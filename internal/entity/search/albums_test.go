@@ -7,6 +7,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 func TestAlbumPhotos(t *testing.T) {
@@ -53,6 +54,37 @@ func TestUserAlbums(t *testing.T) {
 		}
 
 		assert.Equal(t, 0, len(result))
+	})
+	t.Run("SearchByUidWithoutType", func(t *testing.T) {
+		// Regression for the share-link "Permission denied" error: a lookup by album UID without
+		// a type must not be denied for a non-admin role — the default branch uses ResourceAlbums.
+		query := form.SearchAlbums{UID: "as6sg6bxpogaaba8", Count: 1}
+		_, err := UserAlbums(query, entity.SessionFixtures.Pointer("visitor"))
+
+		assert.NoError(t, err)
+	})
+	t.Run("SearchWithoutTypeOrUidDeniesNonAdmin", func(t *testing.T) {
+		// Without a type and without a UID filter, the check falls back to ResourceDefault, so a
+		// non-admin role is denied. This keeps a broad type-less listing admin-only.
+		query := form.SearchAlbums{Count: 100}
+		_, err := UserAlbums(query, entity.SessionFixtures.Pointer("visitor"))
+
+		assert.ErrorIs(t, err, ErrForbidden)
+	})
+	t.Run("SearchWithoutTypeOrUidAllowsAdmin", func(t *testing.T) {
+		// An admin has full access to ResourceDefault, so a type-less listing is permitted.
+		query := form.SearchAlbums{Count: 100}
+		_, err := UserAlbums(query, entity.SessionFixtures.Pointer("alice"))
+
+		assert.NoError(t, err)
+	})
+	t.Run("InvalidUidWithoutTypeDeniesNonAdmin", func(t *testing.T) {
+		// A UID filter that contains no valid album UID must not unlock the ResourceAlbums path;
+		// the check still falls back to ResourceDefault and denies the non-admin role.
+		query := form.SearchAlbums{UID: "not-a-real-uid", Count: 1}
+		_, err := UserAlbums(query, entity.SessionFixtures.Pointer("visitor"))
+
+		assert.ErrorIs(t, err, ErrForbidden)
 	})
 }
 
@@ -291,8 +323,14 @@ func TestAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "sale%", result[0].AlbumTitle)
-		assert.Equal(t, "Yoga***", result[1].AlbumTitle)
+		// MySQL/MariaDB sort case-insensitively, SQLite compares byte values.
+		if testDialect() == dsn.DriverSQLite3 {
+			assert.Equal(t, "sale%", result[0].AlbumTitle)
+			assert.Equal(t, "Yoga***", result[1].AlbumTitle)
+		} else {
+			assert.Equal(t, "Yoga***", result[0].AlbumTitle)
+			assert.Equal(t, "sale%", result[1].AlbumTitle)
+		}
 	})
 	t.Run("AlbumSortName", func(t *testing.T) {
 		f := form.SearchAlbums{
@@ -308,8 +346,14 @@ func TestAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "%gold", result[0].AlbumTitle)
-		assert.Equal(t, "'Family", result[1].AlbumTitle)
+		// MySQL/MariaDB sort case-insensitively, SQLite compares byte values.
+		if testDialect() == dsn.DriverSQLite3 {
+			assert.Equal(t, "%gold", result[0].AlbumTitle)
+			assert.Equal(t, "'Family", result[1].AlbumTitle)
+		} else {
+			assert.Equal(t, "'Family", result[0].AlbumTitle)
+			assert.Equal(t, "*Forrest", result[1].AlbumTitle)
+		}
 	})
 	t.Run("SortByCount", func(t *testing.T) {
 		f := form.SearchAlbums{

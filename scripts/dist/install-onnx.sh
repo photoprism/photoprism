@@ -2,7 +2,11 @@
 
 set -euo pipefail
 
-ONNX_VERSION=${ONNX_VERSION:-1.26.0}
+# ONNX_DEFAULT_VERSION must match the C API headers vendored by the
+# "github.com/yalue/onnxruntime_go" module, as the binding requests that exact
+# API version and fails to initialize against an older shared library.
+ONNX_DEFAULT_VERSION=1.28.0
+ONNX_VERSION=${ONNX_VERSION:-${ONNX_DEFAULT_VERSION}}
 TODAY=$(date -u +%Y%m%d)
 TMPDIR=${TMPDIR:-/tmp}
 SYSTEM=$(uname -s)
@@ -68,16 +72,17 @@ case "${SYSTEM}" in
           # Upstream renamed the CUDA-12 archive from "-gpu-" to "-gpu_cuda12-" in v1.27.0.
           if [[ "${gpu_variant}" == "cuda12" ]] && version_lt "${ONNX_VERSION}" "1.27.0"; then
             archive="onnxruntime-linux-x64-gpu-${ONNX_VERSION}.tgz"
-            sha="cb7df7ee2ca0f962c7ce7c839aeae36223d146a91fb4646d62fb0046f297479f"
           else
             archive="onnxruntime-linux-x64-gpu_${gpu_variant}-${ONNX_VERSION}.tgz"
             if [[ "${gpu_variant}" == "cuda13" ]]; then
-              sha="aa619d5701bbe58046cc998b21e692d5b2aefac1479f375c4b988526cb80befa"
+              sha="84d28f27589090b280d4312743efd3d450cd4ac7d1e1d75e7d9076d9637bf9de"
+            else
+              sha="ea6bd2b65d7dfabbeb92c4af5dd8f12e5aed8601e544ad378d2f872275438b1a"
             fi
           fi
         else
           archive="onnxruntime-linux-x64-${ONNX_VERSION}.tgz"
-          sha="1254da24fb389cf39dc0ff3451ab48301740ffbfcbaf646849df92f80ee92c57"
+          sha="a3e1b79d7bb1bf09696ce675f49e4064e6c81f6202b8225624fff0e93f8d6407"
         fi
         ;;
       arm64|ARM64|aarch64)
@@ -86,7 +91,7 @@ case "${SYSTEM}" in
           exit 1
         fi
         archive="onnxruntime-linux-aarch64-${ONNX_VERSION}.tgz"
-        sha="34ff1c2d0f12e2cf3d33a0c5f82e39792e1d581fbd6968fd7c30d173654be01a"
+        sha="e15ff8b5d85afe6c144d97c6fd432254bf76a219daaf17658087d6ecb3e8f0bb"
         ;;
       *)
         echo "Warning: ONNX Runtime is not provided for Linux/${ARCH}; skipping install." >&2
@@ -102,7 +107,7 @@ case "${SYSTEM}" in
     case "${ARCH}" in
       arm64|ARM64|aarch64)
         archive="onnxruntime-osx-arm64-${ONNX_VERSION}.tgz"
-        sha="7a1280bbb1701ea514f71828765237e7896e0f2e1cd332f1f70dbd5c3e33aca3"
+        sha="1268b359718099bde2cedb55787f182a130067bc4f31e8c88478c445b850d3d8"
         ;;
       x86_64|x86-64)
         echo "Warning: ONNX Runtime is not provided for macOS/${ARCH} in v${ONNX_VERSION}; skipping install." >&2
@@ -119,6 +124,12 @@ case "${SYSTEM}" in
     exit 1
     ;;
  esac
+
+# The pinned checksums describe the default version only, so drop them for any
+# other release rather than failing later with a misleading mismatch.
+if [[ "${ONNX_VERSION}" != "${ONNX_DEFAULT_VERSION}" ]]; then
+  sha=""
+fi
 
 # Allow an explicit checksum override (e.g. when installing a non-default version
 # or a GPU variant whose checksum is not pinned in this script).

@@ -2,10 +2,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-27 09:13+0000\n"
-"PO-Revision-Date: 2026-06-27 10:28+0000\n"
-"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-"
-"translate@weblate.org>\n"
+"POT-Creation-Date: 2026-07-23 13:05+0000\n"
+"PO-Revision-Date: 2026-07-23 13:17+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: none\n"
 "Language: sl\n"
 "MIME-Version: 1.0\n"
@@ -13,418 +12,423 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || "
 "n%100==4 ? 2 : 3;\n"
-"X-Generator: Weblate 2026.5\n"
+"X-Generator: Weblate 2026.7.1\n"
 
-#: messages.go:112
+#: messages.go:113
 msgid "Something went wrong, try again"
 msgstr "Nekaj je šlo narobe, poskusite znova"
 
-#: messages.go:113
+#: messages.go:114
 msgid "Unable to do that"
 msgstr "Tega ni mogoče storiti"
 
-#: messages.go:114
+#: messages.go:115
 msgid "Changes could not be saved"
 msgstr "Sprememb ni bilo mogoče shraniti"
 
-#: messages.go:115
+#: messages.go:116
 msgid "Could not be deleted"
 msgstr "Ni bilo mogoče izbrisati"
 
-#: messages.go:116
+#: messages.go:117
 #, c-format
 msgid "%s already exists"
 msgstr "%s že obstaja"
 
-#: messages.go:117
+#: messages.go:118
 msgid "Not found"
 msgstr "Ga ni mogoče najti"
 
-#: messages.go:118
+#: messages.go:119
 msgid "File not found"
 msgstr "Datoteka ni najdena"
 
-#: messages.go:119
+#: messages.go:120
 msgid "File too large"
 msgstr "Prevelika datoteka"
 
-#: messages.go:120
+#: messages.go:121
 msgid "Unsupported"
 msgstr "Nepodprto"
 
-#: messages.go:121
+#: messages.go:122
 msgid "Unsupported type"
 msgstr "Nepodprta vrsta"
 
-#: messages.go:122
+#: messages.go:123
 msgid "Unsupported format"
 msgstr "Nepodprt format"
 
-#: messages.go:123
+#: messages.go:124
 msgid "Originals folder is empty"
 msgstr "Mapa Originali je prazna"
 
-#: messages.go:124
+#: messages.go:125
 msgid "Selection not found"
 msgstr "Izbor ni najden"
 
-#: messages.go:125
+#: messages.go:126
 msgid "Entity not found"
 msgstr "Entiteta ni bila najdena"
 
-#: messages.go:126
+#: messages.go:127
 msgid "Account not found"
 msgstr "Račun ni najden"
 
-#: messages.go:127
+#: messages.go:128
 msgid "User not found"
 msgstr "Uporabnik ne obstaja"
 
-#: messages.go:128
+#: messages.go:129
 msgid "Label not found"
 msgstr "Oznaka ni bila najdena"
 
-#: messages.go:129
+#: messages.go:130
 msgid "Camera not found"
 msgstr "Kamera ni bila najdena"
 
-#: messages.go:130
+#: messages.go:131
 msgid "Lens not found"
 msgstr "Objektiv ni bil najden"
 
-#: messages.go:131
+#: messages.go:132
 msgid "Album not found"
 msgstr "Album ni najden"
 
-#: messages.go:132
+#: messages.go:133
 msgid "Subject not found"
 msgstr "Zadeva ni bila najdena"
 
-#: messages.go:133
+#: messages.go:134
 msgid "Person not found"
 msgstr "Oseba ni bila najdena"
 
-#: messages.go:134
+#: messages.go:135
 msgid "Face not found"
 msgstr "Obraza ni mogoče najti"
 
-#: messages.go:135
+#: messages.go:136
 msgid "Not available in public mode"
 msgstr "Ni na voljo v javnem načinu"
 
-#: messages.go:136
+#: messages.go:137
 msgid "Not available in read-only mode"
 msgstr "Ni na voljo v načinu samo za branje"
 
-#: messages.go:137
+#: messages.go:138
 msgid "Please log in to your account"
 msgstr "Prijavite se v svoj račun"
 
-#: messages.go:138
+#: messages.go:139
 msgid "Permission denied"
 msgstr "Dovoljenje Zavrnjeno"
 
-#: messages.go:139
+#: messages.go:140
 msgid "Payment required"
 msgstr "Zahtevano plačilo"
 
-#: messages.go:140
+#: messages.go:141
 msgid "Upload might be offensive"
 msgstr "Nalaganje je lahko žaljivo"
 
-#: messages.go:141
+#: messages.go:142
 msgid "Upload failed"
 msgstr "Nalaganje neuspešno"
 
-#: messages.go:142
+#: messages.go:143
+#, c-format
+msgid "Upload to %s failed"
+msgstr "Naložitev na %s ni uspela"
+
+#: messages.go:144
 msgid "No items selected"
 msgstr "Ni izbranih elementov"
 
-#: messages.go:143
+#: messages.go:145
 msgid "Failed creating file, please check permissions"
 msgstr "Neuspešno ustvarjanje datoteke, preverite dovoljenja"
 
-#: messages.go:144
+#: messages.go:146
 msgid "Failed creating folder, please check permissions"
 msgstr "Neuspešno ustvarjanje mape, preverite dovoljenja"
 
-#: messages.go:145
+#: messages.go:147
 msgid "Could not connect, please try again"
 msgstr "Ne morem vzpostaviti povezave, poskusite znova"
 
-#: messages.go:146
+#: messages.go:148
 msgid "Enter verification code"
 msgstr "vnesi potrditveno kodo"
 
-#: messages.go:147
+#: messages.go:149
 msgid "Invalid verification code, please try again"
 msgstr "Neveljavna koda za preverjanje, poskusite znova"
 
-#: messages.go:148
+#: messages.go:150
 msgid "Invalid password, please try again"
 msgstr "Nepravilno geslo, poskusite znova"
 
-#: messages.go:149
+#: messages.go:151
 msgid "Feature disabled"
 msgstr "Funkcija je onemogočena"
 
-#: messages.go:150
+#: messages.go:152
 msgid "No labels selected"
 msgstr "Ni izbranih nalepk"
 
-#: messages.go:151
+#: messages.go:153
 msgid "No albums selected"
 msgstr "Ni izbranih albumov"
 
-#: messages.go:152
+#: messages.go:154
 msgid "No files available for download"
 msgstr "Za prenos ni na voljo nobenih datotek"
 
-#: messages.go:153
+#: messages.go:155
 msgid "Failed to create zip file"
 msgstr "Ni uspelo ustvariti datoteke zip"
 
-#: messages.go:154
+#: messages.go:156
 msgid "Invalid credentials"
 msgstr "Neveljavne poverilnice"
 
-#: messages.go:155
+#: messages.go:157
 msgid "Invalid link"
 msgstr "Neveljavna povezava"
 
-#: messages.go:156
+#: messages.go:158
 msgid "Invalid name"
 msgstr "Neveljavno ime"
 
-#: messages.go:157
+#: messages.go:159
 msgid "Busy, please try again later"
 msgstr "Zaseden, poskusite znova pozneje"
 
-#: messages.go:158
+#: messages.go:160
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
 msgstr "Interval prebujanja je %s, vendar mora biti 1h ali manj"
 
-#: messages.go:159
+#: messages.go:161
 msgid "Your account could not be connected"
 msgstr "Vašega računa ni bilo mogoče povezati"
 
-#: messages.go:160
+#: messages.go:162
 msgid "Too many requests"
 msgstr "Preveč zahtev"
 
-#: messages.go:161
+#: messages.go:163
 msgid "Insufficient storage"
 msgstr "Nezadostno skladiščenje"
 
-#: messages.go:162
+#: messages.go:164
 msgid "Quota exceeded"
 msgstr "Kvota je presežena"
 
-#: messages.go:163
+#: messages.go:165
 msgid "Registration disabled"
 msgstr "Registracija onemogočena"
 
-#: messages.go:164
+#: messages.go:166
 msgid "Verified email required"
 msgstr "Zahtevan je potrjen e-poštni naslov"
 
-#: messages.go:167
+#: messages.go:169
 msgid "Changes successfully saved"
 msgstr "Spremembe so bile uspešno shranjene"
 
-#: messages.go:168
+#: messages.go:170
 msgid "Album created"
 msgstr "Ustvarjen album"
 
-#: messages.go:169
+#: messages.go:171
 msgid "Album saved"
 msgstr "Shranjen album"
 
-#: messages.go:170
+#: messages.go:172
 #, c-format
 msgid "Album %s deleted"
 msgstr "Album %s izbrisano"
 
-#: messages.go:171
+#: messages.go:173
 msgid "Album contents cloned"
 msgstr "Vsebina albuma klonirana"
 
-#: messages.go:172
+#: messages.go:174
 msgid "File removed from stack"
 msgstr "Datoteka odstranjena iz sklada"
 
-#: messages.go:173
+#: messages.go:175
 msgid "File deleted"
 msgstr "Izbrisana datoteka"
 
-#: messages.go:174
+#: messages.go:176
 #, c-format
 msgid "Selection added to %s"
 msgstr "Izbor dodan v %s"
 
-#: messages.go:175
+#: messages.go:177
 #, c-format
 msgid "One entry added to %s"
 msgstr "En vnos dodan v %s"
 
-#: messages.go:176
+#: messages.go:178
 #, c-format
 msgid "%d entries added to %s"
 msgstr "%d vnosi dodani v %s"
 
-#: messages.go:177
+#: messages.go:179
 #, c-format
 msgid "One entry removed from %s"
 msgstr "En vnos odstranjen iz %s"
 
-#: messages.go:178
+#: messages.go:180
 #, c-format
 msgid "%d entries removed from %s"
 msgstr "%d vnosi odstranjeni iz %s"
 
-#: messages.go:179
+#: messages.go:181
 msgid "Account created"
 msgstr "Ustvarjen račun"
 
-#: messages.go:180
+#: messages.go:182
 msgid "Account saved"
 msgstr "Shranjen račun"
 
-#: messages.go:181
+#: messages.go:183
 msgid "Account deleted"
 msgstr "Račun je izbrisan"
 
-#: messages.go:182
+#: messages.go:184
 msgid "Settings saved"
 msgstr "Nastavitve shranjene"
 
-#: messages.go:183
+#: messages.go:185
 msgid "Password changed"
 msgstr "Geslo spremenjeno"
 
-#: messages.go:184
+#: messages.go:186
 #, c-format
 msgid "Import completed in %d s"
 msgstr "Uvoz se zaključi v %d s"
 
-#: messages.go:185
+#: messages.go:187
 msgid "Import canceled"
 msgstr "Uvoz preklican"
 
-#: messages.go:186
+#: messages.go:188
 #, c-format
 msgid "Indexing completed in %d s"
 msgstr "Indeksiranje je končano v %d s"
 
-#: messages.go:187
+#: messages.go:189
 msgid "Indexing originals..."
 msgstr "Indeksiranje izvirnikov..."
 
-#: messages.go:188
+#: messages.go:190
 #, c-format
 msgid "Indexing files in %s"
 msgstr "Indeksiranje datotek v %s"
 
-#: messages.go:189
+#: messages.go:191
 msgid "Indexing canceled"
 msgstr "Indeksiranje preklicano"
 
-#: messages.go:190
+#: messages.go:192
 #, c-format
 msgid "Removed %d files and %d photos"
 msgstr "Odstranjene %d datoteke in %d fotografije"
 
-#: messages.go:191
+#: messages.go:193
 #, c-format
 msgid "Moving files from %s"
 msgstr "Premikanje datotek iz %s"
 
-#: messages.go:192
+#: messages.go:194
 #, c-format
 msgid "Copying files from %s"
 msgstr "Kopiranje datotek iz %s"
 
-#: messages.go:193
+#: messages.go:195
 msgid "Labels deleted"
 msgstr "Etikete izbrisane"
 
-#: messages.go:194
+#: messages.go:196
 msgid "Label saved"
 msgstr "Shranjena nalepka"
 
-#: messages.go:195
+#: messages.go:197
 msgid "Subject saved"
 msgstr "Zadeva je shranjena"
 
-#: messages.go:196
+#: messages.go:198
 msgid "Subject deleted"
 msgstr "Predmet izbrisanih"
 
-#: messages.go:197
+#: messages.go:199
 msgid "Person saved"
 msgstr "Rešena oseba"
 
-#: messages.go:198
+#: messages.go:200
 msgid "Person deleted"
 msgstr "Izbrisana oseba"
 
-#: messages.go:199
+#: messages.go:201
 msgid "File uploaded"
 msgstr "Prenesena datoteka"
 
-#: messages.go:200
+#: messages.go:202
 #, c-format
 msgid "%d files uploaded in %d s"
 msgstr "%d datoteke, naložene v %d s"
 
-#: messages.go:201
+#: messages.go:203
 msgid "Processing upload..."
 msgstr "Obdelava nalaganja..."
 
-#: messages.go:202
+#: messages.go:204
 msgid "Upload has been processed"
 msgstr "Prenos je bil obdelan"
 
-#: messages.go:203
+#: messages.go:205
 msgid "Selection approved"
 msgstr "Odobren izbor"
 
-#: messages.go:204
+#: messages.go:206
 msgid "Selection archived"
 msgstr "Arhiviran izbor"
 
-#: messages.go:205
+#: messages.go:207
 msgid "Selection restored"
 msgstr "Obnovljen izbor"
 
-#: messages.go:206
+#: messages.go:208
 msgid "Selection marked as private"
 msgstr "Izbor označen kot zasebni"
 
-#: messages.go:207
+#: messages.go:209
 msgid "Albums deleted"
 msgstr "Izbrisani albumi"
 
-#: messages.go:208
+#: messages.go:210
 #, c-format
 msgid "Zip created in %d s"
 msgstr "Zip, ustvarjen v %d s"
 
-#: messages.go:209
+#: messages.go:211
 msgid "Permanently deleted"
 msgstr "Trajno izbrisano"
 
-#: messages.go:210
+#: messages.go:212
 #, c-format
 msgid "%s has been restored"
 msgstr "%s je bil obnovljen"
 
-#: messages.go:211
+#: messages.go:213
 msgid "Successfully verified"
 msgstr "Uspešno preverjeno"
 
-#: messages.go:212
+#: messages.go:214
 msgid "Successfully activated"
 msgstr "Uspešno aktiviran"
 

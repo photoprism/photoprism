@@ -111,7 +111,6 @@ func UpdateUserPassword(router *gin.RouterGroup) {
 		// Update tokens if user matches with session.
 		if s.GetUser().UserUID == u.GetUID() {
 			s.SetPreviewToken(u.PreviewToken)
-			s.SetDownloadToken(u.DownloadToken)
 		}
 
 		// Log event.

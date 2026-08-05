@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/vision/openai"
 	"github.com/photoprism/photoprism/internal/ai/vision/schema"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/media"
 )
 
 func TestOpenAIBuilderBuild(t *testing.T) {
@@ -23,7 +24,7 @@ func TestOpenAIBuilderBuild(t *testing.T) {
 	}
 	model.ApplyEngineDefaults()
 
-	request, err := openaiBuilder{}.Build(context.Background(), model, Files{samplesPath + "/chameleon_lime.jpg"})
+	request, err := openaiBuilder{}.Build(context.Background(), model, Files{samplesPath + "/chameleon_lime.jpg"}, media.SrcLocal)
 	require.NoError(t, err)
 	require.NotNil(t, request)
 
@@ -44,7 +45,7 @@ func TestOpenAIBuilderBuildCaptionDisablesForceJSON(t *testing.T) {
 	}
 	model.ApplyEngineDefaults()
 
-	request, err := openaiBuilder{}.Build(context.Background(), model, Files{samplesPath + "/chameleon_lime.jpg"})
+	request, err := openaiBuilder{}.Build(context.Background(), model, Files{samplesPath + "/chameleon_lime.jpg"}, media.SrcLocal)
 	require.NoError(t, err)
 	require.NotNil(t, request)
 	require.NotNil(t, request.Options)

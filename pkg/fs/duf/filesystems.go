@@ -30,7 +30,7 @@ func findMounts(mounts []Mount, path string) ([]Mount, error) {
 			return []Mount{v}, nil
 		}
 
-		if strings.HasPrefix(path, v.Mountpoint) {
+		if mountContains(v.Mountpoint, path) {
 			var nm []Mount
 
 			// keep all entries that are as close or closer to the target
@@ -49,6 +49,24 @@ func findMounts(mounts []Mount, path string) ([]Mount, error) {
 	}
 
 	return m, nil
+}
+
+// mountContains reports whether path is at or below mountpoint, comparing on path
+// segment boundaries so a mountpoint such as /media does not spuriously match a
+// sibling path like /media-data. The root mountpoint contains every absolute path.
+func mountContains(mountpoint, path string) bool {
+	if path == mountpoint {
+		return true
+	}
+
+	sep := string(filepath.Separator)
+
+	// A trailing separator (e.g. the root "/") already marks the segment boundary.
+	if strings.HasSuffix(mountpoint, sep) {
+		return strings.HasPrefix(path, mountpoint)
+	}
+
+	return strings.HasPrefix(path, mountpoint+sep)
 }
 
 func deviceType(m Mount) string {

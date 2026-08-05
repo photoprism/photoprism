@@ -2,6 +2,7 @@ package api
 
 import (
 	"archive/zip"
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -12,15 +13,33 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/internal/workers"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
+
+// auditArchiveAccess records archive activity in the admin-only audit trail, with the session reference
+// when the request resolved to one and the file name redacted.
+func auditArchiveAccess(c *gin.Context, sess *entity.Session, action, outcome, baseName string) {
+	name := clean.Log(clean.FileNameRedacted(baseName))
+
+	if sess != nil {
+		event.AuditInfo([]string{ClientIP(c), "session %s", string(acl.ResourcePhotos), action, outcome}, sess.RefID, name)
+		return
+	}
+
+	event.AuditInfo([]string{ClientIP(c), string(acl.ResourcePhotos), action, outcome}, name)
+}
 
 // ZipCreate creates a zip file archive for download.
 //
@@ -108,6 +127,9 @@ func ZipCreate(router *gin.RouterGroup) {
 			return
 		}
 
+		// Remove expired archives before adding another one.
+		workers.RunPurgeArchives(conf)
+
 		// Create new zip file.
 		var newZipFile *os.File
 		// #nosec G304 zip name derived from request
@@ -115,6 +137,9 @@ func ZipCreate(router *gin.RouterGroup) {
 			Error(c, http.StatusInternalServerError, err, i18n.ErrZipFailed)
 			return
 		}
+
+		// Arm the periodic sweep.
+		mutex.TempArchives.Store(true)
 
 		// Create zip writer.
 		zipWriter := zip.NewWriter(newZipFile)
@@ -169,9 +194,11 @@ func ZipCreate(router *gin.RouterGroup) {
 
 		elapsed := int(time.Since(start).Seconds())
 
-		log.Infof("download: created %s [%s]", clean.Log(zipBaseName), time.Since(start))
+		auditArchiveAccess(c, s, "create archive %s", status.Succeeded, zipBaseName)
 
-		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": i18n.Msg(i18n.MsgZipCreatedIn, elapsed), "filename": zipBaseName})
+		resp := i18n.NewResponse(http.StatusOK, i18n.MsgZipCreatedIn, elapsed)
+
+		c.JSON(http.StatusOK, gin.H{"code": resp.Code, "message": resp.Message, "messageId": resp.MessageID, "messageParams": resp.MessageParams, "filename": zipBaseName})
 	})
 }
 
@@ -187,8 +214,10 @@ func ZipCreate(router *gin.RouterGroup) {
 //	@Router		/api/v1/zip/{filename} [get]
 func ZipDownload(router *gin.RouterGroup) {
 	router.GET("/zip/:filename", func(c *gin.Context) {
-		if InvalidDownloadToken(c) {
-			log.Errorf("download: %s", c.AbortWithError(http.StatusForbidden, fmt.Errorf("invalid download token")))
+		sess, valid := AuthDownload(c)
+
+		if !valid {
+			AbortForbidden(c)
 			return
 		}
 
@@ -198,25 +227,33 @@ func ZipDownload(router *gin.RouterGroup) {
 		zipFileName := filepath.Join(zipPath, zipBaseName)
 
 		if !fs.FileExists(zipFileName) {
-			log.Errorf("download: %s", c.AbortWithError(http.StatusNotFound, fmt.Errorf("%s not found", clean.Log(zipFileName))))
+			auditArchiveAccess(c, sess, "download %s", status.NotFound, zipBaseName)
+			AbortEntityNotFound(c)
 			return
 		}
 
 		defer func(fileName, baseName string) {
-			log.Infof("download: %s has been downloaded", clean.Log(baseName))
-
 			// Wait a moment before deleting the zip file, just to be sure:
 			// https://github.com/photoprism/photoprism/issues/2532
 			time.Sleep(time.Second)
 
 			// Remove the zip file to free up disk space.
 			if err := os.Remove(fileName); err != nil {
-				log.Warnf("download: failed to delete %s (%s)", clean.Log(fileName), err)
+				// Report the reason without the *os.PathError wrapper, which would name the server path.
+				var pathErr *os.PathError
+
+				if errors.As(err, &pathErr) {
+					err = pathErr.Err
+				}
+
+				log.Warnf("download: failed to delete %s (%s)", clean.Log(clean.FileNameRedacted(baseName)), clean.Error(err))
 			} else {
-				log.Debugf("download: deleted %s", clean.Log(baseName))
+				log.Debugf("download: deleted %s", clean.Log(clean.FileNameRedacted(baseName)))
 			}
 		}(zipFileName, zipBaseName)
 
 		c.FileAttachment(zipFileName, zipBaseName)
+
+		auditArchiveAccess(c, sess, "download %s", status.Succeeded, zipBaseName)
 	})
 }

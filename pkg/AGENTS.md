@@ -11,7 +11,7 @@
 - Enforce per-file and total-size budgets to prevent resource exhaustion.
 - Skip OS metadata directories such as `__MACOSX` and reject suspicious names.
 - Keep tests for absolute and volume path rejection, traversal skipping, `__MACOSX` skipping, size limits, directory creation, and safe nested extraction.
-- The current implementation lives in `pkg/fs/zip.go` via `Unzip`, `UnzipFile`, and `safeJoin`.
+- The current implementation lives in `pkg/fs/zip.go` via `Unzip` and `UnzipFile`; containment is enforced by the shared `SafeJoin` helper in `pkg/fs/join.go` (also used by the WebDAV sync client and server upload handler).
 
 ## HTTP Download Security
 

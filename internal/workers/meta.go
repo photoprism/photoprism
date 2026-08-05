@@ -33,6 +33,17 @@ func (w *Meta) originalsPath() string {
 	return w.conf.OriginalsPath()
 }
 
+// saveSidecarYaml backs up the photo metadata to its YAML sidecar file, if enabled.
+func (w *Meta) saveSidecarYaml(photo *entity.Photo, logName string) {
+	if photo == nil || !w.conf.SidecarYaml() {
+		return
+	}
+
+	if err := photo.SaveSidecarYaml(w.conf.OriginalsPath(), w.conf.SidecarPath()); err != nil {
+		log.Errorf("index: %s in %s (save yaml sidecar)", clean.Error(err), logName)
+	}
+}
+
 // Start metadata optimization routine.
 func (w *Meta) Start(delay, interval time.Duration, force bool) (err error) {
 	defer func() {
@@ -131,7 +142,7 @@ func (w *Meta) Start(delay, interval time.Duration, force bool) (err error) {
 
 								if detectErr != nil {
 									log.Debugf("vision: %s in %s (detect faces)", detectErr, clean.Log(mediaFile.BaseName()))
-								} else if saved, count, applyErr := photoprism.ApplyDetectedFaces(primaryFile, faces); applyErr != nil {
+								} else if saved, count, applyErr := photoprism.ApplyDetectedFaces(mediaFile, primaryFile, faces); applyErr != nil {
 									log.Warnf("index: %s in %s (save faces)", clean.Error(applyErr), logName)
 								} else if saved {
 									photo.PhotoFaces = count
@@ -172,6 +183,10 @@ func (w *Meta) Start(delay, interval time.Duration, force bool) (err error) {
 						if changed {
 							if saveErr := photo.SaveVision(); saveErr == nil {
 								updated = true
+
+								// Back up the vision metadata as well, so deferred labels, captions,
+								// and faces do not stay missing from the sidecar until a full rescan.
+								w.saveSidecarYaml(photo, logName)
 							}
 						}
 					}

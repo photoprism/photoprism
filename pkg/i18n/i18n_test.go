@@ -28,6 +28,11 @@ func TestMsg(t *testing.T) {
 		msg := Msg(ErrUnexpected, "A cat")
 		assert.Equal(t, "Something went wrong, try again", msg)
 	})
+	t.Run("UploadToServiceFailed", func(t *testing.T) {
+		msg := Msg(ErrUploadToServiceFailed, "My NAS")
+		assert.Equal(t, "Upload to My NAS failed", msg)
+		assert.Equal(t, "Upload to %s failed", Source(ErrUploadToServiceFailed))
+	})
 	t.Run("AlreadyExistsGerman", func(t *testing.T) {
 		SetLocale("de")
 		msgTrans := Msg(ErrAlreadyExists, "Eine Katze")

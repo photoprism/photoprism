@@ -5,6 +5,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
 	"github.com/photoprism/photoprism/pkg/time/unix"
 )
 
@@ -128,4 +131,35 @@ func TestWaitForAsyncJobs_DrainsRegisteredWork(t *testing.T) {
 	case <-time.After(2 * time.Second):
 		t.Fatalf("WaitForAsyncJobs did not return after all workers finished")
 	}
+}
+
+func TestWaitForAsyncJobsTimeout(t *testing.T) {
+	// Ensure any prior async work has drained so the counter starts clean.
+	WaitForAsyncJobs()
+
+	t.Run("Drained", func(t *testing.T) {
+		assert.True(t, WaitForAsyncJobsTimeout(time.Second))
+	})
+	t.Run("TimesOutWhileJobInFlight", func(t *testing.T) {
+		AsyncJobAdd()
+		release := make(chan struct{})
+		go func() {
+			<-release
+			AsyncJobDone()
+		}()
+
+		// The job is still in flight, so a short wait must time out and report false.
+		assert.False(t, WaitForAsyncJobsTimeout(20*time.Millisecond))
+
+		// After the job finishes, the wait must drain and report true.
+		close(release)
+		assert.True(t, WaitForAsyncJobsTimeout(2*time.Second))
+	})
+}
+
+func TestUpdateSubjectCounts(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		require.NoError(t, UpdateSubjectCounts(true))
+		require.NoError(t, UpdateSubjectCounts(false))
+	})
 }

@@ -20,7 +20,9 @@ sudo GOBIN="/usr/local/bin" go install github.com/muesli/duf@latest
 sudo ln -sf /usr/local/bin/duf /usr/local/bin/df
 
 echo "Installing muffet, a tool for checking links..."
-sudo GOBIN="/usr/local/bin" go install github.com/raviqqe/muffet@latest
+# The module path must carry the major version: "muffet@latest" still resolves to the
+# v1 line (v1.5.7), so only "/v2" installs a current release.
+sudo GOBIN="/usr/local/bin" go install github.com/raviqqe/muffet/v2@latest
 
 echo "Installing petname to generate pronounceable names..."
 sudo GOBIN="/usr/local/bin" go install github.com/dustinkirkland/golang-petname/cmd/petname@latest

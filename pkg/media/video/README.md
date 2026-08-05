@@ -1,6 +1,6 @@
 ## PhotoPrism — Video Package
 
-**Last Updated:** June 1, 2026
+**Last Updated:** July 21, 2026
 
 ### Codecs & Containers
 
@@ -47,16 +47,18 @@ The detected codec, together with the codec and container reported by ExifTool, 
 
 The [`PHOTOPRISM_FFMPEG_SIZE`](https://docs.photoprism.app/getting-started/config-options/#file-converters) config option allows to limit the resolution of [transcoded videos](https://docs.photoprism.app/getting-started/advanced/transcoding/). It accepts the following standard sizes, while other values are automatically adjusted to the next supported size:
 
-| Size | Usage              |
-|:-----|:-------------------|
-| 720  | SD TV, Mobile      |
-| 1280 | HD TV, SXGA        |
-| 1920 | Full HD            |
-| 2048 | DCI 2K, Tablets    |
-| 2560 | Quad HD, Notebooks |
-| 3840 | 4K Ultra HD        |
-| 4096 | DCI 4K, Retina 4K  |
-| 7680 | 8K Ultra HD 2      |
+| Size  | Usage              |
+|:------|:-------------------|
+| 720   | SD TV, Mobile      |
+| 1280  | HD TV, SXGA        |
+| 1920  | Full HD            |
+| 2048  | DCI 2K, Tablets    |
+| 2560  | Quad HD, Notebooks |
+| 3840  | 4K Ultra HD        |
+| 4096  | DCI 4K, Retina 4K  |
+| 5120  | Retina 5K          |
+| 7680  | 8K Ultra HD 2      |
+| 15360 | 16K UHD            |
 
 ### Technical References & Tutorials
 

@@ -9,9 +9,17 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity/migrate"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 type Tables map[string]any
+
+// schemaTables contains the tables that record the schema migration state.
+// Truncate keeps them, as the schema remains migrated when only data is removed.
+var schemaTables = map[string]bool{
+	migrate.Migration{}.TableName(): true,
+	migrate.Version{}.TableName():   true,
+}
 
 // Entities contains database entities and their table names.
 var Entities = Tables{
@@ -82,7 +90,8 @@ func (list Tables) WaitForMigration(db *gorm.DB) error {
 	return nil
 }
 
-// Truncate removes all data from tables without dropping them.
+// Truncate removes all data from tables without dropping them, except for the
+// schemaTables that record the migration state.
 func (list Tables) Truncate(db *gorm.DB) {
 	var name string
 
@@ -93,13 +102,27 @@ func (list Tables) Truncate(db *gorm.DB) {
 	}()
 
 	for name = range list {
-		if err := db.Exec(fmt.Sprintf("DELETE FROM %s WHERE 1", name)).Error; err == nil {
-			// log.Debugf("entity: removed all data from %s", name)
-			break
-		} else if err.Error() != "record not found" {
+		if schemaTables[name] {
+			continue
+		} else if err := truncateTable(db, name); err != nil && err.Error() != "record not found" {
 			log.Debugf("migrate: %s in %s", err, clean.Log(name))
 		}
 	}
+}
+
+// truncateTable removes all rows from the table with the specified name.
+//
+// TRUNCATE is preferred as it also resets AUTO_INCREMENT counters, so that
+// generated IDs match those in a newly created database. DELETE serves as a
+// fallback for SQLite and for accounts without the required privileges.
+func truncateTable(db *gorm.DB, name string) error {
+	if db.Dialect().GetName() != dsn.DriverSQLite3 {
+		if err := db.Exec(fmt.Sprintf("TRUNCATE TABLE %s", name)).Error; err == nil {
+			return nil
+		}
+	}
+
+	return db.Exec(fmt.Sprintf("DELETE FROM %s WHERE 1", name)).Error
 }
 
 // Migrate migrates all database tables of registered entities.

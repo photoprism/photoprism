@@ -14,7 +14,7 @@ import (
 func TestDeleteSession(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		id := rnd.SessionID("77be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac1")
-		m := &Session{ID: id, DownloadToken: "download123", PreviewToken: "preview123"}
+		m := &Session{ID: id, PreviewToken: "preview123"}
 		CacheSession(m, time.Hour)
 		r, _ := sessionCache.Get(id)
 		assert.NotEmpty(t, r)
@@ -25,8 +25,41 @@ func TestDeleteSession(t *testing.T) {
 		r2, _ := sessionCache.Get(id)
 		assert.Empty(t, r2)
 	})
+	t.Run("ReleasesTokens", func(t *testing.T) {
+		id := rnd.SessionID("11be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac1")
+		m := &Session{ID: id, PreviewToken: "release-pv-token"}
+		CacheSession(m, time.Hour)
+		assert.True(t, PreviewToken.HasValue("release-pv-token"))
+
+		if err := DeleteSession(m); err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, PreviewToken.MissingValue("release-pv-token"))
+	})
+	t.Run("KeepsTokenWhileOtherSessionActive", func(t *testing.T) {
+		first := &Session{ID: rnd.SessionID("22be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac1"),
+			PreviewToken: "shared-pv-token"}
+		CacheSession(first, time.Hour)
+
+		second := &Session{ID: rnd.SessionID("33be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac1"),
+			PreviewToken: "shared-pv-token"}
+		CacheSession(second, time.Hour)
+
+		// Removing the first session keeps the shared tokens because the second still uses them.
+		if err := DeleteSession(first); err != nil {
+			t.Fatal(err)
+		}
+		assert.True(t, PreviewToken.HasValue("shared-pv-token"))
+
+		// Removing the last session releases the tokens.
+		if err := DeleteSession(second); err != nil {
+			t.Fatal(err)
+		}
+		assert.True(t, PreviewToken.MissingValue("shared-pv-token"))
+	})
 	t.Run("InvalidId", func(t *testing.T) {
-		m := &Session{ID: "123-invalid", DownloadToken: "download123", PreviewToken: "preview123"}
+		m := &Session{ID: "123-invalid", PreviewToken: "preview123"}
 		CacheSession(m, time.Hour)
 
 		err := DeleteSession(m)

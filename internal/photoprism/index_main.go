@@ -81,6 +81,7 @@ func IndexMain(related *RelatedFiles, ind *Index, o IndexOptions) (result IndexR
 				return result
 			}
 
+			img.SetRelatedMain(f)
 			related.Files = append(related.Files, img)
 		}
 	}
@@ -102,6 +103,7 @@ func IndexMain(related *RelatedFiles, ind *Index, o IndexOptions) (result IndexR
 
 	// Index main MediaFile.
 	exists := ind.files.Exists(f.RootRelName(), f.Root())
+	f.SetRelatedMain(f)
 	result = ind.MediaFile(f, o, "", "")
 
 	// Save file error.

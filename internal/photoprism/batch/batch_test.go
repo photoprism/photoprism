@@ -8,7 +8,6 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -31,8 +30,8 @@ func runTestMain(m *testing.M) (code int) {
 	c := config.TestConfig()
 	defer c.CleanupTestFolder()
 	defer func() {
-		// Prevent UpdateCountsAsync from causing the test suite to fail due to the database closing before the goroutine has finished.
-		mutex.Index.Lock()
+		// CloseDb drains in-flight async jobs before closing, so it must not run while
+		// holding mutex.Index — the counts goroutine needs that lock and would deadlock.
 		if err := c.CloseDb(); err != nil {
 			log.Warnf("close db: %v", err)
 		}

@@ -131,12 +131,10 @@ export default {
       initTabs("show", tabs);
     }
 
-    let active = 0;
+    let active = tabs.findIndex((t) => t.name === this.tab);
 
-    if (typeof this.$route.name === "string" && this.$route.name !== "") {
+    if (active < 0 && typeof this.$route.name === "string" && this.$route.name !== "") {
       active = tabs.findIndex((t) => t.name === this.$route.name);
-    } else if (typeof this.tab === "string" && this.tab !== "") {
-      active = tabs.findIndex((t) => t.name === this.tab);
     }
 
     if (active < 0) {
@@ -160,14 +158,12 @@ export default {
 
       this.$view.focus(this.$refs?.page);
 
-      let active = this.active;
-
-      if (typeof this.$route.name === "string" && this.$route.name !== "") {
-        active = this.tabs.findIndex((t) => t.name === this.$route.name);
-      }
+      const active = this.tabs.findIndex((t) => t.name === this.tab);
 
       if (active >= 0) {
         this.active = active;
+      } else {
+        this.redirectToVisibleTab();
       }
     },
   },
@@ -178,14 +174,25 @@ export default {
     this.$view.leave(this);
   },
   created() {
-    if (!this.tabs || this.tabs.length === 0) {
-      this.$router.push({ name: "albums" });
-    }
+    this.redirectToVisibleTab();
   },
   methods: {
     changePath: function (path) {
       if (this.$route.path !== path) {
         this.$router.replace(path);
+      }
+    },
+    // redirectToVisibleTab sends the session to a suitable settings tab when the requested
+    // one is unavailable for its role, so a restricted tab never renders as an empty page or
+    // leaves the URL pointing at a hidden tab.
+    redirectToVisibleTab: function () {
+      if (!this.tabs || this.tabs.length === 0) {
+        this.$router.replace({ name: this.$session.getDefaultRoute() });
+        return;
+      }
+
+      if (this.tab && !this.tabs.some((t) => t.name === this.tab)) {
+        this.$router.replace(this.tabs[0].path);
       }
     },
   },

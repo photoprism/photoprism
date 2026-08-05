@@ -1,0 +1,12 @@
+[{
+  "RegionAppliedToDimensionsH": 2000,
+  "RegionAppliedToDimensionsUnit": "pixel",
+  "RegionAppliedToDimensionsW": 4000,
+  "RegionAreaH": [0.1,0.1,0.1],
+  "RegionAreaUnit": ["normalized","normalized","normalized"],
+  "RegionAreaW": [0.1,0.1,0.1],
+  "RegionAreaX": [0.2,0.5,0.8],
+  "RegionAreaY": [0.5,0.5,0.5],
+  "RegionName": ["Alice","Bob"],
+  "RegionType": ["Face","Face","Face"]
+}]

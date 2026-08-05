@@ -56,6 +56,12 @@ func Files(limit, offset int, dir string, includeMissing bool) (files entity.Fil
 
 // FilesByUID finds files for the given UIDs.
 func FilesByUID(u []string, limit int, offset int) (files entity.Files, err error) {
+	// A negative limit omits the LIMIT clause, which only some databases accept
+	// in combination with an OFFSET, so it is rejected before running the query.
+	if limit < 0 {
+		return files, fmt.Errorf("invalid limit")
+	}
+
 	if err = Db().Where("(photo_uid IN (?) AND file_primary = 1) OR file_uid IN (?)", u, u).Preload("Photo").Limit(limit).Offset(offset).Find(&files).Error; err != nil {
 		return files, err
 	}
@@ -87,6 +93,24 @@ func VideoByPhotoUID(photoUID string) (*entity.File, error) {
 	err := Db().Where("photo_uid = ? AND file_missing = 0", photoUID).
 		Where("file_video = 1 OR file_duration > 0 OR file_frames > 0 OR file_type = ?", fs.ImageGif).
 		Order("file_error ASC, file_video DESC, file_duration DESC, file_frames DESC").
+		Preload("Photo").First(&f).Error
+
+	return &f, err
+}
+
+// DocumentByPhotoUID finds the PDF document file for the given photo UID. A
+// document photo's primary file is its rendered cover image, so the original
+// PDF must be looked up among the related files by type.
+func DocumentByPhotoUID(photoUID string) (*entity.File, error) {
+	f := entity.File{}
+
+	if photoUID == "" {
+		return &f, fmt.Errorf("photo uid required")
+	}
+
+	err := Db().Where("photo_uid = ? AND file_missing = 0", photoUID).
+		Where("file_type = ?", fs.DocumentPDF).
+		Order("file_error ASC").
 		Preload("Photo").First(&f).Error
 
 	return &f, err

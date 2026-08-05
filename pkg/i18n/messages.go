@@ -34,6 +34,7 @@ const (
 	ErrPaymentRequired
 	ErrOffensiveUpload
 	ErrUploadFailed
+	ErrUploadToServiceFailed
 	ErrNoItemsSelected
 	ErrCreateFile
 	ErrCreateFolder
@@ -139,6 +140,7 @@ var Messages = MessageMap{
 	ErrPaymentRequired:       gettext("Payment required"),
 	ErrOffensiveUpload:       gettext("Upload might be offensive"),
 	ErrUploadFailed:          gettext("Upload failed"),
+	ErrUploadToServiceFailed: gettext("Upload to %s failed"),
 	ErrNoItemsSelected:       gettext("No items selected"),
 	ErrCreateFile:            gettext("Failed creating file, please check permissions"),
 	ErrCreateFolder:          gettext("Failed creating folder, please check permissions"),

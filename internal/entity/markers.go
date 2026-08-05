@@ -54,6 +54,36 @@ func (m Markers) Contains(other Marker) bool {
 	return false
 }
 
+// Overlapping returns a pointer to the first non-rejected marker that overlaps
+// other above the face-overlap threshold, or nil when none does. Used to
+// reconcile an imported XMP region onto an existing marker instead of
+// discarding the overlap the way Contains does.
+func (m Markers) Overlapping(other Marker) *Marker {
+	for i := range m {
+		if m[i].MarkerInvalid {
+			continue
+		}
+		if m[i].OverlapPercent(other) > face.OverlapThreshold {
+			return &m[i]
+		}
+	}
+
+	return nil
+}
+
+// OverlapsInvalid reports whether any rejected marker (MarkerInvalid) overlaps
+// other above the threshold. An XMP region that lands on a rejected marker must
+// be skipped so it is not resurrected as a fresh marker at a different thumb hash.
+func (m Markers) OverlapsInvalid(other Marker) bool {
+	for i := range m {
+		if m[i].MarkerInvalid && m[i].OverlapPercent(other) > face.OverlapThreshold {
+			return true
+		}
+	}
+
+	return false
+}
+
 // DetectedFaceCount returns the number of automatically detected face markers.
 func (m Markers) DetectedFaceCount() (count int) {
 	for i := range m {

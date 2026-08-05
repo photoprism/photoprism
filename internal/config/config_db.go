@@ -312,7 +312,7 @@ func (c *Config) DatabasePassword() string {
 		// No password set, this is not an error.
 		return ""
 	} else if b, err := os.ReadFile(fileName); err != nil || len(b) == 0 { //nolint:gosec // path derived from environment variable for DB password
-		log.Warnf("config: failed to read database password from %s (%s)", fileName, err)
+		event.SystemWarn([]string{"config", "database password", "read %s", "%s"}, clean.Log(fileName), clean.Error(err))
 		return ""
 	} else {
 		return clean.Password(string(b))
@@ -436,13 +436,19 @@ func (c *Config) Db() *gorm.DB {
 	return c.db
 }
 
-// CloseDb closes the db connection (if any). Before tearing down the
-// connection it drains async work registered with entity.AsyncJobAdd so
-// goroutines launched by UpdateCountsAsync, UpdateCoversAsync, and
-// similar helpers do not race the provider being nilled and panic on a
-// nil dialect lookup.
+// AsyncJobDrainTimeout bounds how long CloseDb waits for background jobs before
+// tearing down the connection, so a wedged job cannot hang shutdown forever.
+const AsyncJobDrainTimeout = 30 * time.Second
+
+// CloseDb closes the db connection (if any). It first drains async work registered
+// with entity.AsyncJobAdd (UpdateCountsAsync, UpdateCoversAsync, …) so those goroutines
+// do not race the provider being nilled, bounded by AsyncJobDrainTimeout so a stuck job
+// degrades to a logged warning instead of an indefinite hang.
 func (c *Config) CloseDb() error {
-	entity.WaitForAsyncJobs()
+	// Reported on the console-only system log, as the database backing the error log is going away.
+	if !entity.WaitForAsyncJobsTimeout(AsyncJobDrainTimeout) {
+		event.SystemWarn([]string{"config", "database", "close", "timeout waiting for background jobs"})
+	}
 
 	if c.db != nil {
 		if err := c.db.Close(); err == nil {
@@ -474,7 +480,7 @@ func (c *Config) RegisterDb() {
 	if err := c.connectDb(); err != nil {
 		// Report via the system log, not the database-persisted logger, so a
 		// connection failure cannot trigger a follow-up error writing to the DB.
-		event.SystemError([]string{"config", "database", "register", "%s"}, err)
+		event.SystemError([]string{"config", "database", "register", "%s"}, clean.Error(err))
 		return
 	}
 
@@ -647,7 +653,7 @@ func (c *Config) connectDb() error {
 		if c.Unsafe() {
 			// Report via the system log so a database problem is not written to
 			// the database-persisted error log.
-			event.SystemError([]string{"config", "database", "check", "%s"}, err)
+			event.SystemError([]string{"config", "database", "check", "%s"}, clean.Error(err))
 		} else {
 			return err
 		}

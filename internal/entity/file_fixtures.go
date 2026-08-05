@@ -7,8 +7,10 @@ import (
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
+// FileMap maps a fixture name to a File.
 type FileMap map[string]File
 
+// Get returns a copy of the named fixture, or a File with that name if it does not exist.
 func (m FileMap) Get(name string) File {
 	if result, ok := m[name]; ok {
 		return result
@@ -17,6 +19,8 @@ func (m FileMap) Get(name string) File {
 	return File{FileName: name}
 }
 
+// Pointer returns a pointer to a copy of the named fixture, or to a File with that name
+// if it does not exist.
 func (m FileMap) Pointer(name string) *File {
 	if result, ok := m[name]; ok {
 		return &result
@@ -25,6 +29,7 @@ func (m FileMap) Pointer(name string) *File {
 	return &File{FileName: name}
 }
 
+// FileFixtures contains the file fixtures used for testing.
 var FileFixtures = FileMap{
 	"exampleFileName.jpg": {
 		ID:              1000000,
@@ -84,7 +89,7 @@ var FileFixtures = FileMap{
 		FileHash:        "3cad9168fa6acc5c5c2965ddf6ec465ca42fd818",
 		FileSize:        661858,
 		FileCodec:       "jpeg",
-		FileType:        "raw",
+		FileType:        string(fs.ImageDng),
 		MediaType:       media.Raw.String(),
 		FileMime:        "image/DNG",
 		FilePrimary:     false,
@@ -2813,6 +2818,7 @@ var FileFixtures = FileMap{
 		FileSize:        407701,
 		FileCodec:       "gif",
 		FileType:        "gif",
+		MediaType:       media.Image.String(),
 		FileMime:        "image/gif",
 		FilePrimary:     false,
 		FileSidecar:     false,
@@ -3024,7 +3030,7 @@ var FileFixtures = FileMap{
 		FileSize:        98168,
 		FileCodec:       "pdf",
 		FileType:        "pdf",
-		MediaType:       media.Image.String(),
+		MediaType:       media.Document.String(),
 		FileMime:        "application/pdf",
 		FilePrimary:     false,
 		FileSidecar:     false,
@@ -3264,10 +3270,13 @@ var FileFixtures = FileMap{
 	},
 }
 
-var FileFixturesExampleJPG = FileFixtures["exampleFileName.jpg"]
-var FileFixturesExampleXMP = FileFixtures["exampleXmpFile.xmp"]
-var FileFixturesExampleBridge = FileFixtures["bridge.jpg"]
-var FileFixturesExampleBridgeVideo = FileFixtures["bridge2.mp4"]
+// Shorthands for the file fixtures most commonly referenced by tests.
+var (
+	FileFixturesExampleJPG         = FileFixtures["exampleFileName.jpg"]
+	FileFixturesExampleXMP         = FileFixtures["exampleXmpFile.xmp"]
+	FileFixturesExampleBridge      = FileFixtures["bridge.jpg"]
+	FileFixturesExampleBridgeVideo = FileFixtures["bridge2.mp4"]
+)
 
 // CreateFileFixtures inserts known entities into the database for testing.
 func CreateFileFixtures() {

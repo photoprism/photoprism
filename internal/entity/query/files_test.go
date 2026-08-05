@@ -108,8 +108,7 @@ func TestFilesByUID(t *testing.T) {
 		}
 		assert.Equal(t, 0, len(files))
 	})
-	//TODO fails on mariadb
-	t.Run("Error", func(t *testing.T) {
+	t.Run("InvalidLimit", func(t *testing.T) {
 		files, err := FilesByUID([]string{"fs6sg6bw45bnlxxx"}, -100, 0)
 
 		assert.Error(t, err)
@@ -148,6 +147,28 @@ func TestVideoByPhotoUID(t *testing.T) {
 
 		assert.Error(t, err, "record not found")
 		t.Log(file)
+	})
+}
+
+func TestDocumentByPhotoUID(t *testing.T) {
+	t.Run("FileFound", func(t *testing.T) {
+		file, err := DocumentByPhotoUID("ps6sg6byk7wrbk48")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, "pdf", file.FileType)
+		assert.Equal(t, "education/university/BSc-Thesis.pdf", file.FileName)
+	})
+	t.Run("NoFileFound", func(t *testing.T) {
+		_, err := DocumentByPhotoUID("111")
+
+		assert.Error(t, err)
+	})
+	t.Run("EmptyUID", func(t *testing.T) {
+		_, err := DocumentByPhotoUID("")
+
+		assert.Error(t, err)
 	})
 }
 

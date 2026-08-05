@@ -194,10 +194,12 @@ func TestLikePhoto(t *testing.T) {
 		r := AuthenticatedRequest(app, "POST", "/api/v1/photos/ps6sg6be2lvl0y21/like", sess.AuthToken())
 		assert.Equal(t, http.StatusOK, r.Code)
 		assert.Equal(t, "ps6sg6be2lvl0y21", gjson.Get(r.Body.String(), "photo.UID").String())
-		// A non-redacted field stays present (the genuine record is returned), while the identifying
-		// storage path is stripped — the fixture sets PhotoPath, so the empty result proves redaction.
+		// A non-redacted field stays present (the genuine record is returned), while the labels are
+		// stripped — the fixture attaches one, so the empty result proves redaction.
 		assert.Equal(t, "Title", gjson.Get(r.Body.String(), "photo.Title").String())
-		assert.Empty(t, gjson.Get(r.Body.String(), "photo.Path").String())
+		assert.Empty(t, gjson.Get(r.Body.String(), "photo.Labels").Array())
+		// The storage path stays: search returns it to every in-scope session.
+		assert.Equal(t, "2018/11", gjson.Get(r.Body.String(), "photo.Path").String())
 	})
 }
 

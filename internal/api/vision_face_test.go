@@ -12,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/scheme"
+	"github.com/photoprism/photoprism/pkg/media"
 )
 
 func TestPostVisionFace(t *testing.T) {
@@ -23,7 +24,7 @@ func TestPostVisionFace(t *testing.T) {
 			fs.Abs("./testdata/face_160x160.jpg"),
 		}
 
-		req, err := vision.NewApiRequestImages(files, scheme.Data)
+		req, err := vision.NewApiRequestImages(files, scheme.Data, media.SrcLocal)
 
 		if err != nil {
 			t.Fatal(err)
@@ -66,7 +67,7 @@ func TestPostVisionFace(t *testing.T) {
 			fs.Abs("./testdata/london_160x160.jpg"),
 		}
 
-		req, err := vision.NewApiRequestImages(files, scheme.Data)
+		req, err := vision.NewApiRequestImages(files, scheme.Data, media.SrcLocal)
 
 		if err != nil {
 			t.Fatal(err)
@@ -102,7 +103,7 @@ func TestPostVisionFace(t *testing.T) {
 			fs.Abs("./testdata/face_320x320.jpg"),
 		}
 
-		req, err := vision.NewApiRequestImages(files, scheme.Data)
+		req, err := vision.NewApiRequestImages(files, scheme.Data, media.SrcLocal)
 
 		if err != nil {
 			t.Fatal(err)
@@ -143,7 +144,7 @@ func TestPostVisionFace(t *testing.T) {
 
 		files := vision.Files{}
 
-		req, err := vision.NewApiRequestImages(files, scheme.Data)
+		req, err := vision.NewApiRequestImages(files, scheme.Data, media.SrcLocal)
 
 		if err != nil {
 			t.Fatal(err)
@@ -172,6 +173,34 @@ func TestPostVisionFace(t *testing.T) {
 		assert.Error(t, apiResponse.Err())
 		assert.False(t, apiResponse.HasResult())
 		assert.Equal(t, http.StatusBadRequest, r.Code)
+	})
+	t.Run("InvalidReference", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		PostVisionFace(router)
+
+		// A raw local path is not an https/data URL and must be rejected with 400,
+		// consistent with the labels endpoint, rather than a 200 with empty embeddings.
+		body := `{"images":["/photoprism/originals/pp-july/peach_pi-1280x720.jpg"]}`
+		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/vision/face", body)
+
+		assert.Equal(t, http.StatusBadRequest, r.Code)
+	})
+	t.Run("NotAnImage", func(t *testing.T) {
+		// A well-formed data URL that does not contain a decodable image must be rejected
+		// with 400 like the labels and nsfw endpoints, not answered with empty embeddings.
+		refs := map[string]string{
+			"PlainText": "data:text/plain;base64," + media.EncodeBase64String([]byte("not an image")),
+			"Svg":       "data:image/svg+xml;base64," + media.EncodeBase64String([]byte(`<svg xmlns="http://www.w3.org/2000/svg"><rect width="10" height="10"/></svg>`)),
+			"Html":      "data:text/html;base64," + media.EncodeBase64String([]byte("<html><body>hi</body></html>")),
+		}
+		for name, ref := range refs {
+			t.Run(name, func(t *testing.T) {
+				app, router, _ := NewApiTest()
+				PostVisionFace(router)
+				r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/vision/face", `{"images":["`+ref+`"]}`)
+				assert.Equal(t, http.StatusBadRequest, r.Code)
+			})
+		}
 	})
 	t.Run("NoBody", func(t *testing.T) {
 		app, router, _ := NewApiTest()

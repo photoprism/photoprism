@@ -1,6 +1,7 @@
 package config
 
 import (
+	"bytes"
 	"os"
 	"path/filepath"
 	"strings"
@@ -8,9 +9,12 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service/hub"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // ProjectRoot references the project root directory for use in tests.
@@ -327,6 +331,126 @@ func TestConfig_Serial(t *testing.T) {
 	t.Logf("Serial: %s", result)
 
 	assert.NotEmpty(t, result)
+}
+
+func TestReadSerialFile(t *testing.T) {
+	valid := rnd.GenerateUID(serialPrefix)
+	write := func(t *testing.T, data string) string {
+		t.Helper()
+		fileName := filepath.Join(t.TempDir(), serialName)
+		require.NoError(t, os.WriteFile(fileName, []byte(data), fs.ModeSecretFile))
+		return fileName
+	}
+	t.Run("Valid", func(t *testing.T) {
+		assert.Equal(t, valid, readSerialFile(write(t, valid)))
+	})
+	t.Run("TrailingNewline", func(t *testing.T) {
+		// A stray newline must not discard the serial, as that would rotate the derived preview token.
+		assert.Equal(t, valid, readSerialFile(write(t, valid+"\n")))
+	})
+	t.Run("Missing", func(t *testing.T) {
+		assert.Empty(t, readSerialFile(filepath.Join(t.TempDir(), serialName)))
+	})
+	t.Run("Truncated", func(t *testing.T) {
+		assert.Empty(t, readSerialFile(write(t, valid[:8])))
+	})
+	t.Run("WrongPrefix", func(t *testing.T) {
+		assert.Empty(t, readSerialFile(write(t, "a"+valid[1:])))
+	})
+	t.Run("NotAlnum", func(t *testing.T) {
+		assert.Empty(t, readSerialFile(write(t, "z!!!!!!!!!!!!!!!")))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Empty(t, readSerialFile(write(t, "")))
+	})
+}
+
+func TestConfig_InitSerial(t *testing.T) {
+	t.Run("GeneratesAndPersists", func(t *testing.T) {
+		c := NewMinimalTestConfig(t.TempDir())
+		require.NoError(t, c.CreateDirectories())
+		require.NoError(t, c.InitSerial())
+		serial := c.Serial()
+		assert.True(t, rnd.IsUID(serial, serialPrefix))
+		// Written to the storage path and mirrored to the backup path, both readable back.
+		assert.Equal(t, serial, readSerialFile(filepath.Join(c.StoragePath(), serialName)))
+		assert.Equal(t, serial, readSerialFile(c.BackupPath(serialName)))
+		// Stable across calls: an existing serial is never regenerated.
+		require.NoError(t, c.InitSerial())
+		assert.Equal(t, serial, c.Serial())
+	})
+	t.Run("RecoversFromBackup", func(t *testing.T) {
+		c := NewMinimalTestConfig(t.TempDir())
+		require.NoError(t, c.CreateDirectories())
+		require.NoError(t, c.InitSerial())
+		serial := c.Serial()
+		// Losing the storage copy must not change the serial, or every preview URL would break.
+		require.NoError(t, os.Remove(filepath.Join(c.StoragePath(), serialName)))
+		c.serial = ""
+		assert.Equal(t, serial, c.Serial())
+	})
+	t.Run("BackupFailureIsNotFatal", func(t *testing.T) {
+		c := NewMinimalTestConfig(t.TempDir())
+		require.NoError(t, c.CreateDirectories())
+		// Block the backup copy by putting a directory where the file belongs; startup must continue,
+		// since the backup only adds redundancy.
+		require.NoError(t, os.MkdirAll(c.BackupPath(serialName), fs.ModeDir))
+		assert.NoError(t, c.InitSerial())
+		assert.True(t, rnd.IsUID(c.Serial(), serialPrefix))
+	})
+}
+
+func TestConfig_reportDownloadTokenOptions(t *testing.T) {
+	// capture swaps the console-only system logger for a buffer, so the assertions do not depend on the
+	// application log level or on what another test left behind.
+	capture := func(t *testing.T) *bytes.Buffer {
+		t.Helper()
+		var buf bytes.Buffer
+		logger := logrus.New()
+		logger.Out = &buf
+		logger.SetLevel(logrus.InfoLevel)
+		origLog := event.SystemLog
+		event.SystemLog = logger
+		t.Cleanup(func() { event.SystemLog = origLog })
+		return &buf
+	}
+	newConfig := func(downloadToken string, public bool) *Config {
+		c := NewMinimalTestConfig(t.TempDir())
+		c.options.Public = public
+		c.options.Demo = false
+		c.options.DownloadToken = downloadToken
+		return c
+	}
+	t.Run("StaticTokenConfigured", func(t *testing.T) {
+		buf := capture(t)
+		newConfig("static-download-token", false).reportDownloadTokenOptions()
+		// Reported at warning level so it stands out in an operator's log, and named after the option so
+		// it can be traced back to the setting that caused it.
+		assert.Contains(t, buf.String(), "level=warning")
+		assert.Contains(t, buf.String(), "config: download-token")
+		assert.Contains(t, buf.String(), "without identifying a session")
+	})
+	t.Run("NotConfigured", func(t *testing.T) {
+		buf := capture(t)
+		newConfig("", false).reportDownloadTokenOptions()
+		assert.Empty(t, buf.String())
+	})
+	t.Run("PublicMode", func(t *testing.T) {
+		// Nothing is scoped in public mode, so the trade-off does not apply.
+		buf := capture(t)
+		newConfig("static-download-token", true).reportDownloadTokenOptions()
+		assert.Empty(t, buf.String())
+	})
+	t.Run("MaxAgeBelowMinimum", func(t *testing.T) {
+		buf := capture(t)
+		c := newConfig("", false)
+		c.options.DownloadTokenMaxAge = 60
+		c.reportDownloadTokenOptions()
+		// Names both the configured value and the floor it was raised to, so the operator can see what
+		// the instance actually uses; the clamp itself is covered by TestConfig_DownloadTokenMaxAge.
+		assert.Contains(t, buf.String(), "config: download-token-maxage")
+		assert.Contains(t, buf.String(), "60s is below the 900s minimum")
+	})
 }
 
 func TestConfig_SerialChecksum(t *testing.T) {

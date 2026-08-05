@@ -75,25 +75,26 @@ const (
 
 // Standard ContentType strings for images and vector graphics.
 const (
-	ContentTypePng    = "image/png"
-	ContentTypeAPng   = "image/vnd.mozilla.apng"
-	ContentTypeJpeg   = "image/jpeg"
-	ContentTypeJpegXL = "image/jxl"
-	ContentTypeGif    = "image/gif"
-	ContentTypeBmp    = "image/bmp"
-	ContentTypeTiff   = "image/tiff"
-	ContentTypePsd    = "application/vnd.adobe.photoshop"
-	ContentTypePsdAlt = "image/vnd.adobe.photoshop"
-	ContentTypeDng    = "image/dng"
-	ContentTypeAvif   = "image/avif"
-	ContentTypeAvifS  = "image/avif-sequence"
-	ContentTypeHeic   = "image/heic"
-	ContentTypeHeicS  = "image/heic-sequence"
-	ContentTypeWebp   = "image/webp"
-	ContentTypeAI     = "application/vnd.adobe.illustrator"
-	ContentTypePS     = "application/postscript"
-	ContentTypeEPS    = "image/eps"
-	ContentTypeSVG    = "image/svg+xml"
+	ContentTypePng     = "image/png"
+	ContentTypeAPng    = "image/apng"
+	ContentTypeAPngAlt = "image/vnd.mozilla.apng"
+	ContentTypeJpeg    = "image/jpeg"
+	ContentTypeJpegXL  = "image/jxl"
+	ContentTypeGif     = "image/gif"
+	ContentTypeBmp     = "image/bmp"
+	ContentTypeTiff    = "image/tiff"
+	ContentTypePsd     = "application/vnd.adobe.photoshop"
+	ContentTypePsdAlt  = "image/vnd.adobe.photoshop"
+	ContentTypeDng     = "image/dng"
+	ContentTypeAvif    = "image/avif"
+	ContentTypeAvifS   = "image/avif-sequence"
+	ContentTypeHeic    = "image/heic"
+	ContentTypeHeicS   = "image/heic-sequence"
+	ContentTypeWebp    = "image/webp"
+	ContentTypeAI      = "application/vnd.adobe.illustrator"
+	ContentTypePS      = "application/postscript"
+	ContentTypeEPS     = "image/eps"
+	ContentTypeSVG     = "image/svg+xml"
 )
 
 // Standard ContentType strings for markup and sidecar files.
@@ -114,6 +115,18 @@ const (
 	ContentTypePrometheus  = "text/plain; version=0.0.4"
 	ContentTypeEventStream = "text/event-stream" // Server-Sent Events (SSE), see https://html.spec.whatwg.org/multipage/server-sent-events.html
 )
+
+// IsPngType checks if the specified media type is a PNG image, including animated PNGs.
+// Detection libraries report APNG either as the IANA-registered type or the legacy Mozilla
+// name, so both must be accepted wherever a detected type is matched against PNG.
+func IsPngType(mediaType string) bool {
+	switch mediaType {
+	case ContentTypePng, ContentTypeAPng, ContentTypeAPngAlt:
+		return true
+	default:
+		return false
+	}
+}
 
 // HasContentType checks weather the Content-Type header has the specified type.
 func HasContentType(header *http.Header, contentType string) bool {

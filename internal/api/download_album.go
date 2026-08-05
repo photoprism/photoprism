@@ -7,18 +7,19 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/ulule/deepcopier"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config/customize"
-	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/entity/search"
+	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/i18n"
-	"github.com/photoprism/photoprism/pkg/media"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
 // AlbumDownloadName returns the album download file name type.
@@ -47,15 +48,17 @@ func AlbumDownloadName(c *gin.Context) customize.DownloadName {
 //	@Router		/api/v1/albums/{uid}/dl [get]
 func DownloadAlbum(router *gin.RouterGroup) {
 	router.GET("/albums/:uid/dl", func(c *gin.Context) {
-		if InvalidDownloadToken(c) {
-			AbortForbidden(c)
+		conf := get.Config()
+
+		// Reject up front when downloads are disabled, before the more expensive token/session resolution.
+		if !conf.Settings().Features.Download || conf.Settings().Albums.Download.Disabled {
+			AbortFeatureDisabled(c)
 			return
 		}
 
-		conf := get.Config()
-
-		if !conf.Settings().Features.Download || conf.Settings().Albums.Download.Disabled {
-			AbortFeatureDisabled(c)
+		sess, valid := AuthDownload(c)
+		if !valid {
+			AbortForbidden(c)
 			return
 		}
 
@@ -67,7 +70,23 @@ func DownloadAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		results, err := search.AlbumPhotos(a, 10000, true)
+		// The session that owns the download token (resolved by AuthDownload above) scopes the archive to
+		// pictures it may see. A nil session means an unidentified requester (a coarse/instance token),
+		// which is limited to public, non-private content below.
+
+		// Deny access to albums the session may not view, mirroring GetAlbum. A nil session is a coarse
+		// (public/static) token, handled by the public-content scoping below rather than this gate.
+		if sess != nil && !albumViewableBySession(sess, a) {
+			AbortAlbumNotFound(c)
+			return
+		}
+
+		// Enumerate at the file level (not via a photo search) so real sidecar files (e.g. XMP) are
+		// included when the Sidecar option is on. Archived and hidden pictures are always excluded;
+		// private ones only when the session may view them, never for an unidentified requester.
+		dl := conf.Settings().Albums.Download
+		selection := query.AlbumDownloadSelection(dl.MediaRaw, dl.MediaSidecar, dl.Originals, search.PhotoSessionSeesPrivate(sess))
+		files, err := query.SelectedFilesForSession(form.Selection{Albums: []string{a.AlbumUID}}, selection, sess)
 
 		if err != nil {
 			AbortEntityNotFound(c)
@@ -76,7 +95,6 @@ func DownloadAlbum(router *gin.RouterGroup) {
 
 		// Configure file names.
 		dlName := AlbumDownloadName(c)
-		settings := get.Config().Settings().Albums
 		zipFileName := a.ZipName()
 
 		AddDownloadHeader(c, zipFileName)
@@ -88,39 +106,14 @@ func DownloadAlbum(router *gin.RouterGroup) {
 
 		var aliases = make(map[string]int)
 
-		for _, result := range results {
-			if result.FileName == "" {
-				log.Warnf("album: %s cannot be downloaded (empty file name)", clean.Log(result.FileUID))
+		for _, file := range files {
+			if file.FileName == "" {
+				log.Warnf("album: %s cannot be downloaded (empty file name)", clean.Log(file.FileUID))
 				continue
-			} else if result.FileHash == "" {
-				log.Warnf("album: %s cannot be downloaded (empty file hash)", clean.Log(result.FileName))
-				continue
-			}
-
-			if settings.Download.Originals && result.FileRoot != "/" {
-				log.Debugf("album: generated file %s not included in download", clean.Log(result.FileName))
+			} else if file.FileHash == "" {
+				log.Warnf("album: %s cannot be downloaded (empty file hash)", clean.Log(file.FileName))
 				continue
 			}
-
-			if !settings.Download.MediaSidecar && result.FileSidecar {
-				log.Debugf("album: sidecar file %s not included in download", clean.Log(result.FileName))
-				continue
-			}
-
-			if !settings.Download.MediaRaw && media.Raw.Equal(result.MediaType) {
-				log.Debugf("album: raw file %s not included in download", clean.Log(result.FileName))
-				continue
-			}
-
-			// Create file model from search result.
-			file := entity.File{}
-
-			if err = deepcopier.Copy(&file).From(result); err != nil {
-				log.Warnf("album: %s in %s (deepcopier)", err, clean.Log(result.FileName))
-				continue
-			}
-
-			file.ID = result.FileID
 
 			fileName := photoprism.FileName(file.FileRoot, file.FileName)
 			alias := file.DownloadName(dlName, 0)
@@ -134,17 +127,25 @@ func DownloadAlbum(router *gin.RouterGroup) {
 
 			if fs.FileExists(fileName) {
 				if zipErr := fs.ZipFile(zipWriter, fileName, alias, false); zipErr != nil {
-					log.Errorf("album: failed to zip %s (%s)", clean.Log(result.FileName), zipErr)
+					log.Errorf("album: failed to zip %s (%s)", clean.Log(file.FileName), clean.Error(zipErr))
 					Abort(c, http.StatusInternalServerError, i18n.ErrZipFailed)
 					return
 				}
 
-				log.Infof("album: zipped %s as %s", clean.Log(result.FileName), clean.Log(alias))
+				log.Infof("album: zipped %s as %s", clean.Log(file.FileName), clean.Log(alias))
 			} else {
-				log.Warnf("album: %s not found", clean.Log(result.FileName))
+				log.Warnf("album: %s not found", clean.Log(file.FileName))
 			}
 		}
 
 		log.Infof("album: %s has been downloaded [%s]", clean.Log(a.AlbumTitle), time.Since(start))
+
+		// Record the completed bulk download: this endpoint authorizes through AuthDownload rather than
+		// Auth, so it emits none of the access lines other handlers do, and AuthDownload audits only denials.
+		if sess != nil {
+			event.AuditInfo([]string{ClientIP(c), "session %s", string(acl.ResourceAlbums), "download %s", status.Succeeded}, sess.RefID, a.AlbumUID)
+		} else {
+			event.AuditInfo([]string{ClientIP(c), string(acl.ResourceAlbums), "download %s", status.Succeeded}, a.AlbumUID)
+		}
 	})
 }

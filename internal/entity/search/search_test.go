@@ -31,3 +31,9 @@ func runTestMain(m *testing.M) int {
 
 	return m.Run()
 }
+
+// testDialect returns the name of the SQL dialect the test database runs on, so
+// that tests can account for collation and sort order differences.
+func testDialect() string {
+	return entity.Db().Dialect().GetName()
+}

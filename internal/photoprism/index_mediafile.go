@@ -357,19 +357,36 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		// New and non-primary files can be skipped when updating faces only.
 		result.Status = IndexSkipped
 		return result
-	} else if o.DetectFaces && file.FilePrimary {
-		// Run face detection on primary files when enabled for this indexing run.
+	} else if (o.DetectFaces || o.ImportFaceTags) && file.FilePrimary {
+		// Process primary-file faces when AI detection and/or XMP face-tag import
+		// is enabled. XMP import is independent of AI detection, so it still runs
+		// when face detection is disabled or deferred to a background worker.
 		if markers := file.Markers(); markers != nil {
-			// Detect faces.
-			faces := ind.Faces(m, markers.DetectedFaceCount())
-
-			// Create markers from faces and add them.
-			if len(faces) > 0 {
-				file.AddFaces(faces)
+			// Run the expensive AI face detection only when it is enabled.
+			if o.DetectFaces {
+				if faces := ind.Faces(m, markers.DetectedFaceCount()); len(faces) > 0 {
+					file.AddFaces(faces)
+				}
 			}
 
-			// Skip when indexing faces only and no new markers were found.
-			if !file.UnsavedMarkers() && o.FacesOnly {
+			// Import face regions and names from XMP metadata onto the markers.
+			xmpChanged := false
+			if o.ImportFaceTags && file.FileHash != "" {
+				regions, collectErr := collectXmpFaces(m)
+				if collectErr != nil {
+					log.Warnf("index: %s while reading xmp face regions for %s", clean.Error(collectErr), logName)
+				} else if n, reconcileErr := reconcileXmpFaces(regions, &file, markers); reconcileErr != nil {
+					log.Warnf("index: %s while reconciling xmp face regions for %s", clean.Error(reconcileErr), logName)
+				} else if n > 0 {
+					xmpChanged = true
+					log.Debugf("index: imported %d xmp face region(s) for %s", n, logName)
+				}
+			}
+
+			// Skip when indexing faces only and nothing changed. A delete-only
+			// reconcile persists no unsaved marker, so xmpChanged is tracked
+			// separately to keep the recomputed face count from going stale.
+			if !file.UnsavedMarkers() && !xmpChanged && o.FacesOnly {
 				result.Status = IndexSkipped
 				return result
 			}
@@ -463,7 +480,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			if data.HasInstanceID() {
 				log.Infof("index: %s has instance_id %s", logName, clean.Log(data.InstanceID))
 
-				file.InstanceID = data.InstanceID
+				file.SetInstanceID(data.InstanceID)
 			}
 
 			if m.IsAnimatedImage() && file.FileDuration > photo.PhotoDuration {
@@ -503,7 +520,11 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			details.SetArtist(data.Artist, entity.SrcXmp)
 			details.SetCopyright(data.Copyright, entity.SrcXmp)
 			details.SetLicense(data.License, entity.SrcXmp)
-			details.SetSoftware(data.Software, entity.SrcXmp)
+
+			// Software prefers embedded metadata: fill it from the sidecar only when none is set.
+			if !details.HasSoftware() {
+				details.SetSoftware(data.Software, entity.SrcXmp)
+			}
 
 			// Adopt the XMP DocumentID as the photo UUID. SrcXmp wins
 			// over an auto-generated UUID assigned in the SrcMeta branch.
@@ -512,7 +533,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			// check from data.HasDocumentID() is too narrow here.
 			if data.DocumentID != "" {
 				log.Infof("index: %s has document_id %s", logName, clean.Log(data.DocumentID))
-				photo.UUID = data.DocumentID
+				photo.SetDocumentID(data.DocumentID)
 			}
 
 			// Update camera, lens, and exposure from the sidecar.
@@ -520,21 +541,18 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			photo.SetLens(entity.FirstOrCreateLens(entity.NewLens(data.LensMake, data.LensModel)), entity.SrcXmp)
 			photo.SetExposure(data.FocalLength, data.FNumber, data.Iso, data.Exposure, entity.SrcXmp)
 
-			// Mirror file-level identity metadata to the primary file so the
-			// UI surfaces it (per-file fields render the primary JPEG/HEIC).
-			// ColorProfile and Projection are not mirrored — they describe
-			// physical container properties, not user-supplied metadata.
-			// Only the changed columns are written: a full Save() would also
-			// re-resolve the primary flag and regenerate the search index,
-			// which neither InstanceID nor Software affects, and would issue
-			// those writes on every re-index pass even when nothing changed.
+			// Mirror sidecar identity metadata onto the primary file so the UI shows it on the visible
+			// JPEG/HEIC row, writing only changed columns. Software prefers the file's own embedded
+			// value; container properties (ColorProfile, Projection) are not mirrored.
 			if primary, primaryErr := photo.PrimaryFile(); primaryErr == nil && primary != nil {
 				prevInstanceID, prevSoftware := primary.InstanceID, primary.FileSoftware
 
 				if data.InstanceID != "" {
-					primary.InstanceID = data.InstanceID
+					primary.SetInstanceID(data.InstanceID)
 				}
-				primary.SetSoftware(data.Software)
+				if primary.FileSoftware == "" {
+					primary.SetSoftware(data.Software)
+				}
 
 				values := entity.Values{}
 				if primary.InstanceID != prevInstanceID {
@@ -581,13 +599,13 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			if data.HasDocumentID() && photo.UUID == "" {
 				log.Infof("index: %s has document_id %s", logName, clean.Log(data.DocumentID))
 
-				photo.UUID = data.DocumentID
+				photo.SetDocumentID(data.DocumentID)
 			}
 
 			if data.HasInstanceID() {
 				log.Infof("index: %s has instance_id %s", logName, clean.Log(data.InstanceID))
 
-				file.InstanceID = data.InstanceID
+				file.SetInstanceID(data.InstanceID)
 			}
 
 			file.FileCodec = data.Codec
@@ -683,13 +701,13 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			if data.HasDocumentID() && photo.UUID == "" {
 				log.Infof("index: %s has document_id %s", logName, clean.Log(data.DocumentID))
 
-				photo.UUID = data.DocumentID
+				photo.SetDocumentID(data.DocumentID)
 			}
 
 			if data.HasInstanceID() {
 				log.Infof("index: %s has instance_id %s", logName, clean.Log(data.InstanceID))
 
-				file.InstanceID = data.InstanceID
+				file.SetInstanceID(data.InstanceID)
 			}
 
 			file.FileCodec = data.Codec
@@ -730,13 +748,13 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			if data.HasDocumentID() && photo.UUID == "" {
 				log.Infof("index: %s has document_id %s", logName, clean.Log(data.DocumentID))
 
-				photo.UUID = data.DocumentID
+				photo.SetDocumentID(data.DocumentID)
 			}
 
 			if data.HasInstanceID() {
 				log.Infof("index: %s has instance_id %s", logName, clean.Log(data.InstanceID))
 
-				file.InstanceID = data.InstanceID
+				file.SetInstanceID(data.InstanceID)
 			}
 
 			file.FileCodec = data.Codec
@@ -777,13 +795,13 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			if data.HasDocumentID() && photo.UUID == "" {
 				log.Infof("index: %s has document_id %s", logName, clean.Log(data.DocumentID))
 
-				photo.UUID = data.DocumentID
+				photo.SetDocumentID(data.DocumentID)
 			}
 
 			if data.HasInstanceID() {
 				log.Infof("index: %s has instance_id %s", logName, clean.Log(data.InstanceID))
 
-				file.InstanceID = data.InstanceID
+				file.SetInstanceID(data.InstanceID)
 			}
 
 			file.FileCodec = data.Codec
@@ -911,7 +929,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			if data.HasDocumentID() && photo.UUID == "" {
 				log.Debugf("index: %s has document_id %s", logName, clean.Log(data.DocumentID))
 
-				photo.UUID = data.DocumentID
+				photo.SetDocumentID(data.DocumentID)
 			}
 		}
 
@@ -1142,8 +1160,10 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		}
 	}
 
-	// Create backup of picture metadata in sidecar YAML file.
-	if file.FilePrimary && Config().SidecarYaml() {
+	// Create backup of picture metadata in sidecar YAML file. A changed XMP sidecar
+	// merges into the photo while the unchanged primary file is skipped, so it refreshes
+	// the backup itself; a rescan reindexes the primary file, which writes it anyway.
+	if (file.FilePrimary || m.IsXMP() && !o.Rescan) && Config().SidecarYaml() {
 		if err = photo.SaveSidecarYaml(Config().OriginalsPath(), Config().SidecarPath()); err != nil {
 			log.Errorf("index: %s in %s (save as yaml)", err, logName)
 		}

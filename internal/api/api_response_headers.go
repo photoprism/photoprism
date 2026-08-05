@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/auth/tokens"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/http/header"
@@ -42,16 +43,19 @@ func AddFileCountHeaders(c *gin.Context, filesCount, foldersCount int) {
 	c.Header("X-Folders", strconv.Itoa(foldersCount))
 }
 
-// AddTokenHeaders adds preview token headers to the response.
+// AddTokenHeaders adds the preview and download tokens to the response so the client can refresh them
+// while browsing instead of polling. Both mirror what ClientSession puts in the client config: a session
+// without its own preview token receives neither, since the download token also authorizes originals.
 func AddTokenHeaders(c *gin.Context, s *entity.Session) {
-	if get.Config().Public() {
+	if get.Config().Public() || s.PreviewToken == "" {
 		return
 	}
 
-	if s.PreviewToken != "" {
-		c.Header("X-Preview-Token", s.PreviewToken)
-	}
-	if s.DownloadToken != "" {
-		c.Header("X-Download-Token", s.DownloadToken)
+	c.Header("X-Preview-Token", s.PreviewToken)
+
+	// The download token is the "?t=" value the client appends to a download URL: a signed,
+	// session-bound token so header-less endpoints resolve back to this session.
+	if v := tokens.DownloadToken(s.ID); v != "" {
+		c.Header("X-Download-Token", v)
 	}
 }

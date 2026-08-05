@@ -1367,6 +1367,24 @@ func TestMediaFile_IsPng(t *testing.T) {
 		assert.Equal(t, "image/png", mediaFile.MimeType())
 		assert.True(t, mediaFile.IsPng())
 	})
+	t.Run("AnimatedPng", func(t *testing.T) {
+		mediaFile, err := NewMediaFile("testdata/animated.png")
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, fs.ImagePng, mediaFile.FileType())
+		assert.Equal(t, header.ContentTypeAPng, mediaFile.MimeType())
+		assert.True(t, mediaFile.IsPng())
+	})
+	t.Run("AnimatedPngExt", func(t *testing.T) {
+		mediaFile, err := NewMediaFile("testdata/animated.apng")
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, fs.ImagePng, mediaFile.FileType())
+		assert.Equal(t, header.ContentTypeAPng, mediaFile.MimeType())
+		assert.True(t, mediaFile.IsPng())
+	})
 }
 
 func TestMediaFile_IsTiff(t *testing.T) {
@@ -1538,6 +1556,20 @@ func TestMediaFile_CheckType(t *testing.T) {
 	})
 	t.Run("PNG", func(t *testing.T) {
 		if f, err := NewMediaFile("testdata/orientation.png"); err != nil {
+			t.Fatal(err)
+		} else {
+			assert.NoError(t, f.CheckType())
+		}
+	})
+	t.Run("AnimatedPNG", func(t *testing.T) {
+		if f, err := NewMediaFile("testdata/animated.png"); err != nil {
+			t.Fatal(err)
+		} else {
+			assert.NoError(t, f.CheckType())
+		}
+	})
+	t.Run("AnimatedPNGExt", func(t *testing.T) {
+		if f, err := NewMediaFile("testdata/animated.apng"); err != nil {
 			t.Fatal(err)
 		} else {
 			assert.NoError(t, f.CheckType())
@@ -3036,5 +3068,31 @@ func TestMediaFile_Duration(t *testing.T) {
 		} else {
 			assert.Equal(t, "2.42s", f.Duration().String())
 		}
+	})
+}
+
+func TestMediaFile_SetRelatedMain(t *testing.T) {
+	c := config.TestConfig()
+
+	t.Run("Seeded", func(t *testing.T) {
+		m, err := NewMediaFile(filepath.Join(c.SamplesPath(), "beach_wood.jpg"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		main, err := NewMediaFile(filepath.Join(c.SamplesPath(), "canon_eos_6d.dng"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Nil(t, m.RelatedMain(), "an unseeded file must report no group")
+		m.SetRelatedMain(main)
+		if m.RelatedMain() == nil {
+			t.Fatal("expected the seeded group main file")
+		}
+		assert.Equal(t, main.FileName(), m.RelatedMain().FileName())
+	})
+	t.Run("NilReceiver", func(t *testing.T) {
+		var m *MediaFile
+		m.SetRelatedMain(nil)
+		assert.Nil(t, m.RelatedMain())
 	})
 }

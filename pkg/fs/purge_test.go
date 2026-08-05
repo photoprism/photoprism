@@ -4,6 +4,9 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestPurgeTestDbFiles_Recursive(t *testing.T) {
@@ -115,4 +118,86 @@ func TestPurgeTestDbFiles_NonRecursive(t *testing.T) {
 			t.Fatalf("expected nested file to remain: %s", f)
 		}
 	}
+}
+
+func TestPurgeExpired(t *testing.T) {
+	// stamp creates a file in dir and backdates its modification time by age.
+	stamp := func(t *testing.T, dir, name string, age time.Duration) string {
+		t.Helper()
+		path := filepath.Join(dir, name)
+		if err := os.WriteFile(path, []byte("test"), ModeFile); err != nil {
+			t.Fatalf("write %s: %v", name, err)
+		}
+		modTime := time.Now().Add(-age)
+		if err := os.Chtimes(path, modTime, modTime); err != nil {
+			t.Fatalf("chtimes %s: %v", name, err)
+		}
+		return path
+	}
+	t.Run("RemovesExpiredOnly", func(t *testing.T) {
+		dir := t.TempDir()
+		expired := stamp(t, dir, "photoprism-download-20260727-094439-zihqtuw4.zip", 2*time.Hour)
+		fresh := stamp(t, dir, "photoprism-download-20260727-101500-abcdefgh.zip", time.Minute)
+		other := stamp(t, dir, "notes.txt", 2*time.Hour)
+		removed, remaining, failed := PurgeExpired(dir, ".zip", time.Hour)
+		assert.Equal(t, 1, removed)
+		assert.Equal(t, 1, remaining)
+		assert.Equal(t, 0, failed)
+		assert.False(t, FileExists(expired))
+		assert.True(t, FileExists(fresh))
+		assert.True(t, FileExists(other))
+	})
+	t.Run("CaseInsensitiveExt", func(t *testing.T) {
+		dir := t.TempDir()
+		expired := stamp(t, dir, "ARCHIVE.ZIP", 2*time.Hour)
+		removed, remaining, failed := PurgeExpired(dir, ".zip", time.Hour)
+		assert.Equal(t, 1, removed)
+		assert.Equal(t, 0, remaining)
+		assert.Equal(t, 0, failed)
+		assert.False(t, FileExists(expired))
+	})
+	t.Run("EmptyExtMatchesAll", func(t *testing.T) {
+		dir := t.TempDir()
+		expired := stamp(t, dir, "notes.txt", 2*time.Hour)
+		removed, _, _ := PurgeExpired(dir, "", time.Hour)
+		assert.Equal(t, 1, removed)
+		assert.False(t, FileExists(expired))
+	})
+	t.Run("SkipsDirectories", func(t *testing.T) {
+		dir := t.TempDir()
+		nested := filepath.Join(dir, "nested.zip")
+		if err := os.MkdirAll(nested, ModeDir); err != nil {
+			t.Fatalf("mkdir: %v", err)
+		}
+		modTime := time.Now().Add(-2 * time.Hour)
+		if err := os.Chtimes(nested, modTime, modTime); err != nil {
+			t.Fatalf("chtimes: %v", err)
+		}
+		removed, remaining, failed := PurgeExpired(dir, ".zip", time.Hour)
+		assert.Equal(t, 0, removed)
+		assert.Equal(t, 0, remaining)
+		assert.Equal(t, 0, failed)
+		assert.True(t, PathExists(nested))
+	})
+	t.Run("ZeroMaxAgeRemovesNothing", func(t *testing.T) {
+		dir := t.TempDir()
+		expired := stamp(t, dir, "archive.zip", 2*time.Hour)
+		removed, remaining, failed := PurgeExpired(dir, ".zip", 0)
+		assert.Equal(t, 0, removed)
+		assert.Equal(t, 0, remaining)
+		assert.Equal(t, 0, failed)
+		assert.True(t, FileExists(expired))
+	})
+	t.Run("EmptyDir", func(t *testing.T) {
+		removed, remaining, failed := PurgeExpired("", ".zip", time.Hour)
+		assert.Equal(t, 0, removed)
+		assert.Equal(t, 0, remaining)
+		assert.Equal(t, 0, failed)
+	})
+	t.Run("MissingDir", func(t *testing.T) {
+		removed, remaining, failed := PurgeExpired(filepath.Join(t.TempDir(), "missing"), ".zip", time.Hour)
+		assert.Equal(t, 0, removed)
+		assert.Equal(t, 0, remaining)
+		assert.Equal(t, 0, failed)
+	})
 }

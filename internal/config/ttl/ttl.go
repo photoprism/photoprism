@@ -1,5 +1,5 @@
 /*
-Package ttl provides cache expiration defaults and helper functions.
+Package ttl provides cache expiration and token lifetime defaults and helper functions.
 
 Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 

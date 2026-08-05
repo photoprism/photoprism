@@ -401,6 +401,7 @@ export const BackendMessages = () => {
   $gettext("Payment required");
   $gettext("Upload might be offensive");
   $gettext("Upload failed");
+  $gettext("Upload to %s failed");
   $gettext("No items selected");
   $gettext("Failed creating file, please check permissions");
   $gettext("Failed creating folder, please check permissions");

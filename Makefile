@@ -54,6 +54,9 @@ UID := $(shell id -u)
 GID := $(shell id -g)
 HASRICHGO := $(shell which richgo)
 
+# Client for the development database, which runs MariaDB.
+MARIADB ?= mariadb
+
 ifdef HASRICHGO
     GOTEST=richgo test
 else
@@ -68,6 +71,68 @@ ifdef HAS_DOCKER_COMPOSE_WITH_DASH
 else
     DOCKER_COMPOSE=docker compose
 endif
+
+# Overview of the most commonly used targets, shown by "make help".
+# Keep this in sync when renaming or adding an important target; "make list" shows all of them.
+define HELP_TEXT
+PhotoPrism Development Makefile
+
+Usage: make <target> [target ...]
+
+Development Environment (run on the host):
+  docker-build             Build the local development image
+  up                       Start the development environment in the background
+  terminal                 Open a terminal in the development container
+  logs                     Follow the log output of the development environment
+  down                     Stop the development environment and remove orphans
+
+Dependencies (run in the development container):
+  dep                      Install the TensorFlow, ONNX, and NPM dependencies
+  dep-js                   Install the NPM dependencies only
+  upgrade                  Upgrade the Go and NPM dependencies
+  tidy                     Add missing and remove unused Go modules
+
+Build:
+  build                    Build the "photoprism" binary in develop mode
+  build-all                Build the backend and the frontend
+  build-js                 Build the frontend for production
+  watch-js                 Rebuild the frontend when source files change
+  clean                    Remove the build artifacts and installed dependencies
+
+Run:
+  start                    Start the server in the background
+  stop                     Stop the server
+  migrate                  Run the pending database migrations
+  users                    Create a test user and list all user accounts
+
+Test:
+  test                     Run the JS and Go tests
+  test-short               Run the short Go tests in parallel
+  test-go                  Run all Go tests, including slow tests
+  test-js                  Run the frontend unit tests with Vitest
+  test-mariadb             Run all Go tests against MariaDB instead of SQLite
+  reset-testdb             Reset the SQLite and MariaDB test databases
+  acceptance-run-chromium  Run the TestCafe acceptance tests in Chrome
+  Package subsets: test-pkg, test-api, test-entity, test-commands, test-photoprism, test-ai
+
+Format, Lint & Docs:
+  fmt                      Format the JS, Go, and Swagger sources
+  lint                     Lint the JS and Go sources
+  swag                     Regenerate the Swagger API documentation
+  format-tables            Format the Markdown tables in README and CODEMAP files
+  notice                   Regenerate the NOTICE files for all dependencies
+  audit                    Check the dependencies for known vulnerabilities
+
+Translations:
+  gettext-extract          Extract the translation strings into the catalogs
+  gettext-compile          Compile the frontend translation catalogs
+  gettext-lint             Check the translation catalogs for errors
+
+Other:
+  show-build               Show the build tag of the current revision
+  list                     List all targets, including those not shown here
+endef
+export HELP_TEXT
 
 # Declare "make" targets.
 all: dep build-js
@@ -94,9 +159,10 @@ acceptance-run-chromium-short: storage/acceptance acceptance-auth-sqlite-restart
 acceptance-auth-run-chromium: storage/acceptance acceptance-auth-sqlite-restart wait-1 acceptance-auth acceptance-auth-sqlite-stop
 acceptance-public-run-chromium: storage/acceptance acceptance-sqlite-restart-1 wait-1 acceptance acceptance-sqlite-stop-1
 acceptance-api-run-chromium: storage/acceptance acceptance-sqlite-restart-1 wait-1 acceptance-api acceptance-sqlite-stop-1
-help: list
+help:
+	@printf '%s\n' "$$HELP_TEXT"
 list:
-	@awk '/^[[:alnum:]]+[^[:space:]]+:/ {printf "%s",substr($$1,1,length($$1)-1); if (match($$0,/#/)) {desc=substr($$0,RSTART+1); sub(/^[[:space:]]+/,"",desc); printf " - %s\n",desc} else printf "\n" }' "$(firstword $(MAKEFILE_LIST))"
+	@awk '/^define /{skip=1} /^endef/{skip=0;next} skip{next} /^[[:alnum:]]+[^[:space:]]+:/ {printf "%s",substr($$1,1,length($$1)-1); if (match($$0,/#/)) {desc=substr($$0,RSTART+1); sub(/^[[:space:]]+/,"",desc); printf " - %s\n",desc} else printf "\n" }' "$(firstword $(MAKEFILE_LIST))"
 wait-%:
 	sleep 20
 show-rev:
@@ -129,6 +195,8 @@ devtools: install-go dep-npm
 .SILENT: help;
 logs:
 	$(DOCKER_COMPOSE) logs -f
+up:
+	$(DOCKER_COMPOSE) up -d
 down: docker-down
 docker-down:
 	$(DOCKER_COMPOSE) --profile=all down --remove-orphans
@@ -255,7 +323,7 @@ terminal:
 mariadb:
 	$(DOCKER_COMPOSE) exec mariadb mariadb -uroot -pphotoprism photoprism
 mariadb-init:
-	mariadb < scripts/sql/mariadb-init.sql
+	$(MARIADB) < scripts/sql/mariadb-init.sql
 root: root-terminal
 root-terminal:
 	$(DOCKER_COMPOSE) exec -u root photoprism bash
@@ -529,16 +597,17 @@ vitest-component:
 	(cd frontend && npm run test-component)
 reset-mariadb:
 	$(info Resetting photoprism database...)
-	mysql < scripts/sql/reset-photoprism.sql
+	$(MARIADB) < scripts/sql/reset-photoprism.sql
 reset-mariadb-testdb:
 	$(info Resetting testdb database...)
-	mysql < scripts/sql/reset-testdb.sql
+	$(MARIADB) < scripts/sql/reset-testdb.sql
 reset-mariadb-local:
 	$(info Resetting local database...)
-	mysql < scripts/sql/reset-local.sql
+	$(MARIADB) < scripts/sql/reset-local.sql
 reset-mariadb-acceptance:
-	$(info Resetting acceptance database...)
-	mysql < scripts/sql/reset-acceptance.sql
+	$(info Resetting acceptance databases...)
+	$(MARIADB) -N -B -e "SELECT CONCAT('DROP DATABASE ', schema_name, ';') FROM information_schema.schemata WHERE schema_name LIKE 'acceptance\_%'" | $(MARIADB)
+	$(MARIADB) < scripts/sql/reset-acceptance.sql
 reset-mariadb-all: reset-mariadb-testdb reset-mariadb-local reset-mariadb-acceptance
 reset-testdb: reset-sqlite reset-mariadb-testdb
 reset-acceptance: reset-mariadb-acceptance
@@ -1116,7 +1185,7 @@ docker-dummy-oidc:
 packer-digitalocean:
 	$(info Buildinng DigitalOcean marketplace image...)
 	(cd ./setup/docker/cloud && packer build digitalocean.json)
-lint: lint-js lint-go check-api-request-limits
+lint: lint-js lint-go check-api-request-limits check-make-help
 lint-js:
 	$(info Linting JS code...)
 	$(MAKE) -C frontend lint
@@ -1126,6 +1195,9 @@ lint-go:
 check-api-request-limits:
 	$(info Checking API request-body limits...)
 	bash ./scripts/check-api-request-limits.sh
+check-make-help:
+	$(info Checking that "make help" only advertises existing targets...)
+	bash ./scripts/check-make-help.sh
 fmt-js:
 	(cd frontend &&	npm run fmt)
 fmt-go:

@@ -318,6 +318,10 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 	c := NewTestConfig("config")
 	c.SetAuthMode(AuthModePasswd)
 
+	// Propagate configures the download signer; without it no session gets a signed token and the
+	// coarse fallback is empty.
+	c.Propagate()
+
 	assert.Equal(t, AuthModePasswd, c.AuthMode())
 
 	adminFeatures := c.ClientRole(acl.RoleAdmin).Settings.Features
@@ -327,7 +331,8 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.IsType(t, &ClientConfig{}, cfg)
 		assert.Equal(t, false, cfg.Public)
 		assert.NotEmpty(t, cfg.PreviewToken)
-		assert.NotEmpty(t, cfg.DownloadToken)
+		// No session preview token, so the higher-value download token is withheld.
+		assert.Empty(t, cfg.DownloadToken)
 
 		f := cfg.Settings.Features
 		assert.Equal(t, adminFeatures, f)
@@ -361,7 +366,8 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.IsType(t, &ClientConfig{}, cfg)
 		assert.Equal(t, false, cfg.Public)
 		assert.NotEmpty(t, cfg.PreviewToken)
-		assert.NotEmpty(t, cfg.DownloadToken)
+		// No session preview token, so the higher-value download token is withheld.
+		assert.Empty(t, cfg.DownloadToken)
 
 		f := cfg.Settings.Features
 		assert.Equal(t, adminFeatures, f)
@@ -428,7 +434,8 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.IsType(t, &ClientConfig{}, cfg)
 		assert.Equal(t, false, cfg.Public)
 		assert.NotEmpty(t, cfg.PreviewToken)
-		assert.NotEmpty(t, cfg.DownloadToken)
+		// No session preview token, so the higher-value download token is withheld.
+		assert.Empty(t, cfg.DownloadToken)
 
 		f := cfg.Settings.Features
 		assert.NotEqual(t, adminFeatures, f)
@@ -463,7 +470,8 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.IsType(t, &ClientConfig{}, cfg)
 		assert.Equal(t, false, cfg.Public)
 		assert.NotEmpty(t, cfg.PreviewToken)
-		assert.NotEmpty(t, cfg.DownloadToken)
+		// No session preview token, so the higher-value download token is withheld.
+		assert.Empty(t, cfg.DownloadToken)
 
 		f := cfg.Settings.Features
 		assert.NotEqual(t, adminFeatures, f)
@@ -499,7 +507,8 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.IsType(t, &ClientConfig{}, cfg)
 		assert.Equal(t, false, cfg.Public)
 		assert.NotEmpty(t, cfg.PreviewToken)
-		assert.NotEmpty(t, cfg.DownloadToken)
+		// No session preview token, so the higher-value download token is withheld.
+		assert.Empty(t, cfg.DownloadToken)
 
 		f := cfg.Settings.Features
 		assert.NotEqual(t, adminFeatures, f)
@@ -532,7 +541,8 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.IsType(t, &ClientConfig{}, cfg)
 		assert.Equal(t, false, cfg.Public)
 		assert.NotEmpty(t, cfg.PreviewToken)
-		assert.NotEmpty(t, cfg.DownloadToken)
+		// No session preview token, so the higher-value download token is withheld.
+		assert.Empty(t, cfg.DownloadToken)
 		f := cfg.Settings.Features
 
 		assert.True(t, f.Search)

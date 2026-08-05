@@ -28,7 +28,7 @@ func authListAction(ctx *cli.Context) error {
 		cols := []string{"Session ID", "User", "Authentication Method", "Client", "Scope", "Login IP", "Current IP", "Last Active", "Created At", "Expires At"}
 
 		if ctx.Bool("tokens") {
-			cols = append(cols, "Preview Token", "Download Token")
+			cols = append(cols, "Preview Token")
 		}
 
 		// Fetch sessions from database.
@@ -63,7 +63,7 @@ func authListAction(ctx *cli.Context) error {
 			}
 
 			if ctx.Bool("tokens") {
-				rows[i] = append(rows[i], res.PreviewToken, res.DownloadToken)
+				rows[i] = append(rows[i], res.PreviewToken)
 			}
 		}
 

@@ -456,8 +456,13 @@ test.meta("testID", "photos-010").meta({ mode: "public" })("Common: Set location
   const CoordinatesBeforeChange = await photoedit.locationInput.value;
   await t.expect(CoordinatesBeforeChange).eql("52.5162546, 13.3777166");
   await t.click(Selector("div.maplibregl-map"), { offsetX: 4, offsetY: 4 });
+  // The coordinate comes from a full-precision MapLibre unproject(), whose last bits
+  // vary by a few ULP (~nanometers) across browser/runtime versions. Assert proximity
+  // rather than bit-exact equality so float noise doesn't fail the test.
   const CoordinatesAfterChange = await photoedit.locationInput.value;
-  await t.expect(CoordinatesAfterChange).eql("52.534636098259455, 13.332140504419073");
+  const [latAfter, lngAfter] = CoordinatesAfterChange.split(",").map((v) => parseFloat(v));
+  await t.expect(Math.abs(latAfter - 52.534636098259455)).lte(1e-6);
+  await t.expect(Math.abs(lngAfter - 13.332140504419073)).lte(1e-6);
   await t.click(photoedit.locationCancel); // use ok on the following to avoid excessive wait time.
   await t.expect(photoedit.coordinates.withAttribute('value', "52.5162546, 13.3777166").visible).ok(); // This will exit when the value appears
 });

@@ -76,6 +76,19 @@ export default defineConfig([
       "no-console": 0,
       "no-case-declarations": 0,
       "no-prototype-builtins": 0,
+      // A native void element leaves the serialized markup unterminated for
+      // `vue-gettext-extract`, which silently drops every later bare `{{ $gettext() }}`
+      // sibling — the string never reaches the catalog and renders English forever.
+      // Wrapping the interpolation in an element (e.g. `<span>`) keeps it extractable.
+      "vue/no-restricted-syntax": [
+        "error",
+        {
+          selector:
+            "VElement[rawName=/^(img|br|hr|input|area|base|col|embed|link|meta|param|source|track|wbr)$/i] ~ VExpressionContainer CallExpression[callee.name=/^\\$n?p?gettext$/]",
+          message:
+            "Wrap this interpolation in an element (e.g. <span>): a preceding void element makes gettext extraction skip it.",
+        },
+      ],
       "vue/no-v-text-v-html-on-component": 0,
       "vue/no-v-model-argument": 0,
       "vue/valid-model-definition": 0,

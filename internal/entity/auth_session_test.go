@@ -3,6 +3,7 @@ package entity
 import (
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 
@@ -725,7 +726,6 @@ func TestSession_SetProvider(t *testing.T) {
 func TestSession_ChangePassword(t *testing.T) {
 	m := FindSessionByRefID("sessxkkcabce")
 	assert.Empty(t, m.PreviewToken)
-	assert.Empty(t, m.DownloadToken)
 
 	err := m.ChangePassword("photoprism123")
 
@@ -734,7 +734,6 @@ func TestSession_ChangePassword(t *testing.T) {
 	}
 
 	assert.NotEmpty(t, m.PreviewToken)
-	assert.NotEmpty(t, m.DownloadToken)
 
 	err2 := m.ChangePassword("Bobbob123!")
 
@@ -907,16 +906,30 @@ func TestSession_SetPreviewToken(t *testing.T) {
 	})
 }
 
-func TestSession_SetDownloadToken(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
-		m := &Session{ID: "12345678"}
-		m.SetDownloadToken("12345")
-		assert.Equal(t, "12345", m.DownloadToken)
+func TestSession_SetAuthToken(t *testing.T) {
+	t.Run("MigratesTokensWhenIdChanges", func(t *testing.T) {
+		// A session that already carries preview/download tokens must move their lookup-cache
+		// registrations to the new ID when SetAuthToken reassigns it, so the old ID does not
+		// orphan the values (#5733).
+		m := &Session{}
+		m.SetAuthToken(rnd.AuthToken())
+		oldID := m.ID
+		m.SetPreviewToken("migrate-preview")
+		assert.Equal(t, []string{oldID}, PreviewToken.Keys("migrate-preview"))
+
+		m.SetAuthToken(rnd.AppPassword())
+		assert.NotEqual(t, oldID, m.ID)
+		assert.Equal(t, []string{m.ID}, PreviewToken.Keys("migrate-preview"))
+
+		PreviewToken.Unset(m.ID)
 	})
-	t.Run("IdEmpty", func(t *testing.T) {
-		m := &Session{ID: ""}
-		m.SetDownloadToken("12345")
-		assert.Equal(t, "", m.DownloadToken)
+	t.Run("NoTokensNoOp", func(t *testing.T) {
+		m := &Session{}
+		m.SetAuthToken(rnd.AuthToken())
+		firstID := m.ID
+		m.SetAuthToken(rnd.AuthToken())
+		assert.NotEqual(t, firstID, m.ID)
+		assert.True(t, rnd.IsSessionID(m.ID))
 	})
 }
 
@@ -1249,5 +1262,25 @@ func TestSession_SetUserScopeDefault(t *testing.T) {
 		sess.SetUser(user)
 
 		assert.Equal(t, "logs:*", sess.AuthScope)
+	})
+}
+
+func TestClampIdToken(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		clamped, truncated := ClampIdToken("")
+		assert.Equal(t, "", clamped)
+		assert.False(t, truncated)
+	})
+	t.Run("WithinLimit", func(t *testing.T) {
+		token := strings.Repeat("a", IdTokenMaxSize)
+		clamped, truncated := ClampIdToken(token)
+		assert.Equal(t, token, clamped)
+		assert.False(t, truncated)
+	})
+	t.Run("ExceedsLimit", func(t *testing.T) {
+		token := strings.Repeat("a", IdTokenMaxSize+100)
+		clamped, truncated := ClampIdToken(token)
+		assert.True(t, truncated)
+		assert.Len(t, clamped, IdTokenMaxSize)
 	})
 }

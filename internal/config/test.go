@@ -19,6 +19,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 
 	"github.com/photoprism/photoprism/internal/config/customize"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service/hub"
 	"github.com/photoprism/photoprism/internal/thumb"
@@ -150,6 +151,9 @@ func NewTestOptionsForPath(dbName, dataPath string) *Options {
 				log.Errorf("sqlite: failed to remove existing test database %s (%s)", clean.Log(testDsn), err)
 			}
 		}
+	} else {
+		// Give the package a database of its own, so that tests can run in parallel.
+		testDsn = entity.TestDbDSN(testDriver, testDsn)
 	}
 
 	// Test config options.
@@ -449,6 +453,7 @@ func CliTestContext() *cli.Context {
 	globalSet.String("wakeup-interval", "1h34m9s", "doc")
 	globalSet.Bool("vision-api", config.VisionApi, "doc")
 	globalSet.Bool("detect-nsfw", config.DetectNSFW, "doc")
+	globalSet.Bool("xmp-faces", config.XMPFaces, "doc")
 	globalSet.Bool("debug", false, "doc")
 	globalSet.Bool("sponsor", true, "doc")
 	globalSet.Bool("test", true, "doc")

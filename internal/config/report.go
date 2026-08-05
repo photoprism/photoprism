@@ -33,6 +33,9 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"session-maxage", fmt.Sprintf("%d", c.SessionMaxAge())},
 		{"session-timeout", fmt.Sprintf("%d", c.SessionTimeout())},
 		{"session-cache", fmt.Sprintf("%d", c.SessionCache())},
+		{"download-token", c.DownloadToken()},
+		{"download-token-maxage", fmt.Sprintf("%d", int64(c.DownloadTokenMaxAge().Seconds()))},
+		{"preview-token", c.PreviewToken()},
 
 		// Logging.
 		{"log-level", c.LogLevel().String()},
@@ -315,8 +318,6 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"jpegxldecoder-bin", c.JpegXLDecoderBin()},
 
 		// Thumbnails.
-		{"download-token", c.DownloadToken()},
-		{"preview-token", c.PreviewToken()},
 		{"thumb-library", c.ThumbLibrary()},
 		{"thumb-color", c.ThumbColor()},
 		{"thumb-size", fmt.Sprintf("%d", c.ThumbSizePrecached())},
@@ -337,6 +338,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"facenet-model-path", c.FacenetModelPath()},
 		{"nsfw-model-path", c.NsfwModelPath()},
 		{"detect-nsfw", fmt.Sprintf("%t", c.DetectNSFW())},
+		{"xmp-faces", fmt.Sprintf("%t", c.XMPFaces())},
 		{"face-engine", faceEngine},
 		{"face-engine-run", vision.ReportRunType(c.FaceEngineRunType())},
 	}...)
@@ -384,6 +386,7 @@ func (c *Config) FaceReport() (rows [][]string, cols []string) {
 
 	rows = [][]string{
 		{"disable-faces", fmt.Sprintf("%t", c.DisableFaces())},
+		{"xmp-faces", fmt.Sprintf("%t", c.XMPFaces())},
 		{"vision-yaml", c.VisionYaml()},
 		{"face-engine", c.FaceEngine()},
 		{"face-engine-run", vision.ReportRunType(c.FaceEngineRunType())},

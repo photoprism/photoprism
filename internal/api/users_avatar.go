@@ -126,7 +126,7 @@ func UploadUserAvatar(router *gin.RouterGroup) {
 			return
 		} else {
 			switch {
-			case mimeType.Is(header.ContentTypePng):
+			case mimeType.Is(header.ContentTypePng), mimeType.Is(header.ContentTypeAPng):
 				fileName = "avatar.png"
 			case mimeType.Is(header.ContentTypeJpeg):
 				fileName = "avatar.jpg"

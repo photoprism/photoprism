@@ -6,6 +6,7 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/log/status"
@@ -42,6 +43,7 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 	}
 
 	done[related.Main.FileName()] = true
+	photoUID := result.PhotoUID
 
 	i := 0
 
@@ -115,12 +117,17 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 				}
 
 				// Add preview image to list of files.
+				img.SetRelatedMain(related.Main)
 				related.Files = append(related.Files, img)
 			}
 		}
 
 		// Index related MediaFile.
+		f.SetRelatedMain(related.Main)
 		res := ind.MediaFile(f, o, "", result.PhotoUID)
+		if photoUID == "" && res.Success() {
+			photoUID = res.PhotoUID
+		}
 
 		// Save file error.
 		if fileUid, err := res.FileError(); err != nil {
@@ -129,6 +136,27 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 
 		// Log index result.
 		log.Infof("index: %s related %s file %s", res, f.FileType(), clean.Log(f.RootRelName()))
+	}
+
+	// Reconcile the logical source once the group is done. UserMediaFile already
+	// covered the primary preview and a distinct RAW/HEIC source's sidecars while
+	// indexing it, so this pass only serves incremental sidecar-only updates
+	// where the unchanged preview was filtered out of the list.
+	if o.ImportFaceTags && photoUID != "" && !related.ContainsPreview() && isXmpFaceSource(related.Main) {
+		// Collect first so a source that declares no region container skips both
+		// the primary-file and marker queries. A declared but empty set still
+		// proceeds: that is what removes markers whose regions the user deleted.
+		if regions, collectErr := collectXmpFaces(related.Main); collectErr != nil {
+			log.Warnf("index: %s while importing xmp face regions for %s", clean.Error(collectErr), related.MainLogName())
+		} else if !regions.Declared {
+			log.Tracef("index: no xmp face regions declared for %s", related.MainLogName())
+		} else if primary, primaryErr := entity.PrimaryFile(photoUID); primaryErr != nil {
+			log.Debugf("index: could not find primary file for xmp faces in %s (%s)", related.MainLogName(), clean.Error(primaryErr))
+		} else if saved, _, applyErr := applyXmpFaceRegions(regions, primary); applyErr != nil {
+			log.Warnf("index: %s while importing xmp face regions for %s", clean.Error(applyErr), related.MainLogName())
+		} else if saved {
+			log.Debugf("index: imported xmp face regions for %s", related.MainLogName())
+		}
 	}
 
 	return result

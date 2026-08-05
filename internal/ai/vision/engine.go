@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"github.com/photoprism/photoprism/pkg/http/scheme"
+	"github.com/photoprism/photoprism/pkg/media"
 )
 
 // ModelEngine represents the canonical identifier for a computer vision service engine.
@@ -22,7 +23,7 @@ const (
 
 // RequestBuilder builds an API request for an engine based on the model configuration and input files.
 type RequestBuilder interface {
-	Build(ctx context.Context, model *Model, files Files) (*ApiRequest, error)
+	Build(ctx context.Context, model *Model, files Files, mediaSrc media.Src) (*ApiRequest, error)
 }
 
 // ResponseParser parses a raw engine response into the generic ApiResponse structure.

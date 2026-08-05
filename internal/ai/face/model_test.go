@@ -31,7 +31,14 @@ func TestNet(t *testing.T) {
 		},
 	})
 	if err != nil {
-		t.Skipf("faces: skipping detector-dependent test: %s", err)
+		// Only a missing model may skip this test, as a detector that fails to
+		// initialize despite being present indicates a broken ONNX Runtime or a
+		// binding that does not match the installed library version.
+		if _, statErr := os.Stat(detectorModelPath); statErr != nil {
+			t.Skipf("faces: skipping detector-dependent test, %s is not available", DefaultONNXModelFilename)
+		}
+
+		t.Fatalf("faces: failed to initialize detector: %s", err)
 	}
 	require.Equal(t, EngineONNX, ActiveEngineName())
 

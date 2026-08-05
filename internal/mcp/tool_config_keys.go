@@ -3,6 +3,7 @@ package mcp
 import (
 	"context"
 	"fmt"
+	"slices"
 	"strings"
 
 	sdkmcp "github.com/modelcontextprotocol/go-sdk/mcp"
@@ -247,10 +248,8 @@ func editionSupportFor(option ConfigOption, currentEdition string) string {
 
 	// Check tags in priority order (most restrictive first).
 	for _, tag := range []string{"portal", "pro", "plus", "essentials"} {
-		for _, t := range option.Tags {
-			if t == tag {
-				return tag
-			}
+		if slices.Contains(option.Tags, tag) {
+			return tag
 		}
 	}
 

@@ -16,6 +16,30 @@ func aclSession(name string) *entity.Session {
 	return s
 }
 
+// visitorSessionWithShares builds an unregistered visitor session that has redeemed the given share
+// link tokens, so its SharedUIDs resolve from the matching links exactly as in production.
+func visitorSessionWithShares(tokens ...string) *entity.Session {
+	s := &entity.Session{}
+	s.SetData(&entity.SessionData{Tokens: tokens})
+	return s
+}
+
+func TestAlbumDownloadSelection(t *testing.T) {
+	t.Run("ExcludesArchivedAndHidden", func(t *testing.T) {
+		sel := AlbumDownloadSelection(true, true, false, true)
+		assert.False(t, sel.Archived)
+		assert.False(t, sel.Hidden)
+		// Private is deferred to the session scope when a session is identified.
+		assert.True(t, sel.Private)
+	})
+	t.Run("AnonymousExcludesPrivate", func(t *testing.T) {
+		sel := AlbumDownloadSelection(true, true, false, false)
+		assert.False(t, sel.Private)
+		assert.False(t, sel.Archived)
+		assert.False(t, sel.Hidden)
+	})
+}
+
 func TestSelectedFilesForSession(t *testing.T) {
 	// Include private pictures in the base selection so the session scope is what filters them.
 	o := FileSelection{Private: true, MaxSize: 1024 * MiB}
@@ -38,6 +62,25 @@ func TestSelectedFilesForSession(t *testing.T) {
 		scoped, err := SelectedFilesForSession(frm, o, nil)
 		assert.NoError(t, err)
 		assert.Equal(t, len(base), len(scoped))
+	})
+	t.Run("VisitorSharedFolderSelection", func(t *testing.T) {
+		// A visitor selecting pictures shared only through a folder (smart) album must be able to
+		// download them, even though the album has no photos_albums rows.
+		//nolint:gosec // G101: deterministic fixture share-link token for tests only.
+		const folderShareToken = "8jxf3jfn2k"                       // link to the "april-1990" folder album
+		frm := form.Selection{Photos: []string{"ps6sg6be2lvl0yh0"}} // "Photo03", path 1990/04
+		files, err := SelectedFilesForSession(frm, o, visitorSessionWithShares(folderShareToken))
+		assert.NoError(t, err)
+		assert.NotEmpty(t, files)
+	})
+	t.Run("VisitorWrongShareSelection", func(t *testing.T) {
+		// Sharing a different smart album must not expose the folder picture for download.
+		//nolint:gosec // G101: deterministic fixture share-link token for tests only.
+		const stateShareToken = "9jxf3jfn2k" // link to the "california-usa" state album (excludes 1990/04)
+		frm := form.Selection{Photos: []string{"ps6sg6be2lvl0yh0"}}
+		files, err := SelectedFilesForSession(frm, o, visitorSessionWithShares(stateShareToken))
+		assert.NoError(t, err)
+		assert.Empty(t, files)
 	})
 }
 
@@ -83,6 +126,33 @@ func TestFileSelection(t *testing.T) {
 			t.Fatal(err)
 		} else {
 			assert.Len(t, results, 2)
+		}
+	})
+	t.Run("AlbumDownloadSidecar", func(t *testing.T) {
+		// Regression for the album download Sidecar option: an album selection must include
+		// real sidecar files (e.g. XMP) when Sidecar is enabled and exclude them when not,
+		// matching the multi-file download path.
+		album := form.Selection{Albums: []string{"as6sg6bxpogaaba9"}} // contains Photo01
+		const xmpUID = "fs6sg6bw45bn0003"                             // Photo01.xmp sidecar
+
+		with, err := SelectedFiles(album, DownloadSelection(true, true, false))
+		if err != nil {
+			t.Fatal(err)
+		}
+		var foundWith bool
+		for _, f := range with {
+			if f.FileUID == xmpUID {
+				foundWith = true
+			}
+		}
+		assert.True(t, foundWith, "album selection must include the XMP sidecar when enabled")
+
+		without, err := SelectedFiles(album, DownloadSelection(true, false, false))
+		if err != nil {
+			t.Fatal(err)
+		}
+		for _, f := range without {
+			assert.NotEqual(t, xmpUID, f.FileUID, "album selection must exclude the XMP sidecar when disabled")
 		}
 	})
 	t.Run("ShareSelectionOriginals", func(t *testing.T) {

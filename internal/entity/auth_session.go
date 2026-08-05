@@ -33,43 +33,59 @@ const (
 	UnknownIP     = limiter.DefaultIP
 )
 
+// IdTokenMaxSize is the maximum number of bytes stored in the id_token column (see the IdToken
+// field's VARBINARY size). It bounds the OIDC ID token kept for RP-initiated logout (id_token_hint);
+// callers must not persist a longer value, since a truncated JWT is unusable as a logout hint.
+const IdTokenMaxSize = 4096
+
+// ClampIdToken returns the OIDC ID token limited to IdTokenMaxSize bytes so it fits the id_token
+// column, and reports whether it had to be truncated. VARBINARY lengths are byte counts and a JWT is
+// ASCII, so a byte slice is safe; a truncated token no longer validates as an id_token_hint, so
+// callers should surface the truncated case.
+func ClampIdToken(idToken string) (clamped string, truncated bool) {
+	if len(idToken) > IdTokenMaxSize {
+		return idToken[:IdTokenMaxSize], true
+	}
+
+	return idToken, false
+}
+
 // Sessions is a convenience alias for slices of Session.
 type Sessions []Session
 
 // Session represents an authenticated user or client session persisted in the database.
 type Session struct {
-	ID            string          `gorm:"type:VARBINARY(2048);primary_key;auto_increment:false;" json:"-" yaml:"ID"`
-	authToken     string          `gorm:"-" yaml:"-"`
-	UserUID       string          `gorm:"type:VARBINARY(42);index;default:'';" json:"UserUID" yaml:"UserUID,omitempty"`
-	UserName      string          `gorm:"size:200;index;" json:"UserName" yaml:"UserName,omitempty"`
-	user          *User           `gorm:"-" yaml:"-"`
-	ClientUID     string          `gorm:"type:VARBINARY(42);index;default:'';" json:"ClientUID" yaml:"ClientUID,omitempty"`
-	ClientName    string          `gorm:"size:200;default:'';" json:"ClientName" yaml:"ClientName,omitempty"`
-	ClientIP      string          `gorm:"size:64;column:client_ip;index" json:"ClientIP" yaml:"ClientIP,omitempty"`
-	client        *Client         `gorm:"-" yaml:"-"`
-	AuthProvider  string          `gorm:"type:VARBINARY(128);default:'';" json:"AuthProvider" yaml:"AuthProvider,omitempty"`
-	AuthMethod    string          `gorm:"type:VARBINARY(128);default:'';" json:"AuthMethod" yaml:"AuthMethod,omitempty"`
-	AuthIssuer    string          `gorm:"type:VARBINARY(255);default:'';" json:"AuthIssuer,omitempty" yaml:"AuthIssuer,omitempty"`
-	AuthID        string          `gorm:"type:VARBINARY(255);index;default:'';" json:"AuthID" yaml:"AuthID,omitempty"`
-	AuthScope     string          `gorm:"size:1024;default:'';" json:"AuthScope" yaml:"AuthScope,omitempty"`
-	GrantType     string          `gorm:"type:VARBINARY(64);default:'';" json:"GrantType" yaml:"GrantType,omitempty"`
-	LastActive    int64           `json:"LastActive" yaml:"LastActive,omitempty"`
-	SessExpires   int64           `gorm:"index" json:"Expires" yaml:"Expires,omitempty"`
-	SessTimeout   int64           `json:"Timeout" yaml:"Timeout,omitempty"`
-	PreviewToken  string          `gorm:"type:VARBINARY(64);column:preview_token;default:'';" json:"-" yaml:"-"`
-	DownloadToken string          `gorm:"type:VARBINARY(64);column:download_token;default:'';" json:"-" yaml:"-"`
-	AccessToken   string          `gorm:"type:VARBINARY(4096);column:access_token;default:'';" json:"-" yaml:"-"`
-	RefreshToken  string          `gorm:"type:VARBINARY(2048);column:refresh_token;default:'';" json:"-" yaml:"-"`
-	IdToken       string          `gorm:"type:VARBINARY(2048);column:id_token;default:'';" json:"IdToken,omitempty" yaml:"IdToken,omitempty"`
-	UserAgent     string          `gorm:"size:512;" json:"UserAgent" yaml:"UserAgent,omitempty"`
-	DataJSON      json.RawMessage `gorm:"type:VARBINARY(16384);" json:"-" yaml:"Data,omitempty"`
-	data          *SessionData    `gorm:"-" yaml:"-"`
-	RefID         string          `gorm:"type:VARBINARY(16);default:'';" json:"ID" yaml:"-"`
-	LoginIP       string          `gorm:"size:64;column:login_ip" json:"LoginIP" yaml:"-"`
-	LoginAt       *time.Time      `json:"LoginAt" yaml:"-"`
-	CreatedAt     time.Time       `json:"CreatedAt" yaml:"CreatedAt"`
-	UpdatedAt     time.Time       `json:"UpdatedAt" yaml:"UpdatedAt"`
-	Status        int             `gorm:"-" json:"Status" yaml:"-"`
+	ID           string          `gorm:"type:VARBINARY(2048);primary_key;auto_increment:false;" json:"-" yaml:"ID"`
+	authToken    string          `gorm:"-" yaml:"-"`
+	UserUID      string          `gorm:"type:VARBINARY(42);index;default:'';" json:"UserUID" yaml:"UserUID,omitempty"`
+	UserName     string          `gorm:"size:200;index;" json:"UserName" yaml:"UserName,omitempty"`
+	user         *User           `gorm:"-" yaml:"-"`
+	ClientUID    string          `gorm:"type:VARBINARY(42);index;default:'';" json:"ClientUID" yaml:"ClientUID,omitempty"`
+	ClientName   string          `gorm:"size:200;default:'';" json:"ClientName" yaml:"ClientName,omitempty"`
+	ClientIP     string          `gorm:"size:64;column:client_ip;index" json:"ClientIP" yaml:"ClientIP,omitempty"`
+	client       *Client         `gorm:"-" yaml:"-"`
+	AuthProvider string          `gorm:"type:VARBINARY(128);default:'';" json:"AuthProvider" yaml:"AuthProvider,omitempty"`
+	AuthMethod   string          `gorm:"type:VARBINARY(128);default:'';" json:"AuthMethod" yaml:"AuthMethod,omitempty"`
+	AuthIssuer   string          `gorm:"type:VARBINARY(255);default:'';" json:"AuthIssuer,omitempty" yaml:"AuthIssuer,omitempty"`
+	AuthID       string          `gorm:"type:VARBINARY(255);index;default:'';" json:"AuthID" yaml:"AuthID,omitempty"`
+	AuthScope    string          `gorm:"size:1024;default:'';" json:"AuthScope" yaml:"AuthScope,omitempty"`
+	GrantType    string          `gorm:"type:VARBINARY(64);default:'';" json:"GrantType" yaml:"GrantType,omitempty"`
+	LastActive   int64           `json:"LastActive" yaml:"LastActive,omitempty"`
+	SessExpires  int64           `gorm:"index" json:"Expires" yaml:"Expires,omitempty"`
+	SessTimeout  int64           `json:"Timeout" yaml:"Timeout,omitempty"`
+	PreviewToken string          `gorm:"type:VARBINARY(64);column:preview_token;default:'';" json:"-" yaml:"-"`
+	AccessToken  string          `gorm:"type:VARBINARY(4096);column:access_token;default:'';" json:"-" yaml:"-"`
+	RefreshToken string          `gorm:"type:VARBINARY(2048);column:refresh_token;default:'';" json:"-" yaml:"-"`
+	IdToken      string          `gorm:"type:VARBINARY(4096);column:id_token;default:'';" json:"IdToken,omitempty" yaml:"IdToken,omitempty"`
+	UserAgent    string          `gorm:"size:512;" json:"UserAgent" yaml:"UserAgent,omitempty"`
+	DataJSON     json.RawMessage `gorm:"type:VARBINARY(16384);" json:"-" yaml:"Data,omitempty"`
+	data         *SessionData    `gorm:"-" yaml:"-"`
+	RefID        string          `gorm:"type:VARBINARY(16);default:'';" json:"ID" yaml:"-"`
+	LoginIP      string          `gorm:"size:64;column:login_ip" json:"LoginIP" yaml:"-"`
+	LoginAt      *time.Time      `json:"LoginAt" yaml:"-"`
+	CreatedAt    time.Time       `json:"CreatedAt" yaml:"CreatedAt"`
+	UpdatedAt    time.Time       `json:"UpdatedAt" yaml:"UpdatedAt"`
+	Status       int             `gorm:"-" json:"Status" yaml:"-"`
 }
 
 // TableName returns the entity table name.
@@ -179,8 +195,22 @@ func (m *Session) AuthToken() string {
 // pass the exact token presented by the caller (JWT, API key, etc.) so follow-up
 // actions reference the same value.
 func (m *Session) SetAuthToken(authToken string) *Session {
+	oldID := m.ID
+
 	m.authToken = authToken
 	m.ID = rnd.SessionID(authToken)
+
+	// Migrate any preview token registration from the previous ID so it is not orphaned in the lookup
+	// cache. Callers like NewClientSession assign the user's token (via SetUser) before finalizing the
+	// ID here, so without this the old ID would keep the value resolvable for the lifetime of the
+	// process even after DeleteSession.
+	if rnd.IsSessionID(oldID) && oldID != m.ID {
+		PreviewToken.Unset(oldID)
+
+		if m.PreviewToken != "" {
+			PreviewToken.Set(m.ID, m.PreviewToken)
+		}
+	}
 
 	return m
 }
@@ -483,9 +513,8 @@ func (m *Session) SetUser(u *User) *Session {
 		m.AuthScope = u.Scope()
 	}
 
-	// Update tokens.
+	// Update the preview token.
 	m.SetPreviewToken(u.PreviewToken)
-	m.SetDownloadToken(u.DownloadToken)
 
 	return m
 }
@@ -652,7 +681,6 @@ func (m *Session) ChangePassword(newPw string) (err error) {
 	}
 
 	m.SetPreviewToken(u.PreviewToken)
-	m.SetDownloadToken(u.DownloadToken)
 
 	return nil
 }
@@ -665,27 +693,10 @@ func (m *Session) SetPreviewToken(token string) *Session {
 
 	if token != "" {
 		m.PreviewToken = token
-		PreviewToken.Set(token, m.ID)
+		PreviewToken.Set(m.ID, token)
 	} else if m.PreviewToken == "" {
 		m.PreviewToken = GenerateToken()
-		PreviewToken.Set(token, m.ID)
-	}
-
-	return m
-}
-
-// SetDownloadToken updates the download token if not empty.
-func (m *Session) SetDownloadToken(token string) *Session {
-	if m.ID == "" {
-		return m
-	}
-
-	if token != "" {
-		m.DownloadToken = token
-		DownloadToken.Set(token, m.ID)
-	} else if m.DownloadToken == "" {
-		m.DownloadToken = GenerateToken()
-		DownloadToken.Set(token, m.ID)
+		PreviewToken.Set(m.ID, m.PreviewToken)
 	}
 
 	return m

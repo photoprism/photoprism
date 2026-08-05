@@ -416,11 +416,12 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			// Set user role and permissions. A Portal-granted pp_role wins, then a
 			// group-mapped role when federation may set it, else the configured
 			// default; all are filtered to federatable roles (no cluster_admin/visitor).
-			if hasPortalRole {
+			switch {
+			case hasPortalRole:
 				user.SetRole(portalRole.String())
-			} else if hasMappedRole && acl.IsFederatedRole(mappedRole) {
+			case hasMappedRole && acl.IsFederatedRole(mappedRole):
 				user.SetRole(mappedRole.String())
-			} else {
+			default:
 				user.SetRole(defaultRole.String())
 			}
 			user.CanLogin = true
@@ -480,12 +481,12 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			}
 		}
 
-		// Ensure that the ID token fits into the existing
-		// database column; otherwise, truncate it.
-		if n := len(tokens.IDToken); n > 2048 {
-			sess.IdToken = tokens.IDToken[:2048]
-		} else {
-			sess.IdToken = tokens.IDToken
+		// Store the ID token for RP-initiated logout (id_token_hint), clamped to the id_token column
+		// size. Exceeding it truncates the JWT into an unusable hint, so warn when that happens; with
+		// the 4096-byte column this only affects extreme role/group-heavy tokens.
+		var idTokenTruncated bool
+		if sess.IdToken, idTokenTruncated = entity.ClampIdToken(tokens.IDToken); idTokenTruncated {
+			event.AuditWarn([]string{clientIp, "create session", "oidc", userName, "id token exceeds storage limit, silent logout may not work"})
 		}
 
 		// Set session expiration and timeout.
