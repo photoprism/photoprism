@@ -1,6 +1,7 @@
 package config
 
 import (
+	"flag"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -8,6 +9,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/vision"
@@ -461,6 +463,78 @@ func TestConfig_FaceThresholdsPerModel(t *testing.T) {
 		assert.Equal(t, 0.7, c.FaceClusterDist())
 		assert.Equal(t, 0.5, c.FaceClusterRadius())
 		assert.Equal(t, 0.3, c.FaceMatchDist())
+	})
+	t.Run("CliDefaultsDoNotWin", func(t *testing.T) {
+		// The CLI flags carry the FaceNet defaults so "--help" documents them, and those
+		// defaults reach the options even when the operator sets nothing.
+		ctx := cliContextWithFlagDefaults(t)
+		c := &Config{cliCtx: ctx, options: NewOptions(ctx)}
+		c.options.ModelsPath = installTestModels(t, face.ModelSFace)
+		c.options.FaceModel = face.ModelSFace
+
+		require.Equal(t, face.ClusterDistDefault, c.options.FaceClusterDist)
+		assert.Equal(t, 0.91, c.FaceClusterDist())
+		assert.Equal(t, 0.67, c.FaceClusterRadius())
+		assert.Equal(t, 0.39, c.FaceMatchDist())
+	})
+}
+
+// cliContextWithFlagDefaults returns a CLI context that carries the default values of the
+// registered flags, which is what the app does for every option the operator leaves unset.
+func cliContextWithFlagDefaults(t *testing.T) *cli.Context {
+	t.Helper()
+
+	set := flag.NewFlagSet("test", flag.ContinueOnError)
+
+	for _, f := range Flags.Cli() {
+		require.NoError(t, f.Apply(set))
+	}
+
+	return cli.NewContext(cli.NewApp(), set, nil)
+}
+
+func TestConfig_FaceThresholdIsSet(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	t.Run("Default", func(t *testing.T) {
+		assert.False(t, c.faceThresholdIsSet("face-cluster-dist", face.ClusterDistDefault, face.ClusterDistDefault))
+	})
+	t.Run("CustomValue", func(t *testing.T) {
+		assert.True(t, c.faceThresholdIsSet("face-cluster-dist", 0.5, face.ClusterDistDefault))
+	})
+	t.Run("FlagSetToDefault", func(t *testing.T) {
+		set := flag.NewFlagSet("test", flag.ContinueOnError)
+		set.Float64("face-cluster-dist", face.ClusterDistDefault, "doc")
+		assert.NoError(t, set.Parse([]string{"--face-cluster-dist", "0.64"}))
+
+		explicit := &Config{cliCtx: cli.NewContext(cli.NewApp(), set, nil), options: NewOptions(nil)}
+
+		assert.True(t, explicit.faceThresholdIsSet("face-cluster-dist", face.ClusterDistDefault, face.ClusterDistDefault))
+	})
+	t.Run("NoContext", func(t *testing.T) {
+		none := &Config{options: NewOptions(nil)}
+
+		assert.False(t, none.faceThresholdIsSet("face-cluster-dist", face.ClusterDistDefault, face.ClusterDistDefault))
+	})
+}
+
+func TestConfig_FaceThreshold(t *testing.T) {
+	pick := func(m *face.EmbeddingModel) float64 { return m.MatchDist }
+
+	t.Run("OutOfRange", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = installTestModels(t, face.ModelSFace)
+		c.options.FaceModel = face.ModelSFace
+
+		assert.Equal(t, 0.39, c.faceThreshold("face-match-dist", 1.6, face.MatchDistDefault, pick))
+		assert.Equal(t, 0.39, c.faceThreshold("face-match-dist", 0.001, face.MatchDistDefault, pick))
+	})
+	t.Run("InRange", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = installTestModels(t, face.ModelSFace)
+		c.options.FaceModel = face.ModelSFace
+
+		assert.Equal(t, 0.5, c.faceThreshold("face-match-dist", 0.5, face.MatchDistDefault, pick))
 	})
 }
 

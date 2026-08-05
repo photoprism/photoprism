@@ -278,20 +278,14 @@ func (c *Config) FaceClusterCore() int {
 
 // FaceClusterDist returns the radius of faces forming a cluster core.
 func (c *Config) FaceClusterDist() float64 {
-	if c.options.FaceClusterDist < c.FaceCollisionDist() || c.options.FaceClusterDist > 1.5 {
-		return faceModelThreshold(c.FaceEmbeddingModel(), func(m *face.EmbeddingModel) float64 { return m.ClusterDist }, face.ClusterDistDefault)
-	}
-
-	return c.options.FaceClusterDist
+	return c.faceThreshold("face-cluster-dist", c.options.FaceClusterDist, face.ClusterDistDefault,
+		func(m *face.EmbeddingModel) float64 { return m.ClusterDist })
 }
 
 // FaceClusterRadius returns the maximum radius used when matching face clusters.
 func (c *Config) FaceClusterRadius() float64 {
-	if c.options.FaceClusterRadius < c.FaceCollisionDist() || c.options.FaceClusterRadius > 1.5 {
-		return faceModelThreshold(c.FaceEmbeddingModel(), func(m *face.EmbeddingModel) float64 { return m.ClusterRadius }, face.ClusterRadiusDefault)
-	}
-
-	return c.options.FaceClusterRadius
+	return c.faceThreshold("face-cluster-radius", c.options.FaceClusterRadius, face.ClusterRadiusDefault,
+		func(m *face.EmbeddingModel) float64 { return m.ClusterRadius })
 }
 
 // FaceCollisionDist returns the minimum distance used to differentiate embeddings.
@@ -314,11 +308,31 @@ func (c *Config) FaceEpsilonDist() float64 {
 
 // FaceMatchDist returns the offset distance when matching faces with clusters.
 func (c *Config) FaceMatchDist() float64 {
-	if c.options.FaceMatchDist < c.FaceCollisionDist() || c.options.FaceMatchDist > 1.5 {
-		return faceModelThreshold(c.FaceEmbeddingModel(), func(m *face.EmbeddingModel) float64 { return m.MatchDist }, face.MatchDistDefault)
+	return c.faceThreshold("face-match-dist", c.options.FaceMatchDist, face.MatchDistDefault,
+		func(m *face.EmbeddingModel) float64 { return m.MatchDist })
+}
+
+// faceThreshold returns the operator-configured clustering threshold, or the value
+// calibrated for the configured embedding model when the option was left untouched.
+func (c *Config) faceThreshold(flagName string, value, flagDefault float64, pick func(*face.EmbeddingModel) float64) float64 {
+	if value >= c.FaceCollisionDist() && value <= 1.5 && c.faceThresholdIsSet(flagName, value, flagDefault) {
+		return value
 	}
 
-	return c.options.FaceMatchDist
+	return faceModelThreshold(c.FaceEmbeddingModel(), pick, flagDefault)
+}
+
+// faceThresholdIsSet reports whether an operator configured a clustering threshold explicitly.
+// The value alone cannot answer this, because the CLI flags carry the FaceNet defaults so that
+// "photoprism --help" documents them, and those defaults are copied into the options.
+func (c *Config) faceThresholdIsSet(flagName string, value, flagDefault float64) bool {
+	if c.cliCtx != nil && c.cliCtx.IsSet(flagName) {
+		return true
+	}
+
+	// Values loaded from "options.yml" are applied after the CLI context, so anything
+	// that differs from the flag default was configured deliberately.
+	return value != flagDefault
 }
 
 // faceModelThreshold returns a clustering threshold in the configured model's distance
