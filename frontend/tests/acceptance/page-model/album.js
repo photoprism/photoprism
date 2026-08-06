@@ -17,6 +17,17 @@ export default class Page {
     }
   }
 
+  // getAlbumUidByTitle returns the UID of the album card matching a title.
+  // Callers narrow the list with toolbar.search first. Picking an album by position is
+  // unstable because the moments worker adds moment and calendar albums on a timer,
+  // so a new one can sort ahead of the intended album.
+  async getAlbumUidByTitle(title) {
+    const Card = Selector("div.result.is-album", { timeout: 10000 }).withText(title);
+    await t.expect(Card.exists).ok(`album "${title}" not found`);
+    const AlbumUid = await Card.getAttribute("data-uid");
+    return AlbumUid;
+  }
+
   async getAlbumCount(type) {
     if (type === "all") {
       if (t.browser.platform === "mobile") {

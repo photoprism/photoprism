@@ -37,7 +37,7 @@ From `frontend/`:
 
 - Unit and component tests: `frontend/tests/vitest/**/*`
 - Vitest setup: `frontend/tests/vitest/setup.js`
-- Vitest config: `frontend/vitest.config.js`
+- Vitest config: `frontend/vitest.config.mjs`
 - Acceptance tests (TestCafe): `frontend/tests/acceptance/**/*`
 - Acceptance page models: `frontend/tests/acceptance/page-model/**/*`
 - Acceptance config: `frontend/testcaferc.json` and `frontend/tests/testcafeconfig.json`

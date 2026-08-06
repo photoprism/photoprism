@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/pkg/time/unix"
 )
@@ -153,5 +154,12 @@ func TestWaitForAsyncJobsTimeout(t *testing.T) {
 		// After the job finishes, the wait must drain and report true.
 		close(release)
 		assert.True(t, WaitForAsyncJobsTimeout(2*time.Second))
+	})
+}
+
+func TestUpdateSubjectCounts(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		require.NoError(t, UpdateSubjectCounts(true))
+		require.NoError(t, UpdateSubjectCounts(false))
 	})
 }

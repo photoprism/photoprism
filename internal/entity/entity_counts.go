@@ -180,14 +180,16 @@ func UpdateSubjectCounts(public bool) (err error) {
 		// Update photo count.
 		if res.Error != nil {
 			return res.Error
-		} else {
-			photosRes := Db().Table(subjTable).
-				UpdateColumn("photo_count", gorm.Expr("(SELECT COUNT(DISTINCT f.photo_id)"+
-					" FROM files f JOIN photos p ON ?"+
-					" JOIN markers m ON f.file_uid = m.file_uid AND m.subj_uid = subjects.subj_uid"+
-					" WHERE m.marker_invalid = 0 AND f.deleted_at IS NULL) WHERE ?", photosJoin, condition))
-			res.RowsAffected += photosRes.RowsAffected
 		}
+		photosRes := Db().Table(subjTable).
+			UpdateColumn("photo_count", gorm.Expr("(SELECT COUNT(DISTINCT f.photo_id)"+
+				" FROM files f JOIN photos p ON ?"+
+				" JOIN markers m ON f.file_uid = m.file_uid AND m.subj_uid = subjects.subj_uid"+
+				" WHERE m.marker_invalid = 0 AND f.deleted_at IS NULL) WHERE ?", photosJoin, condition))
+		if photosRes.Error != nil {
+			return photosRes.Error
+		}
+		res.RowsAffected += photosRes.RowsAffected
 	default:
 		return fmt.Errorf("sql: unsupported dialect %s", DbDialect())
 	}

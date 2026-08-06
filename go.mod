@@ -24,7 +24,7 @@ require (
 	github.com/leandro-lugaresi/hub v1.1.2
 	github.com/leonelquinteros/gotext v1.7.2
 	github.com/lib/pq v1.12.1 // indirect
-	github.com/lucasb-eyer/go-colorful v1.4.0
+	github.com/lucasb-eyer/go-colorful v1.4.1
 	github.com/mandykoh/prism v0.35.3
 	github.com/manifoldco/promptui v0.9.0
 	github.com/mattn/go-sqlite3 v1.14.48 // indirect
@@ -93,8 +93,8 @@ require (
 	github.com/ugjka/go-tz/v2 v2.2.8
 	github.com/urfave/cli/v2 v2.27.7
 	github.com/wamuir/graft v0.10.0
-	github.com/yalue/onnxruntime_go v1.31.0
-	github.com/zitadel/oidc/v3 v3.48.0
+	github.com/yalue/onnxruntime_go v1.32.0
+	github.com/zitadel/oidc/v3 v3.49.1
 	golang.org/x/mod v0.38.0
 	golang.org/x/sys v0.47.0
 	google.golang.org/protobuf v1.36.11
@@ -148,7 +148,7 @@ require (
 	github.com/mandykoh/go-parallel v0.1.0 // indirect
 	github.com/mattn/go-colorable v0.1.15 // indirect
 	github.com/mattn/go-isatty v0.0.23 // indirect
-	github.com/modelcontextprotocol/go-sdk v1.6.1
+	github.com/modelcontextprotocol/go-sdk v1.7.0
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/muhlemmer/gu v0.3.1 // indirect
