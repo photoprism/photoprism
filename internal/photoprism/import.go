@@ -174,6 +174,8 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 
 				if _, newRec, err := entity.FirstOrCreateFolder(&folder); err == nil && newRec {
 					log.Infof("import: added folder /%s", folder.Path)
+				} else if err != nil {
+					log.Errorf("import: failed to create folder record for %s (%s)", clean.Log(folder.Path), err)
 				}
 
 				return result

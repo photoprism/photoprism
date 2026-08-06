@@ -7,7 +7,7 @@ import (
 // PhotoKeyword represents the many-to-many relation between Photo and Keyword.
 type PhotoKeyword struct {
 	PhotoID   uint `gorm:"primaryKey;autoIncrement:false"`
-	KeywordID uint `gorm:"primaryKey;autoIncrement:false"`
+	KeywordID uint `gorm:"primaryKey;autoIncrement:false;index"`
 }
 
 // TableName returns the entity table name.

@@ -640,20 +640,29 @@ func (m *Photo) BeforeCreate(scope *gorm.DB) error {
 
 // BeforeSave ensures the existence of TakenAt properties before indexing or updating a photo.
 func (m *Photo) BeforeSave(scope *gorm.DB) error {
-	if m.TakenAt.IsZero() || m.TakenAtLocal.IsZero() {
-		now := Now()
+	// Can't add these fields to an empty struct as it breaks Postgres with SQLSTATE 42601
+	// if the fields being updated include TakenAt and/or TakenAtLocal.
+	// The assumption is that TakenAt and/or TakenAtLocal are already populated in the record,
+	// as the update doesn't include a populated struct.
+	// Please note that as of 2026-08-06 the only case of this is the test REVERSION function restorePhoto.
+	// Originally used
+	// if !reflect.ValueOf(*m).IsZero() {
+	// but changed to avoid reflection performance penalty
+	if m.String() != "*Photo" {
+		if m.TakenAt.IsZero() || m.TakenAtLocal.IsZero() {
+			now := Now()
 
-		scope.Statement.SetColumn("TakenAt", now)
-		if err := scope.Error; err != nil {
-			return err
-		}
+			scope.Statement.SetColumn("TakenAt", now)
+			if err := scope.Error; err != nil {
+				return err
+			}
 
-		scope.Statement.SetColumn("TakenAtLocal", now)
-		if err := scope.Error; err != nil {
-			return err
+			scope.Statement.SetColumn("TakenAtLocal", now)
+			if err := scope.Error; err != nil {
+				return err
+			}
 		}
 	}
-
 	return nil
 }
 

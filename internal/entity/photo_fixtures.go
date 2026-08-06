@@ -3879,10 +3879,5 @@ var PhotoFixtures = PhotoMap{
 func CreatePhotoFixtures() {
 	for _, entity := range PhotoFixtures {
 		Db().Create(&entity)
-		//Db().Omit(clause.Associations).Save(&entity)
-		/*		Db().Debug().
-				//			Omit("Keywords", "Albums", "Files", "Details", "Lens", "LensID", "Camera", "CameraID", "Cell", "CellID", "Place", "PlaceID", "PhotoCountry").
-				Omit("Keywords", "Albums", "Files", "Details", "Lens", "Camera", "CameraID", "Cell", "CellID", "Place", "PlaceID", "PhotoCountry").
-				Create(&entity)*/
 	}
 }

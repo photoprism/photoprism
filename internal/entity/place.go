@@ -46,10 +46,7 @@ var UnknownPlace = Place{
 
 // CreateUnknownPlace creates the default place if not exists.
 func CreateUnknownPlace() {
-	pRef := FirstOrCreatePlace(&UnknownPlace)
-	if pRef != nil {
-		UnknownPlace = *pRef
-	}
+	UnknownPlace = *FirstOrCreatePlace(&UnknownPlace)
 }
 
 // FindPlace finds a matching place or returns nil.

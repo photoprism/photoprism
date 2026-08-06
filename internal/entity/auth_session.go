@@ -67,7 +67,7 @@ type Session struct {
 	AuthProvider string          `gorm:"type:bytes;size:128;default:'';" json:"AuthProvider" yaml:"AuthProvider,omitempty"`
 	AuthMethod   string          `gorm:"type:bytes;size:128;default:'';" json:"AuthMethod" yaml:"AuthMethod,omitempty"`
 	AuthIssuer   string          `gorm:"type:bytes;size:255;default:'';" json:"AuthIssuer,omitempty" yaml:"AuthIssuer,omitempty"`
-	AuthID       string          `gorm:"type:bytes;size:255;index;default:'';-:migration;" json:"AuthID" yaml:"AuthID,omitempty"`
+	AuthID       string          `gorm:"type:bytes;size:255;index;default:'';-:migration;" json:"AuthID" yaml:"AuthID,omitempty"` // no migration via gorm due to special types needed for SQLite.  See migrate.ConvertDBMSAuthIDDataTypes.
 	AuthScope    string          `gorm:"size:1024;default:'';" json:"AuthScope" yaml:"AuthScope,omitempty"`
 	GrantType    string          `gorm:"type:bytes;size:64;default:'';" json:"GrantType" yaml:"GrantType,omitempty"`
 	LastActive   int64           `json:"LastActive" yaml:"LastActive,omitempty"`

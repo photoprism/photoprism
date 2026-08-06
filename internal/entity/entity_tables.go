@@ -338,7 +338,17 @@ func (list Tables) Migrate(db *gorm.DB, opt migrate.Options) {
 		}
 	}
 
-	if tablesFound < 3 { // migrations and versions may be found.
+	// migrations and/or versions may be found.  Anything else, and it's not an empty database.
+	switch tablesFound {
+	case 2:
+		if db.Migrator().HasTable(&migrate.Migration{}) && db.Migrator().HasTable(&migrate.Version{}) {
+			opt.NewDatabase = true
+		}
+	case 1:
+		if db.Migrator().HasTable(&migrate.Migration{}) || db.Migrator().HasTable(&migrate.Version{}) {
+			opt.NewDatabase = true
+		}
+	case 0:
 		opt.NewDatabase = true
 	}
 
