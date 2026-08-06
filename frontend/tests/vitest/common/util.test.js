@@ -403,6 +403,19 @@ describe("common/util", () => {
     });
   });
 
+  describe("pdfUrl", () => {
+    const hash = "bfdcf45e58b1978af66bbf6212c195851dc65814";
+    it("builds the inline PDF URL from the file hash", () => {
+      expect($util.pdfUrl(hash)).toBe(`${$config.apiUri}/files/${hash}/file.pdf`);
+      // No preview token in the path: the request is authenticated by header.
+      expect($util.pdfUrl(hash)).toBe("/api/v1/files/bfdcf45e58b1978af66bbf6212c195851dc65814/file.pdf");
+    });
+    it("returns an empty string without a hash", () => {
+      expect($util.pdfUrl("")).toBe("");
+      expect($util.pdfUrl(undefined)).toBe("");
+    });
+  });
+
   describe("mapAnimateDuration", () => {
     it("returns the global Maps.Animate duration by default", () => {
       expect($util.mapAnimateDuration({ maps: { animate: 400 } })).toBe(400);
