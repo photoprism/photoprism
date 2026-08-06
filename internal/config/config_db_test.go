@@ -336,7 +336,7 @@ func TestDatabaseProvisionPrefix(t *testing.T) {
 
 func TestShouldAutoRotateDatabase(t *testing.T) {
 	t.Run("PortalAlwaysFalse", func(t *testing.T) {
-		conf := NewMinimalTestConfig("config", t.TempDir())
+		conf := NewMinimalTestConfig(t.TempDir())
 		resetDatabaseOptions(conf)
 		conf.Options().Edition = Portal
 		conf.Options().NodeRole = cluster.RolePortal
@@ -344,13 +344,13 @@ func TestShouldAutoRotateDatabase(t *testing.T) {
 		assert.False(t, conf.ShouldAutoRotateDatabase())
 	})
 	t.Run("NonMySQLDriverFalse", func(t *testing.T) {
-		conf := NewMinimalTestConfig("config", t.TempDir())
+		conf := NewMinimalTestConfig(t.TempDir())
 		resetDatabaseOptions(conf)
 		conf.Options().DatabaseDriver = dsn.DriverSQLite3
 		assert.False(t, conf.ShouldAutoRotateDatabase())
 	})
 	t.Run("MySQLMissingFieldsTrue", func(t *testing.T) {
-		conf := NewMinimalTestConfig("config", t.TempDir())
+		conf := NewMinimalTestConfig(t.TempDir())
 		// Clear the options first, as credentials are otherwise parsed from the
 		// DSN that the test environment may provide.
 		resetDatabaseOptions(conf)

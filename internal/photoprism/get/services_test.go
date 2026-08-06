@@ -77,7 +77,7 @@ func TestOIDC(t *testing.T) {
 	})
 
 	t.Run("CachesSuccess", func(t *testing.T) {
-		tempConf := config.NewMinimalTestConfig("get", t.TempDir())
+		tempConf := config.NewMinimalTestConfig(t.TempDir())
 		SetConfig(tempConf)
 
 		calls := 0
@@ -95,7 +95,7 @@ func TestOIDC(t *testing.T) {
 		assert.Equal(t, 1, calls)
 	})
 	t.Run("RetriesAfterFailure", func(t *testing.T) {
-		tempConf := config.NewMinimalTestConfig("get", t.TempDir())
+		tempConf := config.NewMinimalTestConfig(t.TempDir())
 		SetConfig(tempConf)
 
 		calls := 0

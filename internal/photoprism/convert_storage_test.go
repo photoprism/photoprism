@@ -14,7 +14,7 @@ import (
 )
 
 func TestConvert_InsufficientStorage(t *testing.T) {
-	cfg := config.NewMinimalTestConfig("photoprism", t.TempDir())
+	cfg := config.NewMinimalTestConfig(t.TempDir())
 	convert := NewConvert(cfg)
 	require.NotNil(t, convert)
 
@@ -41,7 +41,7 @@ func TestConvert_InsufficientStorage(t *testing.T) {
 }
 
 func TestConvert_cancelInsufficientStorage(t *testing.T) {
-	cfg := config.NewMinimalTestConfig("photoprism", t.TempDir())
+	cfg := config.NewMinimalTestConfig(t.TempDir())
 	convert := NewConvert(cfg)
 	require.NotNil(t, convert)
 

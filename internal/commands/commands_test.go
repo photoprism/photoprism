@@ -227,7 +227,7 @@ func resetConfigAndDB() *config.Config {
 // resetConfigAndOpenDB replaces the config with a generated minimal config, and opens the configured database.
 // it does not call Migrate and TestFixtures if the database has records in auth_users and photos.
 func resetConfigAndOpenDB() *config.Config {
-	c := config.NewMinimalTestConfig("commands", savedPath)
+	c := config.NewMinimalTestConfig(savedPath)
 	config.RestoreDBFromCache(c) // If using sqlite (not sqlitefile) then the db is removed by NewMinimalTestConfig
 	if err := c.Init(); err != nil {
 		log.Fatalf("config: %s (init)", err.Error())

@@ -243,8 +243,8 @@ func OnceTestConfig(c *Config) {
 // NewMinimalTestConfig creates a lightweight test Config (no DB, minimal filesystem).
 //
 // Not suitable for tests requiring a database or pre-created storage directories.
-func NewMinimalTestConfig(dbName, dataPath string) *Config {
-	return NewIsolatedTestConfig(dbName, dataPath, false)
+func NewMinimalTestConfig(dataPath string) *Config {
+	return NewIsolatedTestConfig("", dataPath, false)
 }
 
 var testDbCache []byte

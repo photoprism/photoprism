@@ -14,7 +14,7 @@ import (
 )
 
 func TestRunPurgeArchives(t *testing.T) {
-	c := config.NewMinimalTestConfig("workers", t.TempDir())
+	c := config.NewMinimalTestConfig(t.TempDir())
 
 	// resetZipDir empties the archive directory. Config.TempPath() is cached process-wide, so every test
 	// config resolves to the same directory and subtests would otherwise see each other's archives.

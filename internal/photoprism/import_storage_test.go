@@ -11,7 +11,7 @@ import (
 )
 
 func TestImport_InsufficientStorage(t *testing.T) {
-	cfg := config.NewMinimalTestConfig("photoprism", t.TempDir())
+	cfg := config.NewMinimalTestConfig(t.TempDir())
 	convert := NewConvert(cfg)
 	ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
 	require.NotNil(t, ind)

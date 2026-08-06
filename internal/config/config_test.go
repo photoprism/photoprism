@@ -368,7 +368,7 @@ func TestReadSerialFile(t *testing.T) {
 
 func TestConfig_InitSerial(t *testing.T) {
 	t.Run("GeneratesAndPersists", func(t *testing.T) {
-		c := NewMinimalTestConfig("config", t.TempDir())
+		c := NewMinimalTestConfig(t.TempDir())
 		require.NoError(t, c.CreateDirectories())
 		require.NoError(t, c.InitSerial())
 		serial := c.Serial()
@@ -381,7 +381,7 @@ func TestConfig_InitSerial(t *testing.T) {
 		assert.Equal(t, serial, c.Serial())
 	})
 	t.Run("RecoversFromBackup", func(t *testing.T) {
-		c := NewMinimalTestConfig("config", t.TempDir())
+		c := NewMinimalTestConfig(t.TempDir())
 		require.NoError(t, c.CreateDirectories())
 		require.NoError(t, c.InitSerial())
 		serial := c.Serial()
@@ -391,7 +391,7 @@ func TestConfig_InitSerial(t *testing.T) {
 		assert.Equal(t, serial, c.Serial())
 	})
 	t.Run("BackupFailureIsNotFatal", func(t *testing.T) {
-		c := NewMinimalTestConfig("config", t.TempDir())
+		c := NewMinimalTestConfig(t.TempDir())
 		require.NoError(t, c.CreateDirectories())
 		// Block the backup copy by putting a directory where the file belongs; startup must continue,
 		// since the backup only adds redundancy.
@@ -416,7 +416,7 @@ func TestConfig_reportDownloadTokenOptions(t *testing.T) {
 		return &buf
 	}
 	newConfig := func(downloadToken string, public bool) *Config {
-		c := NewMinimalTestConfig("config", t.TempDir())
+		c := NewMinimalTestConfig(t.TempDir())
 		c.options.Public = public
 		c.options.Demo = false
 		c.options.DownloadToken = downloadToken

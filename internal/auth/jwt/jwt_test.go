@@ -34,5 +34,5 @@ func runTestMain(m *testing.M) int {
 }
 
 func newTestConfig(t *testing.T) *cfg.Config {
-	return cfg.NewMinimalTestConfig("", t.TempDir())
+	return cfg.NewMinimalTestConfig(t.TempDir())
 }

@@ -144,5 +144,5 @@ func TestWebDAVSetFileMtime_FutureIgnored(t *testing.T) {
 }
 
 func newWebDAVTestConfig(t *testing.T) *config.Config {
-	return config.NewMinimalTestConfig("", t.TempDir())
+	return config.NewMinimalTestConfig(t.TempDir())
 }

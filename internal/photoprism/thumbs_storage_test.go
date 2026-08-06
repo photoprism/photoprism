@@ -11,7 +11,7 @@ import (
 )
 
 func TestThumbs_InsufficientStorage(t *testing.T) {
-	cfg := config.NewMinimalTestConfig("photoprism", t.TempDir())
+	cfg := config.NewMinimalTestConfig(t.TempDir())
 	w := NewThumbs(cfg)
 	require.NotNil(t, w)
 

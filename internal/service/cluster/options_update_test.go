@@ -30,7 +30,7 @@ func TestOptionsUpdate_HasDatabaseUpdate(t *testing.T) {
 }
 
 func TestOptionsUpdate_Apply(t *testing.T) {
-	conf := config.NewMinimalTestConfig("cluster", t.TempDir())
+	conf := config.NewMinimalTestConfig(t.TempDir())
 	conf.Options().OptionsYaml = filepath.Join(conf.ConfigPath(), "options.yml")
 
 	// Seed file with existing values to ensure they are preserved.

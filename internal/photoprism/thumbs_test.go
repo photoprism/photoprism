@@ -46,7 +46,7 @@ func TestResample_Start(t *testing.T) {
 }
 
 func TestThumbs_DirHonorsPPIgnore(t *testing.T) {
-	cfg := config.NewMinimalTestConfig("photoprism", t.TempDir())
+	cfg := config.NewMinimalTestConfig(t.TempDir())
 
 	oldCfg := Config()
 	SetConfig(cfg)

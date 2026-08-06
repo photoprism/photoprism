@@ -203,13 +203,13 @@ func TestUtils_isBcrypt(t *testing.T) {
 }
 
 func TestConfig_KeysPath(t *testing.T) {
-	c := NewMinimalTestConfig("config", t.TempDir())
+	c := NewMinimalTestConfig(t.TempDir())
 	assert.Equal(t, filepath.Join(c.ConfigPath(), "keys"), c.KeysPath())
 }
 
 func TestConfig_TokenSigningKey(t *testing.T) {
 	t.Run("GeneratesStableKeyAtKeysPath", func(t *testing.T) {
-		c := NewMinimalTestConfig("config", t.TempDir())
+		c := NewMinimalTestConfig(t.TempDir())
 		key := c.TokenSigningKey()
 		assert.GreaterOrEqual(t, len(key), tokens.KeyLen)
 		// Stable across calls so tokens stay valid.
@@ -219,7 +219,7 @@ func TestConfig_TokenSigningKey(t *testing.T) {
 		assert.NoFileExists(t, c.BackupPath(signingKeyName))
 	})
 	t.Run("NonEmptyEvenWhenNotPersisted", func(t *testing.T) {
-		c := NewMinimalTestConfig("config", t.TempDir())
+		c := NewMinimalTestConfig(t.TempDir())
 		// Block the keys directory by placing a file where it would be created, so the key cannot be
 		// written; it must still be available in memory (never empty).
 		require.NoError(t, os.MkdirAll(c.ConfigPath(), fs.ModeDir))
@@ -229,7 +229,7 @@ func TestConfig_TokenSigningKey(t *testing.T) {
 		assert.NoFileExists(t, filepath.Join(c.KeysPath(), signingKeyName))
 	})
 	t.Run("NeverZeroFilled", func(t *testing.T) {
-		c := NewMinimalTestConfig("config", t.TempDir())
+		c := NewMinimalTestConfig(t.TempDir())
 		key := c.TokenSigningKey()
 		require.GreaterOrEqual(t, len(key), tokens.KeyLen)
 		// A zero-filled key is publicly known, so every token would be forgeable. Generation must fail
@@ -297,7 +297,7 @@ func TestConfig_PreviewToken(t *testing.T) {
 	// public token otherwise.
 	newAuthTestConfig := func(t *testing.T) *Config {
 		t.Helper()
-		c := NewMinimalTestConfig("config", t.TempDir())
+		c := NewMinimalTestConfig(t.TempDir())
 		c.options.Public = false
 		c.options.Demo = false
 		return c
@@ -323,7 +323,7 @@ func TestConfig_PreviewToken(t *testing.T) {
 		assert.Equal(t, "static-preview-token", c.PreviewToken())
 	})
 	t.Run("PublicMode", func(t *testing.T) {
-		c := NewMinimalTestConfig("config", t.TempDir())
+		c := NewMinimalTestConfig(t.TempDir())
 		c.options.Public = true
 		assert.Equal(t, entity.TokenPublic, c.PreviewToken())
 	})
