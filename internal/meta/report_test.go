@@ -41,6 +41,13 @@ func TestReport(t *testing.T) {
 		assert.Equal(t, "exifEX:LensModel, aux:Lens, aux:LensID", rows["LensModel"][3])
 		assert.Equal(t, "xmpRights:UsageTerms", rows["License"][3])
 	})
+	t.Run("LocalTimeFromXmp", func(t *testing.T) {
+		// The reader fills TakenAtLocal from the TakenAt chain, so an empty
+		// cell would read as "XMP has no local capture time".
+		rows := reportRows(t)
+		assert.Equal(t, "photoshop:DateCreated, exif:DateTimeOriginal, xmp:CreateDate", rows["TakenAtLocal"][3])
+		assert.Equal(t, rows["TakenAt"][3], rows["TakenAtLocal"][3])
+	})
 	t.Run("GpsFromXmp", func(t *testing.T) {
 		// The XMP reader supplies coordinates, so these must not report as
 		// Exiftool-only, which would read as "XMP GPS is unsupported".

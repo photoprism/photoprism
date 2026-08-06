@@ -31,7 +31,7 @@ type Data struct {
 	InstanceID       string        `meta:"InstanceID,DocumentID" xmp:"xmpMM:InstanceID"`
 	CreatedAt        time.Time     `meta:"SubSecCreateDate,CreationTime,CreationDate,CreateDate,MediaCreateDate,ContentCreateDate,TrackCreateDate" xmp:"xmp:CreateDate,xmpDM:CreationDate"`
 	TakenAt          time.Time     `meta:"SubSecDateTimeOriginal,SubSecDateTimeCreated,DateTimeOriginal,CreationTime,CreationDate,DateTimeCreated,DateTime,DateTimeDigitized" xmp:"photoshop:DateCreated,exif:DateTimeOriginal,xmp:CreateDate"`
-	TakenAtLocal     time.Time     `meta:"SubSecDateTimeOriginal,SubSecDateTimeCreated,DateTimeOriginal,CreationDate,DateTimeCreated,DateTime,DateTimeDigitized"`
+	TakenAtLocal     time.Time     `meta:"SubSecDateTimeOriginal,SubSecDateTimeCreated,DateTimeOriginal,CreationDate,DateTimeCreated,DateTime,DateTimeDigitized" xmp:"photoshop:DateCreated,exif:DateTimeOriginal,xmp:CreateDate"`
 	TakenGps         time.Time     `meta:"GPSDateTime,GPSDateStamp" xmp:"exif:GPSTimeStamp,exif:GPSDateStamp"`
 	TakenNs          int           `meta:"-"`
 	TimeZone         string        `meta:"-"`
