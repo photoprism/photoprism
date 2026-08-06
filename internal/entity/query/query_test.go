@@ -28,12 +28,20 @@ func (p staticDbProvider) Db() *gorm.DB {
 // testDriver returns the driver the test database runs on, applying the same
 // fallback to SQLite that entity.InitTestDb uses when resolving the environment.
 func testDriver() string {
-	switch driver := os.Getenv("PHOTOPRISM_TEST_DSN_NAME"); {
-	case os.Getenv("PHOTOPRISM_TEST_DSN_NAME") == "", driver == "", driver == "test", driver == "sqlite":
-		return dsn.DriverSQLite3
+	driver := os.Getenv("PHOTOPRISM_TEST_DSN_NAME")
+	switch driver {
+	case dsn.DriverSQLite3, "sqlitefile":
+		driver = dsn.DriverSQLite3
+	case dsn.DriverMariaDB, dsn.DriverMySQL:
+		driver = dsn.DriverMySQL
+	case "mysql8":
+		driver = dsn.DriverMySQL
+	case dsn.DriverPostgres, dsn.DriverPostgreSQL:
+		driver = dsn.DriverPostgres
 	default:
-		return dsn.ParseDriver(driver)
+		driver = dsn.DriverSQLite3
 	}
+	return driver
 }
 
 // TestMain executes runTestMain returning it's results.  It is done this way so that defer can be used to cleanup.
@@ -60,28 +68,25 @@ func runTestMain(m *testing.M) int {
 }
 
 func TestDbDialect(t *testing.T) {
-	t.Run("TestDriver", func(t *testing.T) {
-		assert.Equal(t, testDriver(), DbDialect())
-	})
 	t.Run("SQLite", func(t *testing.T) {
 		if DbDialect() != dsn.DialectSQLite {
 			t.SkipNow()
 		}
-		assert.Equal(t, dsn.DialectSQLite, DbDialect())
+		assert.Equal(t, dsn.DialectSQLite, testDriver())
 	})
 
 	t.Run("MariaDB", func(t *testing.T) {
 		if DbDialect() != dsn.DialectMySQL {
 			t.SkipNow()
 		}
-		assert.Equal(t, dsn.DialectMySQL, DbDialect())
+		assert.Equal(t, dsn.DialectMySQL, testDriver())
 	})
 
 	t.Run("Postgres", func(t *testing.T) {
 		if DbDialect() != dsn.DialectPostgreSQL {
 			t.SkipNow()
 		}
-		assert.Equal(t, dsn.DialectPostgreSQL, DbDialect())
+		assert.Equal(t, dsn.DialectPostgreSQL, testDriver())
 	})
 }
 

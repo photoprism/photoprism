@@ -772,11 +772,13 @@ func TestPhoto_GetDetails(t *testing.T) {
 		if err := m.Create(); err != nil { // Create the photo otherwise the GetDetails generates a foreign key violation.
 			t.Error(err)
 		}
+		t.Cleanup(func() {
+			if _, err := m.DeletePermanently(); err != nil {
+				t.Error(err)
+			}
+		})
 		result := m.GetDetails()
 		assert.Equal(t, uint(0x136be), result.PhotoID)
-		if _, err := m.DeletePermanently(); err != nil {
-			t.Error(err)
-		}
 	})
 }
 
@@ -1044,14 +1046,14 @@ func TestPhoto_String(t *testing.T) {
 				var p *Photo
 				assert.Equal(t, tc.want, p.String())
 				if tc.checkFmt {
-					assert.Equal(t, tc.want, p.String())
+					assert.Equal(t, tc.want, fmt.Sprintf("%s", p)) //nolint:staticcheck // deliberate test for fmt
 				}
 				return
 			}
 
 			assert.Equal(t, tc.want, tc.photo.String())
 			if tc.checkFmt {
-				assert.Equal(t, tc.want, tc.photo.String())
+				assert.Equal(t, tc.want, fmt.Sprintf("%s", tc.photo)) //nolint:staticcheck // deliberate test for fmt
 			}
 		})
 	}
@@ -1091,11 +1093,15 @@ func TestPhoto_Save(t *testing.T) {
 			t.Fatal(res.Error)
 		}
 
-		t.Log("Expect inconsistent .ID and ID warnings Error or SQLSTATE from photo.save")
+		log.Info("Expect inconsistent .ID and ID warnings Error or SQLSTATE from photo.save")
 		err := photo.Save()
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			_ = Db().Where("error_message like ?", errorMessage).Delete(&Errors{})
+			_, _ = photo.DeletePermanently()
+		})
 
 		afterErrors := Errors{}
 		res = Db().Where("error_message like ?", errorMessage).Find(&afterErrors)
@@ -1103,11 +1109,7 @@ func TestPhoto_Save(t *testing.T) {
 			t.Fatal(res.Error)
 		}
 
-		// Will this break when running all tests?
 		assert.Equal(t, len(beforeErrors)+1, len(afterErrors))
-
-		Db().Where("error_message like ?", errorMessage).Delete(&Errors{})
-		photo.DeletePermanently()
 	})
 
 	t.Run("BadCellID", func(t *testing.T) {
@@ -1120,11 +1122,15 @@ func TestPhoto_Save(t *testing.T) {
 			t.Fatal(res.Error)
 		}
 
-		t.Log("Expect inconsistent .ID and ID warnings Error or SQLSTATE from photo.save")
+		log.Info("Expect inconsistent .ID and ID warnings Error or SQLSTATE from photo.save")
 		err := photo.Save()
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			_ = Db().Where("error_message like ?", errorMessage).Delete(&Errors{})
+			_, _ = photo.DeletePermanently()
+		})
 
 		afterErrors := Errors{}
 		res = Db().Where("error_message like ?", errorMessage).Find(&afterErrors)
@@ -1132,11 +1138,7 @@ func TestPhoto_Save(t *testing.T) {
 			t.Fatal(res.Error)
 		}
 
-		// Will this break when running all tests?
 		assert.Equal(t, len(beforeErrors)+1, len(afterErrors))
-
-		Db().Where("error_message like ?", errorMessage).Delete(&Errors{})
-		photo.DeletePermanently()
 	})
 
 	t.Run("BadLensID", func(t *testing.T) {
@@ -1149,11 +1151,15 @@ func TestPhoto_Save(t *testing.T) {
 			t.Fatal(res.Error)
 		}
 
-		t.Log("Expect inconsistent .ID and ID warnings Error or SQLSTATE from photo.save")
+		log.Info("Expect inconsistent .ID and ID warnings Error or SQLSTATE from photo.save")
 		err := photo.Save()
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			_ = Db().Where("error_message like ?", errorMessage).Delete(&Errors{})
+			_, _ = photo.DeletePermanently()
+		})
 
 		afterErrors := Errors{}
 		res = Db().Where("error_message like ?", errorMessage).Find(&afterErrors)
@@ -1161,11 +1167,7 @@ func TestPhoto_Save(t *testing.T) {
 			t.Fatal(res.Error)
 		}
 
-		// Will this break when running all tests?
 		assert.Equal(t, len(beforeErrors)+1, len(afterErrors))
-
-		Db().Where("error_message like ?", errorMessage).Delete(&Errors{})
-		photo.DeletePermanently()
 	})
 
 	t.Run("BadPlaceID", func(t *testing.T) {
@@ -1178,11 +1180,15 @@ func TestPhoto_Save(t *testing.T) {
 			t.Fatal(res.Error)
 		}
 
-		t.Log("Expect inconsistent .ID and ID warnings Error or SQLSTATE from photo.save")
+		log.Info("Expect inconsistent .ID and ID warnings Error or SQLSTATE from photo.save")
 		err := photo.Save()
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			_ = Db().Where("error_message like ?", errorMessage).Delete(&Errors{})
+			_, _ = photo.DeletePermanently()
+		})
 
 		afterErrors := Errors{}
 		res = Db().Where("error_message like ?", errorMessage).Find(&afterErrors)
@@ -1190,11 +1196,7 @@ func TestPhoto_Save(t *testing.T) {
 			t.Fatal(res.Error)
 		}
 
-		// Will this break when running all tests?
 		assert.Equal(t, len(beforeErrors)+1, len(afterErrors))
-
-		Db().Where("error_message like ?", errorMessage).Delete(&Errors{})
-		photo.DeletePermanently()
 	})
 }
 
@@ -1282,7 +1284,11 @@ func TestPhoto_UpdateLabels(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-
+		t.Cleanup(func() {
+			_, _ = photo.DeletePermanently()
+			_ = UnscopedDb().Delete(&labelNative)
+			_ = UnscopedDb().Delete(&labelWindow)
+		})
 		p := FindPhoto(photo)
 
 		assert.Equal(t, 0, len(p.Labels))
@@ -1296,9 +1302,6 @@ func TestPhoto_UpdateLabels(t *testing.T) {
 
 		assert.Equal(t, 25, len(p.Details.Keywords))
 		assert.Equal(t, 3, len(p.Labels))
-		p.DeletePermanently()
-		UnscopedDb().Delete(&labelNative)
-		UnscopedDb().Delete(&labelWindow)
 	})
 }
 

@@ -161,8 +161,8 @@ func TestConfig_OptionsYaml(t *testing.T) {
 
 func TestConfig_PIDFilename(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	expected := "/storage/testdata/photoprism.pid"
-	assert.Contains(t, c.PIDFilename(), expected)
+
+	assert.Contains(t, c.PIDFilename(), "/storage/testdata/photoprism.pid")
 }
 
 func TestConfig_LogFilename(t *testing.T) {
@@ -317,8 +317,7 @@ func TestConfig_StaticImgFile(t *testing.T) {
 func TestConfig_ThemePath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	expected := ProjectRoot + "/storage/testdata/config/theme"
-	assert.Equal(t, expected, c.ThemePath())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/config/theme", c.ThemePath())
 	c.SetThemePath("testdata/static/img/wallpaper")
 	assert.Equal(t, ProjectRoot+"/internal/config/testdata/static/img/wallpaper", c.ThemePath())
 	c.SetThemePath("")

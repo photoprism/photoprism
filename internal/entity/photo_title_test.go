@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -171,7 +172,12 @@ func TestPhoto_GenerateTitle(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Contains(t, m.PhotoTitle, " & Actress A / 2008")
+		// This test is unpredicatable as TestMarker_SaveForm changes the subject names
+		subjects := m.SubjectNames()
+		assert.True(t, strings.HasSuffix(m.PhotoTitle, "/ 2008"))
+		for _, s := range subjects {
+			assert.Contains(t, m.PhotoTitle, s)
+		}
 		//assert.Equal(t, "Franzilein & Actress A / 2008", m.PhotoTitle)  // Requires TestMarker_SaveForm execution for this to be true.
 	})
 	t.Run("NoLocation", func(t *testing.T) {
@@ -193,16 +199,13 @@ func TestPhoto_GenerateTitle(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		// Order of execution issue...
-		// file_fixtures adds bridge
-		// marker_fixtures adds Actor
-		// photo_fixtures adds 1990
-		// What test changes Actor to Actress?
-		// TODO: Unstable
-		if len(m.SubjectNames()) > 0 {
-			assert.Contains(t, m.PhotoTitle, "/ 1990")
-			assert.Contains(t, m.PhotoTitle, "Act")
-			//	assert.Equal(t, "Actress A / 1990", m.PhotoTitle)
+		// This test is unpredicatable as other tests change the subject names
+		subjects := m.SubjectNames()
+		if len(subjects) > 0 {
+			assert.True(t, strings.HasSuffix(m.PhotoTitle, "/ 1990"))
+			for _, s := range subjects {
+				assert.Contains(t, m.PhotoTitle, s)
+			}
 		} else {
 			assert.Equal(t, "Bridge1 / 1990", m.PhotoTitle)
 		}

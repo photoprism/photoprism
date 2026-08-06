@@ -106,10 +106,10 @@ func TestKeyword_Updates(t *testing.T) {
 
 func TestKeyword_Update(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		keyword := NewKeyword("KeywordBeforeUpdate3")
+		keyword := NewKeyword("KeywordBeforeUpdate2")
 
 		require.NoError(t, keyword.Save())
-		assert.Equal(t, "keywordbeforeupdate3", keyword.Keyword)
+		assert.Equal(t, "keywordbeforeupdate2", keyword.Keyword)
 
 		keyword.ID = 99966 // Gorm2 requires PK to be set on Model if not using Where clause.
 		err := keyword.Update("Keyword", "new-name")
@@ -121,7 +121,28 @@ func TestKeyword_Update(t *testing.T) {
 		assert.Equal(t, "new-name", keyword.Keyword)
 
 	})
+	t.Run("NilKeyword", func(t *testing.T) {
+		var keyword *Keyword
+		err := keyword.Update("Keyword", "value")
+		assert.EqualError(t, err, "keyword must not be nil - you may have found a bug")
+	})
+	t.Run("MissingID", func(t *testing.T) {
+		keyword := NewKeyword("missing-id")
+		err := keyword.Update("Keyword", "value")
+		assert.EqualError(t, err, "keyword ID must not be empty - you may have found a bug")
+	})
+	t.Run("FlushesCache", func(t *testing.T) {
+		FlushKeywordCache()
+		keyword := NewKeyword(fmt.Sprintf("cache-update-%d", time.Now().UnixNano()))
+		require.NoError(t, keyword.Save())
 
+		keywordCache.SetDefault(keyword.Keyword, keyword)
+
+		require.NoError(t, keyword.Update("Skip", true))
+
+		_, found := keywordCache.Get(keyword.Keyword)
+		assert.False(t, found)
+	})
 	t.Run("failure", func(t *testing.T) {
 		keyword := NewKeyword("KeywordBeforeUpdate6")
 		assert.Equal(t, "keywordbeforeupdate6", keyword.Keyword)

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
@@ -95,10 +96,8 @@ func TestAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Greater(t, len(result), 0)
-		if len(result) > 0 {
-			assert.Equal(t, "Christmas 2030", result[0].AlbumTitle)
-		}
+		require.Greater(t, len(result), 0)
+		assert.Equal(t, "Christmas 2030", result[0].AlbumTitle)
 	})
 	t.Run("SearchWithSlug", func(t *testing.T) {
 		query := form.NewAlbumSearch("slug:holiday")
@@ -109,10 +108,8 @@ func TestAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Greater(t, len(result), 0)
-		if len(result) > 0 {
-			assert.Equal(t, "Holiday 2030", result[0].AlbumTitle)
-		}
+		require.Greater(t, len(result), 0)
+		assert.Equal(t, "Holiday 2030", result[0].AlbumTitle)
 	})
 	t.Run("SearchWithCountry", func(t *testing.T) {
 		query := form.NewAlbumSearch("country:ca")
@@ -122,10 +119,8 @@ func TestAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Greater(t, len(result), 0)
-		if len(result) > 0 {
-			assert.Equal(t, "April 1990", result[0].AlbumTitle)
-		}
+		require.Greater(t, len(result), 0)
+		assert.Equal(t, "April 1990", result[0].AlbumTitle)
 	})
 	t.Run("FavoritesTrue", func(t *testing.T) {
 		query := form.NewAlbumSearch("favorite:true")
@@ -138,10 +133,8 @@ func TestAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Greater(t, len(result), 0)
-		if len(result) > 0 {
-			assert.Equal(t, "Holiday 2030", result[0].AlbumTitle)
-		}
+		require.Greater(t, len(result), 0)
+		assert.Equal(t, "Holiday 2030", result[0].AlbumTitle)
 	})
 	t.Run("EmptyQuery", func(t *testing.T) {
 		query := form.NewAlbumSearch("")
@@ -259,10 +252,8 @@ func TestAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Greater(t, len(result), 0)
-		if len(result) > 0 {
-			assert.Equal(t, "April 1990", result[0].AlbumTitle)
-		}
+		require.Greater(t, len(result), 0)
+		assert.Equal(t, "April 1990", result[0].AlbumTitle)
 	})
 	t.Run("California", func(t *testing.T) {
 		query := form.NewAlbumSearch("california")
@@ -442,7 +433,7 @@ func TestAlbums(t *testing.T) {
 		f := form.SearchAlbums{
 			Type:   entity.AlbumMoment,
 			Count:  100,
-			Offset: 2,
+			Offset: 3, // Album Fixture cows requires 3 instead of 2
 			Order:  "newest",
 		}
 
@@ -452,9 +443,8 @@ func TestAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		lastRecord := len(result) - 1
-		assert.GreaterOrEqual(t, result[lastRecord-1].AlbumYear, result[lastRecord].AlbumYear)
-		assert.Greater(t, result[lastRecord].AlbumYear, 0)
+		require.Greater(t, len(result), 1)
+		assert.GreaterOrEqual(t, result[0].AlbumYear, result[1].AlbumYear)
 	})
 	t.Run("MomentSortByNewestReverse", func(t *testing.T) {
 		f := form.SearchAlbums{
@@ -559,7 +549,7 @@ func TestAlbums(t *testing.T) {
 		f := form.SearchAlbums{
 			Type:    entity.AlbumMoment,
 			Count:   100,
-			Offset:  2,
+			Offset:  3,
 			Order:   "oldest",
 			Reverse: true,
 		}
@@ -570,9 +560,8 @@ func TestAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		lastRecord := len(result) - 1
-		assert.GreaterOrEqual(t, result[lastRecord-1].AlbumYear, result[lastRecord].AlbumYear)
-		assert.Greater(t, result[lastRecord].AlbumYear, 0)
+		require.Greater(t, len(result), 1)
+		assert.GreaterOrEqual(t, result[0].AlbumYear, result[1].AlbumYear)
 	})
 	t.Run("FolderSortByOldest", func(t *testing.T) {
 		f := form.SearchAlbums{

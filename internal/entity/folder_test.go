@@ -437,7 +437,7 @@ func TestFolder_Create(t *testing.T) {
 
 		rescanFolder := NewFolder(RootOriginals, folderPath, time.Now().UTC())
 
-		t.Logf("Expect Unique violation from folder %s", folderPath)
+		log.Infof("Expect Unique violation from folder %s", folderPath)
 		if err := rescanFolder.Create(); err == nil {
 			t.Fatal("expected duplicate folder create error")
 		}

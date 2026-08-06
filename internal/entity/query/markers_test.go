@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -184,7 +185,7 @@ func TestMarkerCountsByFaceIDs(t *testing.T) {
 func TestRemoveInvalidMarkerReferences(t *testing.T) {
 	affected, err := RemoveInvalidMarkerReferences()
 
-	assert.NoError(t, err)
+	require.Nil(t, err)
 	assert.GreaterOrEqual(t, affected, int64(0))
 }
 
@@ -198,28 +199,28 @@ func TestRemoveNonExistentMarkerFaces(t *testing.T) {
 
 	affected, err := RemoveNonExistentMarkerFaces()
 
-	assert.NoError(t, err)
+	require.Nil(t, err)
 	assert.Equal(t, affected, expected)
 }
 
 func TestRemoveNonExistentMarkerSubjects(t *testing.T) {
 	affected, err := RemoveNonExistentMarkerSubjects()
 
-	assert.NoError(t, err)
+	require.Nil(t, err)
 	assert.GreaterOrEqual(t, affected, int64(1))
 }
 
 func TestFixMarkerReferences(t *testing.T) {
 	affected, err := FixMarkerReferences()
 
-	assert.NoError(t, err)
+	require.Nil(t, err)
 	assert.GreaterOrEqual(t, affected, int64(0))
 }
 
 func TestMarkersWithNonExistentReferences(t *testing.T) {
 	f, s, err := MarkersWithNonExistentReferences()
 
-	assert.NoError(t, err)
+	require.Nil(t, err)
 
 	assert.GreaterOrEqual(t, len(f), 0)
 	assert.GreaterOrEqual(t, len(s), 0)
@@ -228,7 +229,7 @@ func TestMarkersWithNonExistentReferences(t *testing.T) {
 func TestMarkersWithSubjectConflict(t *testing.T) {
 	m, err := MarkersWithSubjectConflict()
 
-	assert.NoError(t, err)
+	require.Nil(t, err)
 
 	assert.GreaterOrEqual(t, len(m), 0)
 }
@@ -248,17 +249,13 @@ func TestCountMarkers(t *testing.T) {
 func TestResetFaceMarkerMatches(t *testing.T) {
 	n, err := ResetFaceMarkerMatches()
 
-	if !assert.Empty(t, err) {
-		return
-	}
+	require.Nil(t, err)
 	assert.GreaterOrEqual(t, n, int64(0))
 }
 
 func TestRemoveOrphanMarkers(t *testing.T) {
 	n, err := RemoveOrphanMarkers()
 
-	if !assert.Empty(t, err) {
-		return
-	}
+	require.Nil(t, err)
 	assert.GreaterOrEqual(t, n, int64(0))
 }

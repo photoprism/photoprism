@@ -31,7 +31,7 @@ func useTestDb(t *testing.T, name string) {
 	t.Setenv("PHOTOPRISM_TEST_DSN", filepath.Join(t.TempDir(), name+".db"))
 }
 
-func runTestMain(m *testing.M) (code int) {
+func runTestMain(m *testing.M) int {
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.TraceLevel)
 
@@ -41,12 +41,10 @@ func runTestMain(m *testing.M) (code int) {
 	c := config.NewTestConfig("photoprism")
 	config.OnceTestConfig(c)
 	SetConfig(c)
-
-	code = 999
 	defer c.CleanupTestFolder()
 	defer func() {
 		if err := c.CloseDb(); err != nil {
-			log.Errorf("close db: %v", err)
+			log.Warnf("close db: %v", err)
 		}
 		// Remove temporary SQLite files after running the tests.
 		fs.PurgeTestDbFiles(".", false)

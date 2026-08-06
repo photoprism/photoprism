@@ -20,10 +20,6 @@ func TestNewImport(t *testing.T) {
 }
 
 func TestImport_DestinationFilename(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping test in short mode.")
-	}
-
 	cfg := config.TestConfig()
 
 	initErr := cfg.InitializeTestData()

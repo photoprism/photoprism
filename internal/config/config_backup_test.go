@@ -8,14 +8,12 @@ import (
 
 func TestConfig_BackupPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	expected := "/storage/testdata/backup"
-	assert.Contains(t, c.BackupPath(""), expected)
+	assert.Contains(t, c.BackupPath(""), "/storage/testdata/backup")
 }
 
 func TestConfig_BackupBasePath(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	expected := "/storage/testdata/backup"
-	assert.Contains(t, c.BackupBasePath(), expected)
+	assert.Contains(t, c.BackupBasePath(), "/storage/testdata/backup")
 	path := c.options.BackupPath
 	c.options.BackupPath = "./"
 	assert.Contains(t, c.BackupBasePath(), "/photoprism/internal/config")
@@ -61,8 +59,7 @@ func TestConfig_BackupDatabasePath(t *testing.T) {
 	// Ensure DB defaults (SQLite) so path resolves to sqlite backup path
 	c.options.DatabaseDriver = ""
 	c.options.DatabaseDSN = ""
-	expected := "/storage/testdata/backup/sqlite"
-	assert.Contains(t, c.BackupDatabasePath(), expected)
+	assert.Contains(t, c.BackupDatabasePath(), "/storage/testdata/backup/sqlite")
 }
 
 func TestConfig_BackupAlbums(t *testing.T) {

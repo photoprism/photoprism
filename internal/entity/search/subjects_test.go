@@ -7,6 +7,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestSubjects(t *testing.T) {
@@ -20,46 +21,36 @@ func TestSubjects(t *testing.T) {
 		results, err := Subjects(form.SearchSubjects{Type: entity.SubjPerson, Count: 2, Order: "count"})
 		assert.NoError(t, err)
 		//t.Logf("Subjects: %#v", results)
-		assert.Len(t, results, 2)
-		if len(results) > 1 {
-			assert.GreaterOrEqual(t, results[0].FileCount, results[1].FileCount)
-		}
+		require.Len(t, results, 2)
+		assert.GreaterOrEqual(t, results[0].FileCount, results[1].FileCount)
 	})
 	t.Run("FindAllSortByName", func(t *testing.T) {
 		results, err := Subjects(form.SearchSubjects{Type: entity.SubjPerson, Order: "name"})
 		assert.NoError(t, err)
 		//t.Logf("Subjects: %#v", results)
-		assert.LessOrEqual(t, 3, len(results))
-		if len(results) > 0 {
-			assert.Equal(t, "Actor A", results[0].SubjName)
-		}
+		require.LessOrEqual(t, 3, len(results))
+		assert.Equal(t, "Actor A", results[0].SubjName)
 	})
 	t.Run("SortByAdded", func(t *testing.T) {
 		results, err := Subjects(form.SearchSubjects{Type: entity.SubjPerson, Order: "added"})
 		assert.NoError(t, err)
 		//t.Logf("Subjects: %#v", results)
-		assert.LessOrEqual(t, 3, len(results))
-		if len(results) > 0 {
-			assert.Equal(t, "Jane Doe", results[0].SubjName)
-		}
+		require.LessOrEqual(t, 3, len(results))
+		assert.Equal(t, "Jane Doe", results[0].SubjName)
 	})
 	t.Run("SortByRelevance", func(t *testing.T) {
 		results, err := Subjects(form.SearchSubjects{Type: entity.SubjPerson, Order: "relevance"})
 		assert.NoError(t, err)
 		//t.Logf("Subjects: %#v", results)
-		assert.LessOrEqual(t, 3, len(results))
-		if len(results) > 0 {
-			assert.Equal(t, "John Doe", results[0].SubjName)
-		}
+		require.LessOrEqual(t, 3, len(results))
+		assert.Equal(t, "John Doe", results[0].SubjName)
 	})
 	t.Run("SearchFavorite", func(t *testing.T) {
 		results, err := Subjects(form.SearchSubjects{Type: entity.SubjPerson, Favorite: "yes"})
 		assert.NoError(t, err)
 		//t.Logf("Subjects: %#v", results)
-		assert.LessOrEqual(t, 1, len(results))
-		if len(results) > 0 {
-			assert.Equal(t, "John Doe", results[0].SubjName)
-		}
+		require.LessOrEqual(t, 1, len(results))
+		assert.Equal(t, "John Doe", results[0].SubjName)
 	})
 	t.Run("SearchPrivate", func(t *testing.T) {
 		results, err := Subjects(form.SearchSubjects{Type: entity.SubjPerson, Private: "true"})
@@ -83,26 +74,21 @@ func TestSubjects(t *testing.T) {
 		results, err := Subjects(form.SearchSubjects{Type: entity.SubjPerson, Query: "Powell", Favorite: "no", Private: "no"})
 		assert.NoError(t, err)
 		//t.Logf("Subjects: %#v", results)
-		assert.LessOrEqual(t, 1, len(results))
-		if len(results) > 0 {
-			assert.Equal(t, "Dangling Subject", results[0].SubjName)
-		}
+		require.LessOrEqual(t, 1, len(results))
+		assert.Equal(t, "Dangling Subject", results[0].SubjName)
 	})
 	t.Run("SearchForId", func(t *testing.T) {
 		results, err := Subjects(form.SearchSubjects{Type: entity.SubjPerson, UID: "js6sg6b2h8njw0sx"})
-		if assert.NoError(t, err) {
-			if assert.Len(t, results, 1) {
-				assert.Equal(t, "Joe Biden", results[0].SubjName)
-			}
-		}
+		require.NoError(t, err)
+		require.Len(t, results, 1)
+		assert.Equal(t, "Joe Biden", results[0].SubjName)
 		//t.Logf("Subjects: %#v", results)
 	})
 	t.Run("NotNil", func(t *testing.T) {
 		results, err := Subjects(form.SearchSubjects{Type: entity.SubjPerson, UID: "jszzzzzzzzzzzzzz"})
-		if assert.NoError(t, err) {
-			assert.Len(t, results, 0)
-			assert.NotNil(t, results)
-		}
+		require.NoError(t, err)
+		assert.Len(t, results, 0)
+		assert.NotNil(t, results)
 	})
 }
 

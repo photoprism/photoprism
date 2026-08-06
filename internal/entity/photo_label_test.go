@@ -63,7 +63,7 @@ func TestFirstOrCreatePhotoLabel(t *testing.T) {
 
 		photoLabelCache.Set(relation.CacheKey(), PhotoLabel{}, labelCacheErrorExpiration)
 
-		t.Log("Expect 1 x duplicate key value Error or SQLSTATE from photo_label")
+		log.Info("Expect 1 x duplicate key value Error or SQLSTATE from photo_label")
 		result := FirstOrCreatePhotoLabel(NewPhotoLabel(relation.PhotoID, relation.LabelID, relation.Uncertainty, relation.LabelSrc))
 		require.NotNil(t, result)
 		assert.Equal(t, relation.PhotoID, result.PhotoID)

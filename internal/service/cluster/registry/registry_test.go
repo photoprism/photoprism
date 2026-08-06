@@ -5,11 +5,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/internal/testextras"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -21,16 +19,12 @@ func TestMain(m *testing.M) {
 	os.Exit(runTestMain(m))
 }
 
+// TestMain ensures SQLite test DB artifacts are purged after the suite runs.
 func runTestMain(m *testing.M) int {
 	// Remove temporary SQLite files before running the tests.
 	fs.PurgeTestDbFiles(".", false)
 	// Remove temporary SQLite files after running the tests.
 	defer fs.PurgeTestDbFiles(".", false)
-
-	// Init test logger.
-	log := logrus.StandardLogger()
-	log.SetLevel(logrus.TraceLevel)
-	event.AuditLog = log
 
 	// Run unit tests.
 	return testextras.TestDbCleanup(m.Run())
