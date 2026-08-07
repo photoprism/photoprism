@@ -25,6 +25,6 @@ const (
 // overlapping lenses of typical Insta360 X-series cameras.
 const (
 	MinFisheyeFov     = 90
-	DefaultFisheyeFov = 204
+	DefaultFisheyeFov = 190
 	MaxFisheyeFov     = 360
 )

@@ -227,7 +227,7 @@ func TestConvert_TranscodeToAvcCmd(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Contains(t, strings.Join(r.Args, " "), "v360=input=dfisheye:output=e:ih_fov=204:iv_fov=204:roll=180")
+		assert.Contains(t, strings.Join(r.Args, " "), "v360=input=dfisheye:output=e:ih_fov=190:iv_fov=190:roll=180")
 	})
 	t.Run("OneRSSquareInsv", func(t *testing.T) {
 		mf, err := NewMediaFile(oneRSInsvFixture(t, t.TempDir(), "camera.insv"))

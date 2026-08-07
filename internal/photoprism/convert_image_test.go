@@ -377,7 +377,7 @@ func TestConvert_JpegConvertCmds_Insp(t *testing.T) {
 	oneRSCmds, _, err := convert.JpegConvertCmds(oneRS, "camera.insp.jpg", "")
 	require.NoError(t, err)
 	require.NotEmpty(t, oneRSCmds)
-	assert.Contains(t, oneRSCmds[0].String(), "v360=input=dfisheye:output=e:ih_fov=204:iv_fov=204:roll=180")
+	assert.Contains(t, oneRSCmds[0].String(), "v360=input=dfisheye:output=e:ih_fov=190:iv_fov=190:roll=180")
 }
 
 // TestConvert_JpegConvertCmds_Insta360Pair verifies paired-lens poster generation.
@@ -483,17 +483,19 @@ func TestConvert_dewarpFileInPlace(t *testing.T) {
 
 func TestConvert_fisheyeFov(t *testing.T) {
 	cnf := config.TestConfig()
-	cnf.Options().FFmpegFisheyeFov = 190
+	// Deliberately not a value CameraFisheyeFov returns, so the fallback cases below cannot
+	// pass by accident when the per-camera lookup fails.
+	cnf.Options().FFmpegFisheyeFov = 175
 	t.Cleanup(func() { cnf.Options().FFmpegFisheyeFov = 0 })
 	convert := NewConvert(cnf)
 
 	t.Run("NilFallsBackToConfig", func(t *testing.T) {
-		assert.Equal(t, 190, convert.fisheyeFov(nil))
+		assert.Equal(t, 175, convert.fisheyeFov(nil))
 	})
 	t.Run("NoCameraFallsBackToConfig", func(t *testing.T) {
 		f, err := NewMediaFile("testdata/flash.jpg")
 		require.NoError(t, err)
-		assert.Equal(t, 190, convert.fisheyeFov(f))
+		assert.Equal(t, 175, convert.fisheyeFov(f))
 	})
 	t.Run("PerCamera", func(t *testing.T) {
 		if !cnf.ExifToolEnabled() {
@@ -502,17 +504,17 @@ func TestConvert_fisheyeFov(t *testing.T) {
 		dir := t.TempDir()
 		f, err := NewMediaFile(dngFixture(t, dir, "insta360.dng", true)) // Make=Insta360, Model=Insta360 X4.
 		require.NoError(t, err)
-		assert.Equal(t, 204, convert.fisheyeFov(f))
+		assert.Equal(t, 190, convert.fisheyeFov(f))
 	})
 	t.Run("OneRSInspMetadata", func(t *testing.T) {
 		f, err := NewMediaFile(oneRSInspFixture(t, t.TempDir(), "camera.insp"))
 		require.NoError(t, err)
-		assert.Equal(t, 204, convert.fisheyeFov(f))
+		assert.Equal(t, 190, convert.fisheyeFov(f))
 	})
 	t.Run("OneRSInsvTrailer", func(t *testing.T) {
 		f, err := NewMediaFile(oneRSInsvFixture(t, t.TempDir(), "camera.insv"))
 		require.NoError(t, err)
-		assert.Equal(t, 204, convert.fisheyeFov(f))
+		assert.Equal(t, 190, convert.fisheyeFov(f))
 	})
 }
 

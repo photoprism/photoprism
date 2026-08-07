@@ -98,9 +98,9 @@ func TestIndex_UserMediaFile_ParallelDuplicates(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	// The package-wide PHOTOPRISM_TEST_DSN points all test configs at one shared
-	// SQLite file, so the database must be isolated for reliable row counts.
-	t.Setenv("PHOTOPRISM_TEST_DSN", filepath.Join(t.TempDir(), "index-dup-race.db"))
+	// The package-wide test config points all test configs at one shared database,
+	// so this test needs one of its own for reliable row counts.
+	useTestDb(t, "index-dup-race")
 
 	cfg := config.NewMinimalTestConfigWithDb("index-dup-race", filepath.Join(t.TempDir(), "storage"))
 
@@ -225,11 +225,10 @@ func TestIndex_IndexedFileOriginalName(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	// The package-wide PHOTOPRISM_TEST_DSN points all test configs at one
-	// shared SQLite file; the database and storage must be isolated so the
-	// flash.jpg content does not collide by hash with a row another test
-	// indexed with an explicit original name.
-	t.Setenv("PHOTOPRISM_TEST_DSN", filepath.Join(t.TempDir(), "index-original-name.db"))
+	// The package-wide test config points all test configs at one shared database;
+	// the database and storage must be isolated so the flash.jpg content does not
+	// collide by hash with a row another test indexed with an explicit original name.
+	useTestDb(t, "index-original-name")
 
 	cfg := config.NewMinimalTestConfigWithDb("index-original-name", filepath.Join(t.TempDir(), "storage"))
 
@@ -295,7 +294,7 @@ func TestIndex_MediaFile_DualFisheye(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	t.Setenv("PHOTOPRISM_TEST_DSN", filepath.Join(t.TempDir(), "index-dual-fisheye.db"))
+	useTestDb(t, "index-dual-fisheye")
 
 	cfg := config.NewMinimalTestConfigWithDb("index-dual-fisheye", filepath.Join(t.TempDir(), "storage"))
 
