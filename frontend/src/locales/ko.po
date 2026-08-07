@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-07-23 13:16+0000\n"
-"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
+"PO-Revision-Date: 2026-08-07 14:04+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/frontend/ko/>\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 2026.7.1\n"
+"X-Generator: Weblate 2026.8\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -1916,7 +1916,7 @@ msgstr "첫 페이지"
 #: src/component/navigation.vue:118 src/component/navigation.vue:124
 #: src/component/navigation.vue:88 src/component/navigation.vue:89
 msgid "Fisheye"
-msgstr ""
+msgstr "피쉬아이"
 
 #: src/component/meta/camera/dialog.vue:105
 #: src/component/photo/edit/details.vue:276
