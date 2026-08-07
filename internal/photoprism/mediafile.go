@@ -1018,10 +1018,9 @@ func (m *MediaFile) FisheyeDngProjection() projection.Type {
 }
 
 // DualFisheyeLayout reports whether the frame is compatible with the side-by-side dual-fisheye
-// input the FFmpeg "v360=input=dfisheye" dewarp expects. A known aspect ratio must be close to 2:1;
-// an unknown aspect (0) is treated as compatible so the extension-authoritative .insp/.insv path
-// still dewarps. This rejects Insta360 X3/X4 per-lens streams and single-lens/rectilinear sources
-// (whose real dimensions are known and clearly not 2:1) rather than distorting them.
+// input that "v360=input=dfisheye" expects, i.e. a ~2:1 aspect ratio.
+// An unknown aspect (0) counts as compatible so the extension-authoritative .insp/.insv path still
+// dewarps; known non-2:1 frames (X3/X4 per-lens streams, single-lens sources) are rejected.
 func (m *MediaFile) DualFisheyeLayout() bool {
 	r := float64(m.AspectRatio())
 

@@ -83,8 +83,8 @@ func (c *Config) FFmpegBitrate() int {
 	}
 }
 
-// FFmpegFisheyeFov returns the field of view in degrees used by the v360 dewarp filter for fisheye
-// 360° originals, defaulting to 204 (typical Insta360 X-series lens overlap).
+// FFmpegFisheyeFov returns the clamped field of view in degrees for the v360 dewarp filter.
+// Cameras recognized by entity.CameraFisheyeFov use their own angle instead of this value.
 func (c *Config) FFmpegFisheyeFov() int {
 	switch {
 	case c.options.FFmpegFisheyeFov <= 0:

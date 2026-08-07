@@ -1,6 +1,6 @@
 PhotoPrism — Backend CODEMAP
 
-**Last Updated:** July 28, 2026
+**Last Updated:** August 7, 2026
 
 Purpose
 - Give agents and contributors a fast, reliable map of where things live and how they fit together, so you can add features, fix bugs, and write tests without spelunking.
@@ -120,6 +120,7 @@ Media Processing
 - Thumbnails: `internal/thumb/*` and helpers in `internal/photoprism/mediafile_thumbs.go`.
 - Metadata: `internal/meta/*`.
 - FFmpeg integration: `internal/ffmpeg/*`.
+- 360° originals (Insta360 `.insp`/`.insv`, fisheye DNG): recognized in `pkg/fs/file_types.go` and `pkg/media/insta360.go`, with the projection vocabulary in `pkg/media/projection`. Detection and capture grouping live in `internal/photoprism/mediafile_insta360.go` / `mediafile_projection.go`; `internal/ffmpeg/v360.go` builds the dewarp commands that `convert_image*.go` and `convert_video_avc.go` run, always writing a derivative and never touching the original. Only the equirectangular derivative is reported to the viewer (`sphereProjection` in `internal/entity/search/photos_results.go`); `fisheye:` finds the originals behind it.
 - HEIF tooling: distribution binaries live under `scripts/dist/install-libheif.sh`; regenerate archives with `make build-libheif-*` (wraps `scripts/dist/build-libheif.sh` for each supported distro/arch) before publishing to `dl.photoprism.app/dist/libheif/`.
 - Folder album consistency:
   - `internal/entity/folder.go` keeps `FindFolder(...)` unscoped for create/index conflict handling, so a soft-deleted row cannot cause repeated insert/fail/not-found loops.
@@ -194,7 +195,7 @@ Security & Hot Spots (Where to Look)
   - App helpers: `internal/photoprism/mediafile.go` (`MediaFile.Copy/Move` with `force`).
   - Utils: `pkg/fs/copy.go`, `pkg/fs/move.go` (use `O_TRUNC` to avoid trailing bytes).
 - FFmpeg command builders and encoders:
-  - Core: `internal/ffmpeg/transcode_cmd.go`, `internal/ffmpeg/remux.go`.
+  - Core: `internal/ffmpeg/transcode_cmd.go`, `internal/ffmpeg/remux.go`, `internal/ffmpeg/v360.go`.
   - Encoders (string builders only): `internal/ffmpeg/{apple,intel,nvidia,vaapi,v4l}/avc.go`.
   - Tests guard HW runs with `PHOTOPRISM_FFMPEG_ENCODER`; otherwise assert command strings and negative paths.
 - libvips thumbnails:

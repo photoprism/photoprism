@@ -21,8 +21,8 @@ const (
 	DefaultMapMetadata = "0"
 )
 
-// Field-of-view limits in degrees for the v360 fisheye dewarp filter. The default matches the
-// overlapping lenses of typical Insta360 X-series cameras.
+// Field-of-view limits in degrees for the v360 fisheye dewarp filter. The default is the angle the
+// stored fisheye disc spans, not a lens specification, so it is smaller than the optics suggest.
 const (
 	MinFisheyeFov     = 90
 	DefaultFisheyeFov = 190

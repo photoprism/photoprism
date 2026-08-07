@@ -222,9 +222,11 @@ func (m *Photo) MediaInfo() (mediaHash, mediaCodec, mediaMime string, width, hei
 	case entity.MediaVideo, entity.MediaLive:
 		// Prefer a generated equirectangular AVC so dimensions, codec, and projection describe the
 		// media the sphere viewer actually plays rather than either square lens original.
-		for _, f := range m.Files {
-			if f.FileVideo && f.FileHash != "" && projection.Type(f.FileProjection).Equal(projection.Equirectangular.String()) {
-				return f.FileHash, f.FileCodec, video.ContentType(f.FileMime, f.FileType, f.FileCodec, f.IsHDR()), f.FileWidth, f.FileHeight
+		if m.HasFisheyeOriginal() {
+			for _, f := range m.Files {
+				if f.FileVideo && f.FileHash != "" && projection.Type(f.FileProjection).Equal(projection.Equirectangular.String()) {
+					return f.FileHash, f.FileCodec, video.ContentType(f.FileMime, f.FileType, f.FileCodec, f.IsHDR()), f.FileWidth, f.FileHeight
+				}
 			}
 		}
 		for _, f := range m.Files {
@@ -268,25 +270,26 @@ func (m *Photo) MediaInfo() (mediaHash, mediaCodec, mediaMime string, width, hei
 	return m.FileHash, "", m.FileMime, m.FileWidth, m.FileHeight
 }
 
-// MediaProjection returns the projection of the photo's playable media file, i.e. what the viewer
-// actually shows. It prefers an equirectangular derivative (the dewarped output of a fisheye or
-// dual-fisheye original), falling back to the video or primary file's projection. Raw fisheye-family
-// values are never reported, because those originals are not directly viewable in the sphere viewer.
+// MediaProjection returns the projection of the media the viewer actually shows, preferring an
+// equirectangular derivative over the video or primary file's own projection.
+// Raw fisheye-family values are never reported, since those originals are not viewable as spheres.
 func (m *Photo) MediaProjection() string {
-	// Prefer an equirectangular derivative so the sphere viewer shows the corrected pixels
-	// rather than the raw fisheye source.
-	for _, f := range m.Files {
-		if projection.Type(f.FileProjection).Equal(projection.Equirectangular.String()) {
-			return projection.Equirectangular.String()
+	// A dewarp derivative holds the corrected pixels, so it wins over the raw fisheye source.
+	// Only substituted when a fisheye original is present, so that a stack which merely contains
+	// some 360° file does not turn an unrelated primary picture into a sphere.
+	if m.HasFisheyeOriginal() {
+		for _, f := range m.Files {
+			if projection.Type(f.FileProjection).Equal(projection.Equirectangular.String()) {
+				return projection.Equirectangular.String()
+			}
 		}
 	}
 
 	switch m.PhotoType {
 	case entity.MediaVideo, entity.MediaLive:
-		// For videos the primary search row is usually a poster JPEG that carries no projection,
-		// so the video file's projection (which the indexer sets) is used instead. Fisheye-family
-		// values are skipped: the playable media is the equirectangular transcode, which the viewer
-		// routes via its 2:1 aspect ratio and the panorama flag.
+		// The primary row is usually a poster JPEG carrying no projection, so the video file's
+		// projection is used instead. Fisheye values are skipped because the playable media is the
+		// transcode, which the viewer routes via its 2:1 aspect ratio and the panorama flag.
 		for _, f := range m.Files {
 			if f.FileVideo && f.FileProjection != "" && !projection.Type(f.FileProjection).Fisheye() {
 				return f.FileProjection
@@ -297,6 +300,22 @@ func (m *Photo) MediaProjection() string {
 	// A fisheye/dual-fisheye original without an equirectangular derivative is not directly viewable,
 	// so report no projection rather than the raw fisheye value.
 	return sphereProjection(m.FileProjection)
+}
+
+// HasFisheyeOriginal reports whether the photo has a fisheye-family file that needs a dewarp
+// derivative to stand in for it, checking the primary row as well as the merged files.
+func (m *Photo) HasFisheyeOriginal() bool {
+	if projection.Type(m.FileProjection).Fisheye() {
+		return true
+	}
+
+	for _, f := range m.Files {
+		if projection.Type(f.FileProjection).Fisheye() {
+			return true
+		}
+	}
+
+	return false
 }
 
 // sphereProjection redacts raw fisheye-family projections, which the sphere viewer cannot display

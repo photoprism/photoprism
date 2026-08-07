@@ -241,9 +241,8 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 		}
 	}
 
-	// Fisheye 360° DNGs were developed to JPEG above; dewarp that JPEG to equirectangular now, since
-	// FFmpeg cannot develop RAW itself. The developed frame must be a verified horizontal/vertical
-	// dual-fisheye or single-fisheye layout. Best effort: a failure leaves the developed JPEG usable.
+	// Dewarp the JPEG a fisheye DNG was developed to above, since FFmpeg cannot develop RAW itself.
+	// Best effort: an unsupported layout or a failed dewarp leaves the developed JPEG usable.
 	if f.FisheyeDng() && result.IsJpeg() {
 		developedProjection := projection.Unknown
 		stacked := false
@@ -266,10 +265,9 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 		}
 	}
 
-	// Tag a dewarped equirectangular derivative with GPano metadata and record its projection in an
-	// ExifTool JSON sidecar, so the indexer reads the real projection through the normal metadata
-	// pipeline (only files that were actually dewarped are tagged). The dewarp/GPano writes changed
-	// the file, so reload it to refresh the cached size/hash regardless of the GPano write outcome.
+	// Tag a dewarped derivative with GPano metadata and an ExifTool JSON sidecar, so the indexer
+	// reads its projection through the normal metadata pipeline.
+	// Reload afterwards because those writes changed the file's cached size and hash.
 	if fileProjection.Equal(projection.Equirectangular.String()) {
 		result.SetVisualProjection(projection.Equirectangular)
 

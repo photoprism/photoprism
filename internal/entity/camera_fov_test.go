@@ -32,6 +32,16 @@ func TestCameraFisheyeFov(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		assert.Equal(t, 0, CameraFisheyeFov("", ""))
 	})
+	t.Run("IPhoneXNotFisheye", func(t *testing.T) {
+		// "one x" is a substring of "iphone x", so bare model names must not match on their own.
+		assert.Equal(t, 0, CameraFisheyeFov("Apple", "iPhone X"))
+	})
+	t.Run("BareModelWithoutVendor", func(t *testing.T) {
+		assert.Equal(t, 0, CameraFisheyeFov("", "ONE RS"))
+	})
+	t.Run("MeasuredValue", func(t *testing.T) {
+		assert.Equal(t, MeasuredFisheyeFov, CameraFisheyeFov("Insta360", "Insta360 OneRS"))
+	})
 }
 
 // TestCameraFisheyeRoll verifies that only the validated OneRS profile receives a correction.

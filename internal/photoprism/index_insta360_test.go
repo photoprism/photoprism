@@ -13,13 +13,10 @@ import (
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
-// newInsta360ReconcileFixture indexes one capture as three unrelated photos, as a previous index
-// run would have left them, and returns the related files, those photos, and their file names
-// relative to the originals root, all in canonical lens order.
-//
-// The capture directory is named after the test case because a MariaDB run gives the whole package
-// a single database, so a shared directory name would collide across subtests. Do not isolate the
-// database with PHOTOPRISM_TEST_DSN here: that leaves the driver pointing at MySQL and terminates
+// newInsta360ReconcileFixture indexes one capture as three unrelated photos, as an older index run
+// would have left them, and returns them in canonical lens order.
+// The capture directory is named after the test case because MariaDB runs share one database per
+// package. Do not isolate it with PHOTOPRISM_TEST_DSN: that points the driver at MySQL and kills
 // the test binary, see entity.TestDbDSN.
 func newInsta360ReconcileFixture(t *testing.T, name string) (RelatedFiles, []entity.Photo, []string) {
 	t.Helper()

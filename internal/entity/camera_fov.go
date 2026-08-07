@@ -2,28 +2,28 @@ package entity
 
 import "strings"
 
-// CameraFisheyeFov returns the per-lens field of view in degrees for dewarping fisheye 360°
-// originals from known cameras, or 0 when unknown so the caller can fall back to the configured
-// default. Only cameras whose formats are handled (Insta360 .insv/.insp/DNG, Ricoh Theta DNG) are
-// listed, so this stays in step with MediaFile.FisheyeDng detection.
-//
-// A value is the angle the stored fisheye disc spans, not the lens specification: the disc is
-// inscribed in its half of the frame, so it covers noticeably less than the optics do. Values are
-// measured by rendering a sample at candidate angles and picking the one whose seam columns differ
-// least from their neighbors; overshooting drops a wedge of the scene at each seam. Ricoh Theta Z1
-// (190) and Insta360 ONE RS (186-194 across two captures) were measured, the remaining models
-// follow them because no sample was available.
+// MeasuredFisheyeFov is the dewarp angle shared by every camera CameraFisheyeFov recognizes.
+// It is the angle the stored fisheye disc spans, not a lens specification, since the disc is
+// inscribed in its half of the frame; overshooting drops a wedge of the scene at each seam.
+const MeasuredFisheyeFov = 190
+
+// CameraFisheyeFov returns the field of view in degrees for a known 360° camera, or 0 so the
+// caller falls back to the configured default. Recognized cameras must stay in step with
+// MediaFile.FisheyeDng detection.
 func CameraFisheyeFov(makeName, modelName string) int {
 	maker := strings.ToLower(strings.TrimSpace(makeName))
 	model := strings.ToLower(strings.TrimSpace(modelName))
 
+	// Maker and model are matched separately because an original may carry only one of the two.
+	// A model must identify the brand, so bare product names are skipped: "one x" would otherwise
+	// match "iPhone X".
 	switch {
-	case strings.Contains(model, "insta360 x") || strings.Contains(model, "one x") || strings.Contains(model, "one rs") || strings.Contains(model, "oners"):
-		return 190 // Insta360 X-series / ONE X / ONE RS.
-	case strings.Contains(model, "insta360") || maker == "insta360" || maker == "arashi vision":
-		return 190 // Other Insta360 models identified by model or maker (e.g. ONE, bare model names).
-	case strings.Contains(model, "theta"):
-		return 190 // Ricoh Theta series (model always carries "THETA").
+	case maker == "insta360", maker == "arashi vision":
+		return MeasuredFisheyeFov
+	case strings.Contains(model, "insta360"): // Insta360 X-series, ONE, ONE X, ONE RS, ...
+		return MeasuredFisheyeFov
+	case strings.Contains(model, "theta"): // Ricoh Theta series (the model always carries "THETA").
+		return MeasuredFisheyeFov
 	}
 
 	return 0
