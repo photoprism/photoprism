@@ -294,6 +294,9 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 		case terms["panoramas"]:
 			frm.Query = strings.ReplaceAll(frm.Query, "panoramas", "")
 			frm.Panorama = true
+		case terms["fisheye"]:
+			frm.Query = strings.ReplaceAll(frm.Query, "fisheye", "")
+			frm.Fisheye = true
 		case terms["scans"]:
 			frm.Query = strings.ReplaceAll(frm.Query, "scans", "")
 			frm.Scan = "true"
@@ -459,6 +462,11 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 	// Find panoramic pictures only.
 	if frm.Panorama {
 		s = s.Where("photos.photo_panorama = 1")
+	}
+
+	// Find fisheye 360° originals only.
+	if frm.Fisheye {
+		s = fisheyePhotoFilter(s)
 	}
 
 	// Find portrait/landscape/square pictures only.

@@ -676,6 +676,9 @@
                 "FFmpegEncoder": {
                     "type": "string"
                 },
+                "FFmpegFisheyeFov": {
+                    "type": "integer"
+                },
                 "FFmpegMapAudio": {
                     "type": "string"
                 },

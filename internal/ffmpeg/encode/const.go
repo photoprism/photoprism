@@ -20,3 +20,11 @@ const (
 	DefaultMapAudio    = "0:a:0?"
 	DefaultMapMetadata = "0"
 )
+
+// Field-of-view limits in degrees for the v360 fisheye dewarp filter. The default matches the
+// overlapping lenses of typical Insta360 X-series cameras.
+const (
+	MinFisheyeFov     = 90
+	DefaultFisheyeFov = 190
+	MaxFisheyeFov     = 360
+)

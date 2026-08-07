@@ -40,3 +40,10 @@ func TestType_UnknownMethod(t *testing.T) {
 	assert.True(t, Unknown.Unknown())
 	assert.False(t, Equirectangular.Unknown())
 }
+
+func TestType_Fisheye(t *testing.T) {
+	assert.True(t, Fisheye.Fisheye())
+	assert.True(t, DualFisheye.Fisheye())
+	assert.False(t, Equirectangular.Fisheye())
+	assert.False(t, Unknown.Fisheye())
+}

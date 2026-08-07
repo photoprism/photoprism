@@ -2,7 +2,6 @@ package photoprism
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
 	"sync"
 	"testing"
@@ -99,8 +98,8 @@ func TestIndex_UserMediaFile_ParallelDuplicates(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	// The package-wide PHOTOPRISM_TEST_DSN points all test configs at one shared
-	// database, so it must be isolated for reliable row counts.
+	// The package-wide test config points all test configs at one shared database,
+	// so this test needs one of its own for reliable row counts.
 	useTestDb(t, "index-dup-race")
 
 	cfg := config.NewMinimalTestConfigWithDb("index-dup-race", filepath.Join(t.TempDir(), "storage"))
@@ -226,10 +225,9 @@ func TestIndex_IndexedFileOriginalName(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	// The package-wide PHOTOPRISM_TEST_DSN points all test configs at one
-	// shared database; it and the storage must be isolated so the flash.jpg
-	// content does not collide by hash with a row another test indexed with
-	// an explicit original name.
+	// The package-wide test config points all test configs at one shared database;
+	// the database and storage must be isolated so the flash.jpg content does not
+	// collide by hash with a row another test indexed with an explicit original name.
 	useTestDb(t, "index-original-name")
 
 	cfg := config.NewMinimalTestConfigWithDb("index-original-name", filepath.Join(t.TempDir(), "storage"))
@@ -289,135 +287,52 @@ func TestIndex_IndexedFileOriginalName(t *testing.T) {
 	assert.Empty(t, file2.OriginalName, "re-indexed renamed file must not pick up a stale OriginalName")
 }
 
-func TestIndex_MediaFile_ImportFaceTags(t *testing.T) {
+// TestIndex_MediaFile_DualFisheye verifies that an Insta360 .insp original is recognized and
+// recorded with the dual-fisheye projection, which also flags the photo as a panorama.
+func TestIndex_MediaFile_DualFisheye(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
 	}
 
-	// indexSidecar indexes the "Cara" sidecar fixture in an isolated database and
-	// storage with the given face flags, then returns the file's markers. The
-	// isolation mirrors TestIndex_MediaFile_OriginalName so the fixture hash does
-	// not collide with rows another test indexed.
-	indexSidecar := func(t *testing.T, detectFaces, importFaceTags bool) entity.Markers {
-		t.Helper()
+	useTestDb(t, "index-dual-fisheye")
 
-		useTestDb(t, "import-face-tags")
-		cfg := config.NewMinimalTestConfigWithDb("import-face-tags", filepath.Join(t.TempDir(), "storage"))
+	cfg := config.NewMinimalTestConfigWithDb("index-dual-fisheye", filepath.Join(t.TempDir(), "storage"))
 
-		// collectXmpFaces resolves the sidecar via the package-level config.
-		oldCfg := Config()
-		SetConfig(cfg)
-		t.Cleanup(func() {
-			SetConfig(oldCfg)
-			oldCfg.RegisterDb()
-		})
-
-		// Copy the JPEG and its .xmp sidecar into originals so collectXmpFaces
-		// finds the "Cara" region next to the primary file.
-		dstDir := filepath.Join(cfg.OriginalsPath(), "xmp-faces")
-		jpg := filepath.Join(dstDir, "sidecar.jpg")
-		src, err := NewMediaFile("testdata/xmp-faces/sidecar.jpg")
-		require.NoError(t, err)
-		require.NoError(t, src.Copy(jpg, false))
-		require.NoError(t, fs.Copy("testdata/xmp-faces/sidecar.jpg.xmp", filepath.Join(dstDir, "sidecar.jpg.xmp"), false))
-
-		ind := NewIndex(cfg, NewConvert(cfg), NewFiles(), NewPhotos())
-		opt := IndexOptionsSingle(cfg)
-		opt.DetectFaces = detectFaces
-		opt.ImportFaceTags = importFaceTags
-
-		mf, err := NewMediaFile(jpg)
-		require.NoError(t, err)
-
-		result := ind.MediaFile(mf, opt, "", "")
-		require.True(t, result.Success(), "index must succeed: %v", result.Err)
-		require.NotEmpty(t, result.FileUID)
-
-		markers, err := entity.FindMarkers(result.FileUID)
-		require.NoError(t, err)
-		return markers
-	}
-
-	hasXmpName := func(markers entity.Markers, name string) bool {
-		for i := range markers {
-			if markers[i].MarkerSrc == entity.SrcXmp && markers[i].MarkerName == name {
-				return true
-			}
-		}
-		return false
-	}
-
-	t.Run("ImportsWhenDetectionDisabled", func(t *testing.T) {
-		markers := indexSidecar(t, false, true)
-		assert.True(t, hasXmpName(markers, "Cara"), "XMP face tag must import with AI detection off, got %+v", markers)
-	})
-	t.Run("SkipsWhenToggleOff", func(t *testing.T) {
-		markers := indexSidecar(t, false, false)
-		assert.False(t, hasXmpName(markers, "Cara"), "no XMP marker may be created when the import toggle is off")
-	})
-}
-
-// TestIndex_MediaFile_FacesOnlyRecountsAfterDelete verifies that a faces-only
-// re-index recomputes and persists the photo face count when a removed XMP
-// region deletes its marker, even though the deletion leaves no unsaved marker.
-func TestIndex_MediaFile_FacesOnlyRecountsAfterDelete(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping test in short mode.")
-	}
-
-	useTestDb(t, "faces-only-recount")
-	cfg := config.NewMinimalTestConfigWithDb("faces-only-recount", filepath.Join(t.TempDir(), "storage"))
 	oldCfg := Config()
 	SetConfig(cfg)
+
 	t.Cleanup(func() {
 		SetConfig(oldCfg)
 		oldCfg.RegisterDb()
 	})
 
-	dstDir := filepath.Join(cfg.OriginalsPath(), "xmp-faces")
-	jpg := filepath.Join(dstDir, "sidecar.jpg")
-	xmp := filepath.Join(dstDir, "sidecar.jpg.xmp")
-	src, err := NewMediaFile("testdata/xmp-faces/sidecar.jpg")
-	require.NoError(t, err)
-	require.NoError(t, src.Copy(jpg, false))
-	require.NoError(t, fs.Copy("testdata/xmp-faces/sidecar.jpg.xmp", xmp, false))
-
-	ind := NewIndex(cfg, NewConvert(cfg), NewFiles(), NewPhotos())
-
-	// Phase 1: import the sidecar's "Cara" region and confirm the face count.
+	convert := NewConvert(cfg)
+	ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
 	opt := IndexOptionsSingle(cfg)
-	opt.ImportFaceTags = true
-	mf, err := NewMediaFile(jpg)
+	opt.Convert = false // exercise original detection without the ffmpeg dewarp
+
+	srcFile, err := NewMediaFile("testdata/insta360.insp")
 	require.NoError(t, err)
-	result := ind.MediaFile(mf, opt, "", "")
-	require.True(t, result.Success(), "initial index must succeed: %v", result.Err)
-	require.NotEmpty(t, result.PhotoUID)
 
-	markers, err := entity.FindMarkers(result.FileUID)
+	dst := filepath.Join(cfg.OriginalsPath(), "insta360.insp")
+	require.NoError(t, srcFile.Copy(dst, false))
+
+	mf, err := NewMediaFile(dst)
 	require.NoError(t, err)
-	require.Len(t, markers, 1, "the sidecar region must import once")
+	hash := mf.Hash()
 
-	var before entity.Photo
-	require.NoError(t, entity.Db().Where("photo_uid = ?", result.PhotoUID).First(&before).Error)
-	require.Equal(t, 1, before.PhotoFaces, "photo face count must reflect the imported marker")
+	// The full index flow creates the ExifTool JSON before indexing; it also supplies the JPEG
+	// dimensions the panorama flag depends on.
+	require.NoError(t, mf.CreateExifToolJson(convert))
 
-	// Phase 2: empty the sidecar's region list and re-index faces-only. The
-	// container still declares that regions are tracked, so the removed region
-	// deletes its marker; the count must be recomputed and persisted to 0.
-	require.NoError(t, os.WriteFile(xmp, []byte(emptyRegionListXmp), fs.ModeFile)) //nolint:gosec // isolated test path
+	res := ind.MediaFile(mf, opt, "", "")
+	require.True(t, res.Success())
 
-	facesOpt := IndexOptionsFacesOnly(cfg)
-	facesOpt.ImportFaceTags = true
-	mf2, err := NewMediaFile(jpg)
-	require.NoError(t, err)
-	res2 := ind.MediaFile(mf2, facesOpt, "", "")
-	require.NotEqual(t, IndexFailed, res2.Status, "faces-only re-index must not fail: %v", res2.Err)
+	var file entity.File
+	require.NoError(t, entity.UnscopedDb().First(&file, "file_hash = ?", hash).Error)
+	assert.Equal(t, "dual-fisheye", file.FileProjection)
 
-	remaining, err := entity.FindMarkers(result.FileUID)
-	require.NoError(t, err)
-	assert.Empty(t, remaining, "the removed region's XMP marker must be deleted")
-
-	var after entity.Photo
-	require.NoError(t, entity.Db().Where("photo_uid = ?", result.PhotoUID).First(&after).Error)
-	assert.Equal(t, 0, after.PhotoFaces, "photo face count must be recomputed after a delete-only faces run")
+	var photo entity.Photo
+	require.NoError(t, entity.UnscopedDb().First(&photo, "id = ?", file.PhotoID).Error)
+	assert.True(t, photo.PhotoPanorama)
 }

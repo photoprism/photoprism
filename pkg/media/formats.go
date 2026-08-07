@@ -25,6 +25,7 @@ var Formats = map[fs.Type]Type{
 	fs.ImageHeic:       Image,
 	fs.ImageHeicS:      Image,
 	fs.ImageWebp:       Image,
+	fs.ImageInsp:       Image,
 	fs.ImageRaw:        Raw,
 	fs.ImageDng:        Raw,
 	fs.SidecarXMP:      Sidecar,
@@ -66,6 +67,7 @@ var Formats = map[fs.Type]Type{
 	fs.VideoASF:        Video,
 	fs.VideoWMV:        Video,
 	fs.VideoDV:         Video,
+	fs.VideoInsv:       Video,
 	fs.TypeUnknown:     Sidecar,
 }
 

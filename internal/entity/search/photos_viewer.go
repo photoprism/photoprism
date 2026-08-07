@@ -86,7 +86,7 @@ func (m GeoResult) ViewerResult(contentUri, apiUri, previewToken, downloadToken 
 		Favorite:     m.PhotoFavorite,
 		Playable:     m.IsPlayable(),
 		Panorama:     m.PhotoPanorama,
-		Projection:   m.FileProjection,
+		Projection:   sphereProjection(m.FileProjection),
 		Duration:     m.PhotoDuration,
 		Width:        m.FileWidth,
 		Height:       m.FileHeight,

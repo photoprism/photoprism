@@ -11,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/media/projection"
 	"github.com/photoprism/photoprism/pkg/media/video"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -219,6 +220,13 @@ func (m *Photo) IsPlayable() bool {
 func (m *Photo) MediaInfo() (mediaHash, mediaCodec, mediaMime string, width, height int) {
 	switch m.PhotoType {
 	case entity.MediaVideo, entity.MediaLive:
+		// Prefer a generated equirectangular AVC so dimensions, codec, and projection describe the
+		// media the sphere viewer actually plays rather than either square lens original.
+		for _, f := range m.Files {
+			if f.FileVideo && f.FileHash != "" && projection.Type(f.FileProjection).Equal(projection.Equirectangular.String()) {
+				return f.FileHash, f.FileCodec, video.ContentType(f.FileMime, f.FileType, f.FileCodec, f.IsHDR()), f.FileWidth, f.FileHeight
+			}
+		}
 		for _, f := range m.Files {
 			if f.FileVideo && f.FileHash != "" {
 				return f.FileHash, f.FileCodec, video.ContentType(f.FileMime, f.FileType, f.FileCodec, f.IsHDR()), f.FileWidth, f.FileHeight
@@ -260,22 +268,53 @@ func (m *Photo) MediaInfo() (mediaHash, mediaCodec, mediaMime string, width, hei
 	return m.FileHash, "", m.FileMime, m.FileWidth, m.FileHeight
 }
 
-// MediaProjection returns the projection of the photo's playable media file,
-// falling back to the primary file's projection. For videos the primary search
-// row is usually a poster JPEG that carries no projection metadata, so the video
-// file's projection (which the indexer sets) is used instead — this keeps the
-// 360° equirectangular flag accurate in the viewer DTO.
+// MediaProjection returns the projection of the photo's playable media file, i.e. what the viewer
+// actually shows. It prefers an equirectangular derivative (the dewarped output of a fisheye or
+// dual-fisheye original), falling back to the video or primary file's projection. Raw fisheye-family
+// values are never reported, because those originals are not directly viewable in the sphere viewer.
 func (m *Photo) MediaProjection() string {
+	// Prefer an equirectangular derivative so the sphere viewer shows the corrected pixels
+	// rather than the raw fisheye source.
+	for _, f := range m.Files {
+		if projection.Type(f.FileProjection).Equal(projection.Equirectangular.String()) {
+			return projection.Equirectangular.String()
+		}
+	}
+
 	switch m.PhotoType {
 	case entity.MediaVideo, entity.MediaLive:
+		// For videos the primary search row is usually a poster JPEG that carries no projection,
+		// so the video file's projection (which the indexer sets) is used instead. Fisheye-family
+		// values are skipped: the playable media is the equirectangular transcode, which the viewer
+		// routes via its 2:1 aspect ratio and the panorama flag.
 		for _, f := range m.Files {
-			if f.FileVideo && f.FileProjection != "" {
+			if f.FileVideo && f.FileProjection != "" && !projection.Type(f.FileProjection).Fisheye() {
 				return f.FileProjection
 			}
 		}
 	}
 
-	return m.FileProjection
+	// A fisheye/dual-fisheye original without an equirectangular derivative is not directly viewable,
+	// so report no projection rather than the raw fisheye value.
+	return sphereProjection(m.FileProjection)
+}
+
+// sphereProjection redacts raw fisheye-family projections, which the sphere viewer cannot display
+// directly, so only an equirectangular derivative ever routes a photo to it.
+func sphereProjection(proj string) string {
+	if projection.Type(proj).Fisheye() {
+		return ""
+	}
+
+	return proj
+}
+
+// fisheyePhotoFilter restricts the query to photos that have a live fisheye-family original file.
+// The primary file is the equirectangular dewarp derivative, so the subquery scans all files; it
+// mirrors the base query's `media_id IS NOT NULL` scope to exclude missing/soft-deleted files.
+func fisheyePhotoFilter(s *gorm.DB) *gorm.DB {
+	return s.Where("photos.id IN (SELECT photo_id FROM files WHERE media_id IS NOT NULL AND file_projection IN (?))",
+		[]string{projection.Fisheye.String(), projection.DualFisheye.String()})
 }
 
 // ShareBase returns a deterministic, human friendly file name stem for sharing

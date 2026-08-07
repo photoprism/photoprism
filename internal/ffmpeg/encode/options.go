@@ -24,6 +24,7 @@ type Options struct {
 	Duration    time.Duration // See https://ffmpeg.org/ffmpeg.html#Main-options
 	MovFlags    string        // FFmpeg "-movflags" value for the MP4 muxer (e.g. "use_metadata_tags+faststart"). See https://ffmpeg.org/ffmpeg-formats.html#Options-12
 	VideoTag    string        // FFmpeg "-tag:v" override (e.g. "hvc1" for HEVC in MP4/MOV containers)
+	V360        string        // Optional FFmpeg "v360" filter applied before scaling, e.g. to dewarp dual-fisheye 360° video to equirectangular. See https://ffmpeg.org/ffmpeg-filters.html#v360
 	Title       string
 	Description string
 	Comment     string
@@ -120,15 +121,22 @@ func NewPreviewImageOptions(ffmpegBin string, videoDuration time.Duration) *Opti
 
 // VideoFilter returns the FFmpeg video filter string based on the size limit in pixels and the pixel format.
 func (o *Options) VideoFilter(format PixelFormat) string {
+	// prefix is an optional geometry filter (e.g. a v360 dewarp) applied before scaling. It is a
+	// software filter, so it is only expected on the CPU transcode path (not hardware pixel formats).
+	var prefix string
+	if o.V360 != "" {
+		prefix = o.V360 + ","
+	}
+
 	// scale specifies the FFmpeg downscale filter, see http://trac.ffmpeg.org/wiki/Scaling.
 	switch format {
 	case "":
-		return fmt.Sprintf("scale='if(gte(iw,ih), min(%d, iw), -2):if(gte(iw,ih), -2, min(%d, ih))'", o.SizeLimit, o.SizeLimit)
+		return prefix + fmt.Sprintf("scale='if(gte(iw,ih), min(%d, iw), -2):if(gte(iw,ih), -2, min(%d, ih))'", o.SizeLimit, o.SizeLimit)
 	case FormatQSV:
-		return fmt.Sprintf("scale_qsv=w='if(gte(iw,ih), min(%d, iw), -1)':h='if(gte(iw,ih), -1, min(%d, ih))':format=nv12", o.SizeLimit, o.SizeLimit)
+		return prefix + fmt.Sprintf("scale_qsv=w='if(gte(iw,ih), min(%d, iw), -1)':h='if(gte(iw,ih), -1, min(%d, ih))':format=nv12", o.SizeLimit, o.SizeLimit)
 	}
 
-	return fmt.Sprintf("scale='if(gte(iw,ih), min(%d, iw), -2):if(gte(iw,ih), -2, min(%d, ih))',format=%s", o.SizeLimit, o.SizeLimit, format)
+	return prefix + fmt.Sprintf("scale='if(gte(iw,ih), min(%d, iw), -2):if(gte(iw,ih), -2, min(%d, ih))',format=%s", o.SizeLimit, o.SizeLimit, format)
 }
 
 // QvQuality  returns the video encoding quality as "-q:v" parameter string.
