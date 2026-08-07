@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2026-08-05
+Date generated: 2026-08-07
 
 ================================================================================
 
@@ -4060,8 +4060,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: github.com/klauspost/compress
-Version: v1.19.1
-License: Apache-2.0 (https://github.com/klauspost/compress/blob/v1.19.1/LICENSE)
+Version: v1.19.2
+License: Apache-2.0 (https://github.com/klauspost/compress/blob/v1.19.2/LICENSE)
 
 Copyright (c) 2012 The Go Authors. All rights reserved.
 Copyright (c) 2019 Klaus Post. All rights reserved.
@@ -4371,8 +4371,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 --------------------------------------------------------------------------------
 
 Package: github.com/klauspost/compress/internal/snapref
-Version: v1.19.1
-License: BSD-3-Clause (https://github.com/klauspost/compress/blob/v1.19.1/internal/snapref/LICENSE)
+Version: v1.19.2
+License: BSD-3-Clause (https://github.com/klauspost/compress/blob/v1.19.2/internal/snapref/LICENSE)
 
 Copyright (c) 2011 The Snappy-Go Authors. All rights reserved.
 
@@ -4405,8 +4405,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: github.com/klauspost/compress/zstd/internal/xxhash
-Version: v1.19.1
-License: MIT (https://github.com/klauspost/compress/blob/v1.19.1/zstd/internal/xxhash/LICENSE.txt)
+Version: v1.19.2
+License: MIT (https://github.com/klauspost/compress/blob/v1.19.2/zstd/internal/xxhash/LICENSE.txt)
 
 Copyright (c) 2016 Caleb Spare
 
