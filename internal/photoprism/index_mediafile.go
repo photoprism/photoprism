@@ -18,6 +18,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
+	"github.com/photoprism/photoprism/pkg/media/projection"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/time/tz"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -449,7 +450,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		if data := m.MetaData(); data.Error == nil {
 			file.FileCodec = data.Codec
 			file.SetMediaUTC(data.TakenAt)
-			file.SetProjection(data.Projection)
+			file.SetProjection(m.VisualProjection(data.Projection).String())
 			file.SetHDR(data.IsHDR())
 			file.SetColorProfile(data.ColorProfile)
 			file.SetSoftware(data.Software)
@@ -614,10 +615,17 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			file.FilePortrait = m.Portrait()
 			file.SetMediaUTC(data.TakenAt)
 			file.SetPages(data.Pages)
-			file.SetProjection(data.Projection)
+			file.SetProjection(m.VisualProjection(data.Projection).String())
 			file.SetHDR(data.IsHDR())
 			file.SetColorProfile(data.ColorProfile)
 			file.SetSoftware(data.Software)
+
+			// Fisheye 360° DNGs are dual-fisheye; detection reads make/model/lens/projection, so it
+			// runs inside this metadata-ok block to avoid an extra MetaData() call and a projection
+			// tag on a file whose EXIF failed (leaving 0x0 dimensions).
+			if m.FisheyeDng() {
+				file.SetProjection(m.FisheyeDngProjection().String())
+			}
 
 			// Get video metadata from embedded file?
 			if !m.IsHeic() || !data.HasVideoEmbedded {
@@ -668,6 +676,12 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 				photo.SetMediaType(media.Vector, entity.SrcAuto)
 			}
 		}
+
+		// Insta360 .insp originals store dual-fisheye 360° content; record the projection regardless
+		// of metadata errors (these files often lack EXIF) so the dewarped derivative routes correctly.
+		if m.DualFisheye() {
+			file.SetProjection(projection.DualFisheye.String())
+		}
 	case m.IsVector():
 		if data := m.MetaData(); data.Error == nil {
 			// Update basic metadata.
@@ -703,7 +717,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			file.FilePortrait = m.Portrait()
 			file.SetMediaUTC(data.TakenAt)
 			file.SetPages(data.Pages)
-			file.SetProjection(data.Projection)
+			file.SetProjection(m.VisualProjection(data.Projection).String())
 			file.SetHDR(data.IsHDR())
 			file.SetColorProfile(data.ColorProfile)
 			file.SetSoftware(data.Software)
@@ -799,7 +813,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			file.SetDuration(data.Duration)
 			file.SetFPS(data.FPS)
 			file.SetFrames(data.Frames)
-			file.SetProjection(data.Projection)
+			file.SetProjection(m.VisualProjection(data.Projection).String())
 			file.SetHDR(data.IsHDR())
 			file.SetColorProfile(data.ColorProfile)
 			file.SetSoftware(data.Software)
@@ -824,6 +838,12 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			photo.SetMediaType(media.Live, entity.SrcAuto)
 		} else {
 			photo.SetMediaType(media.Video, entity.SrcAuto)
+		}
+
+		// Insta360 .insv originals store dual-fisheye 360° content; record the projection regardless
+		// of metadata errors (these files often lack EXIF) so the dewarped transcode routes correctly.
+		if m.DualFisheye() {
+			file.SetProjection(projection.DualFisheye.String())
 		}
 
 		// Set the video dimensions from the primary image if it could not be determined from the video metadata.

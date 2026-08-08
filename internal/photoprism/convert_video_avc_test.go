@@ -3,7 +3,9 @@ package photoprism
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 
@@ -40,6 +42,18 @@ func TestConvert_ToAvc(t *testing.T) {
 		assert.Truef(t, fs.FileExists(avcFile.FileName()), "output file does not exist: %s", avcFile.FileName())
 
 		t.Logf("video metadata: %+v", avcFile.MetaData())
+
+		oldTime := time.Unix(1, 0)
+		assert.NoError(t, os.Chtimes(outputName, oldTime, oldTime))
+
+		avcFile, err = convert.ToAvc(mf, encode.SoftwareAvc, false, true)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		info, err := os.Stat(avcFile.FileName())
+		assert.NoError(t, err)
+		assert.True(t, info.ModTime().After(oldTime), "forced conversion should replace the sidecar")
 
 		_ = os.Remove(outputName)
 	})
@@ -187,5 +201,77 @@ func TestConvert_TranscodeToAvcCmd(t *testing.T) {
 		assert.Contains(t, r.Path, "convert")
 		assert.Contains(t, r.Args, webpName)
 		assert.Contains(t, r.Args, avcName)
+	})
+	t.Run("Insv", func(t *testing.T) {
+		mf, err := NewMediaFile("testdata/insta360.insv")
+		if err != nil {
+			t.Fatal(err)
+		}
+		// A hardware encoder is requested, but .insv must be forced onto the software v360 path.
+		r, _, err := convert.TranscodeToAvcCmd(mf, "insta360.avc", encode.Encoder("intel"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		args := strings.Join(r.Args, " ")
+		assert.Contains(t, r.Path, "ffmpeg")
+		assert.Contains(t, args, "v360=input=dfisheye:output=e")
+		assert.NotContains(t, args, "roll=180")
+		assert.Contains(t, args, "libx264")
+	})
+	t.Run("OneRSInsv", func(t *testing.T) {
+		mf, err := NewMediaFile(oneRSInsvFixture(t, t.TempDir(), "camera.insv"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		r, _, err := convert.TranscodeToAvcCmd(mf, "camera.avc", encode.SoftwareAvc)
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Contains(t, strings.Join(r.Args, " "), "v360=input=dfisheye:output=e:ih_fov=190:iv_fov=190:roll=180")
+	})
+	t.Run("OneRSSquareInsv", func(t *testing.T) {
+		mf, err := NewMediaFile(oneRSInsvFixture(t, t.TempDir(), "camera.insv"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		mf.width = 3072
+		mf.height = 3072
+		r, _, err := convert.TranscodeToAvcCmd(mf, "camera.avc", encode.SoftwareAvc)
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.NotContains(t, strings.Join(r.Args, " "), "v360")
+	})
+	t.Run("Insta360SeparateLensPair", func(t *testing.T) {
+		dir := t.TempDir()
+		leftName := writeInsta360CaptureFile(t, dir, "VID_20220625_140410_00_008.insv", "testdata/flash.jpg")
+		rightName := writeInsta360CaptureFile(t, dir, "VID_20220625_140410_10_008.insv", "testdata/flash.jpg")
+		mf, err := NewMediaFile(leftName)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		r, useMutex, err := convert.TranscodeToAvcCmd(mf, "camera.avc", encode.Encoder("intel"))
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		args := strings.Join(r.Args, " ")
+		assert.True(t, useMutex)
+		assert.Contains(t, args, "-i "+leftName+" -i "+rightName)
+		assert.Contains(t, args, "hstack=inputs=2:shortest=1,v360=input=dfisheye:output=e")
+		assert.Contains(t, args, "-map [v] -map 0:a:0?")
+		assert.Contains(t, args, "libx264")
+	})
+	t.Run("Mp4NoV360", func(t *testing.T) {
+		mf, err := NewMediaFile(filepath.Join(conf.SamplesPath(), "gopher-video.mp4"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		r, _, err := convert.TranscodeToAvcCmd(mf, "gopher.avc", encode.SoftwareAvc)
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.NotContains(t, strings.Join(r.Args, " "), "v360")
 	})
 }

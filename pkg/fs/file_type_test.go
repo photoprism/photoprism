@@ -189,7 +189,12 @@ func TestFileType(t *testing.T) {
 	t.Run("Mp4", func(t *testing.T) {
 		assert.Equal(t, Type("mp4"), FileType("file.mp4"))
 	})
-
+	t.Run("Insp", func(t *testing.T) {
+		assert.Equal(t, ImageInsp, FileType("IMG_20180318_205851_239.insp"))
+	})
+	t.Run("Insv", func(t *testing.T) {
+		assert.Equal(t, VideoInsv, FileType("VID_20220607_102410_00_322.insv"))
+	})
 }
 
 func TestIsAnimatedImage(t *testing.T) {

@@ -1,6 +1,6 @@
 ## PhotoPrism — Media Package
 
-**Last Updated:** June 1, 2026
+**Last Updated:** August 7, 2026
 
 ### Apple iPhone & iPad
 
@@ -15,6 +15,14 @@ Some Samsung and Google Android devices support taking "Motion Photos" with the 
 The image part of these files can be opened in any image viewer that supports JPEG/HEIC, but the video part cannot. However, since the MP4 video is simply appended at the end of the image file, it can be easily read by our software and streamed through the API as needed.
 
 How PhotoPrism locates the embedded video offset and detects its codec is described in the [`video` subpackage documentation](https://github.com/photoprism/photoprism/blob/develop/pkg/media/video/README.md#codec-detection).
+
+### Insta360 Cameras
+
+Insta360 cameras record 360° originals in two proprietary extensions: `.insp` is a JPEG carrying side-by-side dual-fisheye image data, and `.insv` is an MP4-style container carrying dual-fisheye video plus a gyro/metadata track. Neither is stitched, so both need a dewarp to equirectangular before a sphere viewer can show them.
+
+One capture is not always one file. Higher-resolution models write each lens to its own original (`VID_<date>_<time>_00_<seq>.insv` and `..._10_...`) alongside an optional low-resolution proxy (`LRV_..._11_...`). `ParseInsta360VideoName` recognizes this layout so the indexer can treat the set as a single panorama instead of three unrelated videos.
+
+These files frequently carry no readable EXIF. `Insta360CameraModelFile` therefore scans a bounded window at the start and end of the file for the vendor's embedded model field, which is the only reliable way to identify the camera when the metadata pipeline comes up empty.
 
 ### Introductory Tutorials
 

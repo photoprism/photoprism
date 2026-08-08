@@ -84,7 +84,7 @@ require (
 	github.com/go-co-op/gocron/v2 v2.22.0
 	github.com/go-sql-driver/mysql v1.10.0
 	github.com/golang-jwt/jwt/v5 v5.3.1
-	github.com/klauspost/compress v1.19.1
+	github.com/klauspost/compress v1.19.2
 	github.com/pquerna/otp v1.5.0
 	github.com/prometheus/client_model v0.6.2
 	github.com/robfig/cron/v3 v3.0.1
@@ -94,7 +94,7 @@ require (
 	github.com/urfave/cli/v2 v2.27.7
 	github.com/wamuir/graft v0.10.0
 	github.com/yalue/onnxruntime_go v1.32.0
-	github.com/zitadel/oidc/v3 v3.49.1
+	github.com/zitadel/oidc/v3 v3.49.2
 	golang.org/x/mod v0.38.0
 	golang.org/x/sys v0.47.0
 	google.golang.org/protobuf v1.36.11

@@ -140,7 +140,8 @@ func GetVideo(router *gin.RouterGroup) {
 		bitrateExceeded := conf.FFmpegEnabled() && conf.FFmpegBitrateExceeded(videoBitrate)
 		transcode := !supported || bitrateExceeded
 
-		if mediaFile, mediaErr := photoprism.NewMediaFile(videoFileName); mediaErr != nil {
+		mediaFile, mediaErr := photoprism.NewMediaFile(videoFileName)
+		if mediaErr != nil {
 			// Set missing flag so that the file doesn't show up in search results anymore.
 			logErr("video", f.Update("FileMissing", true))
 
@@ -148,7 +149,31 @@ func GetVideo(router *gin.RouterGroup) {
 			log.Errorf("video: file %s is missing", clean.Log(f.FileName))
 			AbortVideo(c)
 			return
-		} else if transcode {
+		}
+
+		// Original fisheye pixels must never be sent to the sphere viewer or converted inline in an
+		// HTTP request. Index/import workers create the AVC; an older LRV derivative is a safe fallback.
+		if mediaFile.DewarpableInsv() {
+			playable := photoprism.DewarpedVideoFile(mediaFile)
+
+			if playable == nil {
+				log.Warnf("video: equirectangular derivative for %s is not ready", clean.Log(f.FileName))
+				AbortVideo(c)
+				return
+			}
+
+			mediaFile = playable
+			videoFileName = playable.FileName()
+			videoFileType = playable.FileType()
+			videoContentType = playable.ContentType()
+			info := playable.VideoInfo()
+			videoBitrate = info.VideoBitrate()
+			supported = video.Compatible(videoContentType, format.ContentType)
+			bitrateExceeded = conf.FFmpegEnabled() && conf.FFmpegBitrateExceeded(videoBitrate)
+			transcode = !supported || bitrateExceeded
+		}
+
+		if transcode {
 			if supported && bitrateExceeded {
 				log.Debugf(
 					"video: %s has an average bitrate of %.1f Mbps, which exceeds the %d Mbps limit",

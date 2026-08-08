@@ -1,9 +1,6 @@
 package rnd
 
 import (
-	"crypto/rand"
-	"math/big"
-
 	"github.com/photoprism/photoprism/pkg/checksum"
 )
 
@@ -32,21 +29,16 @@ func Base62(length int) string {
 }
 
 // Charset generates a random token with the specified length and charset.
+// It returns an empty string for a non-positive length or an unusable charset.
 func Charset(length int, charset string) string {
-	if length < 1 {
+	if length < 1 || len(charset) < 1 || len(charset) > maxCharsetLen {
 		return ""
 	} else if length > 4096 {
 		length = 4096
 	}
 
-	m := big.NewInt(int64(len(charset)))
 	b := make([]byte, length)
-
-	for i := range b {
-		if r, err := rand.Int(rand.Reader, m); err == nil {
-			b[i] = charset[r.Int64()]
-		}
-	}
+	randomChars(b, charset)
 
 	return string(b)
 }

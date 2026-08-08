@@ -36,6 +36,7 @@ const (
 	ImageHeic   Type = "heic"  // High Efficiency Image Container (HEIC)
 	ImageHeicS  Type = "heics" // HEIC Image Sequence
 	ImageWebp   Type = "webp"  // Google WebP Image
+	ImageInsp   Type = "insp"  // Insta360 Panoramic Image (JPEG carrying dual-fisheye data)
 )
 
 // Supported media.Raw file types:
@@ -93,6 +94,7 @@ const (
 	VideoAVI    Type = "avi"  // Microsoft Audio Video Interleave (AVI)
 	VideoWMV    Type = "wmv"  // Windows Media Video (based on ASF)
 	VideoDV     Type = "dv"   // DV Video (https://en.wikipedia.org/wiki/DV)
+	VideoInsv   Type = "insv" // Insta360 Video (MP4 container carrying dual-fisheye data)
 )
 
 // TypeUnknown is the default type used when a file cannot be classified.

@@ -1,10 +1,10 @@
 ## PhotoPrism — FFmpeg Integration
 
-**Last Updated:** November 22, 2025
+**Last Updated:** August 7, 2026
 
 ### Overview
 
-`internal/ffmpeg` wraps the `ffmpeg` CLI to transcode videos to AVC/H.264, remux containers, and extract preview frames in a predictable, testable way. Command builders share option structs so CLI tools, workers, and tests can select software or hardware encoders without duplicating flag logic.
+`internal/ffmpeg` wraps the `ffmpeg` CLI to transcode videos to AVC/H.264, remux containers, extract preview frames, and dewarp fisheye 360° originals to equirectangular in a predictable, testable way. Command builders share option structs so CLI tools, workers, and tests can select software or hardware encoders without duplicating flag logic.
 
 #### Constraints
 
@@ -12,6 +12,7 @@
 - Inputs are internal filenames and option structs (not user input); exec invocations are annotated with `#nosec G204`.
 - Downstream jobs may run concurrently, so `TranscodeCmd` returns a `useMutex` hint to serialize expensive work.
 - Remux and extract commands honor `Force` and reuse shared map flags; metadata copying is limited to safe defaults.
+- `v360` is a software-only filter, so callers that dewarp must select the software AVC encoder; the field of view comes from `entity.CameraFisheyeFov` or the `ffmpeg-fisheye-fov` option.
 
 #### Goals
 
@@ -42,6 +43,7 @@
 - `remux.go` — container-only transfers with metadata copy and temp-file safety.
 - `transcode_cmd.go` — selects encoder, handles animated image inputs, and signals mutex usage.
 - `extract_image_cmd.go` — JPEG/PNG preview frame extraction with color-space presets.
+- `v360.go` — `v360` filter strings and dewarp commands that turn fisheye/dual-fisheye 360° sources into equirectangular JPEG or AVC derivatives.
 - `test.go` & `*_test.go` — reusable command runner and smoke tests (use fixtures in `testdata/`).
 - `ffmpeg.go` — package logger hook.
 
