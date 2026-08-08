@@ -101,6 +101,15 @@ func TestFindEmbeddingModel(t *testing.T) {
 		assert.Equal(t, 112, m.Width)
 		assert.Equal(t, AlignArcFace5, m.Alignment)
 	})
+	t.Run("AuraFace", func(t *testing.T) {
+		m := FindEmbeddingModel("AuraFace")
+		require.NotNil(t, m)
+		assert.Equal(t, RuntimeONNX, m.Runtime)
+		assert.Equal(t, 512, m.Dims)
+		assert.Equal(t, 112, m.Width)
+		assert.Equal(t, AlignArcFace5, m.Alignment)
+		assert.Equal(t, LicenseApache2, m.License)
+	})
 	t.Run("Unknown", func(t *testing.T) {
 		assert.Nil(t, FindEmbeddingModel("dlib"))
 	})
@@ -113,7 +122,7 @@ func TestEmbeddingModelNames(t *testing.T) {
 	names := EmbeddingModelNames()
 
 	t.Run("Sorted", func(t *testing.T) {
-		assert.Equal(t, []ModelName{ModelArcFaceMBF, ModelArcFaceR50, ModelFaceNet, ModelSFace}, names)
+		assert.Equal(t, []ModelName{ModelArcFaceMBF, ModelArcFaceR50, ModelAuraFace, ModelFaceNet, ModelSFace}, names)
 	})
 	t.Run("ExcludesAliases", func(t *testing.T) {
 		assert.NotContains(t, names, ModelAuto)
@@ -172,7 +181,7 @@ func TestEmbeddingModelThresholds(t *testing.T) {
 		assert.Equal(t, MatchDistDefault, m.MatchDist)
 	})
 	t.Run("CalibratedModelsDifferFromFaceNet", func(t *testing.T) {
-		for _, name := range []ModelName{ModelSFace, ModelArcFaceR50, ModelArcFaceMBF} {
+		for _, name := range []ModelName{ModelSFace, ModelAuraFace, ModelArcFaceR50, ModelArcFaceMBF} {
 			m := FindEmbeddingModel(name)
 			require.NotNil(t, m, name)
 			assert.NotEqual(t, ClusterDistDefault, m.ClusterDist, name)

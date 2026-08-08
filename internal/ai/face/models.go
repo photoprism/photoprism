@@ -51,6 +51,8 @@ const (
 	ModelFaceNet ModelName = "facenet"
 	// ModelSFace is the OpenCV Zoo SFace model.
 	ModelSFace ModelName = "sface"
+	// ModelAuraFace is the fal AuraFace v1 model, an Apache-2.0 ArcFace ResNet-100.
+	ModelAuraFace ModelName = "auraface"
 	// ModelArcFaceR50 is the InsightFace ArcFace WebFace600K ResNet-50 model.
 	ModelArcFaceR50 ModelName = "arcface_r50"
 	// ModelArcFaceMBF is the InsightFace ArcFace WebFace600K MobileFaceNet model.
@@ -88,7 +90,8 @@ type EmbeddingModel struct {
 //
 // The ArcFace entries are recognized so operators can benchmark them, but their
 // weights are not installed by "make dep" because InsightFace publishes them for
-// non-commercial research only.
+// non-commercial research only. AuraFace is Apache-2.0 and may be redistributed,
+// but its graph is 261 MB, so it is an opt-in download rather than a bundled model.
 //
 // The thresholds come from TestCalibrateFaceThresholds, which translates the error
 // budget of the shipped FaceNet configuration into each model's distance scale. The
@@ -129,6 +132,23 @@ var EmbeddingModels = map[ModelName]*EmbeddingModel{
 		ClusterDist:   0.91,
 		ClusterRadius: 0.67,
 		MatchDist:     0.39,
+	},
+	ModelAuraFace: {
+		Name:          ModelAuraFace,
+		Runtime:       RuntimeONNX,
+		Dir:           "auraface",
+		FileName:      "auraface_v1_glintr100.onnx",
+		Width:         112,
+		Height:        112,
+		Dims:          512,
+		ColorOrder:    tensorflow.RGB,
+		Mean:          127.5,
+		Scale:         1 / 127.5,
+		Alignment:     AlignArcFace5,
+		License:       LicenseApache2,
+		ClusterDist:   0.98,
+		ClusterRadius: 0.76,
+		MatchDist:     0.35,
 	},
 	ModelArcFaceR50: {
 		Name:          ModelArcFaceR50,
@@ -171,7 +191,7 @@ var EmbeddingModels = map[ModelName]*EmbeddingModel{
 // FaceNet stays first while it is the shipped default: resolving "auto" to a different
 // model would silently start writing embeddings from an incompatible vector space into
 // libraries that were clustered with FaceNet.
-var AutoModelPreference = []ModelName{ModelFaceNet, ModelSFace, ModelArcFaceR50, ModelArcFaceMBF}
+var AutoModelPreference = []ModelName{ModelFaceNet, ModelSFace, ModelArcFaceR50, ModelArcFaceMBF, ModelAuraFace}
 
 // NormalizeModelName lowercases a model name and accepts hyphens in place of underscores.
 func NormalizeModelName(s string) ModelName {
