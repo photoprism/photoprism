@@ -1,6 +1,6 @@
 ## Face Detection & Embedding Guidelines
 
-**Last Updated:** August 5, 2026
+**Last Updated:** August 8, 2026
 
 ### Overview
 
@@ -30,20 +30,23 @@ The detector also returns five facial landmarks, which `engine_onnx.go` decodes 
 
 `FACE_MODEL` selects the model that turns a face crop into a vector, independently of the detector. Supported models are registered in `models.go` with the preprocessing contract they require — input size, channel order, mean, scale, embedding length, alignment mode, and weight license — so the CLI help and config report are generated from one source.
 
-| Model         | Runtime    | Dim | Input   | Alignment | Weights | License       | Installed By                  |
-|:--------------|:-----------|----:|:--------|:----------|--------:|:--------------|:------------------------------|
-| `facenet`     | TensorFlow | 512 | 160×160 | box crop  |   92 MB | unknown       | `make dep-tensorflow`         |
-| `sface`       | ONNX       | 128 | 112×112 | ArcFace-5 |   39 MB | Apache-2.0    | `make dep-sface`              |
-| `arcface_r50` | ONNX       | 512 | 112×112 | ArcFace-5 |  174 MB | research-only | `scripts/download-arcface.sh` |
-| `arcface_mbf` | ONNX       | 512 | 112×112 | ArcFace-5 |   14 MB | research-only | `scripts/download-arcface.sh` |
+| Model         | Runtime    | Dim | Input   | Alignment | Weights | License       | Installed By                   |
+|:--------------|:-----------|----:|:--------|:----------|--------:|:--------------|:-------------------------------|
+| `facenet`     | TensorFlow | 512 | 160×160 | box crop  |   92 MB | unknown       | `make dep-tensorflow`          |
+| `sface`       | ONNX       | 128 | 112×112 | ArcFace-5 |   39 MB | Apache-2.0    | `make dep-sface`               |
+| `auraface`    | ONNX       | 512 | 112×112 | ArcFace-5 |  261 MB | Apache-2.0    | `scripts/download-auraface.sh` |
+| `arcface_r50` | ONNX       | 512 | 112×112 | ArcFace-5 |  174 MB | research-only | `scripts/download-arcface.sh`  |
+| `arcface_mbf` | ONNX       | 512 | 112×112 | ArcFace-5 |   14 MB | research-only | `scripts/download-arcface.sh`  |
 
 `auto` resolves to the first installed model in `face.AutoModelPreference`, which starts with `facenet` so existing libraries keep their embedding space. An explicitly configured model whose weights are missing resolves the same way, with a warning: embeddings would otherwise be produced by the fallback model and recorded under the name that was requested. The InsightFace ArcFace weights are published for non-commercial research only and are therefore never bundled; their install script requires `ARCFACE_ACCEPT_LICENSE=1` and verifies a pinned checksum.
 
 SFace is installed by the Go test targets rather than by `make dep`, because `make all install` copies `assets/` into the published images. Without it the ONNX embedder tests skip and the inference path goes uncovered.
 
+AuraFace is installed by no target at all. Its Apache-2.0 weights could be redistributed, but the same `make all install` path would put a 261 MB graph into every published image, so it stays an explicit `scripts/download-auraface.sh` download. The file is deliberately renamed from the upstream `glintr100.onnx`: InsightFace's antelopev2 pack ships a different model under that name, and because channel order and normalization cannot be read from an ONNX graph, a name collision would apply one model's preprocessing to the other's weights silently.
+
 Models marked `ArcFace-5` need landmark-aligned input. `align.go` fits a similarity transform from the detected landmarks onto the standard 112×112 template that both OpenCV and InsightFace use, and falls back to an unaligned bounding box crop when a face has no complete landmark set.
 
-The bundled children and background reference samples are FaceNet-space vectors, so `IsChild` and `IsBackground` deactivate (with a warning) for any other model. Length alone cannot detect this, because both ArcFace variants also return 512 values.
+The bundled children and background reference samples are FaceNet-space vectors, so `IsChild` and `IsBackground` deactivate (with a warning) for any other model. Length alone cannot detect this, because AuraFace and both ArcFace variants also return 512 values.
 
 **Switching models invalidates existing clusters.** Vectors from two models are not comparable even when their lengths match, so change `FACE_MODEL` first and then migrate the library during a maintenance window. The target must match the resolved configured model:
 
