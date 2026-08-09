@@ -1,6 +1,6 @@
 ## Face Detection & Embedding Guidelines
 
-**Last Updated:** August 8, 2026
+**Last Updated:** August 9, 2026
 
 ### Overview
 
@@ -38,9 +38,13 @@ The detector also returns five facial landmarks, which `engine_onnx.go` decodes 
 | `arcface_r50` | ONNX       | 512 | 112×112 | ArcFace-5 |  174 MB | research-only | `scripts/download-arcface.sh`  |
 | `arcface_mbf` | ONNX       | 512 | 112×112 | ArcFace-5 |   14 MB | research-only | `scripts/download-arcface.sh`  |
 
-`auto` resolves to the first installed model in `face.AutoModelPreference`, which starts with `facenet` so existing libraries keep their embedding space. An explicitly configured model whose weights are missing resolves the same way, with a warning: embeddings would otherwise be produced by the fallback model and recorded under the name that was requested. The InsightFace ArcFace weights are published for non-commercial research only and are therefore never bundled; their install script requires `ARCFACE_ACCEPT_LICENSE=1` and verifies a pinned checksum.
+`auto` asks the library before it consults `face.AutoModelPreference`. A library that already holds face vectors keeps the model that produced them, because resolving to a different one would leave every stored cluster incomparable with everything indexed afterwards; only a library with no vectors follows the preference list, which starts with `sface`. Upgrading an existing installation therefore never changes its embedding space on its own — moving to another model is an explicit `FACE_MODEL` change followed by `photoprism faces migrate`.
 
-SFace is installed by the Go test targets rather than by `make dep`, because `make all install` copies `assets/` into the published images. Without it the ONNX embedder tests skip and the inference path goes uncovered.
+Two details make that guarantee hold. Vectors written before the provenance column existed report no model at all, and since the schema is migrated *after* the configuration is propagated, the first start after an upgrade reads a `markers` table that has no `embed_model` column yet; both cases are read as FaceNet, because nothing else could have produced them. And a resolution found before the database is connected is not cached, so an early lookup cannot freeze the preference list into place.
+
+An explicitly configured model whose weights are missing falls back with a warning: embeddings would otherwise be produced by the fallback model and recorded under the name that was requested. The InsightFace ArcFace weights are published for non-commercial research only and are therefore never bundled; their install script requires `ARCFACE_ACCEPT_LICENSE=1` and verifies a pinned checksum.
+
+SFace is part of `make dep` through `dep-onnx`, so `make all install` copies it into the published images — a model new libraries default to has to be there. The Go test targets depend on `dep-sface` separately, so the ONNX embedder tests never silently skip when only a subset of the dependencies was installed.
 
 AuraFace is installed by no target at all. Its Apache-2.0 weights could be redistributed, but the same `make all install` path would put a 261 MB graph into every published image, so it stays an explicit `scripts/download-auraface.sh` download. The file is deliberately renamed from the upstream `glintr100.onnx`: InsightFace's antelopev2 pack ships a different model under that name, and because channel order and normalization cannot be read from an ONNX graph, a name collision would apply one model's preprocessing to the other's weights silently.
 
@@ -76,6 +80,18 @@ PHOTOPRISM_TEST_FACE_DATASET=/path/to/dataset \
 ```
 
 Cluster centroids are built with `EmbeddingsMidpoint` and scored as `dist - min(radius, cap)`, which is the quantity `Face.Match` compares against `MatchDist`, so a threshold sweep yields the constant directly. Two operating points are reported: one that spends the baseline budget, and one at a tenth of it. The registry uses the stricter point, where every ONNX model still beats FaceNet's current true accept rate — fewer false merges *and* more correct matches. FaceNet keeps its shipped values, because changing them would alter matching for every existing library on upgrade.
+
+**The operating point in absolute terms.** The derivation is relative to what PhotoPrism already ships rather than to a chosen error rate, so the rate the shipped values actually imply is worth stating. On the benchmark datasets, the FaceNet configuration in production costs **1.43 % false automatic matches** at a true accept rate of 0.8318. The registry's thresholds target a tenth of that, **0.14 %**, and the measured true accept rate at that point is:
+
+| Model         | `ClusterDist` | `ClusterRadius` | `MatchDist` |    TAR |    FAR |
+|:--------------|--------------:|----------------:|------------:|-------:|-------:|
+| `facenet`     |          0.64 |            0.42 |        0.40 | 0.8318 | 1.43 % |
+| `sface`       |          0.91 |            0.67 |        0.39 | 0.9603 | 0.14 % |
+| `auraface`    |          0.98 |            0.76 |        0.35 | 0.9308 | 0.14 % |
+| `arcface_r50` |          1.07 |            0.67 |        0.55 | 0.9943 | 0.14 % |
+| `arcface_mbf` |          1.03 |            0.64 |        0.49 | 0.9648 | 0.14 % |
+
+FaceNet is the odd row because it keeps what it ships rather than a calibrated point, so it sits at the 1.43 % baseline that defines the budget. Every ONNX model is an order of magnitude stricter *and* more accurate. Spending the full baseline instead would buy SFace 0.9852 rather than 0.9603; the stricter point is the deliberate choice, because a wrong automatic merge costs a user more than a match they have to make by hand.
 
 Two caveats apply to the recommendations. The measured centroids are always pure because they are built from labeled identities, so a wider `ClusterRadius` is less safe in production, where an impure cluster has a large radius and would be given more slack. And `ClusterDist` is derived from pairwise distance equivalence rather than from a DBSCAN simulation, so cluster fragmentation and merge behavior are not measured. Validate against a real library before treating these values as final.
 
