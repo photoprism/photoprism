@@ -81,6 +81,8 @@ This package provides PhotoPrism’s native adapter for Ollama-compatible multim
 
 > Tip: pull models inside the dev container with `docker compose --profile ollama up -d` and then `docker compose exec ollama ollama pull gemma4:latest`. Keep the profile stopped when you do not need extra GPU/CPU load.
 
+> Do not trust the `capabilities` list from `GET /api/tags` to decide whether a pulled model is multimodal or reasoning-capable. Models that answer image prompts correctly are sometimes reported without a `vision` flag, and the same model can be listed with and without `thinking` by `/api/tags` and `/api/show`. Send a request and check the response instead.
+
 > Qwen3-VL models can stream structured output via `thinking` while leaving `response` empty. The parser checks `response` first and falls back to `thinking`, so captions/labels continue to work with either field.
 
 #### Ollama Cloud Models
@@ -99,6 +101,8 @@ The table below reports median single-image latency over a fixed 16-image benchm
 | `kimi-k3:cloud`        | ~1 s / ~4 s                |          9.1 | Not measured       | Best English quality measured, but **outside both the free and paid plans** — it needs a Pro or Max subscription plus metered usage credits, so it is not a candidate for library-scale generation |
 
 > **Cloud latency swings between runs; self-hosted latency does not.** Repeating the benchmark hours apart on the same day moved `gemma4:31b-cloud` from ~2 s to ~11 s on labels while its output barely changed, and self-hosted models reproduced to within a tenth of a second. Size a cloud deployment on output quality and plan coverage, and measure latency against your own instance at the time it matters.
+
+> **Prompt tokens per image depend on the model, not just the thumbnail size.** The same 720 px image cost 208 prompt tokens on `gemma4` and 1,182 on `qwen3-vl` — a 5.7x spread for identical input. Where tokens are billed per request, that difference multiplies by the size of the library, so check it alongside latency when comparing models.
 
 > **Check plan coverage before choosing a cloud model.** Ollama Cloud bills by usage tier, and some models sit outside the plans entirely and consume extra credits per token. That is a larger cost factor than latency when captioning or labeling a whole library, so confirm a model's terms on its page before enabling it.
 
