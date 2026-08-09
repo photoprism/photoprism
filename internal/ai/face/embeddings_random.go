@@ -28,6 +28,17 @@ func RandomFloat64(f, d float64) float64 {
 	return f + (rand.Float64()-0.5)*d //nolint:gosec // pseudo-random is sufficient for test fixtures
 }
 
+// RandomEmbeddingDims returns the vector length that random embeddings must have to be
+// accepted by the configured model, defaulting to the FaceNet length when none is set.
+// Persistence rejects vectors of any other length, so fixtures have to follow the model.
+func RandomEmbeddingDims() int {
+	if dims := ExpectedDims(); dims > 0 {
+		return dims
+	}
+
+	return 512
+}
+
 // RandomEmbeddings returns random embeddings for testing.
 func RandomEmbeddings(n int, k Kind) (result Embeddings) {
 	if n <= 0 {
@@ -53,9 +64,10 @@ func RandomEmbeddings(n int, k Kind) (result Embeddings) {
 
 // RandomEmbedding returns a random embedding for testing.
 func RandomEmbedding() (result Embedding) {
-	result = make(Embedding, 512)
+	dims := RandomEmbeddingDims()
+	result = make(Embedding, dims)
 
-	d := 64 / 512.0
+	d := 64 / float64(dims)
 
 	for {
 		i := 0
@@ -74,13 +86,16 @@ func RandomEmbedding() (result Embedding) {
 
 // RandomChildrenEmbedding returns a random children embedding for testing.
 func RandomChildrenEmbedding() (result Embedding) {
-	result = make(Embedding, 512)
-
-	if len(Children) == 0 {
-		return result
+	// The bundled samples are FaceNet-space vectors, so under any other model there is no
+	// child region to perturb and a plain random vector of the right length is all we can
+	// return. IsChild is inactive there for the same reason.
+	if len(Children) == 0 || !SamplesComparable() {
+		return RandomEmbedding()
 	}
 
-	d := 0.1 / 512.0
+	result = make(Embedding, len(Children[0].Embedding))
+
+	d := 0.1 / float64(len(result))
 	n := rand.IntN(len(Children)) //nolint:gosec // deterministic seeding not required for synthetic embeddings
 	e := Children[n].Embedding
 
@@ -95,13 +110,13 @@ func RandomChildrenEmbedding() (result Embedding) {
 
 // RandomBackgroundEmbedding returns a random background embedding for testing.
 func RandomBackgroundEmbedding() (result Embedding) {
-	result = make(Embedding, 512)
-
-	if len(Background) == 0 {
-		return result
+	if len(Background) == 0 || !SamplesComparable() {
+		return RandomEmbedding()
 	}
 
-	d := 0.1 / 512.0
+	result = make(Embedding, len(Background[0].Embedding))
+
+	d := 0.1 / float64(len(result))
 	n := rand.IntN(len(Background)) //nolint:gosec // deterministic seeding not required for synthetic embeddings
 	e := Background[n].Embedding
 

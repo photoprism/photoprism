@@ -50,7 +50,7 @@ func TestBuildFaceCandidates(t *testing.T) {
 	require.NotNil(t, background)
 	stale := *regular
 	stale.ID = "stale-model"
-	stale.EmbedModel = face.ModelSFace
+	stale.EmbedModel = otherFaceModel(t, face.ConfiguredModel())
 
 	faces := entity.Faces{*regular, *background, stale}
 

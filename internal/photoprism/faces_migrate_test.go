@@ -47,17 +47,38 @@ func TestFacesMigrateIncompleteError_Error(t *testing.T) {
 	assert.Contains(t, err, "3 failed")
 }
 
+// otherFaceModel returns a registered embedding model that is not the specified one, so
+// tests can exercise the cross-model guards without assuming which model a test library
+// resolves to.
+func otherFaceModel(t *testing.T, configured face.ModelName) face.ModelName {
+	t.Helper()
+
+	configured = face.NormalizeModelName(configured)
+
+	for _, name := range face.EmbeddingModelNames() {
+		if name != configured {
+			return name
+		}
+	}
+
+	t.Fatalf("no embedding model other than %s is registered", configured)
+
+	return ""
+}
+
 func TestFaces_PlanMigration(t *testing.T) {
 	w := NewFaces(config.TestConfig())
 
 	t.Run("ConfiguredModel", func(t *testing.T) {
+		// An empty target means "the model this instance is configured for", which is
+		// what makes the migration converge instead of creating a third vector space.
 		result, err := w.PlanMigration("")
 		require.NoError(t, err)
-		assert.Equal(t, face.ModelFaceNet, result.Target)
+		assert.Equal(t, face.NormalizeModelName(w.conf.FaceModel()), result.Target)
 		assert.Positive(t, result.Markers.Total)
 	})
 	t.Run("MismatchedTarget", func(t *testing.T) {
-		_, err := w.PlanMigration(face.ModelSFace)
+		_, err := w.PlanMigration(otherFaceModel(t, w.conf.FaceModel()))
 		require.Error(t, err)
 	})
 	t.Run("DisabledTarget", func(t *testing.T) {
@@ -74,7 +95,7 @@ func TestFaces_MigrateDryRun(t *testing.T) {
 	w := NewFaces(config.TestConfig())
 	result, err := w.Migrate(context.Background(), FacesMigrateOptions{DryRun: true})
 	require.NoError(t, err)
-	assert.Equal(t, face.ModelFaceNet, result.Target)
+	assert.Equal(t, face.NormalizeModelName(w.conf.FaceModel()), result.Target)
 	assert.Equal(t, 0, result.Migrated)
 
 	_, err = w.Migrate(context.Background(), FacesMigrateOptions{Target: face.ModelNone, DryRun: true})
@@ -83,11 +104,13 @@ func TestFaces_MigrateDryRun(t *testing.T) {
 
 func TestFaces_migrationEmbedder(t *testing.T) {
 	w := NewFaces(config.TestConfig())
-	embedder, err := w.migrationEmbedder(face.ModelFaceNet)
-	require.NoError(t, err)
-	assert.Equal(t, face.ModelFaceNet, embedder.ModelName())
+	configured := face.NormalizeModelName(w.conf.FaceModel())
 
-	_, err = w.migrationEmbedder(face.ModelSFace)
+	embedder, err := w.migrationEmbedder(configured)
+	require.NoError(t, err)
+	assert.Equal(t, configured, embedder.ModelName())
+
+	_, err = w.migrationEmbedder(otherFaceModel(t, w.conf.FaceModel()))
 	require.Error(t, err)
 }
 
@@ -211,6 +234,9 @@ func TestValidMigrationEmbeddings(t *testing.T) {
 }
 
 func TestBuildFaceMigrationClusters(t *testing.T) {
+	// RandomEmbedding follows the configured model, so the marker has to claim that same
+	// model or its vector is the wrong length for the space the clusters are rebuilt in.
+	target := face.ConfiguredModel()
 	subjectUID := rnd.GenerateUID('j')
 	marker := &entity.Marker{
 		MarkerUID:      rnd.GenerateUID('m'),
@@ -218,7 +244,7 @@ func TestBuildFaceMigrationClusters(t *testing.T) {
 		MarkerType:     entity.MarkerFace,
 		SubjUID:        subjectUID,
 		SubjSrc:        entity.SrcManual,
-		EmbedModel:     face.ModelFaceNet,
+		EmbedModel:     target,
 		EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
 		W:              0.1,
 		H:              0.1,
@@ -226,7 +252,7 @@ func TestBuildFaceMigrationClusters(t *testing.T) {
 	require.NoError(t, entity.Db().Create(marker).Error)
 	t.Cleanup(func() { entity.UnscopedDb().Delete(marker) })
 
-	result, rebuilt, err := buildFaceMigrationClusters(face.ModelFaceNet)
+	result, rebuilt, err := buildFaceMigrationClusters(target)
 	require.NoError(t, err)
 	assert.Equal(t, rebuilt, len(result))
 	found := false
