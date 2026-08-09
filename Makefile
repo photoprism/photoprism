@@ -475,10 +475,11 @@ dep-tensorflow:
 	scripts/download-facenet.sh
 	scripts/download-nasnet.sh
 	scripts/download-nsfw.sh
-dep-onnx:
+dep-onnx: dep-sface
 	scripts/download-scrfd.sh
-# Installed by the Go test targets, not by "dep": the ONNX embedder tests skip without
-# it, while "make all install" would copy the weights into the published images.
+# Part of "dep" because SFace is the embedding model new libraries default to, and
+# "make all install" copies assets/ verbatim into the published images. The Go test
+# targets depend on it separately so the ONNX embedder tests never silently skip.
 dep-sface:
 	scripts/download-sface.sh
 dep-acceptance: storage/acceptance
