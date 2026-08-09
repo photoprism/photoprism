@@ -227,10 +227,8 @@ func mysqlMigration(testDbOriginal string, numberOfRecords int, testname string,
 func postgresqlMigration(testDbOriginal string, numberOfRecords int, testname string, expectedDuration time.Duration, b *testing.B) {
 	b.StopTimer()
 	mDSN := dsn.Parse(testextras.TestDbDSN(dsn.DriverPostgreSQL, "migrate"))
-	pDSN := mDSN
-	pDSN.User = "photoprism"     //nolint:gosec // test only credentials
-	pDSN.Password = "photoprism" //nolint:gosec // test only credentials
-	pDSN.Name = "postgres"
+	_, admindsn := dsn.PhotoPrismDriverToDriverDSN(dsn.DriverPostgres)
+	pDSN := dsn.Parse(admindsn)
 
 	// Prepare migrate PostgreSQL db.
 	if dumpName, err := filepath.Abs(testDbOriginal); err != nil {
@@ -239,7 +237,7 @@ func postgresqlMigration(testDbOriginal string, numberOfRecords int, testname st
 		b.Fatal(err)
 	} else if err = exec.Command("createdb", fmt.Sprintf("--maintenance-db=%s", pDSN.ForPSQL()), "-O", "migrate", "-T", "template0", mDSN.Name).Run(); err != nil { //nolint:gosec // test generated input, test only credentials
 		b.Fatal(err)
-	} else if err = exec.Command("pg_restore", "-d", pDSN.ForPSQL(), dumpName).Run(); err != nil { //nolint:gosec // test generated parameters
+	} else if err = exec.Command("pg_restore", "-d", mDSN.ForPSQL(), dumpName).Run(); err != nil { //nolint:gosec // test generated parameters
 		b.Fatal(err)
 	}
 
@@ -298,11 +296,11 @@ func postgresqlMigration(testDbOriginal string, numberOfRecords int, testname st
 	log.SetOutput(os.Stdout)
 	log.SetLevel(logrus.ErrorLevel)
 
-	// Expect 3 errors (no such table accounts, and missing account_id in files_sync and files_share)
+	// Expect 2 errors (Columns photo_description and description_src do not exist)
 	// And a blank record.
-	assert.Equal(b, 4, len(strings.Split(buffer.String(), "\n")))
-	if len(strings.Split(buffer.String(), "\n")) == 4 {
-		assert.Equal(b, 0, len(strings.Split(buffer.String(), "\n")[3]))
+	assert.Equal(b, 3, len(strings.Split(buffer.String(), "\n")))
+	if len(strings.Split(buffer.String(), "\n")) == 3 {
+		assert.Equal(b, 0, len(strings.Split(buffer.String(), "\n")[2]))
 	} else {
 		log.Error("Migration result not as expected.  Results follow:")
 		for i := 0; i < len(strings.Split(buffer.String(), "\n")); i++ {

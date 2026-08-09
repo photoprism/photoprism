@@ -1,6 +1,7 @@
 package performancetest
 
 import (
+	"os"
 	"os/exec"
 	"testing"
 	"time"
@@ -15,13 +16,9 @@ import (
 )
 
 func BenchmarkMigration_SQLite(b *testing.B) {
-	driver, _ := dsn.PhotoPrismTestToDriverDSN()
-	if driver != "sqlite" {
-		b.Skip("skipping benchmark as not SQLite")
-	}
-
 	// Setup here
 	loglevel := event.Log.GetLevel()
+	event.Log.SetLevel(logrus.ErrorLevel)
 
 	// tests here
 
@@ -29,7 +26,7 @@ func BenchmarkMigration_SQLite(b *testing.B) {
 		if !fs.FileExists("../../storage/test-1k.original.sqlite") {
 			log.Info("Generating SQLite database with 1000 records")
 			event.Log.SetLevel(logrus.ErrorLevel)
-			require.NoError(b, generateDatabase(1000, "sqlite", "../../storage/test-1k.original.sqlite", true, true))
+			require.NoError(b, generateDatabase(1000, dsn.DriverSQLite3, "../../storage/test-1k.original.sqlite", true, true))
 			event.Log.SetLevel(loglevel)
 		}
 		for b.Loop() {
@@ -41,7 +38,7 @@ func BenchmarkMigration_SQLite(b *testing.B) {
 		if !fs.FileExists("../../storage/test-1k.original.sqlite") {
 			log.Info("Generating SQLite database with 1000 records")
 			event.Log.SetLevel(logrus.ErrorLevel)
-			require.NoError(b, generateDatabase(1000, "sqlite", "../../storage/test-1k.original.sqlite", true, true))
+			require.NoError(b, generateDatabase(1000, dsn.DriverSQLite3, "../../storage/test-1k.original.sqlite", true, true))
 			event.Log.SetLevel(loglevel)
 		}
 		for b.Loop() {
@@ -53,7 +50,7 @@ func BenchmarkMigration_SQLite(b *testing.B) {
 		if !fs.FileExists("../../storage/test-10k.original.sqlite") {
 			log.Info("Generating SQLite database with 10000 records")
 			event.Log.SetLevel(logrus.ErrorLevel)
-			require.NoError(b, generateDatabase(10000, "sqlite", "../../storage/test-10k.original.sqlite", true, true))
+			require.NoError(b, generateDatabase(10000, dsn.DriverSQLite3, "../../storage/test-10k.original.sqlite", true, true))
 			event.Log.SetLevel(loglevel)
 		}
 		for b.Loop() {
@@ -65,7 +62,7 @@ func BenchmarkMigration_SQLite(b *testing.B) {
 		if !fs.FileExists("../../storage/test-10k.original.sqlite") {
 			log.Info("Generating SQLite database with 10000 records")
 			event.Log.SetLevel(logrus.ErrorLevel)
-			require.NoError(b, generateDatabase(10000, "sqlite", "../../storage/test-10k.original.sqlite", true, true))
+			require.NoError(b, generateDatabase(10000, dsn.DriverSQLite3, "../../storage/test-10k.original.sqlite", true, true))
 			event.Log.SetLevel(loglevel)
 		}
 		for b.Loop() {
@@ -74,10 +71,14 @@ func BenchmarkMigration_SQLite(b *testing.B) {
 	})
 
 	b.Run("OneHundredKUpgradeTest_Custom", func(b *testing.B) {
+		// Skip this as the setup and storage are excessive.
+		if _, ok := os.LookupEnv("BENCH_GLACIAL"); !ok {
+			b.Skip("skipping benchmark as BENCH_GLACIAL not set")
+		}
 		if !fs.FileExists("../../storage/test-100k.original.sqlite") {
 			log.Info("Generating SQLite database with 100000 records")
 			event.Log.SetLevel(logrus.ErrorLevel)
-			require.NoError(b, generateDatabase(100000, "sqlite", "../../storage/test-100k.original.sqlite", true, true))
+			require.NoError(b, generateDatabase(100000, dsn.DriverSQLite3, "../../storage/test-100k.original.sqlite", true, true))
 			event.Log.SetLevel(loglevel)
 		}
 		for b.Loop() {
@@ -86,6 +87,10 @@ func BenchmarkMigration_SQLite(b *testing.B) {
 	})
 
 	b.Run("OneHundredKUpgradeTest_Auto", func(b *testing.B) {
+		// Skip this as the setup and storage are excessive.
+		if _, ok := os.LookupEnv("BENCH_GLACIAL"); !ok {
+			b.Skip("skipping benchmark as BENCH_GLACIAL not set")
+		}
 		if !fs.FileExists("../../storage/test-100k.original.sqlite") {
 			log.Info("Generating SQLite database with 100000 records")
 			event.Log.SetLevel(logrus.ErrorLevel)
@@ -102,22 +107,21 @@ func BenchmarkMigration_SQLite(b *testing.B) {
 }
 
 func BenchmarkMigration_MySQL(b *testing.B) {
-	driver, _ := dsn.PhotoPrismTestToDriverDSN()
-	if driver != "mysql" {
-		b.Skip("skipping benchmark as not MariaDB")
-	}
-
 	// Setup here
 	loglevel := event.Log.GetLevel()
+	event.Log.SetLevel(logrus.ErrorLevel)
+	mDSN := dsn.Parse(testextras.TestDbDSN(dsn.DriverMariaDB, "migrate"))
+	defer testextras.TestDbRemoveByName(dsn.DriverMariaDB, "migrate")
+
+	// tests here
 
 	b.Run("OneKUpgradeTest", func(b *testing.B) {
 		if !fs.FileExists("../../storage/test-1k.original.mysql") {
 			log.Info("Generating Mariadb database with 1000 records")
 			event.Log.SetLevel(logrus.ErrorLevel)
-			d := dsn.TestDSNFromEnv(dsn.DriverMariaDB, "migrate")
-			require.NoError(b, generateDatabase(1000, "mysql", d.ToString(), true, true))
+			require.NoError(b, generateDatabase(1000, dsn.DriverMySQL, mDSN.ToString(), true, true))
 			resultFile := "--result-file=" + "../../storage/test-1k.original.mysql"
-			if err := exec.Command("mariadb-dump", "--user=migrate", "--password=migrate", "--lock-tables", "--add-drop-database", "--databases", "migrate", resultFile).Run(); err != nil {
+			if err := exec.Command("mariadb-dump", "--user=migrate", "--password=migrate", "--lock-tables", "--no-create-db", mDSN.Name, resultFile).Run(); err != nil { //nolint: gosec // G204 test code
 				b.Fatal(err)
 			}
 			event.Log.SetLevel(loglevel)
@@ -132,10 +136,9 @@ func BenchmarkMigration_MySQL(b *testing.B) {
 			log.Info("Generating Mariadb database with 10000 records")
 			event.Log.SetLevel(logrus.ErrorLevel)
 
-			d := dsn.Parse(testextras.TestDbDSN(dsn.DriverMariaDB, "migrate"))
-			require.NoError(b, generateDatabase(10000, "mysql", d.ToString(), true, true))
+			require.NoError(b, generateDatabase(10000, "mysql", mDSN.ToString(), true, true))
 			resultFile := "--result-file=" + "../../storage/test-10k.original.mysql"
-			if err := exec.Command("mariadb-dump", "--user=migrate", "--password=migrate", "--lock-tables", "--add-drop-database", "--databases", d.Name, resultFile).Run(); err != nil {
+			if err := exec.Command("mariadb-dump", "--user=migrate", "--password=migrate", "--lock-tables", "--no-create-db", mDSN.Name, resultFile).Run(); err != nil { //nolint: gosec // G204 test code
 				b.Fatal(err)
 			}
 			event.Log.SetLevel(loglevel)
@@ -146,13 +149,16 @@ func BenchmarkMigration_MySQL(b *testing.B) {
 	})
 
 	b.Run("OneHundredKUpgradeTest", func(b *testing.B) {
+		// Skip this as the setup and storage are excessive.
+		if _, ok := os.LookupEnv("BENCH_GLACIAL"); !ok {
+			b.Skip("skipping benchmark as BENCH_GLACIAL not set")
+		}
 		if !fs.FileExists("../../storage/test-100k.original.mysql") {
 			log.Info("Generating Mariadb database with 100000 records")
 			event.Log.SetLevel(logrus.ErrorLevel)
-			d := dsn.Parse(testextras.TestDbDSN(dsn.DriverMariaDB, "migrate"))
-			require.NoError(b, generateDatabase(100000, "mysql", d.ToString(), true, true))
+			require.NoError(b, generateDatabase(100000, "mysql", mDSN.ToString(), true, true))
 			resultFile := "--result-file=" + "../../storage/test-100k.original.mysql"
-			if err := exec.Command("mariadb-dump", "--user=migrate", "--password=migrate", "--lock-tables", "--add-drop-database", "--databases", d.Name, resultFile).Run(); err != nil {
+			if err := exec.Command("mariadb-dump", "--user=migrate", "--password=migrate", "--lock-tables", "--no-create-db", mDSN.Name, resultFile).Run(); err != nil { //nolint: gosec // G204 test code
 				b.Fatal(err)
 			}
 			event.Log.SetLevel(loglevel)
@@ -166,23 +172,23 @@ func BenchmarkMigration_MySQL(b *testing.B) {
 }
 
 func BenchmarkMigration_PostgreSQL(b *testing.B) {
-	driver, _ := dsn.PhotoPrismTestToDriverDSN()
-	if driver != "postgres" {
-		b.Skip("skipping benchmark as not PostgreSQL")
-	}
-
 	// Setup here
 	loglevel := event.Log.GetLevel()
+	event.Log.SetLevel(logrus.ErrorLevel)
 	mDSN := dsn.Parse(testextras.TestDbDSN(dsn.DriverPostgreSQL, "migrate"))
+	defer testextras.TestDbRemoveByName(dsn.DriverPostgreSQL, "migrate")
+
 	// tests here
 
 	b.Run("OneKUpgradeTest", func(b *testing.B) {
 		if !fs.FileExists("../../storage/test-1k.original.postgresql") {
 			log.Info("Generating PostgreSQL database with 1000 records")
-			event.Log.SetLevel(logrus.ErrorLevel)
-			require.NoError(b, generateDatabase(1000, Postgres, mDSN.ToString(), true, true))
 			resultFile := "../../storage/test-1k.original.postgresql"
-			if err := exec.Command("pg_dump", "-d", mDSN.ForPSQL(), "-F c", "-f", resultFile).Run(); err != nil { //nolint:gosec // test generated input
+			event.Log.SetLevel(logrus.ErrorLevel)
+			require.NoError(b, generateDatabase(1000, dsn.DriverPostgres, mDSN.ToString(), true, true))
+			if err := exec.Command("pg_dump", "-d", mDSN.ForPSQL(), "-F", "c", "-f", resultFile).Run(); err != nil { //nolint:gosec // test generated input
+				event.Log.SetLevel(loglevel)
+				log.Errorf("pg_dump failed with %v", err)
 				b.Fatal(err)
 			}
 			event.Log.SetLevel(loglevel)
@@ -196,7 +202,7 @@ func BenchmarkMigration_PostgreSQL(b *testing.B) {
 		if !fs.FileExists("../../storage/test-10k.original.postgresql") {
 			log.Info("Generating PostgreSQL database with 10000 records")
 			event.Log.SetLevel(logrus.ErrorLevel)
-			require.NoError(b, generateDatabase(10000, Postgres, mDSN.ToString(), true, true))
+			require.NoError(b, generateDatabase(10000, dsn.DriverPostgres, mDSN.ToString(), true, true))
 			resultFile := "../../storage/test-10k.original.postgresql"
 			if err := exec.Command("pg_dump", "-d", mDSN.ForPSQL(), "-F c", "-f", resultFile).Run(); err != nil { //nolint:gosec // test generated input
 				b.Fatal(err)
@@ -209,10 +215,14 @@ func BenchmarkMigration_PostgreSQL(b *testing.B) {
 	})
 
 	b.Run("OneHundredKUpgradeTest", func(b *testing.B) {
+		// Skip this as the setup and storage are excessive.
+		if _, ok := os.LookupEnv("BENCH_GLACIAL"); !ok {
+			b.Skip("skipping benchmark as BENCH_GLACIAL not set")
+		}
 		if !fs.FileExists("../../storage/test-100k.original.postgresql") {
 			log.Info("Generating PostgreSQL database with 100000 records")
 			event.Log.SetLevel(logrus.ErrorLevel)
-			require.NoError(b, generateDatabase(100000, Postgres, mDSN.ToString(), true, true))
+			require.NoError(b, generateDatabase(100000, dsn.DriverPostgres, mDSN.ToString(), true, true))
 			resultFile := "../../storage/test-100k.original.postgresql"
 			if err := exec.Command("pg_dump", "-d", mDSN.ForPSQL(), "-F c", "-f", resultFile).Run(); err != nil { //nolint:gosec // test generated input
 				b.Fatal(err)

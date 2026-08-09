@@ -6,29 +6,13 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
-	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
-
-// Supported test databases.
-const (
-	MySQL           = "mysql"
-	Postgres        = "postgres"
-	SQLite3         = "sqlite"
-	SQLiteTestDB    = ".test.db"
-	SQLiteMemoryDSN = ":memory:?cache=shared&_foreign_keys=on"
-)
-
-var drivers = map[string]func(string) gorm.Dialector{
-	MySQL:    mysql.Open,
-	Postgres: postgres.Open,
-	SQLite3:  sqlite.Open,
-}
 
 // dbConn is the global gorm.DB connection provider.
 var dbConn Gorm
@@ -64,23 +48,23 @@ func (g *DbConn) Open() {
 	log.Infof("Opening DB connection with driver %s", g.Driver)
 	var db *gorm.DB
 	var err error
-	if g.Driver == Postgres {
+	if g.Driver == dsn.DriverPostgres {
 		postgresDB, pgxPool := entity.OpenPostgreSQL(g.Dsn)
 		g.pool = pgxPool
 		db, err = gorm.Open(postgres.New(postgres.Config{Conn: postgresDB}), gormConfig())
 	} else {
-		db, err = gorm.Open(drivers[g.Driver](g.Dsn), gormConfig())
+		db, err = gorm.Open(dsn.GormDrivers[g.Driver](g.Dsn), gormConfig())
 	}
 
 	if err != nil || db == nil {
 		for i := 1; i <= 12; i++ {
 			fmt.Printf("gorm.Open(%s, %s) %d\n", g.Driver, g.Dsn, i)
-			if g.Driver == Postgres {
+			if g.Driver == dsn.DriverPostgres {
 				postgresDB, pgxPool := entity.OpenPostgreSQL(g.Dsn)
 				g.pool = pgxPool
 				db, err = gorm.Open(postgres.New(postgres.Config{Conn: postgresDB}), gormConfig())
 			} else {
-				db, err = gorm.Open(drivers[g.Driver](g.Dsn), gormConfig())
+				db, err = gorm.Open(dsn.GormDrivers[g.Driver](g.Dsn), gormConfig())
 			}
 
 			if db != nil && err == nil {
@@ -97,7 +81,7 @@ func (g *DbConn) Open() {
 	}
 	log.Info("DB connection established successfully")
 
-	if g.Driver != Postgres {
+	if g.Driver != dsn.DriverPostgres {
 		sqlDB, _ := db.DB()
 
 		sqlDB.SetMaxIdleConns(4)   // in config_db it uses c.DatabaseConnsIdle(), but we don't have the c here.

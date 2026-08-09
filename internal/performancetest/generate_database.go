@@ -13,12 +13,14 @@ import (
 	"time"
 
 	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/migrate"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -35,66 +37,81 @@ func randomSHA1() string {
 	return string(result)
 }
 
-func generateDatabase(numberOfPhotos int, driver string, dsn string, dropdb bool, databasescript bool) error {
-	// Set default test database driver.
-	if driver == "test" || driver == "sqlite" || driver == "" || dsn == "" {
-		driver = SQLite3
-	}
-
-	// Set default database DSN.
-	if driver == SQLite3 {
-		if dsn == "" {
-			dsn = SQLiteMemoryDSN
-		}
-	}
-
-	allowDelete := dropdb
-	if driver == MySQL && allowDelete {
-		basedsn := dsn[0 : strings.Index(dsn, "/")+1]
-		basedbname := dsn[strings.Index(dsn, "/")+1 : strings.Index(dsn, "?")]
-		log.Infof("Connecting to %v", basedsn)
-		database, err := gorm.Open(mysql.Open(basedsn), &gorm.Config{})
-		if err != nil {
-			log.Errorf("Unable to connect to MariaDB %v", err)
-			return err
-		}
-		log.Infof("Dropping database %v if it exists", basedbname)
-		if res := database.Exec("DROP DATABASE IF EXISTS " + basedbname + ";"); res.Error != nil {
-			log.Errorf("Unable to drop database %v", res.Error)
-			return res.Error
-		}
-
-		log.Infof("Creating database %v if it doesnt exist", basedbname)
-		if res := database.Exec("CREATE DATABASE IF NOT EXISTS " + basedbname + ";"); res.Error != nil {
-			log.Errorf("Unable to create database %v", res.Error)
-			return res.Error
-		}
-	}
-	if driver == SQLite3 && dsn != SQLiteMemoryDSN && allowDelete {
-		filename := dsn
-		if strings.Index(dsn, "?") > 0 {
-			if strings.Index(dsn, ":") > 0 {
-				filename = dsn[strings.Index(dsn, ":")+1 : strings.Index(dsn, "?")]
-			} else {
-				filename = dsn[0:strings.Index(dsn, "?")]
+func generateDatabase(numberOfPhotos int, driver string, dsname string, dropdb bool, databasescript bool) error {
+	generateDSN := dsn.Parse(dsname)
+	dbname := generateDSN.Name
+	_, admindsn := dsn.PhotoPrismDriverToDriverDSN(driver)
+	if dropdb {
+		switch driver {
+		case dsn.DriverMySQL:
+			log.Infof("Connecting to %v", admindsn)
+			database, err := gorm.Open(mysql.Open(admindsn), &gorm.Config{})
+			if err != nil {
+				log.Errorf("Unable to connect to MariaDB %v", err)
+				return err
 			}
+			log.Infof("Dropping database %v if it exists", dbname)
+			if res := database.Exec("DROP DATABASE IF EXISTS " + dbname + ";"); res.Error != nil {
+				log.Errorf("Unable to drop database %v", res.Error)
+				return res.Error
+			}
+			log.Infof("Creating database %v if it doesnt exist", dbname)
+			if res := database.Exec("CREATE DATABASE IF NOT EXISTS " + dbname + " CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"); res.Error != nil {
+				log.Errorf("Unable to create database %v", res.Error)
+				return res.Error
+			}
+			log.Infof("Granting permissions to database %v", dbname)
+			str := fmt.Sprintf("GRANT ALL PRIVILEGES ON %s.* TO '%s'@'%%';", dbname, generateDSN.User)
+			if res := database.Exec(str); res.Error != nil {
+				log.Errorf("Unable to create database %v", res.Error)
+				return res.Error
+			}
+		case dsn.DriverPostgres:
+			log.Infof("Connecting to %v", admindsn)
+			database, err := gorm.Open(postgres.Open(admindsn), &gorm.Config{})
+			if err != nil {
+				log.Errorf("Unable to connect to Postgres %v", err)
+				return err
+			}
+			log.Infof("Dropping database %v if it exists", dbname)
+			if res := database.Exec("DROP DATABASE IF EXISTS " + dbname + ";"); res.Error != nil {
+				log.Errorf("Unable to drop database %v", res.Error)
+				return res.Error
+			}
+			log.Infof("Creating database %v if it doesnt exist", dbname)
+			if res := database.Exec("CREATE DATABASE " + dbname + " OWNER " + generateDSN.User + ";"); res.Error != nil {
+				log.Errorf("Unable to create database %v", res.Error)
+				return res.Error
+			}
+		case dsn.DriverSQLite3:
+			fallthrough
+		default:
+			driver = dsn.DriverSQLite3
+			filename := dsname
+			if strings.Index(dsname, "?") > 0 {
+				if strings.Index(dsname, ":") > 0 {
+					filename = dsname[strings.Index(dsname, ":")+1 : strings.Index(dsname, "?")]
+				} else {
+					filename = dsname[0:strings.Index(dsname, "?")]
+				}
+			}
+			log.Infof("Removing file %v", filename)
+			_ = os.Remove(filename)
 		}
-		log.Infof("Removing file %v", filename)
-		_ = os.Remove(filename)
 	}
 
-	log.Infof("Connecting to driver %v with dsn %v", driver, dsn)
+	log.Infof("Connecting to driver %v with dsn %v", driver, dsname)
 	// Create gorm.DB connection provider.
 	db := &DbConn{
 		Driver: driver,
-		Dsn:    dsn,
+		Dsn:    dsname,
 	}
 	defer db.Close()
 
 	SetDbProvider(db)
 
 	// Disable journal to speed up.
-	if driver == SQLite3 {
+	if driver == dsn.DriverSQLite3 {
 		Db().Exec("PRAGMA journal_mode=OFF")
 	}
 
@@ -104,16 +121,17 @@ func generateDatabase(numberOfPhotos int, driver string, dsn string, dropdb bool
 	// Run migration if the photos table doesn't exist.
 	// Otherwise assume that we have a valid structured database.
 	photoCounter := int64(0)
+	log.Info("Accept Table/Relation doesn't exist error that may follow this.")
 	if err := Db().Model(&entity.Photo{}).Count(&photoCounter).Error; err != nil {
 		// Handle SQLite differently as it does table recreates on initial migrate, so we need to be able to simulate that.
 		switch {
-		case driver == SQLite3 && databasescript:
-			filename := dsn
-			if strings.Index(dsn, "?") > 0 {
-				if strings.Index(dsn, ":") > 0 {
-					filename = dsn[strings.Index(dsn, ":")+1 : strings.Index(dsn, "?")]
+		case driver == dsn.DriverSQLite3 && databasescript:
+			filename := dsname
+			if strings.Index(dsname, "?") > 0 {
+				if strings.Index(dsname, ":") > 0 {
+					filename = dsname[strings.Index(dsname, ":")+1 : strings.Index(dsname, "?")]
 				} else {
-					filename = dsn[0:strings.Index(dsn, "?")]
+					filename = dsname[0:strings.Index(dsname, "?")]
 				}
 			}
 
@@ -141,16 +159,26 @@ func generateDatabase(numberOfPhotos int, driver string, dsn string, dropdb bool
 					return fmt.Errorf("%s", errStr)
 				}
 			}
-		case driver == MySQL && databasescript:
+		case driver == dsn.DriverMySQL && databasescript:
 			// Prepare migrate mariadb db.
 			if dumpName, err := filepath.Abs("./testdata/mariadb.sql"); err != nil {
 				log.Error(err)
 				return err
-			} else if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", "migrate", //nolint:gosec // generated command string
+			} else if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", dbname, //nolint:gosec // generated command string
 				"-e", "source "+dumpName).Run(); err != nil {
 				log.Error(err)
 				return err
 			}
+		case driver == dsn.DriverPostgres && databasescript:
+			// Prepare migrate postgres db
+			if dumpName, err := filepath.Abs("./testdata/postgres.sql"); err != nil {
+				log.Error(err)
+				return err
+			} else if err = exec.Command("psql", generateDSN.ForPSQL(), "-f", dumpName).Run(); err != nil { //nolint:gosec // G204 generated command string
+				log.Error(err)
+				return err
+			}
+
 		default:
 			entity.Entities.Migrate(Db(), migrate.Opt(true, false, nil))
 			if err := entity.Entities.WaitForMigration(Db()); err != nil {
@@ -158,8 +186,8 @@ func generateDatabase(numberOfPhotos int, driver string, dsn string, dropdb bool
 			}
 		}
 	} else {
-		log.Errorf("The photos table already exists in driver %v dsn %v.\nAborting...", driver, dsn)
-		return fmt.Errorf("the photos table already exists in driver %v dsn %v", driver, dsn)
+		log.Errorf("The photos table already exists in driver %v dsn %v.\nAborting...", driver, dsname)
+		return fmt.Errorf("the photos table already exists in driver %v dsn %v", driver, dsname)
 	}
 
 	entity.SetDbProvider(db)
@@ -275,6 +303,7 @@ func generateDatabase(numberOfPhotos int, driver string, dsn string, dropdb bool
 			camera := entity.NewCamera(make, model)
 			if _, found := cameras[camera.CameraSlug]; !found {
 				if err := Db().Create(camera).Error; err != nil {
+					log.Errorf("generatedatabase: camera create of %v failed with %v", camera, err)
 					return err
 				}
 				cameras[camera.CameraSlug] = camera.ID
