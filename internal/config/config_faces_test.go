@@ -13,6 +13,8 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/vision"
+	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -211,7 +213,17 @@ func TestConfig_FaceEngineModelPath(t *testing.T) {
 
 func TestConfig_FaceModel(t *testing.T) {
 	t.Run("Default", func(t *testing.T) {
+		// Without a database there is no library to ask, so the preference list decides.
 		c := NewConfig(CliTestContext())
+		assert.Equal(t, face.ModelSFace, c.FaceModel())
+	})
+	t.Run("LibraryKeepsItsModel", func(t *testing.T) {
+		// The fixture markers hold vectors without a recorded model, which is what a
+		// library indexed before the provenance column looks like. Resolving those to
+		// SFace on upgrade would leave every stored cluster incomparable.
+		c := TestConfig()
+		c.options.FaceModel = face.ModelAuto
+
 		assert.Equal(t, face.ModelFaceNet, c.FaceModel())
 	})
 	t.Run("Explicit", func(t *testing.T) {
@@ -245,7 +257,7 @@ func TestConfig_FaceModel(t *testing.T) {
 	t.Run("Unsupported", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.options.FaceModel = "dlib"
-		assert.Equal(t, face.ModelFaceNet, c.FaceModel())
+		assert.Equal(t, face.ModelSFace, c.FaceModel())
 	})
 	t.Run("AutoWithoutModels", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
@@ -265,12 +277,88 @@ func TestConfig_FaceModel(t *testing.T) {
 	})
 }
 
+func TestDominantFaceModel(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", dominantFaceModel(nil))
+	})
+	t.Run("NoVectors", func(t *testing.T) {
+		assert.Equal(t, "", dominantFaceModel([]query.MarkerEmbeddingModelCount{{EmbedModel: face.ModelSFace, Markers: 0}}))
+	})
+	t.Run("LegacyIsFaceNet", func(t *testing.T) {
+		// The query only counts markers that hold a vector, so a blank name is a vector
+		// written before the provenance column existed rather than a missing embedding.
+		assert.Equal(t, face.ModelFaceNet, dominantFaceModel([]query.MarkerEmbeddingModelCount{{EmbedModel: "", Markers: 12}}))
+	})
+	t.Run("SingleModel", func(t *testing.T) {
+		assert.Equal(t, face.ModelSFace, dominantFaceModel([]query.MarkerEmbeddingModelCount{{EmbedModel: "SFace", Markers: 3}}))
+	})
+	t.Run("MixedPrefersMajority", func(t *testing.T) {
+		counts := []query.MarkerEmbeddingModelCount{
+			{EmbedModel: face.ModelSFace, Markers: 4},
+			{EmbedModel: "", Markers: 91},
+		}
+		assert.Equal(t, face.ModelFaceNet, dominantFaceModel(counts))
+	})
+	t.Run("MixedPrefersMajorityModel", func(t *testing.T) {
+		counts := []query.MarkerEmbeddingModelCount{
+			{EmbedModel: "", Markers: 4},
+			{EmbedModel: "ArcFace-R50", Markers: 91},
+		}
+		assert.Equal(t, face.ModelArcFaceR50, dominantFaceModel(counts))
+	})
+}
+
+func TestInstalledFaceModel(t *testing.T) {
+	t.Run("None", func(t *testing.T) {
+		assert.Equal(t, face.ModelNone, installedFaceModel(t.TempDir()))
+	})
+	t.Run("FollowsPreferenceOrder", func(t *testing.T) {
+		// FaceNet is installed too, but SFace comes first for a library with no vectors.
+		modelsPath := installTestModels(t, face.ModelFaceNet, face.ModelSFace)
+		assert.Equal(t, face.ModelSFace, installedFaceModel(modelsPath))
+	})
+	t.Run("SkipsMissing", func(t *testing.T) {
+		modelsPath := installTestModels(t, face.ModelArcFaceR50)
+		assert.Equal(t, face.ModelArcFaceR50, installedFaceModel(modelsPath))
+	})
+}
+
+func TestConfig_LibraryFaceModel(t *testing.T) {
+	t.Run("NilConfig", func(t *testing.T) {
+		assert.Equal(t, "", (*Config)(nil).libraryFaceModel())
+	})
+	t.Run("WithoutDatabase", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		assert.Equal(t, "", c.libraryFaceModel())
+	})
+	t.Run("SeededLibrary", func(t *testing.T) {
+		assert.Equal(t, face.ModelFaceNet, TestConfig().libraryFaceModel())
+	})
+	t.Run("SchemaWithoutProvenanceColumn", func(t *testing.T) {
+		// The schema is migrated after the configuration is propagated, so the first start
+		// after an upgrade reads a markers table that still has no embed_model column. If
+		// that resolved to the preference list instead of FaceNet, every existing library
+		// would quietly start writing vectors into a second, incomparable space.
+		c := TestConfig()
+		db := entity.Db()
+		table := entity.Marker{}.TableName()
+
+		require.NoError(t, db.Exec("ALTER TABLE "+table+" DROP COLUMN embed_model").Error)
+
+		t.Cleanup(func() {
+			require.NoError(t, db.Exec("ALTER TABLE "+table+" ADD COLUMN embed_model VARBINARY(32) DEFAULT ''").Error)
+		})
+
+		assert.Equal(t, face.ModelFaceNet, c.libraryFaceModel())
+	})
+}
+
 func TestConfig_FaceEmbeddingModel(t *testing.T) {
 	t.Run("Default", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		m := c.FaceEmbeddingModel()
 		require.NotNil(t, m)
-		assert.Equal(t, face.ModelFaceNet, m.Name)
+		assert.Equal(t, face.ModelSFace, m.Name)
 	})
 	t.Run("None", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
@@ -402,10 +490,13 @@ func TestConfig_FaceClusterCore(t *testing.T) {
 }
 
 func TestConfig_FaceClusterDist(t *testing.T) {
+	// Thresholds follow the resolved model, which is SFace without a library to ask.
+	sface := face.FindEmbeddingModel(face.ModelSFace).ClusterDist
+
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, 0.64, c.FaceClusterDist())
+	assert.Equal(t, sface, c.FaceClusterDist())
 	c.options.FaceClusterDist = 0.01
-	assert.Equal(t, 0.64, c.FaceClusterDist())
+	assert.Equal(t, sface, c.FaceClusterDist())
 	c.options.FaceCollisionDist = 0.05
 	c.options.FaceClusterDist = 0.06
 	assert.Equal(t, 0.06, c.FaceClusterDist())

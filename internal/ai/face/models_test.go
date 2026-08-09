@@ -191,9 +191,16 @@ func TestEmbeddingModelThresholds(t *testing.T) {
 }
 
 func TestAutoModelPreference(t *testing.T) {
-	t.Run("PrefersFaceNet", func(t *testing.T) {
+	t.Run("PrefersSFace", func(t *testing.T) {
+		// Only libraries without face vectors follow this order, so the first entry is
+		// what a fresh install starts with rather than what an upgrade switches to.
 		require.NotEmpty(t, AutoModelPreference)
-		assert.Equal(t, ModelFaceNet, AutoModelPreference[0])
+		assert.Equal(t, ModelSFace, AutoModelPreference[0])
+	})
+	t.Run("BundledModelsFirst", func(t *testing.T) {
+		// Models that are not shipped must not precede one that is, or "auto" would
+		// resolve to nothing on an installation that never ran their install script.
+		assert.Equal(t, []ModelName{ModelSFace, ModelFaceNet}, AutoModelPreference[:2])
 	})
 	t.Run("Registered", func(t *testing.T) {
 		for _, name := range AutoModelPreference {

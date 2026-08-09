@@ -418,6 +418,30 @@ func TestMarkerEmbeddingModels(t *testing.T) {
 	})
 }
 
+func TestFaceMarkersWithVectors(t *testing.T) {
+	t.Run("CountsFixtures", func(t *testing.T) {
+		count, err := FaceMarkersWithVectors()
+		require.NoError(t, err)
+		assert.Positive(t, count)
+	})
+	t.Run("MatchesProvenanceTotals", func(t *testing.T) {
+		// Both read the same rows, so a drift between them would make the config resolve
+		// "auto" from a different set of markers than the migration reports.
+		counts, err := MarkerEmbeddingModels()
+		require.NoError(t, err)
+
+		var total int64
+
+		for _, c := range counts {
+			total += int64(c.Markers)
+		}
+
+		count, err := FaceMarkersWithVectors()
+		require.NoError(t, err)
+		assert.Equal(t, total, count)
+	})
+}
+
 func TestFacesFromOtherModels(t *testing.T) {
 	restore := face.ConfiguredModel()
 

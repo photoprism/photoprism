@@ -188,10 +188,10 @@ var EmbeddingModels = map[ModelName]*EmbeddingModel{
 
 // AutoModelPreference lists embedding models in the order that ModelAuto prefers them.
 //
-// FaceNet stays first while it is the shipped default: resolving "auto" to a different
-// model would silently start writing embeddings from an incompatible vector space into
-// libraries that were clustered with FaceNet.
-var AutoModelPreference = []ModelName{ModelFaceNet, ModelSFace, ModelArcFaceR50, ModelArcFaceMBF, ModelAuraFace}
+// This list only decides what a library with no face vectors starts out with. An
+// existing library keeps whatever model produced its vectors, because resolving "auto"
+// away from it would leave every stored cluster incomparable — see Config.FaceModel.
+var AutoModelPreference = []ModelName{ModelSFace, ModelFaceNet, ModelAuraFace, ModelArcFaceR50, ModelArcFaceMBF}
 
 // NormalizeModelName lowercases a model name and accepts hyphens in place of underscores.
 func NormalizeModelName(s string) ModelName {
