@@ -83,6 +83,21 @@ func (c *Config) FFmpegBitrate() int {
 	}
 }
 
+// FFmpegFisheyeFov returns the clamped field of view in degrees for the v360 dewarp filter.
+// Cameras recognized by entity.CameraFisheyeFov use their own angle instead of this value.
+func (c *Config) FFmpegFisheyeFov() int {
+	switch {
+	case c.options.FFmpegFisheyeFov <= 0:
+		return encode.DefaultFisheyeFov
+	case c.options.FFmpegFisheyeFov < encode.MinFisheyeFov:
+		return encode.MinFisheyeFov
+	case c.options.FFmpegFisheyeFov > encode.MaxFisheyeFov:
+		return encode.MaxFisheyeFov
+	default:
+		return c.options.FFmpegFisheyeFov
+	}
+}
+
 // FFmpegBitrateExceeded tests if the ffmpeg bitrate limit in Mbps is exceeded.
 func (c *Config) FFmpegBitrateExceeded(bitrate float64) bool {
 	if bitrate <= 0 {

@@ -1,6 +1,7 @@
 package rnd
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -105,6 +106,19 @@ func TestCharset(t *testing.T) {
 		assert.False(t, IsRefID(s))
 		assert.True(t, InvalidRefID(s))
 		assert.Equal(t, 4096, len(s))
+	})
+	t.Run("NoCharset", func(t *testing.T) {
+		assert.Empty(t, Charset(8, ""))
+	})
+	t.Run("CharsetTooLong", func(t *testing.T) {
+		assert.Empty(t, Charset(8, strings.Repeat("x", 257)))
+	})
+	t.Run("OnlyCharsetMembers", func(t *testing.T) {
+		s := Charset(512, CharsetBase36)
+		assert.Equal(t, 512, len(s))
+		for _, c := range []byte(s) {
+			assert.Contains(t, CharsetBase36, string(c))
+		}
 	})
 }
 

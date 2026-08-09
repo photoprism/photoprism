@@ -119,6 +119,12 @@
                   </v-list-item-title>
                 </v-list-item>
 
+                <v-list-item :to="{ name: 'browse', query: { q: 'fisheye' } }" :exact="true" variant="text" class="nav-fisheye" @click.stop="">
+                  <v-list-item-title :class="`nav-menu-item menu-item`">
+                    {{ $gettext(`Fisheye`) }}
+                  </v-list-item-title>
+                </v-list-item>
+
                 <v-list-item :to="{ name: 'photos', query: { q: 'stacks' } }" :exact="true" variant="text" class="nav-stacks" @click.stop="">
                   <v-list-item-title :class="`nav-menu-item menu-item`">
                     {{ $gettext(`Stacks`) }}

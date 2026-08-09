@@ -9,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ffmpeg"
 	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
 	"github.com/photoprism/photoprism/internal/raw"
+	"github.com/photoprism/photoprism/pkg/media/projection"
 )
 
 // JpegConvertCmds returns the supported commands for converting a MediaFile to JPEG, sorted by priority.
@@ -23,6 +24,27 @@ func (w *Convert) JpegConvertCmds(f *MediaFile, jpegName string, xmpName string)
 	fileExt := f.Extension()
 	maxSize := strconv.Itoa(w.conf.JpegSize())
 	rawEnabled := w.conf.RawEnabled()
+
+	// Separate square lens videos are combined in canonical _00/_10 order before v360 dewarping.
+	// Only the _00 file owns generated sidecars; the _10 lens and LRV proxy remain related originals.
+	if capture := FindInsta360Capture(f); capture != nil && capture.ValidPair() && capture.Left.FileName() == f.FileName() && w.conf.FFmpegEnabled() && w.FFmpegAllowed(f) {
+		result = append(result, NewConvertCmd(
+			ffmpeg.DewarpDualFisheyePairToJpegCmd(capture.Left.FileName(), capture.Right.FileName(), jpegName, w.fisheyeFov(f), w.fisheyeRoll(f), &encode.Options{Bin: w.conf.FFmpegBin(), SizeLimit: min(w.conf.JpegSize(), 15360)})).
+			WithImageVerification().
+			WithProjection(projection.Equirectangular),
+		)
+	}
+
+	// Dewarp Insta360 dual-fisheye originals (.insp photos and .insv cover frames) to an
+	// equirectangular JPEG, so thumbnails and the sphere viewer show corrected pixels.
+	// Unsupported layouts and failed dewarps fall through to a normal render later in the loop.
+	if f.DualFisheye() && f.DualFisheyeLayout() && w.conf.FFmpegEnabled() && w.FFmpegAllowed(f) {
+		result = append(result, NewConvertCmd(
+			ffmpeg.DewarpDualFisheyeToJpegCmd(f.FileName(), jpegName, w.fisheyeFov(f), w.fisheyeRoll(f), &encode.Options{Bin: w.conf.FFmpegBin(), SizeLimit: min(w.conf.JpegSize(), 15360)})).
+			WithImageVerification().
+			WithProjection(projection.Equirectangular),
+		)
+	}
 
 	// On a Mac, use the Apple Scriptable image processing system to convert images to JPEG,
 	// see https://ss64.com/osx/sips.html.

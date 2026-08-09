@@ -676,6 +676,9 @@
                 "FFmpegEncoder": {
                     "type": "string"
                 },
+                "FFmpegFisheyeFov": {
+                    "type": "integer"
+                },
                 "FFmpegMapAudio": {
                     "type": "string"
                 },
@@ -4976,6 +4979,14 @@
                 "name": {
                     "type": "string"
                 },
+                "normalize": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/vision.NormalizeType"
+                        }
+                    ],
+                    "description": "\"single-word\", \"phrase\", or \"false\""
+                },
                 "options": {
                     "$ref": "#/definitions/vision.ModelOptions"
                 },
@@ -5177,6 +5188,21 @@
                 "ModelTypeFace",
                 "ModelTypeCaption",
                 "ModelTypeGenerate"
+            ]
+        },
+        "vision.NormalizeType": {
+            "enum": [
+                "",
+                "single-word",
+                "phrase",
+                "false"
+            ],
+            "type": "string",
+            "x-enum-varnames": [
+                "NormalizeAuto",
+                "NormalizeWord",
+                "NormalizePhrase",
+                "NormalizeFalse"
             ]
         },
         "vision.RunType": {

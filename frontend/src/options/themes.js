@@ -367,6 +367,7 @@ let themes = {
     colors: {
       "background": "#525252",
       "surface": "#424242",
+      "surface-bright": "#4e4e4e", // Lifted variant of `surface`; raised tiles, hover states, inline editors.
       "card": "#5e5e5e",
       "primary": "#c8bdb1",
       "highlight": "#726e69",
@@ -681,6 +682,7 @@ let themes = {
     colors: {
       "background": "#444",
       "surface": "#555555",
+      "surface-bright": "#5e5e5e", // Lifted variant of `surface`; raised tiles, hover states, inline editors.
       "button": "#555555",
       "card": "#666666",
       "primary": "#c4f1e5",
@@ -724,7 +726,7 @@ let themes = {
       "on-background": "#f4f6fc",
       "surface": "#252727",
       "on-surface": "#f6f6fa",
-      "surface-bright": "#262626",
+      "surface-bright": "#2a2c2c",
       "surface-variant": "#999999",
       "on-surface-variant": "#1f2121",
       "primary": "#906fe9",

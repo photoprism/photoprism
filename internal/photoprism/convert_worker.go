@@ -45,6 +45,12 @@ func ConvertWorker(jobs <-chan ConvertJob) {
 		// f is the media file to be converted.
 		f := job.file
 
+		// A complete Insta360 capture has one canonical _00 owner. Its _10 lens and LRV proxy are
+		// preserved and indexed as related originals, but must not create duplicate sidecars.
+		if capture := FindInsta360Capture(f); capture != nil && capture.ValidPair() && capture.Left.FileName() != f.FileName() {
+			continue
+		}
+
 		switch {
 		case f.IsAnimated():
 			// Extract metadata.
@@ -64,7 +70,7 @@ func ConvertWorker(jobs <-chan ConvertJob) {
 			}
 
 			// Transcode to MP4 AVC.
-			if _, err := job.convert.ToAvc(f, job.convert.conf.FFmpegEncoder(), false, false); err != nil {
+			if _, err := job.convert.ToAvc(f, job.convert.conf.FFmpegEncoder(), false, job.force); err != nil {
 				handleErr(err, job)
 			}
 		default:

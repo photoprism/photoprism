@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-07-23 13:16+0000\n"
-"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
+"PO-Revision-Date: 2026-08-07 14:04+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Slovak <https://translate.photoprism.app/projects/photoprism/frontend/sk/>\n"
 "Language: sk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Weblate 2026.7.1\n"
+"X-Generator: Weblate 2026.8\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -50,7 +50,7 @@ msgstr "%{n} nájdených albumov"
 msgid "%{n} folders found"
 msgstr "%{n} nájdených zložiek"
 
-#: src/component/navigation.vue:646
+#: src/component/navigation.vue:652
 msgid "%{n} GB of %{q} GB used"
 msgstr "%{n} GB z %{q} GB použitých"
 
@@ -142,10 +142,10 @@ msgstr "K dispozícii je nová verzia %{s}:"
 #: src/component/user/edit/dialog.vue:146
 #: src/component/user/edit/dialog.vue:147 src/page/settings/account.vue:139
 #: src/page/settings/account.vue:140 src/page/about/about.vue:19
-#: src/app/routes.js:97 src/component/navigation.vue:422
-#: src/component/navigation.vue:423 src/component/navigation.vue:435
-#: src/component/navigation.vue:444 src/component/navigation.vue:557
-#: src/component/navigation.vue:565 src/component/navigation.vue:589
+#: src/app/routes.js:97 src/component/navigation.vue:428
+#: src/component/navigation.vue:429 src/component/navigation.vue:441
+#: src/component/navigation.vue:450 src/component/navigation.vue:563
+#: src/component/navigation.vue:571 src/component/navigation.vue:595
 #: src/page/people/recognized.vue:132 src/page/settings/account.vue:123
 #: src/page/settings/account.vue:124
 msgid "About"
@@ -169,8 +169,8 @@ msgid "Accessibility"
 msgstr "Prístupnosť"
 
 #: src/component/navigation.vue:578 src/component/user/edit/dialog.vue:26
-#: src/component/auth/menu.vue:14 src/component/navigation.vue:692
-#: src/component/navigation.vue:881 src/component/service/upload.vue:25
+#: src/component/auth/menu.vue:14 src/component/navigation.vue:698
+#: src/component/navigation.vue:887 src/component/service/upload.vue:25
 #: src/locales.js:335 src/model/service.js:80 src/model/user.js:151
 #: src/page/settings.vue:112 src/page/settings/general.vue:394
 msgid "Account"
@@ -424,8 +424,8 @@ msgid "Album saved"
 msgstr "Album uložený"
 
 #: src/app/routes.js:342 src/component/album/toolbar.vue:118
-#: src/component/lightbox/sidebar.vue:286 src/component/navigation.vue:191
-#: src/component/navigation.vue:728 src/component/photo/batch-edit.vue:414
+#: src/component/lightbox/sidebar.vue:286 src/component/navigation.vue:197
+#: src/component/navigation.vue:734 src/component/photo/batch-edit.vue:414
 #: src/component/photo/edit/info.vue:79 src/component/photo/edit/info.vue:80
 #: src/options/options.js:257 src/page/settings/collections.vue:113
 #: src/page/settings/general.vue:81
@@ -562,9 +562,9 @@ msgstr "Animované"
 msgid "Animation"
 msgstr "Animácie"
 
-#: src/component/navigation.vue:205 src/component/navigation.vue:206
-#: src/component/navigation.vue:218 src/component/navigation.vue:227
-#: src/component/navigation.vue:255
+#: src/component/navigation.vue:211 src/component/navigation.vue:212
+#: src/component/navigation.vue:224 src/component/navigation.vue:233
+#: src/component/navigation.vue:261
 msgid "Animations"
 msgstr "Animácie"
 
@@ -659,9 +659,9 @@ msgid "Attributes"
 msgstr "Atribúty"
 
 #: src/app/routes.js:416 src/common/util.js:862
-#: src/component/navigation.vue:198 src/component/navigation.vue:199
-#: src/component/navigation.vue:211 src/component/navigation.vue:220
-#: src/component/navigation.vue:248 src/options/options.js:358
+#: src/component/navigation.vue:204 src/component/navigation.vue:205
+#: src/component/navigation.vue:217 src/component/navigation.vue:226
+#: src/component/navigation.vue:254 src/options/options.js:358
 msgid "Audio"
 msgstr "Audio"
 
@@ -783,7 +783,7 @@ msgstr "Som zaneprázdnený, prosím čakajte…"
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "Používaním softvéru a služieb, ktoré poskytujeme, súhlasíte s našimi podmienkami používania, zásadami ochrany osobných údajov a kódexom správania."
 
-#: src/app/routes.js:355 src/component/navigation.vue:390
+#: src/app/routes.js:355 src/component/navigation.vue:396
 #: src/options/options.js:263 src/page/settings/collections.vue:173
 #: src/page/settings/general.vue:156
 msgid "Calendar"
@@ -1237,7 +1237,7 @@ msgstr "Súčasné meno"
 msgid "Current Password"
 msgstr "Súčasné heslo"
 
-#: src/options/themes.js:1019 src/options/themes.js:1029
+#: src/options/themes.js:1021 src/options/themes.js:1031
 msgid "Custom"
 msgstr "Vlastné"
 
@@ -1286,7 +1286,7 @@ msgstr "Denníky ladenia"
 #: src/model/user.js:343 src/options/auth.js:40 src/options/auth.js:41
 #: src/options/auth.js:69 src/options/auth.js:70 src/options/options.js:252
 #: src/options/options.js:255 src/options/options.js:293
-#: src/options/options.js:377 src/options/themes.js:861
+#: src/options/options.js:377 src/options/themes.js:863
 msgid "Default"
 msgstr "Predvolená"
 
@@ -1478,10 +1478,10 @@ msgstr "Zobrazenie názvov obrázkov vo výsledkoch vyhľadávania."
 msgid "Document"
 msgstr "Dokument"
 
-#: src/component/navigation.vue:106 src/component/navigation.vue:107
-#: src/component/navigation.vue:119 src/component/navigation.vue:128
-#: src/component/navigation.vue:136 src/component/navigation.vue:149
-#: src/component/navigation.vue:156
+#: src/component/navigation.vue:112 src/component/navigation.vue:113
+#: src/component/navigation.vue:125 src/component/navigation.vue:134
+#: src/component/navigation.vue:142 src/component/navigation.vue:155
+#: src/component/navigation.vue:162
 msgid "Documents"
 msgstr "Dokumenty"
 
@@ -1670,9 +1670,9 @@ msgstr "Subjekt nenájdený"
 msgid "Error"
 msgstr "Chyba"
 
-#: src/app/routes.js:543 src/component/navigation.vue:370
-#: src/component/navigation.vue:371 src/component/navigation.vue:383
-#: src/component/navigation.vue:392 src/component/navigation.vue:505
+#: src/app/routes.js:543 src/component/navigation.vue:376
+#: src/component/navigation.vue:377 src/component/navigation.vue:389
+#: src/component/navigation.vue:398 src/component/navigation.vue:511
 msgid "Errors"
 msgstr "Chyby"
 
@@ -1825,7 +1825,7 @@ msgstr "Rýchle"
 msgid "Favorite"
 msgstr "Obľúbený"
 
-#: src/app/routes.js:388 src/component/navigation.vue:310
+#: src/app/routes.js:388 src/component/navigation.vue:316
 #: src/options/options.js:261 src/page/albums.vue:392
 #: src/page/settings/general.vue:96
 msgid "Favorites"
@@ -1896,7 +1896,7 @@ msgstr "Súbor bol nahratý"
 msgid "Filename"
 msgstr "Názov súboru"
 
-#: src/component/navigation.vue:746 src/component/photo/edit/dialog.vue:55
+#: src/component/navigation.vue:752 src/component/photo/edit/dialog.vue:55
 #: src/component/photo/edit/dialog.vue:56
 #: src/component/photo/edit/dialog.vue:68
 #: src/component/photo/edit/dialog.vue:70
@@ -1911,6 +1911,12 @@ msgstr "Súbory s postupnými menami ako napríklad 'IMG_1234 (2)' alebo 'IMG_12
 #: src/locales.js:238 src/locales.js:296
 msgid "First page"
 msgstr "Prvá strana"
+
+#: src/component/navigation.vue:101 src/component/navigation.vue:110
+#: src/component/navigation.vue:118 src/component/navigation.vue:124
+#: src/component/navigation.vue:88 src/component/navigation.vue:89
+msgid "Fisheye"
+msgstr "Rybie oko"
 
 #: src/component/meta/camera/dialog.vue:105
 #: src/component/photo/edit/details.vue:276
@@ -1933,7 +1939,7 @@ msgstr "Zložka obsahuje %{n} súborov"
 msgid "Folder is empty"
 msgstr "Zložka je prázdna"
 
-#: src/app/routes.js:368 src/component/navigation.vue:457
+#: src/app/routes.js:368 src/component/navigation.vue:463
 #: src/options/options.js:266 src/page/settings/collections.vue:128
 #: src/page/settings/general.vue:111
 msgid "Folders"
@@ -2048,9 +2054,9 @@ msgstr "Pomoc"
 msgid "Help & Support"
 msgstr "Pomoc a podpora"
 
-#: src/component/navigation.vue:363 src/component/navigation.vue:364
-#: src/component/navigation.vue:376 src/component/navigation.vue:385
-#: src/component/navigation.vue:498 src/component/people/edit/dialog.vue:40
+#: src/component/navigation.vue:369 src/component/navigation.vue:370
+#: src/component/navigation.vue:382 src/component/navigation.vue:391
+#: src/component/navigation.vue:504 src/component/people/edit/dialog.vue:40
 msgid "Hidden"
 msgstr "Skryté"
 
@@ -2174,7 +2180,7 @@ msgstr "Pri preberaní zásobníkov a archívov zahrňte vedľajšie súbory."
 msgid "Increase storage size or delete files to continue."
 msgstr "Ak chcete pokračovať, zväčšite veľkosť úložiska alebo odstráňte súbory."
 
-#: src/component/navigation.vue:752 src/page/library.vue:56
+#: src/component/navigation.vue:758 src/page/library.vue:56
 #: src/page/settings/content.vue:6
 msgid "Index"
 msgstr "Index"
@@ -2358,7 +2364,7 @@ msgid "Label saved"
 msgstr "Štítok uložený"
 
 #: src/component/cluster/node/overview.vue:63 src/app/routes.js:558
-#: src/component/lightbox/sidebar.vue:351 src/component/navigation.vue:430
+#: src/component/lightbox/sidebar.vue:351 src/component/navigation.vue:436
 #: src/component/photo/batch-edit.vue:430
 #: src/component/photo/edit/dialog.vue:37
 #: src/component/photo/edit/dialog.vue:38
@@ -2420,7 +2426,7 @@ msgstr "Viac"
 msgid "Learn More"
 msgstr "Dozvedieť sa viac"
 
-#: src/component/navigation.vue:485 src/component/navigation.vue:777
+#: src/component/navigation.vue:485 src/component/navigation.vue:783
 msgid "Legal Information"
 msgstr "Právne informácie"
 
@@ -2436,15 +2442,15 @@ msgid "Lens not found"
 msgstr "Objektív nebol nájdený"
 
 #: src/app/routes.js:612 src/app/routes.js:628 src/app/routes.js:644
-#: src/component/navigation.vue:477 src/page/settings/general.vue:349
+#: src/component/navigation.vue:483 src/page/settings/general.vue:349
 msgid "Library"
 msgstr "Knižnica"
 
 #: src/page/connect.vue:5 src/app/routes.js:103
-#: src/component/lightbox/sidebar.vue:862 src/component/navigation.vue:410
-#: src/component/navigation.vue:411 src/component/navigation.vue:423
-#: src/component/navigation.vue:432 src/component/navigation.vue:545
-#: src/component/navigation.vue:553 src/component/navigation.vue:569
+#: src/component/lightbox/sidebar.vue:862 src/component/navigation.vue:416
+#: src/component/navigation.vue:417 src/component/navigation.vue:429
+#: src/component/navigation.vue:438 src/component/navigation.vue:551
+#: src/component/navigation.vue:559 src/component/navigation.vue:575
 #: src/component/photo/batch-edit.vue:397
 #: src/component/photo/batch-edit.vue:400
 #: src/component/photo/edit/details.vue:332
@@ -2483,9 +2489,9 @@ msgstr "Zobrazenie zoznamu"
 msgid "Live"
 msgstr "Živé"
 
-#: src/app/routes.js:402 src/component/navigation.vue:191
-#: src/component/navigation.vue:192 src/component/navigation.vue:204
-#: src/component/navigation.vue:213 src/component/navigation.vue:241
+#: src/app/routes.js:402 src/component/navigation.vue:197
+#: src/component/navigation.vue:198 src/component/navigation.vue:210
+#: src/component/navigation.vue:219 src/component/navigation.vue:247
 msgid "Live Photos"
 msgstr "Živé fotografie"
 
@@ -2529,12 +2535,12 @@ msgstr "Poloha"
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
 msgstr "Správy denníka sa tu zobrazia vždy, keď program PhotoPrism narazí na poškodené súbory alebo sa vyskytnú iné potenciálne problémy."
 
-#: src/component/navigation.vue:348 src/component/navigation.vue:599
-#: src/component/navigation.vue:714
+#: src/component/navigation.vue:348 src/component/navigation.vue:605
+#: src/component/navigation.vue:720
 msgid "Login"
 msgstr "Prihlásiť sa"
 
-#: src/component/navigation.vue:758 src/page/library.vue:79
+#: src/component/navigation.vue:764 src/page/library.vue:79
 #: src/page/settings/general.vue:379
 msgid "Logs"
 msgstr "Záznamy"
@@ -2543,7 +2549,7 @@ msgstr "Záznamy"
 msgid "Longitude"
 msgstr "Dĺžka"
 
-#: src/component/navigation.vue:629
+#: src/component/navigation.vue:635
 msgid "Lost server connection"
 msgstr "Strata pripojenia k serveru"
 
@@ -2597,7 +2603,7 @@ msgstr "Značka"
 msgid "Maximum number of accounts has been reached."
 msgstr "Maximálny počet účtov bol dosiahnutý."
 
-#: src/app/routes.js:395 src/component/navigation.vue:219
+#: src/app/routes.js:395 src/component/navigation.vue:225
 #: src/options/options.js:258 src/page/settings/general.vue:126
 msgid "Media"
 msgstr "Médiá"
@@ -2646,7 +2652,7 @@ msgstr "Chýbajúca alebo neplatná konfigurácia"
 msgid "mixed"
 msgstr "zmiešané"
 
-#: src/app/routes.js:329 src/component/navigation.vue:417
+#: src/app/routes.js:329 src/component/navigation.vue:423
 #: src/options/options.js:264 src/page/settings/collections.vue:143
 #: src/page/settings/general.vue:171
 msgid "Moments"
@@ -3050,9 +3056,9 @@ msgstr "Pôvodné názvy súborov budú uložené a zaindexované."
 msgid "Original Name"
 msgstr "Pôvodný názov"
 
-#: src/component/navigation.vue:356 src/component/navigation.vue:357
-#: src/component/navigation.vue:369 src/component/navigation.vue:378
-#: src/component/navigation.vue:491 src/model/file.js:180
+#: src/component/navigation.vue:362 src/component/navigation.vue:363
+#: src/component/navigation.vue:375 src/component/navigation.vue:384
+#: src/component/navigation.vue:497 src/model/file.js:180
 #: src/options/options.js:474 src/page/library/browse.vue:7
 #: src/page/settings/collections.vue:42 src/page/settings/content.vue:185
 #: src/page/settings/general.vue:364
@@ -3132,8 +3138,8 @@ msgid "Payment required"
 msgstr "Je potrebné uhradiť platbu"
 
 #: src/app/routes.js:573 src/app/routes.js:597
-#: src/component/lightbox/sidebar.vue:178 src/component/navigation.vue:283
-#: src/component/navigation.vue:734 src/component/photo/edit/dialog.vue:46
+#: src/component/lightbox/sidebar.vue:178 src/component/navigation.vue:289
+#: src/component/navigation.vue:740 src/component/photo/edit/dialog.vue:46
 #: src/component/photo/edit/dialog.vue:47
 #: src/component/photo/edit/dialog.vue:59
 #: src/component/photo/edit/dialog.vue:61
@@ -3222,8 +3228,8 @@ msgid "Place & Time"
 msgstr "Miesto a čas"
 
 #: src/app/routes.js:472 src/app/routes.js:478 src/app/routes.js:484
-#: src/app/routes.js:499 src/component/navigation.vue:346
-#: src/component/navigation.vue:740 src/options/options.js:262
+#: src/app/routes.js:499 src/component/navigation.vue:352
+#: src/component/navigation.vue:746 src/options/options.js:262
 #: src/page/places.vue:7 src/page/settings/collections.vue:158
 #: src/page/settings/general.vue:409 src/page/settings/general.vue:493
 msgid "Places"
@@ -3348,9 +3354,9 @@ msgid "Primary"
 msgstr "Primárne"
 
 #: src/app/routes.js:437 src/component/album/edit/dialog.vue:80
-#: src/component/navigation.vue:120 src/component/navigation.vue:121
-#: src/component/navigation.vue:133 src/component/navigation.vue:142
-#: src/component/navigation.vue:150 src/component/navigation.vue:170
+#: src/component/navigation.vue:126 src/component/navigation.vue:127
+#: src/component/navigation.vue:139 src/component/navigation.vue:148
+#: src/component/navigation.vue:156 src/component/navigation.vue:176
 #: src/component/photo/batch-edit.vue:1537
 #: src/component/photo/edit/info.vue:129 src/component/photo/edit/info.vue:130
 #: src/page/settings/general.vue:200
@@ -3468,10 +3474,10 @@ msgstr "Obmedziť pohyb"
 msgid "Refresh"
 msgstr "Obnoviť"
 
-#: src/app/routes.js:506 src/component/navigation.vue:275
-#: src/component/navigation.vue:276 src/component/navigation.vue:288
-#: src/component/navigation.vue:297 src/component/navigation.vue:324
-#: src/component/navigation.vue:353 src/component/navigation.vue:361
+#: src/app/routes.js:506 src/component/navigation.vue:281
+#: src/component/navigation.vue:282 src/component/navigation.vue:294
+#: src/component/navigation.vue:303 src/component/navigation.vue:330
+#: src/component/navigation.vue:359 src/component/navigation.vue:367
 msgid "Regions"
 msgstr "Regióny"
 
@@ -3487,12 +3493,12 @@ msgstr "Registrácia"
 msgid "Registration disabled"
 msgstr "Registrácia zakázaná"
 
-#: src/component/navigation.vue:422 src/component/navigation.vue:686
+#: src/component/navigation.vue:422 src/component/navigation.vue:692
 #: src/component/update.vue:28 src/page/services.vue:228
 msgid "Reload"
 msgstr "Znovu načítať"
 
-#: src/component/navigation.vue:599 src/component/navigation.vue:902
+#: src/component/navigation.vue:599 src/component/navigation.vue:908
 #: src/component/update.vue:62 src/page/settings/general.vue:642
 #: src/page/settings/general.vue:659
 msgid "Reloading…"
@@ -3600,10 +3606,10 @@ msgstr "Limit opakovania"
 msgid "Retype Password"
 msgstr "Heslo znovu"
 
-#: src/app/routes.js:430 src/component/navigation.vue:113
-#: src/component/navigation.vue:114 src/component/navigation.vue:126
-#: src/component/navigation.vue:135 src/component/navigation.vue:143
-#: src/component/navigation.vue:163
+#: src/app/routes.js:430 src/component/navigation.vue:119
+#: src/component/navigation.vue:120 src/component/navigation.vue:132
+#: src/component/navigation.vue:141 src/component/navigation.vue:149
+#: src/component/navigation.vue:169
 msgid "Review"
 msgstr "Kontrola"
 
@@ -3703,9 +3709,9 @@ msgstr "Sken"
 msgid "Scan the QR code with your authenticator app or use the setup key shown below and then enter the generated verification code:"
 msgstr "Naskenujte QR kód pomocou svojej autentifikačnej aplikácie alebo použite kľúč nastavenia zobrazený nižšie a potom zadajte vygenerovaný overovací kód:"
 
-#: src/component/navigation.vue:100 src/component/navigation.vue:101
-#: src/component/navigation.vue:113 src/component/navigation.vue:122
-#: src/component/navigation.vue:130 src/component/navigation.vue:143
+#: src/component/navigation.vue:106 src/component/navigation.vue:107
+#: src/component/navigation.vue:119 src/component/navigation.vue:128
+#: src/component/navigation.vue:136 src/component/navigation.vue:149
 msgid "Scans"
 msgstr "Skeny"
 
@@ -3723,7 +3729,7 @@ msgstr "Rozsahy"
 #: src/component/cluster/node/users.vue:11 src/page/admin/sessions.vue:13
 #: src/page/admin/users.vue:13 src/page/cluster/activity.vue:13
 #: src/page/cluster/nodes.vue:13 src/page/admin/activity.vue:13
-#: src/component/meta/location/dialog.vue:60 src/component/navigation.vue:722
+#: src/component/meta/location/dialog.vue:60 src/component/navigation.vue:728
 #: src/component/navigation.vue:91 src/component/photo/toolbar.vue:34
 #: src/locales.js:319 src/options/options.js:256 src/page/albums.vue:20
 #: src/page/labels.vue:15 src/page/library/errors.vue:18
@@ -3828,10 +3834,10 @@ msgstr "Služba"
 msgid "Service URL"
 msgstr "URL Služby"
 
-#: src/component/navigation.vue:404 src/component/navigation.vue:405
-#: src/component/navigation.vue:417 src/component/navigation.vue:426
-#: src/component/navigation.vue:539 src/component/navigation.vue:547
-#: src/component/navigation.vue:555 src/component/navigation.vue:563
+#: src/component/navigation.vue:410 src/component/navigation.vue:411
+#: src/component/navigation.vue:423 src/component/navigation.vue:432
+#: src/component/navigation.vue:545 src/component/navigation.vue:553
+#: src/component/navigation.vue:561 src/component/navigation.vue:569
 #: src/locales.js:363 src/page/settings/general.vue:305
 msgid "Services"
 msgstr "Služby"
@@ -3864,8 +3870,8 @@ msgstr "Nastaviť ako titulný obrázok"
 #: src/component/navigation.vue:491 src/component/navigation.vue:494
 #: src/app/routes.js:214 src/app/routes.js:661 src/app/routes.js:673
 #: src/app/routes.js:685 src/app/routes.js:702 src/app/routes.js:714
-#: src/app/routes.js:734 src/component/navigation.vue:527
-#: src/component/navigation.vue:700 src/options/options.js:267
+#: src/app/routes.js:734 src/component/navigation.vue:533
+#: src/component/navigation.vue:706 src/options/options.js:267
 msgid "Settings"
 msgstr "Nastavenia"
 
@@ -3997,7 +4003,7 @@ msgstr "Prihlásiť sa"
 
 #: src/component/navigation.vue:414 src/page/auth/instances.vue:64
 #: src/page/auth/instances.vue:71 src/component/auth/menu.vue:42
-#: src/component/navigation.vue:683
+#: src/component/navigation.vue:689
 msgid "Sign Out"
 msgstr "Odhlásiť sa"
 
@@ -4105,9 +4111,9 @@ msgstr "Naskladané fotky nasnímané v rovnakom čase a na rovnakom mieste na z
 msgid "Stackable"
 msgstr "Naskladateľné"
 
-#: src/component/navigation.vue:101 src/component/navigation.vue:110
-#: src/component/navigation.vue:118 src/component/navigation.vue:124
-#: src/component/navigation.vue:88 src/component/navigation.vue:89
+#: src/component/navigation.vue:107 src/component/navigation.vue:116
+#: src/component/navigation.vue:124 src/component/navigation.vue:130
+#: src/component/navigation.vue:94 src/component/navigation.vue:95
 #: src/page/settings/content.vue:62
 msgid "Stacks"
 msgstr "Naskladané"
@@ -4192,7 +4198,7 @@ msgstr "Super administrátor"
 msgid "Support for additional services, like Google Drive, will be added over time."
 msgstr "Podpora pre dodatočné služby, ako napríklad Google Drive, budú pridané neskôr."
 
-#: src/component/confirm/sponsor.vue:15 src/component/navigation.vue:617
+#: src/component/confirm/sponsor.vue:15 src/component/navigation.vue:623
 msgid "Support Our Mission"
 msgstr "Podporte našu misiu"
 
@@ -4431,12 +4437,12 @@ msgid "Unknown location"
 msgstr "Neznáma lokalita"
 
 #: src/component/navigation.vue:567 src/page/settings/account.vue:467
-#: src/page/settings/account.vue:475 src/component/navigation.vue:870
+#: src/page/settings/account.vue:475 src/component/navigation.vue:876
 #: src/page/settings/account.vue:375 src/page/settings/account.vue:383
 msgid "Unregistered"
 msgstr "Neregistrovaný"
 
-#: src/app/routes.js:381 src/component/navigation.vue:206
+#: src/app/routes.js:381 src/component/navigation.vue:212
 msgid "Unsorted"
 msgstr "Nezoradené"
 
@@ -4492,11 +4498,11 @@ msgid "Updating stacks"
 msgstr "Aktualizujú sa naskladané fotky"
 
 #: src/component/navigation.vue:334 src/page/connect.vue:20
-#: src/component/navigation.vue:416 src/component/navigation.vue:417
-#: src/component/navigation.vue:429 src/component/navigation.vue:438
-#: src/component/navigation.vue:551 src/component/navigation.vue:559
-#: src/component/navigation.vue:575 src/component/navigation.vue:583
-#: src/component/navigation.vue:611 src/component/navigation.vue:771
+#: src/component/navigation.vue:422 src/component/navigation.vue:423
+#: src/component/navigation.vue:435 src/component/navigation.vue:444
+#: src/component/navigation.vue:557 src/component/navigation.vue:565
+#: src/component/navigation.vue:581 src/component/navigation.vue:589
+#: src/component/navigation.vue:617 src/component/navigation.vue:777
 #: src/page/connect.vue:17
 msgid "Upgrade"
 msgstr "Aktualizácia"
@@ -4509,7 +4515,7 @@ msgstr "Aktualizácia"
 msgid "Upgrade Now"
 msgstr "Aktualizujte teraz"
 
-#: src/component/album/toolbar.vue:175 src/component/navigation.vue:708
+#: src/component/album/toolbar.vue:175 src/component/navigation.vue:714
 #: src/component/photo/toolbar.vue:439 src/component/service/upload.vue:28
 #: src/component/service/upload.vue:29 src/component/service/upload.vue:38
 #: src/component/service/upload.vue:63 src/component/upload/dialog.vue:122
@@ -4608,7 +4614,7 @@ msgstr "Použite svoj kód na obnovenie alebo sa obráťte na správcu."
 msgid "User"
 msgstr "Používateľ"
 
-#: src/component/navigation.vue:764
+#: src/component/navigation.vue:770
 msgid "User Guide"
 msgstr "Používateľská príručka"
 
@@ -4631,10 +4637,10 @@ msgstr "Užívateľ nenájdený"
 msgid "Username"
 msgstr "Meno používateľa"
 
-#: src/component/navigation.vue:398 src/component/navigation.vue:399
-#: src/component/navigation.vue:411 src/component/navigation.vue:420
-#: src/component/navigation.vue:533 src/component/navigation.vue:541
-#: src/component/navigation.vue:549 src/locales.js:334
+#: src/component/navigation.vue:404 src/component/navigation.vue:405
+#: src/component/navigation.vue:417 src/component/navigation.vue:426
+#: src/component/navigation.vue:539 src/component/navigation.vue:547
+#: src/component/navigation.vue:555 src/locales.js:334
 msgid "Users"
 msgstr "Používatelia"
 
@@ -4648,10 +4654,10 @@ msgstr "UUID"
 msgid "Vector"
 msgstr "Vektor"
 
-#: src/component/navigation.vue:107 src/component/navigation.vue:116
-#: src/component/navigation.vue:124 src/component/navigation.vue:130
-#: src/component/navigation.vue:137 src/component/navigation.vue:94
-#: src/component/navigation.vue:95
+#: src/component/navigation.vue:100 src/component/navigation.vue:101
+#: src/component/navigation.vue:113 src/component/navigation.vue:122
+#: src/component/navigation.vue:130 src/component/navigation.vue:136
+#: src/component/navigation.vue:143
 msgid "Vectors"
 msgstr "Vektory"
 
@@ -4679,9 +4685,9 @@ msgstr "Video"
 msgid "Video Duration"
 msgstr "Trvanie videa"
 
-#: src/app/routes.js:409 src/component/navigation.vue:184
-#: src/component/navigation.vue:185 src/component/navigation.vue:197
-#: src/component/navigation.vue:206 src/component/navigation.vue:234
+#: src/app/routes.js:409 src/component/navigation.vue:190
+#: src/component/navigation.vue:191 src/component/navigation.vue:203
+#: src/component/navigation.vue:212 src/component/navigation.vue:240
 #: src/options/options.js:259
 msgid "Videos"
 msgstr "Videá"
@@ -4894,10 +4900,10 @@ msgctxt "Edit"
 msgid "Content"
 msgstr "Obsah"
 
-#: src/app/routes.js:454 src/component/navigation.vue:127
-#: src/component/navigation.vue:128 src/component/navigation.vue:140
-#: src/component/navigation.vue:149 src/component/navigation.vue:157
-#: src/component/navigation.vue:177 src/page/settings/general.vue:320
+#: src/app/routes.js:454 src/component/navigation.vue:133
+#: src/component/navigation.vue:134 src/component/navigation.vue:146
+#: src/component/navigation.vue:155 src/component/navigation.vue:163
+#: src/component/navigation.vue:183 src/page/settings/general.vue:320
 msgctxt "Noun"
 msgid "Archive"
 msgstr "Archivovať"

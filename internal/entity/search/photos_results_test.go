@@ -12,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/media"
+	"github.com/photoprism/photoprism/pkg/media/projection"
 	"github.com/photoprism/photoprism/pkg/media/video"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -278,9 +279,87 @@ func TestPhoto_MediaProjection(t *testing.T) {
 		}
 		assert.Equal(t, "equirectangular", r.MediaProjection())
 	})
+	t.Run("ImagePrefersEquirectDerivative", func(t *testing.T) {
+		r := Photo{
+			PhotoType:      "image",
+			FileProjection: "dual-fisheye",
+			Files: []entity.File{
+				{MediaType: media.Image.String(), FileHash: "e", FileProjection: "equirectangular"},
+			},
+		}
+		assert.Equal(t, "equirectangular", r.MediaProjection())
+	})
+	t.Run("ImageDualFisheyeWithoutDerivativeRedacted", func(t *testing.T) {
+		r := Photo{
+			PhotoType:      "image",
+			FileProjection: "dual-fisheye",
+		}
+		assert.Equal(t, "", r.MediaProjection())
+	})
+	t.Run("VideoPrefersEquirectDerivative", func(t *testing.T) {
+		r := Photo{
+			PhotoType:      "video",
+			FileProjection: "",
+			Files: []entity.File{
+				{FileVideo: true, MediaType: media.Video.String(), FileHash: "v", FileProjection: "dual-fisheye"},
+				{MediaType: media.Image.String(), FileHash: "e", FileProjection: "equirectangular"},
+			},
+		}
+		assert.Equal(t, "equirectangular", r.MediaProjection())
+	})
+	t.Run("VideoDualFisheyeWithoutDerivativeRedacted", func(t *testing.T) {
+		r := Photo{
+			PhotoType:      "video",
+			FileProjection: "dual-fisheye",
+			Files: []entity.File{
+				{FileVideo: true, MediaType: media.Video.String(), FileHash: "v", FileProjection: "dual-fisheye"},
+			},
+		}
+		assert.Equal(t, "", r.MediaProjection())
+	})
+}
+
+func TestSphereProjection(t *testing.T) {
+	assert.Equal(t, "", sphereProjection("fisheye"))
+	assert.Equal(t, "", sphereProjection("dual-fisheye"))
+	assert.Equal(t, "equirectangular", sphereProjection("equirectangular"))
+	assert.Equal(t, "cubestrip", sphereProjection("cubestrip"))
+	assert.Equal(t, "", sphereProjection(""))
 }
 
 func TestPhoto_MediaInfo(t *testing.T) {
+	t.Run("EquirectangularDerivativePreferred", func(t *testing.T) {
+		r := Photo{
+			PhotoType: media.Video.String(),
+			// The indexer tags every .insv original dual-fisheye, so the lens file carries that value.
+			Files: []entity.File{
+				{FileVideo: true, FileHash: "square-original", FileCodec: video.CodecHvc1, FileWidth: 3072, FileHeight: 3072, FileProjection: projection.DualFisheye.String()},
+				{FileVideo: true, FileHash: "sphere-avc", FileCodec: video.CodecAvc1, FileMime: header.ContentTypeMp4AvcMain, FileWidth: 1920, FileHeight: 960, FileProjection: projection.Equirectangular.String()},
+			},
+		}
+
+		mediaHash, mediaCodec, _, width, height := r.MediaInfo()
+		assert.Equal(t, "sphere-avc", mediaHash)
+		assert.Equal(t, video.CodecAvc1, mediaCodec)
+		assert.Equal(t, 1920, width)
+		assert.Equal(t, 960, height)
+	})
+	t.Run("StackedEquirectangularNotPreferred", func(t *testing.T) {
+		// Without a fisheye original there is nothing to substitute, so an unrelated 360° file
+		// stacked on a normal video must not replace its dimensions and codec.
+		r := Photo{
+			PhotoType: media.Video.String(),
+			Files: []entity.File{
+				{FileVideo: true, FileHash: "flat-video", FileCodec: video.CodecAvc1, FileWidth: 1920, FileHeight: 1080},
+				{FileVideo: true, FileHash: "sphere-avc", FileCodec: video.CodecAvc1, FileWidth: 1920, FileHeight: 960, FileProjection: projection.Equirectangular.String()},
+			},
+		}
+
+		mediaHash, _, _, width, height := r.MediaInfo()
+		assert.Equal(t, "flat-video", mediaHash)
+		assert.Equal(t, 1920, width)
+		assert.Equal(t, 1080, height)
+	})
 	t.Run("LiveCodecAVC", func(t *testing.T) {
 		r := Photo{
 			ID:           1111154,
@@ -866,4 +945,38 @@ func TestPhotosResult_ShareFileName(t *testing.T) {
 		r := result1.ShareBase(3)
 		assert.Contains(t, r, "20221111-090718-Phototitle123 (3)")
 	})
+}
+
+func TestPhoto_HasFisheyeOriginal(t *testing.T) {
+	t.Run("PrimaryFisheye", func(t *testing.T) {
+		r := Photo{FileProjection: "dual-fisheye"}
+		assert.True(t, r.HasFisheyeOriginal())
+	})
+	t.Run("MergedFileFisheye", func(t *testing.T) {
+		r := Photo{Files: []entity.File{{FileProjection: "fisheye"}}}
+		assert.True(t, r.HasFisheyeOriginal())
+	})
+	t.Run("EquirectangularOnly", func(t *testing.T) {
+		r := Photo{FileProjection: "equirectangular", Files: []entity.File{{FileProjection: "equirectangular"}}}
+		assert.False(t, r.HasFisheyeOriginal())
+	})
+	t.Run("None", func(t *testing.T) {
+		r := Photo{}
+		assert.False(t, r.HasFisheyeOriginal())
+	})
+}
+
+// TestPhoto_MediaProjection_StackedEquirectangular verifies that an unrelated 360° file stacked on
+// a flat picture does not promote that picture to a sphere.
+func TestPhoto_MediaProjection_StackedEquirectangular(t *testing.T) {
+	r := Photo{
+		PhotoType:      "image",
+		FileProjection: "",
+		Files: []entity.File{
+			{MediaType: media.Image.String(), FileHash: "flat", FileProjection: ""},
+			{MediaType: media.Image.String(), FileHash: "sphere", FileProjection: "equirectangular"},
+		},
+	}
+
+	assert.Equal(t, "", r.MediaProjection())
 }

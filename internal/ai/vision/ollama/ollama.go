@@ -24,3 +24,29 @@ Additional information can be found in our Developer Guide:
 <https://docs.photoprism.app/developer-guide/>
 */
 package ollama
+
+import (
+	"net/url"
+	"strings"
+)
+
+// IsCloudUrl reports whether the URL points at the Ollama Cloud service.
+func IsCloudUrl(rawUrl string) bool {
+	if rawUrl = strings.TrimSpace(rawUrl); rawUrl == "" {
+		return false
+	}
+
+	u, err := url.Parse(rawUrl)
+
+	if err != nil || u.Host == "" {
+		return false
+	}
+
+	cloud, err := url.Parse(CloudBaseUrl)
+
+	if err != nil {
+		return false
+	}
+
+	return strings.EqualFold(u.Hostname(), cloud.Hostname())
+}

@@ -1116,6 +1116,12 @@ var Flags = CliFlags{
 			Value:   encode.DefaultBitrateLimit,
 			EnvVars: EnvVars("FFMPEG_BITRATE"),
 		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "ffmpeg-fisheye-fov",
+			Usage:   fmt.Sprintf("field of view in `DEGREES` for dewarping fisheye 360° originals (%d-%d)", encode.MinFisheyeFov, encode.MaxFisheyeFov),
+			Value:   encode.DefaultFisheyeFov,
+			EnvVars: EnvVars("FFMPEG_FISHEYE_FOV"),
+		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "ffmpeg-preset",
 			Usage:   "FFmpeg compression `PRESET` when using an encoder that supports it, e.g. fast, medium, or slow",

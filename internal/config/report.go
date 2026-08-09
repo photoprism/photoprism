@@ -295,6 +295,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"ffmpeg-size", fmt.Sprintf("%d", c.FFmpegSize())},
 		{"ffmpeg-quality", fmt.Sprintf("%d", c.FFmpegQuality())},
 		{"ffmpeg-bitrate", fmt.Sprintf("%d", c.FFmpegBitrate())},
+		{"ffmpeg-fisheye-fov", fmt.Sprintf("%d", c.FFmpegFisheyeFov())},
 		{"ffmpeg-preset", c.FFmpegPreset()},
 		{"ffmpeg-device", c.FFmpegDevice()},
 		{"ffmpeg-map-video", c.FFmpegMapVideo()},

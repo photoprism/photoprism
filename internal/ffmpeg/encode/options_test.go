@@ -1,6 +1,7 @@
 package encode
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -47,5 +48,15 @@ func TestOptions_VideoFilter(t *testing.T) {
 		r := opt.VideoFilter("rgb32")
 		assert.Contains(t, r, "format=rgb32")
 		assert.Contains(t, r, "min(1500, iw)")
+	})
+	t.Run("V360", func(t *testing.T) {
+		v360Opt := &Options{SizeLimit: 1500, V360: "v360=input=dfisheye:output=e"}
+		r := v360Opt.VideoFilter("")
+		assert.True(t, strings.HasPrefix(r, "v360=input=dfisheye:output=e,"))
+		assert.Contains(t, r, "min(1500, iw)")
+	})
+	t.Run("NoV360", func(t *testing.T) {
+		r := opt.VideoFilter("")
+		assert.NotContains(t, r, "v360")
 	})
 }

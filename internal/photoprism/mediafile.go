@@ -33,6 +33,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/media"
+	"github.com/photoprism/photoprism/pkg/media/projection"
 	"github.com/photoprism/photoprism/pkg/media/video"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -63,6 +64,9 @@ type MediaFile struct {
 	metaOnce         sync.Once
 	videoInfo        video.Info
 	videoOnce        sync.Once
+	insta360Model    string
+	insta360Once     sync.Once
+	visualProjection projection.Type
 	fileMutex        sync.Mutex
 	location         *entity.Cell
 	imageConfig      *image.Config
@@ -927,6 +931,116 @@ func (m *MediaFile) IsDng() bool {
 	return m.HasMimeType(header.ContentTypeDng)
 }
 
+// IsInsp checks if the file is an Insta360 panoramic image (dual-fisheye JPEG).
+func (m *MediaFile) IsInsp() bool {
+	return fs.FileType(m.fileName) == fs.ImageInsp
+}
+
+// IsInsv checks if the file is an Insta360 video (dual-fisheye MP4 container).
+func (m *MediaFile) IsInsv() bool {
+	return fs.FileType(m.fileName) == fs.VideoInsv
+}
+
+// IsInsta360 checks if the file was recorded by an Insta360 camera, based on its maker metadata.
+// Older models (ONE, ONE X) report the vendor "Arashi Vision" with the model name carrying "Insta360",
+// while newer models report "Insta360" directly.
+func (m *MediaFile) IsInsta360() bool {
+	if m.IsInsp() || m.IsInsv() {
+		return true
+	}
+
+	switch strings.ToLower(m.CameraMake()) {
+	case "insta360", "arashi vision":
+		return true
+	}
+
+	return strings.HasPrefix(strings.ToLower(m.CameraModel()), "insta360")
+}
+
+// Insta360CameraModel returns the embedded model name for an Insta360 original.
+func (m *MediaFile) Insta360CameraModel() string {
+	if m == nil || !m.IsInsp() && !m.IsInsv() {
+		return ""
+	}
+
+	if model := strings.TrimSpace(m.CameraModel()); model != "" {
+		return model
+	}
+
+	m.insta360Once.Do(func() {
+		model, err := media.Insta360CameraModelFile(m.FileName())
+
+		if err != nil {
+			log.Debugf("media: %s in %s (read Insta360 camera model)", clean.Error(err), clean.Log(m.BaseName()))
+			return
+		}
+
+		m.insta360Model = model
+	})
+
+	return m.insta360Model
+}
+
+// DualFisheye checks if the file stores dual-fisheye 360° content that must be dewarped to
+// equirectangular before it can be shown in the sphere viewer. Insta360 .insp/.insv originals
+// always do; the extension is authoritative for these proprietary formats.
+func (m *MediaFile) DualFisheye() bool {
+	return m.IsInsp() || m.IsInsv()
+}
+
+// FisheyeDng checks if the file is a single- or dual-fisheye DNG that must be developed and dewarped.
+func (m *MediaFile) FisheyeDng() bool {
+	return m.FisheyeDngProjection().Fisheye()
+}
+
+// FisheyeDngProjection returns the conservatively detected fisheye geometry of a DNG original.
+func (m *MediaFile) FisheyeDngProjection() projection.Type {
+	if !m.IsDng() {
+		return projection.Unknown
+	}
+
+	if detected := projection.New(m.MetaData().Projection); detected.Fisheye() {
+		return detected
+	}
+
+	// Known 360 camera vendors identify a fisheye original, while the raster aspect distinguishes
+	// horizontal or vertical dual-lens frames from a single circular lens. Other geometry stays
+	// single fisheye and is verified again after RAW development before v360 is allowed to run.
+	if m.IsInsta360() || strings.Contains(strings.ToLower(m.CameraModel()), "theta") {
+		if m.DualFisheyeLayout() || m.StackedDualFisheyeLayout() {
+			return projection.DualFisheye
+		}
+
+		return projection.Fisheye
+	}
+
+	return projection.Unknown
+}
+
+// DualFisheyeLayout reports whether the frame is compatible with the side-by-side dual-fisheye
+// input that "v360=input=dfisheye" expects, i.e. a ~2:1 aspect ratio.
+// An unknown aspect (0) counts as compatible so the extension-authoritative .insp/.insv path still
+// dewarps; known non-2:1 frames (X3/X4 per-lens streams, single-lens sources) are rejected.
+func (m *MediaFile) DualFisheyeLayout() bool {
+	r := float64(m.AspectRatio())
+
+	return r <= 0 || math.Abs(r-2.0) <= 0.2
+}
+
+// StackedDualFisheyeLayout reports whether two square fisheye frames are stacked vertically.
+func (m *MediaFile) StackedDualFisheyeLayout() bool {
+	r := float64(m.AspectRatio())
+
+	return r > 0 && math.Abs(r-0.5) <= 0.05
+}
+
+// FisheyeLayout reports whether the frame is compatible with a single circular fisheye input.
+func (m *MediaFile) FisheyeLayout() bool {
+	r := float64(m.AspectRatio())
+
+	return r > 0 && math.Abs(r-1.0) <= 0.2
+}
+
 // IsHeif checks if the file is a High Efficiency Image File Format (HEIF) container with a supported file type extension.
 func (m *MediaFile) IsHeif() bool {
 	return m.IsHeic() || m.IsHeicS() || m.IsAvif() || m.IsAvifS()
@@ -1191,7 +1305,26 @@ func (m *MediaFile) NeedsTranscoding() bool {
 		return fs.VideoMp4.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false) == ""
 	}
 
-	return fs.VideoAvc.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false) == ""
+	return m.AvcFile() == nil
+}
+
+// AvcFile returns the existing AVC sidecar for a video original, if available.
+func (m *MediaFile) AvcFile() *MediaFile {
+	if m == nil || m.NotAnimated() {
+		return nil
+	}
+
+	avcName := fs.VideoAvc.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false)
+	if avcName == "" {
+		return nil
+	}
+
+	result, err := NewMediaFile(avcName)
+	if err != nil || result == nil || result.Empty() {
+		return nil
+	}
+
+	return result
 }
 
 // SkipTranscoding checks if the media file is not animated or has already been transcoded to a playable format.

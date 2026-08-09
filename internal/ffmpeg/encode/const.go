@@ -20,3 +20,11 @@ const (
 	DefaultMapAudio    = "0:a:0?"
 	DefaultMapMetadata = "0"
 )
+
+// Field-of-view limits in degrees for the v360 fisheye dewarp filter. The default is the angle the
+// stored fisheye disc spans, not a lens specification, so it is smaller than the optics suggest.
+const (
+	MinFisheyeFov     = 90
+	DefaultFisheyeFov = 190
+	MaxFisheyeFov     = 360
+)

@@ -56,6 +56,7 @@ func registerOllamaEngineDefaults() {
 		DefaultResolution: ollama.DefaultResolution,
 		DefaultKey:        ollama.APIKeyPlaceholder,
 		DefaultThink:      ollama.DefaultThink,
+		DefaultNormalize:  NormalizeWord,
 	})
 
 	// Keep the default caption model config aligned with the defaults.
@@ -205,6 +206,7 @@ func (ollamaParser) Parse(ctx context.Context, req *ApiRequest, raw []byte, stat
 	}
 
 	if parsedLabels {
+		normalize := req.GetNormalize()
 		filtered := response.Result.Labels[:0]
 		for i := range response.Result.Labels {
 			if response.Result.Labels[i].Confidence <= 0 {
@@ -216,7 +218,7 @@ func (ollamaParser) Parse(ctx context.Context, req *ApiRequest, raw []byte, stat
 			}
 
 			// Apply thresholds and canonicalize the name.
-			normalizeLabelResult(&response.Result.Labels[i])
+			normalizeLabelResult(&response.Result.Labels[i], normalize)
 
 			if response.Result.Labels[i].Name == "" {
 				continue

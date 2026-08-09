@@ -51,6 +51,23 @@ func TestConfig_FFmpegBitrate(t *testing.T) {
 	assert.Equal(t, 800, c.FFmpegBitrate())
 }
 
+func TestConfig_FFmpegFisheyeFov(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Equal(t, encode.DefaultFisheyeFov, c.FFmpegFisheyeFov())
+
+	c.options.FFmpegFisheyeFov = 0
+	assert.Equal(t, encode.DefaultFisheyeFov, c.FFmpegFisheyeFov())
+
+	c.options.FFmpegFisheyeFov = 10
+	assert.Equal(t, encode.MinFisheyeFov, c.FFmpegFisheyeFov())
+
+	c.options.FFmpegFisheyeFov = 500
+	assert.Equal(t, encode.MaxFisheyeFov, c.FFmpegFisheyeFov())
+
+	c.options.FFmpegFisheyeFov = 190
+	assert.Equal(t, 190, c.FFmpegFisheyeFov())
+}
+
 func TestConfig_FFmpegSize(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Equal(t, 4096, c.FFmpegSize())

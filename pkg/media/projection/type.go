@@ -17,6 +17,12 @@ func (t Type) Unknown() bool {
 	return t == Unknown
 }
 
+// Fisheye checks if the type is a fisheye or dual-fisheye projection, which
+// require a dewarp to equirectangular before they can be shown in a sphere viewer.
+func (t Type) Fisheye() bool {
+	return t == Fisheye || t == DualFisheye
+}
+
 // Equal checks if the type matches.
 func (t Type) Equal(s string) bool {
 	return strings.EqualFold(s, t.String())

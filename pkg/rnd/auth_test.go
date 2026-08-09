@@ -65,11 +65,31 @@ func TestAuthTokenID(t *testing.T) {
 }
 
 func TestAppPassword(t *testing.T) {
-	for n := range 10 {
+	t.Run("Log", func(t *testing.T) {
+		for n := range 10 {
+			s := AppPassword()
+			t.Logf("AppPassword %d: %s", n, s)
+			assert.Equal(t, AppPasswordLength, len(s))
+		}
+	})
+	t.Run("AlwaysValid", func(t *testing.T) {
+		// Every generated password must have the full length and a matching checksum.
+		for range 100 {
+			s := AppPassword()
+			assert.Equal(t, AppPasswordLength, len(s))
+			assert.True(t, IsAppPassword(s, true), "not a valid app password: %s", s)
+		}
+	})
+	t.Run("RandomCharsFromBase62", func(t *testing.T) {
 		s := AppPassword()
-		t.Logf("AppPassword %d: %s", n, s)
-		assert.Equal(t, AppPasswordLength, len(s))
-	}
+		for i, c := range []byte(s) {
+			if (i+1)%7 == 0 {
+				assert.Equal(t, byte(Separator), c)
+				continue
+			}
+			assert.Contains(t, CharsetBase62, string(c))
+		}
+	})
 }
 
 func BenchmarkAppPassword(b *testing.B) {
@@ -126,12 +146,39 @@ func BenchmarkAppPasswordIgnoreChecksum(b *testing.B) {
 }
 
 func TestJoinToken(t *testing.T) {
-	for n := range 10 {
-		s := JoinToken()
-		t.Logf("JoinToken %d: %s", n, s)
-		assert.Equal(t, JoinTokenLength, len(s))
-		assert.True(t, IsJoinToken(s, true))
-	}
+	t.Run("Log", func(t *testing.T) {
+		for n := range 10 {
+			s := JoinToken()
+			t.Logf("JoinToken %d: %s", n, s)
+			assert.Equal(t, JoinTokenLength, len(s))
+			assert.True(t, IsJoinToken(s, true))
+		}
+	})
+	t.Run("EveryRandomPositionVaries", func(t *testing.T) {
+		// Every non-separator, non-checksum position must draw from the full charset.
+		const rounds = 200
+
+		seen := make([]map[byte]bool, JoinTokenLength)
+		for i := range seen {
+			seen[i] = make(map[byte]bool)
+		}
+
+		for range rounds {
+			s := JoinToken()
+			assert.True(t, IsJoinToken(s, true), "not a valid join token: %s", s)
+			for i := range JoinTokenLength {
+				seen[i][s[i]] = true
+			}
+		}
+
+		for i := range JoinTokenLength - 1 {
+			if isJoinTokenSeparatorIndex(i) {
+				assert.Len(t, seen[i], 1, "separator index %d must be constant", i)
+				continue
+			}
+			assert.Greater(t, len(seen[i]), 1, "index %d always produced the same character", i)
+		}
+	})
 }
 
 func TestIsJoinToken(t *testing.T) {

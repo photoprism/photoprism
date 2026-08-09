@@ -59,10 +59,32 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 		matches = list.Join(matches, files)
 	}
 
+	// Insta360 cameras may store one capture as two full-resolution lens videos plus an optional
+	// low-resolution proxy whose filename has a different prefix. Include the complete capture and
+	// all of its sidecars so the indexer creates one photo instead of three unrelated records.
+	var captureMain string
+	if capture := FindInsta360Capture(m); capture != nil && capture.ValidPair() {
+		captureMain = capture.Left.FileName()
+
+		for _, captureFile := range capture.Files() {
+			capturePattern := regexp.QuoteMeta(captureFile.AbsPrefix(false)+".") + "*"
+			if captureMatches, captureErr := filepath.Glob(capturePattern); captureErr == nil {
+				matches = list.Join(matches, captureMatches)
+			}
+		}
+	}
+
 	isHeic := false
+
+	processedMatches := make(map[string]bool, len(matches))
 
 	// Process files that matched the pattern.
 	for _, fileName := range matches {
+		if processedMatches[fileName] {
+			continue
+		}
+
+		processedMatches[fileName] = true
 		f, fileErr := NewMediaFile(fileName)
 
 		if fileErr != nil || f.Empty() || f.IsArchive() {
@@ -132,6 +154,17 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 	}
 
 	sort.Sort(result.Files)
+
+	// The left (_00) lens is the canonical main original for a complete Insta360 capture. The
+	// generated equirectangular preview becomes the primary display file later during indexing.
+	if captureMain != "" {
+		for _, file := range result.Files {
+			if file.FileName() == captureMain {
+				result.Main = file
+				break
+			}
+		}
+	}
 
 	return result, nil
 }

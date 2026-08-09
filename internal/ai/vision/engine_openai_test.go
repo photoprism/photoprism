@@ -363,3 +363,88 @@ func TestPerformApiRequestOpenAIError(t *testing.T) {
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "Invalid image payload")
 }
+
+func TestPopulateOpenAIJSONResult(t *testing.T) {
+	const compound = `{"labels":[{"name":"ferris wheel","confidence":0.92,"topicality":0.88}]}`
+
+	t.Run("SingleWord", func(t *testing.T) {
+		result := ApiResult{}
+		require.NoError(t, populateOpenAIJSONResult(&result, json.RawMessage(compound), NormalizeWord))
+		require.Len(t, result.Labels, 1)
+		assert.Equal(t, "Ferris", result.Labels[0].Name)
+		assert.Equal(t, entity.SrcOpenAI, result.Labels[0].Source)
+	})
+	t.Run("Phrase", func(t *testing.T) {
+		result := ApiResult{}
+		require.NoError(t, populateOpenAIJSONResult(&result, json.RawMessage(compound), NormalizePhrase))
+		require.Len(t, result.Labels, 1)
+		assert.Equal(t, "Ferris Wheel", result.Labels[0].Name)
+	})
+	t.Run("False", func(t *testing.T) {
+		result := ApiResult{}
+		require.NoError(t, populateOpenAIJSONResult(&result, json.RawMessage(compound), NormalizeFalse))
+		require.Len(t, result.Labels, 1)
+		assert.Equal(t, "Ferris Wheel", result.Labels[0].Name)
+	})
+	t.Run("CaptionOnly", func(t *testing.T) {
+		result := ApiResult{}
+		payload := json.RawMessage(`{"caption":{"text":" A cat on a mat ","confidence":0.7}}`)
+		require.NoError(t, populateOpenAIJSONResult(&result, payload, NormalizeWord))
+		require.NotNil(t, result.Caption)
+		assert.Equal(t, "A cat on a mat", result.Caption.Text)
+		assert.Empty(t, result.Labels)
+	})
+	t.Run("EmptyPayload", func(t *testing.T) {
+		result := ApiResult{}
+		assert.NoError(t, populateOpenAIJSONResult(&result, nil, NormalizeWord))
+		assert.Empty(t, result.Labels)
+	})
+	t.Run("InvalidJson", func(t *testing.T) {
+		result := ApiResult{}
+		assert.Error(t, populateOpenAIJSONResult(&result, json.RawMessage(`{"labels":`), NormalizeWord))
+	})
+	t.Run("NilResult", func(t *testing.T) {
+		assert.NoError(t, populateOpenAIJSONResult(nil, json.RawMessage(compound), NormalizeWord))
+	})
+}
+
+func TestOpenAIParserNormalizeModes(t *testing.T) {
+	// The text branch is a separate call site from the structured one and has to honor the mode too.
+	const textPayload = `{
+		"id": "resp_123",
+		"model": "gpt-5-mini",
+		"output": [{
+			"role": "assistant",
+			"content": [{
+				"type": "output_text",
+				"text": "{\"labels\":[{\"name\":\"ferris wheel\",\"confidence\":0.98,\"topicality\":0.99}]}"
+			}]
+		}]
+	}`
+
+	parse := func(t *testing.T, req *ApiRequest) *ApiResponse {
+		t.Helper()
+
+		resp, err := openaiParser{}.Parse(context.Background(), req, []byte(textPayload), http.StatusOK)
+		require.NoError(t, err)
+		require.NotNil(t, resp)
+
+		return resp
+	}
+
+	t.Run("TextBranchSingleWord", func(t *testing.T) {
+		resp := parse(t, &ApiRequest{Model: "gpt-5-mini", ResponseFormat: ApiFormatOpenAI})
+		require.Len(t, resp.Result.Labels, 1)
+		assert.Equal(t, "Ferris", resp.Result.Labels[0].Name)
+	})
+	t.Run("TextBranchPhrase", func(t *testing.T) {
+		resp := parse(t, &ApiRequest{Model: "gpt-5-mini", ResponseFormat: ApiFormatOpenAI, Normalize: NormalizePhrase})
+		require.Len(t, resp.Result.Labels, 1)
+		assert.Equal(t, "Ferris Wheel", resp.Result.Labels[0].Name)
+	})
+	t.Run("NilRequestDefaults", func(t *testing.T) {
+		resp := parse(t, nil)
+		require.Len(t, resp.Result.Labels, 1)
+		assert.Equal(t, "Ferris", resp.Result.Labels[0].Name)
+	})
+}

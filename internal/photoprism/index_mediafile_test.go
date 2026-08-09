@@ -230,8 +230,8 @@ func TestIndex_UserMediaFile_ParallelDuplicates(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	// The package-wide PHOTOPRISM_TEST_DSN points all test configs at one shared
-	// database, so it must be isolated for reliable row counts.
+	// The package-wide test config points all test configs at one shared database,
+	// so this test needs one of its own for reliable row counts.
 	useTestDb(t, "index-dup-race")
 
 	cfg := config.NewMinimalTestConfigWithDb("index-dup-race", filepath.Join(t.TempDir(), "storage"))
@@ -357,10 +357,9 @@ func TestIndex_IndexedFileOriginalName(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	// The package-wide PHOTOPRISM_TEST_DSN points all test configs at one
-	// shared database; it and the storage must be isolated so the flash.jpg
-	// content does not collide by hash with a row another test indexed with
-	// an explicit original name.
+	// The package-wide test config points all test configs at one shared database;
+	// the database and storage must be isolated so the flash.jpg content does not
+	// collide by hash with a row another test indexed with an explicit original name.
 	useTestDb(t, "index-original-name")
 
 	cfg := config.NewMinimalTestConfigWithDb("index-original-name", filepath.Join(t.TempDir(), "storage"))
@@ -418,6 +417,56 @@ func TestIndex_IndexedFileOriginalName(t *testing.T) {
 	require.NoError(t, entity.UnscopedDb().First(&file2, "file_hash = ?", hash).Error)
 	assert.Equal(t, "indexed-original-name/renamed-photo.jpg", file2.FileName)
 	assert.Empty(t, file2.OriginalName, "re-indexed renamed file must not pick up a stale OriginalName")
+}
+
+// TestIndex_MediaFile_DualFisheye verifies that an Insta360 .insp original is recognized and
+// recorded with the dual-fisheye projection, which also flags the photo as a panorama.
+func TestIndex_MediaFile_DualFisheye(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	useTestDb(t, "index-dual-fisheye")
+
+	cfg := config.NewMinimalTestConfigWithDb("index-dual-fisheye", filepath.Join(t.TempDir(), "storage"))
+
+	oldCfg := Config()
+	SetConfig(cfg)
+
+	t.Cleanup(func() {
+		SetConfig(oldCfg)
+		oldCfg.RegisterDb()
+	})
+
+	convert := NewConvert(cfg)
+	ind := NewIndex(cfg, convert, NewFiles(), NewPhotos())
+	opt := IndexOptionsSingle(cfg)
+	opt.Convert = false // exercise original detection without the ffmpeg dewarp
+
+	srcFile, err := NewMediaFile("testdata/insta360.insp")
+	require.NoError(t, err)
+
+	dst := filepath.Join(cfg.OriginalsPath(), "insta360.insp")
+	require.NoError(t, srcFile.Copy(dst, false))
+
+	mf, err := NewMediaFile(dst)
+	require.NoError(t, err)
+	hash := mf.Hash()
+
+	// The full index flow creates the ExifTool JSON before indexing; it also supplies the JPEG
+	// dimensions the panorama flag depends on.
+	require.NoError(t, mf.CreateExifToolJson(convert))
+
+	res := ind.MediaFile(mf, opt, "", "")
+	require.True(t, res.Success())
+
+	var file entity.File
+	require.NoError(t, entity.UnscopedDb().First(&file, "file_hash = ?", hash).Error)
+	assert.Equal(t, "dual-fisheye", file.FileProjection)
+
+	var photo entity.Photo
+	require.NoError(t, entity.UnscopedDb().First(&photo, "id = ?", file.PhotoID).Error)
+	assert.True(t, photo.PhotoPanorama)
 }
 
 func TestIndex_MediaFile_ImportFaceTags(t *testing.T) {

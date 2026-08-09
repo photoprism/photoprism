@@ -42,6 +42,7 @@ type SearchPhotosGeo struct {
 	Scan        string    `form:"scan" example:"scan:true scan:false" notes:"Finds scanned photos and documents"`
 	Mp          string    `form:"mp" example:"mp:3-6" notes:"Resolution in Megapixels (MP)"`
 	Panorama    bool      `form:"panorama" notes:"Finds panorama pictures only (aspect ratio 1.9:1 or more)"`
+	Fisheye     bool      `form:"fisheye" notes:"Finds fisheye 360° originals (e.g. Insta360 .insv/.insp)"`
 	Portrait    bool      `form:"portrait" notes:"Finds portrait pictures only"`
 	Landscape   bool      `form:"landscape" notes:"Finds landscape pictures only"`
 	Square      bool      `form:"square" notes:"Finds square pictures only (aspect ratio 1:1)"`

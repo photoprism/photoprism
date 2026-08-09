@@ -1,10 +1,7 @@
 package rnd
 
 import (
-	"crypto/rand"
 	"fmt"
-	"log"
-	"math/big"
 
 	"github.com/photoprism/photoprism/pkg/checksum"
 )
@@ -30,10 +27,7 @@ var joinTokenSeparators = [...]int{7, 16}
 // Examples: 9fa8e562564dac91b96881040e98f6719212a1a364e0bb25
 func AuthToken() string {
 	b := make([]byte, 24)
-
-	if _, err := rand.Read(b); err != nil {
-		log.Fatal(err)
-	}
+	randomFill(b)
 
 	return fmt.Sprintf("%x", b)
 }
@@ -62,17 +56,21 @@ func AuthTokenID(prefix string) string {
 //
 // Example: OXiV72-wTtiL9-d04jO7-X7XP4p
 func AppPassword() string {
-	m := big.NewInt(int64(len(CharsetBase62)))
 	b := make([]byte, 0, AppPasswordLength)
 
+	// Draw all random characters up front so the password is always complete.
+	chars := make([]byte, AppPasswordLength)
+	randomChars(chars, CharsetBase62)
+
 	for i := range AppPasswordLength {
-		if (i+1)%7 == 0 {
+		switch {
+		case (i+1)%7 == 0:
 			b = append(b, Separator)
-		} else if i == AppPasswordLength-1 {
+		case i == AppPasswordLength-1:
 			b = append(b, checksum.Char(b))
 			return string(b)
-		} else if r, err := rand.Int(rand.Reader, m); err == nil {
-			b = append(b, CharsetBase62[r.Int64()])
+		default:
+			b = append(b, chars[i])
 		}
 	}
 
@@ -112,8 +110,11 @@ func IsAppPassword(s string, verifyChecksum bool) bool {
 //
 // Example: pGVplw8-eISgkdQN-Mep62nQ
 func JoinToken() string {
-	m := big.NewInt(int64(len(CharsetBase62)))
 	token := make([]byte, 0, JoinTokenLength)
+
+	// Draw all random characters up front so the token is always complete.
+	chars := make([]byte, JoinTokenLength)
+	randomChars(chars, CharsetBase62)
 
 	for i := range JoinTokenLength - 1 {
 		if isJoinTokenSeparatorIndex(i) {
@@ -121,12 +122,7 @@ func JoinToken() string {
 			continue
 		}
 
-		ch := CharsetBase62[0]
-		if r, err := rand.Int(rand.Reader, m); err == nil {
-			ch = CharsetBase62[r.Int64()]
-		}
-
-		token = append(token, ch)
+		token = append(token, chars[i])
 	}
 
 	token = append(token, checksum.Char(token))
