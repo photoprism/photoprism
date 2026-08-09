@@ -55,6 +55,7 @@ type ApiRequest struct {
 	Stream         bool               `form:"stream" yaml:"Stream,omitempty" json:"stream"`
 	Images         Files              `form:"images" yaml:"Images,omitempty" json:"images,omitempty"`
 	Schema         json.RawMessage    `form:"schema" yaml:"Schema,omitempty" json:"schema,omitempty"`
+	Normalize      NormalizeType      `form:"-" yaml:"-" json:"-"`
 	ResponseFormat ApiFormat          `form:"-" yaml:"-" json:"-"`
 }
 
@@ -210,6 +211,19 @@ func (r *ApiRequest) GetResponseFormat() ApiFormat {
 	}
 
 	return r.ResponseFormat
+}
+
+// GetNormalize returns the label name normalization requested for this response.
+func (r *ApiRequest) GetNormalize() NormalizeType {
+	if r == nil {
+		return NormalizeWord
+	}
+
+	if t := ParseNormalizeType(r.Normalize); t != NormalizeAuto {
+		return t
+	}
+
+	return NormalizeWord
 }
 
 // JSON returns the request data as JSON-encoded bytes.

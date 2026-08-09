@@ -83,3 +83,28 @@ func TestResponseJSONTagsAreOptional(t *testing.T) {
 		t.Fatalf("response fields should persist, got %+v", resp)
 	}
 }
+
+func TestIsCloudUrl(t *testing.T) {
+	cases := []struct {
+		name string
+		in   string
+		out  bool
+	}{
+		{name: "CloudBase", in: CloudBaseUrl, out: true},
+		{name: "CloudGenerate", in: CloudBaseUrl + "/api/generate", out: true},
+		{name: "CloudUppercase", in: "https://Ollama.com/api/generate", out: true},
+		{name: "LocalIP", in: "http://192.0.2.10:11434/api/generate", out: false},
+		{name: "LocalHost", in: DefaultBaseUrl + "/api/generate", out: false},
+		{name: "OtherHost", in: "https://vision.example.com/api/generate", out: false},
+		{name: "Empty", in: "", out: false},
+		{name: "NotAUrl", in: "gemma4:latest", out: false},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := IsCloudUrl(tc.in); got != tc.out {
+				t.Fatalf("IsCloudUrl(%q) = %v, want %v", tc.in, got, tc.out)
+			}
+		})
+	}
+}

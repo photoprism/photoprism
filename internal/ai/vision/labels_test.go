@@ -207,3 +207,77 @@ func TestGenerateLabelsRequestShapingForStructuredOutputIdea(t *testing.T) {
 		assert.Equal(t, entity.SrcOpenAI, labels[0].Source)
 	})
 }
+
+func TestGenerateLabelsNormalizeMode(t *testing.T) {
+	useSelfHostedOllamaDefaults(t)
+
+	prevConfig := Config
+	t.Cleanup(func() {
+		Config = prevConfig
+	})
+
+	// Serves one compound label and asserts that the mode never reaches the service.
+	newServer := func(t *testing.T) *httptest.Server {
+		t.Helper()
+
+		return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			var req map[string]any
+			require.NoError(t, json.NewDecoder(r.Body).Decode(&req))
+			assert.NotContains(t, req, "normalize", "the normalize mode must not be sent to the service")
+
+			require.NoError(t, json.NewEncoder(w).Encode(ollama.Response{
+				Model:    "gemma3:4b",
+				Response: `{"labels":[{"name":"ferris wheel","confidence":0.92,"topicality":0.88}]}`,
+			}))
+		}))
+	}
+
+	generate := func(t *testing.T, uri, normalize string) classify.Labels {
+		t.Helper()
+
+		model := &Model{
+			Type:      ModelTypeLabels,
+			Name:      "gemma3:4b",
+			Engine:    ollama.EngineName,
+			Normalize: normalize,
+			Service: Service{
+				Uri:            uri,
+				Method:         http.MethodPost,
+				RequestFormat:  ApiFormatOllama,
+				ResponseFormat: ApiFormatOllama,
+				FileScheme:     scheme.Base64,
+			},
+		}
+		model.ApplyEngineDefaults()
+
+		Config = &ConfigValues{Models: Models{model}, Thresholds: DefaultThresholds}
+
+		labels, err := GenerateLabels(Files{samplesPath + "/cat_224.jpeg"}, media.SrcLocal, entity.SrcAuto)
+		require.NoError(t, err)
+
+		return labels
+	}
+
+	cases := []struct {
+		name      string
+		normalize string
+		want      string
+	}{
+		{name: "Default", normalize: "", want: "Ferris"},
+		{name: "Phrase", normalize: "phrase", want: "Ferris Wheel"},
+		{name: "False", normalize: "false", want: "Ferris Wheel"},
+		{name: "InvalidFallsBackToDefault", normalize: "bogus", want: "Ferris"},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			server := newServer(t)
+			defer server.Close()
+
+			labels := generate(t, server.URL, tc.normalize)
+			require.Len(t, labels, 1)
+			assert.Equal(t, tc.want, labels[0].Name)
+			assert.Equal(t, entity.SrcOllama, labels[0].Source)
+		})
+	}
+}

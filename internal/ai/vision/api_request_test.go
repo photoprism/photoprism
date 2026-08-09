@@ -161,3 +161,44 @@ func TestApiRequestJSONThinkOmitempty(t *testing.T) {
 		}
 	})
 }
+
+func TestApiRequest_GetNormalize(t *testing.T) {
+	cases := []struct {
+		name string
+		req  *ApiRequest
+		want NormalizeType
+	}{
+		{name: "Nil", req: nil, want: NormalizeWord},
+		{name: "Unset", req: &ApiRequest{}, want: NormalizeWord},
+		{name: "Phrase", req: &ApiRequest{Normalize: NormalizePhrase}, want: NormalizePhrase},
+		{name: "Alias", req: &ApiRequest{Normalize: "off"}, want: NormalizeFalse},
+		{name: "Invalid", req: &ApiRequest{Normalize: "bogus"}, want: NormalizeWord},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := tc.req.GetNormalize(); got != tc.want {
+				t.Fatalf("(*ApiRequest).GetNormalize() = %q, want %q", got, tc.want)
+			}
+		})
+	}
+}
+
+func TestApiRequestJSONOmitsNormalize(t *testing.T) {
+	req := &ApiRequest{Model: "gemma4:latest", Prompt: "describe", Normalize: NormalizePhrase}
+
+	data, err := req.JSON()
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	var payload map[string]any
+	if err = json.Unmarshal(data, &payload); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	// The mode is a PhotoPrism post-processing rule and must never reach the service.
+	if _, ok := payload["normalize"]; ok {
+		t.Fatalf("expected the request payload to omit the normalize field, got %s", data)
+	}
+}

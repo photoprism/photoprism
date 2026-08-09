@@ -1,6 +1,6 @@
 ## PhotoPrism — Vision Schema Reference
 
-**Last Updated:** May 21, 2026
+**Last Updated:** August 9, 2026
 
 ### Overview
 
@@ -24,13 +24,13 @@ Both helpers build on the same field set (`name`, `confidence`, `topicality`, an
 
 ### Field Definitions
 
-- `name` — single-word noun describing the subject (string, required).
+- `name` — noun describing the subject (string, required). Single-word unless the model sets `Normalize: phrase`.
 - `confidence` — normalized score between `0` and `1` (float, required).
 - `topicality` — relative relevance score between `0` and `1` (float, required; defaults to `confidence` if omitted after parsing).
 - `nsfw` — boolean flag indicating sensitive content (required only in NSFW variants).
 - `nsfw_confidence` — normalized probability for the NSFW assessment (required only in NSFW variants).
 
-OpenAI schemas enforce these ranges/types, while Ollama prompts remind the model to emit matching keys. After parsing, PhotoPrism applies `LabelConfidenceDefault` and `normalizeLabelResult` to fill gaps and enforce naming rules.
+OpenAI schemas enforce these ranges/types, while Ollama prompts remind the model to emit matching keys. After parsing, PhotoPrism applies `LabelConfidenceDefault` and `normalizeLabelResult` to fill gaps and apply the model's `Normalize` mode.
 
 ### Usage Guidance
 

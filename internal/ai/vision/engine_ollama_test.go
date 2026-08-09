@@ -336,3 +336,92 @@ func TestStripReasoningBlock(t *testing.T) {
 		})
 	}
 }
+
+func TestOllamaParserNormalizeModes(t *testing.T) {
+	const payload = `{"labels":[{"name":"ferris wheel","confidence":0.92,"topicality":0.88}]}`
+
+	parse := func(t *testing.T, mode NormalizeType, body []byte) []LabelResult {
+		t.Helper()
+
+		req := &ApiRequest{Model: "gemma4:latest", Normalize: mode}
+		resp, err := ollamaParser{}.Parse(context.Background(), req, body, http.StatusOK)
+
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+
+		return resp.Result.Labels
+	}
+
+	response := func(t *testing.T, field, value string) []byte {
+		t.Helper()
+
+		body, err := json.Marshal(map[string]string{"model": "gemma4:latest", field: value})
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+
+		return body
+	}
+
+	cases := []struct {
+		name string
+		mode NormalizeType
+		want string
+	}{
+		{name: "Default", mode: "", want: "Ferris"},
+		{name: "SingleWord", mode: NormalizeWord, want: "Ferris"},
+		{name: "Phrase", mode: NormalizePhrase, want: "Ferris Wheel"},
+		{name: "False", mode: NormalizeFalse, want: "Ferris Wheel"},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			labels := parse(t, tc.mode, response(t, "response", payload))
+
+			if len(labels) != 1 || labels[0].Name != tc.want {
+				t.Fatalf("expected a single %q label, got %+v", tc.want, labels)
+			}
+		})
+	}
+	t.Run("ThinkingFallbackPayload", func(t *testing.T) {
+		labels := parse(t, NormalizePhrase, response(t, "thinking", payload))
+
+		if len(labels) != 1 || labels[0].Name != "Ferris Wheel" {
+			t.Fatalf("expected the mode to apply to the fallback payload, got %+v", labels)
+		}
+	})
+}
+
+func TestRegisterOllamaEngineDefaultsNormalize(t *testing.T) {
+	t.Cleanup(func() {
+		ensureEnvOnce = sync.Once{}
+		registerOllamaEngineDefaults()
+	})
+
+	// A model that inherits the engine URI is classified by the endpoint it resolves to,
+	// so the same configuration follows the base URL without an engine-wide default.
+	cases := []struct {
+		name    string
+		baseUrl string
+		want    NormalizeType
+	}{
+		{name: "SelfHosted", baseUrl: ollama.DefaultBaseUrl, want: NormalizeWord},
+		{name: "Cloud", baseUrl: ollama.CloudBaseUrl, want: NormalizePhrase},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Setenv(ollama.BaseUrlEnv, tc.baseUrl)
+			ensureEnvOnce = sync.Once{}
+			registerOllamaEngineDefaults()
+
+			model := &Model{Type: ModelTypeLabels, Engine: ollama.EngineName}
+			model.ApplyEngineDefaults()
+
+			if got := model.GetNormalize(); got != tc.want {
+				t.Fatalf("expected %q for %s, got %q", tc.want, tc.baseUrl, got)
+			}
+		})
+	}
+}

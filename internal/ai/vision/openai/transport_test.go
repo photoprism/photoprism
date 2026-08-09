@@ -26,14 +26,14 @@ func loadTestResponse(t *testing.T, name string) *Response {
 }
 
 func TestParseErrorMessage(t *testing.T) {
-	t.Run("returns message when present", func(t *testing.T) {
+	t.Run("MessagePresent", func(t *testing.T) {
 		raw := []byte(`{"error":{"message":"Invalid schema"}}`)
 		msg := ParseErrorMessage(raw)
 		if msg != "Invalid schema" {
 			t.Fatalf("expected message, got %q", msg)
 		}
 	})
-	t.Run("returns empty string when error is missing", func(t *testing.T) {
+	t.Run("ErrorMissing", func(t *testing.T) {
 		raw := []byte(`{"output":[]}`)
 		if msg := ParseErrorMessage(raw); msg != "" {
 			t.Fatalf("expected empty message, got %q", msg)
@@ -115,5 +115,32 @@ func TestSchemaLabelsReturnsValidJSON(t *testing.T) {
 
 	if decoded["type"] != "object" {
 		t.Fatalf("expected type object, got %v", decoded["type"])
+	}
+}
+
+func TestIsCloudModel(t *testing.T) {
+	cases := []struct {
+		name string
+		in   string
+		out  bool
+	}{
+		{name: "Default", in: DefaultModel, out: true},
+		{name: "GPT4o", in: "gpt-4o-mini", out: true},
+		{name: "Reasoning", in: "o3", out: true},
+		{name: "Uppercase", in: "GPT-5-MINI", out: true},
+		{name: "Whitespace", in: "  gpt-5  ", out: true},
+		{name: "OpenWeight", in: "Qwen2.5-VL-7B-Instruct", out: false},
+		{name: "FamilyPrefixCollision", in: "o11vision", out: false},
+		{name: "ReasoningVariant", in: "o4-mini", out: true},
+		{name: "Llama", in: "llama-3.2-vision", out: false},
+		{name: "Empty", in: "", out: false},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := IsCloudModel(tc.in); got != tc.out {
+				t.Fatalf("IsCloudModel(%q) = %v, want %v", tc.in, got, tc.out)
+			}
+		})
 	}
 }
