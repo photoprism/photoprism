@@ -289,8 +289,7 @@ func TestConfig_DatabasePortString(t *testing.T) {
 func TestConfig_DatabaseName(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	resetDatabaseOptions(c)
-	expected := ProjectRoot + "/storage/testdata/index.db?_busy_timeout=5000&_foreign_keys=on"
-	assert.Equal(t, expected, c.DatabaseName())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/index.db?_busy_timeout=5000&_foreign_keys=on", c.DatabaseName())
 }
 
 func TestConfig_DatabaseUser(t *testing.T) {
@@ -358,7 +357,6 @@ func TestShouldAutoRotateDatabase(t *testing.T) {
 		conf.Options().DatabaseName = "photoprism"
 		conf.Options().DatabaseUser = ""
 		conf.Options().DatabasePassword = ""
-		conf.Options().DatabaseDSN = ""
 		assert.True(t, conf.ShouldAutoRotateDatabase())
 	})
 }
