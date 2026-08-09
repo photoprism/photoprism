@@ -54,7 +54,7 @@ The defaults differ because the failure modes do. A model counts as hosted when 
 
 Hosted models only use a compound when the subject has one — across a 16-image benchmark the multi-word labels they returned were `ferris wheel`, `amusement park`, `roller coaster`, and `ski-lift`, every one of which the default mangles. Models small enough to run on an 8 GB GPU mix real compounds with filler such as `city_name` and `photo list`, which is what `single-word` keeps in check.
 
-This matters most outside English, where a compound subject is usually two words: `single-word` reduces the Arabic `حمار وحشي` (zebra) to `حمار` (donkey) and the Hebrew `גלגל ענק` (ferris wheel) to `גלגל` (wheel).
+This matters most outside English, where a compound subject is usually two words. **A name written in a non-Latin script is therefore never collapsed, whatever the mode says.** The vocabulary is English, so splitting `حمار وحشي` (zebra) into tokens has nothing to resolve against and only changes the subject to `حمار` (donkey); the same holds for `גלגל ענק` (ferris wheel) and `גלגל` (wheel). The check is on the script rather than the language, because a Latin-script name can still resolve — Spanish `noria gigante` keeps the head noun `Noria` — and a name mixing scripts keeps normal handling, so `شاطئ beach` still resolves to `Beach` through the vocabulary.
 
 Phrase mode pairs with a system prompt that does not demand single-word nouns — see `LabelSystemSimple` in the Ollama engine. It cannot repair a model that concatenates instead (`ferriswheel` stays `Ferriswheel`).
 

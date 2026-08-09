@@ -144,6 +144,13 @@ func resolveLabelName(raw string, mode NormalizeType) (string, canonicalLabel) {
 		return resolveLabelRaw(raw)
 	}
 
+	// A name in another script cannot match the English vocabulary, so splitting it into tokens
+	// has nothing to resolve against and only changes the subject: the Arabic "حمار وحشي" (zebra)
+	// would be stored as "حمار" (donkey).
+	if !hasLatinLetters(raw) {
+		return resolveLabelPhrase(raw)
+	}
+
 	if meta, ok := canonicalLabelFor(raw); ok {
 		return meta.Name, meta
 	}
@@ -233,6 +240,17 @@ func resolveLabelRaw(raw string) (string, canonicalLabel) {
 // Separators become spaces first, so "ferris-wheel" and "ferris wheel" cannot become two labels.
 func labelPhrase(raw string) string {
 	return clean.NameCapitalized(labelWordSplitter.Replace(raw))
+}
+
+// hasLatinLetters reports whether the name contains at least one letter of the Latin script.
+func hasLatinLetters(s string) bool {
+	for _, r := range s {
+		if unicode.Is(unicode.Latin, r) {
+			return true
+		}
+	}
+
+	return false
 }
 
 // candidateTokens breaks a raw label into sanitized tokens and adds potential singular forms.

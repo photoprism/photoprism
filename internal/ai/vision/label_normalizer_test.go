@@ -220,6 +220,31 @@ func TestResolveLabelRaw(t *testing.T) {
 	})
 }
 
+func TestHasLatinLetters(t *testing.T) {
+	cases := []struct {
+		name string
+		in   string
+		out  bool
+	}{
+		{name: "Latin", in: "ferris wheel", out: true},
+		{name: "Accented", in: "café", out: true},
+		{name: "Arabic", in: "حمار وحشي", out: false},
+		{name: "Hebrew", in: "גלגל ענק", out: false},
+		{name: "Chinese", in: "斑马", out: false},
+		{name: "Mixed", in: "شاطئ beach", out: true},
+		{name: "DigitsOnly", in: "66", out: false},
+		{name: "Empty", in: "", out: false},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := hasLatinLetters(tc.in); got != tc.out {
+				t.Fatalf("hasLatinLetters(%q) = %v, want %v", tc.in, got, tc.out)
+			}
+		})
+	}
+}
+
 func TestResolveLabelName(t *testing.T) {
 	cases := []struct {
 		name string
@@ -249,6 +274,13 @@ func TestResolveLabelName(t *testing.T) {
 		{name: "UnknownModeDefaultsToSingleWord", in: "ferris wheel", mode: "bogus", out: "Ferris"},
 		{name: "AutoDefaultsToSingleWord", in: "ferris wheel", mode: NormalizeAuto, out: "Ferris"},
 		{name: "EmptyRaw", in: "   ", mode: NormalizePhrase, out: ""},
+		{name: "WordArabicPhrase", in: "حمار وحشي", mode: NormalizeWord, out: "حمار وحشي"},
+		{name: "WordHebrewPhrase", in: "גלגל ענק", mode: NormalizeWord, out: "גלגל ענק"},
+		{name: "WordArabicSingleWord", in: "حمار", mode: NormalizeWord, out: "حمار"},
+		{name: "WordChinese", in: "斑马", mode: NormalizeWord, out: "斑马"},
+		{name: "WordThai", in: "ม้าลาย", mode: NormalizeWord, out: "ม้าลาย"},
+		{name: "WordMixedScriptStillResolves", in: "شاطئ beach", mode: NormalizeWord, out: "Beach"},
+		{name: "WordMixedScriptStillCollapses", in: "Ferris دولاب", mode: NormalizeWord, out: "Ferris"},
 	}
 
 	for _, tc := range cases {
@@ -355,6 +387,14 @@ func TestNormalizeLabelResult(t *testing.T) {
 
 		if label.Name != "" || label.Categories != nil || label.Priority != 0 {
 			t.Fatalf("expected the label to be dropped, got %q %v %d", label.Name, label.Categories, label.Priority)
+		}
+	})
+	t.Run("WordKeepsNonLatinPhrase", func(t *testing.T) {
+		label := LabelResult{Name: "حمار وحشي", Confidence: 0.8, Topicality: 0.7}
+		normalizeLabelResult(&label, NormalizeWord)
+
+		if label.Name != "حمار وحشي" {
+			t.Fatalf("expected the phrase to be kept in the default mode, got %q", label.Name)
 		}
 	})
 	t.Run("PhraseKeepsCompound", func(t *testing.T) {
