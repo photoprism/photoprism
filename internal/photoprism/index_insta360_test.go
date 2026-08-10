@@ -7,6 +7,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -108,9 +109,9 @@ func TestReconcileInsta360Photos(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		related, photos, relNames := newInsta360ReconcileFixture(t, "insta360reconcile")
 
-		archivedAt := entity.Now()
-		photos[0].DeletedAt = &archivedAt
-		photos[1].DeletedAt = &archivedAt
+		archivedAt := gorm.DeletedAt{Time: entity.Now(), Valid: true}
+		photos[0].DeletedAt = archivedAt
+		photos[1].DeletedAt = archivedAt
 		photos[1].PhotoFavorite = true
 		photos[2].PhotoCaption = "preserved manual caption"
 		photos[2].CaptionSrc = entity.SrcManual
@@ -143,7 +144,7 @@ func TestReconcileInsta360Photos(t *testing.T) {
 		var canonical entity.Photo
 		require.NoError(t, entity.UnscopedDb().First(&canonical, "id = ?", photos[0].ID).Error)
 		assert.True(t, canonical.PhotoFavorite)
-		assert.Nil(t, canonical.DeletedAt)
+		assert.False(t, canonical.DeletedAt.Valid)
 		assert.Equal(t, "preserved manual caption", canonical.PhotoCaption)
 		assert.Equal(t, entity.SrcManual, canonical.CaptionSrc)
 
@@ -167,9 +168,9 @@ func TestReconcileInsta360Photos(t *testing.T) {
 	t.Run("AllArchived", func(t *testing.T) {
 		related, photos, _ := newInsta360ReconcileFixture(t, "insta360archived")
 
-		archivedAt := entity.Now()
+		archivedAt := gorm.DeletedAt{Time: entity.Now(), Valid: true}
 		for i := range photos {
-			photos[i].DeletedAt = &archivedAt
+			photos[i].DeletedAt = archivedAt
 			require.NoError(t, photos[i].Save())
 		}
 
@@ -199,7 +200,7 @@ func TestReconcileInsta360Photos(t *testing.T) {
 		for _, photo := range photos {
 			var unchanged entity.Photo
 			require.NoError(t, entity.UnscopedDb().First(&unchanged, "id = ?", photo.ID).Error)
-			assert.Nil(t, unchanged.DeletedAt)
+			assert.False(t, unchanged.DeletedAt.Valid)
 			assert.NotEqual(t, -1, unchanged.PhotoQuality)
 		}
 	})
