@@ -14,6 +14,10 @@ const (
 	ClusterRadiusDefault = 0.42
 	// MatchDistDefault is the default distance offset used to match faces with clusters.
 	MatchDistDefault = 0.4
+	// CollisionDistDefault is the default distance below which embeddings cannot be distinguished.
+	CollisionDistDefault = 0.05
+	// EpsilonDefault is the default numeric tolerance used during cluster comparisons.
+	EpsilonDefault = 0.01
 )
 
 var (
@@ -41,13 +45,13 @@ var (
 	// MatchDist is the distance offset threshold used to match new faces with existing clusters.
 	MatchDist = MatchDistDefault
 	// CollisionDist is the minimum distance under which embeddings cannot be distinguished.
-	CollisionDist = 0.05
+	CollisionDist = CollisionDistDefault
 	// ClusterCore is the minimum number of faces required to seed a cluster core.
 	ClusterCore = 4
 	// SampleThreshold is the number of faces required before automatic clustering begins.
 	SampleThreshold = 2 * ClusterCore
 	// Epsilon is the numeric tolerance used during cluster comparisons.
-	Epsilon = 0.01
+	Epsilon = EpsilonDefault
 	// SkipChildren controls whether the clustering step omits faces from child samples by default.
 	SkipChildren = false
 	// IgnoreBackground determines whether background faces are ignored when generating matches.

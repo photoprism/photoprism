@@ -283,11 +283,7 @@ func (c *Config) FaceModelPath() string {
 // FaceModelLicense returns the license of the configured face embedding model weights,
 // or an empty string when no model is configured.
 func (c *Config) FaceModelLicense() string {
-	if m := c.FaceEmbeddingModel(); m != nil {
-		return m.License
-	}
-
-	return ""
+	return c.FaceEmbeddingModel().WeightLicense()
 }
 
 // FaceModelDims returns the embedding length of the configured face model, or 0 when none is configured.
@@ -366,21 +362,30 @@ func (c *Config) FaceClusterRadius() float64 {
 }
 
 // FaceCollisionDist returns the minimum distance used to differentiate embeddings.
+//
+// It does not go through faceThreshold, which takes this value as its lower bound and
+// would recurse.
 func (c *Config) FaceCollisionDist() float64 {
-	if c.options.FaceCollisionDist <= 0 || c.options.FaceCollisionDist > 1 {
-		return face.CollisionDist
+	value := c.options.FaceCollisionDist
+
+	if value > 0 && value <= 1 && c.faceThresholdIsSet("face-collision-dist", value, face.CollisionDistDefault) {
+		return value
 	}
 
-	return c.options.FaceCollisionDist
+	return faceModelThreshold(c.FaceEmbeddingModel(),
+		func(m *face.EmbeddingModel) float64 { return m.CollisionDist }, face.CollisionDistDefault)
 }
 
 // FaceEpsilonDist returns the distance slack applied to collision checks.
 func (c *Config) FaceEpsilonDist() float64 {
-	if c.options.FaceEpsilonDist <= 0 || c.options.FaceEpsilonDist > 0.1 {
-		return face.Epsilon
+	value := c.options.FaceEpsilonDist
+
+	if value > 0 && value <= 0.1 && c.faceThresholdIsSet("face-epsilon-dist", value, face.EpsilonDefault) {
+		return value
 	}
 
-	return c.options.FaceEpsilonDist
+	return faceModelThreshold(c.FaceEmbeddingModel(),
+		func(m *face.EmbeddingModel) float64 { return m.Epsilon }, face.EpsilonDefault)
 }
 
 // FaceMatchDist returns the offset distance when matching faces with clusters.

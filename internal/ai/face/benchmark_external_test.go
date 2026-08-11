@@ -307,7 +307,7 @@ func loadBenchmarkEmbedders(t *testing.T, modelNames []ModelName, threads int) (
 				Threads:   threads,
 			})
 		} else {
-			tfModel := NewModel(name, m.FilePath(embeddingModelsPath), t.TempDir(), m.Width, nil, false)
+			tfModel := NewModel(name, m.FilePath(embeddingModelsPath), t.TempDir(), CropSize.Width, nil, false)
 			initErr = tfModel.Init()
 			embedder = tfModel
 		}

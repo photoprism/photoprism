@@ -1394,14 +1394,14 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-collision-dist",
-			Usage:   "minimum collision discrimination `DISTANCE` (0.01-1)",
-			Value:   face.CollisionDist,
+			Usage:   "minimum collision discrimination `DISTANCE` (0.01-1); defaults to the calibrated value of the configured face model",
+			Value:   face.CollisionDistDefault,
 			EnvVars: EnvVars("FACE_COLLISION_DIST"),
 		}}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-epsilon-dist",
-			Usage:   "collision tolerance `DELTA` appended to max match distances (0.001-0.1)",
-			Value:   face.Epsilon,
+			Usage:   "collision tolerance `DELTA` appended to max match distances (0.001-0.1); defaults to the calibrated value of the configured face model",
+			Value:   face.EpsilonDefault,
 			EnvVars: EnvVars("FACE_EPSILON_DIST"),
 		}}, {
 		Flag: &cli.Float64Flag{

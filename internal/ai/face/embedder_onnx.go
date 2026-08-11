@@ -9,15 +9,20 @@ import (
 
 	onnxruntime "github.com/yalue/onnxruntime_go"
 
+	"github.com/photoprism/photoprism/internal/ai/onnx"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
-// onnxEmbedder generates face embeddings with an ONNX Runtime session.
+// onnxEmbedder generates face embeddings with an ONNX Runtime session. The preprocessing
+// values are copied out of the model description so the inner loop stays free of pointer
+// hops and of the division that a standard deviation would otherwise cost per pixel.
 type onnxEmbedder struct {
 	session    *onnxruntime.DynamicAdvancedSession
 	model      *EmbeddingModel
-	outputName string
+	colorOrder onnx.ColorOrder
+	mean       [onnx.Channels]float32
+	scales     [onnx.Channels]float32
 	width      int
 	height     int
 	dims       int
@@ -33,6 +38,8 @@ func NewONNXEmbedder(settings EmbedderSettings) (Embedder, error) {
 		return nil, fmt.Errorf("faces: missing embedding model")
 	case m.Runtime != RuntimeONNX:
 		return nil, fmt.Errorf("faces: %s is not an ONNX embedding model", clean.Log(m.Name))
+	case m.ONNX == nil || m.ONNX.Input == nil:
+		return nil, fmt.Errorf("faces: %s has no ONNX model description", clean.Log(m.Name))
 	case settings.ModelPath == "":
 		return nil, fmt.Errorf("faces: embedding model path is empty")
 	}
@@ -41,7 +48,15 @@ func NewONNXEmbedder(settings EmbedderSettings) (Embedder, error) {
 		return nil, fmt.Errorf("faces: %w", err)
 	}
 
-	if err := ensureONNXRuntime(settings.LibraryPath); err != nil {
+	// Embeddings are persisted, so a file that is not the artifact the registry describes
+	// must never produce them: channel order and normalization cannot be read from a
+	// graph, so the wrong preprocessing would be applied silently and every vector would
+	// land in a space nothing else can be compared against.
+	if err := m.ONNX.VerifyChecksum(settings.ModelPath); err != nil {
+		return nil, fmt.Errorf("faces: %w", err)
+	}
+
+	if err := onnx.EnsureRuntime(settings.LibraryPath); err != nil {
 		return nil, fmt.Errorf("faces: %w", err)
 	}
 
@@ -75,31 +90,29 @@ func NewONNXEmbedder(settings EmbedderSettings) (Embedder, error) {
 		return nil, fmt.Errorf("faces: optimize session graph: %w", err)
 	}
 
-	inputInfos, outputInfos, err := onnxruntime.GetInputOutputInfoWithOptions(settings.ModelPath, sessionOpts)
+	graph, err := onnx.Inspect(settings.ModelPath, sessionOpts)
 
 	if err != nil {
-		return nil, fmt.Errorf("faces: load ONNX metadata: %w", err)
+		return nil, fmt.Errorf("faces: %w", err)
 	}
 
-	if len(inputInfos) == 0 {
-		return nil, fmt.Errorf("faces: embedding model has no inputs")
-	} else if len(outputInfos) == 0 {
-		return nil, fmt.Errorf("faces: embedding model has no outputs")
-	}
-
-	width, height := embedderInputSize(inputInfos[0].Dimensions, m)
-	dims := embedderOutputDims(outputInfos[0].Dimensions, m)
-
-	// A mismatch means the file is not the model the registry describes, so refuse to
+	// A graph that contradicts the registry is describing a different model, so refuse to
 	// generate embeddings that would silently be written into an incompatible space.
+	if err = m.ONNX.VerifyGraph(graph); err != nil {
+		return nil, fmt.Errorf("faces: %s %w", clean.Log(m.Name), err)
+	}
+
+	width, height := embedderInputSize(m, graph)
+	dims := embedderOutputDims(m, graph)
+
 	if dims != m.Dims {
 		return nil, fmt.Errorf("faces: %s returns %d dimensions, expected %d", clean.Log(m.Name), dims, m.Dims)
 	}
 
 	session, err := onnxruntime.NewDynamicAdvancedSession(
 		settings.ModelPath,
-		[]string{inputInfos[0].Name},
-		[]string{outputInfos[0].Name},
+		[]string{graph.Input.Name},
+		[]string{graph.Output.Name},
 		sessionOpts,
 	)
 
@@ -112,39 +125,39 @@ func NewONNXEmbedder(settings EmbedderSettings) (Embedder, error) {
 	return &onnxEmbedder{
 		session:    session,
 		model:      m,
-		outputName: outputInfos[0].Name,
+		colorOrder: m.ONNX.Input.ColorOrder,
+		mean:       m.ONNX.Input.Normalization.Mean,
+		scales:     m.ONNX.Input.Normalization.Scales(),
 		width:      width,
 		height:     height,
 		dims:       dims,
 	}, nil
 }
 
-// embedderInputSize returns the crop size the model expects, preferring its own
-// static input shape over the registered defaults.
-func embedderInputSize(dims []int64, m *EmbeddingModel) (width, height int) {
-	width = m.Width
-	height = m.Height
+// embedderInputSize returns the crop size the model expects, preferring the graph's own
+// static input shape over the registered value.
+func embedderInputSize(m *EmbeddingModel, graph *onnx.ModelInfo) (width, height int) {
+	width, height = m.InputSize()
+	graphWidth, graphHeight := graph.InputSize()
 
-	if len(dims) >= 4 {
-		if w := int(dims[len(dims)-1]); w > 0 {
-			width = w
-		}
+	// Each axis falls back on its own, because a graph may fix one and leave the other
+	// dynamic.
+	if graphWidth > 0 {
+		width = graphWidth
+	}
 
-		if h := int(dims[len(dims)-2]); h > 0 {
-			height = h
-		}
+	if graphHeight > 0 {
+		height = graphHeight
 	}
 
 	return width, height
 }
 
-// embedderOutputDims returns the embedding length the model reports, falling back
-// to the registered value when the output shape is dynamic.
-func embedderOutputDims(dims []int64, m *EmbeddingModel) int {
-	if len(dims) > 0 {
-		if d := int(dims[len(dims)-1]); d > 0 {
-			return d
-		}
+// embedderOutputDims returns the embedding length the graph reports, falling back to the
+// registered value when the output shape is dynamic.
+func embedderOutputDims(m *EmbeddingModel, graph *onnx.ModelInfo) int {
+	if dims := graph.OutputWidth(); dims > 0 {
+		return dims
 	}
 
 	return m.Dims
@@ -271,18 +284,18 @@ func (e *onnxEmbedder) buildBlob(img image.Image) ([]float32, error) {
 
 	bounds := img.Bounds()
 	planeSize := e.width * e.height
-	blob := make([]float32, planeSize*3)
+	blob := make([]float32, planeSize*onnx.Channels)
 
-	rIndex, gIndex, bIndex := e.model.ColorOrder.Indices()
+	rIndex, gIndex, bIndex := e.colorOrder.Indices()
 
 	for y := range e.height {
 		for x := range e.width {
 			cr, cg, cb, _ := img.At(bounds.Min.X+x, bounds.Min.Y+y).RGBA()
 
-			channels := [3]float32{
-				(float32(cr>>8) - e.model.Mean) * e.model.Scale,
-				(float32(cg>>8) - e.model.Mean) * e.model.Scale,
-				(float32(cb>>8) - e.model.Mean) * e.model.Scale,
+			channels := [onnx.Channels]float32{
+				(float32(cr>>8) - e.mean[0]) * e.scales[0],
+				(float32(cg>>8) - e.mean[1]) * e.scales[1],
+				(float32(cb>>8) - e.mean[2]) * e.scales[2],
 			}
 
 			idx := y*e.width + x

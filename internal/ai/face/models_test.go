@@ -1,8 +1,10 @@
 package face
 
 import (
+	"math"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -98,7 +100,9 @@ func TestFindEmbeddingModel(t *testing.T) {
 		require.NotNil(t, m)
 		assert.Equal(t, RuntimeONNX, m.Runtime)
 		assert.Equal(t, 128, m.Dims)
-		assert.Equal(t, 112, m.Width)
+		width, height := m.InputSize()
+		assert.Equal(t, ArcFaceTemplateSize, width)
+		assert.Equal(t, ArcFaceTemplateSize, height)
 		assert.Equal(t, AlignArcFace5, m.Alignment)
 	})
 	t.Run("AuraFace", func(t *testing.T) {
@@ -106,9 +110,10 @@ func TestFindEmbeddingModel(t *testing.T) {
 		require.NotNil(t, m)
 		assert.Equal(t, RuntimeONNX, m.Runtime)
 		assert.Equal(t, 512, m.Dims)
-		assert.Equal(t, 112, m.Width)
+		width, _ := m.InputSize()
+		assert.Equal(t, ArcFaceTemplateSize, width)
 		assert.Equal(t, AlignArcFace5, m.Alignment)
-		assert.Equal(t, LicenseApache2, m.License)
+		assert.Equal(t, LicenseApache2, m.WeightLicense())
 	})
 	t.Run("Unknown", func(t *testing.T) {
 		assert.Nil(t, FindEmbeddingModel("dlib"))
@@ -147,10 +152,7 @@ func TestEmbeddingModels(t *testing.T) {
 			assert.Equal(t, name, m.Name)
 			assert.NotEmpty(t, m.Dir)
 			assert.Positive(t, m.Dims)
-			assert.Positive(t, m.Width)
-			assert.Positive(t, m.Height)
-			assert.Positive(t, m.Scale)
-			assert.NotEmpty(t, m.License)
+			assert.NotEmpty(t, m.WeightLicense())
 			assert.Contains(t, []EmbeddingRuntime{RuntimeTensorFlow, RuntimeONNX}, m.Runtime)
 			assert.Contains(t, []CropAlignment{AlignBox, AlignArcFace5}, m.Alignment)
 
@@ -161,11 +163,32 @@ func TestEmbeddingModels(t *testing.T) {
 			assert.Positive(t, m.MatchDist)
 			assert.Less(t, m.ClusterRadius, m.ClusterDist)
 
-			// ONNX models are single files, TensorFlow models are SavedModel directories.
+			// The collision floor and its slack follow the width of the model's distance
+			// scale, so leaving them at the FaceNet values would be the same trap the
+			// per-model thresholds exist to close.
+			assert.Positive(t, m.CollisionDist)
+			assert.Positive(t, m.Epsilon)
+			assert.Less(t, m.Epsilon, m.CollisionDist)
+			assert.Less(t, m.CollisionDist, m.MatchDist)
+			scale := m.ClusterDist / ClusterDistDefault
+			assert.InDelta(t, roundTo3(scale*CollisionDistDefault), m.CollisionDist, 1e-9)
+			assert.InDelta(t, roundTo3(scale*EpsilonDefault), m.Epsilon, 1e-9)
+
+			// ONNX models are single files described by the shared model info, while
+			// TensorFlow models are SavedModel directories that have none.
 			if m.Runtime == RuntimeONNX {
-				assert.NotEmpty(t, m.FileName)
+				require.NotNil(t, m.ONNX)
+				assert.NotEmpty(t, m.ONNX.File)
+				assert.NotEmpty(t, m.ONNX.SourceUrl)
+				assert.NotEmpty(t, m.ONNX.SHA256)
+				require.NotNil(t, m.ONNX.Input)
+				assert.Positive(t, m.ONNX.Input.Width)
+				assert.Positive(t, m.ONNX.Input.Height)
+				assert.True(t, m.ONNX.Input.ColorOrder.Valid())
+				assert.False(t, m.ONNX.Input.Normalization.IsZero())
+				assert.Equal(t, m.Dims, m.ONNX.OutputWidth())
 			} else {
-				assert.Empty(t, m.FileName)
+				assert.Nil(t, m.ONNX)
 			}
 		})
 	}
@@ -271,15 +294,40 @@ func TestEmbeddingModel_Aligned(t *testing.T) {
 	})
 }
 
-func TestEmbeddingModel_License(t *testing.T) {
+func TestEmbeddingModel_InputSize(t *testing.T) {
+	t.Run("ONNXModel", func(t *testing.T) {
+		width, height := FindEmbeddingModel(ModelSFace).InputSize()
+		assert.Equal(t, ArcFaceTemplateSize, width)
+		assert.Equal(t, ArcFaceTemplateSize, height)
+	})
+	t.Run("SavedModel", func(t *testing.T) {
+		// TensorFlow entries carry no ONNX description, so their crop size comes from
+		// CropSize rather than from the registry.
+		width, height := FindEmbeddingModel(ModelFaceNet).InputSize()
+		assert.Equal(t, 0, width)
+		assert.Equal(t, 0, height)
+	})
+	t.Run("NilModel", func(t *testing.T) {
+		var m *EmbeddingModel
+		width, height := m.InputSize()
+		assert.Equal(t, 0, width)
+		assert.Equal(t, 0, height)
+	})
+}
+
+func TestEmbeddingModel_WeightLicense(t *testing.T) {
 	t.Run("Apache2", func(t *testing.T) {
-		assert.Equal(t, LicenseApache2, FindEmbeddingModel(ModelSFace).License)
+		assert.Equal(t, LicenseApache2, FindEmbeddingModel(ModelSFace).WeightLicense())
 	})
 	t.Run("ResearchOnly", func(t *testing.T) {
-		assert.Equal(t, LicenseResearchOnly, FindEmbeddingModel(ModelArcFaceR50).License)
+		assert.Equal(t, LicenseResearchOnly, FindEmbeddingModel(ModelArcFaceR50).WeightLicense())
 	})
 	t.Run("Unknown", func(t *testing.T) {
-		assert.Equal(t, LicenseUnknown, FindEmbeddingModel(ModelFaceNet).License)
+		assert.Equal(t, LicenseUnknown, FindEmbeddingModel(ModelFaceNet).WeightLicense())
+	})
+	t.Run("NilModel", func(t *testing.T) {
+		var m *EmbeddingModel
+		assert.Empty(t, m.WeightLicense())
 	})
 }
 
@@ -291,4 +339,44 @@ func TestEmbeddingModel_String(t *testing.T) {
 		var m *EmbeddingModel
 		assert.Equal(t, ModelNone, m.String())
 	})
+}
+
+// TestEmbeddingModelChecksums verifies that the checksums in the registry are the ones
+// the install scripts verify against. The scripts are where the value originally comes
+// from, so the registry is a second copy of it and would otherwise drift on the next
+// upstream update without anything failing.
+func TestEmbeddingModelChecksums(t *testing.T) {
+	scripts := map[ModelName]struct {
+		fileName string
+		variable string
+	}{
+		ModelSFace:      {"download-sface.sh", "MODEL_SHA256"},
+		ModelAuraFace:   {"download-auraface.sh", "MODEL_SHA256"},
+		ModelArcFaceR50: {"download-arcface.sh", "R50_SHA256"},
+		ModelArcFaceMBF: {"download-arcface.sh", "MBF_SHA256"},
+	}
+
+	for name, script := range scripts {
+		t.Run(name, func(t *testing.T) {
+			m := FindEmbeddingModel(name)
+			require.NotNil(t, m)
+			require.NotNil(t, m.ONNX)
+
+			fileName := filepath.Join("..", "..", "..", "scripts", script.fileName)
+			data, err := os.ReadFile(fileName) //nolint:gosec // G304: fixed repository path.
+
+			if err != nil {
+				t.Skipf("faces: skipping, %s is not available", script.fileName)
+			}
+
+			matches := regexp.MustCompile(script.variable + `="([0-9a-f]{64})"`).FindStringSubmatch(string(data))
+			require.Len(t, matches, 2, "%s must declare %s", script.fileName, script.variable)
+			assert.Equal(t, matches[1], m.ONNX.SHA256)
+		})
+	}
+}
+
+// roundTo3 rounds a derived threshold the way the registry records it.
+func roundTo3(value float64) float64 {
+	return math.Round(value*1000) / 1000
 }

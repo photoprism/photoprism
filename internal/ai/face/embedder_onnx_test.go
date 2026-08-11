@@ -11,6 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/ai/onnx"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -154,9 +155,33 @@ func TestNewONNXEmbedder(t *testing.T) {
 		assert.Equal(t, 112, height)
 		assert.True(t, embedder.Aligned())
 	})
-	t.Run("DimensionMismatch", func(t *testing.T) {
-		// A file that does not match the registered dimensions must be refused rather
-		// than silently writing embeddings from another model into the library.
+	t.Run("MissingModelInfo", func(t *testing.T) {
+		m := *FindEmbeddingModel(ModelSFace)
+		m.ONNX = nil
+
+		_, err := NewONNXEmbedder(EmbedderSettings{Model: &m, ModelPath: "sface.onnx"})
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "no ONNX model description")
+	})
+	t.Run("ChecksumMismatch", func(t *testing.T) {
+		// A name match with a different artifact must not load: two unrelated models have
+		// shipped under the same file name, and applying one model's preprocessing to the
+		// other's weights cannot be detected once the embeddings are written.
+		fileName := filepath.Join(t.TempDir(), "face_recognition_sface_2021dec.onnx")
+		require.NoError(t, os.WriteFile(fileName, []byte("not the registered artifact"), fs.ModeFile))
+
+		_, err := NewONNXEmbedder(EmbedderSettings{
+			Name:      ModelSFace,
+			Model:     FindEmbeddingModel(ModelSFace),
+			ModelPath: fileName,
+		})
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "checksum")
+	})
+	t.Run("GraphContradictsRegistry", func(t *testing.T) {
+		// A registered shape that disagrees with the graph means one of the two describes
+		// a different model, which is a configuration error rather than a difference to
+		// reconcile.
 		m := FindEmbeddingModel(ModelSFace)
 
 		if !m.Installed(embeddingModelsPath) {
@@ -164,7 +189,13 @@ func TestNewONNXEmbedder(t *testing.T) {
 		}
 
 		mismatched := *m
-		mismatched.Dims = 512
+		mismatched.ONNX = &onnx.ModelInfo{
+			File:    m.ONNX.File,
+			SHA256:  m.ONNX.SHA256,
+			License: m.ONNX.License,
+			Input:   m.ONNX.Input,
+			Output:  &onnx.Output{Width: 512},
+		}
 
 		_, err := NewONNXEmbedder(EmbedderSettings{
 			Name:      ModelSFace,
@@ -172,7 +203,7 @@ func TestNewONNXEmbedder(t *testing.T) {
 			ModelPath: m.FilePath(embeddingModelsPath),
 		})
 		require.Error(t, err)
-		assert.Contains(t, err.Error(), "dimensions")
+		assert.Contains(t, err.Error(), "output width")
 	})
 }
 
@@ -294,35 +325,41 @@ func TestONNXEmbedder_AlignmentReducesPoseDistance(t *testing.T) {
 
 func TestEmbedderInputSize(t *testing.T) {
 	m := FindEmbeddingModel(ModelSFace)
+	registeredWidth, registeredHeight := m.InputSize()
 
-	t.Run("FromModelShape", func(t *testing.T) {
-		width, height := embedderInputSize([]int64{1, 3, 128, 96}, m)
+	t.Run("FromGraph", func(t *testing.T) {
+		width, height := embedderInputSize(m, &onnx.ModelInfo{Input: &onnx.Input{Width: 96, Height: 128}})
 		assert.Equal(t, 96, width)
 		assert.Equal(t, 128, height)
 	})
 	t.Run("DynamicShape", func(t *testing.T) {
-		width, height := embedderInputSize([]int64{1, 3, -1, -1}, m)
-		assert.Equal(t, m.Width, width)
-		assert.Equal(t, m.Height, height)
+		width, height := embedderInputSize(m, &onnx.ModelInfo{Input: &onnx.Input{}})
+		assert.Equal(t, registeredWidth, width)
+		assert.Equal(t, registeredHeight, height)
 	})
-	t.Run("NoShape", func(t *testing.T) {
-		width, height := embedderInputSize(nil, m)
-		assert.Equal(t, m.Width, width)
-		assert.Equal(t, m.Height, height)
+	t.Run("NoInput", func(t *testing.T) {
+		width, height := embedderInputSize(m, &onnx.ModelInfo{})
+		assert.Equal(t, registeredWidth, width)
+		assert.Equal(t, registeredHeight, height)
+	})
+	t.Run("PartiallyDynamic", func(t *testing.T) {
+		width, height := embedderInputSize(m, &onnx.ModelInfo{Input: &onnx.Input{Height: 128}})
+		assert.Equal(t, registeredWidth, width)
+		assert.Equal(t, 128, height)
 	})
 }
 
 func TestEmbedderOutputDims(t *testing.T) {
 	m := FindEmbeddingModel(ModelSFace)
 
-	t.Run("FromModelShape", func(t *testing.T) {
-		assert.Equal(t, 512, embedderOutputDims([]int64{1, 512}, m))
+	t.Run("FromGraph", func(t *testing.T) {
+		assert.Equal(t, 512, embedderOutputDims(m, &onnx.ModelInfo{Output: &onnx.Output{Width: 512}}))
 	})
 	t.Run("DynamicShape", func(t *testing.T) {
-		assert.Equal(t, m.Dims, embedderOutputDims([]int64{1, -1}, m))
+		assert.Equal(t, m.Dims, embedderOutputDims(m, &onnx.ModelInfo{Output: &onnx.Output{}}))
 	})
-	t.Run("NoShape", func(t *testing.T) {
-		assert.Equal(t, m.Dims, embedderOutputDims(nil, m))
+	t.Run("NoOutput", func(t *testing.T) {
+		assert.Equal(t, m.Dims, embedderOutputDims(m, &onnx.ModelInfo{}))
 	})
 }
 

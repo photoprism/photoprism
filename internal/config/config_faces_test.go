@@ -30,7 +30,7 @@ func installTestModels(t *testing.T, names ...face.ModelName) string {
 		require.NotNil(t, m)
 		require.NoError(t, os.MkdirAll(filepath.Join(modelsPath, m.Dir), fs.ModeDir))
 
-		if m.FileName != "" {
+		if m.ONNX != nil {
 			require.NoError(t, os.WriteFile(m.FilePath(modelsPath), []byte("onnx"), fs.ModeFile))
 		}
 	}
@@ -497,7 +497,9 @@ func TestConfig_FaceClusterDist(t *testing.T) {
 	assert.Equal(t, sface, c.FaceClusterDist())
 	c.options.FaceClusterDist = 0.01
 	assert.Equal(t, sface, c.FaceClusterDist())
-	c.options.FaceCollisionDist = 0.05
+	// The collision distance is the lower bound, and it follows the model too, so it has
+	// to be lowered explicitly before a value this small is accepted.
+	c.options.FaceCollisionDist = 0.04
 	c.options.FaceClusterDist = 0.06
 	assert.Equal(t, 0.06, c.FaceClusterDist())
 	c.options.FaceClusterDist = 0.34
@@ -525,6 +527,8 @@ func TestConfig_FaceThresholdsPerModel(t *testing.T) {
 		assert.Equal(t, 0.91, c.FaceClusterDist())
 		assert.Equal(t, 0.67, c.FaceClusterRadius())
 		assert.Equal(t, 0.39, c.FaceMatchDist())
+		assert.Equal(t, 0.071, c.FaceCollisionDist())
+		assert.Equal(t, 0.014, c.FaceEpsilonDist())
 	})
 	t.Run("FaceNetKeepsShippedValues", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
@@ -534,6 +538,8 @@ func TestConfig_FaceThresholdsPerModel(t *testing.T) {
 		assert.Equal(t, face.ClusterDistDefault, c.FaceClusterDist())
 		assert.Equal(t, face.ClusterRadiusDefault, c.FaceClusterRadius())
 		assert.Equal(t, face.MatchDistDefault, c.FaceMatchDist())
+		assert.Equal(t, face.CollisionDistDefault, c.FaceCollisionDist())
+		assert.Equal(t, face.EpsilonDefault, c.FaceEpsilonDist())
 	})
 	t.Run("NoModel", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
@@ -542,6 +548,8 @@ func TestConfig_FaceThresholdsPerModel(t *testing.T) {
 		assert.Equal(t, face.ClusterDistDefault, c.FaceClusterDist())
 		assert.Equal(t, face.ClusterRadiusDefault, c.FaceClusterRadius())
 		assert.Equal(t, face.MatchDistDefault, c.FaceMatchDist())
+		assert.Equal(t, face.CollisionDistDefault, c.FaceCollisionDist())
+		assert.Equal(t, face.EpsilonDefault, c.FaceEpsilonDist())
 	})
 	t.Run("ExplicitOptionWins", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
@@ -564,9 +572,12 @@ func TestConfig_FaceThresholdsPerModel(t *testing.T) {
 		c.options.FaceModel = face.ModelSFace
 
 		require.Equal(t, face.ClusterDistDefault, c.options.FaceClusterDist)
+		require.Equal(t, face.CollisionDistDefault, c.options.FaceCollisionDist)
 		assert.Equal(t, 0.91, c.FaceClusterDist())
 		assert.Equal(t, 0.67, c.FaceClusterRadius())
 		assert.Equal(t, 0.39, c.FaceMatchDist())
+		assert.Equal(t, 0.071, c.FaceCollisionDist())
+		assert.Equal(t, 0.014, c.FaceEpsilonDist())
 	})
 }
 
@@ -644,21 +655,31 @@ func TestFaceModelThreshold(t *testing.T) {
 }
 
 func TestConfig_FaceCollisionDist(t *testing.T) {
+	// Like the three calibrated thresholds, this follows the resolved model, which is
+	// SFace without a library to ask.
+	sface := face.FindEmbeddingModel(face.ModelSFace).CollisionDist
+
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, face.CollisionDist, c.FaceCollisionDist())
-	c.options.FaceCollisionDist = 0.05
-	assert.Equal(t, 0.05, c.FaceCollisionDist())
+	assert.Equal(t, sface, c.FaceCollisionDist())
+	c.options.FaceCollisionDist = 0.04
+	assert.Equal(t, 0.04, c.FaceCollisionDist())
 	c.options.FaceCollisionDist = 0
-	assert.Equal(t, face.CollisionDist, c.FaceCollisionDist())
+	assert.Equal(t, sface, c.FaceCollisionDist())
+	c.options.FaceCollisionDist = 1.5
+	assert.Equal(t, sface, c.FaceCollisionDist())
 }
 
 func TestConfig_FaceEpsilonDist(t *testing.T) {
+	sface := face.FindEmbeddingModel(face.ModelSFace).Epsilon
+
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, face.Epsilon, c.FaceEpsilonDist())
+	assert.Equal(t, sface, c.FaceEpsilonDist())
 	c.options.FaceEpsilonDist = 0.02
 	assert.Equal(t, 0.02, c.FaceEpsilonDist())
 	c.options.FaceEpsilonDist = 0.2
-	assert.Equal(t, face.Epsilon, c.FaceEpsilonDist())
+	assert.Equal(t, sface, c.FaceEpsilonDist())
+	c.options.FaceEpsilonDist = 0
+	assert.Equal(t, sface, c.FaceEpsilonDist())
 }
 
 func TestConfig_FaceMatchDist(t *testing.T) {

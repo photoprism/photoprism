@@ -1,22 +1,20 @@
 package face
 
 import (
-	"errors"
 	"fmt"
 	"image"
 	"image/draw"
 	_ "image/jpeg" // register JPEG decoder for ONNX engine input
 	"math"
 	"os"
-	"path/filepath"
 	"runtime"
 	"sort"
-	"strings"
 	"sync"
 
 	onnxruntime "github.com/yalue/onnxruntime_go"
 	xdraw "golang.org/x/image/draw"
 
+	"github.com/photoprism/photoprism/internal/ai/onnx"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -34,10 +32,25 @@ const (
 	DefaultONNXModelFilename  = "scrfd.onnx"
 	onnxDefaultScoreThreshold = 0.50
 	onnxDefaultNMSThreshold   = 0.40
-	onnxDefaultInputSize      = 640
-	onnxInputMean             = 127.5
-	onnxInputStd              = 128.0
 )
+
+// DetectorModel describes the bundled SCRFD detector. Its decode strategy, strides, and
+// anchor count stay in this package because they are what differs between detectors; the
+// artifact and its preprocessing are described in the structure that every subsystem
+// running an ONNX model shares.
+var DetectorModel = &onnx.ModelInfo{
+	File:      DefaultONNXModelFilename,
+	SourceUrl: "https://raw.githubusercontent.com/laolaolulu/FaceTrain/master/model/scrfd/scrfd_500m_bnkps_shape640x640.onnx",
+	SHA256:    "ae72185653e279aa2056b288662a19ec3519ced5426d2adeffbe058a86369a24",
+	Input: &onnx.Input{
+		Width:         640,
+		Height:        640,
+		Layout:        onnx.LayoutNCHW,
+		ColorOrder:    onnx.RGB,
+		Normalization: onnx.Uniform(127.5, 128),
+		Resize:        onnx.Resize{Mode: onnx.ResizePad},
+	},
+}
 
 // anchorCacheKey uniquely identifies cached anchor center grids.
 type anchorCacheKey struct {
@@ -54,6 +67,9 @@ type onnxEngine struct {
 	outputNames    []string
 	inputWidth     int
 	inputHeight    int
+	colorOrder     onnx.ColorOrder
+	mean           [onnx.Channels]float32
+	scales         [onnx.Channels]float32
 	featStrides    []int
 	numAnchors     int
 	batched        bool
@@ -62,85 +78,6 @@ type onnxEngine struct {
 	nmsThreshold   float32
 	centerMu       sync.Mutex
 	centerCache    map[anchorCacheKey][]float32
-}
-
-var (
-	onnxOnce          sync.Once
-	onnxInitErr       error
-	onnxExecutableVar = os.Executable
-)
-
-// ensureONNXRuntime loads the ONNX runtime shared library and initializes the global environment.
-func ensureONNXRuntime(libraryPath string) error {
-	onnxOnce.Do(func() {
-		candidates := onnxSharedLibraryCandidates(libraryPath)
-		var errs []string
-
-		for _, candidate := range candidates {
-			onnxruntime.SetSharedLibraryPath(candidate)
-
-			if err := onnxruntime.InitializeEnvironment(); err != nil {
-				// Collect errors so we can surface meaningful diagnostics when all options fail.
-				errs = append(errs, fmt.Sprintf("%s (%v)", candidate, err))
-				continue
-			}
-
-			// Successfully initialized; stop retrying.
-			onnxInitErr = nil
-			return
-		}
-
-		if len(errs) == 0 {
-			onnxInitErr = errors.New("faces: no ONNX runtime library candidates")
-			return
-		}
-
-		onnxInitErr = fmt.Errorf("faces: failed to load ONNX runtime: %s", strings.Join(errs, "; "))
-	})
-
-	return onnxInitErr
-}
-
-// onnxSharedLibraryCandidates lists library paths to try when loading the ONNX runtime.
-func onnxSharedLibraryCandidates(explicit string) []string {
-	appendUnique := func(list []string, seen map[string]struct{}, values ...string) []string {
-		for _, value := range values {
-			if value == "" {
-				continue
-			}
-			if _, ok := seen[value]; ok {
-				continue
-			}
-			list = append(list, value)
-			seen[value] = struct{}{}
-		}
-		return list
-	}
-
-	seen := make(map[string]struct{})
-	candidates := make([]string, 0, 8)
-	candidates = appendUnique(candidates, seen, explicit)
-	candidates = appendUnique(candidates, seen,
-		"libonnxruntime.so",
-		"libonnxruntime.so.1",
-		"onnxruntime.so",
-	)
-
-	if exePath, err := onnxExecutableVar(); err == nil {
-		exeDir := filepath.Dir(exePath)
-		rootDir := filepath.Dir(exeDir)
-
-		candidates = appendUnique(candidates, seen,
-			filepath.Join(exeDir, "libonnxruntime.so"),
-			filepath.Join(exeDir, "lib", "libonnxruntime.so"),
-		)
-
-		if rootDir != "" && rootDir != "." && rootDir != exeDir {
-			candidates = appendUnique(candidates, seen, filepath.Join(rootDir, "lib", "libonnxruntime.so"))
-		}
-	}
-
-	return candidates
 }
 
 // NewONNXEngine loads the SCRFD model and returns an ONNX-backed DetectionEngine.
@@ -161,7 +98,16 @@ func NewONNXEngine(opts ONNXOptions) (DetectionEngine, error) {
 		opts.NMSThreshold = onnxDefaultNMSThreshold
 	}
 
-	if err := ensureONNXRuntime(opts.LibraryPath); err != nil {
+	// Unlike an embedding model, a detector that turns out to be a different artifact
+	// costs recall on the next indexing run rather than a library of vectors that cannot
+	// be compared with anything, and operators may legitimately point MODELS_PATH at
+	// another SCRFD export whose layout is derived from the graph anyway. So this warns
+	// rather than refusing.
+	if err := DetectorModel.VerifyChecksum(opts.ModelPath); err != nil {
+		log.Warnf("faces: %s", err)
+	}
+
+	if err := onnx.EnsureRuntime(opts.LibraryPath); err != nil {
 		return nil, fmt.Errorf("faces: %w", err)
 	}
 
@@ -206,18 +152,15 @@ func NewONNXEngine(opts ONNXOptions) (DetectionEngine, error) {
 	}
 
 	inputName := inputInfos[0].Name
-	inputDims := inputInfos[0].Dimensions
+	width, height, _ := onnx.InputGeometry(inputInfos[0].Dimensions)
+	defaultWidth, defaultHeight := DetectorModel.InputSize()
 
-	width := onnxDefaultInputSize
-	height := onnxDefaultInputSize
+	if width < 1 {
+		width = defaultWidth
+	}
 
-	if len(inputDims) >= 4 {
-		if w := int(inputDims[len(inputDims)-1]); w > 0 {
-			width = w
-		}
-		if h := int(inputDims[len(inputDims)-2]); h > 0 {
-			height = h
-		}
+	if height < 1 {
+		height = defaultHeight
 	}
 
 	outputNames := make([]string, len(outputInfos))
@@ -243,6 +186,9 @@ func NewONNXEngine(opts ONNXOptions) (DetectionEngine, error) {
 		outputNames:    outputNames,
 		inputWidth:     width,
 		inputHeight:    height,
+		colorOrder:     DetectorModel.Input.ColorOrder,
+		mean:           DetectorModel.Input.Normalization.Mean,
+		scales:         DetectorModel.Input.Normalization.Scales(),
 		featStrides:    featStrides,
 		numAnchors:     numAnchors,
 		batched:        batched,
@@ -401,13 +347,14 @@ func (o *onnxEngine) Detect(fileName string, minSize int) (Faces, error) {
 func (o *onnxEngine) buildBlob(img image.Image) ([]float32, float32, error) {
 	inputWidth := o.inputWidth
 	inputHeight := o.inputHeight
+	defaultWidth, defaultHeight := DetectorModel.InputSize()
 
 	if inputWidth < 1 {
-		inputWidth = onnxDefaultInputSize
+		inputWidth = defaultWidth
 	}
 
 	if inputHeight < 1 {
-		inputHeight = onnxDefaultInputSize
+		inputHeight = defaultHeight
 	}
 
 	bounds := img.Bounds()
@@ -440,7 +387,9 @@ func (o *onnxEngine) buildBlob(img image.Image) ([]float32, float32, error) {
 	resized := resizeLinearImage(img, newWidth, newHeight)
 
 	planeSize := inputWidth * inputHeight
-	blob := make([]float32, planeSize*3)
+	blob := make([]float32, planeSize*onnx.Channels)
+
+	rIndex, gIndex, bIndex := o.colorOrder.Indices()
 
 	for y := 0; y < inputHeight; y++ {
 		for x := 0; x < inputWidth; x++ {
@@ -453,9 +402,11 @@ func (o *onnxEngine) buildBlob(img image.Image) ([]float32, float32, error) {
 				b = float32((cb >> 8) & 0xff)
 			}
 
-			blob[idx] = (r - onnxInputMean) / onnxInputStd
-			blob[idx+planeSize] = (g - onnxInputMean) / onnxInputStd
-			blob[idx+planeSize*2] = (b - onnxInputMean) / onnxInputStd
+			// The padded area is normalized like every other pixel, so the value the model
+			// sees there stays the one it was trained to treat as empty.
+			blob[idx+planeSize*rIndex] = (r - o.mean[0]) * o.scales[0]
+			blob[idx+planeSize*gIndex] = (g - o.mean[1]) * o.scales[1]
+			blob[idx+planeSize*bIndex] = (b - o.mean[2]) * o.scales[2]
 		}
 	}
 
