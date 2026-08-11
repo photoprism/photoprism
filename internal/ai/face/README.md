@@ -1,6 +1,6 @@
 ## Face Detection & Embedding Guidelines
 
-**Last Updated:** August 9, 2026
+**Last Updated:** August 10, 2026
 
 ### Overview
 
@@ -28,7 +28,7 @@ The detector also returns five facial landmarks, which `engine_onnx.go` decodes 
 
 ### Embedding Models
 
-`FACE_MODEL` selects the model that turns a face crop into a vector, independently of the detector. Supported models are registered in `models.go` with the preprocessing contract they require — input size, channel order, mean, scale, embedding length, alignment mode, and weight license — so the CLI help and config report are generated from one source.
+`FACE_MODEL` selects the model that turns a face crop into a vector, independently of the detector. Supported models are registered in `models.go`, so the CLI help and config report are generated from one source. Each entry carries the embedding length, alignment mode, and distance thresholds; its artifact and preprocessing contract — file, source, checksum, license, input geometry, channel order, normalization, resize convention, and output width — live in the `onnx.ModelInfo` that every subsystem running an ONNX model shares (see `internal/ai/onnx/README.md`).
 
 | Model         | Runtime    | Dim | Input   | Alignment | Weights | License       | Installed By                   |
 |:--------------|:-----------|----:|:--------|:----------|--------:|:--------------|:-------------------------------|
@@ -47,6 +47,8 @@ An explicitly configured model whose weights are missing falls back with a warni
 SFace is part of `make dep` through `dep-onnx`, so `make all install` copies it into the published images — a model new libraries default to has to be there. The Go test targets depend on `dep-sface` separately, so the ONNX embedder tests never silently skip when only a subset of the dependencies was installed.
 
 AuraFace is installed by no target at all. Its Apache-2.0 weights could be redistributed, but the same `make all install` path would put a 261 MB graph into every published image, so it stays an explicit `scripts/download-auraface.sh` download. The file is deliberately renamed from the upstream `glintr100.onnx`: InsightFace's antelopev2 pack ships a different model under that name, and because channel order and normalization cannot be read from an ONNX graph, a name collision would apply one model's preprocessing to the other's weights silently.
+
+That collision is why every ONNX entry records the artifact's SHA256 and why the embedder refuses to load a file whose checksum does not match. A name match with a different artifact has no safe fallback here: the fields that would differ are the ones a graph cannot supply, so the wrong preprocessing would be applied and every vector written under the requested model's name. The detector only warns on the same mismatch, because a different detector costs recall on the next indexing run rather than a library of vectors that cannot be compared with anything. The checksums are also verified by the install scripts, and `TestEmbeddingModelChecksums` fails if the two copies drift apart.
 
 Models marked `ArcFace-5` need landmark-aligned input. `align.go` fits a similarity transform from the detected landmarks onto the standard 112×112 template that both OpenCV and InsightFace use, and falls back to an unaligned bounding box crop when a face has no complete landmark set.
 
@@ -70,7 +72,7 @@ PHOTOPRISM_TEST_FACE_DATASET=/path/to/dataset \
 
 #### Model-Specific Thresholds
 
-Each model entry carries its own `ClusterDist`, `ClusterRadius`, and `MatchDist`. Distances are not comparable across models, so one global set of thresholds fits exactly one embedding space: measured on the benchmark datasets, SFace reaches a true accept rate of 0.7934 with the FaceNet-tuned values and 0.9603 with its own, at a tenth of FaceNet's false accept rate. `Config.FaceClusterDist()`, `FaceClusterRadius()`, and `FaceMatchDist()` resolve the configured model's value unless the operator sets `FACE_CLUSTER_DIST`, `FACE_CLUSTER_RADIUS`, or `FACE_MATCH_DIST` explicitly, and `Config.Propagate` publishes the result to the package variables the indexer reads.
+Each model entry carries its own `ClusterDist`, `ClusterRadius`, `MatchDist`, `CollisionDist`, and `Epsilon`. Distances are not comparable across models, so one global set of thresholds fits exactly one embedding space: measured on the benchmark datasets, SFace reaches a true accept rate of 0.7934 with the FaceNet-tuned values and 0.9603 with its own, at a tenth of FaceNet's false accept rate. `Config.FaceClusterDist()`, `FaceClusterRadius()`, and `FaceMatchDist()` resolve the configured model's value unless the operator sets `FACE_CLUSTER_DIST`, `FACE_CLUSTER_RADIUS`, or `FACE_MATCH_DIST` explicitly, and `Config.Propagate` publishes the result to the package variables the indexer reads.
 
 `TestCalibrateFaceThresholds` derives these values. It measures what the shipped FaceNet configuration costs on a labeled dataset and then finds, for every other model, the thresholds that meet the same error budget in that model's own scale, so a model switch is never more permissive than the configuration PhotoPrism ships today:
 
@@ -94,6 +96,20 @@ Cluster centroids are built with `EmbeddingsMidpoint` and scored as `dist - min(
 FaceNet is the odd row because it keeps what it ships rather than a calibrated point, so it sits at the 1.43 % baseline that defines the budget. Every ONNX model is an order of magnitude stricter *and* more accurate. Spending the full baseline instead would buy SFace 0.9852 rather than 0.9603; the stricter point is the deliberate choice, because a wrong automatic merge costs a user more than a match they have to make by hand.
 
 Two caveats apply to the recommendations. The measured centroids are always pure because they are built from labeled identities, so a wider `ClusterRadius` is less safe in production, where an impure cluster has a large radius and would be given more slack. And `ClusterDist` is derived from pairwise distance equivalence rather than from a DBSCAN simulation, so cluster fragmentation and merge behavior are not measured. Validate against a real library before treating these values as final.
+
+**`CollisionDist` and `Epsilon` are derived, not measured.** One is the floor below which two vectors count as indistinguishable and the other the slack added to that check, so neither corresponds to an error budget; what they follow is the width of the model's distance scale:
+
+    value = FaceNet value * (model ClusterDist / ClusterDistDefault), rounded to three decimals
+
+| Model         | Scale | `CollisionDist` | `Epsilon` |
+|:--------------|------:|----------------:|----------:|
+| `facenet`     | 1.000 |           0.050 |     0.010 |
+| `sface`       | 1.422 |           0.071 |     0.014 |
+| `auraface`    | 1.531 |           0.077 |     0.015 |
+| `arcface_r50` | 1.672 |           0.084 |     0.017 |
+| `arcface_mbf` | 1.609 |           0.080 |     0.016 |
+
+Their practical effect is small, but leaving them fixed at the FaceNet values under a scale that is roughly 1.4x wider is the same trap the per-model thresholds exist to close. `FACE_COLLISION_DIST` and `FACE_EPSILON_DIST` override them the same way the three calibrated thresholds are overridden.
 
 #### Quality & Overlap Thresholds
 
