@@ -313,12 +313,19 @@ func TestWrapVipsExportErr(t *testing.T) {
 		assert.Contains(t, err.Error(), "unable to write to target")
 		assert.True(t, errors.Is(err, inner), "wrapped error must remain unwrappable")
 	})
-	t.Run("StripsDirectory", func(t *testing.T) {
-		// Only the basename should appear in the message so logs stay compact.
+	t.Run("ShortensTarget", func(t *testing.T) {
 		err := wrapVipsExportErr("jpeg", "/cache/deep/nested/path/photo.jpg", 1920, 1080, errors.New("boom"))
 
 		assert.Contains(t, err.Error(), "photo.jpg")
 		assert.NotContains(t, err.Error(), "/cache/deep/nested")
+	})
+	t.Run("KeepsInnerErrorVerbatim", func(t *testing.T) {
+		// Only the wrapper's own reference to the target is shortened. libvips names
+		// its temporary files in the message, and those are kept as reported.
+		err := wrapVipsExportErr("jpeg", "/cache/1/2/3/photo.jpg", 720, 720,
+			errors.New("VipsImage: unable to write to \"/tmp/vips-0-267872348.v\""))
+
+		assert.Contains(t, err.Error(), "/tmp/vips-0-267872348.v")
 	})
 }
 
@@ -333,13 +340,21 @@ func TestWrapVipsWriteErr(t *testing.T) {
 		assert.Contains(t, err.Error(), "no space left on device")
 		assert.True(t, errors.Is(err, inner), "wrapped error must remain unwrappable")
 	})
-	t.Run("StripsDirectory", func(t *testing.T) {
-		// Only the basename should appear so the server filesystem layout is not leaked
-		// to the UI via the event-bus log hook.
+	t.Run("ShortensTarget", func(t *testing.T) {
 		err := wrapVipsWriteErr("/photoprism/storage/cache/thumbnails/1/2/3/photo.jpg", errors.New("boom"))
 
 		assert.Contains(t, err.Error(), "photo.jpg")
 		assert.NotContains(t, err.Error(), "/photoprism/storage")
+	})
+	t.Run("KeepsInnerErrorVerbatim", func(t *testing.T) {
+		// The real inner error is the *fs.PathError from os.WriteFile, which repeats the
+		// absolute destination. Shortening the argument does not remove it, so this is a
+		// compactness measure and not a redaction — assert what the message really holds.
+		inner := &fs.PathError{Op: "open", Path: "/photoprism/storage/cache/thumbnails/1/2/3/photo.jpg", Err: syscall.ENOSPC}
+		err := wrapVipsWriteErr("/photoprism/storage/cache/thumbnails/1/2/3/photo.jpg", inner)
+
+		assert.Contains(t, err.Error(), "/photoprism/storage/cache/thumbnails")
+		assert.True(t, errors.Is(err, syscall.ENOSPC), "errno must stay unwrappable")
 	})
 }
 
