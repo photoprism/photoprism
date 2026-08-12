@@ -203,20 +203,38 @@ test.meta("testID", "sharing-003").meta({ type: "short", mode: "auth" })("Common
   await t.navigateTo("http://localhost:2343/s/2t6124pb6d/holiday");
   await t.expect(toolbar.toolbarSecondTitle.withText("Holiday").visible).ok();
 
-  await photoviewer.openPhotoViewer("nth", 1);
+  // The album's fully-populated photo, so every "must not be visible" assertion below has real
+  // data to withhold. Anchored by title: editions differ in both UID and photo order.
+  await photoviewer.openPhotoViewerByTitle("Albums / 2015");
   await photoviewer.openSidebar();
 
-  await t.expect(photoviewer.sidebarRow("mdi-calendar").exists).ok();
-
-  await photoviewer.assertSidebarIsReadOnly({ restricted: true});
-  // Merged file row renders for restricted sessions (type + size as
-  // the title) but the filename subtitle must be suppressed.
-  await t.expect(Selector(".p-lightbox-sidebar .meta-file .v-list-item-subtitle").exists).notOk();
-  await t.expect(Selector(".p-lightbox-sidebar .text-subtitle-2").withText("People").exists).notOk();
-  await t.expect(Selector(".p-lightbox-sidebar .text-subtitle-2").withText("Labels").exists).notOk();
-  await t.expect(Selector(".p-lightbox-sidebar .text-subtitle-2").withText("Albums").exists).ok();
-  await t.expect(Selector(".p-lightbox-sidebar .text-subtitle-2").withText("Keywords").exists).notOk();
-  await t.expect(Selector(".p-lightbox-sidebar .text-subtitle-2").withText("Notes").exists).notOk();
+  // Visitors hold view access on photos and places but not access_library, so the EXIF fields,
+  // the details cluster, People and Labels are all withheld.
+  const hidden = { visible: false };
+  await photoviewer.assertSidebarRows({
+    title: { value: "Albums / 2015", editable: false },
+    caption: { value: "Cute tabby cat on the floor.", editable: false },
+    // The file row renders, but the filename subtitle is suppressed. Each segment is asserted
+    // separately so a change to how they are joined fails on the joiner, not on every value.
+    file: { value: ["JPEG", "3264 × 2448", "2.6 MB"] },
+    filename: hidden,
+    taken: { value: "Dec 25, 2015", editable: false },
+    camera: hidden,
+    lens: hidden,
+    location: { value: ["Neukirchen, Hessen, Germany", "50.8713°N", "9.3460°E"], editable: false },
+    map: {},
+    people: hidden,
+    // Albums is withheld too: the visitor grant carries view but not search.
+    albums: hidden,
+    labels: hidden,
+    subject: hidden,
+    copyright: hidden,
+    artist: hidden,
+    license: hidden,
+    keywords: hidden,
+    notes: hidden,
+  });
+  await t.expect(photoviewer.sidebarAddPrompts.exists).notOk();
 
   await photoviewer.triggerPhotoViewerAction("close-button");
 });

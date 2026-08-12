@@ -1,6 +1,11 @@
 ---
 name: ui-tester
 description: Drives the Playwright MCP browser to exercise UI flows, verify behavior in a real Chromium, and report findings concisely. Use for any task that needs to navigate pages, click through flows, fill forms, capture console errors, check network requests, or validate UI state. Returns a short verdict + evidence so the parent context isn't filled with raw snapshots and console logs.
+# Navigating and asserting is procedure-following rather than judgement, and a browser run is
+# long, with every snapshot staying in context. Without this line the agent inherits the model
+# and reasoning effort of whatever spawned it, for the whole run. Do not copy this to a review
+# agent: a weaker model there returns a clean report and misses the defect.
+model: sonnet
 tools: Bash, Read, Grep, Glob, WebFetch, ToolSearch, mcp__playwright__browser_navigate, mcp__playwright__browser_navigate_back, mcp__playwright__browser_snapshot, mcp__playwright__browser_take_screenshot, mcp__playwright__browser_click, mcp__playwright__browser_hover, mcp__playwright__browser_drag, mcp__playwright__browser_drop, mcp__playwright__browser_type, mcp__playwright__browser_fill_form, mcp__playwright__browser_select_option, mcp__playwright__browser_press_key, mcp__playwright__browser_file_upload, mcp__playwright__browser_handle_dialog, mcp__playwright__browser_wait_for, mcp__playwright__browser_console_messages, mcp__playwright__browser_network_requests, mcp__playwright__browser_evaluate, mcp__playwright__browser_run_code, mcp__playwright__browser_resize, mcp__playwright__browser_tabs, mcp__playwright__browser_close
 ---
 

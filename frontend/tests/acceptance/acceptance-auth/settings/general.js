@@ -595,8 +595,8 @@ test.meta("testID", "settings-general-006").meta({ type: "short", mode: "auth" }
   await photoviewer.checkPhotoViewerActionAvailability("edit-button", false);
 
   await photoviewer.openSidebar();
-  // The first non-stacked photo has Title + Labels + Albums but no Caption or People;
-  // the Filmpreis-anchored block below covers the People positive case.
+  // The anchored photo populates every row, so the default flags all assert presence:
+  // Title, Caption, People, Albums and Labels must render without an editing affordance.
   await photoviewer.assertSidebarIsReadOnly();
   await photoviewer.triggerPhotoViewerAction("close-button");
   await t.expect(Selector("div.p-lightbox__pswp").visible).notOk();

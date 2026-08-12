@@ -94,7 +94,7 @@
           <a :href="links.userGuide" class="text-link" target="_blank" rel="noopener">User Guide</a> also covers many advanced topics, such as
           <a href="https://docs.photoprism.app/user-guide/use-cases/google/" class="text-link" target="_blank" rel="noopener">migrating from Google Photos</a>
           and
-          <a href="https://docs.photoprism.app/user-guide/settings/advanced/#images" class="text-link" target="_blank" rel="noopener"
+          <a href="https://docs.photoprism.app/user-guide/settings/advanced/#preview-images" class="text-link" target="_blank" rel="noopener"
             >thumbnail quality settings</a
           >. Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide at
           <a :href="links.troubleshooting" class="text-link" target="_blank" rel="noopener">docs.photoprism.app/getting-started/troubleshooting</a>.

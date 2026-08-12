@@ -6,6 +6,29 @@ import CameraDialog from "./dialog/camera";
 import LocationDialog from "./dialog/location";
 import { clickIfVisible } from "./helpers";
 
+// SIDEBAR_ROW_KEYS lists every row the sidebar can render. assertSidebarRows() requires an
+// expectation per key, so a new field cannot be added without updating every role.
+export const SIDEBAR_ROW_KEYS = [
+  "title",
+  "caption",
+  "file",
+  "filename",
+  "taken",
+  "camera",
+  "lens",
+  "location",
+  "map",
+  "people",
+  "albums",
+  "labels",
+  "subject",
+  "copyright",
+  "artist",
+  "license",
+  "keywords",
+  "notes",
+];
+
 export default class Page {
   constructor() {
     this.view = Selector("div.p-view-select", { timeout: 15000 });
@@ -52,6 +75,8 @@ export default class Page {
     this.faceMarkerClearSubjectButton = Selector(".metadata__person-row .meta-marker-clear-subject", { timeout: 15000 });
     this.faceMarkerNameInput = Selector(".metadata__person-row .meta-inline-marker input", { timeout: 15000 });
     this.peopleHeader = Selector(".p-lightbox-sidebar .text-subtitle-2").withText("People");
+    // Every "add" affordance in the sidebar; only sessions that may edit ever see one.
+    this.sidebarAddPrompts = Selector(".p-lightbox-sidebar .meta-add-prompt", { timeout: 15000 });
     this.addNameDialog = Selector(".v-dialog.p-confirm-dialog", { timeout: 15000 });
     this.addNameDialogCancel = Selector(".v-dialog.p-confirm-dialog .action-cancel", { timeout: 15000 });
     this.dateTimeDialog = new DateTimeDialog();
@@ -160,7 +185,7 @@ export default class Page {
     if (await display.exists) {
       await t.click(display.parent(".p-lightbox-sidebar .v-list-item"));
     } else {
-      await t.click(Selector(".p-lightbox-sidebar .meta-add-prompt").withText(promptLabel));
+      await t.click(this.sidebarAddPrompts.withText(promptLabel));
     }
   }
 
@@ -285,7 +310,7 @@ export default class Page {
       }
     }
     // meta-add-prompt is an editing affordance and must never render here.
-    await t.expect(Selector(".p-lightbox-sidebar .meta-add-prompt").visible).notOk();
+    await t.expect(this.sidebarAddPrompts.visible).notOk();
 
     if (restricted) {
       await t.expect(this.sidebarRow("mdi-camera").exists).notOk();
@@ -330,6 +355,168 @@ export default class Page {
       }
       await t.click(row);
       await t.expect(row.find(".meta-inline-edit").exists).notOk();
+    }
+  }
+
+  // searchPhotoByName scopes browse to one photo by file name and returns the match count.
+  async searchPhotoByName(name) {
+    const toolbar = new Toolbar();
+    const photo = new Photo();
+    await t.navigateTo("/library/browse");
+    await t.click(toolbar.cardsViewAction);
+    await toolbar.search(`name:${name}`);
+    return photo.getPhotoCount("all");
+  }
+
+  // openSidebarOnPhotoByName opens the lightbox + sidebar on the photo with the given file name.
+  // Anchored by name, not UID: edition fixtures assign different UIDs to the same file.
+  async openSidebarOnPhotoByName(name) {
+    await t.expect(await this.searchPhotoByName(name)).eql(1, `name:${name} must match exactly one photo`);
+    await this.openPhotoViewer("nth", 0);
+    await this.openSidebar();
+  }
+
+  // openPhotoViewerByTitle opens the lightbox by card title, for pages with no search bar.
+  // `div.preview` carries the title regardless of the showTitles setting.
+  async openPhotoViewerByTitle(title) {
+    const preview = Selector("div.is-photo div.preview", { timeout: 15000 }).withAttribute("title", title);
+    await t.expect(preview.visible).ok(`a card titled ${title} must be present`);
+    await t.hover(preview).click(preview);
+    await t.expect(this.viewer.visible).ok();
+  }
+
+  // sidebarFieldRow returns the row for a logical field key. Title and Caption carry no class
+  // on their v-list-item, so they resolve through their value div, which is absent when empty.
+  sidebarFieldRow(key) {
+    switch (key) {
+      case "title":
+      case "caption":
+        return Selector(`.p-lightbox-sidebar .meta-${key}`, { timeout: 15000 }).parent(".p-lightbox-sidebar .v-list-item");
+      case "taken":
+        return this.sidebarRow("mdi-calendar");
+      case "camera":
+        return this.sidebarRow("mdi-camera");
+      case "lens":
+        return this.sidebarRow("mdi-camera-iris");
+      case "location":
+        return Selector(".p-lightbox-sidebar .v-list-item.meta-location", { timeout: 15000 });
+      case "map":
+        return Selector(".p-lightbox-sidebar .p-map", { timeout: 15000 });
+      case "people":
+        return this.peopleHeader;
+      case "file":
+        return Selector(".p-lightbox-sidebar .meta-file", { timeout: 15000 });
+      case "filename":
+        return Selector(".p-lightbox-sidebar .meta-file .v-list-item-subtitle", { timeout: 15000 });
+      default:
+        return Selector(`.p-lightbox-sidebar .v-list-item.meta-${key}`, { timeout: 15000 });
+    }
+  }
+
+  // sidebarAddPrompt returns the "add" affordance shown in place of an empty value. Title and
+  // Caption have no row class, so their prompts are discriminated by label text.
+  sidebarAddPrompt(key) {
+    const labels = { title: "Add a Title", caption: "Add a Caption" };
+    if (labels[key]) {
+      return this.sidebarAddPrompts.withText(labels[key]);
+    }
+    return Selector(`.p-lightbox-sidebar .v-list-item.meta-${key} .meta-add-prompt`, { timeout: 15000 });
+  }
+
+  // assertSidebarRows checks every row against `expected`, which must carry an entry per key —
+  // a missing one throws. Pass null to record a row as deliberately unasserted.
+  async assertSidebarRows(expected) {
+    const missing = SIDEBAR_ROW_KEYS.filter((key) => !(key in expected));
+    if (missing.length) {
+      throw new Error(`sidebar expectations are incomplete, missing: ${missing.join(", ")}`);
+    }
+    for (const key of SIDEBAR_ROW_KEYS) {
+      if (expected[key] !== null) {
+        await this.assertSidebarRow(key, expected[key]);
+      }
+    }
+  }
+
+  // assertSidebarRow checks one field: visibility, value, add-prompt and editability.
+  // Uses `.visible`, never `.exists`: the details rows are v-show-toggled and stay in the DOM.
+  async assertSidebarRow(key, { visible = true, value = null, addPrompt = false, editable = null } = {}) {
+    const row = this.sidebarFieldRow(key);
+
+    if (!visible) {
+      await t.expect(row.with({ timeout: 200 }).visible).notOk(`${key}: row must not be visible`);
+      await t.expect(this.sidebarAddPrompt(key).with({ timeout: 200 }).visible).notOk(`${key}: add-prompt must not be visible`);
+      return;
+    }
+
+    if (addPrompt) {
+      await t.expect(this.sidebarAddPrompt(key).visible).ok(`${key}: add-prompt must be visible`);
+    } else {
+      await t.expect(row.visible).ok(`${key}: row must be visible`);
+      if (value !== null) {
+        // Person names render in sibling marker rows, not inside the section header.
+        const valueTarget = key === "people" ? this.personRow : row;
+        // Arrays assert several strings on one row; Location shows place name plus coordinates.
+        for (const expected of Array.isArray(value) ? value : [value]) {
+          await t.expect(valueTarget.withText(expected).visible).ok(`${key}: must display "${expected}"`);
+        }
+      }
+    }
+
+    if (editable !== null) {
+      await this.assertSidebarRowEditable(key, editable);
+    }
+  }
+
+  // assertSidebarRowEditable drives the row's click path to see whether an editor appears.
+  // Never inferred from the pencil: hideEditPencils defaults true, hiding it for every role.
+  async assertSidebarRowEditable(key, expected) {
+    const dialogs = { taken: this.dateTimeDialog, camera: this.cameraDialog, lens: this.cameraDialog, location: this.locationDialog };
+
+    if (dialogs[key]) {
+      const dialog = dialogs[key];
+      await t.click(this.sidebarFieldRow(key));
+      if (expected) {
+        await t.expect(dialog.root.visible).ok(`${key}: dialog must open`);
+        await t.click(dialog.cancel);
+      } else {
+        await t.expect(dialog.root.with({ timeout: 200 }).visible).notOk(`${key}: dialog must not open`);
+      }
+      return;
+    }
+
+    if (key === "labels" || key === "albums") {
+      // Assert both combobox and chip ×, so a half-gated section cannot pass.
+      const combobox = Selector(`.p-lightbox-sidebar .meta-${key} .meta-inline-edit`, { timeout: 15000 });
+      const remove = Selector(`.p-lightbox-sidebar .meta-${key} .meta-chip__remove`, { timeout: 15000 });
+      if (expected) {
+        await t.expect(combobox.visible).ok(`${key}: combobox must be rendered`);
+      } else {
+        await t.expect(combobox.with({ timeout: 200 }).visible).notOk(`${key}: combobox must not be rendered`);
+        await t.expect(remove.with({ timeout: 200 }).visible).notOk(`${key}: chips must not offer removal`);
+      }
+      return;
+    }
+
+    if (key === "people") {
+      // The toggles are mutually exclusive: pencil when editable, eye when read-only.
+      if (expected) {
+        await t.expect(this.markersEditToggle.visible).ok("people: edit toggle must be rendered");
+        await t.expect(this.markersVisibilityToggle.with({ timeout: 200 }).visible).notOk("people: display toggle must not be rendered");
+      } else {
+        await t.expect(this.markersEditToggle.with({ timeout: 200 }).visible).notOk("people: edit toggle must not be rendered");
+      }
+      return;
+    }
+
+    // Inline-text fields: clicking the row (or its add-prompt) mounts the editor in place.
+    const editor = Selector(`.p-lightbox-sidebar .meta-inline-${key}`, { timeout: 15000 });
+    if (expected) {
+      await t.click((await this.sidebarFieldRow(key).exists) ? this.sidebarFieldRow(key) : this.sidebarAddPrompt(key));
+      await t.expect(editor.visible).ok(`${key}: inline editor must open`);
+      await t.pressKey("esc");
+    } else {
+      await t.click(this.sidebarFieldRow(key));
+      await t.expect(editor.with({ timeout: 200 }).visible).notOk(`${key}: inline editor must not open`);
     }
   }
 
