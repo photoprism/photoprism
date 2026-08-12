@@ -13,7 +13,7 @@
 
 - Default is safety-first: callers must not overwrite non-empty destination files unless they opt-in with `force=true`. Replacing empty destinations is allowed without `force`.
 - Open destinations with `O_WRONLY|O_CREATE|O_TRUNC` to avoid trailing bytes when overwriting; use `O_EXCL` when callers must detect collisions.
-- Where this lives: `internal/photoprism/mediafile.go` (`MediaFile.Copy/Move`), `pkg/fs/copy.go`, `pkg/fs/move.go`.
+- Where this lives: `internal/photoprism/mediafile.go` (`MediaFile.Copy/Move`), `pkg/fs/copy_move.go` (`fs.Copy` / `fs.Move`).
 - When to set `force=true`: explicit "replace" actions or admin tools where the user confirmed overwrite. Not for import/index flows — Originals must not be clobbered.
 
 ## Archive Extraction — Security Checklist
