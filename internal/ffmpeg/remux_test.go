@@ -15,6 +15,7 @@ import (
 
 func TestRemuxFile(t *testing.T) {
 	ffmpegBin := "/usr/bin/ffmpeg"
+	tempDir := t.TempDir()
 
 	t.Run("NoFilePath", func(t *testing.T) {
 		opt := encode.NewRemuxOptions(ffmpegBin, fs.VideoMp4, false)
@@ -27,9 +28,9 @@ func TestRemuxFile(t *testing.T) {
 
 		// QuickTime MOV container with HVC1 (HEVC) codec.
 		origName := fs.Abs("./testdata/30fps.mov")
-		srcName := fs.Abs("./testdata/30fps.remux-file.mov")
-		tmpName := fs.Abs("./testdata/.30fps.remux-file.mp4")
-		destName := fs.Abs("./testdata/30fps.remux-file.avc")
+		srcName := filepath.Join(tempDir, "testdata", "30fps.remux-file.mov")
+		tmpName := filepath.Join(tempDir, "testdata", "30fps.remux-file.mp4")
+		destName := filepath.Join(tempDir, "testdata", "30fps.remux-file.avc")
 
 		_ = os.Remove(srcName)
 		_ = os.Remove(tmpName)
@@ -57,6 +58,7 @@ func TestRemuxFile(t *testing.T) {
 
 func TestRemuxCmd(t *testing.T) {
 	ffmpegBin := "/usr/bin/ffmpeg"
+	tempDir := t.TempDir()
 
 	t.Run("NoSrcName", func(t *testing.T) {
 		opt := encode.NewRemuxOptions(ffmpegBin, fs.VideoMp4, false)
@@ -70,8 +72,8 @@ func TestRemuxCmd(t *testing.T) {
 		// QuickTime MOV container with HVC1 (HEVC) codec.
 		origName := fs.Abs("./testdata/30fps.mov")
 
-		srcName := fs.Abs("./testdata/30fps.remux-cmd.mov")
-		destName := fs.Abs("./testdata/30fps.remux-cmd.mp4")
+		srcName := filepath.Join(tempDir, "testdata", "30fps.remux-cmd.mov")
+		destName := filepath.Join(tempDir, "testdata", "30fps.remux-cmd.avc")
 
 		_ = os.Remove(srcName)
 		_ = os.Remove(destName)
@@ -103,7 +105,7 @@ func TestRemuxFile_DestExists_NoForce_NoOp(t *testing.T) {
 	opt := encode.NewRemuxOptions("/usr/bin/ffmpeg", fs.VideoMp4, false)
 	dir := fs.Abs("./testdata")
 	src := filepath.Join(dir, "30fps.mov")
-	dest := filepath.Join(dir, "already-there.mp4")
+	dest := filepath.Join(t.TempDir(), "already-there.mp4")
 	// Create a tiny placeholder dest file
 	_ = os.Remove(dest)
 	if err := os.WriteFile(dest, []byte("x"), fs.ModeFile); err != nil {
@@ -119,11 +121,12 @@ func TestRemuxFile_DestExists_NoForce_NoOp(t *testing.T) {
 func TestRemuxFile_TempExists_NoForce_Error(t *testing.T) {
 	opt := encode.NewRemuxOptions("/usr/bin/ffmpeg", fs.VideoMp4, false)
 	dir := fs.Abs("./testdata")
+	tempDir := t.TempDir()
 	// Use a copy to avoid modifying the original during test
-	src := filepath.Join(dir, "30fps.remux-temp.mov")
+	src := filepath.Join(tempDir, "30fps.remux-temp.mov")
 	orig := filepath.Join(dir, "30fps.mov")
-	dest := filepath.Join(dir, "30fps.remux-temp.mp4")
-	temp := filepath.Join(dir, ".30fps.remux-temp.mp4")
+	dest := filepath.Join(tempDir, "30fps.remux-temp.mp4")
+	temp := filepath.Join(tempDir, ".30fps.remux-temp.mp4")
 	// Cleanup
 	_ = os.Remove(src)
 	_ = os.Remove(dest)
@@ -144,7 +147,7 @@ func TestRemuxFile_TempExists_NoForce_Error(t *testing.T) {
 func TestRemuxCmd_VideoTag(t *testing.T) {
 	ffmpegBin := "/usr/bin/ffmpeg"
 	src := fs.Abs("./testdata/30fps.mov")
-	dest := fs.Abs("./testdata/30fps.video-tag.mp4")
+	dest := filepath.Join(t.TempDir(), "testdata/30fps.video-tag.mp4")
 
 	defer func() { _ = os.Remove(dest) }()
 
@@ -192,7 +195,7 @@ func TestRemuxCmd_ErrorPaths_And_DefaultBin(t *testing.T) {
 	// Default ffmpeg bin selected when empty
 	// Use an existing file to pass validation
 	src := fs.Abs("./testdata/30fps.mov")
-	dest := fs.Abs("./testdata/30fps.default-bin.mp4")
+	dest := filepath.Join(t.TempDir(), "testdata/30fps.default-bin.mp4")
 	_ = os.Remove(dest)
 	defer os.Remove(dest)
 	cmd, err := RemuxCmd(src, dest, opt)

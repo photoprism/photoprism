@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/thumb"
@@ -180,8 +181,11 @@ func TestMediaFile_SkipThumbnailSize(t *testing.T) {
 
 func TestMediaFile_GenerateThumbnails(t *testing.T) {
 	c := config.TestConfig()
+	basePath := filepath.Join(t.TempDir(), "testdata")
+	require.NoError(t, os.MkdirAll(basePath, fs.ModeDir))
+	t.Cleanup(func() { _ = os.RemoveAll(basePath) })
 
-	thumbsPath := "./.test_mediafile_createthumbnails"
+	thumbsPath := filepath.Join(basePath, ".test_mediafile_createthumbnails")
 
 	if p, err := filepath.Abs(thumbsPath); err != nil {
 		t.Fatal(err)
@@ -288,8 +292,15 @@ func TestMediaFile_GenerateThumbnails(t *testing.T) {
 }
 
 func TestMediaFile_ChangeOrientation(t *testing.T) {
+	basePath := filepath.Join(t.TempDir(), "testdata")
+	require.NoError(t, os.MkdirAll(basePath, fs.ModeDir))
+	t.Cleanup(func() { _ = os.RemoveAll(basePath) })
+
+	require.NoError(t, fs.Copy("testdata/orientation.jpg", filepath.Join(basePath, "orientation.jpg"), false))
+	require.NoError(t, fs.Copy("testdata/orientation.png", filepath.Join(basePath, "orientation.png"), false))
+
 	t.Run("JPEG", func(t *testing.T) {
-		m, err := NewMediaFile("testdata/orientation.jpg")
+		m, err := NewMediaFile(filepath.Join(basePath, "orientation.jpg"))
 
 		if err != nil {
 			t.Fatal(err)
@@ -306,7 +317,7 @@ func TestMediaFile_ChangeOrientation(t *testing.T) {
 		}
 	})
 	t.Run("PNG", func(t *testing.T) {
-		m, err := NewMediaFile("testdata/orientation.png")
+		m, err := NewMediaFile(filepath.Join(basePath, "orientation.png"))
 
 		if err != nil {
 			t.Fatal(err)

@@ -3,6 +3,7 @@ package frame
 import (
 	"image"
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/thumb"
@@ -10,9 +11,14 @@ import (
 	"github.com/photoprism/photoprism/pkg/http/header"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestCollage(t *testing.T) {
+	basePath := filepath.Join(t.TempDir(), "testdata")
+	require.NoError(t, os.MkdirAll(basePath, fs.ModeDir))
+	t.Cleanup(func() { _ = os.RemoveAll(basePath) })
+
 	t.Run("Polaroid", func(t *testing.T) {
 		var images []image.Image
 
@@ -23,7 +29,7 @@ func TestCollage(t *testing.T) {
 			images = append(images, img)
 		}
 
-		saveName := "testdata/test-polaroid-collage.jpg"
+		saveName := filepath.Join(basePath, "test-polaroid-collage.jpg")
 		preview, err := Collage(Polaroid, images)
 
 		assert.NoError(t, err)
@@ -46,7 +52,7 @@ func TestCollage(t *testing.T) {
 			images = append(images, img)
 		}
 
-		saveName := "testdata/test-polaroid-collage-two.jpg"
+		saveName := filepath.Join(basePath, "test-polaroid-collage-two.jpg")
 		preview, err := Collage(Polaroid, images)
 
 		assert.NoError(t, err)
@@ -62,7 +68,7 @@ func TestCollage(t *testing.T) {
 	t.Run("NoImages", func(t *testing.T) {
 		var images []image.Image
 
-		saveName := "testdata/test-no-images-collage.jpg"
+		saveName := filepath.Join(basePath, "test-no-images-collage.jpg")
 		preview, err := Collage(Polaroid, images)
 
 		assert.NoError(t, err)
@@ -85,7 +91,7 @@ func TestCollage(t *testing.T) {
 			images = append(images, img)
 		}
 
-		saveName := "testdata/test-unknown-type-collage.jpg"
+		saveName := filepath.Join(basePath, "test-unknown-type-collage.jpg")
 
 		preview, err := Collage("Unknown", images)
 

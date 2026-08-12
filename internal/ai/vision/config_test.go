@@ -14,8 +14,10 @@ import (
 )
 
 func TestOptions(t *testing.T) {
-	var configPath = fs.Abs("testdata")
-	var configFile = filepath.Join(configPath, "vision.yml")
+	configPath := filepath.Join(t.TempDir(), "testdata")
+	require.NoError(t, os.MkdirAll(configPath, fs.ModeDir))
+	t.Cleanup(func() { _ = os.RemoveAll(configPath) })
+	configFile := filepath.Join(configPath, "vision.yml")
 
 	t.Run("Save", func(t *testing.T) {
 		// Regenerate the committed fixture deterministically, independent of any ambient

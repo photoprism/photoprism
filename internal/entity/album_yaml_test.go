@@ -2,6 +2,7 @@ package entity
 
 import (
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -48,6 +49,7 @@ func TestAlbum_Yaml(t *testing.T) {
 }
 
 func TestAlbum_SaveAsYaml(t *testing.T) {
+	workingDir := filepath.Join(t.TempDir(), "testdata")
 	t.Run("Success", func(t *testing.T) {
 		m := AlbumFixtures.Get("berlin-2019")
 
@@ -57,12 +59,12 @@ func TestAlbum_SaveAsYaml(t *testing.T) {
 			m = *found
 		}
 
-		backupPath := fs.Abs("testdata/TestAlbum_SaveAsYaml")
+		backupPath := filepath.Join(workingDir, "TestAlbum_SaveAsYaml")
 
 		fileName, relName, err := m.YamlFileName(backupPath)
 
 		assert.NoError(t, err)
-		assert.True(t, strings.HasSuffix(fileName, "internal/entity/testdata/TestAlbum_SaveAsYaml/album/as6sg6bxpogaaba9.yml"))
+		assert.True(t, strings.HasSuffix(fileName, "testdata/TestAlbum_SaveAsYaml/album/as6sg6bxpogaaba9.yml"))
 		assert.Equal(t, "album/as6sg6bxpogaaba9.yml", relName)
 
 		if err = m.SaveAsYaml(fileName); err != nil {
@@ -87,7 +89,7 @@ func TestAlbum_SaveAsYaml(t *testing.T) {
 			m = *found
 		}
 
-		backupPath := fs.Abs("testdata/TestAlbum_SaveAsYaml")
+		backupPath := filepath.Join(workingDir, "TestAlbum_SaveAsYaml")
 
 		err := m.SaveAsYaml("")
 
@@ -100,7 +102,7 @@ func TestAlbum_SaveAsYaml(t *testing.T) {
 	t.Run("NoAlbumUID", func(t *testing.T) {
 		m := Album{}
 
-		backupPath := fs.Abs("testdata/TestAlbum_SaveAsYaml")
+		backupPath := filepath.Join(workingDir, "TestAlbum_SaveAsYaml")
 
 		err := m.SaveAsYaml("")
 
@@ -155,10 +157,11 @@ func TestAlbum_YamlFileName(t *testing.T) {
 }
 
 func TestAlbum_SaveBackupYaml(t *testing.T) {
+	workingDir := filepath.Join(t.TempDir(), "testdata")
 	t.Run("Success", func(t *testing.T) {
 		m := AlbumFixtures.Get("berlin-2019")
 
-		backupPath := fs.Abs("testdata/TestAlbum_SaveBackupYaml")
+		backupPath := filepath.Join(workingDir, "TestAlbum_SaveBackupYaml")
 
 		if err := fs.MkdirAll(backupPath); err != nil {
 			t.Fatal(err)
@@ -176,7 +179,7 @@ func TestAlbum_SaveBackupYaml(t *testing.T) {
 	t.Run("NoAlbumUID", func(t *testing.T) {
 		m := Album{}
 
-		backupPath := fs.Abs("testdata/TestAlbum_SaveBackupYaml")
+		backupPath := filepath.Join(workingDir, "TestAlbum_SaveBackupYaml")
 
 		if err := fs.MkdirAll(backupPath); err != nil {
 			t.Fatal(err)

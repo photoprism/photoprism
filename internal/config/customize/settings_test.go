@@ -2,9 +2,13 @@ package customize
 
 import (
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestNewSettings(t *testing.T) {
@@ -79,6 +83,11 @@ func TestSettings_Load(t *testing.T) {
 	})
 }
 func TestSettings_Save(t *testing.T) {
+	basePath := filepath.Join(t.TempDir(), "testdata")
+	require.NoError(t, os.MkdirAll(basePath, fs.ModeDir))
+	t.Cleanup(func() { _ = os.RemoveAll(basePath) })
+	require.NoError(t, fs.Copy("testdata/settings.yml", filepath.Join(basePath, "settings.yml"), false))
+
 	t.Run("ExistingFilename", func(t *testing.T) {
 		s := NewDefaultSettings()
 
@@ -91,7 +100,7 @@ func TestSettings_Save(t *testing.T) {
 		assert.Equal(t, "onyx", s.UI.Theme)
 		assert.Equal(t, "de", s.UI.Language)
 
-		if err := s.Save("testdata/settings.yml"); err != nil {
+		if err := s.Save(filepath.Join(basePath, "settings.yml")); err != nil {
 			t.Fatal(err)
 		}
 	})
@@ -106,18 +115,18 @@ func TestSettings_Save(t *testing.T) {
 		assert.Equal(t, "onyx", s.UI.Theme)
 		assert.Equal(t, "de", s.UI.Language)
 
-		if err := s.Save("testdata/settings_tmp.yml"); err != nil {
+		if err := s.Save(filepath.Join(basePath, "settings_tmp.yml")); err != nil {
 			t.Fatal(err)
 		}
 
 		reloaded := NewDefaultSettings()
-		if err := reloaded.Load("testdata/settings_tmp.yml"); err != nil {
+		if err := reloaded.Load(filepath.Join(basePath, "settings_tmp.yml")); err != nil {
 			t.Fatal(err)
 		}
 		assert.Equal(t, false, reloaded.UI.Scrollbar)
 		assert.Equal(t, true, reloaded.UI.ReduceMotion)
 
-		if err := os.Remove("testdata/settings_tmp.yml"); err != nil {
+		if err := os.Remove(filepath.Join(basePath, "settings_tmp.yml")); err != nil {
 			t.Fatal(err)
 		}
 	})

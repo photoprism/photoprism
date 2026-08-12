@@ -2,6 +2,7 @@ package thumb
 
 import (
 	"image"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -119,11 +120,13 @@ func TestSize_Skip(t *testing.T) {
 func TestSize_FileName(t *testing.T) {
 	size := Sizes[Fit2048]
 
-	r, err := size.FileName("193456789098765432", "testdata/cache")
+	basePath := filepath.Join(t.TempDir(), "cache")
+
+	r, err := size.FileName("193456789098765432", basePath)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	assert.Equal(t, r, "testdata/cache/1/9/3/193456789098765432_2048x2048_fit.jpg")
+	assert.Equal(t, r, filepath.Join(basePath, "1/9/3/193456789098765432_2048x2048_fit.jpg"))
 }

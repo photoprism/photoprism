@@ -54,7 +54,7 @@ func TestToSRGB(t *testing.T) {
 
 		imgSRGB := ToSRGB(img, ProfileDisplayP3)
 
-		srgbFile := "./testdata/SRGB.jpg"
+		srgbFile := filepath.Join(t.TempDir(), "SRGB.jpg")
 
 		if err := writeImage(srgbFile, imgSRGB); err != nil {
 			t.Error(err)

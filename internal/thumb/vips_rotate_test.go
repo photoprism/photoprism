@@ -2,21 +2,24 @@ package thumb
 
 import (
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/davidbyttow/govips/v2/vips"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestVipsRotate(t *testing.T) {
-	if err := os.MkdirAll("testdata/vips/rotate", fs.ModeDir); err != nil {
-		t.Fatal(err)
-	}
+	target := filepath.Join(t.TempDir(), "testdata", "vips", "rotate")
+	require.NoError(t, os.MkdirAll(target, fs.ModeDir))
+	t.Cleanup(func() { _ = os.RemoveAll(target) })
+
 	t.Run("OrientationNormal", func(t *testing.T) {
 		src := "testdata/example.jpg"
-		dst := "testdata/vips/rotate/0.jpg"
+		dst := filepath.Join(target, "0.jpg")
 
 		assert.FileExists(t, src)
 
@@ -48,7 +51,7 @@ func TestVipsRotate(t *testing.T) {
 	})
 	t.Run("OrientationRotate90", func(t *testing.T) {
 		src := "testdata/example.jpg"
-		dst := "testdata/vips/rotate/90.jpg"
+		dst := filepath.Join(target, "90.jpg")
 
 		assert.FileExists(t, src)
 
@@ -80,7 +83,7 @@ func TestVipsRotate(t *testing.T) {
 	})
 	t.Run("OrientationRotate180", func(t *testing.T) {
 		src := "testdata/example.jpg"
-		dst := "testdata/vips/rotate/180.jpg"
+		dst := filepath.Join(target, "180.jpg")
 
 		assert.FileExists(t, src)
 
@@ -112,7 +115,7 @@ func TestVipsRotate(t *testing.T) {
 	})
 	t.Run("OrientationRotate270", func(t *testing.T) {
 		src := "testdata/example.jpg"
-		dst := "testdata/vips/rotate/270.jpg"
+		dst := filepath.Join(target, "270.jpg")
 
 		assert.FileExists(t, src)
 

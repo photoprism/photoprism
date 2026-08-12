@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -67,104 +68,71 @@ func TestPhoto_YamlFileName(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
 		m.PreloadFiles()
-		fileName, relative, err := m.YamlFileName("xxx", "yyy")
+		op := filepath.Join(t.TempDir(), "xxx")
+		fileName, relative, err := m.YamlFileName(op, "yyy")
 		assert.NoError(t, err)
-		assert.Equal(t, "xxx/2790/02/yyy/Photo01.yml", fileName)
+		assert.Equal(t, filepath.Join(op, "2790/02/yyy/Photo01.yml"), fileName)
 		assert.Equal(t, "2790/02/Photo01.yml", relative)
-
-		if err := os.RemoveAll("xxx"); err != nil {
-			t.Fatal(err)
-		}
 	})
 }
 
 func TestPhoto_SaveSidecarYaml(t *testing.T) {
+	basePath := filepath.Join(t.TempDir(), "yaml")
+	require.NoError(t, os.MkdirAll(basePath, fs.ModeDir))
+	t.Cleanup(func() { _ = os.RemoveAll(basePath) })
 	t.Run("Success", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
 		m.PreloadFiles()
 
-		basePath := fs.Abs("testdata/yaml")
 		originalsPath := filepath.Join(basePath, "originals")
 		sidecarPath := filepath.Join(basePath, "sidecar")
 
 		t.Logf("originalsPath: %s", originalsPath)
 		t.Logf("sidecarPath: %s", sidecarPath)
 
-		if err := fs.MkdirAll(originalsPath); err != nil {
-			t.Fatal(err)
-			return
-		}
+		require.NoError(t, fs.MkdirAll(originalsPath))
+		require.NoError(t, fs.MkdirAll(sidecarPath))
 
-		if err := fs.MkdirAll(sidecarPath); err != nil {
-			t.Fatal(err)
-			return
-		}
+		require.NoError(t, m.SaveSidecarYaml(originalsPath, sidecarPath))
 
-		if err := m.SaveSidecarYaml(originalsPath, sidecarPath); err != nil {
-			t.Error(err)
-		}
-
-		if err := os.RemoveAll(basePath); err != nil {
-			t.Error(err)
-		}
+		require.NoError(t, os.RemoveAll(originalsPath))
+		require.NoError(t, os.RemoveAll(sidecarPath))
 	})
 	t.Run("PhotoNameEmpty", func(t *testing.T) {
 		m := Photo{}
 		m.PreloadFiles()
 
-		basePath := fs.Abs("testdata/yaml")
 		originalsPath := filepath.Join(basePath, "originals")
 		sidecarPath := filepath.Join(basePath, "sidecar")
 
 		t.Logf("originalsPath: %s", originalsPath)
 		t.Logf("sidecarPath: %s", sidecarPath)
 
-		if err := fs.MkdirAll(originalsPath); err != nil {
-			t.Fatal(err)
-			return
-		}
+		require.NoError(t, fs.MkdirAll(originalsPath))
+		require.NoError(t, fs.MkdirAll(sidecarPath))
 
-		if err := fs.MkdirAll(sidecarPath); err != nil {
-			t.Fatal(err)
-			return
-		}
+		require.Error(t, m.SaveSidecarYaml(originalsPath, sidecarPath))
 
-		err := m.SaveSidecarYaml(originalsPath, sidecarPath)
-
-		assert.Error(t, err)
-
-		if err := os.RemoveAll(basePath); err != nil {
-			t.Error(err)
-		}
+		require.NoError(t, os.RemoveAll(originalsPath))
+		require.NoError(t, os.RemoveAll(sidecarPath))
 	})
 	t.Run("PhotoUIDEmpty", func(t *testing.T) {
 		m := Photo{PhotoName: "testphoto"}
 		m.PreloadFiles()
 
-		basePath := fs.Abs("testdata/yaml")
 		originalsPath := filepath.Join(basePath, "originals")
 		sidecarPath := filepath.Join(basePath, "sidecar")
 
 		t.Logf("originalsPath: %s", originalsPath)
 		t.Logf("sidecarPath: %s", sidecarPath)
 
-		if err := fs.MkdirAll(originalsPath); err != nil {
-			t.Fatal(err)
-			return
-		}
+		require.NoError(t, fs.MkdirAll(originalsPath))
+		require.NoError(t, fs.MkdirAll(sidecarPath))
 
-		if err := fs.MkdirAll(sidecarPath); err != nil {
-			t.Fatal(err)
-			return
-		}
+		require.Error(t, m.SaveSidecarYaml(originalsPath, sidecarPath))
 
-		err := m.SaveSidecarYaml(originalsPath, sidecarPath)
-
-		assert.Error(t, err)
-
-		if err := os.RemoveAll(basePath); err != nil {
-			t.Error(err)
-		}
+		require.NoError(t, os.RemoveAll(originalsPath))
+		require.NoError(t, os.RemoveAll(sidecarPath))
 	})
 }
 

@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strconv"
 	"testing"
 
@@ -206,14 +207,15 @@ func TestConfig_Save(t *testing.T) {
 		assert.Equal(t, Status("unregistered"), c.Status)
 		assert.Equal(t, "test", c.Version)
 
-		c.FileName = "testdata/hub-save.yml"
+		testFileName := filepath.Join(t.TempDir(), "testdata/hub-save.yml")
+		c.FileName = testFileName
 
 		if err := c.Save(); err != nil {
 			t.Fatal(err)
 		}
 
 		t.Cleanup(func() {
-			if err := os.Remove("testdata/hub-save.yml"); err != nil {
+			if err := os.Remove(testFileName); err != nil {
 				t.Errorf("failed removing testdata/hub-save.yml: %v", err)
 			}
 		})
@@ -224,7 +226,7 @@ func TestConfig_Save(t *testing.T) {
 		assert.Equal(t, Status("unregistered"), c.Status)
 		assert.Equal(t, "test", c.Version)
 
-		assert.FileExists(t, "testdata/hub-save.yml")
+		assert.FileExists(t, testFileName)
 
 		if err := c.Load(); err != nil {
 			t.Log(err.Error())
@@ -237,7 +239,8 @@ func TestConfig_Save(t *testing.T) {
 		assert.Equal(t, "test", c.Version)
 	})
 	t.Run("NotExistingFilename", func(t *testing.T) {
-		c := NewConfig("test", "testdata/hub_new.yml", "zqkunt22r0bewti9", "test", "PhotoPrism/Test", "test")
+		testFileName := filepath.Join(t.TempDir(), "testdata/hub-hub_new.yml")
+		c := NewConfig("test", testFileName, "zqkunt22r0bewti9", "test", "PhotoPrism/Test", "test")
 		c.Key = "F60F5B25D59C397989E3CD374F81CDD7710A4FCA"
 		c.Secret = "foo"
 		c.Session = "bar"
@@ -254,9 +257,9 @@ func TestConfig_Save(t *testing.T) {
 		assert.Equal(t, "", c.Secret)
 		assert.Equal(t, "", c.Session)
 
-		assert.FileExists(t, "testdata/hub_new.yml")
+		assert.FileExists(t, testFileName)
 
-		if err := os.Remove("testdata/hub_new.yml"); err != nil {
+		if err := os.Remove(testFileName); err != nil {
 			t.Fatal(err)
 		}
 	})

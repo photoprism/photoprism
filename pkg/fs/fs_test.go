@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // TestMain executes runTestMain returning it's results.  It is done this way so that defer can be used to cleanup.
@@ -155,13 +156,14 @@ func TestDirIsEmpty(t *testing.T) {
 		assert.Equal(t, false, DirIsEmpty("./xxx"))
 	})
 	t.Run("EmptyDir", func(t *testing.T) {
-		if err := os.Mkdir("./testdata/emptyDir", 0o750); err != nil {
-			t.Fatal(err)
-		}
+		testPath := filepath.Join(t.TempDir(), "testdata")
+		require.NoError(t, os.MkdirAll(testPath, 0o750))
+		t.Cleanup(func() { _ = os.RemoveAll(testPath) })
+		require.NoError(t, os.Mkdir(filepath.Join(testPath, "emptyDir"), 0o750))
 		t.Cleanup(func() {
-			assert.NoError(t, os.RemoveAll("./testdata/emptyDir"))
+			assert.NoError(t, os.RemoveAll(filepath.Join(testPath, "emptyDir")))
 		})
-		assert.Equal(t, true, DirIsEmpty("./testdata/emptyDir"))
+		assert.Equal(t, true, DirIsEmpty(filepath.Join(testPath, "emptyDir")))
 	})
 }
 

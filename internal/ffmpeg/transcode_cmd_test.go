@@ -41,7 +41,7 @@ func TestTranscodeCmd(t *testing.T) {
 		opt := encode.NewVideoOptions(ffmpegBin, encode.SoftwareAvc, 1500, encode.DefaultQuality, encode.PresetFast, "", "", "")
 
 		srcName := fs.Abs("./testdata/25fps.vp9")
-		destName := fs.Abs("./testdata/25fps.avc")
+		destName := filepath.Join(t.TempDir(), "25fps.avc")
 
 		cmd, _, err := TranscodeCmd(srcName, destName, opt)
 
@@ -62,7 +62,7 @@ func TestTranscodeCmd(t *testing.T) {
 		opt := encode.NewVideoOptions(ffmpegBin, encode.VaapiAvc, 1500, encode.DefaultQuality, encode.PresetFast, "", "", "")
 
 		srcName := fs.Abs("./testdata/25fps.vp9")
-		destName := fs.Abs("./testdata/25fps.vaapi.avc")
+		destName := filepath.Join(t.TempDir(), "25fps.vaapi.avc")
 
 		cmd, _, err := TranscodeCmd(srcName, destName, opt)
 
@@ -86,7 +86,7 @@ func TestTranscodeCmd(t *testing.T) {
 
 		// QuickTime MOV container with HVC1 (HEVC) codec.
 		srcName := fs.Abs("./testdata/30fps.mov")
-		destName := fs.Abs("./testdata/30fps.intel.avc")
+		destName := filepath.Join(t.TempDir(), "30fps.intel.avc")
 
 		cmd, _, err := TranscodeCmd(srcName, destName, opt)
 
@@ -109,7 +109,7 @@ func TestTranscodeCmd(t *testing.T) {
 		opt := encode.NewVideoOptions(ffmpegBin, encode.IntelAvc, 1500, encode.DefaultQuality, encode.PresetFast, "/dev/dri/renderD128", "", "")
 
 		srcName := fs.Abs("./testdata/25fps.vp9")
-		destName := fs.Abs("./testdata/25fps.intel.avc")
+		destName := filepath.Join(t.TempDir(), "25fps.intel.avc")
 
 		cmd, _, err := TranscodeCmd(srcName, destName, opt)
 
@@ -133,7 +133,7 @@ func TestTranscodeCmd(t *testing.T) {
 
 		// QuickTime MOV container with HVC1 (HEVC) codec.
 		srcName := fs.Abs("./testdata/30fps.mov")
-		destName := fs.Abs("./testdata/30fps.nvidia.avc")
+		destName := filepath.Join(t.TempDir(), "30fps.nvidia.avc")
 
 		cmd, _, err := TranscodeCmd(srcName, destName, opt)
 
@@ -156,7 +156,7 @@ func TestTranscodeCmd(t *testing.T) {
 		opt := encode.NewVideoOptions(ffmpegBin, encode.NvidiaAvc, 1500, encode.DefaultQuality, encode.PresetFast, "", "", "")
 
 		srcName := fs.Abs("./testdata/25fps.vp9")
-		destName := fs.Abs("./testdata/25fps.nvidia.avc")
+		destName := filepath.Join(t.TempDir(), "25fps.nvidia.avc")
 
 		cmd, _, err := TranscodeCmd(srcName, destName, opt)
 
@@ -179,7 +179,7 @@ func TestTranscodeCmd(t *testing.T) {
 		opt := encode.NewVideoOptions(ffmpegBin, encode.VulkanAvc, 1500, encode.DefaultQuality, encode.PresetFast, "", "", "")
 
 		srcName := fs.Abs("./testdata/25fps.vp9")
-		destName := fs.Abs("./testdata/25fps.vulkan.avc")
+		destName := filepath.Join(t.TempDir(), "25fps.vulkan.avc")
 
 		cmd, _, err := TranscodeCmd(srcName, destName, opt)
 
