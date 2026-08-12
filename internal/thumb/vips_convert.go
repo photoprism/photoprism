@@ -25,6 +25,9 @@ func vipsConvertImportParams() *vips.ImportParams {
 // EXIF orientation as informational only). Non-conformant HEIC files that
 // carry EXIF orientation without irot will not be auto-rotated by this path.
 func vipsConvert(srcFile, dstFile string, orientation int) (_ image.Image, err error) {
+	// Reduce libvips errors, which callers may log at info level or above.
+	defer func() { err = vipsErr(err) }()
+
 	VipsInit()
 
 	logName := clean.Log(filepath.Base(dstFile))
@@ -56,11 +59,11 @@ func vipsConvert(srcFile, dstFile string, orientation int) (_ image.Image, err e
 		imageBytes, _, err = img.ExportPng(params)
 		// If that fails, try again without the ICC profile, since libpng may reject an invalid ICCP chunk (e.g. malformed profile length).
 		if err != nil && img.HasICCProfile() {
-			log.Tracef("vips: %s in %s (export png with icc)", err, logName)
+			log.Tracef("vips: %s in %s (export png with icc)", vipsErr(err), logName)
 			if iccErr := img.RemoveICCProfile(); iccErr != nil {
 				log.Debugf("vips: %s in %s (remove icc profile)", iccErr, logName)
 			} else if imageBytes, _, err = img.ExportPng(params); err != nil {
-				log.Debugf("vips: %s in %s (export png without icc)", err, logName)
+				log.Debugf("vips: %s in %s (export png without icc)", vipsErr(err), logName)
 			}
 		}
 	default:
