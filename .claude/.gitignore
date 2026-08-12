@@ -4,5 +4,6 @@
 !rules
 !rules/*.md
 !agents
-!agents/*.md
+# Allowlisted per file, so agents linked in from specs/ stay untracked (as with skills).
+!agents/ui-tester.md
 !settings.json
