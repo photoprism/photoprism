@@ -116,6 +116,12 @@ func TestLabelHasThumb(t *testing.T) {
 }
 
 func TestLabelThumbByUID(t *testing.T) {
+	t.Run("InvalidUID", func(t *testing.T) {
+		for _, uid := range []string{"", "xxx", "as6sg6bxpogaaba8"} {
+			_, err := LabelThumbByUID(uid)
+			assert.EqualError(t, err, "invalid label uid", "%s", uid)
+		}
+	})
 	t.Run("Success", func(t *testing.T) {
 		result, err := LabelThumbByUID("ls6sg6b1wowuy3c5")
 

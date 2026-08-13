@@ -26,6 +26,11 @@ func TestCoverSize(t *testing.T) {
 		assert.Equal(t, thumb.Tile224, coverSize(thumb.Sizes[thumb.Tile224]).Name)
 	})
 	t.Run("NeverUncached", func(t *testing.T) {
+		// The cap relies on the pre-cached size never being configurable below fit_720.
+		cached, onDemand := thumb.SizeCached, thumb.SizeOnDemand
+		thumb.SizeCached, thumb.SizeOnDemand = thumb.SizeFit720.Width, thumb.SizeFit720.Width
+		defer func() { thumb.SizeCached, thumb.SizeOnDemand = cached, onDemand }()
+
 		for name, size := range thumb.Sizes {
 			assert.False(t, coverSize(size).Uncached(), "%s", name)
 			assert.False(t, coverSize(size).ExceedsLimit(), "%s", name)
@@ -102,6 +107,22 @@ func TestAlbumCover(t *testing.T) {
 		assert.Equal(t, http.StatusOK, large.Code)
 		assert.Equal(t, "image/jpeg", large.Header().Get("Content-Type"))
 		assert.Equal(t, small.Body.Bytes(), large.Body.Bytes())
+	})
+	t.Run("ServedInline", func(t *testing.T) {
+		// Cover responses are always inline.
+		app, router, conf := NewApiTest()
+		conf.Options().ThumbUncached = true
+		defer func() { conf.Options().ThumbUncached = false }()
+		SetTestCoverFile(t, entity.Album{}, "album_uid = ?", "as6sg6bxpogaaba8", "")
+		CreateTestAlbumCover(t, "as6sg6bxpogaaba8", "2023/11/IMG_57.jpg")
+		AlbumCover(router)
+		// Repeated so that the cache hit is covered as well as the render path.
+		for i := 0; i < 2; i++ {
+			r := PerformRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba8/t/"+conf.PreviewToken()+"/tile_500?download=1&name=original")
+			assert.Equal(t, http.StatusOK, r.Code)
+			assert.Equal(t, "image/jpeg", r.Header().Get("Content-Type"))
+			assert.Empty(t, r.Header().Get("Content-Disposition"))
+		}
 	})
 	t.Run("HasCoverFile", func(t *testing.T) {
 		app, router, conf := NewApiTest()

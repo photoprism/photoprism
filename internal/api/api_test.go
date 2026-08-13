@@ -162,7 +162,7 @@ func AuthenticatedRequestWithBody(r http.Handler, method, path, body string, aut
 }
 
 // CreateTestOriginal creates the original file of an indexed fixture, restores its index entry,
-// and returns the file contents so that tests can assert they are never sent to clients.
+// and returns the contents so tests can assert they are never sent to clients.
 func CreateTestOriginal(t *testing.T, f *entity.File) []byte {
 	p := entity.Photo{}
 
@@ -225,9 +225,9 @@ func CreateTestNamedOriginal(t *testing.T, fileName string) []byte {
 	return CreateTestOriginal(t, &f)
 }
 
-// CreateTestCover creates the originals needed by a cover endpoint, starting with the specified
-// fixture. Restoring an index entry can change which file the cover query resolves to, so it is
-// repeated until the resolved original exists. All created originals have the same contents.
+// CreateTestCover creates the originals a cover endpoint needs, starting with the given fixture.
+// Restoring an index entry can change which file the query resolves to, so it repeats until the
+// resolved original exists. All created originals have the same contents.
 func CreateTestCover(t *testing.T, fileName string, cover func() (*entity.File, error)) []byte {
 	data := CreateTestNamedOriginal(t, fileName)
 
@@ -268,15 +268,22 @@ func CreateTestLabelCover(t *testing.T, uid, fileName string) []byte {
 }
 
 // CreateTestFolderCover creates the original that the folder cover query resolves to.
+// Folders have no cover file, so nothing else flushes the cover cache between subtests.
 func CreateTestFolderCover(t *testing.T, uid, fileName string) []byte {
+	get.CoverCache().Flush()
+
+	t.Cleanup(func() {
+		get.CoverCache().Flush()
+	})
+
 	return CreateTestCover(t, fileName, func() (*entity.File, error) {
 		f, err := query.FolderCoverByUID(uid)
 		return &f, err
 	})
 }
 
-// CreateTestThumb renders a thumbnail into the cache, as indexing would, so that tests can
-// exercise the paths that serve pre-cached sizes without on-demand rendering.
+// CreateTestThumb renders a thumbnail into the cache, as indexing would, so tests can reach
+// the paths that serve pre-cached sizes without on-demand rendering.
 func CreateTestThumb(t *testing.T, fileName, fileHash string, size thumb.Size) {
 	if _, err := size.FromFile(fileName, fileHash, get.Config().ThumbCachePath(), 0); err != nil {
 		t.Fatal(err)
@@ -305,9 +312,9 @@ func SetTestFileBounds(t *testing.T, fileHash string, w, h int) {
 	})
 }
 
-// SetTestCoverFile sets the cover file hash of an album or label fixture and restores the
-// previous value afterwards. Pass an empty hash to test the endpoints that resolve a cover
-// by query, as other tests may have assigned one through query.UpdateCovers().
+// SetTestCoverFile sets the cover file hash of an album or label fixture and restores it
+// afterwards. Pass an empty hash to reach the endpoints that resolve a cover by query,
+// as other tests assign one through query.UpdateCovers().
 func SetTestCoverFile(t *testing.T, model interface{}, where, uid, fileHash string) {
 	var current []string
 

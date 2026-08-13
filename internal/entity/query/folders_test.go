@@ -27,6 +27,12 @@ func TestFolderCoverByUID(t *testing.T) {
 			t.Errorf("wrong result: %#v", result)
 		}
 	})
+	t.Run("InvalidUID", func(t *testing.T) {
+		for _, uid := range []string{"", "xxx", "as6sg6bxpogaaba8"} {
+			_, err := FolderCoverByUID(uid)
+			assert.EqualError(t, err, "invalid folder uid", "%s", uid)
+		}
+	})
 }
 
 func TestFoldersByPath(t *testing.T) {

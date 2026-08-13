@@ -21,18 +21,19 @@ const (
 
 // FolderCover returns a folder cover image.
 //
-//	@Summary	returns a folder cover image
-//	@Id			FolderCover
-//	@Produce	image/jpeg
-//	@Produce	image/svg+xml
-//	@Tags		Images, Folders
-//	@Failure	403		{file}	image/svg+xml
-//	@Failure	200		{file}	image/svg+xml
-//	@Success	200		{file}	image/jpg
-//	@Param		uid		path	string	true	"folder uid"
-//	@Param		token	path	string	true	"user-specific security token provided with session or 'public' when running PhotoPrism in public mode"
-//	@Param		size	path	string	true	"cover image size, larger sizes are reduced to 'fit_720'"	Enums(tile_50, tile_100, left_224, right_224, tile_224, tile_500, fit_720)
-//	@Router		/api/v1/folders/t/{uid}/{token}/{size} [get]
+//	@Summary		returns a folder cover image
+//	@Id				FolderCover
+//	@Produce		image/jpeg
+//	@Produce		image/svg+xml
+//	@Tags			Images, Folders
+//	@Failure		403		{file}	image/svg+xml
+//	@Failure		200		{file}	image/svg+xml
+//	@Success		200		{file}	image/jpg
+//	@Param			uid		path	string	true	"folder uid"
+//	@Param			token	path	string	true	"user-specific security token provided with session or 'public' when running PhotoPrism in public mode"
+//	@Description	Sizes other than those listed are accepted and reduced. Covers are always served inline; use the download endpoints to obtain a file.
+//	@Param			size	path	string	true	"cover image size, larger sizes are reduced to 'fit_720' or 'tile_500'"	Enums(tile_50, tile_100, left_224, right_224, tile_224, tile_500, fit_720)
+//	@Router			/api/v1/folders/t/{uid}/{token}/{size} [get]
 func FolderCover(router *gin.RouterGroup) {
 	router.GET("/folders/t/:uid/:token/:size", func(c *gin.Context) {
 		if InvalidPreviewToken(c) {
@@ -44,7 +45,6 @@ func FolderCover(router *gin.RouterGroup) {
 		conf := get.Config()
 		uid := clean.UID(c.Param("uid"))
 		thumbName := thumb.Name(clean.Token(c.Param("size")))
-		attachment := c.Query("download") != ""
 
 		size, ok := thumb.Sizes[thumbName]
 
@@ -72,12 +72,7 @@ func FolderCover(router *gin.RouterGroup) {
 			}
 
 			AddCoverCacheHeader(c)
-
-			if attachment {
-				c.FileAttachment(cached.FileName, cached.ShareName)
-			} else {
-				c.File(cached.FileName)
-			}
+			c.File(cached.FileName)
 
 			return
 		}
@@ -93,7 +88,7 @@ func FolderCover(router *gin.RouterGroup) {
 		fileName := photoprism.FileName(f.FileRoot, f.FileName)
 
 		if !fs.FileExists(fileName) {
-			log.Errorf("%s: found no original for %s", folderCover, clean.Log(fileName))
+			log.Errorf("%s: found no original for %s", folderCover, clean.Log(f.FileName))
 			c.Data(http.StatusOK, "image/svg+xml", folderIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.
@@ -120,15 +115,10 @@ func FolderCover(router *gin.RouterGroup) {
 			return
 		}
 
-		cache.SetDefault(cacheKey, ThumbCache{thumbnail, f.ShareBase(0)})
+		cache.SetDefault(cacheKey, ThumbCache{FileName: thumbnail})
 		log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
 
 		AddCoverCacheHeader(c)
-
-		if attachment {
-			c.FileAttachment(thumbnail, f.DownloadName(DownloadName(c), 0))
-		} else {
-			c.File(thumbnail)
-		}
+		c.File(thumbnail)
 	})
 }
