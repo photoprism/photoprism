@@ -31,7 +31,7 @@ const (
 //	@Success	200		{file}	image/jpg
 //	@Param		uid		path	string	true	"folder uid"
 //	@Param		token	path	string	true	"user-specific security token provided with session or 'public' when running PhotoPrism in public mode"
-//	@Param		size	path	string	true	"thumbnail size"	Enums(tile_50, tile_100, left_224, right_224, tile_224, tile_500, fit_720, tile_1080, fit_1280, fit_1600, fit_1920, fit_2048, fit_2560, fit_3840, fit_4096, fit_7680)
+//	@Param		size	path	string	true	"thumbnail size"	Enums(tile_50, tile_100, left_224, right_224, tile_224, tile_500, fit_720, tile_1080, fit_1280, fit_1600, fit_1920, fit_2048, fit_2560, fit_3840, fit_4096, fit_5120, fit_7680, fit_15360)
 //	@Router		/api/v1/folders/t/{uid}/{token}/{size} [get]
 func FolderCover(router *gin.RouterGroup) {
 	router.GET("/folders/t/:uid/:token/:size", func(c *gin.Context) {
@@ -62,6 +62,13 @@ func FolderCover(router *gin.RouterGroup) {
 				c.Data(http.StatusOK, "image/svg+xml", folderIconSvg)
 				return
 			}
+		}
+
+		// Reduce the size to the largest one that can be rendered, if needed.
+		if size.ExceedsLimit() {
+			size = size.Clamp()
+			thumbName = size.Name
+			log.Debugf("%s: using %s, requested size exceeds limit", folderCover, thumbName)
 		}
 
 		cache := get.CoverCache()
@@ -106,14 +113,6 @@ func FolderCover(router *gin.RouterGroup) {
 			// Set missing flag so that the file doesn't show up in search results anymore.
 			log.Warnf("%s: %s is missing", folderCover, clean.Log(f.FileName))
 			logErr(folderCover, f.Update("FileMissing", true))
-			return
-		}
-
-		// Use original file if thumb size exceeds limit, see https://github.com/photoprism/photoprism/issues/157
-		if size.ExceedsLimit() && !attachment {
-			log.Debugf("%s: using original, size exceeds limit (width %d, height %d)", folderCover, size.Width, size.Height)
-			AddCoverCacheHeader(c)
-			c.File(fileName)
 			return
 		}
 

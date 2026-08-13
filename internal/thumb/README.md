@@ -35,7 +35,7 @@
 - `vips_icc.go` — EXIF InteroperabilityIndex handling and ICC embedding.
 - `icc.go` — lists bundled ICC filenames (`IccProfiles`) and `GetIccProfile` helper.
 - `open.go`, `open_jpeg.go` — bounded file decode helpers for non-libvips paths, including explicit JPEG color handling and TIFF-safe dispatch via `pkg/fs`.
-- `resample.go`, `sizes.go` — resample options and predefined sizes.
+- `resample.go`, `sizes.go`, `size.go` — resample options, the predefined size catalog (`MaxSize`, `InvalidSize`), and the per-size helpers (`Uncached`, `ExceedsLimit`, `Clamp`, `Limit`).
 - `thumb.go` and helpers — naming, caching, file info.
 - Tests live alongside sources (`*_test.go`, fixtures under `testdata/`).
 

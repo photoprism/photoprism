@@ -33,6 +33,32 @@ func (s Size) ExceedsLimit() bool {
 	return s.Width > MaxSize() || s.Height > MaxSize()
 }
 
+// Limit returns the specified maximum size if this size is larger, otherwise the size itself.
+func (s Size) Limit(maxSize Size) Size {
+	if s.Width > maxSize.Width || s.Height > maxSize.Height {
+		return maxSize
+	}
+
+	return s
+}
+
+// Clamp returns the largest renderable size if this size exceeds the limit, so that an
+// oversized request is reduced to a size the render path can produce. It resolves to a
+// "fit" size, as proportional resizing preserves the complete image.
+func (s Size) Clamp() Size {
+	if !s.ExceedsLimit() {
+		return s
+	}
+
+	for _, size := range FitSizes {
+		if size.Width <= MaxSize() && size.Height <= MaxSize() {
+			return size
+		}
+	}
+
+	return SizeFit720
+}
+
 // FromCache returns the filename if a thumbnail image with the matching size is in the cache.
 func (s Size) FromCache(fileName, fileHash, cachePath string) (string, error) {
 	return FromCache(fileName, fileHash, cachePath, s.Width, s.Height, s.Options...)

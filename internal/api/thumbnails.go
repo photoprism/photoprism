@@ -29,7 +29,7 @@ import (
 //	@Success		200		{file}	image/jpg
 //	@Param			thumb	path	string	true	"SHA1 file hash, optionally with a crop area suffixed, e.g. '-016014058037'"
 //	@Param			token	path	string	true	"user-specific security token provided with session or 'public' when running PhotoPrism in public mode"
-//	@Param			size	path	string	true	"thumbnail size"	Enums(tile_50, tile_100, left_224, right_224, tile_224, tile_500, fit_720, tile_1080, fit_1280, fit_1600, fit_1920, fit_2048, fit_2560, fit_3840, fit_4096, fit_7680)
+//	@Param			size	path	string	true	"thumbnail size"	Enums(tile_50, tile_100, left_224, right_224, tile_224, tile_500, fit_720, tile_1080, fit_1280, fit_1600, fit_1920, fit_2048, fit_2560, fit_3840, fit_4096, fit_5120, fit_7680, fit_15360)
 //	@Router			/api/v1/t/{thumb}/{token}/{size} [get]
 func GetThumb(router *gin.RouterGroup) {
 	router.GET("/t/:thumb/:token/:size", func(c *gin.Context) {
@@ -101,7 +101,17 @@ func GetThumb(router *gin.RouterGroup) {
 			}
 		}
 
+		// Reduce the size to the largest one that can be rendered, if needed.
+		if size.ExceedsLimit() {
+			size = size.Clamp()
+			sizeName = size.Name
+			log.Debugf("%s: using %s, requested size exceeds limit", logPrefix, sizeName)
+		}
+
 		cache := get.ThumbCache()
+
+		// Keyed by the requested size, which the size actually rendered may be smaller than
+		// once the file bounds are known. That mapping only depends on the file, so it is stable.
 		cacheKey := CacheKey("thumbs", fileHash, string(sizeName))
 
 		if cacheData, ok := cache.Get(cacheKey); ok {
@@ -183,20 +193,9 @@ func GetThumb(router *gin.RouterGroup) {
 
 		// Choose the smallest fitting size if the original image is smaller.
 		if size.Fit && f.Bounds().In(size.Bounds()) {
-			size = thumb.FitBounds(f.Bounds())
+			// The smallest fitting size can resolve above the requested one, so this is clamped again.
+			size = thumb.FitBounds(f.Bounds()).Clamp()
 			log.Tracef("%s: smallest fitting size for %s is %s (width %d, height %d)", logPrefix, clean.Log(f.FileName), size.Name, size.Width, size.Height)
-		}
-
-		// Use original file if thumb size exceeds limit, see https://github.com/photoprism/photoprism/issues/157
-		if size.ExceedsLimit() && !attachment {
-			log.Debugf("%s: using original, size exceeds limit (width %d, height %d)", logPrefix, size.Width, size.Height)
-
-			// Add HTTP cache header.
-			AddImmutableCacheHeader(c)
-
-			// Return requested content.
-			c.File(fileName)
-			return
 		}
 
 		// thumbName is the thumbnail filename.
