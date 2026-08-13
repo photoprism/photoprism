@@ -38,7 +38,7 @@ We do not operate a bug bounty program and do not offer payment or comparable co
 
 ## Reporting Issues as a Business or Organization
 
-(a) If an email we receive appears to be auto-generated — for example unreviewed output from an automated scanner or a language model — and does not look like a legitimate report that has been manually reviewed in accordance with the requirements of this policy, we may ignore it and you should not expect a response in order to protect our ability to respond to actual issues.
+(a) If an email we receive [appears to be auto-generated](https://docs.photoprism.app/developer-guide/security/policy/#auto-generated-reports) — for example unreviewed output from an automated scanner or a language model — and does not look like a legitimate report that has been manually reviewed in accordance with the requirements of this policy, we may ignore it and you should not expect a response in order to protect our ability to respond to actual issues.
 
 (b) Unless absolutely necessary, for example to report a major issue that has just been discovered, please send requests or reports during regular business hours and never at night or on weekends, especially if they are sent asynchronously.
 
