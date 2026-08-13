@@ -39,6 +39,37 @@ func TestAddVideoCacheHeader(t *testing.T) {
 	})
 }
 
+func TestCachedCoverHasThumb(t *testing.T) {
+	t.Run("Cached", func(t *testing.T) {
+		cache := get.CoverCache()
+		cache.Flush()
+		calls := 0
+		hasThumb := func(string) bool {
+			calls++
+			return true
+		}
+		assert.True(t, CachedCoverHasThumb(albumCover, "as6sg6bxpogaaba7", hasThumb))
+		assert.True(t, CachedCoverHasThumb(albumCover, "as6sg6bxpogaaba7", hasThumb))
+		assert.Equal(t, 1, calls)
+	})
+	t.Run("NoThumbIsNotCached", func(t *testing.T) {
+		// An unknown UID must not create a cache entry, so only a positive result is cached.
+		cache := get.CoverCache()
+		cache.Flush()
+		assert.False(t, CachedCoverHasThumb(labelCover, "ls6sg6b1wowuy3c2", func(string) bool { return false }))
+		_, hit := cache.Get(CacheKey(labelCover, "ls6sg6b1wowuy3c2", coverThumbName))
+		assert.False(t, hit)
+		assert.True(t, CachedCoverHasThumb(labelCover, "ls6sg6b1wowuy3c2", func(string) bool { return true }))
+	})
+	t.Run("Invalidated", func(t *testing.T) {
+		cache := get.CoverCache()
+		cache.Flush()
+		assert.True(t, CachedCoverHasThumb(labelCover, "ls6sg6b1wowuy3c2", func(string) bool { return true }))
+		RemoveFromLabelCoverCache("ls6sg6b1wowuy3c2")
+		assert.False(t, CachedCoverHasThumb(labelCover, "ls6sg6b1wowuy3c2", func(string) bool { return false }))
+	})
+}
+
 func TestRemoveFromFolderCache(t *testing.T) {
 	cache := get.FolderCache()
 	cache.Flush()

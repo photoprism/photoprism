@@ -33,6 +33,34 @@ func CacheKey(ns, uid, name string) string {
 	return fmt.Sprintf("%s:%s:%s", ns, uid, name)
 }
 
+// coverThumbName is the cover cache key name under which the assigned cover file flag is cached.
+// No thumbnail size is named "thumb", so the flag can never land on a key that the cover handlers
+// read with an unchecked type assertion to ThumbCache.
+const coverThumbName = "thumb"
+
+// CachedCoverHasThumb reports whether a cover file has been assigned to the album or label with
+// the specified UID, and caches the result so repeated requests don't query the database.
+// Only a positive result is cached, as an unknown UID must not create a cache entry and the
+// negative path continues to a cover query anyway.
+func CachedCoverHasThumb(ns, uid string, hasThumb func(string) bool) bool {
+	cache := get.CoverCache()
+	cacheKey := CacheKey(ns, uid, coverThumbName)
+
+	if cacheData, hit := cache.Get(cacheKey); hit {
+		if result, ok := cacheData.(bool); ok && result {
+			return true
+		}
+	}
+
+	if !hasThumb(uid) {
+		return false
+	}
+
+	cache.SetDefault(cacheKey, true)
+
+	return true
+}
+
 // RemoveFromFolderCache removes an item from the folder cache e.g. after indexing.
 func RemoveFromFolderCache(rootName string) {
 	cache := get.FolderCache()
@@ -57,6 +85,8 @@ func RemoveFromAlbumCoverCache(uid string) {
 	cache := get.CoverCache()
 
 	// Flush album cover cache.
+	cache.Delete(CacheKey(albumCover, uid, coverThumbName))
+
 	for thumbName := range thumb.Sizes {
 		cacheKey := CacheKey(albumCover, uid, string(thumbName))
 
@@ -94,6 +124,8 @@ func RemoveFromLabelCoverCache(uid string) {
 	}
 
 	cache := get.CoverCache()
+
+	cache.Delete(CacheKey(labelCover, uid, coverThumbName))
 
 	for thumbName := range thumb.Sizes {
 		cacheKey := CacheKey(labelCover, uid, string(thumbName))

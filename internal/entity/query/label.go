@@ -3,6 +3,7 @@ package query
 import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/media"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // PhotoLabel returns a photo label entity if exists.
@@ -36,6 +37,29 @@ func LabelByUID(labelUID string) (*entity.Label, error) {
 	}
 
 	return result, nil
+}
+
+// LabelHasThumb tests if a usable cover file has been assigned to the label with the specified UID.
+// Requires the file to still resolve, so that a stale hash falls back to a cover query instead of
+// leaving clients with a placeholder they cannot resolve through the thumbnail endpoint.
+func LabelHasThumb(labelUID string) bool {
+	if rnd.InvalidUID(labelUID, entity.LabelUID) {
+		return false
+	}
+
+	var result []string
+
+	if err := Db().Model(entity.Label{}).
+		Joins("JOIN files ON files.file_hash = labels.thumb AND files.file_missing = 0 AND files.file_error = '' AND files.deleted_at IS NULL").
+		Where("labels.label_uid = ?", labelUID).
+		Limit(1).
+		Pluck("labels.thumb", &result).Error; err != nil {
+		return false
+	} else if len(result) == 0 {
+		return false
+	}
+
+	return result[0] != ""
 }
 
 // LabelThumbBySlug returns a label cover file based on the slug name.

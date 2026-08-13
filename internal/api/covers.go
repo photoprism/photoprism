@@ -21,20 +21,32 @@ const (
 	labelCover = "label-cover"
 )
 
+// coverSize limits a cover image to the largest size that is always pre-rendered.
+// Covers are displayed as tiles, so a larger request is reduced rather than rendered.
+// Cropped sizes are capped to a cropped size so that a square request stays square.
+func coverSize(size thumb.Size) thumb.Size {
+	if size.Fit {
+		return size.Limit(thumb.SizeFit720)
+	}
+
+	return size.Limit(thumb.SizeTile500)
+}
+
 // AlbumCover returns an album cover image.
 //
-//	@Summary	returns an album cover image
-//	@Id			AlbumCover
-//	@Produce	image/jpeg
-//	@Produce	image/svg+xml
-//	@Tags		Images, Albums
-//	@Failure	403		{file}	image/svg+xml
-//	@Failure	200		{file}	image/svg+xml
-//	@Success	200		{file}	image/jpg
-//	@Param		uid		path	string	true	"Album UID"
-//	@Param		token	path	string	true	"user-specific security token provided with session or 'public' when running PhotoPrism in public mode"
-//	@Param		size	path	string	true	"thumbnail size"	Enums(tile_50, tile_100, left_224, right_224, tile_224, tile_500, fit_720, tile_1080, fit_1280, fit_1600, fit_1920, fit_2048, fit_2560, fit_3840, fit_4096, fit_7680)
-//	@Router		/api/v1/albums/{uid}/t/{token}/{size} [get]
+//	@Summary		returns an album cover image
+//	@Id				AlbumCover
+//	@Description	Returns a generic placeholder icon if a cover file is assigned to the album, in which case clients request it from the thumbnail endpoint by its hash. Sizes other than those listed are accepted and reduced.
+//	@Produce		image/jpeg
+//	@Produce		image/svg+xml
+//	@Tags			Images, Albums
+//	@Failure		403		{file}	image/svg+xml
+//	@Failure		200		{file}	image/svg+xml
+//	@Success		200		{file}	image/jpg
+//	@Param			uid		path	string	true	"Album UID"
+//	@Param			token	path	string	true	"user-specific security token provided with session or 'public' when running PhotoPrism in public mode"
+//	@Param			size	path	string	true	"cover image size, larger sizes are reduced to 'fit_720'"	Enums(tile_50, tile_100, left_224, right_224, tile_224, tile_500, fit_720)
+//	@Router			/api/v1/albums/{uid}/t/{token}/{size} [get]
 func AlbumCover(router *gin.RouterGroup) {
 	router.GET("/albums/:uid/t/:token/:size", func(c *gin.Context) {
 		if InvalidPreviewToken(c) {
@@ -54,6 +66,18 @@ func AlbumCover(router *gin.RouterGroup) {
 			c.Data(http.StatusOK, "image/svg+xml", albumIconSvg)
 			return
 		}
+
+		// Serve a generic cover if the album has a cover file, as clients
+		// must request it from the thumbnail endpoint by its hash.
+		if CachedCoverHasThumb(albumCover, uid, query.AlbumHasThumb) {
+			log.Debugf("%s: %s has a cover file, use the thumbnail endpoint instead", albumCover, uid)
+			AddCoverCacheHeader(c)
+			c.Data(http.StatusOK, "image/svg+xml", albumIconSvg)
+			return
+		}
+
+		size = coverSize(size)
+		thumbName = size.Name
 
 		cache := get.CoverCache()
 		cacheKey := CacheKey(albumCover, uid, string(thumbName))
@@ -100,17 +124,9 @@ func AlbumCover(router *gin.RouterGroup) {
 			return
 		}
 
-		// Use original file if thumb size exceeds limit, see https://github.com/photoprism/photoprism/issues/157
-		if size.ExceedsLimit() && c.Query("download") == "" {
-			log.Debugf("%s: using original, size exceeds limit (width %d, height %d)", albumCover, size.Width, size.Height)
-			AddCoverCacheHeader(c)
-			c.File(fileName)
-			return
-		}
-
 		var thumbnail string
 
-		if conf.ThumbUncached() || size.Uncached() {
+		if conf.ThumbUncached() {
 			thumbnail, err = thumb.FromFile(fileName, f.FileHash, conf.ThumbCachePath(), size.Width, size.Height, f.FileOrientation, size.Options...)
 		} else {
 			thumbnail, err = thumb.FromCache(fileName, f.FileHash, conf.ThumbCachePath(), size.Width, size.Height, size.Options...)
@@ -141,18 +157,19 @@ func AlbumCover(router *gin.RouterGroup) {
 
 // LabelCover returns a label cover image.
 //
-//	@Summary	returns a label cover image
-//	@Id			LabelCover
-//	@Produce	image/jpeg
-//	@Produce	image/svg+xml
-//	@Tags		Images, Labels
-//	@Failure	403		{file}	image/svg+xml
-//	@Failure	200		{file}	image/svg+xml
-//	@Success	200		{file}	image/jpg
-//	@Param		uid		path	string	true	"Label UID"
-//	@Param		token	path	string	true	"user-specific security token provided with session or 'public' when running PhotoPrism in public mode"
-//	@Param		size	path	string	true	"thumbnail size"	Enums(tile_50, tile_100, left_224, right_224, tile_224, tile_500, fit_720, tile_1080, fit_1280, fit_1600, fit_1920, fit_2048, fit_2560, fit_3840, fit_4096, fit_7680)
-//	@Router		/api/v1/labels/{uid}/t/{token}/{size} [get]
+//	@Summary		returns a label cover image
+//	@Id				LabelCover
+//	@Description	Returns a generic placeholder icon if a cover file is assigned to the label, in which case clients request it from the thumbnail endpoint by its hash. Sizes other than those listed are accepted and reduced.
+//	@Produce		image/jpeg
+//	@Produce		image/svg+xml
+//	@Tags			Images, Labels
+//	@Failure		403		{file}	image/svg+xml
+//	@Failure		200		{file}	image/svg+xml
+//	@Success		200		{file}	image/jpg
+//	@Param			uid		path	string	true	"Label UID"
+//	@Param			token	path	string	true	"user-specific security token provided with session or 'public' when running PhotoPrism in public mode"
+//	@Param			size	path	string	true	"cover image size, larger sizes are reduced to 'fit_720'"	Enums(tile_50, tile_100, left_224, right_224, tile_224, tile_500, fit_720)
+//	@Router			/api/v1/labels/{uid}/t/{token}/{size} [get]
 func LabelCover(router *gin.RouterGroup) {
 	router.GET("/labels/:uid/t/:token/:size", func(c *gin.Context) {
 		if InvalidPreviewToken(c) {
@@ -172,6 +189,18 @@ func LabelCover(router *gin.RouterGroup) {
 			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
 			return
 		}
+
+		// Serve a generic cover if the label has a cover file, as clients
+		// must request it from the thumbnail endpoint by its hash.
+		if CachedCoverHasThumb(labelCover, uid, query.LabelHasThumb) {
+			log.Debugf("%s: %s has a cover file, use the thumbnail endpoint instead", labelCover, uid)
+			AddCoverCacheHeader(c)
+			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
+			return
+		}
+
+		size = coverSize(size)
+		thumbName = size.Name
 
 		cache := get.CoverCache()
 		cacheKey := CacheKey(labelCover, uid, string(thumbName))
@@ -217,19 +246,9 @@ func LabelCover(router *gin.RouterGroup) {
 			return
 		}
 
-		// Use original file if thumb size exceeds limit, see https://github.com/photoprism/photoprism/issues/157
-		if size.ExceedsLimit() {
-			log.Debugf("%s: using original, size exceeds limit (width %d, height %d)", labelCover, size.Width, size.Height)
-
-			AddCoverCacheHeader(c)
-			c.File(fileName)
-
-			return
-		}
-
 		var thumbnail string
 
-		if conf.ThumbUncached() || size.Uncached() {
+		if conf.ThumbUncached() {
 			thumbnail, err = thumb.FromFile(fileName, f.FileHash, conf.ThumbCachePath(), size.Width, size.Height, f.FileOrientation, size.Options...)
 		} else {
 			thumbnail, err = thumb.FromCache(fileName, f.FileHash, conf.ThumbCachePath(), size.Width, size.Height, size.Options...)
