@@ -31,7 +31,7 @@ const (
 //	@Success	200		{file}	image/jpg
 //	@Param		uid		path	string	true	"folder uid"
 //	@Param		token	path	string	true	"user-specific security token provided with session or 'public' when running PhotoPrism in public mode"
-//	@Param		size	path	string	true	"thumbnail size"	Enums(tile_50, tile_100, left_224, right_224, tile_224, tile_500, fit_720, tile_1080, fit_1280, fit_1600, fit_1920, fit_2048, fit_2560, fit_3840, fit_4096, fit_5120, fit_7680, fit_15360)
+//	@Param		size	path	string	true	"cover image size, larger sizes are reduced to 'fit_720'"	Enums(tile_50, tile_100, left_224, right_224, tile_224, tile_500, fit_720)
 //	@Router		/api/v1/folders/t/{uid}/{token}/{size} [get]
 func FolderCover(router *gin.RouterGroup) {
 	router.GET("/folders/t/:uid/:token/:size", func(c *gin.Context) {
@@ -42,34 +42,20 @@ func FolderCover(router *gin.RouterGroup) {
 
 		start := time.Now()
 		conf := get.Config()
-		uid := c.Param("uid")
+		uid := clean.UID(c.Param("uid"))
 		thumbName := thumb.Name(clean.Token(c.Param("size")))
 		attachment := c.Query("download") != ""
 
 		size, ok := thumb.Sizes[thumbName]
 
 		if !ok {
-			log.Errorf("%s: invalid size %s", folderCover, thumbName)
+			log.Errorf("%s: invalid size %s", folderCover, clean.Log(thumbName.String()))
 			c.Data(http.StatusOK, "image/svg+xml", folderIconSvg)
 			return
 		}
 
-		if size.Uncached() && !conf.ThumbUncached() {
-			thumbName, size = thumb.Find(conf.ThumbSizePrecached())
-
-			if thumbName == "" {
-				log.Errorf("folder: invalid thumb size %d", conf.ThumbSizePrecached())
-				c.Data(http.StatusOK, "image/svg+xml", folderIconSvg)
-				return
-			}
-		}
-
-		// Reduce the size to the largest one that can be rendered, if needed.
-		if size.ExceedsLimit() {
-			size = size.Clamp()
-			thumbName = size.Name
-			log.Debugf("%s: using %s, requested size exceeds limit", folderCover, thumbName)
-		}
+		size = coverSize(size)
+		thumbName = size.Name
 
 		cache := get.CoverCache()
 		cacheKey := CacheKey(folderCover, uid, string(thumbName))
@@ -80,7 +66,7 @@ func FolderCover(router *gin.RouterGroup) {
 			cached := cacheData.(ThumbCache)
 
 			if !fs.FileExists(cached.FileName) {
-				log.Errorf("%s: %s not found", folderCover, uid)
+				log.Errorf("%s: %s not found", folderCover, clean.Log(uid))
 				c.Data(http.StatusOK, "image/svg+xml", folderIconSvg)
 				return
 			}
@@ -99,7 +85,7 @@ func FolderCover(router *gin.RouterGroup) {
 		f, err := query.FolderCoverByUID(uid)
 
 		if err != nil {
-			log.Debugf("%s: %s contains no pictures, using generic cover", folderCover, uid)
+			log.Debugf("%s: %s contains no pictures, using generic cover", folderCover, clean.Log(uid))
 			c.Data(http.StatusOK, "image/svg+xml", folderIconSvg)
 			return
 		}
@@ -107,7 +93,7 @@ func FolderCover(router *gin.RouterGroup) {
 		fileName := photoprism.FileName(f.FileRoot, f.FileName)
 
 		if !fs.FileExists(fileName) {
-			log.Errorf("%s: could not find original for %s", folderCover, fileName)
+			log.Errorf("%s: found no original for %s", folderCover, clean.Log(fileName))
 			c.Data(http.StatusOK, "image/svg+xml", folderIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.
@@ -118,7 +104,7 @@ func FolderCover(router *gin.RouterGroup) {
 
 		var thumbnail string
 
-		if conf.ThumbUncached() || size.Uncached() {
+		if conf.ThumbUncached() {
 			thumbnail, err = thumb.FromFile(fileName, f.FileHash, conf.ThumbCachePath(), size.Width, size.Height, f.FileOrientation, size.Options...)
 		} else {
 			thumbnail, err = thumb.FromCache(fileName, f.FileHash, conf.ThumbCachePath(), size.Width, size.Height, size.Options...)

@@ -36,6 +36,18 @@ func TestGetFolderCover(t *testing.T) {
 		r := PerformRequest(app, "GET", "/api/v1/folders/t/dqo63pn2f87f02oi/"+conf.PreviewToken()+"/fit_7680")
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
+	t.Run("LimitsSize", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.Options().ThumbUncached = true
+		defer func() { conf.Options().ThumbUncached = false }()
+		CreateTestFolderCover(t, "dqo63pn35k2d495z", "1990/Photo16.jpg")
+		FolderCover(router)
+		small := PerformRequest(app, "GET", "/api/v1/folders/t/dqo63pn35k2d495z/"+conf.PreviewToken()+"/fit_720")
+		large := PerformRequest(app, "GET", "/api/v1/folders/t/dqo63pn35k2d495z/"+conf.PreviewToken()+"/fit_1920")
+		assert.Equal(t, http.StatusOK, large.Code)
+		assert.Equal(t, "image/jpeg", large.Header().Get("Content-Type"))
+		assert.Equal(t, small.Body.Bytes(), large.Body.Bytes())
+	})
 	t.Run("SizeExceedsLimit", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.Options().ThumbUncached = true

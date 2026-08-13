@@ -8319,7 +8319,7 @@
                         "type": "string"
                     },
                     {
-                        "description": "thumbnail size",
+                        "description": "cover image size, larger sizes are reduced to 'fit_720'",
                         "enum": [
                             "tile_50",
                             "tile_100",
@@ -8327,18 +8327,7 @@
                             "right_224",
                             "tile_224",
                             "tile_500",
-                            "fit_720",
-                            "tile_1080",
-                            "fit_1280",
-                            "fit_1600",
-                            "fit_1920",
-                            "fit_2048",
-                            "fit_2560",
-                            "fit_3840",
-                            "fit_4096",
-                            "fit_5120",
-                            "fit_7680",
-                            "fit_15360"
+                            "fit_720"
                         ],
                         "in": "path",
                         "name": "size",
