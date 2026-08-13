@@ -30,7 +30,7 @@ We ask for **90 days** between your report and any public disclosure, including 
 
 **If you intend to request a CVE ID, please tell us first.** Contact us before you approach a CVE Numbering Authority (CNA), and if an identifier has already been requested or assigned, please include it together with the name of the assigning CNA in your first message to us. Under the CVE Program's CNA Operational Rules, a CNA is expected to make a good faith effort to notify the vendor before a record is published. Our contact details are published in [security.txt](https://www.photoprism.app/.well-known/security.txt) and in the SECURITY.md file of our public repository, so there is always a documented way to reach us.
 
-Where a record is published about PhotoPrism without any prior attempt to contact us, we will ask the assigning CNA to correct or reject it, raise the matter with that CNA's Root where the CNA Rules have not been followed, and publish our own assessment alongside the record. We would much rather work with you on an accurate advisory than correct an inaccurate one afterwards.
+When a record is published without an attempt to contact us, we ask the assigning CNA to correct or reject it. We also raise the matter with the CNA's Root if the rules were not followed and publish our own assessment alongside the record. However, we would much rather agree on an accurate advisory with you before publication.
 
 ## Bug Bounty Program
 
