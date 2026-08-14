@@ -42,11 +42,10 @@ import (
 const NONINTERACTIVE = "noninteractive"
 
 var log = event.Log
-var cliMode = strings.ToLower(os.Getenv(config.EnvVar("cli")))
 
 // RunNonInteractively checks if command should run non-interactively.
 func RunNonInteractively(confirmed bool) bool {
-	return confirmed || cliMode == NONINTERACTIVE
+	return confirmed || strings.ToLower(os.Getenv(config.EnvVar("cli"))) == NONINTERACTIVE
 }
 
 // PhotoPrism contains the photoprism CLI (sub-)commands.

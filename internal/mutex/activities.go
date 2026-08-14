@@ -11,6 +11,7 @@ var (
 	FacesWorker  = Activity{}
 	UpdatePeople = Activity{}
 	BatchEdit    = Activity{}
+	ErrorWorker  = Activity{}
 )
 
 // CancelAll requests to stop all activities.
@@ -24,9 +25,11 @@ func CancelAll() {
 	FacesWorker.Cancel()
 	UpdatePeople.Cancel()
 	BatchEdit.Cancel()
+	ErrorWorker.Cancel()
 }
 
 // WorkersRunning checks if a worker is currently running.
+// ErrorWorker is excluded from checking as it's started on startup and stopped on shutdown.
 func WorkersRunning() bool {
 	return IndexWorker.Running() ||
 		SyncWorker.Running() ||

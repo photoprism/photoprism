@@ -84,6 +84,14 @@ func UpdateFolderDates() error {
 			GROUP BY photo_path) AS p ON folders.path = p.photo_path
 		SET folders.folder_year = YEAR(taken_max), folders.folder_month = MONTH(taken_max), folders.folder_day = DAY(taken_max)
 		WHERE p.taken_max IS NOT NULL`).Error
+	case dsn.DriverSQLite3:
+		return UnscopedDb().Exec(`UPDATE folders
+			SET folder_year = strftime('%Y', taken_max), folder_month = strftime('%m', taken_max), folder_day = strftime('%d', taken_max)
+			FROM (SELECT photo_path, MAX(taken_at_local) AS taken_max
+	 			FROM photos WHERE taken_src = 'meta' AND photos.photo_quality >= 3 AND photos.deleted_at IS NULL
+	 			GROUP BY photo_path
+			) AS p
+			WHERE folders.path = p.photo_path AND p.taken_max IS NOT NULL`).Error
 	default:
 		return nil
 	}
