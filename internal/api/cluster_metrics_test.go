@@ -4,10 +4,11 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
+
+	"github.com/photoprism/photoprism/internal/entity"
 )
 
 func TestClusterMetrics_EmptyCounts(t *testing.T) {
