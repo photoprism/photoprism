@@ -124,12 +124,9 @@ func MatchFaceMarkers() (affected int64, err error) {
 			continue
 		}
 
-		stmt := Db().Model(&entity.Marker{}).
+		stmt := whereEmbeddingModel(Db().Model(&entity.Marker{}).
 			Where("marker_invalid = 0").
-			Where("face_id = ?", f.ID)
-		if current != "" {
-			stmt = stmt.Where("embed_model = ? OR (embed_model = '' AND ? = ?)", current, current, face.ModelFaceNet)
-		}
+			Where("face_id = ?", f.ID), current)
 
 		if res := stmt.
 			Where("subj_src = ?", entity.SrcAuto).
@@ -165,16 +162,14 @@ func CountNewFaceMarkers(size, score int) (n int) {
 	var f entity.Face
 	current := face.EmbeddingModelName()
 
-	if err := Db().Where("face_src = ?", entity.SrcAuto).
-		Where("embed_model = ? OR (embed_model = '' AND ? = ?)", current, current, face.ModelFaceNet).
+	if err := whereEmbeddingModel(Db().Where("face_src = ?", entity.SrcAuto), current).
 		Order("created_at DESC").Limit(1).Take(&f).Error; err != nil {
 		log.Debugf("faces: found no existing clusters")
 	}
 
-	q := Db().Model(&entity.Markers{}).
+	q := whereEmbeddingModel(Db().Model(&entity.Markers{}).
 		Where("marker_type = ?", entity.MarkerFace).
-		Where("face_id = '' AND marker_invalid = 0 AND embeddings_json <> ''").
-		Where("embed_model = ? OR (embed_model = '' AND ? = ?)", current, current, face.ModelFaceNet)
+		Where("face_id = '' AND marker_invalid = 0 AND embeddings_json <> ''"), current)
 
 	if size > 0 {
 		q = q.Where("size >= ?", size)
@@ -432,6 +427,20 @@ func RemovePeopleAndFaces() (err error) {
 	}
 
 	return nil
+}
+
+// whereEmbeddingModel restricts a statement to vectors that may be compared with the
+// specified model, treating rows without recorded provenance as FaceNet.
+//
+// An empty name means the model could not be determined, so no restriction is applied:
+// filtering on it would match the legacy rows alone and silently exclude every vector a
+// configured model has written, rather than leaving the working set untouched.
+func whereEmbeddingModel(stmt *gorm.DB, model string) *gorm.DB {
+	if model == "" {
+		return stmt
+	}
+
+	return stmt.Where("embed_model = ? OR (embed_model = '' AND ? = ?)", model, model, face.ModelFaceNet)
 }
 
 // EmbeddingModelCount pairs an embedding model name with the number of face clusters

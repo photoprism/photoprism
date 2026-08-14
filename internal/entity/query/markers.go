@@ -48,12 +48,10 @@ func Markers(limit, offset int, markerType string, embeddings, subjects bool, ma
 
 // UnmatchedFaceMarkers finds all currently unmatched face markers.
 func UnmatchedFaceMarkers(limit, offset int, matchedBefore *time.Time) (result entity.Markers, err error) {
-	current := face.EmbeddingModelName()
-	db := Db().
+	db := whereEmbeddingModel(Db().
 		Where("marker_type = ?", entity.MarkerFace).
 		Where("marker_invalid = 0").
-		Where("embeddings_json <> ''").
-		Where("embed_model = ? OR (embed_model = '' AND ? = ?)", current, current, face.ModelFaceNet)
+		Where("embeddings_json <> ''"), face.EmbeddingModelName())
 
 	if matchedBefore == nil {
 		db = db.Where("matched_at IS NULL")
@@ -70,10 +68,8 @@ func UnmatchedFaceMarkers(limit, offset int, matchedBefore *time.Time) (result e
 
 // FaceMarkers returns all face markers sorted by id.
 func FaceMarkers(limit, offset int) (result entity.Markers, err error) {
-	current := face.EmbeddingModelName()
-	err = Db().
-		Where("marker_type = ?", entity.MarkerFace).
-		Where("embed_model = ? OR (embed_model = '' AND ? = ?)", current, current, face.ModelFaceNet).
+	err = whereEmbeddingModel(Db().
+		Where("marker_type = ?", entity.MarkerFace), face.EmbeddingModelName()).
 		Order("marker_uid").Limit(limit).Offset(offset).
 		Find(&result).Error
 
@@ -91,9 +87,7 @@ func Embeddings(single, unclustered bool, size, score int, model string) (result
 		Where("embeddings_json <> ''").
 		Order("marker_uid")
 
-	if model != "" {
-		stmt = stmt.Where("embed_model = ? OR (embed_model = '' AND ? = ?)", model, model, face.ModelFaceNet)
-	}
+	stmt = whereEmbeddingModel(stmt, model)
 
 	if size > 0 {
 		stmt = stmt.Where("size >= ?", size)
@@ -262,11 +256,9 @@ func ResetFaceMarkerMatches() (removed int64, err error) {
 
 // CountUnmatchedFaceMarkers counts the number of unmatched face markers in the index.
 func CountUnmatchedFaceMarkers() (n int) {
-	current := face.EmbeddingModelName()
-	q := Db().Model(&entity.Markers{}).
+	q := whereEmbeddingModel(Db().Model(&entity.Markers{}).
 		Where("matched_at IS NULL AND marker_invalid = 0 AND embeddings_json <> ''").
-		Where("marker_type = ?", entity.MarkerFace).
-		Where("embed_model = ? OR (embed_model = '' AND ? = ?)", current, current, face.ModelFaceNet)
+		Where("marker_type = ?", entity.MarkerFace), face.EmbeddingModelName())
 
 	if err := q.Count(&n).Error; err != nil {
 		log.Errorf("faces: %s (count unmatched markers)", err)

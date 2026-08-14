@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -439,6 +440,26 @@ func TestFaceMarkersWithVectors(t *testing.T) {
 		count, err := FaceMarkersWithVectors()
 		require.NoError(t, err)
 		assert.Equal(t, total, count)
+	})
+}
+
+func TestWhereEmbeddingModel(t *testing.T) {
+	base := func() *gorm.DB {
+		return Db().Model(&entity.Marker{}).Where("marker_type = ?", entity.MarkerFace)
+	}
+
+	var total int
+	require.NoError(t, base().Count(&total).Error)
+
+	t.Run("EmptyModelAppliesNoFilter", func(t *testing.T) {
+		var count int
+		require.NoError(t, whereEmbeddingModel(base(), "").Count(&count).Error)
+		assert.Equal(t, total, count)
+	})
+	t.Run("NamedModelFilters", func(t *testing.T) {
+		var count int
+		require.NoError(t, whereEmbeddingModel(base(), face.ModelSFace).Count(&count).Error)
+		assert.LessOrEqual(t, count, total)
 	})
 }
 
