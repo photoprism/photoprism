@@ -28,7 +28,7 @@ func Markers(limit, offset int, markerType string, embeddings, subjects bool, ma
 	}
 
 	if embeddings {
-		db = db.Where("embeddings_json <> ''")
+		db = db.Where("LENGTH(embeddings_json) > 0")
 	}
 
 	if subjects {
@@ -51,7 +51,7 @@ func UnmatchedFaceMarkers(limit, offset int, matchedBefore *time.Time) (result e
 	db := whereEmbeddingModel(Db().
 		Where("marker_type = ?", entity.MarkerFace).
 		Where("marker_invalid = 0").
-		Where("embeddings_json <> ''"), face.EmbeddingModelName())
+		Where("LENGTH(embeddings_json) > 0"), face.EmbeddingModelName())
 
 	if matchedBefore == nil {
 		db = db.Where("matched_at IS NULL")
@@ -84,7 +84,7 @@ func Embeddings(single, unclustered bool, size, score int, model string) (result
 		Model(&entity.Marker{}).
 		Where("marker_type = ?", entity.MarkerFace).
 		Where("marker_invalid = 0").
-		Where("embeddings_json <> ''").
+		Where("LENGTH(embeddings_json) > 0").
 		Order("marker_uid")
 
 	stmt = whereEmbeddingModel(stmt, model)
@@ -257,7 +257,7 @@ func ResetFaceMarkerMatches() (removed int64, err error) {
 // CountUnmatchedFaceMarkers counts the number of unmatched face markers in the index.
 func CountUnmatchedFaceMarkers() (n int) {
 	q := whereEmbeddingModel(Db().Model(&entity.Markers{}).
-		Where("matched_at IS NULL AND marker_invalid = 0 AND embeddings_json <> ''").
+		Where("matched_at IS NULL AND marker_invalid = 0 AND LENGTH(embeddings_json) > 0").
 		Where("marker_type = ?", entity.MarkerFace), face.EmbeddingModelName())
 
 	if err := q.Count(&n).Error; err != nil {

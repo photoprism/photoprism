@@ -227,6 +227,47 @@ func TestFaceMarkersWithoutConfiguredModel(t *testing.T) {
 	})
 }
 
+func TestFaceMarkersWithEmptyEmbeddings(t *testing.T) {
+	restore := face.ConfiguredModel()
+	t.Cleanup(func() {
+		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+	})
+	require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
+		Name:  face.ModelFaceNet,
+		Model: face.FindEmbeddingModel(face.ModelFaceNet),
+	}))
+
+	beforeUnmatched := CountUnmatchedFaceMarkers()
+	beforeNew := CountNewFaceMarkers(0, 0)
+
+	// Embeddings.JSON returns an empty non-nil slice when there is nothing to store, and
+	// the migration writes one to clear a vector. SQLite stores that as a zero-length blob
+	// rather than NULL, which an "embeddings_json <> ''" comparison does not exclude.
+	empty := &entity.Marker{
+		MarkerUID:      rnd.GenerateUID('m'),
+		MarkerType:     entity.MarkerFace,
+		EmbedModel:     face.ModelFaceNet,
+		EmbeddingsJSON: face.Embeddings{}.JSON(),
+	}
+	require.NoError(t, entity.Db().Create(empty).Error)
+	t.Cleanup(func() { entity.UnscopedDb().Delete(empty) })
+
+	t.Run("UnmatchedFaceMarkers", func(t *testing.T) {
+		markers, err := UnmatchedFaceMarkers(1000, 0, nil)
+		require.NoError(t, err)
+
+		for _, marker := range markers {
+			assert.NotEqual(t, empty.MarkerUID, marker.MarkerUID)
+		}
+	})
+	t.Run("CountUnmatchedFaceMarkers", func(t *testing.T) {
+		assert.Equal(t, beforeUnmatched, CountUnmatchedFaceMarkers())
+	})
+	t.Run("CountNewFaceMarkers", func(t *testing.T) {
+		assert.Equal(t, beforeNew, CountNewFaceMarkers(0, 0))
+	})
+}
+
 func TestEmbeddings(t *testing.T) {
 	t.Run("All", func(t *testing.T) {
 		results, err := Embeddings(false, false, 0, 0, "")

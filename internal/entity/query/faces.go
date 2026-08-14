@@ -169,7 +169,7 @@ func CountNewFaceMarkers(size, score int) (n int) {
 
 	q := whereEmbeddingModel(Db().Model(&entity.Markers{}).
 		Where("marker_type = ?", entity.MarkerFace).
-		Where("face_id = '' AND marker_invalid = 0 AND embeddings_json <> ''"), current)
+		Where("face_id = '' AND marker_invalid = 0 AND LENGTH(embeddings_json) > 0"), current)
 
 	if size > 0 {
 		q = q.Where("size >= ?", size)
