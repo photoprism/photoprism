@@ -201,6 +201,7 @@ Security & Hot Spots (Where to Look)
 - libvips thumbnails:
   - Pipeline: `internal/thumb/vips.go` (`Vips` render entry, export params); init `internal/thumb/vips_init.go` (`VipsInit`); rotation `internal/thumb/vips_rotate.go` (`VipsRotate`); format conversion `internal/thumb/vips_convert.go` (`vipsConvert`, HEIC/AVIF via libheif).
   - Sizes & names: `internal/thumb/sizes.go` (`MaxSize`, `InvalidSize`), `internal/thumb/size.go` (`Uncached`, `ExceedsLimit`, `Clamp`, `Limit`), `internal/thumb/fit.go` (`FitSizes`, `FitBounds`), `internal/thumb/names.go`, `internal/thumb/filter.go`; face/marker crop helpers live in `internal/thumb/crop` (e.g., `ParseThumb`, `IsCroppedThumb`).
+  - Endpoints: `internal/api/thumbnails.go` (`GetThumb`), `internal/api/albums_cover.go` (`AlbumCover`, shared `coverSize`), `internal/api/labels_cover.go` (`LabelCover`), `internal/api/folders_cover.go` (`FolderCover`); response and cover caching in `internal/api/cache.go`.
 
 - Safe HTTP downloader:
   - Shared utility: `pkg/http/safe` (`Download`, `Options`).
