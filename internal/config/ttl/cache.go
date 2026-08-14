@@ -10,3 +10,13 @@ var (
 	// CacheCover is the cache duration for album cover images (in seconds).
 	CacheCover Duration = 3600 // 1 hour for album cover images
 )
+
+const (
+	// CacheCollection is the lifetime of the in-memory caches that hold derived views of library
+	// content, such as albums, folders and covers (in seconds). Kept short because these change
+	// whenever pictures are added, moved or removed, and not every writer invalidates them.
+	CacheCollection Duration = 900 // 15 minutes
+
+	// CacheCollectionCleanup is how often those caches purge expired entries (in seconds).
+	CacheCollectionCleanup Duration = 300 // 5 minutes
+)
