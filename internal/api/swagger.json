@@ -6279,7 +6279,7 @@
         },
         "/api/v1/albums/{uid}/t/{token}/{size}": {
             "get": {
-                "description": "Returns a generic placeholder icon when a cover file is assigned to the album; request the picture from /api/v1/t/{hash}/{token}/{size} instead, using its hash. Sizes other than those listed are accepted and reduced. Covers are always served inline; use the download endpoints to obtain a file.",
+                "description": "Returns a generic placeholder icon when a cover file is assigned to the album; request the picture from /api/v1/t/{hash}/{token}/{size} instead, using its hash. Covers are always served inline; use the download endpoints to obtain a file.",
                 "operationId": "AlbumCover",
                 "parameters": [
                     {
@@ -6297,7 +6297,7 @@
                         "type": "string"
                     },
                     {
-                        "description": "cover image size, larger sizes are reduced to 'fit_720' or 'tile_500'",
+                        "description": "cover image size; larger sizes are reduced",
                         "enum": [
                             "tile_50",
                             "tile_100",
@@ -8302,7 +8302,7 @@
         },
         "/api/v1/folders/t/{uid}/{token}/{size}": {
             "get": {
-                "description": "Sizes other than those listed are accepted and reduced. Covers are always served inline; use the download endpoints to obtain a file.",
+                "description": "Covers are always served inline; use the download endpoints to obtain a file.",
                 "operationId": "FolderCover",
                 "parameters": [
                     {
@@ -8320,7 +8320,7 @@
                         "type": "string"
                     },
                     {
-                        "description": "cover image size, larger sizes are reduced to 'fit_720' or 'tile_500'",
+                        "description": "cover image size; larger sizes are reduced",
                         "enum": [
                             "tile_50",
                             "tile_100",
@@ -8947,7 +8947,7 @@
         },
         "/api/v1/labels/{uid}/t/{token}/{size}": {
             "get": {
-                "description": "Returns a generic placeholder icon when a cover file is assigned to the label; request the picture from /api/v1/t/{hash}/{token}/{size} instead, using its hash. Sizes other than those listed are accepted and reduced. Covers are always served inline; use the download endpoints to obtain a file.",
+                "description": "Returns a generic placeholder icon when a cover file is assigned to the label; request the picture from /api/v1/t/{hash}/{token}/{size} instead, using its hash. Covers are always served inline; use the download endpoints to obtain a file.",
                 "operationId": "LabelCover",
                 "parameters": [
                     {
@@ -8965,7 +8965,7 @@
                         "type": "string"
                     },
                     {
-                        "description": "cover image size, larger sizes are reduced to 'fit_720' or 'tile_500'",
+                        "description": "cover image size; larger sizes are reduced",
                         "enum": [
                             "tile_50",
                             "tile_100",
@@ -12566,7 +12566,7 @@
                         "type": "string"
                     },
                     {
-                        "description": "thumbnail size",
+                        "description": "thumbnail size; sizes above the server limit are reduced",
                         "enum": [
                             "tile_50",
                             "tile_100",

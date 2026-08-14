@@ -23,6 +23,7 @@ const (
 //
 //	@Summary		returns a folder cover image
 //	@Id				FolderCover
+//	@Description	Covers are always served inline; use the download endpoints to obtain a file.
 //	@Produce		image/jpeg
 //	@Produce		image/svg+xml
 //	@Tags			Images, Folders
@@ -31,8 +32,7 @@ const (
 //	@Success		200		{file}	image/jpg
 //	@Param			uid		path	string	true	"folder uid"
 //	@Param			token	path	string	true	"user-specific security token provided with session or 'public' when running PhotoPrism in public mode"
-//	@Description	Sizes other than those listed are accepted and reduced. Covers are always served inline; use the download endpoints to obtain a file.
-//	@Param			size	path	string	true	"cover image size, larger sizes are reduced to 'fit_720' or 'tile_500'"	Enums(tile_50, tile_100, left_224, right_224, tile_224, tile_500, fit_720)
+//	@Param			size	path	string	true	"cover image size; larger sizes are reduced"	Enums(tile_50, tile_100, left_224, right_224, tile_224, tile_500, fit_720)
 //	@Router			/api/v1/folders/t/{uid}/{token}/{size} [get]
 func FolderCover(router *gin.RouterGroup) {
 	router.GET("/folders/t/:uid/:token/:size", func(c *gin.Context) {
