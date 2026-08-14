@@ -41,8 +41,7 @@ func AlbumByUID(albumUID string) (album entity.Album, err error) {
 }
 
 // AlbumHasThumb tests if a usable cover file has been assigned to the album with the specified UID.
-// Requires the file to still resolve, so that a stale hash falls back to a cover query instead of
-// leaving clients with a placeholder they cannot resolve through the thumbnail endpoint.
+// Requires the file to still resolve, so a stale hash falls back to a cover query.
 func AlbumHasThumb(albumUID string) bool {
 	if rnd.InvalidUID(albumUID, entity.AlbumUID) {
 		return false

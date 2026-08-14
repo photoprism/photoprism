@@ -42,9 +42,8 @@ func (s Size) Limit(maxSize Size) Size {
 	return s
 }
 
-// Clamp returns the largest renderable size if this size exceeds the limit, so that an
-// oversized request is reduced to a size the render path can produce. It resolves to a
-// "fit" size, as proportional resizing preserves the complete image.
+// Clamp returns the largest renderable size if this size exceeds the limit.
+// It resolves to a "fit" size, as proportional resizing preserves the whole image.
 func (s Size) Clamp() Size {
 	if !s.ExceedsLimit() {
 		return s

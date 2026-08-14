@@ -70,8 +70,8 @@ func TestGetThumb(t *testing.T) {
 		assert.NotEqual(t, original, r.Body.Bytes())
 	})
 	t.Run("SmallerOriginalFitsLargerSize", func(t *testing.T) {
-		// thumb.Fit picks the smallest FitSizes entry covering both dimensions, and FitSizes is
-		// neither square nor a superset of the fit sizes, so it can resolve above the limit.
+		// FitSizes is neither square nor a superset of the fit sizes, so the smallest
+		// fitting size can resolve above the limit.
 		app, router, conf := NewApiTest()
 		conf.Options().ThumbUncached = true
 		cached, onDemand := thumb.SizeCached, thumb.SizeOnDemand

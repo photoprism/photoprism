@@ -33,15 +33,12 @@ func CacheKey(ns, uid, name string) string {
 	return fmt.Sprintf("%s:%s:%s", ns, uid, name)
 }
 
-// coverThumbName is the cover cache key name under which the assigned cover file flag is cached.
-// No thumbnail size is named "thumb", so the flag can never land on a key that the cover handlers
-// read with an unchecked type assertion to ThumbCache.
+// coverThumbName is the cover cache key name for the assigned cover file flag.
+// No thumbnail size is named "thumb", so it cannot collide with a cached file entry.
 const coverThumbName = "thumb"
 
-// CachedCoverHasThumb reports whether a cover file has been assigned to the album or label with
-// the specified UID, and caches the result so repeated requests don't query the database.
-// Only a positive result is cached, as an unknown UID must not create a cache entry and the
-// negative path continues to a cover query anyway.
+// CachedCoverHasThumb reports whether a cover file has been assigned to the album or label.
+// Only a positive result is cached, as the negative path continues to a cover query anyway.
 func CachedCoverHasThumb(ns, uid string, hasThumb func(string) bool) bool {
 	cache := get.CoverCache()
 	cacheKey := CacheKey(ns, uid, coverThumbName)

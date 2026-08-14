@@ -110,8 +110,8 @@ func GetThumb(router *gin.RouterGroup) {
 
 		cache := get.ThumbCache()
 
-		// Keyed by the requested size, which the size actually rendered may be smaller than
-		// once the file bounds are known. That mapping only depends on the file, so it is stable.
+		// Keyed by the requested size, which the rendered size may be smaller than.
+		// That mapping only depends on the file, so the entry stays valid.
 		cacheKey := CacheKey("thumbs", fileHash, string(sizeName))
 
 		if cacheData, ok := cache.Get(cacheKey); ok {
