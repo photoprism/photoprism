@@ -33,13 +33,13 @@ require (
 	github.com/paulmach/go.geojson v1.5.0
 	github.com/pbnjay/memory v0.0.0-20210728143218-7b4eea64cf58
 	github.com/sevlyar/go-daemon v0.1.7
-	github.com/sirupsen/logrus v1.9.4
+	github.com/sirupsen/logrus v1.10.0
 	github.com/stretchr/testify v1.11.1
 	github.com/tidwall/gjson v1.19.0
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	go4.org v0.0.0-20260112195520-a5071408f32f // indirect
 	golang.org/x/crypto v0.55.0
-	golang.org/x/net v0.57.0
+	golang.org/x/net v0.58.0
 	gonum.org/v1/gonum v0.17.0
 	gopkg.in/yaml.v2 v2.4.0
 )
@@ -95,7 +95,7 @@ require (
 	github.com/wamuir/graft v0.10.0
 	github.com/yalue/onnxruntime_go v1.32.1
 	github.com/zitadel/oidc/v3 v3.49.2
-	golang.org/x/mod v0.39.0
+	golang.org/x/mod v0.40.0
 	golang.org/x/sys v0.47.0
 	google.golang.org/protobuf v1.36.12
 )
@@ -177,7 +177,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.44.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/oauth2 v0.36.0
-	golang.org/x/tools v0.48.0 // indirect
+	golang.org/x/tools v0.49.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 

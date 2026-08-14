@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2026-08-12
+Date generated: 2026-08-14
 
 ================================================================================
 
@@ -6730,8 +6730,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 --------------------------------------------------------------------------------
 
 Package: github.com/sirupsen/logrus
-Version: v1.9.4
-License: MIT (https://github.com/sirupsen/logrus/blob/v1.9.4/LICENSE)
+Version: v1.10.0
+License: MIT (https://github.com/sirupsen/logrus/blob/v1.10.0/LICENSE)
 
 The MIT License (MIT)
 
@@ -8921,8 +8921,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/mod/semver
-Version: v0.39.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/mod/+/v0.39.0:LICENSE)
+Version: v0.40.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/mod/+/v0.40.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -8955,8 +8955,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/net
-Version: v0.57.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/net/+/v0.57.0:LICENSE)
+Version: v0.58.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/net/+/v0.58.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
