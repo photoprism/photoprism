@@ -28,6 +28,14 @@ Makefile recipes talk to the development database through `$(MARIADB)`, which de
 - Default to `config.NewMinimalTestConfig(t.TempDir())` for FS/config scaffolding, or `config.NewMinimalTestConfigWithDb("<name>", t.TempDir())` for a fresh SQLite schema.
 - Reserve `config.TestConfig()` for tests that truly need the fully seeded fixture snapshot (runs `InitializeTestData()`, wipes `storage/testdata`).
 - Config helpers auto-discover `assets/`; don't set `PHOTOPRISM_ASSETS_PATH` in `init()`. Hub traffic is disabled by default; re-enable with `PHOTOPRISM_TEST_HUB=test`.
+- A test config whose SQLite name is empty resolves to the shared `.test.db` and **removes that file**, so it must never be built mid-suite in a package whose `TestMain` opened the same database. The symptom is a later test failing with `no such table: <name>` while the same test passes in isolation. `NewMinimalTestConfig` names its database for this reason; keep it named if you add a helper beside it.
+
+### Order-Dependent Tests
+
+A test that passes alone and in the full package but fails under `-run` subsets or `make test-short` is depending on state another test happens to leave behind. Both directions occur, so a green full-suite run does not prove independence.
+
+- Assert only on state the test itself created, and delete anything it derives from a shared cache first. The ExifTool export cache (`ExifToolJsonName`) is keyed by file hash, so any test importing the same sample poisons a later `NeedsExifToolJson` assertion until an unrelated indexing test happens to remove it.
+- When a test fails only in a subset, bisect with `-run 'A|B'` rather than reordering: the pair that reproduces it names both the polluter and the victim.
 
 ### Fixtures
 

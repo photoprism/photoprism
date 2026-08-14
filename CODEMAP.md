@@ -190,17 +190,18 @@ Testing
 Security & Hot Spots (Where to Look)
 - Zip extraction (path traversal prevention): `pkg/fs/zip.go`
   - Uses `safeJoin` to reject absolute/volume paths and `..` traversal; enforces per-file and total size limits.
-  - Tests: `pkg/fs/zip_extra_test.go` cover abs/volume/.. cases and limits.
+  - Tests: `pkg/fs/zip_test.go` covers abs/volume/.. cases and limits.
 - Force-aware Copy/Move and truncation-safe writes:
   - App helpers: `internal/photoprism/mediafile.go` (`MediaFile.Copy/Move` with `force`).
-  - Utils: `pkg/fs/copy.go`, `pkg/fs/move.go` (use `O_TRUNC` to avoid trailing bytes).
+  - Utils: `pkg/fs/copy_move.go` — `fs.Copy` / `fs.Move` (use `O_TRUNC` to avoid trailing bytes).
 - FFmpeg command builders and encoders:
   - Core: `internal/ffmpeg/transcode_cmd.go`, `internal/ffmpeg/remux.go`, `internal/ffmpeg/v360.go`.
   - Encoders (string builders only): `internal/ffmpeg/{apple,intel,nvidia,vaapi,v4l}/avc.go`.
   - Tests guard HW runs with `PHOTOPRISM_FFMPEG_ENCODER`; otherwise assert command strings and negative paths.
 - libvips thumbnails:
-  - Pipeline: `internal/thumb/vips.go` (VipsInit, VipsRotate, export params).
-  - Sizes & names: `internal/thumb/sizes.go`, `internal/thumb/names.go`, `internal/thumb/filter.go`; face/marker crop helpers live in `internal/thumb/crop` (e.g., `ParseThumb`, `IsCroppedThumb`).
+  - Pipeline: `internal/thumb/vips.go` (`Vips` render entry, export params); init `internal/thumb/vips_init.go` (`VipsInit`); rotation `internal/thumb/vips_rotate.go` (`VipsRotate`); format conversion `internal/thumb/vips_convert.go` (`vipsConvert`, HEIC/AVIF via libheif).
+  - Sizes & names: `internal/thumb/sizes.go` (`MaxSize`, `InvalidSize`), `internal/thumb/size.go` (`Uncached`, `ExceedsLimit`, `Clamp`, `Limit`), `internal/thumb/fit.go` (`FitSizes`, `FitBounds`), `internal/thumb/names.go`, `internal/thumb/filter.go`; face/marker crop helpers live in `internal/thumb/crop` (e.g., `ParseThumb`, `IsCroppedThumb`).
+  - Endpoints: `internal/api/thumbnails.go` (`GetThumb`), `internal/api/albums_cover.go` (`AlbumCover`, shared `coverSize`), `internal/api/labels_cover.go` (`LabelCover`), `internal/api/folders_cover.go` (`FolderCover`); response and cover caching in `internal/api/cache.go`.
 
 - Safe HTTP downloader:
   - Shared utility: `pkg/http/safe` (`Download`, `Options`).

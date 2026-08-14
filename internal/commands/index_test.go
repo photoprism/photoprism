@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"sync"
 	"testing"
 	"time"
 
@@ -20,13 +21,18 @@ func TestIndexCommand(t *testing.T) {
 	s := event.Subscribe("log.info")
 	defer event.Unsubscribe(s)
 
+	// The receiver runs until the subscription closes, so the log it collects is
+	// read while that goroutine may still be appending to it.
+	var mu sync.Mutex
 	var l string
 
 	assert.IsType(t, hub.Subscription{}, s)
 
 	go func() {
 		for msg := range s.Receiver {
+			mu.Lock()
 			l += msg.Fields["message"].(string) + "\n"
+			mu.Unlock()
 		}
 	}()
 
@@ -44,10 +50,14 @@ func TestIndexCommand(t *testing.T) {
 
 	time.Sleep(time.Second)
 
+	mu.Lock()
+	logged := l
+	mu.Unlock()
+
 	// Check command output.
-	if l != "" {
-		assert.NotContains(t, l, "error")
-		assert.NotContains(t, l, "warning")
+	if logged != "" {
+		assert.NotContains(t, logged, "error")
+		assert.NotContains(t, logged, "warning")
 	} else {
 		t.Fatal("log output missing")
 	}

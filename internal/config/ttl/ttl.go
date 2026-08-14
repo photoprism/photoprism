@@ -1,6 +1,10 @@
 /*
 Package ttl provides cache expiration and token lifetime defaults and helper functions.
 
+It holds two kinds of value: Cache-Control lifetimes sent to clients, some of which
+Config.Propagate overrides from configuration, and fixed lifetimes for the server-side
+in-memory caches. Use Int() for the first and Duration() for the second.
+
 Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 
 	This program is free software: you can redistribute it and/or modify

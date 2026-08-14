@@ -77,33 +77,30 @@ func TestMediaFile_SidecarJsonName(t *testing.T) {
 func TestMediaFile_NeedsExifToolJson(t *testing.T) {
 	c := config.TestConfig()
 
-	t.Run("False", func(t *testing.T) {
+	// needsJson reports the result for a sample after discarding any cached export.
+	// Other tests in this package import the same samples and leave one behind, and
+	// the result is derived from whether that file exists.
+	needsJson := func(t *testing.T, sampleName string) bool {
+		t.Helper()
 
-		mediaFile, err := NewMediaFile(c.SamplesPath() + "/beach_sand.jpg")
+		mediaFile, err := NewMediaFile(filepath.Join(c.SamplesPath(), sampleName))
+		require.NoError(t, err)
 
-		if err != nil {
-			t.Fatal(err)
+		if jsonName, nameErr := mediaFile.ExifToolJsonName(); nameErr == nil {
+			require.NoError(t, os.RemoveAll(jsonName))
 		}
 
-		assert.True(t, mediaFile.NeedsExifToolJson())
+		return mediaFile.NeedsExifToolJson()
+	}
+
+	t.Run("Image", func(t *testing.T) {
+		assert.True(t, needsJson(t, "beach_sand.jpg"))
 	})
-	t.Run("True", func(t *testing.T) {
-		mediaFile, err := NewMediaFile(c.SamplesPath() + "/blue-go-video.mp4")
-
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		assert.True(t, mediaFile.NeedsExifToolJson())
+	t.Run("Video", func(t *testing.T) {
+		assert.True(t, needsJson(t, "blue-go-video.mp4"))
 	})
-	t.Run("True", func(t *testing.T) {
-		mediaFile, err := NewMediaFile(c.SamplesPath() + "/blue-go-video.mp4.json")
-
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		assert.False(t, mediaFile.NeedsExifToolJson())
+	t.Run("JsonSidecar", func(t *testing.T) {
+		assert.False(t, needsJson(t, "blue-go-video.mp4.json"))
 	})
 }
 

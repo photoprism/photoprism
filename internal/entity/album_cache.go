@@ -2,15 +2,15 @@ package entity
 
 import (
 	"fmt"
-	"time"
 
 	gc "github.com/patrickmn/go-cache"
 
+	"github.com/photoprism/photoprism/internal/config/ttl"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-var albumCache = gc.New(15*time.Minute, 15*time.Minute)
+var albumCache = gc.New(ttl.CacheCollection.Duration(), ttl.CacheCollectionCleanup.Duration())
 
 // FlushAlbumCache clears any cached album entries.
 func FlushAlbumCache() {

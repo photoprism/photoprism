@@ -1,9 +1,14 @@
 package api
 
 import (
+	"bytes"
+	"image"
+	"image/color"
+	"image/jpeg"
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -12,10 +17,14 @@ import (
 	"github.com/tidwall/gjson"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/server/limiter"
+	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/header"
 )
@@ -150,4 +159,209 @@ func AuthenticatedRequestWithBody(r http.Handler, method, path, body string, aut
 	r.ServeHTTP(w, req)
 
 	return w
+}
+
+// CreateTestOriginal creates the original file of an indexed fixture, restores its index entry,
+// and returns the contents so tests can assert they are never sent to clients.
+func CreateTestOriginal(t *testing.T, f *entity.File) []byte {
+	p := entity.Photo{}
+
+	if err := entity.UnscopedDb().Where("photo_uid = ?", f.PhotoUID).First(&p).Error; err != nil {
+		t.Fatal(err)
+	}
+
+	// Tests that ran before may have flagged the fixture as missing or removed the photo it
+	// belongs to, because its original is not part of the test data.
+	if err := entity.UnscopedDb().Model(entity.File{}).Where("id = ?", f.ID).
+		Updates(entity.Values{"file_missing": false, "deleted_at": nil}).Error; err != nil {
+		t.Fatal(err)
+	} else if err = entity.UnscopedDb().Model(entity.Photo{}).Where("photo_uid = ?", f.PhotoUID).
+		Update("deleted_at", nil).Error; err != nil {
+		t.Fatal(err)
+	}
+
+	t.Cleanup(func() {
+		_ = entity.UnscopedDb().Model(entity.File{}).Where("id = ?", f.ID).
+			Updates(entity.Values{"file_missing": f.FileMissing, "deleted_at": f.DeletedAt}).Error
+		_ = entity.UnscopedDb().Model(entity.Photo{}).Where("photo_uid = ?", f.PhotoUID).
+			Update("deleted_at", p.DeletedAt).Error
+	})
+
+	data := NewTestJpeg(t, 1024, 768)
+	origName := photoprism.FileName(f.FileRoot, f.FileName)
+
+	if err := os.MkdirAll(filepath.Dir(origName), fs.ModeDir); err != nil {
+		t.Fatal(err)
+	} else if err = os.WriteFile(origName, data, fs.ModeFile); err != nil {
+		t.Fatal(err)
+	}
+
+	t.Cleanup(func() {
+		_ = os.Remove(origName)
+	})
+
+	return data
+}
+
+// CreateTestFileOriginal creates the original of the indexed fixture with the specified hash.
+func CreateTestFileOriginal(t *testing.T, fileHash string) []byte {
+	f := entity.File{}
+
+	if err := entity.UnscopedDb().Where("file_hash = ?", fileHash).First(&f).Error; err != nil {
+		t.Fatal(err)
+	}
+
+	return CreateTestOriginal(t, &f)
+}
+
+// CreateTestNamedOriginal creates the original of the indexed fixture with the specified name.
+func CreateTestNamedOriginal(t *testing.T, fileName string) []byte {
+	f := entity.File{}
+
+	if err := entity.UnscopedDb().Where("file_name = ?", fileName).First(&f).Error; err != nil {
+		t.Fatal(err)
+	}
+
+	return CreateTestOriginal(t, &f)
+}
+
+// CreateTestCover creates the originals a cover endpoint needs, starting with the given fixture.
+// Restoring an index entry can change which file the query resolves to, so it repeats until the
+// resolved original exists. All created originals have the same contents.
+func CreateTestCover(t *testing.T, fileName string, cover func() (*entity.File, error)) []byte {
+	data := CreateTestNamedOriginal(t, fileName)
+
+	for i := 0; i < 3; i++ {
+		f, err := cover()
+
+		if err != nil {
+			t.Fatal(err)
+		} else if fs.FileExists(photoprism.FileName(f.FileRoot, f.FileName)) {
+			break
+		}
+
+		data = CreateTestOriginal(t, f)
+	}
+
+	if f, err := cover(); err != nil {
+		t.Fatal(err)
+	} else if origName := photoprism.FileName(f.FileRoot, f.FileName); !fs.FileExists(origName) {
+		t.Fatalf("cover query resolves to %s, which does not exist", f.FileName)
+	}
+
+	return data
+}
+
+// CreateTestAlbumCover creates the original that the album cover query resolves to.
+func CreateTestAlbumCover(t *testing.T, uid, fileName string) []byte {
+	return CreateTestCover(t, fileName, func() (*entity.File, error) {
+		f, err := query.AlbumCoverByUID(uid, get.Config().Settings().Features.Private)
+		return &f, err
+	})
+}
+
+// CreateTestLabelCover creates the original that the label cover query resolves to.
+func CreateTestLabelCover(t *testing.T, uid, fileName string) []byte {
+	return CreateTestCover(t, fileName, func() (*entity.File, error) {
+		return query.LabelThumbByUID(uid)
+	})
+}
+
+// CreateTestFolderCover creates the original that the folder cover query resolves to.
+// Folders have no cover file, so nothing else flushes the cover cache between subtests.
+func CreateTestFolderCover(t *testing.T, uid, fileName string) []byte {
+	get.CoverCache().Flush()
+
+	t.Cleanup(func() {
+		get.CoverCache().Flush()
+	})
+
+	return CreateTestCover(t, fileName, func() (*entity.File, error) {
+		f, err := query.FolderCoverByUID(uid)
+		return &f, err
+	})
+}
+
+// CreateTestThumb renders a thumbnail into the cache, as indexing would, so tests can reach
+// the paths that serve pre-cached sizes without on-demand rendering.
+func CreateTestThumb(t *testing.T, fileName, fileHash string, size thumb.Size) {
+	if _, err := size.FromFile(fileName, fileHash, get.Config().ThumbCachePath(), 0); err != nil {
+		t.Fatal(err)
+	}
+}
+
+// SetTestFileBounds sets the indexed dimensions of a file fixture and restores them afterwards.
+func SetTestFileBounds(t *testing.T, fileHash string, w, h int) {
+	f := entity.File{}
+
+	if err := entity.UnscopedDb().Where("file_hash = ?", fileHash).First(&f).Error; err != nil {
+		t.Fatal(err)
+	}
+
+	setBounds := func(w, h int) error {
+		return entity.UnscopedDb().Model(entity.File{}).Where("id = ?", f.ID).
+			Updates(entity.Values{"file_width": w, "file_height": h}).Error
+	}
+
+	if err := setBounds(w, h); err != nil {
+		t.Fatal(err)
+	}
+
+	t.Cleanup(func() {
+		_ = setBounds(f.FileWidth, f.FileHeight)
+	})
+}
+
+// SetTestCoverFile sets the cover file hash of an album or label fixture and restores it
+// afterwards. Pass an empty hash to reach the endpoints that resolve a cover by query,
+// as other tests assign one through query.UpdateCovers().
+func SetTestCoverFile(t *testing.T, model interface{}, where, uid, fileHash string) {
+	var current []string
+
+	if err := entity.UnscopedDb().Model(model).Where(where, uid).Limit(1).Pluck("thumb", &current).Error; err != nil {
+		t.Fatal(err)
+	}
+
+	setCoverFile := func(hash string) error {
+		err := entity.UnscopedDb().Model(model).Where(where, uid).Update("thumb", hash).Error
+
+		// Updating the row directly bypasses the hooks and handlers that clear the caches.
+		entity.FlushAlbumCache()
+		get.CoverCache().Flush()
+
+		return err
+	}
+
+	if err := setCoverFile(fileHash); err != nil {
+		t.Fatal(err)
+	}
+
+	t.Cleanup(func() {
+		restore := ""
+
+		if len(current) > 0 {
+			restore = current[0]
+		}
+
+		_ = setCoverFile(restore)
+	})
+}
+
+// NewTestJpeg returns a JPEG-encoded gradient image with the specified size.
+func NewTestJpeg(t *testing.T, w, h int) []byte {
+	img := image.NewRGBA(image.Rect(0, 0, w, h))
+
+	for y := 0; y < h; y++ {
+		for x := 0; x < w; x++ {
+			img.Set(x, y, color.RGBA{R: uint8(x % 256), G: uint8(y % 256), B: uint8((x + y) % 256), A: 255})
+		}
+	}
+
+	buf := &bytes.Buffer{}
+
+	if err := jpeg.Encode(buf, img, nil); err != nil {
+		t.Fatal(err)
+	}
+
+	return buf.Bytes()
 }

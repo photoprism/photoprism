@@ -464,6 +464,23 @@ claude-skills:
 	else \
 	  echo "No specs/.claude/skills directory found, skipping."; \
 	fi
+	@if [ -d "specs/.claude/agents" ]; then \
+	  echo "Linking Claude Code subagents from specs/.claude/agents..."; \
+	  install -d -m 755 -- ".claude/agents"; \
+	  for src in specs/.claude/agents/*.md; do \
+	    [ -f "$$src" ] || continue; \
+	    name=$$(basename "$$src"); \
+	    link=".claude/agents/$$name"; \
+	    target="../../specs/.claude/agents/$$name"; \
+	    if [ -L "$$link" ] || [ ! -e "$$link" ]; then \
+	      ln -sfn "$$target" "$$link"; \
+	    else \
+	      echo "WARNING: $$link exists and is not a symlink, skipping"; \
+	    fi; \
+	  done; \
+	else \
+	  echo "No specs/.claude/agents directory found, skipping."; \
+	fi
 dep-go:
 	go build -v ./...
 dep-upgrade:

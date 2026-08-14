@@ -18,6 +18,7 @@ import (
 )
 
 // ThumbCache describes files persisted on disk for cached thumbnails and share images.
+// ShareName is set by the thumbnail endpoint only; cover entries leave it empty.
 type ThumbCache struct {
 	FileName  string
 	ShareName string
@@ -31,6 +32,31 @@ type ByteCache struct {
 // CacheKey returns a cache key string based on namespace, uid and name.
 func CacheKey(ns, uid, name string) string {
 	return fmt.Sprintf("%s:%s:%s", ns, uid, name)
+}
+
+// coverThumbName is the cover cache key name for the assigned cover file flag.
+// No thumbnail size is named "thumb", so it cannot collide with a cached file entry.
+const coverThumbName = "thumb"
+
+// CachedCoverHasThumb reports whether a cover file has been assigned to the album or label.
+// Only a positive result is cached, as the negative path continues to a cover query anyway.
+func CachedCoverHasThumb(ns, uid string, hasThumb func(string) bool) bool {
+	cache := get.CoverCache()
+	cacheKey := CacheKey(ns, uid, coverThumbName)
+
+	if cacheData, hit := cache.Get(cacheKey); hit {
+		if result, ok := cacheData.(bool); ok && result {
+			return true
+		}
+	}
+
+	if !hasThumb(uid) {
+		return false
+	}
+
+	cache.SetDefault(cacheKey, true)
+
+	return true
 }
 
 // RemoveFromFolderCache removes an item from the folder cache e.g. after indexing.
@@ -57,6 +83,8 @@ func RemoveFromAlbumCoverCache(uid string) {
 	cache := get.CoverCache()
 
 	// Flush album cover cache.
+	cache.Delete(CacheKey(albumCover, uid, coverThumbName))
+
 	for thumbName := range thumb.Sizes {
 		cacheKey := CacheKey(albumCover, uid, string(thumbName))
 
@@ -94,6 +122,8 @@ func RemoveFromLabelCoverCache(uid string) {
 	}
 
 	cache := get.CoverCache()
+
+	cache.Delete(CacheKey(labelCover, uid, coverThumbName))
 
 	for thumbName := range thumb.Sizes {
 		cacheKey := CacheKey(labelCover, uid, string(thumbName))
