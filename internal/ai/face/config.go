@@ -52,8 +52,4 @@ var (
 	SampleThreshold = 2 * ClusterCore
 	// Epsilon is the numeric tolerance used during cluster comparisons.
 	Epsilon = EpsilonDefault
-	// SkipChildren controls whether the clustering step omits faces from child samples by default.
-	SkipChildren = false
-	// IgnoreBackground determines whether background faces are ignored when generating matches.
-	IgnoreBackground = true
 )

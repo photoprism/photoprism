@@ -14,15 +14,8 @@ type Embeddings []Embedding
 func NewEmbeddings(inference [][]float32) Embeddings {
 	result := make(Embeddings, len(inference))
 
-	var v []float32
-	var i int
-
-	for i, v = range inference {
-		e := NewEmbedding(v)
-
-		if e.CanMatch() {
-			result[i] = e
-		}
+	for i, v := range inference {
+		result[i] = NewEmbedding(v)
 	}
 
 	return result
@@ -44,17 +37,6 @@ func (embeddings Embeddings) Count() int {
 	}
 
 	return len(embeddings)
-}
-
-// Kind returns the type of face e.g. regular, kids, or ignored.
-func (embeddings Embeddings) Kind() (result Kind) {
-	for _, e := range embeddings {
-		if k := e.Kind(); k > result {
-			result = k
-		}
-	}
-
-	return result
 }
 
 // One tests if there is exactly one embedding.

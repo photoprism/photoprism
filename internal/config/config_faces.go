@@ -431,21 +431,3 @@ func faceModelThreshold(m *face.EmbeddingModel, pick func(*face.EmbeddingModel) 
 
 	return fallback
 }
-
-// FaceSkipChildren reports whether child embeddings should be skipped when matching.
-func (c *Config) FaceSkipChildren() bool {
-	if c == nil {
-		return face.SkipChildren
-	}
-
-	return c.options.FaceSkipChildren
-}
-
-// FaceAllowBackground reports whether background embeddings should not be ignored.
-func (c *Config) FaceAllowBackground() bool {
-	if c == nil {
-		return !face.IgnoreBackground
-	}
-
-	return c.options.FaceAllowBackground
-}

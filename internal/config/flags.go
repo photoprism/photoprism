@@ -1410,16 +1410,6 @@ var Flags = CliFlags{
 			Value:   face.MatchDistDefault,
 			EnvVars: EnvVars("FACE_MATCH_DIST"),
 		}}, {
-		Flag: &cli.BoolFlag{
-			Name:    "face-skip-children",
-			Usage:   "skips automatic matching of child face embeddings",
-			EnvVars: EnvVars("FACE_SKIP_CHILDREN"),
-		}}, {
-		Flag: &cli.BoolFlag{
-			Name:    "face-allow-background",
-			Usage:   "allows matching of probable background embeddings",
-			EnvVars: EnvVars("FACE_ALLOW_BACKGROUND"),
-		}}, {
 		Flag: &cli.StringFlag{
 			Name:      "pid-filename",
 			Usage:     "process id `FILENAME` *daemon-mode only*",

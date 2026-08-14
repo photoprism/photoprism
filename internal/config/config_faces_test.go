@@ -690,17 +690,3 @@ func TestConfig_FaceMatchDist(t *testing.T) {
 	c.options.FaceMatchDist = 0.01
 	assert.Equal(t, face.MatchDist, c.FaceMatchDist())
 }
-
-func TestConfig_FaceSkipChildren(t *testing.T) {
-	c := NewConfig(CliTestContext())
-	assert.False(t, c.FaceSkipChildren())
-	c.options.FaceSkipChildren = true
-	assert.True(t, c.FaceSkipChildren())
-}
-
-func TestConfig_FaceAllowBackground(t *testing.T) {
-	c := NewConfig(CliTestContext())
-	assert.False(t, c.FaceAllowBackground())
-	c.options.FaceAllowBackground = true
-	assert.True(t, c.FaceAllowBackground())
-}

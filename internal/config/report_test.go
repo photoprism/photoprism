@@ -307,8 +307,6 @@ func TestConfig_FaceReport(t *testing.T) {
 		"face-collision-dist",
 		"face-epsilon-dist",
 		"face-match-dist",
-		"face-skip-children",
-		"face-allow-background",
 	}
 
 	for _, name := range expected {

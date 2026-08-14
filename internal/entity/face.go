@@ -76,8 +76,9 @@ func (m *Face) MatchId(f Face) string {
 }
 
 // SkipMatching checks whether the face should be skipped when matching.
+// Only ResolveCollision still raises the kind, to AmbiguousFace.
 func (m *Face) SkipMatching() bool {
-	return m.FaceKind > 1 || m.Embedding().SkipMatching()
+	return m.FaceKind > 1
 }
 
 // SetEmbeddings assigns face embeddings.
@@ -116,12 +117,8 @@ func (m *Face) SetEmbeddings(embeddings face.Embeddings) (err error) {
 	//nolint:gosec // G401: Stable identifier hash; not used for security decisions.
 	s := sha1.Sum(m.EmbeddingJSON)
 
-	// Update Face ID, Kind, and reset match timestamp,
+	// Update Face ID and reset match timestamp,
 	m.ID = base32.StdEncoding.EncodeToString(s[:])
-
-	if k := int(m.embedding.Kind()); k > m.FaceKind {
-		m.FaceKind = k
-	}
 
 	m.MatchedAt = nil
 

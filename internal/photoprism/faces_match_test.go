@@ -32,27 +32,20 @@ func TestFaces_Match(t *testing.T) {
 
 // TestBuildFaceCandidates validates that we drop non-matchable faces when building the index.
 func TestBuildFaceCandidates(t *testing.T) {
-	// Ensure IgnoreBackground is enabled for this test.
-	originalIgnoreBackground := face.IgnoreBackground
-	face.IgnoreBackground = true
-	t.Cleanup(func() {
-		face.IgnoreBackground = originalIgnoreBackground
-	})
-
 	regular := entity.NewFace("", entity.SrcAuto, face.RandomEmbeddings(3, face.RegularFace))
 	require.NotNil(t, regular)
 
-	// Get deterministic background embedding.
-	clone := make(face.Embedding, len(face.Background[0].Embedding))
-	copy(clone, face.Background[0].Embedding)
-	backgroundEmb := face.Embeddings{clone}
-	background := entity.NewFace("", entity.SrcAuto, backgroundEmb)
-	require.NotNil(t, background)
+	// A cluster from another embedding space must never be compared with the current one.
 	stale := *regular
 	stale.ID = "stale-model"
 	stale.EmbedModel = otherFaceModel(t, face.ConfiguredModel())
 
-	faces := entity.Faces{*regular, *background, stale}
+	// ResolveCollision raises the kind, which excludes a cluster from automatic matching.
+	ambiguous := *regular
+	ambiguous.ID = "ambiguous"
+	ambiguous.FaceKind = int(face.AmbiguousFace)
+
+	faces := entity.Faces{*regular, stale, ambiguous}
 
 	index := buildFaceIndex(faces)
 

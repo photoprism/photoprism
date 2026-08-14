@@ -3,8 +3,6 @@ package face
 import (
 	"image"
 	"sync"
-
-	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // Embedder generates face embeddings from prepared face crops.
@@ -83,19 +81,6 @@ func ExpectedDims() int {
 	return len(NullEmbedding)
 }
 
-// SamplesModel names the embedding model that the bundled children and background
-// reference samples were generated with.
-const SamplesModel = ModelFaceNet
-
-// SamplesComparable reports whether the bundled reference samples can be compared with
-// embeddings from the configured model. Vectors are not comparable across models even
-// when their length matches, so the samples would otherwise produce arbitrary verdicts.
-func SamplesComparable() bool {
-	name := EmbeddingModelName()
-
-	return name == "" || name == SamplesModel
-}
-
 // EmbeddingModelName returns the model name to record with newly generated embeddings.
 // It is empty when the model cannot be determined, so unknown provenance is never
 // mistaken for a specific model.
@@ -151,12 +136,6 @@ func ConfigureEmbedder(settings EmbedderSettings) error {
 
 	if previous != nil {
 		_ = previous.Close()
-	}
-
-	// The bundled reference samples belong to one vector space, so tell operators when
-	// the child and background filters stop applying instead of failing quietly.
-	if initErr == nil && !SamplesComparable() {
-		log.Warnf("faces: children and background samples do not apply to %s, so those filters are inactive", clean.Log(name))
 	}
 
 	return initErr

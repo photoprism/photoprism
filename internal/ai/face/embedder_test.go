@@ -146,7 +146,6 @@ func TestConfigureEmbedder(t *testing.T) {
 		assert.Equal(t, ModelNone, ConfiguredModel())
 		assert.Equal(t, "", EmbeddingModelName())
 		assert.True(t, EmbeddingsDisabled())
-		assert.True(t, SamplesComparable())
 	})
 }
 
@@ -166,59 +165,5 @@ func TestEmbeddingModelName(t *testing.T) {
 		UseEmbedder(nil)
 		require.NoError(t, ConfigureEmbedder(EmbedderSettings{Name: ModelNone}))
 		assert.Equal(t, "", EmbeddingModelName())
-	})
-}
-
-func TestSamplesComparable(t *testing.T) {
-	restoreEmbedder(t)
-
-	t.Run("FaceNet", func(t *testing.T) {
-		require.NoError(t, ConfigureEmbedder(EmbedderSettings{Name: ModelFaceNet, Model: FindEmbeddingModel(ModelFaceNet)}))
-		assert.True(t, SamplesComparable())
-	})
-	t.Run("Unknown", func(t *testing.T) {
-		UseEmbedder(nil)
-		require.NoError(t, ConfigureEmbedder(EmbedderSettings{Name: ModelNone}))
-		assert.True(t, SamplesComparable())
-	})
-	t.Run("OtherModelSameDims", func(t *testing.T) {
-		// ArcFace also returns 512 values, so only the model name can rule it out.
-		UseEmbedder(&testEmbedder{name: ModelArcFaceR50, dims: 512})
-		assert.False(t, SamplesComparable())
-	})
-	t.Run("OtherModelOtherDims", func(t *testing.T) {
-		UseEmbedder(&testEmbedder{name: ModelSFace, dims: 128})
-		assert.False(t, SamplesComparable())
-	})
-}
-
-func TestEmbeddingSamplesGatedByModel(t *testing.T) {
-	restoreEmbedder(t)
-
-	prevChildren, prevBackground := SkipChildren, IgnoreBackground
-	SkipChildren, IgnoreBackground = true, true
-
-	t.Cleanup(func() { SkipChildren, IgnoreBackground = prevChildren, prevBackground })
-
-	require.NotEmpty(t, Children)
-	require.NotEmpty(t, Background)
-
-	child := make(Embedding, len(Children[0].Embedding))
-	copy(child, Children[0].Embedding)
-
-	background := make(Embedding, len(Background[0].Embedding))
-	copy(background, Background[0].Embedding)
-
-	t.Run("AppliesToFaceNet", func(t *testing.T) {
-		UseEmbedder(nil)
-		require.NoError(t, ConfigureEmbedder(EmbedderSettings{Name: ModelFaceNet, Model: FindEmbeddingModel(ModelFaceNet)}))
-		assert.True(t, child.IsChild())
-		assert.True(t, background.IsBackground())
-	})
-	t.Run("InactiveForOtherModel", func(t *testing.T) {
-		// The same 512-value vectors must no longer be judged by FaceNet-space samples.
-		UseEmbedder(&testEmbedder{name: ModelArcFaceR50, dims: 512})
-		assert.False(t, child.IsChild())
-		assert.False(t, background.IsBackground())
 	})
 }
