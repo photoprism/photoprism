@@ -61,12 +61,12 @@ func TestRefreshManualAlbumCoverPrivate(t *testing.T) {
 	origThumb, origSrc, origPrivate := album.Thumb, album.ThumbSrc, photo.PhotoPrivate
 
 	t.Cleanup(func() {
-		_ = UnscopedDb().Model(entity.Photo{}).Where("id = ?", file.PhotoID).Update("photo_private", origPrivate).Error
+		_ = UnscopedDb().Model(&entity.Photo{}).Where("id = ?", file.PhotoID).Update("photo_private", origPrivate).Error
 		_ = entity.UpdateAlbum(album.AlbumUID, entity.Values{"thumb": origThumb, "thumb_src": origSrc})
 		entity.FlushAlbumCache()
 	})
 
-	require.NoError(t, UnscopedDb().Model(entity.Photo{}).Where("id = ?", file.PhotoID).Update("photo_private", true).Error)
+	require.NoError(t, UnscopedDb().Model(&entity.Photo{}).Where("id = ?", file.PhotoID).Update("photo_private", true).Error)
 	require.NoError(t, entity.UpdateAlbum(album.AlbumUID, entity.Values{"thumb": "", "thumb_src": entity.SrcAuto}))
 	entity.FlushAlbumCache()
 

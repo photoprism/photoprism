@@ -889,7 +889,7 @@ func (m *Photo) PreloadLabels() *Photo {
 		return m
 	}
 
-	Log("photo", "preload labels", Db().Model(PhotoLabel{}).Preload("Label").Where("photo_id = ?", m.ID).
+	Log("photo", "preload labels", Db().Model(&PhotoLabel{}).Preload("Label").Where("photo_id = ?", m.ID).
 		Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC").Find(&m.Labels).Error)
 
 	return m

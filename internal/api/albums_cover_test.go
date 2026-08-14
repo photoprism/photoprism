@@ -70,7 +70,7 @@ func TestAlbumCover(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.Options().ThumbUncached = true
 		defer func() { conf.Options().ThumbUncached = false }()
-		SetTestCoverFile(t, entity.Album{}, "album_uid = ?", "as6sg6bxpogaaba8", "")
+		SetTestCoverFile(t, &entity.Album{}, "album_uid = ?", "as6sg6bxpogaaba8", "")
 		original := CreateTestAlbumCover(t, "as6sg6bxpogaaba8", "2023/11/IMG_57.jpg")
 		AlbumCover(router)
 		r := PerformRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba8/t/"+conf.PreviewToken()+"/fit_15360")
@@ -82,7 +82,7 @@ func TestAlbumCover(t *testing.T) {
 		// Matches a stock install, where on-demand rendering is disabled and the cover is
 		// therefore served from the thumbnail that indexing pre-generated.
 		app, router, conf := NewApiTest()
-		SetTestCoverFile(t, entity.Album{}, "album_uid = ?", "as6sg6bxpogaaba8", "")
+		SetTestCoverFile(t, &entity.Album{}, "album_uid = ?", "as6sg6bxpogaaba8", "")
 		original := CreateTestAlbumCover(t, "as6sg6bxpogaaba8", "2023/11/IMG_57.jpg")
 		f, err := query.AlbumCoverByUID("as6sg6bxpogaaba8", conf.Settings().Features.Private)
 		if err != nil {
@@ -99,7 +99,7 @@ func TestAlbumCover(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.Options().ThumbUncached = true
 		defer func() { conf.Options().ThumbUncached = false }()
-		SetTestCoverFile(t, entity.Album{}, "album_uid = ?", "as6sg6bxpogaaba8", "")
+		SetTestCoverFile(t, &entity.Album{}, "album_uid = ?", "as6sg6bxpogaaba8", "")
 		CreateTestAlbumCover(t, "as6sg6bxpogaaba8", "2023/11/IMG_57.jpg")
 		AlbumCover(router)
 		small := PerformRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba8/t/"+conf.PreviewToken()+"/fit_720")
@@ -113,7 +113,7 @@ func TestAlbumCover(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.Options().ThumbUncached = true
 		defer func() { conf.Options().ThumbUncached = false }()
-		SetTestCoverFile(t, entity.Album{}, "album_uid = ?", "as6sg6bxpogaaba8", "")
+		SetTestCoverFile(t, &entity.Album{}, "album_uid = ?", "as6sg6bxpogaaba8", "")
 		CreateTestAlbumCover(t, "as6sg6bxpogaaba8", "2023/11/IMG_57.jpg")
 		AlbumCover(router)
 		// Repeated so that the cache hit is covered as well as the render path.
@@ -129,7 +129,7 @@ func TestAlbumCover(t *testing.T) {
 		conf.Options().ThumbUncached = true
 		defer func() { conf.Options().ThumbUncached = false }()
 		original := CreateTestAlbumCover(t, "as6sg6bxpogaaba8", "2023/11/IMG_57.jpg")
-		SetTestCoverFile(t, entity.Album{}, "album_uid = ?", "as6sg6bxpogaaba8", "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818")
+		SetTestCoverFile(t, &entity.Album{}, "album_uid = ?", "as6sg6bxpogaaba8", "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818")
 		AlbumCover(router)
 		r := PerformRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba8/t/"+conf.PreviewToken()+"/tile_500")
 		assert.Equal(t, http.StatusOK, r.Code)

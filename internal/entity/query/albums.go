@@ -49,8 +49,8 @@ func AlbumHasThumb(albumUID string) bool {
 
 	var result []string
 
-	if err := Db().Model(entity.Album{}).
-		Joins("JOIN files ON files.file_hash = albums.thumb AND files.file_missing = 0 AND files.file_error = '' AND files.deleted_at IS NULL").
+	if err := Db().Model(&entity.Album{}).
+		Joins("JOIN files ON files.file_hash = albums.thumb AND files.file_missing = FALSE AND files.file_error = '' AND files.deleted_at IS NULL").
 		Where("albums.album_uid = ?", albumUID).
 		Limit(1).
 		Pluck("albums.thumb", &result).Error; err != nil {
