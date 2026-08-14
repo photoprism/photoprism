@@ -101,7 +101,7 @@ func (m *MediaFile) GenerateLabels(labelSrc entity.Src) (labels classify.Labels)
 	// Get thumbnail filenames for the selected sizes.
 	for _, s := range sizes {
 		if thumbnail, fileErr := m.Thumbnail(Config().ThumbCachePath(), s); fileErr != nil {
-			log.Debugf("index: %s in %s", fileErr, clean.Log(m.RootRelName()))
+			log.Debugf("%s in %s", fileErr, clean.Log(m.RootRelName()))
 			continue
 		} else {
 			thumbnails = append(thumbnails, thumbnail)

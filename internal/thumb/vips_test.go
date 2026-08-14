@@ -2,11 +2,18 @@ package thumb
 
 import (
 	"errors"
+	"io/fs"
+	"os"
+	"path/filepath"
 	"strings"
+	"syscall"
 	"testing"
 
 	"github.com/davidbyttow/govips/v2/vips"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
+	"github.com/photoprism/photoprism/pkg/fs/disk"
 )
 
 func TestVips(t *testing.T) {
@@ -306,12 +313,19 @@ func TestWrapVipsExportErr(t *testing.T) {
 		assert.Contains(t, err.Error(), "unable to write to target")
 		assert.True(t, errors.Is(err, inner), "wrapped error must remain unwrappable")
 	})
-	t.Run("StripsDirectory", func(t *testing.T) {
-		// Only the basename should appear in the message so logs stay compact.
+	t.Run("ShortensTarget", func(t *testing.T) {
 		err := wrapVipsExportErr("jpeg", "/cache/deep/nested/path/photo.jpg", 1920, 1080, errors.New("boom"))
 
 		assert.Contains(t, err.Error(), "photo.jpg")
 		assert.NotContains(t, err.Error(), "/cache/deep/nested")
+	})
+	t.Run("KeepsInnerErrorVerbatim", func(t *testing.T) {
+		// Only the wrapper's own reference to the target is shortened. libvips names
+		// its temporary files in the message, and those are kept as reported.
+		err := wrapVipsExportErr("jpeg", "/cache/1/2/3/photo.jpg", 720, 720,
+			errors.New("VipsImage: unable to write to \"/tmp/vips-0-267872348.v\""))
+
+		assert.Contains(t, err.Error(), "/tmp/vips-0-267872348.v")
 	})
 }
 
@@ -326,12 +340,85 @@ func TestWrapVipsWriteErr(t *testing.T) {
 		assert.Contains(t, err.Error(), "no space left on device")
 		assert.True(t, errors.Is(err, inner), "wrapped error must remain unwrappable")
 	})
-	t.Run("StripsDirectory", func(t *testing.T) {
-		// Only the basename should appear so the server filesystem layout is not leaked
-		// to the UI via the event-bus log hook.
+	t.Run("ShortensTarget", func(t *testing.T) {
 		err := wrapVipsWriteErr("/photoprism/storage/cache/thumbnails/1/2/3/photo.jpg", errors.New("boom"))
 
 		assert.Contains(t, err.Error(), "photo.jpg")
 		assert.NotContains(t, err.Error(), "/photoprism/storage")
+	})
+	t.Run("KeepsInnerErrorVerbatim", func(t *testing.T) {
+		// The real inner error is the *fs.PathError from os.WriteFile, which repeats the
+		// absolute destination. Shortening the argument does not remove it, so this is a
+		// compactness measure and not a redaction — assert what the message really holds.
+		inner := &fs.PathError{Op: "open", Path: "/photoprism/storage/cache/thumbnails/1/2/3/photo.jpg", Err: syscall.ENOSPC}
+		err := wrapVipsWriteErr("/photoprism/storage/cache/thumbnails/1/2/3/photo.jpg", inner)
+
+		assert.Contains(t, err.Error(), "/photoprism/storage/cache/thumbnails")
+		assert.True(t, errors.Is(err, syscall.ENOSPC), "errno must stay unwrappable")
+	})
+}
+
+func TestVipsErr(t *testing.T) {
+	// govips returns "<libvips buffer>\nStack:\n<trace>", one buffer line per failed op.
+	const dump = "\nStack:\ngoroutine 1 [running]:\nruntime/debug.Stack()\n\t/usr/local/go/src/runtime/debug/stack.go:26"
+
+	t.Run("Nil", func(t *testing.T) {
+		assert.NoError(t, vipsErr(nil))
+	})
+	t.Run("NoSeparatorPassesThrough", func(t *testing.T) {
+		inner := errors.New("unsupported image format")
+		err := vipsErr(inner)
+
+		assert.Equal(t, inner, err, "errors without a govips dump must be returned unchanged")
+		assert.True(t, errors.Is(err, inner))
+	})
+	t.Run("MultiLineWithoutSeparatorPassesThrough", func(t *testing.T) {
+		// Only govips output is rewritten, so a wrapped error keeps its chain.
+		inner := &fs.PathError{Op: "open", Path: "/tmp/a\nb.jpg", Err: syscall.ENOSPC}
+		err := vipsErr(inner)
+
+		assert.Equal(t, error(inner), err)
+		assert.True(t, errors.Is(err, syscall.ENOSPC), "unwrappable errno must survive")
+	})
+	t.Run("DropsGoroutineDump", func(t *testing.T) {
+		err := vipsErr(errors.New("VipsJpeg: premature end of JPEG image" + dump))
+
+		assert.Equal(t, "VipsJpeg: premature end of JPEG image", err.Error())
+		assert.NotContains(t, err.Error(), "goroutine")
+		assert.NotContains(t, err.Error(), "/usr/local/go")
+	})
+	t.Run("KeepsEveryBufferLine", func(t *testing.T) {
+		// The second line carries the cause, so keeping only the first hides it.
+		err := vipsErr(errors.New("VipsJpeg: premature end of JPEG image\nVipsJpeg: Bogus Huffman table definition" + dump))
+
+		assert.Equal(t, "VipsJpeg: premature end of JPEG image; VipsJpeg: Bogus Huffman table definition", err.Error())
+	})
+	t.Run("KeepsErrnoForDiskFullDetection", func(t *testing.T) {
+		// libvips reports ENOSPC as text on its own line; losing it would stop
+		// GenerateThumbnails from aborting an indexing run on a full disk.
+		err := vipsErr(errors.New("VipsImage: unable to write to \"/tmp/vips-0-267872348.v\"\nsystem error: No space left on device" + dump))
+
+		assert.Contains(t, err.Error(), "No space left on device")
+		assert.True(t, disk.IsNoSpace(err), "a full disk must stay detectable after reduction")
+	})
+	t.Run("EmptyBuffer", func(t *testing.T) {
+		assert.Equal(t, "unknown libvips error", vipsErr(errors.New("  "+dump)).Error())
+	})
+}
+
+func TestVipsReturnsReducedErr(t *testing.T) {
+	// Guards the defer in Vips: a truncated PNG fails in the loader, which returns
+	// the govips error directly rather than through one of the wrappers.
+	t.Run("TruncatedImage", func(t *testing.T) {
+		dir := t.TempDir()
+		srcName := filepath.Join(dir, "truncated.png")
+		require.NoError(t, os.WriteFile(srcName, []byte("\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x01"), fs.FileMode(0o644)))
+
+		_, _, err := Vips(srcName, nil, "1e4c2a3b5d6f70891e4c2a3b5d6f70891e4c2a3b", dir, 720, 720, ResampleFit)
+
+		require.Error(t, err)
+		assert.NotContains(t, err.Error(), "goroutine ")
+		assert.NotContains(t, err.Error(), "runtime/debug.Stack")
+		assert.NotContains(t, err.Error(), "\n")
 	})
 }

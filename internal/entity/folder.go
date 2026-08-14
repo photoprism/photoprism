@@ -16,6 +16,9 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// FolderUID is the prefix of folder UIDs.
+const FolderUID = byte('d')
+
 var folderMutex = sync.Mutex{}
 
 type Folders []Folder
@@ -53,11 +56,11 @@ func (Folder) TableName() string {
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *Folder) BeforeCreate(scope *gorm.DB) error {
-	if rnd.IsUnique(m.FolderUID, 'd') {
+	if rnd.IsUnique(m.FolderUID, FolderUID) {
 		return nil
 	}
 
-	scope.Statement.SetColumn("FolderUID", rnd.GenerateUID('d'))
+	scope.Statement.SetColumn("FolderUID", rnd.GenerateUID(FolderUID))
 	return scope.Error
 }
 
@@ -84,7 +87,7 @@ func NewFolder(root, dir string, modTime time.Time) Folder {
 	}
 
 	result := Folder{
-		FolderUID:     rnd.GenerateUID('d'),
+		FolderUID:     rnd.GenerateUID(FolderUID),
 		Root:          root,
 		Path:          dir,
 		FolderType:    MediaUnknown,

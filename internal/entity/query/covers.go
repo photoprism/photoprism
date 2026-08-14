@@ -354,7 +354,8 @@ func refreshAlbumCover(album entity.Album) error {
 
 // refreshManualAlbumCover updates the cover for a single manual album.
 func refreshManualAlbumCover(album entity.Album) error {
-	file, err := AlbumCoverByUID(album.AlbumUID, false)
+	// Excludes private pictures, matching UpdateAlbumManualCovers.
+	file, err := AlbumCoverByUID(album.AlbumUID, true)
 	if err != nil {
 		if strings.Contains(err.Error(), "no cover") {
 			return nil

@@ -8,6 +8,53 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
+func TestAlbumHasThumb(t *testing.T) {
+	// Other tests assign covers through UpdateCovers(), so the fixture value is set explicitly
+	// and restored afterwards. The direct update bypasses the hooks that clear the album cache.
+	setAlbumThumb := func(t *testing.T, uid, hash string) {
+		var current []string
+
+		if err := Db().Model(entity.Album{}).Where("album_uid = ?", uid).Limit(1).Pluck("thumb", &current).Error; err != nil {
+			t.Fatal(err)
+		} else if err = Db().Model(entity.Album{}).Where("album_uid = ?", uid).Update("thumb", hash).Error; err != nil {
+			t.Fatal(err)
+		}
+
+		entity.FlushAlbumCache()
+
+		t.Cleanup(func() {
+			restore := ""
+
+			if len(current) > 0 {
+				restore = current[0]
+			}
+
+			_ = Db().Model(entity.Album{}).Where("album_uid = ?", uid).Update("thumb", restore).Error
+			entity.FlushAlbumCache()
+		})
+	}
+
+	t.Run("NoThumb", func(t *testing.T) {
+		setAlbumThumb(t, "as6sg6bxpogaaba7", "")
+		assert.False(t, AlbumHasThumb("as6sg6bxpogaaba7"))
+	})
+	t.Run("HasThumb", func(t *testing.T) {
+		setAlbumThumb(t, "as6sg6bxpogaaba7", "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818")
+		assert.True(t, AlbumHasThumb("as6sg6bxpogaaba7"))
+	})
+	t.Run("StaleThumb", func(t *testing.T) {
+		// A hash no client can resolve must not gate the cover query.
+		setAlbumThumb(t, "as6sg6bxpogaaba7", "0000000000000000000000000000000000000000")
+		assert.False(t, AlbumHasThumb("as6sg6bxpogaaba7"))
+	})
+	t.Run("NotFound", func(t *testing.T) {
+		assert.False(t, AlbumHasThumb("as6sg6bxpog00007"))
+	})
+	t.Run("InvalidUID", func(t *testing.T) {
+		assert.False(t, AlbumHasThumb("3765"))
+	})
+}
+
 func TestAlbumByUID(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		if album, err := AlbumByUID("as6sg6bxpogaaba7"); err != nil {

@@ -244,7 +244,10 @@ func OnceTestConfig(c *Config) {
 //
 // Not suitable for tests requiring a database or pre-created storage directories.
 func NewMinimalTestConfig(dataPath string) *Config {
-	return NewIsolatedTestConfig("", dataPath, false)
+	// Name the database even though this config never connects to one: an empty name
+	// resolves to the shared SQLite test DSN and deletes that file, which would drop the
+	// schema out from under a suite whose TestMain already opened it via TestConfig().
+	return NewIsolatedTestConfig("minimal", dataPath, false)
 }
 
 var testDbCache []byte

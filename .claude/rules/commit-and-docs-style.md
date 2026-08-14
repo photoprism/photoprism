@@ -50,7 +50,7 @@ The repo's issue templates use the new GitHub `type:` property (`Bug`, `Feature`
 > - Capitalize the first word, the first word after a colon, dash, or end punctuation, and all major words, including the second part of a hyphenated major word.
 > - Lowercase only articles, short conjunctions, and short prepositions of three letters or fewer when they are not in one of those positions.
 > - Preserve known acronyms (for example, API, CLI, HTTP, JSON) and slash-separated acronym groups (for example, CSV/TSV) as uppercase.
-> - Preserve RFC 2119 / RFC 8174 normative keywords (MUST, SHOULD, MAY, SHALL, REQUIRED, RECOMMENDED, OPTIONAL) as uppercase when used in their normative sense.
+> - Preserve RFC 2119 / RFC 8174 normative keywords (MUST, SHOULD, MAY, SHALL, REQUIRED, RECOMMENDED, OPTIONAL) as uppercase when used in their normative sense. A heading that uses one casually comes back mixed (`What You must Not`), because the formatter cannot tell a normative keyword from an ordinary verb — reword it (`What You Do Not`) rather than hand-editing, which the next format run would undo.
 > - Preserve inline code spans (`` `foo` ``), file paths (e.g. `docs/foo-bar.md`), and slash commands (e.g. `/grill-me`) verbatim; do not recase their contents.
 > - Use `&` instead of `And`/`Or` in headings.
 
