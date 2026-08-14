@@ -200,7 +200,7 @@ Security & Hot Spots (Where to Look)
   - Tests guard HW runs with `PHOTOPRISM_FFMPEG_ENCODER`; otherwise assert command strings and negative paths.
 - libvips thumbnails:
   - Pipeline: `internal/thumb/vips.go` (`Vips` render entry, export params); init `internal/thumb/vips_init.go` (`VipsInit`); rotation `internal/thumb/vips_rotate.go` (`VipsRotate`); format conversion `internal/thumb/vips_convert.go` (`vipsConvert`, HEIC/AVIF via libheif).
-  - Sizes & names: `internal/thumb/sizes.go`, `internal/thumb/names.go`, `internal/thumb/filter.go`; face/marker crop helpers live in `internal/thumb/crop` (e.g., `ParseThumb`, `IsCroppedThumb`).
+  - Sizes & names: `internal/thumb/sizes.go` (`MaxSize`, `InvalidSize`), `internal/thumb/size.go` (`Uncached`, `ExceedsLimit`, `Clamp`, `Limit`), `internal/thumb/fit.go` (`FitSizes`, `FitBounds`), `internal/thumb/names.go`, `internal/thumb/filter.go`; face/marker crop helpers live in `internal/thumb/crop` (e.g., `ParseThumb`, `IsCroppedThumb`).
 
 - Safe HTTP downloader:
   - Shared utility: `pkg/http/safe` (`Download`, `Options`).

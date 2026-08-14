@@ -18,6 +18,7 @@ import (
 )
 
 // ThumbCache describes files persisted on disk for cached thumbnails and share images.
+// ShareName is set by the thumbnail endpoint only; cover entries leave it empty.
 type ThumbCache struct {
 	FileName  string
 	ShareName string

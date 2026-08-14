@@ -1,5 +1,7 @@
 package ttl
 
+// Client-facing Cache-Control lifetimes in seconds.
+// CacheDefault and CacheVideo are overridden by Config.Propagate.
 var (
 	// CacheMaxAge is the maximum cache duration (in seconds).
 	CacheMaxAge Duration = 31536000 // 365 days is the maximum cache time
@@ -18,5 +20,7 @@ const (
 	CacheCollection Duration = 900 // 15 minutes
 
 	// CacheCollectionCleanup is how often those caches purge expired entries (in seconds).
+	// Unlike CacheCover, which is the Cache-Control lifetime for the same responses,
+	// this and CacheCollection are server-side lifetimes used with Duration().
 	CacheCollectionCleanup Duration = 300 // 5 minutes
 )

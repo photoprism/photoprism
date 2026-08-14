@@ -1,6 +1,6 @@
 ## PhotoPrism — Thumbnails Package
 
-**Last Updated:** August 12, 2026
+**Last Updated:** August 13, 2026
 
 ### Overview
 

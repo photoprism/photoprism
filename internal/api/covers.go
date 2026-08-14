@@ -35,7 +35,7 @@ func coverSize(size thumb.Size) thumb.Size {
 //
 //	@Summary		returns an album cover image
 //	@Id				AlbumCover
-//	@Description	Returns a generic placeholder icon if a cover file is assigned to the album, in which case clients request it from the thumbnail endpoint by its hash. Sizes other than those listed are accepted and reduced. Covers are always served inline; use the download endpoints to obtain a file.
+//	@Description	Returns a generic placeholder icon when a cover file is assigned to the album; request the picture from /api/v1/t/{hash}/{token}/{size} instead, using its hash. Sizes other than those listed are accepted and reduced. Covers are always served inline; use the download endpoints to obtain a file.
 //	@Produce		image/jpeg
 //	@Produce		image/svg+xml
 //	@Tags			Images, Albums
@@ -148,7 +148,7 @@ func AlbumCover(router *gin.RouterGroup) {
 //
 //	@Summary		returns a label cover image
 //	@Id				LabelCover
-//	@Description	Returns a generic placeholder icon if a cover file is assigned to the label, in which case clients request it from the thumbnail endpoint by its hash. Sizes other than those listed are accepted and reduced. Covers are always served inline; use the download endpoints to obtain a file.
+//	@Description	Returns a generic placeholder icon when a cover file is assigned to the label; request the picture from /api/v1/t/{hash}/{token}/{size} instead, using its hash. Sizes other than those listed are accepted and reduced. Covers are always served inline; use the download endpoints to obtain a file.
 //	@Produce		image/jpeg
 //	@Produce		image/svg+xml
 //	@Tags			Images, Labels
