@@ -27,7 +27,9 @@ func TestCountUsers(t *testing.T) {
 		assert.LessOrEqual(t, CountUsers(true, false, nil, nil), 12)
 	})
 	t.Run("Active", func(t *testing.T) {
-		assert.LessOrEqual(t, CountUsers(false, true, nil, nil), 12)
+		count := CountUsers(false, true, nil, nil)
+		assert.LessOrEqual(t, count, 12)
+		assert.Greater(t, count, 0)
 	})
 	t.Run("RegisteredActive", func(t *testing.T) {
 		assert.LessOrEqual(t, CountUsers(true, true, nil, nil), 12)
@@ -37,6 +39,9 @@ func TestCountUsers(t *testing.T) {
 	})
 	t.Run("NoAdmins", func(t *testing.T) {
 		assert.LessOrEqual(t, CountUsers(true, true, []string{}, []string{"admin"}), 5)
+	})
+	t.Run("NoAdminsUpperCase", func(t *testing.T) {
+		assert.LessOrEqual(t, CountUsers(true, true, []string{}, []string{"ADMIN"}), 11)
 	})
 	t.Run("Guests", func(t *testing.T) {
 		assert.LessOrEqual(t, CountUsers(true, true, []string{"guest"}, nil), 3)
@@ -67,6 +72,18 @@ func TestUsers(t *testing.T) {
 	})
 	t.Run("SearchAlice", func(t *testing.T) {
 		if results, err := Users(100, 0, "", "alice", false); err != nil {
+			t.Fatal(err)
+		} else {
+			assert.LessOrEqual(t, 1, len(results))
+			if len(results) > 0 {
+				assert.Equal(t, 5, results[0].ID)
+				assert.Equal(t, "uqxetse3cy5eo9z2", results[0].UserUID)
+				assert.Equal(t, "alice", results[0].UserName)
+			}
+		}
+	})
+	t.Run("SearchAliceUpper", func(t *testing.T) {
+		if results, err := Users(100, 0, "", "ALICE", false); err != nil {
 			t.Fatal(err)
 		} else {
 			assert.LessOrEqual(t, 1, len(results))

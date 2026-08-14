@@ -321,3 +321,19 @@ func TestFace_HideAndShow(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestFace_SetSubjectUID(t *testing.T) {
+	f := FindFace(FaceFixtures.Get("joe-biden").ID)
+	assert.NotEmpty(t, f)
+
+	if !assert.Empty(t, f.SetSubjectUID(SubjectFixtures.Get("jane-doe").SubjUID)) {
+		return
+	}
+
+	f = FindFace(FaceFixtures.Get("joe-biden").ID)
+	assert.NotEmpty(t, f)
+
+	if !assert.Empty(t, f.SetSubjectUID(SubjectFixtures.Get("joe-biden").SubjUID)) {
+		return
+	}
+}

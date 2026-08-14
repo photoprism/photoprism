@@ -3,6 +3,7 @@ package query
 import (
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -72,9 +73,14 @@ func TestAlbumCoverByUID(t *testing.T) {
 
 func TestUpdateAlbumDates(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
+		album := entity.FindAlbum(entity.Album{AlbumUID: entity.AlbumFixtures.Get("april-1990").AlbumUID})
+		assert.Equal(t, 11, album.AlbumDay)
+
 		if err := UpdateAlbumDates(); err != nil {
 			t.Fatal(err)
 		}
+		album = entity.FindAlbum(entity.Album{AlbumUID: entity.AlbumFixtures.Get("april-1990").AlbumUID})
+		assert.Equal(t, 18, album.AlbumDay)
 	})
 }
 

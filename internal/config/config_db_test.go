@@ -1,6 +1,7 @@
 package config
 
 import (
+	"bytes"
 	"os"
 	"testing"
 
@@ -500,6 +501,28 @@ func TestConfig_DatabaseConnsIdle(t *testing.T) {
 
 	c.options.DatabaseConnsIdle = 35
 	assert.Equal(t, 28, c.DatabaseConnsIdle())
+}
+
+func TestImportSQL(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	c.options.DatabaseDriver = os.Getenv("PHOTOPRISM_TEST_DRIVER")
+	c.options.DatabaseDSN = os.Getenv("PHOTOPRISM_TEST_DSN")
+
+	if err := c.connectDb(); err != nil {
+		assert.Empty(t, err)
+		return
+	}
+
+	// Setup and capture SQL Logging output
+	buffer := bytes.Buffer{}
+	log.SetOutput(&buffer)
+
+	c.ImportSQL("./testdata/importtest.sql")
+
+	// Reset logger
+	log.SetOutput(os.Stdout)
+
+	assert.NotContains(t, buffer.String(), "level=error")
 }
 
 func TestConfig_checkDb(t *testing.T) {

@@ -4,11 +4,13 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestFlushAlbumCache(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
-		FlushAlbumCache()
+		require.NotPanics(t, func() { FlushAlbumCache() })
+		assert.Equal(t, 0, albumCache.ItemCount())
 	})
 }
 

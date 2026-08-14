@@ -40,6 +40,18 @@ func TestClients(t *testing.T) {
 			}
 		}
 	})
+	t.Run("SearchAliceByNameUppercase", func(t *testing.T) {
+		if results, err := Clients(100, 0, "", "ALICE"); err != nil {
+			t.Fatal(err)
+		} else {
+			assert.LessOrEqual(t, 1, len(results))
+			if len(results) > 0 {
+				assert.Equal(t, "cs5gfen1bgxz7s9i", results[0].ClientUID)
+				assert.Equal(t, "uqxetse3cy5eo9z2", results[0].UserUID)
+				assert.Equal(t, "alice", results[0].UserName)
+			}
+		}
+	})
 	t.Run("SearchAliceByClientUID", func(t *testing.T) {
 		if results, err := Clients(100, 0, "", "cs5gfen1bgxz7s9i"); err != nil {
 			t.Fatal(err)

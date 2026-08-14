@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -170,7 +171,12 @@ func TestPhoto_GenerateTitle(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, "Franzilein & Actress A / 2008", m.PhotoTitle)
+		// This test is unpredicatable as TestMarker_SaveForm changes the subject names
+		subjects := m.SubjectNames()
+		assert.True(t, strings.HasSuffix(m.PhotoTitle, "/ 2008"))
+		for _, s := range subjects {
+			assert.Contains(t, m.PhotoTitle, s)
+		}
 	})
 	t.Run("NoLocation", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
@@ -191,9 +197,13 @@ func TestPhoto_GenerateTitle(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		// TODO: Unstable
-		if len(m.SubjectNames()) > 0 {
-			assert.Equal(t, "Actress A / 1990", m.PhotoTitle)
+		// This test is unpredicatable as other tests change the subject names
+		subjects := m.SubjectNames()
+		if len(subjects) > 0 {
+			assert.True(t, strings.HasSuffix(m.PhotoTitle, "/ 1990"))
+			for _, s := range subjects {
+				assert.Contains(t, m.PhotoTitle, s)
+			}
 		} else {
 			assert.Equal(t, "Bridge1 / 1990", m.PhotoTitle)
 		}

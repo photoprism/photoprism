@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -189,10 +190,19 @@ func TestRemoveInvalidMarkerReferences(t *testing.T) {
 }
 
 func TestRemoveNonExistentMarkerFaces(t *testing.T) {
+	// Make sure that the data is valid for the test.
+	_, err := RemoveAutoFaceClusters()
+	require.NoError(t, err)
+
 	affected, err := RemoveNonExistentMarkerFaces()
 
 	assert.NoError(t, err)
 	assert.GreaterOrEqual(t, affected, int64(1))
+	// Post test cleanup
+	entity.Entities.Truncate(Db())
+	entity.CreateDefaultFixtures()
+	entity.CreateTestFixtures()
+	entity.File{}.RegenerateIndex()
 }
 
 func TestRemoveNonExistentMarkerSubjects(t *testing.T) {

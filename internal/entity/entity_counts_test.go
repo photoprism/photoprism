@@ -157,6 +157,28 @@ func TestWaitForAsyncJobsTimeout(t *testing.T) {
 	})
 }
 
+func TestLabelPhotoCounts(t *testing.T) {
+	t.Run("NilTesting", func(t *testing.T) {
+		t.Cleanup(func() {
+			Entities.Truncate(Db())
+			CreateDefaultFixtures()
+			CreateTestFixtures()
+			File{}.RegenerateIndex()
+		})
+		// Clean the database as if it's brand new
+		Entities.Truncate(Db())
+		CreateDefaultFixtures()
+		File{}.RegenerateIndex()
+
+		result := LabelCounts()
+
+		log.Debugf("result := %#v", result)
+
+		assert.NotNil(t, result)
+		assert.Len(t, result, 0)
+	})
+}
+
 func TestUpdateSubjectCounts(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		require.NoError(t, UpdateSubjectCounts(true))

@@ -931,3 +931,27 @@ func TestClient_Validate(t *testing.T) {
 		}
 	})
 }
+func TestFindClientByNodeUUID(t *testing.T) {
+	t.Run("node", func(t *testing.T) {
+		expected := ClientFixtures.Get("node")
+
+		m := FindClientByNodeUUID(expected.NodeUUID)
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		assert.Equal(t, m.UserUID, UserFixtures.Get("node").UserUID)
+		assert.Equal(t, expected.ClientUID, m.GetUID())
+		assert.NotEmpty(t, m.CreatedAt)
+		assert.NotEmpty(t, m.UpdatedAt)
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		m := FindClientByNodeUUID("123")
+		assert.Nil(t, m)
+	})
+	t.Run("Empty", func(t *testing.T) {
+		m := FindClientByNodeUUID("")
+		assert.Nil(t, m)
+	})
+}
