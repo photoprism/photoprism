@@ -131,8 +131,8 @@ var SessionFixtures = SessionMap{
 		UserUID:     UserFixtures.Pointer("bob").UserUID,
 		UserName:    UserFixtures.Pointer("bob").UserName,
 		LoginAt:     TimePointer(Now().Add(-24 * time.Second)),
-		CreatedAt:   Now().Add(-24),
-		UpdatedAt:   Now().Add(-24),
+		CreatedAt:   Now().Add(-24 * time.Second),
+		UpdatedAt:   Now().Add(-24 * time.Second),
 	},
 	"unauthorized": {
 		authToken:   "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac2",
@@ -186,8 +186,8 @@ var SessionFixtures = SessionMap{
 		UserUID:     UserFixtures.Pointer("friend").UserUID,
 		UserName:    UserFixtures.Pointer("friend").UserName,
 		LoginAt:     TimePointer(Now().Add(-12 * time.Second)),
-		CreatedAt:   Now().Add(-20),
-		UpdatedAt:   Now().Add(-12),
+		CreatedAt:   Now().Add(-20 * time.Second),
+		UpdatedAt:   Now().Add(-12 * time.Second),
 	},
 	"client_metrics": {
 		authToken:    "9d8b8801ffa23eb52e08ca7766283799ddfd8dd368212345",

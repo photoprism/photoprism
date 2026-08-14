@@ -1465,8 +1465,7 @@ var PhotoFixtures = PhotoMap{
 		Albums:           []Album{},
 		Files:            []File{},
 		Labels: []PhotoLabel{
-			LabelFixtures.PhotoLabel(10000018, "landscape", 20, "image"),
-			LabelFixtures.PhotoLabel(10000018, "likeLabel", 20, "image")},
+			LabelFixtures.PhotoLabel(10000023, "landscape", 20, "image")},
 		CreatedAt:  time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:  time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 		EditedAt:   nil,
@@ -2551,8 +2550,8 @@ var PhotoFixtures = PhotoMap{
 	"photo39*": { //JPG, Geo from metadata, indexed
 		ID:               1000040,
 		PhotoUID:         "ps6sg6byk7wrbk32",
-		TakenAt:          time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
-		TakenAtLocal:     time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
+		TakenAt:          time.Date(2020, 11, 11, 15, 7, 18, 0, time.UTC), // ensure 24h time_index on the file (Postgres regression test)
+		TakenAtLocal:     time.Date(2020, 11, 11, 15, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,
 		PhotoType:        "image",
 		TypeSrc:          "",
