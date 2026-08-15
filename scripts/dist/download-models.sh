@@ -11,7 +11,7 @@ set -euo pipefail
 
 MODELS_PATH=${MODELS_PATH:-"${PHOTOPRISM_ASSETS_PATH:-assets}/models"}
 TMP_PATH=${TMP_PATH:-"/tmp/photoprism"}
-BACKUP_PATH=${BACKUP_PATH:-"${PHOTOPRISM_STORAGE_PATH:-storage}/backup"}
+BACKUP_PATH=${BACKUP_PATH:-${PHOTOPRISM_BACKUP_PATH:-"${PHOTOPRISM_STORAGE_PATH:-storage}/backup"}}
 TODAY=$(date -u +%Y%m%d)
 STAMP=$(date -u +%Y%m%d-%H%M%S)
 
@@ -71,7 +71,8 @@ Options:
 Environment:
   MODELS_PATH       Install prefix (default "\$PHOTOPRISM_ASSETS_PATH/models").
   TMP_PATH          Download directory (default "/tmp/photoprism").
-  BACKUP_PATH       Backup directory (default "\$PHOTOPRISM_STORAGE_PATH/backup").
+  BACKUP_PATH       Backup directory. Falls back to \$PHOTOPRISM_BACKUP_PATH, then
+                    to "\$PHOTOPRISM_STORAGE_PATH/backup".
   DOCKER_ENV        Backups default to off when set to "prod".
 
 EOF
