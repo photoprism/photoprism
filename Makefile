@@ -506,9 +506,7 @@ frontend-update:
 	make -C frontend update
 dep-upgrade-js: frontend-update
 dep-tensorflow:
-	scripts/download-facenet.sh
-	scripts/download-nasnet.sh
-	scripts/download-nsfw.sh
+	scripts/dist/download-models.sh facenet nasnet nsfw
 dep-onnx:
 	scripts/download-scrfd.sh
 dep-acceptance: storage/acceptance
