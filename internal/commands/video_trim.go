@@ -80,7 +80,7 @@ func videoTrimAction(ctx *cli.Context) error {
 				IsConfirm: true,
 			}
 			if _, err = prompt.Run(); err != nil {
-				log.Info("trim: cancelled")
+				log.Info("trim: canceled")
 				return nil
 			}
 		}
