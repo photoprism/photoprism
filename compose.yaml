@@ -240,9 +240,6 @@ services:
   ## Release Notes: https://www.postgresql.org/docs/release/
   postgres:
     image: postgres:18-alpine
-    ## Only starts if the "all" or "postgres" profile is specified:
-    ## docker compose --profile postgres up -d
-    profiles: [ "all", "postgres" ]
     stop_grace_period: 15s
     expose:
       - "${POSTGRES_PORT:-4002}"
