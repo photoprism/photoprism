@@ -123,7 +123,7 @@ func clusterNodesModAction(ctx *cli.Context) error {
 		if !confirmed {
 			prompt := promptui.Prompt{Label: fmt.Sprintf("Update node %s?", clean.LogQuote(n.Name)), IsConfirm: true}
 			if _, err := prompt.Run(); err != nil {
-				log.Infof("update cancelled for %s", clean.LogQuote(n.Name))
+				log.Infof("update canceled for %s", clean.LogQuote(n.Name))
 				return nil
 			}
 		}

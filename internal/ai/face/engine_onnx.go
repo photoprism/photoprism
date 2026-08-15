@@ -233,7 +233,7 @@ func NewONNXEngine(opts ONNXOptions) (DetectionEngine, error) {
 
 	session, err := onnxruntime.NewDynamicAdvancedSession(opts.ModelPath, []string{inputName}, outputNames, sessionOpts)
 	if err != nil {
-		return nil, fmt.Errorf("faces: initialise ONNX session: %w", err)
+		return nil, fmt.Errorf("faces: initialize ONNX session: %w", err)
 	}
 
 	engine := &onnxEngine{

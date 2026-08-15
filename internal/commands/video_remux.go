@@ -71,7 +71,7 @@ func videoRemuxAction(ctx *cli.Context) error {
 				IsConfirm: true,
 			}
 			if _, err = prompt.Run(); err != nil {
-				log.Info("remux: cancelled")
+				log.Info("remux: canceled")
 				return nil
 			}
 		}
