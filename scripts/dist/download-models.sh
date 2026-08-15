@@ -13,6 +13,7 @@ MODELS_PATH=${MODELS_PATH:-"${PHOTOPRISM_ASSETS_PATH:-assets}/models"}
 TMP_PATH=${TMP_PATH:-"/tmp/photoprism"}
 BACKUP_PATH=${BACKUP_PATH:-"${PHOTOPRISM_STORAGE_PATH:-storage}/backup"}
 TODAY=$(date -u +%Y%m%d)
+STAMP=$(date -u +%Y%m%d-%H%M%S)
 
 MIRROR_URL="https://dl.photoprism.app"
 ONNX_URL="${MIRROR_URL}/onnx/models"
@@ -27,6 +28,9 @@ OPENCV_ZOO_URL="https://media.githubusercontent.com/media/opencv/opencv_zoo/main
 #
 # The fallback is the publisher's own copy, used when the mirror is unreachable. It is
 # empty for the models we export ourselves, which have no upstream equivalent.
+#
+# Several "file" entries may share one directory, as the two yunet exports do; each keeps
+# its own line in version.txt.
 MODELS="\
 facenet|${TENSORFLOW_URL}/facenet.zip||bf9ae0945d2ac53ac3db27082162d2b9dda5ba2c564c0e4c4f539f31f8b670af|zip|facenet|
 nasnet|${TENSORFLOW_URL}/nasnet.zip||a0e1ad8d5a5a0ff9efc4b3ed89898bf008563ee36cacd0c804a384f8fc661588|zip|nasnet|
@@ -104,7 +108,7 @@ fetch() {
 
   # Our own host is behind a CDN, so a dated query defeats a stale cached copy that
   # would otherwise fail the checksum on every retry.
-  if [[ "${url}" == "${MIRROR_URL}"* ]]; then
+  if [[ "${url}" == "${MIRROR_URL}/"* ]]; then
     url="${url}?${TODAY}"
   fi
 
@@ -156,15 +160,23 @@ download_verified() {
   fi
 }
 
-# backup_path moves an existing model file or directory aside, keeping one dated copy.
+# backup_path moves an existing model file or directory aside.
+#
+# It refuses to replace an earlier backup: a retry after a failed install would otherwise
+# overwrite the last good copy with whatever the failure left behind.
 backup_path() {
   local source="$1" backup="$2"
 
   [[ -e "${source}" ]] || return 0
 
+  if [[ -e "${backup}" ]]; then
+    echo "Error: backup ${backup} already exists." >&2
+    return 1
+  fi
+
   echo "Backing up ${source} to ${backup}"
-  mkdir -p "${BACKUP_PATH}"
-  rm -rf "${backup}"
+
+  mkdir -p "${BACKUP_PATH}" || return 1
   mv "${source}" "${backup}"
 }
 
@@ -174,15 +186,96 @@ record_version() {
   local version="$1" name="$2" sha256="$3" file="$4" existing=""
 
   if [[ -f "${version}" && -n "${file}" ]]; then
-    existing="$(grep -v " ${file}\$" "${version}" || true)"
+    existing="$(awk -v f="${file}" '$NF != f' "${version}")"
   fi
 
   {
     [[ -n "${existing}" ]] && echo "${existing}"
     echo "${name} ${TODAY} ${sha256} ${file}"
-  } >"${version}.tmp"
+  } >"${version}.tmp" || return 1
 
   mv "${version}.tmp" "${version}"
+}
+
+# install_zip extracts into a staging directory and swaps it into place once the contents
+# are known good, so a failed extraction can neither remove the installed model nor leave
+# behind a version.txt recording something that was never installed.
+install_zip() {
+  local name="$1" sha256="$2" dir="$3" tmp="$4"
+  local target="${MODELS_PATH}/${dir}"
+  local staging="${MODELS_PATH}/.staging-${dir}-$$"
+
+  rm -rf "${staging}"
+  mkdir -p "${staging}" || return 1
+
+  if ! unzip -q -o "${tmp}" -d "${staging}"; then
+    echo "Error: cannot extract ${tmp}." >&2
+    rm -rf "${staging}"
+    return 1
+  fi
+
+  # The archive has to contain the directory the registry names, or the swap below would
+  # install nothing where the application looks for it.
+  if [[ ! -d "${staging}/${dir}" ]]; then
+    echo "Error: ${name} archive does not contain \"${dir}\"." >&2
+    rm -rf "${staging}"
+    return 1
+  fi
+
+  if ! echo "${name} ${TODAY} ${sha256}" >"${staging}/${dir}/version.txt"; then
+    rm -rf "${staging}"
+    return 1
+  fi
+
+  if ! backup_path "${target}" "${BACKUP_PATH}/${dir}-${STAMP}"; then
+    rm -rf "${staging}"
+    return 1
+  fi
+
+  if ! mv "${staging}/${dir}" "${target}"; then
+    echo "Error: cannot install ${name} in ${target}." >&2
+    rm -rf "${staging}"
+    return 1
+  fi
+
+  rm -rf "${staging}"
+}
+
+# install_file stages the download inside the target directory, confirms it survived the
+# move intact, and only then swaps it over the installed copy.
+install_file() {
+  local name="$1" sha256="$2" dir="$3" file="$4" tmp="$5"
+  local target="${MODELS_PATH}/${dir}"
+  local staged="${target}/.staging-${file}-$$"
+
+  mkdir -p "${target}" || return 1
+
+  if ! mv "${tmp}" "${staged}"; then
+    echo "Error: cannot stage ${file} in ${target}." >&2
+    rm -f "${staged}"
+    return 1
+  fi
+
+  # Moving onto another filesystem copies rather than renames, which a full disk can
+  # truncate, so what matters is the checksum of the staged copy rather than the source.
+  if [[ "$(hash_file "${staged}")" != "${sha256}" ]]; then
+    echo "Error: ${file} did not survive the move to ${target}." >&2
+    rm -f "${staged}"
+    return 1
+  fi
+
+  if ! backup_path "${target}/${file}" "${BACKUP_PATH}/${dir}-${STAMP}-${file}"; then
+    rm -f "${staged}"
+    return 1
+  fi
+
+  if ! mv "${staged}" "${target}/${file}"; then
+    echo "Error: cannot install ${name} in ${target}." >&2
+    rm -f "${staged}"
+    return 1
+  fi
+
+  record_version "${target}/version.txt" "${name}" "${sha256}" "${file}"
 }
 
 # install_model installs one registry entry and prints what it did.
@@ -212,15 +305,13 @@ install_model() {
 
   download_verified "${url}" "${fallback}" "${sha256}" "${tmp}" || return 1
 
+  # Each step is checked explicitly because errexit is suspended for the whole dynamic
+  # extent of a function whose status the caller tests, so nothing here can abort on its
+  # own and an unchecked failure would be reported as a successful install.
   if [[ "${type}" == "zip" ]]; then
-    backup_path "${target}" "${BACKUP_PATH}/${dir}-${TODAY}"
-    unzip -q "${tmp}" -d "${MODELS_PATH}"
-    echo "${name} ${TODAY} ${sha256}" >"${target}/version.txt"
+    install_zip "${name}" "${sha256}" "${dir}" "${tmp}" || return 1
   else
-    backup_path "${target}/${file}" "${BACKUP_PATH}/${dir}-${TODAY}-${file}"
-    mkdir -p "${target}"
-    mv "${tmp}" "${target}/${file}"
-    record_version "${target}/version.txt" "${name}" "${sha256}" "${file}"
+    install_file "${name}" "${sha256}" "${dir}" "${file}" "${tmp}" || return 1
   fi
 
   echo "${name}: installed in ${target}."
@@ -287,6 +378,11 @@ fi
 # A single URL cannot serve several different models.
 if [[ -n "${OVERRIDE_URL}" && ${#ARGS[@]} -ne 1 ]]; then
   echo "Error: --url requires exactly one model." >&2
+  exit 1
+fi
+
+if ! command -v sha256sum >/dev/null 2>&1 && ! command -v shasum >/dev/null 2>&1; then
+  echo "Error: neither sha256sum nor shasum is available." >&2
   exit 1
 fi
 
