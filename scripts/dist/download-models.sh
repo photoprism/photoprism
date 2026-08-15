@@ -44,6 +44,16 @@ centerface|${ONNX_URL}/centerface.onnx|https://raw.githubusercontent.com/Star-Cl
 FORCE=false
 OVERRIDE_URL=""
 
+# Keeping the model that is being replaced is the default, because in a development
+# checkout it may be a local checkpoint that exists nowhere else. Production images set
+# DOCKER_ENV=prod and install only what this registry can fetch again at a pinned
+# checksum, so there a copy would be storage spent on a file that is one download away.
+BACKUP=true
+
+if [[ "${DOCKER_ENV:-}" == "prod" ]]; then
+  BACKUP=false
+fi
+
 # usage prints the command syntax and the models the registry knows.
 usage() {
   cat <<EOF
@@ -52,6 +62,8 @@ Usage: $(basename "$0") [options] <model>...
 Options:
   -l, --list        List the available models and exit.
   -f, --force       Reinstall even when the model is already up to date.
+  -b, --backup      Keep a dated copy of the model being replaced.
+      --no-backup   Replace the installed model without keeping a copy.
   -u, --url <url>   Download from this URL instead of the registry source.
                     Requires exactly one model; the checksum is still enforced.
   -h, --help        Show this help and exit.
@@ -60,6 +72,7 @@ Environment:
   MODELS_PATH       Install prefix (default "\$PHOTOPRISM_ASSETS_PATH/models").
   TMP_PATH          Download directory (default "/tmp/photoprism").
   BACKUP_PATH       Backup directory (default "\$PHOTOPRISM_STORAGE_PATH/backup").
+  DOCKER_ENV        Backups default to off when set to "prod".
 
 EOF
   list_models
@@ -160,14 +173,24 @@ download_verified() {
   fi
 }
 
-# backup_path moves an existing model file or directory aside.
+# replace_path clears the installed copy so the verified replacement can take its place.
 #
-# It refuses to replace an earlier backup: a retry after a failed install would otherwise
+# With --backup it is moved aside instead of removed, which is what a development
+# checkout wants: the copy it replaces may be a local checkpoint that exists nowhere
+# else. Everything this registry installs is republishable at a pinned checksum, so
+# keeping a copy of a model that can simply be downloaded again is off by default.
+#
+# An existing backup is never replaced: a retry after a failed install would otherwise
 # overwrite the last good copy with whatever the failure left behind.
-backup_path() {
+replace_path() {
   local source="$1" backup="$2"
 
   [[ -e "${source}" ]] || return 0
+
+  if [[ "${BACKUP}" != true ]]; then
+    rm -rf "${source}"
+    return
+  fi
 
   if [[ -e "${backup}" ]]; then
     echo "Error: backup ${backup} already exists." >&2
@@ -227,7 +250,7 @@ install_zip() {
     return 1
   fi
 
-  if ! backup_path "${target}" "${BACKUP_PATH}/${dir}-${STAMP}"; then
+  if ! replace_path "${target}" "${BACKUP_PATH}/${dir}-${STAMP}"; then
     rm -rf "${staging}"
     return 1
   fi
@@ -264,7 +287,7 @@ install_file() {
     return 1
   fi
 
-  if ! backup_path "${target}/${file}" "${BACKUP_PATH}/${dir}-${STAMP}-${file}"; then
+  if ! replace_path "${target}/${file}" "${BACKUP_PATH}/${dir}-${STAMP}-${file}"; then
     rm -f "${staged}"
     return 1
   fi
@@ -341,6 +364,14 @@ while [[ $# -gt 0 ]]; do
       ;;
     -f | --force)
       FORCE=true
+      shift
+      ;;
+    -b | --backup)
+      BACKUP=true
+      shift
+      ;;
+    --no-backup)
+      BACKUP=false
       shift
       ;;
     -u | --url)
