@@ -40,3 +40,20 @@ Don't paste full snapshots, full console logs, or screenshot data unless the par
 - Don't edit application code unless the parent explicitly told you to. Your job is to test what's there.
 - Don't run long-form Go/JS test suites (that's `make test` territory) — you're the manual-QA-in-a-browser agent, not a CI runner.
 - Don't summarize what you just did at the end ("I navigated to X, then clicked Y, then..."). The verdict + evidence is the summary.
+
+## Delivering Your Report
+
+**Send your report with `SendMessage` to `main`.** That is the parent conversation, and it is
+the only address that reaches it.
+
+⚠ **Do not send to `team-lead`.** The parent is labelled `team-lead` in the routing metadata of
+every `SendMessage` result you see, so it reads as the obvious reply address — but it resolves to
+a mailbox the parent never reads. The call returns `success: true` with a message id, so nothing
+tells you the report was lost. Measured 2026-08-16: three reviewers, eight sends, all "successful",
+none delivered.
+
+Your final assistant message is **not** a delivery mechanism either — treat it as a summary of what
+you sent, not as the report itself.
+
+If a send fails, say so in your next message rather than retrying silently; the parent would
+otherwise read your silence as "nothing found", which is the failure this rule exists to prevent.
