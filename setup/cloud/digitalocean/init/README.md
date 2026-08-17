@@ -12,7 +12,7 @@ To learn more, visit https://www.photoprism.app/ or try our [demo](https://demo.
 
 - [PhotoPrism latest](https://docs.photoprism.app/release-notes/), AGPL 3
 - [Docker CE latest](https://docs.docker.com/engine/release-notes/), Apache 2
-- [Traefik 3.6](https://github.com/traefik/traefik/releases), MIT
+- [Traefik 3.7](https://github.com/traefik/traefik/releases), MIT
 - [MariaDB 12.3](https://mariadb.com/kb/en/release-notes/), GPL 2
 - [Watchtower latest](https://github.com/nicholas-fedor/watchtower/releases), Apache 2
 
