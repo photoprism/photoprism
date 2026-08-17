@@ -325,7 +325,9 @@ func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) 
 
 	stale := make(entity.Markers, 0, len(markers))
 	for i := range markers {
-		if validMigrationEmbeddings(markers[i].Embeddings(), embedder.Dims()) && markers[i].EmbedModel == target {
+		// Rows written before the provenance column hold FaceNet vectors, so migrating a
+		// legacy library to FaceNet has nothing to regenerate and must be a no-op.
+		if validMigrationEmbeddings(markers[i].Embeddings(), embedder.Dims()) && face.ModelsComparable(markers[i].EmbedModel, target) {
 			skipped++
 		} else {
 			stale = append(stale, markers[i])

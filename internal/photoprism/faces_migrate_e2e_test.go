@@ -247,6 +247,30 @@ func TestFaces_migrate(t *testing.T) {
 		assert.Equal(t, "Xmp Person", storedXmp.MarkerName)
 		assert.NotEmpty(t, storedXmp.EmbeddingsJSON)
 	})
+	t.Run("LegacyBlankModel", func(t *testing.T) {
+		c := newMigrateTestConfig(t, "migratelegacy")
+		w := NewFaces(c)
+
+		f := addMigrateTestFile(t, c, "5555555555555555555555555555555555555555", true)
+		m := addMigrateTestMarker(t, f.FileUID, entity.SrcManual, "Jane Doe")
+
+		// Blank provenance means FaceNet, so migrating to FaceNet must skip this marker
+		// and the finalize must not blank the vector it just declared valid.
+		require.NoError(t, entity.UnscopedDb().Model(&entity.Marker{}).
+			Where("marker_uid = ?", m.MarkerUID).
+			UpdateColumns(entity.Values{"embed_model": ""}).Error)
+
+		plan := FacesMigratePlan{Target: face.ModelFaceNet}
+		result, err := w.migrate(context.Background(), plan, &oneHotEmbedder{dims: 4}, FacesMigrateOptions{Target: face.ModelFaceNet}, FacesMigrateResult{Target: face.ModelFaceNet})
+
+		require.NoError(t, err)
+		assert.Zero(t, result.Migrated)
+		assert.Equal(t, 1, result.Skipped)
+
+		stored := entity.Marker{}
+		require.NoError(t, entity.UnscopedDb().First(&stored, "marker_uid = ?", m.MarkerUID).Error)
+		assert.NotEmpty(t, stored.EmbeddingsJSON)
+	})
 	t.Run("Idempotent", func(t *testing.T) {
 		c := newMigrateTestConfig(t, "migrateidempotent")
 		w := NewFaces(c)

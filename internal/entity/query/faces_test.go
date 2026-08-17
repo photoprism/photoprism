@@ -463,6 +463,52 @@ func TestWhereEmbeddingModel(t *testing.T) {
 	})
 }
 
+func TestNotEmbeddingModel(t *testing.T) {
+	base := func() *gorm.DB {
+		return Db().Model(&entity.Marker{}).Where("marker_type = ?", entity.MarkerFace)
+	}
+
+	// Rows stamped with each model, so both predicates see every case that matters.
+	for _, model := range []string{"", face.ModelFaceNet, face.ModelSFace} {
+		m := entity.Marker{
+			MarkerUID:      rnd.GenerateUID('m'),
+			MarkerType:     entity.MarkerFace,
+			MarkerSrc:      entity.SrcImage,
+			EmbeddingsJSON: face.Embeddings{{0.1, 0.2}}.JSON(),
+			EmbedModel:     model,
+		}
+
+		require.NoError(t, Db().Create(&m).Error)
+
+		t.Cleanup(func() {
+			UnscopedDb().Delete(&entity.Marker{}, "marker_uid = ?", m.MarkerUID)
+		})
+	}
+
+	var total int
+	require.NoError(t, base().Count(&total).Error)
+
+	t.Run("EmptyModelMatchesNothing", func(t *testing.T) {
+		cond, args := notEmbeddingModel("")
+
+		var count int
+		require.NoError(t, base().Where(cond, args...).Count(&count).Error)
+		assert.Zero(t, count)
+	})
+	// The two predicates must partition the table: anything whereEmbeddingModel keeps,
+	// FinalizeFaceMigration must not blank, and the reverse.
+	for _, target := range []string{face.ModelFaceNet, face.ModelSFace} {
+		t.Run("Partitions"+target, func(t *testing.T) {
+			cond, args := notEmbeddingModel(target)
+
+			var kept, cleared int
+			require.NoError(t, whereEmbeddingModel(base(), target).Count(&kept).Error)
+			require.NoError(t, base().Where(cond, args...).Count(&cleared).Error)
+			assert.Equal(t, total, kept+cleared)
+		})
+	}
+}
+
 func TestFacesFromOtherModels(t *testing.T) {
 	restore := face.ConfiguredModel()
 

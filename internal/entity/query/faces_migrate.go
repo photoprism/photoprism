@@ -49,7 +49,7 @@ func FaceMigrationCounts(model string) (result FaceMigrationMarkerCounts, err er
 		{base, &result.Total},
 		{base.Where("marker_invalid = 0"), &result.Valid},
 		{base.Where("marker_invalid = 1"), &result.Invalid},
-		{base.Where("marker_invalid = 0 AND embed_model = ? AND LENGTH(embeddings_json) > 0", model), &result.Ready},
+		{whereEmbeddingModel(base.Where("marker_invalid = 0 AND LENGTH(embeddings_json) > 0"), model), &result.Ready},
 		{base.Where("marker_invalid = 0 AND file_uid = ''"), &result.Unlinked},
 		{base.Where("subj_src = ?", entity.SrcManual), &result.Manual},
 	}
@@ -110,10 +110,10 @@ func FaceMigrationManualMarkers(model string) (result entity.Markers, err error)
 		return result, fmt.Errorf("faces: migration model is required")
 	}
 
-	err = Db().
+	err = whereEmbeddingModel(Db().
 		Where("marker_type = ? AND marker_invalid = 0", entity.MarkerFace).
 		Where("subj_src = ? AND subj_uid <> ''", entity.SrcManual).
-		Where("embed_model = ? AND LENGTH(embeddings_json) > 0", model).
+		Where("LENGTH(embeddings_json) > 0"), model).
 		Order("subj_uid, marker_uid").Find(&result).Error
 
 	return result, err
@@ -179,9 +179,13 @@ func FinalizeFaceMigration(model string, identities []FaceMigrationIdentity, clu
 			return err
 		}
 
+		// Legacy rows hold FaceNet vectors, so a FaceNet target must spare exactly the
+		// markers the migration skipped as already valid rather than blanking them.
+		cond, args := notEmbeddingModel(model)
+
 		if err := tx.Model(&entity.Marker{}).
 			Where("marker_type = ?", entity.MarkerFace).
-			Where("marker_invalid = 1 OR file_uid = '' OR embed_model <> ? OR LENGTH(embeddings_json) = 0", model).
+			Where("marker_invalid = 1 OR file_uid = '' OR LENGTH(embeddings_json) = 0 OR "+cond, args...).
 			UpdateColumns(entity.Values{"embeddings_json": []byte(""), "embed_model": ""}).Error; err != nil {
 			return err
 		}
