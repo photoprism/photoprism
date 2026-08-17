@@ -1215,8 +1215,8 @@ docker-dummy-oidc:
 	docker pull --platform=arm64 golang:1
 	scripts/docker/buildx-multi.sh dummy-oidc linux/amd64,linux/arm64 $(BUILD_DATE)
 packer-digitalocean:
-	$(info Buildinng DigitalOcean marketplace image...)
-	(cd ./setup/docker/cloud && packer build digitalocean.json)
+	$(info Building DigitalOcean marketplace image...)
+	(cd ./setup/cloud/digitalocean && packer init digitalocean.pkr.hcl && packer build digitalocean.pkr.hcl)
 lint: lint-js lint-go check-api-request-limits check-make-help
 lint-js:
 	$(info Linting JS code...)
