@@ -523,10 +523,13 @@ func TestConfig_FaceClusterDist(t *testing.T) {
 }
 
 func TestConfig_FaceClusterRadius(t *testing.T) {
+	// Thresholds follow the resolved model, which is SFace without a library to ask.
+	sface := face.FindEmbeddingModel(face.ModelSFace).ClusterRadius
+
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, face.ClusterRadius, c.FaceClusterRadius())
+	assert.Equal(t, sface, c.FaceClusterRadius())
 	c.options.FaceClusterRadius = 0.01
-	assert.Equal(t, face.ClusterRadius, c.FaceClusterRadius())
+	assert.Equal(t, sface, c.FaceClusterRadius())
 	c.options.FaceCollisionDist = 0.05
 	c.options.FaceClusterRadius = 0.5
 	assert.Equal(t, 0.5, c.FaceClusterRadius())
@@ -735,10 +738,13 @@ func TestConfig_FaceEpsilonDist(t *testing.T) {
 }
 
 func TestConfig_FaceMatchDist(t *testing.T) {
+	// Thresholds follow the resolved model, which is SFace without a library to ask.
+	sface := face.FindEmbeddingModel(face.ModelSFace).MatchDist
+
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, face.MatchDist, c.FaceMatchDist())
+	assert.Equal(t, sface, c.FaceMatchDist())
 	c.options.FaceMatchDist = 0.1
 	assert.Equal(t, 0.1, c.FaceMatchDist())
 	c.options.FaceMatchDist = 0.01
-	assert.Equal(t, face.MatchDist, c.FaceMatchDist())
+	assert.Equal(t, sface, c.FaceMatchDist())
 }
