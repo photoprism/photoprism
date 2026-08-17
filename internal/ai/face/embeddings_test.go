@@ -152,6 +152,27 @@ func TestBackgroundSamplesMidpoint(t *testing.T) {
 	})
 }
 
+func TestValidEmbeddings(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		assert.True(t, ValidEmbeddings(Embeddings{{0.1, 0.2}}, 2))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.False(t, ValidEmbeddings(nil, 2))
+	})
+	t.Run("NotOne", func(t *testing.T) {
+		assert.False(t, ValidEmbeddings(Embeddings{{0.1, 0.2}, {0.3, 0.4}}, 2))
+	})
+	t.Run("WrongDims", func(t *testing.T) {
+		assert.False(t, ValidEmbeddings(Embeddings{{0.1}}, 2))
+	})
+	t.Run("NaN", func(t *testing.T) {
+		assert.False(t, ValidEmbeddings(Embeddings{{0.1, math.NaN()}}, 2))
+	})
+	t.Run("Inf", func(t *testing.T) {
+		assert.False(t, ValidEmbeddings(Embeddings{{0.1, math.Inf(1)}}, 2))
+	})
+}
+
 func TestEmbeddings_Dims(t *testing.T) {
 	t.Run("Uniform", func(t *testing.T) {
 		assert.Equal(t, 2, Embeddings{{1, 2}, {3, 4}}.Dims())

@@ -60,8 +60,8 @@ func FacesByID(knownOnly, unmatchedOnly, hidden, ignored bool) (FaceMap, IDs, er
 	return faceMap, faceIds, nil
 }
 
-// Faces returns all (known / unmatched) faces from the index.
-func Faces(knownOnly, unmatchedOnly, hidden, ignored bool) (result entity.Faces, err error) {
+// facesStmt builds the face selection shared by Faces and MatchableFaces.
+func facesStmt(knownOnly, unmatchedOnly, hidden, ignored bool) *gorm.DB {
 	stmt := Db()
 
 	if knownOnly {
@@ -80,16 +80,32 @@ func Faces(knownOnly, unmatchedOnly, hidden, ignored bool) (result entity.Faces,
 		stmt = stmt.Where("face_kind <= 1")
 	}
 
-	err = stmt.Order("subj_uid, samples DESC").Find(&result).Error
+	return stmt.Order("subj_uid, samples DESC")
+}
+
+// Faces returns all (known / unmatched) faces from the index, including clusters from
+// other embedding models so the audit can find and report them.
+func Faces(knownOnly, unmatchedOnly, hidden, ignored bool) (result entity.Faces, err error) {
+	err = facesStmt(knownOnly, unmatchedOnly, hidden, ignored).Find(&result).Error
+
+	return result, err
+}
+
+// MatchableFaces returns the faces that may be compared with the configured model.
+func MatchableFaces(knownOnly, unmatchedOnly, hidden, ignored bool) (result entity.Faces, err error) {
+	err = whereEmbeddingModel(facesStmt(knownOnly, unmatchedOnly, hidden, ignored), face.EmbeddingModelName()).
+		Find(&result).Error
 
 	return result, err
 }
 
 // ManuallyAddedFaces returns all manually added face clusters for the specified subj_uid, or all subjects if "".
 func ManuallyAddedFaces(hidden, ignored bool, subjUid string) (result entity.Faces, err error) {
-	stmt := Db().
+	// Merging is what turns a cross-model comparison into a corrupted centroid, so the
+	// optimizer only ever sees clusters it can legitimately combine.
+	stmt := whereEmbeddingModel(Db().
 		Where("face_hidden = ?", hidden).
-		Where("face_src = ?", entity.SrcManual)
+		Where("face_src = ?", entity.SrcManual), face.EmbeddingModelName())
 
 	if subjUid != "" {
 		stmt = stmt.Where("subj_uid = ?", subjUid)
@@ -112,7 +128,7 @@ func ManuallyAddedFaces(hidden, ignored bool, subjUid string) (result entity.Fac
 
 // MatchFaceMarkers matches markers with known faces.
 func MatchFaceMarkers() (affected int64, err error) {
-	faces, err := Faces(true, false, false, false)
+	faces, err := MatchableFaces(true, false, false, false)
 
 	if err != nil {
 		return affected, err
@@ -241,7 +257,15 @@ func MergeFaces(merge entity.Faces, ignored bool) (merged *entity.Face, err erro
 	}
 
 	// Find or create merged face cluster.
-	if merged = entity.NewFace(merge[0].SubjUID, merge[0].FaceSrc, merge.Embeddings()); merged == nil {
+	// Merging across embedding spaces would average unrelated vectors into one centroid,
+	// so the shared model is resolved from the clusters themselves before they are combined.
+	model, sameSpace := merge.EmbedModel()
+
+	if !sameSpace {
+		return merged, fmt.Errorf("faces: cannot merge clusters from different embedding models")
+	}
+
+	if merged = entity.NewFace(merge[0].SubjUID, merge[0].FaceSrc, merge.Embeddings(), model); merged == nil {
 		return merged, fmt.Errorf("faces: new cluster is nil for subject %s", clean.Log(subjUID))
 	} else if merged = entity.FirstOrCreateFace(merged); merged == nil {
 		return merged, fmt.Errorf("faces: failed to create new cluster for subject %s", clean.Log(subjUID))
@@ -330,7 +354,7 @@ func ResolveFaceCollisions() (conflicts, resolved int, err error) {
 			}
 
 			// Compare face 1 with face 2.
-			if matched, dist := f1.Match(face.Embeddings{f2.Embedding()}); matched {
+			if matched, dist := f1.Match(face.Embeddings{f2.Embedding()}, f2.EmbedModel); matched {
 				if f1.SubjUID == f2.SubjUID {
 					continue
 				}
@@ -354,7 +378,7 @@ func ResolveFaceCollisions() (conflicts, resolved int, err error) {
 				}
 
 				// Resolve.
-				success, failed := f1.ResolveCollision(face.Embeddings{f2.Embedding()})
+				success, failed := f1.ResolveCollision(face.Embeddings{f2.Embedding()}, f2.EmbedModel)
 
 				// Failed?
 				if failed != nil {

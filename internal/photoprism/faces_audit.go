@@ -155,7 +155,7 @@ func (w *Faces) Audit(fix bool, subjUID string) (err error) {
 			}
 
 			// Compare face 1 with face 2.
-			if matched, dist := f1.Match(face.Embeddings{f2.Embedding()}); matched {
+			if matched, dist := f1.Match(face.Embeddings{f2.Embedding()}, f2.EmbedModel); matched {
 				if f1.SubjUID == f2.SubjUID {
 					continue
 				}
@@ -184,7 +184,7 @@ func (w *Faces) Audit(fix bool, subjUID string) (err error) {
 				}
 
 				// Resolve.
-				success, failed := f1.ResolveCollision(face.Embeddings{f2.Embedding()})
+				success, failed := f1.ResolveCollision(face.Embeddings{f2.Embedding()}, f2.EmbedModel)
 
 				// Failed?
 				if failed != nil {

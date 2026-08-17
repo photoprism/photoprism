@@ -171,7 +171,7 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 	matchedAt := entity.TimeStamp()
 
 	if opt.Force || unmatchedMarkers > 0 {
-		faces, err := query.Faces(false, false, false, false)
+		faces, err := query.MatchableFaces(false, false, false, false)
 
 		if err != nil {
 			return result, err
@@ -185,7 +185,7 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 	}
 
 	// Find unmatched faces.
-	if unmatchedFaces, err := query.Faces(false, true, false, false); err != nil {
+	if unmatchedFaces, err := query.MatchableFaces(false, true, false, false); err != nil {
 		log.Error(err)
 	} else if len(unmatchedFaces) > 0 {
 		if r, err := w.MatchFaces(unmatchedFaces, false, matchedAt, stats); err != nil {

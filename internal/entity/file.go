@@ -862,6 +862,13 @@ func (m *File) AddFace(f face.Face, subjUid string) {
 		return
 	}
 
+	// A vector of the wrong length or with non-finite values is not comparable with
+	// anything, and a remote service can return either, so it is rejected on the way in.
+	if dims := f.Embeddings.Dims(); !face.ValidEmbeddings(f.Embeddings, dims) {
+		log.Warnf("faces: skipped invalid embedding for file %s", clean.Log(m.FileUID))
+		return
+	}
+
 	// Create new marker from face.
 	marker := NewFaceMarker(f, *m, subjUid)
 
@@ -887,7 +894,7 @@ func (m *File) AddFace(f face.Face, subjUid string) {
 			if existing.MarkerUID != "" {
 				values := Values{
 					"embeddings_json": f.Embeddings.JSON(),
-					"embed_model":     face.EmbeddingModelName(),
+					"embed_model":     f.EmbedModel,
 					"landmarks_json":  landmarks,
 				}
 
@@ -897,7 +904,7 @@ func (m *File) AddFace(f face.Face, subjUid string) {
 				}
 			}
 
-			existing.SetEmbeddings(f.Embeddings)
+			existing.SetEmbeddings(f.Embeddings, f.EmbedModel)
 			existing.LandmarksJSON = landmarks
 		}
 

@@ -10,6 +10,8 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/jinzhu/gorm"
+
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
@@ -48,14 +50,14 @@ func (Face) TableName() string {
 	return "faces"
 }
 
-// NewFace returns a new face.
-func NewFace(subjUID, faceSrc string, embeddings face.Embeddings) *Face {
+// NewFace returns a new face for embeddings produced by the specified model.
+func NewFace(subjUID, faceSrc string, embeddings face.Embeddings, model face.ModelName) *Face {
 	result := &Face{
 		SubjUID: subjUID,
 		FaceSrc: faceSrc,
 	}
 
-	if err := result.SetEmbeddings(embeddings); err != nil {
+	if err := result.SetEmbeddings(embeddings, model); err != nil {
 		log.Errorf("face: failed setting embeddings (%s)", err)
 	}
 
@@ -81,10 +83,18 @@ func (m *Face) SkipMatching() bool {
 	return m.FaceKind > 1
 }
 
-// SetEmbeddings assigns face embeddings.
-func (m *Face) SetEmbeddings(embeddings face.Embeddings) (err error) {
+// SetEmbeddings assigns face embeddings produced by the specified model. The model is
+// recorded as passed, so a cluster built from stored vectors keeps their provenance
+// instead of adopting whichever model happens to be configured now.
+func (m *Face) SetEmbeddings(embeddings face.Embeddings, model face.ModelName) (err error) {
 	if len(embeddings) == 0 {
 		return fmt.Errorf("invalid embedding")
+	}
+
+	// Comparing this cluster with anything the configured model produces would mix two
+	// embedding spaces, so it is refused where the row is built rather than where it is read.
+	if !face.ModelsComparable(model, face.EmbeddingModelName()) {
+		return fmt.Errorf("embedding model %s cannot be compared with %s", clean.Log(model), clean.Log(face.EmbeddingModelName()))
 	}
 
 	m.embedding, m.SampleRadius, m.Samples = face.EmbeddingsMidpoint(embeddings)
@@ -101,7 +111,7 @@ func (m *Face) SetEmbeddings(embeddings face.Embeddings) (err error) {
 		return fmt.Errorf("embedding has %d values, expected %d", len(m.embedding), dims)
 	}
 
-	m.EmbedModel = face.EmbeddingModelName()
+	m.EmbedModel = model
 
 	// Limit sample radius to reduce false positives.
 	m.SampleRadius = face.ClampSampleRadius(m.SampleRadius)
@@ -155,8 +165,8 @@ func (m *Face) AcceptDist() float64 {
 	return face.AcceptDist(m.SampleRadius)
 }
 
-// Match tests if embeddings match this face.
-func (m *Face) Match(embeddings face.Embeddings) (match bool, dist float64) {
+// Match tests if embeddings produced by the specified model match this face.
+func (m *Face) Match(embeddings face.Embeddings, model face.ModelName) (match bool, dist float64) {
 	dist = -1
 
 	if embeddings.Empty() {
@@ -166,7 +176,8 @@ func (m *Face) Match(embeddings face.Embeddings) (match bool, dist float64) {
 
 	// Two models can produce vectors of the same length that mean entirely different
 	// things, so provenance decides comparability before any distance is calculated.
-	if !m.SameEmbeddingModel() {
+	// Both sides are checked: the argument carries its own model, not this cluster's.
+	if !m.SameEmbeddingModel() || !face.SameEmbeddingSpace(m.EmbedModel, model) {
 		return false, dist
 	}
 
@@ -202,7 +213,7 @@ func (m *Face) Match(embeddings face.Embeddings) (match bool, dist float64) {
 }
 
 // ResolveCollision resolves a collision with a different subject's face.
-func (m *Face) ResolveCollision(embeddings face.Embeddings) (resolved bool, err error) {
+func (m *Face) ResolveCollision(embeddings face.Embeddings, model face.ModelName) (resolved bool, err error) {
 	if m.SubjUID == "" {
 		// Ignore reports for anonymous faces.
 		return false, nil
@@ -212,7 +223,7 @@ func (m *Face) ResolveCollision(embeddings face.Embeddings) (resolved bool, err 
 		return false, fmt.Errorf("embedding must not be empty")
 	}
 
-	if match, dist := m.Match(embeddings); !match {
+	if match, dist := m.Match(embeddings, model); !match {
 		// Embeddings don't match this face. Ignore.
 		return false, nil
 	} else if dist < 0 {
@@ -265,7 +276,14 @@ func (m *Face) ReviseMatches() (revised Markers, err error) {
 		return revised, err
 	} else {
 		for _, marker := range matches {
-			if ok, _ := m.Match(marker.Embeddings()); !ok {
+			// A marker from another embedding space cannot be compared with this cluster,
+			// so its assignment is left alone rather than dropped on a comparison that
+			// never ran.
+			if !face.SameEmbeddingSpace(marker.EmbedModel, m.EmbedModel) {
+				continue
+			}
+
+			if ok, _ := m.Match(marker.Embeddings(), marker.EmbedModel); !ok {
 				if updated, err := marker.ClearFace(); err != nil {
 					log.Debugf("faces: failed to remove match with marker (%s)", err) // Conflict resolution
 					return revised, err
@@ -279,6 +297,21 @@ func (m *Face) ReviseMatches() (revised Markers, err error) {
 	return revised, nil
 }
 
+// whereSameEmbeddingSpace restricts a statement to vectors from the specified model's
+// embedding space. An empty name selects the legacy rows that predate the provenance
+// column, which is deliberate: the model here is a stored cluster's own, never an
+// unknown configuration.
+func whereSameEmbeddingSpace(stmt *gorm.DB, model face.ModelName) *gorm.DB {
+	switch model {
+	case "":
+		return stmt.Where("embed_model = ''")
+	case face.ModelFaceNet:
+		return stmt.Where("embed_model IN (?)", []string{face.ModelFaceNet, ""})
+	default:
+		return stmt.Where("embed_model = ?", model)
+	}
+}
+
 // MatchMarkers finds and references matching markers.
 func (m *Face) MatchMarkers(faceIds []string) error {
 	if len(faceIds) == 0 {
@@ -287,8 +320,8 @@ func (m *Face) MatchMarkers(faceIds []string) error {
 
 	var markers Markers
 
-	err := Db().
-		Where("marker_invalid = 0 AND marker_type = ? AND face_id IN (?)", MarkerFace, faceIds).
+	err := whereSameEmbeddingSpace(Db().
+		Where("marker_invalid = 0 AND marker_type = ? AND face_id IN (?)", MarkerFace, faceIds), m.EmbedModel).
 		Find(&markers).Error
 
 	if err != nil {
@@ -304,7 +337,7 @@ func (m *Face) MatchMarkers(faceIds []string) error {
 			log.Infof("faces: matching %d of %d markers", i, resultLen)
 			start = time.Now()
 		}
-		if ok, dist := m.Match(marker.Embeddings()); !ok {
+		if ok, dist := m.Match(marker.Embeddings(), marker.EmbedModel); !ok {
 			// Ignore.
 		} else if _, err = marker.SetFace(m, dist); err != nil {
 			return err

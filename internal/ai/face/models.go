@@ -236,6 +236,13 @@ func ModelsComparable(stored, current ModelName) bool {
 	return stored == current || stored == "" && current == ModelFaceNet
 }
 
+// SameEmbeddingSpace reports whether two stored vectors may be compared with each other.
+// ModelsComparable treats its second argument as the reference, which is wrong when both
+// names come from storage, so a legacy blank has to mean FaceNet on either side.
+func SameEmbeddingSpace(a, b ModelName) bool {
+	return ModelsComparable(a, b) || ModelsComparable(b, a)
+}
+
 // ParseModelName returns the supported model name matching s, or ModelAuto when unknown.
 func ParseModelName(s string) ModelName {
 	name := NormalizeModelName(s)

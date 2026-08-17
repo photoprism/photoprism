@@ -48,6 +48,31 @@ func TestModelsComparable(t *testing.T) {
 	})
 }
 
+func TestSameEmbeddingSpace(t *testing.T) {
+	t.Run("BothBlank", func(t *testing.T) {
+		assert.True(t, SameEmbeddingSpace("", ""))
+	})
+	t.Run("SameModel", func(t *testing.T) {
+		assert.True(t, SameEmbeddingSpace(ModelSFace, ModelSFace))
+	})
+	// A library mid-upgrade holds both forms of FaceNet, so neither order may be rejected.
+	t.Run("BlankAndFaceNet", func(t *testing.T) {
+		assert.True(t, SameEmbeddingSpace("", ModelFaceNet))
+	})
+	t.Run("FaceNetAndBlank", func(t *testing.T) {
+		assert.True(t, SameEmbeddingSpace(ModelFaceNet, ""))
+	})
+	t.Run("BlankAndSFace", func(t *testing.T) {
+		assert.False(t, SameEmbeddingSpace("", ModelSFace))
+	})
+	t.Run("SFaceAndBlank", func(t *testing.T) {
+		assert.False(t, SameEmbeddingSpace(ModelSFace, ""))
+	})
+	t.Run("DifferentModels", func(t *testing.T) {
+		assert.False(t, SameEmbeddingSpace(ModelFaceNet, ModelArcFaceR50))
+	})
+}
+
 func TestParseModelName(t *testing.T) {
 	t.Run("Auto", func(t *testing.T) {
 		assert.Equal(t, ModelAuto, ParseModelName("Auto"))

@@ -44,6 +44,23 @@ func (embeddings Embeddings) One() bool {
 	return embeddings.Count() == 1
 }
 
+// ValidEmbeddings checks the cardinality, dimensions, and values of an embedding result.
+// Non-finite values survive JSON and storage but poison every later distance, so they are
+// rejected where the vector enters the index rather than where it is compared.
+func ValidEmbeddings(embeddings Embeddings, dims int) bool {
+	if !embeddings.One() || dims < 1 || len(embeddings[0]) != dims {
+		return false
+	}
+
+	for _, value := range embeddings[0] {
+		if math.IsNaN(value) || math.IsInf(value, 0) {
+			return false
+		}
+	}
+
+	return true
+}
+
 // Dims returns the number of values shared by all embeddings, 0 when there are none,
 // and -1 when they differ, since vectors of different lengths cannot be compared.
 func (embeddings Embeddings) Dims() int {

@@ -226,11 +226,11 @@ func TestMarkerCropArea(t *testing.T) {
 	assert.Zero(t, markerCropArea(entity.Marker{}).W)
 }
 
-func TestValidMigrationEmbeddings(t *testing.T) {
-	assert.True(t, validMigrationEmbeddings(face.Embeddings{{0.1, 0.2}}, 2))
-	assert.False(t, validMigrationEmbeddings(nil, 2))
-	assert.False(t, validMigrationEmbeddings(face.Embeddings{{0.1}}, 2))
-	assert.False(t, validMigrationEmbeddings(face.Embeddings{{0.1, math.NaN()}}, 2))
+func TestValidMigrationEmbeddingsUsage(t *testing.T) {
+	assert.True(t, face.ValidEmbeddings(face.Embeddings{{0.1, 0.2}}, 2))
+	assert.False(t, face.ValidEmbeddings(nil, 2))
+	assert.False(t, face.ValidEmbeddings(face.Embeddings{{0.1}}, 2))
+	assert.False(t, face.ValidEmbeddings(face.Embeddings{{0.1, math.NaN()}}, 2))
 }
 
 func TestBuildFaceMigrationClusters(t *testing.T) {

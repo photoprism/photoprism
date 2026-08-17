@@ -3,7 +3,6 @@ package photoprism
 import (
 	"context"
 	"fmt"
-	"math"
 	"sort"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
@@ -327,7 +326,7 @@ func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) 
 	for i := range markers {
 		// Rows written before the provenance column hold FaceNet vectors, so migrating a
 		// legacy library to FaceNet has nothing to regenerate and must be a no-op.
-		if validMigrationEmbeddings(markers[i].Embeddings(), embedder.Dims()) && face.ModelsComparable(markers[i].EmbedModel, target) {
+		if face.ValidEmbeddings(markers[i].Embeddings(), embedder.Dims()) && face.ModelsComparable(markers[i].EmbedModel, target) {
 			skipped++
 		} else {
 			stale = append(stale, markers[i])
@@ -354,7 +353,7 @@ func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) 
 	}
 
 	for _, marker := range stale {
-		if values, ok := generated[marker.MarkerUID]; ok && validMigrationEmbeddings(values, embedder.Dims()) {
+		if values, ok := generated[marker.MarkerUID]; ok && face.ValidEmbeddings(values, embedder.Dims()) {
 			migrated++
 		} else {
 			failed = append(failed, marker.MarkerUID)
@@ -405,7 +404,7 @@ func (w *Faces) cropMigrationEmbeddings(embedder face.Embedder, file *entity.Fil
 			continue
 		}
 
-		if embeddings := embedder.Run(img); validMigrationEmbeddings(embeddings, embedder.Dims()) {
+		if embeddings := embedder.Run(img); face.ValidEmbeddings(embeddings, embedder.Dims()) {
 			result[marker.MarkerUID] = embeddings
 		}
 	}
@@ -429,7 +428,7 @@ func (w *Faces) detectMigrationEmbeddings(embedder face.Embedder, file *entity.F
 
 	assignments := matchMigrationDetections(markers, detected)
 	for _, marker := range stale {
-		if detectedFace, ok := assignments[marker.MarkerUID]; ok && validMigrationEmbeddings(detectedFace.Embeddings, embedder.Dims()) {
+		if detectedFace, ok := assignments[marker.MarkerUID]; ok && face.ValidEmbeddings(detectedFace.Embeddings, embedder.Dims()) {
 			result[marker.MarkerUID] = detectedFace.Embeddings
 		}
 	}
@@ -501,21 +500,6 @@ func markerCropArea(marker entity.Marker) crop.Area {
 	return crop.Area{Name: "face", X: marker.X, Y: marker.Y, W: marker.W, H: marker.H}
 }
 
-// validMigrationEmbeddings checks the cardinality, dimensions, and values of an embedding result.
-func validMigrationEmbeddings(embeddings face.Embeddings, dims int) bool {
-	if !embeddings.One() || dims < 1 || len(embeddings[0]) != dims {
-		return false
-	}
-
-	for _, value := range embeddings[0] {
-		if math.IsNaN(value) || math.IsInf(value, 0) {
-			return false
-		}
-	}
-
-	return true
-}
-
 // buildFaceMigrationClusters creates one replacement manual cluster per subject.
 func buildFaceMigrationClusters(model string) (result []query.FaceMigrationCluster, rebuilt int, err error) {
 	markers, err := query.FaceMigrationManualMarkers(model)
@@ -529,7 +513,7 @@ func buildFaceMigrationClusters(model string) (result []query.FaceMigrationClust
 
 	groups := make(map[string]entity.Markers)
 	for _, marker := range markers {
-		if validMigrationEmbeddings(marker.Embeddings(), registered.Dims) {
+		if face.ValidEmbeddings(marker.Embeddings(), registered.Dims) {
 			groups[marker.SubjUID] = append(groups[marker.SubjUID], marker)
 		}
 	}
@@ -552,7 +536,7 @@ func buildFaceMigrationClusters(model string) (result []query.FaceMigrationClust
 			continue
 		}
 
-		cluster := entity.NewFace(subjectUID, entity.SrcManual, embeddings)
+		cluster := entity.NewFace(subjectUID, entity.SrcManual, embeddings, model)
 		if cluster == nil || cluster.ID == "" || cluster.EmbedModel != model || len(cluster.Embedding()) == 0 {
 			log.Warnf("faces: failed rebuilding manual cluster for subject %s", clean.Log(subjectUID))
 			continue

@@ -32,8 +32,12 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 		return added, nil
 	}
 
+	// Read the configured model once, so the vectors the clusterer consumes and the name
+	// stamped on the resulting clusters come from one observation.
+	current := face.EmbeddingModelName()
+
 	// Fetch unclustered face embeddings.
-	embeddings, err := query.Embeddings(false, true, face.ClusterSizeThreshold, face.ClusterScoreThreshold, face.EmbeddingModelName())
+	embeddings, err := query.Embeddings(false, true, face.ClusterSizeThreshold, face.ClusterScoreThreshold, current)
 
 	log.Debugf("faces: found %s", english.Plural(len(embeddings), "unclustered sample", "unclustered samples"))
 
@@ -89,8 +93,8 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 				log.Infof("cluster: added %d of %d faces", i, resultLen)
 				start = time.Now()
 			}
-			if f := entity.NewFace("", entity.SrcAuto, cluster); f == nil {
-				log.Errorf("faces: face must not be nil - you may have found a bug")
+			if f := entity.NewFace("", entity.SrcAuto, cluster, current); f == nil || f.ID == "" {
+				log.Errorf("faces: skipped cluster that could not be created")
 			} else if f.SkipMatching() {
 				log.Infof("faces: skipped cluster %s, embedding not distinct enough", f.ID)
 			} else if err = f.Create(); err == nil {

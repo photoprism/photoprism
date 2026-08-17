@@ -170,7 +170,7 @@ func TestFaces_auditEmbeddingModels(t *testing.T) {
 	})
 	t.Run("StaleClusters", func(t *testing.T) {
 		// A cluster from another model must be reported as stale.
-		m := entity.NewFace("", entity.SrcAuto, face.Embeddings{face.RandomEmbedding()})
+		m := entity.NewFace("", entity.SrcAuto, face.Embeddings{face.RandomEmbedding()}, face.EmbeddingModelName())
 		require.NotNil(t, m)
 		m.EmbedModel = face.ModelArcFaceR50
 		require.NoError(t, entity.Db().Create(m).Error)

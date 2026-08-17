@@ -41,6 +41,7 @@ type Face struct {
 	Area       Area       `json:"face"`
 	Eyes       Areas      `json:"eyes,omitempty"`
 	Landmarks  Areas      `json:"landmarks,omitempty"`
+	EmbedModel ModelName  `json:"model,omitempty"`
 	Embeddings Embeddings `json:"embeddings,omitempty"`
 }
 

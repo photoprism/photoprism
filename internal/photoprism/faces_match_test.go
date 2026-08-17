@@ -32,7 +32,7 @@ func TestFaces_Match(t *testing.T) {
 
 // TestBuildFaceCandidates validates that we drop non-matchable faces when building the index.
 func TestBuildFaceCandidates(t *testing.T) {
-	regular := entity.NewFace("", entity.SrcAuto, face.RandomEmbeddings(3, face.RegularFace))
+	regular := entity.NewFace("", entity.SrcAuto, face.RandomEmbeddings(3, face.RegularFace), face.EmbeddingModelName())
 	require.NotNil(t, regular)
 
 	// A cluster from another embedding space must never be compared with the current one.
@@ -60,7 +60,7 @@ func TestBuildFaceCandidates(t *testing.T) {
 // TestFaceCandidateMatch covers the accept distance and collision gates in isolation.
 func TestFaceCandidateMatch(t *testing.T) {
 	embeddings := face.RandomEmbeddings(1, face.RegularFace)
-	ref := entity.NewFace("", entity.SrcAuto, embeddings)
+	ref := entity.NewFace("", entity.SrcAuto, embeddings, face.EmbeddingModelName())
 	require.NotNil(t, ref)
 
 	t.Run("Match", func(t *testing.T) {
@@ -92,12 +92,12 @@ func TestFaceCandidateMatch(t *testing.T) {
 func TestSelectBestFace(t *testing.T) {
 	markerEmb := face.RandomEmbeddings(1, face.RegularFace)
 
-	matchFace := entity.NewFace("", entity.SrcAuto, markerEmb)
+	matchFace := entity.NewFace("", entity.SrcAuto, markerEmb, face.EmbeddingModelName())
 	require.NotNil(t, matchFace)
 
 	// Force a different face that should not be a better match.
 	otherEmb := face.RandomEmbeddings(4, face.RegularFace)
-	otherFace := entity.NewFace("", entity.SrcAuto, otherEmb)
+	otherFace := entity.NewFace("", entity.SrcAuto, otherEmb, face.EmbeddingModelName())
 	require.NotNil(t, otherFace)
 
 	faces := entity.Faces{*matchFace, *otherFace}

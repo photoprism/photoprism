@@ -164,7 +164,7 @@ func TestFinalizeFaceMigration(t *testing.T) {
 
 	identities, err := FaceMigrationManualIdentities()
 	require.NoError(t, err)
-	cluster := entity.NewFace(subjectUID, entity.SrcManual, manual.Embeddings())
+	cluster := entity.NewFace(subjectUID, entity.SrcManual, manual.Embeddings(), face.EmbeddingModelName())
 	require.NotNil(t, cluster)
 
 	require.NoError(t, FinalizeFaceMigration(face.ModelFaceNet, identities, []FaceMigrationCluster{{

@@ -14,12 +14,12 @@ func BenchmarkSelectBestFace(b *testing.B) {
 	faces := make(entity.Faces, 0, candidateCount)
 
 	for range candidateCount {
-		f := entity.NewFace("", entity.SrcAuto, face.RandomEmbeddings(5, face.RegularFace))
+		f := entity.NewFace("", entity.SrcAuto, face.RandomEmbeddings(5, face.RegularFace), face.EmbeddingModelName())
 		faces = append(faces, *f)
 	}
 
 	markerEmb := face.RandomEmbeddings(3, face.RegularFace)
-	faces[0] = *entity.NewFace("", entity.SrcAuto, markerEmb)
+	faces[0] = *entity.NewFace("", entity.SrcAuto, markerEmb, face.EmbeddingModelName())
 
 	index := buildFaceIndex(faces)
 	hash := embeddingSignHashFromEmbeddings(markerEmb)
@@ -42,12 +42,12 @@ func BenchmarkSelectBestFaceLegacy(b *testing.B) {
 	faces := make(entity.Faces, 0, candidateCount)
 
 	for range candidateCount {
-		f := entity.NewFace("", entity.SrcAuto, face.RandomEmbeddings(5, face.RegularFace))
+		f := entity.NewFace("", entity.SrcAuto, face.RandomEmbeddings(5, face.RegularFace), face.EmbeddingModelName())
 		faces = append(faces, *f)
 	}
 
 	markerEmb := face.RandomEmbeddings(3, face.RegularFace)
-	faces[0] = *entity.NewFace("", entity.SrcAuto, markerEmb)
+	faces[0] = *entity.NewFace("", entity.SrcAuto, markerEmb, face.EmbeddingModelName())
 
 	b.ResetTimer()
 
@@ -61,7 +61,7 @@ func legacySelectBestFace(marker face.Embeddings, faces entity.Faces) (*entity.F
 	bestDist := -1.0
 
 	for i := range faces {
-		if ok, dist := faces[i].Match(marker); ok {
+		if ok, dist := faces[i].Match(marker, face.EmbeddingModelName()); ok {
 			if best == nil || dist < bestDist {
 				best = &faces[i]
 				bestDist = dist

@@ -44,8 +44,11 @@ func GenerateEmbeddings(embedder face.Embedder, fileName string, faces face.Face
 			continue
 		}
 
+		// The name is recorded next to the vector because this is the last frame where the
+		// producer is known: everything downstream would have to ask global configuration.
 		if embeddings := embedder.Run(img); !embeddings.Empty() {
 			f.Embeddings = embeddings
+			f.EmbedModel = embedder.ModelName()
 		}
 	}
 }
