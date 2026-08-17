@@ -104,9 +104,7 @@ func (m *Face) SetEmbeddings(embeddings face.Embeddings) (err error) {
 	m.EmbedModel = face.EmbeddingModelName()
 
 	// Limit sample radius to reduce false positives.
-	if m.SampleRadius > face.ClusterRadius {
-		m.SampleRadius = face.ClusterRadius
-	}
+	m.SampleRadius = face.ClampSampleRadius(m.SampleRadius)
 
 	m.EmbeddingJSON, err = json.Marshal(m.embedding)
 
@@ -150,6 +148,13 @@ func (m *Face) SameEmbeddingModel() bool {
 	return face.ModelsComparable(m.EmbedModel, face.EmbeddingModelName())
 }
 
+// AcceptDist returns the distance below which an embedding joins this cluster.
+// The stored radius is clamped on read as well as on write, so a changed cluster
+// radius applies to existing rows before a match run rewrites their statistics.
+func (m *Face) AcceptDist() float64 {
+	return face.AcceptDist(m.SampleRadius)
+}
+
 // Match tests if embeddings match this face.
 func (m *Face) Match(embeddings face.Embeddings) (match bool, dist float64) {
 	dist = -1
@@ -184,7 +189,7 @@ func (m *Face) Match(embeddings face.Embeddings) (match bool, dist float64) {
 	case dist < 0:
 		// Should never happen.
 		return false, dist
-	case dist > (m.SampleRadius + face.MatchDist):
+	case dist > m.AcceptDist():
 		// Too far.
 		return false, dist
 	case m.CollisionRadius > face.CollisionDist && dist > m.CollisionRadius:
@@ -315,15 +320,9 @@ func (m *Face) UpdateMatchStats(samples int, maxDistance float64) error {
 		return nil
 	}
 
-	radius := maxDistance + face.Epsilon
-
-	if radius > face.ClusterRadius {
-		radius = face.ClusterRadius
-	}
-
-	if radius < 0 {
-		radius = 0
-	}
+	// The epsilon slack is applied before clamping so it can never lift the stored
+	// radius above the configured maximum.
+	radius := face.ClampSampleRadius(maxDistance + face.Epsilon)
 
 	if m.Samples == samples && m.SampleRadius == radius {
 		return nil

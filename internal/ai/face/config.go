@@ -20,6 +20,16 @@ const (
 	EpsilonDefault = 0.01
 )
 
+const (
+	// ThresholdMax is the largest value accepted for a configurable distance threshold.
+	ThresholdMax = 1.5
+	// AcceptDistMax is the highest distance at which an embedding may still join a cluster.
+	// Embeddings are unit vectors, so two independent ones sit at √2 ≈ 1.41 in expectation
+	// and a cutoff at or above that accepts every pair. The bound follows from
+	// normalization alone and therefore holds for every embedding model.
+	AcceptDistMax = 1.4
+)
+
 var (
 	// CropSize is the face image crop size used when generating FaceNet embeddings.
 	CropSize = crop.Sizes[crop.Tile160]
@@ -53,3 +63,25 @@ var (
 	// Epsilon is the numeric tolerance used during cluster comparisons.
 	Epsilon = EpsilonDefault
 )
+
+// ClampSampleRadius limits a cluster sample radius to the configured range.
+func ClampSampleRadius(radius float64) float64 {
+	if radius > ClusterRadius {
+		return ClusterRadius
+	} else if radius < 0 {
+		return 0
+	}
+
+	return radius
+}
+
+// AcceptDist returns the distance below which an embedding joins a cluster with the
+// specified sample radius. Clamping here rather than only where the radius is stored
+// keeps a recalibrated ClusterRadius authoritative for rows written by an earlier one.
+func AcceptDist(sampleRadius float64) float64 {
+	if dist := ClampSampleRadius(sampleRadius) + MatchDist; dist < AcceptDistMax {
+		return dist
+	}
+
+	return AcceptDistMax
+}

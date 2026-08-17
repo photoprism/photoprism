@@ -51,6 +51,41 @@ func TestBuildFaceCandidates(t *testing.T) {
 
 	require.Len(t, index.fallback, 1)
 	require.Equal(t, regular.ID, index.fallback[0].ref.ID)
+
+	// The candidate caches the clamped cutoff, not the raw column, so a stored radius
+	// from an earlier calibration cannot widen the gate for a whole match run.
+	require.InDelta(t, regular.AcceptDist(), index.fallback[0].acceptDist, 1e-9)
+}
+
+// TestFaceCandidateMatch covers the accept distance and collision gates in isolation.
+func TestFaceCandidateMatch(t *testing.T) {
+	embeddings := face.RandomEmbeddings(1, face.RegularFace)
+	ref := entity.NewFace("", entity.SrcAuto, embeddings)
+	require.NotNil(t, ref)
+
+	t.Run("Match", func(t *testing.T) {
+		c := faceCandidate{ref: ref, emb: ref.Embedding(), acceptDist: face.AcceptDist(0)}
+		matched, dist := c.match(embeddings)
+		require.True(t, matched)
+		require.InDelta(t, 0.0, dist, 1e-9)
+	})
+	t.Run("TooFar", func(t *testing.T) {
+		c := faceCandidate{ref: ref, emb: ref.Embedding(), acceptDist: -1}
+		matched, _ := c.match(embeddings)
+		require.False(t, matched)
+	})
+	t.Run("WithinCollisionRadius", func(t *testing.T) {
+		c := faceCandidate{ref: ref, emb: ref.Embedding(), acceptDist: face.AcceptDist(0),
+			collisionRadius: face.CollisionDist * 2}
+		matched, _ := c.match(embeddings)
+		require.True(t, matched)
+	})
+	t.Run("NoEmbeddings", func(t *testing.T) {
+		c := faceCandidate{ref: ref, emb: ref.Embedding(), acceptDist: face.AcceptDist(0)}
+		matched, dist := c.match(face.Embeddings{})
+		require.False(t, matched)
+		require.InDelta(t, -1.0, dist, 1e-9)
+	})
 }
 
 // TestSelectBestFace ensures the best candidate is returned after indexing.

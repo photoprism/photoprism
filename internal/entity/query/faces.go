@@ -337,7 +337,7 @@ func ResolveFaceCollisions() (conflicts, resolved int, err error) {
 
 				conflicts++
 
-				r := f1.SampleRadius + face.MatchDist
+				r := f1.AcceptDist()
 
 				log.Infof("faces: face %s has ambiguous subject at dist %f, Ø %f from %d samples, collision Ø %f", f1.ID, dist, r, f1.Samples, f1.CollisionRadius)
 

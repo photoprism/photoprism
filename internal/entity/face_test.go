@@ -17,10 +17,12 @@ func TestFace_TableName(t *testing.T) {
 
 func TestFace_Match(t *testing.T) {
 	t.Run("Num1000003Four", func(t *testing.T) {
+		// The fixture carries a radius from an earlier calibration, so the clamp on read
+		// is what keeps it from widening the gate to the stored 2.4.
 		m := FaceFixtures.Get("joe-biden")
 		match, dist := m.Match(MarkerFixtures.Pointer("1000003-4").Embeddings())
 
-		assert.True(t, match)
+		assert.False(t, match)
 		assert.Greater(t, dist, 1.31)
 		assert.Less(t, dist, 1.32)
 	})
@@ -28,9 +30,23 @@ func TestFace_Match(t *testing.T) {
 		m := FaceFixtures.Get("joe-biden")
 		match, dist := m.Match(MarkerFixtures.Pointer("1000003-6").Embeddings())
 
-		assert.True(t, match)
+		assert.False(t, match)
 		assert.Greater(t, dist, 1.27)
 		assert.Less(t, dist, 1.28)
+	})
+	t.Run("ClusterRadiusRaised", func(t *testing.T) {
+		// A wider radius reaches the stored row without rewriting it, which is the point
+		// of clamping against the live value instead of trusting the column.
+		restore := face.ClusterRadius
+		t.Cleanup(func() { face.ClusterRadius = restore })
+		face.ClusterRadius = 0.95
+
+		m := FaceFixtures.Get("joe-biden")
+		match, dist := m.Match(MarkerFixtures.Pointer("1000003-4").Embeddings())
+
+		assert.True(t, match)
+		assert.Greater(t, dist, 1.31)
+		assert.Less(t, dist, 1.32)
 	})
 	t.Run("LenEmbeddingsEqualZero", func(t *testing.T) {
 		m := FaceFixtures.Get("joe-biden")
@@ -56,6 +72,12 @@ func TestFace_Match(t *testing.T) {
 
 func TestFace_ResolveCollision(t *testing.T) {
 	t.Run("Collision", func(t *testing.T) {
+		// Both markers sit beyond the accept distance the shipped radius allows, so the
+		// gate has to be widened for the collision bookkeeping below to be reachable.
+		restore := face.ClusterRadius
+		t.Cleanup(func() { face.ClusterRadius = restore })
+		face.ClusterRadius = 0.95
+
 		m := FaceFixtures.Get("joe-biden")
 
 		assert.Zero(t, m.Collisions)
@@ -237,6 +259,60 @@ func TestFace_MatchMarkersEmpty(t *testing.T) {
 	m := FaceFixtures.Get("joe-biden")
 	require.NoError(t, m.MatchMarkers(nil))
 	require.NoError(t, m.MatchMarkers([]string{}))
+}
+
+func TestFace_AcceptDist(t *testing.T) {
+	t.Run("WithinClusterRadius", func(t *testing.T) {
+		m := &Face{SampleRadius: 0.2}
+		assert.InDelta(t, 0.2+face.MatchDist, m.AcceptDist(), 1e-9)
+	})
+	t.Run("StoredRadiusClamped", func(t *testing.T) {
+		m := &Face{SampleRadius: 2}
+		assert.InDelta(t, face.ClusterRadius+face.MatchDist, m.AcceptDist(), 1e-9)
+	})
+	t.Run("CappedAtCeiling", func(t *testing.T) {
+		restoreRadius, restoreDist := face.ClusterRadius, face.MatchDist
+		t.Cleanup(func() { face.ClusterRadius, face.MatchDist = restoreRadius, restoreDist })
+		face.ClusterRadius, face.MatchDist = face.ThresholdMax, face.ThresholdMax
+
+		m := &Face{SampleRadius: face.ThresholdMax}
+		assert.InDelta(t, face.AcceptDistMax, m.AcceptDist(), 1e-9)
+	})
+}
+
+func TestFace_UpdateMatchStats(t *testing.T) {
+	t.Run("NoFaceId", func(t *testing.T) {
+		m := &Face{}
+		require.NoError(t, m.UpdateMatchStats(3, 0.2))
+		assert.Zero(t, m.Samples)
+		assert.Zero(t, m.SampleRadius)
+	})
+	t.Run("NoSamples", func(t *testing.T) {
+		m := FaceFixtures.Pointer("jane-doe")
+		radius := m.SampleRadius
+		require.NoError(t, m.UpdateMatchStats(0, 0.2))
+		assert.Equal(t, radius, m.SampleRadius)
+	})
+	t.Run("AddsEpsilonSlack", func(t *testing.T) {
+		m := NewFace("uds5ttbeu5yj2sqf", SrcAuto, face.RandomEmbeddings(1, face.RegularFace))
+		require.NoError(t, m.Create())
+		require.NoError(t, m.UpdateMatchStats(4, 0.1))
+		assert.Equal(t, 4, m.Samples)
+		assert.InDelta(t, 0.1+face.Epsilon, m.SampleRadius, 1e-9)
+	})
+	t.Run("ClampsToClusterRadius", func(t *testing.T) {
+		// The slack must not be able to lift the stored radius past the configured cap.
+		m := NewFace("uds5ttbeu5yj2sqg", SrcAuto, face.RandomEmbeddings(1, face.RegularFace))
+		require.NoError(t, m.Create())
+		require.NoError(t, m.UpdateMatchStats(4, face.ClusterRadius))
+		assert.InDelta(t, face.ClusterRadius, m.SampleRadius, 1e-9)
+	})
+	t.Run("NegativeDistance", func(t *testing.T) {
+		m := NewFace("uds5ttbeu5yj2sqh", SrcAuto, face.RandomEmbeddings(1, face.RegularFace))
+		require.NoError(t, m.Create())
+		require.NoError(t, m.UpdateMatchStats(4, -1))
+		assert.Zero(t, m.SampleRadius)
+	})
 }
 
 func TestFace_UpdateMatchTime(t *testing.T) {

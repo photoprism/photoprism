@@ -211,6 +211,13 @@ func TestEmbeddingModelThresholds(t *testing.T) {
 			assert.NotEqual(t, MatchDistDefault, m.MatchDist, name)
 		}
 	})
+	t.Run("AcceptDistStaysBelowCeiling", func(t *testing.T) {
+		// A model calibrated above the ceiling would be silently capped at runtime, so
+		// adding one is a decision to make here rather than discover in production.
+		for name, m := range EmbeddingModels {
+			assert.Less(t, m.ClusterRadius+m.MatchDist, float64(AcceptDistMax), name)
+		}
+	})
 }
 
 func TestAutoModelPreference(t *testing.T) {

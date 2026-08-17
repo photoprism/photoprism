@@ -28,7 +28,7 @@ type faceMatchStats struct {
 type faceCandidate struct {
 	ref             *entity.Face
 	emb             face.Embedding
-	sampleRadius    float64
+	acceptDist      float64
 	collisionRadius float64
 }
 
@@ -75,7 +75,7 @@ func buildFaceIndex(faces entity.Faces) faceIndex {
 		candidate := faceCandidate{
 			ref:             f,
 			emb:             embedding,
-			sampleRadius:    f.SampleRadius,
+			acceptDist:      f.AcceptDist(),
 			collisionRadius: f.CollisionRadius,
 		}
 
@@ -90,8 +90,6 @@ func buildFaceIndex(faces entity.Faces) faceIndex {
 
 // match checks whether the supplied marker embeddings fall within the distance and collision
 // thresholds for the candidate face, returning the match flag and distance.
-// match checks whether the supplied marker embeddings fall within the distance and collision
-// thresholds for the candidate face, returning the match flag and distance.
 func (c faceCandidate) match(embeddings face.Embeddings) (bool, float64) {
 	if embeddings.Empty() || len(c.emb) == 0 {
 		return false, -1
@@ -103,7 +101,7 @@ func (c faceCandidate) match(embeddings face.Embeddings) (bool, float64) {
 		return false, dist
 	}
 
-	if dist > (c.sampleRadius + face.MatchDist) {
+	if dist > c.acceptDist {
 		return false, dist
 	}
 
