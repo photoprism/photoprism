@@ -34,11 +34,11 @@ import (
 )
 
 // dsnPattern is a regular expression matching a database DSN string.
-var dsnPattern = regexp.MustCompile(
-	`^((?P<driver>.*):\/\/)?(?:(?P<user>.*?)(?::(?P<password>.*))?@)?` +
-		`(?:(?P<net>[^\(]*)(?:\((?P<server>[^\)]*)\))?)?` +
-		`\/(?P<name>.*?)` +
-		`(?:\?(?P<params>[^\?]*))?$`)
+var dsnPattern = regexp.MustCompile(`((?P<driver>.*):\/\/)?` +
+	`(?:(?P<user>.*?)(?::(?P<password>.*))?@)?` +
+	`(?:(?P<net>(?i)tcp|socket|pipe|memory|unix)+(?:\()+)?(?:(?P<server>[^\)]+)+(?:\))?(\/)+)?` +
+	`(?P<name>[^?]+)` +
+	`(?:\?(?P<params>[^\?]*))?$`)
 
 // dsnPostgresPasswordPattern is a regular expression matching a password in a PostgreSQL-style database DSN string.
 var dsnPostgresPasswordPattern = regexp.MustCompile(`(?i)(password\s*=\s*)("[^"]*"|'[^']*'|\S+)`)
@@ -58,6 +58,20 @@ type DSN struct {
 // String returns the original DSN string.
 func (d *DSN) String() string {
 	return d.DSN
+}
+
+// SQLiteFilename returns the filename including any provided path from the DSN,
+// or empty string if not applicable.
+func (d *DSN) SQLiteFilename() string {
+	if d.Driver == DriverSQLite3 {
+		if d.Server == "" {
+			return d.Name
+		} else {
+			return strings.TrimPrefix(d.Server, "file:") + "/" + d.Name
+		}
+	} else {
+		return ""
+	}
 }
 
 // MaskPassword hides the password portion of a DSN while leaving the rest untouched for logging/reporting.

@@ -15,9 +15,9 @@ const (
 
 // SQLite default DSNs.
 const (
-	SQLiteTestDB       = ".test.db"              // Default on-disk DSN for tests that need a fresh SQLite database.
-	SQLiteMemory       = ":memory:"              // Bare in-memory DSN; each connection gets a separate database (rarely what tests want).
-	SQLiteMemoryShared = ":memory:?cache=shared" // In-memory DSN with shared page cache; multiple connections share one database.
+	SQLiteTestDB       = ".test.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL" // Default on-disk DSN for tests that need a fresh SQLite database.
+	SQLiteMemory       = ":memory:"                                                          // Bare in-memory DSN; each connection gets a separate database (rarely what tests want).
+	SQLiteMemoryShared = ":memory:?cache=shared"                                             // In-memory DSN with shared page cache; multiple connections share one database.
 )
 
 // ParseDriver canonicalizes a user-supplied driver identifier.
@@ -43,5 +43,5 @@ var Params = Values{
 	DriverMySQL:    "charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true",
 	DriverMariaDB:  "charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true",
 	DriverPostgres: "sslmode=disable TimeZone=UTC",
-	DriverSQLite3:  "_busy_timeout=5000",
+	DriverSQLite3:  "_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
 }
