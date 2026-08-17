@@ -7,6 +7,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -35,18 +36,25 @@ var labelWordSplitter = strings.NewReplacer(
 )
 
 // normalizeLabelResult canonicalizes the label name, merges categories, and assigns a priority so every engine reuses the same vocabulary logic.
-func normalizeLabelResult(result *LabelResult) {
+// Only the name depends on the normalize type; everything else is applied the same way in every mode.
+func normalizeLabelResult(result *LabelResult, mode NormalizeType) {
 	if result == nil {
 		return
 	}
 
 	// Get canonical label name and metadata,
-	name, meta := resolveLabelName(result.Name)
+	name, meta := resolveLabelName(result.Name, mode)
+
+	// Drop labels that have no name left after cleanup.
+	if name == "" {
+		result.Name = ""
+		result.Categories = nil
+		result.Priority = 0
+		return
+	}
 
 	// Use canonical name from rules.
-	if name != "" {
-		result.Name = name
-	}
+	result.Name = name
 
 	// Apply Confidence threshold if configured and the label has a Confidence score.
 	if result.Confidence > 0 || meta.Threshold == 1 {
@@ -121,11 +129,26 @@ func normalizeLabelResult(result *LabelResult) {
 	}
 }
 
-// resolveLabelName returns the canonical label name and metadata, preferring (1) TensorFlow rules, (2) existing PhotoPrism labels, (3) sanitized tokens, then (4) a Title-case fallback.
-func resolveLabelName(raw string) (string, canonicalLabel) {
+// resolveLabelName returns the canonical label name and metadata for the specified normalize type.
+// NormalizeWord prefers rules, then existing labels, then tokens, then a Title-case fallback.
+func resolveLabelName(raw string, mode NormalizeType) (string, canonicalLabel) {
 	raw = strings.TrimSpace(raw)
 	if raw == "" {
 		return "", canonicalLabel{}
+	}
+
+	switch mode {
+	case NormalizePhrase:
+		return resolveLabelPhrase(raw)
+	case NormalizeFalse:
+		return resolveLabelRaw(raw)
+	}
+
+	// A name in another script cannot match the English vocabulary, so splitting it into tokens
+	// has nothing to resolve against and only changes the subject: the Arabic "حمار وحشي" (zebra)
+	// would be stored as "حمار" (donkey).
+	if !hasLatinLetters(raw) {
+		return resolveLabelPhrase(raw)
 	}
 
 	if meta, ok := canonicalLabelFor(raw); ok {
@@ -166,6 +189,68 @@ func resolveLabelName(raw string) (string, canonicalLabel) {
 	}
 
 	return txt.Title(raw), canonicalLabel{}
+}
+
+// resolveLabelPhrase matches the whole name against the vocabulary and existing labels, keeping the
+// cleaned phrase when there is no match instead of collapsing it to a single token.
+func resolveLabelPhrase(raw string) (string, canonicalLabel) {
+	if meta, ok := canonicalLabelFor(raw); ok {
+		return meta.Name, meta
+	}
+
+	if singular := trimPlural(raw); singular != raw {
+		if meta, ok := canonicalLabelFor(singular); ok {
+			return meta.Name, meta
+		}
+	}
+
+	if meta, ok := lookupExistingLabel(raw); ok {
+		return meta.Name, meta
+	}
+
+	phrase := labelPhrase(raw)
+	if phrase == "" {
+		return "", canonicalLabel{}
+	}
+
+	// Cleanup can change the slug, so the vocabulary is worth a second look.
+	if meta, ok := canonicalLabelFor(phrase); ok {
+		return meta.Name, meta
+	}
+
+	return phrase, canonicalLabel{}
+}
+
+// resolveLabelRaw keeps the name the model returned and looks up rule metadata only, so thresholds,
+// categories, and priorities apply exactly as they do in the other modes.
+func resolveLabelRaw(raw string) (string, canonicalLabel) {
+	phrase := labelPhrase(raw)
+	if phrase == "" {
+		return "", canonicalLabel{}
+	}
+
+	// Callers read the thresholds from meta and ignore meta.Name, so a renaming rule
+	// can be applied here without renaming anything.
+	meta, _ := canonicalLabelFor(phrase)
+
+	return phrase, meta
+}
+
+// labelPhrase normalizes separators, whitespace, and case without collapsing a name to one token.
+// Separators become spaces first, so "ferris-wheel" and "ferris wheel" cannot become two labels.
+func labelPhrase(raw string) string {
+	return clean.NameCapitalized(labelWordSplitter.Replace(raw))
+}
+
+// hasLatinLetters reports whether the name contains at least one letter of the Latin script.
+func hasLatinLetters(s string) bool {
+	for _, r := range s {
+		if unicode.Is(unicode.Latin, r) {
+			return true
+		}
+	}
+
+	return false
 }
 
 // candidateTokens breaks a raw label into sanitized tokens and adds potential singular forms.

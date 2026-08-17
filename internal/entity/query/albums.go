@@ -40,6 +40,28 @@ func AlbumByUID(albumUID string) (album entity.Album, err error) {
 	return entity.CachedAlbumByUID(albumUID)
 }
 
+// AlbumHasThumb tests if a usable cover file has been assigned to the album with the specified UID.
+// Requires the file to still resolve, so a stale hash falls back to a cover query.
+func AlbumHasThumb(albumUID string) bool {
+	if rnd.InvalidUID(albumUID, entity.AlbumUID) {
+		return false
+	}
+
+	var result []string
+
+	if err := Db().Model(entity.Album{}).
+		Joins("JOIN files ON files.file_hash = albums.thumb AND files.file_missing = 0 AND files.file_error = '' AND files.deleted_at IS NULL").
+		Where("albums.album_uid = ?", albumUID).
+		Limit(1).
+		Pluck("albums.thumb", &result).Error; err != nil {
+		return false
+	} else if len(result) == 0 {
+		return false
+	}
+
+	return result[0] != ""
+}
+
 // AlbumCoverByUID returns an album cover file based on the uid.
 func AlbumCoverByUID(uid string, public bool) (file entity.File, err error) {
 	if rnd.InvalidUID(uid, entity.AlbumUID) {

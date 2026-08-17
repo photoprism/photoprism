@@ -35,7 +35,7 @@ func DetectFaces(jpeg *MediaFile, expected int) (face.Faces, error) {
 	thumbName, err := jpeg.Thumbnail(Config().ThumbCachePath(), thumbSize)
 
 	if err != nil {
-		log.Debugf("vision: %s in %s (detect faces)", err, clean.Log(jpeg.BaseName()))
+		log.Debugf("%s (detect faces)", err)
 		return face.Faces{}, err
 	}
 

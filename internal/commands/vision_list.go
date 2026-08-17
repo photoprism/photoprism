@@ -10,6 +10,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt/report"
 )
 
@@ -21,7 +22,24 @@ var VisionListCommand = &cli.Command{
 	Action: visionListAction,
 }
 
-// visionListAction displays existing user accounts.
+// visionEndpoint renders a service endpoint for display, without the credentials that
+// Service.Endpoint injects into the URL for the request itself.
+func visionEndpoint(uri, method string) string {
+	if uri == "" || method == "" {
+		return ""
+	}
+
+	if redacted := clean.UriRedacted(uri); redacted != "" {
+		uri = redacted
+	} else {
+		// An unparsable URI is shown as a placeholder: it may still carry credentials.
+		uri = "?"
+	}
+
+	return fmt.Sprintf("%s %s", method, uri)
+}
+
+// visionListAction displays the configured computer vision models.
 func visionListAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
 		var rows [][]string
@@ -32,6 +50,7 @@ func visionListAction(ctx *cli.Context) error {
 			"Engine",
 			"Endpoint",
 			"Format",
+			"Normalize",
 			"Resolution",
 			"Options",
 			"Schedule",
@@ -91,12 +110,21 @@ func visionListAction(ctx *cli.Context) error {
 
 			engine := model.EngineName()
 
+			// Normalization only runs on the response of a remote labels model, and the
+			// effective mode is shown because an unset value resolves to one.
+			var normalize string
+
+			if model.Type == vision.ModelTypeLabels && modelUri != "" && modelMethod != "" {
+				normalize = model.GetNormalize()
+			}
+
 			rows[i] = []string{
 				name,
 				model.Type,
 				engine,
-				fmt.Sprintf("%s %s", modelMethod, modelUri),
+				visionEndpoint(modelUri, modelMethod),
 				format,
+				normalize,
 				fmt.Sprintf("%d", model.Resolution),
 				report.Bool(model.TensorFlow != nil, fmt.Sprintf(`{"tags":"%s"}`, tags), string(options)),
 				run,

@@ -123,7 +123,7 @@ mkdir -p "${DESTDIR}/bin"
 tmp_dir=$(mktemp -d)
 trap 'rm -rf "${tmp_dir}"' EXIT
 
-curl --fail --silent --show-error --location "${ASSET_URL}" -o "${tmp_dir}/${ASSET_NAME}"
+curl --fail --silent --show-error --location --retry 3 --retry-delay 2 --retry-all-errors "${ASSET_URL}" -o "${tmp_dir}/${ASSET_NAME}"
 
 if [[ -n "${CHECKSUM_URL}" ]]; then
   curl --fail --silent --show-error --location "${CHECKSUM_URL}" -o "${tmp_dir}/checksums.txt"

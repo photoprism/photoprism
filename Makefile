@@ -464,6 +464,40 @@ claude-skills:
 	else \
 	  echo "No specs/.claude/skills directory found, skipping."; \
 	fi
+	@if [ -d "specs/.claude/agents" ]; then \
+	  echo "Linking Claude Code subagents from specs/.claude/agents..."; \
+	  install -d -m 755 -- ".claude/agents"; \
+	  for src in specs/.claude/agents/*.md; do \
+	    [ -f "$$src" ] || continue; \
+	    name=$$(basename "$$src"); \
+	    link=".claude/agents/$$name"; \
+	    target="../../specs/.claude/agents/$$name"; \
+	    if [ -L "$$link" ] || [ ! -e "$$link" ]; then \
+	      ln -sfn "$$target" "$$link"; \
+	    else \
+	      echo "WARNING: $$link exists and is not a symlink, skipping"; \
+	    fi; \
+	  done; \
+	else \
+	  echo "No specs/.claude/agents directory found, skipping."; \
+	fi
+	@if [ -d "specs/.claude/output-styles" ]; then \
+	  echo "Linking Claude Code output styles from specs/.claude/output-styles..."; \
+	  install -d -m 755 -- ".claude/output-styles"; \
+	  for src in specs/.claude/output-styles/*.md; do \
+	    [ -f "$$src" ] || continue; \
+	    name=$$(basename "$$src"); \
+	    link=".claude/output-styles/$$name"; \
+	    target="../../specs/.claude/output-styles/$$name"; \
+	    if [ -L "$$link" ] || [ ! -e "$$link" ]; then \
+	      ln -sfn "$$target" "$$link"; \
+	    else \
+	      echo "WARNING: $$link exists and is not a symlink, skipping"; \
+	    fi; \
+	  done; \
+	else \
+	  echo "No specs/.claude/output-styles directory found, skipping."; \
+	fi
 dep-go:
 	go build -v ./...
 dep-upgrade:
@@ -472,9 +506,7 @@ frontend-update:
 	make -C frontend update
 dep-upgrade-js: frontend-update
 dep-tensorflow:
-	scripts/download-facenet.sh
-	scripts/download-nasnet.sh
-	scripts/download-nsfw.sh
+	scripts/dist/download-models.sh facenet nasnet nsfw
 dep-onnx: dep-sface
 	scripts/download-scrfd.sh
 # Part of "dep" because SFace is the embedding model new libraries default to, and

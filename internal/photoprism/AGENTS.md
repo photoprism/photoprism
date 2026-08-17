@@ -16,7 +16,7 @@
 - Default to safety: callers must not overwrite non-empty destination files unless they opt in with `force=true`.
 - Replacing an empty destination file is allowed without `force=true`.
 - Open overwriting destinations with `O_WRONLY|O_CREATE|O_TRUNC` so stale trailing bytes cannot survive; use `O_EXCL` when the caller must detect collisions.
-- App-level overwrite helpers live in `internal/photoprism/mediafile.go`; reusable helpers live in `pkg/fs/copy.go` and `pkg/fs/move.go`.
+- App-level overwrite helpers live in `internal/photoprism/mediafile.go`; reusable helpers live in `pkg/fs/copy_move.go` (`fs.Copy`, `fs.Move`).
 - Set `force=true` only for explicit replace flows or admin tools with confirmed overwrite, not for import or index flows that touch Originals.
 
 ## Tests

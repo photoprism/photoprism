@@ -525,3 +525,32 @@ func TestModel_FaceModel(t *testing.T) {
 		assert.Nil(t, (*Model)(nil).FaceModel())
 	})
 }
+
+func TestModel_IsCloud(t *testing.T) {
+	cases := []struct {
+		name  string
+		model *Model
+		want  bool
+	}{
+		{name: "Nil", model: nil, want: false},
+		{name: "Empty", model: &Model{}, want: false},
+		{name: "CloudTag", model: &Model{Engine: "ollama", Model: "minimax-m3:cloud"}, want: true},
+		{name: "CloudVersion", model: &Model{Engine: "ollama", Name: "kimi-k3", Version: "cloud"}, want: true},
+		{name: "SelfHosted", model: &Model{Engine: "ollama", Model: "gemma4:latest"}, want: false},
+		{name: "NoVersion", model: &Model{Engine: "ollama", Name: "gemma4"}, want: false},
+		{name: "OpenAIGPT", model: &Model{Engine: "openai", Name: "gpt-5-mini"}, want: true},
+		{name: "OpenAIReasoning", model: &Model{Engine: "openai", Name: "o4-mini"}, want: true},
+		{name: "OpenAICompatibleLocal", model: &Model{Engine: "openai", Name: "Qwen2.5-VL-7B-Instruct"}, want: false},
+		{name: "OllamaGPTName", model: &Model{Engine: "ollama", Model: "gpt-oss:20b"}, want: false},
+		{name: "CloudEndpointWithoutTag", model: &Model{Engine: "ollama", Model: "qwen3-vl:235b-instruct",
+			Service: Service{Uri: "https://ollama.com/api/generate", Method: "POST"}}, want: true},
+		{name: "LocalEndpoint", model: &Model{Engine: "ollama", Model: "gemma4:latest",
+			Service: Service{Uri: "http://192.0.2.10:11434/api/generate", Method: "POST"}}, want: false},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			assert.Equal(t, tc.want, tc.model.IsCloud())
+		})
+	}
+}

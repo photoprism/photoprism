@@ -2,15 +2,16 @@ package get
 
 import (
 	"sync"
-	"time"
 
 	gc "github.com/patrickmn/go-cache"
+
+	"github.com/photoprism/photoprism/internal/config/ttl"
 )
 
 var onceFolderCache sync.Once
 
 func initFolderCache() {
-	services.FolderCache = gc.New(time.Minute*15, 5*time.Minute)
+	services.FolderCache = gc.New(ttl.CacheCollection.Duration(), ttl.CacheCollectionCleanup.Duration())
 }
 
 // FolderCache returns the shared folder listing cache instance.

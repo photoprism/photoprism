@@ -197,7 +197,7 @@ Recovery steps:
 
 - `rm -f /tmp/photoprism/facenet.zip`
 - `rm -rf assets/models/facenet`
-- `make dep-tensorflow` (or `scripts/download-facenet.sh`)
+- `make dep-tensorflow` (or `scripts/dist/download-models.sh facenet`)
 - Re-run `go test ./internal/ai/face -run TestNet -count=1`
 
 ### Configuration Summary

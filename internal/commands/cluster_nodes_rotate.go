@@ -132,7 +132,7 @@ func clusterNodesRotateAction(ctx *cli.Context) error {
 			}
 			prompt := promptui.Prompt{Label: fmt.Sprintf("Rotate %s for %s?", what, clean.LogQuote(name)), IsConfirm: true}
 			if _, err := prompt.Run(); err != nil {
-				log.Infof("rotation cancelled for %s", clean.LogQuote(name))
+				log.Infof("rotation canceled for %s", clean.LogQuote(name))
 				return nil
 			}
 		}

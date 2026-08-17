@@ -1,6 +1,6 @@
 ## PhotoPrism — Thumbnails Package
 
-**Last Updated:** April 1, 2026
+**Last Updated:** August 13, 2026
 
 ### Overview
 
@@ -20,7 +20,7 @@
 
 - Produce consistent thumbnails for all configured sizes and resample modes.
 - Preserve color fidelity when cameras signal color space through EXIF interop tags.
-- Keep error paths non-fatal: invalid sizes, missing files, or absent profiles should return errors (not panics).
+- Keep error paths non-fatal: invalid sizes, missing files, or absent profiles should return errors (not panics). The libvips entry points `Vips` and `vipsConvert` reduce the binding's error to a single line before returning; `Verify` deliberately does not, because its caller discards the value rather than logging it at info level.
 
 ### Non-Goals
 
@@ -29,11 +29,13 @@
 
 ### Package Layout (Code Map)
 
-- `vips.go` — main `Vips` entry: load, resize/crop, strip metadata, export.
+- `vips.go` — main `Vips` entry: load, resize/crop, strip metadata, export; `vipsErr` error reduction.
+- `verify.go` — `Verify` decode probe; returns the libvips error unreduced.
+- `vips_convert.go` — HEIC/HEIF/AVIF and other format conversion via libvips (`vipsConvert`).
 - `vips_icc.go` — EXIF InteroperabilityIndex handling and ICC embedding.
 - `icc.go` — lists bundled ICC filenames (`IccProfiles`) and `GetIccProfile` helper.
 - `open.go`, `open_jpeg.go` — bounded file decode helpers for non-libvips paths, including explicit JPEG color handling and TIFF-safe dispatch via `pkg/fs`.
-- `resample.go`, `sizes.go` — resample options and predefined sizes.
+- `resample.go`, `sizes.go`, `size.go` — resample options, the predefined size catalog (`MaxSize`, `InvalidSize`), and the per-size helpers (`Uncached`, `ExceedsLimit`, `Clamp`, `Limit`).
 - `thumb.go` and helpers — naming, caching, file info.
 - Tests live alongside sources (`*_test.go`, fixtures under `testdata/`).
 
@@ -76,7 +78,7 @@
 
 - Cached thumbnails are written as JPEG or PNG and may be reopened through bounded helper paths for crop, preview, and AI follow-up work.
 - TIFF is intentionally excluded from generic Go decoder registration in this package and related callers so future code paths cannot reach the unsafe generic TIFF dispatch by accident.
-- Already-decoded `image.Image` values are resized, cropped, rotated, and saved through stdlib plus `golang.org/x/image/draw` helpers so the package no longer depends on `github.com/disintegration/imaging`.
+- Already-decoded `image.Image` values are resized, cropped, rotated, and saved through stdlib plus `golang.org/x/image/draw` helpers rather than through a third-party imaging library.
 - HEIC/HEIF and AVIF originals are converted through `vipsConvert`, which uses libvips (via libheif) to load and export the image. Because libheif always applies ISOBMFF `irot`/`imir` container transforms during decode and the HEIF spec treats EXIF orientation as informational only (see `strukturag/libheif#227`), `vipsConvert` skips explicit EXIF-based rotation entirely for images loaded through `heifload`. Older Apple HEIC files without `irot` (e.g. iPhone 7) that carry EXIF orientation are non-conformant per the spec and are not auto-rotated by this path.
 
 ### Go 1.26 JPEG Notes

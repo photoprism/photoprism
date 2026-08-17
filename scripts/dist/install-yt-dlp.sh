@@ -211,7 +211,7 @@ echo "Downloading the yt-dlp binary to \"${DESTBIN}\"..."
 mkdir -p "${DESTDIR}/bin"
 tmp_bin=$(mktemp)
 trap 'rm -f "${tmp_bin}" "${tmp_bin}.sums"' EXIT
-curl --fail --silent --show-error --location "${GITHUB_URL}" -o "${tmp_bin}"
+curl --fail --silent --show-error --location --retry 3 --retry-delay 2 --retry-all-errors "${GITHUB_URL}" -o "${tmp_bin}"
 
 # Verify the binary against the release SHA2-256SUMS manifest before installing.
 # Soft-fail when no manifest is published so older pinned tags still install.

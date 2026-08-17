@@ -99,6 +99,8 @@ func labelsInternal(images Files, mediaSrc media.Src, labelSrc entity.Src) (resu
 				}
 			}
 
+			apiRequest.Normalize = model.GetNormalize()
+
 			apiRequest.WriteLog()
 
 			if apiResponse, err = PerformApiRequest(apiRequest, uri, method, model.EndpointKey()); err != nil {

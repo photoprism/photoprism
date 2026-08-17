@@ -181,9 +181,11 @@ func (openaiParser) Parse(ctx context.Context, req *ApiRequest, raw []byte, stat
 		return nil, errors.New(resp.Error.Message)
 	}
 
+	normalize := req.GetNormalize()
+
 	result := ApiResult{}
 	if jsonPayload := resp.FirstJSON(); len(jsonPayload) > 0 {
-		if err := populateOpenAIJSONResult(&result, jsonPayload); err != nil {
+		if err := populateOpenAIJSONResult(&result, jsonPayload, normalize); err != nil {
 			log.Debugf("vision: %s (parse openai json payload)", clean.Error(err))
 		}
 	}
@@ -194,7 +196,7 @@ func (openaiParser) Parse(ctx context.Context, req *ApiRequest, raw []byte, stat
 			var parsedJSON bool
 
 			if len(trimmed) > 0 && (trimmed[0] == '{' || trimmed[0] == '[') {
-				if err := populateOpenAIJSONResult(&result, json.RawMessage(trimmed)); err != nil {
+				if err := populateOpenAIJSONResult(&result, json.RawMessage(trimmed), normalize); err != nil {
 					log.Debugf("vision: %s (parse openai json text payload)", clean.Error(err))
 				} else {
 					parsedJSON = true
@@ -282,7 +284,7 @@ func normalizeOpenAISchema(raw json.RawMessage) (json.RawMessage, error) {
 }
 
 // populateOpenAIJSONResult unmarshals a structured OpenAI response into ApiResult fields.
-func populateOpenAIJSONResult(result *ApiResult, payload json.RawMessage) error {
+func populateOpenAIJSONResult(result *ApiResult, payload json.RawMessage, normalize NormalizeType) error {
 	if result == nil || len(payload) == 0 {
 		return nil
 	}
@@ -318,7 +320,7 @@ func populateOpenAIJSONResult(result *ApiResult, payload json.RawMessage) error 
 				envelope.Labels[i].Source = entity.SrcOpenAI
 			}
 
-			normalizeLabelResult(&envelope.Labels[i])
+			normalizeLabelResult(&envelope.Labels[i], normalize)
 
 			if envelope.Labels[i].Name == "" {
 				continue

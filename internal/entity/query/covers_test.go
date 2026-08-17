@@ -40,6 +40,44 @@ func TestUpdateAlbumManualCoversFiltered(t *testing.T) {
 	assert.NotEmpty(t, refreshed.Thumb)
 }
 
+func TestRefreshManualAlbumCoverPrivate(t *testing.T) {
+	// A cover is published as a file hash that clients resolve through the thumbnail endpoint,
+	// which applies no privacy filter, so a private picture must never become the cover.
+	var album entity.Album
+
+	if err := UnscopedDb().Where("album_type = ? AND deleted_at IS NULL", entity.AlbumManual).First(&album).Error; err != nil {
+		t.Skipf("no manual album available: %v", err)
+	}
+
+	file, err := AlbumCoverByUID(album.AlbumUID, false)
+
+	if err != nil {
+		t.Skipf("album %s has no cover candidate: %v", album.AlbumUID, err)
+	}
+
+	photo := entity.Photo{}
+	require.NoError(t, UnscopedDb().Where("id = ?", file.PhotoID).First(&photo).Error)
+
+	origThumb, origSrc, origPrivate := album.Thumb, album.ThumbSrc, photo.PhotoPrivate
+
+	t.Cleanup(func() {
+		_ = UnscopedDb().Model(entity.Photo{}).Where("id = ?", file.PhotoID).Update("photo_private", origPrivate).Error
+		_ = entity.UpdateAlbum(album.AlbumUID, entity.Values{"thumb": origThumb, "thumb_src": origSrc})
+		entity.FlushAlbumCache()
+	})
+
+	require.NoError(t, UnscopedDb().Model(entity.Photo{}).Where("id = ?", file.PhotoID).Update("photo_private", true).Error)
+	require.NoError(t, entity.UpdateAlbum(album.AlbumUID, entity.Values{"thumb": "", "thumb_src": entity.SrcAuto}))
+	entity.FlushAlbumCache()
+
+	require.NoError(t, refreshManualAlbumCover(album))
+	entity.FlushAlbumCache()
+
+	refreshed, err := AlbumByUID(album.AlbumUID)
+	require.NoError(t, err)
+	assert.NotEqual(t, file.FileHash, refreshed.Thumb)
+}
+
 func TestUpdateAlbumFolderCovers(t *testing.T) {
 	assert.NoError(t, UpdateAlbumFolderCovers())
 }

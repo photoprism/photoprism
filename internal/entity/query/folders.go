@@ -1,6 +1,7 @@
 package query
 
 import (
+	"fmt"
 	"path/filepath"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -8,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // FoldersByPath returns a slice of folders in a given directory incl subfolders in recursive mode.
@@ -43,6 +45,10 @@ func FoldersByPath(rootName, rootPath, path string, recursive bool) (folders ent
 
 // FolderCoverByUID returns a folder cover file based on the uid.
 func FolderCoverByUID(uid string) (file entity.File, err error) {
+	if rnd.InvalidUID(uid, entity.FolderUID) {
+		return file, fmt.Errorf("invalid folder uid")
+	}
+
 	if err = Db().Where("files.file_primary = 1 AND files.file_missing = 0 AND files.file_type IN (?) AND files.deleted_at IS NULL", media.PreviewExpr).
 		Joins("JOIN photos ON photos.id = files.photo_id AND photos.deleted_at IS NULL AND photos.photo_quality > -1 AND photos.photo_private = 0").
 		Joins("JOIN folders ON photos.photo_path = folders.path AND folders.folder_uid = ?", uid).

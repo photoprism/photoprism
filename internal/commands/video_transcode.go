@@ -67,7 +67,7 @@ func videoTranscodeAction(ctx *cli.Context) error {
 				IsConfirm: true,
 			}
 			if _, err = prompt.Run(); err != nil {
-				log.Info("transcode: cancelled")
+				log.Info("transcode: canceled")
 				return nil
 			}
 		}

@@ -80,6 +80,7 @@ type EngineInfo struct {
 	DefaultResolution int
 	DefaultKey        string // Optional placeholder key (e.g., ${OPENAI_API_KEY}); applied only when Service.Key is empty.
 	DefaultThink      string // Optional reasoning hint (e.g., "false"); applied only when Service.Think is empty.
+	DefaultNormalize  string // Label name normalization used when Model.Normalize is empty, see NormalizeTypes.
 }
 
 // RegisterEngineAlias maps a logical engine name (e.g., "ollama") to a

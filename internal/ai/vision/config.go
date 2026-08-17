@@ -111,6 +111,13 @@ func (c *ConfigValues) Load(fileName string) error {
 
 	for _, model := range c.Models {
 		model.ApplyEngineDefaults()
+
+		// Report a misspelled mode once instead of silently normalizing names the other way.
+		if !IsNormalizeType(model.Normalize) {
+			log.Warnf("vision: invalid normalize type %s for model %s, using %s",
+				clean.Log(model.Normalize), clean.Log(model.Name), ReportNormalizeType(NormalizeAuto))
+			model.Normalize = NormalizeAuto
+		}
 	}
 
 	if c.Thresholds.Confidence <= 0 || c.Thresholds.Confidence > 100 {
