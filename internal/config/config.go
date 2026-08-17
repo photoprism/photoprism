@@ -84,6 +84,7 @@ type Config struct {
 	hub          *hub.Config
 	hubCancel    context.CancelFunc
 	hubLock      sync.Mutex
+	faceWarned   sync.Map
 	token        string
 	serial       string
 	tokenKey     []byte

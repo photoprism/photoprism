@@ -397,11 +397,24 @@ func (c *Config) FaceMatchDist() float64 {
 // faceThreshold returns the operator-configured clustering threshold, or the value
 // calibrated for the configured embedding model when the option was left untouched.
 func (c *Config) faceThreshold(flagName string, value, flagDefault float64, pick func(*face.EmbeddingModel) float64) float64 {
-	if value >= c.FaceCollisionDist() && value <= 1.5 && c.faceThresholdIsSet(flagName, value, flagDefault) {
+	minDist := c.FaceCollisionDist()
+	configured := c.faceThresholdIsSet(flagName, value, flagDefault)
+
+	if configured && value >= minDist && value <= face.ThresholdMax {
 		return value
 	}
 
-	return faceModelThreshold(c.FaceEmbeddingModel(), pick, flagDefault)
+	resolved := faceModelThreshold(c.FaceEmbeddingModel(), pick, flagDefault)
+
+	// A value that is silently replaced looks like a setting that had no effect, so say
+	// so once per option rather than on every call from Propagate and the config report.
+	if configured {
+		if _, warned := c.faceWarned.LoadOrStore(flagName, true); !warned {
+			log.Warnf("config: %s %g is out of range (%g-%g), using %g instead", flagName, value, minDist, face.ThresholdMax, resolved)
+		}
+	}
+
+	return resolved
 }
 
 // faceThresholdIsSet reports whether an operator configured a clustering threshold explicitly.

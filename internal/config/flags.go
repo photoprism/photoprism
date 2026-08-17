@@ -1382,13 +1382,13 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-cluster-dist",
-			Usage:   "similarity `DISTANCE` of faces forming a cluster core (0.1-1.5); defaults to the calibrated value of the configured face model",
+			Usage:   fmt.Sprintf("similarity `DISTANCE` of faces forming a cluster core (collision distance to %g); defaults to the calibrated value of the configured face model", face.ThresholdMax),
 			Value:   face.ClusterDistDefault,
 			EnvVars: EnvVars("FACE_CLUSTER_DIST"),
 		}}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-cluster-radius",
-			Usage:   "maximum cluster `RADIUS` accepted for automatic matches (0.1-1.5); defaults to the calibrated value of the configured face model",
+			Usage:   fmt.Sprintf("maximum cluster `RADIUS` accepted for automatic matches (collision distance to %g); defaults to the calibrated model value, and radius plus match distance is capped at %g", face.ThresholdMax, face.AcceptDistMax),
 			Value:   face.ClusterRadiusDefault,
 			EnvVars: EnvVars("FACE_CLUSTER_RADIUS"),
 		}}, {
@@ -1406,7 +1406,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-match-dist",
-			Usage:   "similarity `OFFSET` for matching faces with existing clusters (0.1-1.5); defaults to the calibrated value of the configured face model",
+			Usage:   fmt.Sprintf("similarity `OFFSET` for matching faces with existing clusters (collision distance to %g); defaults to the calibrated model value, and radius plus match distance is capped at %g", face.ThresholdMax, face.AcceptDistMax),
 			Value:   face.MatchDistDefault,
 			EnvVars: EnvVars("FACE_MATCH_DIST"),
 		}}, {

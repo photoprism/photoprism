@@ -5,8 +5,11 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 
+	"github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v2"
@@ -17,6 +20,19 @@ import (
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
+
+// captureLog records what the shared logger emits for the duration of a test.
+func captureLog(t *testing.T) *test.Hook {
+	t.Helper()
+
+	logger, ok := log.(*logrus.Logger)
+	require.True(t, ok)
+
+	hook := test.NewLocal(logger)
+	t.Cleanup(hook.Reset)
+
+	return hook
+}
 
 // installTestModels creates the files that make the named face embedding models appear
 // installed and returns the temporary models path holding them.
@@ -637,6 +653,42 @@ func TestConfig_FaceThreshold(t *testing.T) {
 		c.options.FaceModel = face.ModelSFace
 
 		assert.Equal(t, 0.5, c.faceThreshold("face-match-dist", 0.5, face.MatchDistDefault, pick))
+	})
+	t.Run("OutOfRangeWarnsOnce", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = installTestModels(t, face.ModelSFace)
+		c.options.FaceModel = face.ModelSFace
+
+		// Propagate and the config report both resolve every threshold, so an
+		// unguarded warning would repeat for the lifetime of the process.
+		hook := captureLog(t)
+
+		assert.Equal(t, 0.39, c.faceThreshold("face-match-dist", 1.6, face.MatchDistDefault, pick))
+		assert.Equal(t, 0.39, c.faceThreshold("face-match-dist", 1.6, face.MatchDistDefault, pick))
+
+		var warnings []string
+
+		for _, e := range hook.AllEntries() {
+			if e.Level == logrus.WarnLevel && strings.Contains(e.Message, "face-match-dist") {
+				warnings = append(warnings, e.Message)
+			}
+		}
+
+		require.Len(t, warnings, 1)
+		assert.Contains(t, warnings[0], "out of range")
+	})
+	t.Run("InRangeStaysSilent", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = installTestModels(t, face.ModelSFace)
+		c.options.FaceModel = face.ModelSFace
+
+		hook := captureLog(t)
+
+		assert.Equal(t, 0.5, c.faceThreshold("face-match-dist", 0.5, face.MatchDistDefault, pick))
+
+		for _, e := range hook.AllEntries() {
+			assert.NotContains(t, e.Message, "out of range")
+		}
 	})
 }
 
