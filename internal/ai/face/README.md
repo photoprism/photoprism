@@ -8,7 +8,7 @@ This document captures the current state of PhotoPrism's face detection and embe
 
 Key changes:
 
-- Detection thresholds were relaxed to improve recall, while overlap handling was adjusted to preserve historical behaviour.
+- Detection thresholds favor recall, and overlap handling keeps markers stable across re-detection.
 - All face embeddings are now L2-normalized at creation, midpoint calculation, and deserialization time to keep cosine and Euclidean comparisons consistent.
 - Benchmarks were added to track the cost of hotspot routines (`Embedding.Dist` and `EmbeddingsMidpoint`).
 
@@ -16,7 +16,7 @@ Embedding provenance is persisted: `faces.embed_model` and `markers.embed_model`
 
 ### Detection Pipeline
 
-PhotoPrism now uses a single detector:
+PhotoPrism uses a single detector:
 
 - **ONNX SCRFD 0.5g** — ONNX Runtime-backed CNN that delivers higher recall on occluded or off-axis faces. The detector consumes 720 px thumbnails (model input 640 px), schedules work on the meta/vision workers, and defaults to half the available CPUs (minimum 1 thread). Operators can select `FACE_ENGINE=onnx` explicitly or leave `FACE_ENGINE=auto`, which resolves to ONNX when the bundled [SCRFD model](https://yakhyo.github.io/facial-analysis/) is present and otherwise disables detection rather than picking another engine.
 
@@ -111,15 +111,14 @@ Their practical effect is small, but leaving them fixed at the FaceNet values un
 
 #### Quality & Overlap Thresholds
 
-- The dynamic quality curve in `face.QualityThreshold` was flattened for better small-face recall:
-  - +12 for scales <26, +8 for <32, +6 for <40, +4 for <50, +2 for <80, +1 for <110.
-- The face overlap floor remains **42 %** to preserve legacy marker behaviour (`OverlapThresholdFloor = 41`). Tests rely on that value (e.g., `Markers.Contains/SameFace`).
+- `ScoreThreshold` (`FACE_SCORE`, default 9.0) is the base minimum detector score, and `ClusterScoreThreshold` (`FACE_CLUSTER_SCORE`, default 20) is the higher bar a face must clear to contribute to automatic clustering. Both live in `internal/ai/face/config.go`.
+- The face overlap floor remains **42 %** (`OverlapThresholdFloor = 41`). Tests rely on that value (e.g., `Markers.Contains/SameFace`).
 
 ### Embedding Handling
 
 #### Memory Management
 
-FaceNet embeddings are generated through TensorFlow bindings that allocate tensors in C memory. Those allocations are released by Go GC finalizers, so long-running indexing jobs can show steadily rising RSS even when the Go heap stays small. To keep memory bounded during extended face indexing runs, PhotoPrism now triggers periodic garbage collection and returns freed C-allocated tensor buffers to the OS. You can tune this behavior with `PHOTOPRISM_TF_GC_EVERY` (default **200**; set to `0` to disable). Lower values reduce peak RSS but increase GC overhead and can slow indexing, so keep the default unless memory pressure is severe.
+FaceNet embeddings are generated through TensorFlow bindings that allocate tensors in C memory. Those allocations are released by Go GC finalizers, so long-running indexing jobs can show steadily rising RSS even when the Go heap stays small. To keep memory bounded during extended face indexing runs, PhotoPrism triggers periodic garbage collection and returns freed C-allocated tensor buffers to the OS. You can tune this behavior with `PHOTOPRISM_TF_GC_EVERY` (default **200**; set to `0` to disable). Lower values reduce peak RSS but increase GC overhead and can slow indexing, so keep the default unless memory pressure is severe.
 
 #### Normalization
 
@@ -132,8 +131,8 @@ All embeddings, regardless of origin, are normalized to unit length (‖x‖₂�
 - `photoprism faces audit --fix` re-normalizes persisted embeddings, rekeys face IDs, and re-links markers (ID + `FaceDist`) so historical data adopts the canonical unit-length vectors.
 - `Faces.Match` pre-filters matchable clusters, keeps an in-memory veto list for freshly cleared markers, and caches embeddings to avoid redundant distance checks; `BenchmarkSelectBestFace` (1024 faces) now reports a bucket size of ~16 candidates out of 1024 (≈98 % fewer distance evaluations) at ≈0.55 ms/op with zero allocations.
 - Face clusters update their sample statistics (`Samples`, `SampleRadius`) from the latest matches via `Face.UpdateMatchStats`. `ClampSampleRadius` bounds the radius at `ClusterRadius` wherever it is written, and `AcceptDist` applies the same bound where it is read, so a recalibrated threshold reaches rows written under the previous one. With the shipped FaceNet values an automatic match therefore accepts embeddings up to **0.82** from the centroid.
-- `AcceptDistMax` caps that cutoff at **1.4** whatever the configuration. Embeddings are unit vectors, so two independent ones sit at √2 ≈ 1.41 and anything at or above that accepts every pair. The bound follows from normalization alone and holds for every model; the widest calibrated model reaches 1.22.
-- Cluster materialisation pre-sizes buffers; `BenchmarkClusterMaterialize` reports ~14.8 µs/op with 64 allocations (≈56 KB).
+- `AcceptDistMax` caps that cutoff at **1.4** whatever the configuration. Embeddings are unit vectors, so two independent ones average √2 ≈ 1.41 — an average, not a floor, so a noticeable share of unrelated pairs already fall below 1.4. The ceiling is therefore a backstop that keeps a misconfiguration from being catastrophic rather than a safe setting; the widest calibrated model reaches 1.22.
+- Cluster materialization pre-sizes buffers; `BenchmarkClusterMaterialize` reports ~14.8 µs/op with 64 allocations (≈56 KB).
 
 This guarantees that Euclidean distance comparisons are equivalent to cosine comparisons, aligning our thresholds with [FaceNet](https://maucher.pages.mi.hdm-stuttgart.de/orbook/face/faceRecognition.html) literature.
 
@@ -147,13 +146,13 @@ This guarantees that Euclidean distance comparisons are equivalent to cosine com
 
 ### Manual Cluster Merging & Retained Markers
 
-The `Faces.Optimize` loop still prefers the operator-curated clusters (`face_src = 'manual'`). When multiple manual clusters for the same subject can be merged, `query.MergeFaces` materialises a midpoint cluster and reassigns markers to it. If some markers remain attached to the original clusters (for example because their embeddings sit far from the midpoint), the old clusters cannot be purged and the optimiser now emits a **warning**:
+The `Faces.Optimize` loop still prefers the operator-curated clusters (`face_src = 'manual'`). When multiple manual clusters for the same subject can be merged, `query.MergeFaces` materializes a midpoint cluster and reassigns markers to it. If some markers remain attached to the original clusters (for example because their embeddings sit far from the midpoint), the old clusters cannot be purged and the optimizer emits a **warning**:
 
 ```
 faces: retained manual clusters after merge: kept 4 candidate cluster(s) [...] for subject <uid> because markers still reference them
 ```
 
-This is informational—the optimiser skips that merge and progresses. To reduce noise, consider:
+This is informational—the optimizer skips that merge and progresses. To reduce noise, consider:
 
 - Running `photoprism faces reset --engine=<auto|onnx>` to regenerate markers with consistent embeddings.
 - Reviewing the subject’s manual clusters in the UI and trimming outliers or reassigning photos to other people.
@@ -163,20 +162,20 @@ No automatic data cleanup runs in this scenario, so operators remain in control 
 
 Additional safeguards limit how often stubborn clusters are retried:
 
-- Every manual cluster stores a retry counter (`faces.merge_retry`) and optional note (`merge_notes`). The optimiser skips clusters once the retry count reaches `MergeMaxRetry` (default **1**). The limit may be raised or disabled with the environment variable `PHOTOPRISM_FACE_MERGE_MAX_RETRY` (`0` = unlimited retries).
+- Every manual cluster stores a retry counter (`faces.merge_retry`) and optional note (`merge_notes`). The optimizer skips clusters once the retry count reaches `MergeMaxRetry` (default **1**). The limit may be raised or disabled with the environment variable `PHOTOPRISM_FACE_MERGE_MAX_RETRY` (`0` = unlimited retries).
 - Warnings surface only when the retry counter is incremented. Subsequent optimise runs log at debug level until counters are reset.
-- `photoprism faces optimize --retry` clears retry counters before running the optimiser, allowing administrators to reprocess clusters after manual cleanup.
+- `photoprism faces optimize --retry` clears retry counters before running the optimizer, allowing administrators to reprocess clusters after manual cleanup.
 - `photoprism faces audit --subject=<uid>` focuses the audit report on a specific person and prints retry counts, sample statistics, and outstanding clusters so operators know which photos still need attention.
-- The warning text now includes the retry count and cluster IDs.
+- The warning text includes the retry count and cluster IDs.
 
 #### Midpoint Computation
 
-- The midpoint routine now performs a single pass (with vector normalization) and uses an inlined L2 distance when computing the sample radius.
-- Benchmarked at ~99 µs/op and 4 KB/op for 128 vectors @512 dims, down from ~194 µs/op and >500 KB/op.
+- The midpoint routine performs a single pass (with vector normalization) and uses an inlined L2 distance when computing the sample radius.
+- Benchmarked at ~99 µs/op and 4 KB/op for 128 vectors @512 dims.
 
 #### Distance Function
 
-- `Embedding.Dist` was hand-optimized with loop unrolling (4-way accumulation) and now runs at ~155 ns/op, down from ~242 ns/op (≈36 % faster).
+- `Embedding.Dist` is hand-optimized with loop unrolling (4-way accumulation) and runs at ~155 ns/op.
 - Euclidean distance remains the recommended metric; with unit vectors, cosine similarity would yield identical rankings, so no change is required to distance thresholds.
 
 ### FaceNet Integration Recommendations
@@ -214,13 +213,13 @@ Recovery steps:
 Run scheduling is configured through the face model entry in `vision.yml`. Adjust the model’s `Run` value (for example `on-schedule`, `manual`, or `never`) to control when detection and embedding jobs execute—no separate `FACE_ENGINE_RUN` flag is required.
 When the model is left on the default `auto` run mode, face detection participates in manual, auto, and on-demand workflows but skips scheduled cron runs so background jobs do not trigger unexpectedly; the same applies to an explicit `on-demand` run mode, which now skips cron executions by default. Set `Run` to `on-schedule` explicitly if you want faces processed during scheduled vision passes.
 
-> Additional merge tuning: set `PHOTOPRISM_FACE_MERGE_MAX_RETRY` to control how often manual clusters are retried (default 1, `0` = unlimited). See the optimiser notes above.
+> Additional merge tuning: set `PHOTOPRISM_FACE_MERGE_MAX_RETRY` to control how often manual clusters are retried (default 1, `0` = unlimited). See the optimizer notes above.
 
 ### Benchmark Reference
 
-| Benchmark                     | Before             | After           |
-|:------------------------------|:-------------------|:----------------|
-| `BenchmarkEmbeddingDist`      | ~242 ns/op         | ~155 ns/op      |
-| `BenchmarkEmbeddingsMidpoint` | ~194 µs/op, 528 KB | ~99 µs/op, 4 KB |
+| Benchmark                     | Current         |
+|:------------------------------|:----------------|
+| `BenchmarkEmbeddingDist`      | ~155 ns/op      |
+| `BenchmarkEmbeddingsMidpoint` | ~99 µs/op, 4 KB |
 
 Re-run these benchmarks after any detector or embedding adjustments to catch regressions early.

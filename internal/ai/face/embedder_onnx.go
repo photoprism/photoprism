@@ -117,7 +117,7 @@ func NewONNXEmbedder(settings EmbedderSettings) (Embedder, error) {
 	)
 
 	if err != nil {
-		return nil, fmt.Errorf("faces: initialise ONNX embedding session: %w", err)
+		return nil, fmt.Errorf("faces: initialize ONNX embedding session: %w", err)
 	}
 
 	log.Infof("faces: loading %s", clean.Log(m.Name))
