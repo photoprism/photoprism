@@ -105,12 +105,24 @@ func TestBackgroundSamplesMidpoint(t *testing.T) {
 		assert.Equal(t, 0, c)
 	})
 	t.Run("EmbeddingWithDifferentLength", func(t *testing.T) {
+		// The longer vector is from another embedding space, so it contributes to neither
+		// the midpoint nor the radius rather than being read up to the shorter length.
 		e := Embeddings{Embedding{1}, Embedding{3, 5}}
 
 		result, r, c := EmbeddingsMidpoint(e)
 
 		assert.Equal(t, Embedding{1}, result)
-		assert.Equal(t, 2.01, r)
+		assert.Equal(t, float64(0), r)
+		assert.Equal(t, 2, c)
+	})
+	t.Run("LongerEmbeddingFirst", func(t *testing.T) {
+		// The reverse order used to read past the end of the shorter vector and panic.
+		e := Embeddings{Embedding{3, 5}, Embedding{1}}
+
+		result, r, c := EmbeddingsMidpoint(e)
+
+		assert.Len(t, result, 2)
+		assert.InDelta(t, 0.01, r, 0.0001)
 		assert.Equal(t, 2, c)
 	})
 	t.Run("Vectors", func(t *testing.T) {
@@ -137,6 +149,18 @@ func TestBackgroundSamplesMidpoint(t *testing.T) {
 		}
 
 		assert.InDelta(t, 1.0, math.Sqrt(sum), 1e-9)
+	})
+}
+
+func TestEmbeddings_Dims(t *testing.T) {
+	t.Run("Uniform", func(t *testing.T) {
+		assert.Equal(t, 2, Embeddings{{1, 2}, {3, 4}}.Dims())
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, 0, Embeddings{}.Dims())
+	})
+	t.Run("Mixed", func(t *testing.T) {
+		assert.Equal(t, -1, Embeddings{{1, 2}, {3}}.Dims())
 	})
 }
 

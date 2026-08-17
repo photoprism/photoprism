@@ -18,6 +18,12 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 		return added, fmt.Errorf("face recognition is disabled")
 	}
 
+	// A model that failed to load leaves no name to filter by, so the marker query would
+	// return vectors from every embedding space in the library in one result set.
+	if modelErr := face.EmbedderError(); modelErr != nil {
+		return added, fmt.Errorf("cannot cluster because the embedding model failed to load: %w", modelErr)
+	}
+
 	// Skip clustering if index contains no new face markers, and force option isn't set.
 	if opt.Force {
 		log.Infof("faces: enforced clustering")
@@ -37,6 +43,8 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 	} else if samples := len(embeddings); samples < opt.SampleThreshold() {
 		log.Debugf("faces: at least %d samples needed for clustering", opt.SampleThreshold())
 		return added, nil
+	} else if embeddings.Dims() < 1 {
+		return added, fmt.Errorf("cannot cluster %d samples of different lengths, run photoprism faces migrate", samples)
 	} else {
 		var c alg.HardClusterer
 

@@ -49,11 +49,13 @@ func (e *testEmbedder) Close() error {
 func restoreEmbedder(t *testing.T) {
 	prev := ActiveEmbedder()
 	prevName := ConfiguredModel()
+	prevErr := EmbedderError()
 
 	t.Cleanup(func() {
 		embedderMu.Lock()
 		activeEmbedder = prev
 		configuredModel = prevName
+		embedderErr = prevErr
 		embedderMu.Unlock()
 	})
 }
@@ -146,6 +148,23 @@ func TestConfigureEmbedder(t *testing.T) {
 		assert.Equal(t, ModelNone, ConfiguredModel())
 		assert.Equal(t, "", EmbeddingModelName())
 		assert.True(t, EmbeddingsDisabled())
+		assert.Error(t, EmbedderError())
+	})
+}
+
+func TestEmbedderError(t *testing.T) {
+	restoreEmbedder(t)
+	t.Run("Success", func(t *testing.T) {
+		require.NoError(t, ConfigureEmbedder(EmbedderSettings{Model: FindEmbeddingModel(ModelFaceNet)}))
+		assert.NoError(t, EmbedderError())
+	})
+	t.Run("Error", func(t *testing.T) {
+		require.Error(t, ConfigureEmbedder(EmbedderSettings{Name: ModelSFace, Model: FindEmbeddingModel(ModelSFace)}))
+		assert.Error(t, EmbedderError())
+	})
+	t.Run("ClearedByNextConfigure", func(t *testing.T) {
+		require.NoError(t, ConfigureEmbedder(EmbedderSettings{Name: ModelNone}))
+		assert.NoError(t, EmbedderError())
 	})
 }
 

@@ -44,6 +44,24 @@ func (embeddings Embeddings) One() bool {
 	return embeddings.Count() == 1
 }
 
+// Dims returns the number of values shared by all embeddings, 0 when there are none,
+// and -1 when they differ, since vectors of different lengths cannot be compared.
+func (embeddings Embeddings) Dims() int {
+	if len(embeddings) < 1 {
+		return 0
+	}
+
+	dims := len(embeddings[0])
+
+	for i := 1; i < len(embeddings); i++ {
+		if len(embeddings[i]) != dims {
+			return -1
+		}
+	}
+
+	return dims
+}
+
 // First returns the first face embedding.
 func (embeddings Embeddings) First() Embedding {
 	if embeddings.Empty() {
@@ -134,7 +152,9 @@ func EmbeddingsMidpoint(embeddings Embeddings) (result Embedding, radius float64
 
 	result = make(Embedding, dim)
 
-	invCount := 1.0 / float64(count)
+	// Vectors of a different length belong to another embedding space, so the mean is
+	// scaled by the vectors that actually contributed rather than by all of them.
+	contributors := 0
 
 	for i := range embeddings {
 		emb := embeddings[i]
@@ -143,12 +163,16 @@ func EmbeddingsMidpoint(embeddings Embeddings) (result Embedding, radius float64
 			continue
 		}
 
+		contributors++
+
 		normalizeEmbedding(emb)
 
 		for j := range dim {
 			result[j] += emb[j]
 		}
 	}
+
+	invCount := 1.0 / float64(contributors)
 
 	for i := range dim {
 		result[i] *= invCount
@@ -158,6 +182,10 @@ func EmbeddingsMidpoint(embeddings Embeddings) (result Embedding, radius float64
 
 	// Radius is the max embedding distance + 0.01 from result.
 	for _, emb := range embeddings {
+		if len(emb) != dim {
+			continue
+		}
+
 		var dist float64
 
 		for i := range dim {

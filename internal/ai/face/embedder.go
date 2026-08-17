@@ -34,6 +34,7 @@ var (
 	embedderMu      sync.RWMutex
 	activeEmbedder  Embedder
 	configuredModel = ModelAuto
+	embedderErr     error
 )
 
 // UseEmbedder replaces the active embedding model and returns the previous instance.
@@ -53,6 +54,17 @@ func ActiveEmbedder() Embedder {
 	embedderMu.RUnlock()
 
 	return embedder
+}
+
+// EmbedderError returns the error that prevented the configured embedding model from
+// loading, or nil when none was requested or it loaded successfully. Both cases report
+// ModelNone, so this is what tells a broken model apart from a disabled one.
+func EmbedderError() error {
+	embedderMu.RLock()
+	err := embedderErr
+	embedderMu.RUnlock()
+
+	return err
 }
 
 // ConfiguredModel returns the embedding model name that was last configured.
@@ -98,6 +110,7 @@ func EmbeddingModelName() ModelName {
 
 // EmbeddingsDisabled reports whether the configuration turns off embedding generation,
 // which lets callers skip embeddings without reporting a broken model configuration.
+// A model that failed to load reports the same, so use EmbedderError to tell them apart.
 func EmbeddingsDisabled() bool {
 	return ConfiguredModel() == ModelNone
 }
@@ -132,6 +145,7 @@ func ConfigureEmbedder(settings EmbedderSettings) error {
 	previous := activeEmbedder
 	activeEmbedder = newEmbedder
 	configuredModel = name
+	embedderErr = initErr
 	embedderMu.Unlock()
 
 	if previous != nil {
