@@ -26,12 +26,12 @@ type FaceMigrationCluster struct {
 
 // FaceMigrationMarkerCounts summarizes marker work for a target model.
 type FaceMigrationMarkerCounts struct {
-	Total       int
-	Valid       int
-	Invalid     int
-	Ready       int
-	MissingFile int
-	Manual      int
+	Total    int
+	Valid    int
+	Invalid  int
+	Ready    int
+	Unlinked int
+	Manual   int
 }
 
 // FaceMigrationCounts returns marker counts used by dry-run and final reports.
@@ -50,7 +50,7 @@ func FaceMigrationCounts(model string) (result FaceMigrationMarkerCounts, err er
 		{base.Where("marker_invalid = 0"), &result.Valid},
 		{base.Where("marker_invalid = 1"), &result.Invalid},
 		{base.Where("marker_invalid = 0 AND embed_model = ? AND LENGTH(embeddings_json) > 0", model), &result.Ready},
-		{base.Where("marker_invalid = 0 AND file_uid = ''"), &result.MissingFile},
+		{base.Where("marker_invalid = 0 AND file_uid = ''"), &result.Unlinked},
 		{base.Where("subj_src = ?", entity.SrcManual), &result.Manual},
 	}
 

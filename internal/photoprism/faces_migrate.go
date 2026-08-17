@@ -19,10 +19,16 @@ import (
 
 const facesMigrateBatchSize = 100
 
+// facesMigrateMaxFailureRatio bounds the share of attempted markers that may fail before
+// the destructive finalize is refused. A storage outage fails every marker it touches, so
+// the bound separates a few unreadable files from a library that is not readable at all.
+const facesMigrateMaxFailureRatio = 0.1
+
 // FacesMigrateOptions controls a face embedding migration.
 type FacesMigrateOptions struct {
 	Target    string
 	DryRun    bool
+	Force     bool
 	BatchSize int
 }
 
@@ -41,6 +47,7 @@ type FacesMigrateResult struct {
 	Migrated          int
 	Skipped           int
 	Failed            int
+	Unlinked          int
 	Invalid           int
 	DetectedFiles     int
 	PreservedSubjects int
@@ -56,6 +63,37 @@ type FacesMigrateIncompleteError struct {
 // Error returns the incomplete migration error message.
 func (e *FacesMigrateIncompleteError) Error() string {
 	return fmt.Sprintf("faces: migration completed with %d failed marker(s)", e.Failed)
+}
+
+// FacesMigrateAbortedError reports a migration that was refused before anything was replaced.
+type FacesMigrateAbortedError struct {
+	Migrated int
+	Failed   int
+	Reason   string
+}
+
+// Error returns the aborted migration error message.
+func (e *FacesMigrateAbortedError) Error() string {
+	return fmt.Sprintf("faces: refused to finalize the migration because %s; the index was not changed and "+
+		"regenerated embeddings were kept, so the command can be re-run after fixing storage (use --force to finalize anyway)", e.Reason)
+}
+
+// finalizeRefused reports why a migration must not be finalized, or "" when it may proceed.
+// Attempting nothing is not a failure: a library that is already migrated skips every
+// marker, and refusing there would make the command permanently unusable.
+func finalizeRefused(migrated, failed int) string {
+	attempted := migrated + failed
+
+	switch {
+	case attempted == 0:
+		return ""
+	case migrated == 0:
+		return fmt.Sprintf("none of %d marker(s) could be re-embedded", attempted)
+	case float64(failed)/float64(attempted) > facesMigrateMaxFailureRatio:
+		return fmt.Sprintf("%d of %d marker(s) could not be re-embedded", failed, attempted)
+	default:
+		return ""
+	}
 }
 
 // PlanMigration validates the target and returns a read-only migration summary.
@@ -136,6 +174,8 @@ func (w *Faces) Migrate(ctx context.Context, opt FacesMigrateOptions) (result Fa
 		return result, nil
 	}
 
+	// These guards are process-local, so they only cover a migration started through the
+	// API. The CLI runs in its own process and cannot see the server's workers.
 	if mutex.IndexWorker.Running() || mutex.MetaWorker.Running() || mutex.VisionWorker.Running() {
 		return result, fmt.Errorf("faces: indexing or vision worker is already running")
 	} else if err = mutex.FacesWorker.Start(); err != nil {
@@ -148,6 +188,11 @@ func (w *Faces) Migrate(ctx context.Context, opt FacesMigrateOptions) (result Fa
 		return result, err
 	}
 
+	return w.migrate(ctx, plan, embedder, opt, result)
+}
+
+// migrate performs the migration itself, once the plan and the embedder are resolved.
+func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder face.Embedder, opt FacesMigrateOptions, result FacesMigrateResult) (FacesMigrateResult, error) {
 	identities, err := query.FaceMigrationManualIdentities()
 	if err != nil {
 		return result, err
@@ -164,8 +209,10 @@ func (w *Faces) Migrate(ctx context.Context, opt FacesMigrateOptions) (result Fa
 	}
 	result.PreservedSubjects = len(preservedSubjects)
 
-	result.Failed = plan.Markers.MissingFile
-	failedMarkerUIDs := make([]string, 0, result.Failed)
+	// Markers without a file cannot be re-embedded by any run, so they are reported apart
+	// from failures: counting them would make every retry look partially failed.
+	result.Unlinked = plan.Markers.Unlinked
+	failedMarkerUIDs := make([]string, 0, result.Unlinked)
 	batchSize := opt.BatchSize
 	if batchSize < 1 {
 		batchSize = facesMigrateBatchSize
@@ -206,6 +253,16 @@ func (w *Faces) Migrate(ctx context.Context, opt FacesMigrateOptions) (result Fa
 		}
 
 		after = fileUIDs[len(fileUIDs)-1]
+	}
+
+	// The finalize below is destructive and irreversible, so a run that regenerated nothing
+	// must not reach it: the old vectors are the only copy that exists.
+	if reason := finalizeRefused(result.Migrated, result.Failed); reason != "" {
+		if !opt.Force {
+			return result, &FacesMigrateAbortedError{Migrated: result.Migrated, Failed: result.Failed, Reason: reason}
+		}
+
+		log.Warnf("faces: finalizing the migration anyway because %s", reason)
 	}
 
 	clusters, rebuilt, clusterErr := buildFaceMigrationClusters(plan.Target)

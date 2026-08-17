@@ -50,11 +50,7 @@ var FacesCommands = &cli.Command{
 			Name:  "reset",
 			Usage: "Removes people and faces after confirmation",
 			Flags: []cli.Flag{
-				&cli.BoolFlag{
-					Name:    "force",
-					Aliases: []string{"f"},
-					Usage:   "removes all people and faces",
-				},
+				ForceFlag("removes all people and faces"),
 				&cli.StringFlag{
 					Name:  "engine",
 					Usage: "regenerate markers using detection engine `NAME` (auto, onnx)",
@@ -73,11 +69,7 @@ var FacesCommands = &cli.Command{
 			Name:  "update",
 			Usage: "Performs face clustering and matching",
 			Flags: []cli.Flag{
-				&cli.BoolFlag{
-					Name:    "force",
-					Aliases: []string{"f"},
-					Usage:   "update all faces",
-				},
+				ForceFlag("update all faces"),
 			},
 			Action: facesUpdateAction,
 		},
@@ -106,6 +98,7 @@ var FacesMigrateCommand = &cli.Command{
 			Usage: "target embedding `MODEL` (defaults to the configured face model)",
 		},
 		DryRunFlag("reports the face migration scope without changing the index"),
+		ForceFlag("finalizes the migration even when markers could not be re-embedded"),
 		YesFlag(),
 	},
 	Action: facesMigrateAction,
@@ -123,6 +116,12 @@ func facesMigrateAction(ctx *cli.Context) error {
 		log.Infof(
 			"faces: migration to %s includes %d valid markers, %d invalid markers, and %d manually identified people",
 			clean.Log(plan.Target), plan.Markers.Valid, plan.Markers.Invalid, plan.ManualSubjects,
+		)
+		// Ready tells an operator that a re-run has nothing left to do, and unlinked
+		// markers are cleared by every run regardless of how the migration goes.
+		log.Infof(
+			"faces: %d markers already use %s, %d have no file, and %d were identified manually",
+			plan.Markers.Ready, clean.Log(plan.Target), plan.Markers.Unlinked, plan.Markers.Manual,
 		)
 		for _, count := range plan.MarkerModels {
 			model := count.EmbedModel
@@ -159,10 +158,10 @@ func facesMigrateAction(ctx *cli.Context) error {
 			}
 		}
 
-		result, migrateErr := w.Migrate(ctx.Context, photoprism.FacesMigrateOptions{Target: plan.Target})
+		result, migrateErr := w.Migrate(ctx.Context, photoprism.FacesMigrateOptions{Target: plan.Target, Force: ctx.Bool("force")})
 		log.Infof(
-			"faces: migrated %d markers, skipped %d, failed %d; preserved %d people, rebuilt %d, %d need attention",
-			result.Migrated, result.Skipped, result.Failed, result.PreservedSubjects, result.RebuiltSubjects, result.AttentionSubjects,
+			"faces: migrated %d markers, skipped %d, failed %d, %d without a file; preserved %d people, rebuilt %d, %d need attention",
+			result.Migrated, result.Skipped, result.Failed, result.Unlinked, result.PreservedSubjects, result.RebuiltSubjects, result.AttentionSubjects,
 		)
 
 		return migrateErr
