@@ -359,10 +359,15 @@ func TestConfig_LibraryFaceModel(t *testing.T) {
 		db := entity.Db()
 		table := entity.Marker{}.TableName()
 
+		// The index has to go first: a column an index references cannot be dropped, and a
+		// schema that predates the column had neither. RemoveIndex keeps this portable
+		// across the drivers the suite runs on.
+		require.NoError(t, db.Model(&entity.Marker{}).RemoveIndex("idx_markers_embed_model").Error)
 		require.NoError(t, db.Exec("ALTER TABLE "+table+" DROP COLUMN embed_model").Error)
 
 		t.Cleanup(func() {
 			require.NoError(t, db.Exec("ALTER TABLE "+table+" ADD COLUMN embed_model VARBINARY(32) DEFAULT ''").Error)
+			require.NoError(t, db.Model(&entity.Marker{}).AddIndex("idx_markers_embed_model", "embed_model").Error)
 		})
 
 		assert.Equal(t, face.ModelFaceNet, c.libraryFaceModel())

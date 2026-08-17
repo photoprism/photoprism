@@ -39,7 +39,7 @@ type Marker struct {
 	FaceID         string          `gorm:"type:VARBINARY(64);index;" json:"FaceID" yaml:"FaceID,omitempty"`
 	FaceDist       float64         `gorm:"default:-1;" json:"FaceDist" yaml:"FaceDist,omitempty"`
 	face           *Face           `gorm:"foreignkey:FaceID;association_foreignkey:ID;association_autoupdate:false;association_autocreate:false;association_save_reference:false"`
-	EmbedModel     string          `gorm:"column:embed_model;type:VARBINARY(32);default:'';" json:"-" yaml:"EmbedModel,omitempty"`
+	EmbedModel     string          `gorm:"column:embed_model;type:VARBINARY(32);index;default:'';" json:"-" yaml:"EmbedModel,omitempty"`
 	EmbeddingsJSON json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"-" yaml:"EmbeddingsJSON,omitempty"`
 	embeddings     face.Embeddings `gorm:"-" yaml:"-"`
 	LandmarksJSON  json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"-" yaml:"LandmarksJSON,omitempty"`

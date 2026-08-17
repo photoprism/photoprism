@@ -100,9 +100,11 @@ func (embeddings Embeddings) Float64() [][]float64 {
 }
 
 // Contains tests if another embeddings is contained within a radius.
+// Dist returns -1 for vectors of a different length, which would otherwise read as the
+// closest possible match, so only a non-negative distance can be inside the radius.
 func (embeddings Embeddings) Contains(other Embedding, radius float64) bool {
 	for _, e := range embeddings {
-		if d := e.Dist(other); d < radius {
+		if d := e.Dist(other); d >= 0 && d < radius {
 			return true
 		}
 	}
