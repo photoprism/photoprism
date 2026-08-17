@@ -162,6 +162,17 @@ func TestFinalizeFaceMigration(t *testing.T) {
 	require.NoError(t, tempDb.Create(&manual).Error)
 	require.NoError(t, tempDb.Create(&automatic).Error)
 
+	// A cluster from the previous run, so the delete this function is named for has
+	// something to remove rather than passing over an empty table.
+	stale := entity.Face{
+		ID:            "STALECLUSTERFROMPREVIOUSMODEL00000000000",
+		FaceSrc:       entity.SrcAuto,
+		SubjUID:       subjectUID,
+		EmbedModel:    face.ModelFaceNet,
+		EmbeddingJSON: []byte("[0.1,0.2]"),
+	}
+	require.NoError(t, tempDb.Create(&stale).Error)
+
 	identities, err := FaceMigrationManualIdentities()
 	require.NoError(t, err)
 	cluster := entity.NewFace(subjectUID, entity.SrcManual, manual.Embeddings(), face.EmbeddingModelName())
@@ -171,6 +182,10 @@ func TestFinalizeFaceMigration(t *testing.T) {
 		Face:            *cluster,
 		MarkerDistances: map[string]float64{manual.MarkerUID: 0},
 	}}, []string{automatic.MarkerUID}))
+
+	var staleCount int
+	require.NoError(t, tempDb.Unscoped().Model(&entity.Face{}).Where("id = ?", stale.ID).Count(&staleCount).Error)
+	assert.Zero(t, staleCount, "the previous run's clusters must be replaced")
 
 	var storedManual, storedAuto entity.Marker
 	require.NoError(t, tempDb.First(&storedManual, "marker_uid = ?", manual.MarkerUID).Error)

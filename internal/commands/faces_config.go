@@ -36,6 +36,11 @@ func facesConfigAction(ctx *cli.Context) error {
 		log.Debug(err)
 	}
 
+	// Resolving "auto" asks the library which model produced its vectors, so without a
+	// connection this report would name the preference-list default rather than the model
+	// actually in force. Connecting is idempotent and fails over to the old behavior.
+	conf.RegisterDb()
+
 	format, formatErr := report.CliFormatStrict(ctx)
 	if formatErr != nil {
 		return formatErr

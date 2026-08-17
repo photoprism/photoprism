@@ -5,9 +5,11 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/pkg/dsn"
 
+	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 )
 
@@ -359,4 +361,33 @@ func TestConfig_ReportURIRedaction(t *testing.T) {
 	assert.Equal(t, "https://proxy:xxxxx@proxy.example.com:8443", values["https-proxy"])
 	assert.Equal(t, "https://vision:xxxxx@vision.example.com/api/v1/vision", values["vision-uri"])
 	assert.Equal(t, "https://theme:xxxxx@cdn.photoprism.app/theme.zip", values["theme-url"])
+}
+
+func TestFaceModelStatus(t *testing.T) {
+	restore := face.ConfiguredModel()
+
+	t.Cleanup(func() {
+		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+	})
+
+	t.Run("Ok", func(t *testing.T) {
+		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelFaceNet, Model: face.FindEmbeddingModel(face.ModelFaceNet)}))
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = installTestModels(t, face.ModelFaceNet)
+		c.options.FaceModel = face.ModelFaceNet
+		assert.Equal(t, "ok", c.faceModelStatus())
+	})
+	t.Run("Disabled", func(t *testing.T) {
+		// The report commands never load the model, so this must follow the configuration.
+		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelNone}))
+		c := NewConfig(CliTestContext())
+		c.options.FaceModel = face.ModelNone
+		assert.Equal(t, "embeddings disabled", c.faceModelStatus())
+	})
+	t.Run("Failed", func(t *testing.T) {
+		// A model that fails to load reports ModelNone, so the status is the only signal.
+		require.Error(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelSFace, Model: face.FindEmbeddingModel(face.ModelSFace)}))
+		c := NewConfig(CliTestContext())
+		assert.Contains(t, c.faceModelStatus(), "failed to load")
+	})
 }

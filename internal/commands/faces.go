@@ -110,7 +110,9 @@ func facesMigrateAction(ctx *cli.Context) error {
 		w := get.Faces()
 		plan, err := w.PlanMigration(ctx.String("to"))
 		if err != nil {
-			return err
+			// Plain errors leave the exit status at 0, so a script cannot tell a refused
+			// migration from one that ran.
+			return cli.Exit(err.Error(), 1)
 		}
 
 		log.Infof(
@@ -142,6 +144,12 @@ func facesMigrateAction(ctx *cli.Context) error {
 				clean.Log(plan.Target), m.ClusterDist, m.ClusterRadius, m.MatchDist)
 		}
 
+		// Finalizing clears the stored vectors of every marker that is not on the target
+		// model, so an operator has to see that number before deciding to run this.
+		if stale := plan.Markers.Valid - plan.Markers.Ready; stale > 0 {
+			log.Warnf("faces: %d markers must be re-embedded and lose their stored vectors if that fails", stale)
+		}
+
 		if ctx.Bool("dry-run") {
 			log.Infof("faces: dry run completed without changes")
 			return nil
@@ -153,7 +161,7 @@ func facesMigrateAction(ctx *cli.Context) error {
 				IsConfirm: true,
 			}
 			if _, promptErr := prompt.Run(); promptErr != nil {
-				log.Info("faces: migration cancelled")
+				log.Info("faces: migration canceled")
 				return nil
 			}
 		}
@@ -164,7 +172,11 @@ func facesMigrateAction(ctx *cli.Context) error {
 			result.Migrated, result.Skipped, result.Failed, result.Unlinked, result.PreservedSubjects, result.RebuiltSubjects, result.AttentionSubjects,
 		)
 
-		return migrateErr
+		if migrateErr != nil {
+			return cli.Exit(migrateErr.Error(), 1)
+		}
+
+		return nil
 	})
 }
 

@@ -7,6 +7,7 @@ import (
 	"time"
 	"unicode/utf8"
 
+	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
@@ -378,6 +379,20 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 	return rows, cols
 }
 
+// faceModelStatus reports whether embeddings are actually being generated. A model that
+// failed to load reports ModelNone everywhere else, so the report would otherwise name a
+// model while nothing is being embedded. Commands that only read the configuration never
+// load the model, so the error is reported when one is known rather than assumed.
+func (c *Config) faceModelStatus() string {
+	if err := face.EmbedderError(); err != nil {
+		return fmt.Sprintf("failed to load (%s)", err)
+	} else if c.FaceModel() == face.ModelNone {
+		return "embeddings disabled"
+	}
+
+	return "ok"
+}
+
 // FaceReport returns the face-detection and face-recognition config values as
 // a table for reporting. It mirrors the values used by Report() so output stays
 // consistent between `photoprism config` and `photoprism faces config`.
@@ -392,6 +407,7 @@ func (c *Config) FaceReport() (rows [][]string, cols []string) {
 		{"face-engine-run", vision.ReportRunType(c.FaceEngineRunType())},
 		{"face-engine-threads", fmt.Sprintf("%d", c.FaceEngineThreads())},
 		{"face-model", c.FaceModel()},
+		{"face-model-status", c.faceModelStatus()},
 		{"face-model-path", c.FaceModelPath()},
 		{"face-model-license", c.FaceModelLicense()},
 		{"facenet-model-path", c.FacenetModelPath()},
