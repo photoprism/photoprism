@@ -273,3 +273,46 @@ func TestClampUint8(t *testing.T) {
 		assert.Equal(t, uint8(255), clampUint8(300))
 	})
 }
+
+func TestSimilarityTransformResidual(t *testing.T) {
+	tpl := ArcFaceTemplate
+
+	t.Run("RotatedAndScaled", func(t *testing.T) {
+		// A proper similarity must fit exactly, whatever the rotation and scale.
+		var src [NumLandmarks][2]float64
+		r := 25 * math.Pi / 180
+
+		for i := range tpl {
+			src[i][0] = 2*(tpl[i][0]*math.Cos(r)-tpl[i][1]*math.Sin(r)) + 30
+			src[i][1] = 2*(tpl[i][0]*math.Sin(r)+tpl[i][1]*math.Cos(r)) + 30
+		}
+
+		tr, err := similarityTransform(src, tpl)
+		require.NoError(t, err)
+		assert.InDelta(t, 0, fitResidual(tr, src, tpl), 1e-6)
+	})
+	t.Run("ExtremeYawAccepted", func(t *testing.T) {
+		// A profile face compresses one axis and must still align rather than fall back.
+		var src [NumLandmarks][2]float64
+		for i := range tpl {
+			src[i][0] = tpl[i][0] * 0.3
+			src[i][1] = tpl[i][1]
+		}
+
+		_, err := similarityTransform(src, tpl)
+		assert.NoError(t, err)
+	})
+	t.Run("MirroredRejected", func(t *testing.T) {
+		// A reflection cannot be expressed by a proper rotation, so it must be refused
+		// instead of warping the crop to a 22 px residual.
+		var src [NumLandmarks][2]float64
+		for i := range tpl {
+			src[i][0] = float64(ArcFaceTemplateSize) - tpl[i][0]
+			src[i][1] = tpl[i][1]
+		}
+
+		_, err := similarityTransform(src, tpl)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "do not fit the template")
+	})
+}

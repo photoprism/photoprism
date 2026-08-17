@@ -13,6 +13,10 @@ const NumLandmarks = 5
 // ArcFaceTemplateSize is the crop size, in pixels, that ArcFaceTemplate refers to.
 const ArcFaceTemplateSize = 112
 
+// maxAlignResidual is the largest RMS landmark fit error, in template pixels, that still
+// yields an aligned crop. Above it the caller falls back to a plain bounding box crop.
+const maxAlignResidual = 14.0
+
 // landmarkDisplayScale divides the face size to derive the display size stored with each landmark.
 const landmarkDisplayScale = 10
 
@@ -149,8 +153,8 @@ func AlignedCrop(img image.Image, f *Face, width, height int) (*image.RGBA, erro
 // squared error, using rotation, uniform scale, and translation only.
 //
 // This is the Umeyama estimate that InsightFace and OpenCV apply, restricted to proper
-// rotations: a reflection would mirror the face, and the only inputs that ask for one
-// are degenerate landmark sets, which return an error instead.
+// rotations. A reflection cannot be represented, so a mirrored set produces a poor fit
+// rather than a mirrored crop; both that and coincident landmarks return an error.
 func similarityTransform(src, dst [NumLandmarks][2]float64) (affine2D, error) {
 	var srcMean, dstMean [2]float64
 
@@ -188,10 +192,33 @@ func similarityTransform(src, dst [NumLandmarks][2]float64) (affine2D, error) {
 	a /= variance
 	b /= variance
 
-	return affine2D{
+	result := affine2D{
 		a, -b, dstMean[0] - (a*srcMean[0] - b*srcMean[1]),
 		b, a, dstMean[1] - (b*srcMean[0] + a*srcMean[1]),
-	}, nil
+	}
+
+	// A mirrored set cannot be expressed by a proper rotation, so it comes back as a poor
+	// fit rather than an error. Measured on the template: a rotated or scaled copy fits at
+	// 0, an extreme yaw at ~9.9, and a horizontal mirror at ~22.6.
+	if residual := fitResidual(result, src, dst); residual > maxAlignResidual {
+		return affine2D{}, fmt.Errorf("faces: landmarks do not fit the template, residual %.1f", residual)
+	}
+
+	return result, nil
+}
+
+// fitResidual returns the RMS distance between the transformed source landmarks and the
+// template they were fitted to.
+func fitResidual(t affine2D, src, dst [NumLandmarks][2]float64) float64 {
+	var sum float64
+
+	for i := range src {
+		dx := t[0]*src[i][0] + t[1]*src[i][1] + t[2] - dst[i][0]
+		dy := t[3]*src[i][0] + t[4]*src[i][1] + t[5] - dst[i][1]
+		sum += dx*dx + dy*dy
+	}
+
+	return math.Sqrt(sum / float64(NumLandmarks))
 }
 
 // apply maps a point through the transform.

@@ -498,9 +498,13 @@ func (o *onnxEngine) parseDetections(values []onnxruntime.Value, detScale float3
 			if landmarks != nil {
 				kpsOffset := idx * NumLandmarks * 2
 
+				// Keypoints are kept unclamped, unlike the box above. similarityTransform
+				// is a least-squares fit over all five, so snapping one point that the
+				// detector placed outside the frame rotates and scales the whole crop.
+				// Sampling out of bounds is already handled by transparent black.
 				for p := range NumLandmarks {
-					det.kps[p*2] = clampFloat32((cx+landmarks[kpsOffset+p*2]*float32(stride))/detScale, 0, float32(origWidth))
-					det.kps[p*2+1] = clampFloat32((cy+landmarks[kpsOffset+p*2+1]*float32(stride))/detScale, 0, float32(origHeight))
+					det.kps[p*2] = (cx + landmarks[kpsOffset+p*2]*float32(stride)) / detScale
+					det.kps[p*2+1] = (cy + landmarks[kpsOffset+p*2+1]*float32(stride)) / detScale
 				}
 
 				det.hasKps = true
