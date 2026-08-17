@@ -35,12 +35,27 @@ entryPoints:
   web:
     address: ":80"
     http:
+      # See https://doc.traefik.io/traefik/reference/install-configuration/entrypoints/#encoded-characters
+      encodedCharacters:
+        allowEncodedSlash: true
+        allowEncodedPercent: true
+        allowEncodedHash: true
+        allowEncodedQuestionMark: true
+        allowEncodedSemicolon: true
       redirections:
         entryPoint:
           to: websecure
           scheme: https
   websecure:
     address: ":443"
+    http:
+      # See https://doc.traefik.io/traefik/reference/install-configuration/entrypoints/#encoded-characters
+      encodedCharacters:
+        allowEncodedSlash: true
+        allowEncodedPercent: true
+        allowEncodedHash: true
+        allowEncodedQuestionMark: true
+        allowEncodedSemicolon: true
     transport:
       respondingTimeouts:
         readTimeout: "3h"
