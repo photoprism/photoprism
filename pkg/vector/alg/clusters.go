@@ -39,7 +39,8 @@ type HardClusterer interface {
 	// Guesses returns mapping from data point indices to cluster numbers. Clusters' numbering begins at 1.
 	Guesses() []int
 
-	// Predict returns number of cluster to which the observation would be assigned
+	// Predict returns number of cluster to which the observation would be assigned, or -1
+	// when the clusterer is untrained or the observation has a different number of dimensions
 	Predict(observation []float64) int
 
 	// IsOnline tells the algorithm supports online learning
@@ -75,6 +76,12 @@ type Importer interface {
 var (
 	// EuclideanDist is one of the common distance measurement
 	EuclideanDist = func(a, b []float64) float64 {
+		// Vectors of different widths are not comparable in either direction, so NaN is
+		// returned rather than indexing past the shorter one or truncating the longer.
+		if len(a) != len(b) {
+			return math.NaN()
+		}
+
 		var (
 			s, t float64
 		)
@@ -89,6 +96,10 @@ var (
 
 	// EuclideanDistSquared is one of the common distance measurement
 	EuclideanDistSquared = func(a, b []float64) float64 {
+		if len(a) != len(b) {
+			return math.NaN()
+		}
+
 		var (
 			s, t float64
 		)

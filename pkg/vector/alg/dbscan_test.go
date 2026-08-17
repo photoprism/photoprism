@@ -113,6 +113,44 @@ func TestDBSCANMoreWorkersThanPoints(t *testing.T) {
 	}
 }
 
+func TestDBSCANRaggedData(t *testing.T) {
+	// Points of different widths cannot be compared, and the distance runs in a worker
+	// goroutine whose panic no caller can recover, so Learn must reject them up front.
+	c, err := DBSCAN(1, 1, 0, EuclideanDist)
+	if err != nil {
+		t.Fatalf("unexpected constructor error: %s", err)
+	}
+
+	if err = c.Learn([][]float64{{1, 1}, {1}}); err != errRaggedData {
+		t.Errorf("expected errRaggedData, got %v", err)
+	}
+}
+
+func TestDBSCANPredict(t *testing.T) {
+	c, err := DBSCAN(1, 1, 0, EuclideanDist)
+	if err != nil {
+		t.Fatalf("unexpected constructor error: %s", err)
+	}
+	t.Run("Untrained", func(t *testing.T) {
+		if n := c.Predict([]float64{1}); n != -1 {
+			t.Errorf("expected -1, got %d", n)
+		}
+	})
+	t.Run("Success", func(t *testing.T) {
+		if err = c.Learn([][]float64{{1}, {1.5}, {5}}); err != nil {
+			t.Fatalf("unexpected learn error: %s", err)
+		}
+		if n := c.Predict([]float64{1.2}); n != 1 {
+			t.Errorf("expected cluster 1, got %d", n)
+		}
+	})
+	t.Run("WrongDimensions", func(t *testing.T) {
+		if n := c.Predict([]float64{1, 2}); n != -1 {
+			t.Errorf("expected -1, got %d", n)
+		}
+	})
+}
+
 func TestDBSCANWithProgress(t *testing.T) {
 	progress := make([][2]int, 0)
 
