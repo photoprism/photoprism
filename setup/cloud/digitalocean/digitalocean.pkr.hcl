@@ -89,6 +89,11 @@ build {
     destination = "/var/lib/cloud/scripts/per-instance/install_photoprism.sh"
   }
 
+  provisioner "file" {
+    source      = "init/disable-algif-aead.conf"
+    destination = "/etc/modprobe.d/disable-algif-aead.conf"
+  }
+
   provisioner "shell" {
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",
@@ -110,6 +115,8 @@ build {
       "apt-get -qq autoclean",
       "apt-get -qq autoremove",
       "chmod 700 /var/lib/cloud/scripts/per-instance/install_photoprism.sh",
+      "chmod 644 /etc/modprobe.d/disable-algif-aead.conf",
+      "chown root:root /etc/modprobe.d/disable-algif-aead.conf",
     ]
   }
 
