@@ -512,7 +512,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "disable-faces",
-			Usage:   "disables face detection and recognition (requires TensorFlow)",
+			Usage:   "disables face detection and recognition",
 			EnvVars: EnvVars("DISABLE_FACES"),
 		}}, {
 		Flag: &cli.BoolFlag{

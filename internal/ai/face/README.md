@@ -1,6 +1,6 @@
 ## Face Detection & Embedding Guidelines
 
-**Last Updated:** August 10, 2026
+**Last Updated:** August 17, 2026
 
 ### Overview
 
@@ -46,7 +46,7 @@ An explicitly configured model whose weights are missing falls back with a warni
 
 SFace is part of `make dep` through `dep-onnx`, so `make all install` copies it into the published images — a model new libraries default to has to be there. The Go test targets depend on `dep-sface` separately, so the ONNX embedder tests never silently skip when only a subset of the dependencies was installed.
 
-AuraFace is installed by no target at all. Its Apache-2.0 weights could be redistributed, but the same `make all install` path would put a 261 MB graph into every published image, so it stays an explicit `scripts/download-auraface.sh` download. The file is deliberately renamed from the upstream `glintr100.onnx`: InsightFace's antelopev2 pack ships a different model under that name, and because channel order and normalization cannot be read from an ONNX graph, a name collision would apply one model's preprocessing to the other's weights silently.
+AuraFace is installed by no target at all. Its Apache-2.0 weights could be redistributed, but a 261 MB graph in every published image is not worth it, so it stays an explicit `scripts/download-auraface.sh` download. `assets/.buildignore` excludes `models/auraface` and `models/arcface`, so a developer copy is never picked up by `make install` — which also keeps the research-only ArcFace weights out of any build. The file is deliberately renamed from the upstream `glintr100.onnx`: InsightFace's antelopev2 pack ships a different model under that name, and because channel order and normalization cannot be read from an ONNX graph, a name collision would apply one model's preprocessing to the other's weights silently.
 
 That collision is why every ONNX entry records the artifact's SHA256 and why the embedder refuses to load a file whose checksum does not match. A name match with a different artifact has no safe fallback here: the fields that would differ are the ones a graph cannot supply, so the wrong preprocessing would be applied and every vector written under the requested model's name. The detector only warns on the same mismatch, because a different detector costs recall on the next indexing run rather than a library of vectors that cannot be compared with anything. The checksums are also verified by the install scripts, and `TestEmbeddingModelChecksums` fails if the two copies drift apart.
 
@@ -181,7 +181,7 @@ Additional safeguards limit how often stubborn clusters are retried:
 
 ### FaceNet Integration Recommendations
 
-- Ensure FaceNet inference remains disabled only when explicitly configured (`PHOTOPRISM_FACENET_DISABLED`).
+- Face detection and recognition are disabled as a unit by `PHOTOPRISM_DISABLE_FACES`; `PHOTOPRISM_DISABLE_TENSORFLOW` also stops FaceNet and is deprecated. `FACE_MODEL=none` keeps detection and disables embedding generation.
 - If you expose similarity scores, convert Euclidean distance to cosine using: `cos θ = 1 - (d² / 2)` (since embeddings are normalized).
 - Keep distance thresholds (e.g., merge, clustering) expressed in the Euclidean domain unless downstream tooling mandates cosine values. The current merge tests expect distances around **0.040** for identical subjects.
 - When updating pretrained models or embedding datasets, re-run the dedicated benchmarks and fixture-based tests:
@@ -207,7 +207,7 @@ Recovery steps:
 |:----------------------|:-----------------------------|:----------------------------------------------------------------------------------------|
 | `FACE_ENGINE`         | `auto`                       | Detection engine (`auto`, `onnx`). `auto` resolves to ONNX when the SCRFD model exists. |
 | `FACE_ENGINE_THREADS` | `runtime.NumCPU()/2` (≥1)    | ONNX inference threads.                                                                 |
-| `FACE_MODEL`          | `auto`                       | Embedding model (`auto`, `none`, `facenet`, `sface`, `arcface_r50`, `arcface_mbf`).     |
+| `FACE_MODEL`          | `auto`                       | Embedding model (`auto`, `none`, `facenet`, `sface`, `auraface`, `arcface_r50`, `arcface_mbf`). |
 | `FACE_SCORE`          | `9.0` (with dynamic offsets) | Base quality threshold before scale adjustments.                                        |
 | `FACE_OVERLAP`        | `42`                         | Maximum allowed IoU when deduplicating markers.                                         |
 
