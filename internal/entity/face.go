@@ -189,11 +189,7 @@ func (m *Face) Match(embeddings face.Embeddings, model face.ModelName) (match bo
 	}
 
 	// Calculate the smallest distance to embeddings.
-	for _, e := range embeddings {
-		if d := e.Dist(faceEmbedding); d < dist || dist < 0 {
-			dist = d
-		}
-	}
+	dist = embeddings.Dist(faceEmbedding)
 
 	// Any reasons embeddings do not match this face?
 	switch {

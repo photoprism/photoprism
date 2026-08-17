@@ -312,18 +312,7 @@ func (m *Marker) SetFace(f *Face, dist float64) (updated bool, err error) {
 	m.FaceDist = dist
 
 	if m.FaceDist < 0 {
-		faceEmbedding := f.Embedding()
-
-		// Calculate the smallest distance to embeddings.
-		for _, e := range m.Embeddings() {
-			if len(e) != len(faceEmbedding) {
-				continue
-			}
-
-			if d := e.Dist(faceEmbedding); d < m.FaceDist || m.FaceDist < 0 {
-				m.FaceDist = d
-			}
-		}
+		m.FaceDist = m.Embeddings().Dist(f.Embedding())
 	}
 
 	if f.SubjUID != "" {

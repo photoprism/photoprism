@@ -395,19 +395,7 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 // minMarkerDistance computes the smallest Euclidean distance between the face embedding and any
 // embedding contained in the marker.
 func minMarkerDistance(faceEmb face.Embedding, embeddings face.Embeddings) float64 {
-	dist := -1.0
-
-	for _, e := range embeddings {
-		if len(e) != len(faceEmb) {
-			continue
-		}
-
-		if d := e.Dist(faceEmb); d < dist || dist < 0 {
-			dist = d
-		}
-	}
-
-	return dist
+	return embeddings.Dist(faceEmb)
 }
 
 // embeddingSignHash reduces the given values to a compact bit-hash by looking at the sign of the

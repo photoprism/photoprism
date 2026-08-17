@@ -112,11 +112,17 @@ func (embeddings Embeddings) Contains(other Embedding, radius float64) bool {
 	return false
 }
 
-// Dist returns the minimum distance to an embedding.
+// Dist returns the minimum distance to an embedding, or -1 when none is comparable.
+// Vectors of a different length are skipped rather than compared: Embedding.Dist reports
+// -1 for them, which would otherwise win the minimum over every real distance.
 func (embeddings Embeddings) Dist(other Embedding) (dist float64) {
 	dist = -1
 
 	for _, e := range embeddings {
+		if len(e) != len(other) {
+			continue
+		}
+
 		if d := e.Dist(other); d < dist || dist < 0 {
 			dist = d
 		}

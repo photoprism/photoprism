@@ -63,6 +63,22 @@ func TestFace_Match(t *testing.T) {
 		assert.False(t, match)
 		assert.Equal(t, dist, float64(-1))
 	})
+	t.Run("OrderIndependentWithIncomparableVector", func(t *testing.T) {
+		// A vector of another width yields -1, which used to win the minimum over every
+		// real distance, so the same set matched or did not depending on its order.
+		m := NewFace("", SrcAuto, face.Embeddings{face.RandomEmbedding()}, face.EmbeddingModelName())
+		require.NotNil(t, m)
+
+		near := m.Embedding()
+		short := face.Embedding{0.1, 0.2}
+
+		okShortFirst, distShortFirst := m.Match(face.Embeddings{short, near}, face.EmbeddingModelName())
+		okNearFirst, distNearFirst := m.Match(face.Embeddings{near, short}, face.EmbeddingModelName())
+
+		assert.Equal(t, okNearFirst, okShortFirst)
+		assert.InDelta(t, distNearFirst, distShortFirst, 1e-9)
+		assert.True(t, okShortFirst)
+	})
 	t.Run("JaneDoeNoMatch", func(t *testing.T) {
 		m := FaceFixtures.Get("jane-doe")
 		match, _ := m.Match(MarkerFixtures.Pointer("1000003-5").Embeddings(), face.EmbeddingModelName())
