@@ -35,6 +35,8 @@ entryPoints:
   web:
     address: ":80"
     http:
+      # Set every option explicitly: Traefik changed these defaults within the v3.6 patch
+      # series, so relying on them means the behaviour can change under you.
       # See https://doc.traefik.io/traefik/reference/install-configuration/entrypoints/#encoded-characters
       encodedCharacters:
         allowEncodedSlash: true
@@ -42,13 +44,22 @@ entryPoints:
         allowEncodedHash: true
         allowEncodedQuestionMark: true
         allowEncodedSemicolon: true
+        allowEncodedBackSlash: true
+        allowEncodedNullCharacter: true
       redirections:
         entryPoint:
           to: websecure
           scheme: https
+    transport:
+      respondingTimeouts:
+        readTimeout: "3h"
+        writeTimeout: "0s"
+        idleTimeout: "3m"
   websecure:
     address: ":443"
     http:
+      # Set every option explicitly: Traefik changed these defaults within the v3.6 patch
+      # series, so relying on them means the behaviour can change under you.
       # See https://doc.traefik.io/traefik/reference/install-configuration/entrypoints/#encoded-characters
       encodedCharacters:
         allowEncodedSlash: true
@@ -56,10 +67,13 @@ entryPoints:
         allowEncodedHash: true
         allowEncodedQuestionMark: true
         allowEncodedSemicolon: true
+        allowEncodedBackSlash: true
+        allowEncodedNullCharacter: true
     transport:
       respondingTimeouts:
         readTimeout: "3h"
         writeTimeout: "0s"
+        idleTimeout: "3m"
 
 # auto tls / https
 certificatesResolvers:
