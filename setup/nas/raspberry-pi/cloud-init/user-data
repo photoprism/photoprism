@@ -242,10 +242,10 @@ write_files:
             - "traefik.docker.network=photoprism"
           environment:
             PHOTOPRISM_ADMIN_PASSWORD: "photoprismpi"
-            PHOTOPRISM_AUTH_MODE: "passwd"
+            PHOTOPRISM_AUTH_MODE: "password"
             PHOTOPRISM_SITE_URL: "https://photoprism-pi.local/"
             PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
-            PHOTOPRISM_HTTP_COMPRESSION: "gzip"
+            PHOTOPRISM_HTTP_COMPRESSION: "zstd,gzip"
             PHOTOPRISM_WORKERS: 3
             PHOTOPRISM_LOG_LEVEL: "info"
             PHOTOPRISM_TRACE: "false"
@@ -326,6 +326,8 @@ write_files:
             - "--entrypoints.websecure.address=:443"
             - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
             - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+            - "--entrypoints.websecure.transport.respondingtimeouts.readtimeout=3h"
+            - "--entrypoints.websecure.transport.respondingtimeouts.writetimeout=0s"
             - "--providers.docker.network=photoprism"
             - "--providers.docker.defaultRule=Host(`{{ normalize .Name }}.local`)"
             - "--log.level=DEBUG"
