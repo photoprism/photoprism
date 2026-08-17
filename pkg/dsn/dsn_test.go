@@ -156,3 +156,58 @@ func TestDSN_ParsePostgres(t *testing.T) {
 		})
 	}
 }
+
+//nolint:gosec // G101: DSN parsing tests intentionally use inline credential samples.
+func TestDSN_SQLiteFilename(t *testing.T) {
+	cases := []struct {
+		name string
+		in   string
+		want string
+	}{
+		{
+			name: "PostgresKeyValuePair",
+			in:   "user=alice password=s3cr3t dbname=app host=db.internal port=5432 connect_timeout=5 sslmode=require",
+			want: "",
+		},
+		{
+			name: "PostgresURI",
+			in:   "postgres://alice:s3cr3t@db.internal:5432/app?connect_timeout=5&sslmode=require",
+			want: "",
+		},
+		{
+			name: "MariaDB",
+			in:   "alice:s3cr3t@tcp(db.internal:4001)/app?connect_timeout=5&sslmode=require",
+			want: "",
+		},
+		{
+			name: "SQLiteCWD",
+			in:   ".index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			want: ".index.db",
+		},
+		{
+			name: "SQLiteRoot",
+			in:   "/.index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			want: "/.index.db",
+		},
+		{
+			name: "SQLiteSubD",
+			in:   "/go/src/github.com/photoprism/photoprism/storage/testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			want: "/go/src/github.com/photoprism/photoprism/storage/testdata/index.db",
+		},
+		{
+			name: "SQLiteFile",
+			in:   "file:/go/src/github.com/photoprism/photoprism/storage/testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			want: "/go/src/github.com/photoprism/photoprism/storage/testdata/index.db",
+		},
+	}
+
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			d := Parse(tt.in)
+
+			if !assert.Equal(t, tt.want, d.SQLiteFilename()) {
+				t.Logf("Parse returned %v", d)
+			}
+		})
+	}
+}
