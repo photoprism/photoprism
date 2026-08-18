@@ -43,8 +43,14 @@ Don't paste full snapshots, full console logs, or screenshot data unless the par
 
 ## Delivering Your Report
 
-**Send your report with `SendMessage` to `main`.** That is the parent conversation, and it is
-the only address that reaches it.
+**Deliver on both channels, every time: send the report with `SendMessage` to `main`, and also
+write it out in full as your final assistant message.** Do both unconditionally rather than
+choosing — you cannot tell from inside which way you were dispatched, and the two cases fail in
+opposite directions: a background agent's final message reaches no one, while in the foreground
+that message is exactly what the parent receives. Duplicate delivery costs nothing; a report put
+on the only channel that was not listening is lost entirely. Writing it out in full has a second
+payoff — a send that fails silently still leaves the complete report recoverable from your
+transcript.
 
 **`main` is the only address you may write to.** Never message another agent, even one you can
 see: you are usually one of several reviewers running in parallel, and the value of that is the
@@ -60,9 +66,6 @@ every `SendMessage` result you see, so it reads as the obvious reply address —
 a mailbox the parent never reads. The call returns `success: true` with a message id, so nothing
 tells you the report was lost. Measured 2026-08-16: three reviewers, eight sends, all "successful",
 none delivered.
-
-Your final assistant message is **not** a delivery mechanism either — treat it as a summary of what
-you sent, not as the report itself.
 
 If a send fails, say so in your next message rather than retrying silently; the parent would
 otherwise read your silence as "nothing found", which is the failure this rule exists to prevent.
