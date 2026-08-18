@@ -35,6 +35,7 @@ Machine Learning:
 
 Other:
   mariadb-client   Install the MariaDB command-line client
+  proxysql-admin   Install the ProxySQL admin and scheduler tools
   davfs            Install the davfs2 WebDAV filesystem driver
   yt-dlp           Update yt-dlp to the latest release
   Related: yt-dlp-nightly, yt-dlp-master
@@ -75,6 +76,10 @@ mariadb: mariadb-client
 mariadb-client: install-mariadb-client
 install-mariadb-client:
 	/scripts/install-mariadb.sh mariadb-client
+proxysql: proxysql-admin
+proxysql-admin: install-proxysql-admin
+install-proxysql-admin:
+	/scripts/install-proxysql-admin.sh
 gpu: install-gpu
 install-gpu:
 	/scripts/install-gpu.sh
