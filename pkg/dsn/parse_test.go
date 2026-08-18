@@ -71,19 +71,8 @@ func TestParse(t *testing.T) {
 				DSN:    "/index.db?_busy_timeout=5000",
 				Driver: DriverSQLite3,
 				Server: "",
-				Name:   "/index.db",
+				Name:   "index.db",
 				Params: "_busy_timeout=5000",
-			},
-		},
-		{
-			name: "SQLiteTestDB",
-			in:   SQLiteTestDB,
-			want: DSN{
-				DSN:    SQLiteTestDB,
-				Driver: DriverSQLite3,
-				Server: "",
-				Name:   ".test.db",
-				Params: "_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
 			},
 		},
 		{

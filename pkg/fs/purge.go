@@ -68,7 +68,7 @@ func PurgeTestDbFiles(dir string, recursive bool) {
 		}
 		lower := strings.ToLower(name)
 		if strings.HasPrefix(name, ".") {
-			if strings.HasSuffix(lower, ".db") || strings.HasSuffix(lower, ".db-journal") || strings.HasSuffix(lower, ".db-shm") || strings.HasSuffix(lower, ".db-wal") || strings.HasPrefix(lower, ".test.") {
+			if strings.HasSuffix(lower, ".db") || strings.HasSuffix(lower, ".db-journal") || strings.HasPrefix(lower, ".test.") {
 				_ = os.Remove(path)
 			}
 		}
