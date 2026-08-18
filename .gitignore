@@ -7,8 +7,6 @@
 *.jsonl
 *.db
 *.db-journal
-*.db-shm
-*.db-wal
 *.sqlite
 *.override.yml
 *.tmp.yml
