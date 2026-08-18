@@ -403,6 +403,16 @@ codex-skills:
 	@if [ -d "specs/.agents/skills" ]; then \
 	  echo "Linking Codex skills from specs/.agents/skills..."; \
 	  install -d -m 755 -- ".agents/skills"; \
+	  for link in .agents/skills/*; do \
+	    [ -L "$$link" ] || continue; \
+	    target=$$(readlink "$$link"); \
+	    case "$$target" in \
+	      ../../specs/.agents/skills/*) \
+	        name=$$(basename "$$link"); \
+	        [ -d "specs/.agents/skills/$$name" ] || rm -- "$$link"; \
+	        ;; \
+	    esac; \
+	  done; \
 	  for src in specs/.agents/skills/*/; do \
 	    [ -d "$$src" ] || continue; \
 	    name=$$(basename "$$src"); \
