@@ -1,6 +1,6 @@
 # Migration Package Guidelines
 
-**Last Updated:** June 1, 2026
+**Last Updated:** August 18, 2026
 
 This file applies to `internal/entity/migrate/`. Read [`README.md`](README.md) here for the runtime flow, retry behavior, and CLI troubleshooting commands.
 
@@ -15,8 +15,8 @@ This file applies to `internal/entity/migrate/`. Read [`README.md`](README.md) h
 
 ## Generation & Verification
 
-- After changing migration SQL, run `go generate ./internal/entity/migrate`.
-- After Go edits in this package, run `go fmt ./internal/entity/migrate`.
+- From the repository root, after changing migration SQL, run `go generate ./internal/entity/migrate`.
+- After Go edits in this package, run `make fmt-go` from the repository root.
 - Verify the package with `go test ./internal/entity/migrate -count=1`.
 - When a change affects operator workflows, also verify the CLI help and status paths with `./photoprism migrations --help`, `./photoprism migrations ls --help`, and `./photoprism migrations run --help`.
 
