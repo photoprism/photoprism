@@ -46,6 +46,15 @@ Don't paste full snapshots, full console logs, or screenshot data unless the par
 **Send your report with `SendMessage` to `main`.** That is the parent conversation, and it is
 the only address that reaches it.
 
+**`main` is the only address you may write to.** Never message another agent, even one you can
+see: you are usually one of several reviewers running in parallel, and the value of that is the
+gap between independent lenses — a note from a peer collapses it, and the parent cannot tell a
+converged finding from a corroborated one.
+
+You may also write to `main` **during** the review, not only at the end. If the brief turns out to
+be ambiguous in a way that changes your conclusion, ask and keep working rather than guessing and
+surfacing the guess at the end.
+
 ⚠ **Do not send to `team-lead`.** The parent is labelled `team-lead` in the routing metadata of
 every `SendMessage` result you see, so it reads as the obvious reply address — but it resolves to
 a mailbox the parent never reads. The call returns `success: true` with a message id, so nothing
