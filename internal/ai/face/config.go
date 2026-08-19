@@ -20,6 +20,12 @@ const (
 	EpsilonDefault = 0.01
 )
 
+// InterOpThreads is how many threads an ONNX session may use to run graph nodes in
+// parallel. Inter-op parallelism only pays off for graphs with independent branches, and
+// the detection and embedding graphs are sequential CNNs, so a second thread would add
+// scheduling overhead and compete with the intra-op pool for nothing.
+const InterOpThreads = 1
+
 const (
 	// ThresholdMax is the largest value accepted for a configurable distance threshold.
 	ThresholdMax = 1.5

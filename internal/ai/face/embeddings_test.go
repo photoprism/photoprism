@@ -117,12 +117,14 @@ func TestBackgroundSamplesMidpoint(t *testing.T) {
 	})
 	t.Run("LongerEmbeddingFirst", func(t *testing.T) {
 		// The reverse order used to read past the end of the shorter vector and panic.
+		// One contributor spreads around its own midpoint by nothing, which is what the
+		// single-embedding path above returns too.
 		e := Embeddings{Embedding{3, 5}, Embedding{1}}
 
 		result, r, c := EmbeddingsMidpoint(e)
 
 		assert.Len(t, result, 2)
-		assert.InDelta(t, 0.01, r, 0.0001)
+		assert.InDelta(t, 0.0, r, 1e-9)
 		assert.Equal(t, 2, c)
 	})
 	t.Run("Vectors", func(t *testing.T) {

@@ -523,6 +523,24 @@ func MarkerEmbeddingModels() (result []MarkerEmbeddingModelCount, err error) {
 	return result, err
 }
 
+// RecordedMarkerEmbeddingModels returns the number of face markers per recorded embedding
+// model, ordered by name.
+//
+// Markers whose model was never recorded are left out, which is what lets the index on the
+// column answer this: the reporting variant above has to test the embedding blob instead,
+// and that reads every row. Callers that need the legacy rows counted must use that one.
+func RecordedMarkerEmbeddingModels() (result []MarkerEmbeddingModelCount, err error) {
+	err = Db().
+		Table(entity.Marker{}.TableName()).
+		Select("embed_model, COUNT(*) AS markers").
+		Where("marker_type = ? AND embed_model <> ''", entity.MarkerFace).
+		Group("embed_model").
+		Order("embed_model").
+		Scan(&result).Error
+
+	return result, err
+}
+
 // FaceMarkersWithVectors returns the number of face markers that hold an embedding.
 // It reads no provenance column, so it also answers for a schema that predates one.
 func FaceMarkersWithVectors() (count int64, err error) {

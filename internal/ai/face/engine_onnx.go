@@ -130,7 +130,7 @@ func NewONNXEngine(opts ONNXOptions) (DetectionEngine, error) {
 		return nil, fmt.Errorf("faces: configure intra-op threads: %w", err)
 	}
 
-	if err := sessionOpts.SetInterOpNumThreads(threads); err != nil {
+	if err := sessionOpts.SetInterOpNumThreads(InterOpThreads); err != nil {
 		return nil, fmt.Errorf("faces: configure inter-op threads: %w", err)
 	}
 

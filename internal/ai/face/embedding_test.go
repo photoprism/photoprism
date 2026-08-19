@@ -36,6 +36,31 @@ func TestNewEmbedding_Normalized(t *testing.T) {
 	assert.InDelta(t, 1.0, math.Sqrt(sum), 1e-9)
 }
 
+func TestNormalizeEmbedding(t *testing.T) {
+	t.Run("Unnormalized", func(t *testing.T) {
+		e := Embedding{3, 4}
+		normalizeEmbedding(e)
+		assert.InDelta(t, 0.6, e[0], 1e-6)
+		assert.InDelta(t, 0.8, e[1], 1e-6)
+	})
+	t.Run("AlreadyNormalized", func(t *testing.T) {
+		// Clustering unmarshals vectors that are already unit length and then hands the
+		// same slices to EmbeddingsMidpoint, so the second pass has to leave them alone
+		// rather than rewrite the caller's data.
+		e := Embedding{0.6, 0.8}
+		normalizeEmbedding(e)
+		assert.Equal(t, Embedding{0.6, 0.8}, e)
+	})
+	t.Run("Zero", func(t *testing.T) {
+		e := Embedding{0, 0}
+		normalizeEmbedding(e)
+		assert.Equal(t, Embedding{0, 0}, e)
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.NotPanics(t, func() { normalizeEmbedding(Embedding{}) })
+	})
+}
+
 var benchmarkEmbeddingDist float64
 
 // benchmarkEmbeddingPair returns deterministic embeddings for Dist benchmarks.

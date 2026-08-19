@@ -206,12 +206,18 @@ func TestConfig_FaceEngineRunType(t *testing.T) {
 }
 
 func TestConfig_FaceEngineThreads(t *testing.T) {
-	c := NewConfig(CliTestContext())
-	expected := max(runtime.NumCPU()/2, 1)
-	assert.Equal(t, expected, c.FaceEngineThreads())
-
-	c.options.FaceEngineThreads = 8
-	assert.Equal(t, 8, c.FaceEngineThreads())
+	t.Run("SharedWithIndexWorkers", func(t *testing.T) {
+		// Detection takes no lock, so one pool of this size runs per indexing worker.
+		c := NewConfig(CliTestContext())
+		expected := max(runtime.NumCPU()/max(c.IndexWorkers(), 1), 1)
+		assert.Equal(t, expected, c.FaceEngineThreads())
+		assert.LessOrEqual(t, c.FaceEngineThreads()*c.IndexWorkers(), max(runtime.NumCPU(), c.IndexWorkers()))
+	})
+	t.Run("Configured", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceEngineThreads = 8
+		assert.Equal(t, 8, c.FaceEngineThreads())
+	})
 }
 
 func TestConfig_FaceEngineModelPath(t *testing.T) {

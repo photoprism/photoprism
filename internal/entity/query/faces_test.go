@@ -228,7 +228,10 @@ func TestMergeFaces(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "4FD6YTOMWTDU5JKD3SS2MTRUTKZRZT7O", result.ID)
+		// The ID is the hash of the stored centroid, so it moves with the last float32
+		// bits of the midpoint rather than with its value; SampleRadius below is what
+		// pins the merge itself.
+		assert.Equal(t, "WRFY77XXC4ITVUSIBCDEM3PRDKBILC4M", result.ID)
 		assert.Equal(t, entity.SrcManual, result.FaceSrc)
 		assert.Equal(t, "jqynvsf28rhn6b0c", result.SubjUID)
 		assert.Equal(t, 2, result.Samples)
@@ -420,6 +423,23 @@ func TestMarkerEmbeddingModels(t *testing.T) {
 		before := modelCounts(t)[""]
 		newFaceMarker(t, "", nil)
 		assert.Equal(t, before, modelCounts(t)[""])
+	})
+	t.Run("RecordedOnly", func(t *testing.T) {
+		// The cheap variant answers from the index, so it cannot see rows whose model
+		// was never recorded, and callers reporting legacy vectors must not use it.
+		newFaceMarker(t, face.ModelSFace, face.Embeddings{face.RandomEmbedding()})
+
+		result, err := RecordedMarkerEmbeddingModels()
+		require.NoError(t, err)
+
+		counts := make(map[string]int, len(result))
+		for _, c := range result {
+			assert.NotEmpty(t, c.EmbedModel, "a recorded model is never blank")
+			counts[c.EmbedModel] = c.Markers
+		}
+
+		assert.Positive(t, counts[face.ModelSFace])
+		assert.Zero(t, counts[""])
 	})
 }
 
