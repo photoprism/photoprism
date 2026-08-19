@@ -103,6 +103,78 @@ func whereFaceIdentity(stmt *gorm.DB) *gorm.DB {
 		Where("marker_name <> '' OR subj_uid <> ''")
 }
 
+// HiddenFaceMarkers returns the markers of every hidden face cluster.
+//
+// Hiding is a per-cluster action, but clusters are replaced by a migration while markers
+// keep their identity, so the markers are what carries the decision across. Most hidden
+// clusters have no subject, which is why this cannot be keyed on one.
+func HiddenFaceMarkers() (result []string, err error) {
+	err = Db().Model(&entity.Marker{}).
+		Where("marker_type = ? AND face_id <> ''", entity.MarkerFace).
+		Where("face_id IN (?)", Db().Model(&entity.Face{}).Select("id").
+			Where("face_hidden = 1").QueryExpr()).
+		Order("marker_uid").Pluck("marker_uid", &result).Error
+
+	return result, err
+}
+
+// RestoreHiddenFaces hides the replacement clusters that mostly consist of markers the
+// operator had hidden before, and reports how many were hidden again.
+//
+// A rebuilt cluster rarely holds exactly the same markers, so a majority decides: it keeps
+// a deliberate choice without hiding a cluster that merely absorbed one hidden face.
+func RestoreHiddenFaces(markerUIDs []string) (hidden int, err error) {
+	if len(markerUIDs) == 0 {
+		return 0, nil
+	}
+
+	was := make(map[string]struct{}, len(markerUIDs))
+	for _, uid := range markerUIDs {
+		was[uid] = struct{}{}
+	}
+
+	type clusterMarker struct {
+		FaceID    string
+		MarkerUID string
+	}
+
+	var markers []clusterMarker
+
+	if err = Db().Model(&entity.Marker{}).
+		Select("face_id, marker_uid").
+		Where("marker_type = ? AND face_id <> ''", entity.MarkerFace).
+		Scan(&markers).Error; err != nil {
+		return 0, err
+	}
+
+	total := make(map[string]int)
+	prior := make(map[string]int)
+
+	for _, m := range markers {
+		total[m.FaceID]++
+
+		if _, ok := was[m.MarkerUID]; ok {
+			prior[m.FaceID]++
+		}
+	}
+
+	for faceID, n := range prior {
+		if n*2 <= total[faceID] {
+			continue
+		}
+
+		if err = Db().Model(&entity.Face{}).
+			Where("id = ?", faceID).
+			UpdateColumn("face_hidden", true).Error; err != nil {
+			return hidden, err
+		}
+
+		hidden++
+	}
+
+	return hidden, nil
+}
+
 // FaceMigrationIdentities returns the marker identities that must survive migration.
 func FaceMigrationIdentities() (result []FaceMigrationIdentity, err error) {
 	err = whereFaceIdentity(Db().Model(&entity.Marker{})).

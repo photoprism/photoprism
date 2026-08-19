@@ -49,6 +49,85 @@ func TestFaceMigrationMarkers(t *testing.T) {
 	})
 }
 
+func TestHiddenFaceMarkers(t *testing.T) {
+	hiddenFace := &entity.Face{
+		ID:            "HIDDENCLUSTERFORMIGRATIONTEST00000000000",
+		FaceSrc:       entity.SrcAuto,
+		FaceHidden:    true,
+		EmbedModel:    face.ModelFaceNet,
+		EmbeddingJSON: []byte("[0.1,0.2]"),
+	}
+	require.NoError(t, entity.Db().Create(hiddenFace).Error)
+	t.Cleanup(func() { entity.UnscopedDb().Delete(hiddenFace) })
+
+	marker := &entity.Marker{
+		MarkerUID:  rnd.GenerateUID('m'),
+		FileUID:    "fs6sg6bw45bnlqdw",
+		MarkerType: entity.MarkerFace,
+		MarkerSrc:  entity.SrcImage,
+		FaceID:     hiddenFace.ID,
+		W:          0.1,
+		H:          0.1,
+	}
+	require.NoError(t, entity.Db().Create(marker).Error)
+	t.Cleanup(func() { entity.UnscopedDb().Delete(marker) })
+
+	result, err := HiddenFaceMarkers()
+	require.NoError(t, err)
+	assert.Contains(t, result, marker.MarkerUID)
+}
+
+func TestRestoreHiddenFaces(t *testing.T) {
+	newCluster := func(id string) *entity.Face {
+		f := &entity.Face{ID: id, FaceSrc: entity.SrcAuto, EmbedModel: face.ModelFaceNet, EmbeddingJSON: []byte("[0.1,0.2]")}
+		require.NoError(t, entity.Db().Create(f).Error)
+		t.Cleanup(func() { entity.UnscopedDb().Delete(f) })
+
+		return f
+	}
+	newMarker := func(faceID string) *entity.Marker {
+		m := &entity.Marker{MarkerUID: rnd.GenerateUID('m'), FileUID: "fs6sg6bw45bnlqdw",
+			MarkerType: entity.MarkerFace, MarkerSrc: entity.SrcImage, FaceID: faceID, W: 0.1, H: 0.1}
+		require.NoError(t, entity.Db().Create(m).Error)
+		t.Cleanup(func() { entity.UnscopedDb().Delete(m) })
+
+		return m
+	}
+
+	t.Run("MajorityHidden", func(t *testing.T) {
+		c := newCluster("RESTOREHIDDENMAJORITY0000000000000000000")
+		was := []string{newMarker(c.ID).MarkerUID, newMarker(c.ID).MarkerUID}
+		newMarker(c.ID)
+
+		hidden, err := RestoreHiddenFaces(was)
+		require.NoError(t, err)
+		assert.Positive(t, hidden)
+
+		stored := entity.Face{}
+		require.NoError(t, entity.UnscopedDb().First(&stored, "id = ?", c.ID).Error)
+		assert.True(t, stored.FaceHidden)
+	})
+	t.Run("MinorityStaysVisible", func(t *testing.T) {
+		// A cluster that merely absorbed one hidden face was not the operator's decision.
+		c := newCluster("RESTOREHIDDENMINORITY0000000000000000000")
+		was := []string{newMarker(c.ID).MarkerUID}
+		newMarker(c.ID)
+		newMarker(c.ID)
+
+		_, err := RestoreHiddenFaces(was)
+		require.NoError(t, err)
+
+		stored := entity.Face{}
+		require.NoError(t, entity.UnscopedDb().First(&stored, "id = ?", c.ID).Error)
+		assert.False(t, stored.FaceHidden)
+	})
+	t.Run("Empty", func(t *testing.T) {
+		hidden, err := RestoreHiddenFaces(nil)
+		require.NoError(t, err)
+		assert.Zero(t, hidden)
+	})
+}
+
 func TestFaceMigrationIdentities(t *testing.T) {
 	result, err := FaceMigrationIdentities()
 	require.NoError(t, err)

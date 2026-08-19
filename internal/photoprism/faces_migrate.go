@@ -7,6 +7,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/vision"
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/mutex"
@@ -57,6 +58,7 @@ type FacesMigrateResult struct {
 	DetectedFiles     int
 	PreservedSubjects int
 	PreservedMarkers  int
+	HiddenClusters    int
 	RebuiltSubjects   int
 	AttentionSubjects int
 }
@@ -227,8 +229,8 @@ func (w *Faces) Migrate(ctx context.Context, opt FacesMigrateOptions) (result Fa
 		return result, nil
 	}
 
-	// These guards are process-local, so they only cover a migration started through the
-	// API. The CLI runs in its own process and cannot see the server's workers.
+	// These guards are process-local, so they only catch a worker started in this same
+	// process. The CLI runs in its own and cannot see a running server's workers.
 	if mutex.IndexWorker.Running() || mutex.MetaWorker.Running() || mutex.VisionWorker.Running() {
 		return result, fmt.Errorf("faces: indexing or vision worker is already running")
 	} else if err = mutex.FacesWorker.Start(); err != nil {
@@ -252,6 +254,13 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 	}
 
 	result.PreservedSubjects, result.PreservedMarkers = faceMigrationSubjectCounts(identities)
+
+	// Captured before the clusters are replaced, because that is the last moment the
+	// operator's hide decisions still exist anywhere.
+	hiddenMarkers, err := query.HiddenFaceMarkers()
+	if err != nil {
+		return result, err
+	}
 
 	// Markers without a file cannot be re-embedded by any run, so they are reported apart
 	// from failures: counting them would make every retry look partially failed.
@@ -324,6 +333,11 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 	if err = w.start(FacesOptions{Force: true}); err != nil {
 		return result, err
 	} else if err = w.Audit(false, ""); err != nil {
+		return result, err
+	}
+
+	// Re-clustering has run by now, so the replacement clusters exist to be hidden again.
+	if result.HiddenClusters, err = query.RestoreHiddenFaces(hiddenMarkers); err != nil {
 		return result, err
 	}
 
@@ -444,7 +458,7 @@ func (w *Faces) cropMigrationEmbeddings(embedder face.Embedder, file *entity.Fil
 
 	width, height := embedder.CropSize()
 	size := crop.Size{Width: width, Height: height, Options: crop.DefaultOptions}
-	source := FileName(file.FileRoot, file.FileName)
+	source := ConfigFileName(w.conf, file.FileRoot, file.FileName)
 
 	for _, marker := range markers {
 		area := markerCropArea(marker)
@@ -470,7 +484,7 @@ func (w *Faces) cropMigrationEmbeddings(embedder face.Embedder, file *entity.Fil
 // detectMigrationEmbeddings redetects a file and maps aligned embeddings to stored markers.
 func (w *Faces) detectMigrationEmbeddings(embedder face.Embedder, file *entity.File, markers, stale entity.Markers) (result map[string]face.Embeddings, err error) {
 	result = make(map[string]face.Embeddings, len(stale))
-	thumbName, err := migrationDetectionThumb(w.conf.ThumbCachePath(), file)
+	thumbName, err := migrationDetectionThumb(w.conf, w.conf.ThumbCachePath(), file)
 	if err != nil {
 		return result, err
 	}
@@ -492,7 +506,7 @@ func (w *Faces) detectMigrationEmbeddings(embedder face.Embedder, file *entity.F
 }
 
 // migrationDetectionThumb returns a cached or newly generated detection thumbnail.
-func migrationDetectionThumb(thumbPath string, file *entity.File) (string, error) {
+func migrationDetectionThumb(conf *config.Config, thumbPath string, file *entity.File) (string, error) {
 	if file == nil || file.FileHash == "" {
 		return "", fmt.Errorf("faces: migration file is invalid")
 	}
@@ -502,7 +516,7 @@ func migrationDetectionThumb(thumbPath string, file *entity.File) (string, error
 		return cached, nil
 	}
 
-	mediaFile, err := NewMediaFile(FileName(file.FileRoot, file.FileName))
+	mediaFile, err := NewMediaFile(ConfigFileName(conf, file.FileRoot, file.FileName))
 	if err != nil {
 		return "", err
 	}
@@ -581,7 +595,7 @@ func buildFaceMigrationClusters(model string) (result []query.FaceMigrationClust
 	sort.Strings(subjectUIDs)
 
 	for _, subjectUID := range subjectUIDs {
-		group := groups[subjectUID]
+		group := centroidSamples(groups[subjectUID], registered, subjectUID)
 		embeddings := make(face.Embeddings, 0, len(group))
 		for _, marker := range group {
 			if values := marker.Embeddings(); values.One() {
@@ -607,6 +621,49 @@ func buildFaceMigrationClusters(model string) (result []query.FaceMigrationClust
 	}
 
 	return result, rebuilt, nil
+}
+
+// centroidSamples returns the markers that may define a subject's replacement cluster,
+// dropping the ones a provisional centroid built from all of them disagrees with.
+//
+// An assignment the previous model got wrong would otherwise help shape the new centroid
+// and widen it enough to attract further wrong faces. The outliers keep their assignment;
+// they are only excluded from the samples, so nothing a person set is discarded here.
+func centroidSamples(group entity.Markers, registered *face.EmbeddingModel, subjectUID string) entity.Markers {
+	if len(group) < 3 {
+		return group
+	}
+
+	embeddings := make(face.Embeddings, 0, len(group))
+	for _, marker := range group {
+		if values := marker.Embeddings(); values.One() {
+			embeddings = append(embeddings, values[0])
+		}
+	}
+
+	midpoint, _, _ := face.EmbeddingsMidpoint(embeddings)
+	if len(midpoint) == 0 {
+		return group
+	}
+
+	kept := make(entity.Markers, 0, len(group))
+	for _, marker := range group {
+		if marker.Embeddings().Dist(midpoint) <= registered.ClusterDist {
+			kept = append(kept, marker)
+		}
+	}
+
+	// Every sample disagreeing with their own midpoint means the assignments are too
+	// scattered to tell signal from outlier, so none of them is dropped.
+	if len(kept) < 2 {
+		return group
+	}
+
+	if dropped := len(group) - len(kept); dropped > 0 {
+		log.Infof("faces: excluded %d outlier(s) from the cluster of subject %s", dropped, clean.Log(subjectUID))
+	}
+
+	return kept
 }
 
 // migrationCanceled reports context and worker cancellation consistently between batches.

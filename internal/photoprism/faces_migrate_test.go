@@ -189,17 +189,18 @@ func TestFaces_detectMigrationEmbeddings(t *testing.T) {
 }
 
 func TestMigrationDetectionThumb(t *testing.T) {
+	c := config.TestConfig()
 	thumbPath := t.TempDir()
 	hash := "0123456789012345678901234567890123456789"
 	name, err := thumb.Sizes[thumb.Fit720].FileName(hash, thumbPath)
 	require.NoError(t, err)
 	require.NoError(t, thumb.Save(image.NewNRGBA(image.Rect(0, 0, 8, 8)), name))
 
-	result, err := migrationDetectionThumb(thumbPath, &entity.File{FileHash: hash})
+	result, err := migrationDetectionThumb(c, thumbPath, &entity.File{FileHash: hash})
 	require.NoError(t, err)
 	assert.Equal(t, name, result)
 
-	_, err = migrationDetectionThumb(thumbPath, nil)
+	_, err = migrationDetectionThumb(c, thumbPath, nil)
 	require.Error(t, err)
 }
 
@@ -326,6 +327,63 @@ func TestFaces_migratePlan(t *testing.T) {
 		supplied := FacesMigratePlan{Target: otherFaceModel(t, w.conf.FaceModel())}
 		_, err := w.migratePlan(FacesMigrateOptions{Plan: &supplied})
 		require.Error(t, err)
+	})
+}
+
+func TestCentroidSamples(t *testing.T) {
+	registered := face.FindEmbeddingModel(face.ModelSFace)
+	require.NotNil(t, registered)
+
+	// A tight group plus one vector pointing elsewhere, which is what an assignment the
+	// previous model got wrong looks like once it has been re-embedded.
+	marker := func(v []float32) entity.Marker {
+		m := entity.Marker{MarkerUID: rnd.GenerateUID('m'), MarkerType: entity.MarkerFace}
+		m.SetEmbeddings(face.NewEmbeddings([][]float32{v}), face.ModelSFace)
+
+		return m
+	}
+	near := func(i int) []float32 {
+		v := make([]float32, registered.Dims)
+		v[0] = 1
+		v[1+i] = 0.05
+
+		return v
+	}
+	far := func() []float32 {
+		v := make([]float32, registered.Dims)
+		v[registered.Dims-1] = 1
+
+		return v
+	}
+
+	t.Run("DropsOutlier", func(t *testing.T) {
+		outlier := marker(far())
+		group := entity.Markers{marker(near(0)), marker(near(1)), marker(near(2)), outlier}
+
+		kept := centroidSamples(group, registered, "jsubject00000001")
+		assert.Len(t, kept, 3)
+		for _, m := range kept {
+			assert.NotEqual(t, outlier.MarkerUID, m.MarkerUID, "the outlier must not define the centroid")
+		}
+	})
+	t.Run("KeepsAgreeingGroup", func(t *testing.T) {
+		group := entity.Markers{marker(near(0)), marker(near(1)), marker(near(2))}
+		assert.Len(t, centroidSamples(group, registered, "jsubject00000002"), 3)
+	})
+	t.Run("TooFewToJudge", func(t *testing.T) {
+		// Two samples have no majority to appeal to, so neither is treated as the outlier.
+		group := entity.Markers{marker(near(0)), marker(far())}
+		assert.Len(t, centroidSamples(group, registered, "jsubject00000003"), 2)
+	})
+	t.Run("AllScattered", func(t *testing.T) {
+		// Nothing agrees with the midpoint, so there is no signal to separate from noise.
+		group := entity.Markers{}
+		for i := range 4 {
+			v := make([]float32, registered.Dims)
+			v[i*8] = 1
+			group = append(group, marker(v))
+		}
+		assert.Len(t, centroidSamples(group, registered, "jsubject00000004"), 4)
 	})
 }
 

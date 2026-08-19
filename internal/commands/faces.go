@@ -178,9 +178,10 @@ func facesMigrateAction(ctx *cli.Context) error {
 			Plan:   &plan,
 		})
 		log.Infof(
-			"faces: migrated %d markers, skipped %d, failed %d, %d without a file; preserved %d people and %d assignments, rebuilt %d clusters, %d need attention",
+			"faces: migrated %d markers, skipped %d, failed %d, %d without a file; preserved %d people, %d assignments and %d hidden clusters, rebuilt %d clusters, %d need attention",
 			result.Migrated, result.Skipped, result.Failed, result.Unlinked,
-			result.PreservedSubjects, result.PreservedMarkers, result.RebuiltSubjects, result.AttentionSubjects,
+			result.PreservedSubjects, result.PreservedMarkers, result.HiddenClusters,
+			result.RebuiltSubjects, result.AttentionSubjects,
 		)
 
 		if migrateErr != nil {
