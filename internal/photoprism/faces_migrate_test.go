@@ -12,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -238,31 +239,120 @@ func TestBuildFaceMigrationClusters(t *testing.T) {
 	// model or its vector is the wrong length for the space the clusters are rebuilt in.
 	target := face.ConfiguredModel()
 	subjectUID := rnd.GenerateUID('j')
-	marker := &entity.Marker{
-		MarkerUID:      rnd.GenerateUID('m'),
-		FileUID:        "fs6sg6bw45bnlqdw",
-		MarkerType:     entity.MarkerFace,
-		SubjUID:        subjectUID,
-		SubjSrc:        entity.SrcManual,
-		EmbedModel:     target,
-		EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
-		W:              0.1,
-		H:              0.1,
+
+	newMarker := func(subjSrc string) *entity.Marker {
+		m := &entity.Marker{
+			MarkerUID:      rnd.GenerateUID('m'),
+			FileUID:        "fs6sg6bw45bnlqdw",
+			MarkerType:     entity.MarkerFace,
+			SubjUID:        subjectUID,
+			SubjSrc:        subjSrc,
+			EmbedModel:     target,
+			EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
+			W:              0.1,
+			H:              0.1,
+		}
+		require.NoError(t, entity.Db().Create(m).Error)
+		t.Cleanup(func() { entity.UnscopedDb().Delete(m) })
+
+		return m
 	}
-	require.NoError(t, entity.Db().Create(marker).Error)
-	t.Cleanup(func() { entity.UnscopedDb().Delete(marker) })
+
+	manual := newMarker(entity.SrcManual)
+	automatic := newMarker(entity.SrcAuto)
 
 	result, rebuilt, err := buildFaceMigrationClusters(target)
 	require.NoError(t, err)
 	assert.Equal(t, rebuilt, len(result))
-	found := false
-	for _, cluster := range result {
-		found = found || cluster.Face.SubjUID == subjectUID
+
+	var cluster *query.FaceMigrationCluster
+	for i := range result {
+		if result[i].Face.SubjUID == subjectUID {
+			cluster = &result[i]
+		}
 	}
-	assert.True(t, found)
+	require.NotNil(t, cluster, "the subject must get a replacement cluster")
+
+	// Both assignments have to seed the cluster, or it comes out too narrow to match with.
+	assert.Contains(t, cluster.MarkerDistances, manual.MarkerUID)
+	assert.Contains(t, cluster.MarkerDistances, automatic.MarkerUID)
+	assert.Equal(t, 2, cluster.Face.Samples)
 
 	_, _, err = buildFaceMigrationClusters("unknown")
 	require.Error(t, err)
+}
+
+func TestFaces_migrationTarget(t *testing.T) {
+	w := NewFaces(config.TestConfig())
+	configured := face.NormalizeModelName(w.conf.FaceModel())
+	t.Run("EmptyResolvesToConfigured", func(t *testing.T) {
+		target, err := w.migrationTarget("")
+		require.NoError(t, err)
+		assert.Equal(t, configured, target)
+	})
+	t.Run("Mismatch", func(t *testing.T) {
+		_, err := w.migrationTarget(otherFaceModel(t, w.conf.FaceModel()))
+		require.Error(t, err)
+	})
+	t.Run("Disabled", func(t *testing.T) {
+		_, err := w.migrationTarget(face.ModelNone)
+		require.Error(t, err)
+	})
+	t.Run("MissingConfig", func(t *testing.T) {
+		_, err := (&Faces{}).migrationTarget("")
+		require.Error(t, err)
+	})
+}
+
+func TestFaces_migratePlan(t *testing.T) {
+	w := NewFaces(config.TestConfig())
+	configured := face.NormalizeModelName(w.conf.FaceModel())
+	t.Run("WithoutPlan", func(t *testing.T) {
+		plan, err := w.migratePlan(FacesMigrateOptions{})
+		require.NoError(t, err)
+		assert.Equal(t, configured, plan.Target)
+		assert.Positive(t, plan.Markers.Total)
+	})
+	t.Run("ReusesSuppliedPlan", func(t *testing.T) {
+		// Counts the caller already gathered are trusted; the target never is.
+		supplied := FacesMigratePlan{Target: configured, Subjects: 7, AssignedMarkers: 42}
+		plan, err := w.migratePlan(FacesMigrateOptions{Target: configured, Plan: &supplied})
+		require.NoError(t, err)
+		assert.Equal(t, 7, plan.Subjects)
+		assert.Equal(t, 42, plan.AssignedMarkers)
+		assert.Zero(t, plan.Markers.Total, "a supplied plan must not be re-counted")
+	})
+	t.Run("RejectsForeignTarget", func(t *testing.T) {
+		supplied := FacesMigratePlan{Target: otherFaceModel(t, w.conf.FaceModel())}
+		_, err := w.migratePlan(FacesMigrateOptions{Plan: &supplied})
+		require.Error(t, err)
+	})
+}
+
+func TestFaceMigrationSubjectCounts(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		subjects, assigned := faceMigrationSubjectCounts([]query.FaceMigrationIdentity{
+			{MarkerUID: "m1", SubjUID: "s1", SubjSrc: entity.SrcManual},
+			{MarkerUID: "m2", SubjUID: "s1", SubjSrc: entity.SrcAuto},
+			{MarkerUID: "m3", SubjUID: "s2", SubjSrc: entity.SrcAuto},
+		})
+		assert.Equal(t, 2, subjects)
+		assert.Equal(t, 3, assigned)
+	})
+	t.Run("NamedWithoutSubject", func(t *testing.T) {
+		// Counting a name that has no subject row yet would report it as needing
+		// attention, although the rebuild creates its subject right afterwards.
+		subjects, assigned := faceMigrationSubjectCounts([]query.FaceMigrationIdentity{
+			{MarkerUID: "m1", MarkerName: "Nameless", SubjSrc: entity.SrcManual},
+		})
+		assert.Zero(t, subjects)
+		assert.Zero(t, assigned)
+	})
+	t.Run("Empty", func(t *testing.T) {
+		subjects, assigned := faceMigrationSubjectCounts(nil)
+		assert.Zero(t, subjects)
+		assert.Zero(t, assigned)
+	})
 }
 
 func TestMigrationCanceled(t *testing.T) {

@@ -48,6 +48,41 @@ func (e *oneHotEmbedder) Run(image.Image) face.Embeddings {
 // Close releases the test embedder.
 func (e *oneHotEmbedder) Close() error { return nil }
 
+// sameFaceEmbedder returns one person's faces as a loose group: about 0.73 apart from each
+// other, so a single-sample cluster cannot reach them, and about 0.46 from their common
+// centroid, so a cluster holding all of them can. That gap is what the sample set buys, and
+// a test whose vectors sit closer together passes no matter how the cluster is seeded.
+type sameFaceEmbedder struct {
+	model face.ModelName
+	dims  int
+	n     int
+}
+
+// ModelName returns the target model this test embedder stands in for.
+func (e *sameFaceEmbedder) ModelName() face.ModelName { return e.model }
+
+// Dims returns the test embedding length.
+func (e *sameFaceEmbedder) Dims() int { return e.dims }
+
+// CropSize returns the test crop size.
+func (e *sameFaceEmbedder) CropSize() (int, int) { return 16, 16 }
+
+// Aligned reports that this embedder works on plain box crops.
+func (e *sameFaceEmbedder) Aligned() bool { return false }
+
+// Run returns the next vector of the same cluster.
+func (e *sameFaceEmbedder) Run(image.Image) face.Embeddings {
+	v := make([]float32, e.dims)
+	v[0] = 1
+	v[1+e.n%(e.dims-1)] = 0.6
+	e.n++
+
+	return face.NewEmbeddings([][]float32{v})
+}
+
+// Close releases the test embedder.
+func (e *sameFaceEmbedder) Close() error { return nil }
+
 // newMigrateTestConfig returns an isolated config for a migration test.
 func newMigrateTestConfig(t *testing.T, name string) *config.Config {
 	t.Helper()
@@ -135,6 +170,18 @@ func addMigrateTestMarker(t *testing.T, fileUID, subjSrc, name string) *entity.M
 	}
 
 	require.NoError(t, entity.Db().Create(m).Error)
+
+	return m
+}
+
+// addMigrateTestSubjectMarker creates a face marker assigned to an existing subject by an
+// automatic match, which is how most of a curated library's faces are attributed.
+func addMigrateTestSubjectMarker(t *testing.T, fileUID, subjUID string, name string) *entity.Marker {
+	t.Helper()
+
+	m := addMigrateTestMarker(t, fileUID, entity.SrcAuto, name)
+	require.NoError(t, entity.Db().Model(m).UpdateColumn("subj_uid", subjUID).Error)
+	m.SubjUID = subjUID
 
 	return m
 }
@@ -232,7 +279,7 @@ func TestFaces_migrate(t *testing.T) {
 		require.Len(t, models, 1)
 		assert.Equal(t, face.ModelFaceNet, models[0].EmbedModel)
 
-		// The manual identity must survive, and the automatic one must be cleared.
+		// Every identity must survive, whichever source recorded it.
 		storedManual := entity.Marker{}
 		require.NoError(t, entity.UnscopedDb().First(&storedManual, "marker_uid = ?", manual.MarkerUID).Error)
 		assert.Equal(t, "Jane Doe", storedManual.MarkerName)
@@ -240,12 +287,57 @@ func TestFaces_migrate(t *testing.T) {
 
 		storedAuto := entity.Marker{}
 		require.NoError(t, entity.UnscopedDb().First(&storedAuto, "marker_uid = ?", auto.MarkerUID).Error)
-		assert.Empty(t, storedAuto.MarkerName)
+		assert.Equal(t, "Auto Person", storedAuto.MarkerName)
 
 		storedXmp := entity.Marker{}
 		require.NoError(t, entity.UnscopedDb().First(&storedXmp, "marker_uid = ?", xmp.MarkerUID).Error)
 		assert.Equal(t, "Xmp Person", storedXmp.MarkerName)
 		assert.NotEmpty(t, storedXmp.EmbeddingsJSON)
+	})
+	t.Run("KeepsAutomaticAssignments", func(t *testing.T) {
+		c := newMigrateTestConfig(t, "migrateassignments")
+		useTestEmbedder(t, c, face.ModelSFace)
+		w := NewFaces(c)
+
+		f := addMigrateTestFile(t, c, "5555555555555555555555555555555555555555", true)
+		manual := addMigrateTestMarker(t, f.FileUID, entity.SrcManual, "Jane Doe")
+		require.NotEmpty(t, manual.SubjUID)
+
+		// A curated library holds one hand-named face per person and many the matcher
+		// assigned, which is the sample set the replacement cluster has to keep.
+		automatic := entity.Markers{
+			*addMigrateTestSubjectMarker(t, f.FileUID, manual.SubjUID, "Jane Doe"),
+			*addMigrateTestSubjectMarker(t, f.FileUID, manual.SubjUID, "Jane Doe"),
+			*addMigrateTestSubjectMarker(t, f.FileUID, manual.SubjUID, "Jane Doe"),
+		}
+
+		plan := FacesMigratePlan{Target: face.ModelSFace}
+		embedder := &sameFaceEmbedder{model: face.ModelSFace, dims: 128}
+		result, err := w.migrate(context.Background(), plan, embedder,
+			FacesMigrateOptions{Target: face.ModelSFace}, FacesMigrateResult{Target: face.ModelSFace})
+
+		require.NoError(t, err)
+		assert.Equal(t, 4, result.Migrated)
+		assert.Zero(t, result.Failed)
+		assert.Equal(t, 1, result.RebuiltSubjects)
+		assert.Zero(t, result.AttentionSubjects)
+
+		// Not one assignment may be dropped: losing them empties the person's page and no
+		// later matching run brings them back.
+		for _, m := range append(entity.Markers{*manual}, automatic...) {
+			stored := entity.Marker{}
+			require.NoError(t, entity.UnscopedDb().First(&stored, "marker_uid = ?", m.MarkerUID).Error)
+			assert.Equal(t, manual.SubjUID, stored.SubjUID, "marker %s lost its subject", m.MarkerUID)
+			assert.Equal(t, "Jane Doe", stored.MarkerName)
+			assert.NotEmpty(t, stored.FaceID, "marker %s was not linked to a cluster", m.MarkerUID)
+		}
+
+		// The rebuilt cluster has to carry all four samples, because a one-sample cluster
+		// is too narrow to accept the faces the person already had.
+		cluster := entity.Face{}
+		require.NoError(t, entity.UnscopedDb().First(&cluster, "subj_uid = ?", manual.SubjUID).Error)
+		assert.Equal(t, face.ModelSFace, cluster.EmbedModel)
+		assert.Equal(t, 4, cluster.Samples)
 	})
 	t.Run("LegacyBlankModel", func(t *testing.T) {
 		c := newMigrateTestConfig(t, "migratelegacy")

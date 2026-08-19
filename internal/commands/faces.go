@@ -116,8 +116,14 @@ func facesMigrateAction(ctx *cli.Context) error {
 		}
 
 		log.Infof(
-			"faces: migration to %s includes %d valid markers, %d invalid markers, and %d manually identified people",
-			clean.Log(plan.Target), plan.Markers.Valid, plan.Markers.Invalid, plan.ManualSubjects,
+			"faces: migration to %s includes %d valid markers, %d invalid markers, and %d identified people",
+			clean.Log(plan.Target), plan.Markers.Valid, plan.Markers.Invalid, plan.Subjects,
+		)
+		// People keep the faces already assigned to them, so an operator can tell at a
+		// glance whether the run is about to touch a well-curated library.
+		log.Infof(
+			"faces: %d markers are assigned to a person and keep that assignment",
+			plan.AssignedMarkers,
 		)
 		// Ready tells an operator that a re-run has nothing left to do, and unlinked
 		// markers are cleared by every run regardless of how the migration goes.
@@ -166,10 +172,15 @@ func facesMigrateAction(ctx *cli.Context) error {
 			}
 		}
 
-		result, migrateErr := w.Migrate(ctx.Context, photoprism.FacesMigrateOptions{Target: plan.Target, Force: ctx.Bool("force")})
+		result, migrateErr := w.Migrate(ctx.Context, photoprism.FacesMigrateOptions{
+			Target: plan.Target,
+			Force:  ctx.Bool("force"),
+			Plan:   &plan,
+		})
 		log.Infof(
-			"faces: migrated %d markers, skipped %d, failed %d, %d without a file; preserved %d people, rebuilt %d, %d need attention",
-			result.Migrated, result.Skipped, result.Failed, result.Unlinked, result.PreservedSubjects, result.RebuiltSubjects, result.AttentionSubjects,
+			"faces: migrated %d markers, skipped %d, failed %d, %d without a file; preserved %d people and %d assignments, rebuilt %d clusters, %d need attention",
+			result.Migrated, result.Skipped, result.Failed, result.Unlinked,
+			result.PreservedSubjects, result.PreservedMarkers, result.RebuiltSubjects, result.AttentionSubjects,
 		)
 
 		if migrateErr != nil {

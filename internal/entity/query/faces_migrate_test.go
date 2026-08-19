@@ -49,40 +49,55 @@ func TestFaceMigrationMarkers(t *testing.T) {
 	})
 }
 
-func TestFaceMigrationManualIdentities(t *testing.T) {
-	result, err := FaceMigrationManualIdentities()
+func TestFaceMigrationIdentities(t *testing.T) {
+	result, err := FaceMigrationIdentities()
 	require.NoError(t, err)
 	for _, identity := range result {
-		assert.Equal(t, entity.SrcManual, identity.SubjSrc)
 		assert.NotEmpty(t, identity.MarkerUID)
+		assert.True(t, identity.SubjUID != "" || identity.MarkerName != "",
+			"an identity must carry a subject or a name")
 	}
 }
 
-func TestFaceMigrationManualMarkers(t *testing.T) {
-	marker := &entity.Marker{
-		MarkerUID:      rnd.GenerateUID('m'),
-		FileUID:        "fs6sg6bw45bnlqdw",
-		MarkerType:     entity.MarkerFace,
-		MarkerSrc:      entity.SrcImage,
-		SubjUID:        rnd.GenerateUID('j'),
-		SubjSrc:        entity.SrcManual,
-		EmbedModel:     face.ModelFaceNet,
-		EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
-		W:              0.1,
-		H:              0.1,
-	}
-	require.NoError(t, entity.Db().Create(marker).Error)
-	t.Cleanup(func() { entity.UnscopedDb().Delete(marker) })
+func TestFaceMigrationSubjectMarkers(t *testing.T) {
+	// An automatic assignment is what the old model recorded about a person, not about
+	// its own embedding space, so it has to seed the replacement cluster as well.
+	newMarker := func(subjUID, subjSrc string) *entity.Marker {
+		m := &entity.Marker{
+			MarkerUID:      rnd.GenerateUID('m'),
+			FileUID:        "fs6sg6bw45bnlqdw",
+			MarkerType:     entity.MarkerFace,
+			MarkerSrc:      entity.SrcImage,
+			SubjUID:        subjUID,
+			SubjSrc:        subjSrc,
+			EmbedModel:     face.ModelFaceNet,
+			EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
+			W:              0.1,
+			H:              0.1,
+		}
+		require.NoError(t, entity.Db().Create(m).Error)
+		t.Cleanup(func() { entity.UnscopedDb().Delete(m) })
 
-	result, err := FaceMigrationManualMarkers(face.ModelFaceNet)
+		return m
+	}
+
+	subjUID := rnd.GenerateUID('j')
+	manual := newMarker(subjUID, entity.SrcManual)
+	automatic := newMarker(subjUID, entity.SrcAuto)
+	unassigned := newMarker("", entity.SrcAuto)
+
+	result, err := FaceMigrationSubjectMarkers(face.ModelFaceNet)
 	require.NoError(t, err)
-	found := false
-	for _, candidate := range result {
-		found = found || candidate.MarkerUID == marker.MarkerUID
-	}
-	assert.True(t, found)
 
-	_, err = FaceMigrationManualMarkers("")
+	found := make(map[string]bool, len(result))
+	for _, candidate := range result {
+		found[candidate.MarkerUID] = true
+	}
+	assert.True(t, found[manual.MarkerUID], "manual marker must seed the cluster")
+	assert.True(t, found[automatic.MarkerUID], "automatic marker must seed the cluster")
+	assert.False(t, found[unassigned.MarkerUID], "marker without a subject must be excluded")
+
+	_, err = FaceMigrationSubjectMarkers("")
 	require.Error(t, err)
 }
 
@@ -159,8 +174,22 @@ func TestFinalizeFaceMigration(t *testing.T) {
 		W:              0.1,
 		H:              0.1,
 	}
+	// A marker from a third source, to prove the relink is not restricted to manual ones.
+	imported := entity.Marker{
+		MarkerUID:      rnd.GenerateUID('m'),
+		FileUID:        "file123",
+		MarkerType:     entity.MarkerFace,
+		MarkerName:     "Alice",
+		SubjUID:        subjectUID,
+		SubjSrc:        entity.SrcXmp,
+		EmbedModel:     face.ModelFaceNet,
+		EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
+		W:              0.1,
+		H:              0.1,
+	}
 	require.NoError(t, tempDb.Create(&manual).Error)
 	require.NoError(t, tempDb.Create(&automatic).Error)
+	require.NoError(t, tempDb.Create(&imported).Error)
 
 	// A cluster from the previous run, so the delete this function is named for has
 	// something to remove rather than passing over an empty table.
@@ -173,29 +202,34 @@ func TestFinalizeFaceMigration(t *testing.T) {
 	}
 	require.NoError(t, tempDb.Create(&stale).Error)
 
-	identities, err := FaceMigrationManualIdentities()
+	identities, err := FaceMigrationIdentities()
 	require.NoError(t, err)
 	cluster := entity.NewFace(subjectUID, entity.SrcManual, manual.Embeddings(), face.EmbeddingModelName())
 	require.NotNil(t, cluster)
 
 	require.NoError(t, FinalizeFaceMigration(face.ModelFaceNet, identities, []FaceMigrationCluster{{
 		Face:            *cluster,
-		MarkerDistances: map[string]float64{manual.MarkerUID: 0},
+		MarkerDistances: map[string]float64{manual.MarkerUID: 0, imported.MarkerUID: 0.2},
 	}}, []string{automatic.MarkerUID}))
 
 	var staleCount int
 	require.NoError(t, tempDb.Unscoped().Model(&entity.Face{}).Where("id = ?", stale.ID).Count(&staleCount).Error)
 	assert.Zero(t, staleCount, "the previous run's clusters must be replaced")
 
-	var storedManual, storedAuto entity.Marker
+	var storedManual, storedAuto, storedImported entity.Marker
 	require.NoError(t, tempDb.First(&storedManual, "marker_uid = ?", manual.MarkerUID).Error)
 	require.NoError(t, tempDb.First(&storedAuto, "marker_uid = ?", automatic.MarkerUID).Error)
+	require.NoError(t, tempDb.First(&storedImported, "marker_uid = ?", imported.MarkerUID).Error)
 	assert.Equal(t, "Alice", storedManual.MarkerName)
 	assert.Equal(t, subjectUID, storedManual.SubjUID)
 	assert.Equal(t, cluster.ID, storedManual.FaceID)
-	assert.Empty(t, storedAuto.MarkerName)
-	assert.Empty(t, storedAuto.SubjUID)
+	// Who a face shows outlives the vectors, so an automatic assignment survives even
+	// when its embedding could not be regenerated.
+	assert.Equal(t, "Alice", storedAuto.MarkerName)
+	assert.Equal(t, subjectUID, storedAuto.SubjUID)
 	assert.Empty(t, storedAuto.EmbeddingsJSON)
+	assert.Equal(t, cluster.ID, storedImported.FaceID)
+	assert.Equal(t, subjectUID, storedImported.SubjUID)
 
 	var facesBefore, facesAfter int
 	require.NoError(t, tempDb.Model(&entity.Face{}).Count(&facesBefore).Error)

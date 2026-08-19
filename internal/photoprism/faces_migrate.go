@@ -29,15 +29,21 @@ type FacesMigrateOptions struct {
 	DryRun    bool
 	Force     bool
 	BatchSize int
+
+	// Plan carries a summary the caller already computed, so a command that reports the
+	// scope before prompting does not run the counting queries a second time. It is
+	// revalidated rather than trusted.
+	Plan *FacesMigratePlan
 }
 
 // FacesMigratePlan summarizes the work required for a target embedding model.
 type FacesMigratePlan struct {
-	Target         string
-	Markers        query.FaceMigrationMarkerCounts
-	MarkerModels   []query.MarkerEmbeddingModelCount
-	FaceModels     []query.EmbeddingModelCount
-	ManualSubjects int
+	Target          string
+	Markers         query.FaceMigrationMarkerCounts
+	MarkerModels    []query.MarkerEmbeddingModelCount
+	FaceModels      []query.EmbeddingModelCount
+	Subjects        int
+	AssignedMarkers int
 }
 
 // FacesMigrateResult summarizes a completed face embedding migration.
@@ -50,6 +56,7 @@ type FacesMigrateResult struct {
 	Invalid           int
 	DetectedFiles     int
 	PreservedSubjects int
+	PreservedMarkers  int
 	RebuiltSubjects   int
 	AttentionSubjects int
 }
@@ -95,12 +102,13 @@ func finalizeRefused(migrated, failed int) string {
 	}
 }
 
-// PlanMigration validates the target and returns a read-only migration summary.
-func (w *Faces) PlanMigration(target string) (result FacesMigratePlan, err error) {
+// migrationTarget resolves the target model and reports why it cannot be migrated to.
+// Every check reads configuration rather than the index, so it is cheap enough to repeat.
+func (w *Faces) migrationTarget(target string) (string, error) {
 	if w == nil || w.conf == nil {
-		return result, fmt.Errorf("faces: configuration not available")
+		return "", fmt.Errorf("faces: configuration not available")
 	} else if w.Disabled() {
-		return result, fmt.Errorf("face recognition is disabled")
+		return "", fmt.Errorf("face recognition is disabled")
 	}
 
 	configured := face.NormalizeModelName(w.conf.FaceModel())
@@ -112,20 +120,31 @@ func (w *Faces) PlanMigration(target string) (result FacesMigratePlan, err error
 
 	switch {
 	case !face.KnownModelName(target) || target == face.ModelAuto:
-		return result, fmt.Errorf("faces: unsupported migration model %q", target)
+		return "", fmt.Errorf("faces: unsupported migration model %q", target)
 	case target == face.ModelNone:
-		return result, fmt.Errorf("faces: cannot migrate to disabled embeddings")
+		return "", fmt.Errorf("faces: cannot migrate to disabled embeddings")
 	case target != configured:
-		return result, fmt.Errorf("faces: migration target %s does not match configured model %s", clean.Log(target), clean.Log(configured))
+		return "", fmt.Errorf("faces: migration target %s does not match configured model %s", clean.Log(target), clean.Log(configured))
 	}
 
 	model := face.FindEmbeddingModel(target)
 	if model == nil || !model.Installed(w.conf.ModelsPath()) {
-		return result, fmt.Errorf("faces: embedding model %s is not installed", clean.Log(target))
+		return "", fmt.Errorf("faces: embedding model %s is not installed", clean.Log(target))
 	}
 
 	if model.Aligned() && face.ActiveEngineName() != face.EngineONNX {
-		return result, fmt.Errorf("faces: migration to %s requires the ONNX face detector", clean.Log(target))
+		return "", fmt.Errorf("faces: migration to %s requires the ONNX face detector", clean.Log(target))
+	}
+
+	return target, nil
+}
+
+// PlanMigration validates the target and returns a read-only migration summary.
+func (w *Faces) PlanMigration(target string) (result FacesMigratePlan, err error) {
+	target, err = w.migrationTarget(target)
+
+	if err != nil {
+		return result, err
 	}
 
 	result.Target = target
@@ -138,36 +157,71 @@ func (w *Faces) PlanMigration(target string) (result FacesMigratePlan, err error
 		return result, err
 	}
 
-	identities, err := query.FaceMigrationManualIdentities()
+	identities, err := query.FaceMigrationIdentities()
 	if err != nil {
 		return result, err
 	}
 
-	subjects := make(map[string]struct{})
-	for _, identity := range identities {
-		key := identity.SubjUID
-		if key == "" {
-			key = identity.MarkerName
-		}
-		if key != "" {
-			subjects[key] = struct{}{}
-		}
-	}
-	result.ManualSubjects = len(subjects)
+	result.Subjects, result.AssignedMarkers = faceMigrationSubjectCounts(identities)
 
 	return result, nil
 }
 
+// faceMigrationSubjectCounts returns how many subjects the identities name and how many
+// markers are assigned to one.
+//
+// Keyed by subject alone: a named marker that has no subject row yet is not a person the
+// migration can rebuild a cluster for, and counting it here would report it as needing
+// attention even though the rebuild creates its subject moments later.
+func faceMigrationSubjectCounts(identities []query.FaceMigrationIdentity) (subjects, assigned int) {
+	seen := make(map[string]struct{}, len(identities))
+
+	for _, identity := range identities {
+		if identity.SubjUID == "" {
+			continue
+		}
+
+		seen[identity.SubjUID] = struct{}{}
+		assigned++
+	}
+
+	return len(seen), assigned
+}
+
+// migratePlan reuses the caller's summary when it has one, and computes it otherwise.
+//
+// Only the counting queries are skipped: the target is validated either way, so a plan
+// handed in from elsewhere cannot decide what gets migrated.
+func (w *Faces) migratePlan(opt FacesMigrateOptions) (FacesMigratePlan, error) {
+	if opt.Plan == nil {
+		return w.PlanMigration(opt.Target)
+	}
+
+	target, err := w.migrationTarget(opt.Target)
+
+	if err != nil {
+		return FacesMigratePlan{}, err
+	}
+
+	if opt.Plan.Target != target {
+		return FacesMigratePlan{}, fmt.Errorf("faces: migration plan targets %s, expected %s",
+			clean.Log(opt.Plan.Target), clean.Log(target))
+	}
+
+	return *opt.Plan, nil
+}
+
 // Migrate regenerates face marker embeddings and rebuilds all clusters for the target model.
 func (w *Faces) Migrate(ctx context.Context, opt FacesMigrateOptions) (result FacesMigrateResult, err error) {
-	plan, err := w.PlanMigration(opt.Target)
+	plan, err := w.migratePlan(opt)
 	if err != nil {
 		return result, err
 	}
 
 	result.Target = plan.Target
 	result.Invalid = plan.Markers.Invalid
-	result.PreservedSubjects = plan.ManualSubjects
+	result.PreservedSubjects = plan.Subjects
+	result.PreservedMarkers = plan.AssignedMarkers
 
 	if opt.DryRun {
 		return result, nil
@@ -192,21 +246,12 @@ func (w *Faces) Migrate(ctx context.Context, opt FacesMigrateOptions) (result Fa
 
 // migrate performs the migration itself, once the plan and the embedder are resolved.
 func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder face.Embedder, opt FacesMigrateOptions, result FacesMigrateResult) (FacesMigrateResult, error) {
-	identities, err := query.FaceMigrationManualIdentities()
+	identities, err := query.FaceMigrationIdentities()
 	if err != nil {
 		return result, err
 	}
-	preservedSubjects := make(map[string]struct{})
-	for _, identity := range identities {
-		key := identity.SubjUID
-		if key == "" {
-			key = identity.MarkerName
-		}
-		if key != "" {
-			preservedSubjects[key] = struct{}{}
-		}
-	}
-	result.PreservedSubjects = len(preservedSubjects)
+
+	result.PreservedSubjects, result.PreservedMarkers = faceMigrationSubjectCounts(identities)
 
 	// Markers without a file cannot be re-embedded by any run, so they are reported apart
 	// from failures: counting them would make every retry look partially failed.
@@ -280,6 +325,16 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 		return result, err
 	} else if err = w.Audit(false, ""); err != nil {
 		return result, err
+	}
+
+	// Subject covers and counts are denormalized, so without this the People view keeps
+	// advertising the totals the library had before the clusters were replaced.
+	if updateErr := query.UpdateSubjectCovers(true); updateErr != nil {
+		log.Errorf("faces: %s (update covers)", updateErr)
+	}
+
+	if updateErr := entity.UpdateSubjectCounts(true); updateErr != nil {
+		log.Errorf("faces: %s (update counts)", updateErr)
 	}
 
 	if result.Failed > 0 {
@@ -500,9 +555,10 @@ func markerCropArea(marker entity.Marker) crop.Area {
 	return crop.Area{Name: "face", X: marker.X, Y: marker.Y, W: marker.W, H: marker.H}
 }
 
-// buildFaceMigrationClusters creates one replacement manual cluster per subject.
+// buildFaceMigrationClusters creates one replacement cluster per identified subject,
+// seeded from every marker assigned to it so the cluster keeps its original width.
 func buildFaceMigrationClusters(model string) (result []query.FaceMigrationCluster, rebuilt int, err error) {
-	markers, err := query.FaceMigrationManualMarkers(model)
+	markers, err := query.FaceMigrationSubjectMarkers(model)
 	if err != nil {
 		return result, 0, err
 	}
@@ -538,7 +594,7 @@ func buildFaceMigrationClusters(model string) (result []query.FaceMigrationClust
 
 		cluster := entity.NewFace(subjectUID, entity.SrcManual, embeddings, model)
 		if cluster == nil || cluster.ID == "" || cluster.EmbedModel != model || len(cluster.Embedding()) == 0 {
-			log.Warnf("faces: failed rebuilding manual cluster for subject %s", clean.Log(subjectUID))
+			log.Warnf("faces: failed rebuilding cluster for subject %s", clean.Log(subjectUID))
 			continue
 		}
 

@@ -18,7 +18,7 @@ type FaceMigrationIdentity struct {
 	SubjSrc    string
 }
 
-// FaceMigrationCluster describes a replacement manual cluster and its marker distances.
+// FaceMigrationCluster describes a replacement subject cluster and its marker distances.
 type FaceMigrationCluster struct {
 	Face            entity.Face
 	MarkerDistances map[string]float64
@@ -94,25 +94,37 @@ func FaceMigrationMarkers(fileUID string) (result entity.Markers, err error) {
 	return result, err
 }
 
-// FaceMigrationManualIdentities returns the manual marker state that must survive migration.
-func FaceMigrationManualIdentities() (result []FaceMigrationIdentity, err error) {
-	err = Db().Model(&entity.Marker{}).
+// whereFaceIdentity restricts a statement to face markers that carry an identity.
+//
+// Which person a face shows is knowledge the library owns rather than something the
+// embedding space encodes, so it is preserved whichever source recorded it.
+func whereFaceIdentity(stmt *gorm.DB) *gorm.DB {
+	return stmt.Where("marker_type = ?", entity.MarkerFace).
+		Where("marker_name <> '' OR subj_uid <> ''")
+}
+
+// FaceMigrationIdentities returns the marker identities that must survive migration.
+func FaceMigrationIdentities() (result []FaceMigrationIdentity, err error) {
+	err = whereFaceIdentity(Db().Model(&entity.Marker{})).
 		Select("marker_uid, subj_uid, marker_name, subj_src").
-		Where("marker_type = ? AND subj_src = ?", entity.MarkerFace, entity.SrcManual).
 		Order("marker_uid").Scan(&result).Error
 
 	return result, err
 }
 
-// FaceMigrationManualMarkers returns successfully migrated manual markers grouped by subject.
-func FaceMigrationManualMarkers(model string) (result entity.Markers, err error) {
+// FaceMigrationSubjectMarkers returns successfully migrated markers grouped by subject.
+//
+// Automatic assignments count as samples too: seeding a replacement cluster from the
+// manually named markers alone leaves it too narrow to re-accept the faces it already
+// held, which strands them in an unnamed cluster.
+func FaceMigrationSubjectMarkers(model string) (result entity.Markers, err error) {
 	if model == "" {
 		return result, fmt.Errorf("faces: migration model is required")
 	}
 
 	err = whereEmbeddingModel(Db().
 		Where("marker_type = ? AND marker_invalid = 0", entity.MarkerFace).
-		Where("subj_src = ? AND subj_uid <> ''", entity.SrcManual).
+		Where("subj_uid <> ''").
 		Where("LENGTH(embeddings_json) > 0"), model).
 		Order("subj_uid, marker_uid").Find(&result).Error
 
@@ -173,12 +185,6 @@ func FinalizeFaceMigration(model string, identities []FaceMigrationIdentity, clu
 			return err
 		}
 
-		if err := tx.Model(&entity.Marker{}).
-			Where("marker_type = ? AND subj_src = ?", entity.MarkerFace, entity.SrcAuto).
-			UpdateColumns(entity.Values{"marker_name": "", "subj_uid": "", "subj_src": ""}).Error; err != nil {
-			return err
-		}
-
 		// Legacy rows hold FaceNet vectors, so a FaceNet target must spare exactly the
 		// markers the migration skipped as already valid rather than blanking them.
 		cond, args := notEmbeddingModel(model)
@@ -204,35 +210,38 @@ func FinalizeFaceMigration(model string, identities []FaceMigrationIdentity, clu
 
 		for _, cluster := range clusters {
 			if cluster.Face.ID == "" || cluster.Face.EmbedModel != model {
-				return fmt.Errorf("faces: invalid manual migration cluster")
+				return fmt.Errorf("faces: invalid subject migration cluster")
 			}
 
 			if err := tx.Create(&cluster.Face).Error; err != nil {
 				return err
 			}
 
+			// Every seeded marker is relinked, not just the manually named ones, so the
+			// cluster keeps the sample set that makes it wide enough to match with.
 			for markerUID, distance := range cluster.MarkerDistances {
 				res := tx.Model(&entity.Marker{}).
-					Where("marker_uid = ? AND marker_type = ? AND subj_src = ?", markerUID, entity.MarkerFace, entity.SrcManual).
+					Where("marker_uid = ? AND marker_type = ?", markerUID, entity.MarkerFace).
 					UpdateColumns(entity.Values{"face_id": cluster.Face.ID, "face_dist": distance})
 				if res.Error != nil {
 					return res.Error
 				} else if res.RowsAffected != 1 {
-					return fmt.Errorf("faces: manual migration marker %s not found", markerUID)
+					return fmt.Errorf("faces: migration marker %s not found", markerUID)
 				}
 			}
 		}
 
+		// Read back with the predicate that produced the snapshot: the two are compared
+		// field by field, so a wider or narrower re-read would report a false mismatch.
 		var preserved []FaceMigrationIdentity
-		if err := tx.Model(&entity.Marker{}).
+		if err := whereFaceIdentity(tx.Model(&entity.Marker{})).
 			Select("marker_uid, subj_uid, marker_name, subj_src").
-			Where("marker_type = ? AND subj_src = ?", entity.MarkerFace, entity.SrcManual).
 			Order("marker_uid").Scan(&preserved).Error; err != nil {
 			return err
 		}
 
 		if !sameFaceMigrationIdentities(identities, preserved) {
-			return fmt.Errorf("faces: manual marker identities changed during migration")
+			return fmt.Errorf("faces: marker identities changed during migration")
 		}
 
 		return nil
