@@ -2,8 +2,10 @@ package query
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
 )
@@ -123,12 +125,73 @@ func TestUpdateAlbumDates(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		album := entity.FindAlbum(entity.Album{AlbumUID: entity.AlbumFixtures.Get("april-1990").AlbumUID})
 		assert.Equal(t, 11, album.AlbumDay)
+		defer func() {
+			require.NoError(t, entity.Db().Save(entity.AlbumFixtures.Pointer("april-1990")).Error)
+		}()
 
-		if err := UpdateAlbumDates(); err != nil {
-			t.Fatal(err)
-		}
+		actual, err := UpdateAlbumDates()
+		require.NoError(t, err)
+		assert.Equal(t, 1, actual)
+		album = entity.FindAlbum(entity.Album{AlbumUID: entity.AlbumFixtures.Get("april-1990").AlbumUID})
+		assert.Equal(t, 17, album.AlbumDay)
+		actual, err = UpdateAlbumDates()
+		require.NoError(t, err)
+		assert.Equal(t, 0, actual)
+	})
+	t.Run("MaxWithTimeOffset", func(t *testing.T) {
+		album := entity.FindAlbum(entity.Album{AlbumUID: entity.AlbumFixtures.Get("april-1990").AlbumUID})
+		assert.Equal(t, 11, album.AlbumDay)
+		defer func() {
+			require.NoError(t, entity.Db().Save(entity.AlbumFixtures.Pointer("april-1990")).Error)
+		}()
+		photoPhoto17 := entity.PhotoFixtures.Get("Photo17")
+		// Set a timestamp that would sort (by string) BEFORE 1990-04-18 01:00:00+08:00 in SQLite, but is actually a GREATER date.
+		photoPhoto17.TakenAtLocal = time.Date(1990, 4, 18, 1, 0, 0, 0, time.UTC)
+		photoPhoto17.TakenSrc = entity.SrcMeta
+		photoPhoto17.PhotoQuality = 4
+
+		entity.Db().Save(&photoPhoto17)
+		defer func() {
+			require.NoError(t, entity.UnscopedDb().Save(entity.PhotoFixtures.Pointer("Photo17")).Error)
+		}()
+
+		actual, err := UpdateAlbumDates()
+		require.NoError(t, err)
+		assert.Equal(t, 1, actual)
 		album = entity.FindAlbum(entity.Album{AlbumUID: entity.AlbumFixtures.Get("april-1990").AlbumUID})
 		assert.Equal(t, 18, album.AlbumDay)
+		actual, err = UpdateAlbumDates()
+		require.NoError(t, err)
+		assert.Equal(t, 0, actual)
+	})
+	t.Run("DeleteRecord", func(t *testing.T) {
+		album := entity.FindAlbum(entity.Album{AlbumUID: entity.AlbumFixtures.Get("april-1990").AlbumUID})
+		assert.Equal(t, 11, album.AlbumDay)
+		defer func() {
+			require.NoError(t, entity.Db().Save(entity.AlbumFixtures.Pointer("april-1990")).Error)
+		}()
+		photoPhoto17 := entity.PhotoFixtures.Get("Photo17")
+		// Set a timestamp that would sort (by string) BEFORE 1990-04-18 01:00:00+08:00 in SQLite, but is actually a GREATER date.
+		photoPhoto17.TakenAtLocal = time.Date(1990, 4, 18, 1, 0, 0, 0, time.UTC)
+		photoPhoto17.TakenSrc = entity.SrcMeta
+		photoPhoto17.PhotoQuality = 4
+
+		entity.Db().Save(&photoPhoto17)
+		defer func() {
+			require.NoError(t, entity.UnscopedDb().Save(entity.PhotoFixtures.Pointer("Photo17")).Error)
+		}()
+
+		actual, err := UpdateAlbumDates()
+		require.NoError(t, err)
+		assert.Equal(t, 1, actual)
+		album = entity.FindAlbum(entity.Album{AlbumUID: entity.AlbumFixtures.Get("april-1990").AlbumUID})
+		assert.Equal(t, 18, album.AlbumDay)
+		require.NoError(t, photoPhoto17.Archive())
+		actual, err = UpdateAlbumDates()
+		album = entity.FindAlbum(entity.Album{AlbumUID: entity.AlbumFixtures.Get("april-1990").AlbumUID})
+		assert.Equal(t, 17, album.AlbumDay)
+		require.NoError(t, err)
+		assert.Equal(t, 1, actual)
 	})
 }
 
@@ -178,5 +241,27 @@ func TestAlbumsByUID(t *testing.T) {
 		}
 
 		assert.Len(t, results, 2)
+	})
+}
+
+func TestAlbumsByType(t *testing.T) {
+	t.Run("AlbumFolder", func(t *testing.T) {
+		actual, err := AlbumsByType(entity.AlbumFolder, false)
+		require.NoError(t, err)
+		assert.Len(t, actual, 4)
+	})
+	t.Run("AlbumManual", func(t *testing.T) {
+		actual, err := AlbumsByType(entity.AlbumManual, true)
+		require.NoError(t, err)
+		assert.Len(t, actual, 22)
+
+		m := entity.AlbumFixtures.Pointer("christmas2030")
+		require.NoError(t, m.Delete())
+		defer func() {
+			require.NoError(t, m.Restore())
+		}()
+		actual, err = AlbumsByType(entity.AlbumManual, false)
+		require.NoError(t, err)
+		assert.Len(t, actual, 21)
 	})
 }

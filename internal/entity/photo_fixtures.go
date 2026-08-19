@@ -223,7 +223,7 @@ var PhotoFixtures = PhotoMap{
 		ID:               1000003,
 		PhotoUID:         "ps6sg6be2lvl0yh0",
 		TakenAt:          time.Date(1990, 4, 18, 1, 0, 0, 0, time.UTC),
-		TakenAtLocal:     time.Date(1990, 4, 18, 1, 0, 0, 0, time.UTC),
+		TakenAtLocal:     time.Date(1990, 4, 18, 1, 0, 0, 0, time.FixedZone("UTC+8", +8*60*60)),
 		TakenSrc:         SrcMeta,
 		PhotoType:        MediaVideo,
 		PhotoDuration:    time.Hour * 2,
@@ -1465,7 +1465,7 @@ var PhotoFixtures = PhotoMap{
 		Albums:           []Album{},
 		Files:            []File{},
 		Labels: []PhotoLabel{
-			LabelFixtures.PhotoLabel(10000023, "landscape", 20, "image")},
+			LabelFixtures.PhotoLabel(1000023, "landscape", 20, "image")},
 		CreatedAt:  time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:  time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 		EditedAt:   nil,
@@ -1525,8 +1525,7 @@ var PhotoFixtures = PhotoMap{
 		Albums:           []Album{},
 		Files:            []File{},
 		Labels: []PhotoLabel{
-			LabelFixtures.PhotoLabel(10000018, "landscape", 20, "image"),
-			LabelFixtures.PhotoLabel(10000018, "likeLabel", 20, "image")},
+			LabelFixtures.PhotoLabel(1000024, "likeLabel", 20, "image")},
 		CreatedAt:  time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:  time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 		EditedAt:   nil,

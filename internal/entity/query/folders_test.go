@@ -2,8 +2,10 @@ package query
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
 )
@@ -36,6 +38,24 @@ func TestFolderCoverByUID(t *testing.T) {
 }
 
 func TestFoldersByPath(t *testing.T) {
+	before, err := AllFolders(true)
+	require.NoError(t, err)
+	defer func() {
+		after, err := AllFolders(true)
+		require.NoError(t, err)
+		for _, afterFolder := range after {
+			found := false
+			for _, beforeFolder := range before {
+				if beforeFolder.FolderUID == afterFolder.FolderUID {
+					found = true
+					break
+				}
+			}
+			if !found {
+				require.NoError(t, entity.UnscopedDb().Delete(&afterFolder).Error)
+			}
+		}
+	}()
 	t.Run("Root", func(t *testing.T) {
 		folders, err := FoldersByPath(entity.RootOriginals, "testdata", "", false)
 
@@ -84,10 +104,85 @@ func TestUpdateFolderDates(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		actual := entity.FindFolder("/", "1990/04")
 		assert.Equal(t, 0, actual.FolderDay)
-		if err := UpdateFolderDates(); err != nil {
-			t.Fatal(err)
-		}
+		defer func() {
+			require.NoError(t, entity.UnscopedDb().Save(entity.FolderFixtures.Pointer("1990/04")).Error)
+			require.NoError(t, entity.UnscopedDb().Save(entity.FolderFixtures.Pointer("2007/12")).Error)
+		}()
+		records, err := UpdateFolderDates()
+		require.NoError(t, err)
+		assert.Equal(t, 2, records)
+		actual = entity.FindFolder("/", "1990/04")
+		assert.Equal(t, 17, actual.FolderDay)
+		records, err = UpdateFolderDates()
+		require.NoError(t, err)
+		assert.Equal(t, 0, records)
+	})
+	t.Run("MaxWithTimeOffset", func(t *testing.T) {
+		actual := entity.FindFolder("/", "1990/04")
+		assert.Equal(t, 0, actual.FolderDay)
+		defer func() {
+			require.NoError(t, entity.UnscopedDb().Save(entity.FolderFixtures.Pointer("1990/04")).Error)
+			require.NoError(t, entity.UnscopedDb().Save(entity.FolderFixtures.Pointer("2007/12")).Error)
+		}()
+		photoPhoto17 := entity.PhotoFixtures.Get("Photo17")
+		// Set a timestamp that would sort (by string) BEFORE 1990-04-18 01:00:00+08:00 in SQLite, but is actually a GREATER date.
+		photoPhoto17.TakenAtLocal = time.Date(1990, 4, 18, 1, 0, 0, 0, time.UTC)
+		photoPhoto17.TakenSrc = entity.SrcMeta
+		photoPhoto17.PhotoQuality = 4
+
+		entity.Db().Save(&photoPhoto17)
+		defer func() {
+			require.NoError(t, entity.UnscopedDb().Save(entity.PhotoFixtures.Pointer("Photo17")).Error)
+		}()
+
+		records, err := UpdateFolderDates()
+		require.NoError(t, err)
+		assert.Equal(t, 2, records)
 		actual = entity.FindFolder("/", "1990/04")
 		assert.Equal(t, 18, actual.FolderDay)
+		records, err = UpdateFolderDates()
+		require.NoError(t, err)
+		assert.Equal(t, 0, records)
+	})
+	t.Run("DeleteRecord", func(t *testing.T) {
+		actual := entity.FindFolder("/", "1990/04")
+		assert.Equal(t, 0, actual.FolderDay)
+		defer func() {
+			require.NoError(t, entity.UnscopedDb().Save(entity.FolderFixtures.Pointer("1990/04")).Error)
+			require.NoError(t, entity.UnscopedDb().Save(entity.FolderFixtures.Pointer("2007/12")).Error)
+		}()
+		photoPhoto17 := entity.PhotoFixtures.Get("Photo17")
+		// Set a timestamp that would sort (by string) BEFORE 1990-04-18 01:00:00+08:00 in SQLite, but is actually a GREATER date.
+		photoPhoto17.TakenAtLocal = time.Date(1990, 4, 18, 1, 0, 0, 0, time.UTC)
+		photoPhoto17.TakenSrc = entity.SrcMeta
+		photoPhoto17.PhotoQuality = 4
+
+		entity.Db().Save(&photoPhoto17)
+		defer func() {
+			require.NoError(t, entity.UnscopedDb().Save(entity.PhotoFixtures.Pointer("Photo17")).Error)
+		}()
+
+		records, err := UpdateFolderDates()
+		require.NoError(t, err)
+		assert.Equal(t, 2, records)
+		actual = entity.FindFolder("/", "1990/04")
+		assert.Equal(t, 18, actual.FolderDay)
+		require.NoError(t, photoPhoto17.Archive())
+		records, err = UpdateFolderDates()
+		require.NoError(t, err)
+		assert.Equal(t, 1, records)
+		actual = entity.FindFolder("/", "1990/04")
+		assert.Equal(t, 17, actual.FolderDay)
+	})
+}
+
+func TestAllFolders(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		actual, err := AllFolders(true)
+		require.NoError(t, err)
+		assert.Len(t, actual, 4, "Include Deleted")
+		actual, err = AllFolders(false)
+		require.NoError(t, err)
+		assert.Len(t, actual, 3, "Exclude Deleted")
 	})
 }
