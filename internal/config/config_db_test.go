@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/pkg/dsn"
 
@@ -504,14 +505,15 @@ func TestConfig_DatabaseConnsIdle(t *testing.T) {
 }
 
 func TestImportSQL(t *testing.T) {
-	c := NewConfig(CliTestContext())
-	c.options.DatabaseDriver = os.Getenv("PHOTOPRISM_TEST_DRIVER")
-	c.options.DatabaseDSN = os.Getenv("PHOTOPRISM_TEST_DSN")
+	c := NewMinimalTestConfigWithDb("config", t.TempDir())
 
 	if err := c.connectDb(); err != nil {
 		assert.Empty(t, err)
 		return
 	}
+	defer func() {
+		require.NoError(t, c.CloseDb())
+	}()
 
 	// Setup and capture SQL Logging output
 	buffer := bytes.Buffer{}
@@ -523,6 +525,14 @@ func TestImportSQL(t *testing.T) {
 	log.SetOutput(os.Stdout)
 
 	assert.NotContains(t, buffer.String(), "level=error")
+	assert.True(t, c.db.HasTable("importtest"))
+
+	log.SetOutput(&buffer)
+	c.ImportSQL("./testdata/importtest.sql")
+	// Reset logger
+	log.SetOutput(os.Stdout)
+	assert.Contains(t, buffer.String(), "level=error")
+	require.NoError(t, c.db.DropTableIfExists("importtest").Error)
 }
 
 func TestConfig_checkDb(t *testing.T) {

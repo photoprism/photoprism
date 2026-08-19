@@ -709,8 +709,9 @@ func (c *Config) ImportSQL(filename string) {
 			continue
 		}
 
-		var result struct{}
-
-		q.Raw(stmt).Scan(&result)
+		if err := q.Exec(stmt).Error; err != nil {
+			log.Error(err)
+			return
+		}
 	}
 }
