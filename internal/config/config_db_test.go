@@ -507,14 +507,6 @@ func TestConfig_DatabaseConnsIdle(t *testing.T) {
 func TestImportSQL(t *testing.T) {
 	c := NewMinimalTestConfigWithDb("config", t.TempDir())
 
-	if err := c.connectDb(); err != nil {
-		assert.Empty(t, err)
-		return
-	}
-	defer func() {
-		require.NoError(t, c.CloseDb())
-	}()
-
 	// Setup and capture SQL Logging output
 	buffer := bytes.Buffer{}
 	log.SetOutput(&buffer)
