@@ -39,6 +39,7 @@ The repo's issue templates use the new GitHub `type:` property (`Bug`, `Feature`
 ## Specifications & Documentation
 
 - Document headings use a **Chicago-style title case**, with additional code- and path-aware normalization rules (see below). Always spell the product name as `PhotoPrism`.
+- Use US English spelling in all documentation, headings, issue and PR text, and commit messages (`behavior`, `color`, `labeled`, `license`, `analyze`, `normalize`, `optimize`) — not the British `-our` / `-ise` / `-re` / `-lled` variants. Leave code spans, identifiers, file paths, and quoted external text such as third-party license names verbatim. `.claude/rules/code-comments.md` applies the same rule to code comments.
 - When writing CLI examples or scripts, place option flags before positional arguments unless the command requires a different order.
 - Use RFC 3339 UTC timestamps in request and response examples, and valid ID, UID and UUID examples in docs and tests.
 - Technical specifications in the nested `specs/` subrepository may not be present in every clone or environment. Do not add `Makefile` targets in the main project that depend on `specs/` paths.

@@ -15,10 +15,31 @@
 #
 # To create a reusable image for DigitalOcean:
 #
-#   packer build digitalocean.json
+#   packer init digitalocean.pkr.hcl
+#   packer build digitalocean.pkr.hcl
 #
-# Download packer from https://www.packer.io/downloads if not installed yet.
+# Download packer from https://developer.hashicorp.com/packer/install if not installed yet.
 #
 # Enjoy!
 
-bash <(curl -s https://dl.photoprism.app/cloud/digitalocean/setup.sh)
+set -eu
+
+SETUP_URL="https://dl.photoprism.app/cloud/digitalocean/setup.sh"
+SETUP_SCRIPT=$(mktemp)
+
+# shellcheck disable=SC2064
+trap "rm -f '$SETUP_SCRIPT'" EXIT
+
+# Download the setup script to a file first, so that an incomplete or missing
+# download aborts with a visible error instead of silently doing nothing.
+if ! curl -fsSL "$SETUP_URL" -o "$SETUP_SCRIPT"; then
+  echo "Failed to download $SETUP_URL" 1>&2
+  exit 1
+fi
+
+if [[ ! -s $SETUP_SCRIPT ]]; then
+  echo "Downloaded an empty setup script from $SETUP_URL" 1>&2
+  exit 1
+fi
+
+bash "$SETUP_SCRIPT"

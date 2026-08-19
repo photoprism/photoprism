@@ -172,7 +172,7 @@ if [[ ! -f "${package_path}" ]]; then
   echo "Downloading ONNX Runtime ${ONNX_VERSION} (${archive})..."
   if ! curl -fsSL --retry 3 --retry-delay 2 -o "${package_path}" "${primary_url}"; then
     echo "Primary download failed, trying upstream release..."
-    if ! curl -fsSL --retry 3 --retry-delay 2 -o "${package_path}" "${fallback_url}"; then
+    if ! curl -fsSL --retry 3 --retry-delay 2 --retry-all-errors -o "${package_path}" "${fallback_url}"; then
       echo "Failed to download ONNX Runtime archive." >&2
       exit 1
     fi

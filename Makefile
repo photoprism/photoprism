@@ -403,6 +403,16 @@ codex-skills:
 	@if [ -d "specs/.agents/skills" ]; then \
 	  echo "Linking Codex skills from specs/.agents/skills..."; \
 	  install -d -m 755 -- ".agents/skills"; \
+	  for link in .agents/skills/*; do \
+	    [ -L "$$link" ] || continue; \
+	    target=$$(readlink "$$link"); \
+	    case "$$target" in \
+	      ../../specs/.agents/skills/*) \
+	        name=$$(basename "$$link"); \
+	        [ -d "specs/.agents/skills/$$name" ] || rm -- "$$link"; \
+	        ;; \
+	    esac; \
+	  done; \
 	  for src in specs/.agents/skills/*/; do \
 	    [ -d "$$src" ] || continue; \
 	    name=$$(basename "$$src"); \
@@ -481,6 +491,23 @@ claude-skills:
 	else \
 	  echo "No specs/.claude/agents directory found, skipping."; \
 	fi
+	@if [ -d "specs/.claude/output-styles" ]; then \
+	  echo "Linking Claude Code output styles from specs/.claude/output-styles..."; \
+	  install -d -m 755 -- ".claude/output-styles"; \
+	  for src in specs/.claude/output-styles/*.md; do \
+	    [ -f "$$src" ] || continue; \
+	    name=$$(basename "$$src"); \
+	    link=".claude/output-styles/$$name"; \
+	    target="../../specs/.claude/output-styles/$$name"; \
+	    if [ -L "$$link" ] || [ ! -e "$$link" ]; then \
+	      ln -sfn "$$target" "$$link"; \
+	    else \
+	      echo "WARNING: $$link exists and is not a symlink, skipping"; \
+	    fi; \
+	  done; \
+	else \
+	  echo "No specs/.claude/output-styles directory found, skipping."; \
+	fi
 dep-go:
 	go build -v ./...
 dep-upgrade:
@@ -489,9 +516,7 @@ frontend-update:
 	make -C frontend update
 dep-upgrade-js: frontend-update
 dep-tensorflow:
-	scripts/download-facenet.sh
-	scripts/download-nasnet.sh
-	scripts/download-nsfw.sh
+	scripts/dist/download-models.sh facenet nasnet nsfw
 dep-onnx:
 	scripts/download-scrfd.sh
 dep-acceptance: storage/acceptance
@@ -1200,8 +1225,8 @@ docker-dummy-oidc:
 	docker pull --platform=arm64 golang:1
 	scripts/docker/buildx-multi.sh dummy-oidc linux/amd64,linux/arm64 $(BUILD_DATE)
 packer-digitalocean:
-	$(info Buildinng DigitalOcean marketplace image...)
-	(cd ./setup/docker/cloud && packer build digitalocean.json)
+	$(info Building DigitalOcean marketplace image...)
+	(cd ./setup/cloud/digitalocean && packer init digitalocean.pkr.hcl && packer build digitalocean.pkr.hcl)
 lint: lint-js lint-go check-api-request-limits check-make-help
 lint-js:
 	$(info Linting JS code...)

@@ -79,7 +79,7 @@ questions:
   - variable: config.PHOTOPRISM_APP_COLOR
     group: "Customization"
     label: "App Color"
-    description: "Hex colour used for the PWA splash screen and tint. Example: #1d1d1e."
+    description: "Hex color used for the PWA splash screen and tint. Example: #1d1d1e."
     type: string
     default: "#1d1d1e"
   - variable: config.PHOTOPRISM_DEFAULT_TIMEZONE
