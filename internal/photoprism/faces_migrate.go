@@ -126,7 +126,12 @@ func (w *Faces) migrationTarget(target string) (string, error) {
 	case target == face.ModelNone:
 		return "", fmt.Errorf("faces: cannot migrate to disabled embeddings")
 	case target != configured:
-		return "", fmt.Errorf("faces: migration target %s does not match configured model %s", clean.Log(target), clean.Log(configured))
+		// The configured model may have been resolved from "auto", which follows whichever
+		// model owns most of the vectors and therefore points back at the old one while a
+		// migration is only half done. Naming the way out keeps that from reading as a
+		// refusal the operator cannot act on.
+		return "", fmt.Errorf("faces: migration target %s does not match configured model %s, "+
+			"set PHOTOPRISM_FACE_MODEL=%s and re-run to continue", clean.Log(target), clean.Log(configured), clean.Log(target))
 	}
 
 	model := face.FindEmbeddingModel(target)
