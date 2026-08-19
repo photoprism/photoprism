@@ -100,10 +100,13 @@ func UpdateFolderDates() (updated int, err error) {
 			FROM photos WHERE taken_src = 'meta' AND photos.photo_quality >= 3 AND photos.deleted_at IS NULL
 			GROUP BY photo_path) AS p ON folders.path = p.photo_path
 		SET folders.folder_year = YEAR(taken_max), folders.folder_month = MONTH(taken_max), folders.folder_day = DAY(taken_max)
-		WHERE p.taken_max IS NOT NULL AND p.taken_max <> STR_TO_DATE(CONCAT(folder_year, '-', folder_month,'-', folder_day), '%Y-%c-%e')`)
+		WHERE p.taken_max IS NOT NULL 
+		AND (folder_year = 0 OR folder_month = 0 OR folder_day = 0
+			OR DATE(p.taken_max) <> COALESCE(STR_TO_DATE(CONCAT(folder_year, '-', folder_month,'-', folder_day), '%Y-%c-%e'), DATE('1000-01-01'))
+		)`)
 		return int(result.RowsAffected), result.Error
 	case dsn.DriverSQLite3:
-		// SQLite has potential locking issues if the update is done on all foders at once.
+		// SQLite has potential locking issues if the update is done on all folders at once.
 		var folders entity.Folders
 		if folders, err = AllFolders(true); err != nil {
 			log.Errorf("folders: get folders (%v)", err)
@@ -113,7 +116,7 @@ func UpdateFolderDates() (updated int, err error) {
 		for _, folder := range folders {
 			folderDate := time.Date(1000, 1, 1, 0, 0, 0, 0, time.UTC)
 			// Clip the allowable range to what MariaDB supports (most restrictive of supported DBMS') so a database migration in the future won't break
-			if folder.FolderYear > 1000 && folder.FolderYear < 10000 && folder.FolderMonth > 0 && folder.FolderMonth < 13 && folder.FolderDay > 0 && folder.FolderDay < 31 {
+			if folder.FolderYear > 999 && folder.FolderYear < 10000 && folder.FolderMonth > 0 && folder.FolderMonth < 13 && folder.FolderDay > 0 && folder.FolderDay < 32 {
 				folderDate = time.Date(folder.FolderYear, time.Month(folder.FolderMonth), folder.FolderDay, 0, 0, 0, 0, time.UTC)
 			}
 			result := UnscopedDb().Exec(`UPDATE folders
@@ -125,7 +128,7 @@ func UpdateFolderDates() (updated int, err error) {
 			) AS p
 			WHERE folders.path = p.photo_path AND p.taken_max IS NOT NULL AND DATE(p.taken_max) <> DATE(?)`, folder.Path, folderDate)
 			if err = result.Error; err != nil {
-				log.Errorf("album: set folder dates on %s (%v)", folder.FolderTitle, err)
+				log.Errorf("folders: set folder dates on %s (%v)", folder.FolderTitle, err)
 				return updated, err
 			} else {
 				updated += int(result.RowsAffected)

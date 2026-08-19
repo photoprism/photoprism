@@ -161,7 +161,10 @@ func UpdateAlbumDates() (updated int, err error) {
 			 GROUP BY photo_path
 	    ) AS p ON albums.album_path = p.photo_path
 		SET albums.album_year = YEAR(taken_max), albums.album_month = MONTH(taken_max), albums.album_day = DAY(taken_max)
-		WHERE albums.album_type = 'folder' AND albums.album_path IS NOT NULL AND p.taken_max IS NOT NULL AND p.taken_max <> STR_TO_DATE(CONCAT(album_year, '-', album_month,'-', album_day), '%Y-%c-%e')`)
+		WHERE albums.album_type = 'folder' AND albums.album_path IS NOT NULL AND p.taken_max IS NOT NULL
+		AND (album_year = 0 OR album_month = 0 OR album_day = 0
+			OR DATE(p.taken_max) <> COALESCE(STR_TO_DATE(CONCAT(album_year, '-', album_month, '-', album_day), '%Y-%c-%e'), DATE('1000-01-01'))
+		)`)
 		return int(result.RowsAffected), result.Error
 	case dsn.DriverSQLite3:
 		// SQLite has potential locking issues if the update is done on all albums at once.
@@ -173,7 +176,7 @@ func UpdateAlbumDates() (updated int, err error) {
 		for _, album := range albums {
 			albumDate := time.Date(1000, 1, 1, 0, 0, 0, 0, time.UTC)
 			// Clip the allowable range to what MariaDB supports (most restrictive of supported DBMS') so a database migration in the future won't break
-			if album.AlbumYear > 1000 && album.AlbumYear < 10000 && album.AlbumMonth > 0 && album.AlbumMonth < 13 && album.AlbumDay > 0 && album.AlbumDay < 31 {
+			if album.AlbumYear > 999 && album.AlbumYear < 10000 && album.AlbumMonth > 0 && album.AlbumMonth < 13 && album.AlbumDay > 0 && album.AlbumDay < 32 {
 				albumDate = time.Date(album.AlbumYear, time.Month(album.AlbumMonth), album.AlbumDay, 0, 0, 0, 0, time.UTC)
 			}
 			result := UnscopedDb().Exec(`UPDATE albums
