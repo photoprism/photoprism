@@ -862,10 +862,18 @@ func (m *File) AddFace(f face.Face, subjUid string) {
 		return
 	}
 
-	// A vector of the wrong length or with non-finite values is not comparable with
-	// anything, and a remote service can return either, so it is rejected on the way in.
-	if dims := f.Embeddings.Dims(); !face.ValidEmbeddings(f.Embeddings, dims) {
-		log.Warnf("faces: skipped invalid embedding for file %s", clean.Log(m.FileUID))
+	// A vector with non-finite values poisons every later distance, and one whose width
+	// disagrees with its own model belongs to no embedding space at all; a remote service
+	// can return either, so both are rejected here. The width is only checked against a
+	// known producer, because a vector that records no model implies no expected width.
+	dims := f.Embeddings.Dims()
+
+	if producer := face.FindEmbeddingModel(f.EmbedModel); producer != nil {
+		dims = producer.Dims
+	}
+
+	if !face.ValidEmbeddings(f.Embeddings, dims) {
+		log.Warnf("faces: skipped invalid %d-value embedding for file %s", f.Embeddings.Dims(), clean.Log(m.FileUID))
 		return
 	}
 
