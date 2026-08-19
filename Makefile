@@ -513,7 +513,7 @@ dep-onnx: dep-sface
 # "make all install" copies assets/ verbatim into the published images. The Go test
 # targets depend on it separately so the ONNX embedder tests never silently skip.
 dep-sface:
-	scripts/download-sface.sh
+	scripts/dist/download-models.sh sface
 dep-acceptance: storage/acceptance
 storage/acceptance:
 	[ -f "./storage/acceptance/index.db" ] || (cd storage && rm -rf acceptance && wget -c https://dl.photoprism.app/qa/acceptance.tar.gz -O - | tar -xz)

@@ -377,35 +377,64 @@ func TestEmbeddingModel_String(t *testing.T) {
 // the install scripts verify against. The scripts are where the value originally comes
 // from, so the registry is a second copy of it and would otherwise drift on the next
 // upstream update without anything failing.
+// readModelScript returns the contents of an installation script, or skips the test when
+// the repository scripts are not available, as in a production image.
+func readModelScript(t *testing.T, fileName string) string {
+	t.Helper()
+
+	path := filepath.Join("..", "..", "..", "scripts", fileName)
+	data, err := os.ReadFile(path) //nolint:gosec // G304: fixed repository path.
+
+	if err != nil {
+		t.Skipf("faces: skipping, %s is not available", fileName)
+	}
+
+	return string(data)
+}
+
+// TestEmbeddingModelChecksums keeps the registry and the installers pinned to the same
+// artifact. Bundled models are installed from the shared registry, while the ArcFace
+// weights keep a dedicated script because they are license-gated and never mirrored.
 func TestEmbeddingModelChecksums(t *testing.T) {
-	scripts := map[ModelName]struct {
-		fileName string
-		variable string
-	}{
-		ModelSFace:      {"download-sface.sh", "MODEL_SHA256"},
-		ModelAuraFace:   {"download-auraface.sh", "MODEL_SHA256"},
-		ModelArcFaceR50: {"download-arcface.sh", "R50_SHA256"},
-		ModelArcFaceMBF: {"download-arcface.sh", "MBF_SHA256"},
-	}
+	t.Run("Registry", func(t *testing.T) {
+		// Registry fields: name|url|fallback|sha256|type|dir|file
+		data := readModelScript(t, filepath.Join("dist", "download-models.sh"))
 
-	for name, script := range scripts {
-		t.Run(name, func(t *testing.T) {
-			m := FindEmbeddingModel(name)
-			require.NotNil(t, m)
-			require.NotNil(t, m.ONNX)
+		for _, name := range []ModelName{ModelSFace, ModelAuraFace} {
+			t.Run(name, func(t *testing.T) {
+				m := FindEmbeddingModel(name)
+				require.NotNil(t, m)
+				require.NotNil(t, m.ONNX)
 
-			fileName := filepath.Join("..", "..", "..", "scripts", script.fileName)
-			data, err := os.ReadFile(fileName) //nolint:gosec // G304: fixed repository path.
+				entry := regexp.MustCompile(`(?m)^` + regexp.QuoteMeta(name) + `\|.*$`).FindString(data)
+				require.NotEmpty(t, entry, "download-models.sh must list %s", name)
 
-			if err != nil {
-				t.Skipf("faces: skipping, %s is not available", script.fileName)
-			}
+				fields := strings.Split(entry, "|")
+				require.Len(t, fields, 7, "%s must have all registry fields", name)
+				assert.Equal(t, m.ONNX.SHA256, fields[3])
+				assert.Equal(t, m.ONNX.File, fields[6])
+				assert.Equal(t, m.Dir, fields[5])
+			})
+		}
+	})
+	t.Run("ArcFace", func(t *testing.T) {
+		data := readModelScript(t, "download-arcface.sh")
 
-			matches := regexp.MustCompile(script.variable + `="([0-9a-f]{64})"`).FindStringSubmatch(string(data))
-			require.Len(t, matches, 2, "%s must declare %s", script.fileName, script.variable)
-			assert.Equal(t, matches[1], m.ONNX.SHA256)
-		})
-	}
+		for name, variable := range map[ModelName]string{
+			ModelArcFaceR50: "R50_SHA256",
+			ModelArcFaceMBF: "MBF_SHA256",
+		} {
+			t.Run(name, func(t *testing.T) {
+				m := FindEmbeddingModel(name)
+				require.NotNil(t, m)
+				require.NotNil(t, m.ONNX)
+
+				matches := regexp.MustCompile(variable + `="([0-9a-f]{64})"`).FindStringSubmatch(data)
+				require.Len(t, matches, 2, "download-arcface.sh must declare %s", variable)
+				assert.Equal(t, matches[1], m.ONNX.SHA256)
+			})
+		}
+	})
 }
 
 // roundTo3 rounds a derived threshold the way the registry records it.
