@@ -95,6 +95,14 @@ func ImageFromThumb(thumbName string, area Area, size Size, cache bool) (img ima
 	return img, cropName, nil
 }
 
+// ImageFromIdealThumb decodes the smallest cached thumbnail that can still supply the
+// requested crop size for an area, falling back to the given thumbnail when there is
+// none. Callers that need the whole image rather than the crop use this, so that a face
+// warped onto a template is not upscaled from a rendition it outgrew.
+func ImageFromIdealThumb(thumbName string, area Area, size Size) (img image.Image, err error) {
+	return openIdealThumbFile(thumbName, thumbHash(thumbName), area, size)
+}
+
 // ThumbFileName returns the ideal thumb file name.
 func ThumbFileName(hash string, area Area, size Size, thumbPath string) (string, error) {
 	if len(hash) < 4 {

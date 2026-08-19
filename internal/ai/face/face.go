@@ -50,6 +50,17 @@ func (f *Face) Size() int {
 	return f.Area.Scale
 }
 
+// ImageScale returns the factor that maps this face's absolute coordinates onto an image
+// of the given width, which is 1 unless it is a different rendition than the detection ran
+// on. An unknown detection width yields 1, so coordinates are left as they are.
+func (f *Face) ImageScale(width int) float64 {
+	if f == nil || f.Cols < 1 || width < 1 {
+		return 1
+	}
+
+	return float64(width) / float64(f.Cols)
+}
+
 // Dim returns the max number of rows and cols as float32 to calculate relative coordinates.
 func (f *Face) Dim() float32 {
 	if f.Cols > 0 {

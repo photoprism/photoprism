@@ -110,6 +110,10 @@ func ScaledArcFaceTemplate(width, height int) (dst [NumLandmarks][2]float64) {
 // AlignedCrop warps a face onto the ArcFace template and returns a crop of the
 // requested size. It fails when the face has no complete landmark set so callers
 // can fall back to an unaligned bounding box crop.
+//
+// The image may be a larger rendition than the one the face was detected in, which is how
+// a small face avoids being upscaled from the detection thumbnail. Landmarks are absolute
+// coordinates, so they are scaled by the width ratio the face records.
 func AlignedCrop(img image.Image, f *Face, width, height int) (*image.RGBA, error) {
 	if img == nil {
 		return nil, fmt.Errorf("faces: missing image")
@@ -121,6 +125,13 @@ func AlignedCrop(img image.Image, f *Face, width, height int) (*image.RGBA, erro
 
 	if !ok {
 		return nil, fmt.Errorf("faces: incomplete landmarks")
+	}
+
+	if scale := f.ImageScale(img.Bounds().Dx()); scale != 1 {
+		for i := range src {
+			src[i][0] *= scale
+			src[i][1] *= scale
+		}
 	}
 
 	forward, err := similarityTransform(src, ScaledArcFaceTemplate(width, height))

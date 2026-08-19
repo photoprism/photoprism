@@ -207,6 +207,39 @@ func TestAlignedCrop(t *testing.T) {
 			assert.Greater(t, int(c.R), 200, "landmark %s at %d,%d", LandmarkNames[i], px, py)
 		}
 	})
+	t.Run("LargerRendition", func(t *testing.T) {
+		// The same face, warped from a rendition twice as wide as the one it was detected
+		// in. Landmarks are absolute, so without the rescale the fit lands somewhere else
+		// entirely and the template positions stay dark.
+		big := image.NewRGBA(image.Rect(0, 0, 600, 600))
+
+		for y := range 600 {
+			for x := range 600 {
+				big.SetRGBA(x, y, color.RGBA{R: 20, G: 20, B: 20, A: 255})
+			}
+		}
+
+		for _, p := range src {
+			cx := int(math.Round(p[0] * 2))
+			cy := int(math.Round(p[1] * 2))
+
+			for dy := -4; dy <= 4; dy++ {
+				for dx := -4; dx <= 4; dx++ {
+					big.SetRGBA(cx+dx, cy+dy, color.RGBA{R: 255, G: 255, B: 255, A: 255})
+				}
+			}
+		}
+
+		out, err := AlignedCrop(big, f, ArcFaceTemplateSize, ArcFaceTemplateSize)
+		require.NoError(t, err)
+
+		for i, p := range ArcFaceTemplate {
+			px := int(math.Round(p[0]))
+			py := int(math.Round(p[1]))
+			c := out.RGBAAt(px, py)
+			assert.Greater(t, int(c.R), 200, "landmark %s at %d,%d", LandmarkNames[i], px, py)
+		}
+	})
 	t.Run("BackgroundPreserved", func(t *testing.T) {
 		out, err := AlignedCrop(img, f, ArcFaceTemplateSize, ArcFaceTemplateSize)
 		require.NoError(t, err)

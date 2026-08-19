@@ -123,6 +123,23 @@ func TestGenerateEmbeddings(t *testing.T) {
 	})
 }
 
+func TestSmallestFaceArea(t *testing.T) {
+	t.Run("SmallestWins", func(t *testing.T) {
+		// The smallest face needs the widest source to fill a template, so it is the one
+		// that decides which rendition is decoded for the whole set.
+		faces := face.Faces{
+			{Rows: 720, Cols: 720, Area: face.NewArea("face", 300, 300, 400)},
+			{Rows: 720, Cols: 720, Area: face.NewArea("face", 300, 300, 60)},
+			{Rows: 720, Cols: 720, Area: face.NewArea("face", 300, 300, 200)},
+		}
+
+		assert.InDelta(t, faces[1].CropArea().W, smallestFaceArea(faces).W, 1e-6)
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Zero(t, smallestFaceArea(nil).W)
+	})
+}
+
 func TestFaceCropImage(t *testing.T) {
 	fileName, err := filepath.Abs("../face/testdata/1.jpg")
 	require.NoError(t, err)

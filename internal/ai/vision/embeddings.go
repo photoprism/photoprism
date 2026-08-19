@@ -7,7 +7,6 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/thumb/crop"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // GenerateEmbeddings runs the embedding model on each detected face and assigns the result.
@@ -18,12 +17,15 @@ func GenerateEmbeddings(embedder face.Embedder, fileName string, faces face.Face
 
 	width, height := embedder.CropSize()
 
-	// Landmark alignment needs the image the detector measured the landmarks in,
-	// so it is decoded once instead of per face.
+	// Landmark alignment reads the source image directly, so it is decoded once for all
+	// faces rather than per face. The smallest face decides the rendition, because it is
+	// the one that would otherwise be upscaled onto the template.
 	var srcImg image.Image
 
 	if embedder.Aligned() {
-		if img, _, err := fs.DecodeImageFile(fileName); err != nil {
+		size := crop.Size{Width: width, Height: height, Options: crop.DefaultOptions}
+
+		if img, err := crop.ImageFromIdealThumb(fileName, smallestFaceArea(faces), size); err != nil {
 			log.Warnf("vision: failed to decode %s (%s)", clean.Log(filepath.Base(fileName)), err)
 		} else {
 			srcImg = img
@@ -51,6 +53,20 @@ func GenerateEmbeddings(embedder face.Embedder, fileName string, faces face.Face
 			f.EmbedModel = embedder.ModelName()
 		}
 	}
+}
+
+// smallestFaceArea returns the crop area of the smallest detected face, which is the one
+// that needs the largest source image to fill a template without being upscaled.
+func smallestFaceArea(faces face.Faces) crop.Area {
+	var result crop.Area
+
+	for i := range faces {
+		if area := faces[i].CropArea(); result.W <= 0 || area.W < result.W {
+			result = area
+		}
+	}
+
+	return result
 }
 
 // faceCropImage returns the image to run inference on, aligned on the detected landmarks
