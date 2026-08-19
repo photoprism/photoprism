@@ -258,3 +258,34 @@ func FlagHiddenPhotos() (err error) {
 
 	return nil
 }
+
+// getPhotoPathMaxDates returns the maximum TakenAtLocal DATE for each PhotoPath as a map
+func getPhotoPathMaxDates() (photoPathDates map[string]time.Time, err error) {
+	photoPathDates = make(map[string]time.Time)
+	type PhotoMax struct {
+		PhotoPath string
+		TakenMax  *string
+	}
+	var photoMaxs []PhotoMax
+	// Get all the paths and dates.
+	if err = entity.Db().Raw(`SELECT photo_path, MAX(DATE(taken_at_local)) AS taken_max
+	 			FROM photos WHERE taken_src = 'meta' AND photos.photo_quality >= 3 AND photos.deleted_at IS NULL
+	 			GROUP BY photo_path`).Scan(&photoMaxs).Error; err != nil {
+		log.Errorf("photo: get photo dates (%v)", err)
+		return photoPathDates, err
+	}
+	defaultDate := time.Date(1000, 1, 1, 0, 0, 0, 0, time.UTC)
+	var takenMax time.Time
+	for _, photoPath := range photoMaxs {
+		if photoPath.TakenMax != nil {
+			if takenMax, err = time.Parse("2006-01-02", *photoPath.TakenMax); err != nil {
+				log.Errorf("photo: get photo dates unable to parse %s (%v)", *photoPath.TakenMax, err)
+				return photoPathDates, err
+			}
+			photoPathDates[photoPath.PhotoPath] = takenMax
+		} else {
+			photoPathDates[photoPath.PhotoPath] = defaultDate
+		}
+	}
+	return photoPathDates, err
+}

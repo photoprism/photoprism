@@ -173,25 +173,24 @@ func UpdateAlbumDates() (updated int, err error) {
 			log.Errorf("album: get folders (%v)", err)
 			return updated, err
 		}
+
+		var photos map[string]time.Time
+		if photos, err = getPhotoPathMaxDates(); err != nil {
+			return updated, err
+		}
+		updated = 0
 		for _, album := range albums {
-			albumDate := time.Date(1000, 1, 1, 0, 0, 0, 0, time.UTC)
-			// Clip the allowable range to what MariaDB supports (most restrictive of supported DBMS') so a database migration in the future won't break
-			if album.AlbumYear > 999 && album.AlbumYear < 10000 && album.AlbumMonth > 0 && album.AlbumMonth < 13 && album.AlbumDay > 0 && album.AlbumDay < 32 {
-				albumDate = time.Date(album.AlbumYear, time.Month(album.AlbumMonth), album.AlbumDay, 0, 0, 0, 0, time.UTC)
-			}
-			result := UnscopedDb().Exec(`UPDATE albums
-			SET album_year = strftime('%Y', taken_max), album_month = strftime('%m', taken_max), album_day = strftime('%d', taken_max)
-			FROM (SELECT photo_path, MAX(DATE(taken_at_local)) AS taken_max
-	 			FROM photos WHERE taken_src = 'meta' AND photos.photo_quality >= 3 AND photos.deleted_at IS NULL
-				AND photo_path = ?
-	 			GROUP BY photo_path
-			) AS p
-			WHERE albums.album_path = p.photo_path AND albums.album_type = 'folder' AND albums.album_path IS NOT NULL AND date(p.taken_max) IS NOT NULL AND DATE(p.taken_max) <> DATE(?)`, album.AlbumPath, albumDate)
-			if err = result.Error; err != nil {
-				log.Errorf("album: set album dates on %s (%v)", album.AlbumTitle, err)
-				return updated, err
-			} else {
-				updated += int(result.RowsAffected)
+			takenMax, ok := photos[album.AlbumPath]
+			if ok {
+				if takenMax != time.Date(album.AlbumYear, time.Month(album.AlbumMonth), album.AlbumDay, 0, 0, 0, 0, time.UTC) {
+					result := UnscopedDb().Exec(`UPDATE albums SET album_year = ?, album_month = ?, album_day = ? WHERE album_path = ?`, takenMax.Year(), takenMax.Month(), takenMax.Day(), album.AlbumPath)
+					if err = result.Error; err != nil {
+						log.Errorf("album: set album dates on %s (%v)", album.AlbumTitle, err)
+						return updated, err
+					} else {
+						updated += int(result.RowsAffected)
+					}
+				}
 			}
 		}
 		return updated, err
