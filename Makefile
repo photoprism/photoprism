@@ -385,7 +385,20 @@ npm-update:
 	npm update --save --package-lock --ignore-scripts --no-audit --no-fund --no-update-notifier
 npm-audit:
 	npm audit --ignore-scripts --no-fund --no-update-notifier
-tools: gh claude codex
+tools: tools-mcp gh claude codex
+tools-mcp:
+	@if [ -e ".mcp.json" ]; then \
+	  echo "Keeping the existing .mcp.json."; \
+	elif [ -f "specs/.mcp.json" ]; then \
+	  ln -sfn "specs/.mcp.json" ".mcp.json"; \
+	  echo "Linked .mcp.json to specs/.mcp.json (remove it to opt out)."; \
+	elif [ ! -f ".mcp.json.example" ]; then \
+	  echo "No .mcp.json.example found, skipping."; \
+	else \
+	  rm -f ".mcp.json"; \
+	  cp -- ".mcp.json.example" ".mcp.json"; \
+	  echo "Copied .mcp.json from .mcp.json.example (remove it to opt out)."; \
+	fi
 codex: dep-codex codex-version codex-skills
 codex-version:
 	@echo "🤖 Installed $$(codex --version)."
