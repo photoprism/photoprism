@@ -253,14 +253,18 @@ func (w *Moments) Start() (err error) {
 		}
 	}
 
-	// UpdateFolderDates updates folder year, month and day based on indexed photo metadata.
-	if queryErr := query.UpdateFolderDates(); queryErr != nil {
+	// UpdateFolderDates updated folder year, month and day based on indexed photo metadata.
+	if updated, queryErr := query.UpdateFolderDates(); queryErr != nil {
 		log.Errorf("moments: %s (update folder dates)", queryErr.Error())
+	} else {
+		log.Infof("moments: updated %d folder dates", updated)
 	}
 
 	// UpdateAlbumDates updates the year, month and day of the album based on the indexed photo metadata.
-	if queryErr := query.UpdateAlbumDates(); queryErr != nil {
+	if updated, queryErr := query.UpdateAlbumDates(); queryErr != nil {
 		log.Errorf("moments: %s (update album dates)", queryErr.Error())
+	} else {
+		log.Infof("moments: updated %d album dates", updated)
 	}
 
 	return nil

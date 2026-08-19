@@ -2,6 +2,7 @@ package query
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/search"
@@ -27,6 +28,16 @@ func AlbumsByUID(albumUIDs []string, includeDeleted bool) (results entity.Albums
 		err = UnscopedDb().Where("album_uid IN (?)", albumUIDs).Find(&results).Error
 	} else {
 		err = UnscopedDb().Where("album_uid IN (?) AND deleted_at IS NULL", albumUIDs).Find(&results).Error
+	}
+	return results, err
+}
+
+// AlbumsByType returns albums by AlbumType.
+func AlbumsByType(albumType string, includeDeleted bool) (results entity.Albums, err error) {
+	if includeDeleted {
+		err = UnscopedDb().Where("album_type = ?", albumType).Find(&results).Error
+	} else {
+		err = Db().Where("album_type = ?", albumType).Find(&results).Error
 	}
 	return results, err
 }
@@ -138,29 +149,51 @@ func AlbumCoverByUID(uid string, public bool) (file entity.File, err error) {
 }
 
 // UpdateAlbumDates updates the year, month and day of the album based on the indexed photo metadata.
-func UpdateAlbumDates() error {
+func UpdateAlbumDates() (updated int, err error) {
 	mutex.Index.Lock()
 	defer mutex.Index.Unlock()
 
 	switch DbDialect() {
 	case dsn.DriverMySQL:
-		return UnscopedDb().Exec(`UPDATE albums INNER JOIN (
+		result := UnscopedDb().Exec(`UPDATE albums INNER JOIN (
              SELECT photo_path, MAX(taken_at_local) AS taken_max
 			 FROM photos WHERE taken_src = 'meta' AND photos.photo_quality >= 3 AND photos.deleted_at IS NULL
 			 GROUP BY photo_path
 	    ) AS p ON albums.album_path = p.photo_path
 		SET albums.album_year = YEAR(taken_max), albums.album_month = MONTH(taken_max), albums.album_day = DAY(taken_max)
-		WHERE albums.album_type = 'folder' AND albums.album_path IS NOT NULL AND p.taken_max IS NOT NULL`).Error
+		WHERE albums.album_type = 'folder' AND albums.album_path IS NOT NULL AND p.taken_max IS NOT NULL AND p.taken_max <> STR_TO_DATE(CONCAT(album_year, '-', album_month,'-', album_day), '%Y-%c-%e')`)
+		return int(result.RowsAffected), result.Error
 	case dsn.DriverSQLite3:
-		return UnscopedDb().Exec(`UPDATE albums
+		// SQLite has potential locking issues if the update is done on all albums at once.
+		var albums entity.Albums
+		if albums, err = AlbumsByType(entity.AlbumFolder, true); err != nil {
+			log.Errorf("album: get folders (%v)", err)
+			return updated, err
+		}
+		for _, album := range albums {
+			albumDate := time.Date(1000, 1, 1, 0, 0, 0, 0, time.UTC)
+			// Clip the allowable range to what MariaDB supports (most restrictive of supported DBMS') so a database migration in the future won't break
+			if album.AlbumYear > 1000 && album.AlbumYear < 10000 && album.AlbumMonth > 0 && album.AlbumMonth < 13 && album.AlbumDay > 0 && album.AlbumDay < 31 {
+				albumDate = time.Date(album.AlbumYear, time.Month(album.AlbumMonth), album.AlbumDay, 0, 0, 0, 0, time.UTC)
+			}
+			result := UnscopedDb().Exec(`UPDATE albums
 			SET album_year = strftime('%Y', taken_max), album_month = strftime('%m', taken_max), album_day = strftime('%d', taken_max)
-			FROM (SELECT photo_path, MAX(taken_at_local) AS taken_max
+			FROM (SELECT photo_path, MAX(DATE(taken_at_local)) AS taken_max
 	 			FROM photos WHERE taken_src = 'meta' AND photos.photo_quality >= 3 AND photos.deleted_at IS NULL
+				AND photo_path = ?
 	 			GROUP BY photo_path
 			) AS p
-			WHERE albums.album_path = p.photo_path AND albums.album_type = 'folder' AND albums.album_path IS NOT NULL AND p.taken_max IS NOT NULL`).Error
+			WHERE albums.album_path = p.photo_path AND albums.album_type = 'folder' AND albums.album_path IS NOT NULL AND date(p.taken_max) IS NOT NULL AND DATE(p.taken_max) <> DATE(?)`, album.AlbumPath, albumDate)
+			if err = result.Error; err != nil {
+				log.Errorf("album: set album dates on %s (%v)", album.AlbumTitle, err)
+				return updated, err
+			} else {
+				updated += int(result.RowsAffected)
+			}
+		}
+		return updated, err
 	default:
-		return nil
+		return updated, err
 	}
 }
 

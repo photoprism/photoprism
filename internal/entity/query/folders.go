@@ -3,6 +3,7 @@ package query
 import (
 	"fmt"
 	"path/filepath"
+	"time"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
@@ -43,6 +44,16 @@ func FoldersByPath(rootName, rootPath, path string, recursive bool) (folders ent
 	return folders, nil
 }
 
+// AllFolders returns all folders, optionally including deleted.
+func AllFolders(includeDeleted bool) (results entity.Folders, err error) {
+	if includeDeleted {
+		err = UnscopedDb().Find(&results).Error
+	} else {
+		err = Db().Find(&results).Error
+	}
+	return results, err
+}
+
 // FolderCoverByUID returns a folder cover file based on the uid.
 func FolderCoverByUID(uid string) (file entity.File, err error) {
 	if rnd.InvalidUID(uid, entity.FolderUID) {
@@ -77,28 +88,51 @@ func AlbumFolders(threshold int) (folders entity.Folders, err error) {
 }
 
 // UpdateFolderDates updates the year, month and day of the folder based on the indexed photo metadata.
-func UpdateFolderDates() error {
+func UpdateFolderDates() (updated int, err error) {
 	mutex.Index.Lock()
 	defer mutex.Index.Unlock()
 
 	switch DbDialect() {
 	case dsn.DriverMySQL:
-		return UnscopedDb().Exec(`UPDATE folders
+		result := UnscopedDb().Exec(`UPDATE folders
 		INNER JOIN
 			(SELECT photo_path, MAX(taken_at_local) AS taken_max
 			FROM photos WHERE taken_src = 'meta' AND photos.photo_quality >= 3 AND photos.deleted_at IS NULL
 			GROUP BY photo_path) AS p ON folders.path = p.photo_path
 		SET folders.folder_year = YEAR(taken_max), folders.folder_month = MONTH(taken_max), folders.folder_day = DAY(taken_max)
-		WHERE p.taken_max IS NOT NULL`).Error
+		WHERE p.taken_max IS NOT NULL AND p.taken_max <> STR_TO_DATE(CONCAT(folder_year, '-', folder_month,'-', folder_day), '%Y-%c-%e')`)
+		return int(result.RowsAffected), result.Error
 	case dsn.DriverSQLite3:
-		return UnscopedDb().Exec(`UPDATE folders
+		// SQLite has potential locking issues if the update is done on all foders at once.
+		var folders entity.Folders
+		if folders, err = AllFolders(true); err != nil {
+			log.Errorf("folders: get folders (%v)", err)
+			return 0, err
+		}
+		updated = 0
+		for _, folder := range folders {
+			folderDate := time.Date(1000, 1, 1, 0, 0, 0, 0, time.UTC)
+			// Clip the allowable range to what MariaDB supports (most restrictive of supported DBMS') so a database migration in the future won't break
+			if folder.FolderYear > 1000 && folder.FolderYear < 10000 && folder.FolderMonth > 0 && folder.FolderMonth < 13 && folder.FolderDay > 0 && folder.FolderDay < 31 {
+				folderDate = time.Date(folder.FolderYear, time.Month(folder.FolderMonth), folder.FolderDay, 0, 0, 0, 0, time.UTC)
+			}
+			result := UnscopedDb().Exec(`UPDATE folders
 			SET folder_year = strftime('%Y', taken_max), folder_month = strftime('%m', taken_max), folder_day = strftime('%d', taken_max)
-			FROM (SELECT photo_path, MAX(taken_at_local) AS taken_max
+			FROM (SELECT photo_path, MAX(DATE(taken_at_local)) AS taken_max
 	 			FROM photos WHERE taken_src = 'meta' AND photos.photo_quality >= 3 AND photos.deleted_at IS NULL
+				AND photo_path = ?
 	 			GROUP BY photo_path
 			) AS p
-			WHERE folders.path = p.photo_path AND p.taken_max IS NOT NULL`).Error
+			WHERE folders.path = p.photo_path AND p.taken_max IS NOT NULL AND DATE(p.taken_max) <> DATE(?)`, folder.Path, folderDate)
+			if err = result.Error; err != nil {
+				log.Errorf("album: set folder dates on %s (%v)", folder.FolderTitle, err)
+				return updated, err
+			} else {
+				updated += int(result.RowsAffected)
+			}
+		}
+		return updated, err
 	default:
-		return nil
+		return updated, err
 	}
 }
