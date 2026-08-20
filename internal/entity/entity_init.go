@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"os"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/entity/migrate"
@@ -66,7 +65,7 @@ func InitTestDb(driver, dbDsn string) *DbConn {
 			wDsn := dsn.Parse(dbDsn)
 			if !fs.FileExists(wDsn.SQLiteFilename()) {
 				log.Debugf("sqlite: test database %s does not already exist", clean.Log(wDsn.SQLiteFilename()))
-			} else if err := os.Remove(wDsn.SQLiteFilename()); err != nil {
+			} else if err := fs.PurgeSQLiteDbFiles(wDsn.SQLiteFilename()); err != nil {
 				log.Errorf("sqlite: failed to remove existing test database %s (%s)", clean.Log(wDsn.SQLiteFilename()), err)
 			}
 		}
