@@ -10,6 +10,9 @@
 *.db-shm
 *.db-wal
 *.sqlite
+*.sqlite-journal
+*.sqlite-shm
+*.sqlite-wal
 *.override.yml
 *.tmp.yml
 *.override.yaml
