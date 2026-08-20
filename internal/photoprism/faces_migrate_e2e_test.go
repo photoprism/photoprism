@@ -90,10 +90,6 @@ func newMigrateTestConfig(t *testing.T, name string) *config.Config {
 
 	oldConfig := Config()
 
-	// Initializing a config reconfigures the process-wide embedder from its models path,
-	// which is empty here, so the previous one has to be reinstated afterwards.
-	restore := restoreEmbedderSettings(oldConfig)
-
 	c := config.NewMinimalTestConfigWithDb(name, filepath.Join(t.TempDir(), "storage"))
 	require.NoError(t, c.CreateDirectories())
 
@@ -101,7 +97,10 @@ func newMigrateTestConfig(t *testing.T, name string) *config.Config {
 	t.Cleanup(func() {
 		SetConfig(oldConfig)
 		oldConfig.RegisterDb()
-		_ = face.ConfigureEmbedder(restore)
+
+		// Initializing a config reconfigures the process-wide embedder from its models
+		// path, which is empty here, so the previous one has to be reinstated.
+		restoreEmbedder(t)
 	})
 
 	// The isolated database is seeded from the cached test database, so migration would
@@ -296,7 +295,7 @@ func TestFaces_migrate(t *testing.T) {
 	})
 	t.Run("KeepsAutomaticAssignments", func(t *testing.T) {
 		c := newMigrateTestConfig(t, "migrateassignments")
-		useTestEmbedder(t, c, face.ModelSFace)
+		useTestEmbedder(t, face.ModelSFace)
 		w := NewFaces(c)
 
 		f := addMigrateTestFile(t, c, "5555555555555555555555555555555555555555", true)

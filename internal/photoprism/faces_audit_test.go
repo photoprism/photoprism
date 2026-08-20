@@ -148,17 +148,8 @@ func normalizeEmbeddingCopy(src face.Embedding) face.Embedding {
 func TestFaces_auditEmbeddingModels(t *testing.T) {
 	w := NewFaces(config.TestConfig())
 
-	// ONNX models load from an explicit file, so restoring by name alone would leave the
-	// package without an embedder and fail every later test that expects one.
-	restore := face.EmbedderSettings{
-		Name:      face.ConfiguredModel(),
-		Model:     face.FindEmbeddingModel(face.ConfiguredModel()),
-		ModelPath: w.conf.FaceModelPath(),
-		Threads:   w.conf.FaceEngineThreads(),
-	}
-
 	t.Cleanup(func() {
-		_ = face.ConfigureEmbedder(restore)
+		restoreEmbedder(t)
 	})
 
 	t.Run("ConfiguredModel", func(t *testing.T) {

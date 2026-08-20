@@ -12,35 +12,50 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-// restoreEmbedderSettings returns the settings that reinstate the currently configured
-// embedder. ONNX models load from an explicit file, so restoring by name alone would
-// leave the package without an embedder and fail every later test that expects one.
-func restoreEmbedderSettings(c *config.Config) face.EmbedderSettings {
-	return face.EmbedderSettings{
+// baseEmbedder holds the embedder that the package test config installed.
+var baseEmbedder face.EmbedderSettings
+
+// captureEmbedderSettings records the embedder installed by the package test config, so
+// a test that replaces the process-wide embedder has a value known to be good to put
+// back. ONNX models load from an explicit file, so restoring by name alone would leave
+// the package without an embedder and fail every later test that expects one.
+func captureEmbedderSettings(c *config.Config) {
+	baseEmbedder = face.EmbedderSettings{
 		Name:      face.ConfiguredModel(),
 		Model:     face.FindEmbeddingModel(face.ConfiguredModel()),
 		ModelPath: c.FaceModelPath(),
-		Threads:   c.FaceEngineThreads(),
+		Threads:   c.FaceModelThreads(),
 	}
+}
+
+// restoreEmbedder reinstates the embedder that the package test config installed.
+//
+// Reading the name back from the global would capture whatever an earlier test left
+// there, so one missed restore would spread to every test that follows. A restore that
+// does not take fails the test for the same reason.
+func restoreEmbedder(t *testing.T) {
+	t.Helper()
+
+	assert.NoError(t, face.ConfigureEmbedder(baseEmbedder))
+	assert.Equal(t, baseEmbedder.Name, face.ConfiguredModel())
 }
 
 // useTestEmbedder configures a working embedding model for the duration of a test, so
 // clustering does not depend on whether the ONNX runtime is present in the environment.
-func useTestEmbedder(t *testing.T, c *config.Config, name face.ModelName) {
+func useTestEmbedder(t *testing.T, name face.ModelName) {
 	t.Helper()
 
-	restore := restoreEmbedderSettings(c)
 	require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: name}))
 
 	t.Cleanup(func() {
-		_ = face.ConfigureEmbedder(restore)
+		restoreEmbedder(t)
 	})
 }
 
 func TestFaces_Cluster(t *testing.T) {
 	t.Run("ForceTrue", func(t *testing.T) {
 		c := config.TestConfig()
-		useTestEmbedder(t, c, face.ModelSFace)
+		useTestEmbedder(t, face.ModelSFace)
 
 		m := NewFaces(c)
 
@@ -59,7 +74,7 @@ func TestFaces_Cluster(t *testing.T) {
 	})
 	t.Run("ForceFalse", func(t *testing.T) {
 		c := config.TestConfig()
-		useTestEmbedder(t, c, face.ModelSFace)
+		useTestEmbedder(t, face.ModelSFace)
 
 		m := NewFaces(c)
 
@@ -79,10 +94,9 @@ func TestFaces_Cluster(t *testing.T) {
 	t.Run("RefusesWhenEmbedderFailed", func(t *testing.T) {
 		c := config.TestConfig()
 
-		restore := restoreEmbedderSettings(c)
 		require.Error(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelSFace, Model: face.FindEmbeddingModel(face.ModelSFace)}))
 		t.Cleanup(func() {
-			_ = face.ConfigureEmbedder(restore)
+			restoreEmbedder(t)
 		})
 
 		r, err := NewFaces(c).Cluster(FacesOptions{Force: true, Threshold: 1})
@@ -93,7 +107,7 @@ func TestFaces_Cluster(t *testing.T) {
 	})
 	t.Run("RefusesMixedDimensions", func(t *testing.T) {
 		c := config.TestConfig()
-		useTestEmbedder(t, c, face.ModelSFace)
+		useTestEmbedder(t, face.ModelSFace)
 
 		// No fixture records an embedding model, so stamping these two selects exactly
 		// them and keeps the mixed set under the test's control.
