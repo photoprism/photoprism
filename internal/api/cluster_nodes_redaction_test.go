@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -16,6 +17,12 @@ import (
 
 // Verifies redaction differences between admin and non-admin on list endpoint.
 func TestClusterListNodes_Redaction(t *testing.T) {
+	// Remove the fixture record
+	require.NoError(t, entity.UnscopedDb().Delete(entity.Client{}, "client_uid = ?", entity.ClientFixtures.Get("node").ClientUID).Error)
+	defer func() {
+		require.NoError(t, entity.Db().Create(entity.ClientFixtures.Pointer("node")).Error)
+	}()
+
 	app, router, conf := NewApiTest()
 	enablePortalAPIs(t, conf)
 

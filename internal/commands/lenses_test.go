@@ -66,10 +66,7 @@ func TestLensesCommand(t *testing.T) {
 		assert.Error(t, err)
 
 		// Check command output for plausibility.
-		// Can't capture the output when an error happens :-(
-		// assert.Contains(t, output, "Updates a specific lens Make and Model")
-		// assert.Contains(t, output, "photoprism lenses update [command options]")
-		assert.Len(t, output, 0)
+		assert.Contains(t, output, "update - Updates a specific lens Make and Model")
 		assert.Contains(t, err.Error(), `Required flag "model" not set`)
 	})
 	t.Run("UpdateWithNoMake", func(t *testing.T) {
@@ -78,10 +75,7 @@ func TestLensesCommand(t *testing.T) {
 		assert.Error(t, err)
 
 		// Check command output for plausibility.
-		// Can't capture the output when an error happens :-(
-		// assert.Contains(t, output, "Updates a specific lens Make and Model")
-		// assert.Contains(t, output, "photoprism lenses update [command options]")
-		assert.Len(t, output, 0)
+		assert.Contains(t, output, "update - Updates a specific lens Make and Model")
 		assert.Contains(t, err.Error(), `Required flag "make" not set`)
 	})
 	t.Run("UpdateWithEmptyMakeAndModel", func(t *testing.T) {

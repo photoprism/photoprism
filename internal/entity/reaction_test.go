@@ -27,6 +27,23 @@ func TestReaction_Save(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
+	t.Run("RainbowPlus1", func(t *testing.T) {
+		m := NewReaction(FileFixtures.Pointer("bridge.jpg").FileUID, UserFixtures.Pointer("bob").UserUID).React(react.Rainbow)
+		if n := FindReaction(m.UID, m.UserUID); n == nil {
+			if err := m.Save(); err != nil {
+				t.Fatal(err)
+			}
+		}
+		n := FindReaction(m.UID, m.UserUID)
+		expected := n.Reacted + 1
+		if assert.NotNil(t, n) {
+			err := n.Save()
+			if assert.Empty(t, err) {
+				n2 := FindReaction(m.UID, m.UserUID)
+				assert.Equal(t, expected, n2.Reacted)
+			}
+		}
+	})
 }
 
 func TestFindReaction(t *testing.T) {
@@ -40,4 +57,17 @@ func TestFindReaction(t *testing.T) {
 			assert.Equal(t, react.Love, m.Emoji())
 		}
 	})
+}
+
+func TestReaction_Delete(t *testing.T) {
+	m := NewReaction(FileFixtures.Pointer("bridge.jpg").FileUID, UserFixtures.Pointer("bob").UserUID).React(react.Rainbow)
+	if n := FindReaction(m.UID, m.UserUID); n == nil {
+		if err := m.Save(); err != nil {
+			t.Fatal(err)
+		}
+	}
+	n := FindReaction(m.UID, m.UserUID)
+	if assert.Empty(t, n.Delete()) {
+		assert.Nil(t, FindReaction(m.UID, m.UserUID))
+	}
 }
