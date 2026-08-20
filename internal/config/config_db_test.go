@@ -415,6 +415,21 @@ func TestConfig_DatabaseDSN(t *testing.T) {
 		assert.Equal(t, "postgres.internal", conf.DatabaseHost())
 		assert.Equal(t, 5433, conf.DatabasePort())
 	})
+	t.Run("SQLiteSQLiteAlias", func(t *testing.T) {
+		conf := NewConfig(CliTestContext())
+		resetDatabaseOptions(conf)
+
+		conf.options.DatabaseDriver = dsn.DriverSQLite3
+		conf.options.DatabaseDSN = "sqlite:/var/photoprism/instance.db"
+
+		want := "file:/var/photoprism/instance.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL"
+		if got := conf.DatabaseDSN(); got != want {
+			t.Fatalf("DatabaseDSN() = %q, want %q", got, want)
+		}
+
+		assert.Equal(t, "", conf.DatabaseHost())
+		assert.Equal(t, 0, conf.DatabasePort())
+	})
 }
 
 func TestConfig_DatabaseDSNFlags(t *testing.T) {

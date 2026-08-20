@@ -176,6 +176,18 @@ func (c *Config) DatabaseDSN() string {
 			c.DatabaseTimeout())
 	}
 
+	// If missing, add the required parameters to the configured SQLite DSN.
+	if c.DatabaseDriver() == dsn.DriverSQLite3 && !strings.Contains(c.options.DatabaseDSN, "?") {
+		c.options.DatabaseDSN = fmt.Sprintf(
+			"%s?%s",
+			c.options.DatabaseDSN,
+			dsn.Params[dsn.DriverSQLite3])
+	}
+	// If sqlite: alias, replace with file: for SQLite driver's DSN
+	if c.DatabaseDriver() == dsn.DriverSQLite3 && strings.HasPrefix(strings.ToLower(c.options.DatabaseDSN), "sqlite:") {
+		c.options.DatabaseDSN = "file:" + c.options.DatabaseDSN[7:]
+	}
+
 	return c.options.DatabaseDSN
 }
 
