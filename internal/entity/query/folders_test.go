@@ -117,6 +117,35 @@ func TestUpdateFolderDates(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, 0, records)
 	})
+	t.Run("ZeroDay", func(t *testing.T) {
+		// A stored day of 0 must be repaired even when it would resolve to the newest
+		// photo date if the components were normalized rather than rejected.
+		folder := entity.NewFolder(entity.RootOriginals, "1990/03", entity.Now())
+		folder.FolderYear, folder.FolderMonth, folder.FolderDay = 1990, 4, 0
+		require.NoError(t, entity.UnscopedDb().Create(&folder).Error)
+		photo := entity.Photo{
+			PhotoUID:     "ps6sg6bxpogaabz9",
+			PhotoName:    "zeroday",
+			PhotoPath:    "1990/03",
+			TakenAt:      time.Date(1990, 3, 31, 9, 0, 0, 0, time.UTC),
+			TakenAtLocal: time.Date(1990, 3, 31, 9, 0, 0, 0, time.UTC),
+			TakenSrc:     entity.SrcMeta,
+			PhotoQuality: 3,
+		}
+		require.NoError(t, entity.UnscopedDb().Create(&photo).Error)
+		defer func() {
+			require.NoError(t, entity.UnscopedDb().Exec("DELETE FROM folders WHERE path = ?", "1990/03").Error)
+			require.NoError(t, entity.UnscopedDb().Exec("DELETE FROM photos WHERE photo_uid = ?", "ps6sg6bxpogaabz9").Error)
+			require.NoError(t, entity.UnscopedDb().Save(entity.FolderFixtures.Pointer("1990/04")).Error)
+			require.NoError(t, entity.UnscopedDb().Save(entity.FolderFixtures.Pointer("2007/12")).Error)
+		}()
+		_, err := UpdateFolderDates()
+		require.NoError(t, err)
+		actual := entity.FindFolder(entity.RootOriginals, "1990/03")
+		assert.Equal(t, 1990, actual.FolderYear)
+		assert.Equal(t, 3, actual.FolderMonth)
+		assert.Equal(t, 31, actual.FolderDay)
+	})
 	t.Run("MaxWithTimeOffset", func(t *testing.T) {
 		actual := entity.FindFolder("/", "1990/04")
 		assert.Equal(t, 0, actual.FolderDay)

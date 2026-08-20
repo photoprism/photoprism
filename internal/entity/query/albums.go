@@ -212,7 +212,7 @@ func UpdateAlbumDates() (updated int, err error) {
 					result := tx.Exec(`UPDATE albums SET album_year = ?, album_month = ?, album_day = ? WHERE id = ?`, takenMax.Year(), takenMax.Month(), takenMax.Day(), album.ID)
 					if err = result.Error; err != nil {
 						log.Errorf("albums: set album dates on %s (%v)", clean.Log(album.AlbumTitle), err)
-						if errRB := tx.Rollback(); errRB != nil {
+						if errRB := tx.Rollback().Error; errRB != nil {
 							log.Errorf("albums: rollback changes failed (%v)", errRB)
 						}
 						return updated, err

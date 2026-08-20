@@ -150,12 +150,13 @@ func UpdateFolderDates() (updated int, err error) {
 					result := tx.Exec(`UPDATE folders SET folder_year = ?, folder_month = ?, folder_day = ? WHERE folder_uid = ?`, takenMax.Year(), takenMax.Month(), takenMax.Day(), folder.FolderUID)
 					if err = result.Error; err != nil {
 						log.Errorf("folders: set folder dates on %s (%v)", clean.Log(folder.FolderTitle), err)
-						if errRB := tx.Rollback(); errRB != nil {
+						if errRB := tx.Rollback().Error; errRB != nil {
 							log.Errorf("folders: rollback changes failed (%v)", errRB)
 						}
 						return updated, err
 					} else {
 						updated += int(result.RowsAffected)
+						pathCount++
 					}
 				}
 			}
