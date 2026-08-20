@@ -1,6 +1,8 @@
 package fs
 
 import (
+	"errors"
+	"fmt"
 	gofs "io/fs"
 	"os"
 	"path/filepath"
@@ -104,4 +106,38 @@ func PurgeTestDbFiles(dir string, recursive bool) {
 			matchAndRemove(filepath.Join(dir, e.Name()), e.Name(), info)
 		}
 	}
+}
+
+// PurgeSQLiteDbFiles makes best efforts to remove the named database file
+// and it's associated journal, write ahead log, and shared memory files
+func PurgeSQLiteDbFiles(fileName string) (err error) {
+	if fileName == "" {
+		return nil
+	}
+
+	// Common function used to remove files.
+	checkAndRemove := func(name string) (err error) {
+		if FileExists(name) {
+			var info os.FileInfo
+			if info, err = StatFile(name); err != nil {
+				return err
+			}
+			if !info.Mode().IsRegular() {
+				return fmt.Errorf("purge: file %s is not valid for removal", name)
+			}
+			return os.Remove(name)
+		}
+		return nil
+	}
+
+	journalFileName := fileName + "-journal"
+	walFileName := fileName + "-wal"
+	shmFileName := fileName + "-shm"
+
+	dbErr := checkAndRemove(fileName)
+	jErr := checkAndRemove(journalFileName)
+	wErr := checkAndRemove(walFileName)
+	sErr := checkAndRemove(shmFileName)
+
+	return errors.Join(dbErr, jErr, wErr, sErr)
 }
