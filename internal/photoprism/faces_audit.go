@@ -612,7 +612,7 @@ func (w *Faces) auditEmbeddingModels() {
 	for _, c := range counts {
 		switch c.EmbedModel {
 		case "":
-			if current == "" || face.ModelsComparable("", current) {
+			if face.ModelsComparable("", current) {
 				log.Infof("faces: %s without a recorded embedding model", english.Plural(c.Faces, "cluster", "clusters"))
 			} else {
 				stale += c.Faces
@@ -650,7 +650,7 @@ func (w *Faces) auditMarkerEmbeddingModels(current string) {
 	for _, c := range counts {
 		switch c.EmbedModel {
 		case "":
-			if current == "" || face.ModelsComparable("", current) {
+			if face.ModelsComparable("", current) {
 				log.Infof("faces: %s without a recorded embedding model", english.Plural(c.Markers, "marker", "markers"))
 			} else {
 				log.Warnf("faces: %s without a recorded embedding model, which is not compatible with configured %s",
