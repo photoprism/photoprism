@@ -385,6 +385,20 @@ func TestCentroidSamples(t *testing.T) {
 		}
 		assert.Len(t, centroidSamples(group, registered, "jsubject00000004"), 4)
 	})
+	t.Run("SkipsIncomparableWidth", func(t *testing.T) {
+		// Embeddings.Dist reports -1 when nothing is comparable, which must not read as
+		// the closest possible sample and let a foreign vector define the centroid.
+		odd := entity.Marker{MarkerUID: rnd.GenerateUID('m'), MarkerType: entity.MarkerFace}
+		odd.SetEmbeddings(face.Embeddings{face.Embedding{1, 0}}, face.ModelSFace)
+
+		group := entity.Markers{marker(near(0)), marker(near(1)), marker(near(2)), odd}
+
+		kept := centroidSamples(group, registered, "jsubject00000005")
+		assert.Len(t, kept, 3)
+		for _, m := range kept {
+			assert.NotEqual(t, odd.MarkerUID, m.MarkerUID, "an incomparable vector is not a sample")
+		}
+	})
 }
 
 func TestFaceMigrationSubjectCounts(t *testing.T) {

@@ -651,9 +651,11 @@ func centroidSamples(group entity.Markers, registered *face.EmbeddingModel, subj
 		return group
 	}
 
+	// Embeddings.Dist reports -1 when nothing is comparable, which would otherwise read as
+	// the closest possible sample, so only a non-negative distance can be inside.
 	kept := make(entity.Markers, 0, len(group))
 	for _, marker := range group {
-		if marker.Embeddings().Dist(midpoint) <= registered.ClusterDist {
+		if d := marker.Embeddings().Dist(midpoint); d >= 0 && d <= registered.ClusterDist {
 			kept = append(kept, marker)
 		}
 	}
