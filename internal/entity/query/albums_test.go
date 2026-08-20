@@ -164,6 +164,77 @@ func TestUpdateAlbumDates(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, 0, actual)
 	})
+	t.Run("TwoAlbums", func(t *testing.T) {
+		album := entity.FindAlbum(entity.Album{AlbumUID: entity.AlbumFixtures.Get("april-1990").AlbumUID})
+		assert.Equal(t, 11, album.AlbumDay)
+		defer func() {
+			require.NoError(t, entity.Db().Save(entity.AlbumFixtures.Pointer("april-1990")).Error)
+		}()
+		album.AlbumDay = 0
+		album.AlbumMonth = 0
+		album.AlbumYear = 0
+		require.NoError(t, entity.Db().Save(&album).Error)
+		album2 := entity.FindAlbum(entity.Album{AlbumUID: entity.AlbumFixtures.Get("2016-04").AlbumUID})
+		assert.Equal(t, 0, album2.AlbumDay)
+		defer func() {
+			require.NoError(t, entity.Db().Save(entity.AlbumFixtures.Pointer("2016-04")).Error)
+		}()
+		photoPhoto12 := entity.PhotoFixtures.Get("Photo12")
+		photoPhoto12.TakenAtLocal = time.Date(2016, 4, 18, 1, 0, 0, 0, time.UTC)
+		photoPhoto12.TakenSrc = entity.SrcMeta
+		photoPhoto12.PhotoQuality = 4
+		photoPhoto12.PhotoPath = "2016/04"
+
+		entity.Db().Save(&photoPhoto12)
+		defer func() {
+			require.NoError(t, entity.UnscopedDb().Save(entity.PhotoFixtures.Pointer("Photo12")).Error)
+		}()
+
+		actual, err := UpdateAlbumDates()
+		require.NoError(t, err)
+		assert.Equal(t, 2, actual)
+		album = entity.FindAlbum(entity.Album{AlbumUID: entity.AlbumFixtures.Get("april-1990").AlbumUID})
+		assert.Equal(t, 17, album.AlbumDay)
+		album2 = entity.FindAlbum(entity.Album{AlbumUID: entity.AlbumFixtures.Get("2016-04").AlbumUID})
+		assert.Equal(t, 18, album2.AlbumDay)
+		actual, err = UpdateAlbumDates()
+		require.NoError(t, err)
+		assert.Equal(t, 0, actual)
+	})
+	t.Run("BlankAlbumPath", func(t *testing.T) {
+		album := entity.FindAlbum(entity.Album{AlbumUID: entity.AlbumFixtures.Get("april-1990").AlbumUID})
+		assert.Equal(t, 11, album.AlbumDay)
+		defer func() {
+			require.NoError(t, entity.Db().Save(entity.AlbumFixtures.Pointer("april-1990")).Error)
+		}()
+		album.AlbumPath = ""
+		album.AlbumDay = 0
+		album.AlbumMonth = 0
+		album.AlbumYear = 0
+		require.NoError(t, entity.Db().Save(&album).Error)
+		photoPhoto17 := entity.PhotoFixtures.Get("Photo17")
+		// Set a timestamp that would sort (by string) BEFORE 1990-04-18 01:00:00+08:00 in SQLite, but is actually a GREATER date.
+		photoPhoto17.TakenAtLocal = time.Date(1990, 4, 18, 1, 0, 0, 0, time.UTC)
+		photoPhoto17.TakenSrc = entity.SrcMeta
+		photoPhoto17.PhotoQuality = 4
+		photoPhoto17.PhotoPath = ""
+
+		entity.Db().Save(&photoPhoto17)
+		defer func() {
+			require.NoError(t, entity.UnscopedDb().Save(entity.PhotoFixtures.Pointer("Photo17")).Error)
+		}()
+
+		actual, err := UpdateAlbumDates()
+		require.NoError(t, err)
+		assert.Equal(t, 0, actual)
+		album = entity.FindAlbum(entity.Album{AlbumUID: entity.AlbumFixtures.Get("april-1990").AlbumUID})
+		assert.Equal(t, 0, album.AlbumDay)
+		assert.Equal(t, 0, album.AlbumMonth)
+		assert.Equal(t, 0, album.AlbumYear)
+		actual, err = UpdateAlbumDates()
+		require.NoError(t, err)
+		assert.Equal(t, 0, actual)
+	})
 	t.Run("DeleteRecord", func(t *testing.T) {
 		album := entity.FindAlbum(entity.Album{AlbumUID: entity.AlbumFixtures.Get("april-1990").AlbumUID})
 		assert.Equal(t, 11, album.AlbumDay)
@@ -192,6 +263,26 @@ func TestUpdateAlbumDates(t *testing.T) {
 		assert.Equal(t, 17, album.AlbumDay)
 		require.NoError(t, err)
 		assert.Equal(t, 1, actual)
+	})
+	t.Run("InvalidDateFromAlbum", func(t *testing.T) {
+		album := entity.FindAlbum(entity.Album{AlbumUID: entity.AlbumFixtures.Get("april-1990").AlbumUID})
+		assert.Equal(t, 11, album.AlbumDay)
+		defer func() {
+			require.NoError(t, entity.Db().Save(entity.AlbumFixtures.Pointer("april-1990")).Error)
+		}()
+		album.AlbumDay = 0
+		album.AlbumMonth = 0
+		album.AlbumYear = 0
+		require.NoError(t, album.Save())
+
+		actual, err := UpdateAlbumDates()
+		require.NoError(t, err)
+		assert.Equal(t, 1, actual)
+		album = entity.FindAlbum(entity.Album{AlbumUID: entity.AlbumFixtures.Get("april-1990").AlbumUID})
+		assert.Equal(t, 17, album.AlbumDay)
+		actual, err = UpdateAlbumDates()
+		require.NoError(t, err)
+		assert.Equal(t, 0, actual)
 	})
 }
 

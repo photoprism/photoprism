@@ -38,10 +38,10 @@ func TestFolderCoverByUID(t *testing.T) {
 }
 
 func TestFoldersByPath(t *testing.T) {
-	before, err := AllFolders(true)
+	before, err := FoldersByRoot(entity.RootOriginals, true)
 	require.NoError(t, err)
 	defer func() {
-		after, err := AllFolders(true)
+		after, err := FoldersByRoot(entity.RootOriginals, true)
 		require.NoError(t, err)
 		for _, afterFolder := range after {
 			found := false
@@ -174,14 +174,67 @@ func TestUpdateFolderDates(t *testing.T) {
 		actual = entity.FindFolder("/", "1990/04")
 		assert.Equal(t, 17, actual.FolderDay)
 	})
+	t.Run("InvalidDateFromFolder", func(t *testing.T) {
+		actual := entity.FindFolder("/", "1990/04")
+		assert.Equal(t, 0, actual.FolderDay)
+		actual.FolderDay = 0
+		actual.FolderMonth = 0
+		actual.FolderYear = 0
+		require.NoError(t, entity.UnscopedDb().Save(actual).Error)
+
+		defer func() {
+			require.NoError(t, entity.UnscopedDb().Save(entity.FolderFixtures.Pointer("1990/04")).Error)
+			require.NoError(t, entity.UnscopedDb().Save(entity.FolderFixtures.Pointer("2007/12")).Error)
+		}()
+		records, err := UpdateFolderDates()
+		require.NoError(t, err)
+		assert.Equal(t, 2, records)
+		actual = entity.FindFolder("/", "1990/04")
+		assert.Equal(t, 17, actual.FolderDay)
+		records, err = UpdateFolderDates()
+		require.NoError(t, err)
+		assert.Equal(t, 0, records)
+	})
+	t.Run("FolderOnAnotherRoot", func(t *testing.T) {
+		actual := entity.FindFolder("/", "1990/04")
+		assert.Equal(t, 0, actual.FolderDay)
+		actual.FolderDay = 0
+		actual.FolderMonth = 0
+		actual.FolderYear = 0
+		require.NoError(t, entity.UnscopedDb().Save(actual).Error)
+
+		importF := entity.NewFolder(entity.RootImport, "1990/04", time.Date(1990, 4, 1, 0, 0, 0, 0, time.UTC))
+		importF.FolderDay = 0
+		importF.FolderMonth = 0
+		importF.FolderYear = 0
+		require.NoError(t, entity.Db().Save(&importF).Error)
+		assert.Equal(t, 0, importF.FolderDay)
+
+		defer func() {
+			require.NoError(t, entity.UnscopedDb().Save(entity.FolderFixtures.Pointer("1990/04")).Error)
+			require.NoError(t, entity.UnscopedDb().Save(entity.FolderFixtures.Pointer("2007/12")).Error)
+			require.NoError(t, entity.UnscopedDb().Delete(&importF).Error)
+		}()
+
+		records, err := UpdateFolderDates()
+		require.NoError(t, err)
+		assert.Equal(t, 2, records)
+		actual = entity.FindFolder("/", "1990/04")
+		assert.Equal(t, 17, actual.FolderDay)
+		actual = entity.FindFolder(entity.RootImport, "1990/04")
+		assert.Equal(t, 0, actual.FolderDay)
+		records, err = UpdateFolderDates()
+		require.NoError(t, err)
+		assert.Equal(t, 0, records)
+	})
 }
 
-func TestAllFolders(t *testing.T) {
+func TestFoldersByRoot(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		actual, err := AllFolders(true)
+		actual, err := FoldersByRoot(entity.RootOriginals, true)
 		require.NoError(t, err)
 		assert.Len(t, actual, 4, "Include Deleted")
-		actual, err = AllFolders(false)
+		actual, err = FoldersByRoot(entity.RootOriginals, false)
 		require.NoError(t, err)
 		assert.Len(t, actual, 3, "Exclude Deleted")
 	})
