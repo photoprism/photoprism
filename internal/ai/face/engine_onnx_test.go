@@ -227,3 +227,45 @@ func TestONNXEngineDetect(t *testing.T) {
 		assert.Contains(t, err.Error(), "invalid TIFF: IFD offset")
 	})
 }
+
+func TestDetectorInputSize(t *testing.T) {
+	defaultWidth, defaultHeight := DetectorModel.InputSize()
+
+	t.Run("DeclaredGeometry", func(t *testing.T) {
+		w, h, err := detectorInputSize(defaultWidth, defaultHeight)
+		require.NoError(t, err)
+		assert.Equal(t, defaultWidth, w)
+		assert.Equal(t, defaultHeight, h)
+	})
+	t.Run("DynamicAxes", func(t *testing.T) {
+		// A dynamic axis reports zero, so the registered size stands in for it.
+		w, h, err := detectorInputSize(0, 0)
+		require.NoError(t, err)
+		assert.Equal(t, defaultWidth, w)
+		assert.Equal(t, defaultHeight, h)
+	})
+	t.Run("DynamicWidthOnly", func(t *testing.T) {
+		w, h, err := detectorInputSize(0, 480)
+		require.NoError(t, err)
+		assert.Equal(t, defaultWidth, w)
+		assert.Equal(t, 480, h)
+	})
+	t.Run("AtLimit", func(t *testing.T) {
+		w, h, err := detectorInputSize(maxDetectorInputSize, maxDetectorInputSize)
+		require.NoError(t, err)
+		assert.Equal(t, maxDetectorInputSize, w)
+		assert.Equal(t, maxDetectorInputSize, h)
+	})
+	t.Run("WidthTooLarge", func(t *testing.T) {
+		// The blob is sized from these values, so an axis this wide is not an export that
+		// can be run.
+		_, _, err := detectorInputSize(maxDetectorInputSize+1, defaultHeight)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "exceeds")
+	})
+	t.Run("HeightTooLarge", func(t *testing.T) {
+		_, _, err := detectorInputSize(defaultWidth, 65536)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "exceeds")
+	})
+}

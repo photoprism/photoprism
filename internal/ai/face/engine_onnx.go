@@ -32,6 +32,11 @@ const (
 	DefaultONNXModelFilename  = "scrfd.onnx"
 	onnxDefaultScoreThreshold = 0.50
 	onnxDefaultNMSThreshold   = 0.40
+
+	// maxDetectorInputSize bounds the input geometry a detector graph may declare. The
+	// detector runs on a thumbnail and the blob is sized from these values, so an axis
+	// beyond this describes a graph that cannot be run rather than a wider export.
+	maxDetectorInputSize = 4096
 )
 
 // DetectorModel describes the bundled SCRFD detector. Its decode strategy, strides, and
@@ -50,6 +55,29 @@ var DetectorModel = &onnx.ModelInfo{
 		Normalization: onnx.Uniform(127.5, 128),
 		Resize:        onnx.Resize{Mode: onnx.ResizePad},
 	},
+}
+
+// detectorInputSize returns the geometry to run the detector at, given what its graph
+// declares. A dynamic axis reports zero and falls back to the registered size; an axis
+// larger than a detector input can be is refused, because the blob is sized from it.
+func detectorInputSize(graphWidth, graphHeight int) (width, height int, err error) {
+	defaultWidth, defaultHeight := DetectorModel.InputSize()
+
+	width, height = graphWidth, graphHeight
+
+	if width < 1 {
+		width = defaultWidth
+	}
+
+	if height < 1 {
+		height = defaultHeight
+	}
+
+	if width > maxDetectorInputSize || height > maxDetectorInputSize {
+		return 0, 0, fmt.Errorf("faces: detector input %dx%d exceeds %d", width, height, maxDetectorInputSize)
+	}
+
+	return width, height, nil
 }
 
 // anchorCacheKey uniquely identifies cached anchor center grids.
@@ -149,15 +177,11 @@ func NewONNXEngine(opts ONNXOptions) (DetectionEngine, error) {
 	}
 
 	inputName := inputInfos[0].Name
-	width, height, _ := onnx.InputGeometry(inputInfos[0].Dimensions)
-	defaultWidth, defaultHeight := DetectorModel.InputSize()
+	graphWidth, graphHeight, _ := onnx.InputGeometry(inputInfos[0].Dimensions)
 
-	if width < 1 {
-		width = defaultWidth
-	}
-
-	if height < 1 {
-		height = defaultHeight
+	width, height, err := detectorInputSize(graphWidth, graphHeight)
+	if err != nil {
+		return nil, err
 	}
 
 	outputNames := make([]string, len(outputInfos))
