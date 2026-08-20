@@ -98,11 +98,8 @@ func NewONNXEngine(opts ONNXOptions) (DetectionEngine, error) {
 		opts.NMSThreshold = onnxDefaultNMSThreshold
 	}
 
-	// Unlike an embedding model, a detector that turns out to be a different artifact
-	// costs recall on the next indexing run rather than a library of vectors that cannot
-	// be compared with anything, and operators may legitimately point MODELS_PATH at
-	// another SCRFD export whose layout is derived from the graph anyway. So this warns
-	// rather than refusing.
+	// Operators may point MODELS_PATH at another SCRFD export, whose layout is read from
+	// the graph, so a checksum other than the bundled one is reported and accepted.
 	if err := DetectorModel.VerifyChecksum(opts.ModelPath); err != nil {
 		log.Warnf("faces: %s", err)
 	}

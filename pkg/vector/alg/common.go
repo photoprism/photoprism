@@ -68,9 +68,8 @@ func (pq *priorityQueue) Update(item *pItem, value int, priority float64) {
 	heap.Fix(pq, item.i)
 }
 
-// dataDims returns the number of dimensions shared by all data points. It reports
-// errRaggedData when they differ, so no point is ever indexed with the width of another
-// in a worker goroutine, where the resulting panic could not be recovered.
+// dataDims returns the number of dimensions shared by all data points, and reports
+// errRaggedData when they differ so that every point is indexed with its own width.
 func dataDims(data [][]float64) (int, error) {
 	if len(data) == 0 {
 		return 0, errEmptySet

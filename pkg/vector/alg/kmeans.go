@@ -160,8 +160,8 @@ func (c *kmeansClusterer) Online(observations chan []float64, done chan struct{}
 		for {
 			select {
 			case o := <-observations:
-				// An observation of a different width would be adjusted into centroid 0,
-				// because NaN distances never beat the initial candidate.
+				// Only observations that match the centroid width are adjusted: a distance
+				// to any other is NaN, which names no nearest centroid.
 				if len(o) != f {
 					continue
 				}

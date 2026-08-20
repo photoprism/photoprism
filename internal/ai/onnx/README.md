@@ -1,6 +1,6 @@
 ## ONNX Model Description
 
-**Last Updated:** August 10, 2026
+**Last Updated:** August 20, 2026
 
 ### Overview
 
@@ -38,7 +38,7 @@ How a mismatch is handled is the consumer's decision, and the two current consum
 
 `Metadata` reads the `photoprism.` prefixed entries of a model's `metadata_props`. Models we export ourselves should carry their own source, checksum, license, channel order, normalization, and resize convention there.
 
-The bundled models were untraceable because `scripts/download-*.sh` pointed only at our own mirror and `version.txt` recorded nothing but an archive checksum. Metadata inside the artifact survives mirroring, renaming, and being copied into an image in a way that a sibling file does not.
+Metadata inside the artifact survives mirroring, renaming, and being copied into an image in a way that a sibling `version.txt` does not, which is why a model we export records where it came from rather than relying on the script that installed it.
 
 ### Runtime
 

@@ -76,8 +76,8 @@ type Importer interface {
 var (
 	// EuclideanDist is one of the common distance measurement
 	EuclideanDist = func(a, b []float64) float64 {
-		// Vectors of different widths are not comparable in either direction, so NaN is
-		// returned rather than indexing past the shorter one or truncating the longer.
+		// Vectors of different widths belong to different spaces and have no distance
+		// between them, so NaN is returned instead of one.
 		if len(a) != len(b) {
 			return math.NaN()
 		}
