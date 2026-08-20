@@ -76,6 +76,7 @@ venv
 .eslintcache
 .gocache
 .gitconfig
+.mcp.json
 .DS_Store
 .DS_Store?
 ._*

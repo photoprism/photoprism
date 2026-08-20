@@ -50,6 +50,7 @@
 - Prefer waits over sleeps; click only visible/enabled elements; use role/label/text selectors (not XPath).
 - Screenshots: small and reproducible — JPEG, visible viewport, deterministic `.local/screenshots/<case>/<step>__<viewport>.jpg` names, no large inline screenshots.
 - If `npx` fetches an MCP server at runtime, add `--yes` or preinstall to avoid prompts.
+- Playwright MCP is configured per developer and is deliberately absent from `.mcp.json.example`: its tool definitions cost roughly four times what the shared server does, charged to every session.
 - Delegate to the `ui-tester` subagent for any flow with more than ~2 browser steps (login + navigate + assert, multi-step forms, regression sweeps). Brief it with the URL, credentials, exact steps, and the verdict format you want back; ask for a short report so raw snapshots and console dumps stay out of the parent context. Drive Playwright MCP inline only for one-shot checks (single navigate, single screenshot).
 
 ## Frontend Focus Management

@@ -96,6 +96,7 @@ Thumbs.db
 .idea
 .codex
 .config
+.mcp.json
 Dockerfile.local*
 .local
 *.local.json
