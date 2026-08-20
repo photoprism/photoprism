@@ -222,16 +222,19 @@ func TestMergeFaces(t *testing.T) {
 
 		faces := entity.Faces{*face1, *face2}
 
+		// The ID is a content hash of the centroid, so the expected value is computed from
+		// the same inputs rather than pinned: a literal fixes the last float bits of an
+		// arithmetic result, which differ on architectures that fuse multiply-add.
+		expected := entity.NewFace("jqynvsf28rhn6b0c", entity.SrcManual, faces.Embeddings(), face.EmbeddingModelName())
+
 		result, err := MergeFaces(faces, false)
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		// The ID is the hash of the stored centroid, so it moves with the last float32
-		// bits of the midpoint rather than with its value; SampleRadius below is what
-		// pins the merge itself.
-		assert.Equal(t, "WRFY77XXC4ITVUSIBCDEM3PRDKBILC4M", result.ID)
+		assert.NotEmpty(t, result.ID)
+		assert.Equal(t, expected.ID, result.ID)
 		assert.Equal(t, entity.SrcManual, result.FaceSrc)
 		assert.Equal(t, "jqynvsf28rhn6b0c", result.SubjUID)
 		assert.Equal(t, 2, result.Samples)
