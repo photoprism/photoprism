@@ -1,9 +1,12 @@
 package query
 
 import (
+	"bytes"
 	"errors"
+	"os"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -219,7 +222,7 @@ func TestMergeFaces(t *testing.T) {
 
 		faces := entity.Faces{*face1, *face2}
 
-		result, err := MergeFaces(faces, false)
+		result, err := MergeFaces(faces, false, true)
 
 		if err != nil {
 			t.Fatal(err)
@@ -255,13 +258,13 @@ func TestMergeFaces(t *testing.T) {
 
 		faces := entity.Faces{*face1, *face2}
 
-		result, err := MergeFaces(faces, false)
+		result, err := MergeFaces(faces, false, true)
 
 		assert.EqualError(t, err, "faces: cannot merge clusters with conflicting subjects jqynvsf28rhn6b0c <> jqynvt925h8c1asv")
 		assert.Nil(t, result)
 	})
 	t.Run("OneSubject", func(t *testing.T) {
-		result, err := MergeFaces(entity.Faces{entity.Face{ID: "4FD6YTOMWTDU5JKD3SS2MTRUTKZRZT7O"}}, false)
+		result, err := MergeFaces(entity.Faces{entity.Face{ID: "4FD6YTOMWTDU5JKD3SS2MTRUTKZRZT7O"}}, false, true)
 
 		assert.EqualError(t, err, "faces: two or more clusters required for merging")
 		assert.Nil(t, result)
@@ -305,7 +308,7 @@ func TestMergeFacesRetainedClusters(t *testing.T) {
 		require.NoError(t, entity.Db().Create(marker).Error)
 	}
 
-	_, err := MergeFaces(entity.Faces{*faceA, *faceB}, false)
+	_, err := MergeFaces(entity.Faces{*faceA, *faceB}, false, true)
 	require.Error(t, err)
 	require.True(t, errors.Is(err, ErrRetainedManualClusters))
 
@@ -342,4 +345,36 @@ func TestRemoveAutoFaceClusters(t *testing.T) {
 	}
 
 	assert.LessOrEqual(t, 3, removed)
+}
+
+func TestProcessMatchMarkersAsync(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
+		require.Nil(t, ProcessMatchMarkersAsync(entity.FindFace(entity.FaceFixtures.Get("john-doe").ID), entity.Faceless))
+		time.Sleep(2 * time.Second)
+	})
+	t.Run("NilFace", func(t *testing.T) {
+		require.Nil(t, ProcessMatchMarkersAsync(nil, entity.Faceless))
+		time.Sleep(time.Second)
+	})
+	t.Run("NilFaceID", func(t *testing.T) {
+		require.Nil(t, ProcessMatchMarkersAsync(entity.FindFace(entity.FaceFixtures.Get("john-doe").ID), nil))
+		time.Sleep(time.Second)
+	})
+	t.Run("Mutex", func(t *testing.T) {
+		// Setup and capture Logging output
+		log.Debug("TestProcessMatchMarkersAsync/Mutex Commencing")
+		buffer := bytes.Buffer{}
+		log.SetOutput(&buffer)
+		MatchMarkersMutex.Lock()
+		require.Nil(t, ProcessMatchMarkersAsync(entity.FindFace(entity.FaceFixtures.Get("john-doe").ID), entity.Faceless))
+		log.Debug("TestProcessMatchMarkersAsync/Mutex Waiting 1s")
+		time.Sleep(time.Second)
+		assert.NotContains(t, buffer.String(), "faces: async matching commenced for")
+		MatchMarkersMutex.Unlock()
+		time.Sleep(2 * time.Second)
+		assert.Contains(t, buffer.String(), "faces: async matching commenced for")
+		// Reset logger
+		log.SetOutput(os.Stdout)
+		log.Debug(buffer.String())
+	})
 }

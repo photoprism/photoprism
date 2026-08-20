@@ -366,7 +366,7 @@ func facesOptimizeAction(ctx *cli.Context) error {
 		}
 	}
 
-	if res, err := w.Optimize(); err != nil {
+	if res, err := w.Optimize(true); err != nil {
 		return err
 	} else {
 		elapsed := time.Since(start)

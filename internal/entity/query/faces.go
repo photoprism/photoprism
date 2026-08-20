@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -28,6 +29,9 @@ var ErrRetainedManualClusters = errors.New("faces: retained manual clusters afte
 
 // MergeMaxRetry limits how often the optimizer retries stubborn manual clusters (0 = unlimited).
 var MergeMaxRetry = 1
+
+// MatchMarkersMutex guards concurrent MatchMarkers updates running.
+var MatchMarkersMutex = &sync.Mutex{}
 
 func init() {
 	if v := os.Getenv("PHOTOPRISM_FACE_MERGE_MAX_RETRY"); v != "" {
@@ -217,7 +221,7 @@ func PurgeOrphanFaces(faceIds []string, ignored bool) (affected int, err error) 
 }
 
 // MergeFaces returns a new face that replaces multiple others.
-func MergeFaces(merge entity.Faces, ignored bool) (merged *entity.Face, err error) {
+func MergeFaces(merge entity.Faces, ignored, mmMustBeSync bool) (merged *entity.Face, err error) {
 	if len(merge) < 2 {
 		// Nothing to merge.
 		return merged, fmt.Errorf("faces: two or more clusters required for merging")
@@ -237,7 +241,7 @@ func MergeFaces(merge entity.Faces, ignored bool) (merged *entity.Face, err erro
 		return merged, fmt.Errorf("faces: new cluster is nil for subject %s", clean.Log(subjUID))
 	} else if merged = entity.FirstOrCreateFace(merged); merged == nil {
 		return merged, fmt.Errorf("faces: failed to create new cluster for subject %s", clean.Log(subjUID))
-	} else if err := merged.MatchMarkers(append(merge.IDs(), "")); err != nil {
+	} else if err := merged.MatchMarkers(append(merge.IDs(), ""), mmMustBeSync); err != nil {
 		return merged, err
 	}
 
@@ -267,6 +271,36 @@ func MergeFaces(merge entity.Faces, ignored bool) (merged *entity.Face, err erro
 	}
 
 	return merged, err
+}
+
+// ProcessMatchMarkersAsync finds and references matching markers.
+func ProcessMatchMarkersAsync(m *entity.Face, faceIDs []string) error {
+	if len(faceIDs) == 0 {
+		return nil
+	}
+	// Handle case where the face was to low quality and wasn't added.
+	if m == nil {
+		return nil
+	}
+
+	go func() {
+		MatchMarkersMutex.Lock()
+		defer MatchMarkersMutex.Unlock()
+		log.Debugf("faces: async matching commenced for %s", m.ID)
+		if err := m.MatchMarkersAsync(faceIDs); err != nil {
+			log.Warnf("faces: %s (match markers)", clean.Error(err))
+		}
+		if err := m.RefreshPhotos(); err != nil {
+			log.Warnf("faces: %s (refresh photos)", clean.Error(err))
+		}
+		if err := UpdateSubjectCovers(true); err != nil {
+			log.Warnf("faces: %s (update covers)", clean.Error(err))
+		}
+		if err := entity.UpdateSubjectCounts(true); err != nil {
+			log.Warnf("faces: %s (update counts)", clean.Error(err))
+		}
+	}()
+	return nil
 }
 
 // ResetFaceMergeRetry clears merge retry metadata for all (or subject-specific) clusters.

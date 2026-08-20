@@ -15,6 +15,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/auth/session"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism/backup"
 	"github.com/photoprism/photoprism/internal/server"
@@ -141,6 +142,9 @@ func startAction(ctx *cli.Context) error {
 
 	// Start worker that periodically deletes expired sessions.
 	session.Cleanup(conf.SessionCacheDuration() * 4)
+
+	// Configure the threshold for match markers
+	entity.MatchMarkersCanBeSync(conf.Options().FaceMarkerBlankThreshold)
 
 	// Start sync and metadata maintenance background workers.
 	workers.Start(conf)

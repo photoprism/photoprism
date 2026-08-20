@@ -1414,6 +1414,12 @@ var Flags = CliFlags{
 			Usage:   "allows matching of probable background embeddings",
 			EnvVars: EnvVars("FACE_ALLOW_BACKGROUND"),
 		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "face-marker-blank-threshold",
+			Usage:   "sets the `THRESHOLD` where async is used for matching markers via UI",
+			Value:   face.BlankFaceMarkerThreshold,
+			EnvVars: EnvVars("FACE_MARKER_BLANK_THRESHOLD"),
+		}}, {
 		Flag: &cli.StringFlag{
 			Name:      "pid-filename",
 			Usage:     "process id `FILENAME` *daemon-mode only*",

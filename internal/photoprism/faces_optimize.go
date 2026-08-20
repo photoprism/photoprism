@@ -19,12 +19,12 @@ type FacesOptimizeResult struct {
 }
 
 // Optimize optimizes the face lookup table.
-func (w *Faces) Optimize() (result FacesOptimizeResult, err error) {
-	return w.OptimizeFor("")
+func (w *Faces) Optimize(mmMustBeSync bool) (result FacesOptimizeResult, err error) {
+	return w.OptimizeFor("", mmMustBeSync)
 }
 
 // OptimizeFor optimizes the face lookup table for the given subject UID (or all when empty).
-func (w *Faces) OptimizeFor(subjUID string) (result FacesOptimizeResult, err error) {
+func (w *Faces) OptimizeFor(subjUID string, mmMustBeSync bool) (result FacesOptimizeResult, err error) {
 	if w.Disabled() {
 		return result, fmt.Errorf("face recognition is disabled")
 	}
@@ -53,7 +53,7 @@ func (w *Faces) OptimizeFor(subjUID string) (result FacesOptimizeResult, err err
 			} else if faces[j].SubjUID != merge[len(merge)-1].SubjUID || j == n {
 				if len(merge) < 2 {
 					// Nothing to merge.
-				} else if _, mergeErr := query.MergeFaces(merge, false); mergeErr != nil {
+				} else if _, mergeErr := query.MergeFaces(merge, false, mmMustBeSync); mergeErr != nil {
 					if errors.Is(mergeErr, query.ErrRetainedManualClusters) {
 						subject := entity.SubjNames.Log(merge[0].SubjUID)
 						clusterIDs := strings.Join(merge.IDs(), ", ")

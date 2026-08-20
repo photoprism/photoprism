@@ -260,3 +260,13 @@ func (c *Config) FaceAllowBackground() bool {
 
 	return c.options.FaceAllowBackground
 }
+
+// FaceMarkerBlankThreshold returns the threshold at which async is enabled for blank face_ids in markers
+func (c *Config) FaceMarkerBlankThreshold() int {
+	if c == nil {
+		return face.BlankFaceMarkerThreshold
+	}
+
+	return c.options.FaceMarkerBlankThreshold
+
+}

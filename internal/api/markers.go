@@ -169,12 +169,17 @@ func CreateMarker(router *gin.RouterGroup) {
 			AbortSaveFailed(c)
 			return
 		} else if changed {
-			if updateErr := query.UpdateSubjectCovers(true); updateErr != nil {
-				log.Errorf("faces: %s (update covers)", updateErr)
-			}
+			conf := get.Config()
+			if entity.MatchMarkersCanBeSync(conf.Options().FaceMarkerBlankThreshold) {
+				if updateErr := query.UpdateSubjectCovers(true); updateErr != nil {
+					log.Errorf("faces: %s (update covers)", updateErr)
+				}
 
-			if updateErr := entity.UpdateSubjectCounts(true); updateErr != nil {
-				log.Errorf("faces: %s (update counts)", updateErr)
+				if updateErr := entity.UpdateSubjectCounts(true); updateErr != nil {
+					log.Errorf("faces: %s (update counts)", updateErr)
+				}
+			} else {
+				query.ProcessMatchMarkersAsync(entity.FindFace(marker.FaceID), entity.Faceless)
 			}
 		}
 
@@ -269,19 +274,23 @@ func UpdateMarker(router *gin.RouterGroup) {
 			return
 		} else if changed {
 			if marker.FaceID != "" && marker.SubjUID != "" && marker.SubjSrc == entity.SrcManual {
-				if res, err := get.Faces().OptimizeFor(marker.SubjUID); err != nil {
+				if res, err := get.Faces().OptimizeFor(marker.SubjUID, false); err != nil {
 					log.Errorf("faces: %s (optimize)", err)
 				} else if res.Merged > 0 {
 					log.Infof("faces: merged %s", english.Plural(res.Merged, "cluster", "clusters"))
 				}
 			}
+			conf := get.Config()
+			if entity.MatchMarkersCanBeSync(conf.Options().FaceMarkerBlankThreshold) {
+				if updateErr := query.UpdateSubjectCovers(true); updateErr != nil {
+					log.Errorf("faces: %s (update covers)", updateErr)
+				}
 
-			if updateErr := query.UpdateSubjectCovers(true); updateErr != nil {
-				log.Errorf("faces: %s (update covers)", updateErr)
-			}
-
-			if updateErr := entity.UpdateSubjectCounts(true); updateErr != nil {
-				log.Errorf("faces: %s (update counts)", updateErr)
+				if updateErr := entity.UpdateSubjectCounts(true); updateErr != nil {
+					log.Errorf("faces: %s (update counts)", updateErr)
+				}
+			} else {
+				query.ProcessMatchMarkersAsync(entity.FindFace(marker.FaceID), entity.Faceless)
 			}
 		}
 
