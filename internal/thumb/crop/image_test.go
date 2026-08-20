@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -145,5 +146,62 @@ func TestImageFromThumb(t *testing.T) {
 		assert.Equal(t, filepath.Join(filepath.Dir(thumbName), "bccfeaa526a36e19b555fd4ca5e8f767d5604289_50x50_crop_0000003e83e8.jpg"), cropName)
 		assert.Equal(t, 50, img.Bounds().Dx())
 		assert.Equal(t, 50, img.Bounds().Dy())
+	})
+}
+
+func TestImageFromIdealThumb(t *testing.T) {
+	const hash = "bccfeaa526a36e19b555fd4ca5e8f767d5604289"
+
+	cachePath := t.TempDir()
+	src := fs.Abs("../../../assets/samples/6720px_white.jpg")
+
+	renditionWidth := func(t *testing.T, name thumb.Name) int {
+		t.Helper()
+		size := thumb.Sizes[name]
+		fileName, err := thumb.FromFile(src, hash, cachePath, size.Width, size.Height, thumb.OrientationNormal, size.Options...)
+		require.NoError(t, err)
+		img, _, err := fs.DecodeImageFile(fileName)
+		require.NoError(t, err)
+
+		return img.Bounds().Dx()
+	}
+
+	width720 := renditionWidth(t, thumb.Fit720)
+	width1280 := renditionWidth(t, thumb.Fit1280)
+	require.Greater(t, width1280, width720, "the two renditions must differ for this test to mean anything")
+
+	thumbName, err := thumb.Sizes[thumb.Fit720].FileName(hash, cachePath)
+	require.NoError(t, err)
+
+	t.Run("LargeAreaKeepsSmallestRendition", func(t *testing.T) {
+		// A face filling the frame is already larger than the template, so the detection
+		// thumbnail supplies it without upscaling.
+		img, err := ImageFromIdealThumb(thumbName, NewArea("face", 0, 0, 1, 1), Sizes[Tile160])
+		require.NoError(t, err)
+		assert.Equal(t, width720, img.Bounds().Dx())
+	})
+	t.Run("SmallAreaUpgradesRendition", func(t *testing.T) {
+		// A face covering a fifth of the width needs five times the template width, which
+		// only the larger rendition can supply.
+		img, err := ImageFromIdealThumb(thumbName, NewArea("face", 0.4, 0.4, 0.2, 0.2), Sizes[Tile160])
+		require.NoError(t, err)
+		assert.Equal(t, width1280, img.Bounds().Dx())
+	})
+	t.Run("ReturnsWholeImageNotACrop", func(t *testing.T) {
+		// Callers warp from the source themselves, so this must not crop to the area.
+		img, err := ImageFromIdealThumb(thumbName, NewArea("face", 0, 0, 1, 1), Sizes[Tile160])
+		require.NoError(t, err)
+		assert.Greater(t, img.Bounds().Dx(), Sizes[Tile160].Width)
+	})
+	t.Run("NotAThumbName", func(t *testing.T) {
+		// Without a hash prefix there is no ladder to search, so the file is decoded as is.
+		img, err := ImageFromIdealThumb(src, NewArea("face", 0.4, 0.4, 0.2, 0.2), Sizes[Tile160])
+		require.NoError(t, err)
+		assert.Equal(t, 6720, img.Bounds().Dx())
+	})
+	t.Run("MissingFile", func(t *testing.T) {
+		img, err := ImageFromIdealThumb(filepath.Join(cachePath, "missing.jpg"), NewArea("face", 0, 0, 1, 1), Sizes[Tile160])
+		assert.Error(t, err)
+		assert.Nil(t, img)
 	})
 }
