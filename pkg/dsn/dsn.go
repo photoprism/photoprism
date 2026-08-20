@@ -223,6 +223,8 @@ func (d *DSN) parse() {
 			} else {
 				d.Name = filepath.Base(uri.Path)
 				d.Server = strings.TrimSuffix(uri.Path, d.Name)
+				d.User = uri.User.Username()
+				d.Password, _ = uri.User.Password()
 				d.Params = uri.RawQuery
 			}
 			if strings.ToLower(uri.Scheme) == "sqlite" {

@@ -57,6 +57,12 @@ func TestDSN_HostAndPort(t *testing.T) {
 			port: 0,
 		},
 		{
+			name: "UriSQLiteWithCredentials",
+			in:   "file://user:secret@/var/photoprism/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			host: "",
+			port: 0,
+		},
+		{
 			name: "InvalidPortFallback",
 			in:   "user:secret@tcp(localhost:abc)/photoprism",
 			host: "localhost",
@@ -73,12 +79,91 @@ func TestDSN_HostAndPort(t *testing.T) {
 	}
 }
 
+//nolint:gosec // G101: DSN parsing tests intentionally use inline credential samples.
 func TestDSN_MaskPassword(t *testing.T) {
-	d := Parse("user:secret@tcp(localhost:3306)/db")
-	assert.Equal(t, "user:***@tcp(localhost:3306)/db", d.MaskPassword())
+	tests := []struct {
+		name   string
+		in     string
+		expect string
+	}{
+		{
+			name:   "GoMySQLTcpFull",
+			in:     "user:secret@tcp(localhost:3306)/db",
+			expect: "user:***@tcp(localhost:3306)/db",
+		},
+		{
+			name:   "GoPostgresKVP",
+			in:     "user=alice password=s3cr3t dbname=app",
+			expect: "user=alice password=*** dbname=app",
+		},
+		{
+			name:   "GoMySQLTcpNoPassword",
+			in:     "user@tcp(localhost:3306)/db",
+			expect: "user@tcp(localhost:3306)/db",
+		},
+		{
+			name:   "GoSQLiteLookingLikeMySQL",
+			in:     "photoprism:storage@pipe(storage:port)/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			expect: "photoprism:storage@pipe(storage:port)/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+		},
+		{
+			name:   "UriMySQLFull",
+			in:     "mysql://user:secret@localhost:3306/photoprism?parseTime=true",
+			expect: "mysql://user:***@localhost:3306/photoprism?parseTime=true",
+		},
+		{
+			name:   "UriMySQLNoPassword",
+			in:     "mysql://user@localhost:3306/photoprism?parseTime=true",
+			expect: "mysql://user@localhost:3306/photoprism?parseTime=true",
+		},
+		{
+			name:   "UriMySQLNoUserNoPassword",
+			in:     "mysql://localhost:3306/photoprism?parseTime=true",
+			expect: "mysql://localhost:3306/photoprism?parseTime=true",
+		},
+		{
+			name:   "UriMySQLNoUserNoPassword",
+			in:     "mysql://localhost:3306/photoprism?parseTime=true",
+			expect: "mysql://localhost:3306/photoprism?parseTime=true",
+		},
+		{
+			name:   "UriSQLiteWithCredentials",
+			in:     "file://user:secret@/var/photoprism/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			expect: "file://user:***@/var/photoprism/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+		},
+		{
+			name:   "UriSQLiteWithoutCredentials",
+			in:     "file:/var/photoprism/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			expect: "file:/var/photoprism/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+		},
+		{
+			name:   "UriPostgresFull",
+			in:     "postgres://user:secret@localhost:4002/photoprism?parseTime=true",
+			expect: "postgres://user:***@localhost:4002/photoprism?parseTime=true",
+		},
+		{
+			name:   "UriPostgresNoPassword",
+			in:     "postgres://user@localhost:4002/photoprism?parseTime=true",
+			expect: "postgres://user@localhost:4002/photoprism?parseTime=true",
+		},
+		{
+			name:   "UriPostgresNoUserNoPassword",
+			in:     "postgresql://localhost:4002/photoprism?parseTime=true",
+			expect: "postgresql://localhost:4002/photoprism?parseTime=true",
+		},
+		{
+			name:   "UriMPostgresNoUserNoPassword",
+			in:     "postgresql://localhost:4002/photoprism?parseTime=true",
+			expect: "postgresql://localhost:4002/photoprism?parseTime=true",
+		},
+	}
 
-	p := Parse("user=alice password=s3cr3t dbname=app")
-	assert.Equal(t, "user=alice password=*** dbname=app", p.MaskPassword())
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			d := Parse(tt.in)
+			assert.Equal(t, tt.expect, d.MaskPassword())
+		})
+	}
 
 	noPass := Parse("user@tcp(localhost:3306)/db")
 	assert.Equal(t, "user@tcp(localhost:3306)/db", noPass.MaskPassword())
@@ -198,6 +283,11 @@ func TestDSN_SQLiteFilename(t *testing.T) {
 			name: "SQLiteFile",
 			in:   "file:/go/src/github.com/photoprism/photoprism/storage/testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
 			want: "/go/src/github.com/photoprism/photoprism/storage/testdata/index.db",
+		},
+		{
+			name: "UriSQLiteWithCredentials",
+			in:   "file://user:secret@/var/photoprism/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			want: "/var/photoprism/index.db",
 		},
 		{
 			name: "Brackets",

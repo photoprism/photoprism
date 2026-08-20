@@ -142,6 +142,19 @@ func TestParse(t *testing.T) {
 			},
 		},
 		{
+			name: "UriSQLiteWithCredentials",
+			in:   "file://user:secret@/var/photoprism/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			want: DSN{
+				DSN:      "file://user:secret@/var/photoprism/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+				Driver:   DriverSQLite3,
+				Server:   "/var/photoprism/",
+				Name:     "index.db",
+				Params:   "_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+				User:     "user",
+				Password: "secret",
+			},
+		},
+		{
 			name: "PostgresKeyValue",
 			in:   "user=alice password=s3cr3t dbname=app host=db.internal port=5432 connect_timeout=5 sslmode=require",
 			want: DSN{
