@@ -102,21 +102,25 @@ func applyEndpointEmbeddings(faces face.Faces, res *ApiResponse, configured face
 		return 0
 	}
 
-	// An echoed model name is evidence; the configured one is only an assumption that the
-	// length check below has to back up.
-	model := configured
-
-	if res.Model != nil {
-		if name := face.NormalizeModelName(res.Model.Name); face.FindEmbeddingModel(name) != nil {
-			model = name
-		}
-	}
-
+	// The configured model decides which contract these vectors are held to. Letting the
+	// echoed name select it would let the endpoint pick the width it is checked against,
+	// and its vectors would then be stored under a name this instance does not query.
+	model := face.NormalizeModelName(configured)
 	registered := face.FindEmbeddingModel(model)
 
 	if registered == nil {
 		log.Warnf("vision: cannot attribute face embeddings to model %s, dropping them", clean.Log(model))
 		return 0
+	}
+
+	// An echoed name is cross-checked rather than adopted: a service that says it used a
+	// different model produced vectors of another space, whatever their width.
+	if res.Model != nil {
+		if name := face.NormalizeModelName(res.Model.Name); name != "" && !face.ModelsComparable(name, model) {
+			log.Warnf("vision: endpoint returned %s face embeddings, expected %s, dropping them",
+				clean.Log(name), clean.Log(model))
+			return 0
+		}
 	}
 
 	for i := range faces {
