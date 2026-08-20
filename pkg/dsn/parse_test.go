@@ -59,7 +59,7 @@ func TestParse(t *testing.T) {
 			want: DSN{
 				DSN:    "file:/data/index.db?_busy_timeout=5000",
 				Driver: DriverSQLite3,
-				Server: "file:/data",
+				Server: "/data/",
 				Name:   "index.db",
 				Params: "_busy_timeout=5000",
 			},
@@ -70,8 +70,8 @@ func TestParse(t *testing.T) {
 			want: DSN{
 				DSN:    "/index.db?_busy_timeout=5000",
 				Driver: DriverSQLite3,
-				Server: "",
-				Name:   "/index.db",
+				Server: "/",
+				Name:   "index.db",
 				Params: "_busy_timeout=5000",
 			},
 		},
@@ -84,6 +84,61 @@ func TestParse(t *testing.T) {
 				Server: "",
 				Name:   ".test.db",
 				Params: "_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			},
+		},
+		{
+			name: "SQLiteBrackets",
+			in:   `/srv/photos (main)/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL`,
+			want: DSN{
+				DSN:    `/srv/photos (main)/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL`,
+				Driver: DriverSQLite3,
+				Server: "/srv/photos (main)/",
+				Name:   "index.db",
+				Params: "_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			},
+		},
+		{
+			name: "SQLiteAtInName",
+			in:   "/photoprism/my@storage/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			want: DSN{
+				DSN:    "/photoprism/my@storage/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+				Driver: DriverSQLite3,
+				Server: "/photoprism/my@storage/",
+				Name:   "index.db",
+				Params: "_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			},
+		},
+		{
+			name: "SQLiteFileNoPath",
+			in:   "file:index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			want: DSN{
+				DSN:    "file:index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+				Driver: DriverSQLite3,
+				Server: "",
+				Name:   "index.db",
+				Params: "_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			},
+		},
+		{
+			name: "SQLiteTripleDot",
+			in:   ".../index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			want: DSN{
+				DSN:    ".../index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+				Driver: DriverSQLite3,
+				Server: ".../",
+				Name:   "index.db",
+				Params: "_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			},
+		},
+		{
+			name: "SQLiteMemory",
+			in:   ":memory:?_shared_cache=true&_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			want: DSN{
+				DSN:    ":memory:?_shared_cache=true&_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+				Driver: DriverSQLite3,
+				Server: "",
+				Name:   ":memory:",
+				Params: "_shared_cache=true&_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
 			},
 		},
 		{
@@ -100,6 +155,125 @@ func TestParse(t *testing.T) {
 			},
 		},
 		{
+			name: "URISQLite1",
+			in:   "sqlite:database_name?param=value&param=value",
+			want: DSN{
+				DSN:      "file:database_name?param=value&param=value",
+				Driver:   DriverSQLite3,
+				User:     "",
+				Password: "",
+				Server:   "",
+				Name:     "database_name",
+				Params:   "param=value&param=value",
+			},
+		},
+		{
+			name: "URISQLite2",
+			in:   "sqlite:path/to/database_name?param=value&param=value",
+			want: DSN{
+				DSN:      "file:path/to/database_name?param=value&param=value",
+				Driver:   DriverSQLite3,
+				User:     "",
+				Password: "",
+				Server:   "path/to/",
+				Name:     "database_name",
+				Params:   "param=value&param=value",
+			},
+		},
+		{
+			name: "URISQLite3",
+			in:   "sqlite:/path/to/database_name?param=value&param=value",
+			want: DSN{
+				DSN:      "file:/path/to/database_name?param=value&param=value",
+				Driver:   DriverSQLite3,
+				User:     "",
+				Password: "",
+				Server:   "/path/to/",
+				Name:     "database_name",
+				Params:   "param=value&param=value",
+			},
+		},
+		{
+			name: "URIMySQLNoPassword",
+			in:   "mysql://user@localhost:3306/photoprism?parseTime=true",
+			want: DSN{
+				DSN:      "mysql://user@localhost:3306/photoprism?parseTime=true",
+				Driver:   DriverMySQL,
+				User:     "user",
+				Password: "",
+				Server:   "localhost:3306",
+				Name:     "photoprism",
+				Params:   "parseTime=true",
+			},
+		},
+		{
+			name: "URIMySQLNoUserOrPassword",
+			in:   "mysql://localhost:3306/photoprism?parseTime=true",
+			want: DSN{
+				DSN:      "mysql://localhost:3306/photoprism?parseTime=true",
+				Driver:   DriverMySQL,
+				User:     "",
+				Password: "",
+				Server:   "localhost:3306",
+				Name:     "photoprism",
+				Params:   "parseTime=true",
+			},
+		},
+		{
+			name: "URIMySQLNoUserOrPasswordOrPort",
+			in:   "mysql://localhost/photoprism?parseTime=true",
+			want: DSN{
+				DSN:      "mysql://localhost/photoprism?parseTime=true",
+				Driver:   DriverMySQL,
+				User:     "",
+				Password: "",
+				Server:   "localhost",
+				Name:     "photoprism",
+				Params:   "parseTime=true",
+			},
+		},
+		{
+			name: "SQLiteLookingLikeMySQL",
+			in:   "photoprism:storage@pipe(storage:port)/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			want: DSN{
+				DSN:      "photoprism:storage@pipe(storage:port)/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+				Driver:   DriverSQLite3,
+				User:     "",
+				Password: "",
+				Server:   "photoprism:storage@pipe(storage:port)/",
+				Name:     "index.db",
+				Params:   "_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			},
+		},
+		{
+			name: "MySQLNoDatabase",
+			in:   "user:secret@tcp(localhost:3306)/?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true",
+			want: DSN{
+				DSN:      "user:secret@tcp(localhost:3306)/?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true",
+				Driver:   DriverMySQL,
+				User:     "user",
+				Password: "secret",
+				Net:      "tcp",
+				Server:   "localhost:3306",
+				Name:     "",
+				Params:   "charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true",
+			},
+		},
+		{
+			name: "JustASlash",
+			in:   "/",
+			want: DSN{
+				DSN:      "/",
+				Driver:   DriverMySQL,
+				User:     "",
+				Password: "",
+				Net:      "",
+				Server:   "",
+				Name:     "",
+				Params:   "",
+			},
+		},
+		{
 			name: "EmptyInput",
 			in:   "",
 			want: DSN{},
@@ -109,8 +283,7 @@ func TestParse(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := Parse(tt.in)
-			assert.Equal(t, tt.in, got.String())
-			if got != tt.want {
+			if !assert.Equal(t, tt.want, got) {
 				t.Fatalf("Parse(%q) = %#v, want %#v", tt.in, got, tt.want)
 			}
 		})

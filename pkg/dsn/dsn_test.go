@@ -199,6 +199,46 @@ func TestDSN_SQLiteFilename(t *testing.T) {
 			in:   "file:/go/src/github.com/photoprism/photoprism/storage/testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
 			want: "/go/src/github.com/photoprism/photoprism/storage/testdata/index.db",
 		},
+		{
+			name: "Brackets",
+			in:   "/srv/photos (main)/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			want: "/srv/photos (main)/index.db",
+		},
+		{
+			name: "AtInName",
+			in:   "/photoprism/my@storage/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			want: "/photoprism/my@storage/index.db",
+		},
+		{
+			name: "FileNoPath",
+			in:   "file:index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			want: "index.db",
+		},
+		{
+			name: "TripleDot",
+			in:   ".../index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			want: ".../index.db",
+		},
+		{
+			name: "MemoryDB",
+			in:   ":memory:?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			want: ":memory:",
+		},
+		{
+			name: "SQLiteSQLiteFQN",
+			in:   "sqlite:/go/src/github.com/photoprism/photoprism/storage/testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			want: "/go/src/github.com/photoprism/photoprism/storage/testdata/index.db",
+		},
+		{
+			name: "SQLiteSQLiteRelative",
+			in:   "sqlite:storage/testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			want: "storage/testdata/index.db",
+		},
+		{
+			name: "SQLiteSQLiteRoot",
+			in:   "sqlite:/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			want: "/index.db",
+		},
 	}
 
 	for _, tt := range cases {
