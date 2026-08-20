@@ -298,6 +298,9 @@ install-darktable:
 acceptance-sqlite-restart-%: acceptance-sqlite-stop-%
 	cp -f storage/acceptance/backup.db storage/acceptance/index.db
 	cp -f storage/acceptance/config-sqlite/settingsBackup.yml storage/acceptance/config-sqlite/settings.yml
+	rm -f storage/acceptance/index.db-journal
+	rm -f storage/acceptance/index.db-shm
+	rm -f storage/acceptance/index.db-wal
 	rm -rf storage/acceptance/sidecar/2020
 	rm -rf storage/acceptance/sidecar/2011
 	rm -rf storage/acceptance/originals/2010
@@ -310,6 +313,9 @@ acceptance-sqlite-stop-%:
 	./photoprism --auth-mode="public" -c "./storage/acceptance/config-sqlite" stop
 acceptance-auth-sqlite-restart: acceptance-auth-sqlite-stop
 	cp -f storage/acceptance/backup.db storage/acceptance/index.db
+	rm -f storage/acceptance/index.db-journal
+	rm -f storage/acceptance/index.db-shm
+	rm -f storage/acceptance/index.db-wal
 	cp -f storage/acceptance/config-sqlite/settingsBackup.yml storage/acceptance/config-sqlite/settings.yml
 	./photoprism --auth-mode="password" -c "./storage/acceptance/config-sqlite" start -d
 acceptance-auth-sqlite-stop:
@@ -655,11 +661,11 @@ reset-testdb: reset-sqlite reset-mariadb-testdb
 reset-acceptance: reset-mariadb-acceptance
 reset-sqlite:
 	$(info Removing test database files...)
-	find ./internal -type f \( -iname '.*.db' -o -iname '.*.db-journal' -o -iname '.test.*' \) -delete
+	find ./internal -type f \( -iname '.*.db' -o -iname '.*.db-journal' -o -iname '.*.db-shm' -o -iname '.*.db-wal' -o -iname '.test.*' \) -delete
 run-test-short:
 	$(info Running short Go tests in parallel mode...)
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -short -timeout 5m ./pkg/... ./internal/... ./.../internal/...
-run-test-go:
+run-test-go: reset-sqlite
 	$(info Running all Go tests...)
 	$(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="slow,develop" -timeout 20m ./pkg/... ./internal/... ./.../internal/...
 run-test-hub:
