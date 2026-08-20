@@ -1,6 +1,6 @@
 ## PhotoPrism — Vision Package
 
-**Last Updated:** August 9, 2026
+**Last Updated:** August 20, 2026
 
 ### Overview
 
@@ -9,6 +9,8 @@
 - **TensorFlow (built‑in)** — default Nasnet / NSFW / Facenet models, no remote service required. Long-running TensorFlow inference can accumulate C-allocated tensor memory until GC finalizers run, so PhotoPrism periodically triggers garbage collection to return that memory to the OS; tune with `PHOTOPRISM_TF_GC_EVERY` (default **200**, `0` disables). Lower values reduce peak RSS but increase GC overhead and can slow indexing, so keep the default unless memory pressure is severe.
 - **Ollama** — local or proxied multimodal LLMs. See [`ollama/README.md`](ollama/README.md) for tuning and schema details. The engine defaults to `${OLLAMA_BASE_URL:-http://ollama:11434}/api/generate`, trimming any trailing slash on the base URL; set `OLLAMA_BASE_URL=https://ollama.com` to opt into cloud defaults. The default model is `gemma4:latest` (self-hosted) or `minimax-m3:cloud` (cloud), and reasoning is disabled by default (`Service.Think: "false"`) so thinking-capable models do not leak reasoning into results. That flag is a correctness guard rather than a performance one — a reasoning build still generates the reasoning and bills the tokens for it, so prefer a non-reasoning tag (for example `qwen3-vl:4b-instruct` over `qwen3-vl:4b`) where one exists.
 - **OpenAI** — cloud Responses API. See [`openai/README.md`](openai/README.md) for prompts, schema variants, and header requirements.
+
+Faces are the one type this registry does not fully own. A `face` entry in `vision.yml` schedules detection and embedding, but *which* model turns a crop into a vector is chosen per instance by `FACE_MODEL`, and `Model.FaceModel()` returns the embedder that selects (`nil` when `FACE_MODEL=none`) before it looks at the `vision.yml` entry. So a custom TensorFlow face model configured here is used only while no embedding model is active. The registry, thresholds, and provenance columns live in [`internal/ai/face`](../face/README.md).
 
 ### Configuration
 
