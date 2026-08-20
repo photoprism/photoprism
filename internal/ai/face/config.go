@@ -30,9 +30,9 @@ const (
 	// ThresholdMax is the largest value accepted for a configurable distance threshold.
 	ThresholdMax = 1.5
 	// AcceptDistMax is the highest distance at which an embedding may still join a cluster.
-	// Embeddings are unit vectors, so two independent ones sit at √2 ≈ 1.41 in expectation
-	// and a cutoff at or above that accepts every pair. The bound follows from
-	// normalization alone and therefore holds for every embedding model.
+	// Two independent unit vectors average sqrt(2) ~ 1.41 apart, but a sizable share of
+	// them land nearer, so this caps what a misconfigured threshold can do rather than
+	// naming a distance that is safe to configure.
 	AcceptDistMax = 1.4
 )
 

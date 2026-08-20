@@ -276,8 +276,9 @@ func (c *Config) libraryFaceModel() face.ModelName {
 }
 
 // dominantFaceModel returns the model that produced most of the counted vectors, or an
-// empty name when none were counted. A blank model name means the vector predates the
-// provenance column and is therefore FaceNet.
+// empty name when none were counted. What is counted depends on the caller: the recorded
+// provenance alone, or every vector, in which case a blank name means the vector predates
+// the provenance column and is therefore FaceNet.
 func dominantFaceModel(counts []query.MarkerEmbeddingModelCount) face.ModelName {
 	var name face.ModelName
 	var markers int

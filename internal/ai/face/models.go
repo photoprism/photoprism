@@ -215,7 +215,7 @@ func arcFaceInput(normalization onnx.Normalization) *onnx.Input {
 //
 // This list only decides what a library with no face vectors starts out with. An
 // existing library keeps whatever model produced its vectors, because resolving "auto"
-// away from it would leave every stored cluster incomparable — see Config.FaceModel.
+// away from it would leave every stored cluster incomparable - see Config.FaceModel.
 var AutoModelPreference = []ModelName{ModelSFace, ModelFaceNet, ModelAuraFace, ModelArcFaceR50, ModelArcFaceMBF}
 
 // NormalizeModelName lowercases a model name and accepts hyphens in place of underscores.

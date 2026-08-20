@@ -373,10 +373,6 @@ func TestEmbeddingModel_String(t *testing.T) {
 	})
 }
 
-// TestEmbeddingModelChecksums verifies that the checksums in the registry are the ones
-// the install scripts verify against. The scripts are where the value originally comes
-// from, so the registry is a second copy of it and would otherwise drift on the next
-// upstream update without anything failing.
 // readModelScript returns the contents of an installation script, or skips the test when
 // the repository scripts are not available, as in a production image.
 func readModelScript(t *testing.T, fileName string) string {

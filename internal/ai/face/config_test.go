@@ -57,7 +57,7 @@ func TestAcceptDist(t *testing.T) {
 		assert.InDelta(t, AcceptDistMax, AcceptDist(ThresholdMax), 1e-9)
 	})
 	t.Run("CeilingBelowRandomPairDistance", func(t *testing.T) {
-		// Two independent unit vectors sit at √2, so the ceiling has to stay under it.
+		// Independent unit vectors average sqrt(2) apart, so the ceiling stays under it.
 		assert.Less(t, float64(AcceptDistMax), math.Sqrt2)
 	})
 }

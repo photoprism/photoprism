@@ -62,8 +62,8 @@ const normalizeTolerance = 1e-6
 
 // normalizeEmbedding scales a vector to unit length in place.
 //
-// Vectors reach this from two directions — freshly unmarshaled ones that are already
-// normalized, and raw model output that is not — so an already-unit vector returns
+// Vectors reach this from two directions - freshly unmarshaled ones that are already
+// normalized, and raw model output that is not - so an already-unit vector returns
 // before the write loop, which is also what keeps it from rewriting the caller's data.
 func normalizeEmbedding(e Embedding) {
 	var sum float64
