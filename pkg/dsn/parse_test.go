@@ -246,7 +246,7 @@ func TestParse(t *testing.T) {
 			},
 		},
 		{
-			name: "SQLiteLookingLikeMySQL",
+			name: "SQLiteLookingLikeMySQLWithDotDB",
 			in:   "photoprism:storage@pipe(storage:port)/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
 			want: DSN{
 				DSN:      "photoprism:storage@pipe(storage:port)/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
@@ -255,6 +255,19 @@ func TestParse(t *testing.T) {
 				Password: "",
 				Server:   "photoprism:storage@pipe(storage:port)/",
 				Name:     "index.db",
+				Params:   "_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			},
+		},
+		{
+			name: "SQLiteLookingLikeMySQLWithoutDotDB",
+			in:   "photoprism:storage@pipe(storage:port)/myspecialdb?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			want: DSN{
+				DSN:      "photoprism:storage@pipe(storage:port)/myspecialdb?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+				Driver:   DriverSQLite3,
+				User:     "",
+				Password: "",
+				Server:   "photoprism:storage@pipe(storage:port)/",
+				Name:     "myspecialdb",
 				Params:   "_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
 			},
 		},
@@ -284,6 +297,32 @@ func TestParse(t *testing.T) {
 				Server:   "",
 				Name:     "",
 				Params:   "",
+			},
+		},
+		{
+			name: "SQLiteNoDotDb",
+			in:   "/index-db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			want: DSN{
+				DSN:      "/index-db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+				Driver:   DriverSQLite3,
+				User:     "",
+				Password: "",
+				Server:   "/",
+				Name:     "index-db",
+				Params:   "_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			},
+		},
+		{
+			name: "SQLiteRootNoDotDb",
+			in:   "photoprismdatabase?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			want: DSN{
+				DSN:      "photoprismdatabase?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+				Driver:   DriverSQLite3,
+				User:     "",
+				Password: "",
+				Server:   "",
+				Name:     "photoprismdatabase",
+				Params:   "_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
 			},
 		},
 		{

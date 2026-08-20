@@ -496,7 +496,9 @@ func (d *DSN) detectDriver() {
 		return
 	}
 
-	if strings.HasPrefix(lower, "file:") || strings.HasPrefix(lower, ":memory:") || strings.HasSuffix(lower, ".db") || strings.HasSuffix(strings.ToLower(d.Name), ".db") {
+	if strings.HasPrefix(lower, "file:") || strings.HasPrefix(lower, ":memory:") || strings.HasSuffix(lower, ".db") ||
+		strings.HasSuffix(strings.ToLower(d.Name), ".db") ||
+		strings.Contains(strings.ToLower(d.Params), "_busy_timeout=") || strings.Contains(strings.ToLower(d.Params), "_journal_mode=") {
 		d.Driver = DriverSQLite3
 		return
 	}
