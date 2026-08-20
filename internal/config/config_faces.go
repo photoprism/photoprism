@@ -98,9 +98,9 @@ func (c *Config) FaceEngineShouldRun(when vision.RunType) bool {
 		case vision.RunAuto, vision.RunAlways, vision.RunManual, vision.RunOnDemand:
 			return true
 		case vision.RunOnIndex:
-			return c.FaceEngineThreads() > 2
+			return c.faceEngineRunsOnIndex()
 		case vision.RunNewlyIndexed:
-			return c.FaceEngineThreads() <= 2
+			return !c.faceEngineRunsOnIndex()
 		case vision.RunOnSchedule, vision.RunNever:
 			return false
 		}
@@ -109,24 +109,45 @@ func (c *Config) FaceEngineShouldRun(when vision.RunType) bool {
 	return false
 }
 
-// FaceEngineThreads returns the configured thread count for ONNX inference.
+// FaceEngineThreads returns the thread count for ONNX face detection.
 //
 // The automatic value divides the cores by the number of indexing workers, because face
 // detection takes no lock: that many detections run at once, each with its own thread
 // pool, so a per-session count derived from the cores alone oversubscribes the machine
-// by exactly that factor.
+// by exactly that factor. The derived value is not written back to the options, so that
+// FaceModelThreads keeps deriving its own count.
 func (c *Config) FaceEngineThreads() int {
 	if c == nil {
 		return 1
-	} else if c.options.FaceEngineThreads <= 0 {
-		threads := max(runtime.NumCPU()/max(c.IndexWorkers(), 1), 1)
-
-		c.options.FaceEngineThreads = threads
-
-		return threads
+	} else if c.options.FaceEngineThreads > 0 {
+		return c.options.FaceEngineThreads
 	}
 
-	return c.options.FaceEngineThreads
+	return max(runtime.NumCPU()/max(c.IndexWorkers(), 1), 1)
+}
+
+// FaceModelThreads returns the thread count for face embedding inference.
+//
+// Embeddings are generated one at a time behind the model session lock, so unlike
+// detection they never run once per indexing worker and keep the undivided count.
+func (c *Config) FaceModelThreads() int {
+	if c == nil {
+		return 1
+	} else if c.options.FaceEngineThreads > 0 {
+		return c.options.FaceEngineThreads
+	}
+
+	return max(runtime.NumCPU()/2, 1)
+}
+
+// faceEngineRunsOnIndex reports whether this host is fast enough to detect faces while
+// indexing rather than deferring them to the pass over newly indexed files.
+//
+// It reads the count that is not divided among the indexing workers, because that
+// divisor follows the database driver and the available memory, which would tie the
+// schedule to the storage backend instead of to the capability of the machine.
+func (c *Config) faceEngineRunsOnIndex() bool {
+	return c.FaceModelThreads() > 2
 }
 
 // FaceEngineModelPath returns the absolute path to the bundled SCRFD ONNX detector.

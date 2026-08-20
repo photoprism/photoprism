@@ -1335,7 +1335,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-engine-threads",
-			Usage:   "face detection thread `COUNT` (0 uses half the available CPU cores)",
+			Usage:   "face detection and embedding thread `COUNT` (0 derives a default from the CPU cores)",
 			EnvVars: EnvVars("FACE_ENGINE_THREADS"),
 		}}, {
 		Flag: &cli.StringFlag{

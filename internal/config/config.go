@@ -498,7 +498,7 @@ func (c *Config) Propagate() {
 		Name:      c.FaceModel(),
 		Model:     c.FaceEmbeddingModel(),
 		ModelPath: c.FaceModelPath(),
-		Threads:   c.FaceEngineThreads(),
+		Threads:   c.FaceModelThreads(),
 	}); err != nil {
 		log.Warnf("faces: %s (configure embedding model)", err)
 	}

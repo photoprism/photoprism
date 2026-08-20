@@ -1,6 +1,6 @@
 ## Face Detection & Embedding Guidelines
 
-**Last Updated:** August 17, 2026
+**Last Updated:** August 20, 2026
 
 ### Overview
 
@@ -18,7 +18,7 @@ Embedding provenance is persisted: `faces.embed_model` and `markers.embed_model`
 
 PhotoPrism uses a single detector:
 
-- **ONNX SCRFD 0.5g** — ONNX Runtime-backed CNN that delivers higher recall on occluded or off-axis faces. The detector consumes 720 px thumbnails (model input 640 px), schedules work on the meta/vision workers, and defaults to half the available CPUs (minimum 1 thread). Operators can select `FACE_ENGINE=onnx` explicitly or leave `FACE_ENGINE=auto`, which resolves to ONNX when the bundled [SCRFD model](https://yakhyo.github.io/facial-analysis/) is present and otherwise disables detection rather than picking another engine.
+- **ONNX SCRFD 0.5g** — ONNX Runtime-backed CNN that delivers higher recall on occluded or off-axis faces. The detector consumes 720 px thumbnails (model input 640 px), schedules work on the meta/vision workers, and defaults to the available CPUs divided by the number of indexing workers (minimum 1 thread), because detection takes no lock and one session runs per worker. Operators can select `FACE_ENGINE=onnx` explicitly or leave `FACE_ENGINE=auto`, which resolves to ONNX when the bundled [SCRFD model](https://yakhyo.github.io/facial-analysis/) is present and otherwise disables detection rather than picking another engine.
 
 The `github.com/yalue/onnxruntime_go` binding requests the exact C API version of the headers it vendors, so it fails to initialize against an older shared library. Bumping that module therefore requires a matching `ONNX_DEFAULT_VERSION` and checksum update in `scripts/dist/install-onnx.sh`, plus a rebuild of the base images that ship `libonnxruntime.so`. `TestNet` is the only test that loads the shared library, so it fails when the SCRFD model is present but the detector cannot be initialized, and skips only when the model itself is missing — a version mismatch must not pass as a skipped test.
 
@@ -30,17 +30,19 @@ The detector also returns five facial landmarks, which `engine_onnx.go` decodes 
 
 `FACE_MODEL` selects the model that turns a face crop into a vector, independently of the detector. Supported models are registered in `models.go`, so the CLI help and config report are generated from one source. Each entry carries the embedding length, alignment mode, and distance thresholds; its artifact and preprocessing contract — file, source, checksum, license, input geometry, channel order, normalization, resize convention, and output width — live in the `onnx.ModelInfo` that every subsystem running an ONNX model shares (see `internal/ai/onnx/README.md`).
 
-| Model         | Runtime    | Dim | Input   | Alignment | Weights | License       | Installed By                   |
-|:--------------|:-----------|----:|:--------|:----------|--------:|:--------------|:-------------------------------|
-| `facenet`     | TensorFlow | 512 | 160×160 | box crop  |   92 MB | unknown       | `make dep-tensorflow`          |
-| `sface`       | ONNX       | 128 | 112×112 | ArcFace-5 |   39 MB | Apache-2.0    | `make dep-sface`               |
-| `auraface`    | ONNX       | 512 | 112×112 | ArcFace-5 |  261 MB | Apache-2.0    | `download-models.sh auraface`  |
-| `arcface_r50` | ONNX       | 512 | 112×112 | ArcFace-5 |  174 MB | research-only | `scripts/download-arcface.sh`  |
-| `arcface_mbf` | ONNX       | 512 | 112×112 | ArcFace-5 |   14 MB | research-only | `scripts/download-arcface.sh`  |
+| Model         | Runtime    | Dim | Input   | Alignment | Weights | License       | Installed By                  |
+|:--------------|:-----------|----:|:--------|:----------|--------:|:--------------|:------------------------------|
+| `facenet`     | TensorFlow | 512 | 160×160 | box crop  |   92 MB | unknown       | `make dep-tensorflow`         |
+| `sface`       | ONNX       | 128 | 112×112 | ArcFace-5 |   39 MB | Apache-2.0    | `make dep-sface`              |
+| `auraface`    | ONNX       | 512 | 112×112 | ArcFace-5 |  261 MB | Apache-2.0    | `download-models.sh auraface` |
+| `arcface_r50` | ONNX       | 512 | 112×112 | ArcFace-5 |  174 MB | research-only | `scripts/download-arcface.sh` |
+| `arcface_mbf` | ONNX       | 512 | 112×112 | ArcFace-5 |   14 MB | research-only | `scripts/download-arcface.sh` |
 
-`auto` asks the library before it consults `face.AutoModelPreference`. A library that already holds face vectors keeps the model that produced them, because resolving to a different one would leave every stored cluster incomparable with everything indexed afterwards; only a library with no vectors follows the preference list, which starts with `sface`. Upgrading an existing installation therefore never changes its embedding space on its own — moving to another model is an explicit `FACE_MODEL` change followed by `photoprism faces migrate`.
+`auto` asks the library before it consults `face.AutoModelPreference`. It reads the recorded provenance of the stored face vectors and keeps whichever model produced most of them, because resolving to a different one would leave those clusters incomparable with everything indexed afterwards; only a library with no vectors follows the preference list, which starts with `sface`. Upgrading an existing installation therefore never changes its embedding space on its own — moving to another model is an explicit `FACE_MODEL` change followed by `photoprism faces migrate`.
 
-Two details make that guarantee hold. Vectors written before the provenance column existed report no model at all, and since the schema is migrated *after* the configuration is propagated, the first start after an upgrade reads a `markers` table that has no `embed_model` column yet; both cases are read as FaceNet, because nothing else could have produced them. And a resolution found before the database is connected is not cached, so an early lookup cannot freeze the preference list into place.
+The provenance count only sees markers that recorded a model. A library whose vectors all predate the column records none, so it resolves to `facenet`, which is the only model that could have produced them. A library that holds both, however, resolves to the recorded model even when the unrecorded vectors outnumber it — trying another model on a few photos and then unsetting `FACE_MODEL` therefore adopts that model for the whole library and leaves the legacy vectors out of comparison until they are migrated.
+
+The first start after an upgrade is answered the same way: the schema is migrated *after* the configuration is propagated, so the `markers` table has no `embed_model` column to read yet, and the face markers that hold a vector stand in for it. A resolution found before the database is connected is not cached either, so an early lookup cannot freeze the preference list into place.
 
 An explicitly configured model whose weights are missing falls back with a warning: embeddings would otherwise be produced by the fallback model and recorded under the name that was requested. The InsightFace ArcFace weights are published for non-commercial research only and are therefore never bundled; their install script requires `ARCFACE_ACCEPT_LICENSE=1` and verifies a pinned checksum.
 
@@ -52,6 +54,8 @@ That collision is why every ONNX entry records the artifact's SHA256 and why the
 
 Models marked `ArcFace-5` need landmark-aligned input. `align.go` fits a similarity transform from the detected landmarks onto the standard 112×112 template that both OpenCV and InsightFace use, and falls back to an unaligned bounding box crop when a face has no complete landmark set.
 
+The transform reads the smallest cached rendition that can still fill the template (`crop.ImageFromIdealThumb`), which is usually larger than the 720 px thumbnail the detector measured the face in. Warping from the detection thumbnail would upscale a small face onto the template and blur exactly the detail the model relies on. An embedding is therefore not a pure function of the original and the model: it also depends on which renditions the thumbnail ladder holds, so raising `--thumb-size` after indexing changes the vectors that a later re-index produces.
+
 **Switching models invalidates existing clusters.** Vectors from two models are not comparable even when their lengths match, so change `FACE_MODEL` first and then migrate the library during a maintenance window. The target must match the resolved configured model:
 
 ```bash
@@ -59,7 +63,7 @@ photoprism faces migrate --to sface --dry-run
 photoprism faces migrate --to sface --yes
 ```
 
-The migration preserves every subject assignment, whether a person set it or the matcher did, and seeds each replacement cluster from all of them: which photos show a person is library knowledge rather than something the old vector space encoded, and a cluster rebuilt from the hand-named markers alone would be too narrow to accept the faces it already held. It checkpoints regenerated marker embeddings so it can resume after interruption, and atomically replaces face clusters before rebuilding automatic matches. Box-crop models reuse marker geometry and cached thumbnails, falling back to the original; landmark-aligned models redetect each affected thumbnail once so legacy landmarks cannot be mistaken for the required five-point layout. Markers that cannot be regenerated have their stale embeddings cleared and cause a nonzero exit status. Until migration is complete, model-aware queries and `entity.Face.Match` exclude incompatible vectors. Clustering and matching thresholds follow the target model, so no manual retuning is required after a switch.
+The migration preserves every subject assignment, whether a person set it or the matcher did, and seeds each replacement cluster from the assignments that agree with their own midpoint: which photos show a person is library knowledge rather than something the old vector space encoded, and a cluster rebuilt from the hand-named markers alone would be too narrow to accept the faces it already held. Assignments further from that midpoint than the target model's cluster distance are left out of the seed so a single mismatched face cannot widen the replacement, and a group that disagrees with itself keeps all of its samples rather than guessing which ones are the outliers. Clusters a person had hidden are hidden again once the replacements exist, because their markers are the only record that the decision was made. It checkpoints regenerated marker embeddings so it can resume after interruption, and atomically replaces face clusters before rebuilding automatic matches. Box-crop models reuse marker geometry and cached thumbnails, falling back to the original; landmark-aligned models redetect each affected thumbnail once so legacy landmarks cannot be mistaken for the required five-point layout. Markers that cannot be regenerated have their stale embeddings cleared and cause a nonzero exit status. Until migration is complete, model-aware queries and `entity.Face.Match` exclude incompatible vectors. Clustering and matching thresholds follow the target model, so no manual retuning is required after a switch.
 
 To compare installed models on a labeled dataset of identity subdirectories:
 
@@ -202,13 +206,13 @@ Recovery steps:
 
 ### Configuration Summary
 
-| Setting               | Default                      | Description                                                                             |
-|:----------------------|:-----------------------------|:----------------------------------------------------------------------------------------|
-| `FACE_ENGINE`         | `auto`                       | Detection engine (`auto`, `onnx`). `auto` resolves to ONNX when the SCRFD model exists. |
-| `FACE_ENGINE_THREADS` | `runtime.NumCPU()/2` (≥1)    | ONNX inference threads.                                                                 |
-| `FACE_MODEL`          | `auto`                       | Embedding model (`auto`, `none`, `facenet`, `sface`, `auraface`, `arcface_r50`, `arcface_mbf`). |
-| `FACE_SCORE`          | `9.0` (with dynamic offsets) | Base quality threshold before scale adjustments.                                        |
-| `FACE_OVERLAP`        | `42`                         | Maximum allowed IoU when deduplicating markers.                                         |
+| Setting               | Default                                                                          | Description                                                                                     |
+|:----------------------|:---------------------------------------------------------------------------------|:------------------------------------------------------------------------------------------------|
+| `FACE_ENGINE`         | `auto`                                                                           | Detection engine (`auto`, `onnx`). `auto` resolves to ONNX when the SCRFD model exists.         |
+| `FACE_ENGINE_THREADS` | detection `runtime.NumCPU()/IndexWorkers()`, embedding `runtime.NumCPU()/2` (≥1) | ONNX inference threads. Detection runs one session per indexing worker, embedding one in total. |
+| `FACE_MODEL`          | `auto`                                                                           | Embedding model (`auto`, `none`, `facenet`, `sface`, `auraface`, `arcface_r50`, `arcface_mbf`). |
+| `FACE_SCORE`          | `9.0` (with dynamic offsets)                                                     | Base quality threshold before scale adjustments.                                                |
+| `FACE_OVERLAP`        | `42`                                                                             | Maximum allowed IoU when deduplicating markers.                                                 |
 
 Run scheduling is configured through the face model entry in `vision.yml`. Adjust the model’s `Run` value (for example `on-schedule`, `manual`, or `never`) to control when detection and embedding jobs execute—no separate `FACE_ENGINE_RUN` flag is required.
 When the model is left on the default `auto` run mode, face detection participates in manual, auto, and on-demand workflows but skips scheduled cron runs so background jobs do not trigger unexpectedly; the same applies to an explicit `on-demand` run mode, which now skips cron executions by default. Set `Run` to `on-schedule` explicitly if you want faces processed during scheduled vision passes.

@@ -18,6 +18,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -217,6 +218,68 @@ func TestConfig_FaceEngineThreads(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.options.FaceEngineThreads = 8
 		assert.Equal(t, 8, c.FaceEngineThreads())
+	})
+	t.Run("KeepsOptionUnset", func(t *testing.T) {
+		// Writing the derived value back would freeze it for FaceModelThreads as well.
+		c := NewConfig(CliTestContext())
+		c.FaceEngineThreads()
+		assert.LessOrEqual(t, c.options.FaceEngineThreads, 0)
+	})
+}
+
+func TestConfig_FaceModelThreads(t *testing.T) {
+	t.Run("HalfTheCores", func(t *testing.T) {
+		// Embeddings are generated behind the model session lock, so this count is not
+		// divided among the indexing workers the way detection is.
+		c := NewConfig(CliTestContext())
+		assert.Equal(t, max(runtime.NumCPU()/2, 1), c.FaceModelThreads())
+	})
+	t.Run("Configured", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceEngineThreads = 8
+		assert.Equal(t, 8, c.FaceModelThreads())
+	})
+	t.Run("IndependentOfDatabaseDriver", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		originalDriver := c.options.DatabaseDriver
+		t.Cleanup(func() { c.options.DatabaseDriver = originalDriver })
+
+		c.options.DatabaseDriver = dsn.DriverMySQL
+		mysqlThreads := c.FaceModelThreads()
+		c.options.DatabaseDriver = dsn.DriverSQLite3
+		assert.Equal(t, mysqlThreads, c.FaceModelThreads())
+	})
+	t.Run("Nil", func(t *testing.T) {
+		var c *Config
+		assert.Equal(t, 1, c.FaceModelThreads())
+	})
+}
+
+func TestConfig_faceEngineRunsOnIndex(t *testing.T) {
+	t.Run("ManyCores", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceEngineThreads = 4
+		assert.True(t, c.faceEngineRunsOnIndex())
+	})
+	t.Run("FewCores", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceEngineThreads = 2
+		assert.False(t, c.faceEngineRunsOnIndex())
+	})
+	t.Run("SurvivesIndexWorkerCount", func(t *testing.T) {
+		// Dividing by the indexing workers yields exactly 2 on the automatic MySQL path,
+		// which would move detection off the index for every such host.
+		c := NewConfig(CliTestContext())
+		originalDriver := c.options.DatabaseDriver
+		t.Cleanup(func() { c.options.DatabaseDriver = originalDriver })
+
+		c.options.DatabaseDriver = dsn.DriverMySQL
+
+		if runtime.NumCPU() < 6 {
+			t.Skip("needs at least six cores")
+		}
+
+		assert.True(t, c.faceEngineRunsOnIndex())
 	})
 }
 
