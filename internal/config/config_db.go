@@ -219,8 +219,7 @@ func (c *Config) ParseDatabaseDSN() {
 
 // DatabaseFile returns the filename part of a sqlite database DSN.
 func (c *Config) DatabaseFile() string {
-	d := dsn.Parse(c.DatabaseDSN())
-	return d.SQLiteFilename()
+	return dsn.Parse(c.DatabaseDSN()).SQLiteFilename()
 }
 
 // DatabaseServer the database server.
