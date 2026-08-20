@@ -48,6 +48,23 @@ func TestFacesMigrateIncompleteError_Error(t *testing.T) {
 	assert.Contains(t, err, "3 failed")
 }
 
+func TestFacesMigrateAbortedError_Error(t *testing.T) {
+	t.Run("NamesWhatWasCommitted", func(t *testing.T) {
+		// Embeddings are checkpointed per file, so the message has to account for the
+		// markers a refused run already regenerated and left unmatched.
+		err := (&FacesMigrateAbortedError{Migrated: 7, Failed: 90, Reason: "storage is unreadable"}).Error()
+
+		assert.Contains(t, err, "storage is unreadable")
+		assert.Contains(t, err, "clusters were not replaced")
+		assert.Contains(t, err, "7 regenerated marker(s) stay unmatched")
+		assert.Contains(t, err, "--force")
+	})
+	t.Run("NothingRegenerated", func(t *testing.T) {
+		err := (&FacesMigrateAbortedError{Migrated: 0, Failed: 12, Reason: "nothing could be re-embedded"}).Error()
+		assert.Contains(t, err, "0 regenerated marker(s)")
+	})
+}
+
 // otherFaceModel returns a registered embedding model that is not the specified one, so
 // tests can exercise the cross-model guards without assuming which model a test library
 // resolves to.

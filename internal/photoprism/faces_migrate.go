@@ -73,7 +73,7 @@ func (e *FacesMigrateIncompleteError) Error() string {
 	return fmt.Sprintf("faces: migration completed with %d failed marker(s)", e.Failed)
 }
 
-// FacesMigrateAbortedError reports a migration that was refused before anything was replaced.
+// FacesMigrateAbortedError reports a migration that was refused before clusters were replaced.
 type FacesMigrateAbortedError struct {
 	Migrated int
 	Failed   int
@@ -81,9 +81,14 @@ type FacesMigrateAbortedError struct {
 }
 
 // Error returns the aborted migration error message.
+//
+// It names what the run already committed, because embeddings are checkpointed per file:
+// an operator told the index was untouched would not know that those people are missing
+// faces until the migration is completed.
 func (e *FacesMigrateAbortedError) Error() string {
-	return fmt.Sprintf("faces: refused to finalize the migration because %s; the index was not changed and "+
-		"regenerated embeddings were kept, so the command can be re-run after fixing storage (use --force to finalize anyway)", e.Reason)
+	return fmt.Sprintf("faces: refused to finalize the migration because %s; clusters were not replaced, "+
+		"but %d regenerated marker(s) stay unmatched until a run completes, so re-run after fixing "+
+		"storage (use --force to finalize anyway)", e.Reason, e.Migrated)
 }
 
 // finalizeRefused reports why a migration must not be finalized, or "" when it may proceed.
