@@ -27,17 +27,18 @@ package dsn
 
 import (
 	"net"
+	"net/url"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
 	"unicode"
 )
 
-// dsnPattern is a regular expression matching a database DSN string.
-var dsnPattern = regexp.MustCompile(`((?P<driver>.*):\/\/)?` +
-	`(?:(?P<user>.*?)(?::(?P<password>.*))?@)?` +
-	`(?:(?P<net>(?i)tcp|socket|pipe|memory|unix)+(?:\()+)?(?:(?P<server>[^\)]+)+(?:\))?(\/)+)?` +
-	`(?P<name>[^?]+)` +
+// dsnPattern is a regular expression matching a go mysql database DSN string.
+var dsnPattern = regexp.MustCompile(`^((?P<driver>.*):\/\/)?(?:(?P<user>.*?)(?::(?P<password>.*))?@)?` +
+	`(?:(?P<net>(?i)tcp|socket|pipe|memory|unix)(?:\((?P<server>[^\)]*)\))?)?` +
+	`\/(?P<name>.*?)` +
 	`(?:\?(?P<params>[^\?]*))?$`)
 
 // dsnPostgresPasswordPattern is a regular expression matching a password in a PostgreSQL-style database DSN string.
@@ -62,14 +63,15 @@ func (d *DSN) String() string {
 
 // SQLiteFilename returns the filename including any provided path from the DSN,
 // or empty string if not applicable.
-func (d *DSN) SQLiteFilename() string {
+func (d DSN) SQLiteFilename() string {
 	if d.Driver == DriverSQLite3 {
 		if d.Server == "" {
 			return d.Name
 		} else {
-			return strings.TrimPrefix(d.Server, "file:") + "/" + d.Name
+			return filepath.Join(d.Server, d.Name)
 		}
 	} else {
+		// Return an empty string, as this wasn't an SQLite DSN
 		return ""
 	}
 }
@@ -182,11 +184,77 @@ func (d *DSN) splitHostPort() (host, port string) {
 }
 
 // parse parses a data source name string.
+// These are the following dsn formats that need to be supported
+// with most of the components are optional.
+// uri formats:
+//
+// file:[username[:password]@]database_name[?param1=value1&...&paramN=valueN]
+// file:[username[:password]@]/path/to/database_name[?param1=value1&...&paramN=valueN]
+// mysql://[username[:password]@]host[]:port]/database_name[?param1=value1&...&paramN=valueN]
+// postgres://[username[:password]@][host][:port][/database_name][?param1=value1&...&paramN=valueN]
+// postgressql://[username[:password]@][host][:port][/database_name][?param1=value1&...&paramN=valueN]
+//
+// go lang formats:
+// mysql/mariadb
+// [username[:password]@][protocol[(address)]]/[dbname][?param1=value1&...&paramN=valueN]
+// sqlite
+// database_name[?param1=value1&...&paramN=valueN]
+// /path/to/database_name[?param1=value1&...&paramN=valueN]
+//
+// postgres format:
+// keyword1=value1 keyword2=value2 ...
+
 func (d *DSN) parse() {
+	// Parse all URI based DSN 1st as they report the Driver and have a known format
+	// driver://username:password@host:port/database_name?param=value&param=value
+	if uri, err := url.Parse(d.DSN); err == nil {
+		switch strings.ToLower(uri.Scheme) {
+		case "file", "sqlite": // file is the Scheme that SQLite uses.
+			// sqlite is an "alias" that needs to be recognized for tests to pass,
+			// but it will fail to find a file if a connection is attempted.
+			d.Driver = DriverSQLite3
+			if uri.Opaque != "" {
+				// SQLite supports a non standard URI style, so this has to be handled
+				// driver:filepath/filename?param=value&param=value
+				filePath := strings.TrimPrefix(uri.Opaque, uri.Scheme)
+				d.Name = filepath.Base(filePath)
+				d.Server = strings.TrimSuffix(filePath, d.Name)
+				d.Params = uri.RawQuery
+			} else {
+				d.Name = filepath.Base(uri.Path)
+				d.Server = strings.TrimSuffix(uri.Path, d.Name)
+				d.Params = uri.RawQuery
+			}
+			if strings.ToLower(uri.Scheme) == "sqlite" {
+				// Correct the incorrect scheme here, so that d.DSN can be used to connect with is so desired.
+				d.DSN = strings.Replace(d.DSN, uri.Scheme, "file", 1)
+			}
+			d.detectDriver()
+			return
+		default:
+			if uri.Opaque == "" && uri.Scheme != "" {
+				// This has been recognized as a valid URI based dsn, so keep it.
+				d.Driver = uri.Scheme
+				d.Name = strings.TrimPrefix(uri.Path, "/")
+				d.Server = uri.Host
+				d.User = uri.User.Username()
+				d.Password, _ = uri.User.Password()
+				d.Params = uri.RawQuery
+				d.detectDriver()
+				return
+			}
+			// To be here, testing has shown that the username has been recognized as the uri.Schema
+			// and the rest of the string is in the uri.Opaque and uri.RawQuery
+			// username:password@protocol(address)/dbname?param=value&param=value
+		}
+	}
+
+	// Try and parse as a key value pair Postgres dsn
 	if d.parsePostgres() {
 		return
 	}
 
+	// Try and parse as a MySQL/MariaDB GO format dsn
 	if matches := dsnPattern.FindStringSubmatch(d.DSN); len(matches) > 0 {
 		names := dsnPattern.SubexpNames()
 
@@ -213,9 +281,30 @@ func (d *DSN) parse() {
 			d.Server = d.Net
 			d.Net = ""
 		}
+	} else if len(d.DSN) > 0 {
+		filePath, params, _ := strings.Cut(strings.TrimPrefix(d.DSN, "file:"), "?")
+		d.Name = filepath.Base(filePath)
+		d.Server = strings.TrimSuffix(filePath, d.Name)
+		d.Params = params
 	}
 
 	d.detectDriver()
+	// Add the missing / at the start of the file name if required for SQLite.
+	if d.Driver == DriverSQLite3 {
+		if d.Net != "" || d.User != "" || d.Password != "" {
+			// Someone has managed to setup a filepath (with a name that ends in .db) that looks like a Go MySQL dsn
+			filePath := strings.TrimSuffix(d.DSN, "?"+d.Params)
+			d.Name = filepath.Base(filePath)
+			d.Server = strings.TrimSuffix(filePath, d.Name)
+			d.User = ""
+			d.Password = ""
+			d.Net = ""
+		} else if strings.HasPrefix(d.DSN, "/") && d.Server == "" {
+			filePath := "/" + d.Name
+			d.Name = filepath.Base(filePath)
+			d.Server = strings.TrimSuffix(filePath, d.Name)
+		}
+	}
 }
 
 // parsePostgres extracts connection settings from PostgreSQL key/value style DSNs and
@@ -405,7 +494,7 @@ func (d *DSN) detectDriver() {
 		return
 	}
 
-	if strings.HasPrefix(lower, "file:") || strings.HasSuffix(lower, ".db") || strings.HasSuffix(strings.ToLower(d.Name), ".db") {
+	if strings.HasPrefix(lower, "file:") || strings.HasPrefix(lower, ":memory:") || strings.HasSuffix(lower, ".db") || strings.HasSuffix(strings.ToLower(d.Name), ".db") {
 		d.Driver = DriverSQLite3
 		return
 	}
@@ -417,5 +506,12 @@ func (d *DSN) detectDriver() {
 
 	if d.Server != "" && (strings.Contains(d.Server, ":") || d.Net != "") && d.Driver == "" {
 		d.Driver = DriverMySQL
+		return
+	}
+
+	if d.DSN == "/" {
+		// The MySQL driver accepts just a slash as a valid DSN.  Nothing else does.
+		d.Driver = DriverMySQL
+		return
 	}
 }
