@@ -162,6 +162,7 @@ func UpdateAlbumDates() (updated int, err error) {
 	    ) AS p ON albums.album_path = p.photo_path
 		SET albums.album_year = YEAR(taken_max), albums.album_month = MONTH(taken_max), albums.album_day = DAY(taken_max)
 		WHERE albums.album_type = 'folder' AND albums.album_path IS NOT NULL AND p.taken_max IS NOT NULL
+		AND albums.album_path <> ''
 		AND (album_year = 0 OR album_month = 0 OR album_day = 0
 			OR DATE(p.taken_max) <> COALESCE(STR_TO_DATE(CONCAT(album_year, '-', album_month, '-', album_day), '%Y-%c-%e'), DATE('1000-01-01'))
 		)`)
@@ -170,30 +171,59 @@ func UpdateAlbumDates() (updated int, err error) {
 		// SQLite has potential locking issues if the update is done on all albums at once.
 		var albums entity.Albums
 		if albums, err = AlbumsByType(entity.AlbumFolder, true); err != nil {
-			log.Errorf("album: get folders (%v)", err)
+			log.Errorf("albums: get folders (%v)", err)
 			return updated, err
 		}
 
 		var photos map[string]time.Time
-		if photos, err = getPhotoPathMaxDates(); err != nil {
+		if photos, err = photoPathMaxDates(); err != nil {
 			return updated, err
 		}
-		updated = 0
+		pathCount := 0
+		tx := UnscopedDb().Begin()
+		if tx.Error != nil {
+			log.Errorf("albums: begin transaction failed (%v)", tx.Error)
+			return updated, tx.Error
+		}
 		for _, album := range albums {
+			if pathCount == 5000 {
+				log.Debugf("albums: committing")
+				if err = tx.Commit().Error; err != nil {
+					log.Errorf("albums: commit partial changes failed (%v)", err)
+					return updated, err
+				}
+				tx = UnscopedDb().Begin()
+				if tx.Error != nil {
+					log.Errorf("albums: begin transaction failed (%v)", tx.Error)
+					return updated, tx.Error
+				}
+				pathCount = 0
+			}
 			takenMax, ok := photos[album.AlbumPath]
-			if ok {
-				if takenMax != time.Date(album.AlbumYear, time.Month(album.AlbumMonth), album.AlbumDay, 0, 0, 0, 0, time.UTC) {
-					result := UnscopedDb().Exec(`UPDATE albums SET album_year = ?, album_month = ?, album_day = ? WHERE album_path = ?`, takenMax.Year(), takenMax.Month(), takenMax.Day(), album.AlbumPath)
+			// Exclude empty AlbumPath as the originals root path can be incorrectly included,
+			// and there shouldn't be an album of type folder without a path.
+			if ok && album.AlbumPath != "" {
+				var albumDate time.Time
+				if albumDate, err = time.Parse("2006-01-02", fmt.Sprintf("%04d-%02d-%02d", album.AlbumYear, album.AlbumMonth, album.AlbumDay)); err != nil {
+					// Date wasn't valid, so set to 1000-01-01
+					albumDate = time.Date(1000, time.January, 1, 0, 0, 0, 0, time.UTC)
+				}
+				if takenMax != albumDate {
+					result := tx.Exec(`UPDATE albums SET album_year = ?, album_month = ?, album_day = ? WHERE id = ?`, takenMax.Year(), takenMax.Month(), takenMax.Day(), album.ID)
 					if err = result.Error; err != nil {
-						log.Errorf("album: set album dates on %s (%v)", album.AlbumTitle, err)
+						log.Errorf("albums: set album dates on %s (%v)", clean.Log(album.AlbumTitle), err)
+						if errRB := tx.Rollback(); errRB != nil {
+							log.Errorf("albums: rollback changes failed (%v)", errRB)
+						}
 						return updated, err
 					} else {
 						updated += int(result.RowsAffected)
+						pathCount++
 					}
 				}
 			}
 		}
-		return updated, err
+		return updated, tx.Commit().Error
 	default:
 		return updated, err
 	}

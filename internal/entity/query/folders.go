@@ -7,6 +7,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
@@ -44,12 +45,12 @@ func FoldersByPath(rootName, rootPath, path string, recursive bool) (folders ent
 	return folders, nil
 }
 
-// AllFolders returns all folders, optionally including deleted.
-func AllFolders(includeDeleted bool) (results entity.Folders, err error) {
+// FoldersByRoot returns all folders for the specified Root, optionally including deleted.
+func FoldersByRoot(root string, includeDeleted bool) (results entity.Folders, err error) {
 	if includeDeleted {
-		err = UnscopedDb().Find(&results).Error
+		err = UnscopedDb().Where("root = ?", root).Find(&results).Error
 	} else {
-		err = Db().Find(&results).Error
+		err = Db().Where("root = ?", root).Find(&results).Error
 	}
 	return results, err
 }
@@ -100,31 +101,58 @@ func UpdateFolderDates() (updated int, err error) {
 			FROM photos WHERE taken_src = 'meta' AND photos.photo_quality >= 3 AND photos.deleted_at IS NULL
 			GROUP BY photo_path) AS p ON folders.path = p.photo_path
 		SET folders.folder_year = YEAR(taken_max), folders.folder_month = MONTH(taken_max), folders.folder_day = DAY(taken_max)
-		WHERE p.taken_max IS NOT NULL 
+		WHERE p.taken_max IS NOT NULL AND root = ?
 		AND (folder_year = 0 OR folder_month = 0 OR folder_day = 0
 			OR DATE(p.taken_max) <> COALESCE(STR_TO_DATE(CONCAT(folder_year, '-', folder_month,'-', folder_day), '%Y-%c-%e'), DATE('1000-01-01'))
-		)`)
+		)`, entity.RootOriginals)
 		return int(result.RowsAffected), result.Error
 	case dsn.DriverSQLite3:
 		// SQLite has potential locking issues if the update is done on all folders at once.
 		var folders entity.Folders
-		if folders, err = AllFolders(true); err != nil {
-			log.Errorf("folder: get folders (%v)", err)
+		// Only update Original's folders.
+		if folders, err = FoldersByRoot(entity.RootOriginals, true); err != nil {
+			log.Errorf("folders: get folders (%v)", err)
 			return 0, err
 		}
 
 		var photos map[string]time.Time
-		if photos, err = getPhotoPathMaxDates(); err != nil {
+		if photos, err = photoPathMaxDates(); err != nil {
 			return updated, err
 		}
-		updated = 0
+		pathCount := 0
+		tx := UnscopedDb().Begin()
+		if tx.Error != nil {
+			log.Errorf("folders: begin transaction failed (%v)", tx.Error)
+			return updated, tx.Error
+		}
 		for _, folder := range folders {
+			if pathCount == 5000 {
+				log.Debugf("folders: committing")
+				if err = tx.Commit().Error; err != nil {
+					log.Errorf("folders: commit partial changes failed (%v)", err)
+					return updated, err
+				}
+				tx = UnscopedDb().Begin()
+				if tx.Error != nil {
+					log.Errorf("folders: begin transaction failed (%v)", tx.Error)
+					return updated, tx.Error
+				}
+				pathCount = 0
+			}
 			takenMax, ok := photos[folder.Path]
 			if ok {
-				if takenMax != time.Date(folder.FolderYear, time.Month(folder.FolderMonth), folder.FolderDay, 0, 0, 0, 0, time.UTC) {
-					result := UnscopedDb().Exec(`UPDATE folders SET folder_year = ?, folder_month = ?, folder_day = ? WHERE path = ?`, takenMax.Year(), takenMax.Month(), takenMax.Day(), folder.Path)
+				var folderDate time.Time
+				if folderDate, err = time.Parse("2006-01-02", fmt.Sprintf("%04d-%02d-%02d", folder.FolderYear, folder.FolderMonth, folder.FolderDay)); err != nil {
+					// Date wasn't valid, so set to 1000-01-01
+					folderDate = time.Date(1000, time.January, 1, 0, 0, 0, 0, time.UTC)
+				}
+				if takenMax != folderDate {
+					result := tx.Exec(`UPDATE folders SET folder_year = ?, folder_month = ?, folder_day = ? WHERE folder_uid = ?`, takenMax.Year(), takenMax.Month(), takenMax.Day(), folder.FolderUID)
 					if err = result.Error; err != nil {
-						log.Errorf("folder: set folder dates on %s (%v)", folder.FolderTitle, err)
+						log.Errorf("folders: set folder dates on %s (%v)", clean.Log(folder.FolderTitle), err)
+						if errRB := tx.Rollback(); errRB != nil {
+							log.Errorf("folders: rollback changes failed (%v)", errRB)
+						}
 						return updated, err
 					} else {
 						updated += int(result.RowsAffected)
@@ -132,7 +160,7 @@ func UpdateFolderDates() (updated int, err error) {
 				}
 			}
 		}
-		return updated, err
+		return updated, tx.Commit().Error
 	default:
 		return updated, err
 	}
