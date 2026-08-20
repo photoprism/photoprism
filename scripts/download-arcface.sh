@@ -15,7 +15,6 @@ TODAY=$(date -u +%Y%m%d)
 MODELS_PATH="assets/models"
 MODEL_DIR="$MODELS_PATH/arcface"
 MODEL_VERSION="$MODEL_DIR/version.txt"
-TMP_DIR="/tmp/photoprism/arcface"
 
 # Checksums of the release assets, so a replaced upstream file is rejected instead of
 # silently installed.
@@ -39,7 +38,16 @@ if ! command -v unzip >/dev/null 2>&1; then
   exit 1
 fi
 
-mkdir -p "${TMP_DIR}"
+# A private directory the script owns, so nothing it downloads or extracts can be
+# redirected through a name another user of the machine placed there first.
+TMP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/photoprism-arcface.XXXXXXXX")"
+
+cleanup() {
+  rm -rf "${TMP_DIR}"
+}
+
+trap cleanup EXIT
+
 mkdir -p "${MODEL_DIR}"
 
 hash_file() {
@@ -64,13 +72,11 @@ install_model() {
     return 0
   fi
 
-  if [[ ! -f "${archive}" ]]; then
-    echo "Downloading ${pack} from ${url}..."
+  echo "Downloading ${pack} from ${url}..."
 
-    if ! curl -fL --no-progress-meter --retry 3 --retry-delay 2 -o "${archive}" "${url}"; then
-      echo "Failed to download ${pack}." >&2
-      return 1
-    fi
+  if ! curl -fL --no-progress-meter --retry 3 --retry-delay 2 -o "${archive}" "${url}"; then
+    echo "Failed to download ${pack}." >&2
+    return 1
   fi
 
   echo "Extracting ${entry}..."
