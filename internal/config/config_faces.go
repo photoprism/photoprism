@@ -7,6 +7,8 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/vision"
+	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // FaceEngine returns the configured face detection engine. When the config is
@@ -96,9 +98,9 @@ func (c *Config) FaceEngineShouldRun(when vision.RunType) bool {
 		case vision.RunAuto, vision.RunAlways, vision.RunManual, vision.RunOnDemand:
 			return true
 		case vision.RunOnIndex:
-			return c.FaceEngineThreads() > 2
+			return c.faceEngineRunsOnIndex()
 		case vision.RunNewlyIndexed:
-			return c.FaceEngineThreads() <= 2
+			return !c.faceEngineRunsOnIndex()
 		case vision.RunOnSchedule, vision.RunNever:
 			return false
 		}
@@ -107,19 +109,45 @@ func (c *Config) FaceEngineShouldRun(when vision.RunType) bool {
 	return false
 }
 
-// FaceEngineThreads returns the configured thread count for ONNX inference.
+// FaceEngineThreads returns the thread count for ONNX face detection.
+//
+// The automatic value divides the cores by the number of indexing workers, because face
+// detection takes no lock: that many detections run at once, each with its own thread
+// pool, so a per-session count derived from the cores alone oversubscribes the machine
+// by exactly that factor. The derived value is not written back to the options, so that
+// FaceModelThreads keeps deriving its own count.
 func (c *Config) FaceEngineThreads() int {
 	if c == nil {
 		return 1
-	} else if c.options.FaceEngineThreads <= 0 {
-		threads := max(runtime.NumCPU()/2, 1)
-
-		c.options.FaceEngineThreads = threads
-
-		return threads
+	} else if c.options.FaceEngineThreads > 0 {
+		return c.options.FaceEngineThreads
 	}
 
-	return c.options.FaceEngineThreads
+	return max(runtime.NumCPU()/max(c.IndexWorkers(), 1), 1)
+}
+
+// FaceModelThreads returns the thread count for face embedding inference.
+//
+// Embeddings are generated one at a time behind the model session lock, so unlike
+// detection they never run once per indexing worker and keep the undivided count.
+func (c *Config) FaceModelThreads() int {
+	if c == nil {
+		return 1
+	} else if c.options.FaceEngineThreads > 0 {
+		return c.options.FaceEngineThreads
+	}
+
+	return max(runtime.NumCPU()/2, 1)
+}
+
+// faceEngineRunsOnIndex reports whether this host is fast enough to detect faces while
+// indexing rather than deferring them to the pass over newly indexed files.
+//
+// It reads the count that is not divided among the indexing workers, because that
+// divisor follows the database driver and the available memory, which would tie the
+// schedule to the storage backend instead of to the capability of the machine.
+func (c *Config) faceEngineRunsOnIndex() bool {
+	return c.FaceModelThreads() > 2
 }
 
 // FaceEngineModelPath returns the absolute path to the bundled SCRFD ONNX detector.
@@ -142,6 +170,161 @@ func (c *Config) FaceEngineModelPath() string {
 	}
 
 	return primary
+}
+
+// FaceModel returns the name of the configured face embedding model. Unsupported
+// values are reported and treated as `face.ModelAuto`, which keeps the embedding space
+// a library already uses and otherwise resolves to the first installed model in
+// `face.AutoModelPreference`.
+func (c *Config) FaceModel() string {
+	if c == nil {
+		return face.ModelNone
+	}
+
+	if c.options.FaceModel == "" {
+		c.options.FaceModel = face.ModelAuto
+	} else if !face.KnownModelName(c.options.FaceModel) {
+		log.Warnf("config: unsupported face model %s, expected %s", clean.Log(c.options.FaceModel), face.ModelUsageString())
+		c.options.FaceModel = face.ModelAuto
+	}
+
+	modelsPath := c.ModelsPath()
+
+	if name := face.ParseModelName(c.options.FaceModel); name == face.ModelNone {
+		return name
+	} else if name != face.ModelAuto {
+		if face.FindEmbeddingModel(name).Installed(modelsPath) {
+			return name
+		}
+
+		// Falling forward to another model would start a second vector space the library
+		// cannot compare with, and an image upgrade removes opt-in models from assets, so
+		// an explicitly requested model that is missing disables embeddings instead.
+		log.Warnf("config: face model %s is not installed, disabling face embeddings", clean.Log(name))
+
+		return face.ModelNone
+	}
+
+	resolved := face.ModelNone
+
+	// An existing library keeps the space its vectors were generated in. Resolving to a
+	// different model would leave every stored cluster incomparable with everything
+	// indexed from now on, which is why "auto" asks the library before the preference list.
+	if name := c.libraryFaceModel(); name == "" {
+		resolved = installedFaceModel(modelsPath)
+	} else if face.FindEmbeddingModel(name).Installed(modelsPath) {
+		resolved = name
+	} else {
+		// Anything indexed from now on would land in a second vector space that cannot be
+		// compared with what the library already holds, so embeddings stop until the model
+		// is reinstalled or the library is migrated.
+		log.Warnf("config: library was indexed with face model %s, which is not installed, disabling face embeddings", clean.Log(name))
+		resolved = face.ModelNone
+	}
+
+	// Cache the resolved name so the lookup, the query, and any warning only happen once.
+	// An answer found before the database was connected could not consult the library,
+	// so it stays provisional rather than freezing the preference list into place.
+	if c.db != nil {
+		c.options.FaceModel = resolved
+	}
+
+	return resolved
+}
+
+// installedFaceModel returns the first model in AutoModelPreference whose weights exist
+// in the specified path, or ModelNone when none of them are installed.
+func installedFaceModel(modelsPath string) face.ModelName {
+	for _, candidate := range face.AutoModelPreference {
+		if face.FindEmbeddingModel(candidate).Installed(modelsPath) {
+			return candidate
+		}
+	}
+
+	return face.ModelNone
+}
+
+// libraryFaceModel returns the embedding model the library's face vectors were generated
+// with, or an empty name when it holds none and when the database is not connected yet.
+//
+// This runs once per process, including for every CLI invocation, so it asks the indexed
+// provenance column first and only falls back to counting vectors when nothing answers.
+func (c *Config) libraryFaceModel() face.ModelName {
+	if c == nil || c.db == nil {
+		return ""
+	}
+
+	counts, err := query.RecordedMarkerEmbeddingModels()
+
+	if err == nil && len(counts) > 0 {
+		return dominantFaceModel(counts)
+	} else if err != nil {
+		// The schema is migrated after the configuration is propagated, so on the first
+		// start after an upgrade the provenance column does not exist yet.
+		log.Debugf("config: %s (find face embedding models)", err)
+	}
+
+	// A library whose markers record no model cannot hold anything but FaceNet vectors,
+	// which is what its face markers prove.
+	if markers, countErr := query.FaceMarkersWithVectors(); countErr != nil {
+		log.Debugf("config: %s (count face markers)", countErr)
+	} else if markers > 0 {
+		return face.ModelFaceNet
+	}
+
+	return ""
+}
+
+// dominantFaceModel returns the model that produced most of the counted vectors, or an
+// empty name when none were counted. A blank model name means the vector predates the
+// provenance column and is therefore FaceNet.
+func dominantFaceModel(counts []query.MarkerEmbeddingModelCount) face.ModelName {
+	var name face.ModelName
+	var markers int
+
+	for _, count := range counts {
+		if count.Markers > markers {
+			name, markers = face.NormalizeModelName(count.EmbedModel), count.Markers
+		}
+	}
+
+	if markers == 0 {
+		return ""
+	} else if name == "" {
+		return face.ModelFaceNet
+	}
+
+	return name
+}
+
+// FaceEmbeddingModel returns the resolved face embedding model, or nil when
+// embeddings are disabled or no model is installed.
+func (c *Config) FaceEmbeddingModel() *face.EmbeddingModel {
+	return face.FindEmbeddingModel(c.FaceModel())
+}
+
+// FaceModelPath returns the absolute path of the configured face embedding model.
+func (c *Config) FaceModelPath() string {
+	if c == nil {
+		return ""
+	}
+
+	return c.FaceEmbeddingModel().FilePath(c.ModelsPath())
+}
+
+// FaceModelLicense returns the license of the configured face embedding model weights,
+// or an empty string when no model is configured.
+func (c *Config) FaceModelLicense() string {
+	return c.FaceEmbeddingModel().WeightLicense()
+}
+
+// FaceModelDims returns the embedding length of the configured face model, or 0 when none is configured.
+func (c *Config) FaceModelDims() int {
+	if m := c.FaceEmbeddingModel(); m != nil {
+		return m.Dims
+	}
+
+	return 0
 }
 
 // FaceSize returns the face size threshold in pixels.
@@ -200,63 +383,114 @@ func (c *Config) FaceClusterCore() int {
 
 // FaceClusterDist returns the radius of faces forming a cluster core.
 func (c *Config) FaceClusterDist() float64 {
-	if c.options.FaceClusterDist < c.FaceCollisionDist() || c.options.FaceClusterDist > 1.5 {
-		return face.ClusterDist
-	}
-
-	return c.options.FaceClusterDist
+	return c.faceThreshold("face-cluster-dist", c.options.FaceClusterDist, face.ClusterDistDefault,
+		func(m *face.EmbeddingModel) float64 { return m.ClusterDist })
 }
 
 // FaceClusterRadius returns the maximum radius used when matching face clusters.
 func (c *Config) FaceClusterRadius() float64 {
-	if c.options.FaceClusterRadius < c.FaceCollisionDist() || c.options.FaceClusterRadius > 1.5 {
-		return face.ClusterRadius
-	}
-
-	return c.options.FaceClusterRadius
+	return c.faceThreshold("face-cluster-radius", c.options.FaceClusterRadius, face.ClusterRadiusDefault,
+		func(m *face.EmbeddingModel) float64 { return m.ClusterRadius })
 }
 
 // FaceCollisionDist returns the minimum distance used to differentiate embeddings.
+//
+// It does not go through faceThreshold, which takes this value as its lower bound and
+// would recurse.
 func (c *Config) FaceCollisionDist() float64 {
-	if c.options.FaceCollisionDist <= 0 || c.options.FaceCollisionDist > 1 {
-		return face.CollisionDist
+	value := c.options.FaceCollisionDist
+	configured := c.faceThresholdIsSet("face-collision-dist", value, face.CollisionDistDefault)
+
+	if value > 0 && value <= 1 && configured {
+		return value
 	}
 
-	return c.options.FaceCollisionDist
+	resolved := faceModelThreshold(c.FaceEmbeddingModel(),
+		func(m *face.EmbeddingModel) float64 { return m.CollisionDist }, face.CollisionDistDefault)
+
+	// Zero means "use the model default", so only a real value can be out of range.
+	c.warnFaceThreshold(configured && value != 0, "face-collision-dist", value, 0, 1, resolved)
+
+	return resolved
 }
 
 // FaceEpsilonDist returns the distance slack applied to collision checks.
 func (c *Config) FaceEpsilonDist() float64 {
-	if c.options.FaceEpsilonDist <= 0 || c.options.FaceEpsilonDist > 0.1 {
-		return face.Epsilon
+	value := c.options.FaceEpsilonDist
+	configured := c.faceThresholdIsSet("face-epsilon-dist", value, face.EpsilonDefault)
+
+	if value > 0 && value <= 0.1 && configured {
+		return value
 	}
 
-	return c.options.FaceEpsilonDist
+	resolved := faceModelThreshold(c.FaceEmbeddingModel(),
+		func(m *face.EmbeddingModel) float64 { return m.Epsilon }, face.EpsilonDefault)
+
+	c.warnFaceThreshold(configured && value != 0, "face-epsilon-dist", value, 0, 0.1, resolved)
+
+	return resolved
 }
 
 // FaceMatchDist returns the offset distance when matching faces with clusters.
 func (c *Config) FaceMatchDist() float64 {
-	if c.options.FaceMatchDist < c.FaceCollisionDist() || c.options.FaceMatchDist > 1.5 {
-		return face.MatchDist
-	}
-
-	return c.options.FaceMatchDist
+	return c.faceThreshold("face-match-dist", c.options.FaceMatchDist, face.MatchDistDefault,
+		func(m *face.EmbeddingModel) float64 { return m.MatchDist })
 }
 
-// FaceSkipChildren reports whether child embeddings should be skipped when matching.
-func (c *Config) FaceSkipChildren() bool {
-	if c == nil {
-		return face.SkipChildren
+// faceThreshold returns the operator-configured clustering threshold, or the value
+// calibrated for the configured embedding model when the option was left untouched.
+func (c *Config) faceThreshold(flagName string, value, flagDefault float64, pick func(*face.EmbeddingModel) float64) float64 {
+	minDist := c.FaceCollisionDist()
+	configured := c.faceThresholdIsSet(flagName, value, flagDefault)
+
+	if configured && value >= minDist && value <= face.ThresholdMax {
+		return value
 	}
 
-	return c.options.FaceSkipChildren
+	resolved := faceModelThreshold(c.FaceEmbeddingModel(), pick, flagDefault)
+
+	c.warnFaceThreshold(configured, flagName, value, minDist, face.ThresholdMax, resolved)
+
+	return resolved
 }
 
-// FaceAllowBackground reports whether background embeddings should not be ignored.
-func (c *Config) FaceAllowBackground() bool {
-	if c == nil {
-		return !face.IgnoreBackground
+// warnFaceThreshold reports an out-of-range option once. A value that is silently replaced
+// looks like a setting that had no effect, and the getters are called from Propagate and
+// the config report, so the warning is emitted once per option rather than per call.
+func (c *Config) warnFaceThreshold(configured bool, flagName string, value, minValue, maxValue, resolved float64) {
+	if !configured {
+		return
 	}
 
-	return c.options.FaceAllowBackground
+	if _, warned := c.faceWarned.LoadOrStore(flagName, true); !warned {
+		log.Warnf("config: %s %g is out of range (%g-%g), using %g instead", flagName, value, minValue, maxValue, resolved)
+	}
+}
+
+// faceThresholdIsSet reports whether an operator configured a clustering threshold explicitly.
+// The value alone cannot answer this, because the CLI flags carry the FaceNet defaults so that
+// "photoprism --help" documents them, and those defaults are copied into the options.
+func (c *Config) faceThresholdIsSet(flagName string, value, flagDefault float64) bool {
+	if c.cliCtx != nil && c.cliCtx.IsSet(flagName) {
+		return true
+	}
+
+	// Values loaded from "options.yml" are applied after the CLI context, so anything
+	// that differs from the flag default was configured deliberately.
+	return value != flagDefault
+}
+
+// faceModelThreshold returns a clustering threshold in the configured model's distance
+// scale, falling back to the FaceNet-tuned default when no model is configured or the
+// model carries no calibrated value.
+func faceModelThreshold(m *face.EmbeddingModel, pick func(*face.EmbeddingModel) float64, fallback float64) float64 {
+	if m == nil {
+		return fallback
+	}
+
+	if v := pick(m); v > 0 {
+		return v
+	}
+
+	return fallback
 }

@@ -18,6 +18,26 @@ func (f Faces) Embeddings() (embeddings face.Embeddings) {
 	return embeddings
 }
 
+// EmbedModel returns the embedding model shared by all faces in this slice, and reports
+// whether they belong to one embedding space. Legacy rows without a recorded model are
+// FaceNet, so they resolve to the name their siblings carry.
+func (f Faces) EmbedModel() (model face.ModelName, ok bool) {
+	for _, m := range f {
+		if m.EmbedModel != "" {
+			model = m.EmbedModel
+			break
+		}
+	}
+
+	for _, m := range f {
+		if !face.ModelsComparable(m.EmbedModel, model) {
+			return model, false
+		}
+	}
+
+	return model, true
+}
+
 // IDs returns all face IDs in this slice.
 func (f Faces) IDs() (ids []string) {
 	for _, m := range f {

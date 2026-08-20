@@ -84,6 +84,7 @@ type Config struct {
 	hub          *hub.Config
 	hubCancel    context.CancelFunc
 	hubLock      sync.Mutex
+	faceWarned   sync.Map
 	token        string
 	serial       string
 	tokenKey     []byte
@@ -484,8 +485,6 @@ func (c *Config) Propagate() {
 	face.ClusterRadius = c.FaceClusterRadius()
 	face.ClusterDist = c.FaceClusterDist()
 	face.MatchDist = c.FaceMatchDist()
-	face.SkipChildren = c.FaceSkipChildren()
-	face.IgnoreBackground = !c.FaceAllowBackground()
 	if err := face.ConfigureEngine(face.EngineSettings{
 		Name: c.FaceEngine(),
 		ONNX: face.ONNXOptions{
@@ -494,6 +493,14 @@ func (c *Config) Propagate() {
 		},
 	}); err != nil {
 		log.Warnf("faces: %s (configure engine)", err)
+	}
+	if err := face.ConfigureEmbedder(face.EmbedderSettings{
+		Name:      c.FaceModel(),
+		Model:     c.FaceEmbeddingModel(),
+		ModelPath: c.FaceModelPath(),
+		Threads:   c.FaceModelThreads(),
+	}); err != nil {
+		log.Warnf("faces: %s (configure embedding model)", err)
 	}
 
 	// Set default theme and locale.

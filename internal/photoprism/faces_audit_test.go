@@ -11,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/query"
 )
 
 func TestFaces_Audit(t *testing.T) {
@@ -142,4 +143,65 @@ func normalizeEmbeddingCopy(src face.Embedding) face.Embedding {
 	}
 
 	return copyEmb
+}
+
+func TestFaces_auditEmbeddingModels(t *testing.T) {
+	w := NewFaces(config.TestConfig())
+
+	t.Cleanup(func() {
+		restoreEmbedder(t)
+	})
+
+	t.Run("ConfiguredModel", func(t *testing.T) {
+		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
+			Name:  face.ModelFaceNet,
+			Model: face.FindEmbeddingModel(face.ModelFaceNet),
+		}))
+		w.auditEmbeddingModels()
+	})
+	t.Run("StaleClusters", func(t *testing.T) {
+		// A cluster from another model must be reported as stale.
+		m := entity.NewFace("", entity.SrcAuto, face.Embeddings{face.RandomEmbedding()}, face.EmbeddingModelName())
+		require.NotNil(t, m)
+		m.EmbedModel = face.ModelArcFaceR50
+		require.NoError(t, entity.Db().Create(m).Error)
+
+		t.Cleanup(func() { entity.Db().Delete(m) })
+
+		count, err := query.FacesFromOtherModels()
+		require.NoError(t, err)
+		require.Positive(t, count)
+
+		w.auditEmbeddingModels()
+	})
+	t.Run("NoModelConfigured", func(t *testing.T) {
+		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelNone}))
+		w.auditEmbeddingModels()
+	})
+}
+
+func TestFaces_auditMarkerEmbeddingModels(t *testing.T) {
+	w := NewFaces(config.TestConfig())
+
+	t.Run("StaleMarkers", func(t *testing.T) {
+		m := &entity.Marker{
+			MarkerType:     entity.MarkerFace,
+			MarkerSrc:      entity.SrcImage,
+			EmbedModel:     face.ModelArcFaceR50,
+			EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
+		}
+
+		require.NoError(t, entity.Db().Create(m).Error)
+
+		t.Cleanup(func() { entity.Db().Delete(m) })
+
+		counts, err := query.MarkerEmbeddingModels()
+		require.NoError(t, err)
+		require.NotEmpty(t, counts)
+
+		w.auditMarkerEmbeddingModels(face.ModelFaceNet)
+	})
+	t.Run("NoModelConfigured", func(t *testing.T) {
+		w.auditMarkerEmbeddingModels("")
+	})
 }

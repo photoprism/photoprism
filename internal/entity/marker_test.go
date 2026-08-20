@@ -7,11 +7,27 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/pkg/dsn"
 
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/thumb/crop"
 )
+
+func TestMarker_SameEmbeddingModel(t *testing.T) {
+	restore := face.ConfiguredModel()
+	t.Cleanup(func() {
+		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+	})
+
+	assert.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelFaceNet, Model: face.FindEmbeddingModel(face.ModelFaceNet)}))
+	assert.True(t, (&Marker{EmbedModel: face.ModelFaceNet}).SameEmbeddingModel())
+	assert.True(t, (&Marker{}).SameEmbeddingModel())
+	assert.False(t, (&Marker{EmbedModel: face.ModelSFace}).SameEmbeddingModel())
+
+	assert.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelSFace}))
+	assert.False(t, (&Marker{}).SameEmbeddingModel())
+}
 
 var testArea = crop.Area{
 	Name: "face",

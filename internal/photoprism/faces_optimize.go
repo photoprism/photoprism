@@ -83,7 +83,7 @@ func (w *Faces) OptimizeFor(subjUID string) (result FacesOptimizeResult, err err
 				}
 
 				merge = nil
-			} else if ok, dist := merge[0].Match(face.Embeddings{faces[j].Embedding()}); ok {
+			} else if ok, dist := merge[0].Match(face.Embeddings{faces[j].Embedding()}, faces[j].EmbedModel); ok {
 				log.Debugf("faces: can merge %s with %s, subject %s, dist %f", merge[0].ID, faces[j].ID, entity.SubjNames.Log(merge[0].SubjUID), dist)
 				merge = append(merge, faces[j])
 			} else if len(merge) == 1 {

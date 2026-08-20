@@ -14,15 +14,8 @@ type Embeddings []Embedding
 func NewEmbeddings(inference [][]float32) Embeddings {
 	result := make(Embeddings, len(inference))
 
-	var v []float32
-	var i int
-
-	for i, v = range inference {
-		e := NewEmbedding(v)
-
-		if e.CanMatch() {
-			result[i] = e
-		}
+	for i, v := range inference {
+		result[i] = NewEmbedding(v)
 	}
 
 	return result
@@ -46,20 +39,44 @@ func (embeddings Embeddings) Count() int {
 	return len(embeddings)
 }
 
-// Kind returns the type of face e.g. regular, kids, or ignored.
-func (embeddings Embeddings) Kind() (result Kind) {
-	for _, e := range embeddings {
-		if k := e.Kind(); k > result {
-			result = k
-		}
-	}
-
-	return result
-}
-
 // One tests if there is exactly one embedding.
 func (embeddings Embeddings) One() bool {
 	return embeddings.Count() == 1
+}
+
+// ValidEmbeddings checks the cardinality, dimensions, and values of an embedding result.
+// Non-finite values survive JSON and storage but poison every later distance, so they are
+// rejected where the vector enters the index rather than where it is compared.
+func ValidEmbeddings(embeddings Embeddings, dims int) bool {
+	if !embeddings.One() || dims < 1 || len(embeddings[0]) != dims {
+		return false
+	}
+
+	for _, value := range embeddings[0] {
+		if math.IsNaN(value) || math.IsInf(value, 0) {
+			return false
+		}
+	}
+
+	return true
+}
+
+// Dims returns the number of values shared by all embeddings, 0 when there are none,
+// and -1 when they differ, since vectors of different lengths cannot be compared.
+func (embeddings Embeddings) Dims() int {
+	if len(embeddings) < 1 {
+		return 0
+	}
+
+	dims := len(embeddings[0])
+
+	for i := 1; i < len(embeddings); i++ {
+		if len(embeddings[i]) != dims {
+			return -1
+		}
+	}
+
+	return dims
 }
 
 // First returns the first face embedding.
@@ -83,9 +100,11 @@ func (embeddings Embeddings) Float64() [][]float64 {
 }
 
 // Contains tests if another embeddings is contained within a radius.
+// Dist returns -1 for vectors of a different length, which would otherwise read as the
+// closest possible match, so only a non-negative distance can be inside the radius.
 func (embeddings Embeddings) Contains(other Embedding, radius float64) bool {
 	for _, e := range embeddings {
-		if d := e.Dist(other); d < radius {
+		if d := e.Dist(other); d >= 0 && d < radius {
 			return true
 		}
 	}
@@ -93,11 +112,17 @@ func (embeddings Embeddings) Contains(other Embedding, radius float64) bool {
 	return false
 }
 
-// Dist returns the minimum distance to an embedding.
+// Dist returns the minimum distance to an embedding, or -1 when none is comparable.
+// Vectors of a different length are skipped rather than compared: Embedding.Dist reports
+// -1 for them, which would otherwise win the minimum over every real distance.
 func (embeddings Embeddings) Dist(other Embedding) (dist float64) {
 	dist = -1
 
 	for _, e := range embeddings {
+		if len(e) != len(other) {
+			continue
+		}
+
 		if d := e.Dist(other); d < dist || dist < 0 {
 			dist = d
 		}
@@ -152,7 +177,9 @@ func EmbeddingsMidpoint(embeddings Embeddings) (result Embedding, radius float64
 
 	result = make(Embedding, dim)
 
-	invCount := 1.0 / float64(count)
+	// Vectors of a different length belong to another embedding space, so the mean is
+	// scaled by the vectors that actually contributed rather than by all of them.
+	contributors := 0
 
 	for i := range embeddings {
 		emb := embeddings[i]
@@ -161,12 +188,16 @@ func EmbeddingsMidpoint(embeddings Embeddings) (result Embedding, radius float64
 			continue
 		}
 
+		contributors++
+
 		normalizeEmbedding(emb)
 
 		for j := range dim {
 			result[j] += emb[j]
 		}
 	}
+
+	invCount := 1.0 / float64(contributors)
 
 	for i := range dim {
 		result[i] *= invCount
@@ -176,6 +207,10 @@ func EmbeddingsMidpoint(embeddings Embeddings) (result Embedding, radius float64
 
 	// Radius is the max embedding distance + 0.01 from result.
 	for _, emb := range embeddings {
+		if len(emb) != dim {
+			continue
+		}
+
 		var dist float64
 
 		for i := range dim {

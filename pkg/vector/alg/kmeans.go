@@ -78,8 +78,8 @@ func (c *kmeansClusterer) WithOnline(o Online) HardClusterer {
 }
 
 func (c *kmeansClusterer) Learn(data [][]float64) error {
-	if len(data) == 0 {
-		return errEmptySet
+	if _, err := dataDims(data); err != nil {
+		return err
 	}
 
 	c.mu.Lock()
@@ -123,6 +123,12 @@ func (c *kmeansClusterer) Guesses() []int {
 }
 
 func (c *kmeansClusterer) Predict(p []float64) int {
+	// Cluster numbers are zero-based here, so -1 is unambiguous for an observation that
+	// cannot be compared with the centroids.
+	if len(c.m) == 0 || len(p) != len(c.m[0]) {
+		return -1
+	}
+
 	l := 0
 	m := c.distance(p, c.m[0])
 	var d float64
@@ -154,6 +160,12 @@ func (c *kmeansClusterer) Online(observations chan []float64, done chan struct{}
 		for {
 			select {
 			case o := <-observations:
+				// An observation of a different width would be adjusted into centroid 0,
+				// because NaN distances never beat the initial candidate.
+				if len(o) != f {
+					continue
+				}
+
 				var (
 					k int
 					n float64

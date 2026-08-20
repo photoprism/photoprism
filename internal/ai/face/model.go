@@ -19,16 +19,22 @@ import (
 // Model is a wrapper for the TensorFlow Facenet model.
 type Model struct {
 	model      *tf.SavedModel
+	name       ModelName
 	modelPath  string
 	cachePath  string
 	resolution int
+	dims       int
 	modelTags  []string
 	disabled   bool
 	mutex      sync.Mutex
 }
 
 // NewModel returns a new TensorFlow Facenet instance.
-func NewModel(modelPath, cachePath string, resolution int, meta *tensorflow.ModelInfo, disabled bool) *Model {
+func NewModel(name ModelName, modelPath, cachePath string, resolution int, meta *tensorflow.ModelInfo, disabled bool) *Model {
+	if name == "" {
+		name = ModelFaceNet
+	}
+
 	if resolution == 0 {
 		resolution = CropSize.Width
 	}
@@ -42,12 +48,63 @@ func NewModel(modelPath, cachePath string, resolution int, meta *tensorflow.Mode
 	}
 
 	return &Model{
+		name:       name,
 		modelPath:  modelPath,
 		cachePath:  cachePath,
 		resolution: resolution,
+		dims:       modelDims(name, meta),
 		modelTags:  meta.Tags,
 		disabled:   disabled,
 	}
+}
+
+// modelDims returns the embedding length of a TensorFlow model, preferring the graph
+// metadata so custom models configured in vision.yml report their own vector length.
+func modelDims(name ModelName, meta *tensorflow.ModelInfo) int {
+	if meta.Output != nil && meta.Output.NumOutputs > 0 {
+		return int(meta.Output.NumOutputs)
+	}
+
+	if info := FindEmbeddingModel(name); info != nil {
+		return info.Dims
+	}
+
+	return len(NullEmbedding)
+}
+
+// ModelName returns the name of the embedding model.
+func (m *Model) ModelName() ModelName {
+	return m.name
+}
+
+// Dims returns the length of the embeddings the model produces.
+func (m *Model) Dims() int {
+	return m.dims
+}
+
+// CropSize returns the input width and height the model expects.
+func (m *Model) CropSize() (width, height int) {
+	return m.resolution, m.resolution
+}
+
+// Aligned reports whether the model requires landmark-aligned crops.
+func (m *Model) Aligned() bool {
+	return false
+}
+
+// Close releases the TensorFlow session.
+func (m *Model) Close() error {
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
+
+	if m.model == nil {
+		return nil
+	}
+
+	err := m.model.Session.Close()
+	m.model = nil
+
+	return err
 }
 
 // Detect runs the detection and facenet algorithms over the provided source image.

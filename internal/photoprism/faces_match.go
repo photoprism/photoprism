@@ -28,7 +28,7 @@ type faceMatchStats struct {
 type faceCandidate struct {
 	ref             *entity.Face
 	emb             face.Embedding
-	sampleRadius    float64
+	acceptDist      float64
 	collisionRadius float64
 }
 
@@ -62,7 +62,7 @@ func buildFaceIndex(faces entity.Faces) faceIndex {
 	for i := range faces {
 		f := &faces[i]
 
-		if f.SkipMatching() {
+		if !f.SameEmbeddingModel() || f.SkipMatching() {
 			continue
 		}
 
@@ -75,7 +75,7 @@ func buildFaceIndex(faces entity.Faces) faceIndex {
 		candidate := faceCandidate{
 			ref:             f,
 			emb:             embedding,
-			sampleRadius:    f.SampleRadius,
+			acceptDist:      f.AcceptDist(),
 			collisionRadius: f.CollisionRadius,
 		}
 
@@ -90,8 +90,6 @@ func buildFaceIndex(faces entity.Faces) faceIndex {
 
 // match checks whether the supplied marker embeddings fall within the distance and collision
 // thresholds for the candidate face, returning the match flag and distance.
-// match checks whether the supplied marker embeddings fall within the distance and collision
-// thresholds for the candidate face, returning the match flag and distance.
 func (c faceCandidate) match(embeddings face.Embeddings) (bool, float64) {
 	if embeddings.Empty() || len(c.emb) == 0 {
 		return false, -1
@@ -103,7 +101,7 @@ func (c faceCandidate) match(embeddings face.Embeddings) (bool, float64) {
 		return false, dist
 	}
 
-	if dist > (c.sampleRadius + face.MatchDist) {
+	if dist > c.acceptDist {
 		return false, dist
 	}
 
@@ -173,7 +171,7 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 	matchedAt := entity.TimeStamp()
 
 	if opt.Force || unmatchedMarkers > 0 {
-		faces, err := query.Faces(false, false, false, false)
+		faces, err := query.MatchableFaces(false, false, false, false)
 
 		if err != nil {
 			return result, err
@@ -187,7 +185,7 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 	}
 
 	// Find unmatched faces.
-	if unmatchedFaces, err := query.Faces(false, true, false, false); err != nil {
+	if unmatchedFaces, err := query.MatchableFaces(false, true, false, false); err != nil {
 		log.Error(err)
 	} else if len(unmatchedFaces) > 0 {
 		if r, err := w.MatchFaces(unmatchedFaces, false, matchedAt, stats); err != nil {
@@ -289,7 +287,7 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 			}
 
 			// Skip invalid markers.
-			if marker.MarkerInvalid || marker.MarkerType != entity.MarkerFace || len(marker.EmbeddingsJSON) == 0 {
+			if marker.MarkerInvalid || marker.MarkerType != entity.MarkerFace || len(marker.EmbeddingsJSON) == 0 || !marker.SameEmbeddingModel() {
 				continue
 			}
 
@@ -397,19 +395,7 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 // minMarkerDistance computes the smallest Euclidean distance between the face embedding and any
 // embedding contained in the marker.
 func minMarkerDistance(faceEmb face.Embedding, embeddings face.Embeddings) float64 {
-	dist := -1.0
-
-	for _, e := range embeddings {
-		if len(e) != len(faceEmb) {
-			continue
-		}
-
-		if d := e.Dist(faceEmb); d < dist || dist < 0 {
-			dist = d
-		}
-	}
-
-	return dist
+	return embeddings.Dist(faceEmb)
 }
 
 // embeddingSignHash reduces the given values to a compact bit-hash by looking at the sign of the

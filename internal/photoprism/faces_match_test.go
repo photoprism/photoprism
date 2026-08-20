@@ -32,41 +32,72 @@ func TestFaces_Match(t *testing.T) {
 
 // TestBuildFaceCandidates validates that we drop non-matchable faces when building the index.
 func TestBuildFaceCandidates(t *testing.T) {
-	// Ensure IgnoreBackground is enabled for this test.
-	originalIgnoreBackground := face.IgnoreBackground
-	face.IgnoreBackground = true
-	t.Cleanup(func() {
-		face.IgnoreBackground = originalIgnoreBackground
-	})
-
-	regular := entity.NewFace("", entity.SrcAuto, face.RandomEmbeddings(3, face.RegularFace))
+	regular := entity.NewFace("", entity.SrcAuto, face.RandomEmbeddings(3, face.RegularFace), face.EmbeddingModelName())
 	require.NotNil(t, regular)
 
-	// Get deterministic background embedding.
-	clone := make(face.Embedding, len(face.Background[0].Embedding))
-	copy(clone, face.Background[0].Embedding)
-	backgroundEmb := face.Embeddings{clone}
-	background := entity.NewFace("", entity.SrcAuto, backgroundEmb)
-	require.NotNil(t, background)
+	// A cluster from another embedding space must never be compared with the current one.
+	stale := *regular
+	stale.ID = "stale-model"
+	stale.EmbedModel = otherFaceModel(t, face.ConfiguredModel())
 
-	faces := entity.Faces{*regular, *background}
+	// ResolveCollision raises the kind, which excludes a cluster from automatic matching.
+	ambiguous := *regular
+	ambiguous.ID = "ambiguous"
+	ambiguous.FaceKind = int(face.AmbiguousFace)
+
+	faces := entity.Faces{*regular, stale, ambiguous}
 
 	index := buildFaceIndex(faces)
 
 	require.Len(t, index.fallback, 1)
 	require.Equal(t, regular.ID, index.fallback[0].ref.ID)
+
+	// The candidate caches the clamped cutoff, not the raw column, so a stored radius
+	// from an earlier calibration cannot widen the gate for a whole match run.
+	require.InDelta(t, regular.AcceptDist(), index.fallback[0].acceptDist, 1e-9)
+}
+
+// TestFaceCandidateMatch covers the accept distance and collision gates in isolation.
+func TestFaceCandidateMatch(t *testing.T) {
+	embeddings := face.RandomEmbeddings(1, face.RegularFace)
+	ref := entity.NewFace("", entity.SrcAuto, embeddings, face.EmbeddingModelName())
+	require.NotNil(t, ref)
+
+	t.Run("Match", func(t *testing.T) {
+		c := faceCandidate{ref: ref, emb: ref.Embedding(), acceptDist: face.AcceptDist(0)}
+		matched, dist := c.match(embeddings)
+		require.True(t, matched)
+		require.InDelta(t, 0.0, dist, 1e-9)
+	})
+	t.Run("TooFar", func(t *testing.T) {
+		c := faceCandidate{ref: ref, emb: ref.Embedding(), acceptDist: -1}
+		matched, _ := c.match(embeddings)
+		require.False(t, matched)
+	})
+	t.Run("WithinCollisionRadius", func(t *testing.T) {
+		c := faceCandidate{ref: ref, emb: ref.Embedding(), acceptDist: face.AcceptDist(0),
+			collisionRadius: face.CollisionDist * 2}
+		matched, _ := c.match(embeddings)
+		require.True(t, matched)
+	})
+	t.Run("NoEmbeddings", func(t *testing.T) {
+		c := faceCandidate{ref: ref, emb: ref.Embedding(), acceptDist: face.AcceptDist(0)}
+		matched, dist := c.match(face.Embeddings{})
+		require.False(t, matched)
+		require.InDelta(t, -1.0, dist, 1e-9)
+	})
 }
 
 // TestSelectBestFace ensures the best candidate is returned after indexing.
 func TestSelectBestFace(t *testing.T) {
 	markerEmb := face.RandomEmbeddings(1, face.RegularFace)
 
-	matchFace := entity.NewFace("", entity.SrcAuto, markerEmb)
+	matchFace := entity.NewFace("", entity.SrcAuto, markerEmb, face.EmbeddingModelName())
 	require.NotNil(t, matchFace)
 
 	// Force a different face that should not be a better match.
 	otherEmb := face.RandomEmbeddings(4, face.RegularFace)
-	otherFace := entity.NewFace("", entity.SrcAuto, otherEmb)
+	otherFace := entity.NewFace("", entity.SrcAuto, otherEmb, face.EmbeddingModelName())
 	require.NotNil(t, otherFace)
 
 	faces := entity.Faces{*matchFace, *otherFace}

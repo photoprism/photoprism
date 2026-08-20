@@ -178,7 +178,7 @@ func TestMarkers_AppendWithEmbedding(t *testing.T) {
 		assert.True(t, m.Contains(m1))
 		assert.False(t, m.Contains(m2))
 
-		m2.SetEmbeddings(face.Embeddings{testEmbeddings[0], testEmbeddings[2]})
+		m2.SetEmbeddings(face.Embeddings{testEmbeddings[0], testEmbeddings[2]}, face.EmbeddingModelName())
 
 		assert.Len(t, m, 1)
 		m.AppendWithEmbedding(m2)
@@ -187,7 +187,7 @@ func TestMarkers_AppendWithEmbedding(t *testing.T) {
 		assert.True(t, m.Contains(m1))
 		assert.False(t, m.Contains(m2))
 
-		m2.SetEmbeddings(face.Embeddings{testEmbeddings[0]})
+		m2.SetEmbeddings(face.Embeddings{testEmbeddings[0]}, face.EmbeddingModelName())
 
 		m.AppendWithEmbedding(m2)
 		assert.Len(t, m, 2)

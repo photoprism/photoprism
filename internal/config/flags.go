@@ -512,7 +512,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "disable-faces",
-			Usage:   "disables face detection and recognition (requires TensorFlow)",
+			Usage:   "disables face detection and recognition",
 			EnvVars: EnvVars("DISABLE_FACES"),
 		}}, {
 		Flag: &cli.BoolFlag{
@@ -1335,8 +1335,14 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-engine-threads",
-			Usage:   "face detection thread `COUNT` (0 uses half the available CPU cores)",
+			Usage:   "face detection and embedding thread `COUNT` (0 derives a default from the CPU cores)",
 			EnvVars: EnvVars("FACE_ENGINE_THREADS"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "face-model",
+			Usage:   "face embedding model `NAME` (" + face.ModelUsageString() + "); changing it invalidates existing clusters and requires photoprism faces migrate",
+			Value:   face.ModelAuto,
+			EnvVars: EnvVars("FACE_MODEL"),
 		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-size",
@@ -1376,43 +1382,33 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-cluster-dist",
-			Usage:   "similarity `DISTANCE` of faces forming a cluster core (0.1-1.5)",
-			Value:   face.ClusterDist,
+			Usage:   fmt.Sprintf("similarity `DISTANCE` of faces forming a cluster core (collision distance to %g); defaults to the calibrated value of the configured face model", face.ThresholdMax),
+			Value:   face.ClusterDistDefault,
 			EnvVars: EnvVars("FACE_CLUSTER_DIST"),
 		}}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-cluster-radius",
-			Usage:   "maximum cluster `RADIUS` accepted for automatic matches (0.1-1.5)",
-			Value:   face.ClusterRadius,
+			Usage:   fmt.Sprintf("maximum cluster `RADIUS` accepted for automatic matches (collision distance to %g); defaults to the calibrated model value, and radius plus match distance is capped at %g", face.ThresholdMax, face.AcceptDistMax),
+			Value:   face.ClusterRadiusDefault,
 			EnvVars: EnvVars("FACE_CLUSTER_RADIUS"),
 		}}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-collision-dist",
-			Usage:   "minimum collision discrimination `DISTANCE` (0.01-1)",
-			Value:   face.CollisionDist,
+			Usage:   "minimum collision discrimination `DISTANCE` (greater than 0, up to 1); defaults to the calibrated value of the configured face model",
+			Value:   face.CollisionDistDefault,
 			EnvVars: EnvVars("FACE_COLLISION_DIST"),
 		}}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-epsilon-dist",
-			Usage:   "collision tolerance `DELTA` appended to max match distances (0.001-0.1)",
-			Value:   face.Epsilon,
+			Usage:   "collision tolerance `DELTA` appended to max match distances (greater than 0, up to 0.1); defaults to the calibrated value of the configured face model",
+			Value:   face.EpsilonDefault,
 			EnvVars: EnvVars("FACE_EPSILON_DIST"),
 		}}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-match-dist",
-			Usage:   "similarity `OFFSET` for matching faces with existing clusters (0.1-1.5)",
-			Value:   face.MatchDist,
+			Usage:   fmt.Sprintf("similarity `OFFSET` for matching faces with existing clusters (collision distance to %g); defaults to the calibrated model value, and radius plus match distance is capped at %g", face.ThresholdMax, face.AcceptDistMax),
+			Value:   face.MatchDistDefault,
 			EnvVars: EnvVars("FACE_MATCH_DIST"),
-		}}, {
-		Flag: &cli.BoolFlag{
-			Name:    "face-skip-children",
-			Usage:   "skips automatic matching of child face embeddings",
-			EnvVars: EnvVars("FACE_SKIP_CHILDREN"),
-		}}, {
-		Flag: &cli.BoolFlag{
-			Name:    "face-allow-background",
-			Usage:   "allows matching of probable background embeddings",
-			EnvVars: EnvVars("FACE_ALLOW_BACKGROUND"),
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:      "pid-filename",

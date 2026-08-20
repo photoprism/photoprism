@@ -5,6 +5,7 @@ import (
 	"image/color"
 	"os"
 	"path/filepath"
+	"regexp"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -13,30 +14,6 @@ import (
 
 	"github.com/photoprism/photoprism/pkg/fs"
 )
-
-// TestONNXSharedLibraryCandidates_Defaults verifies default search ordering when no explicit path is provided.
-func TestONNXSharedLibraryCandidates_Defaults(t *testing.T) {
-	t.Cleanup(func() { onnxExecutableVar = os.Executable })
-	onnxExecutableVar = func() (string, error) {
-		return filepath.Join("/opt/photoprism", "bin", "photoprism"), nil
-	}
-
-	candidates := onnxSharedLibraryCandidates("")
-	require.NotEmpty(t, candidates)
-	require.Equal(t, "libonnxruntime.so", candidates[0])
-	require.Contains(t, candidates, filepath.Join("/opt/photoprism", "lib", "libonnxruntime.so"))
-}
-
-// TestONNXSharedLibraryCandidates_ExplicitFirst ensures explicit paths remain the first candidate.
-func TestONNXSharedLibraryCandidates_ExplicitFirst(t *testing.T) {
-	t.Cleanup(func() { onnxExecutableVar = os.Executable })
-	onnxExecutableVar = func() (string, error) { return "/tmp/photoprism", nil }
-
-	explicit := "/custom/libonnxruntime.so"
-	candidates := onnxSharedLibraryCandidates(explicit)
-	require.NotEmpty(t, candidates)
-	require.Equal(t, explicit, candidates[0])
-}
 
 func TestDeriveONNXLayout(t *testing.T) {
 	outputs := make([]onnxruntime.InputOutputInfo, 9)
@@ -67,17 +44,175 @@ func TestONNXEngineAnchorCentersCaches(t *testing.T) {
 	require.Equal(t, &centers1[0], &centers2[0])
 }
 
+func TestDetectorModel(t *testing.T) {
+	t.Run("Fields", func(t *testing.T) {
+		require.NotNil(t, DetectorModel.Input)
+		assert.Equal(t, DefaultONNXModelFilename, DetectorModel.File)
+		assert.NotEmpty(t, DetectorModel.SourceUrl)
+		assert.Positive(t, DetectorModel.Input.Width)
+		assert.Positive(t, DetectorModel.Input.Height)
+		assert.True(t, DetectorModel.Input.ColorOrder.Valid())
+		assert.False(t, DetectorModel.Input.Normalization.IsZero())
+	})
+	t.Run("ChecksumMatchesInstallScript", func(t *testing.T) {
+		// The install script is where the value comes from, so the registry is a second
+		// copy of it and would otherwise drift on the next upstream update unnoticed.
+		fileName := filepath.Join("..", "..", "..", "scripts", "download-scrfd.sh")
+		data, err := os.ReadFile(fileName) //nolint:gosec // G304: fixed repository path.
+
+		if err != nil {
+			t.Skip("faces: skipping, download-scrfd.sh is not available")
+		}
+
+		matches := regexp.MustCompile(`MODEL_HASH="([0-9a-f]{64})`).FindStringSubmatch(string(data))
+		require.Len(t, matches, 2, "download-scrfd.sh must declare MODEL_HASH")
+		assert.Equal(t, matches[1], DetectorModel.SHA256)
+	})
+	t.Run("BundledArtifactMatches", func(t *testing.T) {
+		if _, err := os.Stat(detectorModelPath); err != nil {
+			t.Skipf("faces: skipping, %s is not available", DefaultONNXModelFilename)
+		}
+
+		require.NoError(t, DetectorModel.VerifyChecksum(detectorModelPath))
+	})
+}
+
 func TestONNXEngineBuildBlob(t *testing.T) {
-	engine := &onnxEngine{inputWidth: 4, inputHeight: 4}
+	engine := &onnxEngine{
+		inputWidth:  4,
+		inputHeight: 4,
+		colorOrder:  DetectorModel.Input.ColorOrder,
+		mean:        DetectorModel.Input.Normalization.Mean,
+		scales:      DetectorModel.Input.Normalization.Scales(),
+	}
 	img := image.NewRGBA(image.Rect(0, 0, 1, 1))
 	img.Set(0, 0, color.RGBA{R: 255, G: 0, B: 0, A: 255})
 
 	blob, scale, err := engine.buildBlob(img)
 	require.NoError(t, err)
 	require.Len(t, blob, 4*4*3)
-	require.InDelta(t, (255-onnxInputMean)/onnxInputStd, blob[0], 1e-3)
-	require.InDelta(t, (0-onnxInputMean)/onnxInputStd, blob[16], 1e-3)
+	// Stated as literals rather than as the registered mean and standard deviation, so
+	// that changing the registry changes what this test measures rather than what it
+	// compares against.
+	require.InDelta(t, (255-127.5)/128.0, blob[0], 1e-3)
+	require.InDelta(t, (0-127.5)/128.0, blob[16], 1e-3)
 	require.Equal(t, float32(4), scale)
+}
+
+func TestONNXEngineDetectLandmarks(t *testing.T) {
+	prev := UseEngine(nil)
+	t.Cleanup(func() {
+		if current := UseEngine(prev); current != nil {
+			_ = current.Close()
+		}
+	})
+
+	err := ConfigureEngine(EngineSettings{
+		Name: EngineONNX,
+		ONNX: ONNXOptions{ModelPath: detectorModelPath, Threads: 1},
+	})
+	if err != nil {
+		t.Skipf("faces: skipping detector-dependent test: %s", err)
+	}
+
+	fileName := filepath.Join("testdata", "1.jpg")
+	faces, err := Detect(fileName, 20)
+	require.NoError(t, err)
+	require.NotEmpty(t, faces)
+
+	f := &faces[0]
+
+	t.Run("EyesAndLandmarks", func(t *testing.T) {
+		require.Len(t, f.Eyes, 2)
+		require.Len(t, f.Landmarks, NumLandmarks-2)
+		assert.Equal(t, "eye_l", f.Eyes[0].Name)
+		assert.Equal(t, "nose", f.Landmarks[0].Name)
+	})
+	t.Run("WithinImage", func(t *testing.T) {
+		for _, areas := range []Areas{f.Eyes, f.Landmarks} {
+			for _, a := range areas {
+				assert.GreaterOrEqual(t, a.Col, 0)
+				assert.GreaterOrEqual(t, a.Row, 0)
+				assert.Less(t, a.Col, f.Cols)
+				assert.Less(t, a.Row, f.Rows)
+			}
+		}
+	})
+	t.Run("EyesAboveMouth", func(t *testing.T) {
+		// A frontal portrait must place both eyes above both mouth corners.
+		assert.Less(t, f.Eyes[0].Row, f.Landmarks[1].Row)
+		assert.Less(t, f.Eyes[1].Row, f.Landmarks[2].Row)
+	})
+	t.Run("LeftEyeLeftOfRightEye", func(t *testing.T) {
+		assert.Less(t, f.Eyes[0].Col, f.Eyes[1].Col)
+	})
+	t.Run("AlignedCrop", func(t *testing.T) {
+		img, _, imgErr := fs.DecodeImageFile(fileName)
+		require.NoError(t, imgErr)
+
+		out, cropErr := AlignedCrop(img, f, ArcFaceTemplateSize, ArcFaceTemplateSize)
+		require.NoError(t, cropErr)
+		assert.Equal(t, ArcFaceTemplateSize, out.Bounds().Dx())
+		assert.Equal(t, ArcFaceTemplateSize, out.Bounds().Dy())
+	})
+}
+
+// TestDetectorRecall pins how many faces the bundled detector finds in each test image,
+// so a change to its preprocessing cannot pass unnoticed. A wrong channel order or
+// normalization still returns plausible-looking detections, so nothing else in this
+// package would fail. The images pinned to zero are negatives, which makes the table a
+// guard against new false positives as well as against lost recall.
+func TestDetectorRecall(t *testing.T) {
+	pinned := []struct {
+		fileName string
+		faces    int
+	}{
+		{"1.jpg", 2},
+		{"2.jpg", 1},
+		{"3.jpg", 1},
+		{"4.jpg", 1},
+		{"5.jpg", 1},
+		{"6.jpg", 1},
+		{"7.jpg", 0},
+		{"8.jpg", 0},
+		{"9.jpg", 0},
+		{"10.jpg", 0},
+		{"11.jpg", 0},
+		{"12.jpg", 1},
+		{"13.jpg", 0},
+		{"14.jpg", 0},
+		{"15.jpg", 0},
+		{"16.jpg", 2},
+		{"17.jpg", 2},
+		{"18.jpg", 2},
+		{"19.jpg", 0},
+	}
+
+	prev := UseEngine(nil)
+	t.Cleanup(func() {
+		if current := UseEngine(prev); current != nil {
+			_ = current.Close()
+		}
+	})
+
+	if err := ConfigureEngine(EngineSettings{
+		Name: EngineONNX,
+		ONNX: ONNXOptions{ModelPath: detectorModelPath, Threads: 1},
+	}); err != nil {
+		if _, statErr := os.Stat(detectorModelPath); statErr != nil {
+			t.Skipf("faces: skipping detector-dependent test, %s is not available", DefaultONNXModelFilename)
+		}
+
+		t.Fatalf("faces: failed to initialize detector: %s", err)
+	}
+
+	for _, c := range pinned {
+		t.Run(c.fileName, func(t *testing.T) {
+			faces, err := Detect(filepath.Join("testdata", c.fileName), 20)
+			require.NoError(t, err)
+			assert.Len(t, faces, c.faces)
+		})
+	}
 }
 
 func TestONNXEngineDetect(t *testing.T) {

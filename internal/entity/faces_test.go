@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/ai/face"
 )
 
 func TestFaces_Embeddings(t *testing.T) {
@@ -29,5 +31,26 @@ func TestDeleteOrphanFaces(t *testing.T) {
 		} else {
 			t.Logf("deleted %d faces", count)
 		}
+	})
+}
+
+func TestFaces_EmbedModel(t *testing.T) {
+	t.Run("AllBlank", func(t *testing.T) {
+		model, ok := Faces{{EmbedModel: ""}, {EmbedModel: ""}}.EmbedModel()
+		assert.True(t, ok)
+		assert.Empty(t, model)
+	})
+	t.Run("BlankAndFaceNet", func(t *testing.T) {
+		model, ok := Faces{{EmbedModel: ""}, {EmbedModel: face.ModelFaceNet}}.EmbedModel()
+		assert.True(t, ok)
+		assert.Equal(t, face.ModelFaceNet, model)
+	})
+	t.Run("BlankAndSFace", func(t *testing.T) {
+		_, ok := Faces{{EmbedModel: ""}, {EmbedModel: face.ModelSFace}}.EmbedModel()
+		assert.False(t, ok)
+	})
+	t.Run("Mixed", func(t *testing.T) {
+		_, ok := Faces{{EmbedModel: face.ModelFaceNet}, {EmbedModel: face.ModelSFace}}.EmbedModel()
+		assert.False(t, ok)
 	})
 }
