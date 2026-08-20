@@ -226,6 +226,29 @@ func TestONNXEngineDetect(t *testing.T) {
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "invalid TIFF: IFD offset")
 	})
+	t.Run("ClosedSession", func(t *testing.T) {
+		// Reconfiguring the detector closes the session while workers may still hold it,
+		// so a detection that arrives afterwards has to report it rather than use it.
+		fileName, err := filepath.Abs("testdata/1.jpg")
+		require.NoError(t, err)
+
+		engine := &onnxEngine{inputWidth: 640, inputHeight: 640}
+		require.NoError(t, engine.Close())
+
+		faces, err := engine.Detect(fileName, 20)
+
+		assert.Empty(t, faces)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "closed")
+	})
+}
+
+func TestONNXEngineClose(t *testing.T) {
+	t.Run("Idempotent", func(t *testing.T) {
+		engine := &onnxEngine{}
+		require.NoError(t, engine.Close())
+		require.NoError(t, engine.Close())
+	})
 }
 
 func TestDetectorInputSize(t *testing.T) {

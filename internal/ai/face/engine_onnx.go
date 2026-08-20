@@ -104,6 +104,7 @@ type onnxEngine struct {
 	useKps         bool
 	scoreThreshold float32
 	nmsThreshold   float32
+	sessionMu      sync.Mutex
 	centerMu       sync.Mutex
 	centerCache    map[anchorCacheKey][]float32
 }
@@ -266,15 +267,19 @@ func (o *onnxEngine) Name() string {
 	return EngineONNX
 }
 
+// Close releases the ONNX session.
 func (o *onnxEngine) Close() error {
-	if o.session != nil {
-		if err := o.session.Destroy(); err != nil {
-			return err
-		}
-		o.session = nil
+	o.sessionMu.Lock()
+	defer o.sessionMu.Unlock()
+
+	if o.session == nil {
+		return nil
 	}
 
-	return nil
+	err := o.session.Destroy()
+	o.session = nil
+
+	return err
 }
 
 // Detect identifies faces in the provided image using the ONNX runtime session.
@@ -308,7 +313,20 @@ func (o *onnxEngine) Detect(fileName string, minSize int) (Faces, error) {
 
 	inputs := []onnxruntime.Value{tensor}
 	outputs := make([]onnxruntime.Value, len(o.outputNames))
-	if err := o.session.Run(inputs, outputs); err != nil {
+
+	// Reconfiguring the detector closes this session while indexing workers may still
+	// hold it, so the nil check has to happen under the lock that Close takes.
+	o.sessionMu.Lock()
+
+	if o.session == nil {
+		o.sessionMu.Unlock()
+		return Faces{}, fmt.Errorf("faces: detector was closed while detecting")
+	}
+
+	err = o.session.Run(inputs, outputs)
+	o.sessionMu.Unlock()
+
+	if err != nil {
 		return Faces{}, fmt.Errorf("faces: run session: %w", err)
 	}
 	for _, out := range outputs {
