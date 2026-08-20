@@ -462,6 +462,11 @@ func (c *Config) CloseDb() error {
 	}
 
 	if c.db != nil {
+		if c.DatabaseDriver() == dsn.DriverSQLite3 {
+			if err := c.db.Exec("PRAGMA wal_checkpoint(FULL)").Error; err != nil {
+				log.Warnf("config: could not initiate wal_checkpoint (%v)", err)
+			}
+		}
 		if err := c.db.Close(); err == nil {
 			c.db = nil
 			entity.SetDbProvider(nil)
