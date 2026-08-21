@@ -204,7 +204,8 @@ func UpdateAlbumDates() (updated int, err error) {
 			// and there shouldn't be an album of type folder without a path.
 			if ok && album.AlbumPath != "" {
 				var albumDate time.Time
-				if albumDate, err = time.Parse("2006-01-02", fmt.Sprintf("%04d-%02d-%02d", album.AlbumYear, album.AlbumMonth, album.AlbumDay)); err != nil {
+				var parseErr error
+				if albumDate, parseErr = time.Parse("2006-01-02", fmt.Sprintf("%04d-%02d-%02d", album.AlbumYear, album.AlbumMonth, album.AlbumDay)); parseErr != nil {
 					// Date wasn't valid, so set to 1000-01-01
 					albumDate = time.Date(1000, time.January, 1, 0, 0, 0, 0, time.UTC)
 				}

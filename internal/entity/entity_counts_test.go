@@ -160,14 +160,12 @@ func TestWaitForAsyncJobsTimeout(t *testing.T) {
 func TestLabelPhotoCounts(t *testing.T) {
 	t.Run("NilTesting", func(t *testing.T) {
 		t.Cleanup(func() {
-			Entities.Truncate(Db())
-			CreateDefaultFixtures()
-			CreateTestFixtures()
-			File{}.RegenerateIndex()
+			ResetTestFixtures()
 		})
 		// Clean the database as if it's brand new
 		Entities.Truncate(Db())
 		CreateDefaultFixtures()
+		FlushCaches()
 		File{}.RegenerateIndex()
 
 		result := LabelCounts()

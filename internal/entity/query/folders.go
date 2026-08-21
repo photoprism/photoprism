@@ -139,10 +139,13 @@ func UpdateFolderDates() (updated int, err error) {
 				}
 				pathCount = 0
 			}
+			// Unlike a folder album, the originals root is a real folder, so an empty
+			// path is stamped here rather than skipped.
 			takenMax, ok := photos[folder.Path]
 			if ok {
 				var folderDate time.Time
-				if folderDate, err = time.Parse("2006-01-02", fmt.Sprintf("%04d-%02d-%02d", folder.FolderYear, folder.FolderMonth, folder.FolderDay)); err != nil {
+				var parseErr error
+				if folderDate, parseErr = time.Parse("2006-01-02", fmt.Sprintf("%04d-%02d-%02d", folder.FolderYear, folder.FolderMonth, folder.FolderDay)); parseErr != nil {
 					// Date wasn't valid, so set to 1000-01-01
 					folderDate = time.Date(1000, time.January, 1, 0, 0, 0, 0, time.UTC)
 				}

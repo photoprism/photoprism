@@ -141,14 +141,12 @@ func TestConfig_ClientUser(t *testing.T) {
 	})
 	t.Run("NilTesting", func(t *testing.T) {
 		t.Cleanup(func() {
-			entity.Entities.Truncate(entity.Db())
-			entity.CreateDefaultFixtures()
-			entity.CreateTestFixtures()
-			entity.File{}.RegenerateIndex()
+			entity.ResetTestFixtures()
 		})
 		// Clean the database as if it's brand new
 		entity.Entities.Truncate(entity.Db())
 		entity.CreateDefaultFixtures()
+		entity.FlushCaches()
 		entity.File{}.RegenerateIndex()
 
 		var count int64

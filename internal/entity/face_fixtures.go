@@ -116,6 +116,6 @@ var FaceFixtures = FaceMap{
 // CreateFaceFixtures inserts known entities into the database for testing.
 func CreateFaceFixtures() {
 	for _, entity := range FaceFixtures {
-		Db().Create(&entity)
+		fixtureDb().Create(&entity)
 	}
 }

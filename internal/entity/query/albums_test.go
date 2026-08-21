@@ -160,7 +160,7 @@ func TestUpdateAlbumDates(t *testing.T) {
 		defer func() {
 			require.NoError(t, entity.UnscopedDb().Exec("DELETE FROM albums WHERE album_uid = ?", "as6sg6bxpogaabz1").Error)
 			require.NoError(t, entity.UnscopedDb().Exec("DELETE FROM photos WHERE photo_uid = ?", "ps6sg6bxpogaabz1").Error)
-			require.NoError(t, entity.Db().Save(entity.AlbumFixtures.Pointer("april-1990")).Error)
+			require.NoError(t, entity.UnscopedDb().Save(entity.AlbumFixtures.Pointer("april-1990")).Error)
 		}()
 		_, err := UpdateAlbumDates()
 		require.NoError(t, err)

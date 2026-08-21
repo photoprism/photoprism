@@ -199,10 +199,7 @@ func TestRemoveNonExistentMarkerFaces(t *testing.T) {
 	assert.NoError(t, err)
 	assert.GreaterOrEqual(t, affected, int64(1))
 	// Post test cleanup
-	entity.Entities.Truncate(Db())
-	entity.CreateDefaultFixtures()
-	entity.CreateTestFixtures()
-	entity.File{}.RegenerateIndex()
+	entity.ResetTestFixtures()
 }
 
 func TestRemoveNonExistentMarkerSubjects(t *testing.T) {

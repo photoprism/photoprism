@@ -923,6 +923,6 @@ var AlbumFixtures = AlbumMap{
 // CreateAlbumFixtures inserts known entities into the database for testing.
 func CreateAlbumFixtures() {
 	for _, entity := range AlbumFixtures {
-		Db().Create(&entity)
+		fixtureDb().Create(&entity)
 	}
 }

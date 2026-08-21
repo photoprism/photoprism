@@ -122,6 +122,6 @@ var FolderFixtures = FolderMap{
 // CreateFolderFixtures inserts known entities into the database for testing.
 func CreateFolderFixtures() {
 	for _, entity := range FolderFixtures {
-		Db().Create(&entity)
+		fixtureDb().Create(&entity)
 	}
 }

@@ -3876,6 +3876,6 @@ var PhotoFixtures = PhotoMap{
 // CreatePhotoFixtures inserts known entities into the database for testing.
 func CreatePhotoFixtures() {
 	for _, entity := range PhotoFixtures {
-		Db().Create(&entity)
+		fixtureDb().Create(&entity)
 	}
 }

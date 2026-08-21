@@ -175,6 +175,6 @@ var ClientFixtures = ClientMap{
 // CreateClientFixtures inserts known entities into the database for testing.
 func CreateClientFixtures() {
 	for _, entity := range ClientFixtures {
-		Db().Create(&entity)
+		fixtureDb().Create(&entity)
 	}
 }

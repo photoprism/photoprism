@@ -21,14 +21,12 @@ func TestCategoryLabels(t *testing.T) {
 	})
 	t.Run("NotNil", func(t *testing.T) {
 		t.Cleanup(func() {
-			entity.Entities.Truncate(entity.Db())
-			entity.CreateDefaultFixtures()
-			entity.CreateTestFixtures()
-			entity.File{}.RegenerateIndex()
+			entity.ResetTestFixtures()
 		})
 		// Clean the database as if it's brand new
 		entity.Entities.Truncate(entity.Db())
 		entity.CreateDefaultFixtures()
+		entity.FlushCaches()
 		entity.File{}.RegenerateIndex()
 
 		categories := CategoryLabels(1000, 0)

@@ -34,8 +34,9 @@ func albumState(t *testing.T) map[string]string {
 	state := make(map[string]string, len(albums))
 
 	for _, a := range albums {
-		state[a.AlbumUID] = fmt.Sprintf("%s|%s|%s|%s|%04d-%02d-%02d",
-			a.AlbumType, a.AlbumTitle, a.AlbumSlug, a.AlbumPath, a.AlbumYear, a.AlbumMonth, a.AlbumDay)
+		state[a.AlbumUID] = fmt.Sprintf("%s|%s|%s|%s|%s|deleted=%v|%04d-%02d-%02d",
+			a.AlbumType, a.AlbumTitle, a.AlbumSlug, a.AlbumPath, a.AlbumFilter,
+			a.DeletedAt != nil, a.AlbumYear, a.AlbumMonth, a.AlbumDay)
 	}
 
 	return state
@@ -65,8 +66,11 @@ func TestMoments_StartRepeated(t *testing.T) {
 	require.NoError(t, entity.UnscopedDb().Create(rootPhoto).Error)
 
 	t.Cleanup(func() {
-		entity.UnscopedDb().Exec("DELETE FROM albums WHERE album_uid = ?", "as6sg6bxpogaabm1")
-		entity.UnscopedDb().Exec("DELETE FROM photos WHERE photo_uid = ?", "ps6sg6bxpogaabm1")
+		require.NoError(t, entity.UnscopedDb().Exec("DELETE FROM albums WHERE album_uid = ?", "as6sg6bxpogaabm1").Error)
+		require.NoError(t, entity.UnscopedDb().Exec("DELETE FROM photos WHERE photo_uid = ?", "ps6sg6bxpogaabm1").Error)
+		// Moments stamps dates and adds a month album for the root picture above, so the
+		// fixture set has to be rebuilt for whatever runs next.
+		entity.ResetTestFixtures()
 	})
 
 	m := NewMoments(conf)

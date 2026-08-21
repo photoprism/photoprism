@@ -352,8 +352,5 @@ func TestRemovePeopleAndFaces(t *testing.T) {
 	}
 
 	// replace all the fixtures as the previous statement kills a lot of other tests.
-	entity.Entities.Truncate(Db())
-	entity.CreateDefaultFixtures()
-	entity.CreateTestFixtures()
-	entity.File{}.RegenerateIndex()
+	entity.ResetTestFixtures()
 }

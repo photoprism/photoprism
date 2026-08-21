@@ -333,9 +333,20 @@ func qualifyingPhotoPaths() map[string]bool {
 	paths := make(map[string]bool)
 
 	for _, photo := range entity.PhotoFixtures {
-		if (photo.DeletedAt == nil && photo.PhotoQuality >= 3 && photo.TakenSrc == entity.SrcMeta && photo.TakenAtLocal != time.Time{}) {
+		if photo.DeletedAt == nil && photo.PhotoQuality >= 3 && photo.TakenSrc == entity.SrcMeta && !photo.TakenAtLocal.IsZero() {
 			paths[photo.PhotoPath] = true
 		}
+	}
+
+	return paths
+}
+
+// reportedPaths returns the key set of a photoPathMaxDates result for comparison.
+func reportedPaths(m map[string]time.Time) map[string]bool {
+	paths := make(map[string]bool, len(m))
+
+	for path := range m {
+		paths[path] = true
 	}
 
 	return paths
@@ -345,7 +356,7 @@ func TestPhotoPathMaxDates(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		p, err := photoPathMaxDates()
 		require.NoError(t, err)
-		assert.Equal(t, len(qualifyingPhotoPaths()), len(p))
+		assert.Equal(t, qualifyingPhotoPaths(), reportedPaths(p))
 		minDate := entity.PhotoFixtures.Get("Photo03").TakenAtLocal
 		maxDate := entity.PhotoFixtures.Get("Photo55").TakenAtLocal
 		for path, d := range p {
@@ -370,13 +381,13 @@ func TestPhotoPathMaxDates(t *testing.T) {
 
 		// Saving Photo18 above adds its path to the reported set; the unreadable date below
 		// removes it again, since no other qualifying picture shares that path.
-		withoutPhoto18 := len(qualifyingPhotoPaths())
+		withoutPhoto18 := qualifyingPhotoPaths()
 		promoted := qualifyingPhotoPaths()
 		promoted[bp.PhotoPath] = true
 
 		p, err := photoPathMaxDates()
 		require.NoError(t, err)
-		assert.Equal(t, len(promoted), len(p))
+		assert.Equal(t, promoted, reportedPaths(p))
 
 		// Force the taken_at_local to return a NULL from MAX(DATE('RUBBISH'))
 		require.NoError(t, entity.UnscopedDb().Exec("UPDATE photos SET taken_at_local = 'RUBBISH' WHERE id = ?", bp.ID).Error)
@@ -386,7 +397,7 @@ func TestPhotoPathMaxDates(t *testing.T) {
 
 		p, err = photoPathMaxDates()
 		require.NoError(t, err)
-		assert.Equal(t, withoutPhoto18, len(p))
+		assert.Equal(t, withoutPhoto18, reportedPaths(p))
 
 		minDate := entity.PhotoFixtures.Get("Photo03").TakenAtLocal
 		maxDate := entity.PhotoFixtures.Get("Photo55").TakenAtLocal
