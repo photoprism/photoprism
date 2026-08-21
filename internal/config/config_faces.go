@@ -476,8 +476,8 @@ func (c *Config) faceThresholdIsSet(flagName string, value, flagDefault float64)
 		return true
 	}
 
-	// Values loaded from "options.yml" are applied after the CLI context, so anything
-	// that differs from the flag default was configured deliberately.
+	// These options are yaml:"-", so "options.yml" never sets them and the flag default is
+	// the only value an operator did not choose. Anything else was configured deliberately.
 	return value != flagDefault
 }
 

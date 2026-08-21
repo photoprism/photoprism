@@ -1,16 +1,12 @@
 ## Face Detection & Embedding Guidelines
 
-**Last Updated:** August 20, 2026
+**Last Updated:** August 21, 2026
 
 ### Overview
 
-This document captures the current state of PhotoPrism's face detection and embedding pipeline following the October 2025 optimizations. It should be used as the canonical reference when assessing detection quality, tuning configuration, or integrating downstream tooling that depends on FaceNet embeddings.
+This document is the canonical reference for PhotoPrism's face detection and embedding pipeline: use it when assessing detection quality, tuning configuration, or integrating downstream tooling that depends on face embeddings.
 
-Key changes:
-
-- Detection thresholds favor recall, and overlap handling keeps markers stable across re-detection.
-- All face embeddings are now L2-normalized at creation, midpoint calculation, and deserialization time to keep cosine and Euclidean comparisons consistent.
-- Benchmarks were added to track the cost of hotspot routines (`Embedding.Dist` and `EmbeddingsMidpoint`).
+Detection thresholds favor recall, and overlap handling keeps markers stable across re-detection. Every face embedding is L2-normalized at creation, at midpoint calculation and at deserialization, so cosine and Euclidean comparisons stay equivalent.
 
 Embedding provenance is persisted: `faces.embed_model` and `markers.embed_model` record the model that produced each vector, `entity.Face.Match` refuses to compare clusters from a different model, and `photoprism faces audit` reports the cluster and marker counts per model.
 
@@ -20,7 +16,7 @@ PhotoPrism uses a single detector:
 
 - **ONNX SCRFD 0.5g** — ONNX Runtime-backed CNN that delivers higher recall on occluded or off-axis faces. The detector consumes 720 px thumbnails (model input 640 px), schedules work on the meta/vision workers, and defaults to the available CPUs divided by the number of indexing workers (minimum 1 thread), because detection takes no lock and one session runs per worker. Operators can select `FACE_ENGINE=onnx` explicitly or leave `FACE_ENGINE=auto`, which resolves to ONNX when the bundled [SCRFD model](https://yakhyo.github.io/facial-analysis/) is present and otherwise disables detection rather than picking another engine.
 
-The `github.com/yalue/onnxruntime_go` binding requests the exact C API version of the headers it vendors, so it fails to initialize against an older shared library. Bumping that module therefore requires a matching `ONNX_DEFAULT_VERSION` and checksum update in `scripts/dist/install-onnx.sh`, plus a rebuild of the base images that ship `libonnxruntime.so`. `TestNet` is the only test that loads the shared library, so it fails when the SCRFD model is present but the detector cannot be initialized, and skips only when the model itself is missing — a version mismatch must not pass as a skipped test.
+The `github.com/yalue/onnxruntime_go` binding requests the exact C API version of the headers it vendors, so it fails to initialize against an older shared library. Bumping that module therefore requires a matching `ONNX_DEFAULT_VERSION` and checksum update in `scripts/dist/install-onnx.sh`, plus a rebuild of the base images that ship `libonnxruntime.so`. Tests that load the shared library — `TestNet` for the detector, and the ONNX embedder tests through `onnx.EnsureRuntime` — fail when the model is present but the runtime cannot be initialized, and skip only when the model itself is missing. A version mismatch must not pass as a skipped test.
 
 Runtime selection lives in `Config.FaceEngine()`. Scheduling is controlled by the face model entry in `vision.yml`: `Config.FaceEngineRunType()` simply forwards to `vision.Config.RunType(ModelTypeFace)` and returns `never` when no detector is configured. This keeps face detection aligned with embedding generation so both always run together.
 
@@ -171,7 +167,7 @@ No automatic data cleanup runs in this scenario, so operators remain in control 
 Additional safeguards limit how often stubborn clusters are retried:
 
 - Every manual cluster stores a retry counter (`faces.merge_retry`) and optional note (`merge_notes`). The optimizer skips clusters once the retry count reaches `MergeMaxRetry` (default **1**). The limit may be raised or disabled with the environment variable `PHOTOPRISM_FACE_MERGE_MAX_RETRY` (`0` = unlimited retries).
-- Warnings surface only when the retry counter is incremented. Subsequent optimise runs log at debug level until counters are reset.
+- Warnings surface only when the retry counter is incremented. Subsequent optimize runs log at debug level until counters are reset.
 - `photoprism faces optimize --retry` clears retry counters before running the optimizer, allowing administrators to reprocess clusters after manual cleanup.
 - `photoprism faces audit --subject=<uid>` focuses the audit report on a specific person and prints retry counts, sample statistics, and outstanding clusters so operators know which photos still need attention.
 - The warning text includes the retry count and cluster IDs.

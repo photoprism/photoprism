@@ -309,7 +309,8 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 	// Markers without a file cannot be re-embedded by any run, so they are reported apart
 	// from failures: counting them would make every retry look partially failed.
 	result.Unlinked = plan.Markers.Unlinked
-	failedMarkerUIDs := make([]string, 0, result.Unlinked)
+
+	var failedMarkerUIDs []string
 	batchSize := opt.BatchSize
 	if batchSize < 1 {
 		batchSize = facesMigrateBatchSize

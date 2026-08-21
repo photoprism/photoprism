@@ -170,7 +170,7 @@ func (m *Face) Match(embeddings face.Embeddings, model face.ModelName) (match bo
 	dist = -1
 
 	if embeddings.Empty() {
-		// Np embeddings, no match.
+		// No embeddings, no match.
 		return false, dist
 	}
 

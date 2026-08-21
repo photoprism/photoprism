@@ -205,7 +205,8 @@ func EmbeddingsMidpoint(embeddings Embeddings) (result Embedding, radius float64
 
 	normalizeEmbedding(result)
 
-	// Radius is the max embedding distance + 0.01 from result.
+	// Radius is the max embedding distance from result, plus the tolerance the rest of the
+	// comparison path uses, so a sample sitting exactly on the radius is still inside it.
 	for _, emb := range embeddings {
 		if len(emb) != dim {
 			continue
@@ -219,7 +220,7 @@ func EmbeddingsMidpoint(embeddings Embeddings) (result Embedding, radius float64
 		}
 
 		if d := math.Sqrt(dist); d > radius {
-			radius = d + 0.01
+			radius = d + Epsilon
 		}
 	}
 

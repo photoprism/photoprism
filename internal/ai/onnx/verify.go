@@ -13,9 +13,9 @@ import (
 // was written for.
 //
 // Registry entries are selected by name, and names collide across publishers: two
-// unrelated models have shipped as glintr100.onnx, and the figures published for
-// centerface_bnmerged.onnx describe a different file than the centerface.onnx that is
-// hosted. Confirming by name alone would apply one model's preprocessing to another
+// unrelated models have shipped as glintr100.onnx, and published figures routinely
+// describe a differently named export than the file a mirror serves under that name.
+// Confirming by name alone would apply one model's preprocessing to another
 // model's weights, which fails quietly because normalization and channel order cannot be
 // read from a graph. Descriptions without a recorded checksum are accepted so that custom
 // models keep working.

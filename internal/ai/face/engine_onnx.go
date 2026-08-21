@@ -383,17 +383,10 @@ func (o *onnxEngine) Detect(fileName string, minSize int) (Faces, error) {
 
 // buildBlob normalizes the input image into the tensor layout expected by SCRFD.
 func (o *onnxEngine) buildBlob(img image.Image) ([]float32, float32, error) {
+	// detectorInputSize resolved these before the session was created, so they are known
+	// to be within bounds and non-zero here.
 	inputWidth := o.inputWidth
 	inputHeight := o.inputHeight
-	defaultWidth, defaultHeight := DetectorModel.InputSize()
-
-	if inputWidth < 1 {
-		inputWidth = defaultWidth
-	}
-
-	if inputHeight < 1 {
-		inputHeight = defaultHeight
-	}
 
 	bounds := img.Bounds()
 	width := bounds.Dx()

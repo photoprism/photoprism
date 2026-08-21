@@ -1,6 +1,6 @@
 ## ONNX Model Description
 
-**Last Updated:** August 20, 2026
+**Last Updated:** August 21, 2026
 
 ### Overview
 
@@ -21,7 +21,7 @@ Channel order, normalization, and the resize convention are **not present in a g
 `VerifyChecksum` confirms a description against the file it was written for. Lookup selects a candidate by name, and names collide across publishers:
 
 - InsightFace's `antelopev2` pack and fal's AuraFace both ship a file called `glintr100.onnx`, and they are different models. Our mirror renames ours to `auraface_v1_glintr100.onnx` for this reason.
-- The published CenterFace figures describe `centerface_bnmerged.onnx`, while the hosted file is `centerface.onnx` — a different artifact.
+- Published figures routinely describe a differently named export than the file a mirror actually serves, so a name match is not an artifact match.
 
 A name-only match applies one model's preprocessing to another model's weights, and because the mismatched fields are exactly the ones that cannot be inferred, it fails quietly. Descriptions without a recorded checksum are accepted so that custom models supplied through `PHOTOPRISM_MODELS_PATH` keep working.
 
