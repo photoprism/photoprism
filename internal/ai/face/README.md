@@ -6,7 +6,7 @@
 
 This document is the canonical reference for PhotoPrism's face detection and embedding pipeline: use it when assessing detection quality, tuning configuration, or integrating downstream tooling that depends on face embeddings.
 
-Detection thresholds favor recall, and overlap handling keeps markers stable across re-detection. Every face embedding is L2-normalized at creation, at midpoint calculation and at deserialization, so cosine and Euclidean comparisons stay equivalent.
+Detection thresholds favor recall, and overlap handling keeps markers stable across re-detection. Every face embedding is L2-normalized where it is produced and where a centroid is computed, so cosine and Euclidean comparisons stay equivalent; see § Normalization for the one read path that does not, and the repair for it.
 
 Embedding provenance is persisted: `faces.embed_model` and `markers.embed_model` record the model that produced each vector, `entity.Face.Match` refuses to compare clusters from a different model, and `photoprism faces audit` reports the cluster and marker counts per model.
 
@@ -130,9 +130,9 @@ All embeddings, regardless of origin, are normalized to unit length (‖x‖₂�
 
 - `NewEmbedding` normalizes the raw float32 inference output.
 - `EmbeddingsMidpoint` normalizes each contributor, averages component-wise, and renormalizes the centroid.
-- `UnmarshalEmbedding` and `UnmarshalEmbeddings` normalize data when loading from persisted JSON.
+- `UnmarshalEmbeddings` normalizes when loading from persisted JSON, which is the path `query.Embeddings` uses to feed clustering. **`entity.Face.Embedding()` and `entity.Marker.Embeddings()` do not**: they call `json.Unmarshal` directly, so the matching path compares a stored vector as it was written. Everything written since normalization existed is already unit length, and `EmbeddingsMidpoint` normalizes its own inputs, so this is reachable only by a row predating that contract.
 - Random generators normalize their entries after perturbation.
-- `photoprism faces audit --fix` re-normalizes persisted embeddings, rekeys face IDs, and re-links markers (ID + `FaceDist`) so historical data adopts the canonical unit-length vectors.
+- `photoprism faces audit --fix` re-normalizes persisted embeddings, rekeys face IDs, and re-links markers (ID + `FaceDist`) so historical data adopts the canonical unit-length vectors. It is the repair for the read path above, and it reads the stored JSON as written in order to detect what needs repairing.
 - `Faces.Match` pre-filters matchable clusters, keeps an in-memory veto list for freshly cleared markers, and caches embeddings to avoid redundant distance checks; `BenchmarkSelectBestFace` (1024 faces) reports a bucket size of ~16 candidates out of 1024 (≈98 % fewer distance evaluations) at ≈0.55 ms/op with zero allocations.
 - Face clusters update their sample statistics (`Samples`, `SampleRadius`) from the latest matches via `Face.UpdateMatchStats`. `ClampSampleRadius` bounds the radius at `ClusterRadius` wherever it is written, and `AcceptDist` applies the same bound where it is read, so a recalibrated threshold reaches rows written under the previous one. With the shipped FaceNet values an automatic match therefore accepts embeddings up to **0.82** from the centroid.
 - `AcceptDistMax` caps that cutoff at **1.4** whatever the configuration. Embeddings are unit vectors, so two independent ones average √2 ≈ 1.41 — an average, not a floor, so a noticeable share of unrelated pairs already fall below 1.4. The ceiling is therefore a backstop that keeps a misconfiguration from being catastrophic rather than a safe setting; the widest calibrated model reaches 1.22.
