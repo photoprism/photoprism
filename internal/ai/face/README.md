@@ -28,7 +28,7 @@ The detector also returns five facial landmarks, which `engine_onnx.go` decodes 
 
 ### Embedding Models
 
-`FACE_MODEL` selects the model that turns a face crop into a vector, independently of the detector. Supported models are registered in `models.go`, so the CLI help and config report are generated from one source. Each entry carries the embedding length, alignment mode, and distance thresholds; its artifact and preprocessing contract — file, source, checksum, license, input geometry, channel order, normalization, resize convention, and output width — live in the `onnx.ModelInfo` that every subsystem running an ONNX model shares (see `internal/ai/onnx/README.md`).
+`FACE_MODEL` selects the model that turns a face crop into a vector, independently of the detector. Supported models are registered in `models.go`, so the CLI help and config report are generated from one source. Each entry carries the embedding length, alignment mode, and distance thresholds; its artifact and preprocessing contract — file, checksum, license, input geometry, channel order, normalization, resize convention, and output width — live in the `onnx.ModelInfo` that every subsystem running an ONNX model shares (see `internal/ai/onnx/README.md`).
 
 | Model         | Runtime    | Dim | Input   | Alignment | Weights | License       | Installed By                  |
 |:--------------|:-----------|----:|:--------|:----------|--------:|:--------------|:------------------------------|

@@ -108,7 +108,6 @@ func TestModelInfo_Merge(t *testing.T) {
 		m := &ModelInfo{File: "sface.onnx", Input: &Input{Width: 112}}
 		m.Merge(&ModelInfo{
 			File:         "other.onnx",
-			SourceUrl:    "https://dl.photoprism.app/onnx/models/sface.onnx",
 			SHA256:       "0ba9fbfa",
 			License:      "Apache-2.0",
 			Quantization: "fp32",
@@ -117,7 +116,6 @@ func TestModelInfo_Merge(t *testing.T) {
 		})
 
 		assert.Equal(t, "sface.onnx", m.File)
-		assert.Equal(t, "https://dl.photoprism.app/onnx/models/sface.onnx", m.SourceUrl)
 		assert.Equal(t, "0ba9fbfa", m.SHA256)
 		assert.Equal(t, "Apache-2.0", m.License)
 		assert.Equal(t, "fp32", m.Quantization)

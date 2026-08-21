@@ -204,7 +204,6 @@ func TestEmbeddingModels(t *testing.T) {
 			if m.Runtime == RuntimeONNX {
 				require.NotNil(t, m.ONNX)
 				assert.NotEmpty(t, m.ONNX.File)
-				assert.NotEmpty(t, m.ONNX.SourceUrl)
 				assert.NotEmpty(t, m.ONNX.SHA256)
 				require.NotNil(t, m.ONNX.Input)
 				assert.Positive(t, m.ONNX.Input.Width)

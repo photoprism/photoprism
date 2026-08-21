@@ -44,9 +44,8 @@ const (
 // artifact and its preprocessing are described in the structure that every subsystem
 // running an ONNX model shares.
 var DetectorModel = &onnx.ModelInfo{
-	File:      DefaultONNXModelFilename,
-	SourceUrl: "https://raw.githubusercontent.com/laolaolulu/FaceTrain/master/model/scrfd/scrfd_500m_bnkps_shape640x640.onnx",
-	SHA256:    "ae72185653e279aa2056b288662a19ec3519ced5426d2adeffbe058a86369a24",
+	File:   DefaultONNXModelFilename,
+	SHA256: "ae72185653e279aa2056b288662a19ec3519ced5426d2adeffbe058a86369a24",
 	Input: &onnx.Input{
 		Width:         640,
 		Height:        640,

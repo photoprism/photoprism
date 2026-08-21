@@ -106,9 +106,12 @@ func (o *Output) Merge(other *Output) {
 // SHA256 identifies the artifact. Names collide across publishers, and applying one
 // model's preprocessing to another model's weights fails quietly rather than raising, so
 // a description is confirmed by checksum rather than by file name.
+//
+// Where an artifact is downloaded from is not described here. That belongs to the install
+// registry in scripts/dist/download-models.sh, which owns the URLs and verifies the same
+// checksums, so a source that moves upstream is changed in one place.
 type ModelInfo struct {
 	File         string  `yaml:"File,omitempty" json:"file,omitempty"`
-	SourceUrl    string  `yaml:"SourceUrl,omitempty" json:"sourceUrl,omitempty"`
 	SHA256       string  `yaml:"SHA256,omitempty" json:"sha256,omitempty"`
 	License      string  `yaml:"License,omitempty" json:"license,omitempty"`
 	Quantization string  `yaml:"Quantization,omitempty" json:"quantization,omitempty"`
@@ -152,10 +155,6 @@ func (m *ModelInfo) Merge(other *ModelInfo) {
 
 	if m.File == "" {
 		m.File = other.File
-	}
-
-	if m.SourceUrl == "" {
-		m.SourceUrl = other.SourceUrl
 	}
 
 	if m.SHA256 == "" {

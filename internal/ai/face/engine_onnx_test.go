@@ -48,7 +48,6 @@ func TestDetectorModel(t *testing.T) {
 	t.Run("Fields", func(t *testing.T) {
 		require.NotNil(t, DetectorModel.Input)
 		assert.Equal(t, DefaultONNXModelFilename, DetectorModel.File)
-		assert.NotEmpty(t, DetectorModel.SourceUrl)
 		assert.Positive(t, DetectorModel.Input.Width)
 		assert.Positive(t, DetectorModel.Input.Height)
 		assert.True(t, DetectorModel.Input.ColorOrder.Valid())

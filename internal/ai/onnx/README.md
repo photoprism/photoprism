@@ -6,7 +6,7 @@
 
 This package holds one description of an ONNX model's parameters, shared by every subsystem that runs one. The field list is the description of a graph plus its preprocessing contract, and that does not vary by task, so face detection, face embeddings, label generation, and NSFW detection use the same structure rather than a registry each.
 
-`ModelInfo` is deliberately shaped after `tensorflow.ModelInfo` in `internal/ai/tensorflow`: an `Input` describing geometry, layout, channel order, normalization, and the resize convention; an `Output` describing name, width, and whether it carries logits; plus artifact-level fields for file, source, checksum, license, and quantization. `internal/ai/tensorflow` is scheduled for deletion once its three consumers migrate, so the two structures sitting side by side is a transitional state rather than an abstraction to unify.
+`ModelInfo` is deliberately shaped after `tensorflow.ModelInfo` in `internal/ai/tensorflow`: an `Input` describing geometry, layout, channel order, normalization, and the resize convention; an `Output` describing name, width, and whether it carries logits; plus artifact-level fields for file, checksum, license, and quantization. Where an artifact is downloaded from is not among them: the install registry in `scripts/dist/download-models.sh` owns the URLs and verifies the same checksums, so a source that moves upstream changes in one place. `internal/ai/tensorflow` is scheduled for deletion once its three consumers migrate, so the two structures sitting side by side is a transitional state rather than an abstraction to unify.
 
 ### What Can Be Inferred and What Cannot
 
