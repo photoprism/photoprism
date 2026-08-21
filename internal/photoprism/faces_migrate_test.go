@@ -390,7 +390,18 @@ func TestCentroidSamples(t *testing.T) {
 
 		return v
 	}
+	// Beyond the outlier distance (0.91 for SFace) but inside the widest distance the
+	// resulting cluster can accept (ClusterRadius + MatchDist = 1.06), which is the band
+	// where the manual exemption applies.
 	far := func() []float32 {
+		v := make([]float32, registered.Dims)
+		v[0] = 0.2
+		v[registered.Dims-1] = 1
+
+		return v
+	}
+	// Past that bound, where no cluster of this model would re-accept it.
+	beyondAcceptance := func() []float32 {
 		v := make([]float32, registered.Dims)
 		v[registered.Dims-1] = 1
 
@@ -444,22 +455,46 @@ func TestCentroidSamples(t *testing.T) {
 		assert.Len(t, kept, 4, "a hand-set assignment is exempt from the outlier distance")
 		assert.Zero(t, dropped)
 	})
-	t.Run("DropsManualBeyondAbsoluteBound", func(t *testing.T) {
-		// Past the ceiling a vector is no closer to this person than a random one, so it
-		// contributes noise whoever assigned it.
-		opposite := make([]float32, registered.Dims)
-		opposite[0] = -1
-
-		outlier := marker(opposite)
+	t.Run("DropsManualBeyondAcceptance", func(t *testing.T) {
+		// Seeding past the widest distance the cluster can accept would relink the marker
+		// to a cluster that then refuses it, which is a link matching would never make and
+		// cannot renew. The exemption reaches to that bound and no further.
+		outlier := marker(beyondAcceptance())
 		outlier.SubjSrc = entity.SrcManual
 		group := entity.Markers{marker(near(0)), marker(near(1)), marker(near(2)), outlier}
 
 		kept, dropped := centroidSamples(group, registered, "jsubject00000007")
 
-		require.Len(t, kept, 3, "the absolute bound applies to every source")
+		require.Len(t, kept, 3, "acceptance bounds every source, hand-set included")
 		assert.Equal(t, 1, dropped)
 		for _, m := range kept {
 			assert.NotEqual(t, outlier.MarkerUID, m.MarkerUID)
+		}
+	})
+	t.Run("SeededSamplesStayReAcceptable", func(t *testing.T) {
+		// The invariant the bound buys: whatever survives can be matched into the cluster
+		// it seeded, so the migration never hands the matcher a link it would refuse.
+		outlier := marker(far())
+		outlier.SubjSrc = entity.SrcManual
+		group := entity.Markers{marker(near(0)), marker(near(1)), marker(near(2)), outlier}
+
+		kept, _ := centroidSamples(group, registered, "jsubject00000008")
+		require.NotEmpty(t, kept)
+
+		embeddings := make(face.Embeddings, 0, len(kept))
+		for _, m := range kept {
+			embeddings = append(embeddings, m.Embeddings()[0])
+		}
+
+		midpoint, radius, _ := face.EmbeddingsMidpoint(embeddings)
+
+		// Derived from the registered model rather than from face.AcceptDist, which reads
+		// the process-wide thresholds another test may have pointed at a different model.
+		accept := min(min(radius, registered.ClusterRadius)+registered.MatchDist, face.AcceptDistMax)
+
+		for _, m := range kept {
+			assert.LessOrEqual(t, m.Embeddings().Dist(midpoint), accept,
+				"a seeded sample must be within the cluster's own accept distance")
 		}
 	})
 	t.Run("SkipsIncomparableWidth", func(t *testing.T) {

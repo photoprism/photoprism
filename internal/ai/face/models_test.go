@@ -242,6 +242,15 @@ func TestEmbeddingModelThresholds(t *testing.T) {
 			assert.Less(t, m.ClusterRadius+m.MatchDist, float64(AcceptDistMax), name)
 		}
 	})
+	t.Run("ClusterDistStaysWithinAcceptance", func(t *testing.T) {
+		// A face close enough to seed a cluster must be close enough for that cluster to
+		// accept it again, or the migration relinks a marker the matcher then refuses and
+		// cannot renew. Holding this per model is what lets the outlier rule stay a plain
+		// ClusterDist comparison instead of carrying the acceptance bound as well.
+		for name, m := range EmbeddingModels {
+			assert.LessOrEqual(t, m.ClusterDist, m.ClusterRadius+m.MatchDist, name)
+		}
+	})
 }
 
 func TestAutoModelPreference(t *testing.T) {

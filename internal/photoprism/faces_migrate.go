@@ -702,8 +702,9 @@ func manualSubjectAssignment(subjSrc string) bool {
 // concentrated on small children, unusual angles and lens distortion - the cases embedding
 // matching handles worst, which is why a person had to name them - so distance from the
 // centroid measures the model rather than the assignment, and dropping the sample removes
-// the width the cluster needs to reach that face. Every source is still held to the
-// absolute bound, past which a vector says nothing about anyone.
+// the width the cluster needs to reach that face. It is not exempt from the widest distance
+// the resulting cluster can accept: seeding past that produces a link the matcher would
+// never make and cannot renew.
 func centroidSamples(group entity.Markers, registered *face.EmbeddingModel, subjectUID string) (kept entity.Markers, excluded int) {
 	if len(group) < 3 {
 		return group, 0
@@ -721,13 +722,19 @@ func centroidSamples(group entity.Markers, registered *face.EmbeddingModel, subj
 		return group, 0
 	}
 
+	// The widest distance a cluster of this model can ever accept. SampleRadius is clamped
+	// to ClusterRadius where it is written and again where it is read, so no cluster reaches
+	// further than this whatever its samples. Seeding beyond it would relink a marker to a
+	// cluster that then refuses it, leaving an assignment matching would never have made.
+	maxAccept := min(registered.ClusterRadius+registered.MatchDist, face.AcceptDistMax)
+
 	kept = make(entity.Markers, 0, len(group))
 
 	for _, marker := range group {
 		// Embeddings.Dist reports -1 when nothing is comparable, which would otherwise read
 		// as the closest possible sample.
 		switch d := marker.Embeddings().Dist(midpoint); {
-		case d < 0 || d > face.AcceptDistMax:
+		case d < 0 || d > maxAccept:
 			continue
 		case d > registered.ClusterDist && !manualSubjectAssignment(marker.SubjSrc):
 			continue
