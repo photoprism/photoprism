@@ -32,7 +32,7 @@ TensorFlow tensors are allocated in C memory and freed by Go GC finalizers in th
 - **FaceNet load error `Read less bytes than requested`:** The local `assets/models/facenet/saved_model.pb` file is usually incomplete or corrupted. Remove cached/downloaded files and reinstall:
   - `rm -f /tmp/photoprism/facenet.zip`
   - `rm -rf assets/models/facenet`
-  - `make dep-tensorflow` (or `scripts/dist/download-models.sh facenet`)
+  - `make dep-models` (or `scripts/dist/download-models.sh facenet`)
   - Re-run the face tests (`go test ./internal/ai/face -run TestNet -count=1`)
 - **Input/output mismatch:** Check logs for inferred inputs/outputs and confirm `vision.yml` overrides (name, resolution, and `TensorFlow.Input/Output`).
 - **Unexpected probabilities:** Ensure logits are handled correctly and labels match output indices.

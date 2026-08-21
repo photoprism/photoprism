@@ -32,8 +32,8 @@ The detector also returns five facial landmarks, which `engine_onnx.go` decodes 
 
 | Model         | Runtime    | Dim | Input   | Alignment | Weights | License       | Installed By                  |
 |:--------------|:-----------|----:|:--------|:----------|--------:|:--------------|:------------------------------|
-| `facenet`     | TensorFlow | 512 | 160×160 | box crop  |   92 MB | unknown       | `make dep-tensorflow`         |
-| `sface`       | ONNX       | 128 | 112×112 | ArcFace-5 |   39 MB | Apache-2.0    | `make dep-sface`              |
+| `facenet`     | TensorFlow | 512 | 160×160 | box crop  |   92 MB | unknown       | `make dep-models`             |
+| `sface`       | ONNX       | 128 | 112×112 | ArcFace-5 |   39 MB | Apache-2.0    | `make dep-models`             |
 | `auraface`    | ONNX       | 512 | 112×112 | ArcFace-5 |  261 MB | Apache-2.0    | `download-models.sh auraface` |
 | `arcface_r50` | ONNX       | 512 | 112×112 | ArcFace-5 |  174 MB | research-only | `scripts/download-arcface.sh` |
 | `arcface_mbf` | ONNX       | 512 | 112×112 | ArcFace-5 |   14 MB | research-only | `scripts/download-arcface.sh` |
@@ -48,7 +48,7 @@ The first start after an upgrade is answered the same way: the schema is migrate
 
 An explicitly configured model whose weights are missing falls back with a warning: embeddings would otherwise be produced by the fallback model and recorded under the name that was requested. The InsightFace ArcFace weights are published for non-commercial research only and are therefore never bundled; their install script requires `ARCFACE_ACCEPT_LICENSE=1` and verifies a pinned checksum.
 
-SFace is part of `make dep` through `dep-onnx`, so `make all install` copies it into the published images — a model new libraries default to has to be there. The Go test targets depend on `dep-sface` separately, so the ONNX embedder tests never silently skip when only a subset of the dependencies was installed.
+`make dep-models` installs every model a development build runs or ships, and `make dep` includes it, so `make all install` copies SFace into the published images — a model new libraries default to has to be there. The Go test targets depend on the same target, so the ONNX embedder tests cannot silently skip because only a subset of the models was installed.
 
 AuraFace is installed by no target at all. Its Apache-2.0 weights could be redistributed, but a 261 MB graph in every published image is not worth it, so it stays an explicit `scripts/dist/download-models.sh auraface` download. `assets/.buildignore` excludes `models/auraface` and `models/arcface`, so a developer copy is never picked up by `make install` — which also keeps the research-only ArcFace weights out of any build. The file is deliberately renamed from the upstream `glintr100.onnx`: InsightFace's antelopev2 pack ships a different model under that name, and because channel order and normalization cannot be read from an ONNX graph, a name collision would apply one model's preprocessing to the other's weights silently.
 
@@ -205,7 +205,7 @@ Recovery steps:
 
 - `rm -f /tmp/photoprism/facenet.zip`
 - `rm -rf assets/models/facenet`
-- `make dep-tensorflow` (or `scripts/dist/download-models.sh facenet`)
+- `make dep-models` (or `scripts/dist/download-models.sh facenet`)
 - Re-run `go test ./internal/ai/face -run TestNet -count=1`
 
 ### Configuration Summary

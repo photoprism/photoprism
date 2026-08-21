@@ -88,6 +88,7 @@ Development Environment (run on the host):
 
 Dependencies (run in the development container):
   dep                      Install the TensorFlow, ONNX, and NPM dependencies
+  dep-models               Install the TensorFlow and ONNX models only
   dep-js                   Install the NPM dependencies only
   upgrade                  Upgrade the Go and NPM dependencies
   tidy                     Add missing and remove unused Go modules
@@ -136,23 +137,23 @@ export HELP_TEXT
 
 # Declare "make" targets.
 all: dep build-js
-dep: dep-tensorflow dep-onnx dep-js
+dep: dep-models dep-js
 biuld: build
 build: build-go
 watch: watch-js
 build-all: build-go build-js
 pull: docker-pull
 test: test-js test-go
-test-go: dep-sface run-test-go
+test-go: dep-models run-test-go
 test-hub: run-test-hub
 test-pkg: run-test-pkg
-test-ai: dep-sface run-test-ai
+test-ai: dep-models run-test-ai
 test-api: run-test-api
 test-video: run-test-video
 test-entity: run-test-entity
 test-commands: run-test-commands
 test-photoprism: run-test-photoprism
-test-short: dep-sface run-test-short
+test-short: dep-models run-test-short
 test-mariadb: reset-acceptance run-test-mariadb
 acceptance-run-chromium: storage/acceptance acceptance-sqlite-restart-1 wait-1 acceptance-api acceptance-sqlite-stop-1 acceptance-auth-sqlite-restart wait-2 acceptance-auth acceptance-auth-sqlite-stop acceptance-sqlite-restart-3 wait-3 acceptance acceptance-sqlite-stop-3
 acceptance-run-chromium-short: storage/acceptance acceptance-auth-sqlite-restart wait-1 acceptance-auth-short acceptance-auth-sqlite-stop acceptance-sqlite-restart-2 wait-2 acceptance-short acceptance-sqlite-stop-2
@@ -528,15 +529,16 @@ dep-upgrade:
 frontend-update:
 	make -C frontend update
 dep-upgrade-js: frontend-update
-dep-tensorflow:
-	scripts/dist/download-models.sh facenet nasnet nsfw
-dep-onnx: dep-sface
+# Installs every model a development build runs or ships. One target rather than three,
+# because a partial install used to leave tests skipping silently: SFace is the embedding
+# model new libraries default to and "make all install" copies assets/ verbatim into the
+# published images, so what the test targets need and what the images carry are the same
+# list. SCRFD keeps its own script for licensing reasons and is not in the shared registry.
+dep-models:
+	scripts/dist/download-models.sh facenet nasnet nsfw sface
 	scripts/download-scrfd.sh
-# Part of "dep" because SFace is the embedding model new libraries default to, and
-# "make all install" copies assets/ verbatim into the published images. The Go test
-# targets depend on it separately so the ONNX embedder tests never silently skip.
-dep-sface:
-	scripts/dist/download-models.sh sface
+dep-tensorflow: dep-models
+dep-onnx: dep-models
 dep-acceptance: storage/acceptance
 storage/acceptance:
 	[ -f "./storage/acceptance/index.db" ] || (cd storage && rm -rf acceptance && wget -c https://dl.photoprism.app/qa/acceptance.tar.gz -O - | tar -xz)

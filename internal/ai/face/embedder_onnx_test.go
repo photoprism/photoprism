@@ -209,7 +209,7 @@ func TestNewONNXEmbedder(t *testing.T) {
 
 // installedONNXModels returns the ONNX embedding models whose weights are present, so
 // the contract tests below cover every model the environment can actually run instead
-// of only the one that "make dep-sface" installs.
+// of only the one that "make dep-models" installs.
 func installedONNXModels(t *testing.T) []ModelName {
 	t.Helper()
 
