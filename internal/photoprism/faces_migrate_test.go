@@ -2,6 +2,7 @@ package photoprism
 
 import (
 	"context"
+	"errors"
 	"image"
 	"math"
 	"testing"
@@ -450,4 +451,28 @@ func TestMigrationCanceled(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
 	require.Error(t, migrationCanceled(ctx, nil))
+}
+
+func TestFacesMigrateRerunError_Error(t *testing.T) {
+	t.Run("IdentitiesChanged", func(t *testing.T) {
+		// The rollback is the safe outcome, so the message has to describe the state it
+		// leaves rather than the failure, and name the one action that resolves it.
+		err := &FacesMigrateRerunError{Migrated: 12, Cause: query.ErrFaceMigrationIdentitiesChanged}
+
+		assert.Contains(t, err.Error(), "a person assignment changed")
+		assert.Contains(t, err.Error(), "nothing was lost")
+		assert.Contains(t, err.Error(), "12 regenerated marker(s) stay unmatched")
+		assert.Contains(t, err.Error(), "run again with the server stopped")
+	})
+	t.Run("Unwraps", func(t *testing.T) {
+		// The identity case is the one a caller may want to tell apart from a storage error.
+		err := error(&FacesMigrateRerunError{Migrated: 1, Cause: query.ErrFaceMigrationIdentitiesChanged})
+		assert.ErrorIs(t, err, query.ErrFaceMigrationIdentitiesChanged)
+	})
+	t.Run("OtherCause", func(t *testing.T) {
+		err := &FacesMigrateRerunError{Migrated: 0, Cause: errors.New("database is locked")}
+
+		assert.Contains(t, err.Error(), "database is locked")
+		assert.NotErrorIs(t, error(err), query.ErrFaceMigrationIdentitiesChanged)
+	})
 }

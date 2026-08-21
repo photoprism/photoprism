@@ -312,7 +312,11 @@ func TestFinalizeFaceMigration(t *testing.T) {
 
 	var facesBefore, facesAfter int
 	require.NoError(t, tempDb.Model(&entity.Face{}).Count(&facesBefore).Error)
-	require.Error(t, FinalizeFaceMigration(face.ModelFaceNet, []FaceMigrationIdentity{{MarkerUID: "changed"}}, nil, nil))
+	changedErr := FinalizeFaceMigration(face.ModelFaceNet, []FaceMigrationIdentity{{MarkerUID: "changed"}}, nil, nil)
+	require.Error(t, changedErr)
+	// Callers distinguish this from a storage failure, because it is the one rollback an
+	// operator caused and can avoid on the next run.
+	assert.ErrorIs(t, changedErr, ErrFaceMigrationIdentitiesChanged)
 	require.NoError(t, tempDb.Model(&entity.Face{}).Count(&facesAfter).Error)
 	assert.Equal(t, facesBefore, facesAfter)
 

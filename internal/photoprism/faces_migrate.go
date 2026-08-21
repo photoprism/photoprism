@@ -91,6 +91,29 @@ func (e *FacesMigrateAbortedError) Error() string {
 		"storage (use --force to finalize anyway)", e.Reason, e.Migrated)
 }
 
+// FacesMigrateRerunError reports a migration whose finalize was rolled back after markers
+// had already been regenerated, which leaves the library between two models.
+type FacesMigrateRerunError struct {
+	Migrated int
+	Cause    error
+}
+
+// Error returns the rolled-back migration error message.
+//
+// The rollback itself is the safe outcome, so the message is about the state it leaves:
+// the clusters are the old model's and some markers are the new one's, and only another
+// run reconciles them.
+func (e *FacesMigrateRerunError) Error() string {
+	return fmt.Sprintf("faces: %s, so replacing the clusters was rolled back and nothing was lost; "+
+		"%d regenerated marker(s) stay unmatched until the migration is run again with the server stopped",
+		e.Cause, e.Migrated)
+}
+
+// Unwrap returns the error that caused the rollback.
+func (e *FacesMigrateRerunError) Unwrap() error {
+	return e.Cause
+}
+
 // finalizeRefused reports why a migration must not be finalized, or "" when it may proceed.
 // Attempting nothing is not a failure: a library that is already migrated skips every
 // marker, and refusing there would make the command permanently unusable.
@@ -335,8 +358,11 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 	result.RebuiltSubjects = rebuilt
 	result.AttentionSubjects = max(result.PreservedSubjects-result.RebuiltSubjects, 0)
 
+	// Any failure here rolls the whole finalize back, so the clusters are still the old
+	// model's while the markers this run regenerated are the target's. That is recoverable
+	// only by running again, which the operator has to be told rather than left to infer.
 	if err = query.FinalizeFaceMigration(plan.Target, identities, clusters, failedMarkerUIDs); err != nil {
-		return result, err
+		return result, &FacesMigrateRerunError{Migrated: result.Migrated, Cause: err}
 	}
 
 	entity.UpdateFaces.Store(true)

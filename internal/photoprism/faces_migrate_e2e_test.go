@@ -83,6 +83,26 @@ func (e *sameFaceEmbedder) Run(image.Image) face.Embeddings {
 // Close releases the test embedder.
 func (e *sameFaceEmbedder) Close() error { return nil }
 
+// renamingEmbedder renames a marker the first time it runs, which is what a rename through
+// the API looks like to a migration that snapshotted the identities before its batch loop.
+type renamingEmbedder struct {
+	oneHotEmbedder
+	markerUID string
+	renamed   bool
+}
+
+// Run renames the target marker once and then embeds as usual.
+func (e *renamingEmbedder) Run(img image.Image) face.Embeddings {
+	if !e.renamed {
+		e.renamed = true
+		_ = entity.UnscopedDb().Model(&entity.Marker{}).
+			Where("marker_uid = ?", e.markerUID).
+			UpdateColumn("marker_name", "Someone Else").Error
+	}
+
+	return e.oneHotEmbedder.Run(img)
+}
+
 // newMigrateTestConfig returns an isolated config for a migration test.
 func newMigrateTestConfig(t *testing.T, name string) *config.Config {
 	t.Helper()
@@ -214,6 +234,30 @@ func TestFinalizeRefused(t *testing.T) {
 }
 
 func TestFaces_migrate(t *testing.T) {
+	t.Run("IdentityChangedMidRun", func(t *testing.T) {
+		// The finalize rolls back when a person assignment moved under it. What the
+		// operator must not be left with is a bare error: the clusters are still the old
+		// model's while the markers this run regenerated are the new one's.
+		c := newMigrateTestConfig(t, "migraterename")
+		w := NewFaces(c)
+
+		f := addMigrateTestFile(t, c, "3333333333333333333333333333333333333333", true)
+		m := addMigrateTestMarker(t, f.FileUID, entity.SrcManual, "Jane Doe")
+
+		plan := FacesMigratePlan{Target: face.ModelFaceNet}
+		embedder := &renamingEmbedder{oneHotEmbedder: oneHotEmbedder{dims: 4}, markerUID: m.MarkerUID}
+		result, err := w.migrate(context.Background(), plan, embedder,
+			FacesMigrateOptions{Target: face.ModelFaceNet}, FacesMigrateResult{Target: face.ModelFaceNet})
+
+		require.Error(t, err)
+		assert.IsType(t, &FacesMigrateRerunError{}, err)
+		assert.ErrorIs(t, err, query.ErrFaceMigrationIdentitiesChanged)
+		assert.Contains(t, err.Error(), "run again")
+		assert.Positive(t, result.Migrated, "the rollback happens after markers were regenerated")
+
+		// The rollback has to leave the clusters alone, which is what makes re-running safe.
+		assert.Zero(t, countFaceRows(t))
+	})
 	t.Run("RefusesTotalFailure", func(t *testing.T) {
 		c := newMigrateTestConfig(t, "migraterefuse")
 		w := NewFaces(c)

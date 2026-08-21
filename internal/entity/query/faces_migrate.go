@@ -2,6 +2,7 @@ package query
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"github.com/jinzhu/gorm"
@@ -9,6 +10,11 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
 )
+
+// ErrFaceMigrationIdentitiesChanged reports that a person assignment changed while the
+// migration was running, so the finalize was rolled back rather than applied against a
+// library that no longer matches the snapshot it was planned from.
+var ErrFaceMigrationIdentitiesChanged = errors.New("a person assignment changed while the migration was running")
 
 // FaceMigrationIdentity is the human-owned marker state that migration must preserve.
 type FaceMigrationIdentity struct {
@@ -313,7 +319,7 @@ func FinalizeFaceMigration(model string, identities []FaceMigrationIdentity, clu
 		}
 
 		if !sameFaceMigrationIdentities(identities, preserved) {
-			return fmt.Errorf("faces: marker identities changed during migration")
+			return ErrFaceMigrationIdentitiesChanged
 		}
 
 		return nil
