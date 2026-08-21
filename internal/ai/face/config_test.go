@@ -53,8 +53,8 @@ func TestAcceptDist(t *testing.T) {
 	})
 	t.Run("CapsAtCeiling", func(t *testing.T) {
 		// Both thresholds at their configurable maximum would otherwise accept every pair.
-		setThresholds(t, ThresholdMax, ThresholdMax)
-		assert.InDelta(t, AcceptDistMax, AcceptDist(ThresholdMax), 1e-9)
+		setThresholds(t, AcceptDistMax, AcceptDistMax)
+		assert.InDelta(t, AcceptDistMax, AcceptDist(AcceptDistMax), 1e-9)
 	})
 	t.Run("CeilingBelowRandomPairDistance", func(t *testing.T) {
 		// Independent unit vectors average sqrt(2) apart, so the ceiling stays under it.

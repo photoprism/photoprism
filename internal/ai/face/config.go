@@ -26,15 +26,15 @@ const (
 // scheduling overhead and compete with the intra-op pool for nothing.
 const InterOpThreads = 1
 
-const (
-	// ThresholdMax is the largest value accepted for a configurable distance threshold.
-	ThresholdMax = 1.5
-	// AcceptDistMax is the highest distance at which an embedding may still join a cluster.
-	// Two independent unit vectors average sqrt(2) ~ 1.41 apart, but a sizable share of
-	// them land nearer, so this caps what a misconfigured threshold can do rather than
-	// naming a distance that is safe to configure.
-	AcceptDistMax = 1.4
-)
+// AcceptDistMax is the highest distance at which an embedding may still join a cluster,
+// and the largest value a configurable distance threshold may take.
+//
+// Two independent unit vectors average sqrt(2) ~ 1.41 apart, but a sizable share of them
+// land nearer, so this caps what a misconfigured threshold can do rather than naming a
+// distance that is safe to configure. One constant rather than a separate configuration
+// bound, because a threshold accepted above the ceiling is only clipped again on read,
+// which leaves the report echoing a value that never applies.
+const AcceptDistMax = 1.4
 
 var (
 	// CropSize is the face image crop size used when generating FaceNet embeddings.

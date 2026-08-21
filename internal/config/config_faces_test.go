@@ -767,6 +767,27 @@ func TestConfig_FaceThreshold(t *testing.T) {
 			assert.NotContains(t, e.Message, "out of range")
 		}
 	})
+	t.Run("AboveTheCeilingIsRefused", func(t *testing.T) {
+		// A threshold accepted above the ceiling would only be clipped again where it is
+		// read, leaving the config report echoing a value that never applies. One constant
+		// bounds both, so the value is refused here and the calibrated one is used.
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = installTestModels(t, face.ModelSFace)
+		c.options.FaceModel = face.ModelSFace
+
+		hook := captureLog(t)
+		above := float64(face.AcceptDistMax) + 0.05
+
+		assert.NotEqual(t, above, c.faceThreshold("face-match-dist", above, face.MatchDistDefault, pick))
+
+		var warned bool
+		for _, e := range hook.AllEntries() {
+			if e.Level == logrus.WarnLevel && strings.Contains(e.Message, "out of range") {
+				warned = true
+			}
+		}
+		assert.True(t, warned, "a value above the ceiling warns rather than being silently clipped")
+	})
 }
 
 func TestFaceModelThreshold(t *testing.T) {

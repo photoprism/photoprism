@@ -444,13 +444,13 @@ func (c *Config) faceThreshold(flagName string, value, flagDefault float64, pick
 	minDist := c.FaceCollisionDist()
 	configured := c.faceThresholdIsSet(flagName, value, flagDefault)
 
-	if configured && value >= minDist && value <= face.ThresholdMax {
+	if configured && value >= minDist && value <= face.AcceptDistMax {
 		return value
 	}
 
 	resolved := faceModelThreshold(c.FaceEmbeddingModel(), pick, flagDefault)
 
-	c.warnFaceThreshold(configured, flagName, value, minDist, face.ThresholdMax, resolved)
+	c.warnFaceThreshold(configured, flagName, value, minDist, face.AcceptDistMax, resolved)
 
 	return resolved
 }

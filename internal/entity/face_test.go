@@ -290,9 +290,9 @@ func TestFace_AcceptDist(t *testing.T) {
 	t.Run("CappedAtCeiling", func(t *testing.T) {
 		restoreRadius, restoreDist := face.ClusterRadius, face.MatchDist
 		t.Cleanup(func() { face.ClusterRadius, face.MatchDist = restoreRadius, restoreDist })
-		face.ClusterRadius, face.MatchDist = face.ThresholdMax, face.ThresholdMax
+		face.ClusterRadius, face.MatchDist = face.AcceptDistMax, face.AcceptDistMax
 
-		m := &Face{SampleRadius: face.ThresholdMax}
+		m := &Face{SampleRadius: face.AcceptDistMax}
 		assert.InDelta(t, face.AcceptDistMax, m.AcceptDist(), 1e-9)
 	})
 }
