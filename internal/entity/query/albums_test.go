@@ -138,6 +138,37 @@ func TestUpdateAlbumDates(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, 0, actual)
 	})
+	t.Run("ZeroDay", func(t *testing.T) {
+		// A stored day of 0 must be repaired even when it would resolve to the newest
+		// picture date if the components were normalized rather than rejected.
+		album := entity.Album{
+			AlbumUID: "as6sg6bxpogaabz1", AlbumType: entity.AlbumFolder,
+			AlbumTitle: "Zero Day", AlbumSlug: "zero-day-album", AlbumPath: "1990/03",
+			AlbumYear: 1990, AlbumMonth: 4, AlbumDay: 0,
+		}
+		require.NoError(t, entity.UnscopedDb().Create(&album).Error)
+		photo := entity.Photo{
+			PhotoUID:     "ps6sg6bxpogaabz1",
+			PhotoName:    "zerodayalbum",
+			PhotoPath:    "1990/03",
+			TakenAt:      time.Date(1990, 3, 31, 9, 0, 0, 0, time.UTC),
+			TakenAtLocal: time.Date(1990, 3, 31, 9, 0, 0, 0, time.UTC),
+			TakenSrc:     entity.SrcMeta,
+			PhotoQuality: 3,
+		}
+		require.NoError(t, entity.UnscopedDb().Create(&photo).Error)
+		defer func() {
+			require.NoError(t, entity.UnscopedDb().Exec("DELETE FROM albums WHERE album_uid = ?", "as6sg6bxpogaabz1").Error)
+			require.NoError(t, entity.UnscopedDb().Exec("DELETE FROM photos WHERE photo_uid = ?", "ps6sg6bxpogaabz1").Error)
+			require.NoError(t, entity.Db().Save(entity.AlbumFixtures.Pointer("april-1990")).Error)
+		}()
+		_, err := UpdateAlbumDates()
+		require.NoError(t, err)
+		actual := entity.FindAlbum(entity.Album{AlbumUID: "as6sg6bxpogaabz1"})
+		assert.Equal(t, 1990, actual.AlbumYear)
+		assert.Equal(t, 3, actual.AlbumMonth)
+		assert.Equal(t, 31, actual.AlbumDay)
+	})
 	t.Run("MaxWithTimeOffset", func(t *testing.T) {
 		album := entity.FindAlbum(entity.Album{AlbumUID: entity.AlbumFixtures.Get("april-1990").AlbumUID})
 		assert.Equal(t, 11, album.AlbumDay)

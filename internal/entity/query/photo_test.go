@@ -327,11 +327,25 @@ func TestFlagHiddenPhotos(t *testing.T) {
 	})
 }
 
+// qualifyingPhotoPaths returns the distinct photo paths photoPathMaxDates is expected to
+// report, so the assertions below track the fixtures instead of a hard-coded total.
+func qualifyingPhotoPaths() map[string]bool {
+	paths := make(map[string]bool)
+
+	for _, photo := range entity.PhotoFixtures {
+		if (photo.DeletedAt == nil && photo.PhotoQuality >= 3 && photo.TakenSrc == entity.SrcMeta && photo.TakenAtLocal != time.Time{}) {
+			paths[photo.PhotoPath] = true
+		}
+	}
+
+	return paths
+}
+
 func TestPhotoPathMaxDates(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		p, err := photoPathMaxDates()
 		require.NoError(t, err)
-		assert.Equal(t, 35, len(p))
+		assert.Equal(t, len(qualifyingPhotoPaths()), len(p))
 		minDate := entity.PhotoFixtures.Get("Photo03").TakenAtLocal
 		maxDate := entity.PhotoFixtures.Get("Photo55").TakenAtLocal
 		for path, d := range p {
@@ -354,9 +368,15 @@ func TestPhotoPathMaxDates(t *testing.T) {
 		bp.DeletedAt = nil
 		require.NoError(t, entity.UnscopedDb().Save(bp).Error)
 
+		// Saving Photo18 above adds its path to the reported set; the unreadable date below
+		// removes it again, since no other qualifying picture shares that path.
+		withoutPhoto18 := len(qualifyingPhotoPaths())
+		promoted := qualifyingPhotoPaths()
+		promoted[bp.PhotoPath] = true
+
 		p, err := photoPathMaxDates()
 		require.NoError(t, err)
-		assert.Equal(t, 36, len(p))
+		assert.Equal(t, len(promoted), len(p))
 
 		// Force the taken_at_local to return a NULL from MAX(DATE('RUBBISH'))
 		require.NoError(t, entity.UnscopedDb().Exec("UPDATE photos SET taken_at_local = 'RUBBISH' WHERE id = ?", bp.ID).Error)
@@ -366,7 +386,7 @@ func TestPhotoPathMaxDates(t *testing.T) {
 
 		p, err = photoPathMaxDates()
 		require.NoError(t, err)
-		assert.Equal(t, 35, len(p))
+		assert.Equal(t, withoutPhoto18, len(p))
 
 		minDate := entity.PhotoFixtures.Get("Photo03").TakenAtLocal
 		maxDate := entity.PhotoFixtures.Get("Photo55").TakenAtLocal
