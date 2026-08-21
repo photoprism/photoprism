@@ -3,6 +3,7 @@ package photoprism
 import (
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
@@ -79,6 +80,26 @@ func TestFaceCandidateMatch(t *testing.T) {
 			collisionRadius: face.CollisionDist * 2}
 		matched, _ := c.match(embeddings)
 		require.True(t, matched)
+	})
+	t.Run("OutsideCollisionRadius", func(t *testing.T) {
+		// A cluster that was separated from another by a collision keeps a narrowed radius,
+		// and honoring it during matching is what stops the two people re-merging. The
+		// subtest above only covers the accepting side of that gate.
+		other := face.RandomEmbeddings(1, face.RegularFace)
+		dist := minMarkerDistance(ref.Embedding(), other)
+		require.Positive(t, dist, "the two random faces must be far enough apart to test with")
+
+		c := faceCandidate{
+			ref:             ref,
+			emb:             ref.Embedding(),
+			acceptDist:      dist + 1,
+			collisionRadius: dist / 2,
+		}
+		require.Greater(t, c.collisionRadius, face.CollisionDist, "the gate only applies above the collision distance")
+
+		matched, got := c.match(other)
+		assert.False(t, matched, "a face beyond the collision radius must be refused")
+		assert.InDelta(t, dist, got, 1e-9)
 	})
 	t.Run("NoEmbeddings", func(t *testing.T) {
 		c := faceCandidate{ref: ref, emb: ref.Embedding(), acceptDist: face.AcceptDist(0)}

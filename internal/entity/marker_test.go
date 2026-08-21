@@ -782,3 +782,32 @@ func TestMarker_String(t *testing.T) {
 		assert.Equal(t, "Jens Mander", m.String())
 	})
 }
+
+func TestMarker_SetEmbeddings(t *testing.T) {
+	t.Run("RecordsTheProducingModel", func(t *testing.T) {
+		// Provenance is what keeps two embedding spaces apart. A vector stored without it
+		// reads as legacy FaceNet and would be admitted into FaceNet clusters whatever
+		// model actually produced it.
+		m := &Marker{MarkerType: MarkerFace}
+		m.SetEmbeddings(face.Embeddings{face.RandomEmbedding()}, face.ModelSFace)
+
+		assert.Equal(t, face.ModelSFace, m.EmbedModel)
+		assert.NotEmpty(t, m.EmbeddingsJSON)
+		assert.False(t, m.Embeddings().Empty())
+	})
+	t.Run("EmptyClearsTheModel", func(t *testing.T) {
+		// A marker whose vector was cleared must not keep claiming a model, or a later
+		// migration counts it as already done.
+		m := &Marker{MarkerType: MarkerFace, EmbedModel: face.ModelSFace}
+		m.SetEmbeddings(face.Embeddings{}, face.ModelSFace)
+
+		assert.Empty(t, m.EmbedModel)
+	})
+	t.Run("ReplacesAPreviousModel", func(t *testing.T) {
+		m := &Marker{MarkerType: MarkerFace}
+		m.SetEmbeddings(face.Embeddings{face.RandomEmbedding()}, face.ModelFaceNet)
+		m.SetEmbeddings(face.Embeddings{face.RandomEmbedding()}, face.ModelSFace)
+
+		assert.Equal(t, face.ModelSFace, m.EmbedModel)
+	})
+}
