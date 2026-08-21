@@ -92,6 +92,9 @@ var FacesCommands = &cli.Command{
 var FacesMigrateCommand = &cli.Command{
 	Name:  "migrate",
 	Usage: "Migrates face embeddings to the configured model",
+	Description: "Stop the server before running this. The migration replaces every face cluster in " +
+		"one transaction, and its worker guards cannot see the indexing and matching that a running " +
+		"instance performs on the same rows.",
 	Flags: []cli.Flag{
 		&cli.StringFlag{
 			Name:  "to",
@@ -161,9 +164,15 @@ func facesMigrateAction(ctx *cli.Context) error {
 			return nil
 		}
 
+		// The worker guards in Migrate are process-local, so they cannot see a server that
+		// is indexing or matching the same rows. Stopping it is the operator's job, and the
+		// prompt is the last point at which saying so still helps.
+		log.Warnf("faces: stop the server before continuing, as this replaces every face cluster " +
+			"and cannot detect an instance that is still writing to the index")
+
 		if !RunNonInteractively(ctx.Bool("yes")) {
 			prompt := promptui.Prompt{
-				Label:     fmt.Sprintf("Migrate all face embeddings to %s?", plan.Target),
+				Label:     fmt.Sprintf("Migrate all face embeddings to %s, with the server stopped?", plan.Target),
 				IsConfirm: true,
 			}
 			if _, promptErr := prompt.Run(); promptErr != nil {

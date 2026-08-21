@@ -56,3 +56,13 @@ func TestFacesMigrateAction(t *testing.T) {
 		assert.Contains(t, err.Error(), "cannot migrate to disabled embeddings")
 	})
 }
+
+func TestFacesMigrateCommand(t *testing.T) {
+	t.Run("DescribesTheServerConstraint", func(t *testing.T) {
+		// The worker guards are process-local, so the operator is the only thing that can
+		// keep a running instance away from the rows being replaced. "photoprism help" has
+		// to say so, because nothing in the code can enforce it.
+		assert.Contains(t, FacesMigrateCommand.Description, "Stop the server")
+		assert.NotEmpty(t, FacesMigrateCommand.Usage)
+	})
+}
