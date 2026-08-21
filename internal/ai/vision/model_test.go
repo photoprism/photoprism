@@ -1,11 +1,13 @@
 package vision
 
 import (
+	"bytes"
 	"os"
 	"path/filepath"
 	"sync"
 	"testing"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -520,6 +522,32 @@ func TestModel_FaceModel(t *testing.T) {
 		t.Cleanup(func() { face.UseEmbedder(prev) })
 
 		assert.Equal(t, embedder, (&Model{Name: "facenet", Type: ModelTypeFace}).FaceModel())
+	})
+	t.Run("CustomModelDeprecated", func(t *testing.T) {
+		// FACE_MODEL decides which model produces embeddings, so a custom face entry has
+		// to say it is on the way out rather than look like a supported way to configure
+		// one. Selecting it is what the operator would otherwise never be told about.
+		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
+			Name:  face.ModelFaceNet,
+			Model: face.FindEmbeddingModel(face.ModelFaceNet),
+		}))
+
+		prev := face.UseEmbedder(nil)
+		t.Cleanup(func() { face.UseEmbedder(prev) })
+
+		logger, ok := log.(*logrus.Logger)
+		require.True(t, ok)
+
+		originalOutput := logger.Out
+		buffer := &bytes.Buffer{}
+		logger.SetOutput(buffer)
+		t.Cleanup(func() { logger.SetOutput(originalOutput) })
+
+		(&Model{Name: "custom-face-net", Type: ModelTypeFace}).FaceModel()
+
+		assert.Contains(t, buffer.String(), "custom-face-net")
+		assert.Contains(t, buffer.String(), "deprecated")
+		assert.Contains(t, buffer.String(), "FACE_MODEL")
 	})
 	t.Run("NilModel", func(t *testing.T) {
 		assert.Nil(t, (*Model)(nil).FaceModel())

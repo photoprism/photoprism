@@ -757,6 +757,14 @@ func (m *Model) FaceModel() face.Embedder {
 			m.faceModel = model
 		}
 	default:
+		// FACE_MODEL is authoritative for which model produces embeddings, and every
+		// supported one needs code that knows its preprocessing contract, so there is
+		// nothing useful to configure per installation here. Loading it anyway keeps an
+		// existing vision.yml working, but its vectors are recorded under the configured
+		// model's name rather than this one.
+		log.Warnf("vision: custom face model %s in vision.yml is deprecated, select a model with FACE_MODEL instead",
+			clean.Log(m.Name))
+
 		// Set model path from model name if no path is configured.
 		if m.Path == "" {
 			m.Path = clean.Path(clean.TypeLowerUnderscore(m.Name))

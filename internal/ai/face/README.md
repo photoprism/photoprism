@@ -216,10 +216,20 @@ Recovery steps:
 | `FACE_SCORE`          | `9.0` (with dynamic offsets)                                                     | Base quality threshold before scale adjustments.                                                |
 | `FACE_OVERLAP`        | `42`                                                                             | Maximum allowed IoU when deduplicating markers.                                                 |
 
+`FACE_MODEL` is authoritative for which model produces embeddings. A `face` entry in `vision.yml` schedules detection and embedding through its `Run` value, but a **custom face model configured there is deprecated**: it is still loaded while no embedding model is active, it logs a warning, and its vectors are recorded under the configured model's name rather than its own. Every supported face model needs code that knows its preprocessing contract, so there is nothing useful to configure per installation the way a caption or label model can be.
+
 Run scheduling is configured through the face model entry in `vision.yml`. Adjust the model’s `Run` value (for example `on-schedule`, `manual`, or `never`) to control when detection and embedding jobs execute—no separate `FACE_ENGINE_RUN` flag is required.
 When the model is left on the default `auto` run mode, face detection participates in manual, auto, and on-demand workflows but skips scheduled cron runs so background jobs do not trigger unexpectedly; the same applies to an explicit `on-demand` run mode, which now skips cron executions by default. Set `Run` to `on-schedule` explicitly if you want faces processed during scheduled vision passes.
 
 > Additional merge tuning: set `PHOTOPRISM_FACE_MERGE_MAX_RETRY` to control how often manual clusters are retried (default 1, `0` = unlimited). See the optimizer notes above.
+
+### Breaking Changes
+
+Collected here so they can be turned into release notes rather than rediscovered.
+
+- **`--face-skip-children` and `--face-allow-background` are removed**, together with `PHOTOPRISM_FACE_SKIP_CHILDREN` and `PHOTOPRISM_FACE_ALLOW_BACKGROUND`. The environment variables are ignored silently, and both options were `yaml:"-"`, so an `options.yml` carrying them is unaffected. A Compose `command:` line that still passes either **flag** fails to start, because unknown flags are rejected. The flags existed for development rather than for tuning a library.
+- **The out-of-distribution background filter is gone**, and it was enabled by default (`IgnoreBackground` defaulted to true) for every existing FaceNet library. Removing it is required rather than optional: it compared each embedding against bundled FaceNet-space reference vectors, so under any model of a different width every face would have been classified as background and matching would have stopped library-wide. The child filter it is paired with was already inert. Measured under FaceNet with both forced on, neither fired.
+- **A custom face model in `vision.yml` is deprecated** in favor of `FACE_MODEL` — see § Configuration Summary. It still works and warns.
 
 ### Benchmark Reference
 
