@@ -266,6 +266,8 @@ func TestBuildFaceMigrationClusters(t *testing.T) {
 			MarkerType:     entity.MarkerFace,
 			SubjUID:        subjectUID,
 			SubjSrc:        subjSrc,
+			Size:           face.ClusterSizeThreshold + 10,
+			Score:          face.ClusterScoreThreshold + 10,
 			EmbedModel:     target,
 			EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
 			W:              0.1,
@@ -280,9 +282,10 @@ func TestBuildFaceMigrationClusters(t *testing.T) {
 	manual := newMarker(entity.SrcManual)
 	automatic := newMarker(entity.SrcAuto)
 
-	result, rebuilt, err := buildFaceMigrationClusters(target)
+	result, rebuilt, excluded, err := buildFaceMigrationClusters(target)
 	require.NoError(t, err)
 	assert.Equal(t, rebuilt, len(result))
+	assert.GreaterOrEqual(t, excluded, 0)
 
 	var cluster *query.FaceMigrationCluster
 	for i := range result {
@@ -297,7 +300,7 @@ func TestBuildFaceMigrationClusters(t *testing.T) {
 	assert.Contains(t, cluster.MarkerDistances, automatic.MarkerUID)
 	assert.Equal(t, 2, cluster.Face.Samples)
 
-	_, _, err = buildFaceMigrationClusters("unknown")
+	_, _, _, err = buildFaceMigrationClusters("unknown")
 	require.Error(t, err)
 }
 
@@ -348,6 +351,26 @@ func TestFaces_migratePlan(t *testing.T) {
 	})
 }
 
+func TestManualSubjectAssignment(t *testing.T) {
+	t.Run("Manual", func(t *testing.T) {
+		assert.True(t, manualSubjectAssignment(entity.SrcManual))
+	})
+	t.Run("Automatic", func(t *testing.T) {
+		// What the previous model decided is what the outlier rule is looking for.
+		assert.False(t, manualSubjectAssignment(entity.SrcAuto))
+	})
+	t.Run("Xmp", func(t *testing.T) {
+		// XMP names never seed a shared face either, so they follow the automatic rule.
+		assert.False(t, manualSubjectAssignment(entity.SrcXmp))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.False(t, manualSubjectAssignment(""))
+	})
+	t.Run("Image", func(t *testing.T) {
+		assert.True(t, manualSubjectAssignment(entity.SrcImage))
+	})
+}
+
 func TestCentroidSamples(t *testing.T) {
 	registered := face.FindEmbeddingModel(face.ModelSFace)
 	require.NotNil(t, registered)
@@ -378,7 +401,8 @@ func TestCentroidSamples(t *testing.T) {
 		outlier := marker(far())
 		group := entity.Markers{marker(near(0)), marker(near(1)), marker(near(2)), outlier}
 
-		kept := centroidSamples(group, registered, "jsubject00000001")
+		kept, dropped := centroidSamples(group, registered, "jsubject00000001")
+		assert.Equal(t, 1, dropped)
 		assert.Len(t, kept, 3)
 		for _, m := range kept {
 			assert.NotEqual(t, outlier.MarkerUID, m.MarkerUID, "the outlier must not define the centroid")
@@ -386,12 +410,15 @@ func TestCentroidSamples(t *testing.T) {
 	})
 	t.Run("KeepsAgreeingGroup", func(t *testing.T) {
 		group := entity.Markers{marker(near(0)), marker(near(1)), marker(near(2))}
-		assert.Len(t, centroidSamples(group, registered, "jsubject00000002"), 3)
+		kept, dropped := centroidSamples(group, registered, "jsubject00000002")
+		assert.Len(t, kept, 3)
+		assert.Zero(t, dropped)
 	})
 	t.Run("TooFewToJudge", func(t *testing.T) {
 		// Two samples have no majority to appeal to, so neither is treated as the outlier.
 		group := entity.Markers{marker(near(0)), marker(far())}
-		assert.Len(t, centroidSamples(group, registered, "jsubject00000003"), 2)
+		kept, _ := centroidSamples(group, registered, "jsubject00000003")
+		assert.Len(t, kept, 2)
 	})
 	t.Run("AllScattered", func(t *testing.T) {
 		// Nothing agrees with the midpoint, so there is no signal to separate from noise.
@@ -401,7 +428,39 @@ func TestCentroidSamples(t *testing.T) {
 			v[i*8] = 1
 			group = append(group, marker(v))
 		}
-		assert.Len(t, centroidSamples(group, registered, "jsubject00000004"), 4)
+		kept, _ := centroidSamples(group, registered, "jsubject00000004")
+		assert.Len(t, kept, 4)
+	})
+	t.Run("KeepsManualOutlier", func(t *testing.T) {
+		// Hand-named faces are concentrated on what embedding matching handles worst, so a
+		// long distance measures the model rather than the assignment. Dropping the sample
+		// would take away the width the cluster needs to reach that face.
+		outlier := marker(far())
+		outlier.SubjSrc = entity.SrcManual
+		group := entity.Markers{marker(near(0)), marker(near(1)), marker(near(2)), outlier}
+
+		kept, dropped := centroidSamples(group, registered, "jsubject00000006")
+
+		assert.Len(t, kept, 4, "a hand-set assignment is exempt from the outlier distance")
+		assert.Zero(t, dropped)
+	})
+	t.Run("DropsManualBeyondAbsoluteBound", func(t *testing.T) {
+		// Past the ceiling a vector is no closer to this person than a random one, so it
+		// contributes noise whoever assigned it.
+		opposite := make([]float32, registered.Dims)
+		opposite[0] = -1
+
+		outlier := marker(opposite)
+		outlier.SubjSrc = entity.SrcManual
+		group := entity.Markers{marker(near(0)), marker(near(1)), marker(near(2)), outlier}
+
+		kept, dropped := centroidSamples(group, registered, "jsubject00000007")
+
+		require.Len(t, kept, 3, "the absolute bound applies to every source")
+		assert.Equal(t, 1, dropped)
+		for _, m := range kept {
+			assert.NotEqual(t, outlier.MarkerUID, m.MarkerUID)
+		}
 	})
 	t.Run("SkipsIncomparableWidth", func(t *testing.T) {
 		// Embeddings.Dist reports -1 when nothing is comparable, which must not read as
@@ -411,7 +470,7 @@ func TestCentroidSamples(t *testing.T) {
 
 		group := entity.Markers{marker(near(0)), marker(near(1)), marker(near(2)), odd}
 
-		kept := centroidSamples(group, registered, "jsubject00000005")
+		kept, _ := centroidSamples(group, registered, "jsubject00000005")
 		assert.Len(t, kept, 3)
 		for _, m := range kept {
 			assert.NotEqual(t, odd.MarkerUID, m.MarkerUID, "an incomparable vector is not a sample")

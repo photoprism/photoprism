@@ -128,6 +128,12 @@ func facesMigrateAction(ctx *cli.Context) error {
 			"faces: %d markers are assigned to a person and keep that assignment",
 			plan.AssignedMarkers,
 		)
+		// A face too small or too poorly scored to be clustered cannot define a centroid
+		// either, so a library of mostly small faces rebuilds from less than it looks like.
+		if plan.LowQualitySamples > 0 {
+			log.Infof("faces: %d of those are too small or too low-scoring to seed a cluster",
+				plan.LowQualitySamples)
+		}
 		// Ready tells an operator that a re-run has nothing left to do, and unlinked
 		// markers are cleared by every run regardless of how the migration goes.
 		log.Infof(
@@ -192,6 +198,12 @@ func facesMigrateAction(ctx *cli.Context) error {
 			result.PreservedSubjects, result.PreservedMarkers, result.HiddenClusters,
 			result.RebuiltSubjects, result.AttentionSubjects,
 		)
+		// Excluded assignments keep their person but seed no cluster, so the count is what
+		// tells an operator how much of a curated library did not shape its own centroids.
+		if result.ExcludedMarkers > 0 || result.LowQualityMarkers > 0 {
+			log.Infof("faces: %d assignment(s) were left out of a cluster as outliers, and %d as too low-quality to seed one",
+				result.ExcludedMarkers, result.LowQualityMarkers)
+		}
 
 		if migrateErr != nil {
 			return cli.Exit(migrateErr.Error(), 1)

@@ -2,6 +2,7 @@ package query
 
 import (
 	"path/filepath"
+	"sort"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -141,7 +142,7 @@ func TestFaceMigrationIdentities(t *testing.T) {
 func TestFaceMigrationSubjectMarkers(t *testing.T) {
 	// An automatic assignment is what the old model recorded about a person, not about
 	// its own embedding space, so it has to seed the replacement cluster as well.
-	newMarker := func(subjUID, subjSrc string) *entity.Marker {
+	newMarker := func(subjUID, subjSrc string, size, score int) *entity.Marker {
 		m := &entity.Marker{
 			MarkerUID:      rnd.GenerateUID('m'),
 			FileUID:        "fs6sg6bw45bnlqdw",
@@ -149,6 +150,8 @@ func TestFaceMigrationSubjectMarkers(t *testing.T) {
 			MarkerSrc:      entity.SrcImage,
 			SubjUID:        subjUID,
 			SubjSrc:        subjSrc,
+			Size:           size,
+			Score:          score,
 			EmbedModel:     face.ModelFaceNet,
 			EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
 			W:              0.1,
@@ -160,12 +163,17 @@ func TestFaceMigrationSubjectMarkers(t *testing.T) {
 		return m
 	}
 
-	subjUID := rnd.GenerateUID('j')
-	manual := newMarker(subjUID, entity.SrcManual)
-	automatic := newMarker(subjUID, entity.SrcAuto)
-	unassigned := newMarker("", entity.SrcAuto)
+	good := face.ClusterSizeThreshold + 10
+	goodScore := face.ClusterScoreThreshold + 10
 
-	result, err := FaceMigrationSubjectMarkers(face.ModelFaceNet)
+	subjUID := rnd.GenerateUID('j')
+	manual := newMarker(subjUID, entity.SrcManual, good, goodScore)
+	automatic := newMarker(subjUID, entity.SrcAuto, good, goodScore)
+	tiny := newMarker(subjUID, entity.SrcManual, face.ClusterSizeThreshold-1, goodScore)
+	faint := newMarker(subjUID, entity.SrcManual, good, face.ClusterScoreThreshold-1)
+	other := newMarker(rnd.GenerateUID('j'), entity.SrcAuto, good, goodScore)
+
+	result, err := FaceMigrationSubjectMarkers(face.ModelFaceNet, subjUID)
 	require.NoError(t, err)
 
 	found := make(map[string]bool, len(result))
@@ -174,10 +182,34 @@ func TestFaceMigrationSubjectMarkers(t *testing.T) {
 	}
 	assert.True(t, found[manual.MarkerUID], "manual marker must seed the cluster")
 	assert.True(t, found[automatic.MarkerUID], "automatic marker must seed the cluster")
-	assert.False(t, found[unassigned.MarkerUID], "marker without a subject must be excluded")
+	// A face too small or too poorly scored to be clustered cannot define a centroid
+	// either, whoever assigned it.
+	assert.False(t, found[tiny.MarkerUID], "a face below the cluster size must not seed one")
+	assert.False(t, found[faint.MarkerUID], "a face below the cluster score must not seed one")
+	assert.False(t, found[other.MarkerUID], "another subject's marker must not be returned")
 
-	_, err = FaceMigrationSubjectMarkers("")
+	_, err = FaceMigrationSubjectMarkers("", subjUID)
 	require.Error(t, err)
+	_, err = FaceMigrationSubjectMarkers(face.ModelFaceNet, "")
+	require.Error(t, err)
+
+	t.Run("SubjectUIDs", func(t *testing.T) {
+		uids, uidErr := FaceMigrationSubjectUIDs(face.ModelFaceNet)
+		require.NoError(t, uidErr)
+		assert.Contains(t, uids, subjUID)
+		assert.True(t, sort.StringsAreSorted(uids), "subjects are paged in order")
+
+		_, uidErr = FaceMigrationSubjectUIDs("")
+		require.Error(t, uidErr)
+	})
+	t.Run("LowQualityMarkers", func(t *testing.T) {
+		count, countErr := FaceMigrationLowQualityMarkers(face.ModelFaceNet)
+		require.NoError(t, countErr)
+		assert.GreaterOrEqual(t, count, 2, "the tiny and faint markers are counted")
+
+		_, countErr = FaceMigrationLowQualityMarkers("")
+		require.Error(t, countErr)
+	})
 }
 
 func TestSaveFaceMigrationEmbeddings(t *testing.T) {

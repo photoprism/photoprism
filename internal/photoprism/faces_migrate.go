@@ -45,6 +45,10 @@ type FacesMigratePlan struct {
 	FaceModels      []query.EmbeddingModelCount
 	Subjects        int
 	AssignedMarkers int
+
+	// LowQualitySamples counts assignments too small or too poorly scored to seed a
+	// replacement centroid. They keep their person; they just cannot define one.
+	LowQualitySamples int
 }
 
 // FacesMigrateResult summarizes a completed face embedding migration.
@@ -60,6 +64,8 @@ type FacesMigrateResult struct {
 	PreservedMarkers  int
 	HiddenClusters    int
 	RebuiltSubjects   int
+	ExcludedMarkers   int
+	LowQualityMarkers int
 	AttentionSubjects int
 }
 
@@ -199,6 +205,10 @@ func (w *Faces) PlanMigration(target string) (result FacesMigratePlan, err error
 
 	result.Subjects, result.AssignedMarkers = faceMigrationSubjectCounts(identities)
 
+	if result.LowQualitySamples, err = query.FaceMigrationLowQualityMarkers(target); err != nil {
+		return result, err
+	}
+
 	return result, nil
 }
 
@@ -257,6 +267,7 @@ func (w *Faces) Migrate(ctx context.Context, opt FacesMigrateOptions) (result Fa
 	result.Invalid = plan.Markers.Invalid
 	result.PreservedSubjects = plan.Subjects
 	result.PreservedMarkers = plan.AssignedMarkers
+	result.LowQualityMarkers = plan.LowQualitySamples
 
 	if opt.DryRun {
 		return result, nil
@@ -351,11 +362,12 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 		log.Warnf("faces: finalizing the migration anyway because %s", reason)
 	}
 
-	clusters, rebuilt, clusterErr := buildFaceMigrationClusters(plan.Target)
+	clusters, rebuilt, excluded, clusterErr := buildFaceMigrationClusters(plan.Target)
 	if clusterErr != nil {
 		return result, clusterErr
 	}
 	result.RebuiltSubjects = rebuilt
+	result.ExcludedMarkers = excluded
 	result.AttentionSubjects = max(result.PreservedSubjects-result.RebuiltSubjects, 0)
 
 	// Any failure here rolls the whole finalize back, so the clusters are still the old
@@ -606,38 +618,49 @@ func markerCropArea(marker entity.Marker) crop.Area {
 }
 
 // buildFaceMigrationClusters creates one replacement cluster per identified subject,
-// seeded from every marker assigned to it so the cluster keeps its original width.
-func buildFaceMigrationClusters(model string) (result []query.FaceMigrationCluster, rebuilt int, err error) {
-	markers, err := query.FaceMigrationSubjectMarkers(model)
-	if err != nil {
-		return result, 0, err
-	}
+// seeded from the assignments that agree with their own midpoint, and reports how many
+// were left out.
+//
+// Subjects are rebuilt one at a time so that the embedding blobs of a whole library never
+// have to be resident at once, matching the batching the re-embedding loop already uses.
+func buildFaceMigrationClusters(model string) (result []query.FaceMigrationCluster, rebuilt, excluded int, err error) {
 	registered := face.FindEmbeddingModel(model)
 	if registered == nil {
-		return result, 0, fmt.Errorf("faces: unsupported migration model %s", clean.Log(model))
+		return result, 0, 0, fmt.Errorf("faces: unsupported migration model %s", clean.Log(model))
 	}
 
-	groups := make(map[string]entity.Markers)
-	for _, marker := range markers {
-		if face.ValidEmbeddings(marker.Embeddings(), registered.Dims) {
-			groups[marker.SubjUID] = append(groups[marker.SubjUID], marker)
-		}
+	subjectUIDs, err := query.FaceMigrationSubjectUIDs(model)
+	if err != nil {
+		return result, 0, 0, err
 	}
-
-	subjectUIDs := make([]string, 0, len(groups))
-	for subjectUID := range groups {
-		subjectUIDs = append(subjectUIDs, subjectUID)
-	}
-	sort.Strings(subjectUIDs)
 
 	for _, subjectUID := range subjectUIDs {
-		group := centroidSamples(groups[subjectUID], registered, subjectUID)
-		embeddings := make(face.Embeddings, 0, len(group))
-		for _, marker := range group {
+		markers, markerErr := query.FaceMigrationSubjectMarkers(model, subjectUID)
+		if markerErr != nil {
+			return result, rebuilt, excluded, markerErr
+		}
+
+		group := make(entity.Markers, 0, len(markers))
+		for _, marker := range markers {
+			if face.ValidEmbeddings(marker.Embeddings(), registered.Dims) {
+				group = append(group, marker)
+			}
+		}
+
+		if len(group) == 0 {
+			continue
+		}
+
+		samples, dropped := centroidSamples(group, registered, subjectUID)
+		excluded += dropped
+
+		embeddings := make(face.Embeddings, 0, len(samples))
+		for _, marker := range samples {
 			if values := marker.Embeddings(); values.One() {
 				embeddings = append(embeddings, values[0])
 			}
 		}
+
 		if len(embeddings) == 0 {
 			continue
 		}
@@ -648,26 +671,41 @@ func buildFaceMigrationClusters(model string) (result []query.FaceMigrationClust
 			continue
 		}
 
-		distances := make(map[string]float64, len(group))
-		for _, marker := range group {
+		distances := make(map[string]float64, len(samples))
+		for _, marker := range samples {
 			distances[marker.MarkerUID] = marker.Embeddings().Dist(cluster.Embedding())
 		}
+
 		result = append(result, query.FaceMigrationCluster{Face: *cluster, MarkerDistances: distances})
 		rebuilt++
 	}
 
-	return result, rebuilt, nil
+	return result, rebuilt, excluded, nil
 }
 
-// centroidSamples returns the markers that may define a subject's replacement cluster,
-// dropping the ones a provisional centroid built from all of them disagrees with.
+// manualSubjectAssignment reports whether a person set this marker's subject rather than
+// the matcher. Auto- and XMP-sourced assignments are the ones a previous model may have got
+// wrong, which is what the outlier rule is looking for.
+func manualSubjectAssignment(subjSrc string) bool {
+	return subjSrc != "" && subjSrc != entity.SrcAuto && subjSrc != entity.SrcXmp
+}
+
+// centroidSamples returns the markers that may define a subject's replacement cluster, and
+// how many assignments were left out of it.
 //
 // An assignment the previous model got wrong would otherwise help shape the new centroid
-// and widen it enough to attract further wrong faces. The outliers keep their assignment;
-// they are only excluded from the samples, so nothing a person set is discarded here.
-func centroidSamples(group entity.Markers, registered *face.EmbeddingModel, subjectUID string) entity.Markers {
+// and widen it enough to attract further wrong faces. Outliers keep their assignment; they
+// are only excluded from the samples, so nothing a person set is discarded here.
+//
+// A hand-set assignment is exempt from the ordinary outlier distance. Those are
+// concentrated on small children, unusual angles and lens distortion - the cases embedding
+// matching handles worst, which is why a person had to name them - so distance from the
+// centroid measures the model rather than the assignment, and dropping the sample removes
+// the width the cluster needs to reach that face. Every source is still held to the
+// absolute bound, past which a vector says nothing about anyone.
+func centroidSamples(group entity.Markers, registered *face.EmbeddingModel, subjectUID string) (kept entity.Markers, excluded int) {
 	if len(group) < 3 {
-		return group
+		return group, 0
 	}
 
 	embeddings := make(face.Embeddings, 0, len(group))
@@ -679,29 +717,35 @@ func centroidSamples(group entity.Markers, registered *face.EmbeddingModel, subj
 
 	midpoint, _, _ := face.EmbeddingsMidpoint(embeddings)
 	if len(midpoint) == 0 {
-		return group
+		return group, 0
 	}
 
-	// Embeddings.Dist reports -1 when nothing is comparable, which would otherwise read as
-	// the closest possible sample, so only a non-negative distance can be inside.
-	kept := make(entity.Markers, 0, len(group))
+	kept = make(entity.Markers, 0, len(group))
+
 	for _, marker := range group {
-		if d := marker.Embeddings().Dist(midpoint); d >= 0 && d <= registered.ClusterDist {
-			kept = append(kept, marker)
+		// Embeddings.Dist reports -1 when nothing is comparable, which would otherwise read
+		// as the closest possible sample.
+		switch d := marker.Embeddings().Dist(midpoint); {
+		case d < 0 || d > face.AcceptDistMax:
+			continue
+		case d > registered.ClusterDist && !manualSubjectAssignment(marker.SubjSrc):
+			continue
 		}
+
+		kept = append(kept, marker)
 	}
 
 	// Every sample disagreeing with their own midpoint means the assignments are too
 	// scattered to tell signal from outlier, so none of them is dropped.
 	if len(kept) < 2 {
-		return group
+		return group, 0
 	}
 
-	if dropped := len(group) - len(kept); dropped > 0 {
-		log.Infof("faces: excluded %d outlier(s) from the cluster of subject %s", dropped, clean.Log(subjectUID))
+	if excluded = len(group) - len(kept); excluded > 0 {
+		log.Infof("faces: excluded %d outlier(s) from the cluster of subject %s", excluded, clean.Log(subjectUID))
 	}
 
-	return kept
+	return kept, excluded
 }
 
 // migrationCanceled reports context and worker cancellation consistently between batches.

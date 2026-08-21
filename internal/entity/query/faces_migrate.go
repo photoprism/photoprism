@@ -190,23 +190,75 @@ func FaceMigrationIdentities() (result []FaceMigrationIdentity, err error) {
 	return result, err
 }
 
-// FaceMigrationSubjectMarkers returns successfully migrated markers grouped by subject.
+// whereFaceMigrationSamples restricts a statement to the markers that may seed a
+// replacement cluster: assigned to a subject, valid, on the target model, and good enough
+// that ordinary clustering would use them.
 //
-// Automatic assignments count as samples too: seeding a replacement cluster from the
-// manually named markers alone leaves it too narrow to re-accept the faces it already
-// held, which strands them in an unnamed cluster.
-func FaceMigrationSubjectMarkers(model string) (result entity.Markers, err error) {
+// The size and score bar is the one query.Embeddings and entity.Marker.Face() apply, so a
+// face too small or too poorly scored to be clustered cannot define a centroid either.
+func whereFaceMigrationSamples(stmt *gorm.DB, model string) *gorm.DB {
+	stmt = stmt.Where("marker_type = ? AND marker_invalid = 0", entity.MarkerFace).
+		Where("subj_uid <> ''").
+		Where("LENGTH(embeddings_json) > 0")
+
+	if face.ClusterSizeThreshold > 0 {
+		stmt = stmt.Where("size >= ?", face.ClusterSizeThreshold)
+	}
+
+	if face.ClusterScoreThreshold > 0 {
+		stmt = stmt.Where("score >= ?", face.ClusterScoreThreshold)
+	}
+
+	return whereEmbeddingModel(stmt, model)
+}
+
+// FaceMigrationSubjectUIDs returns the subjects whose markers can seed a replacement
+// cluster, ordered so that a rebuild can work through them one at a time.
+func FaceMigrationSubjectUIDs(model string) (result []string, err error) {
 	if model == "" {
 		return result, fmt.Errorf("faces: migration model is required")
 	}
 
-	err = whereEmbeddingModel(Db().
-		Where("marker_type = ? AND marker_invalid = 0", entity.MarkerFace).
-		Where("subj_uid <> ''").
-		Where("LENGTH(embeddings_json) > 0"), model).
-		Order("subj_uid, marker_uid").Find(&result).Error
+	err = whereFaceMigrationSamples(Db().Model(&entity.Marker{}), model).
+		Group("subj_uid").Order("subj_uid").Pluck("subj_uid", &result).Error
 
 	return result, err
+}
+
+// FaceMigrationSubjectMarkers returns one subject's successfully migrated markers.
+//
+// Automatic assignments count as samples too: seeding a replacement cluster from the
+// manually named markers alone leaves it too narrow to re-accept the faces it already
+// held, which strands them in an unnamed cluster. One subject at a time, because the
+// embedding blobs of a whole library do not have to be resident to rebuild a centroid.
+func FaceMigrationSubjectMarkers(model, subjUID string) (result entity.Markers, err error) {
+	if model == "" {
+		return result, fmt.Errorf("faces: migration model is required")
+	} else if subjUID == "" {
+		return result, fmt.Errorf("faces: migration subject is required")
+	}
+
+	err = whereFaceMigrationSamples(Db().Where("subj_uid = ?", subjUID), model).
+		Order("marker_uid").Find(&result).Error
+
+	return result, err
+}
+
+// FaceMigrationLowQualityMarkers returns how many markers the quality bar keeps out of the
+// replacement centroids, so a run that seeds from very little can say why.
+func FaceMigrationLowQualityMarkers(model string) (count int, err error) {
+	if model == "" {
+		return 0, fmt.Errorf("faces: migration model is required")
+	}
+
+	err = whereEmbeddingModel(Db().Model(&entity.Marker{}).
+		Where("marker_type = ? AND marker_invalid = 0", entity.MarkerFace).
+		Where("subj_uid <> ''").
+		Where("LENGTH(embeddings_json) > 0").
+		Where("size < ? OR score < ?", face.ClusterSizeThreshold, face.ClusterScoreThreshold), model).
+		Count(&count).Error
+
+	return count, err
 }
 
 // SaveFaceMigrationEmbeddings checkpoints generated embeddings for a single file.
