@@ -462,19 +462,19 @@ func (c *Config) CloseDb() error {
 	return nil
 }
 
-// IsDbOpen determines if the database is available to use
+// IsDbOpen reports whether the database is connected and responding.
 func (c *Config) IsDbOpen() bool {
 	if c.db == nil {
-		log.Debug("isdbopen: c.db == nil")
+		log.Debug("config: database not connected")
 		return false
-	} else {
-		if sqlErr := c.db.DB().Ping(); sqlErr != nil {
-			log.Errorf("isdbopen: Ping err = %+v", sqlErr)
-			return false
-		} else {
-			return true
-		}
 	}
+
+	if err := c.db.DB().Ping(); err != nil {
+		log.Debugf("config: database not available (%s)", err)
+		return false
+	}
+
+	return true
 }
 
 // SetDbOptions sets the database collation to unicode if supported.
