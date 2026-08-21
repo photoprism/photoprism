@@ -26,13 +26,13 @@ The detector also returns five facial landmarks, which `engine_onnx.go` decodes 
 
 `FACE_MODEL` selects the model that turns a face crop into a vector, independently of the detector. Supported models are registered in `models.go`, so the CLI help and config report are generated from one source. Each entry carries the embedding length, alignment mode, and distance thresholds; its artifact and preprocessing contract — file, checksum, license, input geometry, channel order, normalization, resize convention, and output width — live in the `onnx.ModelInfo` that every subsystem running an ONNX model shares (see `internal/ai/onnx/README.md`).
 
-| Model         | Runtime    | Dim | Input   | Alignment | Weights | License       | Installed By                  |
-|:--------------|:-----------|----:|:--------|:----------|--------:|:--------------|:------------------------------|
-| `facenet`     | TensorFlow | 512 | 160×160 | box crop  |   92 MB | unknown       | `make dep-models`             |
-| `sface`       | ONNX       | 128 | 112×112 | ArcFace-5 |   39 MB | Apache-2.0    | `make dep-models`             |
-| `auraface`    | ONNX       | 512 | 112×112 | ArcFace-5 |  261 MB | Apache-2.0    | `download-models.sh auraface` |
-| `arcface_r50` | ONNX       | 512 | 112×112 | ArcFace-5 |  174 MB | research-only | `scripts/download-arcface.sh` |
-| `arcface_mbf` | ONNX       | 512 | 112×112 | ArcFace-5 |   14 MB | research-only | `scripts/download-arcface.sh` |
+| Model         | Runtime    | Dim | Input   | Alignment | Weights | License       | Installed By                               |
+|:--------------|:-----------|----:|:--------|:----------|--------:|:--------------|:-------------------------------------------|
+| `facenet`     | TensorFlow | 512 | 160×160 | box crop  |   92 MB | unknown       | `make dep-models`                          |
+| `sface`       | ONNX       | 128 | 112×112 | ArcFace-5 |   39 MB | Apache-2.0    | `make dep-models`                          |
+| `auraface`    | ONNX       | 512 | 112×112 | ArcFace-5 |  261 MB | Apache-2.0    | `scripts/dist/download-models.sh auraface` |
+| `arcface_r50` | ONNX       | 512 | 112×112 | ArcFace-5 |  174 MB | research-only | `scripts/download-arcface.sh`              |
+| `arcface_mbf` | ONNX       | 512 | 112×112 | ArcFace-5 |   14 MB | research-only | `scripts/download-arcface.sh`              |
 
 `auto` asks the library before it consults `face.AutoModelPreference`. It reads the recorded provenance of the stored face vectors and keeps whichever model produced most of them, because resolving to a different one would leave those clusters incomparable with everything indexed afterwards; only a library with no vectors follows the preference list, which starts with `sface`. Upgrading an existing installation therefore never changes its embedding space on its own — moving to another model is an explicit `FACE_MODEL` change followed by `photoprism faces migrate`.
 
@@ -116,7 +116,7 @@ Their practical effect is small, but leaving them fixed at the FaceNet values un
 #### Quality & Overlap Thresholds
 
 - `ScoreThreshold` (`FACE_SCORE`, default 9.0) is the base minimum detector score, and `ClusterScoreThreshold` (`FACE_CLUSTER_SCORE`, default 20) is the higher bar a face must clear to contribute to automatic clustering. Both live in `internal/ai/face/config.go`.
-- The face overlap floor remains **42 %** (`OverlapThresholdFloor = 41`). Tests rely on that value (e.g., `Markers.Contains/SameFace`).
+- Two detections count as the same face when their area overlap exceeds `OverlapThresholdFloor` (41 %), which is `OverlapThreshold` (42 %) relaxed by one point to absorb rounding. Tests rely on that value (e.g., `Markers.Contains/SameFace`).
 
 ### Embedding Handling
 
@@ -133,7 +133,7 @@ All embeddings, regardless of origin, are normalized to unit length (‖x‖₂�
 - `UnmarshalEmbedding` and `UnmarshalEmbeddings` normalize data when loading from persisted JSON.
 - Random generators normalize their entries after perturbation.
 - `photoprism faces audit --fix` re-normalizes persisted embeddings, rekeys face IDs, and re-links markers (ID + `FaceDist`) so historical data adopts the canonical unit-length vectors.
-- `Faces.Match` pre-filters matchable clusters, keeps an in-memory veto list for freshly cleared markers, and caches embeddings to avoid redundant distance checks; `BenchmarkSelectBestFace` (1024 faces) now reports a bucket size of ~16 candidates out of 1024 (≈98 % fewer distance evaluations) at ≈0.55 ms/op with zero allocations.
+- `Faces.Match` pre-filters matchable clusters, keeps an in-memory veto list for freshly cleared markers, and caches embeddings to avoid redundant distance checks; `BenchmarkSelectBestFace` (1024 faces) reports a bucket size of ~16 candidates out of 1024 (≈98 % fewer distance evaluations) at ≈0.55 ms/op with zero allocations.
 - Face clusters update their sample statistics (`Samples`, `SampleRadius`) from the latest matches via `Face.UpdateMatchStats`. `ClampSampleRadius` bounds the radius at `ClusterRadius` wherever it is written, and `AcceptDist` applies the same bound where it is read, so a recalibrated threshold reaches rows written under the previous one. With the shipped FaceNet values an automatic match therefore accepts embeddings up to **0.82** from the centroid.
 - `AcceptDistMax` caps that cutoff at **1.4** whatever the configuration. Embeddings are unit vectors, so two independent ones average √2 ≈ 1.41 — an average, not a floor, so a noticeable share of unrelated pairs already fall below 1.4. The ceiling is therefore a backstop that keeps a misconfiguration from being catastrophic rather than a safe setting; the widest calibrated model reaches 1.22.
 - Cluster materialization pre-sizes buffers; `BenchmarkClusterMaterialize` reports ~14.8 µs/op with 64 allocations (≈56 KB).
@@ -217,7 +217,7 @@ Recovery steps:
 `FACE_MODEL` is authoritative for which model produces embeddings. A `face` entry in `vision.yml` schedules detection and embedding through its `Run` value, but a **custom face model configured there is deprecated**: it is still loaded while no embedding model is active, it logs a warning, and its vectors are recorded under the configured model's name rather than its own. Every supported face model needs code that knows its preprocessing contract, so there is nothing useful to configure per installation the way a caption or label model can be.
 
 Run scheduling is configured through the face model entry in `vision.yml`. Adjust the model’s `Run` value (for example `on-schedule`, `manual`, or `never`) to control when detection and embedding jobs execute—no separate `FACE_ENGINE_RUN` flag is required.
-When the model is left on the default `auto` run mode, face detection participates in manual, auto, and on-demand workflows but skips scheduled cron runs so background jobs do not trigger unexpectedly; the same applies to an explicit `on-demand` run mode, which now skips cron executions by default. Set `Run` to `on-schedule` explicitly if you want faces processed during scheduled vision passes.
+When the model is left on the default `auto` run mode, face detection participates in manual, auto, and on-demand workflows but skips scheduled cron runs so background jobs do not trigger unexpectedly; the same applies to an explicit `on-demand` run mode, which skips cron executions by default. Set `Run` to `on-schedule` explicitly if you want faces processed during scheduled vision passes.
 
 > Additional merge tuning: set `PHOTOPRISM_FACE_MERGE_MAX_RETRY` to control how often manual clusters are retried (default 1, `0` = unlimited). See the optimizer notes above.
 

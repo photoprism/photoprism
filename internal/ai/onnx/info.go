@@ -100,7 +100,7 @@ func (o *Output) Merge(other *Output) {
 }
 
 // ModelInfo describes an ONNX model artifact and the preprocessing contract it requires.
-// It is shared by every subsystem that runs one, because the field list describes a graph
+// It is shared by the subsystems that run one, because the field list describes a graph
 // plus its preprocessing and does not vary by task.
 //
 // SHA256 identifies the artifact. Names collide across publishers, and applying one

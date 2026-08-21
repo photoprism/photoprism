@@ -129,7 +129,8 @@ func (c *Config) FaceEngineThreads() int {
 // FaceModelThreads returns the thread count for face embedding inference.
 //
 // Embeddings are generated one at a time behind the model session lock, so unlike
-// detection they never run once per indexing worker and keep the undivided count.
+// detection there is one session in total rather than one per indexing worker, and the
+// count is not divided among them.
 func (c *Config) FaceModelThreads() int {
 	if c == nil {
 		return 1
