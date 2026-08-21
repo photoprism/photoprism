@@ -28,7 +28,7 @@ Run `make help` for an overview of the most common targets, and `make list` to l
 
 **Run all tests:**
 - `make test` — runs both JS and Go tests
-- `make test-go` — all Go tests (slow, ~20 min)
+- `make test-go` — all Go tests (slow, ~30 min)
 - `make test-js` — frontend unit tests (Vitest)
 - `make test-short` — short Go tests in parallel (~5 min)
 

@@ -94,7 +94,7 @@ func TestUsersListCommand(t *testing.T) {
 
 		// Check command output for plausibility.
 		// t.Logf(output)
-		assert.Empty(t, output)
+		assert.Contains(t, output, "Incorrect Usage: flag provided but not defined: -xyz")
 		assert.Error(t, err)
 	})
 }

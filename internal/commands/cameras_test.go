@@ -47,14 +47,14 @@ func TestCamerasCommand(t *testing.T) {
 		// Run command with test context.
 		output, err := RunWithTestContext(CamerasCommand, []string{"cameras", "update", "--id=1000002", "--make=Nikon"})
 		assert.Error(t, err)
-		assert.Len(t, output, 0)
+		assert.Contains(t, output, `update - Updates a specific camera Make and Model`)
 		assert.Contains(t, err.Error(), `Required flag "model" not set`)
 	})
 	t.Run("UpdateWithNoMake", func(t *testing.T) {
 		// Run command with test context.
 		output, err := RunWithTestContext(CamerasCommand, []string{"cameras", "update", "--id=1000002", `--model=K-1`})
 		assert.Error(t, err)
-		assert.Len(t, output, 0)
+		assert.Contains(t, output, `update - Updates a specific camera Make and Model`)
 		assert.Contains(t, err.Error(), `Required flag "make" not set`)
 	})
 	t.Run("UpdateWithEmptyMakeAndModel", func(t *testing.T) {

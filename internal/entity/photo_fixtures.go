@@ -223,7 +223,7 @@ var PhotoFixtures = PhotoMap{
 		ID:               1000003,
 		PhotoUID:         "ps6sg6be2lvl0yh0",
 		TakenAt:          time.Date(1990, 4, 18, 1, 0, 0, 0, time.UTC),
-		TakenAtLocal:     time.Date(1990, 4, 18, 1, 0, 0, 0, time.UTC),
+		TakenAtLocal:     time.Date(1990, 4, 18, 1, 0, 0, 0, time.FixedZone("UTC+8", +8*60*60)),
 		TakenSrc:         SrcMeta,
 		PhotoType:        MediaVideo,
 		PhotoDuration:    time.Hour * 2,
@@ -1465,8 +1465,7 @@ var PhotoFixtures = PhotoMap{
 		Albums:           []Album{},
 		Files:            []File{},
 		Labels: []PhotoLabel{
-			LabelFixtures.PhotoLabel(10000018, "landscape", 20, "image"),
-			LabelFixtures.PhotoLabel(10000018, "likeLabel", 20, "image")},
+			LabelFixtures.PhotoLabel(1000023, "landscape", 20, "image")},
 		CreatedAt:  time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:  time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 		EditedAt:   nil,
@@ -1526,8 +1525,7 @@ var PhotoFixtures = PhotoMap{
 		Albums:           []Album{},
 		Files:            []File{},
 		Labels: []PhotoLabel{
-			LabelFixtures.PhotoLabel(10000018, "landscape", 20, "image"),
-			LabelFixtures.PhotoLabel(10000018, "likeLabel", 20, "image")},
+			LabelFixtures.PhotoLabel(1000024, "likeLabel", 20, "image")},
 		CreatedAt:  time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:  time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC),
 		EditedAt:   nil,
@@ -2551,8 +2549,8 @@ var PhotoFixtures = PhotoMap{
 	"photo39*": { //JPG, Geo from metadata, indexed
 		ID:               1000040,
 		PhotoUID:         "ps6sg6byk7wrbk32",
-		TakenAt:          time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
-		TakenAtLocal:     time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
+		TakenAt:          time.Date(2020, 11, 11, 15, 7, 18, 0, time.UTC), // ensure 24h time_index on the file (Postgres regression test)
+		TakenAtLocal:     time.Date(2020, 11, 11, 15, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,
 		PhotoType:        "image",
 		TypeSrc:          "",
@@ -3878,6 +3876,6 @@ var PhotoFixtures = PhotoMap{
 // CreatePhotoFixtures inserts known entities into the database for testing.
 func CreatePhotoFixtures() {
 	for _, entity := range PhotoFixtures {
-		Db().Create(&entity)
+		fixtureDb().Create(&entity)
 	}
 }

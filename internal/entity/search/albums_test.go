@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
@@ -425,7 +426,7 @@ func TestAlbums(t *testing.T) {
 		f := form.SearchAlbums{
 			Type:   entity.AlbumMoment,
 			Count:  100,
-			Offset: 2,
+			Offset: 3, // Album Fixture cows requires 3 instead of 2
 			Order:  "newest",
 		}
 
@@ -435,6 +436,7 @@ func TestAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 
+		require.Greater(t, len(result), 1)
 		assert.GreaterOrEqual(t, result[0].AlbumYear, result[1].AlbumYear)
 	})
 	t.Run("MomentSortByNewestReverse", func(t *testing.T) {
@@ -540,7 +542,7 @@ func TestAlbums(t *testing.T) {
 		f := form.SearchAlbums{
 			Type:    entity.AlbumMoment,
 			Count:   100,
-			Offset:  2,
+			Offset:  3,
 			Order:   "oldest",
 			Reverse: true,
 		}
@@ -551,6 +553,7 @@ func TestAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 
+		require.Greater(t, len(result), 1)
 		assert.GreaterOrEqual(t, result[0].AlbumYear, result[1].AlbumYear)
 	})
 	t.Run("FolderSortByOldest", func(t *testing.T) {

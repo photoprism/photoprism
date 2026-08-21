@@ -343,3 +343,14 @@ func TestRemoveAutoFaceClusters(t *testing.T) {
 
 	assert.LessOrEqual(t, 3, removed)
 }
+
+func TestRemovePeopleAndFaces(t *testing.T) {
+	err := RemovePeopleAndFaces()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// replace all the fixtures as the previous statement kills a lot of other tests.
+	entity.ResetTestFixtures()
+}
