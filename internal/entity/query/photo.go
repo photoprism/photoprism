@@ -260,15 +260,16 @@ func FlagHiddenPhotos() (err error) {
 	return nil
 }
 
-// photoPathMaxDates returns the maximum TakenAtLocal DATE for each PhotoPath as a map, where the result date != nil.
-// This is a helper function for UpdateAlbumDates and UpdateFolderDates
+// photoPathMaxDates returns the maximum TakenAtLocal DATE for each PhotoPath as a map.
+// Paths whose maximum is NULL are omitted rather than mapped to a placeholder, so callers
+// skip them instead of stamping a date that was never indexed.
 func photoPathMaxDates() (photoPathDates map[string]time.Time, err error) {
 	photoPathDates = make(map[string]time.Time)
-	type photoPathMaxDates struct {
+	type pathMaxDate struct {
 		PhotoPath string
 		TakenMax  *string
 	}
-	var pathDates []photoPathMaxDates
+	var pathDates []pathMaxDate
 	// Get all the paths and dates.
 	if err = entity.Db().Raw(`SELECT photo_path, MAX(DATE(taken_at_local)) AS taken_max
 	 			FROM photos WHERE taken_src = 'meta' AND photos.photo_quality >= 3 AND photos.deleted_at IS NULL
