@@ -186,9 +186,9 @@ func RunWithProvidedTestContext(ctx *cli.Context, cmd *cli.Command, args []strin
 	conf := get.Config()
 	previousOptions := *conf.Options()
 	// Redirect the output from cli to buffer for transfer to output for testing
-	var catureOutput bytes.Buffer
+	var captureOutput bytes.Buffer
 	oldWriter := ctx.App.Writer
-	ctx.App.Writer = &catureOutput
+	ctx.App.Writer = &captureOutput
 
 	// Run command via cli.Command.Run but neutralize os.Exit so ExitCoder
 	// errors don't terminate the test binary.
@@ -199,7 +199,7 @@ func RunWithProvidedTestContext(ctx *cli.Context, cmd *cli.Command, args []strin
 		err = cmd.Run(ctx, args...)
 	})
 	ctx.App.Writer = oldWriter
-	output += catureOutput.String()
+	output += captureOutput.String()
 
 	// Reset the config options just in case they have been affected
 	*conf.Options() = previousOptions

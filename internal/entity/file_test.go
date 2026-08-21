@@ -28,7 +28,7 @@ func TestFile_RegenerateIndex(t *testing.T) {
 		if err := Db().Model(&File{ID: 1000000}).First(&result).Error; err != nil {
 			t.Error(err)
 		}
-		assert.NotNil(t, result.PhotoTakenAt)
+		assert.False(t, result.PhotoTakenAt.IsZero())
 		assert.NotNil(t, result.MediaID)
 		assert.NotNil(t, result.TimeIndex)
 	})
@@ -39,7 +39,7 @@ func TestFile_RegenerateIndex(t *testing.T) {
 		if err := Db().Model(&File{}).Where("photo_id = ?", 1000039).First(&result).Error; err != nil {
 			t.Error(err)
 		}
-		assert.NotNil(t, result.PhotoTakenAt)
+		assert.False(t, result.PhotoTakenAt.IsZero())
 		assert.NotNil(t, result.MediaID)
 		assert.NotNil(t, result.TimeIndex)
 	})
@@ -50,7 +50,7 @@ func TestFile_RegenerateIndex(t *testing.T) {
 		if err := Db().Model(&File{}).Where("photo_uid = ?", "ps6sg6byk7wrbk32").First(&result).Error; err != nil {
 			t.Error(err)
 		}
-		assert.NotNil(t, result.PhotoTakenAt)
+		assert.False(t, result.PhotoTakenAt.IsZero())
 		assert.NotNil(t, result.MediaID)
 		assert.NotNil(t, result.TimeIndex)
 		assert.Equal(t, time.Date(2020, 11, 11, 15, 7, 18, 0, time.UTC), result.PhotoTakenAt)
@@ -71,7 +71,7 @@ func TestFile_RegenerateIndex(t *testing.T) {
 
 		result, err := FirstFileByHash("2cad9168fa6acc5c5c2965ddf6ec465ca42fd818")
 		require.NoError(t, err)
-		assert.NotNil(t, result.PhotoTakenAt)
+		assert.False(t, result.PhotoTakenAt.IsZero())
 		assert.NotNil(t, result.MediaID)
 		assert.NotNil(t, result.TimeIndex)
 	})
