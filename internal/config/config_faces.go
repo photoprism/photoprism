@@ -173,6 +173,26 @@ func (c *Config) FaceEngineModelPath() string {
 	return primary
 }
 
+// FaceModelReport returns the face embedding model for a general configuration report, marked
+// as provisional when it could not be resolved.
+//
+// Resolving "auto" asks the library which model produced its vectors, and a configuration report
+// has to stay usable when the database is unreachable - that is when an operator most needs it -
+// so it says the name is provisional rather than connecting to find out.
+func (c *Config) FaceModelReport() string {
+	if c == nil {
+		return face.ModelNone
+	}
+
+	provisional := c.db == nil && face.ParseModelName(c.options.FaceModel) == face.ModelAuto
+
+	if name := c.FaceModel(); !provisional || name == face.ModelNone {
+		return name
+	} else {
+		return name + " (auto, unresolved)"
+	}
+}
+
 // FaceModel returns the name of the configured face embedding model. Unsupported
 // values are reported and treated as `face.ModelAuto`, which keeps the embedding space
 // a library already uses and otherwise resolves to the first installed model in

@@ -296,6 +296,39 @@ func TestConfig_FaceEngineModelPath(t *testing.T) {
 	})
 }
 
+func TestConfig_FaceModelReport(t *testing.T) {
+	t.Run("ProvisionalWithoutDatabase", func(t *testing.T) {
+		// A configuration report has to stay usable when the database is unreachable, so an
+		// unresolved "auto" is named as provisional rather than printed as if it were in force.
+		c := NewConfig(CliTestContext())
+		assert.Equal(t, face.ModelSFace+" (auto, unresolved)", c.FaceModelReport())
+	})
+	t.Run("ResolvedAgainstLibrary", func(t *testing.T) {
+		c := TestConfig()
+		c.options.FaceModel = face.ModelAuto
+
+		assert.Equal(t, face.ModelFaceNet, c.FaceModelReport())
+	})
+	t.Run("Explicit", func(t *testing.T) {
+		// An explicitly named model needs no library lookup, so it carries no caveat.
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = installTestModels(t, face.ModelArcFaceR50)
+		c.options.FaceModel = "ArcFace-R50"
+
+		assert.Equal(t, face.ModelArcFaceR50, c.FaceModelReport())
+	})
+	t.Run("None", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceModel = face.ModelNone
+
+		assert.Equal(t, face.ModelNone, c.FaceModelReport())
+	})
+	t.Run("NilConfig", func(t *testing.T) {
+		var c *Config
+		assert.Equal(t, face.ModelNone, c.FaceModelReport())
+	})
+}
+
 func TestConfig_FaceModel(t *testing.T) {
 	t.Run("Default", func(t *testing.T) {
 		// Without a database there is no library to ask, so the preference list decides.

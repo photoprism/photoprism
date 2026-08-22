@@ -342,7 +342,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"xmp-faces", fmt.Sprintf("%t", c.XMPFaces())},
 		{"face-engine", faceEngine},
 		{"face-engine-run", vision.ReportRunType(c.FaceEngineRunType())},
-		{"face-model", c.FaceModel()},
+		{"face-model", c.FaceModelReport()},
 		{"face-model-path", c.FaceModelPath()},
 	}...)
 
@@ -393,9 +393,9 @@ func (c *Config) faceModelStatus() string {
 	return "ok"
 }
 
-// FaceReport returns the face-detection and face-recognition config values as
-// a table for reporting. It mirrors the values used by Report() so output stays
-// consistent between `photoprism config` and `photoprism faces config`.
+// FaceReport returns the face-detection and face-recognition config values as a table for
+// reporting. It covers the same options as Report(), except that face-model is resolved:
+// `faces config` connects to the database, so it can name the model "auto" actually selects.
 func (c *Config) FaceReport() (rows [][]string, cols []string) {
 	cols = []string{"Name", "Value"}
 
