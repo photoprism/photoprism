@@ -27,14 +27,23 @@ const (
 const InterOpThreads = 1
 
 // AcceptDistMax is the highest distance at which an embedding may still join a cluster,
-// and the largest value a configurable distance threshold may take.
+// whatever a stored sample radius says.
 //
 // Two independent unit vectors average sqrt(2) ~ 1.41 apart, but a sizable share of them
 // land nearer, so this caps what a misconfigured threshold can do rather than naming a
-// distance that is safe to configure. One constant rather than a separate configuration
-// bound, because a threshold accepted above the ceiling is only clipped again on read,
-// which leaves the report echoing a value that never applies.
+// distance that is safe to configure.
 const AcceptDistMax = 1.4
+
+// ConfigDistMax is the largest value a configurable distance threshold may take, and the
+// widest accept distance an operator can therefore ask for.
+//
+// It sits just above the widest calibrated model, so the range that can be configured is the
+// range the models were calibrated in. Past it a cluster accepts about as readily as it
+// refuses - independent embeddings average sqrt(2) ~ 1.41 apart - and the distance bound in
+// selection can abandon less and less of each comparison. A value above this is refused and
+// the calibrated one is used, rather than accepted here and clipped where it is read, which
+// would leave the config report echoing a number that never applies.
+const ConfigDistMax = 1.25
 
 var (
 	// CropSize is the face image crop size used when generating FaceNet embeddings.

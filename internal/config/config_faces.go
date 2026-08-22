@@ -411,8 +411,45 @@ func (c *Config) FaceClusterDist() float64 {
 
 // FaceClusterRadius returns the maximum radius used when matching face clusters.
 func (c *Config) FaceClusterRadius() float64 {
-	return c.faceThreshold("face-cluster-radius", c.options.FaceClusterRadius, face.ClusterRadiusDefault,
-		func(m *face.EmbeddingModel) float64 { return m.ClusterRadius })
+	radius, _ := c.faceAcceptThresholds()
+	return radius
+}
+
+// faceAcceptThresholds returns the cluster radius and the match distance, falling back to the
+// configured model's calibrated pair when the two together would reach past face.ConfigDistMax.
+//
+// They are resolved as a pair because a cluster accepts at their sum, so one wide option is
+// enough to reach the ceiling on its own. There, selection can no longer abandon a comparison
+// early and matching walks every candidate to its last component, while a cluster that reaches
+// that far accepts strangers as readily as the person it was built from.
+func (c *Config) faceAcceptThresholds() (radius, matchDist float64) {
+	pickRadius := func(m *face.EmbeddingModel) float64 { return m.ClusterRadius }
+	pickMatchDist := func(m *face.EmbeddingModel) float64 { return m.MatchDist }
+
+	radius = c.faceThreshold("face-cluster-radius", c.options.FaceClusterRadius, face.ClusterRadiusDefault, pickRadius)
+	matchDist = c.faceThreshold("face-match-dist", c.options.FaceMatchDist, face.MatchDistDefault, pickMatchDist)
+
+	if radius+matchDist <= face.ConfigDistMax {
+		return radius, matchDist
+	}
+
+	model := c.FaceEmbeddingModel()
+	calibratedRadius := faceModelThreshold(model, pickRadius, face.ClusterRadiusDefault)
+	calibratedMatchDist := faceModelThreshold(model, pickMatchDist, face.MatchDistDefault)
+
+	// A model whose own calibration reaches past the limit has nothing to fall back to, and
+	// warning about a value nobody set would be noise. TestEmbeddingModelThresholds is where
+	// that is caught, when the model is registered rather than when it is used.
+	if radius == calibratedRadius && matchDist == calibratedMatchDist {
+		return radius, matchDist
+	}
+
+	if _, warned := c.faceWarned.LoadOrStore("face-accept-dist", true); !warned {
+		log.Warnf("config: face-cluster-radius %g and face-match-dist %g accept faces up to %g, more than the maximum of %g, using %g and %g instead",
+			radius, matchDist, radius+matchDist, face.ConfigDistMax, calibratedRadius, calibratedMatchDist)
+	}
+
+	return calibratedRadius, calibratedMatchDist
 }
 
 // FaceCollisionDist returns the minimum distance used to differentiate embeddings.
@@ -455,8 +492,8 @@ func (c *Config) FaceEpsilonDist() float64 {
 
 // FaceMatchDist returns the offset distance when matching faces with clusters.
 func (c *Config) FaceMatchDist() float64 {
-	return c.faceThreshold("face-match-dist", c.options.FaceMatchDist, face.MatchDistDefault,
-		func(m *face.EmbeddingModel) float64 { return m.MatchDist })
+	_, matchDist := c.faceAcceptThresholds()
+	return matchDist
 }
 
 // faceThreshold returns the operator-configured clustering threshold, or the value
@@ -465,13 +502,13 @@ func (c *Config) faceThreshold(flagName string, value, flagDefault float64, pick
 	minDist := c.FaceCollisionDist()
 	configured := c.faceThresholdIsSet(flagName, value, flagDefault)
 
-	if configured && value >= minDist && value <= face.AcceptDistMax {
+	if configured && value >= minDist && value <= face.ConfigDistMax {
 		return value
 	}
 
 	resolved := faceModelThreshold(c.FaceEmbeddingModel(), pick, flagDefault)
 
-	c.warnFaceThreshold(configured, flagName, value, minDist, face.AcceptDistMax, resolved)
+	c.warnFaceThreshold(configured, flagName, value, minDist, face.ConfigDistMax, resolved)
 
 	return resolved
 }

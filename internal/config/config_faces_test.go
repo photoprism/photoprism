@@ -839,14 +839,14 @@ func TestConfig_FaceThreshold(t *testing.T) {
 	})
 	t.Run("AboveTheCeilingIsRefused", func(t *testing.T) {
 		// A threshold accepted above the ceiling would only be clipped again where it is
-		// read, leaving the config report echoing a value that never applies. One constant
-		// bounds both, so the value is refused here and the calibrated one is used.
+		// read, leaving the config report echoing a value that never applies, so the value
+		// is refused here and the calibrated one is used instead.
 		c := NewConfig(CliTestContext())
 		c.options.ModelsPath = installTestModels(t, face.ModelSFace)
 		c.options.FaceModel = face.ModelSFace
 
 		hook := captureLog(t)
-		above := float64(face.AcceptDistMax) + 0.05
+		above := float64(face.ConfigDistMax) + 0.05
 
 		assert.NotEqual(t, above, c.faceThreshold("face-match-dist", above, face.MatchDistDefault, pick))
 
@@ -959,4 +959,70 @@ func TestConfig_FaceMatchDist(t *testing.T) {
 	assert.Equal(t, 0.1, c.FaceMatchDist())
 	c.options.FaceMatchDist = 0.01
 	assert.Equal(t, sface, c.FaceMatchDist())
+}
+
+func TestConfig_faceAcceptThresholds(t *testing.T) {
+	model := face.FindEmbeddingModel(face.ModelSFace)
+
+	newTestConfig := func(t *testing.T) *Config {
+		t.Helper()
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = installTestModels(t, face.ModelSFace)
+		c.options.FaceModel = face.ModelSFace
+		return c
+	}
+
+	t.Run("Calibrated", func(t *testing.T) {
+		radius, matchDist := newTestConfig(t).faceAcceptThresholds()
+		assert.Equal(t, model.ClusterRadius, radius)
+		assert.Equal(t, model.MatchDist, matchDist)
+	})
+	t.Run("ConfiguredPairWithinLimit", func(t *testing.T) {
+		c := newTestConfig(t)
+		// Not 0.4, which is the flag default a value has to differ from to count as set.
+		c.options.FaceClusterRadius = 0.7
+		c.options.FaceMatchDist = 0.45
+
+		radius, matchDist := c.faceAcceptThresholds()
+		assert.Equal(t, 0.7, radius)
+		assert.Equal(t, 0.45, matchDist)
+	})
+	t.Run("OneWideOptionIsRefused", func(t *testing.T) {
+		// A cluster accepts at the sum of the two, so a single wide value reaches the limit
+		// on its own. Both fall back, because the pair is what was out of range.
+		c := newTestConfig(t)
+		hook := captureLog(t)
+		c.options.FaceMatchDist = 1.0
+
+		radius, matchDist := c.faceAcceptThresholds()
+		assert.Equal(t, model.ClusterRadius, radius)
+		assert.Equal(t, model.MatchDist, matchDist)
+
+		var warned bool
+		for _, e := range hook.AllEntries() {
+			if e.Level == logrus.WarnLevel && strings.Contains(e.Message, "face-cluster-radius") {
+				warned = true
+			}
+		}
+		assert.True(t, warned, "a pair above the limit warns rather than being silently clipped")
+	})
+	t.Run("WarnsOnce", func(t *testing.T) {
+		// Propagate and the config report both resolve the pair, so an unguarded warning
+		// would repeat for the lifetime of the process.
+		c := newTestConfig(t)
+		hook := captureLog(t)
+		c.options.FaceClusterRadius = 0.9
+		c.options.FaceMatchDist = 0.9
+
+		c.faceAcceptThresholds()
+		c.faceAcceptThresholds()
+
+		var warnings int
+		for _, e := range hook.AllEntries() {
+			if e.Level == logrus.WarnLevel && strings.Contains(e.Message, "face-cluster-radius") {
+				warnings++
+			}
+		}
+		assert.Equal(t, 1, warnings)
+	})
 }

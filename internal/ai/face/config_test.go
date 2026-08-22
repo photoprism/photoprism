@@ -52,12 +52,18 @@ func TestAcceptDist(t *testing.T) {
 		assert.InDelta(t, MatchDistDefault, AcceptDist(-1), 1e-9)
 	})
 	t.Run("CapsAtCeiling", func(t *testing.T) {
-		// Both thresholds at their configurable maximum would otherwise accept every pair.
+		// Values this wide cannot be configured, but a stored radius written before a
+		// recalibration can still be read back, and it must not accept every pair.
 		setThresholds(t, AcceptDistMax, AcceptDistMax)
 		assert.InDelta(t, AcceptDistMax, AcceptDist(AcceptDistMax), 1e-9)
 	})
 	t.Run("CeilingBelowRandomPairDistance", func(t *testing.T) {
 		// Independent unit vectors average sqrt(2) apart, so the ceiling stays under it.
 		assert.Less(t, float64(AcceptDistMax), math.Sqrt2)
+	})
+	t.Run("ConfigurableRangeBelowCeiling", func(t *testing.T) {
+		// What an operator may set has to stay under the runtime backstop, or a configured
+		// value would be accepted, reported, and then clipped where it is read.
+		assert.Less(t, float64(ConfigDistMax), float64(AcceptDistMax))
 	})
 }

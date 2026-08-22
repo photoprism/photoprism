@@ -242,6 +242,14 @@ func TestEmbeddingModelThresholds(t *testing.T) {
 			assert.Less(t, m.ClusterRadius+m.MatchDist, float64(AcceptDistMax), name)
 		}
 	})
+	t.Run("CalibratedValuesStayConfigurable", func(t *testing.T) {
+		// ConfigDistMax bounds what an operator may set, so a model calibrated above it
+		// would carry values that are refused as out of range when they are set by hand.
+		for name, m := range EmbeddingModels {
+			assert.LessOrEqual(t, m.ClusterRadius+m.MatchDist, float64(ConfigDistMax), name)
+			assert.LessOrEqual(t, m.ClusterDist, float64(ConfigDistMax), name)
+		}
+	})
 	t.Run("ClusterDistStaysWithinAcceptance", func(t *testing.T) {
 		// A face close enough to seed a cluster must be close enough for that cluster to
 		// accept it again, or the migration relinks a marker the matcher then refuses and
