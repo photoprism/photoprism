@@ -21,21 +21,20 @@ func TestLenses(t *testing.T) {
 
 		assert.LessOrEqual(t, 2, len(result))
 
-			for _, r := range result {
-				assert.IsType(t, Lens{}, r)
-				assert.NotEmpty(t, r.ID)
-				assert.NotEmpty(t, r.LensName)
-				assert.NotEmpty(t, r.LensSlug)
-				assert.NotEmpty(t, r.LensModel)
-				assert.NotEmpty(t, r.LensMake)
-				assert.True(t, strings.Contains(strings.ToLower(r.LensName), "a") || strings.Contains(strings.ToLower(r.LensMake), "a") || strings.Contains(strings.ToLower(r.LensModel), "a"))
+		for _, r := range result {
+			assert.IsType(t, Lens{}, r)
+			assert.NotEmpty(t, r.ID)
+			assert.NotEmpty(t, r.LensName)
+			assert.NotEmpty(t, r.LensSlug)
+			assert.NotEmpty(t, r.LensModel)
+			assert.NotEmpty(t, r.LensMake)
+			assert.True(t, strings.Contains(strings.ToLower(r.LensName), "a") || strings.Contains(strings.ToLower(r.LensMake), "a") || strings.Contains(strings.ToLower(r.LensModel), "a"))
 
-				if fix, ok := entity.LensFixtures[r.LensSlug]; ok {
-					assert.Equal(t, fix.LensName, r.LensName)
-					assert.Equal(t, fix.LensSlug, r.LensSlug)
-					assert.Equal(t, fix.LensMake, r.LensMake)
-					assert.Equal(t, fix.LensModel, r.LensModel)
-				}
+			if fix, ok := entity.LensFixtures[r.LensSlug]; ok {
+				assert.Equal(t, fix.LensName, r.LensName)
+				assert.Equal(t, fix.LensSlug, r.LensSlug)
+				assert.Equal(t, fix.LensMake, r.LensMake)
+				assert.Equal(t, fix.LensModel, r.LensModel)
 			}
 		}
 	})
@@ -48,19 +47,18 @@ func TestLenses(t *testing.T) {
 
 		assert.LessOrEqual(t, 1, len(result))
 
-			for _, r := range result {
-				assert.IsType(t, Lens{}, r)
-				assert.NotEmpty(t, r.ID)
-				assert.NotEmpty(t, r.LensName)
-				assert.NotEmpty(t, r.LensSlug)
-				assert.NotEmpty(t, r.LensModel)
+		for _, r := range result {
+			assert.IsType(t, Lens{}, r)
+			assert.NotEmpty(t, r.ID)
+			assert.NotEmpty(t, r.LensName)
+			assert.NotEmpty(t, r.LensSlug)
+			assert.NotEmpty(t, r.LensModel)
 
-				if fix, ok := entity.LensFixtures[r.LensSlug]; ok {
-					assert.Equal(t, fix.LensName, r.LensName)
-					assert.Equal(t, fix.LensSlug, r.LensSlug)
-					assert.Equal(t, fix.LensMake, r.LensMake)
-					assert.Equal(t, fix.LensModel, r.LensModel)
-				}
+			if fix, ok := entity.LensFixtures[r.LensSlug]; ok {
+				assert.Equal(t, fix.LensName, r.LensName)
+				assert.Equal(t, fix.LensSlug, r.LensSlug)
+				assert.Equal(t, fix.LensMake, r.LensMake)
+				assert.Equal(t, fix.LensModel, r.LensModel)
 			}
 		}
 	})
@@ -73,18 +71,17 @@ func TestLenses(t *testing.T) {
 
 		assert.LessOrEqual(t, 1, len(result))
 
-			for _, r := range result {
-				assert.IsType(t, Lens{}, r)
-				assert.NotEmpty(t, r.ID)
-				assert.NotEmpty(t, r.LensName)
-				assert.NotEmpty(t, r.LensSlug)
-				assert.Empty(t, r.LensMake)
+		for _, r := range result {
+			assert.IsType(t, Lens{}, r)
+			assert.NotEmpty(t, r.ID)
+			assert.NotEmpty(t, r.LensName)
+			assert.NotEmpty(t, r.LensSlug)
+			assert.Empty(t, r.LensMake)
 
-				if fix, ok := entity.LensFixtures[r.LensSlug]; ok {
-					assert.Equal(t, fix.LensName, r.LensName)
-					assert.Equal(t, fix.LensSlug, r.LensSlug)
-					assert.Equal(t, fix.LensModel, r.LensModel)
-				}
+			if fix, ok := entity.LensFixtures[r.LensSlug]; ok {
+				assert.Equal(t, fix.LensName, r.LensName)
+				assert.Equal(t, fix.LensSlug, r.LensSlug)
+				assert.Equal(t, fix.LensModel, r.LensModel)
 			}
 		}
 	})
