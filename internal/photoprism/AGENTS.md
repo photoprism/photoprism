@@ -1,6 +1,6 @@
 # PhotoPrism Core Import & Index Guidelines
 
-**Last Updated:** April 9, 2026
+**Last Updated:** August 18, 2026
 
 ## Import & Index Behavior
 
@@ -22,4 +22,3 @@
 ## Tests
 
 - In `internal/photoprism` tests, rely on `photoprism.Config()` for runtime-accurate behavior; only build a new config if you replace it with `photoprism.SetConfig`.
-

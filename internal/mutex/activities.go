@@ -29,7 +29,8 @@ func CancelAll() {
 }
 
 // WorkersRunning checks if a worker is currently running.
-// ErrorWorker is excluded from checking as it's started on startup and stopped on shutdown.
+// ErrorWorker is excluded from checking as it's started via the database migration (config.MigrateDb)
+// and stopped if the database is closed, or the ErrorWorker is canceled via CancelAll (entity.LogEvents).
 func WorkersRunning() bool {
 	return IndexWorker.Running() ||
 		SyncWorker.Running() ||

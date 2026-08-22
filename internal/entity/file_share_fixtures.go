@@ -53,10 +53,10 @@ var FileShareFixtures = FileShareMap{
 func CreateFileShareFixtures() {
 	for _, entity := range FileShareFixtures {
 		firstEntity := &FileShare{}
-		if err := Db().Model(&FileShare{}).Where("file_id = ? and service_id = ? and remote_name = ?", entity.FileID, entity.ServiceID, entity.RemoteName).First(&firstEntity).Error; err != nil {
-			Db().Create(&entity)
+		if err := fixtureDb().Model(&FileShare{}).Where("file_id = ? and service_id = ? and remote_name = ?", entity.FileID, entity.ServiceID, entity.RemoteName).First(&firstEntity).Error; err != nil {
+			fixtureDb().Create(&entity)
 		} else {
-			Db().Save(&entity)
+			fixtureDb().Save(&entity)
 		}
 	}
 }

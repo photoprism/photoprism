@@ -190,17 +190,16 @@ func TestRemoveInvalidMarkerReferences(t *testing.T) {
 }
 
 func TestRemoveNonExistentMarkerFaces(t *testing.T) {
-	expected := int64(0)
-
-	if err := Db().Model(&entity.Marker{}).Where("marker_type = ?", entity.MarkerFace).Where("face_id <> '' AND face_id NOT IN (?)", Db().Model(&entity.Face{}).Select("id")).Count(&expected).Error; err != nil {
-		assert.Empty(t, err)
-		return
-	}
+	// Make sure that the data is valid for the test.
+	_, err := RemoveAutoFaceClusters()
+	require.NoError(t, err)
 
 	affected, err := RemoveNonExistentMarkerFaces()
 
-	require.Nil(t, err)
-	assert.Equal(t, affected, expected)
+	assert.NoError(t, err)
+	assert.GreaterOrEqual(t, affected, int64(1))
+	// Post test cleanup
+	entity.ResetTestFixtures()
 }
 
 func TestRemoveNonExistentMarkerSubjects(t *testing.T) {

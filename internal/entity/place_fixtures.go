@@ -138,10 +138,10 @@ var PlaceFixtures = PlacesMap{
 func CreatePlaceFixtures() {
 	for _, entity := range PlaceFixtures {
 		firstEntity := &Place{}
-		if err := Db().Model(&Place{}).Where("id = ?", entity.ID).First(&firstEntity).Error; err != nil {
-			Db().Create(&entity)
+		if err := fixtureDb().Model(&Place{}).Where("id = ?", entity.ID).First(&firstEntity).Error; err != nil {
+			fixtureDb().Create(&entity)
 		} else {
-			Db().Save(&entity)
+			fixtureDb().Save(&entity)
 		}
 	}
 }

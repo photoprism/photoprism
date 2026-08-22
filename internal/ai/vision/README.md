@@ -261,7 +261,7 @@ PhotoPrism currently keeps TensorFlow models resident for the lifetime of the pr
 - If face model initialization fails with `Read less bytes than requested` (often followed by `invalid face model configuration` in `GenerateFaceEmbeddings` tests), reinstall the local FaceNet assets:
   - `rm -f /tmp/photoprism/facenet.zip`
   - `rm -rf assets/models/facenet`
-  - `make dep-tensorflow` (or `scripts/download-facenet.sh`)
+  - `make dep-tensorflow` (or `scripts/dist/download-models.sh facenet`)
   - Re-run: `go test ./internal/ai/face -run TestNet -count=1` and `go test ./internal/ai/vision -run TestGenerateFaceEmbeddings -count=1`
 
 ### Related Docs

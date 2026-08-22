@@ -3286,7 +3286,7 @@ func CreateFileFixtures() {
 		if entity.PhotoUID == "" && entity.PhotoID == 0 && entity.Photo == nil {
 			log.Debugf("Unable to create %s as it doesn't have required foreign key components", entity.FileName)
 		} else {
-			Db().Create(&entity)
+			fixtureDb().Create(&entity)
 		}
 	}
 }

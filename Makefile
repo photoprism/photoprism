@@ -455,7 +455,20 @@ npm-update:
 	npm update --save --package-lock --ignore-scripts --no-audit --no-fund --no-update-notifier
 npm-audit:
 	npm audit --ignore-scripts --no-fund --no-update-notifier
-tools: gh claude codex
+tools: tools-mcp gh claude codex
+tools-mcp:
+	@if [ -e ".mcp.json" ]; then \
+	  echo "Keeping the existing .mcp.json."; \
+	elif [ -f "specs/.mcp.json" ]; then \
+	  ln -sfn "specs/.mcp.json" ".mcp.json"; \
+	  echo "Linked .mcp.json to specs/.mcp.json (remove it to opt out)."; \
+	elif [ ! -f ".mcp.json.example" ]; then \
+	  echo "No .mcp.json.example found, skipping."; \
+	else \
+	  rm -f ".mcp.json"; \
+	  cp -- ".mcp.json.example" ".mcp.json"; \
+	  echo "Copied .mcp.json from .mcp.json.example (remove it to opt out)."; \
+	fi
 codex: dep-codex codex-version codex-skills
 codex-version:
 	@echo "🤖 Installed $$(codex --version)."
@@ -473,6 +486,16 @@ codex-skills:
 	@if [ -d "specs/.agents/skills" ]; then \
 	  echo "Linking Codex skills from specs/.agents/skills..."; \
 	  install -d -m 755 -- ".agents/skills"; \
+	  for link in .agents/skills/*; do \
+	    [ -L "$$link" ] || continue; \
+	    target=$$(readlink "$$link"); \
+	    case "$$target" in \
+	      ../../specs/.agents/skills/*) \
+	        name=$$(basename "$$link"); \
+	        [ -d "specs/.agents/skills/$$name" ] || rm -- "$$link"; \
+	        ;; \
+	    esac; \
+	  done; \
 	  for src in specs/.agents/skills/*/; do \
 	    [ -d "$$src" ] || continue; \
 	    name=$$(basename "$$src"); \
@@ -576,9 +599,7 @@ frontend-update:
 	make -C frontend update
 dep-upgrade-js: frontend-update
 dep-tensorflow:
-	scripts/download-facenet.sh
-	scripts/download-nasnet.sh
-	scripts/download-nsfw.sh
+	scripts/dist/download-models.sh facenet nasnet nsfw
 dep-onnx:
 	scripts/download-scrfd.sh
 dep-acceptance: storage/acceptance
@@ -1336,8 +1357,8 @@ docker-dummy-oidc:
 	docker pull --platform=arm64 golang:1
 	scripts/docker/buildx-multi.sh dummy-oidc linux/amd64,linux/arm64 $(BUILD_DATE)
 packer-digitalocean:
-	$(info Buildinng DigitalOcean marketplace image...)
-	(cd ./setup/docker/cloud && packer build digitalocean.json)
+	$(info Building DigitalOcean marketplace image...)
+	(cd ./setup/cloud/digitalocean && packer init digitalocean.pkr.hcl && packer build digitalocean.pkr.hcl)
 lint: lint-js lint-go check-api-request-limits check-make-help
 lint-js:
 	$(info Linting JS code...)

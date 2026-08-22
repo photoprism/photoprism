@@ -56,7 +56,7 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.
 
 # install docker incl compose plugin
 apt-get update
-apt-get -qq install docker-ce docker-ce-cli docker-ce-rootless-extras containerd.io docker-compose-plugin cgroupfs-mount libltdl7 pigz
+apt-get -qq install docker-ce docker-ce-cli docker-ce-rootless-extras containerd.io docker-compose-plugin libltdl7 pigz
 
 echo "Adding user..."
 

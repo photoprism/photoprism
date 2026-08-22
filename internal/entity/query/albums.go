@@ -2,6 +2,7 @@ package query
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/search"
@@ -27,6 +28,16 @@ func AlbumsByUID(albumUIDs []string, includeDeleted bool) (results entity.Albums
 		err = UnscopedDb().Where("album_uid IN (?)", albumUIDs).Find(&results).Error
 	} else {
 		err = UnscopedDb().Where("album_uid IN (?) AND deleted_at IS NULL", albumUIDs).Find(&results).Error
+	}
+	return results, err
+}
+
+// AlbumsByType returns albums by AlbumType.
+func AlbumsByType(albumType string, includeDeleted bool) (results entity.Albums, err error) {
+	if includeDeleted {
+		err = UnscopedDb().Where("album_type = ?", albumType).Find(&results).Error
+	} else {
+		err = Db().Where("album_type = ?", albumType).Find(&results).Error
 	}
 	return results, err
 }
@@ -138,19 +149,24 @@ func AlbumCoverByUID(uid string, public bool) (file entity.File, err error) {
 }
 
 // UpdateAlbumDates updates the year, month and day of the album based on the indexed photo metadata.
-func UpdateAlbumDates() error {
+func UpdateAlbumDates() (updated int, err error) {
 	mutex.Index.Lock()
 	defer mutex.Index.Unlock()
 
 	switch DbDialect() {
 	case dsn.DialectMySQL:
-		return UnscopedDb().Exec(`UPDATE albums INNER JOIN (
+		result := UnscopedDb().Exec(`UPDATE albums INNER JOIN (
              SELECT photo_path, MAX(taken_at_local) AS taken_max
 			 FROM photos WHERE taken_src = 'meta' AND photos.photo_quality >= 3 AND photos.deleted_at IS NULL
 			 GROUP BY photo_path
 	    ) AS p ON albums.album_path = p.photo_path
 		SET albums.album_year = YEAR(taken_max), albums.album_month = MONTH(taken_max), albums.album_day = DAY(taken_max)
-		WHERE albums.album_type = 'folder' AND albums.album_path IS NOT NULL AND p.taken_max IS NOT NULL`).Error
+		WHERE albums.album_type = 'folder' AND albums.album_path IS NOT NULL AND p.taken_max IS NOT NULL
+		AND albums.album_path <> ''
+		AND (album_year = 0 OR album_month = 0 OR album_day = 0
+			OR DATE(p.taken_max) <> COALESCE(STR_TO_DATE(CONCAT(album_year, '-', album_month, '-', album_day), '%Y-%c-%e'), DATE('1000-01-01'))
+		)`)
+		return int(result.RowsAffected), result.Error
 	case dsn.DialectPostgreSQL:
 		return UnscopedDb().Exec(`UPDATE albums
 			SET album_year = date_part('year', taken_max), album_month = date_part('month', taken_max), album_day = date_part('day', taken_max)
@@ -160,15 +176,65 @@ func UpdateAlbumDates() error {
 			) AS p
 			WHERE albums.album_path = p.photo_path AND albums.album_type = 'folder' AND albums.album_path IS NOT NULL AND p.taken_max IS NOT NULL`).Error
 	case dsn.DialectSQLite:
-		return UnscopedDb().Exec(`UPDATE albums
-			SET album_year = strftime('%Y', taken_max), album_month = strftime('%m', taken_max), album_day = strftime('%d', taken_max)
-			FROM (SELECT photo_path, MAX(taken_at_local) AS taken_max
-	 			FROM photos WHERE taken_src = 'meta' AND photos.photo_quality >= 3 AND photos.deleted_at IS NULL
-	 			GROUP BY photo_path
-			) AS p
-			WHERE albums.album_path = p.photo_path AND albums.album_type = 'folder' AND albums.album_path IS NOT NULL AND p.taken_max IS NOT NULL`).Error
+		// SQLite has potential locking issues if the update is done on all albums at once.
+		var albums entity.Albums
+		if albums, err = AlbumsByType(entity.AlbumFolder, true); err != nil {
+			log.Errorf("albums: get folders (%v)", err)
+			return updated, err
+		}
+
+		var photos map[string]time.Time
+		if photos, err = photoPathMaxDates(); err != nil {
+			return updated, err
+		}
+		pathCount := 0
+		tx := UnscopedDb().Begin()
+		if tx.Error != nil {
+			log.Errorf("albums: begin transaction failed (%v)", tx.Error)
+			return updated, tx.Error
+		}
+		for _, album := range albums {
+			if pathCount == 5000 {
+				log.Debugf("albums: committing")
+				if err = tx.Commit().Error; err != nil {
+					log.Errorf("albums: commit partial changes failed (%v)", err)
+					return updated, err
+				}
+				tx = UnscopedDb().Begin()
+				if tx.Error != nil {
+					log.Errorf("albums: begin transaction failed (%v)", tx.Error)
+					return updated, tx.Error
+				}
+				pathCount = 0
+			}
+			takenMax, ok := photos[album.AlbumPath]
+			// Exclude empty AlbumPath as the originals root path can be incorrectly included,
+			// and there shouldn't be an album of type folder without a path.
+			if ok && album.AlbumPath != "" {
+				var albumDate time.Time
+				var parseErr error
+				if albumDate, parseErr = time.Parse("2006-01-02", fmt.Sprintf("%04d-%02d-%02d", album.AlbumYear, album.AlbumMonth, album.AlbumDay)); parseErr != nil {
+					// Date wasn't valid, so set to 1000-01-01
+					albumDate = time.Date(1000, time.January, 1, 0, 0, 0, 0, time.UTC)
+				}
+				if takenMax != albumDate {
+					result := tx.Exec(`UPDATE albums SET album_year = ?, album_month = ?, album_day = ? WHERE id = ?`, takenMax.Year(), takenMax.Month(), takenMax.Day(), album.ID)
+					if err = result.Error; err != nil {
+						log.Errorf("albums: set album dates on %s (%v)", clean.Log(album.AlbumTitle), err)
+						if errRB := tx.Rollback().Error; errRB != nil {
+							log.Errorf("albums: rollback changes failed (%v)", errRB)
+						}
+						return updated, err
+					} else {
+						updated += int(result.RowsAffected)
+						pathCount++
+					}
+				}
+			}
+		}
+		return updated, tx.Commit().Error
 	default:
-		return nil
+		return updated, err
 	}
 }
 

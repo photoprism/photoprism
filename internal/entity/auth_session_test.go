@@ -343,7 +343,6 @@ func TestSession_Create(t *testing.T) {
 		err := s.Create()
 		assert.Empty(t, err)
 	})
-
 	t.Run("LongNumericAuthID", func(t *testing.T) {
 		refID := rnd.RefID("ts")
 		m := FindSessionByRefID(refID)
@@ -1145,7 +1144,6 @@ func TestSession_UpdateLastActive(t *testing.T) {
 
 		assert.GreaterOrEqual(t, unix.Now(), m.LastActive)
 	})
-
 	t.Run("SaveMethodSession", func(t *testing.T) {
 		expected := unix.Now() - 10
 		m := NewSession(unix.Day, unix.Hour)
@@ -1167,7 +1165,6 @@ func TestSession_UpdateLastActive(t *testing.T) {
 
 		assert.Greater(t, m.LastActive, expected)
 	})
-
 }
 
 func TestSession_Expired(t *testing.T) {

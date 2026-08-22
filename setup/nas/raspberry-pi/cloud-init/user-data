@@ -242,10 +242,10 @@ write_files:
             - "traefik.docker.network=photoprism"
           environment:
             PHOTOPRISM_ADMIN_PASSWORD: "photoprismpi"
-            PHOTOPRISM_AUTH_MODE: "passwd"
+            PHOTOPRISM_AUTH_MODE: "password"
             PHOTOPRISM_SITE_URL: "https://photoprism-pi.local/"
             PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
-            PHOTOPRISM_HTTP_COMPRESSION: "gzip"
+            PHOTOPRISM_HTTP_COMPRESSION: "zstd,gzip"
             PHOTOPRISM_WORKERS: 3
             PHOTOPRISM_LOG_LEVEL: "info"
             PHOTOPRISM_TRACE: "false"
@@ -309,7 +309,7 @@ write_files:
 
         traefik:
           restart: always
-          image: traefik:v3.6
+          image: traefik:v3.7
           ports:
             - "80:80"
             - "443:443"
@@ -326,6 +326,26 @@ write_files:
             - "--entrypoints.websecure.address=:443"
             - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
             - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+            - "--entrypoints.web.http.encodedcharacters.allowencodedslash=true"
+            - "--entrypoints.web.http.encodedcharacters.allowencodedpercent=true"
+            - "--entrypoints.web.http.encodedcharacters.allowencodedhash=true"
+            - "--entrypoints.web.http.encodedcharacters.allowencodedquestionmark=true"
+            - "--entrypoints.web.http.encodedcharacters.allowencodedsemicolon=true"
+            - "--entrypoints.web.http.encodedcharacters.allowencodedbackslash=true"
+            - "--entrypoints.web.http.encodedcharacters.allowencodednullcharacter=true"
+            - "--entrypoints.websecure.http.encodedcharacters.allowencodedslash=true"
+            - "--entrypoints.websecure.http.encodedcharacters.allowencodedpercent=true"
+            - "--entrypoints.websecure.http.encodedcharacters.allowencodedhash=true"
+            - "--entrypoints.websecure.http.encodedcharacters.allowencodedquestionmark=true"
+            - "--entrypoints.websecure.http.encodedcharacters.allowencodedsemicolon=true"
+            - "--entrypoints.websecure.http.encodedcharacters.allowencodedbackslash=true"
+            - "--entrypoints.websecure.http.encodedcharacters.allowencodednullcharacter=true"
+            - "--entrypoints.web.transport.respondingtimeouts.readtimeout=3h"
+            - "--entrypoints.web.transport.respondingtimeouts.writetimeout=0s"
+            - "--entrypoints.web.transport.respondingtimeouts.idletimeout=3m"
+            - "--entrypoints.websecure.transport.respondingtimeouts.readtimeout=3h"
+            - "--entrypoints.websecure.transport.respondingtimeouts.writetimeout=0s"
+            - "--entrypoints.websecure.transport.respondingtimeouts.idletimeout=3m"
             - "--providers.docker.network=photoprism"
             - "--providers.docker.defaultRule=Host(`{{ normalize .Name }}.local`)"
             - "--log.level=DEBUG"

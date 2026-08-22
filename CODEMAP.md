@@ -1,6 +1,6 @@
 PhotoPrism — Backend CODEMAP
 
-**Last Updated:** August 7, 2026
+**Last Updated:** August 18, 2026
 
 Purpose
 - Give agents and contributors a fast, reliable map of where things live and how they fit together, so you can add features, fix bugs, and write tests without spelunking.
@@ -54,7 +54,7 @@ Templates & Static Assets
 - Entry HTML lives in `assets/templates/index.gohtml`, which includes the splash markup from `app.gohtml` and the SPA loader from `app.js.gohtml`.
 - OIDC login completion for the SPA is bridged through `assets/templates/auth.gohtml`, which clears legacy/namespaced session keys and writes the session into the preferred namespaced browser store selected by the login UI toggle in `frontend/src/page/auth/login.vue`.
 - The browser check logic resides in `assets/static/js/browser-check.js` and is included via `app.js.gohtml`; it performs capability checks (Promise, fetch, AbortController, `script.noModule`, etc.) before the main bundle runs.
-- Update this file (and the partial) in lockstep with `pro/assets/templates/index.gohtml`, `plus/assets/templates/index.gohtml`, and `portal/assets/templates/index.gohtml`, because those editions import the same partial.
+- Update this file (and the partial) in lockstep with `pro/assets/templates/index.gohtml` and `portal/assets/templates/index.gohtml`, because those editions import the same partial. Plus ships no template overlay and renders these templates unchanged.
 - Keep the script tag order unchanged so the browser check executes before the main bundle.
 - `splash.gohtml` renders the loading screen text while the bundle loads; styles are in `frontend/src/css/splash.css`.
 - When adjusting browser support messaging, update both the loader partial and splash styles so the warning message stays consistent across editions.

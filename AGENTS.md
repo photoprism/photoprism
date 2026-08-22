@@ -1,6 +1,6 @@
 # PhotoPrism Repository Guidelines
 
-**Last Updated:** July 28, 2026
+**Last Updated:** August 18, 2026
 
 ## Purpose
 
@@ -27,12 +27,13 @@ Entry point for agents and humans.
 - [`internal/api/AGENTS.md`](internal/api/AGENTS.md): API rules.
 - [`internal/config/AGENTS.md`](internal/config/AGENTS.md): config rules.
 - [`internal/commands/AGENTS.md`](internal/commands/AGENTS.md): CLI rules.
+- [`internal/entity/migrate/AGENTS.md`](internal/entity/migrate/AGENTS.md): database migration rules.
 - [`internal/photoprism/AGENTS.md`](internal/photoprism/AGENTS.md): import and index rules.
 - [`internal/service/cluster/AGENTS.md`](internal/service/cluster/AGENTS.md): cluster rules.
 - [`frontend/AGENTS.md`](frontend/AGENTS.md): frontend rules.
 - [`pkg/AGENTS.md`](pkg/AGENTS.md): `pkg/*` security and test rules.
 
-Optional nested repositories such as `plus/`, `pro/`, `portal/`, and `specs/` may contain their own `AGENTS.md` files. When present, treat those files as additional directory-local guidance.
+Optional nested repositories such as `plus/`, `pro/`, `portal/`, and `specs/` may contain their own `AGENTS.md` files. Each nested Git repository starts a separate Codex instruction chain, so read this guide and the nested repository guide before working there; Codex does not load this file automatically when a session starts inside a nested repository.
 
 ## Local Agent Progress
 
@@ -94,7 +95,7 @@ Title Case rules (Chicago-style, with code- and path-aware normalization):
 
 - Backend: Go in `internal/`, `pkg/`, and `cmd/`, backed by MariaDB or SQLite.
 - Frontend: Vue 3 plus Vuetify 3 under `frontend/`.
-- Local dev and CI use Docker Compose; Traefik provides local TLS via `*.localssl.dev`.
+- Local development uses Docker Compose; Traefik provides local TLS via `*.localssl.dev`.
 - Code in `pkg/*` must not import from `internal/*`. If you need config, entity, or DB access, add code under `internal/`.
 - Shared Go rules:
   - After Go edits, run `make fmt-go` and keep `gofmt` tab indentation.

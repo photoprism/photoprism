@@ -1,6 +1,6 @@
 # Frontend Guidelines
 
-**Last Updated:** July 28, 2026
+**Last Updated:** August 18, 2026
 
 ## Dependencies & Pins
 
@@ -27,7 +27,7 @@
 - Browser checks live in `assets/static/js/browser-check.js` and must load before the main bundle from `app.js.gohtml`. Do not add `defer` or `async` unless you restore guarded loading.
 - OIDC completion is bridged through `assets/templates/auth.gohtml` and must stay aligned with `frontend/src/common/session.js`, `frontend/src/common/storage.js`, and `frontend/src/page/auth/login.vue`. Preserve the `session` storage preference across the callback so `sessionStorage` logins survive redirect.
 - When touching frontend session bootstrap, verify that `frontend/src/common/session.js` resolves `storageNamespace` from the real client config shape (`window.__CONFIG__` or `config.values`), not only from simplified mocks. Include a focused test that would fail if restore fell back to `pp:root:`.
-- The loader partial is reused in `pro/assets/templates/index.gohtml`, `plus/assets/templates/index.gohtml`, and `portal/assets/templates/index.gohtml`; whenever you change `app.js.gohtml` or bundle loading, verify those files still include the shared partial.
+- The loader partial is reused in `pro/assets/templates/index.gohtml` and `portal/assets/templates/index.gohtml`; whenever you change `app.js.gohtml` or bundle loading, verify those files still include the shared partial.
 - Splash styles live in `frontend/src/css/splash.css`; add new splash elements there so public and private editions stay aligned.
 - Browser baseline: the `browserslist` query in `frontend/package.json` is authoritative — `.babelrc` sets no explicit `targets`, so `@babel/preset-env` compiles to that set. Resolve it with `(cd frontend && npx browserslist)` rather than quoting fixed versions, which go stale as caniuse data updates. Update the message in `assets/templates/app.js.gohtml` and matching CSS if the support matrix changes.
 

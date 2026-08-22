@@ -370,6 +370,6 @@ var MarkerFixtures = MarkerMap{
 // CreateMarkerFixtures inserts known entities into the database for testing.
 func CreateMarkerFixtures() {
 	for _, entity := range MarkerFixtures {
-		Db().Create(&entity)
+		fixtureDb().Create(&entity)
 	}
 }

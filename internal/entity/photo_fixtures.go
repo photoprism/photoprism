@@ -225,7 +225,7 @@ var PhotoFixtures = PhotoMap{
 		ID:               1000003,
 		PhotoUID:         "ps6sg6be2lvl0yh0",
 		TakenAt:          time.Date(1990, 4, 18, 1, 0, 0, 0, time.UTC),
-		TakenAtLocal:     time.Date(1990, 4, 18, 1, 0, 0, 0, time.UTC),
+		TakenAtLocal:     time.Date(1990, 4, 18, 1, 0, 0, 0, time.FixedZone("UTC+8", +8*60*60)),
 		TakenSrc:         SrcMeta,
 		PhotoType:        MediaVideo,
 		PhotoDuration:    time.Hour * 2,
@@ -3878,6 +3878,6 @@ var PhotoFixtures = PhotoMap{
 // CreatePhotoFixtures inserts known entities into the database for testing.
 func CreatePhotoFixtures() {
 	for _, entity := range PhotoFixtures {
-		Db().Create(&entity)
+		fixtureDb().Create(&entity)
 	}
 }

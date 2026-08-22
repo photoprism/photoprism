@@ -139,8 +139,13 @@ case $DESTARCH in
   amd64 | AMD64 | x86_64 | x86-64)
     echo "Installing Google Chrome (stable) on ${ID} for ${DESTARCH^^}..."
     set -e
-    curl -fsSL https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --no-tty --batch --yes --dearmor -o /etc/apt/trusted.gpg.d/dl-ssl.google.com.gpg
-    sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+    # Bootstrap the repo just far enough to install the package; its postinst
+    # then installs its own keyring and manages this list itself. Written, not
+    # appended, so a re-run cannot leave apt with a duplicate source.
+    chrome_keyring="/etc/apt/keyrings/dl-ssl.google.com.gpg"
+    install -m 0755 -d /etc/apt/keyrings
+    curl -fsSL https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --no-tty --batch --yes --dearmor -o "$chrome_keyring"
+    echo "deb [arch=amd64 signed-by=${chrome_keyring}] https://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
     apt-get update
     apt-get -qq install google-chrome-stable
     ;;

@@ -234,7 +234,7 @@ workdir=$(mktemp -d)
 trap 'rm -rf "${tmp_tar}" "${workdir}"' EXIT
 
 echo "Downloading ${ASSET_NAME}..."
-curl --fail --silent --show-error --location --retry 3 --retry-delay 2 "${ASSET_URL}" -o "${tmp_tar}"
+curl --fail --silent --show-error --location --retry 3 --retry-delay 2 --retry-all-errors "${ASSET_URL}" -o "${tmp_tar}"
 
 # Verify the download when a checksum was provided; upstream ships no checksum manifest.
 if [[ -n ${LLAMA_SHA256:-} ]]; then

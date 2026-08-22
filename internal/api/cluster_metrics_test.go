@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -12,9 +13,10 @@ import (
 
 func TestClusterMetrics_EmptyCounts(t *testing.T) {
 	// Remove the fixture record
-	if !assert.Empty(t, entity.UnscopedDb().Delete(entity.Client{}, "client_uid = ?", entity.ClientFixtures.Get("node").ClientUID).Error) {
-		return
-	}
+	require.NoError(t, entity.UnscopedDb().Delete(entity.Client{}, "client_uid = ?", entity.ClientFixtures.Get("node").ClientUID).Error)
+	defer func() {
+		require.NoError(t, entity.Db().Create(entity.ClientFixtures.Pointer("node")).Error)
+	}()
 
 	app, router, conf := NewApiTest()
 	enablePortalAPIs(t, conf)
@@ -29,7 +31,4 @@ func TestClusterMetrics_EmptyCounts(t *testing.T) {
 	body := resp.Body.String()
 	assert.Equal(t, "192.0.2.0/24", gjson.Get(body, "ClusterCIDR").String())
 	assert.Equal(t, int64(0), gjson.Get(body, "Nodes.total").Int())
-
-	// Recreate the fixture record
-	entity.Db().Create(entity.ClientFixtures.Get("node"))
 }

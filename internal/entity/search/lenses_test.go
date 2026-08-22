@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
@@ -16,8 +17,9 @@ func TestLenses(t *testing.T) {
 		query.Count = 1005
 		result, err := Lenses(query)
 
-		if assert.Nil(t, err) {
-			assert.LessOrEqual(t, 2, len(result))
+		require.NoError(t, err)
+
+		assert.LessOrEqual(t, 2, len(result))
 
 			for _, r := range result {
 				assert.IsType(t, Lens{}, r)
@@ -42,8 +44,9 @@ func TestLenses(t *testing.T) {
 		query.Count = 1005
 		result, err := Lenses(query)
 
-		if assert.Nil(t, err) {
-			assert.LessOrEqual(t, 1, len(result))
+		require.NoError(t, err)
+
+		assert.LessOrEqual(t, 1, len(result))
 
 			for _, r := range result {
 				assert.IsType(t, Lens{}, r)
@@ -66,8 +69,9 @@ func TestLenses(t *testing.T) {
 		query.Count = 15
 		result, err := Lenses(query)
 
-		if assert.Nil(t, err) {
-			assert.LessOrEqual(t, 1, len(result))
+		require.NoError(t, err)
+
+		assert.LessOrEqual(t, 1, len(result))
 
 			for _, r := range result {
 				assert.IsType(t, Lens{}, r)
@@ -89,10 +93,9 @@ func TestLenses(t *testing.T) {
 		query := form.NewLensSearch("")
 		result, err := Lenses(query)
 
-		if assert.Nil(t, err) {
-			assert.LessOrEqual(t, 3, len(result))
-			assert.Equal(t, entity.LensFixtures.Get(fixture).LensSlug, result[0].LensSlug)
-		}
+		require.NoError(t, err)
+		assert.LessOrEqual(t, 3, len(result))
+		assert.Equal(t, entity.LensFixtures.Get(fixture).LensSlug, result[0].LensSlug)
 	})
 	t.Run("SearchWithReverse", func(t *testing.T) {
 		fixture := "4.15mm-f/2.2"
@@ -100,20 +103,17 @@ func TestLenses(t *testing.T) {
 		query.Reverse = true
 		result, err := Lenses(query)
 
-		if assert.Nil(t, err) {
-			assert.LessOrEqual(t, 3, len(result))
-			assert.Equal(t, entity.LensFixtures.Get(fixture).LensSlug, result[0].LensSlug)
-		}
+		require.NoError(t, err)
+		assert.LessOrEqual(t, 3, len(result))
+		assert.Equal(t, entity.LensFixtures.Get(fixture).LensSlug, result[0].LensSlug)
 	})
 	t.Run("SearchForNoMakeAndQueryNoResults", func(t *testing.T) {
 		query := form.NewLensSearch("Apple")
 		query.NoMake = true
 		result, err := Lenses(query)
 
-		if assert.NoError(t, err) {
-			assert.Empty(t, result)
-			assert.NotNil(t, result)
-		}
+		require.NoError(t, err)
+		assert.Empty(t, result)
 	})
 	t.Run("SearchWithInvalidQueryString", func(t *testing.T) {
 		query := form.NewLensSearch("xxx:bla")
@@ -136,11 +136,9 @@ func TestLenses(t *testing.T) {
 
 		result, err := Lenses(f)
 
-		if assert.Nil(t, err) {
-			if assert.Len(t, result, 2) {
-				assert.Equal(t, "4-37", result[0].LensSlug)
-			}
-		}
+		require.NoError(t, err)
+		assert.Len(t, result, 2)
+		assert.Equal(t, "4-37", result[0].LensSlug)
 	})
 	t.Run("NotNil", func(t *testing.T) {
 		f := form.SearchLenses{
@@ -156,9 +154,8 @@ func TestLenses(t *testing.T) {
 
 		result, err := Lenses(f)
 
-		if assert.Nil(t, err) {
-			assert.Len(t, result, 0)
-			assert.NotNil(t, result)
-		}
+		require.NoError(t, err)
+		assert.Len(t, result, 0)
+		assert.NotNil(t, result)
 	})
 }

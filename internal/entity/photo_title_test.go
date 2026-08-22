@@ -63,6 +63,11 @@ func TestPhoto_SetTitle(t *testing.T) {
 }
 
 func TestPhoto_GenerateTitle(t *testing.T) {
+	// Reset Markers before test to ensure stableness.
+	for _, entity := range MarkerFixtures {
+		UnscopedDb().Save(&entity)
+	}
+
 	t.Run("WonTUpdateTitleWasModified", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo08")
 		classifyLabels := &classify.Labels{}
@@ -81,12 +86,7 @@ func TestPhoto_GenerateTitle(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		// TODO: Unstable
-		if len(m.SubjectNames()) > 0 {
-			assert.Equal(t, "Actor A / Germany / 2016", m.PhotoTitle)
-		} else {
-			assert.Equal(t, "Tree / Germany / 2016", m.PhotoTitle)
-		}
+		assert.Equal(t, "Actor A / Germany / 2016", m.PhotoTitle)
 	})
 	t.Run("PhotoWithLocationAndShortCityAndLabel", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo09")
@@ -137,12 +137,7 @@ func TestPhoto_GenerateTitle(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		// TODO: Unstable
-		if len(m.SubjectNames()) > 0 {
-			assert.Equal(t, "Actor A / Germany / 2016", m.PhotoTitle)
-		} else {
-			assert.Equal(t, "Holiday Park / Germany / 2016", m.PhotoTitle)
-		}
+		assert.Equal(t, "Actor A / Germany / 2016", m.PhotoTitle)
 	})
 	t.Run("PhotoWithLocationWithoutLocNameAndLongCity", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo11")
@@ -172,13 +167,7 @@ func TestPhoto_GenerateTitle(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		// This test is unpredicatable as TestMarker_SaveForm changes the subject names
-		subjects := m.SubjectNames()
-		assert.True(t, strings.HasSuffix(m.PhotoTitle, "/ 2008"))
-		for _, s := range subjects {
-			assert.Contains(t, m.PhotoTitle, s)
-		}
-		//assert.Equal(t, "Franzilein & Actress A / 2008", m.PhotoTitle)  // Requires TestMarker_SaveForm execution for this to be true.
+		assert.Equal(t, "Actor A & Actress A / 2008", m.PhotoTitle)
 	})
 	t.Run("NoLocation", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
@@ -236,14 +225,7 @@ func TestPhoto_GenerateTitle(t *testing.T) {
 
 		assert.Equal(t, SrcAuto, m.TitleSrc)
 		assert.Equal(t, SrcAuto, m.CaptionSrc)
-
-		// TODO: Unstable
-		if len(m.SubjectNames()) > 0 {
-			assert.Equal(t, "Actor A / Germany / 2016", m.PhotoTitle)
-		} else {
-			assert.Equal(t, "Holiday Park / Germany / 2016", m.PhotoTitle)
-		}
-
+		assert.Equal(t, "Actor A / Germany / 2016", m.PhotoTitle)
 		assert.Equal(t, "", m.PhotoCaption)
 	})
 	t.Run("People", func(t *testing.T) {

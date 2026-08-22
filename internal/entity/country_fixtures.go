@@ -18,6 +18,6 @@ var CountryFixtures = CountryMap{
 // CreateCountryFixtures inserts known entities into the database for testing.
 func CreateCountryFixtures() {
 	for _, entity := range CountryFixtures {
-		Db().Create(&entity)
+		fixtureDb().Create(&entity)
 	}
 }

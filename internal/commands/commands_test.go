@@ -176,6 +176,7 @@ func NewTestContextWithParse(appArgs []string, cmdArgs []string) *cli.Context {
 	LogErr(flagSet.Parse(cmdArgs))
 
 	// Create and return new test context.
+	// cli.NewContext(app, flagSet, nil) will cause a Panic if HideHelp = false.  You must provide a context in the OUTER call.
 	return cli.NewContext(app, flagSet, cli.NewContext(app, photoprismFlagSet, nil))
 }
 
@@ -185,9 +186,9 @@ func RunWithProvidedTestContext(ctx *cli.Context, cmd *cli.Command, args []strin
 	conf := get.Config()
 	previousOptions := *conf.Options()
 	// Redirect the output from cli to buffer for transfer to output for testing
-	var catureOutput bytes.Buffer
+	var captureOutput bytes.Buffer
 	oldWriter := ctx.App.Writer
-	ctx.App.Writer = &catureOutput
+	ctx.App.Writer = &captureOutput
 
 	// Run command via cli.Command.Run but neutralize os.Exit so ExitCoder
 	// errors don't terminate the test binary.
@@ -198,20 +199,18 @@ func RunWithProvidedTestContext(ctx *cli.Context, cmd *cli.Command, args []strin
 		err = cmd.Run(ctx, args...)
 	})
 	ctx.App.Writer = oldWriter
-	output += catureOutput.String()
+	output += captureOutput.String()
 
 	// Reset the config options just in case they have been affected
 	*conf.Options() = previousOptions
-	// // Re-open the database after the command completed so follow-up checks
-	// // (potentially issued by the test itself) have an active connection.
+	// Re-open the database after the command completed so follow-up checks
+	// (potentially issued by the test itself) have an active connection.
 	_ = reopenConnection()
 
 	return output, err
 }
 
 // resetConfigAndDB replaces the config with a generated minimal config, and may replace the database if it doesn't exist.
-// it does call Migrate and TestFixtures for Postgres and MariaDB.  It may call Migrate and TestFixtures for SQLite if the database
-// doesn't exist.  That can only happen if you are using PHOTOPRISM_TEST_DSN_NAME="sqlite".
 func resetConfigAndDB() *config.Config {
 	c := config.NewMinimalTestConfigWithDb("commands", savedPath)
 	get.SetConfig(c)

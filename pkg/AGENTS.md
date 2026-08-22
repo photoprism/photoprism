@@ -1,6 +1,6 @@
 # Package Security & Test Guidelines
 
-**Last Updated:** April 9, 2026
+**Last Updated:** August 18, 2026
 
 ## Archive Extraction Security
 
@@ -28,4 +28,3 @@
 
 - Filesystem copy, move, and unzip helpers: `go test ./pkg/fs -run 'Copy|Move|Unzip' -count=1`
 - Media helpers: `go test ./pkg/media/... -count=1`
-

@@ -127,10 +127,10 @@ var CellFixtures = CellMap{
 func CreateCellFixtures() {
 	for _, entity := range CellFixtures {
 		firstEntity := &Cell{}
-		if err := Db().Model(&Cell{}).Where("id = ?", entity.ID).First(&firstEntity).Error; err != nil {
-			Db().Create(&entity)
+		if err := fixtureDb().Model(&Cell{}).Where("id = ?", entity.ID).First(&firstEntity).Error; err != nil {
+			fixtureDb().Create(&entity)
 		} else {
-			Db().Save(&entity)
+			fixtureDb().Save(&entity)
 		}
 	}
 }

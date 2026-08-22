@@ -119,8 +119,7 @@ var PhotoKeywordFixtures = PhotoKeywordMap{
 		PhotoID:   1000045,
 		KeywordID: 10000018,
 	},
-	/*	"30": { // Duplicate of 29.
-		}, */
+	// 30 was a duplicate of 29
 	"31": {
 		PhotoID:   1000036,
 		KeywordID: 10000015,
@@ -175,10 +174,10 @@ var PhotoKeywordFixtures = PhotoKeywordMap{
 func CreatePhotoKeywordFixtures() {
 	for _, entity := range PhotoKeywordFixtures {
 		firstEntity := &PhotoKeyword{}
-		if err := Db().Model(&PhotoKeyword{}).Where("photo_id = ? and keyword_id = ?", entity.PhotoID, entity.KeywordID).First(&firstEntity).Error; err != nil {
-			Db().Create(&entity)
+		if err := fixtureDb().Model(&PhotoKeyword{}).Where("photo_id = ? and keyword_id = ?", entity.PhotoID, entity.KeywordID).First(&firstEntity).Error; err != nil {
+			fixtureDb().Create(&entity)
 		} else {
-			Db().Save(&entity)
+			fixtureDb().Save(&entity)
 		}
 	}
 }

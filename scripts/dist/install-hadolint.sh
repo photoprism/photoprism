@@ -101,7 +101,7 @@ mkdir -p "${DESTDIR}/bin"
 tmp_bin=$(mktemp)
 trap 'rm -f "${tmp_bin}" "${tmp_bin}.sha256"' EXIT
 
-curl --fail --silent --show-error --location "${RELEASE_URL}" -o "${tmp_bin}"
+curl --fail --silent --show-error --location --retry 3 --retry-delay 2 --retry-all-errors "${RELEASE_URL}" -o "${tmp_bin}"
 
 # Verify the SHA-256 checksum when the upstream releases publish one.
 if curl --fail --silent --show-error --location "${CHECKSUM_URL}" -o "${tmp_bin}.sha256" 2>/dev/null; then

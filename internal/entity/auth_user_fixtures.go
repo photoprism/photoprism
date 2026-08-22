@@ -302,6 +302,6 @@ var UserFixtures = UserMap{
 // CreateUserFixtures creates the user fixtures specified above
 func CreateUserFixtures() {
 	for _, entity := range UserFixtures {
-		Db().Create(&entity)
+		fixtureDb().Create(&entity)
 	}
 }

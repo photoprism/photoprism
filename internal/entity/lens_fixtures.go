@@ -70,8 +70,8 @@ var LensFixtures = LensMap{
 func CreateLensFixtures() {
 	for _, entity := range LensFixtures {
 		firstEntity := &Lens{}
-		if err := Db().Model(&Lens{}).Where("id = ?", entity.ID).First(&firstEntity).Error; err != nil {
-			Db().Create(&entity)
+		if err := fixtureDb().Model(&Lens{}).Where("id = ?", entity.ID).First(&firstEntity).Error; err != nil {
+			fixtureDb().Create(&entity)
 		}
 		// Save updates the UpdatedAt, which breaks some tests.
 		// So assume that the record already being there means that the other fixture

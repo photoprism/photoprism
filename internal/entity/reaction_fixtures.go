@@ -47,6 +47,6 @@ var ReactionFixtures = ReactionMap{
 // CreateReactionFixtures inserts known entities into the database for testing.
 func CreateReactionFixtures() {
 	for _, entity := range ReactionFixtures {
-		Db().Create(&entity)
+		fixtureDb().Create(&entity)
 	}
 }

@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
@@ -16,8 +17,9 @@ func TestCameras(t *testing.T) {
 		query.Count = 1005
 		result, err := Cameras(query)
 
-		if assert.Nil(t, err) {
-			assert.LessOrEqual(t, 2, len(result))
+		require.NoError(t, err)
+
+		assert.LessOrEqual(t, 2, len(result))
 
 			for _, r := range result {
 				assert.IsType(t, Camera{}, r)
@@ -40,8 +42,9 @@ func TestCameras(t *testing.T) {
 		query.Count = 1005
 		result, err := Cameras(query)
 
-		if assert.Nil(t, err) {
-			assert.LessOrEqual(t, 1, len(result))
+		require.NoError(t, err)
+
+		assert.LessOrEqual(t, 1, len(result))
 
 			for _, r := range result {
 				assert.IsType(t, Camera{}, r)
@@ -57,8 +60,9 @@ func TestCameras(t *testing.T) {
 		query.Count = 15
 		result, err := Cameras(query)
 
-		if assert.Nil(t, err) {
-			assert.LessOrEqual(t, 1, len(result))
+		require.NoError(t, err)
+
+		assert.LessOrEqual(t, 1, len(result))
 
 			for _, r := range result {
 				assert.IsType(t, Camera{}, r)
@@ -73,18 +77,16 @@ func TestCameras(t *testing.T) {
 		query := form.NewCameraSearch("")
 		result, err := Cameras(query)
 
-		if assert.Nil(t, err) {
-			assert.LessOrEqual(t, 6, len(result))
-		}
+		require.NoError(t, err)
+		assert.LessOrEqual(t, 6, len(result))
 	})
 	t.Run("SearchWithReverse", func(t *testing.T) {
 		query := form.NewCameraSearch("")
 		query.Reverse = true
 		result, err := Cameras(query)
 
-		if assert.Nil(t, err) {
-			assert.LessOrEqual(t, 6, len(result))
-		}
+		require.NoError(t, err)
+		assert.LessOrEqual(t, 6, len(result))
 	})
 	t.Run("SearchForNoMakeAndQueryNoResults", func(t *testing.T) {
 		query := form.NewCameraSearch("Canon")
@@ -111,8 +113,7 @@ func TestCameras(t *testing.T) {
 
 		result, err := Cameras(f)
 
-		if assert.Nil(t, err) {
-			assert.Len(t, result, 2)
-		}
+		require.NoError(t, err)
+		assert.Len(t, result, 2)
 	})
 }

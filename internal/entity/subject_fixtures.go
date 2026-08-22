@@ -128,6 +128,6 @@ var SubjectFixtures = SubjectMap{
 // CreateSubjectFixtures inserts known entities into the database for testing.
 func CreateSubjectFixtures() {
 	for _, entity := range SubjectFixtures {
-		Db().Create(&entity)
+		fixtureDb().Create(&entity)
 	}
 }

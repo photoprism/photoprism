@@ -932,7 +932,6 @@ func TestClient_Validate(t *testing.T) {
 		}
 	})
 }
-
 func TestFindClientByNodeUUID(t *testing.T) {
 	t.Run("node", func(t *testing.T) {
 		expected := ClientFixtures.Get("node")
@@ -943,7 +942,7 @@ func TestFindClientByNodeUUID(t *testing.T) {
 			t.Fatal("result should not be nil")
 		}
 
-		assert.Equal(t, m.UserUID, UserFixtures.Get("node").UserUID)
+		assert.Equal(t, ClientFixtures.Get("node").ClientName, m.ClientName)
 		assert.Equal(t, expected.ClientUID, m.GetUID())
 		assert.NotEmpty(t, m.CreatedAt)
 		assert.NotEmpty(t, m.UpdatedAt)

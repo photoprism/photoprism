@@ -333,10 +333,10 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 func CreatePhotoAlbumFixtures() {
 	for _, entity := range PhotoAlbumFixtures {
 		firstEntity := &PhotoAlbum{}
-		if err := Db().Model(&PhotoAlbum{}).Where("photo_uid = ? and album_uid = ?", entity.PhotoUID, entity.AlbumUID).First(&firstEntity).Error; err != nil {
-			Db().Create(&entity)
+		if err := fixtureDb().Model(&PhotoAlbum{}).Where("photo_uid = ? and album_uid = ?", entity.PhotoUID, entity.AlbumUID).First(&firstEntity).Error; err != nil {
+			fixtureDb().Create(&entity)
 		} else {
-			Db().Save(&entity)
+			fixtureDb().Save(&entity)
 		}
 	}
 }

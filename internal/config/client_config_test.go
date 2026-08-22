@@ -141,14 +141,12 @@ func TestConfig_ClientUser(t *testing.T) {
 	})
 	t.Run("NilTesting", func(t *testing.T) {
 		t.Cleanup(func() {
-			entity.Entities.Truncate(entity.Db())
-			entity.CreateDefaultFixtures()
-			entity.CreateTestFixtures()
-			entity.File{}.RegenerateIndex()
+			entity.ResetTestFixtures()
 		})
 		// Clean the database as if it's brand new
 		entity.Entities.Truncate(entity.Db())
 		entity.CreateDefaultFixtures()
+		entity.FlushCaches()
 		entity.File{}.RegenerateIndex()
 
 		var count int64
@@ -158,17 +156,15 @@ func TestConfig_ClientUser(t *testing.T) {
 		adminFeatures := c.ClientRole(acl.RoleAdmin).Settings.Features
 		c.Settings().Features = adminFeatures
 		result := c.ClientUser(true)
-		assert.NotNil(t, result.AlbumCategories, "AlbumCategories")
+		assert.Nil(t, result.AlbumCategories, "AlbumCategories")
 		assert.NotNil(t, result.Albums, "Albums")
 		assert.NotNil(t, result.Cameras, "Cameras")
 		assert.NotNil(t, result.Lenses, "Lenses")
 		assert.NotNil(t, result.Countries, "Countries")
 		assert.NotNil(t, result.Thumbs, "Thumbs")
-		assert.NotNil(t, result.Years, "Years")
+		assert.Nil(t, result.Years, "Years")
 		assert.NotNil(t, result.Colors, "Colors")
 		assert.NotNil(t, result.Categories, "Categories")
-		assert.NotNil(t, result.AlbumCategories, "AlbumCategories")
-		assert.NotNil(t, result.AlbumCategories, "AlbumCategories")
 	})
 }
 

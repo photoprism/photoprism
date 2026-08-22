@@ -28,7 +28,10 @@ func LogWarningsAndErrors() {
 	}
 
 	if logEvents.CompareAndSwap(false, true) {
-		mutex.ErrorWorker.Start()
+		if err := mutex.ErrorWorker.Start(); err != nil {
+			// This should not be possible, as the CompareAndSwap should prevent this scenario.
+			return
+		}
 		go Error{}.LogEvents(logrus.WarnLevel)
 	}
 }
@@ -54,6 +57,7 @@ func (Error) LogEvents(minLevel logrus.Level) {
 	s := event.Subscribe("log.*")
 
 	defer func() {
+		mutex.ErrorWorker.Stop() // Make sure that the worker has been stopped, before swapping the state.
 		logEvents.CompareAndSwap(true, false)
 		event.Unsubscribe(s)
 		mutex.ErrorWorker.Stop()

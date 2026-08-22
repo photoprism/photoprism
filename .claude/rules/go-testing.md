@@ -42,7 +42,7 @@ A test that passes alone and in the full package but fails under `-run` subsets 
 - `NewTestConfig("<pkg>")` runs `InitializeTestData()`; for custom configs call `c.InitializeTestData()` (and optionally `c.AssertTestData(t)`).
 - `PhotoFixtures.Get()` etc. return value copies — re-query via `entity.FindPhoto(fixture)` when you need the DB row.
 - New persistent IDs: `rnd.GenerateUID(entity.PhotoUID|FileUID|LabelUID|ClientUID|…)`; node UUIDs use `rnd.UUIDv7()` and `node.uuid` is required in responses.
-- Use `entity.Values` (not raw `map[string]interface{}`) for DB updates. Reuse shared `Example*` constants for illustrative credentials (see `internal/service/cluster/examples.go`).
+- Use `entity.Values` (not raw `map[string]interface{}`) for DB updates. Reuse shared `Example*` constants for illustrative credentials (see `internal/service/cluster/const.go`).
 
 ### CLI Testing Gotchas
 

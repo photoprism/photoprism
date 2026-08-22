@@ -464,15 +464,15 @@ func (c *Config) CloseDb() error {
 // IsDbOpen determines if the database is available to use
 func (c *Config) IsDbOpen() bool {
 	if c.db == nil {
-		log.Debug("isdbopen: c.db == nil")
+		log.Debug("config: database not connected")
 		return false
 	} else {
 		if sqlDB, err := c.db.DB(); err != nil {
-			log.Errorf("isdbopen: c.db.DB err = %+v", err)
+			log.Debugf("config: database not available (%s)", err)
 			return false
 		} else {
 			if sqlErr := sqlDB.Ping(); sqlErr != nil {
-				log.Errorf("isdbopen: Ping err = %+v", sqlErr)
+				log.Debugf("config: database not available (%s)", sqlErr)
 				return false
 			} else {
 				return true

@@ -155,10 +155,10 @@ var KeywordFixtures = KeywordMap{
 func CreateKeywordFixtures() {
 	for _, entity := range KeywordFixtures {
 		firstEntity := &Keyword{}
-		if err := Db().Model(&Keyword{}).Where("id = ?", entity.ID).First(&firstEntity).Error; err != nil {
-			Db().Create(&entity)
+		if err := fixtureDb().Model(&Keyword{}).Where("id = ?", entity.ID).First(&firstEntity).Error; err != nil {
+			fixtureDb().Create(&entity)
 		} else {
-			Db().Save(&entity)
+			fixtureDb().Save(&entity)
 		}
 	}
 }

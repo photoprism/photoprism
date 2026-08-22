@@ -19,9 +19,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 		require.Len(t, photos, 3)
 
 		for i := range len(photos) {
@@ -53,9 +51,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 		assert.Len(t, photos, 5)
 	})
 	t.Run("CakePipeFlower", func(t *testing.T) {
@@ -66,9 +62,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 		assert.Len(t, photos, 5)
 	})
 	t.Run("CakeWhitespacePipeWhitespaceFlower", func(t *testing.T) {
@@ -79,9 +73,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 		assert.Len(t, photos, 5)
 	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
@@ -92,9 +84,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 		assert.Len(t, photos, 1)
 	})
 	t.Run("CenterPercent", func(t *testing.T) {
@@ -105,9 +95,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 		assert.Len(t, photos, 1)
 	})
 	t.Run("EndsWithPercent", func(t *testing.T) {
@@ -118,10 +106,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
+		require.NoError(t, err)
 		assert.Len(t, photos, 1)
 	})
 	t.Run("StartsWithAmpersand", func(t *testing.T) {
@@ -134,10 +119,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
+		require.NoError(t, err)
 		assert.Equal(t, 2, len(photos))
 	})
 	t.Run("CenterAmpersand", func(t *testing.T) {
@@ -148,10 +130,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
+		require.NoError(t, err)
 		assert.Equal(t, 2, len(photos))
 	})
 	t.Run("EndsWithAmpersand", func(t *testing.T) {
@@ -162,10 +141,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
+		require.NoError(t, err)
 		assert.Len(t, photos, 1)
 	})
 	t.Run("StartsWithSingleQuote", func(t *testing.T) {
@@ -176,10 +152,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
+		require.NoError(t, err)
 		assert.Len(t, photos, 1)
 	})
 	t.Run("CenterSingleQuote", func(t *testing.T) {
@@ -190,10 +163,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
+		require.NoError(t, err)
 		assert.Len(t, photos, 1)
 	})
 	t.Run("EndsWithSingleQuote", func(t *testing.T) {
@@ -204,10 +174,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
+		require.NoError(t, err)
 		assert.Len(t, photos, 1)
 	})
 	t.Run("StartsWithAsterisk", func(t *testing.T) {
@@ -218,10 +185,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
+		require.NoError(t, err)
 		assert.Len(t, photos, 1)
 	})
 	t.Run("CenterAsterisk", func(t *testing.T) {
@@ -232,10 +196,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
+		require.NoError(t, err)
 		assert.Len(t, photos, 1)
 	})
 	t.Run("EndsWithAsterisk", func(t *testing.T) {
@@ -246,10 +207,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
+		require.NoError(t, err)
 		assert.Len(t, photos, 1)
 	})
 	t.Run("StartsWithPipe", func(t *testing.T) {
@@ -260,10 +218,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
+		require.NoError(t, err)
 		assert.Len(t, photos, 1)
 	})
 	t.Run("CenterPipe", func(t *testing.T) {
@@ -274,10 +229,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
+		require.NoError(t, err)
 		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("EndsWithPipe", func(t *testing.T) {
@@ -288,10 +240,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
+		require.NoError(t, err)
 		assert.Len(t, photos, 1)
 	})
 	t.Run("StartsWithNumber", func(t *testing.T) {
@@ -302,9 +251,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 		assert.Len(t, photos, 1)
 	})
 	t.Run("CenterNumber", func(t *testing.T) {
@@ -315,10 +262,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
+		require.NoError(t, err)
 		assert.Len(t, photos, 1)
 	})
 	t.Run("EndsWithNumber", func(t *testing.T) {
@@ -329,10 +273,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
+		require.NoError(t, err)
 		assert.Len(t, photos, 1)
 	})
 	t.Run("StartsWithDoubleQuotes", func(t *testing.T) {
@@ -343,10 +284,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
+		require.NoError(t, err)
 		assert.Len(t, photos, 1)
 	})
 	t.Run("CenterDoubleQuotes", func(t *testing.T) {
@@ -357,10 +295,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
+		require.NoError(t, err)
 		assert.Len(t, photos, 0)
 	})
 	t.Run("EndsWithDoubleQuotes", func(t *testing.T) {
@@ -371,10 +306,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
+		require.NoError(t, err)
 		assert.Len(t, photos, 4)
 	})
 	t.Run("OrSearch", func(t *testing.T) {
@@ -385,9 +317,7 @@ func TestPhotosFilterLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 		assert.Len(t, photos, 2)
 	})
 }
@@ -401,9 +331,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 		assert.Len(t, photos, 3)
 	})
 	t.Run("Cake", func(t *testing.T) {
@@ -414,9 +342,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 		assert.Len(t, photos, 5)
 	})
 	t.Run("CakePipeFlower", func(t *testing.T) {
@@ -427,9 +353,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 		assert.Len(t, photos, 5)
 	})
 	t.Run("CakeWhitespacePipeWhitespaceFlower", func(t *testing.T) {
@@ -440,9 +364,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 		assert.Len(t, photos, 5)
 	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
@@ -453,9 +375,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 		assert.Len(t, photos, 1)
 	})
 	t.Run("CenterPercent", func(t *testing.T) {
@@ -466,9 +386,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 		assert.Len(t, photos, 1)
 	})
 	t.Run("EndsWithPercent", func(t *testing.T) {
@@ -479,10 +397,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
+		require.NoError(t, err)
 		assert.Equal(t, 1, len(photos))
 	})
 	t.Run("StartsWithAmpersand", func(t *testing.T) {
@@ -493,10 +408,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
+		require.NoError(t, err)
 		assert.Equal(t, 2, len(photos))
 	})
 	t.Run("CenterAmpersand", func(t *testing.T) {
@@ -507,10 +419,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
+		require.NoError(t, err)
 		assert.Equal(t, 2, len(photos))
 	})
 	t.Run("EndsWithAmpersand", func(t *testing.T) {
@@ -521,10 +430,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
+		require.NoError(t, err)
 		assert.Len(t, photos, 1)
 	})
 	t.Run("StartsWithSingleQuote", func(t *testing.T) {
@@ -535,10 +441,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
+		require.NoError(t, err)
 		assert.Len(t, photos, 1)
 	})
 	t.Run("CenterSingleQuote", func(t *testing.T) {
@@ -549,10 +452,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
+		require.NoError(t, err)
 		assert.Len(t, photos, 1)
 	})
 	t.Run("EndsWithSingleQuote", func(t *testing.T) {
@@ -563,10 +463,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
+		require.NoError(t, err)
 		assert.Len(t, photos, 1)
 	})
 	t.Run("StartsWithAsterisk", func(t *testing.T) {
@@ -577,10 +474,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
+		require.NoError(t, err)
 		assert.Len(t, photos, 1)
 	})
 	t.Run("CenterAsterisk", func(t *testing.T) {
@@ -591,10 +485,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
+		require.NoError(t, err)
 		assert.Len(t, photos, 1)
 	})
 	t.Run("EndsWithAsterisk", func(t *testing.T) {
@@ -605,10 +496,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
+		require.NoError(t, err)
 		assert.Len(t, photos, 1)
 	})
 	t.Run("StartsWithPipe", func(t *testing.T) {
@@ -619,10 +507,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
+		require.NoError(t, err)
 		assert.Len(t, photos, 1)
 	})
 	t.Run("CenterPipe", func(t *testing.T) {
@@ -633,10 +518,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
+		require.NoError(t, err)
 		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("EndsWithPipe", func(t *testing.T) {
@@ -647,10 +529,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
+		require.NoError(t, err)
 		assert.Len(t, photos, 1)
 	})
 	t.Run("StartsWithNumber", func(t *testing.T) {
@@ -661,9 +540,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 		assert.Len(t, photos, 1)
 	})
 	t.Run("CenterNumber", func(t *testing.T) {
@@ -674,10 +551,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
+		require.NoError(t, err)
 		assert.Len(t, photos, 1)
 	})
 	t.Run("EndsWithNumber", func(t *testing.T) {
@@ -688,10 +562,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
-
+		require.NoError(t, err)
 		assert.Len(t, photos, 1)
 	})
 	t.Run("StartsWithDoubleQuotes", func(t *testing.T) {
@@ -702,9 +573,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 		// TODO Finds all?
 		assert.Greater(t, len(photos), 0)
 	})
@@ -716,9 +585,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 		// TODO Finds all?
 		assert.Greater(t, len(photos), 0)
 	})
@@ -730,9 +597,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 		// TODO Finds all?
 		assert.Greater(t, len(photos), 0)
 	})
@@ -744,9 +609,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 		assert.Len(t, photos, 2)
 	})
 	t.Run("HomophoneName", func(t *testing.T) {
@@ -759,9 +622,7 @@ func TestPhotosQueryLabel(t *testing.T) {
 
 		photos, _, err := Photos(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 
 		if len(photos) != 1 {
 			t.Fatalf("expected one result, got %d", len(photos))
@@ -798,10 +659,7 @@ func photosWithLabel(t *testing.T, label string) PhotoResults {
 	f.Merged = true
 
 	photos, _, err := Photos(f)
-	if err != nil {
-		t.Fatal(err)
-	}
-
+	require.NoError(t, err)
 	return photos
 }
 

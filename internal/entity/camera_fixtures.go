@@ -108,6 +108,6 @@ var CameraFixtures = CameraMap{
 // CreateCameraFixtures inserts known entities into the database for testing.
 func CreateCameraFixtures() {
 	for _, entity := range CameraFixtures {
-		Db().Create(&entity)
+		fixtureDb().Create(&entity)
 	}
 }

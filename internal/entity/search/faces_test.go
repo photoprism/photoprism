@@ -6,12 +6,13 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestFaces(t *testing.T) {
 	t.Run("Unknown", func(t *testing.T) {
 		results, err := Faces(form.SearchFaces{Unknown: "yes", Order: "added", Markers: true})
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		t.Logf("Faces: %#v", results)
 		if len(results) == 0 {
 			t.Fatal("results are empty")
@@ -21,28 +22,27 @@ func TestFaces(t *testing.T) {
 	})
 	t.Run("SearchWithLimit", func(t *testing.T) {
 		results, err := Faces(form.SearchFaces{Offset: 3, Order: "subject", Markers: true})
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		t.Logf("Faces: %#v", results)
 		assert.LessOrEqual(t, 1, len(results))
 	})
 	t.Run("FindSpecificId", func(t *testing.T) {
 		results, err := Faces(form.SearchFaces{UID: "PN6QO5INYTUSAATOFL43LL2ABAV5ACZK", Markers: true})
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		t.Logf("Faces: %#v", results)
 		assert.LessOrEqual(t, 1, len(results))
 	})
 	t.Run("ExcludeUnknownHidden", func(t *testing.T) {
 		results, err := Faces(form.SearchFaces{Unknown: "no", Hidden: "yes", Order: "samples", Markers: true})
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		t.Logf("Faces: %#v", results)
 		assert.LessOrEqual(t, 0, len(results))
 	})
 	t.Run("NotNil", func(t *testing.T) {
 		results, err := Faces(form.SearchFaces{Unknown: "no", Hidden: "yes", Order: "samples", Markers: true, Count: 100, Offset: 999999})
-		if assert.NoError(t, err) {
-			t.Logf("Faces: %#v", results)
-			assert.NotNil(t, results)
-			assert.Len(t, results, 0)
-		}
+		require.NoError(t, err)
+		t.Logf("Faces: %#v", results)
+		assert.NotNil(t, results)
+		assert.Len(t, results, 0)
 	})
 }

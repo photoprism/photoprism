@@ -134,7 +134,7 @@ var DetailsFixtures = DetailsMap{
 // CreateDetailsFixtures inserts known entities into the database for testing.
 func CreateDetailsFixtures() {
 	for _, entity := range DetailsFixtures {
-		Db().Clauses(clause.OnConflict{
+		fixtureDb().Clauses(clause.OnConflict{
 			Columns:   []clause.Column{{Name: "photo_id"}},
 			UpdateAll: true,
 		}).Create(&entity)
