@@ -5,6 +5,8 @@ import (
 	"errors"
 	"image"
 	"math"
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -15,6 +17,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -107,6 +110,38 @@ func TestFaces_PlanMigration(t *testing.T) {
 	t.Run("MissingConfig", func(t *testing.T) {
 		_, err := (&Faces{}).PlanMigration("")
 		require.Error(t, err)
+	})
+	t.Run("OriginalsUnavailable", func(t *testing.T) {
+		// The counting queries cannot see the filesystem, so the plan carries this separately.
+		// The seeded test library keeps its media elsewhere, which is the unreadable case.
+		result, err := w.PlanMigration("")
+		require.NoError(t, err)
+		assert.True(t, result.OriginalsUnavailable)
+
+		name := filepath.Join(w.conf.OriginalsPath(), "plan-migration-test.jpg")
+		require.NoError(t, os.WriteFile(name, []byte("test"), fs.ModeFile))
+		t.Cleanup(func() { _ = os.Remove(name) })
+
+		result, err = w.PlanMigration("")
+		require.NoError(t, err)
+		assert.False(t, result.OriginalsUnavailable)
+	})
+}
+
+func TestOriginalsUnavailable(t *testing.T) {
+	t.Run("Missing", func(t *testing.T) {
+		assert.True(t, originalsUnavailable(filepath.Join(t.TempDir(), "not-mounted")))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.True(t, originalsUnavailable(t.TempDir()))
+	})
+	t.Run("NoPath", func(t *testing.T) {
+		assert.True(t, originalsUnavailable(""))
+	})
+	t.Run("Populated", func(t *testing.T) {
+		dir := t.TempDir()
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "photo.jpg"), []byte("test"), fs.ModeFile))
+		assert.False(t, originalsUnavailable(dir))
 	})
 }
 

@@ -147,6 +147,12 @@ func facesMigrateAction(ctx *cli.Context) error {
 			log.Warnf("faces: %d markers cannot be re-embedded because their file is missing or unreadable",
 				plan.Markers.Unreadable)
 		}
+		// The counts above come from the index, which believes whatever it was told last. An
+		// unmounted originals volume leaves them looking clean and then fails every file.
+		if plan.OriginalsUnavailable {
+			log.Warnf("faces: originals path %s is empty or cannot be read, so no marker can be re-embedded",
+				clean.Log(conf.OriginalsPath()))
+		}
 		for _, count := range plan.MarkerModels {
 			model := count.EmbedModel
 			if model == "" {

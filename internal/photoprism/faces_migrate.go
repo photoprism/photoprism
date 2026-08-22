@@ -49,6 +49,11 @@ type FacesMigratePlan struct {
 	// LowQualitySamples counts assignments too small or too poorly scored to seed a
 	// replacement centroid. They keep their person; they just cannot define one.
 	LowQualitySamples int
+
+	// OriginalsUnavailable reports that the originals root cannot be read, which is what an
+	// unmounted volume looks like. The counting queries cannot see it, so a plan would
+	// otherwise be reported as clean and then fail on every file it tried to re-embed.
+	OriginalsUnavailable bool
 }
 
 // FacesMigrateResult summarizes a completed face embedding migration.
@@ -209,7 +214,18 @@ func (w *Faces) PlanMigration(target string) (result FacesMigratePlan, err error
 		return result, err
 	}
 
+	result.OriginalsUnavailable = originalsUnavailable(w.conf.OriginalsPath())
+
 	return result, nil
+}
+
+// originalsUnavailable reports whether the originals root is missing or holds nothing, at the
+// cost of a stat and a single directory entry rather than one stat per file.
+//
+// It answers the case a per-file check cannot improve on: when the volume is not mounted every
+// marker fails, and the plan is the last point at which that is cheap to say.
+func originalsUnavailable(originalsPath string) bool {
+	return !fs.PathExists(originalsPath) || fs.DirIsEmpty(originalsPath)
 }
 
 // faceMigrationSubjectCounts returns how many subjects the identities name and how many
