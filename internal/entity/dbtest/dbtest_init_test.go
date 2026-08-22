@@ -148,7 +148,7 @@ func TestInit(t *testing.T) {
 
 		stmt.Model(m).Count(&count)
 
-		assert.Equal(t, int64(3), count)
+		assert.Equal(t, int64(4), count)
 	})
 
 	t.Run("FileCounts", func(t *testing.T) {
