@@ -22,6 +22,17 @@ func TestEmbedding_Dist(t *testing.T) {
 
 		assert.Equal(t, -1.0, a.Dist(b))
 	})
+	t.Run("NonFinite", func(t *testing.T) {
+		// A NaN distance is below every threshold it is compared with, so it would be
+		// accepted as a match and could never be displaced by a real one.
+		a := Embedding{0, 0, 0}
+		nan := Embedding{math.NaN(), 0, 0}
+		inf := Embedding{math.Inf(1), 0, 0}
+
+		assert.Equal(t, -1.0, a.Dist(nan))
+		assert.Equal(t, -1.0, nan.Dist(a))
+		assert.Equal(t, -1.0, a.Dist(inf))
+	})
 }
 
 func TestEmbedding_DistWithin(t *testing.T) {

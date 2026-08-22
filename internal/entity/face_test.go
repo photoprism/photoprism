@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"math"
 	"testing"
 	"time"
 
@@ -86,6 +87,20 @@ func TestFace_Match(t *testing.T) {
 		match, _ := m.Match(MarkerFixtures.Pointer("1000003-5").Embeddings(), face.EmbeddingModelName())
 
 		assert.False(t, match)
+	})
+	t.Run("NonFiniteVector", func(t *testing.T) {
+		// A NaN distance is below every threshold it is compared with, so a corrupt vector
+		// would match any cluster and be written to markers.face_dist as the best result.
+		m := NewFace("", SrcAuto, face.Embeddings{face.RandomEmbedding()}, face.EmbeddingModelName())
+		require.NotNil(t, m)
+
+		nan := make(face.Embedding, len(m.Embedding()))
+		nan[0] = math.NaN()
+
+		match, dist := m.Match(face.Embeddings{nan}, face.EmbeddingModelName())
+
+		assert.False(t, match)
+		assert.Equal(t, float64(-1), dist)
 	})
 }
 

@@ -29,7 +29,8 @@ func NewEmbedding(inference []float32) Embedding {
 	return result
 }
 
-// Dist calculates the distance to another face embedding.
+// Dist calculates the distance to another face embedding, and returns -1 when the embeddings
+// are not comparable or hold a non-finite component.
 func (m Embedding) Dist(other Embedding) float64 {
 	if len(other) == 0 || len(m) != len(other) {
 		return -1
@@ -42,7 +43,15 @@ func (m Embedding) Dist(other Embedding) float64 {
 		sum += diff * diff
 	}
 
-	return math.Sqrt(sum)
+	dist := math.Sqrt(sum)
+
+	// A non-finite component reports "not comparable" like DistWithin does: NaN compares below
+	// every threshold it is fed to, so it would be accepted as a match and never displaced.
+	if math.IsNaN(dist) || math.IsInf(dist, 0) {
+		return -1
+	}
+
+	return dist
 }
 
 // distBlockMask controls how often DistWithin tests its running sum against the limit.

@@ -239,6 +239,31 @@ func BenchmarkEmbeddingsMidpoint(b *testing.B) {
 	}
 }
 
+func TestEmbeddings_Dist(t *testing.T) {
+	near := Embedding{0, 0, 0}
+	far := Embedding{3, 4, 0}
+	other := Embedding{0, 0, 1}
+
+	t.Run("ReportsMinimum", func(t *testing.T) {
+		assert.InDelta(t, 1.0, Embeddings{far, other}.Dist(near), 1e-9)
+	})
+	t.Run("SkipsIncomparable", func(t *testing.T) {
+		assert.InDelta(t, 1.0, Embeddings{Embedding{9}, other}.Dist(near), 1e-9)
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, -1.0, Embeddings{}.Dist(near))
+	})
+	t.Run("NonFinite", func(t *testing.T) {
+		// A NaN distance is smaller than nothing and larger than nothing, so it neither wins
+		// the minimum nor lets a comparable vector beside it win. Both orders are checked.
+		nan := Embedding{math.NaN(), 0, 0}
+
+		assert.Equal(t, -1.0, Embeddings{nan}.Dist(near))
+		assert.InDelta(t, 1.0, Embeddings{nan, other}.Dist(near), 1e-9)
+		assert.InDelta(t, 1.0, Embeddings{other, nan}.Dist(near), 1e-9)
+	})
+}
+
 func TestEmbeddings_DistWithin(t *testing.T) {
 	near := Embedding{0, 0, 0}
 	far := Embedding{3, 4, 0}
