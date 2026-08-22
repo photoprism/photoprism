@@ -56,11 +56,11 @@ go test ./internal/entity/... -count=1 -tags="slow,develop"
   `run-test-mariadb` sets in the `Makefile`, then call `go test` on the packages you want.
 
 **Reset test databases:**
-- `make reset-acceptance` — drops the MariaDB databases the Go tests use. `make test-mariadb`
-  already does this; run it by hand after a targeted or interrupted MariaDB run.
-- `make reset-testdb` — deletes the SQLite test database files. It also resets a MariaDB
-  `testdb` database that nothing connects to on `develop`, so it is **not** a substitute for
-  `reset-acceptance` before a MariaDB run.
+- `make reset-testdb` — the one to reach for: deletes the SQLite test database files, including
+  the `-journal`, `-wal` and `-shm` sidecars, and drops the MariaDB databases the Go tests use.
+- `make reset-acceptance` — drops the MariaDB test databases only. `make test-mariadb` runs it
+  automatically; call it by hand after a targeted or interrupted MariaDB run.
+- `make reset-sqlite` — removes the SQLite test files only.
 
 **Subset targets:** `make test-pkg`, `make test-api`, `make test-entity`, `make test-commands`, `make test-photoprism`, `make test-ai`
 
