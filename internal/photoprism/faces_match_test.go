@@ -241,6 +241,19 @@ func TestFacesMatchRespectsVeto(t *testing.T) {
 	c := config.TestConfig()
 	w := NewFaces(c)
 
+	// The fixtures hold FaceNet vectors with no recorded model, and the test configuration
+	// resolves to SFace because the schema is not migrated when it asks the library. Without
+	// this the candidate index is empty, MatchFaces returns at its early exit, and every
+	// assertion below passes whatever the veto does.
+	restore := face.ConfiguredModel()
+	require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
+		Name:  face.ModelFaceNet,
+		Model: face.FindEmbeddingModel(face.ModelFaceNet),
+	}))
+	t.Cleanup(func() {
+		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+	})
+
 	var marker entity.Marker
 	require.NoError(t, entity.Db().Where("marker_type = ? AND marker_invalid = 0 AND face_id <> ''", entity.MarkerFace).Take(&marker).Error)
 
@@ -256,12 +269,29 @@ func TestFacesMatchRespectsVeto(t *testing.T) {
 	stats := make(map[*entity.Face]*faceMatchStats)
 	faces := entity.Faces{f}
 
+	// The cluster has to be eligible and actually accept this marker, or the veto is not what
+	// keeps it unassigned. The fixture radius is narrower than the marker it holds, so widen
+	// it to what a cluster containing that marker would really have recorded.
+	require.NotEmpty(t, buildFaceIndex(faces).candidates, "the fixture cluster must be matchable")
+
+	// The fixture marker carries the same vector as its cluster, so the distance is zero.
+	reach := marker.Embeddings().Dist(f.Embedding())
+	require.GreaterOrEqual(t, reach, 0.0, "the marker must be comparable with its cluster")
+
+	faces[0].SampleRadius = face.ClampSampleRadius(reach + face.Epsilon)
+	require.LessOrEqual(t, reach, faces[0].AcceptDist(), "the cluster must accept its own marker")
+
+	// A positive control belongs here - clear the veto, call again, and assert the marker is
+	// re-assigned - but the second call does not re-match it even with a cluster that accepts
+	// it, so something other than the veto keeps it unassigned. Left as a follow-up rather
+	// than asserted loosely enough to pass.
+
 	w.rememberVeto(marker.MarkerUID)
 	_, err = w.MatchFaces(faces, false, nil, stats)
 	require.NoError(t, err)
 
 	require.NoError(t, entity.Db().Where("marker_uid = ?", marker.MarkerUID).Take(&marker).Error)
-	require.Equal(t, "", marker.FaceID)
+	require.Equal(t, "", marker.FaceID, "a vetoed marker must not be re-assigned")
 
 	// restore original assignment to keep fixtures consistent
 	dist := marker.Embeddings().Dist(f.Embedding())

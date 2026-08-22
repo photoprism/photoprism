@@ -2,6 +2,7 @@ package query
 
 import (
 	"errors"
+	"math"
 	"path/filepath"
 	"testing"
 
@@ -344,6 +345,40 @@ func TestResolveFaceCollisions(t *testing.T) {
 		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
 	})
 
+	// Two clusters of different people, close enough that one accepts the other. The test
+	// creates its own collision rather than relying on one an earlier test left behind:
+	// without it there is nothing to resolve, and the assertions below pass or fail on
+	// whatever the fixtures happen to hold.
+	dims := face.ExpectedDims()
+	require.Positive(t, dims)
+
+	theta := 2 * math.Asin(0.1/2)
+	first := make([]float32, dims)
+	first[0] = 1
+	second := make([]float32, dims)
+	second[0] = float32(math.Cos(theta))
+	second[1] = float32(math.Sin(theta))
+
+	faceOne := entity.NewFace("uqcollision0001", entity.SrcManual,
+		face.NewEmbeddings([][]float32{first}), face.ModelFaceNet)
+	require.NotNil(t, faceOne)
+	require.NoError(t, faceOne.Create())
+
+	faceTwo := entity.NewFace("uqcollision0002", entity.SrcManual,
+		face.NewEmbeddings([][]float32{second}), face.ModelFaceNet)
+	require.NotNil(t, faceTwo)
+	require.NoError(t, faceTwo.Create())
+
+	t.Cleanup(func() {
+		entity.UnscopedDb().Delete(&entity.Face{}, "id IN (?)", []string{faceOne.ID, faceTwo.ID})
+	})
+
+	// The pair must be close enough for one to accept the other, or there is no collision
+	// to find and the test would report the ambient state again.
+	dist := faceOne.Embedding().Dist(faceTwo.Embedding())
+	require.InDelta(t, 0.1, dist, 1e-6)
+	require.Less(t, dist, faceOne.AcceptDist())
+
 	c, r, err := ResolveFaceCollisions()
 
 	if err != nil {
@@ -352,6 +387,13 @@ func TestResolveFaceCollisions(t *testing.T) {
 
 	assert.LessOrEqual(t, 1, c)
 	assert.LessOrEqual(t, 1, r)
+
+	// And specifically this pair, so the counts above cannot be satisfied by an unrelated
+	// collision that happened to be in the index.
+	var resolved entity.Face
+	require.NoError(t, entity.Db().Where("id = ?", faceOne.ID).First(&resolved).Error)
+	assert.Positive(t, resolved.Collisions, "the created cluster must record the collision")
+	assert.Positive(t, resolved.CollisionRadius, "and the radius that separates the two people")
 }
 
 func TestRemoveAutoFaceClusters(t *testing.T) {
