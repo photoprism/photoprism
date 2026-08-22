@@ -126,7 +126,7 @@ var EmbeddingModels = map[ModelName]*EmbeddingModel{
 			File:    "face_recognition_sface_2021dec.onnx",
 			SHA256:  "0ba9fbfa01b5270c96627c4ef784da859931e02f04419c829e83484087c34e79",
 			License: LicenseApache2,
-			Input:   arcFaceInput(onnx.Uniform(0, 1)),
+			Input:   alignedCropInput(onnx.Uniform(0, 1)),
 			Output:  &onnx.Output{Width: 128},
 		},
 		ClusterDist:   0.91,
@@ -145,7 +145,7 @@ var EmbeddingModels = map[ModelName]*EmbeddingModel{
 			File:    "auraface_v1_glintr100.onnx",
 			SHA256:  "a7933ea5330113b01c9b60351d8f4c33003f145d8470ac5f0e52ee2effe25c60",
 			License: LicenseApache2,
-			Input:   arcFaceInput(onnx.Uniform(127.5, 127.5)),
+			Input:   alignedCropInput(onnx.Uniform(127.5, 127.5)),
 			Output:  &onnx.Output{Width: 512},
 		},
 		ClusterDist:   0.98,
@@ -164,7 +164,7 @@ var EmbeddingModels = map[ModelName]*EmbeddingModel{
 			File:    "w600k_r50.onnx",
 			SHA256:  "4c06341c33c2ca1f86781dab0e829f88ad5b64be9fba56e56bc9ebdefc619e43",
 			License: LicenseResearchOnly,
-			Input:   arcFaceInput(onnx.Uniform(127.5, 127.5)),
+			Input:   alignedCropInput(onnx.Uniform(127.5, 127.5)),
 			Output:  &onnx.Output{Width: 512},
 		},
 		ClusterDist:   1.07,
@@ -183,7 +183,7 @@ var EmbeddingModels = map[ModelName]*EmbeddingModel{
 			File:    "w600k_mbf.onnx",
 			SHA256:  "9cc6e4a75f0e2bf0b1aed94578f144d15175f357bdc05e815e5c4a02b319eb4f",
 			License: LicenseResearchOnly,
-			Input:   arcFaceInput(onnx.Uniform(127.5, 127.5)),
+			Input:   alignedCropInput(onnx.Uniform(127.5, 127.5)),
 			Output:  &onnx.Output{Width: 512},
 		},
 		ClusterDist:   1.03,
@@ -194,9 +194,11 @@ var EmbeddingModels = map[ModelName]*EmbeddingModel{
 	},
 }
 
-// arcFaceInput returns the input description shared by every model that consumes the
-// standard 112x112 ArcFace crop, which differ from one another only in normalization.
-func arcFaceInput(normalization onnx.Normalization) *onnx.Input {
+// alignedCropInput returns the input description shared by every model that consumes the
+// standard 112x112 five-point aligned crop (AlignArcFace5), which differ from one another
+// only in normalization. It describes the crop, not the ArcFace weights: SFace and AuraFace
+// take the same geometry.
+func alignedCropInput(normalization onnx.Normalization) *onnx.Input {
 	return &onnx.Input{
 		Width:         ArcFaceTemplateSize,
 		Height:        ArcFaceTemplateSize,
