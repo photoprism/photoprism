@@ -324,6 +324,35 @@ func TestFace_UpdateMatchStats(t *testing.T) {
 		require.NoError(t, m.UpdateMatchStats(4, face.ClusterRadius))
 		assert.InDelta(t, face.ClusterRadius, m.SampleRadius, 1e-9)
 	})
+	t.Run("NeverNarrowsTheRadius", func(t *testing.T) {
+		// A run visits only the markers that were unmatched when it started, so one newly
+		// indexed face arriving near the centroid would otherwise rewrite the radius to its
+		// own distance and refuse every member beyond it on the next pass.
+		m := NewFace("uds5ttbeu5yj2sqi", SrcAuto, face.RandomEmbeddings(1, face.RegularFace), face.EmbeddingModelName())
+		require.NoError(t, m.Create())
+		require.NoError(t, m.UpdateMatchStats(20, 0.30))
+
+		wide := m.SampleRadius
+		accept := m.AcceptDist()
+		require.InDelta(t, 0.30+face.Epsilon, wide, 1e-9)
+
+		require.NoError(t, m.UpdateMatchStats(1, 0.05))
+
+		assert.InDelta(t, wide, m.SampleRadius, 1e-9, "a single close match must not shrink the cluster")
+		assert.InDelta(t, accept, m.AcceptDist(), 1e-9, "so the accept distance holds")
+		assert.Equal(t, 20, m.Samples, "and the sample count is not replaced by the subset")
+	})
+	t.Run("StillWidens", func(t *testing.T) {
+		// Growing is the whole point of the statistic: a farther member must still be able
+		// to widen the cluster toward its clamp.
+		m := NewFace("uds5ttbeu5yj2sqj", SrcAuto, face.RandomEmbeddings(1, face.RegularFace), face.EmbeddingModelName())
+		require.NoError(t, m.Create())
+		require.NoError(t, m.UpdateMatchStats(3, 0.10))
+		require.NoError(t, m.UpdateMatchStats(4, 0.25))
+
+		assert.InDelta(t, 0.25+face.Epsilon, m.SampleRadius, 1e-9)
+		assert.Equal(t, 4, m.Samples)
+	})
 	t.Run("NegativeDistance", func(t *testing.T) {
 		m := NewFace("uds5ttbeu5yj2sqh", SrcAuto, face.RandomEmbeddings(1, face.RegularFace), face.EmbeddingModelName())
 		require.NoError(t, m.Create())

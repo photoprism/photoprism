@@ -344,6 +344,13 @@ func (m *Face) MatchMarkers(faceIds []string) error {
 }
 
 // UpdateMatchStats persists sample statistics derived from recent matches.
+//
+// A run only visits the markers that were unmatched when it started, so what it reports
+// describes a subset rather than the cluster: one newly indexed face arriving close to the
+// centroid would otherwise rewrite the radius to its own distance and drop the accept
+// distance to match, refusing the members that sit beyond it. The observation may therefore
+// widen the recorded extent and never narrow it. SetEmbeddings recomputes both from actual
+// membership, which is the path that may shrink a cluster.
 func (m *Face) UpdateMatchStats(samples int, maxDistance float64) error {
 	if m.ID == "" || samples <= 0 {
 		return nil
@@ -351,7 +358,8 @@ func (m *Face) UpdateMatchStats(samples int, maxDistance float64) error {
 
 	// The epsilon slack is applied before clamping so it can never lift the stored
 	// radius above the configured maximum.
-	radius := face.ClampSampleRadius(maxDistance + face.Epsilon)
+	radius := face.ClampSampleRadius(max(maxDistance+face.Epsilon, m.SampleRadius))
+	samples = max(samples, m.Samples)
 
 	if m.Samples == samples && m.SampleRadius == radius {
 		return nil
