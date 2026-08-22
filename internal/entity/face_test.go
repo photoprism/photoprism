@@ -19,35 +19,37 @@ func TestFace_TableName(t *testing.T) {
 func TestFace_Match(t *testing.T) {
 	t.Run("Num1000003Four", func(t *testing.T) {
 		// The fixture carries a radius from an earlier calibration, so the clamp on read
-		// is what keeps it from widening the gate to the stored 2.4.
+		// is what keeps it from widening the gate to the stored 2.
 		m := FaceFixtures.Get("joe-biden")
 		match, dist := m.Match(MarkerFixtures.Pointer("1000003-4").Embeddings(), face.EmbeddingModelName())
 
 		assert.False(t, match)
-		assert.Greater(t, dist, 1.31)
-		assert.Less(t, dist, 1.32)
+		assert.Greater(t, dist, m.AcceptDist())
+		assert.InDelta(t, face.AcceptDist(face.ClusterRadius), m.AcceptDist(), 1e-9)
 	})
 	t.Run("Num1000003Six", func(t *testing.T) {
+		// Another person's marker, so it is beyond anything a configuration can accept.
 		m := FaceFixtures.Get("joe-biden")
 		match, dist := m.Match(MarkerFixtures.Pointer("1000003-6").Embeddings(), face.EmbeddingModelName())
 
 		assert.False(t, match)
-		assert.Greater(t, dist, 1.27)
-		assert.Less(t, dist, 1.28)
+		assert.Greater(t, dist, float64(face.ConfigDistMax))
 	})
 	t.Run("ClusterRadiusRaised", func(t *testing.T) {
 		// A wider radius reaches the stored row without rewriting it, which is the point
 		// of clamping against the live value instead of trusting the column.
+		m := FaceFixtures.Get("joe-biden")
+		_, dist := m.Match(MarkerFixtures.Pointer("1000003-4").Embeddings(), face.EmbeddingModelName())
+		require.Greater(t, dist, m.AcceptDist())
+
 		restore := face.ClusterRadius
 		t.Cleanup(func() { face.ClusterRadius = restore })
-		face.ClusterRadius = 0.95
+		face.ClusterRadius = dist - face.MatchDist + face.Epsilon
 
-		m := FaceFixtures.Get("joe-biden")
-		match, dist := m.Match(MarkerFixtures.Pointer("1000003-4").Embeddings(), face.EmbeddingModelName())
+		match, raised := m.Match(MarkerFixtures.Pointer("1000003-4").Embeddings(), face.EmbeddingModelName())
 
 		assert.True(t, match)
-		assert.Greater(t, dist, 1.31)
-		assert.Less(t, dist, 1.32)
+		assert.InDelta(t, dist, raised, 1e-9)
 	})
 	t.Run("LenEmbeddingsEqualZero", func(t *testing.T) {
 		m := FaceFixtures.Get("joe-biden")
@@ -89,18 +91,35 @@ func TestFace_Match(t *testing.T) {
 
 func TestFace_ResolveCollision(t *testing.T) {
 	t.Run("Collision", func(t *testing.T) {
-		// Both markers sit beyond the accept distance the shipped radius allows, so the
-		// gate has to be widened for the collision bookkeeping below to be reachable.
+		m := FaceFixtures.Get("joe-biden")
+
+		// Resolving a collision narrows the cluster and revises what it holds, so the row
+		// goes back to what the fixture says before another test reads it.
+		t.Cleanup(func() {
+			f := FaceFixtures.Get("joe-biden")
+			assert.NoError(t, m.Updates(Values{"collisions": f.Collisions, "collision_radius": f.CollisionRadius}))
+		})
+
+		far := MarkerFixtures.Pointer("1000003-4").Embeddings()
+		farDist := far.Dist(m.Embedding())
+
+		// The nearer collision has to stay outside the marker this cluster holds, or
+		// revising its matches unlinks that marker and leaves the cluster an orphan.
+		nearDist := 0.5 * face.AcceptDist(m.SampleRadius)
+		near := face.Embeddings{face.FixtureEmbeddingAt(m.Embedding(), nearDist, 9001)}
+		require.Greater(t, farDist, nearDist)
+		require.Greater(t, nearDist, MarkerFixtures.Pointer("ms6sg6b14ahkyd24").Embeddings().Dist(m.Embedding()))
+
+		// A collision is only reported for an embedding the cluster still accepts, and the
+		// farther of the two sits outside what the shipped radius allows.
 		restore := face.ClusterRadius
 		t.Cleanup(func() { face.ClusterRadius = restore })
-		face.ClusterRadius = 0.95
-
-		m := FaceFixtures.Get("joe-biden")
+		face.ClusterRadius = farDist - face.MatchDist + face.Epsilon
 
 		assert.Zero(t, m.Collisions)
 		assert.Zero(t, m.CollisionRadius)
 
-		if reported, err := m.ResolveCollision(MarkerFixtures.Pointer("1000003-4").Embeddings(), face.EmbeddingModelName()); err != nil {
+		if reported, err := m.ResolveCollision(far, face.EmbeddingModelName()); err != nil {
 			t.Fatal(err)
 		} else {
 			assert.True(t, reported)
@@ -108,23 +127,18 @@ func TestFace_ResolveCollision(t *testing.T) {
 
 		// Number of collisions must have increased by one.
 		assert.Equal(t, 1, m.Collisions)
+		assert.InDelta(t, farDist-face.Epsilon, m.CollisionRadius, 1e-9)
 
-		// Actual distance is ~1.314040
-		assert.Greater(t, m.CollisionRadius, 1.2)
-		assert.Less(t, m.CollisionRadius, 1.314)
-
-		if reported, err := m.ResolveCollision(MarkerFixtures.Pointer("1000003-6").Embeddings(), face.EmbeddingModelName()); err != nil {
+		if reported, err := m.ResolveCollision(near, face.EmbeddingModelName()); err != nil {
 			t.Fatal(err)
 		} else {
 			assert.True(t, reported)
 		}
 
-		// Number of collisions must not have increased.
+		// A nearer collision narrows the radius rather than widening it.
 		assert.Equal(t, 2, m.Collisions)
-
-		// Actual distance is ~1.272604
-		assert.Greater(t, m.CollisionRadius, 1.1)
-		assert.Less(t, m.CollisionRadius, 1.272)
+		assert.InDelta(t, nearDist-face.Epsilon, m.CollisionRadius, 1e-9)
+		assert.Less(t, m.CollisionRadius, farDist-face.Epsilon)
 	})
 	t.Run("SubjectIdEmpty", func(t *testing.T) {
 		m := NewFace("", SrcAuto, face.RandomEmbeddings(2, face.RegularFace), face.EmbeddingModelName())
@@ -254,9 +268,12 @@ func TestFace_SetEmbeddings(t *testing.T) {
 
 func TestFace_Embedding(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
+		// The fixtures are generated for whichever model a run resolves to, so what the
+		// vector has to be is its width, not a particular value.
 		m := FaceFixtures.Get("joe-biden")
 
-		assert.Equal(t, 0.10730543085474682, m.Embedding()[0])
+		assert.Len(t, m.Embedding(), face.ExpectedDims())
+		assert.InDelta(t, 0.0, m.Embedding().Dist(m.Embedding()), 1e-9)
 	})
 	t.Run("EmptyEmbedding", func(t *testing.T) {
 		m := NewFace("12345", SrcAuto, face.Embeddings{}, face.EmbeddingModelName())

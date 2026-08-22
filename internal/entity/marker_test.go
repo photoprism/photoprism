@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/pkg/dsn"
@@ -531,9 +532,13 @@ func TestMarker_Create(t *testing.T) {
 
 func TestMarker_Embeddings(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
+		// The fixtures are generated for whichever model a run resolves to, so what the
+		// vector has to be is its width and its provenance, not a particular value.
 		m := MarkerFixtures.Get("1000003-4")
 
-		assert.Equal(t, 0.013083286379677253, m.Embeddings()[0][0])
+		require.Len(t, m.Embeddings(), 1)
+		assert.Len(t, m.Embeddings()[0], face.ExpectedDims())
+		assert.True(t, m.SameEmbeddingModel())
 	})
 	t.Run("EmptyEmbedding", func(t *testing.T) {
 		m := Marker{}

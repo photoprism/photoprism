@@ -625,17 +625,19 @@ func (w *Faces) auditEmbeddingModels() {
 	current := face.EmbeddingModelName()
 	stale := 0
 
+	// Without a configured model there is nothing a stored vector can be incompatible with,
+	// and a migration has no target to run against, so the counts are reported as they are.
+	configured := current != ""
+
 	for _, c := range counts {
-		switch c.EmbedModel {
-		case "":
-			if face.ModelsComparable("", current) {
-				log.Infof("faces: %s without a recorded embedding model", english.Plural(c.Faces, "cluster", "clusters"))
-			} else {
-				stale += c.Faces
-				log.Warnf("faces: %s without a recorded embedding model, which is not compatible with configured %s",
-					english.Plural(c.Faces, "cluster", "clusters"), clean.Log(current))
-			}
-		case current:
+		switch {
+		case c.EmbedModel == "" && face.ModelsComparable("", current):
+			log.Infof("faces: %s without a recorded embedding model", english.Plural(c.Faces, "cluster", "clusters"))
+		case c.EmbedModel == "":
+			stale += c.Faces
+			log.Warnf("faces: %s without a recorded embedding model, which is not compatible with configured %s",
+				english.Plural(c.Faces, "cluster", "clusters"), clean.Log(current))
+		case c.EmbedModel == current || !configured:
 			log.Infof("faces: %s from embedding model %s", english.Plural(c.Faces, "cluster", "clusters"), clean.Log(c.EmbedModel))
 		default:
 			stale += c.Faces
@@ -664,15 +666,13 @@ func (w *Faces) auditMarkerEmbeddingModels(current string) {
 	}
 
 	for _, c := range counts {
-		switch c.EmbedModel {
-		case "":
-			if face.ModelsComparable("", current) {
-				log.Infof("faces: %s without a recorded embedding model", english.Plural(c.Markers, "marker", "markers"))
-			} else {
-				log.Warnf("faces: %s without a recorded embedding model, which is not compatible with configured %s",
-					english.Plural(c.Markers, "marker", "markers"), clean.Log(current))
-			}
-		case current:
+		switch {
+		case c.EmbedModel == "" && face.ModelsComparable("", current):
+			log.Infof("faces: %s without a recorded embedding model", english.Plural(c.Markers, "marker", "markers"))
+		case c.EmbedModel == "":
+			log.Warnf("faces: %s without a recorded embedding model, which is not compatible with configured %s",
+				english.Plural(c.Markers, "marker", "markers"), clean.Log(current))
+		case c.EmbedModel == current || current == "":
 			log.Infof("faces: %s from embedding model %s", english.Plural(c.Markers, "marker", "markers"), clean.Log(c.EmbedModel))
 		default:
 			log.Warnf("faces: %s from embedding model %s, which is not the configured %s",

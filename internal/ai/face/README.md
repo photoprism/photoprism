@@ -187,6 +187,10 @@ Additional safeguards limit how often stubborn clusters are retried:
 - **How much the bound saves depends on the model.** For a random unit pair at 512 dims the mean abandon depth is ~34 % of the vector at FaceNet's 0.82 accept distance, ~63 % at AuraFace's 1.11 and ~75 % at ArcFace-R50's 1.22 — and ~98 % at the `AcceptDistMax` ceiling of 1.4, where two independent unit vectors average √2 ≈ 1.41 and almost nothing can be abandoned. A configuration that pushes the accept distance toward the ceiling therefore pays close to a full compare per candidate. Cost is measured indirectly, by `BenchmarkSelectBestFace` and `BenchmarkSelectBestFaceUnmatched` in `internal/photoprism`.
 - Euclidean distance remains the recommended metric; with unit vectors, cosine similarity would yield identical rankings, so no change is required to distance thresholds.
 
+### Fixture Vectors
+
+`RandomEmbedding` and `RandomEmbeddings` produce vectors of whatever width the configured model expects, which is what makes them usable as fixtures at all. `FixtureEmbedding` and `FixtureEmbeddingAt` add the two properties a seeded library needs: the same seed always yields the same vector, and a vector can be placed at a chosen distance from another one. Independent seeds are near-orthogonal, so they stand for different people; a chosen distance expressed against a cluster's accept distance keeps a marker inside or outside that cluster whatever the model. `entity.GenerateFaceFixtureVectors` builds the face and marker fixtures from both, immediately before they are written.
+
 ### FaceNet Integration Recommendations
 
 - Face detection and recognition are disabled as a unit by `PHOTOPRISM_DISABLE_FACES`; `PHOTOPRISM_DISABLE_TENSORFLOW` also stops FaceNet and is deprecated. `FACE_MODEL=none` keeps detection and disables embedding generation.

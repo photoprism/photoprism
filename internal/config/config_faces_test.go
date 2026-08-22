@@ -304,10 +304,12 @@ func TestConfig_FaceModelReport(t *testing.T) {
 		assert.Equal(t, face.ModelSFace+" (auto, unresolved)", c.FaceModelReport())
 	})
 	t.Run("ResolvedAgainstLibrary", func(t *testing.T) {
+		// A configuration with a database resolves "auto" against the library, so the report
+		// names the model the library holds and carries no provisional caveat.
 		c := TestConfig()
 		c.options.FaceModel = face.ModelAuto
 
-		assert.Equal(t, face.ModelFaceNet, c.FaceModelReport())
+		assert.Equal(t, entity.MarkerFixtures.Get("1000003-4").EmbedModel, c.FaceModelReport())
 	})
 	t.Run("Explicit", func(t *testing.T) {
 		// An explicitly named model needs no library lookup, so it carries no caveat.
@@ -336,10 +338,11 @@ func TestConfig_FaceModel(t *testing.T) {
 		assert.Equal(t, face.ModelSFace, c.FaceModel())
 	})
 	t.Run("LibraryKeepsItsModel", func(t *testing.T) {
-		// The fixture markers hold vectors without a recorded model, which is what a
-		// library indexed before the provenance column looks like. Resolving those to
-		// SFace on upgrade would leave every stored cluster incomparable.
+		// A library whose markers record no model was indexed before the provenance column,
+		// so its vectors are FaceNet. Resolving those to the first installed model on upgrade
+		// would leave every stored cluster incomparable.
 		c := TestConfig()
+		seedLegacyLibrary(t)
 		c.options.FaceModel = face.ModelAuto
 
 		assert.Equal(t, face.ModelFaceNet, c.FaceModel())
@@ -441,6 +444,30 @@ func TestInstalledFaceModel(t *testing.T) {
 	})
 }
 
+// seedLegacyLibrary blanks the recorded embedding model of every marker that has one, which
+// is what a library indexed before the provenance column looks like, and restores them when
+// the test ends. The fixtures record the configured model, so a test that needs the legacy
+// case has to create it.
+func seedLegacyLibrary(t *testing.T) {
+	t.Helper()
+
+	db := entity.Db()
+
+	var uids []string
+	require.NoError(t, db.Model(&entity.Marker{}).Where("embed_model <> ''").Pluck("marker_uid", &uids).Error)
+	require.NotEmpty(t, uids, "the fixtures must record an embedding model for this to mean anything")
+
+	model := entity.MarkerFixtures.Get("1000003-4").EmbedModel
+
+	require.NoError(t, db.Model(&entity.Marker{}).Where("marker_uid IN (?)", uids).
+		UpdateColumn("embed_model", "").Error)
+
+	t.Cleanup(func() {
+		assert.NoError(t, db.Model(&entity.Marker{}).Where("marker_uid IN (?)", uids).
+			UpdateColumn("embed_model", model).Error)
+	})
+}
+
 func TestConfig_LibraryFaceModel(t *testing.T) {
 	t.Run("NilConfig", func(t *testing.T) {
 		assert.Equal(t, "", (*Config)(nil).libraryFaceModel())
@@ -450,7 +477,17 @@ func TestConfig_LibraryFaceModel(t *testing.T) {
 		assert.Equal(t, "", c.libraryFaceModel())
 	})
 	t.Run("SeededLibrary", func(t *testing.T) {
-		assert.Equal(t, face.ModelFaceNet, TestConfig().libraryFaceModel())
+		// The fixtures are generated for the configured model and record it, so the library
+		// reports back what it was seeded with.
+		assert.Equal(t, entity.MarkerFixtures.Get("1000003-4").EmbedModel, TestConfig().libraryFaceModel())
+	})
+	t.Run("LegacyLibrary", func(t *testing.T) {
+		// A marker that records no model can only hold a FaceNet vector, because FaceNet was
+		// the only bundled model before the column existed.
+		c := TestConfig()
+		seedLegacyLibrary(t)
+
+		assert.Equal(t, face.ModelFaceNet, c.libraryFaceModel())
 	})
 	t.Run("SchemaWithoutProvenanceColumn", func(t *testing.T) {
 		// The schema is migrated after the configuration is propagated, so the first start

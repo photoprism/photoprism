@@ -241,19 +241,6 @@ func TestFacesMatchRespectsVeto(t *testing.T) {
 	c := config.TestConfig()
 	w := NewFaces(c)
 
-	// The fixtures hold FaceNet vectors with no recorded model, and the test configuration
-	// resolves to SFace because the schema is not migrated when it asks the library. Without
-	// this the candidate index is empty, MatchFaces returns at its early exit, and every
-	// assertion below passes whatever the veto does.
-	restore := face.ConfiguredModel()
-	require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
-		Name:  face.ModelFaceNet,
-		Model: face.FindEmbeddingModel(face.ModelFaceNet),
-	}))
-	t.Cleanup(func() {
-		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
-	})
-
 	var marker entity.Marker
 	require.NoError(t, entity.Db().Where("marker_type = ? AND marker_invalid = 0 AND face_id <> ''", entity.MarkerFace).Take(&marker).Error)
 
@@ -281,10 +268,17 @@ func TestFacesMatchRespectsVeto(t *testing.T) {
 	faces[0].SampleRadius = face.ClampSampleRadius(reach + face.Epsilon)
 	require.LessOrEqual(t, reach, faces[0].AcceptDist(), "the cluster must accept its own marker")
 
-	// A positive control belongs here - clear the veto, call again, and assert the marker is
-	// re-assigned - but the second call does not re-match it even with a cluster that accepts
-	// it, so something other than the veto keeps it unassigned. Left as a follow-up rather
-	// than asserted loosely enough to pass.
+	// ClearFace stamps matched_at, while a non-force run only visits markers that carry none,
+	// so the marker has to look unmatched again or MatchFaces never reaches the veto and the
+	// assertion below passes on a marker it never saw.
+	unmatch := func(t *testing.T) {
+		t.Helper()
+		require.NoError(t, entity.UnscopedDb().Model(&entity.Marker{}).
+			Where("marker_uid = ?", marker.MarkerUID).
+			UpdateColumn("matched_at", nil).Error)
+	}
+
+	unmatch(t)
 
 	w.rememberVeto(marker.MarkerUID)
 	_, err = w.MatchFaces(faces, false, nil, stats)
@@ -293,9 +287,19 @@ func TestFacesMatchRespectsVeto(t *testing.T) {
 	require.NoError(t, entity.Db().Where("marker_uid = ?", marker.MarkerUID).Take(&marker).Error)
 	require.Equal(t, "", marker.FaceID, "a vetoed marker must not be re-assigned")
 
+	// Positive control: the same call without the veto has to re-assign the marker, or the
+	// assertion above holds for a reason that has nothing to do with the veto.
+	w.clearVeto(marker.MarkerUID)
+	unmatch(t)
+
+	_, err = w.MatchFaces(faces, false, nil, stats)
+	require.NoError(t, err)
+
+	require.NoError(t, entity.Db().Where("marker_uid = ?", marker.MarkerUID).Take(&marker).Error)
+	assert.Equal(t, origFaceID, marker.FaceID, "a marker that is not vetoed must be re-assigned")
+
 	// restore original assignment to keep fixtures consistent
 	dist := marker.Embeddings().Dist(f.Embedding())
 	_, err = marker.SetFace(&f, dist)
 	require.NoError(t, err)
-	w.clearVeto(marker.MarkerUID)
 }
