@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/entity/migrate"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // CreateDefaultFixtures inserts default fixtures for test and production.
@@ -22,10 +23,14 @@ func ResetTestFixtures() {
 
 	// Make sure that the migrations and versions tables are already there, as once prevents these from being handled correctly in tests.
 	if (!Db().Migrator().HasTable(&migrate.Migration{})) {
-		Db().Migrator().AutoMigrate(&migrate.Migration{})
+		if err := Db().Migrator().AutoMigrate(&migrate.Migration{}); err != nil {
+			log.Errorf("migrate: automigrate of migrations (%s)", clean.Log(err.Error()))
+		}
 	}
 	if (!Db().Migrator().HasTable(&migrate.Version{})) {
-		Db().Migrator().AutoMigrate(&migrate.Version{})
+		if err := Db().Migrator().AutoMigrate(&migrate.Version{}); err != nil {
+			log.Errorf("migrate: automigrate of versions (%s)", clean.Log(err.Error()))
+		}
 	}
 
 	Entities.Migrate(Db(), migrate.Opt(true, false, nil))

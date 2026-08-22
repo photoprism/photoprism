@@ -539,10 +539,10 @@ func (c *Config) MigrateDb(runFailed bool, ids []string) {
 func (c *Config) InitTestDb() {
 	// Make sure that the migrations and versions tables are already there, as once prevents these from being handled correctly in tests.
 	if (!c.db.Migrator().HasTable(&migrate.Migration{})) {
-		c.db.Migrator().AutoMigrate(&migrate.Migration{})
+		LogErr(c.db.Migrator().AutoMigrate(&migrate.Migration{}))
 	}
 	if (!c.db.Migrator().HasTable(&migrate.Version{})) {
-		c.db.Migrator().AutoMigrate(&migrate.Version{})
+		LogErr(c.db.Migrator().AutoMigrate(&migrate.Version{}))
 	}
 	entity.ResetTestFixtures()
 
