@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
@@ -16,9 +17,7 @@ func TestCameras(t *testing.T) {
 		query.Count = 1005
 		result, err := Cameras(query)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 
 		assert.LessOrEqual(t, 2, len(result))
 
@@ -42,9 +41,7 @@ func TestCameras(t *testing.T) {
 		query.Count = 1005
 		result, err := Cameras(query)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 
 		assert.LessOrEqual(t, 1, len(result))
 
@@ -61,9 +58,7 @@ func TestCameras(t *testing.T) {
 		query.Count = 15
 		result, err := Cameras(query)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 
 		assert.LessOrEqual(t, 1, len(result))
 
@@ -79,9 +74,7 @@ func TestCameras(t *testing.T) {
 		query := form.NewCameraSearch("")
 		result, err := Cameras(query)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 		assert.LessOrEqual(t, 6, len(result))
 	})
 	t.Run("SearchWithReverse", func(t *testing.T) {
@@ -89,9 +82,7 @@ func TestCameras(t *testing.T) {
 		query.Reverse = true
 		result, err := Cameras(query)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 		assert.LessOrEqual(t, 6, len(result))
 	})
 	t.Run("SearchForNoMakeAndQueryNoResults", func(t *testing.T) {
@@ -117,9 +108,7 @@ func TestCameras(t *testing.T) {
 
 		result, err := Cameras(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 		assert.Len(t, result, 2)
 	})
 }

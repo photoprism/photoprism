@@ -7,6 +7,7 @@ import (
 )
 
 func TestAuthListCommand(t *testing.T) {
+	resetConfigAndOpenDB()
 	t.Run("All", func(t *testing.T) {
 		// Run command with test context.
 		output, err := RunWithTestContext(AuthListCommand, []string{"ls"})
@@ -71,7 +72,7 @@ func TestAuthListCommand(t *testing.T) {
 
 		// Check command output for plausibility.
 		// t.Logf(output)
-		assert.Empty(t, output)
+		assert.Contains(t, output, "Incorrect Usage: flag provided but not defined: -xyz")
 		assert.Error(t, err)
 	})
 }

@@ -139,6 +139,36 @@ func TestConfig_ClientUser(t *testing.T) {
 		assert.Equal(t, result.Settings.Features.Private, false)
 		assert.Equal(t, result.Settings.Features, guestFeatures)
 	})
+	t.Run("NilTesting", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		}
+		t.Cleanup(func() {
+			entity.ResetTestFixtures()
+		})
+		// Clean the database as if it's brand new
+		entity.Entities.Truncate(entity.Db())
+		entity.CreateDefaultFixtures()
+		entity.FlushCaches()
+		entity.File{}.RegenerateIndex()
+
+		var count int64
+		c.Db().Model(&entity.Photo{}).Count(&count)
+		assert.Equal(t, int64(0), count)
+
+		adminFeatures := c.ClientRole(acl.RoleAdmin).Settings.Features
+		c.Settings().Features = adminFeatures
+		result := c.ClientUser(true)
+		assert.Nil(t, result.AlbumCategories, "AlbumCategories")
+		assert.NotNil(t, result.Albums, "Albums")
+		assert.NotNil(t, result.Cameras, "Cameras")
+		assert.NotNil(t, result.Lenses, "Lenses")
+		assert.NotNil(t, result.Countries, "Countries")
+		assert.NotNil(t, result.Thumbs, "Thumbs")
+		assert.Nil(t, result.Years, "Years")
+		assert.NotNil(t, result.Colors, "Colors")
+		assert.NotNil(t, result.Categories, "Categories")
+	})
 }
 
 func TestConfig_ClientRoleConfig(t *testing.T) {

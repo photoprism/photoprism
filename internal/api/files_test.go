@@ -314,9 +314,10 @@ func TestResolvePDFDocument(t *testing.T) {
 		cover, err := query.FileByHash(pdfCoverHash)
 		assert.NoError(t, err)
 		got, ok := resolvePDFDocument(cover)
-		assert.True(t, ok)
-		assert.Equal(t, fs.DocumentPDF, got.Type())
-		assert.Equal(t, cover.PhotoUID, got.PhotoUID)
+		if assert.True(t, ok) {
+			assert.Equal(t, fs.DocumentPDF, got.Type())
+			assert.Equal(t, cover.PhotoUID, got.PhotoUID)
+		}
 	})
 	t.Run("Unrelated", func(t *testing.T) {
 		// A jpeg whose photo has no related PDF cannot resolve to a document.

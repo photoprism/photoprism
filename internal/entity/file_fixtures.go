@@ -3281,6 +3281,6 @@ var (
 // CreateFileFixtures inserts known entities into the database for testing.
 func CreateFileFixtures() {
 	for _, entity := range FileFixtures {
-		Db().Create(&entity)
+		fixtureDb().Create(&entity)
 	}
 }

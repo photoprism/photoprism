@@ -3,6 +3,8 @@ package api
 import (
 	"encoding/json"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
 	"testing"
 
@@ -21,6 +23,16 @@ func TestGetFoldersOriginals(t *testing.T) {
 
 		if err != nil {
 			t.Fatal(err)
+		}
+
+		if len(expected) == 0 {
+			// create something so that the test does some work.
+			newpath := filepath.Join(conf.OriginalsPath(), "2025/01")
+			assert.NoError(t, os.MkdirAll(newpath, fs.ModeDir))
+			expected, err = fs.Dirs(conf.OriginalsPath(), false, true)
+			if err != nil {
+				t.Fatal(err)
+			}
 		}
 
 		SearchFoldersOriginals(router)

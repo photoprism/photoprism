@@ -660,9 +660,12 @@ vitest-component:
 reset-mariadb:
 	$(info Resetting photoprism database...)
 	$(MARIADB) < scripts/sql/reset-photoprism.sql
+# Interim: the Go unit test databases still carry the acceptance_ prefix, so this drops
+# them alongside testdb until they are renamed (see PR #4831).
 reset-mariadb-testdb:
 	$(info Resetting testdb database...)
 	$(MARIADB) < scripts/sql/reset-testdb.sql
+	$(MARIADB) -N -B -e "SELECT CONCAT('DROP DATABASE ', schema_name, ';') FROM information_schema.schemata WHERE schema_name LIKE 'acceptance\_%'" | $(MARIADB)
 reset-mariadb-local:
 	$(info Resetting local database...)
 	$(MARIADB) < scripts/sql/reset-local.sql
@@ -675,7 +678,13 @@ reset-testdb: reset-sqlite reset-mariadb-testdb
 reset-acceptance: reset-mariadb-acceptance
 reset-sqlite:
 	$(info Removing test database files...)
-	find ./internal -type f \( -iname '.*.db' -o -iname '.*.db-journal' -o -iname '.test.*' \) -delete
+	find ./internal -type f \( \
+		-iname '.*.db' \
+		-o -iname '.*.db-journal' \
+		-o -iname '.*.db-wal' \
+		-o -iname '.*.db-shm' \
+		-o -iname '.test.*' \
+	\) -delete
 run-test-short:
 	$(info Running short Go tests in parallel mode...)
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -short -timeout 5m ./pkg/... ./internal/... ./.../internal/...

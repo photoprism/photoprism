@@ -431,6 +431,22 @@ func TestFace_HideAndShow(t *testing.T) {
 	}
 }
 
+func TestFace_SetSubjectUID(t *testing.T) {
+	f := FindFace(FaceFixtures.Get("joe-biden").ID)
+	assert.NotEmpty(t, f)
+
+	if !assert.Empty(t, f.SetSubjectUID(SubjectFixtures.Get("jane-doe").SubjUID)) {
+		return
+	}
+
+	f = FindFace(FaceFixtures.Get("joe-biden").ID)
+	assert.NotEmpty(t, f)
+
+	if !assert.Empty(t, f.SetSubjectUID(SubjectFixtures.Get("joe-biden").SubjUID)) {
+		return
+	}
+}
+
 func TestFace_SameEmbeddingModel(t *testing.T) {
 	restore := face.ConfiguredModel()
 

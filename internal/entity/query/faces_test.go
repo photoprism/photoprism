@@ -364,6 +364,21 @@ func TestRemoveAutoFaceClusters(t *testing.T) {
 	assert.LessOrEqual(t, 3, removed)
 }
 
+func TestRemovePeopleAndFaces(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	err := RemovePeopleAndFaces()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// replace all the fixtures as the previous statement kills a lot of other tests.
+	entity.ResetTestFixtures()
+}
+
 func TestFaceEmbeddingModels(t *testing.T) {
 	t.Run("Fixtures", func(t *testing.T) {
 		result, err := FaceEmbeddingModels()

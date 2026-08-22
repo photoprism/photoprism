@@ -98,6 +98,6 @@ var LinkFixtures = LinkMap{
 // CreateLinkFixtures inserts known entities into the database for testing.
 func CreateLinkFixtures() {
 	for _, entity := range LinkFixtures {
-		Db().Create(&entity)
+		fixtureDb().Create(&entity)
 	}
 }

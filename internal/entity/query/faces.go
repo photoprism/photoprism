@@ -432,7 +432,9 @@ func RemovePeopleAndFaces() (err error) {
 
 	// Reset people label.
 	if label, labelErr := LabelBySlug("people"); labelErr != nil {
-		return labelErr
+		if labelErr != gorm.ErrRecordNotFound {
+			return labelErr
+		}
 	} else if labelErr = UnscopedDb().
 		Delete(entity.PhotoLabel{}, "label_id = ?", label.ID).Error; labelErr != nil {
 		return labelErr
@@ -442,7 +444,9 @@ func RemovePeopleAndFaces() (err error) {
 
 	// Reset portrait label.
 	if label, labelErr := LabelBySlug("portrait"); labelErr != nil {
-		return labelErr
+		if labelErr != gorm.ErrRecordNotFound {
+			return labelErr
+		}
 	} else if labelErr = UnscopedDb().
 		Delete(entity.PhotoLabel{}, "label_id = ?", label.ID).Error; labelErr != nil {
 		return labelErr

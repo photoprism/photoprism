@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
@@ -16,9 +17,7 @@ func TestLenses(t *testing.T) {
 		query.Count = 1005
 		result, err := Lenses(query)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 
 		assert.LessOrEqual(t, 2, len(result))
 
@@ -44,9 +43,7 @@ func TestLenses(t *testing.T) {
 		query.Count = 1005
 		result, err := Lenses(query)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 
 		assert.LessOrEqual(t, 1, len(result))
 
@@ -70,9 +67,7 @@ func TestLenses(t *testing.T) {
 		query.Count = 15
 		result, err := Lenses(query)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 
 		assert.LessOrEqual(t, 1, len(result))
 
@@ -95,9 +90,7 @@ func TestLenses(t *testing.T) {
 		query := form.NewLensSearch("")
 		result, err := Lenses(query)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 		assert.LessOrEqual(t, 3, len(result))
 		assert.Equal(t, entity.LensFixtures.Get(fixture).LensSlug, result[0].LensSlug)
 	})
@@ -107,9 +100,7 @@ func TestLenses(t *testing.T) {
 		query.Reverse = true
 		result, err := Lenses(query)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 		assert.LessOrEqual(t, 3, len(result))
 		assert.Equal(t, entity.LensFixtures.Get(fixture).LensSlug, result[0].LensSlug)
 	})
@@ -118,7 +109,7 @@ func TestLenses(t *testing.T) {
 		query.NoMake = true
 		result, err := Lenses(query)
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.Empty(t, result)
 	})
 	t.Run("SearchWithInvalidQueryString", func(t *testing.T) {
@@ -142,10 +133,26 @@ func TestLenses(t *testing.T) {
 
 		result, err := Lenses(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 		assert.Len(t, result, 2)
 		assert.Equal(t, "4-37", result[0].LensSlug)
+	})
+	t.Run("NotNil", func(t *testing.T) {
+		f := form.SearchLenses{
+			Query:   "",
+			ID:      "1000002|1000000",
+			Slug:    "",
+			Name:    "",
+			NoMake:  false,
+			Count:   100,
+			Offset:  999999,
+			Reverse: false,
+		}
+
+		result, err := Lenses(f)
+
+		require.NoError(t, err)
+		assert.Len(t, result, 0)
+		assert.NotNil(t, result)
 	})
 }
