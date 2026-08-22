@@ -32,6 +32,56 @@ func TestFaces_Match(t *testing.T) {
 	t.Log(r)
 }
 
+// TestRecordFaceMatch covers the per-run statistics a match pass accumulates for each cluster.
+func TestRecordFaceMatch(t *testing.T) {
+	newFace := func(t *testing.T) *entity.Face {
+		t.Helper()
+		f := entity.NewFace("", entity.SrcAuto, face.RandomEmbeddings(3, face.RegularFace), face.EmbeddingModelName())
+		require.NotNil(t, f)
+		require.NotEmpty(t, f.ID)
+		return f
+	}
+
+	t.Run("Success", func(t *testing.T) {
+		stats := make(map[string]*faceMatchStats)
+		f := newFace(t)
+
+		recordFaceMatch(stats, f, 0.2)
+		recordFaceMatch(stats, f, 0.5)
+		recordFaceMatch(stats, f, 0.3)
+
+		require.Len(t, stats, 1)
+		assert.Equal(t, 3, stats[f.ID].matched)
+		assert.InDelta(t, 0.5, stats[f.ID].maxDist, 1e-9)
+		assert.Same(t, f, stats[f.ID].face)
+	})
+	t.Run("SameRowThroughTwoPointers", func(t *testing.T) {
+		// Faces.Match runs two passes over different slices, so one database row reaches this
+		// as two pointers. Keyed by pointer, only one of the two entries would be written back.
+		stats := make(map[string]*faceMatchStats)
+		first := newFace(t)
+		second := *first
+
+		recordFaceMatch(stats, first, 0.2)
+		recordFaceMatch(stats, &second, 0.4)
+
+		require.Len(t, stats, 1)
+		assert.Equal(t, 2, stats[first.ID].matched)
+		assert.InDelta(t, 0.4, stats[first.ID].maxDist, 1e-9)
+	})
+	t.Run("InvalidInput", func(t *testing.T) {
+		stats := make(map[string]*faceMatchStats)
+		f := newFace(t)
+		unsaved := &entity.Face{}
+
+		recordFaceMatch(stats, nil, 0.2)
+		recordFaceMatch(stats, unsaved, 0.2)
+		recordFaceMatch(stats, f, -1)
+
+		assert.Empty(t, stats)
+	})
+}
+
 // TestBuildFaceCandidates validates that we drop non-matchable faces when building the index.
 func TestBuildFaceCandidates(t *testing.T) {
 	regular := entity.NewFace("", entity.SrcAuto, face.RandomEmbeddings(3, face.RegularFace), face.EmbeddingModelName())
@@ -253,7 +303,7 @@ func TestFacesMatchRespectsVeto(t *testing.T) {
 	_, err := marker.ClearFace()
 	require.NoError(t, err)
 
-	stats := make(map[*entity.Face]*faceMatchStats)
+	stats := make(map[string]*faceMatchStats)
 	faces := entity.Faces{f}
 
 	// The cluster has to be eligible and actually accept this marker, or the veto is not what
