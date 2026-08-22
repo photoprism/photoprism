@@ -25,6 +25,72 @@ func TestFaceMigrationCounts(t *testing.T) {
 	require.Error(t, err)
 }
 
+// TestFaceMigrationUnreadableFileCount pins that the plan counts markers whose file cannot be
+// re-embedded. Counting only file_uid = ” reported a clean plan for a run that then failed
+// five markers and left them with no vector at all, because a soft-deleted file row does not
+// resolve and so never looked unlinked.
+func TestFaceMigrationUnreadableFileCount(t *testing.T) {
+	result, err := FaceMigrationCounts(face.ModelFaceNet)
+	require.NoError(t, err)
+
+	// Counted independently, as a left join rather than the NOT IN under test.
+	var want int
+	row := Db().Raw("SELECT COUNT(*) FROM markers m LEFT JOIN files f"+
+		" ON f.file_uid = m.file_uid AND f.deleted_at IS NULL"+
+		" WHERE m.marker_type = ? AND m.marker_invalid = 0 AND m.file_uid <> ''"+
+		" AND (f.file_uid IS NULL OR f.file_missing = 1 OR f.file_error <> '')", entity.MarkerFace).Row()
+	require.NoError(t, row.Scan(&want))
+
+	require.Positive(t, want, "fixtures must include a face marker whose file cannot be read")
+	assert.Equal(t, want, result.Unreadable)
+
+	// Strictly fewer than all valid markers, which is what fails if the predicate ever stops
+	// restricting the count to files the index cannot offer.
+	assert.Less(t, result.Unreadable, result.Valid, "a readable file must not be counted")
+}
+
+// TestFaceMigrationSoftDeletedFileCount pins the case that the fixtures do not cover and that
+// the live run tripped over: a file row that still exists but is soft-deleted. It resolves to
+// nothing, so the marker neither looks unlinked nor looks flagged, and counting it is the only
+// thing that lets a plan predict the failure.
+func TestFaceMigrationSoftDeletedFileCount(t *testing.T) {
+	before, err := FaceMigrationCounts(face.ModelFaceNet)
+	require.NoError(t, err)
+
+	file := entity.File{
+		FileUID:  rnd.GenerateUID('f'),
+		PhotoUID: rnd.GenerateUID('p'),
+		FileName: "soft-deleted/migrate-test.jpg",
+		FileRoot: entity.RootOriginals,
+	}
+	require.NoError(t, Db().Create(&file).Error)
+
+	marker := entity.Marker{
+		MarkerUID:  rnd.GenerateUID('m'),
+		FileUID:    file.FileUID,
+		MarkerType: entity.MarkerFace,
+	}
+	require.NoError(t, Db().Create(&marker).Error)
+
+	t.Cleanup(func() {
+		Db().Unscoped().Delete(&marker)
+		Db().Unscoped().Delete(&file)
+	})
+
+	// A readable file must not be counted, so the marker is invisible while the file is live.
+	live, err := FaceMigrationCounts(face.ModelFaceNet)
+	require.NoError(t, err)
+	assert.Equal(t, before.Unreadable, live.Unreadable, "a live file must not count as unreadable")
+
+	// Soft-deleting leaves the row in place, so nothing about the marker changes.
+	require.NoError(t, Db().Delete(&file).Error)
+
+	after, err := FaceMigrationCounts(face.ModelFaceNet)
+	require.NoError(t, err)
+	assert.Equal(t, before.Unreadable+1, after.Unreadable, "a soft-deleted file must count as unreadable")
+	assert.Equal(t, live.Unlinked, after.Unlinked, "the marker still has a file_uid, so it is not unlinked")
+}
+
 func TestFaceMigrationFileUIDs(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		result, err := FaceMigrationFileUIDs("", 2)

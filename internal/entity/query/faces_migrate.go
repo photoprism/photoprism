@@ -32,12 +32,13 @@ type FaceMigrationCluster struct {
 
 // FaceMigrationMarkerCounts summarizes marker work for a target model.
 type FaceMigrationMarkerCounts struct {
-	Total    int
-	Valid    int
-	Invalid  int
-	Ready    int
-	Unlinked int
-	Manual   int
+	Total      int
+	Valid      int
+	Invalid    int
+	Ready      int
+	Unlinked   int
+	Unreadable int
+	Manual     int
 }
 
 // FaceMigrationCounts returns marker counts used by dry-run and final reports.
@@ -57,6 +58,7 @@ func FaceMigrationCounts(model string) (result FaceMigrationMarkerCounts, err er
 		{base.Where("marker_invalid = 1"), &result.Invalid},
 		{whereEmbeddingModel(base.Where("marker_invalid = 0 AND LENGTH(embeddings_json) > 0"), model), &result.Ready},
 		{base.Where("marker_invalid = 0 AND file_uid = ''"), &result.Unlinked},
+		{whereFaceMigrationUnreadableFile(base), &result.Unreadable},
 		{base.Where("subj_src = ?", entity.SrcManual), &result.Manual},
 	}
 
@@ -67,6 +69,24 @@ func FaceMigrationCounts(model string) (result FaceMigrationMarkerCounts, err er
 	}
 
 	return result, nil
+}
+
+// whereFaceMigrationUnreadableFile restricts a marker query to those whose file the index
+// cannot offer for re-embedding, whether it is soft-deleted, gone from the table, flagged
+// missing, or recorded with a read error.
+//
+// It is expressed as the complement of a usable file rather than as a list of faults, because
+// a marker fails the run for any of them and the reasons are not enumerable in advance: a
+// soft-deleted row simply does not resolve. The index answers this without touching the
+// filesystem, so a plan can name these markers up front - it cannot see a file that has gone
+// missing since the last index run.
+func whereFaceMigrationUnreadableFile(stmt *gorm.DB) *gorm.DB {
+	return stmt.
+		Where("marker_invalid = 0 AND file_uid <> ''").
+		Where("file_uid NOT IN (?)", Db().Model(&entity.File{}).
+			Select("file_uid").
+			Where("file_uid <> '' AND file_missing = 0 AND file_error = ''").
+			QueryExpr())
 }
 
 // FaceMigrationFileUIDs returns the next batch of files that contain valid face markers.

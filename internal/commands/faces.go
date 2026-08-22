@@ -140,6 +140,13 @@ func facesMigrateAction(ctx *cli.Context) error {
 			"faces: %d markers already use %s, %d have no file, and %d were identified manually",
 			plan.Markers.Ready, clean.Log(plan.Target), plan.Markers.Unlinked, plan.Markers.Manual,
 		)
+		// Re-embedding reads the file, so a marker whose file the index has already recorded
+		// as unreadable is going to fail. Naming them before the prompt is what separates an
+		// expected loss from a surprise, since a failed marker keeps no vector at all.
+		if plan.Markers.Unreadable > 0 {
+			log.Warnf("faces: %d markers cannot be re-embedded because their file is missing or unreadable",
+				plan.Markers.Unreadable)
+		}
 		for _, count := range plan.MarkerModels {
 			model := count.EmbedModel
 			if model == "" {
