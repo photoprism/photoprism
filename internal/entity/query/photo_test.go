@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	
+
 	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -180,7 +180,7 @@ func TestFixPrimaries(t *testing.T) {
 			t.Fatal(err)
 		}
 		defer func() {
-			require.NoError(t, UnscopedDb().Delete(&p).Error)
+			require.NoError(t, UnscopedDb().Select("Keywords", "Details", "Labels", "Albums", "Files").Delete(&p).Error)
 		}()
 		// Primary file that has since been soft-deleted but still carries the primary flag.
 		deletedPrimary := entity.File{
@@ -335,7 +335,7 @@ func qualifyingPhotoPaths() map[string]bool {
 	paths := make(map[string]bool)
 
 	for _, photo := range entity.PhotoFixtures {
-		if photo.DeletedAt == nil && photo.PhotoQuality >= 3 && photo.TakenSrc == entity.SrcMeta && !photo.TakenAtLocal.IsZero() {
+		if !photo.DeletedAt.Valid && photo.PhotoQuality >= 3 && photo.TakenSrc == entity.SrcMeta && !photo.TakenAtLocal.IsZero() {
 			paths[photo.PhotoPath] = true
 		}
 	}
@@ -366,7 +366,7 @@ func TestPhotoPathMaxDates(t *testing.T) {
 			assert.GreaterOrEqual(t, d.UTC().Format(time.DateOnly), minDate.UTC().Format(time.DateOnly), path)
 		}
 		for _, photo := range entity.PhotoFixtures {
-			if (photo.DeletedAt == nil && photo.PhotoQuality >= 3 && photo.TakenSrc == entity.SrcMeta && photo.TakenAtLocal != time.Time{}) {
+			if (!photo.DeletedAt.Valid && photo.PhotoQuality >= 3 && photo.TakenSrc == entity.SrcMeta && photo.TakenAtLocal != time.Time{}) {
 				_, ok := p[photo.PhotoPath]
 				assert.True(t, ok, photo.PhotoPath)
 			}
@@ -378,7 +378,7 @@ func TestPhotoPathMaxDates(t *testing.T) {
 		}
 		bp := entity.PhotoFixtures.Pointer("Photo18")
 		bp.PhotoQuality = 4
-		bp.DeletedAt = nil
+		bp.DeletedAt = gorm.DeletedAt{}
 		require.NoError(t, entity.UnscopedDb().Save(bp).Error)
 
 		// Saving Photo18 above adds its path to the reported set; the unreadable date below
@@ -408,7 +408,7 @@ func TestPhotoPathMaxDates(t *testing.T) {
 			assert.GreaterOrEqual(t, d.UTC().Format(time.DateOnly), minDate.UTC().Format(time.DateOnly), path)
 		}
 		for _, photo := range entity.PhotoFixtures {
-			if (photo.DeletedAt == nil && photo.PhotoQuality >= 3 && photo.TakenSrc == entity.SrcMeta && photo.TakenAtLocal != time.Time{}) {
+			if (!photo.DeletedAt.Valid && photo.PhotoQuality >= 3 && photo.TakenSrc == entity.SrcMeta && photo.TakenAtLocal != time.Time{}) {
 				_, ok := p[photo.PhotoPath]
 				assert.True(t, ok, photo.PhotoPath)
 			}

@@ -918,7 +918,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumPrivate:     false,
 		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 	},
 }
 

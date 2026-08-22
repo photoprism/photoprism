@@ -3,7 +3,7 @@ package entity
 import (
 	"sync"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 var (
@@ -66,7 +66,7 @@ func CreateTestFixtures() {
 	CreatePasswordFixtures()
 	CreateUserShareFixtures()
 
-	if err := Entities.ResetSequences(Db()); err != nil {
+	if err := Entities.ResetSequences(fixtureDb()); err != nil {
 		log.Error(err)
 		panic(err)
 	}

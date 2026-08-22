@@ -548,7 +548,7 @@ func TestConfig_DatabaseConnsIdle(t *testing.T) {
 }
 
 func TestImportSQL(t *testing.T) {
-	c := NewMinimalTestConfigWithDb("config", t.TempDir())
+	c := NewMinimalTestConfigWithDbTTest("config", t.TempDir(), t)
 
 	// Setup and capture SQL Logging output
 	buffer := bytes.Buffer{}
@@ -560,14 +560,14 @@ func TestImportSQL(t *testing.T) {
 	log.SetOutput(os.Stdout)
 
 	assert.NotContains(t, buffer.String(), "level=error")
-	assert.True(t, c.db.HasTable("importtest"))
+	assert.True(t, c.db.Migrator().HasTable("importtest"))
 
 	log.SetOutput(&buffer)
 	c.ImportSQL("./testdata/importtest.sql")
 	// Reset logger
 	log.SetOutput(os.Stdout)
 	assert.Contains(t, buffer.String(), "level=error")
-	require.NoError(t, c.db.DropTableIfExists("importtest").Error)
+	require.NoError(t, c.db.Migrator().DropTable("importtest"))
 }
 
 func TestConfig_checkDb(t *testing.T) {

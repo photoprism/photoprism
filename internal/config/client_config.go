@@ -746,6 +746,14 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 		Limit(10000).Offset(0).
 		Pluck("album_category", &cfg.AlbumCategories)
 
+	// Reset to nil as per Gorm v1
+	if len(cfg.AlbumCategories) == 0 {
+		cfg.AlbumCategories = nil
+	}
+	if len(cfg.Years) == 0 {
+		cfg.Years = nil
+	}
+
 	// Trace log for performance measurement.
 	log.Tracef("config: updated counts [%s]", time.Since(start))
 

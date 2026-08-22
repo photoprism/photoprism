@@ -27,7 +27,7 @@ func (m FolderMap) Pointer(name string) *Folder {
 	return &Folder{Path: name}
 }
 
-var deletedAt = time.Date(2026, 8, 19, 2, 16, 12, 0, time.UTC)
+var deletedAt = gorm.DeletedAt{Valid: true, Time: time.Date(2026, 8, 19, 2, 16, 12, 0, time.UTC)}
 
 // FolderFixtures is the map of test data for Folder
 var FolderFixtures = FolderMap{
@@ -117,7 +117,7 @@ var FolderFixtures = FolderMap{
 		CreatedAt:         time.Date(2026, 8, 19, 2, 6, 51, 0, time.UTC),
 		UpdatedAt:         time.Date(2026, 8, 19, 2, 6, 59, 0, time.UTC),
 		ModifiedAt:        time.Date(2026, 8, 19, 2, 16, 12, 0, time.UTC),
-		DeletedAt:         &deletedAt,
+		DeletedAt:         deletedAt,
 	},
 }
 
