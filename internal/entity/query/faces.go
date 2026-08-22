@@ -80,7 +80,11 @@ func facesStmt(knownOnly, unmatchedOnly, hidden, ignored bool) *gorm.DB {
 		stmt = stmt.Where("face_kind <= 1")
 	}
 
-	return stmt.Order("subj_uid, samples DESC")
+	// Largest clusters first, because selection bounds each comparison by the best distance
+	// found so far: meeting a likely winner early makes every later candidate cheaper to
+	// reject. Ordering by subject instead put every unnamed cluster ahead of every named one,
+	// which is the opposite. The id breaks ties so the order does not vary between drivers.
+	return stmt.Order("samples DESC, id")
 }
 
 // Faces returns all (known / unmatched) faces from the index, including clusters from
@@ -329,20 +333,30 @@ func ResolveFaceCollisions() (conflicts, resolved int, err error) {
 	// Remembers matched combinations.
 	done := make(map[string]bool, len(ids)*len(ids))
 
+	// Face.Match reads the receiver's vector through a cache that a value copied out of the
+	// map starts empty, so re-reading both sides inside the inner loop parsed the same JSON
+	// once per pair. The outer face is copied once per pass and re-adopted after a refresh,
+	// and the inner vectors are decoded up front, which makes it one parse per cluster.
+	embeddings := make(map[string]face.Embedding, len(ids))
+
+	for _, id := range ids {
+		if f, ok := faces[id]; ok {
+			embeddings[id] = f.Embedding()
+		}
+	}
+
 	// Find face assignment collisions.
 	for _, i := range ids {
+		f1, ok := faces[i]
+
+		if !ok {
+			continue
+		}
+
 		for _, j := range ids {
-			var f1, f2 entity.Face
+			f2, ok := faces[j]
 
-			if f, ok := faces[i]; ok {
-				f1 = f
-			} else {
-				continue
-			}
-
-			if f, ok := faces[j]; ok {
-				f2 = f
-			} else {
+			if !ok {
 				continue
 			}
 
@@ -354,7 +368,7 @@ func ResolveFaceCollisions() (conflicts, resolved int, err error) {
 			}
 
 			// Compare face 1 with face 2.
-			if matched, dist := f1.Match(face.Embeddings{f2.Embedding()}, f2.EmbedModel); matched {
+			if matched, dist := f1.Match(face.Embeddings{embeddings[j]}, f2.EmbedModel); matched {
 				if f1.SubjUID == f2.SubjUID {
 					continue
 				}
@@ -378,7 +392,7 @@ func ResolveFaceCollisions() (conflicts, resolved int, err error) {
 				}
 
 				// Resolve.
-				success, failed := f1.ResolveCollision(face.Embeddings{f2.Embedding()}, f2.EmbedModel)
+				success, failed := f1.ResolveCollision(face.Embeddings{embeddings[j]}, f2.EmbedModel)
 
 				// Failed?
 				if failed != nil {
@@ -392,6 +406,12 @@ func ResolveFaceCollisions() (conflicts, resolved int, err error) {
 					resolved++
 					faces, _, err = FacesByID(true, false, false, false)
 					logErr("faces", "refresh", err)
+
+					// ResolveCollision narrowed this cluster, and every later comparison in
+					// this pass has to see that rather than the row it started from.
+					if f, ok := faces[i]; ok {
+						f1 = f
+					}
 				} else {
 					log.Infof("faces: conflict resolution for %s not successful, face %s still has collisions with other persons", entity.SubjNames.Log(f1.SubjUID), f1.ID)
 				}

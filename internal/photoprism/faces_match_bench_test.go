@@ -5,6 +5,8 @@ import (
 	"math/rand/v2"
 	"testing"
 
+	"github.com/stretchr/testify/require"
+
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
 )
@@ -102,6 +104,35 @@ func BenchmarkSelectBestFaceUnmatched(b *testing.B) {
 	// b.Loop() resets the timer and the extra metrics on its first iteration, so a metric
 	// reported before it never reaches the output.
 	b.ReportMetric(float64(len(index.candidates)), "candidates")
+}
+
+// BenchmarkSelectBestFaceWinnerFirst and BenchmarkSelectBestFaceWinnerLast measure how much
+// candidate order costs. The bound tightens as soon as a close candidate is seen, so meeting
+// the winner early makes every later candidate cheaper to reject - which is why the face query
+// returns the largest clusters first.
+func BenchmarkSelectBestFaceWinnerFirst(b *testing.B) {
+	benchmarkSelectBestFaceAt(b, 0)
+}
+
+func BenchmarkSelectBestFaceWinnerLast(b *testing.B) {
+	benchmarkSelectBestFaceAt(b, benchmarkCandidateCount-1)
+}
+
+// benchmarkSelectBestFaceAt places the only close candidate at the given position.
+func benchmarkSelectBestFaceAt(b *testing.B, pos int) {
+	index, base := benchmarkFaceIndex([]float64{1.2, 1.25, 1.3, 1.35})
+
+	rnd := rand.New(rand.NewPCG(9, 10)) //nolint:gosec // deterministic fixtures, not security
+	markerEmb := face.Embeddings{benchmarkEmbeddingAt(base, 0.1, rnd)}
+
+	// One candidate the marker actually matches, everything else far away.
+	winner := entity.NewFace("", entity.SrcAuto, markerEmb, face.EmbeddingModelName())
+	require.NotNil(b, winner)
+	index.candidates[pos] = faceCandidate{ref: winner, emb: winner.Embedding(), acceptDist: winner.AcceptDist()}
+
+	for b.Loop() {
+		selectBestFace(markerEmb, index)
+	}
 }
 
 // BenchmarkSelectBestFaceLegacy captures an unbounded scan over the same candidates, which is
