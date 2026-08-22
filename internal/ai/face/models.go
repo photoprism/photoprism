@@ -98,6 +98,11 @@ type EmbeddingModel struct {
 // exceeded. FaceNet keeps the values PhotoPrism has shipped, because changing them
 // would alter matching for every existing library on upgrade.
 //
+// SFace sits at the budget-matched point rather than a tenth of it. Measured on hand-named
+// lookalike siblings, the tenth-budget values admitted roughly a quarter of cross-sibling
+// comparisons, because the accept distance sat where the false accept rate climbs steeply -
+// so recall was bought at a price the error budget was never meant to cover.
+//
 // CollisionDist and Epsilon are not measured separately. They are a floor below which two
 // vectors count as indistinguishable and the slack added to that check, so they follow the
 // width of the model's distance scale rather than an error budget:
@@ -129,11 +134,11 @@ var EmbeddingModels = map[ModelName]*EmbeddingModel{
 			Input:   alignedCropInput(onnx.Uniform(0, 1)),
 			Output:  &onnx.Output{Width: 128},
 		},
-		ClusterDist:   0.91,
-		ClusterRadius: 0.67,
-		MatchDist:     0.39,
-		CollisionDist: 0.071,
-		Epsilon:       0.014,
+		ClusterDist:   0.78,
+		ClusterRadius: 0.60,
+		MatchDist:     0.35,
+		CollisionDist: 0.061,
+		Epsilon:       0.012,
 	},
 	ModelAuraFace: {
 		Name:      ModelAuraFace,

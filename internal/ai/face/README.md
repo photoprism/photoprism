@@ -90,12 +90,14 @@ Cluster centroids are built with `EmbeddingsMidpoint` and scored as `dist - min(
 | Model         | `ClusterDist` | `ClusterRadius` | `MatchDist` |    TAR |    FAR |
 |:--------------|--------------:|----------------:|------------:|-------:|-------:|
 | `facenet`     |          0.64 |            0.42 |        0.40 | 0.8318 | 1.43 % |
-| `sface`       |          0.91 |            0.67 |        0.39 | 0.9603 | 0.14 % |
+| `sface`       |          0.78 |            0.60 |        0.35 |    n/a |    n/a |
 | `auraface`    |          0.98 |            0.76 |        0.35 | 0.9308 | 0.14 % |
 | `arcface_r50` |          1.07 |            0.67 |        0.55 | 0.9943 | 0.14 % |
 | `arcface_mbf` |          1.03 |            0.64 |        0.49 | 0.9648 | 0.14 % |
 
-FaceNet is the odd row because it keeps what it ships rather than a calibrated point, so it sits at the 1.43 % baseline that defines the budget. Every ONNX model is an order of magnitude stricter *and* more accurate. Spending the full baseline instead would buy SFace 0.9852 rather than 0.9603; the stricter point is the deliberate choice, because a wrong automatic merge costs a user more than a match they have to make by hand.
+FaceNet is the odd row because it keeps what it ships rather than a calibrated point, so it sits at the 1.43 % baseline that defines the budget. The remaining ONNX models are an order of magnitude stricter *and* more accurate on that benchmark, because a wrong automatic merge costs a user more than a match they have to make by hand.
+
+**SFace is the second odd row, and its TAR/FAR are marked n/a deliberately.** Its values no longer come from that benchmark run: the tenth-budget point it produced (0.91 / 0.67 / 0.39, accept distance 1.06) was measured against hand-named lookalike siblings and admitted roughly a quarter of cross-sibling comparisons. The accept distance sat where the false accept rate climbs steeply - between 0.97 and 1.06 it rises fivefold for nine hundredths of a distance - so recall was being bought at a price the error budget was never meant to cover. SFace now sits at the budget-matched point (accept distance 0.95). Re-running `TestCalibrateFaceThresholds` on a broad dataset is what should fill this row back in; the sibling set is a hard-case check, not a calibration set.
 
 Two caveats apply to the recommendations. The measured centroids are always pure because they are built from labeled identities, so a wider `ClusterRadius` is less safe in production, where an impure cluster has a large radius and would be given more slack. And `ClusterDist` is derived from pairwise distance equivalence rather than from a DBSCAN simulation, so cluster fragmentation and merge behavior are not measured. Validate against a real library before treating these values as final.
 

@@ -650,11 +650,11 @@ func TestConfig_FaceThresholdsPerModel(t *testing.T) {
 		c.options.ModelsPath = installTestModels(t, face.ModelSFace)
 		c.options.FaceModel = face.ModelSFace
 
-		assert.Equal(t, 0.91, c.FaceClusterDist())
-		assert.Equal(t, 0.67, c.FaceClusterRadius())
-		assert.Equal(t, 0.39, c.FaceMatchDist())
-		assert.Equal(t, 0.071, c.FaceCollisionDist())
-		assert.Equal(t, 0.014, c.FaceEpsilonDist())
+		assert.Equal(t, 0.78, c.FaceClusterDist())
+		assert.Equal(t, 0.60, c.FaceClusterRadius())
+		assert.Equal(t, 0.35, c.FaceMatchDist())
+		assert.Equal(t, 0.061, c.FaceCollisionDist())
+		assert.Equal(t, 0.012, c.FaceEpsilonDist())
 	})
 	t.Run("FaceNetKeepsShippedValues", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
@@ -699,11 +699,11 @@ func TestConfig_FaceThresholdsPerModel(t *testing.T) {
 
 		require.Equal(t, face.ClusterDistDefault, c.options.FaceClusterDist)
 		require.Equal(t, face.CollisionDistDefault, c.options.FaceCollisionDist)
-		assert.Equal(t, 0.91, c.FaceClusterDist())
-		assert.Equal(t, 0.67, c.FaceClusterRadius())
-		assert.Equal(t, 0.39, c.FaceMatchDist())
-		assert.Equal(t, 0.071, c.FaceCollisionDist())
-		assert.Equal(t, 0.014, c.FaceEpsilonDist())
+		assert.Equal(t, 0.78, c.FaceClusterDist())
+		assert.Equal(t, 0.60, c.FaceClusterRadius())
+		assert.Equal(t, 0.35, c.FaceMatchDist())
+		assert.Equal(t, 0.061, c.FaceCollisionDist())
+		assert.Equal(t, 0.012, c.FaceEpsilonDist())
 	})
 }
 
@@ -754,8 +754,8 @@ func TestConfig_FaceThreshold(t *testing.T) {
 		c.options.ModelsPath = installTestModels(t, face.ModelSFace)
 		c.options.FaceModel = face.ModelSFace
 
-		assert.Equal(t, 0.39, c.faceThreshold("face-match-dist", 1.6, face.MatchDistDefault, pick))
-		assert.Equal(t, 0.39, c.faceThreshold("face-match-dist", 0.001, face.MatchDistDefault, pick))
+		assert.Equal(t, 0.35, c.faceThreshold("face-match-dist", 1.6, face.MatchDistDefault, pick))
+		assert.Equal(t, 0.35, c.faceThreshold("face-match-dist", 0.001, face.MatchDistDefault, pick))
 	})
 	t.Run("InRange", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
@@ -773,8 +773,8 @@ func TestConfig_FaceThreshold(t *testing.T) {
 		// unguarded warning would repeat for the lifetime of the process.
 		hook := captureLog(t)
 
-		assert.Equal(t, 0.39, c.faceThreshold("face-match-dist", 1.6, face.MatchDistDefault, pick))
-		assert.Equal(t, 0.39, c.faceThreshold("face-match-dist", 1.6, face.MatchDistDefault, pick))
+		assert.Equal(t, 0.35, c.faceThreshold("face-match-dist", 1.6, face.MatchDistDefault, pick))
+		assert.Equal(t, 0.35, c.faceThreshold("face-match-dist", 1.6, face.MatchDistDefault, pick))
 
 		var warnings []string
 
@@ -827,7 +827,7 @@ func TestFaceModelThreshold(t *testing.T) {
 	pick := func(m *face.EmbeddingModel) float64 { return m.MatchDist }
 
 	t.Run("Model", func(t *testing.T) {
-		assert.Equal(t, 0.39, faceModelThreshold(face.FindEmbeddingModel(face.ModelSFace), pick, 0.4))
+		assert.Equal(t, 0.35, faceModelThreshold(face.FindEmbeddingModel(face.ModelSFace), pick, 0.4))
 	})
 	t.Run("NilModel", func(t *testing.T) {
 		assert.Equal(t, 0.4, faceModelThreshold(nil, pick, 0.4))

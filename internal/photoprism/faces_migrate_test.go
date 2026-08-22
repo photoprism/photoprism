@@ -390,22 +390,53 @@ func TestCentroidSamples(t *testing.T) {
 
 		return v
 	}
-	// Beyond the outlier distance (0.91 for SFace) but inside the widest distance the
-	// resulting cluster can accept (ClusterRadius + MatchDist = 1.06), which is the band
-	// where the manual exemption applies.
-	far := func() []float32 {
-		v := make([]float32, registered.Dims)
-		v[0] = 0.2
-		v[registered.Dims-1] = 1
+	// The two bands the exemption is defined by, taken from the model rather than written
+	// down, so a recalibration cannot silently move a fixture out of the band it names.
+	maxAccept := min(registered.ClusterRadius+registered.MatchDist, face.AcceptDistMax)
 
-		return v
+	// atGroupDist returns a vector whose distance to the midpoint of {near(0..2), itself}
+	// is target. The outlier pulls that midpoint toward itself, so the angle that produces
+	// a given distance is searched for rather than derived.
+	atGroupDist := func(target float64) []float32 {
+		best := make([]float32, registered.Dims)
+		bestErr := math.Inf(1)
+
+		for step := 0; step <= 400; step++ {
+			theta := float64(step) / 400 * math.Pi
+			v := make([]float32, registered.Dims)
+			v[0] = float32(math.Cos(theta))
+			v[registered.Dims-1] = float32(math.Sin(theta))
+
+			group := entity.Markers{marker(near(0)), marker(near(1)), marker(near(2)), marker(v)}
+
+			embeddings := make(face.Embeddings, 0, len(group))
+			for i := range group {
+				embeddings = append(embeddings, group[i].Embeddings()...)
+			}
+
+			midpoint, _, count := face.EmbeddingsMidpoint(embeddings)
+			if count == 0 {
+				continue
+			}
+
+			if e := math.Abs(group[3].Embeddings().Dist(midpoint) - target); e < bestErr {
+				bestErr, best = e, v
+			}
+		}
+
+		require.Less(t, bestErr, 0.02, "fixture must be able to reach %.2f from the midpoint", target)
+
+		return best
+	}
+
+	// Beyond the outlier distance but inside the widest distance the resulting cluster can
+	// accept, which is the band where the manual exemption applies.
+	far := func() []float32 {
+		return atGroupDist((registered.ClusterDist + maxAccept) / 2)
 	}
 	// Past that bound, where no cluster of this model would re-accept it.
 	beyondAcceptance := func() []float32 {
-		v := make([]float32, registered.Dims)
-		v[registered.Dims-1] = 1
-
-		return v
+		return atGroupDist(min(maxAccept+0.15, 1.9))
 	}
 
 	t.Run("DropsOutlier", func(t *testing.T) {
