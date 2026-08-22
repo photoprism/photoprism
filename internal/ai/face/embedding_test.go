@@ -24,6 +24,81 @@ func TestEmbedding_Dist(t *testing.T) {
 	})
 }
 
+func TestEmbedding_DistWithin(t *testing.T) {
+	a := Embedding{0, 0, 0}
+	b := Embedding{3, 4, 0}
+
+	t.Run("Within", func(t *testing.T) {
+		assert.InDelta(t, 5.0, a.DistWithin(b, 6), 1e-9)
+	})
+	t.Run("AtLimit", func(t *testing.T) {
+		assert.InDelta(t, 5.0, a.DistWithin(b, 5), 1e-9)
+	})
+	t.Run("Beyond", func(t *testing.T) {
+		assert.Equal(t, -1.0, a.DistWithin(b, 4.999))
+	})
+	t.Run("ZeroLimit", func(t *testing.T) {
+		assert.InDelta(t, 0.0, a.DistWithin(a, 0), 1e-9)
+		assert.Equal(t, -1.0, a.DistWithin(b, 0))
+	})
+	t.Run("NegativeLimit", func(t *testing.T) {
+		assert.Equal(t, -1.0, a.DistWithin(b, -1))
+	})
+	t.Run("MismatchedLength", func(t *testing.T) {
+		assert.Equal(t, -1.0, Embedding{0, 0}.DistWithin(Embedding{1}, 100))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, -1.0, a.DistWithin(Embedding{}, 100))
+	})
+	t.Run("NonFinite", func(t *testing.T) {
+		// Dist reports NaN for these, which passes every threshold comparison it is fed to.
+		// DistWithin reports "not comparable" instead, so a corrupt vector cannot win.
+		nan := Embedding{math.NaN(), 0, 0}
+		inf := Embedding{math.Inf(1), 0, 0}
+
+		assert.Equal(t, -1.0, a.DistWithin(nan, 100))
+		assert.Equal(t, -1.0, nan.DistWithin(a, 100))
+		assert.Equal(t, -1.0, a.DistWithin(inf, 100))
+	})
+	t.Run("AbandonsMidVector", func(t *testing.T) {
+		// A limit the running sum passes early is decided by the in-loop test rather than the
+		// final one, which is the path the block stride exists for.
+		x := make(Embedding, 512)
+		y := make(Embedding, 512)
+		for i := range x {
+			x[i] = 1
+		}
+
+		assert.Equal(t, -1.0, x.DistWithin(y, 0.5))
+		assert.InDelta(t, x.Dist(y), x.DistWithin(y, x.Dist(y)), 1e-9)
+	})
+	t.Run("AgreesWithDist", func(t *testing.T) {
+		// Lengths that are not a multiple of the block matter because their tail is never
+		// block-tested, so only the final verdict can reject them.
+		for _, dims := range []int{1, 15, 16, 17, 128, 129, 512} {
+			for i := range 32 {
+				x := make(Embedding, dims)
+				y := make(Embedding, dims)
+
+				for j := range x {
+					x[j] = float64((i*7+j*13)%97)/97 - 0.5
+					y[j] = float64((i*11+j*5)%89)/89 - 0.5
+				}
+
+				full := x.Dist(y)
+
+				assert.InDelta(t, full, x.DistWithin(y, full), 1e-9,
+					"dims %d case %d must report the true distance at its own limit", dims, i)
+
+				if full > 0 {
+					assert.Equal(t, -1.0, x.DistWithin(y, math.Nextafter(full, 0)),
+						"dims %d case %d must be refused just below the true distance", dims, i)
+				}
+			}
+		}
+	})
+}
+
 func TestNewEmbedding_Normalized(t *testing.T) {
 	raw := []float32{3, 4}
 	result := NewEmbedding(raw)

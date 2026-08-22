@@ -1,6 +1,6 @@
 ## Face Detection & Embedding Guidelines
 
-**Last Updated:** August 21, 2026
+**Last Updated:** August 22, 2026
 
 ### Overview
 
@@ -133,7 +133,8 @@ All embeddings, regardless of origin, are normalized to unit length (‖x‖₂�
 - `UnmarshalEmbeddings` normalizes when loading from persisted JSON, which is the path `query.Embeddings` uses to feed clustering. **`entity.Face.Embedding()` and `entity.Marker.Embeddings()` do not**: they call `json.Unmarshal` directly, so the matching path compares a stored vector as it was written. Everything written since normalization existed is already unit length, and `EmbeddingsMidpoint` normalizes its own inputs, so this is reachable only by a row predating that contract.
 - Random generators normalize their entries after perturbation.
 - `photoprism faces audit --fix` re-normalizes persisted embeddings, rekeys face IDs, and re-links markers (ID + `FaceDist`) so historical data adopts the canonical unit-length vectors. It is the repair for the read path above, and it reads the stored JSON as written in order to detect what needs repairing.
-- `Faces.Match` pre-filters matchable clusters, keeps an in-memory veto list for freshly cleared markers, and caches embeddings to avoid redundant distance checks; `BenchmarkSelectBestFace` (1024 faces) reports a bucket size of ~16 candidates out of 1024 (≈98 % fewer distance evaluations) at ≈0.55 ms/op with zero allocations.
+- `Faces.Match` pre-filters matchable clusters, keeps an in-memory veto list for freshly cleared markers, and decodes each cluster embedding and its thresholds once per run rather than once per marker.
+- `selectBestFace` compares the marker against every candidate and returns the closest one that accepts it. Each comparison is bounded by the tighter of what that candidate accepts and what the current best already achieves, and `Embedding.DistWithin` abandons the sum once it passes that bound, so a candidate that cannot win costs a fraction of a full compare. The answer is the one an exhaustive scan returns, which `TestSelectBestFaceReturnsClosest` pins against an unbounded reference.
 - Face clusters update their sample statistics (`Samples`, `SampleRadius`) from the latest matches via `Face.UpdateMatchStats`. `ClampSampleRadius` bounds the radius at `ClusterRadius` wherever it is written, and `AcceptDist` applies the same bound where it is read, so a recalibrated threshold reaches rows written under the previous one. With the shipped FaceNet values an automatic match therefore accepts embeddings up to **0.82** from the centroid.
 - `AcceptDistMax` caps that cutoff at **1.4** whatever the configuration. Embeddings are unit vectors, so two independent ones average √2 ≈ 1.41 — an average, not a floor, so a noticeable share of unrelated pairs already fall below 1.4. The ceiling is therefore a backstop that keeps a misconfiguration from being catastrophic rather than a safe setting; the widest calibrated model reaches 1.22.
 - Cluster materialization pre-sizes buffers; `BenchmarkClusterMaterialize` reports ~14.8 µs/op with 64 allocations (≈56 KB).
@@ -180,6 +181,8 @@ Additional safeguards limit how often stubborn clusters are retried:
 #### Distance Function
 
 - `Embedding.Dist` is hand-optimized with loop unrolling (4-way accumulation) and runs at ~155 ns/op.
+- `Embedding.DistWithin` is the matching hot path. It accumulates the same squared distance but abandons as soon as the running sum passes the caller's limit, testing every 16th component so the branch stays off the critical path of the vectors that survive. It returns -1 rather than a distance above the limit, and also for a non-finite component, which `Dist` reports as a NaN that passes every threshold comparison. `Embeddings.DistWithin` tightens the limit to each hit, so it reports the same minimum `Dist` would whenever that minimum is within the limit.
+- **How much the bound saves depends on the model.** For a random unit pair at 512 dims the mean abandon depth is ~34 % of the vector at FaceNet's 0.82 accept distance, ~63 % at AuraFace's 1.11 and ~75 % at ArcFace-R50's 1.22 — and ~98 % at the `AcceptDistMax` ceiling of 1.4, where two independent unit vectors average √2 ≈ 1.41 and almost nothing can be abandoned. A configuration that pushes the accept distance toward the ceiling therefore pays close to a full compare per candidate. Cost is measured indirectly, by `BenchmarkSelectBestFace` and `BenchmarkSelectBestFaceUnmatched` in `internal/photoprism`.
 - Euclidean distance remains the recommended metric; with unit vectors, cosine similarity would yield identical rankings, so no change is required to distance thresholds.
 
 ### FaceNet Integration Recommendations

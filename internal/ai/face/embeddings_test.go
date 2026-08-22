@@ -238,3 +238,40 @@ func BenchmarkEmbeddingsMidpoint(b *testing.B) {
 		}
 	}
 }
+
+func TestEmbeddings_DistWithin(t *testing.T) {
+	near := Embedding{0, 0, 0}
+	far := Embedding{3, 4, 0}
+	other := Embedding{0, 0, 1}
+
+	t.Run("ReportsMinimum", func(t *testing.T) {
+		embeddings := Embeddings{far, other}
+		assert.InDelta(t, 1.0, embeddings.DistWithin(near, 5), 1e-9)
+	})
+	t.Run("OrderIndependent", func(t *testing.T) {
+		// Each hit tightens the limit for the rest, so the closest one has to win whether it
+		// is seen before or after a farther one that is also within the limit.
+		assert.InDelta(t, Embeddings{other, far}.DistWithin(near, 5),
+			Embeddings{far, other}.DistWithin(near, 5), 1e-9)
+	})
+	t.Run("Beyond", func(t *testing.T) {
+		assert.Equal(t, -1.0, Embeddings{far}.DistWithin(near, 4.999))
+	})
+	t.Run("SkipsIncomparable", func(t *testing.T) {
+		assert.InDelta(t, 1.0, Embeddings{Embedding{9}, other}.DistWithin(near, 5), 1e-9)
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, -1.0, Embeddings{}.DistWithin(near, 5))
+	})
+	t.Run("NonFinite", func(t *testing.T) {
+		assert.Equal(t, -1.0, Embeddings{Embedding{math.NaN(), 0, 0}}.DistWithin(near, 100))
+	})
+	t.Run("AgreesWithDist", func(t *testing.T) {
+		embeddings := RandomEmbeddings(8, RegularFace)
+		query := RandomEmbedding()
+		full := embeddings.Dist(query)
+
+		assert.InDelta(t, full, embeddings.DistWithin(query, full), 1e-9)
+		assert.Equal(t, -1.0, embeddings.DistWithin(query, math.Nextafter(full, 0)))
+	})
+}

@@ -131,6 +131,22 @@ func (embeddings Embeddings) Dist(other Embedding) (dist float64) {
 	return dist
 }
 
+// DistWithin returns the minimum distance to an embedding, or -1 when none is comparable or
+// none is within limit. Each hit tightens the limit for the embeddings that follow it, so the
+// result is the same minimum Dist would report whenever that minimum is within the limit.
+func (embeddings Embeddings) DistWithin(other Embedding, limit float64) (dist float64) {
+	dist = -1
+
+	for _, e := range embeddings {
+		if d := e.DistWithin(other, limit); d >= 0 && (dist < 0 || d < dist) {
+			dist = d
+			limit = d
+		}
+	}
+
+	return dist
+}
+
 // JSON returns the embeddings as JSON-encoded bytes.
 func (embeddings Embeddings) JSON() []byte {
 	var noResult = []byte("")

@@ -1,6 +1,7 @@
 package photoprism
 
 import (
+	"math/rand/v2"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -50,62 +51,95 @@ func TestBuildFaceCandidates(t *testing.T) {
 
 	index := buildFaceIndex(faces)
 
-	require.Len(t, index.fallback, 1)
-	require.Equal(t, regular.ID, index.fallback[0].ref.ID)
+	require.Len(t, index.candidates, 1)
+	require.Equal(t, regular.ID, index.candidates[0].ref.ID)
 
 	// The candidate caches the clamped cutoff, not the raw column, so a stored radius
 	// from an earlier calibration cannot widen the gate for a whole match run.
-	require.InDelta(t, regular.AcceptDist(), index.fallback[0].acceptDist, 1e-9)
+	require.InDelta(t, regular.AcceptDist(), index.candidates[0].acceptDist, 1e-9)
 }
 
-// TestFaceCandidateMatch covers the accept distance and collision gates in isolation.
-func TestFaceCandidateMatch(t *testing.T) {
+// TestFaceCandidateLimit covers the accept distance and collision gates in isolation. The limit
+// is what selection bounds each comparison by, so it decides both what a candidate accepts and
+// how early one that cannot win is abandoned.
+func TestFaceCandidateLimit(t *testing.T) {
 	embeddings := face.RandomEmbeddings(1, face.RegularFace)
 	ref := entity.NewFace("", entity.SrcAuto, embeddings, face.EmbeddingModelName())
 	require.NotNil(t, ref)
 
-	t.Run("Match", func(t *testing.T) {
+	t.Run("AcceptDist", func(t *testing.T) {
 		c := faceCandidate{ref: ref, emb: ref.Embedding(), acceptDist: face.AcceptDist(0)}
-		matched, dist := c.match(embeddings)
-		require.True(t, matched)
-		require.InDelta(t, 0.0, dist, 1e-9)
+		assert.InDelta(t, face.AcceptDist(0), c.limit(), 1e-9)
 	})
-	t.Run("TooFar", func(t *testing.T) {
-		c := faceCandidate{ref: ref, emb: ref.Embedding(), acceptDist: -1}
-		matched, _ := c.match(embeddings)
-		require.False(t, matched)
-	})
-	t.Run("WithinCollisionRadius", func(t *testing.T) {
-		c := faceCandidate{ref: ref, emb: ref.Embedding(), acceptDist: face.AcceptDist(0),
+	t.Run("CollisionRadiusBelowAcceptDist", func(t *testing.T) {
+		// A cluster that was separated from another by a collision keeps a narrowed radius,
+		// and honoring it during matching is what stops the two people re-merging.
+		c := faceCandidate{ref: ref, emb: ref.Embedding(), acceptDist: 1.0,
 			collisionRadius: face.CollisionDist * 2}
-		matched, _ := c.match(embeddings)
-		require.True(t, matched)
+		require.Greater(t, c.collisionRadius, face.CollisionDist, "the gate only applies above the collision distance")
+		assert.InDelta(t, c.collisionRadius, c.limit(), 1e-9)
+	})
+	t.Run("CollisionRadiusAboveAcceptDist", func(t *testing.T) {
+		// The wider of the two never wins: a collision radius may only narrow the gate.
+		c := faceCandidate{ref: ref, emb: ref.Embedding(), acceptDist: 0.5, collisionRadius: 1.0}
+		assert.InDelta(t, 0.5, c.limit(), 1e-9)
+	})
+	t.Run("CollisionRadiusUnmeasured", func(t *testing.T) {
+		// Below the collision distance the radius is not yet meaningful and is ignored.
+		c := faceCandidate{ref: ref, emb: ref.Embedding(), acceptDist: 1.0,
+			collisionRadius: face.CollisionDist / 2}
+		assert.InDelta(t, 1.0, c.limit(), 1e-9)
+	})
+}
+
+// TestSelectBestFaceGates covers the cases where no candidate may be returned at all.
+func TestSelectBestFaceGates(t *testing.T) {
+	embeddings := face.RandomEmbeddings(1, face.RegularFace)
+	ref := entity.NewFace("", entity.SrcAuto, embeddings, face.EmbeddingModelName())
+	require.NotNil(t, ref)
+
+	t.Run("TooFar", func(t *testing.T) {
+		idx := faceIndex{candidates: []faceCandidate{{ref: ref, emb: ref.Embedding(), acceptDist: -1}}}
+		best, dist := selectBestFace(embeddings, idx)
+		assert.Nil(t, best)
+		assert.InDelta(t, -1.0, dist, 1e-9)
 	})
 	t.Run("OutsideCollisionRadius", func(t *testing.T) {
-		// A cluster that was separated from another by a collision keeps a narrowed radius,
-		// and honoring it during matching is what stops the two people re-merging. The
-		// subtest above only covers the accepting side of that gate.
 		other := face.RandomEmbeddings(1, face.RegularFace)
-		dist := minMarkerDistance(ref.Embedding(), other)
-		require.Positive(t, dist, "the two random faces must be far enough apart to test with")
+		d := other.Dist(ref.Embedding())
+		require.Positive(t, d, "the two random faces must be far enough apart to test with")
 
-		c := faceCandidate{
+		idx := faceIndex{candidates: []faceCandidate{{
 			ref:             ref,
 			emb:             ref.Embedding(),
-			acceptDist:      dist + 1,
-			collisionRadius: dist / 2,
-		}
-		require.Greater(t, c.collisionRadius, face.CollisionDist, "the gate only applies above the collision distance")
+			acceptDist:      d + 1,
+			collisionRadius: d / 2,
+		}}}
 
-		matched, got := c.match(other)
-		assert.False(t, matched, "a face beyond the collision radius must be refused")
-		assert.InDelta(t, dist, got, 1e-9)
+		best, _ := selectBestFace(other, idx)
+		assert.Nil(t, best, "a face beyond the collision radius must be refused")
 	})
 	t.Run("NoEmbeddings", func(t *testing.T) {
-		c := faceCandidate{ref: ref, emb: ref.Embedding(), acceptDist: face.AcceptDist(0)}
-		matched, dist := c.match(face.Embeddings{})
-		require.False(t, matched)
-		require.InDelta(t, -1.0, dist, 1e-9)
+		idx := faceIndex{candidates: []faceCandidate{{ref: ref, emb: ref.Embedding(), acceptDist: face.AcceptDist(0)}}}
+		best, dist := selectBestFace(face.Embeddings{}, idx)
+		assert.Nil(t, best)
+		assert.InDelta(t, -1.0, dist, 1e-9)
+	})
+	t.Run("FirstWinsOnTie", func(t *testing.T) {
+		// Selection bounds each comparison by the best distance found so far, so an equally
+		// close candidate must not displace the one already chosen.
+		first := &entity.Face{ID: "first"}
+		second := &entity.Face{ID: "second"}
+		emb := ref.Embedding()
+
+		idx := faceIndex{candidates: []faceCandidate{
+			{ref: first, emb: emb, acceptDist: face.AcceptDist(0)},
+			{ref: second, emb: emb, acceptDist: face.AcceptDist(0)},
+		}}
+
+		best, _ := selectBestFace(embeddings, idx)
+		require.NotNil(t, best)
+		assert.Equal(t, "first", best.ID)
 	})
 }
 
@@ -124,12 +158,83 @@ func TestSelectBestFace(t *testing.T) {
 	faces := entity.Faces{*matchFace, *otherFace}
 
 	index := buildFaceIndex(faces)
-	require.Len(t, index.fallback, 2)
+	require.Len(t, index.candidates, 2)
 
 	best, dist := selectBestFace(markerEmb, index)
 	require.NotNil(t, best)
 	require.Equal(t, matchFace.ID, best.ID)
 	require.InDelta(t, 0.0, dist, 1e-9)
+}
+
+// TestBenchmarkEmbeddingAt checks the fixture helper places a vector where it claims. The
+// closest-wins test reads distances off these shells, so a helper that drifted would weaken
+// that test without failing it.
+func TestBenchmarkEmbeddingAt(t *testing.T) {
+	rnd := rand.New(rand.NewPCG(21, 22)) //nolint:gosec // deterministic fixtures, not security
+	base := face.RandomEmbedding()
+
+	for _, d := range []float64{0.05, 0.15, 0.39, 0.6, 1.0, 1.41} {
+		e := benchmarkEmbeddingAt(base, d, rnd)
+		assert.InDelta(t, d, base.Dist(e), 1e-9, "must land at the requested distance")
+		assert.InDelta(t, 1.0, e.Magnitude(), 1e-9, "must stay a unit vector")
+	}
+
+	t.Run("BeyondDiameter", func(t *testing.T) {
+		// Two unit vectors cannot be more than 2 apart, so a larger request clamps.
+		assert.InDelta(t, 2.0, base.Dist(benchmarkEmbeddingAt(base, 2.5, rnd)), 1e-9)
+	})
+}
+
+// TestSelectBestFaceReturnsClosest pins the invariant that a search narrowed by anything other
+// than distance cannot hold: the marker gets the closest cluster that accepts it, not merely an
+// acceptable one. A merely acceptable cluster is then widened to the inflated distance by
+// UpdateMatchStats, so a near miss here does not stay a near miss.
+func TestSelectBestFaceReturnsClosest(t *testing.T) {
+	index, base := benchmarkFaceIndex([]float64{0.15, 0.3, 0.45, 0.6, 0.9, 1.1, 1.3})
+	require.Len(t, index.candidates, benchmarkCandidateCount)
+
+	// Clusters built from one sample all share the same gate, which would make the bound
+	// selection lowers to the running best indistinguishable from one that widens it. Real
+	// clusters differ, so spread the gates and narrow a few by a measured collision.
+	for i := range index.candidates {
+		c := &index.candidates[i]
+		c.acceptDist = 0.2 + float64(i%9)*0.1
+
+		if i%7 == 0 {
+			c.collisionRadius = face.CollisionDist + float64(i%5)*0.05
+		}
+	}
+
+	limits := make(map[float64]struct{}, len(index.candidates))
+	for i := range index.candidates {
+		limits[index.candidates[i].limit()] = struct{}{}
+	}
+	require.Greater(t, len(limits), 5, "the candidates must not all share one gate")
+
+	rnd := rand.New(rand.NewPCG(7, 8)) //nolint:gosec // deterministic fixtures, not security
+
+	var accepted int
+
+	for i := range 200 {
+		markerEmb := face.Embeddings{benchmarkEmbeddingAt(base, 0.05+float64(i%12)*0.05, rnd)}
+
+		// The reference scans every candidate to completion and applies no bound at all.
+		want, wantDist := legacySelectBestFace(markerEmb, index)
+		got, gotDist := selectBestFace(markerEmb, index)
+
+		if want == nil {
+			assert.Nil(t, got, "nothing accepts the marker, so nothing may be returned")
+			continue
+		}
+
+		accepted++
+
+		require.NotNil(t, got)
+		assert.Equal(t, want.ID, got.ID, "the closest accepting cluster must win")
+		assert.InDelta(t, wantDist, gotDist, 1e-9)
+	}
+
+	require.Positive(t, accepted, "the fixture must produce matches for the comparison to mean anything")
 }
 
 func TestFacesMatchRespectsVeto(t *testing.T) {
@@ -159,7 +264,7 @@ func TestFacesMatchRespectsVeto(t *testing.T) {
 	require.Equal(t, "", marker.FaceID)
 
 	// restore original assignment to keep fixtures consistent
-	dist := minMarkerDistance(f.Embedding(), marker.Embeddings())
+	dist := marker.Embeddings().Dist(f.Embedding())
 	_, err = marker.SetFace(&f, dist)
 	require.NoError(t, err)
 	w.clearVeto(marker.MarkerUID)

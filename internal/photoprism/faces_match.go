@@ -32,17 +32,12 @@ type faceCandidate struct {
 	collisionRadius float64
 }
 
-// faceIndex groups face candidates by a coarse hash so we can narrow the search space before
-// evaluating full distances. Buckets fall back to the full candidate list when empty to preserve
-// recall.
+// faceIndex holds the face candidates a run can match against, with the per-candidate data that
+// would otherwise be recomputed for every marker. Selection scans all of them and prunes by
+// distance rather than by partition, so the marker always gets its closest cluster.
 type faceIndex struct {
-	buckets  map[uint32][]faceCandidate
-	fallback []faceCandidate
+	candidates []faceCandidate
 }
-
-// faceIndexHashDims defines how many leading embedding dimensions we use when creating the coarse
-// sign hash for face buckets.
-const faceIndexHashDims = 6
 
 // Add adds result counts.
 func (r *FacesMatchResult) Add(result FacesMatchResult) {
@@ -51,12 +46,11 @@ func (r *FacesMatchResult) Add(result FacesMatchResult) {
 	r.Unknown += result.Unknown
 }
 
-// buildFaceIndex filters the provided faces down to candidates that can be matched and groups them
-// by a coarse bit-hash so we can avoid scanning every face for each marker.
+// buildFaceIndex filters the provided faces down to candidates that can be matched, decoding each
+// embedding and its thresholds once per run rather than once per marker.
 func buildFaceIndex(faces entity.Faces) faceIndex {
 	idx := faceIndex{
-		buckets:  make(map[uint32][]faceCandidate, len(faces)),
-		fallback: make([]faceCandidate, 0, len(faces)),
+		candidates: make([]faceCandidate, 0, len(faces)),
 	}
 
 	for i := range faces {
@@ -72,78 +66,57 @@ func buildFaceIndex(faces entity.Faces) faceIndex {
 			continue
 		}
 
-		candidate := faceCandidate{
+		idx.candidates = append(idx.candidates, faceCandidate{
 			ref:             f,
 			emb:             embedding,
 			acceptDist:      f.AcceptDist(),
 			collisionRadius: f.CollisionRadius,
-		}
-
-		idx.fallback = append(idx.fallback, candidate)
-
-		hash := embeddingSignHash(embedding)
-		idx.buckets[hash] = append(idx.buckets[hash], candidate)
+		})
 	}
 
 	return idx
 }
 
-// match checks whether the supplied marker embeddings fall within the distance and collision
-// thresholds for the candidate face, returning the match flag and distance.
-func (c faceCandidate) match(embeddings face.Embeddings) (bool, float64) {
-	if embeddings.Empty() || len(c.emb) == 0 {
-		return false, -1
+// limit returns the largest distance at which this candidate would still accept a marker, which
+// is the narrower of its accept distance and a collision radius once one has been measured.
+func (c faceCandidate) limit() float64 {
+	if c.collisionRadius > face.CollisionDist && c.collisionRadius < c.acceptDist {
+		return c.collisionRadius
 	}
 
-	dist := minMarkerDistance(c.emb, embeddings)
-
-	if dist < 0 {
-		return false, dist
-	}
-
-	if dist > c.acceptDist {
-		return false, dist
-	}
-
-	if c.collisionRadius > face.CollisionDist && dist > c.collisionRadius {
-		return false, dist
-	}
-
-	return true, dist
+	return c.acceptDist
 }
 
-// selectBestFace finds the best matching face candidate for the given marker embeddings.
+// selectBestFace returns the closest face candidate that accepts the given marker embeddings.
+//
+// The closest one has to win because UpdateMatchStats widens the chosen cluster to the distance
+// it accepted, so a merely acceptable cluster does not stay one. Each comparison is bounded by
+// what that candidate accepts and by the current best, which keeps the full scan affordable.
 func selectBestFace(embeddings face.Embeddings, idx faceIndex) (*entity.Face, float64) {
-	candidates := idx.fallback
-
-	if !embeddings.Empty() {
-		hash := embeddingSignHashFromEmbeddings(embeddings)
-
-		if bucket, ok := idx.buckets[hash]; ok && len(bucket) > 0 {
-			candidates = bucket
-		}
+	if embeddings.Empty() {
+		return nil, -1
 	}
 
 	var best *entity.Face
+
 	bestDist := -1.0
 
-	for i := range candidates {
-		if ok, dist := candidates[i].match(embeddings); ok {
-			if best == nil || dist < bestDist {
-				best = candidates[i].ref
-				bestDist = dist
-			}
-		}
-	}
+	for i := range idx.candidates {
+		c := &idx.candidates[i]
 
-	if best == nil && len(candidates) != len(idx.fallback) {
-		for i := range idx.fallback {
-			if ok, dist := idx.fallback[i].match(embeddings); ok {
-				if best == nil || dist < bestDist {
-					best = idx.fallback[i].ref
-					bestDist = dist
-				}
-			}
+		if len(c.emb) == 0 {
+			continue
+		}
+
+		limit := c.limit()
+
+		if bestDist >= 0 && bestDist < limit {
+			limit = bestDist
+		}
+
+		if dist := embeddings.DistWithin(c.emb, limit); dist >= 0 && (best == nil || dist < bestDist) {
+			best = c.ref
+			bestDist = dist
 		}
 	}
 
@@ -231,7 +204,7 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 
 	index := buildFaceIndex(faces)
 
-	if len(index.fallback) == 0 {
+	if len(index.candidates) == 0 {
 		log.Debugf("faces: no eligible faces for matching")
 		return result, nil
 	}
@@ -390,50 +363,4 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 	}
 
 	return result, err
-}
-
-// minMarkerDistance computes the smallest Euclidean distance between the face embedding and any
-// embedding contained in the marker.
-func minMarkerDistance(faceEmb face.Embedding, embeddings face.Embeddings) float64 {
-	return embeddings.Dist(faceEmb)
-}
-
-// embeddingSignHash reduces the given values to a compact bit-hash by looking at the sign of the
-// first faceIndexHashDims components.
-func embeddingSignHash(values []float64) uint32 {
-	var hash uint32
-
-	limit := min(min(len(values), faceIndexHashDims), 32)
-
-	for i := 0; i < limit; i++ {
-		if values[i] >= 0 {
-			hash |= uint32(1) << i
-		}
-	}
-
-	return hash
-}
-
-// embeddingSignHashFromEmbeddings aggregates the first faceIndexHashDims components of a marker's
-// embeddings and derives their sign hash so we can query the appropriate face bucket.
-func embeddingSignHashFromEmbeddings(embeddings face.Embeddings) uint32 {
-	if embeddings.Empty() {
-		return 0
-	}
-
-	dims := min(faceIndexHashDims, len(embeddings[0]))
-
-	var sums [faceIndexHashDims]float64
-
-	for _, emb := range embeddings {
-		if len(emb) < dims {
-			continue
-		}
-
-		for i := 0; i < dims; i++ {
-			sums[i] += emb[i]
-		}
-	}
-
-	return embeddingSignHash(sums[:dims])
 }
