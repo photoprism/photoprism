@@ -13,7 +13,7 @@ import (
 
 func TestResetCommand(t *testing.T) {
 	// make sure that database is in a good state for later tests as this test empties it
-	defer resetConfigAndDB()
+	defer resetConfigAndDB(t)
 
 	t.Run("ResetIndex", func(t *testing.T) {
 		c := resetConfigAndOpenDB()

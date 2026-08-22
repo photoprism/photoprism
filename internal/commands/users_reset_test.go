@@ -14,7 +14,7 @@ import (
 func TestUsersResetCommand(t *testing.T) {
 	c := resetConfigAndOpenDB()
 	// reset as this test removes all users
-	defer resetConfigAndDB()
+	defer resetConfigAndDB(t)
 
 	t.Run("NotConfirmed", func(t *testing.T) {
 		// Run command with test context.

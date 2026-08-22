@@ -28,12 +28,7 @@ import (
 // newBootstrapTestConfig creates a minimal test config and closes its database on test cleanup.
 func newBootstrapTestConfig(t *testing.T, name string) *config.Config {
 	t.Helper()
-	c := config.NewMinimalTestConfigWithDb(name, t.TempDir())
-	t.Cleanup(func() {
-		assert.NoError(t, c.CloseDb())
-	})
-
-	return c
+	return config.NewMinimalTestConfigWithDbTTest(name, t.TempDir(), t)
 }
 
 func TestInitConfig_NoPortal_NoOp(t *testing.T) {

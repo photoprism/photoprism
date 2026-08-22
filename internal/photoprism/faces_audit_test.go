@@ -46,17 +46,7 @@ func TestFaces_Audit(t *testing.T) {
 }
 
 func TestFaces_AuditNormalizesEmbeddings(t *testing.T) {
-	t.Helper()
-
-	oldCfg := Config()
-	c := config.NewMinimalTestConfigWithDb("faces-audit-normalize", t.TempDir())
-	t.Cleanup(func() {
-		_ = c.CloseDb()
-
-		if oldCfg != nil {
-			oldCfg.RegisterDb()
-		}
-	})
+	c := config.NewMinimalTestConfigWithDbTTest("faces-audit-normalize", t.TempDir(), t)
 
 	m := NewFaces(c)
 

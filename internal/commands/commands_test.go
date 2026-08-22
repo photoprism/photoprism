@@ -47,7 +47,7 @@ func runTestMain(m *testing.M) (code int) {
 	savedPath = tempDir
 	defer os.RemoveAll(tempDir)
 
-	c := config.NewMinimalTestConfigWithDb("commands", tempDir)
+	c := config.NewMinimalTestConfigWithDbTMain("commands", tempDir)
 	defer c.CleanupTestFolder()
 	defer func() {
 		if err := c.CloseDb(); err != nil {
@@ -211,8 +211,8 @@ func RunWithProvidedTestContext(ctx *cli.Context, cmd *cli.Command, args []strin
 }
 
 // resetConfigAndDB replaces the config with a generated minimal config, and may replace the database if it doesn't exist.
-func resetConfigAndDB() *config.Config {
-	c := config.NewMinimalTestConfigWithDb("commands", savedPath)
+func resetConfigAndDB(t *testing.T) *config.Config {
+	c := config.NewMinimalTestConfigWithDbTTest("commands", savedPath, t)
 	get.SetConfig(c)
 	entity.SetDbProvider(c)
 

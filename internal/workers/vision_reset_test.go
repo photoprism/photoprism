@@ -12,8 +12,7 @@ import (
 )
 
 func TestVisionReset(t *testing.T) {
-	conf := config.NewMinimalTestConfigWithDb("workers-vision-reset", t.TempDir())
-
+	conf := config.NewMinimalTestConfigWithDbTTest("workers-vision-reset", t.TempDir(), t)
 	worker := NewVision(conf)
 	fixture := entity.PhotoFixtures.Get("VisionResetTarget")
 	require.NotEmpty(t, fixture.PhotoUID)

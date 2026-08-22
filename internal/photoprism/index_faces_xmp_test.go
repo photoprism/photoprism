@@ -117,7 +117,7 @@ func newXmpIndexConfig(t *testing.T, name string) *config.Config {
 	t.Helper()
 	useTestDb(t, name)
 
-	c := config.NewMinimalTestConfigWithDb(name, filepath.Join(t.TempDir(), "storage"))
+	c := config.NewMinimalTestConfigWithDbTTest(name, filepath.Join(t.TempDir(), "storage"), t)
 	oldConfig := Config()
 	SetConfig(c)
 	t.Cleanup(func() {

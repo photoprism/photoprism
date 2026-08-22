@@ -591,13 +591,13 @@ func newPortalJWTFixture(t *testing.T, suffix string) portalJWTFixture {
 
 	t.Cleanup(func() {
 		c := get.Config()
-		c.CloseDb()
+		require.NoError(t, c.CloseDb())
 		get.SetConfig(config.TestConfig())
 		c = get.Config()
 		entity.SetDbProvider(c) // Make sure that the database has been swapped back
 	})
 
-	nodeConf := config.NewMinimalTestConfigWithDb("auth-any-portal-jwt-"+suffix, t.TempDir())
+	nodeConf := config.NewMinimalTestConfigWithDbTTest("auth-any-portal-jwt-"+suffix, t.TempDir(), t)
 
 	nodeConf.Options().NodeRole = cluster.RoleInstance
 	nodeConf.Options().Public = false
@@ -606,7 +606,7 @@ func newPortalJWTFixture(t *testing.T, suffix string) portalJWTFixture {
 	nodeUUID := nodeConf.NodeUUID()
 	nodeConf.Options().PortalUrl = "https://portal.example.test"
 
-	portalConf := config.NewMinimalTestConfigWithDb("auth-any-portal-jwt-issuer-"+suffix, t.TempDir())
+	portalConf := config.NewMinimalTestConfigWithDbTTest("auth-any-portal-jwt-issuer-"+suffix, t.TempDir(), t)
 
 	enablePortalAPIs(t, portalConf)
 	portalConf.Options().ClusterUUID = clusterUUID

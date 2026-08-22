@@ -13,6 +13,7 @@ import (
 	"time"
 
 	gc "github.com/patrickmn/go-cache"
+	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config/customize"
@@ -253,10 +254,24 @@ func NewMinimalTestConfig(dataPath string) *Config {
 var testDbCache []byte
 var testDbMutex sync.Mutex
 
-// NewMinimalTestConfigWithDb creates a lightweight test Config (minimal filesystem).
+// NewMinimalTestConfigWithDbTTest creates a lightweight test Config (minimal filesystem).
 //
+// For SQLite a cached isolated DB is created by first run without seeding media fixtures.
+func NewMinimalTestConfigWithDbTTest(dbName, dataPath string, t *testing.T) *Config {
+	c := NewMinimalTestConfigWithDbTMain(dbName, dataPath)
+	t.Cleanup(func() {
+		require.NoError(t, c.CloseDb())
+		// Reopen the default config just in case
+		TestConfig().RegisterDb()
+	})
+	return c
+}
+
+// NewMinimalTestConfigWithDbTMain creates a lightweight test Config (minimal filesystem).
+// For use within TestMain where testing.T is not available.
+// Use NewMinimalTestConfigWithDbTTest in tests.
 // Creates an isolated SQLite DB (cached after first run) without seeding media fixtures.
-func NewMinimalTestConfigWithDb(dbName, dataPath string) *Config {
+func NewMinimalTestConfigWithDbTMain(dbName, dataPath string) *Config {
 	c := NewIsolatedTestConfig(dbName, dataPath, true)
 
 	cachedDb := RestoreDBFromCache(c)

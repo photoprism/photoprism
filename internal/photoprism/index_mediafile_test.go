@@ -234,7 +234,7 @@ func TestIndex_UserMediaFile_ParallelDuplicates(t *testing.T) {
 	// so this test needs one of its own for reliable row counts.
 	useTestDb(t, "index-dup-race")
 
-	cfg := config.NewMinimalTestConfigWithDb("index-dup-race", filepath.Join(t.TempDir(), "storage"))
+	cfg := config.NewMinimalTestConfigWithDbTTest("index-dup-race", filepath.Join(t.TempDir(), "storage"), t)
 
 	// MediaFile.Root() resolves paths against the package-level config, so it
 	// must point to the test config for files to be detected as originals.
@@ -362,7 +362,7 @@ func TestIndex_IndexedFileOriginalName(t *testing.T) {
 	// collide by hash with a row another test indexed with an explicit original name.
 	useTestDb(t, "index-original-name")
 
-	cfg := config.NewMinimalTestConfigWithDb("index-original-name", filepath.Join(t.TempDir(), "storage"))
+	cfg := config.NewMinimalTestConfigWithDbTTest("index-original-name", filepath.Join(t.TempDir(), "storage"), t)
 
 	// MediaFile.Root() and the ExifTool cache resolve against the package-level
 	// config, so it must point to the test config for this run.
@@ -428,7 +428,7 @@ func TestIndex_MediaFile_DualFisheye(t *testing.T) {
 
 	useTestDb(t, "index-dual-fisheye")
 
-	cfg := config.NewMinimalTestConfigWithDb("index-dual-fisheye", filepath.Join(t.TempDir(), "storage"))
+	cfg := config.NewMinimalTestConfigWithDbTTest("index-dual-fisheye", filepath.Join(t.TempDir(), "storage"), t)
 
 	oldCfg := Config()
 	SetConfig(cfg)
@@ -482,7 +482,7 @@ func TestIndex_MediaFile_ImportFaceTags(t *testing.T) {
 		t.Helper()
 
 		useTestDb(t, "import-face-tags")
-		cfg := config.NewMinimalTestConfigWithDb("import-face-tags", filepath.Join(t.TempDir(), "storage"))
+		cfg := config.NewMinimalTestConfigWithDbTTest("import-face-tags", filepath.Join(t.TempDir(), "storage"), t)
 
 		// collectXmpFaces resolves the sidecar via the package-level config.
 		oldCfg := Config()
@@ -546,7 +546,7 @@ func TestIndex_MediaFile_FacesOnlyRecountsAfterDelete(t *testing.T) {
 	}
 
 	useTestDb(t, "faces-only-recount")
-	cfg := config.NewMinimalTestConfigWithDb("faces-only-recount", filepath.Join(t.TempDir(), "storage"))
+	cfg := config.NewMinimalTestConfigWithDbTTest("faces-only-recount", filepath.Join(t.TempDir(), "storage"), t)
 	oldCfg := Config()
 	SetConfig(cfg)
 	t.Cleanup(func() {

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
@@ -16,7 +17,10 @@ func TestError(t *testing.T) {
 	t.Run("AllOk", func(t *testing.T) {
 		c := NewTestConfig("config")
 		c.Init()
-		defer c.CleanupTestFolder()
+		t.Cleanup(func() {
+			c.CleanupTestFolder()
+			require.NoError(t, c.CloseDb())
+		})
 		entity.SetDbProvider(c)
 
 		entity.LogWarningsAndErrors()
@@ -46,7 +50,10 @@ func TestError(t *testing.T) {
 	t.Run("CloseDB", func(t *testing.T) {
 		c := NewTestConfig("config")
 		c.Init()
-		defer c.CleanupTestFolder()
+		t.Cleanup(func() {
+			c.CleanupTestFolder()
+			require.NoError(t, c.CloseDb())
+		})
 		entity.SetDbProvider(c)
 
 		entity.LogWarningsAndErrors()
@@ -89,7 +96,10 @@ func TestError(t *testing.T) {
 	t.Run("Shutdown", func(t *testing.T) {
 		c := NewTestConfig("config")
 		c.Init()
-		defer c.CleanupTestFolder()
+		t.Cleanup(func() {
+			c.CleanupTestFolder()
+			require.NoError(t, c.CloseDb())
+		})
 		entity.SetDbProvider(c)
 
 		entity.LogWarningsAndErrors()

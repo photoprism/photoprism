@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config/customize"
@@ -84,7 +85,7 @@ func TestConfig_ClientConfigDisableMCP(t *testing.T) {
 	// ClientPublic, ClientShare, and ClientUser must all propagate the MCP
 	// disable flag so the frontend can hide any MCP-related controls when
 	// the endpoint is turned off via --disable-mcp / PHOTOPRISM_DISABLE_MCP.
-	c := NewMinimalTestConfigWithDb("client-mcp", t.TempDir())
+	c := NewMinimalTestConfigWithDbTTest("client-mcp", t.TempDir(), t)
 	c.SetAuthMode(AuthModePasswd)
 
 	original := c.Options().DisableMCP
@@ -112,7 +113,7 @@ func TestConfig_ClientShareConfig(t *testing.T) {
 }
 
 func TestConfig_ClientUser(t *testing.T) {
-	c := NewMinimalTestConfigWithDb("client-user", t.TempDir())
+	c := NewMinimalTestConfigWithDbTTest("client-user", t.TempDir(), t)
 	c.SetAuthMode(AuthModePasswd)
 
 	assert.Equal(t, AuthModePasswd, c.AuthMode())
@@ -169,7 +170,7 @@ func TestConfig_ClientUser(t *testing.T) {
 }
 
 func TestConfig_ClientRoleConfig(t *testing.T) {
-	c := NewMinimalTestConfigWithDb("client-role", t.TempDir())
+	c := NewMinimalTestConfigWithDbTTest("client-role", t.TempDir(), t)
 	c.SetAuthMode(AuthModePasswd)
 
 	assert.Equal(t, AuthModePasswd, c.AuthMode())
@@ -344,6 +345,10 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 func TestConfig_ClientSessionConfig(t *testing.T) {
 	c := NewTestConfig("config")
 	c.SetAuthMode(AuthModePasswd)
+	t.Cleanup(func() {
+		c.CleanupTestFolder()
+		require.NoError(t, c.CloseDb())
+	})
 
 	// Propagate configures the download signer; without it no session gets a signed token and the
 	// coarse fallback is empty.

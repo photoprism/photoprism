@@ -21,7 +21,7 @@ import (
 // the test binary, see entity.TestDbDSN.
 func newInsta360ReconcileFixture(t *testing.T, name string) (RelatedFiles, []entity.Photo, []string) {
 	t.Helper()
-	cfg := config.NewMinimalTestConfigWithDb(name, filepath.Join(t.TempDir(), "storage"))
+	cfg := config.NewMinimalTestConfigWithDbTTest(name, filepath.Join(t.TempDir(), "storage"), t)
 	oldCfg := Config()
 	SetConfig(cfg)
 	t.Cleanup(func() {

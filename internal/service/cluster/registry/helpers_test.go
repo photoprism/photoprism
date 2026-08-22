@@ -10,14 +10,7 @@ import (
 func newRegistryTestConfig(t *testing.T, name string) *cfg.Config {
 	t.Helper()
 
-	c := cfg.NewMinimalTestConfigWithDb(name, t.TempDir())
-	t.Cleanup(func() {
-		if err := c.CloseDb(); err != nil {
-			t.Fatalf("close db: %v", err)
-		}
-	})
-
-	return c
+	return cfg.NewMinimalTestConfigWithDbTTest(name, t.TempDir(), t)
 }
 
 // listNodeByName returns the listed node with the given name, or nil if absent.
