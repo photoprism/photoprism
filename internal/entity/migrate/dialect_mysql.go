@@ -2,6 +2,7 @@ package migrate
 
 // Generated code, do not edit.
 
+// DialectMySQL is the migrations for the DBMS MySQL
 var DialectMySQL = Migrations{
 	{
 		ID:         "20211121-094727",

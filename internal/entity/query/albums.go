@@ -168,13 +168,17 @@ func UpdateAlbumDates() (updated int, err error) {
 		)`)
 		return int(result.RowsAffected), result.Error
 	case dsn.DialectPostgreSQL:
-		return UnscopedDb().Exec(`UPDATE albums
+		result := UnscopedDb().Exec(`UPDATE albums
 			SET album_year = date_part('year', taken_max), album_month = date_part('month', taken_max), album_day = date_part('day', taken_max)
 			FROM (SELECT photo_path, MAX(taken_at_local) AS taken_max
 	 			FROM photos WHERE taken_src = 'meta' AND photos.photo_quality >= 3 AND photos.deleted_at IS NULL
 	 			GROUP BY photo_path
 			) AS p
-			WHERE albums.album_path = p.photo_path AND albums.album_type = 'folder' AND albums.album_path IS NOT NULL AND p.taken_max IS NOT NULL`).Error
+			WHERE albums.album_path = p.photo_path AND albums.album_type = 'folder' AND albums.album_path IS NOT NULL AND p.taken_max IS NOT NULL
+			AND albums.album_path <> ''
+			AND (album_year = 0 OR album_month = 0 OR album_day = 0 OR DATE(p.taken_max) <> coalesce(safe_make_date(album_year, album_month, album_day), make_date(1000, 1, 1))
+			)`)
+		return int(result.RowsAffected), result.Error
 	case dsn.DialectSQLite:
 		// SQLite has potential locking issues if the update is done on all albums at once.
 		var albums entity.Albums

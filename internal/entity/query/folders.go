@@ -107,13 +107,17 @@ func UpdateFolderDates() (updated int, err error) {
 		)`, entity.RootOriginals)
 		return int(result.RowsAffected), result.Error
 	case dsn.DialectPostgreSQL:
-		return UnscopedDb().Exec(`UPDATE folders
+		result := UnscopedDb().Exec(`UPDATE folders
 			SET folder_year = date_part('year', taken_max), folder_month = date_part('month', taken_max), folder_day = date_part('day', taken_max)
 			FROM (SELECT photo_path, MAX(taken_at_local) AS taken_max
 	 			FROM photos WHERE taken_src = 'meta' AND photos.photo_quality >= 3 AND photos.deleted_at IS NULL
 	 			GROUP BY photo_path
 			) AS p
-			WHERE folders.path = p.photo_path AND p.taken_max IS NOT NULL`).Error
+			WHERE folders.path = p.photo_path AND p.taken_max IS NOT NULL and root = ?
+			AND (folder_year = 0 OR folder_month = 0 OR folder_day = 0
+				OR DATE(p.taken_max) <> coalesce(safe_make_date(folder_year, folder_month, folder_day), make_date(1000, 1, 1))
+			)`, entity.RootOriginals)
+		return int(result.RowsAffected), result.Error
 	case dsn.DialectSQLite:
 		// SQLite has potential locking issues if the update is done on all folders at once.
 		var folders entity.Folders

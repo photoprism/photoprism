@@ -2,6 +2,7 @@ package migrate
 
 // Generated code, do not edit.
 
+// DialectSQLite is the migrations for the DBMS SQLite
 var DialectSQLite = Migrations{
 	{
 		ID:         "20211121-094727",
@@ -143,19 +144,19 @@ var DialectSQLite = Migrations{
 	},
 	{
 		ID:         "20251005-000001",
-		Dialect:    "sqlite3",
+		Dialect:    "sqlite",
 		Stage:      "main",
 		Statements: []string{"UPDATE labels SET label_nsfw = 0 WHERE label_nsfw IS NULL;", "UPDATE photos_labels SET nsfw = 0 WHERE nsfw IS NULL;", "UPDATE photos_labels SET topicality = 0 WHERE topicality IS NULL;"},
 	},
 	{
 		ID:         "20251007-000001",
-		Dialect:    "sqlite3",
+		Dialect:    "sqlite",
 		Stage:      "main",
 		Statements: []string{"UPDATE photos SET indexed_at = checked_at WHERE indexed_at IS NULL;"},
 	},
 	{
 		ID:         "20260711-000001",
-		Dialect:    "sqlite3",
+		Dialect:    "sqlite",
 		Stage:      "post",
 		Statements: []string{"CREATE INDEX IF NOT EXISTS idx_albums_album_filter ON albums (album_filter);", "CREATE INDEX IF NOT EXISTS idx_albums_album_path ON albums (album_path);"},
 	},

@@ -2,6 +2,7 @@ package migrate
 
 // Generated code, do not edit.
 
+// DialectPostgres is the migrations for the DBMS Postgres
 var DialectPostgres = Migrations{
 	{
 		ID:         "20241202-000001",
@@ -38,5 +39,11 @@ var DialectPostgres = Migrations{
 		Dialect:    "postgres",
 		Stage:      "post",
 		Statements: []string{"CREATE INDEX IF NOT EXISTS idx_albums_album_filter ON albums (album_filter);", "CREATE INDEX IF NOT EXISTS idx_albums_album_path ON albums (album_path);"},
+	},
+	{
+		ID:         "20260822-000001",
+		Dialect:    "postgres",
+		Stage:      "post",
+		Statements: []string{"CREATE OR REPLACE FUNCTION public.safe_make_date(year bigint, month bigint, day bigint)\nRETURNS date \nLANGUAGE plpgsql IMMUTABLE AS \n$$\nDECLARE\n\tsyear smallint;\n\tsmonth smallint;\n\tsday smallint;\nBEGIN\n\tBEGIN\n\t\tsyear := year::smallint;\n\t\tsmonth := month::smallint;\n\t\tsday := day::smallint;\n    \tRETURN make_date(syear, smonth, sday);\n\tEXCEPTION\n\t    WHEN others THEN \n    \t    RETURN null;\n\tEND;\nEND;\n$$;"},
 	},
 }
