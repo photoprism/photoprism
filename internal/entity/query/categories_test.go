@@ -20,6 +20,9 @@ func TestCategoryLabels(t *testing.T) {
 		}
 	})
 	t.Run("NotNil", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		}
 		t.Cleanup(func() {
 			entity.ResetTestFixtures()
 		})

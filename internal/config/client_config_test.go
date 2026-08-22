@@ -140,6 +140,9 @@ func TestConfig_ClientUser(t *testing.T) {
 		assert.Equal(t, result.Settings.Features, guestFeatures)
 	})
 	t.Run("NilTesting", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		}
 		t.Cleanup(func() {
 			entity.ResetTestFixtures()
 		})
