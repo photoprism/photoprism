@@ -41,28 +41,11 @@ const (
 	maxDetectorInputSize = 4096
 )
 
-// DetectorModel describes the bundled SCRFD detector. Its decode strategy, strides, and
-// anchor count stay in this package because they are what differs between detectors; the
-// artifact and its preprocessing are described in the structure that every subsystem
-// running an ONNX model shares.
-var DetectorModel = &onnx.ModelInfo{
-	File:   DefaultONNXModelFilename,
-	SHA256: "ae72185653e279aa2056b288662a19ec3519ced5426d2adeffbe058a86369a24",
-	Input: &onnx.Input{
-		Width:         640,
-		Height:        640,
-		Layout:        onnx.LayoutNCHW,
-		ColorOrder:    onnx.RGB,
-		Normalization: onnx.Uniform(127.5, 128),
-		Resize:        onnx.Resize{Mode: onnx.ResizePad},
-	},
-}
-
-// detectorInputSize returns the geometry to run the detector at, given what its graph
-// declares. A dynamic axis reports zero and falls back to the registered size; an axis
+// detectorInputSize returns the geometry to run the specified detector at, given what its
+// graph declares. A dynamic axis reports zero and falls back to the registered size; an axis
 // larger than a detector input can be is refused, because the blob is sized from it.
-func detectorInputSize(graphWidth, graphHeight int) (width, height int, err error) {
-	defaultWidth, defaultHeight := DetectorModel.InputSize()
+func detectorInputSize(detector *Detector, graphWidth, graphHeight int) (width, height int, err error) {
+	defaultWidth, defaultHeight := detector.ONNX.InputSize()
 
 	width, height = graphWidth, graphHeight
 
@@ -131,13 +114,13 @@ func NewONNXEngine(opts ONNXOptions) (DetectionEngine, error) {
 	}
 
 	// Which detector this is decides the channel order and normalization, which cannot be read
-	// from a graph. An unknown artifact falls back to the incumbent rather than refusing, so a
+	// from a graph. An unknown artifact falls back to the default rather than refusing, so a
 	// re-export still runs, and its layout is still derived from the graph.
 	detector := DetectorForFile(opts.ModelPath)
 
 	if detector == nil {
-		log.Warnf("faces: unrecognized detector %s, assuming %s preprocessing", clean.Log(filepath.Base(opts.ModelPath)), DetectorSCRFD)
-		detector = FindDetector(DetectorSCRFD)
+		detector = DefaultDetector()
+		log.Warnf("faces: unrecognized detector %s, assuming %s preprocessing", clean.Log(filepath.Base(opts.ModelPath)), detector.Name)
 	}
 
 	// Operators may point MODELS_PATH at another export, whose layout is read from the graph,
@@ -193,7 +176,7 @@ func NewONNXEngine(opts ONNXOptions) (DetectionEngine, error) {
 	inputName := inputInfos[0].Name
 	graphWidth, graphHeight, _ := onnx.InputGeometry(inputInfos[0].Dimensions)
 
-	width, height, err := detectorInputSize(graphWidth, graphHeight)
+	width, height, err := detectorInputSize(detector, graphWidth, graphHeight)
 	if err != nil {
 		return nil, err
 	}

@@ -20,7 +20,21 @@ var LicenseEligibleEditions = []string{"ce", "plus"}
 
 // LicenseGated reports whether the model weights have to be enabled explicitly before use.
 func (m *EmbeddingModel) LicenseGated() bool {
-	return m != nil && m.WeightLicense() == LicenseResearchOnly
+	return m != nil && m.WeightLicense() == LicenseNonFree
+}
+
+// WeightLicense returns the license of the detector's pretrained weights.
+func (d *Detector) WeightLicense() string {
+	if d == nil || d.ONNX == nil {
+		return ""
+	}
+
+	return d.ONNX.License
+}
+
+// LicenseGated reports whether the detector weights have to be enabled explicitly before use.
+func (d *Detector) LicenseGated() bool {
+	return d != nil && d.WeightLicense() == LicenseNonFree
 }
 
 // LicenseAccepted reports whether the operator enabled the gated weights.

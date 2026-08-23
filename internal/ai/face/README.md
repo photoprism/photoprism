@@ -14,9 +14,18 @@ Detector provenance is persisted alongside it: `markers.detect_model` records th
 
 ### Detection Pipeline
 
-PhotoPrism uses a single detector:
+Detection runs on ONNX Runtime. The detectors this build can run are registered in `detectors.go`, which carries each one's artifact, preprocessing contract and decode strategy:
 
-- **ONNX SCRFD 0.5g** — ONNX Runtime-backed CNN that delivers higher recall on occluded or off-axis faces. The detector consumes 720 px thumbnails (model input 640 px), schedules work on the meta/vision workers, and defaults to the available CPUs divided by the number of indexing workers (minimum 1 thread), because detection takes no lock and one session runs per worker. Operators can select `FACE_ENGINE=onnx` explicitly or leave `FACE_ENGINE=auto`, which resolves to ONNX when the bundled [SCRFD model](https://yakhyo.github.io/facial-analysis/) is present and otherwise disables detection rather than picking another engine.
+| Detector | Artifact                            | Weights  | Installed By                     |
+|:---------|:------------------------------------|:---------|:---------------------------------|
+| `yunet`  | `face_detection_yunet_2026may.onnx` | MIT      | `make dep-models`                |
+| `scrfd`  | `scrfd.onnx`                        | non-free | `scripts/dist/download-scrfd.sh` |
+
+`Config.FaceEngineModelPath` walks that registry and loads the first entry that is installed, so **YuNet is what a build runs**: it is registered first because its weights may be redistributed, and `face.DefaultDetector` reads the same order. SCRFD stays selectable for comparison and is never bundled.
+
+The detector consumes 720 px thumbnails (model input 640 px), schedules work on the meta/vision workers, and defaults to the available CPUs divided by the number of indexing workers (minimum 1 thread), because detection takes no lock and one session runs per worker. Operators can select `FACE_ENGINE=onnx` explicitly or leave `FACE_ENGINE=auto`, which resolves to ONNX when a detector is installed and otherwise disables detection rather than picking another engine.
+
+**Preprocessing is per detector and cannot be crossed.** YuNet consumes raw 0-255 BGR, SCRFD normalized RGB, and neither is derivable from an ONNX graph. `DetectorForFile` keys it off the artifact the path names, because applying the other detector's channel order does not fail — it quietly detects worse.
 
 The `github.com/yalue/onnxruntime_go` binding requests the exact C API version of the headers it vendors, so it fails to initialize against an older shared library. Bumping that module therefore requires a matching `ONNX_DEFAULT_VERSION` and checksum update in `scripts/dist/install-onnx.sh`, plus a rebuild of the base images that ship `libonnxruntime.so`. Tests that load the shared library — `TestNet` for the detector, and the ONNX embedder tests through `onnx.EnsureRuntime` — fail when the model is present but the runtime cannot be initialized, and skip only when the model itself is missing. A version mismatch must not pass as a skipped test.
 
@@ -36,13 +45,13 @@ A blank value means the row predates the column. Clearing a vector clears both p
 
 `FACE_MODEL` selects the model that turns a face crop into a vector, independently of the detector. Supported models are registered in `models.go`, so the CLI help and config report are generated from one source. Each entry carries the embedding length, alignment mode, and distance thresholds; its artifact and preprocessing contract — file, checksum, license, input geometry, channel order, normalization, resize convention, and output width — live in the `onnx.ModelInfo` that every subsystem running an ONNX model shares (see `internal/ai/onnx/README.md`).
 
-| Model         | Runtime    | Dim | Input   | Alignment | Weights | License       | Installed By                               |
-|:--------------|:-----------|----:|:--------|:----------|--------:|:--------------|:-------------------------------------------|
-| `facenet`     | TensorFlow | 512 | 160×160 | box crop  |   92 MB | unknown       | `make dep-models`                          |
-| `sface`       | ONNX       | 128 | 112×112 | ArcFace-5 |   39 MB | Apache-2.0    | `make dep-models`                          |
-| `auraface`    | ONNX       | 512 | 112×112 | ArcFace-5 |  261 MB | Apache-2.0    | `scripts/dist/download-models.sh auraface` |
-| `arcface_r50` | ONNX       | 512 | 112×112 | ArcFace-5 |  174 MB | research-only | `scripts/dist/download-arcface.sh`         |
-| `arcface_mbf` | ONNX       | 512 | 112×112 | ArcFace-5 |   14 MB | research-only | `scripts/dist/download-arcface.sh`         |
+| Model         | Runtime    | Dim | Input   | Alignment | Weights | License    | Installed By                               |
+|:--------------|:-----------|----:|:--------|:----------|--------:|:-----------|:-------------------------------------------|
+| `facenet`     | TensorFlow | 512 | 160×160 | box crop  |   92 MB | unknown    | `make dep-models`                          |
+| `sface`       | ONNX       | 128 | 112×112 | ArcFace-5 |   39 MB | Apache-2.0 | `make dep-models`                          |
+| `auraface`    | ONNX       | 512 | 112×112 | ArcFace-5 |  261 MB | Apache-2.0 | `scripts/dist/download-models.sh auraface` |
+| `arcface_r50` | ONNX       | 512 | 112×112 | ArcFace-5 |  174 MB | non-free   | `scripts/dist/download-arcface.sh`         |
+| `arcface_mbf` | ONNX       | 512 | 112×112 | ArcFace-5 |   14 MB | non-free   | `scripts/dist/download-arcface.sh`         |
 
 **The setting is normative: it states which model to use rather than being re-derived on every start.** With nothing configured it reads `detect`, and the first start that finds vectors in the library resolves it once and writes the answer to `options.yml`. Only an answer the library actually gave is recorded: a database that could not be read and one that holds no vectors both leave the setting alone, because writing a default down would outlive the moment it was true - a library restored afterwards would then be refused by a model nothing in it was produced with. Detection asks the library before it consults `face.AutoModelPreference`: it reads the recorded provenance of the stored face vectors and keeps whichever model produced most of them, because resolving to a different one would leave those clusters incomparable with everything indexed afterwards; only a library with no vectors follows the preference list, which starts with `sface`. Upgrading an existing installation therefore never changes its embedding space on its own, and once the name is written the answer can no longer move — the library's own answer is a majority vote that flips while a migration is only half done.
 
@@ -68,7 +77,7 @@ A configured model whose weights are missing disables embeddings with a warning 
 
 `make dep-models` installs every model a development build runs or ships, and `make dep` includes it, so `make all install` copies SFace into the published images — a model new libraries default to has to be there. The Go test targets depend on the same target, so the ONNX embedder tests cannot silently skip because only a subset of the models was installed.
 
-AuraFace is installed by no target at all. Its Apache-2.0 weights could be redistributed, but a 261 MB graph in every published image is not worth it, so it stays an explicit `scripts/dist/download-models.sh auraface` download. `assets/.buildignore` excludes `models/auraface` and `models/arcface`, so a developer copy is never picked up by `make install` — which also keeps the research-only ArcFace weights out of any build. The file is deliberately renamed from the upstream `glintr100.onnx`: InsightFace's antelopev2 pack ships a different model under that name, and because channel order and normalization cannot be read from an ONNX graph, a name collision would apply one model's preprocessing to the other's weights silently.
+AuraFace is installed by no target at all. Its Apache-2.0 weights could be redistributed, but a 261 MB graph in every published image is not worth it, so it stays an explicit `scripts/dist/download-models.sh auraface` download. `assets/.buildignore` excludes `models/auraface` and `models/arcface`, so a developer copy is never picked up by `make install` — which also keeps the non-free ArcFace weights out of any build. The file is deliberately renamed from the upstream `glintr100.onnx`: InsightFace's antelopev2 pack ships a different model under that name, and because channel order and normalization cannot be read from an ONNX graph, a name collision would apply one model's preprocessing to the other's weights silently.
 
 That collision is why every ONNX entry records the artifact's SHA256 and why the embedder refuses to load a file whose checksum does not match. A name match with a different artifact has no safe fallback here: the fields that would differ are the ones a graph cannot supply, so the wrong preprocessing would be applied and every vector written under the requested model's name. The detector only warns on the same mismatch, because a different detector costs recall on the next indexing run rather than a library of vectors that cannot be compared with anything. The checksums are also verified on install — from the shared registry in `scripts/dist/download-models.sh` for the bundled models, and from `scripts/dist/download-arcface.sh` for the license-gated ones — and `TestEmbeddingModelChecksums` fails if a copy drifts from the registry.
 
@@ -266,7 +275,7 @@ Recovery steps:
 
 | Setting               | Default                                                                          | Description                                                                                                                                                                              |
 |:----------------------|:---------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `FACE_ENGINE`         | `auto`                                                                           | Detection engine (`auto`, `onnx`). `auto` resolves to ONNX when the SCRFD model exists.                                                                                                  |
+| `FACE_ENGINE`         | `auto`                                                                           | Detection engine (`auto`, `onnx`). `auto` resolves to ONNX when a registered detector is installed.                                                                                      |
 | `FACE_ENGINE_THREADS` | detection `runtime.NumCPU()/IndexWorkers()`, embedding `runtime.NumCPU()/2` (≥1) | ONNX inference threads. Detection runs one session per indexing worker, embedding one in total.                                                                                          |
 | `FACE_MODEL`          | *(unset)*                                                                        | Embedding model (`detect`, `none`, `facenet`, `sface`, `auraface`). Unset detects it once and writes the name to `options.yml`; the gated InsightFace names are accepted but not listed. |
 | `FACE_SCORE`          | `9.0` (with dynamic offsets)                                                     | Base quality threshold before scale adjustments.                                                                                                                                         |

@@ -5,7 +5,6 @@ import (
 	"image/color"
 	"os"
 	"path/filepath"
-	"regexp"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -46,43 +45,44 @@ func TestONNXEngineAnchorCentersCaches(t *testing.T) {
 
 func TestDetectorModel(t *testing.T) {
 	t.Run("Fields", func(t *testing.T) {
-		require.NotNil(t, DetectorModel.Input)
-		assert.Equal(t, DefaultONNXModelFilename, DetectorModel.File)
-		assert.Positive(t, DetectorModel.Input.Width)
-		assert.Positive(t, DetectorModel.Input.Height)
-		assert.True(t, DetectorModel.Input.ColorOrder.Valid())
-		assert.False(t, DetectorModel.Input.Normalization.IsZero())
-	})
-	t.Run("ChecksumMatchesInstallScript", func(t *testing.T) {
-		// The install script is where the value comes from, so the registry is a second
-		// copy of it and would otherwise drift on the next upstream update unnoticed.
-		fileName := filepath.Join("..", "..", "..", "scripts", "dist", "download-scrfd.sh")
-		data, err := os.ReadFile(fileName) //nolint:gosec // G304: fixed repository path.
-
-		if err != nil {
-			t.Skip("faces: skipping, download-scrfd.sh is not available")
+		// Preprocessing cannot be read from a graph, so every registered detector has to
+		// carry it: an entry that left it unset would run under another detector's channel
+		// order and quietly detect worse.
+		for _, d := range Detectors {
+			require.NotNil(t, d.ONNX, d.Name)
+			require.NotNil(t, d.ONNX.Input, d.Name)
+			assert.NotEmpty(t, d.ONNX.File, d.Name)
+			assert.Positive(t, d.ONNX.Input.Width, d.Name)
+			assert.Positive(t, d.ONNX.Input.Height, d.Name)
+			assert.True(t, d.ONNX.Input.ColorOrder.Valid(), d.Name)
+			assert.NotEmpty(t, d.ONNX.License, d.Name)
 		}
-
-		matches := regexp.MustCompile(`MODEL_HASH="([0-9a-f]{64})`).FindStringSubmatch(string(data))
-		require.Len(t, matches, 2, "download-scrfd.sh must declare MODEL_HASH")
-		assert.Equal(t, matches[1], DetectorModel.SHA256)
 	})
-	t.Run("BundledArtifactMatches", func(t *testing.T) {
-		if _, err := os.Stat(detectorModelPath); err != nil {
-			t.Skipf("faces: skipping, %s is not available", DefaultONNXModelFilename)
-		}
+	t.Run("InstalledArtifactsMatch", func(t *testing.T) {
+		// Every detector that happens to be installed, rather than only the one that ships:
+		// a stale opt-in download decodes as the registered artifact and is not detectable
+		// from its detections.
+		for _, d := range Detectors {
+			path := d.Path(assetsModelsPath)
 
-		require.NoError(t, DetectorModel.VerifyChecksum(detectorModelPath))
+			if _, err := os.Stat(path); err != nil {
+				continue
+			}
+
+			assert.NoError(t, d.ONNX.VerifyChecksum(path), d.Name)
+		}
 	})
 }
 
 func TestONNXEngineBuildBlob(t *testing.T) {
+	input := FindDetector(DetectorSCRFD).ONNX.Input
+
 	engine := &onnxEngine{
 		inputWidth:  4,
 		inputHeight: 4,
-		colorOrder:  DetectorModel.Input.ColorOrder,
-		mean:        DetectorModel.Input.Normalization.Mean,
-		scales:      DetectorModel.Input.Normalization.Scales(),
+		colorOrder:  input.ColorOrder,
+		mean:        input.Normalization.Mean,
+		scales:      input.Normalization.Scales(),
 	}
 	img := image.NewRGBA(image.Rect(0, 0, 1, 1))
 	img.Set(0, 0, color.RGBA{R: 255, G: 0, B: 0, A: 255})
@@ -159,7 +159,8 @@ func TestONNXEngineDetectLandmarks(t *testing.T) {
 // TestDetectorRecall pins how many faces the detector finds per test image, so a preprocessing
 // change cannot pass unnoticed: a wrong channel order still returns plausible detections, and
 // nothing else here would fail. Images pinned to zero are negatives, so the table guards against
-// new false positives as well as lost recall.
+// new false positives as well as lost recall. 19.jpg is the exception and is pinned to what the
+// detector does: it holds flowers, three of which clear the shipping score threshold.
 func TestDetectorRecall(t *testing.T) {
 	pinned := []struct {
 		fileName string
@@ -183,7 +184,7 @@ func TestDetectorRecall(t *testing.T) {
 		{"16.jpg", 2},
 		{"17.jpg", 2},
 		{"18.jpg", 2},
-		{"19.jpg", 0},
+		{"19.jpg", 3},
 	}
 
 	prev := UseEngine(nil)
@@ -198,7 +199,7 @@ func TestDetectorRecall(t *testing.T) {
 		ONNX: ONNXOptions{ModelPath: detectorModelPath, Threads: 1},
 	}); err != nil {
 		if _, statErr := os.Stat(detectorModelPath); statErr != nil {
-			t.Skipf("faces: skipping detector-dependent test, %s is not available", DefaultONNXModelFilename)
+			t.Skipf("faces: skipping detector-dependent test, %s is not available", filepath.Base(detectorModelPath))
 		}
 
 		t.Fatalf("faces: failed to initialize detector: %s", err)
@@ -250,29 +251,30 @@ func TestONNXEngineClose(t *testing.T) {
 }
 
 func TestDetectorInputSize(t *testing.T) {
-	defaultWidth, defaultHeight := DetectorModel.InputSize()
+	detector := DefaultDetector()
+	defaultWidth, defaultHeight := detector.ONNX.InputSize()
 
 	t.Run("DeclaredGeometry", func(t *testing.T) {
-		w, h, err := detectorInputSize(defaultWidth, defaultHeight)
+		w, h, err := detectorInputSize(detector, defaultWidth, defaultHeight)
 		require.NoError(t, err)
 		assert.Equal(t, defaultWidth, w)
 		assert.Equal(t, defaultHeight, h)
 	})
 	t.Run("DynamicAxes", func(t *testing.T) {
 		// A dynamic axis reports zero, so the registered size stands in for it.
-		w, h, err := detectorInputSize(0, 0)
+		w, h, err := detectorInputSize(detector, 0, 0)
 		require.NoError(t, err)
 		assert.Equal(t, defaultWidth, w)
 		assert.Equal(t, defaultHeight, h)
 	})
 	t.Run("DynamicWidthOnly", func(t *testing.T) {
-		w, h, err := detectorInputSize(0, 480)
+		w, h, err := detectorInputSize(detector, 0, 480)
 		require.NoError(t, err)
 		assert.Equal(t, defaultWidth, w)
 		assert.Equal(t, 480, h)
 	})
 	t.Run("AtLimit", func(t *testing.T) {
-		w, h, err := detectorInputSize(maxDetectorInputSize, maxDetectorInputSize)
+		w, h, err := detectorInputSize(detector, maxDetectorInputSize, maxDetectorInputSize)
 		require.NoError(t, err)
 		assert.Equal(t, maxDetectorInputSize, w)
 		assert.Equal(t, maxDetectorInputSize, h)
@@ -280,12 +282,12 @@ func TestDetectorInputSize(t *testing.T) {
 	t.Run("WidthTooLarge", func(t *testing.T) {
 		// The blob is sized from these values, so an axis this wide is not an export that
 		// can be run.
-		_, _, err := detectorInputSize(maxDetectorInputSize+1, defaultHeight)
+		_, _, err := detectorInputSize(detector, maxDetectorInputSize+1, defaultHeight)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "exceeds")
 	})
 	t.Run("HeightTooLarge", func(t *testing.T) {
-		_, _, err := detectorInputSize(defaultWidth, 65536)
+		_, _, err := detectorInputSize(detector, defaultWidth, 65536)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "exceeds")
 	})

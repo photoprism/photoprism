@@ -385,7 +385,7 @@ func TestEmbeddingModel_WeightLicense(t *testing.T) {
 		assert.Equal(t, LicenseApache2, FindEmbeddingModel(ModelSFace).WeightLicense())
 	})
 	t.Run("ResearchOnly", func(t *testing.T) {
-		assert.Equal(t, LicenseResearchOnly, FindEmbeddingModel(ModelArcFaceR50).WeightLicense())
+		assert.Equal(t, LicenseNonFree, FindEmbeddingModel(ModelArcFaceR50).WeightLicense())
 	})
 	t.Run("Unknown", func(t *testing.T) {
 		assert.Equal(t, LicenseUnknown, FindEmbeddingModel(ModelFaceNet).WeightLicense())

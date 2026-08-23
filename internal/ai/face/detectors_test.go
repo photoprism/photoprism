@@ -2,6 +2,9 @@ package face
 
 import (
 	"os"
+	"path/filepath"
+	"regexp"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -16,6 +19,65 @@ func TestFindDetector(t *testing.T) {
 	assert.Equal(t, DecodeYuNet, FindDetector(DetectorYuNet).Decode)
 	assert.Equal(t, DecodeSCRFD, FindDetector(DetectorSCRFD).Decode)
 	assert.Nil(t, FindDetector("nonexistent"))
+}
+
+func TestDefaultDetector(t *testing.T) {
+	d := DefaultDetector()
+	require.NotNil(t, d)
+	assert.Equal(t, DetectorYuNet, d.Name)
+	assert.False(t, d.LicenseGated(), "a build may only default to weights it may redistribute")
+}
+
+// TestDetectorInstallers pins the registry to the scripts that install the weights, and with it
+// the guarantee a fresh checkout depends on: "make dep-models" has to install the default
+// detector. Without one, detection resolves to nothing and every picture is indexed as holding
+// nobody rather than failing.
+func TestDetectorInstallers(t *testing.T) {
+	t.Run("Default", func(t *testing.T) {
+		d := DefaultDetector()
+		require.NotNil(t, d)
+
+		// Registry fields: name|url|fallback|sha256|type|dir|file
+		data := readModelScript(t, filepath.Join("dist", "download-models.sh"))
+		entry := regexp.MustCompile(`(?m)^` + regexp.QuoteMeta(d.Dir) + `\|.*$`).FindString(data)
+		require.NotEmpty(t, entry, "download-models.sh must list %s", d.Name)
+
+		fields := strings.Split(entry, "|")
+		require.Len(t, fields, 7, "%s must have all registry fields", d.Name)
+		assert.Equal(t, d.ONNX.SHA256, fields[3])
+		assert.Equal(t, d.Dir, fields[5])
+		assert.Equal(t, d.ONNX.File, fields[6])
+
+		assert.Contains(t, depModelsRecipe(t), " "+d.Dir, "make dep-models must install the default detector")
+	})
+	t.Run("GatedWeightsStayOutOfTheBuild", func(t *testing.T) {
+		recipe := depModelsRecipe(t)
+
+		for _, d := range Detectors {
+			if !d.LicenseGated() {
+				continue
+			}
+
+			assert.NotContains(t, recipe, d.Dir, "make dep-models must not install %s", d.Name)
+		}
+	})
+}
+
+// depModelsRecipe returns the "dep-models" recipe from the Makefile, which is what decides
+// which weights a development build and therefore a published image contains.
+func depModelsRecipe(t *testing.T) string {
+	t.Helper()
+
+	data, err := os.ReadFile(filepath.Join("..", "..", "..", "Makefile")) //nolint:gosec // G304: fixed repository path.
+
+	if err != nil {
+		t.Skip("faces: skipping, the Makefile is not available")
+	}
+
+	recipe := regexp.MustCompile(`(?m)^dep-models:\n(?:\t.*\n)+`).FindString(string(data))
+	require.NotEmpty(t, recipe, "the Makefile must define dep-models")
+
+	return recipe
 }
 
 func TestDetectorForFile(t *testing.T) {

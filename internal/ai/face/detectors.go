@@ -69,8 +69,9 @@ var Detectors = []*Detector{
 		Dir:    "scrfd",
 		Decode: DecodeSCRFD,
 		ONNX: &onnx.ModelInfo{
-			File:   DefaultONNXModelFilename,
-			SHA256: "ae72185653e279aa2056b288662a19ec3519ced5426d2adeffbe058a86369a24",
+			File:    DefaultONNXModelFilename,
+			SHA256:  "ae72185653e279aa2056b288662a19ec3519ced5426d2adeffbe058a86369a24",
+			License: LicenseNonFree,
 			Input: &onnx.Input{
 				Width:         640,
 				Height:        640,
@@ -87,6 +88,19 @@ var Detectors = []*Detector{
 func FindDetector(name DetectorName) *Detector {
 	for _, d := range Detectors {
 		if d.Name == name {
+			return d
+		}
+	}
+
+	return nil
+}
+
+// DefaultDetector returns the detector a build runs when nothing selects one.
+// It is the first registered entry whose weights may be redistributed, so a second list
+// cannot name a detector no image contains.
+func DefaultDetector() *Detector {
+	for _, d := range Detectors {
+		if !d.LicenseGated() {
 			return d
 		}
 	}

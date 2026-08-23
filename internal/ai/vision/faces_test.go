@@ -34,11 +34,13 @@ func TestDetectFaces(t *testing.T) {
 
 	Config = &ConfigValues{Models: Models{{Name: "facenet", Type: ModelTypeFace}}}
 
-	detectorPath, err := filepath.Abs(filepath.Join("..", "..", "..", "assets", "models", "scrfd", face.DefaultONNXModelFilename))
+	modelsPath, err := filepath.Abs(filepath.Join("..", "..", "..", "assets", "models"))
 	require.NoError(t, err)
 
+	detectorPath := face.DefaultDetector().Path(modelsPath)
+
 	if _, statErr := os.Stat(detectorPath); statErr != nil {
-		t.Skipf("faces: skipping, %s is not available", face.DefaultONNXModelFilename)
+		t.Skipf("faces: skipping, %s is not available", filepath.Base(detectorPath))
 	}
 
 	prev := face.UseEngine(nil)

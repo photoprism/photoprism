@@ -29,13 +29,14 @@ const (
 	AlignArcFace5 CropAlignment = "arcface5"
 )
 
-// Licenses that apply to the pretrained weights of the supported embedding models.
+// Licenses that apply to the pretrained weights of the supported models.
 const (
 	// LicenseApache2 allows redistribution under the Apache License 2.0.
 	LicenseApache2 = "Apache-2.0"
-	// LicenseResearchOnly marks weights that are not published under an OSI-approved license, so
-	// they are never bundled and have to be enabled explicitly before use.
-	LicenseResearchOnly = "research-only"
+	// LicenseNonFree marks weights that are not published under an OSI-approved license, so they
+	// are never bundled and have to be enabled explicitly. It names why the gate exists rather
+	// than the restriction, which differs per publisher.
+	LicenseNonFree = "non-free"
 	// LicenseUnknown marks weights whose provenance has not been verified.
 	LicenseUnknown = "unknown"
 )
@@ -84,7 +85,7 @@ type EmbeddingModel struct {
 
 // EmbeddingModels lists the supported face embedding models by name.
 //
-// ArcFace is recognized for benchmarking but never bundled - see LicenseResearchOnly - and AuraFace
+// ArcFace is recognized for benchmarking but never bundled - see LicenseNonFree - and AuraFace
 // is redistributable but too large to ship, so both are opt-in downloads. Thresholds are calibrated
 // per model by TestCalibrateFaceThresholds; internal/ai/face/README.md records how and why.
 var EmbeddingModels = map[ModelName]*EmbeddingModel{
@@ -147,7 +148,7 @@ var EmbeddingModels = map[ModelName]*EmbeddingModel{
 		ONNX: &onnx.ModelInfo{
 			File:    "w600k_r50.onnx",
 			SHA256:  "4c06341c33c2ca1f86781dab0e829f88ad5b64be9fba56e56bc9ebdefc619e43",
-			License: LicenseResearchOnly,
+			License: LicenseNonFree,
 			Input:   alignedCropInput(onnx.Uniform(127.5, 127.5)),
 			Output:  &onnx.Output{Width: 512},
 		},
@@ -166,7 +167,7 @@ var EmbeddingModels = map[ModelName]*EmbeddingModel{
 		ONNX: &onnx.ModelInfo{
 			File:    "w600k_mbf.onnx",
 			SHA256:  "9cc6e4a75f0e2bf0b1aed94578f144d15175f357bdc05e815e5c4a02b319eb4f",
-			License: LicenseResearchOnly,
+			License: LicenseNonFree,
 			Input:   alignedCropInput(onnx.Uniform(127.5, 127.5)),
 			Output:  &onnx.Output{Width: 512},
 		},
