@@ -529,11 +529,7 @@ dep-upgrade:
 frontend-update:
 	make -C frontend update
 dep-upgrade-js: frontend-update
-# Installs every model a development build runs or ships. One target rather than three,
-# because a partial install leaves tests skipping silently: SFace is the embedding
-# model new libraries default to and "make all install" copies assets/ verbatim into the
-# published images, so what the test targets need and what the images carry are the same
-# list. SCRFD keeps its own script for licensing reasons and is not in the shared registry.
+# Installs every model a development build runs or ships.
 dep-models:
 	scripts/dist/download-models.sh facenet nasnet nsfw sface
 	scripts/dist/download-scrfd.sh
