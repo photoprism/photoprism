@@ -141,11 +141,12 @@ Their practical effect is small, but leaving them fixed at the FaceNet values un
 
 - `ScoreThreshold` (`FACE_SCORE`, default 9.0) is the base minimum detector score, and `ClusterScoreThreshold` (`FACE_CLUSTER_SCORE`, default 20) is the higher bar a face must clear to contribute to automatic clustering. Both live in `internal/ai/face/config.go`.
 - `SizeThreshold` (`FACE_SIZE`, default 25 px) and `ClusterSizeThreshold` (`FACE_CLUSTER_SIZE`, default 60 px) are the size pair, and they do different jobs: the first decides whether a marker is created at all, the second whether that face may contribute to automatic clustering. A face below 60 px therefore never seeds a person even though it is detected and shown.
+- **Both are measured in pixels of the detection thumbnail (`Fit720`), not of the original and not of the crop the embedder receives.** The crop comes from `crop.ImageFromIdealThumb`, which opens the smallest cached rendition wide enough to fill the 112 px template and falls back to the largest one cached, so with the default `THUMB_SIZE` of 1920 it is drawn at 2.67x the resolution the threshold was compared at. A 60 px face arrives as a 150 px crop and is downscaled onto the template; a 25 px face arrives as 63 px and is stretched 1.8x. `FACE_CLUSTER_SIZE` is therefore close to the point at which a face crop stops being upscaled at all, which is what makes it a sensible bar for clustering.
 - Two detections count as the same face when their area overlap exceeds `OverlapThresholdFloor` (41 %), which is `OverlapThreshold` (42 %) relaxed by one point to absorb rounding. Tests rely on that value (e.g., `Markers.Contains/SameFace`).
 
 ##### `FACE_SIZE` Decides Whether Crowds Are Seen at All
 
-Detection runs on a 720 px thumbnail, so a face occupies a share of 720 px rather than of the original. In a crowd photograph a person's face is often 10-15 px at that size, which is below the default minimum — so the faces are detected and then discarded, and the photo is indexed as containing nobody.
+Detection runs on a 720 px thumbnail, so `FACE_SIZE` is compared against a share of 720 px rather than of the original. In a crowd photograph a person's face is often 10-15 px at that size, which is below the default minimum — so the faces are detected and then discarded, and the photo is indexed as containing nobody.
 
 Measured over twelve crowd photographs that yield no face at the default, varying only the minimum size:
 
