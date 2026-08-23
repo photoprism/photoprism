@@ -89,9 +89,6 @@ func TestImportWorker_StackedVectorPreviews(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	// Isolate the database so the imported stack is the only photo present.
-	useTestDb(t, "import-stacked-vectors")
-
 	cfg := config.NewMinimalTestConfigWithDbTMain("import-stacked-vectors", filepath.Join(t.TempDir(), "storage"))
 
 	if !cfg.VectorEnabled() {

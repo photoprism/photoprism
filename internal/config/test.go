@@ -270,7 +270,8 @@ func NewMinimalTestConfigWithDbTTest(dbName, dataPath string, t *testing.T) *Con
 // NewMinimalTestConfigWithDbTMain creates a lightweight test Config (minimal filesystem).
 // For use within TestMain where testing.T is not available.
 // Use NewMinimalTestConfigWithDbTTest in tests.
-// Creates an isolated SQLite DB (cached after first run) without seeding media fixtures.
+// If the DatabaseDriver is SQLite then it creates an isolated SQLite DB (cached after first run) without seeding media fixtures,
+// otherwise it truncates and reloads the test fixtures for other DBMS'.
 func NewMinimalTestConfigWithDbTMain(dbName, dataPath string) *Config {
 	c := NewIsolatedTestConfig(dbName, dataPath, true)
 

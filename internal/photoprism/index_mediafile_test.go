@@ -230,10 +230,6 @@ func TestIndex_UserMediaFile_ParallelDuplicates(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	// The package-wide test config points all test configs at one shared database,
-	// so this test needs one of its own for reliable row counts.
-	useTestDb(t, "index-dup-race")
-
 	cfg := config.NewMinimalTestConfigWithDbTTest("index-dup-race", filepath.Join(t.TempDir(), "storage"), t)
 
 	// MediaFile.Root() resolves paths against the package-level config, so it
@@ -357,11 +353,6 @@ func TestIndex_IndexedFileOriginalName(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	// The package-wide test config points all test configs at one shared database;
-	// the database and storage must be isolated so the flash.jpg content does not
-	// collide by hash with a row another test indexed with an explicit original name.
-	useTestDb(t, "index-original-name")
-
 	cfg := config.NewMinimalTestConfigWithDbTTest("index-original-name", filepath.Join(t.TempDir(), "storage"), t)
 
 	// MediaFile.Root() and the ExifTool cache resolve against the package-level
@@ -426,8 +417,6 @@ func TestIndex_MediaFile_DualFisheye(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	useTestDb(t, "index-dual-fisheye")
-
 	cfg := config.NewMinimalTestConfigWithDbTTest("index-dual-fisheye", filepath.Join(t.TempDir(), "storage"), t)
 
 	oldCfg := Config()
@@ -481,7 +470,6 @@ func TestIndex_MediaFile_ImportFaceTags(t *testing.T) {
 	indexSidecar := func(t *testing.T, detectFaces, importFaceTags bool) entity.Markers {
 		t.Helper()
 
-		useTestDb(t, "import-face-tags")
 		cfg := config.NewMinimalTestConfigWithDbTTest("import-face-tags", filepath.Join(t.TempDir(), "storage"), t)
 
 		// collectXmpFaces resolves the sidecar via the package-level config.
@@ -545,7 +533,6 @@ func TestIndex_MediaFile_FacesOnlyRecountsAfterDelete(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	useTestDb(t, "faces-only-recount")
 	cfg := config.NewMinimalTestConfigWithDbTTest("faces-only-recount", filepath.Join(t.TempDir(), "storage"), t)
 	oldCfg := Config()
 	SetConfig(cfg)
