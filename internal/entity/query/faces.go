@@ -565,6 +565,31 @@ func RecordedMarkerEmbeddingModels() (result []MarkerEmbeddingModelCount, err er
 	return result, err
 }
 
+// MarkerDetectModelCount pairs a detector name with the number of face markers whose crop
+// it produced. An empty name means the detector was not recorded.
+type MarkerDetectModelCount struct {
+	DetectModel string
+	Markers     int
+}
+
+// MarkerDetectModels returns the number of face markers per detector, ordered by name.
+//
+// The detector decides the landmarks, so these counts say how much of a library holds
+// landmarks a later run may reuse rather than having to detect again.
+func MarkerDetectModels() (result []MarkerDetectModelCount, err error) {
+	err = Db().
+		Table(entity.Marker{}.TableName()).
+		Select("detect_model, COUNT(*) AS markers").
+		// Comparing the blob column with an empty string is driver dependent, so the
+		// length is what reliably tells markers with a vector from those without one.
+		Where("marker_type = ? AND LENGTH(embeddings_json) > 0", entity.MarkerFace).
+		Group("detect_model").
+		Order("detect_model").
+		Scan(&result).Error
+
+	return result, err
+}
+
 // LegacyFaceMarkersWithVectors returns the number of face markers that hold a vector and record
 // no model, which can only have been produced by FaceNet.
 //

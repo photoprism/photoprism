@@ -10,7 +10,7 @@ Detection thresholds favor recall, and overlap handling keeps markers stable acr
 
 Embedding provenance is persisted: `faces.embed_model` and `markers.embed_model` record the model that produced each vector, `entity.Face.Match` refuses to compare clusters from a different model, and `photoprism faces audit` reports the cluster and marker counts per model.
 
-Detector provenance is persisted alongside it: `markers.detect_model` records the detector whose landmarks produced the crop a vector was computed from. A blank value means the row was written before the column existed, so its landmarks must not be trusted for alignment. See § Detector Provenance.
+Detector provenance is persisted alongside it: `markers.detect_model` records the detector whose landmarks produced the crop a vector was computed from, and `photoprism faces audit` reports the marker counts per detector beside the per-model ones. A blank value means the row was written before the column existed, so its landmarks must not be trusted for alignment. See § Detector Provenance.
 
 ### Detection Pipeline
 

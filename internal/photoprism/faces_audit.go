@@ -679,4 +679,32 @@ func (w *Faces) auditMarkerEmbeddingModels(current string) {
 				english.Plural(c.Markers, "marker", "markers"), clean.Log(c.EmbedModel), clean.Log(current))
 		}
 	}
+
+	w.auditMarkerDetectModels()
+}
+
+// auditMarkerDetectModels reports the face markers per detector. The detector decides the
+// landmarks and therefore the aligned crop, so a marker produced by a different one holds a
+// vector that is not strictly comparable even when the embedding model matches.
+func (w *Faces) auditMarkerDetectModels() {
+	counts, err := query.MarkerDetectModels()
+
+	if err != nil {
+		log.Errorf("faces: %s (audit marker detectors)", err)
+		return
+	}
+
+	current := face.ActiveEngineName()
+
+	for _, c := range counts {
+		switch {
+		case c.DetectModel == "":
+			log.Infof("faces: %s without a recorded detector", english.Plural(c.Markers, "marker", "markers"))
+		case c.DetectModel == current || current == face.EngineNone:
+			log.Infof("faces: %s from detector %s", english.Plural(c.Markers, "marker", "markers"), clean.Log(c.DetectModel))
+		default:
+			log.Warnf("faces: %s from detector %s, which is not the active %s",
+				english.Plural(c.Markers, "marker", "markers"), clean.Log(c.DetectModel), clean.Log(current))
+		}
+	}
 }

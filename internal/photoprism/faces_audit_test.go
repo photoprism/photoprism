@@ -262,3 +262,40 @@ func TestFaces_auditMarkerEmbeddingModels(t *testing.T) {
 		assert.NotContains(t, strings.Join(loggedMessages(hook, logrus.WarnLevel), "\n"), "not compatible")
 	})
 }
+
+func TestFaces_auditMarkerDetectModels(t *testing.T) {
+	w := NewFaces(config.TestConfig())
+
+	t.Run("ReportsTheRecordedDetector", func(t *testing.T) {
+		// A detector nobody is running now produced landmarks the active one would not
+		// reproduce, so its markers are named rather than folded into the totals.
+		m := &entity.Marker{
+			MarkerType:     entity.MarkerFace,
+			MarkerSrc:      entity.SrcImage,
+			EmbedModel:     face.ModelSFace,
+			DetectModel:    "retired-detector",
+			EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
+		}
+
+		require.NoError(t, entity.Db().Create(m).Error)
+
+		t.Cleanup(func() { entity.Db().Delete(m) })
+
+		counts, err := query.MarkerDetectModels()
+		require.NoError(t, err)
+		require.NotEmpty(t, counts)
+
+		hook := captureLog(t)
+		w.auditMarkerDetectModels()
+
+		assert.Contains(t, strings.Join(loggedMessages(hook, logrus.InfoLevel), "\n"), "retired-detector")
+	})
+	t.Run("UnrecordedDetector", func(t *testing.T) {
+		// The fixtures carry the legacy landmark vocabulary and record no detector, which
+		// is the state an operator has to be able to see before anything relies on it.
+		hook := captureLog(t)
+		w.auditMarkerDetectModels()
+
+		assert.Contains(t, strings.Join(loggedMessages(hook, logrus.InfoLevel), "\n"), "without a recorded detector")
+	})
+}

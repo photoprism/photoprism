@@ -438,6 +438,53 @@ func TestFaceEmbeddingModels(t *testing.T) {
 	})
 }
 
+func TestMarkerDetectModels(t *testing.T) {
+	// newFaceMarker persists a face marker attributed to the specified detector.
+	newFaceMarker := func(t *testing.T, detector string, embeddings face.Embeddings) {
+		t.Helper()
+
+		m := &entity.Marker{
+			MarkerType:     entity.MarkerFace,
+			MarkerSrc:      entity.SrcImage,
+			EmbedModel:     face.ModelSFace,
+			DetectModel:    detector,
+			EmbeddingsJSON: embeddings.JSON(),
+		}
+
+		require.NoError(t, entity.Db().Create(m).Error)
+		t.Cleanup(func() { entity.Db().Delete(m) })
+	}
+
+	// detectorCounts maps the reported detector names to their marker counts.
+	detectorCounts := func(t *testing.T) map[string]int {
+		t.Helper()
+
+		result, err := MarkerDetectModels()
+		require.NoError(t, err)
+
+		counts := make(map[string]int, len(result))
+
+		for _, c := range result {
+			assert.Positive(t, c.Markers)
+			counts[c.DetectModel] = c.Markers
+		}
+
+		return counts
+	}
+
+	t.Run("CountsRecordedDetector", func(t *testing.T) {
+		newFaceMarker(t, face.EngineONNX, face.Embeddings{face.RandomEmbedding()})
+		assert.Positive(t, detectorCounts(t)[face.EngineONNX])
+	})
+	t.Run("SkipsMarkersWithoutEmbeddings", func(t *testing.T) {
+		// A marker holds no crop until it holds a vector, so counting it would inflate
+		// the bucket that reports rows written before the column existed.
+		before := detectorCounts(t)[""]
+		newFaceMarker(t, "", nil)
+		assert.Equal(t, before, detectorCounts(t)[""])
+	})
+}
+
 func TestMarkerEmbeddingModels(t *testing.T) {
 	// newFaceMarker persists a face marker with the specified embedding model.
 	newFaceMarker := func(t *testing.T, model string, embeddings face.Embeddings) *entity.Marker {
