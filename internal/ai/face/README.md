@@ -140,7 +140,26 @@ Their practical effect is small, but leaving them fixed at the FaceNet values un
 #### Quality & Overlap Thresholds
 
 - `ScoreThreshold` (`FACE_SCORE`, default 9.0) is the base minimum detector score, and `ClusterScoreThreshold` (`FACE_CLUSTER_SCORE`, default 20) is the higher bar a face must clear to contribute to automatic clustering. Both live in `internal/ai/face/config.go`.
+- `SizeThreshold` (`FACE_SIZE`, default 25 px) and `ClusterSizeThreshold` (`FACE_CLUSTER_SIZE`, default 60 px) are the size pair, and they do different jobs: the first decides whether a marker is created at all, the second whether that face may contribute to automatic clustering. A face below 60 px therefore never seeds a person even though it is detected and shown.
 - Two detections count as the same face when their area overlap exceeds `OverlapThresholdFloor` (41 %), which is `OverlapThreshold` (42 %) relaxed by one point to absorb rounding. Tests rely on that value (e.g., `Markers.Contains/SameFace`).
+
+##### `FACE_SIZE` Decides Whether Crowds Are Seen at All
+
+Detection runs on a 720 px thumbnail, so a face occupies a share of 720 px rather than of the original. In a crowd photograph a person's face is often 10-15 px at that size, which is below the default minimum — so the faces are detected and then discarded, and the photo is indexed as containing nobody.
+
+Measured over twelve crowd photographs that yield no face at the default, varying only the minimum size:
+
+|    `FACE_SIZE` | Faces detected |
+|---------------:|---------------:|
+| 25 *(default)* |              0 |
+|             20 |            117 |
+|             15 |            879 |
+|             12 |           1140 |
+|             10 |           1149 |
+
+The count is steepest below 20, which matters because **20 is the lowest value that takes effect**: `Config.FaceSize` treats anything under 20 as out of range and falls back to the 25 px default, so `FACE_SIZE=10` behaves as `FACE_SIZE=25`.
+
+Lowering it globally is a trade rather than a fix. Photographs that already yield a face gain roughly three more each at 10 px, and those are the people in the background that most libraries would rather leave unmarked; photographs that yield nothing gain around nine. Raising recall on group shots without marking bystanders everywhere else therefore wants a per-photo decision rather than a smaller default.
 
 ### Embedding Handling
 
