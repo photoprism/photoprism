@@ -1212,6 +1212,15 @@ func TestConfig_FaceSize(t *testing.T) {
 	assert.Equal(t, 30, c.FaceSize())
 	c.options.FaceSize = 1
 	assert.Equal(t, face.SizeThreshold, c.FaceSize())
+	t.Run("SmallestSupported", func(t *testing.T) {
+		// The bound is where the detectors stop being trained, so a deliberate operator can
+		// ask for the small faces a crowd photograph is made of.
+		c.options.FaceSize = face.MinSizeThreshold
+		assert.Equal(t, face.MinSizeThreshold, c.FaceSize())
+		c.options.FaceSize = face.MinSizeThreshold - 1
+		assert.Equal(t, face.SizeThreshold, c.FaceSize())
+	})
+	c.options.FaceSize = 0
 }
 
 func TestConfig_FaceSizeRetry(t *testing.T) {

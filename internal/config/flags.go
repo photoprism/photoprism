@@ -1345,7 +1345,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-size",
-			Usage:   "minimum size of faces in `PIXELS` (20-10000)",
+			Usage:   "minimum size of faces in `PIXELS` (10-10000)",
 			Value:   face.SizeThreshold,
 			EnvVars: EnvVars("FACE_SIZE"),
 		}}, {

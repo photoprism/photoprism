@@ -610,7 +610,7 @@ func (c *Config) FaceModelDims() int {
 
 // FaceSize returns the face size threshold in pixels.
 func (c *Config) FaceSize() int {
-	if c.options.FaceSize < 20 || c.options.FaceSize > 10000 {
+	if c.options.FaceSize < face.MinSizeThreshold || c.options.FaceSize > 10000 {
 		return face.SizeThreshold
 	}
 

@@ -159,7 +159,7 @@ Measured over twelve crowd photographs that yield no face at the default, varyin
 |             12 |           1140 |
 |             10 |           1149 |
 
-The count is steepest below 20, which matters because **20 is the lowest value that takes effect**: `Config.FaceSize` treats anything under 20 as out of range and falls back to the 25 px default, so `FACE_SIZE=10` behaves as `FACE_SIZE=25`.
+The count is steepest below 20, which is why the option accepts values down to **10 px** - the bottom of the detectors' trained range, so a smaller setting would ask for faces no model can find. Anything below it is out of range and falls back to the 25 px default rather than being applied.
 
 Lowering it globally is a trade rather than a fix. Photographs that already yield a face gain roughly three more each at 10 px, and those are the people in the background that most libraries would rather leave unmarked; photographs that yield nothing gain around nine. Raising recall on group shots without marking bystanders everywhere else therefore wants a per-photo decision rather than a smaller default.
 

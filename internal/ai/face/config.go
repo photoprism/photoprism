@@ -58,6 +58,10 @@ var (
 	// only when the first finds nothing. Crowd photographs reduce every face below SizeThreshold,
 	// so without it a frame full of people is indexed as containing none.
 	RetrySizeThreshold = 10
+	// MinSizeThreshold is the smallest configurable face size. It is where the detectors stop
+	// being trained rather than a policy choice: YuNet states a lower bound of about ten pixels,
+	// so a smaller setting would ask for faces no model in the registry can find.
+	MinSizeThreshold = 10
 	// ClusterSizeThreshold is the minimum face size, in pixels, for faces considered when forming clusters.
 	ClusterSizeThreshold = 60
 	// ClusterDist is the similarity distance threshold that defines the cluster core.
