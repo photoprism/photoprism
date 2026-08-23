@@ -65,15 +65,9 @@ const (
 
 // EmbeddingModel describes what a face embedding model expects from the pipeline.
 //
-// ONNX carries the artifact and the preprocessing contract in the structure that every
-// subsystem running an ONNX model shares; it is nil for TensorFlow models. What stays
-// here is what only face embedding needs: the alignment mode, the embedding length, and
-// the distance thresholds.
-//
-// ClusterDist, ClusterRadius, MatchDist, CollisionDist, and Epsilon are all expressed in
-// that model's own distance scale. Distances are not comparable across models, so a single
-// global set of thresholds silently discards most matches for every model except the one
-// it was tuned for.
+// ONNX carries the artifact and preprocessing contract every ONNX subsystem shares, and is nil for
+// TensorFlow models. The five distances are in the model's own scale and are not comparable across
+// models, so one global set would discard most matches for every model but the one it was tuned for.
 type EmbeddingModel struct {
 	Name          ModelName
 	Runtime       EmbeddingRuntime
@@ -90,29 +84,9 @@ type EmbeddingModel struct {
 
 // EmbeddingModels lists the supported face embedding models by name.
 //
-// The ArcFace entries are recognized so operators can benchmark them, but their
-// weights are not installed by "make dep" because they are not published under an
-// OSI-approved license.
-// AuraFace is Apache-2.0 and may be redistributed,
-// but its graph is 261 MB, so it is an opt-in download rather than a bundled model.
-//
-// The thresholds come from TestCalibrateFaceThresholds, which translates the error
-// budget of the shipped FaceNet configuration into each model's distance scale. The
-// matching pair is taken at a tenth of that budget, where every ONNX model still beats
-// FaceNet's current true accept rate, and rounded down so the measured budget is never
-// exceeded. FaceNet keeps the values PhotoPrism has shipped, because changing them
-// would alter matching for every existing library on upgrade.
-//
-// SFace sits at the budget-matched point rather than a tenth of it. Measured on hand-named
-// lookalike siblings, the tenth-budget values admitted roughly a quarter of cross-sibling
-// comparisons, because the accept distance sat where the false accept rate climbs steeply -
-// so recall was bought at a price the error budget was never meant to cover.
-//
-// CollisionDist and Epsilon are not measured separately. They are a floor below which two
-// vectors count as indistinguishable and the slack added to that check, so they follow the
-// width of the model's distance scale rather than an error budget:
-//
-//	value = FaceNet value * (model ClusterDist / ClusterDistDefault), rounded to three decimals
+// ArcFace is recognized for benchmarking but never bundled - see LicenseResearchOnly - and AuraFace
+// is redistributable but too large to ship, so both are opt-in downloads. Thresholds are calibrated
+// per model by TestCalibrateFaceThresholds; internal/ai/face/README.md records how and why.
 var EmbeddingModels = map[ModelName]*EmbeddingModel{
 	ModelFaceNet: {
 		Name:          ModelFaceNet,
