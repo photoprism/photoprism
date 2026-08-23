@@ -283,8 +283,12 @@ func TestFaces_migrateFaceFile(t *testing.T) {
 	require.NoError(t, entity.Db().Create(marker).Error)
 	t.Cleanup(func() { entity.UnscopedDb().Delete(marker) })
 
+	// A file the library removed is absent from the scoped lookup, and the plan already
+	// counted its markers as unreadable, so the error has to name that rather than report a
+	// bare "record not found" an operator would read as a database fault.
 	_, _, failed, _, err = w.migrateFaceFile(embedder, face.ModelFaceNet, marker.FileUID)
 	require.Error(t, err)
+	assert.Equal(t, "file was deleted", err.Error())
 	assert.Equal(t, []string{marker.MarkerUID}, failed)
 }
 

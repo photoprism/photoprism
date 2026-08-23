@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"sort"
 
+	"github.com/dustin/go-humanize/english"
+	"github.com/jinzhu/gorm"
+
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/config"
@@ -386,7 +389,12 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 				if len(failed) == 0 {
 					return result, migrateErr
 				}
-				log.Errorf("faces: %s while migrating file %s", migrateErr, clean.Log(fileUID))
+
+				// The markers this file holds are counted as failed rather than lost, and the
+				// plan reported them as unreadable before the prompt, so this is the predicted
+				// outcome rather than a fault: the run continues and the exit status carries it.
+				log.Warnf("faces: %s, so %s could not be re-embedded",
+					migrateErr, english.Plural(len(failed), "marker", "markers"))
 			}
 		}
 
@@ -543,6 +551,12 @@ func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) 
 
 	file, err := query.FileByUID(fileUID)
 	if err != nil {
+		// The lookup is scoped, so a file the library removed is simply absent, and "record
+		// not found" would read as a database fault rather than the state the plan counted.
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			err = fmt.Errorf("file was deleted")
+		}
+
 		return 0, skipped, faceMigrationMarkerUIDs(stale), false, err
 	}
 
