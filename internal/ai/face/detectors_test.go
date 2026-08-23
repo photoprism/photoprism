@@ -61,6 +61,19 @@ func TestDetectorInstallers(t *testing.T) {
 			assert.NotContains(t, recipe, d.Dir, "make dep-models must not install %s", d.Name)
 		}
 	})
+	t.Run("SCRFD", func(t *testing.T) {
+		d := FindDetector(DetectorSCRFD)
+		require.NotNil(t, d)
+
+		data := readModelScript(t, filepath.Join("dist", "download-scrfd.sh"))
+
+		assert.Contains(t, data, `MODEL_SHA256="`+d.ONNX.SHA256+`"`, "the installer must pin the registered checksum")
+		assert.Contains(t, data, `MODEL_ENTRY="`+d.ONNX.File+`"`, "the installer must install the registered artifact")
+		// Gated weights are fetched from their publisher after an explicit acceptance, so the
+		// installer must state both rather than being reachable by running it.
+		assert.Contains(t, data, LicenseAcceptanceVar)
+		assert.Contains(t, data, "https://github.com/deepinsight/insightface/releases/")
+	})
 }
 
 // depModelsRecipe returns the "dep-models" recipe from the Makefile, which is what decides
@@ -91,15 +104,17 @@ func TestDetectorForFile(t *testing.T) {
 		assert.Equal(t, float32(0), d.ONNX.Input.Normalization.Mean[0])
 	})
 	t.Run("SCRFD", func(t *testing.T) {
-		d := DetectorForFile("/models/scrfd/scrfd.onnx")
+		d := DetectorForFile("/models/scrfd/det_500m.onnx")
 		require.NotNil(t, d)
 		assert.Equal(t, DecodeSCRFD, d.Decode)
 		assert.Equal(t, onnx.RGB, d.ONNX.Input.ColorOrder)
 	})
-	t.Run("LegacyFixedShapeExport", func(t *testing.T) {
-		d := DetectorForFile("/models/scrfd/scrfd_500m_bnkps_shape640x640.onnx")
-		require.NotNil(t, d)
-		assert.Equal(t, DecodeSCRFD, d.Decode)
+	t.Run("LegacyNames", func(t *testing.T) {
+		for _, name := range FindDetector(DetectorSCRFD).Legacy {
+			d := DetectorForFile(filepath.Join("/models/scrfd", name))
+			require.NotNil(t, d, name)
+			assert.Equal(t, DecodeSCRFD, d.Decode, name)
+		}
 	})
 	t.Run("Unknown", func(t *testing.T) {
 		assert.Nil(t, DetectorForFile("/models/other/whatever.onnx"))

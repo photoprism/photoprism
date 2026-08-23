@@ -30,8 +30,6 @@ type ONNXOptions struct {
 }
 
 const (
-	// DefaultONNXModelFilename is the bundled ONNX model name used when none is provided.
-	DefaultONNXModelFilename  = "scrfd.onnx"
 	onnxDefaultScoreThreshold = 0.50
 	onnxDefaultNMSThreshold   = 0.40
 

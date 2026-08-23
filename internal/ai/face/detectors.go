@@ -2,6 +2,7 @@ package face
 
 import (
 	"path/filepath"
+	"slices"
 
 	"github.com/photoprism/photoprism/internal/ai/onnx"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -21,11 +22,15 @@ const (
 
 // Detector describes a face detection model: where its weights live, how an image must be
 // prepared for it, and which decoder reads its output.
+//
+// Legacy names the same weights were installed under before, so a copy an operator already
+// holds still resolves to its own preprocessing instead of the default detector's.
 type Detector struct {
 	Name   DetectorName
 	Dir    string
 	Decode DecodeKind
 	ONNX   *onnx.ModelInfo
+	Legacy []string
 }
 
 // DetectorName identifies a detection model.
@@ -69,8 +74,11 @@ var Detectors = []*Detector{
 		Dir:    "scrfd",
 		Decode: DecodeSCRFD,
 		ONNX: &onnx.ModelInfo{
-			File:    DefaultONNXModelFilename,
-			SHA256:  "ae72185653e279aa2056b288662a19ec3519ced5426d2adeffbe058a86369a24",
+			// The publisher's own artifact, which is where an opt-in install fetches from. Its
+			// input is dynamic where our earlier re-export was fixed, and it is otherwise the
+			// same weights: both produce identical boxes and landmarks at a 640 input.
+			File:    "det_500m.onnx",
+			SHA256:  "5e4447f50245bbd7966bd6c0fa52938c61474a04ec7def48753668a9d8b4ea3a",
 			License: LicenseNonFree,
 			Input: &onnx.Input{
 				Width:         640,
@@ -81,6 +89,7 @@ var Detectors = []*Detector{
 				Resize:        onnx.Resize{Mode: onnx.ResizePad},
 			},
 		},
+		Legacy: []string{"scrfd.onnx", "scrfd_500m_bnkps_shape640x640.onnx"},
 	},
 }
 
@@ -122,9 +131,10 @@ func DetectorForFile(fileName string) *Detector {
 		}
 	}
 
-	// The SCRFD installer also produced a differently named fixed-shape export.
-	if base == "scrfd_500m_bnkps_shape640x640.onnx" {
-		return FindDetector(DetectorSCRFD)
+	for _, d := range Detectors {
+		if slices.Contains(d.Legacy, base) {
+			return d
+		}
 	}
 
 	return nil
@@ -132,10 +142,30 @@ func DetectorForFile(fileName string) *Detector {
 
 // Installed reports whether this detector's weights are present under the models path.
 func (d *Detector) Installed(modelsPath string) bool {
-	return d != nil && d.ONNX != nil && fs.FileExists(d.Path(modelsPath))
+	return d.InstalledPath(modelsPath) != ""
 }
 
-// Path returns the absolute path to this detector's weights.
+// InstalledPath returns the path the weights are actually at, or an empty string when they
+// are not installed. It reports a legacy name only when the current artifact is absent, so
+// an install that holds both loads the one the registry describes.
+func (d *Detector) InstalledPath(modelsPath string) string {
+	if path := d.Path(modelsPath); path != "" && fs.FileExists(path) {
+		return path
+	} else if d == nil {
+		return ""
+	}
+
+	for _, name := range d.Legacy {
+		if path := filepath.Join(modelsPath, d.Dir, name); fs.FileExists(path) {
+			return path
+		}
+	}
+
+	return ""
+}
+
+// Path returns the absolute path to the artifact the registry describes, whether or not it
+// is installed, so a caller can report which detector a build would have loaded.
 func (d *Detector) Path(modelsPath string) string {
 	if d == nil || d.ONNX == nil {
 		return ""

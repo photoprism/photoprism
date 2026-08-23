@@ -19,9 +19,11 @@ Detection runs on ONNX Runtime. The detectors this build can run are registered 
 | Detector | Artifact                            | Weights  | Installed By                     |
 |:---------|:------------------------------------|:---------|:---------------------------------|
 | `yunet`  | `face_detection_yunet_2026may.onnx` | MIT      | `make dep-models`                |
-| `scrfd`  | `scrfd.onnx`                        | non-free | `scripts/dist/download-scrfd.sh` |
+| `scrfd`  | `det_500m.onnx`                     | non-free | `scripts/dist/download-scrfd.sh` |
 
-`Config.FaceEngineModelPath` walks that registry and loads the first entry that is installed, so **YuNet is what a build runs**: it is registered first because its weights may be redistributed, and `face.DefaultDetector` reads the same order. SCRFD stays selectable for comparison and is never bundled.
+`Config.FaceEngineModelPath` walks that registry and loads the first entry that is installed, so **YuNet is what a build runs**: it is registered first because its weights may be redistributed, and `face.DefaultDetector` reads the same order.
+
+**SCRFD is never bundled, mirrored, or redistributed.** Its weights are separately licensed, so `download-scrfd.sh` refuses without `INSIGHTFACE_ACCEPT_LICENSE=1`, prints the required notice, and fetches the publisher's own `det_500m.onnx` from an official InsightFace release at a pinned checksum. The registry names that artifact; `Detector.Legacy` lists the names an earlier install wrote, and `Detector.InstalledPath` falls back to them so a copy an operator already holds keeps working.
 
 The detector consumes 720 px thumbnails (model input 640 px), schedules work on the meta/vision workers, and defaults to the available CPUs divided by the number of indexing workers (minimum 1 thread), because detection takes no lock and one session runs per worker. Operators can select `FACE_ENGINE=onnx` explicitly or leave `FACE_ENGINE=auto`, which resolves to ONNX when a detector is installed and otherwise disables detection rather than picking another engine.
 

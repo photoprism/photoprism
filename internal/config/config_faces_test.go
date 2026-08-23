@@ -91,10 +91,9 @@ func TestConfig_FaceEngine(t *testing.T) {
 		tempModels := t.TempDir()
 		c.options.ModelsPath = tempModels
 
-		modelDir := filepath.Join(tempModels, "scrfd")
-		require.NoError(t, os.MkdirAll(modelDir, 0o750))
-		modelFile := filepath.Join(modelDir, face.DefaultONNXModelFilename)
-		require.NoError(t, os.WriteFile(modelFile, []byte("onnx"), 0o600))
+		modelFile := face.DefaultDetector().Path(tempModels)
+		require.NoError(t, os.MkdirAll(filepath.Dir(modelFile), fs.ModeDir))
+		require.NoError(t, os.WriteFile(modelFile, []byte("onnx"), fs.ModeFile))
 
 		c.options.FaceEngine = face.EngineAuto
 		assert.Equal(t, face.EngineONNX, c.FaceEngine())
@@ -304,8 +303,23 @@ func TestConfig_FaceEngineModelPath(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.options.ModelsPath = t.TempDir()
 
-		first := face.Detectors[0]
-		assert.Equal(t, first.Path(c.options.ModelsPath), c.FaceEngineModelPath())
+		assert.Equal(t, face.DefaultDetector().Path(c.options.ModelsPath), c.FaceEngineModelPath())
+	})
+	t.Run("LegacyArtifactName", func(t *testing.T) {
+		// An operator who installed the detector under its earlier name keeps it, rather than
+		// having it treated as absent because the registry now names the publisher's artifact.
+		c := NewConfig(CliTestContext())
+		models := t.TempDir()
+		c.options.ModelsPath = models
+
+		scrfd := face.FindDetector(face.DetectorSCRFD)
+		require.NotEmpty(t, scrfd.Legacy)
+
+		legacy := filepath.Join(models, scrfd.Dir, scrfd.Legacy[0])
+		require.NoError(t, os.MkdirAll(filepath.Dir(legacy), fs.ModeDir))
+		require.NoError(t, os.WriteFile(legacy, []byte("x"), fs.ModeFile))
+
+		assert.Equal(t, legacy, c.FaceEngineModelPath())
 	})
 	t.Run("PrefersTheFirstInstalled", func(t *testing.T) {
 		// Registration order decides, and YuNet is registered first because it is the

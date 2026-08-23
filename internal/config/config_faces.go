@@ -3,7 +3,6 @@ package config
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 	"runtime"
 	"slices"
 
@@ -11,7 +10,6 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -168,23 +166,14 @@ func (c *Config) FaceEngineModelPath() string {
 	models := c.ModelsPath()
 
 	for _, detector := range face.Detectors {
-		if detector.Installed(models) {
-			return detector.Path(models)
+		if path := detector.InstalledPath(models); path != "" {
+			return path
 		}
-	}
-
-	// The SCRFD installer also produced a differently named fixed-shape export.
-	if alt := filepath.Join(models, "scrfd", "scrfd_500m_bnkps_shape640x640.onnx"); fs.FileExists(alt) {
-		return alt
 	}
 
 	// Nothing is installed, so the path names what auto would have loaded and the caller
 	// reports it as missing rather than resolving to an empty string.
-	if len(face.Detectors) > 0 {
-		return face.Detectors[0].Path(models)
-	}
-
-	return ""
+	return face.DefaultDetector().Path(models)
 }
 
 // FaceModelSetting returns the face embedding model as configured, without resolving it.
