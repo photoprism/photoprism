@@ -224,6 +224,14 @@ export default {
     },
   },
   watch: {
+    // Events received while the tab was hidden only set the dirty flag. Switching
+    // tabs leaves the filter unchanged, so search() below returns early without
+    // refreshing; a list that went stale while hidden is refreshed here instead.
+    active(value) {
+      if (value && this.dirty) {
+        this.refresh();
+      }
+    },
     $route() {
       // Tab inactive?
       if (!this.active) {
