@@ -4,7 +4,7 @@
 #
 # These weights are published for non-commercial research only, so they are NOT
 # installed by "make dep" and MUST NOT be redistributed with PhotoPrism. Set
-# ARCFACE_ACCEPT_LICENSE=1 to confirm that your use is covered before running this.
+# INSIGHTFACE_ACCEPT_LICENSE=1 to confirm that your use is covered before running this.
 #
 # See: https://github.com/deepinsight/insightface/tree/master/model_zoo
 
@@ -21,14 +21,14 @@ MODEL_VERSION="$MODEL_DIR/version.txt"
 R50_SHA256="4c06341c33c2ca1f86781dab0e829f88ad5b64be9fba56e56bc9ebdefc619e43"
 MBF_SHA256="9cc6e4a75f0e2bf0b1aed94578f144d15175f357bdc05e815e5c4a02b319eb4f"
 
-if [[ "${ARCFACE_ACCEPT_LICENSE:-}" != "1" ]]; then
+if [[ "${INSIGHTFACE_ACCEPT_LICENSE:-}" != "1" ]]; then
   cat >&2 <<'EOF'
 The InsightFace pretrained recognition models are licensed for non-commercial
 research only. PhotoPrism does not redistribute them.
 
-Re-run with ARCFACE_ACCEPT_LICENSE=1 if your use is covered by that license:
+Re-run with INSIGHTFACE_ACCEPT_LICENSE=1 if your use is covered by that license:
 
-  ARCFACE_ACCEPT_LICENSE=1 scripts/download-arcface.sh
+  INSIGHTFACE_ACCEPT_LICENSE=1 scripts/download-arcface.sh
 EOF
   exit 1
 fi
