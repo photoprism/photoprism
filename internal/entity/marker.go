@@ -364,6 +364,14 @@ func (m *Marker) SyncSubject(updateRelated bool) (err error) {
 	// Update subject with marker name?
 	if m.MarkerName == "" || subj.SubjName == m.MarkerName {
 		// Do nothing.
+	} else if other := ReassignSubject(subj, m.MarkerName); other != nil {
+		// The name belongs to someone else, so link this marker to them. Renaming
+		// the linked person is reserved for names nobody owns; combining two
+		// people is an explicit action on the people page.
+		subj = other
+		m.subject = other
+		m.SubjUID = other.SubjUID
+		m.MarkerName = other.SubjName
 	} else if subj, err = subj.UpdateName(m.MarkerName); err != nil {
 		return err
 	} else if subj != nil {

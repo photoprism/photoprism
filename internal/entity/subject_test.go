@@ -617,3 +617,65 @@ func TestSubject_DeletePermanently(t *testing.T) {
 	assert.NotEmpty(t, m.DeletedAt)
 	assert.Empty(t, FindSubject(m.SubjUID))
 }
+
+func TestReassignSubject(t *testing.T) {
+	t.Run("OtherPersonOwnsName", func(t *testing.T) {
+		subj := FirstOrCreateSubject(NewSubject("Reassign Lookup Source", SubjPerson, SrcManual))
+		other := FirstOrCreateSubject(NewSubject("Reassign Lookup Target", SubjPerson, SrcManual))
+
+		if subj == nil || other == nil {
+			t.Fatal("failed creating test subjects")
+		}
+
+		found := ReassignSubject(subj, "Reassign Lookup Target")
+
+		if assert.NotNil(t, found) {
+			assert.Equal(t, other.SubjUID, found.SubjUID)
+		}
+	})
+	t.Run("NameIsUnused", func(t *testing.T) {
+		subj := FirstOrCreateSubject(NewSubject("Reassign Lookup Unused", SubjPerson, SrcManual))
+
+		if subj == nil {
+			t.Fatal("failed creating test subject")
+		}
+
+		assert.Nil(t, ReassignSubject(subj, "Reassign Lookup Nobody Has This"))
+	})
+	t.Run("SamePerson", func(t *testing.T) {
+		subj := FirstOrCreateSubject(NewSubject("Reassign Lookup Self", SubjPerson, SrcManual))
+
+		if subj == nil {
+			t.Fatal("failed creating test subject")
+		}
+
+		assert.Nil(t, ReassignSubject(subj, "Reassign Lookup Self"))
+	})
+	t.Run("EmptyName", func(t *testing.T) {
+		subj := FirstOrCreateSubject(NewSubject("Reassign Lookup Empty", SubjPerson, SrcManual))
+
+		if subj == nil {
+			t.Fatal("failed creating test subject")
+		}
+
+		assert.Nil(t, ReassignSubject(subj, ""))
+		assert.Nil(t, ReassignSubject(subj, "   "))
+	})
+	t.Run("NilSubject", func(t *testing.T) {
+		assert.Nil(t, ReassignSubject(nil, "Reassign Lookup Target"))
+	})
+	t.Run("DeletedPersonOwnsName", func(t *testing.T) {
+		subj := FirstOrCreateSubject(NewSubject("Reassign Lookup Live", SubjPerson, SrcManual))
+		gone := FirstOrCreateSubject(NewSubject("Reassign Lookup Gone", SubjPerson, SrcManual))
+
+		if subj == nil || gone == nil {
+			t.Fatal("failed creating test subjects")
+		}
+
+		if err := gone.Delete(); err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Nil(t, ReassignSubject(subj, "Reassign Lookup Gone"))
+	})
+}
