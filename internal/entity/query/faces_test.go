@@ -503,6 +503,82 @@ func TestMarkerEmbeddingModels(t *testing.T) {
 	})
 }
 
+func TestLegacyFaceMarkersWithVectors(t *testing.T) {
+	// newFaceMarker persists a face marker with the specified embedding model.
+	newFaceMarker := func(t *testing.T, model string, embeddings face.Embeddings) *entity.Marker {
+		t.Helper()
+
+		m := &entity.Marker{
+			MarkerType:     entity.MarkerFace,
+			MarkerSrc:      entity.SrcImage,
+			EmbedModel:     model,
+			EmbeddingsJSON: embeddings.JSON(),
+		}
+
+		require.NoError(t, entity.Db().Create(m).Error)
+		t.Cleanup(func() { entity.Db().Delete(m) })
+
+		return m
+	}
+
+	t.Run("CountsRowsThatRecordNoModel", func(t *testing.T) {
+		before, err := LegacyFaceMarkersWithVectors()
+		require.NoError(t, err)
+
+		newFaceMarker(t, "", face.Embeddings{face.RandomEmbedding()})
+
+		count, err := LegacyFaceMarkersWithVectors()
+		require.NoError(t, err)
+		assert.Equal(t, before+1, count)
+	})
+	t.Run("SkipsRecordedModels", func(t *testing.T) {
+		before, err := LegacyFaceMarkersWithVectors()
+		require.NoError(t, err)
+
+		newFaceMarker(t, face.ModelSFace, face.Embeddings{face.RandomEmbedding()})
+
+		count, err := LegacyFaceMarkersWithVectors()
+		require.NoError(t, err)
+		assert.Equal(t, before, count)
+	})
+	t.Run("SkipsMarkersWithoutEmbeddings", func(t *testing.T) {
+		// A marker that was detected but never embedded records no model either, and
+		// counting it would report a vector the library does not hold.
+		before, err := LegacyFaceMarkersWithVectors()
+		require.NoError(t, err)
+
+		newFaceMarker(t, "", nil)
+
+		count, err := LegacyFaceMarkersWithVectors()
+		require.NoError(t, err)
+		assert.Equal(t, before, count)
+	})
+	t.Run("CompletesTheRecordedCounts", func(t *testing.T) {
+		// The two together have to add up to every vector the library holds, or the
+		// configuration resolves its model from a different set of markers than the
+		// migration reports - which is what leaves a half-migrated library unblocked.
+		newFaceMarker(t, "", face.Embeddings{face.RandomEmbedding()})
+		newFaceMarker(t, face.ModelSFace, face.Embeddings{face.RandomEmbedding()})
+
+		recorded, err := RecordedMarkerEmbeddingModels()
+		require.NoError(t, err)
+
+		var total int64
+
+		for _, c := range recorded {
+			total += int64(c.Markers)
+		}
+
+		legacy, err := LegacyFaceMarkersWithVectors()
+		require.NoError(t, err)
+
+		all, err := FaceMarkersWithVectors()
+		require.NoError(t, err)
+
+		assert.Equal(t, all, total+legacy)
+	})
+}
+
 func TestFaceMarkersWithVectors(t *testing.T) {
 	t.Run("CountsFixtures", func(t *testing.T) {
 		count, err := FaceMarkersWithVectors()
