@@ -9,16 +9,11 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// VerifyChecksum reports whether the file at modelPath is the artifact this description
-// was written for.
+// VerifyChecksum reports whether modelPath holds the artifact this description was written for.
 //
-// Registry entries are selected by name, and names collide across publishers: two
-// unrelated models have shipped as glintr100.onnx, and published figures routinely
-// describe a differently named export than the file a mirror serves under that name.
-// Confirming by name alone would apply one model's preprocessing to another
-// model's weights, which fails quietly because normalization and channel order cannot be
-// read from a graph. Descriptions without a recorded checksum are accepted so that custom
-// models keep working.
+// Names collide across publishers - two unrelated models have shipped as glintr100.onnx - so
+// confirming by name would apply one model's preprocessing to another's weights, which fails
+// quietly. A description with no recorded checksum is accepted, so custom models keep working.
 func (m *ModelInfo) VerifyChecksum(modelPath string) error {
 	if m == nil || m.SHA256 == "" {
 		return nil

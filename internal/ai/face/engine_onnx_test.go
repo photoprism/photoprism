@@ -156,11 +156,10 @@ func TestONNXEngineDetectLandmarks(t *testing.T) {
 	})
 }
 
-// TestDetectorRecall pins how many faces the bundled detector finds in each test image,
-// so a change to its preprocessing cannot pass unnoticed. A wrong channel order or
-// normalization still returns plausible-looking detections, so nothing else in this
-// package would fail. The images pinned to zero are negatives, which makes the table a
-// guard against new false positives as well as against lost recall.
+// TestDetectorRecall pins how many faces the detector finds per test image, so a preprocessing
+// change cannot pass unnoticed: a wrong channel order still returns plausible detections, and
+// nothing else here would fail. Images pinned to zero are negatives, so the table guards against
+// new false positives as well as lost recall.
 func TestDetectorRecall(t *testing.T) {
 	pinned := []struct {
 		fileName string

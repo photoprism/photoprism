@@ -16,10 +16,9 @@ const (
 
 // Resize describes how an image is fitted to the model input size.
 //
-// ShortEdge and CropRatio express the convention that ImageNet classifiers state as
-// "resize the short edge to N, then center-crop to N * ratio". Models that scale directly
-// to the input size leave both unset. Getting this wrong costs accuracy silently instead
-// of raising, which is why it is recorded rather than assumed.
+// ShortEdge and CropRatio express the ImageNet convention, "resize the short edge to N, then
+// center-crop to N * ratio"; models that scale straight to the input size leave both unset.
+// Recorded rather than assumed, because getting it wrong costs accuracy without raising.
 type Resize struct {
 	Mode      ResizeMode `yaml:"Mode,omitempty" json:"mode,omitempty"`
 	ShortEdge int        `yaml:"ShortEdge,omitempty" json:"shortEdge,omitempty"`

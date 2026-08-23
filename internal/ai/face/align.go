@@ -107,13 +107,11 @@ func ScaledArcFaceTemplate(width, height int) (dst [NumLandmarks][2]float64) {
 	return dst
 }
 
-// AlignedCrop warps a face onto the ArcFace template and returns a crop of the
-// requested size. It fails when the face has no complete landmark set so callers
-// can fall back to an unaligned bounding box crop.
+// AlignedCrop warps a face onto the ArcFace template, and fails without a complete landmark set
+// so callers can fall back to an unaligned bounding box crop.
 //
-// The image may be a larger rendition than the one the face was detected in, which is how
-// a small face avoids being upscaled from the detection thumbnail. Landmarks are absolute
-// coordinates, so they are scaled by the width ratio the face records.
+// The image may be a larger rendition than the face was detected in, which is how a small face
+// avoids being upscaled. Landmarks are absolute, so they scale by the width ratio the face records.
 func AlignedCrop(img image.Image, f *Face, width, height int) (*image.RGBA, error) {
 	if img == nil {
 		return nil, fmt.Errorf("faces: missing image")
@@ -160,12 +158,11 @@ func AlignedCrop(img image.Image, f *Face, width, height int) (*image.RGBA, erro
 	return out, nil
 }
 
-// similarityTransform returns the transform that maps src onto dst with the smallest
-// squared error, using rotation, uniform scale, and translation only.
+// similarityTransform maps src onto dst with the smallest squared error, using rotation, uniform
+// scale and translation only.
 //
-// This is the Umeyama estimate that InsightFace and OpenCV apply, restricted to proper
-// rotations. A reflection cannot be represented, so a mirrored set produces a poor fit
-// rather than a mirrored crop; both that and coincident landmarks return an error.
+// The Umeyama estimate InsightFace and OpenCV apply, restricted to proper rotations: a reflection
+// cannot be represented, so a mirrored set fits poorly and, like coincident landmarks, errors.
 func similarityTransform(src, dst [NumLandmarks][2]float64) (affine2D, error) {
 	var srcMean, dstMean [2]float64
 

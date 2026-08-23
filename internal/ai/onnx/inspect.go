@@ -13,12 +13,11 @@ import (
 // MetadataPrefix marks the metadata_props entries that PhotoPrism writes.
 const MetadataPrefix = "photoprism."
 
-// Inspect reads the structural description of a model from its graph: tensor names, input
-// geometry and layout, and output width. Channel order, normalization, and the resize
-// convention are not present in a graph and are therefore never filled from it.
+// Inspect reads what a graph states: tensor names, input geometry, layout and output width.
+// Channel order, normalization and the resize convention are not in a graph, so never from it.
 //
-// The binding creates a temporary session to read this, so inspection costs a model load.
-// Call it when a model is about to be used, never to scan a directory of artifacts.
+// The binding opens a temporary session to read this, so inspection costs a model load - call it
+// when a model is about to be used, never to scan a directory.
 func Inspect(modelPath string, sessionOpts *onnxruntime.SessionOptions) (*ModelInfo, error) {
 	inputs, outputs, err := onnxruntime.GetInputOutputInfoWithOptions(modelPath, sessionOpts)
 

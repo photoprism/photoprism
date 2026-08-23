@@ -16,13 +16,11 @@ const (
 	LayoutNHWC Layout = "NHWC"
 )
 
-// Input describes the tensor a model expects together with the preprocessing that
-// produces it.
+// Input describes the tensor a model expects together with the preprocessing that produces it.
 //
-// Name, geometry, and layout can be read from the graph, so they may be filled by
-// inspection. Channel order, normalization, and the resize convention cannot, and a
-// wrong value for any of them yields a model that loads, runs, and returns plausible
-// output that is quietly worse, so they are never inferred.
+// Name, geometry and layout are readable from the graph and may be filled by inspection. Channel
+// order, normalization and the resize convention are not, and a wrong value for any of them still
+// loads and runs while returning quietly worse output, so they are never inferred.
 type Input struct {
 	Name          string        `yaml:"Name,omitempty" json:"name,omitempty"`
 	Width         int           `yaml:"Width,omitempty" json:"width,omitempty"`
@@ -100,16 +98,10 @@ func (o *Output) Merge(other *Output) {
 }
 
 // ModelInfo describes an ONNX model artifact and the preprocessing contract it requires.
-// It is shared by the subsystems that run one, because the field list describes a graph
-// plus its preprocessing and does not vary by task.
 //
-// SHA256 identifies the artifact. Names collide across publishers, and applying one
-// model's preprocessing to another model's weights fails quietly rather than raising, so
-// a description is confirmed by checksum rather than by file name.
-//
-// Where an artifact is downloaded from is not described here. That belongs to the install
-// registry in scripts/dist/download-models.sh, which owns the URLs and verifies the same
-// checksums, so a source that moves upstream is changed in one place.
+// SHA256 identifies the artifact, because names collide across publishers and the wrong
+// preprocessing fails quietly. Download URLs live in scripts/dist/download-models.sh instead, which
+// verifies the same checksums, so a source that moves upstream changes in one place.
 type ModelInfo struct {
 	File         string  `yaml:"File,omitempty" json:"file,omitempty"`
 	SHA256       string  `yaml:"SHA256,omitempty" json:"sha256,omitempty"`

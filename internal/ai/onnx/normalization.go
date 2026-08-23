@@ -1,11 +1,10 @@
 package onnx
 
-// Normalization describes the preprocessing a model expects as (channel - Mean) / StdDev,
-// applied per channel to values in the 0-255 range.
+// Normalization describes the preprocessing a model expects as (channel - Mean) / StdDev, applied
+// per channel to values in the 0-255 range.
 //
-// The values are per channel because ImageNet-pretrained classifiers use a different mean
-// and standard deviation for each one, while the face models use the same value for all
-// three. A single scalar cannot express the former.
+// Per channel rather than scalar, because ImageNet-pretrained classifiers use a different mean and
+// standard deviation for each one, which a single value cannot express.
 type Normalization struct {
 	Mean   [Channels]float32 `yaml:"Mean,omitempty" json:"mean,omitempty"`
 	StdDev [Channels]float32 `yaml:"StdDev,omitempty" json:"stdDev,omitempty"`

@@ -17,12 +17,11 @@ var (
 	executableVar  = os.Executable
 )
 
-// EnsureRuntime loads the ONNX Runtime shared library and initializes the global
-// environment. It must succeed before any model is inspected or loaded.
+// EnsureRuntime loads the ONNX Runtime shared library and initializes the global environment,
+// and must succeed before any model is inspected or loaded.
 //
-// The binding requests the exact C API version of the headers it vendors, so it fails to
-// initialize against an older shared library; the collected candidate errors are kept in
-// the message because that is what distinguishes a missing library from a mismatched one.
+// The binding requests the exact C API version of its vendored headers, so it fails against an
+// older library; the candidate errors are kept in the message to tell missing from mismatched.
 func EnsureRuntime(libraryPath string) error {
 	runtimeOnce.Do(func() {
 		candidates := SharedLibraryCandidates(libraryPath)
