@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/event"
 
@@ -33,6 +34,12 @@ func TestAddPhotoToAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 
+		t.Cleanup(func() {
+			require.NoError(t, UnscopedDb().Where("album_uid = ? AND photo_uid = ?", "as6sg6bitoga0004", "ps6sg6bexxvl0yh0").Delete(&PhotoAlbum{}).Error)
+			require.NoError(t, UnscopedDb().Model(AlbumFixtures.Pointer("import")).UpdateColumn("updated_at", AlbumFixtures.Get("import").UpdatedAt).Error)
+			require.NoError(t, UnscopedDb().Model(PhotoFixtures.Pointer("Photo19")).UpdateColumn("updated_at", PhotoFixtures.Get("Photo19").UpdatedAt).Error)
+		})
+
 		a := Album{AlbumUID: "as6sg6bitoga0004"}
 
 		if found := a.Find(); found == nil {
@@ -56,17 +63,15 @@ func TestAddPhotoToAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		photo_updatedAt := strings.Split(entries[0].UpdatedAt.String(), ".")[0]
-		album_updatedAt := strings.Split(album.UpdatedAt.String(), ".")[0]
+		photoUpdatedAt, _, _ := strings.Cut(entries[0].UpdatedAt.String(), ".")
+		albumUpdatedAt, _, _ := strings.Cut(album.UpdatedAt.String(), ".")
 
 		assert.Truef(
-			t, photo_updatedAt <= album_updatedAt,
+			t, photoUpdatedAt <= albumUpdatedAt,
 			"Expected the UpdatedAt field of an album to be updated when"+
 				" new photos are added",
 		)
-	},
-	)
-
+	})
 	t.Run("EmptyPhoto", func(t *testing.T) {
 		err := AddPhotoToAlbums("", []string{"as6sg6bitoga0004"})
 
@@ -77,12 +82,18 @@ func TestAddPhotoToAlbums(t *testing.T) {
 	t.Run("InvalidPhotoUid", func(t *testing.T) {
 		assert.Error(t, AddPhotoToAlbums("xxx", []string{"as6sg6bitoga0004"}))
 	})
-	t.Run("SuccessTwoAlbums", func(t *testing.T) {
+	t.Run("SuccessOneGoodOneBadAlbum", func(t *testing.T) {
 		err := AddPhotoToAlbums("ps6sg6bexxvl0yh0", []string{"as6sg6bitoga0004", ""})
 
 		if err != nil {
 			t.Fatal(err)
 		}
+
+		t.Cleanup(func() {
+			require.NoError(t, UnscopedDb().Where("album_uid = ? AND photo_uid = ?", "as6sg6bitoga0004", "ps6sg6bexxvl0yh0").Delete(&PhotoAlbum{}).Error)
+			require.NoError(t, UnscopedDb().Model(AlbumFixtures.Pointer("import")).UpdateColumn("updated_at", AlbumFixtures.Get("import").UpdatedAt).Error)
+			require.NoError(t, UnscopedDb().Model(PhotoFixtures.Pointer("Photo19")).UpdateColumn("updated_at", PhotoFixtures.Get("Photo19").UpdatedAt).Error)
+		})
 
 		a := Album{AlbumUID: "as6sg6bitoga0004"}
 
@@ -107,11 +118,86 @@ func TestAddPhotoToAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		photo_updatedAt := strings.Split(entries[0].UpdatedAt.String(), ".")[0]
-		album_updatedAt := strings.Split(album.UpdatedAt.String(), ".")[0]
+		photoUpdatedAt, _, _ := strings.Cut(entries[0].UpdatedAt.String(), ".")
+		albumUpdatedAt, _, _ := strings.Cut(album.UpdatedAt.String(), ".")
 
 		assert.Truef(
-			t, photo_updatedAt <= album_updatedAt,
+			t, photoUpdatedAt <= albumUpdatedAt,
+			"Expected the UpdatedAt field of an album to be updated when"+
+				" new photos are added",
+		)
+	})
+	t.Run("SuccessTwoAlbums", func(t *testing.T) {
+		err := AddPhotoToAlbums("ps6sg6bexxvl0yh0", []string{AlbumFixtures.Get("import").AlbumUID, AlbumFixtures.Get("berlin-2019").AlbumUID})
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		t.Cleanup(func() {
+			require.NoError(t, UnscopedDb().Where("album_uid = ? AND photo_uid = ?", AlbumFixtures.Get("import").AlbumUID, "ps6sg6bexxvl0yh0").Delete(&PhotoAlbum{}).Error)
+			require.NoError(t, UnscopedDb().Where("album_uid = ? AND photo_uid = ?", AlbumFixtures.Get("berlin-2019").AlbumUID, "ps6sg6bexxvl0yh0").Delete(&PhotoAlbum{}).Error)
+			require.NoError(t, UnscopedDb().Model(AlbumFixtures.Pointer("import")).UpdateColumn("updated_at", AlbumFixtures.Get("import").UpdatedAt).Error)
+			require.NoError(t, UnscopedDb().Model(AlbumFixtures.Pointer("berlin-2019")).UpdateColumn("updated_at", AlbumFixtures.Get("berlin-2019").UpdatedAt).Error)
+			require.NoError(t, UnscopedDb().Model(PhotoFixtures.Pointer("Photo19")).UpdateColumn("updated_at", PhotoFixtures.Get("Photo19").UpdatedAt).Error)
+		})
+
+		a := Album{AlbumUID: AlbumFixtures.Get("import").AlbumUID}
+
+		if found := a.Find(); found == nil {
+			t.Fatal("should find album")
+		}
+
+		a = Album{AlbumUID: AlbumFixtures.Get("berlin-2019").AlbumUID}
+
+		if found := a.Find(); found == nil {
+			t.Fatal("should find album")
+		}
+
+		var entries PhotoAlbums
+
+		if err = Db().Where("album_uid = ? AND photo_uid = ?", AlbumFixtures.Get("import").AlbumUID, "ps6sg6bexxvl0yh0").Find(&entries).Error; err != nil {
+			t.Fatal(err)
+		}
+		if len(entries) < 1 {
+			t.Error("at least one album entry expected")
+		}
+
+		var album Album
+		if err = Db().Where("album_uid = ?", AlbumFixtures.Get("import").AlbumUID).Find(
+			&album,
+		).Error; err != nil {
+			t.Fatal(err)
+		}
+
+		photoUpdatedAt, _, _ := strings.Cut(entries[0].UpdatedAt.String(), ".")
+		albumUpdatedAt, _, _ := strings.Cut(album.UpdatedAt.String(), ".")
+
+		assert.Truef(
+			t, photoUpdatedAt <= albumUpdatedAt,
+			"Expected the UpdatedAt field of an album to be updated when"+
+				" new photos are added",
+		)
+
+		if err = Db().Where("album_uid = ? AND photo_uid = ?", AlbumFixtures.Get("berlin-2019").AlbumUID, "ps6sg6bexxvl0yh0").Find(&entries).Error; err != nil {
+			t.Fatal(err)
+		}
+		if len(entries) < 1 {
+			t.Error("at least one album entry expected")
+		}
+
+		album = Album{}
+		if err = Db().Where("album_uid = ?", AlbumFixtures.Get("berlin-2019").AlbumUID).Find(
+			&album,
+		).Error; err != nil {
+			t.Fatal(err)
+		}
+
+		photoUpdatedAt, _, _ = strings.Cut(entries[0].UpdatedAt.String(), ".")
+		albumUpdatedAt, _, _ = strings.Cut(album.UpdatedAt.String(), ".")
+
+		assert.Truef(
+			t, photoUpdatedAt <= albumUpdatedAt,
 			"Expected the UpdatedAt field of an album to be updated when"+
 				" new photos are added",
 		)
@@ -127,6 +213,12 @@ func TestAddPhotoToUserAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 
+		t.Cleanup(func() {
+			require.NoError(t, UnscopedDb().Where("album_uid = ? AND photo_uid = ?", "as6sg6bitoga0004", "ps6sg6bexxvl0yh0").Delete(&PhotoAlbum{}).Error)
+			require.NoError(t, UnscopedDb().Model(AlbumFixtures.Pointer("import")).UpdateColumn("updated_at", AlbumFixtures.Get("import").UpdatedAt).Error)
+			require.NoError(t, UnscopedDb().Model(PhotoFixtures.Pointer("Photo19")).UpdateColumn("updated_at", PhotoFixtures.Get("Photo19").UpdatedAt).Error)
+		})
+
 		a := Album{AlbumUID: "as6sg6bitoga0004"}
 
 		if found := a.Find(); found == nil {
@@ -150,11 +242,11 @@ func TestAddPhotoToUserAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		photo_updatedAt := strings.Split(entries[0].UpdatedAt.String(), ".")[0]
-		album_updatedAt := strings.Split(album.UpdatedAt.String(), ".")[0]
+		photoUpdatedAt, _, _ := strings.Cut(entries[0].UpdatedAt.String(), ".")
+		albumUpdatedAt, _, _ := strings.Cut(album.UpdatedAt.String(), ".")
 
 		assert.Truef(
-			t, photo_updatedAt <= album_updatedAt,
+			t, photoUpdatedAt <= albumUpdatedAt,
 			"Expected the UpdatedAt field of an album to be updated when"+
 				" new photos are added",
 		)
@@ -163,6 +255,14 @@ func TestAddPhotoToUserAlbums(t *testing.T) {
 		assert.Nil(t, FindAlbumByAttr([]string{"yyy"}, []string{}, AlbumManual))
 
 		assert.NoError(t, AddPhotoToUserAlbums("ps6sg6bexxvl0yh0", []string{"yyy"}, sortby.Oldest, "uqxetse3cy5eo9z2"))
+
+		t.Cleanup(func() {
+			require.NoError(t, UnscopedDb().Model(PhotoFixtures.Pointer("Photo19")).UpdateColumn("updated_at", PhotoFixtures.Get("Photo19").UpdatedAt).Error)
+			album := FindAlbumByAttr([]string{"yyy"}, []string{}, AlbumManual)
+			require.NotNil(t, album)
+			require.NoError(t, UnscopedDb().Where("album_uid = ? AND photo_uid = ?", album.AlbumUID, "ps6sg6bexxvl0yh0").Delete(&PhotoAlbum{}).Error)
+			require.NoError(t, album.DeletePermanently())
+		})
 
 		assert.NotNil(t, FindAlbumByAttr([]string{"yyy"}, []string{}, AlbumManual))
 	})
@@ -192,7 +292,9 @@ func TestAlbumSearch(t *testing.T) {
 
 // TestAddPhotoToUserAlbumsConcurrentCreate exercises the related album behavior.
 func TestAddPhotoToUserAlbumsConcurrentCreate(t *testing.T) {
-	_ = Db().Where("album_title = ?", "ConcurrencyTestAlbum").Unscoped().Delete(&Album{})
+	t.Cleanup(func() {
+		require.NoError(t, Db().Where("album_title = ?", "ConcurrencyTestAlbum").Unscoped().Delete(&Album{}).Error)
+	})
 
 	photos := []string{
 		PhotoFixtures.Get("Photo01").PhotoUID,
@@ -1175,6 +1277,10 @@ func TestAlbum_SaveForm(t *testing.T) {
 			t.Fatal(err)
 		}
 
+		t.Cleanup(func() {
+			require.NoError(t, album.DeletePermanently())
+		})
+
 		assert.IsType(t, &form.Album{}, frm)
 		assert.Equal(t, "New name", album.AlbumTitle)
 		assert.Equal(t, "new description", album.AlbumDescription)
@@ -1252,6 +1358,9 @@ func TestAlbum_UpdateFolder(t *testing.T) {
 		if err := a.UpdateFolder("2222/07", "month:07", "July 2222"); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			require.NoError(t, a.DeletePermanently())
+		})
 
 		assert.Equal(t, "2222/07", a.AlbumPath)
 		assert.Equal(t, "month:07", a.AlbumFilter)
@@ -1265,6 +1374,9 @@ func TestAlbum_UpdateFolder(t *testing.T) {
 		if err := a.UpdateFolder(`2222\07`, "month:07", "July 2222"); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			require.NoError(t, a.DeletePermanently())
+		})
 
 		assert.Equal(t, "2222/07", a.AlbumPath)
 		assert.Equal(t, "2222-07", a.AlbumSlug)
@@ -1276,6 +1388,9 @@ func TestAlbum_UpdateFolder(t *testing.T) {
 		if err := a.UpdateFolder("2222/07", "month:07", "July 2222"); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			require.NoError(t, a.DeletePermanently())
+		})
 
 		assert.Equal(t, "2222/07", a.AlbumPath)
 		assert.Equal(t, "month:07", a.AlbumFilter)
@@ -1313,6 +1428,9 @@ func TestAlbum_UpdateFolder(t *testing.T) {
 				if err := a.UpdateFolder(path, filter, tc.childTitle); err != nil {
 					t.Fatal(err)
 				}
+				t.Cleanup(func() {
+					require.NoError(t, a.DeletePermanently())
+				})
 
 				assert.Equal(t, tc.childTitle, a.AlbumTitle)
 				assert.Equal(t, path, a.AlbumPath)
@@ -1333,6 +1451,9 @@ func TestAlbum_UpdateFolder(t *testing.T) {
 		if err := a.UpdateFolder("ins/🍷", `path:"ins/🍷" public:true`, "🍷"); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			require.NoError(t, a.DeletePermanently())
+		})
 
 		assert.Equal(t, "My Wine Folder", a.AlbumTitle)
 	})
@@ -1371,6 +1492,9 @@ func TestAlbum_Save(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			require.NoError(t, UnscopedDb().Model(AlbumFixtures.Pointer("christmas2030")).UpdateColumn("updated_at", AlbumFixtures.Get("christmas2030").UpdatedAt).Error)
+		})
 		afterDate := album.UpdatedAt
 
 		assert.True(t, afterDate.After(initialDate))
@@ -1384,6 +1508,9 @@ func TestAlbum_Save(t *testing.T) {
 		if err := album.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			require.NoError(t, UnscopedDb().Model(AlbumFixtures.Pointer("christmas2030")).UpdateColumn("updated_at", AlbumFixtures.Get("christmas2030").UpdatedAt).Error)
+		})
 
 		select {
 		case msg := <-sub.Receiver:
@@ -1408,6 +1535,9 @@ func TestAlbum_Create(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			require.NoError(t, album.DeletePermanently())
+		})
 	})
 	t.Run("Moment", func(t *testing.T) {
 		album := Album{
@@ -1419,6 +1549,9 @@ func TestAlbum_Create(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			require.NoError(t, album.DeletePermanently())
+		})
 	})
 	t.Run("Month", func(t *testing.T) {
 		album := Album{
@@ -1430,6 +1563,9 @@ func TestAlbum_Create(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			require.NoError(t, album.DeletePermanently())
+		})
 	})
 	t.Run("Folder", func(t *testing.T) {
 		album := Album{
@@ -1441,6 +1577,9 @@ func TestAlbum_Create(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			require.NoError(t, album.DeletePermanently())
+		})
 	})
 }
 
@@ -1482,6 +1621,9 @@ func TestAlbum_DeleteRestore(t *testing.T) {
 		if err := album.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			require.NoError(t, album.DeletePermanently())
+		})
 
 		assert.Empty(t, album.DeletedAt)
 		assert.False(t, album.Deleted())
@@ -1505,6 +1647,9 @@ func TestAlbum_DeleteRestore(t *testing.T) {
 		if err := album.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			require.NoError(t, album.DeletePermanently())
+		})
 
 		assert.Empty(t, album.DeletedAt)
 
@@ -1540,6 +1685,9 @@ func TestAlbum_DeleteRestore(t *testing.T) {
 		if err := album.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			require.NoError(t, album.DeletePermanently())
+		})
 
 		assert.Empty(t, album.DeletedAt)
 		assert.False(t, album.Deleted())
@@ -1599,6 +1747,12 @@ func TestAlbum_AddPhotos(t *testing.T) {
 		photos := Photos{&photo1, &photo2, &photo3}
 
 		added := album.AddPhotos(photos)
+		t.Cleanup(func() {
+			require.NoError(t, UnscopedDb().Where("album_uid = ? AND photo_uid in (?)", "as6sg6bxpogaaba7", []string{"ps6sg6be2lvl0yh7", "ps6sg6be2lvl0yh8"}).Delete(&PhotoAlbum{}).Error)
+			require.NoError(t, UnscopedDb().Model(AlbumFixtures.Pointer("christmas2030")).UpdateColumn("updated_at", AlbumFixtures.Get("christmas2030").UpdatedAt).Error)
+			require.NoError(t, UnscopedDb().Model(PhotoFixtures.Pointer("19800101_000002_D640C559")).UpdateColumn("updated_at", PhotoFixtures.Get("19800101_000002_D640C559").UpdatedAt).Error)
+			require.NoError(t, UnscopedDb().Model(PhotoFixtures.Pointer("Photo01")).UpdateColumn("updated_at", PhotoFixtures.Get("Photo01").UpdatedAt).Error)
+		})
 
 		var entries PhotoAlbums
 
@@ -1622,9 +1776,9 @@ func TestAlbum_AddPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		firstUpdatedAt := strings.Split(entries[0].UpdatedAt.String(), ".")[0]
-		secondUpdatedAt := strings.Split(entries[1].UpdatedAt.String(), ".")[0]
-		albumUpdatedAt := strings.Split(a.UpdatedAt.String(), ".")[0]
+		firstUpdatedAt, _, _ := strings.Cut(entries[0].UpdatedAt.String(), ".")
+		secondUpdatedAt, _, _ := strings.Cut(entries[1].UpdatedAt.String(), ".")
+		albumUpdatedAt, _, _ := strings.Cut(a.UpdatedAt.String(), ".")
 
 		assert.Truef(
 			t, firstUpdatedAt <= albumUpdatedAt,
@@ -1663,6 +1817,15 @@ func TestAlbum_RemovePhotos(t *testing.T) {
 			AlbumTitle: "Test Title",
 		}
 		removed := album.RemovePhotos([]string{"ps6sg6be2lvl0yh7", "ps6sg6be2lvl0yh8", "xxx"})
+		t.Cleanup(func() {
+			album.AddPhotos(Photos{
+				PhotoFixtures.Pointer("19800101_000002_D640C559"),
+				PhotoFixtures.Pointer("Photo01"),
+			})
+			require.NoError(t, UnscopedDb().Model(AlbumFixtures.Pointer("christmas2030")).UpdateColumn("updated_at", AlbumFixtures.Get("christmas2030").UpdatedAt).Error)
+			require.NoError(t, UnscopedDb().Model(PhotoFixtures.Pointer("19800101_000002_D640C559")).UpdateColumn("updated_at", PhotoFixtures.Get("19800101_000002_D640C559").UpdatedAt).Error)
+			require.NoError(t, UnscopedDb().Model(PhotoFixtures.Pointer("Photo01")).UpdateColumn("updated_at", PhotoFixtures.Get("Photo01").UpdatedAt).Error)
+		})
 
 		var entries PhotoAlbums
 
@@ -1686,17 +1849,17 @@ func TestAlbum_RemovePhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		first_photo_updatedAt := strings.Split(entries[0].UpdatedAt.String(), ".")[0]
-		second_photo_updatedAt := strings.Split(entries[1].UpdatedAt.String(), ".")[0]
-		album_updatedAt := strings.Split(a.UpdatedAt.String(), ".")[0]
+		firstPhotoUpdatedAt, _, _ := strings.Cut(entries[0].UpdatedAt.String(), ".")
+		secondPhotoUpdatedAt, _, _ := strings.Cut(entries[1].UpdatedAt.String(), ".")
+		albumUpdatedAt, _, _ := strings.Cut(a.UpdatedAt.String(), ".")
 
 		assert.Truef(
-			t, first_photo_updatedAt <= album_updatedAt,
+			t, firstPhotoUpdatedAt <= albumUpdatedAt,
 			"Expected the UpdatedAt field of an album to be updated when"+
 				" photos are removed",
 		)
 		assert.Truef(
-			t, second_photo_updatedAt <= album_updatedAt,
+			t, secondPhotoUpdatedAt <= albumUpdatedAt,
 			"Expected the UpdatedAt field of an album to be updated when"+
 				" photos are removed",
 		)

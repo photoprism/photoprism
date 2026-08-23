@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNewPhotoAlbum(t *testing.T) {
@@ -45,6 +46,9 @@ func TestFirstOrCreatePhotoAlbum(t *testing.T) {
 		if result == nil {
 			t.Fatal("result must not be nil")
 		}
+		t.Cleanup(func() {
+			require.NoError(t, UnscopedDb().Delete(&result).Error)
+		})
 
 		if result.AlbumUID != model.AlbumUID {
 			t.Errorf("AlbumUID should be the same: %s %s", result.AlbumUID, model.AlbumUID)
@@ -65,5 +69,9 @@ func TestPhotoAlbum_Save(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+
+		t.Cleanup(func() {
+			require.NoError(t, UnscopedDb().Delete(&p).Error)
+		})
 	})
 }
