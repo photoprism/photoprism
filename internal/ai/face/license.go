@@ -10,25 +10,20 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// LicenseAcceptanceVar is the environment variable through which an operator accepts the terms
-// that apply to license-gated model weights. One vendor, one variable: the same terms cover the
-// detector and the embedding models it publishes.
+// LicenseAcceptanceVar is the environment variable an operator sets to enable the model weights
+// that are gated. One variable covers every model from the same publisher.
 const LicenseAcceptanceVar = "INSIGHTFACE_ACCEPT_LICENSE"
 
-// LicenseEligibleEditions lists the editions in which license-gated weights may be used.
-//
-// The builds a personal user runs are the Community Edition and Plus, and the organizational
-// editions are outside the terms as we read them. The edition proves nothing about the use
-// itself, which is why the notice an operator accepts carries that half.
+// LicenseEligibleEditions lists the editions in which gated model weights may be enabled.
+// The installer states what an operator is confirming when they set the acceptance variable.
 var LicenseEligibleEditions = []string{"ce", "plus"}
 
-// LicenseGated reports whether the model weights may only be used after their vendor's terms
-// have been accepted.
+// LicenseGated reports whether the model weights have to be enabled explicitly before use.
 func (m *EmbeddingModel) LicenseGated() bool {
 	return m != nil && m.WeightLicense() == LicenseResearchOnly
 }
 
-// LicenseAccepted reports whether the operator accepted the terms of the gated weights.
+// LicenseAccepted reports whether the operator enabled the gated weights.
 func LicenseAccepted() bool {
 	return txt.Bool(os.Getenv(LicenseAcceptanceVar))
 }
@@ -41,7 +36,7 @@ func LicenseEligibleEdition(edition string) bool {
 }
 
 // LicenseRefused returns why the specified model may not be used in the specified edition, or
-// nil when it may. Models whose weights carry no gate are always permitted.
+// nil when it may. Models whose weights are not gated are always permitted.
 func LicenseRefused(name ModelName, edition string) error {
 	model := FindEmbeddingModel(name)
 
@@ -50,13 +45,13 @@ func LicenseRefused(name ModelName, edition string) error {
 	}
 
 	if !LicenseAccepted() {
-		return fmt.Errorf("the %s weights are published for non-commercial use only, "+
-			"set %s=1 to confirm that your use is covered by their terms", model.Name, LicenseAcceptanceVar)
+		return fmt.Errorf("the %s weights have to be enabled explicitly, "+
+			"see the model documentation and set %s=1 to use them", model.Name, LicenseAcceptanceVar)
 	}
 
 	if !LicenseEligibleEdition(edition) {
-		return fmt.Errorf("the %s weights are published for non-commercial use only, "+
-			"which the %s edition is outside of", model.Name, clean.Log(edition))
+		return fmt.Errorf("the %s weights are not available in the %s edition",
+			model.Name, clean.Log(edition))
 	}
 
 	return nil
