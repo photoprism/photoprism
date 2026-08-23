@@ -72,11 +72,9 @@ var (
 	fixtureVectorsSet  bool
 )
 
-// GenerateFaceFixtureVectors fills the face and marker fixtures with embeddings for the
-// configured model, and is called before either is written to the database.
-//
-// It regenerates when the model or its width changed since the last call, so a process that
-// configures a second model does not seed the second library from the first one's vectors.
+// GenerateFaceFixtureVectors fills the face and marker fixtures with embeddings for the configured
+// model, before either is written. It regenerates when the model or its width changed, so a process
+// that configures a second model does not seed the second library from the first one's vectors.
 func GenerateFaceFixtureVectors() {
 	model := face.EmbeddingModelName()
 	dims := face.ExpectedDims()
@@ -127,12 +125,9 @@ func GenerateFaceFixtureVectors() {
 	fixtureVectorsSet = true
 }
 
-// faceFixtureMarkerEmbedding returns the vector a marker fixture is generated with: a point at
-// the intended distance from the cluster it belongs to, or a person of its own when it names
-// no cluster.
-//
-// The distance follows the cluster it is generated for rather than the configured maximum,
-// because a fixture radius may be narrower or wider than the calibrated one.
+// faceFixtureMarkerEmbedding returns the vector a marker fixture is generated with: a point at the
+// intended distance from its cluster, or a person of its own when it names none. The distance follows
+// that cluster, because a fixture radius may be narrower or wider than the calibrated one.
 func faceFixtureMarkerEmbedding(spec markerFixtureVector, centroids map[string]face.Embedding) face.Embedding {
 	centroid, found := centroids[spec.face]
 

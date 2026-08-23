@@ -415,13 +415,11 @@ func (c *Config) FaceClusterRadius() float64 {
 	return radius
 }
 
-// faceAcceptThresholds returns the cluster radius and the match distance, falling back to the
-// configured model's calibrated pair when the two together would reach past face.ConfigDistMax.
+// faceAcceptThresholds returns the cluster radius and match distance, falling back to the configured
+// model's calibrated pair when the two together reach past face.ConfigDistMax.
 //
-// They are resolved as a pair because a cluster accepts at their sum, so one wide option is
-// enough to reach the ceiling on its own. There, selection can no longer abandon a comparison
-// early and matching walks every candidate to its last component, while a cluster that reaches
-// that far accepts strangers as readily as the person it was built from.
+// Resolved as a pair because a cluster accepts at their sum, so one wide option reaches the limit on
+// its own - where a cluster accepts strangers as readily as the person it was built from.
 func (c *Config) faceAcceptThresholds() (radius, matchDist float64) {
 	pickRadius := func(m *face.EmbeddingModel) float64 { return m.ClusterRadius }
 	pickMatchDist := func(m *face.EmbeddingModel) float64 { return m.MatchDist }

@@ -219,11 +219,9 @@ func (w *Faces) PlanMigration(target string) (result FacesMigratePlan, err error
 	return result, nil
 }
 
-// originalsUnavailable reports whether the originals root is missing or holds nothing, at the
-// cost of a stat and a single directory entry rather than one stat per file.
-//
-// It answers the case a per-file check cannot improve on: when the volume is not mounted every
-// marker fails, and the plan is the last point at which that is cheap to say.
+// originalsUnavailable reports whether the originals root is missing or holds nothing, at the cost of
+// a stat and one directory entry. It answers the case a per-file check cannot improve on: when the
+// volume is not mounted every marker fails, and the plan is the last point at which that is cheap.
 func originalsUnavailable(originalsPath string) bool {
 	return !fs.PathExists(originalsPath) || fs.DirIsEmpty(originalsPath)
 }

@@ -26,23 +26,16 @@ const (
 // scheduling overhead and compete with the intra-op pool for nothing.
 const InterOpThreads = 1
 
-// AcceptDistMax is the highest distance at which an embedding may still join a cluster,
-// whatever a stored sample radius says.
-//
-// Two independent unit vectors average sqrt(2) ~ 1.41 apart, but a sizable share of them
-// land nearer, so this caps what a misconfigured threshold can do rather than naming a
-// distance that is safe to configure.
+// AcceptDistMax is the highest distance at which an embedding may still join a cluster, whatever a
+// stored sample radius says. Two independent unit vectors average sqrt(2) ~ 1.41 apart and a sizable
+// share land nearer, so this caps what a misconfiguration can do rather than naming a safe value.
 const AcceptDistMax = 1.4
 
-// ConfigDistMax is the largest value a configurable distance threshold may take, and the
-// widest accept distance an operator can therefore ask for.
+// ConfigDistMax is the largest value a configurable distance threshold may take.
 //
-// It sits just above the widest calibrated model, so the range that can be configured is the
-// range the models were calibrated in. Past it a cluster accepts about as readily as it
-// refuses - independent embeddings average sqrt(2) ~ 1.41 apart - and the distance bound in
-// selection can abandon less and less of each comparison. A value above this is refused and
-// the calibrated one is used, rather than accepted here and clipped where it is read, which
-// would leave the config report echoing a number that never applies.
+// It sits just above the widest calibrated model, so what can be configured is the range the models
+// were calibrated in; past it a cluster accepts about as readily as it refuses. A value above is
+// refused rather than clipped on read, which would leave the report echoing a number that never applies.
 const ConfigDistMax = 1.25
 
 var (

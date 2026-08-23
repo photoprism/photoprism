@@ -32,12 +32,10 @@ func FixtureEmbedding(seed uint64) Embedding {
 	return result
 }
 
-// FixtureEmbeddingAt returns a deterministic unit embedding at the given distance from base,
-// which is how a fixture states that a marker belongs to a cluster in the distance scale of
-// whichever model is configured.
+// FixtureEmbeddingAt returns a deterministic unit embedding at the given distance from base.
 //
-// Distances between unit vectors are chords, so the result is base rotated by the angle that
-// chord subtends. A distance of zero or less returns a copy of base, and 2 its antipode.
+// Distances between unit vectors are chords, so the result is base rotated by the angle that chord
+// subtends. A distance of zero or less returns a copy of base, and 2 its antipode.
 func FixtureEmbeddingAt(base Embedding, dist float64, seed uint64) Embedding {
 	result := make(Embedding, len(base))
 	copy(result, base)

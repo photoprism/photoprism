@@ -126,11 +126,9 @@ func EmbeddingsDisabled() bool {
 // subsystem so that custom entries in vision.yml keep their configured model path
 // and graph metadata.
 func ConfigureEmbedder(settings EmbedderSettings) error {
-	// Loading the same model again would produce an identical session, so the active one is
-	// kept: an instance is configured once per process, but tests build many, and each load
-	// reads the weights, verifies the checksum, and creates an inference session. A file
+	// Loading the same model again produces an identical session, so the active one is kept: each
+	// load reads the weights, verifies the checksum, and creates an inference session. A file
 	// replaced under an unchanged path keeps the copy that was verified when it was loaded.
-	// Callers that want a fresh session pass different settings or call UseEmbedder(nil).
 	if reuseEmbedder(settings) {
 		return nil
 	}
