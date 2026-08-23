@@ -11,6 +11,10 @@ import (
 	"github.com/photoprism/photoprism/internal/entity/query"
 )
 
+// faceMatchBatchSize is how many markers a match run reads at a time. It is a variable so a test
+// can reproduce a full page without seeding one.
+var faceMatchBatchSize = 500
+
 // FacesMatchResult represents the outcome of Faces.Match().
 type FacesMatchResult struct {
 	Updated    int64
@@ -25,12 +29,11 @@ type faceMatchStats struct {
 	maxDist float64
 }
 
-// recordFaceMatch accumulates how many markers a cluster matched and the widest distance it
-// accepted, so the run can update its stored statistics once at the end.
+// recordFaceMatch accumulates how many markers a cluster matched and the widest distance it accepted.
 //
-// Keyed by the cluster id rather than by the pointer it was reached through: a run matches
-// against more than one slice of faces, so the same database row arrives as two pointers, and
-// only one of the two entries would otherwise be written back.
+// Keyed by the cluster id rather than by the pointer it was reached through: a run matches against
+// more than one slice of faces, so one database row arrives as two pointers and only one of the two
+// entries would be written back.
 func recordFaceMatch(stats map[string]*faceMatchStats, f *entity.Face, dist float64) {
 	if f == nil || f.ID == "" || dist < 0 {
 		return
@@ -88,7 +91,9 @@ func buildFaceIndex(faces entity.Faces) faceIndex {
 
 		embedding := f.Embedding()
 
-		if len(embedding) == 0 {
+		// A cluster with no magnitude sits exactly 1 from every marker, so it would capture
+		// everything a model accepting past 1 compares against it.
+		if len(embedding) == 0 || embedding.Zero() {
 			continue
 		}
 
@@ -222,7 +227,7 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 
 // MatchFaces matches markers against a slice of faces.
 func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.Time, stats map[string]*faceMatchStats) (result FacesMatchResult, err error) {
-	limit := 500
+	limit := faceMatchBatchSize
 
 	if stats == nil {
 		stats = make(map[string]*faceMatchStats)
@@ -240,6 +245,7 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 	totalProcessed := 0
 
 	offset := 0
+	cursor := ""
 	start := time.Now()
 
 	for {
@@ -248,7 +254,7 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 		if force {
 			markers, err = query.FaceMarkers(limit, offset)
 		} else {
-			markers, err = query.UnmatchedFaceMarkers(limit, 0, matchedBefore)
+			markers, err = query.UnmatchedFaceMarkers(limit, cursor, matchedBefore)
 		}
 
 		if err != nil {
@@ -264,6 +270,10 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 			if offset >= maxMarkers {
 				offset = maxMarkers
 			}
+		} else {
+			// The cursor advances even when every marker in this page is skipped, which is what
+			// keeps a page of markers that are never stamped from being returned forever.
+			cursor = markers[len(markers)-1].MarkerUID
 		}
 
 		batchProcessed := 0

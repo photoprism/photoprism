@@ -97,7 +97,15 @@ func TestBuildFaceCandidates(t *testing.T) {
 	ambiguous.ID = "ambiguous"
 	ambiguous.FaceKind = int(face.AmbiguousFace)
 
-	faces := entity.Faces{*regular, stale, ambiguous}
+	// A cluster with no magnitude is 1 from every marker, so it would capture everything a model
+	// accepting past 1 compares with it.
+	zero := entity.Face{
+		ID:            "zero-magnitude",
+		EmbedModel:    regular.EmbedModel,
+		EmbeddingJSON: make(face.Embedding, len(regular.Embedding())).JSON(),
+	}
+
+	faces := entity.Faces{*regular, stale, ambiguous, zero}
 
 	index := buildFaceIndex(faces)
 

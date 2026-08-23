@@ -46,8 +46,12 @@ func Markers(limit, offset int, markerType string, embeddings, subjects bool, ma
 	return result, err
 }
 
-// UnmatchedFaceMarkers finds all currently unmatched face markers.
-func UnmatchedFaceMarkers(limit, offset int, matchedBefore *time.Time) (result entity.Markers, err error) {
+// UnmatchedFaceMarkers returns the next page of markers that still need matching, after the given uid.
+//
+// Paged by cursor, not offset: a run stamps what it matches, so rows leave this set as it reads, and
+// an offset would skip whatever shifted into its window. A fixed offset also returns the markers a
+// run visits without stamping until a batch holds nothing new and the run stops early.
+func UnmatchedFaceMarkers(limit int, after string, matchedBefore *time.Time) (result entity.Markers, err error) {
 	db := whereEmbeddingModel(Db().
 		Where("marker_type = ?", entity.MarkerFace).
 		Where("marker_invalid = 0").
@@ -59,7 +63,12 @@ func UnmatchedFaceMarkers(limit, offset int, matchedBefore *time.Time) (result e
 		db = db.Where("matched_at IS NULL OR matched_at < ?", matchedBefore)
 	}
 
-	db = db.Order("matched_at, marker_uid").Limit(limit).Offset(offset)
+	if after != "" {
+		db = db.Where("marker_uid > ?", after)
+	}
+
+	// Ordered by the cursor column, so a page cannot shift under the run that is reading it.
+	db = db.Order("marker_uid").Limit(limit)
 
 	err = db.Find(&result).Error
 

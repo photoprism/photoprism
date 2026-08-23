@@ -80,7 +80,7 @@ func TestMarkers(t *testing.T) {
 
 func TestUnmatchedFaceMarkers(t *testing.T) {
 	t.Run("All", func(t *testing.T) {
-		results, err := UnmatchedFaceMarkers(3, 0, nil)
+		results, err := UnmatchedFaceMarkers(3, "", nil)
 
 		if err != nil {
 			t.Fatal(err)
@@ -89,13 +89,33 @@ func TestUnmatchedFaceMarkers(t *testing.T) {
 		assert.Equal(t, 3, len(results))
 	})
 	t.Run("Before", func(t *testing.T) {
-		results, err := UnmatchedFaceMarkers(3, 0, entity.TimeStamp())
+		results, err := UnmatchedFaceMarkers(3, "", entity.TimeStamp())
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
 		assert.Equal(t, 3, len(results))
+	})
+	t.Run("Cursor", func(t *testing.T) {
+		// Paging by cursor is what keeps a run from re-reading markers it visited without
+		// stamping, so a page must start after the uid it is given and never repeat one.
+		first, err := UnmatchedFaceMarkers(2, "", nil)
+		require.NoError(t, err)
+		require.Len(t, first, 2)
+		require.Less(t, first[0].MarkerUID, first[1].MarkerUID, "a page is ordered by the cursor column")
+
+		next, err := UnmatchedFaceMarkers(2, first[1].MarkerUID, nil)
+		require.NoError(t, err)
+
+		for _, m := range next {
+			assert.Greater(t, m.MarkerUID, first[1].MarkerUID)
+		}
+	})
+	t.Run("CursorPastTheEnd", func(t *testing.T) {
+		results, err := UnmatchedFaceMarkers(2, "zzzzzzzzzzzzzzzz", nil)
+		require.NoError(t, err)
+		assert.Empty(t, results)
 	})
 }
 
@@ -137,7 +157,7 @@ func TestFaceMarkerModelBoundaries(t *testing.T) {
 		entity.UnscopedDb().Delete(legacy)
 	})
 
-	unmatched, err := UnmatchedFaceMarkers(1000, 0, nil)
+	unmatched, err := UnmatchedFaceMarkers(1000, "", nil)
 	require.NoError(t, err)
 	foundCompatible, foundLegacy := false, false
 	for _, marker := range unmatched {
@@ -200,7 +220,7 @@ func TestFaceMarkersWithoutConfiguredModel(t *testing.T) {
 	}
 
 	t.Run("UnmatchedFaceMarkers", func(t *testing.T) {
-		markers, err := UnmatchedFaceMarkers(1000, 0, nil)
+		markers, err := UnmatchedFaceMarkers(1000, "", nil)
 		require.NoError(t, err)
 		assert.True(t, found(markers))
 	})
@@ -253,7 +273,7 @@ func TestFaceMarkersWithEmptyEmbeddings(t *testing.T) {
 	t.Cleanup(func() { entity.UnscopedDb().Delete(empty) })
 
 	t.Run("UnmatchedFaceMarkers", func(t *testing.T) {
-		markers, err := UnmatchedFaceMarkers(1000, 0, nil)
+		markers, err := UnmatchedFaceMarkers(1000, "", nil)
 		require.NoError(t, err)
 
 		for _, marker := range markers {
