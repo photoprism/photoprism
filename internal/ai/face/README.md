@@ -163,6 +163,12 @@ The count is steepest below 20, which matters because **20 is the lowest value t
 
 Lowering it globally is a trade rather than a fix. Photographs that already yield a face gain roughly three more each at 10 px, and those are the people in the background that most libraries would rather leave unmarked; photographs that yield nothing gain around nine. Raising recall on group shots without marking bystanders everywhere else therefore wants a per-photo decision rather than a smaller default.
 
+**That decision is `FACE_SIZE_RETRY`, and the pipeline makes it per picture.** `face.DetectWithRetry` runs the detector once at `FACE_SIZE`, and only when that finds **no face at all** does it try again at `FACE_SIZE_RETRY` (default 10 px). A photograph whose subject was found never reaches the second pass, so bystanders stay unmarked where somebody is already recognized; a crowd, which yields nothing at the ordinary minimum, is searched again. Set it to `-1` to disable the fallback; zero selects the default, and it is never larger than `FACE_SIZE`.
+
+Measured over the development library, the fallback changed the outcome for 19 pictures out of 861 and added 1163 faces, of which 1149 came from twelve crowd photographs that had yielded none. The cost is one extra inference pass on the pictures that would otherwise be indexed as containing nobody.
+
+The indexer and `photoprism faces migrate` use the same call, which they must: the migration matches re-detected faces against stored markers by overlap, so a marker the fallback created would find no partner and be dropped.
+
 ### Embedding Handling
 
 #### Memory Management

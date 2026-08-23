@@ -10,7 +10,7 @@ import (
 )
 
 // DetectFaces detects faces in the specified image and generates embeddings from them.
-func DetectFaces(fileName string, minSize int, cacheCrop bool, expected int) (result face.Faces, err error) {
+func DetectFaces(fileName string, minSize, retrySize int, cacheCrop bool, expected int) (result face.Faces, err error) {
 	if fileName == "" {
 		return result, errors.New("missing image filename")
 	}
@@ -19,7 +19,7 @@ func DetectFaces(fileName string, minSize int, cacheCrop bool, expected int) (re
 	if Config == nil {
 		return result, errors.New("vision service is not configured")
 	} else if model := Config.Model(ModelTypeFace); model != nil {
-		result, err = face.Detect(fileName, minSize)
+		result, err = face.DetectWithRetry(fileName, minSize, retrySize)
 
 		if err != nil {
 			return result, err

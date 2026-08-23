@@ -351,6 +351,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 	rows = append(rows, [][]string{
 		{"face-engine-threads", fmt.Sprintf("%d", c.FaceEngineThreads())},
 		{"face-size", fmt.Sprintf("%d", c.FaceSize())},
+		{"face-size-retry", fmt.Sprintf("%d", c.FaceSizeRetry())},
 		{"face-score", fmt.Sprintf("%f", c.FaceScore())},
 	}...)
 
@@ -446,6 +447,7 @@ func (c *Config) FaceReport() (rows [][]string, cols []string) {
 		{"face-model-license", c.FaceModelLicense()},
 		{"facenet-model-path", c.FacenetModelPath()},
 		{"face-size", fmt.Sprintf("%d", c.FaceSize())},
+		{"face-size-retry", fmt.Sprintf("%d", c.FaceSizeRetry())},
 		{"face-score", fmt.Sprintf("%f", c.FaceScore())},
 		{"face-overlap", fmt.Sprintf("%d", c.FaceOverlap())},
 		{"face-cluster-size", fmt.Sprintf("%d", c.FaceClusterSize())},

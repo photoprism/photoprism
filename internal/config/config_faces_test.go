@@ -1214,6 +1214,34 @@ func TestConfig_FaceSize(t *testing.T) {
 	assert.Equal(t, face.SizeThreshold, c.FaceSize())
 }
 
+func TestConfig_FaceSizeRetry(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Equal(t, face.RetrySizeThreshold, c.FaceSizeRetry())
+	t.Run("Disabled", func(t *testing.T) {
+		c.options.FaceSizeRetry = -1
+		assert.Zero(t, c.FaceSizeRetry())
+	})
+	t.Run("UnsetSelectsTheDefault", func(t *testing.T) {
+		// Zero is what a configuration that never named the option holds, and it must not
+		// read as a request to turn the fallback off.
+		c.options.FaceSizeRetry = 0
+		assert.Equal(t, face.RetrySizeThreshold, c.FaceSizeRetry())
+	})
+	t.Run("OutOfRange", func(t *testing.T) {
+		c.options.FaceSizeRetry = 100000
+		assert.Equal(t, face.RetrySizeThreshold, c.FaceSizeRetry())
+	})
+	t.Run("NeverAboveTheOrdinaryThreshold", func(t *testing.T) {
+		// A retry asking for larger faces than the first pass could only find fewer, so it
+		// is clamped rather than allowed to make the fallback pointless.
+		c.options.FaceSize = 25
+		c.options.FaceSizeRetry = 40
+		assert.Equal(t, 25, c.FaceSizeRetry())
+	})
+	c.options.FaceSize = 0
+	c.options.FaceSizeRetry = 0
+}
+
 func TestConfig_FaceScore(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Equal(t, 9.0, c.FaceScore())

@@ -54,6 +54,10 @@ var (
 	ClusterScoreThreshold = 20
 	// SizeThreshold is the minimum detected face size, in pixels.
 	SizeThreshold = 25
+	// RetrySizeThreshold is the minimum face size, in pixels, used by the second pass that runs
+	// only when the first finds nothing. Crowd photographs reduce every face below SizeThreshold,
+	// so without it a frame full of people is indexed as containing none.
+	RetrySizeThreshold = 10
 	// ClusterSizeThreshold is the minimum face size, in pixels, for faces considered when forming clusters.
 	ClusterSizeThreshold = 60
 	// ClusterDist is the similarity distance threshold that defines the cluster core.

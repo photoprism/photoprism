@@ -2,8 +2,11 @@ package face
 
 import (
 	"fmt"
+	"path/filepath"
 	"strings"
 	"sync"
+
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // EngineName identifies a face detection engine implementation.
@@ -139,6 +142,33 @@ func ActiveEngineName() EngineName {
 	}
 
 	return EngineNone
+}
+
+// DetectWithRetry runs the detector and, when it finds nothing, tries once more at a smaller
+// minimum size.
+//
+// Detection sees a 720 px thumbnail, so a crowd reduces every face to around ten pixels and the
+// ordinary minimum discards all of them - the frame is then indexed as holding nobody. Retrying
+// only on an empty result is what keeps that from marking bystanders everywhere else: a picture
+// whose subject was found never reaches the second pass.
+//
+// A retrySize of zero or one that is not smaller than minSize disables it.
+func DetectWithRetry(fileName string, minSize, retrySize int) (Faces, error) {
+	faces, err := Detect(fileName, minSize)
+
+	if err != nil || len(faces) > 0 || retrySize < 1 || retrySize >= minSize {
+		return faces, err
+	}
+
+	retried, retryErr := Detect(fileName, retrySize)
+
+	if retryErr != nil || len(retried) == 0 {
+		return faces, err
+	}
+
+	log.Debugf("faces: found %d face(s) in %s below the %d px minimum", len(retried), clean.Log(filepath.Base(fileName)), minSize)
+
+	return retried, nil
 }
 
 // Detect runs the active engine on the provided file and returns the detected faces.

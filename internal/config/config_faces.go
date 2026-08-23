@@ -617,6 +617,26 @@ func (c *Config) FaceSize() int {
 	return c.options.FaceSize
 }
 
+// FaceSizeRetry returns the face size threshold for the second detection pass, which runs only
+// when the first found no face at all.
+//
+// A negative value disables the second pass, and zero selects the default, so that a configuration
+// which never set the option behaves like one that asked for the default rather than silently
+// turning the fallback off. The result never exceeds the ordinary threshold, because a retry asking
+// for larger faces could only find fewer than the pass that already found none.
+func (c *Config) FaceSizeRetry() int {
+	size := c.options.FaceSizeRetry
+
+	switch {
+	case size < 0:
+		return 0
+	case size == 0 || size > face.SizeThreshold*10:
+		size = face.RetrySizeThreshold
+	}
+
+	return min(size, c.FaceSize())
+}
+
 // FaceScore returns the face quality score threshold.
 func (c *Config) FaceScore() float64 {
 	if c.options.FaceScore < 1 || c.options.FaceScore > 100 {

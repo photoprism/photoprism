@@ -647,7 +647,9 @@ func (w *Faces) detectMigrationEmbeddings(embedder face.Embedder, file *entity.F
 		return result, "", err
 	}
 
-	detected, err := face.Detect(thumbName, w.conf.FaceSize())
+	// The same fallback the indexer used, or a marker created by it would match no detection
+	// here and be dropped as unreadable.
+	detected, err := face.DetectWithRetry(thumbName, w.conf.FaceSize(), w.conf.FaceSizeRetry())
 	if err != nil {
 		return result, "", err
 	}

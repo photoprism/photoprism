@@ -1349,6 +1349,12 @@ var Flags = CliFlags{
 			Value:   face.SizeThreshold,
 			EnvVars: EnvVars("FACE_SIZE"),
 		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "face-size-retry",
+			Usage:   "minimum size of faces in `PIXELS` when a picture would otherwise have none, -1 to disable",
+			Value:   face.RetrySizeThreshold,
+			EnvVars: EnvVars("FACE_SIZE_RETRY"),
+		}}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-score",
 			Usage:   "minimum face `QUALITY` score (1-100)",

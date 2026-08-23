@@ -263,6 +263,7 @@ type Options struct {
 	FaceEngineThreads         int           `yaml:"FaceEngineThreads" json:"-" flag:"face-engine-threads"`
 	FaceModel                 string        `yaml:"FaceModel" json:"-" flag:"face-model"`
 	FaceSize                  int           `yaml:"-" json:"-" flag:"face-size"`
+	FaceSizeRetry             int           `yaml:"-" json:"-" flag:"face-size-retry"`
 	FaceScore                 float64       `yaml:"-" json:"-" flag:"face-score"`
 	FaceOverlap               int           `yaml:"-" json:"-" flag:"face-overlap"`
 	FaceClusterSize           int           `yaml:"-" json:"-" flag:"face-cluster-size"`

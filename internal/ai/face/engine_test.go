@@ -120,6 +120,112 @@ func TestDetect(t *testing.T) {
 	})
 }
 
+func TestDetectWithRetry(t *testing.T) {
+	t.Run("RetriesOnlyWhenNothingWasFound", func(t *testing.T) {
+		restoreEngine(t)
+
+		var calls []detectCall
+
+		stub := &recordingEngine{
+			calls: &calls,
+			// A face is returned for the smaller minimum only, which is the crowd case.
+			result: func(minSize int) Faces {
+				if minSize <= 10 {
+					return Faces{{Score: 50}}
+				}
+				return nil
+			},
+		}
+
+		if prev := UseEngine(stub); prev != nil {
+			_ = prev.Close()
+		}
+
+		faces, err := DetectWithRetry("testdata/face.jpg", 25, 10)
+
+		require.NoError(t, err)
+		require.Len(t, faces, 1, "the second pass result is returned")
+		require.Len(t, calls, 2, "the first pass runs before the second")
+		assert.Equal(t, 25, calls[0].minSize)
+		assert.Equal(t, 10, calls[1].minSize)
+		assert.Equal(t, EngineName("stub"), faces[0].DetectModel)
+	})
+	t.Run("NoRetryWhenTheFirstPassFoundSomething", func(t *testing.T) {
+		restoreEngine(t)
+
+		var calls []detectCall
+
+		stub := &recordingEngine{calls: &calls, result: func(int) Faces { return Faces{{Score: 90}} }}
+
+		if prev := UseEngine(stub); prev != nil {
+			_ = prev.Close()
+		}
+
+		faces, err := DetectWithRetry("testdata/face.jpg", 25, 10)
+
+		require.NoError(t, err)
+		require.Len(t, faces, 1)
+		assert.Len(t, calls, 1, "a picture whose subject was found must not be searched again")
+	})
+	t.Run("Disabled", func(t *testing.T) {
+		restoreEngine(t)
+
+		var calls []detectCall
+
+		stub := &recordingEngine{calls: &calls, result: func(int) Faces { return nil }}
+
+		if prev := UseEngine(stub); prev != nil {
+			_ = prev.Close()
+		}
+
+		for _, retrySize := range []int{0, -1, 25, 30} {
+			calls = nil
+			_, err := DetectWithRetry("testdata/face.jpg", 25, retrySize)
+			require.NoError(t, err)
+			assert.Len(t, calls, 1, "retry size %d must not trigger a second pass", retrySize)
+		}
+	})
+	t.Run("FirstPassErrorIsNotRetried", func(t *testing.T) {
+		restoreEngine(t)
+
+		var calls []detectCall
+
+		stub := &recordingEngine{calls: &calls, err: errors.New("broken"), result: func(int) Faces { return nil }}
+
+		if prev := UseEngine(stub); prev != nil {
+			_ = prev.Close()
+		}
+
+		_, err := DetectWithRetry("testdata/face.jpg", 25, 10)
+
+		require.Error(t, err)
+		assert.Len(t, calls, 1, "a detector that failed is not asked again")
+	})
+}
+
+// detectCall records what one detection pass was asked for, so the two passes can be told
+// apart by their minimum size.
+type detectCall struct{ minSize int }
+
+// recordingEngine records the minimum size each pass asked for.
+type recordingEngine struct {
+	calls  *[]detectCall
+	result func(minSize int) Faces
+	err    error
+}
+
+// Name returns the stub engine name.
+func (e *recordingEngine) Name() EngineName { return "stub" }
+
+// Detect records the call and returns whatever the result function yields.
+func (e *recordingEngine) Detect(_ string, minSize int) (Faces, error) {
+	*e.calls = append(*e.calls, detectCall{minSize})
+	return e.result(minSize), e.err
+}
+
+// Close releases nothing.
+func (e *recordingEngine) Close() error { return nil }
+
 func TestConfigureEngineReuse(t *testing.T) {
 	restoreEngine(t)
 
