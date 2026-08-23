@@ -92,6 +92,31 @@ func TestFace_AlignPoints(t *testing.T) {
 		_, ok := f.AlignPoints()
 		assert.False(t, ok)
 	})
+	t.Run("LegacyLandmarkVocabulary", func(t *testing.T) {
+		// Markers indexed before the ONNX detector carry a different and larger landmark
+		// set that happens to share the two eye names, so a check that counted points or
+		// matched by position would warp a face onto the template from the wrong geometry.
+		// Only all five names may satisfy this.
+		f := &Face{
+			Rows: 300,
+			Cols: 300,
+			Area: NewArea("face", 150, 150, 100),
+			Eyes: Areas{NewArea("eye_l", 140, 140, 10), NewArea("eye_r", 140, 160, 10)},
+			Landmarks: Areas{
+				NewArea("lp46", 150, 130, 10),
+				NewArea("lp44", 150, 170, 10),
+				NewArea("mouth_lp93", 170, 150, 10),
+				NewArea("mouth_lp84", 175, 140, 10),
+				NewArea("mouth_lp82", 175, 160, 10),
+				NewArea("lp84", 165, 150, 10),
+			},
+		}
+
+		require.Greater(t, len(f.Eyes)+len(f.Landmarks), NumLandmarks, "the legacy set is larger, not smaller")
+
+		_, ok := f.AlignPoints()
+		assert.False(t, ok)
+	})
 	t.Run("NilFace", func(t *testing.T) {
 		var f *Face
 		_, ok := f.AlignPoints()
