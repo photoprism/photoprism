@@ -581,12 +581,23 @@ func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) 
 	}
 
 	if len(generated) > 0 {
-		if err = query.SaveFaceMigrationEmbeddings(target, generated); err != nil {
+		if err = query.SaveFaceMigrationEmbeddings(target, migrationDetectModel(detected), generated); err != nil {
 			return 0, skipped, nil, detected, err
 		}
 	}
 
 	return migrated, skipped, failed, detected, err
+}
+
+// migrationDetectModel names the detector that produced the crops a migration re-embedded,
+// and nothing when the run re-cropped from the geometry a previous detection stored: no
+// detector ran, so the one already recorded still describes those crops.
+func migrationDetectModel(detected bool) string {
+	if !detected {
+		return ""
+	}
+
+	return face.ActiveEngineName()
 }
 
 // faceMigrationMarkerUIDs returns the marker UIDs in their current order.

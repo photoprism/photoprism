@@ -903,6 +903,7 @@ func (m *File) AddFace(f face.Face, subjUid string) {
 				values := Values{
 					"embeddings_json": f.Embeddings.JSON(),
 					"embed_model":     f.EmbedModel,
+					"detect_model":    f.DetectModel,
 					"landmarks_json":  landmarks,
 				}
 
@@ -912,7 +913,7 @@ func (m *File) AddFace(f face.Face, subjUid string) {
 				}
 			}
 
-			existing.SetEmbeddings(f.Embeddings, f.EmbedModel)
+			existing.SetEmbeddings(f.Embeddings, f.EmbedModel, f.DetectModel)
 			existing.LandmarksJSON = landmarks
 		}
 

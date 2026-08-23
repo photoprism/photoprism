@@ -282,7 +282,11 @@ func FaceMigrationLowQualityMarkers(model string) (count int, err error) {
 }
 
 // SaveFaceMigrationEmbeddings checkpoints generated embeddings for a single file.
-func SaveFaceMigrationEmbeddings(model string, embeddings map[string]face.Embeddings) error {
+//
+// A blank detectModel leaves the recorded detector as it is, which is what a run that re-cropped
+// from the stored geometry must do: it re-ran no detector, so the one already recorded is still
+// the one that produced the crop.
+func SaveFaceMigrationEmbeddings(model, detectModel string, embeddings map[string]face.Embeddings) error {
 	if model == "" {
 		return fmt.Errorf("faces: migration model is required")
 	}
@@ -298,15 +302,21 @@ func SaveFaceMigrationEmbeddings(model string, embeddings map[string]face.Embedd
 				return fmt.Errorf("faces: invalid migration embedding json for marker %s", markerUID)
 			}
 
+			columns := entity.Values{
+				"embeddings_json": encoded,
+				"embed_model":     model,
+				"face_id":         "",
+				"face_dist":       -1.0,
+				"matched_at":      nil,
+			}
+
+			if detectModel != "" {
+				columns["detect_model"] = detectModel
+			}
+
 			res := tx.Model(&entity.Marker{}).
 				Where("marker_uid = ? AND marker_type = ?", markerUID, entity.MarkerFace).
-				UpdateColumns(entity.Values{
-					"embeddings_json": encoded,
-					"embed_model":     model,
-					"face_id":         "",
-					"face_dist":       -1.0,
-					"matched_at":      nil,
-				})
+				UpdateColumns(columns)
 
 			if res.Error != nil {
 				return res.Error
@@ -342,7 +352,7 @@ func FinalizeFaceMigration(model string, identities []FaceMigrationIdentity, clu
 		if err := tx.Model(&entity.Marker{}).
 			Where("marker_type = ?", entity.MarkerFace).
 			Where("marker_invalid = 1 OR file_uid = '' OR LENGTH(embeddings_json) = 0 OR "+cond, args...).
-			UpdateColumns(entity.Values{"embeddings_json": []byte(""), "embed_model": ""}).Error; err != nil {
+			UpdateColumns(entity.Values{"embeddings_json": []byte(""), "embed_model": "", "detect_model": ""}).Error; err != nil {
 			return err
 		}
 
@@ -352,7 +362,7 @@ func FinalizeFaceMigration(model string, identities []FaceMigrationIdentity, clu
 				j := min(i+batchSize, len(failedMarkerUIDs))
 				if err := tx.Model(&entity.Marker{}).
 					Where("marker_type = ? AND marker_uid IN (?)", entity.MarkerFace, failedMarkerUIDs[i:j]).
-					UpdateColumns(entity.Values{"embeddings_json": []byte(""), "embed_model": ""}).Error; err != nil {
+					UpdateColumns(entity.Values{"embeddings_json": []byte(""), "embed_model": "", "detect_model": ""}).Error; err != nil {
 					return err
 				}
 			}

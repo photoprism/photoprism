@@ -40,6 +40,7 @@ type Marker struct {
 	FaceDist       float64         `gorm:"default:-1;" json:"FaceDist" yaml:"FaceDist,omitempty"`
 	face           *Face           `gorm:"foreignkey:FaceID;association_foreignkey:ID;association_autoupdate:false;association_autocreate:false;association_save_reference:false"`
 	EmbedModel     string          `gorm:"column:embed_model;type:VARBINARY(32);index;default:'';" json:"-" yaml:"EmbedModel,omitempty"`
+	DetectModel    string          `gorm:"column:detect_model;type:VARBINARY(32);index;default:'';" json:"-" yaml:"DetectModel,omitempty"`
 	EmbeddingsJSON json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"-" yaml:"EmbeddingsJSON,omitempty"`
 	embeddings     face.Embeddings `gorm:"-" yaml:"-"`
 	LandmarksJSON  json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"-" yaml:"LandmarksJSON,omitempty"`
@@ -108,22 +109,28 @@ func NewFaceMarker(f face.Face, file File, subjUid string) *Marker {
 		return nil
 	}
 
-	m.SetEmbeddings(f.Embeddings, f.EmbedModel)
+	m.SetEmbeddings(f.Embeddings, f.EmbedModel, f.DetectModel)
 	m.LandmarksJSON = f.RelativeLandmarksJSON()
 
 	return m
 }
 
-// SetEmbeddings assigns new face embeddings to the marker, recorded under the model that
-// produced them rather than the one that happens to be configured now.
-func (m *Marker) SetEmbeddings(e face.Embeddings, model face.ModelName) {
+// SetEmbeddings assigns new face embeddings to the marker, recorded under the models that
+// produced them rather than the ones that happen to be configured now.
+//
+// The detector is recorded beside the embedding model because it decides the landmarks, and
+// therefore the aligned crop the vector was computed from: without it, a later run cannot tell
+// whether stored landmarks are the ones the configured pipeline would produce.
+func (m *Marker) SetEmbeddings(e face.Embeddings, embedModel, detectModel face.ModelName) {
 	m.embeddings = e
 	m.EmbeddingsJSON = e.JSON()
 
 	if e.Empty() {
 		m.EmbedModel = ""
+		m.DetectModel = ""
 	} else {
-		m.EmbedModel = model
+		m.EmbedModel = embedModel
+		m.DetectModel = detectModel
 	}
 }
 

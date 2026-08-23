@@ -293,17 +293,28 @@ func TestSaveFaceMigrationEmbeddings(t *testing.T) {
 	t.Cleanup(func() { entity.UnscopedDb().Delete(marker) })
 
 	embeddings := face.Embeddings{face.RandomEmbedding()}
-	require.NoError(t, SaveFaceMigrationEmbeddings(face.ModelFaceNet, map[string]face.Embeddings{marker.MarkerUID: embeddings}))
+	require.NoError(t, SaveFaceMigrationEmbeddings(face.ModelFaceNet, face.EngineONNX, map[string]face.Embeddings{marker.MarkerUID: embeddings}))
 
 	stored, err := MarkerByUID(marker.MarkerUID)
 	require.NoError(t, err)
 	assert.Equal(t, face.ModelFaceNet, stored.EmbedModel)
+	assert.Equal(t, face.EngineONNX, stored.DetectModel, "a run that re-detected records the detector it used")
 	assert.Empty(t, stored.FaceID)
 	assert.True(t, stored.Embeddings().One())
 	assert.Len(t, stored.Embeddings()[0], len(embeddings[0]))
 
-	require.Error(t, SaveFaceMigrationEmbeddings("", nil))
-	require.Error(t, SaveFaceMigrationEmbeddings(face.ModelFaceNet, map[string]face.Embeddings{"": nil}))
+	t.Run("BlankDetectorKeepsProvenance", func(t *testing.T) {
+		// Re-cropping from the stored geometry runs no detector, so overwriting the recorded
+		// one would attribute the crop to a detector that never saw the image.
+		require.NoError(t, SaveFaceMigrationEmbeddings(face.ModelFaceNet, "", map[string]face.Embeddings{marker.MarkerUID: embeddings}))
+
+		kept, keptErr := MarkerByUID(marker.MarkerUID)
+		require.NoError(t, keptErr)
+		assert.Equal(t, face.EngineONNX, kept.DetectModel)
+	})
+
+	require.Error(t, SaveFaceMigrationEmbeddings("", face.EngineONNX, nil))
+	require.Error(t, SaveFaceMigrationEmbeddings(face.ModelFaceNet, face.EngineONNX, map[string]face.Embeddings{"": nil}))
 }
 
 func TestFinalizeFaceMigration(t *testing.T) {
@@ -347,6 +358,7 @@ func TestFinalizeFaceMigration(t *testing.T) {
 		SubjUID:        subjectUID,
 		SubjSrc:        entity.SrcAuto,
 		EmbedModel:     face.ModelFaceNet,
+		DetectModel:    face.EngineONNX,
 		EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
 		W:              0.1,
 		H:              0.1,
@@ -360,6 +372,7 @@ func TestFinalizeFaceMigration(t *testing.T) {
 		SubjUID:        subjectUID,
 		SubjSrc:        entity.SrcXmp,
 		EmbedModel:     face.ModelFaceNet,
+		DetectModel:    face.EngineONNX,
 		EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
 		W:              0.1,
 		H:              0.1,
@@ -405,6 +418,10 @@ func TestFinalizeFaceMigration(t *testing.T) {
 	assert.Equal(t, "Alice", storedAuto.MarkerName)
 	assert.Equal(t, subjectUID, storedAuto.SubjUID)
 	assert.Empty(t, storedAuto.EmbeddingsJSON)
+	// A blanked vector takes both provenance columns with it: a detector recorded next to
+	// no embedding would claim a crop that no longer exists.
+	assert.Empty(t, storedAuto.DetectModel)
+	assert.Equal(t, face.EngineONNX, storedImported.DetectModel, "a spared vector keeps its detector")
 	assert.Equal(t, cluster.ID, storedImported.FaceID)
 	assert.Equal(t, subjectUID, storedImported.SubjUID)
 

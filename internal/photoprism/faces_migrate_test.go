@@ -290,6 +290,71 @@ func TestFaces_migrateFaceFile(t *testing.T) {
 	require.Error(t, err)
 	assert.Equal(t, "file was deleted", err.Error())
 	assert.Equal(t, []string{marker.MarkerUID}, failed)
+
+	t.Run("CropPathKeepsTheRecordedDetector", func(t *testing.T) {
+		// Re-cropping reads the stored geometry, so the detector that produced it is still
+		// the one that produced the crop and must survive the checkpoint.
+		hash := "c0ffee00000000000000000000000000000000a5"
+		photo := entity.Photo{PhotoUID: rnd.GenerateUID('p'), PhotoName: "migrate-crop", PhotoType: entity.MediaImage}
+		require.NoError(t, photo.Save())
+		file := &entity.File{
+			PhotoID:     photo.ID,
+			PhotoUID:    photo.PhotoUID,
+			FileUID:     rnd.GenerateUID('f'),
+			FileHash:    hash,
+			FileName:    "migrate-crop/a.jpg",
+			FileRoot:    entity.RootOriginals,
+			FilePrimary: true,
+			FileType:    "jpg",
+		}
+		require.NoError(t, file.Create())
+
+		stale := &entity.Marker{
+			MarkerUID:      rnd.GenerateUID('m'),
+			FileUID:        file.FileUID,
+			MarkerType:     entity.MarkerFace,
+			MarkerSrc:      entity.SrcImage,
+			EmbedModel:     face.ModelSFace,
+			DetectModel:    face.EngineONNX,
+			EmbeddingsJSON: face.Embeddings{face.Embedding{1, 0, 0, 0}}.JSON(),
+			W:              1,
+			H:              1,
+		}
+		require.NoError(t, entity.Db().Create(stale).Error)
+		t.Cleanup(func() { entity.UnscopedDb().Delete(stale) })
+
+		cropConf := config.NewMinimalTestConfig(t.TempDir())
+		require.NoError(t, cropConf.CreateDirectories())
+		cropWorker := NewFaces(cropConf)
+
+		thumbName, thumbErr := thumb.Sizes[thumb.Fit720].FileName(hash, cropConf.ThumbCachePath())
+		require.NoError(t, thumbErr)
+		require.NoError(t, thumb.Save(image.NewNRGBA(image.Rect(0, 0, 64, 64)), thumbName))
+
+		cropEmbedder := &migrationTestEmbedder{name: face.ModelFaceNet, dims: 4}
+		migrated, _, cropFailed, cropDetected, cropErr := cropWorker.migrateFaceFile(cropEmbedder, face.ModelFaceNet, file.FileUID)
+
+		require.NoError(t, cropErr)
+		assert.False(t, cropDetected)
+		assert.Empty(t, cropFailed)
+		require.Equal(t, 1, migrated)
+
+		saved, savedErr := query.MarkerByUID(stale.MarkerUID)
+		require.NoError(t, savedErr)
+		assert.Equal(t, face.ModelFaceNet, saved.EmbedModel)
+		assert.Equal(t, face.EngineONNX, saved.DetectModel)
+	})
+}
+
+func TestMigrationDetectModel(t *testing.T) {
+	t.Run("Detected", func(t *testing.T) {
+		assert.Equal(t, face.ActiveEngineName(), migrationDetectModel(true))
+	})
+	t.Run("CroppedFromStoredGeometry", func(t *testing.T) {
+		// Nothing was detected, so the recorded detector must be left alone rather than
+		// reattributed to whichever engine happens to be loaded now.
+		assert.Empty(t, migrationDetectModel(false))
+	})
 }
 
 func TestFaceMigrationMarkerUIDs(t *testing.T) {
@@ -521,7 +586,7 @@ func TestCentroidSamples(t *testing.T) {
 	// previous model got wrong looks like once it has been re-embedded.
 	marker := func(v []float32) entity.Marker {
 		m := entity.Marker{MarkerUID: rnd.GenerateUID('m'), MarkerType: entity.MarkerFace}
-		m.SetEmbeddings(face.NewEmbeddings([][]float32{v}), face.ModelSFace)
+		m.SetEmbeddings(face.NewEmbeddings([][]float32{v}), face.ModelSFace, face.EngineONNX)
 
 		return m
 	}
@@ -674,7 +739,7 @@ func TestCentroidSamples(t *testing.T) {
 		// Embeddings.Dist reports -1 when nothing is comparable, which must not read as
 		// the closest possible sample and let a foreign vector define the centroid.
 		odd := entity.Marker{MarkerUID: rnd.GenerateUID('m'), MarkerType: entity.MarkerFace}
-		odd.SetEmbeddings(face.Embeddings{face.Embedding{1, 0}}, face.ModelSFace)
+		odd.SetEmbeddings(face.Embeddings{face.Embedding{1, 0}}, face.ModelSFace, face.EngineONNX)
 
 		group := entity.Markers{marker(near(0)), marker(near(1)), marker(near(2)), odd}
 

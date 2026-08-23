@@ -794,24 +794,33 @@ func TestMarker_SetEmbeddings(t *testing.T) {
 		// reads as legacy FaceNet and would be admitted into FaceNet clusters whatever
 		// model actually produced it.
 		m := &Marker{MarkerType: MarkerFace}
-		m.SetEmbeddings(face.Embeddings{face.RandomEmbedding()}, face.ModelSFace)
+		m.SetEmbeddings(face.Embeddings{face.RandomEmbedding()}, face.ModelSFace, face.EngineONNX)
 
 		assert.Equal(t, face.ModelSFace, m.EmbedModel)
 		assert.NotEmpty(t, m.EmbeddingsJSON)
 		assert.False(t, m.Embeddings().Empty())
 	})
+	t.Run("RecordsTheProducingDetector", func(t *testing.T) {
+		// The detector decides the landmarks and therefore the aligned crop, so a vector
+		// whose detector is unknown cannot be told apart from one a legacy set produced.
+		m := &Marker{MarkerType: MarkerFace}
+		m.SetEmbeddings(face.Embeddings{face.RandomEmbedding()}, face.ModelSFace, face.EngineONNX)
+
+		assert.Equal(t, face.EngineONNX, m.DetectModel)
+	})
 	t.Run("EmptyClearsTheModel", func(t *testing.T) {
 		// A marker whose vector was cleared must not keep claiming a model, or a later
 		// migration counts it as already done.
-		m := &Marker{MarkerType: MarkerFace, EmbedModel: face.ModelSFace}
-		m.SetEmbeddings(face.Embeddings{}, face.ModelSFace)
+		m := &Marker{MarkerType: MarkerFace, EmbedModel: face.ModelSFace, DetectModel: face.EngineONNX}
+		m.SetEmbeddings(face.Embeddings{}, face.ModelSFace, face.EngineONNX)
 
 		assert.Empty(t, m.EmbedModel)
+		assert.Empty(t, m.DetectModel)
 	})
 	t.Run("ReplacesAPreviousModel", func(t *testing.T) {
 		m := &Marker{MarkerType: MarkerFace}
-		m.SetEmbeddings(face.Embeddings{face.RandomEmbedding()}, face.ModelFaceNet)
-		m.SetEmbeddings(face.Embeddings{face.RandomEmbedding()}, face.ModelSFace)
+		m.SetEmbeddings(face.Embeddings{face.RandomEmbedding()}, face.ModelFaceNet, face.EngineONNX)
+		m.SetEmbeddings(face.Embeddings{face.RandomEmbedding()}, face.ModelSFace, face.EngineONNX)
 
 		assert.Equal(t, face.ModelSFace, m.EmbedModel)
 	})

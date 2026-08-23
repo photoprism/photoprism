@@ -10,6 +10,8 @@ Detection thresholds favor recall, and overlap handling keeps markers stable acr
 
 Embedding provenance is persisted: `faces.embed_model` and `markers.embed_model` record the model that produced each vector, `entity.Face.Match` refuses to compare clusters from a different model, and `photoprism faces audit` reports the cluster and marker counts per model.
 
+Detector provenance is persisted alongside it: `markers.detect_model` records the detector whose landmarks produced the crop a vector was computed from. A blank value means the row was written before the column existed, so its landmarks must not be trusted for alignment. See § Detector Provenance.
+
 ### Detection Pipeline
 
 PhotoPrism uses a single detector:
@@ -21,6 +23,14 @@ The `github.com/yalue/onnxruntime_go` binding requests the exact C API version o
 Runtime selection lives in `Config.FaceEngine()`. Scheduling is controlled by the face model entry in `vision.yml`: `Config.FaceEngineRunType()` simply forwards to `vision.Config.RunType(ModelTypeFace)` and returns `never` when no detector is configured. This keeps face detection aligned with embedding generation so both always run together.
 
 The detector also returns five facial landmarks, which `engine_onnx.go` decodes into `Face.Eyes` (both eyes) and `Face.Landmarks` (nose and mouth corners).
+
+#### Detector Provenance
+
+`face.Detect` stamps `Face.DetectModel` with the name of the engine that found each face, and that value is carried to `markers.detect_model` wherever a vector is written — `entity.Marker.SetEmbeddings`, the in-place upgrade in `entity.File.AddFace`, and `query.SaveFaceMigrationEmbeddings`. Recording it at detection time is what keeps it truthful: everything downstream would have to ask global configuration, which by then names whatever is loaded rather than whatever produced the row.
+
+The column attests **the crop a vector was computed from**, not the contents of `landmarks_json`. The two agree everywhere a marker is created or upgraded, because both are written from the same detection. They do not agree after `faces migrate` re-detects for an aligned model: that path stores the regenerated vector and its detector but leaves the stored landmarks as they were. Reusing known-good landmarks instead of re-detecting therefore needs the migration to persist them too; until it does, `detect_model` answers "which detector produced this vector", not "are these landmarks current".
+
+A blank value means the row predates the column. Clearing a vector clears both provenance columns, since a detector recorded next to no embedding would claim a crop that no longer exists. A migration that re-crops from stored geometry runs no detector and leaves the recorded one alone.
 
 ### Embedding Models
 

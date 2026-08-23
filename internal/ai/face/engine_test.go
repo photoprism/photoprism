@@ -54,6 +54,54 @@ func TestActiveEngineName(t *testing.T) {
 	assert.Equal(t, EngineNone, ActiveEngineName())
 }
 
+// stubEngine returns a fixed result under a chosen name so detection can be exercised
+// without a model file.
+type stubEngine struct {
+	name  EngineName
+	faces Faces
+	err   error
+}
+
+// Name returns the engine name this stub reports.
+func (e *stubEngine) Name() EngineName { return e.name }
+
+// Detect returns the canned result, leaving provenance to the caller.
+func (e *stubEngine) Detect(string, int) (Faces, error) { return e.faces, e.err }
+
+// Close releases nothing.
+func (e *stubEngine) Close() error { return nil }
+
+func TestDetect(t *testing.T) {
+	t.Run("RecordsTheDetector", func(t *testing.T) {
+		restoreEngine(t)
+
+		// Every face carries the detector that found it, because its landmarks decide the
+		// aligned crop: a vector whose detector is unknown cannot be compared with confidence.
+		stub := &stubEngine{name: "stub", faces: Faces{{Score: 42}, {Score: 21}}}
+		if prev := UseEngine(stub); prev != nil {
+			_ = prev.Close()
+		}
+
+		faces, err := Detect("testdata/face.jpg", 20)
+
+		require.NoError(t, err)
+		require.Len(t, faces, 2)
+		assert.Equal(t, EngineName("stub"), faces[0].DetectModel)
+		assert.Equal(t, EngineName("stub"), faces[1].DetectModel)
+	})
+	t.Run("NoEngine", func(t *testing.T) {
+		restoreEngine(t)
+
+		if prev := UseEngine(nil); prev != nil {
+			_ = prev.Close()
+		}
+
+		_, err := Detect("testdata/face.jpg", 20)
+
+		require.Error(t, err)
+	})
+}
+
 func TestConfigureEngineReuse(t *testing.T) {
 	restoreEngine(t)
 

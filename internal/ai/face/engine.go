@@ -142,10 +142,21 @@ func ActiveEngineName() EngineName {
 }
 
 // Detect runs the active engine on the provided file and returns the detected faces.
+//
+// Each face records the detector that found it, because this is the last frame where the
+// producer of the landmarks is known: the crop they align is what makes an embedding
+// comparable, so everything downstream would have to ask global configuration instead.
 func Detect(fileName string, minSize int) (Faces, error) {
 	engine := ActiveEngine()
 	if engine == nil {
 		return Faces{}, fmt.Errorf("faces: detection engine not configured")
 	}
-	return engine.Detect(fileName, minSize)
+
+	faces, err := engine.Detect(fileName, minSize)
+
+	for i := range faces {
+		faces[i].DetectModel = engine.Name()
+	}
+
+	return faces, err
 }

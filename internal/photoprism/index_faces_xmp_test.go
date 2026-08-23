@@ -563,7 +563,7 @@ func TestReconcileXmpFaces_OverwritesClusteredAiFace(t *testing.T) {
 		m.MarkerName = "AutoAlice"
 		m.FaceID = cluster.ID
 		m.FaceDist = 0.1
-		m.SetEmbeddings(face.Embeddings{emb}, face.EmbeddingModelName())
+		m.SetEmbeddings(face.Embeddings{emb}, face.EmbeddingModelName(), face.EngineONNX)
 		require.NoError(t, m.Create())
 		return m
 	}
