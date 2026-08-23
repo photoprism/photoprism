@@ -190,6 +190,10 @@ func TestRemoveInvalidMarkerReferences(t *testing.T) {
 }
 
 func TestRemoveNonExistentMarkerFaces(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	// Make sure that the data is valid for the test.
 	_, err := RemoveAutoFaceClusters()
 	require.NoError(t, err)

@@ -159,6 +159,9 @@ func TestWaitForAsyncJobsTimeout(t *testing.T) {
 
 func TestLabelPhotoCounts(t *testing.T) {
 	t.Run("NilTesting", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		}
 		t.Cleanup(func() {
 			ResetTestFixtures()
 		})

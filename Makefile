@@ -743,6 +743,8 @@ reset-mariadb:
 	$(MARIADB) < scripts/sql/reset-photoprism.sql
 reset-testdb: reset-sqlite reset-mariadb-testdb reset-postgres-testdb
 reset-acceptance: reset-mariadb-acceptance reset-postgres-acceptance
+# Interim: the Go unit test databases still carry the acceptance_ prefix, so this drops
+# them alongside testdb until they are renamed (see PR #4831).
 reset-mariadb-%:
 	$(info Resetting $* database...)
 	$(MARIADB) -N -B -e "SELECT CONCAT('DROP DATABASE IF EXISTS ', schema_name, ';') FROM information_schema.schemata WHERE schema_name LIKE '$*\_%'" | $(MARIADB)
@@ -763,7 +765,13 @@ reset-postgres-%:
 reset-postgres-all: reset-postgres-testdb reset-postgres-local reset-postgres-acceptance reset-postgres-migrate
 reset-sqlite:
 	$(info Removing test database files...)
-	find ./internal -type f \( -iname '.*.db' -o -iname '.*.db-journal' -o -iname '.test.*' \) -delete
+	find ./internal -type f \( \
+		-iname '.*.db' \
+		-o -iname '.*.db-journal' \
+		-o -iname '.*.db-wal' \
+		-o -iname '.*.db-shm' \
+		-o -iname '.test.*' \
+	\) -delete
 run-test-short:
 	$(info Running short Go tests in parallel mode...)
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -short -timeout 5m ./pkg/... ./internal/... ./.../internal/...

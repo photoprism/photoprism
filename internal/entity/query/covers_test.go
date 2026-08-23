@@ -131,7 +131,7 @@ func TestUpdateAlbumMonthCoversFiltered(t *testing.T) {
 
 	if err := UnscopedDb().Where("album_type = ? AND thumb_src = ? AND album_year <> 0 AND thumb <> ''", entity.AlbumMonth, entity.SrcAuto).First(&album).Error; err != nil {
 		// Make the data look like it is needed for the test.  Updating the fixtures directly breaks to many other tests.
-		require.NoError(t, Db().Save(entity.AlbumFixtures.Pointer("september-2021")).Error)
+		require.NoError(t, UnscopedDb().Save(entity.AlbumFixtures.Pointer("september-2021")).Error)
 		require.NoError(t, UnscopedDb().Model(entity.Album{}).Where("id = ?", entity.AlbumFixtures.Get("september-2021").ID).UpdateColumns(entity.Values{"thumb": "justtestdata", "thumb_src": entity.SrcAuto}).Error)
 		require.NoError(t, UnscopedDb().Model(entity.Photo{}).Where("id = ?", entity.PhotoFixtures.Get("pho44to").ID).UpdateColumns(entity.Values{"photo_year": 2021, "photo_month": 9}).Error)
 		require.NoError(t, UnscopedDb().Where("album_type = ? AND thumb_src = ? AND album_year <> 0 AND thumb <> ''", entity.AlbumMonth, entity.SrcAuto).First(&album).Error)

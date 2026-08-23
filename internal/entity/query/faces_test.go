@@ -333,6 +333,10 @@ func TestRemoveAutoFaceClusters(t *testing.T) {
 }
 
 func TestRemovePeopleAndFaces(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	err := RemovePeopleAndFaces()
 
 	if err != nil {
