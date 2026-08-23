@@ -47,13 +47,19 @@ func (e *testEmbedder) Close() error {
 
 // restoreEmbedder resets the active embedder and configured model after a test.
 func restoreEmbedder(t *testing.T) {
-	prev := ActiveEmbedder()
-	prevName := ConfiguredModel()
-	prevErr := EmbedderError()
+	embedderMu.RLock()
+	prev := activeEmbedder
+	prevSettings := embedderSettings
+	prevLoaded := embedderLoaded
+	prevName := configuredModel
+	prevErr := embedderErr
+	embedderMu.RUnlock()
 
 	t.Cleanup(func() {
 		embedderMu.Lock()
 		activeEmbedder = prev
+		embedderSettings = prevSettings
+		embedderLoaded = prevLoaded
 		configuredModel = prevName
 		embedderErr = prevErr
 		embedderMu.Unlock()
@@ -149,6 +155,82 @@ func TestConfigureEmbedder(t *testing.T) {
 		assert.Equal(t, "", EmbeddingModelName())
 		assert.True(t, EmbeddingsDisabled())
 		assert.Error(t, EmbedderError())
+	})
+}
+
+func TestConfigureEmbedderReuse(t *testing.T) {
+	restoreEmbedder(t)
+
+	m := FindEmbeddingModel(ModelSFace)
+	require.NotNil(t, m)
+
+	if !m.Installed(embeddingModelsPath) {
+		t.Skipf("faces: %s is not installed", ModelSFace)
+	}
+
+	settings := EmbedderSettings{
+		Name:      ModelSFace,
+		Model:     m,
+		ModelPath: m.FilePath(embeddingModelsPath),
+		Threads:   1,
+	}
+
+	t.Run("UnchangedSettings", func(t *testing.T) {
+		// An instance configures once, but a test binary builds many configurations, and
+		// each load reads the weights and creates an inference session.
+		require.NoError(t, ConfigureEmbedder(settings))
+		first := ActiveEmbedder()
+		require.NotNil(t, first)
+
+		require.NoError(t, ConfigureEmbedder(settings))
+
+		assert.Same(t, first, ActiveEmbedder())
+		assert.Equal(t, ModelSFace, ConfiguredModel())
+	})
+	t.Run("ChangedSettings", func(t *testing.T) {
+		require.NoError(t, ConfigureEmbedder(settings))
+		first := ActiveEmbedder()
+		require.NotNil(t, first)
+
+		changed := settings
+		changed.Threads = settings.Threads + 1
+		require.NoError(t, ConfigureEmbedder(changed))
+
+		assert.NotSame(t, first, ActiveEmbedder())
+	})
+	t.Run("AfterUseEmbedder", func(t *testing.T) {
+		// An embedder installed from outside is not described by the recorded settings, so
+		// configuring them again has to load the model rather than keep the stand-in.
+		require.NoError(t, ConfigureEmbedder(settings))
+
+		stub := &testEmbedder{name: ModelSFace, dims: 128}
+		UseEmbedder(stub)
+		require.NoError(t, ConfigureEmbedder(settings))
+
+		assert.NotSame(t, stub, ActiveEmbedder())
+		assert.NotNil(t, ActiveEmbedder())
+	})
+	t.Run("AfterFailure", func(t *testing.T) {
+		// A failed load must not be remembered as reusable, or an instance configured
+		// before its weights were installed would never pick them up.
+		missing := settings
+		missing.ModelPath = ""
+		require.Error(t, ConfigureEmbedder(missing))
+		require.Nil(t, ActiveEmbedder())
+
+		require.Error(t, ConfigureEmbedder(missing))
+		require.NoError(t, ConfigureEmbedder(settings))
+
+		assert.NotNil(t, ActiveEmbedder())
+		assert.NoError(t, EmbedderError())
+	})
+	t.Run("DisabledThenConfigured", func(t *testing.T) {
+		require.NoError(t, ConfigureEmbedder(EmbedderSettings{Name: ModelNone}))
+		require.Nil(t, ActiveEmbedder())
+
+		require.NoError(t, ConfigureEmbedder(settings))
+
+		assert.NotNil(t, ActiveEmbedder())
 	})
 }
 

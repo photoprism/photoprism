@@ -31,10 +31,12 @@ type EmbedderSettings struct {
 }
 
 var (
-	embedderMu      sync.RWMutex
-	activeEmbedder  Embedder
-	configuredModel = ModelAuto
-	embedderErr     error
+	embedderMu       sync.RWMutex
+	activeEmbedder   Embedder
+	embedderSettings EmbedderSettings
+	embedderLoaded   bool
+	configuredModel  = ModelAuto
+	embedderErr      error
 )
 
 // UseEmbedder replaces the active embedding model and returns the previous instance.
@@ -42,6 +44,9 @@ func UseEmbedder(embedder Embedder) (previous Embedder) {
 	embedderMu.Lock()
 	previous = activeEmbedder
 	activeEmbedder = embedder
+	// What is active no longer came from ConfigureEmbedder, so the recorded settings do not
+	// describe it and must not let the next call keep it.
+	embedderLoaded = false
 	embedderMu.Unlock()
 
 	return previous
@@ -121,6 +126,15 @@ func EmbeddingsDisabled() bool {
 // subsystem so that custom entries in vision.yml keep their configured model path
 // and graph metadata.
 func ConfigureEmbedder(settings EmbedderSettings) error {
+	// Loading the same model again would produce an identical session, so the active one is
+	// kept: an instance is configured once per process, but tests build many, and each load
+	// reads the weights, verifies the checksum, and creates an inference session. A file
+	// replaced under an unchanged path keeps the copy that was verified when it was loaded.
+	// Callers that want a fresh session pass different settings or call UseEmbedder(nil).
+	if reuseEmbedder(settings) {
+		return nil
+	}
+
 	var newEmbedder Embedder
 	var initErr error
 
@@ -144,6 +158,8 @@ func ConfigureEmbedder(settings EmbedderSettings) error {
 	embedderMu.Lock()
 	previous := activeEmbedder
 	activeEmbedder = newEmbedder
+	embedderSettings = settings
+	embedderLoaded = newEmbedder != nil && initErr == nil
 	configuredModel = name
 	embedderErr = initErr
 	embedderMu.Unlock()
@@ -153,4 +169,14 @@ func ConfigureEmbedder(settings EmbedderSettings) error {
 	}
 
 	return initErr
+}
+
+// reuseEmbedder reports whether the active embedding model was loaded from these settings and
+// can serve them again. A model that failed to load is never reusable, so an attempt that ran
+// before its weights were installed is retried rather than remembered.
+func reuseEmbedder(settings EmbedderSettings) bool {
+	embedderMu.RLock()
+	defer embedderMu.RUnlock()
+
+	return embedderLoaded && activeEmbedder != nil && embedderSettings == settings
 }
