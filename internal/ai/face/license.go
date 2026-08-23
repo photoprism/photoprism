@@ -17,9 +17,9 @@ const LicenseAcceptanceVar = "INSIGHTFACE_ACCEPT_LICENSE"
 
 // LicenseEligibleEditions lists the editions in which license-gated weights may be used.
 //
-// The terms grant personal, non-commercial use, and the builds a personal user runs are the
-// Community Edition and Plus; the organizational editions are outside them. The edition proves
-// nothing about the use itself, which is why the notice an operator accepts carries that half.
+// The builds a personal user runs are the Community Edition and Plus, and the organizational
+// editions are outside the terms as we read them. The edition proves nothing about the use
+// itself, which is why the notice an operator accepts carries that half.
 var LicenseEligibleEditions = []string{"ce", "plus"}
 
 // LicenseGated reports whether the model weights may only be used after their vendor's terms
@@ -50,13 +50,13 @@ func LicenseRefused(name ModelName, edition string) error {
 	}
 
 	if !LicenseAccepted() {
-		return fmt.Errorf("the %s weights are licensed for personal, non-commercial use only, "+
-			"set %s=1 to confirm that your use is covered", model.Name, LicenseAcceptanceVar)
+		return fmt.Errorf("the %s weights are published for non-commercial use only, "+
+			"set %s=1 to confirm that your use is covered by their terms", model.Name, LicenseAcceptanceVar)
 	}
 
 	if !LicenseEligibleEdition(edition) {
-		return fmt.Errorf("the %s weights are licensed for personal, non-commercial use only, "+
-			"which does not cover the %s edition", model.Name, clean.Log(edition))
+		return fmt.Errorf("the %s weights are published for non-commercial use only, "+
+			"which the %s edition is outside of", model.Name, clean.Log(edition))
 	}
 
 	return nil

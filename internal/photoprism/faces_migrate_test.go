@@ -76,9 +76,6 @@ func TestFacesMigrateAbortedError_Error(t *testing.T) {
 	})
 }
 
-// otherFaceModel returns a registered embedding model that is not the specified one, so
-// tests can exercise the cross-model guards without assuming which model a test library
-// resolves to.
 // installedOtherFaceModel returns an installed model that is not the configured one and can be
 // migrated to in this environment, skipping the test when there is none.
 func installedOtherFaceModel(t *testing.T, conf *config.Config) face.ModelName {
@@ -103,6 +100,9 @@ func installedOtherFaceModel(t *testing.T, conf *config.Config) face.ModelName {
 	return ""
 }
 
+// otherFaceModel returns a registered embedding model that is not the specified one, so
+// tests can exercise the cross-model guards without assuming which model a test library
+// resolves to.
 func otherFaceModel(t *testing.T, configured face.ModelName) face.ModelName {
 	t.Helper()
 

@@ -1,6 +1,6 @@
 ## PhotoPrism — Vision Package
 
-**Last Updated:** August 20, 2026
+**Last Updated:** August 23, 2026
 
 ### Overview
 
@@ -10,7 +10,7 @@
 - **Ollama** — local or proxied multimodal LLMs. See [`ollama/README.md`](ollama/README.md) for tuning and schema details. The engine defaults to `${OLLAMA_BASE_URL:-http://ollama:11434}/api/generate`, trimming any trailing slash on the base URL; set `OLLAMA_BASE_URL=https://ollama.com` to opt into cloud defaults. The default model is `gemma4:latest` (self-hosted) or `minimax-m3:cloud` (cloud), and reasoning is disabled by default (`Service.Think: "false"`) so thinking-capable models do not leak reasoning into results. That flag is a correctness guard rather than a performance one — a reasoning build still generates the reasoning and bills the tokens for it, so prefer a non-reasoning tag (for example `qwen3-vl:4b-instruct` over `qwen3-vl:4b`) where one exists.
 - **OpenAI** — cloud Responses API. See [`openai/README.md`](openai/README.md) for prompts, schema variants, and header requirements.
 
-Faces are the one type this registry does not fully own. A `face` entry in `vision.yml` schedules detection and embedding, but *which* model turns a crop into a vector is chosen per instance by `FACE_MODEL`, and `Model.FaceModel()` returns the embedder that selects (`nil` when `FACE_MODEL=none`) before it looks at the `vision.yml` entry.
+Faces are the one type this registry does not fully own. A `face` entry in `vision.yml` schedules detection and embedding, but *which* model turns a crop into a vector is settled per instance by `FACE_MODEL`, which is detected once and recorded in `options.yml`. `Model.FaceModel()` returns that embedder before it looks at the `vision.yml` entry, and `nil` when embeddings are off (`FACE_MODEL=none`), when the configured weights are missing or license-refused, or while a library the model cannot read has embedding work paused. `MigrationFaceModel()` is the one caller exempt from the last gate, because `photoprism faces migrate` is what resolves that mismatch.
 
 **A custom face model in `vision.yml` is therefore deprecated.** `FACE_MODEL` is authoritative; a custom entry is still loaded while no embedding model is active, logs a deprecation warning, and has its vectors recorded under the configured model's name rather than its own. Unlike a caption or label model, every face model needs code that knows its preprocessing contract — channel order, normalization, input geometry, alignment mode — so there is nothing useful to point at a different artifact here. The registry, thresholds, and provenance columns live in [`internal/ai/face`](../face/README.md).
 

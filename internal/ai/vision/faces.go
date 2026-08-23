@@ -30,6 +30,15 @@ func DetectFaces(fileName string, minSize int, cacheCrop bool, expected int) (re
 			return result, nil
 		}
 
+		// A library the configured model cannot read is migrated rather than added to, so the
+		// faces are still recorded and their vectors are filled in afterwards. Returning an
+		// error instead would drop the detections, and an endpoint is no exemption: its
+		// vectors are stamped with the configured model and land in the same second space.
+		if face.EmbeddingsBlocked() {
+			log.Debugf("vision: skipping face embeddings while they are paused")
+			return result, nil
+		}
+
 		if uri, method := model.Endpoint(); uri != "" && method != "" && face.EmbeddingsDisabled() {
 			// An endpoint does not exempt the instance from the embeddings setting.
 			log.Debugf("vision: skipping face embeddings")

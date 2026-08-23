@@ -1,6 +1,6 @@
 ## Face Detection & Embedding Guidelines
 
-**Last Updated:** August 22, 2026
+**Last Updated:** August 23, 2026
 
 ### Overview
 
@@ -50,7 +50,7 @@ The first start after an upgrade is answered the same way: the schema is migrate
 
 A configured model whose weights are missing disables embeddings with a warning rather than falling forward: another model's vectors would otherwise be produced and recorded under the name that was requested.
 
-**A library the configured model cannot read pauses embedding work.** When stored vectors were produced by a model that is not comparable with the configured one, generation, clustering and matching stop after one warning naming both sides and the way out. Filtering the incomparable rows instead - which is what the model-aware queries do within a run - lets indexing keep writing a second vector space beside the first, and that is the state with no cheap way back. Detection keeps running, because a marker without a vector is filled in on a later pass, so the faces stay recorded rather than having to be re-indexed. `photoprism faces audit` reports the counts, `photoprism faces migrate` resolves them and clears the block in the same run, and the migration itself is exempt by construction: it loads its own target embedder rather than the instance's.
+**A library the configured model cannot read pauses embedding work.** When stored vectors were produced by a model that is not comparable with the configured one, generation, clustering and matching stop after one warning naming both sides and the way out. Filtering the incomparable rows instead - which is what the model-aware queries do within a run - lets indexing keep writing a second vector space beside the first, and that is the state with no cheap way back. Detection keeps running and its markers are still written, because a marker without a vector is filled in on a later pass, so the faces stay recorded rather than having to be re-indexed. `photoprism faces audit` reports the counts, `photoprism faces migrate` resolves them and clears the block in the same run, and the migration itself is exempt by construction: it loads its own target embedder rather than the instance's.
 
 **License-gated weights are refused at use, not only at download.** The InsightFace ArcFace weights are published for non-commercial research only and are therefore never bundled. Their installer ships in `scripts/dist/`, so a user of a published image can run it; it requires `INSIGHTFACE_ACCEPT_LICENSE=1` and verifies a pinned checksum. The application applies the same gate again when a model is selected: a gated model named by `FACE_MODEL` leaves embeddings unconfigured unless the acceptance variable is set **and** the edition is eligible, gated names are left out of the `--face-model` help text, and detection never resolves to one on its own. A library whose vectors were produced by gated weights still resolves to them, because a model that cannot read those vectors is no substitute — the gate then reports why nothing is being embedded, and `photoprism faces migrate` is the way out.
 
@@ -229,7 +229,7 @@ Recovery steps:
 |:----------------------|:---------------------------------------------------------------------------------|:--------------------------------------------------------------------------------------------------------------------------------|
 | `FACE_ENGINE`         | `auto`                                                                           | Detection engine (`auto`, `onnx`). `auto` resolves to ONNX when the SCRFD model exists.                                         |
 | `FACE_ENGINE_THREADS` | detection `runtime.NumCPU()/IndexWorkers()`, embedding `runtime.NumCPU()/2` (≥1) | ONNX inference threads. Detection runs one session per indexing worker, embedding one in total.                                 |
-| `FACE_MODEL`          | *(unset)*                                                                        | Embedding model (`detect`, `none`, `facenet`, `sface`, `auraface`). Unset detects it once and writes the name to `options.yml`. |
+| `FACE_MODEL`          | *(unset)*                                                                        | Embedding model (`detect`, `none`, `facenet`, `sface`, `auraface`). Unset detects it once and writes the name to `options.yml`; the gated InsightFace names are accepted but not listed. |
 | `FACE_SCORE`          | `9.0` (with dynamic offsets)                                                     | Base quality threshold before scale adjustments.                                                                                |
 | `FACE_OVERLAP`        | `42`                                                                             | Maximum allowed IoU when deduplicating markers.                                                                                 |
 

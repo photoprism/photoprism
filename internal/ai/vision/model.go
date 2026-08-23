@@ -727,8 +727,8 @@ func (m *Model) FaceModel() face.Embedder {
 	}
 
 	// A library whose stored vectors were produced by another model has to be migrated
-	// rather than added to, so nothing is embedded until it is. Detection keeps running:
-	// a marker without a vector is filled in on a later pass, so the faces stay recorded.
+	// rather than added to, so nothing is embedded until it is. Detection keeps running,
+	// because DetectFaces returns its markers instead of failing when this hands out none.
 	if face.EmbeddingsBlocked() {
 		return nil
 	}
