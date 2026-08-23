@@ -2,6 +2,7 @@ package photoprism
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"sort"
 
@@ -426,14 +427,14 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 
 	entity.UpdateFaces.Store(true)
 	if err = w.start(FacesOptions{Force: true}); err != nil {
-		return result, err
+		return result, unrecordedFaceModel(settingErr, plan.Target, err)
 	} else if err = w.Audit(false, ""); err != nil {
-		return result, err
+		return result, unrecordedFaceModel(settingErr, plan.Target, err)
 	}
 
 	// Re-clustering has run by now, so the replacement clusters exist to be hidden again.
 	if result.HiddenClusters, err = query.RestoreHiddenFaces(hiddenMarkers); err != nil {
-		return result, err
+		return result, unrecordedFaceModel(settingErr, plan.Target, err)
 	}
 
 	// Subject covers and counts are denormalized, so without this the People view keeps
@@ -446,10 +447,8 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 		log.Errorf("faces: %s (update counts)", updateErr)
 	}
 
-	// An unrecorded setting outranks failed markers: it decides whether the whole library is
-	// matched at all, while they cost the faces on a handful of files.
-	if settingErr != nil {
-		return result, &FacesMigrateSettingError{Target: plan.Target, Cause: settingErr}
+	if err = unrecordedFaceModel(settingErr, plan.Target, nil); err != nil {
+		return result, err
 	}
 
 	if result.Failed > 0 {
@@ -497,6 +496,20 @@ func (w *Faces) migrationEmbedder(target string) (embedder face.Embedder, err er
 	}
 
 	return embedder, nil
+}
+
+// unrecordedFaceModel keeps a setting that could not be saved attached to whatever failed after
+// it, or returns that error unchanged when the setting was saved.
+//
+// It outranks what follows: the setting decides whether the whole library is matched at all, and
+// the two failures are correlated - a full disk or a read-only volume causes both - so the window
+// where it would be dropped is the one where it is most likely.
+func unrecordedFaceModel(settingErr error, target string, err error) error {
+	if settingErr == nil {
+		return err
+	}
+
+	return errors.Join(&FacesMigrateSettingError{Target: target, Cause: settingErr}, err)
 }
 
 // restoreEmbedder loads the embedding model the configuration names, which is the target after

@@ -204,6 +204,36 @@ func TestFaces_migrationEmbedder(t *testing.T) {
 	require.Error(t, err)
 }
 
+func TestUnrecordedFaceModel(t *testing.T) {
+	t.Run("Saved", func(t *testing.T) {
+		assert.NoError(t, unrecordedFaceModel(nil, face.ModelSFace, nil))
+	})
+	t.Run("SavedWithAnotherError", func(t *testing.T) {
+		cause := errors.New("clustering failed")
+
+		assert.Equal(t, cause, unrecordedFaceModel(nil, face.ModelSFace, cause))
+	})
+	t.Run("Unsaved", func(t *testing.T) {
+		err := unrecordedFaceModel(errors.New("permission denied"), face.ModelSFace, nil)
+
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "set FaceModel: sface in options.yml")
+	})
+	t.Run("UnsavedKeepsWhatFailedAfterIt", func(t *testing.T) {
+		// A read-only volume fails the write and then the clustering, so reporting only the
+		// second would hide the one that decides whether the library is matched at all.
+		cause := errors.New("clustering failed")
+		err := unrecordedFaceModel(errors.New("permission denied"), face.ModelSFace, cause)
+
+		require.Error(t, err)
+		assert.ErrorIs(t, err, cause)
+
+		var settingErr *FacesMigrateSettingError
+		require.True(t, errors.As(err, &settingErr))
+		assert.Equal(t, face.ModelSFace, settingErr.Target)
+	})
+}
+
 func TestFaces_restoreEmbedder(t *testing.T) {
 	t.Run("AFailedTargetLeavesTheModelInPlace", func(t *testing.T) {
 		// The embedder is the one this process runs on, so a target that cannot be loaded

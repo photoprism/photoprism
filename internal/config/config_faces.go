@@ -428,7 +428,11 @@ func (c *Config) checkFaceModelMismatch(counts []query.MarkerEmbeddingModelCount
 			stale, txt.JoinAnd(models))
 
 		face.BlockEmbeddings(reason)
-		log.Warnf("faces: %s, so face embeddings are not processed", reason)
+
+		// Why it cannot be loaded was reported by the getter, under a different prefix and
+		// possibly many lines earlier, so this names where to read it back.
+		log.Warnf(`faces: %s, so face embeddings are not processed `+
+			`(run "photoprism faces config" to see why)`, reason)
 
 		return
 	}
