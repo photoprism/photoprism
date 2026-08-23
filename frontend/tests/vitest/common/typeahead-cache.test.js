@@ -3,7 +3,11 @@ import Album from "model/album";
 import Label from "model/label";
 import Subject from "model/subject";
 import $event from "common/event";
-import { typeaheadCache, CAP } from "common/typeahead-cache";
+import { typeaheadCache, CAP, SelfEchoTtl, EchoGraceMs } from "common/typeahead-cache";
+
+// People events evict after a short grace period, so tests that publish one must
+// wait it out before asserting on the refetch.
+const settleEcho = () => new Promise((resolve) => setTimeout(resolve, EchoGraceMs + 50));
 
 beforeEach(() => {
   typeaheadCache.clear();
@@ -237,6 +241,7 @@ describe("typeaheadCache.getPeople", () => {
 
     expect(await typeaheadCache.getPeople()).toEqual(first);
     $event.publishSync("people.updated", { entities: ["ps-1"] });
+    await settleEcho();
     expect(await typeaheadCache.getPeople()).toEqual(second);
     expect(spy).toHaveBeenCalledTimes(2);
   });
@@ -251,6 +256,7 @@ describe("typeaheadCache.getPeople", () => {
 
     expect(await typeaheadCache.getPeople()).toEqual(first);
     $event.publishSync("subjects.updated", { entities: ["ps-1"] });
+    await settleEcho();
     expect(await typeaheadCache.getPeople()).toEqual(second);
     expect(spy).toHaveBeenCalledTimes(2);
   });
@@ -292,6 +298,7 @@ describe("typeaheadCache in-flight eviction (epoch guard)", () => {
     $event.publishSync("subjects.updated", { entities: ["ps-1"] });
     resolveStale({ models: [{ Name: "Original", UID: "ps-1" }] });
     await inFlight;
+    await settleEcho();
 
     expect(await typeaheadCache.getPeople()).toEqual([{ Name: "Renamed", UID: "ps-1" }]);
     expect(spy).toHaveBeenCalledTimes(2);
@@ -375,32 +382,203 @@ describe("typeaheadCache.upsertPerson", () => {
   // The reported bug: two names saved in quick succession. The optimistic seed
   // keeps the second name visible before its WS event arrives, and the eventual
   // event still refreshes from server truth.
-  it("keeps a quick second save visible before the WS eviction lands", async () => {
-    const spy = vi
-      .spyOn(Subject, "search")
-      .mockResolvedValueOnce({ models: [{ Name: "Alpha", UID: "ps-1" }] })
-      .mockResolvedValueOnce({
-        models: [
-          { Name: "Alpha", UID: "ps-1" },
-          { Name: "Beta", UID: "ps-2" },
-        ],
-      });
+  it("keeps a quick second save visible when its own WS echo arrives", async () => {
+    const spy = vi.spyOn(Subject, "search").mockResolvedValueOnce({ models: [{ Name: "Alpha", UID: "ps-1" }] });
 
     expect(await typeaheadCache.getPeople()).toEqual([{ Name: "Alpha", UID: "ps-1" }]);
 
     typeaheadCache.upsertPerson({ UID: "ps-2", Name: "Beta" });
+    const merged = [
+      { Name: "Alpha", UID: "ps-1" },
+      { UID: "ps-2", Name: "Beta" },
+    ];
+    expect(await typeaheadCache.getPeople()).toEqual(merged);
+    expect(spy).toHaveBeenCalledTimes(1);
+
+    $event.publishSync("subjects.created", { entities: [{ UID: "ps-2", Name: "Beta" }] });
+    await settleEcho();
+    expect(await typeaheadCache.getPeople()).toEqual(merged);
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("typeaheadCache people self-echo suppression", () => {
+  const loaded = [{ Name: "Alpha", UID: "ps-1" }];
+
+  // primePeople loads the slot and returns the Subject.search spy.
+  async function primePeople() {
+    const spy = vi.spyOn(Subject, "search").mockResolvedValue({ models: loaded });
+    await typeaheadCache.getPeople();
+    expect(spy).toHaveBeenCalledTimes(1);
+    return spy;
+  }
+  it("does not refetch when subjects.updated names only a person we just saved", async () => {
+    const spy = await primePeople();
+    typeaheadCache.upsertPerson({ UID: "ps-2", Name: "Beta" });
+    $event.publishSync("subjects.updated", { entities: ["ps-2"] });
+    await settleEcho();
+    await typeaheadCache.getPeople();
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
+  it("does not refetch when people.updated echoes the same save", async () => {
+    const spy = await primePeople();
+    typeaheadCache.upsertPerson({ UID: "ps-2", Name: "Beta" });
+    $event.publishSync("people.updated", { entities: ["ps-2"] });
+    await settleEcho();
+    await typeaheadCache.getPeople();
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
+  // The websocket frame routinely beats the HTTP response that triggers the
+  // merge, so the grace period has to cover that order too.
+  it("does not refetch when the echo arrives before the save is merged", async () => {
+    const spy = await primePeople();
+    $event.publishSync("subjects.created", { entities: ["ps-2"] });
+    $event.publishSync("people.created", { entities: ["ps-2"] });
+    typeaheadCache.upsertPerson({ UID: "ps-2", Name: "Beta" });
+    await settleEcho();
     expect(await typeaheadCache.getPeople()).toEqual([
       { Name: "Alpha", UID: "ps-1" },
       { UID: "ps-2", Name: "Beta" },
     ]);
     expect(spy).toHaveBeenCalledTimes(1);
-
-    $event.publishSync("subjects.created", { entities: [{ UID: "ps-2", Name: "Beta" }] });
-    expect(await typeaheadCache.getPeople()).toEqual([
-      { Name: "Alpha", UID: "ps-1" },
-      { Name: "Beta", UID: "ps-2" },
-    ]);
+  });
+  it("refetches when the event names a person this tab did not save", async () => {
+    const spy = await primePeople();
+    typeaheadCache.upsertPerson({ UID: "ps-2", Name: "Beta" });
+    $event.publishSync("subjects.updated", { entities: ["ps-9"] });
+    await settleEcho();
+    await typeaheadCache.getPeople();
     expect(spy).toHaveBeenCalledTimes(2);
+  });
+  it("refetches when a foreign UID is mixed into our own", async () => {
+    const spy = await primePeople();
+    typeaheadCache.upsertPerson({ UID: "ps-2", Name: "Beta" });
+    $event.publishSync("subjects.updated", { entities: ["ps-2", "ps-9"] });
+    await settleEcho();
+    await typeaheadCache.getPeople();
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+  it("refetches when a foreign event lands inside the same grace period", async () => {
+    const spy = await primePeople();
+    $event.publishSync("subjects.updated", { entities: ["ps-2"] });
+    typeaheadCache.upsertPerson({ UID: "ps-2", Name: "Beta" });
+    $event.publishSync("people.updated", { entities: ["ps-9"] });
+    await settleEcho();
+    await typeaheadCache.getPeople();
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+  it("evicts at once when the payload carries no entities", async () => {
+    const spy = await primePeople();
+    typeaheadCache.upsertPerson({ UID: "ps-2", Name: "Beta" });
+    $event.publishSync("subjects.updated", {});
+    await typeaheadCache.getPeople();
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+  it("evicts at once when the entity list is empty", async () => {
+    const spy = await primePeople();
+    typeaheadCache.upsertPerson({ UID: "ps-2", Name: "Beta" });
+    $event.publishSync("subjects.updated", { entities: [] });
+    await typeaheadCache.getPeople();
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+  it("refetches once the echo window has passed", async () => {
+    const spy = await primePeople();
+    const start = Date.now();
+    const clock = vi.spyOn(Date, "now").mockReturnValue(start);
+    typeaheadCache.upsertPerson({ UID: "ps-2", Name: "Beta" });
+    clock.mockReturnValue(start + SelfEchoTtl + 1);
+    $event.publishSync("subjects.updated", { entities: ["ps-2"] });
+    await settleEcho();
+    await typeaheadCache.getPeople();
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+  it("forgets our saves once the slot is evicted, so the next echo refetches", async () => {
+    const spy = await primePeople();
+    typeaheadCache.upsertPerson({ UID: "ps-2", Name: "Beta" });
+    typeaheadCache.evictPeople();
+    await typeaheadCache.getPeople();
+    expect(spy).toHaveBeenCalledTimes(2);
+    $event.publishSync("subjects.updated", { entities: ["ps-2"] });
+    await settleEcho();
+    await typeaheadCache.getPeople();
+    expect(spy).toHaveBeenCalledTimes(3);
+  });
+  // clear() is what the session.logout subscriber calls, so one user's merge
+  // records must not go on suppressing events for the next user in the same tab.
+  it("does not suppress people events for a different session after clear", async () => {
+    const spy = await primePeople();
+    typeaheadCache.upsertPerson({ UID: "ps-2", Name: "Beta" });
+    typeaheadCache.clear();
+    await typeaheadCache.getPeople();
+    expect(spy).toHaveBeenCalledTimes(2);
+    $event.publishSync("people.updated", { entities: ["ps-2"] });
+    await settleEcho();
+    await typeaheadCache.getPeople();
+    expect(spy).toHaveBeenCalledTimes(3);
+  });
+  // upsertPeople merges saves; it can never echo a delete, so a delete naming a
+  // recently saved person must still evict.
+  it("evicts on subjects.deleted even for a person we just saved", async () => {
+    const spy = await primePeople();
+    typeaheadCache.upsertPerson({ UID: "ps-2", Name: "Beta" });
+    $event.publishSync("subjects.deleted", { entities: ["ps-2"] });
+    await typeaheadCache.getPeople();
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+  it("evicts on people.deleted even for a person we just saved", async () => {
+    const spy = await primePeople();
+    typeaheadCache.upsertPerson({ UID: "ps-2", Name: "Beta" });
+    $event.publishSync("people.deleted", { entities: ["ps-2"] });
+    await typeaheadCache.getPeople();
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+  it("evicts on subjects.archived even for a person we just saved", async () => {
+    const spy = await primePeople();
+    typeaheadCache.upsertPerson({ UID: "ps-2", Name: "Beta" });
+    $event.publishSync("subjects.archived", { entities: ["ps-2"] });
+    await typeaheadCache.getPeople();
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+  // A record answers for one echo; it must not mask a later foreign edit to the
+  // same person for the rest of the TTL.
+  it("consumes the record, so a second event for the same person evicts", async () => {
+    const spy = await primePeople();
+    typeaheadCache.upsertPerson({ UID: "ps-2", Name: "Beta" });
+    $event.publishSync("subjects.updated", { entities: ["ps-2"] });
+    $event.publishSync("people.updated", { entities: ["ps-2"] });
+    await settleEcho();
+    await typeaheadCache.getPeople();
+    expect(spy).toHaveBeenCalledTimes(1);
+
+    $event.publishSync("subjects.updated", { entities: ["ps-2"] });
+    await settleEcho();
+    await typeaheadCache.getPeople();
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+  // The eviction itself is deferred, but the epoch bump is not: a response
+  // captured before the pending change must not land in the slot.
+  it("discards a fetch that resolves during the grace period", async () => {
+    let resolveStale;
+    const spy = vi
+      .spyOn(Subject, "search")
+      .mockImplementationOnce(() => new Promise((resolve) => (resolveStale = resolve)))
+      .mockResolvedValueOnce({ models: [{ Name: "Fresh", UID: "ps-9" }] });
+
+    const inFlight = typeaheadCache.getPeople();
+    $event.publishSync("subjects.updated", { entities: ["ps-9"] });
+    resolveStale({ models: [{ Name: "Stale", UID: "ps-1" }] });
+    await inFlight;
+
+    expect(await typeaheadCache.getPeople()).toEqual([{ Name: "Fresh", UID: "ps-9" }]);
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+  it("leaves a cold slot alone, so the first read still fetches", async () => {
+    typeaheadCache.upsertPerson({ UID: "ps-2", Name: "Beta" });
+    const spy = vi.spyOn(Subject, "search").mockResolvedValue({ models: loaded });
+    $event.publishSync("subjects.updated", { entities: ["ps-2"] });
+    await settleEcho();
+    expect(await typeaheadCache.getPeople()).toEqual(loaded);
+    expect(spy).toHaveBeenCalledTimes(1);
   });
 });
 
