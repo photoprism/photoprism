@@ -33,7 +33,8 @@ const (
 const (
 	// LicenseApache2 allows redistribution under the Apache License 2.0.
 	LicenseApache2 = "Apache-2.0"
-	// LicenseResearchOnly restricts the weights to non-commercial research unless licensed separately.
+	// LicenseResearchOnly marks weights that are not freely licensed, so they are never bundled
+	// and have to be enabled explicitly before use.
 	LicenseResearchOnly = "research-only"
 	// LicenseUnknown marks weights whose provenance has not been verified.
 	LicenseUnknown = "unknown"
@@ -90,8 +91,8 @@ type EmbeddingModel struct {
 // EmbeddingModels lists the supported face embedding models by name.
 //
 // The ArcFace entries are recognized so operators can benchmark them, but their
-// weights are not installed by "make dep" because InsightFace publishes them for
-// non-commercial research only. AuraFace is Apache-2.0 and may be redistributed,
+// weights are not installed by "make dep" because they are not freely licensed.
+// AuraFace is Apache-2.0 and may be redistributed,
 // but its graph is 261 MB, so it is an opt-in download rather than a bundled model.
 //
 // The thresholds come from TestCalibrateFaceThresholds, which translates the error
