@@ -35,6 +35,21 @@ func TestEmbedding_Dist(t *testing.T) {
 	})
 }
 
+func TestEmbedding_Zero(t *testing.T) {
+	t.Run("AllZero", func(t *testing.T) {
+		assert.True(t, Embedding{0, 0, 0}.Zero())
+		assert.True(t, make(Embedding, 512).Zero())
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.True(t, Embedding{}.Zero())
+	})
+	t.Run("HasMagnitude", func(t *testing.T) {
+		assert.False(t, Embedding{0, 0, 0.1}.Zero())
+		assert.False(t, Embedding{-1, 0, 0}.Zero())
+		assert.False(t, RandomEmbedding().Zero())
+	})
+}
+
 func TestEmbedding_DistWithin(t *testing.T) {
 	a := Embedding{0, 0, 0}
 	b := Embedding{3, 4, 0}

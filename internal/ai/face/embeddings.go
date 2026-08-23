@@ -58,7 +58,8 @@ func ValidEmbeddings(embeddings Embeddings, dims int) bool {
 		}
 	}
 
-	return true
+	// A vector with no magnitude is not a face, and normalization cannot turn it into one.
+	return !embeddings[0].Zero()
 }
 
 // Dims returns the number of values shared by all embeddings, 0 when there are none,

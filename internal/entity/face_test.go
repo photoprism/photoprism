@@ -88,6 +88,20 @@ func TestFace_Match(t *testing.T) {
 
 		assert.False(t, match)
 	})
+	t.Run("ClusterWithoutMagnitude", func(t *testing.T) {
+		// Such a cluster is 1 away from every unit embedding, so it would accept whatever a
+		// model reaching past 1 compares with it.
+		m := NewFace("", SrcAuto, face.Embeddings{face.RandomEmbedding()}, face.EmbeddingModelName())
+		require.NotNil(t, m)
+
+		m.EmbeddingJSON = make(face.Embedding, len(m.Embedding())).JSON()
+		m.embedding = nil
+
+		match, dist := m.Match(face.Embeddings{face.RandomEmbedding()}, face.EmbeddingModelName())
+
+		assert.False(t, match)
+		assert.Equal(t, float64(-1), dist)
+	})
 	t.Run("NonFiniteVector", func(t *testing.T) {
 		// A NaN distance is below every threshold it is compared with, so a corrupt vector
 		// would match any cluster and be written to markers.face_dist as the best result.

@@ -170,6 +170,11 @@ func TestValidEmbeddings(t *testing.T) {
 	t.Run("NaN", func(t *testing.T) {
 		assert.False(t, ValidEmbeddings(Embeddings{{0.1, math.NaN()}}, 2))
 	})
+	t.Run("NoMagnitude", func(t *testing.T) {
+		// A cluster built from a zero vector would sit 1 from every face, so it never enters.
+		assert.False(t, ValidEmbeddings(Embeddings{{0, 0}}, 2))
+		assert.True(t, ValidEmbeddings(Embeddings{{0, 0.1}}, 2))
+	})
 	t.Run("Inf", func(t *testing.T) {
 		assert.False(t, ValidEmbeddings(Embeddings{{0.1, math.Inf(1)}}, 2))
 	})

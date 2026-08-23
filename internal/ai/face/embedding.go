@@ -29,6 +29,21 @@ func NewEmbedding(inference []float32) Embedding {
 	return result
 }
 
+// Zero reports whether the embedding has no magnitude.
+//
+// Such a vector sits exactly 1 from every unit embedding, so a cluster built from one accepts any
+// face a model reaches past 1. An all-zero inference and a midpoint of opposite vectors both land
+// here, which is why it is checked where vectors enter and where they are compared.
+func (m Embedding) Zero() bool {
+	for _, v := range m {
+		if v != 0 {
+			return false
+		}
+	}
+
+	return true
+}
+
 // Dist calculates the distance to another face embedding, and returns -1 when the embeddings
 // are not comparable or hold a non-finite component.
 func (m Embedding) Dist(other Embedding) float64 {

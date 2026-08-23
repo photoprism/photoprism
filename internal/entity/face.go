@@ -183,8 +183,10 @@ func (m *Face) Match(embeddings face.Embeddings, model face.ModelName) (match bo
 
 	faceEmbedding := m.Embedding()
 
-	if len(faceEmbedding) == 0 {
-		// Should never happen.
+	// A cluster with no magnitude is 1 away from every unit embedding, so it accepts whatever a
+	// model reaching past 1 compares with it. Refused here as well as where vectors are written,
+	// because a row may predate that check.
+	if len(faceEmbedding) == 0 || faceEmbedding.Zero() {
 		return false, dist
 	}
 

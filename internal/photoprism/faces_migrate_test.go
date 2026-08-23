@@ -39,9 +39,16 @@ func (e *migrationTestEmbedder) CropSize() (int, int) { return 16, 16 }
 // Aligned reports whether the test embedder requires landmark alignment.
 func (e *migrationTestEmbedder) Aligned() bool { return e.aligned }
 
-// Run returns a deterministic test embedding.
+// Run returns a deterministic test embedding. It has a magnitude, because a vector without one is
+// not a face and is refused where embeddings are written.
 func (e *migrationTestEmbedder) Run(image.Image) face.Embeddings {
-	return face.Embeddings{make(face.Embedding, e.dims)}
+	result := make(face.Embedding, e.dims)
+
+	if e.dims > 0 {
+		result[0] = 1
+	}
+
+	return face.Embeddings{result}
 }
 
 // Close releases the test embedder.
