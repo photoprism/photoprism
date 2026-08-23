@@ -1,6 +1,7 @@
 package face
 
 import (
+	"errors"
 	"os"
 	"testing"
 
@@ -88,6 +89,23 @@ func TestDetect(t *testing.T) {
 		require.Len(t, faces, 2)
 		assert.Equal(t, EngineName("stub"), faces[0].DetectModel)
 		assert.Equal(t, EngineName("stub"), faces[1].DetectModel)
+	})
+	t.Run("PartialResultWithError", func(t *testing.T) {
+		restoreEngine(t)
+
+		// An engine that fails partway still hands back what it found, and those faces are
+		// stamped: the caller decides what to do with them, and an unattributed vector is
+		// what this column exists to prevent.
+		stub := &stubEngine{name: "stub", faces: Faces{{Score: 7}}, err: errors.New("partial")}
+		if prev := UseEngine(stub); prev != nil {
+			_ = prev.Close()
+		}
+
+		faces, err := Detect("testdata/face.jpg", 20)
+
+		require.Error(t, err)
+		require.Len(t, faces, 1)
+		assert.Equal(t, EngineName("stub"), faces[0].DetectModel)
 	})
 	t.Run("NoEngine", func(t *testing.T) {
 		restoreEngine(t)

@@ -377,9 +377,26 @@ func TestFinalizeFaceMigration(t *testing.T) {
 		W:              0.1,
 		H:              0.1,
 	}
+	// Caught by the bulk stale-vector predicate rather than the failed-marker batch, which
+	// is a separate statement and would otherwise keep its provenance untested.
+	invalid := entity.Marker{
+		MarkerUID:      rnd.GenerateUID('m'),
+		FileUID:        "file123",
+		MarkerType:     entity.MarkerFace,
+		MarkerName:     "Alice",
+		SubjUID:        subjectUID,
+		SubjSrc:        entity.SrcXmp,
+		MarkerInvalid:  true,
+		EmbedModel:     face.ModelFaceNet,
+		DetectModel:    face.EngineONNX,
+		EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
+		W:              0.1,
+		H:              0.1,
+	}
 	require.NoError(t, tempDb.Create(&manual).Error)
 	require.NoError(t, tempDb.Create(&automatic).Error)
 	require.NoError(t, tempDb.Create(&imported).Error)
+	require.NoError(t, tempDb.Create(&invalid).Error)
 
 	// A cluster from the previous run, so the delete this function is named for has
 	// something to remove rather than passing over an empty table.
@@ -422,6 +439,12 @@ func TestFinalizeFaceMigration(t *testing.T) {
 	// no embedding would claim a crop that no longer exists.
 	assert.Empty(t, storedAuto.DetectModel)
 	assert.Equal(t, face.EngineONNX, storedImported.DetectModel, "a spared vector keeps its detector")
+
+	var storedInvalid entity.Marker
+	require.NoError(t, tempDb.First(&storedInvalid, "marker_uid = ?", invalid.MarkerUID).Error)
+	assert.Empty(t, storedInvalid.EmbeddingsJSON)
+	assert.Empty(t, storedInvalid.EmbedModel)
+	assert.Empty(t, storedInvalid.DetectModel, "the bulk stale update clears provenance too")
 	assert.Equal(t, cluster.ID, storedImported.FaceID)
 	assert.Equal(t, subjectUID, storedImported.SubjUID)
 

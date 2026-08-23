@@ -574,8 +574,8 @@ type MarkerDetectModelCount struct {
 
 // MarkerDetectModels returns the number of face markers per detector, ordered by name.
 //
-// The detector decides the landmarks, so these counts say how much of a library holds
-// landmarks a later run may reuse rather than having to detect again.
+// The counts are per producing detector of the vector's crop. They do not say whether the
+// stored landmarks are that detector's, so they cannot gate reusing them.
 func MarkerDetectModels() (result []MarkerDetectModelCount, err error) {
 	err = Db().
 		Table(entity.Marker{}.TableName()).

@@ -119,8 +119,8 @@ func NewFaceMarker(f face.Face, file File, subjUid string) *Marker {
 // produced them rather than the ones that happen to be configured now.
 //
 // The detector is recorded beside the embedding model because it decides the landmarks, and
-// therefore the aligned crop the vector was computed from: without it, a later run cannot tell
-// whether stored landmarks are the ones the configured pipeline would produce.
+// therefore the aligned crop the vector was computed from: two detectors yield different crops
+// and so different vectors, which without this nothing distinguishes.
 func (m *Marker) SetEmbeddings(e face.Embeddings, embedModel, detectModel face.ModelName) {
 	m.embeddings = e
 	m.EmbeddingsJSON = e.JSON()

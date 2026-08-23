@@ -10,7 +10,7 @@ Detection thresholds favor recall, and overlap handling keeps markers stable acr
 
 Embedding provenance is persisted: `faces.embed_model` and `markers.embed_model` record the model that produced each vector, `entity.Face.Match` refuses to compare clusters from a different model, and `photoprism faces audit` reports the cluster and marker counts per model.
 
-Detector provenance is persisted alongside it: `markers.detect_model` records the detector whose landmarks produced the crop a vector was computed from, and `photoprism faces audit` reports the marker counts per detector beside the per-model ones. A blank value means the row was written before the column existed, so its landmarks must not be trusted for alignment. See § Detector Provenance.
+Detector provenance is persisted alongside it: `markers.detect_model` records the detector whose landmarks produced the crop a vector was computed from, and `photoprism faces audit` reports the marker counts per detector beside the per-model ones. A blank value means the row was written before the column existed; a non-blank one attests the vector's crop rather than the stored landmarks. See § Detector Provenance.
 
 ### Detection Pipeline
 
@@ -26,7 +26,7 @@ The detector also returns five facial landmarks, which `engine_onnx.go` decodes 
 
 #### Detector Provenance
 
-`face.Detect` stamps `Face.DetectModel` with the name of the engine that found each face, and that value is carried to `markers.detect_model` wherever a vector is written — `entity.Marker.SetEmbeddings`, the in-place upgrade in `entity.File.AddFace`, and `query.SaveFaceMigrationEmbeddings`. Recording it at detection time is what keeps it truthful: everything downstream would have to ask global configuration, which by then names whatever is loaded rather than whatever produced the row.
+`face.Detect` stamps `Face.DetectModel` with the name of the engine that found each face, and that value travels with the vector to `markers.detect_model` wherever one is written — `entity.Marker.SetEmbeddings`, the in-place upgrade in `entity.File.AddFace`, and `query.SaveFaceMigrationEmbeddings`, which takes it from the detection `Faces.detectMigrationEmbeddings` ran. Recording it at detection time is what keeps it truthful: reading it back later would ask global configuration, which by then names whatever engine is loaded — `none`, after a reconfiguration — rather than whatever produced the row.
 
 The column attests **the crop a vector was computed from**, not the contents of `landmarks_json`. The two agree everywhere a marker is created or upgraded, because both are written from the same detection. They do not agree after `faces migrate` re-detects for an aligned model: that path stores the regenerated vector and its detector but leaves the stored landmarks as they were. Reusing known-good landmarks instead of re-detecting therefore needs the migration to persist them too; until it does, `detect_model` answers "which detector produced this vector", not "are these landmarks current".
 

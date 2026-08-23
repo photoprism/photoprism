@@ -561,9 +561,15 @@ func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) 
 	}
 
 	var generated map[string]face.Embeddings
+
+	// A blank detector means no detection ran, so the one already recorded still describes
+	// the crop. It is taken from the detection rather than from the active engine, which by
+	// the time this returns may name whatever a concurrent reconfiguration left loaded.
+	detectModel := ""
+
 	if embedder.Aligned() {
 		detected = true
-		generated, err = w.detectMigrationEmbeddings(embedder, file, markers, stale)
+		generated, detectModel, err = w.detectMigrationEmbeddings(embedder, file, markers, stale)
 	} else {
 		generated, err = w.cropMigrationEmbeddings(embedder, file, stale)
 	}
@@ -581,23 +587,12 @@ func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) 
 	}
 
 	if len(generated) > 0 {
-		if err = query.SaveFaceMigrationEmbeddings(target, migrationDetectModel(detected), generated); err != nil {
+		if err = query.SaveFaceMigrationEmbeddings(target, detectModel, generated); err != nil {
 			return 0, skipped, nil, detected, err
 		}
 	}
 
 	return migrated, skipped, failed, detected, err
-}
-
-// migrationDetectModel names the detector that produced the crops a migration re-embedded,
-// and nothing when the run re-cropped from the geometry a previous detection stored: no
-// detector ran, so the one already recorded still describes those crops.
-func migrationDetectModel(detected bool) string {
-	if !detected {
-		return ""
-	}
-
-	return face.ActiveEngineName()
 }
 
 // faceMigrationMarkerUIDs returns the marker UIDs in their current order.
@@ -643,16 +638,18 @@ func (w *Faces) cropMigrationEmbeddings(embedder face.Embedder, file *entity.Fil
 }
 
 // detectMigrationEmbeddings redetects a file and maps aligned embeddings to stored markers.
-func (w *Faces) detectMigrationEmbeddings(embedder face.Embedder, file *entity.File, markers, stale entity.Markers) (result map[string]face.Embeddings, err error) {
+// It also reports the detector that found them, so provenance travels with the vectors it
+// describes instead of being read back from configuration further up.
+func (w *Faces) detectMigrationEmbeddings(embedder face.Embedder, file *entity.File, markers, stale entity.Markers) (result map[string]face.Embeddings, detectModel string, err error) {
 	result = make(map[string]face.Embeddings, len(stale))
 	thumbName, err := migrationDetectionThumb(w.conf, w.conf.ThumbCachePath(), file)
 	if err != nil {
-		return result, err
+		return result, "", err
 	}
 
 	detected, err := face.Detect(thumbName, w.conf.FaceSize())
 	if err != nil {
-		return result, err
+		return result, "", err
 	}
 	vision.GenerateEmbeddings(embedder, thumbName, detected, true)
 
@@ -660,10 +657,11 @@ func (w *Faces) detectMigrationEmbeddings(embedder face.Embedder, file *entity.F
 	for _, marker := range stale {
 		if detectedFace, ok := assignments[marker.MarkerUID]; ok && face.ValidEmbeddings(detectedFace.Embeddings, embedder.Dims()) {
 			result[marker.MarkerUID] = detectedFace.Embeddings
+			detectModel = detectedFace.DetectModel
 		}
 	}
 
-	return result, nil
+	return result, detectModel, nil
 }
 
 // migrationDetectionThumb returns a cached or newly generated detection thumbnail.

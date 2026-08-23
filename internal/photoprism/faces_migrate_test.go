@@ -315,7 +315,7 @@ func TestFaces_migrateFaceFile(t *testing.T) {
 			MarkerType:     entity.MarkerFace,
 			MarkerSrc:      entity.SrcImage,
 			EmbedModel:     face.ModelSFace,
-			DetectModel:    face.EngineONNX,
+			DetectModel:    "legacy-detector",
 			EmbeddingsJSON: face.Embeddings{face.Embedding{1, 0, 0, 0}}.JSON(),
 			W:              1,
 			H:              1,
@@ -342,18 +342,10 @@ func TestFaces_migrateFaceFile(t *testing.T) {
 		saved, savedErr := query.MarkerByUID(stale.MarkerUID)
 		require.NoError(t, savedErr)
 		assert.Equal(t, face.ModelFaceNet, saved.EmbedModel)
-		assert.Equal(t, face.EngineONNX, saved.DetectModel)
-	})
-}
-
-func TestMigrationDetectModel(t *testing.T) {
-	t.Run("Detected", func(t *testing.T) {
-		assert.Equal(t, face.ActiveEngineName(), migrationDetectModel(true))
-	})
-	t.Run("CroppedFromStoredGeometry", func(t *testing.T) {
-		// Nothing was detected, so the recorded detector must be left alone rather than
-		// reattributed to whichever engine happens to be loaded now.
-		assert.Empty(t, migrationDetectModel(false))
+		// Deliberately not the active engine: a value equal to it could not tell a preserved
+		// detector from one the crop path wrongly re-attributed.
+		assert.NotEqual(t, face.ActiveEngineName(), "legacy-detector")
+		assert.Equal(t, "legacy-detector", saved.DetectModel)
 	})
 }
 
@@ -396,9 +388,10 @@ func TestFaces_detectMigrationEmbeddings(t *testing.T) {
 	embedder := &migrationTestEmbedder{name: face.ModelSFace, dims: 4, aligned: true}
 	w := NewFaces(config.TestConfig())
 
-	result, err := w.detectMigrationEmbeddings(embedder, nil, nil, nil)
+	result, detectModel, err := w.detectMigrationEmbeddings(embedder, nil, nil, nil)
 	require.Error(t, err)
 	assert.Empty(t, result)
+	assert.Empty(t, detectModel, "a run that could not detect names no detector")
 }
 
 func TestMigrationDetectionThumb(t *testing.T) {

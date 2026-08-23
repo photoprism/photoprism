@@ -266,14 +266,69 @@ func TestFaces_auditMarkerEmbeddingModels(t *testing.T) {
 func TestFaces_auditMarkerDetectModels(t *testing.T) {
 	w := NewFaces(config.TestConfig())
 
-	t.Run("ReportsTheRecordedDetector", func(t *testing.T) {
-		// A detector nobody is running now produced landmarks the active one would not
-		// reproduce, so its markers are named rather than folded into the totals.
+	// newDetectedMarker persists a face marker attributed to the specified detector.
+	newDetectedMarker := func(t *testing.T, detector string) {
+		t.Helper()
+
 		m := &entity.Marker{
 			MarkerType:     entity.MarkerFace,
 			MarkerSrc:      entity.SrcImage,
 			EmbedModel:     face.ModelSFace,
-			DetectModel:    "retired-detector",
+			DetectModel:    detector,
+			EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
+		}
+
+		require.NoError(t, entity.Db().Create(m).Error)
+		t.Cleanup(func() { entity.Db().Delete(m) })
+	}
+
+	t.Run("WarnsAboutAnotherDetector", func(t *testing.T) {
+		// A detector nobody is running now placed landmarks the active one would not
+		// reproduce. Telling the operator so is the only actionable output of the report,
+		// so the level is asserted: an Info line here would read as normal.
+		require.NotEqual(t, "retired-detector", face.ActiveEngineName())
+		newDetectedMarker(t, "retired-detector")
+
+		hook := captureLog(t)
+		w.auditMarkerDetectModels()
+
+		warnings := strings.Join(loggedMessages(hook, logrus.WarnLevel), "\n")
+		assert.Contains(t, warnings, "retired-detector")
+		assert.Contains(t, warnings, "not the active")
+	})
+	t.Run("ActiveDetectorIsNotAWarning", func(t *testing.T) {
+		newDetectedMarker(t, face.ActiveEngineName())
+
+		hook := captureLog(t)
+		w.auditMarkerDetectModels()
+
+		assert.NotContains(t, strings.Join(loggedMessages(hook, logrus.WarnLevel), "\n"), "not the active")
+		assert.Contains(t, strings.Join(loggedMessages(hook, logrus.InfoLevel), "\n"), face.ActiveEngineName())
+	})
+	t.Run("UnrecordedDetector", func(t *testing.T) {
+		// A marker written before the column existed records nothing, which is the state an
+		// operator has to be able to see before anything relies on the column.
+		newDetectedMarker(t, "")
+
+		hook := captureLog(t)
+		w.auditMarkerDetectModels()
+
+		assert.Contains(t, strings.Join(loggedMessages(hook, logrus.InfoLevel), "\n"), "without a recorded detector")
+	})
+}
+
+func TestFaces_auditProvenance(t *testing.T) {
+	w := NewFaces(config.TestConfig())
+
+	t.Run("ReportsDetectorsAsWellAsModels", func(t *testing.T) {
+		// The three reports read separate tables, and the detector one is what the README
+		// promises photoprism faces audit prints, so its wiring is pinned rather than
+		// left to whichever reporter happens to call the next.
+		m := &entity.Marker{
+			MarkerType:     entity.MarkerFace,
+			MarkerSrc:      entity.SrcImage,
+			EmbedModel:     face.ModelSFace,
+			DetectModel:    "wired-detector",
 			EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
 		}
 
@@ -281,21 +336,11 @@ func TestFaces_auditMarkerDetectModels(t *testing.T) {
 
 		t.Cleanup(func() { entity.Db().Delete(m) })
 
-		counts, err := query.MarkerDetectModels()
-		require.NoError(t, err)
-		require.NotEmpty(t, counts)
-
 		hook := captureLog(t)
-		w.auditMarkerDetectModels()
+		w.auditProvenance()
 
-		assert.Contains(t, strings.Join(loggedMessages(hook, logrus.InfoLevel), "\n"), "retired-detector")
-	})
-	t.Run("UnrecordedDetector", func(t *testing.T) {
-		// The fixtures carry the legacy landmark vocabulary and record no detector, which
-		// is the state an operator has to be able to see before anything relies on it.
-		hook := captureLog(t)
-		w.auditMarkerDetectModels()
-
-		assert.Contains(t, strings.Join(loggedMessages(hook, logrus.InfoLevel), "\n"), "without a recorded detector")
+		logged := strings.Join(loggedMessages(hook, logrus.InfoLevel), "\n")
+		assert.Contains(t, logged, "wired-detector", "the detector report runs")
+		assert.Contains(t, logged, "embedding model", "the model reports still run")
 	})
 }
