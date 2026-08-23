@@ -565,6 +565,21 @@ func RecordedMarkerEmbeddingModels() (result []MarkerEmbeddingModelCount, err er
 	return result, err
 }
 
+// LegacyFaceMarkersWithVectors returns the number of face markers that hold a vector and record
+// no model, which can only have been produced by FaceNet.
+//
+// The provenance index narrows this to the rows that predate the column, so unlike counting every
+// vector it reads few blobs once a library has been migrated. It completes the recorded counts,
+// which leave these rows out so that the index can answer them.
+func LegacyFaceMarkersWithVectors() (count int64, err error) {
+	err = Db().
+		Table(entity.Marker{}.TableName()).
+		Where("marker_type = ? AND embed_model = '' AND LENGTH(embeddings_json) > 0", entity.MarkerFace).
+		Count(&count).Error
+
+	return count, err
+}
+
 // FaceMarkersWithVectors returns the number of face markers that hold an embedding.
 // It reads no provenance column, so it also answers for a schema that predates one.
 func FaceMarkersWithVectors() (count int64, err error) {

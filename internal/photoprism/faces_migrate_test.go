@@ -205,6 +205,17 @@ func TestFaces_migrationEmbedder(t *testing.T) {
 }
 
 func TestFaces_restoreEmbedder(t *testing.T) {
+	t.Run("AFailedTargetLeavesTheModelInPlace", func(t *testing.T) {
+		// The embedder is the one this process runs on, so a target that cannot be loaded
+		// must not leave the instance without the model it was running on.
+		w := NewFaces(config.TestConfig())
+		configured := face.NormalizeModelName(w.conf.FaceModel())
+
+		_, err := w.migrationEmbedder(otherFaceModel(t, configured))
+
+		require.Error(t, err)
+		assert.Equal(t, configured, face.ConfiguredModel())
+	})
 	t.Run("RestoresTheConfiguredModel", func(t *testing.T) {
 		w := NewFaces(config.TestConfig())
 		configured := face.NormalizeModelName(w.conf.FaceModel())

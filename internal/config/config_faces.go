@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"slices"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/vision"
@@ -236,9 +237,11 @@ func (c *Config) usableFaceModel(name face.ModelName) face.ModelName {
 	return name
 }
 
-// ResolveFaceModel detects the model from the library without persisting the result, so that a
-// report can name what is in force, and whether it can read the library, without changing what
-// is configured.
+// ResolveFaceModel pins the model in memory and computes the block verdict, without writing
+// anything to "options.yml".
+//
+// It is what a report calls to name the model in force and whether it can read the library:
+// what is configured stays as it was, so `photoprism faces config` still shows "detect".
 func (c *Config) ResolveFaceModel() face.ModelName {
 	if c == nil {
 		return face.ModelNone
@@ -246,25 +249,34 @@ func (c *Config) ResolveFaceModel() face.ModelName {
 		return c.FaceModel()
 	}
 
-	counts := c.libraryFaceModels()
+	counts, ok := c.libraryFaceModels()
 
-	if c.faceModel == "" && c.FaceModelSetting() == face.ModelDetect {
+	if c.faceModel == "" && c.faceModelDetects() {
 		c.faceModel = c.detectFaceModel(counts)
 	}
 
-	c.checkFaceModelMismatch(counts)
+	if ok {
+		c.checkFaceModelMismatch(counts)
+	}
 
 	return c.FaceModel()
 }
 
-// SetFaceModel records the model the library's vectors are now in and persists it.
+// faceModelDetects reports whether the model has to be worked out from the library, which an
+// unsupported value asks for as much as an empty one does.
+func (c *Config) faceModelDetects() bool {
+	return c.FaceModelSetting() == face.ModelDetect
+}
+
+// SetFaceModel records the model the library's vectors are now in and persists it, reporting
+// whether the file could be written.
 //
 // A migration is the one operation that changes the answer, and the setting has to follow it,
-// or a later start hides the whole library from matching. A file that cannot be written costs
-// the next start a detection, nothing more.
-func (c *Config) SetFaceModel(name face.ModelName) {
+// or a later start hides the whole library from matching - so a caller that changed the data
+// has to treat a failed write as a failed run rather than as a warning.
+func (c *Config) SetFaceModel(name face.ModelName) error {
 	if c == nil || name == "" {
-		return
+		return nil
 	}
 
 	// Set in memory as well as in the file, because the patch helper only reloads the options
@@ -273,8 +285,10 @@ func (c *Config) SetFaceModel(name face.ModelName) {
 	c.options.FaceModel = name
 
 	if _, err := c.SaveOptionsPatch(Values{"FaceModel": name}); err != nil {
-		log.Warnf("config: failed saving face model %s (%s)", clean.Log(name), err)
+		return fmt.Errorf("failed saving face model %s (%s)", clean.Log(name), err)
 	}
+
+	return nil
 }
 
 // initFaceModel settles which embedding model this instance uses, and is called once by Init
@@ -286,27 +300,36 @@ func (c *Config) initFaceModel() {
 
 	c.reportIgnoredFaceModel()
 
-	// An unsupported value is reported and left alone rather than detected from: writing a
-	// detected name would turn a typo into a decision that outlives it.
-	if !face.KnownModelName(c.options.FaceModel) {
-		log.Warnf("config: unsupported face model %s, expected %s",
-			clean.Log(c.options.FaceModel), face.ModelUsageString())
+	counts, ok := c.libraryFaceModels()
 
-		return
-	}
+	if c.faceModelDetects() {
+		c.faceModel = c.detectFaceModel(counts)
 
-	counts := c.libraryFaceModels()
+		// Persist only an answer the library actually gave. A value derived from an unreadable
+		// database or from an empty one is a default rather than a finding, and writing it down
+		// would outlive the moment it was true - a restored library would then be refused by a
+		// model nothing in it was produced with.
+		switch {
+		case !ok || len(counts) == 0 || c.faceModel == face.ModelNone:
+			log.Debugf("config: face model %s is not recorded yet", clean.Log(c.faceModel))
+		case !face.KnownModelName(c.options.FaceModel):
+			// An unsupported value applies to the run as if nothing were set, but writing a
+			// detected name would turn a typo into a decision that outlives it.
+			log.Warnf("config: face model %s is detected but not recorded, because %s is not a supported value",
+				clean.Log(c.faceModel), clean.Log(c.options.FaceModel))
+		default:
+			log.Infof("config: detected face model %s", clean.Log(c.faceModel))
 
-	if c.FaceModelSetting() == face.ModelDetect {
-		if name := c.detectFaceModel(counts); name == face.ModelNone {
-			c.faceModel = name
-		} else {
-			log.Infof("config: detected face model %s", clean.Log(name))
-			c.SetFaceModel(name)
+			if err := c.SetFaceModel(c.faceModel); err != nil {
+				// The value applies to this process either way, and the next start detects again.
+				log.Warnf("config: %s", err)
+			}
 		}
 	}
 
-	c.checkFaceModelMismatch(counts)
+	if ok {
+		c.checkFaceModelMismatch(counts)
+	}
 }
 
 // reportIgnoredFaceModel reports a model that an environment variable or the command line set
@@ -324,6 +347,15 @@ func (c *Config) reportIgnoredFaceModel() {
 	inForce := c.FaceModelSetting()
 
 	if configured == face.ModelDetect || configured == inForce {
+		return
+	}
+
+	// Disabling embeddings is not something a migration can carry out, so that value is the one
+	// case where the way to apply it is the file rather than the command.
+	if configured == face.ModelNone {
+		log.Infof("config: face model %s is configured but ignored, this library uses %s "+
+			"(set FaceModel in %s to change it)", clean.Log(configured), clean.Log(inForce), clean.Log(c.OptionsYaml()))
+
 		return
 	}
 
@@ -374,25 +406,30 @@ func (c *Config) installedFaceModel() face.ModelName {
 func (c *Config) checkFaceModelMismatch(counts []query.MarkerEmbeddingModelCount) {
 	name := c.FaceModel()
 
-	if name == face.ModelNone {
+	// Embeddings that were turned off are not a mismatch: nothing is generated, and the vectors
+	// a library already holds stay comparable with each other.
+	if name == face.ModelNone && c.FaceModelSetting() == face.ModelNone {
 		face.UnblockEmbeddings()
 		return
 	}
 
-	stale := 0
-	models := make([]string, 0, len(counts))
-
-	for _, count := range counts {
-		if count.Markers < 1 || face.ModelsComparable(count.EmbedModel, name) {
-			continue
-		}
-
-		stale += count.Markers
-		models = append(models, clean.Log(recordedFaceModel(count.EmbedModel)))
-	}
+	// A model that could not be used reads none of the stored vectors, so every one of them is
+	// stale: clustering them under another model's distances would rewrite the library at
+	// thresholds it was never calibrated for.
+	stale, models := staleFaceModels(counts, name)
 
 	if stale == 0 {
 		face.UnblockEmbeddings()
+		return
+	}
+
+	if name == face.ModelNone {
+		reason := fmt.Sprintf("%d marker(s) use %s, which this instance cannot load",
+			stale, txt.JoinAnd(models))
+
+		face.BlockEmbeddings(reason)
+		log.Warnf("faces: %s, so face embeddings are not processed", reason)
+
 		return
 	}
 
@@ -403,6 +440,26 @@ func (c *Config) checkFaceModelMismatch(counts []query.MarkerEmbeddingModelCount
 
 	log.Warnf(`faces: %s, so face embeddings are not processed (run "photoprism faces migrate --to %s" to migrate them)`,
 		reason, clean.Log(name))
+}
+
+// staleFaceModels returns how many of the counted markers hold a vector the specified model
+// cannot read, and which models produced them. Nothing is readable when no model is in force.
+func staleFaceModels(counts []query.MarkerEmbeddingModelCount, name face.ModelName) (stale int, models []string) {
+	models = make([]string, 0, len(counts))
+
+	for _, count := range counts {
+		if count.Markers < 1 || name != face.ModelNone && face.ModelsComparable(count.EmbedModel, name) {
+			continue
+		}
+
+		stale += count.Markers
+
+		if recorded := clean.Log(recordedFaceModel(count.EmbedModel)); !slices.Contains(models, recorded) {
+			models = append(models, recorded)
+		}
+	}
+
+	return stale, models
 }
 
 // warnFaceModel reports a face model problem once, because the getters are called from
@@ -416,38 +473,55 @@ func (c *Config) warnFaceModel(key, format string, args ...any) {
 // libraryFaceModel returns the embedding model the library's face vectors were generated
 // with, or an empty name when it holds none and when the database is not connected yet.
 func (c *Config) libraryFaceModel() face.ModelName {
-	return dominantFaceModel(c.libraryFaceModels())
+	counts, _ := c.libraryFaceModels()
+	return dominantFaceModel(counts)
 }
 
-// libraryFaceModels returns how many face markers the library holds per embedding model, or
-// nothing when it holds none and when the database is not connected yet.
+// libraryFaceModels returns how many face markers the library holds per embedding model, and
+// whether the library could be asked at all.
 //
-// This runs once per process, including for every CLI invocation, so it asks the indexed
-// provenance column first and only falls back to counting vectors when nothing answers.
-func (c *Config) libraryFaceModels() []query.MarkerEmbeddingModelCount {
+// Answering "no vectors" and "no answer" with the same value would let a database that is not
+// readable yet be pinned as an empty library, so the two are reported apart. This runs once per
+// process, including for every CLI invocation, so it asks the indexed provenance column and
+// completes it with the rows that predate the column rather than counting every vector.
+func (c *Config) libraryFaceModels() (counts []query.MarkerEmbeddingModelCount, ok bool) {
 	if c == nil || c.db == nil {
-		return nil
+		return nil, false
 	}
 
 	counts, err := query.RecordedMarkerEmbeddingModels()
 
-	if err == nil && len(counts) > 0 {
-		return counts
-	} else if err != nil {
+	if err != nil {
 		// The schema is migrated after the configuration is propagated, so on the first
-		// start after an upgrade the provenance column does not exist yet.
+		// start after an upgrade the provenance column does not exist yet. Its face markers
+		// prove what they hold: a library that records no model can only hold FaceNet.
 		log.Debugf("config: %s (find face embedding models)", err)
+
+		markers, countErr := query.FaceMarkersWithVectors()
+
+		if countErr != nil {
+			log.Debugf("config: %s (count face markers)", countErr)
+			return nil, false
+		} else if markers > 0 {
+			return []query.MarkerEmbeddingModelCount{{EmbedModel: "", Markers: int(markers)}}, true
+		}
+
+		return nil, true
 	}
 
-	// A library whose markers record no model cannot hold anything but FaceNet vectors,
-	// which is what its face markers prove.
-	if markers, countErr := query.FaceMarkersWithVectors(); countErr != nil {
-		log.Debugf("config: %s (count face markers)", countErr)
-	} else if markers > 0 {
-		return []query.MarkerEmbeddingModelCount{{EmbedModel: "", Markers: int(markers)}}
+	// Vectors written before the column are not in the counts above, and leaving them out
+	// would let a handful of migrated markers outvote a whole legacy library and hide it from
+	// the mismatch check - which is the silent filtering the check exists to replace.
+	legacy, legacyErr := query.LegacyFaceMarkersWithVectors()
+
+	if legacyErr != nil {
+		log.Debugf("config: %s (count legacy face markers)", legacyErr)
+		return counts, false
+	} else if legacy > 0 {
+		counts = append(counts, query.MarkerEmbeddingModelCount{EmbedModel: "", Markers: int(legacy)})
 	}
 
-	return nil
+	return counts, true
 }
 
 // dominantFaceModel returns the model that produced most of the counted vectors, or an

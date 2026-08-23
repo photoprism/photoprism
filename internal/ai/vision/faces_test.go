@@ -11,6 +11,20 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/face"
 )
 
+// mustEndpoint returns the face model endpoint URL configured for the test, so a case that
+// depends on one is skipped rather than passing for the wrong reason.
+func mustEndpoint(t *testing.T) string {
+	t.Helper()
+
+	uri, method := Config.Model(ModelTypeFace).Endpoint()
+
+	if method == "" {
+		t.Skip("vision: skipping, no endpoint method is configured")
+	}
+
+	return uri
+}
+
 func TestDetectFaces(t *testing.T) {
 	fileName, err := filepath.Abs(filepath.Join("..", "face", "testdata", "1.jpg"))
 	require.NoError(t, err)
@@ -55,6 +69,34 @@ func TestDetectFaces(t *testing.T) {
 		}
 
 		assert.True(t, result[0].Embeddings.Empty(), "a paused instance must not embed")
+	})
+	t.Run("PausedIgnoresTheEndpoint", func(t *testing.T) {
+		// A configured endpoint is no exemption: its vectors are stamped with the model this
+		// instance is configured for, so they would land in the same second space.
+		t.Cleanup(func() {
+			Config = &ConfigValues{Models: Models{{Name: "facenet", Type: ModelTypeFace}}}
+			face.UnblockEmbeddings()
+		})
+
+		Config = &ConfigValues{Models: Models{{
+			Name:    "facenet",
+			Type:    ModelTypeFace,
+			Service: Service{Uri: "http://127.0.0.1:1/vision/face", Method: "POST"},
+		}}}
+
+		require.NotEmpty(t, mustEndpoint(t))
+
+		face.BlockEmbeddings("12 marker(s) use sface, but this instance is configured for facenet")
+
+		result, detectErr := DetectFaces(fileName, 20, false, 0)
+
+		// An endpoint that was called would fail against a closed port, so no error is what
+		// proves it was not.
+		require.NoError(t, detectErr)
+
+		if len(result) > 0 {
+			assert.True(t, result[0].Embeddings.Empty())
+		}
 	})
 	t.Run("MissingFilename", func(t *testing.T) {
 		_, detectErr := DetectFaces("", 20, false, 0)

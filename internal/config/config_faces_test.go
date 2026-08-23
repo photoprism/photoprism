@@ -21,6 +21,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // captureLog records what the shared logger emits for the duration of a test.
@@ -536,48 +537,275 @@ func TestConfig_checkFaceModelMismatch(t *testing.T) {
 		assert.Contains(t, face.EmbeddingsBlockedReason(), "1031 marker(s) use facenet")
 		assert.Contains(t, face.EmbeddingsBlockedReason(), "configured for sface")
 	})
-	t.Run("NoModelInForce", func(t *testing.T) {
-		// Nothing is generated without a model, so there is nothing to block.
+	t.Run("EmbeddingsDisabled", func(t *testing.T) {
+		// Nothing is generated when embeddings are turned off, and the vectors a library
+		// already holds stay comparable with each other, so there is nothing to block.
 		c := NewConfig(CliTestContext())
-		c.faceModel = face.ModelNone
+		c.options.FaceModel = face.ModelNone
 
 		c.checkFaceModelMismatch([]query.MarkerEmbeddingModelCount{{EmbedModel: "", Markers: 12}})
 
 		assert.False(t, face.EmbeddingsBlocked())
 	})
+	t.Run("UnusableModelBlocks", func(t *testing.T) {
+		// A model that could not be loaded reads none of the stored vectors, so clustering
+		// them would rewrite the library at another model's distances.
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = t.TempDir()
+		c.options.FaceModel = face.ModelSFace
+
+		require.Equal(t, face.ModelNone, c.FaceModel())
+
+		c.checkFaceModelMismatch([]query.MarkerEmbeddingModelCount{{EmbedModel: face.ModelSFace, Markers: 12}})
+
+		require.True(t, face.EmbeddingsBlocked())
+		assert.Contains(t, face.EmbeddingsBlockedReason(), "cannot load")
+	})
+	t.Run("UnusableModelWithoutVectors", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = t.TempDir()
+		c.options.FaceModel = face.ModelSFace
+
+		c.checkFaceModelMismatch(nil)
+
+		assert.False(t, face.EmbeddingsBlocked())
+	})
+	t.Run("NamesEachModelOnce", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.faceModel = face.ModelSFace
+		c.options.ModelsPath = installTestModels(t, face.ModelSFace)
+
+		c.checkFaceModelMismatch([]query.MarkerEmbeddingModelCount{
+			{EmbedModel: "", Markers: 30},
+			{EmbedModel: face.ModelFaceNet, Markers: 12},
+		})
+
+		require.True(t, face.EmbeddingsBlocked())
+		assert.Contains(t, face.EmbeddingsBlockedReason(), "42 marker(s) use facenet,")
+	})
+}
+
+func TestStaleFaceModels(t *testing.T) {
+	t.Run("Comparable", func(t *testing.T) {
+		stale, models := staleFaceModels([]query.MarkerEmbeddingModelCount{{EmbedModel: "", Markers: 9}}, face.ModelFaceNet)
+
+		assert.Equal(t, 0, stale)
+		assert.Empty(t, models)
+	})
+	t.Run("Incomparable", func(t *testing.T) {
+		stale, models := staleFaceModels([]query.MarkerEmbeddingModelCount{{EmbedModel: "", Markers: 9}}, face.ModelSFace)
+
+		assert.Equal(t, 9, stale)
+		assert.Equal(t, []string{face.ModelFaceNet}, models)
+	})
+	t.Run("NoModelReadsNothing", func(t *testing.T) {
+		counts := []query.MarkerEmbeddingModelCount{
+			{EmbedModel: face.ModelSFace, Markers: 4},
+			{EmbedModel: face.ModelFaceNet, Markers: 2},
+		}
+
+		stale, models := staleFaceModels(counts, face.ModelNone)
+
+		assert.Equal(t, 6, stale)
+		assert.Equal(t, []string{face.ModelSFace, face.ModelFaceNet}, models)
+	})
+	t.Run("EmptyCountsAreSkipped", func(t *testing.T) {
+		stale, models := staleFaceModels([]query.MarkerEmbeddingModelCount{{EmbedModel: face.ModelSFace, Markers: 0}}, face.ModelFaceNet)
+
+		assert.Equal(t, 0, stale)
+		assert.Empty(t, models)
+	})
 }
 
 func TestConfig_reportIgnoredFaceModel(t *testing.T) {
+	// The message is all this does, so each case has to read it.
+	ignoredLines := func(t *testing.T, hook *test.Hook) []string {
+		t.Helper()
+
+		var lines []string
+
+		for _, e := range hook.AllEntries() {
+			if strings.Contains(e.Message, "is configured but ignored") {
+				lines = append(lines, e.Message)
+			}
+		}
+
+		return lines
+	}
+
 	t.Run("FileWins", func(t *testing.T) {
-		// The message is all this does, so the test states the condition it reports on.
 		c := NewConfig(CliTestContext())
+		hook := captureLog(t)
 		c.faceModelFlag = face.ModelSFace
 		c.options.FaceModel = face.ModelFaceNet
 
 		c.reportIgnoredFaceModel()
 
-		assert.Equal(t, face.ModelFaceNet, c.FaceModelSetting())
+		lines := ignoredLines(t, hook)
+
+		require.Len(t, lines, 1)
+		assert.Contains(t, lines[0], "face model sface is configured but ignored")
+		assert.Contains(t, lines[0], "this library uses facenet")
+		assert.Contains(t, lines[0], "faces migrate --to sface")
+	})
+	t.Run("DisabledPointsAtTheFile", func(t *testing.T) {
+		// A migration cannot turn embeddings off, so naming it as the way to apply this
+		// value would send the operator to a command that refuses.
+		c := NewConfig(CliTestContext())
+		hook := captureLog(t)
+		c.faceModelFlag = face.ModelNone
+		c.options.FaceModel = face.ModelSFace
+
+		c.reportIgnoredFaceModel()
+
+		lines := ignoredLines(t, hook)
+
+		require.Len(t, lines, 1)
+		assert.NotContains(t, lines[0], "faces migrate")
+		assert.Contains(t, lines[0], "options.yml")
 	})
 	t.Run("NothingConfigured", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
+		hook := captureLog(t)
 		c.faceModelFlag = ""
 		c.options.FaceModel = face.ModelFaceNet
 
 		c.reportIgnoredFaceModel()
+
+		assert.Empty(t, ignoredLines(t, hook))
+	})
+	t.Run("Detect", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		hook := captureLog(t)
+		c.faceModelFlag = face.ModelDetect
+		c.options.FaceModel = face.ModelSFace
+
+		c.reportIgnoredFaceModel()
+
+		assert.Empty(t, ignoredLines(t, hook))
 	})
 	t.Run("Agree", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
+		hook := captureLog(t)
 		c.faceModelFlag = face.ModelSFace
 		c.options.FaceModel = face.ModelSFace
 
 		c.reportIgnoredFaceModel()
+
+		assert.Empty(t, ignoredLines(t, hook))
 	})
+}
+
+func TestConfig_libraryFaceModels(t *testing.T) {
+	t.Run("SeededLibrary", func(t *testing.T) {
+		counts, ok := TestConfig().libraryFaceModels()
+
+		assert.True(t, ok)
+		assert.NotEmpty(t, counts)
+	})
+	t.Run("CountsLegacyVectors", func(t *testing.T) {
+		// Leaving the rows that predate the column out would let a handful of migrated
+		// markers outvote a whole legacy library, and hide it from the mismatch check.
+		c := TestConfig()
+		uids := seedLegacyMarkers(t)
+
+		counts, ok := c.libraryFaceModels()
+		require.True(t, ok)
+
+		legacy := 0
+		for _, count := range counts {
+			if count.EmbedModel == "" {
+				legacy = count.Markers
+			}
+		}
+
+		assert.Equal(t, len(uids), legacy)
+		assert.Equal(t, face.ModelFaceNet, dominantFaceModel(counts))
+	})
+	t.Run("WithoutDatabase", func(t *testing.T) {
+		// Not being able to ask is not the same answer as an empty library.
+		counts, ok := NewConfig(CliTestContext()).libraryFaceModels()
+
+		assert.Nil(t, counts)
+		assert.False(t, ok)
+	})
+	t.Run("NilConfig", func(t *testing.T) {
+		counts, ok := (*Config)(nil).libraryFaceModels()
+
+		assert.Nil(t, counts)
+		assert.False(t, ok)
+	})
+}
+
+// seedEmptyLibrary clears the stored vectors of every face marker for the duration of the test,
+// which is what a library that has been indexed but never embedded looks like.
+func seedEmptyLibrary(t *testing.T) {
+	t.Helper()
+
+	db := entity.Db()
+
+	var uids []string
+	require.NoError(t, db.Model(&entity.Marker{}).
+		Where("marker_type = ? AND LENGTH(embeddings_json) > 0", entity.MarkerFace).
+		Pluck("marker_uid", &uids).Error)
+	require.NotEmpty(t, uids, "the fixtures must hold face vectors for this to mean anything")
+
+	values := make(map[string][]byte, len(uids))
+
+	for _, uid := range uids {
+		m := entity.Marker{}
+		require.NoError(t, db.Where("marker_uid = ?", uid).First(&m).Error)
+		values[uid] = m.EmbeddingsJSON
+	}
+
+	// Both columns, because a vector and its provenance are only ever written together.
+	model := entity.MarkerFixtures.Get("1000003-4").EmbedModel
+
+	require.NoError(t, db.Model(&entity.Marker{}).Where("marker_uid IN (?)", uids).
+		UpdateColumns(entity.Values{"embeddings_json": []byte(""), "embed_model": ""}).Error)
+
+	t.Cleanup(func() {
+		for uid, embeddings := range values {
+			assert.NoError(t, db.Model(&entity.Marker{}).Where("marker_uid = ?", uid).
+				UpdateColumns(entity.Values{"embeddings_json": embeddings, "embed_model": model}).Error)
+		}
+	})
+}
+
+// seedLegacyMarkers gives the fixture library a majority of markers that record no model, which
+// is what a library indexed before the provenance column looks like after a partial migration.
+func seedLegacyMarkers(t *testing.T) []string {
+	t.Helper()
+
+	db := entity.Db()
+	uids := make([]string, 0, 24)
+
+	for i := 0; i < 24; i++ {
+		m := &entity.Marker{
+			MarkerUID:      rnd.GenerateUID('m'),
+			FileUID:        "fs6sg6bw45bnlqdw",
+			MarkerType:     entity.MarkerFace,
+			EmbedModel:     "",
+			EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
+			W:              0.1,
+			H:              0.1,
+		}
+
+		require.NoError(t, db.Create(m).Error)
+		uids = append(uids, m.MarkerUID)
+	}
+
+	t.Cleanup(func() {
+		assert.NoError(t, entity.UnscopedDb().Where("marker_uid IN (?)", uids).Delete(&entity.Marker{}).Error)
+	})
+
+	return uids
 }
 
 func TestConfig_SetFaceModel(t *testing.T) {
 	t.Run("Persisted", func(t *testing.T) {
 		c := NewMinimalTestConfig(t.TempDir())
-		c.SetFaceModel(face.ModelSFace)
+		require.NoError(t, c.SetFaceModel(face.ModelSFace))
 
 		assert.Equal(t, face.ModelSFace, c.faceModel)
 
@@ -587,14 +815,25 @@ func TestConfig_SetFaceModel(t *testing.T) {
 		require.NoError(t, yaml.Unmarshal(b, &values))
 		assert.Equal(t, face.ModelSFace, values["FaceModel"])
 	})
+	t.Run("ReportsAFailedWrite", func(t *testing.T) {
+		// A caller that changed the data has to be able to tell that the setting did not
+		// follow it, or it reports a migration as done that the next start refuses.
+		c := NewMinimalTestConfig(t.TempDir())
+		require.NoError(t, os.WriteFile(c.OptionsYaml(), []byte("FaceModel: [\n"), fs.ModeFile))
+
+		err := c.SetFaceModel(face.ModelSFace)
+
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "failed saving face model")
+	})
 	t.Run("Empty", func(t *testing.T) {
 		c := NewMinimalTestConfig(t.TempDir())
-		c.SetFaceModel("")
+		require.NoError(t, c.SetFaceModel(""))
 
 		assert.Equal(t, "", c.faceModel)
 	})
 	t.Run("NilConfig", func(t *testing.T) {
-		(*Config)(nil).SetFaceModel(face.ModelSFace)
+		assert.NoError(t, (*Config)(nil).SetFaceModel(face.ModelSFace))
 	})
 }
 
@@ -677,7 +916,9 @@ func TestConfig_initFaceModel(t *testing.T) {
 		assert.Equal(t, "", c.faceModel)
 	})
 	t.Run("UnsupportedValueIsNotPinned", func(t *testing.T) {
-		// Detecting a model for a typo would turn it into a decision that outlives it.
+		// A typo applies to the run as if nothing were set - turning face embeddings off
+		// instead would be a silent cost for a value the operator can fix in a second - but
+		// writing the detected name down would outlive the typo.
 		c := TestConfig()
 		defer restoreFaceModel(t, c)()
 		c.options.FaceModel = "sfase"
@@ -686,7 +927,43 @@ func TestConfig_initFaceModel(t *testing.T) {
 		c.initFaceModel()
 
 		assert.Equal(t, "sfase", c.options.FaceModel)
-		assert.Equal(t, "", c.faceModel)
+		assert.Equal(t, entity.MarkerFixtures.Get("1000003-4").EmbedModel, c.faceModel)
+	})
+	t.Run("UnreadableLibraryIsNotPinned", func(t *testing.T) {
+		// A database that could not be asked is not an empty library. Pinning the preference
+		// list there survives the outage and refuses the library once it comes back.
+		c := TestConfig()
+		defer restoreFaceModel(t, c)()
+		c.options.FaceModel = ""
+		c.faceModel = ""
+
+		db := entity.Db()
+		table := entity.Marker{}.TableName()
+		require.NoError(t, db.Exec("ALTER TABLE "+table+" RENAME TO "+table+"_hidden").Error)
+
+		t.Cleanup(func() {
+			require.NoError(t, db.Exec("ALTER TABLE "+table+"_hidden RENAME TO "+table).Error)
+		})
+
+		c.initFaceModel()
+
+		assert.Equal(t, "", c.options.FaceModel)
+		assert.False(t, face.EmbeddingsBlocked())
+	})
+	t.Run("EmptyLibraryIsNotPinned", func(t *testing.T) {
+		// There is nothing to learn from a library with no vectors, so the preference list
+		// answers for the run and the name is recorded once the faces exist. A restore into
+		// a fresh instance would otherwise be refused by a model nothing in it produced.
+		c := TestConfig()
+		defer restoreFaceModel(t, c)()
+		seedEmptyLibrary(t)
+		c.options.FaceModel = ""
+		c.faceModel = ""
+
+		c.initFaceModel()
+
+		assert.Equal(t, "", c.options.FaceModel)
+		assert.Equal(t, face.ModelSFace, c.faceModel)
 	})
 	t.Run("WithoutDatabase", func(t *testing.T) {
 		c := NewConfig(CliTestContext())

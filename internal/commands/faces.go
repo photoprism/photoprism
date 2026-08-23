@@ -2,6 +2,7 @@ package commands
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"path/filepath"
 	"strings"
@@ -220,8 +221,11 @@ func facesMigrateAction(ctx *cli.Context) error {
 		}
 
 		// The setting is written by a run that replaced the clusters, including one that
-		// reports failed markers, so the report follows what the library now holds.
-		if conf.FaceModel() == plan.Target {
+		// reports failed markers. A write that failed carries its own error, so this line has
+		// to follow the file rather than the value this process is holding.
+		var settingErr *photoprism.FacesMigrateSettingError
+
+		if !errors.As(migrateErr, &settingErr) && conf.FaceModel() == plan.Target {
 			log.Infof("faces: the configured face model is now %s", clean.Log(plan.Target))
 		}
 

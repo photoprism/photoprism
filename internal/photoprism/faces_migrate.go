@@ -102,6 +102,27 @@ func (e *FacesMigrateAbortedError) Error() string {
 		"storage (use --force to finalize anyway)", e.Reason, e.Migrated)
 }
 
+// FacesMigrateSettingError reports a completed migration whose model could not be recorded.
+type FacesMigrateSettingError struct {
+	Target string
+	Cause  error
+}
+
+// Error returns the unrecorded migration error message.
+//
+// The vectors are the target's from here on, so an instance that starts again with the previous
+// model hides the whole library from matching. Naming the file is what makes that recoverable
+// without running the migration a second time.
+func (e *FacesMigrateSettingError) Error() string {
+	return fmt.Sprintf("faces: migrated to %s, but %s; set FaceModel: %s in options.yml before "+
+		"starting again, or the library stays hidden from matching", e.Target, e.Cause, e.Target)
+}
+
+// Unwrap returns the error that prevented the setting from being saved.
+func (e *FacesMigrateSettingError) Unwrap() error {
+	return e.Cause
+}
+
 // FacesMigrateRerunError reports a migration whose finalize was rolled back after markers
 // had already been regenerated, which leaves the library between two models.
 type FacesMigrateRerunError struct {
@@ -398,8 +419,9 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 
 	// The vectors are in the target's space from here on, so the setting follows the data even
 	// when markers failed: a start that read the previous model would hide the whole library
-	// from matching. Both have to happen before the clustering below, which is gated on them.
-	w.conf.SetFaceModel(plan.Target)
+	// from matching. Both have to happen before the clustering below, which is gated on them,
+	// and a write that failed is reported once the run has finished rather than losing it.
+	settingErr := w.conf.SetFaceModel(plan.Target)
 	face.UnblockEmbeddings()
 
 	entity.UpdateFaces.Store(true)
@@ -422,6 +444,12 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 
 	if updateErr := entity.UpdateSubjectCounts(true); updateErr != nil {
 		log.Errorf("faces: %s (update counts)", updateErr)
+	}
+
+	// An unrecorded setting outranks failed markers: it decides whether the whole library is
+	// matched at all, while they cost the faces on a handful of files.
+	if settingErr != nil {
+		return result, &FacesMigrateSettingError{Target: plan.Target, Cause: settingErr}
 	}
 
 	if result.Failed > 0 {

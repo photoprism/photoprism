@@ -3,11 +3,13 @@ package photoprism
 import (
 	"context"
 	"image"
+	"os"
 	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gopkg.in/yaml.v2"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/config"
@@ -104,6 +106,26 @@ func (e *renamingEmbedder) Run(img image.Image) face.Embeddings {
 }
 
 // newMigrateTestConfig returns an isolated config for a migration test.
+// savedFaceModel returns the face model recorded in the config's "options.yml", or an empty
+// string when the file names none. Reading the file is what tells a persisted setting apart
+// from one this process is merely holding.
+func savedFaceModel(t *testing.T, c *config.Config) string {
+	t.Helper()
+
+	b, err := os.ReadFile(c.OptionsYaml())
+
+	if err != nil {
+		return ""
+	}
+
+	values := map[string]any{}
+	require.NoError(t, yaml.Unmarshal(b, &values))
+
+	name, _ := values["FaceModel"].(string)
+
+	return name
+}
+
 func newMigrateTestConfig(t *testing.T, name string) *config.Config {
 	t.Helper()
 	useTestDb(t, name)
@@ -257,6 +279,7 @@ func TestFaces_migrate(t *testing.T) {
 
 		// The rollback has to leave the clusters alone, which is what makes re-running safe.
 		assert.Zero(t, countFaceRows(t))
+		assert.NotEqual(t, face.ModelFaceNet, savedFaceModel(t, c))
 	})
 	t.Run("RefusesTotalFailure", func(t *testing.T) {
 		c := newMigrateTestConfig(t, "migraterefuse")
@@ -273,6 +296,9 @@ func TestFaces_migrate(t *testing.T) {
 		require.Error(t, err)
 		assert.IsType(t, &FacesMigrateAbortedError{}, err)
 		assert.Zero(t, result.Migrated)
+
+		// A run that did not replace the clusters must not move the setting either.
+		assert.NotEqual(t, face.ModelFaceNet, savedFaceModel(t, c))
 
 		// Nothing may have been replaced.
 		assert.Zero(t, countFaceRows(t))
@@ -316,6 +342,14 @@ func TestFaces_migrate(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, 3, result.Migrated)
 		assert.Zero(t, result.Failed)
+
+		// The vectors are the target's now, so the setting has to follow them: a start that
+		// read the previous model would hide the whole library from matching.
+		assert.Equal(t, face.ModelFaceNet, c.FaceModel())
+		assert.Equal(t, face.ModelFaceNet, savedFaceModel(t, c))
+
+		// The re-clustering at the end of the same run is gated on the block being cleared.
+		assert.False(t, face.EmbeddingsBlocked())
 
 		models, err := query.MarkerEmbeddingModels()
 		require.NoError(t, err)
