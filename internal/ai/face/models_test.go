@@ -74,8 +74,11 @@ func TestSameEmbeddingSpace(t *testing.T) {
 }
 
 func TestParseModelName(t *testing.T) {
-	t.Run("Auto", func(t *testing.T) {
-		assert.Equal(t, ModelAuto, ParseModelName("Auto"))
+	t.Run("Detect", func(t *testing.T) {
+		assert.Equal(t, ModelDetect, ParseModelName("Detect"))
+	})
+	t.Run("AutoIsDetect", func(t *testing.T) {
+		assert.Equal(t, ModelDetect, ParseModelName("Auto"))
 	})
 	t.Run("None", func(t *testing.T) {
 		assert.Equal(t, ModelNone, ParseModelName("none"))
@@ -87,16 +90,22 @@ func TestParseModelName(t *testing.T) {
 		assert.Equal(t, ModelArcFaceR50, ParseModelName("arcface-r50"))
 	})
 	t.Run("Unknown", func(t *testing.T) {
-		assert.Equal(t, ModelAuto, ParseModelName("dlib"))
+		assert.Equal(t, ModelDetect, ParseModelName("dlib"))
 	})
 	t.Run("Empty", func(t *testing.T) {
-		assert.Equal(t, ModelAuto, ParseModelName(""))
+		assert.Equal(t, ModelDetect, ParseModelName(""))
 	})
 }
 
 func TestKnownModelName(t *testing.T) {
+	t.Run("Detect", func(t *testing.T) {
+		assert.True(t, KnownModelName("detect"))
+	})
 	t.Run("Auto", func(t *testing.T) {
 		assert.True(t, KnownModelName("auto"))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.True(t, KnownModelName(""))
 	})
 	t.Run("None", func(t *testing.T) {
 		assert.True(t, KnownModelName("NONE"))
@@ -106,9 +115,6 @@ func TestKnownModelName(t *testing.T) {
 	})
 	t.Run("Unknown", func(t *testing.T) {
 		assert.False(t, KnownModelName("dlib"))
-	})
-	t.Run("Empty", func(t *testing.T) {
-		assert.False(t, KnownModelName(""))
 	})
 }
 
@@ -143,8 +149,8 @@ func TestFindEmbeddingModel(t *testing.T) {
 	t.Run("Unknown", func(t *testing.T) {
 		assert.Nil(t, FindEmbeddingModel("dlib"))
 	})
-	t.Run("Auto", func(t *testing.T) {
-		assert.Nil(t, FindEmbeddingModel(ModelAuto))
+	t.Run("Detect", func(t *testing.T) {
+		assert.Nil(t, FindEmbeddingModel(ModelDetect))
 	})
 }
 
@@ -155,6 +161,7 @@ func TestEmbeddingModelNames(t *testing.T) {
 		assert.Equal(t, []ModelName{ModelArcFaceMBF, ModelArcFaceR50, ModelAuraFace, ModelFaceNet, ModelSFace}, names)
 	})
 	t.Run("ExcludesAliases", func(t *testing.T) {
+		assert.NotContains(t, names, ModelDetect)
 		assert.NotContains(t, names, ModelAuto)
 		assert.NotContains(t, names, ModelNone)
 	})
@@ -162,12 +169,22 @@ func TestEmbeddingModelNames(t *testing.T) {
 
 func TestModelUsageString(t *testing.T) {
 	t.Run("Aliases", func(t *testing.T) {
-		assert.True(t, strings.HasPrefix(ModelUsageString(), "auto, none, "))
+		assert.True(t, strings.HasPrefix(ModelUsageString(), "detect, none, "))
 	})
-	t.Run("AllModels", func(t *testing.T) {
+	t.Run("PermissiveModels", func(t *testing.T) {
 		for _, name := range EmbeddingModelNames() {
+			if FindEmbeddingModel(name).LicenseGated() {
+				continue
+			}
+
 			assert.Contains(t, ModelUsageString(), name)
 		}
+	})
+	t.Run("OmitsGatedModels", func(t *testing.T) {
+		// Help text reads as an offer, and these weights may not be used until their terms
+		// have been accepted, so they are named where that acceptance is asked for instead.
+		assert.NotContains(t, ModelUsageString(), ModelArcFaceR50)
+		assert.NotContains(t, ModelUsageString(), ModelArcFaceMBF)
 	})
 }
 
@@ -430,7 +447,7 @@ func TestEmbeddingModelChecksums(t *testing.T) {
 		}
 	})
 	t.Run("ArcFace", func(t *testing.T) {
-		data := readModelScript(t, "download-arcface.sh")
+		data := readModelScript(t, filepath.Join("dist", "download-arcface.sh"))
 
 		for name, variable := range map[ModelName]string{
 			ModelArcFaceR50: "R50_SHA256",

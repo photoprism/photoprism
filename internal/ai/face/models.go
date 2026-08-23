@@ -43,7 +43,10 @@ const (
 type ModelName = string
 
 const (
-	// ModelAuto resolves to the first model in AutoModelPreference that is installed.
+	// ModelDetect resolves the model from the library on the next start that has a database,
+	// and the resolved name is written to "options.yml" so it stays the same afterwards.
+	ModelDetect ModelName = "detect"
+	// ModelAuto is an accepted spelling of ModelDetect.
 	ModelAuto ModelName = "auto"
 	// ModelNone disables embedding generation so only face regions are detected.
 	ModelNone ModelName = "none"
@@ -214,11 +217,11 @@ func alignedCropInput(normalization onnx.Normalization) *onnx.Input {
 	}
 }
 
-// AutoModelPreference lists embedding models in the order that ModelAuto prefers them.
+// AutoModelPreference lists embedding models in the order that detection prefers them.
 //
 // This list only decides what a library with no face vectors starts out with. An
-// existing library keeps whatever model produced its vectors, because resolving "auto"
-// away from it would leave every stored cluster incomparable - see Config.FaceModel.
+// existing library keeps whatever model produced its vectors, because resolving away
+// from it would leave every stored cluster incomparable - see Config.FaceModel.
 var AutoModelPreference = []ModelName{ModelSFace, ModelFaceNet, ModelAuraFace, ModelArcFaceR50, ModelArcFaceMBF}
 
 // NormalizeModelName lowercases a model name and accepts hyphens in place of underscores.
@@ -246,12 +249,16 @@ func SameEmbeddingSpace(a, b ModelName) bool {
 	return ModelsComparable(a, b) || ModelsComparable(b, a)
 }
 
-// ParseModelName returns the supported model name matching s, or ModelAuto when unknown.
+// ParseModelName returns the supported model name matching s, or ModelDetect when the value
+// is empty, asks for detection, or is not recognized. Use KnownModelName to tell an unknown
+// value apart from a request to detect one.
 func ParseModelName(s string) ModelName {
 	name := NormalizeModelName(s)
 
 	switch name {
-	case ModelAuto, ModelNone:
+	case "", ModelDetect, ModelAuto:
+		return ModelDetect
+	case ModelNone:
 		return name
 	}
 
@@ -259,15 +266,16 @@ func ParseModelName(s string) ModelName {
 		return name
 	}
 
-	return ModelAuto
+	return ModelDetect
 }
 
-// KnownModelName reports whether s names a supported embedding model, "auto", or "none".
+// KnownModelName reports whether s names a supported embedding model, asks for detection,
+// or disables embeddings.
 func KnownModelName(s string) bool {
 	name := NormalizeModelName(s)
 
 	switch name {
-	case ModelAuto, ModelNone:
+	case "", ModelDetect, ModelAuto, ModelNone:
 		return true
 	}
 
@@ -295,10 +303,20 @@ func EmbeddingModelNames() []ModelName {
 }
 
 // ModelUsageString lists the accepted FACE_MODEL values for use in CLI help text.
-// It is generated from the registry so the help can never advertise a model that
-// has been renamed or removed.
+//
+// It is generated from the registry so the help can never advertise a model that has been
+// renamed or removed, and it leaves out the models whose weights may only be used after
+// their vendor's terms have been accepted: help text is read as an offer.
 func ModelUsageString() string {
-	return strings.Join(append([]ModelName{ModelAuto, ModelNone}, EmbeddingModelNames()...), ", ")
+	names := append(make([]ModelName, 0, len(EmbeddingModels)+2), ModelDetect, ModelNone)
+
+	for _, name := range EmbeddingModelNames() {
+		if !FindEmbeddingModel(name).LicenseGated() {
+			names = append(names, name)
+		}
+	}
+
+	return strings.Join(names, ", ")
 }
 
 // FilePath returns the absolute model path within the specified models directory.

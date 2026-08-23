@@ -91,14 +91,15 @@ var FacesCommands = &cli.Command{
 // FacesMigrateCommand configures the face embedding migration command.
 var FacesMigrateCommand = &cli.Command{
 	Name:  "migrate",
-	Usage: "Migrates face embeddings to the configured model",
-	Description: "Stop the server before running this. The migration replaces every face cluster in " +
-		"one transaction, and its worker guards cannot see the indexing and matching that a running " +
-		"instance performs on the same rows.",
+	Usage: "Migrates face embeddings to another model",
+	Description: "This is how the face embedding model is changed: every marker is re-embedded and " +
+		"the target is recorded as the configured model. Stop the server before running it, as the " +
+		"migration replaces every face cluster in one transaction and its worker guards cannot see " +
+		"what a running instance writes to the same rows.",
 	Flags: []cli.Flag{
 		&cli.StringFlag{
 			Name:  "to",
-			Usage: "target embedding `MODEL` (defaults to the configured face model)",
+			Usage: "target embedding `MODEL` (defaults to the model in use)",
 		},
 		DryRunFlag("reports the face migration scope without changing the index"),
 		ForceFlag("finalizes the migration even when markers could not be re-embedded"),
@@ -216,6 +217,12 @@ func facesMigrateAction(ctx *cli.Context) error {
 		if result.ExcludedMarkers > 0 || result.LowQualityMarkers > 0 {
 			log.Infof("faces: %d assignment(s) were left out of a cluster as outliers, and %d as too low-quality to seed one",
 				result.ExcludedMarkers, result.LowQualityMarkers)
+		}
+
+		// The setting is written by a run that replaced the clusters, including one that
+		// reports failed markers, so the report follows what the library now holds.
+		if conf.FaceModel() == plan.Target {
+			log.Infof("faces: the configured face model is now %s", clean.Log(plan.Target))
 		}
 
 		if migrateErr != nil {

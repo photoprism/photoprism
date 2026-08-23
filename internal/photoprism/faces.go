@@ -8,6 +8,7 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 
+	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
@@ -110,6 +111,14 @@ func (w *Faces) start(opt FacesOptions) (err error) {
 
 	if w.Disabled() {
 		return fmt.Errorf("face recognition is disabled")
+	}
+
+	// Clustering and matching compare stored vectors, so both are paused while the library
+	// holds vectors the configured model cannot read. The reason is reported once when the
+	// configuration is initialized; a worker that wakes every few minutes must not repeat it.
+	if reason := face.EmbeddingsBlockedReason(); reason != "" {
+		log.Debugf("faces: %s, so clustering and matching are paused", reason)
+		return nil
 	}
 
 	var start time.Time

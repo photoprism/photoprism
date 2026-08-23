@@ -79,6 +79,30 @@ func TestFacesMigrateAbortedError_Error(t *testing.T) {
 // otherFaceModel returns a registered embedding model that is not the specified one, so
 // tests can exercise the cross-model guards without assuming which model a test library
 // resolves to.
+// installedOtherFaceModel returns an installed model that is not the configured one and can be
+// migrated to in this environment, skipping the test when there is none.
+func installedOtherFaceModel(t *testing.T, conf *config.Config) face.ModelName {
+	t.Helper()
+
+	configured := face.NormalizeModelName(conf.FaceModel())
+
+	for _, name := range []face.ModelName{face.ModelFaceNet, face.ModelSFace} {
+		m := face.FindEmbeddingModel(name)
+
+		if name == configured || !m.Installed(conf.ModelsPath()) {
+			continue
+		} else if m.Aligned() && face.ActiveEngineName() != face.EngineONNX {
+			continue
+		}
+
+		return name
+	}
+
+	t.Skip("faces: no other embedding model is installed")
+
+	return ""
+}
+
 func otherFaceModel(t *testing.T, configured face.ModelName) face.ModelName {
 	t.Helper()
 
@@ -154,10 +178,15 @@ func TestOriginalsUnavailable(t *testing.T) {
 
 func TestFaces_MigrateDryRun(t *testing.T) {
 	w := NewFaces(config.TestConfig())
+	configured := face.NormalizeModelName(w.conf.FaceModel())
+
 	result, err := w.Migrate(context.Background(), FacesMigrateOptions{DryRun: true})
 	require.NoError(t, err)
-	assert.Equal(t, face.NormalizeModelName(w.conf.FaceModel()), result.Target)
+	assert.Equal(t, configured, result.Target)
 	assert.Equal(t, 0, result.Migrated)
+
+	// A dry run reports the scope and changes nothing, including what is configured.
+	assert.Equal(t, configured, face.NormalizeModelName(w.conf.FaceModel()))
 
 	_, err = w.Migrate(context.Background(), FacesMigrateOptions{Target: face.ModelNone, DryRun: true})
 	require.Error(t, err)
@@ -173,6 +202,20 @@ func TestFaces_migrationEmbedder(t *testing.T) {
 
 	_, err = w.migrationEmbedder(otherFaceModel(t, w.conf.FaceModel()))
 	require.Error(t, err)
+}
+
+func TestFaces_restoreEmbedder(t *testing.T) {
+	t.Run("RestoresTheConfiguredModel", func(t *testing.T) {
+		w := NewFaces(config.TestConfig())
+		configured := face.NormalizeModelName(w.conf.FaceModel())
+
+		require.NoError(t, w.conf.ConfigureFaceEmbedder(face.ModelNone))
+		require.Equal(t, face.ModelNone, face.ConfiguredModel())
+
+		w.restoreEmbedder()
+
+		assert.Equal(t, configured, face.ConfiguredModel())
+	})
 }
 
 func TestFaces_migrateFaceFile(t *testing.T) {
@@ -354,9 +397,21 @@ func TestFaces_migrationTarget(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, configured, target)
 	})
-	t.Run("Mismatch", func(t *testing.T) {
-		_, err := w.migrationTarget(otherFaceModel(t, w.conf.FaceModel()))
+	t.Run("OtherModelIsAllowed", func(t *testing.T) {
+		// The migration is how the model is changed, so a target that differs from the
+		// configured model is its normal input rather than a refusal.
+		other := installedOtherFaceModel(t, w.conf)
+
+		target, err := w.migrationTarget(other)
+		require.NoError(t, err)
+		assert.Equal(t, other, target)
+	})
+	t.Run("GatedModelWithoutAcceptance", func(t *testing.T) {
+		t.Setenv(face.LicenseAcceptanceVar, "")
+
+		_, err := w.migrationTarget(face.ModelArcFaceR50)
 		require.Error(t, err)
+		assert.Contains(t, err.Error(), face.LicenseAcceptanceVar)
 	})
 	t.Run("Disabled", func(t *testing.T) {
 		_, err := w.migrationTarget(face.ModelNone)

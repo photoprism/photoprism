@@ -28,7 +28,7 @@ research only. PhotoPrism does not redistribute them.
 
 Re-run with INSIGHTFACE_ACCEPT_LICENSE=1 if your use is covered by that license:
 
-  INSIGHTFACE_ACCEPT_LICENSE=1 scripts/download-arcface.sh
+  INSIGHTFACE_ACCEPT_LICENSE=1 scripts/dist/download-arcface.sh
 EOF
   exit 1
 fi

@@ -35,7 +35,7 @@ var (
 	activeEmbedder   Embedder
 	embedderSettings EmbedderSettings
 	embedderLoaded   bool
-	configuredModel  = ModelAuto
+	configuredModel  = ModelDetect
 	embedderErr      error
 )
 

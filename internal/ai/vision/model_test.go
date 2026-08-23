@@ -510,6 +510,18 @@ func TestModel_FaceModel(t *testing.T) {
 		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelNone}))
 		assert.Nil(t, (&Model{Name: "facenet", Type: ModelTypeFace}).FaceModel())
 	})
+	t.Run("EmbeddingsBlocked", func(t *testing.T) {
+		// A library the configured model cannot read is migrated rather than added to, so
+		// nothing generates embeddings until it is.
+		t.Cleanup(face.UnblockEmbeddings)
+		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
+			Name:  face.ModelFaceNet,
+			Model: face.FindEmbeddingModel(face.ModelFaceNet),
+		}))
+		face.BlockEmbeddings("12 marker(s) use sface, but this instance is configured for facenet")
+
+		assert.Nil(t, (&Model{Name: "facenet", Type: ModelTypeFace}).FaceModel())
+	})
 	t.Run("ActiveEmbedder", func(t *testing.T) {
 		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
 			Name:  face.ModelFaceNet,
@@ -581,4 +593,26 @@ func TestModel_IsCloud(t *testing.T) {
 			assert.Equal(t, tc.want, tc.model.IsCloud())
 		})
 	}
+}
+
+func TestModel_MigrationFaceModel(t *testing.T) {
+	t.Run("IgnoresTheBlock", func(t *testing.T) {
+		// A migration writes every vector in its own target's space, so the gate against
+		// mixing spaces would only stop the work that resolves the mismatch.
+		t.Cleanup(face.UnblockEmbeddings)
+
+		embedder := &stubEmbedder{dims: 128}
+		prev := face.UseEmbedder(embedder)
+		t.Cleanup(func() { face.UseEmbedder(prev) })
+
+		face.BlockEmbeddings("12 marker(s) use sface, but this instance is configured for facenet")
+
+		m := &Model{Name: "facenet", Type: ModelTypeFace}
+
+		assert.Nil(t, m.FaceModel())
+		assert.Equal(t, embedder, m.MigrationFaceModel())
+	})
+	t.Run("NilModel", func(t *testing.T) {
+		assert.Nil(t, (*Model)(nil).MigrationFaceModel())
+	})
 }

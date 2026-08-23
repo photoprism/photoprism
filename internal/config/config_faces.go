@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -9,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // FaceEngine returns the configured face detection engine. When the config is
@@ -173,91 +175,189 @@ func (c *Config) FaceEngineModelPath() string {
 	return primary
 }
 
-// FaceModelReport returns the face embedding model for a general configuration report, marked
-// as provisional when it could not be resolved.
-//
-// Resolving "auto" asks the library which model produced its vectors, and a configuration report
-// has to stay usable when the database is unreachable - that is when an operator most needs it -
-// so it says the name is provisional rather than connecting to find out.
-func (c *Config) FaceModelReport() string {
+// FaceModelSetting returns the face embedding model as configured, without resolving it.
+// It reports `face.ModelDetect` when the model is still to be detected, which is also what
+// an unsupported value is treated as.
+func (c *Config) FaceModelSetting() face.ModelName {
 	if c == nil {
 		return face.ModelNone
 	}
 
-	provisional := c.db == nil && face.ParseModelName(c.options.FaceModel) == face.ModelAuto
+	if !face.KnownModelName(c.options.FaceModel) {
+		c.warnFaceModel("face-model", "config: unsupported face model %s, expected %s",
+			clean.Log(c.options.FaceModel), face.ModelUsageString())
 
-	if name := c.FaceModel(); !provisional || name == face.ModelNone {
-		return name
-	} else {
-		return name + " (auto, unresolved)"
+		return face.ModelDetect
+	}
+
+	return face.ParseModelName(c.options.FaceModel)
+}
+
+// FaceModel returns the name of the face embedding model in force, or `face.ModelNone` when
+// embeddings are disabled, the model cannot be used, or none has been detected yet.
+//
+// Detection runs once in Config.Init and pins its result, so this reads what was settled there
+// rather than asking the library, whose answer is a majority vote that flips mid-migration.
+func (c *Config) FaceModel() face.ModelName {
+	if c == nil {
+		return face.ModelNone
+	}
+
+	if c.faceModel != "" {
+		return c.faceModel
+	}
+
+	switch name := c.FaceModelSetting(); name {
+	case face.ModelDetect, face.ModelNone:
+		return face.ModelNone
+	default:
+		return c.usableFaceModel(name)
 	}
 }
 
-// FaceModel returns the name of the configured face embedding model. Unsupported
-// values are reported and treated as `face.ModelAuto`, which keeps the embedding space
-// a library already uses and otherwise resolves to the first installed model in
-// `face.AutoModelPreference`.
-func (c *Config) FaceModel() string {
-	if c == nil {
+// usableFaceModel returns the specified model when its weights are installed and may be used
+// here, and `face.ModelNone` with one warning otherwise.
+func (c *Config) usableFaceModel(name face.ModelName) face.ModelName {
+	if err := face.LicenseRefused(name, c.Edition()); err != nil {
+		c.warnFaceModel("face-model-license", "config: %s, so face embeddings are disabled", err)
+
 		return face.ModelNone
 	}
 
-	if c.options.FaceModel == "" {
-		c.options.FaceModel = face.ModelAuto
-	} else if !face.KnownModelName(c.options.FaceModel) {
-		log.Warnf("config: unsupported face model %s, expected %s", clean.Log(c.options.FaceModel), face.ModelUsageString())
-		c.options.FaceModel = face.ModelAuto
-	}
-
-	modelsPath := c.ModelsPath()
-
-	if name := face.ParseModelName(c.options.FaceModel); name == face.ModelNone {
-		return name
-	} else if name != face.ModelAuto {
-		if face.FindEmbeddingModel(name).Installed(modelsPath) {
-			return name
-		}
-
+	if !face.FindEmbeddingModel(name).Installed(c.ModelsPath()) {
 		// Falling forward to another model would start a second vector space the library
 		// cannot compare with, and an image upgrade removes opt-in models from assets, so
-		// an explicitly requested model that is missing disables embeddings instead.
-		log.Warnf("config: face model %s is not installed, disabling face embeddings", clean.Log(name))
+		// a model that is missing disables embeddings instead.
+		c.warnFaceModel("face-model-installed", "config: face model %s is not installed, disabling face embeddings", clean.Log(name))
 
 		return face.ModelNone
 	}
 
-	resolved := face.ModelNone
-
-	// An existing library keeps the space its vectors were generated in. Resolving to a
-	// different model would leave every stored cluster incomparable with everything
-	// indexed from now on, which is why "auto" asks the library before the preference list.
-	if name := c.libraryFaceModel(); name == "" {
-		resolved = installedFaceModel(modelsPath)
-	} else if face.FindEmbeddingModel(name).Installed(modelsPath) {
-		resolved = name
-	} else {
-		// Anything indexed from now on would land in a second vector space that cannot be
-		// compared with what the library already holds, so embeddings stop until the model
-		// is reinstalled or the library is migrated.
-		log.Warnf("config: library was indexed with face model %s, which is not installed, disabling face embeddings", clean.Log(name))
-		resolved = face.ModelNone
-	}
-
-	// Cache the resolved name so the lookup, the query, and any warning only happen once.
-	// An answer found before the database was connected could not consult the library,
-	// so it stays provisional rather than freezing the preference list into place.
-	if c.db != nil {
-		c.options.FaceModel = resolved
-	}
-
-	return resolved
+	return name
 }
 
-// installedFaceModel returns the first model in AutoModelPreference whose weights exist
-// in the specified path, or ModelNone when none of them are installed.
-func installedFaceModel(modelsPath string) face.ModelName {
+// ResolveFaceModel detects the model from the library without persisting the result, so that a
+// report can name what is in force, and whether it can read the library, without changing what
+// is configured.
+func (c *Config) ResolveFaceModel() face.ModelName {
+	if c == nil {
+		return face.ModelNone
+	} else if c.db == nil {
+		return c.FaceModel()
+	}
+
+	counts := c.libraryFaceModels()
+
+	if c.faceModel == "" && c.FaceModelSetting() == face.ModelDetect {
+		c.faceModel = c.detectFaceModel(counts)
+	}
+
+	c.checkFaceModelMismatch(counts)
+
+	return c.FaceModel()
+}
+
+// SetFaceModel records the model the library's vectors are now in and persists it.
+//
+// A migration is the one operation that changes the answer, and the setting has to follow it,
+// or a later start hides the whole library from matching. A file that cannot be written costs
+// the next start a detection, nothing more.
+func (c *Config) SetFaceModel(name face.ModelName) {
+	if c == nil || name == "" {
+		return
+	}
+
+	// Set in memory as well as in the file, because the patch helper only reloads the options
+	// it changed and a file that already named the model would leave this process behind.
+	c.faceModel = name
+	c.options.FaceModel = name
+
+	if _, err := c.SaveOptionsPatch(Values{"FaceModel": name}); err != nil {
+		log.Warnf("config: failed saving face model %s (%s)", clean.Log(name), err)
+	}
+}
+
+// initFaceModel settles which embedding model this instance uses, and is called once by Init
+// on a start that has a database.
+func (c *Config) initFaceModel() {
+	if c == nil || c.db == nil {
+		return
+	}
+
+	c.reportIgnoredFaceModel()
+
+	// An unsupported value is reported and left alone rather than detected from: writing a
+	// detected name would turn a typo into a decision that outlives it.
+	if !face.KnownModelName(c.options.FaceModel) {
+		log.Warnf("config: unsupported face model %s, expected %s",
+			clean.Log(c.options.FaceModel), face.ModelUsageString())
+
+		return
+	}
+
+	counts := c.libraryFaceModels()
+
+	if c.FaceModelSetting() == face.ModelDetect {
+		if name := c.detectFaceModel(counts); name == face.ModelNone {
+			c.faceModel = name
+		} else {
+			log.Infof("config: detected face model %s", clean.Log(name))
+			c.SetFaceModel(name)
+		}
+	}
+
+	c.checkFaceModelMismatch(counts)
+}
+
+// reportIgnoredFaceModel reports a model that an environment variable or the command line set
+// while "options.yml" names a different one.
+//
+// The file wins for every option, and here it also keeps the instance intact: changing the
+// model is a data migration, so a variable could only leave the library in two vector spaces.
+// An instruction with no effect must still not be silent.
+func (c *Config) reportIgnoredFaceModel() {
+	if c.faceModelFlag == "" {
+		return
+	}
+
+	configured := face.ParseModelName(c.faceModelFlag)
+	inForce := c.FaceModelSetting()
+
+	if configured == face.ModelDetect || configured == inForce {
+		return
+	}
+
+	log.Infof("config: face model %s is configured but ignored, this library uses %s "+
+		`(run "photoprism faces migrate --to %s" to change it)`, clean.Log(configured), clean.Log(inForce), clean.Log(configured))
+}
+
+// detectFaceModel returns the model that produced the library's vectors, or the first installed
+// model that may be used when it holds none.
+func (c *Config) detectFaceModel(counts []query.MarkerEmbeddingModelCount) face.ModelName {
+	// An existing library keeps the space its vectors were generated in, or every stored
+	// cluster becomes incomparable with what is indexed from now on. Its answer is not
+	// filtered by the preference list either: a model that may not be used is refused with a
+	// reason rather than replaced by one that cannot read the vectors.
+	if name := dominantFaceModel(counts); name != "" {
+		return c.usableFaceModel(name)
+	}
+
+	return c.installedFaceModel()
+}
+
+// installedFaceModel returns the first model in `face.AutoModelPreference` whose weights are
+// installed and may be used here, or `face.ModelNone` when there is none.
+//
+// License-gated weights are skipped rather than refused: nothing has been chosen yet, so
+// selecting a model the operator never asked for is exactly what the gate exists to prevent.
+func (c *Config) installedFaceModel() face.ModelName {
+	modelsPath := c.ModelsPath()
+	edition := c.Edition()
+
 	for _, candidate := range face.AutoModelPreference {
-		if face.FindEmbeddingModel(candidate).Installed(modelsPath) {
+		if face.LicenseRefused(candidate, edition) != nil {
+			continue
+		} else if face.FindEmbeddingModel(candidate).Installed(modelsPath) {
 			return candidate
 		}
 	}
@@ -265,20 +365,74 @@ func installedFaceModel(modelsPath string) face.ModelName {
 	return face.ModelNone
 }
 
+// checkFaceModelMismatch blocks embedding work when the library holds vectors that cannot be
+// compared with the model in force.
+//
+// Without it a mismatch is a filter rather than a fault: matching runs, finds nothing, reports
+// nothing wrong, and indexing keeps adding vectors in the configured model's space beside the
+// ones already there.
+func (c *Config) checkFaceModelMismatch(counts []query.MarkerEmbeddingModelCount) {
+	name := c.FaceModel()
+
+	if name == face.ModelNone {
+		face.UnblockEmbeddings()
+		return
+	}
+
+	stale := 0
+	models := make([]string, 0, len(counts))
+
+	for _, count := range counts {
+		if count.Markers < 1 || face.ModelsComparable(count.EmbedModel, name) {
+			continue
+		}
+
+		stale += count.Markers
+		models = append(models, clean.Log(recordedFaceModel(count.EmbedModel)))
+	}
+
+	if stale == 0 {
+		face.UnblockEmbeddings()
+		return
+	}
+
+	reason := fmt.Sprintf("%d marker(s) use %s, but this instance is configured for %s",
+		stale, txt.JoinAnd(models), clean.Log(name))
+
+	face.BlockEmbeddings(reason)
+
+	log.Warnf(`faces: %s, so face embeddings are not processed (run "photoprism faces migrate --to %s" to migrate them)`,
+		reason, clean.Log(name))
+}
+
+// warnFaceModel reports a face model problem once, because the getters are called from
+// Propagate and from the config report rather than a single time per start.
+func (c *Config) warnFaceModel(key, format string, args ...any) {
+	if _, warned := c.faceWarned.LoadOrStore(key, true); !warned {
+		log.Warnf(format, args...)
+	}
+}
+
 // libraryFaceModel returns the embedding model the library's face vectors were generated
 // with, or an empty name when it holds none and when the database is not connected yet.
+func (c *Config) libraryFaceModel() face.ModelName {
+	return dominantFaceModel(c.libraryFaceModels())
+}
+
+// libraryFaceModels returns how many face markers the library holds per embedding model, or
+// nothing when it holds none and when the database is not connected yet.
 //
 // This runs once per process, including for every CLI invocation, so it asks the indexed
 // provenance column first and only falls back to counting vectors when nothing answers.
-func (c *Config) libraryFaceModel() face.ModelName {
+func (c *Config) libraryFaceModels() []query.MarkerEmbeddingModelCount {
 	if c == nil || c.db == nil {
-		return ""
+		return nil
 	}
 
 	counts, err := query.RecordedMarkerEmbeddingModels()
 
 	if err == nil && len(counts) > 0 {
-		return dominantFaceModel(counts)
+		return counts
 	} else if err != nil {
 		// The schema is migrated after the configuration is propagated, so on the first
 		// start after an upgrade the provenance column does not exist yet.
@@ -290,10 +444,10 @@ func (c *Config) libraryFaceModel() face.ModelName {
 	if markers, countErr := query.FaceMarkersWithVectors(); countErr != nil {
 		log.Debugf("config: %s (count face markers)", countErr)
 	} else if markers > 0 {
-		return face.ModelFaceNet
+		return []query.MarkerEmbeddingModelCount{{EmbedModel: "", Markers: int(markers)}}
 	}
 
-	return ""
+	return nil
 }
 
 // dominantFaceModel returns the model that produced most of the counted vectors, or an
@@ -312,17 +466,44 @@ func dominantFaceModel(counts []query.MarkerEmbeddingModelCount) face.ModelName 
 
 	if markers == 0 {
 		return ""
-	} else if name == "" {
-		return face.ModelFaceNet
 	}
 
-	return name
+	return recordedFaceModel(name)
+}
+
+// recordedFaceModel returns the model that produced a vector from the name recorded with it,
+// so a blank name reads as the model it can only have come from rather than as unknown.
+func recordedFaceModel(recorded string) face.ModelName {
+	if name := face.NormalizeModelName(recorded); name != "" {
+		return name
+	}
+
+	return face.ModelFaceNet
 }
 
 // FaceEmbeddingModel returns the resolved face embedding model, or nil when
 // embeddings are disabled or no model is installed.
 func (c *Config) FaceEmbeddingModel() *face.EmbeddingModel {
 	return face.FindEmbeddingModel(c.FaceModel())
+}
+
+// ConfigureFaceEmbedder loads the embedding model with the specified name.
+//
+// It takes the name rather than reading the configuration, so a migration can load the model
+// it writes before the instance is configured for it. Loading the active model is a no-op.
+func (c *Config) ConfigureFaceEmbedder(name face.ModelName) error {
+	if c == nil {
+		return nil
+	}
+
+	model := face.FindEmbeddingModel(name)
+
+	return face.ConfigureEmbedder(face.EmbedderSettings{
+		Name:      name,
+		Model:     model,
+		ModelPath: model.FilePath(c.ModelsPath()),
+		Threads:   c.FaceModelThreads(),
+	})
 }
 
 // FaceModelPath returns the absolute path of the configured face embedding model.

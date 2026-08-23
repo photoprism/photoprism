@@ -40,15 +40,24 @@ func TestFacesMigrateAction(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, before, after)
 	})
-	t.Run("TargetMismatch", func(t *testing.T) {
+	t.Run("TargetNotInstalled", func(t *testing.T) {
+		// A target that differs from the configured model is the command's normal input,
+		// so what it refuses here is weights it cannot load.
 		_, err := RunWithTestContext(FacesMigrateCommand, []string{"migrate", "--to=sface", "--dry-run", "--yes"})
 		require.Error(t, err)
-		assert.Contains(t, err.Error(), "configured model facenet")
+		assert.Contains(t, err.Error(), "embedding model sface is not installed")
 
 		// Without an exit code a script cannot tell a refused migration from one that ran.
 		exitErr, ok := err.(cli.ExitCoder)
 		require.True(t, ok, "migration errors must set an exit status")
 		assert.Equal(t, 1, exitErr.ExitCode())
+	})
+	t.Run("GatedTargetWithoutAcceptance", func(t *testing.T) {
+		t.Setenv(face.LicenseAcceptanceVar, "")
+
+		_, err := RunWithTestContext(FacesMigrateCommand, []string{"migrate", "--to=arcface_r50", "--dry-run", "--yes"})
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), face.LicenseAcceptanceVar)
 	})
 	t.Run("DisabledTarget", func(t *testing.T) {
 		_, err := RunWithTestContext(FacesMigrateCommand, []string{"migrate", "--to=none", "--dry-run", "--yes"})

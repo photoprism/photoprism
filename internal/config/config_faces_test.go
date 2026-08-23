@@ -13,6 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v2"
+	"gopkg.in/yaml.v2"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/vision"
@@ -53,6 +54,18 @@ func installTestModels(t *testing.T, names ...face.ModelName) string {
 	}
 
 	return modelsPath
+}
+
+// newSFaceTestConfig returns a test config with SFace installed and in force, which is what
+// the model-calibrated thresholds follow.
+func newSFaceTestConfig(t *testing.T) *Config {
+	t.Helper()
+
+	c := NewConfig(CliTestContext())
+	c.options.ModelsPath = installTestModels(t, face.ModelSFace)
+	c.options.FaceModel = face.ModelSFace
+
+	return c
 }
 
 func TestConfig_FaceEngine(t *testing.T) {
@@ -296,58 +309,66 @@ func TestConfig_FaceEngineModelPath(t *testing.T) {
 	})
 }
 
-func TestConfig_FaceModelReport(t *testing.T) {
-	t.Run("ProvisionalWithoutDatabase", func(t *testing.T) {
-		// A configuration report has to stay usable when the database is unreachable, so an
-		// unresolved "auto" is named as provisional rather than printed as if it were in force.
+func TestConfig_FaceModelSetting(t *testing.T) {
+	t.Run("Unset", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
-		assert.Equal(t, face.ModelSFace+" (auto, unresolved)", c.FaceModelReport())
+		c.options.FaceModel = ""
+
+		assert.Equal(t, face.ModelDetect, c.FaceModelSetting())
 	})
-	t.Run("ResolvedAgainstLibrary", func(t *testing.T) {
-		// A configuration with a database resolves "auto" against the library, so the report
-		// names the model the library holds and carries no provisional caveat.
-		c := TestConfig()
+	t.Run("Detect", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceModel = "Detect"
+
+		assert.Equal(t, face.ModelDetect, c.FaceModelSetting())
+	})
+	t.Run("AutoIsDetect", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
 		c.options.FaceModel = face.ModelAuto
 
-		assert.Equal(t, entity.MarkerFixtures.Get("1000003-4").EmbedModel, c.FaceModelReport())
+		assert.Equal(t, face.ModelDetect, c.FaceModelSetting())
 	})
-	t.Run("Explicit", func(t *testing.T) {
-		// An explicitly named model needs no library lookup, so it carries no caveat.
+	t.Run("Named", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
-		c.options.ModelsPath = installTestModels(t, face.ModelArcFaceR50)
-		c.options.FaceModel = "ArcFace-R50"
+		c.options.FaceModel = "SFace"
 
-		assert.Equal(t, face.ModelArcFaceR50, c.FaceModelReport())
+		assert.Equal(t, face.ModelSFace, c.FaceModelSetting())
 	})
 	t.Run("None", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.options.FaceModel = face.ModelNone
 
-		assert.Equal(t, face.ModelNone, c.FaceModelReport())
+		assert.Equal(t, face.ModelNone, c.FaceModelSetting())
+	})
+	t.Run("Unsupported", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceModel = "sfase"
+
+		assert.Equal(t, face.ModelDetect, c.FaceModelSetting())
 	})
 	t.Run("NilConfig", func(t *testing.T) {
-		var c *Config
-		assert.Equal(t, face.ModelNone, c.FaceModelReport())
+		assert.Equal(t, face.ModelNone, (*Config)(nil).FaceModelSetting())
 	})
 }
 
 func TestConfig_FaceModel(t *testing.T) {
-	t.Run("Default", func(t *testing.T) {
-		// Without a database there is no library to ask, so the preference list decides.
+	t.Run("UnsetIsNotResolvedHere", func(t *testing.T) {
+		// Detection runs once in Init, so a configuration that has not reached it names no
+		// model rather than deriving one that the instance may never use.
 		c := NewConfig(CliTestContext())
+		c.options.FaceModel = ""
+
+		assert.Equal(t, face.ModelNone, c.FaceModel())
+	})
+	t.Run("Detected", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = installTestModels(t, face.ModelSFace)
+		c.faceModel = face.ModelSFace
+
 		assert.Equal(t, face.ModelSFace, c.FaceModel())
 	})
-	t.Run("LibraryKeepsItsModel", func(t *testing.T) {
-		// A library whose markers record no model was indexed before the provenance column,
-		// so its vectors are FaceNet. Resolving those to the first installed model on upgrade
-		// would leave every stored cluster incomparable.
-		c := TestConfig()
-		seedLegacyLibrary(t)
-		c.options.FaceModel = face.ModelAuto
-
-		assert.Equal(t, face.ModelFaceNet, c.FaceModel())
-	})
 	t.Run("Explicit", func(t *testing.T) {
+		t.Setenv(face.LicenseAcceptanceVar, "1")
 		c := NewConfig(CliTestContext())
 		c.options.ModelsPath = installTestModels(t, face.ModelArcFaceR50)
 		c.options.FaceModel = "ArcFace-R50"
@@ -359,43 +380,357 @@ func TestConfig_FaceModel(t *testing.T) {
 		// library cannot compare with, so a missing explicit model disables embeddings.
 		c := NewConfig(CliTestContext())
 		c.options.ModelsPath = installTestModels(t, face.ModelFaceNet)
-		c.options.FaceModel = face.ModelArcFaceR50
+		c.options.FaceModel = face.ModelSFace
 
 		assert.Equal(t, face.ModelNone, c.FaceModel())
 	})
-	t.Run("ExplicitNotInstalledWithoutFallback", func(t *testing.T) {
+	t.Run("ExplicitWithoutLicenseAcceptance", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
-		c.options.ModelsPath = t.TempDir()
-		c.options.FaceModel = face.ModelSFace
+		c.options.ModelsPath = installTestModels(t, face.ModelArcFaceR50)
+		c.options.FaceModel = face.ModelArcFaceR50
 
 		assert.Equal(t, face.ModelNone, c.FaceModel())
 	})
 	t.Run("None", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.options.FaceModel = face.ModelNone
+
 		assert.Equal(t, face.ModelNone, c.FaceModel())
 	})
 	t.Run("Unsupported", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.options.FaceModel = "dlib"
-		assert.Equal(t, face.ModelSFace, c.FaceModel())
-	})
-	t.Run("AutoWithoutModels", func(t *testing.T) {
-		c := NewConfig(CliTestContext())
-		c.options.ModelsPath = t.TempDir()
-		c.options.FaceModel = face.ModelAuto
-		assert.Equal(t, face.ModelNone, c.FaceModel())
-	})
-	t.Run("AutoPrefersSFaceWhenFaceNetMissing", func(t *testing.T) {
-		c := NewConfig(CliTestContext())
-		c.options.ModelsPath = installTestModels(t, face.ModelSFace)
-		c.options.FaceModel = face.ModelAuto
 
-		assert.Equal(t, face.ModelSFace, c.FaceModel())
+		assert.Equal(t, face.ModelNone, c.FaceModel())
 	})
 	t.Run("NilConfig", func(t *testing.T) {
 		assert.Equal(t, face.ModelNone, (*Config)(nil).FaceModel())
 	})
+}
+
+func TestConfig_usableFaceModel(t *testing.T) {
+	t.Run("Installed", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = installTestModels(t, face.ModelSFace)
+
+		assert.Equal(t, face.ModelSFace, c.usableFaceModel(face.ModelSFace))
+	})
+	t.Run("NotInstalled", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = t.TempDir()
+
+		assert.Equal(t, face.ModelNone, c.usableFaceModel(face.ModelSFace))
+	})
+	t.Run("LicenseNotAccepted", func(t *testing.T) {
+		// Weights that are installed are still not usable until their terms are accepted.
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = installTestModels(t, face.ModelArcFaceR50)
+
+		assert.Equal(t, face.ModelNone, c.usableFaceModel(face.ModelArcFaceR50))
+	})
+	t.Run("IneligibleEdition", func(t *testing.T) {
+		t.Setenv(face.LicenseAcceptanceVar, "1")
+		c := NewConfig(CliTestContext())
+		c.options.Edition = "pro"
+		c.options.ModelsPath = installTestModels(t, face.ModelArcFaceR50)
+
+		assert.Equal(t, face.ModelNone, c.usableFaceModel(face.ModelArcFaceR50))
+	})
+}
+
+func TestConfig_detectFaceModel(t *testing.T) {
+	t.Run("LibraryKeepsItsModel", func(t *testing.T) {
+		// Vectors written before the provenance column can only be FaceNet, and resolving
+		// them to the first installed model would leave every stored cluster incomparable.
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = installTestModels(t, face.ModelFaceNet, face.ModelSFace)
+
+		counts := []query.MarkerEmbeddingModelCount{{EmbedModel: "", Markers: 12}}
+
+		assert.Equal(t, face.ModelFaceNet, c.detectFaceModel(counts))
+	})
+	t.Run("LibraryModelIsNotFiltered", func(t *testing.T) {
+		// A library the operator deliberately built on gated weights still resolves to them,
+		// because a model that cannot read its vectors is no substitute.
+		t.Setenv(face.LicenseAcceptanceVar, "1")
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = installTestModels(t, face.ModelSFace, face.ModelArcFaceR50)
+
+		counts := []query.MarkerEmbeddingModelCount{{EmbedModel: face.ModelArcFaceR50, Markers: 7}}
+
+		assert.Equal(t, face.ModelArcFaceR50, c.detectFaceModel(counts))
+	})
+	t.Run("EmptyLibraryUsesPreference", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = installTestModels(t, face.ModelFaceNet, face.ModelSFace)
+
+		assert.Equal(t, face.ModelSFace, c.detectFaceModel(nil))
+	})
+}
+
+func TestConfig_installedFaceModel(t *testing.T) {
+	t.Run("None", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = t.TempDir()
+
+		assert.Equal(t, face.ModelNone, c.installedFaceModel())
+	})
+	t.Run("FollowsPreferenceOrder", func(t *testing.T) {
+		// FaceNet is installed too, but SFace comes first for a library with no vectors.
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = installTestModels(t, face.ModelFaceNet, face.ModelSFace)
+
+		assert.Equal(t, face.ModelSFace, c.installedFaceModel())
+	})
+	t.Run("SkipsGatedWeights", func(t *testing.T) {
+		// Nothing has been chosen yet, so selecting weights whose terms nobody accepted is
+		// exactly what the gate exists to prevent - even when they are the only ones there.
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = installTestModels(t, face.ModelArcFaceR50)
+
+		assert.Equal(t, face.ModelNone, c.installedFaceModel())
+	})
+	t.Run("AcceptedGatedWeightsStayLast", func(t *testing.T) {
+		t.Setenv(face.LicenseAcceptanceVar, "1")
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = installTestModels(t, face.ModelArcFaceR50)
+
+		assert.Equal(t, face.ModelArcFaceR50, c.installedFaceModel())
+	})
+}
+
+func TestConfig_checkFaceModelMismatch(t *testing.T) {
+	t.Cleanup(face.UnblockEmbeddings)
+
+	t.Run("Comparable", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.faceModel = face.ModelSFace
+		c.options.ModelsPath = installTestModels(t, face.ModelSFace)
+
+		c.checkFaceModelMismatch([]query.MarkerEmbeddingModelCount{{EmbedModel: face.ModelSFace, Markers: 9}})
+
+		assert.False(t, face.EmbeddingsBlocked())
+	})
+	t.Run("LegacyVectorsAreFaceNet", func(t *testing.T) {
+		// A blank name is a vector written before the provenance column, which FaceNet can
+		// read by definition, so it is not a mismatch against it.
+		c := NewConfig(CliTestContext())
+		c.faceModel = face.ModelFaceNet
+		c.options.ModelsPath = installTestModels(t, face.ModelFaceNet)
+
+		c.checkFaceModelMismatch([]query.MarkerEmbeddingModelCount{{EmbedModel: "", Markers: 9}})
+
+		assert.False(t, face.EmbeddingsBlocked())
+	})
+	t.Run("Incomparable", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.faceModel = face.ModelSFace
+		c.options.ModelsPath = installTestModels(t, face.ModelSFace)
+
+		c.checkFaceModelMismatch([]query.MarkerEmbeddingModelCount{
+			{EmbedModel: "", Markers: 1031},
+			{EmbedModel: face.ModelSFace, Markers: 4},
+		})
+
+		require.True(t, face.EmbeddingsBlocked())
+		assert.Contains(t, face.EmbeddingsBlockedReason(), "1031 marker(s) use facenet")
+		assert.Contains(t, face.EmbeddingsBlockedReason(), "configured for sface")
+	})
+	t.Run("NoModelInForce", func(t *testing.T) {
+		// Nothing is generated without a model, so there is nothing to block.
+		c := NewConfig(CliTestContext())
+		c.faceModel = face.ModelNone
+
+		c.checkFaceModelMismatch([]query.MarkerEmbeddingModelCount{{EmbedModel: "", Markers: 12}})
+
+		assert.False(t, face.EmbeddingsBlocked())
+	})
+}
+
+func TestConfig_reportIgnoredFaceModel(t *testing.T) {
+	t.Run("FileWins", func(t *testing.T) {
+		// The message is all this does, so the test states the condition it reports on.
+		c := NewConfig(CliTestContext())
+		c.faceModelFlag = face.ModelSFace
+		c.options.FaceModel = face.ModelFaceNet
+
+		c.reportIgnoredFaceModel()
+
+		assert.Equal(t, face.ModelFaceNet, c.FaceModelSetting())
+	})
+	t.Run("NothingConfigured", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.faceModelFlag = ""
+		c.options.FaceModel = face.ModelFaceNet
+
+		c.reportIgnoredFaceModel()
+	})
+	t.Run("Agree", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.faceModelFlag = face.ModelSFace
+		c.options.FaceModel = face.ModelSFace
+
+		c.reportIgnoredFaceModel()
+	})
+}
+
+func TestConfig_SetFaceModel(t *testing.T) {
+	t.Run("Persisted", func(t *testing.T) {
+		c := NewMinimalTestConfig(t.TempDir())
+		c.SetFaceModel(face.ModelSFace)
+
+		assert.Equal(t, face.ModelSFace, c.faceModel)
+
+		values := Values{}
+		b, err := os.ReadFile(c.OptionsYaml())
+		require.NoError(t, err)
+		require.NoError(t, yaml.Unmarshal(b, &values))
+		assert.Equal(t, face.ModelSFace, values["FaceModel"])
+	})
+	t.Run("Empty", func(t *testing.T) {
+		c := NewMinimalTestConfig(t.TempDir())
+		c.SetFaceModel("")
+
+		assert.Equal(t, "", c.faceModel)
+	})
+	t.Run("NilConfig", func(t *testing.T) {
+		(*Config)(nil).SetFaceModel(face.ModelSFace)
+	})
+}
+
+func TestConfig_ResolveFaceModel(t *testing.T) {
+	t.Run("WithoutDatabase", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceModel = ""
+
+		assert.Equal(t, face.ModelNone, c.ResolveFaceModel())
+	})
+	t.Run("DoesNotPersist", func(t *testing.T) {
+		// A report states what is configured, so resolving for display must leave the
+		// setting untouched.
+		c := TestConfig()
+		defer restoreFaceModel(t, c)()
+		c.options.FaceModel = face.ModelDetect
+		c.faceModel = ""
+
+		assert.Equal(t, entity.MarkerFixtures.Get("1000003-4").EmbedModel, c.ResolveFaceModel())
+		assert.Equal(t, face.ModelDetect, c.FaceModelSetting())
+	})
+	t.Run("ReportsAMismatch", func(t *testing.T) {
+		// An operator who saw the warning at startup looks here next, so the report has to
+		// answer with the same verdict rather than "ok".
+		t.Cleanup(face.UnblockEmbeddings)
+		c := TestConfig()
+		defer restoreFaceModel(t, c)()
+		c.options.FaceModel = otherLibraryFaceModel(t, c)
+		c.faceModel = ""
+
+		c.ResolveFaceModel()
+
+		assert.True(t, face.EmbeddingsBlocked())
+	})
+	t.Run("NilConfig", func(t *testing.T) {
+		assert.Equal(t, face.ModelNone, (*Config)(nil).ResolveFaceModel())
+	})
+}
+
+// otherLibraryFaceModel returns an installed model whose vectors the library does not hold,
+// which is the mismatch an instance pointed at the wrong library sees.
+func otherLibraryFaceModel(t *testing.T, c *Config) face.ModelName {
+	t.Helper()
+
+	held := c.libraryFaceModel()
+
+	for _, name := range []face.ModelName{face.ModelSFace, face.ModelFaceNet} {
+		if name != held && face.FindEmbeddingModel(name).Installed(c.ModelsPath()) {
+			return name
+		}
+	}
+
+	t.Skip("faces: no other embedding model is installed")
+
+	return ""
+}
+
+func TestConfig_initFaceModel(t *testing.T) {
+	t.Run("DetectsAndPersists", func(t *testing.T) {
+		c := TestConfig()
+		defer restoreFaceModel(t, c)()
+		c.options.FaceModel = face.ModelDetect
+		c.faceModel = ""
+
+		c.initFaceModel()
+
+		expected := entity.MarkerFixtures.Get("1000003-4").EmbedModel
+		assert.Equal(t, expected, c.faceModel)
+		assert.Equal(t, expected, c.options.FaceModel)
+	})
+	t.Run("NamedModelIsAnAnswer", func(t *testing.T) {
+		c := TestConfig()
+		defer restoreFaceModel(t, c)()
+		c.options.FaceModel = face.ModelNone
+		c.faceModel = ""
+
+		c.initFaceModel()
+
+		assert.Equal(t, face.ModelNone, c.options.FaceModel)
+		assert.Equal(t, "", c.faceModel)
+	})
+	t.Run("UnsupportedValueIsNotPinned", func(t *testing.T) {
+		// Detecting a model for a typo would turn it into a decision that outlives it.
+		c := TestConfig()
+		defer restoreFaceModel(t, c)()
+		c.options.FaceModel = "sfase"
+		c.faceModel = ""
+
+		c.initFaceModel()
+
+		assert.Equal(t, "sfase", c.options.FaceModel)
+		assert.Equal(t, "", c.faceModel)
+	})
+	t.Run("WithoutDatabase", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceModel = ""
+
+		c.initFaceModel()
+
+		assert.Equal(t, "", c.options.FaceModel)
+	})
+}
+
+func TestConfig_ConfigureFaceEmbedder(t *testing.T) {
+	t.Run("None", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+
+		require.NoError(t, c.ConfigureFaceEmbedder(face.ModelNone))
+		assert.Equal(t, face.ModelNone, face.ConfiguredModel())
+
+		t.Cleanup(func() { _ = c.ConfigureFaceEmbedder(TestConfig().FaceModel()) })
+	})
+	t.Run("NilConfig", func(t *testing.T) {
+		assert.NoError(t, (*Config)(nil).ConfigureFaceEmbedder(face.ModelSFace))
+	})
+}
+
+func TestRecordedFaceModel(t *testing.T) {
+	t.Run("Blank", func(t *testing.T) {
+		assert.Equal(t, face.ModelFaceNet, recordedFaceModel(""))
+	})
+	t.Run("Named", func(t *testing.T) {
+		assert.Equal(t, face.ModelSFace, recordedFaceModel("SFace"))
+	})
+}
+
+// restoreFaceModel resets the face model of the shared test config when the test ends, since
+// the tests that need a detectable library have to use the fixture-backed singleton.
+func restoreFaceModel(t *testing.T, c *Config) func() {
+	t.Helper()
+
+	setting, resolved := c.options.FaceModel, c.faceModel
+
+	return func() {
+		c.options.FaceModel, c.faceModel = setting, resolved
+	}
 }
 
 func TestDominantFaceModel(t *testing.T) {
@@ -426,21 +761,6 @@ func TestDominantFaceModel(t *testing.T) {
 			{EmbedModel: "ArcFace-R50", Markers: 91},
 		}
 		assert.Equal(t, face.ModelArcFaceR50, dominantFaceModel(counts))
-	})
-}
-
-func TestInstalledFaceModel(t *testing.T) {
-	t.Run("None", func(t *testing.T) {
-		assert.Equal(t, face.ModelNone, installedFaceModel(t.TempDir()))
-	})
-	t.Run("FollowsPreferenceOrder", func(t *testing.T) {
-		// FaceNet is installed too, but SFace comes first for a library with no vectors.
-		modelsPath := installTestModels(t, face.ModelFaceNet, face.ModelSFace)
-		assert.Equal(t, face.ModelSFace, installedFaceModel(modelsPath))
-	})
-	t.Run("SkipsMissing", func(t *testing.T) {
-		modelsPath := installTestModels(t, face.ModelArcFaceR50)
-		assert.Equal(t, face.ModelArcFaceR50, installedFaceModel(modelsPath))
 	})
 }
 
@@ -506,6 +826,14 @@ func TestConfig_LibraryFaceModel(t *testing.T) {
 
 		t.Cleanup(func() {
 			require.NoError(t, db.Exec("ALTER TABLE "+table+" ADD COLUMN embed_model VARBINARY(32) DEFAULT ''").Error)
+
+			// The column comes back empty, so what the fixtures recorded has to be written
+			// again: a later test that asks the library which model it holds would otherwise
+			// be answered by this one.
+			require.NoError(t, db.Model(&entity.Marker{}).
+				Where("marker_type = ? AND LENGTH(embeddings_json) > 0", entity.MarkerFace).
+				UpdateColumn("embed_model", entity.MarkerFixtures.Get("1000003-4").EmbedModel).Error)
+
 			require.NoError(t, db.Model(&entity.Marker{}).AddIndex("idx_markers_embed_model", "embed_model").Error)
 		})
 
@@ -514,11 +842,16 @@ func TestConfig_LibraryFaceModel(t *testing.T) {
 }
 
 func TestConfig_FaceEmbeddingModel(t *testing.T) {
-	t.Run("Default", func(t *testing.T) {
-		c := NewConfig(CliTestContext())
+	t.Run("InForce", func(t *testing.T) {
+		c := newSFaceTestConfig(t)
 		m := c.FaceEmbeddingModel()
 		require.NotNil(t, m)
 		assert.Equal(t, face.ModelSFace, m.Name)
+	})
+	t.Run("NotDetectedYet", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceModel = ""
+		assert.Nil(t, c.FaceEmbeddingModel())
 	})
 	t.Run("None", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
@@ -650,10 +983,10 @@ func TestConfig_FaceClusterCore(t *testing.T) {
 }
 
 func TestConfig_FaceClusterDist(t *testing.T) {
-	// Thresholds follow the resolved model, which is SFace without a library to ask.
+	// Thresholds follow the model in force, so the test has to put one there.
 	sface := face.FindEmbeddingModel(face.ModelSFace).ClusterDist
 
-	c := NewConfig(CliTestContext())
+	c := newSFaceTestConfig(t)
 	assert.Equal(t, sface, c.FaceClusterDist())
 	c.options.FaceClusterDist = 0.01
 	assert.Equal(t, sface, c.FaceClusterDist())
@@ -667,10 +1000,10 @@ func TestConfig_FaceClusterDist(t *testing.T) {
 }
 
 func TestConfig_FaceClusterRadius(t *testing.T) {
-	// Thresholds follow the resolved model, which is SFace without a library to ask.
+	// Thresholds follow the model in force, so the test has to put one there.
 	sface := face.FindEmbeddingModel(face.ModelSFace).ClusterRadius
 
-	c := NewConfig(CliTestContext())
+	c := newSFaceTestConfig(t)
 	assert.Equal(t, sface, c.FaceClusterRadius())
 	c.options.FaceClusterRadius = 0.01
 	assert.Equal(t, sface, c.FaceClusterRadius())
@@ -875,11 +1208,10 @@ func TestFaceModelThreshold(t *testing.T) {
 }
 
 func TestConfig_FaceCollisionDist(t *testing.T) {
-	// Like the three calibrated thresholds, this follows the resolved model, which is
-	// SFace without a library to ask.
+	// Like the three calibrated thresholds, this follows the model in force.
 	sface := face.FindEmbeddingModel(face.ModelSFace).CollisionDist
 
-	c := NewConfig(CliTestContext())
+	c := newSFaceTestConfig(t)
 	assert.Equal(t, sface, c.FaceCollisionDist())
 	c.options.FaceCollisionDist = 0.04
 	assert.Equal(t, 0.04, c.FaceCollisionDist())
@@ -889,7 +1221,7 @@ func TestConfig_FaceCollisionDist(t *testing.T) {
 	assert.Equal(t, sface, c.FaceCollisionDist())
 
 	t.Run("OutOfRangeWarns", func(t *testing.T) {
-		c := NewConfig(CliTestContext())
+		c := newSFaceTestConfig(t)
 		hook := captureLog(t)
 
 		c.options.FaceCollisionDist = 1.5
@@ -906,7 +1238,7 @@ func TestConfig_FaceCollisionDist(t *testing.T) {
 		assert.Contains(t, warnings[0], "out of range")
 	})
 	t.Run("UnsetStaysSilent", func(t *testing.T) {
-		c := NewConfig(CliTestContext())
+		c := newSFaceTestConfig(t)
 		hook := captureLog(t)
 
 		c.options.FaceCollisionDist = 0
@@ -921,7 +1253,7 @@ func TestConfig_FaceCollisionDist(t *testing.T) {
 func TestConfig_FaceEpsilonDist(t *testing.T) {
 	sface := face.FindEmbeddingModel(face.ModelSFace).Epsilon
 
-	c := NewConfig(CliTestContext())
+	c := newSFaceTestConfig(t)
 	assert.Equal(t, sface, c.FaceEpsilonDist())
 	c.options.FaceEpsilonDist = 0.02
 	assert.Equal(t, 0.02, c.FaceEpsilonDist())
@@ -931,7 +1263,7 @@ func TestConfig_FaceEpsilonDist(t *testing.T) {
 	assert.Equal(t, sface, c.FaceEpsilonDist())
 
 	t.Run("OutOfRangeWarns", func(t *testing.T) {
-		c := NewConfig(CliTestContext())
+		c := newSFaceTestConfig(t)
 		hook := captureLog(t)
 
 		c.options.FaceEpsilonDist = 0.2
@@ -950,10 +1282,10 @@ func TestConfig_FaceEpsilonDist(t *testing.T) {
 }
 
 func TestConfig_FaceMatchDist(t *testing.T) {
-	// Thresholds follow the resolved model, which is SFace without a library to ask.
+	// Thresholds follow the model in force, so the test has to put one there.
 	sface := face.FindEmbeddingModel(face.ModelSFace).MatchDist
 
-	c := NewConfig(CliTestContext())
+	c := newSFaceTestConfig(t)
 	assert.Equal(t, sface, c.FaceMatchDist())
 	c.options.FaceMatchDist = 0.1
 	assert.Equal(t, 0.1, c.FaceMatchDist())

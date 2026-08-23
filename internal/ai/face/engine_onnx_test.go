@@ -56,7 +56,7 @@ func TestDetectorModel(t *testing.T) {
 	t.Run("ChecksumMatchesInstallScript", func(t *testing.T) {
 		// The install script is where the value comes from, so the registry is a second
 		// copy of it and would otherwise drift on the next upstream update unnoticed.
-		fileName := filepath.Join("..", "..", "..", "scripts", "download-scrfd.sh")
+		fileName := filepath.Join("..", "..", "..", "scripts", "dist", "download-scrfd.sh")
 		data, err := os.ReadFile(fileName) //nolint:gosec // G304: fixed repository path.
 
 		if err != nil {

@@ -1340,8 +1340,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "face-model",
-			Usage:   "face embedding model `NAME` (" + face.ModelUsageString() + "); changing it invalidates existing clusters and requires photoprism faces migrate",
-			Value:   face.ModelAuto,
+			Usage:   "face embedding model `NAME` (" + face.ModelUsageString() + "); detected from the library when unset, and changed with photoprism faces migrate",
 			EnvVars: EnvVars("FACE_MODEL"),
 		}}, {
 		Flag: &cli.IntFlag{

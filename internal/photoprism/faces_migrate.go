@@ -160,17 +160,16 @@ func (w *Faces) migrationTarget(target string) (string, error) {
 	}
 
 	switch {
-	case !face.KnownModelName(target) || target == face.ModelAuto:
+	case !face.KnownModelName(target) || target == face.ModelDetect:
 		return "", fmt.Errorf("faces: unsupported migration model %q", target)
 	case target == face.ModelNone:
 		return "", fmt.Errorf("faces: cannot migrate to disabled embeddings")
-	case target != configured:
-		// The configured model may have been resolved from "auto", which follows whichever
-		// model owns most of the vectors and therefore points back at the old one while a
-		// migration is only half done. Naming the way out keeps that from reading as a
-		// refusal the operator cannot act on.
-		return "", fmt.Errorf("faces: migration target %s does not match configured model %s, "+
-			"set PHOTOPRISM_FACE_MODEL=%s and re-run to continue", clean.Log(target), clean.Log(configured), clean.Log(target))
+	}
+
+	// A migration is how the model is changed, so the target is not required to match what
+	// is configured: it regenerates every vector in the target's space and then records it.
+	if err := face.LicenseRefused(target, w.conf.Edition()); err != nil {
+		return "", fmt.Errorf("faces: %s", err)
 	}
 
 	model := face.FindEmbeddingModel(target)
@@ -301,6 +300,11 @@ func (w *Faces) Migrate(ctx context.Context, opt FacesMigrateOptions) (result Fa
 		return result, err
 	}
 
+	// A run that does not reach the point where the setting follows the data has to leave the
+	// previous model loaded. After one that committed this is a no-op, since the setting
+	// names the target by then.
+	defer w.restoreEmbedder()
+
 	return w.migrate(ctx, plan, embedder, opt, result)
 }
 
@@ -392,6 +396,12 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 		return result, &FacesMigrateRerunError{Migrated: result.Migrated, Cause: err}
 	}
 
+	// The vectors are in the target's space from here on, so the setting follows the data even
+	// when markers failed: a start that read the previous model would hide the whole library
+	// from matching. Both have to happen before the clustering below, which is gated on them.
+	w.conf.SetFaceModel(plan.Target)
+	face.UnblockEmbeddings()
+
 	entity.UpdateFaces.Store(true)
 	if err = w.start(FacesOptions{Force: true}); err != nil {
 		return result, err
@@ -421,10 +431,24 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 	return result, nil
 }
 
-// migrationEmbedder returns the configured local embedder after validating its contract.
-func (w *Faces) migrationEmbedder(target string) (face.Embedder, error) {
+// migrationEmbedder loads the embedder that writes the target's vectors and validates its
+// contract. It configures the target itself rather than taking the active model, which is what
+// lets a migration run on an instance still configured for the model it replaces.
+func (w *Faces) migrationEmbedder(target string) (embedder face.Embedder, err error) {
 	if vision.Config == nil {
 		return nil, fmt.Errorf("faces: vision configuration not available")
+	}
+
+	// A target that cannot be loaded, or that turns out not to honor its contract, must not
+	// leave the instance without the model it was running on.
+	defer func() {
+		if err != nil {
+			w.restoreEmbedder()
+		}
+	}()
+
+	if err = w.conf.ConfigureFaceEmbedder(target); err != nil {
+		return nil, fmt.Errorf("faces: embedding model %s could not be loaded (%s)", clean.Log(target), err)
 	}
 
 	model := vision.Config.Model(vision.ModelTypeFace)
@@ -432,7 +456,7 @@ func (w *Faces) migrationEmbedder(target string) (face.Embedder, error) {
 		return nil, fmt.Errorf("faces: face vision model not configured")
 	}
 
-	embedder := model.FaceModel()
+	embedder = model.MigrationFaceModel()
 	if embedder == nil {
 		return nil, fmt.Errorf("faces: embedding model %s could not be loaded", clean.Log(target))
 	} else if embedder.ModelName() != target {
@@ -445,6 +469,14 @@ func (w *Faces) migrationEmbedder(target string) (face.Embedder, error) {
 	}
 
 	return embedder, nil
+}
+
+// restoreEmbedder loads the embedding model the configuration names, which is the target after
+// a migration committed and the previous model otherwise.
+func (w *Faces) restoreEmbedder() {
+	if err := w.conf.ConfigureFaceEmbedder(w.conf.FaceModel()); err != nil {
+		log.Warnf("faces: %s (restore embedding model)", err)
+	}
 }
 
 // migrateFaceFile checkpoints all stale marker embeddings associated with a file.

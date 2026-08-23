@@ -76,23 +76,25 @@ import (
 
 // Config aggregates CLI flags, options.yml overrides, runtime settings, and shared resources (database, caches) for the running instance.
 type Config struct {
-	cliCtx       *cli.Context
-	options      *Options
-	settings     *customize.Settings
-	db           *gorm.DB
-	dbVersion    string
-	hub          *hub.Config
-	hubCancel    context.CancelFunc
-	hubLock      sync.Mutex
-	faceWarned   sync.Map
-	token        string
-	serial       string
-	tokenKey     []byte
-	tokenKeyOnce sync.Once
-	env          string
-	start        bool
-	ready        atomic.Bool
-	cache        *gc.Cache
+	cliCtx        *cli.Context
+	options       *Options
+	settings      *customize.Settings
+	db            *gorm.DB
+	dbVersion     string
+	hub           *hub.Config
+	hubCancel     context.CancelFunc
+	hubLock       sync.Mutex
+	faceWarned    sync.Map
+	faceModel     string
+	faceModelFlag string
+	token         string
+	serial        string
+	tokenKey      []byte
+	tokenKeyOnce  sync.Once
+	env           string
+	start         bool
+	ready         atomic.Bool
+	cache         *gc.Cache
 }
 
 // Values is a shorthand alias for map[string]interface{}.
@@ -177,6 +179,10 @@ func NewConfig(ctx *cli.Context) *Config {
 		start:   start,
 		cache:   gc.New(time.Minute, 10*time.Minute),
 	}
+
+	// Keep what the environment or the command line asked for, since "options.yml" is loaded
+	// last and a model it names is what an instance must keep using - see initFaceModel.
+	c.faceModelFlag = c.options.FaceModel
 
 	// Override options with values from the "options.yml" file, if it exists.
 	if optionsYaml := c.OptionsYaml(); fs.FileExists(optionsYaml) {
@@ -285,6 +291,10 @@ func (c *Config) Init() error {
 	} else if loadErr := vision.Config.Load(visionYaml); loadErr != nil {
 		log.Warnf("vision: %s", loadErr)
 	}
+
+	// Settle which face embedding model this instance uses, which needs the database and has
+	// to happen before Propagate configures the embedder from it.
+	c.initFaceModel()
 
 	// Update package defaults.
 	c.Propagate()
@@ -494,12 +504,7 @@ func (c *Config) Propagate() {
 	}); err != nil {
 		log.Warnf("faces: %s (configure engine)", err)
 	}
-	if err := face.ConfigureEmbedder(face.EmbedderSettings{
-		Name:      c.FaceModel(),
-		Model:     c.FaceEmbeddingModel(),
-		ModelPath: c.FaceModelPath(),
-		Threads:   c.FaceModelThreads(),
-	}); err != nil {
+	if err := c.ConfigureFaceEmbedder(c.FaceModel()); err != nil {
 		log.Warnf("faces: %s (configure embedding model)", err)
 	}
 

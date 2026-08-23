@@ -288,7 +288,7 @@ type Options struct {
 //  2. ApplyCliContext: Which comes after Load and overrides
 //     any previous options giving an option two override file configs through the CLI.
 func NewOptions(ctx *cli.Context) *Options {
-	c := &Options{FaceEngine: face.EngineAuto, FaceModel: face.ModelAuto}
+	c := &Options{FaceEngine: face.EngineAuto}
 
 	// Has context?
 	if ctx == nil {

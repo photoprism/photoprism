@@ -536,7 +536,7 @@ dep-upgrade-js: frontend-update
 # list. SCRFD keeps its own script for licensing reasons and is not in the shared registry.
 dep-models:
 	scripts/dist/download-models.sh facenet nasnet nsfw sface
-	scripts/download-scrfd.sh
+	scripts/dist/download-scrfd.sh
 dep-tensorflow: dep-models
 dep-onnx: dep-models
 dep-acceptance: storage/acceptance

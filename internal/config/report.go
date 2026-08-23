@@ -342,8 +342,10 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"xmp-faces", fmt.Sprintf("%t", c.XMPFaces())},
 		{"face-engine", faceEngine},
 		{"face-engine-run", vision.ReportRunType(c.FaceEngineRunType())},
-		{"face-model", c.FaceModelReport()},
+		{"face-model", c.FaceModelSetting()},
+		{"face-model-status", c.faceModelStatus()},
 		{"face-model-path", c.FaceModelPath()},
+		{"face-model-license", c.FaceModelLicense()},
 	}...)
 
 	rows = append(rows, [][]string{
@@ -357,11 +359,11 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"face-cluster-size", fmt.Sprintf("%d", c.FaceClusterSize())},
 		{"face-cluster-score", fmt.Sprintf("%d", c.FaceClusterScore())},
 		{"face-cluster-core", fmt.Sprintf("%d", c.FaceClusterCore())},
-		{"face-cluster-dist", fmt.Sprintf("%f", c.FaceClusterDist())},
-		{"face-cluster-radius", fmt.Sprintf("%f", c.FaceClusterRadius())},
-		{"face-collision-dist", fmt.Sprintf("%f", c.FaceCollisionDist())},
-		{"face-epsilon-dist", fmt.Sprintf("%f", c.FaceEpsilonDist())},
-		{"face-match-dist", fmt.Sprintf("%f", c.FaceMatchDist())},
+		{"face-cluster-dist", c.faceDistReport(c.FaceClusterDist)},
+		{"face-cluster-radius", c.faceDistReport(c.FaceClusterRadius)},
+		{"face-collision-dist", c.faceDistReport(c.FaceCollisionDist)},
+		{"face-epsilon-dist", c.faceDistReport(c.FaceEpsilonDist)},
+		{"face-match-dist", c.faceDistReport(c.FaceMatchDist)},
 
 		// Daemon Mode.
 		{"pid-filename", c.PIDFilename()},
@@ -384,8 +386,12 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 // model while nothing is being embedded. Commands that only read the configuration never
 // load the model, so the error is reported when one is known rather than assumed.
 func (c *Config) faceModelStatus() string {
-	if err := face.EmbedderError(); err != nil {
+	if c.FaceModel() == face.ModelNone && c.FaceModelSetting() == face.ModelDetect {
+		return "not set, detected on the next start"
+	} else if err := face.EmbedderError(); err != nil {
 		return fmt.Sprintf("failed to load (%s)", err)
+	} else if reason := face.EmbeddingsBlockedReason(); reason != "" {
+		return fmt.Sprintf("paused (%s)", reason)
 	} else if c.FaceModel() == face.ModelNone {
 		return "embeddings disabled"
 	}
@@ -393,9 +399,37 @@ func (c *Config) faceModelStatus() string {
 	return "ok"
 }
 
+// faceDistReport formats a face distance threshold, or reports nothing when no embedding model
+// is in force. The calibrated distances are per model and are not comparable between them, so a
+// report with no model would otherwise print five numbers that will not apply to the model the
+// instance ends up using.
+func (c *Config) faceDistReport(value func() float64) string {
+	if c.FaceModel() == face.ModelNone {
+		return ""
+	}
+
+	return fmt.Sprintf("%f", value())
+}
+
+// faceModelReport names the configured model and, while it is still to be detected, the model
+// the library holds. `photoprism faces config` connects to the database, so it is the one
+// report that can state both.
+func (c *Config) faceModelReport() string {
+	setting := c.FaceModelSetting()
+
+	if setting != face.ModelDetect {
+		return setting
+	} else if name := c.libraryFaceModel(); name != "" {
+		return fmt.Sprintf("%s (library holds %s)", setting, name)
+	}
+
+	return setting
+}
+
 // FaceReport returns the face-detection and face-recognition config values as a table for
-// reporting. It covers the same options as Report(), except that face-model is resolved:
-// `faces config` connects to the database, so it can name the model "auto" actually selects.
+// reporting. It covers the same options as Report(), except that face-model also names the
+// model the library holds: `faces config` connects to the database, so it is the one report
+// that can state both.
 func (c *Config) FaceReport() (rows [][]string, cols []string) {
 	cols = []string{"Name", "Value"}
 
@@ -406,7 +440,7 @@ func (c *Config) FaceReport() (rows [][]string, cols []string) {
 		{"face-engine", c.FaceEngine()},
 		{"face-engine-run", vision.ReportRunType(c.FaceEngineRunType())},
 		{"face-engine-threads", fmt.Sprintf("%d", c.FaceEngineThreads())},
-		{"face-model", c.FaceModel()},
+		{"face-model", c.faceModelReport()},
 		{"face-model-status", c.faceModelStatus()},
 		{"face-model-path", c.FaceModelPath()},
 		{"face-model-license", c.FaceModelLicense()},
@@ -417,11 +451,11 @@ func (c *Config) FaceReport() (rows [][]string, cols []string) {
 		{"face-cluster-size", fmt.Sprintf("%d", c.FaceClusterSize())},
 		{"face-cluster-score", fmt.Sprintf("%d", c.FaceClusterScore())},
 		{"face-cluster-core", fmt.Sprintf("%d", c.FaceClusterCore())},
-		{"face-cluster-dist", fmt.Sprintf("%f", c.FaceClusterDist())},
-		{"face-cluster-radius", fmt.Sprintf("%f", c.FaceClusterRadius())},
-		{"face-collision-dist", fmt.Sprintf("%f", c.FaceCollisionDist())},
-		{"face-epsilon-dist", fmt.Sprintf("%f", c.FaceEpsilonDist())},
-		{"face-match-dist", fmt.Sprintf("%f", c.FaceMatchDist())},
+		{"face-cluster-dist", c.faceDistReport(c.FaceClusterDist)},
+		{"face-cluster-radius", c.faceDistReport(c.FaceClusterRadius)},
+		{"face-collision-dist", c.faceDistReport(c.FaceCollisionDist)},
+		{"face-epsilon-dist", c.faceDistReport(c.FaceEpsilonDist)},
+		{"face-match-dist", c.faceDistReport(c.FaceMatchDist)},
 	}
 
 	return rows, cols

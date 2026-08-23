@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/dsn"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 )
 
@@ -388,6 +389,68 @@ func TestFaceModelStatus(t *testing.T) {
 		// A model that fails to load reports ModelNone, so the status is the only signal.
 		require.Error(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelSFace, Model: face.FindEmbeddingModel(face.ModelSFace)}))
 		c := NewConfig(CliTestContext())
+		c.options.FaceModel = face.ModelSFace
 		assert.Contains(t, c.faceModelStatus(), "failed to load")
+	})
+	t.Run("NotSet", func(t *testing.T) {
+		// Nothing has been configured, so the report says so rather than reporting on a
+		// model this instance never asked for.
+		c := NewConfig(CliTestContext())
+		c.options.FaceModel = ""
+		assert.Equal(t, "not set, detected on the next start", c.faceModelStatus())
+	})
+	t.Run("Paused", func(t *testing.T) {
+		t.Cleanup(face.UnblockEmbeddings)
+		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelFaceNet, Model: face.FindEmbeddingModel(face.ModelFaceNet)}))
+		face.BlockEmbeddings("12 marker(s) use facenet")
+
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = installTestModels(t, face.ModelFaceNet)
+		c.options.FaceModel = face.ModelFaceNet
+
+		assert.Contains(t, c.faceModelStatus(), "paused")
+	})
+}
+
+func TestConfig_faceModelReport(t *testing.T) {
+	t.Run("Named", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceModel = face.ModelSFace
+
+		assert.Equal(t, face.ModelSFace, c.faceModelReport())
+	})
+	t.Run("DetectWithoutDatabase", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceModel = ""
+
+		assert.Equal(t, face.ModelDetect, c.faceModelReport())
+	})
+	t.Run("DetectNamesTheLibraryModel", func(t *testing.T) {
+		// "faces config" connects, so it is the one report that can state both what is
+		// configured and what the library would answer.
+		c := TestConfig()
+		setting := c.options.FaceModel
+		t.Cleanup(func() { c.options.FaceModel = setting })
+		c.options.FaceModel = face.ModelDetect
+
+		expected := entity.MarkerFixtures.Get("1000003-4").EmbedModel
+
+		assert.Equal(t, face.ModelDetect+" (library holds "+expected+")", c.faceModelReport())
+	})
+}
+
+func TestConfig_faceDistReport(t *testing.T) {
+	t.Run("ModelInForce", func(t *testing.T) {
+		c := newSFaceTestConfig(t)
+
+		assert.Equal(t, "0.780000", c.faceDistReport(c.FaceClusterDist))
+	})
+	t.Run("NoModel", func(t *testing.T) {
+		// The calibrated distances are per model, so a report with none must not print
+		// five numbers that will not apply to the model the instance ends up using.
+		c := NewConfig(CliTestContext())
+		c.options.FaceModel = ""
+
+		assert.Equal(t, "", c.faceDistReport(c.FaceClusterDist))
 	})
 }

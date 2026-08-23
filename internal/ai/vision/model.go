@@ -726,6 +726,29 @@ func (m *Model) FaceModel() face.Embedder {
 		return nil
 	}
 
+	// A library whose stored vectors were produced by another model has to be migrated
+	// rather than added to, so nothing is embedded until it is. Detection keeps running:
+	// a marker without a vector is filled in on a later pass, so the faces stay recorded.
+	if face.EmbeddingsBlocked() {
+		return nil
+	}
+
+	return m.faceEmbedder()
+}
+
+// MigrationFaceModel returns the face embedding model instance for a migration, the one caller
+// the gates above do not apply to: it writes every vector in its own target's space, so a gate
+// against mixing spaces would only stop the work that resolves the mismatch.
+func (m *Model) MigrationFaceModel() face.Embedder {
+	if m == nil {
+		return nil
+	}
+
+	return m.faceEmbedder()
+}
+
+// faceEmbedder returns the face embedding model instance, loading it when needed.
+func (m *Model) faceEmbedder() face.Embedder {
 	// An ONNX embedding model selected with FACE_MODEL takes precedence: vision.yml
 	// only schedules when faces are processed, while the model itself is per instance.
 	if embedder := face.ActiveEmbedder(); embedder != nil {
