@@ -58,13 +58,17 @@ func TestActiveEngineName(t *testing.T) {
 // stubEngine returns a fixed result under a chosen name so detection can be exercised
 // without a model file.
 type stubEngine struct {
-	name  EngineName
-	faces Faces
-	err   error
+	name     EngineName
+	detector DetectorName
+	faces    Faces
+	err      error
 }
 
 // Name returns the engine name this stub reports.
 func (e *stubEngine) Name() EngineName { return e.name }
+
+// Detector returns the stub's detector name.
+func (e *stubEngine) Detector() DetectorName { return e.detector }
 
 // Detect returns the canned result, leaving provenance to the caller.
 func (e *stubEngine) Detect(string, int) (Faces, error) { return e.faces, e.err }
@@ -78,7 +82,7 @@ func TestDetect(t *testing.T) {
 
 		// Every face carries the detector that found it, because its landmarks decide the
 		// aligned crop: a vector whose detector is unknown cannot be compared with confidence.
-		stub := &stubEngine{name: "stub", faces: Faces{{Score: 42}, {Score: 21}}}
+		stub := &stubEngine{name: "stub", detector: "stub-detector", faces: Faces{{Score: 42}, {Score: 21}}}
 		if prev := UseEngine(stub); prev != nil {
 			_ = prev.Close()
 		}
@@ -87,8 +91,8 @@ func TestDetect(t *testing.T) {
 
 		require.NoError(t, err)
 		require.Len(t, faces, 2)
-		assert.Equal(t, EngineName("stub"), faces[0].DetectModel)
-		assert.Equal(t, EngineName("stub"), faces[1].DetectModel)
+		assert.Equal(t, DetectorName("stub-detector"), faces[0].DetectModel)
+		assert.Equal(t, DetectorName("stub-detector"), faces[1].DetectModel)
 	})
 	t.Run("PartialResultWithError", func(t *testing.T) {
 		restoreEngine(t)
@@ -96,7 +100,7 @@ func TestDetect(t *testing.T) {
 		// An engine that fails partway still hands back what it found, and those faces are
 		// stamped: the caller decides what to do with them, and an unattributed vector is
 		// what this column exists to prevent.
-		stub := &stubEngine{name: "stub", faces: Faces{{Score: 7}}, err: errors.New("partial")}
+		stub := &stubEngine{name: "stub", detector: "stub-detector", faces: Faces{{Score: 7}}, err: errors.New("partial")}
 		if prev := UseEngine(stub); prev != nil {
 			_ = prev.Close()
 		}
@@ -105,7 +109,23 @@ func TestDetect(t *testing.T) {
 
 		require.Error(t, err)
 		require.Len(t, faces, 1)
-		assert.Equal(t, EngineName("stub"), faces[0].DetectModel)
+		assert.Equal(t, DetectorName("stub-detector"), faces[0].DetectModel)
+	})
+	t.Run("EngineWithoutADetectorName", func(t *testing.T) {
+		restoreEngine(t)
+
+		// The engine name is coarser provenance but not none: it rules out the legacy Go
+		// detector, so the five canonical landmarks are known to be there.
+		stub := &stubEngine{name: "onnx", faces: Faces{{Score: 30}}}
+		if prev := UseEngine(stub); prev != nil {
+			_ = prev.Close()
+		}
+
+		faces, err := Detect("testdata/1.jpg", 20)
+
+		require.NoError(t, err)
+		require.Len(t, faces, 1)
+		assert.Equal(t, DetectorName("onnx"), faces[0].DetectModel)
 	})
 	t.Run("NoEngine", func(t *testing.T) {
 		restoreEngine(t)
@@ -148,7 +168,7 @@ func TestDetectWithRetry(t *testing.T) {
 		require.Len(t, calls, 2, "the first pass runs before the second")
 		assert.Equal(t, 25, calls[0].minSize)
 		assert.Equal(t, 10, calls[1].minSize)
-		assert.Equal(t, EngineName("stub"), faces[0].DetectModel)
+		assert.Equal(t, DetectorName("stub-detector"), faces[0].DetectModel)
 	})
 	t.Run("NoRetryWhenTheFirstPassFoundSomething", func(t *testing.T) {
 		restoreEngine(t)
@@ -216,6 +236,9 @@ type recordingEngine struct {
 
 // Name returns the stub engine name.
 func (e *recordingEngine) Name() EngineName { return "stub" }
+
+// Detector returns the stub detector name.
+func (e *recordingEngine) Detector() DetectorName { return "stub-detector" }
 
 // Detect records the call and returns whatever the result function yields.
 func (e *recordingEngine) Detect(_ string, minSize int) (Faces, error) {

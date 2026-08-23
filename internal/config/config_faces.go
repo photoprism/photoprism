@@ -11,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -154,26 +155,36 @@ func (c *Config) faceEngineRunsOnIndex() bool {
 	return c.FaceModelThreads() > 2
 }
 
-// FaceEngineModelPath returns the absolute path to the bundled SCRFD ONNX detector.
+// FaceEngineModelPath returns the absolute path to the detector weights to load.
+//
+// Registration order decides, and the first installed detector wins. YuNet is registered first
+// because it is permissively licensed at the weights layer as well as the code layer, so a build
+// that has both installed runs the one it may redistribute.
 func (c *Config) FaceEngineModelPath() string {
 	if c == nil {
 		return ""
 	}
 
-	dir := filepath.Join(c.ModelsPath(), "scrfd")
-	primary := filepath.Join(dir, face.DefaultONNXModelFilename)
+	models := c.ModelsPath()
 
-	if _, err := os.Stat(primary); err == nil {
-		return primary
+	for _, detector := range face.Detectors {
+		if detector.Installed(models) {
+			return detector.Path(models)
+		}
 	}
 
-	alt := filepath.Join(dir, "scrfd_500m_bnkps_shape640x640.onnx")
-
-	if _, err := os.Stat(alt); err == nil {
+	// The SCRFD installer also produced a differently named fixed-shape export.
+	if alt := filepath.Join(models, "scrfd", "scrfd_500m_bnkps_shape640x640.onnx"); fs.FileExists(alt) {
 		return alt
 	}
 
-	return primary
+	// Nothing is installed, so the path names what auto would have loaded and the caller
+	// reports it as missing rather than resolving to an empty string.
+	if len(face.Detectors) > 0 {
+		return face.Detectors[0].Path(models)
+	}
+
+	return ""
 }
 
 // FaceModelSetting returns the face embedding model as configured, without resolving it.

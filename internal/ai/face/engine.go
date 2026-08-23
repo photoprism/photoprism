@@ -39,6 +39,10 @@ func ParseEngine(s string) EngineName {
 // DetectionEngine represents a strategy for locating faces in an image.
 type DetectionEngine interface {
 	Name() EngineName
+	// Detector names the detection model, which is what provenance records: the engine name
+	// says which runtime produced a face, not which detector, and two detectors under one
+	// runtime place different landmarks.
+	Detector() DetectorName
 	Detect(fileName string, minSize int) (Faces, error)
 	Close() error
 }
@@ -176,6 +180,11 @@ func DetectWithRetry(fileName string, minSize, retrySize int) (Faces, error) {
 // Each face records the detector that found it, because this is the last frame where the
 // producer of the landmarks is known: the crop they align is what makes an embedding
 // comparable, so everything downstream would have to ask global configuration instead.
+// Provenance has three levels, and an engine that cannot name its detector falls back to the
+// middle one rather than to none. Blank means no provenance at all, so the landmarks may be the
+// legacy vocabulary the Go cascade detector produced and cannot be aligned. The engine name means
+// some ONNX detector, so the five canonical points are there even though which detector placed
+// them is unknown. A detector name means both are known.
 func Detect(fileName string, minSize int) (Faces, error) {
 	engine := ActiveEngine()
 	if engine == nil {
@@ -184,8 +193,14 @@ func Detect(fileName string, minSize int) (Faces, error) {
 
 	faces, err := engine.Detect(fileName, minSize)
 
+	detector := engine.Detector()
+
+	if detector == "" {
+		detector = engine.Name()
+	}
+
 	for i := range faces {
-		faces[i].DetectModel = engine.Name()
+		faces[i].DetectModel = detector
 	}
 
 	return faces, err

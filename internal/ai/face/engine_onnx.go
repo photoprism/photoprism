@@ -7,6 +7,7 @@ import (
 	_ "image/jpeg" // register JPEG decoder for ONNX engine input
 	"math"
 	"os"
+	"path/filepath"
 	"runtime"
 	"sort"
 	"sync"
@@ -15,6 +16,7 @@ import (
 	xdraw "golang.org/x/image/draw"
 
 	"github.com/photoprism/photoprism/internal/ai/onnx"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -101,6 +103,8 @@ type onnxEngine struct {
 	numAnchors     int
 	batched        bool
 	useKps         bool
+	decode         DecodeKind
+	detector       DetectorName
 	scoreThreshold float32
 	nmsThreshold   float32
 	sessionMu      sync.Mutex
@@ -126,9 +130,19 @@ func NewONNXEngine(opts ONNXOptions) (DetectionEngine, error) {
 		opts.NMSThreshold = onnxDefaultNMSThreshold
 	}
 
-	// Operators may point MODELS_PATH at another SCRFD export, whose layout is read from
-	// the graph, so a checksum other than the bundled one is reported and accepted.
-	if err := DetectorModel.VerifyChecksum(opts.ModelPath); err != nil {
+	// Which detector this is decides the channel order and normalization, which cannot be read
+	// from a graph. An unknown artifact falls back to the incumbent rather than refusing, so a
+	// re-export still runs, and its layout is still derived from the graph.
+	detector := DetectorForFile(opts.ModelPath)
+
+	if detector == nil {
+		log.Warnf("faces: unrecognized detector %s, assuming %s preprocessing", clean.Log(filepath.Base(opts.ModelPath)), DetectorSCRFD)
+		detector = FindDetector(DetectorSCRFD)
+	}
+
+	// Operators may point MODELS_PATH at another export, whose layout is read from the graph,
+	// so a checksum other than the registered one is reported and accepted.
+	if err := detector.ONNX.VerifyChecksum(opts.ModelPath); err != nil {
 		log.Warnf("faces: %s", err)
 	}
 
@@ -207,9 +221,11 @@ func NewONNXEngine(opts ONNXOptions) (DetectionEngine, error) {
 		outputNames:    outputNames,
 		inputWidth:     width,
 		inputHeight:    height,
-		colorOrder:     DetectorModel.Input.ColorOrder,
-		mean:           DetectorModel.Input.Normalization.Mean,
-		scales:         DetectorModel.Input.Normalization.Scales(),
+		colorOrder:     detector.ONNX.Input.ColorOrder,
+		mean:           detector.ONNX.Input.Normalization.Mean,
+		scales:         detector.ONNX.Input.Normalization.Scales(),
+		decode:         detector.Decode,
+		detector:       detector.Name,
 		featStrides:    featStrides,
 		numAnchors:     numAnchors,
 		batched:        batched,
@@ -237,6 +253,11 @@ func deriveONNXLayout(outputs []onnxruntime.InputOutputInfo) (fmc, anchors int, 
 	case 10:
 		fmc = 5
 		anchors = 1
+	case 12:
+		// YuNet: cls, obj, bbox and kps at three strides, one prior per cell.
+		fmc = 3
+		anchors = 1
+		useKps = true
 	case 15:
 		fmc = 5
 		anchors = 1
@@ -264,6 +285,11 @@ func stridesForFeatureMaps(fmc int) []int {
 
 func (o *onnxEngine) Name() string {
 	return EngineONNX
+}
+
+// Detector returns the name of the detection model this session loaded.
+func (o *onnxEngine) Detector() DetectorName {
+	return o.detector
 }
 
 // Close releases the ONNX session.
@@ -339,7 +365,13 @@ func (o *onnxEngine) Detect(fileName string, minSize int) (Faces, error) {
 		}
 	}
 
-	detections, err := o.parseDetections(outputs, detScale, width, height)
+	var detections []onnxDetection
+
+	if o.decode == DecodeYuNet {
+		detections, err = o.parseYuNetDetections(outputs, detScale, width, height)
+	} else {
+		detections, err = o.parseDetections(outputs, detScale, width, height)
+	}
 	if err != nil {
 		return Faces{}, err
 	}

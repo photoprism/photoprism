@@ -298,15 +298,33 @@ func TestConfig_faceEngineRunsOnIndex(t *testing.T) {
 }
 
 func TestConfig_FaceEngineModelPath(t *testing.T) {
-	t.Run("DefaultPath", func(t *testing.T) {
+	t.Run("NothingInstalled", func(t *testing.T) {
+		// The path names what would have been loaded, so the caller reports a missing
+		// detector rather than an empty string.
 		c := NewConfig(CliTestContext())
-		tempModels := t.TempDir()
-		c.options.ModelsPath = tempModels
+		c.options.ModelsPath = t.TempDir()
 
-		path := c.FaceEngineModelPath()
-		assert.Contains(t, path, "scrfd")
-		expected := filepath.Join(tempModels, "scrfd", face.DefaultONNXModelFilename)
-		assert.Equal(t, expected, path)
+		first := face.Detectors[0]
+		assert.Equal(t, first.Path(c.options.ModelsPath), c.FaceEngineModelPath())
+	})
+	t.Run("PrefersTheFirstInstalled", func(t *testing.T) {
+		// Registration order decides, and YuNet is registered first because it is the
+		// detector we may redistribute. A build holding both must not load the other.
+		c := NewConfig(CliTestContext())
+		models := t.TempDir()
+		c.options.ModelsPath = models
+
+		scrfd := face.FindDetector(face.DetectorSCRFD)
+		require.NoError(t, os.MkdirAll(filepath.Dir(scrfd.Path(models)), fs.ModeDir))
+		require.NoError(t, os.WriteFile(scrfd.Path(models), []byte("x"), fs.ModeFile))
+
+		assert.Equal(t, scrfd.Path(models), c.FaceEngineModelPath(), "only SCRFD is installed")
+
+		yunet := face.FindDetector(face.DetectorYuNet)
+		require.NoError(t, os.MkdirAll(filepath.Dir(yunet.Path(models)), fs.ModeDir))
+		require.NoError(t, os.WriteFile(yunet.Path(models), []byte("x"), fs.ModeFile))
+
+		assert.Equal(t, yunet.Path(models), c.FaceEngineModelPath(), "YuNet wins once installed")
 	})
 }
 

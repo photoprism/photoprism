@@ -1,0 +1,95 @@
+package face
+
+import (
+	"os"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
+	"github.com/photoprism/photoprism/internal/ai/onnx"
+	"github.com/photoprism/photoprism/pkg/fs"
+)
+
+func TestFindDetector(t *testing.T) {
+	assert.Equal(t, DetectorYuNet, FindDetector(DetectorYuNet).Name)
+	assert.Equal(t, DecodeYuNet, FindDetector(DetectorYuNet).Decode)
+	assert.Equal(t, DecodeSCRFD, FindDetector(DetectorSCRFD).Decode)
+	assert.Nil(t, FindDetector("nonexistent"))
+}
+
+func TestDetectorForFile(t *testing.T) {
+	t.Run("YuNet", func(t *testing.T) {
+		d := DetectorForFile("/models/yunet/face_detection_yunet_2026may.onnx")
+		require.NotNil(t, d)
+		assert.Equal(t, DecodeYuNet, d.Decode)
+		// Raw 0-255 BGR: applying the other detector's normalization would not fail, it would
+		// quietly produce worse detections, which is why the mapping is asserted.
+		assert.Equal(t, onnx.BGR, d.ONNX.Input.ColorOrder)
+		assert.Equal(t, float32(0), d.ONNX.Input.Normalization.Mean[0])
+	})
+	t.Run("SCRFD", func(t *testing.T) {
+		d := DetectorForFile("/models/scrfd/scrfd.onnx")
+		require.NotNil(t, d)
+		assert.Equal(t, DecodeSCRFD, d.Decode)
+		assert.Equal(t, onnx.RGB, d.ONNX.Input.ColorOrder)
+	})
+	t.Run("LegacyFixedShapeExport", func(t *testing.T) {
+		d := DetectorForFile("/models/scrfd/scrfd_500m_bnkps_shape640x640.onnx")
+		require.NotNil(t, d)
+		assert.Equal(t, DecodeSCRFD, d.Decode)
+	})
+	t.Run("Unknown", func(t *testing.T) {
+		assert.Nil(t, DetectorForFile("/models/other/whatever.onnx"))
+	})
+}
+
+func TestYuNetFeatDim(t *testing.T) {
+	// A multiple of 32 agrees with division, and 720 is the case that does not.
+	assert.Equal(t, 80, yunetFeatDim(640, 8))
+	assert.Equal(t, 20, yunetFeatDim(640, 32))
+	assert.Equal(t, 23, yunetFeatDim(720, 32), "the halving chain rounds up")
+}
+
+// TestYuNetEngineLive runs the shipped YuNet path end to end against the installed weights.
+func TestYuNetEngineLive(t *testing.T) {
+	restoreEngine(t)
+
+	detector := FindDetector(DetectorYuNet)
+	require.NotNil(t, detector)
+
+	modelPath := detector.Path("../../../assets/models")
+
+	if _, err := os.Stat(modelPath); err != nil {
+		t.Skipf("yunet is not installed (%s)", err)
+	}
+
+	require.NoError(t, ConfigureEngine(EngineSettings{
+		Name: EngineONNX,
+		ONNX: ONNXOptions{ModelPath: modelPath, Threads: 2},
+	}))
+
+	faces, err := Detect("testdata/1.jpg", SizeThreshold)
+	require.NoError(t, err)
+	require.NotEmpty(t, faces, "yunet must find the face in the test image")
+
+	f := faces[0]
+	t.Logf("yunet: %d face(s), first score %d size %d", len(faces), f.Score, f.Size())
+
+	// A decoder that mismapped its outputs still produces boxes, so the landmarks are what
+	// prove it: they must be complete and fit the template.
+	pts, ok := f.AlignPoints()
+	require.True(t, ok, "all five landmarks must be present")
+	assert.Less(t, pts[0][0], pts[1][0], "the first eye must be the image-left one")
+
+	img, _, decodeErr := fs.DecodeImageFile("testdata/1.jpg")
+	require.NoError(t, decodeErr)
+
+	_, alignErr := AlignedCrop(img, &f, 112, 112)
+	assert.NoError(t, alignErr, "the landmarks must fit the ArcFace template")
+
+	// Provenance names the detector, not the runtime. Every detector runs on ONNX, so the
+	// engine name would distinguish nothing and must not reach the column.
+	assert.Equal(t, DetectorYuNet, f.DetectModel)
+	assert.NotEqual(t, EngineONNX, f.DetectModel)
+}
