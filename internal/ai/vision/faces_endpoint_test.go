@@ -10,9 +10,13 @@ import (
 )
 
 func TestApplyEndpointEmbeddings(t *testing.T) {
-	// FaceNet is 512-wide, so a full-length vector is needed for the accepted cases.
+	// FaceNet is 512-wide, so a full-length vector is needed for the accepted cases, and it needs a
+	// magnitude: a vector without one is not a face and is refused where embeddings are written.
 	valid := func() face.Embeddings {
-		return face.Embeddings{make(face.Embedding, 512)}
+		e := make(face.Embedding, 512)
+		e[0] = 1
+
+		return face.Embeddings{e}
 	}
 
 	t.Run("NilResponse", func(t *testing.T) {
