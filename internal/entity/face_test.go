@@ -752,3 +752,40 @@ func TestFace_MatchMarkers(t *testing.T) {
 		assert.Empty(t, found.FaceID)
 	})
 }
+
+// TestFace_Reopened pins the discriminator the matcher needs on its way out. Every cluster a
+// matching pass reads started out unmatched, so a NULL timestamp cannot say whether a collision
+// reopened one during the pass - the flag can, and stamping a reopened cluster would leave the
+// markers ReviseMatches dropped with nothing to be rematched against.
+func TestFace_Reopened(t *testing.T) {
+	t.Run("Fresh", func(t *testing.T) {
+		m := NewFace("", SrcAuto, face.Embeddings{face.RandomEmbedding()}, face.EmbeddingModelName())
+		require.NotNil(t, m)
+		// NewFace computes the id through SetEmbeddings, which reopens by construction.
+		assert.Nil(t, m.MatchedAt)
+	})
+	t.Run("Stamped", func(t *testing.T) {
+		m := &Face{ID: "TESTFACEID", MatchedAt: TimeStamp()}
+		assert.False(t, m.Reopened())
+	})
+	t.Run("Reopen", func(t *testing.T) {
+		m := &Face{ID: "TESTFACEID", MatchedAt: TimeStamp()}
+		m.reopen()
+
+		assert.True(t, m.Reopened())
+		assert.Nil(t, m.MatchedAt, "reopening clears the timestamp as well as raising the flag")
+	})
+	t.Run("SurvivesACopy", func(t *testing.T) {
+		// The matcher reopens through a pointer into the slice and reads the flag back from a
+		// copy of the same element, so the flag has to travel with the value.
+		faces := Faces{{ID: "TESTFACEID", MatchedAt: TimeStamp()}}
+		(&faces[0]).reopen()
+
+		for _, f := range faces {
+			assert.True(t, f.Reopened())
+		}
+	})
+	t.Run("NilFace", func(t *testing.T) {
+		assert.False(t, (*Face)(nil).Reopened())
+	})
+}

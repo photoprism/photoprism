@@ -198,11 +198,7 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 			result.Add(r)
 		}
 
-		for _, m := range unmatchedFaces {
-			if err := m.Matched(); err != nil {
-				log.Warnf("faces: %s (update match timestamp)", err)
-			}
-		}
+		stampMatchedFaces(unmatchedFaces)
 	}
 
 	// Update remaining markers based on previous matches.
@@ -223,6 +219,25 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 	}
 
 	return result, nil
+}
+
+// stampMatchedFaces records that this run compared each cluster against every marker.
+//
+// A cluster a collision reopened during the pass is left alone. Stamping it would end the only
+// route back: the next run reads clusters that are still unmatched, so a stamped one is not
+// examined again and the markers ReviseMatches dropped have nothing to be compared against.
+// Every cluster here started out unmatched, so the timestamp cannot tell the two apart.
+func stampMatchedFaces(faces entity.Faces) {
+	for _, m := range faces {
+		if m.Reopened() {
+			log.Debugf("faces: cluster %s was reopened during the run and stays unmatched", m.ID)
+			continue
+		}
+
+		if err := m.Matched(); err != nil {
+			log.Warnf("faces: %s (update match timestamp)", err)
+		}
+	}
 }
 
 // MatchFaces matches markers against a slice of faces.

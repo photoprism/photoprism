@@ -361,3 +361,43 @@ func TestFacesMatchRespectsVeto(t *testing.T) {
 	_, err = marker.SetFace(&f, dist)
 	require.NoError(t, err)
 }
+
+// TestStampMatchedFaces pins that the stamping loop leaves a cluster a collision reopened during
+// the pass unmatched.
+//
+// Stamping it would end the only route back: the next run reads clusters that are still
+// unmatched, so a cluster stamped here is not re-examined, and the markers ReviseMatches dropped
+// have nothing to be compared against. Every cluster the loop iterates started out unmatched, so
+// the timestamp cannot tell the two apart and the flag has to.
+func TestStampMatchedFaces(t *testing.T) {
+	stamped := entity.Face{ID: "REOPENTESTSTAMPED", MatchedAt: entity.TimeStamp()}
+	reopened := entity.Face{ID: "REOPENTESTREOPEN", MatchedAt: entity.TimeStamp()}
+
+	require.NoError(t, entity.UnscopedDb().Create(&stamped).Error)
+	require.NoError(t, entity.UnscopedDb().Create(&reopened).Error)
+	t.Cleanup(func() {
+		entity.UnscopedDb().Delete(&entity.Face{}, "id IN (?)", []string{stamped.ID, reopened.ID})
+	})
+
+	// What a pass looks like on the way out: one cluster untouched, one reopened by a collision.
+	faces := entity.Faces{stamped, reopened}
+	require.NoError(t, entity.UnscopedDb().Model(&faces[0]).UpdateColumn("matched_at", nil).Error)
+	require.NoError(t, entity.UnscopedDb().Model(&faces[1]).UpdateColumn("matched_at", nil).Error)
+	faces[0].MatchedAt = nil
+	faces[1].ReopenForTest()
+
+	stampMatchedFaces(faces)
+
+	var after entity.Faces
+	require.NoError(t, entity.UnscopedDb().Find(&after, "id IN (?)", []string{stamped.ID, reopened.ID}).Error)
+	require.Len(t, after, 2)
+
+	for _, f := range after {
+		switch f.ID {
+		case stamped.ID:
+			assert.NotNil(t, f.MatchedAt, "an untouched cluster is stamped as compared")
+		case reopened.ID:
+			assert.Nil(t, f.MatchedAt, "a reopened cluster stays unmatched so the next run reads it")
+		}
+	}
+}

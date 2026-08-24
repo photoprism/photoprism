@@ -37,9 +37,13 @@ type Face struct {
 	EmbedModel      string          `gorm:"column:embed_model;type:VARBINARY(32);index;default:'';" json:"-" yaml:"EmbedModel,omitempty"`
 	EmbeddingJSON   json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"-" yaml:"EmbeddingJSON,omitempty"`
 	embedding       face.Embedding  `gorm:"-" yaml:"-"`
-	MatchedAt       *time.Time      `json:"MatchedAt" yaml:"MatchedAt,omitempty"`
-	CreatedAt       time.Time       `json:"CreatedAt" yaml:"CreatedAt,omitempty"`
-	UpdatedAt       time.Time       `json:"UpdatedAt" yaml:"UpdatedAt,omitempty"`
+	// reopened records that this cluster changed after a run read it, so a caller about to stamp
+	// it as matched can tell it apart from one that merely started out unmatched - which is the
+	// only state the timestamp itself can report, since both are NULL.
+	reopened  bool       `gorm:"-" yaml:"-"`
+	MatchedAt *time.Time `json:"MatchedAt" yaml:"MatchedAt,omitempty"`
+	CreatedAt time.Time  `json:"CreatedAt" yaml:"CreatedAt,omitempty"`
+	UpdatedAt time.Time  `json:"UpdatedAt" yaml:"UpdatedAt,omitempty"`
 }
 
 // Faceless can be used as argument to match unmatched face markers.
@@ -128,9 +132,21 @@ func (m *Face) SetEmbeddings(embeddings face.Embeddings, model face.ModelName) (
 	// Update Face ID and reset match timestamp,
 	m.ID = base32.StdEncoding.EncodeToString(s[:])
 
-	m.MatchedAt = nil
+	m.reopen()
 
 	return nil
+}
+
+// Reopened reports whether this cluster changed after the run read it, and therefore has to be
+// compared against the markers again rather than stamped as matched.
+func (m *Face) Reopened() bool {
+	return m != nil && m.reopened
+}
+
+// reopen clears the match timestamp and records that this cluster needs comparing again.
+func (m *Face) reopen() {
+	m.MatchedAt = nil
+	m.reopened = true
 }
 
 // Matched updates the match timestamp.
@@ -239,7 +255,10 @@ func (m *Face) ResolveCollision(embeddings face.Embeddings, model face.ModelName
 		return true, m.Updates(Values{"collisions": m.Collisions, "collision_radius": m.CollisionRadius,
 			"face_kind": m.FaceKind, "updated_at": m.UpdatedAt, "matched_at": m.MatchedAt})
 	} else {
-		m.MatchedAt = nil
+		// Reopened rather than merely cleared: this narrows the cluster mid-run, and the markers
+		// ReviseMatches drops below have nothing to be rematched against if the run then stamps
+		// it as matched on its way out.
+		m.reopen()
 		m.Collisions++
 		m.CollisionRadius = dist - face.Epsilon
 		UpdateFaces.Store(true)
