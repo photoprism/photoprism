@@ -9,10 +9,26 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/thumb/crop"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
+
+func TestMarker_SameEmbeddingModel(t *testing.T) {
+	restore := face.ConfiguredModel()
+	t.Cleanup(func() {
+		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+	})
+
+	assert.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelFaceNet, Model: face.FindEmbeddingModel(face.ModelFaceNet)}))
+	assert.True(t, (&Marker{EmbedModel: face.ModelFaceNet}).SameEmbeddingModel())
+	assert.True(t, (&Marker{}).SameEmbeddingModel())
+	assert.False(t, (&Marker{EmbedModel: face.ModelSFace}).SameEmbeddingModel())
+
+	assert.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelSFace}))
+	assert.False(t, (&Marker{}).SameEmbeddingModel())
+}
 
 var testArea = crop.Area{
 	Name: "face",
@@ -522,9 +538,13 @@ func TestMarker_Create(t *testing.T) {
 
 func TestMarker_Embeddings(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
+		// The fixtures are generated for whichever model a run resolves to, so what the
+		// vector has to be is its width and its provenance, not a particular value.
 		m := MarkerFixtures.Get("1000003-4")
 
-		assert.Equal(t, 0.013083286379677253, m.Embeddings()[0][0])
+		require.Len(t, m.Embeddings(), 1)
+		assert.Len(t, m.Embeddings()[0], face.ExpectedDims())
+		assert.True(t, m.SameEmbeddingModel())
 	})
 	t.Run("EmptyEmbedding", func(t *testing.T) {
 		m := Marker{}
@@ -789,5 +809,34 @@ func TestMarker_Matched(t *testing.T) {
 			assert.Equal(t, "markeruid required but not provided", err.Error())
 
 		}
+	})
+}
+
+func TestMarker_SetEmbeddings(t *testing.T) {
+	t.Run("RecordsTheProducingModel", func(t *testing.T) {
+		// Provenance is what keeps two embedding spaces apart. A vector stored without it
+		// reads as legacy FaceNet and would be admitted into FaceNet clusters whatever
+		// model actually produced it.
+		m := &Marker{MarkerType: MarkerFace}
+		m.SetEmbeddings(face.Embeddings{face.RandomEmbedding()}, face.ModelSFace)
+
+		assert.Equal(t, face.ModelSFace, m.EmbedModel)
+		assert.NotEmpty(t, m.EmbeddingsJSON)
+		assert.False(t, m.Embeddings().Empty())
+	})
+	t.Run("EmptyClearsTheModel", func(t *testing.T) {
+		// A marker whose vector was cleared must not keep claiming a model, or a later
+		// migration counts it as already done.
+		m := &Marker{MarkerType: MarkerFace, EmbedModel: face.ModelSFace}
+		m.SetEmbeddings(face.Embeddings{}, face.ModelSFace)
+
+		assert.Empty(t, m.EmbedModel)
+	})
+	t.Run("ReplacesAPreviousModel", func(t *testing.T) {
+		m := &Marker{MarkerType: MarkerFace}
+		m.SetEmbeddings(face.Embeddings{face.RandomEmbedding()}, face.ModelFaceNet)
+		m.SetEmbeddings(face.Embeddings{face.RandomEmbedding()}, face.ModelSFace)
+
+		assert.Equal(t, face.ModelSFace, m.EmbedModel)
 	})
 }

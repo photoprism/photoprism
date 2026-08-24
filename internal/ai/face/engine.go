@@ -47,21 +47,48 @@ type EngineSettings struct {
 }
 
 var (
-	engineMu     sync.RWMutex
-	activeEngine DetectionEngine
+	engineMu       sync.RWMutex
+	activeEngine   DetectionEngine
+	engineSettings EngineSettings
+	engineLoaded   bool
 )
 
 // UseEngine replaces the active detection engine and returns the previous instance.
 func UseEngine(engine DetectionEngine) (previous DetectionEngine) {
+	return setEngine(engine, EngineSettings{}, false)
+}
+
+// setEngine replaces the active detection engine and records the settings it was built from,
+// so a later call with the same settings can keep it. An engine installed through UseEngine
+// records none, because the settings would not describe it.
+func setEngine(engine DetectionEngine, settings EngineSettings, loaded bool) (previous DetectionEngine) {
 	engineMu.Lock()
-	prev := activeEngine
+	previous = activeEngine
 	activeEngine = engine
+	engineSettings = settings
+	engineLoaded = loaded
 	engineMu.Unlock()
-	return prev
+
+	return previous
+}
+
+// reuseEngine reports whether the active detection engine was loaded from these settings and
+// can serve them again. An engine that failed to load is never reusable.
+func reuseEngine(settings EngineSettings) bool {
+	engineMu.RLock()
+	defer engineMu.RUnlock()
+
+	return engineLoaded && activeEngine != nil && engineSettings == settings
 }
 
 // ConfigureEngine selects and initializes the face detection engine based on the provided settings.
 func ConfigureEngine(settings EngineSettings) error {
+	// The detector holds an inference session like the embedding model does, so configuring
+	// the same one again keeps it rather than reading and verifying the weights a second time.
+	if reuseEngine(settings) {
+		return nil
+	}
+
 	desired := ParseEngine(settings.Name)
 
 	if desired == EngineAuto {
@@ -87,7 +114,8 @@ func ConfigureEngine(settings EngineSettings) error {
 		initErr = fmt.Errorf("faces: unsupported detection engine %q", desired)
 	}
 
-	prev := UseEngine(newEngine)
+	prev := setEngine(newEngine, settings, newEngine != nil && initErr == nil)
+
 	if prev != nil {
 		_ = prev.Close()
 	}

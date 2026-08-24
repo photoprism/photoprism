@@ -43,6 +43,7 @@ A test that passes alone and in the full package but fails under `-run` subsets 
 - `PhotoFixtures.Get()` etc. return value copies — re-query via `entity.FindPhoto(fixture)` when you need the DB row.
 - New persistent IDs: `rnd.GenerateUID(entity.PhotoUID|FileUID|LabelUID|ClientUID|…)`; node UUIDs use `rnd.UUIDv7()` and `node.uuid` is required in responses.
 - Use `entity.Values` (not raw `map[string]interface{}`) for DB updates. Reuse shared `Example*` constants for illustrative credentials (see `internal/service/cluster/const.go`).
+- **Face and marker vectors are generated, not stored.** `entity.GenerateFaceFixtureVectors` fills the face and marker fixtures for whichever embedding model the run resolved, before either is written, so they always have that model's width and provenance. A hard-coded vector belongs to one model and is ineligible for matching under any other, which silently turns a matching test into a test of the early exit. Place a new face marker by adding it to `markerFixtureVectors` with the cluster it belongs to and its distance as a fraction of what that cluster accepts; assert on that relationship rather than on a literal distance, since the numbers follow the model.
 
 ### CLI Testing Gotchas
 

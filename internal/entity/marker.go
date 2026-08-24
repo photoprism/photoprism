@@ -40,6 +40,7 @@ type Marker struct {
 	FaceID         string          `gorm:"type:bytes;size:64;index;" json:"FaceID" yaml:"FaceID,omitempty"`
 	FaceDist       float64         `gorm:"default:-1;" json:"FaceDist" yaml:"FaceDist,omitempty"`
 	face           *Face           `gorm:"foreignKey:FaceID;"`
+	EmbedModel     string          `gorm:"type:bytes;size:32;column:embed_model;index;default:'';" json:"-" yaml:"EmbedModel,omitempty"`
 	EmbeddingsJSON json.RawMessage `gorm:"type:bytes;size:66666;" json:"-" yaml:"EmbeddingsJSON,omitempty"`
 	embeddings     face.Embeddings `gorm:"-" yaml:"-"`
 	LandmarksJSON  json.RawMessage `gorm:"type:bytes;size:66666;" json:"-" yaml:"LandmarksJSON,omitempty"`
@@ -109,16 +110,28 @@ func NewFaceMarker(f face.Face, file File, subjUid string) *Marker {
 		return nil
 	}
 
-	m.SetEmbeddings(f.Embeddings)
+	m.SetEmbeddings(f.Embeddings, f.EmbedModel)
 	m.LandmarksJSON = f.RelativeLandmarksJSON()
 
 	return m
 }
 
-// SetEmbeddings assigns new face emebddings to the marker.
-func (m *Marker) SetEmbeddings(e face.Embeddings) {
+// SetEmbeddings assigns new face embeddings to the marker, recorded under the model that
+// produced them rather than the one that happens to be configured now.
+func (m *Marker) SetEmbeddings(e face.Embeddings, model face.ModelName) {
 	m.embeddings = e
 	m.EmbeddingsJSON = e.JSON()
+
+	if e.Empty() {
+		m.EmbedModel = ""
+	} else {
+		m.EmbedModel = model
+	}
+}
+
+// SameEmbeddingModel reports whether the marker embedding belongs to the configured model.
+func (m *Marker) SameEmbeddingModel() bool {
+	return face.ModelsComparable(m.EmbedModel, face.EmbeddingModelName())
 }
 
 // UpdateFile sets the file uid and thumb and updates the index if the marker already exists.
@@ -253,10 +266,18 @@ func (m *Marker) SetFace(f *Face, dist float64) (updated bool, err error) {
 		return false, fmt.Errorf("not a face marker")
 	}
 
+	// A cluster from another embedding space cannot describe this marker. Refusing is a
+	// normal condition during a migration, not an error: MatchMarkers returns on an error
+	// and would abandon every remaining marker of the cluster.
+	if !face.SameEmbeddingSpace(m.EmbedModel, f.EmbedModel) {
+		log.Debugf("faces: marker %s and face %s use different embedding models", clean.Log(m.MarkerUID), clean.Log(f.ID))
+		return false, nil
+	}
+
 	// Any reason we don't want to set a new face for this marker?
 	if !subjSrcSharesFace(m.SubjSrc) || f.SubjUID == "" || m.SubjUID == "" || f.SubjUID == m.SubjUID {
 		// Don't skip if subject wasn't set manually, or subjects match.
-	} else if reported, err := f.ResolveCollision(m.Embeddings()); err != nil {
+	} else if reported, err := f.ResolveCollision(m.Embeddings(), m.EmbedModel); err != nil {
 		return false, err
 	} else if reported {
 		log.Warnf("faces: marker %s face %s has ambiguous subjects %s <> %s, subject source %s", clean.Log(m.MarkerUID), clean.Log(f.ID), clean.Log(m.SubjUID), clean.Log(f.SubjUID), SrcString(m.SubjSrc))
@@ -293,18 +314,7 @@ func (m *Marker) SetFace(f *Face, dist float64) (updated bool, err error) {
 	m.FaceDist = dist
 
 	if m.FaceDist < 0 {
-		faceEmbedding := f.Embedding()
-
-		// Calculate the smallest distance to embeddings.
-		for _, e := range m.Embeddings() {
-			if len(e) != len(faceEmbedding) {
-				continue
-			}
-
-			if d := e.Dist(faceEmbedding); d < m.FaceDist || m.FaceDist < 0 {
-				m.FaceDist = d
-			}
-		}
+		m.FaceDist = m.Embeddings().Dist(f.Embedding())
 	}
 
 	if f.SubjUID != "" {
@@ -356,6 +366,14 @@ func (m *Marker) SyncSubject(updateRelated bool) (err error) {
 	// Update subject with marker name?
 	if m.MarkerName == "" || subj.SubjName == m.MarkerName {
 		// Do nothing.
+	} else if other := ReassignSubject(subj, m.MarkerName); other != nil {
+		// The name belongs to someone else, so link this marker to them. Renaming
+		// the linked person is reserved for names nobody owns; combining two
+		// people is an explicit action on the people page.
+		subj = other
+		m.subject = other
+		m.SubjUID = other.SubjUID
+		m.MarkerName = other.SubjName
 	} else if subj, err = subj.UpdateName(m.MarkerName); err != nil {
 		return err
 	} else if subj != nil {
@@ -517,7 +535,7 @@ func (m *Marker) ClearSubject(src string) error {
 	} else if m.face == nil {
 		m.subject = nil
 		return nil
-	} else if resolved, colErr := m.face.ResolveCollision(m.Embeddings()); colErr != nil {
+	} else if resolved, colErr := m.face.ResolveCollision(m.Embeddings(), m.EmbedModel); colErr != nil {
 		return colErr
 	} else if resolved {
 		log.Debugf("faces: marker %s resolved ambiguous subjects for face %s", clean.Log(m.MarkerUID), clean.Log(m.face.ID))
@@ -560,7 +578,7 @@ func (m *Marker) Face() (f *Face) {
 		if emb := m.Embeddings(); emb.Empty() {
 			log.Warnf("faces: marker %s has no face embeddings", clean.Log(m.MarkerUID))
 			return nil
-		} else if f = NewFace(m.SubjUID, m.SubjSrc, emb); f == nil {
+		} else if f = NewFace(m.SubjUID, m.SubjSrc, emb, m.EmbedModel); f == nil {
 			log.Warnf("faces: failed assigning face to marker %s", clean.Log(m.MarkerUID))
 			return nil
 		} else if f.SkipMatching() {

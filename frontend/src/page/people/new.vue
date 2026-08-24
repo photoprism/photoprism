@@ -60,7 +60,7 @@
                 <v-combobox
                   v-else
                   v-model:search="m.Name"
-                  :items="people"
+                  :items="focused === m.ID ? people : noPeople"
                   item-title="Name"
                   item-value="Name"
                   :readonly="readonly"
@@ -76,7 +76,7 @@
                   autocomplete="off"
                   density="comfortable"
                   class="input-name pa-0 ma-0 text-selectable"
-                  @focus="loadPeople"
+                  @focus="() => onFocusName(m)"
                   @update:model-value="(person) => onSetPerson(m, person)"
                   @blur="() => onSetName(m)"
                   @keyup.enter="() => onSetName(m)"
@@ -134,6 +134,9 @@ export default {
       view: "all",
       config: this.$config.values,
       people: [],
+      // Stable empty list handed to every combobox that is not being edited.
+      noPeople: [],
+      focused: "",
       rules,
       SubjectMaxLength,
       subscriptions: [],
@@ -223,6 +226,14 @@ export default {
           this.people = Array.isArray(models) ? models : [];
         })
         .catch(() => {});
+    },
+    // onFocusName records which tile is being edited and loads the suggestions.
+    // Only that tile's combobox receives the list, so the item state stays
+    // proportional to the list length instead of list length times tile count.
+    // The id is kept after blur so a menu click cannot empty the list mid-select.
+    onFocusName(model) {
+      this.focused = model?.ID ? model.ID : "";
+      return this.loadPeople();
     },
     searchCount() {
       return this.batchSize;

@@ -29,7 +29,7 @@ func Markers(limit, offset int, markerType string, embeddings, subjects bool, ma
 	}
 
 	if embeddings {
-		db = db.Where("embeddings_json <> ''")
+		db = db.Where("LENGTH(embeddings_json) > 0")
 	}
 
 	if subjects {
@@ -47,12 +47,16 @@ func Markers(limit, offset int, markerType string, embeddings, subjects bool, ma
 	return result, err
 }
 
-// UnmatchedFaceMarkers finds all currently unmatched face markers.
-func UnmatchedFaceMarkers(limit, offset int, matchedBefore *time.Time) (result entity.Markers, err error) {
-	db := Db().
+// UnmatchedFaceMarkers returns the next page of markers that still need matching, after the given uid.
+//
+// Paged by cursor, not offset: a run stamps what it matches, so rows leave this set as it reads, and
+// an offset would skip whatever shifted into its window. A fixed offset also returns the markers a
+// run visits without stamping until a batch holds nothing new and the run stops early.
+func UnmatchedFaceMarkers(limit int, after string, matchedBefore *time.Time) (result entity.Markers, err error) {
+	db := whereEmbeddingModel(Db().
 		Where("marker_type = ?", entity.MarkerFace).
 		Where("marker_invalid = FALSE").
-		Where("embeddings_json <> ''")
+		Where("LENGTH(embeddings_json) > 0"), face.EmbeddingModelName())
 
 	if matchedBefore == nil {
 		db = db.Where("matched_at IS NULL")
@@ -60,7 +64,12 @@ func UnmatchedFaceMarkers(limit, offset int, matchedBefore *time.Time) (result e
 		db = db.Where("matched_at IS NULL OR matched_at < ?", matchedBefore)
 	}
 
-	db = db.Order("matched_at, marker_uid").Limit(limit).Offset(offset)
+	if after != "" {
+		db = db.Where("marker_uid > ?", after)
+	}
+
+	// Ordered by the cursor column, so a page cannot shift under the run that is reading it.
+	db = db.Order("marker_uid").Limit(limit)
 
 	err = db.Find(&result).Error
 
@@ -69,8 +78,8 @@ func UnmatchedFaceMarkers(limit, offset int, matchedBefore *time.Time) (result e
 
 // FaceMarkers returns all face markers sorted by id.
 func FaceMarkers(limit, offset int) (result entity.Markers, err error) {
-	err = Db().
-		Where("marker_type = ?", entity.MarkerFace).
+	err = whereEmbeddingModel(Db().
+		Where("marker_type = ?", entity.MarkerFace), face.EmbeddingModelName()).
 		Order("marker_uid").Limit(limit).Offset(offset).
 		Find(&result).Error
 
@@ -78,15 +87,17 @@ func FaceMarkers(limit, offset int) (result entity.Markers, err error) {
 }
 
 // Embeddings returns existing face embeddings.
-func Embeddings(single, unclustered bool, size, score int) (result face.Embeddings, err error) {
+func Embeddings(single, unclustered bool, size, score int, model string) (result face.Embeddings, err error) {
 	var col []string
 
 	stmt := Db().
 		Model(&entity.Marker{}).
 		Where("marker_type = ?", entity.MarkerFace).
 		Where("marker_invalid = FALSE").
-		Where("embeddings_json <> ''").
+		Where("LENGTH(embeddings_json) > 0").
 		Order("marker_uid")
+
+	stmt = whereEmbeddingModel(stmt, model)
 
 	if size > 0 {
 		stmt = stmt.Where("size >= ?", size)
@@ -256,9 +267,9 @@ func ResetFaceMarkerMatches() (removed int64, err error) {
 // CountUnmatchedFaceMarkers counts the number of unmatched face markers in the index.
 func CountUnmatchedFaceMarkers() (n int) {
 	nData := int64(0)
-	q := Db().Model(&entity.Markers{}).
-		Where("matched_at IS NULL AND marker_invalid = FALSE AND embeddings_json <> ''").
-		Where("marker_type = ?", entity.MarkerFace)
+	q := whereEmbeddingModel(Db().Model(&entity.Markers{}).
+		Where("matched_at IS NULL AND marker_invalid = FALSE AND LENGTH(embeddings_json) > 0").
+		Where("marker_type = ?", entity.MarkerFace), face.EmbeddingModelName())
 
 	if err := q.Count(&nData).Error; err != nil {
 		log.Errorf("faces: %s (count unmatched markers)", err)

@@ -24,9 +24,9 @@ func GenerateFaceEmbeddings(imgData []byte) (embeddings face.Embeddings, err err
 			return embeddings, imgErr
 		}
 
-		if tf := model.FaceModel(); tf == nil {
+		if embedder := model.FaceModel(); embedder == nil {
 			return embeddings, fmt.Errorf("invalid face model configuration")
-		} else if embeddings = tf.Run(img); !embeddings.Empty() {
+		} else if embeddings = embedder.Run(img); !embeddings.Empty() {
 			return embeddings, nil
 		} else {
 			return face.Embeddings{}, nil

@@ -36,6 +36,15 @@ func facesConfigAction(ctx *cli.Context) error {
 		log.Debug(err)
 	}
 
+	// Detecting the model asks the library which one produced its vectors, so without a
+	// connection this report could not name the model that is in force. Connecting is
+	// idempotent and fails over to the old behavior.
+	conf.RegisterDb()
+
+	// A report states what is configured and must not change it, so this resolves the model
+	// for display without writing the result to "options.yml".
+	conf.ResolveFaceModel()
+
 	format, formatErr := report.CliFormatStrict(ctx)
 	if formatErr != nil {
 		return formatErr

@@ -463,6 +463,30 @@ func (m *Subject) UpdateName(name string) (*Subject, error) {
 	return m, m.UpdateMarkerNames()
 }
 
+// ReassignSubject returns the person that already owns the given name when that is
+// someone other than subj, so callers can link to them instead of renaming subj.
+// A deleted record is not returned: UpdateName clears those out of the way and
+// renames instead.
+func ReassignSubject(subj *Subject, name string) *Subject {
+	if subj == nil {
+		return nil
+	}
+
+	name = clean.Name(name)
+
+	if name == "" || name == subj.SubjName {
+		return nil
+	}
+
+	existing := FindSubjectByName(name, false)
+
+	if existing == nil || existing.Deleted() || existing.SubjUID == subj.SubjUID {
+		return nil
+	}
+
+	return existing
+}
+
 // UpdateMarkerNames updates related marker names.
 func (m *Subject) UpdateMarkerNames() error {
 	// Make sure the subject has a name and UID.

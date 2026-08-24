@@ -18,6 +18,12 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 		return added, fmt.Errorf("face recognition is disabled")
 	}
 
+	// A model that failed to load leaves no name to filter by, so the marker query would
+	// return vectors from every embedding space in the library in one result set.
+	if modelErr := face.EmbedderError(); modelErr != nil {
+		return added, fmt.Errorf("cannot cluster because the embedding model failed to load: %w", modelErr)
+	}
+
 	// Skip clustering if index contains no new face markers, and force option isn't set.
 	if opt.Force {
 		log.Infof("faces: enforced clustering")
@@ -26,8 +32,12 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 		return added, nil
 	}
 
+	// Read the configured model once, so the vectors the clusterer consumes and the name
+	// stamped on the resulting clusters come from one observation.
+	current := face.EmbeddingModelName()
+
 	// Fetch unclustered face embeddings.
-	embeddings, err := query.Embeddings(false, true, face.ClusterSizeThreshold, face.ClusterScoreThreshold)
+	embeddings, err := query.Embeddings(false, true, face.ClusterSizeThreshold, face.ClusterScoreThreshold, current)
 
 	log.Debugf("faces: found %s", english.Plural(len(embeddings), "unclustered sample", "unclustered samples"))
 
@@ -37,6 +47,8 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 	} else if samples := len(embeddings); samples < opt.SampleThreshold() {
 		log.Debugf("faces: at least %d samples needed for clustering", opt.SampleThreshold())
 		return added, nil
+	} else if embeddings.Dims() < 1 {
+		return added, fmt.Errorf("cannot cluster %d samples of different lengths, run photoprism faces migrate", samples)
 	} else {
 		var c alg.HardClusterer
 
@@ -81,8 +93,8 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 				log.Infof("cluster: added %d of %d faces", i, resultLen)
 				start = time.Now()
 			}
-			if f := entity.NewFace("", entity.SrcAuto, cluster); f == nil {
-				log.Errorf("faces: face must not be nil - you may have found a bug")
+			if f := entity.NewFace("", entity.SrcAuto, cluster, current); f == nil || f.ID == "" {
+				log.Errorf("faces: skipped cluster that could not be created")
 			} else if f.SkipMatching() {
 				log.Infof("faces: skipped cluster %s, embedding not distinct enough", f.ID)
 			} else if err = f.Create(); err == nil {

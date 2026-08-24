@@ -61,8 +61,8 @@ func FacesByID(knownOnly, unmatchedOnly, hidden, ignored bool) (FaceMap, IDs, er
 	return faceMap, faceIds, nil
 }
 
-// Faces returns all (known / unmatched) faces from the index.
-func Faces(knownOnly, unmatchedOnly, hidden, ignored bool) (result entity.Faces, err error) {
+// facesStmt builds the face selection shared by Faces and MatchableFaces.
+func facesStmt(knownOnly, unmatchedOnly, hidden, ignored bool) *gorm.DB {
 	stmt := Db()
 
 	if knownOnly {
@@ -81,16 +81,36 @@ func Faces(knownOnly, unmatchedOnly, hidden, ignored bool) (result entity.Faces,
 		stmt = stmt.Where("face_kind <= 1")
 	}
 
-	err = stmt.Order("subj_uid, samples DESC").Find(&result).Error
+	// Largest clusters first, because selection bounds each comparison by the best distance
+	// found so far: meeting a likely winner early makes every later candidate cheaper to
+	// reject. Ordering by subject instead put every unnamed cluster ahead of every named one,
+	// which is the opposite. The id breaks ties so the order does not vary between drivers.
+	return stmt.Order("samples DESC, id")
+}
+
+// Faces returns all (known / unmatched) faces from the index, including clusters from
+// other embedding models so the audit can find and report them.
+func Faces(knownOnly, unmatchedOnly, hidden, ignored bool) (result entity.Faces, err error) {
+	err = facesStmt(knownOnly, unmatchedOnly, hidden, ignored).Find(&result).Error
+
+	return result, err
+}
+
+// MatchableFaces returns the faces that may be compared with the configured model.
+func MatchableFaces(knownOnly, unmatchedOnly, hidden, ignored bool) (result entity.Faces, err error) {
+	err = whereEmbeddingModel(facesStmt(knownOnly, unmatchedOnly, hidden, ignored), face.EmbeddingModelName()).
+		Find(&result).Error
 
 	return result, err
 }
 
 // ManuallyAddedFaces returns all manually added face clusters for the specified subj_uid, or all subjects if "".
 func ManuallyAddedFaces(hidden, ignored bool, subjUid string) (result entity.Faces, err error) {
-	stmt := Db().
+	// Merging is what turns a cross-model comparison into a corrupted centroid, so the
+	// optimizer only ever sees clusters it can legitimately combine.
+	stmt := whereEmbeddingModel(Db().
 		Where("face_hidden = ?", hidden).
-		Where("face_src = ?", entity.SrcManual)
+		Where("face_src = ?", entity.SrcManual), face.EmbeddingModelName())
 
 	if subjUid != "" {
 		stmt = stmt.Where("subj_uid = ?", subjUid)
@@ -113,16 +133,23 @@ func ManuallyAddedFaces(hidden, ignored bool, subjUid string) (result entity.Fac
 
 // MatchFaceMarkers matches markers with known faces.
 func MatchFaceMarkers() (affected int64, err error) {
-	faces, err := Faces(true, false, false, false)
+	faces, err := MatchableFaces(true, false, false, false)
 
 	if err != nil {
 		return affected, err
 	}
 
+	current := face.EmbeddingModelName()
 	for _, f := range faces {
-		if res := Db().Model(&entity.Marker{}).
+		if current != "" && !f.SameEmbeddingModel() {
+			continue
+		}
+
+		stmt := whereEmbeddingModel(Db().Model(&entity.Marker{}).
 			Where("marker_invalid = FALSE").
-			Where("face_id = ?", f.ID).
+			Where("face_id = ?", f.ID), current)
+
+		if res := stmt.
 			Where("subj_src = ?", entity.SrcAuto).
 			Where("subj_uid <> ?", f.SubjUID).
 			UpdateColumns(entity.Values{"subj_uid": f.SubjUID, "marker_review": false}); res.Error != nil {
@@ -154,16 +181,17 @@ func RemoveAutoFaceClusters() (removed int, err error) {
 // CountNewFaceMarkers counts the number of new face markers in the index.
 func CountNewFaceMarkers(size, score int) (n int) {
 	var f entity.Face
+	current := face.EmbeddingModelName()
 	nData := int64(0)
 
-	if err := Db().Where("face_src = ?", entity.SrcAuto).
+	if err := whereEmbeddingModel(Db().Where("face_src = ?", entity.SrcAuto), current).
 		Order("created_at DESC").Limit(1).Take(&f).Error; err != nil {
 		log.Debugf("faces: found no existing clusters")
 	}
 
-	q := Db().Model(&entity.Markers{}).
+	q := whereEmbeddingModel(Db().Model(&entity.Markers{}).
 		Where("marker_type = ?", entity.MarkerFace).
-		Where("face_id = '' AND marker_invalid = FALSE AND embeddings_json <> ''")
+		Where("face_id = '' AND marker_invalid = FALSE AND LENGTH(embeddings_json) > 0"), current)
 
 	if size > 0 {
 		q = q.Where("size >= ?", size)
@@ -235,7 +263,15 @@ func MergeFaces(merge entity.Faces, ignored bool) (merged *entity.Face, err erro
 	}
 
 	// Find or create merged face cluster.
-	if merged = entity.NewFace(merge[0].SubjUID, merge[0].FaceSrc, merge.Embeddings()); merged == nil {
+	// Merging across embedding spaces would average unrelated vectors into one centroid,
+	// so the shared model is resolved from the clusters themselves before they are combined.
+	model, sameSpace := merge.EmbedModel()
+
+	if !sameSpace {
+		return merged, fmt.Errorf("faces: cannot merge clusters from different embedding models")
+	}
+
+	if merged = entity.NewFace(merge[0].SubjUID, merge[0].FaceSrc, merge.Embeddings(), model); merged == nil {
 		return merged, fmt.Errorf("faces: new cluster is nil for subject %s", clean.Log(subjUID))
 	} else if merged = entity.FirstOrCreateFace(merged); merged == nil {
 		return merged, fmt.Errorf("faces: failed to create new cluster for subject %s", clean.Log(subjUID))
@@ -299,20 +335,30 @@ func ResolveFaceCollisions() (conflicts, resolved int, err error) {
 	// Remembers matched combinations.
 	done := make(map[string]bool, len(ids)*len(ids))
 
+	// Face.Match reads the receiver's vector through a cache that a value copied out of the
+	// map starts empty, so re-reading both sides inside the inner loop parsed the same JSON
+	// once per pair. The outer face is copied once per pass and re-adopted after a refresh,
+	// and the inner vectors are decoded up front, which makes it one parse per cluster.
+	embeddings := make(map[string]face.Embedding, len(ids))
+
+	for _, id := range ids {
+		if f, ok := faces[id]; ok {
+			embeddings[id] = f.Embedding()
+		}
+	}
+
 	// Find face assignment collisions.
 	for _, i := range ids {
+		f1, ok := faces[i]
+
+		if !ok {
+			continue
+		}
+
 		for _, j := range ids {
-			var f1, f2 entity.Face
+			f2, ok := faces[j]
 
-			if f, ok := faces[i]; ok {
-				f1 = f
-			} else {
-				continue
-			}
-
-			if f, ok := faces[j]; ok {
-				f2 = f
-			} else {
+			if !ok {
 				continue
 			}
 
@@ -324,14 +370,14 @@ func ResolveFaceCollisions() (conflicts, resolved int, err error) {
 			}
 
 			// Compare face 1 with face 2.
-			if matched, dist := f1.Match(face.Embeddings{f2.Embedding()}); matched {
+			if matched, dist := f1.Match(face.Embeddings{embeddings[j]}, f2.EmbedModel); matched {
 				if f1.SubjUID == f2.SubjUID {
 					continue
 				}
 
 				conflicts++
 
-				r := f1.SampleRadius + face.MatchDist
+				r := f1.AcceptDist()
 
 				log.Infof("faces: face %s has ambiguous subject at dist %f, Ø %f from %d samples, collision Ø %f", f1.ID, dist, r, f1.Samples, f1.CollisionRadius)
 
@@ -348,7 +394,7 @@ func ResolveFaceCollisions() (conflicts, resolved int, err error) {
 				}
 
 				// Resolve.
-				success, failed := f1.ResolveCollision(face.Embeddings{f2.Embedding()})
+				success, failed := f1.ResolveCollision(face.Embeddings{embeddings[j]}, f2.EmbedModel)
 
 				// Failed?
 				if failed != nil {
@@ -362,6 +408,12 @@ func ResolveFaceCollisions() (conflicts, resolved int, err error) {
 					resolved++
 					faces, _, err = FacesByID(true, false, false, false)
 					logErr("faces", "refresh", err)
+
+					// ResolveCollision narrowed this cluster, and every later comparison in
+					// this pass has to see that rather than the row it started from.
+					if f, ok := faces[i]; ok {
+						f1 = f
+					}
 				} else {
 					log.Infof("faces: conflict resolution for %s not successful, face %s still has collisions with other persons", entity.SubjNames.Log(f1.SubjUID), f1.ID)
 				}
@@ -425,4 +477,140 @@ func RemovePeopleAndFaces() (err error) {
 	}
 
 	return nil
+}
+
+// whereEmbeddingModel restricts a statement to vectors that may be compared with the
+// specified model, treating rows without recorded provenance as FaceNet.
+//
+// An empty name means the model could not be determined, so no restriction is applied:
+// filtering on it would match the legacy rows alone and silently exclude every vector a
+// configured model has written, rather than leaving the working set untouched.
+func whereEmbeddingModel(stmt *gorm.DB, model string) *gorm.DB {
+	if model == "" {
+		return stmt
+	}
+
+	return stmt.Where("embed_model = ? OR (embed_model = '' AND ? = ?)", model, model, face.ModelFaceNet)
+}
+
+// notEmbeddingModel returns the condition and arguments matching vectors that cannot be
+// compared with the specified model, treating rows without recorded provenance as FaceNet.
+// It is the exact inverse of whereEmbeddingModel, returned as a fragment so callers can
+// combine it with OR.
+func notEmbeddingModel(model string) (string, []any) {
+	if model == "" {
+		return "0 = 1", nil
+	}
+
+	return "(embed_model <> ? AND (embed_model <> '' OR ? <> ?))", []any{model, model, face.ModelFaceNet}
+}
+
+// EmbeddingModelCount pairs an embedding model name with the number of face clusters
+// that were generated by it. An empty name means the model was not recorded.
+type EmbeddingModelCount struct {
+	EmbedModel string
+	Faces      int
+}
+
+// FaceEmbeddingModels returns the number of face clusters per embedding model, ordered
+// by name, so callers can report libraries that mix incompatible embedding spaces.
+func FaceEmbeddingModels() (result []EmbeddingModelCount, err error) {
+	err = Db().
+		Table(entity.Face{}.TableName()).
+		Select("embed_model, COUNT(*) AS faces").
+		Group("embed_model").
+		Order("embed_model").
+		Scan(&result).Error
+
+	return result, err
+}
+
+// MarkerEmbeddingModelCount pairs an embedding model name with the number of face
+// markers that were generated by it. An empty name means the model was not recorded.
+type MarkerEmbeddingModelCount struct {
+	EmbedModel string
+	Markers    int
+}
+
+// MarkerEmbeddingModels returns the number of face markers per embedding model, ordered
+// by name. Markers are what a migration regenerates, so their counts show how much of a
+// library still holds vectors from a previous model.
+func MarkerEmbeddingModels() (result []MarkerEmbeddingModelCount, err error) {
+	err = Db().
+		Table(entity.Marker{}.TableName()).
+		Select("embed_model, COUNT(*) AS markers").
+		// Comparing the blob column with an empty string is driver dependent, so the
+		// length is what reliably tells markers with a vector from those without one.
+		Where("marker_type = ? AND LENGTH(embeddings_json) > 0", entity.MarkerFace).
+		Group("embed_model").
+		Order("embed_model").
+		Scan(&result).Error
+
+	return result, err
+}
+
+// RecordedMarkerEmbeddingModels returns the number of face markers per recorded embedding
+// model, ordered by name.
+//
+// Markers whose model was never recorded are left out, which is what lets the index on the
+// column answer this: the reporting variant above has to test the embedding blob instead,
+// and that reads every row. Callers that need the legacy rows counted must use that one.
+func RecordedMarkerEmbeddingModels() (result []MarkerEmbeddingModelCount, err error) {
+	err = Db().
+		Table(entity.Marker{}.TableName()).
+		Select("embed_model, COUNT(*) AS markers").
+		Where("marker_type = ? AND embed_model <> ''", entity.MarkerFace).
+		Group("embed_model").
+		Order("embed_model").
+		Scan(&result).Error
+
+	return result, err
+}
+
+// LegacyFaceMarkersWithVectors returns the number of face markers that hold a vector and record
+// no model, which can only have been produced by FaceNet.
+//
+// The provenance index narrows this to the rows that predate the column, so unlike counting every
+// vector it reads few blobs once a library has been migrated. It completes the recorded counts,
+// which leave these rows out so that the index can answer them.
+func LegacyFaceMarkersWithVectors() (count int64, err error) {
+	err = Db().
+		Table(entity.Marker{}.TableName()).
+		Where("marker_type = ? AND embed_model = '' AND LENGTH(embeddings_json) > 0", entity.MarkerFace).
+		Count(&count).Error
+
+	return count, err
+}
+
+// FaceMarkersWithVectors returns the number of face markers that hold an embedding.
+// It reads no provenance column, so it also answers for a schema that predates one.
+func FaceMarkersWithVectors() (count int64, err error) {
+	err = Db().
+		Table(entity.Marker{}.TableName()).
+		Where("marker_type = ? AND LENGTH(embeddings_json) > 0", entity.MarkerFace).
+		Count(&count).Error
+
+	return count, err
+}
+
+// FacesFromOtherModels returns the number of face clusters that were generated by an
+// incompatible embedding model. Legacy clusters without provenance are FaceNet-compatible.
+func FacesFromOtherModels() (count int, err error) {
+	current := face.EmbeddingModelName()
+
+	if current == "" {
+		return 0, nil
+	}
+
+	stmt := Db().
+		Table(entity.Face{}.TableName()).
+		Where("embed_model <> ?", current)
+
+	if current == face.ModelFaceNet {
+		stmt = stmt.Where("embed_model <> ''")
+	}
+
+	err = stmt.Count(&count).Error
+
+	return count, err
 }

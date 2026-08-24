@@ -53,6 +53,8 @@ for index, number := range c.Guesses() {
 }
 ```
 
+All data points must have the same number of dimensions, since vectors of different widths cannot be compared. `Learn` and `Estimate` return an error otherwise, and `Predict` returns `-1` for an observation of a different length or before the clusterer is trained.
+
 Algorithms currently supported are KMeans++ and DBSCAN.
 
 Algorithms which support online learning can be trained this way using Online() function, which relies on channel communication to coordinate the process:

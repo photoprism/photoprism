@@ -6,21 +6,32 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // FileName returns the full file name based on the root folder type.
 func FileName(fileRoot, fileName string) string {
+	return ConfigFileName(Config(), fileRoot, fileName)
+}
+
+// ConfigFileName returns the full file name based on the root folder type, resolved
+// against the specified configuration rather than the process-wide one.
+func ConfigFileName(conf *config.Config, fileRoot, fileName string) string {
+	if conf == nil {
+		return fileName
+	}
+
 	switch fileRoot {
 	case entity.RootSidecar:
-		return path.Join(Config().SidecarPath(), fileName)
+		return path.Join(conf.SidecarPath(), fileName)
 	case entity.RootImport:
-		return path.Join(Config().ImportPath(), fileName)
+		return path.Join(conf.ImportPath(), fileName)
 	case entity.RootSamples:
-		return path.Join(Config().SamplesPath(), fileName)
+		return path.Join(conf.SamplesPath(), fileName)
 	default:
-		return path.Join(Config().OriginalsPath(), fileName)
+		return path.Join(conf.OriginalsPath(), fileName)
 	}
 }
 

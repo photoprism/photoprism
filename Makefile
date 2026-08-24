@@ -97,6 +97,7 @@ Development Environment (run on the host):
 
 Dependencies (run in the development container):
   dep                      Install the TensorFlow, ONNX, and NPM dependencies
+  dep-models               Install the TensorFlow and ONNX models only
   dep-js                   Install the NPM dependencies only
   upgrade                  Upgrade the Go and NPM dependencies
   tidy                     Add missing and remove unused Go modules
@@ -149,26 +150,26 @@ export HELP_TEXT
 
 # Declare "make" targets.
 all: dep build-js
-dep: dep-tensorflow dep-onnx dep-js
+dep: dep-models dep-js
 biuld: build
 build: build-go
 watch: watch-js
 build-all: build-go build-js
 pull: docker-pull
 test: test-js test-go
-test-go: reset-mariadb-migrate reset-postgres-migrate run-test-go
+test-go: dep-models reset-mariadb-migrate reset-postgres-migrate run-test-go
 test-hub: run-test-hub
 test-pkg: run-test-pkg
-test-ai: run-test-ai
+test-ai: dep-models run-test-ai
 test-api: run-test-api
 test-video: run-test-video
 test-entity: run-test-entity
 test-commands: run-test-commands
 test-photoprism: run-test-photoprism
-test-short: run-test-short
-test-mariadb: reset-mariadb-testdb reset-mariadb-migrate reset-postgres-migrate run-test-mariadb
-test-postgres: reset-postgres-testdb reset-postgres-migrate reset-mariadb-migrate run-test-postgres
-test-sqlite: reset-sqlite-unit reset-mariadb-migrate reset-postgres-migrate run-test-sqlite
+test-short: dep-models run-test-short
+test-mariadb: dep-models reset-mariadb-testdb reset-mariadb-migrate reset-postgres-migrate run-test-mariadb
+test-postgres: dep-models reset-postgres-testdb reset-postgres-migrate reset-mariadb-migrate run-test-postgres
+test-sqlite: dep-models reset-sqlite-unit reset-mariadb-migrate reset-postgres-migrate run-test-sqlite
 
 # Backward compatible SQLite acceptance tests - These call the new dbms generic targets that do the testing
 acceptance-run-chromium: acceptance-run-long-chromium-sqlite
@@ -598,10 +599,12 @@ dep-upgrade:
 frontend-update:
 	make -C frontend update
 dep-upgrade-js: frontend-update
-dep-tensorflow:
-	scripts/dist/download-models.sh facenet nasnet nsfw
-dep-onnx:
-	scripts/download-scrfd.sh
+# Installs every model a development build runs or ships.
+dep-models:
+	scripts/dist/download-models.sh facenet nasnet nsfw sface yunet
+	scripts/dist/download-scrfd.sh
+dep-tensorflow: dep-models
+dep-onnx: dep-models
 dep-acceptance: storage/acceptance
 storage/acceptance:
 	[ -f "./storage/acceptance/index.db" ] || (cd storage && rm -rf acceptance && wget -c https://dl.photoprism.app/qa/acceptance.tar.gz -O - | tar -xz)

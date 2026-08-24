@@ -15,34 +15,21 @@ func TestRandomDist(t *testing.T) {
 }
 
 func TestRandomEmbeddings(t *testing.T) {
-	skipChildren := SkipChildren
-	ignoreBackground := IgnoreBackground
-	t.Cleanup(func() {
-		SkipChildren = skipChildren
-		IgnoreBackground = ignoreBackground
-	})
-	SkipChildren = true
-	IgnoreBackground = true
-	t.Run("Regular", func(t *testing.T) {
-		e := RandomEmbeddings(2, RegularFace)
+	t.Run("Count", func(t *testing.T) {
+		e := RandomEmbeddings(3, RegularFace)
+		assert.Len(t, e, 3)
+
 		for i := range e {
-			// t.Logf("embedding: %#v", e[i])
-			assert.False(t, e[i].IsChild())
-			assert.False(t, e[i].IsBackground())
+			assert.Len(t, e[i], RandomEmbeddingDims())
 		}
 	})
-	t.Run("Children", func(t *testing.T) {
-		e := RandomEmbeddings(2, ChildrenFace)
-		for i := range e {
-			assert.False(t, e[i].IsBackground())
-			assert.True(t, e[i].IsChild())
-		}
+	t.Run("None", func(t *testing.T) {
+		assert.Empty(t, RandomEmbeddings(0, RegularFace))
 	})
-	t.Run("Background", func(t *testing.T) {
-		e := RandomEmbeddings(2, BackgroundFace)
-		for i := range e {
-			assert.True(t, e[i].IsBackground())
-			assert.False(t, e[i].IsChild())
+	t.Run("Normalized", func(t *testing.T) {
+		// Distances only mean anything on unit vectors, so fixtures have to be normalized too.
+		for _, e := range RandomEmbeddings(2, RegularFace) {
+			assert.InDelta(t, 1.0, e.Magnitude(), 0.001)
 		}
 	})
 }

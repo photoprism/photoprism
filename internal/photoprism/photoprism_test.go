@@ -26,6 +26,7 @@ func runTestMain(m *testing.M) int {
 	c := config.NewTestConfig("photoprism")
 	config.OnceTestConfig(c)
 	SetConfig(c)
+	captureEmbedderSettings(c)
 	defer c.CleanupTestFolder()
 	defer func() {
 		if err := c.CloseDb(); err != nil {

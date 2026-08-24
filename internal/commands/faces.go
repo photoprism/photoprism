@@ -2,6 +2,8 @@ package commands
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"path/filepath"
 	"strings"
 	"time"
@@ -10,6 +12,8 @@ import (
 	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli/v2"
 
+	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
@@ -47,11 +51,7 @@ var FacesCommands = &cli.Command{
 			Name:  "reset",
 			Usage: "Removes people and faces after confirmation",
 			Flags: []cli.Flag{
-				&cli.BoolFlag{
-					Name:    "force",
-					Aliases: []string{"f"},
-					Usage:   "removes all people and faces",
-				},
+				ForceFlag("removes all people and faces"),
 				&cli.StringFlag{
 					Name:  "engine",
 					Usage: "regenerate markers using detection engine `NAME` (auto, onnx)",
@@ -59,6 +59,7 @@ var FacesCommands = &cli.Command{
 			},
 			Action: facesResetAction,
 		},
+		FacesMigrateCommand,
 		{
 			Name:      "index",
 			Usage:     "Searches originals for faces",
@@ -69,11 +70,7 @@ var FacesCommands = &cli.Command{
 			Name:  "update",
 			Usage: "Performs face clustering and matching",
 			Flags: []cli.Flag{
-				&cli.BoolFlag{
-					Name:    "force",
-					Aliases: []string{"f"},
-					Usage:   "update all faces",
-				},
+				ForceFlag("update all faces"),
 			},
 			Action: facesUpdateAction,
 		},
@@ -90,6 +87,154 @@ var FacesCommands = &cli.Command{
 		},
 		FacesConfigCommand,
 	},
+}
+
+// FacesMigrateCommand configures the face embedding migration command.
+var FacesMigrateCommand = &cli.Command{
+	Name:  "migrate",
+	Usage: "Migrates face embeddings to another model",
+	Description: "This is how the face embedding model is changed: every marker is re-embedded and " +
+		"the target is recorded as the configured model. Stop the server before running it, as the " +
+		"migration replaces every face cluster in one transaction and its worker guards cannot see " +
+		"what a running instance writes to the same rows.",
+	Flags: []cli.Flag{
+		&cli.StringFlag{
+			Name:  "to",
+			Usage: "target embedding `MODEL` (defaults to the model in use)",
+		},
+		DryRunFlag("reports the face migration scope without changing the index"),
+		ForceFlag("finalizes the migration even when markers could not be re-embedded"),
+		YesFlag(),
+	},
+	Action: facesMigrateAction,
+}
+
+// facesMigrateAction migrates face embeddings to the configured model.
+func facesMigrateAction(ctx *cli.Context) error {
+	return CallWithDependencies(ctx, func(conf *config.Config) error {
+		w := get.Faces()
+		plan, err := w.PlanMigration(ctx.String("to"))
+		if err != nil {
+			// Plain errors leave the exit status at 0, so a script cannot tell a refused
+			// migration from one that ran.
+			return cli.Exit(err.Error(), 1)
+		}
+
+		log.Infof(
+			"faces: migration to %s includes %d valid markers, %d invalid markers, and %d identified people",
+			clean.Log(plan.Target), plan.Markers.Valid, plan.Markers.Invalid, plan.Subjects,
+		)
+		// People keep the faces already assigned to them, so an operator can tell at a
+		// glance whether the run is about to touch a well-curated library.
+		log.Infof(
+			"faces: %d markers are assigned to a person and keep that assignment",
+			plan.AssignedMarkers,
+		)
+		// A face too small or too poorly scored to be clustered cannot define a centroid
+		// either, so a library of mostly small faces rebuilds from less than it looks like.
+		if plan.LowQualitySamples > 0 {
+			log.Infof("faces: %d of those are too small or too low-scoring to seed a cluster",
+				plan.LowQualitySamples)
+		}
+		// Ready tells an operator that a re-run has nothing left to do, and unlinked
+		// markers are cleared by every run regardless of how the migration goes.
+		log.Infof(
+			"faces: %d markers already use %s, %d have no file, and %d were identified manually",
+			plan.Markers.Ready, clean.Log(plan.Target), plan.Markers.Unlinked, plan.Markers.Manual,
+		)
+		// Re-embedding reads the file, so a marker whose file the index has already recorded
+		// as unreadable is going to fail. Naming them before the prompt is what separates an
+		// expected loss from a surprise, since a failed marker keeps no vector at all.
+		if plan.Markers.Unreadable > 0 {
+			log.Warnf("faces: %d markers cannot be re-embedded because their file is missing or unreadable",
+				plan.Markers.Unreadable)
+		}
+		// The counts above come from the index, which believes whatever it was told last. An
+		// unmounted originals volume leaves them looking clean and then fails every file.
+		if plan.OriginalsUnavailable {
+			log.Warnf("faces: originals path %s is empty or cannot be read, so no marker can be re-embedded",
+				clean.Log(conf.OriginalsPath()))
+		}
+		for _, count := range plan.MarkerModels {
+			model := count.EmbedModel
+			if model == "" {
+				model = "legacy"
+			}
+			log.Infof("faces: embedding model %s has %d markers", clean.Log(model), count.Markers)
+		}
+		for _, count := range plan.FaceModels {
+			model := count.EmbedModel
+			if model == "" {
+				model = "legacy"
+			}
+			log.Infof("faces: embedding model %s has %d clusters", clean.Log(model), count.Faces)
+		}
+		if m := face.FindEmbeddingModel(plan.Target); m != nil {
+			log.Infof("faces: %s uses cluster distance %.2f, cluster radius %.2f, and match distance %.2f",
+				clean.Log(plan.Target), m.ClusterDist, m.ClusterRadius, m.MatchDist)
+		}
+
+		// Finalizing clears the stored vectors of every marker that is not on the target
+		// model, so an operator has to see that number before deciding to run this.
+		if stale := plan.Markers.Valid - plan.Markers.Ready; stale > 0 {
+			log.Warnf("faces: %d markers must be re-embedded and lose their stored vectors if that fails", stale)
+		}
+
+		if ctx.Bool("dry-run") {
+			log.Infof("faces: dry run completed without changes")
+			return nil
+		}
+
+		// The worker guards in Migrate are process-local, so they cannot see a server that
+		// is indexing or matching the same rows. Stopping it is the operator's job, and the
+		// prompt is the last point at which saying so still helps.
+		log.Warnf("faces: stop the server before continuing, as this replaces every face cluster " +
+			"and cannot detect an instance that is still writing to the index")
+
+		if !RunNonInteractively(ctx.Bool("yes")) {
+			prompt := promptui.Prompt{
+				Label:     fmt.Sprintf("Migrate all face embeddings to %s, with the server stopped?", plan.Target),
+				IsConfirm: true,
+			}
+			if _, promptErr := prompt.Run(); promptErr != nil {
+				log.Info("faces: migration canceled")
+				return nil
+			}
+		}
+
+		result, migrateErr := w.Migrate(ctx.Context, photoprism.FacesMigrateOptions{
+			Target: plan.Target,
+			Force:  ctx.Bool("force"),
+			Plan:   &plan,
+		})
+		log.Infof(
+			"faces: migrated %d markers, skipped %d, failed %d, %d without a file; preserved %d people, %d assignments and %d hidden clusters, rebuilt %d clusters, %d need attention",
+			result.Migrated, result.Skipped, result.Failed, result.Unlinked,
+			result.PreservedSubjects, result.PreservedMarkers, result.HiddenClusters,
+			result.RebuiltSubjects, result.AttentionSubjects,
+		)
+		// Excluded assignments keep their person but seed no cluster, so the count is what
+		// tells an operator how much of a curated library did not shape its own centroids.
+		if result.ExcludedMarkers > 0 || result.LowQualityMarkers > 0 {
+			log.Infof("faces: %d assignment(s) were left out of a cluster as outliers, and %d as too low-quality to seed one",
+				result.ExcludedMarkers, result.LowQualityMarkers)
+		}
+
+		// The setting is written by a run that replaced the clusters, including one that
+		// reports failed markers. A write that failed carries its own error, so this line has
+		// to follow the file rather than the value this process is holding.
+		var settingErr *photoprism.FacesMigrateSettingError
+
+		if !errors.As(migrateErr, &settingErr) && conf.FaceModel() == plan.Target {
+			log.Infof("faces: the configured face model is now %s", clean.Log(plan.Target))
+		}
+
+		if migrateErr != nil {
+			return cli.Exit(migrateErr.Error(), 1)
+		}
+
+		return nil
+	})
 }
 
 // facesStatsAction shows stats on face embeddings.

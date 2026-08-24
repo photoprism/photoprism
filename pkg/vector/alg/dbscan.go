@@ -99,8 +99,8 @@ func (c *dbscanClusterer) WithOnline(o Online) HardClusterer {
 }
 
 func (c *dbscanClusterer) Learn(data [][]float64) error {
-	if len(data) == 0 {
-		return errEmptySet
+	if _, err := dataDims(data); err != nil {
+		return err
 	}
 
 	c.mu.Lock()
@@ -147,6 +147,12 @@ func (c *dbscanClusterer) Guesses() []int {
 }
 
 func (c *dbscanClusterer) Predict(p []float64) int {
+	// Without training data, or for an observation of a different width, there is no
+	// cluster to assign, which this algorithm already labels as noise.
+	if len(c.d) == 0 || len(p) != len(c.d[0]) {
+		return -1
+	}
+
 	var (
 		l int
 		d float64
