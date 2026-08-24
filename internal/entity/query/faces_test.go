@@ -5,9 +5,9 @@ import (
 	"math"
 	"testing"
 
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -596,16 +596,16 @@ func TestWhereEmbeddingModel(t *testing.T) {
 		return Db().Model(&entity.Marker{}).Where("marker_type = ?", entity.MarkerFace)
 	}
 
-	var total int
+	var total int64
 	require.NoError(t, base().Count(&total).Error)
 
 	t.Run("EmptyModelAppliesNoFilter", func(t *testing.T) {
-		var count int
+		var count int64
 		require.NoError(t, whereEmbeddingModel(base(), "").Count(&count).Error)
 		assert.Equal(t, total, count)
 	})
 	t.Run("NamedModelFilters", func(t *testing.T) {
-		var count int
+		var count int64
 		require.NoError(t, whereEmbeddingModel(base(), face.ModelSFace).Count(&count).Error)
 		assert.LessOrEqual(t, count, total)
 	})
@@ -633,13 +633,13 @@ func TestNotEmbeddingModel(t *testing.T) {
 		})
 	}
 
-	var total int
+	var total int64
 	require.NoError(t, base().Count(&total).Error)
 
 	t.Run("EmptyModelMatchesNothing", func(t *testing.T) {
 		cond, args := notEmbeddingModel("")
 
-		var count int
+		var count int64
 		require.NoError(t, base().Where(cond, args...).Count(&count).Error)
 		assert.Zero(t, count)
 	})
@@ -649,7 +649,7 @@ func TestNotEmbeddingModel(t *testing.T) {
 		t.Run("Partitions"+target, func(t *testing.T) {
 			cond, args := notEmbeddingModel(target)
 
-			var kept, cleared int
+			var kept, cleared int64
 			require.NoError(t, whereEmbeddingModel(base(), target).Count(&kept).Error)
 			require.NoError(t, base().Where(cond, args...).Count(&cleared).Error)
 			assert.Equal(t, total, kept+cleared)
@@ -668,7 +668,7 @@ func TestFacesFromOtherModels(t *testing.T) {
 		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelNone}))
 		count, err := FacesFromOtherModels()
 		require.NoError(t, err)
-		assert.Equal(t, 0, count)
+		assert.Equal(t, int64(0), count)
 	})
 	t.Run("CountsOtherModels", func(t *testing.T) {
 		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{

@@ -34,11 +34,11 @@ func TestFaceMigrationUnreadableFileCount(t *testing.T) {
 	require.NoError(t, err)
 
 	// Counted independently, as a left join rather than the NOT IN under test.
-	var want int
+	var want int64
 	row := Db().Raw("SELECT COUNT(*) FROM markers m LEFT JOIN files f"+
 		" ON f.file_uid = m.file_uid AND f.deleted_at IS NULL"+
-		" WHERE m.marker_type = ? AND m.marker_invalid = 0 AND m.file_uid <> ''"+
-		" AND (f.file_uid IS NULL OR f.file_missing = 1 OR f.file_error <> '')", entity.MarkerFace).Row()
+		" WHERE m.marker_type = ? AND m.marker_invalid = FALSE AND m.file_uid <> ''"+
+		" AND (f.file_uid IS NULL OR f.file_missing = TRUE OR f.file_error <> '')", entity.MarkerFace).Row()
 	require.NoError(t, row.Scan(&want))
 
 	require.Positive(t, want, "fixtures must include a face marker whose file cannot be read")
@@ -57,9 +57,13 @@ func TestFaceMigrationSoftDeletedFileCount(t *testing.T) {
 	before, err := FaceMigrationCounts(face.ModelFaceNet)
 	require.NoError(t, err)
 
+	photo := entity.NewPhoto(false)
+	require.NoError(t, Db().Create(&photo).Error)
+
 	file := entity.File{
 		FileUID:  rnd.GenerateUID('f'),
-		PhotoUID: rnd.GenerateUID('p'),
+		PhotoID:  photo.ID,
+		PhotoUID: photo.PhotoUID,
 		FileName: "soft-deleted/migrate-test.jpg",
 		FileRoot: entity.RootOriginals,
 	}
@@ -75,6 +79,7 @@ func TestFaceMigrationSoftDeletedFileCount(t *testing.T) {
 	t.Cleanup(func() {
 		Db().Unscoped().Delete(&marker)
 		Db().Unscoped().Delete(&file)
+		Db().Unscoped().Delete(&photo)
 	})
 
 	// A readable file must not be counted, so the marker is invisible while the file is live.
@@ -271,7 +276,7 @@ func TestFaceMigrationSubjectMarkers(t *testing.T) {
 	t.Run("LowQualityMarkers", func(t *testing.T) {
 		count, countErr := FaceMigrationLowQualityMarkers(face.ModelFaceNet)
 		require.NoError(t, countErr)
-		assert.GreaterOrEqual(t, count, 2, "the tiny and faint markers are counted")
+		assert.GreaterOrEqual(t, count, int64(2), "the tiny and faint markers are counted")
 
 		_, countErr = FaceMigrationLowQualityMarkers("")
 		require.Error(t, countErr)
@@ -319,7 +324,7 @@ func TestFinalizeFaceMigration(t *testing.T) {
 	tempConn := &entity.DbConn{Driver: dsn.DriverSQLite3, Dsn: filepath.Join(t.TempDir(), "faces-migrate.db")}
 	tempDb := tempConn.Db()
 	require.NotNil(t, tempDb)
-	require.NoError(t, tempDb.AutoMigrate(&entity.Face{}, &entity.Marker{}).Error)
+	require.NoError(t, tempDb.AutoMigrate(&entity.Face{}, &entity.Marker{}))
 
 	entity.SetDbProvider(tempConn)
 	t.Cleanup(func() {
@@ -389,7 +394,7 @@ func TestFinalizeFaceMigration(t *testing.T) {
 		MarkerDistances: map[string]float64{manual.MarkerUID: 0, imported.MarkerUID: 0.2},
 	}}, []string{automatic.MarkerUID}))
 
-	var staleCount int
+	var staleCount int64
 	require.NoError(t, tempDb.Unscoped().Model(&entity.Face{}).Where("id = ?", stale.ID).Count(&staleCount).Error)
 	assert.Zero(t, staleCount, "the previous run's clusters must be replaced")
 
@@ -408,7 +413,7 @@ func TestFinalizeFaceMigration(t *testing.T) {
 	assert.Equal(t, cluster.ID, storedImported.FaceID)
 	assert.Equal(t, subjectUID, storedImported.SubjUID)
 
-	var facesBefore, facesAfter int
+	var facesBefore, facesAfter int64
 	require.NoError(t, tempDb.Model(&entity.Face{}).Count(&facesBefore).Error)
 	changedErr := FinalizeFaceMigration(face.ModelFaceNet, []FaceMigrationIdentity{{MarkerUID: "changed"}}, nil, nil)
 	require.Error(t, changedErr)

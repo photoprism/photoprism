@@ -9,6 +9,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/convert"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -230,20 +231,20 @@ func TestFaceMarkersWithoutConfiguredModel(t *testing.T) {
 		assert.True(t, found(markers))
 	})
 	t.Run("CountUnmatchedFaceMarkers", func(t *testing.T) {
-		var expected int
+		var expected int64
 		require.NoError(t, entity.Db().Model(&entity.Markers{}).
-			Where("matched_at IS NULL AND marker_invalid = 0 AND LENGTH(embeddings_json) > 0").
+			Where("matched_at IS NULL AND marker_invalid = FALSE AND LENGTH(embeddings_json) > 0").
 			Where("marker_type = ?", entity.MarkerFace).
 			Count(&expected).Error)
-		assert.Equal(t, expected, CountUnmatchedFaceMarkers())
+		assert.Equal(t, convert.SafeInt64toint(expected), CountUnmatchedFaceMarkers())
 	})
 	t.Run("CountNewFaceMarkers", func(t *testing.T) {
-		var expected int
+		var expected int64
 		require.NoError(t, entity.Db().Model(&entity.Markers{}).
 			Where("marker_type = ?", entity.MarkerFace).
-			Where("face_id = '' AND marker_invalid = 0 AND LENGTH(embeddings_json) > 0").
+			Where("face_id = '' AND marker_invalid = FALSE AND LENGTH(embeddings_json) > 0").
 			Count(&expected).Error)
-		assert.Equal(t, expected, CountNewFaceMarkers(0, 0))
+		assert.Equal(t, convert.SafeInt64toint(expected), CountNewFaceMarkers(0, 0))
 	})
 }
 

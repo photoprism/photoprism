@@ -7,7 +7,7 @@ import (
 	"sort"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/vision"
@@ -52,7 +52,7 @@ type FacesMigratePlan struct {
 
 	// LowQualitySamples counts assignments too small or too poorly scored to seed a
 	// replacement centroid. They keep their person; they just cannot define one.
-	LowQualitySamples int
+	LowQualitySamples int64
 
 	// OriginalsUnavailable reports that the originals root cannot be read, which is what an
 	// unmounted volume looks like. The counting queries cannot see it, so a plan would
@@ -66,15 +66,15 @@ type FacesMigrateResult struct {
 	Migrated          int
 	Skipped           int
 	Failed            int
-	Unlinked          int
-	Invalid           int
+	Unlinked          int64
+	Invalid           int64
 	DetectedFiles     int
 	PreservedSubjects int
 	PreservedMarkers  int
 	HiddenClusters    int
 	RebuiltSubjects   int
 	ExcludedMarkers   int
-	LowQualityMarkers int
+	LowQualityMarkers int64
 	AttentionSubjects int
 }
 

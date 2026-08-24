@@ -128,11 +128,10 @@ func savedFaceModel(t *testing.T, c *config.Config) string {
 
 func newMigrateTestConfig(t *testing.T, name string) *config.Config {
 	t.Helper()
-	useTestDb(t, name)
 
 	oldConfig := Config()
 
-	c := config.NewMinimalTestConfigWithDb(name, filepath.Join(t.TempDir(), "storage"))
+	c := config.NewMinimalTestConfigWithDbTTest(name, filepath.Join(t.TempDir(), "storage"), t)
 	require.NoError(t, c.CreateDirectories())
 
 	SetConfig(c)
@@ -147,9 +146,13 @@ func newMigrateTestConfig(t *testing.T, name string) *config.Config {
 
 	// The isolated database is seeded from the cached test database, so migration would
 	// otherwise walk the shared fixtures instead of the rows this test creates.
-	for _, model := range []any{&entity.Marker{}, &entity.Face{}, &entity.Subject{}, &entity.File{}} {
-		require.NoError(t, entity.UnscopedDb().Unscoped().Delete(model).Error)
-	}
+	// Clean the database as if it's brand new
+	entity.Entities.Truncate(entity.Db())
+	entity.CreateDefaultFixtures()
+	entity.FlushCaches()
+	entity.File{}.RegenerateIndex()
+	// Force the model to detect as the face model will be based on what was in the database before the cleanse was done.
+	require.NoError(t, c.SetFaceModel(face.ModelDetect))
 
 	return c
 }
@@ -159,9 +162,13 @@ func newMigrateTestConfig(t *testing.T, name string) *config.Config {
 func addMigrateTestFile(t *testing.T, c *config.Config, hash string, withThumb bool) *entity.File {
 	t.Helper()
 
+	p := entity.NewPhoto(false)
+	require.NoError(t, entity.Db().Create(&p).Error)
+
 	f := &entity.File{
 		FileUID:  rnd.GenerateUID('f'),
-		PhotoUID: rnd.GenerateUID('p'),
+		PhotoID:  p.ID,
+		PhotoUID: p.PhotoUID,
 		FileHash: hash,
 		FileName: hash + ".jpg",
 		FileRoot: entity.RootOriginals,
@@ -228,10 +235,9 @@ func addMigrateTestSubjectMarker(t *testing.T, fileUID, subjUID string, name str
 }
 
 // countFaceRows returns the number of stored face clusters.
-func countFaceRows(t *testing.T) int {
+func countFaceRows(t *testing.T) (n int64) {
 	t.Helper()
 
-	var n int
 	require.NoError(t, entity.UnscopedDb().Model(&entity.Face{}).Count(&n).Error)
 
 	return n

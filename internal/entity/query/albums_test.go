@@ -31,7 +31,7 @@ func TestAlbumHasThumb(t *testing.T) {
 				restore = current[0]
 			}
 
-			_ = Db().Model(entity.Album{}).Where("album_uid = ?", uid).Update("thumb", restore).Error
+			_ = Db().Model(&entity.Album{}).Where("album_uid = ?", uid).Update("thumb", restore).Error
 			entity.FlushAlbumCache()
 		})
 	}

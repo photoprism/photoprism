@@ -1096,13 +1096,13 @@ func TestConfig_LibraryFaceModel(t *testing.T) {
 		table := entity.Marker{}.TableName()
 
 		// The index has to go first: a column an index references cannot be dropped, and a
-		// schema that predates the column had neither. RemoveIndex keeps this portable
+		// schema that predates the column had neither. DropIndex keeps this portable
 		// across the drivers the suite runs on.
-		require.NoError(t, db.Model(&entity.Marker{}).RemoveIndex("idx_markers_embed_model").Error)
+		require.NoError(t, db.Migrator().DropIndex(&entity.Marker{}, "EmbedModel"))
 		require.NoError(t, db.Exec("ALTER TABLE "+table+" DROP COLUMN embed_model").Error)
 
 		t.Cleanup(func() {
-			require.NoError(t, db.Exec("ALTER TABLE "+table+" ADD COLUMN embed_model VARBINARY(32) DEFAULT ''").Error)
+			require.NoError(t, db.Migrator().AddColumn(&entity.Marker{}, "EmbedModel"))
 
 			// The column comes back empty, so what the fixtures recorded has to be written
 			// again: a later test that asks the library which model it holds would otherwise
@@ -1111,9 +1111,10 @@ func TestConfig_LibraryFaceModel(t *testing.T) {
 				Where("marker_type = ? AND LENGTH(embeddings_json) > 0", entity.MarkerFace).
 				UpdateColumn("embed_model", entity.MarkerFixtures.Get("1000003-4").EmbedModel).Error)
 
-			require.NoError(t, db.Model(&entity.Marker{}).AddIndex("idx_markers_embed_model", "embed_model").Error)
+			require.NoError(t, db.Migrator().CreateIndex(&entity.Marker{}, "EmbedModel"))
 		})
 
+		t.Log("Expect column embed_model missing error for markers")
 		assert.Equal(t, face.ModelFaceNet, c.libraryFaceModel())
 	})
 }
