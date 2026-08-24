@@ -3777,7 +3777,7 @@ var PhotoFixtures = PhotoMap{
 		PhotoExposure:    "1/40",
 		PhotoFocalLength: 105,
 		PhotoFNumber:     3.5,
-		PhotoQuality:     3,
+		PhotoQuality:     4, // Update to 4 to support quality tests of private photos
 		PhotoResolution:  16,
 		Camera:           CameraFixtures.Pointer("apple-iphone-se"),
 		CameraID:         CameraFixtures.Pointer("apple-iphone-se").ID,

@@ -102,6 +102,7 @@ type SearchPhotos struct {
 	Reverse     bool      `form:"reverse" serialize:"-"`                                                                                                                                 // Merge FILES in response
 	Merged      bool      `form:"merged" serialize:"-"`                                                                                                                                  // Merge FILES in response
 	Details     bool      `form:"-" serialize:"-"`                                                                                                                                       // Include additional information from details table
+	NonManager  bool      `form:"-" serialize:"-"`                                                                                                                                       // Indicates that this search needs special handling of Quality
 }
 
 // GetQuery returns the current search query string.

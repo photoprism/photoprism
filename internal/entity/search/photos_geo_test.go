@@ -1266,4 +1266,61 @@ func TestGeo(t *testing.T) {
 
 		assert.True(t, foundRight)
 	})
+	t.Run("SearchForPublicAndPrivate", func(t *testing.T) {
+		var f form.SearchPhotosGeo
+
+		f.Query = ""
+		f.Count = 5000
+		f.Offset = 0
+		f.Public = true
+		f.Private = true
+
+		photos, err := PhotosGeo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 3, len(photos))
+		count := 0
+		for _, r := range photos {
+			assert.IsType(t, GeoResult{}, r)
+			p := entity.FindPhoto(entity.Photo{PhotoUID: r.PhotoUID})
+			if p.PhotoPrivate {
+				count++
+			}
+		}
+		assert.LessOrEqual(t, 1, count, "No private photos returned")
+	})
+	t.Run("SearchForPrivateQuality", func(t *testing.T) {
+		var f form.SearchPhotosGeo
+
+		f.Query = ""
+		f.Count = 5000
+		f.Offset = 0
+		f.Quality = 3
+		f.Private = true
+
+		photos, err := PhotosGeo(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, 1, len(photos))
+		privateCount := 0
+		publicCount := 0
+		for _, r := range photos {
+			assert.IsType(t, GeoResult{}, r)
+			p := entity.FindPhoto(entity.Photo{PhotoUID: r.PhotoUID})
+			assert.LessOrEqual(t, 3, p.PhotoQuality, "PhotoUID "+p.PhotoUID)
+			if p.PhotoPrivate {
+				privateCount++
+			} else {
+				publicCount++
+			}
+		}
+		assert.LessOrEqual(t, 1, privateCount, "No private photos returned")
+		assert.Equal(t, 0, publicCount, "Public photos returned")
+	})
 }
