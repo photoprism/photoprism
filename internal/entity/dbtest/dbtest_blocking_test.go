@@ -101,9 +101,12 @@ func TestEntity_UpdateDBErrors(t *testing.T) {
 		// Wait a bit for the other thread to start waiting.
 		time.Sleep(time.Second * 2)
 
-		if entity.DbDialect() == dsn.DialectMySQL {
+		switch entity.DbDialect() {
+		case dsn.DialectMySQL:
 			require.NoError(t, entity.Db().Exec("SET lock_wait_timeout=5;").Error)
 			require.NoError(t, entity.Db().Exec("SET innodb_lock_wait_timeout=5;").Error)
+		case dsn.DialectPostgreSQL:
+			require.NoError(t, entity.Db().Exec("SET lock_timeout='5s';").Error)
 		}
 
 		// Should return an error with lock timeout.
@@ -125,9 +128,12 @@ func TestEntity_UpdateDBErrors(t *testing.T) {
 		t.Fail()
 	})
 
-	if entity.DbDialect() == dsn.DialectMySQL {
-		entity.Db().Exec("SET lock_wait_timeout=DEFAULT;")
-		entity.Db().Exec("SET innodb_lock_wait_timeout=DEFAULT;")
+	switch entity.DbDialect() {
+	case dsn.DialectMySQL:
+		require.NoError(t, entity.Db().Exec("SET lock_wait_timeout=DEFAULT;").Error)
+		require.NoError(t, entity.Db().Exec("SET innodb_lock_wait_timeout=DEFAULT;").Error)
+	case dsn.DialectPostgreSQL:
+		require.NoError(t, entity.Db().Exec("SET lock_timeout='120s';").Error)
 	}
 	// Need to sleep here waiting for the child process to end.
 	timeLeft := time.Duration(time.Second*32) - time.Since(startTime)
@@ -173,9 +179,12 @@ func TestEntity_SaveDBErrors(t *testing.T) {
 		// Wait a bit for the other thread to start waiting.
 		time.Sleep(time.Second * 2)
 
-		if entity.DbDialect() == dsn.DialectMySQL {
+		switch entity.DbDialect() {
+		case dsn.DialectMySQL:
 			require.NoError(t, entity.Db().Exec("SET lock_wait_timeout=5;").Error)
 			require.NoError(t, entity.Db().Exec("SET innodb_lock_wait_timeout=5;").Error)
+		case dsn.DialectPostgreSQL:
+			require.NoError(t, entity.Db().Exec("SET lock_timeout='5s';").Error)
 		}
 
 		// Should return an error with lock timeout.
@@ -197,9 +206,12 @@ func TestEntity_SaveDBErrors(t *testing.T) {
 		t.Fail()
 	})
 
-	if entity.DbDialect() == dsn.DialectMySQL {
-		entity.Db().Exec("SET lock_wait_timeout=DEFAULT;")
-		entity.Db().Exec("SET innodb_lock_wait_timeout=DEFAULT;")
+	switch entity.DbDialect() {
+	case dsn.DialectMySQL:
+		require.NoError(t, entity.Db().Exec("SET lock_wait_timeout=DEFAULT;").Error)
+		require.NoError(t, entity.Db().Exec("SET innodb_lock_wait_timeout=DEFAULT;").Error)
+	case dsn.DialectPostgreSQL:
+		require.NoError(t, entity.Db().Exec("SET lock_timeout='120s';").Error)
 	}
 	// Need to sleep here waiting for the child process to end.
 	timeLeft := time.Duration(time.Second*32) - time.Since(startTime)
