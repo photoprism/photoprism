@@ -21,6 +21,49 @@ func TestFindDetector(t *testing.T) {
 	assert.Nil(t, FindDetector("nonexistent"))
 }
 
+func TestNormalizeDetectorName(t *testing.T) {
+	assert.Equal(t, DetectorYuNet, NormalizeDetectorName(" YuNet "))
+	assert.Equal(t, "arc_face", NormalizeDetectorName("Arc-Face"))
+	assert.Equal(t, "", NormalizeDetectorName(""))
+}
+
+func TestParseDetectorName(t *testing.T) {
+	t.Run("Registered", func(t *testing.T) {
+		assert.Equal(t, DetectorYuNet, ParseDetectorName("YuNet"))
+		assert.Equal(t, DetectorSCRFD, ParseDetectorName(DetectorSCRFD))
+	})
+	t.Run("Derive", func(t *testing.T) {
+		assert.Equal(t, DetectorDetect, ParseDetectorName(""))
+		assert.Equal(t, DetectorDetect, ParseDetectorName(DetectorAuto))
+		assert.Equal(t, DetectorDetect, ParseDetectorName(DetectorDetect))
+	})
+	t.Run("None", func(t *testing.T) {
+		assert.Equal(t, DetectorNone, ParseDetectorName("None"))
+	})
+	t.Run("Unknown", func(t *testing.T) {
+		// An unknown value asks for derivation, and KnownDetectorName is what tells the two
+		// apart, so a typo does not silently disable detection.
+		assert.Equal(t, DetectorDetect, ParseDetectorName("nonexistent"))
+		assert.False(t, KnownDetectorName("nonexistent"))
+	})
+}
+
+func TestKnownDetectorName(t *testing.T) {
+	for _, name := range []string{"", DetectorDetect, DetectorAuto, DetectorNone, DetectorYuNet, "SCRFD"} {
+		assert.True(t, KnownDetectorName(name), name)
+	}
+	assert.False(t, KnownDetectorName("pigo"))
+}
+
+func TestDetectorUsageString(t *testing.T) {
+	usage := DetectorUsageString()
+
+	assert.Equal(t, "detect, none, yunet", usage)
+	// Help text is read as an offer, so weights that need their publisher's terms accepted
+	// are not listed.
+	assert.NotContains(t, usage, DetectorSCRFD)
+}
+
 func TestDefaultDetector(t *testing.T) {
 	d := DefaultDetector()
 	require.NotNil(t, d)

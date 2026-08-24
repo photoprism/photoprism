@@ -2,7 +2,6 @@ package config
 
 import (
 	"fmt"
-	"os"
 	"runtime"
 	"slices"
 
@@ -13,34 +12,119 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// FaceEngine returns the configured face detection engine. When the config is
-// nil or the vision subsystem is not initialized it reports `face.EngineNone`
-// so callers can short-circuit gracefully.
+// FaceEngine returns the runtime that face detection runs on, or `face.EngineNone` when it is
+// off, the config is nil, or the vision subsystem is not initialized.
+//
+// Every registered detector runs on ONNX, so the runtime follows the detector in force rather
+// than being configured on its own.
 func (c *Config) FaceEngine() string {
+	if c == nil || vision.Config == nil {
+		return face.EngineNone
+	}
+
+	if c.FaceDetector() == face.DetectorNone {
+		return face.EngineNone
+	}
+
+	return face.EngineONNX
+}
+
+// FaceDetectorSetting returns the detector as configured, without resolving it. It reports
+// `face.DetectorDetect` when the detector is to be derived from the embedding model, which is
+// also what an unsupported value is treated as.
+//
+// The deprecated `FACE_ENGINE` is consulted only when nothing configured this option, and only
+// `none` carries over: its other values name a runtime rather than a model, and all of them
+// mean "detection is enabled", which this option's own default already expresses.
+func (c *Config) FaceDetectorSetting() face.DetectorName {
 	if c == nil {
-		return face.EngineNone
-	} else if c.options.FaceEngine == face.EngineONNX || c.options.FaceEngine == face.EngineNone {
-		return c.options.FaceEngine
+		return face.DetectorNone
 	}
 
-	if vision.Config == nil {
-		return face.EngineNone
+	configured := face.DetectorDetect
+
+	if !face.KnownDetectorName(c.options.FaceDetector) {
+		c.warnFaceConfig("face-detector", "config: unsupported face detector %s, expected %s",
+			clean.Log(c.options.FaceDetector), face.DetectorUsageString())
+	} else {
+		configured = face.ParseDetectorName(c.options.FaceDetector)
 	}
 
-	desired := face.ParseEngine(c.options.FaceEngine)
-	modelPath := c.FaceEngineModelPath()
+	if face.ParseEngine(c.options.FaceEngine) != face.EngineNone {
+		return configured
+	}
 
-	if desired == face.EngineAuto {
-		if _, err := os.Stat(modelPath); err == nil {
-			desired = face.EngineONNX
-		} else {
-			desired = face.EngineNone
+	if configured == face.DetectorDetect {
+		return face.DetectorNone
+	}
+
+	c.infoFaceConfig("face-engine-ignored", "config: face-engine %s is ignored, because face-detector %s is configured",
+		clean.Log(c.options.FaceEngine), clean.Log(configured))
+
+	return configured
+}
+
+// FaceDetector returns the name of the detector in force, or `face.DetectorNone` when detection
+// is disabled or no detector may be used.
+func (c *Config) FaceDetector() face.DetectorName {
+	if c == nil {
+		return face.DetectorNone
+	}
+
+	switch name := c.FaceDetectorSetting(); name {
+	case face.DetectorNone:
+		return face.DetectorNone
+	case face.DetectorDetect:
+		return c.derivedFaceDetector()
+	default:
+		return c.usableFaceDetector(name)
+	}
+}
+
+// usableFaceDetector returns the specified detector when its weights are installed and may be
+// used here, and `face.DetectorNone` with one warning otherwise.
+//
+// Falling forward to another detector would place different landmarks and therefore a different
+// crop, so a detector that was asked for and cannot run disables detection instead.
+func (c *Config) usableFaceDetector(name face.DetectorName) face.DetectorName {
+	if err := face.DetectorLicenseRefused(name, c.Edition()); err != nil {
+		c.warnFaceConfig("face-detector-license", "config: %s, so face detection is disabled", err)
+
+		return face.DetectorNone
+	}
+
+	if !face.FindDetector(name).Installed(c.ModelsPath()) {
+		c.warnFaceConfig("face-detector-installed", "config: face detector %s is not installed, disabling face detection", clean.Log(name))
+
+		return face.DetectorNone
+	}
+
+	return name
+}
+
+// derivedFaceDetector returns the detector the configured embedding model pairs with, or the
+// first installed detector whose weights may be redistributed.
+//
+// Gated weights are reached only through the pairing, never through the scan: the pairing is
+// downstream of a model the operator selected explicitly and that the same gate already let
+// through, while the scan is what runs when nothing has been chosen.
+func (c *Config) derivedFaceDetector() face.DetectorName {
+	modelsPath := c.ModelsPath()
+
+	if model := c.FaceEmbeddingModel(); model != nil && model.Detector != "" {
+		if face.DetectorLicenseRefused(model.Detector, c.Edition()) == nil &&
+			face.FindDetector(model.Detector).Installed(modelsPath) {
+			return model.Detector
 		}
-
-		c.options.FaceEngine = desired
 	}
 
-	return desired
+	for _, detector := range face.Detectors {
+		if !detector.LicenseGated() && detector.Installed(modelsPath) {
+			return detector.Name
+		}
+	}
+
+	return face.DetectorNone
 }
 
 // FaceEngineRunType returns the effective run type for the face detection engine.
@@ -155,9 +239,8 @@ func (c *Config) faceEngineRunsOnIndex() bool {
 
 // FaceEngineModelPath returns the absolute path to the detector weights to load.
 //
-// Registration order decides, and the first installed detector wins. YuNet is registered first
-// because it is permissively licensed at the weights layer as well as the code layer, so a build
-// that has both installed runs the one it may redistribute.
+// When nothing is installed it names the artifact that would have been loaded, so the caller
+// reports a missing detector rather than an empty path.
 func (c *Config) FaceEngineModelPath() string {
 	if c == nil {
 		return ""
@@ -165,14 +248,10 @@ func (c *Config) FaceEngineModelPath() string {
 
 	models := c.ModelsPath()
 
-	for _, detector := range face.Detectors {
-		if path := detector.InstalledPath(models); path != "" {
-			return path
-		}
+	if path := face.FindDetector(c.FaceDetector()).InstalledPath(models); path != "" {
+		return path
 	}
 
-	// Nothing is installed, so the path names what auto would have loaded and the caller
-	// reports it as missing rather than resolving to an empty string.
 	return face.DefaultDetector().Path(models)
 }
 
@@ -185,7 +264,7 @@ func (c *Config) FaceModelSetting() face.ModelName {
 	}
 
 	if !face.KnownModelName(c.options.FaceModel) {
-		c.warnFaceModel("face-model", "config: unsupported face model %s, expected %s",
+		c.warnFaceConfig("face-model", "config: unsupported face model %s, expected %s",
 			clean.Log(c.options.FaceModel), face.ModelUsageString())
 
 		return face.ModelDetect
@@ -220,7 +299,7 @@ func (c *Config) FaceModel() face.ModelName {
 // here, and `face.ModelNone` with one warning otherwise.
 func (c *Config) usableFaceModel(name face.ModelName) face.ModelName {
 	if err := face.LicenseRefused(name, c.Edition()); err != nil {
-		c.warnFaceModel("face-model-license", "config: %s, so face embeddings are disabled", err)
+		c.warnFaceConfig("face-model-license", "config: %s, so face embeddings are disabled", err)
 
 		return face.ModelNone
 	}
@@ -229,7 +308,7 @@ func (c *Config) usableFaceModel(name face.ModelName) face.ModelName {
 		// Falling forward to another model would start a second vector space the library
 		// cannot compare with, and an image upgrade removes opt-in models from assets, so
 		// a model that is missing disables embeddings instead.
-		c.warnFaceModel("face-model-installed", "config: face model %s is not installed, disabling face embeddings", clean.Log(name))
+		c.warnFaceConfig("face-model-installed", "config: face model %s is not installed, disabling face embeddings", clean.Log(name))
 
 		return face.ModelNone
 	}
@@ -466,11 +545,19 @@ func staleFaceModels(counts []query.MarkerEmbeddingModelCount, name face.ModelNa
 	return stale, models
 }
 
-// warnFaceModel reports a face model problem once, because the getters are called from
+// warnFaceConfig reports a face configuration problem once, because the getters are called from
 // Propagate and from the config report rather than a single time per start.
-func (c *Config) warnFaceModel(key, format string, args ...any) {
+func (c *Config) warnFaceConfig(key, format string, args ...any) {
 	if _, warned := c.faceWarned.LoadOrStore(key, true); !warned {
 		log.Warnf(format, args...)
+	}
+}
+
+// infoFaceConfig reports a face setting that has no effect once. It is not a fault, so it is
+// reported at info level, but an instruction that is ignored must still not be silent.
+func (c *Config) infoFaceConfig(key, format string, args ...any) {
+	if _, warned := c.faceWarned.LoadOrStore(key, true); !warned {
+		log.Infof(format, args...)
 	}
 }
 

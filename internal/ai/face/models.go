@@ -67,14 +67,16 @@ const (
 // EmbeddingModel describes what a face embedding model expects from the pipeline.
 //
 // ONNX carries the artifact and preprocessing contract every ONNX subsystem shares, and is nil for
-// TensorFlow models. The five distances are in the model's own scale and are not comparable across
-// models, so one global set would discard most matches for every model but the one it was tuned for.
+// TensorFlow models. Detector is what an unset FACE_DETECTOR derives from, so adding a model states
+// which detector it was calibrated against. The five distances are in the model's own scale and are
+// not comparable across models, so one global set would discard most matches for all but one.
 type EmbeddingModel struct {
 	Name          ModelName
 	Runtime       EmbeddingRuntime
 	Dir           string
 	Dims          int
 	Alignment     CropAlignment
+	Detector      DetectorName
 	ONNX          *onnx.ModelInfo
 	ClusterDist   float64
 	ClusterRadius float64
@@ -95,6 +97,7 @@ var EmbeddingModels = map[ModelName]*EmbeddingModel{
 		Dir:           "facenet",
 		Dims:          512,
 		Alignment:     AlignBox,
+		Detector:      DetectorYuNet,
 		ClusterDist:   ClusterDistDefault,
 		ClusterRadius: ClusterRadiusDefault,
 		MatchDist:     MatchDistDefault,
@@ -107,6 +110,7 @@ var EmbeddingModels = map[ModelName]*EmbeddingModel{
 		Dir:       "sface",
 		Dims:      128,
 		Alignment: AlignArcFace5,
+		Detector:  DetectorYuNet,
 		ONNX: &onnx.ModelInfo{
 			File:    "face_recognition_sface_2021dec.onnx",
 			SHA256:  "0ba9fbfa01b5270c96627c4ef784da859931e02f04419c829e83484087c34e79",
@@ -126,6 +130,7 @@ var EmbeddingModels = map[ModelName]*EmbeddingModel{
 		Dir:       "auraface",
 		Dims:      512,
 		Alignment: AlignArcFace5,
+		Detector:  DetectorYuNet,
 		ONNX: &onnx.ModelInfo{
 			File:    "auraface_v1_glintr100.onnx",
 			SHA256:  "a7933ea5330113b01c9b60351d8f4c33003f145d8470ac5f0e52ee2effe25c60",
@@ -145,6 +150,7 @@ var EmbeddingModels = map[ModelName]*EmbeddingModel{
 		Dir:       "arcface",
 		Dims:      512,
 		Alignment: AlignArcFace5,
+		Detector:  DetectorSCRFD,
 		ONNX: &onnx.ModelInfo{
 			File:    "w600k_r50.onnx",
 			SHA256:  "4c06341c33c2ca1f86781dab0e829f88ad5b64be9fba56e56bc9ebdefc619e43",
@@ -164,6 +170,7 @@ var EmbeddingModels = map[ModelName]*EmbeddingModel{
 		Dir:       "arcface",
 		Dims:      512,
 		Alignment: AlignArcFace5,
+		Detector:  DetectorSCRFD,
 		ONNX: &onnx.ModelInfo{
 			File:    "w600k_mbf.onnx",
 			SHA256:  "9cc6e4a75f0e2bf0b1aed94578f144d15175f357bdc05e815e5c4a02b319eb4f",

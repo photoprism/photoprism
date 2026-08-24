@@ -311,34 +311,150 @@ func TestConfig_FaceEngineModelPath(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		models := t.TempDir()
 		c.options.ModelsPath = models
+		c.options.FaceDetector = face.DetectorSCRFD
+
+		t.Setenv(face.LicenseAcceptanceVar, "1")
 
 		scrfd := face.FindDetector(face.DetectorSCRFD)
 		require.NotEmpty(t, scrfd.Legacy)
 
-		legacy := filepath.Join(models, scrfd.Dir, scrfd.Legacy[0])
-		require.NoError(t, os.MkdirAll(filepath.Dir(legacy), fs.ModeDir))
-		require.NoError(t, os.WriteFile(legacy, []byte("x"), fs.ModeFile))
+		legacy := installTestDetectorFile(t, filepath.Join(models, scrfd.Dir, scrfd.Legacy[0]))
 
 		assert.Equal(t, legacy, c.FaceEngineModelPath())
 	})
-	t.Run("PrefersTheFirstInstalled", func(t *testing.T) {
-		// Registration order decides, and YuNet is registered first because it is the
-		// detector we may redistribute. A build holding both must not load the other.
+	t.Run("SelectedDetector", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		models := t.TempDir()
 		c.options.ModelsPath = models
 
-		scrfd := face.FindDetector(face.DetectorSCRFD)
-		require.NoError(t, os.MkdirAll(filepath.Dir(scrfd.Path(models)), fs.ModeDir))
-		require.NoError(t, os.WriteFile(scrfd.Path(models), []byte("x"), fs.ModeFile))
-
-		assert.Equal(t, scrfd.Path(models), c.FaceEngineModelPath(), "only SCRFD is installed")
+		t.Setenv(face.LicenseAcceptanceVar, "1")
 
 		yunet := face.FindDetector(face.DetectorYuNet)
-		require.NoError(t, os.MkdirAll(filepath.Dir(yunet.Path(models)), fs.ModeDir))
-		require.NoError(t, os.WriteFile(yunet.Path(models), []byte("x"), fs.ModeFile))
+		scrfd := face.FindDetector(face.DetectorSCRFD)
+		installTestDetectorFile(t, yunet.Path(models))
+		installTestDetectorFile(t, scrfd.Path(models))
 
-		assert.Equal(t, yunet.Path(models), c.FaceEngineModelPath(), "YuNet wins once installed")
+		assert.Equal(t, yunet.Path(models), c.FaceEngineModelPath(), "derivation must not select gated weights")
+
+		c.options.FaceDetector = face.DetectorSCRFD
+		assert.Equal(t, scrfd.Path(models), c.FaceEngineModelPath(), "an explicit detector is loaded")
+	})
+}
+
+// installTestDetectorFile writes a placeholder detector artifact and returns its path. It is
+// never loaded, so its contents only have to exist.
+func installTestDetectorFile(t *testing.T, path string) string {
+	t.Helper()
+
+	require.NoError(t, os.MkdirAll(filepath.Dir(path), fs.ModeDir))
+	require.NoError(t, os.WriteFile(path, []byte("onnx"), fs.ModeFile))
+
+	return path
+}
+
+func TestConfig_FaceDetectorSetting(t *testing.T) {
+	t.Run("Unset", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		assert.Equal(t, face.DetectorDetect, c.FaceDetectorSetting())
+	})
+	t.Run("AutoIsDetect", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceDetector = face.DetectorAuto
+		assert.Equal(t, face.DetectorDetect, c.FaceDetectorSetting())
+	})
+	t.Run("Named", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceDetector = "YuNet"
+		assert.Equal(t, face.DetectorYuNet, c.FaceDetectorSetting())
+	})
+	t.Run("None", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceDetector = face.DetectorNone
+		assert.Equal(t, face.DetectorNone, c.FaceDetectorSetting())
+	})
+	t.Run("Unsupported", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceDetector = "nonexistent"
+		assert.Equal(t, face.DetectorDetect, c.FaceDetectorSetting())
+	})
+	t.Run("DeprecatedEngineDisables", func(t *testing.T) {
+		// "none" is the one FACE_ENGINE value that means the same in both options.
+		c := NewConfig(CliTestContext())
+		c.options.FaceEngine = face.EngineNone
+		assert.Equal(t, face.DetectorNone, c.FaceDetectorSetting())
+	})
+	t.Run("DeprecatedEngineHasNoOtherOpinion", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceEngine = face.EngineONNX
+		assert.Equal(t, face.DetectorDetect, c.FaceDetectorSetting())
+		c.options.FaceEngine = "pigo"
+		assert.Equal(t, face.DetectorDetect, c.FaceDetectorSetting())
+	})
+	t.Run("DetectorWinsOverDeprecatedEngine", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceEngine = face.EngineNone
+		c.options.FaceDetector = face.DetectorYuNet
+		assert.Equal(t, face.DetectorYuNet, c.FaceDetectorSetting())
+	})
+}
+
+func TestConfig_FaceDetector(t *testing.T) {
+	t.Run("NilConfig", func(t *testing.T) {
+		assert.Equal(t, face.DetectorNone, (*Config)(nil).FaceDetector())
+	})
+	t.Run("NothingInstalled", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = t.TempDir()
+		assert.Equal(t, face.DetectorNone, c.FaceDetector())
+	})
+	t.Run("Derived", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		models := t.TempDir()
+		c.options.ModelsPath = models
+		installTestDetectorFile(t, face.FindDetector(face.DetectorYuNet).Path(models))
+
+		assert.Equal(t, face.DetectorYuNet, c.FaceDetector())
+	})
+	t.Run("DerivationSkipsGatedWeights", func(t *testing.T) {
+		// Accepting the license is not selecting the detector, so a build that holds only
+		// gated weights detects nothing rather than reaching for them on its own.
+		c := NewConfig(CliTestContext())
+		models := t.TempDir()
+		c.options.ModelsPath = models
+		installTestDetectorFile(t, face.FindDetector(face.DetectorSCRFD).Path(models))
+
+		t.Setenv(face.LicenseAcceptanceVar, "1")
+
+		assert.Equal(t, face.DetectorNone, c.FaceDetector())
+	})
+	t.Run("GatedWeightsRefusedWithoutAcceptance", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		models := t.TempDir()
+		c.options.ModelsPath = models
+		c.options.FaceDetector = face.DetectorSCRFD
+		installTestDetectorFile(t, face.FindDetector(face.DetectorSCRFD).Path(models))
+
+		t.Setenv(face.LicenseAcceptanceVar, "")
+
+		assert.Equal(t, face.DetectorNone, c.FaceDetector())
+	})
+	t.Run("SelectedButNotInstalled", func(t *testing.T) {
+		// Falling forward to another detector would move the landmarks, so a detector that
+		// was asked for and cannot run disables detection.
+		c := NewConfig(CliTestContext())
+		models := t.TempDir()
+		c.options.ModelsPath = models
+		c.options.FaceDetector = face.DetectorSCRFD
+		installTestDetectorFile(t, face.FindDetector(face.DetectorYuNet).Path(models))
+
+		t.Setenv(face.LicenseAcceptanceVar, "1")
+
+		assert.Equal(t, face.DetectorNone, c.FaceDetector())
+	})
+	t.Run("Disabled", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceDetector = face.DetectorNone
+		assert.Equal(t, face.DetectorNone, c.FaceDetector())
 	})
 }
 

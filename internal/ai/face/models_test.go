@@ -470,3 +470,25 @@ func TestEmbeddingModelChecksums(t *testing.T) {
 func roundTo3(value float64) float64 {
 	return math.Round(value*1000) / 1000
 }
+
+// TestEmbeddingModelDetectors pins the pairing an unset FACE_DETECTOR derives from. A model
+// that names no detector, or one that is not registered, would leave detection off for anyone
+// who selected it.
+func TestEmbeddingModelDetectors(t *testing.T) {
+	for _, name := range EmbeddingModelNames() {
+		t.Run(name, func(t *testing.T) {
+			m := FindEmbeddingModel(name)
+			require.NotNil(t, m)
+			require.NotEmpty(t, m.Detector, "%s must name a detector", name)
+
+			d := FindDetector(m.Detector)
+			require.NotNil(t, d, "%s pairs with an unregistered detector", name)
+
+			// A model whose weights ship must pair with a detector whose weights ship, or a
+			// default installation detects nothing.
+			if !m.LicenseGated() {
+				assert.False(t, d.LicenseGated(), "%s must not pair with gated detector weights", name)
+			}
+		})
+	}
+}

@@ -3,6 +3,7 @@ package face
 import (
 	"path/filepath"
 	"slices"
+	"strings"
 
 	"github.com/photoprism/photoprism/internal/ai/onnx"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -37,6 +38,12 @@ type Detector struct {
 type DetectorName = string
 
 const (
+	// DetectorDetect derives the detector from the configured embedding model.
+	DetectorDetect DetectorName = "detect"
+	// DetectorAuto is an accepted spelling of DetectorDetect.
+	DetectorAuto DetectorName = "auto"
+	// DetectorNone disables face detection.
+	DetectorNone DetectorName = "none"
 	// DetectorYuNet is the permissively licensed default.
 	DetectorYuNet DetectorName = "yunet"
 	// DetectorSCRFD is the InsightFace detector, kept selectable for comparison.
@@ -95,6 +102,8 @@ var Detectors = []*Detector{
 
 // FindDetector returns the registered detector with the given name, or nil.
 func FindDetector(name DetectorName) *Detector {
+	name = NormalizeDetectorName(name)
+
 	for _, d := range Detectors {
 		if d.Name == name {
 			return d
@@ -102,6 +111,56 @@ func FindDetector(name DetectorName) *Detector {
 	}
 
 	return nil
+}
+
+// NormalizeDetectorName lowercases a detector name and accepts hyphens in place of underscores.
+func NormalizeDetectorName(s string) DetectorName {
+	return strings.ReplaceAll(strings.ToLower(strings.TrimSpace(s)), "-", "_")
+}
+
+// ParseDetectorName returns the registered detector name matching s, or DetectorDetect when the
+// value is empty, asks for derivation, or is not recognized. Use KnownDetectorName to tell an
+// unknown value apart from a request to derive one.
+func ParseDetectorName(s string) DetectorName {
+	switch name := NormalizeDetectorName(s); name {
+	case "", DetectorDetect, DetectorAuto:
+		return DetectorDetect
+	case DetectorNone:
+		return name
+	default:
+		if FindDetector(name) != nil {
+			return name
+		}
+
+		return DetectorDetect
+	}
+}
+
+// KnownDetectorName reports whether s names a registered detector, asks for derivation, or
+// disables detection.
+func KnownDetectorName(s string) bool {
+	switch name := NormalizeDetectorName(s); name {
+	case "", DetectorDetect, DetectorAuto, DetectorNone:
+		return true
+	default:
+		return FindDetector(name) != nil
+	}
+}
+
+// DetectorUsageString lists the accepted FACE_DETECTOR values for use in CLI help text.
+//
+// It leaves out detectors whose weights may only be used after their publisher's terms have
+// been accepted, because help text is read as an offer.
+func DetectorUsageString() string {
+	names := []DetectorName{DetectorDetect, DetectorNone}
+
+	for _, d := range Detectors {
+		if !d.LicenseGated() {
+			names = append(names, d.Name)
+		}
+	}
+
+	return strings.Join(names, ", ")
 }
 
 // DefaultDetector returns the detector a build runs when nothing selects one.

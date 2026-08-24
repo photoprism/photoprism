@@ -340,6 +340,8 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"nsfw-model-path", c.NsfwModelPath()},
 		{"detect-nsfw", fmt.Sprintf("%t", c.DetectNSFW())},
 		{"xmp-faces", fmt.Sprintf("%t", c.XMPFaces())},
+		{"face-detector", c.FaceDetectorSetting()},
+		{"face-detector-path", c.FaceEngineModelPath()},
 		{"face-engine", faceEngine},
 		{"face-engine-run", vision.ReportRunType(c.FaceEngineRunType())},
 		{"face-model", c.FaceModelSetting()},
@@ -412,6 +414,18 @@ func (c *Config) faceDistReport(value func() float64) string {
 	return fmt.Sprintf("%f", value())
 }
 
+// faceDetectorReport names the configured detector and, while it is still to be derived, the
+// detector that derivation settles on.
+func (c *Config) faceDetectorReport() string {
+	setting := c.FaceDetectorSetting()
+
+	if setting != face.DetectorDetect {
+		return setting
+	}
+
+	return fmt.Sprintf("%s (%s)", setting, c.FaceDetector())
+}
+
 // faceModelReport names the configured model and, while it is still to be detected, the model
 // the library holds. `photoprism faces config` connects to the database, so it is the one
 // report that can state both.
@@ -438,6 +452,8 @@ func (c *Config) FaceReport() (rows [][]string, cols []string) {
 		{"disable-faces", fmt.Sprintf("%t", c.DisableFaces())},
 		{"xmp-faces", fmt.Sprintf("%t", c.XMPFaces())},
 		{"vision-yaml", c.VisionYaml()},
+		{"face-detector", c.faceDetectorReport()},
+		{"face-detector-path", c.FaceEngineModelPath()},
 		{"face-engine", c.FaceEngine()},
 		{"face-engine-run", vision.ReportRunType(c.FaceEngineRunType())},
 		{"face-engine-threads", fmt.Sprintf("%d", c.FaceEngineThreads())},

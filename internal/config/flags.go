@@ -1328,6 +1328,11 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("XMP_FACES"),
 		}}, {
 		Flag: &cli.StringFlag{
+			Name:    "face-detector",
+			Usage:   "face detection model `NAME` (" + face.DetectorUsageString() + "); derived from the face model when unset",
+			EnvVars: EnvVars("FACE_DETECTOR"),
+		}}, {
+		Flag: &cli.StringFlag{
 			Name:    "face-engine",
 			Usage:   "face detection engine `NAME` (auto, onnx)",
 			Value:   face.EngineAuto,
