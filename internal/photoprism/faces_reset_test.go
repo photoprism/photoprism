@@ -22,7 +22,7 @@ func TestFaces_Reset(t *testing.T) {
 	}
 }
 
-func TestFaces_ResetAndReindex_InvalidEngine(t *testing.T) {
+func TestFaces_ResetAndReindex_InvalidDetector(t *testing.T) {
 	c := config.TestConfig()
 	m := NewFaces(c)
 
@@ -30,7 +30,7 @@ func TestFaces_ResetAndReindex_InvalidEngine(t *testing.T) {
 	require.Error(t, err)
 }
 
-func TestFaces_ResetAndReindex_Auto(t *testing.T) {
+func TestFaces_ResetAndReindex_Detect(t *testing.T) {
 	defer func(prev func(*Index, IndexOptions) (fs.Done, int, error)) {
 		runFacesReindex = prev
 	}(runFacesReindex)
@@ -46,11 +46,29 @@ func TestFaces_ResetAndReindex_Auto(t *testing.T) {
 	c := config.TestConfig()
 	m := NewFaces(c)
 
-	err := m.ResetAndReindex(face.EngineAuto, nil)
+	err := m.ResetAndReindex(face.DetectorDetect, nil)
 	require.NoError(t, err)
 	require.True(t, called)
 	require.True(t, received.FacesOnly)
 	require.Equal(t, face.EngineONNX, c.FaceEngine())
+}
+
+// TestFaces_ResetAndReindex_ResetOnly pins that naming no detector, or naming "none", resets
+// without regenerating rather than being rejected.
+func TestFaces_ResetAndReindex_ResetOnly(t *testing.T) {
+	defer func(prev func(*Index, IndexOptions) (fs.Done, int, error)) {
+		runFacesReindex = prev
+	}(runFacesReindex)
+
+	runFacesReindex = func(idx *Index, opt IndexOptions) (fs.Done, int, error) {
+		t.Fatal("faces: must not reindex when no detector was named")
+		return fs.Done{}, 0, nil
+	}
+
+	m := NewFaces(config.TestConfig())
+
+	require.NoError(t, m.ResetAndReindex("", nil))
+	require.NoError(t, m.ResetAndReindex(face.DetectorNone, nil))
 }
 
 // TestFaces_ResetAndReindex_NoDetector pins the order this runs in: a request to regenerate that
@@ -70,8 +88,8 @@ func TestFaces_ResetAndReindex_NoDetector(t *testing.T) {
 	c.Options().ModelsPath = t.TempDir()
 	m := NewFaces(c)
 
-	err := m.ResetAndReindex(face.EngineONNX, nil)
+	err := m.ResetAndReindex(face.DetectorYuNet, nil)
 
 	require.Error(t, err)
-	require.Contains(t, err.Error(), "no face detector")
+	require.Contains(t, err.Error(), "cannot be used")
 }

@@ -53,8 +53,13 @@ var FacesCommands = &cli.Command{
 			Flags: []cli.Flag{
 				ForceFlag("removes all people and faces"),
 				&cli.StringFlag{
-					Name:  "engine",
-					Usage: "regenerate markers using detection engine `NAME` (auto, onnx)",
+					Name:  "detector",
+					Usage: "regenerate markers with the detection model `NAME` (" + face.DetectorUsageString() + ")",
+				},
+				&cli.StringFlag{
+					Name:   "engine",
+					Usage:  "regenerate markers using detection engine `NAME` *deprecated*, use --detector",
+					Hidden: true,
 				},
 			},
 			Action: facesResetAction,
@@ -328,10 +333,20 @@ func facesResetAction(ctx *cli.Context) error {
 
 	w := get.Faces()
 
-	engine := strings.TrimSpace(ctx.String("engine"))
+	detector := strings.TrimSpace(ctx.String("detector"))
 
-	if engine != "" {
-		if err := w.ResetAndReindex(engine, get.Index()); err != nil {
+	// The deprecated flag names a runtime that every detector shares, so it can only ask for the
+	// detector already configured, or for no regeneration at all.
+	if detector == "" {
+		if engine := strings.TrimSpace(ctx.String("engine")); engine != "" {
+			if detector = face.DetectorDetect; face.ParseEngine(engine) == face.EngineNone {
+				detector = ""
+			}
+		}
+	}
+
+	if detector != "" {
+		if err := w.ResetAndReindex(detector, get.Index()); err != nil {
 			return err
 		}
 	} else {

@@ -225,7 +225,7 @@ faces: retained manual clusters after merge: kept 4 candidate cluster(s) [...] f
 
 This is informational—the optimizer skips that merge and progresses. To reduce noise, consider:
 
-- Running `photoprism faces reset --engine=<auto|onnx>` to regenerate markers with consistent embeddings.
+- Running `photoprism faces reset --detector=<detect|none|yunet>` to regenerate markers with consistent embeddings.
 - Reviewing the subject’s manual clusters in the UI and trimming outliers or reassigning photos to other people.
 - Confirming that the remaining clusters genuinely represent different appearances (lighting, age); in that case it is safe to ignore the warning.
 
