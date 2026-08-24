@@ -388,9 +388,10 @@ func TestFaces_detectMigrationEmbeddings(t *testing.T) {
 	embedder := &migrationTestEmbedder{name: face.ModelSFace, dims: 4, aligned: true}
 	w := NewFaces(config.TestConfig())
 
-	result, detectModel, err := w.detectMigrationEmbeddings(embedder, nil, nil, nil)
+	result, landmarks, detectModel, err := w.detectMigrationEmbeddings(embedder, nil, nil, nil)
 	require.Error(t, err)
 	assert.Empty(t, result)
+	assert.Empty(t, landmarks)
 	assert.Empty(t, detectModel, "a run that could not detect names no detector")
 }
 

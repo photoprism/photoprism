@@ -311,6 +311,14 @@ func whereSameEmbeddingSpace(stmt *gorm.DB, model face.ModelName) *gorm.DB {
 }
 
 // MatchMarkers finds and references matching markers.
+//
+// A marker that no ordinary detection pass would have produced may not be admitted to a
+// cluster: the second pass exists to mark faces a crowd photograph would otherwise lose, not
+// to put them in the recognition path, and the crop of a face that small is largely
+// interpolation. The bound is the detection floor rather than the clustering one, so every
+// face a normal pass finds stays matchable. Markers that are already in a cluster are only
+// being re-pointed at another one, so it does not reach them - applying it there would strand
+// them on a cluster that is about to be purged.
 func (m *Face) MatchMarkers(faceIds []string) error {
 	if len(faceIds) == 0 {
 		return nil
@@ -319,7 +327,8 @@ func (m *Face) MatchMarkers(faceIds []string) error {
 	var markers Markers
 
 	err := whereSameEmbeddingSpace(Db().
-		Where("marker_invalid = 0 AND marker_type = ? AND face_id IN (?)", MarkerFace, faceIds), m.EmbedModel).
+		Where("marker_invalid = 0 AND marker_type = ? AND face_id IN (?)", MarkerFace, faceIds).
+		Where("face_id <> '' OR size >= ?", face.SizeThreshold), m.EmbedModel).
 		Find(&markers).Error
 
 	if err != nil {

@@ -641,3 +641,53 @@ func TestFace_ReviseMatchesSkipsOtherModels(t *testing.T) {
 	require.NoError(t, UnscopedDb().First(&stored, "marker_uid = ?", other.MarkerUID).Error)
 	assert.Equal(t, m.ID, stored.FaceID, "the assignment must survive a revision it could not evaluate")
 }
+
+func TestFace_MatchMarkers(t *testing.T) {
+	cluster := FaceFixtures.Pointer("joe-biden")
+
+	// newFacelessMarker persists an unassigned marker well inside what the cluster accepts, so
+	// only the size bound can keep it out.
+	newFacelessMarker := func(t *testing.T, size int, seed uint64) *Marker {
+		t.Helper()
+
+		m := &Marker{
+			FileUID:    "fs6sg6bw45bnlqdw",
+			MarkerType: MarkerFace,
+			MarkerSrc:  SrcImage,
+			Size:       size,
+			Score:      50,
+			X:          0.1,
+			Y:          0.1,
+			W:          0.1,
+			H:          0.1,
+		}
+
+		at := face.FixtureEmbeddingAt(cluster.Embedding(), 0.2*cluster.AcceptDist(), seed)
+		m.SetEmbeddings(face.Embeddings{at}, cluster.EmbedModel, face.DetectorYuNet)
+
+		require.NoError(t, Db().Create(m).Error)
+		t.Cleanup(func() { Db().Delete(m) })
+
+		return m
+	}
+	t.Run("AdmitsAnOrdinaryMarker", func(t *testing.T) {
+		m := newFacelessMarker(t, face.SizeThreshold, 9101)
+
+		require.NoError(t, cluster.MatchMarkers(Faceless))
+
+		found := FindMarker(m.MarkerUID)
+		require.NotNil(t, found)
+		assert.Equal(t, cluster.ID, found.FaceID)
+	})
+	t.Run("RefusesAMarkerBelowTheDetectionFloor", func(t *testing.T) {
+		// Only the second detection pass produces one, and it exists to mark a face a crowd
+		// photograph would otherwise lose rather than to name a person from it.
+		m := newFacelessMarker(t, face.SizeThreshold-1, 9102)
+
+		require.NoError(t, cluster.MatchMarkers(Faceless))
+
+		found := FindMarker(m.MarkerUID)
+		require.NotNil(t, found)
+		assert.Empty(t, found.FaceID)
+	})
+}

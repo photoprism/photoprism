@@ -27,11 +27,12 @@ const (
 // Legacy names the same weights were installed under before, so a copy an operator already
 // holds still resolves to its own preprocessing instead of the default detector's.
 type Detector struct {
-	Name   DetectorName
-	Dir    string
-	Decode DecodeKind
-	ONNX   *onnx.ModelInfo
-	Legacy []string
+	Name     DetectorName
+	Dir      string
+	Decode   DecodeKind
+	MinScore float32
+	ONNX     *onnx.ModelInfo
+	Legacy   []string
 }
 
 // DetectorName identifies a detection model.
@@ -60,6 +61,11 @@ var Detectors = []*Detector{
 		Name:   DetectorYuNet,
 		Dir:    "yunet",
 		Decode: DecodeYuNet,
+		// Calibrated on our own corpus rather than adopted from another detector: YuNet scores
+		// as sqrt(cls x obj) and is not a single calibrated sigmoid, so it needs its own cutoff.
+		// 0.65 is where its false positives on non-faces stop while it still finds more in a
+		// group photograph than SCRFD does.
+		MinScore: 0.65,
 		ONNX: &onnx.ModelInfo{
 			File:    "face_detection_yunet_2026may.onnx",
 			SHA256:  "ebafce4e3c118d6554634be5c27ab333b4c047a9a8c3faf1d7cf93101c22f0f0",
@@ -77,9 +83,10 @@ var Detectors = []*Detector{
 		},
 	},
 	{
-		Name:   DetectorSCRFD,
-		Dir:    "scrfd",
-		Decode: DecodeSCRFD,
+		Name:     DetectorSCRFD,
+		Dir:      "scrfd",
+		Decode:   DecodeSCRFD,
+		MinScore: 0.50,
 		ONNX: &onnx.ModelInfo{
 			// The publisher's own artifact, which is where an opt-in install fetches from. Its
 			// input is dynamic where our earlier re-export was fixed, and it is otherwise the

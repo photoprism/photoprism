@@ -2,6 +2,7 @@ package photoprism
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"sort"
@@ -561,6 +562,7 @@ func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) 
 	}
 
 	var generated map[string]face.Embeddings
+	var landmarks map[string]json.RawMessage
 
 	// A blank detector means no detection ran, so the one already recorded still describes
 	// the crop. It is taken from the detection rather than from the active engine, which by
@@ -569,7 +571,7 @@ func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) 
 
 	if embedder.Aligned() {
 		detected = true
-		generated, detectModel, err = w.detectMigrationEmbeddings(embedder, file, markers, stale)
+		generated, landmarks, detectModel, err = w.detectMigrationEmbeddings(embedder, file, markers, stale)
 	} else {
 		generated, err = w.cropMigrationEmbeddings(embedder, file, stale)
 	}
@@ -583,11 +585,12 @@ func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) 
 		} else {
 			failed = append(failed, marker.MarkerUID)
 			delete(generated, marker.MarkerUID)
+			delete(landmarks, marker.MarkerUID)
 		}
 	}
 
 	if len(generated) > 0 {
-		if err = query.SaveFaceMigrationEmbeddings(target, detectModel, generated); err != nil {
+		if err = query.SaveFaceMigrationEmbeddings(target, detectModel, generated, landmarks); err != nil {
 			return 0, skipped, nil, detected, err
 		}
 	}
@@ -638,20 +641,27 @@ func (w *Faces) cropMigrationEmbeddings(embedder face.Embedder, file *entity.Fil
 }
 
 // detectMigrationEmbeddings redetects a file and maps aligned embeddings to stored markers.
-// It also reports the detector that found them, so provenance travels with the vectors it
-// describes instead of being read back from configuration further up.
-func (w *Faces) detectMigrationEmbeddings(embedder face.Embedder, file *entity.File, markers, stale entity.Markers) (result map[string]face.Embeddings, detectModel string, err error) {
+// It also reports the landmarks each detection placed and the detector that placed them, so
+// provenance travels with the vectors it describes instead of being read back from
+// configuration further up.
+//
+// The landmarks are what make the recorded detector usable later: without them the column
+// attests the crop a vector was computed from while the stored landmarks are still whatever
+// an earlier detector produced, and no reader can tell the two apart.
+func (w *Faces) detectMigrationEmbeddings(embedder face.Embedder, file *entity.File, markers, stale entity.Markers) (result map[string]face.Embeddings, landmarks map[string]json.RawMessage, detectModel string, err error) {
 	result = make(map[string]face.Embeddings, len(stale))
+	landmarks = make(map[string]json.RawMessage, len(stale))
+
 	thumbName, err := migrationDetectionThumb(w.conf, w.conf.ThumbCachePath(), file)
 	if err != nil {
-		return result, "", err
+		return result, landmarks, "", err
 	}
 
 	// The same fallback the indexer used, or a marker created by it would match no detection
 	// here and be dropped as unreadable.
 	detected, err := face.DetectWithRetry(thumbName, w.conf.FaceSize(), w.conf.FaceSizeRetry())
 	if err != nil {
-		return result, "", err
+		return result, landmarks, "", err
 	}
 	vision.GenerateEmbeddings(embedder, thumbName, detected, true)
 
@@ -660,10 +670,14 @@ func (w *Faces) detectMigrationEmbeddings(embedder face.Embedder, file *entity.F
 		if detectedFace, ok := assignments[marker.MarkerUID]; ok && face.ValidEmbeddings(detectedFace.Embeddings, embedder.Dims()) {
 			result[marker.MarkerUID] = detectedFace.Embeddings
 			detectModel = detectedFace.DetectModel
+
+			if points := detectedFace.RelativeLandmarksJSON(); len(points) > 0 {
+				landmarks[marker.MarkerUID] = points
+			}
 		}
 	}
 
-	return result, detectModel, nil
+	return result, landmarks, detectModel, nil
 }
 
 // migrationDetectionThumb returns a cached or newly generated detection thumbnail.

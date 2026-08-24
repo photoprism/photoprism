@@ -1,6 +1,7 @@
 package query
 
 import (
+	"encoding/json"
 	"path/filepath"
 	"sort"
 	"testing"
@@ -293,32 +294,51 @@ func TestSaveFaceMigrationEmbeddings(t *testing.T) {
 	t.Cleanup(func() { entity.UnscopedDb().Delete(marker) })
 
 	embeddings := face.Embeddings{face.RandomEmbedding()}
-	require.NoError(t, SaveFaceMigrationEmbeddings(face.ModelFaceNet, face.EngineONNX, map[string]face.Embeddings{marker.MarkerUID: embeddings}))
+	detectedPoints := json.RawMessage(`[{"name":"eye_l","x":-0.05},{"name":"eye_r","x":0.05}]`)
+	require.NoError(t, SaveFaceMigrationEmbeddings(face.ModelFaceNet, face.DetectorYuNet,
+		map[string]face.Embeddings{marker.MarkerUID: embeddings},
+		map[string]json.RawMessage{marker.MarkerUID: detectedPoints}))
 
 	stored, err := MarkerByUID(marker.MarkerUID)
 	require.NoError(t, err)
 	assert.Equal(t, face.ModelFaceNet, stored.EmbedModel)
-	assert.Equal(t, face.EngineONNX, stored.DetectModel, "a run that re-detected records the detector it used")
+	assert.Equal(t, face.DetectorYuNet, stored.DetectModel, "a run that re-detected records the detector it used")
 	assert.Empty(t, stored.FaceID)
 	assert.True(t, stored.Embeddings().One())
 	assert.Len(t, stored.Embeddings()[0], len(embeddings[0]))
+	assert.JSONEq(t, string(detectedPoints), string(stored.LandmarksJSON),
+		"the landmarks the detection placed travel with the vector they produced")
 
 	t.Run("BlankDetectorKeepsProvenance", func(t *testing.T) {
 		// Re-cropping from the stored geometry runs no detector, so overwriting the recorded
-		// one would attribute the crop to a detector that never saw the image.
+		// one would attribute the crop to a detector that never saw the image, and the stored
+		// landmarks are still the ones that produced that crop.
 		//
 		// The vector has to differ from the one already stored: MariaDB reports no affected
 		// rows for an update that changes nothing, which the caller treats as a missing marker.
 		regenerated := face.Embeddings{face.RandomEmbedding()}
-		require.NoError(t, SaveFaceMigrationEmbeddings(face.ModelFaceNet, "", map[string]face.Embeddings{marker.MarkerUID: regenerated}))
+		require.NoError(t, SaveFaceMigrationEmbeddings(face.ModelFaceNet, "", map[string]face.Embeddings{marker.MarkerUID: regenerated}, nil))
 
 		kept, keptErr := MarkerByUID(marker.MarkerUID)
 		require.NoError(t, keptErr)
-		assert.Equal(t, face.EngineONNX, kept.DetectModel)
+		assert.Equal(t, face.DetectorYuNet, kept.DetectModel)
+		assert.JSONEq(t, string(detectedPoints), string(kept.LandmarksJSON))
+	})
+	t.Run("MalformedLandmarksAreNotWritten", func(t *testing.T) {
+		// A payload that is not valid JSON would make the column unreadable, and the vector
+		// beside it is still worth checkpointing.
+		regenerated := face.Embeddings{face.RandomEmbedding()}
+		require.NoError(t, SaveFaceMigrationEmbeddings(face.ModelFaceNet, face.DetectorSCRFD,
+			map[string]face.Embeddings{marker.MarkerUID: regenerated},
+			map[string]json.RawMessage{marker.MarkerUID: json.RawMessage("{")}))
+
+		kept, keptErr := MarkerByUID(marker.MarkerUID)
+		require.NoError(t, keptErr)
+		assert.JSONEq(t, string(detectedPoints), string(kept.LandmarksJSON))
 	})
 
-	require.Error(t, SaveFaceMigrationEmbeddings("", face.EngineONNX, nil))
-	require.Error(t, SaveFaceMigrationEmbeddings(face.ModelFaceNet, face.EngineONNX, map[string]face.Embeddings{"": nil}))
+	require.Error(t, SaveFaceMigrationEmbeddings("", face.DetectorYuNet, nil, nil))
+	require.Error(t, SaveFaceMigrationEmbeddings(face.ModelFaceNet, face.DetectorYuNet, map[string]face.Embeddings{"": nil}, nil))
 }
 
 func TestFinalizeFaceMigration(t *testing.T) {

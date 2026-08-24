@@ -100,7 +100,7 @@ func TestDetect(t *testing.T) {
 		// An engine that fails partway still hands back what it found, and those faces are
 		// stamped: the caller decides what to do with them, and an unattributed vector is
 		// what this column exists to prevent.
-		stub := &stubEngine{name: "stub", detector: "stub-detector", faces: Faces{{Score: 7}}, err: errors.New("partial")}
+		stub := &stubEngine{name: "stub", detector: "stub-detector", faces: Faces{{Score: 70}}, err: errors.New("partial")}
 		if prev := UseEngine(stub); prev != nil {
 			_ = prev.Close()
 		}
@@ -323,5 +323,47 @@ func TestActiveDetector(t *testing.T) {
 		t.Cleanup(func() { UseEngine(prev) })
 
 		assert.Equal(t, EngineONNX, ActiveDetector())
+	})
+}
+
+func TestDetectScoreThreshold(t *testing.T) {
+	t.Run("DiscardsLowQualityDetections", func(t *testing.T) {
+		// Filtered before a marker exists rather than after: what a detector reports as a
+		// face and is not costs an operator a thumbnail to reject once it is in the index.
+		restoreEngine(t)
+
+		restore := ScoreThreshold
+		t.Cleanup(func() { ScoreThreshold = restore })
+		ScoreThreshold = 50
+
+		stub := &stubEngine{name: "stub", detector: "stub-detector", faces: Faces{{Score: 49}, {Score: 50}, {Score: 90}}}
+		if prev := UseEngine(stub); prev != nil {
+			_ = prev.Close()
+		}
+
+		faces, err := Detect("testdata/face.jpg", 20)
+
+		require.NoError(t, err)
+		require.Len(t, faces, 2, "only the detections at or above the threshold are kept")
+		assert.Equal(t, 50, faces[0].Score)
+		assert.Equal(t, 90, faces[1].Score)
+		assert.Equal(t, DetectorName("stub-detector"), faces[0].DetectModel)
+	})
+	t.Run("AllDiscarded", func(t *testing.T) {
+		restoreEngine(t)
+
+		restore := ScoreThreshold
+		t.Cleanup(func() { ScoreThreshold = restore })
+		ScoreThreshold = 99
+
+		stub := &stubEngine{name: "stub", detector: "stub-detector", faces: Faces{{Score: 90}}}
+		if prev := UseEngine(stub); prev != nil {
+			_ = prev.Close()
+		}
+
+		faces, err := Detect("testdata/face.jpg", 20)
+
+		require.NoError(t, err)
+		assert.Empty(t, faces)
 	})
 }

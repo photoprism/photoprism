@@ -103,10 +103,6 @@ func NewONNXEngine(opts ONNXOptions) (DetectionEngine, error) {
 		return nil, fmt.Errorf("faces: %w", err)
 	}
 
-	if opts.ScoreThreshold <= 0 {
-		opts.ScoreThreshold = onnxDefaultScoreThreshold
-	}
-
 	if opts.NMSThreshold <= 0 {
 		opts.NMSThreshold = onnxDefaultNMSThreshold
 	}
@@ -119,6 +115,15 @@ func NewONNXEngine(opts ONNXOptions) (DetectionEngine, error) {
 	if detector == nil {
 		detector = DefaultDetector()
 		log.Warnf("faces: unrecognized detector %s, assuming %s preprocessing", clean.Log(filepath.Base(opts.ModelPath)), detector.Name)
+	}
+
+	// Detectors do not score alike, so the cutoff is registered per detector rather than shared.
+	if opts.ScoreThreshold <= 0 {
+		opts.ScoreThreshold = detector.MinScore
+	}
+
+	if opts.ScoreThreshold <= 0 {
+		opts.ScoreThreshold = onnxDefaultScoreThreshold
 	}
 
 	// Operators may point MODELS_PATH at another export, whose layout is read from the graph,

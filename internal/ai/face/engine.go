@@ -218,9 +218,19 @@ func Detect(fileName string, minSize int) (Faces, error) {
 		detector = engine.Name()
 	}
 
+	kept := faces[:0]
+
 	for i := range faces {
+		// A detection below the configured quality is discarded here rather than filtered
+		// downstream, so it never becomes a marker: what a detector reports as a face and is
+		// not costs an operator a thumbnail to reject, whatever happens to it afterwards.
+		if float64(faces[i].Score) < ScoreThreshold {
+			continue
+		}
+
 		faces[i].DetectModel = detector
+		kept = append(kept, faces[i])
 	}
 
-	return faces, err
+	return kept, err
 }

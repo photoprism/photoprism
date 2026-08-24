@@ -213,3 +213,16 @@ func TestYuNetEngineLive(t *testing.T) {
 	assert.Equal(t, DetectorYuNet, f.DetectModel)
 	assert.NotEqual(t, EngineONNX, f.DetectModel)
 }
+
+// TestDetectorMinScore pins the score cutoff per detector. Detectors do not score alike, so a
+// value adopted from another is not calibration: YuNet scores as sqrt(cls x obj) rather than as
+// one sigmoid, and at SCRFD's 0.50 it accepts flowers as faces.
+func TestDetectorMinScore(t *testing.T) {
+	for _, d := range Detectors {
+		assert.Positive(t, d.MinScore, d.Name)
+		assert.LessOrEqual(t, d.MinScore, float32(1), d.Name)
+	}
+
+	assert.NotEqual(t, FindDetector(DetectorSCRFD).MinScore, FindDetector(DetectorYuNet).MinScore,
+		"a cutoff copied from the other detector is not a calibrated one")
+}
