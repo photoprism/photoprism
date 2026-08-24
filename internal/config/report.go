@@ -18,7 +18,6 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 	cols = []string{"Name", "Value"}
 
 	reportDatabaseDSN := c.ReportDatabaseDSN()
-	faceEngine := c.FaceEngine()
 
 	rows = [][]string{
 		// Authentication.
@@ -342,7 +341,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"xmp-faces", fmt.Sprintf("%t", c.XMPFaces())},
 		{"face-detector", c.FaceDetectorSetting()},
 		{"face-detector-path", c.FaceEngineModelPath()},
-		{"face-engine", faceEngine},
+		{"face-engine", c.faceEngineReport()},
 		{"face-engine-run", vision.ReportRunType(c.FaceEngineRunType())},
 		{"face-model", c.FaceModelSetting()},
 		{"face-model-status", c.faceModelStatus()},
@@ -351,7 +350,8 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 	}...)
 
 	rows = append(rows, [][]string{
-		{"face-engine-threads", fmt.Sprintf("%d", c.FaceEngineThreads())},
+		{"face-detector-threads", fmt.Sprintf("%d", c.FaceDetectorThreads())},
+		{"face-model-threads", fmt.Sprintf("%d", c.FaceModelThreads())},
 		{"face-size", fmt.Sprintf("%d", c.FaceSize())},
 		{"face-size-retry", fmt.Sprintf("%d", c.FaceSizeRetry())},
 		{"face-score", fmt.Sprintf("%f", c.FaceScore())},
@@ -414,6 +414,14 @@ func (c *Config) faceDistReport(value func() float64) string {
 	return fmt.Sprintf("%f", value())
 }
 
+// faceEngineReport names the deprecated runtime setting as it is configured, rather than the
+// runtime in force, which now follows the detector and is already reported as one. A stale
+// "none" left in "options.yml" is the only thing that explains why detection is off, so the
+// row stays even though the option no longer selects anything.
+func (c *Config) faceEngineReport() string {
+	return fmt.Sprintf("%s (deprecated)", face.ParseEngine(c.options.FaceEngine))
+}
+
 // faceDetectorReport names the configured detector and, while it is still to be derived, the
 // detector that derivation settles on.
 func (c *Config) faceDetectorReport() string {
@@ -454,9 +462,10 @@ func (c *Config) FaceReport() (rows [][]string, cols []string) {
 		{"vision-yaml", c.VisionYaml()},
 		{"face-detector", c.faceDetectorReport()},
 		{"face-detector-path", c.FaceEngineModelPath()},
-		{"face-engine", c.FaceEngine()},
+		{"face-engine", c.faceEngineReport()},
 		{"face-engine-run", vision.ReportRunType(c.FaceEngineRunType())},
-		{"face-engine-threads", fmt.Sprintf("%d", c.FaceEngineThreads())},
+		{"face-detector-threads", fmt.Sprintf("%d", c.FaceDetectorThreads())},
+		{"face-model-threads", fmt.Sprintf("%d", c.FaceModelThreads())},
 		{"face-model", c.faceModelReport()},
 		{"face-model-status", c.faceModelStatus()},
 		{"face-model-path", c.FaceModelPath()},

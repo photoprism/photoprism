@@ -292,6 +292,10 @@ func (c *Config) Init() error {
 		log.Warnf("vision: %s", loadErr)
 	}
 
+	// Replace a persisted face engine value with the detector option that supersedes it, before
+	// the model is settled from it.
+	c.initFaceDetector()
+
 	// Settle which face embedding model this instance uses, which needs the database and has
 	// to happen before Propagate configures the embedder from it.
 	c.initFaceModel()
@@ -499,7 +503,7 @@ func (c *Config) Propagate() {
 		Name: c.FaceEngine(),
 		ONNX: face.ONNXOptions{
 			ModelPath: c.FaceEngineModelPath(),
-			Threads:   c.FaceEngineThreads(),
+			Threads:   c.FaceDetectorThreads(),
 		},
 	}); err != nil {
 		log.Warnf("faces: %s (configure engine)", err)
@@ -553,7 +557,16 @@ func (c *Config) Options() *Options {
 // SaveOptionsPatch merges a patch into options.yml, reloads in-memory options,
 // and returns true when persisted values changed.
 func (c *Config) SaveOptionsPatch(patch Values) (bool, error) {
-	if c == nil || c.options == nil || len(patch) == 0 {
+	return c.SaveOptionsUpdate(patch, nil)
+}
+
+// SaveOptionsUpdate merges a patch into options.yml, removes the specified keys, reloads
+// in-memory options, and returns true when persisted values changed.
+//
+// Removal is what retires a deprecated key rather than leaving it beside the one that replaced
+// it, where a later reader would have two settings to reconcile.
+func (c *Config) SaveOptionsUpdate(patch Values, remove []string) (bool, error) {
+	if c == nil || c.options == nil || len(patch) == 0 && len(remove) == 0 {
 		return false, nil
 	}
 
@@ -562,7 +575,16 @@ func (c *Config) SaveOptionsPatch(patch Values) (bool, error) {
 		return false, err
 	}
 
-	if !mergeOptionValues(values, patch) {
+	changed := mergeOptionValues(values, patch)
+
+	for _, key := range remove {
+		if _, found := values[key]; found {
+			delete(values, key)
+			changed = true
+		}
+	}
+
+	if !changed {
 		return false, nil
 	}
 

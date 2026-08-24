@@ -260,9 +260,11 @@ type Options struct {
 	DetectNSFW                bool          `yaml:"DetectNSFW" json:"DetectNSFW" flag:"detect-nsfw"`
 	XMPFaces                  bool          `yaml:"XMPFaces" json:"XMPFaces" flag:"xmp-faces"`
 	FaceDetector              string        `yaml:"FaceDetector" json:"-" flag:"face-detector"`
+	FaceDetectorThreads       int           `yaml:"FaceDetectorThreads" json:"-" flag:"face-detector-threads"`
+	FaceModel                 string        `yaml:"FaceModel" json:"-" flag:"face-model"`
+	FaceModelThreads          int           `yaml:"FaceModelThreads" json:"-" flag:"face-model-threads"`
 	FaceEngine                string        `yaml:"FaceEngine" json:"-" flag:"face-engine"`
 	FaceEngineThreads         int           `yaml:"FaceEngineThreads" json:"-" flag:"face-engine-threads"`
-	FaceModel                 string        `yaml:"FaceModel" json:"-" flag:"face-model"`
 	FaceSize                  int           `yaml:"-" json:"-" flag:"face-size"`
 	FaceSizeRetry             int           `yaml:"-" json:"-" flag:"face-size-retry"`
 	FaceScore                 float64       `yaml:"-" json:"-" flag:"face-score"`

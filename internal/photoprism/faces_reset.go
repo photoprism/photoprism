@@ -77,7 +77,7 @@ func (w *Faces) ResetAndReindex(engine string, index *Index) error {
 		Name: w.conf.FaceEngine(),
 		ONNX: face.ONNXOptions{
 			ModelPath: w.conf.FaceEngineModelPath(),
-			Threads:   w.conf.FaceEngineThreads(),
+			Threads:   w.conf.FaceDetectorThreads(),
 		},
 	}); err != nil {
 		return err

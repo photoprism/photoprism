@@ -1332,21 +1332,33 @@ var Flags = CliFlags{
 			Usage:   "face detection model `NAME` (" + face.DetectorUsageString() + "); derived from the face model when unset",
 			EnvVars: EnvVars("FACE_DETECTOR"),
 		}}, {
-		Flag: &cli.StringFlag{
-			Name:    "face-engine",
-			Usage:   "face detection engine `NAME` (auto, onnx)",
-			Value:   face.EngineAuto,
-			EnvVars: EnvVars("FACE_ENGINE"),
-		}}, {
 		Flag: &cli.IntFlag{
-			Name:    "face-engine-threads",
-			Usage:   "face detection and embedding thread `COUNT` (0 derives a default from the CPU cores)",
-			EnvVars: EnvVars("FACE_ENGINE_THREADS"),
+			Name:    "face-detector-threads",
+			Usage:   "face detection thread `COUNT` per indexing worker (0 derives a default from the CPU cores)",
+			EnvVars: EnvVars("FACE_DETECTOR_THREADS"),
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "face-model",
 			Usage:   "face embedding model `NAME` (" + face.ModelUsageString() + "); detected from the library when unset, and changed with photoprism faces migrate",
 			EnvVars: EnvVars("FACE_MODEL"),
+		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "face-model-threads",
+			Usage:   "face embedding thread `COUNT` (0 derives a default from the CPU cores)",
+			EnvVars: EnvVars("FACE_MODEL_THREADS"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "face-engine",
+			Usage:   "face detection engine `NAME` (auto, onnx, none) *deprecated*, use --face-detector",
+			Value:   face.EngineAuto,
+			Hidden:  true,
+			EnvVars: EnvVars("FACE_ENGINE"),
+		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "face-engine-threads",
+			Usage:   "face detection and embedding thread `COUNT` *deprecated*, use --face-detector-threads and --face-model-threads",
+			Hidden:  true,
+			EnvVars: EnvVars("FACE_ENGINE_THREADS"),
 		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-size",

@@ -127,6 +127,52 @@ func (c *Config) derivedFaceDetector() face.DetectorName {
 	return face.DetectorNone
 }
 
+// initFaceDetector retires a persisted face engine value in favor of the detector option that
+// supersedes it, and is called once by Init.
+//
+// Only `none` is carried over, because it is the one value that means the same in both. The
+// rest name a runtime every detector shares, so they say "detection is enabled", which the
+// detector option's own default already expresses.
+func (c *Config) initFaceDetector() {
+	if c == nil {
+		return
+	}
+
+	// Only what the file holds is migrated. An environment variable is read afresh on every
+	// start, so persisting one would outlive the moment it was set and keep disabling detection
+	// after the operator removed it.
+	_, values, err := c.loadOptionsYAML()
+
+	if err != nil {
+		log.Debugf("config: %s (replace the deprecated face engine option)", err)
+		return
+	}
+
+	engine, found := values["FaceEngine"]
+
+	if !found {
+		return
+	}
+
+	patch := Values{}
+
+	// A file that already names a detector keeps it, because the deprecated value was consulted
+	// only while nothing else was configured.
+	if _, named := values["FaceDetector"]; !named && face.ParseEngine(fmt.Sprintf("%v", engine)) == face.EngineNone {
+		c.options.FaceDetector = face.DetectorNone
+		patch["FaceDetector"] = face.DetectorNone
+	}
+
+	c.options.FaceEngine = ""
+
+	if _, saveErr := c.SaveOptionsUpdate(patch, []string{"FaceEngine"}); saveErr != nil {
+		log.Warnf("config: failed replacing the deprecated face engine option (%s)", saveErr)
+		return
+	}
+
+	log.Infof("config: replaced the deprecated face engine option in %s", clean.Log(c.OptionsYaml()))
+}
+
 // FaceEngineRunType returns the effective run type for the face detection engine.
 // Detection and embedding always run together, so we defer to the face model
 // configuration in the vision subsystem. If no detection model is configured,
@@ -195,18 +241,17 @@ func (c *Config) FaceEngineShouldRun(when vision.RunType) bool {
 	return false
 }
 
-// FaceEngineThreads returns the thread count for ONNX face detection.
+// FaceDetectorThreads returns the thread count for ONNX face detection.
 //
 // The automatic value divides the cores by the number of indexing workers, because face
 // detection takes no lock: that many detections run at once, each with its own thread
 // pool, so a per-session count derived from the cores alone oversubscribes the machine
-// by exactly that factor. The derived value is not written back to the options, so that
-// FaceModelThreads keeps deriving its own count.
-func (c *Config) FaceEngineThreads() int {
+// by exactly that factor.
+func (c *Config) FaceDetectorThreads() int {
 	if c == nil {
 		return 1
-	} else if c.options.FaceEngineThreads > 0 {
-		return c.options.FaceEngineThreads
+	} else if threads := c.faceThreadsSetting(c.options.FaceDetectorThreads); threads > 0 {
+		return threads
 	}
 
 	return max(runtime.NumCPU()/max(c.IndexWorkers(), 1), 1)
@@ -220,11 +265,22 @@ func (c *Config) FaceEngineThreads() int {
 func (c *Config) FaceModelThreads() int {
 	if c == nil {
 		return 1
-	} else if c.options.FaceEngineThreads > 0 {
-		return c.options.FaceEngineThreads
+	} else if threads := c.faceThreadsSetting(c.options.FaceModelThreads); threads > 0 {
+		return threads
 	}
 
 	return max(runtime.NumCPU()/2, 1)
+}
+
+// faceThreadsSetting returns the configured thread count, falling back to the deprecated
+// option that set detection and embedding together. The two derive different defaults, so
+// the shared value is only consulted where nothing more specific was configured.
+func (c *Config) faceThreadsSetting(threads int) int {
+	if threads > 0 {
+		return threads
+	}
+
+	return c.options.FaceEngineThreads
 }
 
 // faceEngineRunsOnIndex reports whether this host is fast enough to detect faces while

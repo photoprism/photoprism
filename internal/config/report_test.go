@@ -295,9 +295,12 @@ func TestConfig_FaceReport(t *testing.T) {
 	expected := []string{
 		"disable-faces",
 		"vision-yaml",
+		"face-detector",
+		"face-detector-path",
+		"face-detector-threads",
 		"face-engine",
 		"face-engine-run",
-		"face-engine-threads",
+		"face-model-threads",
 		"facenet-model-path",
 		"face-size",
 		"face-score",

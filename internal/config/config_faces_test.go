@@ -115,7 +115,7 @@ func TestConfig_FaceEngine(t *testing.T) {
 func TestConfig_FaceEngineShouldRun(t *testing.T) {
 	t.Run("AutoHighThreads", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
-		c.options.FaceEngineThreads = 4
+		c.options.FaceModelThreads = 4
 
 		assert.True(t, c.FaceEngineShouldRun(vision.RunOnIndex))
 		assert.False(t, c.FaceEngineShouldRun(vision.RunNewlyIndexed))
@@ -125,7 +125,7 @@ func TestConfig_FaceEngineShouldRun(t *testing.T) {
 	})
 	t.Run("AutoLowThreads", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
-		c.options.FaceEngineThreads = 2
+		c.options.FaceModelThreads = 2
 
 		assert.False(t, c.FaceEngineShouldRun(vision.RunOnIndex))
 		assert.True(t, c.FaceEngineShouldRun(vision.RunNewlyIndexed))
@@ -159,14 +159,14 @@ func TestConfig_FaceEngineShouldRun(t *testing.T) {
 func TestConfig_FaceEngineRunType(t *testing.T) {
 	t.Run("AutoDefaults", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
-		c.options.FaceEngineThreads = 1
+		c.options.FaceModelThreads = 1
 		assert.Equal(t, "auto", vision.ReportRunType(c.FaceEngineRunType()))
 
 		c.options.DisableFaces = true
 		assert.Equal(t, "never", vision.ReportRunType(c.FaceEngineRunType()))
 		c.options.DisableFaces = false
 
-		c.options.FaceEngineThreads = 4
+		c.options.FaceModelThreads = 4
 		assert.Equal(t, "auto", vision.ReportRunType(c.FaceEngineRunType()))
 	})
 	t.Run("DisabledFaceModel", func(t *testing.T) {
@@ -219,24 +219,39 @@ func TestConfig_FaceEngineRunType(t *testing.T) {
 	})
 }
 
-func TestConfig_FaceEngineThreads(t *testing.T) {
+func TestConfig_FaceDetectorThreads(t *testing.T) {
 	t.Run("SharedWithIndexWorkers", func(t *testing.T) {
 		// Detection takes no lock, so one pool of this size runs per indexing worker.
 		c := NewConfig(CliTestContext())
 		expected := max(runtime.NumCPU()/max(c.IndexWorkers(), 1), 1)
-		assert.Equal(t, expected, c.FaceEngineThreads())
-		assert.LessOrEqual(t, c.FaceEngineThreads()*c.IndexWorkers(), max(runtime.NumCPU(), c.IndexWorkers()))
+		assert.Equal(t, expected, c.FaceDetectorThreads())
+		assert.LessOrEqual(t, c.FaceDetectorThreads()*c.IndexWorkers(), max(runtime.NumCPU(), c.IndexWorkers()))
 	})
 	t.Run("Configured", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
-		c.options.FaceEngineThreads = 8
-		assert.Equal(t, 8, c.FaceEngineThreads())
+		c.options.FaceDetectorThreads = 8
+		assert.Equal(t, 8, c.FaceDetectorThreads())
 	})
 	t.Run("KeepsOptionUnset", func(t *testing.T) {
 		// Writing the derived value back would freeze it for FaceModelThreads as well.
 		c := NewConfig(CliTestContext())
-		c.FaceEngineThreads()
-		assert.LessOrEqual(t, c.options.FaceEngineThreads, 0)
+		c.FaceDetectorThreads()
+		assert.LessOrEqual(t, c.options.FaceDetectorThreads, 0)
+	})
+	t.Run("DeprecatedOption", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceEngineThreads = 6
+		assert.Equal(t, 6, c.FaceDetectorThreads())
+		assert.Equal(t, 6, c.FaceModelThreads())
+	})
+	t.Run("SpecificOptionWins", func(t *testing.T) {
+		// The two derive different defaults, so a value that set both must not override the
+		// one an operator configured for detection alone.
+		c := NewConfig(CliTestContext())
+		c.options.FaceEngineThreads = 6
+		c.options.FaceDetectorThreads = 3
+		assert.Equal(t, 3, c.FaceDetectorThreads())
+		assert.Equal(t, 6, c.FaceModelThreads())
 	})
 }
 
@@ -249,7 +264,7 @@ func TestConfig_FaceModelThreads(t *testing.T) {
 	})
 	t.Run("Configured", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
-		c.options.FaceEngineThreads = 8
+		c.options.FaceModelThreads = 8
 		assert.Equal(t, 8, c.FaceModelThreads())
 	})
 	t.Run("IndependentOfDatabaseDriver", func(t *testing.T) {
@@ -271,12 +286,12 @@ func TestConfig_FaceModelThreads(t *testing.T) {
 func TestConfig_faceEngineRunsOnIndex(t *testing.T) {
 	t.Run("ManyCores", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
-		c.options.FaceEngineThreads = 4
+		c.options.FaceModelThreads = 4
 		assert.True(t, c.faceEngineRunsOnIndex())
 	})
 	t.Run("FewCores", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
-		c.options.FaceEngineThreads = 2
+		c.options.FaceModelThreads = 2
 		assert.False(t, c.faceEngineRunsOnIndex())
 	})
 	t.Run("SurvivesIndexWorkerCount", func(t *testing.T) {
@@ -1818,5 +1833,75 @@ func TestConfig_faceAcceptThresholds(t *testing.T) {
 			}
 		}
 		assert.Equal(t, 1, warnings)
+	})
+}
+
+func TestConfig_initFaceDetector(t *testing.T) {
+	// writeOptions writes an options.yml holding the specified keys and returns a config that
+	// reads it, so the migration sees a file rather than an in-memory value.
+	writeOptions := func(t *testing.T, body string) *Config {
+		t.Helper()
+
+		c := NewConfig(CliTestContext())
+		c.options.ConfigPath = t.TempDir()
+
+		require.NoError(t, os.WriteFile(c.OptionsYaml(), []byte(body), fs.ModeConfigFile))
+		require.NoError(t, c.options.Load(c.OptionsYaml()))
+
+		return c
+	}
+	readOptions := func(t *testing.T, c *Config) Values {
+		t.Helper()
+
+		_, values, err := c.loadOptionsYAML()
+		require.NoError(t, err)
+
+		return values
+	}
+	t.Run("DisabledCarriesOver", func(t *testing.T) {
+		c := writeOptions(t, "FaceEngine: none\n")
+		c.initFaceDetector()
+
+		values := readOptions(t, c)
+		assert.NotContains(t, values, "FaceEngine")
+		assert.Equal(t, face.DetectorNone, values["FaceDetector"])
+		assert.Equal(t, face.DetectorNone, c.FaceDetectorSetting())
+	})
+	t.Run("RuntimeValuesDoNot", func(t *testing.T) {
+		// Every value but "none" says detection is enabled, which the detector default already
+		// expresses, so nothing is written in its place.
+		for _, engine := range []string{"auto", "onnx", "pigo"} {
+			c := writeOptions(t, "FaceEngine: "+engine+"\n")
+			c.initFaceDetector()
+
+			values := readOptions(t, c)
+			assert.NotContains(t, values, "FaceEngine", engine)
+			assert.NotContains(t, values, "FaceDetector", engine)
+		}
+	})
+	t.Run("ConfiguredDetectorWins", func(t *testing.T) {
+		c := writeOptions(t, "FaceEngine: none\nFaceDetector: yunet\n")
+		c.initFaceDetector()
+
+		values := readOptions(t, c)
+		assert.NotContains(t, values, "FaceEngine")
+		assert.Equal(t, face.DetectorYuNet, values["FaceDetector"])
+	})
+	t.Run("EnvironmentIsNotPersisted", func(t *testing.T) {
+		// An environment variable is read again on every start, so persisting one would keep
+		// disabling detection after the operator removed it.
+		c := writeOptions(t, "FaceModel: sface\n")
+		c.options.FaceEngine = face.EngineNone
+		c.initFaceDetector()
+
+		values := readOptions(t, c)
+		assert.NotContains(t, values, "FaceDetector")
+		assert.Equal(t, face.DetectorNone, c.FaceDetectorSetting(), "it still applies to this run")
+	})
+	t.Run("NothingToMigrate", func(t *testing.T) {
+		c := writeOptions(t, "FaceModel: sface\n")
+		c.initFaceDetector()
+
+		assert.NotContains(t, readOptions(t, c), "FaceDetector")
 	})
 }
