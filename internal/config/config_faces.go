@@ -9,6 +9,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/vision"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -493,12 +494,17 @@ func (c *Config) libraryFaceModels() (counts []query.MarkerEmbeddingModelCount, 
 		return nil, false
 	}
 
+	// The schema is migrated after the configuration is propagated, so on the first
+	// start after an upgrade the provenance column does not exist yet. Its face markers
+	// prove what they hold: a library that records no model can only hold FaceNet.
+	if !c.db.Migrator().HasTable(&entity.Marker{}) {
+		log.Debug("config: no markers table (find face embedding models)")
+		return nil, false
+	}
+
 	counts, err := query.RecordedMarkerEmbeddingModels()
 
 	if err != nil {
-		// The schema is migrated after the configuration is propagated, so on the first
-		// start after an upgrade the provenance column does not exist yet. Its face markers
-		// prove what they hold: a library that records no model can only hold FaceNet.
 		log.Debugf("config: %s (find face embedding models)", err)
 
 		markers, countErr := query.FaceMarkersWithVectors()
