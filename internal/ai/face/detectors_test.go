@@ -33,9 +33,9 @@ func TestParseDetectorName(t *testing.T) {
 		assert.Equal(t, DetectorSCRFD, ParseDetectorName(DetectorSCRFD))
 	})
 	t.Run("Derive", func(t *testing.T) {
-		assert.Equal(t, DetectorDetect, ParseDetectorName(""))
-		assert.Equal(t, DetectorDetect, ParseDetectorName(DetectorAuto))
-		assert.Equal(t, DetectorDetect, ParseDetectorName(DetectorDetect))
+		assert.Equal(t, DetectorAuto, ParseDetectorName(""))
+		assert.Equal(t, DetectorAuto, ParseDetectorName(DetectorAuto))
+		assert.Equal(t, DetectorAuto, ParseDetectorName(DetectorDetect), "detect is an accepted spelling")
 	})
 	t.Run("None", func(t *testing.T) {
 		assert.Equal(t, DetectorNone, ParseDetectorName("None"))
@@ -43,13 +43,13 @@ func TestParseDetectorName(t *testing.T) {
 	t.Run("Unknown", func(t *testing.T) {
 		// An unknown value asks for derivation, and KnownDetectorName is what tells the two
 		// apart, so a typo does not silently disable detection.
-		assert.Equal(t, DetectorDetect, ParseDetectorName("nonexistent"))
+		assert.Equal(t, DetectorAuto, ParseDetectorName("nonexistent"))
 		assert.False(t, KnownDetectorName("nonexistent"))
 	})
 }
 
 func TestKnownDetectorName(t *testing.T) {
-	for _, name := range []string{"", DetectorDetect, DetectorAuto, DetectorNone, DetectorYuNet, "SCRFD"} {
+	for _, name := range []string{"", DetectorAuto, DetectorDetect, DetectorNone, DetectorYuNet, "SCRFD"} {
 		assert.True(t, KnownDetectorName(name), name)
 	}
 	assert.False(t, KnownDetectorName("pigo"))
@@ -58,7 +58,7 @@ func TestKnownDetectorName(t *testing.T) {
 func TestDetectorUsageString(t *testing.T) {
 	usage := DetectorUsageString()
 
-	assert.Equal(t, "detect, none, yunet", usage)
+	assert.Equal(t, "auto, none, yunet", usage)
 	// Help text is read as an offer, so weights that need their publisher's terms accepted
 	// are not listed.
 	assert.NotContains(t, usage, DetectorSCRFD)

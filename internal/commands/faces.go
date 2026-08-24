@@ -339,7 +339,7 @@ func facesResetAction(ctx *cli.Context) error {
 	// detector already configured, or for no regeneration at all.
 	if detector == "" {
 		if engine := strings.TrimSpace(ctx.String("engine")); engine != "" {
-			if detector = face.DetectorDetect; face.ParseEngine(engine) == face.EngineNone {
+			if detector = face.DetectorAuto; face.ParseEngine(engine) == face.EngineNone {
 				detector = ""
 			}
 		}

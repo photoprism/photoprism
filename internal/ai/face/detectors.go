@@ -39,10 +39,12 @@ type Detector struct {
 type DetectorName = string
 
 const (
-	// DetectorDetect derives the detector from the configured embedding model.
-	DetectorDetect DetectorName = "detect"
-	// DetectorAuto is an accepted spelling of DetectorDetect.
+	// DetectorAuto derives the detector from the configured embedding model. It is derived on
+	// every start rather than resolved once and recorded, which is what tells it apart from the
+	// embedding model's ModelDetect.
 	DetectorAuto DetectorName = "auto"
+	// DetectorDetect is an accepted spelling of DetectorAuto.
+	DetectorDetect DetectorName = "detect"
 	// DetectorNone disables face detection.
 	DetectorNone DetectorName = "none"
 	// DetectorYuNet is the permissively licensed default.
@@ -125,13 +127,13 @@ func NormalizeDetectorName(s string) DetectorName {
 	return strings.ReplaceAll(strings.ToLower(strings.TrimSpace(s)), "-", "_")
 }
 
-// ParseDetectorName returns the registered detector name matching s, or DetectorDetect when the
+// ParseDetectorName returns the registered detector name matching s, or DetectorAuto when the
 // value is empty, asks for derivation, or is not recognized. Use KnownDetectorName to tell an
 // unknown value apart from a request to derive one.
 func ParseDetectorName(s string) DetectorName {
 	switch name := NormalizeDetectorName(s); name {
-	case "", DetectorDetect, DetectorAuto:
-		return DetectorDetect
+	case "", DetectorAuto, DetectorDetect:
+		return DetectorAuto
 	case DetectorNone:
 		return name
 	default:
@@ -139,7 +141,7 @@ func ParseDetectorName(s string) DetectorName {
 			return name
 		}
 
-		return DetectorDetect
+		return DetectorAuto
 	}
 }
 
@@ -147,7 +149,7 @@ func ParseDetectorName(s string) DetectorName {
 // disables detection.
 func KnownDetectorName(s string) bool {
 	switch name := NormalizeDetectorName(s); name {
-	case "", DetectorDetect, DetectorAuto, DetectorNone:
+	case "", DetectorAuto, DetectorDetect, DetectorNone:
 		return true
 	default:
 		return FindDetector(name) != nil
@@ -159,7 +161,7 @@ func KnownDetectorName(s string) bool {
 // It leaves out detectors whose weights may only be used after their publisher's terms have
 // been accepted, because help text is read as an offer.
 func DetectorUsageString() string {
-	names := []DetectorName{DetectorDetect, DetectorNone}
+	names := []DetectorName{DetectorAuto, DetectorNone}
 
 	for _, d := range Detectors {
 		if !d.LicenseGated() {

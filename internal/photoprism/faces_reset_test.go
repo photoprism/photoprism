@@ -46,7 +46,7 @@ func TestFaces_ResetAndReindex_Detect(t *testing.T) {
 	c := config.TestConfig()
 	m := NewFaces(c)
 
-	err := m.ResetAndReindex(face.DetectorDetect, nil)
+	err := m.ResetAndReindex(face.DetectorAuto, nil)
 	require.NoError(t, err)
 	require.True(t, called)
 	require.True(t, received.FacesOnly)

@@ -495,6 +495,6 @@ func TestConfig_faceDetectorReport(t *testing.T) {
 		// Still to be derived, so the report names both what is configured and what it settles
 		// on - the second is the only one that says whether anything will be detected.
 		c.options.FaceDetector = ""
-		assert.Equal(t, fmt.Sprintf("%s (%s)", face.DetectorDetect, c.FaceDetector()), c.faceDetectorReport())
+		assert.Equal(t, fmt.Sprintf("%s (%s)", face.DetectorAuto, c.FaceDetector()), c.faceDetectorReport())
 	})
 }

@@ -21,7 +21,7 @@ Detection runs on ONNX Runtime. The detectors this build can run are registered 
 | `yunet`  | `face_detection_yunet_2026may.onnx` | MIT      | `make dep-models`                |
 | `scrfd`  | `det_500m.onnx`                     | non-free | `scripts/dist/download-scrfd.sh` |
 
-`FACE_DETECTOR` selects which one runs. Left unset it reads `detect`, and the detector is **derived from the configured embedding model** — `EmbeddingModel.Detector` states the pairing, so adding a model states its detector. With no model configured, derivation falls back to the first installed detector whose weights may be redistributed, so **YuNet is what a build runs**. A detector that was named but cannot run disables detection rather than falling forward to another: a different detector places different landmarks and therefore produces a different crop.
+`FACE_DETECTOR` selects which one runs. Left unset it reads `auto` - derived again on every start, where `FACE_MODEL`'s `detect` resolves once and is written back - and the detector is **derived from the configured embedding model** — `EmbeddingModel.Detector` states the pairing, so adding a model states its detector. With no model configured, derivation falls back to the first installed detector whose weights may be redistributed, so **YuNet is what a build runs**. A detector that was named but cannot run disables detection rather than falling forward to another: a different detector places different landmarks and therefore produces a different crop.
 
 **SCRFD is never bundled, mirrored, or redistributed.** Its weights are separately licensed, so `download-scrfd.sh` refuses without `INSIGHTFACE_ACCEPT_LICENSE=1`, prints the required notice, and fetches the publisher's own `det_500m.onnx` from an official InsightFace release at a pinned checksum. The registry names that artifact; `Detector.Legacy` lists the names an earlier install wrote, and `Detector.InstalledPath` falls back to them so a copy an operator already holds keeps working.
 
@@ -229,7 +229,7 @@ faces: retained manual clusters after merge: kept 4 candidate cluster(s) [...] f
 
 This is informational—the optimizer skips that merge and progresses. To reduce noise, consider:
 
-- Running `photoprism faces reset --detector=<detect|none|yunet>` to regenerate markers with consistent embeddings.
+- Running `photoprism faces reset --detector=<auto|none|yunet>` to regenerate markers with consistent embeddings.
 - Reviewing the subject’s manual clusters in the UI and trimming outliers or reassigning photos to other people.
 - Confirming that the remaining clusters genuinely represent different appearances (lighting, age); in that case it is safe to ignore the warning.
 
@@ -285,7 +285,7 @@ Recovery steps:
 
 | Setting                 | Default                                | Description                                                                                                                                                                                                         |
 |:------------------------|:---------------------------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `FACE_DETECTOR`         | *(unset)*                              | Detection model (`detect`, `none`, `yunet`). Unset derives it from the face model; the gated InsightFace name is accepted but not listed.                                                                           |
+| `FACE_DETECTOR`         | *(unset)*                              | Detection model (`auto`, `none`, `yunet`). Unset derives it from the face model; the gated InsightFace name is accepted but not listed.                                                                             |
 | `FACE_ENGINE`           | `auto`                                 | Detection runtime (`auto`, `onnx`, `none`) *deprecated*. Only `none` still has an effect, and `FACE_DETECTOR` overrides it.                                                                                         |
 | `FACE_DETECTOR_THREADS` | `runtime.NumCPU()/IndexWorkers()` (≥1) | ONNX threads per detection session. Detection takes no lock, so one session runs per indexing worker.                                                                                                               |
 | `FACE_MODEL_THREADS`    | `runtime.NumCPU()/2` (≥1)              | ONNX threads for embedding, which runs one session in total behind the model lock.                                                                                                                                  |

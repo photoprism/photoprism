@@ -427,7 +427,7 @@ func (c *Config) faceEngineReport() string {
 func (c *Config) faceDetectorReport() string {
 	setting := c.FaceDetectorSetting()
 
-	if setting != face.DetectorDetect {
+	if setting != face.DetectorAuto {
 		return setting
 	}
 

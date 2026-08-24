@@ -30,7 +30,7 @@ func (c *Config) FaceEngine() string {
 }
 
 // FaceDetectorSetting returns the detector as configured, without resolving it. It reports
-// `face.DetectorDetect` when it is to be derived, which an unsupported value asks for too.
+// `face.DetectorAuto` when it is to be derived, which an unsupported value asks for too.
 //
 // The deprecated `FACE_ENGINE` is consulted only when this option is unset, and only `none` carries
 // over: its other values name a runtime every detector shares, so they add nothing to the default.
@@ -39,7 +39,7 @@ func (c *Config) FaceDetectorSetting() face.DetectorName {
 		return face.DetectorNone
 	}
 
-	configured := face.DetectorDetect
+	configured := face.DetectorAuto
 
 	if !face.KnownDetectorName(c.options.FaceDetector) {
 		c.warnFaceConfig("face-detector", "config: unsupported face detector %s, expected %s",
@@ -52,7 +52,7 @@ func (c *Config) FaceDetectorSetting() face.DetectorName {
 		return configured
 	}
 
-	if configured == face.DetectorDetect {
+	if configured == face.DetectorAuto {
 		return face.DetectorNone
 	}
 
@@ -72,7 +72,7 @@ func (c *Config) FaceDetector() face.DetectorName {
 	switch name := c.FaceDetectorSetting(); name {
 	case face.DetectorNone:
 		return face.DetectorNone
-	case face.DetectorDetect:
+	case face.DetectorAuto:
 		return c.derivedFaceDetector()
 	default:
 		return c.usableFaceDetector(name)

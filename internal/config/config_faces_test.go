@@ -370,12 +370,12 @@ func installTestDetectorFile(t *testing.T, path string) string {
 func TestConfig_FaceDetectorSetting(t *testing.T) {
 	t.Run("Unset", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
-		assert.Equal(t, face.DetectorDetect, c.FaceDetectorSetting())
+		assert.Equal(t, face.DetectorAuto, c.FaceDetectorSetting())
 	})
-	t.Run("AutoIsDetect", func(t *testing.T) {
+	t.Run("DetectIsAnAcceptedSpelling", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
-		c.options.FaceDetector = face.DetectorAuto
-		assert.Equal(t, face.DetectorDetect, c.FaceDetectorSetting())
+		c.options.FaceDetector = face.DetectorDetect
+		assert.Equal(t, face.DetectorAuto, c.FaceDetectorSetting())
 	})
 	t.Run("Named", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
@@ -390,7 +390,7 @@ func TestConfig_FaceDetectorSetting(t *testing.T) {
 	t.Run("Unsupported", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.options.FaceDetector = "nonexistent"
-		assert.Equal(t, face.DetectorDetect, c.FaceDetectorSetting())
+		assert.Equal(t, face.DetectorAuto, c.FaceDetectorSetting())
 	})
 	t.Run("DeprecatedEngineDisables", func(t *testing.T) {
 		// "none" is the one FACE_ENGINE value that means the same in both options.
@@ -401,9 +401,9 @@ func TestConfig_FaceDetectorSetting(t *testing.T) {
 	t.Run("DeprecatedEngineHasNoOtherOpinion", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.options.FaceEngine = face.EngineONNX
-		assert.Equal(t, face.DetectorDetect, c.FaceDetectorSetting())
+		assert.Equal(t, face.DetectorAuto, c.FaceDetectorSetting())
 		c.options.FaceEngine = "pigo"
-		assert.Equal(t, face.DetectorDetect, c.FaceDetectorSetting())
+		assert.Equal(t, face.DetectorAuto, c.FaceDetectorSetting())
 	})
 	t.Run("DetectorWinsOverDeprecatedEngine", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
