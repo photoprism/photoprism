@@ -286,7 +286,7 @@ func TestFaces_auditMarkerDetectModels(t *testing.T) {
 		// A detector nobody is running now placed landmarks the active one would not
 		// reproduce. Telling the operator so is the only actionable output of the report,
 		// so the level is asserted: an Info line here would read as normal.
-		require.NotEqual(t, "retired-detector", face.ActiveEngineName())
+		require.NotEqual(t, "retired-detector", face.ActiveDetector())
 		newDetectedMarker(t, "retired-detector")
 
 		hook := captureLog(t)
@@ -297,13 +297,18 @@ func TestFaces_auditMarkerDetectModels(t *testing.T) {
 		assert.Contains(t, warnings, "not the active")
 	})
 	t.Run("ActiveDetectorIsNotAWarning", func(t *testing.T) {
-		newDetectedMarker(t, face.ActiveEngineName())
+		// The detector rather than the engine that runs it. Comparing against the engine name
+		// would report every marker a real library holds as produced by a foreign detector,
+		// because no detector is called "onnx".
+		detector := face.ActiveDetector()
+		require.NotEqual(t, face.EngineONNX, detector, "the active detector must not be the engine name")
+		newDetectedMarker(t, detector)
 
 		hook := captureLog(t)
 		w.auditMarkerDetectModels()
 
 		assert.NotContains(t, strings.Join(loggedMessages(hook, logrus.WarnLevel), "\n"), "not the active")
-		assert.Contains(t, strings.Join(loggedMessages(hook, logrus.InfoLevel), "\n"), face.ActiveEngineName())
+		assert.Contains(t, strings.Join(loggedMessages(hook, logrus.InfoLevel), "\n"), detector)
 	})
 	t.Run("UnrecordedDetector", func(t *testing.T) {
 		// A marker written before the column existed records nothing, which is the state an

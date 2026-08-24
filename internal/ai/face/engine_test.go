@@ -298,3 +298,30 @@ func TestConfigureEngineReuse(t *testing.T) {
 		assert.NotNil(t, ActiveEngine())
 	})
 }
+
+func TestActiveDetector(t *testing.T) {
+	t.Run("NoEngine", func(t *testing.T) {
+		prev := UseEngine(nil)
+		t.Cleanup(func() {
+			if current := UseEngine(prev); current != nil {
+				_ = current.Close()
+			}
+		})
+
+		assert.Equal(t, DetectorNone, ActiveDetector())
+	})
+	t.Run("NamedDetector", func(t *testing.T) {
+		prev := UseEngine(&stubEngine{name: EngineONNX, detector: DetectorYuNet})
+		t.Cleanup(func() { UseEngine(prev) })
+
+		assert.Equal(t, DetectorYuNet, ActiveDetector())
+	})
+	t.Run("FallsBackToTheEngineName", func(t *testing.T) {
+		// An engine that cannot name its detector still rules out the legacy landmark
+		// vocabulary, which is the coarser level provenance records.
+		prev := UseEngine(&stubEngine{name: EngineONNX})
+		t.Cleanup(func() { UseEngine(prev) })
+
+		assert.Equal(t, EngineONNX, ActiveDetector())
+	})
+}

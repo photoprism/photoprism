@@ -148,6 +148,25 @@ func ActiveEngineName() EngineName {
 	return EngineNone
 }
 
+// ActiveDetector returns the name of the detector the active engine runs, or DetectorNone when
+// there is none.
+//
+// An engine that cannot name its detector falls back to the engine name, which is the rule Detect
+// records provenance under, so what this returns is comparable with a stored value.
+func ActiveDetector() DetectorName {
+	engine := ActiveEngine()
+
+	if engine == nil {
+		return DetectorNone
+	}
+
+	if detector := engine.Detector(); detector != "" {
+		return detector
+	}
+
+	return engine.Name()
+}
+
 // DetectWithRetry runs the detector and, when it finds nothing, tries once more at a smaller
 // minimum size.
 //

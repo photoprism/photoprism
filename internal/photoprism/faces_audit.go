@@ -699,13 +699,15 @@ func (w *Faces) auditMarkerDetectModels() {
 		return
 	}
 
-	current := face.ActiveEngineName()
+	// The detector, not the engine that runs it: every detector runs on ONNX, so comparing a
+	// stored detector name against the engine name would report every marker as foreign.
+	current := face.ActiveDetector()
 
 	for _, c := range counts {
 		switch {
 		case c.DetectModel == "":
 			log.Infof("faces: %s without a recorded detector", english.Plural(c.Markers, "marker", "markers"))
-		case c.DetectModel == current || current == face.EngineNone:
+		case c.DetectModel == current || current == face.DetectorNone:
 			log.Infof("faces: %s from detector %s", english.Plural(c.Markers, "marker", "markers"), clean.Log(c.DetectModel))
 		default:
 			log.Warnf("faces: %s from detector %s, which is not the active %s",
