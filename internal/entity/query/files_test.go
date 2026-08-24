@@ -262,8 +262,8 @@ func TestSetFileError(t *testing.T) {
 
 	SetFileError("fs6sg6bwhhbnlqdn", "errorFromTest")
 
-	//TODO How to assert
-	//assert.Equal(t, true, entity.FileFixturesExampleXMP.FilePrimary)
+	// TODO How to assert
+	// assert.Equal(t, true, entity.FileFixturesExampleXMP.FilePrimary)
 }
 
 func TestRenameFile(t *testing.T) {
@@ -282,8 +282,8 @@ func TestRenameFile(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		//TODO how to assert?
-		//assert.Equal(t, "", entity.FileFixturesExampleXMP.FileName)
+		// TODO how to assert?
+		// assert.Equal(t, "", entity.FileFixturesExampleXMP.FileName)
 	})
 
 }

@@ -220,11 +220,7 @@ func UpdateAlbumCovers(albums ...entity.Album) (err error) {
 			return err
 		}
 
-		if err = UpdateAlbumMonthCovers(); err != nil {
-			return err
-		}
-
-		return nil
+		return UpdateAlbumMonthCovers()
 	}
 
 	var manualAlbums, folderAlbums, monthAlbums []entity.Album

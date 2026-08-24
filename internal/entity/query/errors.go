@@ -12,11 +12,12 @@ func Errors(limit, offset int, search string) (results entity.Errors, err error)
 
 	search = strings.TrimSpace(search)
 
-	if search == "error" || search == "errors" {
+	switch {
+	case search == "error" || search == "errors":
 		stmt = stmt.Where("error_level = 'error'")
-	} else if search == "warning" || search == "warnings" {
+	case search == "warning" || search == "warnings":
 		stmt = stmt.Where("error_level = 'warning'")
-	} else if len(search) >= 3 {
+	case len(search) >= 3:
 		stmt = stmt.Where("error_message LIKE ?", "%"+search+"%")
 	}
 
