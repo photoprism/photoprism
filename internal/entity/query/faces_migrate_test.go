@@ -274,7 +274,84 @@ func TestFaceMigrationSubjectMarkers(t *testing.T) {
 		require.NoError(t, countErr)
 		assert.GreaterOrEqual(t, count, 2, "the tiny and faint markers are counted")
 
+		// It reports the complement of what seeds a cluster, so the two have to agree on the
+		// bars: a count with its own copy of them describes a set the rebuild does not use.
+		var assigned int
+		require.NoError(t, whereEmbeddingModel(Db().Model(&entity.Marker{}).
+			Where("marker_type = ? AND marker_invalid = 0", entity.MarkerFace).
+			Where("subj_uid <> ''").
+			Where("LENGTH(embeddings_json) > 0"), face.ModelFaceNet).Count(&assigned).Error)
+
+		var seeds int
+		require.NoError(t, whereFaceMigrationSamples(Db().Model(&entity.Marker{}), face.ModelFaceNet).Count(&seeds).Error)
+
+		assert.Equal(t, assigned-seeds, count)
+
 		_, countErr = FaceMigrationLowQualityMarkers("")
+		require.Error(t, countErr)
+	})
+}
+
+func TestFaceMigrationRecropMarkers(t *testing.T) {
+	// Absolute counts depend on what else the library holds, and every fixture marker records
+	// no detector, so the assertions are on what these rows add.
+	beforeYuNet, err := FaceMigrationRecropMarkers(face.ModelFaceNet, face.DetectorYuNet)
+	require.NoError(t, err)
+	beforeSCRFD, err := FaceMigrationRecropMarkers(face.ModelFaceNet, face.DetectorSCRFD)
+	require.NoError(t, err)
+
+	newMarker := func(embedModel, detectModel string, vector []byte) *entity.Marker {
+		m := &entity.Marker{
+			MarkerUID:      rnd.GenerateUID('m'),
+			FileUID:        "fs6sg6bw45bnlqdw",
+			MarkerType:     entity.MarkerFace,
+			MarkerSrc:      entity.SrcImage,
+			EmbedModel:     embedModel,
+			DetectModel:    detectModel,
+			EmbeddingsJSON: vector,
+			W:              0.1,
+			H:              0.1,
+		}
+		require.NoError(t, entity.Db().Create(m).Error)
+		t.Cleanup(func() { entity.UnscopedDb().Delete(m) })
+
+		return m
+	}
+
+	vector := face.Embeddings{face.RandomEmbedding()}.JSON()
+
+	newMarker(face.ModelFaceNet, face.DetectorSCRFD, vector)
+	newMarker(face.ModelFaceNet, "", vector)
+	newMarker(face.ModelFaceNet, face.DetectorYuNet, vector)
+	newMarker(face.ModelFaceNet, face.DetectorYuNet, vector)
+	newMarker(face.ModelSFace, face.DetectorSCRFD, vector)
+	newMarker(face.ModelFaceNet, face.DetectorSCRFD, nil)
+
+	t.Run("CountsTheOtherDetector", func(t *testing.T) {
+		// Only a marker holding a target-model vector that another detector cropped: the
+		// current detector's is not stale, another model's is stale for a different reason,
+		// and one without a vector has nothing to keep.
+		count, countErr := FaceMigrationRecropMarkers(face.ModelFaceNet, face.DetectorYuNet)
+		require.NoError(t, countErr)
+		assert.Equal(t, beforeYuNet+2, count)
+	})
+	t.Run("OtherDetectorInForce", func(t *testing.T) {
+		// The same rows, counted against the other detector: which crop is stale follows the
+		// detector in force rather than naming one of them.
+		count, countErr := FaceMigrationRecropMarkers(face.ModelFaceNet, face.DetectorSCRFD)
+		require.NoError(t, countErr)
+		assert.Equal(t, beforeSCRFD+3, count)
+	})
+	t.Run("NoDetector", func(t *testing.T) {
+		// Detection is off, so there is no detector to disagree with and nothing to re-crop.
+		for _, detector := range []string{"", face.DetectorNone} {
+			count, countErr := FaceMigrationRecropMarkers(face.ModelFaceNet, detector)
+			require.NoError(t, countErr)
+			assert.Zero(t, count, detector)
+		}
+	})
+	t.Run("ModelRequired", func(t *testing.T) {
+		_, countErr := FaceMigrationRecropMarkers("", face.DetectorYuNet)
 		require.Error(t, countErr)
 	})
 }

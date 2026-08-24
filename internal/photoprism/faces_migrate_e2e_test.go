@@ -50,6 +50,15 @@ func (e *oneHotEmbedder) Run(image.Image) face.Embeddings {
 // Close releases the test embedder.
 func (e *oneHotEmbedder) Close() error { return nil }
 
+// alignedEmbedder stands in for a model that consumes landmarks, which is what makes the
+// detector that placed them part of what a marker's vector depends on.
+type alignedEmbedder struct {
+	oneHotEmbedder
+}
+
+// Aligned reports that this embedder needs an aligned crop.
+func (e *alignedEmbedder) Aligned() bool { return true }
+
 // sameFaceEmbedder returns one person's faces as a loose group: about 0.73 apart from each
 // other, so a single-sample cluster cannot reach them, and about 0.46 from their common
 // centroid, so a cluster holding all of them can. That gap is what the sample set buys, and
@@ -439,6 +448,46 @@ func TestFaces_migrate(t *testing.T) {
 		stored := entity.Marker{}
 		require.NoError(t, entity.UnscopedDb().First(&stored, "marker_uid = ?", m.MarkerUID).Error)
 		assert.NotEmpty(t, stored.EmbeddingsJSON)
+	})
+	t.Run("DetectorChangeKeepsUnfoundVectors", func(t *testing.T) {
+		c := newMigrateTestConfig(t, "migratedetector")
+		w := NewFaces(c)
+
+		detector := face.ActiveDetector()
+		require.NotEmpty(t, detector)
+		require.NotEqual(t, face.DetectorNone, detector, "the detector decides which crops are stale")
+
+		f := addMigrateTestFile(t, c, "6666666666666666666666666666666666666666", true)
+		recrop := addMigrateTestMarker(t, f.FileUID, entity.SrcManual, "Jane Doe")
+		stale := addMigrateTestMarker(t, f.FileUID, entity.SrcManual, "John Doe")
+
+		// The first marker already holds a target-model vector and only needs a new crop; the
+		// second holds one no run can compare. Detection finds neither in a blank thumbnail,
+		// which is what tells them apart: only the second has nothing left to keep.
+		require.NoError(t, entity.UnscopedDb().Model(&entity.Marker{}).
+			Where("marker_uid = ?", recrop.MarkerUID).
+			UpdateColumns(entity.Values{"embed_model": face.ModelFaceNet, "detect_model": "some-other-detector"}).Error)
+
+		plan := FacesMigratePlan{Target: face.ModelFaceNet}
+		opt := FacesMigrateOptions{Target: face.ModelFaceNet, Force: true}
+		result, err := w.migrate(context.Background(), plan, &alignedEmbedder{oneHotEmbedder{dims: 4}}, opt, FacesMigrateResult{Target: face.ModelFaceNet})
+
+		// The stale marker could not be re-embedded, so the run is incomplete: a retained
+		// marker must not mask that, since only one of the two kept anything.
+		var incomplete *FacesMigrateIncompleteError
+		require.ErrorAs(t, err, &incomplete)
+		assert.Equal(t, 1, incomplete.Failed)
+		assert.Zero(t, result.Skipped, "a crop another detector placed is not up to date")
+		assert.Equal(t, 1, result.Retained)
+		assert.Equal(t, 1, result.Failed)
+
+		kept := entity.Marker{}
+		require.NoError(t, entity.UnscopedDb().First(&kept, "marker_uid = ?", recrop.MarkerUID).Error)
+		assert.NotEmpty(t, kept.EmbeddingsJSON, "a marker detection cannot find again keeps its usable vector")
+
+		lost := entity.Marker{}
+		require.NoError(t, entity.UnscopedDb().First(&lost, "marker_uid = ?", stale.MarkerUID).Error)
+		assert.Empty(t, lost.EmbeddingsJSON, "a vector of the previous model is cleared whether it could be replaced or not")
 	})
 	t.Run("Idempotent", func(t *testing.T) {
 		c := newMigrateTestConfig(t, "migrateidempotent")

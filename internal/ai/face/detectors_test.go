@@ -55,6 +55,30 @@ func TestKnownDetectorName(t *testing.T) {
 	assert.False(t, KnownDetectorName("pigo"))
 }
 
+func TestDetectorsComparable(t *testing.T) {
+	t.Run("SameDetector", func(t *testing.T) {
+		assert.True(t, DetectorsComparable(DetectorYuNet, DetectorYuNet))
+		assert.True(t, DetectorsComparable("YuNet", DetectorYuNet))
+	})
+	t.Run("OtherDetector", func(t *testing.T) {
+		assert.False(t, DetectorsComparable(DetectorSCRFD, DetectorYuNet))
+		assert.False(t, DetectorsComparable(DetectorYuNet, DetectorSCRFD))
+	})
+	t.Run("NoRecordedDetector", func(t *testing.T) {
+		// A blank names no detector and "onnx" names only the runtime, so neither can be shown
+		// to agree with the crop the current detector would place.
+		assert.False(t, DetectorsComparable("", DetectorYuNet))
+		assert.False(t, DetectorsComparable(string(EngineONNX), DetectorYuNet))
+	})
+	t.Run("NoCurrentDetector", func(t *testing.T) {
+		// Nothing is running to disagree with, so this must not report every stored crop as
+		// belonging to another detector.
+		assert.True(t, DetectorsComparable(DetectorSCRFD, ""))
+		assert.True(t, DetectorsComparable(DetectorSCRFD, DetectorNone))
+		assert.True(t, DetectorsComparable("", ""))
+	})
+}
+
 func TestDetectorUsageString(t *testing.T) {
 	usage := DetectorUsageString()
 

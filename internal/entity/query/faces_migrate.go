@@ -258,16 +258,53 @@ func FaceMigrationSubjectMarkers(model, subjUID string) (result entity.Markers, 
 
 // FaceMigrationLowQualityMarkers returns how many markers the quality bar keeps out of the
 // replacement centroids, so a run that seeds from very little can say why.
+//
+// It counts the complement of whereFaceMigrationSamples over the same rows, so the bars are
+// read from one place: a count computed from its own copy of them reports on a set the rebuild
+// does not use.
 func FaceMigrationLowQualityMarkers(model string) (count int, err error) {
 	if model == "" {
 		return 0, fmt.Errorf("faces: migration model is required")
 	}
 
+	assigned := func() *gorm.DB {
+		return whereEmbeddingModel(Db().Model(&entity.Marker{}).
+			Where("marker_type = ? AND marker_invalid = 0", entity.MarkerFace).
+			Where("subj_uid <> ''").
+			Where("LENGTH(embeddings_json) > 0"), model)
+	}
+
+	var total, samples int
+
+	if err = assigned().Count(&total).Error; err != nil {
+		return 0, err
+	} else if err = whereFaceMigrationSamples(Db().Model(&entity.Marker{}), model).Count(&samples).Error; err != nil {
+		return 0, err
+	}
+
+	return max(total-samples, 0), nil
+}
+
+// FaceMigrationRecropMarkers returns how many markers hold a usable target-model vector that a
+// different detector's crop produced, so a plan can report the work a detector change creates.
+//
+// These markers are not stale in the embedding sense, which is why they are counted apart: a
+// re-embedding that cannot find them again keeps the vector they already hold.
+func FaceMigrationRecropMarkers(model, detector string) (count int, err error) {
+	if model == "" {
+		return 0, fmt.Errorf("faces: migration model is required")
+	}
+
+	detector = face.NormalizeDetectorName(detector)
+
+	if detector == "" || detector == face.DetectorNone {
+		return 0, nil
+	}
+
 	err = whereEmbeddingModel(Db().Model(&entity.Marker{}).
 		Where("marker_type = ? AND marker_invalid = 0", entity.MarkerFace).
-		Where("subj_uid <> ''").
 		Where("LENGTH(embeddings_json) > 0").
-		Where("size < ? OR score < ?", face.ClusterSizeThreshold, face.ClusterScoreThresholdDefault), model).
+		Where("detect_model <> ?", detector), model).
 		Count(&count).Error
 
 	return count, err

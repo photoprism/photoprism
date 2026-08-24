@@ -147,6 +147,14 @@ func facesMigrateAction(ctx *cli.Context) error {
 			"faces: %d markers already use %s, %d have no file, and %d were identified manually",
 			plan.Markers.Ready, clean.Log(plan.Target), plan.Markers.Unlinked, plan.Markers.Manual,
 		)
+		// The crop is an axis of the embedding space, so a detector change leaves a library in
+		// two of them. This is the only run that repairs that, and it is why a re-run to the
+		// same model can still have work to do. Every marker indexed before the detector was
+		// recorded counts here, which on a first run is all of them.
+		if plan.RecropMarkers > 0 {
+			log.Infof("faces: %d of those were cropped by another or an unrecorded detector and are re-embedded, keeping their vector if detection cannot find them again",
+				plan.RecropMarkers)
+		}
 		// Re-embedding reads the file, so a marker whose file the index has already recorded
 		// as unreadable is going to fail. Naming them before the prompt is what separates an
 		// expected loss from a surprise, since a failed marker keeps no vector at all.
@@ -218,6 +226,11 @@ func facesMigrateAction(ctx *cli.Context) error {
 			result.PreservedSubjects, result.PreservedMarkers, result.HiddenClusters,
 			result.RebuiltSubjects, result.AttentionSubjects,
 		)
+		// Reported apart from both, because a retained marker is neither work done nor a loss:
+		// detection did not find it again, most often because a person drew it by hand.
+		if result.Retained > 0 {
+			log.Infof("faces: %d markers kept the vector another detector's crop produced", result.Retained)
+		}
 		// Excluded assignments keep their person but seed no cluster, so the count is what
 		// tells an operator how much of a curated library did not shape its own centroids.
 		if result.ExcludedMarkers > 0 || result.LowQualityMarkers > 0 {

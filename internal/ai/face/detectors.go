@@ -162,6 +162,24 @@ func KnownDetectorName(s string) bool {
 	}
 }
 
+// DetectorsComparable reports whether a crop recorded under stored may be treated as one the
+// current detector would place, so that a marker holding it needs no new detection.
+//
+// Only an exact match qualifies: a blank or engine-level value names no detector, and two
+// detectors place different landmarks and therefore a different crop from the same face.
+// A current name that is empty or disables detection compares equal to everything, because
+// there is then no detector to disagree with.
+func DetectorsComparable(stored, current DetectorName) bool {
+	stored = NormalizeDetectorName(stored)
+	current = NormalizeDetectorName(current)
+
+	if current == "" || current == DetectorNone {
+		return true
+	}
+
+	return stored == current
+}
+
 // DetectorUsageString lists the accepted FACE_DETECTOR values for use in CLI help text.
 //
 // It leaves out detectors whose weights may only be used after their publisher's terms have

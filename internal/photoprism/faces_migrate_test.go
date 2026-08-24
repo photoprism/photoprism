@@ -264,14 +264,15 @@ func TestFaces_migrateFaceFile(t *testing.T) {
 	embedder := &migrationTestEmbedder{name: face.ModelFaceNet, dims: 512}
 	w := NewFaces(config.TestConfig())
 
-	migrated, skipped, failed, detected, err := w.migrateFaceFile(embedder, face.ModelFaceNet, "missing-file")
+	empty, err := w.migrateFaceFile(embedder, face.ModelFaceNet, "missing-file")
 	require.NoError(t, err)
-	assert.Zero(t, migrated)
-	assert.Zero(t, skipped)
-	assert.Empty(t, failed)
-	assert.False(t, detected)
+	assert.Zero(t, empty.Migrated)
+	assert.Zero(t, empty.Skipped)
+	assert.Zero(t, empty.Retained)
+	assert.Empty(t, empty.Failed)
+	assert.False(t, empty.Detected)
 
-	_, _, _, _, err = w.migrateFaceFile(embedder, face.ModelFaceNet, "")
+	_, err = w.migrateFaceFile(embedder, face.ModelFaceNet, "")
 	require.Error(t, err)
 
 	marker := &entity.Marker{
@@ -287,10 +288,11 @@ func TestFaces_migrateFaceFile(t *testing.T) {
 	// A file the library removed is absent from the scoped lookup, and the plan already
 	// counted its markers as unreadable, so the error has to name that rather than report a
 	// bare "record not found" an operator would read as a database fault.
-	_, _, failed, _, err = w.migrateFaceFile(embedder, face.ModelFaceNet, marker.FileUID)
+	deleted, err := w.migrateFaceFile(embedder, face.ModelFaceNet, marker.FileUID)
 	require.Error(t, err)
 	assert.Equal(t, "file was deleted", err.Error())
-	assert.Equal(t, []string{marker.MarkerUID}, failed)
+	assert.Equal(t, []string{marker.MarkerUID}, deleted.Failed)
+	assert.Zero(t, deleted.Retained)
 
 	t.Run("CropPathKeepsTheRecordedDetector", func(t *testing.T) {
 		// Re-cropping reads the stored geometry, so the detector that produced it is still
@@ -333,12 +335,13 @@ func TestFaces_migrateFaceFile(t *testing.T) {
 		require.NoError(t, thumb.Save(image.NewNRGBA(image.Rect(0, 0, 64, 64)), thumbName))
 
 		cropEmbedder := &migrationTestEmbedder{name: face.ModelFaceNet, dims: 4}
-		migrated, _, cropFailed, cropDetected, cropErr := cropWorker.migrateFaceFile(cropEmbedder, face.ModelFaceNet, file.FileUID)
+		cropped, cropErr := cropWorker.migrateFaceFile(cropEmbedder, face.ModelFaceNet, file.FileUID)
 
 		require.NoError(t, cropErr)
-		assert.False(t, cropDetected)
-		assert.Empty(t, cropFailed)
-		require.Equal(t, 1, migrated)
+		assert.False(t, cropped.Detected)
+		assert.Empty(t, cropped.Failed)
+		assert.Zero(t, cropped.Retained)
+		require.Equal(t, 1, cropped.Migrated)
 
 		saved, savedErr := query.MarkerByUID(stale.MarkerUID)
 		require.NoError(t, savedErr)
@@ -350,10 +353,82 @@ func TestFaces_migrateFaceFile(t *testing.T) {
 	})
 }
 
-func TestFaceMigrationMarkerUIDs(t *testing.T) {
-	markers := entity.Markers{{MarkerUID: "m1"}, {MarkerUID: "m2"}}
-	assert.Equal(t, []string{"m1", "m2"}, faceMigrationMarkerUIDs(markers))
-	assert.Empty(t, faceMigrationMarkerUIDs(nil))
+func TestUnresolvedMigrationMarkers(t *testing.T) {
+	markers := entity.Markers{{MarkerUID: "m1"}, {MarkerUID: "m2"}, {MarkerUID: "m3"}}
+	t.Run("NothingToRecrop", func(t *testing.T) {
+		failed, retained := unresolvedMigrationMarkers(markers, nil)
+		assert.Equal(t, []string{"m1", "m2", "m3"}, failed)
+		assert.Zero(t, retained)
+	})
+	t.Run("RecropIsRetained", func(t *testing.T) {
+		// A marker that only needed a new crop keeps the vector it holds, so it must not reach
+		// the failed list: that list is what the finalize blanks.
+		failed, retained := unresolvedMigrationMarkers(markers, map[string]bool{"m2": true})
+		assert.Equal(t, []string{"m1", "m3"}, failed)
+		assert.Equal(t, 1, retained)
+	})
+	t.Run("EveryMarkerIsRetained", func(t *testing.T) {
+		failed, retained := unresolvedMigrationMarkers(markers, map[string]bool{"m1": true, "m2": true, "m3": true})
+		assert.Empty(t, failed)
+		assert.Equal(t, 3, retained)
+	})
+	t.Run("NoMarkers", func(t *testing.T) {
+		failed, retained := unresolvedMigrationMarkers(nil, map[string]bool{"m1": true})
+		assert.Empty(t, failed)
+		assert.Zero(t, retained)
+	})
+}
+
+func TestStaleMigrationMarkers(t *testing.T) {
+	vector := face.Embeddings{face.Embedding{1, 0, 0, 0}}.JSON()
+	detector := face.ActiveDetector()
+	require.NotEmpty(t, detector)
+	require.NotEqual(t, face.DetectorNone, detector)
+
+	current := entity.Marker{MarkerUID: "mcurrent", EmbedModel: face.ModelFaceNet, DetectModel: detector, EmbeddingsJSON: vector}
+	other := entity.Marker{MarkerUID: "mother", EmbedModel: face.ModelFaceNet, DetectModel: "some-other-detector", EmbeddingsJSON: vector}
+	blank := entity.Marker{MarkerUID: "mblank", EmbedModel: face.ModelFaceNet, EmbeddingsJSON: vector}
+	wrongModel := entity.Marker{MarkerUID: "mmodel", EmbedModel: face.ModelSFace, DetectModel: detector, EmbeddingsJSON: vector}
+
+	markers := entity.Markers{current, other, blank, wrongModel}
+
+	t.Run("Aligned", func(t *testing.T) {
+		// An aligned embedder consumes the landmarks, so a crop another detector placed is
+		// stale even though its vector is the target's, and is recorded as re-croppable.
+		stale, recrop := staleMigrationMarkers(markers, &migrationTestEmbedder{name: face.ModelFaceNet, dims: 4, aligned: true}, face.ModelFaceNet)
+		assert.Equal(t, []string{"mother", "mblank", "mmodel"}, markerUIDsOf(stale))
+		assert.Equal(t, map[string]bool{"mother": true, "mblank": true}, recrop)
+	})
+	t.Run("NotAligned", func(t *testing.T) {
+		// A crop-based embedder reads the stored geometry, so the detector that placed it
+		// changes nothing and only the incomparable vector is stale.
+		stale, recrop := staleMigrationMarkers(markers, &migrationTestEmbedder{name: face.ModelFaceNet, dims: 4}, face.ModelFaceNet)
+		assert.Equal(t, []string{"mmodel"}, markerUIDsOf(stale))
+		assert.Empty(t, recrop)
+	})
+	t.Run("UnreadableVector", func(t *testing.T) {
+		// A vector of the wrong width cannot be compared at all, so it is stale outright and
+		// must never be retained: there is nothing usable to keep.
+		stale, recrop := staleMigrationMarkers(entity.Markers{current}, &migrationTestEmbedder{name: face.ModelFaceNet, dims: 512, aligned: true}, face.ModelFaceNet)
+		assert.Equal(t, []string{"mcurrent"}, markerUIDsOf(stale))
+		assert.Empty(t, recrop)
+	})
+	t.Run("NoMarkers", func(t *testing.T) {
+		stale, recrop := staleMigrationMarkers(nil, &migrationTestEmbedder{name: face.ModelFaceNet, dims: 4, aligned: true}, face.ModelFaceNet)
+		assert.Empty(t, stale)
+		assert.Empty(t, recrop)
+	})
+}
+
+// markerUIDsOf returns the marker UIDs in their current order, so a test can assert on the
+// selection a helper made rather than on the marker rows it copied.
+func markerUIDsOf(markers entity.Markers) []string {
+	result := make([]string, 0, len(markers))
+	for _, marker := range markers {
+		result = append(result, marker.MarkerUID)
+	}
+
+	return result
 }
 
 func TestFaces_cropMigrationEmbeddings(t *testing.T) {

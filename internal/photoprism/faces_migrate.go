@@ -55,6 +55,12 @@ type FacesMigratePlan struct {
 	// replacement centroid. They keep their person; they just cannot define one.
 	LowQualitySamples int
 
+	// RecropMarkers counts markers already on the target model whose crop another detector
+	// placed, or that record none. They are re-embedded so the library ends up in one crop
+	// space, and are reported apart from stale markers because they lose nothing if that fails.
+	// On the first run after the provenance column was added, this is every marker.
+	RecropMarkers int
+
 	// OriginalsUnavailable reports that the originals root cannot be read, which is what an
 	// unmounted volume looks like. The counting queries cannot see it, so a plan would
 	// otherwise be reported as clean and then fail on every file it tried to re-embed.
@@ -66,6 +72,7 @@ type FacesMigrateResult struct {
 	Target            string
 	Migrated          int
 	Skipped           int
+	Retained          int
 	Failed            int
 	Unlinked          int
 	Invalid           int
@@ -239,6 +246,14 @@ func (w *Faces) PlanMigration(target string) (result FacesMigratePlan, err error
 		return result, err
 	}
 
+	// Only an aligned model consumes landmarks, so only there does the detector that placed them
+	// decide the crop and with it the vector. A crop-based model reads stored geometry instead.
+	if model := face.FindEmbeddingModel(target); model != nil && model.Aligned() {
+		if result.RecropMarkers, err = query.FaceMigrationRecropMarkers(target, face.ActiveDetector()); err != nil {
+			return result, err
+		}
+	}
+
 	result.OriginalsUnavailable = originalsUnavailable(w.conf.OriginalsPath())
 
 	return result, nil
@@ -377,16 +392,17 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 				return result, err
 			}
 
-			migrated, skipped, failed, detected, migrateErr := w.migrateFaceFile(embedder, plan.Target, fileUID)
-			result.Migrated += migrated
-			result.Skipped += skipped
-			result.Failed += len(failed)
-			failedMarkerUIDs = append(failedMarkerUIDs, failed...)
-			if detected {
+			fileResult, migrateErr := w.migrateFaceFile(embedder, plan.Target, fileUID)
+			result.Migrated += fileResult.Migrated
+			result.Skipped += fileResult.Skipped
+			result.Retained += fileResult.Retained
+			result.Failed += len(fileResult.Failed)
+			failedMarkerUIDs = append(failedMarkerUIDs, fileResult.Failed...)
+			if fileResult.Detected {
 				result.DetectedFiles++
 			}
 			if migrateErr != nil {
-				if len(failed) == 0 {
+				if len(fileResult.Failed) == 0 && fileResult.Retained == 0 {
 					return result, migrateErr
 				}
 
@@ -394,7 +410,7 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 				// plan reported them as unreadable before the prompt, so this is the predicted
 				// outcome rather than a fault: the run continues and the exit status carries it.
 				log.Warnf("faces: %s, so %s could not be re-embedded",
-					migrateErr, english.Plural(len(failed), "marker", "markers"))
+					migrateErr, english.Plural(len(fileResult.Failed)+fileResult.Retained, "marker", "markers"))
 			}
 		}
 
@@ -527,25 +543,30 @@ func (w *Faces) restoreEmbedder() {
 	}
 }
 
+// faceMigrationFile reports what one file's markers contributed to a migration.
+//
+// Retained markers keep the vector they already hold, so they are neither migrated nor failed:
+// counting them as either would make a detector change look like data loss or like work done.
+type faceMigrationFile struct {
+	Migrated int
+	Skipped  int
+	Retained int
+	Failed   []string
+	Detected bool
+}
+
 // migrateFaceFile checkpoints all stale marker embeddings associated with a file.
-func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) (migrated, skipped int, failed []string, detected bool, err error) {
+func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) (result faceMigrationFile, err error) {
 	markers, err := query.FaceMigrationMarkers(fileUID)
 	if err != nil {
-		return 0, 0, nil, false, err
+		return result, err
 	}
 
-	stale := make(entity.Markers, 0, len(markers))
-	for i := range markers {
-		// Rows written before the provenance column hold FaceNet vectors, so migrating a
-		// legacy library to FaceNet has nothing to regenerate and must be a no-op.
-		if face.ValidEmbeddings(markers[i].Embeddings(), embedder.Dims()) && face.ModelsComparable(markers[i].EmbedModel, target) {
-			skipped++
-		} else {
-			stale = append(stale, markers[i])
-		}
-	}
+	stale, recrop := staleMigrationMarkers(markers, embedder, target)
+	result.Skipped = len(markers) - len(stale)
+
 	if len(stale) == 0 {
-		return 0, skipped, nil, false, nil
+		return result, nil
 	}
 
 	file, err := query.FileByUID(fileUID)
@@ -556,7 +577,9 @@ func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) 
 			err = fmt.Errorf("file was deleted")
 		}
 
-		return 0, skipped, faceMigrationMarkerUIDs(stale), false, err
+		result.Failed, result.Retained = unresolvedMigrationMarkers(stale, recrop)
+
+		return result, err
 	}
 
 	var generated map[string]face.Embeddings
@@ -568,42 +591,88 @@ func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) 
 	detectModel := ""
 
 	if embedder.Aligned() {
-		detected = true
+		result.Detected = true
 		generated, landmarks, detectModel, err = w.detectMigrationEmbeddings(embedder, file, markers, stale)
 	} else {
 		generated, err = w.cropMigrationEmbeddings(embedder, file, stale)
 	}
 	if err != nil {
-		return 0, skipped, faceMigrationMarkerUIDs(stale), detected, err
+		result.Failed, result.Retained = unresolvedMigrationMarkers(stale, recrop)
+
+		return result, err
 	}
+
+	unresolved := make(entity.Markers, 0, len(stale))
 
 	for _, marker := range stale {
 		if values, ok := generated[marker.MarkerUID]; ok && face.ValidEmbeddings(values, embedder.Dims()) {
-			migrated++
-		} else {
-			failed = append(failed, marker.MarkerUID)
-			delete(generated, marker.MarkerUID)
-			delete(landmarks, marker.MarkerUID)
+			result.Migrated++
+			continue
 		}
+
+		unresolved = append(unresolved, marker)
+		delete(generated, marker.MarkerUID)
+		delete(landmarks, marker.MarkerUID)
 	}
+
+	result.Failed, result.Retained = unresolvedMigrationMarkers(unresolved, recrop)
 
 	if len(generated) > 0 {
 		if err = query.SaveFaceMigrationEmbeddings(target, detectModel, generated, landmarks); err != nil {
-			return 0, skipped, nil, detected, err
+			return faceMigrationFile{Skipped: result.Skipped, Detected: result.Detected}, err
 		}
 	}
 
-	return migrated, skipped, failed, detected, err
+	return result, nil
 }
 
-// faceMigrationMarkerUIDs returns the marker UIDs in their current order.
-func faceMigrationMarkerUIDs(markers entity.Markers) []string {
-	result := make([]string, 0, len(markers))
-	for _, marker := range markers {
-		result = append(result, marker.MarkerUID)
+// staleMigrationMarkers returns the markers a migration to target has to re-embed, and the subset
+// of them that only needs a new crop.
+//
+// The crop is an axis of the embedding space, so an unrecorded or foreign detector makes a marker
+// stale even when its vector is the target's: leaving it puts one library in two crop spaces. A
+// first run therefore re-crops everything, which costs time and risks nothing.
+func staleMigrationMarkers(markers entity.Markers, embedder face.Embedder, target string) (stale entity.Markers, recrop map[string]bool) {
+	stale = make(entity.Markers, 0, len(markers))
+	recrop = make(map[string]bool)
+	detector := face.ActiveDetector()
+
+	for i := range markers {
+		if !face.ValidEmbeddings(markers[i].Embeddings(), embedder.Dims()) || !face.ModelsComparable(markers[i].EmbedModel, target) {
+			stale = append(stale, markers[i])
+			continue
+		}
+
+		// Only an aligned embedder consumes landmarks, so only there does the detector decide
+		// the crop. A crop-based one reads the stored geometry whichever detector wrote it.
+		if !embedder.Aligned() || face.DetectorsComparable(markers[i].DetectModel, detector) {
+			continue
+		}
+
+		recrop[markers[i].MarkerUID] = true
+		stale = append(stale, markers[i])
 	}
 
-	return result
+	return stale, recrop
+}
+
+// unresolvedMigrationMarkers splits the markers whose embeddings could not be regenerated into
+// those that must be discarded and the number that keep a usable vector.
+//
+// Detection finds no marker a person drew by hand, so re-cropping one is expected to fail. Its
+// vector is still in the target's space, and discarding it would make a detector change cost
+// exactly the assignments the migration exists to preserve.
+func unresolvedMigrationMarkers(markers entity.Markers, recrop map[string]bool) (failed []string, retained int) {
+	for _, marker := range markers {
+		if recrop[marker.MarkerUID] {
+			retained++
+			continue
+		}
+
+		failed = append(failed, marker.MarkerUID)
+	}
+
+	return failed, retained
 }
 
 // cropMigrationEmbeddings generates embeddings directly from stored marker geometry.
