@@ -16,10 +16,11 @@ import (
 func TestError(t *testing.T) {
 	t.Run("AllOk", func(t *testing.T) {
 		c := NewTestConfig("config")
-		c.Init()
+		require.NoError(t, c.Init())
 		t.Cleanup(func() {
 			c.CleanupTestFolder()
 			require.NoError(t, c.CloseDb())
+			TestConfig().RegisterDb()
 		})
 		entity.SetDbProvider(c)
 
@@ -49,10 +50,11 @@ func TestError(t *testing.T) {
 
 	t.Run("CloseDB", func(t *testing.T) {
 		c := NewTestConfig("config")
-		c.Init()
+		require.NoError(t, c.Init())
 		t.Cleanup(func() {
 			c.CleanupTestFolder()
 			require.NoError(t, c.CloseDb())
+			TestConfig().RegisterDb()
 		})
 		entity.SetDbProvider(c)
 
@@ -68,9 +70,6 @@ func TestError(t *testing.T) {
 		event.Warn(msg + "2")
 		event.Warn(msg + "3")
 
-		//backup := c.db
-
-		//c.db = nil  // This causes Fatal as expected
 		if err := c.CloseDb(); err != nil {
 			assert.Empty(t, err)
 			return
@@ -81,7 +80,7 @@ func TestError(t *testing.T) {
 
 		result := &entity.Error{}
 		// Reconnect the database
-		c.connectDb()
+		require.NoError(t, c.connectDb())
 		entity.SetDbProvider(c)
 
 		if err := entity.Db().Where("error_level = ?", "warning").First(&result).Error; err != nil {
@@ -95,10 +94,11 @@ func TestError(t *testing.T) {
 
 	t.Run("Shutdown", func(t *testing.T) {
 		c := NewTestConfig("config")
-		c.Init()
+		require.NoError(t, c.Init())
 		t.Cleanup(func() {
 			c.CleanupTestFolder()
 			require.NoError(t, c.CloseDb())
+			TestConfig().RegisterDb()
 		})
 		entity.SetDbProvider(c)
 

@@ -148,7 +148,47 @@ func TestConfig_ReportDatabaseSection(t *testing.T) {
 		values := collect(rows)
 
 		assert.Equal(t, dsn.DriverMySQL, values["database-driver"])
-		assert.Equal(t, "user:***@tcp(db.internal:3306)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s", values["database-dsn"])
+		assert.Equal(t, "user:***@tcp(db.internal:3306)/photoprism?timeout=15s&charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true", values["database-dsn"])
+		_, hasName := values["database-name"]
+		assert.False(t, hasName)
+		_, hasPassword := values["database-password"]
+		assert.False(t, hasPassword)
+	})
+	t.Run("PostgresReportsIndividualFields", func(t *testing.T) {
+		conf := NewConfig(CliTestContext())
+		resetDatabaseOptions(conf)
+
+		conf.options.DatabaseDriver = dsn.DriverPostgreSQL
+		conf.options.DatabaseServer = "db.internal:4002"
+		conf.options.DatabaseName = "photoprism"
+		conf.options.DatabaseUser = "app"
+		conf.options.DatabasePassword = "secret"
+
+		rows, _ := conf.Report()
+		values := collect(rows)
+
+		assert.Equal(t, dsn.DriverPostgreSQL, values["database-driver"])
+		assert.Equal(t, "photoprism", values["database-name"])
+		assert.Equal(t, "db.internal:4002", values["database-server"])
+		assert.Equal(t, "db.internal", values["database-host"])
+		assert.Equal(t, "4002", values["database-port"])
+		assert.Equal(t, "app", values["database-user"])
+		assert.Equal(t, strings.Repeat("*", len("secret")), values["database-password"])
+		_, hasDSN := values["database-dsn"]
+		assert.False(t, hasDSN)
+	})
+	t.Run("PostgresReportsDSNWhenConfigured", func(t *testing.T) {
+		conf := NewConfig(CliTestContext())
+		resetDatabaseOptions(conf)
+
+		conf.options.DatabaseDriver = dsn.DriverPostgreSQL
+		conf.options.DatabaseDSN = "postgres://user:pass@db.internal:4002/photoprism"
+
+		rows, _ := conf.Report()
+		values := collect(rows)
+
+		assert.Equal(t, dsn.DriverPostgreSQL, values["database-driver"])
+		assert.Equal(t, "postgres://user:***@db.internal:4002/photoprism?connect_timeout=15000&sslmode=disable&TimeZone=UTC", values["database-dsn"])
 		_, hasName := values["database-name"]
 		assert.False(t, hasName)
 		_, hasPassword := values["database-password"]

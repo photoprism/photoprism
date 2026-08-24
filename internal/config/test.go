@@ -260,6 +260,10 @@ var testDbMutex sync.Mutex
 func NewMinimalTestConfigWithDbTTest(dbName, dataPath string, t *testing.T) *Config {
 	c := NewMinimalTestConfigWithDbTMain(dbName, dataPath)
 	t.Cleanup(func() {
+		if c.DatabaseName() == TestConfig().DatabaseName() {
+			// Reset the database as it is the same as the TestConfig db, which is shared.
+			c.InitTestDb()
+		}
 		require.NoError(t, c.CloseDb())
 		// Reopen the default config just in case
 		TestConfig().RegisterDb()
