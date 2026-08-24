@@ -51,26 +51,35 @@ func (faces Faces) Uncertainty() int {
 		}
 	}
 
+	return ScoreUncertainty(maxScore)
+}
+
+// ScoreUncertainty converts a detection score into an uncertainty in percent.
+//
+// The steps are spread over the 0-100 confidence scale the ONNX detectors report, where the
+// cascade detector that preceded them scored into the hundreds. Reading one scale's thresholds
+// on the other leaves the confident end unreachable, so nothing ever reports as certain.
+func ScoreUncertainty(score int) int {
 	switch {
-	case maxScore > 300:
+	case score > 95:
 		return 1
-	case maxScore > 200:
+	case score > 90:
 		return 5
-	case maxScore > 100:
+	case score > 85:
 		return 10
-	case maxScore > 80:
+	case score > 80:
 		return 15
-	case maxScore > 65:
+	case score > 75:
 		return 20
-	case maxScore > 50:
+	case score > 70:
 		return 25
-	case maxScore > 40:
+	case score > 65:
 		return 30
-	case maxScore > 30:
+	case score > 60:
 		return 35
-	case maxScore > 20:
+	case score > 55:
 		return 40
-	case maxScore > 10:
+	case score > 50:
 		return 45
 	}
 

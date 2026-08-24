@@ -667,7 +667,7 @@ func TestMarker_GetFace(t *testing.T) {
 			EmbeddingsJSON: MarkerFixtures.Get("actress-a-1").EmbeddingsJSON,
 			SubjSrc:        SrcManual,
 			Size:           160,
-			Score:          40,
+			Score:          80,
 		}
 
 		if m.Face() == nil {

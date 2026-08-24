@@ -20,8 +20,9 @@ const (
 	EpsilonDefault = 0.01
 	// SizeThresholdDefault is the default minimum detected face size, in pixels.
 	SizeThresholdDefault = 25
-	// ScoreThresholdDefault is the default minimum face score accepted by the detector.
-	ScoreThresholdDefault = 9.0
+	// ScoreThresholdDefault is the default minimum face score accepted by the detector, on the
+	// 0-100 confidence scale the ONNX detectors report. A detector may be stricter still.
+	ScoreThresholdDefault = 65.0
 )
 
 // InterOpThreads is how many threads an ONNX session may use to run graph nodes in
@@ -54,8 +55,10 @@ var (
 	OverlapThresholdFloor = OverlapThreshold - 1
 	// ScoreThreshold is the base minimum face score accepted by the detector.
 	ScoreThreshold = ScoreThresholdDefault
-	// ClusterScoreThreshold is the minimum score required for faces that contribute to automatic clustering.
-	ClusterScoreThreshold = 20
+	// ClusterScoreThreshold is the minimum score required for faces that contribute to automatic
+	// clustering. It is a weak gate on its own, because detector confidence saturates above the
+	// detector's own cutoff; ClusterSizeThreshold is what keeps an interpolated crop out.
+	ClusterScoreThreshold = 70
 	// SizeThreshold is the minimum detected face size, in pixels. Config.Propagate assigns it from
 	// FACE_SIZE, so a reader that bounds what detection produced compares against the same value.
 	SizeThreshold = SizeThresholdDefault

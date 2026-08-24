@@ -192,7 +192,7 @@ func addMigrateTestMarker(t *testing.T, fileUID, subjSrc, name string) *entity.M
 		MarkerType:     entity.MarkerFace,
 		MarkerSrc:      entity.SrcImage,
 		Size:           100,
-		Score:          50,
+		Score:          face.ClusterScoreThreshold + 10,
 		X:              0,
 		Y:              0,
 		W:              1,

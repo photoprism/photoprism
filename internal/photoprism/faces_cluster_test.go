@@ -117,7 +117,7 @@ func TestFaces_Cluster(t *testing.T) {
 				MarkerType:     entity.MarkerFace,
 				MarkerSrc:      entity.SrcImage,
 				Size:           100,
-				Score:          50,
+				Score:          face.ClusterScoreThreshold + 10,
 				EmbeddingsJSON: values.JSON(),
 				EmbedModel:     face.ModelSFace,
 			}

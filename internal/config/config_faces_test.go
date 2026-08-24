@@ -1435,11 +1435,11 @@ func TestConfig_FaceSizeRetry(t *testing.T) {
 
 func TestConfig_FaceScore(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, 9.0, c.FaceScore())
-	c.options.FaceScore = 8.5
-	assert.Equal(t, 8.5, c.FaceScore())
+	assert.Equal(t, face.ScoreThresholdDefault, c.FaceScore())
+	c.options.FaceScore = 80
+	assert.Equal(t, 80.0, c.FaceScore())
 	c.options.FaceScore = 0.1
-	assert.Equal(t, 9.0, c.FaceScore())
+	assert.Equal(t, face.ScoreThresholdDefault, c.FaceScore(), "an out-of-range value falls back to the default")
 }
 
 func TestConfig_FaceOverlap(t *testing.T) {

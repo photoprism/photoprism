@@ -7,22 +7,36 @@ import (
 )
 
 func TestFaces_Uncertainty(t *testing.T) {
-	t.Run("MaxScoreEqualNum310", func(t *testing.T) {
-		f := Faces{Face{Score: 310}, Face{Score: 210}}
+	t.Run("HighestScoreDecides", func(t *testing.T) {
+		f := Faces{Face{Score: 96}, Face{Score: 70}}
 		assert.Equal(t, 1, f.Uncertainty())
 	})
-	t.Run("MaxScoreEqualNum210", func(t *testing.T) {
-		f := Faces{Face{Score: 210}, Face{Score: 210}}
+	t.Run("Confident", func(t *testing.T) {
+		f := Faces{Face{Score: 91}, Face{Score: 91}}
 		assert.Equal(t, 5, f.Uncertainty())
 	})
-	t.Run("MaxScoreEqualNum66", func(t *testing.T) {
-		f := Faces{Face{Score: 66}, Face{Score: 66}}
+	t.Run("Ordinary", func(t *testing.T) {
+		f := Faces{Face{Score: 76}, Face{Score: 76}}
 		assert.Equal(t, 20, f.Uncertainty())
 	})
-	t.Run("MaxScoreEqualTen", func(t *testing.T) {
-		f := Faces{Face{Score: 10}, Face{Score: 10}}
+	t.Run("AtTheFloor", func(t *testing.T) {
+		f := Faces{Face{Score: 50}, Face{Score: 50}}
 		assert.Equal(t, 50, f.Uncertainty())
 	})
+	t.Run("NoFaces", func(t *testing.T) {
+		assert.Equal(t, 100, Faces{}.Uncertainty())
+	})
+}
+
+// TestScoreUncertainty pins that the confident end is reachable. The detectors cap a score at
+// 100, so a scale whose steps start above that reports nothing better than its fourth step.
+func TestScoreUncertainty(t *testing.T) {
+	assert.Equal(t, 1, ScoreUncertainty(100))
+	assert.Equal(t, 1, ScoreUncertainty(96))
+	assert.Equal(t, 5, ScoreUncertainty(95))
+	assert.Equal(t, 30, ScoreUncertainty(int(ScoreThresholdDefault)+1))
+	assert.Equal(t, 35, ScoreUncertainty(int(ScoreThresholdDefault)), "a face at the floor is the least certain one that exists")
+	assert.Equal(t, 50, ScoreUncertainty(0))
 }
 
 func TestFaces_Contains(t *testing.T) {

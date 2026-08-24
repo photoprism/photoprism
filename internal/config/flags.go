@@ -1373,7 +1373,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-score",
-			Usage:   "minimum face `QUALITY` score (1-100), applied on top of the detector's own cutoff",
+			Usage:   "minimum face `QUALITY` score (1-100), on top of the detector's own cutoff",
 			Value:   face.ScoreThresholdDefault,
 			EnvVars: EnvVars("FACE_SCORE"),
 		}}, {

@@ -36,7 +36,7 @@ var MarkerFixtures = MarkerMap{
 		W:          0.355556,
 		H:          .355556,
 		Size:       200,
-		Score:      100,
+		Score:      82,
 	},
 	"1000003-2": Marker{ //Photo04
 		MarkerUID:  "ms6sg6b1wowuy3c3",
@@ -52,7 +52,7 @@ var MarkerFixtures = MarkerMap{
 		W:          0.05,
 		H:          0.05,
 		Size:       200,
-		Score:      100,
+		Score:      82,
 	},
 	"1000003-3": Marker{ //Photo04
 		MarkerUID:  "ms6sg6b1wowuy111",
@@ -67,7 +67,7 @@ var MarkerFixtures = MarkerMap{
 		W:          0,
 		H:          0,
 		Size:       200,
-		Score:      100,
+		Score:      82,
 	},
 	"1000003-4": Marker{ //Photo04
 		MarkerUID:     "ms6sg6b1wowuy222",
@@ -83,7 +83,7 @@ var MarkerFixtures = MarkerMap{
 		W:             0.2,
 		H:             0.05,
 		Size:          160,
-		Score:         50,
+		Score:         72,
 	},
 	"1000003-5": Marker{ //Photo04
 		MarkerUID:     "ms6sg6b1wowuy333",
@@ -101,7 +101,7 @@ var MarkerFixtures = MarkerMap{
 		W:             0.1,
 		H:             0.1,
 		Size:          200,
-		Score:         50,
+		Score:         72,
 	},
 	"1000003-6": Marker{ //Photo04
 		MarkerUID:     "ms6sg6b1wowuy444",
@@ -120,7 +120,7 @@ var MarkerFixtures = MarkerMap{
 		W:             0.285937,
 		H:             0.38125,
 		Size:          200,
-		Score:         100,
+		Score:         82,
 	},
 	"ma-ba-1": Marker{ //Photo27
 		MarkerUID:     "ms6sg6b1wowuy555",
@@ -139,7 +139,7 @@ var MarkerFixtures = MarkerMap{
 		W:             0.113281,
 		H:             0.169988,
 		Size:          240,
-		Score:         243,
+		Score:         98,
 	},
 	"fa-gr-1": Marker{ //Photo27
 		MarkerUID:     "ms6sg6b1wowuy666",
@@ -158,7 +158,7 @@ var MarkerFixtures = MarkerMap{
 		W:             0.234375,
 		H:             0.3517,
 		Size:          200,
-		Score:         107,
+		Score:         86,
 	},
 	"fa-gr-2": Marker{ //Photo03
 		MarkerUID:     "ms6sg6b1wowuy777",
@@ -177,7 +177,7 @@ var MarkerFixtures = MarkerMap{
 		W:             0.214062,
 		H:             0.321219,
 		Size:          200,
-		Score:         74,
+		Score:         78,
 	},
 	"fa-gr-3": Marker{ //19800101_000002_D640C559
 		MarkerUID:     "ms6sg6b1wowuy888",
@@ -196,7 +196,7 @@ var MarkerFixtures = MarkerMap{
 		W:             0.3625,
 		H:             0.543962,
 		Size:          200,
-		Score:         56,
+		Score:         75,
 	},
 	"actress-a-1": Marker{ //Photo27
 		MarkerUID:     "ms6sg6b1wowuy999",
@@ -215,7 +215,7 @@ var MarkerFixtures = MarkerMap{
 		W:             0.630499,
 		H:             0.419922,
 		Size:          430,
-		Score:         176,
+		Score:         94,
 	},
 	"actress-a-2": Marker{ //Photo03 - non primary file
 		MarkerUID:     "ms6sg6b1wowu1000",
@@ -234,7 +234,7 @@ var MarkerFixtures = MarkerMap{
 		W:             0.434375,
 		H:             0.652582,
 		Size:          556,
-		Score:         155,
+		Score:         90,
 	},
 	"actress-a-3": Marker{ //19800101_000002_D640C559
 		MarkerUID:     "ms6sg6b1wowu1001",
@@ -253,7 +253,7 @@ var MarkerFixtures = MarkerMap{
 		W:             0.402344,
 		H:             0.60446,
 		Size:          515,
-		Score:         102,
+		Score:         84,
 	},
 	"actor-a-1": Marker{ //Photo05
 		MarkerUID:     "ms6sg6b1wowu1002",
@@ -272,7 +272,7 @@ var MarkerFixtures = MarkerMap{
 		W:             0.683284,
 		H:             0.455078,
 		Size:          466,
-		Score:         39,
+		Score:         70,
 	},
 	"actor-a-2": Marker{ //Photo02
 		MarkerUID:     "ms6sg6b1wowu1003",
@@ -291,7 +291,7 @@ var MarkerFixtures = MarkerMap{
 		W:             0.543988,
 		H:             0.362305,
 		Size:          371,
-		Score:         164,
+		Score:         92,
 	},
 	"actor-a-3": Marker{ //Photo10
 		MarkerUID:     "ms6sg6b1wowu1004",
@@ -310,7 +310,7 @@ var MarkerFixtures = MarkerMap{
 		W:             0.549853,
 		H:             0.366211,
 		Size:          375,
-		Score:         100,
+		Score:         82,
 	},
 	"actor-a-4": Marker{ //19800101_000002_D640C559
 		MarkerUID:     "ms6sg6b1wowu1005",
@@ -329,7 +329,7 @@ var MarkerFixtures = MarkerMap{
 		W:             0.746334,
 		H:             0.49707,
 		Size:          509,
-		Score:         100,
+		Score:         82,
 	},
 	"ms6sg6b14ahkyd24": Marker{ //19800101_000002_D640C559
 		MarkerUID:     "ms6sg6b14ahkyd24",
@@ -348,7 +348,7 @@ var MarkerFixtures = MarkerMap{
 		W:             0.246334,
 		H:             0.29707,
 		Size:          209,
-		Score:         55,
+		Score:         74,
 	},
 }
 

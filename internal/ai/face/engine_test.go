@@ -82,7 +82,7 @@ func TestDetect(t *testing.T) {
 
 		// Every face carries the detector that found it, because its landmarks decide the
 		// aligned crop: a vector whose detector is unknown cannot be compared with confidence.
-		stub := &stubEngine{name: "stub", detector: "stub-detector", faces: Faces{{Score: 42}, {Score: 21}}}
+		stub := &stubEngine{name: "stub", detector: "stub-detector", faces: Faces{{Score: 90}, {Score: 80}}}
 		if prev := UseEngine(stub); prev != nil {
 			_ = prev.Close()
 		}
@@ -116,7 +116,7 @@ func TestDetect(t *testing.T) {
 
 		// The engine name is coarser provenance but not none: it rules out the legacy Go
 		// detector, so the five canonical landmarks are known to be there.
-		stub := &stubEngine{name: "onnx", faces: Faces{{Score: 30}}}
+		stub := &stubEngine{name: "onnx", faces: Faces{{Score: 90}}}
 		if prev := UseEngine(stub); prev != nil {
 			_ = prev.Close()
 		}
@@ -151,7 +151,7 @@ func TestDetectWithRetry(t *testing.T) {
 			// A face is returned for the smaller minimum only, which is the crowd case.
 			result: func(minSize int) Faces {
 				if minSize <= 10 {
-					return Faces{{Score: 50}}
+					return Faces{{Score: 90}}
 				}
 				return nil
 			},
