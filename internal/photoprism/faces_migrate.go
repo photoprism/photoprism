@@ -251,12 +251,11 @@ func originalsUnavailable(originalsPath string) bool {
 	return !fs.PathExists(originalsPath) || fs.DirIsEmpty(originalsPath)
 }
 
-// faceMigrationSubjectCounts returns how many subjects the identities name and how many
-// markers are assigned to one.
+// faceMigrationSubjectCounts returns how many subjects the identities name and how many markers
+// are assigned to one.
 //
-// Keyed by subject alone: a named marker that has no subject row yet is not a person the
-// migration can rebuild a cluster for, and counting it here would report it as needing
-// attention even though the rebuild creates its subject moments later.
+// Keyed by subject alone: a named marker with no subject row yet is not a person a cluster can be
+// rebuilt for, and counting it would report it as needing attention moments before it exists.
 func faceMigrationSubjectCounts(identities []query.FaceMigrationIdentity) (subjects, assigned int) {
 	seen := make(map[string]struct{}, len(identities))
 
@@ -510,9 +509,8 @@ func (w *Faces) migrationEmbedder(target string) (embedder face.Embedder, err er
 // unrecordedFaceModel keeps a setting that could not be saved attached to whatever failed after
 // it, or returns that error unchanged when the setting was saved.
 //
-// It outranks what follows: the setting decides whether the whole library is matched at all, and
-// the two failures are correlated - a full disk or a read-only volume causes both - so the window
-// where it would be dropped is the one where it is most likely.
+// It outranks what follows, because the setting decides whether the library is matched at all and
+// the two failures are correlated: a full disk or a read-only volume causes both.
 func unrecordedFaceModel(settingErr error, target string, err error) error {
 	if settingErr == nil {
 		return err
@@ -643,9 +641,8 @@ func (w *Faces) cropMigrationEmbeddings(embedder face.Embedder, file *entity.Fil
 // detectMigrationEmbeddings redetects a file and maps aligned embeddings to stored markers, also
 // reporting the landmarks each detection placed and the detector that placed them.
 //
-// Provenance travels with the vectors it describes rather than being read back from configuration.
-// The landmarks are what make it usable: without them the column attests the crop while the stored
-// landmarks are still an earlier detector's, and no reader can tell the two apart.
+// Provenance travels with the vectors rather than being read back from configuration, and the
+// landmarks are what make it usable: without them the column attests the crop alone.
 func (w *Faces) detectMigrationEmbeddings(embedder face.Embedder, file *entity.File, markers, stale entity.Markers) (result map[string]face.Embeddings, landmarks map[string]json.RawMessage, detectModel string, err error) {
 	result = make(map[string]face.Embeddings, len(stale))
 	landmarks = make(map[string]json.RawMessage, len(stale))
@@ -742,12 +739,10 @@ func markerCropArea(marker entity.Marker) crop.Area {
 	return crop.Area{Name: "face", X: marker.X, Y: marker.Y, W: marker.W, H: marker.H}
 }
 
-// buildFaceMigrationClusters creates one replacement cluster per identified subject,
-// seeded from the assignments that agree with their own midpoint, and reports how many
-// were left out.
+// buildFaceMigrationClusters creates one replacement cluster per identified subject, seeded from
+// the assignments that agree with their own midpoint, and reports how many were left out.
 //
-// Subjects are rebuilt one at a time so that the embedding blobs of a whole library never
-// have to be resident at once, matching the batching the re-embedding loop already uses.
+// One subject at a time, so that a whole library's embedding blobs never have to be resident.
 func buildFaceMigrationClusters(model string) (result []query.FaceMigrationCluster, rebuilt, excluded int, err error) {
 	registered := face.FindEmbeddingModel(model)
 	if registered == nil {
@@ -815,20 +810,11 @@ func manualSubjectAssignment(subjSrc string) bool {
 	return subjSrc != "" && subjSrc != entity.SrcAuto && subjSrc != entity.SrcXmp
 }
 
-// centroidSamples returns the markers that may define a subject's replacement cluster, and
-// how many assignments were left out of it.
+// centroidSamples returns the markers that may define a subject's replacement cluster, and how
+// many assignments were left out. An outlier keeps its assignment and loses only its vote.
 //
-// An assignment the previous model got wrong would otherwise help shape the new centroid
-// and widen it enough to attract further wrong faces. Outliers keep their assignment; they
-// are only excluded from the samples, so nothing a person set is discarded here.
-//
-// A hand-set assignment is exempt from the ordinary outlier distance. Those are
-// concentrated on small children, unusual angles and lens distortion - the cases embedding
-// matching handles worst, which is why a person had to name them - so distance from the
-// centroid measures the model rather than the assignment, and dropping the sample removes
-// the width the cluster needs to reach that face. It is not exempt from the widest distance
-// the resulting cluster can accept: seeding past that produces a link the matcher would
-// never make and cannot renew.
+// A hand-set assignment is exempt from the ordinary outlier distance, which there measures the
+// model rather than the assignment, but not from the widest distance the cluster can accept.
 func centroidSamples(group entity.Markers, registered *face.EmbeddingModel, subjectUID string) (kept entity.Markers, excluded int) {
 	if len(group) < 3 {
 		return group, 0

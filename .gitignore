@@ -5,6 +5,7 @@
 *.pid
 *.log
 *.jsonl
+zz_*.go
 *.db
 *.db-journal
 *.sqlite

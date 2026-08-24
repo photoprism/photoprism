@@ -2,6 +2,7 @@ package photoprism
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"image"
 	"math"
@@ -393,6 +394,62 @@ func TestFaces_detectMigrationEmbeddings(t *testing.T) {
 	assert.Empty(t, result)
 	assert.Empty(t, landmarks)
 	assert.Empty(t, detectModel, "a run that could not detect names no detector")
+}
+
+// TestFaces_detectMigrationEmbeddings_Landmarks pins the producer half of the provenance pair:
+// the landmarks a re-detection placed have to travel with the vector it produced, or the recorded
+// detector attests a crop while the stored landmarks are an earlier detector's.
+func TestFaces_detectMigrationEmbeddings_Landmarks(t *testing.T) {
+	prev := face.UseEngine(nil)
+	t.Cleanup(func() {
+		if current := face.UseEngine(prev); current != nil {
+			_ = current.Close()
+		}
+	})
+
+	c := config.TestConfig()
+	detectorPath := face.DefaultDetector().Path(c.ModelsPath())
+
+	if _, err := os.Stat(detectorPath); err != nil {
+		t.Skipf("faces: skipping, %s is not available", filepath.Base(detectorPath))
+	}
+
+	require.NoError(t, face.ConfigureEngine(face.EngineSettings{
+		Name: face.EngineONNX,
+		ONNX: face.ONNXOptions{ModelPath: detectorPath, Threads: 1},
+	}))
+
+	// The detection thumbnail is what the migration re-detects, so a real face has to be cached
+	// under the file's hash for the run to have anything to map.
+	source, _, err := fs.DecodeImageFile(filepath.Join("..", "ai", "face", "testdata", "1.jpg"))
+	require.NoError(t, err)
+
+	hash := "1111111111111111111111111111111111111111"
+	thumbName, err := thumb.Sizes[thumb.Fit720].FileName(hash, c.ThumbCachePath())
+	require.NoError(t, err)
+	require.NoError(t, thumb.Save(source, thumbName))
+
+	detected, err := face.DetectWithRetry(thumbName, c.FaceSize(), c.FaceSizeRetry())
+	require.NoError(t, err)
+	require.NotEmpty(t, detected, "the test image must yield a face to map")
+
+	file := &entity.File{FileUID: rnd.GenerateUID('f'), FileHash: hash}
+	marker := entity.NewFaceMarker(detected[0], *file, "")
+	require.NotNil(t, marker)
+	marker.MarkerUID = rnd.GenerateUID('m')
+
+	markers := entity.Markers{*marker}
+	embedder := &migrationTestEmbedder{name: face.ModelSFace, dims: 4, aligned: true}
+
+	w := NewFaces(c)
+	result, landmarks, detectModel, err := w.detectMigrationEmbeddings(embedder, file, markers, markers)
+
+	require.NoError(t, err)
+	require.Contains(t, result, marker.MarkerUID)
+	assert.Equal(t, face.DefaultDetector().Name, detectModel)
+	require.Contains(t, landmarks, marker.MarkerUID, "the landmarks must travel with the vector")
+	assert.True(t, json.Valid(landmarks[marker.MarkerUID]))
+	assert.Contains(t, string(landmarks[marker.MarkerUID]), "eye_l")
 }
 
 func TestMigrationDetectionThumb(t *testing.T) {

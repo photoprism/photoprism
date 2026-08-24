@@ -1537,15 +1537,16 @@ func TestConfig_FaceThresholdsPerModel(t *testing.T) {
 		assert.Equal(t, 0.3, c.FaceMatchDist())
 	})
 	t.Run("CliDefaultsDoNotWin", func(t *testing.T) {
-		// The CLI flags carry the FaceNet defaults so "--help" documents them, and those
-		// defaults reach the options even when the operator sets nothing.
+		// The distance flags carry no default, because the value that applies is calibrated per
+		// embedding model and "--help" cannot name one. An unset option therefore reads as zero
+		// and must resolve to the model's own value rather than being treated as configured.
 		ctx := cliContextWithFlagDefaults(t)
 		c := &Config{cliCtx: ctx, options: NewOptions(ctx)}
 		c.options.ModelsPath = installTestModels(t, face.ModelSFace)
 		c.options.FaceModel = face.ModelSFace
 
-		require.Equal(t, face.ClusterDistDefault, c.options.FaceClusterDist)
-		require.Equal(t, face.CollisionDistDefault, c.options.FaceCollisionDist)
+		require.Zero(t, c.options.FaceClusterDist)
+		require.Zero(t, c.options.FaceCollisionDist)
 		assert.Equal(t, 0.85, c.FaceClusterDist())
 		assert.Equal(t, 0.60, c.FaceClusterRadius())
 		assert.Equal(t, 0.35, c.FaceMatchDist())
@@ -1571,25 +1572,26 @@ func cliContextWithFlagDefaults(t *testing.T) *cli.Context {
 func TestConfig_FaceThresholdIsSet(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	t.Run("Default", func(t *testing.T) {
-		assert.False(t, c.faceThresholdIsSet("face-cluster-dist", face.ClusterDistDefault, face.ClusterDistDefault))
+	t.Run("Unset", func(t *testing.T) {
+		assert.False(t, c.faceThresholdIsSet("face-cluster-dist", 0))
 	})
 	t.Run("CustomValue", func(t *testing.T) {
-		assert.True(t, c.faceThresholdIsSet("face-cluster-dist", 0.5, face.ClusterDistDefault))
+		assert.True(t, c.faceThresholdIsSet("face-cluster-dist", 0.5))
 	})
-	t.Run("FlagSetToDefault", func(t *testing.T) {
+	t.Run("FlagSetToZero", func(t *testing.T) {
+		// An operator who passes the flag configured it, whatever the value.
 		set := flag.NewFlagSet("test", flag.ContinueOnError)
-		set.Float64("face-cluster-dist", face.ClusterDistDefault, "doc")
-		assert.NoError(t, set.Parse([]string{"--face-cluster-dist", "0.64"}))
+		set.Float64("face-cluster-dist", 0, "doc")
+		assert.NoError(t, set.Parse([]string{"--face-cluster-dist", "0"}))
 
 		explicit := &Config{cliCtx: cli.NewContext(cli.NewApp(), set, nil), options: NewOptions(nil)}
 
-		assert.True(t, explicit.faceThresholdIsSet("face-cluster-dist", face.ClusterDistDefault, face.ClusterDistDefault))
+		assert.True(t, explicit.faceThresholdIsSet("face-cluster-dist", 0))
 	})
 	t.Run("NoContext", func(t *testing.T) {
 		none := &Config{options: NewOptions(nil)}
 
-		assert.False(t, none.faceThresholdIsSet("face-cluster-dist", face.ClusterDistDefault, face.ClusterDistDefault))
+		assert.False(t, none.faceThresholdIsSet("face-cluster-dist", 0))
 	})
 }
 
@@ -1897,6 +1899,19 @@ func TestConfig_initFaceDetector(t *testing.T) {
 		values := readOptions(t, c)
 		assert.NotContains(t, values, "FaceDetector")
 		assert.Equal(t, face.DetectorNone, c.FaceDetectorSetting(), "it still applies to this run")
+	})
+	t.Run("ConfiguredDetectorSurvivesTheEnvironment", func(t *testing.T) {
+		// The operator turns detection back on under the new option while a stale "none" is
+		// still in the file. Overwriting it would persist the disable, which no later start
+		// could undo, because the file outranks the environment.
+		c := writeOptions(t, "FaceEngine: none\n")
+		c.options.FaceDetector = face.DetectorYuNet
+		c.initFaceDetector()
+
+		values := readOptions(t, c)
+		assert.NotContains(t, values, "FaceEngine")
+		assert.NotContains(t, values, "FaceDetector")
+		assert.Equal(t, face.DetectorYuNet, c.FaceDetectorSetting())
 	})
 	t.Run("NothingToMigrate", func(t *testing.T) {
 		c := writeOptions(t, "FaceModel: sface\n")

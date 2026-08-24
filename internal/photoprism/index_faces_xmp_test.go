@@ -531,12 +531,9 @@ func TestReconcileXmpFaces(t *testing.T) {
 	})
 }
 
-// TestReconcileXmpFaces_OverwritesClusteredAiFace models the realistic flow of
-// an AI-recognized, auto-clustered person spanning two photos whose name is
-// later overwritten by a different XMP tag on one of them. The import must
-// relabel only the tagged marker: the sibling marker on the other photo, the
-// shared Face cluster, and the original person's global name must stay intact
-// (an XMP name labels only its own marker — no XMP-driven clustering in v1).
+// TestReconcileXmpFaces_OverwritesClusteredAiFace models an auto-clustered person spanning two
+// photos whose name is later overwritten by a different XMP tag on one of them. Only the tagged
+// marker is relabeled: the sibling, the shared cluster and the person's global name stay intact.
 func TestReconcileXmpFaces_OverwritesClusteredAiFace(t *testing.T) {
 	config.TestConfig()
 

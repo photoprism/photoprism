@@ -321,9 +321,10 @@ func TestSaveFaceMigrationEmbeddings(t *testing.T) {
 		assert.Equal(t, face.DetectorYuNet, kept.DetectModel)
 		assert.JSONEq(t, string(detectedPoints), string(kept.LandmarksJSON))
 	})
-	t.Run("MalformedLandmarksAreNotWritten", func(t *testing.T) {
-		// A payload that is not valid JSON would make the column unreadable, and the vector
-		// beside it is still worth checkpointing.
+	t.Run("MalformedLandmarksClearTheColumn", func(t *testing.T) {
+		// The detector and the landmarks are written as a pair. A payload that is not valid JSON
+		// would make the column unreadable, and leaving the previous detector's landmarks beside
+		// a newly recorded one is the divergence the pairing exists to prevent, so it is cleared.
 		regenerated := face.Embeddings{face.RandomEmbedding()}
 		require.NoError(t, SaveFaceMigrationEmbeddings(face.ModelFaceNet, face.DetectorSCRFD,
 			map[string]face.Embeddings{marker.MarkerUID: regenerated},
@@ -331,7 +332,8 @@ func TestSaveFaceMigrationEmbeddings(t *testing.T) {
 
 		kept, keptErr := MarkerByUID(marker.MarkerUID)
 		require.NoError(t, keptErr)
-		assert.JSONEq(t, string(detectedPoints), string(kept.LandmarksJSON))
+		assert.Equal(t, face.DetectorSCRFD, kept.DetectModel)
+		assert.Empty(t, kept.LandmarksJSON)
 	})
 
 	require.Error(t, SaveFaceMigrationEmbeddings("", face.DetectorYuNet, nil, nil))

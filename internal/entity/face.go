@@ -350,14 +350,11 @@ func (m *Face) MatchMarkers(faceIds []string) error {
 	return nil
 }
 
-// UpdateMatchStats persists sample statistics derived from recent matches.
+// UpdateMatchStats persists sample statistics from recent matches, only ever widening the extent.
 //
-// A run only visits the markers that were unmatched when it started, so what it reports
-// describes a subset rather than the cluster: one newly indexed face arriving close to the
-// centroid would otherwise rewrite the radius to its own distance and drop the accept
-// distance to match, refusing the members that sit beyond it. The observation may therefore
-// widen the recorded extent and never narrow it. SetEmbeddings recomputes both from actual
-// membership, which is the path that may shrink a cluster.
+// A run visits only the markers that were unmatched when it started, so one face arriving near the
+// centroid would otherwise shrink the radius and refuse the members beyond it. SetEmbeddings
+// recomputes both from membership, which is the path that may shrink a cluster.
 func (m *Face) UpdateMatchStats(samples int, maxDistance float64) error {
 	if m.ID == "" || samples <= 0 {
 		return nil

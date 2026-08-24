@@ -118,9 +118,8 @@ func NewFaceMarker(f face.Face, file File, subjUid string) *Marker {
 // SetEmbeddings assigns new face embeddings to the marker, recorded under the models that
 // produced them rather than the ones that happen to be configured now.
 //
-// The detector is recorded beside the embedding model because it decides the landmarks, and
-// therefore the aligned crop the vector was computed from: two detectors yield different crops
-// and so different vectors, which without this nothing distinguishes.
+// The detector is recorded beside the embedding model because it decides the landmarks and so the
+// aligned crop: two detectors yield different vectors, which nothing else distinguishes.
 func (m *Marker) SetEmbeddings(e face.Embeddings, embedModel, detectModel face.ModelName) {
 	m.embeddings = e
 	m.EmbeddingsJSON = e.JSON()
@@ -247,11 +246,9 @@ func subjSrcSharesFace(src string) bool {
 	return src != SrcAuto && src != SrcXmp
 }
 
-// SetSubjectLink links the marker to an already-resolved subject and its UID
-// without renaming the subject, so reassigning a marker (e.g. from an imported
-// XMP name) affects only this marker and never renames the Person globally.
-// Passing nil detaches the cached subject and clears SubjUID so a later
-// SyncSubject resolves or creates a fresh subject.
+// SetSubjectLink links the marker to an already-resolved subject without renaming it, so
+// reassigning a marker never renames the person globally. Passing nil detaches the cached subject
+// and clears SubjUID, so a later SyncSubject resolves or creates a fresh one.
 func (m *Marker) SetSubjectLink(subj *Subject) {
 	m.subject = subj
 	if subj != nil {

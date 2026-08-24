@@ -1224,8 +1224,7 @@ var Flags = CliFlags{
 			Usage:   "libheif HEIC image conversion `COMMAND`",
 			Value:   "",
 			EnvVars: EnvVars("HEIFCONVERT_BIN"),
-		},
-		DocDefault: "heif-dec"}, {
+		}, DocDefault: "heif-dec"}, {
 		Flag: &cli.StringFlag{
 			Name:    "heifconvert-orientation",
 			Usage:   "Exif `ORIENTATION` of images generated with libheif (keep, reset)",
@@ -1329,24 +1328,24 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "face-detector",
-			Usage:   "face detection model `NAME` (" + face.DetectorUsageString() + "); derived from the face model when unset",
+			Usage:   "face detection model `NAME` (" + face.DetectorUsageString() + "), derived from the face model when unset",
 			EnvVars: EnvVars("FACE_DETECTOR"),
 		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-detector-threads",
-			Usage:   "face detection thread `COUNT` per indexing worker (0 derives a default from the CPU cores)",
+			Usage:   "face detection thread `COUNT` per indexing worker, derived from the CPU cores when unset",
 			EnvVars: EnvVars("FACE_DETECTOR_THREADS"),
-		}}, {
+		}, DocDefault: "auto"}, {
 		Flag: &cli.StringFlag{
 			Name:    "face-model",
-			Usage:   "face embedding model `NAME` (" + face.ModelUsageString() + "); detected from the library when unset, and changed with photoprism faces migrate",
+			Usage:   "face embedding model `NAME` (" + face.ModelUsageString() + "), detected from the library when unset and changed with photoprism faces migrate",
 			EnvVars: EnvVars("FACE_MODEL"),
 		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-model-threads",
-			Usage:   "face embedding thread `COUNT` (0 derives a default from the CPU cores)",
+			Usage:   "face embedding thread `COUNT`, derived from the CPU cores when unset",
 			EnvVars: EnvVars("FACE_MODEL_THREADS"),
-		}}, {
+		}, DocDefault: "auto"}, {
 		Flag: &cli.StringFlag{
 			Name:    "face-engine",
 			Usage:   "face detection engine `NAME` (auto, onnx, none) *deprecated*, use --face-detector",
@@ -1363,7 +1362,7 @@ var Flags = CliFlags{
 		Flag: &cli.IntFlag{
 			Name:    "face-size",
 			Usage:   "minimum size of faces in `PIXELS` (10-10000)",
-			Value:   face.SizeThreshold,
+			Value:   face.SizeThresholdDefault,
 			EnvVars: EnvVars("FACE_SIZE"),
 		}}, {
 		Flag: &cli.IntFlag{
@@ -1374,8 +1373,8 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-score",
-			Usage:   "minimum face `QUALITY` score (1-100)",
-			Value:   face.ScoreThreshold,
+			Usage:   "minimum face `QUALITY` score (1-100), applied on top of the detector's own cutoff",
+			Value:   face.ScoreThresholdDefault,
 			EnvVars: EnvVars("FACE_SCORE"),
 		}}, {
 		Flag: &cli.IntFlag{
@@ -1404,34 +1403,29 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-cluster-dist",
-			Usage:   fmt.Sprintf("similarity `DISTANCE` of faces forming a cluster core (collision distance to %g); defaults to the calibrated value of the configured face model", face.ConfigDistMax),
-			Value:   face.ClusterDistDefault,
+			Usage:   fmt.Sprintf("similarity `DISTANCE` of faces forming a cluster core (collision distance to %g), calibrated per face model when unset", face.ConfigDistMax),
 			EnvVars: EnvVars("FACE_CLUSTER_DIST"),
-		}}, {
+		}, DocDefault: "auto"}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-cluster-radius",
-			Usage:   fmt.Sprintf("maximum cluster `RADIUS` accepted for automatic matches (collision distance to %g); defaults to the calibrated model value, and radius plus match distance may not exceed the same limit", face.ConfigDistMax),
-			Value:   face.ClusterRadiusDefault,
+			Usage:   fmt.Sprintf("maximum cluster `RADIUS` accepted for automatic matches, calibrated per face model when unset; radius plus match distance may not exceed %g", face.ConfigDistMax),
 			EnvVars: EnvVars("FACE_CLUSTER_RADIUS"),
-		}}, {
+		}, DocDefault: "auto"}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-collision-dist",
-			Usage:   "minimum collision discrimination `DISTANCE` (greater than 0, up to 1); defaults to the calibrated value of the configured face model",
-			Value:   face.CollisionDistDefault,
+			Usage:   "minimum collision discrimination `DISTANCE` (greater than 0, up to 1), calibrated per face model when unset",
 			EnvVars: EnvVars("FACE_COLLISION_DIST"),
-		}}, {
+		}, DocDefault: "auto"}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-epsilon-dist",
-			Usage:   "collision tolerance `DELTA` appended to max match distances (greater than 0, up to 0.1); defaults to the calibrated value of the configured face model",
-			Value:   face.EpsilonDefault,
+			Usage:   "collision tolerance `DELTA` appended to max match distances (up to 0.1), calibrated per face model when unset",
 			EnvVars: EnvVars("FACE_EPSILON_DIST"),
-		}}, {
+		}, DocDefault: "auto"}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-match-dist",
-			Usage:   fmt.Sprintf("similarity `OFFSET` for matching faces with existing clusters (collision distance to %g); defaults to the calibrated model value, and radius plus match distance may not exceed the same limit", face.ConfigDistMax),
-			Value:   face.MatchDistDefault,
+			Usage:   fmt.Sprintf("similarity `OFFSET` for matching faces with existing clusters, calibrated per face model when unset; radius plus match distance may not exceed %g", face.ConfigDistMax),
 			EnvVars: EnvVars("FACE_MATCH_DIST"),
-		}}, {
+		}, DocDefault: "auto"}, {
 		Flag: &cli.StringFlag{
 			Name:      "pid-filename",
 			Usage:     "process id `FILENAME` *daemon-mode only*",

@@ -489,6 +489,7 @@ func (c *Config) Propagate() {
 	entity.ValidateTokens = !c.Public()
 
 	// Set face recognition parameters.
+	face.SizeThreshold = c.FaceSize()
 	face.ScoreThreshold = c.FaceScore()
 	face.OverlapThreshold = c.FaceOverlap()
 	face.ClusterScoreThreshold = c.FaceClusterScore()

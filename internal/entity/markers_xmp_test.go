@@ -223,11 +223,9 @@ func TestFile_AddFace_DoesNotResurrectRejected(t *testing.T) {
 }
 
 func TestMarker_SetFace_XmpNotShared(t *testing.T) {
-	// SetFace propagates a marker's subject onto the shared Face (via
-	// Face.SetSubjectUID) for clustering name sources such as SrcManual, but must
-	// NOT for SrcXmp: an imported XMP name labels only its own marker, so there is
-	// no XMP-driven clustering in v1. SetSubjectUID mutates the passed Face's
-	// SubjUID in memory, so an unchanged f.SubjUID proves propagation was gated.
+	// SetFace propagates a marker's subject onto the shared Face for clustering name sources such
+	// as SrcManual, but must not for SrcXmp: an imported XMP name labels only its own marker.
+	// SetSubjectUID mutates the passed Face in memory, so an unchanged SubjUID proves it was gated.
 	setup := func(t *testing.T, subjSrc, hash, person string) (*Marker, *Face, string) {
 		photo := Photo{PhotoUID: rnd.GenerateUID('p'), PhotoName: "xmp-setface-" + subjSrc, PhotoType: MediaImage}
 		require.NoError(t, photo.Save())

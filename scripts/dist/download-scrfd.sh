@@ -14,6 +14,7 @@ TODAY=$(date -u +%Y%m%d)
 
 MODELS_PATH=${MODELS_PATH:-"${PHOTOPRISM_ASSETS_PATH:-assets}/models"}
 MODEL_DIR="$MODELS_PATH/scrfd"
+LEGACY_MODEL_DIR="$MODELS_PATH/scrfs"
 MODEL_VERSION="$MODEL_DIR/version.txt"
 
 # The detector ships inside a release pack rather than as a standalone asset. Its checksum is
@@ -55,6 +56,11 @@ cleanup() {
 }
 
 trap cleanup EXIT
+
+if [[ -d "${LEGACY_MODEL_DIR}" && ! -d "${MODEL_DIR}" ]]; then
+  echo "Migrating legacy directory from ${LEGACY_MODEL_DIR} to ${MODEL_DIR}."
+  mv "${LEGACY_MODEL_DIR}" "${MODEL_DIR}"
+fi
 
 mkdir -p "${MODEL_DIR}"
 

@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"strings"
 	"testing"
 
@@ -455,5 +456,45 @@ func TestConfig_faceDistReport(t *testing.T) {
 		c.options.FaceModel = ""
 
 		assert.Equal(t, "", c.faceDistReport(c.FaceClusterDist))
+	})
+}
+
+func TestConfig_faceEngineReport(t *testing.T) {
+	// The row reports the configured value rather than the runtime in force, which now follows
+	// the detector: a stale "none" in options.yml is the only thing that explains why detection
+	// is off, and blanking it would take that away.
+	c := NewConfig(CliTestContext())
+
+	t.Run("Deprecated", func(t *testing.T) {
+		c.options.FaceEngine = face.EngineNone
+		assert.Equal(t, "none (deprecated)", c.faceEngineReport())
+	})
+	t.Run("LegacyAlias", func(t *testing.T) {
+		c.options.FaceEngine = "pigo"
+		assert.Equal(t, "onnx (deprecated)", c.faceEngineReport())
+	})
+	t.Run("Unset", func(t *testing.T) {
+		c.options.FaceEngine = ""
+		assert.Equal(t, "auto (deprecated)", c.faceEngineReport())
+	})
+}
+
+func TestConfig_faceDetectorReport(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	t.Cleanup(func() { c.options.FaceDetector = "" })
+
+	t.Run("Named", func(t *testing.T) {
+		c.options.FaceDetector = face.DetectorYuNet
+		assert.Equal(t, face.DetectorYuNet, c.faceDetectorReport())
+	})
+	t.Run("Disabled", func(t *testing.T) {
+		c.options.FaceDetector = face.DetectorNone
+		assert.Equal(t, face.DetectorNone, c.faceDetectorReport())
+	})
+	t.Run("Derived", func(t *testing.T) {
+		// Still to be derived, so the report names both what is configured and what it settles
+		// on - the second is the only one that says whether anything will be detected.
+		c.options.FaceDetector = ""
+		assert.Equal(t, fmt.Sprintf("%s (%s)", face.DetectorDetect, c.FaceDetector()), c.faceDetectorReport())
 	})
 }

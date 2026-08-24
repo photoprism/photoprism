@@ -18,6 +18,10 @@ const (
 	CollisionDistDefault = 0.05
 	// EpsilonDefault is the default numeric tolerance used during cluster comparisons.
 	EpsilonDefault = 0.01
+	// SizeThresholdDefault is the default minimum detected face size, in pixels.
+	SizeThresholdDefault = 25
+	// ScoreThresholdDefault is the default minimum face score accepted by the detector.
+	ScoreThresholdDefault = 9.0
 )
 
 // InterOpThreads is how many threads an ONNX session may use to run graph nodes in
@@ -49,11 +53,12 @@ var (
 	// OverlapThresholdFloor is the relaxed overlap threshold used to avoid rounding inconsistencies.
 	OverlapThresholdFloor = OverlapThreshold - 1
 	// ScoreThreshold is the base minimum face score accepted by the detector.
-	ScoreThreshold = 9.0
+	ScoreThreshold = ScoreThresholdDefault
 	// ClusterScoreThreshold is the minimum score required for faces that contribute to automatic clustering.
 	ClusterScoreThreshold = 20
-	// SizeThreshold is the minimum detected face size, in pixels.
-	SizeThreshold = 25
+	// SizeThreshold is the minimum detected face size, in pixels. Config.Propagate assigns it from
+	// FACE_SIZE, so a reader that bounds what detection produced compares against the same value.
+	SizeThreshold = SizeThresholdDefault
 	// RetrySizeThreshold is the minimum face size, in pixels, used by the second pass that runs
 	// only when the first finds nothing. Crowd photographs reduce every face below SizeThreshold,
 	// so without it a frame full of people is indexed as containing none.

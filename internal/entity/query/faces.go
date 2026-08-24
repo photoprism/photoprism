@@ -477,12 +477,11 @@ func RemovePeopleAndFaces() (err error) {
 	return nil
 }
 
-// whereEmbeddingModel restricts a statement to vectors that may be compared with the
-// specified model, treating rows without recorded provenance as FaceNet.
+// whereEmbeddingModel restricts a statement to vectors that may be compared with the specified
+// model, treating rows without recorded provenance as FaceNet.
 //
-// An empty name means the model could not be determined, so no restriction is applied:
-// filtering on it would match the legacy rows alone and silently exclude every vector a
-// configured model has written, rather than leaving the working set untouched.
+// An empty name means the model could not be determined, so nothing is restricted: filtering on it
+// would match the legacy rows alone and exclude every vector a configured model wrote.
 func whereEmbeddingModel(stmt *gorm.DB, model string) *gorm.DB {
 	if model == "" {
 		return stmt
@@ -547,12 +546,11 @@ func MarkerEmbeddingModels() (result []MarkerEmbeddingModelCount, err error) {
 	return result, err
 }
 
-// RecordedMarkerEmbeddingModels returns the number of face markers per recorded embedding
-// model, ordered by name.
+// RecordedMarkerEmbeddingModels returns the number of face markers per recorded embedding model,
+// ordered by name.
 //
-// Markers whose model was never recorded are left out, which is what lets the index on the
-// column answer this: the reporting variant above has to test the embedding blob instead,
-// and that reads every row. Callers that need the legacy rows counted must use that one.
+// Markers whose model was never recorded are left out, which is what lets the index answer this.
+// A caller that needs those counted has to use the reporting variant above, which reads every row.
 func RecordedMarkerEmbeddingModels() (result []MarkerEmbeddingModelCount, err error) {
 	err = Db().
 		Table(entity.Marker{}.TableName()).
@@ -590,12 +588,10 @@ func MarkerDetectModels() (result []MarkerDetectModelCount, err error) {
 	return result, err
 }
 
-// LegacyFaceMarkersWithVectors returns the number of face markers that hold a vector and record
-// no model, which can only have been produced by FaceNet.
+// LegacyFaceMarkersWithVectors returns the number of face markers that hold a vector and record no
+// model, which can only have been produced by FaceNet.
 //
-// The provenance index narrows this to the rows that predate the column, so unlike counting every
-// vector it reads few blobs once a library has been migrated. It completes the recorded counts,
-// which leave these rows out so that the index can answer them.
+// It completes the recorded counts, which leave these rows out so that the index can answer them.
 func LegacyFaceMarkersWithVectors() (count int64, err error) {
 	err = Db().
 		Table(entity.Marker{}.TableName()).

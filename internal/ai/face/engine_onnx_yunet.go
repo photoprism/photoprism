@@ -20,10 +20,9 @@ var yunetOutputs = [4][3]string{
 
 // yunetFeatDim returns the feature map extent a stride produces for an input extent.
 //
-// The convolution chain halves with ceil semantics, so this is not integer division: a 720 px
-// axis yields 23 cells at stride 32 rather than 22. It agrees with division whenever the input
-// is a multiple of 32, which is the only geometry the graph accepts anyway, so it exists to keep
-// the decoder correct if that ever stops being true.
+// The convolution chain halves with ceil semantics, so this is not integer division: a 720 px axis
+// yields 23 cells at stride 32 rather than 22. It agrees with division at every multiple of 32,
+// which is the only geometry the graph accepts, so the difference is latent rather than dead.
 func yunetFeatDim(size, stride int) int {
 	for s := 1; s < stride; s *= 2 {
 		size = (size + 1) / 2
@@ -32,14 +31,11 @@ func yunetFeatDim(size, stride int) int {
 	return size
 }
 
-// parseYuNetDetections decodes YuNet output into bounding boxes and landmarks in the coordinate
-// space of the source image.
+// parseYuNetDetections decodes YuNet output into boxes and landmarks in the source image's space.
 //
-// YuNet is anchor-free with one prior per cell, so a cell's own row and column are the reference
-// point rather than a table of anchors, and its score is split across a classification and an
-// objectness head that are combined geometrically. Its five keypoints already arrive in the order
-// ArcFaceTemplate expects, which was established by fitting both orderings: as emitted they fit at
-// a mean residual of 5.0, swapped at 22.1.
+// Anchor-free with one prior per cell, so a cell's own row and column are the reference point, and
+// the score is the geometric mean of a classification and an objectness head. Its keypoints arrive
+// in the order ArcFaceTemplate expects - fitting both ways gives 5.0 against 22.1.
 func (o *onnxEngine) parseYuNetDetections(values []onnxruntime.Value, detScale float32, origWidth, origHeight int) ([]onnxDetection, error) {
 	index := make(map[string]int, len(o.outputNames))
 	for i, name := range o.outputNames {

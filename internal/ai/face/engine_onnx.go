@@ -113,7 +113,10 @@ func NewONNXEngine(opts ONNXOptions) (DetectionEngine, error) {
 	detector := DetectorForFile(opts.ModelPath)
 
 	if detector == nil {
-		detector = DefaultDetector()
+		if detector = DefaultDetector(); detector == nil {
+			return nil, fmt.Errorf("faces: no detector is registered")
+		}
+
 		log.Warnf("faces: unrecognized detector %s, assuming %s preprocessing", clean.Log(filepath.Base(opts.ModelPath)), detector.Name)
 	}
 

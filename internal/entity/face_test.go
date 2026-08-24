@@ -679,6 +679,23 @@ func TestFace_MatchMarkers(t *testing.T) {
 		require.NotNil(t, found)
 		assert.Equal(t, cluster.ID, found.FaceID)
 	})
+	t.Run("RepointsASmallMarkerThatIsAlreadyClustered", func(t *testing.T) {
+		// The merge path calls this to move markers off clusters it is about to purge, so the
+		// size bound must not reach them: one left behind would point at a deleted cluster.
+		m := newFacelessMarker(t, face.SizeThreshold-1, 9104)
+
+		other := NewFace(cluster.SubjUID, SrcAuto, face.Embeddings{cluster.Embedding()}, cluster.EmbedModel)
+		require.NotNil(t, other)
+		other = FirstOrCreateFace(other)
+		require.NotNil(t, other)
+
+		require.NoError(t, m.Update("FaceID", other.ID))
+		require.NoError(t, cluster.MatchMarkers([]string{other.ID}))
+
+		found := FindMarker(m.MarkerUID)
+		require.NotNil(t, found)
+		assert.Equal(t, cluster.ID, found.FaceID, "a clustered marker is re-pointed whatever its size")
+	})
 	t.Run("RefusesAMarkerBelowTheDetectionFloor", func(t *testing.T) {
 		// Only the second detection pass produces one, and it exists to mark a face a crowd
 		// photograph would otherwise lose rather than to name a person from it.

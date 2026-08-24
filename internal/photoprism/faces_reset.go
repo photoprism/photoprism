@@ -58,16 +58,24 @@ func (w *Faces) ResetAndReindex(engine string, index *Index) error {
 		}
 	}
 
+	if lowered != "" && w.conf == nil {
+		return fmt.Errorf("faces: configuration not available")
+	}
+
+	// Checked before anything is removed, because the engine no longer follows this flag: it
+	// follows the detector, so a request to regenerate that cannot be met would otherwise delete
+	// every person and face and rebuild nothing.
+	if engine := face.ParseEngine(lowered); lowered != "" && engine != face.EngineNone &&
+		w.conf.FaceEngine() == face.EngineNone {
+		return fmt.Errorf("faces: no face detector is configured, so markers cannot be regenerated")
+	}
+
 	if err := w.Reset(); err != nil {
 		return err
 	}
 
 	if lowered == "" {
 		return nil
-	}
-
-	if w.conf == nil {
-		return fmt.Errorf("faces: configuration not available")
 	}
 
 	engineName := face.ParseEngine(lowered)

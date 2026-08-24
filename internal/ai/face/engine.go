@@ -168,14 +168,10 @@ func ActiveDetector() DetectorName {
 }
 
 // DetectWithRetry runs the detector and, when it finds nothing, tries once more at a smaller
-// minimum size.
+// minimum size. A retrySize of zero, or one not smaller than minSize, disables that.
 //
-// Detection sees a 720 px thumbnail, so a crowd reduces every face to around ten pixels and the
-// ordinary minimum discards all of them - the frame is then indexed as holding nobody. Retrying
-// only on an empty result is what keeps that from marking bystanders everywhere else: a picture
-// whose subject was found never reaches the second pass.
-//
-// A retrySize of zero or one that is not smaller than minSize disables it.
+// A crowd reduces every face below the ordinary minimum, so the frame is indexed as holding
+// nobody. Retrying only on an empty result keeps bystanders unmarked everywhere else.
 func DetectWithRetry(fileName string, minSize, retrySize int) (Faces, error) {
 	faces, err := Detect(fileName, minSize)
 
@@ -196,14 +192,9 @@ func DetectWithRetry(fileName string, minSize, retrySize int) (Faces, error) {
 
 // Detect runs the active engine on the provided file and returns the detected faces.
 //
-// Each face records the detector that found it, because this is the last frame where the
-// producer of the landmarks is known: the crop they align is what makes an embedding
-// comparable, so everything downstream would have to ask global configuration instead.
-// Provenance has three levels, and an engine that cannot name its detector falls back to the
-// middle one rather than to none. Blank means no provenance at all, so the landmarks may be the
-// legacy vocabulary the Go cascade detector produced and cannot be aligned. The engine name means
-// some ONNX detector, so the five canonical points are there even though which detector placed
-// them is unknown. A detector name means both are known.
+// Each face records the detector that found it, this being the last frame where the producer of
+// the landmarks is known. Provenance has three levels - none, the engine, the detector - and
+// internal/ai/face/README.md records what each rules out.
 func Detect(fileName string, minSize int) (Faces, error) {
 	engine := ActiveEngine()
 	if engine == nil {
@@ -218,12 +209,12 @@ func Detect(fileName string, minSize int) (Faces, error) {
 		detector = engine.Name()
 	}
 
-	kept := faces[:0]
+	// A detection below the configured quality is discarded here rather than filtered downstream,
+	// so it never becomes a marker: what a detector reports as a face and is not costs an operator
+	// a thumbnail to reject, whatever happens to it afterwards.
+	kept := make(Faces, 0, len(faces))
 
 	for i := range faces {
-		// A detection below the configured quality is discarded here rather than filtered
-		// downstream, so it never becomes a marker: what a detector reports as a face and is
-		// not costs an operator a thumbnail to reject, whatever happens to it afterwards.
 		if float64(faces[i].Score) < ScoreThreshold {
 			continue
 		}
