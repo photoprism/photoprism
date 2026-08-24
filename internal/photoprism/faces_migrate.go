@@ -84,9 +84,12 @@ type FacesMigrateResult struct {
 	// message that names neither sends a diagnosis toward the filesystem.
 	Unreadable int
 
-	// FailedClusterable counts the failed markers that cleared both clustering bars, which is
-	// what the finalize guard measures: the rest lose a vector nothing would have used.
-	FailedClusterable int
+	// AttemptedClusterable and FailedClusterable count the markers that cleared both clustering
+	// bars, which is the population the finalize guard measures. Both sides have to come from it,
+	// or the ratio compares a subset against a total and a library where little is clusterable
+	// can never reach the bound however completely the run failed.
+	AttemptedClusterable int
+	FailedClusterable    int
 
 	Unlinked          int
 	Invalid           int
@@ -184,12 +187,23 @@ func finalizeRefused(result FacesMigrateResult) string {
 		return ""
 	case result.Migrated == 0:
 		return fmt.Sprintf("none of %d marker(s) could be re-embedded%s", attempted, migrationFailureCause(result))
-	case float64(result.FailedClusterable)/float64(attempted) > facesMigrateMaxFailureRatio:
-		return fmt.Sprintf("%d of %d marker(s) that clear the clustering thresholds could not be re-embedded%s",
-			result.FailedClusterable, attempted, migrationFailureCause(result))
-	default:
-		return ""
 	}
+
+	failed, of := result.FailedClusterable, result.AttemptedClusterable
+
+	// A library with no clusterable markers has no such population to measure, so the bound
+	// falls back to every marker rather than passing by default - which is also what stops
+	// FACE_CLUSTER_SIZE or FACE_CLUSTER_SCORE from switching the guard off.
+	if of == 0 {
+		failed, of = result.Failed, attempted
+	}
+
+	if float64(failed)/float64(of) > facesMigrateMaxFailureRatio {
+		return fmt.Sprintf("%d of %d marker(s) that clear the clustering thresholds could not be re-embedded%s",
+			failed, of, migrationFailureCause(result))
+	}
+
+	return ""
 }
 
 // migrationFailureCause names what the failures have in common, or "" when there were none.
@@ -456,6 +470,7 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 			result.Retained += fileResult.Retained
 			result.Failed += len(fileResult.Failed)
 			result.Unreadable += fileResult.Unreadable
+			result.AttemptedClusterable += fileResult.Attempted
 			result.FailedClusterable += fileResult.Clusterable
 			failedMarkerUIDs = append(failedMarkerUIDs, fileResult.Failed...)
 			if fileResult.Detected {
@@ -624,7 +639,9 @@ func (w *Faces) useMigrationDetector() (restore func(), err error) {
 
 	score := w.conf.FaceScore()
 
-	if score <= 0 {
+	// Only an unset cutoff is replaced. A negative one switches the check off, which is as much
+	// a decision as a number is.
+	if score == face.ScoreThresholdDefault {
 		score = face.MigrationScoreThreshold
 	}
 
@@ -659,9 +676,35 @@ type faceMigrationFile struct {
 	// Unreadable counts the failed markers this file lost because it could not be read at all,
 	// as distinct from the ones a successful detection did not find again.
 	Unreadable int
-	// Clusterable counts the failed markers that cleared both clustering bars.
+	// Attempted and Clusterable count the markers that cleared both clustering bars: those this
+	// file put at risk, and those it lost. The guard needs both sides of that ratio.
+	Attempted   int
 	Clusterable int
 	Detected    bool
+}
+
+// clusterableMarkers counts the markers that clear both bars a face has to clear to seed or join
+// an automatic cluster.
+func clusterableMarkers(markers entity.Markers) (n int) {
+	for i := range markers {
+		if markers[i].Clusterable() {
+			n++
+		}
+	}
+
+	return n
+}
+
+// retainedMigrationMarkers returns the markers that keep the vector they already hold, which is
+// what tells a marker that was never at risk apart from one whose vector the run would discard.
+func retainedMigrationMarkers(markers entity.Markers, recrop map[string]bool) (retained entity.Markers) {
+	for i := range markers {
+		if recrop[markers[i].MarkerUID] {
+			retained = append(retained, markers[i])
+		}
+	}
+
+	return retained
 }
 
 // migrateFaceFile checkpoints all stale marker embeddings associated with a file.
@@ -688,6 +731,7 @@ func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) 
 
 		result.Failed, result.Retained, result.Clusterable = unresolvedMigrationMarkers(stale, recrop)
 		result.Unreadable = len(result.Failed)
+		result.Attempted = result.Clusterable
 
 		return result, err
 	}
@@ -711,6 +755,7 @@ func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) 
 		// declining to find a face in it.
 		result.Failed, result.Retained, result.Clusterable = unresolvedMigrationMarkers(stale, recrop)
 		result.Unreadable = len(result.Failed)
+		result.Attempted = result.Clusterable
 
 		return result, err
 	}
@@ -729,6 +774,10 @@ func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) 
 	}
 
 	result.Failed, result.Retained, result.Clusterable = unresolvedMigrationMarkers(unresolved, recrop)
+
+	// A retained marker keeps the vector it holds, so it was never at risk and belongs on
+	// neither side of the guard's ratio.
+	result.Attempted = clusterableMarkers(stale) - clusterableMarkers(retainedMigrationMarkers(unresolved, recrop))
 
 	if len(generated) > 0 {
 		if err = query.SaveFaceMigrationEmbeddings(target, detectModel, generated, landmarks); err != nil {
@@ -909,7 +958,15 @@ type migrationDetectionPair struct {
 	markerUID string
 	detected  int
 	overlap   int
+	score     int
 }
+
+// migrationOverlapMax bounds how much larger than the marker a detection claiming it may be.
+//
+// OverlapPercent divides by the marker's own surface, so a box that merely contains the marker
+// scores a perfect 100 while the correctly fitting detection scores less. At the floors a
+// migration detects at, a low-confidence head-and-shoulders box is exactly that shape.
+const migrationOverlapMax = 4
 
 // matchMigrationDetections assigns each detected face to at most one stored marker, and returns
 // the index of the detection each marker was given.
@@ -918,19 +975,34 @@ func matchMigrationDetections(markers entity.Markers, detected face.Faces) map[s
 	for _, marker := range markers {
 		area := markerCropArea(marker)
 		for i := range detected {
-			if overlap := detected[i].CropArea().OverlapPercent(area); overlap > face.OverlapThresholdFloor {
-				pairs = append(pairs, migrationDetectionPair{markerUID: marker.MarkerUID, detected: i, overlap: overlap})
+			candidate := detected[i].CropArea()
+
+			if overlap := candidate.OverlapPercent(area); overlap > face.OverlapThresholdFloor &&
+				!oversizedMigrationDetection(candidate, area) {
+				pairs = append(pairs, migrationDetectionPair{
+					markerUID: marker.MarkerUID,
+					detected:  i,
+					overlap:   overlap,
+					score:     detected[i].Score,
+				})
 			}
 		}
 	}
 
+	// Confidence breaks a tie before detector output order does. Containment scores 100, so
+	// several candidates reach the top and the order they were decoded in decided which one
+	// claimed the marker.
 	sort.Slice(pairs, func(i, j int) bool {
-		if pairs[i].overlap != pairs[j].overlap {
+		switch {
+		case pairs[i].overlap != pairs[j].overlap:
 			return pairs[i].overlap > pairs[j].overlap
-		} else if pairs[i].markerUID != pairs[j].markerUID {
+		case pairs[i].score != pairs[j].score:
+			return pairs[i].score > pairs[j].score
+		case pairs[i].markerUID != pairs[j].markerUID:
 			return pairs[i].markerUID < pairs[j].markerUID
+		default:
+			return pairs[i].detected < pairs[j].detected
 		}
-		return pairs[i].detected < pairs[j].detected
 	})
 
 	result := make(map[string]int)
@@ -944,6 +1016,16 @@ func matchMigrationDetections(markers entity.Markers, detected face.Faces) map[s
 	}
 
 	return result
+}
+
+// oversizedMigrationDetection reports whether a detection is too much larger than the marker it
+// overlaps to be the same face. Without it a box containing the marker outranks every other
+// candidate, because the overlap is measured against the marker's surface alone.
+func oversizedMigrationDetection(candidate, area crop.Area) bool {
+	markerSurface := float64(area.W) * float64(area.H)
+	candidateSurface := float64(candidate.W) * float64(candidate.H)
+
+	return markerSurface > 0 && candidateSurface > markerSurface*migrationOverlapMax
 }
 
 // markerCropArea returns the normalized crop geometry stored on a marker.
@@ -1083,15 +1165,25 @@ func centroidSamples(group entity.Markers, registered *face.EmbeddingModel, subj
 // Every processed state is counted rather than the migrated ones alone, so a re-run that skips
 // most of the library still reports honestly instead of appearing to stall.
 func logMigrationProgress(plan FacesMigratePlan, result FacesMigrateResult) {
-	total := plan.Markers.Valid
+	done, total := migrationProgress(plan, result)
 
 	if total < 1 {
 		return
 	}
 
-	done := min(result.Migrated+result.Skipped+result.Failed+result.Retained, total)
-
 	log.Infof("faces: processed %d of %d markers (%d%%)", done, total, done*100/total)
+}
+
+// migrationProgress returns how many of the planned markers have been processed. The plan is
+// counted before the run, so a marker added meanwhile must not report more than the total.
+func migrationProgress(plan FacesMigratePlan, result FacesMigrateResult) (done, total int) {
+	total = plan.Markers.Valid
+
+	if total < 1 {
+		return 0, 0
+	}
+
+	return min(result.Migrated+result.Skipped+result.Failed+result.Retained, total), total
 }
 
 // migrationCanceled reports context and worker cancellation consistently between batches.

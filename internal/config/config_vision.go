@@ -56,7 +56,9 @@ func (c *Config) reportIgnoredFaceRun(visionYaml string) {
 		return
 	}
 
-	c.infoFaceConfig("face-run-ignored", "config: face run type %s in %s is ignored, set FACE_RUN instead",
+	// Warned rather than noted: this used to be the documented way to turn face detection off,
+	// so an operator who set "never" has it running again after an upgrade.
+	c.warnFaceConfig("face-run-ignored", "config: face run type %s in %s is ignored, set FACE_RUN instead",
 		clean.Log(m.Run), clean.Log(visionYaml))
 }
 

@@ -30,6 +30,10 @@ func (w *Faces) reportClusteringSkipped(eligible, required int) {
 // reportOnce reports whether a recurring condition has changed since it was last logged, so a
 // worker that wakes every few minutes states it once rather than every time.
 func (w *Faces) reportOnce(key string, value int) bool {
+	if w == nil {
+		return false
+	}
+
 	w.vetoMu.Lock()
 	defer w.vetoMu.Unlock()
 

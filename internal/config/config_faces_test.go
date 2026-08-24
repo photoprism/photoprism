@@ -157,6 +157,64 @@ func TestConfig_FaceEngineShouldRun(t *testing.T) {
 	})
 }
 
+func TestConfig_LoadVisionConfig(t *testing.T) {
+	newVisionYaml := func(t *testing.T, body string) *Config {
+		t.Helper()
+
+		c := NewConfig(CliTestContext())
+		c.options.ConfigPath = t.TempDir()
+		c.options.VisionYaml = filepath.Join(c.options.ConfigPath, "vision.yml")
+		require.NoError(t, os.WriteFile(c.options.VisionYaml, []byte(body), fs.ModeConfigFile))
+
+		return c
+	}
+
+	t.Run("FaceRunIsIgnored", func(t *testing.T) {
+		// Warned rather than noted: this used to be the documented way to turn face detection
+		// off, so an operator who set "never" has it running again after an upgrade.
+		origVision := vision.Config
+		t.Cleanup(func() { vision.Config = origVision })
+		vision.Config = vision.NewConfig()
+
+		c := newVisionYaml(t, "Models:\n  - Type: face\n    Default: true\n    Run: never\n")
+
+		hook := test.NewGlobal()
+		t.Cleanup(hook.Reset)
+
+		c.LoadVisionConfig()
+
+		assert.Equal(t, vision.RunAuto, c.FaceEngineRunType(), "the file must not decide the schedule")
+
+		var reported bool
+
+		for _, entry := range hook.AllEntries() {
+			if entry.Level == logrus.WarnLevel && strings.Contains(entry.Message, "FACE_RUN") {
+				reported = true
+			}
+		}
+
+		assert.True(t, reported, "an ignored setting must not be silent")
+	})
+	t.Run("NoFaceRun", func(t *testing.T) {
+		origVision := vision.Config
+		t.Cleanup(func() { vision.Config = origVision })
+		vision.Config = vision.NewConfig()
+
+		c := newVisionYaml(t, "Models:\n  - Type: labels\n    Default: true\n    Run: manual\n")
+
+		assert.NotPanics(t, c.LoadVisionConfig)
+	})
+	t.Run("MissingFile", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.VisionYaml = filepath.Join(t.TempDir(), "absent.yml")
+
+		assert.NotPanics(t, c.LoadVisionConfig)
+	})
+	t.Run("NilConfig", func(t *testing.T) {
+		assert.NotPanics(t, (*Config)(nil).LoadVisionConfig)
+	})
+}
+
 func TestConfig_FaceEngineRunType(t *testing.T) {
 	t.Run("AutoDefaults", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
@@ -1640,6 +1698,21 @@ func TestConfig_ClearFaceModel(t *testing.T) {
 		b, err := os.ReadFile(c.OptionsYaml())
 		require.NoError(t, err)
 		assert.NotContains(t, string(b), "FaceModel")
+	})
+	t.Run("UnwritableFile", func(t *testing.T) {
+		// The pin has to stay in memory when it could not be removed from the file, or the run
+		// resolves a detected model while a restart pins the old one again.
+		c := NewConfig(CliTestContext())
+		c.options.ConfigPath = t.TempDir()
+		require.NoError(t, c.SetFaceModel(face.ModelFaceNet))
+		require.NoError(t, os.Chmod(c.OptionsYaml(), 0o400))
+		t.Cleanup(func() { _ = os.Chmod(c.OptionsYaml(), fs.ModeConfigFile) })
+		require.NoError(t, os.Chmod(c.options.ConfigPath, 0o500)) //nolint:gosec // read-only by design
+		t.Cleanup(func() { _ = os.Chmod(c.options.ConfigPath, fs.ModeDir) })
+
+		require.Error(t, c.ClearFaceModel())
+
+		assert.Equal(t, face.ModelFaceNet, c.options.FaceModel, "memory must agree with the file")
 	})
 	t.Run("NothingPinned", func(t *testing.T) {
 		c := NewConfig(CliTestContext())

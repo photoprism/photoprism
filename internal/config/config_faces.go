@@ -113,7 +113,9 @@ func (c *Config) usableFaceDetector(name face.DetectorName) face.DetectorName {
 func (c *Config) derivedFaceDetector() face.DetectorName {
 	modelsPath := c.ModelsPath()
 
-	if model := c.FaceEmbeddingModel(); model != nil && model.Detector != "" {
+	// The model in force rather than the effective one: this pairing is reached only because an
+	// operator selected the model explicitly, and an auto-detected one has not been.
+	if model := face.FindEmbeddingModel(c.FaceModel()); model != nil && model.Detector != "" {
 		if face.DetectorLicenseRefused(model.Detector, c.Edition()) == nil &&
 			face.FindDetector(model.Detector).Installed(modelsPath) {
 			return model.Detector
@@ -136,8 +138,7 @@ func (c *Config) FaceRun() vision.RunType {
 		return vision.RunNever
 	}
 
-	if configured := c.options.FaceRun; configured != "" && vision.ParseRunType(configured) == vision.RunAuto &&
-		vision.ReportRunType(configured) != vision.ReportRunType(vision.RunAuto) {
+	if configured := c.options.FaceRun; configured != "" && !vision.KnownRunType(configured) {
 		c.warnFaceConfig("face-run", "config: unsupported face run type %s, expected %s",
 			clean.Log(configured), vision.RunTypeUsageString())
 	}
@@ -413,12 +414,14 @@ func (c *Config) ClearFaceModel() error {
 		return nil
 	}
 
-	c.faceModel = ""
-	c.options.FaceModel = ""
-
+	// The file is written first, so a failure leaves this process agreeing with it rather than
+	// resolving a model that a restart would pin again.
 	if _, err := c.DeleteOptionsPatch("FaceModel"); err != nil {
 		return fmt.Errorf("failed clearing the face model (%s)", err)
 	}
+
+	c.faceModel = ""
+	c.options.FaceModel = ""
 
 	return nil
 }
@@ -759,7 +762,8 @@ func (c *Config) FacesLocked() string {
 }
 
 // ConfigureFaceDetector loads the detection engine for the detector in force, applying the
-// specified minimum score on the 0-100 scale instead of the configured one when it is positive.
+// specified minimum score on the 0-100 scale instead of the configured one. Zero asks for the
+// configured value; the sentinels carry through, so a negative score switches the cutoff off.
 //
 // The cutoff is baked into the inference session, so lowering it - which a migration does -
 // means loading the detector again rather than passing a value per call.

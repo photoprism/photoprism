@@ -622,6 +622,39 @@ func TestConfig_faceScoreReport(t *testing.T) {
 		assert.Equal(t, "42", c.faceScoreReport(false))
 		assert.Equal(t, "42", c.faceScoreReport(true), "an operator's own value has no source to name")
 	})
+	t.Run("Disabled", func(t *testing.T) {
+		// A cutoff that was switched off must not be attributed to a detector's calibration.
+		c := NewConfig(CliTestContext())
+		c.options.FaceScore = -1
+
+		assert.Equal(t, "-1", c.faceScoreReport(true))
+	})
+}
+
+func TestConfig_faceClusterScoreReport(t *testing.T) {
+	t.Run("Detector", func(t *testing.T) {
+		// Zero is what the raw option holds in the ordinary case, and it reads as "every face
+		// may cluster" - which is the opposite of what it means.
+		c := NewConfig(CliTestContext())
+		c.options.FaceClusterScore = 0
+
+		assert.NotEqual(t, "0", c.faceClusterScoreReport(false))
+		assert.Contains(t, c.faceClusterScoreReport(true), c.FaceDetector())
+	})
+	t.Run("Configured", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceClusterScore = 42
+
+		assert.Equal(t, "42", c.faceClusterScoreReport(false))
+		assert.Equal(t, "42", c.faceClusterScoreReport(true), "an operator's own bar has no source to name")
+	})
+	t.Run("Disabled", func(t *testing.T) {
+		// A bar that was switched off is not a detector calibration either.
+		c := NewConfig(CliTestContext())
+		c.options.FaceClusterScore = -1
+
+		assert.Equal(t, "-1", c.faceClusterScoreReport(true))
+	})
 }
 
 func TestFaceReportValue(t *testing.T) {

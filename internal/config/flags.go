@@ -1330,7 +1330,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "face-detector",
-			Usage:   "face detection model `NAME` (" + face.DetectorUsageString() + "), derived from the face model when unset",
+			Usage:   "face detection model `NAME` (" + face.DetectorUsageString() + "), derived from the face model unless named",
 			EnvVars: EnvVars("FACE_DETECTOR"),
 		},
 		DocDefault: face.DefaultDetectorName()}, {
@@ -1341,7 +1341,7 @@ var Flags = CliFlags{
 		}, DocDefault: "auto"}, {
 		Flag: &cli.StringFlag{
 			Name:    "face-model",
-			Usage:   "face embedding model `NAME` (" + face.ModelUsageString() + "), detected from the library when unset and changed with photoprism faces migrate",
+			Usage:   "face embedding model `NAME` (" + face.ModelUsageString() + "), detected from the library unless named, and changed with photoprism faces migrate",
 			EnvVars: EnvVars("FACE_MODEL"),
 		},
 		DocDefault: face.DefaultModelName()}, {
@@ -1404,7 +1404,7 @@ var Flags = CliFlags{
 			Usage:   "minimum `QUALITY` score of automatically clustered faces (1-100), overriding the bar calibrated per detector, -1 disables the check",
 			EnvVars: EnvVars("FACE_CLUSTER_SCORE"),
 		},
-		DocDefault: faceDocDefault(float64(face.ClusterScore(face.DefaultDetectorName())))}, {
+		DocDefault: faceDocDefault(float64(face.DefaultDetectorClusterScore()))}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-cluster-core",
 			Usage:   "`NUMBER` of faces forming a cluster core (1-100)",

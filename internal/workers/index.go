@@ -45,13 +45,6 @@ func (w *Index) Start() (err error) {
 		return nil
 	}
 
-	// A face migration runs from another process and rewrites every marker vector, so indexing
-	// alongside it would add markers in the model it is migrating away from.
-	if held := w.conf.FacesLocked(); held != "" {
-		log.Infof("index: waiting for the %s to complete", held)
-		return nil
-	}
-
 	conf := w.conf
 	settings := conf.Settings()
 

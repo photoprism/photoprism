@@ -227,6 +227,18 @@ func DefaultDetectorName() DetectorName {
 	return DetectorNone
 }
 
+// DefaultDetectorClusterScore returns the clustering bar registered for the default detector.
+//
+// Read from the registry rather than through ClusterScore, which consults the runtime-mutable
+// threshold Propagate assigns and would freeze whatever it held when the flags were built.
+func DefaultDetectorClusterScore() int {
+	if d := DefaultDetector(); d != nil && d.ClusterMinScore > 0 {
+		return d.ClusterMinScore
+	}
+
+	return ClusterScoreThresholdDefault
+}
+
 // DetectorForFile returns the detector whose artifact the path names.
 //
 // Matching is by file name rather than by checksum so that an operator who re-exported a model

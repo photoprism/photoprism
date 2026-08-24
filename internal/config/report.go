@@ -429,7 +429,7 @@ func (c *Config) faceModelStatus() string {
 func (c *Config) faceScoreReport(verbose bool) string {
 	score := fmt.Sprintf("%g", c.FaceScoreEffective())
 
-	if !verbose || c.FaceScore() > 0 {
+	if !verbose || c.FaceScore() != face.ScoreThresholdDefault {
 		return score
 	}
 
@@ -540,6 +540,12 @@ func (c *Config) FaceReport() (rows [][]string, cols []string) {
 
 	for _, row := range c.faceConfigRows(true) {
 		rows = append(rows, []string{row.Label, row.Value})
+	}
+
+	// Only shown while one is held. A lock nothing reports is the difference between an instance
+	// that explains why it indexes nothing and one that has to be diagnosed by finding a file.
+	if held := c.FacesLocked(); held != "" {
+		rows = append(rows, []string{"Locked", held})
 	}
 
 	return rows, cols

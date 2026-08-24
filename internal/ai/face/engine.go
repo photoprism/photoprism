@@ -138,6 +138,17 @@ func ActiveEngine() DetectionEngine {
 	return engine
 }
 
+// ActiveEngineSettings returns the settings the active engine was configured with, so a caller
+// that changed one - a migration lowering the detection cutoff - can verify it took effect.
+// The cutoff lives inside the inference session, where nothing else can observe it.
+func ActiveEngineSettings() EngineSettings {
+	engineMu.RLock()
+	settings := engineSettings
+	engineMu.RUnlock()
+
+	return settings
+}
+
 // ActiveEngineName returns the name of the active engine.
 // If there is no active engine, it returns "none."
 func ActiveEngineName() EngineName {

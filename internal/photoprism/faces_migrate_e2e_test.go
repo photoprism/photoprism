@@ -254,32 +254,55 @@ func TestFinalizeRefused(t *testing.T) {
 		assert.Contains(t, finalizeRefused(FacesMigrateResult{Failed: 15}), "none of 15")
 	})
 	t.Run("AboveRatio", func(t *testing.T) {
-		assert.Contains(t, finalizeRefused(FacesMigrateResult{Migrated: 1, Failed: 9, FailedClusterable: 9}), "9 of 10")
+		assert.Contains(t, finalizeRefused(FacesMigrateResult{Migrated: 1, Failed: 9, AttemptedClusterable: 10, FailedClusterable: 9}), "9 of 10")
 	})
 	t.Run("WithinRatio", func(t *testing.T) {
-		assert.Empty(t, finalizeRefused(FacesMigrateResult{Migrated: 99, Failed: 1, FailedClusterable: 1}))
+		assert.Empty(t, finalizeRefused(FacesMigrateResult{Migrated: 99, Failed: 1, AttemptedClusterable: 100, FailedClusterable: 1}))
 	})
 	t.Run("NoFailures", func(t *testing.T) {
 		assert.Empty(t, finalizeRefused(FacesMigrateResult{Migrated: 10}))
+	})
+	t.Run("StorageOutageOnALibraryWithFewClusterableMarkers", func(t *testing.T) {
+		// The numerator counts clusterable failures, so the denominator has to count clusterable
+		// attempts. Dividing by every attempted marker made the bound unreachable whenever the
+		// clusterable share was under it - here 7 % - so a total outage finalized and blanked
+		// every failed vector, which is the case the guard was written for.
+		reason := finalizeRefused(FacesMigrateResult{
+			Migrated:             10000,
+			Failed:               190000,
+			Unreadable:           190000,
+			AttemptedClusterable: 14000,
+			FailedClusterable:    13300,
+		})
+
+		assert.Contains(t, reason, "could not be re-embedded")
+		assert.Contains(t, reason, "their file is missing or unreadable")
+	})
+	t.Run("NothingClusterableFallsBackToEveryMarker", func(t *testing.T) {
+		// A library with no clusterable markers has no population to measure, so the bound must
+		// fall back rather than pass by default - which is also what stops FACE_CLUSTER_SIZE
+		// or FACE_CLUSTER_SCORE from switching the guard off.
+		assert.NotEmpty(t, finalizeRefused(FacesMigrateResult{Migrated: 1, Failed: 99}))
+		assert.Empty(t, finalizeRefused(FacesMigrateResult{Migrated: 99, Failed: 1}))
 	})
 	t.Run("FailuresBelowTheClusteringBars", func(t *testing.T) {
 		// Most of what a detector change fails to re-find is too small or too low-scoring to
 		// seed or join a cluster, so its vector changes nothing. Counting it refused two of
 		// three real libraries over a loss the library could not have used.
-		assert.Empty(t, finalizeRefused(FacesMigrateResult{Migrated: 41063, Failed: 7993, FailedClusterable: 209}))
+		assert.Empty(t, finalizeRefused(FacesMigrateResult{Migrated: 41063, Failed: 7993, AttemptedClusterable: 41272, FailedClusterable: 209}))
 	})
 	t.Run("NamesTheDetectorWhenNoFileFailed", func(t *testing.T) {
-		reason := finalizeRefused(FacesMigrateResult{Migrated: 1, Failed: 9, FailedClusterable: 9})
+		reason := finalizeRefused(FacesMigrateResult{Migrated: 1, Failed: 9, AttemptedClusterable: 10, FailedClusterable: 9})
 		assert.Contains(t, reason, "the detector did not find their face again")
 		assert.NotContains(t, reason, "unreadable")
 	})
 	t.Run("NamesStorageWhenEveryFileFailed", func(t *testing.T) {
-		reason := finalizeRefused(FacesMigrateResult{Migrated: 1, Failed: 9, Unreadable: 9, FailedClusterable: 9})
+		reason := finalizeRefused(FacesMigrateResult{Migrated: 1, Failed: 9, Unreadable: 9, AttemptedClusterable: 10, FailedClusterable: 9})
 		assert.Contains(t, reason, "their file is missing or unreadable")
 		assert.NotContains(t, reason, "did not find")
 	})
 	t.Run("NamesBoth", func(t *testing.T) {
-		reason := finalizeRefused(FacesMigrateResult{Migrated: 1, Failed: 9, Unreadable: 4, FailedClusterable: 9})
+		reason := finalizeRefused(FacesMigrateResult{Migrated: 1, Failed: 9, Unreadable: 4, AttemptedClusterable: 10, FailedClusterable: 9})
 		assert.Contains(t, reason, "5 because the detector did not find their face again")
 		assert.Contains(t, reason, "4 because their file is missing or unreadable")
 	})

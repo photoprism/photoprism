@@ -646,6 +646,19 @@ func TestConfig_DeleteOptionsPatch(t *testing.T) {
 		require.NoError(t, err)
 		assert.False(t, wrote, "a file that would not change must not be rewritten")
 	})
+	t.Run("MissingFileCreatesNothing", func(t *testing.T) {
+		// A helper that removes a setting must not leave a directory tree behind as its only
+		// effect, which reading the file through loadOptionsYAML would do.
+		c := NewConfig(CliTestContext())
+		c.options.ConfigPath = filepath.Join(t.TempDir(), "absent")
+		c.options.OptionsYaml = filepath.Join(c.options.ConfigPath, "options.yml")
+
+		wrote, err := c.DeleteOptionsPatch("FaceModel")
+
+		require.NoError(t, err)
+		assert.False(t, wrote)
+		assert.NoDirExists(t, c.options.ConfigPath)
+	})
 	t.Run("NoKeys", func(t *testing.T) {
 		c := newTestOptions(t, Values{"SiteUrl": "https://photos.example.com/"})
 

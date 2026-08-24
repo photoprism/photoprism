@@ -367,3 +367,16 @@ func TestDetectScoreThreshold(t *testing.T) {
 		assert.Empty(t, faces)
 	})
 }
+
+func TestActiveEngineSettings(t *testing.T) {
+	prev := UseEngine(nil)
+	t.Cleanup(func() {
+		if current := UseEngine(prev); current != nil {
+			_ = current.Close()
+		}
+	})
+
+	t.Run("NoEngine", func(t *testing.T) {
+		assert.NotPanics(t, func() { _ = ActiveEngineSettings() })
+	})
+}

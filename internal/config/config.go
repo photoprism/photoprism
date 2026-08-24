@@ -572,8 +572,8 @@ func (c *Config) DeleteOptionsPatch(keys ...string) (bool, error) {
 	}
 
 	// Nothing to remove from a file that does not exist, and reading one through loadOptionsYAML
-	// would create its directory on the way - which is not nothing: ConfigPath() resolves to the
-	// storage config directory once that exists, moving every path derived from it.
+	// would create its directory on the way. A helper that removes a setting must not leave a
+	// directory tree behind as its only effect.
 	if fileName := c.OptionsYaml(); fileName == "" || !fs.FileExists(fileName) {
 		return false, nil
 	}

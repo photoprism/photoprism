@@ -18,6 +18,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/internal/thumb/crop"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -602,6 +603,25 @@ func TestAssignedMigrationDetections(t *testing.T) {
 		assert.Equal(t, detected[1].Area, assigned[0].Area)
 		assert.Equal(t, map[string]int{"m2": 0}, order)
 	})
+	t.Run("ContestedDetection", func(t *testing.T) {
+		// One detection, two markers overlapping it, and the one that needs no work wins it.
+		// Matching only the stale markers would hand it to m2 instead, which is the regression
+		// passing every marker exists to prevent - and which a fixture where each marker has
+		// its own detection cannot see.
+		contested := entity.Markers{
+			{MarkerUID: "m1", X: 0.40, Y: 0.40, W: 0.10, H: 0.10},
+			{MarkerUID: "m2", X: 0.42, Y: 0.42, W: 0.10, H: 0.10},
+		}
+		one := face.Faces{{Rows: 100, Cols: 100, Score: 80, Area: face.NewArea("face", 45, 45, 10)}}
+
+		require.Equal(t, map[string]int{"m1": 0}, matchMigrationDetections(contested, one),
+			"the detection must belong to m1")
+
+		assigned, order := assignedMigrationDetections(contested, entity.Markers{contested[1]}, one)
+
+		assert.Empty(t, assigned, "m2 must not be given a detection m1 accounts for")
+		assert.Empty(t, order)
+	})
 	t.Run("EveryMarkerIsStale", func(t *testing.T) {
 		assigned, order := assignedMigrationDetections(markers, markers, detected)
 
@@ -615,6 +635,61 @@ func TestAssignedMigrationDetections(t *testing.T) {
 		assert.Empty(t, assigned)
 		assert.Empty(t, order)
 	})
+}
+
+// TestOversizedMigrationDetection pins the bound that keeps a containing box from claiming a
+// marker. OverlapPercent divides by the marker's own surface, so a detection that merely
+// contains it scores a perfect 100 while the correctly fitting one scores less.
+func TestOversizedMigrationDetection(t *testing.T) {
+	marker := crop.Area{Name: "face", X: 0.4, Y: 0.4, W: 0.1, H: 0.1}
+
+	t.Run("SameSize", func(t *testing.T) {
+		assert.False(t, oversizedMigrationDetection(crop.Area{X: 0.4, Y: 0.4, W: 0.1, H: 0.1}, marker))
+	})
+	t.Run("SlightlyLarger", func(t *testing.T) {
+		// Ordinary detector-to-detector drift must still match.
+		assert.False(t, oversizedMigrationDetection(crop.Area{X: 0.38, Y: 0.38, W: 0.14, H: 0.14}, marker))
+	})
+	t.Run("HeadAndShoulders", func(t *testing.T) {
+		assert.True(t, oversizedMigrationDetection(crop.Area{X: 0.3, Y: 0.3, W: 0.3, H: 0.3}, marker))
+	})
+	t.Run("EmptyMarker", func(t *testing.T) {
+		// Nothing to compare against, so nothing is rejected on size.
+		assert.False(t, oversizedMigrationDetection(crop.Area{X: 0.3, Y: 0.3, W: 0.3, H: 0.3}, crop.Area{}))
+	})
+}
+
+// TestMatchMigrationDetectionsPrefersConfidence pins that a tie on overlap is broken by detection
+// score rather than by the order the detector emitted them. Containment scores 100, so the
+// migration's lower floors put several candidates at the top of the list.
+func TestMatchMigrationDetectionsPrefersConfidence(t *testing.T) {
+	markers := entity.Markers{{MarkerUID: "m1", X: 0.4, Y: 0.4, W: 0.1, H: 0.1}}
+	detected := face.Faces{
+		{Rows: 100, Cols: 100, Score: 12, Area: face.NewArea("face", 45, 45, 10)},
+		{Rows: 100, Cols: 100, Score: 92, Area: face.NewArea("face", 45, 45, 10)},
+	}
+
+	result := matchMigrationDetections(markers, detected)
+
+	require.Contains(t, result, "m1")
+	assert.Equal(t, 1, result["m1"], "the more confident detection must claim the marker")
+}
+
+func TestClusterableMarkers(t *testing.T) {
+	markers := entity.Markers{
+		{MarkerUID: "big", Size: face.ClusterSizeThreshold, Score: 100},
+		{MarkerUID: "small", Size: face.ClusterSizeThreshold - 1, Score: 100},
+	}
+
+	assert.Equal(t, 1, clusterableMarkers(markers))
+	assert.Zero(t, clusterableMarkers(nil))
+}
+
+func TestRetainedMigrationMarkers(t *testing.T) {
+	markers := entity.Markers{{MarkerUID: "m1"}, {MarkerUID: "m2"}}
+
+	assert.Len(t, retainedMigrationMarkers(markers, map[string]bool{"m2": true}), 1)
+	assert.Empty(t, retainedMigrationMarkers(markers, nil))
 }
 
 func TestMarkerCropArea(t *testing.T) {
@@ -992,7 +1067,7 @@ func TestFacesMigrateRerunError_Error(t *testing.T) {
 	})
 }
 
-func TestLogMigrationProgress(t *testing.T) {
+func TestMigrationProgress(t *testing.T) {
 	// The loop is silent for the best part of an hour on a large library, so this is the only
 	// signal a run is making progress. Every processed state counts, or a re-run that skips
 	// most of the library would appear to stall.
@@ -1000,17 +1075,27 @@ func TestLogMigrationProgress(t *testing.T) {
 		plan := FacesMigratePlan{Markers: query.FaceMigrationMarkerCounts{Valid: 200}}
 		result := FacesMigrateResult{Migrated: 40, Skipped: 30, Failed: 20, Retained: 10}
 
-		assert.NotPanics(t, func() { logMigrationProgress(plan, result) })
+		done, total := migrationProgress(plan, result)
+
+		assert.Equal(t, 100, done)
+		assert.Equal(t, 200, total)
 	})
 	t.Run("NothingToDo", func(t *testing.T) {
 		// Zero would divide by zero rather than report nothing.
+		done, total := migrationProgress(FacesMigratePlan{}, FacesMigrateResult{})
+
+		assert.Zero(t, done)
+		assert.Zero(t, total)
 		assert.NotPanics(t, func() { logMigrationProgress(FacesMigratePlan{}, FacesMigrateResult{}) })
 	})
 	t.Run("MoreProcessedThanPlanned", func(t *testing.T) {
 		// The plan is counted before the run, so a marker added meanwhile must not report 101%.
 		plan := FacesMigratePlan{Markers: query.FaceMigrationMarkerCounts{Valid: 10}}
 
-		assert.NotPanics(t, func() { logMigrationProgress(plan, FacesMigrateResult{Migrated: 99}) })
+		done, total := migrationProgress(plan, FacesMigrateResult{Migrated: 99})
+
+		assert.Equal(t, 10, done)
+		assert.Equal(t, 10, total)
 	})
 }
 
@@ -1048,6 +1133,35 @@ func TestFaces_useMigrationDetector(t *testing.T) {
 		restore()
 
 		assert.Equal(t, previous, face.ScoreThreshold)
+	})
+	t.Run("KeepsADisabledScore", func(t *testing.T) {
+		// -1 switches the cutoff off, which is as much a decision as a number is. Treating it
+		// as unset re-imposed a floor of 9 on an operator who had removed one.
+		previous := face.ScoreThreshold
+		options := c.Options()
+		configured := options.FaceScore
+		options.FaceScore = -1
+		t.Cleanup(func() { options.FaceScore = configured })
+
+		restore, err := w.useMigrationDetector()
+		require.NoError(t, err)
+
+		assert.Equal(t, face.NoScoreThreshold, face.ScoreThreshold)
+
+		restore()
+
+		assert.Equal(t, previous, face.ScoreThreshold)
+	})
+	t.Run("MovesTheDetectionSessionToo", func(t *testing.T) {
+		// The cutoff lives in the inference session as well as in the filter Detect applies
+		// afterwards, so a run that moved only the second would have the first undo it.
+		restore, err := w.useMigrationDetector()
+		require.NoError(t, err)
+		t.Cleanup(restore)
+
+		settings := face.ActiveEngineSettings()
+
+		assert.InDelta(t, face.MigrationScoreThreshold/100, float64(settings.ONNX.ScoreThreshold), 0.0001)
 	})
 	t.Run("NilWorker", func(t *testing.T) {
 		restore, err := (*Faces)(nil).useMigrationDetector()

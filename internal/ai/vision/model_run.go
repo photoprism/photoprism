@@ -40,6 +40,14 @@ func ReportRunType(when RunType) string {
 	return when
 }
 
+// KnownRunType reports whether s names a supported run type. ParseRunType cannot answer this:
+// it returns RunAuto both for the values that ask for it and for the ones it does not know.
+func KnownRunType(s string) bool {
+	_, found := RunTypes[clean.TypeLowerDash(s)]
+
+	return found
+}
+
 // RunTypeUsageString lists the canonical run types for use in CLI help text. It leaves out the
 // aliases RunTypes accepts, which would make the list unreadable without adding a choice.
 func RunTypeUsageString() string {

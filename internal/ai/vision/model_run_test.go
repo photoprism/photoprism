@@ -1,6 +1,11 @@
 package vision
 
-import "testing"
+import (
+	"strings"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 func TestParseRunType(t *testing.T) {
 	cases := []struct {
@@ -160,4 +165,47 @@ func assertShouldRun(t *testing.T, m *Model, when RunType, want bool) {
 	if got := m.ShouldRun(when); got != want {
 		t.Fatalf("ShouldRun(%q) = %v, want %v (model run=%q)", when, got, want, m.RunType())
 	}
+}
+
+func TestRunTypeUsageString(t *testing.T) {
+	usage := RunTypeUsageString()
+
+	t.Run("NamesTheCanonicalTypes", func(t *testing.T) {
+		for _, run := range []RunType{RunAlways, RunOnIndex, RunNewlyIndexed, RunOnSchedule, RunOnDemand, RunManual, RunNever} {
+			assert.Contains(t, usage, run)
+		}
+
+		assert.True(t, strings.HasPrefix(usage, "auto, "))
+	})
+	t.Run("OmitsAliases", func(t *testing.T) {
+		// The aliases add no choice and would make the list unreadable in a help listing.
+		assert.NotContains(t, usage, "after-index")
+		assert.NotContains(t, usage, "manually")
+	})
+	t.Run("EveryNameParses", func(t *testing.T) {
+		for _, name := range strings.Split(usage, ", ") {
+			assert.True(t, KnownRunType(name), name)
+		}
+	})
+}
+
+// TestKnownRunType pins what ParseRunType cannot answer: it returns RunAuto both for the values
+// that ask for it and for the ones it does not recognize, so a typo could not be reported.
+func TestKnownRunType(t *testing.T) {
+	t.Run("Known", func(t *testing.T) {
+		assert.True(t, KnownRunType("auto"))
+		assert.True(t, KnownRunType(""))
+		assert.True(t, KnownRunType("On-Schedule"))
+		assert.True(t, KnownRunType("after-index"))
+		// Underscores and spaces normalize to dashes, as they do for model and detector names.
+		assert.True(t, KnownRunType("on_schedule"))
+		assert.True(t, KnownRunType("on schedule"))
+	})
+	t.Run("Unknown", func(t *testing.T) {
+		// ParseRunType answers RunAuto for these as well as for "auto", which is why the report
+		// of an unsupported value could never fire while it was derived from the parsed result.
+		assert.False(t, KnownRunType("whenever"))
+		assert.False(t, KnownRunType("bogus"))
+		assert.Equal(t, RunAuto, ParseRunType("whenever"))
+	})
 }

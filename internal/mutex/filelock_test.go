@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -160,6 +162,194 @@ func TestFileLock_Release(t *testing.T) {
 	t.Run("NilLock", func(t *testing.T) {
 		assert.NotPanics(t, (*FileLock)(nil).Release)
 	})
+}
+
+// TestAcquireFileLockIsExclusive pins that two processes reaching the lock at the same moment
+// cannot both come away holding it. A read followed by a write let every racer through, and
+// preventing two concurrent finalize transactions is the whole reason this lock exists.
+func TestAcquireFileLockIsExclusive(t *testing.T) {
+	fileName := filepath.Join(t.TempDir(), "faces.lock")
+
+	const racers = 16
+
+	var wg sync.WaitGroup
+	var held atomic.Int32
+
+	start := make(chan struct{})
+	locks := make(chan *FileLock, racers)
+
+	for range racers {
+		wg.Add(1)
+
+		go func() {
+			defer wg.Done()
+			<-start
+
+			if lock, err := AcquireFileLock(fileName, "faces migration"); err == nil {
+				held.Add(1)
+				locks <- lock
+			}
+		}()
+	}
+
+	close(start)
+	wg.Wait()
+	close(locks)
+
+	for lock := range locks {
+		lock.Release()
+	}
+
+	assert.Equal(t, int32(1), held.Load(), "exactly one racer may hold the lock")
+}
+
+// TestFileLockRenewIsAtomic pins that a reader never sees the lock as free while it is being
+// renewed. Writing in place leaves the file empty between truncating and writing, and an
+// unreadable lock reads as free - a window every worker polls into, once a minute for hours.
+func TestFileLockRenewIsAtomic(t *testing.T) {
+	fileName := filepath.Join(t.TempDir(), "faces.lock")
+
+	lock, err := AcquireFileLock(fileName, "faces migration")
+	require.NoError(t, err)
+	t.Cleanup(lock.Release)
+
+	done := make(chan struct{})
+	var free atomic.Bool
+
+	go func() {
+		defer close(done)
+
+		for range 2000 {
+			if FileLockHeld(fileName) == "" {
+				free.Store(true)
+				return
+			}
+		}
+	}()
+
+	for range 200 {
+		require.NoError(t, lock.write())
+	}
+
+	<-done
+
+	assert.False(t, free.Load(), "the lock must never read as free while it is held")
+}
+
+// TestFileLock_ReleaseKeepsAForeignLock pins that a holder whose own lock lapsed and was taken
+// over cannot free the one that replaced it.
+func TestFileLock_ReleaseKeepsAForeignLock(t *testing.T) {
+	fileName := filepath.Join(t.TempDir(), "faces.lock")
+
+	lock, err := AcquireFileLock(fileName, "faces migration")
+	require.NoError(t, err)
+
+	// Another process took over after this holder's renewals stopped.
+	writeFileLock(t, fileName, FileLockState{
+		Action:    "faces migration",
+		PID:       os.Getpid() + 1,
+		Host:      "elsewhere",
+		UpdatedAt: time.Now(),
+		ExpiresAt: time.Now().Add(FileLockMaxAge),
+	})
+
+	lock.Release()
+
+	assert.FileExists(t, fileName)
+	assert.Contains(t, FileLockHeld(fileName), "elsewhere")
+}
+
+// TestFileLockStateExpiredClampsAFutureExpiry pins that a holder whose clock ran fast cannot wedge
+// every worker for as long as that clock was wrong.
+//
+// Both timestamps inside the file come from that clock, so neither bounds the other; the file's
+// modification time does, because the kernel that stored it wrote that.
+func TestFileLockStateExpiredClampsAFutureExpiry(t *testing.T) {
+	now := time.Now()
+
+	t.Run("FutureExpiryOnAFreshFile", func(t *testing.T) {
+		// Written now by a clock 48 hours ahead: held, but for one interval rather than two days.
+		fileName := filepath.Join(t.TempDir(), "faces.lock")
+		writeFileLock(t, fileName, FileLockState{
+			Action:    "faces migration",
+			PID:       7,
+			UpdatedAt: now.Add(48 * time.Hour),
+			ExpiresAt: now.Add(48*time.Hour + FileLockMaxAge),
+		})
+
+		assert.False(t, ReadFileLock(fileName).Expired())
+
+		// The same file one interval later is stale, whatever it claims.
+		stale := now.Add(-2 * FileLockMaxAge)
+		require.NoError(t, os.Chtimes(fileName, stale, stale))
+
+		assert.True(t, ReadFileLock(fileName).Expired(),
+			"an expiry beyond one interval past the file's own modification time is stale")
+	})
+	t.Run("NoModTime", func(t *testing.T) {
+		// A state that did not come from a file has only its own word to go on.
+		assert.True(t, FileLockState{ExpiresAt: now.Add(-time.Second)}.Expired())
+		assert.False(t, FileLockState{ExpiresAt: now.Add(FileLockMaxAge)}.Expired())
+	})
+	t.Run("Live", func(t *testing.T) {
+		fileName := filepath.Join(t.TempDir(), "faces.lock")
+		writeFileLock(t, fileName, FileLockState{PID: 7, UpdatedAt: now, ExpiresAt: now.Add(FileLockMaxAge)})
+
+		assert.False(t, ReadFileLock(fileName).Expired())
+	})
+}
+
+// TestFileLockRenewInterval pins the relation the renew loop depends on. Inverting it would make
+// every run longer than one interval release its own lock mid-way, silently.
+func TestFileLockRenewInterval(t *testing.T) {
+	assert.Positive(t, fileLockRenewInterval)
+	assert.Less(t, fileLockRenewInterval, FileLockMaxAge, "a lock must be renewed before it expires")
+}
+
+// TestFileLock_renew checks that the loop keeps the lock alive and stops when it is released.
+func TestFileLock_renew(t *testing.T) {
+	fileName := filepath.Join(t.TempDir(), "faces.lock")
+
+	lock, err := AcquireFileLock(fileName, "faces migration")
+	require.NoError(t, err)
+
+	first := ReadFileLock(fileName).ExpiresAt
+	time.Sleep(2 * time.Millisecond)
+	require.NoError(t, lock.write())
+
+	assert.True(t, ReadFileLock(fileName).ExpiresAt.After(first))
+
+	lock.Release()
+
+	// The goroutine selects on the same channel Release closes, so it is gone with the file.
+	assert.NoFileExists(t, fileName)
+	assert.NotPanics(t, lock.Release)
+}
+
+// TestAcquireFileLockTakesOverAnExpiredLockOnce pins that only one of two processes finding the
+// same expired lock comes away holding it. Both may rename over it; the one whose write did not
+// survive has to find that out by reading it back.
+func TestAcquireFileLockTakesOverAnExpiredLockOnce(t *testing.T) {
+	fileName := filepath.Join(t.TempDir(), "faces.lock")
+	writeFileLock(t, fileName, FileLockState{Action: "faces migration", PID: 9, ExpiresAt: time.Now().Add(-time.Hour)})
+
+	lock, err := AcquireFileLock(fileName, "faces migration")
+	require.NoError(t, err)
+	t.Cleanup(lock.Release)
+
+	assert.Equal(t, os.Getpid(), ReadFileLock(fileName).PID)
+
+	// A second process on the same host would see the live lock this one now holds.
+	_, err = AcquireFileLock(fileName, "faces migration")
+	assert.Error(t, err)
+}
+
+func TestFileLockState_HeldBy(t *testing.T) {
+	state := FileLockState{PID: 42, Host: "neon"}
+
+	assert.True(t, state.HeldBy(42, "neon"))
+	assert.False(t, state.HeldBy(43, "neon"))
+	assert.False(t, state.HeldBy(42, "other"))
 }
 
 // TestFileLock_write checks that renewing moves the expiry forward, which is what keeps a run
