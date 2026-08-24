@@ -7,6 +7,7 @@ services:
   postgres-18:
     image: postgres:18-alpine
     stop_grace_period: 15s
+    command: ["postgres", "-c", "lock_timeout=120s"]
     expose:
       - "${POSTGRES_PORT:-4002}"
     ports:
@@ -24,6 +25,7 @@ services:
   postgres-17:
     image: postgres:17-alpine
     stop_grace_period: 15s
+    command: ["postgres", "-c", "lock_timeout=120s"]
     expose:
       - "${POSTGRES_PORT:-4002}"
     ports:

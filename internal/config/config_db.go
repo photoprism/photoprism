@@ -138,7 +138,7 @@ func (c *Config) DatabaseDSN() string {
 				Password: c.DatabasePassword(),
 				Server:   c.DatabaseServer(),
 				Name:     c.DatabaseName(),
-				Params:   fmt.Sprintf("connect_timeout=%d&%s", c.DatabaseTimeout(), dsn.Params[dsn.DriverPostgreSQL]),
+				Params:   fmt.Sprintf("connect_timeout=%d&%s", c.DatabaseTimeout()*1000, dsn.Params[dsn.DriverPostgreSQL]), // Postgres GO driver only supports milliseconds
 			}).ToString()
 		case dsn.DriverSQLite3:
 			return (&dsn.DSN{
@@ -156,10 +156,18 @@ func (c *Config) DatabaseDSN() string {
 	// If missing, add the required parameters to the configured MySQL/MariaDB DSN.
 	if c.DatabaseDriver() == dsn.DriverMySQL && !strings.Contains(c.options.DatabaseDSN, "?") {
 		c.options.DatabaseDSN = fmt.Sprintf(
-			"%s?%s&timeout=%ds",
+			"%s?timeout=%ds&%s",
 			c.options.DatabaseDSN,
-			dsn.Params[dsn.DriverMySQL],
-			c.DatabaseTimeout())
+			c.DatabaseTimeout(),
+			dsn.Params[dsn.DriverMySQL])
+	}
+	// If missing, add the required parameters to the configured MySQL/MariaDB DSN.
+	if c.DatabaseDriver() == dsn.DriverPostgreSQL && !strings.Contains(c.options.DatabaseDSN, "?") {
+		c.options.DatabaseDSN = fmt.Sprintf(
+			"%s?connect_timeout=%d&%s",
+			c.options.DatabaseDSN,
+			c.DatabaseTimeout()*1000, // Postgres GO driver only supports milliseconds
+			dsn.Params[dsn.DriverPostgreSQL])
 	}
 
 	return c.options.DatabaseDSN

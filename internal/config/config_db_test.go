@@ -149,7 +149,7 @@ func TestConfig_normalizeDatabaseDSN(t *testing.T) {
 	t.Run("Postgres", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 
-		c.options.Deprecated.DatabaseDsn = "postgresql://foo:b@r@honeypot:1234/baz?TimeZone=UTC&connect_timeout=15&lock_timeout=5000&sslmode=disable"
+		c.options.Deprecated.DatabaseDsn = "postgresql://foo:b@r@honeypot:1234/baz?TimeZone=UTC&connect_timeout=15000&sslmode=disable"
 		c.options.DatabaseDriver = dsn.DriverPostgreSQL
 
 		assert.Equal(t, "honeypot:1234", c.DatabaseServer())
@@ -374,7 +374,7 @@ func TestConfig_DatabaseDSN(t *testing.T) {
 		c.options.DatabaseDriver = "tidb"
 		assert.Equal(t, ProjectRoot+"/storage/testdata/index.db?_busy_timeout=5000&_foreign_keys=on", c.DatabaseDSN())
 		c.options.DatabaseDriver = "Postgres"
-		assert.Equal(t, "postgresql://photoprism:@localhost/photoprism?connect_timeout=15&sslmode=disable&TimeZone=UTC&lock_timeout=5000", c.DatabaseDSN())
+		assert.Equal(t, "postgresql://photoprism:@localhost/photoprism?connect_timeout=15000&sslmode=disable&TimeZone=UTC", c.DatabaseDSN())
 		c.options.DatabaseDriver = "SQLite"
 		assert.Equal(t, ProjectRoot+"/storage/testdata/index.db?_busy_timeout=5000&_foreign_keys=on", c.DatabaseDSN())
 		c.options.DatabaseDriver = ""
@@ -388,7 +388,7 @@ func TestConfig_DatabaseDSN(t *testing.T) {
 		assert.Equal(t, dsn.DriverSQLite3, driver)
 		c.options.DatabaseDriver = "Postgres"
 		c.options.DatabasePassword = "spec[char@$2&"
-		assert.Equal(t, "postgresql://photoprism:spec%5Bchar%40$2&@localhost/photoprism?connect_timeout=15&sslmode=disable&TimeZone=UTC&lock_timeout=5000", c.DatabaseDSN()) //nolint:gosec // This is a mock value used strictly for unit testing
+		assert.Equal(t, "postgresql://photoprism:spec%5Bchar%40$2&@localhost/photoprism?connect_timeout=15000&sslmode=disable&TimeZone=UTC", c.DatabaseDSN()) //nolint:gosec // This is a mock value used strictly for unit testing
 	})
 
 	t.Run("CustomServer", func(t *testing.T) {
@@ -433,7 +433,7 @@ func TestConfig_DatabaseDSN(t *testing.T) {
 		conf.options.DatabasePassword = "secret"
 		conf.options.DatabaseTimeout = 12
 
-		want := "postgresql://instance:secret@localhost/instancedb?connect_timeout=12&sslmode=disable&TimeZone=UTC&lock_timeout=5000" //nolint:gosec // This is a mock value used strictly for unit testing
+		want := "postgresql://instance:secret@localhost/instancedb?connect_timeout=12000&sslmode=disable&TimeZone=UTC" //nolint:gosec // This is a mock value used strictly for unit testing
 		if got := conf.DatabaseDSN(); got != want {
 			t.Fatalf("DatabaseDSN() = %q, want %q", got, want)
 		}
@@ -452,7 +452,7 @@ func TestConfig_DatabaseDSN(t *testing.T) {
 		conf.options.DatabasePassword = "secret"
 		conf.options.DatabaseTimeout = 9
 
-		want := "postgresql://instance:secret@postgres.internal:5433/instancedb?connect_timeout=9&sslmode=disable&TimeZone=UTC&lock_timeout=5000" //nolint:gosec // This is a mock value used strictly for unit testing
+		want := "postgresql://instance:secret@postgres.internal:5433/instancedb?connect_timeout=9000&sslmode=disable&TimeZone=UTC" //nolint:gosec // This is a mock value used strictly for unit testing
 		if got := conf.DatabaseDSN(); got != want {
 			t.Fatalf("DatabaseDSN() = %q, want %q", got, want)
 		}
@@ -479,7 +479,19 @@ func TestConfig_DatabaseDSNFlags(t *testing.T) {
 
 		assert.False(t, conf.NoDatabaseDSN())
 		assert.True(t, conf.HasDatabaseDSN())
-		assert.Equal(t, "user:pass@tcp(db.internal:3306)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s", conf.DatabaseDSN()) //nolint:gosec // This is a mock value used strictly for unit testing
+		assert.Equal(t, "user:pass@tcp(db.internal:3306)/photoprism?timeout=15s&charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true", conf.DatabaseDSN()) //nolint:gosec // This is a mock value used strictly for unit testing
+		assert.Empty(t, conf.options.Deprecated.DatabaseDsn)
+	})
+	t.Run("DeprecatedDatabaseDsnPostgres", func(t *testing.T) {
+		conf := NewConfig(CliTestContext())
+		resetDatabaseOptions(conf)
+
+		conf.options.DatabaseDriver = dsn.DriverPostgreSQL
+		conf.options.Deprecated.DatabaseDsn = "postgresql://user:pass@db.internal:4002/photoprism"
+
+		assert.False(t, conf.NoDatabaseDSN())
+		assert.True(t, conf.HasDatabaseDSN())
+		assert.Equal(t, "postgresql://user:pass@db.internal:4002/photoprism?connect_timeout=15000&sslmode=disable&TimeZone=UTC", conf.DatabaseDSN()) //nolint:gosec // This is a mock value used strictly for unit testing
 		assert.Empty(t, conf.options.Deprecated.DatabaseDsn)
 	})
 }

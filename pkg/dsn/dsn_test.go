@@ -224,7 +224,7 @@ func TestDSN_ToString(t *testing.T) {
 				User:     "myuser",
 				Password: "password",
 			},
-			want: "postgresql://myuser:password@postgres:5432/testdb?sslmode=disable&TimeZone=UTC&lock_timeout=5000",
+			want: "postgresql://myuser:password@postgres:5432/testdb?sslmode=disable&TimeZone=UTC",
 		},
 		{
 			name: "PostgresWithParms",
@@ -234,9 +234,9 @@ func TestDSN_ToString(t *testing.T) {
 				Server:   "postgres:5432",
 				User:     "myuser",
 				Password: "password",
-				Params:   "sslmode=require TimeZone=UTC lock_timeout=5000",
+				Params:   "sslmode=require TimeZone=UTC",
 			},
-			want: "postgresql://myuser:password@postgres:5432/testdb?sslmode=require&TimeZone=UTC&lock_timeout=5000",
+			want: "postgresql://myuser:password@postgres:5432/testdb?sslmode=require&TimeZone=UTC",
 		},
 		{
 			name: "PostgreSQL",
@@ -247,7 +247,7 @@ func TestDSN_ToString(t *testing.T) {
 				User:     "myuser",
 				Password: "password",
 			},
-			want: "postgresql://myuser:password@postgres:5432/testdb?sslmode=disable&TimeZone=UTC&lock_timeout=5000",
+			want: "postgresql://myuser:password@postgres:5432/testdb?sslmode=disable&TimeZone=UTC",
 		},
 		{
 			name: "PostgreSQLWithParms",
@@ -257,9 +257,9 @@ func TestDSN_ToString(t *testing.T) {
 				Server:   "postgres:5432",
 				User:     "myuser",
 				Password: "password",
-				Params:   "sslmode=require&TimeZone=UTC&lock_timeout=5000",
+				Params:   "sslmode=require&TimeZone=UTC&connect_timeout=5000",
 			},
-			want: "postgresql://myuser:password@postgres:5432/testdb?sslmode=require&TimeZone=UTC&lock_timeout=5000",
+			want: "postgresql://myuser:password@postgres:5432/testdb?sslmode=require&TimeZone=UTC&connect_timeout=5000",
 		},
 		{
 			name: "PostgreSQLEncodedPassword",
@@ -270,7 +270,7 @@ func TestDSN_ToString(t *testing.T) {
 				User:     "myuser",
 				Password: "spec[char$@2&",
 			},
-			want: "postgresql://myuser:spec%5Bchar$%402&@postgres:5432/testdb?sslmode=disable&TimeZone=UTC&lock_timeout=5000",
+			want: "postgresql://myuser:spec%5Bchar$%402&@postgres:5432/testdb?sslmode=disable&TimeZone=UTC",
 		},
 		{
 			name: "PostgreSQLWithParmsEncodedPassword",
@@ -280,9 +280,9 @@ func TestDSN_ToString(t *testing.T) {
 				Server:   "postgres:5432",
 				User:     "myuser",
 				Password: "spec[char@$2&",
-				Params:   "sslmode=require&TimeZone=UTC&lock_timeout=5000",
+				Params:   "sslmode=require&TimeZone=UTC&connect_timeout=5000",
 			},
-			want: "postgresql://myuser:spec%5Bchar%40$2&@postgres:5432/testdb?sslmode=require&TimeZone=UTC&lock_timeout=5000",
+			want: "postgresql://myuser:spec%5Bchar%40$2&@postgres:5432/testdb?sslmode=require&TimeZone=UTC&connect_timeout=5000",
 		},
 		{
 			name: "MariaDB",
@@ -394,7 +394,7 @@ func TestDSN_ForPSQL(t *testing.T) {
 				Server:   "postgres:5432",
 				User:     "myuser",
 				Password: "password",
-				Params:   "sslmode=require&TimeZone=UTC&lock_timeout=5000",
+				Params:   "sslmode=require&TimeZone=UTC&connect_timeout=5000",
 			},
 			want: "postgresql://myuser:password@postgres:5432/testdb",
 		},
@@ -417,7 +417,7 @@ func TestDSN_ForPSQL(t *testing.T) {
 				Server:   "postgres:5432",
 				User:     "myuser",
 				Password: "password",
-				Params:   "sslmode=require&TimeZone=UTC&lock_timeout=5000",
+				Params:   "sslmode=require&TimeZone=UTC&connect_timeout=5000",
 			},
 			want: "postgresql://myuser:password@postgres:5432/testdb",
 		},
@@ -477,9 +477,9 @@ func TestPostgresEncodeParams(t *testing.T) {
 		{
 			name: "ThreeParams",
 			in: DSN{
-				Params: "sslmode=require TimeZone=UTC lock_timeout=5000",
+				Params: "sslmode=require TimeZone=UTC connect_timeout=5000",
 			},
-			want: "sslmode=require&TimeZone=UTC&lock_timeout=5000",
+			want: "sslmode=require&TimeZone=UTC&connect_timeout=5000",
 		},
 		{
 			name: "AlreadyEncoded",

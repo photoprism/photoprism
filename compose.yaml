@@ -241,6 +241,7 @@ services:
   postgres:
     image: postgres:18-alpine
     stop_grace_period: 15s
+    command: ["postgres", "-c", "lock_timeout=120s"]
     expose:
       - "${POSTGRES_PORT:-4002}"
     ## Publish the PostgreSQL port on the host for direct access from the host:

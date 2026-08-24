@@ -50,12 +50,12 @@ func TestPhotoPrismTestToDriverDSN(t *testing.T) {
 
 	t.Run("postgres", func(t *testing.T) {
 		t.Setenv("PHOTOPRISM_TEST_DSN_NAME", "postgres")
-		t.Setenv("PHOTOPRISM_TEST_DSN_POSTGRES", "postgresql://photoprism:photoprism@postgres:5432/postgres?TimeZone=UTC&connect_timeout=15&lock_timeout=5000&sslmode=disable")
+		t.Setenv("PHOTOPRISM_TEST_DSN_POSTGRES", "postgresql://photoprism:photoprism@postgres:5432/postgres?TimeZone=UTC&connect_timeout=15&sslmode=disable")
 
 		driver, dsn := PhotoPrismTestToDriverDSN()
 
 		assert.Equal(t, "postgres", driver)
-		assert.Equal(t, "postgresql://photoprism:photoprism@postgres:5432/postgres?TimeZone=UTC&connect_timeout=15&lock_timeout=5000&sslmode=disable", dsn)
+		assert.Equal(t, "postgresql://photoprism:photoprism@postgres:5432/postgres?TimeZone=UTC&connect_timeout=15&sslmode=disable", dsn)
 	})
 
 	t.Run("default", func(t *testing.T) {
