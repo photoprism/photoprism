@@ -5,7 +5,7 @@
 - `IndexOptions*` helpers require a `*config.Config`; pass the active config (or `config.NewMinimalTestConfig(t.TempDir())` in unit tests) so face/label/NSFW scheduling matches the current run.
 - Folder albums use path-first lookup/update (`album_path`) to avoid slug collisions for emoji child paths.
 - Label/label-search logic should reuse `entity.FindLabels(...)`, `entity.FindLabelIDs(...)`, and `entity.LabelSlugs(...)` for homophone-aware exact-name matching — avoid ad-hoc slug SQL in search code.
-- Vision worker scheduling is controlled via `VisionSchedule` / `VisionFilter` and `Run` in `vision.yml`. Use `vision.FilterModels` and `entity.Photo.ShouldGenerateLabels/Caption` to decide when work is required before loading media files.
+- Vision worker scheduling is controlled via `VisionSchedule` / `VisionFilter` and `Run` in `vision.yml` - except faces, which are scheduled by `FACE_RUN` alone. Use `vision.FilterModels` and `entity.Photo.ShouldGenerateLabels/Caption` to decide when work is required before loading media files.
 
 ## Download CLI Workbench (yt-dlp, remux, importer)
 
