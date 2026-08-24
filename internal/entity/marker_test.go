@@ -73,11 +73,25 @@ func TestNewMarker(t *testing.T) {
 	assert.Equal(t, "fs6sg6bw45bnlqdw", m.FileUID)
 	assert.Equal(t, "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818-1340ce163163", m.Thumb)
 	assert.Equal(t, "ls6sg6b1wowuy3c3", m.SubjUID)
-	assert.True(t, m.MarkerReview)
 	assert.Equal(t, 59, m.Q)
 	assert.Equal(t, 29, m.Score)
 	assert.Equal(t, SrcImage, m.MarkerSrc)
 	assert.Equal(t, MarkerLabel, m.MarkerType)
+}
+
+// TestNewMarkerReview pins what "needs review" means on the score scale: a marker that exists but
+// cannot contribute to a cluster is one a person has to look at. Stated against the threshold
+// rather than a literal, because a literal is what let this drift onto the wrong scale before.
+func TestNewMarkerReview(t *testing.T) {
+	file := FileFixtures.Get("exampleFileName.jpg")
+
+	below := NewMarker(file, testArea, "ls6sg6b1wowuy3c3", SrcImage, MarkerFace, 100, face.ClusterScoreThreshold-1)
+	require.NotNil(t, below)
+	assert.True(t, below.MarkerReview, "a marker under the clustering bar needs review")
+
+	atBar := NewMarker(file, testArea, "ls6sg6b1wowuy3c3", SrcImage, MarkerFace, 100, face.ClusterScoreThreshold)
+	require.NotNil(t, atBar)
+	assert.False(t, atBar.MarkerReview, "a marker that can contribute to a cluster does not")
 }
 
 func TestMarker_SetName(t *testing.T) {

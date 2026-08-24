@@ -305,6 +305,14 @@ func facesAuditAction(ctx *cli.Context) error {
 // facesResetAction resets face clusters and matches.
 func facesResetAction(ctx *cli.Context) error {
 	if ctx.Bool("force") {
+		// The two do not compose: --force removes every person, face and marker, and the names go
+		// with them, so a caller who also asked to regenerate would silently get the destructive
+		// half alone. Refused rather than reordered, because which of the two they meant is not
+		// knowable from the command.
+		if ctx.IsSet("detector") || ctx.IsSet("engine") {
+			return cli.Exit("faces: --force removes all people and faces, so it cannot be combined with --detector", 1)
+		}
+
 		return facesResetAllAction(ctx)
 	}
 

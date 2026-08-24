@@ -20,9 +20,22 @@ const (
 	EpsilonDefault = 0.01
 	// SizeThresholdDefault is the default minimum detected face size, in pixels.
 	SizeThresholdDefault = 25
-	// ScoreThresholdDefault is the default minimum face score accepted by the detector, on the
-	// 0-100 confidence scale the ONNX detectors report. A detector may be stricter still.
-	ScoreThresholdDefault = 65.0
+	// ScoreThresholdDefault is the minimum face score a detector's own calibrated cutoff is not
+	// allowed to fall below, on the 0-100 confidence scale the ONNX detectors report.
+	ScoreThresholdDefault = 0.0
+	// ClusterScoreThresholdDefault is the clustering bar for a detector that registers none, and
+	// for a marker no detector produced.
+	ClusterScoreThresholdDefault = 20
+	// ClusterScoreAuto asks a query to apply each marker's own detector bar, as distinct from zero,
+	// which asks for no score filter at all.
+	ClusterScoreAuto = -1
+	// OverlapThresholdDefault is the default face area overlap percentage above which two
+	// detections are treated as identical.
+	OverlapThresholdDefault = 42
+	// ClusterSizeThresholdDefault is the default minimum face size, in pixels, for clustering.
+	ClusterSizeThresholdDefault = 60
+	// ClusterCoreDefault is the default number of faces required to seed a cluster core.
+	ClusterCoreDefault = 4
 )
 
 // InterOpThreads is how many threads an ONNX session may use to run graph nodes in
@@ -50,15 +63,16 @@ var (
 
 var (
 	// OverlapThreshold defines the minimum face area overlap percentage required to treat detections as identical.
-	OverlapThreshold = 42
+	OverlapThreshold = OverlapThresholdDefault
 	// OverlapThresholdFloor is the relaxed overlap threshold used to avoid rounding inconsistencies.
 	OverlapThresholdFloor = OverlapThreshold - 1
 	// ScoreThreshold is the base minimum face score accepted by the detector.
 	ScoreThreshold = ScoreThresholdDefault
 	// ClusterScoreThreshold is the minimum score required for faces that contribute to automatic
-	// clustering. It is a weak gate on its own, because detector confidence saturates above the
-	// detector's own cutoff; ClusterSizeThreshold is what keeps an interpolated crop out.
-	ClusterScoreThreshold = 70
+	// clustering, assigned by Config.Propagate from the detector in force. It is a weak gate on
+	// its own, because detector confidence saturates above the detector's own cutoff;
+	// ClusterSizeThreshold is what keeps an interpolated crop out.
+	ClusterScoreThreshold = ClusterScoreThresholdDefault
 	// SizeThreshold is the minimum detected face size, in pixels. Config.Propagate assigns it from
 	// FACE_SIZE, so a reader that bounds what detection produced compares against the same value.
 	SizeThreshold = SizeThresholdDefault
@@ -71,7 +85,7 @@ var (
 	// so a smaller setting would ask for faces no model in the registry can find.
 	MinSizeThreshold = 10
 	// ClusterSizeThreshold is the minimum face size, in pixels, for faces considered when forming clusters.
-	ClusterSizeThreshold = 60
+	ClusterSizeThreshold = ClusterSizeThresholdDefault
 	// ClusterDist is the similarity distance threshold that defines the cluster core.
 	ClusterDist = ClusterDistDefault
 	// ClusterRadius is the maximum normalized distance for cluster samples.
@@ -81,12 +95,27 @@ var (
 	// CollisionDist is the minimum distance under which embeddings cannot be distinguished.
 	CollisionDist = CollisionDistDefault
 	// ClusterCore is the minimum number of faces required to seed a cluster core.
-	ClusterCore = 4
+	ClusterCore = ClusterCoreDefault
 	// SampleThreshold is the number of faces required before automatic clustering begins.
 	SampleThreshold = 2 * ClusterCore
 	// Epsilon is the numeric tolerance used during cluster comparisons.
 	Epsilon = EpsilonDefault
 )
+
+// ClusterScore returns the score a marker the named detector produced has to reach to contribute
+// to automatic clustering.
+//
+// The bar is per detector because their scores are not comparable - the same number is a thin
+// sliver above one detector's floor and a third of another's range - and it is looked up per
+// marker because a library holds markers from more than one. A detector that registers none, and
+// a marker written before the provenance column existed, fall back to the shared default.
+func ClusterScore(detector DetectorName) int {
+	if d := FindDetector(detector); d != nil && d.ClusterMinScore > 0 {
+		return d.ClusterMinScore
+	}
+
+	return ClusterScoreThresholdDefault
+}
 
 // ClampSampleRadius limits a cluster sample radius to the configured range.
 func ClampSampleRadius(radius float64) float64 {

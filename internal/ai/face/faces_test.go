@@ -34,8 +34,12 @@ func TestScoreUncertainty(t *testing.T) {
 	assert.Equal(t, 1, ScoreUncertainty(100))
 	assert.Equal(t, 1, ScoreUncertainty(96))
 	assert.Equal(t, 5, ScoreUncertainty(95))
-	assert.Equal(t, 30, ScoreUncertainty(int(ScoreThresholdDefault)+1))
-	assert.Equal(t, 35, ScoreUncertainty(int(ScoreThresholdDefault)), "a face at the floor is the least certain one that exists")
+	// The floor is the detector's own cutoff, so the steps below it are reachable only through a
+	// detector that scores lower, or through a marker no detector produced.
+	floor := int(FindDetector(DetectorYuNet).MinScore * 100)
+	assert.Equal(t, 35, ScoreUncertainty(floor), "a face at the default detector's floor")
+	assert.Equal(t, 30, ScoreUncertainty(floor+1))
+	assert.Equal(t, 45, ScoreUncertainty(int(FindDetector(DetectorSCRFD).MinScore*100)+1))
 	assert.Equal(t, 50, ScoreUncertainty(0))
 }
 

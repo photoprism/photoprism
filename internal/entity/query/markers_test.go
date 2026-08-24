@@ -426,3 +426,66 @@ func TestCountMarkers(t *testing.T) {
 
 	assert.GreaterOrEqual(t, n, 1)
 }
+
+// TestWhereClusterScore pins the bar that decides which markers clustering may use. It is per
+// marker, from the detector that produced it, so an upgrade cannot exclude a marker for a
+// calibration it was never scored against.
+func TestWhereClusterScore(t *testing.T) {
+	newMarker := func(t *testing.T, detector string, score int) *entity.Marker {
+		t.Helper()
+
+		m := &entity.Marker{
+			MarkerUID:      rnd.GenerateUID('m'),
+			FileUID:        "fs6sg6bw45bnlqdw",
+			MarkerType:     entity.MarkerFace,
+			MarkerSrc:      entity.SrcImage,
+			Score:          score,
+			Size:           160,
+			DetectModel:    detector,
+			EmbedModel:     face.EmbeddingModelName(),
+			EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
+		}
+
+		require.NoError(t, entity.Db().Create(m).Error)
+		t.Cleanup(func() { entity.UnscopedDb().Delete(m) })
+
+		return m
+	}
+	matched := func(t *testing.T, uid string, floor int) bool {
+		t.Helper()
+
+		var n int
+		require.NoError(t, whereClusterScore(entity.Db().Model(&entity.Marker{}).Where("marker_uid = ?", uid), floor).
+			Count(&n).Error)
+
+		return n == 1
+	}
+	yunet := face.ClusterScore(face.DetectorYuNet)
+	scrfd := face.ClusterScore(face.DetectorSCRFD)
+
+	t.Run("EachDetectorItsOwnBar", func(t *testing.T) {
+		// A score below YuNet's bar and above SCRFD's is admitted for one and refused for the
+		// other, which is the whole point of registering them separately.
+		between := scrfd
+
+		require.Less(t, scrfd, yunet)
+		assert.False(t, matched(t, newMarker(t, face.DetectorYuNet, between).MarkerUID, face.ClusterScoreAuto))
+		assert.True(t, matched(t, newMarker(t, face.DetectorSCRFD, between).MarkerUID, face.ClusterScoreAuto))
+	})
+	t.Run("UnrecordedDetectorKeepsTheDefault", func(t *testing.T) {
+		// Every row written before the provenance column existed, which must not be stranded.
+		legacy := newMarker(t, "", face.ClusterScoreThresholdDefault)
+
+		assert.True(t, matched(t, legacy.MarkerUID, face.ClusterScoreAuto))
+		assert.False(t, matched(t, newMarker(t, "", face.ClusterScoreThresholdDefault-1).MarkerUID, face.ClusterScoreAuto))
+	})
+	t.Run("ExplicitFloorOverrides", func(t *testing.T) {
+		m := newMarker(t, face.DetectorYuNet, yunet)
+
+		assert.True(t, matched(t, m.MarkerUID, yunet))
+		assert.False(t, matched(t, m.MarkerUID, yunet+1))
+	})
+	t.Run("ZeroDoesNotFilter", func(t *testing.T) {
+		assert.True(t, matched(t, newMarker(t, "", 1).MarkerUID, 0))
+	})
+}

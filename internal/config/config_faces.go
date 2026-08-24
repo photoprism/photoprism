@@ -52,7 +52,10 @@ func (c *Config) FaceDetectorSetting() face.DetectorName {
 		return configured
 	}
 
-	if configured == face.DetectorAuto {
+	// Only an unset detector lets the deprecated value decide. "auto" is a value an operator
+	// chose, and it is the first thing they reach for to turn detection back on, so it has to
+	// win as plainly as a detector name does.
+	if c.options.FaceDetector == "" {
 		return face.DetectorNone
 	}
 
@@ -732,8 +735,11 @@ func (c *Config) FaceSizeRetry() int {
 	return min(size, c.FaceSize())
 }
 
-// FaceScore returns the face quality score threshold. It falls back to the shipped default
-// rather than to `face.ScoreThreshold`, which Propagate assigns from this.
+// FaceScore returns the minimum detection score, or zero when each detector's own calibrated
+// cutoff is to decide.
+//
+// Unset means zero rather than a number, because a shared default either sits below every
+// detector's cutoff and gates nothing, or above one of them and silently overrules a calibration.
 func (c *Config) FaceScore() float64 {
 	if c.options.FaceScore < 1 || c.options.FaceScore > 100 {
 		return face.ScoreThresholdDefault
@@ -745,7 +751,7 @@ func (c *Config) FaceScore() float64 {
 // FaceOverlap returns the face area overlap threshold in percent.
 func (c *Config) FaceOverlap() int {
 	if c.options.FaceOverlap < 1 || c.options.FaceOverlap > 100 {
-		return face.OverlapThreshold
+		return face.OverlapThresholdDefault
 	}
 
 	return c.options.FaceOverlap
@@ -754,25 +760,40 @@ func (c *Config) FaceOverlap() int {
 // FaceClusterSize returns the size threshold for faces forming a cluster in pixels.
 func (c *Config) FaceClusterSize() int {
 	if c.options.FaceClusterSize < 20 || c.options.FaceClusterSize > 10000 {
-		return face.ClusterSizeThreshold
+		return face.ClusterSizeThresholdDefault
 	}
 
 	return c.options.FaceClusterSize
 }
 
-// FaceClusterScore returns the quality threshold for faces forming a cluster.
+// FaceClusterScore returns the quality threshold for faces forming a cluster, calibrated for the
+// detector in force when the operator set none.
+//
+// It falls back to the detector rather than to `face.ClusterScoreThreshold`, which Propagate
+// assigns from this, and which would otherwise freeze the last value an operator cleared.
 func (c *Config) FaceClusterScore() int {
 	if c.options.FaceClusterScore < 1 || c.options.FaceClusterScore > 100 {
-		return face.ClusterScoreThreshold
+		return c.detectorClusterScore()
 	}
 
 	return c.options.FaceClusterScore
 }
 
+// detectorClusterScore returns the clustering bar registered for the detector in force. A bar that
+// is a meaningful step above one detector's cutoff sits below another's and gates nothing, so it
+// follows the detector the same way the cutoff itself does.
+func (c *Config) detectorClusterScore() int {
+	if d := face.FindDetector(c.FaceDetector()); d != nil && d.ClusterMinScore > 0 {
+		return d.ClusterMinScore
+	}
+
+	return face.ClusterScoreThresholdDefault
+}
+
 // FaceClusterCore returns the number of faces forming a cluster core.
 func (c *Config) FaceClusterCore() int {
 	if c.options.FaceClusterCore < 1 || c.options.FaceClusterCore > 100 {
-		return face.ClusterCore
+		return face.ClusterCoreDefault
 	}
 
 	return c.options.FaceClusterCore

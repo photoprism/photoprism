@@ -220,9 +220,7 @@ func whereFaceMigrationSamples(stmt *gorm.DB, model string) *gorm.DB {
 		stmt = stmt.Where("size >= ?", face.ClusterSizeThreshold)
 	}
 
-	if face.ClusterScoreThreshold > 0 {
-		stmt = stmt.Where("score >= ?", face.ClusterScoreThreshold)
-	}
+	stmt = whereClusterScore(stmt, face.ClusterScoreAuto)
 
 	return whereEmbeddingModel(stmt, model)
 }
@@ -269,7 +267,7 @@ func FaceMigrationLowQualityMarkers(model string) (count int, err error) {
 		Where("marker_type = ? AND marker_invalid = 0", entity.MarkerFace).
 		Where("subj_uid <> ''").
 		Where("LENGTH(embeddings_json) > 0").
-		Where("size < ? OR score < ?", face.ClusterSizeThreshold, face.ClusterScoreThreshold), model).
+		Where("size < ? OR score < ?", face.ClusterSizeThreshold, face.ClusterScoreThresholdDefault), model).
 		Count(&count).Error
 
 	return count, err

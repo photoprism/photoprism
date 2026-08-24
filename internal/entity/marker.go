@@ -82,7 +82,7 @@ func NewMarker(file File, area crop.Area, subjUID, markerSrc, markerType string,
 		FileUID:       file.FileUID,
 		MarkerSrc:     markerSrc,
 		MarkerType:    markerType,
-		MarkerReview:  score < 30,
+		MarkerReview:  score < face.ClusterScoreThresholdDefault,
 		MarkerInvalid: false,
 		SubjUID:       subjUID,
 		FaceDist:      -1,
@@ -572,7 +572,7 @@ func (m *Marker) Face() (f *Face) {
 	// XMP-sourced markers are excluded: auto clustering is managed elsewhere,
 	// and XMP names must not seed the shared face (no XMP clustering in v1).
 	if subjSrcSharesFace(m.SubjSrc) && m.FaceID == "" {
-		if m.Size < face.ClusterSizeThreshold || m.Score < face.ClusterScoreThreshold {
+		if m.Size < face.ClusterSizeThreshold || m.Score < face.ClusterScore(m.DetectModel) {
 			log.Debugf("faces: marker %s skipped adding face due to low-quality (size %d, score %d)", clean.Log(m.MarkerUID), m.Size, m.Score)
 			return nil
 		}

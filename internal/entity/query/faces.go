@@ -195,9 +195,7 @@ func CountNewFaceMarkers(size, score int) (n int) {
 		q = q.Where("size >= ?", size)
 	}
 
-	if score > 0 {
-		q = q.Where("score >= ?", score)
-	}
+	q = whereClusterScore(q, score)
 
 	if !f.CreatedAt.IsZero() {
 		q = q.Where("created_at > ?", f.CreatedAt)
@@ -208,6 +206,50 @@ func CountNewFaceMarkers(size, score int) (n int) {
 	}
 
 	return n
+}
+
+// whereClusterScore restricts a statement to markers that clear the clustering bar of the detector
+// that produced them, or the given floor when one is set explicitly.
+//
+// Looked up per marker rather than taken from the detector in force: a library holds markers from
+// more than one, and judging an old marker by the active detector's bar would exclude it for a
+// calibration it was never scored against - permanently, since nothing recomputes a score.
+func whereClusterScore(stmt *gorm.DB, floor int) *gorm.DB {
+	switch {
+	case floor > 0:
+		return stmt.Where("score >= ?", floor)
+	case floor == 0:
+		// No score filter at all, which is what a caller counting every marker asks for.
+		return stmt
+	}
+
+	conds := make([]string, 0, len(face.Detectors)+1)
+	args := make([]any, 0, 2*len(face.Detectors)+1)
+	others := make([]string, 0, len(face.Detectors))
+	names := make([]any, 0, len(face.Detectors))
+
+	for _, d := range face.Detectors {
+		if d.ClusterMinScore <= 0 {
+			continue
+		}
+
+		conds = append(conds, "(COALESCE(detect_model, '') = ? AND score >= ?)")
+		args = append(args, d.Name, d.ClusterMinScore)
+		others = append(others, "COALESCE(detect_model, '') <> ?")
+		names = append(names, d.Name)
+	}
+
+	if len(conds) == 0 {
+		return stmt.Where("score >= ?", face.ClusterScoreThresholdDefault)
+	}
+
+	// Everything the registry does not name, including every row written before the provenance
+	// column existed, keeps the shared default so an upgrade strands nothing.
+	conds = append(conds, "("+strings.Join(others, " AND ")+" AND score >= ?)")
+	args = append(args, names...)
+	args = append(args, face.ClusterScoreThresholdDefault)
+
+	return stmt.Where(strings.Join(conds, " OR "), args...)
 }
 
 // PurgeOrphanFaces removes unused faces from the index.

@@ -226,3 +226,19 @@ func TestDetectorMinScore(t *testing.T) {
 	assert.NotEqual(t, FindDetector(DetectorSCRFD).MinScore, FindDetector(DetectorYuNet).MinScore,
 		"a cutoff copied from the other detector is not a calibrated one")
 }
+
+// TestClusterScore pins that the clustering bar follows the detector that produced a marker, not
+// the one in force. A library holds markers from more than one, and nothing recomputes a score, so
+// judging an old marker by a newer detector's calibration would exclude it permanently.
+func TestClusterScore(t *testing.T) {
+	assert.Equal(t, FindDetector(DetectorYuNet).ClusterMinScore, ClusterScore(DetectorYuNet))
+	assert.Equal(t, FindDetector(DetectorSCRFD).ClusterMinScore, ClusterScore(DetectorSCRFD))
+	assert.NotEqual(t, ClusterScore(DetectorYuNet), ClusterScore(DetectorSCRFD),
+		"a bar shared between detectors gates nothing for one of them")
+
+	// Everything written before the provenance column existed keeps the shared default, so an
+	// upgrade strands nothing.
+	assert.Equal(t, ClusterScoreThresholdDefault, ClusterScore(""))
+	assert.Equal(t, ClusterScoreThresholdDefault, ClusterScore("centerface"))
+	assert.Less(t, ClusterScoreThresholdDefault, ClusterScore(DetectorSCRFD))
+}

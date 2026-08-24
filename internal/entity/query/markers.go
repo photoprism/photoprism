@@ -102,9 +102,7 @@ func Embeddings(single, unclustered bool, size, score int, model string) (result
 		stmt = stmt.Where("size >= ?", size)
 	}
 
-	if score > 0 {
-		stmt = stmt.Where("score >= ?", score)
-	}
+	stmt = whereClusterScore(stmt, score)
 
 	if unclustered {
 		stmt = stmt.Where("face_id = ''")

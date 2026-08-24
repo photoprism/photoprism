@@ -1330,7 +1330,8 @@ var Flags = CliFlags{
 			Name:    "face-detector",
 			Usage:   "face detection model `NAME` (" + face.DetectorUsageString() + "), derived from the face model when unset",
 			EnvVars: EnvVars("FACE_DETECTOR"),
-		}}, {
+		},
+		DocDefault: "auto"}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-detector-threads",
 			Usage:   "face detection thread `COUNT` per indexing worker, derived from the CPU cores when unset",
@@ -1374,9 +1375,9 @@ var Flags = CliFlags{
 		Flag: &cli.Float64Flag{
 			Name:    "face-score",
 			Usage:   "minimum face `QUALITY` score (1-100), on top of the detector's own cutoff",
-			Value:   face.ScoreThresholdDefault,
 			EnvVars: EnvVars("FACE_SCORE"),
-		}}, {
+		},
+		DocDefault: "detector"}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-overlap",
 			Usage:   "face area overlap threshold in `PERCENT` (1-100)",
@@ -1392,9 +1393,9 @@ var Flags = CliFlags{
 		Flag: &cli.IntFlag{
 			Name:    "face-cluster-score",
 			Usage:   "minimum `QUALITY` score of automatically clustered faces (1-100)",
-			Value:   face.ClusterScoreThreshold,
 			EnvVars: EnvVars("FACE_CLUSTER_SCORE"),
-		}}, {
+		},
+		DocDefault: "detector"}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-cluster-core",
 			Usage:   "`NUMBER` of faces forming a cluster core (1-100)",

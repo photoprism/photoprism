@@ -27,7 +27,7 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 	// Skip clustering if index contains no new face markers, and force option isn't set.
 	if opt.Force {
 		log.Infof("faces: enforced clustering")
-	} else if n := query.CountNewFaceMarkers(face.ClusterSizeThreshold, face.ClusterScoreThreshold); n < opt.SampleThreshold() {
+	} else if n := query.CountNewFaceMarkers(face.ClusterSizeThreshold, face.ClusterScoreAuto); n < opt.SampleThreshold() {
 		log.Debugf("faces: skipped clustering")
 		return added, nil
 	}
@@ -37,7 +37,7 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 	current := face.EmbeddingModelName()
 
 	// Fetch unclustered face embeddings.
-	embeddings, err := query.Embeddings(false, true, face.ClusterSizeThreshold, face.ClusterScoreThreshold, current)
+	embeddings, err := query.Embeddings(false, true, face.ClusterSizeThreshold, face.ClusterScoreAuto, current)
 
 	log.Debugf("faces: found %s", english.Plural(len(embeddings), "unclustered sample", "unclustered samples"))
 
