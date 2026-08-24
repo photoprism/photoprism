@@ -285,12 +285,7 @@ func (c *Config) Init() error {
 	disk.StorageLowPct = c.StorageFree()
 	DisableStorageCheck.Store(disk.StorageLowPct <= 0)
 
-	// Load optional vision package configuration.
-	if visionYaml := c.VisionYaml(); !fs.FileExistsNotEmpty(visionYaml) {
-		// Do nothing.
-	} else if loadErr := vision.Config.Load(visionYaml); loadErr != nil {
-		log.Warnf("vision: %s", loadErr)
-	}
+	c.LoadVisionConfig()
 
 	// Settle which face embedding model this instance uses, which needs the database and has
 	// to happen before Propagate configures the embedder from it.
@@ -496,13 +491,7 @@ func (c *Config) Propagate() {
 	face.ClusterRadius = c.FaceClusterRadius()
 	face.ClusterDist = c.FaceClusterDist()
 	face.MatchDist = c.FaceMatchDist()
-	if err := face.ConfigureEngine(face.EngineSettings{
-		Name: c.FaceEngine(),
-		ONNX: face.ONNXOptions{
-			ModelPath: c.FaceEngineModelPath(),
-			Threads:   c.FaceDetectorThreads(),
-		},
-	}); err != nil {
+	if err := c.ConfigureFaceDetector(0); err != nil {
 		log.Warnf("faces: %s (configure engine)", err)
 	}
 	if err := c.ConfigureFaceEmbedder(c.FaceModel()); err != nil {
@@ -567,7 +556,68 @@ func (c *Config) SaveOptionsPatch(patch Values) (bool, error) {
 		return false, nil
 	}
 
+	if _, err = c.writeOptionsYAML(fileName, values); err != nil {
+		return true, err
+	}
+
+	return true, c.applyOptionValues(patch)
+}
+
+// DeleteOptionsPatch removes the specified keys from "options.yml" and reports whether the file
+// was changed. Removing a key restores the default, which writing an empty value does not: the
+// loader cannot tell an option that was cleared from one that was set to nothing.
+func (c *Config) DeleteOptionsPatch(keys ...string) (bool, error) {
+	if c == nil || c.options == nil || len(keys) == 0 {
+		return false, nil
+	}
+
+	// Nothing to remove from a file that does not exist, and reading one through loadOptionsYAML
+	// would create its directory on the way - which is not nothing: ConfigPath() resolves to the
+	// storage config directory once that exists, moving every path derived from it.
+	if fileName := c.OptionsYaml(); fileName == "" || !fs.FileExists(fileName) {
+		return false, nil
+	}
+
+	fileName, values, err := c.loadOptionsYAML()
+	if err != nil {
+		return false, err
+	}
+
+	changed := false
+
+	for _, key := range keys {
+		if _, ok := values[key]; ok {
+			delete(values, key)
+			changed = true
+		}
+	}
+
+	if !changed {
+		return false, nil
+	}
+
+	// Nothing is applied in return: a removed key leaves no value to read back, and the caller
+	// clears its own field.
 	return c.writeOptionsYAML(fileName, values)
+}
+
+// applyOptionValues applies the patched values, and only those, to the in-memory options.
+//
+// Reading the file back instead would apply every key it holds - including ones a flag or an
+// environment variable overrode for this run, and ones another writer left there. That is how
+// recording a face model came to replace a live database configuration.
+func (c *Config) applyOptionValues(patch Values) error {
+	if c == nil || c.options == nil || len(patch) == 0 {
+		return nil
+	}
+
+	b, err := yaml.Marshal(patch)
+
+	if err != nil {
+		return err
+	}
+
+	return yaml.Unmarshal(b, c.options)
 }
 
 // loadOptionsYAML loads options.yml into a writable map and returns its file path.
@@ -632,7 +682,8 @@ func mergeOptionValues(dst Values, src Values) bool {
 	return changed
 }
 
-// writeOptionsYAML persists merged options values and reloads in-memory options.
+// writeOptionsYAML persists merged options values. It does not touch the in-memory options,
+// which the caller applies through applyOptionValues when it changed one.
 func (c *Config) writeOptionsYAML(fileName string, values Values) (bool, error) {
 	b, err := yaml.Marshal(values)
 	if err != nil {
@@ -641,10 +692,6 @@ func (c *Config) writeOptionsYAML(fileName string, values Values) (bool, error) 
 
 	if err = os.WriteFile(fileName, b, fs.ModeConfigFile); err != nil {
 		return false, err
-	}
-
-	if err = c.options.Load(fileName); err != nil {
-		return true, err
 	}
 
 	return true, nil

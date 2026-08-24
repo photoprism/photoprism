@@ -215,6 +215,14 @@ func CountNewFaceMarkers(size, score int) (n int) {
 // more than one, and judging an old marker by the active detector's bar would exclude it for a
 // calibration it was never scored against - permanently, since nothing recomputes a score.
 func whereClusterScore(stmt *gorm.DB, floor int) *gorm.DB {
+	// FACE_CLUSTER_SCORE outranks the per-detector bars when an operator set one, and removes it
+	// when negative. Applying one value to every marker is safe here in a way that taking the
+	// active detector's bar is not: it is a choice rather than a calibration a marker was never
+	// scored against. Without this the option configured nothing at all.
+	if floor < 0 && face.ClusterScoreThreshold != 0 {
+		floor = max(face.ClusterScoreThreshold, 0)
+	}
+
 	switch {
 	case floor > 0:
 		return stmt.Where("score >= ?", floor)

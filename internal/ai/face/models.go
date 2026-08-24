@@ -70,12 +70,16 @@ const (
 // TensorFlow models. Detector is what an unset FACE_DETECTOR derives from. The five distances are in
 // the model's own scale, so one global set would discard most matches for all but one.
 type EmbeddingModel struct {
-	Name          ModelName
-	Runtime       EmbeddingRuntime
-	Dir           string
-	Dims          int
-	Alignment     CropAlignment
-	Detector      DetectorName
+	Name      ModelName
+	Runtime   EmbeddingRuntime
+	Dir       string
+	Dims      int
+	Alignment CropAlignment
+	Detector  DetectorName
+	// Official marks the model the product offers, which is what a migration defaults to. The
+	// others run and are selectable by name, but user-facing text must not name them: FaceNet is
+	// on its way out with TensorFlow and there is no supported migration back to it.
+	Official      bool
 	ONNX          *onnx.ModelInfo
 	ClusterDist   float64
 	ClusterRadius float64
@@ -110,6 +114,7 @@ var EmbeddingModels = map[ModelName]*EmbeddingModel{
 		Dims:      128,
 		Alignment: AlignArcFace5,
 		Detector:  DetectorYuNet,
+		Official:  true,
 		ONNX: &onnx.ModelInfo{
 			File:    "face_recognition_sface_2021dec.onnx",
 			SHA256:  "0ba9fbfa01b5270c96627c4ef784da859931e02f04419c829e83484087c34e79",
@@ -290,18 +295,35 @@ func EmbeddingModelNames() []ModelName {
 // ModelUsageString lists the accepted FACE_MODEL values for use in CLI help text.
 //
 // It is generated from the registry so the help can never advertise a model that has been
-// renamed or removed, and it leaves out the models whose weights may only be used after
-// their vendor's terms have been accepted: help text is read as an offer.
+// renamed or removed, and it names the officially offered models only: help text is read as an
+// offer, and a model we do not support is one an operator cannot be migrated off again.
 func ModelUsageString() string {
-	names := append(make([]ModelName, 0, len(EmbeddingModels)+2), ModelDetect, ModelNone)
+	names := append(make([]ModelName, 0, len(EmbeddingModels)+2), ModelAuto)
 
 	for _, name := range EmbeddingModelNames() {
-		if !FindEmbeddingModel(name).LicenseGated() {
+		if m := FindEmbeddingModel(name); m.Official && !m.LicenseGated() {
 			names = append(names, name)
 		}
 	}
 
-	return strings.Join(names, ", ")
+	return strings.Join(append(names, ModelNone), ", ")
+}
+
+// DefaultModelName returns the embedding model the product offers, which is the target a
+// migration runs to when none is named. Any other model has to be selected explicitly.
+func DefaultModelName() ModelName {
+	for _, name := range AutoModelPreference {
+		if m := FindEmbeddingModel(name); m != nil && m.Official && !m.LicenseGated() {
+			return name
+		}
+	}
+
+	return ModelNone
+}
+
+// DefaultModel returns the embedding model the product offers, or nil when none is registered.
+func DefaultModel() *EmbeddingModel {
+	return FindEmbeddingModel(DefaultModelName())
 }
 
 // FilePath returns the absolute model path within the specified models directory.

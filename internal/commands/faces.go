@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -90,22 +91,22 @@ var FacesCommands = &cli.Command{
 			},
 			Action: facesOptimizeAction,
 		},
-		FacesConfigCommand,
+		FacesStatusCommand,
 	},
 }
 
 // FacesMigrateCommand configures the face embedding migration command.
 var FacesMigrateCommand = &cli.Command{
 	Name:  "migrate",
-	Usage: "Migrates face embeddings to another model",
+	Usage: "Migrates face embeddings to the supported model",
 	Description: "This is how the face embedding model is changed: every marker is re-embedded and " +
-		"the target is recorded as the configured model. Stop the server before running it, as the " +
-		"migration replaces every face cluster in one transaction and its worker guards cannot see " +
-		"what a running instance writes to the same rows.",
+		"the target is recorded as the configured model. It defaults to " + face.DefaultModelName() +
+		", the model this release supports, so an ordinary migration needs no target. Stop the server " +
+		"before running it, as the migration replaces every face cluster in one transaction.",
 	Flags: []cli.Flag{
 		&cli.StringFlag{
 			Name:  "to",
-			Usage: "target embedding `MODEL` (defaults to the model in use)",
+			Usage: "target embedding `MODEL` (default " + face.DefaultModelName() + ")",
 		},
 		DryRunFlag("reports the face migration scope without changing the index"),
 		ForceFlag("finalizes the migration even when markers could not be re-embedded"),
@@ -159,13 +160,13 @@ func facesMigrateAction(ctx *cli.Context) error {
 		// as unreadable is going to fail. Naming them before the prompt is what separates an
 		// expected loss from a surprise, since a failed marker keeps no vector at all.
 		if plan.Markers.Unreadable > 0 {
-			log.Warnf("faces: %d markers cannot be re-embedded because their file is missing or unreadable",
+			event.SystemWarn([]string{"faces", "migrate", "%d markers cannot be re-embedded because their file is missing or unreadable"},
 				plan.Markers.Unreadable)
 		}
 		// The counts above come from the index, which believes whatever it was told last. An
 		// unmounted originals volume leaves them looking clean and then fails every file.
 		if plan.OriginalsUnavailable {
-			log.Warnf("faces: originals path %s is empty or cannot be read, so no marker can be re-embedded",
+			event.SystemWarn([]string{"faces", "migrate", "originals path %s is empty or cannot be read, so no marker can be re-embedded"},
 				clean.Log(conf.OriginalsPath()))
 		}
 		for _, count := range plan.MarkerModels {
@@ -190,7 +191,7 @@ func facesMigrateAction(ctx *cli.Context) error {
 		// Finalizing clears the stored vectors of every marker that is not on the target
 		// model, so an operator has to see that number before deciding to run this.
 		if stale := plan.Markers.Valid - plan.Markers.Ready; stale > 0 {
-			log.Warnf("faces: %d markers must be re-embedded and lose their stored vectors if that fails", stale)
+			event.SystemWarn([]string{"faces", "migrate", "%d markers must be re-embedded and lose their stored vectors if that fails"}, stale)
 		}
 
 		if ctx.Bool("dry-run") {
@@ -201,8 +202,8 @@ func facesMigrateAction(ctx *cli.Context) error {
 		// The worker guards in Migrate are process-local, so they cannot see a server that
 		// is indexing or matching the same rows. Stopping it is the operator's job, and the
 		// prompt is the last point at which saying so still helps.
-		log.Warnf("faces: stop the server before continuing, as this replaces every face cluster " +
-			"and cannot detect an instance that is still writing to the index")
+		event.SystemWarn([]string{"faces", "migrate", "this replaces every face cluster; indexing and vision hold off " +
+			"while it runs, but changes made in the app are not covered, so stopping the server is still the safe way"})
 
 		if !RunNonInteractively(ctx.Bool("yes")) {
 			prompt := promptui.Prompt{

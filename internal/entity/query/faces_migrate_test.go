@@ -231,13 +231,13 @@ func TestFaceMigrationSubjectMarkers(t *testing.T) {
 	}
 
 	good := face.ClusterSizeThreshold + 10
-	goodScore := face.ClusterScoreThreshold + 10
+	goodScore := face.ClusterScore("") + 10
 
 	subjUID := rnd.GenerateUID('j')
 	manual := newMarker(subjUID, entity.SrcManual, good, goodScore)
 	automatic := newMarker(subjUID, entity.SrcAuto, good, goodScore)
 	tiny := newMarker(subjUID, entity.SrcManual, face.ClusterSizeThreshold-1, goodScore)
-	faint := newMarker(subjUID, entity.SrcManual, good, face.ClusterScoreThreshold-1)
+	faint := newMarker(subjUID, entity.SrcManual, good, face.ClusterScore("")-1)
 	other := newMarker(rnd.GenerateUID('j'), entity.SrcAuto, good, goodScore)
 
 	result, err := FaceMigrationSubjectMarkers(face.ModelFaceNet, subjUID)

@@ -85,11 +85,13 @@ func TestNewMarker(t *testing.T) {
 func TestNewMarkerReview(t *testing.T) {
 	file := FileFixtures.Get("exampleFileName.jpg")
 
-	below := NewMarker(file, testArea, "ls6sg6b1wowuy3c3", SrcImage, MarkerFace, 100, face.ClusterScoreThreshold-1)
+	// The shared default rather than the configurable variable, which is what NewMarker reads:
+	// the review flag is stored, so it cannot follow a threshold an operator changes later.
+	below := NewMarker(file, testArea, "ls6sg6b1wowuy3c3", SrcImage, MarkerFace, 100, face.ClusterScoreThresholdDefault-1)
 	require.NotNil(t, below)
 	assert.True(t, below.MarkerReview, "a marker under the clustering bar needs review")
 
-	atBar := NewMarker(file, testArea, "ls6sg6b1wowuy3c3", SrcImage, MarkerFace, 100, face.ClusterScoreThreshold)
+	atBar := NewMarker(file, testArea, "ls6sg6b1wowuy3c3", SrcImage, MarkerFace, 100, face.ClusterScoreThresholdDefault)
 	require.NotNil(t, atBar)
 	assert.False(t, atBar.MarkerReview, "a marker that can contribute to a cluster does not")
 }
@@ -837,5 +839,33 @@ func TestMarker_SetEmbeddings(t *testing.T) {
 		m.SetEmbeddings(face.Embeddings{face.RandomEmbedding()}, face.ModelSFace, face.EngineONNX)
 
 		assert.Equal(t, face.ModelSFace, m.EmbedModel)
+	})
+}
+
+func TestMarker_Clusterable(t *testing.T) {
+	t.Run("ClearsBothBars", func(t *testing.T) {
+		m := &Marker{Size: face.ClusterSizeThreshold, Score: 100}
+		assert.True(t, m.Clusterable())
+	})
+	t.Run("TooSmall", func(t *testing.T) {
+		m := &Marker{Size: face.ClusterSizeThreshold - 1, Score: 100}
+		assert.False(t, m.Clusterable())
+	})
+	t.Run("TooLowScoring", func(t *testing.T) {
+		m := &Marker{Size: face.ClusterSizeThreshold, Score: 0}
+		assert.False(t, m.Clusterable())
+	})
+	t.Run("ScoreBarFollowsTheDetector", func(t *testing.T) {
+		// A library holds markers from more than one detector and nothing recomputes a score, so
+		// judging one by the active detector's bar would exclude it for a calibration it was
+		// never scored against.
+		score := face.ClusterScore(face.DetectorSCRFD)
+		m := &Marker{Size: face.ClusterSizeThreshold, Score: score, DetectModel: face.DetectorSCRFD}
+
+		assert.True(t, m.Clusterable())
+		assert.Equal(t, score >= face.ClusterScore(""), (&Marker{Size: m.Size, Score: score}).Clusterable())
+	})
+	t.Run("NilMarker", func(t *testing.T) {
+		assert.False(t, (*Marker)(nil).Clusterable())
 	})
 }

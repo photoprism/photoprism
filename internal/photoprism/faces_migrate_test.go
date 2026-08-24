@@ -356,26 +356,44 @@ func TestFaces_migrateFaceFile(t *testing.T) {
 func TestUnresolvedMigrationMarkers(t *testing.T) {
 	markers := entity.Markers{{MarkerUID: "m1"}, {MarkerUID: "m2"}, {MarkerUID: "m3"}}
 	t.Run("NothingToRecrop", func(t *testing.T) {
-		failed, retained := unresolvedMigrationMarkers(markers, nil)
+		failed, retained, clusterable := unresolvedMigrationMarkers(markers, nil)
 		assert.Equal(t, []string{"m1", "m2", "m3"}, failed)
 		assert.Zero(t, retained)
+		// The fixtures carry neither a size nor a score, so none of them could have clustered.
+		assert.Zero(t, clusterable)
 	})
 	t.Run("RecropIsRetained", func(t *testing.T) {
 		// A marker that only needed a new crop keeps the vector it holds, so it must not reach
 		// the failed list: that list is what the finalize blanks.
-		failed, retained := unresolvedMigrationMarkers(markers, map[string]bool{"m2": true})
+		failed, retained, _ := unresolvedMigrationMarkers(markers, map[string]bool{"m2": true})
 		assert.Equal(t, []string{"m1", "m3"}, failed)
 		assert.Equal(t, 1, retained)
 	})
 	t.Run("EveryMarkerIsRetained", func(t *testing.T) {
-		failed, retained := unresolvedMigrationMarkers(markers, map[string]bool{"m1": true, "m2": true, "m3": true})
+		failed, retained, clusterable := unresolvedMigrationMarkers(markers, map[string]bool{"m1": true, "m2": true, "m3": true})
 		assert.Empty(t, failed)
 		assert.Equal(t, 3, retained)
+		assert.Zero(t, clusterable)
 	})
 	t.Run("NoMarkers", func(t *testing.T) {
-		failed, retained := unresolvedMigrationMarkers(nil, map[string]bool{"m1": true})
+		failed, retained, clusterable := unresolvedMigrationMarkers(nil, map[string]bool{"m1": true})
 		assert.Empty(t, failed)
 		assert.Zero(t, retained)
+		assert.Zero(t, clusterable)
+	})
+	t.Run("CountsOnlyWhatCouldHaveClustered", func(t *testing.T) {
+		// The finalize guard measures real loss, so a marker under either clustering bar must
+		// not count toward it however many of them a detector change fails to re-find.
+		mixed := entity.Markers{
+			{MarkerUID: "big", Size: face.ClusterSizeThreshold, Score: 100},
+			{MarkerUID: "small", Size: face.ClusterSizeThreshold - 1, Score: 100},
+			{MarkerUID: "weak", Size: face.ClusterSizeThreshold, Score: 1},
+		}
+
+		failed, _, clusterable := unresolvedMigrationMarkers(mixed, nil)
+
+		assert.Len(t, failed, 3)
+		assert.Equal(t, 1, clusterable)
 	})
 }
 
@@ -555,9 +573,48 @@ func TestMatchMigrationDetections(t *testing.T) {
 
 	result := matchMigrationDetections(markers, detected)
 	require.Len(t, result, 2)
-	assert.Equal(t, detected[0].Area, result["m1"].Area)
-	assert.Equal(t, detected[1].Area, result["m2"].Area)
+	assert.Equal(t, 0, result["m1"])
+	assert.Equal(t, 1, result["m2"])
 	assert.Empty(t, matchMigrationDetections(nil, detected))
+}
+
+// TestAssignedMigrationDetections pins that only the detections a stale marker claims are handed
+// on to be embedded. Migration detects at the smallest size the detectors are trained for, so a
+// file yields detections no marker accounts for, and inferring those would cost the run their
+// time and the real crops their rendition.
+func TestAssignedMigrationDetections(t *testing.T) {
+	markers := entity.Markers{
+		{MarkerUID: "m1", X: 0.1, Y: 0.1, W: 0.2, H: 0.2},
+		{MarkerUID: "m2", X: 0.6, Y: 0.6, W: 0.2, H: 0.2},
+	}
+	detected := face.Faces{
+		{Rows: 100, Cols: 100, Area: face.NewArea("face", 20, 20, 20)},
+		{Rows: 100, Cols: 100, Area: face.NewArea("face", 70, 70, 20)},
+		{Rows: 100, Cols: 100, Area: face.NewArea("face", 5, 90, 4)},
+	}
+
+	t.Run("Success", func(t *testing.T) {
+		// Only m2 needs work, so the detection m1 accounts for must not be embedded, and must
+		// still be unavailable to m2.
+		assigned, order := assignedMigrationDetections(markers, entity.Markers{markers[1]}, detected)
+
+		require.Len(t, assigned, 1)
+		assert.Equal(t, detected[1].Area, assigned[0].Area)
+		assert.Equal(t, map[string]int{"m2": 0}, order)
+	})
+	t.Run("EveryMarkerIsStale", func(t *testing.T) {
+		assigned, order := assignedMigrationDetections(markers, markers, detected)
+
+		require.Len(t, assigned, 2, "the unclaimed detection must be left out")
+		assert.Equal(t, detected[0].Area, assigned[order["m1"]].Area)
+		assert.Equal(t, detected[1].Area, assigned[order["m2"]].Area)
+	})
+	t.Run("NoDetections", func(t *testing.T) {
+		assigned, order := assignedMigrationDetections(markers, markers, nil)
+
+		assert.Empty(t, assigned)
+		assert.Empty(t, order)
+	})
 }
 
 func TestMarkerCropArea(t *testing.T) {
@@ -588,7 +645,7 @@ func TestBuildFaceMigrationClusters(t *testing.T) {
 			SubjUID:        subjectUID,
 			SubjSrc:        subjSrc,
 			Size:           face.ClusterSizeThreshold + 10,
-			Score:          face.ClusterScoreThreshold + 10,
+			Score:          face.ClusterScore("") + 10,
 			EmbedModel:     target,
 			EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
 			W:              0.1,
@@ -932,5 +989,70 @@ func TestFacesMigrateRerunError_Error(t *testing.T) {
 
 		assert.Contains(t, err.Error(), "database is locked")
 		assert.NotErrorIs(t, error(err), query.ErrFaceMigrationIdentitiesChanged)
+	})
+}
+
+func TestLogMigrationProgress(t *testing.T) {
+	// The loop is silent for the best part of an hour on a large library, so this is the only
+	// signal a run is making progress. Every processed state counts, or a re-run that skips
+	// most of the library would appear to stall.
+	t.Run("CountsEveryProcessedState", func(t *testing.T) {
+		plan := FacesMigratePlan{Markers: query.FaceMigrationMarkerCounts{Valid: 200}}
+		result := FacesMigrateResult{Migrated: 40, Skipped: 30, Failed: 20, Retained: 10}
+
+		assert.NotPanics(t, func() { logMigrationProgress(plan, result) })
+	})
+	t.Run("NothingToDo", func(t *testing.T) {
+		// Zero would divide by zero rather than report nothing.
+		assert.NotPanics(t, func() { logMigrationProgress(FacesMigratePlan{}, FacesMigrateResult{}) })
+	})
+	t.Run("MoreProcessedThanPlanned", func(t *testing.T) {
+		// The plan is counted before the run, so a marker added meanwhile must not report 101%.
+		plan := FacesMigratePlan{Markers: query.FaceMigrationMarkerCounts{Valid: 10}}
+
+		assert.NotPanics(t, func() { logMigrationProgress(plan, FacesMigrateResult{Migrated: 99}) })
+	})
+}
+
+func TestFaces_useMigrationDetector(t *testing.T) {
+	c := config.TestConfig()
+	w := NewFaces(c)
+
+	t.Run("LowersAndRestoresTheFloor", func(t *testing.T) {
+		previous := face.ScoreThreshold
+
+		restore, err := w.useMigrationDetector()
+		require.NoError(t, err)
+		require.NotNil(t, restore)
+
+		assert.Equal(t, face.MigrationScoreThreshold, face.ScoreThreshold)
+
+		restore()
+
+		assert.Equal(t, previous, face.ScoreThreshold)
+	})
+	t.Run("KeepsAConfiguredScore", func(t *testing.T) {
+		// FACE_SCORE is a decision rather than a calibration, so the migration must not overrule
+		// it the way it overrules the detector's own cutoff.
+		previous := face.ScoreThreshold
+		options := c.Options()
+		configured := options.FaceScore
+		options.FaceScore = 55
+		t.Cleanup(func() { options.FaceScore = configured })
+
+		restore, err := w.useMigrationDetector()
+		require.NoError(t, err)
+
+		assert.Equal(t, 55.0, face.ScoreThreshold)
+
+		restore()
+
+		assert.Equal(t, previous, face.ScoreThreshold)
+	})
+	t.Run("NilWorker", func(t *testing.T) {
+		restore, err := (*Faces)(nil).useMigrationDetector()
+		require.NoError(t, err)
+		require.NotNil(t, restore)
+		assert.NotPanics(t, restore)
 	})
 }

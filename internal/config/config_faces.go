@@ -2,12 +2,14 @@ package config
 
 import (
 	"fmt"
+	"path/filepath"
 	"runtime"
 	"slices"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -127,10 +129,25 @@ func (c *Config) derivedFaceDetector() face.DetectorName {
 	return face.DetectorNone
 }
 
-// FaceEngineRunType returns the effective run type for the face detection engine.
-// Detection and embedding always run together, so we defer to the face model
-// configuration in the vision subsystem. If no detection model is configured,
-// or faces are disabled entirely, the run type falls back to RunNever.
+// FaceRun returns when face detection and recognition are scheduled to run. An unsupported value
+// is reported and applies as `vision.RunAuto`.
+func (c *Config) FaceRun() vision.RunType {
+	if c == nil {
+		return vision.RunNever
+	}
+
+	if configured := c.options.FaceRun; configured != "" && vision.ParseRunType(configured) == vision.RunAuto &&
+		vision.ReportRunType(configured) != vision.ReportRunType(vision.RunAuto) {
+		c.warnFaceConfig("face-run", "config: unsupported face run type %s, expected %s",
+			clean.Log(configured), vision.RunTypeUsageString())
+	}
+
+	return vision.ParseRunType(c.options.FaceRun)
+}
+
+// FaceEngineRunType returns the effective run type for face detection and recognition, which is
+// `FACE_RUN`. Detection and embedding always run together, so one schedule covers both, and it
+// falls back to RunNever when faces are disabled or no detector may be used.
 func (c *Config) FaceEngineRunType() vision.RunType {
 	if c == nil {
 		return vision.RunNever
@@ -144,7 +161,7 @@ func (c *Config) FaceEngineRunType() vision.RunType {
 		return vision.RunNever
 	}
 
-	return vision.Config.RunType(vision.ModelTypeFace)
+	return c.FaceRun()
 }
 
 // FaceEngineShouldRun reports whether the face detection engine should execute in the
@@ -337,7 +354,7 @@ func (c *Config) usableFaceModel(name face.ModelName) face.ModelName {
 // anything to "options.yml".
 //
 // It is what a report calls to name the model in force and whether it can read the library:
-// what is configured stays as it was, so `photoprism faces config` still shows "detect".
+// what is configured stays as it was, so `photoprism faces status` still shows "detect".
 func (c *Config) ResolveFaceModel() face.ModelName {
 	if c == nil {
 		return face.ModelNone
@@ -374,13 +391,33 @@ func (c *Config) SetFaceModel(name face.ModelName) error {
 		return nil
 	}
 
-	// Set in memory as well as in the file, because the patch helper only reloads the options
-	// it changed and a file that already named the model would leave this process behind.
+	// Set in memory as well as in the file: the patch helper applies only the keys it wrote, and
+	// a file that already named the model would leave this process behind.
 	c.faceModel = name
 	c.options.FaceModel = name
 
 	if _, err := c.SaveOptionsPatch(Values{"FaceModel": name}); err != nil {
 		return fmt.Errorf("failed saving face model %s (%s)", clean.Log(name), err)
+	}
+
+	return nil
+}
+
+// ClearFaceModel removes a pinned embedding model from "options.yml" and from this process, so
+// the next start detects one again.
+//
+// Keeping vectors comparable is the only reason the model is pinned, and a reset leaves none.
+// The pin would otherwise outlive its reason, undoable only by hand-editing the file.
+func (c *Config) ClearFaceModel() error {
+	if c == nil {
+		return nil
+	}
+
+	c.faceModel = ""
+	c.options.FaceModel = ""
+
+	if _, err := c.DeleteOptionsPatch("FaceModel"); err != nil {
+		return fmt.Errorf("failed clearing the face model (%s)", err)
 	}
 
 	return nil
@@ -525,7 +562,7 @@ func (c *Config) checkFaceModelMismatch(counts []query.MarkerEmbeddingModelCount
 		// Why it cannot be loaded was reported by the getter, under a different prefix and
 		// possibly many lines earlier, so this names where to read it back.
 		log.Warnf(`faces: %s, so face embeddings are not processed `+
-			`(run "photoprism faces config" to see why)`, reason)
+			`(run "photoprism faces status" to see why)`, reason)
 
 		return
 	}
@@ -658,10 +695,29 @@ func recordedFaceModel(recorded string) face.ModelName {
 	return face.ModelFaceNet
 }
 
+// EffectiveFaceModel returns the model whose calibration applies: the one in force, or the one
+// detection would settle on while the library has not been asked yet.
+//
+// A report runs before the database is connected, where FaceModel reports none for a model that
+// is merely undetected - which left every calibrated distance in it blank.
+func (c *Config) EffectiveFaceModel() face.ModelName {
+	if c == nil {
+		return face.ModelNone
+	}
+
+	if name := c.FaceModel(); name != face.ModelNone {
+		return name
+	} else if c.FaceModelSetting() == face.ModelDetect {
+		return c.installedFaceModel()
+	}
+
+	return face.ModelNone
+}
+
 // FaceEmbeddingModel returns the resolved face embedding model, or nil when
 // embeddings are disabled or no model is installed.
 func (c *Config) FaceEmbeddingModel() *face.EmbeddingModel {
-	return face.FindEmbeddingModel(c.FaceModel())
+	return face.FindEmbeddingModel(c.EffectiveFaceModel())
 }
 
 // ConfigureFaceEmbedder loads the embedding model with the specified name.
@@ -681,6 +737,61 @@ func (c *Config) ConfigureFaceEmbedder(name face.ModelName) error {
 		ModelPath: model.FilePath(c.ModelsPath()),
 		Threads:   c.FaceModelThreads(),
 	})
+}
+
+// FacesLockFile returns the path of the lock a face embedding migration holds while it runs.
+//
+// Beside the storage serial rather than in the config or cache path: it describes what this
+// instance is doing now, is worthless to a restored backup, and must survive a cleared cache.
+func (c *Config) FacesLockFile() string {
+	if c == nil {
+		return ""
+	}
+
+	return filepath.Join(c.StoragePath(), "faces.lock")
+}
+
+// FacesLocked returns a description of the face migration currently holding the lock, or "" when
+// none is. Workers that write markers or clusters consult it, because the worker activities are
+// process-local and a migration ordinarily runs from the command line rather than the server.
+func (c *Config) FacesLocked() string {
+	return mutex.FileLockHeld(c.FacesLockFile())
+}
+
+// ConfigureFaceDetector loads the detection engine for the detector in force, applying the
+// specified minimum score on the 0-100 scale instead of the configured one when it is positive.
+//
+// The cutoff is baked into the inference session, so lowering it - which a migration does -
+// means loading the detector again rather than passing a value per call.
+func (c *Config) ConfigureFaceDetector(minScore float64) error {
+	if c == nil {
+		return nil
+	}
+
+	if minScore == 0 {
+		minScore = c.FaceScore()
+	}
+
+	return face.ConfigureEngine(face.EngineSettings{
+		Name: c.FaceEngine(),
+		ONNX: face.ONNXOptions{
+			ModelPath:      c.FaceEngineModelPath(),
+			Threads:        c.FaceDetectorThreads(),
+			ScoreThreshold: detectorScoreThreshold(minScore),
+		},
+	})
+}
+
+// detectorScoreThreshold converts a minimum score from the 0-100 scale operators read scores in
+// to the 0-1 scale a detector reports them on. Without it no reachable value could lower a
+// calibrated cutoff. The two sentinels carry through unscaled, because neither is a score:
+// zero leaves the cutoff to the detector, and negative switches it off.
+func detectorScoreThreshold(minScore float64) float32 {
+	if minScore <= 0 {
+		return float32(minScore)
+	}
+
+	return float32(minScore / 100)
 }
 
 // FaceModelPath returns the absolute path of the configured face embedding model.
@@ -735,17 +846,34 @@ func (c *Config) FaceSizeRetry() int {
 	return min(size, c.FaceSize())
 }
 
-// FaceScore returns the minimum detection score, or zero when each detector's own calibrated
-// cutoff is to decide.
+// FaceScore returns the configured minimum detection score on the 0-100 scale, zero when each
+// detector's own calibrated cutoff is to decide, and -1 when no cutoff is to be applied at all.
 //
 // Unset means zero rather than a number, because a shared default either sits below every
 // detector's cutoff and gates nothing, or above one of them and silently overrules a calibration.
+// Negative follows the convention the other numeric options use - see DefaultStorageFree - and is
+// what makes "no cutoff" expressible at all, since zero is taken by "let the detector decide".
 func (c *Config) FaceScore() float64 {
-	if c.options.FaceScore < 1 || c.options.FaceScore > 100 {
+	switch {
+	case c.options.FaceScore < 0:
+		return face.NoScoreThreshold
+	case c.options.FaceScore < 1 || c.options.FaceScore > 100:
 		return face.ScoreThresholdDefault
 	}
 
 	return c.options.FaceScore
+}
+
+// FaceScoreEffective returns the detection cutoff actually in force on the 0-100 scale, which is
+// the detector's own whenever FACE_SCORE is unset, and -1 when it is switched off. A report has
+// to state this rather than the raw option, which is zero in the ordinary case and reads as
+// "nothing is filtered" - the one thing zero does not mean.
+func (c *Config) FaceScoreEffective() float64 {
+	if score := c.FaceScore(); score != face.ScoreThresholdDefault {
+		return score
+	}
+
+	return face.DetectorScore(c.FaceDetector())
 }
 
 // FaceOverlap returns the face area overlap threshold in percent.
@@ -766,17 +894,32 @@ func (c *Config) FaceClusterSize() int {
 	return c.options.FaceClusterSize
 }
 
-// FaceClusterScore returns the quality threshold for faces forming a cluster, calibrated for the
-// detector in force when the operator set none.
+// FaceClusterScore returns the operator's own quality threshold for faces forming a cluster, zero
+// when the bar is left to the detector that scored each marker, and -1 when it is switched off.
 //
-// It falls back to the detector rather than to `face.ClusterScoreThreshold`, which Propagate
-// assigns from this, and which would otherwise freeze the last value an operator cleared.
+// Unset has to stay distinguishable from a value, because the bar is per marker: collapsing it to
+// the detector in force here would apply that one detector's calibration to markers a different
+// one scored, which is the leak the per-marker lookup exists to close.
 func (c *Config) FaceClusterScore() int {
-	if c.options.FaceClusterScore < 1 || c.options.FaceClusterScore > 100 {
-		return c.detectorClusterScore()
+	switch {
+	case c.options.FaceClusterScore < 0:
+		return -1
+	case c.options.FaceClusterScore < 1 || c.options.FaceClusterScore > 100:
+		return 0
 	}
 
 	return c.options.FaceClusterScore
+}
+
+// FaceClusterScoreEffective returns the clustering bar in force for a marker the detector in force
+// produced, which is what a report has to state: the raw option is zero in the ordinary case, and
+// zero reads as "every face may cluster".
+func (c *Config) FaceClusterScoreEffective() int {
+	if score := c.FaceClusterScore(); score != 0 {
+		return score
+	}
+
+	return c.detectorClusterScore()
 }
 
 // detectorClusterScore returns the clustering bar registered for the detector in force. A bar that

@@ -339,35 +339,13 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"nsfw-model-path", c.NsfwModelPath()},
 		{"detect-nsfw", fmt.Sprintf("%t", c.DetectNSFW())},
 		{"xmp-faces", fmt.Sprintf("%t", c.XMPFaces())},
-		{"face-detector", c.FaceDetectorSetting()},
-		{"face-detector-path", c.FaceEngineModelPath()},
-		{"face-engine", c.faceEngineReport()},
-		{"face-engine-run", vision.ReportRunType(c.FaceEngineRunType())},
-		{"face-model", c.FaceModelSetting()},
-		{"face-model-status", c.faceModelStatus()},
-		{"face-model-path", c.FaceModelPath()},
-		{"face-model-license", c.FaceModelLicense()},
 	}...)
 
-	rows = append(rows, [][]string{
-		{"face-detector-threads", fmt.Sprintf("%d", c.FaceDetectorThreads())},
-		{"face-model-threads", fmt.Sprintf("%d", c.FaceModelThreads())},
-		{"face-size", fmt.Sprintf("%d", c.FaceSize())},
-		{"face-size-retry", fmt.Sprintf("%d", c.FaceSizeRetry())},
-		{"face-score", fmt.Sprintf("%f", c.FaceScore())},
-	}...)
+	for _, row := range c.faceConfigRows(false) {
+		rows = append(rows, []string{row.Flag, row.Value})
+	}
 
 	rows = append(rows, [][]string{
-		{"face-overlap", fmt.Sprintf("%d", c.FaceOverlap())},
-		{"face-cluster-size", fmt.Sprintf("%d", c.FaceClusterSize())},
-		{"face-cluster-score", fmt.Sprintf("%d", c.FaceClusterScore())},
-		{"face-cluster-core", fmt.Sprintf("%d", c.FaceClusterCore())},
-		{"face-cluster-dist", c.faceDistReport(c.FaceClusterDist)},
-		{"face-cluster-radius", c.faceDistReport(c.FaceClusterRadius)},
-		{"face-collision-dist", c.faceDistReport(c.FaceCollisionDist)},
-		{"face-epsilon-dist", c.faceDistReport(c.FaceEpsilonDist)},
-		{"face-match-dist", c.faceDistReport(c.FaceMatchDist)},
-
 		// Daemon Mode.
 		{"pid-filename", c.PIDFilename()},
 		{"log-filename", c.LogFilename()},
@@ -384,22 +362,91 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 	return rows, cols
 }
 
-// faceModelStatus reports whether embeddings are actually being generated. A model that
-// failed to load reports ModelNone everywhere else, so the report would otherwise name a
-// model while nothing is being embedded. Commands that only read the configuration never
-// load the model, so the error is reported when one is known rather than assumed.
-func (c *Config) faceModelStatus() string {
-	if c.FaceModel() == face.ModelNone && c.FaceModelSetting() == face.ModelDetect {
-		return "not set, detected on the next start"
-	} else if err := face.EmbedderError(); err != nil {
-		return fmt.Sprintf("failed to load (%s)", err)
-	} else if reason := face.EmbeddingsBlockedReason(); reason != "" {
-		return fmt.Sprintf("paused (%s)", reason)
-	} else if c.FaceModel() == face.ModelNone {
-		return "embeddings disabled"
+// faceConfigRow is one row of the face detection and recognition configuration. Flag is the
+// option name `photoprism show config` reports, Label the heading `photoprism faces status`
+// gives the same value, which drops the prefix every row in that report would repeat.
+type faceConfigRow struct {
+	Flag  string
+	Label string
+	Value string
+}
+
+// faceConfigRows returns the face configuration in the order the Options struct and flags.go
+// declare the options, so both reports read like the flag list rather than like each other.
+//
+// Verbose adds the qualifiers only the faces report shows. `show config` states the value alone:
+// it runs without a database and can neither detect the model nor see that one is blocked.
+func (c *Config) faceConfigRows(verbose bool) []faceConfigRow {
+	detector := c.FaceDetector()
+	model := c.EffectiveFaceModel()
+
+	if verbose {
+		detector = c.faceDetectorReport()
+		model = c.faceModelReport()
 	}
 
-	return "ok"
+	return []faceConfigRow{
+		{"face-detector", "Detector", detector},
+		{"face-detector-path", "Detector Path", c.FaceEngineModelPath()},
+		{"face-detector-threads", "Detector Threads", fmt.Sprintf("%d", c.FaceDetectorThreads())},
+		{"face-model", "Model", model},
+		{"face-model-path", "Model Path", c.FaceModelPath()},
+		{"face-model-threads", "Model Threads", fmt.Sprintf("%d", c.FaceModelThreads())},
+		{"face-run", "Schedule", vision.ReportRunType(c.FaceEngineRunType())},
+		{"face-engine", "Engine", c.faceEngineReport()},
+		{"face-size", "Min Size", fmt.Sprintf("%d", c.FaceSize())},
+		{"face-size-retry", "Retry Size", fmt.Sprintf("%d", c.FaceSizeRetry())},
+		{"face-score", "Min Score", c.faceScoreReport(verbose)},
+		{"face-overlap", "Overlap", fmt.Sprintf("%d", c.FaceOverlap())},
+		{"face-cluster-size", "Cluster Size", fmt.Sprintf("%d", c.FaceClusterSize())},
+		{"face-cluster-score", "Cluster Score", c.faceClusterScoreReport(verbose)},
+		{"face-cluster-core", "Cluster Core", fmt.Sprintf("%d", c.FaceClusterCore())},
+		{"face-cluster-dist", "Cluster Distance", c.faceDistReport(c.FaceClusterDist)},
+		{"face-cluster-radius", "Cluster Radius", c.faceDistReport(c.FaceClusterRadius)},
+		{"face-collision-dist", "Collision Distance", c.faceDistReport(c.FaceCollisionDist)},
+		{"face-epsilon-dist", "Epsilon Distance", c.faceDistReport(c.FaceEpsilonDist)},
+		{"face-match-dist", "Match Distance", c.faceDistReport(c.FaceMatchDist)},
+	}
+}
+
+// faceModelStatus reports why a model that is otherwise in force is generating no embeddings, or
+// "" when it is. One that failed to load reports ModelNone everywhere else, so a report would
+// name a model while nothing is being embedded. Commands that only read the configuration never
+// load the model, so the error is reported when one is known rather than assumed.
+func (c *Config) faceModelStatus() string {
+	if err := face.EmbedderError(); err != nil {
+		return fmt.Sprintf("failed to load: %s", err)
+	} else if reason := face.EmbeddingsBlockedReason(); reason != "" {
+		return fmt.Sprintf("paused: %s", reason)
+	}
+
+	return ""
+}
+
+// faceScoreReport formats the detection cutoff in force, which is the detector's own whenever
+// FACE_SCORE is unset. Verbose names where it came from, because the same number means a
+// calibration in one case and an operator's decision in the other.
+func (c *Config) faceScoreReport(verbose bool) string {
+	score := fmt.Sprintf("%g", c.FaceScoreEffective())
+
+	if !verbose || c.FaceScore() > 0 {
+		return score
+	}
+
+	return fmt.Sprintf("%s (%s)", score, c.FaceDetector())
+}
+
+// faceClusterScoreReport formats the clustering bar in force. Verbose names the detector it was
+// calibrated for, because the bar is looked up per marker: a library holding markers from more
+// than one detector applies more than one bar, and the row can only state the current one.
+func (c *Config) faceClusterScoreReport(verbose bool) string {
+	score := fmt.Sprintf("%d", c.FaceClusterScoreEffective())
+
+	if !verbose || c.FaceClusterScore() != 0 {
+		return score
+	}
+
+	return fmt.Sprintf("%s (%s)", score, c.FaceDetector())
 }
 
 // faceDistReport formats a face distance threshold, or reports nothing when no embedding model
@@ -407,7 +454,7 @@ func (c *Config) faceModelStatus() string {
 // report with no model would otherwise print five numbers that will not apply to the model the
 // instance ends up using.
 func (c *Config) faceDistReport(value func() float64) string {
-	if c.FaceModel() == face.ModelNone {
+	if c.EffectiveFaceModel() == face.ModelNone {
 		return ""
 	}
 
@@ -422,67 +469,77 @@ func (c *Config) faceEngineReport() string {
 	return fmt.Sprintf("%s (deprecated)", face.ParseEngine(c.options.FaceEngine))
 }
 
-// faceDetectorReport names the configured detector and, while it is still to be derived, the
-// detector that derivation settles on.
+// faceDetectorReport names the detector in force and where that name came from.
 func (c *Config) faceDetectorReport() string {
-	setting := c.FaceDetectorSetting()
+	resolved := c.FaceDetector()
 
-	if setting != face.DetectorAuto {
-		return setting
+	switch setting := c.FaceDetectorSetting(); {
+	case setting == face.DetectorAuto && resolved != face.DetectorNone:
+		return faceReportValue(resolved, "default")
+	case setting != face.DetectorAuto && setting != resolved:
+		return faceReportValue(resolved, fmt.Sprintf("%s is not available", clean.Log(setting)))
+	default:
+		return resolved
 	}
-
-	return fmt.Sprintf("%s (%s)", setting, c.FaceDetector())
 }
 
-// faceModelReport names the configured model and, while it is still to be detected, the model
-// the library holds. `photoprism faces config` connects to the database, so it is the one
-// report that can state both.
+// faceModelReport names the embedding model in force, where that name came from, and why
+// embeddings are not being generated when they are not. `faces status` connects to the database,
+// so a detected model is there the one the library holds rather than a fresh install's default.
 func (c *Config) faceModelReport() string {
+	resolved := c.EffectiveFaceModel()
 	setting := c.FaceModelSetting()
 
-	if setting != face.ModelDetect {
-		return setting
-	} else if name := c.libraryFaceModel(); name != "" {
-		return fmt.Sprintf("%s (library holds %s)", setting, name)
+	// Nothing is in force, so the reason is the whole row: which of the three it is decides
+	// whether an operator has a decision to revisit, an install to fix, or nothing to do.
+	switch {
+	case setting == face.ModelNone:
+		return faceReportValue(resolved, "embeddings disabled")
+	case resolved != face.ModelNone:
+		break
+	case setting == face.ModelDetect:
+		return faceReportValue(resolved, "no embedding model is installed")
+	default:
+		return faceReportValue(resolved, fmt.Sprintf("%s is not available", clean.Log(setting)))
 	}
 
-	return setting
+	var notes []string
+
+	if setting == face.ModelDetect {
+		notes = append(notes, "default")
+	}
+
+	if status := c.faceModelStatus(); status != "" {
+		notes = append(notes, status)
+	}
+
+	return faceReportValue(resolved, notes...)
 }
 
-// FaceReport returns the face-detection and face-recognition config values as a table for
-// reporting. It covers the same options as Report(), except that face-model also names the
-// model the library holds: `faces config` connects to the database, so it is the one report
-// that can state both.
+// faceReportValue appends the qualifiers a report shows in parentheses after a resolved value.
+func faceReportValue(value string, notes ...string) string {
+	if len(notes) == 0 {
+		return value
+	}
+
+	return fmt.Sprintf("%s (%s)", value, strings.Join(notes, ", "))
+}
+
+// FaceReport returns the face detection and recognition configuration as a table for
+// `photoprism faces status`. It covers the same options as Report() in the same order, but
+// names them without the prefix the subcommand already carries and states what a database
+// connection adds: the model the library holds, and whether embeddings are paused.
 func (c *Config) FaceReport() (rows [][]string, cols []string) {
 	cols = []string{"Name", "Value"}
 
 	rows = [][]string{
-		{"disable-faces", fmt.Sprintf("%t", c.DisableFaces())},
-		{"xmp-faces", fmt.Sprintf("%t", c.XMPFaces())},
-		{"vision-yaml", c.VisionYaml()},
-		{"face-detector", c.faceDetectorReport()},
-		{"face-detector-path", c.FaceEngineModelPath()},
-		{"face-engine", c.faceEngineReport()},
-		{"face-engine-run", vision.ReportRunType(c.FaceEngineRunType())},
-		{"face-detector-threads", fmt.Sprintf("%d", c.FaceDetectorThreads())},
-		{"face-model-threads", fmt.Sprintf("%d", c.FaceModelThreads())},
-		{"face-model", c.faceModelReport()},
-		{"face-model-status", c.faceModelStatus()},
-		{"face-model-path", c.FaceModelPath()},
-		{"face-model-license", c.FaceModelLicense()},
-		{"facenet-model-path", c.FacenetModelPath()},
-		{"face-size", fmt.Sprintf("%d", c.FaceSize())},
-		{"face-size-retry", fmt.Sprintf("%d", c.FaceSizeRetry())},
-		{"face-score", fmt.Sprintf("%f", c.FaceScore())},
-		{"face-overlap", fmt.Sprintf("%d", c.FaceOverlap())},
-		{"face-cluster-size", fmt.Sprintf("%d", c.FaceClusterSize())},
-		{"face-cluster-score", fmt.Sprintf("%d", c.FaceClusterScore())},
-		{"face-cluster-core", fmt.Sprintf("%d", c.FaceClusterCore())},
-		{"face-cluster-dist", c.faceDistReport(c.FaceClusterDist)},
-		{"face-cluster-radius", c.faceDistReport(c.FaceClusterRadius)},
-		{"face-collision-dist", c.faceDistReport(c.FaceCollisionDist)},
-		{"face-epsilon-dist", c.faceDistReport(c.FaceEpsilonDist)},
-		{"face-match-dist", c.faceDistReport(c.FaceMatchDist)},
+		{"Enabled", fmt.Sprintf("%t", !c.DisableFaces())},
+		{"XMP Faces", fmt.Sprintf("%t", c.XMPFaces())},
+		{"Vision Config", c.VisionYaml()},
+	}
+
+	for _, row := range c.faceConfigRows(true) {
+		rows = append(rows, []string{row.Label, row.Value})
 	}
 
 	return rows, cols

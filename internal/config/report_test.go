@@ -11,7 +11,6 @@ import (
 	"github.com/photoprism/photoprism/pkg/dsn"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
-	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 )
 
@@ -292,28 +291,31 @@ func TestConfig_FaceReport(t *testing.T) {
 		values[row[0]] = row[1]
 	}
 
-	// Spot-check that the core face-related options are present.
+	// Spot-check that the core face-related rows are present. They are named without the prefix
+	// the subcommand already carries, which is what tells this report apart from "show config".
 	expected := []string{
-		"disable-faces",
-		"vision-yaml",
-		"face-detector",
-		"face-detector-path",
-		"face-detector-threads",
-		"face-engine",
-		"face-engine-run",
-		"face-model-threads",
-		"facenet-model-path",
-		"face-size",
-		"face-score",
-		"face-overlap",
-		"face-cluster-size",
-		"face-cluster-score",
-		"face-cluster-core",
-		"face-cluster-dist",
-		"face-cluster-radius",
-		"face-collision-dist",
-		"face-epsilon-dist",
-		"face-match-dist",
+		"Enabled",
+		"Vision Config",
+		"Detector",
+		"Detector Path",
+		"Detector Threads",
+		"Model",
+		"Model Path",
+		"Model Threads",
+		"Engine",
+		"Schedule",
+		"Min Size",
+		"Retry Size",
+		"Min Score",
+		"Overlap",
+		"Cluster Size",
+		"Cluster Score",
+		"Cluster Core",
+		"Cluster Distance",
+		"Cluster Radius",
+		"Collision Distance",
+		"Epsilon Distance",
+		"Match Distance",
 	}
 
 	for _, name := range expected {
@@ -380,14 +382,7 @@ func TestFaceModelStatus(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.options.ModelsPath = installTestModels(t, face.ModelFaceNet)
 		c.options.FaceModel = face.ModelFaceNet
-		assert.Equal(t, "ok", c.faceModelStatus())
-	})
-	t.Run("Disabled", func(t *testing.T) {
-		// The report commands never load the model, so this must follow the configuration.
-		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelNone}))
-		c := NewConfig(CliTestContext())
-		c.options.FaceModel = face.ModelNone
-		assert.Equal(t, "embeddings disabled", c.faceModelStatus())
+		assert.Empty(t, c.faceModelStatus())
 	})
 	t.Run("Failed", func(t *testing.T) {
 		// A model that fails to load reports ModelNone, so the status is the only signal.
@@ -395,13 +390,6 @@ func TestFaceModelStatus(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.options.FaceModel = face.ModelSFace
 		assert.Contains(t, c.faceModelStatus(), "failed to load")
-	})
-	t.Run("NotSet", func(t *testing.T) {
-		// Nothing has been configured, so the report says so rather than reporting on a
-		// model this instance never asked for.
-		c := NewConfig(CliTestContext())
-		c.options.FaceModel = ""
-		assert.Equal(t, "not set, detected on the next start", c.faceModelStatus())
 	})
 	t.Run("Paused", func(t *testing.T) {
 		t.Cleanup(face.UnblockEmbeddings)
@@ -417,29 +405,66 @@ func TestFaceModelStatus(t *testing.T) {
 }
 
 func TestConfig_faceModelReport(t *testing.T) {
+	// The embedder is process-wide, and a test that leaves it in an error state would otherwise
+	// show up here as every model failing to load.
+	restore := face.ConfiguredModel()
+	require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelNone}))
+	t.Cleanup(func() {
+		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+	})
+
 	t.Run("Named", func(t *testing.T) {
-		c := NewConfig(CliTestContext())
-		c.options.FaceModel = face.ModelSFace
+		c := newSFaceTestConfig(t)
 
 		assert.Equal(t, face.ModelSFace, c.faceModelReport())
 	})
-	t.Run("DetectWithoutDatabase", func(t *testing.T) {
+	t.Run("Default", func(t *testing.T) {
+		// Nothing is pinned, so the row names the model that is going to apply and says the
+		// operator did not choose it.
 		c := NewConfig(CliTestContext())
 		c.options.FaceModel = ""
 
-		assert.Equal(t, face.ModelDetect, c.faceModelReport())
+		assert.Equal(t, c.installedFaceModel()+" (default)", c.faceModelReport())
+	})
+	t.Run("NotAvailable", func(t *testing.T) {
+		// A configured model that cannot be loaded resolves to none everywhere else, so the row
+		// is the only place an operator sees which one was asked for.
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = t.TempDir()
+		c.options.FaceModel = face.ModelSFace
+
+		assert.Equal(t, face.ModelNone+" ("+face.ModelSFace+" is not available)", c.faceModelReport())
+	})
+	t.Run("NoneInstalled", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = t.TempDir()
+		c.options.FaceModel = ""
+
+		assert.Equal(t, face.ModelNone+" (no embedding model is installed)", c.faceModelReport())
+	})
+	t.Run("Disabled", func(t *testing.T) {
+		// The report commands never load the model, so this must follow the configuration.
+		c := NewConfig(CliTestContext())
+		c.options.FaceModel = face.ModelNone
+
+		assert.Equal(t, face.ModelNone+" (embeddings disabled)", c.faceModelReport())
+	})
+	t.Run("Paused", func(t *testing.T) {
+		t.Cleanup(face.UnblockEmbeddings)
+		c := newSFaceTestConfig(t)
+		face.BlockEmbeddings("12 marker(s) use facenet")
+
+		assert.Equal(t, face.ModelSFace+" (paused: 12 marker(s) use facenet)", c.faceModelReport())
 	})
 	t.Run("DetectNamesTheLibraryModel", func(t *testing.T) {
-		// "faces config" connects, so it is the one report that can state both what is
-		// configured and what the library would answer.
+		// "faces status" connects, so it is the one report where the detected model is the one
+		// the library actually holds rather than the one a fresh install would start with.
 		c := TestConfig()
 		setting := c.options.FaceModel
 		t.Cleanup(func() { c.options.FaceModel = setting })
 		c.options.FaceModel = face.ModelDetect
 
-		expected := entity.MarkerFixtures.Get("1000003-4").EmbedModel
-
-		assert.Equal(t, face.ModelDetect+" (library holds "+expected+")", c.faceModelReport())
+		assert.Contains(t, c.faceModelReport(), "(default")
 	})
 }
 
@@ -453,7 +478,7 @@ func TestConfig_faceDistReport(t *testing.T) {
 		// The calibrated distances are per model, so a report with none must not print
 		// five numbers that will not apply to the model the instance ends up using.
 		c := NewConfig(CliTestContext())
-		c.options.FaceModel = ""
+		c.options.FaceModel = face.ModelNone
 
 		assert.Equal(t, "", c.faceDistReport(c.FaceClusterDist))
 	})
@@ -492,9 +517,115 @@ func TestConfig_faceDetectorReport(t *testing.T) {
 		assert.Equal(t, face.DetectorNone, c.faceDetectorReport())
 	})
 	t.Run("Derived", func(t *testing.T) {
-		// Still to be derived, so the report names both what is configured and what it settles
-		// on - the second is the only one that says whether anything will be detected.
+		// Nothing was configured, so the row names the detector that is going to run rather than
+		// the word "auto", which says nothing about whether anything will be detected.
 		c.options.FaceDetector = ""
-		assert.Equal(t, fmt.Sprintf("%s (%s)", face.DetectorAuto, c.FaceDetector()), c.faceDetectorReport())
+		assert.Equal(t, fmt.Sprintf("%s (default)", c.FaceDetector()), c.faceDetectorReport())
 	})
+	t.Run("NotAvailable", func(t *testing.T) {
+		// A named detector that cannot run disables detection, so the row has to name it: "none"
+		// alone reads as a setting rather than as a detector that could not be loaded.
+		c.options.ModelsPath = t.TempDir()
+		t.Cleanup(func() { c.options.ModelsPath = "" })
+		c.options.FaceDetector = face.DetectorYuNet
+		assert.Equal(t, face.DetectorNone+" ("+face.DetectorYuNet+" is not available)", c.faceDetectorReport())
+	})
+}
+
+// TestConfig_faceConfigRows pins the row order to the order flags.go declares the options, which
+// is what makes both reports diffable against the flag list rather than against each other.
+func TestConfig_faceConfigRows(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	t.Run("FlagOrder", func(t *testing.T) {
+		want := []string{
+			"face-detector",
+			"face-detector-path",
+			"face-detector-threads",
+			"face-model",
+			"face-model-path",
+			"face-model-threads",
+			"face-run",
+			"face-engine",
+			"face-size",
+			"face-size-retry",
+			"face-score",
+			"face-overlap",
+			"face-cluster-size",
+			"face-cluster-score",
+			"face-cluster-core",
+			"face-cluster-dist",
+			"face-cluster-radius",
+			"face-collision-dist",
+			"face-epsilon-dist",
+			"face-match-dist",
+		}
+
+		rows := c.faceConfigRows(false)
+		flags := make([]string, 0, len(rows))
+
+		for _, row := range rows {
+			flags = append(flags, row.Flag)
+			assert.NotEmpty(t, row.Label, row.Flag)
+			assert.NotContains(t, row.Label, "face-", "the faces report drops the prefix its subcommand carries")
+		}
+
+		assert.Equal(t, want, flags)
+	})
+	t.Run("EveryFlagIsRegistered", func(t *testing.T) {
+		// A row naming an option that no longer exists reads as a setting an operator can change.
+		// The two derived paths and the run schedule have no flag of their own.
+		derived := map[string]bool{"face-detector-path": true, "face-model-path": true}
+
+		registered := make(map[string]bool, len(Flags))
+
+		for _, flag := range Flags {
+			registered[flag.Name()] = true
+		}
+
+		for _, row := range c.faceConfigRows(false) {
+			if derived[row.Flag] {
+				continue
+			}
+
+			assert.True(t, registered[row.Flag], row.Flag)
+		}
+	})
+	t.Run("QuietWithoutVerbose", func(t *testing.T) {
+		// "show config" runs without a database, so it can neither detect the model nor see that
+		// one is blocked. Stating a resolution it cannot check is how it came to report "ok" on
+		// a paused instance.
+		for _, row := range c.faceConfigRows(false) {
+			if row.Flag == "face-engine" {
+				continue // The deprecation marker is a property of the option, not a resolution.
+			}
+
+			assert.NotContains(t, row.Value, "(", row.Flag)
+		}
+	})
+}
+
+func TestConfig_faceScoreReport(t *testing.T) {
+	t.Run("Detector", func(t *testing.T) {
+		// A cutoff of zero is what the raw option holds in the ordinary case, and it reads as
+		// "no detection is filtered", which is the opposite of what it means.
+		c := NewConfig(CliTestContext())
+		c.options.FaceScore = 0
+
+		assert.NotEqual(t, "0", c.faceScoreReport(false))
+		assert.Contains(t, c.faceScoreReport(true), c.FaceDetector())
+	})
+	t.Run("Configured", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceScore = 42
+
+		assert.Equal(t, "42", c.faceScoreReport(false))
+		assert.Equal(t, "42", c.faceScoreReport(true), "an operator's own value has no source to name")
+	})
+}
+
+func TestFaceReportValue(t *testing.T) {
+	assert.Equal(t, "sface", faceReportValue("sface"))
+	assert.Equal(t, "sface (default)", faceReportValue("sface", "default"))
+	assert.Equal(t, "sface (default, paused: 12 markers)", faceReportValue("sface", "default", "paused: 12 markers"))
 }

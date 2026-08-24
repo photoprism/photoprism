@@ -35,8 +35,11 @@ type Detector struct {
 	// on the 0-100 scale. It follows MinScore rather than being shared, because a value that is a
 	// meaningful step above one detector's cutoff is below another's and gates nothing.
 	ClusterMinScore int
-	ONNX            *onnx.ModelInfo
-	Legacy          []string
+	// Official marks the detector the product offers. The others run and are selectable for
+	// comparison, but user-facing text must not name them, because help text reads as an offer.
+	Official bool
+	ONNX     *onnx.ModelInfo
+	Legacy   []string
 }
 
 // DetectorName identifies a detection model.
@@ -67,12 +70,13 @@ var Detectors = []*Detector{
 		Name:   DetectorYuNet,
 		Dir:    "yunet",
 		Decode: DecodeYuNet,
-		// Calibrated on our own corpus rather than adopted from another detector: YuNet scores
-		// as sqrt(cls x obj) and is not a single calibrated sigmoid, so it needs its own cutoff.
-		// 0.65 is where its false positives on non-faces stop while it still finds more in a
-		// group photograph than SCRFD does.
-		MinScore:        0.65,
-		ClusterMinScore: 70,
+		// The pair the last stable release shipped, below the 0.65 and 70 its own corpus measured:
+		// that measurement weighed false positives and not re-detection, which is what decides
+		// whether a migration keeps a curated marker. Both are open until the preview, whose data
+		// points are only attributable against a configuration with known production behavior.
+		MinScore:        0.09,
+		ClusterMinScore: 20,
+		Official:        true,
 		ONNX: &onnx.ModelInfo{
 			File:    "face_detection_yunet_2026may.onnx",
 			SHA256:  "ebafce4e3c118d6554634be5c27ab333b4c047a9a8c3faf1d7cf93101c22f0f0",
@@ -90,9 +94,12 @@ var Detectors = []*Detector{
 		},
 	},
 	{
-		Name:            DetectorSCRFD,
-		Dir:             "scrfd",
-		Decode:          DecodeSCRFD,
+		Name:   DetectorSCRFD,
+		Dir:    "scrfd",
+		Decode: DecodeSCRFD,
+		// Its publisher's own calibration, kept where YuNet's was lowered to what the last stable
+		// release shipped: SCRFD emits one sigmoid whose floor is 0.50, so a bar below that would
+		// sit under its own cutoff and gate nothing.
 		MinScore:        0.50,
 		ClusterMinScore: 60,
 		ONNX: &onnx.ModelInfo{
@@ -182,18 +189,19 @@ func DetectorsComparable(stored, current DetectorName) bool {
 
 // DetectorUsageString lists the accepted FACE_DETECTOR values for use in CLI help text.
 //
-// It leaves out detectors whose weights may only be used after their publisher's terms have
-// been accepted, because help text is read as an offer.
+// It names the officially offered detectors only, and puts "none" last to match the other
+// usage strings: help text is read as an offer, so a detector we do not support and one whose
+// publisher's terms have to be accepted first both stay out of it.
 func DetectorUsageString() string {
-	names := []DetectorName{DetectorAuto, DetectorNone}
+	names := []DetectorName{DetectorAuto}
 
 	for _, d := range Detectors {
-		if !d.LicenseGated() {
+		if d.Official && !d.LicenseGated() {
 			names = append(names, d.Name)
 		}
 	}
 
-	return strings.Join(names, ", ")
+	return strings.Join(append(names, DetectorNone), ", ")
 }
 
 // DefaultDetector returns the detector a build runs when nothing selects one.
@@ -207,6 +215,16 @@ func DefaultDetector() *Detector {
 	}
 
 	return nil
+}
+
+// DefaultDetectorName returns the name of the detector a build runs when nothing selects one,
+// or DetectorNone when no redistributable detector is registered.
+func DefaultDetectorName() DetectorName {
+	if d := DefaultDetector(); d != nil {
+		return d.Name
+	}
+
+	return DetectorNone
 }
 
 // DetectorForFile returns the detector whose artifact the path names.

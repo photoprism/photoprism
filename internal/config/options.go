@@ -263,6 +263,7 @@ type Options struct {
 	FaceDetectorThreads       int           `yaml:"FaceDetectorThreads" json:"-" flag:"face-detector-threads"`
 	FaceModel                 string        `yaml:"FaceModel" json:"-" flag:"face-model"`
 	FaceModelThreads          int           `yaml:"FaceModelThreads" json:"-" flag:"face-model-threads"`
+	FaceRun                   string        `yaml:"FaceRun" json:"-" flag:"face-run"`
 	FaceEngine                string        `yaml:"FaceEngine" json:"-" flag:"face-engine"`
 	FaceEngineThreads         int           `yaml:"FaceEngineThreads" json:"-" flag:"face-engine-threads"`
 	FaceSize                  int           `yaml:"-" json:"-" flag:"face-size"`

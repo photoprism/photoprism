@@ -1,6 +1,8 @@
 package vision
 
 import (
+	"strings"
+
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -36,6 +38,13 @@ func ReportRunType(when RunType) string {
 	}
 
 	return when
+}
+
+// RunTypeUsageString lists the canonical run types for use in CLI help text. It leaves out the
+// aliases RunTypes accepts, which would make the list unreadable without adding a choice.
+func RunTypeUsageString() string {
+	return strings.Join([]string{"auto", RunAlways, RunOnIndex, RunNewlyIndexed,
+		RunOnSchedule, RunOnDemand, RunManual, RunNever}, ", ")
 }
 
 // RunTypes maps configuration strings to standard RunType model settings.

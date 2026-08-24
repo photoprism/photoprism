@@ -572,7 +572,7 @@ func (m *Marker) Face() (f *Face) {
 	// XMP-sourced markers are excluded: auto clustering is managed elsewhere,
 	// and XMP names must not seed the shared face (no XMP clustering in v1).
 	if subjSrcSharesFace(m.SubjSrc) && m.FaceID == "" {
-		if m.Size < face.ClusterSizeThreshold || m.Score < face.ClusterScore(m.DetectModel) {
+		if !m.Clusterable() {
 			log.Debugf("faces: marker %s skipped adding face due to low-quality (size %d, score %d)", clean.Log(m.MarkerUID), m.Size, m.Score)
 			return nil
 		}
@@ -733,6 +733,13 @@ func (m *Marker) ValidFace() bool {
 // DetectedFace tests if the marker is an automatically detected face.
 func (m *Marker) DetectedFace() bool {
 	return m.MarkerType == MarkerFace && SrcGenerated[m.MarkerSrc] > 0
+}
+
+// Clusterable reports whether this marker clears both bars a face has to clear to seed or join
+// an automatic cluster. The score bar comes from the detector that scored it, because a library
+// holds markers from more than one and nothing recomputes a score.
+func (m *Marker) Clusterable() bool {
+	return m != nil && m.Size >= face.ClusterSizeThreshold && m.Score >= face.ClusterScore(m.DetectModel)
 }
 
 // Uncertainty returns the detection uncertainty based on the score in percent. The scale is

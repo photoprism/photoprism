@@ -121,11 +121,16 @@ func NewONNXEngine(opts ONNXOptions) (DetectionEngine, error) {
 	}
 
 	// Detectors do not score alike, so the cutoff is registered per detector rather than shared.
-	if opts.ScoreThreshold <= 0 {
+	// A negative value switches it off, which is the only way to ask for that: zero is taken by
+	// "let the detector decide", and a detector always registers one.
+	switch {
+	case opts.ScoreThreshold < 0:
+		opts.ScoreThreshold = 0
+	case opts.ScoreThreshold > 0:
+		// Keep the caller's cutoff, whether it is above the detector's or below it.
+	case detector.MinScore > 0:
 		opts.ScoreThreshold = detector.MinScore
-	}
-
-	if opts.ScoreThreshold <= 0 {
+	default:
 		opts.ScoreThreshold = onnxDefaultScoreThreshold
 	}
 

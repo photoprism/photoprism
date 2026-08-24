@@ -84,13 +84,7 @@ func (w *Faces) ResetAndReindex(detector string, index *Index) error {
 		return nil
 	}
 
-	if err := face.ConfigureEngine(face.EngineSettings{
-		Name: w.conf.FaceEngine(),
-		ONNX: face.ONNXOptions{
-			ModelPath: w.conf.FaceEngineModelPath(),
-			Threads:   w.conf.FaceDetectorThreads(),
-		},
-	}); err != nil {
+	if err := w.conf.ConfigureFaceDetector(0); err != nil {
 		return err
 	}
 

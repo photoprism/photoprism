@@ -201,7 +201,7 @@ func addMigrateTestMarker(t *testing.T, fileUID, subjSrc, name string) *entity.M
 		MarkerType:     entity.MarkerFace,
 		MarkerSrc:      entity.SrcImage,
 		Size:           100,
-		Score:          face.ClusterScoreThreshold + 10,
+		Score:          face.ClusterScore("") + 10,
 		X:              0,
 		Y:              0,
 		W:              1,
@@ -248,19 +248,51 @@ func countFaceRows(t *testing.T) int {
 
 func TestFinalizeRefused(t *testing.T) {
 	t.Run("NothingAttempted", func(t *testing.T) {
-		assert.Empty(t, finalizeRefused(0, 0))
+		assert.Empty(t, finalizeRefused(FacesMigrateResult{}))
 	})
 	t.Run("AllFailed", func(t *testing.T) {
-		assert.Contains(t, finalizeRefused(0, 15), "none of 15")
+		assert.Contains(t, finalizeRefused(FacesMigrateResult{Failed: 15}), "none of 15")
 	})
 	t.Run("AboveRatio", func(t *testing.T) {
-		assert.Contains(t, finalizeRefused(1, 9), "9 of 10")
+		assert.Contains(t, finalizeRefused(FacesMigrateResult{Migrated: 1, Failed: 9, FailedClusterable: 9}), "9 of 10")
 	})
 	t.Run("WithinRatio", func(t *testing.T) {
-		assert.Empty(t, finalizeRefused(99, 1))
+		assert.Empty(t, finalizeRefused(FacesMigrateResult{Migrated: 99, Failed: 1, FailedClusterable: 1}))
 	})
 	t.Run("NoFailures", func(t *testing.T) {
-		assert.Empty(t, finalizeRefused(10, 0))
+		assert.Empty(t, finalizeRefused(FacesMigrateResult{Migrated: 10}))
+	})
+	t.Run("FailuresBelowTheClusteringBars", func(t *testing.T) {
+		// Most of what a detector change fails to re-find is too small or too low-scoring to
+		// seed or join a cluster, so its vector changes nothing. Counting it refused two of
+		// three real libraries over a loss the library could not have used.
+		assert.Empty(t, finalizeRefused(FacesMigrateResult{Migrated: 41063, Failed: 7993, FailedClusterable: 209}))
+	})
+	t.Run("NamesTheDetectorWhenNoFileFailed", func(t *testing.T) {
+		reason := finalizeRefused(FacesMigrateResult{Migrated: 1, Failed: 9, FailedClusterable: 9})
+		assert.Contains(t, reason, "the detector did not find their face again")
+		assert.NotContains(t, reason, "unreadable")
+	})
+	t.Run("NamesStorageWhenEveryFileFailed", func(t *testing.T) {
+		reason := finalizeRefused(FacesMigrateResult{Migrated: 1, Failed: 9, Unreadable: 9, FailedClusterable: 9})
+		assert.Contains(t, reason, "their file is missing or unreadable")
+		assert.NotContains(t, reason, "did not find")
+	})
+	t.Run("NamesBoth", func(t *testing.T) {
+		reason := finalizeRefused(FacesMigrateResult{Migrated: 1, Failed: 9, Unreadable: 4, FailedClusterable: 9})
+		assert.Contains(t, reason, "5 because the detector did not find their face again")
+		assert.Contains(t, reason, "4 because their file is missing or unreadable")
+	})
+}
+
+func TestMigrationFailureCause(t *testing.T) {
+	t.Run("NoFailures", func(t *testing.T) {
+		assert.Empty(t, migrationFailureCause(FacesMigrateResult{Migrated: 10}))
+	})
+	t.Run("MoreUnreadableThanFailed", func(t *testing.T) {
+		// Cannot happen, but the subtraction would report a negative count if it did.
+		assert.Contains(t, migrationFailureCause(FacesMigrateResult{Failed: 2, Unreadable: 5}),
+			"their file is missing or unreadable")
 	})
 }
 

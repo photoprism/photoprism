@@ -34,11 +34,11 @@ func TestScoreUncertainty(t *testing.T) {
 	assert.Equal(t, 1, ScoreUncertainty(100))
 	assert.Equal(t, 1, ScoreUncertainty(96))
 	assert.Equal(t, 5, ScoreUncertainty(95))
-	// The floor is the detector's own cutoff, so the steps below it are reachable only through a
-	// detector that scores lower, or through a marker no detector produced.
+	// Every step is reachable while the default detector's cutoff sits at the bottom of the
+	// scale. It has been above the least certain steps before, which made them dead, so this
+	// states the relationship rather than the numbers either side of it.
 	floor := int(FindDetector(DetectorYuNet).MinScore * 100)
-	assert.Equal(t, 35, ScoreUncertainty(floor), "a face at the default detector's floor")
-	assert.Equal(t, 30, ScoreUncertainty(floor+1))
+	assert.Equal(t, 50, ScoreUncertainty(floor), "the least certain step must stay reachable")
 	assert.Equal(t, 45, ScoreUncertainty(int(FindDetector(DetectorSCRFD).MinScore*100)+1))
 	assert.Equal(t, 50, ScoreUncertainty(0))
 }

@@ -82,7 +82,7 @@ func TestDetectorsComparable(t *testing.T) {
 func TestDetectorUsageString(t *testing.T) {
 	usage := DetectorUsageString()
 
-	assert.Equal(t, "auto, none, yunet", usage)
+	assert.Equal(t, "auto, yunet, none", usage)
 	// Help text is read as an offer, so weights that need their publisher's terms accepted
 	// are not listed.
 	assert.NotContains(t, usage, DetectorSCRFD)
@@ -255,6 +255,10 @@ func TestDetectorMinScore(t *testing.T) {
 // the one in force. A library holds markers from more than one, and nothing recomputes a score, so
 // judging an old marker by a newer detector's calibration would exclude it permanently.
 func TestClusterScore(t *testing.T) {
+	restore := ClusterScoreThreshold
+	t.Cleanup(func() { ClusterScoreThreshold = restore })
+	ClusterScoreThreshold = 0
+
 	assert.Equal(t, FindDetector(DetectorYuNet).ClusterMinScore, ClusterScore(DetectorYuNet))
 	assert.Equal(t, FindDetector(DetectorSCRFD).ClusterMinScore, ClusterScore(DetectorSCRFD))
 	assert.NotEqual(t, ClusterScore(DetectorYuNet), ClusterScore(DetectorSCRFD),
@@ -265,4 +269,20 @@ func TestClusterScore(t *testing.T) {
 	assert.Equal(t, ClusterScoreThresholdDefault, ClusterScore(""))
 	assert.Equal(t, ClusterScoreThresholdDefault, ClusterScore("centerface"))
 	assert.Less(t, ClusterScoreThresholdDefault, ClusterScore(DetectorSCRFD))
+
+	// FACE_CLUSTER_SCORE outranks the per-detector bars. It was assigned by Propagate and read by
+	// nothing once the bar became per detector, so the option configured nothing at all - the
+	// same defect FACE_SCORE had in the detection path.
+	t.Run("Configured", func(t *testing.T) {
+		// Safe where taking the active detector's bar is not: it is a choice rather than a
+		// calibration a marker was never scored against.
+		ClusterScoreThreshold = 55
+		assert.Equal(t, 55, ClusterScore(DetectorYuNet))
+		assert.Equal(t, 55, ClusterScore(DetectorSCRFD))
+		assert.Equal(t, 55, ClusterScore(""))
+	})
+	t.Run("Disabled", func(t *testing.T) {
+		ClusterScoreThreshold = -1
+		assert.Zero(t, ClusterScore(DetectorYuNet))
+	})
 }

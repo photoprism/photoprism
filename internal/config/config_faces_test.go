@@ -19,6 +19,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -169,33 +170,33 @@ func TestConfig_FaceEngineRunType(t *testing.T) {
 		c.options.FaceModelThreads = 4
 		assert.Equal(t, "auto", vision.ReportRunType(c.FaceEngineRunType()))
 	})
-	t.Run("DisabledFaceModel", func(t *testing.T) {
-		origVision := vision.Config
-		t.Cleanup(func() { vision.Config = origVision })
-
-		vision.Config = &vision.ConfigValues{Models: vision.Models{{Type: vision.ModelTypeFace, Disabled: true}}}
+	t.Run("FollowsFaceRun", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
-		assert.Equal(t, vision.RunNever, c.FaceEngineRunType())
-	})
-	t.Run("NoFaceModel", func(t *testing.T) {
-		origVision := vision.Config
-		t.Cleanup(func() { vision.Config = origVision })
+		c.options.FaceRun = vision.RunOnSchedule
+		t.Cleanup(func() { c.options.FaceRun = "" })
 
-		vision.Config = &vision.ConfigValues{Models: vision.Models{}}
-		c := NewConfig(CliTestContext())
-		assert.Equal(t, vision.RunNever, c.FaceEngineRunType())
-	})
-	t.Run("DelegatesToVisionModel", func(t *testing.T) {
-		origVision := vision.Config
-		t.Cleanup(func() { vision.Config = origVision })
-
-		vision.Config = &vision.ConfigValues{Models: vision.Models{{Type: vision.ModelTypeFace}}}
-		c := NewConfig(CliTestContext())
-		m := vision.Config.Model(vision.ModelTypeFace)
-		require.NotNil(t, m)
-		m.Run = vision.RunOnSchedule
-		require.Equal(t, vision.RunOnSchedule, vision.Config.RunType(vision.ModelTypeFace))
 		assert.Equal(t, vision.RunOnSchedule, c.FaceEngineRunType())
+	})
+	t.Run("IgnoresTheVisionModel", func(t *testing.T) {
+		// "vision.yml" no longer configures faces. Two ways to set one schedule raise a
+		// precedence question nobody can answer from the outside, so the file is read and
+		// ignored rather than obeyed; FACE_RUN and DISABLE_FACES are the way.
+		origVision := vision.Config
+		t.Cleanup(func() { vision.Config = origVision })
+
+		vision.Config = &vision.ConfigValues{Models: vision.Models{{Type: vision.ModelTypeFace, Run: vision.RunNever}}}
+		c := NewConfig(CliTestContext())
+
+		assert.Equal(t, vision.RunAuto, c.FaceEngineRunType())
+	})
+	t.Run("VisionSubsystemUnavailable", func(t *testing.T) {
+		origVision := vision.Config
+		t.Cleanup(func() { vision.Config = origVision })
+
+		vision.Config = nil
+		c := NewConfig(CliTestContext())
+
+		assert.Equal(t, vision.RunNever, c.FaceEngineRunType())
 	})
 	t.Run("VisionModelShouldRunFace", func(t *testing.T) {
 		origVision := vision.Config
@@ -203,19 +204,14 @@ func TestConfig_FaceEngineRunType(t *testing.T) {
 
 		vision.Config = &vision.ConfigValues{Models: vision.Models{{Type: vision.ModelTypeFace}}}
 		c := NewConfig(CliTestContext())
-
-		m := vision.Config.Model(vision.ModelTypeFace)
-		require.NotNil(t, m)
-		m.Run = vision.RunOnSchedule
+		c.options.FaceRun = vision.RunOnSchedule
+		t.Cleanup(func() { c.options.FaceRun = "" })
 
 		assert.True(t, c.VisionModelShouldRun(vision.ModelTypeFace, vision.RunOnSchedule))
 
 		c.options.DisableFaces = true
 		assert.False(t, c.VisionModelShouldRun(vision.ModelTypeFace, vision.RunOnSchedule))
 		c.options.DisableFaces = false
-
-		m.Disabled = true
-		assert.False(t, c.VisionModelShouldRun(vision.ModelTypeFace, vision.RunOnSchedule))
 	})
 }
 
@@ -1308,7 +1304,17 @@ func TestConfig_FaceEmbeddingModel(t *testing.T) {
 		assert.Equal(t, face.ModelSFace, m.Name)
 	})
 	t.Run("NotDetectedYet", func(t *testing.T) {
+		// A report runs before the library can be asked, so the calibration that applies is the
+		// default model's rather than none: leaving it nil blanked every distance in the report.
 		c := NewConfig(CliTestContext())
+		c.options.FaceModel = ""
+		m := c.FaceEmbeddingModel()
+		require.NotNil(t, m)
+		assert.Equal(t, c.installedFaceModel(), m.Name)
+	})
+	t.Run("NotInstalled", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = t.TempDir()
 		c.options.FaceModel = ""
 		assert.Nil(t, c.FaceEmbeddingModel())
 	})
@@ -1442,6 +1448,209 @@ func TestConfig_FaceScore(t *testing.T) {
 	assert.Equal(t, face.ScoreThresholdDefault, c.FaceScore(), "an out-of-range value falls back to the default")
 }
 
+func TestConfig_FaceRun(t *testing.T) {
+	t.Run("Unset", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceRun = ""
+		assert.Equal(t, vision.RunAuto, c.FaceRun())
+	})
+	t.Run("Configured", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceRun = "on-schedule"
+		assert.Equal(t, vision.RunOnSchedule, c.FaceRun())
+	})
+	t.Run("Alias", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceRun = "Schedule"
+		assert.Equal(t, vision.RunOnSchedule, c.FaceRun())
+	})
+	t.Run("Unsupported", func(t *testing.T) {
+		// Reported and applied as if nothing were set, rather than turning face work off over
+		// a typo. The warning fires once, so the getter may be called from Propagate.
+		c := NewConfig(CliTestContext())
+		c.options.FaceRun = "whenever"
+		assert.Equal(t, vision.RunAuto, c.FaceRun())
+	})
+	t.Run("NilConfig", func(t *testing.T) {
+		assert.Equal(t, vision.RunNever, (*Config)(nil).FaceRun())
+	})
+}
+
+func TestConfig_FaceClusterScoreEffective(t *testing.T) {
+	t.Run("Configured", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceClusterScore = 55
+		assert.Equal(t, 55, c.FaceClusterScore())
+		assert.Equal(t, 55, c.FaceClusterScoreEffective())
+	})
+	t.Run("Detector", func(t *testing.T) {
+		// Unset must stay distinguishable from a value: the bar is per marker, and collapsing it
+		// to the detector in force would apply that calibration to markers another one scored.
+		c := NewConfig(CliTestContext())
+		c.options.FaceClusterScore = 0
+		assert.Zero(t, c.FaceClusterScore())
+		assert.Equal(t, c.detectorClusterScore(), c.FaceClusterScoreEffective())
+		assert.Positive(t, c.FaceClusterScoreEffective())
+	})
+	t.Run("Disabled", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceClusterScore = -1
+		assert.Equal(t, -1, c.FaceClusterScore())
+		assert.Equal(t, -1, c.FaceClusterScoreEffective())
+	})
+	t.Run("OutOfRange", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceClusterScore = 300
+		assert.Zero(t, c.FaceClusterScore())
+	})
+}
+
+func TestConfig_FaceScoreEffective(t *testing.T) {
+	t.Run("Configured", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceScore = 80
+		assert.Equal(t, 80.0, c.FaceScoreEffective())
+	})
+	t.Run("Detector", func(t *testing.T) {
+		// The raw option is zero in the ordinary case, which reads as "nothing is filtered", so
+		// a report has to resolve the cutoff the detector actually enforces.
+		c := NewConfig(CliTestContext())
+		c.options.FaceScore = 0
+		assert.Equal(t, face.DetectorScore(c.FaceDetector()), c.FaceScoreEffective())
+		assert.Positive(t, c.FaceScoreEffective(), "a report must never state a cutoff of zero")
+	})
+	t.Run("DetectionDisabled", func(t *testing.T) {
+		// Detection is off, so no detector states a cutoff. Falling back to the default one
+		// still beats reporting zero, which would read as a setting rather than as an absence.
+		c := NewConfig(CliTestContext())
+		c.options.FaceDetector = face.DetectorNone
+		assert.Positive(t, c.FaceScoreEffective())
+	})
+	t.Run("Disabled", func(t *testing.T) {
+		// Negative follows the convention the other numeric options use, and is the only way to
+		// ask for no cutoff at all: zero is taken by "let the detector decide".
+		c := NewConfig(CliTestContext())
+		c.options.FaceScore = -1
+		assert.Equal(t, face.NoScoreThreshold, c.FaceScore())
+		assert.Equal(t, face.NoScoreThreshold, c.FaceScoreEffective())
+	})
+}
+
+func TestDetectorScoreThreshold(t *testing.T) {
+	t.Run("Rescaled", func(t *testing.T) {
+		// The option is on the 0-100 scale operators read scores in, the detector on 0-1.
+		assert.InDelta(t, 0.55, detectorScoreThreshold(55), 0.0001)
+	})
+	t.Run("SentinelsCarryThrough", func(t *testing.T) {
+		// Neither is a score, so neither may be divided into a value the engine reads as one.
+		assert.Zero(t, detectorScoreThreshold(0))
+		assert.EqualValues(t, -1, detectorScoreThreshold(-1))
+	})
+}
+
+func TestConfig_ConfigureFaceDetector(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		assert.NoError(t, c.ConfigureFaceDetector(0))
+	})
+	t.Run("LowerScore", func(t *testing.T) {
+		// A migration lowers the cutoff below the detector's own, which is the case that had no
+		// reachable value before: the option is on the 0-100 scale and the detector on 0-1.
+		c := NewConfig(CliTestContext())
+		assert.NoError(t, c.ConfigureFaceDetector(face.MigrationScoreThreshold))
+	})
+	t.Run("DetectionDisabled", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceDetector = face.DetectorNone
+		assert.NoError(t, c.ConfigureFaceDetector(0))
+	})
+	t.Run("NilConfig", func(t *testing.T) {
+		assert.NoError(t, (*Config)(nil).ConfigureFaceDetector(0))
+	})
+}
+
+func TestConfig_EffectiveFaceModel(t *testing.T) {
+	t.Run("InForce", func(t *testing.T) {
+		c := newSFaceTestConfig(t)
+		assert.Equal(t, face.ModelSFace, c.EffectiveFaceModel())
+	})
+	t.Run("Undetected", func(t *testing.T) {
+		// FaceModel reports none until the library has been asked, and a report runs before
+		// that, so the model whose calibration applies is the one detection would settle on.
+		c := NewConfig(CliTestContext())
+		c.options.FaceModel = ""
+		assert.Equal(t, c.installedFaceModel(), c.EffectiveFaceModel())
+	})
+	t.Run("Disabled", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceModel = face.ModelNone
+		assert.Equal(t, face.ModelNone, c.EffectiveFaceModel())
+	})
+	t.Run("NoneInstalled", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = t.TempDir()
+		c.options.FaceModel = ""
+		assert.Equal(t, face.ModelNone, c.EffectiveFaceModel())
+	})
+	t.Run("NilConfig", func(t *testing.T) {
+		assert.Equal(t, face.ModelNone, (*Config)(nil).EffectiveFaceModel())
+	})
+}
+
+func TestConfig_FacesLockFile(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		assert.Equal(t, filepath.Join(c.StoragePath(), "faces.lock"), c.FacesLockFile())
+	})
+	t.Run("NilConfig", func(t *testing.T) {
+		assert.Empty(t, (*Config)(nil).FacesLockFile())
+	})
+}
+
+func TestConfig_FacesLocked(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	t.Run("Unlocked", func(t *testing.T) {
+		assert.Empty(t, c.FacesLocked())
+	})
+	t.Run("Locked", func(t *testing.T) {
+		lock, err := mutex.AcquireFileLock(c.FacesLockFile(), "faces migration")
+		require.NoError(t, err)
+		t.Cleanup(lock.Release)
+
+		assert.Contains(t, c.FacesLocked(), "faces migration")
+	})
+	t.Run("Released", func(t *testing.T) {
+		assert.Empty(t, c.FacesLocked())
+	})
+}
+
+func TestConfig_ClearFaceModel(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ConfigPath = t.TempDir()
+		require.NoError(t, c.SetFaceModel(face.ModelSFace))
+		require.Equal(t, face.ModelSFace, c.options.FaceModel)
+
+		require.NoError(t, c.ClearFaceModel())
+
+		assert.Empty(t, c.options.FaceModel)
+		assert.Equal(t, face.ModelDetect, c.FaceModelSetting())
+
+		b, err := os.ReadFile(c.OptionsYaml())
+		require.NoError(t, err)
+		assert.NotContains(t, string(b), "FaceModel")
+	})
+	t.Run("NothingPinned", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ConfigPath = t.TempDir()
+		assert.NoError(t, c.ClearFaceModel())
+	})
+	t.Run("NilConfig", func(t *testing.T) {
+		assert.NoError(t, (*Config)(nil).ClearFaceModel())
+	})
+}
+
 func TestConfig_FaceOverlap(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Equal(t, face.OverlapThreshold, c.FaceOverlap())
@@ -1462,9 +1671,11 @@ func TestConfig_FaceClusterSize(t *testing.T) {
 
 func TestConfig_FaceClusterScore(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, face.ClusterScoreThreshold, c.FaceClusterScore())
+	// Unset reports zero rather than a bar, because the bar that applies is looked up per marker
+	// from the detector that scored it.
+	assert.Zero(t, c.FaceClusterScore())
 	c.options.FaceClusterScore = 0
-	assert.Equal(t, face.ClusterScoreThreshold, c.FaceClusterScore())
+	assert.Zero(t, c.FaceClusterScore())
 	c.options.FaceClusterScore = 55
 	assert.Equal(t, 55, c.FaceClusterScore())
 }

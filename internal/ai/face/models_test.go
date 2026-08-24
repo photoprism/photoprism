@@ -169,23 +169,41 @@ func TestEmbeddingModelNames(t *testing.T) {
 
 func TestModelUsageString(t *testing.T) {
 	t.Run("Aliases", func(t *testing.T) {
-		assert.True(t, strings.HasPrefix(ModelUsageString(), "detect, none, "))
+		usage := ModelUsageString()
+		assert.True(t, strings.HasPrefix(usage, ModelAuto+", "))
+		assert.True(t, strings.HasSuffix(usage, ", "+ModelNone))
 	})
-	t.Run("PermissiveModels", func(t *testing.T) {
+	t.Run("OfficialModels", func(t *testing.T) {
 		for _, name := range EmbeddingModelNames() {
-			if FindEmbeddingModel(name).LicenseGated() {
+			if !FindEmbeddingModel(name).Official {
 				continue
 			}
 
 			assert.Contains(t, ModelUsageString(), name)
 		}
 	})
+	t.Run("OmitsUnofficialModels", func(t *testing.T) {
+		// Help text reads as an offer. FaceNet and AuraFace run and may be named explicitly, but
+		// only one model is supported, and there is no supported migration back off the others.
+		assert.NotContains(t, ModelUsageString(), ModelFaceNet)
+		assert.NotContains(t, ModelUsageString(), ModelAuraFace)
+	})
 	t.Run("OmitsGatedModels", func(t *testing.T) {
-		// Help text reads as an offer, and these weights may not be used until their terms
-		// have been accepted, so they are named where that acceptance is asked for instead.
+		// These weights may not be used until their terms have been accepted, so they are named
+		// where that acceptance is asked for instead.
 		assert.NotContains(t, ModelUsageString(), ModelArcFaceR50)
 		assert.NotContains(t, ModelUsageString(), ModelArcFaceMBF)
 	})
+}
+
+// TestDefaultModelName pins the target a migration runs to when none is named, which is the one
+// model the product offers rather than whichever the library happens to hold.
+func TestDefaultModelName(t *testing.T) {
+	name := DefaultModelName()
+
+	assert.Equal(t, ModelSFace, name)
+	require.NotNil(t, FindEmbeddingModel(name))
+	assert.False(t, FindEmbeddingModel(name).LicenseGated(), "a default may only name weights we may redistribute")
 }
 
 func TestEmbeddingModels(t *testing.T) {

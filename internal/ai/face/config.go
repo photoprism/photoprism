@@ -1,6 +1,8 @@
 package face
 
 import (
+	"math"
+
 	"github.com/photoprism/photoprism/internal/thumb/crop"
 )
 
@@ -20,9 +22,19 @@ const (
 	EpsilonDefault = 0.01
 	// SizeThresholdDefault is the default minimum detected face size, in pixels.
 	SizeThresholdDefault = 25
-	// ScoreThresholdDefault is the minimum face score a detector's own calibrated cutoff is not
-	// allowed to fall below, on the 0-100 confidence scale the ONNX detectors report.
+	// ScoreThresholdDefault leaves the cutoff to the detector, on the 0-100 confidence scale the
+	// ONNX detectors report. A shared default either sits below every detector's own cutoff and
+	// gates nothing, or above one of them and silently overrules its calibration.
 	ScoreThresholdDefault = 0.0
+	// NoScoreThreshold applies no score cutoff at all, following the convention the other numeric
+	// options use for "switched off". It is distinct from ScoreThresholdDefault, which cannot
+	// express this: zero already means "let the detector decide".
+	NoScoreThreshold = -1.0
+	// MigrationScoreThreshold is the detection floor a face embedding migration runs at, on the
+	// 0-100 scale, unless an operator configured one. Re-embedding keeps a marker only when the
+	// detector finds its face again, so a miss here discards a curated marker instead of adding
+	// a false positive to an index - the opposite trade to the one indexing makes.
+	MigrationScoreThreshold = 9.0
 	// ClusterScoreThresholdDefault is the clustering bar for a detector that registers none, and
 	// for a marker no detector produced.
 	ClusterScoreThresholdDefault = 20
@@ -68,11 +80,12 @@ var (
 	OverlapThresholdFloor = OverlapThreshold - 1
 	// ScoreThreshold is the base minimum face score accepted by the detector.
 	ScoreThreshold = ScoreThresholdDefault
-	// ClusterScoreThreshold is the minimum score required for faces that contribute to automatic
-	// clustering, assigned by Config.Propagate from the detector in force. It is a weak gate on
-	// its own, because detector confidence saturates above the detector's own cutoff;
+	// ClusterScoreThreshold is the operator's own minimum score for faces that contribute to
+	// automatic clustering, assigned by Config.Propagate from FACE_CLUSTER_SCORE. Zero leaves the
+	// bar to the detector that scored each marker, and negative removes it. It is a weak gate
+	// either way, because detector confidence saturates above the detector's own cutoff;
 	// ClusterSizeThreshold is what keeps an interpolated crop out.
-	ClusterScoreThreshold = ClusterScoreThresholdDefault
+	ClusterScoreThreshold = 0
 	// SizeThreshold is the minimum detected face size, in pixels. Config.Propagate assigns it from
 	// FACE_SIZE, so a reader that bounds what detection produced compares against the same value.
 	SizeThreshold = SizeThresholdDefault
@@ -105,16 +118,37 @@ var (
 // ClusterScore returns the score a marker the named detector produced has to reach to contribute
 // to automatic clustering.
 //
-// The bar is per detector because their scores are not comparable - the same number is a thin
-// sliver above one detector's floor and a third of another's range - and it is looked up per
-// marker because a library holds markers from more than one. A detector that registers none, and
-// a marker written before the provenance column existed, fall back to the shared default.
+// FACE_CLUSTER_SCORE outranks the per-detector bars, and a negative value removes them, because
+// a value an operator chose is not a calibration a marker was never scored against. Unset, the
+// bar is per marker: two detectors' scores are not comparable, and a library holds markers from
+// both. An unregistered detector and a row predating the column keep the shared default.
 func ClusterScore(detector DetectorName) int {
+	if ClusterScoreThreshold != 0 {
+		return max(ClusterScoreThreshold, 0)
+	}
+
 	if d := FindDetector(detector); d != nil && d.ClusterMinScore > 0 {
 		return d.ClusterMinScore
 	}
 
 	return ClusterScoreThresholdDefault
+}
+
+// DetectorScore returns the detection cutoff calibrated for the named detector, on the 0-100
+// scale. An unregistered name falls back to the default detector, so a report always states a
+// cutoff that some detector actually enforces rather than zero.
+func DetectorScore(detector DetectorName) float64 {
+	d := FindDetector(detector)
+
+	if d == nil {
+		d = DefaultDetector()
+	}
+
+	if d == nil || d.MinScore <= 0 {
+		return ScoreThresholdDefault
+	}
+
+	return math.Round(float64(d.MinScore) * 100)
 }
 
 // ClampSampleRadius limits a cluster sample radius to the configured range.

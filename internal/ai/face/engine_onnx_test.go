@@ -156,10 +156,16 @@ func TestONNXEngineDetectLandmarks(t *testing.T) {
 	})
 }
 
-// TestDetectorRecall pins how many faces the detector finds per test image, so a preprocessing
-// change cannot pass unnoticed: a wrong channel order still returns plausible detections, and
-// nothing else here would fail. Images pinned to zero are negatives, so the table guards against
-// new false positives - 19.jpg holds flowers - as well as against lost recall.
+// detectorRecallScore is the cutoff the pinned table below was measured at, which is the knee
+// YuNet's own calibration found. The shipped default is deliberately lower - a migration keeps a
+// curated marker only if the detector finds its face again - so the pin names the cutoff rather
+// than following Detector.MinScore, or a threshold change would silently rewrite the measurement.
+const detectorRecallScore = 0.65
+
+// TestDetectorRecall pins how many faces the detector finds per test image at the calibrated
+// cutoff, so a preprocessing change cannot pass unnoticed: a wrong channel order still returns
+// plausible detections, and nothing else here would fail. Images pinned to zero are negatives,
+// so the table guards against new false positives - 19.jpg holds flowers - as well as lost recall.
 func TestDetectorRecall(t *testing.T) {
 	pinned := []struct {
 		fileName string
@@ -195,7 +201,7 @@ func TestDetectorRecall(t *testing.T) {
 
 	if err := ConfigureEngine(EngineSettings{
 		Name: EngineONNX,
-		ONNX: ONNXOptions{ModelPath: detectorModelPath, Threads: 1},
+		ONNX: ONNXOptions{ModelPath: detectorModelPath, Threads: 1, ScoreThreshold: detectorRecallScore},
 	}); err != nil {
 		if _, statErr := os.Stat(detectorModelPath); statErr != nil {
 			t.Skipf("faces: skipping detector-dependent test, %s is not available", filepath.Base(detectorModelPath))
@@ -209,6 +215,40 @@ func TestDetectorRecall(t *testing.T) {
 			faces, err := Detect(filepath.Join("testdata", c.fileName), 20)
 			require.NoError(t, err)
 			assert.Len(t, faces, c.faces)
+		})
+	}
+}
+
+// TestDetectorRecallAtDefaultScore checks that the shipped cutoff, which is below the calibrated
+// one, costs no recall on the images the table above pins a face in. It deliberately asserts a
+// lower bound rather than a count: admitting weaker detections is what the lower cutoff is for,
+// and pinning how many would turn every threshold decision into a test edit.
+func TestDetectorRecallAtDefaultScore(t *testing.T) {
+	positives := []string{"1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", "6.jpg", "12.jpg", "16.jpg", "17.jpg", "18.jpg"}
+
+	prev := UseEngine(nil)
+	t.Cleanup(func() {
+		if current := UseEngine(prev); current != nil {
+			_ = current.Close()
+		}
+	})
+
+	if err := ConfigureEngine(EngineSettings{
+		Name: EngineONNX,
+		ONNX: ONNXOptions{ModelPath: detectorModelPath, Threads: 1},
+	}); err != nil {
+		if _, statErr := os.Stat(detectorModelPath); statErr != nil {
+			t.Skipf("faces: skipping detector-dependent test, %s is not available", filepath.Base(detectorModelPath))
+		}
+
+		t.Fatalf("faces: failed to initialize detector: %s", err)
+	}
+
+	for _, fileName := range positives {
+		t.Run(fileName, func(t *testing.T) {
+			faces, err := Detect(filepath.Join("testdata", fileName), 20)
+			require.NoError(t, err)
+			assert.NotEmpty(t, faces)
 		})
 	}
 }

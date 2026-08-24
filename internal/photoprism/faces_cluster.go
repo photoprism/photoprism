@@ -12,6 +12,40 @@ import (
 	"github.com/photoprism/photoprism/pkg/vector/alg"
 )
 
+// reportClusteringSkipped states that too few markers clear the clustering bars, and names both
+// bars so the gap is actionable.
+//
+// A library where nothing ever clusters otherwise looks exactly like one where clustering ran and
+// found nothing: the only trace was a debug line, and the thresholds that exclude a marker are not
+// the ones an operator judges a face by. Reported once per count, because the worker wakes often.
+func (w *Faces) reportClusteringSkipped(eligible, required int) {
+	if w == nil || !w.reportOnce("cluster-skipped", eligible) {
+		return
+	}
+
+	log.Infof("faces: %d of the %d new markers required for clustering clear the %d px size and %d score thresholds",
+		eligible, required, face.ClusterSizeThreshold, face.ClusterScore(face.ActiveDetector()))
+}
+
+// reportOnce reports whether a recurring condition has changed since it was last logged, so a
+// worker that wakes every few minutes states it once rather than every time.
+func (w *Faces) reportOnce(key string, value int) bool {
+	w.vetoMu.Lock()
+	defer w.vetoMu.Unlock()
+
+	if w.reported == nil {
+		w.reported = make(map[string]int)
+	}
+
+	if last, ok := w.reported[key]; ok && last == value {
+		return false
+	}
+
+	w.reported[key] = value
+
+	return true
+}
+
 // Cluster clusters indexed face embeddings.
 func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 	if w.Disabled() {
@@ -28,7 +62,7 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 	if opt.Force {
 		log.Infof("faces: enforced clustering")
 	} else if n := query.CountNewFaceMarkers(face.ClusterSizeThreshold, face.ClusterScoreAuto); n < opt.SampleThreshold() {
-		log.Debugf("faces: skipped clustering")
+		w.reportClusteringSkipped(n, opt.SampleThreshold())
 		return added, nil
 	}
 
