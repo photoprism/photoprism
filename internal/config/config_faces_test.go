@@ -1497,7 +1497,7 @@ func TestConfig_FaceThresholdsPerModel(t *testing.T) {
 		c.options.ModelsPath = installTestModels(t, face.ModelSFace)
 		c.options.FaceModel = face.ModelSFace
 
-		assert.Equal(t, 0.78, c.FaceClusterDist())
+		assert.Equal(t, 0.85, c.FaceClusterDist())
 		assert.Equal(t, 0.60, c.FaceClusterRadius())
 		assert.Equal(t, 0.35, c.FaceMatchDist())
 		assert.Equal(t, 0.061, c.FaceCollisionDist())
@@ -1546,7 +1546,7 @@ func TestConfig_FaceThresholdsPerModel(t *testing.T) {
 
 		require.Equal(t, face.ClusterDistDefault, c.options.FaceClusterDist)
 		require.Equal(t, face.CollisionDistDefault, c.options.FaceCollisionDist)
-		assert.Equal(t, 0.78, c.FaceClusterDist())
+		assert.Equal(t, 0.85, c.FaceClusterDist())
 		assert.Equal(t, 0.60, c.FaceClusterRadius())
 		assert.Equal(t, 0.35, c.FaceMatchDist())
 		assert.Equal(t, 0.061, c.FaceCollisionDist())

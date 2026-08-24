@@ -123,7 +123,7 @@ Cluster centroids are built with `EmbeddingsMidpoint` and scored as `dist - min(
 | Model         | `ClusterDist` | `ClusterRadius` | `MatchDist` |    TAR |    FAR |
 |:--------------|--------------:|----------------:|------------:|-------:|-------:|
 | `facenet`     |          0.64 |            0.42 |        0.40 | 0.8318 | 1.43 % |
-| `sface`       |          0.78 |            0.60 |        0.35 |    n/a |    n/a |
+| `sface`       |          0.85 |            0.60 |        0.35 |    n/a |    n/a |
 | `auraface`    |          0.98 |            0.76 |        0.35 | 0.9308 | 0.14 % |
 | `arcface_r50` |          1.07 |            0.67 |        0.55 | 0.9943 | 0.14 % |
 | `arcface_mbf` |          1.03 |            0.64 |        0.49 | 0.9648 | 0.14 % |

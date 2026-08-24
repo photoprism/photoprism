@@ -118,7 +118,7 @@ var EmbeddingModels = map[ModelName]*EmbeddingModel{
 			Input:   alignedCropInput(onnx.Uniform(0, 1)),
 			Output:  &onnx.Output{Width: 128},
 		},
-		ClusterDist:   0.78,
+		ClusterDist:   0.85,
 		ClusterRadius: 0.60,
 		MatchDist:     0.35,
 		CollisionDist: 0.061,

@@ -446,7 +446,7 @@ func TestConfig_faceDistReport(t *testing.T) {
 	t.Run("ModelInForce", func(t *testing.T) {
 		c := newSFaceTestConfig(t)
 
-		assert.Equal(t, "0.780000", c.faceDistReport(c.FaceClusterDist))
+		assert.Equal(t, "0.850000", c.faceDistReport(c.FaceClusterDist))
 	})
 	t.Run("NoModel", func(t *testing.T) {
 		// The calibrated distances are per model, so a report with none must not print

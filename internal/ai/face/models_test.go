@@ -205,16 +205,22 @@ func TestEmbeddingModels(t *testing.T) {
 			assert.Positive(t, m.MatchDist)
 			assert.Less(t, m.ClusterRadius, m.ClusterDist)
 
-			// The collision floor and its slack follow the width of the model's distance
-			// scale, so leaving them at the FaceNet values would be the same trap the
-			// per-model thresholds exist to close.
+			// The collision floor follows the width of the model's distance scale, so leaving
+			// it at the FaceNet value would be the same trap the per-model thresholds exist
+			// to close. Its slack is a fixed fraction of it for every model.
+			//
+			// It is deliberately not derived from ClusterDist: that one also carries a
+			// recall-against-merging choice, and a floor below which two vectors are
+			// indistinguishable is a property of the space rather than of that choice.
 			assert.Positive(t, m.CollisionDist)
 			assert.Positive(t, m.Epsilon)
 			assert.Less(t, m.Epsilon, m.CollisionDist)
 			assert.Less(t, m.CollisionDist, m.MatchDist)
-			scale := m.ClusterDist / ClusterDistDefault
-			assert.InDelta(t, roundTo3(scale*CollisionDistDefault), m.CollisionDist, 1e-9)
-			assert.InDelta(t, roundTo3(scale*EpsilonDefault), m.Epsilon, 1e-9)
+			assert.InDelta(t, roundTo3(m.CollisionDist*EpsilonDefault/CollisionDistDefault), m.Epsilon, 1e-9)
+
+			if name != ModelFaceNet {
+				assert.NotEqual(t, CollisionDistDefault, m.CollisionDist)
+			}
 
 			// ONNX models are single files described by the shared model info, while
 			// TensorFlow models are SavedModel directories that have none.
