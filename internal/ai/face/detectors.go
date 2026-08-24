@@ -75,8 +75,8 @@ var Detectors = []*Detector{
 				Height:     640,
 				Layout:     onnx.LayoutNCHW,
 				ColorOrder: onnx.BGR,
-				// YuNet consumes raw 0-255 values: OpenCV hands FaceDetectorYN a blob built
-				// with the default scale factor and no mean, and the graph expects that.
+				// Raw 0-255 BGR: OpenCV builds the detector's blob with every default, where
+				// the SFace one sets swapRB. The two are opposite and neither is inferable.
 				Normalization: onnx.Uniform(0, 1),
 				Resize:        onnx.Resize{Mode: onnx.ResizePad},
 			},

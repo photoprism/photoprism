@@ -185,10 +185,12 @@ var EmbeddingModels = map[ModelName]*EmbeddingModel{
 	},
 }
 
-// alignedCropInput returns the input description shared by every model that consumes the
-// standard 112x112 five-point aligned crop (AlignArcFace5), which differ from one another
-// only in normalization. It describes the crop, not the ArcFace weights: SFace and AuraFace
-// take the same geometry.
+// alignedCropInput returns the input description shared by every model that consumes the standard
+// 112x112 five-point aligned crop (AlignArcFace5), which differ only in normalization.
+//
+// The channel order is RGB for all of them, including SFace. That is worth stating because the
+// obvious inference is the opposite one: OpenCV feeds SFace an image that is BGR in memory, but
+// its blob is built with swapRB set, where the detector's is not.
 func alignedCropInput(normalization onnx.Normalization) *onnx.Input {
 	return &onnx.Input{
 		Width:         ArcFaceTemplateSize,
