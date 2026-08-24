@@ -1,6 +1,6 @@
 ## Face Detection & Embedding Guidelines
 
-**Last Updated:** August 23, 2026
+**Last Updated:** August 24, 2026
 
 ### Overview
 
@@ -31,7 +31,7 @@ The detector consumes 720 px thumbnails (model input 640 px), schedules work on 
 
 The `github.com/yalue/onnxruntime_go` binding requests the exact C API version of the headers it vendors, so it fails to initialize against an older shared library. Bumping that module therefore requires a matching `ONNX_DEFAULT_VERSION` and checksum update in `scripts/dist/install-onnx.sh`, plus a rebuild of the base images that ship `libonnxruntime.so`. Tests that load the shared library — `TestNet` for the detector, and the ONNX embedder tests through `onnx.EnsureRuntime` — fail when the model is present but the runtime cannot be initialized, and skip only when the model itself is missing. A version mismatch must not pass as a skipped test.
 
-Runtime selection lives in `Config.FaceEngine()`. Scheduling is controlled by the face model entry in `vision.yml`: `Config.FaceEngineRunType()` simply forwards to `vision.Config.RunType(ModelTypeFace)` and returns `never` when no detector is configured. This keeps face detection aligned with embedding generation so both always run together.
+Detector selection lives in `Config.FaceDetector()`, and `Config.FaceEngine()` reports the runtime that follows from it. Scheduling is controlled by the face model entry in `vision.yml`: `Config.FaceEngineRunType()` simply forwards to `vision.Config.RunType(ModelTypeFace)` and returns `never` when no detector is configured. This keeps face detection aligned with embedding generation so both always run together.
 
 The detector also returns five facial landmarks, which `engine_onnx.go` decodes into `Face.Eyes` (both eyes) and `Face.Landmarks` (nose and mouth corners).
 
@@ -141,12 +141,14 @@ Two caveats apply to the recommendations. The measured centroids are always pure
 | Model         | Scale | `CollisionDist` | `Epsilon` |
 |:--------------|------:|----------------:|----------:|
 | `facenet`     | 1.000 |           0.050 |     0.010 |
-| `sface`       | 1.422 |           0.071 |     0.014 |
+| `sface`       | 1.219 |           0.061 |     0.012 |
 | `auraface`    | 1.531 |           0.077 |     0.015 |
 | `arcface_r50` | 1.672 |           0.084 |     0.017 |
 | `arcface_mbf` | 1.609 |           0.080 |     0.016 |
 
 Their practical effect is small, but leaving them fixed at the FaceNet values under a scale that is roughly 1.4x wider is the same trap the per-model thresholds exist to close. `FACE_COLLISION_DIST` and `FACE_EPSILON_DIST` override them the same way the three calibrated thresholds are overridden.
+
+**SFace is the exception, and deliberately so.** Its scale stays pinned at the `ClusterDist` these two were calibrated at rather than following it to the 0.85 that ships. A collision floor states how close two vectors can be and still be told apart, which is a property of the space; `ClusterDist` also carries a recall-against-merging choice, and a choice is not a re-measurement.
 
 #### Quality & Overlap Thresholds
 

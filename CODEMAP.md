@@ -39,7 +39,7 @@ High-Level Package Map (Go)
 - `internal/photoprism` — core domain logic (indexing, import, faces, thumbnails, cleanup)
 - `internal/ai/vision` — multi-engine computer vision pipeline (models, adapters, schema). Adapter docs: [`internal/ai/vision/openai/README.md`](internal/ai/vision/openai/README.md) and [`internal/ai/vision/ollama/README.md`](internal/ai/vision/ollama/README.md).
 - `internal/ai/onnx` — shared ONNX model description: artifact identity and checksum, graph inspection and verification, preprocessing contract, runtime loading. Consumed today by `internal/ai/face`. See [`internal/ai/onnx/README.md`](internal/ai/onnx/README.md).
-- `internal/ai/face` — face detection and embedding: the embedding-model registry selected by `FACE_MODEL`, landmark alignment, distance thresholds, and the SCRFD decode. See [`internal/ai/face/README.md`](internal/ai/face/README.md).
+- `internal/ai/face` — face detection and embedding: the detector registry selected by `FACE_DETECTOR`, the embedding-model registry selected by `FACE_MODEL`, landmark alignment, and distance thresholds. See [`internal/ai/face/README.md`](internal/ai/face/README.md).
 - `internal/workers` — background schedulers (index, vision, sync, meta, backup)
 - `internal/auth` — ACL, sessions, OIDC
 - `internal/service` — cluster/portal, maps, hub, webdav
