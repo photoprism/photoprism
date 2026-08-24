@@ -413,6 +413,25 @@ func TestConfig_FaceDetectorSetting(t *testing.T) {
 	})
 }
 
+// TestConfig_FaceDetectorLeavesOptionsYaml pins that a persisted deprecated value is read rather
+// than rewritten. Writing the option that replaces it would be one line, and removing it from every
+// operator's file afterwards would not be, so the deprecated key is simply consulted where it sits.
+func TestConfig_FaceDetectorLeavesOptionsYaml(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	c.options.ConfigPath = t.TempDir()
+
+	body := "# operator notes\nFaceEngine: none\nFaceModel: sface\n"
+	require.NoError(t, os.WriteFile(c.OptionsYaml(), []byte(body), fs.ModeConfigFile))
+	require.NoError(t, c.options.Load(c.OptionsYaml()))
+
+	assert.Equal(t, face.DetectorNone, c.FaceDetectorSetting(), "the deprecated value still disables detection")
+	assert.Equal(t, face.EngineNone, c.FaceEngine())
+
+	after, err := os.ReadFile(c.OptionsYaml())
+	require.NoError(t, err)
+	assert.Equal(t, body, string(after), "options.yml must be left exactly as the operator wrote it")
+}
+
 func TestConfig_FaceDetector(t *testing.T) {
 	t.Run("NilConfig", func(t *testing.T) {
 		assert.Equal(t, face.DetectorNone, (*Config)(nil).FaceDetector())
@@ -1835,88 +1854,5 @@ func TestConfig_faceAcceptThresholds(t *testing.T) {
 			}
 		}
 		assert.Equal(t, 1, warnings)
-	})
-}
-
-func TestConfig_initFaceDetector(t *testing.T) {
-	// writeOptions writes an options.yml holding the specified keys and returns a config that
-	// reads it, so the migration sees a file rather than an in-memory value.
-	writeOptions := func(t *testing.T, body string) *Config {
-		t.Helper()
-
-		c := NewConfig(CliTestContext())
-		c.options.ConfigPath = t.TempDir()
-
-		require.NoError(t, os.WriteFile(c.OptionsYaml(), []byte(body), fs.ModeConfigFile))
-		require.NoError(t, c.options.Load(c.OptionsYaml()))
-
-		return c
-	}
-	readOptions := func(t *testing.T, c *Config) Values {
-		t.Helper()
-
-		_, values, err := c.loadOptionsYAML()
-		require.NoError(t, err)
-
-		return values
-	}
-	t.Run("DisabledCarriesOver", func(t *testing.T) {
-		c := writeOptions(t, "FaceEngine: none\n")
-		c.initFaceDetector()
-
-		values := readOptions(t, c)
-		assert.NotContains(t, values, "FaceEngine")
-		assert.Equal(t, face.DetectorNone, values["FaceDetector"])
-		assert.Equal(t, face.DetectorNone, c.FaceDetectorSetting())
-	})
-	t.Run("RuntimeValuesDoNot", func(t *testing.T) {
-		// Every value but "none" says detection is enabled, which the detector default already
-		// expresses, so nothing is written in its place.
-		for _, engine := range []string{"auto", "onnx", "pigo"} {
-			c := writeOptions(t, "FaceEngine: "+engine+"\n")
-			c.initFaceDetector()
-
-			values := readOptions(t, c)
-			assert.NotContains(t, values, "FaceEngine", engine)
-			assert.NotContains(t, values, "FaceDetector", engine)
-		}
-	})
-	t.Run("ConfiguredDetectorWins", func(t *testing.T) {
-		c := writeOptions(t, "FaceEngine: none\nFaceDetector: yunet\n")
-		c.initFaceDetector()
-
-		values := readOptions(t, c)
-		assert.NotContains(t, values, "FaceEngine")
-		assert.Equal(t, face.DetectorYuNet, values["FaceDetector"])
-	})
-	t.Run("EnvironmentIsNotPersisted", func(t *testing.T) {
-		// An environment variable is read again on every start, so persisting one would keep
-		// disabling detection after the operator removed it.
-		c := writeOptions(t, "FaceModel: sface\n")
-		c.options.FaceEngine = face.EngineNone
-		c.initFaceDetector()
-
-		values := readOptions(t, c)
-		assert.NotContains(t, values, "FaceDetector")
-		assert.Equal(t, face.DetectorNone, c.FaceDetectorSetting(), "it still applies to this run")
-	})
-	t.Run("ConfiguredDetectorSurvivesTheEnvironment", func(t *testing.T) {
-		// The operator turns detection back on under the new option while a stale "none" is
-		// still in the file. Overwriting it would persist the disable, which no later start
-		// could undo, because the file outranks the environment.
-		c := writeOptions(t, "FaceEngine: none\n")
-		c.options.FaceDetector = face.DetectorYuNet
-		c.initFaceDetector()
-
-		values := readOptions(t, c)
-		assert.NotContains(t, values, "FaceEngine")
-		assert.NotContains(t, values, "FaceDetector")
-		assert.Equal(t, face.DetectorYuNet, c.FaceDetectorSetting())
-	})
-	t.Run("NothingToMigrate", func(t *testing.T) {
-		c := writeOptions(t, "FaceModel: sface\n")
-		c.initFaceDetector()
-
-		assert.NotContains(t, readOptions(t, c), "FaceDetector")
 	})
 }

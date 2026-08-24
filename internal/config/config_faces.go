@@ -124,53 +124,6 @@ func (c *Config) derivedFaceDetector() face.DetectorName {
 	return face.DetectorNone
 }
 
-// initFaceDetector retires a persisted face engine value in favor of the detector option that
-// supersedes it, and is called once by Init. Only `none` carries over, because it is the one
-// value that means the same in both.
-func (c *Config) initFaceDetector() {
-	if c == nil {
-		return
-	}
-
-	// Only what the file holds is migrated. An environment variable is read afresh on every
-	// start, so persisting one would outlive the moment it was set and keep disabling detection
-	// after the operator removed it.
-	_, values, err := c.loadOptionsYAML()
-
-	if err != nil {
-		log.Debugf("config: %s (replace the deprecated face engine option)", err)
-		return
-	}
-
-	engine, found := values["FaceEngine"]
-
-	if !found {
-		return
-	}
-
-	patch := Values{}
-
-	// A detector that is configured anywhere keeps it, because the deprecated value was consulted
-	// only while nothing else was. The file is checked as well as the effective value, or an
-	// environment variable that turns detection back on would be overwritten by the "none" it
-	// was set to replace - and persisted, which no later start could undo.
-	_, named := values["FaceDetector"]
-
-	if !named && c.options.FaceDetector == "" && face.ParseEngine(fmt.Sprintf("%v", engine)) == face.EngineNone {
-		c.options.FaceDetector = face.DetectorNone
-		patch["FaceDetector"] = face.DetectorNone
-	}
-
-	c.options.FaceEngine = ""
-
-	if _, saveErr := c.SaveOptionsUpdate(patch, []string{"FaceEngine"}); saveErr != nil {
-		log.Warnf("config: failed replacing the deprecated face engine option (%s)", saveErr)
-		return
-	}
-
-	log.Infof("config: replaced the deprecated face engine option in %s", clean.Log(c.OptionsYaml()))
-}
-
 // FaceEngineRunType returns the effective run type for the face detection engine.
 // Detection and embedding always run together, so we defer to the face model
 // configuration in the vision subsystem. If no detection model is configured,
