@@ -286,6 +286,14 @@ func (m *Face) ReviseMatches() (revised Markers, err error) {
 					log.Debugf("faces: failed to remove match with marker (%s)", err) // Conflict resolution
 					return revised, err
 				} else if updated {
+					// ClearFace stamps the marker as matched, which is true of the matcher but
+					// not of this: the cluster narrowed underneath it and nothing has compared
+					// it against the others. Left stamped, it is in neither pass's set and waits
+					// for "faces update --force".
+					if err = marker.Unmatched(); err != nil {
+						log.Debugf("faces: failed to flag marker for rematching (%s)", err)
+					}
+
 					revised = append(revised, marker)
 				}
 			}

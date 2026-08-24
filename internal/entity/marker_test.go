@@ -869,3 +869,37 @@ func TestMarker_Clusterable(t *testing.T) {
 		assert.False(t, (*Marker)(nil).Clusterable())
 	})
 }
+
+// TestMarker_Unmatched pins the flag a conflict has to leave behind. ClearFace stamps, which is
+// right where the matcher found no face and wrong after a cluster narrowed underneath a marker:
+// a stamped marker is in neither matching pass's set and waits for a forced run.
+func TestMarker_Unmatched(t *testing.T) {
+	m := &Marker{
+		FileUID:        "fs6sg6bw45bnlqdw",
+		MarkerType:     MarkerFace,
+		MarkerSrc:      SrcImage,
+		Size:           100,
+		Score:          100,
+		EmbedModel:     face.EmbeddingModelName(),
+		EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
+		W:              0.1,
+		H:              0.1,
+	}
+	require.NoError(t, Db().Create(m).Error)
+	t.Cleanup(func() { UnscopedDb().Delete(m) })
+
+	require.NoError(t, m.Matched())
+	require.NotNil(t, m.MatchedAt)
+
+	stored := FindMarker(m.MarkerUID)
+	require.NotNil(t, stored)
+	require.NotNil(t, stored.MatchedAt)
+
+	require.NoError(t, m.Unmatched())
+
+	assert.Nil(t, m.MatchedAt)
+
+	stored = FindMarker(m.MarkerUID)
+	require.NotNil(t, stored)
+	assert.Nil(t, stored.MatchedAt, "the column must be cleared, not only the field")
+}

@@ -642,6 +642,50 @@ func TestFace_ReviseMatchesSkipsOtherModels(t *testing.T) {
 	assert.Equal(t, m.ID, stored.FaceID, "the assignment must survive a revision it could not evaluate")
 }
 
+// TestFace_ReviseMatchesFlagsForRematching pins that a marker a conflict drops is left needing a
+// match rather than recorded as having had one.
+//
+// ClearFace stamps matched_at, which is true where the matcher itself found no face - it had just
+// compared against every cluster. After a conflict narrowed a cluster underneath the marker,
+// nothing has compared it against anything, and a stamped marker is in neither matching pass's
+// set: pass one reads matched_at IS NULL, pass two runs only while some cluster is unmatched. It
+// would sit unassigned until "faces update --force".
+func TestFace_ReviseMatchesFlagsForRematching(t *testing.T) {
+	m := NewFace("", SrcAuto, face.Embeddings{face.RandomEmbedding()}, face.EmbeddingModelName())
+	require.NotNil(t, m)
+	require.NoError(t, m.Create())
+	t.Cleanup(func() { UnscopedDb().Delete(&Face{}, "id = ?", m.ID) })
+
+	// Assigned to the cluster, stamped, and far enough away that a revision drops it.
+	dropped := Marker{
+		MarkerUID:      rnd.GenerateUID('m'),
+		MarkerType:     MarkerFace,
+		MarkerSrc:      SrcImage,
+		FaceID:         m.ID,
+		EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
+		EmbedModel:     face.EmbeddingModelName(),
+		MatchedAt:      TimeStamp(),
+	}
+
+	require.NoError(t, Db().Create(&dropped).Error)
+	t.Cleanup(func() { UnscopedDb().Delete(&Marker{}, "marker_uid = ?", dropped.MarkerUID) })
+
+	// Narrow the cluster so nothing it holds still matches.
+	m.SampleRadius = 0
+	m.CollisionRadius = 0.0001
+	require.NoError(t, m.Updates(Values{"sample_radius": m.SampleRadius, "collision_radius": m.CollisionRadius}))
+
+	revised, err := m.ReviseMatches()
+	require.NoError(t, err)
+	require.NotEmpty(t, revised, "the marker must be dropped by the revision")
+
+	stored := Marker{}
+	require.NoError(t, UnscopedDb().First(&stored, "marker_uid = ?", dropped.MarkerUID).Error)
+
+	assert.Empty(t, stored.FaceID, "the assignment is removed")
+	assert.Nil(t, stored.MatchedAt, "and the marker is left for the next run to match")
+}
+
 func TestFace_MatchMarkers(t *testing.T) {
 	cluster := FaceFixtures.Pointer("joe-biden")
 

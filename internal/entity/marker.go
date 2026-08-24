@@ -660,6 +660,17 @@ func (m *Marker) Matched() error {
 	return UnscopedDb().Model(m).UpdateColumns(Values{"matched_at": m.MatchedAt}).Error
 }
 
+// Unmatched clears the match timestamp, so the next run compares this marker against every
+// cluster again.
+//
+// ClearFace stamps instead, which is right where the matcher itself found no face: it had just
+// compared against all of them. It is wrong after a conflict narrowed a cluster and dropped the
+// marker, because nothing has compared it against anything since.
+func (m *Marker) Unmatched() error {
+	m.MatchedAt = nil
+	return UnscopedDb().Model(m).UpdateColumns(Values{"matched_at": nil}).Error
+}
+
 // Top returns the top Y coordinate as float64.
 func (m *Marker) Top() float64 {
 	return float64(m.Y)
