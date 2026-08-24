@@ -310,12 +310,9 @@ func TestSaveFaceMigrationEmbeddings(t *testing.T) {
 		"the landmarks the detection placed travel with the vector they produced")
 
 	t.Run("BlankDetectorKeepsProvenance", func(t *testing.T) {
-		// Re-cropping from the stored geometry runs no detector, so overwriting the recorded
-		// one would attribute the crop to a detector that never saw the image, and the stored
-		// landmarks are still the ones that produced that crop.
-		//
-		// The vector has to differ from the one already stored: MariaDB reports no affected
-		// rows for an update that changes nothing, which the caller treats as a missing marker.
+		// Re-cropping runs no detector, so overwriting either would attribute the crop to one
+		// that never saw the image. The vector has to differ from the one already stored:
+		// MariaDB reports no affected rows for an update that changes nothing.
 		regenerated := face.Embeddings{face.RandomEmbedding()}
 		require.NoError(t, SaveFaceMigrationEmbeddings(face.ModelFaceNet, "", map[string]face.Embeddings{marker.MarkerUID: regenerated}, nil))
 

@@ -640,14 +640,12 @@ func (w *Faces) cropMigrationEmbeddings(embedder face.Embedder, file *entity.Fil
 	return result, nil
 }
 
-// detectMigrationEmbeddings redetects a file and maps aligned embeddings to stored markers.
-// It also reports the landmarks each detection placed and the detector that placed them, so
-// provenance travels with the vectors it describes instead of being read back from
-// configuration further up.
+// detectMigrationEmbeddings redetects a file and maps aligned embeddings to stored markers, also
+// reporting the landmarks each detection placed and the detector that placed them.
 //
-// The landmarks are what make the recorded detector usable later: without them the column
-// attests the crop a vector was computed from while the stored landmarks are still whatever
-// an earlier detector produced, and no reader can tell the two apart.
+// Provenance travels with the vectors it describes rather than being read back from configuration.
+// The landmarks are what make it usable: without them the column attests the crop while the stored
+// landmarks are still an earlier detector's, and no reader can tell the two apart.
 func (w *Faces) detectMigrationEmbeddings(embedder face.Embedder, file *entity.File, markers, stale entity.Markers) (result map[string]face.Embeddings, landmarks map[string]json.RawMessage, detectModel string, err error) {
 	result = make(map[string]face.Embeddings, len(stale))
 	landmarks = make(map[string]json.RawMessage, len(stale))

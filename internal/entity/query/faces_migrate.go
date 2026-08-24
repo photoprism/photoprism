@@ -281,13 +281,12 @@ func FaceMigrationLowQualityMarkers(model string) (count int, err error) {
 	return count, err
 }
 
-// SaveFaceMigrationEmbeddings checkpoints generated embeddings for a single file, along with
-// the landmarks the detection that produced them placed.
+// SaveFaceMigrationEmbeddings checkpoints generated embeddings for a single file, along with the
+// landmarks the detection that produced them placed.
 //
-// A blank detectModel and absent landmarks leave both as they are, which is what a run that
-// re-cropped from the stored geometry must do: it re-ran no detector, so what is already
-// recorded still describes the crop. A run that re-detected has to write both together, or the
-// recorded detector attests the vector while the stored landmarks are another detector's.
+// A blank detectModel and absent landmarks leave both as they are, which a run that re-cropped
+// from stored geometry must do: it ran no detector. A run that re-detected writes both together,
+// or the recorded detector attests the vector while the landmarks are another detector's.
 func SaveFaceMigrationEmbeddings(model, detectModel string, embeddings map[string]face.Embeddings, landmarks map[string]json.RawMessage) error {
 	if model == "" {
 		return fmt.Errorf("faces: migration model is required")

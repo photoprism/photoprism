@@ -205,13 +205,9 @@ func TestEmbeddingModels(t *testing.T) {
 			assert.Positive(t, m.MatchDist)
 			assert.Less(t, m.ClusterRadius, m.ClusterDist)
 
-			// The collision floor follows the width of the model's distance scale, so leaving
-			// it at the FaceNet value would be the same trap the per-model thresholds exist
-			// to close. Its slack is a fixed fraction of it for every model.
-			//
-			// It is deliberately not derived from ClusterDist: that one also carries a
-			// recall-against-merging choice, and a floor below which two vectors are
-			// indistinguishable is a property of the space rather than of that choice.
+			// The collision floor follows the width of the model's distance scale, and its slack
+			// is a fixed fraction of it. It is deliberately not derived from ClusterDist, which
+			// also carries a recall-against-merging choice the space itself does not.
 			assert.Positive(t, m.CollisionDist)
 			assert.Positive(t, m.Epsilon)
 			assert.Less(t, m.Epsilon, m.CollisionDist)

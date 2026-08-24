@@ -30,12 +30,11 @@ func (c *Config) FaceEngine() string {
 }
 
 // FaceDetectorSetting returns the detector as configured, without resolving it. It reports
-// `face.DetectorDetect` when the detector is to be derived from the embedding model, which is
-// also what an unsupported value is treated as.
+// `face.DetectorDetect` when it is to be derived, which an unsupported value asks for too.
 //
-// The deprecated `FACE_ENGINE` is consulted only when nothing configured this option, and only
-// `none` carries over: its other values name a runtime rather than a model, and all of them
-// mean "detection is enabled", which this option's own default already expresses.
+// The deprecated `FACE_ENGINE` is consulted only when this option is unset, and only `none`
+// carries over: its other values name a runtime every detector shares, so they say "detection is
+// enabled", which this option's own default already expresses.
 func (c *Config) FaceDetectorSetting() face.DetectorName {
 	if c == nil {
 		return face.DetectorNone
@@ -105,9 +104,8 @@ func (c *Config) usableFaceDetector(name face.DetectorName) face.DetectorName {
 // derivedFaceDetector returns the detector the configured embedding model pairs with, or the
 // first installed detector whose weights may be redistributed.
 //
-// Gated weights are reached only through the pairing, never through the scan: the pairing is
-// downstream of a model the operator selected explicitly and that the same gate already let
-// through, while the scan is what runs when nothing has been chosen.
+// Gated weights are reached through the pairing only, never through the scan: the pairing follows
+// a model the operator selected explicitly, while the scan runs when nothing has been chosen.
 func (c *Config) derivedFaceDetector() face.DetectorName {
 	modelsPath := c.ModelsPath()
 
@@ -128,11 +126,8 @@ func (c *Config) derivedFaceDetector() face.DetectorName {
 }
 
 // initFaceDetector retires a persisted face engine value in favor of the detector option that
-// supersedes it, and is called once by Init.
-//
-// Only `none` is carried over, because it is the one value that means the same in both. The
-// rest name a runtime every detector shares, so they say "detection is enabled", which the
-// detector option's own default already expresses.
+// supersedes it, and is called once by Init. Only `none` carries over, because it is the one
+// value that means the same in both.
 func (c *Config) initFaceDetector() {
 	if c == nil {
 		return
@@ -243,10 +238,9 @@ func (c *Config) FaceEngineShouldRun(when vision.RunType) bool {
 
 // FaceDetectorThreads returns the thread count for ONNX face detection.
 //
-// The automatic value divides the cores by the number of indexing workers, because face
-// detection takes no lock: that many detections run at once, each with its own thread
-// pool, so a per-session count derived from the cores alone oversubscribes the machine
-// by exactly that factor.
+// The automatic value divides the cores by the number of indexing workers, because detection
+// takes no lock: that many run at once, each with its own pool, so a count derived from the
+// cores alone oversubscribes the machine by exactly that factor.
 func (c *Config) FaceDetectorThreads() int {
 	if c == nil {
 		return 1

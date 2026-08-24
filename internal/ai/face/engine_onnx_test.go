@@ -159,8 +159,7 @@ func TestONNXEngineDetectLandmarks(t *testing.T) {
 // TestDetectorRecall pins how many faces the detector finds per test image, so a preprocessing
 // change cannot pass unnoticed: a wrong channel order still returns plausible detections, and
 // nothing else here would fail. Images pinned to zero are negatives, so the table guards against
-// new false positives as well as lost recall. 19.jpg is a photograph of flowers, and the value
-// that decides whether it yields any is the detector's own calibrated score threshold.
+// new false positives - 19.jpg holds flowers - as well as against lost recall.
 func TestDetectorRecall(t *testing.T) {
 	pinned := []struct {
 		fileName string

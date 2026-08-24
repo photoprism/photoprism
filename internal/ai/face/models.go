@@ -67,9 +67,8 @@ const (
 // EmbeddingModel describes what a face embedding model expects from the pipeline.
 //
 // ONNX carries the artifact and preprocessing contract every ONNX subsystem shares, and is nil for
-// TensorFlow models. Detector is what an unset FACE_DETECTOR derives from, so adding a model states
-// which detector it was calibrated against. The five distances are in the model's own scale and are
-// not comparable across models, so one global set would discard most matches for all but one.
+// TensorFlow models. Detector is what an unset FACE_DETECTOR derives from. The five distances are in
+// the model's own scale, so one global set would discard most matches for all but one.
 type EmbeddingModel struct {
 	Name          ModelName
 	Runtime       EmbeddingRuntime
