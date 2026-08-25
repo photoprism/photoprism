@@ -492,7 +492,7 @@ func (c *Config) EffectiveFaceModel() face.ModelName {
 // anything to "options.yml".
 //
 // It is what a report calls to name the model in force and whether it can read the library. The
-// configured value stays as it was, so a report cannot turn "detect" into a recorded decision.
+// configured value stays as it was, so a report cannot turn a request to detect into a decision.
 func (c *Config) ResolveFaceModel() face.ModelName {
 	if c == nil {
 		return face.ModelNone
@@ -972,6 +972,14 @@ func (c *Config) detectorClusterScore() int {
 	}
 
 	return face.ClusterScoreThresholdDefault
+}
+
+// FaceSampleThreshold returns how many new markers an automatic clustering pass needs before it
+// runs. Derived from FACE_CLUSTER_CORE rather than configured on its own, and read through the
+// getter rather than through face.SampleThreshold: the commands that report it never propagate,
+// so the global still holds the shipped default there.
+func (c *Config) FaceSampleThreshold() int {
+	return 2 * c.FaceClusterCore()
 }
 
 // FaceClusterCore returns the number of faces forming a cluster core.

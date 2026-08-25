@@ -11,7 +11,9 @@ import (
 	"github.com/photoprism/photoprism/pkg/dsn"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 )
 
@@ -366,6 +368,29 @@ func TestConfig_FaceStatus(t *testing.T) {
 
 		assert.Contains(t, c.FaceStatus()[0], "Face detection is disabled")
 	})
+	t.Run("NeverScheduled", func(t *testing.T) {
+		// Everything is installed and configured, and nothing will ever run it. No value in the
+		// tables says so; that is what the prose is for.
+		c := NewConfig(CliTestContext())
+		c.options.FaceRun = vision.RunNever
+
+		assert.Contains(t, c.FaceStatus()[0], "never scheduled to run")
+	})
+	t.Run("MigrationLockIsNamed", func(t *testing.T) {
+		// A lock nothing reports is the difference between an instance that explains why it
+		// indexes nothing and one that has to be diagnosed by finding a file.
+		c := NewConfig(CliTestContext())
+		c.options.StoragePath = t.TempDir()
+
+		lock, err := mutex.AcquireFileLock(c.FacesLockFile(), "test migration")
+		require.NoError(t, err)
+		t.Cleanup(lock.Release)
+
+		status := strings.Join(c.FaceStatus(), " ")
+
+		assert.Contains(t, status, "A face embedding migration is in progress")
+		assert.Contains(t, status, "test migration")
+	})
 }
 
 func TestConfig_ReportURIRedaction(t *testing.T) {
@@ -648,11 +673,31 @@ func TestConfig_faceConfigRows(t *testing.T) {
 	})
 	t.Run("ValuesOnly", func(t *testing.T) {
 		// "show config" runs without a database, so it can neither detect the model nor see that
-		// one is blocked. Stating a resolution it cannot check is how it came to report "ok" on
-		// a paused instance, so every qualifier belongs in a note beside the table instead.
-		for _, row := range c.faceConfigRows() {
+		// one is blocked. Stating a resolution it cannot check is how it came to report "ok" on a
+		// paused instance, so every resolution qualifier belongs in a note beside the table.
+		//
+		// face-engine is the exception and has to be forced on to be reached at all: its marker
+		// names the option as deprecated, which is a property of the setting rather than a
+		// resolution, and it is the only row that carries one.
+		engine := c.options.FaceEngine
+		t.Cleanup(func() { c.options.FaceEngine = engine })
+		c.options.FaceEngine = face.EngineNone
+
+		rows := c.faceConfigRows()
+		flags := make([]string, 0, len(rows))
+
+		for _, row := range rows {
+			flags = append(flags, row.Flag)
+
+			if row.Flag == "face-engine" {
+				assert.Equal(t, "none (deprecated)", row.Value)
+				continue
+			}
+
 			assert.NotContains(t, row.Value, "(", row.Flag)
 		}
+
+		require.Contains(t, flags, "face-engine", "the exempt row must be reached, or this asserts nothing")
 	})
 	t.Run("ResolvedScores", func(t *testing.T) {
 		// Zero is what the two raw options hold in the ordinary case, and it reads as "nothing is
@@ -753,6 +798,31 @@ func TestConfig_faceClusterStatus(t *testing.T) {
 		assert.Contains(t, status, "face-cluster-size of 10000 px")
 		assert.Contains(t, status, "face-cluster-core")
 	})
+	t.Run("RequiredMatchesTheWorker", func(t *testing.T) {
+		// A non-default core, because at the default the getter and the package variable coincide
+		// and the test cannot see which one the report read. This command never propagates, so
+		// reading the global here reported the shipped default whatever FACE_CLUSTER_CORE said.
+		size, core := c.options.FaceClusterSize, c.options.FaceClusterCore
+		t.Cleanup(func() { c.options.FaceClusterSize, c.options.FaceClusterCore = size, core })
+		c.options.FaceClusterSize = 10000
+		c.options.FaceClusterCore = 7
+
+		require.NotEqual(t, c.FaceSampleThreshold(), face.SampleThreshold, "the fixture must tell the two apart")
+		assert.Contains(t, c.faceClusterStatus(), fmt.Sprintf("needs %d new markers", c.FaceSampleThreshold()))
+	})
+	t.Run("ScoreBarFollowsTheFloorMapping", func(t *testing.T) {
+		// Unset, the counts are taken per marker, so naming one number would state the bar of the
+		// detector in force for markers a different one scored.
+		size, score := c.options.FaceClusterSize, c.options.FaceClusterScore
+		t.Cleanup(func() { c.options.FaceClusterSize, c.options.FaceClusterScore = size, score })
+		c.options.FaceClusterSize = 10000
+		c.options.FaceClusterScore = 0
+
+		assert.Contains(t, c.faceClusterStatus(), "the detector that scored each one")
+
+		c.options.FaceClusterScore = 42
+		assert.Contains(t, c.faceClusterStatus(), "face-cluster-score of 42")
+	})
 	t.Run("NoDatabase", func(t *testing.T) {
 		// It runs one query per bar, so a report without a connection must skip it rather than
 		// count zero and blame a threshold.
@@ -764,34 +834,53 @@ func TestConfig_faceClusterStatus(t *testing.T) {
 }
 
 func TestFaceClusterStatusFor(t *testing.T) {
+	const bar = "the face-cluster-score of 70"
+
 	t.Run("Enough", func(t *testing.T) {
-		// A line that appears on every healthy instance is one nobody reads on the instance that
-		// is not, so it is emitted only while clustering is actually short.
-		assert.Empty(t, faceClusterStatusFor(query.FaceClusterGates{Unclustered: 20, SizeOK: 20, ScoreOK: 20, Eligible: 20}, 8, 60, 70, 4))
+		// A line every healthy instance prints is one nobody reads on the instance that is not.
+		assert.Empty(t, faceClusterStatusFor(query.FaceClusterGates{Unclustered: 20, Recent: 20, SizeOK: 20, ScoreOK: 20, Eligible: 20}, 8, 60, bar, 4))
 	})
 	t.Run("NothingUnclustered", func(t *testing.T) {
-		assert.Empty(t, faceClusterStatusFor(query.FaceClusterGates{}, 8, 60, 70, 4))
+		assert.Empty(t, faceClusterStatusFor(query.FaceClusterGates{}, 8, 60, bar, 4))
+	})
+	t.Run("StrandedBehindTheLastCluster", func(t *testing.T) {
+		// The shortfall no threshold explains: every marker predates the newest cluster, so none
+		// counts toward the trigger again and the instance sits idle looking healthy.
+		status := faceClusterStatusFor(query.FaceClusterGates{Unclustered: 6}, 8, 60, bar, 4)
+
+		assert.Contains(t, status, "6 markers are unclustered")
+		assert.Contains(t, status, "none was added since the last cluster")
+		assert.Contains(t, status, "faces update --force")
 	})
 	t.Run("VolumeOnly", func(t *testing.T) {
 		// Every marker clears every bar, so naming thresholds would send an operator to tune bars
 		// that are excluding nothing.
-		status := faceClusterStatusFor(query.FaceClusterGates{Unclustered: 3, SizeOK: 3, ScoreOK: 3, Eligible: 3}, 8, 60, 70, 4)
+		status := faceClusterStatusFor(query.FaceClusterGates{Unclustered: 3, Recent: 3, SizeOK: 3, ScoreOK: 3, Eligible: 3}, 8, 60, bar, 4)
 
 		assert.Contains(t, status, "needs 8 new markers and has 3")
 		assert.Contains(t, status, "no threshold is excluding")
 		assert.NotContains(t, status, "face-cluster-size")
 	})
 	t.Run("SizeIsTheGate", func(t *testing.T) {
-		status := faceClusterStatusFor(query.FaceClusterGates{Unclustered: 40, SizeOK: 2, ScoreOK: 40, Eligible: 2}, 8, 60, 70, 4)
+		status := faceClusterStatusFor(query.FaceClusterGates{Unclustered: 40, Recent: 40, SizeOK: 2, ScoreOK: 40, Eligible: 2}, 8, 60, bar, 4)
 
+		assert.Contains(t, status, "of the 40 added since the last cluster")
 		assert.Contains(t, status, "2 clear the face-cluster-size of 60 px")
-		assert.Contains(t, status, "40 the face-cluster-score of 70")
+		assert.Contains(t, status, "40 clear "+bar)
 	})
 	t.Run("ScoreIsTheGate", func(t *testing.T) {
-		status := faceClusterStatusFor(query.FaceClusterGates{Unclustered: 40, SizeOK: 40, ScoreOK: 1, Eligible: 1}, 8, 60, 70, 4)
+		status := faceClusterStatusFor(query.FaceClusterGates{Unclustered: 40, Recent: 40, SizeOK: 40, ScoreOK: 1, Eligible: 1}, 8, 60, bar, 4)
 
 		assert.Contains(t, status, "40 clear the face-cluster-size of 60 px")
-		assert.Contains(t, status, "1 the face-cluster-score of 70")
+		assert.Contains(t, status, "1 clear "+bar)
+	})
+	t.Run("OlderMarkersDoNotCountTowardTheTrigger", func(t *testing.T) {
+		// Recent is what the worker sees; Unclustered is the whole pool. Reporting the pool as
+		// though it were the trigger is what hid the stranded case.
+		status := faceClusterStatusFor(query.FaceClusterGates{Unclustered: 90, Recent: 3, SizeOK: 3, ScoreOK: 3, Eligible: 3}, 8, 60, bar, 4)
+
+		assert.Contains(t, status, "has 3")
+		assert.NotContains(t, status, "90")
 	})
 }
 

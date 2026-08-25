@@ -1391,7 +1391,7 @@ var Flags = CliFlags{
 		Flag: &cli.IntFlag{
 			Name:    "face-overlap",
 			Usage:   "face area overlap threshold in `PERCENT` (1-100)",
-			Value:   face.OverlapThreshold,
+			Value:   face.OverlapThresholdDefault,
 			EnvVars: EnvVars("FACE_OVERLAP"),
 		}}, {
 		Flag: &cli.StringFlag{
@@ -1420,7 +1420,7 @@ var Flags = CliFlags{
 		Flag: &cli.IntFlag{
 			Name:    "face-cluster-core",
 			Usage:   "`NUMBER` of faces forming a cluster core (1-100)",
-			Value:   face.ClusterCore,
+			Value:   face.ClusterCoreDefault,
 			EnvVars: EnvVars("FACE_CLUSTER_CORE"),
 		}}, {
 		Flag: &cli.Float64Flag{
@@ -1445,7 +1445,7 @@ var Flags = CliFlags{
 		}, DocDefault: faceModelDocDefault(func(m *face.EmbeddingModel) float64 { return m.CollisionDist })}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-epsilon-dist",
-			Usage:   "collision tolerance `DELTA` appended to max match distances (up to 0.1), the same for every face model",
+			Usage:   "collision tolerance `DELTA` appended to max match distances (up to 0.1), the same for every face model; twice it is the distance at which a colliding cluster is retired for good",
 			EnvVars: EnvVars("FACE_EPSILON_DIST"),
 		}, DocDefault: faceDocDefault(face.EpsilonDefault)}, {
 		Flag: &cli.StringFlag{

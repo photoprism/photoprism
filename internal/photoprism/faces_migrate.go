@@ -122,9 +122,14 @@ func (e *FacesMigrateIncompleteError) Error() string {
 	case e.Unreadable > 0:
 		return fmt.Sprintf("faces: migration completed, but %d marker(s) could not be re-embedded "+
 			"because their file is missing or unreadable", e.Unreadable)
-	default:
+	case e.Clusterable > 0:
 		return fmt.Sprintf("faces: migration completed, but %d marker(s) that clear the clustering "+
 			"thresholds could not be re-detected and lost their vector", e.Clusterable)
+	default:
+		// Below the clustering bars, so the ratio guard never saw them - but a third of a library
+		// can sit here, and an exit status of zero would report that as a clean run.
+		return fmt.Sprintf("faces: migration completed, but %d marker(s) could not be re-detected "+
+			"and lost their vector, none of which clears the clustering thresholds", e.Failed)
 	}
 }
 
@@ -574,11 +579,15 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 	// could have used the vector either. What still fails is loss the library would have felt, and
 	// a file that could not be read, because that is a storage fault an operator can act on.
 	if obsolete := result.Failed - result.FailedClusterable - result.Unreadable; obsolete > 0 {
-		log.Infof("faces: %d marker(s) were not re-detected and are no longer used for recognition, "+
-			"which is expected where an earlier detector placed them", obsolete)
+		log.Infof("faces: %d marker(s) were not found again at the %g migration score and are no longer used "+
+			"for recognition, which is expected where an earlier or lower-scoring pass placed them",
+			obsolete, w.conf.FaceMigrateScore())
 	}
 
-	if result.FailedClusterable > 0 || result.Unreadable > 0 {
+	// Every marker that lost a vector counts, not just the clusterable ones. The ratio guard is
+	// deliberately blind to the rest - they seed no cluster, so refusing over them refused real
+	// libraries - but a run that discarded a third of the library must not also exit zero.
+	if result.Failed > 0 || result.Unreadable > 0 {
 		return result, &FacesMigrateIncompleteError{
 			Failed:      result.Failed,
 			Clusterable: result.FailedClusterable,

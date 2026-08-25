@@ -648,33 +648,62 @@ func (c *Config) faceClusterStatus() string {
 		return ""
 	}
 
-	size, core := c.FaceClusterSize(), c.FaceClusterCore()
-	gates := query.CountFaceClusterGates(c.EffectiveFaceModel(), size, c.faceClusterScoreFloor())
+	size, floor := c.FaceClusterSize(), c.faceClusterScoreFloor()
+	gates := query.CountFaceClusterGates(c.EffectiveFaceModel(), size, floor)
 
-	return faceClusterStatusFor(gates, 2*core, size, c.FaceClusterScoreEffective(), core)
+	// The same getter Propagate assigns to face.SampleThreshold, not the global: this command runs
+	// on InitCore, which never propagates, so the global would still hold the shipped default and
+	// the report would name a shortfall that is not the one holding.
+	return faceClusterStatusFor(gates, c.FaceSampleThreshold(), size, c.faceClusterScorePhrase(floor), c.FaceClusterCore())
+}
+
+// faceClusterScorePhrase names the score bar the gate counts were taken at. Unset it is per marker,
+// so a single number would state the bar of the detector in force for markers a different one
+// scored - which on a library predating the provenance column is the wrong number entirely.
+func (c *Config) faceClusterScorePhrase(floor int) string {
+	switch floor {
+	case face.ClusterScoreAuto:
+		return "the face-cluster-score of the detector that scored each one"
+	case 0:
+		return "the face-cluster-score, which is switched off"
+	default:
+		return fmt.Sprintf("the face-cluster-score of %d", floor)
+	}
 }
 
 // faceClusterStatusFor renders the clustering status for a set of gate counts, or "" when nothing
 // is holding. Separate from the queries so every branch is reachable without a library shaped to
 // produce it.
-func faceClusterStatusFor(gates query.FaceClusterGates, required, size, score, core int) string {
-	// Enough to run, or nothing left to cluster: neither is a state an operator has to act on, and
-	// a line that appears on every healthy instance is one nobody reads on the instance that is not.
-	if gates.Eligible >= required || gates.Unclustered == 0 {
+func faceClusterStatusFor(gates query.FaceClusterGates, required, size int, scorePhrase string, core int) string {
+	// Enough to run: not a state an operator has to act on, and a line every healthy instance
+	// prints is one nobody reads on the instance that is not. Eligible rather than Recent, because
+	// the worker counts markers that already clear both bars.
+	if gates.Eligible >= required {
+		return ""
+	}
+
+	// The one shortfall no threshold explains: a marker older than the newest cluster never counts
+	// toward the trigger again, so an instance can sit on hundreds of them and look idle.
+	if gates.Recent == 0 && gates.Unclustered > 0 {
+		return fmt.Sprintf("Automatic clustering will not start on its own: %d markers are unclustered, but none was "+
+			`added since the last cluster. Run "photoprism faces update --force" to cluster them.`, gates.Unclustered)
+	}
+
+	if gates.Unclustered == 0 {
 		return ""
 	}
 
 	// No bar excludes anything, so the shortfall is volume alone. Naming thresholds here would
 	// send an operator to tune bars that are already passing every marker they see.
-	if gates.Eligible == gates.Unclustered {
+	if gates.Eligible == gates.Recent {
 		return fmt.Sprintf("Automatic clustering needs %d new markers and has %d, which no threshold is excluding "+
 			"(face-cluster-core %d sets how many are needed).", required, gates.Eligible, core)
 	}
 
-	return fmt.Sprintf("Automatic clustering needs %d new markers and has %d: of the %d that no cluster has taken, "+
-		"%d clear the face-cluster-size of %d px and %d the face-cluster-score of %d "+
+	return fmt.Sprintf("Automatic clustering needs %d new markers and has %d: of the %d added since the last cluster, "+
+		"%d clear the face-cluster-size of %d px and %d clear %s "+
 		"(face-cluster-core %d sets how many are needed).",
-		required, gates.Eligible, gates.Unclustered, gates.SizeOK, size, gates.ScoreOK, score, core)
+		required, gates.Eligible, gates.Recent, gates.SizeOK, size, gates.ScoreOK, scorePhrase, core)
 }
 
 // faceClusterScoreFloor maps FACE_CLUSTER_SCORE onto the convention the marker queries use, where

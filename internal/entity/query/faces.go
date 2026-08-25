@@ -177,36 +177,43 @@ func RemoveAutoFaceClusters() (removed int, err error) {
 	return int(res.RowsAffected), res.Error
 }
 
-// FaceClusterGates counts the new face markers automatic clustering could use, with each bar that
-// can exclude one applied on its own and then together, so a report can name the gate that holds.
+// FaceClusterGates counts the face markers automatic clustering could use, with each bar that can
+// exclude one applied on its own and then together, so a report can name the gate that holds.
+//
+// Unclustered ignores the recency cut every other count applies, because a marker older than the
+// newest cluster never counts toward the trigger again: that is a state the worker cannot report
+// and only a full rebuild clears.
 type FaceClusterGates struct {
 	Unclustered int
+	Recent      int
 	SizeOK      int
 	ScoreOK     int
 	Eligible    int
 }
 
-// CountFaceClusterGates counts the new face markers at each clustering bar.
+// CountFaceClusterGates counts the face markers at each clustering bar.
 //
 // It takes the model, size and score rather than reading them from the loaded engine, because the
 // command that reports them never loads one and would otherwise count against the shipped defaults.
 func CountFaceClusterGates(model string, size, score int) FaceClusterGates {
 	return FaceClusterGates{
-		Unclustered: countNewFaceMarkers(model, 0, 0),
-		SizeOK:      countNewFaceMarkers(model, size, 0),
-		ScoreOK:     countNewFaceMarkers(model, 0, score),
-		Eligible:    countNewFaceMarkers(model, size, score),
+		Unclustered: countNewFaceMarkers(model, 0, 0, false),
+		Recent:      countNewFaceMarkers(model, 0, 0, true),
+		SizeOK:      countNewFaceMarkers(model, size, 0, true),
+		ScoreOK:     countNewFaceMarkers(model, 0, score, true),
+		Eligible:    countNewFaceMarkers(model, size, score, true),
 	}
 }
 
 // CountNewFaceMarkers counts the number of new face markers in the index.
 func CountNewFaceMarkers(size, score int) (n int) {
-	return countNewFaceMarkers(face.EmbeddingModelName(), size, score)
+	return countNewFaceMarkers(face.EmbeddingModelName(), size, score, true)
 }
 
-// countNewFaceMarkers counts the face markers holding a vector the specified model can read that
-// no cluster has taken, and that were added after the newest cluster that model produced.
-func countNewFaceMarkers(current string, size, score int) (n int) {
+// countNewFaceMarkers counts the face markers holding a vector the specified model can read that no
+// cluster has taken. Recent also requires them to postdate the newest cluster that model produced,
+// which is what the clustering worker counts.
+func countNewFaceMarkers(current string, size, score int, recent bool) (n int) {
 	var f entity.Face
 
 	if err := whereEmbeddingModel(Db().Where("face_src = ?", entity.SrcAuto), current).
@@ -224,7 +231,7 @@ func countNewFaceMarkers(current string, size, score int) (n int) {
 
 	q = whereClusterScore(q, score)
 
-	if !f.CreatedAt.IsZero() {
+	if recent && !f.CreatedAt.IsZero() {
 		q = q.Where("created_at > ?", f.CreatedAt)
 	}
 

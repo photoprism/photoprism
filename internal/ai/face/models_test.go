@@ -161,8 +161,8 @@ func TestEmbeddingModelNames(t *testing.T) {
 	})
 	t.Run("ExcludesAliases", func(t *testing.T) {
 		assert.NotContains(t, names, ModelAuto)
-		assert.NotContains(t, names, ModelAuto)
 		assert.NotContains(t, names, ModelNone)
+		assert.NotContains(t, names, "detect", "the retired spelling must not be a registered model")
 	})
 }
 
@@ -288,6 +288,19 @@ func TestEmbeddingModels(t *testing.T) {
 	}
 }
 
+// TestEmbeddingModelEpsilon pins the collision gap flat across every model. It is a void where
+// nothing matches rather than a separation, so widening it with a model's distance scale strands
+// embeddings instead of telling anyone apart, and AmbiguityDist is derived from it.
+func TestEmbeddingModelEpsilon(t *testing.T) {
+	for name, m := range EmbeddingModels {
+		assert.Equal(t, EpsilonDefault, m.Epsilon, name)
+	}
+
+	// Against the runtime value, not the constant: AmbiguityDist reads the variable Propagate
+	// assigns, so comparing with the default would pass or fail on what another test left behind.
+	assert.InDelta(t, 2*Epsilon, AmbiguityDist(), 0.0001)
+}
+
 func TestEmbeddingModelThresholds(t *testing.T) {
 	t.Run("FaceNetKeepsShippedValues", func(t *testing.T) {
 		// Changing these would alter matching for every library that upgrades.
@@ -303,13 +316,6 @@ func TestEmbeddingModelThresholds(t *testing.T) {
 			require.NotNil(t, m, name)
 			assert.NotEqual(t, ClusterDistDefault, m.ClusterDist, name)
 			assert.NotEqual(t, MatchDistDefault, m.MatchDist, name)
-		}
-	})
-	t.Run("EpsilonIsNotScaled", func(t *testing.T) {
-		// A void where nothing matches rather than a separation, so widening it with a model's
-		// distance scale strands embeddings instead of separating anyone.
-		for name, m := range EmbeddingModels {
-			assert.Equal(t, EpsilonDefault, m.Epsilon, name)
 		}
 	})
 	t.Run("AcceptDistStaysBelowCeiling", func(t *testing.T) {

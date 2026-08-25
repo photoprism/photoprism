@@ -486,6 +486,10 @@ func (c *Config) Propagate() {
 	face.ClusterScoreThreshold = c.FaceClusterScore()
 	face.ClusterSizeThreshold = c.FaceClusterSize()
 	face.ClusterCore = c.FaceClusterCore()
+	// Derived rather than configured, but it still has to follow FACE_CLUSTER_CORE: leaving it at
+	// the package initializer froze the clustering trigger at the shipped default, so raising the
+	// core size moved the cluster definition and not the number of markers that starts a pass.
+	face.SampleThreshold = c.FaceSampleThreshold()
 	face.CollisionDist = c.FaceCollisionDist()
 	face.Epsilon = c.FaceEpsilonDist()
 	face.ClusterRadius = c.FaceClusterRadius()

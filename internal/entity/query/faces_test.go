@@ -1,6 +1,8 @@
 package query
 
 import (
+	"time"
+
 	"errors"
 	"math"
 	"path/filepath"
@@ -218,7 +220,41 @@ func TestCountFaceClusterGates(t *testing.T) {
 	t.Run("NoBars", func(t *testing.T) {
 		gates := CountFaceClusterGates(model, 0, 0)
 
-		assert.Equal(t, gates.Unclustered, gates.Eligible)
+		assert.Equal(t, gates.Recent, gates.Eligible)
+	})
+	t.Run("RecentIsBoundedByUnclustered", func(t *testing.T) {
+		gates := CountFaceClusterGates(model, 0, 0)
+
+		assert.LessOrEqual(t, gates.Recent, gates.Unclustered)
+		assert.Positive(t, gates.Unclustered)
+	})
+	t.Run("MarkersOlderThanTheNewestClusterAreStranded", func(t *testing.T) {
+		// The state the report exists to name: every unclustered marker predates the newest
+		// cluster, so none counts toward the trigger again. The fixtures hold no such marker, so
+		// the cluster that strands them is created here and removed again.
+		before := CountFaceClusterGates(model, 0, 0)
+		require.Equal(t, before.Unclustered, before.Recent, "fixtures are expected to strand nothing")
+
+		newest := entity.Face{
+			ID:         "zzstrandedcluster",
+			FaceSrc:    entity.SrcAuto,
+			EmbedModel: model,
+			CreatedAt:  time.Now().Add(time.Hour),
+		}
+		require.NoError(t, Db().Create(&newest).Error)
+		t.Cleanup(func() { UnscopedDb().Delete(entity.Face{}, "id = ?", newest.ID) })
+
+		after := CountFaceClusterGates(model, 0, 0)
+
+		assert.Equal(t, before.Unclustered, after.Unclustered, "the pool does not shrink because a cluster appeared")
+		assert.Zero(t, after.Recent, "nothing postdates a cluster created in the future")
+		assert.Less(t, after.Recent, after.Unclustered)
+	})
+	t.Run("UnclusteredIgnoresRecency", func(t *testing.T) {
+		// Pinned against the unfiltered count directly, so dropping the recency branch collapses
+		// the two and fails here rather than silently hiding stranded markers.
+		assert.Equal(t, countNewFaceMarkers(model, 0, 0, false), CountFaceClusterGates(model, 0, 0).Unclustered)
+		assert.Equal(t, countNewFaceMarkers(model, 0, 0, true), CountFaceClusterGates(model, 0, 0).Recent)
 	})
 }
 

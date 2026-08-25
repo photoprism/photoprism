@@ -160,7 +160,7 @@ func TestConfig_FaceEngineShouldRun(t *testing.T) {
 		assert.False(t, c.FaceEngineShouldRun(vision.RunOnIndex), "on-demand does not detect inline")
 	})
 	t.Run("VisionYamlDoesNotSchedule", func(t *testing.T) {
-		// A Run value there is read and ignored, so a test that sets one is testing "auto".
+		// FaceEngineRunType never consults it, so a test that sets one is testing "auto".
 		origVision := vision.Config
 		t.Cleanup(func() { vision.Config = origVision })
 
@@ -1867,6 +1867,21 @@ func TestConfig_FaceClusterCore(t *testing.T) {
 	assert.Equal(t, 4, c.FaceClusterCore())
 	c.options.FaceClusterCore = 1
 	assert.Equal(t, 1, c.FaceClusterCore())
+}
+
+// TestConfig_PropagateSampleThreshold pins the clustering trigger to FACE_CLUSTER_CORE. It is
+// derived rather than configured, and leaving it at the package initializer froze it at the
+// shipped default, so raising the core size moved what a cluster is but not what starts a pass.
+func TestConfig_PropagateSampleThreshold(t *testing.T) {
+	core, samples := face.ClusterCore, face.SampleThreshold
+	t.Cleanup(func() { face.ClusterCore, face.SampleThreshold = core, samples })
+
+	c := NewConfig(CliTestContext())
+	c.options.FaceClusterCore = 7
+	c.Propagate()
+
+	assert.Equal(t, 7, face.ClusterCore)
+	assert.Equal(t, 14, face.SampleThreshold)
 }
 
 func TestConfig_FaceClusterDist(t *testing.T) {
