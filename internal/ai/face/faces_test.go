@@ -34,13 +34,16 @@ func TestScoreUncertainty(t *testing.T) {
 	assert.Equal(t, 1, ScoreUncertainty(100))
 	assert.Equal(t, 1, ScoreUncertainty(96))
 	assert.Equal(t, 5, ScoreUncertainty(95))
-	// Every step is reachable while the default detector's cutoff sits at the bottom of the
-	// scale. It has been above the least certain steps before, which made them dead, so this
-	// states the relationship rather than the numbers either side of it.
+	// The steps below the default detector's cutoff are reachable only through a detector that
+	// scores lower, a marker no detector produced, or a migration, which detects beneath it on
+	// purpose. Stated as the relationship rather than as the numbers either side, because the
+	// cutoff is a calibration that moves.
 	floor := FindDetector(DetectorYuNet).MinScore
-	assert.Equal(t, 50, ScoreUncertainty(floor), "the least certain step must stay reachable")
+	assert.Less(t, ScoreUncertainty(floor+1), ScoreUncertainty(floor),
+		"a more confident face must be less uncertain")
 	assert.Equal(t, 45, ScoreUncertainty(FindDetector(DetectorSCRFD).MinScore+1))
-	assert.Equal(t, 50, ScoreUncertainty(0))
+	assert.Equal(t, 50, ScoreUncertainty(0), "a marker no detector scored stays at the least certain step")
+	assert.Equal(t, 50, ScoreUncertainty(int(MigrationScoreThreshold)), "and so does one a migration found below every cutoff")
 }
 
 func TestFaces_Contains(t *testing.T) {

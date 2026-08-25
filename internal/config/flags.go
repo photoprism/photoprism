@@ -1388,6 +1388,18 @@ var Flags = CliFlags{
 		},
 		DocDefault: faceDocDefault(face.DetectorScore(face.DefaultDetectorName()))}, {
 		Flag: &cli.IntFlag{
+			Name:    "face-migrate-size",
+			Usage:   "minimum size of faces in `PIXELS` while a migration re-detects them, which is where a marker an earlier detector placed is found or lost",
+			EnvVars: EnvVars("FACE_MIGRATE_SIZE"),
+		},
+		DocDefault: faceDocDefault(float64(face.MinSizeThreshold))}, {
+		Flag: &cli.Float64Flag{
+			Name:    "face-migrate-score",
+			Usage:   "minimum face `QUALITY` score (1-100) while a migration re-detects them, -1 disables the check",
+			EnvVars: EnvVars("FACE_MIGRATE_SCORE"),
+		},
+		DocDefault: faceDocDefault(face.MigrationScoreThreshold)}, {
+		Flag: &cli.IntFlag{
 			Name:    "face-overlap",
 			Usage:   "face area overlap threshold in `PERCENT` (1-100)",
 			Value:   face.OverlapThreshold,

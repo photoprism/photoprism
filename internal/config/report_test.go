@@ -553,6 +553,8 @@ func TestConfig_faceConfigRows(t *testing.T) {
 			"face-size",
 			"face-size-retry",
 			"face-score",
+			"face-migrate-size",
+			"face-migrate-score",
 			"face-overlap",
 			"face-cluster-size",
 			"face-cluster-score",

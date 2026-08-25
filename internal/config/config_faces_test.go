@@ -1724,6 +1724,72 @@ func TestConfig_ClearFaceModel(t *testing.T) {
 	})
 }
 
+// TestConfig_FaceMigrateScore pins that the migration's floor is tunable without a rebuild, and
+// that it is a floor of its own rather than the detector's calibrated one.
+func TestConfig_FaceMigrateScore(t *testing.T) {
+	t.Run("Unset", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		assert.Equal(t, face.MigrationScoreThreshold, c.FaceMigrateScore())
+	})
+	t.Run("Configured", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceMigrateScore = 25
+		assert.Equal(t, 25.0, c.FaceMigrateScore())
+	})
+	t.Run("Disabled", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceMigrateScore = -1
+		assert.Equal(t, face.NoScoreThreshold, c.FaceMigrateScore())
+	})
+	t.Run("FallsBackToFaceScore", func(t *testing.T) {
+		// A cutoff an operator set for detection as a whole still stands here.
+		c := NewConfig(CliTestContext())
+		c.options.FaceScore = 40
+		assert.Equal(t, 40.0, c.FaceMigrateScore())
+	})
+	t.Run("OutranksFaceScore", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceScore = 40
+		c.options.FaceMigrateScore = 12
+		assert.Equal(t, 12.0, c.FaceMigrateScore())
+	})
+	t.Run("OutOfRange", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceMigrateScore = 300
+		assert.Equal(t, face.MigrationScoreThreshold, c.FaceMigrateScore())
+	})
+	t.Run("NilConfig", func(t *testing.T) {
+		assert.Equal(t, face.MigrationScoreThreshold, (*Config)(nil).FaceMigrateScore())
+	})
+}
+
+func TestConfig_FaceMigrateSize(t *testing.T) {
+	t.Run("Unset", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		assert.Equal(t, face.MinSizeThreshold, c.FaceMigrateSize())
+	})
+	t.Run("Configured", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceMigrateSize = 18
+		assert.Equal(t, 18, c.FaceMigrateSize())
+	})
+	t.Run("DoesNotInheritFaceSize", func(t *testing.T) {
+		// A legacy marker can describe a face well under FACE_SIZE, which is the case this
+		// floor exists for.
+		c := NewConfig(CliTestContext())
+		c.options.FaceSize = 40
+		assert.Equal(t, face.MinSizeThreshold, c.FaceMigrateSize())
+	})
+	t.Run("BelowWhatTheDetectorsAreTrainedFor", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceMigrateSize = 2
+		assert.Equal(t, face.MinSizeThreshold, c.FaceMigrateSize())
+	})
+	t.Run("NilConfig", func(t *testing.T) {
+		assert.Equal(t, face.MinSizeThreshold, (*Config)(nil).FaceMigrateSize())
+	})
+}
+
 func TestConfig_FaceOverlap(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Equal(t, face.OverlapThreshold, c.FaceOverlap())

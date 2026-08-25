@@ -81,12 +81,14 @@ var Detectors = []*Detector{
 		DisplayName: "YuNet 2026may",
 		Dir:         "yunet",
 		Decode:      DecodeYuNet,
-		// The pair the last stable release shipped, below the 0.65 and 70 its own corpus measured:
-		// that measurement weighed false positives and not re-detection, which is what decides
-		// whether a migration keeps a curated marker. Both are open until the preview, whose data
-		// points are only attributable against a configuration with known production behavior.
-		MinScore:        9,
-		ClusterMinScore: 20,
+		// The knee its own corpus measured: 65 is the first cutoff at which a photograph of
+		// flowers yields nothing, with every pinned positive still found. Lower was tried, at
+		// the pair the last stable release ran, and the demo library answered within a day -
+		// three "people" on a bee, two of them blurred background. Re-detection wants a lower
+		// floor than this, but that is the migration's trade to make and it makes it on its own
+		// (face.MigrationScoreThreshold); an index pays for it on every picture.
+		MinScore:        65,
+		ClusterMinScore: 70,
 		Advertise:       true,
 		Default:         true,
 		ONNX: &onnx.ModelInfo{

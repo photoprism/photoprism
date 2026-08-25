@@ -103,14 +103,31 @@ type FacesMigrateResult struct {
 	AttentionSubjects int
 }
 
-// FacesMigrateIncompleteError reports a migration that completed with marker failures.
+// FacesMigrateIncompleteError reports a migration that completed but lost something the library
+// could have used, which is what makes the exit status non-zero.
 type FacesMigrateIncompleteError struct {
-	Failed int
+	Failed      int
+	Clusterable int
+	Unreadable  int
 }
 
 // Error returns the incomplete migration error message.
+//
+// It names what was actually lost rather than the total. A marker the detector no longer finds is
+// the ordinary outcome for a library indexed by an earlier one, and reporting that as a fault
+// tells an operator to fix something that is not broken.
 func (e *FacesMigrateIncompleteError) Error() string {
-	return fmt.Sprintf("faces: migration completed with %d failed marker(s)", e.Failed)
+	switch {
+	case e.Unreadable > 0 && e.Clusterable > 0:
+		return fmt.Sprintf("faces: migration completed, but %d marker(s) that clear the clustering "+
+			"thresholds lost their vector and %d file(s) could not be read", e.Clusterable, e.Unreadable)
+	case e.Unreadable > 0:
+		return fmt.Sprintf("faces: migration completed, but %d marker(s) could not be re-embedded "+
+			"because their file is missing or unreadable", e.Unreadable)
+	default:
+		return fmt.Sprintf("faces: migration completed, but %d marker(s) that clear the clustering "+
+			"thresholds could not be re-detected and lost their vector", e.Clusterable)
+	}
 }
 
 // FacesMigrateAbortedError reports a migration that was refused before clusters were replaced.
@@ -556,8 +573,22 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 		return result, err
 	}
 
-	if result.Failed > 0 {
-		return result, &FacesMigrateIncompleteError{Failed: result.Failed}
+	// A marker the detector cannot find again is the expected outcome for a library an earlier,
+	// less reliable one indexed: some of those regions were never faces. Below the clustering
+	// bars it costs nothing either - no cluster could have used the vector - so the run reports
+	// the attrition and succeeds. What still fails is loss the library would have felt, and a
+	// file that could not be read, because that is a storage fault an operator can act on.
+	if obsolete := result.Failed - result.FailedClusterable - result.Unreadable; obsolete > 0 {
+		log.Infof("faces: %d marker(s) were not re-detected and are no longer used for recognition, "+
+			"which is expected where an earlier detector placed them", obsolete)
+	}
+
+	if result.FailedClusterable > 0 || result.Unreadable > 0 {
+		return result, &FacesMigrateIncompleteError{
+			Failed:      result.Failed,
+			Clusterable: result.FailedClusterable,
+			Unreadable:  result.Unreadable,
+		}
 	}
 
 	return result, nil
@@ -637,13 +668,7 @@ func (w *Faces) useMigrationDetector() (restore func(), err error) {
 		return restore, nil
 	}
 
-	score := w.conf.FaceScore()
-
-	// Only an unset cutoff is replaced. A negative one switches the check off, which is as much
-	// a decision as a number is.
-	if score == face.ScoreThresholdDefault {
-		score = face.MigrationScoreThreshold
-	}
+	score := w.conf.FaceMigrateScore()
 
 	// The cutoff lives in the inference session and in the filter Detect applies afterwards, so
 	// both have to move or the second undoes the first.
@@ -888,11 +913,12 @@ func (w *Faces) detectMigrationEmbeddings(embedder face.Embedder, file *entity.F
 		return result, landmarks, "", err
 	}
 
-	// At the smallest size the detectors are trained for rather than at FACE_SIZE: a marker's size
-	// is in pixels of the thumbnail it was detected in, and the detector before this one fell back
-	// to a larger one, so a legacy marker can sit well under the ordinary floor - which no score
-	// recovers. The retry pass only fires when a picture yields nothing, which is not this case.
-	detected, err := face.Detect(thumbName, face.MinSizeThreshold)
+	// FACE_MIGRATE_SIZE rather than FACE_SIZE, defaulting to the smallest size the detectors are
+	// trained for: a marker's size is in pixels of the thumbnail it was detected in, and the
+	// detector before this one fell back to a larger one, so a legacy marker can sit well under
+	// the ordinary floor - which no score recovers. The retry pass only fires when a picture
+	// yields nothing, which is not this case.
+	detected, err := face.Detect(thumbName, w.conf.FaceMigrateSize())
 	if err != nil {
 		return result, landmarks, "", err
 	}

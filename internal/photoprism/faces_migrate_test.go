@@ -56,9 +56,24 @@ func (e *migrationTestEmbedder) Run(image.Image) face.Embeddings {
 // Close releases the test embedder.
 func (e *migrationTestEmbedder) Close() error { return nil }
 
+// TestFacesMigrateIncompleteError_Error pins that the message names what was actually lost. A
+// marker an earlier detector placed and this one cannot find again is the ordinary outcome, and
+// reporting the total as a fault tells an operator to fix something that is not broken.
 func TestFacesMigrateIncompleteError_Error(t *testing.T) {
-	err := (&FacesMigrateIncompleteError{Failed: 3}).Error()
-	assert.Contains(t, err, "3 failed")
+	t.Run("Clusterable", func(t *testing.T) {
+		err := (&FacesMigrateIncompleteError{Failed: 900, Clusterable: 3}).Error()
+		assert.Contains(t, err, "3 marker(s) that clear the clustering thresholds")
+		assert.NotContains(t, err, "900")
+	})
+	t.Run("Unreadable", func(t *testing.T) {
+		err := (&FacesMigrateIncompleteError{Failed: 5, Unreadable: 5}).Error()
+		assert.Contains(t, err, "missing or unreadable")
+	})
+	t.Run("Both", func(t *testing.T) {
+		err := (&FacesMigrateIncompleteError{Failed: 9, Clusterable: 4, Unreadable: 5}).Error()
+		assert.Contains(t, err, "4 marker(s)")
+		assert.Contains(t, err, "5 file(s)")
+	})
 }
 
 func TestFacesMigrateAbortedError_Error(t *testing.T) {
@@ -1134,6 +1149,25 @@ func TestFaces_useMigrationDetector(t *testing.T) {
 
 		assert.Equal(t, previous, face.ScoreThreshold)
 	})
+	t.Run("FollowsFaceMigrateScore", func(t *testing.T) {
+		// The floor has to be tunable without a rebuild: it is the value the preview is
+		// collecting data on, and a Docker image build per experiment is not a feedback loop.
+		previous := face.ScoreThreshold
+		options := c.Options()
+		configured := options.FaceMigrateScore
+		options.FaceMigrateScore = 25
+		t.Cleanup(func() { options.FaceMigrateScore = configured })
+
+		restore, err := w.useMigrationDetector()
+		require.NoError(t, err)
+
+		assert.Equal(t, 25.0, face.ScoreThreshold)
+		assert.InDelta(t, 0.25, float64(face.ActiveEngineSettings().ONNX.ScoreThreshold), 0.0001)
+
+		restore()
+
+		assert.Equal(t, previous, face.ScoreThreshold)
+	})
 	t.Run("KeepsADisabledScore", func(t *testing.T) {
 		// -1 switches the cutoff off, which is as much a decision as a number is. Treating it
 		// as unset re-imposed a floor of 9 on an operator who had removed one.
@@ -1142,6 +1176,7 @@ func TestFaces_useMigrationDetector(t *testing.T) {
 		configured := options.FaceScore
 		options.FaceScore = -1
 		t.Cleanup(func() { options.FaceScore = configured })
+		// FACE_MIGRATE_SCORE is unset, so the decision FACE_SCORE records carries into the run.
 
 		restore, err := w.useMigrationDetector()
 		require.NoError(t, err)

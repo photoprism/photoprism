@@ -880,6 +880,50 @@ func (c *Config) FaceScoreEffective() float64 {
 	return face.DetectorScore(c.FaceDetector())
 }
 
+// FaceMigrateScore returns the detection cutoff a migration re-detects at, on the 0-100 scale.
+//
+// A migration makes the opposite trade to an index: a false positive there costs a thumbnail to
+// reject, a miss costs a curated marker its vector. It therefore has its own floor rather than
+// inheriting the detector's calibrated one. A configured FACE_SCORE still stands when this is
+// unset, because that is a decision an operator made about detection as a whole.
+func (c *Config) FaceMigrateScore() float64 {
+	if c == nil {
+		return face.MigrationScoreThreshold
+	}
+
+	switch {
+	case c.options.FaceMigrateScore < 0:
+		return face.NoScoreThreshold
+	case c.options.FaceMigrateScore >= 1 && c.options.FaceMigrateScore <= 100:
+		return c.options.FaceMigrateScore
+	}
+
+	if score := c.FaceScore(); score != face.ScoreThresholdDefault {
+		return score
+	}
+
+	return face.MigrationScoreThreshold
+}
+
+// FaceMigrateSize returns the minimum face size a migration re-detects at, in pixels of the
+// detection thumbnail.
+//
+// It does not inherit FACE_SIZE. A marker's size is in the pixels of the thumbnail it was
+// detected in, and an earlier detector fell back to a larger one, so a legacy marker can describe
+// a face well under the ordinary floor - which no score recovers, because the detector never
+// emits the candidate.
+func (c *Config) FaceMigrateSize() int {
+	if c == nil {
+		return face.MinSizeThreshold
+	}
+
+	if size := c.options.FaceMigrateSize; size >= face.MinSizeThreshold && size <= 10000 {
+		return size
+	}
+
+	return face.MinSizeThreshold
+}
+
 // FaceOverlap returns the face area overlap threshold in percent.
 func (c *Config) FaceOverlap() int {
 	if c.options.FaceOverlap < 1 || c.options.FaceOverlap > 100 {

@@ -397,6 +397,8 @@ func (c *Config) faceConfigRows(verbose bool) []faceConfigRow {
 		{"face-size", "Min Size", fmt.Sprintf("%d", c.FaceSize())},
 		{"face-size-retry", "Retry Size", fmt.Sprintf("%d", c.FaceSizeRetry())},
 		{"face-score", "Min Score", c.faceScoreReport(verbose)},
+		{"face-migrate-size", "Migration Size", fmt.Sprintf("%d", c.FaceMigrateSize())},
+		{"face-migrate-score", "Migration Score", fmt.Sprintf("%g", c.FaceMigrateScore())},
 		{"face-overlap", "Overlap", fmt.Sprintf("%d", c.FaceOverlap())},
 		{"face-cluster-size", "Cluster Size", fmt.Sprintf("%d", c.FaceClusterSize())},
 		{"face-cluster-score", "Cluster Score", c.faceClusterScoreReport(verbose)},

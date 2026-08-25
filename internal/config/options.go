@@ -269,6 +269,8 @@ type Options struct {
 	FaceSize                  int           `yaml:"-" json:"-" flag:"face-size"`
 	FaceSizeRetry             int           `yaml:"-" json:"-" flag:"face-size-retry"`
 	FaceScore                 float64       `yaml:"-" json:"-" flag:"face-score"`
+	FaceMigrateSize           int           `yaml:"-" json:"-" flag:"face-migrate-size"`
+	FaceMigrateScore          float64       `yaml:"-" json:"-" flag:"face-migrate-score"`
 	FaceOverlap               int           `yaml:"-" json:"-" flag:"face-overlap"`
 	FaceClusterSize           int           `yaml:"-" json:"-" flag:"face-cluster-size"`
 	FaceClusterScore          int           `yaml:"-" json:"-" flag:"face-cluster-score"`
