@@ -37,9 +37,9 @@ func TestScoreUncertainty(t *testing.T) {
 	// Every step is reachable while the default detector's cutoff sits at the bottom of the
 	// scale. It has been above the least certain steps before, which made them dead, so this
 	// states the relationship rather than the numbers either side of it.
-	floor := int(FindDetector(DetectorYuNet).MinScore * 100)
+	floor := FindDetector(DetectorYuNet).MinScore
 	assert.Equal(t, 50, ScoreUncertainty(floor), "the least certain step must stay reachable")
-	assert.Equal(t, 45, ScoreUncertainty(int(FindDetector(DetectorSCRFD).MinScore*100)+1))
+	assert.Equal(t, 45, ScoreUncertainty(FindDetector(DetectorSCRFD).MinScore+1))
 	assert.Equal(t, 50, ScoreUncertainty(0))
 }
 

@@ -76,10 +76,17 @@ type EmbeddingModel struct {
 	Dims      int
 	Alignment CropAlignment
 	Detector  DetectorName
-	// Official marks the model the product offers, which is what a migration defaults to. The
-	// others run and are selectable by name, but user-facing text must not name them: FaceNet is
-	// on its way out with TensorFlow and there is no supported migration back to it.
-	Official      bool
+	// DisplayName is the human-readable name, for a report or a log line that an operator reads
+	// rather than parses. It names the artifact generation too, so it has to be kept in step with
+	// ONNX.File when the weights are replaced.
+	DisplayName string
+	// Advertise allows user-facing text to name this model. The others run and are selectable by
+	// name, but help text reads as an offer: FaceNet is on its way out with TensorFlow and there
+	// is no supported migration back to it.
+	Advertise bool
+	// Default marks the model a migration runs to when none is named. Exactly one model carries
+	// it, which TestDefaultModelName pins.
+	Default       bool
 	ONNX          *onnx.ModelInfo
 	ClusterDist   float64
 	ClusterRadius float64
@@ -96,6 +103,7 @@ type EmbeddingModel struct {
 var EmbeddingModels = map[ModelName]*EmbeddingModel{
 	ModelFaceNet: {
 		Name:          ModelFaceNet,
+		DisplayName:   "FaceNet (TensorFlow)",
 		Runtime:       RuntimeTensorFlow,
 		Dir:           "facenet",
 		Dims:          512,
@@ -108,13 +116,15 @@ var EmbeddingModels = map[ModelName]*EmbeddingModel{
 		Epsilon:       EpsilonDefault,
 	},
 	ModelSFace: {
-		Name:      ModelSFace,
-		Runtime:   RuntimeONNX,
-		Dir:       "sface",
-		Dims:      128,
-		Alignment: AlignArcFace5,
-		Detector:  DetectorYuNet,
-		Official:  true,
+		Name:        ModelSFace,
+		DisplayName: "SFace 2021dec",
+		Runtime:     RuntimeONNX,
+		Dir:         "sface",
+		Dims:        128,
+		Alignment:   AlignArcFace5,
+		Detector:    DetectorYuNet,
+		Advertise:   true,
+		Default:     true,
 		ONNX: &onnx.ModelInfo{
 			File:    "face_recognition_sface_2021dec.onnx",
 			SHA256:  "0ba9fbfa01b5270c96627c4ef784da859931e02f04419c829e83484087c34e79",
@@ -129,12 +139,13 @@ var EmbeddingModels = map[ModelName]*EmbeddingModel{
 		Epsilon:       0.012,
 	},
 	ModelAuraFace: {
-		Name:      ModelAuraFace,
-		Runtime:   RuntimeONNX,
-		Dir:       "auraface",
-		Dims:      512,
-		Alignment: AlignArcFace5,
-		Detector:  DetectorYuNet,
+		Name:        ModelAuraFace,
+		DisplayName: "AuraFace v1",
+		Runtime:     RuntimeONNX,
+		Dir:         "auraface",
+		Dims:        512,
+		Alignment:   AlignArcFace5,
+		Detector:    DetectorYuNet,
 		ONNX: &onnx.ModelInfo{
 			File:    "auraface_v1_glintr100.onnx",
 			SHA256:  "a7933ea5330113b01c9b60351d8f4c33003f145d8470ac5f0e52ee2effe25c60",
@@ -149,12 +160,13 @@ var EmbeddingModels = map[ModelName]*EmbeddingModel{
 		Epsilon:       0.015,
 	},
 	ModelArcFaceR50: {
-		Name:      ModelArcFaceR50,
-		Runtime:   RuntimeONNX,
-		Dir:       "arcface",
-		Dims:      512,
-		Alignment: AlignArcFace5,
-		Detector:  DetectorSCRFD,
+		Name:        ModelArcFaceR50,
+		DisplayName: "ArcFace WebFace600K R50",
+		Runtime:     RuntimeONNX,
+		Dir:         "arcface",
+		Dims:        512,
+		Alignment:   AlignArcFace5,
+		Detector:    DetectorSCRFD,
 		ONNX: &onnx.ModelInfo{
 			File:    "w600k_r50.onnx",
 			SHA256:  "4c06341c33c2ca1f86781dab0e829f88ad5b64be9fba56e56bc9ebdefc619e43",
@@ -169,12 +181,13 @@ var EmbeddingModels = map[ModelName]*EmbeddingModel{
 		Epsilon:       0.017,
 	},
 	ModelArcFaceMBF: {
-		Name:      ModelArcFaceMBF,
-		Runtime:   RuntimeONNX,
-		Dir:       "arcface",
-		Dims:      512,
-		Alignment: AlignArcFace5,
-		Detector:  DetectorSCRFD,
+		Name:        ModelArcFaceMBF,
+		DisplayName: "ArcFace WebFace600K MobileFaceNet",
+		Runtime:     RuntimeONNX,
+		Dir:         "arcface",
+		Dims:        512,
+		Alignment:   AlignArcFace5,
+		Detector:    DetectorSCRFD,
 		ONNX: &onnx.ModelInfo{
 			File:    "w600k_mbf.onnx",
 			SHA256:  "9cc6e4a75f0e2bf0b1aed94578f144d15175f357bdc05e815e5c4a02b319eb4f",
@@ -301,7 +314,7 @@ func ModelUsageString() string {
 	names := append(make([]ModelName, 0, len(EmbeddingModels)+2), ModelAuto)
 
 	for _, name := range EmbeddingModelNames() {
-		if m := FindEmbeddingModel(name); m.Official && !m.LicenseGated() {
+		if m := FindEmbeddingModel(name); m.Advertise && !m.LicenseGated() {
 			names = append(names, name)
 		}
 	}
@@ -311,14 +324,27 @@ func ModelUsageString() string {
 
 // DefaultModelName returns the embedding model the product offers, which is the target a
 // migration runs to when none is named. Any other model has to be selected explicitly.
+//
+// Named by the registry rather than taken from the preference list, which decides what an empty
+// library resolves to and is a different question from what a migration should target.
 func DefaultModelName() ModelName {
-	for _, name := range AutoModelPreference {
-		if m := FindEmbeddingModel(name); m != nil && m.Official && !m.LicenseGated() {
+	for _, name := range EmbeddingModelNames() {
+		if m := FindEmbeddingModel(name); m != nil && m.Default && !m.LicenseGated() {
 			return name
 		}
 	}
 
 	return ModelNone
+}
+
+// ModelDisplayName returns the human-readable name registered for an embedding model, falling
+// back to the identifier so a report never shows an empty cell for one that registers none.
+func ModelDisplayName(name ModelName) string {
+	if m := FindEmbeddingModel(name); m != nil && m.DisplayName != "" {
+		return m.DisplayName
+	}
+
+	return name
 }
 
 // DefaultModel returns the embedding model the product offers, or nil when none is registered.

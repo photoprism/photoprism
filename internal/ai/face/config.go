@@ -1,8 +1,6 @@
 package face
 
 import (
-	"math"
-
 	"github.com/photoprism/photoprism/internal/thumb/crop"
 )
 
@@ -148,7 +146,7 @@ func DetectorScore(detector DetectorName) float64 {
 		return ScoreThresholdDefault
 	}
 
-	return math.Round(float64(d.MinScore) * 100)
+	return float64(d.MinScore)
 }
 
 // ClampSampleRadius limits a cluster sample radius to the configured range.

@@ -160,7 +160,7 @@ func TestONNXEngineDetectLandmarks(t *testing.T) {
 // YuNet's own calibration found. The shipped default is deliberately lower - a migration keeps a
 // curated marker only if the detector finds its face again - so the pin names the cutoff rather
 // than following Detector.MinScore, or a threshold change would silently rewrite the measurement.
-const detectorRecallScore = 0.65
+const detectorRecallScore = 65
 
 // TestDetectorRecall pins how many faces the detector finds per test image at the calibrated
 // cutoff, so a preprocessing change cannot pass unnoticed: a wrong channel order still returns
@@ -201,7 +201,7 @@ func TestDetectorRecall(t *testing.T) {
 
 	if err := ConfigureEngine(EngineSettings{
 		Name: EngineONNX,
-		ONNX: ONNXOptions{ModelPath: detectorModelPath, Threads: 1, ScoreThreshold: detectorRecallScore},
+		ONNX: ONNXOptions{ModelPath: detectorModelPath, Threads: 1, ScoreThreshold: float32(detectorRecallScore) / 100},
 	}); err != nil {
 		if _, statErr := os.Stat(detectorModelPath); statErr != nil {
 			t.Skipf("faces: skipping detector-dependent test, %s is not available", filepath.Base(detectorModelPath))

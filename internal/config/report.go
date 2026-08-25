@@ -471,12 +471,12 @@ func (c *Config) faceEngineReport() string {
 
 // faceDetectorReport names the detector in force and where that name came from.
 func (c *Config) faceDetectorReport() string {
-	resolved := c.FaceDetector()
+	resolved := face.DetectorDisplayName(c.FaceDetector())
 
 	switch setting := c.FaceDetectorSetting(); {
-	case setting == face.DetectorAuto && resolved != face.DetectorNone:
+	case setting == face.DetectorAuto && c.FaceDetector() != face.DetectorNone:
 		return faceReportValue(resolved, "default")
-	case setting != face.DetectorAuto && setting != resolved:
+	case setting != face.DetectorAuto && setting != c.FaceDetector():
 		return faceReportValue(resolved, fmt.Sprintf("%s is not available", clean.Log(setting)))
 	default:
 		return resolved
@@ -487,7 +487,8 @@ func (c *Config) faceDetectorReport() string {
 // embeddings are not being generated when they are not. `faces status` connects to the database,
 // so a detected model is there the one the library holds rather than a fresh install's default.
 func (c *Config) faceModelReport() string {
-	resolved := c.EffectiveFaceModel()
+	inForce := c.EffectiveFaceModel()
+	resolved := face.ModelDisplayName(inForce)
 	setting := c.FaceModelSetting()
 
 	// Nothing is in force, so the reason is the whole row: which of the three it is decides
@@ -495,7 +496,7 @@ func (c *Config) faceModelReport() string {
 	switch {
 	case setting == face.ModelNone:
 		return faceReportValue(resolved, "embeddings disabled")
-	case resolved != face.ModelNone:
+	case inForce != face.ModelNone:
 		break
 	case setting == face.ModelDetect:
 		return faceReportValue(resolved, "no embedding model is installed")

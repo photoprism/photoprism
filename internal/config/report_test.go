@@ -416,7 +416,7 @@ func TestConfig_faceModelReport(t *testing.T) {
 	t.Run("Named", func(t *testing.T) {
 		c := newSFaceTestConfig(t)
 
-		assert.Equal(t, face.ModelSFace, c.faceModelReport())
+		assert.Equal(t, face.ModelDisplayName(face.ModelSFace), c.faceModelReport())
 	})
 	t.Run("Default", func(t *testing.T) {
 		// Nothing is pinned, so the row names the model that is going to apply and says the
@@ -424,7 +424,7 @@ func TestConfig_faceModelReport(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.options.FaceModel = ""
 
-		assert.Equal(t, c.installedFaceModel()+" (default)", c.faceModelReport())
+		assert.Equal(t, face.ModelDisplayName(c.installedFaceModel())+" (default)", c.faceModelReport())
 	})
 	t.Run("NotAvailable", func(t *testing.T) {
 		// A configured model that cannot be loaded resolves to none everywhere else, so the row
@@ -454,7 +454,7 @@ func TestConfig_faceModelReport(t *testing.T) {
 		c := newSFaceTestConfig(t)
 		face.BlockEmbeddings("12 marker(s) use facenet")
 
-		assert.Equal(t, face.ModelSFace+" (paused: 12 marker(s) use facenet)", c.faceModelReport())
+		assert.Equal(t, face.ModelDisplayName(face.ModelSFace)+" (paused: 12 marker(s) use facenet)", c.faceModelReport())
 	})
 	t.Run("DetectNamesTheLibraryModel", func(t *testing.T) {
 		// "faces status" connects, so it is the one report where the detected model is the one
@@ -509,8 +509,10 @@ func TestConfig_faceDetectorReport(t *testing.T) {
 	t.Cleanup(func() { c.options.FaceDetector = "" })
 
 	t.Run("Named", func(t *testing.T) {
+		// The faces report is read rather than parsed, so it names the detector the way an
+		// operator would. "show config" keeps the identifier.
 		c.options.FaceDetector = face.DetectorYuNet
-		assert.Equal(t, face.DetectorYuNet, c.faceDetectorReport())
+		assert.Equal(t, face.DetectorDisplayName(face.DetectorYuNet), c.faceDetectorReport())
 	})
 	t.Run("Disabled", func(t *testing.T) {
 		c.options.FaceDetector = face.DetectorNone
@@ -520,7 +522,7 @@ func TestConfig_faceDetectorReport(t *testing.T) {
 		// Nothing was configured, so the row names the detector that is going to run rather than
 		// the word "auto", which says nothing about whether anything will be detected.
 		c.options.FaceDetector = ""
-		assert.Equal(t, fmt.Sprintf("%s (default)", c.FaceDetector()), c.faceDetectorReport())
+		assert.Equal(t, fmt.Sprintf("%s (default)", face.DetectorDisplayName(c.FaceDetector())), c.faceDetectorReport())
 	})
 	t.Run("NotAvailable", func(t *testing.T) {
 		// A named detector that cannot run disables detection, so the row has to name it: "none"
@@ -529,6 +531,7 @@ func TestConfig_faceDetectorReport(t *testing.T) {
 		t.Cleanup(func() { c.options.ModelsPath = "" })
 		c.options.FaceDetector = face.DetectorYuNet
 		assert.Equal(t, face.DetectorNone+" ("+face.DetectorYuNet+" is not available)", c.faceDetectorReport())
+		assert.Equal(t, face.DetectorNone, face.DetectorDisplayName(face.DetectorNone), "a disabled detector has no display name to show")
 	})
 }
 

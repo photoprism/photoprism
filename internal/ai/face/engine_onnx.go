@@ -129,7 +129,9 @@ func NewONNXEngine(opts ONNXOptions) (DetectionEngine, error) {
 	case opts.ScoreThreshold > 0:
 		// Keep the caller's cutoff, whether it is above the detector's or below it.
 	case detector.MinScore > 0:
-		opts.ScoreThreshold = detector.MinScore
+		// Registered on the 0-100 scale operators read scores in, applied on the 0-1 one the
+		// decoder reports.
+		opts.ScoreThreshold = float32(detector.MinScore) / 100
 	default:
 		opts.ScoreThreshold = onnxDefaultScoreThreshold
 	}

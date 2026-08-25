@@ -173,16 +173,16 @@ func TestModelUsageString(t *testing.T) {
 		assert.True(t, strings.HasPrefix(usage, ModelAuto+", "))
 		assert.True(t, strings.HasSuffix(usage, ", "+ModelNone))
 	})
-	t.Run("OfficialModels", func(t *testing.T) {
+	t.Run("AdvertisedModels", func(t *testing.T) {
 		for _, name := range EmbeddingModelNames() {
-			if !FindEmbeddingModel(name).Official {
+			if !FindEmbeddingModel(name).Advertise {
 				continue
 			}
 
 			assert.Contains(t, ModelUsageString(), name)
 		}
 	})
-	t.Run("OmitsUnofficialModels", func(t *testing.T) {
+	t.Run("OmitsModelsNotAdvertised", func(t *testing.T) {
 		// Help text reads as an offer. FaceNet and AuraFace run and may be named explicitly, but
 		// only one model is supported, and there is no supported migration back off the others.
 		assert.NotContains(t, ModelUsageString(), ModelFaceNet)
@@ -204,6 +204,41 @@ func TestDefaultModelName(t *testing.T) {
 	assert.Equal(t, ModelSFace, name)
 	require.NotNil(t, FindEmbeddingModel(name))
 	assert.False(t, FindEmbeddingModel(name).LicenseGated(), "a default may only name weights we may redistribute")
+	assert.True(t, FindEmbeddingModel(name).Advertise, "the default has to be one the product offers")
+
+	// Exactly one, or which model a migration targets depends on map iteration order.
+	defaults := 0
+
+	for _, m := range EmbeddingModels {
+		if m.Default {
+			defaults++
+		}
+	}
+
+	assert.Equal(t, 1, defaults, "exactly one embedding model may be the default")
+}
+
+// TestEmbeddingModelDisplayNames pins that every registered model has a human-readable name, so a
+// report never falls back to the identifier for one that is shipped.
+func TestEmbeddingModelDisplayNames(t *testing.T) {
+	seen := make(map[string]ModelName, len(EmbeddingModels))
+
+	for name, m := range EmbeddingModels {
+		assert.NotEmpty(t, m.DisplayName, name)
+
+		if other, dup := seen[m.DisplayName]; dup {
+			t.Errorf("%s and %s share the display name %q", name, other, m.DisplayName)
+		}
+
+		seen[m.DisplayName] = name
+	}
+
+	t.Run("Registered", func(t *testing.T) {
+		assert.Equal(t, FindEmbeddingModel(ModelSFace).DisplayName, ModelDisplayName(ModelSFace))
+	})
+	t.Run("FallsBackToTheIdentifier", func(t *testing.T) {
+		assert.Equal(t, "nonexistent", ModelDisplayName("nonexistent"))
+	})
 }
 
 func TestEmbeddingModels(t *testing.T) {

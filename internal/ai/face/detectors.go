@@ -27,19 +27,29 @@ const (
 // Legacy names the same weights were installed under before, so a copy an operator already
 // holds still resolves to its own preprocessing instead of the default detector's.
 type Detector struct {
-	Name     DetectorName
-	Dir      string
-	Decode   DecodeKind
-	MinScore float32
-	// ClusterMinScore is the higher bar a face must clear to contribute to automatic clustering,
-	// on the 0-100 scale. It follows MinScore rather than being shared, because a value that is a
-	// meaningful step above one detector's cutoff is below another's and gates nothing.
+	Name DetectorName
+	// DisplayName is the human-readable name, for a report or a log line that an operator reads
+	// rather than parses. It names the artifact generation too, so it has to be kept in step with
+	// ONNX.File when the weights are replaced.
+	DisplayName string
+	Dir         string
+	Decode      DecodeKind
+	// MinScore is the detector's own calibrated cutoff and ClusterMinScore the higher bar a face
+	// must clear to contribute to automatic clustering. Both are on the 0-100 scale that markers,
+	// FACE_SCORE and FACE_CLUSTER_SCORE use; the engine converts to the 0-1 one its decoder
+	// reports. Neither is shared between detectors: a value that is a meaningful step above one
+	// detector's cutoff is below another's and gates nothing.
+	MinScore        int
 	ClusterMinScore int
-	// Official marks the detector the product offers. The others run and are selectable for
-	// comparison, but user-facing text must not name them, because help text reads as an offer.
-	Official bool
-	ONNX     *onnx.ModelInfo
-	Legacy   []string
+	// Advertise allows user-facing text to name this detector. The others run and are selectable
+	// by name, but help text reads as an offer, so it lists only what the product offers.
+	Advertise bool
+	// Default marks the one a build runs when nothing selects it. Exactly one detector carries
+	// it, which TestDetectorDefault pins - deriving it from list order instead made the registry
+	// order load-bearing without saying so.
+	Default bool
+	ONNX    *onnx.ModelInfo
+	Legacy  []string
 }
 
 // DetectorName identifies a detection model.
@@ -67,16 +77,18 @@ const (
 // SCRFD on ordinary libraries while finding more faces in group photographs.
 var Detectors = []*Detector{
 	{
-		Name:   DetectorYuNet,
-		Dir:    "yunet",
-		Decode: DecodeYuNet,
+		Name:        DetectorYuNet,
+		DisplayName: "YuNet 2026may",
+		Dir:         "yunet",
+		Decode:      DecodeYuNet,
 		// The pair the last stable release shipped, below the 0.65 and 70 its own corpus measured:
 		// that measurement weighed false positives and not re-detection, which is what decides
 		// whether a migration keeps a curated marker. Both are open until the preview, whose data
 		// points are only attributable against a configuration with known production behavior.
-		MinScore:        0.09,
+		MinScore:        9,
 		ClusterMinScore: 20,
-		Official:        true,
+		Advertise:       true,
+		Default:         true,
 		ONNX: &onnx.ModelInfo{
 			File:    "face_detection_yunet_2026may.onnx",
 			SHA256:  "ebafce4e3c118d6554634be5c27ab333b4c047a9a8c3faf1d7cf93101c22f0f0",
@@ -94,13 +106,14 @@ var Detectors = []*Detector{
 		},
 	},
 	{
-		Name:   DetectorSCRFD,
-		Dir:    "scrfd",
-		Decode: DecodeSCRFD,
+		Name:        DetectorSCRFD,
+		DisplayName: "SCRFD 500M",
+		Dir:         "scrfd",
+		Decode:      DecodeSCRFD,
 		// Its publisher's own calibration, kept where YuNet's was lowered to what the last stable
 		// release shipped: SCRFD emits one sigmoid whose floor is 0.50, so a bar below that would
 		// sit under its own cutoff and gate nothing.
-		MinScore:        0.50,
+		MinScore:        50,
 		ClusterMinScore: 60,
 		ONNX: &onnx.ModelInfo{
 			// The publisher's own artifact, which is where an opt-in install fetches from. Its
@@ -196,7 +209,7 @@ func DetectorUsageString() string {
 	names := []DetectorName{DetectorAuto}
 
 	for _, d := range Detectors {
-		if d.Official && !d.LicenseGated() {
+		if d.Advertise && !d.LicenseGated() {
 			names = append(names, d.Name)
 		}
 	}
@@ -205,16 +218,28 @@ func DetectorUsageString() string {
 }
 
 // DefaultDetector returns the detector a build runs when nothing selects one.
-// It is the first registered entry whose weights may be redistributed, so a second list
-// cannot name a detector no image contains.
+//
+// Named by the registry rather than taken from list order, so adding a detector ahead of it
+// cannot change what a build runs. Its weights may be redistributed by construction, since a
+// default no image contains would leave every picture indexed as holding nobody.
 func DefaultDetector() *Detector {
 	for _, d := range Detectors {
-		if !d.LicenseGated() {
+		if d.Default && !d.LicenseGated() {
 			return d
 		}
 	}
 
 	return nil
+}
+
+// DetectorDisplayName returns the human-readable name registered for a detector, falling back to
+// the identifier so a report never shows an empty cell for one that registers none.
+func DetectorDisplayName(name DetectorName) string {
+	if d := FindDetector(name); d != nil && d.DisplayName != "" {
+		return d.DisplayName
+	}
+
+	return name
 }
 
 // DefaultDetectorName returns the name of the detector a build runs when nothing selects one,

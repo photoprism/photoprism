@@ -72,8 +72,8 @@ func TestAcceptDist(t *testing.T) {
 // returned zero for an unknown name before, which reads as "nothing is filtered".
 func TestDetectorScore(t *testing.T) {
 	t.Run("Registered", func(t *testing.T) {
-		assert.InDelta(t, float64(FindDetector(DetectorYuNet).MinScore*100), DetectorScore(DetectorYuNet), 0.5)
-		assert.InDelta(t, float64(FindDetector(DetectorSCRFD).MinScore*100), DetectorScore(DetectorSCRFD), 0.5)
+		assert.InDelta(t, float64(FindDetector(DetectorYuNet).MinScore), DetectorScore(DetectorYuNet), 0.5)
+		assert.InDelta(t, float64(FindDetector(DetectorSCRFD).MinScore), DetectorScore(DetectorSCRFD), 0.5)
 	})
 	t.Run("Unregistered", func(t *testing.T) {
 		assert.Equal(t, DetectorScore(DefaultDetector().Name), DetectorScore("nonexistent"))

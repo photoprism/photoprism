@@ -93,6 +93,44 @@ func TestDefaultDetector(t *testing.T) {
 	require.NotNil(t, d)
 	assert.Equal(t, DetectorYuNet, d.Name)
 	assert.False(t, d.LicenseGated(), "a build may only default to weights it may redistribute")
+	assert.True(t, d.Advertise, "the default has to be one the product offers")
+}
+
+// TestDetectorDefault pins that exactly one detector is the default. It used to be whichever
+// redistributable one came first, which made the registry order load-bearing without saying so.
+func TestDetectorDefault(t *testing.T) {
+	defaults := 0
+
+	for _, d := range Detectors {
+		if d.Default {
+			defaults++
+		}
+	}
+
+	assert.Equal(t, 1, defaults, "exactly one detector may be the default")
+}
+
+// TestDetectorDisplayNames pins that every registered detector has a human-readable name, so a
+// report never falls back to the identifier for one that is shipped.
+func TestDetectorDisplayNames(t *testing.T) {
+	seen := make(map[string]DetectorName, len(Detectors))
+
+	for _, d := range Detectors {
+		assert.NotEmpty(t, d.DisplayName, d.Name)
+
+		if other, dup := seen[d.DisplayName]; dup {
+			t.Errorf("%s and %s share the display name %q", d.Name, other, d.DisplayName)
+		}
+
+		seen[d.DisplayName] = d.Name
+	}
+
+	t.Run("Registered", func(t *testing.T) {
+		assert.Equal(t, FindDetector(DetectorYuNet).DisplayName, DetectorDisplayName(DetectorYuNet))
+	})
+	t.Run("FallsBackToTheIdentifier", func(t *testing.T) {
+		assert.Equal(t, "nonexistent", DetectorDisplayName("nonexistent"))
+	})
 }
 
 // TestDetectorInstallers pins the registry to the scripts that install the weights, and with it
@@ -243,8 +281,12 @@ func TestYuNetEngineLive(t *testing.T) {
 // one sigmoid, and at SCRFD's 0.50 it accepts flowers as faces.
 func TestDetectorMinScore(t *testing.T) {
 	for _, d := range Detectors {
+		// Both bars are on the 0-100 scale markers and the FACE_* options use, so a value that
+		// looks like the 0-1 one the decoder reports is a unit mistake rather than a low cutoff.
 		assert.Positive(t, d.MinScore, d.Name)
-		assert.LessOrEqual(t, d.MinScore, float32(1), d.Name)
+		assert.LessOrEqual(t, d.MinScore, 100, d.Name)
+		assert.Positive(t, d.ClusterMinScore, d.Name)
+		assert.LessOrEqual(t, d.ClusterMinScore, 100, d.Name)
 	}
 
 	assert.NotEqual(t, FindDetector(DetectorSCRFD).MinScore, FindDetector(DetectorYuNet).MinScore,
