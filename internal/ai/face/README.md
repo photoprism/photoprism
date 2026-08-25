@@ -1,6 +1,6 @@
 ## Face Detection & Embedding Guidelines
 
-**Last Updated:** August 24, 2026
+**Last Updated:** August 25, 2026
 
 ### Overview
 
@@ -31,7 +31,7 @@ The detector consumes 720 px thumbnails (model input 640 px), schedules work on 
 
 The channel orders were verified against OpenCV's own source rather than inferred, because the inference goes the wrong way for two of them. `FaceDetectorYN` builds its blob with every `blobFromImage` default, so BGR; `FaceRecognizerSF` sets `swapRB`, so SFace takes **RGB** despite being fed an image that is BGR in memory. Every embedding model on the aligned crop takes RGB.
 
-**Neither detector is rotation invariant.** Both are trained on upright faces, so recall falls away past roughly +/-30 degrees of in-plane roll and is effectively zero near 90 - a person lying down, or a camera held sideways where the orientation tag does not describe the subject. The face is not small or poor, it produces no candidate at all, so no size or score setting recovers it. `specs/intelligence/onnx-face-detection.md` records what recovering these would cost.
+**Neither detector is rotation invariant.** Both are trained on upright faces, so recall falls away past roughly +/-30 degrees of in-plane roll and is effectively zero near 90 - a person lying down, or a camera held sideways where the orientation tag does not describe the subject. The face is not small or poor, it produces no candidate at all, so no size or score setting recovers it. Recovering them would need an orientation-aware pass over rotated copies of each thumbnail, at a multiple of the current detection cost.
 
 The `github.com/yalue/onnxruntime_go` binding requests the exact C API version of the headers it vendors, so it fails to initialize against an older shared library. Bumping that module therefore requires a matching `ONNX_DEFAULT_VERSION` and checksum update in `scripts/dist/install-onnx.sh`, plus a rebuild of the base images that ship `libonnxruntime.so`. Tests that load the shared library — `TestNet` for the detector, and the ONNX embedder tests through `onnx.EnsureRuntime` — fail when the model is present but the runtime cannot be initialized, and skip only when the model itself is missing. A version mismatch must not pass as a skipped test.
 
@@ -156,11 +156,11 @@ Two caveats apply to the recommendations. The measured centroids are always pure
 | `arcface_r50` | 1.672 |           0.084 |                                           0.094 |
 | `arcface_mbf` | 1.609 |           0.080 |                                           0.090 |
 
-**`Epsilon` stays at 0.01 for every model**, which `TestEmbeddingModelEpsilon` pins. It is a void where nothing matches rather than a separation anyone measured, so widening it with the distance scale strands embeddings instead of telling two people apart. `face.AmbiguityDist` - the cutoff under which a collision is treated as the same person rather than resolved - is `2 * Epsilon` rather than a literal, so the two cannot drift: a per-model `Epsilon` beside a fixed `0.02` once left the backoff able to exceed the separation it preserves, and on ArcFace R50 it pushed the first effective collision distance to five times `Epsilon`.
+**`Epsilon` stays at 0.01 for every model**, which `TestEmbeddingModelEpsilon` pins. It is a void where nothing matches rather than a separation anyone measured, so widening it with the distance scale strands embeddings instead of telling two people apart. `face.AmbiguityDist` - the cutoff under which a collision is treated as the same person rather than resolved - is `2 * Epsilon` rather than a literal, so the two cannot drift: a per-model `Epsilon` beside a fixed cutoff lets the backoff exceed the separation it preserves; on ArcFace R50 that pushes the first effective collision distance to five times `Epsilon`.
 
 `FACE_COLLISION_DIST` and `FACE_EPSILON_DIST` override both the way the three calibrated thresholds are overridden, and `FACE_EPSILON_DIST` moves the ambiguity cutoff with it.
 
-**SFace's scale is pinned at 0.78, the `ClusterDist` it was calibrated at, rather than the 0.85 that ships.** `ClusterDist` was raised afterwards on a recall-against-merging judgement, and a judgement is not a re-measurement of the space.
+**SFace's scale is pinned at 0.78, the `ClusterDist` it was calibrated at, rather than the 0.85 that ships.** `ClusterDist` was raised afterwards on a recall-against-merging judgment, and a judgment is not a re-measurement of the space.
 
 > Neither value has been measured, and `CollisionDist` is the one with an open question against it: whether a representational noise floor really scales with class separation is an assumption. It is testable by embedding the same crop twice under a small perturbation and comparing the jitter across models.
 
@@ -198,7 +198,7 @@ Lowering it globally is a trade rather than a fix. Photographs that already yiel
 
 Measured over the development library, the fallback changed the outcome for 19 pictures out of 861 and added 1163 faces, of which 1149 came from twelve crowd photographs that had yielded none. The cost is one extra inference pass on the pictures that would otherwise be indexed as containing nobody.
 
-The migration does not use this call at all: it detects at `face.MinSizeThreshold` unconditionally, which is strictly more permissive, because a marker the fallback created has to find a partner there or be dropped.
+The migration does not use this call at all: it detects once at `FACE_MIGRATE_SIZE`, which defaults to `face.MinSizeThreshold` (10 px) and is therefore ordinarily more permissive than either pass, because a marker the fallback created has to find a partner there or be dropped.
 
 ### Embedding Handling
 
@@ -227,11 +227,11 @@ This guarantees that Euclidean distance comparisons are equivalent to cosine com
 
 #### Face Kind Reference
 
-| Kind            | Value | Source                                     | Matching Behavior                               | Notes                                                                                                           |
-|:----------------|:-----:|:-------------------------------------------|:------------------------------------------------|:----------------------------------------------------------------------------------------------------------------|
-| `RegularFace`   |   1   | Default embedding classification           | Eligible for matching and clustering            | Every cluster starts here.                                                                                      |
-| *(reserved)*    |  2–3  | —                                          | —                                               | Held by the retired children and background classifications; never reused, because `faces.face_kind` is stored. |
-| `AmbiguousFace` |   4   | `entity.Face.ResolveCollision()` heuristic | Excluded from matching and manual merge retries | Assigned when two subjects collide at very low distance (< 0.02); face remains until collision cleared.         |
+| Kind            | Value | Source                                     | Matching Behavior                               | Notes                                                                                                                         |
+|:----------------|:-----:|:-------------------------------------------|:------------------------------------------------|:------------------------------------------------------------------------------------------------------------------------------|
+| `RegularFace`   |   1   | Default embedding classification           | Eligible for matching and clustering            | Every cluster starts here.                                                                                                    |
+| *(reserved)*    |  2–3  | —                                          | —                                               | Held by the retired children and background classifications; never reused, because `faces.face_kind` is stored.               |
+| `AmbiguousFace` |   4   | `entity.Face.ResolveCollision()` heuristic | Excluded from matching and manual merge retries | Assigned when two subjects collide closer than `face.AmbiguityDist()`, twice `Epsilon`; face remains until collision cleared. |
 
 ### Manual Cluster Merging & Retained Markers
 
@@ -299,6 +299,7 @@ Recovery steps:
 
 | Setting                 | Default                                 | Description                                                                                                                                                                                |
 |-------------------------|-----------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `XMP_FACES`             | `false`                                 | Imports face regions and names from XMP metadata as people markers. Reported under `Global Options`.                                                                                       |
 | `FACE_RUN`              | `auto`                                  | When detection and recognition run (`auto`, `always`, `on-index`, `newly-indexed`, `on-schedule`, `on-demand`, `manual`, `never`). Replaces the `Run` value in `vision.yml`.               |
 | `FACE_ENGINE`           | `auto`                                  | Detection runtime (`auto`, `onnx`, `none`) *deprecated*. Only `none` still has an effect, and `FACE_DETECTOR` overrides it. Reported only when it is not `auto`.                           |
 | `FACE_ENGINE_THREADS`   | *(unset)*                               | Sets both thread counts at once *deprecated*. The two derive different defaults, so a value that is right for one is not right for the other.                                              |
@@ -309,7 +310,7 @@ Recovery steps:
 | `FACE_SCORE`            | `65` *(detector)*                       | Minimum detection quality, on the 0-100 scale. Unset, each detector's own calibrated cutoff decides; a value set here replaces it, in either direction, and `-1` removes it.               |
 | `FACE_MIGRATE_SIZE`     | `10`                                    | Minimum face size while a migration re-detects, in detection-thumbnail pixels. Never inherits `FACE_SIZE`.                                                                                 |
 | `FACE_MIGRATE_SCORE`    | `50` *(detector)*                       | Minimum detection quality while a migration re-detects. Registered per detector, outranks `FACE_SCORE`, which still applies when this is unset; `-1` removes it.                           |
-| `FACE_OVERLAP`          | `42`                                    | Maximum allowed IoU when deduplicating markers.                                                                                                                                            |
+| `FACE_OVERLAP`          | `42`                                    | Overlap in percent above which two detections count as the same face.                                                                                                                      |
 | `FACE_MODEL`            | *(unset)*                               | Embedding model (`auto`, `sface`, `none`). Unset detects it once and writes the name to `options.yml`; `facenet`, `auraface` and the gated InsightFace names are accepted but not offered. |
 | `FACE_MODEL_THREADS`    | `runtime.NumCPU()/2` (>=1)              | ONNX threads for embedding, which runs one session in total behind the model lock.                                                                                                         |
 | `FACE_CLUSTER_SIZE`     | `60`                                    | Minimum face size (px) considered for clustering, and the bar that actually gates recognition quality.                                                                                     |
@@ -324,7 +325,7 @@ Recovery steps:
 **`vision.yml` no longer configures faces.** `FACE_MODEL` is authoritative for which model produces embeddings and `FACE_RUN` for when it runs; a `face` entry in that file decides neither. A **custom face model configured there is deprecated**: it is still loaded while no embedding model is active, it logs a warning, and its vectors are recorded under the configured model's name rather than its own. Every supported face model needs code that knows its preprocessing contract, so there is nothing useful to configure per installation the way a caption or label model can be.
 
 Run scheduling is `FACE_RUN` (`auto`, `always`, `on-index`, `newly-indexed`, `on-schedule`, `on-demand`, `manual`, `never`). Detection and embedding always run together, so one schedule covers both, and `DISABLE_FACES` turns the whole subsystem off. A `Run` value on a face entry in `vision.yml` is read and **ignored**, with one info-level line naming `FACE_RUN`: two ways to set one schedule raise a precedence question an operator cannot answer from the outside.
-When `FACE_RUN` is left on `auto`, face detection participates in manual, auto, and on-demand workflows but skips scheduled cron runs so background jobs do not trigger unexpectedly; an explicit `on-demand` behaves the same way. Set `FACE_RUN=on-schedule` if you want faces processed during scheduled vision passes.
+When `FACE_RUN` is left on `auto`, face detection participates in manual, auto, and on-demand workflows but skips scheduled cron runs so background jobs do not trigger unexpectedly. Every other value is decided by the table `vision.ShouldRunAt` shares with the vision models, so an explicit `on-demand` covers the scheduled pass as well as manual and newly indexed work, while `on-schedule` restricts it to scheduled runs and manual invocation.
 
 **`photoprism faces status` is where a stuck instance is diagnosed** (`config` and `doctor` are aliases). It reports the same options as `photoprism config`, named the same way so the two can be read against each other, but grouped as `Global Options`, `Face Detection` and `Face Recognition` and preceded by the state that no value can express: whether faces are being processed, why they are not, and which threshold is holding automatic clustering back. That last one answers the question that otherwise takes hand-written SQL - `Config.faceClusterStatus` counts the unclustered markers against `FACE_CLUSTER_SIZE` and the per-marker score bar separately, so the report names the gate rather than only that clustering did not run, and stays silent when nothing is holding. It connects to a database where `photoprism config` deliberately does not, which is also why the notes under each table can name the model the library actually holds. `face-engine` appears in either report only when it is not `auto`, and `face-detector-path` is blank when detection is off rather than naming weights that will not be loaded.
 
