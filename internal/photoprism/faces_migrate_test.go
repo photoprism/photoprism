@@ -421,13 +421,19 @@ func TestUnresolvedMigrationMarkers(t *testing.T) {
 			{MarkerUID: "anon"},
 			{MarkerUID: "named", SubjUID: "js6sg6b1qekk9jx8"},
 			{MarkerUID: "drawn", SubjUID: "js6sg6b1qekk9jx9", SubjSrc: entity.SrcManual},
+			// ClearSubject blanks subj_uid and records the source of the clearing, so this is what
+			// a marker somebody named and later un-named looks like. It is effort spent either way.
+			{MarkerUID: "unnamed", SubjSrc: entity.SrcManual},
 		}
 
 		failed, counts := unresolvedMigrationMarkers(mixed, nil)
 
-		assert.Len(t, failed, 3)
+		assert.Len(t, failed, 4)
 		assert.Equal(t, 2, counts.Named, "every assigned marker counts, however it was assigned")
-		assert.Equal(t, 1, counts.Manual, "the hand-drawn one is a subset of them")
+		assert.Equal(t, 2, counts.Manual, "including one with no subject, so the counts overlap rather than nest")
+		// Three of the four markers are named or manual, yet the counts sum to four. That gap is
+		// the overlap, and reporting one as a subset of the other is what it would hide.
+		assert.Equal(t, 4, counts.Named+counts.Manual)
 	})
 }
 

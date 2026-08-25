@@ -88,9 +88,11 @@ type FacesMigrateResult struct {
 	AttemptedClusterable int
 	FailedClusterable    int
 
-	// FailedNamed and FailedManual count the lost markers a person had assigned to someone, and
-	// the subset they drew by hand. Attrition among markers nobody named is a cleanup on a library
-	// an unreliable detector indexed; these two are the cost, and only they can judge a floor.
+	// FailedNamed and FailedManual count the lost markers that carried a person assignment, and
+	// those with a manual source. They overlap rather than nest: ClearSubject blanks subj_uid and
+	// sets subj_src to the source of the clearing, so a marker somebody named and later un-named
+	// is manual with no subject. Attrition among markers nobody touched is a cleanup on a library
+	// an unreliable detector indexed; both of these are human effort, and only they judge a floor.
 	FailedNamed  int
 	FailedManual int
 
@@ -585,9 +587,10 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 	// one indexed: some of those regions were never faces, and below the clustering bars no cluster
 	// could have used the vector either. What still fails is loss the library would have felt, and
 	// a file that could not be read, because that is a storage fault an operator can act on.
-	if result.FailedNamed > 0 {
-		log.Warnf("faces: %d of the %d marker(s) that lost a vector were assigned to a person, %d of them by hand",
-			result.FailedNamed, result.Failed, result.FailedManual)
+	if result.FailedNamed > 0 || result.FailedManual > 0 {
+		log.Warnf("faces: of the %d marker(s) that lost a vector, %d carried a person assignment and %d a manual source; "+
+			"the two overlap rather than nest, because un-naming a marker leaves its source manual",
+			result.Failed, result.FailedNamed, result.FailedManual)
 	}
 
 	if obsolete := result.Failed - result.FailedClusterable - result.Unreadable; obsolete > 0 {
@@ -721,8 +724,9 @@ type faceMigrationFile struct {
 	// file put at risk, and those it lost. The guard needs both sides of that ratio.
 	Attempted   int
 	Clusterable int
-	// Named and Manual count the lost markers a person had assigned to someone, and the subset
-	// they drew by hand. A bare failure count cannot say whether a floor was worth its cost.
+	// Named and Manual count the lost markers that carried a person assignment, and those with a
+	// manual source. They overlap rather than nest - see FacesMigrateResult. A bare failure count
+	// cannot say whether a floor was worth its cost.
 	Named    int
 	Manual   int
 	Detected bool
@@ -889,9 +893,9 @@ func unresolvedMigrationMarkers(markers entity.Markers, recrop map[string]bool) 
 			counts.Clusterable++
 		}
 
-		// A marker nobody named is attrition; one a person named is the thing the migration exists
-		// to preserve, and a hand-drawn one is the least recoverable of all. The share differs by
-		// library, so a single failure count cannot say whether a floor was worth it.
+		// Counted independently, not as a subset: ClearSubject blanks subj_uid and records the
+		// source of the clearing, so a marker a person named and later un-named is manual with no
+		// subject. Both are effort somebody spent, and a bare failure count hides either.
 		if markers[i].SubjUID != "" {
 			counts.Named++
 		}
