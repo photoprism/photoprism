@@ -23,13 +23,6 @@ var FacesStatusCommand = &cli.Command{
 	Action:  facesStatusAction,
 }
 
-// FacesStatusReports specifies which face-related reports to display.
-var FacesStatusReports = []Report{
-	{Title: "Face Detection & Recognition", NoWrap: true, Report: func(conf *config.Config) ([][]string, []string) {
-		return conf.FaceReport()
-	}},
-}
-
 // facesStatusAction prints the face detection and recognition status.
 func facesStatusAction(ctx *cli.Context) error {
 	conf, err := InitCoreConfig(ctx, true)
@@ -48,36 +41,70 @@ func facesStatusAction(ctx *cli.Context) error {
 	conf.ResolveFaceModel()
 
 	format, formatErr := report.CliFormatStrict(ctx)
+
 	if formatErr != nil {
 		return formatErr
 	}
 
+	status := conf.FaceStatus()
+	sections := conf.FaceReportSections()
+
 	if format == report.JSON {
-		type section struct {
-			Title string              `json:"title"`
-			Items []map[string]string `json:"items"`
-		}
-		sections := make([]section, 0, len(FacesStatusReports))
-		for _, rep := range FacesStatusReports {
-			rows, cols := rep.Report(conf)
-			sections = append(sections, section{Title: rep.Title, Items: report.RowsToObjects(rows, cols)})
-		}
-		b, _ := json.Marshal(map[string]any{"sections": sections})
-		fmt.Println(string(b))
-		return nil
+		return printFacesStatusJSON(status, sections)
 	}
 
-	for _, rep := range FacesStatusReports {
-		rows, cols := rep.Report(conf)
-		opt := report.Options{Format: format, NoWrap: rep.NoWrap}
-		result, _ := report.Render(rows, cols, opt)
-		switch opt.Format {
-		case report.Markdown:
-			fmt.Printf("### %s\n\n", rep.Title)
-		case report.Default:
-			fmt.Printf("%s\n\n", strings.ToUpper(rep.Title))
+	fmt.Printf("%s\n\n", strings.Join(status, " "))
+
+	for _, section := range sections {
+		result, renderErr := report.Render(section.Rows, section.Cols, report.Options{Format: format, NoWrap: true})
+
+		if renderErr != nil {
+			return renderErr
 		}
+
+		switch format {
+		case report.Markdown:
+			fmt.Printf("### %s\n\n", section.Title)
+		default:
+			fmt.Printf("%s\n\n", strings.ToUpper(section.Title))
+		}
+
 		fmt.Println(result)
+
+		if section.Note != "" {
+			fmt.Printf("%s\n\n", section.Note)
+		}
 	}
+
+	return nil
+}
+
+// printFacesStatusJSON writes the status report as a single JSON object, so that a caller parsing
+// it gets the notes and the status lines too rather than only the tables.
+func printFacesStatusJSON(status []string, sections []config.FaceReportSection) error {
+	type jsonSection struct {
+		Title string              `json:"title"`
+		Items []map[string]string `json:"items"`
+		Note  string              `json:"note,omitempty"`
+	}
+
+	out := make([]jsonSection, 0, len(sections))
+
+	for _, section := range sections {
+		out = append(out, jsonSection{
+			Title: section.Title,
+			Items: report.RowsToObjects(section.Rows, section.Cols),
+			Note:  section.Note,
+		})
+	}
+
+	b, err := json.Marshal(map[string]any{"status": status, "sections": out})
+
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(string(b))
+
 	return nil
 }

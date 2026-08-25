@@ -25,19 +25,19 @@ func TestFaceDocDefaults(t *testing.T) {
 		assert.Equal(t, face.DefaultDetectorName(), defaults["face-detector"])
 		assert.Equal(t, face.DefaultModelName(), defaults["face-model"])
 	})
-	t.Run("Scores", func(t *testing.T) {
-		// Derived from the registry, not restated: a calibration that moves would otherwise be
-		// published from two places and only one of them would be updated.
-		d := face.DefaultDetector()
-		require.NotNil(t, d)
+	// Derived from the registry, not restated: a calibration that moves would otherwise be
+	// published from two places and only one of them would be updated.
+	d := face.DefaultDetector()
+	require.NotNil(t, d)
 
+	t.Run("Scores", func(t *testing.T) {
 		assert.Equal(t, strconv.Itoa(d.MinScore), defaults["face-score"])
-		assert.Equal(t, strconv.Itoa(d.ClusterMinScore), defaults["face-cluster-score"])
+		assert.Equal(t, strconv.Itoa(d.ClusterScore), defaults["face-cluster-score"])
 	})
 	t.Run("MigrationFloors", func(t *testing.T) {
 		// The migration's own floors, which the team tunes without a rebuild.
 		assert.Equal(t, strconv.Itoa(face.MinSizeThreshold), defaults["face-migrate-size"])
-		assert.Equal(t, strconv.FormatFloat(face.MigrationScoreThreshold, 'g', -1, 64), defaults["face-migrate-score"])
+		assert.Equal(t, strconv.Itoa(d.MigrateScore), defaults["face-migrate-score"])
 	})
 	t.Run("CalibratedDistances", func(t *testing.T) {
 		m := face.DefaultModel()

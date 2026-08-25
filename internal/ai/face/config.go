@@ -28,8 +28,8 @@ const (
 	// options use for "switched off". It is distinct from ScoreThresholdDefault, which cannot
 	// express this: zero already means "let the detector decide".
 	NoScoreThreshold = -1.0
-	// MigrationScoreThreshold is the detection floor a face embedding migration runs at, on the
-	// 0-100 scale, unless an operator configured one. Re-embedding keeps a marker only when the
+	// MigrationScoreThreshold is the detection floor a face embedding migration runs at for a
+	// detector that registers none, on the 0-100 scale. Re-embedding keeps a marker only when the
 	// detector finds its face again, so a miss here discards a curated marker instead of adding
 	// a false positive to an index - the opposite trade to the one indexing makes.
 	MigrationScoreThreshold = 9.0
@@ -80,9 +80,8 @@ var (
 	ScoreThreshold = ScoreThresholdDefault
 	// ClusterScoreThreshold is the operator's own minimum score for faces that contribute to
 	// automatic clustering, assigned by Config.Propagate from FACE_CLUSTER_SCORE. Zero leaves the
-	// bar to the detector that scored each marker, and negative removes it. It is a weak gate
-	// either way, because detector confidence saturates above the detector's own cutoff;
-	// ClusterSizeThreshold is what keeps an interpolated crop out.
+	// bar to the detector that scored each marker, and negative removes it. It gates weakly either
+	// way, since confidence saturates above a cutoff; ClusterSizeThreshold keeps blurry crops out.
 	ClusterScoreThreshold = 0
 	// SizeThreshold is the minimum detected face size, in pixels. Config.Propagate assigns it from
 	// FACE_SIZE, so a reader that bounds what detection produced compares against the same value.
@@ -116,17 +115,16 @@ var (
 // ClusterScore returns the score a marker the named detector produced has to reach to contribute
 // to automatic clustering.
 //
-// FACE_CLUSTER_SCORE outranks the per-detector bars, and a negative value removes them, because
-// a value an operator chose is not a calibration a marker was never scored against. Unset, the
-// bar is per marker: two detectors' scores are not comparable, and a library holds markers from
-// both. An unregistered detector and a row predating the column keep the shared default.
+// FACE_CLUSTER_SCORE outranks the per-detector bars and a negative value removes them: a value an
+// operator chose is not a calibration a marker was never scored against. Unset, the bar is per
+// marker, since two detectors' scores are not comparable and a library holds markers from both.
 func ClusterScore(detector DetectorName) int {
 	if ClusterScoreThreshold != 0 {
 		return max(ClusterScoreThreshold, 0)
 	}
 
-	if d := FindDetector(detector); d != nil && d.ClusterMinScore > 0 {
-		return d.ClusterMinScore
+	if d := FindDetector(detector); d != nil && d.ClusterScore > 0 {
+		return d.ClusterScore
 	}
 
 	return ClusterScoreThresholdDefault
@@ -147,6 +145,23 @@ func DetectorScore(detector DetectorName) float64 {
 	}
 
 	return float64(d.MinScore)
+}
+
+// DetectorMigrateScore returns the detection floor a migration re-detects at for the named
+// detector, on the 0-100 scale. An unregistered name falls back to the default detector, so a
+// caller always gets a floor some detector enforces rather than zero.
+func DetectorMigrateScore(detector DetectorName) float64 {
+	d := FindDetector(detector)
+
+	if d == nil {
+		d = DefaultDetector()
+	}
+
+	if d == nil || d.MigrateScore <= 0 {
+		return MigrationScoreThreshold
+	}
+
+	return float64(d.MigrateScore)
 }
 
 // ClampSampleRadius limits a cluster sample radius to the configured range.

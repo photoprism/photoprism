@@ -276,59 +276,95 @@ func TestConfig_ReportThemeURLVisibility(t *testing.T) {
 	})
 }
 
-func TestConfig_FaceReport(t *testing.T) {
+func TestConfig_FaceReportSections(t *testing.T) {
 	m := NewConfig(CliTestContext())
-	rows, cols := m.FaceReport()
+	sections := m.FaceReportSections()
 
-	assert.Equal(t, []string{"Name", "Value"}, cols)
-	assert.GreaterOrEqual(t, len(rows), 1)
+	titles := make([]string, 0, len(sections))
+	values := make(map[string]string)
+	notes := make(map[string]string, len(sections))
 
-	values := make(map[string]string, len(rows))
-	for _, row := range rows {
-		if len(row) < 2 {
-			continue
+	for _, section := range sections {
+		assert.Equal(t, []string{"Name", "Value"}, section.Cols)
+		assert.NotEmpty(t, section.Rows, section.Title)
+
+		titles = append(titles, section.Title)
+		notes[section.Title] = section.Note
+
+		for _, row := range section.Rows {
+			if len(row) < 2 {
+				continue
+			}
+
+			assert.NotContains(t, values, row[0], "reported in more than one section")
+			values[row[0]] = row[1]
 		}
-		values[row[0]] = row[1]
 	}
 
-	// Spot-check that the core face-related rows are present. They are named without the prefix
-	// the subcommand already carries, which is what tells this report apart from "show config".
-	expected := []string{
-		"Enabled",
-		"Vision Config",
-		"Detector",
-		"Detector Path",
-		"Detector Threads",
-		"Model",
-		"Model Path",
-		"Model Threads",
-		"Engine",
-		"Schedule",
-		"Min Size",
-		"Retry Size",
-		"Min Score",
-		"Overlap",
-		"Cluster Size",
-		"Cluster Score",
-		"Cluster Core",
-		"Cluster Distance",
-		"Cluster Radius",
-		"Collision Distance",
-		"Epsilon Distance",
-		"Match Distance",
-	}
+	t.Run("Sections", func(t *testing.T) {
+		assert.Equal(t, []string{"Global Options", "Face Detection", "Face Recognition"}, titles)
+		assert.Empty(t, notes["Global Options"])
+		assert.Contains(t, notes["Face Detection"], "Detector:")
+		assert.Contains(t, notes["Face Recognition"], "Model:")
+	})
+	t.Run("Options", func(t *testing.T) {
+		// The rows are named by the option `photoprism show config` reports, so both reports name
+		// the same value the same way and can be read against each other.
+		expected := []string{
+			"xmp-faces",
+			"face-run",
+			"face-detector",
+			"face-detector-path",
+			"face-detector-threads",
+			"face-size",
+			"face-size-retry",
+			"face-score",
+			"face-migrate-size",
+			"face-migrate-score",
+			"face-overlap",
+			"face-model",
+			"face-model-path",
+			"face-model-threads",
+			"face-match-dist",
+			"face-collision-dist",
+			"face-epsilon-dist",
+			"face-cluster-size",
+			"face-cluster-score",
+			"face-cluster-core",
+			"face-cluster-dist",
+			"face-cluster-radius",
+		}
 
-	for _, name := range expected {
-		_, ok := values[name]
-		assert.True(t, ok, "FaceReport missing %q", name)
-	}
+		for _, name := range expected {
+			assert.Contains(t, values, name)
+		}
+	})
+	t.Run("OnlyFaceOptions", func(t *testing.T) {
+		for _, name := range []string{"originals-path", "auth-mode", "ffmpeg-bin", "site-url", "vision-yaml"} {
+			assert.NotContains(t, values, name)
+		}
+	})
+	t.Run("EngineHiddenWhenAuto", func(t *testing.T) {
+		assert.NotContains(t, values, "face-engine")
+	})
+}
 
-	// Non-face options must not leak into the focused report.
-	unexpected := []string{"originals-path", "auth-mode", "ffmpeg-bin", "site-url"}
-	for _, name := range unexpected {
-		_, ok := values[name]
-		assert.False(t, ok, "FaceReport unexpectedly includes %q", name)
-	}
+func TestConfig_FaceStatus(t *testing.T) {
+	t.Run("Nil", func(t *testing.T) {
+		assert.Equal(t, []string{"Face detection and recognition are unavailable."}, (*Config)(nil).FaceStatus())
+	})
+	t.Run("Disabled", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.DisableFaces = true
+
+		assert.Equal(t, []string{"Face detection and recognition are disabled."}, c.FaceStatus())
+	})
+	t.Run("NoDetector", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.FaceDetector = face.DetectorNone
+
+		assert.Contains(t, c.FaceStatus()[0], "Face detection is disabled")
+	})
 }
 
 func TestConfig_ReportURIRedaction(t *testing.T) {
@@ -542,44 +578,43 @@ func TestConfig_faceConfigRows(t *testing.T) {
 
 	t.Run("FlagOrder", func(t *testing.T) {
 		want := []string{
+			"xmp-faces",
+			"face-run",
 			"face-detector",
 			"face-detector-path",
 			"face-detector-threads",
-			"face-model",
-			"face-model-path",
-			"face-model-threads",
-			"face-run",
-			"face-engine",
 			"face-size",
 			"face-size-retry",
 			"face-score",
 			"face-migrate-size",
 			"face-migrate-score",
 			"face-overlap",
+			"face-model",
+			"face-model-path",
+			"face-model-threads",
+			"face-match-dist",
+			"face-collision-dist",
+			"face-epsilon-dist",
 			"face-cluster-size",
 			"face-cluster-score",
 			"face-cluster-core",
 			"face-cluster-dist",
 			"face-cluster-radius",
-			"face-collision-dist",
-			"face-epsilon-dist",
-			"face-match-dist",
 		}
 
-		rows := c.faceConfigRows(false)
+		rows := c.faceConfigRows()
 		flags := make([]string, 0, len(rows))
 
 		for _, row := range rows {
 			flags = append(flags, row.Flag)
-			assert.NotEmpty(t, row.Label, row.Flag)
-			assert.NotContains(t, row.Label, "face-", "the faces report drops the prefix its subcommand carries")
+			assert.NotEmpty(t, row.Section, row.Flag)
 		}
 
 		assert.Equal(t, want, flags)
 	})
 	t.Run("EveryFlagIsRegistered", func(t *testing.T) {
 		// A row naming an option that no longer exists reads as a setting an operator can change.
-		// The two derived paths and the run schedule have no flag of their own.
+		// The two derived paths have no flag of their own.
 		derived := map[string]bool{"face-detector-path": true, "face-model-path": true}
 
 		registered := make(map[string]bool, len(Flags))
@@ -588,7 +623,7 @@ func TestConfig_faceConfigRows(t *testing.T) {
 			registered[flag.Name()] = true
 		}
 
-		for _, row := range c.faceConfigRows(false) {
+		for _, row := range c.faceConfigRows() {
 			if derived[row.Flag] {
 				continue
 			}
@@ -596,69 +631,108 @@ func TestConfig_faceConfigRows(t *testing.T) {
 			assert.True(t, registered[row.Flag], row.Flag)
 		}
 	})
-	t.Run("QuietWithoutVerbose", func(t *testing.T) {
+	t.Run("ValuesOnly", func(t *testing.T) {
 		// "show config" runs without a database, so it can neither detect the model nor see that
 		// one is blocked. Stating a resolution it cannot check is how it came to report "ok" on
-		// a paused instance.
-		for _, row := range c.faceConfigRows(false) {
-			if row.Flag == "face-engine" {
-				continue // The deprecation marker is a property of the option, not a resolution.
-			}
-
+		// a paused instance, so every qualifier belongs in a note beside the table instead.
+		for _, row := range c.faceConfigRows() {
 			assert.NotContains(t, row.Value, "(", row.Flag)
 		}
 	})
+	t.Run("ResolvedScores", func(t *testing.T) {
+		// Zero is what the two raw options hold in the ordinary case, and it reads as "nothing is
+		// filtered" - the one thing it does not mean.
+		values := make(map[string]string)
+
+		for _, row := range c.faceConfigRows() {
+			values[row.Flag] = row.Value
+		}
+
+		assert.Equal(t, fmt.Sprintf("%g", c.FaceScoreEffective()), values["face-score"])
+		assert.Equal(t, fmt.Sprintf("%d", c.FaceClusterScoreEffective()), values["face-cluster-score"])
+		assert.NotEqual(t, "0", values["face-score"])
+		assert.NotEqual(t, "0", values["face-cluster-score"])
+	})
+	t.Run("EngineReportedWhenItDecides", func(t *testing.T) {
+		engine := c.options.FaceEngine
+		t.Cleanup(func() { c.options.FaceEngine = engine })
+
+		flags := func() []string {
+			var names []string
+
+			for _, row := range c.faceConfigRows() {
+				names = append(names, row.Flag)
+			}
+
+			return names
+		}
+
+		c.options.FaceEngine = face.EngineAuto
+		assert.NotContains(t, flags(), "face-engine")
+		c.options.FaceEngine = face.EngineNone
+		assert.Contains(t, flags(), "face-engine")
+	})
 }
 
-func TestConfig_faceScoreReport(t *testing.T) {
-	t.Run("Detector", func(t *testing.T) {
-		// A cutoff of zero is what the raw option holds in the ordinary case, and it reads as
-		// "no detection is filtered", which is the opposite of what it means.
+func TestConfig_faceDetectionNote(t *testing.T) {
+	t.Run("CalibratedScore", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.options.FaceScore = 0
 
-		assert.NotEqual(t, "0", c.faceScoreReport(false))
-		assert.Contains(t, c.faceScoreReport(true), c.FaceDetector())
+		assert.Contains(t, c.faceDetectionNote(), "Detector: ")
+		assert.Contains(t, c.faceDetectionNote(), fmt.Sprintf("minimum score of %g is calibrated for %s", c.FaceScoreEffective(), c.FaceDetector()))
 	})
-	t.Run("Configured", func(t *testing.T) {
+	t.Run("ConfiguredScore", func(t *testing.T) {
+		// An operator's own value has no calibration to attribute it to.
 		c := NewConfig(CliTestContext())
 		c.options.FaceScore = 42
 
-		assert.Equal(t, "42", c.faceScoreReport(false))
-		assert.Equal(t, "42", c.faceScoreReport(true), "an operator's own value has no source to name")
+		assert.NotContains(t, c.faceDetectionNote(), "calibrated")
 	})
 	t.Run("Disabled", func(t *testing.T) {
-		// A cutoff that was switched off must not be attributed to a detector's calibration.
+		// A cutoff no detector enforces must not be attributed to one.
 		c := NewConfig(CliTestContext())
-		c.options.FaceScore = -1
+		c.options.FaceDetector = face.DetectorNone
 
-		assert.Equal(t, "-1", c.faceScoreReport(true))
+		assert.NotContains(t, c.faceDetectionNote(), "calibrated")
 	})
 }
 
-func TestConfig_faceClusterScoreReport(t *testing.T) {
-	t.Run("Detector", func(t *testing.T) {
-		// Zero is what the raw option holds in the ordinary case, and it reads as "every face
-		// may cluster" - which is the opposite of what it means.
-		c := NewConfig(CliTestContext())
+func TestConfig_faceRecognitionNote(t *testing.T) {
+	t.Run("CalibratedClusterScore", func(t *testing.T) {
+		c := newSFaceTestConfig(t)
 		c.options.FaceClusterScore = 0
 
-		assert.NotEqual(t, "0", c.faceClusterScoreReport(false))
-		assert.Contains(t, c.faceClusterScoreReport(true), c.FaceDetector())
+		assert.Contains(t, c.faceRecognitionNote(), "Model: ")
+		assert.Contains(t, c.faceRecognitionNote(), fmt.Sprintf("cluster score of %d is calibrated for %s", c.FaceClusterScoreEffective(), c.FaceDetector()))
 	})
-	t.Run("Configured", func(t *testing.T) {
-		c := NewConfig(CliTestContext())
+	t.Run("ConfiguredClusterScore", func(t *testing.T) {
+		c := newSFaceTestConfig(t)
 		c.options.FaceClusterScore = 42
 
-		assert.Equal(t, "42", c.faceClusterScoreReport(false))
-		assert.Equal(t, "42", c.faceClusterScoreReport(true), "an operator's own bar has no source to name")
+		assert.NotContains(t, c.faceRecognitionNote(), "calibrated")
 	})
-	t.Run("Disabled", func(t *testing.T) {
-		// A bar that was switched off is not a detector calibration either.
+	t.Run("NoModel", func(t *testing.T) {
+		// The distance rows are blank without a model, so the note has to say why rather than
+		// leaving five empty cells to be read as zero.
 		c := NewConfig(CliTestContext())
-		c.options.FaceClusterScore = -1
+		c.options.FaceModel = face.ModelNone
 
-		assert.Equal(t, "-1", c.faceClusterScoreReport(true))
+		assert.Contains(t, c.faceRecognitionNote(), "once a model is in force")
+	})
+}
+
+func TestConfig_faceEmbedderStatus(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	t.Run("Ok", func(t *testing.T) {
+		assert.Empty(t, c.faceEmbedderStatus())
+	})
+	t.Run("Paused", func(t *testing.T) {
+		t.Cleanup(face.UnblockEmbeddings)
+		face.BlockEmbeddings("12 marker(s) use facenet")
+
+		assert.Equal(t, "Face embeddings are paused, because 12 marker(s) use facenet.", c.faceEmbedderStatus())
 	})
 }
 

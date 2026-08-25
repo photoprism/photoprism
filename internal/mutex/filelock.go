@@ -38,11 +38,9 @@ type FileLockState struct {
 // Expired reports whether the lock has passed its own expiry, which is what makes a crashed
 // holder release it.
 //
-// The expiry is bounded by one interval past the file's modification time, because both
-// timestamps inside it come from the holder's clock and a holder whose clock ran fast - a
-// container before NTP corrects it, a resumed snapshot - would otherwise wedge every worker for
-// as long as that clock was wrong. The modification time is written by the kernel that stored
-// the file, so it is the one reading a stale lock can trust.
+// The expiry is bounded by one interval past the file's modification time, because both timestamps
+// inside it come from the holder's clock: one running fast would otherwise wedge every worker for
+// as long as it was wrong. The kernel wrote the modification time, so a stale lock can be trusted.
 func (s FileLockState) Expired() bool {
 	expires := s.ExpiresAt
 

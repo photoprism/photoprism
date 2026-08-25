@@ -237,12 +237,12 @@ func whereClusterScore(stmt *gorm.DB, floor int) *gorm.DB {
 	names := make([]any, 0, len(face.Detectors))
 
 	for _, d := range face.Detectors {
-		if d.ClusterMinScore <= 0 {
+		if d.ClusterScore <= 0 {
 			continue
 		}
 
 		conds = append(conds, "(COALESCE(detect_model, '') = ? AND score >= ?)")
-		args = append(args, d.Name, d.ClusterMinScore)
+		args = append(args, d.Name, d.ClusterScore)
 		others = append(others, "COALESCE(detect_model, '') <> ?")
 		names = append(names, d.Name)
 	}

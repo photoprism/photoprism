@@ -34,13 +34,13 @@ type Detector struct {
 	DisplayName string
 	Dir         string
 	Decode      DecodeKind
-	// MinScore is the detector's own calibrated cutoff and ClusterMinScore the higher bar a face
-	// must clear to contribute to automatic clustering. Both are on the 0-100 scale that markers,
-	// FACE_SCORE and FACE_CLUSTER_SCORE use; the engine converts to the 0-1 one its decoder
-	// reports. Neither is shared between detectors: a value that is a meaningful step above one
-	// detector's cutoff is below another's and gates nothing.
-	MinScore        int
-	ClusterMinScore int
+	// MinScore is the calibrated cutoff, ClusterScore the higher bar for automatic clustering, and
+	// MigrateScore the lower floor a migration re-detects at, all on the 0-100 scale the FACE_*
+	// options use; the engine converts to the 0-1 one its decoder reports. None is shared between
+	// detectors: a meaningful step above one detector's cutoff is below another's and gates nothing.
+	MinScore     int
+	ClusterScore int
+	MigrateScore int
 	// Advertise allows user-facing text to name this detector. The others run and are selectable
 	// by name, but help text reads as an offer, so it lists only what the product offers.
 	Advertise bool
@@ -81,16 +81,15 @@ var Detectors = []*Detector{
 		DisplayName: "YuNet 2026may",
 		Dir:         "yunet",
 		Decode:      DecodeYuNet,
-		// The knee its own corpus measured: 65 is the first cutoff at which a photograph of
-		// flowers yields nothing, with every pinned positive still found. Lower was tried, at
-		// the pair the last stable release ran, and the demo library answered within a day -
-		// three "people" on a bee, two of them blurred background. Re-detection wants a lower
-		// floor than this, but that is the migration's trade to make and it makes it on its own
-		// (face.MigrationScoreThreshold); an index pays for it on every picture.
-		MinScore:        65,
-		ClusterMinScore: 70,
-		Advertise:       true,
-		Default:         true,
+		// The knee its own corpus measured: 65 is the first cutoff at which flowers yield nothing,
+		// with every pinned positive still found. Lower was tried, at the pair the last stable
+		// release ran, and the demo library answered with three "people" on a bee. Re-detection
+		// keeps that low floor, since it pays for a false positive once rather than per picture.
+		MinScore:     65,
+		ClusterScore: 70,
+		MigrateScore: 9,
+		Advertise:    true,
+		Default:      true,
 		ONNX: &onnx.ModelInfo{
 			File:    "face_detection_yunet_2026may.onnx",
 			SHA256:  "ebafce4e3c118d6554634be5c27ab333b4c047a9a8c3faf1d7cf93101c22f0f0",
@@ -112,11 +111,12 @@ var Detectors = []*Detector{
 		DisplayName: "SCRFD 500M",
 		Dir:         "scrfd",
 		Decode:      DecodeSCRFD,
-		// Its publisher's own calibration, kept where YuNet's was lowered to what the last stable
-		// release shipped: SCRFD emits one sigmoid whose floor is 0.50, so a bar below that would
-		// sit under its own cutoff and gate nothing.
-		MinScore:        50,
-		ClusterMinScore: 60,
+		// Its publisher's own calibration. SCRFD emits one sigmoid whose floor is 0.50, so a bar
+		// below that gates nothing - which is why a migration cannot buy recall here as it can
+		// from YuNet, and re-detects at the same cutoff.
+		MinScore:     50,
+		ClusterScore: 60,
+		MigrateScore: 50,
 		ONNX: &onnx.ModelInfo{
 			// The publisher's own artifact, which is where an opt-in install fetches from. Its
 			// input is dynamic where our earlier re-export was fixed, and it is otherwise the
@@ -187,10 +187,9 @@ func KnownDetectorName(s string) bool {
 // DetectorsComparable reports whether a crop recorded under stored may be treated as one the
 // current detector would place, so that a marker holding it needs no new detection.
 //
-// Only an exact match qualifies: a blank or engine-level value names no detector, and two
-// detectors place different landmarks and therefore a different crop from the same face.
-// A current name that is empty or disables detection compares equal to everything, because
-// there is then no detector to disagree with.
+// Only an exact match qualifies: two detectors place different landmarks and therefore a
+// different crop from the same face, and a blank or engine-level value names no detector. An
+// empty current name, or one that disables detection, compares equal to everything.
 func DetectorsComparable(stored, current DetectorName) bool {
 	stored = NormalizeDetectorName(stored)
 	current = NormalizeDetectorName(current)
@@ -259,11 +258,17 @@ func DefaultDetectorName() DetectorName {
 // Read from the registry rather than through ClusterScore, which consults the runtime-mutable
 // threshold Propagate assigns and would freeze whatever it held when the flags were built.
 func DefaultDetectorClusterScore() int {
-	if d := DefaultDetector(); d != nil && d.ClusterMinScore > 0 {
-		return d.ClusterMinScore
+	if d := DefaultDetector(); d != nil && d.ClusterScore > 0 {
+		return d.ClusterScore
 	}
 
 	return ClusterScoreThresholdDefault
+}
+
+// DefaultDetectorMigrateScore returns the migration floor registered for the default detector,
+// which is the value "photoprism --help" names for FACE_MIGRATE_SCORE.
+func DefaultDetectorMigrateScore() float64 {
+	return DetectorMigrateScore(DefaultDetectorName())
 }
 
 // DetectorForFile returns the detector whose artifact the path names.

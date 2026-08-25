@@ -26,11 +26,9 @@ import (
 const facesMigrateBatchSize = 100
 
 // facesMigrateMaxFailureRatio bounds the share of attempted markers that may lose a vector the
-// library could have used, before the destructive finalize is refused.
-//
-// Only markers clearing both clustering bars count: one below them seeds no cluster and joins
-// none. Counting the rest made a detector that re-finds fewer weak faces look like a storage
-// outage, which refused two of three real libraries.
+// library could have used, before the destructive finalize is refused. Only markers clearing both
+// clustering bars count: counting the rest made a detector that re-finds fewer weak faces look
+// like a storage outage, which refused two of three real libraries.
 const facesMigrateMaxFailureRatio = 0.1
 
 // FacesMigrateOptions controls a face embedding migration.
@@ -498,11 +496,9 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 					return result, migrateErr
 				}
 
-				// The markers this file holds are counted as failed rather than lost, and the
-				// plan reported them as unreadable before the prompt, so this is the predicted
-				// outcome rather than a fault: the run continues and the exit status carries it.
-				// Reported through the system log, since a run over a library with missing files
-				// emits one of these per file and the ordinary log persists warnings.
+				// Predicted rather than a fault: the plan reported these markers as unreadable
+				// before the prompt, so the run continues and the exit status carries it. Through
+				// the system log, since the ordinary one persists a warning per missing file.
 				event.SystemWarn([]string{"faces", "migrate", "%s, so %s could not be re-embedded"},
 					migrateErr, english.Plural(len(fileResult.Failed)+fileResult.Retained, "marker", "markers"))
 			}
@@ -573,11 +569,10 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 		return result, err
 	}
 
-	// A marker the detector cannot find again is the expected outcome for a library an earlier,
-	// less reliable one indexed: some of those regions were never faces. Below the clustering
-	// bars it costs nothing either - no cluster could have used the vector - so the run reports
-	// the attrition and succeeds. What still fails is loss the library would have felt, and a
-	// file that could not be read, because that is a storage fault an operator can act on.
+	// A marker the detector cannot find again is expected for a library an earlier, less reliable
+	// one indexed: some of those regions were never faces, and below the clustering bars no cluster
+	// could have used the vector either. What still fails is loss the library would have felt, and
+	// a file that could not be read, because that is a storage fault an operator can act on.
 	if obsolete := result.Failed - result.FailedClusterable - result.Unreadable; obsolete > 0 {
 		log.Infof("faces: %d marker(s) were not re-detected and are no longer used for recognition, "+
 			"which is expected where an earlier detector placed them", obsolete)
@@ -659,8 +654,8 @@ func (w *Faces) restoreEmbedder() {
 // function that restores the configured one.
 //
 // A false positive costs an index a thumbnail to reject; a miss costs a migration a curated
-// marker's vector, so the run detects at the lowest floor the detectors have shipped with. A
-// configured FACE_SCORE stands: that is a decision rather than a calibration.
+// marker's vector, so the run detects at the detector's own migration floor. A configured
+// FACE_SCORE stands: that is a decision rather than a calibration.
 func (w *Faces) useMigrationDetector() (restore func(), err error) {
 	restore = func() {}
 
@@ -817,8 +812,7 @@ func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) 
 // of them that only needs a new crop.
 //
 // The crop is an axis of the embedding space, so an unrecorded or foreign detector makes a marker
-// stale even when its vector is the target's: leaving it puts one library in two crop spaces. A
-// first run therefore re-crops everything, which costs time and risks nothing.
+// stale even when its vector is the target's. A first run therefore re-crops everything.
 func staleMigrationMarkers(markers entity.Markers, embedder face.Embedder, target string) (stale entity.Markers, recrop map[string]bool) {
 	stale = make(entity.Markers, 0, len(markers))
 	recrop = make(map[string]bool)
@@ -848,8 +842,8 @@ func staleMigrationMarkers(markers entity.Markers, embedder face.Embedder, targe
 // discarded ones the library could have clustered.
 //
 // Detection finds no marker a person drew by hand, so re-cropping one is expected to fail. Its
-// vector is still in the target's space, and discarding it would make a detector change cost
-// exactly the assignments the migration exists to preserve.
+// vector is still in the target's space, and discarding it would cost exactly the assignments the
+// migration exists to preserve.
 func unresolvedMigrationMarkers(markers entity.Markers, recrop map[string]bool) (failed []string, retained, clusterable int) {
 	for i := range markers {
 		if recrop[markers[i].MarkerUID] {
@@ -913,11 +907,10 @@ func (w *Faces) detectMigrationEmbeddings(embedder face.Embedder, file *entity.F
 		return result, landmarks, "", err
 	}
 
-	// FACE_MIGRATE_SIZE rather than FACE_SIZE, defaulting to the smallest size the detectors are
-	// trained for: a marker's size is in pixels of the thumbnail it was detected in, and the
-	// detector before this one fell back to a larger one, so a legacy marker can sit well under
-	// the ordinary floor - which no score recovers. The retry pass only fires when a picture
-	// yields nothing, which is not this case.
+	// FACE_MIGRATE_SIZE rather than FACE_SIZE: a marker's size is in pixels of the thumbnail it was
+	// detected in, and the detector before this one fell back to a larger one, so a legacy marker
+	// can sit well under the ordinary floor - which no score recovers. The retry pass only fires
+	// when a picture yields nothing, which is not this case.
 	detected, err := face.Detect(thumbName, w.conf.FaceMigrateSize())
 	if err != nil {
 		return result, landmarks, "", err

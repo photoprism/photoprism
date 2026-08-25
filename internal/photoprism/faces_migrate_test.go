@@ -1125,7 +1125,7 @@ func TestFaces_useMigrationDetector(t *testing.T) {
 		require.NoError(t, err)
 		require.NotNil(t, restore)
 
-		assert.Equal(t, face.MigrationScoreThreshold, face.ScoreThreshold)
+		assert.Equal(t, c.FaceMigrateScore(), face.ScoreThreshold)
 
 		restore()
 
@@ -1196,7 +1196,7 @@ func TestFaces_useMigrationDetector(t *testing.T) {
 
 		settings := face.ActiveEngineSettings()
 
-		assert.InDelta(t, face.MigrationScoreThreshold/100, float64(settings.ONNX.ScoreThreshold), 0.0001)
+		assert.InDelta(t, c.FaceMigrateScore()/100, float64(settings.ONNX.ScoreThreshold), 0.0001)
 	})
 	t.Run("NilWorker", func(t *testing.T) {
 		restore, err := (*Faces)(nil).useMigrationDetector()

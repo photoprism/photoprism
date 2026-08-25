@@ -285,12 +285,32 @@ func TestDetectorMinScore(t *testing.T) {
 		// looks like the 0-1 one the decoder reports is a unit mistake rather than a low cutoff.
 		assert.Positive(t, d.MinScore, d.Name)
 		assert.LessOrEqual(t, d.MinScore, 100, d.Name)
-		assert.Positive(t, d.ClusterMinScore, d.Name)
-		assert.LessOrEqual(t, d.ClusterMinScore, 100, d.Name)
+		assert.Positive(t, d.ClusterScore, d.Name)
+		assert.LessOrEqual(t, d.ClusterScore, 100, d.Name)
+		assert.Positive(t, d.MigrateScore, d.Name)
+		assert.LessOrEqual(t, d.MigrateScore, d.MinScore, d.Name)
 	}
 
 	assert.NotEqual(t, FindDetector(DetectorSCRFD).MinScore, FindDetector(DetectorYuNet).MinScore,
 		"a cutoff copied from the other detector is not a calibrated one")
+}
+
+// TestDetectorMigrateScore pins the migration floor to the detector, because a migration makes the
+// opposite trade to an index: a miss discards a curated marker rather than adding a false positive.
+func TestDetectorMigrateScore(t *testing.T) {
+	t.Run("Registered", func(t *testing.T) {
+		assert.InDelta(t, float64(FindDetector(DetectorYuNet).MigrateScore), DetectorMigrateScore(DetectorYuNet), 0.5)
+		assert.InDelta(t, float64(FindDetector(DetectorSCRFD).MigrateScore), DetectorMigrateScore(DetectorSCRFD), 0.5)
+	})
+	t.Run("Unregistered", func(t *testing.T) {
+		// A name nothing registers must still yield a floor some detector enforces, or a migration
+		// would run at zero and re-embed whatever the decoder emits.
+		assert.Equal(t, DetectorMigrateScore(DefaultDetectorName()), DetectorMigrateScore("nonexistent"))
+		assert.Positive(t, DetectorMigrateScore(DetectorNone))
+	})
+	t.Run("Default", func(t *testing.T) {
+		assert.Equal(t, DetectorMigrateScore(DefaultDetectorName()), DefaultDetectorMigrateScore())
+	})
 }
 
 // TestClusterScore pins that the clustering bar follows the detector that produced a marker, not
@@ -301,8 +321,8 @@ func TestClusterScore(t *testing.T) {
 	t.Cleanup(func() { ClusterScoreThreshold = restore })
 	ClusterScoreThreshold = 0
 
-	assert.Equal(t, FindDetector(DetectorYuNet).ClusterMinScore, ClusterScore(DetectorYuNet))
-	assert.Equal(t, FindDetector(DetectorSCRFD).ClusterMinScore, ClusterScore(DetectorSCRFD))
+	assert.Equal(t, FindDetector(DetectorYuNet).ClusterScore, ClusterScore(DetectorYuNet))
+	assert.Equal(t, FindDetector(DetectorSCRFD).ClusterScore, ClusterScore(DetectorSCRFD))
 	assert.NotEqual(t, ClusterScore(DetectorYuNet), ClusterScore(DetectorSCRFD),
 		"a bar shared between detectors gates nothing for one of them")
 
