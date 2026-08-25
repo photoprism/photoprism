@@ -88,6 +88,12 @@ type FacesMigrateResult struct {
 	AttemptedClusterable int
 	FailedClusterable    int
 
+	// FailedNamed and FailedManual count the lost markers a person had assigned to someone, and
+	// the subset they drew by hand. Attrition among markers nobody named is a cleanup on a library
+	// an unreliable detector indexed; these two are the cost, and only they can judge a floor.
+	FailedNamed  int
+	FailedManual int
+
 	Unlinked          int
 	Invalid           int
 	DetectedFiles     int
@@ -491,6 +497,8 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 			result.Unreadable += fileResult.Unreadable
 			result.AttemptedClusterable += fileResult.Attempted
 			result.FailedClusterable += fileResult.Clusterable
+			result.FailedNamed += fileResult.Named
+			result.FailedManual += fileResult.Manual
 			failedMarkerUIDs = append(failedMarkerUIDs, fileResult.Failed...)
 			if fileResult.Detected {
 				result.DetectedFiles++
@@ -577,6 +585,11 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 	// one indexed: some of those regions were never faces, and below the clustering bars no cluster
 	// could have used the vector either. What still fails is loss the library would have felt, and
 	// a file that could not be read, because that is a storage fault an operator can act on.
+	if result.FailedNamed > 0 {
+		log.Warnf("faces: %d of the %d marker(s) that lost a vector were assigned to a person, %d of them by hand",
+			result.FailedNamed, result.Failed, result.FailedManual)
+	}
+
 	if obsolete := result.Failed - result.FailedClusterable - result.Unreadable; obsolete > 0 {
 		log.Infof("faces: %d marker(s) were not found again at the %g migration score and are no longer used "+
 			"for recognition, which is expected where an earlier or lower-scoring pass placed them",
@@ -708,7 +721,11 @@ type faceMigrationFile struct {
 	// file put at risk, and those it lost. The guard needs both sides of that ratio.
 	Attempted   int
 	Clusterable int
-	Detected    bool
+	// Named and Manual count the lost markers a person had assigned to someone, and the subset
+	// they drew by hand. A bare failure count cannot say whether a floor was worth its cost.
+	Named    int
+	Manual   int
+	Detected bool
 }
 
 // clusterableMarkers counts the markers that clear both bars a face has to clear to seed or join
@@ -757,7 +774,9 @@ func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) 
 			err = fmt.Errorf("file was deleted")
 		}
 
-		result.Failed, result.Retained, result.Clusterable = unresolvedMigrationMarkers(stale, recrop)
+		var counts faceMigrationLoss
+		result.Failed, counts = unresolvedMigrationMarkers(stale, recrop)
+		result.Retained, result.Clusterable, result.Named, result.Manual = counts.Retained, counts.Clusterable, counts.Named, counts.Manual
 		result.Unreadable = len(result.Failed)
 		result.Attempted = result.Clusterable
 
@@ -781,7 +800,9 @@ func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) 
 	if err != nil {
 		// Detection reads the file, so a failure here is the file rather than the detector
 		// declining to find a face in it.
-		result.Failed, result.Retained, result.Clusterable = unresolvedMigrationMarkers(stale, recrop)
+		var counts faceMigrationLoss
+		result.Failed, counts = unresolvedMigrationMarkers(stale, recrop)
+		result.Retained, result.Clusterable, result.Named, result.Manual = counts.Retained, counts.Clusterable, counts.Named, counts.Manual
 		result.Unreadable = len(result.Failed)
 		result.Attempted = result.Clusterable
 
@@ -801,7 +822,10 @@ func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) 
 		delete(details, marker.MarkerUID)
 	}
 
-	result.Failed, result.Retained, result.Clusterable = unresolvedMigrationMarkers(unresolved, recrop)
+	unresolvedCounts := faceMigrationLoss{}
+	result.Failed, unresolvedCounts = unresolvedMigrationMarkers(unresolved, recrop)
+	result.Retained, result.Clusterable = unresolvedCounts.Retained, unresolvedCounts.Clusterable
+	result.Named, result.Manual = unresolvedCounts.Named, unresolvedCounts.Manual
 
 	// A retained marker keeps the vector it holds, so it was never at risk and belongs on
 	// neither side of the guard's ratio.
@@ -852,21 +876,41 @@ func staleMigrationMarkers(markers entity.Markers, embedder face.Embedder, targe
 // Detection finds no marker a person drew by hand, so re-cropping one is expected to fail. Its
 // vector is still in the target's space, and discarding it would cost exactly the assignments the
 // migration exists to preserve.
-func unresolvedMigrationMarkers(markers entity.Markers, recrop map[string]bool) (failed []string, retained, clusterable int) {
+func unresolvedMigrationMarkers(markers entity.Markers, recrop map[string]bool) (failed []string, counts faceMigrationLoss) {
 	for i := range markers {
 		if recrop[markers[i].MarkerUID] {
-			retained++
+			counts.Retained++
 			continue
 		}
 
 		failed = append(failed, markers[i].MarkerUID)
 
 		if markers[i].Clusterable() {
-			clusterable++
+			counts.Clusterable++
+		}
+
+		// A marker nobody named is attrition; one a person named is the thing the migration exists
+		// to preserve, and a hand-drawn one is the least recoverable of all. The share differs by
+		// library, so a single failure count cannot say whether a floor was worth it.
+		if markers[i].SubjUID != "" {
+			counts.Named++
+		}
+
+		if markers[i].SubjSrc == entity.SrcManual {
+			counts.Manual++
 		}
 	}
 
-	return failed, retained, clusterable
+	return failed, counts
+}
+
+// faceMigrationLoss counts what a file's unresolved markers cost, split by what makes them worth
+// keeping. Retained markers kept their vector and were never at risk.
+type faceMigrationLoss struct {
+	Retained    int
+	Clusterable int
+	Named       int
+	Manual      int
 }
 
 // cropMigrationEmbeddings generates embeddings directly from stored marker geometry.

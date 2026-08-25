@@ -189,6 +189,9 @@ type FaceClusterGates struct {
 	SizeOK      int
 	ScoreOK     int
 	Eligible    int
+	// Clusterable counts the markers clearing both bars whatever their age, which is what a forced
+	// run would take. Eligible answers what the automatic pass sees; this answers what --force buys.
+	Clusterable int
 }
 
 // CountFaceClusterGates counts the face markers at each clustering bar.
@@ -216,7 +219,8 @@ func CountFaceClusterGates(model string, size, score int) (result FaceClusterGat
 		", COALESCE(SUM(CASE WHEN " + recent + " THEN 1 ELSE 0 END), 0) AS recent" +
 		", COALESCE(SUM(CASE WHEN " + recent + " AND " + sized + " THEN 1 ELSE 0 END), 0) AS size_ok" +
 		", COALESCE(SUM(CASE WHEN " + recent + " AND " + scored + " THEN 1 ELSE 0 END), 0) AS score_ok" +
-		", COALESCE(SUM(CASE WHEN " + recent + " AND " + sized + " AND " + scored + " THEN 1 ELSE 0 END), 0) AS eligible"
+		", COALESCE(SUM(CASE WHEN " + recent + " AND " + sized + " AND " + scored + " THEN 1 ELSE 0 END), 0) AS eligible" +
+		", COALESCE(SUM(CASE WHEN " + sized + " AND " + scored + " THEN 1 ELSE 0 END), 0) AS clusterable"
 
 	args := make([]any, 0, 4*len(recentArgs)+2*len(sizeArgs)+2*len(scoreArgs))
 	args = append(args, recentArgs...)
@@ -225,6 +229,8 @@ func CountFaceClusterGates(model string, size, score int) (result FaceClusterGat
 	args = append(args, recentArgs...)
 	args = append(args, scoreArgs...)
 	args = append(args, recentArgs...)
+	args = append(args, sizeArgs...)
+	args = append(args, scoreArgs...)
 	args = append(args, sizeArgs...)
 	args = append(args, scoreArgs...)
 

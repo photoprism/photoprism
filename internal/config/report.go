@@ -464,8 +464,17 @@ func (c *Config) faceRecognitionNote() string {
 	}
 
 	if c.FaceClusterScore() == 0 {
-		notes = append(notes, fmt.Sprintf("The cluster score of %d is calibrated for %s, and each marker is filtered by the bar of the detector that scored it.",
-			c.FaceClusterScoreEffective(), c.FaceDetector()))
+		// Named as the bar for markers this detector scored, not as the bar in force: a library
+		// whose markers predate the provenance column is filtered at ClusterScoreThresholdDefault
+		// throughout, and stating the detector's own number there is the wrong one to act on.
+		if detector := c.FaceDetector(); detector == face.DetectorNone {
+			notes = append(notes, fmt.Sprintf("Each marker is filtered by the cluster score of the detector that scored it, "+
+				"or %d where none is recorded.", face.ClusterScoreThresholdDefault))
+		} else {
+			notes = append(notes, fmt.Sprintf("Markers %s scored cluster at %d; every other marker is filtered by the bar of "+
+				"the detector that scored it, or %d where none is recorded.",
+				detector, c.FaceClusterScoreEffective(), face.ClusterScoreThresholdDefault))
+		}
 	}
 
 	return strings.Join(notes, " ")
@@ -663,7 +672,8 @@ func (c *Config) faceClusterStatus() string {
 func (c *Config) faceClusterScorePhrase(floor int) string {
 	switch floor {
 	case face.ClusterScoreAuto:
-		return "the face-cluster-score of the detector that scored each one"
+		return fmt.Sprintf("the face-cluster-score of the detector that scored each one (%d where none is recorded)",
+			face.ClusterScoreThresholdDefault)
 	case 0:
 		return "the face-cluster-score, which is switched off"
 	default:
@@ -683,10 +693,12 @@ func faceClusterStatusFor(gates query.FaceClusterGates, required, size int, scor
 	}
 
 	// The one shortfall no threshold explains: a marker older than the newest cluster never counts
-	// toward the trigger again, so an instance can sit on hundreds of them and look idle.
+	// toward the trigger again, so an instance can sit on hundreds of them and look idle. Naming
+	// how many a forced run would actually take is what makes the remedy worth weighing.
 	if gates.Recent == 0 && gates.Unclustered > 0 {
 		return fmt.Sprintf("Automatic clustering will not start on its own: %d markers are unclustered, but none was "+
-			`added since the last cluster. Run "photoprism faces update --force" to cluster them.`, gates.Unclustered)
+			"added since the last cluster, and %d of them clear both thresholds. "+
+			`Run "photoprism faces update --force" to cluster them.`, gates.Unclustered, gates.Clusterable)
 	}
 
 	if gates.Unclustered == 0 {
@@ -696,14 +708,16 @@ func faceClusterStatusFor(gates query.FaceClusterGates, required, size int, scor
 	// No bar excludes anything, so the shortfall is volume alone. Naming thresholds here would
 	// send an operator to tune bars that are already passing every marker they see.
 	if gates.Eligible == gates.Recent {
-		return fmt.Sprintf("Automatic clustering needs %d new markers and has %d, which no threshold is excluding "+
-			"(face-cluster-core %d sets how many are needed).", required, gates.Eligible, core)
+		return fmt.Sprintf("Automatic clustering needs %d new markers (2 x face-cluster-core %d) and has %d, "+
+			"which no threshold is excluding.", required, core, gates.Eligible)
 	}
 
-	return fmt.Sprintf("Automatic clustering needs %d new markers and has %d: of the %d added since the last cluster, "+
-		"%d clear the face-cluster-size of %d px and %d clear %s "+
-		"(face-cluster-core %d sets how many are needed).",
-		required, gates.Eligible, gates.Recent, gates.SizeOK, size, gates.ScoreOK, scorePhrase, core)
+	// The derivation is spelled out because the two numbers otherwise look contradictory, and the
+	// eligible count is named as the intersection: the size and score counts overlap, so reporting
+	// them alone reads as two independent facts rather than as the arithmetic that produced it.
+	return fmt.Sprintf("Automatic clustering needs %d new markers (2 x face-cluster-core %d) and has %d clearing both: "+
+		"of the %d added since the last cluster, %d clear the face-cluster-size of %d px and %d clear %s.",
+		required, core, gates.Eligible, gates.Recent, gates.SizeOK, size, gates.ScoreOK, scorePhrase)
 }
 
 // faceClusterScoreFloor maps FACE_CLUSTER_SCORE onto the convention the marker queries use, where

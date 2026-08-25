@@ -372,30 +372,32 @@ func TestFaces_migrateFaceFile(t *testing.T) {
 func TestUnresolvedMigrationMarkers(t *testing.T) {
 	markers := entity.Markers{{MarkerUID: "m1"}, {MarkerUID: "m2"}, {MarkerUID: "m3"}}
 	t.Run("NothingToRecrop", func(t *testing.T) {
-		failed, retained, clusterable := unresolvedMigrationMarkers(markers, nil)
+		failed, counts := unresolvedMigrationMarkers(markers, nil)
 		assert.Equal(t, []string{"m1", "m2", "m3"}, failed)
-		assert.Zero(t, retained)
+		assert.Zero(t, counts.Retained)
 		// The fixtures carry neither a size nor a score, so none of them could have clustered.
-		assert.Zero(t, clusterable)
+		assert.Zero(t, counts.Clusterable)
+		assert.Zero(t, counts.Named)
+		assert.Zero(t, counts.Manual)
 	})
 	t.Run("RecropIsRetained", func(t *testing.T) {
 		// A marker that only needed a new crop keeps the vector it holds, so it must not reach
 		// the failed list: that list is what the finalize blanks.
-		failed, retained, _ := unresolvedMigrationMarkers(markers, map[string]bool{"m2": true})
+		failed, counts := unresolvedMigrationMarkers(markers, map[string]bool{"m2": true})
 		assert.Equal(t, []string{"m1", "m3"}, failed)
-		assert.Equal(t, 1, retained)
+		assert.Equal(t, 1, counts.Retained)
 	})
 	t.Run("EveryMarkerIsRetained", func(t *testing.T) {
-		failed, retained, clusterable := unresolvedMigrationMarkers(markers, map[string]bool{"m1": true, "m2": true, "m3": true})
+		failed, counts := unresolvedMigrationMarkers(markers, map[string]bool{"m1": true, "m2": true, "m3": true})
 		assert.Empty(t, failed)
-		assert.Equal(t, 3, retained)
-		assert.Zero(t, clusterable)
+		assert.Equal(t, 3, counts.Retained)
+		assert.Zero(t, counts.Clusterable)
 	})
 	t.Run("NoMarkers", func(t *testing.T) {
-		failed, retained, clusterable := unresolvedMigrationMarkers(nil, map[string]bool{"m1": true})
+		failed, counts := unresolvedMigrationMarkers(nil, map[string]bool{"m1": true})
 		assert.Empty(t, failed)
-		assert.Zero(t, retained)
-		assert.Zero(t, clusterable)
+		assert.Zero(t, counts.Retained)
+		assert.Zero(t, counts.Clusterable)
 	})
 	t.Run("CountsOnlyWhatCouldHaveClustered", func(t *testing.T) {
 		// The finalize guard measures real loss, so a marker under either clustering bar must
@@ -406,10 +408,26 @@ func TestUnresolvedMigrationMarkers(t *testing.T) {
 			{MarkerUID: "weak", Size: face.ClusterSizeThreshold, Score: 1},
 		}
 
-		failed, _, clusterable := unresolvedMigrationMarkers(mixed, nil)
+		failed, counts := unresolvedMigrationMarkers(mixed, nil)
 
 		assert.Len(t, failed, 3)
-		assert.Equal(t, 1, clusterable)
+		assert.Equal(t, 1, counts.Clusterable)
+	})
+	t.Run("SplitsTheLossByWhatMakesAMarkerWorthKeeping", func(t *testing.T) {
+		// A marker nobody named is attrition on a library an unreliable detector indexed; one a
+		// person named is the cost, and a hand-drawn one is the least recoverable. A bare failure
+		// count cannot tell them apart, which is what makes a migration floor unjudgeable.
+		mixed := entity.Markers{
+			{MarkerUID: "anon"},
+			{MarkerUID: "named", SubjUID: "js6sg6b1qekk9jx8"},
+			{MarkerUID: "drawn", SubjUID: "js6sg6b1qekk9jx9", SubjSrc: entity.SrcManual},
+		}
+
+		failed, counts := unresolvedMigrationMarkers(mixed, nil)
+
+		assert.Len(t, failed, 3)
+		assert.Equal(t, 2, counts.Named, "every assigned marker counts, however it was assigned")
+		assert.Equal(t, 1, counts.Manual, "the hand-drawn one is a subset of them")
 	})
 }
 

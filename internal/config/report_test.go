@@ -764,7 +764,8 @@ func TestConfig_faceRecognitionNote(t *testing.T) {
 		c.options.FaceClusterScore = 0
 
 		assert.Contains(t, c.faceRecognitionNote(), "Model: ")
-		assert.Contains(t, c.faceRecognitionNote(), fmt.Sprintf("cluster score of %d is calibrated for %s", c.FaceClusterScoreEffective(), c.FaceDetector()))
+		assert.Contains(t, c.faceRecognitionNote(), fmt.Sprintf("%d where none is recorded", face.ClusterScoreThresholdDefault),
+			"a library of markers predating the provenance column is filtered at the shared default, not the detector's own bar")
 	})
 	t.Run("ConfiguredClusterScore", func(t *testing.T) {
 		c := newSFaceTestConfig(t)
@@ -846,10 +847,12 @@ func TestFaceClusterStatusFor(t *testing.T) {
 	t.Run("StrandedBehindTheLastCluster", func(t *testing.T) {
 		// The shortfall no threshold explains: every marker predates the newest cluster, so none
 		// counts toward the trigger again and the instance sits idle looking healthy.
-		status := faceClusterStatusFor(query.FaceClusterGates{Unclustered: 6}, 8, 60, bar, 4)
+		status := faceClusterStatusFor(query.FaceClusterGates{Unclustered: 6, Clusterable: 4}, 8, 60, bar, 4)
 
 		assert.Contains(t, status, "6 markers are unclustered")
 		assert.Contains(t, status, "none was added since the last cluster")
+		// What a forced run would take, or the remedy cannot be weighed.
+		assert.Contains(t, status, "4 of them clear both thresholds")
 		assert.Contains(t, status, "faces update --force")
 	})
 	t.Run("VolumeOnly", func(t *testing.T) {
@@ -857,13 +860,17 @@ func TestFaceClusterStatusFor(t *testing.T) {
 		// that are excluding nothing.
 		status := faceClusterStatusFor(query.FaceClusterGates{Unclustered: 3, Recent: 3, SizeOK: 3, ScoreOK: 3, Eligible: 3}, 8, 60, bar, 4)
 
-		assert.Contains(t, status, "needs 8 new markers and has 3")
+		assert.Contains(t, status, "needs 8 new markers (2 x face-cluster-core 4) and has 3")
 		assert.Contains(t, status, "no threshold is excluding")
 		assert.NotContains(t, status, "face-cluster-size")
 	})
 	t.Run("SizeIsTheGate", func(t *testing.T) {
 		status := faceClusterStatusFor(query.FaceClusterGates{Unclustered: 40, Recent: 40, SizeOK: 2, ScoreOK: 40, Eligible: 2}, 8, 60, bar, 4)
 
+		// The two numbers look contradictory unless the derivation is named, and the size and
+		// score counts overlap, so the eligible one has to read as their intersection.
+		assert.Contains(t, status, "needs 8 new markers (2 x face-cluster-core 4)")
+		assert.Contains(t, status, "has 2 clearing both")
 		assert.Contains(t, status, "of the 40 added since the last cluster")
 		assert.Contains(t, status, "2 clear the face-cluster-size of 60 px")
 		assert.Contains(t, status, "40 clear "+bar)
