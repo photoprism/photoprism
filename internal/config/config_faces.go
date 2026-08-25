@@ -502,7 +502,15 @@ func (c *Config) libraryFaceModels() (counts []query.MarkerEmbeddingModelCount, 
 		return nil, false
 	}
 
-	counts, err := query.RecordedMarkerEmbeddingModels()
+	// If this startup is run against an old schema database (before migrate has been run)
+	// then the embed_model column will not exist, and will throw a database error.
+	// To prevent that appearing in the dbms logs, check for existence first.
+	var err error
+	if !c.db.Migrator().HasColumn(&entity.Marker{}, "EmbedModel") {
+		err = fmt.Errorf("no embed_model column in markers table")
+	} else {
+		counts, err = query.RecordedMarkerEmbeddingModels()
+	}
 
 	if err != nil {
 		log.Debugf("config: %s (find face embedding models)", err)
