@@ -64,7 +64,9 @@ const AcceptDistMax = 1.4
 const ConfigDistMax = 1.25
 
 var (
-	// CropSize is the face image crop size used when generating FaceNet embeddings.
+	// CropSize is the rectangular face crop, used by FaceNet, by the fallback for a face whose
+	// landmarks are incomplete, and for the crop the UI displays. It is not what the ONNX models
+	// consume: those are warped onto ArcFaceTemplateSize directly from the source rendition.
 	CropSize = crop.Sizes[crop.Tile160]
 )
 
