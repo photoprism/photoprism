@@ -235,11 +235,20 @@ func (c *Config) FaceEngineModelPath() string {
 		return ""
 	}
 
+	setting := c.FaceDetectorSetting()
+
+	// Detection that was switched off names no artifact. Falling through to the default would
+	// report a path for weights this instance will not load, which reads as though a detector
+	// were running - and that row is what an operator checks to find out whether one is.
+	if setting == face.DetectorNone {
+		return ""
+	}
+
 	models := c.ModelsPath()
 	detector := face.FindDetector(c.FaceDetector())
 
 	if detector == nil {
-		detector = face.FindDetector(c.FaceDetectorSetting())
+		detector = face.FindDetector(setting)
 	}
 
 	if detector == nil {
@@ -414,7 +423,7 @@ func (c *Config) FaceOverlap() int {
 // Face recognition options.
 
 // FaceModelSetting returns the face embedding model as configured, without resolving it.
-// It reports `face.ModelDetect` when the model is still to be detected, which is also what
+// It reports `face.ModelAuto` when the model is still to be detected, which is also what
 // an unsupported value is treated as.
 func (c *Config) FaceModelSetting() face.ModelName {
 	if c == nil {
@@ -425,7 +434,7 @@ func (c *Config) FaceModelSetting() face.ModelName {
 		c.warnFaceConfig("face-model", "config: unsupported face model %s, expected %s",
 			clean.Log(c.options.FaceModel), face.ModelUsageString())
 
-		return face.ModelDetect
+		return face.ModelAuto
 	}
 
 	return face.ParseModelName(c.options.FaceModel)
@@ -446,7 +455,7 @@ func (c *Config) FaceModel() face.ModelName {
 	}
 
 	switch name := c.FaceModelSetting(); name {
-	case face.ModelDetect, face.ModelNone:
+	case face.ModelAuto, face.ModelNone:
 		return face.ModelNone
 	default:
 		return c.usableFaceModel(name)
@@ -486,7 +495,7 @@ func (c *Config) EffectiveFaceModel() face.ModelName {
 
 	if name := c.FaceModel(); name != face.ModelNone {
 		return name
-	} else if c.FaceModelSetting() == face.ModelDetect {
+	} else if c.FaceModelSetting() == face.ModelAuto {
 		return c.installedFaceModel()
 	}
 
@@ -521,7 +530,7 @@ func (c *Config) ResolveFaceModel() face.ModelName {
 // faceModelDetects reports whether the model has to be worked out from the library, which an
 // unsupported value asks for as much as an empty one does.
 func (c *Config) faceModelDetects() bool {
-	return c.FaceModelSetting() == face.ModelDetect
+	return c.FaceModelSetting() == face.ModelAuto
 }
 
 // initFaceModel settles which embedding model this instance uses, and is called once by Init
@@ -622,7 +631,7 @@ func (c *Config) reportIgnoredFaceModel() {
 	configured := face.ParseModelName(c.faceModelFlag)
 	inForce := c.FaceModelSetting()
 
-	if configured == face.ModelDetect || configured == inForce {
+	if configured == face.ModelAuto || configured == inForce {
 		return
 	}
 

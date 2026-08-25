@@ -257,7 +257,7 @@ func (w *Faces) migrationTarget(target string) (string, error) {
 	// target and defaults to it. Any other model has to be named. An instance where embeddings
 	// were switched off keeps that decision: defaulting there would turn "off" into a data
 	// migration nobody asked for.
-	if target == "" || target == face.ModelAuto || target == face.ModelDetect {
+	if target == "" || target == face.ModelAuto {
 		if w.conf.FaceModelSetting() == face.ModelNone {
 			target = face.ModelNone
 		} else {
@@ -266,7 +266,7 @@ func (w *Faces) migrationTarget(target string) (string, error) {
 	}
 
 	switch {
-	case !face.KnownModelName(target) || target == face.ModelDetect:
+	case !face.KnownModelName(target) || target == face.ModelAuto:
 		return "", fmt.Errorf("faces: unsupported migration model %q", target)
 	case target == face.ModelNone:
 		return "", fmt.Errorf("faces: cannot migrate to disabled embeddings")

@@ -366,6 +366,24 @@ func TestConfig_faceEngineRunsOnIndex(t *testing.T) {
 }
 
 func TestConfig_FaceEngineModelPath(t *testing.T) {
+	t.Run("DetectionDisabled", func(t *testing.T) {
+		// A path beside a detector of "none" reads as though weights were loaded, and that row is
+		// what an operator checks to find out whether any are.
+		c := NewConfig(CliTestContext())
+		c.options.FaceDetector = face.DetectorNone
+
+		assert.Empty(t, c.FaceEngineModelPath())
+	})
+	t.Run("RefusedDetectorStillNamesItsOwn", func(t *testing.T) {
+		// A detector that was asked for and could not be loaded resolves to none, so this row is
+		// the only place the artifact that was looked for is reported.
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = t.TempDir()
+		c.options.FaceDetector = face.DetectorYuNet
+
+		assert.Equal(t, face.DetectorNone, c.FaceDetector())
+		assert.Equal(t, face.FindDetector(face.DetectorYuNet).Path(c.options.ModelsPath), c.FaceEngineModelPath())
+	})
 	t.Run("NothingInstalled", func(t *testing.T) {
 		// The path names what would have been loaded, so the caller reports a missing
 		// detector rather than an empty string.
@@ -426,10 +444,13 @@ func TestConfig_FaceDetectorSetting(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		assert.Equal(t, face.DetectorAuto, c.FaceDetectorSetting())
 	})
-	t.Run("DetectIsAnAcceptedSpelling", func(t *testing.T) {
+	t.Run("DetectIsNoLongerAccepted", func(t *testing.T) {
+		// It was an accepted spelling of "auto" during development and never shipped, so it now
+		// reads as a typo: reported once, and applied as a request to derive a detector.
 		c := NewConfig(CliTestContext())
-		c.options.FaceDetector = face.DetectorDetect
+		c.options.FaceDetector = "detect"
 		assert.Equal(t, face.DetectorAuto, c.FaceDetectorSetting())
+		assert.False(t, face.KnownDetectorName("detect"))
 	})
 	t.Run("Named", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
@@ -551,19 +572,19 @@ func TestConfig_FaceModelSetting(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.options.FaceModel = ""
 
-		assert.Equal(t, face.ModelDetect, c.FaceModelSetting())
+		assert.Equal(t, face.ModelAuto, c.FaceModelSetting())
 	})
 	t.Run("Detect", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.options.FaceModel = "Detect"
 
-		assert.Equal(t, face.ModelDetect, c.FaceModelSetting())
+		assert.Equal(t, face.ModelAuto, c.FaceModelSetting())
 	})
 	t.Run("AutoIsDetect", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.options.FaceModel = face.ModelAuto
 
-		assert.Equal(t, face.ModelDetect, c.FaceModelSetting())
+		assert.Equal(t, face.ModelAuto, c.FaceModelSetting())
 	})
 	t.Run("Named", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
@@ -581,7 +602,7 @@ func TestConfig_FaceModelSetting(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.options.FaceModel = "sfase"
 
-		assert.Equal(t, face.ModelDetect, c.FaceModelSetting())
+		assert.Equal(t, face.ModelAuto, c.FaceModelSetting())
 	})
 	t.Run("NilConfig", func(t *testing.T) {
 		assert.Equal(t, face.ModelNone, (*Config)(nil).FaceModelSetting())
@@ -913,7 +934,7 @@ func TestConfig_reportIgnoredFaceModel(t *testing.T) {
 	t.Run("Detect", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		hook := captureLog(t)
-		c.faceModelFlag = face.ModelDetect
+		c.faceModelFlag = face.ModelAuto
 		c.options.FaceModel = face.ModelSFace
 
 		c.reportIgnoredFaceModel()
@@ -1085,11 +1106,11 @@ func TestConfig_ResolveFaceModel(t *testing.T) {
 		// setting untouched.
 		c := TestConfig()
 		defer restoreFaceModel(t, c)()
-		c.options.FaceModel = face.ModelDetect
+		c.options.FaceModel = face.ModelAuto
 		c.faceModel = ""
 
 		assert.Equal(t, entity.MarkerFixtures.Get("1000003-4").EmbedModel, c.ResolveFaceModel())
-		assert.Equal(t, face.ModelDetect, c.FaceModelSetting())
+		assert.Equal(t, face.ModelAuto, c.FaceModelSetting())
 	})
 	t.Run("ReportsAMismatch", func(t *testing.T) {
 		// An operator who saw the warning at startup looks here next, so the report has to
@@ -1131,7 +1152,7 @@ func TestConfig_initFaceModel(t *testing.T) {
 	t.Run("DetectsAndPersists", func(t *testing.T) {
 		c := TestConfig()
 		defer restoreFaceModel(t, c)()
-		c.options.FaceModel = face.ModelDetect
+		c.options.FaceModel = face.ModelAuto
 		c.faceModel = ""
 
 		c.initFaceModel()
@@ -1693,7 +1714,7 @@ func TestConfig_ClearFaceModel(t *testing.T) {
 		require.NoError(t, c.ClearFaceModel())
 
 		assert.Empty(t, c.options.FaceModel)
-		assert.Equal(t, face.ModelDetect, c.FaceModelSetting())
+		assert.Equal(t, face.ModelAuto, c.FaceModelSetting())
 
 		b, err := os.ReadFile(c.OptionsYaml())
 		require.NoError(t, err)
@@ -1729,7 +1750,9 @@ func TestConfig_ClearFaceModel(t *testing.T) {
 func TestConfig_FaceMigrateScore(t *testing.T) {
 	t.Run("Unset", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
-		assert.Equal(t, face.MigrationScoreThreshold, c.FaceMigrateScore())
+		assert.Equal(t, face.DetectorMigrateScore(c.FaceDetector()), c.FaceMigrateScore())
+		assert.Less(t, c.FaceMigrateScore(), face.DetectorScore(c.FaceDetector()),
+			"a migration floor at the calibrated cutoff recovers nothing the index would not have found")
 	})
 	t.Run("Configured", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
@@ -1756,10 +1779,10 @@ func TestConfig_FaceMigrateScore(t *testing.T) {
 	t.Run("OutOfRange", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.options.FaceMigrateScore = 300
-		assert.Equal(t, face.MigrationScoreThreshold, c.FaceMigrateScore())
+		assert.Equal(t, face.DetectorMigrateScore(c.FaceDetector()), c.FaceMigrateScore())
 	})
 	t.Run("NilConfig", func(t *testing.T) {
-		assert.Equal(t, face.MigrationScoreThreshold, (*Config)(nil).FaceMigrateScore())
+		assert.Equal(t, face.DefaultDetectorMigrateScore(), (*Config)(nil).FaceMigrateScore())
 	})
 }
 

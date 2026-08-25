@@ -45,10 +45,9 @@ const (
 type ModelName = string
 
 const (
-	// ModelDetect resolves the model from the library on the next start that has a database,
-	// and the resolved name is written to "options.yml" so it stays the same afterwards.
-	ModelDetect ModelName = "detect"
-	// ModelAuto is an accepted spelling of ModelDetect.
+	// ModelAuto resolves the model from the library on the next start that has a database, and the
+	// resolved name is written to "options.yml" so it stays the same afterwards. That write is what
+	// tells it apart from the detector's DetectorAuto, which is derived again on every start.
 	ModelAuto ModelName = "auto"
 	// ModelNone disables embedding generation so only face regions are detected.
 	ModelNone ModelName = "none"
@@ -252,15 +251,15 @@ func SameEmbeddingSpace(a, b ModelName) bool {
 	return ModelsComparable(a, b) || ModelsComparable(b, a)
 }
 
-// ParseModelName returns the supported model name matching s, or ModelDetect when the value
-// is empty, asks for detection, or is not recognized. Use KnownModelName to tell an unknown
-// value apart from a request to detect one.
+// ParseModelName returns the supported model name matching s, or ModelAuto when the value is
+// empty, asks for detection, or is not recognized. Use KnownModelName to tell an unknown value
+// apart from a request to detect one.
 func ParseModelName(s string) ModelName {
 	name := NormalizeModelName(s)
 
 	switch name {
-	case "", ModelDetect, ModelAuto:
-		return ModelDetect
+	case "", ModelAuto:
+		return ModelAuto
 	case ModelNone:
 		return name
 	}
@@ -269,7 +268,7 @@ func ParseModelName(s string) ModelName {
 		return name
 	}
 
-	return ModelDetect
+	return ModelAuto
 }
 
 // KnownModelName reports whether s names a supported embedding model, asks for detection,
@@ -278,7 +277,7 @@ func KnownModelName(s string) bool {
 	name := NormalizeModelName(s)
 
 	switch name {
-	case "", ModelDetect, ModelAuto, ModelNone:
+	case "", ModelAuto, ModelNone:
 		return true
 	}
 

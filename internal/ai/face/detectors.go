@@ -58,10 +58,8 @@ type DetectorName = string
 const (
 	// DetectorAuto derives the detector from the configured embedding model. It is derived on
 	// every start rather than resolved once and recorded, which is what tells it apart from the
-	// embedding model's ModelDetect.
+	// embedding model's ModelAuto.
 	DetectorAuto DetectorName = "auto"
-	// DetectorDetect is an accepted spelling of DetectorAuto.
-	DetectorDetect DetectorName = "detect"
 	// DetectorNone disables face detection.
 	DetectorNone DetectorName = "none"
 	// DetectorYuNet is the permissively licensed default.
@@ -83,11 +81,11 @@ var Detectors = []*Detector{
 		Decode:      DecodeYuNet,
 		// The knee its own corpus measured: 65 is the first cutoff at which flowers yield nothing,
 		// with every pinned positive still found. Lower was tried, at the pair the last stable
-		// release ran, and the demo library answered with three "people" on a bee. Re-detection
-		// keeps that low floor, since it pays for a false positive once rather than per picture.
+		// release ran, and the demo library answered with three "people" on a bee - so a migration
+		// buys its extra recall from the span above that evidence rather than from the floor.
 		MinScore:     65,
 		ClusterScore: 70,
-		MigrateScore: 9,
+		MigrateScore: 50,
 		Advertise:    true,
 		Default:      true,
 		ONNX: &onnx.ModelInfo{
@@ -160,7 +158,7 @@ func NormalizeDetectorName(s string) DetectorName {
 // unknown value apart from a request to derive one.
 func ParseDetectorName(s string) DetectorName {
 	switch name := NormalizeDetectorName(s); name {
-	case "", DetectorAuto, DetectorDetect:
+	case "", DetectorAuto:
 		return DetectorAuto
 	case DetectorNone:
 		return name
@@ -177,7 +175,7 @@ func ParseDetectorName(s string) DetectorName {
 // disables detection.
 func KnownDetectorName(s string) bool {
 	switch name := NormalizeDetectorName(s); name {
-	case "", DetectorAuto, DetectorDetect, DetectorNone:
+	case "", DetectorAuto, DetectorNone:
 		return true
 	default:
 		return FindDetector(name) != nil

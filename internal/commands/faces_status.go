@@ -12,12 +12,13 @@ import (
 )
 
 // FacesStatusCommand reports the face detection and recognition configuration together with the
-// state a database connection reveals: the model the library holds, and whether embeddings are
-// paused. It is named for the status rather than the configuration, because `photoprism config`
-// reports the same options and cannot state either.
+// state a database connection reveals: the model the library holds, whether embeddings are paused,
+// and which threshold is holding automatic clustering back. It is named for the status rather than
+// the configuration, because `photoprism config` reports the same options and cannot state any of
+// it; "doctor" is an alias, since diagnosing is what an operator comes here to do.
 var FacesStatusCommand = &cli.Command{
 	Name:    "status",
-	Aliases: []string{"config"},
+	Aliases: []string{"config", "doctor"},
 	Usage:   "Reports the face detection and recognition status",
 	Flags:   report.CliFlags,
 	Action:  facesStatusAction,

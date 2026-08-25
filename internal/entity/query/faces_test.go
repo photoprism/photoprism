@@ -192,6 +192,36 @@ func TestCountNewFaceMarkers(t *testing.T) {
 	})
 }
 
+// TestCountFaceClusterGates pins that each bar is counted on its own, which is what lets a report
+// name the one that is actually holding rather than only that clustering did not run.
+func TestCountFaceClusterGates(t *testing.T) {
+	model := face.EmbeddingModelName()
+
+	t.Run("EachBarIsCountedOnItsOwn", func(t *testing.T) {
+		gates := CountFaceClusterGates(model, 160, 50)
+
+		assert.Positive(t, gates.Unclustered)
+		assert.LessOrEqual(t, gates.SizeOK, gates.Unclustered)
+		assert.LessOrEqual(t, gates.ScoreOK, gates.Unclustered)
+		assert.LessOrEqual(t, gates.Eligible, gates.SizeOK)
+		assert.LessOrEqual(t, gates.Eligible, gates.ScoreOK)
+	})
+	t.Run("SizeIsTheGate", func(t *testing.T) {
+		// A size nothing reaches must leave the score count untouched, or the report would blame
+		// whichever bar happened to be listed first.
+		gates := CountFaceClusterGates(model, 100000, 0)
+
+		assert.Zero(t, gates.SizeOK)
+		assert.Zero(t, gates.Eligible)
+		assert.Equal(t, gates.Unclustered, gates.ScoreOK)
+	})
+	t.Run("NoBars", func(t *testing.T) {
+		gates := CountFaceClusterGates(model, 0, 0)
+
+		assert.Equal(t, gates.Unclustered, gates.Eligible)
+	})
+}
+
 func TestMergeFaces(t *testing.T) {
 	t.Run("SameSubjects", func(t *testing.T) {
 		face1 := entity.NewFace(

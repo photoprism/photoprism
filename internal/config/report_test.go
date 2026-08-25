@@ -11,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/dsn"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 )
 
@@ -450,9 +451,11 @@ func TestConfig_faceModelReport(t *testing.T) {
 	})
 
 	t.Run("Named", func(t *testing.T) {
+		// SFace is the shipped default, so the row says so whether it was named or detected: the
+		// word describes the model rather than how this instance arrived at it.
 		c := newSFaceTestConfig(t)
 
-		assert.Equal(t, face.ModelDisplayName(face.ModelSFace), c.faceModelReport())
+		assert.Equal(t, face.ModelDisplayName(face.ModelSFace)+" (default)", c.faceModelReport())
 	})
 	t.Run("Default", func(t *testing.T) {
 		// Nothing is pinned, so the row names the model that is going to apply and says the
@@ -490,7 +493,7 @@ func TestConfig_faceModelReport(t *testing.T) {
 		c := newSFaceTestConfig(t)
 		face.BlockEmbeddings("12 marker(s) use facenet")
 
-		assert.Equal(t, face.ModelDisplayName(face.ModelSFace)+" (paused: 12 marker(s) use facenet)", c.faceModelReport())
+		assert.Equal(t, face.ModelDisplayName(face.ModelSFace)+" (default, paused: 12 marker(s) use facenet)", c.faceModelReport())
 	})
 	t.Run("DetectNamesTheLibraryModel", func(t *testing.T) {
 		// "faces status" connects, so it is the one report where the detected model is the one
@@ -498,7 +501,7 @@ func TestConfig_faceModelReport(t *testing.T) {
 		c := TestConfig()
 		setting := c.options.FaceModel
 		t.Cleanup(func() { c.options.FaceModel = setting })
-		c.options.FaceModel = face.ModelDetect
+		c.options.FaceModel = face.ModelAuto
 
 		assert.Contains(t, c.faceModelReport(), "(default")
 	})
@@ -545,10 +548,21 @@ func TestConfig_faceDetectorReport(t *testing.T) {
 	t.Cleanup(func() { c.options.FaceDetector = "" })
 
 	t.Run("Named", func(t *testing.T) {
-		// The faces report is read rather than parsed, so it names the detector the way an
-		// operator would. "show config" keeps the identifier.
+		// The faces report is read rather than parsed, so it names the detector the way an operator
+		// would. "show config" keeps the identifier. "(default)" is a property of the value, so it
+		// stands whether the detector was named or derived.
 		c.options.FaceDetector = face.DetectorYuNet
-		assert.Equal(t, face.DetectorDisplayName(face.DetectorYuNet), c.faceDetectorReport())
+		assert.Equal(t, face.DetectorDisplayName(face.DetectorYuNet)+" (default)", c.faceDetectorReport())
+	})
+	t.Run("NamedButNotTheDefault", func(t *testing.T) {
+		c.options.FaceDetector = face.DetectorSCRFD
+		t.Setenv(face.LicenseAcceptanceVar, "1")
+
+		if c.FaceDetector() != face.DetectorSCRFD {
+			t.Skip("scrfd is not installed")
+		}
+
+		assert.Equal(t, face.DetectorDisplayName(face.DetectorSCRFD), c.faceDetectorReport())
 	})
 	t.Run("Disabled", func(t *testing.T) {
 		c.options.FaceDetector = face.DetectorNone
@@ -559,6 +573,7 @@ func TestConfig_faceDetectorReport(t *testing.T) {
 		// the word "auto", which says nothing about whether anything will be detected.
 		c.options.FaceDetector = ""
 		assert.Equal(t, fmt.Sprintf("%s (default)", face.DetectorDisplayName(c.FaceDetector())), c.faceDetectorReport())
+		assert.Equal(t, face.DefaultDetectorName(), c.FaceDetector())
 	})
 	t.Run("NotAvailable", func(t *testing.T) {
 		// A named detector that cannot run disables detection, so the row has to name it: "none"
@@ -722,7 +737,92 @@ func TestConfig_faceRecognitionNote(t *testing.T) {
 	})
 }
 
+// TestConfig_faceClusterStatus pins that the report names the bar holding clustering back. A
+// library that never forms a cluster otherwise looks exactly like one that clustered everything.
+func TestConfig_faceClusterStatus(t *testing.T) {
+	c := TestConfig()
+
+	t.Run("SizeIsTheGate", func(t *testing.T) {
+		size := c.options.FaceClusterSize
+		t.Cleanup(func() { c.options.FaceClusterSize = size })
+		c.options.FaceClusterSize = 10000
+
+		status := c.faceClusterStatus()
+
+		assert.Contains(t, status, "Automatic clustering needs")
+		assert.Contains(t, status, "face-cluster-size of 10000 px")
+		assert.Contains(t, status, "face-cluster-core")
+	})
+	t.Run("NoDatabase", func(t *testing.T) {
+		// It runs one query per bar, so a report without a connection must skip it rather than
+		// count zero and blame a threshold.
+		assert.Empty(t, NewConfig(CliTestContext()).faceClusterStatus())
+	})
+	t.Run("NilConfig", func(t *testing.T) {
+		assert.Empty(t, (*Config)(nil).faceClusterStatus())
+	})
+}
+
+func TestFaceClusterStatusFor(t *testing.T) {
+	t.Run("Enough", func(t *testing.T) {
+		// A line that appears on every healthy instance is one nobody reads on the instance that
+		// is not, so it is emitted only while clustering is actually short.
+		assert.Empty(t, faceClusterStatusFor(query.FaceClusterGates{Unclustered: 20, SizeOK: 20, ScoreOK: 20, Eligible: 20}, 8, 60, 70, 4))
+	})
+	t.Run("NothingUnclustered", func(t *testing.T) {
+		assert.Empty(t, faceClusterStatusFor(query.FaceClusterGates{}, 8, 60, 70, 4))
+	})
+	t.Run("VolumeOnly", func(t *testing.T) {
+		// Every marker clears every bar, so naming thresholds would send an operator to tune bars
+		// that are excluding nothing.
+		status := faceClusterStatusFor(query.FaceClusterGates{Unclustered: 3, SizeOK: 3, ScoreOK: 3, Eligible: 3}, 8, 60, 70, 4)
+
+		assert.Contains(t, status, "needs 8 new markers and has 3")
+		assert.Contains(t, status, "no threshold is excluding")
+		assert.NotContains(t, status, "face-cluster-size")
+	})
+	t.Run("SizeIsTheGate", func(t *testing.T) {
+		status := faceClusterStatusFor(query.FaceClusterGates{Unclustered: 40, SizeOK: 2, ScoreOK: 40, Eligible: 2}, 8, 60, 70, 4)
+
+		assert.Contains(t, status, "2 clear the face-cluster-size of 60 px")
+		assert.Contains(t, status, "40 the face-cluster-score of 70")
+	})
+	t.Run("ScoreIsTheGate", func(t *testing.T) {
+		status := faceClusterStatusFor(query.FaceClusterGates{Unclustered: 40, SizeOK: 40, ScoreOK: 1, Eligible: 1}, 8, 60, 70, 4)
+
+		assert.Contains(t, status, "40 clear the face-cluster-size of 60 px")
+		assert.Contains(t, status, "1 the face-cluster-score of 70")
+	})
+}
+
+func TestConfig_faceClusterScoreFloor(t *testing.T) {
+	// The option and the marker queries use opposite conventions for zero, so the mapping is where
+	// "let the detector decide" would silently become "no filter at all".
+	c := NewConfig(CliTestContext())
+
+	t.Run("Detector", func(t *testing.T) {
+		c.options.FaceClusterScore = 0
+		assert.Equal(t, face.ClusterScoreAuto, c.faceClusterScoreFloor())
+	})
+	t.Run("Configured", func(t *testing.T) {
+		c.options.FaceClusterScore = 42
+		assert.Equal(t, 42, c.faceClusterScoreFloor())
+	})
+	t.Run("Disabled", func(t *testing.T) {
+		c.options.FaceClusterScore = -1
+		assert.Equal(t, 0, c.faceClusterScoreFloor())
+	})
+}
+
 func TestConfig_faceEmbedderStatus(t *testing.T) {
+	// The embedder is process-wide, so a test that read it as another test left it would report
+	// every model as failing to load - which is the state this is supposed to detect.
+	restore := face.ConfiguredModel()
+	require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelNone}))
+	t.Cleanup(func() {
+		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+	})
+
 	c := NewConfig(CliTestContext())
 
 	t.Run("Ok", func(t *testing.T) {

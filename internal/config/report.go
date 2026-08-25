@@ -9,6 +9,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/vision"
+	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
 )
@@ -490,18 +491,21 @@ func (c *Config) faceEngineReport() string {
 	return fmt.Sprintf("%s (deprecated)", face.ParseEngine(c.options.FaceEngine))
 }
 
-// faceDetectorReport names the detector in force and where that name came from.
+// faceDetectorReport names the detector in force, marks it when it is the one a build runs unless
+// something selects otherwise, and says so when it is not the one that was asked for.
 func (c *Config) faceDetectorReport() string {
-	resolved := face.DetectorDisplayName(c.FaceDetector())
+	inForce := c.FaceDetector()
+	resolved := face.DetectorDisplayName(inForce)
 
-	switch setting := c.FaceDetectorSetting(); {
-	case setting == face.DetectorAuto && c.FaceDetector() != face.DetectorNone:
-		return faceReportValue(resolved, "default")
-	case setting != face.DetectorAuto && setting != c.FaceDetector():
+	if setting := c.FaceDetectorSetting(); setting != face.DetectorAuto && setting != inForce {
 		return faceReportValue(resolved, fmt.Sprintf("%s is not available", clean.Log(setting)))
-	default:
-		return resolved
 	}
+
+	if inForce != face.DetectorNone && inForce == face.DefaultDetectorName() {
+		return faceReportValue(resolved, "default")
+	}
+
+	return resolved
 }
 
 // faceModelReport names the embedding model in force, where that name came from, and why
@@ -519,7 +523,7 @@ func (c *Config) faceModelReport() string {
 		return faceReportValue(resolved, "embeddings disabled")
 	case inForce != face.ModelNone:
 		break
-	case setting == face.ModelDetect:
+	case setting == face.ModelAuto:
 		return faceReportValue(resolved, "no embedding model is installed")
 	default:
 		return faceReportValue(resolved, fmt.Sprintf("%s is not available", clean.Log(setting)))
@@ -527,7 +531,10 @@ func (c *Config) faceModelReport() string {
 
 	var notes []string
 
-	if setting == face.ModelDetect {
+	// Whether it is the shipped default, not whether it was derived: an operator reads the word as
+	// a property of the model, and a detected name is written back, so the two would soon disagree
+	// about a model nobody chose either way.
+	if inForce == face.DefaultModelName() {
 		notes = append(notes, "default")
 	}
 
@@ -618,6 +625,10 @@ func (c *Config) FaceStatus() []string {
 		lines = append(lines, status)
 	}
 
+	if status := c.faceClusterStatus(); status != "" {
+		lines = append(lines, status)
+	}
+
 	// Only reported while one is held. A lock nothing states is the difference between an instance
 	// that explains why it indexes nothing and one that has to be diagnosed by finding a file.
 	if held := c.FacesLocked(); held != "" {
@@ -625,6 +636,59 @@ func (c *Config) FaceStatus() []string {
 	}
 
 	return lines
+}
+
+// faceClusterStatus names the bar holding automatic clustering back, or "" when nothing is.
+//
+// A library that never forms a cluster is indistinguishable from one that clustered everything:
+// both simply show no new people. Answering it took hand-written SQL twice, though the thresholds
+// that exclude a marker are the ones this instance already knows.
+func (c *Config) faceClusterStatus() string {
+	if c == nil || c.db == nil || c.EffectiveFaceModel() == face.ModelNone {
+		return ""
+	}
+
+	size, core := c.FaceClusterSize(), c.FaceClusterCore()
+	gates := query.CountFaceClusterGates(c.EffectiveFaceModel(), size, c.faceClusterScoreFloor())
+
+	return faceClusterStatusFor(gates, 2*core, size, c.FaceClusterScoreEffective(), core)
+}
+
+// faceClusterStatusFor renders the clustering status for a set of gate counts, or "" when nothing
+// is holding. Separate from the queries so every branch is reachable without a library shaped to
+// produce it.
+func faceClusterStatusFor(gates query.FaceClusterGates, required, size, score, core int) string {
+	// Enough to run, or nothing left to cluster: neither is a state an operator has to act on, and
+	// a line that appears on every healthy instance is one nobody reads on the instance that is not.
+	if gates.Eligible >= required || gates.Unclustered == 0 {
+		return ""
+	}
+
+	// No bar excludes anything, so the shortfall is volume alone. Naming thresholds here would
+	// send an operator to tune bars that are already passing every marker they see.
+	if gates.Eligible == gates.Unclustered {
+		return fmt.Sprintf("Automatic clustering needs %d new markers and has %d, which no threshold is excluding "+
+			"(face-cluster-core %d sets how many are needed).", required, gates.Eligible, core)
+	}
+
+	return fmt.Sprintf("Automatic clustering needs %d new markers and has %d: of the %d that no cluster has taken, "+
+		"%d clear the face-cluster-size of %d px and %d the face-cluster-score of %d "+
+		"(face-cluster-core %d sets how many are needed).",
+		required, gates.Eligible, gates.Unclustered, gates.SizeOK, size, gates.ScoreOK, score, core)
+}
+
+// faceClusterScoreFloor maps FACE_CLUSTER_SCORE onto the convention the marker queries use, where
+// zero removes the filter and negative asks for the bar of the detector that scored each marker.
+// The two are the inverse of the option's, where zero is what defers to the detector.
+func (c *Config) faceClusterScoreFloor() int {
+	switch score := c.FaceClusterScore(); {
+	case score > 0:
+		return score
+	case score < 0:
+		return 0
+	default:
+		return face.ClusterScoreAuto
+	}
 }
 
 // faceEmbedderStatus states why a model that is otherwise in force is generating no embeddings,

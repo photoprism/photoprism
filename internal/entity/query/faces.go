@@ -177,10 +177,37 @@ func RemoveAutoFaceClusters() (removed int, err error) {
 	return int(res.RowsAffected), res.Error
 }
 
+// FaceClusterGates counts the new face markers automatic clustering could use, with each bar that
+// can exclude one applied on its own and then together, so a report can name the gate that holds.
+type FaceClusterGates struct {
+	Unclustered int
+	SizeOK      int
+	ScoreOK     int
+	Eligible    int
+}
+
+// CountFaceClusterGates counts the new face markers at each clustering bar.
+//
+// It takes the model, size and score rather than reading them from the loaded engine, because the
+// command that reports them never loads one and would otherwise count against the shipped defaults.
+func CountFaceClusterGates(model string, size, score int) FaceClusterGates {
+	return FaceClusterGates{
+		Unclustered: countNewFaceMarkers(model, 0, 0),
+		SizeOK:      countNewFaceMarkers(model, size, 0),
+		ScoreOK:     countNewFaceMarkers(model, 0, score),
+		Eligible:    countNewFaceMarkers(model, size, score),
+	}
+}
+
 // CountNewFaceMarkers counts the number of new face markers in the index.
 func CountNewFaceMarkers(size, score int) (n int) {
+	return countNewFaceMarkers(face.EmbeddingModelName(), size, score)
+}
+
+// countNewFaceMarkers counts the face markers holding a vector the specified model can read that
+// no cluster has taken, and that were added after the newest cluster that model produced.
+func countNewFaceMarkers(current string, size, score int) (n int) {
 	var f entity.Face
-	current := face.EmbeddingModelName()
 
 	if err := whereEmbeddingModel(Db().Where("face_src = ?", entity.SrcAuto), current).
 		Order("created_at DESC").Limit(1).Take(&f).Error; err != nil {

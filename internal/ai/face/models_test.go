@@ -74,11 +74,8 @@ func TestSameEmbeddingSpace(t *testing.T) {
 }
 
 func TestParseModelName(t *testing.T) {
-	t.Run("Detect", func(t *testing.T) {
-		assert.Equal(t, ModelDetect, ParseModelName("Detect"))
-	})
-	t.Run("AutoIsDetect", func(t *testing.T) {
-		assert.Equal(t, ModelDetect, ParseModelName("Auto"))
+	t.Run("Auto", func(t *testing.T) {
+		assert.Equal(t, ModelAuto, ParseModelName("Auto"))
 	})
 	t.Run("None", func(t *testing.T) {
 		assert.Equal(t, ModelNone, ParseModelName("none"))
@@ -90,19 +87,22 @@ func TestParseModelName(t *testing.T) {
 		assert.Equal(t, ModelArcFaceR50, ParseModelName("arcface-r50"))
 	})
 	t.Run("Unknown", func(t *testing.T) {
-		assert.Equal(t, ModelDetect, ParseModelName("dlib"))
+		assert.Equal(t, ModelAuto, ParseModelName("dlib"))
 	})
 	t.Run("Empty", func(t *testing.T) {
-		assert.Equal(t, ModelDetect, ParseModelName(""))
+		assert.Equal(t, ModelAuto, ParseModelName(""))
 	})
 }
 
 func TestKnownModelName(t *testing.T) {
-	t.Run("Detect", func(t *testing.T) {
-		assert.True(t, KnownModelName("detect"))
-	})
 	t.Run("Auto", func(t *testing.T) {
 		assert.True(t, KnownModelName("auto"))
+	})
+	t.Run("Detect", func(t *testing.T) {
+		// It was an accepted spelling of "auto" during development and never shipped, so it now
+		// reads as a typo: reported once, and applied as a request to detect the model.
+		assert.False(t, KnownModelName("detect"))
+		assert.Equal(t, ModelAuto, ParseModelName("detect"))
 	})
 	t.Run("Empty", func(t *testing.T) {
 		assert.True(t, KnownModelName(""))
@@ -150,7 +150,7 @@ func TestFindEmbeddingModel(t *testing.T) {
 		assert.Nil(t, FindEmbeddingModel("dlib"))
 	})
 	t.Run("Detect", func(t *testing.T) {
-		assert.Nil(t, FindEmbeddingModel(ModelDetect))
+		assert.Nil(t, FindEmbeddingModel(ModelAuto))
 	})
 }
 
@@ -161,7 +161,7 @@ func TestEmbeddingModelNames(t *testing.T) {
 		assert.Equal(t, []ModelName{ModelArcFaceMBF, ModelArcFaceR50, ModelAuraFace, ModelFaceNet, ModelSFace}, names)
 	})
 	t.Run("ExcludesAliases", func(t *testing.T) {
-		assert.NotContains(t, names, ModelDetect)
+		assert.NotContains(t, names, ModelAuto)
 		assert.NotContains(t, names, ModelAuto)
 		assert.NotContains(t, names, ModelNone)
 	})

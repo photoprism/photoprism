@@ -35,7 +35,6 @@ func TestParseDetectorName(t *testing.T) {
 	t.Run("Derive", func(t *testing.T) {
 		assert.Equal(t, DetectorAuto, ParseDetectorName(""))
 		assert.Equal(t, DetectorAuto, ParseDetectorName(DetectorAuto))
-		assert.Equal(t, DetectorAuto, ParseDetectorName(DetectorDetect), "detect is an accepted spelling")
 	})
 	t.Run("None", func(t *testing.T) {
 		assert.Equal(t, DetectorNone, ParseDetectorName("None"))
@@ -49,10 +48,16 @@ func TestParseDetectorName(t *testing.T) {
 }
 
 func TestKnownDetectorName(t *testing.T) {
-	for _, name := range []string{"", DetectorAuto, DetectorDetect, DetectorNone, DetectorYuNet, "SCRFD"} {
+	for _, name := range []string{"", DetectorAuto, DetectorNone, DetectorYuNet, "SCRFD"} {
 		assert.True(t, KnownDetectorName(name), name)
 	}
-	assert.False(t, KnownDetectorName("pigo"))
+
+	// "detect" was an accepted spelling of "auto" during development and never shipped. It now
+	// reads as any other unknown value: reported once, and applied as a request to derive one.
+	for _, name := range []string{"pigo", "detect"} {
+		assert.False(t, KnownDetectorName(name), name)
+		assert.Equal(t, DetectorAuto, ParseDetectorName(name), name)
+	}
 }
 
 func TestDetectorsComparable(t *testing.T) {
