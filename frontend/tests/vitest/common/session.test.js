@@ -961,7 +961,7 @@ describe("common/session", () => {
 
   // A10 contract: isUser / isAdmin / isSuperAdmin must always return a Boolean,
   // so bindings like `:disabled="isAdmin"` never pass null/undefined to a
-  // Vuetify Boolean prop. See specs/frontend/best-practices.md#a10.
+  // Vuetify Boolean prop.
   describe("isUser / isAdmin / isSuperAdmin Boolean contract", () => {
     it("return Boolean false when no user is loaded", () => {
       const session = new Session(new StorageShim(), $config);

@@ -1,6 +1,6 @@
 # XMP Fixture Corpus
 
-Test fixtures for the `internal/meta` XMP sidecar reader rewrite (issue #2260, proposal `specs/proposals/xmp-improvement.md`).
+Test fixtures for the `internal/meta` XMP sidecar reader rewrite (issue #2260).
 
 Each fixture is paired with an `.exiftool.txt` reference (output of `exiftool -X <file>`) that captures the canonical interpretation; regression tests compare reader output against the same XMP read through ExifTool.
 
