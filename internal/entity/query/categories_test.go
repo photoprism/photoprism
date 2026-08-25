@@ -27,10 +27,7 @@ func TestCategoryLabels(t *testing.T) {
 			entity.ResetTestFixtures()
 		})
 		// Clean the database as if it's brand new
-		entity.Entities.Truncate(entity.Db())
-		entity.CreateDefaultFixtures()
-		entity.FlushCaches()
-		entity.File{}.RegenerateIndex()
+		entity.ResetNoTestFixtures()
 
 		categories := CategoryLabels(1000, 0)
 		assert.NotNil(t, categories)

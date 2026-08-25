@@ -23,6 +23,10 @@ func countTestRows(t *testing.T, db *gorm.DB, name string) int64 {
 
 func TestTables_Truncate(t *testing.T) {
 	t.Run("KeepsSchemaTables", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		}
+
 		migrations := migrate.Migration{}.TableName()
 		before := countTestRows(t, UnscopedDb(), migrations)
 		require.NotZero(t, before, "migrations must not be empty")

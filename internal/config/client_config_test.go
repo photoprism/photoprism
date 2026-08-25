@@ -148,10 +148,7 @@ func TestConfig_ClientUser(t *testing.T) {
 			entity.ResetTestFixtures()
 		})
 		// Clean the database as if it's brand new
-		entity.Entities.Truncate(entity.Db())
-		entity.CreateDefaultFixtures()
-		entity.FlushCaches()
-		entity.File{}.RegenerateIndex()
+		entity.ResetNoTestFixtures()
 
 		var count int64
 		c.Db().Model(&entity.Photo{}).Count(&count)
