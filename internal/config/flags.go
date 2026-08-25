@@ -1330,7 +1330,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "face-run",
-			Usage:   "`WHEN` face detection and recognition run (" + vision.RunTypeUsageString() + ")",
+			Usage:   "`WHEN` face detection and recognition should run (" + vision.RunTypeUsageString() + ")",
 			EnvVars: EnvVars("FACE_RUN"),
 		},
 		DocDefault: vision.ReportRunType(vision.RunAuto)}, {

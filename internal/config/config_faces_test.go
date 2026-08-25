@@ -139,7 +139,28 @@ func TestConfig_FaceEngineShouldRun(t *testing.T) {
 		assert.False(t, c.FaceEngineShouldRun(vision.RunOnIndex))
 		c.options.DisableFaces = false
 	})
-	t.Run("RunOnDemandSkipsSchedule", func(t *testing.T) {
+	t.Run("AutoSkipsTheScheduledPass", func(t *testing.T) {
+		// Left on auto, faces stay out of scheduled cron runs so a background job does not start
+		// detecting unannounced. FACE_RUN is what changes that, not a Run value in "vision.yml".
+		c := NewConfig(CliTestContext())
+		c.options.FaceRun = ""
+
+		assert.True(t, c.FaceEngineShouldRun(vision.RunManual))
+		assert.False(t, c.FaceEngineShouldRun(vision.RunOnSchedule))
+	})
+	t.Run("RunOnDemandCoversTheScheduledPass", func(t *testing.T) {
+		// It names the scheduled run in its own definition, and the face copy of the schedule table
+		// used to drop that term, which left this behaving exactly like newly-indexed.
+		c := NewConfig(CliTestContext())
+		c.options.FaceRun = vision.RunOnDemand
+
+		assert.True(t, c.FaceEngineShouldRun(vision.RunOnSchedule))
+		assert.True(t, c.FaceEngineShouldRun(vision.RunNewlyIndexed))
+		assert.True(t, c.FaceEngineShouldRun(vision.RunManual))
+		assert.False(t, c.FaceEngineShouldRun(vision.RunOnIndex), "on-demand does not detect inline")
+	})
+	t.Run("VisionYamlDoesNotSchedule", func(t *testing.T) {
+		// A Run value there is read and ignored, so a test that sets one is testing "auto".
 		origVision := vision.Config
 		t.Cleanup(func() { vision.Config = origVision })
 
@@ -148,12 +169,9 @@ func TestConfig_FaceEngineShouldRun(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		m := vision.Config.Model(vision.ModelTypeFace)
 		require.NotNil(t, m)
-		m.Run = vision.RunOnDemand
+		m.Run = vision.RunNever
 
-		assert.True(t, c.FaceEngineShouldRun(vision.RunOnDemand))
 		assert.True(t, c.FaceEngineShouldRun(vision.RunManual))
-		assert.True(t, c.FaceEngineShouldRun(vision.RunAuto))
-		assert.False(t, c.FaceEngineShouldRun(vision.RunOnSchedule))
 	})
 }
 

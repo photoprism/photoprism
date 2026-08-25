@@ -79,37 +79,23 @@ func (c *Config) FaceEngineShouldRun(when vision.RunType) bool {
 		return false
 	}
 
-	run := c.FaceEngineRunType()
 	when = vision.ParseRunType(when)
 
-	switch run {
-	case vision.RunNever:
-		return false
-	case vision.RunManual:
-		return when == vision.RunManual
-	case vision.RunAlways:
-		return when != vision.RunNever
-	case vision.RunNewlyIndexed:
-		return when == vision.RunManual || when == vision.RunNewlyIndexed || when == vision.RunOnDemand
-	case vision.RunOnDemand:
-		return when == vision.RunAuto || when == vision.RunManual || when == vision.RunNewlyIndexed || when == vision.RunOnDemand
-	case vision.RunOnSchedule:
-		return when == vision.RunAuto || when == vision.RunManual || when == vision.RunOnSchedule || when == vision.RunOnDemand
+	// Every schedule but "auto" is decided by the shared table, so face detection and a vision
+	// model cannot disagree about what a run type means.
+	if should, decided := vision.ShouldRunAt(c.FaceEngineRunType(), when); decided {
+		return should
+	}
+
+	// "auto" is where faces differ deliberately: they detect inline only on a host fast enough,
+	// and skip the scheduled pass so a background job does not start detecting unannounced.
+	switch when {
+	case vision.RunAuto, vision.RunAlways, vision.RunManual, vision.RunOnDemand:
+		return true
 	case vision.RunOnIndex:
-		return when == vision.RunManual || when == vision.RunOnIndex
-	case vision.RunAuto:
-		fallthrough
-	default:
-		switch when {
-		case vision.RunAuto, vision.RunAlways, vision.RunManual, vision.RunOnDemand:
-			return true
-		case vision.RunOnIndex:
-			return c.faceEngineRunsOnIndex()
-		case vision.RunNewlyIndexed:
-			return !c.faceEngineRunsOnIndex()
-		case vision.RunOnSchedule, vision.RunNever:
-			return false
-		}
+		return c.faceEngineRunsOnIndex()
+	case vision.RunNewlyIndexed:
+		return !c.faceEngineRunsOnIndex()
 	}
 
 	return false

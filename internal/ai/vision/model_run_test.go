@@ -189,6 +189,51 @@ func TestRunTypeUsageString(t *testing.T) {
 	})
 }
 
+// TestShouldRunAt pins the one table every caller shares, and that RunAuto is not decided in it.
+func TestShouldRunAt(t *testing.T) {
+	t.Run("AutoIsLeftToTheCaller", func(t *testing.T) {
+		// A vision model asks whether it is the default one and face detection whether the host is
+		// fast enough, so a decision here would have to be wrong for one of them.
+		for _, when := range []RunType{RunAuto, RunAlways, RunOnIndex, RunNewlyIndexed, RunOnSchedule, RunOnDemand, RunManual, RunNever} {
+			_, decided := ShouldRunAt(RunAuto, when)
+			assert.False(t, decided, when)
+		}
+	})
+	t.Run("OnDemandCoversTheScheduledPass", func(t *testing.T) {
+		// Its own definition names the scheduled run, and a second copy of this table dropped that
+		// term, which left FACE_RUN=on-demand behaving exactly like newly-indexed.
+		for _, when := range []RunType{RunManual, RunNewlyIndexed, RunOnSchedule, RunOnDemand} {
+			should, decided := ShouldRunAt(RunOnDemand, when)
+			assert.True(t, decided, when)
+			assert.True(t, should, when)
+		}
+
+		should, _ := ShouldRunAt(RunOnDemand, RunOnIndex)
+		assert.False(t, should, "on-demand does not detect inline")
+	})
+	t.Run("EveryRunTypeIsDistinct", func(t *testing.T) {
+		// Two options that decide alike everywhere are one option and a choice nobody can act on.
+		contexts := []RunType{RunOnIndex, RunNewlyIndexed, RunOnSchedule, RunManual}
+		seen := make(map[string]RunType, 7)
+
+		for _, run := range []RunType{RunNever, RunManual, RunAlways, RunNewlyIndexed, RunOnDemand, RunOnSchedule, RunOnIndex} {
+			key := ""
+
+			for _, when := range contexts {
+				should, _ := ShouldRunAt(run, when)
+				key += map[bool]string{true: "1", false: "0"}[should]
+			}
+
+			assert.NotContains(t, seen, key, run)
+			seen[key] = run
+		}
+	})
+	t.Run("Unknown", func(t *testing.T) {
+		_, decided := ShouldRunAt("nonexistent", RunManual)
+		assert.False(t, decided, "an unknown value asks for auto, which is not decided here")
+	})
+}
+
 // TestKnownRunType pins what ParseRunType cannot answer: it returns RunAuto both for the values
 // that ask for it and for the ones it does not recognize, so a typo could not be reported.
 func TestKnownRunType(t *testing.T) {
