@@ -27,6 +27,7 @@
 /specs/
 /docs/
 /bin/
+/i
 
 # Docker configuration files:
 .dockerignore
