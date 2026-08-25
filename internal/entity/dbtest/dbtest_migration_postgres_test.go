@@ -19,6 +19,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/migrate"
+	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/testextras"
 	"github.com/photoprism/photoprism/pkg/dsn"
 )
@@ -130,7 +131,6 @@ func TestDialectPostgreSQL(t *testing.T) {
 
 		// Test that the maximum values can be added to the database
 		populatePhotoPrismStructsWithMax(t, db)
-
 	})
 
 	t.Run("EmptyDB", func(t *testing.T) {
@@ -208,5 +208,13 @@ func TestDialectPostgreSQL(t *testing.T) {
 			assert.Equal(t, int64(0), count)
 		}
 	})
+	t.Run("AutoMigrationFailure", func(t *testing.T) {
+		require.NoError(t, entity.Db().AutoMigrate(&entity.File{}))
+		var results search.PhotoResults
+		assert.NoError(t, entity.Db().Raw("SELECT ROW_NUMBER() OVER (PARTITION BY photos.id, files.id ORDER BY files.media_id) as rec_num, photos.id FROM files JOIN photos ON files.photo_id = photos.id AND files.media_id IS NOT NULL").Scan(&results).Error)
+		// Test to make sure that after using search.Photo (via search.PhotoResults) that no errors happen in the AutoMigrate
+		assert.NoError(t, entity.Db().AutoMigrate(&entity.File{}))
+	})
+
 	log.Info("End Expect many table does not exist or no such table Error or SQLSTATE from migration.go")
 }

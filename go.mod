@@ -97,9 +97,9 @@ require (
 	golang.org/x/sys v0.47.0
 	google.golang.org/protobuf v1.36.12
 	gorm.io/driver/mysql v1.6.0
-	gorm.io/driver/postgres v1.6.0
+	gorm.io/driver/postgres v1.6.2
 	gorm.io/driver/sqlite v1.6.0
-	gorm.io/gorm v1.31.1
+	gorm.io/gorm v1.31.2
 )
 
 require (
@@ -203,7 +203,6 @@ require (
 require (
 	github.com/emersion/go-webdav v0.7.0
 	github.com/mattn/go-runewidth v0.0.24 // indirect
-	github.com/tidwall/pretty v1.2.1 // indirect
 )
 
 go 1.25.0

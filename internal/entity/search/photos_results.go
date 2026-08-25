@@ -117,7 +117,7 @@ type Photo struct {
 	DetailsLicense   string `json:"DetailsLicense,omitempty" select:"-"`
 
 	// List of files if search results are merged.
-	Files []entity.File `json:"Files" select:"-"`
+	Files []entity.File `json:"Files" select:"-" gorm:"-:migration"` // prevent gorm migration as it causes issues with AutoMigration IF search.Photo has been used in a query before the migration.
 }
 
 // GetID returns the numeric entity ID.
