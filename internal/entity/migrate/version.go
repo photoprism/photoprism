@@ -82,6 +82,7 @@ func (m *Version) Create(db *gorm.DB) error {
 	versionMutex.Lock()
 	defer versionMutex.Unlock()
 
+	m.CreatedAt = time.Now().UTC()
 	return db.Create(m).Error
 }
 
@@ -94,6 +95,12 @@ func (m *Version) Save(db *gorm.DB) error {
 	versionMutex.Lock()
 	defer versionMutex.Unlock()
 
+	if m.CreatedAt.IsZero() {
+		m.CreatedAt = time.Now().UTC()
+	}
+	if m.UpdatedAt.IsZero() {
+		m.UpdatedAt = time.Now().UTC()
+	}
 	return db.Save(m).Error
 }
 
