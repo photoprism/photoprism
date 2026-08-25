@@ -256,6 +256,32 @@ func TestCountFaceClusterGates(t *testing.T) {
 		assert.Equal(t, countNewFaceMarkers(model, 0, 0, false), CountFaceClusterGates(model, 0, 0).Unclustered)
 		assert.Equal(t, countNewFaceMarkers(model, 0, 0, true), CountFaceClusterGates(model, 0, 0).Recent)
 	})
+	t.Run("OnePassAgreesWithOneQueryPerBar", func(t *testing.T) {
+		// The five counts moved into one scan with conditional sums, and the score bar became an
+		// expression instead of a WHERE. Every field is compared against the query it replaced,
+		// across the bar shapes that take different branches: off, fixed, and per-detector.
+		for _, bar := range []struct {
+			name  string
+			size  int
+			score int
+		}{
+			{"NoBars", 0, 0},
+			{"SizeOnly", 60, 0},
+			{"FixedScore", 60, 50},
+			{"PerDetectorScore", 60, face.ClusterScoreAuto},
+			{"SizeNothingReaches", 100000, face.ClusterScoreAuto},
+		} {
+			t.Run(bar.name, func(t *testing.T) {
+				gates := CountFaceClusterGates(model, bar.size, bar.score)
+
+				assert.Equal(t, countNewFaceMarkers(model, 0, 0, false), gates.Unclustered)
+				assert.Equal(t, countNewFaceMarkers(model, 0, 0, true), gates.Recent)
+				assert.Equal(t, countNewFaceMarkers(model, bar.size, 0, true), gates.SizeOK)
+				assert.Equal(t, countNewFaceMarkers(model, 0, bar.score, true), gates.ScoreOK)
+				assert.Equal(t, countNewFaceMarkers(model, bar.size, bar.score, true), gates.Eligible)
+			})
+		}
+	})
 }
 
 func TestMergeFaces(t *testing.T) {
