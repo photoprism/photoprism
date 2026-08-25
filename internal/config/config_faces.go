@@ -80,10 +80,20 @@ func (c *Config) FaceEngineShouldRun(when vision.RunType) bool {
 	}
 
 	when = vision.ParseRunType(when)
+	run := c.FaceEngineRunType()
 
-	// Every schedule but "auto" is decided by the shared table, so face detection and a vision
-	// model cannot disagree about what a run type means.
-	if should, decided := vision.ShouldRunAt(c.FaceEngineRunType(), when); decided {
+	// Faces stay out of the scheduled sweep unless the schedule was asked for by name. Re-detecting
+	// pictures an earlier pass already examined finds nothing while the detector is unchanged, and
+	// the sweep costs a full decode per file - so "on demand" means a person or an import asked,
+	// not a cron tick. Changing detector is what makes another pass worthwhile, and that is a
+	// migration or an explicit run.
+	if when == vision.RunOnSchedule && run != vision.RunOnSchedule && run != vision.RunAlways {
+		return false
+	}
+
+	// Every other schedule is decided by the shared table, so face detection and a vision model
+	// cannot disagree about what a run type means.
+	if should, decided := vision.ShouldRunAt(run, when); decided {
 		return should
 	}
 
@@ -915,14 +925,14 @@ func (c *Config) FaceEpsilonDist() float64 {
 	value := c.options.FaceEpsilonDist
 	configured := c.faceThresholdIsSet("face-epsilon-dist", value)
 
-	if value > 0 && value <= 0.1 && configured {
+	if value > 0 && value <= face.EpsilonDefault && configured {
 		return value
 	}
 
 	resolved := faceModelThreshold(c.FaceEmbeddingModel(),
 		func(m *face.EmbeddingModel) float64 { return m.Epsilon }, face.EpsilonDefault)
 
-	c.warnFaceThreshold(configured && value != 0, "face-epsilon-dist", value, 0, 0.1, resolved)
+	c.warnFaceThreshold(configured && value != 0, "face-epsilon-dist", value, 0, face.EpsilonDefault, resolved)
 
 	return resolved
 }

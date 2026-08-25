@@ -1445,7 +1445,7 @@ var Flags = CliFlags{
 		}, DocDefault: faceModelDocDefault(func(m *face.EmbeddingModel) float64 { return m.CollisionDist })}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-epsilon-dist",
-			Usage:   "collision tolerance `DELTA` appended to max match distances (up to 0.1), the same for every face model; twice it is the distance at which a colliding cluster is retired for good",
+			Usage:   "collision tolerance `DELTA` appended to max match distances (up to 0.01), the same for every face model; twice it is the distance at which a colliding cluster is retired for good",
 			EnvVars: EnvVars("FACE_EPSILON_DIST"),
 		}, DocDefault: faceDocDefault(face.EpsilonDefault)}, {
 		Flag: &cli.StringFlag{

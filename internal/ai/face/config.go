@@ -30,11 +30,6 @@ const (
 	// options use for "switched off". It is distinct from ScoreThresholdDefault, which cannot
 	// express this: zero already means "let the detector decide".
 	NoScoreThreshold = -1.0
-	// MigrationScoreThreshold is the detection floor a face embedding migration runs at for a
-	// detector that registers none, on the 0-100 scale. Re-embedding keeps a marker only when the
-	// detector finds its face again, so a miss here discards a curated marker instead of adding
-	// a false positive to an index - the opposite trade to the one indexing makes.
-	MigrationScoreThreshold = 9.0
 	// ClusterScoreThresholdDefault is the clustering bar for a detector that registers none, and
 	// for a marker no detector produced.
 	ClusterScoreThresholdDefault = 20
@@ -168,8 +163,11 @@ func DetectorMigrateScore(detector DetectorName) float64 {
 		d = DefaultDetector()
 	}
 
+	// A detector registering no migration floor re-detects at its own cutoff: that recovers
+	// nothing an index would not have found, which is the safe direction for a value nobody
+	// calibrated, and it never returns zero.
 	if d == nil || d.MigrateScore <= 0 {
-		return MigrationScoreThreshold
+		return DetectorScore(detector)
 	}
 
 	return float64(d.MigrateScore)

@@ -195,14 +195,65 @@ type FaceClusterGates struct {
 //
 // It takes the model, size and score rather than reading them from the loaded engine, because the
 // command that reports them never loads one and would otherwise count against the shipped defaults.
-func CountFaceClusterGates(model string, size, score int) FaceClusterGates {
-	return FaceClusterGates{
-		Unclustered: countNewFaceMarkers(model, 0, 0, false),
-		Recent:      countNewFaceMarkers(model, 0, 0, true),
-		SizeOK:      countNewFaceMarkers(model, size, 0, true),
-		ScoreOK:     countNewFaceMarkers(model, 0, score, true),
-		Eligible:    countNewFaceMarkers(model, size, score, true),
+func CountFaceClusterGates(model string, size, score int) (result FaceClusterGates) {
+	recent, sized, scored := "1 = 1", "1 = 1", ""
+	var recentArgs, sizeArgs []any
+
+	if newest := newestAutoFaceTime(model); !newest.IsZero() {
+		recent, recentArgs = "created_at > ?", []any{newest}
 	}
+
+	if size > 0 {
+		sized, sizeArgs = "size >= ?", []any{size}
+	}
+
+	scored, scoreArgs := clusterScoreCond(score)
+
+	// One pass rather than one query per bar: LENGTH() on the embedding blob defeats every index,
+	// so each bar would otherwise cost a full scan of a table that grows with the library - in the
+	// command an operator runs when something is already wrong. SUM returns NULL over no rows.
+	sel := "COUNT(*) AS unclustered" +
+		", COALESCE(SUM(CASE WHEN " + recent + " THEN 1 ELSE 0 END), 0) AS recent" +
+		", COALESCE(SUM(CASE WHEN " + recent + " AND " + sized + " THEN 1 ELSE 0 END), 0) AS size_ok" +
+		", COALESCE(SUM(CASE WHEN " + recent + " AND " + scored + " THEN 1 ELSE 0 END), 0) AS score_ok" +
+		", COALESCE(SUM(CASE WHEN " + recent + " AND " + sized + " AND " + scored + " THEN 1 ELSE 0 END), 0) AS eligible"
+
+	args := make([]any, 0, 4*len(recentArgs)+2*len(sizeArgs)+2*len(scoreArgs))
+	args = append(args, recentArgs...)
+	args = append(args, recentArgs...)
+	args = append(args, sizeArgs...)
+	args = append(args, recentArgs...)
+	args = append(args, scoreArgs...)
+	args = append(args, recentArgs...)
+	args = append(args, sizeArgs...)
+	args = append(args, scoreArgs...)
+
+	if err := unclusteredFaceMarkers(model).Select(sel, args...).Scan(&result).Error; err != nil {
+		log.Errorf("faces: %s (count cluster gates)", err)
+	}
+
+	return result
+}
+
+// unclusteredFaceMarkers restricts a statement to the face markers holding a vector the specified
+// model can read that no cluster has taken.
+func unclusteredFaceMarkers(model string) *gorm.DB {
+	return whereEmbeddingModel(Db().Model(&entity.Markers{}).
+		Where("marker_type = ?", entity.MarkerFace).
+		Where("face_id = '' AND marker_invalid = 0 AND LENGTH(embeddings_json) > 0"), model)
+}
+
+// newestAutoFaceTime returns when the most recent automatic cluster the specified model produced
+// was created, or the zero time when it has produced none.
+func newestAutoFaceTime(model string) time.Time {
+	var f entity.Face
+
+	if err := whereEmbeddingModel(Db().Where("face_src = ?", entity.SrcAuto), model).
+		Order("created_at DESC").Limit(1).Take(&f).Error; err != nil {
+		log.Debugf("faces: found no existing clusters")
+	}
+
+	return f.CreatedAt
 }
 
 // CountNewFaceMarkers counts the number of new face markers in the index.
@@ -214,16 +265,8 @@ func CountNewFaceMarkers(size, score int) (n int) {
 // cluster has taken. Recent also requires them to postdate the newest cluster that model produced,
 // which is what the clustering worker counts.
 func countNewFaceMarkers(current string, size, score int, recent bool) (n int) {
-	var f entity.Face
-
-	if err := whereEmbeddingModel(Db().Where("face_src = ?", entity.SrcAuto), current).
-		Order("created_at DESC").Limit(1).Take(&f).Error; err != nil {
-		log.Debugf("faces: found no existing clusters")
-	}
-
-	q := whereEmbeddingModel(Db().Model(&entity.Markers{}).
-		Where("marker_type = ?", entity.MarkerFace).
-		Where("face_id = '' AND marker_invalid = 0 AND LENGTH(embeddings_json) > 0"), current)
+	newest := newestAutoFaceTime(current)
+	q := unclusteredFaceMarkers(current)
 
 	if size > 0 {
 		q = q.Where("size >= ?", size)
@@ -231,8 +274,8 @@ func countNewFaceMarkers(current string, size, score int, recent bool) (n int) {
 
 	q = whereClusterScore(q, score)
 
-	if recent && !f.CreatedAt.IsZero() {
-		q = q.Where("created_at > ?", f.CreatedAt)
+	if recent && !newest.IsZero() {
+		q = q.Where("created_at > ?", newest)
 	}
 
 	if err := q.Count(&n).Error; err != nil {
@@ -248,6 +291,14 @@ func countNewFaceMarkers(current string, size, score int, recent bool) (n int) {
 // Looked up per marker rather than from the detector in force: a library holds markers from more
 // than one, and judging an old one by the active detector's bar would exclude it permanently.
 func whereClusterScore(stmt *gorm.DB, floor int) *gorm.DB {
+	cond, args := clusterScoreCond(floor)
+
+	return stmt.Where(cond, args...)
+}
+
+// clusterScoreCond returns the same restriction as an SQL fragment, so a report can evaluate it
+// beside the other bars in one pass instead of scanning the table once per bar.
+func clusterScoreCond(floor int) (string, []any) {
 	// FACE_CLUSTER_SCORE outranks the per-detector bars when an operator set one, and removes it
 	// when negative. Applying one value to every marker is safe here in a way that taking the
 	// active detector's bar is not: it is a choice rather than a calibration a marker was never
@@ -258,10 +309,10 @@ func whereClusterScore(stmt *gorm.DB, floor int) *gorm.DB {
 
 	switch {
 	case floor > 0:
-		return stmt.Where("score >= ?", floor)
+		return "score >= ?", []any{floor}
 	case floor == 0:
 		// No score filter at all, which is what a caller counting every marker asks for.
-		return stmt
+		return "1 = 1", nil
 	}
 
 	conds := make([]string, 0, len(face.Detectors)+1)
@@ -281,16 +332,16 @@ func whereClusterScore(stmt *gorm.DB, floor int) *gorm.DB {
 	}
 
 	if len(conds) == 0 {
-		return stmt.Where("score >= ?", face.ClusterScoreThresholdDefault)
+		return "score >= ?", []any{face.ClusterScoreThresholdDefault}
 	}
 
 	// Everything the registry does not name, including every row written before the provenance
 	// column existed, keeps the shared default so an upgrade strands nothing.
-	conds = append(conds, "("+strings.Join(others, " AND ")+" AND score >= ?)")
+	conds = append(conds, "("+strings.Join(others, " AND ")+" AND ?"+" <= score)")
 	args = append(args, names...)
 	args = append(args, face.ClusterScoreThresholdDefault)
 
-	return stmt.Where(strings.Join(conds, " OR "), args...)
+	return "(" + strings.Join(conds, " OR ") + ")", args
 }
 
 // PurgeOrphanFaces removes unused faces from the index.

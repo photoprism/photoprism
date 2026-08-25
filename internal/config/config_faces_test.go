@@ -148,16 +148,31 @@ func TestConfig_FaceEngineShouldRun(t *testing.T) {
 		assert.True(t, c.FaceEngineShouldRun(vision.RunManual))
 		assert.False(t, c.FaceEngineShouldRun(vision.RunOnSchedule))
 	})
-	t.Run("RunOnDemandCoversTheScheduledPass", func(t *testing.T) {
-		// It names the scheduled run in its own definition, and the face copy of the schedule table
-		// used to drop that term, which left this behaving exactly like newly-indexed.
+	t.Run("OnDemandDoesNotSweepOnSchedule", func(t *testing.T) {
+		// Re-detecting pictures an earlier pass examined finds nothing while the detector is
+		// unchanged, and the sweep costs a full decode per file. "On demand" means a person or an
+		// import asked; changing detector is a migration or an explicit run, not a cron tick.
 		c := NewConfig(CliTestContext())
 		c.options.FaceRun = vision.RunOnDemand
 
-		assert.True(t, c.FaceEngineShouldRun(vision.RunOnSchedule))
+		assert.False(t, c.FaceEngineShouldRun(vision.RunOnSchedule))
 		assert.True(t, c.FaceEngineShouldRun(vision.RunNewlyIndexed))
 		assert.True(t, c.FaceEngineShouldRun(vision.RunManual))
 		assert.False(t, c.FaceEngineShouldRun(vision.RunOnIndex), "on-demand does not detect inline")
+	})
+	t.Run("TheScheduledSweepHasToBeAskedForByName", func(t *testing.T) {
+		// Only these two name it, so nothing else can start a library-wide pass by accident.
+		c := NewConfig(CliTestContext())
+
+		for _, run := range []vision.RunType{vision.RunOnSchedule, vision.RunAlways} {
+			c.options.FaceRun = run
+			assert.True(t, c.FaceEngineShouldRun(vision.RunOnSchedule), run)
+		}
+
+		for _, run := range []vision.RunType{"", vision.RunOnDemand, vision.RunNewlyIndexed, vision.RunOnIndex, vision.RunManual, vision.RunNever} {
+			c.options.FaceRun = run
+			assert.False(t, c.FaceEngineShouldRun(vision.RunOnSchedule), run)
+		}
 	})
 	t.Run("VisionYamlDoesNotSchedule", func(t *testing.T) {
 		// FaceEngineRunType never consults it, so a test that sets one is testing "auto".
@@ -1654,7 +1669,7 @@ func TestConfig_ConfigureFaceDetector(t *testing.T) {
 		// A migration lowers the cutoff below the detector's own, which is the case that had no
 		// reachable value before: the option is on the 0-100 scale and the detector on 0-1.
 		c := NewConfig(CliTestContext())
-		assert.NoError(t, c.ConfigureFaceDetector(face.MigrationScoreThreshold))
+		assert.NoError(t, c.ConfigureFaceDetector(face.DetectorMigrateScore(c.FaceDetector())))
 	})
 	t.Run("DetectionDisabled", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
@@ -2161,12 +2176,25 @@ func TestConfig_FaceEpsilonDist(t *testing.T) {
 
 	c := newSFaceTestConfig(t)
 	assert.Equal(t, sface, c.FaceEpsilonDist())
-	c.options.FaceEpsilonDist = 0.02
-	assert.Equal(t, 0.02, c.FaceEpsilonDist())
+	c.options.FaceEpsilonDist = 0.004
+	assert.Equal(t, 0.004, c.FaceEpsilonDist())
 	c.options.FaceEpsilonDist = 0.2
 	assert.Equal(t, sface, c.FaceEpsilonDist())
 	c.options.FaceEpsilonDist = 0
 	assert.Equal(t, sface, c.FaceEpsilonDist())
+
+	t.Run("CappedAtTheDefault", func(t *testing.T) {
+		// The gap is a void where nothing matches, and twice it retires a colliding cluster for
+		// good. Capping it at the default keeps the ambiguity cutoff at or below the fixed 0.02 it
+		// had before it became derivable, so the option can narrow that door but never widen it.
+		c := newSFaceTestConfig(t)
+
+		c.options.FaceEpsilonDist = face.EpsilonDefault
+		assert.Equal(t, face.EpsilonDefault, c.FaceEpsilonDist())
+
+		c.options.FaceEpsilonDist = face.EpsilonDefault * 2
+		assert.Equal(t, sface, c.FaceEpsilonDist(), "above the cap resolves to the model value")
+	})
 
 	t.Run("OutOfRangeWarns", func(t *testing.T) {
 		c := newSFaceTestConfig(t)

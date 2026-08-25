@@ -43,7 +43,7 @@ func TestScoreUncertainty(t *testing.T) {
 		"a more confident face must be less uncertain")
 	assert.Equal(t, 45, ScoreUncertainty(FindDetector(DetectorSCRFD).MinScore+1))
 	assert.Equal(t, 50, ScoreUncertainty(0), "a marker no detector scored stays at the least certain step")
-	assert.Equal(t, 50, ScoreUncertainty(int(MigrationScoreThreshold)), "and so does one a migration found below every cutoff")
+	assert.Equal(t, 50, ScoreUncertainty(9), "and so does one a migration found below every cutoff")
 }
 
 func TestFaces_Contains(t *testing.T) {
