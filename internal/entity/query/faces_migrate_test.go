@@ -374,7 +374,7 @@ func TestSaveFaceMigrationEmbeddings(t *testing.T) {
 	detectedPoints := json.RawMessage(`[{"name":"eye_l","x":-0.05},{"name":"eye_r","x":0.05}]`)
 	require.NoError(t, SaveFaceMigrationEmbeddings(face.ModelFaceNet, face.DetectorYuNet,
 		map[string]face.Embeddings{marker.MarkerUID: embeddings},
-		map[string]json.RawMessage{marker.MarkerUID: detectedPoints}))
+		map[string]MigrationDetection{marker.MarkerUID: {Landmarks: detectedPoints, Size: 84, Score: 91}}))
 
 	stored, err := MarkerByUID(marker.MarkerUID)
 	require.NoError(t, err)
@@ -385,6 +385,10 @@ func TestSaveFaceMigrationEmbeddings(t *testing.T) {
 	assert.Len(t, stored.Embeddings()[0], len(embeddings[0]))
 	assert.JSONEq(t, string(detectedPoints), string(stored.LandmarksJSON),
 		"the landmarks the detection placed travel with the vector they produced")
+	// The clustering bars are looked up by detect_model, so a marker relabelled with a new detector
+	// while holding the old one's score would be judged at a calibration it was never scored against.
+	assert.Equal(t, 91, stored.Score, "the score of the detection that produced the vector")
+	assert.Equal(t, 84, stored.Size, "and its size, in the pixels of the same detection thumbnail")
 
 	t.Run("BlankDetectorKeepsProvenance", func(t *testing.T) {
 		// Re-cropping runs no detector, so overwriting either would attribute the crop to one
@@ -397,6 +401,8 @@ func TestSaveFaceMigrationEmbeddings(t *testing.T) {
 		require.NoError(t, keptErr)
 		assert.Equal(t, face.DetectorYuNet, kept.DetectModel)
 		assert.JSONEq(t, string(detectedPoints), string(kept.LandmarksJSON))
+		assert.Equal(t, 91, kept.Score, "no detection ran, so nothing may overwrite what one recorded")
+		assert.Equal(t, 84, kept.Size)
 	})
 	t.Run("MalformedLandmarksClearTheColumn", func(t *testing.T) {
 		// The detector and the landmarks are written as a pair. A payload that is not valid JSON
@@ -405,12 +411,14 @@ func TestSaveFaceMigrationEmbeddings(t *testing.T) {
 		regenerated := face.Embeddings{face.RandomEmbedding()}
 		require.NoError(t, SaveFaceMigrationEmbeddings(face.ModelFaceNet, face.DetectorSCRFD,
 			map[string]face.Embeddings{marker.MarkerUID: regenerated},
-			map[string]json.RawMessage{marker.MarkerUID: json.RawMessage("{")}))
+			map[string]MigrationDetection{marker.MarkerUID: {Landmarks: json.RawMessage("{"), Size: 60, Score: 55}}))
 
 		kept, keptErr := MarkerByUID(marker.MarkerUID)
 		require.NoError(t, keptErr)
 		assert.Equal(t, face.DetectorSCRFD, kept.DetectModel)
 		assert.Empty(t, kept.LandmarksJSON)
+		assert.Equal(t, 55, kept.Score, "unreadable landmarks do not invalidate what the detection scored")
+		assert.Equal(t, 60, kept.Size)
 	})
 
 	require.Error(t, SaveFaceMigrationEmbeddings("", face.DetectorYuNet, nil, nil))

@@ -551,14 +551,21 @@ func TestFaces_detectMigrationEmbeddings_Landmarks(t *testing.T) {
 	embedder := &migrationTestEmbedder{name: face.ModelSFace, dims: 4, aligned: true}
 
 	w := NewFaces(c)
-	result, landmarks, detectModel, err := w.detectMigrationEmbeddings(embedder, file, markers, markers)
+	result, details, detectModel, err := w.detectMigrationEmbeddings(embedder, file, markers, markers)
 
 	require.NoError(t, err)
 	require.Contains(t, result, marker.MarkerUID)
 	assert.Equal(t, face.DefaultDetector().Name, detectModel)
-	require.Contains(t, landmarks, marker.MarkerUID, "the landmarks must travel with the vector")
-	assert.True(t, json.Valid(landmarks[marker.MarkerUID]))
-	assert.Contains(t, string(landmarks[marker.MarkerUID]), "eye_l")
+	require.Contains(t, details, marker.MarkerUID, "what the detection recorded must travel with the vector")
+
+	detection := details[marker.MarkerUID]
+	assert.True(t, json.Valid(detection.Landmarks))
+	assert.Contains(t, string(detection.Landmarks), "eye_l")
+
+	// The clustering bars are looked up by detect_model, so the score has to come from the
+	// detection the provenance names rather than from whatever placed the marker originally.
+	assert.Positive(t, detection.Score)
+	assert.Positive(t, detection.Size)
 }
 
 func TestMigrationDetectionThumb(t *testing.T) {

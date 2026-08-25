@@ -2,7 +2,6 @@ package photoprism
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"sort"
@@ -766,7 +765,7 @@ func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) 
 	}
 
 	var generated map[string]face.Embeddings
-	var landmarks map[string]json.RawMessage
+	var details map[string]query.MigrationDetection
 
 	// A blank detector means no detection ran, so the one already recorded still describes
 	// the crop. It is taken from the detection rather than from the active engine, which by
@@ -775,7 +774,7 @@ func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) 
 
 	if embedder.Aligned() {
 		result.Detected = true
-		generated, landmarks, detectModel, err = w.detectMigrationEmbeddings(embedder, file, markers, stale)
+		generated, details, detectModel, err = w.detectMigrationEmbeddings(embedder, file, markers, stale)
 	} else {
 		generated, err = w.cropMigrationEmbeddings(embedder, file, stale)
 	}
@@ -799,7 +798,7 @@ func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) 
 
 		unresolved = append(unresolved, marker)
 		delete(generated, marker.MarkerUID)
-		delete(landmarks, marker.MarkerUID)
+		delete(details, marker.MarkerUID)
 	}
 
 	result.Failed, result.Retained, result.Clusterable = unresolvedMigrationMarkers(unresolved, recrop)
@@ -809,7 +808,7 @@ func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) 
 	result.Attempted = clusterableMarkers(stale) - clusterableMarkers(retainedMigrationMarkers(unresolved, recrop))
 
 	if len(generated) > 0 {
-		if err = query.SaveFaceMigrationEmbeddings(target, detectModel, generated, landmarks); err != nil {
+		if err = query.SaveFaceMigrationEmbeddings(target, detectModel, generated, details); err != nil {
 			return faceMigrationFile{Skipped: result.Skipped, Detected: result.Detected}, err
 		}
 	}
@@ -903,17 +902,19 @@ func (w *Faces) cropMigrationEmbeddings(embedder face.Embedder, file *entity.Fil
 }
 
 // detectMigrationEmbeddings redetects a file and maps aligned embeddings to stored markers, also
-// reporting the landmarks each detection placed and the detector that placed them.
+// reporting what each detection recorded and the detector that placed it.
 //
 // Provenance travels with the vectors rather than being read back from configuration, and the
-// landmarks are what make it usable: without them the column attests the crop alone.
-func (w *Faces) detectMigrationEmbeddings(embedder face.Embedder, file *entity.File, markers, stale entity.Markers) (result map[string]face.Embeddings, landmarks map[string]json.RawMessage, detectModel string, err error) {
+// size and score have to travel with it: the clustering bars are looked up by detect_model, so a
+// marker labeled with the new detector while holding the old one's score is judged at a
+// calibration it was never scored against.
+func (w *Faces) detectMigrationEmbeddings(embedder face.Embedder, file *entity.File, markers, stale entity.Markers) (result map[string]face.Embeddings, details map[string]query.MigrationDetection, detectModel string, err error) {
 	result = make(map[string]face.Embeddings, len(stale))
-	landmarks = make(map[string]json.RawMessage, len(stale))
+	details = make(map[string]query.MigrationDetection, len(stale))
 
 	thumbName, err := migrationDetectionThumb(w.conf, w.conf.ThumbCachePath(), file)
 	if err != nil {
-		return result, landmarks, "", err
+		return result, details, "", err
 	}
 
 	// FACE_MIGRATE_SIZE rather than FACE_SIZE: a marker's size is in pixels of the thumbnail it was
@@ -922,7 +923,7 @@ func (w *Faces) detectMigrationEmbeddings(embedder face.Embedder, file *entity.F
 	// when a picture yields nothing, which is not this case.
 	detected, err := face.Detect(thumbName, w.conf.FaceMigrateSize())
 	if err != nil {
-		return result, landmarks, "", err
+		return result, details, "", err
 	}
 
 	// Only the detections a stored marker claims are embedded. Everything else this floor admits
@@ -936,13 +937,15 @@ func (w *Faces) detectMigrationEmbeddings(embedder face.Embedder, file *entity.F
 			result[markerUID] = detectedFace.Embeddings
 			detectModel = detectedFace.DetectModel
 
-			if points := detectedFace.RelativeLandmarksJSON(); len(points) > 0 {
-				landmarks[markerUID] = points
+			details[markerUID] = query.MigrationDetection{
+				Landmarks: detectedFace.RelativeLandmarksJSON(),
+				Size:      detectedFace.Size(),
+				Score:     detectedFace.Score,
 			}
 		}
 	}
 
-	return result, landmarks, detectModel, nil
+	return result, details, detectModel, nil
 }
 
 // assignedMigrationDetections returns the detections the stale markers claim, and where each

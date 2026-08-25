@@ -310,12 +310,20 @@ func FaceMigrationRecropMarkers(model, detector string) (count int, err error) {
 	return count, err
 }
 
+// MigrationDetection carries what the detection that produced a marker's new vector recorded about
+// it, so the provenance column and the values the clustering bars read are written from one source.
+type MigrationDetection struct {
+	Landmarks json.RawMessage
+	Size      int
+	Score     int
+}
+
 // SaveFaceMigrationEmbeddings checkpoints generated embeddings for a single file, along with the
 // landmarks the detection that produced them placed.
 //
 // A blank detectModel and absent landmarks leave both alone, which a re-crop must do: it ran no
 // detector. A re-detection writes both, or the detector recorded is not the landmarks' own.
-func SaveFaceMigrationEmbeddings(model, detectModel string, embeddings map[string]face.Embeddings, landmarks map[string]json.RawMessage) error {
+func SaveFaceMigrationEmbeddings(model, detectModel string, embeddings map[string]face.Embeddings, details map[string]MigrationDetection) error {
 	if model == "" {
 		return fmt.Errorf("faces: migration model is required")
 	}
@@ -339,11 +347,15 @@ func SaveFaceMigrationEmbeddings(model, detectModel string, embeddings map[strin
 				"matched_at":      nil,
 			}
 
-			// Written as a pair, or the recorded detector would attest landmarks an earlier one
-			// placed. A detection that produced no usable landmark set blanks the column rather
-			// than leaving another detector's behind.
+			// Written together, or the recorded detector would attest another one's work. The
+			// score matters most: the clustering bars are looked up by detect_model, so a marker
+			// relabeled without it is judged at a calibration it was never scored against. Size
+			// travels for the same reason, and both are in the pixels of the same Fit720 thumbnail
+			// indexing detects on. A detection that produced no usable landmarks blanks the column
+			// rather than leaving an earlier detector's behind.
 			if detectModel != "" {
-				points := landmarks[markerUID]
+				detection := details[markerUID]
+				points := detection.Landmarks
 
 				if len(points) == 0 || !json.Valid(points) {
 					points = json.RawMessage{}
@@ -351,6 +363,11 @@ func SaveFaceMigrationEmbeddings(model, detectModel string, embeddings map[strin
 
 				columns["detect_model"] = detectModel
 				columns["landmarks_json"] = points
+				columns["score"] = detection.Score
+
+				if detection.Size > 0 {
+					columns["size"] = detection.Size
+				}
 			}
 
 			res := tx.Model(&entity.Marker{}).
