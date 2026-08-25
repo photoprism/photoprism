@@ -1405,21 +1405,6 @@ var Flags = CliFlags{
 			Usage:   "face embedding thread `COUNT`, derived from the CPU cores when unset",
 			EnvVars: EnvVars("FACE_MODEL_THREADS"),
 		}, DocDefault: "auto"}, {
-		Flag: &cli.Float64Flag{
-			Name:    "face-match-dist",
-			Usage:   fmt.Sprintf("similarity `OFFSET` for matching faces with existing clusters, calibrated per face model when unset; radius plus match distance may not exceed %g", face.ConfigDistMax),
-			EnvVars: EnvVars("FACE_MATCH_DIST"),
-		}, DocDefault: faceModelDocDefault(func(m *face.EmbeddingModel) float64 { return m.MatchDist })}, {
-		Flag: &cli.Float64Flag{
-			Name:    "face-collision-dist",
-			Usage:   "minimum collision discrimination `DISTANCE` (greater than 0, up to 1), calibrated per face model when unset",
-			EnvVars: EnvVars("FACE_COLLISION_DIST"),
-		}, DocDefault: faceModelDocDefault(func(m *face.EmbeddingModel) float64 { return m.CollisionDist })}, {
-		Flag: &cli.Float64Flag{
-			Name:    "face-epsilon-dist",
-			Usage:   "collision tolerance `DELTA` appended to max match distances (up to 0.1), calibrated per face model when unset",
-			EnvVars: EnvVars("FACE_EPSILON_DIST"),
-		}, DocDefault: faceModelDocDefault(func(m *face.EmbeddingModel) float64 { return m.Epsilon })}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-cluster-size",
 			Usage:   "minimum size of automatically clustered faces in `PIXELS` (20-10000)",
@@ -1448,6 +1433,21 @@ var Flags = CliFlags{
 			Usage:   fmt.Sprintf("maximum cluster `RADIUS` accepted for automatic matches, calibrated per face model when unset; radius plus match distance may not exceed %g", face.ConfigDistMax),
 			EnvVars: EnvVars("FACE_CLUSTER_RADIUS"),
 		}, DocDefault: faceModelDocDefault(func(m *face.EmbeddingModel) float64 { return m.ClusterRadius })}, {
+		Flag: &cli.Float64Flag{
+			Name:    "face-match-dist",
+			Usage:   fmt.Sprintf("similarity `OFFSET` for matching faces with existing clusters, calibrated per face model when unset; radius plus match distance may not exceed %g", face.ConfigDistMax),
+			EnvVars: EnvVars("FACE_MATCH_DIST"),
+		}, DocDefault: faceModelDocDefault(func(m *face.EmbeddingModel) float64 { return m.MatchDist })}, {
+		Flag: &cli.Float64Flag{
+			Name:    "face-collision-dist",
+			Usage:   "minimum collision discrimination `DISTANCE` (greater than 0, up to 1), calibrated per face model when unset",
+			EnvVars: EnvVars("FACE_COLLISION_DIST"),
+		}, DocDefault: faceModelDocDefault(func(m *face.EmbeddingModel) float64 { return m.CollisionDist })}, {
+		Flag: &cli.Float64Flag{
+			Name:    "face-epsilon-dist",
+			Usage:   "collision tolerance `DELTA` appended to max match distances (up to 0.1), the same for every face model",
+			EnvVars: EnvVars("FACE_EPSILON_DIST"),
+		}, DocDefault: faceDocDefault(face.EpsilonDefault)}, {
 		Flag: &cli.StringFlag{
 			Name:      "pid-filename",
 			Usage:     "process id `FILENAME` *daemon-mode only*",

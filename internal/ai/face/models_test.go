@@ -1,7 +1,6 @@
 package face
 
 import (
-	"math"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -258,14 +257,13 @@ func TestEmbeddingModels(t *testing.T) {
 			assert.Positive(t, m.MatchDist)
 			assert.Less(t, m.ClusterRadius, m.ClusterDist)
 
-			// The collision floor follows the width of the model's distance scale, and its slack
-			// is a fixed fraction of it. It is deliberately not derived from ClusterDist, which
-			// also carries a recall-against-merging choice the space itself does not.
+			// The collision floor follows the width of the model's distance scale, because it
+			// bounds a radius the model measured. Epsilon does not: it is the gap a resolved
+			// collision leaves, and TestEmbeddingModelThresholds pins it flat for every model.
 			assert.Positive(t, m.CollisionDist)
-			assert.Positive(t, m.Epsilon)
+			assert.Equal(t, EpsilonDefault, m.Epsilon)
 			assert.Less(t, m.Epsilon, m.CollisionDist)
 			assert.Less(t, m.CollisionDist, m.MatchDist)
-			assert.InDelta(t, roundTo3(m.CollisionDist*EpsilonDefault/CollisionDistDefault), m.Epsilon, 1e-9)
 
 			if name != ModelFaceNet {
 				assert.NotEqual(t, CollisionDistDefault, m.CollisionDist)
@@ -305,6 +303,13 @@ func TestEmbeddingModelThresholds(t *testing.T) {
 			require.NotNil(t, m, name)
 			assert.NotEqual(t, ClusterDistDefault, m.ClusterDist, name)
 			assert.NotEqual(t, MatchDistDefault, m.MatchDist, name)
+		}
+	})
+	t.Run("EpsilonIsNotScaled", func(t *testing.T) {
+		// A void where nothing matches rather than a separation, so widening it with a model's
+		// distance scale strands embeddings instead of separating anyone.
+		for name, m := range EmbeddingModels {
+			assert.Equal(t, EpsilonDefault, m.Epsilon, name)
 		}
 	})
 	t.Run("AcceptDistStaysBelowCeiling", func(t *testing.T) {
@@ -519,11 +524,6 @@ func TestEmbeddingModelChecksums(t *testing.T) {
 			})
 		}
 	})
-}
-
-// roundTo3 rounds a derived threshold the way the registry records it.
-func roundTo3(value float64) float64 {
-	return math.Round(value*1000) / 1000
 }
 
 // TestEmbeddingModelDetectors pins the pairing an unset FACE_DETECTOR derives from. A model

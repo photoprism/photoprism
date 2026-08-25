@@ -14,9 +14,11 @@ const (
 	ClusterRadiusDefault = 0.42
 	// MatchDistDefault is the default distance offset used to match faces with clusters.
 	MatchDistDefault = 0.4
-	// CollisionDistDefault is the default distance below which embeddings cannot be distinguished.
+	// CollisionDistDefault is the default floor below which a recorded collision radius is discarded.
 	CollisionDistDefault = 0.05
-	// EpsilonDefault is the default numeric tolerance used during cluster comparisons.
+	// EpsilonDefault is the numeric tolerance used during cluster comparisons, and the same for
+	// every model unlike the calibrated distances: it is the gap a resolved collision leaves, which
+	// is a void where nothing matches, so a wider one strands embeddings rather than separating anyone.
 	EpsilonDefault = 0.01
 	// SizeThresholdDefault is the default minimum detected face size, in pixels.
 	SizeThresholdDefault = 25
@@ -102,7 +104,9 @@ var (
 	ClusterRadius = ClusterRadiusDefault
 	// MatchDist is the distance offset threshold used to match new faces with existing clusters.
 	MatchDist = MatchDistDefault
-	// CollisionDist is the minimum distance under which embeddings cannot be distinguished.
+	// CollisionDist is the floor below which a cluster's recorded CollisionRadius is discarded and
+	// the cluster keeps its full accept distance: narrowing that far would exclude its own members,
+	// so the code stops separating the two and flags the face ambiguous instead.
 	CollisionDist = CollisionDistDefault
 	// ClusterCore is the minimum number of faces required to seed a cluster core.
 	ClusterCore = ClusterCoreDefault
@@ -113,11 +117,9 @@ var (
 )
 
 // ClusterScore returns the score a marker the named detector produced has to reach to contribute
-// to automatic clustering.
-//
-// FACE_CLUSTER_SCORE outranks the per-detector bars and a negative value removes them: a value an
-// operator chose is not a calibration a marker was never scored against. Unset, the bar is per
-// marker, since two detectors' scores are not comparable and a library holds markers from both.
+// to automatic clustering. FACE_CLUSTER_SCORE outranks the per-detector bars and a negative value
+// removes them; unset, the bar is per marker, since two detectors' scores are not comparable and
+// a library holds markers from both.
 func ClusterScore(detector DetectorName) int {
 	if ClusterScoreThreshold != 0 {
 		return max(ClusterScoreThreshold, 0)
@@ -145,6 +147,15 @@ func DetectorScore(detector DetectorName) float64 {
 	}
 
 	return float64(d.MinScore)
+}
+
+// AmbiguityDist returns the distance below which two embeddings of different subjects are treated
+// as the same face rather than as a collision to resolve.
+//
+// Twice Epsilon, and derived rather than stated: resolving a collision backs a cluster off by
+// Epsilon, so below this the backoff would exceed the separation it preserves.
+func AmbiguityDist() float64 {
+	return 2 * Epsilon
 }
 
 // DetectorMigrateScore returns the detection floor a migration re-detects at for the named

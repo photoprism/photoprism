@@ -326,14 +326,14 @@ func TestConfig_FaceReportSections(t *testing.T) {
 			"face-model",
 			"face-model-path",
 			"face-model-threads",
-			"face-match-dist",
-			"face-collision-dist",
-			"face-epsilon-dist",
 			"face-cluster-size",
 			"face-cluster-score",
 			"face-cluster-core",
 			"face-cluster-dist",
 			"face-cluster-radius",
+			"face-match-dist",
+			"face-collision-dist",
+			"face-epsilon-dist",
 		}
 
 		for _, name := range expected {
@@ -607,14 +607,14 @@ func TestConfig_faceConfigRows(t *testing.T) {
 			"face-model",
 			"face-model-path",
 			"face-model-threads",
-			"face-match-dist",
-			"face-collision-dist",
-			"face-epsilon-dist",
 			"face-cluster-size",
 			"face-cluster-score",
 			"face-cluster-core",
 			"face-cluster-dist",
 			"face-cluster-radius",
+			"face-match-dist",
+			"face-collision-dist",
+			"face-epsilon-dist",
 		}
 
 		rows := c.faceConfigRows()

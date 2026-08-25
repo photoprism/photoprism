@@ -91,7 +91,9 @@ type EmbeddingModel struct {
 	ClusterRadius float64
 	MatchDist     float64
 	CollisionDist float64
-	Epsilon       float64
+	// Epsilon is registered per model only so an operator can override it; TestEmbeddingModelEpsilon
+	// pins every model to EpsilonDefault, because it is a gap rather than a calibrated separation.
+	Epsilon float64
 }
 
 // EmbeddingModels lists the supported face embedding models by name.
@@ -135,7 +137,7 @@ var EmbeddingModels = map[ModelName]*EmbeddingModel{
 		ClusterRadius: 0.60,
 		MatchDist:     0.35,
 		CollisionDist: 0.061,
-		Epsilon:       0.012,
+		Epsilon:       EpsilonDefault,
 	},
 	ModelAuraFace: {
 		Name:        ModelAuraFace,
@@ -156,7 +158,7 @@ var EmbeddingModels = map[ModelName]*EmbeddingModel{
 		ClusterRadius: 0.76,
 		MatchDist:     0.35,
 		CollisionDist: 0.077,
-		Epsilon:       0.015,
+		Epsilon:       EpsilonDefault,
 	},
 	ModelArcFaceR50: {
 		Name:        ModelArcFaceR50,
@@ -177,7 +179,7 @@ var EmbeddingModels = map[ModelName]*EmbeddingModel{
 		ClusterRadius: 0.67,
 		MatchDist:     0.55,
 		CollisionDist: 0.084,
-		Epsilon:       0.017,
+		Epsilon:       EpsilonDefault,
 	},
 	ModelArcFaceMBF: {
 		Name:        ModelArcFaceMBF,
@@ -198,16 +200,15 @@ var EmbeddingModels = map[ModelName]*EmbeddingModel{
 		ClusterRadius: 0.64,
 		MatchDist:     0.49,
 		CollisionDist: 0.080,
-		Epsilon:       0.016,
+		Epsilon:       EpsilonDefault,
 	},
 }
 
 // alignedCropInput returns the input description shared by every model that consumes the standard
 // 112x112 five-point aligned crop (AlignArcFace5), which differ only in normalization.
 //
-// The channel order is RGB for all of them, including SFace. That is worth stating because the
-// obvious inference is the opposite one: OpenCV feeds SFace an image that is BGR in memory, but
-// its blob is built with swapRB set, where the detector's is not.
+// The channel order is RGB for all of them, including SFace, where the obvious inference is the
+// opposite: OpenCV feeds it an image that is BGR in memory, but builds the blob with swapRB set.
 func alignedCropInput(normalization onnx.Normalization) *onnx.Input {
 	return &onnx.Input{
 		Width:         ArcFaceTemplateSize,

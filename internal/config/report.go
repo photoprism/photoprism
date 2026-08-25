@@ -410,14 +410,14 @@ func (c *Config) faceConfigRows() []faceConfigRow {
 		{faceSectionRecognition, "face-model", c.EffectiveFaceModel()},
 		{faceSectionRecognition, "face-model-path", c.FaceModelPath()},
 		{faceSectionRecognition, "face-model-threads", fmt.Sprintf("%d", c.FaceModelThreads())},
-		{faceSectionRecognition, "face-match-dist", c.faceDistReport(c.FaceMatchDist)},
-		{faceSectionRecognition, "face-collision-dist", c.faceDistReport(c.FaceCollisionDist)},
-		{faceSectionRecognition, "face-epsilon-dist", c.faceDistReport(c.FaceEpsilonDist)},
 		{faceSectionRecognition, "face-cluster-size", fmt.Sprintf("%d", c.FaceClusterSize())},
 		{faceSectionRecognition, "face-cluster-score", fmt.Sprintf("%d", c.FaceClusterScoreEffective())},
 		{faceSectionRecognition, "face-cluster-core", fmt.Sprintf("%d", c.FaceClusterCore())},
 		{faceSectionRecognition, "face-cluster-dist", c.faceDistReport(c.FaceClusterDist)},
 		{faceSectionRecognition, "face-cluster-radius", c.faceDistReport(c.FaceClusterRadius)},
+		{faceSectionRecognition, "face-match-dist", c.faceDistReport(c.FaceMatchDist)},
+		{faceSectionRecognition, "face-collision-dist", c.faceDistReport(c.FaceCollisionDist)},
+		{faceSectionRecognition, "face-epsilon-dist", c.faceDistReport(c.FaceEpsilonDist)},
 	}...)
 }
 

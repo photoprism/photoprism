@@ -142,21 +142,27 @@ FaceNet is the odd row because it keeps what it ships rather than a calibrated p
 
 Two caveats apply to the recommendations. The measured centroids are always pure because they are built from labeled identities, so a wider `ClusterRadius` is less safe in production, where an impure cluster has a large radius and would be given more slack. And `ClusterDist` is derived from pairwise distance equivalence rather than from a DBSCAN simulation, so cluster fragmentation and merge behavior are not measured. Validate against a real library before treating these values as final.
 
-**`CollisionDist` and `Epsilon` are derived, not measured.** One is the floor below which two vectors count as indistinguishable and the other the slack added to that check, so neither corresponds to an error budget; what they follow is the width of the model's distance scale:
+**`CollisionDist` is derived, `Epsilon` is not, and the two are not the same kind of value.** When a foreign subject's embedding turns up inside a cluster, `ResolveCollision` records `CollisionRadius = dist - Epsilon` and `Match` then refuses anything past that radius, pulling the cluster back to just inside the intruder. `Epsilon` is the gap that pullback leaves. `CollisionDist` is the floor below which a recorded radius is discarded entirely and the cluster keeps its full accept distance - narrowing to a radius that small would exclude the cluster's own members, so the code gives up on separating the two and flags the face `AmbiguousFace` instead.
 
-    value = FaceNet value * (model ClusterDist / ClusterDistDefault), rounded to three decimals
+`CollisionDist` follows the width of the model's distance scale, because it bounds a distance the model itself measured:
 
-| Model         | Scale | `CollisionDist` | `Epsilon` |
-|:--------------|------:|----------------:|----------:|
-| `facenet`     | 1.000 |           0.050 |     0.010 |
-| `sface`       | 1.219 |           0.061 |     0.012 |
-| `auraface`    | 1.531 |           0.077 |     0.015 |
-| `arcface_r50` | 1.672 |           0.084 |     0.017 |
-| `arcface_mbf` | 1.609 |           0.080 |     0.016 |
+    CollisionDist = 0.05 * (calibrated ClusterDist / 0.64), rounded to three decimals
 
-Their practical effect is small, but leaving them fixed at the FaceNet values under a scale that is roughly 1.4x wider is the same trap the per-model thresholds exist to close. `FACE_COLLISION_DIST` and `FACE_EPSILON_DIST` override them the same way the three calibrated thresholds are overridden.
+| Model         | Scale | `CollisionDist` | First collision distance that narrows a cluster |
+|:--------------|------:|----------------:|------------------------------------------------:|
+| `facenet`     | 1.000 |           0.050 |                                           0.060 |
+| `sface`       | 1.219 |           0.061 |                                           0.071 |
+| `auraface`    | 1.531 |           0.077 |                                           0.087 |
+| `arcface_r50` | 1.672 |           0.084 |                                           0.094 |
+| `arcface_mbf` | 1.609 |           0.080 |                                           0.090 |
 
-**SFace is the exception, and deliberately so.** Its scale stays pinned at the `ClusterDist` these two were calibrated at rather than following it to the 0.85 that ships. A collision floor states how close two vectors can be and still be told apart, which is a property of the space; `ClusterDist` also carries a recall-against-merging choice, and a choice is not a re-measurement.
+**`Epsilon` stays at 0.01 for every model**, which `TestEmbeddingModelEpsilon` pins. It is a void where nothing matches rather than a separation anyone measured, so widening it with the distance scale strands embeddings instead of telling two people apart. `face.AmbiguityDist` - the cutoff under which a collision is treated as the same person rather than resolved - is `2 * Epsilon` rather than a literal, so the two cannot drift: a per-model `Epsilon` beside a fixed `0.02` once left the backoff able to exceed the separation it preserves, and on ArcFace R50 it pushed the first effective collision distance to five times `Epsilon`.
+
+`FACE_COLLISION_DIST` and `FACE_EPSILON_DIST` override both the way the three calibrated thresholds are overridden, and `FACE_EPSILON_DIST` moves the ambiguity cutoff with it.
+
+**SFace's scale is pinned at 0.78, the `ClusterDist` it was calibrated at, rather than the 0.85 that ships.** `ClusterDist` was raised afterwards on a recall-against-merging judgement, and a judgement is not a re-measurement of the space.
+
+> Neither value has been measured, and `CollisionDist` is the one with an open question against it: whether a representational noise floor really scales with class separation is an assumption. It is testable by embedding the same crop twice under a small perturbation and comparing the jitter across models.
 
 #### Quality & Overlap Thresholds
 
@@ -291,19 +297,29 @@ Recovery steps:
 
 ### Configuration Summary
 
-| Setting                 | Default                                | Description                                                                                                                                                                                |
-|:------------------------|:---------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `FACE_RUN`              | `auto`                                 | When detection and recognition run (`auto`, `always`, `on-index`, `newly-indexed`, `on-schedule`, `on-demand`, `manual`, `never`). Replaces the `Run` value in `vision.yml`.               |
-| `FACE_DETECTOR`         | *(unset)*                              | Detection model (`auto`, `yunet`, `none`). Unset derives it from the face model; the gated InsightFace name is accepted but not offered.                                                   |
-| `FACE_ENGINE`           | `auto`                                 | Detection runtime (`auto`, `onnx`, `none`) *deprecated*. Only `none` still has an effect, and `FACE_DETECTOR` overrides it.                                                                |
-| `FACE_DETECTOR_THREADS` | `runtime.NumCPU()/IndexWorkers()` (≥1) | ONNX threads per detection session. Detection takes no lock, so one session runs per indexing worker.                                                                                      |
-| `FACE_MODEL_THREADS`    | `runtime.NumCPU()/2` (≥1)              | ONNX threads for embedding, which runs one session in total behind the model lock.                                                                                                         |
-| `FACE_ENGINE_THREADS`   | *(unset)*                              | Sets both of the above at once *deprecated*. The two derive different defaults, so a value that is right for one is not right for the other.                                               |
-| `FACE_MODEL`            | *(unset)*                              | Embedding model (`auto`, `sface`, `none`). Unset detects it once and writes the name to `options.yml`; `facenet`, `auraface` and the gated InsightFace names are accepted but not offered. |
-| `FACE_SCORE`            | `65` *(detector)*                      | Minimum detection quality, on the 0-100 scale. Unset, each detector's own calibrated cutoff decides; a value set here replaces it, in either direction, and `-1` removes it.               |
-| `FACE_MIGRATE_SIZE`     | `10`                                   | Minimum face size while a migration re-detects, in detection-thumbnail pixels. Never inherits `FACE_SIZE`.                                                                                 |
-| `FACE_MIGRATE_SCORE`    | `50` *(detector)*                      | Minimum detection quality while a migration re-detects. Registered per detector, outranks `FACE_SCORE`, which still applies when this is unset; `-1` removes it.                           |
-| `FACE_OVERLAP`          | `42`                                   | Maximum allowed IoU when deduplicating markers.                                                                                                                                            |
+| Setting                 | Default                                 | Description                                                                                                                                                                                |
+|-------------------------|-----------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `FACE_RUN`              | `auto`                                  | When detection and recognition run (`auto`, `always`, `on-index`, `newly-indexed`, `on-schedule`, `on-demand`, `manual`, `never`). Replaces the `Run` value in `vision.yml`.               |
+| `FACE_ENGINE`           | `auto`                                  | Detection runtime (`auto`, `onnx`, `none`) *deprecated*. Only `none` still has an effect, and `FACE_DETECTOR` overrides it. Reported only when it is not `auto`.                           |
+| `FACE_ENGINE_THREADS`   | *(unset)*                               | Sets both thread counts at once *deprecated*. The two derive different defaults, so a value that is right for one is not right for the other.                                              |
+| `FACE_DETECTOR`         | *(unset)*                               | Detection model (`auto`, `yunet`, `none`). Unset derives it from the face model; the gated InsightFace name is accepted but not offered.                                                   |
+| `FACE_DETECTOR_THREADS` | `runtime.NumCPU()/IndexWorkers()` (>=1) | ONNX threads per detection session. Detection takes no lock, so one session runs per indexing worker.                                                                                      |
+| `FACE_SIZE`             | `25`                                    | Minimum detected face size in pixels (10-10000).                                                                                                                                           |
+| `FACE_SIZE_RETRY`       | `10`                                    | Minimum face size for the second pass, which runs only when the first found none. `-1` disables it.                                                                                        |
+| `FACE_SCORE`            | `65` *(detector)*                       | Minimum detection quality, on the 0-100 scale. Unset, each detector's own calibrated cutoff decides; a value set here replaces it, in either direction, and `-1` removes it.               |
+| `FACE_MIGRATE_SIZE`     | `10`                                    | Minimum face size while a migration re-detects, in detection-thumbnail pixels. Never inherits `FACE_SIZE`.                                                                                 |
+| `FACE_MIGRATE_SCORE`    | `50` *(detector)*                       | Minimum detection quality while a migration re-detects. Registered per detector, outranks `FACE_SCORE`, which still applies when this is unset; `-1` removes it.                           |
+| `FACE_OVERLAP`          | `42`                                    | Maximum allowed IoU when deduplicating markers.                                                                                                                                            |
+| `FACE_MODEL`            | *(unset)*                               | Embedding model (`auto`, `sface`, `none`). Unset detects it once and writes the name to `options.yml`; `facenet`, `auraface` and the gated InsightFace names are accepted but not offered. |
+| `FACE_MODEL_THREADS`    | `runtime.NumCPU()/2` (>=1)              | ONNX threads for embedding, which runs one session in total behind the model lock.                                                                                                         |
+| `FACE_CLUSTER_SIZE`     | `60`                                    | Minimum face size (px) considered for clustering, and the bar that actually gates recognition quality.                                                                                     |
+| `FACE_CLUSTER_SCORE`    | `70` *(detector)*                       | Minimum detection confidence for cluster candidates. Unset, it is taken from the detector that produced each marker; a value set here applies to every marker, and `-1` removes it.        |
+| `FACE_CLUSTER_CORE`     | `4`                                     | Number of faces required to seed a cluster.                                                                                                                                                |
+| `FACE_CLUSTER_DIST`     | *(per model)*                           | Similarity distance threshold used during cluster formation.                                                                                                                               |
+| `FACE_CLUSTER_RADIUS`   | *(per model)*                           | Maximum stored radius for cluster matching; matches are allowed up to `radius + FACE_MATCH_DIST`.                                                                                          |
+| `FACE_MATCH_DIST`       | *(per model)*                           | Similarity offset applied when matching embeddings to clusters. Its sum with `FACE_CLUSTER_RADIUS` is the accept distance, which is why the two are listed together.                       |
+| `FACE_COLLISION_DIST`   | *(per model)*                           | Floor below which a measured collision radius is discarded and the cluster keeps its full accept distance.                                                                                 |
+| `FACE_EPSILON_DIST`     | `0.01`                                  | Gap a resolved collision leaves between a cluster and the intruder, and the slack added to match statistics. The same for every model; the ambiguity cutoff is twice it.                   |
 
 **`vision.yml` no longer configures faces.** `FACE_MODEL` is authoritative for which model produces embeddings and `FACE_RUN` for when it runs; a `face` entry in that file decides neither. A **custom face model configured there is deprecated**: it is still loaded while no embedding model is active, it logs a warning, and its vectors are recorded under the configured model's name rather than its own. Every supported face model needs code that knows its preprocessing contract, so there is nothing useful to configure per installation the way a caption or label model can be.
 

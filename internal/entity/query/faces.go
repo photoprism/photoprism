@@ -238,9 +238,8 @@ func countNewFaceMarkers(current string, size, score int) (n int) {
 // whereClusterScore restricts a statement to markers that clear the clustering bar of the detector
 // that produced them, or the given floor when one is set explicitly.
 //
-// Looked up per marker rather than taken from the detector in force: a library holds markers from
-// more than one, and judging an old marker by the active detector's bar would exclude it for a
-// calibration it was never scored against - permanently, since nothing recomputes a score.
+// Looked up per marker rather than from the detector in force: a library holds markers from more
+// than one, and judging an old one by the active detector's bar would exclude it permanently.
 func whereClusterScore(stmt *gorm.DB, floor int) *gorm.DB {
 	// FACE_CLUSTER_SCORE outranks the per-detector bars when an operator set one, and removes it
 	// when negative. Applying one value to every marker is safe here in a way that taking the

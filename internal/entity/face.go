@@ -243,7 +243,7 @@ func (m *Face) ResolveCollision(embeddings face.Embeddings, model face.ModelName
 	} else if dist < 0 {
 		// Should never happen.
 		return false, fmt.Errorf("collision distance must be positive")
-	} else if dist < 0.02 {
+	} else if dist < face.AmbiguityDist() {
 		log.Warnf("faces: %s has ambiguous subject %s with a similar face at dist %f with source %s", m.ID, SubjNames.Log(m.SubjUID), dist, SrcString(m.FaceSrc))
 
 		m.FaceKind = int(face.AmbiguousFace)

@@ -1893,7 +1893,9 @@ func TestConfig_FaceThresholdsPerModel(t *testing.T) {
 		assert.Equal(t, 0.60, c.FaceClusterRadius())
 		assert.Equal(t, 0.35, c.FaceMatchDist())
 		assert.Equal(t, 0.061, c.FaceCollisionDist())
-		assert.Equal(t, 0.012, c.FaceEpsilonDist())
+		// Epsilon does not scale with the model: it is the gap a resolved collision leaves, and a
+		// wider one strands embeddings rather than telling two people apart.
+		assert.Equal(t, face.EpsilonDefault, c.FaceEpsilonDist())
 	})
 	t.Run("FaceNetKeepsShippedValues", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
@@ -1943,7 +1945,7 @@ func TestConfig_FaceThresholdsPerModel(t *testing.T) {
 		assert.Equal(t, 0.60, c.FaceClusterRadius())
 		assert.Equal(t, 0.35, c.FaceMatchDist())
 		assert.Equal(t, 0.061, c.FaceCollisionDist())
-		assert.Equal(t, 0.012, c.FaceEpsilonDist())
+		assert.Equal(t, face.EpsilonDefault, c.FaceEpsilonDist())
 	})
 }
 

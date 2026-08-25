@@ -68,6 +68,25 @@ func TestAcceptDist(t *testing.T) {
 	})
 }
 
+// TestAmbiguityDist pins the cutoff to Epsilon rather than to a literal. The two came apart once
+// already: the cutoff stayed at 0.02 while Epsilon was scaled per model.
+func TestAmbiguityDist(t *testing.T) {
+	restore := Epsilon
+	t.Cleanup(func() { Epsilon = restore })
+
+	t.Run("Default", func(t *testing.T) {
+		Epsilon = EpsilonDefault
+		assert.InDelta(t, 0.02, AmbiguityDist(), 0.0001)
+	})
+	t.Run("FollowsEpsilon", func(t *testing.T) {
+		// FACE_EPSILON_DIST reaches this through Config.Propagate, so an operator narrowing the
+		// gap narrows the cutoff with it rather than leaving a band that resolves neither way.
+		Epsilon = 0.004
+		assert.InDelta(t, 0.008, AmbiguityDist(), 0.0001)
+		assert.Greater(t, AmbiguityDist(), Epsilon, "a cutoff at or below Epsilon would record a non-positive radius")
+	})
+}
+
 // TestDetectorScore checks that a report can always state a cutoff some detector enforces. It
 // returned zero for an unknown name before, which reads as "nothing is filtered".
 func TestDetectorScore(t *testing.T) {

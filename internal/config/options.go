@@ -272,14 +272,14 @@ type Options struct {
 	FaceOverlap               int           `yaml:"-" json:"-" flag:"face-overlap"`
 	FaceModel                 string        `yaml:"FaceModel" json:"-" flag:"face-model"`
 	FaceModelThreads          int           `yaml:"FaceModelThreads" json:"-" flag:"face-model-threads"`
-	FaceMatchDist             float64       `yaml:"-" json:"-" flag:"face-match-dist"`
-	FaceCollisionDist         float64       `yaml:"-" json:"-" flag:"face-collision-dist"`
-	FaceEpsilonDist           float64       `yaml:"-" json:"-" flag:"face-epsilon-dist"`
 	FaceClusterSize           int           `yaml:"-" json:"-" flag:"face-cluster-size"`
 	FaceClusterScore          int           `yaml:"-" json:"-" flag:"face-cluster-score"`
 	FaceClusterCore           int           `yaml:"-" json:"-" flag:"face-cluster-core"`
 	FaceClusterDist           float64       `yaml:"-" json:"-" flag:"face-cluster-dist"`
 	FaceClusterRadius         float64       `yaml:"-" json:"-" flag:"face-cluster-radius"`
+	FaceMatchDist             float64       `yaml:"-" json:"-" flag:"face-match-dist"`
+	FaceCollisionDist         float64       `yaml:"-" json:"-" flag:"face-collision-dist"`
+	FaceEpsilonDist           float64       `yaml:"-" json:"-" flag:"face-epsilon-dist"`
 	PIDFilename               string        `yaml:"PIDFilename" json:"-" flag:"pid-filename"`
 	LogFilename               string        `yaml:"LogFilename" json:"-" flag:"log-filename"`
 	DetachServer              bool          `yaml:"DetachServer" json:"-" flag:"detach-server"`
