@@ -78,7 +78,7 @@ func ModelValuesStructOption(m any, includeAll bool, omit ...string) (result Val
 			}
 			whitelist := false
 			switch v.Type().String() {
-			case "json.RawMessage":
+			case "json.RawMessage", "jsontext.Value":
 				whitelist = true
 			}
 			if !whitelist && !includeAll {
@@ -91,7 +91,7 @@ func ModelValuesStructOption(m any, includeAll bool, omit ...string) (result Val
 			}
 			whitelist := false
 			switch v.Type().String() {
-			case "sql.NullTime", "time.Time", "time.Duration", "json.RawMessage", "otp.Key":
+			case "sql.NullTime", "time.Time", "time.Duration", "json.RawMessage", "jsontext.Value", "otp.Key":
 				whitelist = true
 			}
 			if !whitelist && !includeAll {
@@ -101,7 +101,7 @@ func ModelValuesStructOption(m any, includeAll bool, omit ...string) (result Val
 		case reflect.Pointer:
 			whitelist := false
 			switch v.Type().String() {
-			case "*time.Time", "*time.Duration", "*bool", "*uint", "*uint64", "*uint32", "*int", "*int64", "*int32", "*string", "*float32", "*float64", "*otp.Key", "*sql.NullTime", "*json.RawMessage":
+			case "*time.Time", "*time.Duration", "*bool", "*uint", "*uint64", "*uint32", "*int", "*int64", "*int32", "*string", "*float32", "*float64", "*otp.Key", "*sql.NullTime", "*json.RawMessage", "*jsontext.Value":
 				whitelist = true
 			}
 			if !whitelist && !includeAll {
