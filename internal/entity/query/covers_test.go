@@ -258,13 +258,23 @@ func TestUpdateSubjectCovers(t *testing.T) {
 		assert.Equal(t, "manual-"+subj.SubjUID, coverThumb(t, subj.SubjUID))
 	})
 	t.Run("RanksAssignedSubjectsBySize", func(t *testing.T) {
-		// Sources other than automatic clustering share one rank, so a byte sort over the source
-		// string cannot put a sidecar's name above the one a person typed.
+		// Every source other than automatic clustering shares one rank, so size decides between
+		// them. A byte sort over the source string would take the sidecar name here instead.
 		subj := newCoverSubject(t, "", entity.SrcAuto)
 		newCoverMarker(t, entity.Marker{SubjUID: subj.SubjUID, SubjSrc: entity.SrcXmp, Size: 60, Score: 95, Thumb: "xmp-" + subj.SubjUID})
 		newCoverMarker(t, entity.Marker{SubjUID: subj.SubjUID, SubjSrc: entity.SrcManual, Size: 200, Score: 70, Thumb: "manual-" + subj.SubjUID})
 		require.NoError(t, UpdateSubjectCovers(true))
 		assert.Equal(t, "manual-"+subj.SubjUID, coverThumb(t, subj.SubjUID))
+	})
+	t.Run("RanksASidecarNameByTheSameRule", func(t *testing.T) {
+		// The converse, and the case that decides what "one rank" means: a larger face named from
+		// a sidecar takes the cover from a smaller one a person typed. Without this, reintroducing
+		// a precedence between the two sources would pass every other subtest here.
+		subj := newCoverSubject(t, "", entity.SrcAuto)
+		newCoverMarker(t, entity.Marker{SubjUID: subj.SubjUID, SubjSrc: entity.SrcManual, Size: 60, Score: 95, Thumb: "manual-" + subj.SubjUID})
+		newCoverMarker(t, entity.Marker{SubjUID: subj.SubjUID, SubjSrc: entity.SrcXmp, Size: 200, Score: 70, Thumb: "xmp-" + subj.SubjUID})
+		require.NoError(t, UpdateSubjectCovers(true))
+		assert.Equal(t, "xmp-"+subj.SubjUID, coverThumb(t, subj.SubjUID))
 	})
 	t.Run("PicksTheMostConfidentOfEqualSize", func(t *testing.T) {
 		subj := newCoverSubject(t, "", entity.SrcAuto)
