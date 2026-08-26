@@ -281,13 +281,13 @@ func TestFaceMigrationSubjectMarkers(t *testing.T) {
 
 		// It reports the complement of what seeds a cluster, so the two have to agree on the
 		// bars: a count with its own copy of them describes a set the rebuild does not use.
-		var assigned int
+		var assigned int64
 		require.NoError(t, whereEmbeddingModel(Db().Model(&entity.Marker{}).
-			Where("marker_type = ? AND marker_invalid = 0", entity.MarkerFace).
+			Where("marker_type = ? AND marker_invalid = FALSE", entity.MarkerFace).
 			Where("subj_uid <> ''").
 			Where("LENGTH(embeddings_json) > 0"), face.ModelFaceNet).Count(&assigned).Error)
 
-		var seeds int
+		var seeds int64
 		require.NoError(t, whereFaceMigrationSamples(Db().Model(&entity.Marker{}), face.ModelFaceNet).Count(&seeds).Error)
 
 		assert.Equal(t, assigned-seeds, count)

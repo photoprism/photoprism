@@ -469,11 +469,11 @@ func TestWhereClusterScore(t *testing.T) {
 	matched := func(t *testing.T, uid string, floor int) bool {
 		t.Helper()
 
-		var n int
+		var n int64
 		require.NoError(t, whereClusterScore(entity.Db().Model(&entity.Marker{}).Where("marker_uid = ?", uid), floor).
 			Count(&n).Error)
 
-		return n == 1
+		return n == int64(1)
 	}
 	yunet := face.ClusterScore(face.DetectorYuNet)
 	scrfd := face.ClusterScore(face.DetectorSCRFD)

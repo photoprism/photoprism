@@ -19,6 +19,7 @@ import (
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/internal/thumb/crop"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/convert"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -60,7 +61,7 @@ type FacesMigratePlan struct {
 	// placed, or that record none. They are re-embedded so the library ends up in one crop
 	// space, and are reported apart from stale markers because they lose nothing if that fails.
 	// On the first run after the provenance column was added, this is every marker.
-	RecropMarkers int
+	RecropMarkers int64
 
 	// OriginalsUnavailable reports that the originals root cannot be read, which is what an
 	// unmounted volume looks like. The counting queries cannot see it, so a plan would
@@ -1256,7 +1257,7 @@ func logMigrationProgress(plan FacesMigratePlan, result FacesMigrateResult) {
 // migrationProgress returns how many of the planned markers have been processed. The plan is
 // counted before the run, so a marker added meanwhile must not report more than the total.
 func migrationProgress(plan FacesMigratePlan, result FacesMigrateResult) (done, total int) {
-	total = plan.Markers.Valid
+	total = convert.SafeInt64toint(plan.Markers.Valid)
 
 	if total < 1 {
 		return 0, 0

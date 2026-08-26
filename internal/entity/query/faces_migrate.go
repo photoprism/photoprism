@@ -268,12 +268,12 @@ func FaceMigrationLowQualityMarkers(model string) (count int64, err error) {
 
 	assigned := func() *gorm.DB {
 		return whereEmbeddingModel(Db().Model(&entity.Marker{}).
-			Where("marker_type = ? AND marker_invalid = 0", entity.MarkerFace).
+			Where("marker_type = ? AND marker_invalid = FALSE", entity.MarkerFace).
 			Where("subj_uid <> ''").
 			Where("LENGTH(embeddings_json) > 0"), model)
 	}
 
-	var total, samples int
+	var total, samples int64
 
 	if err = assigned().Count(&total).Error; err != nil {
 		return 0, err
@@ -289,7 +289,7 @@ func FaceMigrationLowQualityMarkers(model string) (count int64, err error) {
 //
 // These markers are not stale in the embedding sense, which is why they are counted apart: a
 // re-embedding that cannot find them again keeps the vector they already hold.
-func FaceMigrationRecropMarkers(model, detector string) (count int, err error) {
+func FaceMigrationRecropMarkers(model, detector string) (count int64, err error) {
 	if model == "" {
 		return 0, fmt.Errorf("faces: migration model is required")
 	}
