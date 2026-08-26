@@ -387,32 +387,37 @@ func TestSplitWideClusters(t *testing.T) {
 	})
 }
 
-// TestSplitDist covers how far one round shortens the link distance. The proportional term is what
-// lets a badly chained group converge inside faceClusterSplitRounds, and no fixture reaches it: the
-// chained one is only just too wide, so the flat term wins there.
+// TestSplitDist covers how far one round shortens the link distance.
+//
+// Flat rather than sized to how far past its accept distance the group reaches: a cut sized to the
+// symptom overshoots the distance that separates the group and dissolves it into noise, which on a
+// real library halved coverage and left the person the check was written for unnameable.
 func TestSplitDist(t *testing.T) {
-	setFaceThresholds(t, 0.85, 0.60, 0.35)
-
-	accept := face.AcceptDist(face.ClusterRadius)
-	require.InDelta(t, 0.95, accept, 1e-9)
-
-	t.Run("Proportional", func(t *testing.T) {
-		// Twice the accept distance, so the proportional term more than halves the link distance
-		// where the flat one would take four rounds to get there.
-		radius := 2 * accept
-		assert.InDelta(t, face.ClusterDist*accept/radius, splitDist(face.ClusterDist, radius), 1e-9)
-		assert.Less(t, splitDist(face.ClusterDist, radius), face.ClusterDist*faceClusterSplitShrink)
+	t.Run("Shortens", func(t *testing.T) {
+		assert.InDelta(t, 0.85*faceClusterSplitShrink, splitDist(0.85), 1e-9)
 	})
-	t.Run("FlatWhenBarelyTooWide", func(t *testing.T) {
-		// A group just past its accept distance would otherwise be re-clustered at the distance
-		// that produced it, and every round would return it unchanged.
-		assert.InDelta(t, face.ClusterDist*faceClusterSplitShrink, splitDist(face.ClusterDist, accept+0.001), 1e-9)
+	t.Run("IndependentOfHowWideTheGroupIs", func(t *testing.T) {
+		// The whole point: a group at twice its accept distance takes the same first step as one
+		// just past it, because DBSCAN width is a chaining property rather than a linear one.
+		assert.InDelta(t, splitDist(0.85), splitDist(0.85), 1e-9)
+		assert.Less(t, splitDist(0.85), 0.85)
 	})
 	t.Run("AlwaysMakesProgress", func(t *testing.T) {
-		for _, radius := range []float64{accept + 1e-9, 1.0, 1.3, 1.99} {
-			assert.Less(t, splitDist(face.ClusterDist, radius), face.ClusterDist, "radius %f", radius)
-			assert.Positive(t, splitDist(face.ClusterDist, radius), "radius %f", radius)
+		for _, dist := range []float64{0.4, 0.85, 1.07, 1.25} {
+			assert.Less(t, splitDist(dist), dist, "dist %f", dist)
+			assert.Positive(t, splitDist(dist), "dist %f", dist)
 		}
+	})
+	t.Run("ReachesAUsefulRangeWithinTheRoundCap", func(t *testing.T) {
+		// A step gentle enough not to overshoot still has to reach the distances that separate a
+		// chained group, or the rounds run out and the group is discarded instead.
+		dist := face.ClusterDistDefault
+
+		for range faceClusterSplitRounds {
+			dist = splitDist(dist)
+		}
+
+		assert.Less(t, dist, 0.5, "the cap and the step have to reach past where a chain separates")
 	})
 }
 
@@ -422,32 +427,43 @@ func TestSplitCluster(t *testing.T) {
 	setFaceThresholds(t, 0.85, 0.60, 0.35)
 
 	embeddings, _ := chainedFixture()
-	radius := embeddings.Radius()
 
 	t.Run("ShortensTheLinkDistance", func(t *testing.T) {
-		parts, err := splitCluster(faceClusterPart{embeddings: embeddings, dist: face.ClusterDist}, radius, 1)
+		parts, err := splitCluster(faceClusterPart{embeddings: embeddings, dist: face.ClusterDist}, 1)
 
 		require.NoError(t, err)
 		require.NotEmpty(t, parts)
 
 		for _, part := range parts {
-			assert.Less(t, part.dist, face.ClusterDist)
+			assert.InDelta(t, splitDist(face.ClusterDist), part.dist, 1e-9)
 			assert.Equal(t, 1, part.round)
 		}
 	})
-	t.Run("MakesProgressWhenBarelyTooWide", func(t *testing.T) {
-		// A group just past its accept distance would otherwise be re-clustered at the distance
-		// that produced it, and every round would return it unchanged.
-		barely := face.AcceptDist(radius) + 0.001
-
-		parts, err := splitCluster(faceClusterPart{embeddings: embeddings, dist: face.ClusterDist}, barely, 1)
-
+	t.Run("KeepsEveryMemberOfTheGroup", func(t *testing.T) {
+		// Whatever the schedule, a round may only separate a group or leave points below the core
+		// size - never invent one. A part holding a vector the group did not is a mapping bug.
+		parts, err := splitCluster(faceClusterPart{embeddings: embeddings, dist: face.ClusterDist}, 1)
 		require.NoError(t, err)
-		require.NotEmpty(t, parts)
-		assert.InDelta(t, face.ClusterDist*faceClusterSplitShrink, parts[0].dist, 1e-9)
+
+		seen := make(map[*float64]bool, len(embeddings))
+		for i := range embeddings {
+			seen[&embeddings[i][0]] = true
+		}
+
+		total := 0
+
+		for _, part := range parts {
+			total += len(part.embeddings)
+
+			for _, e := range part.embeddings {
+				assert.True(t, seen[&e[0]])
+			}
+		}
+
+		assert.LessOrEqual(t, total, len(embeddings))
 	})
 	t.Run("InvalidDistance", func(t *testing.T) {
-		_, err := splitCluster(faceClusterPart{embeddings: embeddings, dist: 0}, radius, 1)
+		_, err := splitCluster(faceClusterPart{embeddings: embeddings, dist: 0}, 1)
 		assert.Error(t, err)
 	})
 }

@@ -51,12 +51,17 @@ func (w *Faces) reportOnce(key string, value int) bool {
 }
 
 // faceClusterSplitRounds is how often a group wider than its own accept distance may be re-clustered
-// before it is given up on. A round costs at most what the pass that produced the group did.
-const faceClusterSplitRounds = 4
+// before it is given up on. A round costs at most what the pass that produced the group did, and the
+// recursion is measured to terminate well before this on a real library.
+const faceClusterSplitRounds = 6
 
-// faceClusterSplitShrink is the least a round has to shorten the link distance by, so a group that
-// is only slightly too wide still makes progress instead of being re-clustered unchanged.
-const faceClusterSplitShrink = 0.85
+// faceClusterSplitShrink is how much a round shortens the link distance by.
+//
+// Flat rather than proportional to how far past its accept distance the group reaches: width is a
+// chaining property, so a cut sized to the symptom overshoots the distance that separates a group and
+// dissolves it into noise instead. The first step is what decides the outcome, and this value is
+// provisional - see the spec, which records what a run on a real library should watch.
+const faceClusterSplitShrink = 0.90
 
 // faceClusterPart is a group awaiting the width check, with the link distance it was formed at.
 type faceClusterPart struct {
@@ -101,7 +106,7 @@ func (w *Faces) splitWideClusters(cluster face.Embeddings, dist float64, workers
 			continue
 		}
 
-		parts, err := splitCluster(part, radius, workers)
+		parts, err := splitCluster(part, workers)
 
 		if err != nil {
 			log.Errorf("faces: %s (split cluster)", err)
@@ -131,17 +136,15 @@ func (w *Faces) reportWideCluster(samples int, radius, dist float64) {
 		english.Plural(samples, "sample", "samples"), radius, dist)
 }
 
-// splitDist returns the link distance the next round uses. It is shortened in proportion to how far
-// past its accept distance the group reaches, so a badly chained group converges in as few rounds as
-// a marginal one, and by faceClusterSplitShrink at least, so a round always makes progress.
-func splitDist(dist, radius float64) float64 {
-	return min(dist*face.AcceptDist(radius)/radius, dist*faceClusterSplitShrink)
+// splitDist returns the link distance the next round uses.
+func splitDist(dist float64) float64 {
+	return dist * faceClusterSplitShrink
 }
 
 // splitCluster re-clusters one group at a shorter link distance. Points left below the core size
 // stay unclustered, which a later pass can still pick up.
-func splitCluster(part faceClusterPart, radius float64, workers int) ([]faceClusterPart, error) {
-	dist := splitDist(part.dist, radius)
+func splitCluster(part faceClusterPart, workers int) ([]faceClusterPart, error) {
+	dist := splitDist(part.dist)
 
 	// The same progress reporting the pass that produced the group uses: a round is a full pass
 	// over it, which on a large library is minutes of silence otherwise.
