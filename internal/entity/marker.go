@@ -12,6 +12,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/internal/thumb/crop"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
@@ -96,6 +97,19 @@ func NewMarker(file File, area crop.Area, subjUID, markerSrc, markerType string,
 	}
 
 	return m
+}
+
+// MarkerSize returns the size an area covers in pixels of the thumbnail faces are detected in,
+// which is the unit markers record. Never returns zero: GORM omits it on insert, so the row would
+// read back as the -1 this also returns for a file of unknown dimensions.
+func MarkerSize(area crop.Area, file File) int {
+	w, h := thumb.Sizes[thumb.Fit720].Fitted(file.FileWidth, file.FileHeight)
+
+	if w <= 0 || h <= 0 {
+		return -1
+	}
+
+	return max(1, int(math.Max(float64(area.W)*float64(w), float64(area.H)*float64(h))))
 }
 
 // NewFaceMarker creates a new entity.
@@ -239,7 +253,7 @@ func (m *Marker) HasFace(f *Face, dist float64) bool {
 // subjSrcSharesFace reports whether a subject source may propagate its name onto
 // the shared Face and its related markers. SrcAuto never does (that is what face
 // clustering itself manages), and SrcXmp is excluded too so an imported XMP name
-// labels only its own marker — there is no XMP-driven clustering in v1.
+// labels only its own marker - there is no XMP-driven clustering in v1.
 func subjSrcSharesFace(src string) bool {
 	return src != SrcAuto && src != SrcXmp
 }

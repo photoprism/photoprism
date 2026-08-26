@@ -19,7 +19,6 @@ import (
 // and Score only influence the quality sort and the review flag; named regions
 // are not flagged for review, unnamed ones are so the user can name them.
 const (
-	xmpMarkerSize = 100 // Nominal face size in pixels.
 	// Scores are on the detector's 0-100 confidence scale, so both clear the clustering bar: a
 	// region a detector later confirms carries a real embedding, and its score is never rewritten.
 	// Whether it needs review is set explicitly rather than inferred from the score.
@@ -327,7 +326,7 @@ func reconcileXmpFaces(regions meta.FaceRegions, file *entity.File, markers *ent
 			score = xmpMarkerScoreNamed
 		}
 
-		probe := entity.NewMarker(*file, area, "", entity.SrcXmp, entity.MarkerFace, xmpMarkerSize, score)
+		probe := entity.NewMarker(*file, area, "", entity.SrcXmp, entity.MarkerFace, entity.MarkerSize(area, *file), score)
 		if probe == nil {
 			continue
 		}
