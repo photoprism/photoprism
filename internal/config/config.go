@@ -551,6 +551,12 @@ func (c *Config) SaveOptionsPatch(patch Values) (bool, error) {
 		return false, nil
 	}
 
+	// Values are typed against the options they set before anything is written, so that the file
+	// and the running configuration cannot end up holding different numbers.
+	if err := CoerceOptionValues(patch); err != nil {
+		return false, err
+	}
+
 	fileName, values, err := c.loadOptionsYAML()
 	if err != nil {
 		return false, err

@@ -2,6 +2,7 @@ package config
 
 import (
 	"bytes"
+	"math"
 	"os"
 	"path/filepath"
 	"strings"
@@ -604,6 +605,49 @@ func TestConfig_SaveOptionsPatchAppliesOnlyThePatch(t *testing.T) {
 	assert.Equal(t, "sface", c.options.FaceModel, "the patched key must be applied")
 	assert.Equal(t, "sqlite3", c.options.DatabaseDriver, "an unpatched key must not be read back")
 	assert.Empty(t, c.options.DatabaseServer)
+}
+
+// TestConfig_SaveOptionsPatchTypesValues pins that an integer option persists as an integer,
+// so that the file and the running configuration cannot end up holding different numbers.
+func TestConfig_SaveOptionsPatchTypesValues(t *testing.T) {
+	newTestConfig := func(t *testing.T) *Config {
+		t.Helper()
+
+		tempCfg := t.TempDir()
+		c := NewConfig(CliTestContext())
+		c.options.ConfigPath = tempCfg
+		c.options.OptionsYaml = filepath.Join(tempCfg, "options.yml")
+
+		return c
+	}
+
+	t.Run("Success", func(t *testing.T) {
+		c := newTestConfig(t)
+
+		wrote, err := c.SaveOptionsPatch(Values{"JpegQuality": 85.61960784313726})
+		require.NoError(t, err)
+		require.True(t, wrote)
+
+		assert.Equal(t, 86, c.options.JpegQuality)
+
+		b, err := os.ReadFile(c.OptionsYaml())
+		require.NoError(t, err)
+		assert.Contains(t, string(b), "JpegQuality: 86")
+		assert.NotContains(t, string(b), "85.61960784313726")
+
+		// The value must survive a reload as the number that was written.
+		values := Values{}
+		require.NoError(t, yaml.Unmarshal(b, &values))
+		assert.EqualValues(t, 86, values["JpegQuality"])
+	})
+	t.Run("InvalidRequest", func(t *testing.T) {
+		c := newTestConfig(t)
+
+		wrote, err := c.SaveOptionsPatch(Values{"JpegQuality": math.NaN()})
+		assert.ErrorIs(t, err, ErrInvalidOptionValue)
+		assert.False(t, wrote)
+		assert.NoFileExists(t, c.OptionsYaml(), "a rejected patch must not write the file")
+	})
 }
 
 func TestConfig_DeleteOptionsPatch(t *testing.T) {
