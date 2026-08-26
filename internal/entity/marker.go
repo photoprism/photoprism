@@ -48,7 +48,6 @@ type Marker struct {
 	Y              float32         `gorm:"type:FLOAT;" json:"Y" yaml:"Y,omitempty"`
 	W              float32         `gorm:"type:FLOAT;" json:"W" yaml:"W,omitempty"`
 	H              float32         `gorm:"type:FLOAT;" json:"H" yaml:"H,omitempty"`
-	Q              int             `json:"Q" yaml:"Q,omitempty"`
 	Size           int             `gorm:"default:-1;" json:"Size" yaml:"Size,omitempty"`
 	Score          int             `gorm:"type:SMALLINT;" json:"Score" yaml:"Score,omitempty"`
 	Thumb          string          `gorm:"type:VARBINARY(128);index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
@@ -90,7 +89,6 @@ func NewMarker(file File, area crop.Area, subjUID, markerSrc, markerType string,
 		Y:             area.Y,
 		W:             area.W,
 		H:             area.H,
-		Q:             int(math.Log(float64(score)) * ((float64(size) * float64(area.W)) / 2)),
 		Size:          size,
 		Score:         score,
 		Thumb:         area.Thumb(file.FileHash),

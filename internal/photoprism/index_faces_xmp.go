@@ -360,13 +360,12 @@ func reconcileXmpFaces(regions meta.FaceRegions, file *entity.File, markers *ent
 				entity.SrcPriority[existing.SubjSrc] <= entity.SrcPriority[entity.SrcXmp] &&
 				(existing.X != probe.X || existing.Y != probe.Y ||
 					existing.W != probe.W || existing.H != probe.H ||
-					existing.Q != probe.Q || existing.Size != probe.Size ||
+					existing.Size != probe.Size ||
 					existing.Score != probe.Score || existing.Thumb != probe.Thumb) {
 				existing.X = probe.X
 				existing.Y = probe.Y
 				existing.W = probe.W
 				existing.H = probe.H
-				existing.Q = probe.Q
 				existing.Size = probe.Size
 				existing.Score = probe.Score
 				existing.Thumb = probe.Thumb
@@ -378,7 +377,6 @@ func reconcileXmpFaces(regions meta.FaceRegions, file *entity.File, markers *ent
 						"y":     existing.Y,
 						"w":     existing.W,
 						"h":     existing.H,
-						"q":     existing.Q,
 						"size":  existing.Size,
 						"score": existing.Score,
 						"thumb": existing.Thumb,
