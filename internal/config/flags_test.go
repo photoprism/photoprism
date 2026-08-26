@@ -45,9 +45,14 @@ func TestFaceDocDefaults(t *testing.T) {
 
 		assert.Equal(t, strconv.FormatFloat(m.ClusterDist, 'g', -1, 64), defaults["face-cluster-dist"])
 		assert.Equal(t, strconv.FormatFloat(m.ClusterRadius, 'g', -1, 64), defaults["face-cluster-radius"])
-		assert.Equal(t, strconv.FormatFloat(m.CollisionDist, 'g', -1, 64), defaults["face-collision-dist"])
-		assert.Equal(t, strconv.FormatFloat(m.Epsilon, 'g', -1, 64), defaults["face-epsilon-dist"])
 		assert.Equal(t, strconv.FormatFloat(m.MatchDist, 'g', -1, 64), defaults["face-match-dist"])
+	})
+	t.Run("FlatDistances", func(t *testing.T) {
+		// The two gaps and the assignment margin do not follow the model, so "--help" states one
+		// number for all of them rather than the default model's.
+		assert.Equal(t, strconv.FormatFloat(face.CollisionDistDefault, 'g', -1, 64), defaults["face-collision-dist"])
+		assert.Equal(t, strconv.FormatFloat(face.EpsilonDefault, 'g', -1, 64), defaults["face-epsilon-dist"])
+		assert.Equal(t, strconv.FormatFloat(face.MatchMarginDefault, 'g', -1, 64), defaults["face-match-margin"])
 	})
 	t.Run("NoneIsZero", func(t *testing.T) {
 		// The thread counts are derived from the CPU, so there is no number to publish and

@@ -1439,10 +1439,15 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("FACE_MATCH_DIST"),
 		}, DocDefault: faceModelDocDefault(func(m *face.EmbeddingModel) float64 { return m.MatchDist })}, {
 		Flag: &cli.Float64Flag{
+			Name:    "face-match-margin",
+			Usage:   "minimum `DISTANCE` by which the nearest cluster must beat the runner-up, leaving a face between two people unassigned instead of guessing, -1 disables the check",
+			EnvVars: EnvVars("FACE_MATCH_MARGIN"),
+		}, DocDefault: faceDocDefault(face.MatchMarginDefault)}, {
+		Flag: &cli.Float64Flag{
 			Name:    "face-collision-dist",
-			Usage:   "minimum collision discrimination `DISTANCE` (greater than 0, up to 1), calibrated per face model when unset",
+			Usage:   "minimum collision discrimination `DISTANCE` (greater than 0, up to 1), the same for every face model",
 			EnvVars: EnvVars("FACE_COLLISION_DIST"),
-		}, DocDefault: faceModelDocDefault(func(m *face.EmbeddingModel) float64 { return m.CollisionDist })}, {
+		}, DocDefault: faceDocDefault(face.CollisionDistDefault)}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-epsilon-dist",
 			Usage:   "collision tolerance `DELTA` appended to max match distances (up to 0.01), the same for every face model; twice it is the distance at which a colliding cluster is retired for good",
@@ -1476,8 +1481,8 @@ func faceDocDefault(value float64) string {
 }
 
 // faceModelDocDefault formats a distance calibrated for the embedding model a default install
-// runs. The five distances are per model and are not comparable between them, so this names the
-// one set that applies rather than implying a global default.
+// runs. The calibrated distances are per model and are not comparable between them, so this names
+// the one set that applies rather than implying a global default.
 func faceModelDocDefault(pick func(*face.EmbeddingModel) float64) string {
 	m := face.DefaultModel()
 

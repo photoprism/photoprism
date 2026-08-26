@@ -899,6 +899,34 @@ func (c *Config) FaceMatchDist() float64 {
 	return matchDist
 }
 
+// FaceMatchMargin returns how much closer the nearest cluster has to be than the runner-up before
+// a marker is assigned to it, or 0 when a marker always goes to its nearest cluster.
+//
+// It does not go through faceThreshold, which floors a value at the collision distance: this is the
+// difference between two distances, and a useful margin is legitimately smaller than either.
+func (c *Config) FaceMatchMargin() float64 {
+	value := c.options.FaceMatchMargin
+	configured := c.faceThresholdIsSet("face-match-margin", value)
+
+	if !configured || value == 0 {
+		return face.MatchMarginDefault
+	}
+
+	// Any negative value switches the check off, face.NoMatchMargin being the documented spelling.
+	// A decision rather than an out-of-range value, so it applies without a warning.
+	if value < 0 {
+		return 0
+	}
+
+	if value <= face.ConfigDistMax {
+		return value
+	}
+
+	c.warnFaceThreshold(true, "face-match-margin", value, 0, face.ConfigDistMax, face.MatchMarginDefault)
+
+	return face.MatchMarginDefault
+}
+
 // FaceCollisionDist returns the minimum distance used to differentiate embeddings.
 //
 // It does not go through faceThreshold, which takes this value as its lower bound and

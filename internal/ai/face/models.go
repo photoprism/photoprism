@@ -66,8 +66,8 @@ const (
 // EmbeddingModel describes what a face embedding model expects from the pipeline.
 //
 // ONNX carries the artifact and preprocessing contract every ONNX subsystem shares, and is nil for
-// TensorFlow models. Detector is what an unset FACE_DETECTOR derives from. The five distances are in
-// the model's own scale, so one global set would discard most matches for all but one.
+// TensorFlow models. Detector is what an unset FACE_DETECTOR derives from. The three calibrated
+// distances are in the model's own scale, so one global set would discard most matches for all but one.
 type EmbeddingModel struct {
 	Name      ModelName
 	Runtime   EmbeddingRuntime
@@ -90,10 +90,10 @@ type EmbeddingModel struct {
 	ClusterDist   float64
 	ClusterRadius float64
 	MatchDist     float64
+	// CollisionDist and Epsilon are gaps rather than separations measured in a model's scale, so
+	// they are registered only to be overridable; two tests pin every model to the shared default.
 	CollisionDist float64
-	// Epsilon is registered per model only so an operator can override it; TestEmbeddingModelEpsilon
-	// pins every model to EpsilonDefault, because it is a gap rather than a calibrated separation.
-	Epsilon float64
+	Epsilon       float64
 }
 
 // EmbeddingModels lists the supported face embedding models by name.
@@ -136,7 +136,7 @@ var EmbeddingModels = map[ModelName]*EmbeddingModel{
 		ClusterDist:   0.85,
 		ClusterRadius: 0.60,
 		MatchDist:     0.35,
-		CollisionDist: 0.061,
+		CollisionDist: CollisionDistDefault,
 		Epsilon:       EpsilonDefault,
 	},
 	ModelAuraFace: {
@@ -157,7 +157,7 @@ var EmbeddingModels = map[ModelName]*EmbeddingModel{
 		ClusterDist:   0.98,
 		ClusterRadius: 0.76,
 		MatchDist:     0.35,
-		CollisionDist: 0.077,
+		CollisionDist: CollisionDistDefault,
 		Epsilon:       EpsilonDefault,
 	},
 	ModelArcFaceR50: {
@@ -178,7 +178,7 @@ var EmbeddingModels = map[ModelName]*EmbeddingModel{
 		ClusterDist:   1.07,
 		ClusterRadius: 0.67,
 		MatchDist:     0.55,
-		CollisionDist: 0.084,
+		CollisionDist: CollisionDistDefault,
 		Epsilon:       EpsilonDefault,
 	},
 	ModelArcFaceMBF: {
@@ -199,7 +199,7 @@ var EmbeddingModels = map[ModelName]*EmbeddingModel{
 		ClusterDist:   1.03,
 		ClusterRadius: 0.64,
 		MatchDist:     0.49,
-		CollisionDist: 0.080,
+		CollisionDist: CollisionDistDefault,
 		Epsilon:       EpsilonDefault,
 	},
 }

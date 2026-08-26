@@ -584,7 +584,7 @@ func (m *Marker) Face() (f *Face) {
 			log.Warnf("faces: failed assigning face to marker %s", clean.Log(m.MarkerUID))
 			return nil
 		} else if f.SkipMatching() {
-			log.Infof("faces: skipped matching marker %s, embedding %s not distinct enough", clean.Log(m.MarkerUID), f.ID)
+			log.Infof("faces: skipped matching marker %s, the face kind of %s is excluded from matching", clean.Log(m.MarkerUID), f.ID)
 		} else if f = FirstOrCreateFace(f); f == nil {
 			log.Warnf("faces: failed matching marker %s with subject %s", clean.Log(m.MarkerUID), SubjNames.Log(m.SubjUID))
 			return nil

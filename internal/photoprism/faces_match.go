@@ -20,6 +20,9 @@ type FacesMatchResult struct {
 	Updated    int64
 	Recognized int64
 	Unknown    int64
+	// Ambiguous counts the markers left unassigned because two clusters were within
+	// face.MatchMargin of each other, which is the number an operator judges the margin by.
+	Ambiguous int64
 }
 
 // faceMatchStats accumulates per-face matching metrics within a single run.
@@ -73,6 +76,7 @@ func (r *FacesMatchResult) Add(result FacesMatchResult) {
 	r.Updated += result.Updated
 	r.Recognized += result.Recognized
 	r.Unknown += result.Unknown
+	r.Ambiguous += result.Ambiguous
 }
 
 // buildFaceIndex filters the provided faces down to candidates that can be matched, decoding each
@@ -118,19 +122,23 @@ func (c faceCandidate) limit() float64 {
 	return c.acceptDist
 }
 
-// selectBestFace returns the closest face candidate that accepts the given marker embeddings.
+// selectBestFace returns the closest candidate that accepts the marker, and reports whether the
+// runner-up made that a coin toss - in which case nothing is returned.
 //
-// The closest one has to win because UpdateMatchStats widens the chosen cluster to the distance
-// it accepted, so a merely acceptable cluster does not stay one. Each comparison is bounded by
-// what that candidate accepts and by the current best, which keeps the full scan affordable.
-func selectBestFace(embeddings face.Embeddings, idx faceIndex) (*entity.Face, float64) {
+// The closest one has to win because UpdateMatchStats widens the chosen cluster to the distance it
+// accepted. Each comparison is bounded, which keeps the full scan affordable.
+func selectBestFace(embeddings face.Embeddings, idx faceIndex) (*entity.Face, float64, bool) {
 	if embeddings.Empty() {
-		return nil, -1
+		return nil, -1, false
 	}
 
-	var best *entity.Face
+	var best, runnerUp *entity.Face
 
-	bestDist := -1.0
+	bestDist, runnerUpDist := -1.0, -1.0
+
+	// Never below zero: a negative margin would tighten the bound below the best distance found
+	// so far and prune a candidate that is closer than it.
+	margin := max(face.MatchMargin, 0)
 
 	for i := range idx.candidates {
 		c := &idx.candidates[i]
@@ -141,17 +149,41 @@ func selectBestFace(embeddings face.Embeddings, idx faceIndex) (*entity.Face, fl
 
 		limit := c.limit()
 
-		if bestDist >= 0 && bestDist < limit {
-			limit = bestDist
+		// Lowered to the current best plus the margin rather than to the best itself, so a
+		// candidate close enough to make the winner ambiguous is still measured.
+		if bound := bestDist + margin; bestDist >= 0 && bound < limit {
+			limit = bound
 		}
 
-		if dist := embeddings.DistWithin(c.emb, limit); dist >= 0 && (best == nil || dist < bestDist) {
-			best = c.ref
-			bestDist = dist
+		dist := embeddings.DistWithin(c.emb, limit)
+
+		switch {
+		case dist < 0:
+			// Outside what this candidate accepts, or too far to matter.
+		case best == nil || dist < bestDist:
+			best, bestDist, runnerUp, runnerUpDist = c.ref, dist, best, bestDist
+		case runnerUp == nil || dist < runnerUpDist:
+			runnerUp, runnerUpDist = c.ref, dist
 		}
 	}
 
-	return best, bestDist
+	if best == nil || !ambiguousBestFace(best, runnerUp, bestDist, runnerUpDist) {
+		return best, bestDist, false
+	}
+
+	return nil, -1, true
+}
+
+// ambiguousBestFace reports whether the marker sits between two clusters rather than in one.
+//
+// Two clusters of the same person are exempt, since a subject may own several and whichever wins
+// names the same face. Otherwise the one that takes the marker is widened toward the other.
+func ambiguousBestFace(best, runnerUp *entity.Face, bestDist, runnerUpDist float64) bool {
+	if runnerUp == nil || !face.AmbiguousMatch(bestDist, runnerUpDist) {
+		return false
+	}
+
+	return best.SubjUID == "" || best.SubjUID != runnerUp.SubjUID
 }
 
 // Match matches markers with faces and subjects.
@@ -216,6 +248,12 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 		if err := stat.face.UpdateMatchStats(stat.matched, stat.maxDist); err != nil {
 			log.Warnf("faces: %s (update stats)", err)
 		}
+	}
+
+	// Named because the run otherwise reads as one that simply recognized less.
+	if result.Ambiguous > 0 {
+		log.Infof("faces: left %s unassigned between two similar clusters, see face-match-margin",
+			english.Plural(int(result.Ambiguous), "marker", "markers"))
 	}
 
 	return result, nil
@@ -322,7 +360,11 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 			}
 
 			// Pointer to the matching face.
-			selFace, dist := selectBestFace(markerEmbeddings, index)
+			selFace, dist, ambiguous := selectBestFace(markerEmbeddings, index)
+
+			if ambiguous {
+				result.Ambiguous++
+			}
 
 			// Marker already has the best matching face?
 			if !marker.HasFace(selFace, dist) {

@@ -334,6 +334,7 @@ func TestConfig_FaceReportSections(t *testing.T) {
 			"face-cluster-dist",
 			"face-cluster-radius",
 			"face-match-dist",
+			"face-match-margin",
 			"face-collision-dist",
 			"face-epsilon-dist",
 		}
@@ -638,6 +639,7 @@ func TestConfig_faceConfigRows(t *testing.T) {
 			"face-cluster-dist",
 			"face-cluster-radius",
 			"face-match-dist",
+			"face-match-margin",
 			"face-collision-dist",
 			"face-epsilon-dist",
 		}

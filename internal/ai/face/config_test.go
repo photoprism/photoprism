@@ -87,6 +87,42 @@ func TestAmbiguityDist(t *testing.T) {
 	})
 }
 
+// TestAmbiguousMatch covers the margin that keeps a face lying between two people from being
+// handed to whichever cluster is marginally closer.
+func TestAmbiguousMatch(t *testing.T) {
+	restore := MatchMargin
+	t.Cleanup(func() { MatchMargin = restore })
+
+	MatchMargin = MatchMarginDefault
+
+	t.Run("RunnerUpTooClose", func(t *testing.T) {
+		assert.True(t, AmbiguousMatch(0.70, 0.72))
+	})
+	t.Run("ClearWinner", func(t *testing.T) {
+		assert.False(t, AmbiguousMatch(0.40, 0.90))
+	})
+	t.Run("ExactlyOnTheMargin", func(t *testing.T) {
+		// The margin is what the winner has to reach, so a gap of exactly it is not ambiguous.
+		assert.False(t, AmbiguousMatch(0.50, 0.50+MatchMarginDefault))
+	})
+	t.Run("NoRunnerUp", func(t *testing.T) {
+		assert.False(t, AmbiguousMatch(0.50, -1))
+	})
+	t.Run("NoMatch", func(t *testing.T) {
+		assert.False(t, AmbiguousMatch(-1, -1))
+	})
+	t.Run("Disabled", func(t *testing.T) {
+		MatchMargin = 0
+		assert.False(t, AmbiguousMatch(0.70, 0.70), "an identical distance must still be assigned when the check is off")
+		MatchMargin = MatchMarginDefault
+	})
+	t.Run("FollowsTheConfiguredMargin", func(t *testing.T) {
+		MatchMargin = 0.2
+		assert.True(t, AmbiguousMatch(0.70, 0.85))
+		MatchMargin = MatchMarginDefault
+	})
+}
+
 // TestDetectorScore checks that a report can always state a cutoff some detector enforces. It
 // returned zero for an unknown name before, which reads as "nothing is filtered".
 func TestDetectorScore(t *testing.T) {

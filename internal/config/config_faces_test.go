@@ -1940,9 +1940,9 @@ func TestConfig_FaceThresholdsPerModel(t *testing.T) {
 		assert.Equal(t, 0.85, c.FaceClusterDist())
 		assert.Equal(t, 0.60, c.FaceClusterRadius())
 		assert.Equal(t, 0.35, c.FaceMatchDist())
-		assert.Equal(t, 0.061, c.FaceCollisionDist())
-		// Epsilon does not scale with the model: it is the gap a resolved collision leaves, and a
-		// wider one strands embeddings rather than telling two people apart.
+		// Neither gap scales with the model: a collision floor that did would exclude the members
+		// of both clusters, and a wider Epsilon strands embeddings rather than telling anyone apart.
+		assert.Equal(t, face.CollisionDistDefault, c.FaceCollisionDist())
 		assert.Equal(t, face.EpsilonDefault, c.FaceEpsilonDist())
 	})
 	t.Run("FaceNetKeepsShippedValues", func(t *testing.T) {
@@ -1992,7 +1992,7 @@ func TestConfig_FaceThresholdsPerModel(t *testing.T) {
 		assert.Equal(t, 0.85, c.FaceClusterDist())
 		assert.Equal(t, 0.60, c.FaceClusterRadius())
 		assert.Equal(t, 0.35, c.FaceMatchDist())
-		assert.Equal(t, 0.061, c.FaceCollisionDist())
+		assert.Equal(t, face.CollisionDistDefault, c.FaceCollisionDist())
 		assert.Equal(t, face.EpsilonDefault, c.FaceEpsilonDist())
 	})
 }
@@ -2128,9 +2128,65 @@ func TestFaceModelThreshold(t *testing.T) {
 	})
 }
 
+// TestConfig_FaceMatchMargin covers the gap the nearest cluster has to beat the runner-up by. It
+// is the difference between two distances rather than one, so it is not floored at the collision
+// distance the calibrated thresholds are floored at.
+func TestConfig_FaceMatchMargin(t *testing.T) {
+	t.Run("Unset", func(t *testing.T) {
+		c := newSFaceTestConfig(t)
+		assert.Equal(t, float64(face.MatchMarginDefault), c.FaceMatchMargin())
+	})
+	t.Run("Configured", func(t *testing.T) {
+		c := newSFaceTestConfig(t)
+		c.options.FaceMatchMargin = 0.1
+		assert.Equal(t, 0.1, c.FaceMatchMargin())
+	})
+	t.Run("BelowTheCollisionDistance", func(t *testing.T) {
+		// A margin of a hundredth is a legitimate setting, where a cluster radius that small
+		// would not be, so this must not inherit the floor faceThreshold applies.
+		c := newSFaceTestConfig(t)
+		c.options.FaceMatchMargin = 0.01
+		assert.Equal(t, 0.01, c.FaceMatchMargin())
+	})
+	t.Run("Disabled", func(t *testing.T) {
+		c := newSFaceTestConfig(t)
+		c.options.FaceMatchMargin = face.NoMatchMargin
+		assert.Zero(t, c.FaceMatchMargin())
+	})
+	t.Run("OutOfRangeWarns", func(t *testing.T) {
+		c := newSFaceTestConfig(t)
+		hook := captureLog(t)
+
+		c.options.FaceMatchMargin = 1.5
+		assert.Equal(t, float64(face.MatchMarginDefault), c.FaceMatchMargin())
+
+		var warnings []string
+		for _, e := range hook.AllEntries() {
+			if e.Level == logrus.WarnLevel && strings.Contains(e.Message, "face-match-margin") {
+				warnings = append(warnings, e.Message)
+			}
+		}
+
+		require.Len(t, warnings, 1)
+		assert.Contains(t, warnings[0], "out of range")
+	})
+	t.Run("UnsetStaysSilent", func(t *testing.T) {
+		c := newSFaceTestConfig(t)
+		hook := captureLog(t)
+
+		assert.Equal(t, float64(face.MatchMarginDefault), c.FaceMatchMargin())
+
+		for _, e := range hook.AllEntries() {
+			assert.NotContains(t, e.Message, "face-match-margin")
+		}
+	})
+}
+
 func TestConfig_FaceCollisionDist(t *testing.T) {
-	// Like the three calibrated thresholds, this follows the model in force.
+	// A gap rather than a distance in the model's scale, so it is the same for every model.
 	sface := face.FindEmbeddingModel(face.ModelSFace).CollisionDist
+
+	require.Equal(t, float64(face.CollisionDistDefault), sface)
 
 	c := newSFaceTestConfig(t)
 	assert.Equal(t, sface, c.FaceCollisionDist())

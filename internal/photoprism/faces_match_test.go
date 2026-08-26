@@ -12,6 +12,15 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
+// setMatchMargin applies an assignment margin for the duration of a test.
+func setMatchMargin(t *testing.T, margin float64) {
+	restore := face.MatchMargin
+
+	t.Cleanup(func() { face.MatchMargin = restore })
+
+	face.MatchMargin = margin
+}
+
 // TestFaces_Match exercises the end-to-end matching flow with a loaded test configuration.
 func TestFaces_Match(t *testing.T) {
 	c := config.TestConfig()
@@ -30,6 +39,21 @@ func TestFaces_Match(t *testing.T) {
 	}
 
 	t.Log(r)
+}
+
+// TestFacesMatchResult_Add covers the totals a run accumulates across its two passes. Ambiguous
+// is the one an operator reads to judge the match margin, so a pass that dropped it would report
+// a run that merely recognized less.
+func TestFacesMatchResult_Add(t *testing.T) {
+	r := FacesMatchResult{Updated: 1, Recognized: 2, Unknown: 3, Ambiguous: 4}
+
+	r.Add(FacesMatchResult{Updated: 10, Recognized: 20, Unknown: 30, Ambiguous: 40})
+
+	assert.Equal(t, FacesMatchResult{Updated: 11, Recognized: 22, Unknown: 33, Ambiguous: 44}, r)
+
+	r.Add(FacesMatchResult{})
+
+	assert.Equal(t, FacesMatchResult{Updated: 11, Recognized: 22, Unknown: 33, Ambiguous: 44}, r)
 }
 
 // TestRecordFaceMatch covers the per-run statistics a match pass accumulates for each cluster.
@@ -158,7 +182,7 @@ func TestSelectBestFaceGates(t *testing.T) {
 
 	t.Run("TooFar", func(t *testing.T) {
 		idx := faceIndex{candidates: []faceCandidate{{ref: ref, emb: ref.Embedding(), acceptDist: -1}}}
-		best, dist := selectBestFace(embeddings, idx)
+		best, dist, _ := selectBestFace(embeddings, idx)
 		assert.Nil(t, best)
 		assert.InDelta(t, -1.0, dist, 1e-9)
 	})
@@ -174,18 +198,21 @@ func TestSelectBestFaceGates(t *testing.T) {
 			collisionRadius: d / 2,
 		}}}
 
-		best, _ := selectBestFace(other, idx)
+		best, _, _ := selectBestFace(other, idx)
 		assert.Nil(t, best, "a face beyond the collision radius must be refused")
 	})
 	t.Run("NoEmbeddings", func(t *testing.T) {
 		idx := faceIndex{candidates: []faceCandidate{{ref: ref, emb: ref.Embedding(), acceptDist: face.AcceptDist(0)}}}
-		best, dist := selectBestFace(face.Embeddings{}, idx)
+		best, dist, _ := selectBestFace(face.Embeddings{}, idx)
 		assert.Nil(t, best)
 		assert.InDelta(t, -1.0, dist, 1e-9)
 	})
 	t.Run("FirstWinsOnTie", func(t *testing.T) {
 		// Selection bounds each comparison by the best distance found so far, so an equally
-		// close candidate must not displace the one already chosen.
+		// close candidate must not displace the one already chosen. The margin would refuse
+		// both, which is a separate rule and is covered by TestSelectBestFaceMargin.
+		setMatchMargin(t, 0)
+
 		first := &entity.Face{ID: "first"}
 		second := &entity.Face{ID: "second"}
 		emb := ref.Embedding()
@@ -195,7 +222,7 @@ func TestSelectBestFaceGates(t *testing.T) {
 			{ref: second, emb: emb, acceptDist: face.AcceptDist(0)},
 		}}
 
-		best, _ := selectBestFace(embeddings, idx)
+		best, _, _ := selectBestFace(embeddings, idx)
 		require.NotNil(t, best)
 		assert.Equal(t, "first", best.ID)
 	})
@@ -218,7 +245,7 @@ func TestSelectBestFace(t *testing.T) {
 	index := buildFaceIndex(faces)
 	require.Len(t, index.candidates, 2)
 
-	best, dist := selectBestFace(markerEmb, index)
+	best, dist, _ := selectBestFace(markerEmb, index)
 	require.NotNil(t, best)
 	require.Equal(t, matchFace.ID, best.ID)
 	require.InDelta(t, 0.0, dist, 1e-9)
@@ -248,6 +275,11 @@ func TestBenchmarkEmbeddingAt(t *testing.T) {
 // acceptable one. A merely acceptable cluster is then widened to the inflated distance by
 // UpdateMatchStats, so a near miss here does not stay a near miss.
 func TestSelectBestFaceReturnsClosest(t *testing.T) {
+	// The margin refuses a winner rather than choosing a different one, so it is switched off
+	// here and pinned separately: with it on, the reference and the answer agree by returning
+	// nothing, which would weaken this test without failing it.
+	setMatchMargin(t, 0)
+
 	index, base := benchmarkFaceIndex([]float64{0.15, 0.3, 0.45, 0.6, 0.9, 1.1, 1.3})
 	require.Len(t, index.candidates, benchmarkCandidateCount)
 
@@ -278,7 +310,7 @@ func TestSelectBestFaceReturnsClosest(t *testing.T) {
 
 		// The reference scans every candidate to completion and applies no bound at all.
 		want, wantDist := legacySelectBestFace(markerEmb, index)
-		got, gotDist := selectBestFace(markerEmb, index)
+		got, gotDist, _ := selectBestFace(markerEmb, index)
 
 		if want == nil {
 			assert.Nil(t, got, "nothing accepts the marker, so nothing may be returned")
@@ -293,6 +325,112 @@ func TestSelectBestFaceReturnsClosest(t *testing.T) {
 	}
 
 	require.Positive(t, accepted, "the fixture must produce matches for the comparison to mean anything")
+}
+
+// TestSelectBestFaceMargin covers the assignment margin, which is what a face lying between two
+// people runs into: it is large, sharp and confidently detected, so nothing on the detection side
+// selects against it and only the gap between the two competing distances does.
+func TestSelectBestFaceMargin(t *testing.T) {
+	setMatchMargin(t, face.MatchMarginDefault)
+
+	// One cluster per person, and a marker placed a chosen distance from each.
+	base := face.FixtureEmbedding(4001)
+	near := &entity.Face{ID: "near", EmbedModel: face.EmbeddingModelName()}
+	far := &entity.Face{ID: "far", EmbedModel: face.EmbeddingModelName()}
+
+	selectAt := func(t *testing.T, nearDist, farDist float64) (*entity.Face, float64, bool) {
+		t.Helper()
+
+		marker := face.Embeddings{base}
+		idx := faceIndex{candidates: []faceCandidate{
+			{ref: near, emb: face.FixtureEmbeddingAt(base, nearDist, 4002), acceptDist: face.AcceptDistMax},
+			{ref: far, emb: face.FixtureEmbeddingAt(base, farDist, 4003), acceptDist: face.AcceptDistMax},
+		}}
+
+		return selectBestFace(marker, idx)
+	}
+
+	t.Run("BetweenTwoClusters", func(t *testing.T) {
+		best, dist, ambiguous := selectAt(t, 0.70, 0.72)
+		assert.Nil(t, best, "a marker equidistant between two clusters must not be assigned to either")
+		assert.InDelta(t, -1.0, dist, 1e-9)
+		assert.True(t, ambiguous, "the caller has to tell this apart from a marker nothing accepted")
+	})
+	t.Run("ClearlyNearerClusterStillWins", func(t *testing.T) {
+		// The companion direction, so the margin cannot regress into refusing everything.
+		best, dist, ambiguous := selectAt(t, 0.30, 0.90)
+		require.NotNil(t, best)
+		assert.Equal(t, "near", best.ID)
+		assert.InDelta(t, 0.30, dist, 0.01)
+		assert.False(t, ambiguous)
+	})
+	t.Run("RunnerUpOutsideItsOwnGate", func(t *testing.T) {
+		// A cluster that would refuse the marker anyway is no competitor for it.
+		marker := face.Embeddings{base}
+		idx := faceIndex{candidates: []faceCandidate{
+			{ref: near, emb: face.FixtureEmbeddingAt(base, 0.70, 4002), acceptDist: face.AcceptDistMax},
+			{ref: far, emb: face.FixtureEmbeddingAt(base, 0.72, 4003), acceptDist: 0.5},
+		}}
+
+		best, _, _ := selectBestFace(marker, idx)
+		require.NotNil(t, best)
+		assert.Equal(t, "near", best.ID)
+	})
+	t.Run("SameSubjectIsExempt", func(t *testing.T) {
+		// A person may own several clusters, so whichever of two of theirs wins names the
+		// same face and the marker must not be refused for a difference that does not matter.
+		near.SubjUID = "ps6sg6be2lvl0y11"
+		far.SubjUID = "ps6sg6be2lvl0y11"
+
+		t.Cleanup(func() { near.SubjUID, far.SubjUID = "", "" })
+
+		best, _, _ := selectAt(t, 0.70, 0.72)
+		require.NotNil(t, best)
+		assert.Equal(t, "near", best.ID)
+	})
+	t.Run("DifferentSubjects", func(t *testing.T) {
+		near.SubjUID = "ps6sg6be2lvl0y11"
+		far.SubjUID = "ps6sg6be2lvl0y12"
+
+		t.Cleanup(func() { near.SubjUID, far.SubjUID = "", "" })
+
+		best, _, _ := selectAt(t, 0.70, 0.72)
+		assert.Nil(t, best)
+	})
+	t.Run("Disabled", func(t *testing.T) {
+		setMatchMargin(t, 0)
+
+		best, _, _ := selectAt(t, 0.70, 0.72)
+		require.NotNil(t, best)
+		assert.Equal(t, "near", best.ID)
+	})
+}
+
+// TestAmbiguousBestFace covers the exemptions the margin applies before it refuses an assignment.
+func TestAmbiguousBestFace(t *testing.T) {
+	setMatchMargin(t, face.MatchMarginDefault)
+
+	anon := &entity.Face{ID: "anon"}
+	named := &entity.Face{ID: "named", SubjUID: "ps6sg6be2lvl0y11"}
+	other := &entity.Face{ID: "other", SubjUID: "ps6sg6be2lvl0y12"}
+	same := &entity.Face{ID: "same", SubjUID: "ps6sg6be2lvl0y11"}
+
+	t.Run("NoRunnerUp", func(t *testing.T) {
+		assert.False(t, ambiguousBestFace(anon, nil, 0.7, -1))
+	})
+	t.Run("ClearWinner", func(t *testing.T) {
+		assert.False(t, ambiguousBestFace(anon, named, 0.3, 0.9))
+	})
+	t.Run("Anonymous", func(t *testing.T) {
+		// Nothing says the two hold the same person, so the coin toss stands.
+		assert.True(t, ambiguousBestFace(anon, named, 0.7, 0.72))
+	})
+	t.Run("DifferentSubjects", func(t *testing.T) {
+		assert.True(t, ambiguousBestFace(named, other, 0.7, 0.72))
+	})
+	t.Run("SameSubject", func(t *testing.T) {
+		assert.False(t, ambiguousBestFace(named, same, 0.7, 0.72))
+	})
 }
 
 func TestFacesMatchRespectsVeto(t *testing.T) {
