@@ -160,8 +160,8 @@ func newMigrateTestConfig(t *testing.T, name string) *config.Config {
 	entity.CreateDefaultFixtures()
 	entity.FlushCaches()
 	entity.File{}.RegenerateIndex()
-	// Force the model to detect as the face model will be based on what was in the database before the cleanse was done.
-	require.NoError(t, c.SetFaceModel(face.ModelDetect))
+	// Force the model to auto as otherwise the face model will be based on what was in the database before the cleanse was done.
+	require.NoError(t, c.SetFaceModel(face.ModelAuto))
 
 	return c
 }

@@ -36,8 +36,8 @@ func ResetTestFixtures() {
 		}
 	}
 
-	version := migrate.NewVersion("DBMS AuthID Fix", "Any Editions")
-	if version.Find(Db()) != nil {
+	version := migrate.NewVersion("DBMS AuthID Fix", "Any Editions").Find(Db())
+	if version != nil {
 		runMigration = false
 		log.Debugf("migrate: skipping table migration as version %s was found from %s", version.Version, version.CreatedAt)
 	}
@@ -83,8 +83,8 @@ func ResetNoTestFixtures() {
 		}
 	}
 
-	version := migrate.NewVersion("DBMS AuthID Fix", "Any Editions")
-	if version.Find(Db()) != nil {
+	version := migrate.NewVersion("DBMS AuthID Fix", "Any Editions").Find(Db())
+	if version != nil {
 		runMigration = false
 		log.Debugf("migrate: skipping table migration as version %s was found from %s", version.Version, version.CreatedAt)
 	}
@@ -96,9 +96,9 @@ func ResetNoTestFixtures() {
 		if err := Entities.WaitForMigration(Db()); err != nil {
 			log.Errorf("migrate: %s [%s]", err, time.Since(start))
 		}
+	} else {
+		Entities.Truncate(Db())
 	}
-
-	Entities.Truncate(Db())
 
 	CreateDefaultFixtures()
 
