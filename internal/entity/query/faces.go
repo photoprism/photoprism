@@ -305,49 +305,7 @@ func whereClusterScore(stmt *gorm.DB, floor int) *gorm.DB {
 // clusterScoreCond returns the same restriction as an SQL fragment, so a report can evaluate it
 // beside the other bars in one pass instead of scanning the table once per bar.
 func clusterScoreCond(floor int) (string, []any) {
-	// FACE_CLUSTER_SCORE outranks the per-detector bars when an operator set one, and removes it
-	// when negative. Applying one value to every marker is safe here in a way that taking the
-	// active detector's bar is not: it is a choice rather than a calibration a marker was never
-	// scored against. Without this the option configured nothing at all.
-	if floor < 0 && face.ClusterScoreThreshold != 0 {
-		floor = max(face.ClusterScoreThreshold, 0)
-	}
-
-	switch {
-	case floor > 0:
-		return "score >= ?", []any{floor}
-	case floor == 0:
-		// No score filter at all, which is what a caller counting every marker asks for.
-		return "1 = 1", nil
-	}
-
-	conds := make([]string, 0, len(face.Detectors)+1)
-	args := make([]any, 0, 2*len(face.Detectors)+1)
-	others := make([]string, 0, len(face.Detectors))
-	names := make([]any, 0, len(face.Detectors))
-
-	for _, d := range face.Detectors {
-		if d.ClusterScore <= 0 {
-			continue
-		}
-
-		conds = append(conds, "(COALESCE(detect_model, '') = ? AND score >= ?)")
-		args = append(args, d.Name, d.ClusterScore)
-		others = append(others, "COALESCE(detect_model, '') <> ?")
-		names = append(names, d.Name)
-	}
-
-	if len(conds) == 0 {
-		return "score >= ?", []any{face.ClusterScoreThresholdDefault}
-	}
-
-	// Everything the registry does not name, including every row written before the provenance
-	// column existed, keeps the shared default so an upgrade strands nothing.
-	conds = append(conds, "("+strings.Join(others, " AND ")+" AND ?"+" <= score)")
-	args = append(args, names...)
-	args = append(args, face.ClusterScoreThresholdDefault)
-
-	return "(" + strings.Join(conds, " OR ") + ")", args
+	return entity.ClusterScoreCond("", floor)
 }
 
 // PurgeOrphanFaces removes unused faces from the index.
