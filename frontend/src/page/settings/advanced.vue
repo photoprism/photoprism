@@ -305,7 +305,7 @@
               <v-list-subheader class="pa-0">
                 {{ $gettextInterpolate($gettext("JPEG Quality: %{n}"), { n: parseInt(settings.JpegQuality) }) }}
               </v-list-subheader>
-              <v-slider v-model="settings.JpegQuality" :min="25" :max="100" :disabled="isDemo" hide-details class="ma-0" @end="onChange"></v-slider>
+              <v-slider v-model="settings.JpegQuality" :min="25" :max="100" :step="1" :disabled="isDemo" hide-details class="ma-0" @end="onChange"></v-slider>
             </v-col>
 
             <v-col cols="12" sm="6" lg="4" class="py-2">
