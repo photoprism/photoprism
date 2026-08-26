@@ -250,6 +250,10 @@ This is the gate on naming a face: `Marker.Face()` builds a cluster from that ma
 
 The `Faces.Optimize` loop still prefers the operator-curated clusters (`face_src = 'manual'`). When multiple manual clusters for the same subject can be merged, `query.MergeFaces` materializes a midpoint cluster and reassigns markers to it. If some markers remain attached to the original clusters (for example because their embeddings sit far from the midpoint), the old clusters cannot be purged and the optimizer emits a **warning**:
 
+The clusters arrive ordered by `subj_uid`, so one subject's are a contiguous run and the group is merged when the run ends. The run's **last** cluster is weighed against the group before that flush rather than triggering it, which is what lets a subject holding exactly two clusters merge - the shape a person produces by naming a second face of someone already known.
+
+**A merge builds its midpoint from the source centroids alone**, so the result can be narrower than either source and refuse a marker both of them held. `PurgeOrphanFaces` then cannot remove that candidate, and it would be offered again beside the midpoint the attempt just created - a set the same size as before, merged on every pass. `faces.merge_retry` is raised on the **retained** candidates only, which takes those out of the rotation while leaving the ones that did merge alone, and `Faces.OptimizeFor` stops as soon as a pass does not reduce the cluster count. Both matter because `PUT /api/v1/markers/:uid` optimizes the subject synchronously, so a set that never settles is paid for inside the request that names a face.
+
 ```
 faces: retained manual clusters after merge: kept 4 candidate cluster(s) [...] for subject <uid> because markers still reference them
 ```

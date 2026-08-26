@@ -418,31 +418,74 @@ func MergeFaces(merge entity.Faces, ignored bool) (merged *entity.Face, err erro
 	}
 
 	// PurgeOrphanFaces removes unused faces from the index.
-	if removed, err := PurgeOrphanFaces(merge.IDs(), ignored); err != nil {
+	removed, err := PurgeOrphanFaces(merge.IDs(), ignored)
+
+	if err != nil {
 		return merged, err
 	} else if removed > 0 {
 		log.Debugf("faces: removed %d orphans of %d candidate for subject %s", removed, len(merge), clean.Log(subjUID))
-	} else {
-		note := fmt.Sprintf("retained markers after merge attempt on %s", time.Now().UTC().Format(time.RFC3339))
-
-		for _, candidate := range merge {
-			updates := entity.Values{
-				"MergeRetry": gorm.Expr("merge_retry + 1"),
-				"MergeNotes": note,
-			}
-
-			if err := Db().Model(&entity.Face{}).Where("id = ?", candidate.ID).Updates(updates).Error; err != nil {
-				log.Warnf("faces: failed updating merge retry for %s (%s)", candidate.ID, err)
-			} else {
-				candidate.MergeRetry++
-				candidate.MergeNotes = note
-			}
-		}
-
-		return merged, fmt.Errorf("%w: kept %d candidate cluster(s) [%s] for subject %s because markers still reference them", ErrRetainedManualClusters, len(merge), clean.Log(strings.Join(merge.IDs(), ", ")), clean.Log(subjUID))
 	}
 
-	return merged, err
+	// A candidate the purge left behind would be offered again beside the midpoint this attempt
+	// created - a set the same size as before, merged on every pass. The retry counter takes it
+	// out of the rotation, per candidate so the ones that did merge are not stopped with it.
+	retained, err := retainedFaceIDs(merge.IDs())
+
+	if err != nil {
+		return merged, err
+	} else if len(retained) == 0 {
+		return merged, nil
+	}
+
+	note := fmt.Sprintf("retained markers after merge attempt on %s", time.Now().UTC().Format(time.RFC3339))
+	retainedIDs := make([]string, 0, len(retained))
+
+	for i := range merge {
+		if !retained[merge[i].ID] {
+			continue
+		}
+
+		retainedIDs = append(retainedIDs, merge[i].ID)
+
+		updates := entity.Values{
+			"MergeRetry": gorm.Expr("merge_retry + 1"),
+			"MergeNotes": note,
+		}
+
+		if err := Db().Model(&entity.Face{}).Where("id = ?", merge[i].ID).Updates(updates).Error; err != nil {
+			log.Warnf("faces: failed updating merge retry for %s (%s)", merge[i].ID, err)
+		} else {
+			merge[i].MergeRetry++
+			merge[i].MergeNotes = note
+		}
+	}
+
+	return merged, fmt.Errorf("%w: kept %d candidate cluster(s) [%s] for subject %s because markers still reference them", ErrRetainedManualClusters, len(retainedIDs), clean.Log(strings.Join(retainedIDs, ", ")), clean.Log(subjUID))
+}
+
+// retainedFaceIDs returns which of the given clusters still exist, which after a purge are the
+// ones markers still reference. Batched for SQLite, as the purge itself is.
+func retainedFaceIDs(faceIds []string) (map[string]bool, error) {
+	result := make(map[string]bool, len(faceIds))
+	batchSize := BatchSize()
+
+	for i := 0; i < len(faceIds); i += batchSize {
+		j := min(i+batchSize, len(faceIds))
+
+		var found []string
+
+		if err := UnscopedDb().Model(&entity.Face{}).
+			Where("id IN (?)", faceIds[i:j]).
+			Pluck("id", &found).Error; err != nil {
+			return result, fmt.Errorf("faces: %s while checking retained clusters", err)
+		}
+
+		for _, id := range found {
+			result[id] = true
+		}
+	}
+
+	return result, nil
 }
 
 // ResetFaceMergeRetry clears merge retry metadata for all (or subject-specific) clusters.

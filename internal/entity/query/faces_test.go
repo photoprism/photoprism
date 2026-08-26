@@ -910,3 +910,25 @@ func TestMatchableFaces(t *testing.T) {
 		assert.True(t, found, "the audit must be able to see clusters from other models")
 	})
 }
+
+func TestRetainedFaceIDs(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		f := entity.NewFace(rnd.GenerateUID('j'), entity.SrcManual, face.RandomEmbeddings(1, face.RegularFace), face.EmbeddingModelName())
+		require.NotNil(t, f)
+		require.NoError(t, f.Create())
+		t.Cleanup(func() { entity.Db().Delete(f) })
+
+		result, err := retainedFaceIDs([]string{f.ID, "MISSINGFACECLUSTERID"})
+
+		require.NoError(t, err)
+		assert.True(t, result[f.ID], "a cluster the purge kept is reported as retained")
+		assert.False(t, result["MISSINGFACECLUSTERID"], "a purged cluster is not")
+		assert.Len(t, result, 1)
+	})
+	t.Run("NoIDs", func(t *testing.T) {
+		result, err := retainedFaceIDs(nil)
+
+		require.NoError(t, err)
+		assert.Empty(t, result)
+	})
+}

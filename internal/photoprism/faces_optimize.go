@@ -30,6 +30,8 @@ func (w *Faces) OptimizeFor(subjUID string) (result FacesOptimizeResult, err err
 	}
 
 	// Iterative merging of manually added face clusters.
+	remaining := 0
+
 	for i := 0; i <= 10; i++ {
 		var n int
 		var c = result.Merged
@@ -44,50 +46,75 @@ func (w *Faces) OptimizeFor(subjUID string) (result FacesOptimizeResult, err err
 			break
 		}
 
+		// A pass that leaves as many clusters as it found has converged, whatever it reported
+		// merging. Merging also creates a midpoint, so a merge that keeps one of its candidates
+		// replaces the set rather than shrinking it, and counting merges alone never terminates.
+		if remaining > 0 && len(faces) >= remaining {
+			break
+		}
+
+		remaining = len(faces)
+
 		log.Debugf("faces: optimize for %s itr %d n %d", subjUID, i, n)
+
+		// flushMerge combines the candidates collected so far and clears them.
+		flushMerge := func(j int) {
+			if len(merge) < 2 {
+				// Nothing to merge.
+			} else if _, mergeErr := query.MergeFaces(merge, false); mergeErr != nil {
+				if errors.Is(mergeErr, query.ErrRetainedManualClusters) {
+					subject := entity.SubjNames.Log(merge[0].SubjUID)
+					clusterIDs := strings.Join(merge.IDs(), ", ")
+
+					event.SystemWarn([]string{
+						"faces",
+						"optimize",
+						"retained manual clusters after merge",
+						"subject %s, iteration %d, cluster %d, count %d, ids %s",
+					}, subject, i, j, len(merge), clusterIDs)
+
+					log.Debugf(
+						"faces: retained manual clusters after merge: kept %s [%s] for subject %s (merge) itr %d cluster %d",
+						english.Plural(len(merge), "candidate cluster", "candidate clusters"),
+						clusterIDs,
+						subject,
+						i,
+						j,
+					)
+				} else {
+					log.Errorf("%s (merge) itr %d cluster %d count %d", mergeErr, i, j, len(merge))
+				}
+			} else {
+				// not exactly right, potentially overcounting
+				// see https://github.com/photoprism/photoprism/issues/3124#issuecomment-2558299360
+				result.Merged += len(merge)
+			}
+
+			merge = nil
+		}
 
 		// Find and merge matching faces.
 		for j := 0; j <= n; j++ {
 			if len(merge) == 0 {
 				merge = entity.Faces{faces[j]}
-			} else if faces[j].SubjUID != merge[len(merge)-1].SubjUID || j == n {
-				if len(merge) < 2 {
-					// Nothing to merge.
-				} else if _, mergeErr := query.MergeFaces(merge, false); mergeErr != nil {
-					if errors.Is(mergeErr, query.ErrRetainedManualClusters) {
-						subject := entity.SubjNames.Log(merge[0].SubjUID)
-						clusterIDs := strings.Join(merge.IDs(), ", ")
-
-						event.SystemWarn([]string{
-							"faces",
-							"optimize",
-							"retained manual clusters after merge",
-							"subject %s, iteration %d, cluster %d, count %d, ids %s",
-						}, subject, i, j, len(merge), clusterIDs)
-
-						log.Debugf(
-							"faces: retained manual clusters after merge: kept %s [%s] for subject %s (merge) itr %d cluster %d",
-							english.Plural(len(merge), "candidate cluster", "candidate clusters"),
-							clusterIDs,
-							subject,
-							i,
-							j,
-						)
-					} else {
-						log.Errorf("%s (merge) itr %d cluster %d count %d", mergeErr, i, j, len(merge))
-					}
-				} else {
-					// not exactly right, potentially overcounting
-					// see https://github.com/photoprism/photoprism/issues/3124#issuecomment-2558299360
-					result.Merged += len(merge)
-				}
-
-				merge = nil
+			} else if faces[j].SubjUID != merge[len(merge)-1].SubjUID {
+				flushMerge(j)
+				merge = entity.Faces{faces[j]}
 			} else if ok, dist := merge[0].Match(face.Embeddings{faces[j].Embedding()}, faces[j].EmbedModel); ok {
 				log.Debugf("faces: can merge %s with %s, subject %s, dist %f", merge[0].ID, faces[j].ID, entity.SubjNames.Log(merge[0].SubjUID), dist)
 				merge = append(merge, faces[j])
 			} else if len(merge) == 1 {
-				merge = nil
+				// Re-anchor on this cluster rather than dropping it: an anchor it cannot join
+				// may still be one the next cluster can, and a dropped one is not reconsidered
+				// until the following pass.
+				merge = entity.Faces{faces[j]}
+			}
+
+			// The final index flushes after the body rather than instead of it, so the subject's
+			// last cluster is weighed into its group first. Flushing in its place would leave a
+			// subject holding exactly two clusters with a group of one, which merges nothing.
+			if j == n {
+				flushMerge(j)
 			}
 		}
 
