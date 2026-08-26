@@ -2,10 +2,12 @@ package config
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config/ttl"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -1224,8 +1226,7 @@ var Flags = CliFlags{
 			Usage:   "libheif HEIC image conversion `COMMAND`",
 			Value:   "",
 			EnvVars: EnvVars("HEIFCONVERT_BIN"),
-		},
-		DocDefault: "heif-dec"}, {
+		}, DocDefault: "heif-dec"}, {
 		Flag: &cli.StringFlag{
 			Name:    "heifconvert-orientation",
 			Usage:   "Exif `ORIENTATION` of images generated with libheif (keep, reset)",
@@ -1328,39 +1329,82 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("XMP_FACES"),
 		}}, {
 		Flag: &cli.StringFlag{
+			Name:    "face-run",
+			Usage:   "`WHEN` face detection and recognition should run (" + vision.RunTypeUsageString() + ")",
+			EnvVars: EnvVars("FACE_RUN"),
+		},
+		DocDefault: vision.ReportRunType(vision.RunAuto)}, {
+		Flag: &cli.StringFlag{
 			Name:    "face-engine",
-			Usage:   "face detection engine `NAME` (auto, onnx)",
+			Usage:   "face detection engine `NAME` (auto, onnx, none) *deprecated*, use --face-detector",
 			Value:   face.EngineAuto,
+			Hidden:  true,
 			EnvVars: EnvVars("FACE_ENGINE"),
 		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-engine-threads",
-			Usage:   "face detection and embedding thread `COUNT` (0 derives a default from the CPU cores)",
+			Usage:   "face detection and embedding thread `COUNT` *deprecated*, use --face-detector-threads and --face-model-threads",
+			Hidden:  true,
 			EnvVars: EnvVars("FACE_ENGINE_THREADS"),
 		}}, {
 		Flag: &cli.StringFlag{
-			Name:    "face-model",
-			Usage:   "face embedding model `NAME` (" + face.ModelUsageString() + "); detected from the library when unset, and changed with photoprism faces migrate",
-			EnvVars: EnvVars("FACE_MODEL"),
-		}}, {
+			Name:    "face-detector",
+			Usage:   "face detection model `NAME` (" + face.DetectorUsageString() + "), derived from the face model unless named",
+			EnvVars: EnvVars("FACE_DETECTOR"),
+		},
+		DocDefault: face.DefaultDetectorName()}, {
+		Flag: &cli.IntFlag{
+			Name:    "face-detector-threads",
+			Usage:   "face detection thread `COUNT` per indexing worker, derived from the CPU cores when unset",
+			EnvVars: EnvVars("FACE_DETECTOR_THREADS"),
+		}, DocDefault: "auto"}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-size",
-			Usage:   "minimum size of faces in `PIXELS` (20-10000)",
-			Value:   face.SizeThreshold,
+			Usage:   "minimum size of faces in `PIXELS` (10-10000)",
+			Value:   face.SizeThresholdDefault,
 			EnvVars: EnvVars("FACE_SIZE"),
+		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "face-size-retry",
+			Usage:   "minimum size of faces in `PIXELS` when a picture would otherwise have none, -1 to disable",
+			Value:   face.RetrySizeThreshold,
+			EnvVars: EnvVars("FACE_SIZE_RETRY"),
 		}}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-score",
-			Usage:   "minimum face `QUALITY` score (1-100)",
-			Value:   face.ScoreThreshold,
+			Usage:   "minimum face `QUALITY` score (1-100), replacing the detector's own calibrated cutoff, -1 disables the check",
 			EnvVars: EnvVars("FACE_SCORE"),
-		}}, {
+		},
+		DocDefault: faceDocDefault(face.DetectorScore(face.DefaultDetectorName()))}, {
+		Flag: &cli.IntFlag{
+			Name:    "face-migrate-size",
+			Usage:   "minimum size of faces in `PIXELS` while a migration re-detects them, which is where a marker an earlier detector placed is found or lost",
+			EnvVars: EnvVars("FACE_MIGRATE_SIZE"),
+		},
+		DocDefault: faceDocDefault(float64(face.MinSizeThreshold))}, {
+		Flag: &cli.Float64Flag{
+			Name:    "face-migrate-score",
+			Usage:   "minimum face `QUALITY` score (1-100) while a migration re-detects them, -1 disables the check",
+			EnvVars: EnvVars("FACE_MIGRATE_SCORE"),
+		},
+		DocDefault: faceDocDefault(face.DefaultDetectorMigrateScore())}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-overlap",
 			Usage:   "face area overlap threshold in `PERCENT` (1-100)",
-			Value:   face.OverlapThreshold,
+			Value:   face.OverlapThresholdDefault,
 			EnvVars: EnvVars("FACE_OVERLAP"),
 		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "face-model",
+			Usage:   "face embedding model `NAME` (" + face.ModelUsageString() + "), detected from the library unless named, and changed with photoprism faces migrate",
+			EnvVars: EnvVars("FACE_MODEL"),
+		},
+		DocDefault: face.DefaultModelName()}, {
+		Flag: &cli.IntFlag{
+			Name:    "face-model-threads",
+			Usage:   "face embedding thread `COUNT`, derived from the CPU cores when unset",
+			EnvVars: EnvVars("FACE_MODEL_THREADS"),
+		}, DocDefault: "auto"}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-cluster-size",
 			Usage:   "minimum size of automatically clustered faces in `PIXELS` (20-10000)",
@@ -1369,46 +1413,41 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-cluster-score",
-			Usage:   "minimum `QUALITY` score of automatically clustered faces (1-100)",
-			Value:   face.ClusterScoreThreshold,
+			Usage:   "minimum `QUALITY` score of automatically clustered faces (1-100), overriding the bar calibrated per detector, -1 disables the check",
 			EnvVars: EnvVars("FACE_CLUSTER_SCORE"),
-		}}, {
+		},
+		DocDefault: faceDocDefault(float64(face.DefaultDetectorClusterScore()))}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-cluster-core",
 			Usage:   "`NUMBER` of faces forming a cluster core (1-100)",
-			Value:   face.ClusterCore,
+			Value:   face.ClusterCoreDefault,
 			EnvVars: EnvVars("FACE_CLUSTER_CORE"),
 		}}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-cluster-dist",
-			Usage:   fmt.Sprintf("similarity `DISTANCE` of faces forming a cluster core (collision distance to %g); defaults to the calibrated value of the configured face model", face.ConfigDistMax),
-			Value:   face.ClusterDistDefault,
+			Usage:   fmt.Sprintf("similarity `DISTANCE` of faces forming a cluster core (collision distance to %g), calibrated per face model when unset", face.ConfigDistMax),
 			EnvVars: EnvVars("FACE_CLUSTER_DIST"),
-		}}, {
+		}, DocDefault: faceModelDocDefault(func(m *face.EmbeddingModel) float64 { return m.ClusterDist })}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-cluster-radius",
-			Usage:   fmt.Sprintf("maximum cluster `RADIUS` accepted for automatic matches (collision distance to %g); defaults to the calibrated model value, and radius plus match distance may not exceed the same limit", face.ConfigDistMax),
-			Value:   face.ClusterRadiusDefault,
+			Usage:   fmt.Sprintf("maximum cluster `RADIUS` accepted for automatic matches, calibrated per face model when unset; radius plus match distance may not exceed %g", face.ConfigDistMax),
 			EnvVars: EnvVars("FACE_CLUSTER_RADIUS"),
-		}}, {
-		Flag: &cli.Float64Flag{
-			Name:    "face-collision-dist",
-			Usage:   "minimum collision discrimination `DISTANCE` (greater than 0, up to 1); defaults to the calibrated value of the configured face model",
-			Value:   face.CollisionDistDefault,
-			EnvVars: EnvVars("FACE_COLLISION_DIST"),
-		}}, {
-		Flag: &cli.Float64Flag{
-			Name:    "face-epsilon-dist",
-			Usage:   "collision tolerance `DELTA` appended to max match distances (greater than 0, up to 0.1); defaults to the calibrated value of the configured face model",
-			Value:   face.EpsilonDefault,
-			EnvVars: EnvVars("FACE_EPSILON_DIST"),
-		}}, {
+		}, DocDefault: faceModelDocDefault(func(m *face.EmbeddingModel) float64 { return m.ClusterRadius })}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-match-dist",
-			Usage:   fmt.Sprintf("similarity `OFFSET` for matching faces with existing clusters (collision distance to %g); defaults to the calibrated model value, and radius plus match distance may not exceed the same limit", face.ConfigDistMax),
-			Value:   face.MatchDistDefault,
+			Usage:   fmt.Sprintf("similarity `OFFSET` for matching faces with existing clusters, calibrated per face model when unset; radius plus match distance may not exceed %g", face.ConfigDistMax),
 			EnvVars: EnvVars("FACE_MATCH_DIST"),
-		}}, {
+		}, DocDefault: faceModelDocDefault(func(m *face.EmbeddingModel) float64 { return m.MatchDist })}, {
+		Flag: &cli.Float64Flag{
+			Name:    "face-collision-dist",
+			Usage:   "minimum collision discrimination `DISTANCE` (greater than 0, up to 1), calibrated per face model when unset",
+			EnvVars: EnvVars("FACE_COLLISION_DIST"),
+		}, DocDefault: faceModelDocDefault(func(m *face.EmbeddingModel) float64 { return m.CollisionDist })}, {
+		Flag: &cli.Float64Flag{
+			Name:    "face-epsilon-dist",
+			Usage:   "collision tolerance `DELTA` appended to max match distances (up to 0.01), the same for every face model; twice it is the distance at which a colliding cluster is retired for good",
+			EnvVars: EnvVars("FACE_EPSILON_DIST"),
+		}, DocDefault: faceDocDefault(face.EpsilonDefault)}, {
 		Flag: &cli.StringFlag{
 			Name:      "pid-filename",
 			Usage:     "process id `FILENAME` *daemon-mode only*",
@@ -1461,4 +1500,34 @@ var Flags = CliFlags{
 			Usage:   "database user `PASSWORD`",
 			EnvVars: EnvVars("TRANSFER_PASSWORD"),
 		}},
+}
+
+// faceDocDefault formats a face threshold for the generated configuration reference and for
+// "--help". Both publish a numeric option with no flag default as 0, and a word like "detector"
+// documents nothing to a reader deciding what to set, so the number that actually applies on a
+// default install is stated instead.
+func faceDocDefault(value float64) string {
+	if value <= 0 {
+		return ""
+	}
+
+	return strconv.FormatFloat(value, 'g', -1, 64)
+}
+
+// faceModelDocDefault formats a distance calibrated for the embedding model a default install
+// runs. The five distances are per model and are not comparable between them, so this names the
+// one set that applies rather than implying a global default.
+func faceModelDocDefault(pick func(*face.EmbeddingModel) float64) string {
+	m := face.DefaultModel()
+
+	if m == nil {
+		return ""
+	}
+
+	return faceDocDefault(pick(m))
+}
+
+// init makes the documented defaults the ones "--help" prints.
+func init() {
+	Flags.ApplyDocDefaults()
 }

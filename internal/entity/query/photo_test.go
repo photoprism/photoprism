@@ -252,7 +252,7 @@ func TestFlagHiddenPhotos(t *testing.T) {
 		var checkedTime = time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC)
 		// Load 1000 photos that need to be hidden
 		for range 1000 {
-			newPhoto := entity.Photo{ //JPG, Geo from metadata, indexed
+			newPhoto := entity.Photo{ // JPG, Geo from metadata, indexed
 				//ID:               1000049,
 				PhotoUID:         rnd.GenerateUID(entity.PhotoUID),
 				TakenAt:          time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),

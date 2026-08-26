@@ -19,9 +19,12 @@ import (
 // and Score only influence the quality sort and the review flag; named regions
 // are not flagged for review, unnamed ones are so the user can name them.
 const (
-	xmpMarkerSize         = 100 // Nominal face size in pixels.
-	xmpMarkerScoreNamed   = 30  // score >= 30 -> MarkerReview = false.
-	xmpMarkerScoreUnnamed = 20  // score < 30  -> MarkerReview = true.
+	xmpMarkerSize = 100 // Nominal face size in pixels.
+	// Scores are on the detector's 0-100 confidence scale, so both clear the clustering bar: a
+	// region a detector later confirms carries a real embedding, and its score is never rewritten.
+	// Whether it needs review is set explicitly rather than inferred from the score.
+	xmpMarkerScoreNamed   = 80
+	xmpMarkerScoreUnnamed = 75
 )
 
 // isXmpFaceSource reports whether a media file is a supported still-image XMP source.
@@ -409,7 +412,10 @@ func reconcileXmpFaces(regions meta.FaceRegions, file *entity.File, markers *ent
 		}
 
 		// No overlap: create a new SrcXmp marker (matrix case 1); an unnamed
-		// region becomes a review marker with no linked Person.
+		// region becomes a review marker with no linked Person. Set rather than derived from the
+		// score, which now has to clear the clustering bar and so cannot also mark a review.
+		probe.MarkerReview = !named
+
 		if named {
 			if _, nameErr := applyXmpName(probe, region.Name); nameErr != nil {
 				return count, nameErr

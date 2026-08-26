@@ -1,8 +1,12 @@
 package photoprism
 
 import (
+	"fmt"
+	"strings"
 	"testing"
 
+	"github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -117,7 +121,7 @@ func TestFaces_Cluster(t *testing.T) {
 				MarkerType:     entity.MarkerFace,
 				MarkerSrc:      entity.SrcImage,
 				Size:           100,
-				Score:          50,
+				Score:          face.ClusterScore("") + 10,
 				EmbeddingsJSON: values.JSON(),
 				EmbedModel:     face.ModelSFace,
 			}
@@ -135,4 +139,47 @@ func TestFaces_Cluster(t *testing.T) {
 		assert.Contains(t, err.Error(), "different lengths")
 		assert.Empty(t, r)
 	})
+}
+
+// TestFaces_reportClusteringSkipped pins that a library where nothing ever clusters says so. It
+// was a debug line, which made it indistinguishable from one where clustering ran and found
+// nothing - and the thresholds that exclude a marker are not the ones a person judges a face by.
+func TestFaces_reportClusteringSkipped(t *testing.T) {
+	w := NewFaces(config.TestConfig())
+
+	hook := test.NewGlobal()
+	t.Cleanup(hook.Reset)
+
+	w.reportClusteringSkipped(3, 8)
+
+	var reported int
+
+	for _, entry := range hook.AllEntries() {
+		if entry.Level == logrus.InfoLevel && strings.Contains(entry.Message, "clear the") {
+			reported++
+
+			assert.Contains(t, entry.Message, "3 of the 8")
+			assert.Contains(t, entry.Message, fmt.Sprintf("%d px size", face.ClusterSizeThreshold))
+		}
+	}
+
+	require.Equal(t, 1, reported, "the gap must be named, and it must be actionable")
+
+	// A worker that wakes every few minutes must not repeat an unchanged condition.
+	w.reportClusteringSkipped(3, 8)
+
+	reported = 0
+
+	for _, entry := range hook.AllEntries() {
+		if entry.Level == logrus.InfoLevel && strings.Contains(entry.Message, "clear the") {
+			reported++
+		}
+	}
+
+	assert.Equal(t, 1, reported)
+
+	// A different count is a different state and is reported again.
+	w.reportClusteringSkipped(4, 8)
+
+	assert.NotPanics(t, func() { (*Faces)(nil).reportClusteringSkipped(1, 8) })
 }

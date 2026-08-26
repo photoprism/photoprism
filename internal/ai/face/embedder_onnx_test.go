@@ -68,6 +68,9 @@ func useTestDetector(t *testing.T) {
 }
 
 // detectTestFace returns the highest scoring face in an image along with the image itself.
+// Which face that is is only stable for an image holding one: two faces in a frame can score
+// within a point of each other, so under a transform the ranking flips and a caller ends up
+// comparing two people rather than two views of one.
 func detectTestFace(t *testing.T, fileName string) (image.Image, *Face) {
 	t.Helper()
 
@@ -274,7 +277,9 @@ func TestONNXEmbedder_AlignmentReducesPoseDistance(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			embedder := newTestONNXEmbedder(t, name)
 			width, height := embedder.CropSize()
-			fileName := filepath.Join("testdata", "1.jpg")
+
+			// One face in the frame, so that rotating it cannot change which face is compared.
+			fileName := filepath.Join("testdata", "2.jpg")
 
 			// Embeds the largest face in an image, once landmark-aligned and once from the
 			// detected bounding box, so the two preparations can be compared directly.

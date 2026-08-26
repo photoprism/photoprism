@@ -10,6 +10,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gopkg.in/yaml.v2"
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service/hub"
@@ -576,4 +577,106 @@ func TestConfigOptions(t *testing.T) {
 
 	assert.Equal(t, r2.AutoImport, 0)
 	assert.Equal(t, r2.AutoIndex, 0)
+}
+
+// TestConfig_SaveOptionsPatchAppliesOnlyThePatch pins that writing one option does not import
+// every other key the file holds over options a flag or another writer provided for this run.
+// Reading the file back is how recording a face model came to replace a live database
+// configuration, which surfaces as a hang rather than an error: the DSN never resolves and the
+// connection is retried instead of failing.
+func TestConfig_SaveOptionsPatchAppliesOnlyThePatch(t *testing.T) {
+	tempCfg := t.TempDir()
+	c := NewConfig(CliTestContext())
+	c.options.ConfigPath = tempCfg
+	c.options.OptionsYaml = filepath.Join(tempCfg, "options.yml")
+
+	seed := Values{"DatabaseDriver": "mysql", "DatabaseServer": "database:3306"}
+	b, err := yaml.Marshal(seed)
+	require.NoError(t, err)
+	require.NoError(t, os.WriteFile(c.OptionsYaml(), b, fs.ModeFile))
+
+	c.options.DatabaseDriver = "sqlite3"
+	c.options.DatabaseServer = ""
+
+	wrote, err := c.SaveOptionsPatch(Values{"FaceModel": "sface"})
+	require.NoError(t, err)
+	require.True(t, wrote)
+
+	assert.Equal(t, "sface", c.options.FaceModel, "the patched key must be applied")
+	assert.Equal(t, "sqlite3", c.options.DatabaseDriver, "an unpatched key must not be read back")
+	assert.Empty(t, c.options.DatabaseServer)
+}
+
+func TestConfig_DeleteOptionsPatch(t *testing.T) {
+	newTestOptions := func(t *testing.T, values Values) *Config {
+		t.Helper()
+
+		tempCfg := t.TempDir()
+		c := NewConfig(CliTestContext())
+		c.options.ConfigPath = tempCfg
+		c.options.OptionsYaml = filepath.Join(tempCfg, "options.yml")
+
+		b, err := yaml.Marshal(values)
+		require.NoError(t, err)
+		require.NoError(t, os.WriteFile(c.OptionsYaml(), b, fs.ModeFile))
+
+		return c
+	}
+
+	t.Run("Success", func(t *testing.T) {
+		// Removing a key restores the default, which writing an empty value does not: the loader
+		// cannot tell an option that was cleared from one that was set to nothing.
+		c := newTestOptions(t, Values{"FaceModel": "facenet", "SiteUrl": "https://photos.example.com/"})
+
+		wrote, err := c.DeleteOptionsPatch("FaceModel")
+		require.NoError(t, err)
+		assert.True(t, wrote)
+
+		content, readErr := os.ReadFile(c.OptionsYaml())
+		require.NoError(t, readErr)
+
+		var merged map[string]any
+		require.NoError(t, yaml.Unmarshal(content, &merged))
+		assert.NotContains(t, merged, "FaceModel")
+		assert.Equal(t, "https://photos.example.com/", merged["SiteUrl"])
+	})
+	t.Run("KeyNotPresent", func(t *testing.T) {
+		c := newTestOptions(t, Values{"SiteUrl": "https://photos.example.com/"})
+
+		wrote, err := c.DeleteOptionsPatch("FaceModel")
+		require.NoError(t, err)
+		assert.False(t, wrote, "a file that would not change must not be rewritten")
+	})
+	t.Run("MissingFileCreatesNothing", func(t *testing.T) {
+		// A helper that removes a setting must not leave a directory tree behind as its only
+		// effect, which reading the file through loadOptionsYAML would do.
+		c := NewConfig(CliTestContext())
+		c.options.ConfigPath = filepath.Join(t.TempDir(), "absent")
+		c.options.OptionsYaml = filepath.Join(c.options.ConfigPath, "options.yml")
+
+		wrote, err := c.DeleteOptionsPatch("FaceModel")
+
+		require.NoError(t, err)
+		assert.False(t, wrote)
+		assert.NoDirExists(t, c.options.ConfigPath)
+	})
+	t.Run("NoKeys", func(t *testing.T) {
+		c := newTestOptions(t, Values{"SiteUrl": "https://photos.example.com/"})
+
+		wrote, err := c.DeleteOptionsPatch()
+		assert.NoError(t, err)
+		assert.False(t, wrote)
+	})
+	t.Run("UnreadableFile", func(t *testing.T) {
+		c := newTestOptions(t, Values{"FaceModel": "facenet"})
+		require.NoError(t, os.WriteFile(c.OptionsYaml(), []byte("\tnot: [yaml"), fs.ModeFile))
+
+		_, err := c.DeleteOptionsPatch("FaceModel")
+		assert.Error(t, err)
+	})
+	t.Run("NilConfig", func(t *testing.T) {
+		wrote, err := (*Config)(nil).DeleteOptionsPatch("FaceModel")
+		assert.NoError(t, err)
+		assert.False(t, wrote)
+	})
 }

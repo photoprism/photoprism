@@ -57,7 +57,7 @@ func TestSessions(t *testing.T) {
 			t.Fatal(err)
 		} else {
 			assert.LessOrEqual(t, 2, len(results))
-			//t.Logf("sessions: %#v", results)
+			// t.Logf("sessions: %#v", results)
 		}
 	})
 	t.Run("Limit", func(t *testing.T) {
@@ -65,7 +65,7 @@ func TestSessions(t *testing.T) {
 			t.Fatal(err)
 		} else {
 			assert.LessOrEqual(t, 1, len(results))
-			//t.Logf("sessions: %#v", results)
+			// t.Logf("sessions: %#v", results)
 		}
 	})
 	t.Run("Offset", func(t *testing.T) {
@@ -73,7 +73,7 @@ func TestSessions(t *testing.T) {
 			t.Fatal(err)
 		} else {
 			assert.LessOrEqual(t, 2, len(results))
-			//t.Logf("sessions: %#v", results)
+			// t.Logf("sessions: %#v", results)
 		}
 	})
 	t.Run("SearchAlice", func(t *testing.T) {
@@ -94,7 +94,7 @@ func TestSessions(t *testing.T) {
 			t.Fatal(err)
 		} else {
 			assert.LessOrEqual(t, 2, len(results))
-			//t.Logf("sessions: %#v", results)
+			// t.Logf("sessions: %#v", results)
 		}
 	})
 	t.Run("SearchAliceSortByID", func(t *testing.T) {
@@ -102,7 +102,7 @@ func TestSessions(t *testing.T) {
 			t.Fatal(err)
 		} else {
 			assert.LessOrEqual(t, 1, len(results))
-			//t.Logf("sessions: %#v", results)
+			// t.Logf("sessions: %#v", results)
 		}
 	})
 	t.Run("SearchUpperAliceSortByID", func(t *testing.T) {
@@ -110,7 +110,7 @@ func TestSessions(t *testing.T) {
 			t.Fatal(err)
 		} else {
 			assert.LessOrEqual(t, 1, len(results))
-			//t.Logf("sessions: %#v", results)
+			// t.Logf("sessions: %#v", results)
 		}
 	})
 }

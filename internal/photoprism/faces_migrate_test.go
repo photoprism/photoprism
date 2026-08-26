@@ -2,6 +2,7 @@ package photoprism
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"image"
 	"math"
@@ -17,6 +18,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/internal/thumb/crop"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -54,9 +56,24 @@ func (e *migrationTestEmbedder) Run(image.Image) face.Embeddings {
 // Close releases the test embedder.
 func (e *migrationTestEmbedder) Close() error { return nil }
 
+// TestFacesMigrateIncompleteError_Error pins that the message names what was actually lost. A
+// marker an earlier detector placed and this one cannot find again is the ordinary outcome, and
+// reporting the total as a fault tells an operator to fix something that is not broken.
 func TestFacesMigrateIncompleteError_Error(t *testing.T) {
-	err := (&FacesMigrateIncompleteError{Failed: 3}).Error()
-	assert.Contains(t, err, "3 failed")
+	t.Run("Clusterable", func(t *testing.T) {
+		err := (&FacesMigrateIncompleteError{Failed: 900, Clusterable: 3}).Error()
+		assert.Contains(t, err, "3 marker(s) that clear the clustering thresholds")
+		assert.NotContains(t, err, "900")
+	})
+	t.Run("Unreadable", func(t *testing.T) {
+		err := (&FacesMigrateIncompleteError{Failed: 5, Unreadable: 5}).Error()
+		assert.Contains(t, err, "missing or unreadable")
+	})
+	t.Run("Both", func(t *testing.T) {
+		err := (&FacesMigrateIncompleteError{Failed: 9, Clusterable: 4, Unreadable: 5}).Error()
+		assert.Contains(t, err, "4 marker(s)")
+		assert.Contains(t, err, "5 file(s)")
+	})
 }
 
 func TestFacesMigrateAbortedError_Error(t *testing.T) {
@@ -263,14 +280,15 @@ func TestFaces_migrateFaceFile(t *testing.T) {
 	embedder := &migrationTestEmbedder{name: face.ModelFaceNet, dims: 512}
 	w := NewFaces(config.TestConfig())
 
-	migrated, skipped, failed, detected, err := w.migrateFaceFile(embedder, face.ModelFaceNet, "missing-file")
+	empty, err := w.migrateFaceFile(embedder, face.ModelFaceNet, "missing-file")
 	require.NoError(t, err)
-	assert.Zero(t, migrated)
-	assert.Zero(t, skipped)
-	assert.Empty(t, failed)
-	assert.False(t, detected)
+	assert.Zero(t, empty.Migrated)
+	assert.Zero(t, empty.Skipped)
+	assert.Zero(t, empty.Retained)
+	assert.Empty(t, empty.Failed)
+	assert.False(t, empty.Detected)
 
-	_, _, _, _, err = w.migrateFaceFile(embedder, face.ModelFaceNet, "")
+	_, err = w.migrateFaceFile(embedder, face.ModelFaceNet, "")
 	require.Error(t, err)
 
 	marker := &entity.Marker{
@@ -286,16 +304,189 @@ func TestFaces_migrateFaceFile(t *testing.T) {
 	// A file the library removed is absent from the scoped lookup, and the plan already
 	// counted its markers as unreadable, so the error has to name that rather than report a
 	// bare "record not found" an operator would read as a database fault.
-	_, _, failed, _, err = w.migrateFaceFile(embedder, face.ModelFaceNet, marker.FileUID)
+	deleted, err := w.migrateFaceFile(embedder, face.ModelFaceNet, marker.FileUID)
 	require.Error(t, err)
 	assert.Equal(t, "file was deleted", err.Error())
-	assert.Equal(t, []string{marker.MarkerUID}, failed)
+	assert.Equal(t, []string{marker.MarkerUID}, deleted.Failed)
+	assert.Zero(t, deleted.Retained)
+
+	t.Run("CropPathKeepsTheRecordedDetector", func(t *testing.T) {
+		// Re-cropping reads the stored geometry, so the detector that produced it is still
+		// the one that produced the crop and must survive the checkpoint.
+		hash := "c0ffee00000000000000000000000000000000a5"
+		photo := entity.Photo{PhotoUID: rnd.GenerateUID('p'), PhotoName: "migrate-crop", PhotoType: entity.MediaImage}
+		require.NoError(t, photo.Save())
+		file := &entity.File{
+			PhotoID:     photo.ID,
+			PhotoUID:    photo.PhotoUID,
+			FileUID:     rnd.GenerateUID('f'),
+			FileHash:    hash,
+			FileName:    "migrate-crop/a.jpg",
+			FileRoot:    entity.RootOriginals,
+			FilePrimary: true,
+			FileType:    "jpg",
+		}
+		require.NoError(t, file.Create())
+
+		stale := &entity.Marker{
+			MarkerUID:      rnd.GenerateUID('m'),
+			FileUID:        file.FileUID,
+			MarkerType:     entity.MarkerFace,
+			MarkerSrc:      entity.SrcImage,
+			EmbedModel:     face.ModelSFace,
+			DetectModel:    "legacy-detector",
+			EmbeddingsJSON: face.Embeddings{face.Embedding{1, 0, 0, 0}}.JSON(),
+			W:              1,
+			H:              1,
+		}
+		require.NoError(t, entity.Db().Create(stale).Error)
+		t.Cleanup(func() { entity.UnscopedDb().Delete(stale) })
+
+		cropConf := config.NewMinimalTestConfig(t.TempDir())
+		require.NoError(t, cropConf.CreateDirectories())
+		cropWorker := NewFaces(cropConf)
+
+		thumbName, thumbErr := thumb.Sizes[thumb.Fit720].FileName(hash, cropConf.ThumbCachePath())
+		require.NoError(t, thumbErr)
+		require.NoError(t, thumb.Save(image.NewNRGBA(image.Rect(0, 0, 64, 64)), thumbName))
+
+		cropEmbedder := &migrationTestEmbedder{name: face.ModelFaceNet, dims: 4}
+		cropped, cropErr := cropWorker.migrateFaceFile(cropEmbedder, face.ModelFaceNet, file.FileUID)
+
+		require.NoError(t, cropErr)
+		assert.False(t, cropped.Detected)
+		assert.Empty(t, cropped.Failed)
+		assert.Zero(t, cropped.Retained)
+		require.Equal(t, 1, cropped.Migrated)
+
+		saved, savedErr := query.MarkerByUID(stale.MarkerUID)
+		require.NoError(t, savedErr)
+		assert.Equal(t, face.ModelFaceNet, saved.EmbedModel)
+		// Deliberately not the active engine: a value equal to it could not tell a preserved
+		// detector from one the crop path wrongly re-attributed.
+		assert.NotEqual(t, face.ActiveEngineName(), "legacy-detector")
+		assert.Equal(t, "legacy-detector", saved.DetectModel)
+	})
 }
 
-func TestFaceMigrationMarkerUIDs(t *testing.T) {
-	markers := entity.Markers{{MarkerUID: "m1"}, {MarkerUID: "m2"}}
-	assert.Equal(t, []string{"m1", "m2"}, faceMigrationMarkerUIDs(markers))
-	assert.Empty(t, faceMigrationMarkerUIDs(nil))
+func TestUnresolvedMigrationMarkers(t *testing.T) {
+	markers := entity.Markers{{MarkerUID: "m1"}, {MarkerUID: "m2"}, {MarkerUID: "m3"}}
+	t.Run("NothingToRecrop", func(t *testing.T) {
+		failed, counts := unresolvedMigrationMarkers(markers, nil)
+		assert.Equal(t, []string{"m1", "m2", "m3"}, failed)
+		assert.Zero(t, counts.Retained)
+		// The fixtures carry neither a size nor a score, so none of them could have clustered.
+		assert.Zero(t, counts.Clusterable)
+		assert.Zero(t, counts.Named)
+		assert.Zero(t, counts.Manual)
+	})
+	t.Run("RecropIsRetained", func(t *testing.T) {
+		// A marker that only needed a new crop keeps the vector it holds, so it must not reach
+		// the failed list: that list is what the finalize blanks.
+		failed, counts := unresolvedMigrationMarkers(markers, map[string]bool{"m2": true})
+		assert.Equal(t, []string{"m1", "m3"}, failed)
+		assert.Equal(t, 1, counts.Retained)
+	})
+	t.Run("EveryMarkerIsRetained", func(t *testing.T) {
+		failed, counts := unresolvedMigrationMarkers(markers, map[string]bool{"m1": true, "m2": true, "m3": true})
+		assert.Empty(t, failed)
+		assert.Equal(t, 3, counts.Retained)
+		assert.Zero(t, counts.Clusterable)
+	})
+	t.Run("NoMarkers", func(t *testing.T) {
+		failed, counts := unresolvedMigrationMarkers(nil, map[string]bool{"m1": true})
+		assert.Empty(t, failed)
+		assert.Zero(t, counts.Retained)
+		assert.Zero(t, counts.Clusterable)
+	})
+	t.Run("CountsOnlyWhatCouldHaveClustered", func(t *testing.T) {
+		// The finalize guard measures real loss, so a marker under either clustering bar must
+		// not count toward it however many of them a detector change fails to re-find.
+		mixed := entity.Markers{
+			{MarkerUID: "big", Size: face.ClusterSizeThreshold, Score: 100},
+			{MarkerUID: "small", Size: face.ClusterSizeThreshold - 1, Score: 100},
+			{MarkerUID: "weak", Size: face.ClusterSizeThreshold, Score: 1},
+		}
+
+		failed, counts := unresolvedMigrationMarkers(mixed, nil)
+
+		assert.Len(t, failed, 3)
+		assert.Equal(t, 1, counts.Clusterable)
+	})
+	t.Run("SplitsTheLossByWhatMakesAMarkerWorthKeeping", func(t *testing.T) {
+		// A marker nobody named is attrition on a library an unreliable detector indexed; one a
+		// person named is the cost, and a hand-drawn one is the least recoverable. A bare failure
+		// count cannot tell them apart, which is what makes a migration floor unjudgeable.
+		mixed := entity.Markers{
+			{MarkerUID: "anon"},
+			{MarkerUID: "named", SubjUID: "js6sg6b1qekk9jx8"},
+			{MarkerUID: "drawn", SubjUID: "js6sg6b1qekk9jx9", SubjSrc: entity.SrcManual},
+			// ClearSubject blanks subj_uid and records the source of the clearing, so this is what
+			// a marker somebody named and later un-named looks like. It is effort spent either way.
+			{MarkerUID: "unnamed", SubjSrc: entity.SrcManual},
+		}
+
+		failed, counts := unresolvedMigrationMarkers(mixed, nil)
+
+		assert.Len(t, failed, 4)
+		assert.Equal(t, 2, counts.Named, "every assigned marker counts, however it was assigned")
+		assert.Equal(t, 2, counts.Manual, "including one with no subject, so the counts overlap rather than nest")
+		// Three of the four markers are named or manual, yet the counts sum to four. That gap is
+		// the overlap, and reporting one as a subset of the other is what it would hide.
+		assert.Equal(t, 4, counts.Named+counts.Manual)
+	})
+}
+
+func TestStaleMigrationMarkers(t *testing.T) {
+	vector := face.Embeddings{face.Embedding{1, 0, 0, 0}}.JSON()
+	detector := face.ActiveDetector()
+	require.NotEmpty(t, detector)
+	require.NotEqual(t, face.DetectorNone, detector)
+
+	current := entity.Marker{MarkerUID: "mcurrent", EmbedModel: face.ModelFaceNet, DetectModel: detector, EmbeddingsJSON: vector}
+	other := entity.Marker{MarkerUID: "mother", EmbedModel: face.ModelFaceNet, DetectModel: "some-other-detector", EmbeddingsJSON: vector}
+	blank := entity.Marker{MarkerUID: "mblank", EmbedModel: face.ModelFaceNet, EmbeddingsJSON: vector}
+	wrongModel := entity.Marker{MarkerUID: "mmodel", EmbedModel: face.ModelSFace, DetectModel: detector, EmbeddingsJSON: vector}
+
+	markers := entity.Markers{current, other, blank, wrongModel}
+
+	t.Run("Aligned", func(t *testing.T) {
+		// An aligned embedder consumes the landmarks, so a crop another detector placed is
+		// stale even though its vector is the target's, and is recorded as re-croppable.
+		stale, recrop := staleMigrationMarkers(markers, &migrationTestEmbedder{name: face.ModelFaceNet, dims: 4, aligned: true}, face.ModelFaceNet)
+		assert.Equal(t, []string{"mother", "mblank", "mmodel"}, markerUIDsOf(stale))
+		assert.Equal(t, map[string]bool{"mother": true, "mblank": true}, recrop)
+	})
+	t.Run("NotAligned", func(t *testing.T) {
+		// A crop-based embedder reads the stored geometry, so the detector that placed it
+		// changes nothing and only the incomparable vector is stale.
+		stale, recrop := staleMigrationMarkers(markers, &migrationTestEmbedder{name: face.ModelFaceNet, dims: 4}, face.ModelFaceNet)
+		assert.Equal(t, []string{"mmodel"}, markerUIDsOf(stale))
+		assert.Empty(t, recrop)
+	})
+	t.Run("UnreadableVector", func(t *testing.T) {
+		// A vector of the wrong width cannot be compared at all, so it is stale outright and
+		// must never be retained: there is nothing usable to keep.
+		stale, recrop := staleMigrationMarkers(entity.Markers{current}, &migrationTestEmbedder{name: face.ModelFaceNet, dims: 512, aligned: true}, face.ModelFaceNet)
+		assert.Equal(t, []string{"mcurrent"}, markerUIDsOf(stale))
+		assert.Empty(t, recrop)
+	})
+	t.Run("NoMarkers", func(t *testing.T) {
+		stale, recrop := staleMigrationMarkers(nil, &migrationTestEmbedder{name: face.ModelFaceNet, dims: 4, aligned: true}, face.ModelFaceNet)
+		assert.Empty(t, stale)
+		assert.Empty(t, recrop)
+	})
+}
+
+// markerUIDsOf returns the marker UIDs in their current order, so a test can assert on the
+// selection a helper made rather than on the marker rows it copied.
+func markerUIDsOf(markers entity.Markers) []string {
+	result := make([]string, 0, len(markers))
+	for _, marker := range markers {
+		result = append(result, marker.MarkerUID)
+	}
+
+	return result
 }
 
 func TestFaces_cropMigrationEmbeddings(t *testing.T) {
@@ -331,9 +522,74 @@ func TestFaces_detectMigrationEmbeddings(t *testing.T) {
 	embedder := &migrationTestEmbedder{name: face.ModelSFace, dims: 4, aligned: true}
 	w := NewFaces(config.TestConfig())
 
-	result, err := w.detectMigrationEmbeddings(embedder, nil, nil, nil)
+	result, landmarks, detectModel, err := w.detectMigrationEmbeddings(embedder, nil, nil, nil)
 	require.Error(t, err)
 	assert.Empty(t, result)
+	assert.Empty(t, landmarks)
+	assert.Empty(t, detectModel, "a run that could not detect names no detector")
+}
+
+// TestFaces_detectMigrationEmbeddings_Landmarks pins the producer half of the provenance pair:
+// the landmarks a re-detection placed have to travel with the vector it produced, or the recorded
+// detector attests a crop while the stored landmarks are an earlier detector's.
+func TestFaces_detectMigrationEmbeddings_Landmarks(t *testing.T) {
+	prev := face.UseEngine(nil)
+	t.Cleanup(func() {
+		if current := face.UseEngine(prev); current != nil {
+			_ = current.Close()
+		}
+	})
+
+	c := config.TestConfig()
+	detectorPath := face.DefaultDetector().Path(c.ModelsPath())
+
+	if _, err := os.Stat(detectorPath); err != nil {
+		t.Skipf("faces: skipping, %s is not available", filepath.Base(detectorPath))
+	}
+
+	require.NoError(t, face.ConfigureEngine(face.EngineSettings{
+		Name: face.EngineONNX,
+		ONNX: face.ONNXOptions{ModelPath: detectorPath, Threads: 1},
+	}))
+
+	// The detection thumbnail is what the migration re-detects, so a real face has to be cached
+	// under the file's hash for the run to have anything to map.
+	source, _, err := fs.DecodeImageFile(filepath.Join("..", "ai", "face", "testdata", "1.jpg"))
+	require.NoError(t, err)
+
+	hash := "1111111111111111111111111111111111111111"
+	thumbName, err := thumb.Sizes[thumb.Fit720].FileName(hash, c.ThumbCachePath())
+	require.NoError(t, err)
+	require.NoError(t, thumb.Save(source, thumbName))
+
+	detected, err := face.DetectWithRetry(thumbName, c.FaceSize(), c.FaceSizeRetry())
+	require.NoError(t, err)
+	require.NotEmpty(t, detected, "the test image must yield a face to map")
+
+	file := &entity.File{FileUID: rnd.GenerateUID('f'), FileHash: hash}
+	marker := entity.NewFaceMarker(detected[0], *file, "")
+	require.NotNil(t, marker)
+	marker.MarkerUID = rnd.GenerateUID('m')
+
+	markers := entity.Markers{*marker}
+	embedder := &migrationTestEmbedder{name: face.ModelSFace, dims: 4, aligned: true}
+
+	w := NewFaces(c)
+	result, details, detectModel, err := w.detectMigrationEmbeddings(embedder, file, markers, markers)
+
+	require.NoError(t, err)
+	require.Contains(t, result, marker.MarkerUID)
+	assert.Equal(t, face.DefaultDetector().Name, detectModel)
+	require.Contains(t, details, marker.MarkerUID, "what the detection recorded must travel with the vector")
+
+	detection := details[marker.MarkerUID]
+	assert.True(t, json.Valid(detection.Landmarks))
+	assert.Contains(t, string(detection.Landmarks), "eye_l")
+
+	// The clustering bars are looked up by detect_model, so the score has to come from the
+	// detection the provenance names rather than from whatever placed the marker originally.
+	assert.Positive(t, detection.Score)
+	assert.Positive(t, detection.Size)
 }
 
 func TestMigrationDetectionThumb(t *testing.T) {
@@ -364,9 +620,122 @@ func TestMatchMigrationDetections(t *testing.T) {
 
 	result := matchMigrationDetections(markers, detected)
 	require.Len(t, result, 2)
-	assert.Equal(t, detected[0].Area, result["m1"].Area)
-	assert.Equal(t, detected[1].Area, result["m2"].Area)
+	assert.Equal(t, 0, result["m1"])
+	assert.Equal(t, 1, result["m2"])
 	assert.Empty(t, matchMigrationDetections(nil, detected))
+}
+
+// TestAssignedMigrationDetections pins that only the detections a stale marker claims are handed
+// on to be embedded. Migration detects at the smallest size the detectors are trained for, so a
+// file yields detections no marker accounts for, and inferring those would cost the run their
+// time and the real crops their rendition.
+func TestAssignedMigrationDetections(t *testing.T) {
+	markers := entity.Markers{
+		{MarkerUID: "m1", X: 0.1, Y: 0.1, W: 0.2, H: 0.2},
+		{MarkerUID: "m2", X: 0.6, Y: 0.6, W: 0.2, H: 0.2},
+	}
+	detected := face.Faces{
+		{Rows: 100, Cols: 100, Area: face.NewArea("face", 20, 20, 20)},
+		{Rows: 100, Cols: 100, Area: face.NewArea("face", 70, 70, 20)},
+		{Rows: 100, Cols: 100, Area: face.NewArea("face", 5, 90, 4)},
+	}
+
+	t.Run("Success", func(t *testing.T) {
+		// Only m2 needs work, so the detection m1 accounts for must not be embedded, and must
+		// still be unavailable to m2.
+		assigned, order := assignedMigrationDetections(markers, entity.Markers{markers[1]}, detected)
+
+		require.Len(t, assigned, 1)
+		assert.Equal(t, detected[1].Area, assigned[0].Area)
+		assert.Equal(t, map[string]int{"m2": 0}, order)
+	})
+	t.Run("ContestedDetection", func(t *testing.T) {
+		// One detection, two markers overlapping it, and the one that needs no work wins it.
+		// Matching only the stale markers would hand it to m2 instead, which is the regression
+		// passing every marker exists to prevent - and which a fixture where each marker has
+		// its own detection cannot see.
+		contested := entity.Markers{
+			{MarkerUID: "m1", X: 0.40, Y: 0.40, W: 0.10, H: 0.10},
+			{MarkerUID: "m2", X: 0.42, Y: 0.42, W: 0.10, H: 0.10},
+		}
+		one := face.Faces{{Rows: 100, Cols: 100, Score: 80, Area: face.NewArea("face", 45, 45, 10)}}
+
+		require.Equal(t, map[string]int{"m1": 0}, matchMigrationDetections(contested, one),
+			"the detection must belong to m1")
+
+		assigned, order := assignedMigrationDetections(contested, entity.Markers{contested[1]}, one)
+
+		assert.Empty(t, assigned, "m2 must not be given a detection m1 accounts for")
+		assert.Empty(t, order)
+	})
+	t.Run("EveryMarkerIsStale", func(t *testing.T) {
+		assigned, order := assignedMigrationDetections(markers, markers, detected)
+
+		require.Len(t, assigned, 2, "the unclaimed detection must be left out")
+		assert.Equal(t, detected[0].Area, assigned[order["m1"]].Area)
+		assert.Equal(t, detected[1].Area, assigned[order["m2"]].Area)
+	})
+	t.Run("NoDetections", func(t *testing.T) {
+		assigned, order := assignedMigrationDetections(markers, markers, nil)
+
+		assert.Empty(t, assigned)
+		assert.Empty(t, order)
+	})
+}
+
+// TestOversizedMigrationDetection pins the bound that keeps a containing box from claiming a
+// marker. OverlapPercent divides by the marker's own surface, so a detection that merely
+// contains it scores a perfect 100 while the correctly fitting one scores less.
+func TestOversizedMigrationDetection(t *testing.T) {
+	marker := crop.Area{Name: "face", X: 0.4, Y: 0.4, W: 0.1, H: 0.1}
+
+	t.Run("SameSize", func(t *testing.T) {
+		assert.False(t, oversizedMigrationDetection(crop.Area{X: 0.4, Y: 0.4, W: 0.1, H: 0.1}, marker))
+	})
+	t.Run("SlightlyLarger", func(t *testing.T) {
+		// Ordinary detector-to-detector drift must still match.
+		assert.False(t, oversizedMigrationDetection(crop.Area{X: 0.38, Y: 0.38, W: 0.14, H: 0.14}, marker))
+	})
+	t.Run("HeadAndShoulders", func(t *testing.T) {
+		assert.True(t, oversizedMigrationDetection(crop.Area{X: 0.3, Y: 0.3, W: 0.3, H: 0.3}, marker))
+	})
+	t.Run("EmptyMarker", func(t *testing.T) {
+		// Nothing to compare against, so nothing is rejected on size.
+		assert.False(t, oversizedMigrationDetection(crop.Area{X: 0.3, Y: 0.3, W: 0.3, H: 0.3}, crop.Area{}))
+	})
+}
+
+// TestMatchMigrationDetectionsPrefersConfidence pins that a tie on overlap is broken by detection
+// score rather than by the order the detector emitted them. Containment scores 100, so the
+// migration's lower floors put several candidates at the top of the list.
+func TestMatchMigrationDetectionsPrefersConfidence(t *testing.T) {
+	markers := entity.Markers{{MarkerUID: "m1", X: 0.4, Y: 0.4, W: 0.1, H: 0.1}}
+	detected := face.Faces{
+		{Rows: 100, Cols: 100, Score: 12, Area: face.NewArea("face", 45, 45, 10)},
+		{Rows: 100, Cols: 100, Score: 92, Area: face.NewArea("face", 45, 45, 10)},
+	}
+
+	result := matchMigrationDetections(markers, detected)
+
+	require.Contains(t, result, "m1")
+	assert.Equal(t, 1, result["m1"], "the more confident detection must claim the marker")
+}
+
+func TestClusterableMarkers(t *testing.T) {
+	markers := entity.Markers{
+		{MarkerUID: "big", Size: face.ClusterSizeThreshold, Score: 100},
+		{MarkerUID: "small", Size: face.ClusterSizeThreshold - 1, Score: 100},
+	}
+
+	assert.Equal(t, 1, clusterableMarkers(markers))
+	assert.Zero(t, clusterableMarkers(nil))
+}
+
+func TestRetainedMigrationMarkers(t *testing.T) {
+	markers := entity.Markers{{MarkerUID: "m1"}, {MarkerUID: "m2"}}
+
+	assert.Len(t, retainedMigrationMarkers(markers, map[string]bool{"m2": true}), 1)
+	assert.Empty(t, retainedMigrationMarkers(markers, nil))
 }
 
 func TestMarkerCropArea(t *testing.T) {
@@ -397,7 +766,7 @@ func TestBuildFaceMigrationClusters(t *testing.T) {
 			SubjUID:        subjectUID,
 			SubjSrc:        subjSrc,
 			Size:           face.ClusterSizeThreshold + 10,
-			Score:          face.ClusterScoreThreshold + 10,
+			Score:          face.ClusterScore("") + 10,
 			EmbedModel:     target,
 			EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
 			W:              0.1,
@@ -521,7 +890,7 @@ func TestCentroidSamples(t *testing.T) {
 	// previous model got wrong looks like once it has been re-embedded.
 	marker := func(v []float32) entity.Marker {
 		m := entity.Marker{MarkerUID: rnd.GenerateUID('m'), MarkerType: entity.MarkerFace}
-		m.SetEmbeddings(face.NewEmbeddings([][]float32{v}), face.ModelSFace)
+		m.SetEmbeddings(face.NewEmbeddings([][]float32{v}), face.ModelSFace, face.EngineONNX)
 
 		return m
 	}
@@ -674,7 +1043,7 @@ func TestCentroidSamples(t *testing.T) {
 		// Embeddings.Dist reports -1 when nothing is comparable, which must not read as
 		// the closest possible sample and let a foreign vector define the centroid.
 		odd := entity.Marker{MarkerUID: rnd.GenerateUID('m'), MarkerType: entity.MarkerFace}
-		odd.SetEmbeddings(face.Embeddings{face.Embedding{1, 0}}, face.ModelSFace)
+		odd.SetEmbeddings(face.Embeddings{face.Embedding{1, 0}}, face.ModelSFace, face.EngineONNX)
 
 		group := entity.Markers{marker(near(0)), marker(near(1)), marker(near(2)), odd}
 
@@ -741,5 +1110,129 @@ func TestFacesMigrateRerunError_Error(t *testing.T) {
 
 		assert.Contains(t, err.Error(), "database is locked")
 		assert.NotErrorIs(t, error(err), query.ErrFaceMigrationIdentitiesChanged)
+	})
+}
+
+func TestMigrationProgress(t *testing.T) {
+	// The loop is silent for the best part of an hour on a large library, so this is the only
+	// signal a run is making progress. Every processed state counts, or a re-run that skips
+	// most of the library would appear to stall.
+	t.Run("CountsEveryProcessedState", func(t *testing.T) {
+		plan := FacesMigratePlan{Markers: query.FaceMigrationMarkerCounts{Valid: 200}}
+		result := FacesMigrateResult{Migrated: 40, Skipped: 30, Failed: 20, Retained: 10}
+
+		done, total := migrationProgress(plan, result)
+
+		assert.Equal(t, 100, done)
+		assert.Equal(t, 200, total)
+	})
+	t.Run("NothingToDo", func(t *testing.T) {
+		// Zero would divide by zero rather than report nothing.
+		done, total := migrationProgress(FacesMigratePlan{}, FacesMigrateResult{})
+
+		assert.Zero(t, done)
+		assert.Zero(t, total)
+		assert.NotPanics(t, func() { logMigrationProgress(FacesMigratePlan{}, FacesMigrateResult{}) })
+	})
+	t.Run("MoreProcessedThanPlanned", func(t *testing.T) {
+		// The plan is counted before the run, so a marker added meanwhile must not report 101%.
+		plan := FacesMigratePlan{Markers: query.FaceMigrationMarkerCounts{Valid: 10}}
+
+		done, total := migrationProgress(plan, FacesMigrateResult{Migrated: 99})
+
+		assert.Equal(t, 10, done)
+		assert.Equal(t, 10, total)
+	})
+}
+
+func TestFaces_useMigrationDetector(t *testing.T) {
+	c := config.TestConfig()
+	w := NewFaces(c)
+
+	t.Run("LowersAndRestoresTheFloor", func(t *testing.T) {
+		previous := face.ScoreThreshold
+
+		restore, err := w.useMigrationDetector()
+		require.NoError(t, err)
+		require.NotNil(t, restore)
+
+		assert.Equal(t, c.FaceMigrateScore(), face.ScoreThreshold)
+
+		restore()
+
+		assert.Equal(t, previous, face.ScoreThreshold)
+	})
+	t.Run("KeepsAConfiguredScore", func(t *testing.T) {
+		// FACE_SCORE is a decision rather than a calibration, so the migration must not overrule
+		// it the way it overrules the detector's own cutoff.
+		previous := face.ScoreThreshold
+		options := c.Options()
+		configured := options.FaceScore
+		options.FaceScore = 55
+		t.Cleanup(func() { options.FaceScore = configured })
+
+		restore, err := w.useMigrationDetector()
+		require.NoError(t, err)
+
+		assert.Equal(t, 55.0, face.ScoreThreshold)
+
+		restore()
+
+		assert.Equal(t, previous, face.ScoreThreshold)
+	})
+	t.Run("FollowsFaceMigrateScore", func(t *testing.T) {
+		// The floor has to be tunable without a rebuild: it is the value the preview is
+		// collecting data on, and a Docker image build per experiment is not a feedback loop.
+		previous := face.ScoreThreshold
+		options := c.Options()
+		configured := options.FaceMigrateScore
+		options.FaceMigrateScore = 25
+		t.Cleanup(func() { options.FaceMigrateScore = configured })
+
+		restore, err := w.useMigrationDetector()
+		require.NoError(t, err)
+
+		assert.Equal(t, 25.0, face.ScoreThreshold)
+		assert.InDelta(t, 0.25, float64(face.ActiveEngineSettings().ONNX.ScoreThreshold), 0.0001)
+
+		restore()
+
+		assert.Equal(t, previous, face.ScoreThreshold)
+	})
+	t.Run("KeepsADisabledScore", func(t *testing.T) {
+		// -1 switches the cutoff off, which is as much a decision as a number is. Treating it
+		// as unset re-imposed a floor of 9 on an operator who had removed one.
+		previous := face.ScoreThreshold
+		options := c.Options()
+		configured := options.FaceScore
+		options.FaceScore = -1
+		t.Cleanup(func() { options.FaceScore = configured })
+		// FACE_MIGRATE_SCORE is unset, so the decision FACE_SCORE records carries into the run.
+
+		restore, err := w.useMigrationDetector()
+		require.NoError(t, err)
+
+		assert.Equal(t, face.NoScoreThreshold, face.ScoreThreshold)
+
+		restore()
+
+		assert.Equal(t, previous, face.ScoreThreshold)
+	})
+	t.Run("MovesTheDetectionSessionToo", func(t *testing.T) {
+		// The cutoff lives in the inference session as well as in the filter Detect applies
+		// afterwards, so a run that moved only the second would have the first undo it.
+		restore, err := w.useMigrationDetector()
+		require.NoError(t, err)
+		t.Cleanup(restore)
+
+		settings := face.ActiveEngineSettings()
+
+		assert.InDelta(t, c.FaceMigrateScore()/100, float64(settings.ONNX.ScoreThreshold), 0.0001)
+	})
+	t.Run("NilWorker", func(t *testing.T) {
+		restore, err := (*Faces)(nil).useMigrationDetector()
+		require.NoError(t, err)
+		require.NotNil(t, restore)
+		assert.NotPanics(t, restore)
 	})
 }

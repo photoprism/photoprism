@@ -38,9 +38,13 @@ type Face struct {
 	EmbedModel      string          `gorm:"type:bytes;size:32;column:embed_model;index;default:'';" json:"-" yaml:"EmbedModel,omitempty"`
 	EmbeddingJSON   json.RawMessage `gorm:"type:bytes;size:66666;" json:"-" yaml:"EmbeddingJSON,omitempty"`
 	embedding       face.Embedding  `gorm:"-" yaml:"-"`
-	MatchedAt       *time.Time      `json:"MatchedAt" yaml:"MatchedAt,omitempty"`
-	CreatedAt       time.Time       `json:"CreatedAt" yaml:"CreatedAt,omitempty"`
-	UpdatedAt       time.Time       `json:"UpdatedAt" yaml:"UpdatedAt,omitempty"`
+	// reopened records that this cluster changed after a run read it, so a caller about to stamp
+	// it as matched can tell it apart from one that merely started out unmatched - which is the
+	// only state the timestamp itself can report, since both are NULL.
+	reopened  bool       `gorm:"-" yaml:"-"`
+	MatchedAt *time.Time `json:"MatchedAt" yaml:"MatchedAt,omitempty"`
+	CreatedAt time.Time  `json:"CreatedAt" yaml:"CreatedAt,omitempty"`
+	UpdatedAt time.Time  `json:"UpdatedAt" yaml:"UpdatedAt,omitempty"`
 }
 
 // Faceless can be used as argument to match unmatched face markers.
@@ -129,9 +133,21 @@ func (m *Face) SetEmbeddings(embeddings face.Embeddings, model face.ModelName) (
 	// Update Face ID and reset match timestamp,
 	m.ID = base32.StdEncoding.EncodeToString(s[:])
 
-	m.MatchedAt = nil
+	m.reopen()
 
 	return nil
+}
+
+// Reopened reports whether this cluster changed after the run read it, and therefore has to be
+// compared against the markers again rather than stamped as matched.
+func (m *Face) Reopened() bool {
+	return m != nil && m.reopened
+}
+
+// reopen clears the match timestamp and records that this cluster needs comparing again.
+func (m *Face) reopen() {
+	m.MatchedAt = nil
+	m.reopened = true
 }
 
 // Matched updates the match timestamp.
@@ -228,7 +244,7 @@ func (m *Face) ResolveCollision(embeddings face.Embeddings, model face.ModelName
 	} else if dist < 0 {
 		// Should never happen.
 		return false, fmt.Errorf("collision distance must be positive")
-	} else if dist < 0.02 {
+	} else if dist < face.AmbiguityDist() {
 		log.Warnf("faces: %s has ambiguous subject %s with a similar face at dist %f with source %s", m.ID, SubjNames.Log(m.SubjUID), dist, SrcString(m.FaceSrc))
 
 		m.FaceKind = int(face.AmbiguousFace)
@@ -240,7 +256,10 @@ func (m *Face) ResolveCollision(embeddings face.Embeddings, model face.ModelName
 		return true, m.Updates(Values{"collisions": m.Collisions, "collision_radius": m.CollisionRadius,
 			"face_kind": m.FaceKind, "updated_at": m.UpdatedAt, "matched_at": m.MatchedAt})
 	} else {
-		m.MatchedAt = nil
+		// Reopened rather than merely cleared: this narrows the cluster mid-run, and the markers
+		// ReviseMatches drops below have nothing to be rematched against if the run then stamps
+		// it as matched on its way out.
+		m.reopen()
 		m.Collisions++
 		m.CollisionRadius = dist - face.Epsilon
 		UpdateFaces.Store(true)
@@ -287,6 +306,14 @@ func (m *Face) ReviseMatches() (revised Markers, err error) {
 					log.Debugf("faces: failed to remove match with marker (%s)", err) // Conflict resolution
 					return revised, err
 				} else if updated {
+					// ClearFace stamps the marker as matched, which is true of the matcher but
+					// not of this: the cluster narrowed underneath it and nothing has compared
+					// it against the others. Left stamped, it is in neither pass's set and waits
+					// for "faces update --force".
+					if err = marker.Unmatched(); err != nil {
+						log.Debugf("faces: failed to flag marker for rematching (%s)", err)
+					}
+
 					revised = append(revised, marker)
 				}
 			}
@@ -312,6 +339,10 @@ func whereSameEmbeddingSpace(stmt *gorm.DB, model face.ModelName) *gorm.DB {
 }
 
 // MatchMarkers finds and references matching markers.
+//
+// Only the detection floor admits a marker, not the clustering one: the second pass marks faces
+// a crowd photograph would lose rather than naming people from them. A marker already in a
+// cluster is exempt, or the merge path would strand it on one about to be purged.
 func (m *Face) MatchMarkers(faceIds []string) error {
 	if len(faceIds) == 0 {
 		return nil
@@ -320,7 +351,8 @@ func (m *Face) MatchMarkers(faceIds []string) error {
 	var markers Markers
 
 	err := whereSameEmbeddingSpace(Db().
-		Where("marker_invalid = FALSE AND marker_type = ? AND face_id IN (?)", MarkerFace, faceIds), m.EmbedModel).
+		Where("marker_invalid = FALSE AND marker_type = ? AND face_id IN (?)", MarkerFace, faceIds).
+		Where("face_id <> '' OR size >= ?", face.SizeThreshold), m.EmbedModel).
 		Find(&markers).Error
 
 	if err != nil {
@@ -346,14 +378,11 @@ func (m *Face) MatchMarkers(faceIds []string) error {
 	return nil
 }
 
-// UpdateMatchStats persists sample statistics derived from recent matches.
+// UpdateMatchStats persists sample statistics from recent matches, only ever widening the extent.
 //
-// A run only visits the markers that were unmatched when it started, so what it reports
-// describes a subset rather than the cluster: one newly indexed face arriving close to the
-// centroid would otherwise rewrite the radius to its own distance and drop the accept
-// distance to match, refusing the members that sit beyond it. The observation may therefore
-// widen the recorded extent and never narrow it. SetEmbeddings recomputes both from actual
-// membership, which is the path that may shrink a cluster.
+// A run visits only the markers that were unmatched when it started, so one face arriving near the
+// centroid would otherwise shrink the radius and refuse the members beyond it. SetEmbeddings
+// recomputes both from membership, which is the path that may shrink a cluster.
 func (m *Face) UpdateMatchStats(samples int, maxDistance float64) error {
 	if m.ID == "" || samples <= 0 {
 		return nil

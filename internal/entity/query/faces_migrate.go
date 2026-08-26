@@ -70,15 +70,11 @@ func FaceMigrationCounts(model string) (result FaceMigrationMarkerCounts, err er
 	return result, nil
 }
 
-// whereFaceMigrationUnreadableFile restricts a marker query to those whose file the index
-// cannot offer for re-embedding, whether it is soft-deleted, gone from the table, flagged
-// missing, or recorded with a read error.
+// whereFaceMigrationUnreadableFile restricts a marker query to those whose file the index cannot
+// offer for re-embedding: soft-deleted, absent, flagged missing, or recorded with a read error.
 //
-// It is expressed as the complement of a usable file rather than as a list of faults, because
-// a marker fails the run for any of them and the reasons are not enumerable in advance: a
-// soft-deleted row simply does not resolve. The index answers this without touching the
-// filesystem, so a plan can name these markers up front - it cannot see a file that has gone
-// missing since the last index run.
+// It is the complement of a usable file rather than a list of faults, which are not enumerable in
+// advance. It answers from the index, so it cannot see a file that has gone missing since.
 func whereFaceMigrationUnreadableFile(stmt *gorm.DB) *gorm.DB {
 	return stmt.
 		Where("marker_invalid = FALSE AND file_uid <> ''").
@@ -209,12 +205,11 @@ func FaceMigrationIdentities() (result []FaceMigrationIdentity, err error) {
 	return result, err
 }
 
-// whereFaceMigrationSamples restricts a statement to the markers that may seed a
-// replacement cluster: assigned to a subject, valid, on the target model, and good enough
-// that ordinary clustering would use them.
+// whereFaceMigrationSamples restricts a statement to the markers that may seed a replacement
+// cluster: assigned to a subject, valid, on the target model, and good enough to be clustered.
 //
-// The size and score bar is the one query.Embeddings and entity.Marker.Face() apply, so a
-// face too small or too poorly scored to be clustered cannot define a centroid either.
+// The size and score bar is the one query.Embeddings and entity.Marker.Face() apply, so a face too
+// small to be clustered cannot define a centroid either.
 func whereFaceMigrationSamples(stmt *gorm.DB, model string) *gorm.DB {
 	stmt = stmt.Where("marker_type = ? AND marker_invalid = FALSE", entity.MarkerFace).
 		Where("subj_uid <> ''").
@@ -224,9 +219,7 @@ func whereFaceMigrationSamples(stmt *gorm.DB, model string) *gorm.DB {
 		stmt = stmt.Where("size >= ?", face.ClusterSizeThreshold)
 	}
 
-	if face.ClusterScoreThreshold > 0 {
-		stmt = stmt.Where("score >= ?", face.ClusterScoreThreshold)
-	}
+	stmt = whereClusterScore(stmt, face.ClusterScoreAuto)
 
 	return whereEmbeddingModel(stmt, model)
 }
@@ -244,12 +237,11 @@ func FaceMigrationSubjectUIDs(model string) (result []string, err error) {
 	return result, err
 }
 
-// FaceMigrationSubjectMarkers returns one subject's successfully migrated markers.
+// FaceMigrationSubjectMarkers returns one subject's successfully migrated markers, one subject at
+// a time so that a whole library's embedding blobs never have to be resident.
 //
-// Automatic assignments count as samples too: seeding a replacement cluster from the
-// manually named markers alone leaves it too narrow to re-accept the faces it already
-// held, which strands them in an unnamed cluster. One subject at a time, because the
-// embedding blobs of a whole library do not have to be resident to rebuild a centroid.
+// Automatic assignments count as samples too: seeding from the named markers alone leaves the
+// cluster too narrow to re-accept the faces it already held.
 func FaceMigrationSubjectMarkers(model, subjUID string) (result entity.Markers, err error) {
 	if model == "" {
 		return result, fmt.Errorf("faces: migration model is required")
@@ -265,23 +257,72 @@ func FaceMigrationSubjectMarkers(model, subjUID string) (result entity.Markers, 
 
 // FaceMigrationLowQualityMarkers returns how many markers the quality bar keeps out of the
 // replacement centroids, so a run that seeds from very little can say why.
+//
+// It counts the complement of whereFaceMigrationSamples over the same rows, so the bars are
+// read from one place: a count computed from its own copy of them reports on a set the rebuild
+// does not use.
 func FaceMigrationLowQualityMarkers(model string) (count int64, err error) {
 	if model == "" {
 		return 0, fmt.Errorf("faces: migration model is required")
 	}
 
+	assigned := func() *gorm.DB {
+		return whereEmbeddingModel(Db().Model(&entity.Marker{}).
+			Where("marker_type = ? AND marker_invalid = 0", entity.MarkerFace).
+			Where("subj_uid <> ''").
+			Where("LENGTH(embeddings_json) > 0"), model)
+	}
+
+	var total, samples int
+
+	if err = assigned().Count(&total).Error; err != nil {
+		return 0, err
+	} else if err = whereFaceMigrationSamples(Db().Model(&entity.Marker{}), model).Count(&samples).Error; err != nil {
+		return 0, err
+	}
+
+	return max(total-samples, 0), nil
+}
+
+// FaceMigrationRecropMarkers returns how many markers hold a usable target-model vector that a
+// different detector's crop produced, so a plan can report the work a detector change creates.
+//
+// These markers are not stale in the embedding sense, which is why they are counted apart: a
+// re-embedding that cannot find them again keeps the vector they already hold.
+func FaceMigrationRecropMarkers(model, detector string) (count int, err error) {
+	if model == "" {
+		return 0, fmt.Errorf("faces: migration model is required")
+	}
+
+	detector = face.NormalizeDetectorName(detector)
+
+	if detector == "" || detector == face.DetectorNone {
+		return 0, nil
+	}
+
 	err = whereEmbeddingModel(Db().Model(&entity.Marker{}).
 		Where("marker_type = ? AND marker_invalid = FALSE", entity.MarkerFace).
-		Where("subj_uid <> ''").
 		Where("LENGTH(embeddings_json) > 0").
-		Where("size < ? OR score < ?", face.ClusterSizeThreshold, face.ClusterScoreThreshold), model).
+		Where("detect_model <> ?", detector), model).
 		Count(&count).Error
 
 	return count, err
 }
 
-// SaveFaceMigrationEmbeddings checkpoints generated embeddings for a single file.
-func SaveFaceMigrationEmbeddings(model string, embeddings map[string]face.Embeddings) error {
+// MigrationDetection carries what the detection that produced a marker's new vector recorded about
+// it, so the provenance column and the values the clustering bars read are written from one source.
+type MigrationDetection struct {
+	Landmarks json.RawMessage
+	Size      int
+	Score     int
+}
+
+// SaveFaceMigrationEmbeddings checkpoints generated embeddings for a single file, along with the
+// landmarks the detection that produced them placed.
+//
+// A blank detectModel and absent landmarks leave both alone, which a re-crop must do: it ran no
+// detector. A re-detection writes both, or the detector recorded is not the landmarks' own.
+func SaveFaceMigrationEmbeddings(model, detectModel string, embeddings map[string]face.Embeddings, details map[string]MigrationDetection) error {
 	if model == "" {
 		return fmt.Errorf("faces: migration model is required")
 	}
@@ -297,15 +338,40 @@ func SaveFaceMigrationEmbeddings(model string, embeddings map[string]face.Embedd
 				return fmt.Errorf("faces: invalid migration embedding json for marker %s", markerUID)
 			}
 
+			columns := entity.Values{
+				"embeddings_json": encoded,
+				"embed_model":     model,
+				"face_id":         "",
+				"face_dist":       -1.0,
+				"matched_at":      nil,
+			}
+
+			// Written together, or the recorded detector would attest another one's work. The
+			// score matters most: the clustering bars are looked up by detect_model, so a marker
+			// relabeled without it is judged at a calibration it was never scored against. Size
+			// travels for the same reason, and both are in the pixels of the same Fit720 thumbnail
+			// indexing detects on. A detection that produced no usable landmarks blanks the column
+			// rather than leaving an earlier detector's behind.
+			if detectModel != "" {
+				detection := details[markerUID]
+				points := detection.Landmarks
+
+				if len(points) == 0 || !json.Valid(points) {
+					points = json.RawMessage{}
+				}
+
+				columns["detect_model"] = detectModel
+				columns["landmarks_json"] = points
+				columns["score"] = detection.Score
+
+				if detection.Size > 0 {
+					columns["size"] = detection.Size
+				}
+			}
+
 			res := tx.Model(&entity.Marker{}).
 				Where("marker_uid = ? AND marker_type = ?", markerUID, entity.MarkerFace).
-				UpdateColumns(entity.Values{
-					"embeddings_json": encoded,
-					"embed_model":     model,
-					"face_id":         "",
-					"face_dist":       -1.0,
-					"matched_at":      nil,
-				})
+				UpdateColumns(columns)
 
 			if res.Error != nil {
 				return res.Error
@@ -341,7 +407,7 @@ func FinalizeFaceMigration(model string, identities []FaceMigrationIdentity, clu
 		if err := tx.Model(&entity.Marker{}).
 			Where("marker_type = ?", entity.MarkerFace).
 			Where("marker_invalid = TRUE OR file_uid = '' OR LENGTH(embeddings_json) = 0 OR "+cond, args...).
-			UpdateColumns(entity.Values{"embeddings_json": []byte(""), "embed_model": ""}).Error; err != nil {
+			UpdateColumns(entity.Values{"embeddings_json": []byte(""), "embed_model": "", "detect_model": ""}).Error; err != nil {
 			return err
 		}
 
@@ -351,7 +417,7 @@ func FinalizeFaceMigration(model string, identities []FaceMigrationIdentity, clu
 				j := min(i+batchSize, len(failedMarkerUIDs))
 				if err := tx.Model(&entity.Marker{}).
 					Where("marker_type = ? AND marker_uid IN (?)", entity.MarkerFace, failedMarkerUIDs[i:j]).
-					UpdateColumns(entity.Values{"embeddings_json": []byte(""), "embed_model": ""}).Error; err != nil {
+					UpdateColumns(entity.Values{"embeddings_json": []byte(""), "embed_model": "", "detect_model": ""}).Error; err != nil {
 					return err
 				}
 			}

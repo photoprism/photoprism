@@ -2,8 +2,11 @@ package face
 
 import (
 	"fmt"
+	"path/filepath"
 	"strings"
 	"sync"
+
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // EngineName identifies a face detection engine implementation.
@@ -36,6 +39,10 @@ func ParseEngine(s string) EngineName {
 // DetectionEngine represents a strategy for locating faces in an image.
 type DetectionEngine interface {
 	Name() EngineName
+	// Detector names the detection model, which is what provenance records: the engine name
+	// says which runtime produced a face, not which detector, and two detectors under one
+	// runtime place different landmarks.
+	Detector() DetectorName
 	Detect(fileName string, minSize int) (Faces, error)
 	Close() error
 }
@@ -131,6 +138,17 @@ func ActiveEngine() DetectionEngine {
 	return engine
 }
 
+// ActiveEngineSettings returns the settings the active engine was configured with, so a caller
+// that changed one - a migration lowering the detection cutoff - can verify it took effect.
+// The cutoff lives inside the inference session, where nothing else can observe it.
+func ActiveEngineSettings() EngineSettings {
+	engineMu.RLock()
+	settings := engineSettings
+	engineMu.RUnlock()
+
+	return settings
+}
+
 // ActiveEngineName returns the name of the active engine.
 // If there is no active engine, it returns "none."
 func ActiveEngineName() EngineName {
@@ -141,11 +159,80 @@ func ActiveEngineName() EngineName {
 	return EngineNone
 }
 
+// ActiveDetector returns the name of the detector the active engine runs, or DetectorNone when
+// there is none.
+//
+// An engine that cannot name its detector falls back to the engine name, which is the rule Detect
+// records provenance under, so what this returns is comparable with a stored value.
+func ActiveDetector() DetectorName {
+	engine := ActiveEngine()
+
+	if engine == nil {
+		return DetectorNone
+	}
+
+	if detector := engine.Detector(); detector != "" {
+		return detector
+	}
+
+	return engine.Name()
+}
+
+// DetectWithRetry runs the detector and, when it finds nothing, tries once more at a smaller
+// minimum size. A retrySize of zero, or one not smaller than minSize, disables that.
+//
+// A crowd reduces every face below the ordinary minimum, so the frame is indexed as holding
+// nobody. Retrying only on an empty result keeps bystanders unmarked everywhere else.
+func DetectWithRetry(fileName string, minSize, retrySize int) (Faces, error) {
+	faces, err := Detect(fileName, minSize)
+
+	if err != nil || len(faces) > 0 || retrySize < 1 || retrySize >= minSize {
+		return faces, err
+	}
+
+	retried, retryErr := Detect(fileName, retrySize)
+
+	if retryErr != nil || len(retried) == 0 {
+		return faces, err
+	}
+
+	log.Debugf("faces: found %d face(s) in %s below the %d px minimum", len(retried), clean.Log(filepath.Base(fileName)), minSize)
+
+	return retried, nil
+}
+
 // Detect runs the active engine on the provided file and returns the detected faces.
+//
+// Each face records the detector that found it, this being the last frame where the producer of
+// the landmarks is known. Provenance has three levels - none, the engine, the detector - and
+// internal/ai/face/README.md records what each rules out.
 func Detect(fileName string, minSize int) (Faces, error) {
 	engine := ActiveEngine()
 	if engine == nil {
 		return Faces{}, fmt.Errorf("faces: detection engine not configured")
 	}
-	return engine.Detect(fileName, minSize)
+
+	faces, err := engine.Detect(fileName, minSize)
+
+	detector := engine.Detector()
+
+	if detector == "" {
+		detector = engine.Name()
+	}
+
+	// A detection below the configured quality is discarded here rather than filtered downstream,
+	// so it never becomes a marker: what a detector reports as a face and is not costs an operator
+	// a thumbnail to reject, whatever happens to it afterwards.
+	kept := make(Faces, 0, len(faces))
+
+	for i := range faces {
+		if float64(faces[i].Score) < ScoreThreshold {
+			continue
+		}
+
+		faces[i].DetectModel = detector
+		kept = append(kept, faces[i])
+	}
+
+	return kept, err
 }

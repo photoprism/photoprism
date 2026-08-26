@@ -73,11 +73,27 @@ func TestNewMarker(t *testing.T) {
 	assert.Equal(t, "fs6sg6bw45bnlqdw", m.FileUID)
 	assert.Equal(t, "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818-1340ce163163", m.Thumb)
 	assert.Equal(t, "ls6sg6b1wowuy3c3", m.SubjUID)
-	assert.True(t, m.MarkerReview)
 	assert.Equal(t, 59, m.Q)
 	assert.Equal(t, 29, m.Score)
 	assert.Equal(t, SrcImage, m.MarkerSrc)
 	assert.Equal(t, MarkerLabel, m.MarkerType)
+}
+
+// TestNewMarkerReview pins what "needs review" means on the score scale: a marker that exists but
+// cannot contribute to a cluster is one a person has to look at. Stated against the threshold
+// rather than a literal, because a literal is what let this drift onto the wrong scale before.
+func TestNewMarkerReview(t *testing.T) {
+	file := FileFixtures.Get("exampleFileName.jpg")
+
+	// The shared default rather than the configurable variable, which is what NewMarker reads:
+	// the review flag is stored, so it cannot follow a threshold an operator changes later.
+	below := NewMarker(file, testArea, "ls6sg6b1wowuy3c3", SrcImage, MarkerFace, 100, face.ClusterScoreThresholdDefault-1)
+	require.NotNil(t, below)
+	assert.True(t, below.MarkerReview, "a marker under the clustering bar needs review")
+
+	atBar := NewMarker(file, testArea, "ls6sg6b1wowuy3c3", SrcImage, MarkerFace, 100, face.ClusterScoreThresholdDefault)
+	require.NotNil(t, atBar)
+	assert.False(t, atBar.MarkerReview, "a marker that can contribute to a cluster does not")
 }
 
 func TestMarker_SetName(t *testing.T) {
@@ -673,7 +689,7 @@ func TestMarker_GetFace(t *testing.T) {
 			EmbeddingsJSON: MarkerFixtures.Get("actress-a-1").EmbeddingsJSON,
 			SubjSrc:        SrcManual,
 			Size:           160,
-			Score:          40,
+			Score:          80,
 		}
 
 		if m.Face() == nil {
@@ -818,25 +834,96 @@ func TestMarker_SetEmbeddings(t *testing.T) {
 		// reads as legacy FaceNet and would be admitted into FaceNet clusters whatever
 		// model actually produced it.
 		m := &Marker{MarkerType: MarkerFace}
-		m.SetEmbeddings(face.Embeddings{face.RandomEmbedding()}, face.ModelSFace)
+		m.SetEmbeddings(face.Embeddings{face.RandomEmbedding()}, face.ModelSFace, face.EngineONNX)
 
 		assert.Equal(t, face.ModelSFace, m.EmbedModel)
 		assert.NotEmpty(t, m.EmbeddingsJSON)
 		assert.False(t, m.Embeddings().Empty())
 	})
+	t.Run("RecordsTheProducingDetector", func(t *testing.T) {
+		// The detector decides the landmarks and therefore the aligned crop, so a vector
+		// whose detector is unknown cannot be told apart from one a legacy set produced.
+		m := &Marker{MarkerType: MarkerFace}
+		m.SetEmbeddings(face.Embeddings{face.RandomEmbedding()}, face.ModelSFace, face.EngineONNX)
+
+		assert.Equal(t, face.EngineONNX, m.DetectModel)
+	})
 	t.Run("EmptyClearsTheModel", func(t *testing.T) {
 		// A marker whose vector was cleared must not keep claiming a model, or a later
 		// migration counts it as already done.
-		m := &Marker{MarkerType: MarkerFace, EmbedModel: face.ModelSFace}
-		m.SetEmbeddings(face.Embeddings{}, face.ModelSFace)
+		m := &Marker{MarkerType: MarkerFace, EmbedModel: face.ModelSFace, DetectModel: face.EngineONNX}
+		m.SetEmbeddings(face.Embeddings{}, face.ModelSFace, face.EngineONNX)
 
 		assert.Empty(t, m.EmbedModel)
+		assert.Empty(t, m.DetectModel)
 	})
 	t.Run("ReplacesAPreviousModel", func(t *testing.T) {
 		m := &Marker{MarkerType: MarkerFace}
-		m.SetEmbeddings(face.Embeddings{face.RandomEmbedding()}, face.ModelFaceNet)
-		m.SetEmbeddings(face.Embeddings{face.RandomEmbedding()}, face.ModelSFace)
+		m.SetEmbeddings(face.Embeddings{face.RandomEmbedding()}, face.ModelFaceNet, face.EngineONNX)
+		m.SetEmbeddings(face.Embeddings{face.RandomEmbedding()}, face.ModelSFace, face.EngineONNX)
 
 		assert.Equal(t, face.ModelSFace, m.EmbedModel)
 	})
+}
+
+func TestMarker_Clusterable(t *testing.T) {
+	t.Run("ClearsBothBars", func(t *testing.T) {
+		m := &Marker{Size: face.ClusterSizeThreshold, Score: 100}
+		assert.True(t, m.Clusterable())
+	})
+	t.Run("TooSmall", func(t *testing.T) {
+		m := &Marker{Size: face.ClusterSizeThreshold - 1, Score: 100}
+		assert.False(t, m.Clusterable())
+	})
+	t.Run("TooLowScoring", func(t *testing.T) {
+		m := &Marker{Size: face.ClusterSizeThreshold, Score: 0}
+		assert.False(t, m.Clusterable())
+	})
+	t.Run("ScoreBarFollowsTheDetector", func(t *testing.T) {
+		// A library holds markers from more than one detector and nothing recomputes a score, so
+		// judging one by the active detector's bar would exclude it for a calibration it was
+		// never scored against.
+		score := face.ClusterScore(face.DetectorSCRFD)
+		m := &Marker{Size: face.ClusterSizeThreshold, Score: score, DetectModel: face.DetectorSCRFD}
+
+		assert.True(t, m.Clusterable())
+		assert.Equal(t, score >= face.ClusterScore(""), (&Marker{Size: m.Size, Score: score}).Clusterable())
+	})
+	t.Run("NilMarker", func(t *testing.T) {
+		assert.False(t, (*Marker)(nil).Clusterable())
+	})
+}
+
+// TestMarker_Unmatched pins the flag a conflict has to leave behind. ClearFace stamps, which is
+// right where the matcher found no face and wrong after a cluster narrowed underneath a marker:
+// a stamped marker is in neither matching pass's set and waits for a forced run.
+func TestMarker_Unmatched(t *testing.T) {
+	m := &Marker{
+		FileUID:        "fs6sg6bw45bnlqdw",
+		MarkerType:     MarkerFace,
+		MarkerSrc:      SrcImage,
+		Size:           100,
+		Score:          100,
+		EmbedModel:     face.EmbeddingModelName(),
+		EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
+		W:              0.1,
+		H:              0.1,
+	}
+	require.NoError(t, Db().Create(m).Error)
+	t.Cleanup(func() { UnscopedDb().Delete(m) })
+
+	require.NoError(t, m.Matched())
+	require.NotNil(t, m.MatchedAt)
+
+	stored := FindMarker(m.MarkerUID)
+	require.NotNil(t, stored)
+	require.NotNil(t, stored.MatchedAt)
+
+	require.NoError(t, m.Unmatched())
+
+	assert.Nil(t, m.MatchedAt)
+
+	stored = FindMarker(m.MarkerUID)
+	require.NotNil(t, stored)
+	assert.Nil(t, stored.MatchedAt, "the column must be cleared, not only the field")
 }

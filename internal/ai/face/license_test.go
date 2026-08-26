@@ -84,3 +84,33 @@ func TestLicenseRefused(t *testing.T) {
 		assert.Contains(t, err.Error(), "pro edition")
 	})
 }
+
+func TestDetectorLicenseRefused(t *testing.T) {
+	t.Run("Ungated", func(t *testing.T) {
+		assert.NoError(t, DetectorLicenseRefused(DetectorYuNet, "pro"))
+	})
+	t.Run("UnknownDetector", func(t *testing.T) {
+		assert.NoError(t, DetectorLicenseRefused("centerface", "ce"))
+	})
+	t.Run("NotAccepted", func(t *testing.T) {
+		t.Setenv(LicenseAcceptanceVar, "")
+		err := DetectorLicenseRefused(DetectorSCRFD, "ce")
+
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), LicenseAcceptanceVar)
+	})
+	t.Run("AcceptedAndEligible", func(t *testing.T) {
+		t.Setenv(LicenseAcceptanceVar, "1")
+		assert.NoError(t, DetectorLicenseRefused(DetectorSCRFD, "ce"))
+		assert.NoError(t, DetectorLicenseRefused(DetectorSCRFD, "plus"))
+	})
+	t.Run("AcceptedButIneligible", func(t *testing.T) {
+		// One acceptance covers the publisher, so the detector is refused where the
+		// embedding weights are.
+		t.Setenv(LicenseAcceptanceVar, "1")
+		err := DetectorLicenseRefused(DetectorSCRFD, "portal")
+
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "portal edition")
+	})
+}

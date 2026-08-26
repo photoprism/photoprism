@@ -20,10 +20,9 @@ var (
 	PortalOIDCTokenEndpointAuthMethods = []string{"client_secret_basic", "client_secret_post"}
 )
 
-// NewPortalOpenIDConfiguration builds the discovery JSON for the Portal's
-// OIDC OP. The returned shape advertises the endpoints, signing algorithm,
-// and scope vocabulary documented in specs/portal/cluster-oidc.md; instances
-// consume it through their existing OIDC RP code.
+// NewPortalOpenIDConfiguration builds the discovery JSON for the Portal's OIDC OP. The returned
+// shape advertises the endpoints, signing algorithm and scope vocabulary that instances consume
+// through their existing OIDC RP code.
 func NewPortalOpenIDConfiguration(conf *config.Config) *OpenIDConfiguration {
 	issuer := strings.TrimRight(conf.PortalOIDCIssuer(), "/")
 

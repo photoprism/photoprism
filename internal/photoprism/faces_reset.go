@@ -8,6 +8,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -47,14 +48,31 @@ func (w *Faces) Reset() (err error) {
 	return nil
 }
 
-// ResetAndReindex resets face data and optionally regenerates markers with the specified engine.
-func (w *Faces) ResetAndReindex(engine string, index *Index) error {
-	trimmed := strings.TrimSpace(engine)
-	lowered := strings.ToLower(trimmed)
-	if lowered != "" {
-		parsed := face.ParseEngine(lowered)
-		if parsed == face.EngineAuto && !strings.EqualFold(trimmed, string(face.EngineAuto)) {
-			return fmt.Errorf("faces: unsupported detection engine %q", engine)
+// ResetAndReindex resets face data and regenerates markers with the specified detector, or resets
+// only when none is named.
+//
+// The detector is what a caller has to name, because every one of them runs on the same runtime:
+// naming the runtime would not say which model places the landmarks, and those decide the crop.
+func (w *Faces) ResetAndReindex(detector string, index *Index) error {
+	name := strings.TrimSpace(detector)
+
+	if name != "" && !face.KnownDetectorName(name) {
+		return fmt.Errorf("faces: unsupported face detector %q", detector)
+	}
+
+	regenerate := name != "" && face.ParseDetectorName(name) != face.DetectorNone
+
+	if regenerate && w.conf == nil {
+		return fmt.Errorf("faces: configuration not available")
+	}
+
+	if regenerate {
+		w.conf.Options().FaceDetector = face.ParseDetectorName(name)
+
+		// Checked before anything is removed: a request to regenerate that cannot be met would
+		// otherwise delete every person and face and rebuild nothing.
+		if w.conf.FaceDetector() == face.DetectorNone {
+			return fmt.Errorf("faces: face detector %s cannot be used, so markers cannot be regenerated", clean.Log(name))
 		}
 	}
 
@@ -62,24 +80,11 @@ func (w *Faces) ResetAndReindex(engine string, index *Index) error {
 		return err
 	}
 
-	if lowered == "" {
+	if !regenerate {
 		return nil
 	}
 
-	if w.conf == nil {
-		return fmt.Errorf("faces: configuration not available")
-	}
-
-	engineName := face.ParseEngine(lowered)
-	w.conf.Options().FaceEngine = engineName
-
-	if err := face.ConfigureEngine(face.EngineSettings{
-		Name: w.conf.FaceEngine(),
-		ONNX: face.ONNXOptions{
-			ModelPath: w.conf.FaceEngineModelPath(),
-			Threads:   w.conf.FaceEngineThreads(),
-		},
-	}); err != nil {
+	if err := w.conf.ConfigureFaceDetector(0); err != nil {
 		return err
 	}
 
@@ -92,7 +97,8 @@ func (w *Faces) ResetAndReindex(engine string, index *Index) error {
 		return err
 	}
 
-	log.Infof("faces: regenerated %s using %s engine (%s scanned)", english.Plural(updated, "file", "files"), w.conf.FaceEngine(), english.Plural(len(found), "file", "files"))
+	log.Infof("faces: regenerated %s with detector %s (%s scanned)",
+		english.Plural(updated, "file", "files"), clean.Log(w.conf.FaceDetector()), english.Plural(len(found), "file", "files"))
 
 	return nil
 }

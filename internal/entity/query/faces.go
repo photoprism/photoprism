@@ -178,38 +178,178 @@ func RemoveAutoFaceClusters() (removed int, err error) {
 	return int(res.RowsAffected), res.Error
 }
 
-// CountNewFaceMarkers counts the number of new face markers in the index.
-func CountNewFaceMarkers(size, score int) (n int) {
-	var f entity.Face
-	current := face.EmbeddingModelName()
-	nData := int64(0)
+// FaceClusterGates counts the face markers automatic clustering could use, with each bar that can
+// exclude one applied on its own and then together, so a report can name the gate that holds.
+//
+// Unclustered ignores the recency cut every other count applies, because a marker older than the
+// newest cluster never counts toward the trigger again: that is a state the worker cannot report
+// and only a full rebuild clears.
+type FaceClusterGates struct {
+	Unclustered int
+	Recent      int
+	SizeOK      int
+	ScoreOK     int
+	Eligible    int
+	// Clusterable counts the markers clearing both bars whatever their age, which is what a forced
+	// run would take. Eligible answers what the automatic pass sees; this answers what --force buys.
+	Clusterable int
+}
 
-	if err := whereEmbeddingModel(Db().Where("face_src = ?", entity.SrcAuto), current).
+// CountFaceClusterGates counts the face markers at each clustering bar.
+//
+// It takes the model, size and score rather than reading them from the loaded engine, because the
+// command that reports them never loads one and would otherwise count against the shipped defaults.
+func CountFaceClusterGates(model string, size, score int) (result FaceClusterGates) {
+	recent, sized, scored := "1 = 1", "1 = 1", ""
+	var recentArgs, sizeArgs []any
+
+	if newest := newestAutoFaceTime(model); !newest.IsZero() {
+		recent, recentArgs = "created_at > ?", []any{newest}
+	}
+
+	if size > 0 {
+		sized, sizeArgs = "size >= ?", []any{size}
+	}
+
+	scored, scoreArgs := clusterScoreCond(score)
+
+	// One pass rather than one query per bar: LENGTH() on the embedding blob defeats every index,
+	// so each bar would otherwise cost a full scan of a table that grows with the library - in the
+	// command an operator runs when something is already wrong. SUM returns NULL over no rows.
+	sel := "COUNT(*) AS unclustered" +
+		", COALESCE(SUM(CASE WHEN " + recent + " THEN 1 ELSE 0 END), 0) AS recent" +
+		", COALESCE(SUM(CASE WHEN " + recent + " AND " + sized + " THEN 1 ELSE 0 END), 0) AS size_ok" +
+		", COALESCE(SUM(CASE WHEN " + recent + " AND " + scored + " THEN 1 ELSE 0 END), 0) AS score_ok" +
+		", COALESCE(SUM(CASE WHEN " + recent + " AND " + sized + " AND " + scored + " THEN 1 ELSE 0 END), 0) AS eligible" +
+		", COALESCE(SUM(CASE WHEN " + sized + " AND " + scored + " THEN 1 ELSE 0 END), 0) AS clusterable"
+
+	args := make([]any, 0, 4*len(recentArgs)+2*len(sizeArgs)+2*len(scoreArgs))
+	args = append(args, recentArgs...)
+	args = append(args, recentArgs...)
+	args = append(args, sizeArgs...)
+	args = append(args, recentArgs...)
+	args = append(args, scoreArgs...)
+	args = append(args, recentArgs...)
+	args = append(args, sizeArgs...)
+	args = append(args, scoreArgs...)
+	args = append(args, sizeArgs...)
+	args = append(args, scoreArgs...)
+
+	if err := unclusteredFaceMarkers(model).Select(sel, args...).Scan(&result).Error; err != nil {
+		log.Errorf("faces: %s (count cluster gates)", err)
+	}
+
+	return result
+}
+
+// unclusteredFaceMarkers restricts a statement to the face markers holding a vector the specified
+// model can read that no cluster has taken.
+func unclusteredFaceMarkers(model string) *gorm.DB {
+	return whereEmbeddingModel(Db().Model(&entity.Markers{}).
+		Where("marker_type = ?", entity.MarkerFace).
+		Where("face_id = '' AND marker_invalid = 0 AND LENGTH(embeddings_json) > 0"), model)
+}
+
+// newestAutoFaceTime returns when the most recent automatic cluster the specified model produced
+// was created, or the zero time when it has produced none.
+func newestAutoFaceTime(model string) time.Time {
+	var f entity.Face
+
+	if err := whereEmbeddingModel(Db().Where("face_src = ?", entity.SrcAuto), model).
 		Order("created_at DESC").Limit(1).Take(&f).Error; err != nil {
 		log.Debugf("faces: found no existing clusters")
 	}
 
-	q := whereEmbeddingModel(Db().Model(&entity.Markers{}).
-		Where("marker_type = ?", entity.MarkerFace).
-		Where("face_id = '' AND marker_invalid = FALSE AND LENGTH(embeddings_json) > 0"), current)
+	return f.CreatedAt
+}
+
+// CountNewFaceMarkers counts the number of new face markers in the index.
+func CountNewFaceMarkers(size, score int) (n int) {
+	return countNewFaceMarkers(face.EmbeddingModelName(), size, score, true)
+}
+
+// countNewFaceMarkers counts the face markers holding a vector the specified model can read that no
+// cluster has taken. Recent also requires them to postdate the newest cluster that model produced,
+// which is what the clustering worker counts.
+func countNewFaceMarkers(current string, size, score int, recent bool) (n int) {
+	newest := newestAutoFaceTime(current)
+	q := unclusteredFaceMarkers(current)
 
 	if size > 0 {
 		q = q.Where("size >= ?", size)
 	}
 
-	if score > 0 {
-		q = q.Where("score >= ?", score)
+	q = whereClusterScore(q, score)
+
+	if recent && !newest.IsZero() {
+		q = q.Where("created_at > ?", newest)
 	}
 
-	if !f.CreatedAt.IsZero() {
-		q = q.Where("created_at > ?", f.CreatedAt)
-	}
-
+	nData := int64(0)
 	if err := q.Count(&nData).Error; err != nil {
 		log.Errorf("faces: %s (count new markers)", err)
 	}
 
 	return convert.SafeInt64toint(nData)
+}
+
+// whereClusterScore restricts a statement to markers that clear the clustering bar of the detector
+// that produced them, or the given floor when one is set explicitly.
+//
+// Looked up per marker rather than from the detector in force: a library holds markers from more
+// than one, and judging an old one by the active detector's bar would exclude it permanently.
+func whereClusterScore(stmt *gorm.DB, floor int) *gorm.DB {
+	cond, args := clusterScoreCond(floor)
+
+	return stmt.Where(cond, args...)
+}
+
+// clusterScoreCond returns the same restriction as an SQL fragment, so a report can evaluate it
+// beside the other bars in one pass instead of scanning the table once per bar.
+func clusterScoreCond(floor int) (string, []any) {
+	// FACE_CLUSTER_SCORE outranks the per-detector bars when an operator set one, and removes it
+	// when negative. Applying one value to every marker is safe here in a way that taking the
+	// active detector's bar is not: it is a choice rather than a calibration a marker was never
+	// scored against. Without this the option configured nothing at all.
+	if floor < 0 && face.ClusterScoreThreshold != 0 {
+		floor = max(face.ClusterScoreThreshold, 0)
+	}
+
+	switch {
+	case floor > 0:
+		return "score >= ?", []any{floor}
+	case floor == 0:
+		// No score filter at all, which is what a caller counting every marker asks for.
+		return "1 = 1", nil
+	}
+
+	conds := make([]string, 0, len(face.Detectors)+1)
+	args := make([]any, 0, 2*len(face.Detectors)+1)
+	others := make([]string, 0, len(face.Detectors))
+	names := make([]any, 0, len(face.Detectors))
+
+	for _, d := range face.Detectors {
+		if d.ClusterScore <= 0 {
+			continue
+		}
+
+		conds = append(conds, "(COALESCE(detect_model, '') = ? AND score >= ?)")
+		args = append(args, d.Name, d.ClusterScore)
+		others = append(others, "COALESCE(detect_model, '') <> ?")
+		names = append(names, d.Name)
+	}
+
+	if len(conds) == 0 {
+		return "score >= ?", []any{face.ClusterScoreThresholdDefault}
+	}
+
+	// Everything the registry does not name, including every row written before the provenance
+	// column existed, keeps the shared default so an upgrade strands nothing.
+	conds = append(conds, "("+strings.Join(others, " AND ")+" AND ?"+" <= score)")
+	args = append(args, names...)
+	args = append(args, face.ClusterScoreThresholdDefault)
+
+	return "(" + strings.Join(conds, " OR ") + ")", args
 }
 
 // PurgeOrphanFaces removes unused faces from the index.
@@ -479,12 +619,11 @@ func RemovePeopleAndFaces() (err error) {
 	return nil
 }
 
-// whereEmbeddingModel restricts a statement to vectors that may be compared with the
-// specified model, treating rows without recorded provenance as FaceNet.
+// whereEmbeddingModel restricts a statement to vectors that may be compared with the specified
+// model, treating rows without recorded provenance as FaceNet.
 //
-// An empty name means the model could not be determined, so no restriction is applied:
-// filtering on it would match the legacy rows alone and silently exclude every vector a
-// configured model has written, rather than leaving the working set untouched.
+// An empty name means the model could not be determined, so nothing is restricted: filtering on it
+// would match the legacy rows alone and exclude every vector a configured model wrote.
 func whereEmbeddingModel(stmt *gorm.DB, model string) *gorm.DB {
 	if model == "" {
 		return stmt
@@ -549,12 +688,11 @@ func MarkerEmbeddingModels() (result []MarkerEmbeddingModelCount, err error) {
 	return result, err
 }
 
-// RecordedMarkerEmbeddingModels returns the number of face markers per recorded embedding
-// model, ordered by name.
+// RecordedMarkerEmbeddingModels returns the number of face markers per recorded embedding model,
+// ordered by name.
 //
-// Markers whose model was never recorded are left out, which is what lets the index on the
-// column answer this: the reporting variant above has to test the embedding blob instead,
-// and that reads every row. Callers that need the legacy rows counted must use that one.
+// Markers whose model was never recorded are left out, which is what lets the index answer this.
+// A caller that needs those counted has to use the reporting variant above, which reads every row.
 func RecordedMarkerEmbeddingModels() (result []MarkerEmbeddingModelCount, err error) {
 	err = Db().
 		Table(entity.Marker{}.TableName()).
@@ -567,12 +705,35 @@ func RecordedMarkerEmbeddingModels() (result []MarkerEmbeddingModelCount, err er
 	return result, err
 }
 
-// LegacyFaceMarkersWithVectors returns the number of face markers that hold a vector and record
-// no model, which can only have been produced by FaceNet.
+// MarkerDetectModelCount pairs a detector name with the number of face markers whose crop
+// it produced. An empty name means the detector was not recorded.
+type MarkerDetectModelCount struct {
+	DetectModel string
+	Markers     int
+}
+
+// MarkerDetectModels returns the number of face markers per detector, ordered by name.
 //
-// The provenance index narrows this to the rows that predate the column, so unlike counting every
-// vector it reads few blobs once a library has been migrated. It completes the recorded counts,
-// which leave these rows out so that the index can answer them.
+// The counts are per producing detector of the vector's crop. They do not say whether the
+// stored landmarks are that detector's, so they cannot gate reusing them.
+func MarkerDetectModels() (result []MarkerDetectModelCount, err error) {
+	err = Db().
+		Table(entity.Marker{}.TableName()).
+		Select("detect_model, COUNT(*) AS markers").
+		// Comparing the blob column with an empty string is driver dependent, so the
+		// length is what reliably tells markers with a vector from those without one.
+		Where("marker_type = ? AND LENGTH(embeddings_json) > 0", entity.MarkerFace).
+		Group("detect_model").
+		Order("detect_model").
+		Scan(&result).Error
+
+	return result, err
+}
+
+// LegacyFaceMarkersWithVectors returns the number of face markers that hold a vector and record no
+// model, which can only have been produced by FaceNet.
+//
+// It completes the recorded counts, which leave these rows out so that the index can answer them.
 func LegacyFaceMarkersWithVectors() (count int64, err error) {
 	err = Db().
 		Table(entity.Marker{}.TableName()).

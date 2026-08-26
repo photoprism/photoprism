@@ -259,20 +259,27 @@ type Options struct {
 	VisionFilter              string        `yaml:"VisionFilter" json:"VisionFilter" flag:"vision-filter"`
 	DetectNSFW                bool          `yaml:"DetectNSFW" json:"DetectNSFW" flag:"detect-nsfw"`
 	XMPFaces                  bool          `yaml:"XMPFaces" json:"XMPFaces" flag:"xmp-faces"`
+	FaceRun                   string        `yaml:"FaceRun" json:"-" flag:"face-run"`
 	FaceEngine                string        `yaml:"FaceEngine" json:"-" flag:"face-engine"`
 	FaceEngineThreads         int           `yaml:"FaceEngineThreads" json:"-" flag:"face-engine-threads"`
-	FaceModel                 string        `yaml:"FaceModel" json:"-" flag:"face-model"`
+	FaceDetector              string        `yaml:"FaceDetector" json:"-" flag:"face-detector"`
+	FaceDetectorThreads       int           `yaml:"FaceDetectorThreads" json:"-" flag:"face-detector-threads"`
 	FaceSize                  int           `yaml:"-" json:"-" flag:"face-size"`
+	FaceSizeRetry             int           `yaml:"-" json:"-" flag:"face-size-retry"`
 	FaceScore                 float64       `yaml:"-" json:"-" flag:"face-score"`
+	FaceMigrateSize           int           `yaml:"-" json:"-" flag:"face-migrate-size"`
+	FaceMigrateScore          float64       `yaml:"-" json:"-" flag:"face-migrate-score"`
 	FaceOverlap               int           `yaml:"-" json:"-" flag:"face-overlap"`
+	FaceModel                 string        `yaml:"FaceModel" json:"-" flag:"face-model"`
+	FaceModelThreads          int           `yaml:"FaceModelThreads" json:"-" flag:"face-model-threads"`
 	FaceClusterSize           int           `yaml:"-" json:"-" flag:"face-cluster-size"`
 	FaceClusterScore          int           `yaml:"-" json:"-" flag:"face-cluster-score"`
 	FaceClusterCore           int           `yaml:"-" json:"-" flag:"face-cluster-core"`
 	FaceClusterDist           float64       `yaml:"-" json:"-" flag:"face-cluster-dist"`
 	FaceClusterRadius         float64       `yaml:"-" json:"-" flag:"face-cluster-radius"`
+	FaceMatchDist             float64       `yaml:"-" json:"-" flag:"face-match-dist"`
 	FaceCollisionDist         float64       `yaml:"-" json:"-" flag:"face-collision-dist"`
 	FaceEpsilonDist           float64       `yaml:"-" json:"-" flag:"face-epsilon-dist"`
-	FaceMatchDist             float64       `yaml:"-" json:"-" flag:"face-match-dist"`
 	PIDFilename               string        `yaml:"PIDFilename" json:"-" flag:"pid-filename"`
 	LogFilename               string        `yaml:"LogFilename" json:"-" flag:"log-filename"`
 	DetachServer              bool          `yaml:"DetachServer" json:"-" flag:"detach-server"`

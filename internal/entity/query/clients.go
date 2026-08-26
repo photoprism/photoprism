@@ -15,13 +15,14 @@ func Clients(limit, offset int, sortOrder, search string) (result entity.Clients
 
 	search = strings.TrimSpace(search)
 
-	if search == "all" {
+	switch {
+	case search == "all":
 		// Don't filter.
-	} else if rnd.IsUID(search, entity.ClientUID) {
+	case rnd.IsUID(search, entity.ClientUID):
 		stmt = stmt.Where("client_uid = ?", search)
-	} else if rnd.IsUID(search, entity.UserUID) {
+	case rnd.IsUID(search, entity.UserUID):
 		stmt = stmt.Where("user_uid = ?", search)
-	} else if search != "" {
+	case search != "":
 		switch entity.DbDialect() {
 		case dsn.DialectPostgreSQL:
 			stmt = stmt.Where("lower(client_name) LIKE ? OR lower(user_name) LIKE ?", strings.ToLower(search+"%"), strings.ToLower(search+"%"))

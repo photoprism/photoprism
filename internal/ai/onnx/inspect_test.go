@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var detectorModelPath, _ = filepath.Abs("../../../assets/models/scrfd/scrfd.onnx")
+var detectorModelPath, _ = filepath.Abs("../../../assets/models/yunet/face_detection_yunet_2026may.onnx")
 var embeddingModelPath, _ = filepath.Abs("../../../assets/models/sface/face_recognition_sface_2021dec.onnx")
 
 // requireRuntime skips a test when the ONNX Runtime or the model it needs is unavailable,
@@ -34,11 +34,13 @@ func TestInspect(t *testing.T) {
 
 		info, err := Inspect(detectorModelPath, nil)
 		require.NoError(t, err)
-		assert.Equal(t, "scrfd.onnx", info.File)
+		assert.Equal(t, filepath.Base(detectorModelPath), info.File)
 		assert.NotEmpty(t, info.Input.Name)
-		assert.Equal(t, 640, info.Input.Width)
-		assert.Equal(t, 640, info.Input.Height)
 		assert.Equal(t, LayoutNCHW, info.Input.Layout)
+		// The bundled detector is a dynamic export, so a spatial axis reads as unset and the
+		// geometry to run it at comes from the registry rather than from the graph.
+		assert.Zero(t, info.Input.Width)
+		assert.Zero(t, info.Input.Height)
 	})
 	t.Run("EmbeddingModel", func(t *testing.T) {
 		requireRuntime(t, embeddingModelPath)

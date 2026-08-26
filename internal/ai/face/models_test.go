@@ -1,7 +1,6 @@
 package face
 
 import (
-	"math"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -74,11 +73,8 @@ func TestSameEmbeddingSpace(t *testing.T) {
 }
 
 func TestParseModelName(t *testing.T) {
-	t.Run("Detect", func(t *testing.T) {
-		assert.Equal(t, ModelDetect, ParseModelName("Detect"))
-	})
-	t.Run("AutoIsDetect", func(t *testing.T) {
-		assert.Equal(t, ModelDetect, ParseModelName("Auto"))
+	t.Run("Auto", func(t *testing.T) {
+		assert.Equal(t, ModelAuto, ParseModelName("Auto"))
 	})
 	t.Run("None", func(t *testing.T) {
 		assert.Equal(t, ModelNone, ParseModelName("none"))
@@ -90,19 +86,22 @@ func TestParseModelName(t *testing.T) {
 		assert.Equal(t, ModelArcFaceR50, ParseModelName("arcface-r50"))
 	})
 	t.Run("Unknown", func(t *testing.T) {
-		assert.Equal(t, ModelDetect, ParseModelName("dlib"))
+		assert.Equal(t, ModelAuto, ParseModelName("dlib"))
 	})
 	t.Run("Empty", func(t *testing.T) {
-		assert.Equal(t, ModelDetect, ParseModelName(""))
+		assert.Equal(t, ModelAuto, ParseModelName(""))
 	})
 }
 
 func TestKnownModelName(t *testing.T) {
-	t.Run("Detect", func(t *testing.T) {
-		assert.True(t, KnownModelName("detect"))
-	})
 	t.Run("Auto", func(t *testing.T) {
 		assert.True(t, KnownModelName("auto"))
+	})
+	t.Run("Detect", func(t *testing.T) {
+		// It was an accepted spelling of "auto" during development and never shipped, so it now
+		// reads as a typo: reported once, and applied as a request to detect the model.
+		assert.False(t, KnownModelName("detect"))
+		assert.Equal(t, ModelAuto, ParseModelName("detect"))
 	})
 	t.Run("Empty", func(t *testing.T) {
 		assert.True(t, KnownModelName(""))
@@ -150,7 +149,7 @@ func TestFindEmbeddingModel(t *testing.T) {
 		assert.Nil(t, FindEmbeddingModel("dlib"))
 	})
 	t.Run("Detect", func(t *testing.T) {
-		assert.Nil(t, FindEmbeddingModel(ModelDetect))
+		assert.Nil(t, FindEmbeddingModel(ModelAuto))
 	})
 }
 
@@ -161,30 +160,83 @@ func TestEmbeddingModelNames(t *testing.T) {
 		assert.Equal(t, []ModelName{ModelArcFaceMBF, ModelArcFaceR50, ModelAuraFace, ModelFaceNet, ModelSFace}, names)
 	})
 	t.Run("ExcludesAliases", func(t *testing.T) {
-		assert.NotContains(t, names, ModelDetect)
 		assert.NotContains(t, names, ModelAuto)
 		assert.NotContains(t, names, ModelNone)
+		assert.NotContains(t, names, "detect", "the retired spelling must not be a registered model")
 	})
 }
 
 func TestModelUsageString(t *testing.T) {
 	t.Run("Aliases", func(t *testing.T) {
-		assert.True(t, strings.HasPrefix(ModelUsageString(), "detect, none, "))
+		usage := ModelUsageString()
+		assert.True(t, strings.HasPrefix(usage, ModelAuto+", "))
+		assert.True(t, strings.HasSuffix(usage, ", "+ModelNone))
 	})
-	t.Run("PermissiveModels", func(t *testing.T) {
+	t.Run("AdvertisedModels", func(t *testing.T) {
 		for _, name := range EmbeddingModelNames() {
-			if FindEmbeddingModel(name).LicenseGated() {
+			if !FindEmbeddingModel(name).Advertise {
 				continue
 			}
 
 			assert.Contains(t, ModelUsageString(), name)
 		}
 	})
+	t.Run("OmitsModelsNotAdvertised", func(t *testing.T) {
+		// Help text reads as an offer. FaceNet and AuraFace run and may be named explicitly, but
+		// only one model is supported, and there is no supported migration back off the others.
+		assert.NotContains(t, ModelUsageString(), ModelFaceNet)
+		assert.NotContains(t, ModelUsageString(), ModelAuraFace)
+	})
 	t.Run("OmitsGatedModels", func(t *testing.T) {
-		// Help text reads as an offer, and these weights may not be used until their terms
-		// have been accepted, so they are named where that acceptance is asked for instead.
+		// These weights may not be used until their terms have been accepted, so they are named
+		// where that acceptance is asked for instead.
 		assert.NotContains(t, ModelUsageString(), ModelArcFaceR50)
 		assert.NotContains(t, ModelUsageString(), ModelArcFaceMBF)
+	})
+}
+
+// TestDefaultModelName pins the target a migration runs to when none is named, which is the one
+// model the product offers rather than whichever the library happens to hold.
+func TestDefaultModelName(t *testing.T) {
+	name := DefaultModelName()
+
+	assert.Equal(t, ModelSFace, name)
+	require.NotNil(t, FindEmbeddingModel(name))
+	assert.False(t, FindEmbeddingModel(name).LicenseGated(), "a default may only name weights we may redistribute")
+	assert.True(t, FindEmbeddingModel(name).Advertise, "the default has to be one the product offers")
+
+	// Exactly one, or which model a migration targets depends on map iteration order.
+	defaults := 0
+
+	for _, m := range EmbeddingModels {
+		if m.Default {
+			defaults++
+		}
+	}
+
+	assert.Equal(t, 1, defaults, "exactly one embedding model may be the default")
+}
+
+// TestEmbeddingModelDisplayNames pins that every registered model has a human-readable name, so a
+// report never falls back to the identifier for one that is shipped.
+func TestEmbeddingModelDisplayNames(t *testing.T) {
+	seen := make(map[string]ModelName, len(EmbeddingModels))
+
+	for name, m := range EmbeddingModels {
+		assert.NotEmpty(t, m.DisplayName, name)
+
+		if other, dup := seen[m.DisplayName]; dup {
+			t.Errorf("%s and %s share the display name %q", name, other, m.DisplayName)
+		}
+
+		seen[m.DisplayName] = name
+	}
+
+	t.Run("Registered", func(t *testing.T) {
+		assert.Equal(t, FindEmbeddingModel(ModelSFace).DisplayName, ModelDisplayName(ModelSFace))
+	})
+	t.Run("FallsBackToTheIdentifier", func(t *testing.T) {
+		assert.Equal(t, "nonexistent", ModelDisplayName("nonexistent"))
 	})
 }
 
@@ -205,16 +257,17 @@ func TestEmbeddingModels(t *testing.T) {
 			assert.Positive(t, m.MatchDist)
 			assert.Less(t, m.ClusterRadius, m.ClusterDist)
 
-			// The collision floor and its slack follow the width of the model's distance
-			// scale, so leaving them at the FaceNet values would be the same trap the
-			// per-model thresholds exist to close.
+			// The collision floor follows the width of the model's distance scale, because it
+			// bounds a radius the model measured. Epsilon does not: it is the gap a resolved
+			// collision leaves, and TestEmbeddingModelThresholds pins it flat for every model.
 			assert.Positive(t, m.CollisionDist)
-			assert.Positive(t, m.Epsilon)
+			assert.Equal(t, EpsilonDefault, m.Epsilon)
 			assert.Less(t, m.Epsilon, m.CollisionDist)
 			assert.Less(t, m.CollisionDist, m.MatchDist)
-			scale := m.ClusterDist / ClusterDistDefault
-			assert.InDelta(t, roundTo3(scale*CollisionDistDefault), m.CollisionDist, 1e-9)
-			assert.InDelta(t, roundTo3(scale*EpsilonDefault), m.Epsilon, 1e-9)
+
+			if name != ModelFaceNet {
+				assert.NotEqual(t, CollisionDistDefault, m.CollisionDist)
+			}
 
 			// ONNX models are single files described by the shared model info, while
 			// TensorFlow models are SavedModel directories that have none.
@@ -233,6 +286,19 @@ func TestEmbeddingModels(t *testing.T) {
 			}
 		})
 	}
+}
+
+// TestEmbeddingModelEpsilon pins the collision gap flat across every model. It is a void where
+// nothing matches rather than a separation, so widening it with a model's distance scale strands
+// embeddings instead of telling anyone apart, and AmbiguityDist is derived from it.
+func TestEmbeddingModelEpsilon(t *testing.T) {
+	for name, m := range EmbeddingModels {
+		assert.Equal(t, EpsilonDefault, m.Epsilon, name)
+	}
+
+	// Against the runtime value, not the constant: AmbiguityDist reads the variable Propagate
+	// assigns, so comparing with the default would pass or fail on what another test left behind.
+	assert.InDelta(t, 2*Epsilon, AmbiguityDist(), 0.0001)
 }
 
 func TestEmbeddingModelThresholds(t *testing.T) {
@@ -385,7 +451,7 @@ func TestEmbeddingModel_WeightLicense(t *testing.T) {
 		assert.Equal(t, LicenseApache2, FindEmbeddingModel(ModelSFace).WeightLicense())
 	})
 	t.Run("ResearchOnly", func(t *testing.T) {
-		assert.Equal(t, LicenseResearchOnly, FindEmbeddingModel(ModelArcFaceR50).WeightLicense())
+		assert.Equal(t, LicenseNonFree, FindEmbeddingModel(ModelArcFaceR50).WeightLicense())
 	})
 	t.Run("Unknown", func(t *testing.T) {
 		assert.Equal(t, LicenseUnknown, FindEmbeddingModel(ModelFaceNet).WeightLicense())
@@ -466,7 +532,24 @@ func TestEmbeddingModelChecksums(t *testing.T) {
 	})
 }
 
-// roundTo3 rounds a derived threshold the way the registry records it.
-func roundTo3(value float64) float64 {
-	return math.Round(value*1000) / 1000
+// TestEmbeddingModelDetectors pins the pairing an unset FACE_DETECTOR derives from. A model
+// that names no detector, or one that is not registered, would leave detection off for anyone
+// who selected it.
+func TestEmbeddingModelDetectors(t *testing.T) {
+	for _, name := range EmbeddingModelNames() {
+		t.Run(name, func(t *testing.T) {
+			m := FindEmbeddingModel(name)
+			require.NotNil(t, m)
+			require.NotEmpty(t, m.Detector, "%s must name a detector", name)
+
+			d := FindDetector(m.Detector)
+			require.NotNil(t, d, "%s pairs with an unregistered detector", name)
+
+			// A model whose weights ship must pair with a detector whose weights ship, or a
+			// default installation detects nothing.
+			if !m.LicenseGated() {
+				assert.False(t, d.LicenseGated(), "%s must not pair with gated detector weights", name)
+			}
+		})
+	}
 }

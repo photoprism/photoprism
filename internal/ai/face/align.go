@@ -10,7 +10,9 @@ import (
 // NumLandmarks is the number of facial landmark points the detector predicts per face.
 const NumLandmarks = 5
 
-// ArcFaceTemplateSize is the crop size, in pixels, that ArcFaceTemplate refers to.
+// ArcFaceTemplateSize is the crop size, in pixels, that ArcFaceTemplate refers to, and therefore
+// the input every ONNX embedding model consumes - alignedCropInput gives all of them this size.
+// A crop this size is a landmark warp rather than a rectangle, so it is not one of crop.Sizes.
 const ArcFaceTemplateSize = 112
 
 // maxAlignResidual is the largest RMS landmark fit error, in template pixels, that still

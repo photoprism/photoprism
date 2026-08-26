@@ -35,14 +35,15 @@ var log = event.Log
 
 // Face represents a face detected.
 type Face struct {
-	Rows       int        `json:"rows,omitempty"`
-	Cols       int        `json:"cols,omitempty"`
-	Score      int        `json:"score,omitempty"`
-	Area       Area       `json:"face"`
-	Eyes       Areas      `json:"eyes,omitempty"`
-	Landmarks  Areas      `json:"landmarks,omitempty"`
-	EmbedModel ModelName  `json:"model,omitempty"`
-	Embeddings Embeddings `json:"embeddings,omitempty"`
+	Rows        int        `json:"rows,omitempty"`
+	Cols        int        `json:"cols,omitempty"`
+	Score       int        `json:"score,omitempty"`
+	Area        Area       `json:"face"`
+	Eyes        Areas      `json:"eyes,omitempty"`
+	Landmarks   Areas      `json:"landmarks,omitempty"`
+	DetectModel EngineName `json:"detector,omitempty"`
+	EmbedModel  ModelName  `json:"model,omitempty"`
+	Embeddings  Embeddings `json:"embeddings,omitempty"`
 }
 
 // Size returns the absolute face size in pixels.

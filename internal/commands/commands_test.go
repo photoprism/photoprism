@@ -68,7 +68,7 @@ func runTestMain(m *testing.M) (code int) {
 	}
 
 	// Init core config (no database) using the shared test config so commands
-	// like "show config" and "faces config" don't fall back to a storage path
+	// like "show config" and "faces status" don't fall back to a storage path
 	// derived from the real originals directory.
 	InitCoreConfig = func(ctx *cli.Context, quiet bool) (*config.Config, error) {
 		return c, c.InitCore()

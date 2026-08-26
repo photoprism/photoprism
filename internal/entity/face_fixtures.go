@@ -117,3 +117,9 @@ func CreateFaceFixtures() {
 		fixtureDb().Create(&entity)
 	}
 }
+
+// ReopenForTest reopens a cluster the way a collision does, so tests outside this package can
+// build the state a matching pass has to recognize on its way out.
+func (m *Face) ReopenForTest() {
+	m.reopen()
+}

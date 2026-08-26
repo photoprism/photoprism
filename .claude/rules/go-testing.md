@@ -30,6 +30,16 @@ Makefile recipes talk to the development database through `$(MARIADB)`, which de
 - Config helpers auto-discover `assets/`; don't set `PHOTOPRISM_ASSETS_PATH` in `init()`. Hub traffic is disabled by default; re-enable with `PHOTOPRISM_TEST_HUB=test`.
 - A test config whose SQLite name is empty resolves to the shared `.test.db` and **removes that file**, so it must never be built mid-suite in a package whose `TestMain` opened the same database. The symptom is a later test failing with `no such table: <name>` while the same test passes in isolation. `NewMinimalTestConfig` names its database for this reason; keep it named if you add a helper beside it.
 
+### Environment Traps in `internal/config` and Nested Packages
+
+- **`config.TestConfig()` resolves `fs.Abs("../../storage")` relative to the *package* directory.**
+  That is the repo root for a package at `internal/<pkg>`, but `internal/storage` for one at
+  `internal/photoprism/<pkg>` - which does not exist, so `backup` and `batch` panic in `TestMain`
+  and read as real failures. Set `PHOTOPRISM_STORAGE_PATH` explicitly when running those ad hoc.
+- **No single UID makes `internal/config` green.** `TestConfig_TLSCert` needs root to read
+  `/etc/ssl/private/photoprism.key` (0640 root:ssl-cert), while two `TestConfig_Cluster` cases fail
+  *as* root. Expect one failure either way and check which one before calling it a regression.
+
 ### Order-Dependent Tests
 
 A test that passes alone and in the full package but fails under `-run` subsets or `make test-short` is depending on state another test happens to leave behind. Both directions occur, so a green full-suite run does not prove independence.

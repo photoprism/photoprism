@@ -1,6 +1,8 @@
 package query
 
 import (
+	"time"
+
 	"errors"
 	"math"
 	"testing"
@@ -177,6 +179,96 @@ func TestCountNewFaceMarkers(t *testing.T) {
 	})
 	t.Run("ScoreNum50AndSizeNum160", func(t *testing.T) {
 		assert.GreaterOrEqual(t, CountNewFaceMarkers(160, 50), 1)
+	})
+}
+
+// TestCountFaceClusterGates pins that each bar is counted on its own, which is what lets a report
+// name the one that is actually holding rather than only that clustering did not run.
+func TestCountFaceClusterGates(t *testing.T) {
+	model := face.EmbeddingModelName()
+
+	t.Run("EachBarIsCountedOnItsOwn", func(t *testing.T) {
+		gates := CountFaceClusterGates(model, 160, 50)
+
+		assert.Positive(t, gates.Unclustered)
+		assert.LessOrEqual(t, gates.SizeOK, gates.Unclustered)
+		assert.LessOrEqual(t, gates.ScoreOK, gates.Unclustered)
+		assert.LessOrEqual(t, gates.Eligible, gates.SizeOK)
+		assert.LessOrEqual(t, gates.Eligible, gates.ScoreOK)
+	})
+	t.Run("SizeIsTheGate", func(t *testing.T) {
+		// A size nothing reaches must leave the score count untouched, or the report would blame
+		// whichever bar happened to be listed first.
+		gates := CountFaceClusterGates(model, 100000, 0)
+
+		assert.Zero(t, gates.SizeOK)
+		assert.Zero(t, gates.Eligible)
+		assert.Equal(t, gates.Unclustered, gates.ScoreOK)
+	})
+	t.Run("NoBars", func(t *testing.T) {
+		gates := CountFaceClusterGates(model, 0, 0)
+
+		assert.Equal(t, gates.Recent, gates.Eligible)
+	})
+	t.Run("RecentIsBoundedByUnclustered", func(t *testing.T) {
+		gates := CountFaceClusterGates(model, 0, 0)
+
+		assert.LessOrEqual(t, gates.Recent, gates.Unclustered)
+		assert.Positive(t, gates.Unclustered)
+	})
+	t.Run("MarkersOlderThanTheNewestClusterAreStranded", func(t *testing.T) {
+		// The state the report exists to name: every unclustered marker predates the newest
+		// cluster, so none counts toward the trigger again. The fixtures hold no such marker, so
+		// the cluster that strands them is created here and removed again.
+		before := CountFaceClusterGates(model, 0, 0)
+		require.Equal(t, before.Unclustered, before.Recent, "fixtures are expected to strand nothing")
+
+		newest := entity.Face{
+			ID:         "zzstrandedcluster",
+			FaceSrc:    entity.SrcAuto,
+			EmbedModel: model,
+			CreatedAt:  time.Now().Add(time.Hour),
+		}
+		require.NoError(t, Db().Create(&newest).Error)
+		t.Cleanup(func() { UnscopedDb().Delete(entity.Face{}, "id = ?", newest.ID) })
+
+		after := CountFaceClusterGates(model, 0, 0)
+
+		assert.Equal(t, before.Unclustered, after.Unclustered, "the pool does not shrink because a cluster appeared")
+		assert.Zero(t, after.Recent, "nothing postdates a cluster created in the future")
+		assert.Less(t, after.Recent, after.Unclustered)
+	})
+	t.Run("UnclusteredIgnoresRecency", func(t *testing.T) {
+		// Pinned against the unfiltered count directly, so dropping the recency branch collapses
+		// the two and fails here rather than silently hiding stranded markers.
+		assert.Equal(t, countNewFaceMarkers(model, 0, 0, false), CountFaceClusterGates(model, 0, 0).Unclustered)
+		assert.Equal(t, countNewFaceMarkers(model, 0, 0, true), CountFaceClusterGates(model, 0, 0).Recent)
+	})
+	t.Run("OnePassAgreesWithOneQueryPerBar", func(t *testing.T) {
+		// The five counts moved into one scan with conditional sums, and the score bar became an
+		// expression instead of a WHERE. Every field is compared against the query it replaced,
+		// across the bar shapes that take different branches: off, fixed, and per-detector.
+		for _, bar := range []struct {
+			name  string
+			size  int
+			score int
+		}{
+			{"NoBars", 0, 0},
+			{"SizeOnly", 60, 0},
+			{"FixedScore", 60, 50},
+			{"PerDetectorScore", 60, face.ClusterScoreAuto},
+			{"SizeNothingReaches", 100000, face.ClusterScoreAuto},
+		} {
+			t.Run(bar.name, func(t *testing.T) {
+				gates := CountFaceClusterGates(model, bar.size, bar.score)
+
+				assert.Equal(t, countNewFaceMarkers(model, 0, 0, false), gates.Unclustered)
+				assert.Equal(t, countNewFaceMarkers(model, 0, 0, true), gates.Recent)
+				assert.Equal(t, countNewFaceMarkers(model, bar.size, 0, true), gates.SizeOK)
+				assert.Equal(t, countNewFaceMarkers(model, 0, bar.score, true), gates.ScoreOK)
+				assert.Equal(t, countNewFaceMarkers(model, bar.size, bar.score, true), gates.Eligible)
+			})
+		}
 	})
 }
 
@@ -423,6 +515,53 @@ func TestFaceEmbeddingModels(t *testing.T) {
 		}
 
 		assert.Positive(t, total)
+	})
+}
+
+func TestMarkerDetectModels(t *testing.T) {
+	// newFaceMarker persists a face marker attributed to the specified detector.
+	newFaceMarker := func(t *testing.T, detector string, embeddings face.Embeddings) {
+		t.Helper()
+
+		m := &entity.Marker{
+			MarkerType:     entity.MarkerFace,
+			MarkerSrc:      entity.SrcImage,
+			EmbedModel:     face.ModelSFace,
+			DetectModel:    detector,
+			EmbeddingsJSON: embeddings.JSON(),
+		}
+
+		require.NoError(t, entity.Db().Create(m).Error)
+		t.Cleanup(func() { entity.Db().Delete(m) })
+	}
+
+	// detectorCounts maps the reported detector names to their marker counts.
+	detectorCounts := func(t *testing.T) map[string]int {
+		t.Helper()
+
+		result, err := MarkerDetectModels()
+		require.NoError(t, err)
+
+		counts := make(map[string]int, len(result))
+
+		for _, c := range result {
+			assert.Positive(t, c.Markers)
+			counts[c.DetectModel] = c.Markers
+		}
+
+		return counts
+	}
+
+	t.Run("CountsRecordedDetector", func(t *testing.T) {
+		newFaceMarker(t, face.EngineONNX, face.Embeddings{face.RandomEmbedding()})
+		assert.Positive(t, detectorCounts(t)[face.EngineONNX])
+	})
+	t.Run("SkipsMarkersWithoutEmbeddings", func(t *testing.T) {
+		// A marker holds no crop until it holds a vector, so counting it would inflate
+		// the bucket that reports rows written before the column existed.
+		before := detectorCounts(t)[""]
+		newFaceMarker(t, "", nil)
+		assert.Equal(t, before, detectorCounts(t)[""])
 	})
 }
 

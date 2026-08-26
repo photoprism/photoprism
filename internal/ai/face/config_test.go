@@ -67,3 +67,44 @@ func TestAcceptDist(t *testing.T) {
 		assert.Less(t, float64(ConfigDistMax), float64(AcceptDistMax))
 	})
 }
+
+// TestAmbiguityDist pins the cutoff to Epsilon rather than to a literal. The two came apart once
+// already: the cutoff stayed at 0.02 while Epsilon was scaled per model.
+func TestAmbiguityDist(t *testing.T) {
+	restore := Epsilon
+	t.Cleanup(func() { Epsilon = restore })
+
+	t.Run("Default", func(t *testing.T) {
+		Epsilon = EpsilonDefault
+		assert.InDelta(t, 0.02, AmbiguityDist(), 0.0001)
+	})
+	t.Run("FollowsEpsilon", func(t *testing.T) {
+		// FACE_EPSILON_DIST reaches this through Config.Propagate, so an operator narrowing the
+		// gap narrows the cutoff with it rather than leaving a band that resolves neither way.
+		Epsilon = 0.004
+		assert.InDelta(t, 0.008, AmbiguityDist(), 0.0001)
+		assert.Greater(t, AmbiguityDist(), Epsilon, "a cutoff at or below Epsilon would record a non-positive radius")
+	})
+}
+
+// TestDetectorScore checks that a report can always state a cutoff some detector enforces. It
+// returned zero for an unknown name before, which reads as "nothing is filtered".
+func TestDetectorScore(t *testing.T) {
+	t.Run("Registered", func(t *testing.T) {
+		assert.InDelta(t, float64(FindDetector(DetectorYuNet).MinScore), DetectorScore(DetectorYuNet), 0.5)
+		assert.InDelta(t, float64(FindDetector(DetectorSCRFD).MinScore), DetectorScore(DetectorSCRFD), 0.5)
+	})
+	t.Run("Unregistered", func(t *testing.T) {
+		assert.Equal(t, DetectorScore(DefaultDetector().Name), DetectorScore("nonexistent"))
+	})
+	t.Run("DetectionDisabled", func(t *testing.T) {
+		assert.Positive(t, DetectorScore(DetectorNone))
+	})
+}
+
+// TestNoScoreThreshold pins that "no cutoff" is expressible. Zero cannot say it, because zero is
+// taken by "let the detector decide" and every detector registers one.
+func TestNoScoreThreshold(t *testing.T) {
+	assert.Negative(t, NoScoreThreshold)
+	assert.NotEqual(t, ScoreThresholdDefault, NoScoreThreshold)
+}

@@ -100,7 +100,7 @@ func TestIndexOptionsFacesOnly(t *testing.T) {
 
 func TestNewIndexOptions_DefaultDetectors(t *testing.T) {
 	conf := config.NewMinimalTestConfig(t.TempDir())
-	conf.Options().FaceEngineThreads = 4
+	conf.Options().FaceModelThreads = 4
 
 	prevVision := vision.Config
 	vision.Config = vision.NewConfig()
@@ -132,7 +132,7 @@ func TestNewIndexOptions_ImportFaceTags(t *testing.T) {
 
 func TestNewIndexOptions_FacesOnlyOverridesSchedulers(t *testing.T) {
 	conf := config.NewMinimalTestConfig(t.TempDir())
-	conf.Options().FaceEngineThreads = 1
+	conf.Options().FaceModelThreads = 1
 
 	prevVision := vision.Config
 	vision.Config = vision.NewConfig()

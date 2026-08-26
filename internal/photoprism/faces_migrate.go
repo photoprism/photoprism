@@ -14,6 +14,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/internal/thumb/crop"
@@ -23,9 +24,10 @@ import (
 
 const facesMigrateBatchSize = 100
 
-// facesMigrateMaxFailureRatio bounds the share of attempted markers that may fail before
-// the destructive finalize is refused. A storage outage fails every marker it touches, so
-// the bound separates a few unreadable files from a library that is not readable at all.
+// facesMigrateMaxFailureRatio bounds the share of attempted markers that may lose a vector the
+// library could have used, before the destructive finalize is refused. Only markers clearing both
+// clustering bars count: counting the rest made a detector that re-finds fewer weak faces look
+// like a storage outage, which refused two of three real libraries.
 const facesMigrateMaxFailureRatio = 0.1
 
 // FacesMigrateOptions controls a face embedding migration.
@@ -54,6 +56,12 @@ type FacesMigratePlan struct {
 	// replacement centroid. They keep their person; they just cannot define one.
 	LowQualitySamples int64
 
+	// RecropMarkers counts markers already on the target model whose crop another detector
+	// placed, or that record none. They are re-embedded so the library ends up in one crop
+	// space, and are reported apart from stale markers because they lose nothing if that fails.
+	// On the first run after the provenance column was added, this is every marker.
+	RecropMarkers int
+
 	// OriginalsUnavailable reports that the originals root cannot be read, which is what an
 	// unmounted volume looks like. The counting queries cannot see it, so a plan would
 	// otherwise be reported as clean and then fail on every file it tried to re-embed.
@@ -62,10 +70,32 @@ type FacesMigratePlan struct {
 
 // FacesMigrateResult summarizes a completed face embedding migration.
 type FacesMigrateResult struct {
-	Target            string
-	Migrated          int
-	Skipped           int
-	Failed            int
+	Target   string
+	Migrated int
+	Skipped  int
+	Retained int
+	Failed   int
+
+	// Unreadable counts the failed markers whose file could not be read, as distinct from the
+	// ones the detector simply did not find again. The two need different responses, and a
+	// message that names neither sends a diagnosis toward the filesystem.
+	Unreadable int
+
+	// AttemptedClusterable and FailedClusterable count the markers that cleared both clustering
+	// bars, which is the population the finalize guard measures. Both sides have to come from it,
+	// or the ratio compares a subset against a total and a library where little is clusterable
+	// can never reach the bound however completely the run failed.
+	AttemptedClusterable int
+	FailedClusterable    int
+
+	// FailedNamed and FailedManual count the lost markers that carried a person assignment, and
+	// those with a manual source. They overlap rather than nest: ClearSubject blanks subj_uid and
+	// sets subj_src to the source of the clearing, so a marker somebody named and later un-named
+	// is manual with no subject. Attrition among markers nobody touched is a cleanup on a library
+	// an unreliable detector indexed; both of these are human effort, and only they judge a floor.
+	FailedNamed  int
+	FailedManual int
+
 	Unlinked          int64
 	Invalid           int64
 	DetectedFiles     int
@@ -78,14 +108,36 @@ type FacesMigrateResult struct {
 	AttentionSubjects int
 }
 
-// FacesMigrateIncompleteError reports a migration that completed with marker failures.
+// FacesMigrateIncompleteError reports a migration that completed but lost something the library
+// could have used, which is what makes the exit status non-zero.
 type FacesMigrateIncompleteError struct {
-	Failed int
+	Failed      int
+	Clusterable int
+	Unreadable  int
 }
 
 // Error returns the incomplete migration error message.
+//
+// It names what was actually lost rather than the total. A marker the detector no longer finds is
+// the ordinary outcome for a library indexed by an earlier one, and reporting that as a fault
+// tells an operator to fix something that is not broken.
 func (e *FacesMigrateIncompleteError) Error() string {
-	return fmt.Sprintf("faces: migration completed with %d failed marker(s)", e.Failed)
+	switch {
+	case e.Unreadable > 0 && e.Clusterable > 0:
+		return fmt.Sprintf("faces: migration completed, but %d marker(s) that clear the clustering "+
+			"thresholds lost their vector and %d file(s) could not be read", e.Clusterable, e.Unreadable)
+	case e.Unreadable > 0:
+		return fmt.Sprintf("faces: migration completed, but %d marker(s) could not be re-embedded "+
+			"because their file is missing or unreadable", e.Unreadable)
+	case e.Clusterable > 0:
+		return fmt.Sprintf("faces: migration completed, but %d marker(s) that clear the clustering "+
+			"thresholds could not be re-detected and lost their vector", e.Clusterable)
+	default:
+		// Below the clustering bars, so the ratio guard never saw them - but a third of a library
+		// can sit here, and an exit status of zero would report that as a clean run.
+		return fmt.Sprintf("faces: migration completed, but %d marker(s) could not be re-detected "+
+			"and lost their vector, none of which clears the clustering thresholds", e.Failed)
+	}
 }
 
 // FacesMigrateAbortedError reports a migration that was refused before clusters were replaced.
@@ -102,8 +154,9 @@ type FacesMigrateAbortedError struct {
 // faces until the migration is completed.
 func (e *FacesMigrateAbortedError) Error() string {
 	return fmt.Sprintf("faces: refused to finalize the migration because %s; clusters were not replaced, "+
-		"but %d regenerated marker(s) stay unmatched until a run completes, so re-run after fixing "+
-		"storage (use --force to finalize anyway)", e.Reason, e.Migrated)
+		"but %d regenerated marker(s) stay unmatched until a run completes, so re-run once the cause is "+
+		"addressed (use --force to finalize anyway, which keeps every person assignment and loses only "+
+		"the vectors that could not be regenerated)", e.Reason, e.Migrated)
 }
 
 // FacesMigrateSettingError reports a completed migration whose model could not be recorded.
@@ -153,18 +206,51 @@ func (e *FacesMigrateRerunError) Unwrap() error {
 // finalizeRefused reports why a migration must not be finalized, or "" when it may proceed.
 // Attempting nothing is not a failure: a library that is already migrated skips every
 // marker, and refusing there would make the command permanently unusable.
-func finalizeRefused(migrated, failed int) string {
-	attempted := migrated + failed
+func finalizeRefused(result FacesMigrateResult) string {
+	attempted := result.Migrated + result.Failed
 
 	switch {
 	case attempted == 0:
 		return ""
-	case migrated == 0:
-		return fmt.Sprintf("none of %d marker(s) could be re-embedded", attempted)
-	case float64(failed)/float64(attempted) > facesMigrateMaxFailureRatio:
-		return fmt.Sprintf("%d of %d marker(s) could not be re-embedded", failed, attempted)
-	default:
+	case result.Migrated == 0:
+		return fmt.Sprintf("none of %d marker(s) could be re-embedded%s", attempted, migrationFailureCause(result))
+	}
+
+	failed, of := result.FailedClusterable, result.AttemptedClusterable
+
+	// A library with no clusterable markers has no such population to measure, so the bound
+	// falls back to every marker rather than passing by default - which is also what stops
+	// FACE_CLUSTER_SIZE or FACE_CLUSTER_SCORE from switching the guard off.
+	if of == 0 {
+		failed, of = result.Failed, attempted
+	}
+
+	if float64(failed)/float64(of) > facesMigrateMaxFailureRatio {
+		return fmt.Sprintf("%d of %d marker(s) that clear the clustering thresholds could not be re-embedded%s",
+			failed, of, migrationFailureCause(result))
+	}
+
+	return ""
+}
+
+// migrationFailureCause names what the failures have in common, or "" when there were none.
+//
+// A file that cannot be read is a storage problem; a face the detector declines to find again
+// will fail identically on every re-run. They ask for opposite responses, so naming neither
+// sent this diagnosis toward the filesystem for several steps.
+func migrationFailureCause(result FacesMigrateResult) string {
+	undetected := result.Failed - result.Unreadable
+
+	switch {
+	case result.Failed == 0:
 		return ""
+	case result.Unreadable == 0:
+		return ", because the detector did not find their face again"
+	case undetected <= 0:
+		return ", because their file is missing or unreadable"
+	default:
+		return fmt.Sprintf(", %d because the detector did not find their face again and %d because "+
+			"their file is missing or unreadable", undetected, result.Unreadable)
 	}
 }
 
@@ -177,15 +263,22 @@ func (w *Faces) migrationTarget(target string) (string, error) {
 		return "", fmt.Errorf("face recognition is disabled")
 	}
 
-	configured := face.NormalizeModelName(w.conf.FaceModel())
 	target = face.NormalizeModelName(target)
 
+	// Exactly one embedding model is officially supported, so the ordinary migration needs no
+	// target and defaults to it. Any other model has to be named. An instance where embeddings
+	// were switched off keeps that decision: defaulting there would turn "off" into a data
+	// migration nobody asked for.
 	if target == "" || target == face.ModelAuto {
-		target = configured
+		if w.conf.FaceModelSetting() == face.ModelNone {
+			target = face.ModelNone
+		} else {
+			target = face.DefaultModelName()
+		}
 	}
 
 	switch {
-	case !face.KnownModelName(target) || target == face.ModelDetect:
+	case !face.KnownModelName(target) || target == face.ModelAuto:
 		return "", fmt.Errorf("faces: unsupported migration model %q", target)
 	case target == face.ModelNone:
 		return "", fmt.Errorf("faces: cannot migrate to disabled embeddings")
@@ -238,6 +331,14 @@ func (w *Faces) PlanMigration(target string) (result FacesMigratePlan, err error
 		return result, err
 	}
 
+	// Only an aligned model consumes landmarks, so only there does the detector that placed them
+	// decide the crop and with it the vector. A crop-based model reads stored geometry instead.
+	if model := face.FindEmbeddingModel(target); model != nil && model.Aligned() {
+		if result.RecropMarkers, err = query.FaceMigrationRecropMarkers(target, face.ActiveDetector()); err != nil {
+			return result, err
+		}
+	}
+
 	result.OriginalsUnavailable = originalsUnavailable(w.conf.OriginalsPath())
 
 	return result, nil
@@ -250,12 +351,11 @@ func originalsUnavailable(originalsPath string) bool {
 	return !fs.PathExists(originalsPath) || fs.DirIsEmpty(originalsPath)
 }
 
-// faceMigrationSubjectCounts returns how many subjects the identities name and how many
-// markers are assigned to one.
+// faceMigrationSubjectCounts returns how many subjects the identities name and how many markers
+// are assigned to one.
 //
-// Keyed by subject alone: a named marker that has no subject row yet is not a person the
-// migration can rebuild a cluster for, and counting it here would report it as needing
-// attention even though the rebuild creates its subject moments later.
+// Keyed by subject alone: a named marker with no subject row yet is not a person a cluster can be
+// rebuilt for, and counting it would report it as needing attention moments before it exists.
 func faceMigrationSubjectCounts(identities []query.FaceMigrationIdentity) (subjects, assigned int) {
 	seen := make(map[string]struct{}, len(identities))
 
@@ -320,6 +420,14 @@ func (w *Faces) Migrate(ctx context.Context, opt FacesMigrateOptions) (result Fa
 	}
 	defer mutex.FacesWorker.Stop()
 
+	// The lock file is what a server in another process can see. It carries its own expiry, so
+	// a run that is killed releases it rather than leaving the instance unable to index faces.
+	lock, err := mutex.AcquireFileLock(w.conf.FacesLockFile(), "faces migration")
+	if err != nil {
+		return result, fmt.Errorf("faces: %s", err)
+	}
+	defer lock.Release()
+
 	embedder, err := w.migrationEmbedder(plan.Target)
 	if err != nil {
 		return result, err
@@ -329,6 +437,12 @@ func (w *Faces) Migrate(ctx context.Context, opt FacesMigrateOptions) (result Fa
 	// previous model loaded. After one that committed this is a no-op, since the setting
 	// names the target by then.
 	defer w.restoreEmbedder()
+
+	restoreDetector, err := w.useMigrationDetector()
+	if err != nil {
+		return result, err
+	}
+	defer restoreDetector()
 
 	return w.migrate(ctx, plan, embedder, opt, result)
 }
@@ -377,38 +491,48 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 				return result, err
 			}
 
-			migrated, skipped, failed, detected, migrateErr := w.migrateFaceFile(embedder, plan.Target, fileUID)
-			result.Migrated += migrated
-			result.Skipped += skipped
-			result.Failed += len(failed)
-			failedMarkerUIDs = append(failedMarkerUIDs, failed...)
-			if detected {
+			fileResult, migrateErr := w.migrateFaceFile(embedder, plan.Target, fileUID)
+			result.Migrated += fileResult.Migrated
+			result.Skipped += fileResult.Skipped
+			result.Retained += fileResult.Retained
+			result.Failed += len(fileResult.Failed)
+			result.Unreadable += fileResult.Unreadable
+			result.AttemptedClusterable += fileResult.Attempted
+			result.FailedClusterable += fileResult.Clusterable
+			result.FailedNamed += fileResult.Named
+			result.FailedManual += fileResult.Manual
+			failedMarkerUIDs = append(failedMarkerUIDs, fileResult.Failed...)
+			if fileResult.Detected {
 				result.DetectedFiles++
 			}
 			if migrateErr != nil {
-				if len(failed) == 0 {
+				if len(fileResult.Failed) == 0 && fileResult.Retained == 0 {
 					return result, migrateErr
 				}
 
-				// The markers this file holds are counted as failed rather than lost, and the
-				// plan reported them as unreadable before the prompt, so this is the predicted
-				// outcome rather than a fault: the run continues and the exit status carries it.
-				log.Warnf("faces: %s, so %s could not be re-embedded",
-					migrateErr, english.Plural(len(failed), "marker", "markers"))
+				// Predicted rather than a fault: the plan reported these markers as unreadable
+				// before the prompt, so the run continues and the exit status carries it. Through
+				// the system log, since the ordinary one persists a warning per missing file.
+				event.SystemWarn([]string{"faces", "migrate", "%s, so %s could not be re-embedded"},
+					migrateErr, english.Plural(len(fileResult.Failed)+fileResult.Retained, "marker", "markers"))
 			}
 		}
 
 		after = fileUIDs[len(fileUIDs)-1]
+
+		// A batch boundary is the natural cadence: the loop is cursor-paged, so it needs no timer,
+		// and a run over a large library is otherwise silent for the best part of an hour.
+		logMigrationProgress(plan, result)
 	}
 
 	// The finalize below is destructive and irreversible, so a run that regenerated nothing
 	// must not reach it: the old vectors are the only copy that exists.
-	if reason := finalizeRefused(result.Migrated, result.Failed); reason != "" {
+	if reason := finalizeRefused(result); reason != "" {
 		if !opt.Force {
 			return result, &FacesMigrateAbortedError{Migrated: result.Migrated, Failed: result.Failed, Reason: reason}
 		}
 
-		log.Warnf("faces: finalizing the migration anyway because %s", reason)
+		event.SystemWarn([]string{"faces", "migrate", "finalizing the migration anyway because %s"}, reason)
 	}
 
 	clusters, rebuilt, excluded, clusterErr := buildFaceMigrationClusters(plan.Target)
@@ -448,19 +572,42 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 	// Subject covers and counts are denormalized, so without this the People view keeps
 	// advertising the totals the library had before the clusters were replaced.
 	if updateErr := query.UpdateSubjectCovers(true); updateErr != nil {
-		log.Errorf("faces: %s (update covers)", updateErr)
+		event.SystemError([]string{"faces", "migrate", "%s (update covers)"}, updateErr)
 	}
 
 	if updateErr := entity.UpdateSubjectCounts(true); updateErr != nil {
-		log.Errorf("faces: %s (update counts)", updateErr)
+		event.SystemError([]string{"faces", "migrate", "%s (update counts)"}, updateErr)
 	}
 
 	if err = unrecordedFaceModel(settingErr, plan.Target, nil); err != nil {
 		return result, err
 	}
 
-	if result.Failed > 0 {
-		return result, &FacesMigrateIncompleteError{Failed: result.Failed}
+	// A marker the detector cannot find again is expected for a library an earlier, less reliable
+	// one indexed: some of those regions were never faces, and below the clustering bars no cluster
+	// could have used the vector either. What still fails is loss the library would have felt, and
+	// a file that could not be read, because that is a storage fault an operator can act on.
+	if result.FailedNamed > 0 || result.FailedManual > 0 {
+		log.Warnf("faces: of the %d marker(s) that lost a vector, %d carried a person assignment and %d a manual source; "+
+			"the two overlap rather than nest, because un-naming a marker leaves its source manual",
+			result.Failed, result.FailedNamed, result.FailedManual)
+	}
+
+	if obsolete := result.Failed - result.FailedClusterable - result.Unreadable; obsolete > 0 {
+		log.Infof("faces: %d marker(s) were not found again at the %g migration score and are no longer used "+
+			"for recognition, which is expected where an earlier or lower-scoring pass placed them",
+			obsolete, w.conf.FaceMigrateScore())
+	}
+
+	// Every marker that lost a vector counts, not just the clusterable ones. The ratio guard is
+	// deliberately blind to the rest - they seed no cluster, so refusing over them refused real
+	// libraries - but a run that discarded a third of the library must not also exit zero.
+	if result.Failed > 0 || result.Unreadable > 0 {
+		return result, &FacesMigrateIncompleteError{
+			Failed:      result.Failed,
+			Clusterable: result.FailedClusterable,
+			Unreadable:  result.Unreadable,
+		}
 	}
 
 	return result, nil
@@ -509,9 +656,8 @@ func (w *Faces) migrationEmbedder(target string) (embedder face.Embedder, err er
 // unrecordedFaceModel keeps a setting that could not be saved attached to whatever failed after
 // it, or returns that error unchanged when the setting was saved.
 //
-// It outranks what follows: the setting decides whether the whole library is matched at all, and
-// the two failures are correlated - a full disk or a read-only volume causes both - so the window
-// where it would be dropped is the one where it is most likely.
+// It outranks what follows, because the setting decides whether the library is matched at all and
+// the two failures are correlated: a full disk or a read-only volume causes both.
 func unrecordedFaceModel(settingErr error, target string, err error) error {
 	if settingErr == nil {
 		return err
@@ -524,29 +670,104 @@ func unrecordedFaceModel(settingErr error, target string, err error) error {
 // a migration committed and the previous model otherwise.
 func (w *Faces) restoreEmbedder() {
 	if err := w.conf.ConfigureFaceEmbedder(w.conf.FaceModel()); err != nil {
-		log.Warnf("faces: %s (restore embedding model)", err)
+		event.SystemWarn([]string{"faces", "migrate", "%s (restore embedding model)"}, err)
 	}
 }
 
-// migrateFaceFile checkpoints all stale marker embeddings associated with a file.
-func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) (migrated, skipped int, failed []string, detected bool, err error) {
-	markers, err := query.FaceMigrationMarkers(fileUID)
-	if err != nil {
-		return 0, 0, nil, false, err
+// useMigrationDetector lowers the detection floor for the duration of a migration and returns the
+// function that restores the configured one.
+//
+// A false positive costs an index a thumbnail to reject; a miss costs a migration a curated
+// marker's vector, so the run detects at the detector's own migration floor. A configured
+// FACE_SCORE stands: that is a decision rather than a calibration.
+func (w *Faces) useMigrationDetector() (restore func(), err error) {
+	restore = func() {}
+
+	if w == nil || w.conf == nil {
+		return restore, nil
 	}
 
-	stale := make(entity.Markers, 0, len(markers))
+	score := w.conf.FaceMigrateScore()
+
+	// The cutoff lives in the inference session and in the filter Detect applies afterwards, so
+	// both have to move or the second undoes the first.
+	previous := face.ScoreThreshold
+
+	if err = w.conf.ConfigureFaceDetector(score); err != nil {
+		return restore, fmt.Errorf("faces: %s (configure detector)", err)
+	}
+
+	face.ScoreThreshold = score
+
+	return func() {
+		face.ScoreThreshold = previous
+
+		if restoreErr := w.conf.ConfigureFaceDetector(0); restoreErr != nil {
+			event.SystemWarn([]string{"faces", "migrate", "%s (restore detector)"}, restoreErr)
+		}
+	}, nil
+}
+
+// faceMigrationFile reports what one file's markers contributed to a migration.
+//
+// Retained markers keep the vector they already hold, so they are neither migrated nor failed:
+// counting them as either would make a detector change look like data loss or like work done.
+type faceMigrationFile struct {
+	Migrated int
+	Skipped  int
+	Retained int
+	Failed   []string
+	// Unreadable counts the failed markers this file lost because it could not be read at all,
+	// as distinct from the ones a successful detection did not find again.
+	Unreadable int
+	// Attempted and Clusterable count the markers that cleared both clustering bars: those this
+	// file put at risk, and those it lost. The guard needs both sides of that ratio.
+	Attempted   int
+	Clusterable int
+	// Named and Manual count the lost markers that carried a person assignment, and those with a
+	// manual source. They overlap rather than nest - see FacesMigrateResult. A bare failure count
+	// cannot say whether a floor was worth its cost.
+	Named    int
+	Manual   int
+	Detected bool
+}
+
+// clusterableMarkers counts the markers that clear both bars a face has to clear to seed or join
+// an automatic cluster.
+func clusterableMarkers(markers entity.Markers) (n int) {
 	for i := range markers {
-		// Rows written before the provenance column hold FaceNet vectors, so migrating a
-		// legacy library to FaceNet has nothing to regenerate and must be a no-op.
-		if face.ValidEmbeddings(markers[i].Embeddings(), embedder.Dims()) && face.ModelsComparable(markers[i].EmbedModel, target) {
-			skipped++
-		} else {
-			stale = append(stale, markers[i])
+		if markers[i].Clusterable() {
+			n++
 		}
 	}
+
+	return n
+}
+
+// retainedMigrationMarkers returns the markers that keep the vector they already hold, which is
+// what tells a marker that was never at risk apart from one whose vector the run would discard.
+func retainedMigrationMarkers(markers entity.Markers, recrop map[string]bool) (retained entity.Markers) {
+	for i := range markers {
+		if recrop[markers[i].MarkerUID] {
+			retained = append(retained, markers[i])
+		}
+	}
+
+	return retained
+}
+
+// migrateFaceFile checkpoints all stale marker embeddings associated with a file.
+func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) (result faceMigrationFile, err error) {
+	markers, err := query.FaceMigrationMarkers(fileUID)
+	if err != nil {
+		return result, err
+	}
+
+	stale, recrop := staleMigrationMarkers(markers, embedder, target)
+	result.Skipped = len(markers) - len(stale)
+
 	if len(stale) == 0 {
-		return 0, skipped, nil, false, nil
+		return result, nil
 	}
 
 	file, err := query.FileByUID(fileUID)
@@ -557,46 +778,143 @@ func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) 
 			err = fmt.Errorf("file was deleted")
 		}
 
-		return 0, skipped, faceMigrationMarkerUIDs(stale), false, err
+		var counts faceMigrationLoss
+		result.Failed, counts = unresolvedMigrationMarkers(stale, recrop)
+		result.Retained, result.Clusterable, result.Named, result.Manual = counts.Retained, counts.Clusterable, counts.Named, counts.Manual
+		result.Unreadable = len(result.Failed)
+		result.Attempted = result.Clusterable
+
+		return result, err
 	}
 
 	var generated map[string]face.Embeddings
+	var details map[string]query.MigrationDetection
+
+	// A blank detector means no detection ran, so the one already recorded still describes
+	// the crop. It is taken from the detection rather than from the active engine, which by
+	// the time this returns may name whatever a concurrent reconfiguration left loaded.
+	detectModel := ""
+
 	if embedder.Aligned() {
-		detected = true
-		generated, err = w.detectMigrationEmbeddings(embedder, file, markers, stale)
+		result.Detected = true
+		generated, details, detectModel, err = w.detectMigrationEmbeddings(embedder, file, markers, stale)
 	} else {
 		generated, err = w.cropMigrationEmbeddings(embedder, file, stale)
 	}
 	if err != nil {
-		return 0, skipped, faceMigrationMarkerUIDs(stale), detected, err
+		// Detection reads the file, so a failure here is the file rather than the detector
+		// declining to find a face in it.
+		var counts faceMigrationLoss
+		result.Failed, counts = unresolvedMigrationMarkers(stale, recrop)
+		result.Retained, result.Clusterable, result.Named, result.Manual = counts.Retained, counts.Clusterable, counts.Named, counts.Manual
+		result.Unreadable = len(result.Failed)
+		result.Attempted = result.Clusterable
+
+		return result, err
 	}
+
+	unresolved := make(entity.Markers, 0, len(stale))
 
 	for _, marker := range stale {
 		if values, ok := generated[marker.MarkerUID]; ok && face.ValidEmbeddings(values, embedder.Dims()) {
-			migrated++
-		} else {
-			failed = append(failed, marker.MarkerUID)
-			delete(generated, marker.MarkerUID)
+			result.Migrated++
+			continue
 		}
+
+		unresolved = append(unresolved, marker)
+		delete(generated, marker.MarkerUID)
+		delete(details, marker.MarkerUID)
 	}
+
+	unresolvedCounts := faceMigrationLoss{}
+	result.Failed, unresolvedCounts = unresolvedMigrationMarkers(unresolved, recrop)
+	result.Retained, result.Clusterable = unresolvedCounts.Retained, unresolvedCounts.Clusterable
+	result.Named, result.Manual = unresolvedCounts.Named, unresolvedCounts.Manual
+
+	// A retained marker keeps the vector it holds, so it was never at risk and belongs on
+	// neither side of the guard's ratio.
+	result.Attempted = clusterableMarkers(stale) - clusterableMarkers(retainedMigrationMarkers(unresolved, recrop))
 
 	if len(generated) > 0 {
-		if err = query.SaveFaceMigrationEmbeddings(target, generated); err != nil {
-			return 0, skipped, nil, detected, err
+		if err = query.SaveFaceMigrationEmbeddings(target, detectModel, generated, details); err != nil {
+			return faceMigrationFile{Skipped: result.Skipped, Detected: result.Detected}, err
 		}
 	}
 
-	return migrated, skipped, failed, detected, err
+	return result, nil
 }
 
-// faceMigrationMarkerUIDs returns the marker UIDs in their current order.
-func faceMigrationMarkerUIDs(markers entity.Markers) []string {
-	result := make([]string, 0, len(markers))
-	for _, marker := range markers {
-		result = append(result, marker.MarkerUID)
+// staleMigrationMarkers returns the markers a migration to target has to re-embed, and the subset
+// of them that only needs a new crop.
+//
+// The crop is an axis of the embedding space, so an unrecorded or foreign detector makes a marker
+// stale even when its vector is the target's. A first run therefore re-crops everything.
+func staleMigrationMarkers(markers entity.Markers, embedder face.Embedder, target string) (stale entity.Markers, recrop map[string]bool) {
+	stale = make(entity.Markers, 0, len(markers))
+	recrop = make(map[string]bool)
+	detector := face.ActiveDetector()
+
+	for i := range markers {
+		if !face.ValidEmbeddings(markers[i].Embeddings(), embedder.Dims()) || !face.ModelsComparable(markers[i].EmbedModel, target) {
+			stale = append(stale, markers[i])
+			continue
+		}
+
+		// Only an aligned embedder consumes landmarks, so only there does the detector decide
+		// the crop. A crop-based one reads the stored geometry whichever detector wrote it.
+		if !embedder.Aligned() || face.DetectorsComparable(markers[i].DetectModel, detector) {
+			continue
+		}
+
+		recrop[markers[i].MarkerUID] = true
+		stale = append(stale, markers[i])
 	}
 
-	return result
+	return stale, recrop
+}
+
+// unresolvedMigrationMarkers splits the markers whose embeddings could not be regenerated into
+// those that must be discarded, the number that keep a usable vector, and how many of the
+// discarded ones the library could have clustered.
+//
+// Detection finds no marker a person drew by hand, so re-cropping one is expected to fail. Its
+// vector is still in the target's space, and discarding it would cost exactly the assignments the
+// migration exists to preserve.
+func unresolvedMigrationMarkers(markers entity.Markers, recrop map[string]bool) (failed []string, counts faceMigrationLoss) {
+	for i := range markers {
+		if recrop[markers[i].MarkerUID] {
+			counts.Retained++
+			continue
+		}
+
+		failed = append(failed, markers[i].MarkerUID)
+
+		if markers[i].Clusterable() {
+			counts.Clusterable++
+		}
+
+		// Counted independently, not as a subset: ClearSubject blanks subj_uid and records the
+		// source of the clearing, so a marker a person named and later un-named is manual with no
+		// subject. Both are effort somebody spent, and a bare failure count hides either.
+		if markers[i].SubjUID != "" {
+			counts.Named++
+		}
+
+		if markers[i].SubjSrc == entity.SrcManual {
+			counts.Manual++
+		}
+	}
+
+	return failed, counts
+}
+
+// faceMigrationLoss counts what a file's unresolved markers cost, split by what makes them worth
+// keeping. Retained markers kept their vector and were never at risk.
+type faceMigrationLoss struct {
+	Retained    int
+	Clusterable int
+	Named       int
+	Manual      int
 }
 
 // cropMigrationEmbeddings generates embeddings directly from stored marker geometry.
@@ -619,7 +937,7 @@ func (w *Faces) cropMigrationEmbeddings(embedder face.Embedder, file *entity.Fil
 
 		img, _, cropErr := crop.ImageFromThumb(thumbName, area, size, false)
 		if cropErr != nil {
-			log.Warnf("faces: failed cropping marker %s (%s)", clean.Log(marker.MarkerUID), cropErr)
+			event.SystemWarn([]string{"faces", "migrate", "failed cropping marker %s (%s)"}, clean.Log(marker.MarkerUID), cropErr)
 			continue
 		}
 
@@ -631,28 +949,69 @@ func (w *Faces) cropMigrationEmbeddings(embedder face.Embedder, file *entity.Fil
 	return result, nil
 }
 
-// detectMigrationEmbeddings redetects a file and maps aligned embeddings to stored markers.
-func (w *Faces) detectMigrationEmbeddings(embedder face.Embedder, file *entity.File, markers, stale entity.Markers) (result map[string]face.Embeddings, err error) {
+// detectMigrationEmbeddings redetects a file and maps aligned embeddings to stored markers, also
+// reporting what each detection recorded and the detector that placed it.
+//
+// Provenance travels with the vectors rather than being read back from configuration, and the
+// size and score have to travel with it: the clustering bars are looked up by detect_model, so a
+// marker labeled with the new detector while holding the old one's score is judged at a
+// calibration it was never scored against.
+func (w *Faces) detectMigrationEmbeddings(embedder face.Embedder, file *entity.File, markers, stale entity.Markers) (result map[string]face.Embeddings, details map[string]query.MigrationDetection, detectModel string, err error) {
 	result = make(map[string]face.Embeddings, len(stale))
+	details = make(map[string]query.MigrationDetection, len(stale))
+
 	thumbName, err := migrationDetectionThumb(w.conf, w.conf.ThumbCachePath(), file)
 	if err != nil {
-		return result, err
+		return result, details, "", err
 	}
 
-	detected, err := face.Detect(thumbName, w.conf.FaceSize())
+	// FACE_MIGRATE_SIZE rather than FACE_SIZE: a marker's size is in pixels of the thumbnail it was
+	// detected in, and the detector before this one fell back to a larger one, so a legacy marker
+	// can sit well under the ordinary floor - which no score recovers. The retry pass only fires
+	// when a picture yields nothing, which is not this case.
+	detected, err := face.Detect(thumbName, w.conf.FaceMigrateSize())
 	if err != nil {
-		return result, err
+		return result, details, "", err
 	}
-	vision.GenerateEmbeddings(embedder, thumbName, detected, true)
 
-	assignments := matchMigrationDetections(markers, detected)
-	for _, marker := range stale {
-		if detectedFace, ok := assignments[marker.MarkerUID]; ok && face.ValidEmbeddings(detectedFace.Embeddings, embedder.Dims()) {
-			result[marker.MarkerUID] = detectedFace.Embeddings
+	// Only the detections a stored marker claims are embedded. Everything else this floor admits
+	// would be inferred and thrown away, and the smallest face decides the crop rendition for the
+	// whole file, so embedding them all would make the real crops worse as well as slower.
+	assigned, order := assignedMigrationDetections(markers, stale, detected)
+	vision.GenerateEmbeddings(embedder, thumbName, assigned, true)
+
+	for markerUID, i := range order {
+		if detectedFace := assigned[i]; face.ValidEmbeddings(detectedFace.Embeddings, embedder.Dims()) {
+			result[markerUID] = detectedFace.Embeddings
+			detectModel = detectedFace.DetectModel
+
+			details[markerUID] = query.MigrationDetection{
+				Landmarks: detectedFace.RelativeLandmarksJSON(),
+				Size:      detectedFace.Size(),
+				Score:     detectedFace.Score,
+			}
 		}
 	}
 
-	return result, nil
+	return result, details, detectModel, nil
+}
+
+// assignedMigrationDetections returns the detections the stale markers claim, and where each
+// marker's own detection sits in that slice. Matching considers every marker the file holds, so
+// a detection a marker needing no work accounts for is not handed to a second marker as well.
+func assignedMigrationDetections(markers, stale entity.Markers, detected face.Faces) (assigned face.Faces, order map[string]int) {
+	assignments := matchMigrationDetections(markers, detected)
+	assigned = make(face.Faces, 0, len(stale))
+	order = make(map[string]int, len(stale))
+
+	for _, marker := range stale {
+		if i, ok := assignments[marker.MarkerUID]; ok {
+			order[marker.MarkerUID] = len(assigned)
+			assigned = append(assigned, detected[i])
+		}
+	}
+
+	return assigned, order
 }
 
 // migrationDetectionThumb returns a cached or newly generated detection thumbnail.
@@ -678,40 +1037,74 @@ type migrationDetectionPair struct {
 	markerUID string
 	detected  int
 	overlap   int
+	score     int
 }
 
-// matchMigrationDetections assigns each detected face to at most one stored marker.
-func matchMigrationDetections(markers entity.Markers, detected face.Faces) map[string]face.Face {
+// migrationOverlapMax bounds how much larger than the marker a detection claiming it may be.
+//
+// OverlapPercent divides by the marker's own surface, so a box that merely contains the marker
+// scores a perfect 100 while the correctly fitting detection scores less. At the floors a
+// migration detects at, a low-confidence head-and-shoulders box is exactly that shape.
+const migrationOverlapMax = 4
+
+// matchMigrationDetections assigns each detected face to at most one stored marker, and returns
+// the index of the detection each marker was given.
+func matchMigrationDetections(markers entity.Markers, detected face.Faces) map[string]int {
 	pairs := make([]migrationDetectionPair, 0)
 	for _, marker := range markers {
 		area := markerCropArea(marker)
 		for i := range detected {
-			if overlap := detected[i].CropArea().OverlapPercent(area); overlap > face.OverlapThresholdFloor {
-				pairs = append(pairs, migrationDetectionPair{markerUID: marker.MarkerUID, detected: i, overlap: overlap})
+			candidate := detected[i].CropArea()
+
+			if overlap := candidate.OverlapPercent(area); overlap > face.OverlapThresholdFloor &&
+				!oversizedMigrationDetection(candidate, area) {
+				pairs = append(pairs, migrationDetectionPair{
+					markerUID: marker.MarkerUID,
+					detected:  i,
+					overlap:   overlap,
+					score:     detected[i].Score,
+				})
 			}
 		}
 	}
 
+	// Confidence breaks a tie before detector output order does. Containment scores 100, so
+	// several candidates reach the top and the order they were decoded in decided which one
+	// claimed the marker.
 	sort.Slice(pairs, func(i, j int) bool {
-		if pairs[i].overlap != pairs[j].overlap {
+		switch {
+		case pairs[i].overlap != pairs[j].overlap:
 			return pairs[i].overlap > pairs[j].overlap
-		} else if pairs[i].markerUID != pairs[j].markerUID {
+		case pairs[i].score != pairs[j].score:
+			return pairs[i].score > pairs[j].score
+		case pairs[i].markerUID != pairs[j].markerUID:
 			return pairs[i].markerUID < pairs[j].markerUID
+		default:
+			return pairs[i].detected < pairs[j].detected
 		}
-		return pairs[i].detected < pairs[j].detected
 	})
 
-	result := make(map[string]face.Face)
+	result := make(map[string]int)
 	used := make(map[int]bool)
 	for _, pair := range pairs {
 		if _, ok := result[pair.markerUID]; ok || used[pair.detected] {
 			continue
 		}
-		result[pair.markerUID] = detected[pair.detected]
+		result[pair.markerUID] = pair.detected
 		used[pair.detected] = true
 	}
 
 	return result
+}
+
+// oversizedMigrationDetection reports whether a detection is too much larger than the marker it
+// overlaps to be the same face. Without it a box containing the marker outranks every other
+// candidate, because the overlap is measured against the marker's surface alone.
+func oversizedMigrationDetection(candidate, area crop.Area) bool {
+	markerSurface := float64(area.W) * float64(area.H)
+	candidateSurface := float64(candidate.W) * float64(candidate.H)
+
+	return markerSurface > 0 && candidateSurface > markerSurface*migrationOverlapMax
 }
 
 // markerCropArea returns the normalized crop geometry stored on a marker.
@@ -719,12 +1112,10 @@ func markerCropArea(marker entity.Marker) crop.Area {
 	return crop.Area{Name: "face", X: marker.X, Y: marker.Y, W: marker.W, H: marker.H}
 }
 
-// buildFaceMigrationClusters creates one replacement cluster per identified subject,
-// seeded from the assignments that agree with their own midpoint, and reports how many
-// were left out.
+// buildFaceMigrationClusters creates one replacement cluster per identified subject, seeded from
+// the assignments that agree with their own midpoint, and reports how many were left out.
 //
-// Subjects are rebuilt one at a time so that the embedding blobs of a whole library never
-// have to be resident at once, matching the batching the re-embedding loop already uses.
+// One subject at a time, so that a whole library's embedding blobs never have to be resident.
 func buildFaceMigrationClusters(model string) (result []query.FaceMigrationCluster, rebuilt, excluded int, err error) {
 	registered := face.FindEmbeddingModel(model)
 	if registered == nil {
@@ -769,7 +1160,7 @@ func buildFaceMigrationClusters(model string) (result []query.FaceMigrationClust
 
 		cluster := entity.NewFace(subjectUID, entity.SrcManual, embeddings, model)
 		if cluster == nil || cluster.ID == "" || cluster.EmbedModel != model || len(cluster.Embedding()) == 0 {
-			log.Warnf("faces: failed rebuilding cluster for subject %s", clean.Log(subjectUID))
+			event.SystemWarn([]string{"faces", "migrate", "failed rebuilding cluster for subject %s"}, clean.Log(subjectUID))
 			continue
 		}
 
@@ -792,20 +1183,11 @@ func manualSubjectAssignment(subjSrc string) bool {
 	return subjSrc != "" && subjSrc != entity.SrcAuto && subjSrc != entity.SrcXmp
 }
 
-// centroidSamples returns the markers that may define a subject's replacement cluster, and
-// how many assignments were left out of it.
+// centroidSamples returns the markers that may define a subject's replacement cluster, and how
+// many assignments were left out. An outlier keeps its assignment and loses only its vote.
 //
-// An assignment the previous model got wrong would otherwise help shape the new centroid
-// and widen it enough to attract further wrong faces. Outliers keep their assignment; they
-// are only excluded from the samples, so nothing a person set is discarded here.
-//
-// A hand-set assignment is exempt from the ordinary outlier distance. Those are
-// concentrated on small children, unusual angles and lens distortion - the cases embedding
-// matching handles worst, which is why a person had to name them - so distance from the
-// centroid measures the model rather than the assignment, and dropping the sample removes
-// the width the cluster needs to reach that face. It is not exempt from the widest distance
-// the resulting cluster can accept: seeding past that produces a link the matcher would
-// never make and cannot renew.
+// A hand-set assignment is exempt from the ordinary outlier distance, which there measures the
+// model rather than the assignment, but not from the widest distance the cluster can accept.
 func centroidSamples(group entity.Markers, registered *face.EmbeddingModel, subjectUID string) (kept entity.Markers, excluded int) {
 	if len(group) < 3 {
 		return group, 0
@@ -855,6 +1237,32 @@ func centroidSamples(group entity.Markers, registered *face.EmbeddingModel, subj
 	}
 
 	return kept, excluded
+}
+
+// logMigrationProgress reports how far a run has got, against the total the plan named.
+//
+// Every processed state is counted rather than the migrated ones alone, so a re-run that skips
+// most of the library still reports honestly instead of appearing to stall.
+func logMigrationProgress(plan FacesMigratePlan, result FacesMigrateResult) {
+	done, total := migrationProgress(plan, result)
+
+	if total < 1 {
+		return
+	}
+
+	log.Infof("faces: processed %d of %d markers (%d%%)", done, total, done*100/total)
+}
+
+// migrationProgress returns how many of the planned markers have been processed. The plan is
+// counted before the run, so a marker added meanwhile must not report more than the total.
+func migrationProgress(plan FacesMigratePlan, result FacesMigrateResult) (done, total int) {
+	total = plan.Markers.Valid
+
+	if total < 1 {
+		return 0, 0
+	}
+
+	return min(result.Migrated+result.Skipped+result.Failed+result.Retained, total), total
 }
 
 // migrationCanceled reports context and worker cancellation consistently between batches.

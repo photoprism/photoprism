@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -53,8 +54,13 @@ var FacesCommands = &cli.Command{
 			Flags: []cli.Flag{
 				ForceFlag("removes all people and faces"),
 				&cli.StringFlag{
-					Name:  "engine",
-					Usage: "regenerate markers using detection engine `NAME` (auto, onnx)",
+					Name:  "detector",
+					Usage: "regenerate markers with the detection model `NAME` (" + face.DetectorUsageString() + ")",
+				},
+				&cli.StringFlag{
+					Name:   "engine",
+					Usage:  "regenerate markers using detection engine `NAME` *deprecated*, use --detector",
+					Hidden: true,
 				},
 			},
 			Action: facesResetAction,
@@ -85,22 +91,22 @@ var FacesCommands = &cli.Command{
 			},
 			Action: facesOptimizeAction,
 		},
-		FacesConfigCommand,
+		FacesStatusCommand,
 	},
 }
 
 // FacesMigrateCommand configures the face embedding migration command.
 var FacesMigrateCommand = &cli.Command{
 	Name:  "migrate",
-	Usage: "Migrates face embeddings to another model",
+	Usage: "Migrates face embeddings to the supported model",
 	Description: "This is how the face embedding model is changed: every marker is re-embedded and " +
-		"the target is recorded as the configured model. Stop the server before running it, as the " +
-		"migration replaces every face cluster in one transaction and its worker guards cannot see " +
-		"what a running instance writes to the same rows.",
+		"the target is recorded as the configured model. It defaults to " + face.DefaultModelName() +
+		", the model this release supports, so an ordinary migration needs no target. Stop the server " +
+		"before running it, as the migration replaces every face cluster in one transaction.",
 	Flags: []cli.Flag{
 		&cli.StringFlag{
 			Name:  "to",
-			Usage: "target embedding `MODEL` (defaults to the model in use)",
+			Usage: "target embedding `MODEL` (default " + face.DefaultModelName() + ")",
 		},
 		DryRunFlag("reports the face migration scope without changing the index"),
 		ForceFlag("finalizes the migration even when markers could not be re-embedded"),
@@ -142,17 +148,25 @@ func facesMigrateAction(ctx *cli.Context) error {
 			"faces: %d markers already use %s, %d have no file, and %d were identified manually",
 			plan.Markers.Ready, clean.Log(plan.Target), plan.Markers.Unlinked, plan.Markers.Manual,
 		)
+		// The crop is an axis of the embedding space, so a detector change leaves a library in
+		// two of them. This is the only run that repairs that, and it is why a re-run to the
+		// same model can still have work to do. Every marker indexed before the detector was
+		// recorded counts here, which on a first run is all of them.
+		if plan.RecropMarkers > 0 {
+			log.Infof("faces: %d of those were cropped by another or an unrecorded detector and are re-embedded, keeping their vector if detection cannot find them again",
+				plan.RecropMarkers)
+		}
 		// Re-embedding reads the file, so a marker whose file the index has already recorded
 		// as unreadable is going to fail. Naming them before the prompt is what separates an
 		// expected loss from a surprise, since a failed marker keeps no vector at all.
 		if plan.Markers.Unreadable > 0 {
-			log.Warnf("faces: %d markers cannot be re-embedded because their file is missing or unreadable",
+			event.SystemWarn([]string{"faces", "migrate", "%d markers cannot be re-embedded because their file is missing or unreadable"},
 				plan.Markers.Unreadable)
 		}
 		// The counts above come from the index, which believes whatever it was told last. An
 		// unmounted originals volume leaves them looking clean and then fails every file.
 		if plan.OriginalsUnavailable {
-			log.Warnf("faces: originals path %s is empty or cannot be read, so no marker can be re-embedded",
+			event.SystemWarn([]string{"faces", "migrate", "originals path %s is empty or cannot be read, so no marker can be re-embedded"},
 				clean.Log(conf.OriginalsPath()))
 		}
 		for _, count := range plan.MarkerModels {
@@ -177,7 +191,7 @@ func facesMigrateAction(ctx *cli.Context) error {
 		// Finalizing clears the stored vectors of every marker that is not on the target
 		// model, so an operator has to see that number before deciding to run this.
 		if stale := plan.Markers.Valid - plan.Markers.Ready; stale > 0 {
-			log.Warnf("faces: %d markers must be re-embedded and lose their stored vectors if that fails", stale)
+			event.SystemWarn([]string{"faces", "migrate", "%d markers must be re-embedded and lose their stored vectors if that fails"}, stale)
 		}
 
 		if ctx.Bool("dry-run") {
@@ -188,8 +202,8 @@ func facesMigrateAction(ctx *cli.Context) error {
 		// The worker guards in Migrate are process-local, so they cannot see a server that
 		// is indexing or matching the same rows. Stopping it is the operator's job, and the
 		// prompt is the last point at which saying so still helps.
-		log.Warnf("faces: stop the server before continuing, as this replaces every face cluster " +
-			"and cannot detect an instance that is still writing to the index")
+		event.SystemWarn([]string{"faces", "migrate", "this replaces every face cluster; indexing and vision hold off " +
+			"while it runs, but changes made in the app are not covered, so stopping the server is still the safe way"})
 
 		if !RunNonInteractively(ctx.Bool("yes")) {
 			prompt := promptui.Prompt{
@@ -213,6 +227,11 @@ func facesMigrateAction(ctx *cli.Context) error {
 			result.PreservedSubjects, result.PreservedMarkers, result.HiddenClusters,
 			result.RebuiltSubjects, result.AttentionSubjects,
 		)
+		// Reported apart from both, because a retained marker is neither work done nor a loss:
+		// detection did not find it again, most often because a person drew it by hand.
+		if result.Retained > 0 {
+			log.Infof("faces: %d markers kept the vector another detector's crop produced", result.Retained)
+		}
 		// Excluded assignments keep their person but seed no cluster, so the count is what
 		// tells an operator how much of a curated library did not shape its own centroids.
 		if result.ExcludedMarkers > 0 || result.LowQualityMarkers > 0 {
@@ -300,6 +319,14 @@ func facesAuditAction(ctx *cli.Context) error {
 // facesResetAction resets face clusters and matches.
 func facesResetAction(ctx *cli.Context) error {
 	if ctx.Bool("force") {
+		// The two do not compose: --force removes every person, face and marker, and the names go
+		// with them, so a caller who also asked to regenerate would silently get the destructive
+		// half alone. Refused rather than reordered, because which of the two they meant is not
+		// knowable from the command.
+		if ctx.IsSet("detector") || ctx.IsSet("engine") {
+			return cli.Exit("faces: --force removes all people and faces, so it cannot be combined with --detector", 1)
+		}
+
 		return facesResetAllAction(ctx)
 	}
 
@@ -328,10 +355,20 @@ func facesResetAction(ctx *cli.Context) error {
 
 	w := get.Faces()
 
-	engine := strings.TrimSpace(ctx.String("engine"))
+	detector := strings.TrimSpace(ctx.String("detector"))
 
-	if engine != "" {
-		if err := w.ResetAndReindex(engine, get.Index()); err != nil {
+	// The deprecated flag names a runtime that every detector shares, so it can only ask for the
+	// detector already configured, or for no regeneration at all.
+	if detector == "" {
+		if engine := strings.TrimSpace(ctx.String("engine")); engine != "" {
+			if detector = face.DetectorAuto; face.ParseEngine(engine) == face.EngineNone {
+				detector = ""
+			}
+		}
+	}
+
+	if detector != "" {
+		if err := w.ResetAndReindex(detector, get.Index()); err != nil {
 			return err
 		}
 	} else {

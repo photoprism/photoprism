@@ -12,8 +12,12 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs/fastwalk"
 )
 
-var modelPath, _ = filepath.Abs("../../../assets/models/facenet")
-var detectorModelPath, _ = filepath.Abs("../../../assets/models/scrfd/" + DefaultONNXModelFilename)
+var assetsModelsPath, _ = filepath.Abs("../../../assets/models")
+var modelPath = filepath.Join(assetsModelsPath, "facenet")
+
+// detectorModelPath names the detector a build ships rather than a fixed directory, so the
+// detector-dependent tests keep running against whatever "make dep-models" installs.
+var detectorModelPath = DefaultDetector().Path(assetsModelsPath)
 
 func TestNet(t *testing.T) {
 	prev := UseEngine(nil)
@@ -36,7 +40,7 @@ func TestNet(t *testing.T) {
 		// initialize despite being present indicates a broken ONNX Runtime or a
 		// binding that does not match the installed library version.
 		if _, statErr := os.Stat(detectorModelPath); statErr != nil {
-			t.Skipf("faces: skipping detector-dependent test, %s is not available", DefaultONNXModelFilename)
+			t.Skipf("faces: skipping detector-dependent test, %s is not available", filepath.Base(detectorModelPath))
 		}
 
 		t.Fatalf("faces: failed to initialize detector: %s", err)

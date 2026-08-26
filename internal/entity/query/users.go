@@ -57,13 +57,14 @@ func Users(limit, offset int, sortOrder, search string, deleted bool) (result en
 	search = strings.TrimSpace(search)
 
 	// Filter user accounts to be returned.
-	if search == "all" {
+	switch id := txt.Int(search); {
+	case search == "all":
 		// Don't filter.
-	} else if id := txt.Int(search); id != 0 {
+	case id != 0:
 		stmt = stmt.Where("id = ?", id)
-	} else if rnd.IsUID(search, entity.UserUID) {
+	case rnd.IsUID(search, entity.UserUID):
 		stmt = stmt.Where("user_uid = ?", search)
-	} else if search != "" {
+	case search != "":
 		switch entity.DbDialect() {
 		case dsn.DialectPostgreSQL:
 			lowerSearch := strings.ToLower(search + "%")
@@ -72,7 +73,7 @@ func Users(limit, offset int, sortOrder, search string, deleted bool) (result en
 			stmt = stmt.Where("user_name LIKE ? OR user_email LIKE ? OR display_name LIKE ?", search+"%", search+"%", search+"%")
 		}
 
-	} else {
+	default:
 		stmt = stmt.Where("id > 0")
 	}
 

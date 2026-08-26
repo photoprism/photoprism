@@ -18,6 +18,10 @@ func firstName(names string) string {
 	return ""
 }
 
+// DeprecatedFlagMarker is what a flag's usage text carries when the option still works but is
+// no longer offered. It is rendered as emphasis in the generated reference.
+const DeprecatedFlagMarker = "*deprecated*"
+
 // CliFlags represents a list of command-line parameters.
 type CliFlags []CliFlag
 
@@ -30,6 +34,22 @@ func (f CliFlags) Cli() (result []cli.Flag) {
 	}
 
 	return result
+}
+
+// Deprecated reports whether the parameter with the specified name is marked as deprecated in
+// its usage text, which is where that is stated for the help output as well.
+func (f CliFlags) Deprecated(name string) bool {
+	if name = firstName(name); name == "" {
+		return false
+	}
+
+	for _, flag := range f {
+		if flag.Name() == name {
+			return strings.Contains(flag.Usage(), DeprecatedFlagMarker)
+		}
+	}
+
+	return false
 }
 
 // Find finds command-line parameters based on a list of tags.

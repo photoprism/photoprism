@@ -641,3 +641,151 @@ func TestFace_ReviseMatchesSkipsOtherModels(t *testing.T) {
 	require.NoError(t, UnscopedDb().First(&stored, "marker_uid = ?", other.MarkerUID).Error)
 	assert.Equal(t, m.ID, stored.FaceID, "the assignment must survive a revision it could not evaluate")
 }
+
+// TestFace_ReviseMatchesFlagsForRematching pins that a marker a conflict drops is left needing a
+// match rather than recorded as having had one.
+//
+// ClearFace stamps matched_at, which is true where the matcher itself found no face - it had just
+// compared against every cluster. After a conflict narrowed a cluster underneath the marker,
+// nothing has compared it against anything, and a stamped marker is in neither matching pass's
+// set: pass one reads matched_at IS NULL, pass two runs only while some cluster is unmatched. It
+// would sit unassigned until "faces update --force".
+func TestFace_ReviseMatchesFlagsForRematching(t *testing.T) {
+	m := NewFace("", SrcAuto, face.Embeddings{face.RandomEmbedding()}, face.EmbeddingModelName())
+	require.NotNil(t, m)
+	require.NoError(t, m.Create())
+	t.Cleanup(func() { UnscopedDb().Delete(&Face{}, "id = ?", m.ID) })
+
+	// Assigned to the cluster, stamped, and far enough away that a revision drops it.
+	dropped := Marker{
+		MarkerUID:      rnd.GenerateUID('m'),
+		MarkerType:     MarkerFace,
+		MarkerSrc:      SrcImage,
+		FaceID:         m.ID,
+		EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
+		EmbedModel:     face.EmbeddingModelName(),
+		MatchedAt:      TimeStamp(),
+	}
+
+	require.NoError(t, Db().Create(&dropped).Error)
+	t.Cleanup(func() { UnscopedDb().Delete(&Marker{}, "marker_uid = ?", dropped.MarkerUID) })
+
+	// Narrow the cluster so nothing it holds still matches.
+	m.SampleRadius = 0
+	m.CollisionRadius = 0.0001
+	require.NoError(t, m.Updates(Values{"sample_radius": m.SampleRadius, "collision_radius": m.CollisionRadius}))
+
+	revised, err := m.ReviseMatches()
+	require.NoError(t, err)
+	require.NotEmpty(t, revised, "the marker must be dropped by the revision")
+
+	stored := Marker{}
+	require.NoError(t, UnscopedDb().First(&stored, "marker_uid = ?", dropped.MarkerUID).Error)
+
+	assert.Empty(t, stored.FaceID, "the assignment is removed")
+	assert.Nil(t, stored.MatchedAt, "and the marker is left for the next run to match")
+}
+
+func TestFace_MatchMarkers(t *testing.T) {
+	cluster := FaceFixtures.Pointer("joe-biden")
+
+	// newFacelessMarker persists an unassigned marker well inside what the cluster accepts, so
+	// only the size bound can keep it out.
+	newFacelessMarker := func(t *testing.T, size int, seed uint64) *Marker {
+		t.Helper()
+
+		m := &Marker{
+			FileUID:    "fs6sg6bw45bnlqdw",
+			MarkerType: MarkerFace,
+			MarkerSrc:  SrcImage,
+			Size:       size,
+			Score:      50,
+			X:          0.1,
+			Y:          0.1,
+			W:          0.1,
+			H:          0.1,
+		}
+
+		at := face.FixtureEmbeddingAt(cluster.Embedding(), 0.2*cluster.AcceptDist(), seed)
+		m.SetEmbeddings(face.Embeddings{at}, cluster.EmbedModel, face.DetectorYuNet)
+
+		require.NoError(t, Db().Create(m).Error)
+		t.Cleanup(func() { Db().Delete(m) })
+
+		return m
+	}
+	t.Run("AdmitsAnOrdinaryMarker", func(t *testing.T) {
+		m := newFacelessMarker(t, face.SizeThreshold, 9101)
+
+		require.NoError(t, cluster.MatchMarkers(Faceless))
+
+		found := FindMarker(m.MarkerUID)
+		require.NotNil(t, found)
+		assert.Equal(t, cluster.ID, found.FaceID)
+	})
+	t.Run("RepointsASmallMarkerThatIsAlreadyClustered", func(t *testing.T) {
+		// The merge path calls this to move markers off clusters it is about to purge, so the
+		// size bound must not reach them: one left behind would point at a deleted cluster.
+		m := newFacelessMarker(t, face.SizeThreshold-1, 9104)
+
+		other := NewFace(cluster.SubjUID, SrcAuto, face.Embeddings{cluster.Embedding()}, cluster.EmbedModel)
+		require.NotNil(t, other)
+		other = FirstOrCreateFace(other)
+		require.NotNil(t, other)
+
+		require.NoError(t, m.Update("FaceID", other.ID))
+		require.NoError(t, cluster.MatchMarkers([]string{other.ID}))
+
+		found := FindMarker(m.MarkerUID)
+		require.NotNil(t, found)
+		assert.Equal(t, cluster.ID, found.FaceID, "a clustered marker is re-pointed whatever its size")
+	})
+	t.Run("RefusesAMarkerBelowTheDetectionFloor", func(t *testing.T) {
+		// Only the second detection pass produces one, and it exists to mark a face a crowd
+		// photograph would otherwise lose rather than to name a person from it.
+		m := newFacelessMarker(t, face.SizeThreshold-1, 9102)
+
+		require.NoError(t, cluster.MatchMarkers(Faceless))
+
+		found := FindMarker(m.MarkerUID)
+		require.NotNil(t, found)
+		assert.Empty(t, found.FaceID)
+	})
+}
+
+// TestFace_Reopened pins the discriminator the matcher needs on its way out. Every cluster a
+// matching pass reads started out unmatched, so a NULL timestamp cannot say whether a collision
+// reopened one during the pass - the flag can, and stamping a reopened cluster would leave the
+// markers ReviseMatches dropped with nothing to be rematched against.
+func TestFace_Reopened(t *testing.T) {
+	t.Run("Fresh", func(t *testing.T) {
+		m := NewFace("", SrcAuto, face.Embeddings{face.RandomEmbedding()}, face.EmbeddingModelName())
+		require.NotNil(t, m)
+		// NewFace computes the id through SetEmbeddings, which reopens by construction.
+		assert.Nil(t, m.MatchedAt)
+	})
+	t.Run("Stamped", func(t *testing.T) {
+		m := &Face{ID: "TESTFACEID", MatchedAt: TimeStamp()}
+		assert.False(t, m.Reopened())
+	})
+	t.Run("Reopen", func(t *testing.T) {
+		m := &Face{ID: "TESTFACEID", MatchedAt: TimeStamp()}
+		m.reopen()
+
+		assert.True(t, m.Reopened())
+		assert.Nil(t, m.MatchedAt, "reopening clears the timestamp as well as raising the flag")
+	})
+	t.Run("SurvivesACopy", func(t *testing.T) {
+		// The matcher reopens through a pointer into the slice and reads the flag back from a
+		// copy of the same element, so the flag has to travel with the value.
+		faces := Faces{{ID: "TESTFACEID", MatchedAt: TimeStamp()}}
+		(&faces[0]).reopen()
+
+		for _, f := range faces {
+			assert.True(t, f.Reopened())
+		}
+	})
+	t.Run("NilFace", func(t *testing.T) {
+		assert.False(t, (*Face)(nil).Reopened())
+	})
+}

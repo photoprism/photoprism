@@ -50,6 +50,15 @@ func (e *oneHotEmbedder) Run(image.Image) face.Embeddings {
 // Close releases the test embedder.
 func (e *oneHotEmbedder) Close() error { return nil }
 
+// alignedEmbedder stands in for a model that consumes landmarks, which is what makes the
+// detector that placed them part of what a marker's vector depends on.
+type alignedEmbedder struct {
+	oneHotEmbedder
+}
+
+// Aligned reports that this embedder needs an aligned crop.
+func (e *alignedEmbedder) Aligned() bool { return true }
+
 // sameFaceEmbedder returns one person's faces as a loose group: about 0.73 apart from each
 // other, so a single-sample cluster cannot reach them, and about 0.46 from their common
 // centroid, so a cluster holding all of them can. That gap is what the sample set buys, and
@@ -199,7 +208,7 @@ func addMigrateTestMarker(t *testing.T, fileUID, subjSrc, name string) *entity.M
 		MarkerType:     entity.MarkerFace,
 		MarkerSrc:      entity.SrcImage,
 		Size:           100,
-		Score:          50,
+		Score:          face.ClusterScore("") + 10,
 		X:              0,
 		Y:              0,
 		W:              1,
@@ -245,19 +254,74 @@ func countFaceRows(t *testing.T) (n int64) {
 
 func TestFinalizeRefused(t *testing.T) {
 	t.Run("NothingAttempted", func(t *testing.T) {
-		assert.Empty(t, finalizeRefused(0, 0))
+		assert.Empty(t, finalizeRefused(FacesMigrateResult{}))
 	})
 	t.Run("AllFailed", func(t *testing.T) {
-		assert.Contains(t, finalizeRefused(0, 15), "none of 15")
+		assert.Contains(t, finalizeRefused(FacesMigrateResult{Failed: 15}), "none of 15")
 	})
 	t.Run("AboveRatio", func(t *testing.T) {
-		assert.Contains(t, finalizeRefused(1, 9), "9 of 10")
+		assert.Contains(t, finalizeRefused(FacesMigrateResult{Migrated: 1, Failed: 9, AttemptedClusterable: 10, FailedClusterable: 9}), "9 of 10")
 	})
 	t.Run("WithinRatio", func(t *testing.T) {
-		assert.Empty(t, finalizeRefused(99, 1))
+		assert.Empty(t, finalizeRefused(FacesMigrateResult{Migrated: 99, Failed: 1, AttemptedClusterable: 100, FailedClusterable: 1}))
 	})
 	t.Run("NoFailures", func(t *testing.T) {
-		assert.Empty(t, finalizeRefused(10, 0))
+		assert.Empty(t, finalizeRefused(FacesMigrateResult{Migrated: 10}))
+	})
+	t.Run("StorageOutageOnALibraryWithFewClusterableMarkers", func(t *testing.T) {
+		// The numerator counts clusterable failures, so the denominator has to count clusterable
+		// attempts. Dividing by every attempted marker made the bound unreachable whenever the
+		// clusterable share was under it - here 7 % - so a total outage finalized and blanked
+		// every failed vector, which is the case the guard was written for.
+		reason := finalizeRefused(FacesMigrateResult{
+			Migrated:             10000,
+			Failed:               190000,
+			Unreadable:           190000,
+			AttemptedClusterable: 14000,
+			FailedClusterable:    13300,
+		})
+
+		assert.Contains(t, reason, "could not be re-embedded")
+		assert.Contains(t, reason, "their file is missing or unreadable")
+	})
+	t.Run("NothingClusterableFallsBackToEveryMarker", func(t *testing.T) {
+		// A library with no clusterable markers has no population to measure, so the bound must
+		// fall back rather than pass by default - which is also what stops FACE_CLUSTER_SIZE
+		// or FACE_CLUSTER_SCORE from switching the guard off.
+		assert.NotEmpty(t, finalizeRefused(FacesMigrateResult{Migrated: 1, Failed: 99}))
+		assert.Empty(t, finalizeRefused(FacesMigrateResult{Migrated: 99, Failed: 1}))
+	})
+	t.Run("FailuresBelowTheClusteringBars", func(t *testing.T) {
+		// Most of what a detector change fails to re-find is too small or too low-scoring to
+		// seed or join a cluster, so its vector changes nothing. Counting it refused two of
+		// three real libraries over a loss the library could not have used.
+		assert.Empty(t, finalizeRefused(FacesMigrateResult{Migrated: 41063, Failed: 7993, AttemptedClusterable: 41272, FailedClusterable: 209}))
+	})
+	t.Run("NamesTheDetectorWhenNoFileFailed", func(t *testing.T) {
+		reason := finalizeRefused(FacesMigrateResult{Migrated: 1, Failed: 9, AttemptedClusterable: 10, FailedClusterable: 9})
+		assert.Contains(t, reason, "the detector did not find their face again")
+		assert.NotContains(t, reason, "unreadable")
+	})
+	t.Run("NamesStorageWhenEveryFileFailed", func(t *testing.T) {
+		reason := finalizeRefused(FacesMigrateResult{Migrated: 1, Failed: 9, Unreadable: 9, AttemptedClusterable: 10, FailedClusterable: 9})
+		assert.Contains(t, reason, "their file is missing or unreadable")
+		assert.NotContains(t, reason, "did not find")
+	})
+	t.Run("NamesBoth", func(t *testing.T) {
+		reason := finalizeRefused(FacesMigrateResult{Migrated: 1, Failed: 9, Unreadable: 4, AttemptedClusterable: 10, FailedClusterable: 9})
+		assert.Contains(t, reason, "5 because the detector did not find their face again")
+		assert.Contains(t, reason, "4 because their file is missing or unreadable")
+	})
+}
+
+func TestMigrationFailureCause(t *testing.T) {
+	t.Run("NoFailures", func(t *testing.T) {
+		assert.Empty(t, migrationFailureCause(FacesMigrateResult{Migrated: 10}))
+	})
+	t.Run("MoreUnreadableThanFailed", func(t *testing.T) {
+		// Cannot happen, but the subtraction would report a negative count if it did.
+		assert.Contains(t, migrationFailureCause(FacesMigrateResult{Failed: 2, Unreadable: 5}),
+			"their file is missing or unreadable")
 	})
 }
 
@@ -445,6 +509,46 @@ func TestFaces_migrate(t *testing.T) {
 		stored := entity.Marker{}
 		require.NoError(t, entity.UnscopedDb().First(&stored, "marker_uid = ?", m.MarkerUID).Error)
 		assert.NotEmpty(t, stored.EmbeddingsJSON)
+	})
+	t.Run("DetectorChangeKeepsUnfoundVectors", func(t *testing.T) {
+		c := newMigrateTestConfig(t, "migratedetector")
+		w := NewFaces(c)
+
+		detector := face.ActiveDetector()
+		require.NotEmpty(t, detector)
+		require.NotEqual(t, face.DetectorNone, detector, "the detector decides which crops are stale")
+
+		f := addMigrateTestFile(t, c, "6666666666666666666666666666666666666666", true)
+		recrop := addMigrateTestMarker(t, f.FileUID, entity.SrcManual, "Jane Doe")
+		stale := addMigrateTestMarker(t, f.FileUID, entity.SrcManual, "John Doe")
+
+		// The first marker already holds a target-model vector and only needs a new crop; the
+		// second holds one no run can compare. Detection finds neither in a blank thumbnail,
+		// which is what tells them apart: only the second has nothing left to keep.
+		require.NoError(t, entity.UnscopedDb().Model(&entity.Marker{}).
+			Where("marker_uid = ?", recrop.MarkerUID).
+			UpdateColumns(entity.Values{"embed_model": face.ModelFaceNet, "detect_model": "some-other-detector"}).Error)
+
+		plan := FacesMigratePlan{Target: face.ModelFaceNet}
+		opt := FacesMigrateOptions{Target: face.ModelFaceNet, Force: true}
+		result, err := w.migrate(context.Background(), plan, &alignedEmbedder{oneHotEmbedder{dims: 4}}, opt, FacesMigrateResult{Target: face.ModelFaceNet})
+
+		// The stale marker could not be re-embedded, so the run is incomplete: a retained
+		// marker must not mask that, since only one of the two kept anything.
+		var incomplete *FacesMigrateIncompleteError
+		require.ErrorAs(t, err, &incomplete)
+		assert.Equal(t, 1, incomplete.Failed)
+		assert.Zero(t, result.Skipped, "a crop another detector placed is not up to date")
+		assert.Equal(t, 1, result.Retained)
+		assert.Equal(t, 1, result.Failed)
+
+		kept := entity.Marker{}
+		require.NoError(t, entity.UnscopedDb().First(&kept, "marker_uid = ?", recrop.MarkerUID).Error)
+		assert.NotEmpty(t, kept.EmbeddingsJSON, "a marker detection cannot find again keeps its usable vector")
+
+		lost := entity.Marker{}
+		require.NoError(t, entity.UnscopedDb().First(&lost, "marker_uid = ?", stale.MarkerUID).Error)
+		assert.Empty(t, lost.EmbeddingsJSON, "a vector of the previous model is cleared whether it could be replaced or not")
 	})
 	t.Run("Idempotent", func(t *testing.T) {
 		c := newMigrateTestConfig(t, "migrateidempotent")

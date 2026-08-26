@@ -602,7 +602,6 @@ dep-upgrade-js: frontend-update
 # Installs every model a development build runs or ships.
 dep-models:
 	scripts/dist/download-models.sh facenet nasnet nsfw sface yunet
-	scripts/dist/download-scrfd.sh
 dep-tensorflow: dep-models
 dep-onnx: dep-models
 dep-acceptance: storage/acceptance

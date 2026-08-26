@@ -247,12 +247,9 @@ func UpdateMissingAlbumEntries() error {
 	mutex.Index.Lock()
 	defer mutex.Index.Unlock()
 
-	switch DbDialect() {
-	default:
-		return UnscopedDb().Exec(`UPDATE photos_albums SET missing = TRUE
+	return UnscopedDb().Exec(`UPDATE photos_albums SET missing = TRUE
             WHERE photo_uid IN (SELECT photo_uid FROM photos WHERE deleted_at IS NOT NULL OR photo_quality < 0)
             OR photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa LEFT JOIN photos p ON pa.photo_uid = p.photo_uid WHERE p.photo_uid IS NULL)`).Error
-	}
 }
 
 // AlbumEntryFound removes the missing flag from album entries.
@@ -261,10 +258,7 @@ func AlbumEntryFound(uid string) error {
 		return fmt.Errorf("invalid photo uid")
 	}
 
-	switch DbDialect() {
-	default:
-		return UnscopedDb().Exec(`UPDATE photos_albums SET missing = FALSE WHERE photo_uid = ?`, uid).Error
-	}
+	return UnscopedDb().Exec(`UPDATE photos_albums SET missing = FALSE WHERE photo_uid = ?`, uid).Error
 }
 
 // AlbumsPhotoUIDs returns up to 100000 photo UIDs that belong to the specified albums.

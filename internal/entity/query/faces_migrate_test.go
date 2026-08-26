@@ -1,6 +1,7 @@
 package query
 
 import (
+	"encoding/json"
 	"path/filepath"
 	"sort"
 	"testing"
@@ -235,13 +236,13 @@ func TestFaceMigrationSubjectMarkers(t *testing.T) {
 	}
 
 	good := face.ClusterSizeThreshold + 10
-	goodScore := face.ClusterScoreThreshold + 10
+	goodScore := face.ClusterScore("") + 10
 
 	subjUID := rnd.GenerateUID('j')
 	manual := newMarker(subjUID, entity.SrcManual, good, goodScore)
 	automatic := newMarker(subjUID, entity.SrcAuto, good, goodScore)
 	tiny := newMarker(subjUID, entity.SrcManual, face.ClusterSizeThreshold-1, goodScore)
-	faint := newMarker(subjUID, entity.SrcManual, good, face.ClusterScoreThreshold-1)
+	faint := newMarker(subjUID, entity.SrcManual, good, face.ClusterScore("")-1)
 	other := newMarker(rnd.GenerateUID('j'), entity.SrcAuto, good, goodScore)
 
 	result, err := FaceMigrationSubjectMarkers(face.ModelFaceNet, subjUID)
@@ -278,7 +279,84 @@ func TestFaceMigrationSubjectMarkers(t *testing.T) {
 		require.NoError(t, countErr)
 		assert.GreaterOrEqual(t, count, int64(2), "the tiny and faint markers are counted")
 
+		// It reports the complement of what seeds a cluster, so the two have to agree on the
+		// bars: a count with its own copy of them describes a set the rebuild does not use.
+		var assigned int
+		require.NoError(t, whereEmbeddingModel(Db().Model(&entity.Marker{}).
+			Where("marker_type = ? AND marker_invalid = 0", entity.MarkerFace).
+			Where("subj_uid <> ''").
+			Where("LENGTH(embeddings_json) > 0"), face.ModelFaceNet).Count(&assigned).Error)
+
+		var seeds int
+		require.NoError(t, whereFaceMigrationSamples(Db().Model(&entity.Marker{}), face.ModelFaceNet).Count(&seeds).Error)
+
+		assert.Equal(t, assigned-seeds, count)
+
 		_, countErr = FaceMigrationLowQualityMarkers("")
+		require.Error(t, countErr)
+	})
+}
+
+func TestFaceMigrationRecropMarkers(t *testing.T) {
+	// Absolute counts depend on what else the library holds, and every fixture marker records
+	// no detector, so the assertions are on what these rows add.
+	beforeYuNet, err := FaceMigrationRecropMarkers(face.ModelFaceNet, face.DetectorYuNet)
+	require.NoError(t, err)
+	beforeSCRFD, err := FaceMigrationRecropMarkers(face.ModelFaceNet, face.DetectorSCRFD)
+	require.NoError(t, err)
+
+	newMarker := func(embedModel, detectModel string, vector []byte) *entity.Marker {
+		m := &entity.Marker{
+			MarkerUID:      rnd.GenerateUID('m'),
+			FileUID:        "fs6sg6bw45bnlqdw",
+			MarkerType:     entity.MarkerFace,
+			MarkerSrc:      entity.SrcImage,
+			EmbedModel:     embedModel,
+			DetectModel:    detectModel,
+			EmbeddingsJSON: vector,
+			W:              0.1,
+			H:              0.1,
+		}
+		require.NoError(t, entity.Db().Create(m).Error)
+		t.Cleanup(func() { entity.UnscopedDb().Delete(m) })
+
+		return m
+	}
+
+	vector := face.Embeddings{face.RandomEmbedding()}.JSON()
+
+	newMarker(face.ModelFaceNet, face.DetectorSCRFD, vector)
+	newMarker(face.ModelFaceNet, "", vector)
+	newMarker(face.ModelFaceNet, face.DetectorYuNet, vector)
+	newMarker(face.ModelFaceNet, face.DetectorYuNet, vector)
+	newMarker(face.ModelSFace, face.DetectorSCRFD, vector)
+	newMarker(face.ModelFaceNet, face.DetectorSCRFD, nil)
+
+	t.Run("CountsTheOtherDetector", func(t *testing.T) {
+		// Only a marker holding a target-model vector that another detector cropped: the
+		// current detector's is not stale, another model's is stale for a different reason,
+		// and one without a vector has nothing to keep.
+		count, countErr := FaceMigrationRecropMarkers(face.ModelFaceNet, face.DetectorYuNet)
+		require.NoError(t, countErr)
+		assert.Equal(t, beforeYuNet+2, count)
+	})
+	t.Run("OtherDetectorInForce", func(t *testing.T) {
+		// The same rows, counted against the other detector: which crop is stale follows the
+		// detector in force rather than naming one of them.
+		count, countErr := FaceMigrationRecropMarkers(face.ModelFaceNet, face.DetectorSCRFD)
+		require.NoError(t, countErr)
+		assert.Equal(t, beforeSCRFD+3, count)
+	})
+	t.Run("NoDetector", func(t *testing.T) {
+		// Detection is off, so there is no detector to disagree with and nothing to re-crop.
+		for _, detector := range []string{"", face.DetectorNone} {
+			count, countErr := FaceMigrationRecropMarkers(face.ModelFaceNet, detector)
+			require.NoError(t, countErr)
+			assert.Zero(t, count, detector)
+		}
+	})
+	t.Run("ModelRequired", func(t *testing.T) {
+		_, countErr := FaceMigrationRecropMarkers("", face.DetectorYuNet)
 		require.Error(t, countErr)
 	})
 }
@@ -298,17 +376,58 @@ func TestSaveFaceMigrationEmbeddings(t *testing.T) {
 	t.Cleanup(func() { entity.UnscopedDb().Delete(marker) })
 
 	embeddings := face.Embeddings{face.RandomEmbedding()}
-	require.NoError(t, SaveFaceMigrationEmbeddings(face.ModelFaceNet, map[string]face.Embeddings{marker.MarkerUID: embeddings}))
+	detectedPoints := json.RawMessage(`[{"name":"eye_l","x":-0.05},{"name":"eye_r","x":0.05}]`)
+	require.NoError(t, SaveFaceMigrationEmbeddings(face.ModelFaceNet, face.DetectorYuNet,
+		map[string]face.Embeddings{marker.MarkerUID: embeddings},
+		map[string]MigrationDetection{marker.MarkerUID: {Landmarks: detectedPoints, Size: 84, Score: 91}}))
 
 	stored, err := MarkerByUID(marker.MarkerUID)
 	require.NoError(t, err)
 	assert.Equal(t, face.ModelFaceNet, stored.EmbedModel)
+	assert.Equal(t, face.DetectorYuNet, stored.DetectModel, "a run that re-detected records the detector it used")
 	assert.Empty(t, stored.FaceID)
 	assert.True(t, stored.Embeddings().One())
 	assert.Len(t, stored.Embeddings()[0], len(embeddings[0]))
+	assert.JSONEq(t, string(detectedPoints), string(stored.LandmarksJSON),
+		"the landmarks the detection placed travel with the vector they produced")
+	// The clustering bars are looked up by detect_model, so a marker relabelled with a new detector
+	// while holding the old one's score would be judged at a calibration it was never scored against.
+	assert.Equal(t, 91, stored.Score, "the score of the detection that produced the vector")
+	assert.Equal(t, 84, stored.Size, "and its size, in the pixels of the same detection thumbnail")
 
-	require.Error(t, SaveFaceMigrationEmbeddings("", nil))
-	require.Error(t, SaveFaceMigrationEmbeddings(face.ModelFaceNet, map[string]face.Embeddings{"": nil}))
+	t.Run("BlankDetectorKeepsProvenance", func(t *testing.T) {
+		// Re-cropping runs no detector, so overwriting either would attribute the crop to one
+		// that never saw the image. The vector has to differ from the one already stored:
+		// MariaDB reports no affected rows for an update that changes nothing.
+		regenerated := face.Embeddings{face.RandomEmbedding()}
+		require.NoError(t, SaveFaceMigrationEmbeddings(face.ModelFaceNet, "", map[string]face.Embeddings{marker.MarkerUID: regenerated}, nil))
+
+		kept, keptErr := MarkerByUID(marker.MarkerUID)
+		require.NoError(t, keptErr)
+		assert.Equal(t, face.DetectorYuNet, kept.DetectModel)
+		assert.JSONEq(t, string(detectedPoints), string(kept.LandmarksJSON))
+		assert.Equal(t, 91, kept.Score, "no detection ran, so nothing may overwrite what one recorded")
+		assert.Equal(t, 84, kept.Size)
+	})
+	t.Run("MalformedLandmarksClearTheColumn", func(t *testing.T) {
+		// The detector and the landmarks are written as a pair. A payload that is not valid JSON
+		// would make the column unreadable, and leaving the previous detector's landmarks beside
+		// a newly recorded one is the divergence the pairing exists to prevent, so it is cleared.
+		regenerated := face.Embeddings{face.RandomEmbedding()}
+		require.NoError(t, SaveFaceMigrationEmbeddings(face.ModelFaceNet, face.DetectorSCRFD,
+			map[string]face.Embeddings{marker.MarkerUID: regenerated},
+			map[string]MigrationDetection{marker.MarkerUID: {Landmarks: json.RawMessage("{"), Size: 60, Score: 55}}))
+
+		kept, keptErr := MarkerByUID(marker.MarkerUID)
+		require.NoError(t, keptErr)
+		assert.Equal(t, face.DetectorSCRFD, kept.DetectModel)
+		assert.Empty(t, kept.LandmarksJSON)
+		assert.Equal(t, 55, kept.Score, "unreadable landmarks do not invalidate what the detection scored")
+		assert.Equal(t, 60, kept.Size)
+	})
+
+	require.Error(t, SaveFaceMigrationEmbeddings("", face.DetectorYuNet, nil, nil))
+	require.Error(t, SaveFaceMigrationEmbeddings(face.ModelFaceNet, face.DetectorYuNet, map[string]face.Embeddings{"": nil}, nil))
 }
 
 func TestFinalizeFaceMigration(t *testing.T) {
@@ -352,6 +471,7 @@ func TestFinalizeFaceMigration(t *testing.T) {
 		SubjUID:        subjectUID,
 		SubjSrc:        entity.SrcAuto,
 		EmbedModel:     face.ModelFaceNet,
+		DetectModel:    face.EngineONNX,
 		EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
 		W:              0.1,
 		H:              0.1,
@@ -365,6 +485,23 @@ func TestFinalizeFaceMigration(t *testing.T) {
 		SubjUID:        subjectUID,
 		SubjSrc:        entity.SrcXmp,
 		EmbedModel:     face.ModelFaceNet,
+		DetectModel:    face.EngineONNX,
+		EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
+		W:              0.1,
+		H:              0.1,
+	}
+	// Caught by the bulk stale-vector predicate rather than the failed-marker batch, which
+	// is a separate statement and would otherwise keep its provenance untested.
+	invalid := entity.Marker{
+		MarkerUID:      rnd.GenerateUID('m'),
+		FileUID:        "file123",
+		MarkerType:     entity.MarkerFace,
+		MarkerName:     "Alice",
+		SubjUID:        subjectUID,
+		SubjSrc:        entity.SrcXmp,
+		MarkerInvalid:  true,
+		EmbedModel:     face.ModelFaceNet,
+		DetectModel:    face.EngineONNX,
 		EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
 		W:              0.1,
 		H:              0.1,
@@ -372,6 +509,7 @@ func TestFinalizeFaceMigration(t *testing.T) {
 	require.NoError(t, tempDb.Create(&manual).Error)
 	require.NoError(t, tempDb.Create(&automatic).Error)
 	require.NoError(t, tempDb.Create(&imported).Error)
+	require.NoError(t, tempDb.Create(&invalid).Error)
 
 	// A cluster from the previous run, so the delete this function is named for has
 	// something to remove rather than passing over an empty table.
@@ -410,6 +548,16 @@ func TestFinalizeFaceMigration(t *testing.T) {
 	assert.Equal(t, "Alice", storedAuto.MarkerName)
 	assert.Equal(t, subjectUID, storedAuto.SubjUID)
 	assert.Empty(t, storedAuto.EmbeddingsJSON)
+	// A blanked vector takes both provenance columns with it: a detector recorded next to
+	// no embedding would claim a crop that no longer exists.
+	assert.Empty(t, storedAuto.DetectModel)
+	assert.Equal(t, face.EngineONNX, storedImported.DetectModel, "a spared vector keeps its detector")
+
+	var storedInvalid entity.Marker
+	require.NoError(t, tempDb.First(&storedInvalid, "marker_uid = ?", invalid.MarkerUID).Error)
+	assert.Empty(t, storedInvalid.EmbeddingsJSON)
+	assert.Empty(t, storedInvalid.EmbedModel)
+	assert.Empty(t, storedInvalid.DetectModel, "the bulk stale update clears provenance too")
 	assert.Equal(t, cluster.ID, storedImported.FaceID)
 	assert.Equal(t, subjectUID, storedImported.SubjUID)
 

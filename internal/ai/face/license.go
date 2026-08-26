@@ -20,7 +20,21 @@ var LicenseEligibleEditions = []string{"ce", "plus"}
 
 // LicenseGated reports whether the model weights have to be enabled explicitly before use.
 func (m *EmbeddingModel) LicenseGated() bool {
-	return m != nil && m.WeightLicense() == LicenseResearchOnly
+	return m != nil && m.WeightLicense() == LicenseNonFree
+}
+
+// WeightLicense returns the license of the detector's pretrained weights.
+func (d *Detector) WeightLicense() string {
+	if d == nil || d.ONNX == nil {
+		return ""
+	}
+
+	return d.ONNX.License
+}
+
+// LicenseGated reports whether the detector weights have to be enabled explicitly before use.
+func (d *Detector) LicenseGated() bool {
+	return d != nil && d.WeightLicense() == LicenseNonFree
 }
 
 // LicenseAccepted reports whether the operator enabled the gated weights.
@@ -44,14 +58,32 @@ func LicenseRefused(name ModelName, edition string) error {
 		return nil
 	}
 
+	return licenseRefused(model.Name, edition)
+}
+
+// DetectorLicenseRefused returns why the specified detector may not be used in the specified
+// edition, or nil when it may. One acceptance covers a publisher rather than a model family,
+// so detection and embedding are gated the same way.
+func DetectorLicenseRefused(name DetectorName, edition string) error {
+	detector := FindDetector(name)
+
+	if !detector.LicenseGated() {
+		return nil
+	}
+
+	return licenseRefused(detector.Name, edition)
+}
+
+// licenseRefused returns why gated weights may not be used in the specified edition, or nil
+// when they may.
+func licenseRefused(name, edition string) error {
 	if !LicenseAccepted() {
 		return fmt.Errorf("the %s weights have to be enabled explicitly, "+
-			"see the model documentation and set %s=1 to use them", model.Name, LicenseAcceptanceVar)
+			"see the model documentation and set %s=1 to use them", name, LicenseAcceptanceVar)
 	}
 
 	if !LicenseEligibleEdition(edition) {
-		return fmt.Errorf("the %s weights are not available in the %s edition",
-			model.Name, clean.Log(edition))
+		return fmt.Errorf("the %s weights are not available in the %s edition", name, clean.Log(edition))
 	}
 
 	return nil

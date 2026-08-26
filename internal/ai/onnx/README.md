@@ -48,4 +48,4 @@ The `github.com/yalue/onnxruntime_go` binding requests the exact C API version o
 
 ### Consumers
 
-- `internal/ai/face` — `EmbeddingModels` describes each embedding model; `DetectorModel` describes the bundled SCRFD detector. What stays in that package is what differs per task: alignment mode, embedding length, distance thresholds, and the detector's decode strategy, strides, and anchor count.
+- `internal/ai/face` — `EmbeddingModels` describes each embedding model and `Detectors` each detector. What stays in that package is what differs per task: alignment mode, embedding length, distance thresholds, and the detector's decode strategy, strides, and anchor count.

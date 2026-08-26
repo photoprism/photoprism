@@ -33,7 +33,7 @@ var OptionsReportSections = []ReportSection{
 	{Start: "PHOTOPRISM_THUMB_LIBRARY", Title: "Preview Images"},
 	{Start: "PHOTOPRISM_JPEG_QUALITY", Title: "Image Quality"},
 	{Start: "PHOTOPRISM_VISION_YAML", Title: "Computer Vision"},
-	{Start: "PHOTOPRISM_FACE_ENGINE", Title: "Face Recognition",
+	{Start: "PHOTOPRISM_FACE_DETECTOR", Title: "Face Recognition",
 		Info: faceFlagsInfo},
 	{Start: "PHOTOPRISM_PID_FILENAME", Title: "Daemon Mode",
 		Info: "If you start the server as a *daemon* in the background, you can additionally specify a filename for the log and the process ID:"},
@@ -59,7 +59,7 @@ var YamlReportSections = []ReportSection{
 	{Start: "ThumbLibrary", Title: "Preview Images"},
 	{Start: "JpegQuality", Title: "Image Quality"},
 	{Start: "VisionYaml", Title: "Computer Vision"},
-	{Start: "FaceEngine", Title: "Face Recognition"},
+	{Start: "FaceDetector", Title: "Face Recognition"},
 	{Start: "PIDFilename", Title: "Daemon Mode",
 		Info: "If you start the server as a *daemon* in the background, you can additionally specify a filename for the log and the process ID:"},
 }

@@ -34,11 +34,13 @@ func TestDetectFaces(t *testing.T) {
 
 	Config = &ConfigValues{Models: Models{{Name: "facenet", Type: ModelTypeFace}}}
 
-	detectorPath, err := filepath.Abs(filepath.Join("..", "..", "..", "assets", "models", "scrfd", face.DefaultONNXModelFilename))
+	modelsPath, err := filepath.Abs(filepath.Join("..", "..", "..", "assets", "models"))
 	require.NoError(t, err)
 
+	detectorPath := face.DefaultDetector().Path(modelsPath)
+
 	if _, statErr := os.Stat(detectorPath); statErr != nil {
-		t.Skipf("faces: skipping, %s is not available", face.DefaultONNXModelFilename)
+		t.Skipf("faces: skipping, %s is not available", filepath.Base(detectorPath))
 	}
 
 	prev := face.UseEngine(nil)
@@ -60,7 +62,7 @@ func TestDetectFaces(t *testing.T) {
 		t.Cleanup(face.UnblockEmbeddings)
 		face.BlockEmbeddings("12 marker(s) use facenet, but this instance is configured for sface")
 
-		result, detectErr := DetectFaces(fileName, 20, false, 0)
+		result, detectErr := DetectFaces(fileName, 20, 0, false, 0)
 
 		require.NoError(t, detectErr)
 
@@ -88,7 +90,7 @@ func TestDetectFaces(t *testing.T) {
 
 		face.BlockEmbeddings("12 marker(s) use sface, but this instance is configured for facenet")
 
-		result, detectErr := DetectFaces(fileName, 20, false, 0)
+		result, detectErr := DetectFaces(fileName, 20, 0, false, 0)
 
 		// An endpoint that was called would fail against a closed port, so no error is what
 		// proves it was not.
@@ -99,14 +101,14 @@ func TestDetectFaces(t *testing.T) {
 		}
 	})
 	t.Run("MissingFilename", func(t *testing.T) {
-		_, detectErr := DetectFaces("", 20, false, 0)
+		_, detectErr := DetectFaces("", 20, 0, false, 0)
 		require.Error(t, detectErr)
 	})
 	t.Run("NoFaceModel", func(t *testing.T) {
 		Config = &ConfigValues{Models: Models{}}
 		t.Cleanup(func() { Config = &ConfigValues{Models: Models{{Name: "facenet", Type: ModelTypeFace}}} })
 
-		_, detectErr := DetectFaces(fileName, 20, false, 0)
+		_, detectErr := DetectFaces(fileName, 20, 0, false, 0)
 		require.Error(t, detectErr)
 	})
 }

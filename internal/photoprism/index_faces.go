@@ -44,7 +44,7 @@ func DetectFaces(jpeg *MediaFile, expected int) (face.Faces, error) {
 		return face.Faces{}, fmt.Errorf("thumbnail %s not found", thumbSize)
 	}
 
-	faces, err := vision.DetectFaces(thumbName, Config().FaceSize(), true, expected)
+	faces, err := vision.DetectFaces(thumbName, Config().FaceSize(), Config().FaceSizeRetry(), true, expected)
 
 	if err != nil {
 		log.Debugf("vision: %s in %s (detect faces)", err, clean.Log(jpeg.BaseName()))

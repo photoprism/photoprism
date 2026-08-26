@@ -116,7 +116,9 @@ func GenerateFaceFixtureVectors() {
 			spec = markerFixtureVector{seed: fixtureSeed(name)}
 		}
 
-		m.SetEmbeddings(face.Embeddings{faceFixtureMarkerEmbedding(spec, centroids)}, model)
+		// No detector is recorded: the fixtures carry the legacy landmark vocabulary, which
+		// predates the ONNX detector and is what a blank provenance value stands for.
+		m.SetEmbeddings(face.Embeddings{faceFixtureMarkerEmbedding(spec, centroids)}, model, "")
 		MarkerFixtures[name] = m
 	}
 
