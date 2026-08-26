@@ -65,7 +65,8 @@ func TestThumbFileName(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.True(t, strings.HasSuffix(r, "testdata/b/c/c/bccfeaa526a36e19b555fd4ca5e8f767d5604289_720x720_fit.jpg"), r)
+		// A sliver of a crop asks for a source no rendition has, so the widest one is used.
+		assert.True(t, strings.HasSuffix(r, "testdata/b/c/c/bccfeaa526a36e19b555fd4ca5e8f767d5604289_1280x1024_fit.jpg"), r)
 	})
 }
 
@@ -102,21 +103,21 @@ func TestFindIdealThumbFileName(t *testing.T) {
 		r := findIdealThumbFileName("2105662d3f8d6e68d9e94280449fbf26ed89xxxx", 500, "path/b")
 		assert.Equal(t, "", r)
 	})
-	t.Run("WidthNum500", func(t *testing.T) {
-		r := findIdealThumbFileName("bccfeaa526a36e19b555fd4ca5e8f767d5604289", 500, "./testdata/b/c/c")
-		assert.True(t, strings.HasSuffix(r, "testdata/b/c/c/bccfeaa526a36e19b555fd4ca5e8f767d5604289_720x720_fit.jpg"), r)
-	})
-	t.Run("WidthNum720", func(t *testing.T) {
-		r := findIdealThumbFileName("bccfeaa526a36e19b555fd4ca5e8f767d5604289", 720, "./testdata/b/c/c")
-		assert.True(t, strings.HasSuffix(r, "testdata/b/c/c/bccfeaa526a36e19b555fd4ca5e8f767d5604289_720x720_fit.jpg"), r)
-	})
-	t.Run("WidthNum800", func(t *testing.T) {
-		r := findIdealThumbFileName("bccfeaa526a36e19b555fd4ca5e8f767d5604289", 800, "./testdata/b/c/c")
-		assert.True(t, strings.HasSuffix(r, "testdata/b/c/c/bccfeaa526a36e19b555fd4ca5e8f767d5604289_720x720_fit.jpg"), r)
-	})
-	t.Run("WidthNum60", func(t *testing.T) {
+	// The renditions belong to a portrait picture, so neither reaches the width its name states:
+	// the one called 720x720 is 479 px wide and the one called 1280x1024 is 681 px wide.
+	const fit720 = "testdata/b/c/c/bccfeaa526a36e19b555fd4ca5e8f767d5604289_720x720_fit.jpg"
+	const fit1280 = "testdata/b/c/c/bccfeaa526a36e19b555fd4ca5e8f767d5604289_1280x1024_fit.jpg"
+	t.Run("SmallestThatCovers", func(t *testing.T) {
 		r := findIdealThumbFileName("bccfeaa526a36e19b555fd4ca5e8f767d5604289", 60, "./testdata/b/c/c")
-		assert.True(t, strings.HasSuffix(r, "testdata/b/c/c/bccfeaa526a36e19b555fd4ca5e8f767d5604289_720x720_fit.jpg"), r)
+		assert.True(t, strings.HasSuffix(r, fit720), r)
+	})
+	t.Run("SkipsARenditionNarrowerThanItsName", func(t *testing.T) {
+		r := findIdealThumbFileName("bccfeaa526a36e19b555fd4ca5e8f767d5604289", 500, "./testdata/b/c/c")
+		assert.True(t, strings.HasSuffix(r, fit1280), r)
+	})
+	t.Run("WidestAvailableWhenNoneCovers", func(t *testing.T) {
+		r := findIdealThumbFileName("bccfeaa526a36e19b555fd4ca5e8f767d5604289", 4000, "./testdata/b/c/c")
+		assert.True(t, strings.HasSuffix(r, fit1280), r)
 	})
 }
 
