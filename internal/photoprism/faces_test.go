@@ -12,6 +12,25 @@ import (
 	"github.com/photoprism/photoprism/internal/mutex"
 )
 
+// isolatedTestFaces returns a worker on a database of its own, so one test's clusters cannot
+// reach another's. The fixtures are still seeded, so tests scope their assertions by subject.
+func isolatedTestFaces(t *testing.T, name string) *Faces {
+	t.Helper()
+
+	oldCfg := Config()
+	c := config.NewMinimalTestConfigWithDb(name, t.TempDir())
+
+	t.Cleanup(func() {
+		_ = c.CloseDb()
+
+		if oldCfg != nil {
+			oldCfg.RegisterDb()
+		}
+	})
+
+	return NewFaces(c)
+}
+
 func TestFaces_Start(t *testing.T) {
 	c := config.TestConfig()
 

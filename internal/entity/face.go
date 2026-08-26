@@ -120,6 +120,13 @@ func (m *Face) SetEmbeddings(embeddings face.Embeddings, model face.ModelName) (
 	// Limit sample radius to reduce false positives.
 	m.SampleRadius = face.ClampSampleRadius(m.SampleRadius)
 
+	// An extent of zero is unmeasurable rather than tight, and would leave the cluster narrower
+	// than any real pair of one person's faces. Duplicate samples measure zero too, so this also
+	// gives a cluster of duplicates the reach its near-duplicate equivalent would have.
+	if m.SampleRadius <= 0 {
+		m.SampleRadius = face.ClusterRadius
+	}
+
 	m.EmbeddingJSON, err = json.Marshal(m.embedding)
 
 	if err != nil {
