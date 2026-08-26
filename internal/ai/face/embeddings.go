@@ -241,7 +241,8 @@ func EmbeddingsMidpoint(embeddings Embeddings) (result Embedding, radius float64
 }
 
 // Radius returns the distance from the midpoint of the embeddings to the one furthest from it,
-// before ClampSampleRadius bounds what a cluster built from them would store.
+// before ClampSampleRadius bounds what a cluster built from them would store. It normalizes its
+// receiver in place, as EmbeddingsMidpoint does, so it is not the pure accessor it reads as.
 func (embeddings Embeddings) Radius() (radius float64) {
 	_, radius, _ = EmbeddingsMidpoint(embeddings)
 	return radius

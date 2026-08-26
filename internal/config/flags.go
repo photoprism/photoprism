@@ -1440,7 +1440,7 @@ var Flags = CliFlags{
 		}, DocDefault: faceModelDocDefault(func(m *face.EmbeddingModel) float64 { return m.MatchDist })}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-match-margin",
-			Usage:   "minimum `DISTANCE` by which the nearest cluster must beat the runner-up, leaving a face between two people unassigned instead of guessing, -1 disables the check",
+			Usage:   "minimum `DISTANCE` by which the nearest cluster must beat the runner-up, leaving a face between two people unassigned instead of guessing, 0 reads as unset and -1 disables the check",
 			EnvVars: EnvVars("FACE_MATCH_MARGIN"),
 		}, DocDefault: faceDocDefault(face.MatchMarginDefault)}, {
 		Flag: &cli.Float64Flag{

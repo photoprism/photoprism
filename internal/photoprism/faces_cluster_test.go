@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/vector/alg"
 )
 
 // baseEmbedder holds the embedder that the package test config installed.
@@ -284,6 +285,14 @@ func TestChainFixture(t *testing.T) {
 	assert.Less(t, groupA.Dist(bridge[0]), face.ClusterDist)
 	assert.Less(t, bridge[0].Dist(bridge[1]), face.ClusterDist)
 	assert.Less(t, groupB.Dist(bridge[1]), face.ClusterDist)
+
+	// Run the clusterer rather than inferring the outcome from those distances. If the fixture
+	// ever stops chaining, every split test below would pass by measuring nothing.
+	c, err := alg.DBSCAN(face.ClusterCore, face.ClusterDist, 1, alg.EuclideanDist)
+	require.NoError(t, err)
+	require.NoError(t, c.Learn(chained.Float64()))
+	require.Len(t, c.Sizes(), 1, "the bridged pair must chain into one group")
+	assert.Equal(t, len(chained), c.Sizes()[0], "and that group must hold both people")
 }
 
 // TestSplitWideClusters covers the width check DBSCAN itself cannot make: it bounds the distance
@@ -293,6 +302,8 @@ func TestSplitWideClusters(t *testing.T) {
 	// The parts have to be judged against the shipped SFace distances rather than whatever the
 	// package configured last, or the fixture would measure a different question.
 	setFaceThresholds(t, 0.85, 0.60, 0.35)
+
+	w := NewFaces(config.TestConfig())
 
 	partOf := func(t *testing.T, parts []face.Embeddings, embeddings face.Embeddings, group []int) map[int]map[int]int {
 		t.Helper()
@@ -323,7 +334,7 @@ func TestSplitWideClusters(t *testing.T) {
 	t.Run("PassesThroughAGroupThatFits", func(t *testing.T) {
 		groupA, _, _ := chainFixture()
 
-		parts := splitWideClusters(groupA, face.ClusterDist, 1)
+		parts := w.splitWideClusters(groupA, face.ClusterDist, 1)
 
 		require.Len(t, parts, 1, "a group that already fits must not be re-clustered")
 		assert.Len(t, parts[0], len(groupA))
@@ -331,7 +342,7 @@ func TestSplitWideClusters(t *testing.T) {
 	t.Run("SplitsAChainedGroup", func(t *testing.T) {
 		embeddings, group := chainedFixture()
 
-		parts := splitWideClusters(embeddings, face.ClusterDist, 1)
+		parts := w.splitWideClusters(embeddings, face.ClusterDist, 1)
 
 		require.GreaterOrEqual(t, len(parts), 2, "a chained group must be separated")
 
@@ -355,7 +366,7 @@ func TestSplitWideClusters(t *testing.T) {
 		hook := test.NewGlobal()
 		t.Cleanup(hook.Reset)
 
-		parts := splitWideClusters(embeddings, face.ClusterDist, 1)
+		parts := w.splitWideClusters(embeddings, face.ClusterDist, 1)
 
 		for _, part := range parts {
 			assert.True(t, face.ClusterFits(part.Radius()))
@@ -364,7 +375,7 @@ func TestSplitWideClusters(t *testing.T) {
 		var warned bool
 
 		for _, entry := range hook.AllEntries() {
-			if entry.Level == logrus.WarnLevel && strings.Contains(entry.Message, "stays wider than") {
+			if entry.Level == logrus.WarnLevel && strings.Contains(entry.Message, "stay unclustered") {
 				warned = true
 			}
 		}
@@ -372,7 +383,36 @@ func TestSplitWideClusters(t *testing.T) {
 		assert.True(t, warned, "giving up on a group must be reported rather than silent")
 	})
 	t.Run("Empty", func(t *testing.T) {
-		assert.Empty(t, splitWideClusters(face.Embeddings{}, face.ClusterDist, 1))
+		assert.Empty(t, w.splitWideClusters(face.Embeddings{}, face.ClusterDist, 1))
+	})
+}
+
+// TestSplitDist covers how far one round shortens the link distance. The proportional term is what
+// lets a badly chained group converge inside faceClusterSplitRounds, and no fixture reaches it: the
+// chained one is only just too wide, so the flat term wins there.
+func TestSplitDist(t *testing.T) {
+	setFaceThresholds(t, 0.85, 0.60, 0.35)
+
+	accept := face.AcceptDist(face.ClusterRadius)
+	require.InDelta(t, 0.95, accept, 1e-9)
+
+	t.Run("Proportional", func(t *testing.T) {
+		// Twice the accept distance, so the proportional term more than halves the link distance
+		// where the flat one would take four rounds to get there.
+		radius := 2 * accept
+		assert.InDelta(t, face.ClusterDist*accept/radius, splitDist(face.ClusterDist, radius), 1e-9)
+		assert.Less(t, splitDist(face.ClusterDist, radius), face.ClusterDist*faceClusterSplitShrink)
+	})
+	t.Run("FlatWhenBarelyTooWide", func(t *testing.T) {
+		// A group just past its accept distance would otherwise be re-clustered at the distance
+		// that produced it, and every round would return it unchanged.
+		assert.InDelta(t, face.ClusterDist*faceClusterSplitShrink, splitDist(face.ClusterDist, accept+0.001), 1e-9)
+	})
+	t.Run("AlwaysMakesProgress", func(t *testing.T) {
+		for _, radius := range []float64{accept + 1e-9, 1.0, 1.3, 1.99} {
+			assert.Less(t, splitDist(face.ClusterDist, radius), face.ClusterDist, "radius %f", radius)
+			assert.Positive(t, splitDist(face.ClusterDist, radius), "radius %f", radius)
+		}
 	})
 }
 

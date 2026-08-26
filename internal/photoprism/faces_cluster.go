@@ -70,7 +70,7 @@ type faceClusterPart struct {
 // DBSCAN bounds the distance to a neighbor rather than the width of the result, so a line of faces
 // between two people chains both into one group that is then named as whoever is recognized in it -
 // which Face.ResolveCollision cannot see while the group is anonymous. One that fits is untouched.
-func splitWideClusters(cluster face.Embeddings, dist float64, workers int) []face.Embeddings {
+func (w *Faces) splitWideClusters(cluster face.Embeddings, dist float64, workers int) []face.Embeddings {
 	result := make([]face.Embeddings, 0, 1)
 	queue := []faceClusterPart{{embeddings: cluster, dist: dist}}
 
@@ -89,9 +89,15 @@ func splitWideClusters(cluster face.Embeddings, dist float64, workers int) []fac
 			continue
 		}
 
+		// A round costs a full pass over the group, so a canceled worker must not have to wait
+		// out the remaining ones.
+		if w.Canceled() {
+			log.Debugf("faces: stopped splitting a group of %d samples", len(part.embeddings))
+			return result
+		}
+
 		if part.round >= faceClusterSplitRounds {
-			log.Warnf("faces: skipped a group of %s that stays wider than %f at a link distance of %f",
-				english.Plural(len(part.embeddings), "sample", "samples"), radius, part.dist)
+			w.reportWideCluster(len(part.embeddings), radius, part.dist)
 			continue
 		}
 
@@ -113,13 +119,35 @@ func splitWideClusters(cluster face.Embeddings, dist float64, workers int) []fac
 	return result
 }
 
-// splitCluster re-clusters one group at a link distance shortened in proportion to how far past its
-// accept distance it reaches, so a badly chained group converges in as few rounds as a marginal one.
-// Points left below the core size stay unclustered, which a later pass can still pick up.
-func splitCluster(part faceClusterPart, radius float64, workers int) ([]faceClusterPart, error) {
-	dist := min(part.dist*face.AcceptDist(radius)/radius, part.dist*faceClusterSplitShrink)
+// reportWideCluster states that a group could not be separated into clusters that accept their own
+// members, and what that cost. Reported once per size, because the markers keep no record of having
+// been examined, so every later pass reaches the same group and reaches the same conclusion.
+func (w *Faces) reportWideCluster(samples int, radius, dist float64) {
+	if !w.reportOnce("cluster-wide", samples) {
+		return
+	}
 
-	c, err := alg.DBSCAN(face.ClusterCore, dist, workers, alg.EuclideanDist)
+	log.Warnf("faces: %s stay unclustered, still %f wide at a link distance of %f - lower face-cluster-dist to separate them",
+		english.Plural(samples, "sample", "samples"), radius, dist)
+}
+
+// splitDist returns the link distance the next round uses. It is shortened in proportion to how far
+// past its accept distance the group reaches, so a badly chained group converges in as few rounds as
+// a marginal one, and by faceClusterSplitShrink at least, so a round always makes progress.
+func splitDist(dist, radius float64) float64 {
+	return min(dist*face.AcceptDist(radius)/radius, dist*faceClusterSplitShrink)
+}
+
+// splitCluster re-clusters one group at a shorter link distance. Points left below the core size
+// stay unclustered, which a later pass can still pick up.
+func splitCluster(part faceClusterPart, radius float64, workers int) ([]faceClusterPart, error) {
+	dist := splitDist(part.dist, radius)
+
+	// The same progress reporting the pass that produced the group uses: a round is a full pass
+	// over it, which on a large library is minutes of silence otherwise.
+	c, err := alg.DBSCANWithProgress(face.ClusterCore, dist, workers, alg.EuclideanDist, 15*time.Minute, func(done, total int) {
+		log.Infof("cluster: splitting %d of %d", done, total)
+	})
 
 	if err != nil {
 		return nil, err
@@ -233,7 +261,7 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 				start = time.Now()
 			}
 
-			for _, part := range splitWideClusters(cluster, face.ClusterDist, w.conf.IndexWorkers()) {
+			for _, part := range w.splitWideClusters(cluster, face.ClusterDist, w.conf.IndexWorkers()) {
 				if f := entity.NewFace("", entity.SrcAuto, part, current); f == nil || f.ID == "" {
 					log.Errorf("faces: skipped cluster that could not be created")
 				} else if f.SkipMatching() {
