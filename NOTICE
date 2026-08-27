@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2026-08-24
+Date generated: 2026-08-27
 
 ================================================================================
 
@@ -6730,8 +6730,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 --------------------------------------------------------------------------------
 
 Package: github.com/sirupsen/logrus
-Version: v1.10.1
-License: MIT (https://github.com/sirupsen/logrus/blob/v1.10.1/LICENSE)
+Version: v1.10.2
+License: MIT (https://github.com/sirupsen/logrus/blob/v1.10.2/LICENSE)
 
 The MIT License (MIT)
 
