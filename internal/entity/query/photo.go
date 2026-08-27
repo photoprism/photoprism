@@ -291,11 +291,17 @@ func photoPathMaxDates() (photoPathDates map[string]time.Time, err error) {
 				log.Errorf("photo: dialect %s is not supported", entity.DbDialect())
 				return photoPathDates, fmt.Errorf("photo: dialect %s is not supported", entity.DbDialect())
 			}
-			if takenMax, err = time.Parse(parseFormat, *photoPath.TakenMax); err != nil {
-				log.Errorf("photo: get photo dates unable to parse %s (%v)", *photoPath.TakenMax, err)
+			// Parsed into its own error, because err is the named return: assigning to it here
+			// aborts the caller's whole date refresh on a row this loop deliberately skips.
+			parsed, parseErr := time.Parse(parseFormat, *photoPath.TakenMax)
+
+			if parseErr != nil {
+				log.Errorf("photo: get photo dates unable to parse %s (%v)", *photoPath.TakenMax, parseErr)
 				// Don't abort, as the MAX(DATE(taken_at_local)) has already forced the data into a date within Go's limitations, so this shouldn't happen.
 				continue
 			}
+
+			takenMax = parsed
 			photoPathDates[photoPath.PhotoPath] = takenMax
 		}
 	}
