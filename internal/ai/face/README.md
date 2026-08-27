@@ -312,6 +312,20 @@ Recovery steps:
 - `make dep-models` (or `scripts/dist/download-models.sh facenet`)
 - Re-run `go test ./internal/ai/face -run TestNet -count=1`
 
+### Resetting Face Recognition
+
+`photoprism faces reset` has three scopes, and what separates them is how much has to be recomputed afterwards. All three prompt for confirmation.
+
+| Command               | `markers`                                                      | `faces`                 | `subjects`                                 | To recover                         |
+|:----------------------|:---------------------------------------------------------------|:------------------------|:-------------------------------------------|:-----------------------------------|
+| `faces reset`         | clears the references of markers whose `subj_src` is automatic | deletes `face_src = ''` | deletes unreferenced `subj_src = 'marker'` | `faces update`                     |
+| `faces reset --all`   | clears the references of **every** face marker                 | deletes all clusters    | same                                       | `faces update`                     |
+| `faces reset --force` | **deletes** every face marker                                  | deletes all clusters    | deletes every person                       | `faces index`, then `faces update` |
+
+The references cleared are `marker_name`, `subj_uid`, `subj_src`, `face_id`, `face_dist` and `matched_at`. Geometry, `size`, `score`, `thumb` and `embeddings_json` are left alone by the first two, which is what lets clustering run again without decoding a single file - the reason `--all` exists is that repeated A/B runs otherwise inherit whatever the previous round asserted.
+
+⚠ **`--all` destroys hand-verified ground truth.** A name a person assigned is recorded in the marker columns and nowhere else, so cluster-purity measurements that count hand-named identities must export them first. `--force` additionally discards detection, so it costs a full re-index. The two cannot be combined, because they name different outcomes for the markers table.
+
 ### Configuration Summary
 
 | Setting                 | Default                                 | Description                                                                                                                                                                                                                                   |

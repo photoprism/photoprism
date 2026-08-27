@@ -177,6 +177,15 @@ func RemoveAutoFaceClusters() (removed int, err error) {
 	return int(res.RowsAffected), res.Error
 }
 
+// RemoveAllFaceClusters removes every face cluster from the index, whatever created it. Unfiltered
+// rather than a list of known sources, because a cluster inherits the source of the marker that
+// created it, so the column holds whatever sources the markers table does.
+func RemoveAllFaceClusters() (removed int, err error) {
+	res := UnscopedDb().Delete(entity.Face{})
+
+	return int(res.RowsAffected), res.Error
+}
+
 // FaceClusterGates counts the face markers automatic clustering could use, with each bar that can
 // exclude one applied on its own and then together, so a report can name the gate that holds.
 //

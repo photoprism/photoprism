@@ -932,3 +932,35 @@ func TestRetainedFaceIDs(t *testing.T) {
 		assert.Empty(t, result)
 	})
 }
+
+// TestRemoveAllFaceClusters covers the unfiltered scope, which is what the automatic one leaves
+// behind: the clusters a person or a sidecar created.
+func TestRemoveAllFaceClusters(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	t.Cleanup(entity.ResetTestFixtures)
+
+	var manual int
+
+	require.NoError(t, entity.Db().Model(&entity.Face{}).
+		Where("face_src = ?", entity.SrcManual).Count(&manual).Error)
+	require.Positive(t, manual, "the fixtures must hold a hand-created cluster for this to mean anything")
+
+	if _, err := RemoveAutoFaceClusters(); err != nil {
+		t.Fatal(err)
+	}
+
+	var before int
+	require.NoError(t, entity.Db().Model(&entity.Face{}).Count(&before).Error)
+	assert.Equal(t, manual, before, "the automatic scope must leave the hand-created clusters")
+
+	removed, err := RemoveAllFaceClusters()
+	require.NoError(t, err)
+	assert.Equal(t, manual, removed)
+
+	var after int
+	require.NoError(t, entity.Db().Model(&entity.Face{}).Count(&after).Error)
+	assert.Zero(t, after)
+}

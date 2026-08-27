@@ -30,7 +30,7 @@ func TestFaces_ResetAndReindex_InvalidDetector(t *testing.T) {
 
 	before := faceAndMarkerCount(t)
 
-	err := m.ResetAndReindex("invalid", nil)
+	err := m.ResetAndReindex("invalid", nil, false)
 
 	require.Error(t, err)
 	// The message matters: without it a later failure inside the reset reads as validation.
@@ -67,7 +67,7 @@ func TestFaces_ResetAndReindex_Detect(t *testing.T) {
 	c := config.TestConfig()
 	m := NewFaces(c)
 
-	err := m.ResetAndReindex(face.DetectorAuto, nil)
+	err := m.ResetAndReindex(face.DetectorAuto, nil, false)
 	require.NoError(t, err)
 	require.True(t, called)
 	require.True(t, received.FacesOnly)
@@ -88,8 +88,8 @@ func TestFaces_ResetAndReindex_ResetOnly(t *testing.T) {
 
 	m := NewFaces(config.TestConfig())
 
-	require.NoError(t, m.ResetAndReindex("", nil))
-	require.NoError(t, m.ResetAndReindex(face.DetectorNone, nil))
+	require.NoError(t, m.ResetAndReindex("", nil, false))
+	require.NoError(t, m.ResetAndReindex(face.DetectorNone, nil, false))
 }
 
 // TestFaces_ResetAndReindex_NoDetector pins the order this runs in: a request to regenerate that
@@ -116,9 +116,42 @@ func TestFaces_ResetAndReindex_NoDetector(t *testing.T) {
 
 	before := faceAndMarkerCount(t)
 
-	err := m.ResetAndReindex(face.DetectorYuNet, nil)
+	err := m.ResetAndReindex(face.DetectorYuNet, nil, false)
 
 	require.Error(t, err)
 	require.Contains(t, err.Error(), "cannot be used")
 	assert.Equal(t, before, faceAndMarkerCount(t), "nothing may be removed when the request cannot be met")
+}
+
+// TestFaces_ResetAll covers the scope that returns a library to its pre-recognition state while
+// keeping the markers, which is what makes it usable between clustering runs.
+func TestFaces_ResetAll(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	t.Cleanup(entity.ResetTestFixtures)
+
+	c := config.TestConfig()
+	m := NewFaces(c)
+
+	named := entity.MarkerFixtures.Get("actress-a-1")
+	require.Equal(t, entity.SrcManual, named.SubjSrc)
+
+	require.NoError(t, m.ResetAll())
+
+	var faces int
+	require.NoError(t, entity.Db().Model(&entity.Face{}).Count(&faces).Error)
+	assert.Zero(t, faces, "no cluster of any source may survive")
+
+	var assigned int
+	require.NoError(t, entity.Db().Model(&entity.Marker{}).
+		Where("marker_type = ? AND (subj_uid <> '' OR face_id <> '')", entity.MarkerFace).
+		Count(&assigned).Error)
+	assert.Zero(t, assigned, "no face marker may keep a subject or a cluster")
+
+	var markers int
+	require.NoError(t, entity.Db().Model(&entity.Marker{}).
+		Where("marker_type = ?", entity.MarkerFace).Count(&markers).Error)
+	assert.Positive(t, markers, "the markers themselves must survive, or this costs a reindex")
 }
