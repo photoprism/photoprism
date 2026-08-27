@@ -99,7 +99,6 @@
       icon="mdi-account-plus"
       :text="confirmText"
       :action="$gettext('Create')"
-      confirm-color="primary"
       :confirm-on-enter="false"
       @close="onCancelCreatePerson"
       @confirm="onConfirmCreatePerson"
