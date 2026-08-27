@@ -385,8 +385,8 @@ func (w *Faces) repairDegenerateRadius(fix bool, subjUID string) (repaired int, 
 	// extent gone. The radius written here is the configured model's, so a foreign one is left.
 	stmt = stmt.Where("face_hidden = ?", false).Where("face_kind <= 1")
 
-	if model := face.EmbeddingModelName(); model != "" {
-		stmt = stmt.Where("embed_model = ? OR (embed_model = '' AND ? = ?)", model, model, face.ModelFaceNet)
+	if cond, args := entity.EmbeddingModelCond(face.EmbeddingModelName()); cond != "" {
+		stmt = stmt.Where(cond, args...)
 	}
 
 	if subjUID != "" {

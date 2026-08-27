@@ -624,11 +624,13 @@ func RemovePeopleAndFaces() (err error) {
 // An empty name means the model could not be determined, so nothing is restricted: filtering on it
 // would match the legacy rows alone and exclude every vector a configured model wrote.
 func whereEmbeddingModel(stmt *gorm.DB, model string) *gorm.DB {
-	if model == "" {
+	cond, args := entity.EmbeddingModelCond(model)
+
+	if cond == "" {
 		return stmt
 	}
 
-	return stmt.Where("embed_model = ? OR (embed_model = '' AND ? = ?)", model, model, face.ModelFaceNet)
+	return stmt.Where(cond, args...)
 }
 
 // notEmbeddingModel returns the condition and arguments matching vectors that cannot be

@@ -335,9 +335,11 @@ func (m *Face) ReviseMatches() (revised Markers, err error) {
 // unknown configuration.
 func whereSameEmbeddingSpace(stmt *gorm.DB, model face.ModelName) *gorm.DB {
 	switch model {
-	case "":
-		return stmt.Where("embed_model = ''")
-	case face.ModelFaceNet:
+	case "", face.ModelFaceNet:
+		// A vector with no recorded model is FaceNet's, so the two are one space in both
+		// directions - which is what face.SameEmbeddingSpace reports and ReviseMatches applies
+		// to these same rows. Selecting only the blank ones would leave a legacy cluster unable
+		// to attract the markers a loaded embedder has since stamped.
 		return stmt.Where("embed_model IN (?)", []string{face.ModelFaceNet, ""})
 	default:
 		return stmt.Where("embed_model = ?", model)
