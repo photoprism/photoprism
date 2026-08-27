@@ -267,6 +267,10 @@ func ResetAllFaceMarkerMatches() (removed int64, err error) {
 // resetFaceMarkerMatches clears the subject and face references of the face markers a scope selects.
 // Geometry, embeddings, size and score are left alone, which is what lets a later run re-cluster
 // without decoding a single file.
+//
+// The columns are listed explicitly rather than written through the struct, and a test instance
+// relies on that: a column this package does not name survives a reset, which is how a
+// hand-verified name is kept across repeated re-clustering.
 func resetFaceMarkerMatches(scope *gorm.DB) (removed int64, err error) {
 	res := scope.Model(&entity.Marker{}).
 		Where("marker_type = ?", entity.MarkerFace).
