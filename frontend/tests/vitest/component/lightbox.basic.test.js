@@ -368,6 +368,67 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
     expect(download.visible).toBe(true);
   });
 
+  it("menuActions provides an Information action that toggles the sidebar", () => {
+    const wrapper = mountLightbox();
+    const toggleSidebar = vi.fn();
+    const hideMenu = vi.fn();
+
+    const ctx = {
+      $gettext: VTUConfig.global.mocks.$gettext,
+      $pgettext: VTUConfig.global.mocks.$pgettext,
+      canManageAlbums: false,
+      canArchive: false,
+      canDownload: false,
+      collection: null,
+      context: contexts.Default,
+      model: {},
+      sidebarVisible: false,
+      sidebarButtonRegistered: false,
+      hideCaption: false,
+      toggleSidebar,
+      $refs: {
+        menu: {
+          hide: hideMenu,
+        },
+      },
+    };
+
+    const actions = wrapper.vm.$options.methods.menuActions.call(ctx);
+    const information = actions.find((a) => a?.name === "information");
+
+    expect(information).toBeTruthy();
+    expect(information.visible).toBe(true);
+
+    information.click();
+
+    expect(toggleSidebar).toHaveBeenCalledTimes(1);
+    expect(hideMenu).toHaveBeenCalledTimes(1);
+  });
+
+  it("menuActions hides Information when the dedicated sidebar button is registered", () => {
+    const wrapper = mountLightbox();
+
+    const ctx = {
+      $gettext: VTUConfig.global.mocks.$gettext,
+      $pgettext: VTUConfig.global.mocks.$pgettext,
+      canManageAlbums: false,
+      canArchive: false,
+      canDownload: false,
+      collection: null,
+      context: contexts.Default,
+      model: {},
+      sidebarVisible: false,
+      sidebarButtonRegistered: true,
+      hideCaption: false,
+    };
+
+    const actions = wrapper.vm.$options.methods.menuActions.call(ctx);
+    const information = actions.find((a) => a?.name === "information");
+
+    expect(information).toBeTruthy();
+    expect(information.visible).toBe(false);
+  });
+
   // P1-10 — pause playable media (and any running slideshow) whenever
   // face-marker mode is entered, whether display or draw. Drawing on a
   // moving frame leads to wrong-rectangle saves and Live / Animated
