@@ -59,7 +59,6 @@
                 ></v-text-field>
                 <v-combobox
                   v-else
-                  v-model:search="m.Name"
                   :items="focused === m.ID ? people : noPeople"
                   item-title="Name"
                   item-value="Name"
@@ -77,9 +76,10 @@
                   density="comfortable"
                   class="input-name pa-0 ma-0 text-selectable"
                   @focus="() => onFocusName(m)"
-                  @update:model-value="(person) => onSetPerson(m, person)"
-                  @blur="() => onSetName(m)"
-                  @keyup.enter="() => onSetName(m)"
+                  @update:search="(value) => onNameInput(m, value)"
+                  @update:model-value="(value) => onSelectPerson(m, value)"
+                  @blur="() => onBlurName(m)"
+                  @keyup.enter="() => onSubmitName(m)"
                 >
                 </v-combobox>
               </v-card-actions>
@@ -93,6 +93,17 @@
         </div>
       </div>
     </div>
+
+    <p-confirm-dialog
+      :visible="confirm.visible"
+      icon="mdi-account-plus"
+      :text="confirmText"
+      :action="$gettext('Create')"
+      confirm-color="primary"
+      :confirm-on-enter="false"
+      @close="onCancelCreatePerson"
+      @confirm="onConfirmCreatePerson"
+    ></p-confirm-dialog>
   </div>
 </template>
 
@@ -137,6 +148,9 @@ export default {
       // Stable empty list handed to every combobox that is not being edited.
       noPeople: [],
       focused: "",
+      // Typed name per face id. Kept out of the model so a keystroke cannot become a saved name.
+      nameInput: {},
+      confirm: { visible: false, model: null, name: "" },
       rules,
       SubjectMaxLength,
       subscriptions: [],
@@ -180,6 +194,9 @@ export default {
   computed: {
     readonly: function () {
       return this.busy || this.loading;
+    },
+    confirmText: function () {
+      return this.$gettextInterpolate(this.$gettext("Create a new person named %{name}?"), { name: this.confirm.name });
     },
   },
   watch: {
@@ -632,14 +649,112 @@ export default {
         }
       });
     },
-    onSetPerson(model, person) {
-      if (typeof person === "object" && model?.ID && person?.UID && person?.Name) {
-        model.Name = person.Name;
-        model.SubjUID = person.UID;
-        this.setName(model, person.Name);
+    // onNameInput records what was typed without touching the model. The committed name and the
+    // search text are separate values: binding them together made every keystroke a saved name.
+    //
+    // Observed rather than bound, and the combobox keeps its own model too. Driving either from
+    // here puts a Vue render between the keystroke and the widget's state, which the suggestion
+    // filter reads - fast input then filters against a stale value.
+    onNameInput(model, value) {
+      if (!model?.ID) {
+        return;
       }
 
-      return true;
+      this.nameInput[model.ID] = typeof value === "string" ? value : "";
+    },
+    // onSelectPerson commits a person chosen from the suggestion list.
+    //
+    // Free text reaches this event too - the combobox reports every keystroke through it, which is
+    // how v-model on a combobox yields the typed string live - and is ignored here, because typing
+    // is not a commit. Enter and blur are what submit it.
+    onSelectPerson(model, value) {
+      if (this.busy || !model?.ID) {
+        return;
+      }
+
+      if (value && typeof value === "object" && value.UID && value.Name) {
+        return this.commitPerson(model, value.Name, value.UID);
+      }
+    },
+    // onSubmitName commits the typed name, asking first when it names nobody.
+    //
+    // Enter is also the combobox's key for accepting a highlighted suggestion. That path commits
+    // through onSelectPerson on keydown and sets busy synchronously, so by the time this runs on
+    // keyup the selection has already won and the search text cannot be saved in its place.
+    onSubmitName(model) {
+      return this.resolveName(model, true);
+    },
+    // onBlurName commits the typed name only where it already names someone. Leaving a field is
+    // not intent, so an unknown name is neither saved nor thrown away: it stays in the field.
+    onBlurName(model) {
+      return this.resolveName(model, false);
+    },
+    // resolveName looks the typed name up and commits it, prompting for an unknown name only when
+    // the user submitted it. A mistyped name here is not a typo they can undo - it becomes a second
+    // identity, and the matcher then narrows both clusters to keep the two apart.
+    resolveName(model, prompt) {
+      if (this.busy || !model?.ID || model.SubjUID) {
+        return;
+      }
+
+      const name = (this.nameInput[model.ID] ? this.nameInput[model.ID] : "").trim();
+
+      if (name === "") {
+        return;
+      }
+
+      // Resolved through the cache rather than this.people, which is empty until the suggestions
+      // load - the window in which a typed name misses a person who does exist.
+      return typeaheadCache
+        .getPeople()
+        .then((people) => {
+          const found = Array.isArray(people) ? people.find((person) => person.Name && person.Name.localeCompare(name, "en", { sensitivity: "base" }) === 0) : null;
+
+          if (found) {
+            return this.commitPerson(model, found.Name, found.UID);
+          }
+
+          // Anything that named this face while the lookup was in flight settles it.
+          if (!prompt || this.busy || model.SubjUID) {
+            return;
+          }
+
+          this.confirm.model = model;
+          this.confirm.name = name;
+          this.confirm.visible = true;
+        })
+        .catch(() => {});
+    },
+    // commitPerson writes a name onto the model and saves it. The only path that does.
+    commitPerson(model, name, subjUID) {
+      if (!model || !name) {
+        return;
+      }
+
+      // Vuetify also commits free text when the field loses focus, so a click on a suggestion can
+      // raise the prompt for the half-typed text as well. Whichever lands first, the choice the
+      // user actually made wins and the prompt goes away.
+      if (this.confirm.visible && this.confirm.model === model) {
+        this.onCancelCreatePerson();
+      }
+
+      model.Name = name;
+      model.SubjUID = subjUID ? subjUID : "";
+
+      return this.setName(model, name);
+    },
+    onCancelCreatePerson() {
+      this.confirm.visible = false;
+      this.confirm.model = null;
+      this.confirm.name = "";
+    },
+    onConfirmCreatePerson() {
+      const model = this.confirm.model;
+      const name = this.confirm.name;
+
+      this.onCancelCreatePerson();
+
+      this.commitPerson(model, name, "");
     },
     onSetName(model) {
       if (this.busy || !model) {
@@ -683,11 +798,23 @@ export default {
 
       // Face.setName() seeds the shared people cache, and the name combobox
       // reloads suggestions on focus, so no explicit refresh is needed here.
-      return model.setName(trimmed).finally(() => {
-        this.$notify.unblockUI();
-        this.busy = false;
-        this.changeFaceCount(-1);
-      });
+      return model
+        .setName(trimmed)
+        .then(() => {
+          // Acknowledged where it happens. The People views are eventually consistent - a new
+          // person stays off Recognized until subject counts are refreshed - so a user who reads
+          // that list for confirmation is told a name took effect minutes after it did.
+          if (model.ID) {
+            delete this.nameInput[model.ID];
+          }
+
+          this.$notify.success(this.$gettext("Changes successfully saved"));
+        })
+        .finally(() => {
+          this.$notify.unblockUI();
+          this.busy = false;
+          this.changeFaceCount(-1);
+        });
     },
     changeFaceCount(count) {
       this.faceCount = this.faceCount + count;
