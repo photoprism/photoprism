@@ -63,3 +63,23 @@ func TestClusterScoreCond(t *testing.T) {
 		assert.Equal(t, []any{55}, args)
 	})
 }
+
+func TestEmbeddingModelCond(t *testing.T) {
+	t.Run("NoModel", func(t *testing.T) {
+		cond, args := EmbeddingModelCond("")
+		assert.Empty(t, cond, "an unset model restricts nothing")
+		assert.Empty(t, args)
+	})
+	// A row with no recorded model is FaceNet's, so it has to stay selectable under that name.
+	t.Run("FaceNet", func(t *testing.T) {
+		cond, args := EmbeddingModelCond(face.ModelFaceNet)
+		assert.Equal(t, strings.Count(cond, "?"), len(args))
+		assert.Contains(t, cond, "embed_model = ''")
+		assert.Equal(t, []any{face.ModelFaceNet, face.ModelFaceNet, face.ModelFaceNet}, args)
+	})
+	t.Run("OtherModel", func(t *testing.T) {
+		cond, args := EmbeddingModelCond(face.ModelSFace)
+		assert.Equal(t, strings.Count(cond, "?"), len(args))
+		assert.Equal(t, []any{face.ModelSFace, face.ModelSFace, face.ModelFaceNet}, args)
+	})
+}

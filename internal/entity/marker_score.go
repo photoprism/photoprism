@@ -4,15 +4,17 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // ClusterScoreCond returns the detection score restriction automatic clustering applies, as an SQL
 // fragment and its arguments. Columns are qualified with the given table alias, so the fragment can
 // be nested where another markers row is already in scope; pass an empty alias to leave them bare.
+// The alias is interpolated rather than bound, so it is filtered to a bare identifier first.
 func ClusterScoreCond(alias string, floor int) (string, []any) {
-	score, detector := alias+"score", alias+"detect_model"
+	score, detector := "score", "detect_model"
 
-	if alias != "" {
+	if alias = clean.SqlAlias(alias); alias != "" {
 		score, detector = alias+".score", alias+".detect_model"
 	}
 
@@ -57,4 +59,15 @@ func ClusterScoreCond(alias string, floor int) (string, []any) {
 	args = append(args, face.ClusterScoreThresholdDefault)
 
 	return score + " >= CASE " + detector + bars.String() + " ELSE ? END", args
+}
+
+// EmbeddingModelCond returns the restriction matching vectors that can be compared with the given
+// model, as an SQL fragment and its arguments, or an empty fragment when no model is configured.
+// A row with no recorded model is FaceNet's, which is why the blank case is not simply excluded.
+func EmbeddingModelCond(model string) (string, []any) {
+	if model == "" {
+		return "", nil
+	}
+
+	return "embed_model = ? OR (embed_model = '' AND ? = ?)", []any{model, model, face.ModelFaceNet}
 }
