@@ -2,6 +2,10 @@ package photoprism
 
 import (
 	"fmt"
+	"os"
+	"strconv"
+	"strings"
+	"sync"
 	"time"
 
 	"github.com/dustin/go-humanize/english"
@@ -12,12 +16,11 @@ import (
 	"github.com/photoprism/photoprism/pkg/vector/alg"
 )
 
-// reportClusteringSkipped states that too few markers clear the clustering bars, and names both
-// bars so the gap is actionable.
+// reportClusteringSkipped states that too few markers clear the clustering bars, and names both.
 //
-// A library where nothing ever clusters otherwise looks exactly like one where clustering ran and
-// found nothing: the only trace was a debug line, and the thresholds that exclude a marker are not
-// the ones an operator judges a face by. Reported once per count, because the worker wakes often.
+// A library where nothing ever clusters otherwise reads exactly like one where clustering ran and
+// found nothing, and the bars that exclude a marker are not the ones an operator judges a face by.
+// Reported once per count, because the worker wakes often.
 func (w *Faces) reportClusteringSkipped(eligible, required int) {
 	if w == nil || !w.reportOnce("cluster-skipped", eligible) {
 		return
@@ -50,18 +53,82 @@ func (w *Faces) reportOnce(key string, value int) bool {
 	return true
 }
 
+// Defaults for the limits splitWideClusters works within.
+const (
+	faceClusterSplitRoundsDefault = 6
+	faceClusterSplitShrinkDefault = 0.95
+)
+
+// Environment variables that override the split limits, deliberately not routed through
+// internal/config: they exist to sweep values against a real library without a rebuild, not as
+// options an operator is meant to tune.
+const (
+	envFaceClusterSplitRounds = "PHOTOPRISM_FACES_CLUSTER_SPLIT_ROUNDS"
+	envFaceClusterSplitShrink = "PHOTOPRISM_FACES_CLUSTER_SPLIT_SHRINK"
+)
+
 // faceClusterSplitRounds is how often a group wider than its own accept distance may be re-clustered
-// before it is given up on. A round costs at most what the pass that produced the group did, and the
-// recursion is measured to terminate well before this on a real library.
-const faceClusterSplitRounds = 6
+// before it is given up on. A gentler shrink needs more rounds to reach the same separation, and a
+// group that runs out of them is reported unclustered rather than cut further.
+var faceClusterSplitRounds = faceClusterSplitRoundsDefault
 
 // faceClusterSplitShrink is how much a round shortens the link distance by.
 //
-// Flat rather than proportional to how far past its accept distance the group reaches: width is a
-// chaining property, so a cut sized to the symptom overshoots the distance that separates a group and
-// dissolves it into noise instead. The first step is what decides the outcome, and this value is
-// provisional - see the spec, which records what a run on a real library should watch.
-const faceClusterSplitShrink = 0.90
+// Flat rather than sized to the overrun, since width is a chaining property and a cut sized to the
+// symptom dissolves the group into noise. Gentle because a cut is large in this many dimensions: a
+// tenth off the distance takes the median sample from ten neighbors to two.
+var faceClusterSplitShrink = faceClusterSplitShrinkDefault
+
+// splitOverrideOnce keeps the override report to one line per process.
+var splitOverrideOnce sync.Once
+
+// init applies the split limits set in the environment, keeping the default for anything invalid.
+func init() {
+	faceClusterSplitRounds = splitRoundsEnv(os.Getenv(envFaceClusterSplitRounds), faceClusterSplitRoundsDefault)
+	faceClusterSplitShrink = splitShrinkEnv(os.Getenv(envFaceClusterSplitShrink), faceClusterSplitShrinkDefault)
+}
+
+// splitShrinkEnv returns the shrink factor an environment value sets, or def when it is unset,
+// unparsable, or outside (0, 1). One or more is rejected rather than clamped, because it would spend
+// the whole round budget on passes that repeat the previous one.
+func splitShrinkEnv(v string, def float64) float64 {
+	if v = strings.TrimSpace(v); v == "" {
+		return def
+	} else if f, err := strconv.ParseFloat(v, 64); err == nil && f > 0 && f < 1 {
+		return f
+	}
+
+	return def
+}
+
+// splitRoundsEnv returns the round budget an environment value sets, or def when it is unset,
+// unparsable, or negative. Zero disables splitting, which is the only width limit an anonymous
+// cluster has, so it is a probe rather than a value to leave configured.
+func splitRoundsEnv(v string, def int) int {
+	if v = strings.TrimSpace(v); v == "" {
+		return def
+	} else if n, err := strconv.Atoi(v); err == nil && n >= 0 {
+		return n
+	}
+
+	return def
+}
+
+// reportSplitOverrides states the split limits a run used when they differ from the defaults, so
+// that a captured log names them and two runs of a sweep can be told apart afterwards.
+func reportSplitOverrides() {
+	splitOverrideOnce.Do(func() {
+		if faceClusterSplitShrink != faceClusterSplitShrinkDefault {
+			log.Infof("faces: shortening the link distance by %f per split round instead of %f",
+				faceClusterSplitShrink, faceClusterSplitShrinkDefault)
+		}
+
+		if faceClusterSplitRounds != faceClusterSplitRoundsDefault {
+			log.Infof("faces: splitting a wide group over at most %d rounds instead of %d",
+				faceClusterSplitRounds, faceClusterSplitRoundsDefault)
+		}
+	})
+}
 
 // faceClusterPart is a group awaiting the width check, with the link distance it was formed at.
 type faceClusterPart struct {
@@ -187,6 +254,8 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 	if w.Disabled() {
 		return added, fmt.Errorf("face recognition is disabled")
 	}
+
+	reportSplitOverrides()
 
 	// A model that failed to load leaves no name to filter by, so the marker query would
 	// return vectors from every embedding space in the library in one result set.
