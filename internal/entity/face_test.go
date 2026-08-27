@@ -914,3 +914,124 @@ func TestFace_Reopened(t *testing.T) {
 		assert.False(t, (*Face)(nil).Reopened())
 	})
 }
+
+// TestFace_HasCollision covers the three states that count as a recorded collision, so that a
+// cluster excluded from matching by the ambiguous kind is not read as collision-free.
+func TestFace_HasCollision(t *testing.T) {
+	t.Run("None", func(t *testing.T) {
+		assert.False(t, (&Face{ID: "TESTFACEID", FaceKind: int(face.RegularFace)}).HasCollision())
+	})
+	t.Run("Count", func(t *testing.T) {
+		assert.True(t, (&Face{ID: "TESTFACEID", Collisions: 1}).HasCollision())
+	})
+	t.Run("Radius", func(t *testing.T) {
+		assert.True(t, (&Face{ID: "TESTFACEID", CollisionRadius: 0.64}).HasCollision())
+	})
+	t.Run("AmbiguousKind", func(t *testing.T) {
+		assert.True(t, (&Face{ID: "TESTFACEID", FaceKind: int(face.AmbiguousFace)}).HasCollision())
+	})
+	t.Run("NilFace", func(t *testing.T) {
+		assert.False(t, (*Face)(nil).HasCollision())
+	})
+}
+
+// TestFace_ClearCollision covers the only path that widens a collision radius. Without it the
+// narrowing is permanent, so a cluster stays gated against faces that are known to belong to it.
+func TestFace_ClearCollision(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		m := &Face{
+			ID:              "CLEARCOLLISION0000000000000000A1",
+			SubjUID:         SubjectFixtures.Get("john-doe").SubjUID,
+			FaceSrc:         SrcManual,
+			SampleRadius:    0.3,
+			Samples:         4,
+			Collisions:      2,
+			CollisionRadius: 0.64,
+			FaceKind:        int(face.AmbiguousFace),
+			MatchedAt:       TimeStamp(),
+		}
+
+		require.NoError(t, Db().Create(m).Error)
+		t.Cleanup(func() { UnscopedDb().Delete(&Face{}, "id = ?", m.ID) })
+
+		require.NoError(t, m.ClearCollision())
+
+		assert.Zero(t, m.Collisions)
+		assert.Zero(t, m.CollisionRadius)
+		assert.Equal(t, int(face.RegularFace), m.FaceKind)
+		assert.False(t, m.SkipMatching(), "a cleared cluster has to take part in matching again")
+		assert.Nil(t, m.MatchedAt, "the markers it refused while narrowed must be compared again")
+		assert.True(t, m.Reopened())
+
+		var stored Face
+		require.NoError(t, UnscopedDb().Where("id = ?", m.ID).First(&stored).Error)
+		assert.Zero(t, stored.Collisions)
+		assert.Zero(t, stored.CollisionRadius)
+		assert.Equal(t, int(face.RegularFace), stored.FaceKind)
+		assert.Nil(t, stored.MatchedAt)
+	})
+	t.Run("KeepsAnUnrelatedKind", func(t *testing.T) {
+		// Only the ambiguous kind is set by collision resolution, so no other one is reset here.
+		m := &Face{ID: "CLEARCOLLISION0000000000000000A2", Collisions: 1, FaceKind: 7}
+
+		require.NoError(t, m.ClearCollision())
+		assert.Equal(t, 7, m.FaceKind)
+	})
+	t.Run("NoCollision", func(t *testing.T) {
+		m := &Face{ID: "CLEARCOLLISION0000000000000000A3", MatchedAt: TimeStamp()}
+
+		require.NoError(t, m.ClearCollision())
+		assert.NotNil(t, m.MatchedAt, "a cluster without a collision must not be reopened")
+	})
+	t.Run("InvalidRequest", func(t *testing.T) {
+		assert.Error(t, (&Face{Collisions: 1}).ClearCollision())
+	})
+}
+
+// TestClearSubjectCollisions covers the bulk path used where two subjects turn out to be one.
+func TestClearSubjectCollisions(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		// jane-doe rather than john-doe: that fixture already carries a collision, which would
+		// make the count assertion below pass or fail on fixture state rather than on this code.
+		subjUID := SubjectFixtures.Get("jane-doe").SubjUID
+
+		narrowed := &Face{
+			ID: "CLEARCOLLISION0000000000000000B1", SubjUID: subjUID, FaceSrc: SrcManual,
+			SampleRadius: 0.3, Samples: 4, Collisions: 1, CollisionRadius: 0.64,
+		}
+		intact := &Face{
+			ID: "CLEARCOLLISION0000000000000000B2", SubjUID: subjUID, FaceSrc: SrcManual,
+			SampleRadius: 0.3, Samples: 4, MatchedAt: TimeStamp(),
+		}
+
+		require.NoError(t, Db().Create(narrowed).Error)
+		require.NoError(t, Db().Create(intact).Error)
+		t.Cleanup(func() { UnscopedDb().Delete(&Face{}, "id IN (?)", []string{narrowed.ID, intact.ID}) })
+
+		cleared, err := ClearSubjectCollisions(subjUID)
+		require.NoError(t, err)
+		assert.Equal(t, 1, cleared, "only the clusters carrying a collision are touched")
+
+		// Separate variables on purpose: First adds the primary key of an already populated
+		// struct as a further condition, so reusing one silently looks up the previous row.
+		var clearedFace, untouched Face
+
+		require.NoError(t, UnscopedDb().Where("id = ?", narrowed.ID).First(&clearedFace).Error)
+		assert.Zero(t, clearedFace.CollisionRadius)
+		assert.Zero(t, clearedFace.Collisions)
+		assert.Nil(t, clearedFace.MatchedAt)
+
+		require.NoError(t, UnscopedDb().Where("id = ?", intact.ID).First(&untouched).Error)
+		assert.NotNil(t, untouched.MatchedAt, "an untouched cluster keeps its match stamp")
+	})
+	t.Run("NoMatch", func(t *testing.T) {
+		cleared, err := ClearSubjectCollisions(SubjectFixtures.Get("jane-doe").SubjUID)
+
+		require.NoError(t, err)
+		assert.Zero(t, cleared)
+	})
+	t.Run("InvalidRequest", func(t *testing.T) {
+		_, err := ClearSubjectCollisions("")
+		assert.Error(t, err)
+	})
+}
