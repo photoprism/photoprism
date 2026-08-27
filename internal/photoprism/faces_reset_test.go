@@ -155,3 +155,44 @@ func TestFaces_ResetAll(t *testing.T) {
 		Where("marker_type = ?", entity.MarkerFace).Count(&markers).Error)
 	assert.Positive(t, markers, "the markers themselves must survive, or this costs a reindex")
 }
+
+// TestFaces_Reset_ClearsDanglingFaces pins that a reset leaves no marker pointing at a cluster it
+// just deleted.
+//
+// The marker reset only reaches rows whose subject was assigned automatically, while the cluster
+// delete reaches every automatic cluster - so a hand-named marker that sat on one kept a reference
+// to a row that no longer existed. On a real library that was 11 of 12 hand-named markers.
+func TestFaces_Reset_ClearsDanglingFaces(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	t.Cleanup(entity.ResetTestFixtures)
+
+	c := config.TestConfig()
+	m := NewFaces(c)
+
+	named := entity.MarkerFixtures.Get("actress-a-1")
+	require.Equal(t, entity.SrcManual, named.SubjSrc, "the fixture this pins must be hand-named")
+	require.NotEmpty(t, named.FaceID)
+
+	// The cluster it points at is automatic, so the reset deletes it while keeping the marker.
+	var cluster entity.Face
+	require.NoError(t, entity.UnscopedDb().Where("id = ?", named.FaceID).First(&cluster).Error)
+	require.Equal(t, entity.SrcAuto, cluster.FaceSrc)
+
+	require.NoError(t, m.Reset())
+
+	var marker entity.Marker
+	require.NoError(t, entity.UnscopedDb().Where("marker_uid = ?", named.MarkerUID).First(&marker).Error)
+
+	assert.Equal(t, named.SubjUID, marker.SubjUID, "the hand-assigned subject still stands")
+	assert.Empty(t, marker.FaceID, "but not a reference to a cluster that was deleted")
+	assert.Nil(t, marker.MatchedAt, "and the marker is up for matching again")
+
+	var dangling int
+	require.NoError(t, entity.UnscopedDb().Model(&entity.Marker{}).
+		Where("marker_type = ? AND face_id <> ''", entity.MarkerFace).
+		Where("face_id NOT IN (SELECT id FROM faces)").Count(&dangling).Error)
+	assert.Zero(t, dangling, "no marker may point at a cluster that is gone")
+}
