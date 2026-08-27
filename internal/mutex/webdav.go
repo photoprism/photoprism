@@ -23,14 +23,12 @@ func WebDAV(dir string) webdav.LockSystem {
 	// Return existing LockSystem, or create a new one otherwise.
 	if lock, ok := webdavLocks[dir]; ok {
 		return lock
-	} else if memLS := webdav.NewMemLS(); memLS != nil {
-		lock = &webdavLockSystem{LockSystem: memLS}
-		webdavLocks[dir] = lock
-		return lock
 	}
 
-	// Should never happen.
-	return nil
+	lock := &webdavLockSystem{LockSystem: webdav.NewMemLS()}
+	webdavLocks[dir] = lock
+
+	return lock
 }
 
 // ClampLockDuration limits a requested lock duration to WebDAVMaxLockLifetime,
