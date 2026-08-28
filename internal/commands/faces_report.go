@@ -3,6 +3,7 @@ package commands
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/urfave/cli/v2"
 
@@ -17,8 +18,9 @@ import (
 // FacesSubjectsCommand reports the people a library holds, with the counts the index stores beside
 // the counts its markers currently support.
 var FacesSubjectsCommand = &cli.Command{
-	Name:  "subjects",
-	Usage: "Lists people with the files and photos their markers support",
+	Name:      "subjects",
+	Usage:     "Lists people with the files and photos their markers support",
+	ArgsUsage: "[name|uid]",
 	Flags: append(report.CliFlags, CountFlag, OffsetFlag,
 		&cli.BoolFlag{Name: "stored", Usage: "report the counts the index holds instead of counting now"},
 	),
@@ -27,20 +29,21 @@ var FacesSubjectsCommand = &cli.Command{
 
 // FacesListCommand reports the face clusters a library holds.
 var FacesListCommand = &cli.Command{
-	Name:    "ls",
-	Aliases: []string{"clusters"},
-	Usage:   "Lists face clusters with their samples and current markers",
-	Flags:   append(report.CliFlags, CountFlag, OffsetFlag),
-	Action:  facesListAction,
+	Name:      "ls",
+	Aliases:   []string{"clusters"},
+	Usage:     "Lists face clusters with their samples and current markers",
+	ArgsUsage: "[name|uid]",
+	Flags:     append(report.CliFlags, CountFlag, OffsetFlag),
+	Action:    facesListAction,
 }
 
 // FacesMarkersCommand reports face markers, optionally narrowed to one person, one cluster, or one
 // of the two shapes a diagnosis keeps returning to.
 var FacesMarkersCommand = &cli.Command{
-	Name:  "markers",
-	Usage: "Lists face markers and what they are assigned to",
+	Name:      "markers",
+	Usage:     "Lists face markers and what they are assigned to",
+	ArgsUsage: "[name|uid]",
 	Flags: append(report.CliFlags, CountFlag, OffsetFlag,
-		&cli.StringFlag{Name: "subject", Aliases: []string{"s"}, Usage: "only markers of person `UID`"},
 		&cli.StringFlag{Name: "face", Aliases: []string{"f"}, Usage: "only markers of cluster `ID`"},
 		&cli.BoolFlag{Name: "unassigned", Usage: "only markers that have a person but no cluster"},
 		&cli.BoolFlag{Name: "dangling", Usage: "only markers whose cluster no longer exists"},
@@ -65,6 +68,13 @@ func reportVectors(n int) string {
 	default:
 		return strconv.Itoa(n)
 	}
+}
+
+// reportPerson returns the person a report command was narrowed to, which is a subject uid or a
+// name fragment. Taken as an argument rather than a flag so the reports read like the other list
+// commands, and so a person can be inspected without piping the output through grep.
+func reportPerson(ctx *cli.Context) string {
+	return clean.SearchString(strings.Join(ctx.Args().Slice(), " "))
 }
 
 // reportPaging returns the count and offset a report command was given, bounded like the API.
@@ -96,7 +106,7 @@ func facesSubjectsAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
 		count, offset := reportPaging(ctx)
 
-		people, err := query.SubjectReports(count, offset, !ctx.Bool("stored"))
+		people, err := query.SubjectReports(reportPerson(ctx), count, offset, !ctx.Bool("stored"))
 
 		if err != nil {
 			return err
@@ -122,7 +132,7 @@ func facesListAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
 		count, offset := reportPaging(ctx)
 
-		faces, err := query.FaceReports(count, offset)
+		faces, err := query.FaceReports(reportPerson(ctx), count, offset)
 
 		if err != nil {
 			return err
@@ -150,7 +160,7 @@ func facesMarkersAction(ctx *cli.Context) error {
 		count, offset := reportPaging(ctx)
 
 		markers, err := query.MarkerReports(query.MarkerReportFilter{
-			SubjUID:    clean.UID(ctx.String("subject")),
+			Person:     reportPerson(ctx),
 			FaceID:     clean.Token(ctx.String("face")),
 			Unassigned: ctx.Bool("unassigned"),
 			Dangling:   ctx.Bool("dangling"),

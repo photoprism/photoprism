@@ -12,7 +12,7 @@ import (
 // TestSubjectReports covers the people report, whose point is the two count columns.
 func TestSubjectReports(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		people, err := SubjectReports(100, 0, true)
+		people, err := SubjectReports("", 100, 0, true)
 		require.NoError(t, err)
 		require.NotEmpty(t, people)
 
@@ -32,11 +32,11 @@ func TestSubjectReports(t *testing.T) {
 	t.Run("Stored", func(t *testing.T) {
 		// The cheap variant skips the join over markers and files, which is half a second on a
 		// large library, and reports whatever the last refresh left on the row instead.
-		stored, err := SubjectReports(100, 0, false)
+		stored, err := SubjectReports("", 100, 0, false)
 		require.NoError(t, err)
 		require.NotEmpty(t, stored)
 
-		live, err := SubjectReports(100, 0, true)
+		live, err := SubjectReports("", 100, 0, true)
 		require.NoError(t, err)
 		require.Len(t, stored, len(live), "the two variants describe the same people")
 
@@ -46,18 +46,18 @@ func TestSubjectReports(t *testing.T) {
 		}
 	})
 	t.Run("Paginates", func(t *testing.T) {
-		first, err := SubjectReports(1, 0, true)
+		first, err := SubjectReports("", 1, 0, true)
 		require.NoError(t, err)
 		require.Len(t, first, 1)
 
-		second, err := SubjectReports(1, 1, true)
+		second, err := SubjectReports("", 1, 1, true)
 		require.NoError(t, err)
 		require.Len(t, second, 1)
 
 		assert.NotEqual(t, first[0].SubjUID, second[0].SubjUID, "an offset has to move the window")
 	})
 	t.Run("OffsetPastTheEnd", func(t *testing.T) {
-		people, err := SubjectReports(10, 100000, true)
+		people, err := SubjectReports("", 10, 100000, true)
 		require.NoError(t, err)
 		assert.Empty(t, people)
 	})
@@ -66,7 +66,7 @@ func TestSubjectReports(t *testing.T) {
 // TestFaceReports covers the cluster report.
 func TestFaceReports(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		faces, err := FaceReports(100, 0)
+		faces, err := FaceReports("", 100, 0)
 		require.NoError(t, err)
 		require.NotEmpty(t, faces)
 
@@ -81,7 +81,7 @@ func TestFaceReports(t *testing.T) {
 		}
 	})
 	t.Run("NamesTheSubject", func(t *testing.T) {
-		faces, err := FaceReports(100, 0)
+		faces, err := FaceReports("", 100, 0)
 		require.NoError(t, err)
 
 		var named int
@@ -94,7 +94,7 @@ func TestFaceReports(t *testing.T) {
 		assert.Positive(t, named, "a cluster with a subject has to report the person's name")
 	})
 	t.Run("OffsetPastTheEnd", func(t *testing.T) {
-		faces, err := FaceReports(10, 100000)
+		faces, err := FaceReports("", 10, 100000)
 		require.NoError(t, err)
 		assert.Empty(t, faces)
 	})
@@ -114,7 +114,7 @@ func TestMarkerReports(t *testing.T) {
 	t.Run("BySubject", func(t *testing.T) {
 		subjUID := entity.SubjectFixtures.Get("actress-1").SubjUID
 
-		markers, err := MarkerReports(MarkerReportFilter{SubjUID: subjUID, Count: 100})
+		markers, err := MarkerReports(MarkerReportFilter{Person: subjUID, Count: 100})
 		require.NoError(t, err)
 		require.NotEmpty(t, markers)
 
@@ -217,4 +217,125 @@ func TestMarkerReports_Vectors(t *testing.T) {
 	}
 
 	assert.Positive(t, embedded, "the fixtures have to include an embedded marker for this to mean anything")
+}
+
+// TestPersonFilter covers how a report argument is read, which decides whether "js6sg6b..." selects
+// one person or is searched for as a name.
+func TestPersonFilter(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		uid, like := PersonFilter("")
+		assert.Empty(t, uid)
+		assert.Empty(t, like)
+
+		uid, like = PersonFilter("   ")
+		assert.Empty(t, uid)
+		assert.Empty(t, like)
+	})
+	t.Run("SubjectUID", func(t *testing.T) {
+		uid, like := PersonFilter(entity.SubjectFixtures.Get("actress-1").SubjUID)
+		assert.Equal(t, entity.SubjectFixtures.Get("actress-1").SubjUID, uid)
+		assert.Empty(t, like, "a uid selects one person rather than being searched for")
+	})
+	t.Run("Name", func(t *testing.T) {
+		uid, like := PersonFilter("Actress")
+		assert.Empty(t, uid)
+		assert.Equal(t, "%Actress%", like)
+	})
+	// A name is matched literally: an operator typing a name that holds one of these is looking for
+	// that person, not writing a pattern.
+	t.Run("EscapesWildcards", func(t *testing.T) {
+		_, like := PersonFilter("50%")
+		assert.Equal(t, `%50\%%`, like)
+
+		_, like = PersonFilter("a_b")
+		assert.Equal(t, `%a\_b%`, like)
+
+		_, like = PersonFilter(`back\slash`)
+		assert.Equal(t, `%back\\slash%`, like)
+	})
+	t.Run("UIDOfAnotherType", func(t *testing.T) {
+		// Only a subject uid selects by id; a marker uid is a name nobody has.
+		uid, like := PersonFilter(entity.MarkerFixtures.Get("actress-a-1").MarkerUID)
+		assert.Empty(t, uid)
+		assert.NotEmpty(t, like)
+	})
+}
+
+// TestFaceReports_Person covers narrowing the cluster report, so one person can be inspected
+// without piping the output through grep.
+func TestFaceReports_Person(t *testing.T) {
+	name := entity.SubjectFixtures.Get("actress-1").SubjName
+	subjUID := entity.SubjectFixtures.Get("actress-1").SubjUID
+
+	t.Run("ByName", func(t *testing.T) {
+		faces, err := FaceReports(name, 100, 0)
+		require.NoError(t, err)
+		require.NotEmpty(t, faces)
+
+		for _, f := range faces {
+			assert.Equal(t, name, f.SubjName)
+		}
+	})
+	t.Run("BySubjectUID", func(t *testing.T) {
+		faces, err := FaceReports(subjUID, 100, 0)
+		require.NoError(t, err)
+		require.NotEmpty(t, faces)
+
+		for _, f := range faces {
+			assert.Equal(t, subjUID, f.SubjUID)
+		}
+	})
+	t.Run("NoMatch", func(t *testing.T) {
+		faces, err := FaceReports("Nobody By That Name", 100, 0)
+		require.NoError(t, err)
+		assert.Empty(t, faces)
+	})
+}
+
+// TestSubjectReports_Person covers narrowing the people report.
+func TestSubjectReports_Person(t *testing.T) {
+	known := entity.SubjectFixtures.Get("actress-1")
+
+	t.Run("ByName", func(t *testing.T) {
+		people, err := SubjectReports(known.SubjName, 100, 0, true)
+		require.NoError(t, err)
+		require.Len(t, people, 1)
+		assert.Equal(t, known.SubjUID, people[0].SubjUID)
+	})
+	t.Run("BySubjectUID", func(t *testing.T) {
+		people, err := SubjectReports(known.SubjUID, 100, 0, false)
+		require.NoError(t, err)
+		require.Len(t, people, 1)
+		assert.Equal(t, known.SubjUID, people[0].SubjUID)
+	})
+	t.Run("PartialName", func(t *testing.T) {
+		people, err := SubjectReports("ctress", 100, 0, true)
+		require.NoError(t, err)
+		assert.NotEmpty(t, people, "a fragment matches anywhere in the name")
+	})
+	t.Run("NoMatch", func(t *testing.T) {
+		people, err := SubjectReports("Nobody By That Name", 100, 0, true)
+		require.NoError(t, err)
+		assert.Empty(t, people)
+	})
+}
+
+// TestMarkerReports_Person covers narrowing the marker report by person.
+func TestMarkerReports_Person(t *testing.T) {
+	known := entity.SubjectFixtures.Get("actress-1")
+
+	t.Run("ByName", func(t *testing.T) {
+		markers, err := MarkerReports(MarkerReportFilter{Person: known.SubjName, Count: 100})
+		require.NoError(t, err)
+		require.NotEmpty(t, markers)
+
+		for _, m := range markers {
+			assert.Equal(t, known.SubjUID, m.SubjUID)
+		}
+	})
+	t.Run("NoMatch", func(t *testing.T) {
+		markers, err := MarkerReports(MarkerReportFilter{Person: "Nobody By That Name", Count: 100})
+		require.NoError(t, err)
+		assert.Empty(t, markers)
+	})
 }

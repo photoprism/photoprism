@@ -3,11 +3,36 @@ package query
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
+
+// SubjectUIDPrefix is the byte a subject uid starts with, which is how a person argument tells a
+// uid apart from a name without asking the caller which one it passed.
+const SubjectUIDPrefix = 'j'
+
+// PersonFilter classifies a person argument for the face reports: a subject uid selects exactly one
+// person, and anything else matches the names that contain it.
+//
+// The wildcards are escaped, so a name holding "%" or "_" is matched literally rather than turning
+// the argument into a pattern the caller did not write.
+func PersonFilter(s string) (subjUID, nameLike string) {
+	if s = strings.TrimSpace(s); s == "" {
+		return "", ""
+	}
+
+	if rnd.IsUID(s, SubjectUIDPrefix) {
+		return s, ""
+	}
+
+	r := strings.NewReplacer(`\`, `\\`, "%", `\%`, "_", `\_`)
+
+	return "", "%" + r.Replace(s) + "%"
+}
 
 // SubjectReport describes one person, with the file and photo counts their markers currently
 // support and the marker count itself.
@@ -33,9 +58,20 @@ type SubjectReport struct {
 // library of 150,000 photos and 200,000 face markers, against about ten milliseconds for the stored
 // values. That is affordable for a report and not for a request, which is why only this command
 // does it; pass live=false for the stored numbers.
-func SubjectReports(count, offset int, live bool) (result []SubjectReport, err error) {
+func SubjectReports(person string, count, offset int, live bool) (result []SubjectReport, err error) {
 	counts := "s.file_count, s.photo_count"
 	joins := ""
+	where := ""
+
+	args := []any{entity.MarkerFace, entity.SubjPerson}
+
+	if subjUID, nameLike := PersonFilter(person); subjUID != "" {
+		where = "AND s.subj_uid = ?"
+		args = append(args, subjUID)
+	} else if nameLike != "" {
+		where = "AND s.subj_name LIKE ?"
+		args = append(args, nameLike)
+	}
 
 	if live {
 		counts = "COALESCE(c.live_files, 0) AS file_count, COALESCE(c.live_photos, 0) AS photo_count"
@@ -59,12 +95,12 @@ func SubjectReports(count, offset int, live bool) (result []SubjectReport, err e
 			WHERE marker_type = ? AND marker_invalid = 0 AND subj_uid <> ''
 			GROUP BY subj_uid
 		) n ON n.subj_uid = s.subj_uid
-		WHERE s.subj_type = ? AND s.deleted_at IS NULL
+		WHERE s.subj_type = ? AND s.deleted_at IS NULL %s
 		ORDER BY s.subj_name, s.subj_uid
 		LIMIT ? OFFSET ?`,
-		counts, entity.Subject{}.TableName(), joins, entity.Marker{}.TableName())
+		counts, entity.Subject{}.TableName(), joins, entity.Marker{}.TableName(), where)
 
-	err = UnscopedDb().Raw(stmt, entity.MarkerFace, entity.SubjPerson, count, offset).Scan(&result).Error
+	err = UnscopedDb().Raw(stmt, append(args, count, offset)...).Scan(&result).Error
 
 	return result, err
 }
@@ -89,7 +125,19 @@ type FaceReport struct {
 }
 
 // FaceReports returns clusters ordered by the number of samples they were built from.
-func FaceReports(count, offset int) (result []FaceReport, err error) {
+func FaceReports(person string, count, offset int) (result []FaceReport, err error) {
+	where := ""
+
+	args := []any{entity.MarkerFace}
+
+	if subjUID, nameLike := PersonFilter(person); subjUID != "" {
+		where = "WHERE f.subj_uid = ?"
+		args = append(args, subjUID)
+	} else if nameLike != "" {
+		where = "WHERE s.subj_name LIKE ?"
+		args = append(args, nameLike)
+	}
+
 	stmt := fmt.Sprintf(`SELECT f.id, f.subj_uid, COALESCE(s.subj_name, '') AS subj_name, f.face_src, f.face_kind,
 		f.samples, f.sample_radius, f.collisions, f.collision_radius, f.matched_at,
 		COALESCE(n.markers, 0) AS markers
@@ -100,11 +148,12 @@ func FaceReports(count, offset int) (result []FaceReport, err error) {
 			WHERE marker_type = ? AND marker_invalid = 0 AND face_id <> ''
 			GROUP BY face_id
 		) n ON n.face_id = f.id
+		%s
 		ORDER BY f.samples DESC, f.id
 		LIMIT ? OFFSET ?`,
-		entity.Face{}.TableName(), entity.Subject{}.TableName(), entity.Marker{}.TableName())
+		entity.Face{}.TableName(), entity.Subject{}.TableName(), entity.Marker{}.TableName(), where)
 
-	err = UnscopedDb().Raw(stmt, entity.MarkerFace, count, offset).Scan(&result).Error
+	err = UnscopedDb().Raw(stmt, append(args, count, offset)...).Scan(&result).Error
 
 	return result, err
 }
@@ -139,7 +188,8 @@ const InvalidJSON = -1
 // MarkerReportFilter narrows a marker report. Dangling and Unassigned select the two shapes that
 // keep coming up in diagnosis rather than requiring the caller to write the predicate again.
 type MarkerReportFilter struct {
-	SubjUID    string
+	// Person is a subject uid or a name fragment, whichever the caller was given.
+	Person     string
 	FaceID     string
 	Unassigned bool
 	Dangling   bool
@@ -155,8 +205,11 @@ func MarkerReports(f MarkerReportFilter) (result []MarkerReport, err error) {
 		Select("marker_uid, file_uid, face_id, subj_uid, subj_src, marker_name, size, score, face_dist, marker_invalid, matched_at, embeddings_json, landmarks_json").
 		Where("marker_type = ?", entity.MarkerFace)
 
-	if f.SubjUID != "" {
-		stmt = stmt.Where("subj_uid = ?", f.SubjUID)
+	if subjUID, nameLike := PersonFilter(f.Person); subjUID != "" {
+		stmt = stmt.Where("subj_uid = ?", subjUID)
+	} else if nameLike != "" {
+		stmt = stmt.Where(fmt.Sprintf("subj_uid IN (SELECT subj_uid FROM %s WHERE subj_name LIKE ?)",
+			entity.Subject{}.TableName()), nameLike)
 	}
 
 	if f.FaceID != "" {

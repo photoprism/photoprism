@@ -40,6 +40,15 @@ func TestFacesSubjectsCommand(t *testing.T) {
 		assert.Contains(t, rows[0], "hidden")
 		assert.Contains(t, rows[0], "files")
 	})
+	t.Run("ByPerson", func(t *testing.T) {
+		output, err := RunWithTestContext(FacesSubjectsCommand, []string{"subjects", "--json", "Actress A"})
+		require.NoError(t, err)
+
+		var rows []map[string]any
+		require.NoError(t, json.Unmarshal([]byte(output), &rows))
+		require.Len(t, rows, 1)
+		assert.Equal(t, "Actress A", rows[0]["name"])
+	})
 	t.Run("Stored", func(t *testing.T) {
 		// Same shape, without the pass over markers and files that counting live costs.
 		output, err := RunWithTestContext(FacesSubjectsCommand, []string{"subjects", "--stored", "--json"})
@@ -78,6 +87,18 @@ func TestFacesListCommand(t *testing.T) {
 		// fixture predates the column, so what they render is the name for that state.
 		assert.Contains(t, output, face.Kind(0).String())
 	})
+	t.Run("ByPerson", func(t *testing.T) {
+		output, err := RunWithTestContext(FacesListCommand, []string{"ls", "--json", "Actress A"})
+		require.NoError(t, err)
+
+		var rows []map[string]any
+		require.NoError(t, json.Unmarshal([]byte(output), &rows))
+		require.NotEmpty(t, rows)
+
+		for _, row := range rows {
+			assert.Equal(t, "Actress A", row["name"])
+		}
+	})
 	t.Run("Markdown", func(t *testing.T) {
 		output, err := RunWithTestContext(FacesListCommand, []string{"ls", "--md"})
 		require.NoError(t, err)
@@ -112,13 +133,22 @@ func TestFacesMarkersCommand(t *testing.T) {
 		require.NoError(t, json.Unmarshal([]byte(output), &rows))
 		assert.Empty(t, rows)
 	})
-	t.Run("UnknownSubject", func(t *testing.T) {
-		output, err := RunWithTestContext(FacesMarkersCommand, []string{"markers", "--subject", "js6sg6b1qekk0000", "--json"})
+	t.Run("UnknownPerson", func(t *testing.T) {
+		output, err := RunWithTestContext(FacesMarkersCommand, []string{"markers", "--json", "Nobody By That Name"})
 		require.NoError(t, err)
 
 		var rows []map[string]any
 		require.NoError(t, json.Unmarshal([]byte(output), &rows))
 		assert.Empty(t, rows)
+	})
+	t.Run("ByPerson", func(t *testing.T) {
+		// The argument is what makes inspecting one person possible without piping through grep.
+		output, err := RunWithTestContext(FacesMarkersCommand, []string{"markers", "--json", "Actress A"})
+		require.NoError(t, err)
+
+		var rows []map[string]any
+		require.NoError(t, json.Unmarshal([]byte(output), &rows))
+		assert.NotEmpty(t, rows)
 	})
 }
 
