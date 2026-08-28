@@ -11,6 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/pkg/txt/report"
 )
@@ -226,4 +227,89 @@ func TestReportVectors(t *testing.T) {
 func TestReportBool(t *testing.T) {
 	assert.Equal(t, report.Yes, reportBool(true))
 	assert.Equal(t, report.No, reportBool(false))
+}
+
+func TestFacesConflictsCommand(t *testing.T) {
+	t.Run("Table", func(t *testing.T) {
+		output, err := RunWithTestContext(FacesConflictsCommand, []string{"conflicts"})
+		require.NoError(t, err)
+
+		for _, col := range []string{"Face", "Name", "Subject", "Face 2", "Name 2", "Subject 2", "Resolution", "Dist", "Accept", "Accept 2", "Samples", "Samples 2"} {
+			assert.Contains(t, output, col)
+		}
+	})
+	t.Run("NotesBelowTheTable", func(t *testing.T) {
+		output, err := RunWithTestContext(FacesConflictsCommand, []string{"conflicts"})
+		require.NoError(t, err)
+
+		// What the table cannot say has to be on the same page as the table, or an empty one
+		// reads as "no conflicts" when it may mean "none of them was compared".
+		assert.Contains(t, output, "Compared")
+		assert.Contains(t, output, "retires a cluster as ambiguous")
+	})
+	t.Run("JSONCarriesTheNotes", func(t *testing.T) {
+		// A saved report has to keep them: dropping the notes for machine output would strip
+		// exactly the part that says what the rows do not cover.
+		output, err := RunWithTestContext(FacesConflictsCommand, []string{"conflicts", "--json"})
+		require.NoError(t, err)
+
+		var result struct {
+			Conflicts []map[string]any `json:"conflicts"`
+			Scan      map[string]int   `json:"scan"`
+			Notes     []string         `json:"notes"`
+		}
+
+		require.NoError(t, json.Unmarshal([]byte(output), &result))
+		assert.NotEmpty(t, result.Notes)
+		assert.Contains(t, result.Scan, "clusters")
+		assert.Contains(t, result.Scan, "compared")
+	})
+	t.Run("UnknownPerson", func(t *testing.T) {
+		output, err := RunWithTestContext(FacesConflictsCommand, []string{"conflicts", "--json", "Nobody By That Name"})
+		require.NoError(t, err)
+
+		var result struct {
+			Conflicts []map[string]any `json:"conflicts"`
+			Scan      map[string]int   `json:"scan"`
+		}
+
+		require.NoError(t, json.Unmarshal([]byte(output), &result))
+		assert.Empty(t, result.Conflicts)
+		assert.Zero(t, result.Scan["clusters"])
+	})
+	t.Run("InvalidFormat", func(t *testing.T) {
+		_, err := RunWithTestContext(FacesConflictsCommand, []string{"conflicts", "--format=nonsense"})
+		assert.Error(t, err)
+	})
+}
+
+func TestReportResolution(t *testing.T) {
+	t.Run("Ambiguous", func(t *testing.T) {
+		assert.Equal(t, "ambiguous", reportResolution(query.FaceConflict{Dist: face.AmbiguityDist() / 2}))
+	})
+	t.Run("Narrow", func(t *testing.T) {
+		assert.Equal(t, "narrow", reportResolution(query.FaceConflict{Dist: face.AmbiguityDist() * 10}))
+	})
+	t.Run("Unmeasured", func(t *testing.T) {
+		assert.Equal(t, "narrow", reportResolution(query.FaceConflict{Dist: -1}))
+	})
+}
+
+func TestFaceConflictNotes(t *testing.T) {
+	t.Run("AlwaysStatesWhatWasCompared", func(t *testing.T) {
+		lines := faceConflictNotes(query.FaceConflictScan{Clusters: 3, Compared: 7}, query.FaceConflictNotes{})
+		require.Len(t, lines, 2)
+		assert.Contains(t, lines[0], "7 pairs")
+		assert.Contains(t, lines[0], "3 clusters")
+		assert.Contains(t, lines[1], "ambiguous")
+	})
+	t.Run("EveryNote", func(t *testing.T) {
+		lines := faceConflictNotes(query.FaceConflictScan{},
+			query.FaceConflictNotes{Ambiguous: 1, Hidden: 2, InertRadius: 3, BelowOwnSpread: 4})
+		require.Len(t, lines, 6)
+		assert.Contains(t, strings.Join(lines, "\n"), "1 cluster is already retired")
+		assert.Contains(t, strings.Join(lines, "\n"), "2 clusters are hidden")
+		assert.Contains(t, strings.Join(lines, "\n"), "3 clusters record")
+		assert.Contains(t, strings.Join(lines, "\n"), "4 clusters were narrowed")
+	})
 }

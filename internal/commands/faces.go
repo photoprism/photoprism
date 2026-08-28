@@ -26,12 +26,40 @@ import (
 var FacesCommands = &cli.Command{
 	Name:  "faces",
 	Usage: "Face recognition subcommands",
+	// Ordered as an operator meets them: what the instance is doing, the passes that change the
+	// index, then the reports that describe it, and last the ones that diagnose or destroy.
 	Subcommands: []*cli.Command{
+		FacesStatusCommand,
 		{
-			Name:   "stats",
-			Usage:  "Shows stats on face samples",
-			Action: facesStatsAction,
+			Name:  "update",
+			Usage: "Performs face clustering and matching",
+			Flags: []cli.Flag{
+				ForceFlag("update all faces"),
+			},
+			Action: facesUpdateAction,
 		},
+		{
+			Name:      "index",
+			Usage:     "Searches originals for faces",
+			ArgsUsage: "[subfolder]",
+			Action:    facesIndexAction,
+		},
+		{
+			Name:  "optimize",
+			Usage: "Optimizes face clusters",
+			Flags: []cli.Flag{
+				&cli.BoolFlag{
+					Name:  "retry",
+					Usage: "reset merge retry counters before optimizing",
+				},
+			},
+			Action: facesOptimizeAction,
+		},
+		FacesMigrateCommand,
+		FacesListCommand,
+		FacesMarkersCommand,
+		FacesSubjectsCommand,
+		FacesConflictsCommand,
 		{
 			Name:  "audit",
 			Usage: "Scans the index for issues",
@@ -47,6 +75,11 @@ var FacesCommands = &cli.Command{
 				},
 			},
 			Action: facesAuditAction,
+		},
+		{
+			Name:   "stats",
+			Usage:  "Shows stats on face samples",
+			Action: facesStatsAction,
 		},
 		{
 			Name:  "reset",
@@ -70,43 +103,13 @@ var FacesCommands = &cli.Command{
 			},
 			Action: facesResetAction,
 		},
-		FacesMigrateCommand,
-		{
-			Name:      "index",
-			Usage:     "Searches originals for faces",
-			ArgsUsage: "[subfolder]",
-			Action:    facesIndexAction,
-		},
-		{
-			Name:  "update",
-			Usage: "Performs face clustering and matching",
-			Flags: []cli.Flag{
-				ForceFlag("update all faces"),
-			},
-			Action: facesUpdateAction,
-		},
-		{
-			Name:  "optimize",
-			Usage: "Optimizes face clusters",
-			Flags: []cli.Flag{
-				&cli.BoolFlag{
-					Name:  "retry",
-					Usage: "reset merge retry counters before optimizing",
-				},
-			},
-			Action: facesOptimizeAction,
-		},
-		FacesStatusCommand,
-		FacesSubjectsCommand,
-		FacesListCommand,
-		FacesMarkersCommand,
 	},
 }
 
 // FacesMigrateCommand configures the face embedding migration command.
 var FacesMigrateCommand = &cli.Command{
 	Name:  "migrate",
-	Usage: "Migrates face embeddings to the supported model",
+	Usage: "Migrates face embeddings to a supported model",
 	Description: "This is how the face embedding model is changed: every marker is re-embedded and " +
 		"the target is recorded as the configured model. It defaults to " + face.DefaultModelName() +
 		", the model this release supports, so an ordinary migration needs no target. Stop the server " +

@@ -1,10 +1,12 @@
 package commands
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
 
+	"github.com/dustin/go-humanize/english"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
@@ -51,6 +53,16 @@ var FacesMarkersCommand = &cli.Command{
 	Action: facesMarkersAction,
 }
 
+// FacesConflictsCommand reports the cluster pairs that hold the same face while naming different
+// people, which is the population collision resolution acts on.
+var FacesConflictsCommand = &cli.Command{
+	Name:      "conflicts",
+	Usage:     "Lists face clusters that hold the same face but name different people",
+	ArgsUsage: "[name|uid]",
+	Flags:     append(report.CliFlags, CountFlag, OffsetFlag),
+	Action:    facesConflictsAction,
+}
+
 // reportBool renders a flag with the shared Yes/No labels every other report column uses.
 func reportBool(b bool) string {
 	return report.Bool(b, report.Yes, report.No)
@@ -70,11 +82,10 @@ func reportVectors(n int) string {
 	}
 }
 
-// reportPerson returns the person a report command was narrowed to: a subject uid or a name
-// fragment, taken as an argument so a person can be inspected without piping through grep.
+// reportPerson returns the person a report command was narrowed to: a subject uid or a name fragment.
 //
-// Sanitized by clean.Name, as Subject.SetName sanitizes the column it matches. Not
-// clean.SearchString, which turns "%" into "*" and would search for a character no name can hold.
+// Sanitized by clean.Name, matching what Subject.SetName writes. Not clean.SearchString, which
+// turns "%" into "*" and would search for a character no name can hold.
 func reportPerson(ctx *cli.Context) string {
 	return clean.Name(strings.Join(ctx.Args().Slice(), " "))
 }
@@ -156,6 +167,128 @@ func facesListAction(ctx *cli.Context) error {
 
 		return printReport(ctx, rows, cols)
 	})
+}
+
+// reportResolution names what resolving a conflict would do to the first cluster, so a row an
+// operator has to act on is legible without knowing where AmbiguityDist sits.
+func reportResolution(c query.FaceConflict) string {
+	if c.Ambiguous() {
+		return "ambiguous"
+	}
+
+	return "narrow"
+}
+
+// facesConflictsAction prints the cluster conflict report.
+func facesConflictsAction(ctx *cli.Context) error {
+	return CallWithDependencies(ctx, func(conf *config.Config) error {
+		format, err := report.CliFormatStrict(ctx)
+
+		if err != nil {
+			return err
+		}
+
+		count, offset := reportPaging(ctx)
+
+		conflicts, scan, err := query.FaceConflicts(reportPerson(ctx), count, offset)
+
+		if err != nil {
+			return err
+		}
+
+		notes, err := query.FaceConflictReportNotes()
+
+		if err != nil {
+			return err
+		}
+
+		cols := []string{"Face", "Name", "Subject", "Face 2", "Name 2", "Subject 2", "Resolution", "Dist", "Accept", "Accept 2", "Samples", "Samples 2"}
+		rows := make([][]string, 0, len(conflicts))
+
+		for _, c := range conflicts {
+			rows = append(rows, []string{
+				c.ID, c.SubjName, c.SubjUID,
+				c.OtherID, c.OtherSubjName, c.OtherSubjUID,
+				reportResolution(c), report.Distance(c.Dist),
+				report.Distance(c.Accept), report.Distance(c.OtherAccept),
+				strconv.Itoa(c.Samples), strconv.Itoa(c.OtherSamples),
+			})
+		}
+
+		lines := faceConflictNotes(scan, notes)
+
+		if format == report.JSON {
+			return printFaceConflictsJSON(rows, cols, scan, lines)
+		}
+
+		result, renderErr := report.Render(rows, cols, report.Options{Format: format})
+
+		if renderErr != nil {
+			return renderErr
+		}
+
+		fmt.Println(result)
+
+		for _, line := range lines {
+			fmt.Printf("%s\n", line)
+		}
+
+		fmt.Println()
+
+		return nil
+	})
+}
+
+// faceConflictNotes returns what the table itself cannot show: what the pass compared, the
+// threshold the Resolution column turns on, and the clusters a reader would otherwise assume had
+// been compared.
+func faceConflictNotes(scan query.FaceConflictScan, notes query.FaceConflictNotes) []string {
+	lines := []string{
+		fmt.Sprintf("Compared %s across %s.",
+			english.Plural(scan.Compared, "pair", "pairs"), english.Plural(scan.Clusters, "cluster", "clusters")),
+		fmt.Sprintf("Resolving below %s retires a cluster as ambiguous, above it narrows the cluster.",
+			report.Distance(face.AmbiguityDist())),
+	}
+
+	if notes.Ambiguous > 0 {
+		lines = append(lines, fmt.Sprintf("%s already retired as ambiguous and was not compared.",
+			english.Plural(notes.Ambiguous, "cluster is", "clusters are")))
+	}
+
+	if notes.Hidden > 0 {
+		lines = append(lines, fmt.Sprintf("%s hidden and was not compared.",
+			english.Plural(notes.Hidden, "cluster is", "clusters are")))
+	}
+
+	if notes.InertRadius > 0 {
+		lines = append(lines, fmt.Sprintf("%s a collision radius at or below the collision distance of %s, which the matcher does not enforce.",
+			english.Plural(notes.InertRadius, "cluster records", "clusters record"), report.Distance(face.CollisionDist)))
+	}
+
+	if notes.BelowOwnSpread > 0 {
+		lines = append(lines, fmt.Sprintf("%s narrowed inside its own sample radius and accepts less than the faces it was built from.",
+			english.Plural(notes.BelowOwnSpread, "cluster was", "clusters were")))
+	}
+
+	return lines
+}
+
+// printFaceConflictsJSON writes the report as a single object, so a saved report carries the notes
+// instead of losing everything the table could not show.
+func printFaceConflictsJSON(rows [][]string, cols []string, scan query.FaceConflictScan, notes []string) error {
+	b, err := json.Marshal(map[string]any{
+		"conflicts": report.RowsToObjects(rows, cols),
+		"scan":      map[string]int{"clusters": scan.Clusters, "compared": scan.Compared},
+		"notes":     notes,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(string(b))
+
+	return nil
 }
 
 // facesMarkersAction prints the marker report.

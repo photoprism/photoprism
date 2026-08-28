@@ -18,7 +18,7 @@ import (
 var FacesStatusCommand = &cli.Command{
 	Name:    "status",
 	Aliases: []string{"config"},
-	Usage:   "Reports the face detection and recognition status",
+	Usage:   "Reports the current status and configuration details",
 	Flags:   report.CliFlags,
 	Action:  facesStatusAction,
 }
