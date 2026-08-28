@@ -310,10 +310,12 @@ func (m *Face) ClearCollision() error {
 	values := Values{"collisions": m.Collisions, "collision_radius": m.CollisionRadius, "matched_at": m.MatchedAt}
 
 	// Only ResolveCollision raises the kind, so a cluster carrying the ambiguous kind was marked by
-	// that path and returns to a regular one. Any other kind is left alone, and so is the zero a
-	// row written before kinds existed holds, since both already take part in matching.
+	// that path and returns to the unclassified state a cluster is created in. Not RegularFace:
+	// nothing has set that since the child and background classifiers were removed, so writing it
+	// would leave a cleared cluster the only row in the library carrying a value the search filter
+	// "face:1" selects on. Any other kind is left alone.
 	if m.FaceKind == int(face.AmbiguousFace) {
-		m.FaceKind = int(face.RegularFace)
+		m.FaceKind = int(face.UnclassifiedFace)
 		values["face_kind"] = m.FaceKind
 	}
 

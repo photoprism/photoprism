@@ -242,11 +242,14 @@ This is the gate on naming a face: `Marker.Face()` builds a cluster from that ma
 
 #### Face Kind Reference
 
-| Kind            | Value | Source                                     | Matching Behavior                               | Notes                                                                                                                                                                                    |
-|:----------------|:-----:|:-------------------------------------------|:------------------------------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `RegularFace`   |   1   | Default embedding classification           | Eligible for matching and clustering            | Every cluster starts here.                                                                                                                                                               |
-| *(reserved)*    |  2–3  | —                                          | —                                               | Held by the retired children and background classifications; never reused, because `faces.face_kind` is stored.                                                                          |
-| `AmbiguousFace` |   4   | `entity.Face.ResolveCollision()` heuristic | Excluded from matching and manual merge retries | Assigned when two subjects collide closer than `face.AmbiguityDist()`, twice `Epsilon`. Nothing lowers `face_kind` again, so the cluster stays excluded until it is deleted and rebuilt. |
+| Kind               | Value | Source                                       | Matching Behavior                               | Notes                                                                                                                                                                                            |
+|:-------------------|:-----:|:---------------------------------------------|:------------------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `UnclassifiedFace` |   0   | The value a cluster is created with          | Eligible for matching and clustering            | **What every current cluster holds.** Nothing classifies a face since the child and background filters were removed, so no path writes a kind at creation any more.                              |
+| `RegularFace`      |   1   | Releases before the classifiers were removed | Eligible for matching and clustering            | Written by `SetEmbeddings` until `c97268c1b`, and by nothing today. Identical to `UnclassifiedFace` in behavior, since every predicate reads `face_kind <= 1`.                                   |
+| *(reserved)*       |  2–3  | —                                            | —                                               | Held by the retired children and background classifications; never reused, because `faces.face_kind` is stored.                                                                                  |
+| `AmbiguousFace`    |   4   | `entity.Face.ResolveCollision()` heuristic   | Excluded from matching and manual merge retries | Assigned when two subjects collide closer than `face.AmbiguityDist()`, twice `Epsilon`. Cleared back to `UnclassifiedFace` by `Face.ClearCollision`, which a person merge is the only caller of. |
+
+⚠ **`0` is the current state and `1` is the legacy one, which is the opposite of what the value order suggests.** Both are matchable, so nothing behaves differently, but the `face:N` search filter selects on the stored number: on a library re-clustered by a current release `face:0` matches everything and `face:1` matches nothing.
 
 ### Manual Cluster Merging & Retained Markers
 
@@ -316,7 +319,7 @@ Recovery steps:
 
 ### Reporting
 
-Three read-only commands describe what a library currently holds, so two tuning rounds can be diffed rather than re-derived. All take `--json`, `--md`, `--csv`, `--tsv`, `--count` and `--offset`, like `photoprism faces status`.
+Three read-only commands describe what a library currently holds, so two tuning rounds can be diffed rather than re-derived. All take `--json`, `--md`, `--csv`, `--tsv`, `--count` and `--offset`, like `photoprism faces status`, and all take an optional `[name|uid]` argument that narrows the report to one person - a subject UID selects exactly one, anything else matches names containing it, with `%` and `_` escaped so a name is never read as a pattern.
 
 | Command                     | Reports                                                                              |
 |:----------------------------|:-------------------------------------------------------------------------------------|
@@ -326,7 +329,7 @@ Three read-only commands describe what a library currently holds, so two tuning 
 
 **`faces subjects` counts at report time rather than reading `subjects.file_count`.** The two drift, because `Faces.Start` does not call `entity.UpdateSubjectCounts`: after a CLI-only reset and re-cluster the stored numbers sit at zero while the markers are correctly assigned, which is what keeps a newly named person off *People > Recognized* for a while. Counting costs one pass over the markers joined to their files - about half a second on a library of 150,000 photos and 200,000 face markers, against about ten milliseconds for the stored values - so it is affordable for a report and not for a request. `--stored` skips the join and reports the row instead, which is also how the drift is seen: run it both ways and diff.
 
-**`faces ls` reports `samples` beside the live marker count** for the same reason: `samples` is what a cluster was formed from, the marker count is what currently points at it. Its `Kind` column is the name of `face.Kind` rather than the stored number, so a cluster excluded from matching reads as `ambiguous` without a lookup table; `unset` is a row written before the column existed, which matches like a regular one.
+**`faces ls` reports `samples` beside the live marker count** for the same reason: `samples` is what a cluster was formed from, the marker count is what currently points at it. Its `Kind` column is the name of `face.Kind` rather than the stored number, so a cluster excluded from matching reads as `ambiguous` without a lookup table. It is blank for `face.UnclassifiedFace`, which is what every cluster now holds - see § Face Kinds.
 
 **`faces markers` measures the stored vectors instead of printing them.** The `Embedding` column is the width of the marker's vector and `Landmarks` the number of areas, so a marker that cannot cluster and one embedded by a different model are both visible; blank means none was stored and `invalid` means what is stored could not be parsed. Reading them costs one page of vectors and about a millisecond of parsing at the default count.
 

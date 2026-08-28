@@ -958,7 +958,7 @@ func TestFace_ClearCollision(t *testing.T) {
 
 		assert.Zero(t, m.Collisions)
 		assert.Zero(t, m.CollisionRadius)
-		assert.Equal(t, int(face.RegularFace), m.FaceKind)
+		assert.Equal(t, int(face.UnclassifiedFace), m.FaceKind, "cleared to the state a cluster is created in, not to the legacy regular kind")
 		assert.False(t, m.SkipMatching(), "a cleared cluster has to take part in matching again")
 		assert.Nil(t, m.MatchedAt, "the markers it refused while narrowed must be compared again")
 		assert.True(t, m.Reopened())
@@ -967,7 +967,7 @@ func TestFace_ClearCollision(t *testing.T) {
 		require.NoError(t, UnscopedDb().Where("id = ?", m.ID).First(&stored).Error)
 		assert.Zero(t, stored.Collisions)
 		assert.Zero(t, stored.CollisionRadius)
-		assert.Equal(t, int(face.RegularFace), stored.FaceKind)
+		assert.Equal(t, int(face.UnclassifiedFace), stored.FaceKind)
 		assert.Nil(t, stored.MatchedAt)
 	})
 	t.Run("KeepsAnUnrelatedKind", func(t *testing.T) {

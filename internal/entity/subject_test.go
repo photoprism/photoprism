@@ -725,7 +725,7 @@ func TestSubject_MergeWith_ClearsCollisions(t *testing.T) {
 		assert.Equal(t, keep.SubjUID, merged.SubjUID, "the cluster moves to the surviving subject")
 		assert.Zero(t, merged.Collisions)
 		assert.Zero(t, merged.CollisionRadius)
-		assert.Equal(t, int(face.RegularFace), merged.FaceKind, "and takes part in matching again")
+		assert.Equal(t, int(face.UnclassifiedFace), merged.FaceKind, "and takes part in matching again")
 		assert.Nil(t, merged.MatchedAt, "so the markers it refused are compared against it again")
 
 		require.NoError(t, UnscopedDb().Where("id = ?", keepFace.ID).First(&kept).Error)
