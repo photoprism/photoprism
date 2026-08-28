@@ -148,3 +148,65 @@ func TestFaces_reportOnce(t *testing.T) {
 		assert.False(t, (*Faces)(nil).reportOnce("probe", 1))
 	})
 }
+
+// TestFaces_StartRefreshesSubjectCounts covers the counts the people views order and filter on.
+//
+// Nothing else refreshes them on a CLI-only run, so a person this run assigned correctly would sort
+// last or be filtered out - which is how a mistyped person stayed invisible long enough to look as
+// though naming had failed. Gated on the run having moved something, so an idle wake pays nothing.
+func TestFaces_StartRefreshesSubjectCounts(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	w := isolatedTestFaces(t, "faces_counts")
+
+	subj := entity.SubjectFixtures.Get("actress-1")
+
+	// A count nothing could have computed, so a stale read is distinguishable from a fresh one.
+	require.NoError(t, entity.UnscopedDb().Model(&entity.Subject{}).
+		Where("subj_uid = ?", subj.SubjUID).
+		UpdateColumns(entity.Values{"file_count": 4242, "photo_count": 4242}).Error)
+
+	require.NoError(t, w.Start(FacesOptions{Force: true}))
+
+	stored := entity.FindSubject(subj.SubjUID)
+	require.NotNil(t, stored)
+
+	assert.NotEqual(t, 4242, stored.FileCount, "a run that moved markers has to refresh the counts")
+
+	// The refreshed value has to be the one UpdateSubjectCounts computes, not merely different.
+	var want int
+	require.NoError(t, entity.UnscopedDb().Raw(`SELECT COUNT(DISTINCT f.id) FROM files f
+		JOIN photos p ON p.id = f.photo_id AND p.deleted_at IS NULL AND p.photo_private = 0
+		JOIN markers m ON f.file_uid = m.file_uid AND m.subj_uid = ?
+		WHERE m.marker_invalid = 0 AND f.deleted_at IS NULL`, subj.SubjUID).Row().Scan(&want))
+
+	assert.Equal(t, want, stored.FileCount)
+}
+
+// TestFaces_StartSkipsCountsWhenNothingMoved pins the gate, so a scheduled worker that finds
+// nothing to do does not run the join over markers and files on every wake.
+func TestFaces_StartSkipsCountsWhenNothingMoved(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	w := isolatedTestFaces(t, "faces_counts_idle")
+
+	// Settle the library first, so the second run has nothing left to move.
+	require.NoError(t, w.Start(FacesOptions{Force: true}))
+
+	subj := entity.SubjectFixtures.Get("actress-1")
+
+	require.NoError(t, entity.UnscopedDb().Model(&entity.Subject{}).
+		Where("subj_uid = ?", subj.SubjUID).
+		UpdateColumns(entity.Values{"file_count": 4242}).Error)
+
+	require.NoError(t, w.Start(FacesOptions{Force: false}))
+
+	stored := entity.FindSubject(subj.SubjUID)
+	require.NotNil(t, stored)
+
+	assert.Equal(t, 4242, stored.FileCount, "an idle run must not pay for the refresh")
+}
