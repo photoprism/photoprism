@@ -7,6 +7,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/pkg/txt/report"
 )
 
@@ -18,11 +20,13 @@ func TestFacesSubjectsCommand(t *testing.T) {
 		output, err := RunWithTestContext(FacesSubjectsCommand, []string{"subjects"})
 		require.NoError(t, err)
 
+		assert.Contains(t, output, "UID")
 		assert.Contains(t, output, "Name")
-		assert.Contains(t, output, "Verified")
-		assert.Contains(t, output, "Files")
-		assert.Contains(t, output, "Live Files")
 		assert.Contains(t, output, "Markers")
+		assert.Contains(t, output, "Verified")
+		assert.Contains(t, output, "Hidden")
+		assert.Contains(t, output, "Files")
+		assert.Contains(t, output, "Photos")
 	})
 	t.Run("JSON", func(t *testing.T) {
 		output, err := RunWithTestContext(FacesSubjectsCommand, []string{"subjects", "--json"})
@@ -31,10 +35,21 @@ func TestFacesSubjectsCommand(t *testing.T) {
 		var rows []map[string]any
 		require.NoError(t, json.Unmarshal([]byte(output), &rows))
 
-		if len(rows) > 0 {
-			assert.Contains(t, rows[0], "verified")
-			assert.Contains(t, rows[0], "live_files")
-		}
+		require.NotEmpty(t, rows)
+		assert.Contains(t, rows[0], "verified")
+		assert.Contains(t, rows[0], "hidden")
+		assert.Contains(t, rows[0], "files")
+	})
+	t.Run("Stored", func(t *testing.T) {
+		// Same shape, without the pass over markers and files that counting live costs.
+		output, err := RunWithTestContext(FacesSubjectsCommand, []string{"subjects", "--stored", "--json"})
+		require.NoError(t, err)
+
+		var rows []map[string]any
+		require.NoError(t, json.Unmarshal([]byte(output), &rows))
+		require.NotEmpty(t, rows)
+		assert.Contains(t, rows[0], "files")
+		assert.Contains(t, rows[0], "photos")
 	})
 	t.Run("CountIsBounded", func(t *testing.T) {
 		// An out-of-range count falls back to the API default rather than fetching everything.
@@ -55,9 +70,13 @@ func TestFacesListCommand(t *testing.T) {
 
 		// Samples against the live marker count is the pair worth reading: the first is what the
 		// cluster was built from, the second is what points at it now.
-		assert.Contains(t, output, "Samples")
-		assert.Contains(t, output, "Markers")
-		assert.Contains(t, output, "Collision Radius")
+		for _, col := range []string{"ID", "Name", "Subject", "Src", "Markers", "Samples", "Radius", "Collisions", "Collision Radius", "Kind", "Matched At"} {
+			assert.Contains(t, output, col)
+		}
+
+		// The kind is named rather than numbered, so it reads without a lookup table. Every
+		// fixture predates the column, so what they render is the name for that state.
+		assert.Contains(t, output, face.Kind(0).String())
 	})
 	t.Run("Markdown", func(t *testing.T) {
 		output, err := RunWithTestContext(FacesListCommand, []string{"ls", "--md"})
@@ -74,10 +93,14 @@ func TestFacesMarkersCommand(t *testing.T) {
 		output, err := RunWithTestContext(FacesMarkersCommand, []string{"markers"})
 		require.NoError(t, err)
 
-		assert.Contains(t, output, "Marker")
-		assert.Contains(t, output, "Cluster")
-		// Embeddings are most of the row and none of what a diagnosis reads.
-		assert.NotContains(t, output, "embeddings")
+		for _, col := range []string{"Marker", "Name", "Size", "Score", "Subject", "Src", "Face", "Dist", "Embedding", "Landmarks", "Invalid", "File", "Matched At"} {
+			assert.Contains(t, output, col)
+		}
+
+		// The vectors are measured, not printed: they are most of the row and none of what a
+		// diagnosis reads.
+		assert.NotContains(t, output, "embeddings_json")
+		assert.NotContains(t, output, "0.1234")
 	})
 	t.Run("Dangling", func(t *testing.T) {
 		// The fixtures are consistent, so this selects nothing - which is the point: the filter
@@ -97,6 +120,15 @@ func TestFacesMarkersCommand(t *testing.T) {
 		require.NoError(t, json.Unmarshal([]byte(output), &rows))
 		assert.Empty(t, rows)
 	})
+}
+
+// TestReportVectors covers the vector columns, whose empty and invalid readings mean different
+// things: a marker that was never embedded, and one whose stored vector cannot be parsed.
+func TestReportVectors(t *testing.T) {
+	assert.Equal(t, "128", reportVectors(128))
+	assert.Equal(t, "5", reportVectors(5))
+	assert.Equal(t, "", reportVectors(0), "an absent vector reads as blank, not as a zero width")
+	assert.Equal(t, "invalid", reportVectors(query.InvalidJSON))
 }
 
 // TestReportBool covers the flag rendering, which uses the shared labels so a column of them reads

@@ -318,13 +318,17 @@ Recovery steps:
 
 Three read-only commands describe what a library currently holds, so two tuning rounds can be diffed rather than re-derived. All take `--json`, `--md`, `--csv`, `--tsv`, `--count` and `--offset`, like `photoprism faces status`.
 
-| Command                     | Reports                                                                                      |
-|:----------------------------|:---------------------------------------------------------------------------------------------|
-| `photoprism faces subjects` | People, with the stored `file_count` / `photo_count` beside the counts their markers support |
-| `photoprism faces ls`       | Clusters, with the samples each was built from beside the markers pointing at it now         |
-| `photoprism faces markers`  | Face markers and what they are assigned to                                                   |
+| Command                     | Reports                                                                              |
+|:----------------------------|:-------------------------------------------------------------------------------------|
+| `photoprism faces subjects` | People, with the markers, files, and photos they currently hold                      |
+| `photoprism faces ls`       | Clusters, with the samples each was built from beside the markers pointing at it now |
+| `photoprism faces markers`  | Face markers and what they are assigned to                                           |
 
-Two column pairs carry most of the value. **Stored against live counts** diverge because `Faces.Start` does not call `entity.UpdateSubjectCounts`, so after a CLI-only reset and re-cluster the stored numbers sit at zero while the markers are correctly assigned - which is what keeps a newly named person off *People > Recognized* for a while. **Samples against markers** diverge because `samples` is what a cluster was formed from and the marker count is what currently points at it.
+**`faces subjects` counts at report time rather than reading `subjects.file_count`.** The two drift, because `Faces.Start` does not call `entity.UpdateSubjectCounts`: after a CLI-only reset and re-cluster the stored numbers sit at zero while the markers are correctly assigned, which is what keeps a newly named person off *People > Recognized* for a while. Counting costs one pass over the markers joined to their files - about half a second on a library of 150,000 photos and 200,000 face markers, against about ten milliseconds for the stored values - so it is affordable for a report and not for a request. `--stored` skips the join and reports the row instead, which is also how the drift is seen: run it both ways and diff.
+
+**`faces ls` reports `samples` beside the live marker count** for the same reason: `samples` is what a cluster was formed from, the marker count is what currently points at it. Its `Kind` column is the name of `face.Kind` rather than the stored number, so a cluster excluded from matching reads as `ambiguous` without a lookup table; `unset` is a row written before the column existed, which matches like a regular one.
+
+**`faces markers` measures the stored vectors instead of printing them.** The `Embedding` column is the width of the marker's vector and `Landmarks` the number of areas, so a marker that cannot cluster and one embedded by a different model are both visible; blank means none was stored and `invalid` means what is stored could not be parsed. Reading them costs one page of vectors and about a millisecond of parsing at the default count.
 
 `faces markers` also selects the two shapes a diagnosis keeps returning to: `--unassigned` for markers with a person but no cluster, and `--dangling` for markers naming a cluster that no longer exists. Embeddings are never printed - they are most of the row and none of what is being read.
 

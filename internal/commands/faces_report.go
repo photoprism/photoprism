@@ -6,6 +6,7 @@ import (
 
 	"github.com/urfave/cli/v2"
 
+	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
@@ -16,9 +17,11 @@ import (
 // FacesSubjectsCommand reports the people a library holds, with the counts the index stores beside
 // the counts its markers currently support.
 var FacesSubjectsCommand = &cli.Command{
-	Name:   "subjects",
-	Usage:  "Lists people with their stored and live counts",
-	Flags:  append(report.CliFlags, CountFlag, OffsetFlag),
+	Name:  "subjects",
+	Usage: "Lists people with the files and photos their markers support",
+	Flags: append(report.CliFlags, CountFlag, OffsetFlag,
+		&cli.BoolFlag{Name: "stored", Usage: "report the counts the index holds instead of counting now"},
+	),
 	Action: facesSubjectsAction,
 }
 
@@ -50,6 +53,20 @@ func reportBool(b bool) string {
 	return report.Bool(b, report.Yes, report.No)
 }
 
+// reportVectors renders how much of a stored vector a marker holds. The width answers more than a
+// yes would: a marker embedded by another model reports a different one, which is why the number is
+// shown rather than a flag.
+func reportVectors(n int) string {
+	switch {
+	case n == query.InvalidJSON:
+		return "invalid"
+	case n <= 0:
+		return ""
+	default:
+		return strconv.Itoa(n)
+	}
+}
+
 // reportPaging returns the count and offset a report command was given, bounded like the API.
 func reportPaging(ctx *cli.Context) (count, offset int) {
 	count = int(ctx.Uint("count")) //nolint:gosec // CLI flag bounded here
@@ -79,20 +96,20 @@ func facesSubjectsAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
 		count, offset := reportPaging(ctx)
 
-		people, err := query.SubjectReports(count, offset)
+		people, err := query.SubjectReports(count, offset, !ctx.Bool("stored"))
 
 		if err != nil {
 			return err
 		}
 
-		cols := []string{"Name", "UID", "Src", "Verified", "Files", "Photos", "Live Files", "Live Photos", "Markers"}
+		cols := []string{"UID", "Name", "Src", "Markers", "Verified", "Hidden", "Files", "Photos"}
 		rows := make([][]string, 0, len(people))
 
 		for _, p := range people {
 			rows = append(rows, []string{
-				p.SubjName, p.SubjUID, entity.SrcString(p.SubjSrc), reportBool(p.Verified),
+				p.SubjUID, p.SubjName, entity.SrcString(p.SubjSrc), strconv.Itoa(p.Markers),
+				reportBool(p.Verified), reportBool(p.SubjHidden),
 				strconv.Itoa(p.FileCount), strconv.Itoa(p.PhotoCount),
-				strconv.Itoa(p.LiveFiles), strconv.Itoa(p.LivePhotos), strconv.Itoa(p.Markers),
 			})
 		}
 
@@ -111,15 +128,15 @@ func facesListAction(ctx *cli.Context) error {
 			return err
 		}
 
-		cols := []string{"ID", "Person", "Src", "Kind", "Samples", "Radius", "Collisions", "Collision Radius", "Markers", "Matched At"}
+		cols := []string{"ID", "Name", "Subject", "Src", "Markers", "Samples", "Radius", "Collisions", "Collision Radius", "Kind", "Matched At"}
 		rows := make([][]string, 0, len(faces))
 
 		for _, f := range faces {
 			rows = append(rows, []string{
-				f.ID, f.SubjName, entity.SrcString(f.FaceSrc), strconv.Itoa(f.FaceKind),
-				strconv.Itoa(f.Samples), report.Distance(f.SampleRadius),
+				f.ID, f.SubjName, f.SubjUID, entity.SrcString(f.FaceSrc),
+				strconv.Itoa(f.Markers), strconv.Itoa(f.Samples), report.Distance(f.SampleRadius),
 				strconv.Itoa(f.Collisions), report.Distance(f.CollisionRadius),
-				strconv.Itoa(f.Markers), report.DateTime(f.MatchedAt),
+				face.Kind(f.FaceKind).String(), report.DateTime(f.MatchedAt),
 			})
 		}
 
@@ -145,14 +162,15 @@ func facesMarkersAction(ctx *cli.Context) error {
 			return err
 		}
 
-		cols := []string{"Marker", "File", "Cluster", "Person", "Src", "Name", "Size", "Score", "Dist", "Invalid", "Matched At"}
+		cols := []string{"Marker", "Name", "Size", "Score", "Subject", "Src", "Face", "Dist", "Embedding", "Landmarks", "Invalid", "File", "Matched At"}
 		rows := make([][]string, 0, len(markers))
 
 		for _, m := range markers {
 			rows = append(rows, []string{
-				m.MarkerUID, m.FileUID, m.FaceID, m.SubjUID, entity.SrcString(m.SubjSrc), m.MarkerName,
-				strconv.Itoa(m.Size), strconv.Itoa(m.Score), report.Distance(m.FaceDist),
-				reportBool(m.MarkerInvalid), report.DateTime(m.MatchedAt),
+				m.MarkerUID, m.MarkerName, strconv.Itoa(m.Size), strconv.Itoa(m.Score),
+				m.SubjUID, entity.SrcString(m.SubjSrc), m.FaceID, report.Distance(m.FaceDist),
+				reportVectors(m.EmbeddingDims), reportVectors(m.Landmarks),
+				reportBool(m.MarkerInvalid), m.FileUID, report.DateTime(m.MatchedAt),
 			})
 		}
 
