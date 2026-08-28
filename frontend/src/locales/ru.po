@@ -265,7 +265,7 @@ msgid "Add"
 msgstr "Добавить"
 
 #: src/component/lightbox/sidebar.vue:480
-#: src/component/photo/edit/people.vue:97
+#: src/component/photo/edit/people.vue:97 src/page/people/new.vue:198
 msgid "Add %{s}?"
 msgstr "Добавь %{s}?"
 
@@ -843,7 +843,7 @@ msgstr "Нельзя выбрать больше элементов"
 #: src/component/meta/face/markers.vue:54
 #: src/component/meta/face/markers.vue:73
 #: src/component/meta/location/dialog.vue:115
-#: src/component/people/edit/dialog.vue:46
+#: src/component/people/edit/dialog.vue:57
 #: src/component/photo/album/dialog.vue:64 src/component/service/add.vue:97
 #: src/component/service/edit.vue:232 src/component/service/remove.vue:19
 #: src/component/service/upload.vue:57 src/component/settings/apps.vue:151
@@ -914,7 +914,7 @@ msgstr "Изменить флаг приватности"
 #: src/component/album/edit/dialog.vue:171
 #: src/component/label/edit/dialog.vue:109
 #: src/component/meta/camera/dialog.vue:214
-#: src/component/people/edit/dialog.vue:112
+#: src/component/people/edit/dialog.vue:123
 #: src/component/photo/batch-edit.vue:1440
 #: src/component/photo/edit/details.vue:636 src/locales.js:376
 #: src/page/settings/account.vue:447 src/page/settings/account.vue:452
@@ -933,7 +933,7 @@ msgstr "Изменения не будут сохранены"
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
-#: src/locales.js:428 src/page/albums.vue:1197 src/page/people/new.vue:789
+#: src/locales.js:428 src/page/albums.vue:1197 src/page/people/new.vue:810
 #: src/page/people/recognized.vue:304 src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
 #: src/page/settings/general.vue:646
@@ -1086,7 +1086,7 @@ msgstr "Уверенность"
 #: src/component/settings/passcode.vue:68
 #: src/component/settings/passcode.vue:69
 #: src/component/settings/passcode.vue:78
-#: src/component/settings/passcode.vue:94
+#: src/component/settings/passcode.vue:94 src/page/people/new.vue:101
 msgid "Confirm"
 msgstr "Подтверждать"
 
@@ -1198,14 +1198,6 @@ msgstr "Ничего не найдено."
 #: src/page/settings/account.vue:286
 msgid "Country"
 msgstr "Страна"
-
-#: src/page/people/new.vue:101
-msgid "Create"
-msgstr "Создано"
-
-#: src/page/people/new.vue:198
-msgid "Create a new person named %{name}?"
-msgstr "Создать нового человека с именем %{name}?"
 
 #: src/page/auth/login.vue:123 src/page/auth/login.vue:130
 msgid "Create Account"
@@ -2064,7 +2056,7 @@ msgstr "Помощь и поддержка"
 
 #: src/component/navigation.vue:369 src/component/navigation.vue:370
 #: src/component/navigation.vue:382 src/component/navigation.vue:391
-#: src/component/navigation.vue:504 src/component/people/edit/dialog.vue:40
+#: src/component/navigation.vue:504 src/component/people/edit/dialog.vue:51
 msgid "Hidden"
 msgstr "Скрытые"
 
@@ -2347,6 +2339,10 @@ msgstr "Ограничение по размеру в формате JPEG: %{n}p
 #: src/page/library/import.vue:53
 msgid "JPEGs and thumbnails are automatically rendered as needed."
 msgstr "JPEG и эскизы автоматически отображаются по мере необходимости."
+
+#: src/component/people/edit/dialog.vue:44
+msgid "Keeps this person when face clusters are reset"
+msgstr ""
 
 #: src/common/util.js:906
 msgid "Keyword"
@@ -3169,7 +3165,7 @@ msgstr "Удалено насовсем"
 msgid "Permission denied"
 msgstr "Доступ запрещен"
 
-#: src/model/subject.js:158
+#: src/model/subject.js:159
 msgid "Person"
 msgstr "Человек"
 
@@ -3686,10 +3682,10 @@ msgstr "Спутник"
 #: src/component/meta/datetime/dialog.vue:38
 #: src/component/meta/datetime/dialog.vue:39
 #: src/component/meta/datetime/dialog.vue:51
-#: src/component/people/edit/dialog.vue:30
-#: src/component/people/edit/dialog.vue:31
-#: src/component/people/edit/dialog.vue:42
-#: src/component/people/edit/dialog.vue:49
+#: src/component/people/edit/dialog.vue:34
+#: src/component/people/edit/dialog.vue:35
+#: src/component/people/edit/dialog.vue:46
+#: src/component/people/edit/dialog.vue:60
 #: src/component/photo/batch-edit.vue:483
 #: src/component/photo/edit/details.vue:396 src/component/service/edit.vue:103
 #: src/component/service/edit.vue:235 src/component/service/edit.vue:93
@@ -4673,6 +4669,10 @@ msgstr "Векторы"
 msgid "Verification Code"
 msgstr "Проверочный код"
 
+#: src/component/people/edit/dialog.vue:43
+msgid "Verified"
+msgstr "Проверенный"
+
 #: src/locales.js:427
 msgid "Verified email required"
 msgstr "Требуется подтверждение адреса электронной почты."
@@ -4935,6 +4935,12 @@ msgstr "Название"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Архивировать"
+
+#~ msgid "Create"
+#~ msgstr "Создано"
+
+#~ msgid "Create a new person named %{name}?"
+#~ msgstr "Создать нового человека с именем %{name}?"
 
 #~ msgid "%{n} files uploaded"
 #~ msgstr "%{n} файлов загружено"
@@ -5423,9 +5429,6 @@ msgstr "Архивировать"
 
 #~ msgid "Why are some features only available to sponsors?"
 #~ msgstr "Почему некоторые функции доступны только спонсорам?"
-
-#~ msgid "Verified"
-#~ msgstr "Проверенный"
 
 #~ msgid "Proceed"
 #~ msgstr "Продолжить"

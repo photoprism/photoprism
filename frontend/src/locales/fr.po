@@ -265,7 +265,7 @@ msgid "Add"
 msgstr "Ajouter"
 
 #: src/component/lightbox/sidebar.vue:480
-#: src/component/photo/edit/people.vue:97
+#: src/component/photo/edit/people.vue:97 src/page/people/new.vue:198
 msgid "Add %{s}?"
 msgstr "Ajouter %{s} ?"
 
@@ -845,7 +845,7 @@ msgstr "Impossible de sélectionner plus d’éléments"
 #: src/component/meta/face/markers.vue:54
 #: src/component/meta/face/markers.vue:73
 #: src/component/meta/location/dialog.vue:115
-#: src/component/people/edit/dialog.vue:46
+#: src/component/people/edit/dialog.vue:57
 #: src/component/photo/album/dialog.vue:64 src/component/service/add.vue:97
 #: src/component/service/edit.vue:232 src/component/service/remove.vue:19
 #: src/component/service/upload.vue:57 src/component/settings/apps.vue:151
@@ -916,7 +916,7 @@ msgstr "Modifier le statut privé"
 #: src/component/album/edit/dialog.vue:171
 #: src/component/label/edit/dialog.vue:109
 #: src/component/meta/camera/dialog.vue:214
-#: src/component/people/edit/dialog.vue:112
+#: src/component/people/edit/dialog.vue:123
 #: src/component/photo/batch-edit.vue:1440
 #: src/component/photo/edit/details.vue:636 src/locales.js:376
 #: src/page/settings/account.vue:447 src/page/settings/account.vue:452
@@ -935,7 +935,7 @@ msgstr "Les modifications n'ont pu être sauvegardées"
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
-#: src/locales.js:428 src/page/albums.vue:1197 src/page/people/new.vue:789
+#: src/locales.js:428 src/page/albums.vue:1197 src/page/people/new.vue:810
 #: src/page/people/recognized.vue:304 src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
 #: src/page/settings/general.vue:646
@@ -1089,7 +1089,7 @@ msgstr "Confiance"
 #: src/component/settings/passcode.vue:68
 #: src/component/settings/passcode.vue:69
 #: src/component/settings/passcode.vue:78
-#: src/component/settings/passcode.vue:94
+#: src/component/settings/passcode.vue:94 src/page/people/new.vue:101
 msgid "Confirm"
 msgstr "Confirmer"
 
@@ -1201,14 +1201,6 @@ msgstr "Aucun élément trouvé."
 #: src/page/settings/account.vue:286
 msgid "Country"
 msgstr "Pays"
-
-#: src/page/people/new.vue:101
-msgid "Create"
-msgstr "Créer"
-
-#: src/page/people/new.vue:198
-msgid "Create a new person named %{name}?"
-msgstr "Tu veux créer une nouvelle personne nommée %{name} ?"
 
 #: src/page/auth/login.vue:123 src/page/auth/login.vue:130
 msgid "Create Account"
@@ -2068,7 +2060,7 @@ msgstr "Aide & Support"
 
 #: src/component/navigation.vue:369 src/component/navigation.vue:370
 #: src/component/navigation.vue:382 src/component/navigation.vue:391
-#: src/component/navigation.vue:504 src/component/people/edit/dialog.vue:40
+#: src/component/navigation.vue:504 src/component/people/edit/dialog.vue:51
 msgid "Hidden"
 msgstr "Caché"
 
@@ -2351,6 +2343,10 @@ msgstr "Limite de taille des JPEGs : %{n}px"
 #: src/page/library/import.vue:53
 msgid "JPEGs and thumbnails are automatically rendered as needed."
 msgstr "Les JPEGs et miniatures sont automatiquement affichés selon les besoins."
+
+#: src/component/people/edit/dialog.vue:44
+msgid "Keeps this person when face clusters are reset"
+msgstr ""
 
 #: src/common/util.js:906
 msgid "Keyword"
@@ -3173,7 +3169,7 @@ msgstr "Supprimé définitivement"
 msgid "Permission denied"
 msgstr "Autorisation refusée"
 
-#: src/model/subject.js:158
+#: src/model/subject.js:159
 msgid "Person"
 msgstr "Personne"
 
@@ -3691,10 +3687,10 @@ msgstr "Satellite"
 #: src/component/meta/datetime/dialog.vue:38
 #: src/component/meta/datetime/dialog.vue:39
 #: src/component/meta/datetime/dialog.vue:51
-#: src/component/people/edit/dialog.vue:30
-#: src/component/people/edit/dialog.vue:31
-#: src/component/people/edit/dialog.vue:42
-#: src/component/people/edit/dialog.vue:49
+#: src/component/people/edit/dialog.vue:34
+#: src/component/people/edit/dialog.vue:35
+#: src/component/people/edit/dialog.vue:46
+#: src/component/people/edit/dialog.vue:60
 #: src/component/photo/batch-edit.vue:483
 #: src/component/photo/edit/details.vue:396 src/component/service/edit.vue:103
 #: src/component/service/edit.vue:235 src/component/service/edit.vue:93
@@ -4678,6 +4674,10 @@ msgstr "Vectoriels"
 msgid "Verification Code"
 msgstr "Code de vérification"
 
+#: src/component/people/edit/dialog.vue:43
+msgid "Verified"
+msgstr "Vérifié"
+
 #: src/locales.js:427
 msgid "Verified email required"
 msgstr "Adresse de courriel vérifiée requise"
@@ -4940,6 +4940,12 @@ msgstr "Titre"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Archives"
+
+#~ msgid "Create"
+#~ msgstr "Créer"
+
+#~ msgid "Create a new person named %{name}?"
+#~ msgstr "Tu veux créer une nouvelle personne nommée %{name} ?"
 
 #~ msgid "%{n} files uploaded"
 #~ msgstr "%{n} fichier(s) chargé(s)"
@@ -5452,9 +5458,6 @@ msgstr "Archives"
 
 #~ msgid "Why are some features only available to sponsors?"
 #~ msgstr "Pourquoi certaines fonctions ne sont-elles accessibles qu'aux sponsors ?"
-
-#~ msgid "Verified"
-#~ msgstr "Vérifié"
 
 #~ msgid "Proceed"
 #~ msgstr "Procéder"
