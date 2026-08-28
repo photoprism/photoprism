@@ -122,6 +122,25 @@ func TestFaceConflicts(t *testing.T) {
 		assert.Positive(t, scan.Clusters)
 		assert.NotNil(t, findConflict(conflicts, f1.ID, f2.ID))
 	})
+	t.Run("SameVerdictScopedAndUnscoped", func(t *testing.T) {
+		// A person argument selects which pairs are shown, never which side is evaluated. It used
+		// to pick the receiver, and the receiver decides the reported side and with it the
+		// resolution, so the same pair read "none" unscoped and "narrow" filtered.
+		named := conflictTestSubject(t, "Conflict Orientation")
+		anon := conflictTestFace(t, "", 1, 0.05)
+		known := conflictTestFace(t, named.SubjUID, 2, 0.05)
+		unscoped, _, err := FaceConflicts("", 1000, 0)
+		require.NoError(t, err)
+		scoped, _, err := FaceConflicts(named.SubjUID, 1000, 0)
+		require.NoError(t, err)
+		a := findConflict(unscoped, anon.ID, known.ID)
+		b := findConflict(scoped, anon.ID, known.ID)
+		require.NotNil(t, a, "the pair must be reported without a filter")
+		require.NotNil(t, b, "the pair must be reported with a filter")
+		assert.Equal(t, a.ID, b.ID, "the reported side must not depend on the filter")
+		assert.Equal(t, a.SubjUID, b.SubjUID)
+		assert.Equal(t, a.Dist, b.Dist)
+	})
 	t.Run("SamePersonIsNotAConflict", func(t *testing.T) {
 		alice := conflictTestSubject(t, "Conflict Same")
 		f1 := conflictTestFace(t, alice.SubjUID, 1, 0.05)

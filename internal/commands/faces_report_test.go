@@ -3,6 +3,7 @@ package commands
 import (
 	"encoding/json"
 	"flag"
+	"os"
 	"strings"
 	"testing"
 
@@ -378,7 +379,7 @@ func TestPrintFaceConflictsJSON(t *testing.T) {
 
 func TestFaceConflictNotes(t *testing.T) {
 	t.Run("AlwaysStatesWhatWasCompared", func(t *testing.T) {
-		lines := faceConflictNotes(query.FaceConflictScan{Clusters: 3, Compared: 7}, query.FaceConflictNotes{})
+		lines := faceConflictNotes(query.FaceConflictScan{Clusters: 3, Compared: 7}, query.FaceConflictNotes{}, 0)
 		require.Len(t, lines, 2)
 		assert.Contains(t, lines[0], "7 pairs")
 		assert.Contains(t, lines[0], "3 clusters")
@@ -386,12 +387,53 @@ func TestFaceConflictNotes(t *testing.T) {
 	})
 	t.Run("EveryNote", func(t *testing.T) {
 		lines := faceConflictNotes(query.FaceConflictScan{},
-			query.FaceConflictNotes{Ambiguous: 1, Hidden: 2, InertRadius: 3, BelowOwnSpread: 4})
+			query.FaceConflictNotes{Ambiguous: 1, Hidden: 2, InertRadius: 3, BelowOwnSpread: 4}, 0)
 		require.Len(t, lines, 6)
 		joined := strings.Join(lines, "\n")
 		assert.Contains(t, joined, "1 cluster in the index is already retired")
 		assert.Contains(t, joined, "2 clusters in the index are hidden")
 		assert.Contains(t, joined, "3 compared clusters record")
 		assert.Contains(t, joined, "4 compared clusters record")
+	})
+	t.Run("ExplainsUnresolvedRows", func(t *testing.T) {
+		// Without this a block of "none" rows reads as unresolved conflicts, when what it means is
+		// that one side has no identity yet.
+		lines := faceConflictNotes(query.FaceConflictScan{}, query.FaceConflictNotes{}, 17)
+		joined := strings.Join(lines, "\n")
+		assert.Contains(t, joined, "17 rows are resolved as none")
+		assert.Contains(t, joined, "not evidence of a second person")
+	})
+	t.Run("NoUnresolvedRows", func(t *testing.T) {
+		lines := faceConflictNotes(query.FaceConflictScan{}, query.FaceConflictNotes{}, 0)
+		assert.NotContains(t, strings.Join(lines, "\n"), "resolved as none")
+	})
+}
+
+func TestUnresolvedConflicts(t *testing.T) {
+	t.Run("CountsTheAnonymousSide", func(t *testing.T) {
+		assert.Equal(t, 2, unresolvedConflicts([]query.FaceConflict{
+			{SubjUID: "", OtherSubjUID: "js6sg6b1qekk9jx8"},
+			{SubjUID: "js6sg6b1qekk9jx8", OtherSubjUID: "js6sg6b1h1njaaab"},
+			{SubjUID: "", OtherSubjUID: "js6sg6b1h1njaaab"},
+		}))
+	})
+	t.Run("None", func(t *testing.T) {
+		assert.Zero(t, unresolvedConflicts([]query.FaceConflict{{SubjUID: "js6sg6b1qekk9jx8"}}))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Zero(t, unresolvedConflicts(nil))
+	})
+}
+
+func TestFaceConflictNoteWriter(t *testing.T) {
+	t.Run("DelimitedGoesToStderr", func(t *testing.T) {
+		// A parser pointed at the redirected table would otherwise read the notes as one-column
+		// rows, which is what broke the first one aimed at this output.
+		assert.Equal(t, os.Stderr, faceConflictNoteWriter(report.CSV))
+		assert.Equal(t, os.Stderr, faceConflictNoteWriter(report.TSV))
+	})
+	t.Run("ReadableFormatsGoToStdout", func(t *testing.T) {
+		assert.Equal(t, os.Stdout, faceConflictNoteWriter(report.Default))
+		assert.Equal(t, os.Stdout, faceConflictNoteWriter(report.Markdown))
 	})
 }

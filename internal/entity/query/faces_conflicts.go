@@ -93,10 +93,12 @@ func FaceConflicts(person string, count, offset int) (result []FaceConflict, sca
 			continue
 		}
 
-		f1 := &cached[a]
-
 		for b := range cached {
-			f2 := &cached[b]
+			// Ordered by the walk's own order rather than by the side a person argument selected,
+			// so a pair reports identically scoped and unscoped. cached follows facesStmt's
+			// samples DESC, id, which is the order ResolveCollision itself reaches clusters in.
+			lo, hi := min(a, b), max(a, b)
+			f1, f2 := &cached[lo], &cached[hi]
 
 			// A cluster cannot conflict with itself or with another naming the same person,
 			// which also covers the case where both sides are the same row.

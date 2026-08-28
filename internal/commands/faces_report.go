@@ -3,6 +3,8 @@ package commands
 import (
 	"encoding/json"
 	"fmt"
+	"io"
+	"os"
 	"strconv"
 	"strings"
 
@@ -59,8 +61,10 @@ var FacesConflictsCommand = &cli.Command{
 	Name:      "conflicts",
 	Usage:     "Lists face clusters that hold the same face but not the same person",
 	ArgsUsage: "[name|uid]",
-	Flags:     append(report.CliFlags, CountFlag, OffsetFlag),
-	Action:    facesConflictsAction,
+	Description: "Compares every eligible cluster pair, so --count limits the output and not the scan. " +
+		"Pass a name or subject UID to compare one person's clusters instead.",
+	Flags:  append(report.CliFlags, CountFlag, OffsetFlag),
+	Action: facesConflictsAction,
 }
 
 // reportBool renders a flag with the shared Yes/No labels every other report column uses.
@@ -237,7 +241,7 @@ func facesConflictsAction(ctx *cli.Context) error {
 
 		cols := faceConflictCols()
 		rows := faceConflictRows(conflicts)
-		lines := faceConflictNotes(scan, notes)
+		lines := faceConflictNotes(scan, notes, unresolvedConflicts(conflicts))
 
 		if format == report.JSON {
 			return printFaceConflictsJSON(rows, cols, scan, lines)
@@ -251,11 +255,13 @@ func facesConflictsAction(ctx *cli.Context) error {
 
 		fmt.Println(result)
 
+		notesOut := faceConflictNoteWriter(format)
+
 		for _, line := range lines {
-			fmt.Printf("%s\n", line)
+			fmt.Fprintf(notesOut, "%s\n", line)
 		}
 
-		fmt.Println()
+		fmt.Fprintln(notesOut)
 
 		return nil
 	})
@@ -264,12 +270,18 @@ func facesConflictsAction(ctx *cli.Context) error {
 // faceConflictNotes returns what the table itself cannot show: what the pass compared, the
 // threshold the Resolution column turns on, and the clusters a reader would otherwise assume had
 // been compared.
-func faceConflictNotes(scan query.FaceConflictScan, notes query.FaceConflictNotes) []string {
+func faceConflictNotes(scan query.FaceConflictScan, notes query.FaceConflictNotes, unresolved int) []string {
 	lines := []string{
 		fmt.Sprintf("Compared %s across %s.",
 			english.Plural(scan.Compared, "pair", "pairs"), english.Plural(scan.Clusters, "cluster", "clusters")),
 		fmt.Sprintf("Resolving below %s retires a cluster as ambiguous and above %s narrows it; in between it records a radius the matcher ignores.",
 			report.Distance(face.AmbiguityDist()), report.Distance(face.CollisionDist+face.Epsilon)),
+	}
+
+	if unresolved > 0 {
+		lines = append(lines, fmt.Sprintf("%s resolved as none, pairing a named cluster with an unnamed one, "+
+			"which nothing resolves: an unnamed cluster is not evidence of a second person. Name it if it is the same person.",
+			english.Plural(unresolved, "row is", "rows are")))
 	}
 
 	if notes.Ambiguous > 0 {
@@ -293,6 +305,30 @@ func faceConflictNotes(scan query.FaceConflictScan, notes query.FaceConflictNote
 	}
 
 	return lines
+}
+
+// unresolvedConflicts counts reported pairs the resolver will not act on, which is every row whose
+// reported side names nobody. The other side always names somebody, since two anonymous clusters
+// never pair.
+func unresolvedConflicts(conflicts []query.FaceConflict) (n int) {
+	for _, c := range conflicts {
+		if c.SubjUID == "" {
+			n++
+		}
+	}
+
+	return n
+}
+
+// faceConflictNoteWriter returns where the notes belong for a format: stderr for the delimited ones,
+// so redirecting stdout to a file leaves a parseable table and an interactive run still shows them.
+func faceConflictNoteWriter(format report.Format) io.Writer {
+	switch format {
+	case report.CSV, report.TSV:
+		return os.Stderr
+	default:
+		return os.Stdout
+	}
 }
 
 // printFaceConflictsJSON writes the report as a single object, so a saved report carries the notes
