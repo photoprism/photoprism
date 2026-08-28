@@ -57,7 +57,7 @@ var FacesMarkersCommand = &cli.Command{
 // people, which is the population collision resolution acts on.
 var FacesConflictsCommand = &cli.Command{
 	Name:      "conflicts",
-	Usage:     "Lists face clusters that hold the same face but name different people",
+	Usage:     "Lists face clusters that hold the same face but not the same person",
 	ArgsUsage: "[name|uid]",
 	Flags:     append(report.CliFlags, CountFlag, OffsetFlag),
 	Action:    facesConflictsAction,
@@ -171,12 +171,45 @@ func facesListAction(ctx *cli.Context) error {
 
 // reportResolution names what resolving a conflict would do to the first cluster, so a row an
 // operator has to act on is legible without knowing where AmbiguityDist sits.
+//
+// ResolveCollision ignores a cluster that names nobody, so such a pair is reported but acted on by
+// nothing - which the column has to say rather than assert an outcome that cannot happen.
 func reportResolution(c query.FaceConflict) string {
-	if c.Ambiguous() {
+	switch {
+	case c.SubjUID == "":
+		return "none"
+	case c.Ambiguous():
 		return "ambiguous"
+	case c.Narrows():
+		return "narrow"
+	default:
+		// Past AmbiguityDist but too close for the recorded radius to clear CollisionDist, so
+		// resolution writes a number nothing enforces.
+		return "inert"
+	}
+}
+
+// faceConflictCols returns the conflict report columns.
+func faceConflictCols() []string {
+	return []string{"Face", "Name", "Subject", "Face 2", "Name 2", "Subject 2", "Resolution",
+		"Dist", "Accept", "Accept 2", "Samples", "Samples 2"}
+}
+
+// faceConflictRows renders the reported pairs in the order faceConflictCols names.
+func faceConflictRows(conflicts []query.FaceConflict) [][]string {
+	rows := make([][]string, 0, len(conflicts))
+
+	for _, c := range conflicts {
+		rows = append(rows, []string{
+			c.ID, c.SubjName, c.SubjUID,
+			c.OtherID, c.OtherSubjName, c.OtherSubjUID,
+			reportResolution(c), report.Distance(c.Dist),
+			report.Distance(c.Accept), report.Distance(c.OtherAccept),
+			strconv.Itoa(c.Samples), strconv.Itoa(c.OtherSamples),
+		})
 	}
 
-	return "narrow"
+	return rows
 }
 
 // facesConflictsAction prints the cluster conflict report.
@@ -202,19 +235,8 @@ func facesConflictsAction(ctx *cli.Context) error {
 			return err
 		}
 
-		cols := []string{"Face", "Name", "Subject", "Face 2", "Name 2", "Subject 2", "Resolution", "Dist", "Accept", "Accept 2", "Samples", "Samples 2"}
-		rows := make([][]string, 0, len(conflicts))
-
-		for _, c := range conflicts {
-			rows = append(rows, []string{
-				c.ID, c.SubjName, c.SubjUID,
-				c.OtherID, c.OtherSubjName, c.OtherSubjUID,
-				reportResolution(c), report.Distance(c.Dist),
-				report.Distance(c.Accept), report.Distance(c.OtherAccept),
-				strconv.Itoa(c.Samples), strconv.Itoa(c.OtherSamples),
-			})
-		}
-
+		cols := faceConflictCols()
+		rows := faceConflictRows(conflicts)
 		lines := faceConflictNotes(scan, notes)
 
 		if format == report.JSON {
@@ -246,28 +268,28 @@ func faceConflictNotes(scan query.FaceConflictScan, notes query.FaceConflictNote
 	lines := []string{
 		fmt.Sprintf("Compared %s across %s.",
 			english.Plural(scan.Compared, "pair", "pairs"), english.Plural(scan.Clusters, "cluster", "clusters")),
-		fmt.Sprintf("Resolving below %s retires a cluster as ambiguous, above it narrows the cluster.",
-			report.Distance(face.AmbiguityDist())),
+		fmt.Sprintf("Resolving below %s retires a cluster as ambiguous and above %s narrows it; in between it records a radius the matcher ignores.",
+			report.Distance(face.AmbiguityDist()), report.Distance(face.CollisionDist+face.Epsilon)),
 	}
 
 	if notes.Ambiguous > 0 {
-		lines = append(lines, fmt.Sprintf("%s already retired as ambiguous and was not compared.",
-			english.Plural(notes.Ambiguous, "cluster is", "clusters are")))
+		lines = append(lines, fmt.Sprintf("%s already retired as ambiguous and not compared.",
+			english.Plural(notes.Ambiguous, "cluster in the index is", "clusters in the index are")))
 	}
 
 	if notes.Hidden > 0 {
-		lines = append(lines, fmt.Sprintf("%s hidden and was not compared.",
-			english.Plural(notes.Hidden, "cluster is", "clusters are")))
+		lines = append(lines, fmt.Sprintf("%s hidden and not compared.",
+			english.Plural(notes.Hidden, "cluster in the index is", "clusters in the index are")))
 	}
 
 	if notes.InertRadius > 0 {
 		lines = append(lines, fmt.Sprintf("%s a collision radius at or below the collision distance of %s, which the matcher does not enforce.",
-			english.Plural(notes.InertRadius, "cluster records", "clusters record"), report.Distance(face.CollisionDist)))
+			english.Plural(notes.InertRadius, "compared cluster records", "compared clusters record"), report.Distance(face.CollisionDist)))
 	}
 
 	if notes.BelowOwnSpread > 0 {
-		lines = append(lines, fmt.Sprintf("%s narrowed inside its own sample radius and accepts less than the faces it was built from.",
-			english.Plural(notes.BelowOwnSpread, "cluster was", "clusters were")))
+		lines = append(lines, fmt.Sprintf("%s a collision radius inside the sample radius, so they now accept fewer faces than they were built from.",
+			english.Plural(notes.BelowOwnSpread, "compared cluster records", "compared clusters record")))
 	}
 
 	return lines

@@ -13,6 +13,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/photoprism/photoprism/pkg/txt/report"
 )
 
@@ -284,14 +285,94 @@ func TestFacesConflictsCommand(t *testing.T) {
 }
 
 func TestReportResolution(t *testing.T) {
+	named := "js6sg6b1qekk9jx8"
 	t.Run("Ambiguous", func(t *testing.T) {
-		assert.Equal(t, "ambiguous", reportResolution(query.FaceConflict{Dist: face.AmbiguityDist() / 2}))
+		assert.Equal(t, "ambiguous", reportResolution(query.FaceConflict{SubjUID: named, Dist: face.AmbiguityDist() / 2}))
 	})
 	t.Run("Narrow", func(t *testing.T) {
-		assert.Equal(t, "narrow", reportResolution(query.FaceConflict{Dist: face.AmbiguityDist() * 10}))
+		assert.Equal(t, "narrow", reportResolution(query.FaceConflict{SubjUID: named, Dist: face.AmbiguityDist() * 10}))
 	})
 	t.Run("Unmeasured", func(t *testing.T) {
-		assert.Equal(t, "narrow", reportResolution(query.FaceConflict{Dist: -1}))
+		// Match never reports a negative distance alongside a match, so this is a guard: what
+		// matters is that an unmeasured pair does not claim a cluster would be narrowed.
+		assert.NotEqual(t, "narrow", reportResolution(query.FaceConflict{SubjUID: named, Dist: -1}))
+	})
+	t.Run("AnonymousFirstCluster", func(t *testing.T) {
+		// ResolveCollision returns early on a cluster that names nobody, so neither branch runs
+		// however close the pair is. Naming one here would assert an outcome that cannot happen.
+		assert.Equal(t, "none", reportResolution(query.FaceConflict{Dist: face.AmbiguityDist() / 2}))
+		assert.Equal(t, "none", reportResolution(query.FaceConflict{Dist: face.AmbiguityDist() * 10}))
+	})
+	t.Run("AnonymousSecondCluster", func(t *testing.T) {
+		// The other orientation does resolve: the named cluster is the receiver, and it narrows
+		// against the anonymous one's vector.
+		assert.Equal(t, "narrow", reportResolution(query.FaceConflict{
+			SubjUID: "js6sg6b1qekk9jx8", OtherSubjUID: "", Dist: face.AmbiguityDist() * 10,
+		}))
+	})
+}
+
+func TestFaceConflictRows(t *testing.T) {
+	c := query.FaceConflict{
+		ID: "FACE1", SubjName: "Alice", SubjUID: "js6sg6b1qekk9jx8", Samples: 7, Accept: 0.95,
+		OtherID: "FACE2", OtherSubjName: "Bob", OtherSubjUID: "js6sg6b1h1njaaab", OtherSamples: 3, OtherAccept: 0.42,
+		Dist: face.CollisionDist + face.Epsilon + 0.5,
+	}
+	t.Run("EveryRowFillsEveryColumn", func(t *testing.T) {
+		// Nothing else pins the row against its headers, so a transposed pair of cells - Accept
+		// against Accept 2, Samples against Samples 2 - would ship silently.
+		rows := faceConflictRows([]query.FaceConflict{c, {}})
+		require.Len(t, rows, 2)
+		for i, row := range rows {
+			assert.Len(t, row, len(faceConflictCols()), "row %d", i)
+		}
+	})
+	t.Run("ValuesLandInTheNamedColumn", func(t *testing.T) {
+		row := faceConflictRows([]query.FaceConflict{c})[0]
+		cols := faceConflictCols()
+		got := make(map[string]string, len(cols))
+		for i, col := range cols {
+			got[col] = row[i]
+		}
+		assert.Equal(t, "FACE1", got["Face"])
+		assert.Equal(t, "Alice", got["Name"])
+		assert.Equal(t, "js6sg6b1qekk9jx8", got["Subject"])
+		assert.Equal(t, "FACE2", got["Face 2"])
+		assert.Equal(t, "Bob", got["Name 2"])
+		assert.Equal(t, "js6sg6b1h1njaaab", got["Subject 2"])
+		assert.Equal(t, "narrow", got["Resolution"])
+		assert.Equal(t, report.Distance(c.Accept), got["Accept"])
+		assert.Equal(t, report.Distance(c.OtherAccept), got["Accept 2"])
+		assert.Equal(t, "7", got["Samples"])
+		assert.Equal(t, "3", got["Samples 2"])
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Empty(t, faceConflictRows(nil))
+	})
+}
+
+func TestPrintFaceConflictsJSON(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		cols := faceConflictCols()
+		rows := faceConflictRows([]query.FaceConflict{{ID: "FACE1", OtherID: "FACE2"}})
+		var printErr error
+		output := capture.Output(func() {
+			printErr = printFaceConflictsJSON(rows, cols,
+				query.FaceConflictScan{Clusters: 2, Compared: 1}, []string{"a note"})
+		})
+		require.NoError(t, printErr)
+
+		var result struct {
+			Conflicts []map[string]any `json:"conflicts"`
+			Scan      map[string]int   `json:"scan"`
+			Notes     []string         `json:"notes"`
+		}
+
+		require.NoError(t, json.Unmarshal([]byte(output), &result))
+		require.Len(t, result.Conflicts, 1)
+		assert.Equal(t, "FACE1", result.Conflicts[0]["face"])
+		assert.Equal(t, 1, result.Scan["compared"])
+		assert.Equal(t, []string{"a note"}, result.Notes)
 	})
 }
 
@@ -307,9 +388,10 @@ func TestFaceConflictNotes(t *testing.T) {
 		lines := faceConflictNotes(query.FaceConflictScan{},
 			query.FaceConflictNotes{Ambiguous: 1, Hidden: 2, InertRadius: 3, BelowOwnSpread: 4})
 		require.Len(t, lines, 6)
-		assert.Contains(t, strings.Join(lines, "\n"), "1 cluster is already retired")
-		assert.Contains(t, strings.Join(lines, "\n"), "2 clusters are hidden")
-		assert.Contains(t, strings.Join(lines, "\n"), "3 clusters record")
-		assert.Contains(t, strings.Join(lines, "\n"), "4 clusters were narrowed")
+		joined := strings.Join(lines, "\n")
+		assert.Contains(t, joined, "1 cluster in the index is already retired")
+		assert.Contains(t, joined, "2 clusters in the index are hidden")
+		assert.Contains(t, joined, "3 compared clusters record")
+		assert.Contains(t, joined, "4 compared clusters record")
 	})
 }

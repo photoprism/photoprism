@@ -82,7 +82,7 @@ func facesStmt(knownOnly, unmatchedOnly, hidden, ignored bool) *gorm.DB {
 
 	// Largest clusters first, because selection bounds each comparison by the best distance
 	// found so far: meeting a likely winner early makes every later candidate cheaper to
-	// reject. Ordering by subject instead put every unnamed cluster ahead of every named one,
+	// reject. Ordering by subject instead puts every unnamed cluster ahead of every named one,
 	// which is the opposite. The id breaks ties so the order does not vary between drivers.
 	return stmt.Order("samples DESC, id")
 }

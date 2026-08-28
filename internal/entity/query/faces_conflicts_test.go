@@ -93,6 +93,35 @@ func TestFaceConflicts(t *testing.T) {
 		assert.Positive(t, found.Accept)
 		assert.Positive(t, found.OtherAccept)
 	})
+	t.Run("ReportedFromTheSideThatAccepts", func(t *testing.T) {
+		// Match gates on the receiver's own collision radius, so a cluster an earlier resolution
+		// narrowed refuses a pair its counterparty still accepts. Testing one direction dropped it.
+		a := conflictTestSubject(t, "Conflict Refuses")
+		b := conflictTestSubject(t, "Conflict Accepts")
+		f1 := conflictTestFace(t, a.SubjUID, 1, 0.05)
+		f2 := conflictTestFace(t, b.SubjUID, 2, 0.05)
+		// Above CollisionDist so it is enforced, and below the distance between the two.
+		require.NoError(t, UnscopedDb().Model(&entity.Face{}).
+			Where("id = ?", f1.ID).UpdateColumn("collision_radius", face.CollisionDist+0.01).Error)
+		conflicts, _, err := FaceConflicts(a.SubjUID, 1000, 0)
+		require.NoError(t, err)
+		found := findConflict(conflicts, f1.ID, f2.ID)
+		require.NotNil(t, found, "the pair must be reported from the cluster that accepts it")
+		assert.Equal(t, f2.ID, found.ID, "reported from the accepting side")
+		assert.Equal(t, "Conflict Accepts", found.SubjName)
+	})
+	t.Run("FoundWithoutAPersonFilter", func(t *testing.T) {
+		// The unscoped walk is the path a person filter cannot cover, so a positive case has to
+		// exist for it: every other one forces the named cluster to be compared first.
+		a := conflictTestSubject(t, "Conflict Unscoped A")
+		b := conflictTestSubject(t, "Conflict Unscoped B")
+		f1 := conflictTestFace(t, a.SubjUID, 1, 0.05)
+		f2 := conflictTestFace(t, b.SubjUID, 2, 0.05)
+		conflicts, scan, err := FaceConflicts("", 1000, 0)
+		require.NoError(t, err)
+		assert.Positive(t, scan.Clusters)
+		assert.NotNil(t, findConflict(conflicts, f1.ID, f2.ID))
+	})
 	t.Run("SamePersonIsNotAConflict", func(t *testing.T) {
 		alice := conflictTestSubject(t, "Conflict Same")
 		f1 := conflictTestFace(t, alice.SubjUID, 1, 0.05)
@@ -149,6 +178,29 @@ func TestFaceConflict_Ambiguous(t *testing.T) {
 	})
 }
 
+func TestFaceConflict_Narrows(t *testing.T) {
+	t.Run("AboveTheEnforcedFloor", func(t *testing.T) {
+		assert.True(t, FaceConflict{Dist: face.CollisionDist + face.Epsilon + 0.001}.Narrows())
+	})
+	t.Run("AtTheFloorRecordsAnInertRadius", func(t *testing.T) {
+		// dist - Epsilon lands exactly on CollisionDist, which Face.Match does not enforce.
+		assert.False(t, FaceConflict{Dist: face.CollisionDist + face.Epsilon}.Narrows())
+	})
+	t.Run("BetweenAmbiguousAndTheFloor", func(t *testing.T) {
+		assert.False(t, FaceConflict{Dist: face.AmbiguityDist() + 0.001}.Narrows())
+	})
+	t.Run("FollowsTheConfiguredFloor", func(t *testing.T) {
+		// CollisionDist is set from PHOTOPRISM_FACE_COLLISION_DIST at startup, so the cutoff has
+		// to be read per call rather than captured.
+		restore := face.CollisionDist
+		t.Cleanup(func() { face.CollisionDist = restore })
+		c := FaceConflict{Dist: restore + face.Epsilon + 0.001}
+		assert.True(t, c.Narrows())
+		face.CollisionDist = restore + 0.1
+		assert.False(t, c.Narrows())
+	})
+}
+
 func TestConflictScope(t *testing.T) {
 	faces := FaceMap{
 		"A": entity.Face{ID: "A", SubjUID: "js6sg6b1qekk9jx8"},
@@ -166,9 +218,7 @@ func TestConflictScope(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, IDs{"A"}, scope)
 	})
-	t.Run("AnonymousIsNeverInScope", func(t *testing.T) {
-		// An anonymous cluster names nobody, so no person argument may select it - including
-		// one that resolves to no subject at all.
+	t.Run("UnknownSubjectSelectsNothing", func(t *testing.T) {
 		scope, err := conflictScope("js6sg6b1h1njaaac", faces, ids)
 		require.NoError(t, err)
 		assert.Empty(t, scope)
@@ -192,6 +242,11 @@ func TestSortFaceConflicts(t *testing.T) {
 		conflicts := []FaceConflict{{ID: "B", OtherID: "X", Dist: 0.5}, {ID: "A", OtherID: "Y", Dist: 0.5}}
 		sortFaceConflicts(conflicts)
 		assert.Equal(t, "A", conflicts[0].ID)
+	})
+	t.Run("TiesBreakOnOtherID", func(t *testing.T) {
+		conflicts := []FaceConflict{{ID: "A", OtherID: "Y", Dist: 0.5}, {ID: "A", OtherID: "X", Dist: 0.5}}
+		sortFaceConflicts(conflicts)
+		assert.Equal(t, "X", conflicts[0].OtherID)
 	})
 	t.Run("Empty", func(t *testing.T) {
 		assert.NotPanics(t, func() { sortFaceConflicts(nil) })
@@ -220,13 +275,44 @@ func TestPageFaceConflicts(t *testing.T) {
 }
 
 func TestFaceConflictReportNotes(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
-		notes, err := FaceConflictReportNotes()
+	t.Run("CountsAHiddenCluster", func(t *testing.T) {
+		s := conflictTestSubject(t, "Notes Hidden Person")
+		f := conflictTestFace(t, s.SubjUID, 1, 0.05)
+		before, err := FaceConflictReportNotes()
 		require.NoError(t, err)
-		assert.GreaterOrEqual(t, notes.Ambiguous, 0)
-		assert.GreaterOrEqual(t, notes.Hidden, 0)
-		assert.GreaterOrEqual(t, notes.InertRadius, 0)
-		assert.GreaterOrEqual(t, notes.BelowOwnSpread, 0)
+		require.NoError(t, UnscopedDb().Model(&entity.Face{}).
+			Where("id = ?", f.ID).UpdateColumn("face_hidden", true).Error)
+		after, err := FaceConflictReportNotes()
+		require.NoError(t, err)
+		assert.Equal(t, before.Hidden+1, after.Hidden)
+	})
+	t.Run("CountsAnInertRadius", func(t *testing.T) {
+		s := conflictTestSubject(t, "Notes Inert Person")
+		f := conflictTestFace(t, s.SubjUID, 1, 0.05)
+		before, err := FaceConflictReportNotes()
+		require.NoError(t, err)
+		// At the floor exactly, which is the boundary the matcher still ignores.
+		require.NoError(t, UnscopedDb().Model(&entity.Face{}).
+			Where("id = ?", f.ID).UpdateColumn("collision_radius", face.CollisionDist).Error)
+		after, err := FaceConflictReportNotes()
+		require.NoError(t, err)
+		assert.Equal(t, before.InertRadius+1, after.InertRadius)
+		// An inert radius is not a narrowing, so it must not also be reported as one.
+		assert.Equal(t, before.BelowOwnSpread, after.BelowOwnSpread)
+	})
+	t.Run("SkipsClustersTheWalkExcludes", func(t *testing.T) {
+		// A hidden cluster is never compared, so counting its radius would describe a row the
+		// same notes have just said was skipped.
+		s := conflictTestSubject(t, "Notes Excluded Person")
+		f := conflictTestFace(t, s.SubjUID, 1, 0.05)
+		before, err := FaceConflictReportNotes()
+		require.NoError(t, err)
+		require.NoError(t, UnscopedDb().Model(&entity.Face{}).Where("id = ?", f.ID).
+			UpdateColumns(entity.Values{"face_hidden": true, "collision_radius": face.CollisionDist / 2}).Error)
+		after, err := FaceConflictReportNotes()
+		require.NoError(t, err)
+		assert.Equal(t, before.InertRadius, after.InertRadius)
+		assert.Equal(t, before.BelowOwnSpread, after.BelowOwnSpread)
 	})
 	t.Run("CountsARetiredCluster", func(t *testing.T) {
 		s := conflictTestSubject(t, "Notes Test Person")

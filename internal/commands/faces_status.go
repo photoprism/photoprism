@@ -23,7 +23,7 @@ var FacesStatusCommand = &cli.Command{
 	Action:  facesStatusAction,
 }
 
-// facesStatusAction prints the face detection and recognition status.
+// facesStatusAction prints the current status and configuration details.
 func facesStatusAction(ctx *cli.Context) error {
 	conf, err := InitCoreConfig(ctx, true)
 
