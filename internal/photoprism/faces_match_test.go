@@ -183,7 +183,7 @@ func TestSelectBestFaceGates(t *testing.T) {
 
 	t.Run("TooFar", func(t *testing.T) {
 		idx := faceIndex{candidates: []faceCandidate{{ref: ref, emb: ref.Embedding(), acceptDist: -1}}}
-		best, dist, _ := selectBestFace(embeddings, idx)
+		best, dist, _ := selectBestFace(embeddings, idx, false)
 		assert.Nil(t, best)
 		assert.InDelta(t, -1.0, dist, 1e-9)
 	})
@@ -199,12 +199,12 @@ func TestSelectBestFaceGates(t *testing.T) {
 			collisionRadius: d / 2,
 		}}}
 
-		best, _, _ := selectBestFace(other, idx)
+		best, _, _ := selectBestFace(other, idx, false)
 		assert.Nil(t, best, "a face beyond the collision radius must be refused")
 	})
 	t.Run("NoEmbeddings", func(t *testing.T) {
 		idx := faceIndex{candidates: []faceCandidate{{ref: ref, emb: ref.Embedding(), acceptDist: face.AcceptDist(0)}}}
-		best, dist, _ := selectBestFace(face.Embeddings{}, idx)
+		best, dist, _ := selectBestFace(face.Embeddings{}, idx, false)
 		assert.Nil(t, best)
 		assert.InDelta(t, -1.0, dist, 1e-9)
 	})
@@ -223,7 +223,7 @@ func TestSelectBestFaceGates(t *testing.T) {
 			{ref: second, emb: emb, acceptDist: face.AcceptDist(0)},
 		}}
 
-		best, _, _ := selectBestFace(embeddings, idx)
+		best, _, _ := selectBestFace(embeddings, idx, false)
 		require.NotNil(t, best)
 		assert.Equal(t, "first", best.ID)
 	})
@@ -246,7 +246,7 @@ func TestSelectBestFace(t *testing.T) {
 	index := buildFaceIndex(faces)
 	require.Len(t, index.candidates, 2)
 
-	best, dist, _ := selectBestFace(markerEmb, index)
+	best, dist, _ := selectBestFace(markerEmb, index, false)
 	require.NotNil(t, best)
 	require.Equal(t, matchFace.ID, best.ID)
 	require.InDelta(t, 0.0, dist, 1e-9)
@@ -311,7 +311,7 @@ func TestSelectBestFaceReturnsClosest(t *testing.T) {
 
 		// The reference scans every candidate to completion and applies no bound at all.
 		want, wantDist := legacySelectBestFace(markerEmb, index)
-		got, gotDist, _ := selectBestFace(markerEmb, index)
+		got, gotDist, _ := selectBestFace(markerEmb, index, false)
 
 		if want == nil {
 			assert.Nil(t, got, "nothing accepts the marker, so nothing may be returned")
@@ -348,7 +348,7 @@ func TestSelectBestFaceMargin(t *testing.T) {
 			{ref: far, emb: face.FixtureEmbeddingAt(base, farDist, 4003), acceptDist: face.AcceptDistMax},
 		}}
 
-		return selectBestFace(marker, idx)
+		return selectBestFace(marker, idx, false)
 	}
 
 	t.Run("BetweenTwoPeople", func(t *testing.T) {
@@ -388,7 +388,7 @@ func TestSelectBestFaceMargin(t *testing.T) {
 			{ref: far, emb: face.FixtureEmbeddingAt(base, 0.72, 4003), acceptDist: 0.5},
 		}}
 
-		best, _, _ := selectBestFace(marker, idx)
+		best, _, _ := selectBestFace(marker, idx, false)
 		require.NotNil(t, best)
 		assert.Equal(t, "near", best.ID)
 	})
@@ -445,7 +445,7 @@ func TestSelectBestFaceMargin(t *testing.T) {
 			{ref: third, emb: face.FixtureEmbeddingAt(base, 0.72, 4013), acceptDist: face.AcceptDistMax},
 		}}
 
-		best, _, ambiguous := selectBestFace(face.Embeddings{base}, idx)
+		best, _, ambiguous := selectBestFace(face.Embeddings{base}, idx, false)
 
 		assert.Nil(t, best, "a cluster holding someone else is inside the margin")
 		assert.True(t, ambiguous)
@@ -454,7 +454,7 @@ func TestSelectBestFaceMargin(t *testing.T) {
 		// each other, or the assertion above would hold for a reason that is not the third one.
 		idx.candidates[2].emb = face.FixtureEmbeddingAt(base, 1.20, 4013)
 
-		best, _, ambiguous = selectBestFace(face.Embeddings{base}, idx)
+		best, _, ambiguous = selectBestFace(face.Embeddings{base}, idx, false)
 
 		require.NotNil(t, best)
 		assert.Equal(t, "alice-1", best.ID)
@@ -476,47 +476,56 @@ func TestAmbiguousBestFace(t *testing.T) {
 	far := func(f *entity.Face) faceContender { return faceContender{ref: f, dist: 0.90} }
 
 	t.Run("NoContender", func(t *testing.T) {
-		assert.False(t, ambiguousBestFace(anon, 0.7, nil))
+		assert.False(t, ambiguousBestFace(anon, 0.7, nil, false))
 	})
 	t.Run("ClearWinner", func(t *testing.T) {
-		assert.False(t, ambiguousBestFace(named, 0.3, []faceContender{far(other)}))
+		assert.False(t, ambiguousBestFace(named, 0.3, []faceContender{far(other)}, false))
 	})
 	t.Run("DifferentSubjects", func(t *testing.T) {
-		assert.True(t, ambiguousBestFace(named, 0.7, []faceContender{near(other)}))
+		assert.True(t, ambiguousBestFace(named, 0.7, []faceContender{near(other)}, false))
 	})
 	t.Run("SameSubject", func(t *testing.T) {
-		assert.False(t, ambiguousBestFace(named, 0.7, []faceContender{near(same)}))
+		assert.False(t, ambiguousBestFace(named, 0.7, []faceContender{near(same)}, false))
 	})
 	t.Run("Anonymous", func(t *testing.T) {
 		// Two clusters close enough to contend for one marker are the same person on the evidence,
 		// because the splitter fragments people. Deferring here withholds a correct assignment and
 		// prevents nothing, since neither cluster carries a name to get wrong.
-		assert.False(t, ambiguousBestFace(anon, 0.7, []faceContender{near(otherAnon)}))
+		assert.False(t, ambiguousBestFace(anon, 0.7, []faceContender{near(otherAnon)}, false))
+	})
+	t.Run("AnchoredMarkerBetweenAnonymousClusters", func(t *testing.T) {
+		// A marker whose subject a person set anchors that name onto whichever cluster wins:
+		// Marker.SetFace lets an anonymous cluster adopt it, and Face.SetSubjectUID then writes it
+		// onto every automatic marker of the cluster and clears their review flag. So for these the
+		// coin toss names a person rather than picking a cluster, and nothing withdraws it.
+		assert.True(t, ambiguousBestFace(anon, 0.7, []faceContender{near(otherAnon)}, true))
+
+		// The exemption still applies to everything else, which is what it was added for.
+		assert.False(t, ambiguousBestFace(anon, 0.7, []faceContender{near(otherAnon)}, false))
 	})
 	t.Run("AnonymousContenderAgainstANamedBest", func(t *testing.T) {
 		// The converse still defers: one of the two would give the marker a name, so a coin toss
 		// between them can be wrong in a way two anonymous clusters cannot.
-		assert.True(t, ambiguousBestFace(named, 0.7, []faceContender{near(anon)}))
-		assert.True(t, ambiguousBestFace(anon, 0.7, []faceContender{near(named)}))
+		assert.True(t, ambiguousBestFace(named, 0.7, []faceContender{near(anon)}, false))
+		assert.True(t, ambiguousBestFace(anon, 0.7, []faceContender{near(named)}, false))
 	})
 	t.Run("SameSubjectDoesNotHideAnother", func(t *testing.T) {
 		// The reason every contender is weighed rather than the runner-up alone: a subject owns
 		// several clusters routinely, and two of theirs would otherwise fill both places while a
 		// third one holding someone else sits just as close.
-		assert.True(t, ambiguousBestFace(named, 0.7, []faceContender{near(same), near(other)}))
-		assert.True(t, ambiguousBestFace(named, 0.7, []faceContender{near(other), near(same)}))
+		assert.True(t, ambiguousBestFace(named, 0.7, []faceContender{near(same), near(other)}, false))
+		assert.True(t, ambiguousBestFace(named, 0.7, []faceContender{near(other), near(same)}, false))
 	})
 	t.Run("OnlyContendersInsideTheMargin", func(t *testing.T) {
-		assert.False(t, ambiguousBestFace(named, 0.7, []faceContender{near(same), far(other)}))
+		assert.False(t, ambiguousBestFace(named, 0.7, []faceContender{near(same), far(other)}, false))
 	})
 }
 
-// TestFacesMatchClearsAmbiguousMarker covers what happens to the marker, which is where the margin
-// either reaches the population it was written for or does not.
+// TestFacesMatchClearsAmbiguousMarker covers what happens to the marker itself.
 //
-// A bridge marker an earlier run already assigned is the whole point: Marker.HasFace reports any
-// marker holding a face as already having the best one, so a decision taken after that check would
-// leave exactly those markers on the cluster the coin toss gave them.
+// A bridge marker an earlier run assigned is the point: HasFace reports any marker holding a face
+// as already having the best one, so deciding after that check would leave exactly those markers
+// on the cluster the coin toss gave them.
 func TestFacesMatchClearsAmbiguousMarker(t *testing.T) {
 	c := config.TestConfig()
 	w := NewFaces(c)
@@ -697,13 +706,11 @@ func TestFacesMatchRespectsVeto(t *testing.T) {
 	require.NoError(t, err)
 }
 
-// TestStampMatchedFaces pins that the stamping loop leaves a cluster a collision reopened during
-// the pass unmatched.
+// TestStampMatchedFaces pins that a cluster a collision reopened mid-pass is left unmatched.
 //
-// Stamping it would end the only route back: the next run reads clusters that are still
-// unmatched, so a cluster stamped here is not re-examined, and the markers ReviseMatches dropped
-// have nothing to be compared against. Every cluster the loop iterates started out unmatched, so
-// the timestamp cannot tell the two apart and the flag has to.
+// Stamping it would end the only route back: the next run reads clusters that are still unmatched,
+// so a stamped one is not re-examined and the markers ReviseMatches dropped have nothing to compare
+// against. Every cluster the loop iterates started unmatched, so the flag has to tell them apart.
 func TestStampMatchedFaces(t *testing.T) {
 	stamped := entity.Face{ID: "REOPENTESTSTAMPED", MatchedAt: entity.TimeStamp()}
 	reopened := entity.Face{ID: "REOPENTESTREOPEN", MatchedAt: entity.TimeStamp()}
