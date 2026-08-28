@@ -20,7 +20,7 @@ func TestFacesSubjectsCommand(t *testing.T) {
 		output, err := RunWithTestContext(FacesSubjectsCommand, []string{"subjects"})
 		require.NoError(t, err)
 
-		for _, col := range []string{"Subject", "Name", "Src", "Markers", "Clusters", "Verified", "Hidden", "Files", "Photos", "Created"} {
+		for _, col := range []string{"Subject", "Name", "Src", "Favorite", "Verified", "Hidden", "Markers", "Clusters", "Files", "Photos", "Created"} {
 			assert.Contains(t, output, col)
 		}
 
@@ -39,6 +39,7 @@ func TestFacesSubjectsCommand(t *testing.T) {
 		require.NoError(t, json.Unmarshal([]byte(output), &rows))
 
 		require.NotEmpty(t, rows)
+		assert.Contains(t, rows[0], "favorite")
 		assert.Contains(t, rows[0], "verified")
 		assert.Contains(t, rows[0], "hidden")
 		assert.Contains(t, rows[0], "files")

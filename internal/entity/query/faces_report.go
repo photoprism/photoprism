@@ -40,16 +40,17 @@ func PersonFilter(s string) (subjUID, nameLike string) {
 // CLI-only reset the stored numbers sit at zero while the markers are assigned. Clusters is stored
 // nowhere and is the fragmentation a sweep reads - a person holds several by design.
 type SubjectReport struct {
-	SubjUID    string
-	SubjName   string
-	SubjSrc    string
-	Verified   bool
-	SubjHidden bool
-	FileCount  int
-	PhotoCount int
-	Markers    int
-	Clusters   int
-	CreatedAt  time.Time
+	SubjUID      string
+	SubjName     string
+	SubjSrc      string
+	SubjFavorite bool
+	Verified     bool
+	SubjHidden   bool
+	FileCount    int
+	PhotoCount   int
+	Markers      int
+	Clusters     int
+	CreatedAt    time.Time
 }
 
 // SubjectReports returns person subjects ordered by name.
@@ -85,7 +86,7 @@ func SubjectReports(person string, count, offset int, live bool) (result []Subje
 			entity.File{}.TableName(), entity.Photo{}.TableName(), entity.Marker{}.TableName())
 	}
 
-	stmt := fmt.Sprintf(`SELECT s.subj_uid, s.subj_name, s.subj_src, s.verified, s.subj_hidden, s.created_at, %s,
+	stmt := fmt.Sprintf(`SELECT s.subj_uid, s.subj_name, s.subj_src, s.subj_favorite, s.verified, s.subj_hidden, s.created_at, %s,
 		COALESCE(n.markers, 0) AS markers, COALESCE(fc.clusters, 0) AS clusters
 		FROM %s s
 		%s
