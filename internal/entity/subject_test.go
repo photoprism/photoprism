@@ -771,3 +771,52 @@ func TestSubject_SaveForm_Verified(t *testing.T) {
 	require.NotNil(t, stored)
 	assert.False(t, stored.Verified)
 }
+
+// TestSubject_MergeWith_Verified pins that the flag follows the person rather than the row.
+//
+// The survivor keeps it, or the most ordinary People action - renaming one person onto another -
+// would silently strip the protection and the next reset would delete the name. The absorbed row
+// loses it, or the tombstone becomes uncollectable: the orphan sweep skips a verified row.
+func TestSubject_MergeWith_Verified(t *testing.T) {
+	merge := func(t *testing.T, vouchedIsAbsorbed bool) (survivor, absorbed *Subject) {
+		t.Helper()
+
+		a := NewSubject("ZZ Merge Verified A", SubjPerson, SrcManual)
+		b := NewSubject("ZZ Merge Verified B", SubjPerson, SrcManual)
+		require.NotNil(t, a)
+		require.NotNil(t, b)
+
+		if vouchedIsAbsorbed {
+			a.Verified = true
+		} else {
+			b.Verified = true
+		}
+
+		require.NoError(t, a.Create())
+		require.NoError(t, b.Create())
+
+		t.Cleanup(func() {
+			UnscopedDb().Delete(&Subject{}, "subj_uid IN (?)", []string{a.SubjUID, b.SubjUID})
+		})
+
+		require.NoError(t, a.MergeWith(b))
+
+		var stored, gone Subject
+		require.NoError(t, UnscopedDb().Where("subj_uid = ?", b.SubjUID).First(&stored).Error)
+		require.NoError(t, UnscopedDb().Where("subj_uid = ?", a.SubjUID).First(&gone).Error)
+
+		return &stored, &gone
+	}
+
+	t.Run("AbsorbedWasVerified", func(t *testing.T) {
+		survivor, absorbed := merge(t, true)
+
+		assert.True(t, survivor.Verified, "the survivor inherits it, or a reset deletes the name")
+		assert.False(t, absorbed.Verified, "and the deleted row gives it up, or it can never be collected")
+	})
+	t.Run("SurvivorWasVerified", func(t *testing.T) {
+		survivor, _ := merge(t, false)
+
+		assert.True(t, survivor.Verified, "a merge does not withdraw what somebody vouched for")
+	})
+}

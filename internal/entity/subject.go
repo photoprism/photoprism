@@ -577,9 +577,14 @@ func (m *Subject) MergeWith(other *Subject) error {
 	}
 
 	// Updated subject entity values.
+	//
+	// Verified carries over from either side: the flag records that somebody vouched for the
+	// person, and a merge does not withdraw that. Dropping it would leave the survivor unprotected
+	// by the orphan sweeps, so the next reset would delete the name the operator vouched for.
 	updates := Values{
 		"FileCount":  other.FileCount + m.FileCount,
 		"PhotoCount": other.PhotoCount + m.PhotoCount,
+		"Verified":   other.Verified || m.Verified,
 	}
 
 	// Use existing thumbnail image?
@@ -591,6 +596,18 @@ func (m *Subject) MergeWith(other *Subject) error {
 	// Update subject entity.
 	if err := UnscopedDb().Model(other).Updates(updates).Error; err != nil {
 		return err
+	}
+
+	other.Verified = other.Verified || m.Verified
+
+	// Cleared on the row about to be deleted, or the tombstone outlives every cleanup: the orphan
+	// sweep skips a verified row and does not filter deleted_at, so it could never be collected.
+	if m.Verified {
+		m.Verified = false
+
+		if err := m.Updates(Values{"Verified": false}); err != nil {
+			return err
+		}
 	}
 
 	return m.Delete()
