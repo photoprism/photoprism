@@ -409,10 +409,11 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 				continue
 			}
 
-			// A marker whose subject a person or a sidecar set anchors a name onto whichever
-			// cluster wins, so it is held to the stricter test - the same markers
-			// clearAmbiguousMarker refuses to detach.
-			anchored := marker.SubjUID != "" && marker.SubjSrc != entity.SrcAuto
+			// Held to the stricter test only where winning a cluster would name it. Narrower than
+			// what clearAmbiguousMarker exempts, deliberately: that asks whether to withdraw
+			// somebody's assertion, which a sidecar name is, while this asks whether the choice
+			// mints an identity, which a sidecar name cannot.
+			anchored := marker.NamesFace()
 
 			// Pointer to the matching face.
 			selFace, dist, ambiguous := selectBestFace(markerEmbeddings, index, anchored)
