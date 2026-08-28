@@ -479,6 +479,11 @@ func TestFaces_migrate(t *testing.T) {
 		require.NoError(t, entity.UnscopedDb().First(&cluster, "subj_uid = ?", manual.SubjUID).Error)
 		assert.Equal(t, face.ModelSFace, cluster.EmbedModel)
 		assert.Equal(t, 4, cluster.Samples)
+
+		// A migration deletes every cluster and rebuilds it, so whatever the schema migration
+		// raised is gone by then and each replacement has to classify itself. Left unset, the
+		// person would be missing from the "face:1" search filter that reads this column.
+		assert.Equal(t, int(face.RegularFace), cluster.FaceKind)
 	})
 	t.Run("LegacyBlankModel", func(t *testing.T) {
 		c := newMigrateTestConfig(t, "migratelegacy")
