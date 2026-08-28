@@ -117,6 +117,13 @@ func (m *Face) SetEmbeddings(embeddings face.Embeddings, model face.ModelName) (
 
 	m.EmbedModel = model
 
+	// Recorded rather than left at zero, because the "face:N" search filter reads the number: a
+	// cluster formed now has to carry the kind an earlier release gave one. Raised rather than
+	// assigned, so a cluster already reported as ambiguous is not downgraded.
+	if k := int(embeddings.Kind()); k > m.FaceKind {
+		m.FaceKind = k
+	}
+
 	// Limit sample radius to reduce false positives.
 	m.SampleRadius = face.ClampSampleRadius(m.SampleRadius)
 
@@ -286,12 +293,11 @@ func (m *Face) ResolveCollision(embeddings face.Embeddings, model face.ModelName
 	return true, nil
 }
 
-// ClearCollision discards a recorded collision, so the cluster matches at its full accept distance
-// again and is no longer excluded from matching.
+// ClearCollision discards a recorded collision, so the cluster matches at its full accept distance.
 //
 // A collision records that two subjects competed for the same embeddings. Once an operator states
-// that those subjects are one person, the premise is gone, and the narrowing that followed from it
-// gates the cluster against faces it should hold. A later pass re-derives a collision that is real.
+// they are one person the premise is gone, and the narrowing gates the cluster against faces it
+// should hold; a later pass re-derives a collision that is still real.
 func (m *Face) ClearCollision() error {
 	if m.ID == "" {
 		return fmt.Errorf("invalid face id")
@@ -310,12 +316,10 @@ func (m *Face) ClearCollision() error {
 	values := Values{"collisions": m.Collisions, "collision_radius": m.CollisionRadius, "matched_at": m.MatchedAt}
 
 	// Only ResolveCollision raises the kind, so a cluster carrying the ambiguous kind was marked by
-	// that path and returns to the unclassified state a cluster is created in. Not RegularFace:
-	// nothing has set that since the child and background classifiers were removed, so writing it
-	// would leave a cleared cluster the only row in the library carrying a value the search filter
-	// "face:1" selects on. Any other kind is left alone.
+	// that path and returns to the regular one every cluster is created with. Any other kind is
+	// left alone.
 	if m.FaceKind == int(face.AmbiguousFace) {
-		m.FaceKind = int(face.UnclassifiedFace)
+		m.FaceKind = int(face.RegularFace)
 		values["face_kind"] = m.FaceKind
 	}
 

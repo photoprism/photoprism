@@ -12,11 +12,9 @@ func TestKind_String(t *testing.T) {
 		assert.Equal(t, "ambiguous", AmbiguousFace.String())
 	})
 	t.Run("Unclassified", func(t *testing.T) {
-		// What every cluster is created with since the classifiers were removed, so a column of
-		// them would say nothing. Blank rather than named, so a value that is there to be read is
-		// one that differs from it.
-		assert.Equal(t, "", UnclassifiedFace.String())
-		assert.Equal(t, "", Kind(0).String())
+		// The zero value, which nothing stores deliberately, so seeing it in a report means the
+		// cluster was never classified rather than that it is ordinary.
+		assert.Equal(t, "unset", UnclassifiedFace.String())
 	})
 	t.Run("Retired", func(t *testing.T) {
 		// Named rather than reported as unknown: a library indexed before they were removed
@@ -37,5 +35,38 @@ func TestKind_String(t *testing.T) {
 		}
 
 		assert.LessOrEqual(t, int(UnclassifiedFace), int(RegularFace))
+	})
+}
+
+// TestEmbedding_Kind covers the classification a cluster is created with.
+//
+// Nothing classifies a face any further since the child and background filters were measured to be
+// inert, so the only thing it separates is a vector that describes a face from one that does not.
+func TestEmbedding_Kind(t *testing.T) {
+	t.Run("Regular", func(t *testing.T) {
+		assert.Equal(t, RegularFace, Embedding{0.1, 0.2, 0.3}.Kind())
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, UnclassifiedFace, Embedding{}.Kind())
+		assert.Equal(t, UnclassifiedFace, Embedding(nil).Kind())
+	})
+	t.Run("Zero", func(t *testing.T) {
+		// A vector with no magnitude sits one unit from every unit vector, so a cluster built from
+		// it would accept whatever a model reaching past 1 compares with it. Not a face.
+		assert.Equal(t, UnclassifiedFace, Embedding{0, 0, 0}.Kind())
+	})
+}
+
+// TestEmbeddings_Kind covers the classification of a set, which is the highest any member carries.
+func TestEmbeddings_Kind(t *testing.T) {
+	t.Run("Regular", func(t *testing.T) {
+		assert.Equal(t, RegularFace, Embeddings{{0.1, 0.2}, {0.3, 0.4}}.Kind())
+	})
+	t.Run("None", func(t *testing.T) {
+		assert.Equal(t, UnclassifiedFace, Embeddings{}.Kind())
+	})
+	t.Run("HighestWins", func(t *testing.T) {
+		// One usable member is enough, so a set is not demoted by an empty neighbor.
+		assert.Equal(t, RegularFace, Embeddings{{}, {0.1, 0.2}}.Kind())
 	})
 }

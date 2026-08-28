@@ -1,6 +1,9 @@
 package entity
 
-// UnknownFace can be used as a placeholder for unknown faces.
+import "github.com/photoprism/photoprism/internal/ai/face"
+
+// UnknownFace can be used as a placeholder for unknown faces. It carries no embedding, so it keeps
+// the unclassified kind that Embedding.Kind reports for one.
 var UnknownFace = Face{
 	ID:            UnknownID,
 	FaceSrc:       SrcDefault,
@@ -32,6 +35,7 @@ var FaceFixtures = FaceMap{
 		ID:           "PN6QO5INYTUSAATOFL43LL2ABAV5ACZK",
 		SubjUID:      SubjectFixtures.Get("john-doe").SubjUID,
 		FaceSrc:      SrcAuto,
+		FaceKind:     int(face.RegularFace),
 		SampleRadius: 0.8,
 		Samples:      5,
 		Collisions:   1,
@@ -42,6 +46,7 @@ var FaceFixtures = FaceMap{
 		ID:           "IW2P73ISBCUFPIAWSIOZKRDCHHFHC35S",
 		SubjUID:      "",
 		FaceSrc:      SrcAuto,
+		FaceKind:     int(face.RegularFace),
 		SampleRadius: 0,
 		Samples:      1,
 		Collisions:   0,
@@ -50,9 +55,10 @@ var FaceFixtures = FaceMap{
 		UpdatedAt:    Now(),
 	},
 	"joe-biden": Face{
-		ID:      "VF7ANLDET2BKZNT4VQWJMMC6HBEFDOG6",
-		SubjUID: SubjectFixtures.Get("joe-biden").SubjUID,
-		FaceSrc: SrcManual,
+		ID:       "VF7ANLDET2BKZNT4VQWJMMC6HBEFDOG6",
+		SubjUID:  SubjectFixtures.Get("joe-biden").SubjUID,
+		FaceSrc:  SrcManual,
+		FaceKind: int(face.RegularFace),
 		// Deliberately above face.ClusterRadius, which no calibration in effect can
 		// produce: this row stands in for a cluster written under an earlier one, and
 		// proves the radius is clamped where it is read rather than only where it is set.
@@ -67,6 +73,7 @@ var FaceFixtures = FaceMap{
 		ID:              "VF7ANLDET2BKZNT4VQWJMMC6HBEFDOG7",
 		SubjUID:         SubjectFixtures.Get("jane-doe").SubjUID,
 		FaceSrc:         SrcManual,
+		FaceKind:        int(face.RegularFace),
 		SampleRadius:    0.2849559839760571,
 		Samples:         3,
 		Collisions:      0,
@@ -78,6 +85,7 @@ var FaceFixtures = FaceMap{
 		ID:              "TOSCDXCS4VI3PGIUTCNIQCNI6HSFXQVZ",
 		SubjUID:         "",
 		FaceSrc:         "",
+		FaceKind:        int(face.RegularFace),
 		SampleRadius:    0.3335191224530258,
 		Samples:         4,
 		Collisions:      0,
@@ -89,6 +97,7 @@ var FaceFixtures = FaceMap{
 		ID:              "GMH5NISEEULNJL6RATITOA3TMZXMTMCI",
 		SubjUID:         SubjectFixtures.Get("actress-1").SubjUID,
 		FaceSrc:         "",
+		FaceKind:        int(face.RegularFace),
 		SampleRadius:    0.27852392873736237,
 		Samples:         4,
 		Collisions:      0,
@@ -100,6 +109,7 @@ var FaceFixtures = FaceMap{
 		ID:              "PI6A2XGOTUXEFI7CBF4KCI5I2I3JEJHS",
 		SubjUID:         SubjectFixtures.Get("actor-1").SubjUID,
 		FaceSrc:         "",
+		FaceKind:        int(face.RegularFace),
 		SampleRadius:    0.3239983399779298,
 		Samples:         4,
 		Collisions:      0,

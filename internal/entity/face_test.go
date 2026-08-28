@@ -724,14 +724,11 @@ func TestFace_ReviseMatchesSkipsOtherModels(t *testing.T) {
 	assert.Equal(t, m.ID, stored.FaceID, "the assignment must survive a revision it could not evaluate")
 }
 
-// TestFace_ReviseMatchesFlagsForRematching pins that a marker a conflict drops is left needing a
-// match rather than recorded as having had one.
+// TestFace_ReviseMatchesFlagsForRematching pins that a marker a conflict drops needs matching again.
 //
-// ClearFace stamps matched_at, which is true where the matcher itself found no face - it had just
-// compared against every cluster. After a conflict narrowed a cluster underneath the marker,
-// nothing has compared it against anything, and a stamped marker is in neither matching pass's
-// set: pass one reads matched_at IS NULL, pass two runs only while some cluster is unmatched. It
-// would sit unassigned until "faces update --force".
+// ClearFace stamps matched_at, true where the matcher found no face - it had just compared against
+// every cluster. After a conflict narrowed one underneath the marker nothing has, and a stamped
+// marker is in neither pass's set, so it would sit unassigned until "faces update --force".
 func TestFace_ReviseMatchesFlagsForRematching(t *testing.T) {
 	m := NewFace("", SrcAuto, face.Embeddings{face.RandomEmbedding()}, face.EmbeddingModelName())
 	require.NotNil(t, m)
@@ -958,7 +955,7 @@ func TestFace_ClearCollision(t *testing.T) {
 
 		assert.Zero(t, m.Collisions)
 		assert.Zero(t, m.CollisionRadius)
-		assert.Equal(t, int(face.UnclassifiedFace), m.FaceKind, "cleared to the state a cluster is created in, not to the legacy regular kind")
+		assert.Equal(t, int(face.RegularFace), m.FaceKind, "cleared to the kind a cluster is created with")
 		assert.False(t, m.SkipMatching(), "a cleared cluster has to take part in matching again")
 		assert.Nil(t, m.MatchedAt, "the markers it refused while narrowed must be compared again")
 		assert.True(t, m.Reopened())
@@ -967,7 +964,7 @@ func TestFace_ClearCollision(t *testing.T) {
 		require.NoError(t, UnscopedDb().Where("id = ?", m.ID).First(&stored).Error)
 		assert.Zero(t, stored.Collisions)
 		assert.Zero(t, stored.CollisionRadius)
-		assert.Equal(t, int(face.UnclassifiedFace), stored.FaceKind)
+		assert.Equal(t, int(face.RegularFace), stored.FaceKind)
 		assert.Nil(t, stored.MatchedAt)
 	})
 	t.Run("KeepsAnUnrelatedKind", func(t *testing.T) {
@@ -1033,5 +1030,36 @@ func TestClearSubjectCollisions(t *testing.T) {
 	t.Run("InvalidRequest", func(t *testing.T) {
 		_, err := ClearSubjectCollisions("")
 		assert.Error(t, err)
+	})
+}
+
+// TestFace_KindIsRecorded pins that a cluster stores its kind rather than leaving the column at zero.
+//
+// The "face:N" search filter reads the stored number, so a cluster formed now has to carry the kind
+// an earlier release gave one, or the same query answers differently on two libraries that differ
+// only in when they were clustered. The zero value cannot say that: it is also what nothing wrote.
+func TestFace_KindIsRecorded(t *testing.T) {
+	t.Run("NewFace", func(t *testing.T) {
+		m := NewFace("", SrcAuto, face.Embeddings{face.FixtureEmbedding(7001)}, face.EmbeddingModelName())
+
+		require.NotNil(t, m)
+		require.NotEmpty(t, m.ID)
+		assert.Equal(t, int(face.RegularFace), m.FaceKind)
+		assert.False(t, m.SkipMatching())
+	})
+	t.Run("AmbiguousIsNotDowngraded", func(t *testing.T) {
+		// Re-embedding gives the cluster a new identity, but a kind that excludes it from matching
+		// is a report about its members and must not be lowered by rebuilding it.
+		m := &Face{FaceKind: int(face.AmbiguousFace)}
+
+		require.NoError(t, m.SetEmbeddings(face.Embeddings{face.FixtureEmbedding(7002)}, face.EmbeddingModelName()))
+		assert.Equal(t, int(face.AmbiguousFace), m.FaceKind)
+	})
+	t.Run("ClearCollisionDoesNotReintroduceZero", func(t *testing.T) {
+		m := &Face{ID: "KINDCLEAR000000000000000000000A1", Collisions: 1, FaceKind: int(face.AmbiguousFace)}
+
+		require.NoError(t, m.ClearCollision())
+		assert.Equal(t, int(face.RegularFace), m.FaceKind)
+		assert.NotEqual(t, int(face.UnclassifiedFace), m.FaceKind)
 	})
 }
