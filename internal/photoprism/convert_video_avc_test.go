@@ -240,7 +240,9 @@ func TestConvert_TranscodeToAvcCmd(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.NotContains(t, strings.Join(r.Args, " "), "v360")
+		// Matched on the filter rather than the bare name: the arguments carry the input
+		// path, and a temp directory whose random suffix starts with 360 contains "v360".
+		assert.NotContains(t, strings.Join(r.Args, " "), "v360=")
 	})
 	t.Run("Insta360SeparateLensPair", func(t *testing.T) {
 		dir := t.TempDir()
@@ -272,6 +274,6 @@ func TestConvert_TranscodeToAvcCmd(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.NotContains(t, strings.Join(r.Args, " "), "v360")
+		assert.NotContains(t, strings.Join(r.Args, " "), "v360=")
 	})
 }

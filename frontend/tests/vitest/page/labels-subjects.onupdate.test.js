@@ -23,6 +23,43 @@ function newStub() {
   };
 }
 
+describe("page/people/recognized.vue active watcher", () => {
+  const onActive = PPageSubjects.watch.active;
+
+  it("refreshes a list that went stale while the tab was hidden", () => {
+    const stub = newStub();
+    stub.dirty = true;
+
+    onActive.call(stub, true);
+
+    expect(stub.refresh).toHaveBeenCalledTimes(1);
+  });
+  it("does not refresh an up-to-date list", () => {
+    const stub = newStub();
+
+    onActive.call(stub, true);
+
+    expect(stub.refresh).not.toHaveBeenCalled();
+  });
+  it("does not refresh when the tab is being hidden", () => {
+    const stub = newStub();
+    stub.dirty = true;
+
+    onActive.call(stub, false);
+
+    expect(stub.refresh).not.toHaveBeenCalled();
+  });
+  it("refreshes after subjects.created marked the list dirty", () => {
+    const stub = newStub();
+
+    PPageSubjects.methods.onUpdate.call(stub, "subjects.created", { entities: ["ps-1"] });
+    expect(stub.dirty).toBe(true);
+
+    onActive.call(stub, true);
+    expect(stub.refresh).toHaveBeenCalledTimes(1);
+  });
+});
+
 describe("page/labels.vue onUpdate", () => {
   const onUpdate = PPageLabels.methods.onUpdate;
 

@@ -6,6 +6,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/dustin/go-humanize/english"
 	"github.com/jinzhu/gorm"
 
 	"github.com/photoprism/photoprism/internal/event"
@@ -463,6 +464,30 @@ func (m *Subject) UpdateName(name string) (*Subject, error) {
 	return m, m.UpdateMarkerNames()
 }
 
+// ReassignSubject returns the person that already owns the given name when that is
+// someone other than subj, so callers can link to them instead of renaming subj.
+// A deleted record is not returned: UpdateName clears those out of the way and
+// renames instead.
+func ReassignSubject(subj *Subject, name string) *Subject {
+	if subj == nil {
+		return nil
+	}
+
+	name = clean.Name(name)
+
+	if name == "" || name == subj.SubjName {
+		return nil
+	}
+
+	existing := FindSubjectByName(name, false)
+
+	if existing == nil || existing.Deleted() || existing.SubjUID == subj.SubjUID {
+		return nil
+	}
+
+	return existing
+}
+
 // UpdateMarkerNames updates related marker names.
 func (m *Subject) UpdateMarkerNames() error {
 	// Make sure the subject has a name and UID.
@@ -527,6 +552,16 @@ func (m *Subject) MergeWith(other *Subject) error {
 		return err
 	} else if err = other.UpdateMarkerNames(); err != nil {
 		return err
+	}
+
+	// A merge states that the two subjects are one person, which retracts the premise every
+	// collision between their clusters was recorded on. Nothing else widens a collision radius, so
+	// leaving it gates those clusters permanently against faces that are now known to belong.
+	if cleared, colErr := ClearSubjectCollisions(other.SubjUID); colErr != nil {
+		return colErr
+	} else if cleared > 0 {
+		log.Infof("subject: cleared %s after merging into %s",
+			english.Plural(cleared, "face collision", "face collisions"), clean.Log(other.SubjName))
 	}
 
 	// Updated subject entity values.

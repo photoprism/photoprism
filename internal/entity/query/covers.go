@@ -220,11 +220,7 @@ func UpdateAlbumCovers(albums ...entity.Album) (err error) {
 			return err
 		}
 
-		if err = UpdateAlbumMonthCovers(); err != nil {
-			return err
-		}
-
-		return nil
+		return UpdateAlbumMonthCovers()
 	}
 
 	var manualAlbums, folderAlbums, monthAlbums []entity.Album
@@ -473,14 +469,14 @@ func UpdateLabelCovers() (err error) {
 	return err
 }
 
-// UpdateSubjectCovers updates subject cover thumbs.
+// UpdateSubjectCovers updates subject cover thumbs, preferring a marker whose subject automatic
+// clustering did not assign, and then the largest and most confident face.
 func UpdateSubjectCovers(public bool) (err error) {
 	mutex.Index.Lock()
 	defer mutex.Index.Unlock()
 
 	start := time.Now()
 
-	var res *gorm.DB
 	var photosJoin *gorm.SqlExpr
 
 	// Use faces tagged on private pictures as cover images?
@@ -494,41 +490,28 @@ func UpdateSubjectCovers(public bool) (err error) {
 
 	condition := gorm.Expr("subjects.subj_type = ? AND thumb_src = ?", entity.SubjPerson, entity.SrcAuto)
 
-	// Compose SQL update query.
-	switch DbDialect() {
-	case dsn.DriverMySQL:
-		res = Db().Exec(`UPDATE subjects LEFT JOIN (
-    	SELECT m.subj_uid, m.q, MAX(m.thumb) AS marker_thumb
-    		FROM markers m
-    	    JOIN files f ON f.file_uid = m.file_uid AND f.deleted_at IS NULL
-			JOIN photos p ON ?
-			WHERE m.subj_uid <> '' AND m.subj_uid IS NOT NULL
-			  AND m.marker_invalid = 0 AND m.thumb IS NOT NULL AND m.thumb <> ''
-			GROUP BY m.subj_uid, m.q
-			) b ON b.subj_uid = subjects.subj_uid
-		SET thumb = marker_thumb WHERE ?`,
-			photosJoin,
-			condition,
-		)
-	case dsn.DriverSQLite3:
-		// from := gorm.Expr(fmt.Sprintf("%s m WHERE m.subj_uid = %s.subj_uid ", markerTable, subjTable))
-		res = Db().Table(entity.Subject{}.TableName()).UpdateColumn("thumb",
-			gorm.Expr(`(
-                SELECT m.thumb
-					FROM markers m 
-					JOIN files f ON f.file_uid = m.file_uid AND f.deleted_at IS NULL
-					JOIN photos p ON ?
-					WHERE m.subj_uid = subjects.subj_uid AND m.thumb <> ''
-					ORDER BY m.subj_src DESC, m.q DESC LIMIT 1
-				) WHERE ?`,
-				photosJoin,
-				condition,
-			),
-		)
-	default:
-		log.Warnf("sql: unsupported dialect %s", DbDialect())
+	if dialect := DbDialect(); dialect != dsn.DriverMySQL && dialect != dsn.DriverSQLite3 {
+		log.Warnf("sql: unsupported dialect %s", dialect)
 		return nil
 	}
+
+	// One statement for both dialects, so a library cannot get a different cover per backend.
+	// The uid guard keeps an empty subject uid from correlating against every unassigned marker,
+	// and a person left without an eligible marker gets no cover rather than a null one.
+	res := Db().Exec(`UPDATE subjects SET thumb = COALESCE((
+		SELECT m.thumb FROM markers m
+			JOIN files f ON f.file_uid = m.file_uid AND f.deleted_at IS NULL
+			JOIN photos p ON ?
+			WHERE m.subj_uid = subjects.subj_uid AND m.subj_uid <> ''
+			  AND m.marker_type = ? AND m.marker_invalid = 0 AND m.thumb <> ''
+			ORDER BY (m.subj_src <> ?) DESC, m.size DESC, m.score DESC, m.marker_uid
+			LIMIT 1), '')
+		WHERE ?`,
+		photosJoin,
+		entity.MarkerFace,
+		entity.SrcAuto,
+		condition,
+	)
 
 	err = res.Error
 

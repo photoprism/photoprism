@@ -8,6 +8,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -23,23 +24,62 @@ var runFacesReindex = func(index *Index, opt IndexOptions) (fs.Done, int, error)
 
 // Reset removes automatically added face clusters, marker matches, and dangling subjects.
 func (w *Faces) Reset() (err error) {
-	// Remove automatically added subject and face references from the markers table.
-	if removed, err := query.ResetFaceMarkerMatches(); err != nil {
-		return fmt.Errorf("faces: %s (reset markers)", err)
+	return w.reset(false)
+}
+
+// ResetAll additionally removes the clusters and matches a person or an XMP sidecar created, so a
+// library returns to the state it had before any face was recognized. Markers and their embeddings
+// are kept, which is what makes it far cheaper than detecting again - but a hand-verified name is
+// held nowhere else, so it does not survive.
+func (w *Faces) ResetAll() (err error) {
+	return w.reset(true)
+}
+
+// reset clears face recognition state, including what a person asserted when all is set.
+func (w *Faces) reset(all bool) (err error) {
+	var removedMarkers int64
+	var removedFaces int
+
+	// Remove subject and face references from the markers table.
+	if all {
+		removedMarkers, err = query.ResetAllFaceMarkerMatches()
 	} else {
-		log.Infof("faces: removed %d face matches", removed)
+		removedMarkers, err = query.ResetFaceMarkerMatches()
 	}
 
-	// Remove automatically added face clusters from the index.
-	if removed, err := query.RemoveAutoFaceClusters(); err != nil {
-		return fmt.Errorf("faces: %s (reset faces)", err)
+	if err != nil {
+		return fmt.Errorf("faces: %s (reset markers)", err)
+	}
+
+	log.Infof("faces: removed %d face matches", removedMarkers)
+
+	// Remove face clusters from the index.
+	if all {
+		removedFaces, err = query.RemoveAllFaceClusters()
 	} else {
-		log.Infof("faces: removed %d face clusters", removed)
+		removedFaces, err = query.RemoveAutoFaceClusters()
+	}
+
+	if err != nil {
+		return fmt.Errorf("faces: %s (reset faces)", err)
+	}
+
+	log.Infof("faces: removed %d face clusters", removedFaces)
+
+	// Clear references to the clusters just deleted.
+	//
+	// The reset above clears a marker's face only where the subject was assigned automatically, so
+	// a hand-named marker sitting on an automatic cluster keeps pointing at a row that no longer
+	// exists. Measured on a real library, that was 11 of 12 hand-named markers.
+	if removed, faceErr := query.RemoveNonExistentMarkerFaces(); faceErr != nil {
+		return fmt.Errorf("faces: %s (reset marker faces)", faceErr)
+	} else if removed > 0 {
+		log.Infof("faces: cleared %d references to removed clusters", removed)
 	}
 
 	// Remove dangling marker subjects.
-	if removed, err := query.RemoveOrphanSubjects(); err != nil {
-		return fmt.Errorf("faces: %s (reset subjects)", err)
+	if removed, subjErr := query.RemoveOrphanSubjects(); subjErr != nil {
+		return fmt.Errorf("faces: %s (reset subjects)", subjErr)
 	} else {
 		log.Infof("faces: removed %d dangling subjects", removed)
 	}
@@ -47,39 +87,43 @@ func (w *Faces) Reset() (err error) {
 	return nil
 }
 
-// ResetAndReindex resets face data and optionally regenerates markers with the specified engine.
-func (w *Faces) ResetAndReindex(engine string, index *Index) error {
-	trimmed := strings.TrimSpace(engine)
-	lowered := strings.ToLower(trimmed)
-	if lowered != "" {
-		parsed := face.ParseEngine(lowered)
-		if parsed == face.EngineAuto && !strings.EqualFold(trimmed, string(face.EngineAuto)) {
-			return fmt.Errorf("faces: unsupported detection engine %q", engine)
-		}
+// ResetAndReindex resets face data and regenerates markers with the specified detector, or resets
+// only when none is named.
+//
+// The detector is what a caller has to name, because every one of them runs on the same runtime:
+// naming the runtime would not say which model places the landmarks, and those decide the crop.
+func (w *Faces) ResetAndReindex(detector string, index *Index, all bool) error {
+	name := strings.TrimSpace(detector)
+
+	if name != "" && !face.KnownDetectorName(name) {
+		return fmt.Errorf("faces: unsupported face detector %q", detector)
 	}
 
-	if err := w.Reset(); err != nil {
-		return err
-	}
+	regenerate := name != "" && face.ParseDetectorName(name) != face.DetectorNone
 
-	if lowered == "" {
-		return nil
-	}
-
-	if w.conf == nil {
+	if regenerate && w.conf == nil {
 		return fmt.Errorf("faces: configuration not available")
 	}
 
-	engineName := face.ParseEngine(lowered)
-	w.conf.Options().FaceEngine = engineName
+	if regenerate {
+		w.conf.Options().FaceDetector = face.ParseDetectorName(name)
 
-	if err := face.ConfigureEngine(face.EngineSettings{
-		Name: w.conf.FaceEngine(),
-		ONNX: face.ONNXOptions{
-			ModelPath: w.conf.FaceEngineModelPath(),
-			Threads:   w.conf.FaceEngineThreads(),
-		},
-	}); err != nil {
+		// Checked before anything is removed: a request to regenerate that cannot be met would
+		// otherwise delete every person and face and rebuild nothing.
+		if w.conf.FaceDetector() == face.DetectorNone {
+			return fmt.Errorf("faces: face detector %s cannot be used, so markers cannot be regenerated", clean.Log(name))
+		}
+	}
+
+	if err := w.reset(all); err != nil {
+		return err
+	}
+
+	if !regenerate {
+		return nil
+	}
+
+	if err := w.conf.ConfigureFaceDetector(0); err != nil {
 		return err
 	}
 
@@ -92,7 +136,8 @@ func (w *Faces) ResetAndReindex(engine string, index *Index) error {
 		return err
 	}
 
-	log.Infof("faces: regenerated %s using %s engine (%s scanned)", english.Plural(updated, "file", "files"), w.conf.FaceEngine(), english.Plural(len(found), "file", "files"))
+	log.Infof("faces: regenerated %s with detector %s (%s scanned)",
+		english.Plural(updated, "file", "files"), clean.Log(w.conf.FaceDetector()), english.Plural(len(found), "file", "files"))
 
 	return nil
 }

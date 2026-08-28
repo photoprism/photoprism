@@ -288,3 +288,31 @@ func TestCliFlag_Usage(t *testing.T) {
 	assert.Contains(t, plus.Usage(), "*plus*")
 	assert.Contains(t, pro.Usage(), "*pro*")
 }
+
+// TestCliFlags_ApplyDocDefaults checks that an option whose getter reads zero as "derive it"
+// advertises what it derives rather than "(default: 0)", which reads as a value in force.
+func TestCliFlags_ApplyDocDefaults(t *testing.T) {
+	t.Run("Applied", func(t *testing.T) {
+		for _, flag := range Flags {
+			if flag.DocDefault == "" || flag.Secret {
+				continue
+			}
+
+			assert.Equal(t, flag.DocDefault, flag.Flag.GetDefaultText(), flag.Name())
+		}
+	})
+	t.Run("KeepsAnExplicitDefaultText", func(t *testing.T) {
+		flags := CliFlags{{Flag: &cli.IntFlag{Name: "test", DefaultText: "explicit"}, DocDefault: "auto"}}
+
+		flags.ApplyDocDefaults()
+
+		assert.Equal(t, "explicit", flags[0].Flag.GetDefaultText())
+	})
+	t.Run("NoDocDefault", func(t *testing.T) {
+		flags := CliFlags{{Flag: &cli.IntFlag{Name: "test", Value: 7}}}
+
+		flags.ApplyDocDefaults()
+
+		assert.Equal(t, "7", flags[0].Flag.GetDefaultText())
+	})
+}

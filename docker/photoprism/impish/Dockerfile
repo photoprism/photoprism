@@ -37,6 +37,7 @@ ARG BUILD_TAG
 
 # Set environment variables, see https://docs.photoprism.app/getting-started/config-options/.
 ENV DO_NOT_TRACK=true \
+    ORT_DISABLE_TELEMETRY=1 \
     PHOTOPRISM_ARCH=$TARGETARCH \
     DOCKER_TAG=$BUILD_TAG \
     DOCKER_ENV="prod" \

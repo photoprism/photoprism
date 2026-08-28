@@ -1793,9 +1793,6 @@
                 "Name": {
                     "type": "string"
                 },
-                "Q": {
-                    "type": "integer"
-                },
                 "Review": {
                     "type": "boolean"
                 },
@@ -4699,7 +4696,7 @@
                     "type": "integer"
                 },
                 "seconds": {
-                    "description": "Represents seconds of UTC time since Unix epoch 1970-01-01T00:00:00Z. Must\nbe between -315576000000 and 315576000000 inclusive (which corresponds to\n0001-01-01T00:00:00Z to 9999-12-31T23:59:59Z).",
+                    "description": "Represents seconds of UTC time since Unix epoch 1970-01-01T00:00:00Z. Must\nbe between -62135596800 and 253402300799 inclusive (which corresponds to\n0001-01-01T00:00:00Z to 9999-12-31T23:59:59Z).",
                     "type": "integer"
                 }
             },

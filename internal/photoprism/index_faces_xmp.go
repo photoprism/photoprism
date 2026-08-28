@@ -19,9 +19,11 @@ import (
 // and Score only influence the quality sort and the review flag; named regions
 // are not flagged for review, unnamed ones are so the user can name them.
 const (
-	xmpMarkerSize         = 100 // Nominal face size in pixels.
-	xmpMarkerScoreNamed   = 30  // score >= 30 -> MarkerReview = false.
-	xmpMarkerScoreUnnamed = 20  // score < 30  -> MarkerReview = true.
+	// Scores are on the detector's 0-100 confidence scale, so both clear the clustering bar: a
+	// region a detector later confirms carries a real embedding, and its score is never rewritten.
+	// Whether it needs review is set explicitly rather than inferred from the score.
+	xmpMarkerScoreNamed   = 80
+	xmpMarkerScoreUnnamed = 75
 )
 
 // isXmpFaceSource reports whether a media file is a supported still-image XMP source.
@@ -324,7 +326,7 @@ func reconcileXmpFaces(regions meta.FaceRegions, file *entity.File, markers *ent
 			score = xmpMarkerScoreNamed
 		}
 
-		probe := entity.NewMarker(*file, area, "", entity.SrcXmp, entity.MarkerFace, xmpMarkerSize, score)
+		probe := entity.NewMarker(*file, area, "", entity.SrcXmp, entity.MarkerFace, entity.MarkerSize(area, *file), score)
 		if probe == nil {
 			continue
 		}
@@ -357,13 +359,12 @@ func reconcileXmpFaces(regions meta.FaceRegions, file *entity.File, markers *ent
 				entity.SrcPriority[existing.SubjSrc] <= entity.SrcPriority[entity.SrcXmp] &&
 				(existing.X != probe.X || existing.Y != probe.Y ||
 					existing.W != probe.W || existing.H != probe.H ||
-					existing.Q != probe.Q || existing.Size != probe.Size ||
+					existing.Size != probe.Size ||
 					existing.Score != probe.Score || existing.Thumb != probe.Thumb) {
 				existing.X = probe.X
 				existing.Y = probe.Y
 				existing.W = probe.W
 				existing.H = probe.H
-				existing.Q = probe.Q
 				existing.Size = probe.Size
 				existing.Score = probe.Score
 				existing.Thumb = probe.Thumb
@@ -375,7 +376,6 @@ func reconcileXmpFaces(regions meta.FaceRegions, file *entity.File, markers *ent
 						"y":     existing.Y,
 						"w":     existing.W,
 						"h":     existing.H,
-						"q":     existing.Q,
 						"size":  existing.Size,
 						"score": existing.Score,
 						"thumb": existing.Thumb,
@@ -409,7 +409,10 @@ func reconcileXmpFaces(regions meta.FaceRegions, file *entity.File, markers *ent
 		}
 
 		// No overlap: create a new SrcXmp marker (matrix case 1); an unnamed
-		// region becomes a review marker with no linked Person.
+		// region becomes a review marker with no linked Person. Set rather than derived from the
+		// score, which now has to clear the clustering bar and so cannot also mark a review.
+		probe.MarkerReview = !named
+
 		if named {
 			if _, nameErr := applyXmpName(probe, region.Name); nameErr != nil {
 				return count, nameErr

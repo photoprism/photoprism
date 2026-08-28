@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2026-08-14
+Date generated: 2026-08-27
 
 ================================================================================
 
@@ -2433,8 +2433,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 --------------------------------------------------------------------------------
 
 Package: github.com/golang/geo
-Version: v0.0.0-20260810185319-42794aff7523
-License: Apache-2.0 (https://github.com/golang/geo/blob/42794aff7523/LICENSE)
+Version: v0.0.0-20260818125358-b200a1149890
+License: Apache-2.0 (https://github.com/golang/geo/blob/b200a1149890/LICENSE)
 
 
                                  Apache License
@@ -5190,8 +5190,8 @@ the full license text.
 --------------------------------------------------------------------------------
 
 Package: github.com/montanaflynn/stats
-Version: v0.12.3
-License: MIT (https://github.com/montanaflynn/stats/blob/v0.12.3/LICENSE)
+Version: v0.12.4
+License: MIT (https://github.com/montanaflynn/stats/blob/v0.12.4/LICENSE)
 
 The MIT License (MIT)
 
@@ -6730,8 +6730,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 --------------------------------------------------------------------------------
 
 Package: github.com/sirupsen/logrus
-Version: v1.10.0
-License: MIT (https://github.com/sirupsen/logrus/blob/v1.10.0/LICENSE)
+Version: v1.10.2
+License: MIT (https://github.com/sirupsen/logrus/blob/v1.10.2/LICENSE)
 
 The MIT License (MIT)
 
@@ -7217,8 +7217,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/yalue/onnxruntime_go
-Version: v1.32.1
-License: MIT (https://github.com/yalue/onnxruntime_go/blob/v1.32.1/LICENSE)
+Version: v1.35.0
+License: MIT (https://github.com/yalue/onnxruntime_go/blob/v1.35.0/LICENSE)
 
 Copyright (c) 2023 Nathan Otterness
 

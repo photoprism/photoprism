@@ -85,7 +85,8 @@ func PostVisionFace(router *gin.RouterGroup) {
 
 			// Undecodable data fails closed with 400, mirroring the labels and nsfw endpoints.
 			// An image with no detectable face is not an error and still yields 200 with
-			// empty embeddings, so this only rejects input that is not a usable image.
+			// empty embeddings. A configuration that hands out no embedder answers 400 too,
+			// so a client that gets one on valid input should check "faces status".
 			result, faceErr := vision.GenerateFaceEmbeddings(data)
 
 			if faceErr != nil {

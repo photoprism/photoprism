@@ -11,145 +11,228 @@ import (
 	"github.com/photoprism/photoprism/internal/entity/query"
 )
 
+// faceMatchBatchSize is how many markers a match run reads at a time. It is a variable so a test
+// can reproduce a full page without seeding one.
+var faceMatchBatchSize = 500
+
 // FacesMatchResult represents the outcome of Faces.Match().
 type FacesMatchResult struct {
 	Updated    int64
 	Recognized int64
 	Unknown    int64
+	// Ambiguous counts the markers left unassigned because two clusters were within
+	// face.MatchMargin of each other, which is the number an operator judges the margin by.
+	Ambiguous int64
 }
 
 // faceMatchStats accumulates per-face matching metrics within a single run.
 type faceMatchStats struct {
+	face    *entity.Face
 	matched int
 	maxDist float64
+}
+
+// recordFaceMatch accumulates how many markers a cluster matched and the widest distance it accepted.
+//
+// Keyed by the cluster id rather than by the pointer it was reached through: a run matches against
+// more than one slice of faces, so one database row arrives as two pointers and only one of the two
+// entries would be written back.
+func recordFaceMatch(stats map[string]*faceMatchStats, f *entity.Face, dist float64) {
+	if f == nil || f.ID == "" || dist < 0 {
+		return
+	}
+
+	stat := stats[f.ID]
+
+	if stat == nil {
+		stat = &faceMatchStats{face: f}
+		stats[f.ID] = stat
+	}
+
+	stat.matched++
+
+	if dist > stat.maxDist {
+		stat.maxDist = dist
+	}
 }
 
 // faceCandidate caches the expensive data needed to compare markers with a face cluster.
 type faceCandidate struct {
 	ref             *entity.Face
 	emb             face.Embedding
-	sampleRadius    float64
+	acceptDist      float64
 	collisionRadius float64
 }
 
-// faceIndex groups face candidates by a coarse hash so we can narrow the search space before
-// evaluating full distances. Buckets fall back to the full candidate list when empty to preserve
-// recall.
+// faceIndex holds the face candidates a run can match against, with the per-candidate data that
+// would otherwise be recomputed for every marker. Selection scans all of them and prunes by
+// distance rather than by partition, so the marker always gets its closest cluster.
 type faceIndex struct {
-	buckets  map[uint32][]faceCandidate
-	fallback []faceCandidate
+	candidates []faceCandidate
 }
-
-// faceIndexHashDims defines how many leading embedding dimensions we use when creating the coarse
-// sign hash for face buckets.
-const faceIndexHashDims = 6
 
 // Add adds result counts.
 func (r *FacesMatchResult) Add(result FacesMatchResult) {
 	r.Updated += result.Updated
 	r.Recognized += result.Recognized
 	r.Unknown += result.Unknown
+	r.Ambiguous += result.Ambiguous
 }
 
-// buildFaceIndex filters the provided faces down to candidates that can be matched and groups them
-// by a coarse bit-hash so we can avoid scanning every face for each marker.
+// buildFaceIndex filters the provided faces down to candidates that can be matched, decoding each
+// embedding and its thresholds once per run rather than once per marker.
 func buildFaceIndex(faces entity.Faces) faceIndex {
 	idx := faceIndex{
-		buckets:  make(map[uint32][]faceCandidate, len(faces)),
-		fallback: make([]faceCandidate, 0, len(faces)),
+		candidates: make([]faceCandidate, 0, len(faces)),
 	}
 
 	for i := range faces {
 		f := &faces[i]
 
-		if f.SkipMatching() {
+		if !f.SameEmbeddingModel() || f.SkipMatching() {
 			continue
 		}
 
 		embedding := f.Embedding()
 
-		if len(embedding) == 0 {
+		// A cluster with no magnitude sits exactly 1 from every marker, so it would capture
+		// everything a model accepting past 1 compares against it.
+		if len(embedding) == 0 || embedding.Zero() {
 			continue
 		}
 
-		candidate := faceCandidate{
+		idx.candidates = append(idx.candidates, faceCandidate{
 			ref:             f,
 			emb:             embedding,
-			sampleRadius:    f.SampleRadius,
+			acceptDist:      f.AcceptDist(),
 			collisionRadius: f.CollisionRadius,
-		}
-
-		idx.fallback = append(idx.fallback, candidate)
-
-		hash := embeddingSignHash(embedding)
-		idx.buckets[hash] = append(idx.buckets[hash], candidate)
+		})
 	}
 
 	return idx
 }
 
-// match checks whether the supplied marker embeddings fall within the distance and collision
-// thresholds for the candidate face, returning the match flag and distance.
-// match checks whether the supplied marker embeddings fall within the distance and collision
-// thresholds for the candidate face, returning the match flag and distance.
-func (c faceCandidate) match(embeddings face.Embeddings) (bool, float64) {
-	if embeddings.Empty() || len(c.emb) == 0 {
-		return false, -1
+// limit returns the largest distance at which this candidate would still accept a marker, which
+// is the narrower of its accept distance and a collision radius once one has been measured.
+func (c faceCandidate) limit() float64 {
+	if c.collisionRadius > face.CollisionDist && c.collisionRadius < c.acceptDist {
+		return c.collisionRadius
 	}
 
-	dist := minMarkerDistance(c.emb, embeddings)
-
-	if dist < 0 {
-		return false, dist
-	}
-
-	if dist > (c.sampleRadius + face.MatchDist) {
-		return false, dist
-	}
-
-	if c.collisionRadius > face.CollisionDist && dist > c.collisionRadius {
-		return false, dist
-	}
-
-	return true, dist
+	return c.acceptDist
 }
 
-// selectBestFace finds the best matching face candidate for the given marker embeddings.
-func selectBestFace(embeddings face.Embeddings, idx faceIndex) (*entity.Face, float64) {
-	candidates := idx.fallback
+// faceContender is a candidate that was close enough to the best to bear on whether the winner
+// is an answer or a coin toss.
+type faceContender struct {
+	ref  *entity.Face
+	dist float64
+}
 
-	if !embeddings.Empty() {
-		hash := embeddingSignHashFromEmbeddings(embeddings)
-
-		if bucket, ok := idx.buckets[hash]; ok && len(bucket) > 0 {
-			candidates = bucket
-		}
+// selectBestFace returns the closest candidate that accepts the marker, and reports whether a
+// contender made that a coin toss - in which case nothing is returned.
+//
+// The closest one has to win because UpdateMatchStats widens the chosen cluster to the distance it
+// accepted. Each comparison is bounded, which keeps the full scan affordable.
+func selectBestFace(embeddings face.Embeddings, idx faceIndex) (*entity.Face, float64, bool) {
+	if embeddings.Empty() {
+		return nil, -1, false
 	}
 
 	var best *entity.Face
+	var contenders []faceContender
+
 	bestDist := -1.0
 
-	for i := range candidates {
-		if ok, dist := candidates[i].match(embeddings); ok {
-			if best == nil || dist < bestDist {
-				best = candidates[i].ref
-				bestDist = dist
+	// Never below zero: a negative margin would tighten the bound below the best distance found
+	// so far and prune a candidate that is closer than it.
+	margin := max(face.MatchMargin, 0)
+
+	for i := range idx.candidates {
+		c := &idx.candidates[i]
+
+		if len(c.emb) == 0 {
+			continue
+		}
+
+		limit := c.limit()
+
+		// Lowered to the current best plus the margin rather than to the best itself, so a
+		// candidate close enough to make the winner ambiguous is still measured.
+		if bound := bestDist + margin; bestDist >= 0 && bound < limit {
+			limit = bound
+		}
+
+		dist := embeddings.DistWithin(c.emb, limit)
+
+		switch {
+		case dist < 0:
+			// Outside what this candidate accepts, or too far to matter.
+		case best == nil || dist < bestDist:
+			if best != nil {
+				contenders = append(contenders, faceContender{ref: best, dist: bestDist})
 			}
+
+			best, bestDist = c.ref, dist
+		default:
+			contenders = append(contenders, faceContender{ref: c.ref, dist: dist})
 		}
 	}
 
-	if best == nil && len(candidates) != len(idx.fallback) {
-		for i := range idx.fallback {
-			if ok, dist := idx.fallback[i].match(embeddings); ok {
-				if best == nil || dist < bestDist {
-					best = idx.fallback[i].ref
-					bestDist = dist
-				}
-			}
+	if best == nil || !ambiguousBestFace(best, bestDist, contenders) {
+		return best, bestDist, false
+	}
+
+	return nil, -1, true
+}
+
+// ambiguousBestFace reports whether the marker sits between clusters of different people rather
+// than inside one of them.
+//
+// Every contender within the margin is weighed rather than the runner-up alone: a subject owns
+// several clusters routinely, and two of theirs would otherwise fill both places and hide a third
+// that holds someone else. Two clusters of one subject are exempt, since either names the same
+// face; two anonymous ones are not, because nothing says they hold the same person.
+func ambiguousBestFace(best *entity.Face, bestDist float64, contenders []faceContender) bool {
+	for _, c := range contenders {
+		if !face.AmbiguousMatch(bestDist, c.dist) {
+			continue
+		}
+
+		if best.SubjUID == "" || best.SubjUID != c.ref.SubjUID {
+			return true
 		}
 	}
 
-	return best, bestDist
+	return false
+}
+
+// clearAmbiguousMarker detaches a marker that sits between clusters of different people, and
+// reports whether it was left unassigned and whether a face was actually removed.
+//
+// A subject a person set is exempt: that is not a guess of ours to withdraw, so the marker keeps
+// the cluster its name propagates through and does not count toward the run's total.
+func (w *Faces) clearAmbiguousMarker(m *entity.Marker) (unassigned, updated bool) {
+	if m.SubjUID != "" && m.SubjSrc != entity.SrcAuto {
+		if err := m.Matched(); err != nil {
+			log.Warnf("faces: %s while updating marker %s match timestamp", err, m.MarkerUID)
+		}
+
+		return false, false
+	}
+
+	updated, err := m.ClearFace()
+
+	if err != nil {
+		log.Warnf("faces: %s (clear ambiguous marker face)", err)
+		return true, false
+	}
+
+	if updated {
+		w.rememberVeto(m.MarkerUID)
+	}
+
+	return true, updated
 }
 
 // Match matches markers with faces and subjects.
@@ -159,7 +242,7 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 	}
 
 	var unmatchedMarkers int
-	stats := make(map[*entity.Face]*faceMatchStats)
+	stats := make(map[string]*faceMatchStats)
 
 	// Skip matching if index contains no new face markers, and force option isn't set.
 	if opt.Force {
@@ -173,7 +256,7 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 	matchedAt := entity.TimeStamp()
 
 	if opt.Force || unmatchedMarkers > 0 {
-		faces, err := query.Faces(false, false, false, false)
+		faces, err := query.MatchableFaces(false, false, false, false)
 
 		if err != nil {
 			return result, err
@@ -187,7 +270,7 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 	}
 
 	// Find unmatched faces.
-	if unmatchedFaces, err := query.Faces(false, true, false, false); err != nil {
+	if unmatchedFaces, err := query.MatchableFaces(false, true, false, false); err != nil {
 		log.Error(err)
 	} else if len(unmatchedFaces) > 0 {
 		if r, err := w.MatchFaces(unmatchedFaces, false, matchedAt, stats); err != nil {
@@ -196,11 +279,7 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 			result.Add(r)
 		}
 
-		for _, m := range unmatchedFaces {
-			if err := m.Matched(); err != nil {
-				log.Warnf("faces: %s (update match timestamp)", err)
-			}
-		}
+		stampMatchedFaces(unmatchedFaces)
 	}
 
 	// Update remaining markers based on previous matches.
@@ -210,30 +289,55 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 		result.Recognized += m
 	}
 
-	for facePtr, stat := range stats {
-		if stat == nil {
+	for _, stat := range stats {
+		if stat == nil || stat.face == nil {
 			continue
 		}
 
-		if err := facePtr.UpdateMatchStats(stat.matched, stat.maxDist); err != nil {
+		if err := stat.face.UpdateMatchStats(stat.matched, stat.maxDist); err != nil {
 			log.Warnf("faces: %s (update stats)", err)
 		}
+	}
+
+	// Named because the run otherwise reads as one that simply recognized less.
+	if result.Ambiguous > 0 {
+		log.Infof("faces: left %s unassigned between two similar clusters, see face-match-margin",
+			english.Plural(int(result.Ambiguous), "marker", "markers"))
 	}
 
 	return result, nil
 }
 
+// stampMatchedFaces records that this run compared each cluster against every marker.
+//
+// A cluster a collision reopened during the pass is left alone. Stamping it would end the only
+// route back: the next run reads clusters that are still unmatched, so a stamped one is not
+// examined again and the markers ReviseMatches dropped have nothing to be compared against.
+// Every cluster here started out unmatched, so the timestamp cannot tell the two apart.
+func stampMatchedFaces(faces entity.Faces) {
+	for _, m := range faces {
+		if m.Reopened() {
+			log.Debugf("faces: cluster %s was reopened during the run and stays unmatched", m.ID)
+			continue
+		}
+
+		if err := m.Matched(); err != nil {
+			log.Warnf("faces: %s (update match timestamp)", err)
+		}
+	}
+}
+
 // MatchFaces matches markers against a slice of faces.
-func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.Time, stats map[*entity.Face]*faceMatchStats) (result FacesMatchResult, err error) {
-	limit := 500
+func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.Time, stats map[string]*faceMatchStats) (result FacesMatchResult, err error) {
+	limit := faceMatchBatchSize
 
 	if stats == nil {
-		stats = make(map[*entity.Face]*faceMatchStats)
+		stats = make(map[string]*faceMatchStats)
 	}
 
 	index := buildFaceIndex(faces)
 
-	if len(index.fallback) == 0 {
+	if len(index.candidates) == 0 {
 		log.Debugf("faces: no eligible faces for matching")
 		return result, nil
 	}
@@ -243,6 +347,7 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 	totalProcessed := 0
 
 	offset := 0
+	cursor := ""
 	start := time.Now()
 
 	for {
@@ -251,7 +356,7 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 		if force {
 			markers, err = query.FaceMarkers(limit, offset)
 		} else {
-			markers, err = query.UnmatchedFaceMarkers(limit, 0, matchedBefore)
+			markers, err = query.UnmatchedFaceMarkers(limit, cursor, matchedBefore)
 		}
 
 		if err != nil {
@@ -267,6 +372,10 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 			if offset >= maxMarkers {
 				offset = maxMarkers
 			}
+		} else {
+			// The cursor advances even when every marker in this page is skipped, which is what
+			// keeps a page of markers that are never stamped from being returned forever.
+			cursor = markers[len(markers)-1].MarkerUID
 		}
 
 		batchProcessed := 0
@@ -289,7 +398,7 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 			}
 
 			// Skip invalid markers.
-			if marker.MarkerInvalid || marker.MarkerType != entity.MarkerFace || len(marker.EmbeddingsJSON) == 0 {
+			if marker.MarkerInvalid || marker.MarkerType != entity.MarkerFace || len(marker.EmbeddingsJSON) == 0 || !marker.SameEmbeddingModel() {
 				continue
 			}
 
@@ -300,7 +409,22 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 			}
 
 			// Pointer to the matching face.
-			selFace, dist := selectBestFace(markerEmbeddings, index)
+			selFace, dist, ambiguous := selectBestFace(markerEmbeddings, index)
+
+			// A marker between two people is detached rather than left on whichever cluster an
+			// earlier run gave it, because that assignment was the same coin toss. Decided before
+			// HasFace, which reports a marker holding any face as already having the best one.
+			if ambiguous {
+				if unassigned, updated := w.clearAmbiguousMarker(&marker); unassigned {
+					result.Ambiguous++
+
+					if updated {
+						result.Updated++
+					}
+				}
+
+				continue
+			}
 
 			// Marker already has the best matching face?
 			if !marker.HasFace(selFace, dist) {
@@ -312,17 +436,7 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 					log.Warnf("faces: %s while updating marker %s match timestamp", err, marker.MarkerUID)
 				}
 
-				if selFace != nil && dist >= 0 {
-					stat := stats[selFace]
-					if stat == nil {
-						stat = &faceMatchStats{}
-						stats[selFace] = stat
-					}
-					stat.matched++
-					if dist > stat.maxDist {
-						stat.maxDist = dist
-					}
-				}
+				recordFaceMatch(stats, selFace, dist)
 
 				continue
 			}
@@ -351,17 +465,7 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 				result.Updated++
 			}
 
-			if dist >= 0 {
-				stat := stats[selFace]
-				if stat == nil {
-					stat = &faceMatchStats{}
-					stats[selFace] = stat
-				}
-				stat.matched++
-				if dist > stat.maxDist {
-					stat.maxDist = dist
-				}
-			}
+			recordFaceMatch(stats, selFace, dist)
 
 			w.clearVeto(marker.MarkerUID)
 
@@ -392,62 +496,4 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 	}
 
 	return result, err
-}
-
-// minMarkerDistance computes the smallest Euclidean distance between the face embedding and any
-// embedding contained in the marker.
-func minMarkerDistance(faceEmb face.Embedding, embeddings face.Embeddings) float64 {
-	dist := -1.0
-
-	for _, e := range embeddings {
-		if len(e) != len(faceEmb) {
-			continue
-		}
-
-		if d := e.Dist(faceEmb); d < dist || dist < 0 {
-			dist = d
-		}
-	}
-
-	return dist
-}
-
-// embeddingSignHash reduces the given values to a compact bit-hash by looking at the sign of the
-// first faceIndexHashDims components.
-func embeddingSignHash(values []float64) uint32 {
-	var hash uint32
-
-	limit := min(min(len(values), faceIndexHashDims), 32)
-
-	for i := 0; i < limit; i++ {
-		if values[i] >= 0 {
-			hash |= uint32(1) << i
-		}
-	}
-
-	return hash
-}
-
-// embeddingSignHashFromEmbeddings aggregates the first faceIndexHashDims components of a marker's
-// embeddings and derives their sign hash so we can query the appropriate face bucket.
-func embeddingSignHashFromEmbeddings(embeddings face.Embeddings) uint32 {
-	if embeddings.Empty() {
-		return 0
-	}
-
-	dims := min(faceIndexHashDims, len(embeddings[0]))
-
-	var sums [faceIndexHashDims]float64
-
-	for _, emb := range embeddings {
-		if len(emb) < dims {
-			continue
-		}
-
-		for i := 0; i < dims; i++ {
-			sums[i] += emb[i]
-		}
-	}
-
-	return embeddingSignHash(sums[:dims])
 }

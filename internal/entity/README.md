@@ -1,6 +1,6 @@
 ## PhotoPrism — Database Entities
 
-**Last Updated:** July 25, 2026
+**Last Updated:** August 26, 2026
 
 ### Overview
 
@@ -56,6 +56,7 @@ MariaDB strict mode rejects inserts that SQLite quietly accepts, so a test that 
 - **Values must fit the column.** Oversized strings give `Error 1406: Data too long`; out-of-range integers give `Error 1264: Out of range value` (e.g. `photo_id` is `INT UNSIGNED`, max 4294967295).
 - UID format (see `pkg/rnd/uid.go`): a one-byte prefix + 6 base36 time chars + 9 base36 random, 16 chars total (`p…` photo, `a…` album, `c…` client, `u…` user, `l…` label, `d…` folder). Reuse existing fixtures for foreign-key safety; use a throwaway but in-range value only where a real reference would overwrite seeded data (e.g. a synthetic `photo_id` so a Details row does not attach to a real photo).
 - Fixtures live in `*_fixtures.go`, but some join rows are created **indirectly** from a parent fixture's embedded slice (e.g. a `photos_labels` row from a `Photo` fixture's `Labels`). Verify a combination is free against the **seeded database**, not just the fixtures file.
+- Face and marker embeddings are the exception to "fixtures are literals": `GenerateFaceFixtureVectors` (in `face_fixtures_vectors.go`) generates them for the configured embedding model just before the rows are written, because a stored vector has one model's width and no usable provenance under any other. `faceFixtureSeeds` gives each fixture person a centroid, and `markerFixtureVectors` places each face marker at a fraction of the distance its cluster accepts, so the geometry survives both a change of model and a recalibration.
 - `List`-style global queries (`WHERE … <> ''` with no per-test scope) see everything the package has written: rows from other tests in the same package leak in, so a `len(list) == N` assertion that holds against a per-test SQLite file can fail on MariaDB, where the whole package shares one database.
 - **Sort order is collation-dependent.** `utf8mb4_unicode_ci` sorts case-insensitively and weights punctuation by Unicode rules, while SQLite compares byte values, so `ORDER BY` on a text column yields a different sequence. Give rows a deterministic tiebreaker, or assert per dialect (`entity.Db().Dialect().GetName()`).
 - **Generated IDs restart at 1.** `Tables.Truncate` issues `TRUNCATE` where supported, which resets `AUTO_INCREMENT`, so a fixture without an explicit ID gets the same value it would in a fresh database. Plain `DELETE` would not, and IDs would drift with every reset.
@@ -70,6 +71,12 @@ MariaDB's `utf8mb4_unicode_ci` assigns most emoji the **same collation weight**,
 Byte-exact also means **case-sensitive**, which is the one place `VARBINARY` bites on a search path: SQLite's `LIKE` folds ASCII case, so `album_slug LIKE 'Forrest%'` finds the `forrest` slug there but nothing on MariaDB. Slugs are always generated lowercase, so fold the pattern before comparing (`strings.ToLower`), as the album filter in `search.searchPhotos` does.
 
 The durable fix for an identity/path column is to make it `VARBINARY` — `album_path` is `VARBINARY(1024)` so it matches `photos.photo_path` and `album_path = ?` lookups are byte-exact at the database. Where a `utf8mb4` column must stay, keep the SQL but re-verify the match byte-exact in Go before accepting it (see `FindFolderAlbum` / `findFolderAlbumByPath`, whose Go re-check is retained as defense-in-depth even now that `album_path` is `VARBINARY`). For self-join SQL where a Go re-check is awkward, `HEX(col) = HEX(col)` compares byte-exact on both MariaDB and SQLite. Legacy folder slugs drop emoji entirely (`slug.Make("ins/🪞") == "ins"`) and long paths truncate to `ClipSlug` runes, so distinct folders can still collide on `album_slug`; folder albums are therefore deduplicated by `album_filter` (the byte-exact serialized path), not by slug (see `query.RemoveDuplicateMoments`).
+
+### Per-Dialect SQL
+
+Several helpers under `query/` write raw SQL because GORM v1 cannot express the statement. Where one has to differ per driver — MariaDB's multi-table `UPDATE … JOIN` against SQLite's correlated subquery — keep the branches to what the dialects genuinely require and every selection rule identical, ordering included. A statement that can be written once for both should be: divergence between two hand-written branches is invisible to a SQLite-only run, and only `make test-mariadb` exercises the other.
+
+An `ORDER BY` in such a statement needs a total order. A prefix that leaves ties resolves them by plan, and `GROUP BY` guarantees no order at all on MariaDB, so a result that depends on either can change with a version or plan change and no code change. End the ordering on a unique column, as `query.UpdateSubjectCovers` does on `markers.marker_uid`.
 
 ### VARBINARY Index Prefix Limit
 

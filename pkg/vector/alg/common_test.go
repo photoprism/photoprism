@@ -86,6 +86,32 @@ func TestQueueReturnsInPriorityOrderAfterUpdate(t *testing.T) {
 	}
 }
 
+func TestDataDims(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		if dims, err := dataDims([][]float64{{1, 2}, {3, 4}}); err != nil {
+			t.Errorf("unexpected error: %s", err)
+		} else if dims != 2 {
+			t.Errorf("expected 2 dimensions, got %d", dims)
+		}
+	})
+	t.Run("EmptySet", func(t *testing.T) {
+		if _, err := dataDims(nil); err != errEmptySet {
+			t.Errorf("expected errEmptySet, got %v", err)
+		}
+	})
+	t.Run("Ragged", func(t *testing.T) {
+		if _, err := dataDims([][]float64{{1, 2}, {3}}); err != errRaggedData {
+			t.Errorf("expected errRaggedData, got %v", err)
+		}
+	})
+}
+
+func TestBoundsEmpty(t *testing.T) {
+	if r := bounds(nil); r != nil {
+		t.Errorf("expected no bounds, got %v", r)
+	}
+}
+
 func TestBounds(t *testing.T) {
 	var (
 		f = "data/test.csv"

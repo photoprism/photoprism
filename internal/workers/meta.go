@@ -53,6 +53,13 @@ func (w *Meta) Start(delay, interval time.Duration, force bool) (err error) {
 		}
 	}()
 
+	// A face migration runs from another process and rewrites every marker vector, so the markers
+	// this worker adds would be written in the model it is migrating away from and then blanked.
+	if held := w.conf.FacesLocked(); held != "" {
+		log.Infof("metadata: waiting for the %s to complete", held)
+		return nil
+	}
+
 	if err = mutex.MetaWorker.Start(); err != nil {
 		return err
 	}

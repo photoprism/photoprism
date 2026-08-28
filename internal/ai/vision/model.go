@@ -54,7 +54,7 @@ type Model struct {
 	Path          string                `yaml:"Path,omitempty" json:"-"`
 	Disabled      bool                  `yaml:"Disabled,omitempty" json:"disabled,omitempty"`
 	classifyModel *classify.Model
-	faceModel     *face.Model
+	faceModel     face.Embedder
 	nsfwModel     *nsfw.Model
 	schemaOnce    sync.Once
 	schema        string
@@ -715,9 +715,44 @@ func (m *Model) ClassifyModel() *classify.Model {
 
 // FaceModel returns the matching face recognition model instance, if any. Nil
 // receivers return nil.
-func (m *Model) FaceModel() *face.Model {
+func (m *Model) FaceModel() face.Embedder {
 	if m == nil {
 		return nil
+	}
+
+	// FACE_MODEL=none turns embedding generation off, so no model may be loaded even
+	// when vision.yml still schedules face processing to detect regions.
+	if face.EmbeddingsDisabled() {
+		return nil
+	}
+
+	// A library whose stored vectors were produced by another model has to be migrated
+	// rather than added to, so nothing is embedded until it is. Detection keeps running,
+	// because DetectFaces returns its markers instead of failing when this hands out none.
+	if face.EmbeddingsBlocked() {
+		return nil
+	}
+
+	return m.faceEmbedder()
+}
+
+// MigrationFaceModel returns the face embedding model instance for a migration, the one caller
+// the gates above do not apply to: it writes every vector in its own target's space, so a gate
+// against mixing spaces would only stop the work that resolves the mismatch.
+func (m *Model) MigrationFaceModel() face.Embedder {
+	if m == nil {
+		return nil
+	}
+
+	return m.faceEmbedder()
+}
+
+// faceEmbedder returns the face embedding model instance, loading it when needed.
+func (m *Model) faceEmbedder() face.Embedder {
+	// An ONNX embedding model selected with FACE_MODEL takes precedence: vision.yml
+	// only schedules when faces are processed, while the model itself is per instance.
+	if embedder := face.ActiveEmbedder(); embedder != nil {
+		return embedder
 	}
 
 	// Use mutex to prevent models from being loaded and
@@ -736,7 +771,7 @@ func (m *Model) FaceModel() *face.Model {
 		return nil
 	case FacenetModel.Name, "facenet":
 		// Load and initialize the Nasnet image classification model.
-		if model := face.NewModel(GetFacenetModelPath(), GetCachePath(), m.Resolution, m.TensorFlow, m.Disabled); model == nil {
+		if model := face.NewModel(face.ModelFaceNet, GetFacenetModelPath(), GetCachePath(), m.Resolution, m.TensorFlow, m.Disabled); model == nil {
 			return nil
 		} else if err := model.Init(); err != nil {
 			log.Errorf("vision: %s (init %s)", err, m.Path)
@@ -745,6 +780,14 @@ func (m *Model) FaceModel() *face.Model {
 			m.faceModel = model
 		}
 	default:
+		// FACE_MODEL is authoritative for which model produces embeddings, and every
+		// supported one needs code that knows its preprocessing contract, so there is
+		// nothing useful to configure per installation here. Loading it anyway keeps an
+		// existing vision.yml working, but its vectors are recorded under the configured
+		// model's name rather than this one.
+		log.Warnf("vision: custom face model %s in vision.yml is deprecated, select a model with FACE_MODEL instead",
+			clean.Log(m.Name))
+
 		// Set model path from model name if no path is configured.
 		if m.Path == "" {
 			m.Path = clean.Path(clean.TypeLowerUnderscore(m.Name))
@@ -760,7 +803,7 @@ func (m *Model) FaceModel() *face.Model {
 		}
 
 		// Try to load custom model based on the configuration values.
-		if model := face.NewModel(GetModelPath(m.Path), GetCachePath(), m.Resolution, m.TensorFlow, m.Disabled); model == nil {
+		if model := face.NewModel(face.NormalizeModelName(m.Name), GetModelPath(m.Path), GetCachePath(), m.Resolution, m.TensorFlow, m.Disabled); model == nil {
 			return nil
 		} else if err := model.Init(); err != nil {
 			log.Errorf("vision: %s (init %s)", err, m.Path)
@@ -839,12 +882,20 @@ func (m *Model) NsfwModel() *nsfw.Model {
 	return m.nsfwModel
 }
 
-// Clone returns a shallow copy of the model. Nil receivers return nil.
+// Clone returns a copy of the model with its own lazily derived state. Nil receivers return nil.
+//
+// The schema is reset rather than carried over, so a clone derives one from its own fields instead
+// of inheriting whatever was computed for the model it came from.
 func (m *Model) Clone() *Model {
 	if m == nil {
 		return nil
 	}
 
-	c := *m //nolint:govet // Model contains sync.Once; shallow copy used for reporting
+	//nolint:govet // Copying the guard is safe because the copy is reset before it is used.
+	c := *m
+
+	c.schemaOnce = sync.Once{}
+	c.schema = ""
+
 	return &c
 }

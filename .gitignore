@@ -5,6 +5,7 @@
 *.pid
 *.log
 *.jsonl
+zz_*.go
 *.db
 *.db-journal
 *.sqlite
@@ -77,6 +78,7 @@ frontend/coverage/
 /TODO.md
 join_token
 client_secret
+/i
 
 # Files created automatically by editors and/or operating systems:
 .DS_Store

@@ -131,11 +131,12 @@ func (m Moment) Slug() (s string) {
 
 	country := maps.CountryName(m.Country)
 
-	if m.Year > 1900 && m.Month == 0 {
+	switch {
+	case m.Year > 1900 && m.Month == 0:
 		s = fmt.Sprintf("%s-%s-%04d", country, state, m.Year)
-	} else if m.Year > 1900 && m.Month > 0 && m.Month <= 12 {
+	case m.Year > 1900 && m.Month > 0 && m.Month <= 12:
 		s = fmt.Sprintf("%s-%s-%04d-%02d", country, state, m.Year, m.Month)
-	} else {
+	default:
 		s = fmt.Sprintf("%s-%s", country, state)
 	}
 

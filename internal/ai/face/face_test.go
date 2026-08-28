@@ -26,6 +26,27 @@ func TestFace_Size(t *testing.T) {
 	})
 }
 
+func TestFace_ImageScale(t *testing.T) {
+	f := &Face{Cols: 720}
+	t.Run("SameRendition", func(t *testing.T) {
+		assert.Equal(t, 1.0, f.ImageScale(720))
+	})
+	t.Run("LargerRendition", func(t *testing.T) {
+		assert.Equal(t, 2.0, f.ImageScale(1440))
+	})
+	t.Run("UnknownDetectionWidth", func(t *testing.T) {
+		// Without a detection width the coordinates cannot be mapped, so they stay as they
+		// are rather than being scaled by a guess.
+		assert.Equal(t, 1.0, (&Face{}).ImageScale(1440))
+	})
+	t.Run("InvalidWidth", func(t *testing.T) {
+		assert.Equal(t, 1.0, f.ImageScale(0))
+	})
+	t.Run("Nil", func(t *testing.T) {
+		assert.Equal(t, 1.0, (*Face)(nil).ImageScale(1440))
+	})
+}
+
 func TestFace_Dim(t *testing.T) {
 	t.Run("Three", func(t *testing.T) {
 		f := Face{

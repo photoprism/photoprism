@@ -6,7 +6,9 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/event"
 
 	"github.com/photoprism/photoprism/internal/form"
@@ -616,4 +618,118 @@ func TestSubject_DeletePermanently(t *testing.T) {
 
 	assert.NotEmpty(t, m.DeletedAt)
 	assert.Empty(t, FindSubject(m.SubjUID))
+}
+
+func TestReassignSubject(t *testing.T) {
+	t.Run("OtherPersonOwnsName", func(t *testing.T) {
+		subj := FirstOrCreateSubject(NewSubject("Reassign Lookup Source", SubjPerson, SrcManual))
+		other := FirstOrCreateSubject(NewSubject("Reassign Lookup Target", SubjPerson, SrcManual))
+
+		if subj == nil || other == nil {
+			t.Fatal("failed creating test subjects")
+		}
+
+		found := ReassignSubject(subj, "Reassign Lookup Target")
+
+		if assert.NotNil(t, found) {
+			assert.Equal(t, other.SubjUID, found.SubjUID)
+		}
+	})
+	t.Run("NameIsUnused", func(t *testing.T) {
+		subj := FirstOrCreateSubject(NewSubject("Reassign Lookup Unused", SubjPerson, SrcManual))
+
+		if subj == nil {
+			t.Fatal("failed creating test subject")
+		}
+
+		assert.Nil(t, ReassignSubject(subj, "Reassign Lookup Nobody Has This"))
+	})
+	t.Run("SamePerson", func(t *testing.T) {
+		subj := FirstOrCreateSubject(NewSubject("Reassign Lookup Self", SubjPerson, SrcManual))
+
+		if subj == nil {
+			t.Fatal("failed creating test subject")
+		}
+
+		assert.Nil(t, ReassignSubject(subj, "Reassign Lookup Self"))
+	})
+	t.Run("EmptyName", func(t *testing.T) {
+		subj := FirstOrCreateSubject(NewSubject("Reassign Lookup Empty", SubjPerson, SrcManual))
+
+		if subj == nil {
+			t.Fatal("failed creating test subject")
+		}
+
+		assert.Nil(t, ReassignSubject(subj, ""))
+		assert.Nil(t, ReassignSubject(subj, "   "))
+	})
+	t.Run("NilSubject", func(t *testing.T) {
+		assert.Nil(t, ReassignSubject(nil, "Reassign Lookup Target"))
+	})
+	t.Run("DeletedPersonOwnsName", func(t *testing.T) {
+		subj := FirstOrCreateSubject(NewSubject("Reassign Lookup Live", SubjPerson, SrcManual))
+		gone := FirstOrCreateSubject(NewSubject("Reassign Lookup Gone", SubjPerson, SrcManual))
+
+		if subj == nil || gone == nil {
+			t.Fatal("failed creating test subjects")
+		}
+
+		if err := gone.Delete(); err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Nil(t, ReassignSubject(subj, "Reassign Lookup Gone"))
+	})
+}
+
+// TestSubject_MergeWith_ClearsCollisions pins that stating two subjects are one person also
+// retracts the geometry that treating them as two produced.
+//
+// A collision narrows a cluster's accept distance and nothing else widens it again, so without
+// this the clusters stay gated against faces that the merge just established do belong to them.
+func TestSubject_MergeWith_ClearsCollisions(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		typo := NewSubject("Merge Collision Typo", SubjPerson, SrcManual)
+		require.NotNil(t, typo)
+		require.NoError(t, typo.Create())
+
+		keep := NewSubject("Merge Collision Keep", SubjPerson, SrcManual)
+		require.NotNil(t, keep)
+		require.NoError(t, keep.Create())
+
+		// One narrowed cluster per subject: the merge has to reach both, because the collision was
+		// recorded on each side of the same false premise.
+		typoFace := &Face{
+			ID: "MERGECOLLISION0000000000000000C1", SubjUID: typo.SubjUID, FaceSrc: SrcManual,
+			SampleRadius: 0.3, Samples: 4, Collisions: 1, CollisionRadius: 0.64,
+			FaceKind: int(face.AmbiguousFace),
+		}
+		keepFace := &Face{
+			ID: "MERGECOLLISION0000000000000000C2", SubjUID: keep.SubjUID, FaceSrc: SrcManual,
+			SampleRadius: 0.3, Samples: 4, Collisions: 2, CollisionRadius: 0.802,
+		}
+
+		require.NoError(t, Db().Create(typoFace).Error)
+		require.NoError(t, Db().Create(keepFace).Error)
+
+		t.Cleanup(func() {
+			UnscopedDb().Delete(&Face{}, "id IN (?)", []string{typoFace.ID, keepFace.ID})
+			UnscopedDb().Delete(&Subject{}, "subj_uid IN (?)", []string{typo.SubjUID, keep.SubjUID})
+		})
+
+		require.NoError(t, typo.MergeWith(keep))
+
+		var merged, kept Face
+
+		require.NoError(t, UnscopedDb().Where("id = ?", typoFace.ID).First(&merged).Error)
+		assert.Equal(t, keep.SubjUID, merged.SubjUID, "the cluster moves to the surviving subject")
+		assert.Zero(t, merged.Collisions)
+		assert.Zero(t, merged.CollisionRadius)
+		assert.Equal(t, int(face.RegularFace), merged.FaceKind, "and takes part in matching again")
+		assert.Nil(t, merged.MatchedAt, "so the markers it refused are compared against it again")
+
+		require.NoError(t, UnscopedDb().Where("id = ?", keepFace.ID).First(&kept).Error)
+		assert.Zero(t, kept.Collisions, "the surviving subject's own clusters are cleared too")
+		assert.Zero(t, kept.CollisionRadius)
+	})
 }

@@ -654,6 +654,23 @@ func TestFile_AddFaces(t *testing.T) {
 		assert.NotEmpty(t, file.FileUID)
 		assert.NotEmpty(t, file.Markers())
 	})
+	t.Run("WidthDisagreesWithModel", func(t *testing.T) {
+		// A vector that claims a model but does not have that model's width belongs to no
+		// embedding space, which is what a remote service returning the wrong shape looks
+		// like. Comparing it with anything later would silently compare nothing.
+		file := &File{FileUID: "fs6sg6bp4sjk3kd2", FileHash: "246b3897eec9ef75e35fbf0bbc4c83c55ca41e31", FileType: "jpg", FileWidth: 720, FileName: "FacesTest", PhotoID: 1000003, FilePrimary: false}
+
+		file.AddFaces(face.Faces{face.Face{
+			Rows:       480,
+			Cols:       720,
+			Score:      45,
+			Area:       face.NewArea("face", 250, 200, 10),
+			EmbedModel: face.ModelSFace,
+			Embeddings: face.Embeddings{{0.1, 0.2, 0.3}},
+		}})
+
+		assert.Empty(t, *file.Markers())
+	})
 	t.Run("NoEmbeddings", func(t *testing.T) {
 		file := &File{FileUID: "fs6sg6bp4sjk3kd1", FileHash: "146b3897eec9ef75e35fbf0bbc4c83c55ca41e31", FileType: "jpg", FileWidth: 720, FileName: "FacesTest", PhotoID: 1000003, FilePrimary: false}
 

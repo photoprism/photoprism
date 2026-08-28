@@ -8,6 +8,7 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 
+	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
@@ -19,6 +20,9 @@ type Faces struct {
 	conf      *config.Config
 	vetoMu    sync.Mutex
 	vetoCache map[string]time.Time
+	// reported carries the last value logged for a recurring condition, so a worker that wakes
+	// every few minutes states it once rather than every time. Guarded by vetoMu.
+	reported map[string]int
 }
 
 const faceVetoTTL = 30 * time.Minute
@@ -89,7 +93,29 @@ func (w *Faces) StartDefault() (err error) {
 }
 
 // Start face clustering and matching.
+//
+// The lock is checked here rather than in start, which a migration calls directly while holding
+// it: clustering is the last thing a migration does, so refusing it there would leave every
+// replacement cluster unbuilt.
 func (w *Faces) Start(opt FacesOptions) (err error) {
+	// A migration replaces every cluster in one transaction and ordinarily runs in another
+	// process, where the worker activity below cannot see it.
+	if held := w.conf.FacesLocked(); held != "" {
+		log.Infof("faces: waiting for the %s to complete", held)
+		return nil
+	}
+
+	if err = mutex.FacesWorker.Start(); err != nil {
+		return err
+	}
+
+	defer mutex.FacesWorker.Stop()
+
+	return w.start(opt)
+}
+
+// start performs face clustering and matching while the caller holds the faces worker lock.
+func (w *Faces) start(opt FacesOptions) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("%s (panic)\nstack: %s", r, debug.Stack())
@@ -101,11 +127,13 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 		return fmt.Errorf("face recognition is disabled")
 	}
 
-	if err = mutex.FacesWorker.Start(); err != nil {
-		return err
+	// Clustering and matching compare stored vectors, so both are paused while the library
+	// holds vectors the configured model cannot read. The reason is reported once when the
+	// configuration is initialized; a worker that wakes every few minutes must not repeat it.
+	if reason := face.EmbeddingsBlockedReason(); reason != "" {
+		log.Debugf("faces: %s, so clustering and matching are paused", reason)
+		return nil
 	}
-
-	defer mutex.FacesWorker.Stop()
 
 	var start time.Time
 

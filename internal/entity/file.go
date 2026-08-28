@@ -862,6 +862,21 @@ func (m *File) AddFace(f face.Face, subjUid string) {
 		return
 	}
 
+	// A vector with non-finite values poisons every later distance, and one whose width
+	// disagrees with its own model belongs to no embedding space at all; a remote service
+	// can return either, so both are rejected here. The width is only checked against a
+	// known producer, because a vector that records no model implies no expected width.
+	dims := f.Embeddings.Dims()
+
+	if producer := face.FindEmbeddingModel(f.EmbedModel); producer != nil {
+		dims = producer.Dims
+	}
+
+	if !face.ValidEmbeddings(f.Embeddings, dims) {
+		log.Warnf("faces: skipped invalid %d-value embedding for file %s", f.Embeddings.Dims(), clean.Log(m.FileUID))
+		return
+	}
+
 	// Create new marker from face.
 	marker := NewFaceMarker(f, *m, subjUid)
 
@@ -885,13 +900,20 @@ func (m *File) AddFace(f face.Face, subjUid string) {
 			// embedding (Markers.Save does not re-write existing markers), so the
 			// marker stays embedding-less and is retried on the next pass.
 			if existing.MarkerUID != "" {
-				if err := existing.Updates(Values{"embeddings_json": f.Embeddings.JSON(), "landmarks_json": landmarks}); err != nil {
+				values := Values{
+					"embeddings_json": f.Embeddings.JSON(),
+					"embed_model":     f.EmbedModel,
+					"detect_model":    f.DetectModel,
+					"landmarks_json":  landmarks,
+				}
+
+				if err := existing.Updates(values); err != nil {
 					log.Warnf("faces: %s while adding embedding to marker %s", err, clean.Log(existing.MarkerUID))
 					return
 				}
 			}
 
-			existing.SetEmbeddings(f.Embeddings)
+			existing.SetEmbeddings(f.Embeddings, f.EmbedModel, f.DetectModel)
 			existing.LandmarksJSON = landmarks
 		}
 

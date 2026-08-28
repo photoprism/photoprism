@@ -88,6 +88,7 @@ Development Environment (run on the host):
 
 Dependencies (run in the development container):
   dep                      Install the TensorFlow, ONNX, and NPM dependencies
+  dep-models               Install the TensorFlow and ONNX models only
   dep-js                   Install the NPM dependencies only
   upgrade                  Upgrade the Go and NPM dependencies
   tidy                     Add missing and remove unused Go modules
@@ -136,23 +137,23 @@ export HELP_TEXT
 
 # Declare "make" targets.
 all: dep build-js
-dep: dep-tensorflow dep-onnx dep-js
+dep: dep-models dep-js
 biuld: build
 build: build-go
 watch: watch-js
 build-all: build-go build-js
 pull: docker-pull
 test: test-js test-go
-test-go: run-test-go
+test-go: dep-models run-test-go
 test-hub: run-test-hub
 test-pkg: run-test-pkg
-test-ai: run-test-ai
+test-ai: dep-models run-test-ai
 test-api: run-test-api
 test-video: run-test-video
 test-entity: run-test-entity
 test-commands: run-test-commands
 test-photoprism: run-test-photoprism
-test-short: run-test-short
+test-short: dep-models run-test-short
 test-mariadb: reset-acceptance run-test-mariadb
 acceptance-run-chromium: storage/acceptance acceptance-sqlite-restart-1 wait-1 acceptance-api acceptance-sqlite-stop-1 acceptance-auth-sqlite-restart wait-2 acceptance-auth acceptance-auth-sqlite-stop acceptance-sqlite-restart-3 wait-3 acceptance acceptance-sqlite-stop-3
 acceptance-run-chromium-short: storage/acceptance acceptance-auth-sqlite-restart wait-1 acceptance-auth-short acceptance-auth-sqlite-stop acceptance-sqlite-restart-2 wait-2 acceptance-short acceptance-sqlite-stop-2
@@ -528,10 +529,11 @@ dep-upgrade:
 frontend-update:
 	make -C frontend update
 dep-upgrade-js: frontend-update
-dep-tensorflow:
-	scripts/dist/download-models.sh facenet nasnet nsfw
-dep-onnx:
-	scripts/download-scrfd.sh
+# Installs every model a development build runs or ships.
+dep-models:
+	scripts/dist/download-models.sh facenet nasnet nsfw sface yunet
+dep-tensorflow: dep-models
+dep-onnx: dep-models
 dep-acceptance: storage/acceptance
 storage/acceptance:
 	[ -f "./storage/acceptance/index.db" ] || (cd storage && rm -rf acceptance && wget -c https://dl.photoprism.app/qa/acceptance.tar.gz -O - | tar -xz)
