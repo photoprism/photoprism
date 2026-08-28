@@ -20,9 +20,12 @@ func TestFacesSubjectsCommand(t *testing.T) {
 		output, err := RunWithTestContext(FacesSubjectsCommand, []string{"subjects"})
 		require.NoError(t, err)
 
-		assert.Contains(t, output, "Subject")
-		assert.Contains(t, output, "Name")
-		assert.Contains(t, output, "Markers")
+		for _, col := range []string{"Subject", "Name", "Src", "Markers", "Clusters", "Verified", "Hidden", "Files", "Photos", "Created"} {
+			assert.Contains(t, output, col)
+		}
+
+		// A cluster holds markers, so the count of the parts comes before the count of the wholes.
+		assert.Less(t, strings.Index(output, "Markers"), strings.Index(output, "Clusters"))
 		assert.Contains(t, output, "Verified")
 		assert.Contains(t, output, "Hidden")
 		assert.Contains(t, output, "Files")
@@ -39,6 +42,8 @@ func TestFacesSubjectsCommand(t *testing.T) {
 		assert.Contains(t, rows[0], "verified")
 		assert.Contains(t, rows[0], "hidden")
 		assert.Contains(t, rows[0], "files")
+		assert.Contains(t, rows[0], "clusters")
+		assert.Contains(t, rows[0], "created")
 	})
 	t.Run("ByPerson", func(t *testing.T) {
 		output, err := RunWithTestContext(FacesSubjectsCommand, []string{"subjects", "--json", "Actress A"})

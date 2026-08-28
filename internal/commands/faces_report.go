@@ -112,14 +112,16 @@ func facesSubjectsAction(ctx *cli.Context) error {
 			return err
 		}
 
-		cols := []string{"Subject", "Name", "Src", "Markers", "Verified", "Hidden", "Files", "Photos"}
+		cols := []string{"Subject", "Name", "Src", "Markers", "Clusters", "Verified", "Hidden", "Files", "Photos", "Created"}
 		rows := make([][]string, 0, len(people))
 
 		for _, p := range people {
 			rows = append(rows, []string{
-				p.SubjUID, p.SubjName, entity.SrcString(p.SubjSrc), strconv.Itoa(p.Markers),
+				p.SubjUID, p.SubjName, entity.SrcString(p.SubjSrc),
+				strconv.Itoa(p.Markers), strconv.Itoa(p.Clusters),
 				reportBool(p.Verified), reportBool(p.SubjHidden),
 				strconv.Itoa(p.FileCount), strconv.Itoa(p.PhotoCount),
+				report.DateTime(&p.CreatedAt),
 			})
 		}
 

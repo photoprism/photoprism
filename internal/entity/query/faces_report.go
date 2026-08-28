@@ -34,11 +34,11 @@ func PersonFilter(s string) (subjUID, nameLike string) {
 	return "", "%" + r.Replace(s) + "%"
 }
 
-// SubjectReport describes one person, with the files and photos their markers currently support.
+// SubjectReport describes one person, with the clusters, files and photos their markers support.
 //
-// Counted at report time rather than read from the row: Faces.Start does not call
-// UpdateSubjectCounts, so after a CLI-only reset the stored numbers sit at zero while the markers
-// are correctly assigned - which is what keeps a newly named person off People > Recognized.
+// Counted rather than read from the row: Faces.Start does not call UpdateSubjectCounts, so after a
+// CLI-only reset the stored numbers sit at zero while the markers are assigned. Clusters is stored
+// nowhere and is the fragmentation a sweep reads - a person holds several by design.
 type SubjectReport struct {
 	SubjUID    string
 	SubjName   string
@@ -48,6 +48,8 @@ type SubjectReport struct {
 	FileCount  int
 	PhotoCount int
 	Markers    int
+	Clusters   int
+	CreatedAt  time.Time
 }
 
 // SubjectReports returns person subjects ordered by name.
@@ -83,8 +85,8 @@ func SubjectReports(person string, count, offset int, live bool) (result []Subje
 			entity.File{}.TableName(), entity.Photo{}.TableName(), entity.Marker{}.TableName())
 	}
 
-	stmt := fmt.Sprintf(`SELECT s.subj_uid, s.subj_name, s.subj_src, s.verified, s.subj_hidden, %s,
-		COALESCE(n.markers, 0) AS markers
+	stmt := fmt.Sprintf(`SELECT s.subj_uid, s.subj_name, s.subj_src, s.verified, s.subj_hidden, s.created_at, %s,
+		COALESCE(n.markers, 0) AS markers, COALESCE(fc.clusters, 0) AS clusters
 		FROM %s s
 		%s
 		LEFT JOIN (
@@ -92,10 +94,16 @@ func SubjectReports(person string, count, offset int, live bool) (result []Subje
 			WHERE marker_type = ? AND marker_invalid = 0 AND subj_uid <> ''
 			GROUP BY subj_uid
 		) n ON n.subj_uid = s.subj_uid
+		LEFT JOIN (
+			SELECT subj_uid, COUNT(*) AS clusters FROM %s
+			WHERE subj_uid <> ''
+			GROUP BY subj_uid
+		) fc ON fc.subj_uid = s.subj_uid
 		WHERE s.subj_type = ? AND s.deleted_at IS NULL %s
 		ORDER BY s.subj_name, s.subj_uid
 		LIMIT ? OFFSET ?`,
-		counts, entity.Subject{}.TableName(), joins, entity.Marker{}.TableName(), where)
+		counts, entity.Subject{}.TableName(), joins, entity.Marker{}.TableName(),
+		entity.Face{}.TableName(), where)
 
 	err = UnscopedDb().Raw(stmt, append(args, count, offset)...).Scan(&result).Error
 

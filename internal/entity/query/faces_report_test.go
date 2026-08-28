@@ -28,6 +28,23 @@ func TestSubjectReports(t *testing.T) {
 		got, ok := byUID[known.SubjUID]
 		require.True(t, ok, "a person with markers has to appear")
 		assert.Positive(t, got.Markers, "the live marker count is computed, not read from the row")
+		assert.Positive(t, got.Clusters, "and so is the cluster count, which is the fragmentation a sweep reads")
+		assert.False(t, got.CreatedAt.IsZero(), "when a person was added is what tells an accidental one apart")
+	})
+	// Counted from the faces table rather than read from a column, since nothing stores it: a person
+	// holds several clusters by design and how many is what the thresholds decide.
+	t.Run("ClusterCount", func(t *testing.T) {
+		people, err := SubjectReports("", 100, 0, true)
+		require.NoError(t, err)
+		require.NotEmpty(t, people)
+
+		for _, p := range people {
+			var want int
+			require.NoError(t, UnscopedDb().Model(&entity.Face{}).
+				Where("subj_uid = ?", p.SubjUID).Count(&want).Error)
+
+			assert.Equal(t, want, p.Clusters, "cluster count for %s", p.SubjName)
+		}
 	})
 	t.Run("Stored", func(t *testing.T) {
 		// The cheap variant skips the join over markers and files, which is half a second on a
