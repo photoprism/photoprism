@@ -112,7 +112,7 @@ func facesSubjectsAction(ctx *cli.Context) error {
 			return err
 		}
 
-		cols := []string{"Subject", "Name", "Src", "Favorite", "Verified", "Hidden", "Markers", "Clusters", "Files", "Photos", "Created"}
+		cols := []string{"Subject", "Name", "Src", "Favorite", "Verified", "Hidden", "Markers", "Clusters", "Files", "Photos", "Created At"}
 		rows := make([][]string, 0, len(people))
 
 		for _, p := range people {
