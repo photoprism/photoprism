@@ -495,6 +495,7 @@ func (c *Config) Propagate() {
 	face.ClusterRadius = c.FaceClusterRadius()
 	face.ClusterDist = c.FaceClusterDist()
 	face.MatchDist = c.FaceMatchDist()
+	face.MatchMargin = c.FaceMatchMargin()
 	if err := c.ConfigureFaceDetector(0); err != nil {
 		log.Warnf("faces: %s (configure engine)", err)
 	}
@@ -549,6 +550,12 @@ func (c *Config) Options() *Options {
 func (c *Config) SaveOptionsPatch(patch Values) (bool, error) {
 	if c == nil || c.options == nil || len(patch) == 0 {
 		return false, nil
+	}
+
+	// Values are typed against the options they set before anything is written, so that the file
+	// and the running configuration cannot end up holding different numbers.
+	if err := CoerceOptionValues(patch); err != nil {
+		return false, err
 	}
 
 	fileName, values, err := c.loadOptionsYAML()

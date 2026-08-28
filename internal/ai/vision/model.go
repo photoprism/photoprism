@@ -882,12 +882,20 @@ func (m *Model) NsfwModel() *nsfw.Model {
 	return m.nsfwModel
 }
 
-// Clone returns a shallow copy of the model. Nil receivers return nil.
+// Clone returns a copy of the model with its own lazily derived state. Nil receivers return nil.
+//
+// The schema is reset rather than carried over, so a clone derives one from its own fields instead
+// of inheriting whatever was computed for the model it came from.
 func (m *Model) Clone() *Model {
 	if m == nil {
 		return nil
 	}
 
-	c := *m //nolint:govet // Model contains sync.Once; shallow copy used for reporting
+	//nolint:govet // Copying the guard is safe because the copy is reset before it is used.
+	c := *m
+
+	c.schemaOnce = sync.Once{}
+	c.schema = ""
+
 	return &c
 }

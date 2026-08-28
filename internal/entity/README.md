@@ -1,6 +1,6 @@
 ## PhotoPrism — Database Entities
 
-**Last Updated:** July 25, 2026
+**Last Updated:** August 26, 2026
 
 ### Overview
 
@@ -84,6 +84,12 @@ MariaDB's `utf8mb4_unicode_ci` assigns most emoji the **same collation weight**,
 Byte-exact also means **case-sensitive**, which is the one place `VARBINARY` bites on a search path: SQLite's `LIKE` folds ASCII case, so `album_slug LIKE 'Forrest%'` finds the `forrest` slug there but nothing on MariaDB. Slugs are always generated lowercase, so fold the pattern before comparing (`strings.ToLower`), as the album filter in `search.searchPhotos` does.
 
 The durable fix for an identity/path column is to make it `VARBINARY` — `album_path` is `VARBINARY(1024)` so it matches `photos.photo_path` and `album_path = ?` lookups are byte-exact at the database. Where a `utf8mb4` column must stay, keep the SQL but re-verify the match byte-exact in Go before accepting it (see `FindFolderAlbum` / `findFolderAlbumByPath`, whose Go re-check is retained as defense-in-depth even now that `album_path` is `VARBINARY`). For self-join SQL where a Go re-check is awkward, `HEX(col) = HEX(col)` compares byte-exact on both MariaDB and SQLite. Legacy folder slugs drop emoji entirely (`slug.Make("ins/🪞") == "ins"`) and long paths truncate to `ClipSlug` runes, so distinct folders can still collide on `album_slug`; folder albums are therefore deduplicated by `album_filter` (the byte-exact serialized path), not by slug (see `query.RemoveDuplicateMoments`).
+
+### Per-Dialect SQL
+
+Several helpers under `query/` write raw SQL because GORM v1 cannot express the statement. Where one has to differ per driver — MariaDB's multi-table `UPDATE … JOIN` against SQLite's correlated subquery — keep the branches to what the dialects genuinely require and every selection rule identical, ordering included. A statement that can be written once for both should be: divergence between two hand-written branches is invisible to a SQLite-only run, and only `make test-mariadb` exercises the other.
+
+An `ORDER BY` in such a statement needs a total order. A prefix that leaves ties resolves them by plan, and `GROUP BY` guarantees no order at all on MariaDB, so a result that depends on either can change with a version or plan change and no code change. End the ordering on a unique column, as `query.UpdateSubjectCovers` does on `markers.marker_uid`.
 
 ### VARBINARY Index Prefix Limit
 

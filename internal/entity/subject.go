@@ -6,6 +6,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/dustin/go-humanize/english"
 	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/event"
@@ -551,6 +552,16 @@ func (m *Subject) MergeWith(other *Subject) error {
 		return err
 	} else if err = other.UpdateMarkerNames(); err != nil {
 		return err
+	}
+
+	// A merge states that the two subjects are one person, which retracts the premise every
+	// collision between their clusters was recorded on. Nothing else widens a collision radius, so
+	// leaving it gates those clusters permanently against faces that are now known to belong.
+	if cleared, colErr := ClearSubjectCollisions(other.SubjUID); colErr != nil {
+		return colErr
+	} else if cleared > 0 {
+		log.Infof("subject: cleared %s after merging into %s",
+			english.Plural(cleared, "face collision", "face collisions"), clean.Log(other.SubjName))
 	}
 
 	// Updated subject entity values.

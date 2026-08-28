@@ -178,6 +178,15 @@ func RemoveAutoFaceClusters() (removed int, err error) {
 	return int(res.RowsAffected), res.Error
 }
 
+// RemoveAllFaceClusters removes every face cluster from the index, whatever created it. Unfiltered
+// rather than a list of known sources, because a cluster inherits the source of the marker that
+// created it, so the column holds whatever sources the markers table does.
+func RemoveAllFaceClusters() (removed int, err error) {
+	res := UnscopedDb().Delete(entity.Face{})
+
+	return int(res.RowsAffected), res.Error
+}
+
 // FaceClusterGates counts the face markers automatic clustering could use, with each bar that can
 // exclude one applied on its own and then together, so a report can name the gate that holds.
 //
@@ -307,49 +316,7 @@ func whereClusterScore(stmt *gorm.DB, floor int) *gorm.DB {
 // clusterScoreCond returns the same restriction as an SQL fragment, so a report can evaluate it
 // beside the other bars in one pass instead of scanning the table once per bar.
 func clusterScoreCond(floor int) (string, []any) {
-	// FACE_CLUSTER_SCORE outranks the per-detector bars when an operator set one, and removes it
-	// when negative. Applying one value to every marker is safe here in a way that taking the
-	// active detector's bar is not: it is a choice rather than a calibration a marker was never
-	// scored against. Without this the option configured nothing at all.
-	if floor < 0 && face.ClusterScoreThreshold != 0 {
-		floor = max(face.ClusterScoreThreshold, 0)
-	}
-
-	switch {
-	case floor > 0:
-		return "score >= ?", []any{floor}
-	case floor == 0:
-		// No score filter at all, which is what a caller counting every marker asks for.
-		return "1 = 1", nil
-	}
-
-	conds := make([]string, 0, len(face.Detectors)+1)
-	args := make([]any, 0, 2*len(face.Detectors)+1)
-	others := make([]string, 0, len(face.Detectors))
-	names := make([]any, 0, len(face.Detectors))
-
-	for _, d := range face.Detectors {
-		if d.ClusterScore <= 0 {
-			continue
-		}
-
-		conds = append(conds, "(COALESCE(detect_model, '') = ? AND score >= ?)")
-		args = append(args, d.Name, d.ClusterScore)
-		others = append(others, "COALESCE(detect_model, '') <> ?")
-		names = append(names, d.Name)
-	}
-
-	if len(conds) == 0 {
-		return "score >= ?", []any{face.ClusterScoreThresholdDefault}
-	}
-
-	// Everything the registry does not name, including every row written before the provenance
-	// column existed, keeps the shared default so an upgrade strands nothing.
-	conds = append(conds, "("+strings.Join(others, " AND ")+" AND ?"+" <= score)")
-	args = append(args, names...)
-	args = append(args, face.ClusterScoreThresholdDefault)
-
-	return "(" + strings.Join(conds, " OR ") + ")", args
+	return entity.ClusterScoreCond("", floor)
 }
 
 // PurgeOrphanFaces removes unused faces from the index.
@@ -420,31 +387,74 @@ func MergeFaces(merge entity.Faces, ignored bool) (merged *entity.Face, err erro
 	}
 
 	// PurgeOrphanFaces removes unused faces from the index.
-	if removed, err := PurgeOrphanFaces(merge.IDs(), ignored); err != nil {
+	removed, err := PurgeOrphanFaces(merge.IDs(), ignored)
+
+	if err != nil {
 		return merged, err
 	} else if removed > 0 {
 		log.Debugf("faces: removed %d orphans of %d candidate for subject %s", removed, len(merge), clean.Log(subjUID))
-	} else {
-		note := fmt.Sprintf("retained markers after merge attempt on %s", time.Now().UTC().Format(time.RFC3339))
-
-		for _, candidate := range merge {
-			updates := entity.Values{
-				"MergeRetry": gorm.Expr("merge_retry + 1"),
-				"MergeNotes": note,
-			}
-
-			if err := Db().Model(&entity.Face{}).Where("id = ?", candidate.ID).Updates(updates).Error; err != nil {
-				log.Warnf("faces: failed updating merge retry for %s (%s)", candidate.ID, err)
-			} else {
-				candidate.MergeRetry++
-				candidate.MergeNotes = note
-			}
-		}
-
-		return merged, fmt.Errorf("%w: kept %d candidate cluster(s) [%s] for subject %s because markers still reference them", ErrRetainedManualClusters, len(merge), clean.Log(strings.Join(merge.IDs(), ", ")), clean.Log(subjUID))
 	}
 
-	return merged, err
+	// A candidate the purge left behind would be offered again beside the midpoint this attempt
+	// created - a set the same size as before, merged on every pass. The retry counter takes it
+	// out of the rotation, per candidate so the ones that did merge are not stopped with it.
+	retained, err := retainedFaceIDs(merge.IDs())
+
+	if err != nil {
+		return merged, err
+	} else if len(retained) == 0 {
+		return merged, nil
+	}
+
+	note := fmt.Sprintf("retained markers after merge attempt on %s", time.Now().UTC().Format(time.RFC3339))
+	retainedIDs := make([]string, 0, len(retained))
+
+	for i := range merge {
+		if !retained[merge[i].ID] {
+			continue
+		}
+
+		retainedIDs = append(retainedIDs, merge[i].ID)
+
+		updates := entity.Values{
+			"MergeRetry": gorm.Expr("merge_retry + 1"),
+			"MergeNotes": note,
+		}
+
+		if err := Db().Model(&entity.Face{}).Where("id = ?", merge[i].ID).Updates(updates).Error; err != nil {
+			log.Warnf("faces: failed updating merge retry for %s (%s)", merge[i].ID, err)
+		} else {
+			merge[i].MergeRetry++
+			merge[i].MergeNotes = note
+		}
+	}
+
+	return merged, fmt.Errorf("%w: kept %d candidate cluster(s) [%s] for subject %s because markers still reference them", ErrRetainedManualClusters, len(retainedIDs), clean.Log(strings.Join(retainedIDs, ", ")), clean.Log(subjUID))
+}
+
+// retainedFaceIDs returns which of the given clusters still exist, which after a purge are the
+// ones markers still reference. Batched for SQLite, as the purge itself is.
+func retainedFaceIDs(faceIds []string) (map[string]bool, error) {
+	result := make(map[string]bool, len(faceIds))
+	batchSize := BatchSize()
+
+	for i := 0; i < len(faceIds); i += batchSize {
+		j := min(i+batchSize, len(faceIds))
+
+		var found []string
+
+		if err := UnscopedDb().Model(&entity.Face{}).
+			Where("id IN (?)", faceIds[i:j]).
+			Pluck("id", &found).Error; err != nil {
+			return result, fmt.Errorf("faces: %s while checking retained clusters", err)
+		}
+
+		for _, id := range found {
+			result[id] = true
+		}
+	}
+
+	return result, nil
 }
 
 // ResetFaceMergeRetry clears merge retry metadata for all (or subject-specific) clusters.
@@ -625,11 +635,13 @@ func RemovePeopleAndFaces() (err error) {
 // An empty name means the model could not be determined, so nothing is restricted: filtering on it
 // would match the legacy rows alone and exclude every vector a configured model wrote.
 func whereEmbeddingModel(stmt *gorm.DB, model string) *gorm.DB {
-	if model == "" {
+	cond, args := entity.EmbeddingModelCond(model)
+
+	if cond == "" {
 		return stmt
 	}
 
-	return stmt.Where("embed_model = ? OR (embed_model = '' AND ? = ?)", model, model, face.ModelFaceNet)
+	return stmt.Where(cond, args...)
 }
 
 // notEmbeddingModel returns the condition and arguments matching vectors that cannot be

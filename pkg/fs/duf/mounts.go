@@ -82,6 +82,8 @@ func intToString(orig []int8) string {
 			size = i
 			break
 		}
+		//nolint:gosec // Two's-complement round trip: a byte above 0x7f arrives as a negative
+		// int8, and converting it back reproduces the original byte of the mount point.
 		ret[i] = byte(o)
 	}
 	if size == -1 {

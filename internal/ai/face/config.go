@@ -16,6 +16,13 @@ const (
 	MatchDistDefault = 0.4
 	// CollisionDistDefault is the default floor below which a recorded collision radius is discarded.
 	CollisionDistDefault = 0.05
+	// MatchMarginDefault is the default distance by which the nearest cluster has to beat the
+	// runner-up for the marker to be given to it. It shares CollisionDistDefault's value without
+	// being derived from it, the two measuring different quantities.
+	MatchMarginDefault = 0.05
+	// NoMatchMargin assigns a marker to its nearest cluster however narrowly that one wins,
+	// following the convention the score bars use for "switched off".
+	NoMatchMargin = -1.0
 	// EpsilonDefault is the numeric tolerance used during cluster comparisons, and the same for
 	// every model unlike the calibrated distances: it is the gap a resolved collision leaves, which
 	// is a void where nothing matches, so a wider one strands embeddings rather than separating anyone.
@@ -105,6 +112,10 @@ var (
 	// the cluster keeps its full accept distance: narrowing that far would exclude its own members,
 	// so the code stops separating the two and flags the face ambiguous instead.
 	CollisionDist = CollisionDistDefault
+	// MatchMargin is how much closer the nearest cluster has to be than the runner-up before a
+	// marker is assigned to it. A face between two people is large, sharp and confidently scored,
+	// so no detection threshold selects against it and only the margin does.
+	MatchMargin = MatchMarginDefault
 	// ClusterCore is the minimum number of faces required to seed a cluster core.
 	ClusterCore = ClusterCoreDefault
 	// SampleThreshold is the number of faces required before automatic clustering begins.
@@ -153,6 +164,18 @@ func DetectorScore(detector DetectorName) float64 {
 // Epsilon, so below this the backoff would exceed the separation it preserves.
 func AmbiguityDist() float64 {
 	return 2 * Epsilon
+}
+
+// AmbiguousMatch reports whether picking the nearest of two clusters is a coin toss.
+//
+// The quantity is the difference between two distances rather than a distance: a face between two
+// people is admitted by both, and the one that takes it is then widened toward the other.
+func AmbiguousMatch(bestDist, runnerUpDist float64) bool {
+	if MatchMargin <= 0 || bestDist < 0 || runnerUpDist < 0 {
+		return false
+	}
+
+	return runnerUpDist-bestDist < MatchMargin
 }
 
 // DetectorMigrateScore returns the detection floor a migration re-detects at for the named

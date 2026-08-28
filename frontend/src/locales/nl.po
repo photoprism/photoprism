@@ -58,8 +58,8 @@ msgstr "%{n} GB van %{q} GB gebruikt"
 msgid "%{n} labels found"
 msgstr "%{n} labels gevonden"
 
-#: src/page/people/new.vue:467 src/page/people/new.vue:573
-#: src/page/people/recognized.vue:721
+#: src/page/people/new.vue:494 src/page/people/new.vue:600
+#: src/page/people/recognized.vue:729
 msgid "%{n} people found"
 msgstr "%{n} personen gevonden"
 
@@ -100,11 +100,11 @@ msgstr "%s bestaat al"
 msgid "%s has been restored"
 msgstr "%s is hersteld"
 
-#: src/options/options.js:423
+#: src/options/options.js:425
 msgid "1 hour"
 msgstr "1 uur"
 
-#: src/options/options.js:425
+#: src/options/options.js:427
 msgid "12 hours"
 msgstr "12 uren"
 
@@ -123,7 +123,7 @@ msgstr "2-Factor Authenticatie"
 msgid "2FA"
 msgstr "2FA"
 
-#: src/options/options.js:424
+#: src/options/options.js:426
 msgid "4 hours"
 msgstr "4 uren"
 
@@ -355,15 +355,15 @@ msgstr "Geavanceerd"
 msgid "Advertise URL"
 msgstr "URL adverteren"
 
-#: src/options/options.js:433
+#: src/options/options.js:435
 msgid "After 1 day"
 msgstr "Na 1 dag"
 
-#: src/options/options.js:434
+#: src/options/options.js:436
 msgid "After 3 days"
 msgstr "Na 3 dagen"
 
-#: src/options/options.js:435
+#: src/options/options.js:437
 msgid "After 7 days"
 msgstr "Na 7 dagen"
 
@@ -371,11 +371,11 @@ msgstr "Na 7 dagen"
 msgid "After entering your password for confirmation, you can set up two-factor authentication with a compatible authenticator app or device:"
 msgstr "Nadat je je wachtwoord hebt ingevoerd ter bevestiging, kun je tweefactorauthenticatie instellen met een compatibele authenticatie-app of -apparaat:"
 
-#: src/options/options.js:437
+#: src/options/options.js:439
 msgid "After one month"
 msgstr "Na een maand"
 
-#: src/options/options.js:439
+#: src/options/options.js:441
 msgid "After one year"
 msgstr "Na een jaar"
 
@@ -383,11 +383,11 @@ msgstr "Na een jaar"
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
 msgstr "Nadat u foto's uit de zoekresultaten hebt geselecteerd, kunt u ze via het contextmenu aan een album toevoegen."
 
-#: src/options/options.js:438
+#: src/options/options.js:440
 msgid "After two months"
 msgstr "Na twee maanden"
 
-#: src/options/options.js:436
+#: src/options/options.js:438
 msgid "After two weeks"
 msgstr "Na twee weken"
 
@@ -448,7 +448,7 @@ msgstr "Alle %{n} albums geladen"
 msgid "All %{n} labels loaded"
 msgstr "Alle %{n} labels geladen"
 
-#: src/page/people/recognized.vue:553
+#: src/page/people/recognized.vue:561
 msgid "All %{n} people loaded"
 msgstr "Alle %{n} mensen geladen"
 
@@ -554,7 +554,7 @@ msgstr "AM"
 #: src/component/photo/edit/files.vue:147
 #: src/component/photo/view/cards.vue:113
 #: src/component/photo/view/cards.vue:230 src/component/photo/view/list.vue:82
-#: src/component/photo/view/mosaic.vue:68 src/options/options.js:362
+#: src/component/photo/view/mosaic.vue:68 src/options/options.js:364
 msgid "Animated"
 msgstr "Geanimeerd"
 
@@ -661,7 +661,7 @@ msgstr "Attributen"
 #: src/app/routes.js:416 src/common/util.js:862
 #: src/component/navigation.vue:204 src/component/navigation.vue:205
 #: src/component/navigation.vue:217 src/component/navigation.vue:226
-#: src/component/navigation.vue:254 src/options/options.js:358
+#: src/component/navigation.vue:254 src/options/options.js:360
 msgid "Audio"
 msgstr "Audio"
 
@@ -741,15 +741,15 @@ msgstr "Bio"
 msgid "Birth Date"
 msgstr "Geboortedatum"
 
-#: src/options/options.js:458
+#: src/options/options.js:460
 msgid "Black"
 msgstr "Zwart"
 
-#: src/options/options.js:454
+#: src/options/options.js:456
 msgid "Blue"
 msgstr "Blauw"
 
-#: src/options/options.js:455
+#: src/options/options.js:457
 msgid "Brown"
 msgstr "Bruin"
 
@@ -767,7 +767,7 @@ msgstr "Bladeren door bestanden"
 msgid "Browse Pictures"
 msgstr "Foto's bekijken"
 
-#: src/options/options.js:464
+#: src/options/options.js:466
 msgid "Bug Report"
 msgstr "Bugmelding"
 
@@ -817,9 +817,9 @@ msgstr "Kan niet meer laden, limiet bereikt"
 #: src/common/clipboard.js:103 src/common/clipboard.js:139
 #: src/page/albums.vue:1204 src/page/albums.vue:1220 src/page/labels.vue:642
 #: src/page/labels.vue:662 src/page/library/browse.vue:325
-#: src/page/library/browse.vue:341 src/page/people/new.vue:395
-#: src/page/people/new.vue:411 src/page/people/recognized.vue:486
-#: src/page/people/recognized.vue:502
+#: src/page/library/browse.vue:341 src/page/people/new.vue:422
+#: src/page/people/new.vue:438 src/page/people/recognized.vue:494
+#: src/page/people/recognized.vue:510
 msgid "Can't select more items"
 msgstr "Kan niet meer items selecteren"
 
@@ -933,8 +933,8 @@ msgstr "Wijzigingen kunnen niet worden opgeslagen"
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
-#: src/locales.js:428 src/page/albums.vue:1197
-#: src/page/people/recognized.vue:296 src/page/settings/advanced.vue:507
+#: src/locales.js:428 src/page/albums.vue:1197 src/page/people/new.vue:789
+#: src/page/people/recognized.vue:304 src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
 #: src/page/settings/general.vue:646
 msgid "Changes successfully saved"
@@ -1199,6 +1199,14 @@ msgstr "Kon niets vinden."
 msgid "Country"
 msgstr "Land"
 
+#: src/page/people/new.vue:101
+msgid "Create"
+msgstr ""
+
+#: src/page/people/new.vue:198
+msgid "Create a new person named %{name}?"
+msgstr ""
+
 #: src/page/auth/login.vue:123 src/page/auth/login.vue:130
 msgid "Create Account"
 msgstr "Account aanmaken"
@@ -1229,7 +1237,7 @@ msgstr "Aangemaakt"
 msgid "Creating thumbnails for"
 msgstr "Het maken van miniaturen voor"
 
-#: src/options/options.js:501
+#: src/options/options.js:503
 msgid "Current Name"
 msgstr "Huidige naam"
 
@@ -1241,11 +1249,11 @@ msgstr "Huidig Wachtwoord"
 msgid "Custom"
 msgstr "Aangepast"
 
-#: src/options/options.js:453
+#: src/options/options.js:455
 msgid "Cyan"
 msgstr "Cyaan"
 
-#: src/options/options.js:426
+#: src/options/options.js:428
 msgid "Daily"
 msgstr "Dagelijks"
 
@@ -1285,8 +1293,8 @@ msgstr "Debug-logs"
 #: src/page/admin/users.vue:374 src/common/util.js:886 src/model/session.js:42
 #: src/model/user.js:343 src/options/auth.js:40 src/options/auth.js:41
 #: src/options/auth.js:69 src/options/auth.js:70 src/options/options.js:252
-#: src/options/options.js:255 src/options/options.js:293
-#: src/options/options.js:377 src/options/themes.js:863
+#: src/options/options.js:255 src/options/options.js:295
+#: src/options/options.js:379 src/options/themes.js:863
 msgid "Default"
 msgstr "Standaard"
 
@@ -1474,7 +1482,7 @@ msgstr "Afbeeldings titels weergeven in zoekresultaten."
 #: src/common/util.js:868 src/component/photo/view/cards.vue:115
 #: src/component/photo/view/cards.vue:239
 #: src/component/photo/view/mosaic.vue:70 src/model/thumb.js:247
-#: src/options/options.js:370
+#: src/options/options.js:372
 msgid "Document"
 msgstr "Document"
 
@@ -1688,7 +1696,7 @@ msgstr "Locaties schatten"
 msgid "Estimate the approximate location of pictures without GPS coordinates."
 msgstr "De locatie van foto's bij benadering schatten zonder GPS-coördinaten."
 
-#: src/options/options.js:427
+#: src/options/options.js:429
 msgid "Every two days"
 msgstr "Om de twee dagen"
 
@@ -1835,7 +1843,7 @@ msgstr "Favorieten"
 msgid "Feature disabled"
 msgstr "Functie uitgeschakeld"
 
-#: src/options/options.js:463
+#: src/options/options.js:465
 msgid "Feature Request"
 msgstr "Verzoek voor nieuwe functionaliteit"
 
@@ -1843,7 +1851,7 @@ msgstr "Verzoek voor nieuwe functionaliteit"
 msgid "Features"
 msgstr "Kenmerken"
 
-#: src/options/options.js:487
+#: src/options/options.js:489
 msgid "Female"
 msgstr "Vrouw"
 
@@ -1866,7 +1874,7 @@ msgstr "Bestand verwijderd"
 
 #: src/component/photo/batch-edit.vue:606
 #: src/component/photo/batch-edit.vue:626 src/component/photo/view/list.vue:34
-#: src/options/options.js:514
+#: src/options/options.js:516
 msgid "File Name"
 msgstr "Bestandsnaam"
 
@@ -1878,7 +1886,7 @@ msgstr "Bestand niet gevonden"
 msgid "File removed from stack"
 msgstr "Bestand uit stapel verwijderd"
 
-#: src/options/options.js:515
+#: src/options/options.js:517
 msgid "File Size"
 msgstr "Bestandsgrootte"
 
@@ -2018,15 +2026,15 @@ msgstr "Ga naar pagina {0}"
 msgid "Go to Page %{n}"
 msgstr "Ga naar pagina %{n}"
 
-#: src/options/options.js:448
+#: src/options/options.js:450
 msgid "Gold"
 msgstr "Goud"
 
-#: src/options/options.js:451
+#: src/options/options.js:453
 msgid "Green"
 msgstr "Groen"
 
-#: src/options/options.js:457
+#: src/options/options.js:459
 msgid "Grey"
 msgstr "Grijs"
 
@@ -2088,7 +2096,7 @@ msgstr "Schuifbalk verbergen"
 msgid "Hide the permanent scrollbar shown by some desktop browsers."
 msgstr "Verberg de vaste schuifbalk die bij sommige desktopbrowsers wordt weergegeven."
 
-#: src/options/options.js:381
+#: src/options/options.js:383
 msgid "High"
 msgstr "Hoog"
 
@@ -2099,7 +2107,7 @@ msgstr "Hoog"
 msgid "High Dynamic Range (HDR)"
 msgstr "Hoog dynamisch bereik (HDR)"
 
-#: src/options/options.js:304
+#: src/options/options.js:306
 msgid "Hybrid"
 msgstr "Hybride"
 
@@ -2109,7 +2117,7 @@ msgstr "Als u de toegang tot uw authenticatie-app of -apparaat verliest, kunt u 
 
 #: src/common/util.js:854 src/common/util.js:894
 #: src/component/photo/view/cards.vue:246 src/model/file.js:199
-#: src/options/options.js:342
+#: src/options/options.js:344
 msgid "Image"
 msgstr "Afbeelding"
 
@@ -2462,7 +2470,7 @@ msgstr "Licentie"
 msgid "Like"
 msgstr "Vind ik leuk"
 
-#: src/options/options.js:450
+#: src/options/options.js:452
 msgid "Lime"
 msgstr "Limoen"
 
@@ -2485,7 +2493,7 @@ msgstr "Lijstweergave"
 #: src/common/util.js:858 src/component/photo/batch-edit.vue:124
 #: src/component/photo/batch-edit.vue:65 src/component/photo/view/cards.vue:112
 #: src/component/photo/view/cards.vue:224 src/component/photo/view/list.vue:81
-#: src/component/photo/view/mosaic.vue:67 src/options/options.js:350
+#: src/component/photo/view/mosaic.vue:67 src/options/options.js:352
 msgid "Live"
 msgstr "Live"
 
@@ -2553,11 +2561,11 @@ msgstr "Lengtegraad"
 msgid "Lost server connection"
 msgstr "Verbroken serververbinding"
 
-#: src/options/options.js:385
+#: src/options/options.js:387
 msgid "Low"
 msgstr "Laag"
 
-#: src/options/options.js:444
+#: src/options/options.js:446
 msgid "Magenta"
 msgstr "Magenta"
 
@@ -2568,7 +2576,7 @@ msgstr "Magenta"
 msgid "Main Color"
 msgstr "Hoofdkleur"
 
-#: src/options/options.js:486
+#: src/options/options.js:488
 msgid "Male"
 msgstr "Man"
 
@@ -2679,7 +2687,7 @@ msgstr "Meer opties"
 msgid "Mosaic"
 msgstr "Mozaiek"
 
-#: src/options/options.js:518
+#: src/options/options.js:520
 msgid "Most Relevant"
 msgstr "Meest relevant"
 
@@ -2732,8 +2740,8 @@ msgid "Name too long"
 msgstr "Titel is te lang"
 
 #: src/page/admin/users.vue:261 src/page/admin/users.vue:458
-#: src/page/admin/users.vue:402 src/options/options.js:422
-#: src/options/options.js:432 src/page/services.vue:251
+#: src/page/admin/users.vue:402 src/options/options.js:424
+#: src/options/options.js:434 src/page/services.vue:251
 msgid "Never"
 msgstr "Nooit"
 
@@ -2745,7 +2753,7 @@ msgstr "Nieuw"
 msgid "New Password"
 msgstr "Nieuw wachtwoord"
 
-#: src/options/options.js:508 src/page/albums.vue:395
+#: src/options/options.js:510 src/page/albums.vue:395
 msgid "Newest First"
 msgstr "Nieuwste eerst"
 
@@ -2824,15 +2832,15 @@ msgid "No more"
 msgstr "Niet meer"
 
 #: src/component/photo/edit/people.vue:6 src/page/people/new.vue:23
-#: src/page/people/new.vue:463 src/page/people/new.vue:569
-#: src/page/people/recognized.vue:55 src/page/people/recognized.vue:717
+#: src/page/people/new.vue:490 src/page/people/new.vue:596
+#: src/page/people/recognized.vue:55 src/page/people/recognized.vue:725
 msgid "No people found"
 msgstr "Geen mensen gevonden"
 
 #: src/component/photo/view/cards.vue:9 src/component/photo/view/list.vue:9
 #: src/component/photo/view/mosaic.vue:9 src/page/album/photos.vue:582
 #: src/page/library/browse.vue:31 src/page/photos.vue:720
-#: src/page/places.vue:765 src/page/places.vue:886
+#: src/page/places.vue:761 src/page/places.vue:882
 msgid "No pictures found"
 msgstr "Geen foto's gevonden"
 
@@ -2887,7 +2895,7 @@ msgstr "Knooppunten"
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Niet-fotografische beelden en beelden van lage kwaliteit moeten worden beoordeeld voordat ze in de zoekresultaten verschijnen."
 
-#: src/options/auth.js:52 src/options/options.js:273 src/options/options.js:389
+#: src/options/auth.js:52 src/options/options.js:273 src/options/options.js:391
 msgid "None"
 msgstr "Geen"
 
@@ -2946,7 +2954,7 @@ msgstr "Hier is nog niets te zien."
 msgid "Nothing was found."
 msgstr "Er is niets gevonden."
 
-#: src/options/options.js:331
+#: src/options/options.js:333
 msgid "Offline"
 msgstr "Offline"
 
@@ -2954,7 +2962,7 @@ msgstr "Offline"
 msgid "OK"
 msgstr "OK"
 
-#: src/options/options.js:509 src/page/albums.vue:396
+#: src/options/options.js:511 src/page/albums.vue:396
 msgid "Oldest First"
 msgstr "Oudste eerst"
 
@@ -2967,7 +2975,7 @@ msgstr "In Windows voert u de volgende bron in het verbindingsdialoogvenster in:
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
 msgstr "Het op aanvraag genereren van miniaturen kan een hoog CPU- en geheugengebruik veroorzaken. Het wordt niet aanbevolen voor servers en NAS-apparaten met beperkte bronnen."
 
-#: src/options/options.js:428
+#: src/options/options.js:430
 msgid "Once a week"
 msgstr "Eenmaal per week"
 
@@ -2995,8 +3003,8 @@ msgstr "Een album gevonden"
 msgid "One label found"
 msgstr "Een etiket gevonden"
 
-#: src/page/people/new.vue:465 src/page/people/new.vue:571
-#: src/page/people/recognized.vue:719
+#: src/page/people/new.vue:492 src/page/people/new.vue:598
+#: src/page/people/recognized.vue:727
 msgid "One person found"
 msgstr "Eén persoon vond"
 
@@ -3030,7 +3038,7 @@ msgstr "optioneel"
 msgid "or"
 msgstr "of"
 
-#: src/options/options.js:447
+#: src/options/options.js:449
 msgid "Orange"
 msgstr "Oranje"
 
@@ -3052,14 +3060,14 @@ msgstr "Originele bestandsnamen worden opgeslagen en geïndexeerd."
 #: src/component/photo/edit/files.vue:103
 #: src/component/photo/edit/files.vue:111 src/component/photo/edit/files.vue:96
 #: src/component/photo/edit/files.vue:97 src/component/photo/edit/info.vue:44
-#: src/component/photo/edit/info.vue:45 src/options/options.js:502
+#: src/component/photo/edit/info.vue:45 src/options/options.js:504
 msgid "Original Name"
 msgstr "Originele naam"
 
 #: src/component/navigation.vue:362 src/component/navigation.vue:363
 #: src/component/navigation.vue:375 src/component/navigation.vue:384
 #: src/component/navigation.vue:497 src/model/file.js:180
-#: src/options/options.js:474 src/page/library/browse.vue:7
+#: src/options/options.js:476 src/page/library/browse.vue:7
 #: src/page/settings/collections.vue:42 src/page/settings/content.vue:185
 #: src/page/settings/general.vue:364
 msgid "Originals"
@@ -3069,7 +3077,7 @@ msgstr "Originelen"
 msgid "Originals folder is empty"
 msgstr "De map Originelen is leeg"
 
-#: src/options/options.js:465 src/options/options.js:488
+#: src/options/options.js:467 src/options/options.js:490
 msgid "Other"
 msgstr "Andere"
 
@@ -3078,7 +3086,7 @@ msgstr "Andere"
 msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
 msgstr "Onze missie is om de meest gebruiks- en privacyvriendelijke oplossing te bieden om uw foto's georganiseerd en toegankelijk te houden."
 
-#: src/options/options.js:316
+#: src/options/options.js:318
 msgid "Outdoor"
 msgstr "Outdoor"
 
@@ -3207,11 +3215,11 @@ msgstr "Foto’s"
 msgid "Picture"
 msgstr "Afbeelding"
 
-#: src/options/options.js:513
+#: src/options/options.js:515
 msgid "Picture Title"
 msgstr "Titel afbeelding"
 
-#: src/options/options.js:445
+#: src/options/options.js:447
 msgid "Pink"
 msgstr "Roze"
 
@@ -3367,7 +3375,7 @@ msgstr "Privé"
 msgid "Processing upload..."
 msgstr "Verwerking upload..."
 
-#: src/options/options.js:462
+#: src/options/options.js:464
 msgid "Product Feedback"
 msgstr "Terugkoppeling van producten"
 
@@ -3378,7 +3386,7 @@ msgstr "Terugkoppeling van producten"
 msgid "Projection"
 msgstr "Projectie"
 
-#: src/options/options.js:443
+#: src/options/options.js:445
 msgid "Purple"
 msgstr "Paars"
 
@@ -3402,7 +3410,7 @@ msgstr "Willekeurig"
 msgid "Rating {0} of {1}"
 msgstr "Beoordeling {0} van {1}"
 
-#: src/common/util.js:856 src/options/options.js:346
+#: src/common/util.js:856 src/options/options.js:348
 msgid "Raw"
 msgstr "Raw"
 
@@ -3424,15 +3432,15 @@ msgstr "Lees gezichtsgebieden en namen uit XMP-metadata om personenmarkeringen t
 msgid "Read-Only Mode"
 msgstr "Alleen-lezen modus"
 
-#: src/options/options.js:510 src/page/albums.vue:397
+#: src/options/options.js:512 src/page/albums.vue:397
 msgid "Recently Added"
 msgstr "Onlangs toegevoegd"
 
-#: src/options/options.js:511
+#: src/options/options.js:513
 msgid "Recently Archived"
 msgstr "Onlangs gearchiveerd"
 
-#: src/options/options.js:512 src/page/albums.vue:398
+#: src/options/options.js:514 src/page/albums.vue:398
 msgid "Recently Edited"
 msgstr "Recent bewerkt"
 
@@ -3449,7 +3457,7 @@ msgstr "Erkend"
 msgid "Recovery Code"
 msgstr "Herstelcode"
 
-#: src/options/options.js:446
+#: src/options/options.js:448
 msgid "Red"
 msgstr "Rood"
 
@@ -3638,7 +3646,7 @@ msgstr "Gedraaid"
 msgid "Rows per page:"
 msgstr "Rijen per pagina:"
 
-#: src/options/options.js:310
+#: src/options/options.js:312
 msgid "Satellite"
 msgstr "Satelliet"
 
@@ -3903,7 +3911,7 @@ msgstr "Delen"
 msgid "Share %{s}"
 msgstr "Deel %{s}"
 
-#: src/options/options.js:503
+#: src/options/options.js:505
 msgid "Share Friendly"
 msgstr "Gemakkelijk te delen"
 
@@ -4147,7 +4155,7 @@ msgstr "Stop met gieten"
 msgid "Storage"
 msgstr "Opslag"
 
-#: src/options/options.js:298
+#: src/options/options.js:300
 msgid "Streets"
 msgstr "Straat"
 
@@ -4216,11 +4224,11 @@ msgstr "Ruwe en videobestanden synchroniseren"
 msgid "Taken"
 msgstr "Bezet"
 
-#: src/options/options.js:452
+#: src/options/options.js:454
 msgid "Teal"
 msgstr "Groenblauw"
 
-#: src/options/options.js:322
+#: src/options/options.js:324
 msgid "Terrain"
 msgstr "Terrein"
 
@@ -4650,7 +4658,7 @@ msgstr "UUID"
 
 #: src/common/util.js:866 src/component/photo/view/cards.vue:114
 #: src/component/photo/view/cards.vue:239
-#: src/component/photo/view/mosaic.vue:69 src/options/options.js:366
+#: src/component/photo/view/mosaic.vue:69 src/options/options.js:368
 msgid "Vector"
 msgstr "Vector"
 
@@ -4677,11 +4685,11 @@ msgstr "Versie"
 #: src/component/photo/batch-edit.vue:69 src/component/photo/view/cards.vue:122
 #: src/component/photo/view/cards.vue:220 src/component/photo/view/list.vue:83
 #: src/component/photo/view/mosaic.vue:77 src/model/file.js:202
-#: src/model/photo.js:1015 src/model/photo.js:997 src/options/options.js:354
+#: src/model/photo.js:1015 src/model/photo.js:997 src/options/options.js:356
 msgid "Video"
 msgstr "Video"
 
-#: src/options/options.js:516
+#: src/options/options.js:518
 msgid "Video Duration"
 msgstr "Videoduur"
 
@@ -4714,7 +4722,7 @@ msgstr "Visie"
 msgid "Visitor"
 msgstr "Bezoeker"
 
-#: src/options/options.js:517
+#: src/options/options.js:519
 msgid "Visual Similarity"
 msgstr "Visuele gelijkenis"
 
@@ -4735,7 +4743,7 @@ msgstr "Web Login"
 #: src/page/admin/users.vue:188 src/component/cluster/node/user-edit.vue:232
 #: src/component/user/add/dialog.vue:148 src/component/user/edit/dialog.vue:298
 #: src/page/admin/users.vue:280 src/options/auth.js:85 src/options/auth.js:98
-#: src/options/options.js:498
+#: src/options/options.js:500
 msgid "WebDAV"
 msgstr "WebDAV"
 
@@ -4751,7 +4759,7 @@ msgstr "WebDAV cliënten, zoals Microsoft's Windows Explorer of Apple's Finder, 
 msgid "WebDAV Upload"
 msgstr "Uploaden"
 
-#: src/page/places.vue:445
+#: src/page/places.vue:441
 msgid "WebGL support is disabled in your browser"
 msgstr "WebGL-ondersteuning is uitgeschakeld in uw browser"
 
@@ -4760,7 +4768,7 @@ msgstr "WebGL-ondersteuning is uitgeschakeld in uw browser"
 msgid "Website"
 msgstr "Website"
 
-#: src/options/options.js:456
+#: src/options/options.js:458
 msgid "White"
 msgstr "Wit"
 
@@ -4775,7 +4783,7 @@ msgstr "Werk Details"
 msgid "Year"
 msgstr "Jaar"
 
-#: src/options/options.js:449
+#: src/options/options.js:451
 msgid "Yellow"
 msgstr "Geel"
 
@@ -4855,7 +4863,7 @@ msgstr "Uw account kon niet worden aangesloten"
 msgid "Your account has been successfully connected."
 msgstr "Uw account is succesvol verbonden."
 
-#: src/page/places.vue:449
+#: src/page/places.vue:445
 msgid "Your browser does not support WebGL"
 msgstr "Uw browser ondersteunt WebGL niet"
 

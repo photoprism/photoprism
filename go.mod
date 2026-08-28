@@ -31,7 +31,7 @@ require (
 	github.com/paulmach/go.geojson v1.5.0
 	github.com/pbnjay/memory v0.0.0-20210728143218-7b4eea64cf58
 	github.com/sevlyar/go-daemon v0.1.7
-	github.com/sirupsen/logrus v1.10.1
+	github.com/sirupsen/logrus v1.10.2
 	github.com/stretchr/testify v1.12.1
 	github.com/tidwall/gjson v1.19.0
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6

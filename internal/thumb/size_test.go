@@ -127,3 +127,37 @@ func TestSize_FileName(t *testing.T) {
 
 	assert.Equal(t, r, "testdata/cache/1/9/3/193456789098765432_2048x2048_fit.jpg")
 }
+
+func TestSize_Fitted(t *testing.T) {
+	t.Run("WidthLimits", func(t *testing.T) {
+		// Fit1920 is a 1920x1200 box, so a 4:3 original is limited by its height.
+		w, h := Sizes[Fit1920].Fitted(4000, 3000)
+		assert.Equal(t, 1600, w)
+		assert.Equal(t, 1200, h)
+	})
+	t.Run("HeightLimits", func(t *testing.T) {
+		w, h := Sizes[Fit1920].Fitted(3840, 2160)
+		assert.Equal(t, 1920, w)
+		assert.Equal(t, 1080, h)
+	})
+	t.Run("Portrait", func(t *testing.T) {
+		w, h := Sizes[Fit1920].Fitted(3000, 4000)
+		assert.Equal(t, 900, w)
+		assert.Equal(t, 1200, h)
+	})
+	t.Run("NeverUpscales", func(t *testing.T) {
+		w, h := Sizes[Fit720].Fitted(640, 480)
+		assert.Equal(t, 640, w)
+		assert.Equal(t, 480, h)
+	})
+	t.Run("FillSizeIsExact", func(t *testing.T) {
+		w, h := Sizes[Tile224].Fitted(4000, 3000)
+		assert.Equal(t, 224, w)
+		assert.Equal(t, 224, h)
+	})
+	t.Run("UnknownDimensions", func(t *testing.T) {
+		w, h := Sizes[Fit720].Fitted(0, 0)
+		assert.Equal(t, 0, w)
+		assert.Equal(t, 0, h)
+	})
+}

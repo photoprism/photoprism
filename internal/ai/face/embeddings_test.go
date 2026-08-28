@@ -305,3 +305,56 @@ func TestEmbeddings_DistWithin(t *testing.T) {
 		assert.Equal(t, -1.0, embeddings.DistWithin(query, math.Nextafter(full, 0)))
 	})
 }
+
+// TestEmbeddings_Radius checks the extent a cluster would have before ClampSampleRadius bounds it,
+// which is what tells a chained group apart from a stored radius sitting at the clamp.
+func TestEmbeddings_Radius(t *testing.T) {
+	base := FixtureEmbedding(101)
+
+	t.Run("Empty", func(t *testing.T) {
+		assert.Zero(t, Embeddings{}.Radius())
+	})
+	t.Run("One", func(t *testing.T) {
+		assert.Zero(t, Embeddings{base}.Radius())
+	})
+	t.Run("Measured", func(t *testing.T) {
+		// Two vectors 0.4 apart sit 0.2 from their midpoint, plus the tolerance the comparison
+		// path adds so a sample exactly on the radius is still inside it.
+		e := Embeddings{base, FixtureEmbeddingAt(base, 0.4, 102)}
+		assert.InDelta(t, 0.2+Epsilon, e.Radius(), 0.01)
+	})
+	t.Run("GrowsWithTheGroup", func(t *testing.T) {
+		near := Embeddings{base, FixtureEmbeddingAt(base, 0.4, 103)}
+		wide := Embeddings{base, FixtureEmbeddingAt(base, 1.2, 103)}
+		assert.Greater(t, wide.Radius(), near.Radius())
+	})
+}
+
+// TestClusterFits pins the width a cluster may reach and still accept the members it was built
+// from. DBSCAN bounds the link distance rather than the result, so nothing else enforces it.
+func TestClusterFits(t *testing.T) {
+	setThresholds(t, ClusterRadiusDefault, MatchDistDefault)
+
+	t.Run("InsideTheStoredRadius", func(t *testing.T) {
+		assert.True(t, ClusterFits(ClusterRadiusDefault/2))
+	})
+	t.Run("PastTheStoredRadiusButWithinAcceptance", func(t *testing.T) {
+		// The stored radius is clamped, so between the two the gate stops widening with the
+		// group - but every member is still inside it.
+		assert.True(t, ClusterFits(ClusterRadiusDefault+MatchDistDefault/2))
+	})
+	t.Run("ExactlyOnTheAcceptDistance", func(t *testing.T) {
+		assert.True(t, ClusterFits(ClusterRadiusDefault+MatchDistDefault))
+	})
+	t.Run("Chained", func(t *testing.T) {
+		assert.False(t, ClusterFits(ClusterRadiusDefault+MatchDistDefault+0.001))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.True(t, ClusterFits(0))
+	})
+	t.Run("FollowsTheConfiguredThresholds", func(t *testing.T) {
+		setThresholds(t, 0.2, 0.1)
+		assert.False(t, ClusterFits(0.4))
+		assert.True(t, ClusterFits(0.3))
+	})
+}

@@ -529,3 +529,49 @@ func TestWhereClusterScore(t *testing.T) {
 		assert.True(t, matched(t, newMarker(t, "", 1).MarkerUID, 0))
 	})
 }
+
+// TestResetAllFaceMarkerMatches covers the difference between the two reset scopes, which is
+// whether a marker a person named keeps its identity.
+func TestResetAllFaceMarkerMatches(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	t.Cleanup(entity.ResetTestFixtures)
+
+	named := entity.MarkerFixtures.Get("actress-a-1")
+	require.Equal(t, entity.SrcManual, named.SubjSrc, "the fixture this pins must be hand-named")
+
+	t.Run("KeepsManual", func(t *testing.T) {
+		_, err := ResetFaceMarkerMatches()
+		require.NoError(t, err)
+
+		m, err := MarkerByUID(named.MarkerUID)
+		require.NoError(t, err)
+		assert.Equal(t, named.SubjUID, m.SubjUID, "an automatic reset must not touch a hand-named marker")
+		assert.Equal(t, named.MarkerName, m.MarkerName)
+		assert.Equal(t, named.FaceID, m.FaceID)
+	})
+	t.Run("ClearsManual", func(t *testing.T) {
+		removed, err := ResetAllFaceMarkerMatches()
+		require.NoError(t, err)
+		assert.Positive(t, removed)
+
+		m, err := MarkerByUID(named.MarkerUID)
+		require.NoError(t, err)
+		assert.Empty(t, m.SubjUID)
+		assert.Empty(t, m.SubjSrc)
+		assert.Empty(t, m.MarkerName)
+		assert.Empty(t, m.FaceID)
+		assert.Nil(t, m.MatchedAt)
+	})
+	t.Run("KeepsEmbeddings", func(t *testing.T) {
+		// The whole point of the scope: detection survives, so a later run re-clusters from the
+		// stored vectors instead of decoding every file again.
+		m, err := MarkerByUID(named.MarkerUID)
+		require.NoError(t, err)
+		assert.Equal(t, named.Size, m.Size)
+		assert.Equal(t, named.Score, m.Score)
+		assert.NotEmpty(t, m.Thumb)
+	})
+}

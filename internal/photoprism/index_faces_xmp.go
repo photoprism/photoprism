@@ -19,7 +19,6 @@ import (
 // and Score only influence the quality sort and the review flag; named regions
 // are not flagged for review, unnamed ones are so the user can name them.
 const (
-	xmpMarkerSize = 100 // Nominal face size in pixels.
 	// Scores are on the detector's 0-100 confidence scale, so both clear the clustering bar: a
 	// region a detector later confirms carries a real embedding, and its score is never rewritten.
 	// Whether it needs review is set explicitly rather than inferred from the score.
@@ -327,7 +326,7 @@ func reconcileXmpFaces(regions meta.FaceRegions, file *entity.File, markers *ent
 			score = xmpMarkerScoreNamed
 		}
 
-		probe := entity.NewMarker(*file, area, "", entity.SrcXmp, entity.MarkerFace, xmpMarkerSize, score)
+		probe := entity.NewMarker(*file, area, "", entity.SrcXmp, entity.MarkerFace, entity.MarkerSize(area, *file), score)
 		if probe == nil {
 			continue
 		}
@@ -360,13 +359,12 @@ func reconcileXmpFaces(regions meta.FaceRegions, file *entity.File, markers *ent
 				entity.SrcPriority[existing.SubjSrc] <= entity.SrcPriority[entity.SrcXmp] &&
 				(existing.X != probe.X || existing.Y != probe.Y ||
 					existing.W != probe.W || existing.H != probe.H ||
-					existing.Q != probe.Q || existing.Size != probe.Size ||
+					existing.Size != probe.Size ||
 					existing.Score != probe.Score || existing.Thumb != probe.Thumb) {
 				existing.X = probe.X
 				existing.Y = probe.Y
 				existing.W = probe.W
 				existing.H = probe.H
-				existing.Q = probe.Q
 				existing.Size = probe.Size
 				existing.Score = probe.Score
 				existing.Thumb = probe.Thumb
@@ -378,7 +376,6 @@ func reconcileXmpFaces(regions meta.FaceRegions, file *entity.File, markers *ent
 						"y":     existing.Y,
 						"w":     existing.W,
 						"h":     existing.H,
-						"q":     existing.Q,
 						"size":  existing.Size,
 						"score": existing.Score,
 						"thumb": existing.Thumb,

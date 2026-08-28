@@ -278,6 +278,7 @@ type Options struct {
 	FaceClusterDist           float64       `yaml:"-" json:"-" flag:"face-cluster-dist"`
 	FaceClusterRadius         float64       `yaml:"-" json:"-" flag:"face-cluster-radius"`
 	FaceMatchDist             float64       `yaml:"-" json:"-" flag:"face-match-dist"`
+	FaceMatchMargin           float64       `yaml:"-" json:"-" flag:"face-match-margin"`
 	FaceCollisionDist         float64       `yaml:"-" json:"-" flag:"face-collision-dist"`
 	FaceEpsilonDist           float64       `yaml:"-" json:"-" flag:"face-epsilon-dist"`
 	PIDFilename               string        `yaml:"PIDFilename" json:"-" flag:"pid-filename"`

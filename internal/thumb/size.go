@@ -2,6 +2,7 @@ package thumb
 
 import (
 	"image"
+	"math"
 )
 
 // Size represents a standard media resolution.
@@ -21,6 +22,25 @@ type Size struct {
 // Bounds returns the thumb size as image.Rectangle.
 func (s Size) Bounds() image.Rectangle {
 	return image.Rectangle{Min: image.Point{}, Max: image.Point{X: s.Width, Y: s.Height}}
+}
+
+// Fitted returns the pixel dimensions this size renders a source of w x h at. A fit size scales the
+// source into its box without ever enlarging it; every other size fills its box exactly. The
+// arithmetic mirrors fitImage, so a rendition can be reasoned about without reading it.
+func (s Size) Fitted(w, h int) (int, int) {
+	if !s.Fit {
+		return s.Width, s.Height
+	} else if w <= 0 || h <= 0 {
+		return 0, 0
+	}
+
+	scale := math.Min(float64(s.Width)/float64(w), float64(s.Height)/float64(h))
+
+	if scale >= 1 {
+		return w, h
+	}
+
+	return maxInt(1, int(float64(w)*scale)), maxInt(1, int(float64(h)*scale))
 }
 
 // Uncached tests if thumbnail type exceeds the cached thumbnails size limit.

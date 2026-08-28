@@ -240,6 +240,23 @@ func EmbeddingsMidpoint(embeddings Embeddings) (result Embedding, radius float64
 	return result, radius, count
 }
 
+// Radius returns the distance from the midpoint of the embeddings to the one furthest from it,
+// before ClampSampleRadius bounds what a cluster built from them would store. It normalizes its
+// receiver in place, as EmbeddingsMidpoint does, so it is not the pure accessor it reads as.
+func (embeddings Embeddings) Radius() (radius float64) {
+	_, radius, _ = EmbeddingsMidpoint(embeddings)
+	return radius
+}
+
+// ClusterFits reports whether a cluster of the given radius would accept its own members.
+//
+// Not implied by ClusterDist: DBSCAN bounds the distance to a neighbor rather than the width of the
+// result. Past ClusterRadius the clamped radius stops the gate widening with the group, so anything
+// beyond that sum is a member its own cluster would refuse.
+func ClusterFits(radius float64) bool {
+	return radius <= AcceptDist(radius)
+}
+
 // UnmarshalEmbeddings parses face embedding JSON.
 func UnmarshalEmbeddings(s string) (result Embeddings, err error) {
 	if s == "" {

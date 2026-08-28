@@ -416,6 +416,7 @@ func (c *Config) faceConfigRows() []faceConfigRow {
 		{faceSectionRecognition, "face-cluster-dist", c.faceDistReport(c.FaceClusterDist)},
 		{faceSectionRecognition, "face-cluster-radius", c.faceDistReport(c.FaceClusterRadius)},
 		{faceSectionRecognition, "face-match-dist", c.faceDistReport(c.FaceMatchDist)},
+		{faceSectionRecognition, "face-match-margin", c.faceDistReport(c.FaceMatchMargin)},
 		{faceSectionRecognition, "face-collision-dist", c.faceDistReport(c.FaceCollisionDist)},
 		{faceSectionRecognition, "face-epsilon-dist", c.faceDistReport(c.FaceEpsilonDist)},
 	}...)
@@ -482,7 +483,7 @@ func (c *Config) faceRecognitionNote() string {
 
 // faceDistReport formats a face distance threshold, or reports nothing when no embedding model
 // is in force. The calibrated distances are per model and are not comparable between them, so a
-// report with no model would otherwise print five numbers that will not apply to the model the
+// report with no model would otherwise print numbers that will not apply to the model the
 // instance ends up using.
 func (c *Config) faceDistReport(value func() float64) string {
 	if c.EffectiveFaceModel() == face.ModelNone {

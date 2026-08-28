@@ -219,6 +219,26 @@ describe("options/options", () => {
     expect(styles[styles.length - 1].value).not.toContain("low-resolution");
   });
 
+  it("should omit styles that require a map key", () => {
+    const withKey = MapsStyle(false, true);
+    const withoutKey = MapsStyle(false, false);
+    expect(withKey.some((s) => s.sponsor)).toBe(true);
+    expect(withoutKey.some((s) => s.sponsor)).toBe(false);
+    expect(withoutKey.length).toBeLessThan(withKey.length);
+    expect(withoutKey.map((s) => s.value)).toContain("default");
+  });
+
+  it("should list all map styles by default", () => {
+    expect(MapsStyle(false)).toEqual(MapsStyle(false, true));
+    expect(MapsStyle(true)).toEqual(MapsStyle(true, true));
+  });
+
+  it("should keep the experimental style when no map key is available", () => {
+    const styles = MapsStyle(true, false);
+    expect(styles.map((s) => s.value)).toContain("low-resolution");
+    expect(styles.some((s) => s.sponsor)).toBe(false);
+  });
+
   it("should return timeouts", () => {
     expect(Timeouts()[1].value).toBe("high");
   });

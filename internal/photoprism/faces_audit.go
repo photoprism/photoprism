@@ -68,6 +68,12 @@ func (w *Faces) Audit(fix bool, subjUID string) (err error) {
 		return err
 	}
 
+	// Widen degenerate sample radii before the collision pass below reads the clusters, so a
+	// repaired one is checked against the others at the distance it now accepts.
+	if _, err := w.repairDegenerateRadius(fix, subjUID); err != nil {
+		return err
+	}
+
 	conflicts := 0
 	resolved := 0
 
@@ -364,6 +370,67 @@ func (w *Faces) Audit(fix bool, subjUID string) (err error) {
 	}
 
 	return nil
+}
+
+// repairDegenerateRadius widens face clusters whose stored sample radius is degenerate, so one
+// built from a single sample reaches as far as any other may instead of matching nothing.
+// Writing is opt-in and subject-scoped, because it changes which markers a cluster attracts.
+func (w *Faces) repairDegenerateRadius(fix bool, subjUID string) (repaired int, err error) {
+	// Not the guard SetEmbeddings applies: a stored cluster holds Epsilon rather than zero,
+	// because UpdateMatchStats already lifted it, so a check for zero would repair none.
+	stmt := entity.UnscopedDb().Model(&entity.Face{}).Where("sample_radius <= ?", face.Epsilon)
+
+	// The rows the matcher reads, and no others, because the write is one-way: nothing narrows a
+	// radius again, so a cluster the operator hid would come back at the maximum with its own
+	// extent gone. The radius written here is the configured model's, so a foreign one is left.
+	stmt = stmt.Where("face_hidden = ?", false).Where("face_kind <= 1")
+
+	if cond, args := entity.EmbeddingModelCond(face.EmbeddingModelName()); cond != "" {
+		stmt = stmt.Where(cond, args...)
+	}
+
+	if subjUID != "" {
+		stmt = stmt.Where("subj_uid = ?", subjUID)
+	}
+
+	if !fix {
+		var pending int
+
+		if err = stmt.Count(&pending).Error; err != nil {
+			return 0, err
+		}
+
+		if pending == 0 {
+			log.Infof("faces: found no clusters with a degenerate sample radius")
+		} else {
+			log.Infof("faces: %s with a degenerate sample radius", english.Plural(pending, "cluster", "clusters"))
+		}
+
+		return pending, nil
+	}
+
+	// Repaired in place, since the id hashes the embedding rather than the radius. Clearing the
+	// timestamp is what applies it: a cluster is only re-compared while it counts as unmatched.
+	res := stmt.UpdateColumns(entity.Values{
+		"sample_radius": face.ClusterRadius,
+		"matched_at":    nil,
+		"updated_at":    entity.Now(),
+	})
+
+	if res.Error != nil {
+		return 0, res.Error
+	}
+
+	if repaired = int(res.RowsAffected); repaired == 0 {
+		log.Infof("faces: found no clusters with a degenerate sample radius")
+		return 0, nil
+	}
+
+	entity.UpdateFaces.Store(true)
+
+	log.Infof("faces: widened the sample radius of %s to %f", english.Plural(repaired, "cluster", "clusters"), face.ClusterRadius)
+
+	return repaired, nil
 }
 
 // faceNormalizationTolerance defines the acceptable deviation from unit length before a

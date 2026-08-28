@@ -898,3 +898,57 @@ func TestMatchableFaces(t *testing.T) {
 		assert.True(t, found, "the audit must be able to see clusters from other models")
 	})
 }
+
+func TestRetainedFaceIDs(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		f := entity.NewFace(rnd.GenerateUID('j'), entity.SrcManual, face.RandomEmbeddings(1, face.RegularFace), face.EmbeddingModelName())
+		require.NotNil(t, f)
+		require.NoError(t, f.Create())
+		t.Cleanup(func() { entity.Db().Delete(f) })
+
+		result, err := retainedFaceIDs([]string{f.ID, "MISSINGFACECLUSTERID"})
+
+		require.NoError(t, err)
+		assert.True(t, result[f.ID], "a cluster the purge kept is reported as retained")
+		assert.False(t, result["MISSINGFACECLUSTERID"], "a purged cluster is not")
+		assert.Len(t, result, 1)
+	})
+	t.Run("NoIDs", func(t *testing.T) {
+		result, err := retainedFaceIDs(nil)
+
+		require.NoError(t, err)
+		assert.Empty(t, result)
+	})
+}
+
+// TestRemoveAllFaceClusters covers the unfiltered scope, which is what the automatic one leaves
+// behind: the clusters a person or a sidecar created.
+func TestRemoveAllFaceClusters(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	t.Cleanup(entity.ResetTestFixtures)
+
+	var manual int
+
+	require.NoError(t, entity.Db().Model(&entity.Face{}).
+		Where("face_src = ?", entity.SrcManual).Count(&manual).Error)
+	require.Positive(t, manual, "the fixtures must hold a hand-created cluster for this to mean anything")
+
+	if _, err := RemoveAutoFaceClusters(); err != nil {
+		t.Fatal(err)
+	}
+
+	var before int
+	require.NoError(t, entity.Db().Model(&entity.Face{}).Count(&before).Error)
+	assert.Equal(t, manual, before, "the automatic scope must leave the hand-created clusters")
+
+	removed, err := RemoveAllFaceClusters()
+	require.NoError(t, err)
+	assert.Equal(t, manual, removed)
+
+	var after int
+	require.NoError(t, entity.Db().Model(&entity.Face{}).Count(&after).Error)
+	assert.Zero(t, after)
+}

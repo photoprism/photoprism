@@ -60,12 +60,22 @@ func TestReadFileLock(t *testing.T) {
 		assert.Empty(t, ReadFileLock(filepath.Join(t.TempDir(), "absent.lock")).Action)
 	})
 	t.Run("Malformed", func(t *testing.T) {
-		// Treated as absent rather than as held: an unreadable lock nobody can interpret must
-		// not be able to stop an instance permanently.
+		// Nothing interpretable, so no holder is named - but the file's own age still counts, or
+		// a lock caught between being created and being written would read as free. It still
+		// cannot stop an instance permanently, which is what the second half pins.
 		fileName := filepath.Join(t.TempDir(), "faces.lock")
 		require.NoError(t, os.WriteFile(fileName, []byte("not json"), fs.ModeFile))
 
-		assert.Equal(t, FileLockState{}, ReadFileLock(fileName))
+		state := ReadFileLock(fileName)
+
+		assert.Empty(t, state.Action)
+		assert.Zero(t, state.PID)
+		assert.False(t, state.Expired(), "a lock file written moments ago is not free")
+
+		stale := time.Now().Add(-2 * FileLockMaxAge)
+		require.NoError(t, os.Chtimes(fileName, stale, stale))
+
+		assert.True(t, ReadFileLock(fileName).Expired(), "and one nobody renewed cannot block forever")
 	})
 }
 
@@ -201,6 +211,29 @@ func TestAcquireFileLockIsExclusive(t *testing.T) {
 	}
 
 	assert.Equal(t, int32(1), held.Load(), "exactly one racer may hold the lock")
+}
+
+// TestFileLockNotYetWrittenIsHeld pins the window between creating the lock file and filling it.
+// A holder writes its state after the exclusive create, so a reader arriving in between sees a
+// file with no recorded expiry - and reading that as free lets a second caller take the lock the
+// exclusive create had just granted.
+func TestFileLockNotYetWrittenIsHeld(t *testing.T) {
+	fileName := filepath.Join(t.TempDir(), "faces.lock")
+
+	require.NoError(t, os.WriteFile(fileName, nil, 0o644))
+
+	assert.NotEmpty(t, FileLockHeld(fileName), "an empty lock file is held, not free")
+	assert.False(t, ReadFileLock(fileName).Expired())
+
+	// Old enough to be abandoned rather than mid-write, so it can still be taken over.
+	stale := time.Now().Add(-2 * FileLockMaxAge)
+	require.NoError(t, os.Chtimes(fileName, stale, stale))
+
+	assert.Empty(t, FileLockHeld(fileName), "an abandoned empty lock file does not hold it forever")
+
+	lock, err := AcquireFileLock(fileName, "faces migration")
+	require.NoError(t, err)
+	t.Cleanup(lock.Release)
 }
 
 // TestFileLockRenewIsAtomic pins that a reader never sees the lock as free while it is being

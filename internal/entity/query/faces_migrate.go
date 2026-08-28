@@ -375,8 +375,19 @@ func SaveFaceMigrationEmbeddings(model, detectModel string, embeddings map[strin
 
 			if res.Error != nil {
 				return res.Error
-			} else if res.RowsAffected != 1 {
-				return fmt.Errorf("faces: migration marker %s not found", markerUID)
+			} else if res.RowsAffected == 0 {
+				// MariaDB reports changed rows rather than matched ones, so re-embedding a marker
+				// to a byte-identical vector updates nothing and is not a missing row. Only the
+				// zero case pays for the check, and only a row that is really gone is an error.
+				var found int
+
+				if err := tx.Model(&entity.Marker{}).
+					Where("marker_uid = ? AND marker_type = ?", markerUID, entity.MarkerFace).
+					Count(&found).Error; err != nil {
+					return err
+				} else if found == 0 {
+					return fmt.Errorf("faces: migration marker %s not found", markerUID)
+				}
 			}
 		}
 
@@ -391,6 +402,10 @@ func FinalizeFaceMigration(model string, identities []FaceMigrationIdentity, clu
 	}
 
 	return UnscopedDb().Transaction(func(tx *gorm.DB) error {
+		// Deliberately unqualified: a migration re-embeds every marker, so every cluster derived
+		// from the old vector space is stale and the new ones are rebuilt below in the same
+		// transaction. Neither this nor the marker reset that follows is batched, because a
+		// partially replaced cluster table is not a state the library can be left in.
 		if err := tx.Where("1=1").Delete(&entity.Face{}).Error; err != nil {
 			return err
 		}

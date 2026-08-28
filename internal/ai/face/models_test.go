@@ -257,17 +257,12 @@ func TestEmbeddingModels(t *testing.T) {
 			assert.Positive(t, m.MatchDist)
 			assert.Less(t, m.ClusterRadius, m.ClusterDist)
 
-			// The collision floor follows the width of the model's distance scale, because it
-			// bounds a radius the model measured. Epsilon does not: it is the gap a resolved
-			// collision leaves, and TestEmbeddingModelThresholds pins it flat for every model.
-			assert.Positive(t, m.CollisionDist)
+			// Neither gap follows the width of the model's distance scale, and both are pinned
+			// flat by a test of their own. They still have to sit under the distances they bound.
+			assert.Equal(t, CollisionDistDefault, m.CollisionDist)
 			assert.Equal(t, EpsilonDefault, m.Epsilon)
 			assert.Less(t, m.Epsilon, m.CollisionDist)
 			assert.Less(t, m.CollisionDist, m.MatchDist)
-
-			if name != ModelFaceNet {
-				assert.NotEqual(t, CollisionDistDefault, m.CollisionDist)
-			}
 
 			// ONNX models are single files described by the shared model info, while
 			// TensorFlow models are SavedModel directories that have none.
@@ -299,6 +294,19 @@ func TestEmbeddingModelEpsilon(t *testing.T) {
 	// Against the runtime value, not the constant: AmbiguityDist reads the variable Propagate
 	// assigns, so comparing with the default would pass or fail on what another test left behind.
 	assert.InDelta(t, 2*Epsilon, AmbiguityDist(), 0.0001)
+}
+
+// TestEmbeddingModelCollisionDist pins the collision floor flat across every model, beside the
+// gap it bounds. It is the point below which separating two clusters would exclude the members of
+// both, which is a property of the resolution step rather than of a model's distance scale.
+func TestEmbeddingModelCollisionDist(t *testing.T) {
+	for name, m := range EmbeddingModels {
+		assert.Equal(t, CollisionDistDefault, m.CollisionDist, name)
+	}
+
+	// The match margin shares the number without being derived from it: it measures the gap
+	// between two distances rather than one distance, so the two are free to move apart.
+	assert.Equal(t, CollisionDistDefault, float64(MatchMarginDefault))
 }
 
 func TestEmbeddingModelThresholds(t *testing.T) {

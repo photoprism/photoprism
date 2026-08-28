@@ -44,7 +44,15 @@ type FileLockState struct {
 func (s FileLockState) Expired() bool {
 	expires := s.ExpiresAt
 
-	if !s.modTime.IsZero() {
+	switch {
+	case s.modTime.IsZero():
+		// No file, so there is nothing to age.
+	case expires.IsZero():
+		// The file exists but records no expiry, which is what a holder that has created it and
+		// not yet written its state looks like. Reading that as free hands the lock to a second
+		// caller in exactly the window creating it is meant to close, so its age decides instead.
+		expires = s.modTime.Add(FileLockMaxAge)
+	default:
 		if limit := s.modTime.Add(FileLockMaxAge); expires.After(limit) {
 			expires = limit
 		}
@@ -87,9 +95,11 @@ func ReadFileLock(fileName string) FileLockState {
 	}
 
 	if err = json.Unmarshal(b, &state); err != nil {
-		return FileLockState{}
+		state = FileLockState{}
 	}
 
+	// Stat even when the contents could not be read, because a lock file that exists is evidence
+	// in itself: its age is what tells an unparsable one apart from an abandoned one.
 	if info, statErr := os.Stat(fileName); statErr == nil {
 		state.modTime = info.ModTime()
 	}

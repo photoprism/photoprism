@@ -52,7 +52,12 @@ var FacesCommands = &cli.Command{
 			Name:  "reset",
 			Usage: "Removes people and faces after confirmation",
 			Flags: []cli.Flag{
-				ForceFlag("removes all people and faces"),
+				ForceFlag("removes all people, faces, and markers, so faces must be detected again"),
+				&cli.BoolFlag{
+					Name:    "all",
+					Aliases: []string{"a"},
+					Usage:   "also removes manually created faces and names, keeping the markers",
+				},
 				&cli.StringFlag{
 					Name:  "detector",
 					Usage: "regenerate markers with the detection model `NAME` (" + face.DetectorUsageString() + ")",
@@ -327,11 +332,25 @@ func facesResetAction(ctx *cli.Context) error {
 			return cli.Exit("faces: --force removes all people and faces, so it cannot be combined with --detector", 1)
 		}
 
+		// Refused rather than treated as the wider of the two: the flags name different outcomes
+		// for the markers table, and which one a caller meant is not knowable from the command.
+		if ctx.Bool("all") {
+			return cli.Exit("faces: --force also removes the markers, so it cannot be combined with --all", 1)
+		}
+
 		return facesResetAllAction(ctx)
 	}
 
+	all := ctx.Bool("all")
+
+	label := "Remove automatically recognized faces, matches, and dangling subjects?"
+
+	if all {
+		label = "Remove all faces and matches, including names, keeping the markers?"
+	}
+
 	actionPrompt := promptui.Prompt{
-		Label:     "Remove automatically recognized faces, matches, and dangling subjects?",
+		Label:     label,
 		IsConfirm: true,
 	}
 
@@ -367,14 +386,19 @@ func facesResetAction(ctx *cli.Context) error {
 		}
 	}
 
-	if detector != "" {
-		if err := w.ResetAndReindex(detector, get.Index()); err != nil {
-			return err
-		}
-	} else {
-		if err := w.Reset(); err != nil {
-			return err
-		}
+	var resetErr error
+
+	switch {
+	case detector != "":
+		resetErr = w.ResetAndReindex(detector, get.Index(), all)
+	case all:
+		resetErr = w.ResetAll()
+	default:
+		resetErr = w.Reset()
+	}
+
+	if resetErr != nil {
+		return resetErr
 	}
 
 	elapsed := time.Since(start)

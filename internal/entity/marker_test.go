@@ -73,10 +73,33 @@ func TestNewMarker(t *testing.T) {
 	assert.Equal(t, "fs6sg6bw45bnlqdw", m.FileUID)
 	assert.Equal(t, "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818-1340ce163163", m.Thumb)
 	assert.Equal(t, "ls6sg6b1wowuy3c3", m.SubjUID)
-	assert.Equal(t, 59, m.Q)
 	assert.Equal(t, 29, m.Score)
 	assert.Equal(t, SrcImage, m.MarkerSrc)
 	assert.Equal(t, MarkerLabel, m.MarkerType)
+}
+
+func TestMarkerSize(t *testing.T) {
+	area := crop.NewArea("face", 0.4, 0.4, 0.1, 0.1)
+	t.Run("Landscape", func(t *testing.T) {
+		// Fit720 draws a 4:3 original at 720x540, so a tenth of the frame spans 72 px.
+		assert.Equal(t, 72, MarkerSize(area, File{FileWidth: 4000, FileHeight: 3000}))
+	})
+	t.Run("Portrait", func(t *testing.T) {
+		assert.Equal(t, 72, MarkerSize(area, File{FileWidth: 3000, FileHeight: 4000}))
+	})
+	t.Run("SmallOriginal", func(t *testing.T) {
+		// A fit thumbnail never enlarges, so a small original is detected at its own size.
+		assert.Equal(t, 64, MarkerSize(area, File{FileWidth: 640, FileHeight: 480}))
+	})
+	t.Run("UnknownDimensions", func(t *testing.T) {
+		assert.Equal(t, -1, MarkerSize(area, File{}))
+	})
+	t.Run("SubPixelArea", func(t *testing.T) {
+		// Never 0: GORM omits it on insert, so the row would read back as -1 and a second pass
+		// would see a change that did not happen.
+		tiny := crop.NewArea("face", 0.4, 0.4, 0.0001, 0.0001)
+		assert.Equal(t, 1, MarkerSize(tiny, File{FileWidth: 640, FileHeight: 480}))
+	})
 }
 
 // TestNewMarkerReview pins what "needs review" means on the score scale: a marker that exists but

@@ -165,11 +165,7 @@ export default {
   },
   created() {
     this._mapDataHandler = null;
-    if (this.$config.has("mapKey")) {
-      this.mapStyles = options.MapsStyle(this.featExperimental);
-    } else {
-      this.mapStyles = options.MapsStyle(this.featExperimental).filter((s) => !s.Sponsor);
-    }
+    this.mapStyles = options.MapsStyle(this.featExperimental, this.$config.has("mapKey"));
   },
   mounted() {
     this.$view.enter(this);
