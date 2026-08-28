@@ -97,6 +97,9 @@ var FacesCommands = &cli.Command{
 			Action: facesOptimizeAction,
 		},
 		FacesStatusCommand,
+		FacesSubjectsCommand,
+		FacesListCommand,
+		FacesMarkersCommand,
 	},
 }
 
