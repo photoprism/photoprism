@@ -733,3 +733,41 @@ func TestSubject_MergeWith_ClearsCollisions(t *testing.T) {
 		assert.Zero(t, kept.CollisionRadius)
 	})
 }
+
+// TestSubject_SaveForm_Verified covers the one path that may set the verified flag.
+//
+// The rule the column depends on is that nothing automatic writes it: a flag the matcher, the
+// clusterer or an import could raise stops meaning "a person vouched for this name".
+func TestSubject_SaveForm_Verified(t *testing.T) {
+	m := NewSubject("Verified Form Subject", SubjPerson, SrcManual)
+	require.NotNil(t, m)
+	require.NoError(t, m.Create())
+
+	t.Cleanup(func() { UnscopedDb().Delete(&Subject{}, "subj_uid = ?", m.SubjUID) })
+
+	assert.False(t, m.Verified, "a new person is not vouched for")
+
+	frm, err := form.NewSubject(m)
+	require.NoError(t, err)
+	assert.False(t, frm.Verified, "and the form round-trips that")
+
+	frm.Verified = true
+
+	changed, err := m.SaveForm(frm)
+	require.NoError(t, err)
+	assert.True(t, changed)
+
+	stored := FindSubject(m.SubjUID)
+	require.NotNil(t, stored)
+	assert.True(t, stored.Verified, "the flag has to persist, not only stick to the instance")
+
+	// And it clears again, so a wrong assertion is not permanent.
+	frm.Verified = false
+
+	_, err = m.SaveForm(frm)
+	require.NoError(t, err)
+
+	stored = FindSubject(m.SubjUID)
+	require.NotNil(t, stored)
+	assert.False(t, stored.Verified)
+}

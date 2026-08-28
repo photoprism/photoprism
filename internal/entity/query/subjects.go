@@ -62,9 +62,12 @@ func SubjectMap() (result map[string]entity.Subject, err error) {
 }
 
 // RemoveOrphanSubjects permanently removes dangling marker subjects from the index.
+//
+// A verified person is kept: re-clustering leaves them unreferenced by design, and the row is what
+// makes the same name comparable across runs rather than retyped after each one.
 func RemoveOrphanSubjects() (removed int64, err error) {
 	res := UnscopedDb().
-		Where("subj_src = ?", entity.SrcMarker).
+		Where("subj_src = ? AND verified = ?", entity.SrcMarker, false).
 		Where(fmt.Sprintf("subj_uid NOT IN (SELECT subj_uid FROM %s)", entity.Face{}.TableName())).
 		Where(fmt.Sprintf("subj_uid NOT IN (SELECT subj_uid FROM %s)", entity.Marker{}.TableName())).
 		Delete(&entity.Subject{})

@@ -36,6 +36,7 @@ type Subject struct {
 	SubjExcluded bool       `gorm:"default:false;" json:"Excluded" yaml:"Excluded,omitempty"`
 	FileCount    int        `gorm:"default:0;" json:"FileCount" yaml:"-"`
 	PhotoCount   int        `gorm:"default:0;" json:"PhotoCount" yaml:"-"`
+	Verified     bool       `gorm:"default:false;" json:"Verified" yaml:"Verified,omitempty"`
 	Thumb        string     `gorm:"type:VARBINARY(128);index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
 	ThumbSrc     string     `gorm:"type:VARBINARY(8);default:'';" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
 	CreatedAt    time.Time  `json:"CreatedAt" yaml:"-"`
@@ -361,6 +362,16 @@ func (m *Subject) SaveForm(frm *form.Subject) (changed bool, err error) {
 		changed = true
 	}
 
+	// Change verification?
+	//
+	// Set here and nowhere else. A flag the matcher, the clusterer, a propagation pass or an import
+	// could raise stops meaning "a person vouched for this name" within a release, which is how
+	// markers.q drifted from what it claimed until it was removed.
+	if m.Verified != frm.Verified {
+		m.Verified = frm.Verified
+		changed = true
+	}
+
 	// Change visibility?
 	if m.SubjHidden != frm.SubjHidden || m.SubjPrivate != frm.SubjPrivate || m.SubjExcluded != frm.SubjExcluded {
 		m.SubjHidden = frm.SubjHidden
@@ -390,6 +401,7 @@ func (m *Subject) SaveForm(frm *form.Subject) (changed bool, err error) {
 			"SubjHidden":   m.SubjHidden,
 			"SubjPrivate":  m.SubjPrivate,
 			"SubjExcluded": m.SubjExcluded,
+			"Verified":     m.Verified,
 		}
 
 		if thumbChanged {

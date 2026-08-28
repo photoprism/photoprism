@@ -37,6 +37,17 @@
               <v-checkbox v-model="model.Favorite" :disabled="disabled" :label="$gettext('Favorite')" density="comfortable" hide-details> </v-checkbox>
             </v-col>
             <v-col sm="4">
+              <v-checkbox
+                v-model="model.Verified"
+                :disabled="disabled"
+                :label="$gettext('Verified')"
+                :title="$gettext('Keeps this person when face clusters are reset')"
+                density="comfortable"
+                hide-details
+              >
+              </v-checkbox>
+            </v-col>
+            <v-col sm="4">
               <v-checkbox v-model="model.Hidden" :disabled="disabled" :label="$gettext('Hidden')" density="comfortable" hide-details> </v-checkbox>
             </v-col>
           </v-row>

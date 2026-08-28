@@ -6,6 +6,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestPeople(t *testing.T) {
@@ -69,4 +70,35 @@ func TestCreateMarkerSubjects(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.LessOrEqual(t, int64(0), affected)
+}
+
+// TestRemoveOrphanSubjects_Verified covers the flag that survives a face reset.
+func TestRemoveOrphanSubjects_Verified(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	t.Cleanup(entity.ResetTestFixtures)
+
+	plain := entity.NewSubject("Reset Plain", entity.SubjPerson, entity.SrcMarker)
+	require.NotNil(t, plain)
+	require.NoError(t, plain.Create())
+
+	vouched := entity.NewSubject("Reset Vouched", entity.SubjPerson, entity.SrcMarker)
+	require.NotNil(t, vouched)
+	vouched.Verified = true
+	require.NoError(t, vouched.Create())
+
+	t.Cleanup(func() {
+		entity.UnscopedDb().Delete(&entity.Subject{}, "subj_uid IN (?)", []string{plain.SubjUID, vouched.SubjUID})
+	})
+
+	_, err := RemoveOrphanSubjects()
+	require.NoError(t, err)
+
+	assert.Nil(t, entity.FindSubject(plain.SubjUID), "an unreferenced marker subject is removed")
+
+	kept := entity.FindSubject(vouched.SubjUID)
+	require.NotNil(t, kept, "a verified person survives, so the name stays comparable across runs")
+	assert.Equal(t, "Reset Vouched", kept.SubjName)
 }
