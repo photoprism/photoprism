@@ -293,7 +293,6 @@ func createDeletePhoto(b *testing.B) {
 			Y:             rand.Float32() * 2048.0, //nolint:gosec // test data generation crypto rand not required
 			W:             rand.Float32() * 10.0,   //nolint:gosec // test data generation crypto rand not required
 			H:             rand.Float32() * 20.0,   //nolint:gosec // test data generation crypto rand not required
-			Q:             10,
 			Size:          100,
 			Score:         10,
 			CreatedAt:     time.Now().UTC(),

@@ -357,6 +357,9 @@ func generateDatabase(numberOfPhotos int, driver string, dsname string, dropdb b
 			countryPos++
 		}
 	}
+	if err := scanner.Err(); err != nil {
+		return err
+	}
 
 	for word := range txt.StopWords {
 		placeUID := rnd.GenerateUID(PlaceUID)
@@ -636,7 +639,6 @@ func generateDatabase(numberOfPhotos int, driver string, dsname string, dropdb b
 				Y:              rand.Float32(), //nolint:gosec // test data generation crypto rand not required
 				W:              rand.Float32(), //nolint:gosec // test data generation crypto rand not required
 				H:              rand.Float32(), //nolint:gosec // test data generation crypto rand not required
-				Q:              rand.IntN(600), //nolint:gosec // test data generation crypto rand not required
 				Size:           rand.IntN(600), //nolint:gosec // test data generation crypto rand not required
 				Score:          rand.IntN(150), //nolint:gosec // test data generation crypto rand not required
 				CreatedAt:      time.Now().UTC(),
