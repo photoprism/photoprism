@@ -600,8 +600,8 @@ func (m *Subject) MergeWith(other *Subject) error {
 
 	other.Verified = other.Verified || m.Verified
 
-	// Cleared on the row about to be deleted, or the tombstone outlives every cleanup: the orphan
-	// sweep skips a verified row and does not filter deleted_at, so it could never be collected.
+	// Cleared on the row about to be deleted: the survivor now carries the flag, so leaving it here
+	// would claim two people were vouched for where the operator vouched for one.
 	if m.Verified {
 		m.Verified = false
 

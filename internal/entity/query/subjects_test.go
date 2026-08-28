@@ -102,3 +102,47 @@ func TestRemoveOrphanSubjects_Verified(t *testing.T) {
 	require.NotNil(t, kept, "a verified person survives, so the name stays comparable across runs")
 	assert.Equal(t, "Reset Vouched", kept.SubjName)
 }
+
+// TestRemoveOrphanSubjects_Tombstones pins that the sweep still collects soft-deleted rows.
+//
+// This is the garbage collection for what MergeWith leaves: it moves every marker and face to the
+// survivor and soft-deletes the source. Guarding the verified flag without excepting deleted rows
+// stopped collecting any of them, and the earlier test exercised live rows only.
+func TestRemoveOrphanSubjects_Tombstones(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	t.Cleanup(entity.ResetTestFixtures)
+
+	collected := func(t *testing.T, verified bool) bool {
+		t.Helper()
+
+		s := entity.NewSubject("ZZ Tombstone Sweep", entity.SubjPerson, entity.SrcMarker)
+		require.NotNil(t, s)
+
+		s.Verified = verified
+
+		require.NoError(t, s.Create())
+		require.NoError(t, s.Delete())
+
+		t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Subject{}, "subj_uid = ?", s.SubjUID) })
+
+		_, err := RemoveOrphanSubjects()
+		require.NoError(t, err)
+
+		var n int
+		require.NoError(t, entity.UnscopedDb().Model(&entity.Subject{}).
+			Where("subj_uid = ?", s.SubjUID).Count(&n).Error)
+
+		return n == 0
+	}
+
+	t.Run("Unverified", func(t *testing.T) {
+		assert.True(t, collected(t, false))
+	})
+	t.Run("Verified", func(t *testing.T) {
+		// The flag protects a person, not a row nothing can reach: a deleted one is collected too.
+		assert.True(t, collected(t, true))
+	})
+}
