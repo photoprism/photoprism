@@ -189,17 +189,17 @@ func selectBestFace(embeddings face.Embeddings, idx faceIndex) (*entity.Face, fl
 // ambiguousBestFace reports whether the marker sits between clusters of different people rather
 // than inside one of them.
 //
-// Every contender within the margin is weighed rather than the runner-up alone: a subject owns
-// several clusters routinely, and two of theirs would otherwise fill both places and hide a third
-// that holds someone else. Two clusters of one subject are exempt, since either names the same
-// face; two anonymous ones are not, because nothing says they hold the same person.
+// Two clusters of one subject are exempt, since either names the same face. Two anonymous ones are
+// exempt too: to contend for one marker they must sit close together, and clusters that close are
+// one person on the evidence — deferring between them withholds a correct assignment and prevents
+// nothing, because neither carries a name to get wrong.
 func ambiguousBestFace(best *entity.Face, bestDist float64, contenders []faceContender) bool {
 	for _, c := range contenders {
 		if !face.AmbiguousMatch(bestDist, c.dist) {
 			continue
 		}
 
-		if best.SubjUID == "" || best.SubjUID != c.ref.SubjUID {
+		if best.SubjUID != c.ref.SubjUID {
 			return true
 		}
 	}

@@ -351,11 +351,26 @@ func TestSelectBestFaceMargin(t *testing.T) {
 		return selectBestFace(marker, idx)
 	}
 
-	t.Run("BetweenTwoClusters", func(t *testing.T) {
+	t.Run("BetweenTwoPeople", func(t *testing.T) {
+		near.SubjUID = "ps6sg6be2lvl0y11"
+		far.SubjUID = "ps6sg6be2lvl0y12"
+
+		t.Cleanup(func() { near.SubjUID, far.SubjUID = "", "" })
+
 		best, dist, ambiguous := selectAt(t, 0.70, 0.72)
-		assert.Nil(t, best, "a marker equidistant between two clusters must not be assigned to either")
+		assert.Nil(t, best, "a marker equidistant between two people must not be assigned to either")
 		assert.InDelta(t, -1.0, dist, 1e-9)
 		assert.True(t, ambiguous, "the caller has to tell this apart from a marker nothing accepted")
+	})
+	t.Run("BetweenTwoAnonymousClusters", func(t *testing.T) {
+		// Neither carries a name, so the nearer one wins rather than the marker being withheld.
+		// On a freshly reset library every cluster is anonymous, which made this the common case:
+		// deferring here left the run reporting thousands unassigned and nobody recognized.
+		best, dist, ambiguous := selectAt(t, 0.70, 0.72)
+		require.NotNil(t, best)
+		assert.Equal(t, "near", best.ID)
+		assert.InDelta(t, 0.70, dist, 0.01)
+		assert.False(t, ambiguous)
 	})
 	t.Run("ClearlyNearerClusterStillWins", func(t *testing.T) {
 		// The companion direction, so the margin cannot regress into refusing everything.
@@ -473,11 +488,16 @@ func TestAmbiguousBestFace(t *testing.T) {
 		assert.False(t, ambiguousBestFace(named, 0.7, []faceContender{near(same)}))
 	})
 	t.Run("Anonymous", func(t *testing.T) {
-		// Nothing says two unnamed clusters hold the same person, so the coin toss stands.
-		assert.True(t, ambiguousBestFace(anon, 0.7, []faceContender{near(otherAnon)}))
+		// Two clusters close enough to contend for one marker are the same person on the evidence,
+		// because the splitter fragments people. Deferring here withholds a correct assignment and
+		// prevents nothing, since neither cluster carries a name to get wrong.
+		assert.False(t, ambiguousBestFace(anon, 0.7, []faceContender{near(otherAnon)}))
 	})
 	t.Run("AnonymousContenderAgainstANamedBest", func(t *testing.T) {
+		// The converse still defers: one of the two would give the marker a name, so a coin toss
+		// between them can be wrong in a way two anonymous clusters cannot.
 		assert.True(t, ambiguousBestFace(named, 0.7, []faceContender{near(anon)}))
+		assert.True(t, ambiguousBestFace(anon, 0.7, []faceContender{near(named)}))
 	})
 	t.Run("SameSubjectDoesNotHideAnother", func(t *testing.T) {
 		// The reason every contender is weighed rather than the runner-up alone: a subject owns
@@ -503,11 +523,13 @@ func TestFacesMatchClearsAmbiguousMarker(t *testing.T) {
 
 	setMatchMargin(t, face.MatchMarginDefault)
 
-	// Two clusters that both accept the marker, within the margin of each other.
+	// Two clusters that both accept the marker, within the margin of each other, and belonging to
+	// different people - which is what makes the contest ambiguous. Two anonymous clusters that
+	// close are one person on the evidence and are exempt; that direction is pinned below.
 	markerEmb := face.Embeddings{face.FixtureEmbedding(5001)}
-	near := entity.NewFace("", entity.SrcAuto, markerEmb, face.EmbeddingModelName())
+	near := entity.NewFace(entity.SubjectFixtures.Get("john-doe").SubjUID, entity.SrcManual, markerEmb, face.EmbeddingModelName())
 	require.NotNil(t, near)
-	far := entity.NewFace("", entity.SrcAuto, face.Embeddings{face.FixtureEmbeddingAt(markerEmb.First(), 0.02, 5002)}, face.EmbeddingModelName())
+	far := entity.NewFace(entity.SubjectFixtures.Get("jane-doe").SubjUID, entity.SrcManual, face.Embeddings{face.FixtureEmbeddingAt(markerEmb.First(), 0.02, 5002)}, face.EmbeddingModelName())
 	require.NotNil(t, far)
 
 	for _, f := range []*entity.Face{near, far} {
@@ -557,6 +579,30 @@ func TestFacesMatchClearsAmbiguousMarker(t *testing.T) {
 
 		assert.Positive(t, r.Ambiguous, "the run has to report what it left unassigned")
 		assert.Empty(t, reload(t, m.MarkerUID).FaceID, "an ambiguous marker must not keep the cluster a coin toss gave it")
+	})
+	t.Run("KeepsAnAssignmentBetweenTwoAnonymousClusters", func(t *testing.T) {
+		// The case a freshly reset library is made of. Neither cluster carries a name, so the
+		// nearer one takes the marker instead of the run withholding it.
+		// Their own vectors: a cluster id is the hash of its embedding, so reusing the marker's
+		// would collide with the cluster built from it above.
+		anonA := entity.NewFace("", entity.SrcAuto, face.Embeddings{face.FixtureEmbeddingAt(markerEmb.First(), 0.10, 5003)}, face.EmbeddingModelName())
+		require.NotNil(t, anonA)
+		anonB := entity.NewFace("", entity.SrcAuto, face.Embeddings{face.FixtureEmbeddingAt(markerEmb.First(), 0.12, 5004)}, face.EmbeddingModelName())
+		require.NotNil(t, anonB)
+
+		for _, f := range []*entity.Face{anonA, anonB} {
+			require.NoError(t, f.Create())
+			t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Face{}, "id = ?", f.ID) })
+		}
+
+		m := newMarker(t, "", entity.SrcAuto)
+		require.NoError(t, m.Updates(entity.Values{"face_id": "", "matched_at": nil}))
+
+		r, err := w.MatchFaces(entity.Faces{*anonA, *anonB}, true, nil, nil)
+		require.NoError(t, err)
+
+		assert.Zero(t, r.Ambiguous, "an anonymous pair is not a coin toss worth withholding")
+		assert.NotEmpty(t, reload(t, m.MarkerUID).FaceID, "the nearer cluster takes the marker")
 	})
 	t.Run("KeepsAnAssignmentAPersonMade", func(t *testing.T) {
 		// There is no guess of ours to withdraw, so the marker keeps the cluster its name

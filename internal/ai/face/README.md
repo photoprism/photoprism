@@ -165,7 +165,7 @@ Two caveats apply to the recommendations. The measured centroids are always pure
 **A face that lies between two people is what merges them, and no detection threshold reaches it.** Such a face is typically larger, sharper and scored at least as confidently as an ordinary one - a size floor keeps it in preference to the rest - so `FACE_CLUSTER_SIZE` and `FACE_CLUSTER_SCORE` select *for* it rather than against it. Two mechanisms act where the leverage is instead, and each covers what the other cannot:
 
 - **`ClusterDist` does not bound how wide a cluster may be.** DBSCAN links a face to a *neighbor*, so a line of bridge faces chains two people into one group whose extent nothing limits. `face.ClusterFits` states the width a cluster may reach and still accept its own members - `ClusterRadius + MatchDist`, because `ClampSampleRadius` stops the stored radius widening past `ClusterRadius` - and `splitWideClusters` re-clusters a group that exceeds it at a shorter link distance, cut by a flat factor rather than one sized to the overrun. A group that already fits is passed through, so a library that does not chain pays nothing; one that stays wide after `faceClusterSplitRounds` is reported and skipped rather than created - so a gentler cut needs more rounds to reach the same separation, and the two limits have to be read together. This is also the only protection an *anonymous* cluster has: `Face.ResolveCollision` returns early when a cluster has no subject, so a chain that forms, absorbs several identities, and is then named as one of them is never reported by it. Two limits: it bounds *width* rather than purity, so a short chain whose extent stays inside the accept distance still passes; and it runs where a cluster is created, so the migration and merge paths, which build centroids of their own, are not covered by it.
-- **`selectBestFace` refuses a coin toss.** Once the clusters are separate, a bridge face is admitted by both and given to whichever is marginally closer; `Face.UpdateMatchStats` then widens that cluster toward the other, so the mistake compounds instead of staying local. `FACE_MATCH_MARGIN` is how much the nearest has to beat the runner-up by, and a marker inside that margin is left unassigned - which is recoverable, where a wrong assignment is not. Two clusters of the same subject are exempt, since a person may own several and either answer names the same face; every contender inside the margin is weighed rather than the runner-up alone, or two of one subject's clusters would fill both places and hide a third holding someone else.
+- **`selectBestFace` refuses a coin toss.** Once the clusters are separate, a bridge face is admitted by both and given to whichever is marginally closer; `Face.UpdateMatchStats` then widens that cluster toward the other, so the mistake compounds instead of staying local. `FACE_MATCH_MARGIN` is how much the nearest has to beat the runner-up by, and a marker inside that margin is left unassigned - which is recoverable, where a wrong assignment is not. Two clusters of the same subject are exempt, since a person may own several and either answer names the same face, and so are two anonymous ones: clusters close enough to contend for one marker are one person on the evidence, and neither carries a name to get wrong - on a freshly reset library, where nothing has a subject yet, deferring there withheld thousands of correct assignments. Every contender inside the margin is weighed rather than the runner-up alone, or two of one subject's clusters would fill both places and hide a third holding someone else.
 
 #### Quality & Overlap Thresholds
 
@@ -314,6 +314,20 @@ Recovery steps:
 - `make dep-models` (or `scripts/dist/download-models.sh facenet`)
 - Re-run `go test ./internal/ai/face -run TestNet -count=1`
 
+### Reporting
+
+Three read-only commands describe what a library currently holds, so two tuning rounds can be diffed rather than re-derived. All take `--json`, `--md`, `--csv`, `--tsv`, `--count` and `--offset`, like `photoprism faces status`.
+
+| Command                     | Reports                                                                                      |
+|:----------------------------|:---------------------------------------------------------------------------------------------|
+| `photoprism faces subjects` | People, with the stored `file_count` / `photo_count` beside the counts their markers support |
+| `photoprism faces ls`       | Clusters, with the samples each was built from beside the markers pointing at it now         |
+| `photoprism faces markers`  | Face markers and what they are assigned to                                                   |
+
+Two column pairs carry most of the value. **Stored against live counts** diverge because `Faces.Start` does not call `entity.UpdateSubjectCounts`, so after a CLI-only reset and re-cluster the stored numbers sit at zero while the markers are correctly assigned - which is what keeps a newly named person off *People > Recognized* for a while. **Samples against markers** diverge because `samples` is what a cluster was formed from and the marker count is what currently points at it.
+
+`faces markers` also selects the two shapes a diagnosis keeps returning to: `--unassigned` for markers with a person but no cluster, and `--dangling` for markers naming a cluster that no longer exists. Embeddings are never printed - they are most of the row and none of what is being read.
+
 ### Resetting Face Recognition
 
 `photoprism faces reset` has three scopes, and what separates them is how much has to be recomputed afterwards. All three prompt for confirmation.
@@ -325,6 +339,8 @@ Recovery steps:
 | `faces reset --force` | **deletes** every face marker                                  | deletes all clusters    | deletes every person                       | `faces index`, then `faces update` |
 
 The references cleared are `marker_name`, `subj_uid`, `subj_src`, `face_id`, `face_dist` and `matched_at`. The default scope reaches only markers whose subject was assigned automatically, so it finishes with `query.RemoveNonExistentMarkerFaces`: a hand-named marker keeps its person but not a `face_id` pointing at a cluster the same command deleted. Geometry, `size`, `score`, `thumb` and `embeddings_json` are left alone by the first two, which is what lets clustering run again without decoding a single file - the reason `--all` exists is that repeated A/B runs otherwise inherit whatever the previous round asserted.
+
+A person flagged `verified` is kept by both scopes: the row survives as a name so re-clustering rounds are comparable, while their markers lose the assignment along with the clusters. The flag is set from the Edit Person dialog and by nothing automatic.
 
 ⚠ **`--all` destroys hand-verified ground truth.** A name a person assigned is recorded in the marker columns and nowhere else, so cluster-purity measurements that count hand-named identities must export them first. `--force` additionally discards detection, so it costs a full re-index. The two cannot be combined, because they name different outcomes for the markers table.
 
