@@ -930,7 +930,7 @@ func TestRemoveAllFaceClusters(t *testing.T) {
 
 	t.Cleanup(entity.ResetTestFixtures)
 
-	var manual int
+	var manual int64
 
 	require.NoError(t, entity.Db().Model(&entity.Face{}).
 		Where("face_src = ?", entity.SrcManual).Count(&manual).Error)
@@ -940,15 +940,15 @@ func TestRemoveAllFaceClusters(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var before int
+	var before int64
 	require.NoError(t, entity.Db().Model(&entity.Face{}).Count(&before).Error)
 	assert.Equal(t, manual, before, "the automatic scope must leave the hand-created clusters")
 
 	removed, err := RemoveAllFaceClusters()
 	require.NoError(t, err)
-	assert.Equal(t, manual, removed)
+	assert.EqualValues(t, manual, removed)
 
-	var after int
+	var after int64
 	require.NoError(t, entity.Db().Model(&entity.Face{}).Count(&after).Error)
 	assert.Zero(t, after)
 }

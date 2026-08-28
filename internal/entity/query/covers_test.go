@@ -227,7 +227,7 @@ func coverThumb(t *testing.T, subjUID string) string {
 	t.Helper()
 
 	var subj entity.Subject
-	var nulls int
+	var nulls int64
 
 	require.NoError(t, UnscopedDb().Where("subj_uid = ?", subjUID).First(&subj).Error)
 	require.NoError(t, UnscopedDb().Model(entity.Subject{}).Where("subj_uid = ? AND thumb IS NULL", subjUID).Count(&nulls).Error)

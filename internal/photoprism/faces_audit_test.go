@@ -152,7 +152,7 @@ func TestFaces_repairDegenerateRadius(t *testing.T) {
 
 		n, err := w.repairDegenerateRadius(false, subjUID)
 		require.NoError(t, err)
-		assert.Equal(t, 1, n, "the report counts the subject's own degenerate cluster")
+		assert.EqualValues(t, 1, n, "the report counts the subject's own degenerate cluster")
 
 		after := reload(t, stored.ID)
 		assert.InDelta(t, face.Epsilon, after.SampleRadius, 1e-9, "a dry run must not write")
@@ -164,7 +164,7 @@ func TestFaces_repairDegenerateRadius(t *testing.T) {
 
 		n, err := w.repairDegenerateRadius(true, subjUID)
 		require.NoError(t, err)
-		assert.Equal(t, 1, n)
+		assert.EqualValues(t, 1, n)
 
 		after := reload(t, stored.ID)
 		assert.InDelta(t, face.ClusterRadius, after.SampleRadius, 1e-9)

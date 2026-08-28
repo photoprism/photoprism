@@ -379,7 +379,7 @@ func SaveFaceMigrationEmbeddings(model, detectModel string, embeddings map[strin
 				// MariaDB reports changed rows rather than matched ones, so re-embedding a marker
 				// to a byte-identical vector updates nothing and is not a missing row. Only the
 				// zero case pays for the check, and only a row that is really gone is an error.
-				var found int
+				var found int64
 
 				if err := tx.Model(&entity.Marker{}).
 					Where("marker_uid = ? AND marker_type = ?", markerUID, entity.MarkerFace).

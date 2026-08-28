@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/convert"
 )
 
 // Audit face clusters and subjects.
@@ -375,7 +376,7 @@ func (w *Faces) Audit(fix bool, subjUID string) (err error) {
 // repairDegenerateRadius widens face clusters whose stored sample radius is degenerate, so one
 // built from a single sample reaches as far as any other may instead of matching nothing.
 // Writing is opt-in and subject-scoped, because it changes which markers a cluster attracts.
-func (w *Faces) repairDegenerateRadius(fix bool, subjUID string) (repaired int, err error) {
+func (w *Faces) repairDegenerateRadius(fix bool, subjUID string) (repaired int64, err error) {
 	// Not the guard SetEmbeddings applies: a stored cluster holds Epsilon rather than zero,
 	// because UpdateMatchStats already lifted it, so a check for zero would repair none.
 	stmt := entity.UnscopedDb().Model(&entity.Face{}).Where("sample_radius <= ?", face.Epsilon)
@@ -394,7 +395,7 @@ func (w *Faces) repairDegenerateRadius(fix bool, subjUID string) (repaired int, 
 	}
 
 	if !fix {
-		var pending int
+		var pending int64
 
 		if err = stmt.Count(&pending).Error; err != nil {
 			return 0, err
@@ -403,7 +404,7 @@ func (w *Faces) repairDegenerateRadius(fix bool, subjUID string) (repaired int, 
 		if pending == 0 {
 			log.Infof("faces: found no clusters with a degenerate sample radius")
 		} else {
-			log.Infof("faces: %s with a degenerate sample radius", english.Plural(pending, "cluster", "clusters"))
+			log.Infof("faces: %s with a degenerate sample radius", english.Plural(convert.SafeInt64toint(pending), "cluster", "clusters"))
 		}
 
 		return pending, nil
@@ -421,14 +422,14 @@ func (w *Faces) repairDegenerateRadius(fix bool, subjUID string) (repaired int, 
 		return 0, res.Error
 	}
 
-	if repaired = int(res.RowsAffected); repaired == 0 {
+	if repaired = res.RowsAffected; repaired == 0 {
 		log.Infof("faces: found no clusters with a degenerate sample radius")
 		return 0, nil
 	}
 
 	entity.UpdateFaces.Store(true)
 
-	log.Infof("faces: widened the sample radius of %s to %f", english.Plural(repaired, "cluster", "clusters"), face.ClusterRadius)
+	log.Infof("faces: widened the sample radius of %s to %f", english.Plural(convert.SafeInt64toint(repaired), "cluster", "clusters"), face.ClusterRadius)
 
 	return repaired, nil
 }

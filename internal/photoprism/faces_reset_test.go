@@ -140,17 +140,17 @@ func TestFaces_ResetAll(t *testing.T) {
 
 	require.NoError(t, m.ResetAll())
 
-	var faces int
+	var faces int64
 	require.NoError(t, entity.Db().Model(&entity.Face{}).Count(&faces).Error)
 	assert.Zero(t, faces, "no cluster of any source may survive")
 
-	var assigned int
+	var assigned int64
 	require.NoError(t, entity.Db().Model(&entity.Marker{}).
 		Where("marker_type = ? AND (subj_uid <> '' OR face_id <> '')", entity.MarkerFace).
 		Count(&assigned).Error)
 	assert.Zero(t, assigned, "no face marker may keep a subject or a cluster")
 
-	var markers int
+	var markers int64
 	require.NoError(t, entity.Db().Model(&entity.Marker{}).
 		Where("marker_type = ?", entity.MarkerFace).Count(&markers).Error)
 	assert.Positive(t, markers, "the markers themselves must survive, or this costs a reindex")
@@ -190,7 +190,7 @@ func TestFaces_Reset_ClearsDanglingFaces(t *testing.T) {
 	assert.Empty(t, marker.FaceID, "but not a reference to a cluster that was deleted")
 	assert.Nil(t, marker.MatchedAt, "and the marker is up for matching again")
 
-	var dangling int
+	var dangling int64
 	require.NoError(t, entity.UnscopedDb().Model(&entity.Marker{}).
 		Where("marker_type = ? AND face_id <> ''", entity.MarkerFace).
 		Where("face_id NOT IN (SELECT id FROM faces)").Count(&dangling).Error)

@@ -182,7 +182,7 @@ func RemoveAutoFaceClusters() (removed int, err error) {
 // rather than a list of known sources, because a cluster inherits the source of the marker that
 // created it, so the column holds whatever sources the markers table does.
 func RemoveAllFaceClusters() (removed int, err error) {
-	res := UnscopedDb().Delete(entity.Face{})
+	res := UnscopedDb().Where("1=1").Delete(entity.Face{})
 
 	return int(res.RowsAffected), res.Error
 }
