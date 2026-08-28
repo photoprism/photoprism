@@ -98,7 +98,7 @@
       :visible="confirm.visible"
       icon="mdi-account-plus"
       :text="confirmText"
-      :action="$gettext('Create')"
+      :action="$gettext('Confirm')"
       :confirm-on-enter="false"
       @close="onCancelCreatePerson"
       @confirm="onConfirmCreatePerson"
@@ -195,7 +195,7 @@ export default {
       return this.busy || this.loading;
     },
     confirmText: function () {
-      return this.$gettextInterpolate(this.$gettext("Create a new person named %{name}?"), { name: this.confirm.name });
+      return this.$gettextInterpolate(this.$gettext("Add %{s}?"), { s: this.confirm.name });
     },
   },
   watch: {

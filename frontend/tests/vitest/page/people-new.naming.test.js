@@ -17,9 +17,14 @@ const people = [
   { UID: "js6sg6b1h1njaaaa", Name: "Jane Roe" },
 ];
 
+// Interpolates like vue3-gettext rather than returning the message unchanged. A stub that ignores
+// the params cannot tell a matching placeholder key from a mismatched one, which is the whole bug
+// the prompt test below exists to catch.
+const interpolate = (msg, params) => String(msg).replace(/%\{(\w+)\}/g, (all, key) => (params && key in params ? params[key] : all));
+
 const mocks = () => ({
   $gettext: (msg) => msg,
-  $gettextInterpolate: (msg) => msg,
+  $gettextInterpolate: interpolate,
   $notify: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), success: vi.fn(), blockUI: vi.fn(), unblockUI: vi.fn() },
   $config: { values: {}, get: vi.fn(() => false), feature: vi.fn(() => true) },
   $route: { query: {}, name: "people_faces" },
@@ -188,6 +193,27 @@ describe("PPageFaces name input", () => {
     expect(wrapper.vm.confirm.visible).toBe(false);
     expect(setName).toHaveBeenCalledWith("Jane Roe");
     expect(m.SubjUID).toBe("js6sg6b1h1njaaaa");
+  });
+
+  // The prompt has to name the person it would create, and nothing else checks that it does.
+  // A params key that does not match the msgid placeholder is not an error in vue3-gettext - the
+  // literal token renders and no gate objects: gettext-lint compares placeholders between msgid and
+  // msgstr, never against what a caller passes, and jsdom renders both strings equally happily.
+  it("names the person in the prompt it renders", async () => {
+    await mountPage();
+
+    const input = wrapper.find(".input-name input");
+    await input.setValue("Testperson Alpha");
+    await input.trigger("keyup.enter");
+    await flushPromises();
+
+    expect(wrapper.vm.confirm.visible).toBe(true);
+
+    const dialog = wrapper.findComponent({ name: "PConfirmDialog" });
+    const text = dialog.props("text");
+
+    expect(text).toContain("Testperson Alpha");
+    expect(text).not.toContain("%{");
   });
 
   it("acknowledges a save instead of leaving the user to infer it from a list", async () => {
