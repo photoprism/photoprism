@@ -2,8 +2,11 @@ package commands
 
 import (
 	"encoding/json"
+	"flag"
 	"strings"
 	"testing"
+
+	"github.com/urfave/cli/v2"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -11,6 +14,45 @@ import (
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/pkg/txt/report"
 )
+
+// newCommandContext parses args against a subcommand's own flags, which the shared test context
+// does not do: it applies the app's flags, not a subcommand's.
+func newCommandContext(t *testing.T, cmd *cli.Command, args ...string) *cli.Context {
+	t.Helper()
+
+	flagSet := flag.NewFlagSet(cmd.Name, flag.ContinueOnError)
+
+	for _, f := range cmd.Flags {
+		require.NoError(t, f.Apply(flagSet))
+	}
+
+	require.NoError(t, flagSet.Parse(args))
+
+	return cli.NewContext(cli.NewApp(), flagSet, nil)
+}
+
+// TestReportPerson covers how a report argument is sanitized before it becomes a filter.
+func TestReportPerson(t *testing.T) {
+	t.Run("Joined", func(t *testing.T) {
+		assert.Equal(t, "Jane Roe", reportPerson(newCommandContext(t, FacesSubjectsCommand, "Jane", "Roe")))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Empty(t, reportPerson(newCommandContext(t, FacesSubjectsCommand)))
+	})
+	t.Run("KeepsUnderscore", func(t *testing.T) {
+		// A stored name may hold one, so the filter has to keep it and escape it downstream.
+		assert.Equal(t, "Ann_Marie", reportPerson(newCommandContext(t, FacesSubjectsCommand, "Ann_Marie")))
+	})
+	t.Run("SanitizedLikeAStoredName", func(t *testing.T) {
+		// clean.Name is what Subject.SetName applies, so the argument and the column it is matched
+		// against have been through the same filter. Not clean.SearchString, which turns "%" into
+		// the wildcard "*" and would search for a character no stored name can contain.
+		assert.Equal(t, "Bob 100", reportPerson(newCommandContext(t, FacesSubjectsCommand, "Bob 100%")))
+	})
+	t.Run("SubjectUID", func(t *testing.T) {
+		assert.Equal(t, "js6sg6b1h1njaaac", reportPerson(newCommandContext(t, FacesSubjectsCommand, "js6sg6b1h1njaaac")))
+	})
+}
 
 // TestFacesSubjectsCommand covers the people report, whose reason for existing is the pair of
 // count columns: the stored ones and the ones the markers currently support drift, and the drift is
@@ -67,13 +109,24 @@ func TestFacesSubjectsCommand(t *testing.T) {
 		assert.Contains(t, rows[0], "photos")
 	})
 	t.Run("CountIsBounded", func(t *testing.T) {
-		// An out-of-range count falls back to the API default rather than fetching everything.
-		output, err := RunWithTestContext(FacesSubjectsCommand, []string{"subjects", "--count", "0", "--json"})
-		require.NoError(t, err)
+		// Asserted on reportPaging rather than on the row count: the fixtures hold fewer than 100
+		// people, so every bound produces the same output and the command cannot tell them apart.
+		for _, c := range []struct {
+			args          []string
+			count, offset int
+		}{
+			{nil, 100, 0},
+			{[]string{"--count", "0"}, 100, 0},
+			{[]string{"--count", "2000"}, 100, 0},
+			{[]string{"--count", "250"}, 250, 0},
+			{[]string{"--offset", "-5"}, 100, 0},
+			{[]string{"--count", "10", "--offset", "20"}, 10, 20},
+		} {
+			count, offset := reportPaging(newCommandContext(t, FacesSubjectsCommand, c.args...))
 
-		var rows []map[string]any
-		require.NoError(t, json.Unmarshal([]byte(output), &rows))
-		assert.LessOrEqual(t, len(rows), 100)
+			assert.Equal(t, c.count, count, "count for %v", c.args)
+			assert.Equal(t, c.offset, offset, "offset for %v", c.args)
+		}
 	})
 }
 

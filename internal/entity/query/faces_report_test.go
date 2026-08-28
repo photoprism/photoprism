@@ -259,16 +259,26 @@ func TestPersonFilter(t *testing.T) {
 		assert.Equal(t, "%Actress%", like)
 	})
 	// A name is matched literally: an operator typing a name that holds one of these is looking for
-	// that person, not writing a pattern.
+	// that person, not writing a pattern. Pair with LikeCond, which supplies the ESCAPE clause.
 	t.Run("EscapesWildcards", func(t *testing.T) {
-		_, like := PersonFilter("50%")
-		assert.Equal(t, `%50\%%`, like)
+		_, like := PersonFilter("a_b")
+		assert.Equal(t, "%a"+LikeEscape+"_b%", like)
 
-		_, like = PersonFilter("a_b")
-		assert.Equal(t, `%a\_b%`, like)
+		_, like = PersonFilter("50%")
+		assert.Equal(t, "%50"+LikeEscape+"%%", like)
 
-		_, like = PersonFilter(`back\slash`)
-		assert.Equal(t, `%back\\slash%`, like)
+		// The escape character escapes itself, or it would escape the ones added after it.
+		_, like = PersonFilter("Hi" + LikeEscape)
+		assert.Equal(t, "%Hi"+LikeEscape+LikeEscape+"%", like)
+	})
+	// A backslash is not the escape character: MySQL reads one inside a string literal as an escape
+	// while SQLite does not, so the ESCAPE clause itself could not be written for both.
+	t.Run("LeavesBackslashAlone", func(t *testing.T) {
+		_, like := PersonFilter(`back\slash`)
+		assert.Equal(t, `%back\slash%`, like)
+	})
+	t.Run("LikeCond", func(t *testing.T) {
+		assert.Equal(t, "subj_name LIKE ? ESCAPE '"+LikeEscape+"'", LikeCond("subj_name"))
 	})
 	t.Run("UIDOfAnotherType", func(t *testing.T) {
 		// Only a subject uid selects by id; a marker uid is a name nobody has.
@@ -352,6 +362,52 @@ func TestMarkerReports_Person(t *testing.T) {
 	})
 	t.Run("NoMatch", func(t *testing.T) {
 		markers, err := MarkerReports(MarkerReportFilter{Person: "Nobody By That Name", Count: 100})
+		require.NoError(t, err)
+		assert.Empty(t, markers)
+	})
+}
+
+// TestSubjectReports_NameWithWildcard covers the escaping end to end rather than as a string.
+//
+// The pattern alone proves nothing: SQLite has no default LIKE escape character, so a pattern that
+// matches correctly on MariaDB matched nothing there - the same command reporting that a person who
+// exists does not, on the default driver. Only running the query catches that.
+func TestSubjectReports_NameWithWildcard(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	t.Cleanup(entity.ResetTestFixtures)
+
+	literal := entity.NewSubject("ZZ Ann_Marie Wildcard", entity.SubjPerson, entity.SrcManual)
+	decoy := entity.NewSubject("ZZ AnnXMarie Wildcard", entity.SubjPerson, entity.SrcManual)
+	require.NotNil(t, literal)
+	require.NotNil(t, decoy)
+	require.NoError(t, literal.Create())
+	require.NoError(t, decoy.Create())
+
+	t.Cleanup(func() {
+		entity.UnscopedDb().Delete(&entity.Subject{}, "subj_uid IN (?)", []string{literal.SubjUID, decoy.SubjUID})
+	})
+
+	t.Run("UnderscoreIsLiteral", func(t *testing.T) {
+		people, err := SubjectReports("ZZ Ann_Marie Wildcard", 100, 0, false)
+		require.NoError(t, err)
+		require.Len(t, people, 1, "the underscore must match itself, not any character")
+		assert.Equal(t, literal.SubjUID, people[0].SubjUID)
+	})
+	t.Run("PlainFragmentStillMatchesBoth", func(t *testing.T) {
+		people, err := SubjectReports("ZZ Ann", 100, 0, false)
+		require.NoError(t, err)
+		assert.Len(t, people, 2, "escaping must not stop an ordinary fragment from matching")
+	})
+	t.Run("FaceAndMarkerReportsAgree", func(t *testing.T) {
+		// The same pattern is built into three different statements, so each needs the clause.
+		faces, err := FaceReports("ZZ Ann_Marie Wildcard", 100, 0)
+		require.NoError(t, err)
+		assert.Empty(t, faces, "the person has no clusters, but the query must not error")
+
+		markers, err := MarkerReports(MarkerReportFilter{Person: "ZZ Ann_Marie Wildcard", Count: 100})
 		require.NoError(t, err)
 		assert.Empty(t, markers)
 	})

@@ -70,11 +70,13 @@ func reportVectors(n int) string {
 	}
 }
 
-// reportPerson returns the person a report command was narrowed to, which is a subject uid or a
-// name fragment. Taken as an argument rather than a flag so the reports read like the other list
-// commands, and so a person can be inspected without piping the output through grep.
+// reportPerson returns the person a report command was narrowed to: a subject uid or a name
+// fragment, taken as an argument so a person can be inspected without piping through grep.
+//
+// Sanitized by clean.Name, as Subject.SetName sanitizes the column it matches. Not
+// clean.SearchString, which turns "%" into "*" and would search for a character no name can hold.
 func reportPerson(ctx *cli.Context) string {
-	return clean.SearchString(strings.Join(ctx.Args().Slice(), " "))
+	return clean.Name(strings.Join(ctx.Args().Slice(), " "))
 }
 
 // reportPaging returns the count and offset a report command was given, bounded like the API.

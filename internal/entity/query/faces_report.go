@@ -15,11 +15,20 @@ import (
 // uid apart from a name without asking the caller which one it passed.
 const SubjectUIDPrefix = 'j'
 
+// LikeEscape is the escape character the name patterns use.
+//
+// Not a backslash: MySQL reads one inside a string literal as an escape while SQLite does not, so
+// the ESCAPE clause itself cannot be written the same way for both. Nothing needs escaping in "!".
+const LikeEscape = "!"
+
+// likeEscaper escapes the escape character first, or it would escape the ones added after it.
+var likeEscaper = strings.NewReplacer(LikeEscape, LikeEscape+LikeEscape, "%", LikeEscape+"%", "_", LikeEscape+"_")
+
 // PersonFilter classifies a person argument for the face reports: a subject uid selects exactly one
 // person, and anything else matches the names that contain it.
 //
 // The wildcards are escaped, so a name holding "%" or "_" is matched literally rather than turning
-// the argument into a pattern the caller did not write.
+// the argument into a pattern the caller did not write. Pair the result with LikeCond.
 func PersonFilter(s string) (subjUID, nameLike string) {
 	if s = strings.TrimSpace(s); s == "" {
 		return "", ""
@@ -29,9 +38,14 @@ func PersonFilter(s string) (subjUID, nameLike string) {
 		return s, ""
 	}
 
-	r := strings.NewReplacer(`\`, `\\`, "%", `\%`, "_", `\_`)
+	return "", "%" + likeEscaper.Replace(s) + "%"
+}
 
-	return "", "%" + r.Replace(s) + "%"
+// LikeCond returns a LIKE condition for the given column that honors the escaping PersonFilter
+// applies. SQLite has no default escape character, so a pattern built without this matches nothing
+// there while matching correctly on MariaDB - the same command answering differently per driver.
+func LikeCond(col string) string {
+	return fmt.Sprintf("%s LIKE ? ESCAPE '%s'", col, LikeEscape)
 }
 
 // SubjectReport describes one person, with the clusters, files and photos their markers support.
@@ -55,9 +69,9 @@ type SubjectReport struct {
 
 // SubjectReports returns person subjects ordered by name.
 //
-// Counting live costs one pass over the markers joined to their files - half a second on a library
-// of 150,000 photos and 200,000 markers, against ten milliseconds for the stored values. Affordable
-// for a report and not for a request; pass live=false for the stored numbers.
+// Counting live costs one extra pass over the markers joined to their files, about half a second on
+// a library of 150,000 photos and 200,000 markers. It excludes private photos, matching what
+// UpdateSubjectCounts writes, so the two are comparable; pass live=false for the stored numbers.
 func SubjectReports(person string, count, offset int, live bool) (result []SubjectReport, err error) {
 	counts := "s.file_count, s.photo_count"
 	joins := ""
@@ -69,7 +83,7 @@ func SubjectReports(person string, count, offset int, live bool) (result []Subje
 		where = "AND s.subj_uid = ?"
 		args = append(args, subjUID)
 	} else if nameLike != "" {
-		where = "AND s.subj_name LIKE ?"
+		where = "AND " + LikeCond("s.subj_name")
 		args = append(args, nameLike)
 	}
 
@@ -78,7 +92,7 @@ func SubjectReports(person string, count, offset int, live bool) (result []Subje
 		joins = fmt.Sprintf(`LEFT JOIN (
 			SELECT m.subj_uid, COUNT(DISTINCT f.id) AS live_files, COUNT(DISTINCT f.photo_id) AS live_photos
 			FROM %s f
-			JOIN %s p ON p.id = f.photo_id AND p.deleted_at IS NULL
+			JOIN %s p ON p.id = f.photo_id AND p.deleted_at IS NULL AND p.photo_private = 0
 			JOIN %s m ON f.file_uid = m.file_uid AND m.subj_uid <> ''
 			WHERE m.marker_invalid = 0 AND f.deleted_at IS NULL
 			GROUP BY m.subj_uid
@@ -140,7 +154,7 @@ func FaceReports(person string, count, offset int) (result []FaceReport, err err
 		where = "WHERE f.subj_uid = ?"
 		args = append(args, subjUID)
 	} else if nameLike != "" {
-		where = "WHERE s.subj_name LIKE ?"
+		where = "WHERE " + LikeCond("s.subj_name")
 		args = append(args, nameLike)
 	}
 
@@ -214,8 +228,8 @@ func MarkerReports(f MarkerReportFilter) (result []MarkerReport, err error) {
 	if subjUID, nameLike := PersonFilter(f.Person); subjUID != "" {
 		stmt = stmt.Where("subj_uid = ?", subjUID)
 	} else if nameLike != "" {
-		stmt = stmt.Where(fmt.Sprintf("subj_uid IN (SELECT subj_uid FROM %s WHERE subj_name LIKE ?)",
-			entity.Subject{}.TableName()), nameLike)
+		stmt = stmt.Where(fmt.Sprintf("subj_uid IN (SELECT subj_uid FROM %s WHERE %s)",
+			entity.Subject{}.TableName(), LikeCond("subj_name")), nameLike)
 	}
 
 	if f.FaceID != "" {
