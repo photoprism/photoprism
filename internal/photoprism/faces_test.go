@@ -18,7 +18,7 @@ func isolatedTestFaces(t *testing.T, name string) *Faces {
 	t.Helper()
 
 	oldCfg := Config()
-	c := config.NewMinimalTestConfigWithDb(name, t.TempDir())
+	c := config.NewMinimalTestConfigWithDbTTest(name, t.TempDir(), t)
 
 	t.Cleanup(func() {
 		_ = c.CloseDb()

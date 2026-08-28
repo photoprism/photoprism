@@ -157,7 +157,7 @@ watch: watch-js
 build-all: build-go build-js
 pull: docker-pull
 test: test-js test-go
-test-go: dep-models reset-mariadb-migrate reset-postgres-migrate run-test-go
+test-go: dep-models clean-testleftovers reset-mariadb-migrate reset-postgres-migrate run-test-go
 test-hub: run-test-hub
 test-pkg: run-test-pkg
 test-ai: dep-models run-test-ai
@@ -167,9 +167,9 @@ test-entity: run-test-entity
 test-commands: run-test-commands
 test-photoprism: run-test-photoprism
 test-short: dep-models run-test-short
-test-mariadb: dep-models reset-mariadb-testdb reset-mariadb-migrate reset-postgres-migrate run-test-mariadb
-test-postgres: dep-models reset-postgres-testdb reset-postgres-migrate reset-mariadb-migrate run-test-postgres
-test-sqlite: dep-models reset-sqlite-unit reset-mariadb-migrate reset-postgres-migrate run-test-sqlite
+test-mariadb: dep-models clean-testleftovers reset-mariadb-testdb reset-mariadb-migrate reset-postgres-migrate run-test-mariadb
+test-postgres: dep-models clean-testleftovers reset-postgres-testdb reset-postgres-migrate reset-mariadb-migrate run-test-postgres
+test-sqlite: dep-models clean-testleftovers reset-sqlite-unit reset-mariadb-migrate reset-postgres-migrate run-test-sqlite
 
 # Backward compatible SQLite acceptance tests - These call the new dbms generic targets that do the testing
 acceptance-run-chromium: acceptance-run-long-chromium-sqlite

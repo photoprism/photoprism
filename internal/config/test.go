@@ -261,6 +261,10 @@ func NewMinimalTestConfigWithDbTTest(dbName, dataPath string, t *testing.T) *Con
 	c := NewMinimalTestConfigWithDbTMain(dbName, dataPath)
 	t.Cleanup(func() {
 		if c.DatabaseName() == TestConfig().DatabaseName() {
+			// Reopen the database if it's not already open.
+			if !c.IsDbOpen() {
+				c.RegisterDb()
+			}
 			// Reset the database as it is the same as the TestConfig db, which is shared.
 			c.InitTestDb()
 		}
