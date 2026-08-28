@@ -261,12 +261,10 @@ func TestFace_SetEmbeddings(t *testing.T) {
 		assert.Equal(t, e[0][0], m.Embedding()[0])
 	})
 	t.Run("CapsSampleRadius", func(t *testing.T) {
-		embeddings := make(face.Embeddings, 2)
-		for i := range embeddings {
-			embeddings[i] = make(face.Embedding, len(face.NullEmbedding))
-		}
-		embeddings[0][0] = 1
-		embeddings[1][0] = -1
+		// Far apart but not opposite: an exactly opposite pair averages to a vector with no
+		// magnitude, which SetEmbeddings refuses rather than storing as a cluster.
+		base := face.FixtureEmbedding(4101)
+		embeddings := face.Embeddings{base, face.FixtureEmbeddingAt(base, 1.9, 4102)}
 
 		m := &Face{}
 

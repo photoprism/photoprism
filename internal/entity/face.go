@@ -117,10 +117,19 @@ func (m *Face) SetEmbeddings(embeddings face.Embeddings, model face.ModelName) (
 
 	m.EmbedModel = model
 
-	// Recorded rather than left at zero, because the "face:N" search filter reads the number: a
-	// cluster formed now has to carry the kind an earlier release gave one. Raised rather than
-	// assigned, so a cluster already reported as ambiguous is not downgraded.
-	if k := int(embeddings.Kind()); k > m.FaceKind {
+	// A midpoint with no magnitude describes no face and sits one unit from every unit vector, so
+	// a cluster built from it would accept whatever a model reaching past 1 compares with it.
+	// Refused here as well as in Match, so such a row cannot be stored in the first place - which
+	// is also what keeps the recorded kind and the migration predicate in agreement.
+	if m.embedding.Zero() {
+		return fmt.Errorf("embedding has no magnitude")
+	}
+
+	// Classified from the midpoint that is stored, not from the inputs it was computed over: two
+	// opposite vectors are each regular while their mean is not a face. Recorded rather than left
+	// at zero because the "face:N" search filter reads the number, and raised rather than assigned
+	// so a cluster already reported as ambiguous is not downgraded.
+	if k := int(m.embedding.Kind()); k > m.FaceKind {
 		m.FaceKind = k
 	}
 
