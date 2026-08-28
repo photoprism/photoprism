@@ -112,7 +112,7 @@ func facesSubjectsAction(ctx *cli.Context) error {
 			return err
 		}
 
-		cols := []string{"UID", "Name", "Src", "Markers", "Verified", "Hidden", "Files", "Photos"}
+		cols := []string{"Subject", "Name", "Src", "Markers", "Verified", "Hidden", "Files", "Photos"}
 		rows := make([][]string, 0, len(people))
 
 		for _, p := range people {
@@ -138,7 +138,7 @@ func facesListAction(ctx *cli.Context) error {
 			return err
 		}
 
-		cols := []string{"ID", "Name", "Subject", "Src", "Kind", "Markers", "Samples", "Radius", "Collisions", "Collision Radius", "Matched At"}
+		cols := []string{"Face", "Name", "Subject", "Src", "Kind", "Markers", "Samples", "Radius", "Collisions", "Collision Radius", "Matched At"}
 		rows := make([][]string, 0, len(faces))
 
 		for _, f := range faces {

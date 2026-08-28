@@ -319,7 +319,7 @@ Recovery steps:
 
 ### Reporting
 
-Three read-only commands describe what a library currently holds, so two tuning rounds can be diffed rather than re-derived. All take `--json`, `--md`, `--csv`, `--tsv`, `--count` and `--offset`, like `photoprism faces status`, and all take an optional `[name|uid]` argument that narrows the report to one person - a subject UID selects exactly one, anything else matches names containing it, with `%` and `_` escaped so a name is never read as a pattern.
+Three read-only commands describe what a library currently holds, so two tuning rounds can be diffed rather than re-derived. `Marker`, `Subject` and `Face` name the same things in all three, so a value read from one report can be passed to another. All take `--json`, `--md`, `--csv`, `--tsv`, `--count` and `--offset`, like `photoprism faces status`, and all take an optional `[name|uid]` argument that narrows the report to one person - a subject UID selects exactly one, anything else matches names containing it, with `%` and `_` escaped so a name is never read as a pattern.
 
 | Command                     | Reports                                                                              |
 |:----------------------------|:-------------------------------------------------------------------------------------|

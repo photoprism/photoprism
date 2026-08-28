@@ -20,7 +20,7 @@ func TestFacesSubjectsCommand(t *testing.T) {
 		output, err := RunWithTestContext(FacesSubjectsCommand, []string{"subjects"})
 		require.NoError(t, err)
 
-		assert.Contains(t, output, "UID")
+		assert.Contains(t, output, "Subject")
 		assert.Contains(t, output, "Name")
 		assert.Contains(t, output, "Markers")
 		assert.Contains(t, output, "Verified")
@@ -79,7 +79,7 @@ func TestFacesListCommand(t *testing.T) {
 
 		// Samples against the live marker count is the pair worth reading: the first is what the
 		// cluster was built from, the second is what points at it now.
-		for _, col := range []string{"ID", "Name", "Subject", "Src", "Kind", "Markers", "Samples", "Radius", "Collisions", "Collision Radius", "Matched At"} {
+		for _, col := range []string{"Face", "Name", "Subject", "Src", "Kind", "Markers", "Samples", "Radius", "Collisions", "Collision Radius", "Matched At"} {
 			assert.Contains(t, output, col)
 		}
 
