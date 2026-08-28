@@ -6,6 +6,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/dustin/go-humanize/english"
 	"github.com/jinzhu/gorm"
 
 	"github.com/photoprism/photoprism/internal/event"
@@ -35,6 +36,7 @@ type Subject struct {
 	SubjExcluded bool       `gorm:"default:false;" json:"Excluded" yaml:"Excluded,omitempty"`
 	FileCount    int        `gorm:"default:0;" json:"FileCount" yaml:"-"`
 	PhotoCount   int        `gorm:"default:0;" json:"PhotoCount" yaml:"-"`
+	Verified     bool       `gorm:"default:false;" json:"Verified" yaml:"Verified,omitempty"`
 	Thumb        string     `gorm:"type:VARBINARY(128);index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
 	ThumbSrc     string     `gorm:"type:VARBINARY(8);default:'';" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
 	CreatedAt    time.Time  `json:"CreatedAt" yaml:"-"`
@@ -360,6 +362,16 @@ func (m *Subject) SaveForm(frm *form.Subject) (changed bool, err error) {
 		changed = true
 	}
 
+	// Change verification?
+	//
+	// Set here and nowhere else. A flag the matcher, the clusterer, a propagation pass or an import
+	// could raise stops meaning "a person vouched for this name" within a release, which is how
+	// markers.q drifted from what it claimed until it was removed.
+	if m.Verified != frm.Verified {
+		m.Verified = frm.Verified
+		changed = true
+	}
+
 	// Change visibility?
 	if m.SubjHidden != frm.SubjHidden || m.SubjPrivate != frm.SubjPrivate || m.SubjExcluded != frm.SubjExcluded {
 		m.SubjHidden = frm.SubjHidden
@@ -389,6 +401,7 @@ func (m *Subject) SaveForm(frm *form.Subject) (changed bool, err error) {
 			"SubjHidden":   m.SubjHidden,
 			"SubjPrivate":  m.SubjPrivate,
 			"SubjExcluded": m.SubjExcluded,
+			"Verified":     m.Verified,
 		}
 
 		if thumbChanged {
@@ -553,10 +566,25 @@ func (m *Subject) MergeWith(other *Subject) error {
 		return err
 	}
 
+	// A merge states that the two subjects are one person, which retracts the premise every
+	// collision between their clusters was recorded on. Nothing else widens a collision radius, so
+	// leaving it gates those clusters permanently against faces that are now known to belong.
+	if cleared, colErr := ClearSubjectCollisions(other.SubjUID); colErr != nil {
+		return colErr
+	} else if cleared > 0 {
+		log.Infof("subject: cleared %s after merging into %s",
+			english.Plural(cleared, "face collision", "face collisions"), clean.Log(other.SubjName))
+	}
+
 	// Updated subject entity values.
+	//
+	// Verified carries over from either side: the flag records that somebody vouched for the
+	// person, and a merge does not withdraw that. Dropping it would leave the survivor unprotected
+	// by the orphan sweeps, so the next reset would delete the name the operator vouched for.
 	updates := Values{
 		"FileCount":  other.FileCount + m.FileCount,
 		"PhotoCount": other.PhotoCount + m.PhotoCount,
+		"Verified":   other.Verified || m.Verified,
 	}
 
 	// Use existing thumbnail image?
@@ -568,6 +596,18 @@ func (m *Subject) MergeWith(other *Subject) error {
 	// Update subject entity.
 	if err := UnscopedDb().Model(other).Updates(updates).Error; err != nil {
 		return err
+	}
+
+	other.Verified = other.Verified || m.Verified
+
+	// Cleared on the row about to be deleted: the survivor now carries the flag, so leaving it here
+	// would claim two people were vouched for where the operator vouched for one.
+	if m.Verified {
+		m.Verified = false
+
+		if err := m.Updates(Values{"Verified": false}); err != nil {
+			return err
+		}
 	}
 
 	return m.Delete()

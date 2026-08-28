@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-08-07 14:04+0000\n"
+"PO-Revision-Date: 2026-08-28 02:08+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: \n"
 "Language: ar\n"
@@ -58,8 +58,8 @@ msgstr "%{n} جيجابايت من %{q} جيجابايت مستخدمة"
 msgid "%{n} labels found"
 msgstr "تم العثور على %{n} من التصنيفات"
 
-#: src/page/people/new.vue:467 src/page/people/new.vue:573
-#: src/page/people/recognized.vue:721
+#: src/page/people/new.vue:494 src/page/people/new.vue:600
+#: src/page/people/recognized.vue:729
 msgid "%{n} people found"
 msgstr "تم العثور على %{n} من الأشخاص"
 
@@ -100,11 +100,11 @@ msgstr "%s موجود بالفعل"
 msgid "%s has been restored"
 msgstr "تمت استعادة %s"
 
-#: src/options/options.js:423
+#: src/options/options.js:425
 msgid "1 hour"
 msgstr "ساعة واحدة"
 
-#: src/options/options.js:425
+#: src/options/options.js:427
 msgid "12 hours"
 msgstr "12 ساعة"
 
@@ -123,7 +123,7 @@ msgstr "المصادقة الثنائية"
 msgid "2FA"
 msgstr "2FA"
 
-#: src/options/options.js:424
+#: src/options/options.js:426
 msgid "4 hours"
 msgstr "4 ساعات"
 
@@ -265,7 +265,7 @@ msgid "Add"
 msgstr "إضافة"
 
 #: src/component/lightbox/sidebar.vue:480
-#: src/component/photo/edit/people.vue:97
+#: src/component/photo/edit/people.vue:97 src/page/people/new.vue:198
 msgid "Add %{s}?"
 msgstr "إضافة %{s}؟"
 
@@ -355,15 +355,15 @@ msgstr "متقدم"
 msgid "Advertise URL"
 msgstr "الإعلان عن عنوان URL"
 
-#: src/options/options.js:433
+#: src/options/options.js:435
 msgid "After 1 day"
 msgstr "بعد يوم واحد"
 
-#: src/options/options.js:434
+#: src/options/options.js:436
 msgid "After 3 days"
 msgstr "بعد 3 ايام"
 
-#: src/options/options.js:435
+#: src/options/options.js:437
 msgid "After 7 days"
 msgstr "بعد 7 أيام"
 
@@ -371,11 +371,11 @@ msgstr "بعد 7 أيام"
 msgid "After entering your password for confirmation, you can set up two-factor authentication with a compatible authenticator app or device:"
 msgstr "بعد إدخال كلمة المرور الخاصة بك للتأكيد، يمكنك إعداد المصادقة الثنائية باستخدام تطبيق أو جهاز مصادقة متوافق:"
 
-#: src/options/options.js:437
+#: src/options/options.js:439
 msgid "After one month"
 msgstr "بعد شهر واحد"
 
-#: src/options/options.js:439
+#: src/options/options.js:441
 msgid "After one year"
 msgstr "بعد سنة"
 
@@ -383,11 +383,11 @@ msgstr "بعد سنة"
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
 msgstr "بعد تحديد الصور من نتائج البحث ، يمكنك إضافتها إلى ألبوم باستخدام قائمة السياق."
 
-#: src/options/options.js:438
+#: src/options/options.js:440
 msgid "After two months"
 msgstr "بعد شهرين"
 
-#: src/options/options.js:436
+#: src/options/options.js:438
 msgid "After two weeks"
 msgstr "بعد أسبوعين"
 
@@ -448,7 +448,7 @@ msgstr "تم تحميل كافة الألبومات الـ %{n}"
 msgid "All %{n} labels loaded"
 msgstr "تم تحميل كافة التسميات الـ %{n}"
 
-#: src/page/people/recognized.vue:553
+#: src/page/people/recognized.vue:561
 msgid "All %{n} people loaded"
 msgstr "تم تحميل جميع الأشخاص الـ %{n}"
 
@@ -554,7 +554,7 @@ msgstr "صباحاً"
 #: src/component/photo/edit/files.vue:147
 #: src/component/photo/view/cards.vue:113
 #: src/component/photo/view/cards.vue:230 src/component/photo/view/list.vue:82
-#: src/component/photo/view/mosaic.vue:68 src/options/options.js:362
+#: src/component/photo/view/mosaic.vue:68 src/options/options.js:364
 msgid "Animated"
 msgstr "متحركة"
 
@@ -661,7 +661,7 @@ msgstr "السمات"
 #: src/app/routes.js:416 src/common/util.js:862
 #: src/component/navigation.vue:204 src/component/navigation.vue:205
 #: src/component/navigation.vue:217 src/component/navigation.vue:226
-#: src/component/navigation.vue:254 src/options/options.js:358
+#: src/component/navigation.vue:254 src/options/options.js:360
 msgid "Audio"
 msgstr "صوتي"
 
@@ -741,15 +741,15 @@ msgstr "السيرة الذاتية"
 msgid "Birth Date"
 msgstr "تاريخ الميلاد"
 
-#: src/options/options.js:458
+#: src/options/options.js:460
 msgid "Black"
 msgstr "أسود"
 
-#: src/options/options.js:454
+#: src/options/options.js:456
 msgid "Blue"
 msgstr "أزرق"
 
-#: src/options/options.js:455
+#: src/options/options.js:457
 msgid "Brown"
 msgstr "بني"
 
@@ -767,7 +767,7 @@ msgstr "تصفح الملفات"
 msgid "Browse Pictures"
 msgstr "تصفح الصور"
 
-#: src/options/options.js:464
+#: src/options/options.js:466
 msgid "Bug Report"
 msgstr "تقرير المشاكل"
 
@@ -817,9 +817,9 @@ msgstr "لا يمكن تحميل المزيد ، تم الوصول إلى الح
 #: src/common/clipboard.js:103 src/common/clipboard.js:139
 #: src/page/albums.vue:1204 src/page/albums.vue:1220 src/page/labels.vue:642
 #: src/page/labels.vue:662 src/page/library/browse.vue:325
-#: src/page/library/browse.vue:341 src/page/people/new.vue:395
-#: src/page/people/new.vue:411 src/page/people/recognized.vue:486
-#: src/page/people/recognized.vue:502
+#: src/page/library/browse.vue:341 src/page/people/new.vue:422
+#: src/page/people/new.vue:438 src/page/people/recognized.vue:494
+#: src/page/people/recognized.vue:510
 msgid "Can't select more items"
 msgstr "لا يمكن تحديد المزيد من العناصر"
 
@@ -843,7 +843,7 @@ msgstr "لا يمكن تحديد المزيد من العناصر"
 #: src/component/meta/face/markers.vue:54
 #: src/component/meta/face/markers.vue:73
 #: src/component/meta/location/dialog.vue:115
-#: src/component/people/edit/dialog.vue:46
+#: src/component/people/edit/dialog.vue:57
 #: src/component/photo/album/dialog.vue:64 src/component/service/add.vue:97
 #: src/component/service/edit.vue:232 src/component/service/remove.vue:19
 #: src/component/service/upload.vue:57 src/component/settings/apps.vue:151
@@ -914,7 +914,7 @@ msgstr "تغيير العلم الخاص"
 #: src/component/album/edit/dialog.vue:171
 #: src/component/label/edit/dialog.vue:109
 #: src/component/meta/camera/dialog.vue:214
-#: src/component/people/edit/dialog.vue:112
+#: src/component/people/edit/dialog.vue:123
 #: src/component/photo/batch-edit.vue:1440
 #: src/component/photo/edit/details.vue:636 src/locales.js:376
 #: src/page/settings/account.vue:447 src/page/settings/account.vue:452
@@ -933,8 +933,8 @@ msgstr "لا يمكن حفظ التغييرات"
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
-#: src/locales.js:428 src/page/albums.vue:1197
-#: src/page/people/recognized.vue:296 src/page/settings/advanced.vue:507
+#: src/locales.js:428 src/page/albums.vue:1197 src/page/people/new.vue:810
+#: src/page/people/recognized.vue:304 src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
 #: src/page/settings/general.vue:646
 msgid "Changes successfully saved"
@@ -1086,7 +1086,7 @@ msgstr "الثقة"
 #: src/component/settings/passcode.vue:68
 #: src/component/settings/passcode.vue:69
 #: src/component/settings/passcode.vue:78
-#: src/component/settings/passcode.vue:94
+#: src/component/settings/passcode.vue:94 src/page/people/new.vue:101
 msgid "Confirm"
 msgstr "التأكيد"
 
@@ -1229,7 +1229,7 @@ msgstr "تم إنشاءه"
 msgid "Creating thumbnails for"
 msgstr "إنشاء صور مصغرة لـ"
 
-#: src/options/options.js:501
+#: src/options/options.js:503
 msgid "Current Name"
 msgstr "الاسم الحالي"
 
@@ -1241,11 +1241,11 @@ msgstr "كلمة المرور الحالية"
 msgid "Custom"
 msgstr "مخصص"
 
-#: src/options/options.js:453
+#: src/options/options.js:455
 msgid "Cyan"
 msgstr "ازرق سماوي"
 
-#: src/options/options.js:426
+#: src/options/options.js:428
 msgid "Daily"
 msgstr "اليومي"
 
@@ -1285,8 +1285,8 @@ msgstr "سجلات التصحيح"
 #: src/page/admin/users.vue:374 src/common/util.js:886 src/model/session.js:42
 #: src/model/user.js:343 src/options/auth.js:40 src/options/auth.js:41
 #: src/options/auth.js:69 src/options/auth.js:70 src/options/options.js:252
-#: src/options/options.js:255 src/options/options.js:293
-#: src/options/options.js:377 src/options/themes.js:863
+#: src/options/options.js:255 src/options/options.js:295
+#: src/options/options.js:379 src/options/themes.js:863
 msgid "Default"
 msgstr "مبدئي"
 
@@ -1474,7 +1474,7 @@ msgstr "عرض عناوين الصور في نتائج البحث."
 #: src/common/util.js:868 src/component/photo/view/cards.vue:115
 #: src/component/photo/view/cards.vue:239
 #: src/component/photo/view/mosaic.vue:70 src/model/thumb.js:247
-#: src/options/options.js:370
+#: src/options/options.js:372
 msgid "Document"
 msgstr "وثيقة"
 
@@ -1688,7 +1688,7 @@ msgstr "تقدير المواقع"
 msgid "Estimate the approximate location of pictures without GPS coordinates."
 msgstr "قم بتقدير الموقع التقريبي للصور دون إحداثيات GPS."
 
-#: src/options/options.js:427
+#: src/options/options.js:429
 msgid "Every two days"
 msgstr "كل يومين"
 
@@ -1835,7 +1835,7 @@ msgstr "المفضلة"
 msgid "Feature disabled"
 msgstr "الخاصية غير مفعلة"
 
-#: src/options/options.js:463
+#: src/options/options.js:465
 msgid "Feature Request"
 msgstr "طلب المواصفات"
 
@@ -1843,7 +1843,7 @@ msgstr "طلب المواصفات"
 msgid "Features"
 msgstr "الميزات"
 
-#: src/options/options.js:487
+#: src/options/options.js:489
 msgid "Female"
 msgstr "أنثى"
 
@@ -1866,7 +1866,7 @@ msgstr "تم حذف الملف"
 
 #: src/component/photo/batch-edit.vue:606
 #: src/component/photo/batch-edit.vue:626 src/component/photo/view/list.vue:34
-#: src/options/options.js:514
+#: src/options/options.js:516
 msgid "File Name"
 msgstr "اسم الملف"
 
@@ -1878,7 +1878,7 @@ msgstr "لم يتم العثور على الملف"
 msgid "File removed from stack"
 msgstr "تمت إزالة الملف من المكدس"
 
-#: src/options/options.js:515
+#: src/options/options.js:517
 msgid "File Size"
 msgstr "حجم الملف"
 
@@ -2018,15 +2018,15 @@ msgstr "انتقل إلى الصفحة {0}"
 msgid "Go to Page %{n}"
 msgstr "انتقل إلى الصفحة %{n}"
 
-#: src/options/options.js:448
+#: src/options/options.js:450
 msgid "Gold"
 msgstr "ذهب"
 
-#: src/options/options.js:451
+#: src/options/options.js:453
 msgid "Green"
 msgstr "لون أخضر"
 
-#: src/options/options.js:457
+#: src/options/options.js:459
 msgid "Grey"
 msgstr "رمادي"
 
@@ -2056,7 +2056,7 @@ msgstr "ساعد لدعم"
 
 #: src/component/navigation.vue:369 src/component/navigation.vue:370
 #: src/component/navigation.vue:382 src/component/navigation.vue:391
-#: src/component/navigation.vue:504 src/component/people/edit/dialog.vue:40
+#: src/component/navigation.vue:504 src/component/people/edit/dialog.vue:51
 msgid "Hidden"
 msgstr "مختفي"
 
@@ -2088,7 +2088,7 @@ msgstr "إخفاء شريط التمرير"
 msgid "Hide the permanent scrollbar shown by some desktop browsers."
 msgstr "إخفاء شريط التمرير الدائم الذي تعرضه بعض متصفحات سطح المكتب."
 
-#: src/options/options.js:381
+#: src/options/options.js:383
 msgid "High"
 msgstr "عالٍ"
 
@@ -2099,7 +2099,7 @@ msgstr "عالٍ"
 msgid "High Dynamic Range (HDR)"
 msgstr "المدى الديناميكي العالي (HDR)"
 
-#: src/options/options.js:304
+#: src/options/options.js:306
 msgid "Hybrid"
 msgstr "هجين"
 
@@ -2109,7 +2109,7 @@ msgstr "إذا فقدت الوصول إلى تطبيق أو جهاز المصا�
 
 #: src/common/util.js:854 src/common/util.js:894
 #: src/component/photo/view/cards.vue:246 src/model/file.js:199
-#: src/options/options.js:342
+#: src/options/options.js:344
 msgid "Image"
 msgstr "صورة"
 
@@ -2340,6 +2340,10 @@ msgstr "حد حجم JPEG: %{n} بكسل"
 msgid "JPEGs and thumbnails are automatically rendered as needed."
 msgstr "يتم تقديم ملفات JPEG والصور المصغرة تلقائيًا حسب الحاجة."
 
+#: src/component/people/edit/dialog.vue:44
+msgid "Keeps this person when face clusters are reset"
+msgstr ""
+
 #: src/common/util.js:906
 msgid "Keyword"
 msgstr "الكلمة الرئيسية"
@@ -2462,7 +2466,7 @@ msgstr "رخصة"
 msgid "Like"
 msgstr "المفضلة"
 
-#: src/options/options.js:450
+#: src/options/options.js:452
 msgid "Lime"
 msgstr "جير"
 
@@ -2485,7 +2489,7 @@ msgstr "عرض القائمة"
 #: src/common/util.js:858 src/component/photo/batch-edit.vue:124
 #: src/component/photo/batch-edit.vue:65 src/component/photo/view/cards.vue:112
 #: src/component/photo/view/cards.vue:224 src/component/photo/view/list.vue:81
-#: src/component/photo/view/mosaic.vue:67 src/options/options.js:350
+#: src/component/photo/view/mosaic.vue:67 src/options/options.js:352
 msgid "Live"
 msgstr "يعيش"
 
@@ -2553,11 +2557,11 @@ msgstr "خط الطول"
 msgid "Lost server connection"
 msgstr "فقدان الاتصال بالخادم"
 
-#: src/options/options.js:385
+#: src/options/options.js:387
 msgid "Low"
 msgstr "قليل"
 
-#: src/options/options.js:444
+#: src/options/options.js:446
 msgid "Magenta"
 msgstr "أرجواني"
 
@@ -2568,7 +2572,7 @@ msgstr "أرجواني"
 msgid "Main Color"
 msgstr "اللون الأساسي"
 
-#: src/options/options.js:486
+#: src/options/options.js:488
 msgid "Male"
 msgstr "ذكر"
 
@@ -2679,7 +2683,7 @@ msgstr "مزيد من الخيارات"
 msgid "Mosaic"
 msgstr "فسيفساء"
 
-#: src/options/options.js:518
+#: src/options/options.js:520
 msgid "Most Relevant"
 msgstr "الأكثر صلة"
 
@@ -2732,8 +2736,8 @@ msgid "Name too long"
 msgstr "الاسم طويل جدًا"
 
 #: src/page/admin/users.vue:261 src/page/admin/users.vue:458
-#: src/page/admin/users.vue:402 src/options/options.js:422
-#: src/options/options.js:432 src/page/services.vue:251
+#: src/page/admin/users.vue:402 src/options/options.js:424
+#: src/options/options.js:434 src/page/services.vue:251
 msgid "Never"
 msgstr "أبداً"
 
@@ -2745,7 +2749,7 @@ msgstr "جديد"
 msgid "New Password"
 msgstr "كلمة السر الجديدة"
 
-#: src/options/options.js:508 src/page/albums.vue:395
+#: src/options/options.js:510 src/page/albums.vue:395
 msgid "Newest First"
 msgstr "الاحدث اولا"
 
@@ -2824,15 +2828,15 @@ msgid "No more"
 msgstr "لا مزيد"
 
 #: src/component/photo/edit/people.vue:6 src/page/people/new.vue:23
-#: src/page/people/new.vue:463 src/page/people/new.vue:569
-#: src/page/people/recognized.vue:55 src/page/people/recognized.vue:717
+#: src/page/people/new.vue:490 src/page/people/new.vue:596
+#: src/page/people/recognized.vue:55 src/page/people/recognized.vue:725
 msgid "No people found"
 msgstr "لم يتم العثور على أشخاص"
 
 #: src/component/photo/view/cards.vue:9 src/component/photo/view/list.vue:9
 #: src/component/photo/view/mosaic.vue:9 src/page/album/photos.vue:582
 #: src/page/library/browse.vue:31 src/page/photos.vue:720
-#: src/page/places.vue:765 src/page/places.vue:886
+#: src/page/places.vue:761 src/page/places.vue:882
 msgid "No pictures found"
 msgstr "لم يتم العثور على صور"
 
@@ -2887,7 +2891,7 @@ msgstr "العُقد"
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "تتطلب الصور غير الفوتوغرافية وذات الجودة المنخفضة المراجعة قبل ظهورها في نتائج البحث."
 
-#: src/options/auth.js:52 src/options/options.js:273 src/options/options.js:389
+#: src/options/auth.js:52 src/options/options.js:273 src/options/options.js:391
 msgid "None"
 msgstr "لا أحد"
 
@@ -2946,7 +2950,7 @@ msgstr "لا شيء لتراه هنا حتى الآن. كن صبوراً."
 msgid "Nothing was found."
 msgstr "لم يتم العثور على شيء."
 
-#: src/options/options.js:331
+#: src/options/options.js:333
 msgid "Offline"
 msgstr "غير متصل على الانترنت"
 
@@ -2954,7 +2958,7 @@ msgstr "غير متصل على الانترنت"
 msgid "OK"
 msgstr "نعم"
 
-#: src/options/options.js:509 src/page/albums.vue:396
+#: src/options/options.js:511 src/page/albums.vue:396
 msgid "Oldest First"
 msgstr "الاقدم اولا"
 
@@ -2967,7 +2971,7 @@ msgstr "في نظام التشغيل Windows ، أدخل المورد التال
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
 msgstr "قد يؤدي إنشاء الصور المصغرة عند الطلب إلى زيادة استخدام وحدة المعالجة المركزية والذاكرة. لا يُنصح باستخدامه مع الخوادم ذات الموارد المحدودة وأجهزة NAS."
 
-#: src/options/options.js:428
+#: src/options/options.js:430
 msgid "Once a week"
 msgstr "مرة في الأسبوع"
 
@@ -2995,8 +2999,8 @@ msgstr "تم العثور على مجلد واحد"
 msgid "One label found"
 msgstr "تم العثور على تسمية واحدة"
 
-#: src/page/people/new.vue:465 src/page/people/new.vue:571
-#: src/page/people/recognized.vue:719
+#: src/page/people/new.vue:492 src/page/people/new.vue:598
+#: src/page/people/recognized.vue:727
 msgid "One person found"
 msgstr "تم العثور على شخص واحد"
 
@@ -3030,7 +3034,7 @@ msgstr "خياري"
 msgid "or"
 msgstr "أو"
 
-#: src/options/options.js:447
+#: src/options/options.js:449
 msgid "Orange"
 msgstr "البرتقالي"
 
@@ -3052,14 +3056,14 @@ msgstr "سيتم تخزين أسماء الملفات الأصلية وفهرس�
 #: src/component/photo/edit/files.vue:103
 #: src/component/photo/edit/files.vue:111 src/component/photo/edit/files.vue:96
 #: src/component/photo/edit/files.vue:97 src/component/photo/edit/info.vue:44
-#: src/component/photo/edit/info.vue:45 src/options/options.js:502
+#: src/component/photo/edit/info.vue:45 src/options/options.js:504
 msgid "Original Name"
 msgstr "الاسم الاصلي"
 
 #: src/component/navigation.vue:362 src/component/navigation.vue:363
 #: src/component/navigation.vue:375 src/component/navigation.vue:384
 #: src/component/navigation.vue:497 src/model/file.js:180
-#: src/options/options.js:474 src/page/library/browse.vue:7
+#: src/options/options.js:476 src/page/library/browse.vue:7
 #: src/page/settings/collections.vue:42 src/page/settings/content.vue:185
 #: src/page/settings/general.vue:364
 msgid "Originals"
@@ -3069,7 +3073,7 @@ msgstr "أصول"
 msgid "Originals folder is empty"
 msgstr "مجلد النسخ الأصلية فارغ"
 
-#: src/options/options.js:465 src/options/options.js:488
+#: src/options/options.js:467 src/options/options.js:490
 msgid "Other"
 msgstr "آخر"
 
@@ -3078,7 +3082,7 @@ msgstr "آخر"
 msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
 msgstr "مهمتنا هي توفير الحل الأكثر ملاءمة للمستخدم والخصوصية للحفاظ على صورك منظمة ويمكن الوصول إليها."
 
-#: src/options/options.js:316
+#: src/options/options.js:318
 msgid "Outdoor"
 msgstr "في الخارج"
 
@@ -3161,7 +3165,7 @@ msgstr "تم الحذف بشكل نهائي"
 msgid "Permission denied"
 msgstr "طلب الاذن مرفوض"
 
-#: src/model/subject.js:158
+#: src/model/subject.js:159
 msgid "Person"
 msgstr "شخص"
 
@@ -3207,11 +3211,11 @@ msgstr "الصور"
 msgid "Picture"
 msgstr "صورة"
 
-#: src/options/options.js:513
+#: src/options/options.js:515
 msgid "Picture Title"
 msgstr "عنوان الصورة"
 
-#: src/options/options.js:445
+#: src/options/options.js:447
 msgid "Pink"
 msgstr "لون القرنفل"
 
@@ -3367,7 +3371,7 @@ msgstr "خاص"
 msgid "Processing upload..."
 msgstr "جارٍ معالجة التحميل ..."
 
-#: src/options/options.js:462
+#: src/options/options.js:464
 msgid "Product Feedback"
 msgstr "ملاحظات المنتج"
 
@@ -3378,7 +3382,7 @@ msgstr "ملاحظات المنتج"
 msgid "Projection"
 msgstr "تنبؤ"
 
-#: src/options/options.js:443
+#: src/options/options.js:445
 msgid "Purple"
 msgstr "أرجواني"
 
@@ -3402,7 +3406,7 @@ msgstr "عشوائي"
 msgid "Rating {0} of {1}"
 msgstr "التقييم {0} من {1}"
 
-#: src/common/util.js:856 src/options/options.js:346
+#: src/common/util.js:856 src/options/options.js:348
 msgid "Raw"
 msgstr "خام"
 
@@ -3424,15 +3428,15 @@ msgstr "قراءة مناطق الوجه والأسماء من البيانات 
 msgid "Read-Only Mode"
 msgstr "وضع القراءة فقط"
 
-#: src/options/options.js:510 src/page/albums.vue:397
+#: src/options/options.js:512 src/page/albums.vue:397
 msgid "Recently Added"
 msgstr "أضيف حديثا"
 
-#: src/options/options.js:511
+#: src/options/options.js:513
 msgid "Recently Archived"
 msgstr "مؤرشفة مؤخرا"
 
-#: src/options/options.js:512 src/page/albums.vue:398
+#: src/options/options.js:514 src/page/albums.vue:398
 msgid "Recently Edited"
 msgstr "تم تحريره مؤخرًا"
 
@@ -3449,7 +3453,7 @@ msgstr "معروف"
 msgid "Recovery Code"
 msgstr "رمز الاسترداد"
 
-#: src/options/options.js:446
+#: src/options/options.js:448
 msgid "Red"
 msgstr "أحمر"
 
@@ -3638,7 +3642,7 @@ msgstr "تدوير"
 msgid "Rows per page:"
 msgstr "عدد الصفوف في الصفحة:"
 
-#: src/options/options.js:310
+#: src/options/options.js:312
 msgid "Satellite"
 msgstr "الأقمار الصناعية"
 
@@ -3678,10 +3682,10 @@ msgstr "الأقمار الصناعية"
 #: src/component/meta/datetime/dialog.vue:38
 #: src/component/meta/datetime/dialog.vue:39
 #: src/component/meta/datetime/dialog.vue:51
-#: src/component/people/edit/dialog.vue:30
-#: src/component/people/edit/dialog.vue:31
-#: src/component/people/edit/dialog.vue:42
-#: src/component/people/edit/dialog.vue:49
+#: src/component/people/edit/dialog.vue:34
+#: src/component/people/edit/dialog.vue:35
+#: src/component/people/edit/dialog.vue:46
+#: src/component/people/edit/dialog.vue:60
 #: src/component/photo/batch-edit.vue:483
 #: src/component/photo/edit/details.vue:396 src/component/service/edit.vue:103
 #: src/component/service/edit.vue:235 src/component/service/edit.vue:93
@@ -3903,7 +3907,7 @@ msgstr "المشاركة"
 msgid "Share %{s}"
 msgstr "مشاركة %{s}"
 
-#: src/options/options.js:503
+#: src/options/options.js:505
 msgid "Share Friendly"
 msgstr "مشاركة سهلة"
 
@@ -4147,7 +4151,7 @@ msgstr "إيقاف الصب"
 msgid "Storage"
 msgstr "المساحة"
 
-#: src/options/options.js:298
+#: src/options/options.js:300
 msgid "Streets"
 msgstr "الشوارع"
 
@@ -4216,11 +4220,11 @@ msgstr "مزامنة ملفات الفيديو الخام"
 msgid "Taken"
 msgstr "مأخوذ"
 
-#: src/options/options.js:452
+#: src/options/options.js:454
 msgid "Teal"
 msgstr "بط نهري صغير"
 
-#: src/options/options.js:322
+#: src/options/options.js:324
 msgid "Terrain"
 msgstr "التضاريس"
 
@@ -4650,7 +4654,7 @@ msgstr "UUID"
 
 #: src/common/util.js:866 src/component/photo/view/cards.vue:114
 #: src/component/photo/view/cards.vue:239
-#: src/component/photo/view/mosaic.vue:69 src/options/options.js:366
+#: src/component/photo/view/mosaic.vue:69 src/options/options.js:368
 msgid "Vector"
 msgstr "المتجه"
 
@@ -4665,6 +4669,10 @@ msgstr "الابعاد"
 msgid "Verification Code"
 msgstr "رمز التحقق"
 
+#: src/component/people/edit/dialog.vue:43
+msgid "Verified"
+msgstr "موثق"
+
 #: src/locales.js:427
 msgid "Verified email required"
 msgstr "البريد الإلكتروني الموثق مطلوب"
@@ -4677,11 +4685,11 @@ msgstr "الإصدار"
 #: src/component/photo/batch-edit.vue:69 src/component/photo/view/cards.vue:122
 #: src/component/photo/view/cards.vue:220 src/component/photo/view/list.vue:83
 #: src/component/photo/view/mosaic.vue:77 src/model/file.js:202
-#: src/model/photo.js:1015 src/model/photo.js:997 src/options/options.js:354
+#: src/model/photo.js:1015 src/model/photo.js:997 src/options/options.js:356
 msgid "Video"
 msgstr "فيديو"
 
-#: src/options/options.js:516
+#: src/options/options.js:518
 msgid "Video Duration"
 msgstr "مدة الفيديو"
 
@@ -4714,7 +4722,7 @@ msgstr "الرؤية"
 msgid "Visitor"
 msgstr "زائر"
 
-#: src/options/options.js:517
+#: src/options/options.js:519
 msgid "Visual Similarity"
 msgstr "التشابه البصري"
 
@@ -4735,7 +4743,7 @@ msgstr "تسجيل الدخول عبر الويب"
 #: src/page/admin/users.vue:188 src/component/cluster/node/user-edit.vue:232
 #: src/component/user/add/dialog.vue:148 src/component/user/edit/dialog.vue:298
 #: src/page/admin/users.vue:280 src/options/auth.js:85 src/options/auth.js:98
-#: src/options/options.js:498
+#: src/options/options.js:500
 msgid "WebDAV"
 msgstr "WebDAV"
 
@@ -4751,7 +4759,7 @@ msgstr "يمكن لعملاء WebDAV، مثل Microsoft Windows Explorer أو Ap
 msgid "WebDAV Upload"
 msgstr "تحميل WebDAV"
 
-#: src/page/places.vue:445
+#: src/page/places.vue:441
 msgid "WebGL support is disabled in your browser"
 msgstr "تم تعطيل دعم WebGL في متصفحك"
 
@@ -4760,7 +4768,7 @@ msgstr "تم تعطيل دعم WebGL في متصفحك"
 msgid "Website"
 msgstr "الموقع الالكتروني"
 
-#: src/options/options.js:456
+#: src/options/options.js:458
 msgid "White"
 msgstr "أبيض"
 
@@ -4775,7 +4783,7 @@ msgstr "تفاصيل العمل"
 msgid "Year"
 msgstr "سنة"
 
-#: src/options/options.js:449
+#: src/options/options.js:451
 msgid "Yellow"
 msgstr "اصفر"
 
@@ -4855,7 +4863,7 @@ msgstr "لا يمكن ربط حسابك"
 msgid "Your account has been successfully connected."
 msgstr "تم ربط حسابك بنجاح."
 
-#: src/page/places.vue:449
+#: src/page/places.vue:445
 msgid "Your browser does not support WebGL"
 msgstr "متصفحك لا يدعم WebGL"
 
@@ -4927,6 +4935,12 @@ msgstr "عنوان"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "الأرشيف"
+
+#~ msgid "Create"
+#~ msgstr "تم إنشاءه"
+
+#~ msgid "Create a new person named %{name}?"
+#~ msgstr "هل تريد إنشاء شخص جديد باسم %{name}؟"
 
 #~ msgid "%{n} files uploaded"
 #~ msgstr "تم تحميل %{n} من الملفات"
@@ -5411,9 +5425,6 @@ msgstr "الأرشيف"
 
 #~ msgid "Why are some features only available to sponsors?"
 #~ msgstr "لماذا بعض الميزات متاحة فقط للجهات الراعية؟"
-
-#~ msgid "Verified"
-#~ msgstr "موثق"
 
 #~ msgid "Proceed"
 #~ msgstr "يتابع"

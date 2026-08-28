@@ -27,7 +27,7 @@ const makeWrapper = () => {
         VRow: { template: "<div><slot /></div>" },
         VCol: { template: "<div><slot /></div>" },
         VTextField: { template: "<input />" },
-        VCheckbox: { template: "<input type='checkbox' />" },
+        VCheckbox: { props: ["modelValue", "label"], template: "<input type='checkbox' :data-label='label' />" },
         VBtn: { template: "<button><slot /></button>" },
         VIcon: { template: "<i><slot /></i>" },
       },
@@ -72,5 +72,33 @@ describe("component/people/edit/dialog", () => {
     expect(validate).toHaveBeenCalled();
     expect(wrapper.emitted("confirm")).toBeTruthy();
     expect(wrapper.emitted("confirm")[0][0]).toBe(wrapper.vm.model);
+  });
+});
+
+describe("component/people/edit/dialog verified flag", () => {
+  // The flag decides whether a face reset keeps the person, so it has to be reachable where a
+  // person is edited rather than only through the API.
+  it("offers a verified checkbox between favorite and hidden", () => {
+    const wrapper = makeWrapper();
+
+    const labels = wrapper.findAll("input[type='checkbox']").map((c) => c.attributes("data-label"));
+
+    expect(labels).toEqual(["Favorite", "Verified", "Hidden"]);
+
+    wrapper.unmount();
+  });
+
+  it("round-trips the flag through the model", () => {
+    const wrapper = makeWrapper();
+
+    expect(wrapper.vm.model.Verified).toBe(false);
+
+    wrapper.vm.model.Verified = true;
+
+    expect(wrapper.vm.model.Verified).toBe(true);
+    // Sent to the server on save, so a default of undefined would drop it from the payload.
+    expect(Object.keys(wrapper.vm.model.getValues(false))).toContain("Verified");
+
+    wrapper.unmount();
   });
 });

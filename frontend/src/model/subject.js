@@ -27,6 +27,7 @@ export class Subject extends Collection {
       Bio: "",
       Notes: "",
       Favorite: false,
+      Verified: false,
       Hidden: false,
       Private: false,
       Excluded: false,

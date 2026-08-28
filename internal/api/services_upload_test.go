@@ -27,4 +27,14 @@ func TestUploadToService(t *testing.T) {
 		assert.Equal(t, i18n.Msg(i18n.ErrAccountNotFound), val.String())
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
+	// Covers the file selection, which the cases above never reach: they abort in AccountByID or
+	// BindJSON, both of which run before it.
+	t.Run("EmptySelection", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		UploadToService(router)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/services/1000000/upload", `{"folder": "/Photos"}`)
+		val := gjson.Get(r.Body.String(), "error")
+		assert.Equal(t, i18n.Msg(i18n.ErrEntityNotFound), val.String())
+		assert.Equal(t, http.StatusNotFound, r.Code)
+	})
 }

@@ -254,8 +254,23 @@ func MarkersWithSubjectConflict() (results entity.Markers, err error) {
 
 // ResetFaceMarkerMatches removes automatically added subject and face references from the markers table.
 func ResetFaceMarkerMatches() (removed int64, err error) {
-	res := Db().Model(&entity.Marker{}).
-		Where("subj_src = ? AND marker_type = ?", entity.SrcAuto, entity.MarkerFace).
+	return resetFaceMarkerMatches(Db().Where("subj_src = ?", entity.SrcAuto))
+}
+
+// ResetAllFaceMarkerMatches clears the references of every face marker, including the ones a person
+// or an XMP sidecar named. Those columns are the only record of a hand-verified identity, so a
+// caller that measures cluster purity against them has to export them first.
+func ResetAllFaceMarkerMatches() (removed int64, err error) {
+	return resetFaceMarkerMatches(Db())
+}
+
+// resetFaceMarkerMatches clears the subject and face references of the face markers a scope selects.
+// Geometry, embeddings, size and score are left alone, which lets a later run re-cluster without
+// decoding a file. The columns are listed explicitly rather than written through the struct, and a
+// test instance relies on that: a column this package does not name survives a reset.
+func resetFaceMarkerMatches(scope *gorm.DB) (removed int64, err error) {
+	res := scope.Model(&entity.Marker{}).
+		Where("marker_type = ?", entity.MarkerFace).
 		UpdateColumns(entity.Values{"marker_name": "", "subj_uid": "", "subj_src": "", "face_id": "", "face_dist": -1.0, "matched_at": nil})
 
 	return res.RowsAffected, res.Error

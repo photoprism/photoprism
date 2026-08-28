@@ -26,12 +26,40 @@ import (
 var FacesCommands = &cli.Command{
 	Name:  "faces",
 	Usage: "Face recognition subcommands",
+	// Ordered as an operator meets them: what the instance is doing, the passes that change the
+	// index, then the reports that describe it, and last the ones that diagnose or destroy.
 	Subcommands: []*cli.Command{
+		FacesStatusCommand,
 		{
-			Name:   "stats",
-			Usage:  "Shows stats on face samples",
-			Action: facesStatsAction,
+			Name:  "update",
+			Usage: "Performs face clustering and matching",
+			Flags: []cli.Flag{
+				ForceFlag("update all faces"),
+			},
+			Action: facesUpdateAction,
 		},
+		{
+			Name:      "index",
+			Usage:     "Searches originals for faces",
+			ArgsUsage: "[subfolder]",
+			Action:    facesIndexAction,
+		},
+		{
+			Name:  "optimize",
+			Usage: "Optimizes face clusters",
+			Flags: []cli.Flag{
+				&cli.BoolFlag{
+					Name:  "retry",
+					Usage: "reset merge retry counters before optimizing",
+				},
+			},
+			Action: facesOptimizeAction,
+		},
+		FacesMigrateCommand,
+		FacesListCommand,
+		FacesMarkersCommand,
+		FacesSubjectsCommand,
+		FacesConflictsCommand,
 		{
 			Name:  "audit",
 			Usage: "Scans the index for issues",
@@ -49,10 +77,20 @@ var FacesCommands = &cli.Command{
 			Action: facesAuditAction,
 		},
 		{
+			Name:   "stats",
+			Usage:  "Shows stats on face samples",
+			Action: facesStatsAction,
+		},
+		{
 			Name:  "reset",
 			Usage: "Removes people and faces after confirmation",
 			Flags: []cli.Flag{
-				ForceFlag("removes all people and faces"),
+				ForceFlag("removes all people, faces, and markers, so faces must be detected again"),
+				&cli.BoolFlag{
+					Name:    "all",
+					Aliases: []string{"a"},
+					Usage:   "also removes manually created faces and names, keeping the markers",
+				},
 				&cli.StringFlag{
 					Name:  "detector",
 					Usage: "regenerate markers with the detection model `NAME` (" + face.DetectorUsageString() + ")",
@@ -65,40 +103,13 @@ var FacesCommands = &cli.Command{
 			},
 			Action: facesResetAction,
 		},
-		FacesMigrateCommand,
-		{
-			Name:      "index",
-			Usage:     "Searches originals for faces",
-			ArgsUsage: "[subfolder]",
-			Action:    facesIndexAction,
-		},
-		{
-			Name:  "update",
-			Usage: "Performs face clustering and matching",
-			Flags: []cli.Flag{
-				ForceFlag("update all faces"),
-			},
-			Action: facesUpdateAction,
-		},
-		{
-			Name:  "optimize",
-			Usage: "Optimizes face clusters",
-			Flags: []cli.Flag{
-				&cli.BoolFlag{
-					Name:  "retry",
-					Usage: "reset merge retry counters before optimizing",
-				},
-			},
-			Action: facesOptimizeAction,
-		},
-		FacesStatusCommand,
 	},
 }
 
 // FacesMigrateCommand configures the face embedding migration command.
 var FacesMigrateCommand = &cli.Command{
 	Name:  "migrate",
-	Usage: "Migrates face embeddings to the supported model",
+	Usage: "Migrates face embeddings to a supported model",
 	Description: "This is how the face embedding model is changed: every marker is re-embedded and " +
 		"the target is recorded as the configured model. It defaults to " + face.DefaultModelName() +
 		", the model this release supports, so an ordinary migration needs no target. Stop the server " +
@@ -327,11 +338,25 @@ func facesResetAction(ctx *cli.Context) error {
 			return cli.Exit("faces: --force removes all people and faces, so it cannot be combined with --detector", 1)
 		}
 
+		// Refused rather than treated as the wider of the two: the flags name different outcomes
+		// for the markers table, and which one a caller meant is not knowable from the command.
+		if ctx.Bool("all") {
+			return cli.Exit("faces: --force also removes the markers, so it cannot be combined with --all", 1)
+		}
+
 		return facesResetAllAction(ctx)
 	}
 
+	all := ctx.Bool("all")
+
+	label := "Remove automatically recognized faces, matches, and dangling subjects?"
+
+	if all {
+		label = "Remove all faces and matches, including names, keeping the markers?"
+	}
+
 	actionPrompt := promptui.Prompt{
-		Label:     "Remove automatically recognized faces, matches, and dangling subjects?",
+		Label:     label,
 		IsConfirm: true,
 	}
 
@@ -367,14 +392,19 @@ func facesResetAction(ctx *cli.Context) error {
 		}
 	}
 
-	if detector != "" {
-		if err := w.ResetAndReindex(detector, get.Index()); err != nil {
-			return err
-		}
-	} else {
-		if err := w.Reset(); err != nil {
-			return err
-		}
+	var resetErr error
+
+	switch {
+	case detector != "":
+		resetErr = w.ResetAndReindex(detector, get.Index(), all)
+	case all:
+		resetErr = w.ResetAll()
+	default:
+		resetErr = w.Reset()
+	}
+
+	if resetErr != nil {
+		return resetErr
 	}
 
 	elapsed := time.Since(start)

@@ -117,6 +117,22 @@ func (m *Face) SetEmbeddings(embeddings face.Embeddings, model face.ModelName) (
 
 	m.EmbedModel = model
 
+	// A midpoint with no magnitude describes no face and sits one unit from every unit vector, so
+	// a cluster built from it would accept whatever a model reaching past 1 compares with it.
+	// Refused here as well as in Match, so such a row cannot be stored in the first place - which
+	// is also what keeps the recorded kind and the migration predicate in agreement.
+	if m.embedding.Zero() {
+		return fmt.Errorf("embedding has no magnitude")
+	}
+
+	// Classified from the midpoint that is stored, not from the inputs it was computed over: two
+	// opposite vectors are each regular while their mean is not a face. Recorded rather than left
+	// at zero because the "face:N" search filter reads the number, and raised rather than assigned
+	// so a cluster already reported as ambiguous is not downgraded.
+	if k := int(m.embedding.Kind()); k > m.FaceKind {
+		m.FaceKind = k
+	}
+
 	// Limit sample radius to reduce false positives.
 	m.SampleRadius = face.ClampSampleRadius(m.SampleRadius)
 
@@ -284,6 +300,71 @@ func (m *Face) ResolveCollision(embeddings face.Embeddings, model face.ModelName
 	}
 
 	return true, nil
+}
+
+// ClearCollision discards a recorded collision, so the cluster matches at its full accept distance.
+//
+// A collision records that two subjects competed for the same embeddings. Once an operator states
+// they are one person the premise is gone, and the narrowing gates the cluster against faces it
+// should hold; a later pass re-derives a collision that is still real.
+func (m *Face) ClearCollision() error {
+	if m.ID == "" {
+		return fmt.Errorf("invalid face id")
+	} else if !m.HasCollision() {
+		return nil
+	}
+
+	m.Collisions = 0
+	m.CollisionRadius = 0
+
+	// Reopened so the markers this cluster refused while narrowed are compared against it again;
+	// leaving the stamp would keep them out until something else reopened it.
+	m.reopen()
+	UpdateFaces.Store(true)
+
+	values := Values{"collisions": m.Collisions, "collision_radius": m.CollisionRadius, "matched_at": m.MatchedAt}
+
+	// Only ResolveCollision raises the kind, so a cluster carrying the ambiguous kind was marked by
+	// that path and returns to the regular one every cluster is created with. Any other kind is
+	// left alone.
+	if m.FaceKind == int(face.AmbiguousFace) {
+		m.FaceKind = int(face.RegularFace)
+		values["face_kind"] = m.FaceKind
+	}
+
+	return m.Updates(values)
+}
+
+// HasCollision reports whether a narrowing collision is recorded for this cluster.
+func (m *Face) HasCollision() bool {
+	return m != nil && (m.Collisions > 0 || m.CollisionRadius > 0 || m.FaceKind == int(face.AmbiguousFace))
+}
+
+// ClearSubjectCollisions discards the collisions recorded for a subject's clusters and reports how
+// many were cleared. Used where two subjects turn out to be one person, since every collision
+// between their clusters was recorded against an identity that no longer exists.
+func ClearSubjectCollisions(subjUID string) (cleared int, err error) {
+	if subjUID == "" {
+		return 0, fmt.Errorf("subject has no uid")
+	}
+
+	var faces Faces
+
+	if err = UnscopedDb().Where("subj_uid = ?", subjUID).
+		Where("collisions > 0 OR collision_radius > 0 OR face_kind = ?", int(face.AmbiguousFace)).
+		Find(&faces).Error; err != nil {
+		return 0, err
+	}
+
+	for i := range faces {
+		if clearErr := faces[i].ClearCollision(); clearErr != nil {
+			return cleared, clearErr
+		}
+
+		cleared++
+	}
+
+	return cleared, nil
 }
 
 // ReviseMatches updates marker matches after face parameters have been changed.

@@ -15,6 +15,7 @@ type Subject struct {
 	SubjExcluded bool   `json:"Excluded"`
 	FileCount    int    `json:"FileCount"`
 	PhotoCount   int    `json:"PhotoCount"`
+	Verified     bool   `json:"Verified"`
 	Thumb        string `json:"Thumb"`
 	ThumbSrc     string `json:"ThumbSrc,omitempty"`
 }

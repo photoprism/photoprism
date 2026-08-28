@@ -134,7 +134,7 @@ type faceContender struct {
 //
 // The closest one has to win because UpdateMatchStats widens the chosen cluster to the distance it
 // accepted. Each comparison is bounded, which keeps the full scan affordable.
-func selectBestFace(embeddings face.Embeddings, idx faceIndex) (*entity.Face, float64, bool) {
+func selectBestFace(embeddings face.Embeddings, idx faceIndex, anchored bool) (*entity.Face, float64, bool) {
 	if embeddings.Empty() {
 		return nil, -1, false
 	}
@@ -179,27 +179,29 @@ func selectBestFace(embeddings face.Embeddings, idx faceIndex) (*entity.Face, fl
 		}
 	}
 
-	if best == nil || !ambiguousBestFace(best, bestDist, contenders) {
+	if best == nil || !ambiguousBestFace(best, bestDist, contenders, anchored) {
 		return best, bestDist, false
 	}
 
 	return nil, -1, true
 }
 
-// ambiguousBestFace reports whether the marker sits between clusters of different people rather
-// than inside one of them.
+// ambiguousBestFace reports whether the marker sits between clusters of different people.
 //
-// Every contender within the margin is weighed rather than the runner-up alone: a subject owns
-// several clusters routinely, and two of theirs would otherwise fill both places and hide a third
-// that holds someone else. Two clusters of one subject are exempt, since either names the same
-// face; two anonymous ones are not, because nothing says they hold the same person.
-func ambiguousBestFace(best *entity.Face, bestDist float64, contenders []faceContender) bool {
+// Two clusters of one subject are exempt, and two anonymous ones are too: to contend they must sit
+// close, and clusters that close are one person on the evidence. Not for an anchored marker, whose
+// name SetFace lets the winner adopt and spread - there the toss names a person, irreversibly.
+func ambiguousBestFace(best *entity.Face, bestDist float64, contenders []faceContender, anchored bool) bool {
 	for _, c := range contenders {
 		if !face.AmbiguousMatch(bestDist, c.dist) {
 			continue
 		}
 
-		if best.SubjUID == "" || best.SubjUID != c.ref.SubjUID {
+		if best.SubjUID != c.ref.SubjUID {
+			return true
+		}
+
+		if anchored && best.SubjUID == "" {
 			return true
 		}
 	}
@@ -310,10 +312,9 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 
 // stampMatchedFaces records that this run compared each cluster against every marker.
 //
-// A cluster a collision reopened during the pass is left alone. Stamping it would end the only
-// route back: the next run reads clusters that are still unmatched, so a stamped one is not
-// examined again and the markers ReviseMatches dropped have nothing to be compared against.
-// Every cluster here started out unmatched, so the timestamp cannot tell the two apart.
+// A cluster a collision reopened during the pass is left alone: stamping it would end the only
+// route back, since the next run reads clusters that are still unmatched. Every cluster here
+// started out unmatched, so the timestamp cannot tell the two apart and the flag has to.
 func stampMatchedFaces(faces entity.Faces) {
 	for _, m := range faces {
 		if m.Reopened() {
@@ -408,8 +409,14 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 				continue
 			}
 
+			// Held to the stricter test only where winning a cluster would name it. Narrower than
+			// what clearAmbiguousMarker exempts, deliberately: that asks whether to withdraw
+			// somebody's assertion, which a sidecar name is, while this asks whether the choice
+			// mints an identity, which a sidecar name cannot.
+			anchored := marker.NamesFace()
+
 			// Pointer to the matching face.
-			selFace, dist, ambiguous := selectBestFace(markerEmbeddings, index)
+			selFace, dist, ambiguous := selectBestFace(markerEmbeddings, index, anchored)
 
 			// A marker between two people is detached rather than left on whichever cluster an
 			// earlier run gave it, because that assignment was the same coin toss. Decided before

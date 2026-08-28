@@ -6,7 +6,9 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/event"
 
 	"github.com/photoprism/photoprism/internal/form"
@@ -677,5 +679,144 @@ func TestReassignSubject(t *testing.T) {
 		}
 
 		assert.Nil(t, ReassignSubject(subj, "Reassign Lookup Gone"))
+	})
+}
+
+// TestSubject_MergeWith_ClearsCollisions pins that stating two subjects are one person also
+// retracts the geometry that treating them as two produced.
+//
+// A collision narrows a cluster's accept distance and nothing else widens it again, so without
+// this the clusters stay gated against faces that the merge just established do belong to them.
+func TestSubject_MergeWith_ClearsCollisions(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		typo := NewSubject("Merge Collision Typo", SubjPerson, SrcManual)
+		require.NotNil(t, typo)
+		require.NoError(t, typo.Create())
+
+		keep := NewSubject("Merge Collision Keep", SubjPerson, SrcManual)
+		require.NotNil(t, keep)
+		require.NoError(t, keep.Create())
+
+		// One narrowed cluster per subject: the merge has to reach both, because the collision was
+		// recorded on each side of the same false premise.
+		typoFace := &Face{
+			ID: "MERGECOLLISION0000000000000000C1", SubjUID: typo.SubjUID, FaceSrc: SrcManual,
+			SampleRadius: 0.3, Samples: 4, Collisions: 1, CollisionRadius: 0.64,
+			FaceKind: int(face.AmbiguousFace),
+		}
+		keepFace := &Face{
+			ID: "MERGECOLLISION0000000000000000C2", SubjUID: keep.SubjUID, FaceSrc: SrcManual,
+			SampleRadius: 0.3, Samples: 4, Collisions: 2, CollisionRadius: 0.802,
+		}
+
+		require.NoError(t, Db().Create(typoFace).Error)
+		require.NoError(t, Db().Create(keepFace).Error)
+
+		t.Cleanup(func() {
+			UnscopedDb().Delete(&Face{}, "id IN (?)", []string{typoFace.ID, keepFace.ID})
+			UnscopedDb().Delete(&Subject{}, "subj_uid IN (?)", []string{typo.SubjUID, keep.SubjUID})
+		})
+
+		require.NoError(t, typo.MergeWith(keep))
+
+		var merged, kept Face
+
+		require.NoError(t, UnscopedDb().Where("id = ?", typoFace.ID).First(&merged).Error)
+		assert.Equal(t, keep.SubjUID, merged.SubjUID, "the cluster moves to the surviving subject")
+		assert.Zero(t, merged.Collisions)
+		assert.Zero(t, merged.CollisionRadius)
+		assert.Equal(t, int(face.RegularFace), merged.FaceKind, "and takes part in matching again")
+		assert.Nil(t, merged.MatchedAt, "so the markers it refused are compared against it again")
+
+		require.NoError(t, UnscopedDb().Where("id = ?", keepFace.ID).First(&kept).Error)
+		assert.Zero(t, kept.Collisions, "the surviving subject's own clusters are cleared too")
+		assert.Zero(t, kept.CollisionRadius)
+	})
+}
+
+// TestSubject_SaveForm_Verified covers the one path that may set the verified flag.
+//
+// The rule the column depends on is that nothing automatic writes it: a flag the matcher, the
+// clusterer or an import could raise stops meaning "a person vouched for this name".
+func TestSubject_SaveForm_Verified(t *testing.T) {
+	m := NewSubject("Verified Form Subject", SubjPerson, SrcManual)
+	require.NotNil(t, m)
+	require.NoError(t, m.Create())
+
+	t.Cleanup(func() { UnscopedDb().Delete(&Subject{}, "subj_uid = ?", m.SubjUID) })
+
+	assert.False(t, m.Verified, "a new person is not vouched for")
+
+	frm, err := form.NewSubject(m)
+	require.NoError(t, err)
+	assert.False(t, frm.Verified, "and the form round-trips that")
+
+	frm.Verified = true
+
+	changed, err := m.SaveForm(frm)
+	require.NoError(t, err)
+	assert.True(t, changed)
+
+	stored := FindSubject(m.SubjUID)
+	require.NotNil(t, stored)
+	assert.True(t, stored.Verified, "the flag has to persist, not only stick to the instance")
+
+	// And it clears again, so a wrong assertion is not permanent.
+	frm.Verified = false
+
+	_, err = m.SaveForm(frm)
+	require.NoError(t, err)
+
+	stored = FindSubject(m.SubjUID)
+	require.NotNil(t, stored)
+	assert.False(t, stored.Verified)
+}
+
+// TestSubject_MergeWith_Verified pins that the flag follows the person rather than the row.
+//
+// The survivor keeps it, or the most ordinary People action - renaming one person onto another -
+// would silently strip the protection and the next reset would delete the name. The absorbed row
+// loses it, or the tombstone becomes uncollectable: the orphan sweep skips a verified row.
+func TestSubject_MergeWith_Verified(t *testing.T) {
+	merge := func(t *testing.T, vouchedIsAbsorbed bool) (survivor, absorbed *Subject) {
+		t.Helper()
+
+		a := NewSubject("ZZ Merge Verified A", SubjPerson, SrcManual)
+		b := NewSubject("ZZ Merge Verified B", SubjPerson, SrcManual)
+		require.NotNil(t, a)
+		require.NotNil(t, b)
+
+		if vouchedIsAbsorbed {
+			a.Verified = true
+		} else {
+			b.Verified = true
+		}
+
+		require.NoError(t, a.Create())
+		require.NoError(t, b.Create())
+
+		t.Cleanup(func() {
+			UnscopedDb().Delete(&Subject{}, "subj_uid IN (?)", []string{a.SubjUID, b.SubjUID})
+		})
+
+		require.NoError(t, a.MergeWith(b))
+
+		var stored, gone Subject
+		require.NoError(t, UnscopedDb().Where("subj_uid = ?", b.SubjUID).First(&stored).Error)
+		require.NoError(t, UnscopedDb().Where("subj_uid = ?", a.SubjUID).First(&gone).Error)
+
+		return &stored, &gone
+	}
+
+	t.Run("AbsorbedWasVerified", func(t *testing.T) {
+		survivor, absorbed := merge(t, true)
+
+		assert.True(t, survivor.Verified, "the survivor inherits it, or a reset deletes the name")
+		assert.False(t, absorbed.Verified, "and the deleted row gives it up, or it can never be collected")
+	})
+	t.Run("SurvivorWasVerified", func(t *testing.T) {
+		survivor, _ := merge(t, false)
+
+		assert.True(t, survivor.Verified, "a merge does not withdraw what somebody vouched for")
 	})
 }

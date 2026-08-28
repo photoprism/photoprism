@@ -10,7 +10,12 @@ type Kind int
 // Kind values are stored in faces.face_kind, so 2 and 3 stay reserved for the retired
 // children and background classifications rather than being reused.
 const (
-	// RegularFace represents a standard face embedding.
+	// UnclassifiedFace is the zero value, so it cannot be told apart from a column that was never
+	// set. Nothing stores it deliberately: an embedding that has no magnitude reports it, and a
+	// cluster built from one is not a face.
+	UnclassifiedFace Kind = 0
+	// RegularFace represents a standard face embedding, which is what every cluster is created
+	// with. Stored rather than left at zero so a value in the column always means something.
 	RegularFace Kind = 1
 	// AmbiguousFace represents embeddings that should be treated as uncertain.
 	AmbiguousFace Kind = 4

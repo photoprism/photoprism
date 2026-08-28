@@ -137,11 +137,18 @@ func (w *Faces) start(opt FacesOptions) (err error) {
 
 	var start time.Time
 
+	// changed records whether this run moved anything the subject counts are computed from, so an
+	// idle wake does not pay for the join that refreshes them; every step below that can reassign a
+	// marker already reports how many it touched. A forced run recomputes regardless, because drift
+	// arising outside the worker - an interrupted run, a photo turned private - moves no marker.
+	changed := opt.Force
+
 	// Remove orphan file markers.
 	start = time.Now()
 	if removed, err := query.RemoveOrphanMarkers(); err != nil {
 		log.Errorf("faces: %s (remove orphan markers)", err)
 	} else if removed > 0 {
+		changed = true
 		log.Infof("faces: removed %d orphan markers [%s]", removed, time.Since(start))
 	} else {
 		log.Debugf("faces: found no orphan markers [%s]", time.Since(start))
@@ -152,6 +159,7 @@ func (w *Faces) start(opt FacesOptions) (err error) {
 	if removed, err := query.FixMarkerReferences(); err != nil {
 		log.Errorf("markers: %s (fix references)", err)
 	} else if removed > 0 {
+		changed = true
 		log.Infof("markers: fixed %d references [%s]", removed, time.Since(start))
 	} else {
 		log.Debugf("markers: found no invalid references [%s]", time.Since(start))
@@ -162,6 +170,7 @@ func (w *Faces) start(opt FacesOptions) (err error) {
 	if affected, err := query.CreateMarkerSubjects(); err != nil {
 		log.Errorf("markers: %s (create subjects)", err)
 	} else if affected > 0 {
+		changed = true
 		log.Infof("markers: added %d known subjects [%s]", affected, time.Since(start))
 	} else {
 		log.Debugf("markers: found no missing subjects [%s]", time.Since(start))
@@ -172,6 +181,7 @@ func (w *Faces) start(opt FacesOptions) (err error) {
 	if c, r, err := query.ResolveFaceCollisions(); err != nil {
 		log.Errorf("faces: %s (resolve ambiguous subjects)", err)
 	} else if c > 0 {
+		changed = true
 		log.Infof("faces: resolved %d / %d ambiguous subjects [%s]", r, c, time.Since(start))
 	} else {
 		log.Debugf("faces: found no ambiguous subjects [%s]", time.Since(start))
@@ -182,6 +192,7 @@ func (w *Faces) start(opt FacesOptions) (err error) {
 	if res, err := w.Optimize(); err != nil {
 		return err
 	} else if res.Merged > 0 {
+		changed = true
 		log.Infof("faces: merged %d clusters [%s]", res.Merged, time.Since(start))
 	} else {
 		log.Debugf("faces: found no clusters to be merged [%s]", time.Since(start))
@@ -209,6 +220,8 @@ func (w *Faces) start(opt FacesOptions) (err error) {
 
 	// Log face matching results.
 	if matches.Updated > 0 {
+		changed = true
+
 		log.Infof("faces: updated %s, recognized %s, %d unknown [%s]", english.Plural(int(matches.Updated), "marker", "markers"), english.Plural(int(matches.Recognized), "face", "faces"), matches.Unknown, time.Since(start))
 	} else {
 		log.Debugf("faces: updated %s, recognized %s, %d unknown [%s]", english.Plural(int(matches.Updated), "marker", "markers"), english.Plural(int(matches.Recognized), "face", "faces"), matches.Unknown, time.Since(start))
@@ -228,6 +241,21 @@ func (w *Faces) start(opt FacesOptions) (err error) {
 		log.Errorf("faces: %s (remove clusters)", err)
 	} else if count > 0 {
 		log.Debugf("faces: removed %d clusters [%s]", count, time.Since(start))
+	}
+
+	// Refresh the subject counts this run invalidated.
+	//
+	// They are read by the people views, which order and filter on file_count, so a person whose
+	// markers this run assigned correctly would otherwise sort last or be filtered out - which is
+	// how a mistyped person stayed invisible long enough to look as though naming had failed.
+	if changed {
+		start = time.Now()
+
+		if err = entity.UpdateSubjectCounts(true); err != nil {
+			log.Errorf("faces: %s (update subject counts)", err)
+		} else {
+			log.Debugf("faces: updated subject counts [%s]", time.Since(start))
+		}
 	}
 
 	entity.UpdateFaces.Store(false)

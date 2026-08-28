@@ -117,6 +117,29 @@ func TestUpdateSubject(t *testing.T) {
 		r := PerformRequestWithBody(app, "PUT", "/api/v1/subjectss/xxx", `{"Name": "Updated Name"}`)
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
+	t.Run("SetVerified", func(t *testing.T) {
+		// The flag has to round-trip through the API, because that is the only way a person can
+		// set it: nothing automatic may, or it stops meaning that somebody vouched for the name.
+		app, router, _ := NewApiTest()
+
+		SearchSubjects(router)
+		UpdateSubject(router)
+
+		const uid = "js6sg6b1qekk9jx8"
+
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/subjects/"+uid, `{"Verified": true}`)
+		assert.Equal(t, http.StatusOK, r.Code)
+		assert.True(t, gjson.Get(r.Body.String(), "Verified").Bool())
+
+		// And the list the people views read has to carry it, or the checkbox cannot show it.
+		s := PerformRequest(app, "GET", "/api/v1/subjects?count=100&uid="+uid)
+		assert.Equal(t, http.StatusOK, s.Code)
+		assert.True(t, gjson.Get(s.Body.String(), "0.Verified").Bool())
+
+		r = PerformRequestWithBody(app, "PUT", "/api/v1/subjects/"+uid, `{"Verified": false}`)
+		assert.Equal(t, http.StatusOK, r.Code)
+		assert.False(t, gjson.Get(r.Body.String(), "Verified").Bool())
+	})
 	t.Run("SetManualCover", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 

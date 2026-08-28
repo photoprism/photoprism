@@ -13,6 +13,7 @@ type Subject struct {
 	SubjHidden   bool   `json:"Hidden"`
 	SubjPrivate  bool   `json:"Private"`
 	SubjExcluded bool   `json:"Excluded"`
+	Verified     bool   `json:"Verified"`
 	Thumb        string `json:"Thumb"`
 	ThumbSrc     string `json:"ThumbSrc"`
 }

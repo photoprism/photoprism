@@ -926,3 +926,36 @@ func TestMarker_Unmatched(t *testing.T) {
 	require.NotNil(t, stored)
 	assert.Nil(t, stored.MatchedAt, "the column must be cleared, not only the field")
 }
+
+// TestMarker_NamesFace covers the predicate deciding whether choosing a cluster also names it.
+//
+// Narrower than "a person set this subject": an XMP name labels its own marker only, so it cannot
+// mint an identity and must not be withheld as though it could.
+func TestMarker_NamesFace(t *testing.T) {
+	t.Run("Manual", func(t *testing.T) {
+		assert.True(t, (&Marker{SubjUID: "js6sg6b1qekk9jx8", SubjSrc: SrcManual}).NamesFace())
+	})
+	t.Run("Image", func(t *testing.T) {
+		assert.True(t, (&Marker{SubjUID: "js6sg6b1qekk9jx8", SubjSrc: SrcImage}).NamesFace())
+	})
+	t.Run("Automatic", func(t *testing.T) {
+		assert.False(t, (&Marker{SubjUID: "js6sg6b1qekk9jx8", SubjSrc: SrcAuto}).NamesFace())
+	})
+	t.Run("Xmp", func(t *testing.T) {
+		// SetFace refuses to propagate it, so nothing is minted and nothing is withheld.
+		assert.False(t, (&Marker{SubjUID: "js6sg6b1qekk9jx8", SubjSrc: SrcXmp}).NamesFace())
+	})
+	t.Run("NoSubject", func(t *testing.T) {
+		assert.False(t, (&Marker{SubjSrc: SrcManual}).NamesFace())
+	})
+	t.Run("NilMarker", func(t *testing.T) {
+		assert.False(t, (*Marker)(nil).NamesFace())
+	})
+	t.Run("MatchesTheAdoptionBranch", func(t *testing.T) {
+		// The point of the method: it must not drift from what SetFace gates the adoption on.
+		for _, src := range []string{SrcAuto, SrcXmp, SrcManual, SrcImage, SrcMeta, SrcMarker} {
+			m := &Marker{SubjUID: "js6sg6b1qekk9jx8", SubjSrc: src}
+			assert.Equal(t, subjSrcSharesFace(src), m.NamesFace(), "source %q", src)
+		}
+	})
+}

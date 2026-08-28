@@ -82,7 +82,7 @@ func facesStmt(knownOnly, unmatchedOnly, hidden, ignored bool) *gorm.DB {
 
 	// Largest clusters first, because selection bounds each comparison by the best distance
 	// found so far: meeting a likely winner early makes every later candidate cheaper to
-	// reject. Ordering by subject instead put every unnamed cluster ahead of every named one,
+	// reject. Ordering by subject instead puts every unnamed cluster ahead of every named one,
 	// which is the opposite. The id breaks ties so the order does not vary between drivers.
 	return stmt.Order("samples DESC, id")
 }
@@ -173,6 +173,15 @@ func RemoveAnonymousFaceClusters() (removed int, err error) {
 func RemoveAutoFaceClusters() (removed int, err error) {
 	res := UnscopedDb().
 		Delete(entity.Face{}, "face_src = ?", entity.SrcAuto)
+
+	return int(res.RowsAffected), res.Error
+}
+
+// RemoveAllFaceClusters removes every face cluster from the index, whatever created it. Unfiltered
+// rather than a list of known sources, because a cluster inherits the source of the marker that
+// created it, so the column holds whatever sources the markers table does.
+func RemoveAllFaceClusters() (removed int, err error) {
+	res := UnscopedDb().Delete(entity.Face{})
 
 	return int(res.RowsAffected), res.Error
 }

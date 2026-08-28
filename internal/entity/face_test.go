@@ -261,12 +261,10 @@ func TestFace_SetEmbeddings(t *testing.T) {
 		assert.Equal(t, e[0][0], m.Embedding()[0])
 	})
 	t.Run("CapsSampleRadius", func(t *testing.T) {
-		embeddings := make(face.Embeddings, 2)
-		for i := range embeddings {
-			embeddings[i] = make(face.Embedding, len(face.NullEmbedding))
-		}
-		embeddings[0][0] = 1
-		embeddings[1][0] = -1
+		// Far apart but not opposite: an exactly opposite pair averages to a vector with no
+		// magnitude, which SetEmbeddings refuses rather than storing as a cluster.
+		base := face.FixtureEmbedding(4101)
+		embeddings := face.Embeddings{base, face.FixtureEmbeddingAt(base, 1.9, 4102)}
 
 		m := &Face{}
 
@@ -724,14 +722,11 @@ func TestFace_ReviseMatchesSkipsOtherModels(t *testing.T) {
 	assert.Equal(t, m.ID, stored.FaceID, "the assignment must survive a revision it could not evaluate")
 }
 
-// TestFace_ReviseMatchesFlagsForRematching pins that a marker a conflict drops is left needing a
-// match rather than recorded as having had one.
+// TestFace_ReviseMatchesFlagsForRematching pins that a marker a conflict drops needs matching again.
 //
-// ClearFace stamps matched_at, which is true where the matcher itself found no face - it had just
-// compared against every cluster. After a conflict narrowed a cluster underneath the marker,
-// nothing has compared it against anything, and a stamped marker is in neither matching pass's
-// set: pass one reads matched_at IS NULL, pass two runs only while some cluster is unmatched. It
-// would sit unassigned until "faces update --force".
+// ClearFace stamps matched_at, true where the matcher found no face - it had just compared against
+// every cluster. After a conflict narrowed one underneath the marker nothing has, and a stamped
+// marker is in neither pass's set, so it would sit unassigned until "faces update --force".
 func TestFace_ReviseMatchesFlagsForRematching(t *testing.T) {
 	m := NewFace("", SrcAuto, face.Embeddings{face.RandomEmbedding()}, face.EmbeddingModelName())
 	require.NotNil(t, m)
@@ -912,5 +907,157 @@ func TestFace_Reopened(t *testing.T) {
 	})
 	t.Run("NilFace", func(t *testing.T) {
 		assert.False(t, (*Face)(nil).Reopened())
+	})
+}
+
+// TestFace_HasCollision covers the three states that count as a recorded collision, so that a
+// cluster excluded from matching by the ambiguous kind is not read as collision-free.
+func TestFace_HasCollision(t *testing.T) {
+	t.Run("None", func(t *testing.T) {
+		assert.False(t, (&Face{ID: "TESTFACEID", FaceKind: int(face.RegularFace)}).HasCollision())
+	})
+	t.Run("Count", func(t *testing.T) {
+		assert.True(t, (&Face{ID: "TESTFACEID", Collisions: 1}).HasCollision())
+	})
+	t.Run("Radius", func(t *testing.T) {
+		assert.True(t, (&Face{ID: "TESTFACEID", CollisionRadius: 0.64}).HasCollision())
+	})
+	t.Run("AmbiguousKind", func(t *testing.T) {
+		assert.True(t, (&Face{ID: "TESTFACEID", FaceKind: int(face.AmbiguousFace)}).HasCollision())
+	})
+	t.Run("NilFace", func(t *testing.T) {
+		assert.False(t, (*Face)(nil).HasCollision())
+	})
+}
+
+// TestFace_ClearCollision covers the only path that widens a collision radius. Without it the
+// narrowing is permanent, so a cluster stays gated against faces that are known to belong to it.
+func TestFace_ClearCollision(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		m := &Face{
+			ID:              "CLEARCOLLISION0000000000000000A1",
+			SubjUID:         SubjectFixtures.Get("john-doe").SubjUID,
+			FaceSrc:         SrcManual,
+			SampleRadius:    0.3,
+			Samples:         4,
+			Collisions:      2,
+			CollisionRadius: 0.64,
+			FaceKind:        int(face.AmbiguousFace),
+			MatchedAt:       TimeStamp(),
+		}
+
+		require.NoError(t, Db().Create(m).Error)
+		t.Cleanup(func() { UnscopedDb().Delete(&Face{}, "id = ?", m.ID) })
+
+		require.NoError(t, m.ClearCollision())
+
+		assert.Zero(t, m.Collisions)
+		assert.Zero(t, m.CollisionRadius)
+		assert.Equal(t, int(face.RegularFace), m.FaceKind, "cleared to the kind a cluster is created with")
+		assert.False(t, m.SkipMatching(), "a cleared cluster has to take part in matching again")
+		assert.Nil(t, m.MatchedAt, "the markers it refused while narrowed must be compared again")
+		assert.True(t, m.Reopened())
+
+		var stored Face
+		require.NoError(t, UnscopedDb().Where("id = ?", m.ID).First(&stored).Error)
+		assert.Zero(t, stored.Collisions)
+		assert.Zero(t, stored.CollisionRadius)
+		assert.Equal(t, int(face.RegularFace), stored.FaceKind)
+		assert.Nil(t, stored.MatchedAt)
+	})
+	t.Run("KeepsAnUnrelatedKind", func(t *testing.T) {
+		// Only the ambiguous kind is set by collision resolution, so no other one is reset here.
+		m := &Face{ID: "CLEARCOLLISION0000000000000000A2", Collisions: 1, FaceKind: 7}
+
+		require.NoError(t, m.ClearCollision())
+		assert.Equal(t, 7, m.FaceKind)
+	})
+	t.Run("NoCollision", func(t *testing.T) {
+		m := &Face{ID: "CLEARCOLLISION0000000000000000A3", MatchedAt: TimeStamp()}
+
+		require.NoError(t, m.ClearCollision())
+		assert.NotNil(t, m.MatchedAt, "a cluster without a collision must not be reopened")
+	})
+	t.Run("InvalidRequest", func(t *testing.T) {
+		assert.Error(t, (&Face{Collisions: 1}).ClearCollision())
+	})
+}
+
+// TestClearSubjectCollisions covers the bulk path used where two subjects turn out to be one.
+func TestClearSubjectCollisions(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		// jane-doe rather than john-doe: that fixture already carries a collision, which would
+		// make the count assertion below pass or fail on fixture state rather than on this code.
+		subjUID := SubjectFixtures.Get("jane-doe").SubjUID
+
+		narrowed := &Face{
+			ID: "CLEARCOLLISION0000000000000000B1", SubjUID: subjUID, FaceSrc: SrcManual,
+			SampleRadius: 0.3, Samples: 4, Collisions: 1, CollisionRadius: 0.64,
+		}
+		intact := &Face{
+			ID: "CLEARCOLLISION0000000000000000B2", SubjUID: subjUID, FaceSrc: SrcManual,
+			SampleRadius: 0.3, Samples: 4, MatchedAt: TimeStamp(),
+		}
+
+		require.NoError(t, Db().Create(narrowed).Error)
+		require.NoError(t, Db().Create(intact).Error)
+		t.Cleanup(func() { UnscopedDb().Delete(&Face{}, "id IN (?)", []string{narrowed.ID, intact.ID}) })
+
+		cleared, err := ClearSubjectCollisions(subjUID)
+		require.NoError(t, err)
+		assert.Equal(t, 1, cleared, "only the clusters carrying a collision are touched")
+
+		// Separate variables on purpose: First adds the primary key of an already populated
+		// struct as a further condition, so reusing one silently looks up the previous row.
+		var clearedFace, untouched Face
+
+		require.NoError(t, UnscopedDb().Where("id = ?", narrowed.ID).First(&clearedFace).Error)
+		assert.Zero(t, clearedFace.CollisionRadius)
+		assert.Zero(t, clearedFace.Collisions)
+		assert.Nil(t, clearedFace.MatchedAt)
+
+		require.NoError(t, UnscopedDb().Where("id = ?", intact.ID).First(&untouched).Error)
+		assert.NotNil(t, untouched.MatchedAt, "an untouched cluster keeps its match stamp")
+	})
+	t.Run("NoMatch", func(t *testing.T) {
+		cleared, err := ClearSubjectCollisions(SubjectFixtures.Get("jane-doe").SubjUID)
+
+		require.NoError(t, err)
+		assert.Zero(t, cleared)
+	})
+	t.Run("InvalidRequest", func(t *testing.T) {
+		_, err := ClearSubjectCollisions("")
+		assert.Error(t, err)
+	})
+}
+
+// TestFace_KindIsRecorded pins that a cluster stores its kind rather than leaving the column at zero.
+//
+// The "face:N" search filter reads the stored number, so a cluster formed now has to carry the kind
+// an earlier release gave one, or the same query answers differently on two libraries that differ
+// only in when they were clustered. The zero value cannot say that: it is also what nothing wrote.
+func TestFace_KindIsRecorded(t *testing.T) {
+	t.Run("NewFace", func(t *testing.T) {
+		m := NewFace("", SrcAuto, face.Embeddings{face.FixtureEmbedding(7001)}, face.EmbeddingModelName())
+
+		require.NotNil(t, m)
+		require.NotEmpty(t, m.ID)
+		assert.Equal(t, int(face.RegularFace), m.FaceKind)
+		assert.False(t, m.SkipMatching())
+	})
+	t.Run("AmbiguousIsNotDowngraded", func(t *testing.T) {
+		// Re-embedding gives the cluster a new identity, but a kind that excludes it from matching
+		// is a report about its members and must not be lowered by rebuilding it.
+		m := &Face{FaceKind: int(face.AmbiguousFace)}
+
+		require.NoError(t, m.SetEmbeddings(face.Embeddings{face.FixtureEmbedding(7002)}, face.EmbeddingModelName()))
+		assert.Equal(t, int(face.AmbiguousFace), m.FaceKind)
+	})
+	t.Run("ClearCollisionDoesNotReintroduceZero", func(t *testing.T) {
+		m := &Face{ID: "KINDCLEAR000000000000000000000A1", Collisions: 1, FaceKind: int(face.AmbiguousFace)}
+
+		require.NoError(t, m.ClearCollision())
+		assert.Equal(t, int(face.RegularFace), m.FaceKind)
+		assert.NotEqual(t, int(face.UnclassifiedFace), m.FaceKind)
 	})
 }

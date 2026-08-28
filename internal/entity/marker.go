@@ -258,6 +258,13 @@ func subjSrcSharesFace(src string) bool {
 	return src != SrcAuto && src != SrcXmp
 }
 
+// NamesFace reports whether assigning this marker to an anonymous cluster would name that cluster
+// after its subject. SetFace does exactly that, and SetSubjectUID then spreads the name across the
+// cluster, so a caller choosing between clusters needs to know.
+func (m *Marker) NamesFace() bool {
+	return m != nil && m.SubjUID != "" && subjSrcSharesFace(m.SubjSrc)
+}
+
 // SetSubjectLink links the marker to an already-resolved subject without renaming it, so
 // reassigning a marker never renames the person globally. Passing nil detaches the cached subject
 // and clears SubjUID, so a later SyncSubject resolves or creates a fresh one.
@@ -672,12 +679,10 @@ func (m *Marker) Matched() error {
 	return UnscopedDb().Model(m).UpdateColumns(Values{"matched_at": m.MatchedAt}).Error
 }
 
-// Unmatched clears the match timestamp, so the next run compares this marker against every
-// cluster again.
+// Unmatched clears the match timestamp, so the next run compares this marker against every cluster.
 //
-// ClearFace stamps instead, which is right where the matcher itself found no face: it had just
-// compared against all of them. It is wrong after a conflict narrowed a cluster and dropped the
-// marker, because nothing has compared it against anything since.
+// ClearFace stamps instead, right where the matcher found no face: it had just compared against all
+// of them. Wrong after a conflict narrowed a cluster and dropped the marker, since nothing has.
 func (m *Marker) Unmatched() error {
 	m.MatchedAt = nil
 	return UnscopedDb().Model(m).UpdateColumns(Values{"matched_at": nil}).Error
