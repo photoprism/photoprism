@@ -34,13 +34,11 @@ func PersonFilter(s string) (subjUID, nameLike string) {
 	return "", "%" + r.Replace(s) + "%"
 }
 
-// SubjectReport describes one person, with the file and photo counts their markers currently
-// support and the marker count itself.
+// SubjectReport describes one person, with the files and photos their markers currently support.
 //
-// Counted at report time rather than read from the row, because the two drift: Faces.Start does not
-// call entity.UpdateSubjectCounts, so after a CLI-only reset and re-cluster the stored numbers sit
-// at zero while the markers are correctly assigned - which is what keeps a newly named person off
-// People > Recognized long enough to look as though they were never created.
+// Counted at report time rather than read from the row: Faces.Start does not call
+// UpdateSubjectCounts, so after a CLI-only reset the stored numbers sit at zero while the markers
+// are correctly assigned - which is what keeps a newly named person off People > Recognized.
 type SubjectReport struct {
 	SubjUID    string
 	SubjName   string
@@ -54,10 +52,9 @@ type SubjectReport struct {
 
 // SubjectReports returns person subjects ordered by name.
 //
-// Counting live costs one pass over the markers joined to their files: about half a second on a
-// library of 150,000 photos and 200,000 face markers, against about ten milliseconds for the stored
-// values. That is affordable for a report and not for a request, which is why only this command
-// does it; pass live=false for the stored numbers.
+// Counting live costs one pass over the markers joined to their files - half a second on a library
+// of 150,000 photos and 200,000 markers, against ten milliseconds for the stored values. Affordable
+// for a report and not for a request; pass live=false for the stored numbers.
 func SubjectReports(person string, count, offset int, live bool) (result []SubjectReport, err error) {
 	counts := "s.file_count, s.photo_count"
 	joins := ""

@@ -2,12 +2,12 @@ package commands
 
 import (
 	"encoding/json"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/pkg/txt/report"
 )
@@ -79,13 +79,14 @@ func TestFacesListCommand(t *testing.T) {
 
 		// Samples against the live marker count is the pair worth reading: the first is what the
 		// cluster was built from, the second is what points at it now.
-		for _, col := range []string{"ID", "Name", "Subject", "Src", "Markers", "Samples", "Radius", "Collisions", "Collision Radius", "Kind", "Matched At"} {
+		for _, col := range []string{"ID", "Name", "Subject", "Src", "Kind", "Markers", "Samples", "Radius", "Collisions", "Collision Radius", "Matched At"} {
 			assert.Contains(t, output, col)
 		}
 
-		// The kind is named rather than numbered, so it reads without a lookup table. Every
-		// fixture predates the column, so what they render is the name for that state.
-		assert.Contains(t, output, face.Kind(0).String())
+		// The kind is named rather than numbered, so it reads without a lookup table. Kind sits
+		// left of the counts so everything to its right is a number.
+		assert.Less(t, strings.Index(output, "Kind"), strings.Index(output, "Markers"))
+		assert.Contains(t, output, "regular", "a cluster states its kind rather than leaving the column unset")
 	})
 	t.Run("ByPerson", func(t *testing.T) {
 		output, err := RunWithTestContext(FacesListCommand, []string{"ls", "--json", "Actress A"})

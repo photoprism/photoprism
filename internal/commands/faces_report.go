@@ -138,15 +138,15 @@ func facesListAction(ctx *cli.Context) error {
 			return err
 		}
 
-		cols := []string{"ID", "Name", "Subject", "Src", "Markers", "Samples", "Radius", "Collisions", "Collision Radius", "Kind", "Matched At"}
+		cols := []string{"ID", "Name", "Subject", "Src", "Kind", "Markers", "Samples", "Radius", "Collisions", "Collision Radius", "Matched At"}
 		rows := make([][]string, 0, len(faces))
 
 		for _, f := range faces {
 			rows = append(rows, []string{
-				f.ID, f.SubjName, f.SubjUID, entity.SrcString(f.FaceSrc),
+				f.ID, f.SubjName, f.SubjUID, entity.SrcString(f.FaceSrc), face.Kind(f.FaceKind).String(),
 				strconv.Itoa(f.Markers), strconv.Itoa(f.Samples), report.Distance(f.SampleRadius),
 				strconv.Itoa(f.Collisions), report.Distance(f.CollisionRadius),
-				face.Kind(f.FaceKind).String(), report.DateTime(f.MatchedAt),
+				report.DateTime(f.MatchedAt),
 			})
 		}
 
