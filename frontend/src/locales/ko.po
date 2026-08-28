@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-08-07 14:04+0000\n"
+"PO-Revision-Date: 2026-08-28 02:08+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/frontend/ko/>\n"
 "Language: ko\n"
@@ -1201,11 +1201,11 @@ msgstr "나라"
 
 #: src/page/people/new.vue:101
 msgid "Create"
-msgstr ""
+msgstr "만듦"
 
 #: src/page/people/new.vue:198
 msgid "Create a new person named %{name}?"
-msgstr ""
+msgstr "%{name}이라는 이름의 새로운 사람을 생성하시겠습니까?"
 
 #: src/page/auth/login.vue:123 src/page/auth/login.vue:130
 msgid "Create Account"

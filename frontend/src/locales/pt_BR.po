@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-08-07 14:04+0000\n"
+"PO-Revision-Date: 2026-08-28 02:08+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Portuguese (Brazil) <https://translate.photoprism.app/projects/photoprism/frontend/pt_BR/>\n"
 "Language: pt_BR\n"
@@ -1201,11 +1201,11 @@ msgstr "País"
 
 #: src/page/people/new.vue:101
 msgid "Create"
-msgstr ""
+msgstr "Criado"
 
 #: src/page/people/new.vue:198
 msgid "Create a new person named %{name}?"
-msgstr ""
+msgstr "Quer criar uma nova pessoa chamada %{name}?"
 
 #: src/page/auth/login.vue:123 src/page/auth/login.vue:130
 msgid "Create Account"
