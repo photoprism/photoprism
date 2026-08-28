@@ -209,4 +209,13 @@ func TestFaces_StartSkipsCountsWhenNothingMoved(t *testing.T) {
 	require.NotNil(t, stored)
 
 	assert.Equal(t, 4242, stored.FileCount, "an idle run must not pay for the refresh")
+
+	// Forcing is the recompute gesture, and the escape hatch for drift that arose outside the
+	// worker - an interrupted run, or a photo turned private, moves no marker to notice.
+	require.NoError(t, w.Start(FacesOptions{Force: true}))
+
+	stored = entity.FindSubject(subj.SubjUID)
+	require.NotNil(t, stored)
+
+	assert.NotEqual(t, 4242, stored.FileCount, "a forced run recomputes even when nothing moved")
 }

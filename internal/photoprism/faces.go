@@ -138,9 +138,10 @@ func (w *Faces) start(opt FacesOptions) (err error) {
 	var start time.Time
 
 	// changed records whether this run moved anything the subject counts are computed from, so an
-	// idle wake does not pay for the join that refreshes them. Every step below that can reassign
-	// or remove a marker already reports how many it touched.
-	var changed bool
+	// idle wake does not pay for the join that refreshes them; every step below that can reassign a
+	// marker already reports how many it touched. A forced run recomputes regardless, because drift
+	// arising outside the worker - an interrupted run, a photo turned private - moves no marker.
+	changed := opt.Force
 
 	// Remove orphan file markers.
 	start = time.Now()
