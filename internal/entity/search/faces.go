@@ -22,7 +22,7 @@ func representativeMarkerJoin(facesTable, unknown string) (string, []any) {
 	conds := []string{
 		fmt.Sprintf("m2.face_id = %s.id", facesTable),
 		"m2.marker_type = ?",
-		"m2.marker_invalid = 0",
+		"m2.marker_invalid = FALSE",
 		"m2.thumb <> ''",
 		"m2.size >= ?",
 		scoreCond,

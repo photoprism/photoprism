@@ -47,7 +47,9 @@ func ClusterScoreCond(alias string, floor int) (string, []any) {
 			continue
 		}
 
-		bars.WriteString(" WHEN ? THEN ?")
+		// Postgres treats the type of the result as text without an explicit cast.
+		// Which then fails the subsequent >= test with a type conversion issue.
+		bars.WriteString(" WHEN ? THEN CAST(? AS int)")
 		args = append(args, d.Name, d.ClusterScore)
 	}
 

@@ -606,28 +606,30 @@ func UpdateSubjectCovers(public bool) (err error) {
 
 	condition := gorm.Expr("subjects.subj_type = ? AND thumb_src = ?", entity.SubjPerson, entity.SrcAuto)
 
-	if dialect := DbDialect(); dialect != dsn.DriverMySQL && dialect != dsn.DriverSQLite3 {
-		log.Warnf("sql: unsupported dialect %s", dialect)
+	var res *gorm.DB
+	switch DbDialect() {
+	case dsn.DialectMySQL, dsn.DialectSQLite, dsn.DialectPostgreSQL:
+		// One statement for both dialects, so a library cannot get a different cover per backend.
+		// The uid guard keeps an empty subject uid from correlating against every unassigned marker,
+		// and a person left without an eligible marker gets no cover rather than a null one.
+		res = Db().Exec(`UPDATE subjects SET thumb = COALESCE((
+			SELECT m.thumb FROM markers m
+				JOIN files f ON f.file_uid = m.file_uid AND f.deleted_at IS NULL
+				JOIN photos p ON ?
+				WHERE m.subj_uid = subjects.subj_uid AND m.subj_uid <> ''
+				AND m.marker_type = ? AND m.marker_invalid = FALSE AND m.thumb <> ''
+				ORDER BY (m.subj_src <> ?) DESC, m.size DESC, m.score DESC, m.marker_uid
+				LIMIT 1), '')
+			WHERE ?`,
+			photosJoin,
+			entity.MarkerFace,
+			entity.SrcAuto,
+			condition,
+		)
+	default:
+		log.Warnf("sql: unsupported dialect %s", DbDialect())
 		return nil
 	}
-
-	// One statement for both dialects, so a library cannot get a different cover per backend.
-	// The uid guard keeps an empty subject uid from correlating against every unassigned marker,
-	// and a person left without an eligible marker gets no cover rather than a null one.
-	res := Db().Exec(`UPDATE subjects SET thumb = COALESCE((
-		SELECT m.thumb FROM markers m
-			JOIN files f ON f.file_uid = m.file_uid AND f.deleted_at IS NULL
-			JOIN photos p ON ?
-			WHERE m.subj_uid = subjects.subj_uid AND m.subj_uid <> ''
-			  AND m.marker_type = ? AND m.marker_invalid = 0 AND m.thumb <> ''
-			ORDER BY (m.subj_src <> ?) DESC, m.size DESC, m.score DESC, m.marker_uid
-			LIMIT 1), '')
-		WHERE ?`,
-		photosJoin,
-		entity.MarkerFace,
-		entity.SrcAuto,
-		condition,
-	)
 
 	err = res.Error
 
