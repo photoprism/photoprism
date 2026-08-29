@@ -133,7 +133,8 @@ func TestBackgroundSamplesMidpoint(t *testing.T) {
 		result, radius, count := EmbeddingsMidpoint(e)
 
 		assert.Equal(t, Embedding{0.5, 0.5, 0.5, 0.5}, result)
-		assert.InDelta(t, 1.01, radius, 1e-6)
+		// Each vector sits exactly 1 from the midpoint, and the stored radius adds Epsilon.
+		assert.InDelta(t, 1+EpsilonDefault, radius, 1e-6)
 		assert.Equal(t, 4, count)
 	})
 	t.Run("NormalizedResult", func(t *testing.T) {

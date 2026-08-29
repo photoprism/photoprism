@@ -949,18 +949,22 @@ func (c *Config) FaceCollisionDist() float64 {
 }
 
 // FaceEpsilonDist returns the distance slack applied to collision checks.
+//
+// Bounded by face.EpsilonDistMax rather than by the default, which is below it: the ceiling states
+// how far the ambiguity cutoff may be widened, and lowering the default must not invalidate a
+// setting that was in range.
 func (c *Config) FaceEpsilonDist() float64 {
 	value := c.options.FaceEpsilonDist
 	configured := c.faceThresholdIsSet("face-epsilon-dist", value)
 
-	if value > 0 && value <= face.EpsilonDefault && configured {
+	if value > 0 && value <= face.EpsilonDistMax && configured {
 		return value
 	}
 
 	resolved := faceModelThreshold(c.FaceEmbeddingModel(),
 		func(m *face.EmbeddingModel) float64 { return m.Epsilon }, face.EpsilonDefault)
 
-	c.warnFaceThreshold(configured && value != 0, "face-epsilon-dist", value, 0, face.EpsilonDefault, resolved)
+	c.warnFaceThreshold(configured && value != 0, "face-epsilon-dist", value, 0, face.EpsilonDistMax, resolved)
 
 	return resolved
 }

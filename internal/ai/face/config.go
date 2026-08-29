@@ -26,7 +26,7 @@ const (
 	// EpsilonDefault is the numeric tolerance used during cluster comparisons, and the same for
 	// every model unlike the calibrated distances: it is the gap a resolved collision leaves, which
 	// is a void where nothing matches, so a wider one strands embeddings rather than separating anyone.
-	EpsilonDefault = 0.01
+	EpsilonDefault = 0.001
 	// SizeThresholdDefault is the default minimum detected face size, in pixels.
 	SizeThresholdDefault = 25
 	// ScoreThresholdDefault leaves the cutoff to the detector, on the 0-100 confidence scale the
@@ -46,10 +46,12 @@ const (
 	// OverlapThresholdDefault is the default face area overlap percentage above which two
 	// detections are treated as identical.
 	OverlapThresholdDefault = 42
-	// ClusterSizeThresholdDefault is the default minimum face size, in pixels, for clustering.
-	ClusterSizeThresholdDefault = 60
+	// ClusterSizeThresholdDefault is the default minimum face size, in pixels, for clustering, and
+	// is the aligned crop the embedding models consume: a smaller face is upscaled into the
+	// template, so its embedding rests on interpolated rather than on captured detail.
+	ClusterSizeThresholdDefault = ArcFaceTemplateSize
 	// ClusterCoreDefault is the default number of faces required to seed a cluster core.
-	ClusterCoreDefault = 4
+	ClusterCoreDefault = 5
 )
 
 // InterOpThreads is how many threads an ONNX session may use to run graph nodes in
@@ -69,6 +71,10 @@ const AcceptDistMax = 1.4
 // were calibrated in; past it a cluster accepts about as readily as it refuses. A value above is
 // refused rather than clipped on read, which would leave the report echoing a number that never applies.
 const ConfigDistMax = 1.25
+
+// EpsilonDistMax is the widest configurable collision tolerance. Twice it bounds AmbiguityDist, so
+// the cutoff under which a colliding cluster is retired can be narrowed but never widened past it.
+const EpsilonDistMax = 0.01
 
 var (
 	// CropSize is the rectangular face crop, used by FaceNet, by the fallback for a face whose
