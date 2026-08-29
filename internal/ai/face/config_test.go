@@ -68,9 +68,8 @@ func TestAcceptDist(t *testing.T) {
 	})
 }
 
-// TestClusterSizeThresholdDefault pins the clustering bar to the aligned crop the models consume.
-// A literal here would leave the documented reason for the value - that a smaller face is upscaled
-// into the template - true only by coincidence.
+// TestClusterSizeThresholdDefault pins the clustering bar to the aligned crop the models consume,
+// which is what makes it independent of the thumbnail cache. A literal would let the two drift.
 func TestClusterSizeThresholdDefault(t *testing.T) {
 	assert.Equal(t, ArcFaceTemplateSize, ClusterSizeThresholdDefault)
 	assert.Greater(t, ClusterSizeThresholdDefault, SizeThresholdDefault, "a face may be detected without being able to seed a person")
