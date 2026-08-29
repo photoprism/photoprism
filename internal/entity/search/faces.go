@@ -41,6 +41,10 @@ func representativeMarkerJoin(facesTable, unknown string) (string, []any) {
 		conds = append(conds, "m2.subj_uid <> ''")
 	}
 
+	// Filtered on the sampled extent but ranked on the detection size, which is deliberate: the two
+	// answer different questions. thumb_size is available detail, which decides whether a vector can
+	// be trusted; size is the face's extent in a fixed-size thumbnail, so it tracks how much of the
+	// frame the face fills, which is what picks a picture to represent a person.
 	return fmt.Sprintf(`JOIN markers m ON m.marker_uid = (
 		SELECT m2.marker_uid FROM markers m2
 		WHERE %s

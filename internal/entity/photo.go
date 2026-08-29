@@ -28,6 +28,7 @@ import (
 )
 
 const (
+	// PhotoUID is the prefix that identifies a generated photo UID.
 	PhotoUID = byte('p')
 
 	// UUIDBytes is the byte budget for the photos.uuid column (VARBINARY(255)). A
@@ -36,9 +37,13 @@ const (
 	UUIDBytes = 255
 )
 
-var IndexUpdateInterval = 3 * time.Hour           // 3 Hours
-var MetadataUpdateInterval = 24 * 3 * time.Hour   // 3 Days
-var MetadataEstimateInterval = 24 * 7 * time.Hour // 7 Days
+// How long a photo may go without being re-indexed, having its metadata refreshed, or having an
+// estimate recomputed.
+var (
+	IndexUpdateInterval      = 3 * time.Hour
+	MetadataUpdateInterval   = 24 * 3 * time.Hour
+	MetadataEstimateInterval = 24 * 7 * time.Hour
+)
 
 var photoMutex = sync.Mutex{}
 var labelKeywordsSkipSrc = []string{SrcTitle, SrcCaption, SrcSubject, SrcKeyword}
@@ -316,11 +321,7 @@ func (m *Photo) Create() error {
 		return err
 	}
 
-	if err := m.SaveDetails(); err != nil {
-		return err
-	}
-
-	return nil
+	return m.SaveDetails()
 }
 
 // Save writes Photo changes, creates missing rows, and re-resolves the primary file relationship.
@@ -628,11 +629,7 @@ func (m *Photo) UpdateLabels() error {
 		return err
 	}
 
-	if err := m.UpdateKeywordLabels(); err != nil {
-		return err
-	}
-
-	return nil
+	return m.UpdateKeywordLabels()
 }
 
 // SubjectNames returns all known subject names.
