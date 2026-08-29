@@ -25,12 +25,14 @@ func (m Photos) UIDs() []string {
 	return result
 }
 
+// PhotoSet holds photos by UID while preserving the order they were added in.
 type PhotoSet struct {
 	order []string
 	items map[string]*Photo
 	idx   map[string]int // UID -> index in order
 }
 
+// NewPhotoSet returns an empty set.
 func NewPhotoSet() *PhotoSet {
 	return &PhotoSet{
 		order: make([]string, 0),
@@ -39,6 +41,7 @@ func NewPhotoSet() *PhotoSet {
 	}
 }
 
+// Add appends a photo, or replaces one already stored under the same UID without reordering.
 func (s *PhotoSet) Add(r *Photo) {
 	uid := r.GetUID()
 
@@ -50,6 +53,7 @@ func (s *PhotoSet) Add(r *Photo) {
 	s.items[uid] = r
 }
 
+// Delete removes the photo with the specified UID, if the set holds one.
 func (s *PhotoSet) Delete(uid string) {
 	i, ok := s.idx[uid]
 

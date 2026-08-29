@@ -28,6 +28,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 )
 
+// GeoApi names the service that resolves coordinates to places.
 var GeoApi = "places"
 
 var log = event.Log

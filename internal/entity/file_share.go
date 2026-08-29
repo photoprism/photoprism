@@ -4,6 +4,7 @@ import (
 	"time"
 )
 
+// Status values a file share moves through.
 const (
 	FileShareNew     = "new"
 	FileShareError   = "error"

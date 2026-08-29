@@ -28,6 +28,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// File constants, including the prefix that identifies a generated file UID.
 const (
 	FileUID = byte('f')
 

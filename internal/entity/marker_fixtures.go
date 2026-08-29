@@ -24,7 +24,7 @@ func (m MarkerMap) Pointer(name string) *Marker {
 }
 
 var MarkerFixtures = MarkerMap{
-	"1000003-1": Marker{ //Photo04
+	"1000003-1": Marker{ // Photo04
 		MarkerUID:  "ms6sg6b1qekk9jx8",
 		FileUID:    "fs6sg6bw45bn0004",
 		Thumb:      "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
@@ -38,7 +38,7 @@ var MarkerFixtures = MarkerMap{
 		Size:       200,
 		Score:      82,
 	},
-	"1000003-2": Marker{ //Photo04
+	"1000003-2": Marker{ // Photo04
 		MarkerUID:  "ms6sg6b1wowuy3c3",
 		FileUID:    "fs6sg6bw45bn0004",
 		Thumb:      "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
@@ -54,7 +54,7 @@ var MarkerFixtures = MarkerMap{
 		Size:       200,
 		Score:      82,
 	},
-	"1000003-3": Marker{ //Photo04
+	"1000003-3": Marker{ // Photo04
 		MarkerUID:  "ms6sg6b1wowuy111",
 		FileUID:    "fs6sg6bw45bn0004",
 		Thumb:      "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
@@ -69,7 +69,7 @@ var MarkerFixtures = MarkerMap{
 		Size:       200,
 		Score:      82,
 	},
-	"1000003-4": Marker{ //Photo04
+	"1000003-4": Marker{ // Photo04
 		MarkerUID:     "ms6sg6b1wowuy222",
 		FileUID:       "fs6sg6bw45bn0004",
 		Thumb:         "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
@@ -85,7 +85,7 @@ var MarkerFixtures = MarkerMap{
 		Size:          160,
 		Score:         72,
 	},
-	"1000003-5": Marker{ //Photo04
+	"1000003-5": Marker{ // Photo04
 		MarkerUID:     "ms6sg6b1wowuy333",
 		FileUID:       "fs6sg6bw45bn0004",
 		Thumb:         "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
@@ -103,7 +103,7 @@ var MarkerFixtures = MarkerMap{
 		Size:          200,
 		Score:         72,
 	},
-	"1000003-6": Marker{ //Photo04
+	"1000003-6": Marker{ // Photo04
 		MarkerUID:     "ms6sg6b1wowuy444",
 		FileUID:       "fs6sg6bw45bn0004",
 		Thumb:         "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
@@ -122,7 +122,7 @@ var MarkerFixtures = MarkerMap{
 		Size:          200,
 		Score:         82,
 	},
-	"ma-ba-1": Marker{ //Photo27
+	"ma-ba-1": Marker{ // Photo27
 		MarkerUID:     "ms6sg6b1wowuy555",
 		FileUID:       "fs6sg6bqhhinlple",
 		Thumb:         "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
@@ -141,7 +141,7 @@ var MarkerFixtures = MarkerMap{
 		Size:          240,
 		Score:         98,
 	},
-	"fa-gr-1": Marker{ //Photo27
+	"fa-gr-1": Marker{ // Photo27
 		MarkerUID:     "ms6sg6b1wowuy666",
 		FileUID:       "fs6sg6bqhhinlple",
 		Thumb:         "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
@@ -160,7 +160,7 @@ var MarkerFixtures = MarkerMap{
 		Size:          200,
 		Score:         86,
 	},
-	"fa-gr-2": Marker{ //Photo03
+	"fa-gr-2": Marker{ // Photo03
 		MarkerUID:     "ms6sg6b1wowuy777",
 		FileUID:       "fs6sg6bw15bnlqdw",
 		Thumb:         "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
@@ -179,7 +179,7 @@ var MarkerFixtures = MarkerMap{
 		Size:          200,
 		Score:         78,
 	},
-	"fa-gr-3": Marker{ //19800101_000002_D640C559
+	"fa-gr-3": Marker{ // 19800101_000002_D640C559
 		MarkerUID:     "ms6sg6b1wowuy888",
 		FileUID:       "fs6sg6bw45bnlqdw",
 		Thumb:         "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
@@ -198,7 +198,7 @@ var MarkerFixtures = MarkerMap{
 		Size:          200,
 		Score:         75,
 	},
-	"actress-a-1": Marker{ //Photo27
+	"actress-a-1": Marker{ // Photo27
 		MarkerUID:     "ms6sg6b1wowuy999",
 		FileUID:       "fs6sg6bqhhinlple",
 		Thumb:         "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818-045038063041",
@@ -217,7 +217,7 @@ var MarkerFixtures = MarkerMap{
 		Size:          430,
 		Score:         94,
 	},
-	"actress-a-2": Marker{ //Photo03 - non primary file
+	"actress-a-2": Marker{ // Photo03 - non primary file
 		MarkerUID:     "ms6sg6b1wowu1000",
 		FileUID:       "fs6sg6bwhhbnlqdn",
 		Thumb:         "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818-046045043065",
@@ -236,7 +236,7 @@ var MarkerFixtures = MarkerMap{
 		Size:          556,
 		Score:         90,
 	},
-	"actress-a-3": Marker{ //19800101_000002_D640C559
+	"actress-a-3": Marker{ // 19800101_000002_D640C559
 		MarkerUID:     "ms6sg6b1wowu1001",
 		FileUID:       "fs6sg6bw45bnlqdw",
 		Thumb:         "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818-05403304060446",
@@ -255,7 +255,7 @@ var MarkerFixtures = MarkerMap{
 		Size:          515,
 		Score:         84,
 	},
-	"actor-a-1": Marker{ //Photo05
+	"actor-a-1": Marker{ // Photo05
 		MarkerUID:     "ms6sg6b1wowu1002",
 		FileUID:       "fs6sg6bw45bn0005",
 		Thumb:         "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
@@ -274,7 +274,7 @@ var MarkerFixtures = MarkerMap{
 		Size:          466,
 		Score:         70,
 	},
-	"actor-a-2": Marker{ //Photo02
+	"actor-a-2": Marker{ // Photo02
 		MarkerUID:     "ms6sg6b1wowu1003",
 		FileUID:       "fs6sg6bq45bnlqd0",
 		Thumb:         "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
@@ -293,7 +293,7 @@ var MarkerFixtures = MarkerMap{
 		Size:          371,
 		Score:         92,
 	},
-	"actor-a-3": Marker{ //Photo10
+	"actor-a-3": Marker{ // Photo10
 		MarkerUID:     "ms6sg6b1wowu1004",
 		FileUID:       "fs6sg6bw45bn0008",
 		Thumb:         "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
@@ -312,7 +312,7 @@ var MarkerFixtures = MarkerMap{
 		Size:          375,
 		Score:         82,
 	},
-	"actor-a-4": Marker{ //19800101_000002_D640C559
+	"actor-a-4": Marker{ // 19800101_000002_D640C559
 		MarkerUID:     "ms6sg6b1wowu1005",
 		FileUID:       "fs6sg6bw45bnlqdw",
 		Thumb:         "pcad9168fa6acc5c5c2965ddf6ec465ca42fd818",
@@ -331,7 +331,7 @@ var MarkerFixtures = MarkerMap{
 		Size:          509,
 		Score:         82,
 	},
-	"ms6sg6b14ahkyd24": Marker{ //19800101_000002_D640C559
+	"ms6sg6b14ahkyd24": Marker{ // 19800101_000002_D640C559
 		MarkerUID:     "ms6sg6b14ahkyd24",
 		FileUID:       "fs6sg6bw45bnlqdw",
 		Thumb:         "acad9168fa6acc5c5c2965ddf6ec465ca42fd818",

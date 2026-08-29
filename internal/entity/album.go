@@ -21,6 +21,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// Album types and the prefix that identifies a generated album UID.
 const (
 	AlbumUID    = byte('a')
 	AlbumManual = "album"
@@ -30,6 +31,7 @@ const (
 	AlbumState  = "state"
 )
 
+// Default sort orders, one per album type.
 var (
 	DefaultOrderAlbum  = sortby.Oldest
 	DefaultOrderFolder = sortby.Added
@@ -495,24 +497,30 @@ func FindAlbum(find Album) *Album {
 	stmt := UnscopedDb().Where("album_type = ?", find.AlbumType)
 
 	// Search by slug and filter or title.
+	namedSlug := find.AlbumSlug != "" && find.AlbumSlug != UnknownSlug
+
 	if find.AlbumType != AlbumManual {
-		if find.AlbumFilter != "" && find.AlbumSlug != "" && find.AlbumSlug != UnknownSlug {
+		switch {
+		case find.AlbumFilter != "" && namedSlug:
 			stmt = stmt.Where("album_slug = ? OR album_filter = ?", find.AlbumSlug, find.AlbumFilter)
-		} else if find.AlbumFilter != "" {
+		case find.AlbumFilter != "":
 			stmt = stmt.Where("album_filter = ?", find.AlbumFilter)
-		} else if find.AlbumSlug != "" && find.AlbumSlug != UnknownSlug {
+		case namedSlug:
 			stmt = stmt.Where("album_slug = ?", find.AlbumSlug)
-		} else {
+		default:
 			return nil
 		}
-	} else if find.AlbumTitle != "" && find.AlbumSlug != "" && find.AlbumSlug != UnknownSlug {
-		stmt = stmt.Where("album_slug = ? OR album_title LIKE ?", find.AlbumSlug, find.AlbumTitle)
-	} else if find.AlbumSlug != "" && find.AlbumSlug != UnknownSlug {
-		stmt = stmt.Where("album_slug = ?", find.AlbumSlug)
-	} else if find.AlbumTitle != "" {
-		stmt = stmt.Where("album_title LIKE ?", find.AlbumTitle)
 	} else {
-		return nil
+		switch {
+		case find.AlbumTitle != "" && namedSlug:
+			stmt = stmt.Where("album_slug = ? OR album_title LIKE ?", find.AlbumSlug, find.AlbumTitle)
+		case namedSlug:
+			stmt = stmt.Where("album_slug = ?", find.AlbumSlug)
+		case find.AlbumTitle != "":
+			stmt = stmt.Where("album_title LIKE ?", find.AlbumTitle)
+		default:
+			return nil
+		}
 	}
 
 	// Filter by creator if the album has not been published yet.
@@ -792,11 +800,12 @@ func shouldRepairFolderAlbumTitle(currentTitle, folderTitle, albumPath, albumFil
 	folderTitle = strings.TrimSpace(folderTitle)
 	currentTitle = strings.TrimSpace(currentTitle)
 
-	if folderTitle == "" {
+	switch {
+	case folderTitle == "":
 		return false
-	} else if currentTitle == "" {
+	case currentTitle == "":
 		return true
-	} else if currentTitle == folderTitle {
+	case currentTitle == folderTitle:
 		return false
 	}
 
@@ -1065,12 +1074,12 @@ func (m *Album) AddPhotos(photos PhotosInterface) (added PhotoAlbums) {
 }
 
 // RemovePhotos removes photos from an album.
-func (m *Album) RemovePhotos(UIDs []string) (removed PhotoAlbums) {
+func (m *Album) RemovePhotos(uids []string) (removed PhotoAlbums) {
 	if !m.HasID() {
 		return removed
 	}
 
-	for _, uid := range UIDs {
+	for _, uid := range uids {
 		if !rnd.IsUID(uid, PhotoUID) {
 			continue
 		}

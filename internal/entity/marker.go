@@ -19,6 +19,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
+// Marker types, naming what a marker points at.
 const (
 	MarkerUnknown = ""
 	MarkerFace    = "face"  // MarkerType for faces (implemented).
@@ -448,7 +449,7 @@ func (m *Marker) InvalidArea() error {
 	}
 
 	// Ok?
-	if false == (m.X > 1 || m.Y > 1 || m.X < 0 || m.Y < 0 || m.W <= 0 || m.H <= 0 || m.W > 1 || m.H > 1) {
+	if !(m.X > 1 || m.Y > 1 || m.X < 0 || m.Y < 0 || m.W <= 0 || m.H <= 0 || m.W > 1 || m.H > 1) {
 		return nil
 	}
 

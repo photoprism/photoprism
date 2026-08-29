@@ -448,8 +448,6 @@ func (m *Photo) SetMediaType(newType media.Type, typeSrc string) {
 
 	// Write a debug log containing the old and new media type.
 	log.Debugf("photo: changed type of %s from %s to %s", m.String(), currentType.String(), newType.String())
-
-	return
 }
 
 // Find fetches the matching record.
@@ -1279,7 +1277,7 @@ func (m *Photo) SetFavorite(favorite bool) error {
 	}
 
 	// Update counters if changed and not deleted.
-	if changed && m.PhotoPrivate == false && m.DeletedAt == nil {
+	if changed && !m.PhotoPrivate && m.DeletedAt == nil {
 		if favorite {
 			event.Publish("count.favorites", event.Data{
 				"count": 1,

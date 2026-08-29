@@ -37,4 +37,5 @@ type Album struct {
 	DeletedAt        time.Time `json:"DeletedAt"`
 }
 
+// AlbumResults represents a list of album search results.
 type AlbumResults []Album

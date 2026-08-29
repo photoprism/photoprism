@@ -12,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
+// Tables maps a table name to the entity that defines its schema.
 type Tables map[string]any
 
 // schemaTables contains the tables that record the schema migration state.

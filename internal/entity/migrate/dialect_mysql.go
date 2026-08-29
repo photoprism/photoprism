@@ -2,6 +2,7 @@ package migrate
 
 // Generated code, do not edit.
 
+// DialectMySQL lists the migrations that run on MySQL and MariaDB.
 var DialectMySQL = Migrations{
 	{
 		ID:         "20211121-094727",

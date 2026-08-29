@@ -814,11 +814,13 @@ func TestMarker_String(t *testing.T) {
 	t.Run("Nil", func(t *testing.T) {
 		var m *Marker
 		assert.Equal(t, "Marker<nil>", m.String())
+		//nolint:staticcheck // the point is that fmt reaches String(), which calling it cannot show.
 		assert.Equal(t, "Marker<nil>", fmt.Sprintf("%s", m))
 	})
 	t.Run("New", func(t *testing.T) {
 		m := &Marker{}
 		assert.Equal(t, "*Marker", m.String())
+		//nolint:staticcheck // the point is that fmt reaches String(), which calling it cannot show.
 		assert.Equal(t, "*Marker", fmt.Sprintf("%s", m))
 	})
 	t.Run("Name", func(t *testing.T) {

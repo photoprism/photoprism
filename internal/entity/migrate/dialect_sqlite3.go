@@ -2,6 +2,7 @@ package migrate
 
 // Generated code, do not edit.
 
+// DialectSQLite3 lists the migrations that run on SQLite.
 var DialectSQLite3 = Migrations{
 	{
 		ID:         "20211121-094727",

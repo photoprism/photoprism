@@ -4,6 +4,7 @@ import "strings"
 
 type CameraType = string
 
+// Camera types, naming how a picture was produced.
 const (
 	CameraTypeUnknown      CameraType = ""             // Default
 	CameraType3D           CameraType = "3d"           // Stereo 3D
