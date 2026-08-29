@@ -52,9 +52,9 @@ const (
 	// interpolation starts far below it, around 42 px at the default THUMB_SIZE.
 	ClusterSizeThresholdDefault = ArcFaceTemplateSize
 	// ClusterCoreDefault is the default number of faces required to seed a cluster core. DBSCAN
-	// counts the point itself, so this is also the smallest number of clusterable faces a person
-	// can be recognized from at all, and one more excludes them outright rather than gradually.
-	ClusterCoreDefault = 4
+	// counts the point itself, so a person with fewer clusterable faces than this forms no cluster
+	// at all, and any cluster forming around them holds a second identity.
+	ClusterCoreDefault = 5
 )
 
 // InterOpThreads is how many threads an ONNX session may use to run graph nodes in
