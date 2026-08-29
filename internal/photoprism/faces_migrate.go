@@ -937,7 +937,9 @@ func (w *Faces) cropMigrationEmbeddings(embedder face.Embedder, file *entity.Fil
 			thumbName = source
 		}
 
-		img, _, srcWidth, cropErr := crop.ImageFromThumb(thumbName, area, size, false)
+		// ImageFromSource, not ImageFromThumb: a reused crop reports no source width, and the
+		// recorded extent is the point of this pass.
+		img, _, srcWidth, cropErr := crop.ImageFromSource(thumbName, area, size, false)
 		if cropErr != nil {
 			event.SystemWarn([]string{"faces", "migrate", "failed cropping marker %s (%s)"}, clean.Log(marker.MarkerUID), cropErr)
 			continue
