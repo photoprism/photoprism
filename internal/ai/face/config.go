@@ -46,14 +46,12 @@ const (
 	// OverlapThresholdDefault is the default face area overlap percentage above which two
 	// detections are treated as identical.
 	OverlapThresholdDefault = 42
-	// ClusterSizeThresholdDefault is the default minimum face size, in pixels, for clustering. At
-	// the aligned crop size a face fills the template from the detection thumbnail alone, without
-	// depending on a wider rendition being cached. The value itself was measured, not derived:
-	// interpolation starts far below it, around 42 px at the default THUMB_SIZE.
+	// ClusterSizeThresholdDefault is the default minimum face size, in pixels, for clustering, and
+	// bounds the source pixels an embedding rests on. Measured rather than derived: quality turns
+	// at the aligned crop size and is flat above it.
 	ClusterSizeThresholdDefault = ArcFaceTemplateSize
 	// ClusterCoreDefault is the default number of faces required to seed a cluster core. DBSCAN
-	// counts the point itself, so a person with fewer clusterable faces than this forms no cluster
-	// at all, and any cluster forming around them holds a second identity.
+	// counts the point itself, so a person with fewer clusterable faces forms no cluster at all.
 	ClusterCoreDefault = 5
 )
 

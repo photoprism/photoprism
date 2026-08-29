@@ -376,10 +376,9 @@ func (w *Faces) Audit(fix bool, subjUID string) (err error) {
 // built from a single sample reaches as far as any other may instead of matching nothing.
 // Writing is opt-in and subject-scoped, because it changes which markers a cluster attracts.
 func (w *Faces) repairDegenerateRadius(fix bool, subjUID string) (repaired int, err error) {
-	// EmbeddingsMidpoint records a positive spread as d + Epsilon and SetEmbeddings replaces a
-	// zero one with ClusterRadius, so no current write path leaves a row at or below Epsilon and
-	// this reaches only rows written by other means. Widening it would sweep in genuinely tight
-	// clusters and grant them the full radius, which no measurement supports.
+	// EmbeddingsMidpoint records a positive spread as d + Epsilon and SetEmbeddings replaces a zero
+	// one with ClusterRadius, so no current write path leaves a row at or below Epsilon. Widening
+	// this would sweep in genuinely tight clusters and grant them the full radius.
 	stmt := entity.UnscopedDb().Model(&entity.Face{}).Where("sample_radius <= ?", face.Epsilon)
 
 	// The rows the matcher reads, and no others, because the write is one-way: nothing narrows a

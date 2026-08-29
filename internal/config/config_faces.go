@@ -82,11 +82,9 @@ func (c *Config) FaceEngineShouldRun(when vision.RunType) bool {
 	when = vision.ParseRunType(when)
 	run := c.FaceEngineRunType()
 
-	// Faces stay out of the scheduled sweep unless the schedule was asked for by name. Re-detecting
-	// pictures an earlier pass already examined finds nothing while the detector is unchanged, and
-	// the sweep costs a full decode per file - so "on demand" means a person or an import asked,
-	// not a cron tick. Changing detector is what makes another pass worthwhile, and that is a
-	// migration or an explicit run.
+	// Faces stay out of the scheduled sweep unless it was asked for by name: re-detecting pictures
+	// an earlier pass examined finds nothing while the detector is unchanged, and costs a full
+	// decode per file. A detector change is what makes another pass worthwhile.
 	if when == vision.RunOnSchedule && run != vision.RunOnSchedule && run != vision.RunAlways {
 		return false
 	}
@@ -950,9 +948,8 @@ func (c *Config) FaceCollisionDist() float64 {
 
 // FaceEpsilonDist returns the distance slack applied to collision checks.
 //
-// Bounded by face.EpsilonDistMax rather than by the default, which is below it: the ceiling states
-// how far the ambiguity cutoff may be widened, and lowering the default must not invalidate a
-// setting that was in range.
+// Bounded by face.EpsilonDistMax rather than by the default: the ceiling states how far the
+// ambiguity cutoff may be widened, so lowering the default cannot invalidate a setting in range.
 func (c *Config) FaceEpsilonDist() float64 {
 	value := c.options.FaceEpsilonDist
 	configured := c.faceThresholdIsSet("face-epsilon-dist", value)

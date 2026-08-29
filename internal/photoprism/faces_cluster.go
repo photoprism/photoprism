@@ -30,6 +30,17 @@ func (w *Faces) reportClusteringSkipped(eligible, required int) {
 		eligible, required, face.ClusterSizeThreshold, face.ClusterScore(face.ActiveDetector()))
 }
 
+// reportNoClustersFormed states that a pass ran on enough samples and formed nothing. The run
+// repeats on every wake, since no cluster advances the recency cut that would retire the samples.
+func (w *Faces) reportNoClustersFormed(samples int) {
+	if w == nil || !w.reportOnce("cluster-none-formed", samples) {
+		return
+	}
+
+	log.Infof("faces: %d samples formed no cluster, which needs %d faces of one person within a distance of %g",
+		samples, face.ClusterCore, face.ClusterDist)
+}
+
 // reportOnce reports whether a recurring condition has changed since it was last logged, so a
 // worker that wakes every few minutes states it once rather than every time.
 func (w *Faces) reportOnce(key string, value int) bool {
@@ -305,7 +316,7 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 		if len(sizes) > 0 {
 			log.Infof("faces: found %s", english.Plural(len(sizes), "new cluster", "new clusters"))
 		} else {
-			log.Debugf("faces: found no new clusters")
+			w.reportNoClustersFormed(len(embeddings))
 		}
 
 		results := make([]face.Embeddings, len(sizes))

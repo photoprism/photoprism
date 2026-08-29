@@ -201,6 +201,9 @@ type FaceClusterGates struct {
 	// Clusterable counts the markers clearing both bars whatever their age, which is what a forced
 	// run would take. Eligible answers what the automatic pass sees; this answers what --force buys.
 	Clusterable int
+	// Clustered reports whether automatic clustering has ever produced a cluster for this model.
+	// False while markers clear the trigger is the state no threshold explains.
+	Clustered bool
 }
 
 // CountFaceClusterGates counts the face markers at each clustering bar.
@@ -211,7 +214,9 @@ func CountFaceClusterGates(model string, size, score int) (result FaceClusterGat
 	recent, sized, scored := "1 = 1", "1 = 1", ""
 	var recentArgs, sizeArgs []any
 
-	if newest := newestAutoFaceTime(model); !newest.IsZero() {
+	newest := newestAutoFaceTime(model)
+
+	if !newest.IsZero() {
 		recent, recentArgs = "created_at > ?", []any{newest}
 	}
 
@@ -246,6 +251,9 @@ func CountFaceClusterGates(model string, size, score int) (result FaceClusterGat
 	if err := unclusteredFaceMarkers(model).Select(sel, args...).Scan(&result).Error; err != nil {
 		log.Errorf("faces: %s (count cluster gates)", err)
 	}
+
+	// Assigned after the scan, which writes every column it selected.
+	result.Clustered = !newest.IsZero()
 
 	return result
 }
