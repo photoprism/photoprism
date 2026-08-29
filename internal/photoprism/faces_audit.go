@@ -377,7 +377,9 @@ func (w *Faces) Audit(fix bool, subjUID string) (err error) {
 // Writing is opt-in and subject-scoped, because it changes which markers a cluster attracts.
 func (w *Faces) repairDegenerateRadius(fix bool, subjUID string) (repaired int, err error) {
 	// Not the guard SetEmbeddings applies: a stored cluster holds Epsilon rather than zero,
-	// because UpdateMatchStats already lifted it, so a check for zero would repair none.
+	// because UpdateMatchStats already lifted it, so a check for zero would repair none. It
+	// therefore follows the configured Epsilon; widening it to a fixed ceiling would sweep in
+	// genuinely tight clusters and grant them the full radius, which no measurement supports.
 	stmt := entity.UnscopedDb().Model(&entity.Face{}).Where("sample_radius <= ?", face.Epsilon)
 
 	// The rows the matcher reads, and no others, because the write is one-way: nothing narrows a

@@ -298,6 +298,14 @@ func TestReportResolution(t *testing.T) {
 	t.Run("Narrow", func(t *testing.T) {
 		assert.Equal(t, "narrow", reportResolution(query.FaceConflict{SubjUID: named, Dist: narrowing}))
 	})
+	t.Run("AtTheAmbiguityCutoff", func(t *testing.T) {
+		// Ambiguous() uses <, so the cutoff itself is not ambiguous.
+		assert.Equal(t, "inert", reportResolution(query.FaceConflict{SubjUID: named, Dist: face.AmbiguityDist()}))
+	})
+	t.Run("AtTheNarrowingFloor", func(t *testing.T) {
+		// Narrows() uses >, so a pair exactly on the floor records a radius nothing enforces.
+		assert.Equal(t, "inert", reportResolution(query.FaceConflict{SubjUID: named, Dist: face.CollisionDist + face.Epsilon}))
+	})
 	t.Run("Inert", func(t *testing.T) {
 		// Past the ambiguity cutoff but too close for the radius resolution records to clear
 		// CollisionDist, so nothing enforces it and the label must not claim a narrowing.

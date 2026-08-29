@@ -190,6 +190,16 @@ func TestFaces_reportClusteringSkipped(t *testing.T) {
 
 // setFaceThresholds applies clustering thresholds for the duration of a test, so a fixture built
 // against the shipped distances is judged by them rather than by whatever ran last.
+// Prefer setShippedFaceThresholds, which cannot fall behind a recalibration.
+func setShippedFaceThresholds(t *testing.T) {
+	t.Helper()
+
+	m := face.FindEmbeddingModel(face.ModelSFace)
+	require.NotNil(t, m)
+
+	setFaceThresholds(t, m.ClusterDist, m.ClusterRadius, m.MatchDist)
+}
+
 func setFaceThresholds(t *testing.T, clusterDist, clusterRadius, matchDist float64) {
 	dist, radius, match := face.ClusterDist, face.ClusterRadius, face.MatchDist
 
@@ -281,7 +291,7 @@ func chainedFixture() (embeddings face.Embeddings, group []int) {
 // TestChainFixture pins that the fixture reproduces the failure it stands for. A green split test
 // against a fixture that never chains would be a test of the early return.
 func TestChainFixture(t *testing.T) {
-	setFaceThresholds(t, 0.85, 0.60, 0.35)
+	setShippedFaceThresholds(t)
 
 	groupA, groupB, bridge := chainFixture()
 	chained, _ := chainedFixture()
@@ -316,7 +326,7 @@ func TestChainFixture(t *testing.T) {
 func TestSplitWideClusters(t *testing.T) {
 	// The parts have to be judged against the shipped SFace distances rather than whatever the
 	// package configured last, or the fixture would measure a different question.
-	setFaceThresholds(t, 0.85, 0.60, 0.35)
+	setShippedFaceThresholds(t)
 
 	w := NewFaces(config.TestConfig())
 
@@ -542,7 +552,7 @@ func TestReportSplitOverrides(t *testing.T) {
 // TestSplitCluster covers the one round the split takes, which shortens the link distance in
 // proportion to how far past its accept distance the group reaches.
 func TestSplitCluster(t *testing.T) {
-	setFaceThresholds(t, 0.85, 0.60, 0.35)
+	setShippedFaceThresholds(t)
 
 	embeddings, _ := chainedFixture()
 

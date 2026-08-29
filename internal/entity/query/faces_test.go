@@ -332,7 +332,7 @@ func TestMergeFaces(t *testing.T) {
 		assert.Equal(t, "jqynvsf28rhn6b0c", result.SubjUID)
 		assert.Equal(t, 2, result.Samples)
 		// The stored radius is the measured spread plus Epsilon, so it follows the tolerance.
-		assert.InDelta(t, 0.030200777224183827+face.Epsilon, result.SampleRadius, 1e-9)
+		assert.InDelta(t, 0.030200777224183826+face.Epsilon, result.SampleRadius, 1e-9)
 		assert.Equal(t, 0, result.Collisions)
 		assert.Equal(t, float64(0), result.CollisionRadius)
 
