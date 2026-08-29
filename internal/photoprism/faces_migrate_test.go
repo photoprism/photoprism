@@ -495,11 +495,11 @@ func TestFaces_cropMigrationEmbeddings(t *testing.T) {
 	file := &entity.File{FileHash: "0123456789012345678901234567890123456789", FileName: "missing.jpg", FileRoot: entity.RootOriginals}
 	markers := entity.Markers{{MarkerUID: "m1", MarkerType: entity.MarkerFace, W: 0.5, H: 0.5}}
 
-	result, err := w.cropMigrationEmbeddings(embedder, file, markers)
+	result, _, err := w.cropMigrationEmbeddings(embedder, file, markers)
 	require.NoError(t, err)
 	assert.Empty(t, result)
 
-	_, err = w.cropMigrationEmbeddings(embedder, nil, markers)
+	_, _, err = w.cropMigrationEmbeddings(embedder, nil, markers)
 	require.Error(t, err)
 
 	successConf := config.NewMinimalTestConfig(t.TempDir())
@@ -509,7 +509,7 @@ func TestFaces_cropMigrationEmbeddings(t *testing.T) {
 	thumbName, err := thumb.Sizes[thumb.Fit720].FileName(hash, successConf.ThumbCachePath())
 	require.NoError(t, err)
 	require.NoError(t, thumb.Save(image.NewNRGBA(image.Rect(0, 0, 64, 64)), thumbName))
-	result, err = successWorker.cropMigrationEmbeddings(
+	result, _, err = successWorker.cropMigrationEmbeddings(
 		embedder,
 		&entity.File{FileHash: hash},
 		entity.Markers{{MarkerUID: "m2", W: 1, H: 1}},

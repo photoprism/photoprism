@@ -39,7 +39,7 @@ func GenerateEmbeddings(embedder face.Embedder, fileName string, faces face.Face
 			continue
 		}
 
-		img, err := faceCropImage(embedder, srcImg, fileName, f, width, height, cacheCrop)
+		img, srcWidth, err := faceCropImage(embedder, srcImg, fileName, f, width, height, cacheCrop)
 
 		if err != nil {
 			log.Errorf("vision: failed to create face crop (%s)", err)
@@ -51,6 +51,7 @@ func GenerateEmbeddings(embedder face.Embedder, fileName string, faces face.Face
 		if embeddings := embedder.Run(img); !embeddings.Empty() {
 			f.Embeddings = embeddings
 			f.EmbedModel = embedder.ModelName()
+			f.SetThumbSize(srcWidth)
 		}
 	}
 }
@@ -71,10 +72,10 @@ func smallestFaceArea(faces face.Faces) crop.Area {
 
 // faceCropImage returns the image to run inference on, aligned on the detected landmarks
 // when the model expects it, and a plain bounding box crop otherwise.
-func faceCropImage(embedder face.Embedder, srcImg image.Image, fileName string, f *face.Face, width, height int, cacheCrop bool) (image.Image, error) {
+func faceCropImage(embedder face.Embedder, srcImg image.Image, fileName string, f *face.Face, width, height int, cacheCrop bool) (image.Image, int, error) {
 	if embedder.Aligned() && srcImg != nil {
 		if img, err := face.AlignedCrop(srcImg, f, width, height); err == nil {
-			return img, nil
+			return img, srcImg.Bounds().Dx(), nil
 		} else {
 			// Faces without a complete landmark set still get an embedding, at the cost
 			// of the pose normalization the aligned models were trained with.
@@ -82,7 +83,7 @@ func faceCropImage(embedder face.Embedder, srcImg image.Image, fileName string, 
 		}
 	}
 
-	img, _, err := crop.ImageFromThumb(fileName, f.CropArea(), face.CropSize, cacheCrop)
+	img, _, srcWidth, err := crop.ImageFromThumb(fileName, f.CropArea(), face.CropSize, cacheCrop)
 
-	return img, err
+	return img, srcWidth, err
 }

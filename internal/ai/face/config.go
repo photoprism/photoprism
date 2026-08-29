@@ -131,6 +131,22 @@ var (
 	Epsilon = EpsilonDefault
 )
 
+// ClusterSize returns the minimum face size, in pixels of the image an embedding was sampled from,
+// that the named model consumes without interpolating. It is the model's own input geometry, so a
+// bar meaning "not invented by interpolation" keeps that meaning when the model changes.
+func ClusterSize(model ModelName) int {
+	if m := FindEmbeddingModel(model); m != nil {
+		if w, h := m.InputSize(); w > 0 && h > 0 {
+			return max(w, h)
+		} else if !m.Aligned() {
+			// Box-aligned models read the rectangular crop instead of the landmark template.
+			return CropSize.Width
+		}
+	}
+
+	return ClusterSizeThresholdDefault
+}
+
 // ClusterScore returns the score a marker the named detector produced has to reach to contribute
 // to automatic clustering. FACE_CLUSTER_SCORE outranks the per-detector bars and a negative value
 // removes them; unset, the bar is per marker, since two detectors' scores are not comparable and

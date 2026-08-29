@@ -133,7 +133,7 @@ func (m *Model) Detect(fileName string, minSize int, cacheCrop bool, expected in
 			continue
 		}
 
-		if img, _, imgErr := crop.ImageFromThumb(fileName, f.CropArea(), CropSize, cacheCrop); imgErr != nil {
+		if img, _, _, imgErr := crop.ImageFromThumb(fileName, f.CropArea(), CropSize, cacheCrop); imgErr != nil {
 			log.Errorf("faces: failed to decode image: %s", imgErr)
 		} else if embeddings := m.Run(img); !embeddings.Empty() {
 			faces[i].Embeddings = embeddings

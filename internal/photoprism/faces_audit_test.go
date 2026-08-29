@@ -16,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestFaces_Audit(t *testing.T) {
@@ -477,4 +478,44 @@ func TestFaces_auditProvenance(t *testing.T) {
 		assert.Contains(t, logged, "wired-detector", "the detector report runs")
 		assert.Contains(t, logged, "embedding model", "the model reports still run")
 	})
+}
+
+// TestFaces_auditMarkerThumbSizes pins that the audit reports markers judged by their detection
+// size rather than by what their embedding was sampled from. It only counts: synthesizing the
+// value would write today's rendition choice against a vector produced under another one.
+func TestFaces_auditMarkerThumbSizes(t *testing.T) {
+	w := NewFaces(config.TestConfig())
+
+	hook := test.NewGlobal()
+	t.Cleanup(hook.Reset)
+
+	m := &entity.Marker{
+		MarkerUID:      rnd.GenerateUID('m'),
+		FileUID:        "fs6sg6bw45bnlqdw",
+		MarkerType:     entity.MarkerFace,
+		MarkerSrc:      entity.SrcImage,
+		Size:           200,
+		ThumbSize:      -1,
+		Score:          100,
+		EmbedModel:     face.EmbeddingModelName(),
+		EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
+		W:              0.1,
+		H:              0.1,
+	}
+	require.NoError(t, entity.Db().Create(m).Error)
+	t.Cleanup(func() { entity.UnscopedDb().Delete(m) })
+
+	w.auditMarkerThumbSizes()
+
+	var reported int
+
+	for _, entry := range hook.AllEntries() {
+		if strings.Contains(entry.Message, "no recorded sample size") {
+			reported++
+			assert.Equal(t, logrus.InfoLevel, entry.Level)
+		}
+	}
+
+	assert.Equal(t, 1, reported, "a marker the bar falls back on must be named")
+	assert.NotPanics(t, func() { (*Faces)(nil).auditMarkerThumbSizes() })
 }

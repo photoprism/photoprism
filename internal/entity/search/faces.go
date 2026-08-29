@@ -18,17 +18,19 @@ import (
 // so a cluster indexed in one pass would otherwise be represented by an arbitrary one of its faces.
 func representativeMarkerJoin(facesTable, unknown string) (string, []any) {
 	scoreCond, scoreArgs := entity.ClusterScoreCond("m2", face.ClusterScoreAuto)
+	sizeCond, sizeArgs := entity.ClusterSizeCond("m2", face.ClusterSizeThreshold)
 
 	conds := []string{
 		fmt.Sprintf("m2.face_id = %s.id", facesTable),
 		"m2.marker_type = ?",
 		"m2.marker_invalid = 0",
 		"m2.thumb <> ''",
-		"m2.size >= ?",
+		sizeCond,
 		scoreCond,
 	}
 
-	args := []any{entity.MarkerFace, face.ClusterSizeThreshold}
+	args := []any{entity.MarkerFace}
+	args = append(args, sizeArgs...)
 	args = append(args, scoreArgs...)
 
 	// The cluster's own subject decides which markers may represent it, so an unnamed cluster is

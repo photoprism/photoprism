@@ -138,7 +138,7 @@ func TestImageFromThumb(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		img, cropName, err := ImageFromThumb(thumbName, NewArea("crop", 0, 0, 1, 1), Sizes[Tile50], false)
+		img, cropName, srcWidth, err := ImageFromThumb(thumbName, NewArea("crop", 0, 0, 1, 1), Sizes[Tile50], false)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -147,6 +147,10 @@ func TestImageFromThumb(t *testing.T) {
 		assert.Equal(t, filepath.Join(filepath.Dir(thumbName), "bccfeaa526a36e19b555fd4ca5e8f767d5604289_50x50_crop_0000003e83e8.jpg"), cropName)
 		assert.Equal(t, 50, img.Bounds().Dx())
 		assert.Equal(t, 50, img.Bounds().Dy())
+		// The source the crop was taken from, not the crop itself: recording the latter would
+		// store the requested size back, which is a constant and says nothing about quality.
+		assert.Positive(t, srcWidth)
+		assert.NotEqual(t, 50, srcWidth)
 	})
 }
 
@@ -204,5 +208,26 @@ func TestImageFromIdealThumb(t *testing.T) {
 		img, err := ImageFromIdealThumb(filepath.Join(cachePath, "missing.jpg"), NewArea("face", 0, 0, 1, 1), Sizes[Tile160])
 		assert.Error(t, err)
 		assert.Nil(t, img)
+	})
+}
+
+// TestIdealThumbWidth covers the header-only lookup a cached crop relies on, since it returns
+// before the source image is opened and so cannot measure it.
+func TestIdealThumbWidth(t *testing.T) {
+	area := Area{Name: "face", X: 0.4, Y: 0.4, W: 0.1, H: 0.1}
+	size := Sizes[Tile160]
+
+	t.Run("NotAThumbName", func(t *testing.T) {
+		// Without a hash prefix there is no rendition ladder to walk, so no width can be claimed.
+		assert.Equal(t, 0, IdealThumbWidth("/tmp/example.jpg", "", area, size))
+	})
+	t.Run("NoArea", func(t *testing.T) {
+		assert.Equal(t, 0, IdealThumbWidth("/tmp/example.jpg", "3cad9168fa6acc5c5c2965ddf6ec465ca42fd818", Area{}, size))
+	})
+	t.Run("NoSize", func(t *testing.T) {
+		assert.Equal(t, 0, IdealThumbWidth("/tmp/example.jpg", "3cad9168fa6acc5c5c2965ddf6ec465ca42fd818", area, Size{}))
+	})
+	t.Run("MissingRendition", func(t *testing.T) {
+		assert.Equal(t, 0, IdealThumbWidth("/tmp/missing.jpg", "3cad9168fa6acc5c5c2965ddf6ec465ca42fd818", area, size))
 	})
 }

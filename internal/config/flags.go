@@ -1407,7 +1407,7 @@ var Flags = CliFlags{
 		}, DocDefault: "auto"}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-cluster-size",
-			Usage:   "minimum size of automatically clustered faces in `PIXELS` (20-10000)",
+			Usage:   "minimum size of automatically clustered faces in `PIXELS` of the image their embedding was sampled from (20-10000)",
 			Value:   face.ClusterSizeThresholdDefault,
 			EnvVars: EnvVars("FACE_CLUSTER_SIZE"),
 		}}, {

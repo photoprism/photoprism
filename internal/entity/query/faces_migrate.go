@@ -216,8 +216,8 @@ func whereFaceMigrationSamples(stmt *gorm.DB, model string) *gorm.DB {
 		Where("subj_uid <> ''").
 		Where("LENGTH(embeddings_json) > 0")
 
-	if face.ClusterSizeThreshold > 0 {
-		stmt = stmt.Where("size >= ?", face.ClusterSizeThreshold)
+	if sizeCond, sizeArgs := entity.ClusterSizeCond("", face.ClusterSizeThreshold); sizeArgs != nil {
+		stmt = stmt.Where(sizeCond, sizeArgs...)
 	}
 
 	stmt = whereClusterScore(stmt, face.ClusterScoreAuto)
@@ -316,6 +316,9 @@ type MigrationDetection struct {
 	Landmarks json.RawMessage
 	Size      int
 	Score     int
+	// ThumbSize is the extent the embedding was sampled at, which a re-crop records as well: it
+	// belongs to the vector rather than to a detection, so it travels even with no detector.
+	ThumbSize int
 }
 
 // SaveFaceMigrationEmbeddings checkpoints generated embeddings for a single file, along with the
@@ -345,6 +348,11 @@ func SaveFaceMigrationEmbeddings(model, detectModel string, embeddings map[strin
 				"face_id":         "",
 				"face_dist":       -1.0,
 				"matched_at":      nil,
+			}
+
+			// Recorded beside the vector on either path, since a re-crop samples a rendition too.
+			if detail := details[markerUID]; detail.ThumbSize > 0 {
+				columns["thumb_size"] = detail.ThumbSize
 			}
 
 			// Written together, or the recorded detector would attest another one's work. The
@@ -492,4 +500,18 @@ func sameFaceMigrationIdentities(expected, actual []FaceMigrationIdentity) bool 
 	}
 
 	return true
+}
+
+// CountMarkersWithoutThumbSize counts embedded face markers that record no sample extent, so an
+// audit can report how many are still judged by their detection size.
+func CountMarkersWithoutThumbSize() (n int, err error) {
+	var count int64
+
+	err = UnscopedDb().Model(&entity.Marker{}).
+		Where("marker_type = ? AND marker_invalid = 0", entity.MarkerFace).
+		Where("LENGTH(embeddings_json) > 0").
+		Where("thumb_size < 1").
+		Count(&count).Error
+
+	return int(count), err
 }

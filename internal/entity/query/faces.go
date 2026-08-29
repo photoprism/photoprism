@@ -221,7 +221,7 @@ func CountFaceClusterGates(model string, size, score int) (result FaceClusterGat
 	}
 
 	if size > 0 {
-		sized, sizeArgs = "size >= ?", []any{size}
+		sized, sizeArgs = entity.ClusterSizeCond("", size)
 	}
 
 	scored, scoreArgs := clusterScoreCond(score)
@@ -291,8 +291,8 @@ func countNewFaceMarkers(current string, size, score int, recent bool) (n int) {
 	newest := newestAutoFaceTime(current)
 	q := unclusteredFaceMarkers(current)
 
-	if size > 0 {
-		q = q.Where("size >= ?", size)
+	if sizeCond, sizeArgs := entity.ClusterSizeCond("", size); sizeArgs != nil {
+		q = q.Where(sizeCond, sizeArgs...)
 	}
 
 	q = whereClusterScore(q, score)

@@ -50,6 +50,7 @@ type Marker struct {
 	W              float32         `gorm:"type:FLOAT;" json:"W" yaml:"W,omitempty"`
 	H              float32         `gorm:"type:FLOAT;" json:"H" yaml:"H,omitempty"`
 	Size           int             `gorm:"default:-1;" json:"Size" yaml:"Size,omitempty"`
+	ThumbSize      int             `gorm:"column:thumb_size;default:-1;" json:"ThumbSize" yaml:"ThumbSize,omitempty"`
 	Score          int             `gorm:"type:SMALLINT;" json:"Score" yaml:"Score,omitempty"`
 	Thumb          string          `gorm:"type:VARBINARY(128);index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
 	MatchedAt      *time.Time      `sql:"index" json:"MatchedAt" yaml:"MatchedAt,omitempty"`
@@ -91,6 +92,7 @@ func NewMarker(file File, area crop.Area, subjUID, markerSrc, markerType string,
 		W:             area.W,
 		H:             area.H,
 		Size:          size,
+		ThumbSize:     -1,
 		Score:         score,
 		Thumb:         area.Thumb(file.FileHash),
 		MatchedAt:     nil,
@@ -123,6 +125,12 @@ func NewFaceMarker(f face.Face, file File, subjUid string) *Marker {
 
 	m.SetEmbeddings(f.Embeddings, f.EmbedModel, f.DetectModel)
 	m.LandmarksJSON = f.RelativeLandmarksJSON()
+
+	// Only when an embedding was actually sampled: a zero would read as a measurement of nothing,
+	// where -1 says the marker never had a crop taken.
+	if f.ThumbSize > 0 {
+		m.ThumbSize = f.ThumbSize
+	}
 
 	return m
 }
@@ -767,7 +775,7 @@ func (m *Marker) DetectedFace() bool {
 // an automatic cluster. The score bar comes from the detector that scored it, because a library
 // holds markers from more than one and nothing recomputes a score.
 func (m *Marker) Clusterable() bool {
-	return m != nil && m.Size >= face.ClusterSizeThreshold && m.Score >= face.ClusterScore(m.DetectModel)
+	return m != nil && m.ClusterSizeOf() >= face.ClusterSizeThreshold && m.Score >= face.ClusterScore(m.DetectModel)
 }
 
 // Uncertainty returns the detection uncertainty based on the score in percent. The scale is

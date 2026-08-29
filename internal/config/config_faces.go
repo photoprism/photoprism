@@ -967,9 +967,12 @@ func (c *Config) FaceEpsilonDist() float64 {
 }
 
 // FaceClusterSize returns the size threshold for faces forming a cluster in pixels.
+//
+// Resolved from the configured model when unset, because the bar means "the model consumes this
+// without interpolating" and every model states that as its own input geometry.
 func (c *Config) FaceClusterSize() int {
 	if c.options.FaceClusterSize < 20 || c.options.FaceClusterSize > 10000 {
-		return face.ClusterSizeThresholdDefault
+		return face.ClusterSize(c.EffectiveFaceModel())
 	}
 
 	return c.options.FaceClusterSize
