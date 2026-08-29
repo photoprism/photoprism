@@ -51,9 +51,12 @@ type Face struct {
 }
 
 // SetThumbSize records the face's extent in an image of the given width, which is what the
-// embedding was drawn from. A width below 1 leaves it unset rather than storing a guess.
+// embedding was drawn from. Unknown leaves it unset rather than storing a guess.
+//
+// Cols is checked directly rather than through ImageScale, whose "1 when unknown" is a coordinate
+// convention: it would turn an unrecorded detection width into a scale of srcWidth itself.
 func (f *Face) SetThumbSize(srcWidth int) {
-	if f == nil || srcWidth < 1 {
+	if f == nil || srcWidth < 1 || f.Cols < 2 {
 		return
 	}
 

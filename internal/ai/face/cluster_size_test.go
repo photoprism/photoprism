@@ -46,6 +46,15 @@ func TestFace_SetThumbSize(t *testing.T) {
 
 		assert.Zero(t, f.ThumbSize, "a guess is worse than no value, which falls back to the detection size")
 	})
+	t.Run("UnrecordedDetectionWidthLeavesItUnset", func(t *testing.T) {
+		// CropArea rewrites an unset Cols to 1 before the embedding loop runs, and ImageScale
+		// then returns the source width itself. Recording that would be Size x srcWidth, which
+		// clears any bar. No detection image is one pixel wide, so refuse instead.
+		f := &Face{Cols: 1, Area: Area{Scale: 60}}
+		f.SetThumbSize(1920)
+
+		assert.Zero(t, f.ThumbSize)
+	})
 	t.Run("Nil", func(t *testing.T) {
 		assert.NotPanics(t, func() { (*Face)(nil).SetThumbSize(1800) })
 	})

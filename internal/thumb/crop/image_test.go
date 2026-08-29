@@ -1,6 +1,7 @@
 package crop
 
 import (
+	"os"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -211,23 +212,23 @@ func TestImageFromIdealThumb(t *testing.T) {
 	})
 }
 
-// TestIdealThumbWidth covers the header-only lookup a cached crop relies on, since it returns
-// before the source image is opened and so cannot measure it.
-func TestIdealThumbWidth(t *testing.T) {
-	area := Area{Name: "face", X: 0.4, Y: 0.4, W: 0.1, H: 0.1}
-	size := Sizes[Tile160]
+// TestImageFromThumbCachedSource pins that a reused crop reports no source width. The crop's name
+// records its area and dimensions but not what it was drawn from, so any answer would be a
+// prediction of today's rendition rather than a record of the one the vector came from.
+func TestImageFromThumbCachedSource(t *testing.T) {
+	thumbName := "testdata/b/c/c/bccfeaa526a36e19b555fd4ca5e8f767d5604289_720x720_fit.jpg"
+	area := NewArea("crop", 0, 0, 1, 1)
 
-	t.Run("NotAThumbName", func(t *testing.T) {
-		// Without a hash prefix there is no rendition ladder to walk, so no width can be claimed.
-		assert.Equal(t, 0, IdealThumbWidth("/tmp/example.jpg", "", area, size))
-	})
-	t.Run("NoArea", func(t *testing.T) {
-		assert.Equal(t, 0, IdealThumbWidth("/tmp/example.jpg", "3cad9168fa6acc5c5c2965ddf6ec465ca42fd818", Area{}, size))
-	})
-	t.Run("NoSize", func(t *testing.T) {
-		assert.Equal(t, 0, IdealThumbWidth("/tmp/example.jpg", "3cad9168fa6acc5c5c2965ddf6ec465ca42fd818", area, Size{}))
-	})
-	t.Run("MissingRendition", func(t *testing.T) {
-		assert.Equal(t, 0, IdealThumbWidth("/tmp/missing.jpg", "3cad9168fa6acc5c5c2965ddf6ec465ca42fd818", area, size))
-	})
+	if _, err := os.Stat(thumbName); err != nil {
+		t.Skip("thumb fixture not available")
+	}
+
+	_, cropName, first, err := ImageFromThumb(thumbName, area, Sizes[Tile50], true)
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = os.Remove(cropName) })
+	assert.Positive(t, first, "the run that creates the crop measures its source")
+
+	_, _, second, err := ImageFromThumb(thumbName, area, Sizes[Tile50], true)
+	require.NoError(t, err)
+	assert.Zero(t, second, "the run that reuses it cannot know, and must not guess")
 }

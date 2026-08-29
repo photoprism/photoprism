@@ -50,10 +50,6 @@ func ImageFromThumb(thumbName string, area Area, size Size, cache bool) (img ima
 		return nil, "", 0, err
 	}
 
-	// Resolved without a decode, because a cached crop returns before the source is opened. The
-	// non-cached path replaces it below with the width of the image it actually read.
-	srcWidth = IdealThumbWidth(thumbName, hash, area, size)
-
 	// Compose cached crop image file name.
 	cropBase := fmt.Sprintf("%s_%dx%d_crop_%s%s", hash, size.Width, size.Height, area.String(), fs.ExtJpeg)
 	cropName = filepath.Join(filePath, cropBase)
@@ -64,7 +60,9 @@ func ImageFromThumb(thumbName string, area Area, size Size, cache bool) (img ima
 	} else if cropImg, _, cropErr := fs.DecodeImageFile(cropName); cropErr != nil {
 		log.Errorf("crop: failed loading %s", filepath.Base(cropName))
 	} else {
-		return cropImg, cropName, srcWidth, nil
+		// Zero rather than resolved: the crop's name records its area and dimensions but not its
+		// source, and a rendition cached since would predict a wider one than this crop came from.
+		return cropImg, cropName, 0, nil
 	}
 
 	// Open thumb image file.
@@ -101,29 +99,6 @@ func ImageFromThumb(thumbName string, area Area, size Size, cache bool) (img ima
 	}
 
 	return img, cropName, srcWidth, nil
-}
-
-// IdealThumbWidth returns the width of the rendition a crop would be drawn from, or 0 when it
-// cannot be determined. Header-only, so a caller that needs the number but not the pixels does
-// not pay for a decode.
-func IdealThumbWidth(thumbName, hash string, area Area, size Size) int {
-	if len(hash) != 40 || area.W <= 0 || size.Width <= 0 {
-		return 0
-	}
-
-	name := findIdealThumbFileName(hash, area.FileWidth(size), filepath.Dir(thumbName))
-
-	if name == "" {
-		return 0
-	}
-
-	cfg, _, err := fs.DecodeImageConfigFile(name)
-
-	if err != nil {
-		return 0
-	}
-
-	return cfg.Width
 }
 
 // ImageFromIdealThumb decodes the smallest cached thumbnail that can still supply the
