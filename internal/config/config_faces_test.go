@@ -1862,6 +1862,22 @@ func TestConfig_FaceClusterSize(t *testing.T) {
 	assert.Equal(t, face.ClusterSizeThreshold, c.FaceClusterSize())
 	c.options.FaceClusterSize = 66
 	assert.Equal(t, 66, c.FaceClusterSize())
+
+	t.Run("DerivedFromTheModelThroughTheFlagLayer", func(t *testing.T) {
+		// Built from the registered flags rather than by assigning the option, because that is
+		// where the derivation was defeated: a flag Value made the option non-zero on every
+		// start, so the getter never reached the per-model branch. Literals, not the propagated
+		// global, which Propagate assigns from this getter and would compare against itself.
+		ctx := cliContextWithFlagDefaults(t)
+
+		for model, want := range map[string]int{face.ModelFaceNet: 160, face.ModelSFace: 112} {
+			c := &Config{cliCtx: ctx, options: NewOptions(ctx)}
+			c.options.FaceModel = model
+
+			require.Zero(t, c.options.FaceClusterSize, "an unset option must stay zero to mean derive it")
+			assert.Equal(t, want, c.FaceClusterSize(), model)
+		}
+	})
 }
 
 func TestConfig_FaceClusterScore(t *testing.T) {

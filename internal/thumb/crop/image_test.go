@@ -231,4 +231,10 @@ func TestImageFromThumbCachedSource(t *testing.T) {
 	_, _, second, err := ImageFromThumb(thumbName, area, Sizes[Tile50], true)
 	require.NoError(t, err)
 	assert.Zero(t, second, "the run that reuses it cannot know, and must not guess")
+
+	// The crop cache is keyed on hash, area and size alone, so the UI's own face thumbnails
+	// satisfy it. A caller that has to record what it sampled therefore opens the source.
+	_, _, source, err := ImageFromSource(thumbName, area, Sizes[Tile50], false)
+	require.NoError(t, err)
+	assert.Equal(t, first, source, "ImageFromSource measures whether or not a crop is cached")
 }

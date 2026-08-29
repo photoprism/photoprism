@@ -2,6 +2,7 @@ package entity
 
 import "strings"
 
+// CameraType names how a picture was produced.
 type CameraType = string
 
 // Camera types, naming how a picture was produced.

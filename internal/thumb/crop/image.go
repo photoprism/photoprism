@@ -37,8 +37,23 @@ var thumbFileSizes = []thumb.Size{
 	thumb.Sizes[thumb.Fit15360],
 }
 
-// ImageFromThumb returns a cropped area from an existing thumbnail image.
+// ImageFromThumb returns a cropped area from an existing thumbnail image, reusing a cached crop
+// when one exists. srcWidth is then 0, because a reused crop cannot say what it was drawn from.
 func ImageFromThumb(thumbName string, area Area, size Size, cache bool) (img image.Image, cropName string, srcWidth int, err error) {
+	return cropFromThumb(thumbName, area, size, cache, true)
+}
+
+// ImageFromSource returns a cropped area taken from the source rendition, ignoring any cached crop,
+// and reports the width it sampled.
+//
+// A caller that records what an embedding was drawn from has to use this: the crop cache is keyed
+// on hash, area and size alone, so the UI's own face thumbnails satisfy it and would otherwise
+// leave every such embedding unmeasured.
+func ImageFromSource(thumbName string, area Area, size Size, cache bool) (img image.Image, cropName string, srcWidth int, err error) {
+	return cropFromThumb(thumbName, area, size, cache, false)
+}
+
+func cropFromThumb(thumbName string, area Area, size Size, cache, reuse bool) (img image.Image, cropName string, srcWidth int, err error) {
 	// Use same folder for caching if "cache" is true.
 	filePath := filepath.Dir(thumbName)
 
@@ -55,7 +70,9 @@ func ImageFromThumb(thumbName string, area Area, size Size, cache bool) (img ima
 	cropName = filepath.Join(filePath, cropBase)
 
 	// Cached?
-	if !fs.FileExists(cropName) {
+	if !reuse {
+		// Do nothing.
+	} else if !fs.FileExists(cropName) {
 		// Do nothing.
 	} else if cropImg, _, cropErr := fs.DecodeImageFile(cropName); cropErr != nil {
 		log.Errorf("crop: failed loading %s", filepath.Base(cropName))

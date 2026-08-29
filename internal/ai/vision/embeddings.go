@@ -83,7 +83,9 @@ func faceCropImage(embedder face.Embedder, srcImg image.Image, fileName string, 
 		}
 	}
 
-	img, _, srcWidth, err := crop.ImageFromThumb(fileName, f.CropArea(), face.CropSize, cacheCrop)
+	// Not ImageFromThumb: a reused crop reports no source width, and the UI caches face
+	// thumbnails under the same name, so the extent would go unrecorded on every indexed library.
+	img, _, srcWidth, err := crop.ImageFromSource(fileName, f.CropArea(), face.CropSize, cacheCrop)
 
 	return img, srcWidth, err
 }

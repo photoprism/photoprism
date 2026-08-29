@@ -1407,10 +1407,10 @@ var Flags = CliFlags{
 		}, DocDefault: "auto"}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-cluster-size",
-			Usage:   "minimum size of automatically clustered faces in `PIXELS` of the image their embedding was sampled from (20-10000)",
-			Value:   face.ClusterSizeThresholdDefault,
+			Usage:   "minimum size of automatically clustered faces in `PIXELS` of the image their embedding was sampled from (20-10000), calibrated per face model when unset",
 			EnvVars: EnvVars("FACE_CLUSTER_SIZE"),
-		}}, {
+		},
+		DocDefault: faceDocDefault(float64(face.ClusterSize(face.DefaultModelName())))}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-cluster-score",
 			Usage:   "minimum `QUALITY` score of automatically clustered faces (1-100), overriding the bar calibrated per detector, -1 disables the check",

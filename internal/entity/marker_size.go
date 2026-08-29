@@ -9,9 +9,9 @@ import (
 )
 
 // ClusterSizeCond builds the size bar automatic clustering applies, as one expression every query
-// shares. It reads thumb_size, the extent of the image an embedding was sampled from, and falls
-// back to size, which is a lower bound on it: Fit720 is the narrowest rendition a crop is drawn
-// from, so a marker clearing the bar there cleared it in whatever rendition was actually used.
+// shares. It reads thumb_size, the extent of the image an embedding was sampled from, falling back
+// to size, which is a lower bound on it for every marker detected on Fit720 - the only detection
+// rendition this code writes, and the narrowest a crop is ever drawn from.
 func ClusterSizeCond(alias string, floor int) (string, []any) {
 	size, thumbSize := "size", "thumb_size"
 

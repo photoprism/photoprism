@@ -351,16 +351,18 @@ func SaveFaceMigrationEmbeddings(model, detectModel string, embeddings map[strin
 			}
 
 			// Recorded beside the vector on either path, since a re-crop samples a rendition too.
+			// Blanked rather than left alone when the measurement failed, or the row would judge a
+			// fresh vector by the extent an earlier sampling had.
 			if detail := details[markerUID]; detail.ThumbSize > 0 {
 				columns["thumb_size"] = detail.ThumbSize
+			} else {
+				columns["thumb_size"] = -1
 			}
 
-			// Written together, or the recorded detector would attest another one's work. The
-			// score matters most: the clustering bars are looked up by detect_model, so a marker
-			// relabeled without it is judged at a calibration it was never scored against. Size
-			// travels for the same reason, and both are in the pixels of the same Fit720 thumbnail
-			// indexing detects on. A detection that produced no usable landmarks blanks the column
-			// rather than leaving an earlier detector's behind.
+			// Written together, or the recorded detector would attest another one's work: the
+			// clustering bars are looked up by detect_model, so a marker relabeled without its
+			// score is judged at a calibration it was never scored against. Landmarks are blanked
+			// rather than left behind when a detection produced none.
 			if detectModel != "" {
 				detection := details[markerUID]
 				points := detection.Landmarks
@@ -510,7 +512,7 @@ func CountMarkersWithoutThumbSize() (n int, err error) {
 	err = UnscopedDb().Model(&entity.Marker{}).
 		Where("marker_type = ? AND marker_invalid = 0", entity.MarkerFace).
 		Where("LENGTH(embeddings_json) > 0").
-		Where("thumb_size < 1").
+		Where("thumb_size IS NULL OR thumb_size < 1").
 		Count(&count).Error
 
 	return int(count), err

@@ -601,7 +601,7 @@ func (m *Marker) Face() (f *Face) {
 	// and XMP names must not seed the shared face (no XMP clustering in v1).
 	if subjSrcSharesFace(m.SubjSrc) && m.FaceID == "" {
 		if !m.Clusterable() {
-			log.Debugf("faces: marker %s skipped adding face due to low-quality (size %d, score %d)", clean.Log(m.MarkerUID), m.Size, m.Score)
+			log.Debugf("faces: marker %s skipped adding face due to low-quality (size %d, score %d)", clean.Log(m.MarkerUID), m.ClusterSizeOf(), m.Score)
 			return nil
 		}
 

@@ -99,7 +99,8 @@ func Embeddings(single, unclustered bool, size, score int, model string) (result
 	stmt = whereEmbeddingModel(stmt, model)
 
 	if size > 0 {
-		stmt = stmt.Where(entity.ClusterSizeCond("", size))
+		sizeCond, sizeArgs := entity.ClusterSizeCond("", size)
+		stmt = stmt.Where(sizeCond, sizeArgs...)
 	}
 
 	stmt = whereClusterScore(stmt, score)
