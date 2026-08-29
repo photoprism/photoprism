@@ -56,6 +56,17 @@ func Start(conf *config.Config) {
 			log.Errorf("scheduler: %s (backup)", err)
 		}
 
+		// Only portals issue JWTs, so only they need a signing key to rotate. The startup
+		// check runs as well, since a portal that is never up at the scheduled hour would
+		// otherwise never reach a tick.
+		if conf.Portal() {
+			if err = NewJob("jwt-keys", JWTKeySchedule, func() { RunJWTKeyRotation(conf) }); err != nil {
+				log.Errorf("scheduler: %s (jwt keys)", err)
+			}
+
+			go event.Safe(func() { RunJWTKeyRotation(conf) })
+		}
+
 		// Only schedule index and vision jobs if this is not a portal.
 		if !conf.Portal() {
 			// Schedule indexing job.

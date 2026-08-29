@@ -176,6 +176,7 @@ type Options struct {
 	JWKSCacheTTL              int           `yaml:"JWKSCacheTTL" json:"-" flag:"jwks-cache-ttl"`
 	JWTScope                  string        `yaml:"JWTScope" json:"-" flag:"jwt-scope"`
 	JWTLeeway                 int           `yaml:"JWTLeeway" json:"-" flag:"jwt-leeway"`
+	JWTRotateDays             int           `yaml:"JWTRotateDays" json:"-" flag:"jwt-rotate-days"`
 	PortalOIDCIssuer          string        `yaml:"PortalOIDCIssuer" json:"-" flag:"portal-oidc-issuer"`
 	PortalOIDCTTL             int           `yaml:"PortalOIDCTTL" json:"-" flag:"portal-oidc-ttl"`
 	PortalOIDCCodeTTL         int           `yaml:"PortalOIDCCodeTTL" json:"-" flag:"portal-oidc-code-ttl"`

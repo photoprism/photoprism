@@ -226,6 +226,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"jwks-cache-ttl", fmt.Sprintf("%d", c.JWKSCacheTTL())},
 		{"jwt-scope", c.JWTAllowedScopes().String()},
 		{"jwt-leeway", fmt.Sprintf("%d", c.JWTLeeway())},
+		{"jwt-rotate-days", fmt.Sprintf("%d", c.JWTRotateDays())},
 		{"advertise-url", clean.UriRedacted(c.AdvertiseUrl())},
 
 		// Networking.

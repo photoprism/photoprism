@@ -844,6 +844,12 @@ var Flags = CliFlags{
 			Value:   60,
 			EnvVars: EnvVars("JWT_LEEWAY"),
 		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "jwt-rotate-days",
+			Usage:   "portal JWT signing key lifetime in `DAYS`, -1 to rotate manually only",
+			Value:   90,
+			EnvVars: EnvVars("JWT_ROTATE_DAYS"),
+		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "portal-oidc-issuer",
 			Usage:   "Portal OIDC OP issuer `URL` advertised in discovery and ID tokens (defaults to site-url)",
