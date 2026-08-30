@@ -12,6 +12,7 @@ import countries from "options/countries.json";
 import { $gettext } from "common/gettext";
 import { PhotoClipboard } from "common/clipboard";
 import download from "common/download";
+import $notify from "common/notify";
 import * as src from "common/src";
 import * as media from "common/media";
 import * as formats from "options/formats";
@@ -771,6 +772,9 @@ export class Photo extends RestModel {
       return;
     }
 
+    let downloaded = 0;
+    let skipped = 0;
+
     this.Files.forEach((file) => {
       if (!file || !file.Hash) {
         return;
@@ -782,6 +786,7 @@ export class Photo extends RestModel {
         if ($config.debug) {
           console.log(`download: skipped ${file.Root} file ${file.Name}`);
         }
+        skipped++;
         return;
       }
 
@@ -791,6 +796,7 @@ export class Photo extends RestModel {
         if ($config.debug) {
           console.log(`download: skipped sidecar file ${file.Name}`);
         }
+        skipped++;
         return;
       }
 
@@ -799,6 +805,7 @@ export class Photo extends RestModel {
         if ($config.debug) {
           console.log(`download: skipped raw file ${file.Name}`);
         }
+        skipped++;
         return;
       }
 
@@ -808,11 +815,17 @@ export class Photo extends RestModel {
         if ($config.debug) {
           console.log(`download: skipped video sidecar ${file.Name}`);
         }
+        skipped++;
         return;
       }
 
       download(`${$config.apiUri}/dl/${file.Hash}?t=${token}`, this.fileBase(file.Name));
+      downloaded++;
     });
+
+    if (downloaded === 0 && skipped > 0) {
+      $notify.warn($gettext("No files to download: all files are excluded by the download settings"));
+    }
   }
 
   calculateSize(width, height) {
