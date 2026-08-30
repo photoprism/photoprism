@@ -370,9 +370,9 @@ func recomputeFaceStats(f *entity.Face) (measured bool, err error) {
 		return false, nil
 	}
 
-	if err = f.SetMatchStats(len(members), radius); err != nil {
-		// Declined rather than measured: SetMatchStats assigns before it writes, so falling through
-		// would ratchet on top of values that never reached the database.
+	if err = f.SetSampleRadius(radius); err != nil {
+		// Declined rather than measured: the setter assigns before it writes, so falling through
+		// would ratchet on top of a value that never reached the database.
 		return false, err
 	}
 

@@ -14,10 +14,9 @@ import (
 )
 
 // sessionGrantsPeople reports whether the session is granted perm on people, mirroring
-// sessionGrantsPhotos: a client session needs it on the client role too, since a client acting for a
-// user is limited by both, and a client without a user is evaluated on that role alone. Reading the
-// user role there would resolve to RoleNone and deny what the client was authorized with. A nil
-// session means internal or CLI use, which is not restricted.
+// sessionGrantsPhotos: a client is limited by its own role as well as its user's, and one without a
+// user is evaluated on that role alone - reading the user role there resolves to RoleNone and denies
+// what the request was admitted with. A nil session is internal or CLI use and is not restricted.
 func sessionGrantsPeople(sess *entity.Session, perm acl.Permission) bool {
 	if sess == nil {
 		return true

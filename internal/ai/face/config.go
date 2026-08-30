@@ -129,6 +129,10 @@ var (
 	MatchMargin = MatchMarginDefault
 	// ClusterCore is the minimum number of faces required to seed a cluster core.
 	ClusterCore = ClusterCoreDefault
+	// ManualClusterCore is the number of manually assigned faces required to form a cluster, and so
+	// also the fewest that can be merged. Lower than ClusterCore because each already asserts an
+	// identity: one is a labeled example and two are a pair, neither of which is a grouping.
+	ManualClusterCore = 3
 	// ClusterPercentile is the share of a cluster's member distances its stored radius covers, so
 	// that no single outlier decides how far the cluster reaches. Configurable for calibration:
 	// 100 restores the maximum, and the two disagree from well below the usual link distances.

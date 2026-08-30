@@ -141,9 +141,8 @@ func TestSubjects_Birthday(t *testing.T) {
 
 // TestSubjects_BirthdayKeyAlwaysPresent pins the absence of omitempty on the field.
 //
-// The client tracks only the keys a response carried, and its live list refresh copies a field by
-// name: an omitted key is never seen, so clearing a date would stop reaching the loaded row. Nothing
-// else fails if a sweep tidies the tag, which is why this asserts on the tag rather than on a value.
+// The client tracks only the keys a response carried, so an omitted one is never sent back and
+// clearing a date stops working. Nothing else fails if a sweep tidies the tag.
 func TestSubjects_BirthdayKeyAlwaysPresent(t *testing.T) {
 	b, err := json.Marshal(Subject{SubjUID: "js6sg6b1qekk9jx8"})
 

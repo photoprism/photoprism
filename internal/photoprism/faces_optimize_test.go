@@ -119,7 +119,7 @@ func TestFaces_OptimizeSingletons(t *testing.T) {
 			face.FixtureEmbeddingAt(base, near, 8103),
 		} {
 			f := namedFace(t, "js6sg6b1qekk9jx8", e)
-			require.InDelta(t, face.ClusterRadius, f.SampleRadius, 1e-9, "cluster %d", i)
+			require.InDelta(t, face.Epsilon, f.SampleRadius, 1e-9, "cluster %d", i)
 		}
 
 		before, err := query.ManuallyAddedFaces(false, false, "js6sg6b1qekk9jx8")
@@ -134,22 +134,40 @@ func TestFaces_OptimizeSingletons(t *testing.T) {
 		require.NoError(t, err)
 		assert.Less(t, len(after), len(before), "the subject ends up with fewer clusters")
 	})
-	t.Run("SameSubjectPairMerges", func(t *testing.T) {
+	// Two labels of one person are close enough to link, and still must not merge: their midpoint
+	// would be a pair's average, and a centroid needs a core to be one.
+	t.Run("SameSubjectPairWaits", func(t *testing.T) {
 		w := isolatedTestFaces(t, "faces-optimize-same-subj-pair")
 
 		base := face.FixtureEmbedding(8301)
 		near := face.ClusterDist * 0.9
 
-		namedFace(t, "js6sg6b1qekk9jx7", base)
-		namedFace(t, "js6sg6b1qekk9jx7", face.FixtureEmbeddingAt(base, near, 8302))
+		a := namedFace(t, "js6sg6b1qekk9jx7", base)
+		b := namedFace(t, "js6sg6b1qekk9jx7", face.FixtureEmbeddingAt(base, near, 8302))
+
+		mergeable, _ := a.Mergeable(b)
+		require.True(t, mergeable, "the pair links, so only the core decides")
 
 		r, err := w.OptimizeFor("js6sg6b1qekk9jx7")
 		require.NoError(t, err)
-		assert.Positive(t, r.Merged, "naming a second face of one person has to be able to merge")
+		assert.Zero(t, r.Merged)
 
 		after, err := query.ManuallyAddedFaces(false, false, "js6sg6b1qekk9jx7")
 		require.NoError(t, err)
-		assert.Len(t, after, 1)
+		assert.Len(t, after, 2, "both wait for a third")
+
+		// And the third completes the group in one pass, since the link is transitive.
+		namedFace(t, "js6sg6b1qekk9jx7", face.FixtureEmbeddingAt(base, near, 8303))
+
+		r, err = w.OptimizeFor("js6sg6b1qekk9jx7")
+		require.NoError(t, err)
+		assert.Positive(t, r.Merged)
+
+		after, err = query.ManuallyAddedFaces(false, false, "js6sg6b1qekk9jx7")
+		require.NoError(t, err)
+		require.Len(t, after, 1)
+		assert.Equal(t, face.ManualClusterCore, after[0].Samples, "the centroid records its inputs")
+		assert.Greater(t, after[0].SampleRadius, face.Epsilon, "and now has a measured extent")
 	})
 	// The clusters arrive ordered by subject, so a subject that follows another is the case a
 	// boundary can lose: one run must not consume the clusters the next subject needs.
@@ -162,7 +180,10 @@ func TestFaces_OptimizeSingletons(t *testing.T) {
 		for i, subjUID := range subjects {
 			base := face.FixtureEmbedding(uint64(8501 + i*10))
 			namedFace(t, subjUID, base)
-			namedFace(t, subjUID, face.FixtureEmbeddingAt(base, near, uint64(8502+i*10)))
+
+			for j := 1; j < face.ManualClusterCore; j++ {
+				namedFace(t, subjUID, face.FixtureEmbeddingAt(base, near, uint64(8502+i*10+j)))
+			}
 		}
 
 		r, err := w.Optimize()
@@ -172,7 +193,7 @@ func TestFaces_OptimizeSingletons(t *testing.T) {
 		for _, subjUID := range subjects {
 			after, err := query.ManuallyAddedFaces(false, false, subjUID)
 			require.NoError(t, err)
-			assert.Len(t, after, 1, "subject %s merges its own pair", subjUID)
+			assert.Len(t, after, 1, "subject %s merges its own core", subjUID)
 		}
 	})
 	// A merge builds its midpoint from the source centroids alone, so it can be narrower than
@@ -253,7 +274,10 @@ func TestFaces_OptimizeSingletons(t *testing.T) {
 		require.Greater(t, apart, anchor.AcceptDist())
 		require.LessOrEqual(t, apart, face.ClusterDist)
 
-		namedFace(t, subjUID, face.FixtureEmbeddingAt(anchor.Embedding(), apart, 8807))
+		// Enough singletons to complete a core with the anchor, all beyond what it would accept.
+		for i := 1; i < face.ManualClusterCore; i++ {
+			namedFace(t, subjUID, face.FixtureEmbeddingAt(anchor.Embedding(), apart, uint64(8806+i)))
+		}
 
 		r, err := w.OptimizeFor(subjUID)
 		require.NoError(t, err)

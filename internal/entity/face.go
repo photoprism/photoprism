@@ -138,12 +138,11 @@ func (m *Face) SetEmbeddings(embeddings face.Embeddings, model face.ModelName) (
 	// Limit sample radius to reduce false positives.
 	m.SampleRadius = face.ClampSampleRadius(m.SampleRadius)
 
-	// An extent of zero is unmeasurable rather than tight, and would leave the cluster narrower than
-	// any real pair of one person's faces. Duplicate samples reach this only when rounding in the
-	// mean leaves the extent exactly zero, which 2 and 4 copies do and 3 and 5 do not, so the reach
-	// of a duplicate cluster follows its member count rather than a decision anyone made.
+	// One embedding has no extent, and neither do copies of one crop: the honest value is the
+	// numeric tolerance, not the width of a cluster nothing measured. A centroid and a radius are
+	// what merging produces, so a singleton carries neither until it becomes part of one.
 	if m.SampleRadius <= 0 {
-		m.SampleRadius = face.ClusterRadius
+		m.SampleRadius = face.Epsilon
 	}
 
 	m.EmbeddingJSON, err = json.Marshal(m.embedding)
@@ -516,51 +515,50 @@ func (m *Face) MatchMarkers(faceIds []string) error {
 	return nil
 }
 
-// UpdateMatchStats persists sample statistics from recent matches, only ever widening the extent.
+// UpdateMatchStats widens the extent a cluster reaches after a match run, and never narrows it.
 //
 // A run visits only the markers that were unmatched when it started, so one face arriving near the
-// centroid would otherwise shrink the radius and refuse the members beyond it. SetEmbeddings
-// recomputes both from membership, which is the path that may shrink a cluster.
-func (m *Face) UpdateMatchStats(samples int, maxDistance float64) error {
-	if m.ID == "" || samples <= 0 {
+// centroid would otherwise shrink the radius and refuse the members beyond it. It leaves Samples
+// alone: that counts the embeddings the centroid was averaged from, which matching does not change.
+func (m *Face) UpdateMatchStats(matched int, maxDistance float64) error {
+	if m.ID == "" || matched <= 0 {
 		return nil
 	}
 
 	// The epsilon slack is applied before clamping so it can never lift the stored
 	// radius above the configured maximum.
 	radius := face.ClampSampleRadius(max(maxDistance+face.Epsilon, m.SampleRadius))
-	samples = max(samples, m.Samples)
 
-	if m.Samples == samples && m.SampleRadius == radius {
+	if m.SampleRadius == radius {
 		return nil
 	}
 
-	m.Samples = samples
 	m.SampleRadius = radius
 	UpdateFaces.Store(true)
 
-	return m.Updates(Values{"samples": m.Samples, "sample_radius": m.SampleRadius})
+	return m.Updates(Values{"sample_radius": m.SampleRadius})
 }
 
-// SetMatchStats replaces the sample count and radius with measurements of the cluster's members.
+// SetSampleRadius replaces the extent with one measured over the cluster's members, which is what
+// makes a smaller value trustworthy where UpdateMatchStats can only widen.
 //
-// Distinct from UpdateMatchStats, which only ever widens because it sees one pass rather than the
-// membership: measuring the whole cluster is what makes a smaller number trustworthy.
-func (m *Face) SetMatchStats(samples int, radius float64) error {
-	if m.ID == "" || samples <= 0 || radius <= 0 {
+// Samples is not touched. The centroid is read rather than recomputed - a cluster's id is its hash -
+// so the number of embeddings averaged into it is unchanged however far its members now reach.
+func (m *Face) SetSampleRadius(radius float64) error {
+	if m.ID == "" || radius <= 0 {
 		return nil
 	}
 
 	radius = face.ClampSampleRadius(radius)
 
-	if m.Samples == samples && m.SampleRadius == radius {
+	if m.SampleRadius == radius {
 		return nil
 	}
 
-	m.Samples, m.SampleRadius = samples, radius
+	m.SampleRadius = radius
 	UpdateFaces.Store(true)
 
-	return m.Updates(Values{"samples": m.Samples, "sample_radius": m.SampleRadius})
+	return m.Updates(Values{"sample_radius": m.SampleRadius})
 }
 
 // SetSubjectUID updates the face's subject uid and related markers.

@@ -7,6 +7,7 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 
+	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/event"
@@ -57,8 +58,8 @@ func (w *Faces) OptimizeFor(subjUID string) (result FacesOptimizeResult, err err
 
 		// mergeGroup merges one group and reports what became of its candidates.
 		mergeGroup := func(j int, merge entity.Faces) {
-			if len(merge) < 2 {
-				// Nothing to merge.
+			if len(merge) < face.ManualClusterCore {
+				// Too few to form a cluster: their midpoint would be an embedding or a pair.
 			} else if _, mergeErr := query.MergeFaces(merge, false); mergeErr != nil {
 				if errors.Is(mergeErr, query.ErrRetainedManualClusters) {
 					subject := entity.SubjNames.Log(merge[0].SubjUID)

@@ -272,17 +272,20 @@ func TestFace_SetEmbeddings(t *testing.T) {
 		require.Equal(t, 2, m.Samples)
 		assert.InDelta(t, face.ClusterRadius, m.SampleRadius, 1e-9)
 	})
-	t.Run("SingleSampleWidensToClusterRadius", func(t *testing.T) {
+	t.Run("SingleSampleHasNoExtent", func(t *testing.T) {
+		// One embedding is the centroid rather than an average of several, so there is nothing to
+		// measure a spread over. Epsilon is the honest value; a cluster radius would be a width
+		// nothing observed, which is what let a labeled example reach across the library.
 		m := &Face{}
 
 		require.NoError(t, m.SetEmbeddings(face.Embeddings{face.FixtureEmbedding(7301)}, face.EmbeddingModelName()))
 		require.Equal(t, 1, m.Samples)
-		assert.InDelta(t, face.ClusterRadius, m.SampleRadius, 1e-9)
+		assert.InDelta(t, face.Epsilon, m.SampleRadius, 1e-9)
 	})
 	// Duplicate samples reach the guard as well, so it is not confined to the naming path. Which
 	// counts do is decided by rounding in the mean rather than by the count - here 2 and 4 measure
 	// exactly zero while 3 and 5 do not - so the cases are named individually rather than swept.
-	t.Run("IdenticalSamplesWidenToClusterRadius", func(t *testing.T) {
+	t.Run("IdenticalSamplesHaveNoExtent", func(t *testing.T) {
 		e := face.FixtureEmbedding(7311)
 
 		for _, samples := range []int{2, 4} {
@@ -294,7 +297,7 @@ func TestFace_SetEmbeddings(t *testing.T) {
 			m := &Face{}
 			require.NoError(t, m.SetEmbeddings(embeddings, face.EmbeddingModelName()))
 			require.Equal(t, samples, m.Samples)
-			assert.InDelta(t, face.ClusterRadius, m.SampleRadius, 1e-9, "%d identical samples", samples)
+			assert.InDelta(t, face.Epsilon, m.SampleRadius, 1e-9, "%d identical samples", samples)
 		}
 	})
 	// Where the guard stops. A radius is the measured distance plus Epsilon, so samples that merely
@@ -374,16 +377,19 @@ func TestFace_Mergeable(t *testing.T) {
 	anchor := NewFace("js6sg6b1qekk9jx8", SrcManual, face.Embeddings{base}, face.EmbeddingModelName())
 
 	t.Run("WithinClusterDist", func(t *testing.T) {
-		other := clusterAt(face.ClusterDist*0.9, 7602)
-		ok, dist := anchor.Mergeable(other)
+		// Beyond what either would accept a marker at, since a singleton has no extent and reaches
+		// only MatchDist. Merging says yes anyway, which is the property: the bound is ClusterDist,
+		// not the per-member radius the old criterion read.
+		dist := face.ClusterDist * 0.9
+		require.Greater(t, dist, anchor.AcceptDist())
+
+		ok, measured := anchor.Mergeable(clusterAt(dist, 7602))
 
 		assert.True(t, ok)
-		assert.InDelta(t, face.ClusterDist*0.9, dist, 1e-6)
+		assert.InDelta(t, dist, measured, 1e-6)
 	})
 	t.Run("BeyondClusterDist", func(t *testing.T) {
-		// Inside what either one would accept a marker at, so only the bound under test decides.
 		dist := face.ClusterDist + 0.05
-		require.Less(t, dist, anchor.AcceptDist())
 
 		ok, measured := anchor.Mergeable(clusterAt(dist, 7603))
 
@@ -566,7 +572,8 @@ func TestFace_SingletonMatchDistance(t *testing.T) {
 	m := NewFace("", SrcManual, face.Embeddings{base}, face.EmbeddingModelName())
 
 	require.Equal(t, 1, m.Samples)
-	require.InDelta(t, face.ClusterRadius+face.MatchDist, m.AcceptDist(), 1e-9)
+	// One embedding has no extent, so its reach is the match distance and nothing more.
+	require.InDelta(t, face.Epsilon+face.MatchDist, m.AcceptDist(), 1e-9)
 
 	t.Run("WithinAcceptDist", func(t *testing.T) {
 		dist := m.AcceptDist() - 0.05
@@ -614,8 +621,9 @@ func TestFace_UpdateMatchStats(t *testing.T) {
 	})
 	t.Run("AddsEpsilonSlack", func(t *testing.T) {
 		m := narrowTestFace(t, "uds5ttbeu5yj2sqf", 7501)
+		samples := m.Samples
 		require.NoError(t, m.UpdateMatchStats(4, 0.1))
-		assert.Equal(t, 4, m.Samples)
+		assert.Equal(t, samples, m.Samples, "a match run does not change the centroid's inputs")
 		assert.InDelta(t, 0.1+face.Epsilon, m.SampleRadius, 1e-9)
 	})
 	t.Run("ClampsToClusterRadius", func(t *testing.T) {
@@ -639,7 +647,6 @@ func TestFace_UpdateMatchStats(t *testing.T) {
 
 		assert.InDelta(t, wide, m.SampleRadius, 1e-9, "a single close match must not shrink the cluster")
 		assert.InDelta(t, accept, m.AcceptDist(), 1e-9, "so the accept distance holds")
-		assert.Equal(t, 20, m.Samples, "and the sample count is not replaced by the subset")
 	})
 	t.Run("StillWidens", func(t *testing.T) {
 		// Growing is the whole point of the statistic: a farther member must still be able
@@ -649,7 +656,23 @@ func TestFace_UpdateMatchStats(t *testing.T) {
 		require.NoError(t, m.UpdateMatchStats(4, 0.25))
 
 		assert.InDelta(t, 0.25+face.Epsilon, m.SampleRadius, 1e-9)
-		assert.Equal(t, 4, m.Samples)
+	})
+	t.Run("LeavesTheSampleCount", func(t *testing.T) {
+		// Samples counts the embeddings the centroid was averaged from. A match run changes which
+		// markers a cluster holds, not what its centroid was built from, so it must not write it -
+		// otherwise a one-embedding pseudo-centroid reads as a cluster after it recruits.
+		m := NewFace("js6sg6b1qekk9jq1", SrcManual,
+			face.Embeddings{face.FixtureEmbedding(7551)}, face.EmbeddingModelName())
+		require.NotNil(t, m)
+		require.NoError(t, m.Create())
+		require.Equal(t, 1, m.Samples)
+
+		t.Cleanup(func() { UnscopedDb().Delete(&Face{}, "id = ?", m.ID) })
+
+		require.NoError(t, m.UpdateMatchStats(19, 0.30))
+
+		assert.Equal(t, 1, m.Samples, "one embedding stays one embedding")
+		assert.Equal(t, 1, FindFace(m.ID).Samples, "and the stored row agrees")
 	})
 	t.Run("NegativeDistance", func(t *testing.T) {
 		m := narrowTestFace(t, "uds5ttbeu5yj2sqh", 7541)
@@ -659,7 +682,7 @@ func TestFace_UpdateMatchStats(t *testing.T) {
 	})
 }
 
-func TestFace_SetMatchStats(t *testing.T) {
+func TestFace_SetSampleRadius(t *testing.T) {
 	t.Run("ReplacesRatherThanWidens", func(t *testing.T) {
 		// The property UpdateMatchStats cannot have: a measurement of the whole membership is what
 		// makes a smaller number trustworthy.
@@ -667,36 +690,34 @@ func TestFace_SetMatchStats(t *testing.T) {
 		require.NoError(t, m.UpdateMatchStats(20, 0.30))
 		require.InDelta(t, 0.30+face.Epsilon, m.SampleRadius, 1e-9)
 
-		require.NoError(t, m.SetMatchStats(4, 0.08))
+		samples := m.Samples
+		require.NoError(t, m.SetSampleRadius(0.08))
 
 		assert.InDelta(t, 0.08, m.SampleRadius, 1e-9)
-		assert.Equal(t, 4, m.Samples)
+		assert.Equal(t, samples, m.Samples, "measuring the extent says nothing about the centroid")
 		assert.InDelta(t, 0.08, FindFace(m.ID).SampleRadius, 1e-9, "and it is persisted")
 	})
 	t.Run("ClampsToClusterRadius", func(t *testing.T) {
 		m := narrowTestFace(t, "uds5ttbeu5yj2ss2", 7811)
-		require.NoError(t, m.SetMatchStats(4, face.ClusterRadius*2))
+		require.NoError(t, m.SetSampleRadius(face.ClusterRadius*2))
 
 		assert.InDelta(t, face.ClusterRadius, m.SampleRadius, 1e-9)
 	})
 	t.Run("NoFaceId", func(t *testing.T) {
 		m := &Face{}
-		require.NoError(t, m.SetMatchStats(3, 0.2))
+		require.NoError(t, m.SetSampleRadius(0.2))
 
-		assert.Zero(t, m.Samples)
 		assert.Zero(t, m.SampleRadius)
 	})
 	t.Run("RefusesAnEmptyMeasurement", func(t *testing.T) {
-		// Neither a count nor a radius of zero describes a cluster, so the row is left as it is
-		// rather than written with a value nothing measured.
+		// A radius of zero describes no cluster, so the row is left as it is rather than written
+		// with a value nothing measured.
 		m := narrowTestFace(t, "uds5ttbeu5yj2ss3", 7821)
-		radius, samples := m.SampleRadius, m.Samples
+		radius := m.SampleRadius
 
-		require.NoError(t, m.SetMatchStats(0, 0.2))
-		require.NoError(t, m.SetMatchStats(3, 0))
+		require.NoError(t, m.SetSampleRadius(0))
 
 		assert.InDelta(t, radius, m.SampleRadius, 1e-9)
-		assert.Equal(t, samples, m.Samples)
 	})
 }
 
@@ -1046,6 +1067,9 @@ func TestFace_MatchMarkers(t *testing.T) {
 // TestFace_MatchMarkersFromOneSample covers what naming a face is for. Marker.Face() creates a
 // cluster from that one marker and immediately matches it against the faceless ones, so a radius
 // of zero would gate the search at MatchDist and the feature would find nobody.
+// TestFace_MatchMarkersFromOneSample pins how far a one-embedding cluster reaches. It still matches
+// what sits inside MatchDist of it, which is what lets a merged cluster re-adopt its sources'
+// markers; what it no longer does is carry a cluster's width on the evidence of one photograph.
 func TestFace_MatchMarkersFromOneSample(t *testing.T) {
 	base := face.FixtureEmbedding(9301)
 
@@ -1059,8 +1083,10 @@ func TestFace_MatchMarkersFromOneSample(t *testing.T) {
 		Db().Delete(cluster)
 	})
 
+	// A singleton reaches MatchDist and no further, because one embedding has no extent to add.
+	require.InDelta(t, face.Epsilon+face.MatchDist, cluster.AcceptDist(), 1e-9)
+
 	dist := 0.9 * cluster.AcceptDist()
-	require.Greater(t, dist, face.MatchDist, "the marker has to sit beyond what a zero radius accepts")
 
 	m := &Marker{
 		FileUID:    "fs6sg6bw45bnlqdw",

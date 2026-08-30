@@ -17,7 +17,15 @@ func recomputeTestCluster(t *testing.T, subjUID string, seed uint64, dists ...fl
 	t.Helper()
 
 	base := face.FixtureEmbedding(seed)
-	f := entity.NewFace(subjUID, entity.SrcManual, face.Embeddings{base}, face.EmbeddingModelName())
+
+	// Seeded with a full core, or the cluster is a labeled example rather than a grouping and
+	// matching never offers it - which is the state this measurement exists to correct.
+	embeddings := make(face.Embeddings, face.ManualClusterCore)
+	for i := range embeddings {
+		embeddings[i] = base
+	}
+
+	f := entity.NewFace(subjUID, entity.SrcManual, embeddings, face.EmbeddingModelName())
 
 	require.NotNil(t, f)
 	require.NoError(t, f.Create())
@@ -55,9 +63,11 @@ func TestRecomputeFaceStats(t *testing.T) {
 
 		f, _ := recomputeTestCluster(t, subjUID, 9101, 0.05, 0.08, 0.11)
 
-		// The ratchet would leave it here, at the widest a pass may accept rather than at a spread.
-		require.NoError(t, f.UpdateMatchStats(1, f.AcceptDist()))
+		// The ratchet widens to the clamp, which is what a measurement over the members replaces.
+		require.NoError(t, f.UpdateMatchStats(1, face.ClusterRadius))
 		require.InDelta(t, face.ClusterRadius, f.SampleRadius, 1e-9)
+
+		samples := f.Samples
 
 		measured, err := recomputeFaceStats(f)
 		require.NoError(t, err)
@@ -66,9 +76,9 @@ func TestRecomputeFaceStats(t *testing.T) {
 		stored := entity.FindFace(f.ID)
 		require.NotNil(t, stored)
 
-		assert.Equal(t, 3, stored.Samples, "samples counts the markers it holds")
-		assert.Less(t, stored.SampleRadius, face.ClusterRadius, "and the radius stops being the clamp")
+		assert.Less(t, stored.SampleRadius, face.ClusterRadius, "the radius stops being the clamp")
 		assert.GreaterOrEqual(t, stored.SampleRadius, 0.11, "while still covering the furthest member")
+		assert.Equal(t, samples, stored.Samples, "and the centroid's inputs are not what was measured")
 	})
 	t.Run("KeepsClusterIdentity", func(t *testing.T) {
 		// The centroid is read, never re-derived: faces.id is its hash, so a new one would orphan
@@ -137,7 +147,7 @@ func TestRecomputeFaceStats(t *testing.T) {
 		isolatedTestFaces(t, "faces-recompute-unusable")
 
 		f, _ := recomputeTestCluster(t, subjUID, 9361, 0.05)
-		require.NoError(t, f.SetMatchStats(1, 0.05))
+		require.NoError(t, f.SetSampleRadius(0.05))
 
 		members, err := query.FaceMembers(f.ID)
 		require.NoError(t, err)
@@ -181,7 +191,7 @@ func TestFacesMatchRecomputeStatsFlag(t *testing.T) {
 		require.Equal(t, recompute, w.conf.FaceRecomputeStats())
 
 		f, _ := recomputeTestCluster(t, "js6sg6b1qekk9jf1", 9701, 0.04, 0.06, 0.08)
-		require.NoError(t, f.UpdateMatchStats(1, f.AcceptDist()))
+		require.NoError(t, f.UpdateMatchStats(1, face.ClusterRadius))
 		require.InDelta(t, face.ClusterRadius, f.SampleRadius, 1e-9)
 
 		_, err := w.Match(FacesOptions{Force: true})
