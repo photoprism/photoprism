@@ -36,7 +36,7 @@
             <v-col cols="12">
               <v-date-input
                 :model-value="model.getBirthday()"
-                :label="$gettext('Birthday')"
+                :label="$gettext('Birth Date')"
                 :min="minBirthday"
                 :max="today"
                 :disabled="disabled"

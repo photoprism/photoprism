@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 
@@ -147,4 +148,82 @@ func TestSubjects_BirthdayKeyAlwaysPresent(t *testing.T) {
 
 	require.NoError(t, err)
 	assert.Contains(t, string(b), `"Birthday":null`, "an unset date of birth is null, never absent")
+}
+
+// TestUserSubjects covers the session scoping, which decides what a role without private access is
+// allowed to reach. Exercised here rather than through the API because CE grants people to admin and
+// client only, both of which hold private access - the roles this guard exists for are edition ones.
+func TestUserSubjects(t *testing.T) {
+	m := entity.NewSubject("Private Search Subject", entity.SubjPerson, entity.SrcManual)
+	require.NotNil(t, m)
+	m.SubjPrivate = true
+	require.NoError(t, m.Create())
+
+	t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Subject{}, "subj_uid = ?", m.SubjUID) })
+
+	holds := func(t *testing.T, results SubjectResults) bool {
+		t.Helper()
+		for _, r := range results {
+			if r.SubjUID == m.SubjUID {
+				return true
+			}
+		}
+		return false
+	}
+
+	// Every shape that reaches a row: the default list, the two filters that name private people,
+	// and the uid lookup, which answers before the content filters.
+	forms := map[string]form.SearchSubjects{
+		"Default": {Type: entity.SubjPerson, Count: 1000},
+		"All":     {Type: entity.SubjPerson, Count: 1000, All: true},
+		"Private": {Type: entity.SubjPerson, Count: 1000, Private: "yes"},
+		"UID":     {UID: m.SubjUID, Count: 1000},
+	}
+
+	t.Run("DeniedRole", func(t *testing.T) {
+		sess := entity.SessionFixtures.Pointer("visitor")
+		require.True(t, acl.Rules.Deny(acl.ResourcePeople, sess.GetUser().AclRole(), acl.AccessPrivate))
+
+		for name, frm := range forms {
+			t.Run(name, func(t *testing.T) {
+				results, err := UserSubjects(frm, sess)
+				require.NoError(t, err)
+				assert.False(t, holds(t, results), "a private person must not be reachable")
+			})
+		}
+	})
+	t.Run("AllowedRole", func(t *testing.T) {
+		sess := entity.SessionFixtures.Pointer("alice")
+		require.False(t, acl.Rules.Deny(acl.ResourcePeople, sess.GetUser().AclRole(), acl.AccessPrivate))
+
+		results, err := UserSubjects(form.SearchSubjects{UID: m.SubjUID, Count: 1000}, sess)
+		require.NoError(t, err)
+		assert.True(t, holds(t, results), "and must stay reachable for a role that may see it")
+	})
+	t.Run("NoSession", func(t *testing.T) {
+		// The unscoped entry point is what internal callers use; it must not start filtering.
+		results, err := Subjects(form.SearchSubjects{UID: m.SubjUID, Count: 1000})
+		require.NoError(t, err)
+		assert.True(t, holds(t, results))
+	})
+}
+
+// TestSubjects_OmitsDeleted pins that the uid lookup drops a soft-deleted person like the list does.
+// The uid is the one branch that answers before the other filters, so it had to be told separately.
+func TestSubjects_OmitsDeleted(t *testing.T) {
+	m := entity.NewSubject("Deleted Search Subject", entity.SubjPerson, entity.SrcManual)
+	require.NotNil(t, m)
+	require.NoError(t, m.Create())
+
+	t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Subject{}, "subj_uid = ?", m.SubjUID) })
+
+	results, err := Subjects(form.SearchSubjects{UID: m.SubjUID, Count: 1000})
+	require.NoError(t, err)
+	require.Len(t, results, 1)
+
+	require.NoError(t, m.Delete())
+
+	results, err = Subjects(form.SearchSubjects{UID: m.SubjUID, Count: 1000})
+	require.NoError(t, err)
+	assert.Empty(t, results)
 }

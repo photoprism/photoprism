@@ -8,6 +8,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 
 import PPageLabels from "page/labels.vue";
 import PPageSubjects from "page/people/recognized.vue";
+import PPageNewFaces from "page/people/new.vue";
 import Label from "model/label";
 import Subject from "model/subject";
 
@@ -16,6 +17,8 @@ function newStub() {
   return {
     listen: true,
     dirty: false,
+    // The refetch has to ask the question the list asked, hidden people included.
+    filter: { hidden: "yes" },
     results: [],
     refresh: vi.fn(),
     refetchResults: vi.fn(),
@@ -238,7 +241,7 @@ describe("page/people/recognized.vue refetchResults", () => {
     await Promise.resolve();
     await Promise.resolve();
 
-    expect(searchSpy).toHaveBeenCalledWith({ uid: "subj-1", count: 1 });
+    expect(searchSpy).toHaveBeenCalledWith({ uid: "subj-1", count: 1, hidden: "yes" });
     expect(stub.results[0].Name).toBe("New Name");
     expect(stub.results[0].Favorite).toBe(true);
     expect(stub.dirty).toBe(false);
@@ -283,4 +286,49 @@ describe("page/people/recognized.vue refetchResults", () => {
 
     expect(stub.dirty).toBe(true);
   });
+});
+
+describe("people tabs notifyResultCount", () => {
+  // Both tabs are mounted eagerly and search when created, so the one the user is not looking at
+  // used to announce its own empty result over the list that is on screen.
+  const cases = [
+    ["page/people/recognized.vue", PPageSubjects],
+    ["page/people/new.vue", PPageNewFaces],
+  ];
+
+  const newNotifyStub = (active, results) => ({
+    active,
+    results,
+    $notify: { warn: vi.fn(), info: vi.fn() },
+    $gettext: (s) => s,
+    $gettextInterpolate: (s) => s,
+  });
+
+  for (const [name, page] of cases) {
+    it(`${name} stays quiet while its tab is inactive`, () => {
+      const stub = newNotifyStub(false, []);
+
+      page.methods.notifyResultCount.call(stub);
+
+      expect(stub.$notify.warn).not.toHaveBeenCalled();
+      expect(stub.$notify.info).not.toHaveBeenCalled();
+    });
+
+    it(`${name} reports an empty result while its tab is active`, () => {
+      const stub = newNotifyStub(true, []);
+
+      page.methods.notifyResultCount.call(stub);
+
+      expect(stub.$notify.warn).toHaveBeenCalledWith("No people found");
+    });
+
+    it(`${name} reports a non-empty result while its tab is active`, () => {
+      const stub = newNotifyStub(true, [{}, {}]);
+
+      page.methods.notifyResultCount.call(stub);
+
+      expect(stub.$notify.warn).not.toHaveBeenCalled();
+      expect(stub.$notify.info).toHaveBeenCalled();
+    });
+  }
 });

@@ -335,9 +335,9 @@ func (m *Subject) SetBirthday(t *time.Time) (changed bool, err error) {
 
 		// A day of headroom, since a date-only value is legitimately ahead of UTC in eastern zones.
 		if utc.After(time.Now().UTC().AddDate(0, 0, 1)) {
-			return false, fmt.Errorf("birthday must not be in the future")
+			return false, fmt.Errorf("%w: birthday must not be in the future", ErrInvalidValue)
 		} else if y < BirthYearMin {
-			return false, fmt.Errorf("birthday must not be before %d", BirthYearMin)
+			return false, fmt.Errorf("%w: birthday must not be before %d", ErrInvalidValue, BirthYearMin)
 		}
 
 		born = &utc
@@ -381,10 +381,10 @@ func (m *Subject) SaveForm(frm *form.Subject) (changed bool, err error) {
 			thumbChanged = true
 			changed = true
 		} else {
-			return false, fmt.Errorf("invalid thumb source")
+			return false, fmt.Errorf("%w: invalid thumb source", ErrInvalidValue)
 		}
 	} else if frm.Thumb != "" && frm.Thumb != m.Thumb && frm.Thumb != thumbCrop {
-		return false, fmt.Errorf("invalid thumb")
+		return false, fmt.Errorf("%w: invalid thumb", ErrInvalidValue)
 	}
 
 	// Change date of birth?

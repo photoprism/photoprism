@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -33,12 +34,18 @@ func GetSubject(router *gin.RouterGroup) {
 			return
 		}
 
-		if subj := entity.FindSubject(clean.UID(c.Param("uid"))); subj == nil {
+		subj := entity.FindSubject(clean.UID(c.Param("uid")))
+
+		// Answered as not found rather than forbidden, so the endpoint does not confirm that a
+		// person exists to a session that may not see them. FindSubject is unscoped, so a deleted
+		// row reaches here and a private one is only for a role the ACL grants private access.
+		if subj == nil || subj.Deleted() ||
+			subj.SubjPrivate && acl.Rules.Deny(acl.ResourcePeople, s.GetUserRole(), acl.AccessPrivate) {
 			Abort(c, http.StatusNotFound, i18n.ErrSubjectNotFound)
 			return
-		} else {
-			c.JSON(http.StatusOK, subj)
 		}
+
+		c.JSON(http.StatusOK, subj)
 	})
 }
 
@@ -101,7 +108,12 @@ func UpdateSubject(router *gin.RouterGroup) {
 		}
 
 		// Update subject from form values.
-		if changed, err := m.SaveForm(frm); err != nil {
+		if changed, err := m.SaveForm(frm); errors.Is(err, entity.ErrInvalidValue) {
+			// A value the client must correct is a bad request, not a server fault: reporting it as
+			// one hides real failures in the logs and tells the user nothing they can act on.
+			AbortBadRequest(c, err)
+			return
+		} else if err != nil {
 			log.Errorf("subject: %s", err)
 			AbortSaveFailed(c)
 			return

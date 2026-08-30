@@ -7,6 +7,9 @@ import (
 	"github.com/tidwall/gjson"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
+	"github.com/photoprism/photoprism/internal/entity"
 )
 
 func TestGetSubject(t *testing.T) {
@@ -26,6 +29,28 @@ func TestGetSubject(t *testing.T) {
 		assert.Equal(t, "Subject not found", val.String())
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
+}
+
+// TestGetSubjectDeleted pins that a soft-deleted person is not readable by uid. FindSubject is
+// unscoped, so the handler is what has to refuse - and it answers not-found rather than forbidden,
+// so the endpoint does not confirm the row exists.
+func TestGetSubjectDeleted(t *testing.T) {
+	app, router, _ := NewApiTest()
+	GetSubject(router)
+
+	m := entity.NewSubject("Deleted Get Subject", entity.SubjPerson, entity.SrcManual)
+	require.NotNil(t, m)
+	require.NoError(t, m.Create())
+
+	t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Subject{}, "subj_uid = ?", m.SubjUID) })
+
+	r := PerformRequest(app, "GET", "/api/v1/subjects/"+m.SubjUID)
+	assert.Equal(t, http.StatusOK, r.Code)
+
+	require.NoError(t, m.Delete())
+
+	r = PerformRequest(app, "GET", "/api/v1/subjects/"+m.SubjUID)
+	assert.Equal(t, http.StatusNotFound, r.Code)
 }
 
 func TestLikeSubject(t *testing.T) {
@@ -182,12 +207,14 @@ func TestUpdateSubject(t *testing.T) {
 		assert.True(t, gjson.Get(s.Body.String(), "0.Birthday").Exists())
 	})
 	t.Run("ImplausibleBirthday", func(t *testing.T) {
+		// A value the client has to correct, so it answers 400: reporting it as a server fault would
+		// bury real ones in the logs and tell the user nothing they can act on.
 		app, router, _ := NewApiTest()
 		UpdateSubject(router)
 		r := PerformRequestWithBody(app, "PUT", "/api/v1/subjects/js6sg6b1qekk9jx8", `{"Birthday": "2999-01-01T00:00:00Z"}`)
-		assert.Equal(t, http.StatusInternalServerError, r.Code)
+		assert.Equal(t, http.StatusBadRequest, r.Code)
 		r = PerformRequestWithBody(app, "PUT", "/api/v1/subjects/js6sg6b1qekk9jx8", `{"Birthday": "0190-01-01T00:00:00Z"}`)
-		assert.Equal(t, http.StatusInternalServerError, r.Code)
+		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
 	t.Run("SetManualCover", func(t *testing.T) {
 		app, router, _ := NewApiTest()

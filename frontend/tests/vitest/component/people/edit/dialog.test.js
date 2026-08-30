@@ -121,7 +121,7 @@ describe("component/people/edit/dialog birthday", () => {
 
     const picker = wrapper.findComponent({ name: "VDateInput" });
 
-    expect(picker.props("label")).toBe("Birthday");
+    expect(picker.props("label")).toBe("Birth Date");
     expect(picker.props("modelValue")).toEqual(new Date(1990, 7, 1));
 
     wrapper.unmount();
