@@ -281,15 +281,15 @@ type Options struct {
 	FaceClusterDist           float64       `yaml:"-" json:"-" flag:"face-cluster-dist"`
 	FaceClusterRadius         float64       `yaml:"-" json:"-" flag:"face-cluster-radius"`
 	FaceClusterPercentile     int           `yaml:"-" json:"-" flag:"face-cluster-percentile"`
-
-	FaceMatchDist     float64 `yaml:"-" json:"-" flag:"face-match-dist"`
-	FaceMatchMargin   float64 `yaml:"-" json:"-" flag:"face-match-margin"`
-	FaceCollisionDist float64 `yaml:"-" json:"-" flag:"face-collision-dist"`
-	FaceEpsilonDist   float64 `yaml:"-" json:"-" flag:"face-epsilon-dist"`
-	PIDFilename       string  `yaml:"PIDFilename" json:"-" flag:"pid-filename"`
-	LogFilename       string  `yaml:"LogFilename" json:"-" flag:"log-filename"`
-	DetachServer      bool    `yaml:"DetachServer" json:"-" flag:"detach-server"`
-	Deprecated        struct {
+	FaceMatchDist             float64       `yaml:"-" json:"-" flag:"face-match-dist"`
+	FaceMatchMargin           float64       `yaml:"-" json:"-" flag:"face-match-margin"`
+	FaceCollisionDist         float64       `yaml:"-" json:"-" flag:"face-collision-dist"`
+	FaceEpsilonDist           float64       `yaml:"-" json:"-" flag:"face-epsilon-dist"`
+	FaceRecomputeStats        bool          `yaml:"-" json:"-" flag:"face-recompute-stats"`
+	PIDFilename               string        `yaml:"PIDFilename" json:"-" flag:"pid-filename"`
+	LogFilename               string        `yaml:"LogFilename" json:"-" flag:"log-filename"`
+	DetachServer              bool          `yaml:"DetachServer" json:"-" flag:"detach-server"`
+	Deprecated                struct {
 		DatabaseDsn string `yaml:"DatabaseDsn,omitempty" json:"-" flag:"-"`
 	} `yaml:",inline,omitempty" json:"-" flag:"-"`
 }

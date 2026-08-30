@@ -1478,6 +1478,12 @@ var Flags = CliFlags{
 			Usage:   fmt.Sprintf("collision tolerance `DELTA` appended to max match distances (up to %g), the same for every face model; twice it is the distance at which a colliding cluster is retired for good", face.EpsilonDistMax),
 			EnvVars: EnvVars("FACE_EPSILON_DIST"),
 		}, DocDefault: faceDocDefault(face.EpsilonDefault)}, {
+		Flag: &cli.BoolFlag{
+			Name:    "face-recompute-stats",
+			Usage:   "derive a cluster's sample count and radius from the markers it holds, rather than from the widest distance one matching pass accepted",
+			EnvVars: EnvVars("FACE_RECOMPUTE_STATS"),
+			Hidden:  true,
+		}}, {
 		Flag: &cli.StringFlag{
 			Name:      "pid-filename",
 			Usage:     "process id `FILENAME` *daemon-mode only*",

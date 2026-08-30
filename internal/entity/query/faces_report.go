@@ -148,7 +148,8 @@ type FaceReport struct {
 func FaceReports(person string, count, offset int) (result []FaceReport, err error) {
 	where := ""
 
-	args := []any{entity.MarkerFace}
+	// Seeded by the member predicate below rather than here, so the marker type is bound once.
+	var args []any
 
 	if subjUID, nameLike := PersonFilter(person); subjUID != "" {
 		where = "WHERE f.subj_uid = ?"
@@ -158,6 +159,11 @@ func FaceReports(person string, count, offset int) (result []FaceReport, err err
 		args = append(args, nameLike)
 	}
 
+	// The set a cluster's stats are measured over, so the reported count and the stored sample count
+	// answer for the same markers.
+	memberCond, memberArgs := entity.FaceMemberCond()
+	args = append(memberArgs, args...)
+
 	stmt := fmt.Sprintf(`SELECT f.id, f.subj_uid, COALESCE(s.subj_name, '') AS subj_name, f.face_src, f.face_kind,
 		f.samples, f.sample_radius, f.collisions, f.collision_radius, f.matched_at,
 		COALESCE(n.markers, 0) AS markers
@@ -165,13 +171,13 @@ func FaceReports(person string, count, offset int) (result []FaceReport, err err
 		LEFT JOIN %s s ON s.subj_uid = f.subj_uid
 		LEFT JOIN (
 			SELECT face_id, COUNT(*) AS markers FROM %s
-			WHERE marker_type = ? AND marker_invalid = 0 AND face_id <> ''
+			WHERE %s
 			GROUP BY face_id
 		) n ON n.face_id = f.id
 		%s
 		ORDER BY f.samples DESC, f.id
 		LIMIT ? OFFSET ?`,
-		entity.Face{}.TableName(), entity.Subject{}.TableName(), entity.Marker{}.TableName(), where)
+		entity.Face{}.TableName(), entity.Subject{}.TableName(), entity.Marker{}.TableName(), memberCond, where)
 
 	err = UnscopedDb().Raw(stmt, append(args, count, offset)...).Scan(&result).Error
 

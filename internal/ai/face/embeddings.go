@@ -269,6 +269,37 @@ func (embeddings Embeddings) Radius() (radius float64) {
 	return radius
 }
 
+// RadiusFrom returns how far from center the ClusterPercentile of the embeddings reach, in the shape
+// SetEmbeddings stores: clamped, and answering an unmeasurable spread with the full cluster radius.
+//
+// Center is taken as given rather than recomputed, because a cluster's id is the hash of its own
+// centroid - deriving a new one here would change its identity and orphan every marker holding it.
+func RadiusFrom(center Embedding, embeddings Embeddings) (radius float64) {
+	if len(center) == 0 || len(embeddings) == 0 {
+		return ClusterRadius
+	}
+
+	dists := make([]float64, 0, len(embeddings))
+
+	for _, emb := range embeddings {
+		if d := center.Dist(emb); d >= 0 {
+			dists = append(dists, d)
+		}
+	}
+
+	if d := percentileOf(dists, ClusterPercentile); d > 0 {
+		radius = ClampSampleRadius(d + Epsilon)
+	}
+
+	// One member measures nothing, and neither does a set of copies - the same case SetEmbeddings
+	// answers with the full radius rather than leaving the cluster narrower than any real pair.
+	if radius <= 0 {
+		return ClusterRadius
+	}
+
+	return radius
+}
+
 // ClusterFits reports whether a cluster of the given radius would accept its own members.
 //
 // Not implied by ClusterDist: DBSCAN bounds the distance to a neighbor rather than the width of the

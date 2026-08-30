@@ -542,6 +542,27 @@ func (m *Face) UpdateMatchStats(samples int, maxDistance float64) error {
 	return m.Updates(Values{"samples": m.Samples, "sample_radius": m.SampleRadius})
 }
 
+// SetMatchStats replaces the sample count and radius with measurements of the cluster's members.
+//
+// Distinct from UpdateMatchStats, which only ever widens because it sees one pass rather than the
+// membership: measuring the whole cluster is what makes a smaller number trustworthy.
+func (m *Face) SetMatchStats(samples int, radius float64) error {
+	if m.ID == "" || samples <= 0 || radius <= 0 {
+		return nil
+	}
+
+	radius = face.ClampSampleRadius(radius)
+
+	if m.Samples == samples && m.SampleRadius == radius {
+		return nil
+	}
+
+	m.Samples, m.SampleRadius = samples, radius
+	UpdateFaces.Store(true)
+
+	return m.Updates(Values{"samples": m.Samples, "sample_radius": m.SampleRadius})
+}
+
 // SetSubjectUID updates the face's subject uid and related markers.
 func (m *Face) SetSubjectUID(subjUid string) (err error) {
 	// Update face.

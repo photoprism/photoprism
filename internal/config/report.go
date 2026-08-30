@@ -423,6 +423,7 @@ func (c *Config) faceConfigRows() []faceConfigRow {
 		{faceSectionRecognition, "face-match-margin", c.faceDistReport(c.FaceMatchMargin)},
 		{faceSectionRecognition, "face-collision-dist", c.faceDistReport(c.FaceCollisionDist)},
 		{faceSectionRecognition, "face-epsilon-dist", c.faceDistReport(c.FaceEpsilonDist)},
+		{faceSectionRecognition, "face-recompute-stats", fmt.Sprintf("%t", c.FaceRecomputeStats())},
 	}...)
 }
 

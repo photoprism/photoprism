@@ -290,14 +290,35 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 		result.Recognized += m
 	}
 
+	declined := 0
+
 	for _, stat := range stats {
 		if stat == nil || stat.face == nil {
 			continue
 		}
 
+		if w.conf.FaceRecomputeStats() {
+			if measured, err := recomputeFaceStats(stat.face); err != nil {
+				log.Warnf("faces: %s (recompute stats)", err)
+			} else if measured {
+				continue
+			} else {
+				declined++
+				continue
+			}
+		}
+
 		if err := stat.face.UpdateMatchStats(stat.matched, stat.maxDist); err != nil {
 			log.Warnf("faces: %s (update stats)", err)
 		}
+	}
+
+	// Named because a declined cluster keeps whatever it already stored, which is indistinguishable
+	// from a measured one afterwards - so a run during a model migration would otherwise read as a
+	// clean one that simply had less to correct.
+	if declined > 0 {
+		log.Infof("faces: left %s unmeasured, see face-recompute-stats",
+			english.Plural(declined, "cluster", "clusters"))
 	}
 
 	// Named because the run otherwise reads as one that simply recognized less.
@@ -307,6 +328,44 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 	}
 
 	return result, nil
+}
+
+// recomputeFaceStats replaces a cluster's sample count and radius with measurements of the markers
+// it holds, and reports whether it could be measured at all.
+//
+// The stored centroid is reused rather than recomputed: a cluster's id is the hash of its own
+// centroid, so deriving a new one would change its identity and orphan every marker holding it.
+func recomputeFaceStats(f *entity.Face) (measured bool, err error) {
+	members, err := query.FaceMembers(f.ID)
+
+	if err != nil || len(members) == 0 {
+		return false, err
+	}
+
+	center := f.Embedding()
+
+	if len(center) == 0 || center.Zero() {
+		return false, nil
+	}
+
+	embeddings := make(face.Embeddings, 0, len(members))
+
+	for i := range members {
+		// Declined rather than approximated when a member came from another model: a distance
+		// across two embedding spaces means nothing, and a stale radius is at least honest about
+		// being stale. Compared by space, since a blank model is FaceNet's in both directions.
+		if !face.SameEmbeddingSpace(members[i].EmbedModel, f.EmbedModel) {
+			return false, nil
+		}
+
+		embeddings = append(embeddings, members[i].Embeddings()...)
+	}
+
+	if len(embeddings) == 0 {
+		return false, nil
+	}
+
+	return true, f.SetMatchStats(len(members), face.RadiusFrom(center, embeddings))
 }
 
 // stampMatchedFaces records that this run compared each cluster against every marker.

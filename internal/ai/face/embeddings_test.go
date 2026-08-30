@@ -419,3 +419,39 @@ func TestClusterFits(t *testing.T) {
 		assert.True(t, ClusterFits(0.3))
 	})
 }
+
+func TestRadiusFrom(t *testing.T) {
+	base := FixtureEmbedding(9601)
+
+	t.Run("CoversThePercentile", func(t *testing.T) {
+		members := Embeddings{base}
+		for i, d := range []float64{0.05, 0.09, 0.14} {
+			members = append(members, FixtureEmbeddingAt(base, d, uint64(9602+i)))
+		}
+
+		radius := RadiusFrom(base, members)
+
+		assert.GreaterOrEqual(t, radius, 0.14, "the furthest member is inside it at this count")
+		assert.Less(t, radius, ClusterRadius)
+	})
+	t.Run("CenterIsNotRecomputed", func(t *testing.T) {
+		// Measured from the center given, not from the members' own midpoint - which is what keeps
+		// a cluster's identity, since its id is the hash of the centroid it already stores.
+		offset := FixtureEmbeddingAt(base, 0.30, 9611)
+		members := Embeddings{base, FixtureEmbeddingAt(base, 0.05, 9612)}
+
+		assert.Greater(t, RadiusFrom(offset, members), RadiusFrom(base, members))
+	})
+	t.Run("UnmeasurableIsTheFullRadius", func(t *testing.T) {
+		// One sample measures nothing, which SetEmbeddings answers the same way.
+		assert.InDelta(t, ClusterRadius, RadiusFrom(base, Embeddings{base}), 1e-9)
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.InDelta(t, ClusterRadius, RadiusFrom(base, Embeddings{}), 1e-9)
+		assert.InDelta(t, ClusterRadius, RadiusFrom(Embedding{}, Embeddings{base}), 1e-9)
+	})
+	t.Run("ClampedAtTheMaximum", func(t *testing.T) {
+		far := Embeddings{base, FixtureEmbeddingAt(base, 1.2, 9621), FixtureEmbeddingAt(base, 1.3, 9622)}
+		assert.InDelta(t, ClusterRadius, RadiusFrom(base, far), 1e-9)
+	})
+}

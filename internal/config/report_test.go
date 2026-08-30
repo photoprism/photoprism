@@ -648,6 +648,7 @@ func TestConfig_faceConfigRows(t *testing.T) {
 			"face-match-margin",
 			"face-collision-dist",
 			"face-epsilon-dist",
+			"face-recompute-stats",
 		}
 
 		rows := c.faceConfigRows()
