@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/vector/alg"
 )
@@ -567,38 +568,50 @@ func TestReportSplitOverrides(t *testing.T) {
 		assert.Contains(t, out, "0.80")
 		assert.Contains(t, out, "8 rounds")
 	})
+	// A guard that is off or discarding reaches the operator through the system log rather than the
+	// browser stream, so it is hooked separately from the ordinary override notes above.
+	reportSystem := func(t *testing.T) *test.Hook {
+		t.Helper()
+
+		hook := test.NewLocal(logrus.StandardLogger())
+		event.SystemLog.ReplaceHooks(logrus.LevelHooks{})
+		event.SystemLog.AddHook(hook)
+
+		splitOverrideOnce = sync.Once{}
+
+		t.Cleanup(func() {
+			event.SystemLog.ReplaceHooks(logrus.LevelHooks{})
+			hook.Reset()
+			splitOverrideOnce = sync.Once{}
+		})
+
+		reportSplitOverrides()
+
+		return hook
+	}
+
 	t.Run("Disabled", func(t *testing.T) {
 		// Loud rather than noted: with the guard off nothing bounds the width of an anonymous
 		// cluster, and a run that chained a library into one person cannot be undone but by a reset.
 		setFaceClusterSplit(t, face.ClusterSplitShrinkDefault, face.ClusterSplitOff)
 
-		hook := test.NewLocal(logrus.StandardLogger())
-		defer hook.Reset()
+		entries := reportSystem(t).AllEntries()
 
-		splitOverrideOnce = sync.Once{}
-		t.Cleanup(func() { splitOverrideOnce = sync.Once{} })
-
-		reportSplitOverrides()
-
-		require.NotEmpty(t, hook.AllEntries())
-		assert.Equal(t, logrus.WarnLevel, hook.AllEntries()[0].Level)
-		assert.Contains(t, hook.AllEntries()[0].Message, "width guard is off")
+		require.NotEmpty(t, entries)
+		assert.Equal(t, logrus.WarnLevel, entries[0].Level)
+		assert.Contains(t, entries[0].Message, "width guard is off")
+		assert.Contains(t, entries[0].Message, "0 discards", "the value an operator reaches for first has to be named")
 	})
 	t.Run("DiscardsWideGroups", func(t *testing.T) {
 		// Zero reads as the loosest of the three and is the strictest, so it is named too.
 		setFaceClusterSplit(t, face.ClusterSplitShrinkDefault, 0)
 
-		hook := test.NewLocal(logrus.StandardLogger())
-		defer hook.Reset()
+		entries := reportSystem(t).AllEntries()
 
-		splitOverrideOnce = sync.Once{}
-		t.Cleanup(func() { splitOverrideOnce = sync.Once{} })
-
-		reportSplitOverrides()
-
-		require.NotEmpty(t, hook.AllEntries())
-		assert.Equal(t, logrus.WarnLevel, hook.AllEntries()[0].Level)
-		assert.Contains(t, hook.AllEntries()[0].Message, "discarded rather than split")
+		require.NotEmpty(t, entries)
+		assert.Equal(t, logrus.WarnLevel, entries[0].Level)
+		assert.Contains(t, entries[0].Message, "discarded rather than split")
+		assert.Contains(t, entries[0].Message, "-1 is what switches it off")
 	})
 	t.Run("Once", func(t *testing.T) {
 		setFaceClusterSplit(t, 0.8, 8)

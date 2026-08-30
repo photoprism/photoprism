@@ -55,7 +55,7 @@ const (
 	ClusterCoreDefault = 5
 	// ClusterPercentileDefault is the default share of a cluster's member distances its radius has
 	// to cover. Taking the maximum instead lets one loose member decide how far a whole cluster
-	// reaches, with only the clamp to stop it; below about twenty members the two agree.
+	// reaches, with only the clamp to stop it; under twenty members the two are the same value.
 	ClusterPercentileDefault = 95
 )
 

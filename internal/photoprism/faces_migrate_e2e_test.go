@@ -584,6 +584,36 @@ func TestFaces_migrate(t *testing.T) {
 		assert.Equal(t, entity.ThumbSizeUnmeasured, stored.ThumbSize)
 		assert.NotEmpty(t, stored.EmbeddingsJSON)
 	})
+	t.Run("FailedReembeddingTerminates", func(t *testing.T) {
+		// The other half of termination: a marker the sampling reached and could not re-embed keeps
+		// its vector, so nothing records an extent for it and it would be stale on every run. The
+		// file has no thumb, which is how this harness makes every re-embedding on it fail.
+		c := newMigrateTestConfig(t, "migrateunreadable")
+		w := NewFaces(c)
+
+		f := addMigrateTestFile(t, c, "7777777777777777777777777777777777777777", false)
+		m := addMigrateTestMarker(t, f.FileUID, entity.SrcManual, "Jane Doe")
+
+		require.NoError(t, entity.UnscopedDb().Model(&entity.Marker{}).
+			Where("marker_uid = ?", m.MarkerUID).
+			UpdateColumns(entity.Values{"embed_model": face.ModelFaceNet, "thumb_size": -1}).Error)
+
+		plan := FacesMigratePlan{Target: face.ModelFaceNet}
+		opt := FacesMigrateOptions{Target: face.ModelFaceNet}
+
+		_, err := w.migrate(context.Background(), plan, &oneHotEmbedder{dims: 4}, opt, FacesMigrateResult{Target: face.ModelFaceNet})
+		require.NoError(t, err)
+
+		stored := entity.Marker{}
+		require.NoError(t, entity.UnscopedDb().First(&stored, "marker_uid = ?", m.MarkerUID).Error)
+
+		assert.NotEmpty(t, stored.EmbeddingsJSON, "a failed re-embedding must keep the vector it holds")
+		assert.True(t, stored.ThumbSizeSettled(), "and must not be sampled again on every future run")
+
+		second, err := w.migrate(context.Background(), plan, &oneHotEmbedder{dims: 4}, opt, FacesMigrateResult{Target: face.ModelFaceNet})
+		require.NoError(t, err)
+		assert.Equal(t, 1, second.Skipped, "the second run has nothing left to attempt")
+	})
 	t.Run("Idempotent", func(t *testing.T) {
 		c := newMigrateTestConfig(t, "migrateidempotent")
 		w := NewFaces(c)

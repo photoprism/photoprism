@@ -246,10 +246,11 @@ func EmbeddingsMidpoint(embeddings Embeddings) (result Embedding, radius float64
 	return result, radius, count
 }
 
-// percentileOf returns the distance at the given percentile by nearest rank, so the result is
-// always one of the values passed. It sorts in place, and reports 0 for an empty slice.
+// percentileOf returns the distance at the given percentile by nearest rank, so the result is always
+// one of the values passed. It sorts in place, and reports 0 for an empty slice or a percentile at
+// or below zero - which would otherwise select the smallest distance and give a cluster no reach.
 func percentileOf(dists []float64, p int) float64 {
-	if len(dists) == 0 {
+	if len(dists) == 0 || p < 1 {
 		return 0
 	}
 

@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/vector/alg"
 )
 
@@ -78,9 +79,12 @@ func reportSplitOverrides() {
 
 		switch {
 		case face.ClusterSplitDisabled():
-			log.Warnf("faces: the cluster width guard is off, so a group holding several people is kept whole - unset face-cluster-split-rounds to restore it")
+			event.SystemWarn([]string{"faces", "cluster", "the cluster width guard is off, so a group holding " +
+				"several people is kept whole - unset face-cluster-split-rounds to restore it, and note that 0 " +
+				"discards such a group rather than disabling the guard"})
 		case face.ClusterSplitRounds == 0:
-			log.Warnf("faces: wide groups are discarded rather than split, because face-cluster-split-rounds is 0")
+			event.SystemWarn([]string{"faces", "cluster", "wide groups are discarded rather than split, because " +
+				"face-cluster-split-rounds is 0 - the guard is still on, and -1 is what switches it off"})
 		case face.ClusterSplitRounds != face.ClusterSplitRoundsDefault:
 			log.Infof("faces: splitting a wide group over at most %d rounds instead of %d",
 				face.ClusterSplitRounds, face.ClusterSplitRoundsDefault)

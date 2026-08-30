@@ -333,6 +333,7 @@ func TestFaceMigrationRecropMarkers(t *testing.T) {
 	newMarker(face.ModelSFace, face.DetectorSCRFD, vector, sampled)
 	newMarker(face.ModelFaceNet, face.DetectorSCRFD, nil, sampled)
 	newMarker(face.ModelFaceNet, face.DetectorYuNet, vector, -1)
+	newMarker(face.ModelFaceNet, face.DetectorYuNet, vector, entity.ThumbSizeUnmeasured)
 
 	t.Run("CountsTheOtherDetector", func(t *testing.T) {
 		// A target-model vector another detector cropped, plus one the current detector cropped
@@ -347,7 +348,20 @@ func TestFaceMigrationRecropMarkers(t *testing.T) {
 		// detector in force rather than naming one of them.
 		count, countErr := FaceMigrationRecropMarkers(face.ModelFaceNet, face.DetectorSCRFD)
 		require.NoError(t, countErr)
-		assert.Equal(t, beforeSCRFD+4, count)
+		assert.Equal(t, beforeSCRFD+5, count,
+			"a settled extent is still re-cropped for a detector change, which is a separate reason")
+	})
+	t.Run("SkipsAnExtentAlreadyGivenUpOn", func(t *testing.T) {
+		// The row that tells the two predicates apart. A sampling that tried and could not measure
+		// records ThumbSizeUnmeasured, and pricing it as work would quote a number no run can clear.
+		count, countErr := FaceMigrationRecropMarkers(face.ModelFaceNet, face.DetectorYuNet)
+		require.NoError(t, countErr)
+
+		settled, countErr := FaceMigrationRecropMarkers(face.ModelFaceNet, face.DetectorNone)
+		require.NoError(t, countErr)
+
+		assert.Equal(t, beforeYuNet+3, count, "the settled marker must not be counted")
+		assert.Equal(t, beforeNone+1, settled)
 	})
 	t.Run("NoDetector", func(t *testing.T) {
 		// Detection is off, so there is no detector to disagree with and only the unmeasured
@@ -361,6 +375,86 @@ func TestFaceMigrationRecropMarkers(t *testing.T) {
 	t.Run("ModelRequired", func(t *testing.T) {
 		_, countErr := FaceMigrationRecropMarkers("", face.DetectorYuNet)
 		require.Error(t, countErr)
+	})
+}
+
+// TestCountMarkersUnsettledThumbSize covers the count an audit reports as actionable, which excludes
+// the markers a sampling already gave up on - the total beside it does not, and both are needed.
+func TestCountMarkersUnsettledThumbSize(t *testing.T) {
+	beforeAll, err := CountMarkersWithoutThumbSize()
+	require.NoError(t, err)
+	beforeOpen, err := CountMarkersUnsettledThumbSize()
+	require.NoError(t, err)
+
+	vector := face.Embeddings{face.RandomEmbedding()}.JSON()
+
+	for _, size := range []int{-1, entity.ThumbSizeUnmeasured} {
+		uid := rnd.GenerateUID('m')
+		m := &entity.Marker{
+			MarkerUID:      uid,
+			MarkerType:     entity.MarkerFace,
+			MarkerSrc:      entity.SrcImage,
+			EmbeddingsJSON: vector,
+			ThumbSize:      size,
+		}
+
+		require.NoError(t, entity.Db().Create(m).Error)
+		t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Marker{}, "marker_uid = ?", uid) })
+	}
+
+	all, err := CountMarkersWithoutThumbSize()
+	require.NoError(t, err)
+	open, err := CountMarkersUnsettledThumbSize()
+	require.NoError(t, err)
+
+	assert.Equal(t, beforeAll+2, all, "both still fall back to the detection size")
+	assert.Equal(t, beforeOpen+1, open, "only one is worth sampling again")
+}
+
+// TestSettleMigrationThumbSize covers the write that lets a migration filling the column terminate.
+func TestSettleMigrationThumbSize(t *testing.T) {
+	vector := face.Embeddings{face.RandomEmbedding()}.JSON()
+
+	newMarker := func(t *testing.T, size int) string {
+		t.Helper()
+
+		uid := rnd.GenerateUID('m')
+		m := &entity.Marker{
+			MarkerUID:      uid,
+			MarkerType:     entity.MarkerFace,
+			MarkerSrc:      entity.SrcImage,
+			EmbeddingsJSON: vector,
+			ThumbSize:      size,
+		}
+
+		require.NoError(t, entity.Db().Create(m).Error)
+		t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Marker{}, "marker_uid = ?", uid) })
+
+		return uid
+	}
+
+	stored := func(t *testing.T, uid string) int {
+		t.Helper()
+
+		var m entity.Marker
+		require.NoError(t, entity.UnscopedDb().First(&m, "marker_uid = ?", uid).Error)
+
+		return m.ThumbSize
+	}
+
+	t.Run("Settles", func(t *testing.T) {
+		uid := newMarker(t, -1)
+		require.NoError(t, SettleMigrationThumbSize([]string{uid}))
+		assert.Equal(t, entity.ThumbSizeUnmeasured, stored(t, uid))
+	})
+	t.Run("KeepsAMeasurement", func(t *testing.T) {
+		// It records that a sampling found nothing, so it must never overwrite one that found something.
+		uid := newMarker(t, 112)
+		require.NoError(t, SettleMigrationThumbSize([]string{uid}))
+		assert.Equal(t, 112, stored(t, uid))
+	})
+	t.Run("NoMarkers", func(t *testing.T) {
+		assert.NoError(t, SettleMigrationThumbSize(nil))
 	})
 }
 

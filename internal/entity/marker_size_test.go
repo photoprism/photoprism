@@ -83,8 +83,9 @@ func TestMarker_ThumbSizeSettled(t *testing.T) {
 	})
 }
 
-// TestThumbSizeUnsettledCond pins that the SQL predicate selects the same rows as the Go one, since
-// the migration reads it through the first and prices it through the second.
+// TestThumbSizeUnsettledCond pins that the SQL predicate selects the same rows as the Go one. The
+// migration decides through Marker.ThumbSizeSettled and FaceMigrationRecropMarkers prices through
+// this, so a divergence would quote work no run performs.
 func TestThumbSizeUnsettledCond(t *testing.T) {
 	cond := ThumbSizeUnsettledCond()
 

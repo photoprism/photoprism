@@ -490,17 +490,6 @@ func TestStaleMigrationMarkers(t *testing.T) {
 	})
 }
 
-// markerUIDsOf returns the marker UIDs in their current order, so a test can assert on the
-// selection a helper made rather than on the marker rows it copied.
-func markerUIDsOf(markers entity.Markers) []string {
-	result := make([]string, 0, len(markers))
-	for _, marker := range markers {
-		result = append(result, marker.MarkerUID)
-	}
-
-	return result
-}
-
 func TestFaces_cropMigrationEmbeddings(t *testing.T) {
 	embedder := &migrationTestEmbedder{name: face.ModelFaceNet, dims: 4}
 	w := NewFaces(config.TestConfig())

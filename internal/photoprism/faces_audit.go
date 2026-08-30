@@ -690,8 +690,10 @@ func (w *Faces) auditProvenance() {
 }
 
 // auditMarkerThumbSizes counts embedded markers with no recorded sample extent, which the size bar
-// then judges by markers.size instead. A number that should be zero after a migration and is not is
-// the signal worth having; the value is never synthesized, so this only reports.
+// then judges by markers.size instead. The value is never synthesized, so this only reports.
+//
+// The subset a migration would still sample is named separately, because the total includes markers
+// a sampling already gave up on - reporting only that would promise a figure no run can clear.
 func (w *Faces) auditMarkerThumbSizes() {
 	n, err := query.CountMarkersWithoutThumbSize()
 
@@ -700,9 +702,24 @@ func (w *Faces) auditMarkerThumbSizes() {
 		return
 	}
 
-	if n > 0 {
-		log.Infof("faces: %s with an embedding but no recorded sample size, judged by their detection size",
-			english.Plural(n, "marker", "markers"))
+	if n == 0 {
+		return
+	}
+
+	unsettled, err := query.CountMarkersUnsettledThumbSize()
+
+	if err != nil {
+		log.Errorf("faces: %s (audit marker thumb sizes)", err)
+		return
+	}
+
+	log.Infof("faces: %s with an embedding but no recorded sample size, judged by their detection size",
+		english.Plural(n, "marker", "markers"))
+
+	if unsettled > 0 {
+		log.Infof("faces: %s of those would be sampled again by photoprism faces migrate", english.Plural(unsettled, "marker", "markers"))
+	} else {
+		log.Infof("faces: every one of them was sampled and could not be measured, so a migration would not change it")
 	}
 }
 

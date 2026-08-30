@@ -845,7 +845,28 @@ func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) 
 		}
 	}
 
+	// A marker the sampling reached and could not re-embed keeps its vector and would otherwise be
+	// stale again on every future run, since only a regenerated one records an extent. The file was
+	// read to get here, so this is the detector declining rather than a fault that may clear.
+	if retained := retainedMigrationMarkers(unresolved, recrop); len(retained) > 0 {
+		if err = query.SettleMigrationThumbSize(markerUIDsOf(retained)); err != nil {
+			log.Warnf("faces: %s (settle sample extent)", err)
+		}
+	}
+
 	return result, nil
+}
+
+// markerUIDsOf returns the uids of the passed markers, in their current order, so a caller can name
+// a selection rather than carry the rows it was made from.
+func markerUIDsOf(markers entity.Markers) []string {
+	uids := make([]string, 0, len(markers))
+
+	for i := range markers {
+		uids = append(uids, markers[i].MarkerUID)
+	}
+
+	return uids
 }
 
 // staleMigrationMarkers returns the markers a migration to target has to re-embed, and the subset of

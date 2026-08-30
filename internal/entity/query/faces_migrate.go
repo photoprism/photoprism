@@ -301,10 +301,12 @@ func FaceMigrationRecropMarkers(model, detector string) (count int, err error) {
 
 	detector = face.NormalizeDetectorName(detector)
 
+	// The predicate staleMigrationMarkers applies, so the plan prices what the run does. Counting
+	// every unrecorded extent instead would keep quoting markers a sampling already gave up on.
 	if detector == "" || detector == face.DetectorNone {
-		stmt = stmt.Where("thumb_size IS NULL OR thumb_size < 1")
+		stmt = stmt.Where(entity.ThumbSizeUnsettledCond())
 	} else {
-		stmt = stmt.Where("detect_model <> ? OR thumb_size IS NULL OR thumb_size < 1", detector)
+		stmt = stmt.Where("detect_model <> ? OR "+entity.ThumbSizeUnsettledCond(), detector)
 	}
 
 	err = stmt.Count(&count).Error
@@ -508,6 +510,9 @@ func sameFaceMigrationIdentities(expected, actual []FaceMigrationIdentity) bool 
 
 // CountMarkersWithoutThumbSize counts embedded face markers that record no sample extent, so an
 // audit can report how many are still judged by their detection size.
+//
+// Includes the ones a sampling tried and could not measure, because they fall back the same way.
+// CountMarkersUnsettledThumbSize is the subset a migration would still act on.
 func CountMarkersWithoutThumbSize() (n int, err error) {
 	var count int64
 
@@ -515,6 +520,39 @@ func CountMarkersWithoutThumbSize() (n int, err error) {
 		Where("marker_type = ? AND marker_invalid = 0", entity.MarkerFace).
 		Where("LENGTH(embeddings_json) > 0").
 		Where("thumb_size IS NULL OR thumb_size < 1").
+		Count(&count).Error
+
+	return int(count), err
+}
+
+// SettleMigrationThumbSize records that a sampling reached these markers and produced no extent, so
+// a migration filling the column does not attempt them again on every future run.
+//
+// Only for markers whose file was read and whose vector is kept: an unreadable file is a transient
+// fault the next run should retry, and settling one would hide it for good.
+func SettleMigrationThumbSize(markerUIDs []string) error {
+	if len(markerUIDs) == 0 {
+		return nil
+	}
+
+	return UnscopedDb().Model(&entity.Marker{}).
+		Where("marker_uid IN (?) AND marker_type = ?", markerUIDs, entity.MarkerFace).
+		Where(entity.ThumbSizeUnsettledCond()).
+		UpdateColumn("thumb_size", entity.ThumbSizeUnmeasured).Error
+}
+
+// CountMarkersUnsettledThumbSize counts the embedded face markers a migration would sample again for
+// their extent, which is the number that reaches zero once one has run.
+//
+// Reported beside the total, or an audit promises a figure no run can clear: a marker whose extent
+// could not be measured keeps falling back to its detection size and is counted by the other.
+func CountMarkersUnsettledThumbSize() (n int, err error) {
+	var count int64
+
+	err = UnscopedDb().Model(&entity.Marker{}).
+		Where("marker_type = ? AND marker_invalid = 0", entity.MarkerFace).
+		Where("LENGTH(embeddings_json) > 0").
+		Where(entity.ThumbSizeUnsettledCond()).
 		Count(&count).Error
 
 	return int(count), err

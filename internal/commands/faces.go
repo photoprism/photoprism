@@ -153,8 +153,9 @@ func facesMigrateAction(ctx *cli.Context) error {
 			log.Infof("faces: %d of those are too small or too low-scoring to seed a cluster",
 				plan.LowQualitySamples)
 		}
-		// Ready tells an operator that a re-run has nothing left to do, and unlinked
-		// markers are cleared by every run regardless of how the migration goes.
+		// Ready counts the markers already on the target model, which a re-run still samples again
+		// where they record no extent - the line below carries that number. Unlinked markers are
+		// cleared by every run regardless of how the migration goes.
 		log.Infof(
 			"faces: %d markers already use %s, %d have no file, and %d were identified manually",
 			plan.Markers.Ready, clean.Log(plan.Target), plan.Markers.Unlinked, plan.Markers.Manual,

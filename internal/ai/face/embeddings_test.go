@@ -383,7 +383,11 @@ func TestPercentileOf(t *testing.T) {
 		assert.InDelta(t, 0.8, percentileOf([]float64{0.1, 0.8}, ClusterPercentile), 1e-9)
 	})
 	t.Run("BelowTheFirstRank", func(t *testing.T) {
-		assert.InDelta(t, 0.1, percentileOf([]float64{0.1, 0.8}, 0), 1e-9)
+		// Zero reads as unmeasurable rather than as the smallest distance. Selecting the minimum
+		// would give a cluster almost no reach, and ClusterPercentile is an exported variable that
+		// a calibration run could set directly - config refuses it, nothing else does.
+		assert.Zero(t, percentileOf([]float64{0.1, 0.8}, 0))
+		assert.Zero(t, percentileOf([]float64{0.1, 0.8}, -1))
 	})
 }
 
