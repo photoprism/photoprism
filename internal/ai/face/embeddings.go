@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
+	"slices"
 	"strings"
 )
 
@@ -218,8 +219,8 @@ func EmbeddingsMidpoint(embeddings Embeddings) (result Embedding, radius float64
 
 	normalizeEmbedding(result)
 
-	// Radius is the max embedding distance from result, plus the tolerance the rest of the
-	// comparison path uses, so a sample sitting exactly on the radius is still inside it.
+	dists := make([]float64, 0, count)
+
 	for _, emb := range embeddings {
 		if len(emb) != dim {
 			continue
@@ -232,17 +233,37 @@ func EmbeddingsMidpoint(embeddings Embeddings) (result Embedding, radius float64
 			dist += diff * diff
 		}
 
-		if d := math.Sqrt(dist); d > radius {
-			radius = d + Epsilon
-		}
+		dists = append(dists, math.Sqrt(dist))
+	}
+
+	// Epsilon is the tolerance the rest of the comparison path uses, so a sample sitting exactly on
+	// the radius is still inside it. Only a positive percentile is raised by it: zero means the
+	// extent is unmeasurable, which SetEmbeddings answers with the full cluster radius, and flooring
+	// it here would store a number instead and silently narrow a cluster of duplicates.
+	if d := percentileOf(dists, RadiusPercentile); d > 0 {
+		radius = d + Epsilon
 	}
 
 	return result, radius, count
 }
 
-// Radius returns the distance from the midpoint of the embeddings to the one furthest from it,
-// before ClampSampleRadius bounds what a cluster built from them would store. It normalizes its
-// receiver in place, as EmbeddingsMidpoint does, so it is not the pure accessor it reads as.
+// percentileOf returns the distance at the given percentile by nearest rank, so the result is
+// always one of the values passed. It sorts in place, and reports 0 for an empty slice.
+func percentileOf(dists []float64, p int) float64 {
+	if len(dists) == 0 {
+		return 0
+	}
+
+	slices.Sort(dists)
+
+	rank := min(max((p*len(dists)+99)/100, 1), len(dists))
+
+	return dists[rank-1]
+}
+
+// Radius returns how far from their midpoint RadiusPercentile of the embeddings reach, before
+// ClampSampleRadius bounds what a cluster built from them would store. It normalizes its receiver
+// in place, as EmbeddingsMidpoint does, so it is not the pure accessor it reads as.
 func (embeddings Embeddings) Radius() (radius float64) {
 	_, radius, _ = EmbeddingsMidpoint(embeddings)
 	return radius

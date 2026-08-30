@@ -329,6 +329,62 @@ func TestEmbeddings_Radius(t *testing.T) {
 		wide := Embeddings{base, FixtureEmbeddingAt(base, 1.2, 103)}
 		assert.Greater(t, wide.Radius(), near.Radius())
 	})
+	t.Run("OneLooseMemberDoesNotSetTheReach", func(t *testing.T) {
+		// What the percentile is for: taking the maximum instead would put a group of twenty at
+		// the distance of the one member that does not belong to it.
+		tight := make(Embeddings, 0, 21)
+
+		for i := range 20 {
+			tight = append(tight, FixtureEmbeddingAt(base, 0.2, uint64(200+i)))
+		}
+
+		outlier := FixtureEmbeddingAt(base, 1.2, 999)
+		wide := append(tight[:len(tight):len(tight)], outlier)
+
+		mid, radius, count := EmbeddingsMidpoint(wide)
+		require.Equal(t, 21, count)
+
+		assert.InDelta(t, tight.Radius(), radius, 0.1, "the loose member must not move the radius")
+		assert.Greater(t, mid.Dist(outlier), 2*radius, "and it must sit well outside the result")
+	})
+	t.Run("Duplicates", func(t *testing.T) {
+		// Zero has to survive as "unmeasurable", which Face.SetEmbeddings answers with the full
+		// cluster radius. Flooring the percentile unconditionally would store Epsilon instead and
+		// leave a cluster of duplicate crops narrower than any real pair of one person's faces.
+		assert.Zero(t, Embeddings{{1, 0}, {1, 0}}.Radius())
+	})
+}
+
+// TestPercentileOf covers the nearest-rank statistic a cluster's radius is taken from.
+func TestPercentileOf(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		assert.Zero(t, percentileOf(nil, RadiusPercentile))
+	})
+	t.Run("One", func(t *testing.T) {
+		assert.InDelta(t, 0.4, percentileOf([]float64{0.4}, RadiusPercentile), 1e-9)
+	})
+	t.Run("Unsorted", func(t *testing.T) {
+		assert.InDelta(t, 0.9, percentileOf([]float64{0.9, 0.1, 0.5}, 100), 1e-9)
+	})
+	t.Run("LeavesOutTheTopOfALargeSet", func(t *testing.T) {
+		dists := make([]float64, 20)
+
+		for i := range dists {
+			dists[i] = 0.1
+		}
+
+		dists[7] = 9.0
+
+		assert.InDelta(t, 0.1, percentileOf(dists, RadiusPercentile), 1e-9)
+	})
+	t.Run("KeepsEverythingInASmallSet", func(t *testing.T) {
+		// A percentile and a maximum agree below twenty members, which is why the radius narrows
+		// where a group is wide rather than everywhere.
+		assert.InDelta(t, 0.8, percentileOf([]float64{0.1, 0.8}, RadiusPercentile), 1e-9)
+	})
+	t.Run("BelowTheFirstRank", func(t *testing.T) {
+		assert.InDelta(t, 0.1, percentileOf([]float64{0.1, 0.8}, 0), 1e-9)
+	})
 }
 
 // TestClusterFits pins the width a cluster may reach and still accept the members it was built

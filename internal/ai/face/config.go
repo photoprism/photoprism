@@ -67,6 +67,12 @@ const InterOpThreads = 1
 // share land nearer, so this caps what a misconfiguration can do rather than naming a safe value.
 const AcceptDistMax = 1.4
 
+// RadiusPercentile is the share of a cluster's member distances its radius has to cover. Taking
+// the maximum instead lets one loose member decide how far a whole cluster reaches, with only the
+// clamp to stop it; a small group's percentile and maximum barely differ, so this narrows the wide
+// clusters it is aimed at rather than every cluster.
+const RadiusPercentile = 95
+
 // ConfigDistMax is the largest value a configurable distance threshold may take.
 //
 // It sits just above the widest calibrated model, so what can be configured is the range the models
