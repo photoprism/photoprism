@@ -361,6 +361,157 @@ func TestFace_Embedding(t *testing.T) {
 	})
 }
 
+func TestFace_Mergeable(t *testing.T) {
+	base := face.FixtureEmbedding(7601)
+
+	// Each cluster is built from one sample, so any per-member radius they carry is the default
+	// rather than a measurement - which is what the merge criterion must not read.
+	clusterAt := func(dist float64, seed uint64) *Face {
+		return NewFace("js6sg6b1qekk9jx8", SrcManual,
+			face.Embeddings{face.FixtureEmbeddingAt(base, dist, seed)}, face.EmbeddingModelName())
+	}
+
+	anchor := NewFace("js6sg6b1qekk9jx8", SrcManual, face.Embeddings{base}, face.EmbeddingModelName())
+
+	t.Run("WithinClusterDist", func(t *testing.T) {
+		other := clusterAt(face.ClusterDist*0.9, 7602)
+		ok, dist := anchor.Mergeable(other)
+
+		assert.True(t, ok)
+		assert.InDelta(t, face.ClusterDist*0.9, dist, 1e-6)
+	})
+	t.Run("BeyondClusterDist", func(t *testing.T) {
+		// Inside what either one would accept a marker at, so only the bound under test decides.
+		dist := face.ClusterDist + 0.05
+		require.Less(t, dist, anchor.AcceptDist())
+
+		ok, measured := anchor.Mergeable(clusterAt(dist, 7603))
+
+		assert.False(t, ok)
+		assert.InDelta(t, dist, measured, 1e-6)
+	})
+	t.Run("Symmetric", func(t *testing.T) {
+		// The stored radii differ by two orders of magnitude, which under a predicate reading the
+		// anchor's own extent is enough to decide the pair one way in each direction.
+		near, far := clusterAt(face.ClusterDist*0.5, 7604), clusterAt(face.ClusterDist*0.95, 7605)
+		near.SampleRadius, far.SampleRadius = 0.01, face.ClusterRadius
+
+		forward, forwardDist := near.Mergeable(far)
+		reverse, reverseDist := far.Mergeable(near)
+
+		assert.Equal(t, forward, reverse)
+		assert.InDelta(t, forwardDist, reverseDist, 1e-9)
+	})
+	t.Run("IgnoresCollisionRadius", func(t *testing.T) {
+		// A collision records a stranger nearby, which is a reason to stop matching markers - not
+		// a reason to keep two clusters a person named as the same face apart.
+		other := clusterAt(face.ClusterDist*0.9, 7606)
+		anchor.CollisionRadius = 0.1
+
+		defer func() { anchor.CollisionRadius = 0 }()
+
+		ok, _ := anchor.Mergeable(other)
+		assert.True(t, ok)
+	})
+	t.Run("DifferentEmbeddingSpace", func(t *testing.T) {
+		// Close enough to merge on distance alone, so provenance is the only thing refusing them.
+		a, b := clusterAt(face.ClusterDist*0.1, 7607), clusterAt(face.ClusterDist*0.9, 7608)
+		a.EmbedModel, b.EmbedModel = face.ModelFaceNet, face.ModelSFace
+
+		ok, dist := a.Mergeable(b)
+
+		assert.False(t, ok)
+		assert.Equal(t, float64(-1), dist)
+	})
+	t.Run("Itself", func(t *testing.T) {
+		ok, dist := anchor.Mergeable(anchor)
+
+		assert.False(t, ok)
+		assert.Equal(t, float64(-1), dist)
+	})
+	t.Run("Unsaved", func(t *testing.T) {
+		// A row that was never written has to refuse in both directions, not one.
+		unsaved := clusterAt(face.ClusterDist*0.5, 7609)
+		unsaved.ID = ""
+
+		forward, forwardDist := anchor.Mergeable(unsaved)
+		reverse, reverseDist := unsaved.Mergeable(anchor)
+
+		assert.False(t, forward)
+		assert.Equal(t, forward, reverse)
+		assert.Equal(t, forwardDist, reverseDist)
+	})
+	t.Run("Nil", func(t *testing.T) {
+		ok, dist := anchor.Mergeable(nil)
+
+		assert.False(t, ok)
+		assert.Equal(t, float64(-1), dist)
+	})
+	t.Run("ZeroEmbedding", func(t *testing.T) {
+		// Refused for the same reason Match refuses it, so a stored row cannot slip past.
+		zero := make(face.Embedding, len(base))
+		other := &Face{ID: "ZEROVECTOR", SubjUID: anchor.SubjUID, EmbedModel: anchor.EmbedModel, EmbeddingJSON: zero.JSON()}
+
+		ok, dist := anchor.Mergeable(other)
+
+		assert.False(t, ok)
+		assert.Equal(t, float64(-1), dist)
+	})
+}
+
+func TestFace_InheritCollision(t *testing.T) {
+	// Wide enough that the bounds under test all sit above it, so the extent rule is what decides.
+	const narrow, wide = 0.20, 0.40
+
+	sources := func(radius float64, collisions int) Faces {
+		return Faces{{ID: "SOURCEA"}, {ID: "SOURCEB", CollisionRadius: radius, Collisions: collisions}}
+	}
+
+	t.Run("Inherits", func(t *testing.T) {
+		m := narrowTestFace(t, "uds5ttbeu5yj2sr1", 7701)
+		require.NoError(t, m.InheritCollision(sources(wide, 2)))
+
+		assert.InDelta(t, wide, m.CollisionRadius, 1e-9)
+		assert.Equal(t, 2, m.Collisions)
+		assert.InDelta(t, wide, FindFace(m.ID).CollisionRadius, 1e-9, "and it is persisted")
+	})
+	t.Run("NoneToInherit", func(t *testing.T) {
+		m := narrowTestFace(t, "uds5ttbeu5yj2sr2", 7711)
+		require.NoError(t, m.InheritCollision(Faces{{ID: "SOURCEA"}}))
+
+		assert.Zero(t, m.CollisionRadius)
+		assert.Zero(t, m.Collisions)
+	})
+	t.Run("KeepsTighterExisting", func(t *testing.T) {
+		m := narrowTestFace(t, "uds5ttbeu5yj2sr3", 7721)
+		m.CollisionRadius, m.Collisions = narrow, 5
+
+		require.NoError(t, m.InheritCollision(sources(wide, 2)))
+
+		assert.InDelta(t, narrow, m.CollisionRadius, 1e-9, "inheriting must never widen a bound")
+		assert.Equal(t, 5, m.Collisions)
+	})
+	t.Run("TightensExisting", func(t *testing.T) {
+		m := narrowTestFace(t, "uds5ttbeu5yj2sr4", 7731)
+		m.CollisionRadius, m.Collisions = wide, 1
+
+		require.NoError(t, m.InheritCollision(sources(narrow, 3)))
+
+		assert.InDelta(t, narrow, m.CollisionRadius, 1e-9)
+		assert.Equal(t, 3, m.Collisions)
+	})
+	t.Run("DroppedBelowOwnExtent", func(t *testing.T) {
+		// A bound inside the merged cluster's own spread would refuse the members it is made of.
+		m := narrowTestFace(t, "uds5ttbeu5yj2sr5", 7741)
+		require.NoError(t, m.UpdateMatchStats(4, wide))
+		require.Greater(t, m.SampleRadius, narrow)
+
+		require.NoError(t, m.InheritCollision(sources(narrow, 3)))
+
+		assert.Zero(t, m.CollisionRadius)
+	})
+}
+
 func TestFace_MatchMarkersEmpty(t *testing.T) {
 	m := FaceFixtures.Get("joe-biden")
 	require.NoError(t, m.MatchMarkers(nil))

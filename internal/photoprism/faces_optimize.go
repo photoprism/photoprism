@@ -7,7 +7,6 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 
-	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/event"
@@ -35,7 +34,6 @@ func (w *Faces) OptimizeFor(subjUID string) (result FacesOptimizeResult, err err
 	for i := 0; i <= 10; i++ {
 		var n int
 		var c = result.Merged
-		var merge entity.Faces
 		var faces entity.Faces
 
 		// Fetch manually added faces from the database.
@@ -57,8 +55,8 @@ func (w *Faces) OptimizeFor(subjUID string) (result FacesOptimizeResult, err err
 
 		log.Debugf("faces: optimize for %s itr %d n %d", subjUID, i, n)
 
-		// flushMerge combines the candidates collected so far and clears them.
-		flushMerge := func(j int) {
+		// mergeGroup merges one group and reports what became of its candidates.
+		mergeGroup := func(j int, merge entity.Faces) {
 			if len(merge) < 2 {
 				// Nothing to merge.
 			} else if _, mergeErr := query.MergeFaces(merge, false); mergeErr != nil {
@@ -89,33 +87,11 @@ func (w *Faces) OptimizeFor(subjUID string) (result FacesOptimizeResult, err err
 				// see https://github.com/photoprism/photoprism/issues/3124#issuecomment-2558299360
 				result.Merged += len(merge)
 			}
-
-			merge = nil
 		}
 
 		// Find and merge matching faces.
-		for j := 0; j <= n; j++ {
-			if len(merge) == 0 {
-				merge = entity.Faces{faces[j]}
-			} else if faces[j].SubjUID != merge[len(merge)-1].SubjUID {
-				flushMerge(j)
-				merge = entity.Faces{faces[j]}
-			} else if ok, dist := merge[0].Match(face.Embeddings{faces[j].Embedding()}, faces[j].EmbedModel); ok {
-				log.Debugf("faces: can merge %s with %s, subject %s, dist %f", merge[0].ID, faces[j].ID, entity.SubjNames.Log(merge[0].SubjUID), dist)
-				merge = append(merge, faces[j])
-			} else if len(merge) == 1 {
-				// Re-anchor on this cluster rather than dropping it: an anchor it cannot join
-				// may still be one the next cluster can, and a dropped one is not reconsidered
-				// until the following pass.
-				merge = entity.Faces{faces[j]}
-			}
-
-			// The final index flushes after the body rather than instead of it, so the subject's
-			// last cluster is weighed into its group first. Flushing in its place would leave a
-			// subject holding exactly two clusters with a group of one, which merges nothing.
-			if j == n {
-				flushMerge(j)
-			}
+		for j, group := range mergeGroups(faces) {
+			mergeGroup(j, group)
 		}
 
 		// Done?
@@ -125,4 +101,66 @@ func (w *Faces) OptimizeFor(subjUID string) (result FacesOptimizeResult, err err
 	}
 
 	return result, nil
+}
+
+// mergeGroups partitions a subject's clusters into the sets one midpoint can stand for.
+//
+// The link is transitive, as in the clustering pass that groups the same vectors, so the partition
+// follows the distances rather than which cluster the fetch order put first.
+func mergeGroups(faces entity.Faces) []entity.Faces {
+	group := make([]int, len(faces))
+
+	for i := range group {
+		group[i] = i
+	}
+
+	// find resolves a cluster to its group, flattening the chain it walks.
+	var find func(i int) int
+	find = func(i int) int {
+		if group[i] != i {
+			group[i] = find(group[i])
+		}
+
+		return group[i]
+	}
+
+	// Grouped first, so the partition cannot depend on the clusters arriving in subject order.
+	bySubject := make(map[string][]int, len(faces))
+
+	for i := range faces {
+		bySubject[faces[i].SubjUID] = append(bySubject[faces[i].SubjUID], i)
+	}
+
+	for subjUID, members := range bySubject {
+		for x, i := range members {
+			for _, j := range members[x+1:] {
+				if ok, dist := faces[i].Mergeable(&faces[j]); !ok {
+					continue
+				} else if a, b := find(i), find(j); a != b {
+					log.Debugf("faces: can merge %s with %s, subject %s, dist %f",
+						faces[i].ID, faces[j].ID, entity.SubjNames.Log(subjUID), dist)
+					group[a] = b
+				}
+			}
+		}
+	}
+
+	// Collected in fetch order, so the largest cluster of a group anchors it.
+	var groups []entity.Faces
+
+	index := make(map[int]int, len(faces))
+
+	for i := range faces {
+		root := find(i)
+
+		if at, ok := index[root]; ok {
+			groups[at] = append(groups[at], faces[i])
+			continue
+		}
+
+		index[root] = len(groups)
+		groups = append(groups, entity.Faces{faces[i]})
+	}
+
+	return groups
 }

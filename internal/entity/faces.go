@@ -38,6 +38,25 @@ func (f Faces) EmbedModel() (model face.ModelName, ok bool) {
 	return model, true
 }
 
+// CollisionBound returns the tightest active collision radius in this slice, with the collision
+// count of the cluster carrying it.
+//
+// Dropped when it falls inside extent: a midpoint reaches further than its sources, so a tighter
+// bound would refuse the members the merge was made of.
+func (f Faces) CollisionBound(extent float64) (radius float64, collisions int) {
+	for _, m := range f {
+		if m.CollisionRadius > face.CollisionDist && (radius == 0 || m.CollisionRadius < radius) {
+			radius, collisions = m.CollisionRadius, m.Collisions
+		}
+	}
+
+	if radius < extent {
+		return 0, 0
+	}
+
+	return radius, collisions
+}
+
 // IDs returns all face IDs in this slice.
 func (f Faces) IDs() (ids []string) {
 	for _, m := range f {

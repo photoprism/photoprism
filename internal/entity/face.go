@@ -252,6 +252,36 @@ func (m *Face) Match(embeddings face.Embeddings, model face.ModelName) (match bo
 	return true, dist
 }
 
+// Mergeable reports whether one midpoint can stand for this cluster and the given one, and returns
+// the distance between them.
+//
+// Bounded by ClusterDist rather than by Match, which reads this cluster's own extent and collision
+// radius and so answers differently depending on which of the two is asked.
+func (m *Face) Mergeable(f *Face) (mergeable bool, dist float64) {
+	dist = -1
+
+	// An id on both sides, or the verdict would depend on the direction asked.
+	if m == nil || f == nil || m.ID == "" || f.ID == "" || m.ID == f.ID {
+		return false, dist
+	}
+
+	// Averaging vectors from two models yields a midpoint that describes neither.
+	if !face.SameEmbeddingSpace(m.EmbedModel, f.EmbedModel) {
+		return false, dist
+	}
+
+	a, b := m.Embedding(), f.Embedding()
+
+	// Refused as in Match: such a midpoint is one unit from every unit vector.
+	if len(a) == 0 || len(b) == 0 || a.Zero() || b.Zero() {
+		return false, dist
+	}
+
+	dist = a.Dist(b)
+
+	return dist >= 0 && dist <= face.ClusterDist, dist
+}
+
 // ResolveCollision resolves a collision with a different subject's face.
 func (m *Face) ResolveCollision(embeddings face.Embeddings, model face.ModelName) (resolved bool, err error) {
 	if m.SubjUID == "" {
@@ -303,6 +333,22 @@ func (m *Face) ResolveCollision(embeddings face.Embeddings, model face.ModelName
 	}
 
 	return true, nil
+}
+
+// InheritCollision narrows this cluster to the tightest collision bound its sources recorded.
+//
+// NewFace sets none, so a merged row would otherwise start unbounded and re-earn its narrowing.
+// Only ever tightens, since FirstOrCreateFace may return a row already carrying one.
+func (m *Face) InheritCollision(from Faces) error {
+	radius, collisions := from.CollisionBound(m.SampleRadius)
+
+	if radius == 0 || m.CollisionRadius > face.CollisionDist && m.CollisionRadius <= radius {
+		return nil
+	}
+
+	m.Collisions, m.CollisionRadius = collisions, radius
+
+	return m.Updates(Values{"collisions": m.Collisions, "collision_radius": m.CollisionRadius})
 }
 
 // ClearCollision discards a recorded collision, so the cluster matches at its full accept distance.
