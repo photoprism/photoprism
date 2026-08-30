@@ -186,18 +186,18 @@ func selectBestFace(embeddings face.Embeddings, idx faceIndex, anchored bool) (*
 	return nil, -1, true
 }
 
-// ambiguousBestFace reports whether the marker sits between clusters of different people.
+// ambiguousBestFace reports whether the marker sits between clusters naming two different people.
 //
-// Two clusters of one subject are exempt, and two anonymous ones are too: to contend they must sit
-// close, and clusters that close are one person on the evidence. Not for an anchored marker, whose
-// name SetFace lets the winner adopt and spread - there the toss names a person, irreversibly.
+// A nameless contender is the same person fragmented rather than a rival, since it has to sit
+// close to contend at all. Not so for an anchored marker, whose name SetFace lets the winner adopt
+// and spread: there the toss names a person, irreversibly.
 func ambiguousBestFace(best *entity.Face, bestDist float64, contenders []faceContender, anchored bool) bool {
 	for _, c := range contenders {
 		if !face.AmbiguousMatch(bestDist, c.dist) {
 			continue
 		}
 
-		if best.SubjUID != c.ref.SubjUID {
+		if best.SubjUID != "" && c.ref.SubjUID != "" && best.SubjUID != c.ref.SubjUID {
 			return true
 		}
 
@@ -303,7 +303,7 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 
 	// Named because the run otherwise reads as one that simply recognized less.
 	if result.Ambiguous > 0 {
-		log.Infof("faces: left %s unassigned between two similar clusters, see face-match-margin",
+		log.Infof("faces: left %s unassigned between clusters of two different people, see face-match-margin",
 			english.Plural(int(result.Ambiguous), "marker", "markers"))
 	}
 

@@ -511,10 +511,18 @@ func TestAmbiguousBestFace(t *testing.T) {
 		assert.False(t, ambiguousBestFace(anon, 0.7, []faceContender{near(otherAnon)}, false))
 	})
 	t.Run("AnonymousContenderAgainstANamedBest", func(t *testing.T) {
-		// The converse still defers: one of the two would give the marker a name, so a coin toss
-		// between them can be wrong in a way two anonymous clusters cannot.
-		assert.True(t, ambiguousBestFace(named, 0.7, []faceContender{near(anon)}, false))
-		assert.True(t, ambiguousBestFace(anon, 0.7, []faceContender{near(named)}, false))
+		// The pairing a fragmented library is mostly made of, and the one deferring costs the most:
+		// a nameless cluster that close is the same person in another group, so both directions are
+		// assigned. Every cluster a person names would otherwise raise a boundary against each
+		// unnamed one, and naming would remove pictures rather than adding them.
+		assert.False(t, ambiguousBestFace(named, 0.7, []faceContender{near(anon)}, false))
+		assert.False(t, ambiguousBestFace(anon, 0.7, []faceContender{near(named)}, false))
+	})
+	t.Run("AnchoredMarkerBetweenANamedAndAnAnonymousCluster", func(t *testing.T) {
+		// The anchored clause still applies to whichever direction would let the toss mint a name:
+		// an anonymous winner adopts the marker's subject, a named one already carries its own.
+		assert.True(t, ambiguousBestFace(anon, 0.7, []faceContender{near(named)}, true))
+		assert.False(t, ambiguousBestFace(named, 0.7, []faceContender{near(anon)}, true))
 	})
 	t.Run("SameSubjectDoesNotHideAnother", func(t *testing.T) {
 		// The reason every contender is weighed rather than the runner-up alone: a subject owns
@@ -620,6 +628,38 @@ func TestFacesMatchClearsAmbiguousMarker(t *testing.T) {
 
 		assert.Zero(t, r.Ambiguous, "an anonymous pair is not a coin toss worth withholding")
 		assert.NotEmpty(t, reload(t, m.MarkerUID).FaceID, "the nearer cluster takes the marker")
+	})
+	t.Run("NamingOneClusterKeepsTheOtherAssignment", func(t *testing.T) {
+		// The regression this rule exists for: every named cluster used to raise a boundary against
+		// every unnamed one, so naming a person removed pictures from the next. The same pair is
+		// matched twice, named in between, and the marker has to survive it.
+		first := entity.NewFace("", entity.SrcAuto, face.Embeddings{face.FixtureEmbeddingAt(markerEmb.First(), 0.10, 5005)}, face.EmbeddingModelName())
+		require.NotNil(t, first)
+		second := entity.NewFace("", entity.SrcAuto, face.Embeddings{face.FixtureEmbeddingAt(markerEmb.First(), 0.10+tied, 5006)}, face.EmbeddingModelName())
+		require.NotNil(t, second)
+
+		for _, f := range []*entity.Face{first, second} {
+			require.NoError(t, f.Create())
+			t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Face{}, "id = ?", f.ID) })
+		}
+
+		m := newMarker(t, "", entity.SrcAuto)
+		require.NoError(t, m.Updates(entity.Values{"face_id": "", "matched_at": nil}))
+
+		_, err := w.MatchFaces(entity.Faces{*first, *second}, true, nil, nil)
+		require.NoError(t, err)
+		require.NotEmpty(t, reload(t, m.MarkerUID).FaceID, "the baseline the naming is measured against")
+
+		// Written directly: SetSubjectUID would propagate the name onto the marker itself, and it
+		// is the unnamed rival rather than the marker's own subject that used to veto the match.
+		require.NoError(t, second.Updates(entity.Values{"subj_uid": entity.SubjectFixtures.Get("jane-doe").SubjUID}))
+		require.NoError(t, m.Updates(entity.Values{"face_id": "", "matched_at": nil}))
+
+		r, err := w.MatchFaces(entity.Faces{*first, *second}, true, nil, nil)
+		require.NoError(t, err)
+
+		assert.Zero(t, r.Ambiguous, "naming one of two clusters must not turn the other into a coin toss")
+		assert.NotEmpty(t, reload(t, m.MarkerUID).FaceID, "naming a cluster must not cost another one its markers")
 	})
 	t.Run("KeepsAnAssignmentAPersonMade", func(t *testing.T) {
 		// There is no guess of ours to withdraw, so the marker keeps the cluster its name
