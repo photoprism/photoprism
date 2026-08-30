@@ -446,12 +446,13 @@ func TestRadiusFrom(t *testing.T) {
 
 		assert.Greater(t, fromOffset, fromCenter)
 	})
-	t.Run("UnmeasurableIsTheFullRadius", func(t *testing.T) {
-		// One sample measures nothing, which SetEmbeddings answers the same way.
+	t.Run("UnmeasurableIsTheFloor", func(t *testing.T) {
+		// One sample has no spread to measure, which SetEmbeddings answers the same way. A cluster's
+		// width here would be an extent none of these embeddings showed.
 		radius, ok := RadiusFrom(base, Embeddings{base})
 
 		assert.True(t, ok, "a spread that measured zero is still a measurement")
-		assert.InDelta(t, ClusterRadius, radius, 1e-9)
+		assert.InDelta(t, Epsilon, radius, 1e-9)
 	})
 	t.Run("Empty", func(t *testing.T) {
 		radius, ok := RadiusFrom(base, Embeddings{})

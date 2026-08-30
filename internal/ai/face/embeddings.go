@@ -297,11 +297,11 @@ func RadiusFrom(center Embedding, embeddings Embeddings) (radius float64, ok boo
 		radius = ClampSampleRadius(d + Epsilon)
 	}
 
-	// A spread that measured zero - one member, or copies of one crop - is unmeasurable rather than
-	// tight, which SetEmbeddings answers the same way: the full radius, not a cluster narrower than
-	// any real pair of one person's faces.
+	// Nothing to measure - one member, or copies of one crop - so the floor is the honest value,
+	// which is what SetEmbeddings stores for the same case. A cluster's width would be an extent
+	// none of these embeddings showed.
 	if radius <= 0 {
-		return ClusterRadius, true
+		return Epsilon, true
 	}
 
 	return radius, true

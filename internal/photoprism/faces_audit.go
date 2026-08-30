@@ -68,9 +68,9 @@ func (w *Faces) Audit(fix bool, subjUID string) (err error) {
 		return err
 	}
 
-	// Widen degenerate sample radii before the collision pass below reads the clusters, so a
-	// repaired one is checked against the others at the distance it now accepts.
-	if _, err := w.repairDegenerateRadius(fix, subjUID); err != nil {
+	// Measured before the collision pass below reads the clusters, so a cluster whose extent was
+	// missing is checked against the others at the distance it actually reaches.
+	if _, err := w.recomputeMissingRadius(fix, subjUID); err != nil {
 		return err
 	}
 
@@ -372,19 +372,18 @@ func (w *Faces) Audit(fix bool, subjUID string) (err error) {
 	return nil
 }
 
-// repairDegenerateRadius widens face clusters whose stored sample radius is degenerate, so one
-// built from a single sample reaches as far as any other may instead of matching nothing.
-// Writing is opt-in and subject-scoped, because it changes which markers a cluster attracts.
-func (w *Faces) repairDegenerateRadius(fix bool, subjUID string) (repaired int, err error) {
-	// EmbeddingsMidpoint records a positive percentile as p + Epsilon and SetEmbeddings replaces a
-	// zero one with ClusterRadius, so no current write path leaves a row at or below Epsilon.
-	// Widening this would sweep in genuinely tight clusters and grant them the full radius.
-	stmt := entity.UnscopedDb().Model(&entity.Face{}).Where("sample_radius <= ?", face.Epsilon)
-
-	// The rows the matcher reads, and no others, because the write is one-way: nothing narrows a
-	// radius again, so a cluster the operator hid would come back at the maximum with its own
-	// extent gone. The radius written here is the configured model's, so a foreign one is left.
-	stmt = stmt.Where("face_hidden = ?", false).Where("face_kind <= 1")
+// recomputeMissingRadius measures the extent of clusters stored without one, over the markers they
+// hold. A singleton has no extent to measure and is left alone; anything else is measured rather
+// than set to a constant, since a width nothing observed is what this exists to remove.
+func (w *Faces) recomputeMissingRadius(fix bool, subjUID string) (repaired int, err error) {
+	// The rows the matcher reads, and no others: nothing narrows a radius again, so a cluster the
+	// operator hid would come back with its own extent gone. Below the floor rather than at it,
+	// since a row already sitting there was written by a current path.
+	stmt := entity.UnscopedDb().Model(&entity.Face{}).
+		Where("sample_radius < ?", face.Epsilon).
+		Where("samples >= ?", face.ManualClusterCore).
+		Where("face_hidden = ?", false).
+		Where("face_kind <= 1")
 
 	if cond, args := entity.EmbeddingModelCond(face.EmbeddingModelName()); cond != "" {
 		stmt = stmt.Where(cond, args...)
@@ -394,42 +393,47 @@ func (w *Faces) repairDegenerateRadius(fix bool, subjUID string) (repaired int, 
 		stmt = stmt.Where("subj_uid = ?", subjUID)
 	}
 
+	var faces entity.Faces
+
+	if err = stmt.Find(&faces).Error; err != nil {
+		return 0, err
+	}
+
 	if !fix {
-		var pending int
-
-		if err = stmt.Count(&pending).Error; err != nil {
-			return 0, err
-		}
-
-		if pending == 0 {
-			log.Infof("faces: found no clusters with a degenerate sample radius")
+		if len(faces) > 0 {
+			log.Infof("faces: %s without a sample radius", english.Plural(len(faces), "cluster", "clusters"))
 		} else {
-			log.Infof("faces: %s with a degenerate sample radius", english.Plural(pending, "cluster", "clusters"))
+			log.Infof("faces: found no clusters without a sample radius")
 		}
 
-		return pending, nil
+		return len(faces), nil
 	}
 
-	// Repaired in place, since the id hashes the embedding rather than the radius. Clearing the
-	// timestamp is what applies it: a cluster is only re-compared while it counts as unmatched.
-	res := stmt.UpdateColumns(entity.Values{
-		"sample_radius": face.ClusterRadius,
-		"matched_at":    nil,
-		"updated_at":    entity.Now(),
-	})
+	for i := range faces {
+		measured, statsErr := recomputeFaceStats(&faces[i])
 
-	if res.Error != nil {
-		return 0, res.Error
+		if statsErr != nil {
+			return repaired, statsErr
+		} else if !measured {
+			continue
+		}
+
+		// A cluster is only compared against the markers again while it counts as unmatched.
+		if err = faces[i].Update("MatchedAt", nil); err != nil {
+			return repaired, err
+		}
+
+		repaired++
 	}
 
-	if repaired = int(res.RowsAffected); repaired == 0 {
-		log.Infof("faces: found no clusters with a degenerate sample radius")
+	if repaired == 0 {
+		log.Infof("faces: found no clusters to measure")
 		return 0, nil
 	}
 
 	entity.UpdateFaces.Store(true)
 
-	log.Infof("faces: widened the sample radius of %s to %f", english.Plural(repaired, "cluster", "clusters"), face.ClusterRadius)
+	log.Infof("faces: measured the sample radius of %s", english.Plural(repaired, "cluster", "clusters"))
 
 	return repaired, nil
 }
