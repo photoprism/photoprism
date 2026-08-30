@@ -188,11 +188,18 @@ type MarkerReport struct {
 	SubjUID       string
 	SubjSrc       string
 	MarkerName    string
-	Size          int
 	Score         int
 	FaceDist      float64
 	MarkerInvalid bool
 	MatchedAt     *time.Time
+
+	// W is the marker area's width as a fraction of the frame, which says how prominent the face
+	// is without naming a rendition. The stored size does name one - pixels of the Fit720
+	// detection thumbnail - and is left out for that reason, being read as source pixels.
+	W float32
+	// ThumbSize is the extent in pixels of the image the embedding was sampled from, which says
+	// how much detail the vector rests on. Below 1 where it was never recorded.
+	ThumbSize int
 
 	// EmbeddingDims is the vector width the marker holds, 0 when it holds none, and
 	// InvalidJSON when what is stored cannot be parsed.
@@ -222,7 +229,7 @@ type MarkerReportFilter struct {
 func MarkerReports(f MarkerReportFilter) (result []MarkerReport, err error) {
 	stmt := UnscopedDb().
 		Table(entity.Marker{}.TableName()).
-		Select("marker_uid, file_uid, face_id, subj_uid, subj_src, marker_name, size, score, face_dist, marker_invalid, matched_at, embeddings_json, landmarks_json").
+		Select("marker_uid, file_uid, face_id, subj_uid, subj_src, marker_name, w, thumb_size, score, face_dist, marker_invalid, matched_at, embeddings_json, landmarks_json").
 		Where("marker_type = ?", entity.MarkerFace)
 
 	if subjUID, nameLike := PersonFilter(f.Person); subjUID != "" {

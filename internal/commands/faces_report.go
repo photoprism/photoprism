@@ -86,6 +86,32 @@ func reportVectors(n int) string {
 	}
 }
 
+// reportUnrecorded marks a column the row carries no measurement for, which is not the same as a
+// measured zero: the size bars fall back to another value where it appears.
+const reportUnrecorded = "-"
+
+// reportFrameShare renders how much of the frame's width a marker area covers, as a percentage.
+//
+// Relative because the alternative invites a misreading: the stored size is in pixels of the
+// Fit720 detection thumbnail, and nothing in a table of numbers says so.
+func reportFrameShare(w float32) string {
+	if w <= 0 {
+		return reportUnrecorded
+	}
+
+	return strconv.FormatFloat(float64(w)*100, 'f', 1, 64) + "%"
+}
+
+// reportThumbSize renders the extent an embedding was sampled at, in pixels of the image it was
+// drawn from. Empty where none was recorded, which is what the clustering bar falls back for.
+func reportThumbSize(px int) string {
+	if px < 1 {
+		return reportUnrecorded
+	}
+
+	return strconv.Itoa(px)
+}
+
 // reportPerson returns the person a report command was narrowed to: a subject uid or a name fragment.
 //
 // Sanitized by clean.Name, matching what Subject.SetName writes. Not clean.SearchString, which
@@ -367,12 +393,12 @@ func facesMarkersAction(ctx *cli.Context) error {
 			return err
 		}
 
-		cols := []string{"Marker", "Name", "Size", "Score", "Subject", "Src", "Face", "Dist", "Embedding", "Landmarks", "Invalid", "File", "Matched At"}
+		cols := []string{"Marker", "Name", "Size", "Thumb px", "Score", "Subject", "Src", "Face", "Dist", "Embedding", "Landmarks", "Invalid", "File", "Matched At"}
 		rows := make([][]string, 0, len(markers))
 
 		for _, m := range markers {
 			rows = append(rows, []string{
-				m.MarkerUID, m.MarkerName, strconv.Itoa(m.Size), strconv.Itoa(m.Score),
+				m.MarkerUID, m.MarkerName, reportFrameShare(m.W), reportThumbSize(m.ThumbSize), strconv.Itoa(m.Score),
 				m.SubjUID, entity.SrcString(m.SubjSrc), m.FaceID, report.Distance(m.FaceDist),
 				reportVectors(m.EmbeddingDims), reportVectors(m.Landmarks),
 				reportBool(m.MarkerInvalid), m.FileUID, report.DateTime(m.MatchedAt),

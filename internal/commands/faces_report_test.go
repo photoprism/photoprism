@@ -177,7 +177,7 @@ func TestFacesMarkersCommand(t *testing.T) {
 		output, err := RunWithTestContext(FacesMarkersCommand, []string{"markers"})
 		require.NoError(t, err)
 
-		for _, col := range []string{"Marker", "Name", "Size", "Score", "Subject", "Src", "Face", "Dist", "Embedding", "Landmarks", "Invalid", "File", "Matched At"} {
+		for _, col := range []string{"Marker", "Name", "Size", "Thumb px", "Score", "Subject", "Src", "Face", "Dist", "Embedding", "Landmarks", "Invalid", "File", "Matched At"} {
 			assert.Contains(t, output, col)
 		}
 
@@ -222,6 +222,25 @@ func TestReportVectors(t *testing.T) {
 	assert.Equal(t, "5", reportVectors(5))
 	assert.Equal(t, "", reportVectors(0), "an absent vector reads as blank, not as a zero width")
 	assert.Equal(t, "invalid", reportVectors(query.InvalidJSON))
+}
+
+// TestReportFrameShare covers the relative size column, which answers how prominent a face is in
+// its picture without naming the rendition an absolute one would be measured in.
+func TestReportFrameShare(t *testing.T) {
+	assert.Equal(t, "25.0%", reportFrameShare(0.25))
+	assert.Equal(t, "1.5%", reportFrameShare(0.015))
+	assert.Equal(t, "100.0%", reportFrameShare(1))
+	assert.Equal(t, reportUnrecorded, reportFrameShare(0), "an unmeasured area is not a face of no width")
+	assert.Equal(t, reportUnrecorded, reportFrameShare(-1))
+}
+
+// TestReportThumbSize covers the sampled-extent column, whose absence is what sends the clustering
+// bar to the detection size instead - so it has to read as missing rather than as a zero.
+func TestReportThumbSize(t *testing.T) {
+	assert.Equal(t, "112", reportThumbSize(112))
+	assert.Equal(t, "1", reportThumbSize(1))
+	assert.Equal(t, reportUnrecorded, reportThumbSize(0))
+	assert.Equal(t, reportUnrecorded, reportThumbSize(-1), "the column default, so it is the common case")
 }
 
 // TestReportBool covers the flag rendering, which uses the shared labels so a column of them reads

@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // TestSubjectReports covers the people report, whose point is the two count columns.
@@ -168,6 +169,31 @@ func TestMarkerReports(t *testing.T) {
 			require.NotEmpty(t, m.FaceID)
 			assert.Nil(t, entity.FindFace(m.FaceID), "a dangling marker names a cluster that no longer exists")
 		}
+	})
+	t.Run("SizeColumns", func(t *testing.T) {
+		// Two different questions, so both are carried: how prominent the face is in the frame,
+		// and how much detail its vector rests on. Neither is derivable from the other.
+		faceID := "report-size-columns"
+		m := &entity.Marker{
+			MarkerUID:  rnd.GenerateUID('m'),
+			FileUID:    "fs6sg6bw45bnlqdw",
+			MarkerType: entity.MarkerFace,
+			MarkerSrc:  entity.SrcImage,
+			FaceID:     faceID,
+			W:          0.25,
+			H:          0.4,
+			ThumbSize:  312,
+		}
+
+		require.NoError(t, entity.Db().Create(m).Error)
+		t.Cleanup(func() { entity.UnscopedDb().Delete(m) })
+
+		markers, err := MarkerReports(MarkerReportFilter{FaceID: faceID, Count: 10})
+		require.NoError(t, err)
+		require.Len(t, markers, 1)
+
+		assert.InDelta(t, 0.25, markers[0].W, 1e-6)
+		assert.Equal(t, 312, markers[0].ThumbSize)
 	})
 	t.Run("ExcludesNonFaceMarkers", func(t *testing.T) {
 		markers, err := MarkerReports(MarkerReportFilter{Count: 1000})
