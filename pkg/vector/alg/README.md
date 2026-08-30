@@ -4,6 +4,8 @@ Implements the following clustering algorithms:
 
 - k-means++
 - DBSCAN
+- OPTICS, with cluster extraction at one link distance or by the xi-steep method
+- HDBSCAN, with excess-of-mass extraction, membership probabilities and GLOSH outlier scores
 
 It was forked from the following repositories, which don't seem to be maintained anymore:
 
@@ -55,7 +57,41 @@ for index, number := range c.Guesses() {
 
 All data points must have the same number of dimensions, since vectors of different widths cannot be compared. `Learn` and `Estimate` return an error otherwise, and `Predict` returns `-1` for an observation of a different length or before the clusterer is trained.
 
-Algorithms currently supported are KMeans++ and DBSCAN.
+Algorithms currently supported are KMeans++, DBSCAN, OPTICS and HDBSCAN.
+
+### Density-Based Clustering at More Than One Density
+
+DBSCAN takes a single link distance, so a set holding groups of different densities has no value
+that suits all of them: whatever connects the sparsest group also chains the closest pair together.
+`OPTICS` and `HDBSCAN` address that, and neither implements the `HardClusterer` interface, because
+neither produces one clustering - they build a structure that clusterings are extracted from.
+
+```go
+// OPTICS orders the points once; clusters are then extracted from that ordering.
+o, err := alg.OPTICS(data, minPts, math.Inf(1), workers, alg.EuclideanDist)
+
+labels := o.ExtractXi(0.05, minPts) // valleys in the reachability plot
+same := o.ExtractDBSCAN(0.8)        // what DBSCAN would return at this link distance
+
+// HDBSCAN builds the hierarchy of all density levels and keeps the clusters that persist longest.
+h, err := alg.HDBSCAN(data, minPts, minClusterSize, workers, alg.EuclideanDist)
+
+labels := h.Labels()          // clusters numbered from 1, alg.Noise for the rest
+probs := h.Probabilities()    // how central each point is within its own cluster
+outliers := h.Outliers()      // GLOSH score, 0 for a full member
+```
+
+Both return `alg.Labels`, which numbers clusters from 1 and marks unclustered points `alg.Noise`,
+matching what `HardClusterer.Guesses` reports.
+
+Two properties worth knowing before reading a result:
+
+- **`Probabilities` is scaled per cluster.** Every cluster reaches 1 however sparse it is, so the
+  value says where a point sits within its own cluster and is not comparable between clusters.
+- **Tied distances make the outcome arbitrary.** A point whose core distance exceeds every distance
+  around it has several equally short edges, and which one is taken decides its cluster. Both
+  implementations break such ties by point index so a run repeats, but a different valid answer
+  exists.
 
 Algorithms which support online learning can be trained this way using Online() function, which relies on channel communication to coordinate the process:
 

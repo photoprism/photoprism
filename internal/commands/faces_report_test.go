@@ -287,11 +287,29 @@ func TestFacesConflictsCommand(t *testing.T) {
 
 func TestReportResolution(t *testing.T) {
 	named := "js6sg6b1qekk9jx8"
+
+	// Just past the floor where a recorded radius is large enough for Match to enforce it. Derived
+	// rather than a multiple of the ambiguity cutoff, which sits far below the floor.
+	narrowing := face.CollisionDist + 2*face.Epsilon
+
 	t.Run("Ambiguous", func(t *testing.T) {
 		assert.Equal(t, "ambiguous", reportResolution(query.FaceConflict{SubjUID: named, Dist: face.AmbiguityDist() / 2}))
 	})
 	t.Run("Narrow", func(t *testing.T) {
-		assert.Equal(t, "narrow", reportResolution(query.FaceConflict{SubjUID: named, Dist: face.AmbiguityDist() * 10}))
+		assert.Equal(t, "narrow", reportResolution(query.FaceConflict{SubjUID: named, Dist: narrowing}))
+	})
+	t.Run("AtTheAmbiguityCutoff", func(t *testing.T) {
+		// Ambiguous() uses <, so the cutoff itself is not ambiguous.
+		assert.Equal(t, "inert", reportResolution(query.FaceConflict{SubjUID: named, Dist: face.AmbiguityDist()}))
+	})
+	t.Run("AtTheNarrowingFloor", func(t *testing.T) {
+		// Narrows() uses >, so a pair exactly on the floor records a radius nothing enforces.
+		assert.Equal(t, "inert", reportResolution(query.FaceConflict{SubjUID: named, Dist: face.CollisionDist + face.Epsilon}))
+	})
+	t.Run("Inert", func(t *testing.T) {
+		// Past the ambiguity cutoff but too close for the radius resolution records to clear
+		// CollisionDist, so nothing enforces it and the label must not claim a narrowing.
+		assert.Equal(t, "inert", reportResolution(query.FaceConflict{SubjUID: named, Dist: face.CollisionDist}))
 	})
 	t.Run("Unmeasured", func(t *testing.T) {
 		// Match never reports a negative distance alongside a match, so this is a guard: what
@@ -302,13 +320,13 @@ func TestReportResolution(t *testing.T) {
 		// ResolveCollision returns early on a cluster that names nobody, so neither branch runs
 		// however close the pair is. Naming one here would assert an outcome that cannot happen.
 		assert.Equal(t, "none", reportResolution(query.FaceConflict{Dist: face.AmbiguityDist() / 2}))
-		assert.Equal(t, "none", reportResolution(query.FaceConflict{Dist: face.AmbiguityDist() * 10}))
+		assert.Equal(t, "none", reportResolution(query.FaceConflict{Dist: narrowing}))
 	})
 	t.Run("AnonymousSecondCluster", func(t *testing.T) {
 		// The other orientation does resolve: the named cluster is the receiver, and it narrows
 		// against the anonymous one's vector.
 		assert.Equal(t, "narrow", reportResolution(query.FaceConflict{
-			SubjUID: "js6sg6b1qekk9jx8", OtherSubjUID: "", Dist: face.AmbiguityDist() * 10,
+			SubjUID: named, OtherSubjUID: "", Dist: narrowing,
 		}))
 	})
 }

@@ -26,7 +26,7 @@ const (
 	// EpsilonDefault is the numeric tolerance used during cluster comparisons, and the same for
 	// every model unlike the calibrated distances: it is the gap a resolved collision leaves, which
 	// is a void where nothing matches, so a wider one strands embeddings rather than separating anyone.
-	EpsilonDefault = 0.01
+	EpsilonDefault = 0.001
 	// SizeThresholdDefault is the default minimum detected face size, in pixels.
 	SizeThresholdDefault = 25
 	// ScoreThresholdDefault leaves the cutoff to the detector, on the 0-100 confidence scale the
@@ -46,10 +46,13 @@ const (
 	// OverlapThresholdDefault is the default face area overlap percentage above which two
 	// detections are treated as identical.
 	OverlapThresholdDefault = 42
-	// ClusterSizeThresholdDefault is the default minimum face size, in pixels, for clustering.
-	ClusterSizeThresholdDefault = 60
-	// ClusterCoreDefault is the default number of faces required to seed a cluster core.
-	ClusterCoreDefault = 4
+	// ClusterSizeThresholdDefault is the default minimum face size, in pixels, for clustering, and
+	// bounds the source pixels an embedding rests on. Measured rather than derived: quality turns
+	// at the aligned crop size and is flat above it.
+	ClusterSizeThresholdDefault = ArcFaceTemplateSize
+	// ClusterCoreDefault is the default number of faces required to seed a cluster core. DBSCAN
+	// counts the point itself, so a person with fewer clusterable faces forms no cluster at all.
+	ClusterCoreDefault = 5
 )
 
 // InterOpThreads is how many threads an ONNX session may use to run graph nodes in
@@ -69,6 +72,10 @@ const AcceptDistMax = 1.4
 // were calibrated in; past it a cluster accepts about as readily as it refuses. A value above is
 // refused rather than clipped on read, which would leave the report echoing a number that never applies.
 const ConfigDistMax = 1.25
+
+// EpsilonDistMax is the widest configurable collision tolerance. Twice it bounds AmbiguityDist, so
+// the cutoff under which a colliding cluster is retired can be narrowed but never widened past it.
+const EpsilonDistMax = 0.01
 
 var (
 	// CropSize is the rectangular face crop, used by FaceNet, by the fallback for a face whose
@@ -123,6 +130,22 @@ var (
 	// Epsilon is the numeric tolerance used during cluster comparisons.
 	Epsilon = EpsilonDefault
 )
+
+// ClusterSize returns the minimum face size, in pixels of the image an embedding was sampled from,
+// that the named model consumes without interpolating. It is the model's own input geometry, so a
+// bar meaning "not invented by interpolation" keeps that meaning when the model changes.
+func ClusterSize(model ModelName) int {
+	if m := FindEmbeddingModel(model); m != nil {
+		if w, h := m.InputSize(); w > 0 && h > 0 {
+			return max(w, h)
+		} else if !m.Aligned() {
+			// Box-aligned models read the rectangular crop instead of the landmark template.
+			return CropSize.Width
+		}
+	}
+
+	return ClusterSizeThresholdDefault
+}
 
 // ClusterScore returns the score a marker the named detector produced has to reach to contribute
 // to automatic clustering. FACE_CLUSTER_SCORE outranks the per-detector bars and a negative value

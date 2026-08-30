@@ -1862,6 +1862,22 @@ func TestConfig_FaceClusterSize(t *testing.T) {
 	assert.Equal(t, face.ClusterSizeThreshold, c.FaceClusterSize())
 	c.options.FaceClusterSize = 66
 	assert.Equal(t, 66, c.FaceClusterSize())
+
+	t.Run("DerivedFromTheModelThroughTheFlagLayer", func(t *testing.T) {
+		// Built from the registered flags rather than by assigning the option, because that is
+		// where the derivation was defeated: a flag Value made the option non-zero on every
+		// start, so the getter never reached the per-model branch. Literals, not the propagated
+		// global, which Propagate assigns from this getter and would compare against itself.
+		ctx := cliContextWithFlagDefaults(t)
+
+		for model, want := range map[string]int{face.ModelFaceNet: 160, face.ModelSFace: 112} {
+			c := &Config{cliCtx: ctx, options: NewOptions(ctx)}
+			c.options.FaceModel = model
+
+			require.Zero(t, c.options.FaceClusterSize, "an unset option must stay zero to mean derive it")
+			assert.Equal(t, want, c.FaceClusterSize(), model)
+		}
+	})
 }
 
 func TestConfig_FaceClusterScore(t *testing.T) {
@@ -1877,9 +1893,9 @@ func TestConfig_FaceClusterScore(t *testing.T) {
 
 func TestConfig_FaceClusterCore(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, 4, c.FaceClusterCore())
+	assert.Equal(t, face.ClusterCoreDefault, c.FaceClusterCore())
 	c.options.FaceClusterCore = 1000
-	assert.Equal(t, 4, c.FaceClusterCore())
+	assert.Equal(t, face.ClusterCoreDefault, c.FaceClusterCore())
 	c.options.FaceClusterCore = 1
 	assert.Equal(t, 1, c.FaceClusterCore())
 }
@@ -1937,9 +1953,9 @@ func TestConfig_FaceThresholdsPerModel(t *testing.T) {
 		c.options.ModelsPath = installTestModels(t, face.ModelSFace)
 		c.options.FaceModel = face.ModelSFace
 
-		assert.Equal(t, 0.85, c.FaceClusterDist())
-		assert.Equal(t, 0.60, c.FaceClusterRadius())
-		assert.Equal(t, 0.35, c.FaceMatchDist())
+		assert.Equal(t, 0.72, c.FaceClusterDist())
+		assert.Equal(t, 0.70, c.FaceClusterRadius())
+		assert.Equal(t, 0.25, c.FaceMatchDist())
 		// Neither gap scales with the model: a collision floor that did would exclude the members
 		// of both clusters, and a wider Epsilon strands embeddings rather than telling anyone apart.
 		assert.Equal(t, face.CollisionDistDefault, c.FaceCollisionDist())
@@ -1989,9 +2005,9 @@ func TestConfig_FaceThresholdsPerModel(t *testing.T) {
 
 		require.Zero(t, c.options.FaceClusterDist)
 		require.Zero(t, c.options.FaceCollisionDist)
-		assert.Equal(t, 0.85, c.FaceClusterDist())
-		assert.Equal(t, 0.60, c.FaceClusterRadius())
-		assert.Equal(t, 0.35, c.FaceMatchDist())
+		assert.Equal(t, 0.72, c.FaceClusterDist())
+		assert.Equal(t, 0.70, c.FaceClusterRadius())
+		assert.Equal(t, 0.25, c.FaceMatchDist())
 		assert.Equal(t, face.CollisionDistDefault, c.FaceCollisionDist())
 		assert.Equal(t, face.EpsilonDefault, c.FaceEpsilonDist())
 	})
@@ -2045,8 +2061,8 @@ func TestConfig_FaceThreshold(t *testing.T) {
 		c.options.ModelsPath = installTestModels(t, face.ModelSFace)
 		c.options.FaceModel = face.ModelSFace
 
-		assert.Equal(t, 0.35, c.faceThreshold("face-match-dist", 1.6, face.MatchDistDefault, pick))
-		assert.Equal(t, 0.35, c.faceThreshold("face-match-dist", 0.001, face.MatchDistDefault, pick))
+		assert.Equal(t, 0.25, c.faceThreshold("face-match-dist", 1.6, face.MatchDistDefault, pick))
+		assert.Equal(t, 0.25, c.faceThreshold("face-match-dist", 0.001, face.MatchDistDefault, pick))
 	})
 	t.Run("InRange", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
@@ -2064,8 +2080,8 @@ func TestConfig_FaceThreshold(t *testing.T) {
 		// unguarded warning would repeat for the lifetime of the process.
 		hook := captureLog(t)
 
-		assert.Equal(t, 0.35, c.faceThreshold("face-match-dist", 1.6, face.MatchDistDefault, pick))
-		assert.Equal(t, 0.35, c.faceThreshold("face-match-dist", 1.6, face.MatchDistDefault, pick))
+		assert.Equal(t, 0.25, c.faceThreshold("face-match-dist", 1.6, face.MatchDistDefault, pick))
+		assert.Equal(t, 0.25, c.faceThreshold("face-match-dist", 1.6, face.MatchDistDefault, pick))
 
 		var warnings []string
 
@@ -2118,7 +2134,7 @@ func TestFaceModelThreshold(t *testing.T) {
 	pick := func(m *face.EmbeddingModel) float64 { return m.MatchDist }
 
 	t.Run("Model", func(t *testing.T) {
-		assert.Equal(t, 0.35, faceModelThreshold(face.FindEmbeddingModel(face.ModelSFace), pick, 0.4))
+		assert.Equal(t, 0.25, faceModelThreshold(face.FindEmbeddingModel(face.ModelSFace), pick, 0.4))
 	})
 	t.Run("NilModel", func(t *testing.T) {
 		assert.Equal(t, 0.4, faceModelThreshold(nil, pick, 0.4))
@@ -2239,17 +2255,25 @@ func TestConfig_FaceEpsilonDist(t *testing.T) {
 	c.options.FaceEpsilonDist = 0
 	assert.Equal(t, sface, c.FaceEpsilonDist())
 
-	t.Run("CappedAtTheDefault", func(t *testing.T) {
+	t.Run("CappedAtTheConfigurableCeiling", func(t *testing.T) {
 		// The gap is a void where nothing matches, and twice it retires a colliding cluster for
-		// good. Capping it at the default keeps the ambiguity cutoff at or below the fixed 0.02 it
-		// had before it became derivable, so the option can narrow that door but never widen it.
+		// good. EpsilonDistMax holds the ambiguity cutoff at or below 0.02, so the option can
+		// narrow that door but never widen it.
 		c := newSFaceTestConfig(t)
 
-		c.options.FaceEpsilonDist = face.EpsilonDefault
-		assert.Equal(t, face.EpsilonDefault, c.FaceEpsilonDist())
+		c.options.FaceEpsilonDist = face.EpsilonDistMax
+		assert.Equal(t, face.EpsilonDistMax, c.FaceEpsilonDist())
 
-		c.options.FaceEpsilonDist = face.EpsilonDefault * 2
+		c.options.FaceEpsilonDist = face.EpsilonDistMax * 2
 		assert.Equal(t, sface, c.FaceEpsilonDist(), "above the cap resolves to the model value")
+	})
+	t.Run("AboveTheDefaultButInRange", func(t *testing.T) {
+		// The ceiling does not follow the default, so narrowing the default leaves a setting that
+		// was in range still valid.
+		c := newSFaceTestConfig(t)
+
+		c.options.FaceEpsilonDist = face.EpsilonDefault * 5
+		assert.Equal(t, face.EpsilonDefault*5, c.FaceEpsilonDist())
 	})
 
 	t.Run("OutOfRangeWarns", func(t *testing.T) {

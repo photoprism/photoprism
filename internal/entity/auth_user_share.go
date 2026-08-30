@@ -10,8 +10,10 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
+// PermDefault leaves a share on the permissions its resource grants.
 const PermDefault uint = 0
 
+// Permissions a share may grant, combined as a bit mask.
 const (
 	PermNone uint = 1 << iota
 	PermView
@@ -44,7 +46,7 @@ func (m UserShares) UIDs() UIDs {
 
 // Empty checks if there are no shares.
 func (m UserShares) Empty() bool {
-	return m == nil || len(m) == 0
+	return len(m) == 0
 }
 
 // Contains checks the uid is shared.

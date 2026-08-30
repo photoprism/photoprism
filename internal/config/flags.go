@@ -844,6 +844,12 @@ var Flags = CliFlags{
 			Value:   60,
 			EnvVars: EnvVars("JWT_LEEWAY"),
 		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "jwt-rotate-days",
+			Usage:   "portal JWT signing key lifetime in `DAYS`, -1 to rotate manually only",
+			Value:   90,
+			EnvVars: EnvVars("JWT_ROTATE_DAYS"),
+		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "portal-oidc-issuer",
 			Usage:   "Portal OIDC OP issuer `URL` advertised in discovery and ID tokens (defaults to site-url)",
@@ -1407,10 +1413,10 @@ var Flags = CliFlags{
 		}, DocDefault: "auto"}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-cluster-size",
-			Usage:   "minimum size of automatically clustered faces in `PIXELS` (20-10000)",
-			Value:   face.ClusterSizeThreshold,
+			Usage:   "minimum size of automatically clustered faces in `PIXELS` of the image their embedding was sampled from (20-10000), calibrated per face model when unset",
 			EnvVars: EnvVars("FACE_CLUSTER_SIZE"),
-		}}, {
+		},
+		DocDefault: faceDocDefault(float64(face.ClusterSize(face.DefaultModelName())))}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-cluster-score",
 			Usage:   "minimum `QUALITY` score of automatically clustered faces (1-100), overriding the bar calibrated per detector, -1 disables the check",
@@ -1450,7 +1456,7 @@ var Flags = CliFlags{
 		}, DocDefault: faceDocDefault(face.CollisionDistDefault)}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-epsilon-dist",
-			Usage:   "collision tolerance `DELTA` appended to max match distances (up to 0.01), the same for every face model; twice it is the distance at which a colliding cluster is retired for good",
+			Usage:   fmt.Sprintf("collision tolerance `DELTA` appended to max match distances (up to %g), the same for every face model; twice it is the distance at which a colliding cluster is retired for good", face.EpsilonDistMax),
 			EnvVars: EnvVars("FACE_EPSILON_DIST"),
 		}, DocDefault: faceDocDefault(face.EpsilonDefault)}, {
 		Flag: &cli.StringFlag{

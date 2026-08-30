@@ -26,6 +26,7 @@ package face
 
 import (
 	"encoding/json"
+	"math"
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/thumb/crop"
@@ -44,6 +45,22 @@ type Face struct {
 	DetectModel EngineName `json:"detector,omitempty"`
 	EmbedModel  ModelName  `json:"model,omitempty"`
 	Embeddings  Embeddings `json:"embeddings,omitempty"`
+	// ThumbSize is the face's extent in pixels of the thumbnail its embedding was sampled from,
+	// which is a different image than Size measures. Zero until an embedding is generated.
+	ThumbSize int `json:"thumbSize,omitempty"`
+}
+
+// SetThumbSize records the face's extent in an image of the given width, which is what the
+// embedding was drawn from. Unknown leaves it unset rather than storing a guess.
+//
+// Cols is checked directly rather than through ImageScale, whose "1 when unknown" is a coordinate
+// convention: it would turn an unrecorded detection width into a scale of srcWidth itself.
+func (f *Face) SetThumbSize(srcWidth int) {
+	if f == nil || srcWidth < 1 || f.Cols < 2 {
+		return
+	}
+
+	f.ThumbSize = max(1, int(math.Round(float64(f.Size())*f.ImageScale(srcWidth))))
 }
 
 // Size returns the absolute face size in pixels.

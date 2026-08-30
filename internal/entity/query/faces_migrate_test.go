@@ -575,3 +575,38 @@ func TestSameFaceMigrationIdentities(t *testing.T) {
 	assert.False(t, sameFaceMigrationIdentities(identities, nil))
 	assert.False(t, sameFaceMigrationIdentities(identities, []FaceMigrationIdentity{{MarkerUID: "m2"}}))
 }
+
+// TestCountMarkersWithoutThumbSize covers the audit count, which reports how many embedded markers
+// are still judged by their detection size rather than by what their embedding was sampled from.
+func TestCountMarkersWithoutThumbSize(t *testing.T) {
+	before, err := CountMarkersWithoutThumbSize()
+	require.NoError(t, err)
+
+	m := &entity.Marker{
+		MarkerUID:      rnd.GenerateUID('m'),
+		FileUID:        "fs6sg6bw45bnlqdw",
+		MarkerType:     entity.MarkerFace,
+		MarkerSrc:      entity.SrcImage,
+		Size:           200,
+		ThumbSize:      -1,
+		Score:          100,
+		EmbedModel:     face.ModelFaceNet,
+		EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
+		W:              0.1,
+		H:              0.1,
+	}
+	require.NoError(t, entity.Db().Create(m).Error)
+	t.Cleanup(func() { entity.UnscopedDb().Delete(m) })
+
+	after, err := CountMarkersWithoutThumbSize()
+	require.NoError(t, err)
+	assert.Equal(t, before+1, after, "an embedded marker with no recorded sample size must be counted")
+
+	// A recorded value takes it back out, however small: 1 is a measurement, not a sentinel.
+	require.NoError(t, entity.Db().Model(&entity.Marker{}).Where("marker_uid = ?", m.MarkerUID).
+		Update("thumb_size", 1).Error)
+
+	after, err = CountMarkersWithoutThumbSize()
+	require.NoError(t, err)
+	assert.Equal(t, before, after)
+}

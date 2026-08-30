@@ -82,11 +82,9 @@ func (c *Config) FaceEngineShouldRun(when vision.RunType) bool {
 	when = vision.ParseRunType(when)
 	run := c.FaceEngineRunType()
 
-	// Faces stay out of the scheduled sweep unless the schedule was asked for by name. Re-detecting
-	// pictures an earlier pass already examined finds nothing while the detector is unchanged, and
-	// the sweep costs a full decode per file - so "on demand" means a person or an import asked,
-	// not a cron tick. Changing detector is what makes another pass worthwhile, and that is a
-	// migration or an explicit run.
+	// Faces stay out of the scheduled sweep unless it was asked for by name: re-detecting pictures
+	// an earlier pass examined finds nothing while the detector is unchanged, and costs a full
+	// decode per file. A detector change is what makes another pass worthwhile.
 	if when == vision.RunOnSchedule && run != vision.RunOnSchedule && run != vision.RunAlways {
 		return false
 	}
@@ -949,26 +947,32 @@ func (c *Config) FaceCollisionDist() float64 {
 }
 
 // FaceEpsilonDist returns the distance slack applied to collision checks.
+//
+// Bounded by face.EpsilonDistMax rather than by the default: the ceiling states how far the
+// ambiguity cutoff may be widened, so lowering the default cannot invalidate a setting in range.
 func (c *Config) FaceEpsilonDist() float64 {
 	value := c.options.FaceEpsilonDist
 	configured := c.faceThresholdIsSet("face-epsilon-dist", value)
 
-	if value > 0 && value <= face.EpsilonDefault && configured {
+	if value > 0 && value <= face.EpsilonDistMax && configured {
 		return value
 	}
 
 	resolved := faceModelThreshold(c.FaceEmbeddingModel(),
 		func(m *face.EmbeddingModel) float64 { return m.Epsilon }, face.EpsilonDefault)
 
-	c.warnFaceThreshold(configured && value != 0, "face-epsilon-dist", value, 0, face.EpsilonDefault, resolved)
+	c.warnFaceThreshold(configured && value != 0, "face-epsilon-dist", value, 0, face.EpsilonDistMax, resolved)
 
 	return resolved
 }
 
 // FaceClusterSize returns the size threshold for faces forming a cluster in pixels.
+//
+// Resolved from the configured model when unset, because the bar means "the model consumes this
+// without interpolating" and every model states that as its own input geometry.
 func (c *Config) FaceClusterSize() int {
 	if c.options.FaceClusterSize < 20 || c.options.FaceClusterSize > 10000 {
-		return face.ClusterSizeThresholdDefault
+		return face.ClusterSize(c.EffectiveFaceModel())
 	}
 
 	return c.options.FaceClusterSize

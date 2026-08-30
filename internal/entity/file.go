@@ -28,6 +28,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// File constants, including the prefix that identifies a generated file UID.
 const (
 	FileUID = byte('f')
 
@@ -744,11 +745,9 @@ func (m *File) SetInstanceID(id string) {
 	}
 }
 
-// RedactForSession removes identifying per-file metadata a shared-only session must not see when it
-// accesses a file through sharing: the XMP InstanceID (a content-provenance identifier) is cleared and
-// markers are omitted. Sessions with full library or admin access (and nil sessions) are unchanged.
-// This is the per-file counterpart of Photo.RedactForSession, so single-file reads (GetFile) and the
-// picture read (GetPhoto) strip the same fields.
+// RedactForSession removes identifying per-file metadata a shared-only session must not see: the
+// XMP InstanceID is cleared and markers are omitted. Full-library, admin and nil sessions are
+// unchanged. Counterpart of Photo.RedactForSession, so GetFile and GetPhoto strip the same fields.
 func (m *File) RedactForSession(sess *Session) *File {
 	if m == nil || sess == nil {
 		return m
@@ -895,16 +894,28 @@ func (m *File) AddFace(f face.Face, subjUid string) {
 		if existing.Embeddings().Empty() {
 			landmarks := f.RelativeLandmarksJSON()
 
+			// Unmeasured stays -1 rather than keeping a value recorded for another sampling.
+			thumbSize := -1
+
+			if f.ThumbSize > 0 {
+				thumbSize = f.ThumbSize
+			}
+
 			// For an already-saved marker, persist first and mutate in-memory
 			// only on success: a failed write must not leave an unpersisted
 			// embedding (Markers.Save does not re-write existing markers), so the
 			// marker stays embedding-less and is retried on the next pass.
 			if existing.MarkerUID != "" {
+				// thumb_size and score travel with the detector that produced them, or both gates
+				// read the half this upgrade did not replace: the size bar would fall back to an
+				// XMP-declared box extent, and the score bar is looked up by detect_model.
 				values := Values{
 					"embeddings_json": f.Embeddings.JSON(),
 					"embed_model":     f.EmbedModel,
 					"detect_model":    f.DetectModel,
 					"landmarks_json":  landmarks,
+					"thumb_size":      thumbSize,
+					"score":           f.Score,
 				}
 
 				if err := existing.Updates(values); err != nil {
@@ -915,6 +926,8 @@ func (m *File) AddFace(f face.Face, subjUid string) {
 
 			existing.SetEmbeddings(f.Embeddings, f.EmbedModel, f.DetectModel)
 			existing.LandmarksJSON = landmarks
+			existing.ThumbSize = thumbSize
+			existing.Score = f.Score
 		}
 
 		return

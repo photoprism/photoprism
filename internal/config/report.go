@@ -226,6 +226,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"jwks-cache-ttl", fmt.Sprintf("%d", c.JWKSCacheTTL())},
 		{"jwt-scope", c.JWTAllowedScopes().String()},
 		{"jwt-leeway", fmt.Sprintf("%d", c.JWTLeeway())},
+		{"jwt-rotate-days", fmt.Sprintf("%d", c.JWTRotateDays())},
 		{"advertise-url", clean.UriRedacted(c.AdvertiseUrl())},
 
 		// Networking.
@@ -664,7 +665,7 @@ func (c *Config) faceClusterStatus() string {
 	// The same getter Propagate assigns to face.SampleThreshold, not the global: this command runs
 	// on InitCore, which never propagates, so the global would still hold the shipped default and
 	// the report would name a shortfall that is not the one holding.
-	return faceClusterStatusFor(gates, c.FaceSampleThreshold(), size, c.faceClusterScorePhrase(floor), c.FaceClusterCore())
+	return faceClusterStatusFor(gates, c.FaceSampleThreshold(), size, c.faceClusterScorePhrase(floor), c.FaceClusterCore(), c.FaceClusterDist())
 }
 
 // faceClusterScorePhrase names the score bar the gate counts were taken at. Unset it is per marker,
@@ -685,7 +686,15 @@ func (c *Config) faceClusterScorePhrase(floor int) string {
 // faceClusterStatusFor renders the clustering status for a set of gate counts, or "" when nothing
 // is holding. Separate from the queries so every branch is reachable without a library shaped to
 // produce it.
-func faceClusterStatusFor(gates query.FaceClusterGates, required, size int, scorePhrase string, core int) string {
+func faceClusterStatusFor(gates query.FaceClusterGates, required, size int, scorePhrase string, core int, dist float64) string {
+	// Enough to run and nothing formed: no cluster advances the recency cut, so the pass repeats on
+	// every wake. No threshold explains it, so name what decides whether a group forms.
+	if gates.Eligible >= required && !gates.Clustered && gates.Unclustered > 0 {
+		return fmt.Sprintf("Automatic clustering has %d eligible markers and has formed no clusters: "+
+			"face-cluster-core %d requires that many faces of one person within a face-cluster-dist of %g, "+
+			"counting the face itself.", gates.Eligible, core, dist)
+	}
+
 	// Enough to run: not a state an operator has to act on, and a line every healthy instance
 	// prints is one nobody reads on the instance that is not. Eligible rather than Recent, because
 	// the worker counts markers that already clear both bars.

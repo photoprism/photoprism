@@ -1814,6 +1814,9 @@
                 "Thumb": {
                     "type": "string"
                 },
+                "ThumbSize": {
+                    "type": "integer"
+                },
                 "Type": {
                     "type": "string"
                 },
@@ -2346,6 +2349,9 @@
                 },
                 "UpdatedAt": {
                     "type": "string"
+                },
+                "Verified": {
+                    "type": "boolean"
                 }
             },
             "type": "object"
@@ -3278,6 +3284,9 @@
                 },
                 "ThumbSrc": {
                     "type": "string"
+                },
+                "Verified": {
+                    "type": "boolean"
                 }
             },
             "type": "object"
@@ -4507,6 +4516,9 @@
                 },
                 "UID": {
                     "type": "string"
+                },
+                "Verified": {
+                    "type": "boolean"
                 }
             },
             "type": "object"

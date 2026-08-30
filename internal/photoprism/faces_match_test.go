@@ -554,7 +554,7 @@ func TestFacesMatchClearsAmbiguousMarker(t *testing.T) {
 			MarkerUID:      rnd.GenerateUID('m'),
 			MarkerType:     entity.MarkerFace,
 			MarkerSrc:      entity.SrcImage,
-			Size:           100,
+			Size:           face.ClusterSizeThreshold,
 			Score:          face.ClusterScore("") + 10,
 			EmbeddingsJSON: markerEmb.JSON(),
 			EmbedModel:     face.EmbeddingModelName(),

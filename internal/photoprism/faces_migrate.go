@@ -799,7 +799,7 @@ func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) 
 		result.Detected = true
 		generated, details, detectModel, err = w.detectMigrationEmbeddings(embedder, file, markers, stale)
 	} else {
-		generated, err = w.cropMigrationEmbeddings(embedder, file, stale)
+		generated, details, err = w.cropMigrationEmbeddings(embedder, file, stale)
 	}
 	if err != nil {
 		// Detection reads the file, so a failure here is the file rather than the detector
@@ -918,10 +918,12 @@ type faceMigrationLoss struct {
 }
 
 // cropMigrationEmbeddings generates embeddings directly from stored marker geometry.
-func (w *Faces) cropMigrationEmbeddings(embedder face.Embedder, file *entity.File, markers entity.Markers) (result map[string]face.Embeddings, err error) {
+func (w *Faces) cropMigrationEmbeddings(embedder face.Embedder, file *entity.File, markers entity.Markers) (result map[string]face.Embeddings, details map[string]query.MigrationDetection, err error) {
 	result = make(map[string]face.Embeddings, len(markers))
+	details = make(map[string]query.MigrationDetection, len(markers))
+
 	if w == nil || w.conf == nil || embedder == nil || file == nil {
-		return result, fmt.Errorf("faces: migration crop input is invalid")
+		return result, details, fmt.Errorf("faces: migration crop input is invalid")
 	}
 
 	width, height := embedder.CropSize()
@@ -935,7 +937,9 @@ func (w *Faces) cropMigrationEmbeddings(embedder face.Embedder, file *entity.Fil
 			thumbName = source
 		}
 
-		img, _, cropErr := crop.ImageFromThumb(thumbName, area, size, false)
+		// ImageFromSource, not ImageFromThumb: a reused crop reports no source width, and the
+		// recorded extent is the point of this pass.
+		img, _, srcWidth, cropErr := crop.ImageFromSource(thumbName, area, size, false)
 		if cropErr != nil {
 			event.SystemWarn([]string{"faces", "migrate", "failed cropping marker %s (%s)"}, clean.Log(marker.MarkerUID), cropErr)
 			continue
@@ -943,10 +947,14 @@ func (w *Faces) cropMigrationEmbeddings(embedder face.Embedder, file *entity.Fil
 
 		if embeddings := embedder.Run(img); face.ValidEmbeddings(embeddings, embedder.Dims()) {
 			result[marker.MarkerUID] = embeddings
+
+			if thumbSize := entity.MarkerThumbSize(area, *file, srcWidth); thumbSize > 0 {
+				details[marker.MarkerUID] = query.MigrationDetection{ThumbSize: thumbSize}
+			}
 		}
 	}
 
-	return result, nil
+	return result, details, nil
 }
 
 // detectMigrationEmbeddings redetects a file and maps aligned embeddings to stored markers, also
@@ -989,6 +997,7 @@ func (w *Faces) detectMigrationEmbeddings(embedder face.Embedder, file *entity.F
 				Landmarks: detectedFace.RelativeLandmarksJSON(),
 				Size:      detectedFace.Size(),
 				Score:     detectedFace.Score,
+				ThumbSize: detectedFace.ThumbSize,
 			}
 		}
 	}

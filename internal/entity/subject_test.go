@@ -267,11 +267,13 @@ func TestSubject_String(t *testing.T) {
 	t.Run("Nil", func(t *testing.T) {
 		var m *Subject
 		assert.Equal(t, "Subject<nil>", m.String())
+		//nolint:staticcheck // the point is that fmt reaches String(), which calling it cannot show.
 		assert.Equal(t, "Subject<nil>", fmt.Sprintf("%s", m))
 	})
 	t.Run("New", func(t *testing.T) {
 		m := &Subject{}
 		assert.Equal(t, "*Subject", m.String())
+		//nolint:staticcheck // the point is that fmt reaches String(), which calling it cannot show.
 		assert.Equal(t, "*Subject", fmt.Sprintf("%s", m))
 	})
 	t.Run("JohnDoe", func(t *testing.T) {

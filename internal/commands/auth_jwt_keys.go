@@ -9,7 +9,9 @@ import (
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
 // AuthJWTKeysCommand groups JWT key management helpers.
@@ -18,7 +20,81 @@ var AuthJWTKeysCommand = &cli.Command{
 	Usage: "JWT signing key helpers",
 	Subcommands: []*cli.Command{
 		AuthJWTKeysListCommand,
+		AuthJWTKeysRotateCommand,
 	},
+}
+
+// AuthJWTKeysRotateCommand replaces the active JWT signing key.
+var AuthJWTKeysRotateCommand = &cli.Command{
+	Name:      "rotate",
+	Usage:     "Replaces the active JWT signing key",
+	ArgsUsage: "",
+	Flags: []cli.Flag{
+		JsonFlag(),
+	},
+	Action: authJWTKeysRotateAction,
+}
+
+// authJWTKeysRotateAction issues a new portal signing key and reports both key IDs.
+// The replaced key stays in the JWKS for jwt.RotationOverlap.
+func authJWTKeysRotateAction(ctx *cli.Context) error {
+	return CallWithDependencies(ctx, func(conf *config.Config) error {
+		if err := requirePortal(conf); err != nil {
+			return err
+		}
+
+		manager := get.JWTManager()
+		if manager == nil {
+			return cli.Exit(errors.New("jwt manager not available"), 1)
+		}
+
+		prev, _ := manager.ActiveKey()
+
+		// A new key signs as soon as it exists, so an error alongside one means only the
+		// retirement is outstanding. A plain failure would invite a key-minting retry.
+		key, err := manager.RotateKey()
+		if err != nil && key == nil {
+			return cli.Exit(err, 1)
+		} else if err != nil {
+			fmt.Printf("Rotated to %s, but retiring the previous key did not complete: %s\n", key.Kid, err)
+		}
+
+		event.AuditInfo([]string{"cli", "jwt", "rotate signing key", status.Succeeded})
+
+		prevKid := ""
+		retired := ""
+		if prev != nil && prev.Kid != key.Kid {
+			prevKid = prev.Kid
+			for _, k := range manager.AllKeys() {
+				if k.Kid == prevKid && k.NotAfter > 0 {
+					retired = time.Unix(k.NotAfter, 0).UTC().Format(time.RFC3339)
+				}
+			}
+		}
+
+		if ctx.Bool("json") {
+			return printJSON(map[string]any{
+				"kid":      key.Kid,
+				"replaced": prevKid,
+				"notAfter": retired,
+			})
+		}
+
+		fmt.Println()
+		fmt.Printf("New signing key: %s\n", key.Kid)
+		switch {
+		case prevKid == "":
+			fmt.Println("No previous key to replace.")
+		case retired == "":
+			fmt.Printf("Replaced key %s.\n", prevKid)
+		default:
+			fmt.Printf("Replaced key %s, which verifies until %s.\n", prevKid, retired)
+		}
+		fmt.Println("A running portal loads its keys at startup, so restart it to use the new key.")
+		fmt.Println()
+
+		return nil
+	})
 }
 
 // AuthJWTKeysListCommand lists JWT signing keys.

@@ -19,6 +19,8 @@ import (
 )
 
 var faceMutex = sync.Mutex{}
+
+// UpdateFaces reports whether a matching pass changed a cluster, so callers know to refresh.
 var UpdateFaces = atomic.Bool{}
 
 // Face represents the face of a Subject.

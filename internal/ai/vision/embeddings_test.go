@@ -78,6 +78,8 @@ func TestGenerateEmbeddings(t *testing.T) {
 		assert.Equal(t, 112, embedder.sizes[0].Dx())
 		assert.Equal(t, 112, embedder.sizes[0].Dy())
 		assert.False(t, faces[0].Embeddings.Empty())
+		// Recorded beside the vector, in the pixels of the image it was sampled from.
+		assert.Positive(t, faces[0].ThumbSize, "an embedded face records what it was sampled at")
 	})
 	t.Run("FallsBackWithoutLandmarks", func(t *testing.T) {
 		// Alignment is impossible, so the plain thumb crop is used instead.
@@ -88,6 +90,7 @@ func TestGenerateEmbeddings(t *testing.T) {
 		require.Len(t, embedder.sizes, 1)
 		assert.Equal(t, face.CropSize.Width, embedder.sizes[0].Dx())
 		assert.False(t, faces[0].Embeddings.Empty())
+		assert.Positive(t, faces[0].ThumbSize, "the unaligned branch records it too")
 	})
 	t.Run("UnalignedModelUsesThumbCrop", func(t *testing.T) {
 		embedder := &stubEmbedder{aligned: false, dims: 512}
@@ -148,19 +151,25 @@ func TestFaceCropImage(t *testing.T) {
 
 	t.Run("Aligned", func(t *testing.T) {
 		faces := testFaces(true)
-		img, cropErr := faceCropImage(&stubEmbedder{aligned: true, dims: 128}, src, fileName, &faces[0], 112, 112, false)
+		img, srcWidth, cropErr := faceCropImage(&stubEmbedder{aligned: true, dims: 128}, src, fileName, &faces[0], 112, 112, false)
 		require.NoError(t, cropErr)
 		assert.Equal(t, 112, img.Bounds().Dx())
+		// The width reported is the source the crop was warped from, not the crop's own: the crop
+		// is always the model input size, which would record a constant.
+		assert.Equal(t, src.Bounds().Dx(), srcWidth)
 	})
 	t.Run("BoundingBox", func(t *testing.T) {
 		faces := testFaces(true)
-		img, cropErr := faceCropImage(&stubEmbedder{aligned: false, dims: 512}, src, fileName, &faces[0], 112, 112, false)
+		img, srcWidth, cropErr := faceCropImage(&stubEmbedder{aligned: false, dims: 512}, src, fileName, &faces[0], 112, 112, false)
 		require.NoError(t, cropErr)
 		assert.Equal(t, face.CropSize.Width, img.Bounds().Dx())
+		// The unaligned branch selects its own rendition, so the width comes back from there
+		// rather than from the image decoded for the aligned models.
+		assert.NotEqual(t, face.CropSize.Width, srcWidth, "the crop size must not be recorded as the source")
 	})
 	t.Run("MissingThumb", func(t *testing.T) {
 		faces := testFaces(false)
-		_, cropErr := faceCropImage(&stubEmbedder{aligned: true, dims: 128}, src, filepath.Join(t.TempDir(), "missing.jpg"), &faces[0], 112, 112, false)
+		_, _, cropErr := faceCropImage(&stubEmbedder{aligned: true, dims: 128}, src, filepath.Join(t.TempDir(), "missing.jpg"), &faces[0], 112, 112, false)
 		require.Error(t, cropErr)
 	})
 }

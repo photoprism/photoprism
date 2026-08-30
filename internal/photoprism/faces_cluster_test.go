@@ -124,7 +124,7 @@ func TestFaces_Cluster(t *testing.T) {
 				MarkerUID:      rnd.GenerateUID('m'),
 				MarkerType:     entity.MarkerFace,
 				MarkerSrc:      entity.SrcImage,
-				Size:           100,
+				Size:           face.ClusterSizeThreshold,
 				Score:          face.ClusterScore("") + 10,
 				EmbeddingsJSON: values.JSON(),
 				EmbedModel:     face.ModelSFace,
@@ -145,9 +145,63 @@ func TestFaces_Cluster(t *testing.T) {
 	})
 }
 
-// TestFaces_reportClusteringSkipped pins that a library where nothing ever clusters says so. It
-// was a debug line, which made it indistinguishable from one where clustering ran and found
-// nothing - and the thresholds that exclude a marker are not the ones a person judges a face by.
+// TestFaces_reportNoClustersFormed pins that a pass which ran and formed nothing says so, rather
+// than reading as an idle instance while the run repeats on every wake.
+func TestFaces_reportNoClustersFormed(t *testing.T) {
+	w := NewFaces(config.TestConfig())
+
+	hook := test.NewGlobal()
+	t.Cleanup(hook.Reset)
+
+	w.reportNoClustersFormed(42)
+
+	var reported int
+
+	for _, entry := range hook.AllEntries() {
+		if entry.Level == logrus.InfoLevel && strings.Contains(entry.Message, "formed no cluster") {
+			reported++
+
+			assert.Contains(t, entry.Message, "42 samples")
+			// Actionable rather than only observed: the two thresholds that decide whether any
+			// group forms are what an operator would have to change.
+			assert.Contains(t, entry.Message, fmt.Sprintf("%d faces", face.ClusterCore))
+		}
+	}
+
+	require.Equal(t, 1, reported, "a pass that formed nothing must be visible above debug")
+
+	// A worker that wakes every few minutes must not repeat an unchanged condition.
+	w.reportNoClustersFormed(42)
+
+	reported = 0
+
+	for _, entry := range hook.AllEntries() {
+		if entry.Level == logrus.InfoLevel && strings.Contains(entry.Message, "formed no cluster") {
+			reported++
+		}
+	}
+
+	assert.Equal(t, 1, reported, "an unchanged condition must not be repeated")
+
+	// A changed count is a changed condition and is reported again.
+	w.reportNoClustersFormed(43)
+
+	reported = 0
+
+	for _, entry := range hook.AllEntries() {
+		if entry.Level == logrus.InfoLevel && strings.Contains(entry.Message, "formed no cluster") {
+			reported++
+		}
+	}
+
+	assert.Equal(t, 2, reported)
+
+	assert.NotPanics(t, func() { (*Faces)(nil).reportNoClustersFormed(1) })
+}
+
+// TestFaces_reportClusteringSkipped pins that a library where too few markers clear the bars says
+// so, and names them: the thresholds that exclude a marker are not the ones a person judges a face
+// by, so the count alone would not be actionable.
 func TestFaces_reportClusteringSkipped(t *testing.T) {
 	w := NewFaces(config.TestConfig())
 
@@ -190,6 +244,16 @@ func TestFaces_reportClusteringSkipped(t *testing.T) {
 
 // setFaceThresholds applies clustering thresholds for the duration of a test, so a fixture built
 // against the shipped distances is judged by them rather than by whatever ran last.
+// Prefer setShippedFaceThresholds, which cannot fall behind a recalibration.
+func setShippedFaceThresholds(t *testing.T) {
+	t.Helper()
+
+	m := face.FindEmbeddingModel(face.ModelSFace)
+	require.NotNil(t, m)
+
+	setFaceThresholds(t, m.ClusterDist, m.ClusterRadius, m.MatchDist)
+}
+
 func setFaceThresholds(t *testing.T, clusterDist, clusterRadius, matchDist float64) {
 	dist, radius, match := face.ClusterDist, face.ClusterRadius, face.MatchDist
 
@@ -281,7 +345,7 @@ func chainedFixture() (embeddings face.Embeddings, group []int) {
 // TestChainFixture pins that the fixture reproduces the failure it stands for. A green split test
 // against a fixture that never chains would be a test of the early return.
 func TestChainFixture(t *testing.T) {
-	setFaceThresholds(t, 0.85, 0.60, 0.35)
+	setShippedFaceThresholds(t)
 
 	groupA, groupB, bridge := chainFixture()
 	chained, _ := chainedFixture()
@@ -316,7 +380,7 @@ func TestChainFixture(t *testing.T) {
 func TestSplitWideClusters(t *testing.T) {
 	// The parts have to be judged against the shipped SFace distances rather than whatever the
 	// package configured last, or the fixture would measure a different question.
-	setFaceThresholds(t, 0.85, 0.60, 0.35)
+	setShippedFaceThresholds(t)
 
 	w := NewFaces(config.TestConfig())
 
@@ -542,7 +606,7 @@ func TestReportSplitOverrides(t *testing.T) {
 // TestSplitCluster covers the one round the split takes, which shortens the link distance in
 // proportion to how far past its accept distance the group reaches.
 func TestSplitCluster(t *testing.T) {
-	setFaceThresholds(t, 0.85, 0.60, 0.35)
+	setShippedFaceThresholds(t)
 
 	embeddings, _ := chainedFixture()
 

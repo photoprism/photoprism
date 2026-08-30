@@ -1,6 +1,7 @@
 package crop
 
 import (
+	"os"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -138,7 +139,7 @@ func TestImageFromThumb(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		img, cropName, err := ImageFromThumb(thumbName, NewArea("crop", 0, 0, 1, 1), Sizes[Tile50], false)
+		img, cropName, srcWidth, err := ImageFromThumb(thumbName, NewArea("crop", 0, 0, 1, 1), Sizes[Tile50], false)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -147,6 +148,10 @@ func TestImageFromThumb(t *testing.T) {
 		assert.Equal(t, filepath.Join(filepath.Dir(thumbName), "bccfeaa526a36e19b555fd4ca5e8f767d5604289_50x50_crop_0000003e83e8.jpg"), cropName)
 		assert.Equal(t, 50, img.Bounds().Dx())
 		assert.Equal(t, 50, img.Bounds().Dy())
+		// The source the crop was taken from, not the crop itself: recording the latter would
+		// store the requested size back, which is a constant and says nothing about quality.
+		assert.Positive(t, srcWidth)
+		assert.NotEqual(t, 50, srcWidth)
 	})
 }
 
@@ -205,4 +210,31 @@ func TestImageFromIdealThumb(t *testing.T) {
 		assert.Error(t, err)
 		assert.Nil(t, img)
 	})
+}
+
+// TestImageFromThumbCachedSource pins that a reused crop reports no source width. The crop's name
+// records its area and dimensions but not what it was drawn from, so any answer would be a
+// prediction of today's rendition rather than a record of the one the vector came from.
+func TestImageFromThumbCachedSource(t *testing.T) {
+	thumbName := "testdata/b/c/c/bccfeaa526a36e19b555fd4ca5e8f767d5604289_720x720_fit.jpg"
+	area := NewArea("crop", 0, 0, 1, 1)
+
+	if _, err := os.Stat(thumbName); err != nil {
+		t.Skip("thumb fixture not available")
+	}
+
+	_, cropName, first, err := ImageFromThumb(thumbName, area, Sizes[Tile50], true)
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = os.Remove(cropName) })
+	assert.Positive(t, first, "the run that creates the crop measures its source")
+
+	_, _, second, err := ImageFromThumb(thumbName, area, Sizes[Tile50], true)
+	require.NoError(t, err)
+	assert.Zero(t, second, "the run that reuses it cannot know, and must not guess")
+
+	// The crop cache is keyed on hash, area and size alone, so the UI's own face thumbnails
+	// satisfy it. A caller that has to record what it sampled therefore opens the source.
+	_, _, source, err := ImageFromSource(thumbName, area, Sizes[Tile50], false)
+	require.NoError(t, err)
+	assert.Equal(t, first, source, "ImageFromSource measures whether or not a crop is cached")
 }

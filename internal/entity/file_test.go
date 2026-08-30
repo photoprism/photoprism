@@ -12,6 +12,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/config/customize"
+	"github.com/photoprism/photoprism/internal/thumb/crop"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/header"
@@ -687,6 +688,47 @@ func TestFile_AddFaces(t *testing.T) {
 
 		assert.Equal(t, 0, len(*file.Markers()))
 	})
+}
+
+// TestFile_AddFaceUpgradesProvenance pins that upgrading an embedding-less marker carries the
+// detector's own numbers with the vector. Left behind, the size bar falls back to an XMP box extent
+// and the score bar is looked up by the newly written detect_model.
+func TestFile_AddFaceUpgradesProvenance(t *testing.T) {
+	file := &File{
+		FileUID:    "fs6sg6bw45bnlqdw",
+		FileHash:   "0e3d3e2e5b2f4b1a9a3d7c1e5f6a8b9c0d1e2f30",
+		FileWidth:  3000,
+		FileHeight: 2000,
+	}
+
+	// A sidecar region: a generous box, no embedding, and a score from no detector.
+	area := crop.Area{Name: "face", X: 0.4, Y: 0.4, W: 0.2, H: 0.2}
+	existing := NewMarker(*file, area, "", SrcXmp, MarkerFace, MarkerSize(area, *file), 10)
+	require.NotNil(t, existing)
+	require.NoError(t, existing.Create())
+	t.Cleanup(func() { UnscopedDb().Delete(existing) })
+
+	markers := Markers{*existing}
+	file.markers = &markers
+
+	f := face.Face{
+		Rows:       2000,
+		Cols:       3000,
+		Score:      88,
+		Area:       face.NewArea("face", 1000, 1500, 300),
+		Embeddings: face.Embeddings{face.RandomEmbedding()},
+		EmbedModel: face.EmbeddingModelName(),
+		ThumbSize:  97,
+	}
+
+	file.AddFace(f, "")
+
+	stored := &Marker{}
+	require.NoError(t, UnscopedDb().First(stored, "marker_uid = ?", existing.MarkerUID).Error)
+
+	assert.Equal(t, 97, stored.ThumbSize, "the extent the vector was sampled at must be recorded")
+	assert.Equal(t, 88, stored.Score, "the score must come from the detector that produced the vector")
+	assert.Equal(t, 97, (*file.Markers())[0].ThumbSize, "and the in-memory marker must match the row")
 }
 
 func TestFile_ValidFaceCount(t *testing.T) {

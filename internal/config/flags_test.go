@@ -70,6 +70,6 @@ func TestFaceDocDefault(t *testing.T) {
 }
 
 func TestFaceModelDocDefault(t *testing.T) {
-	assert.Equal(t, "0.85", faceModelDocDefault(func(m *face.EmbeddingModel) float64 { return m.ClusterDist }))
+	assert.Equal(t, "0.72", faceModelDocDefault(func(m *face.EmbeddingModel) float64 { return m.ClusterDist }))
 	assert.Empty(t, faceModelDocDefault(func(m *face.EmbeddingModel) float64 { return 0 }))
 }

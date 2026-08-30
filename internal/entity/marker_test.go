@@ -116,7 +116,7 @@ func TestNewMarkerReview(t *testing.T) {
 
 	atBar := NewMarker(file, testArea, "ls6sg6b1wowuy3c3", SrcImage, MarkerFace, 100, face.ClusterScoreThresholdDefault)
 	require.NotNil(t, atBar)
-	assert.False(t, atBar.MarkerReview, "a marker that can contribute to a cluster does not")
+	assert.False(t, atBar.MarkerReview, "a marker scored above the bar does not")
 }
 
 func TestMarker_SetName(t *testing.T) {
@@ -814,11 +814,13 @@ func TestMarker_String(t *testing.T) {
 	t.Run("Nil", func(t *testing.T) {
 		var m *Marker
 		assert.Equal(t, "Marker<nil>", m.String())
+		//nolint:staticcheck // the point is that fmt reaches String(), which calling it cannot show.
 		assert.Equal(t, "Marker<nil>", fmt.Sprintf("%s", m))
 	})
 	t.Run("New", func(t *testing.T) {
 		m := &Marker{}
 		assert.Equal(t, "*Marker", m.String())
+		//nolint:staticcheck // the point is that fmt reaches String(), which calling it cannot show.
 		assert.Equal(t, "*Marker", fmt.Sprintf("%s", m))
 	})
 	t.Run("Name", func(t *testing.T) {

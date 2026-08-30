@@ -55,7 +55,7 @@ func DetectFaces(fileName string, minSize, retrySize int, cacheCrop bool, expect
 					continue
 				}
 
-				if _, faceCrop, imgErr := crop.ImageFromThumb(fileName, f.CropArea(), face.CropSize, cacheCrop); imgErr != nil {
+				if _, faceCrop, _, imgErr := crop.ImageFromThumb(fileName, f.CropArea(), face.CropSize, cacheCrop); imgErr != nil {
 					log.Errorf("vision: failed to create face crop (%s)", imgErr)
 					faceCrops[i] = ""
 				} else if faceCrop != "" {

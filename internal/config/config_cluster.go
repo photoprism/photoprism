@@ -754,6 +754,17 @@ func (c *Config) JWTLeeway() int {
 	return c.options.JWTLeeway
 }
 
+// JWTRotateDays returns the portal signing key lifetime in days, 0 when scheduled rotation
+// is off. Use a negative value to disable it everywhere: ApplyCliContext reads a zero from
+// defaults.yml as unset, so 0 only disables from a flag, an env var, or options.yml.
+func (c *Config) JWTRotateDays() int {
+	if c.options.JWTRotateDays < 0 {
+		return 0
+	}
+
+	return c.options.JWTRotateDays
+}
+
 // JWTAllowedScopes returns an optional allow-list of accepted JWT scopes.
 func (c *Config) JWTAllowedScopes() list.Attr {
 	if s := strings.TrimSpace(c.options.JWTScope); s != "" {
