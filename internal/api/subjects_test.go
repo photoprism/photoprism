@@ -276,6 +276,28 @@ func TestUpdateSubject(t *testing.T) {
 		r = PerformRequestWithBody(app, "PUT", "/api/v1/subjects/js6sg6b1qekk9jx8", `{"Birthday": "0190-01-01T00:00:00Z"}`)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
+	t.Run("SetPrivate", func(t *testing.T) {
+		// The flag has no writer but this one, so the round trip is the whole feature: a person
+		// marked private is withheld from a role without private access by every subject read.
+		app, router, _ := NewApiTest()
+
+		SearchSubjects(router)
+		UpdateSubject(router)
+
+		const uid = "js6sg6b1qekk9jx8"
+
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/subjects/"+uid, `{"Private": true}`)
+		assert.Equal(t, http.StatusOK, r.Code)
+		assert.True(t, gjson.Get(r.Body.String(), "Private").Bool())
+
+		s := PerformRequest(app, "GET", "/api/v1/subjects?count=100&uid="+uid)
+		assert.Equal(t, http.StatusOK, s.Code)
+		assert.True(t, gjson.Get(s.Body.String(), "0.Private").Bool(), "and the list a permitted role reads shows it")
+
+		r = PerformRequestWithBody(app, "PUT", "/api/v1/subjects/"+uid, `{"Private": false}`)
+		assert.Equal(t, http.StatusOK, r.Code)
+		assert.False(t, gjson.Get(r.Body.String(), "Private").Bool())
+	})
 	t.Run("SetManualCover", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 

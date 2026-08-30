@@ -84,12 +84,27 @@ describe("component/people/edit/dialog", () => {
 describe("component/people/edit/dialog verified flag", () => {
   // The flag decides whether a face reset keeps the person, so it has to be reachable where a
   // person is edited rather than only through the API.
-  it("offers a verified checkbox between favorite and hidden", () => {
+  it("offers the verified and private checkboxes beside favorite and hidden", () => {
     const wrapper = makeWrapper();
 
     const labels = wrapper.findAll("input[type='checkbox']").map((c) => c.attributes("data-label"));
 
-    expect(labels).toEqual(["Favorite", "Verified", "Hidden"]);
+    expect(labels).toEqual(["Favorite", "Verified", "Hidden", "Private"]);
+
+    wrapper.unmount();
+  });
+
+  it("round-trips the private flag through the model", () => {
+    // The one visibility flag with no other writer: SaveForm is the only path that sets it, so the
+    // checkbox is the whole feature and a default of undefined would drop it from the payload.
+    const wrapper = makeWrapper();
+
+    expect(wrapper.vm.model.Private).toBe(false);
+
+    wrapper.vm.model.Private = true;
+
+    expect(Object.keys(wrapper.vm.model.getValues(false))).toContain("Private");
+    expect(wrapper.vm.model.getValues(true)).toEqual({ Private: true });
 
     wrapper.unmount();
   });

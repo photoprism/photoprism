@@ -46,10 +46,10 @@
                 @update:model-value="model.setBirthday($event)"
               ></v-date-input>
             </v-col>
-            <v-col sm="4">
+            <v-col cols="12" sm="6" md="3">
               <v-checkbox v-model="model.Favorite" :disabled="disabled" :label="$gettext('Favorite')" density="comfortable" hide-details> </v-checkbox>
             </v-col>
-            <v-col sm="4">
+            <v-col cols="12" sm="6" md="3">
               <v-checkbox
                 v-model="model.Verified"
                 :disabled="disabled"
@@ -60,8 +60,11 @@
               >
               </v-checkbox>
             </v-col>
-            <v-col sm="4">
+            <v-col cols="12" sm="6" md="3">
               <v-checkbox v-model="model.Hidden" :disabled="disabled" :label="$gettext('Hidden')" density="comfortable" hide-details> </v-checkbox>
+            </v-col>
+            <v-col cols="12" sm="6" md="3">
+              <v-checkbox v-model="model.Private" :disabled="disabled" :label="$gettext('Private')" density="comfortable" hide-details> </v-checkbox>
             </v-col>
           </v-row>
         </v-card-text>
