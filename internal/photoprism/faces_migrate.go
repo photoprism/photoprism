@@ -56,11 +56,9 @@ type FacesMigratePlan struct {
 	// replacement centroid. They keep their person; they just cannot define one.
 	LowQualitySamples int
 
-	// RecropMarkers counts markers already on the target model whose crop another detector
-	// placed, that record none, or whose sample extent was never measured. They are re-embedded
-	// so the library ends up in one crop space, and are reported apart from stale markers because
-	// they lose nothing if that fails. On the first run after either column was added, this is
-	// every marker.
+	// RecropMarkers counts markers already on the target model whose crop another detector placed,
+	// that record none, or whose sample extent was never measured. Reported apart from stale
+	// markers because they lose nothing if the re-embedding fails.
 	RecropMarkers int
 
 	// OriginalsUnavailable reports that the originals root cannot be read, which is what an
@@ -850,11 +848,11 @@ func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) 
 	return result, nil
 }
 
-// staleMigrationMarkers returns the markers a migration to target has to re-embed, and the subset
-// of them that only needs a new crop.
+// staleMigrationMarkers returns the markers a migration to target has to re-embed, and the subset of
+// them that only needs a new crop.
 //
 // The crop is an axis of the embedding space, so an unrecorded or foreign detector makes a marker
-// stale even when its vector is the target's. A first run therefore re-crops everything.
+// stale even when its vector is the target's, and a first run re-crops everything.
 func staleMigrationMarkers(markers entity.Markers, embedder face.Embedder, target string) (stale entity.Markers, recrop map[string]bool) {
 	stale = make(entity.Markers, 0, len(markers))
 	recrop = make(map[string]bool)
@@ -870,11 +868,10 @@ func staleMigrationMarkers(markers entity.Markers, embedder face.Embedder, targe
 		// the crop. A crop-based one reads the stored geometry whichever detector wrote it.
 		foreignCrop := embedder.Aligned() && !face.DetectorsComparable(markers[i].DetectModel, detector)
 
-		// A marker whose sample extent was never recorded is unusable for the same reason as one
-		// from a foreign model: nothing can judge the detail its vector rests on, and only
-		// re-sampling the crop measures it. Without this a library already on the target model
-		// is skipped whole, which is the state indexing on any earlier build leaves it in.
-		if !foreignCrop && markers[i].ThumbSize > 0 {
+		// An unrecorded sample extent is stale for the same reason a foreign model is: nothing can
+		// judge the detail the vector rests on until a crop is sampled again. Without it a library
+		// already on the target model is skipped whole, which is where an earlier build leaves it.
+		if !foreignCrop && markers[i].ThumbSizeSettled() {
 			continue
 		}
 

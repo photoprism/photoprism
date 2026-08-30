@@ -17,9 +17,8 @@ const (
 	// CollisionDistDefault is the default floor below which a recorded collision radius is discarded.
 	CollisionDistDefault = 0.05
 	// MatchMarginDefault is the default distance by which the nearest cluster has to beat the
-	// runner-up for the marker to be given to it. Defense in depth rather than a recall lever:
-	// measured against a labeled library it decides two markers, the ambiguity rule deciding the
-	// rest, so the value is kept small enough not to suppress an assignment that rule earns.
+	// runner-up for the marker to be given to it. Defense in depth rather than a recall lever: it
+	// decides two markers on a labeled library, so it is kept below what the ambiguity rule earns.
 	MatchMarginDefault = 0.01
 	// NoMatchMargin assigns a marker to its nearest cluster however narrowly that one wins,
 	// following the convention the score bars use for "switched off".
@@ -54,6 +53,10 @@ const (
 	// ClusterCoreDefault is the default number of faces required to seed a cluster core. DBSCAN
 	// counts the point itself, so a person with fewer clusterable faces forms no cluster at all.
 	ClusterCoreDefault = 5
+	// RadiusPercentileDefault is the default share of a cluster's member distances its radius has
+	// to cover. Taking the maximum instead lets one loose member decide how far a whole cluster
+	// reaches, with only the clamp to stop it; below about twenty members the two agree.
+	RadiusPercentileDefault = 95
 )
 
 // InterOpThreads is how many threads an ONNX session may use to run graph nodes in
@@ -66,12 +69,6 @@ const InterOpThreads = 1
 // stored sample radius says. Two independent unit vectors average sqrt(2) ~ 1.41 apart and a sizable
 // share land nearer, so this caps what a misconfiguration can do rather than naming a safe value.
 const AcceptDistMax = 1.4
-
-// RadiusPercentile is the share of a cluster's member distances its radius has to cover. Taking
-// the maximum instead lets one loose member decide how far a whole cluster reaches, with only the
-// clamp to stop it; a small group's percentile and maximum barely differ, so this narrows the wide
-// clusters it is aimed at rather than every cluster.
-const RadiusPercentile = 95
 
 // ConfigDistMax is the largest value a configurable distance threshold may take.
 //
@@ -132,6 +129,10 @@ var (
 	MatchMargin = MatchMarginDefault
 	// ClusterCore is the minimum number of faces required to seed a cluster core.
 	ClusterCore = ClusterCoreDefault
+	// RadiusPercentile is the share of a cluster's member distances its stored radius covers, so
+	// that no single outlier decides how far the cluster reaches. Configurable for calibration:
+	// 100 restores the maximum, and the two disagree from well below the usual link distances.
+	RadiusPercentile = RadiusPercentileDefault
 	// SampleThreshold is the number of faces required before automatic clustering begins.
 	SampleThreshold = 2 * ClusterCore
 	// Epsilon is the numeric tolerance used during cluster comparisons.

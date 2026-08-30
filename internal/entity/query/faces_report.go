@@ -193,9 +193,9 @@ type MarkerReport struct {
 	MarkerInvalid bool
 	MatchedAt     *time.Time
 
-	// W is the marker area's width as a fraction of the frame, which says how prominent the face
-	// is without naming a rendition. The stored size does name one - pixels of the Fit720
-	// detection thumbnail - and is left out for that reason, being read as source pixels.
+	// W is the marker area's width as a fraction of the frame, so how prominent the face is can be
+	// read without naming a rendition. The stored size names one, Fit720 pixels, and reads as source
+	// pixels to everyone; it is left out for that reason.
 	W float32
 	// ThumbSize is the extent in pixels of the image the embedding was sampled from, which says
 	// how much detail the vector rests on. Below 1 where it was never recorded.

@@ -511,10 +511,9 @@ func TestAmbiguousBestFace(t *testing.T) {
 		assert.False(t, ambiguousBestFace(anon, 0.7, []faceContender{near(otherAnon)}, false))
 	})
 	t.Run("AnonymousContenderAgainstANamedBest", func(t *testing.T) {
-		// The pairing a fragmented library is mostly made of, and the one deferring costs the most:
-		// a nameless cluster that close is the same person in another group, so both directions are
-		// assigned. Every cluster a person names would otherwise raise a boundary against each
-		// unnamed one, and naming would remove pictures rather than adding them.
+		// The pairing a fragmented library is mostly made of: a nameless cluster that close is the
+		// same person in another group, so both directions are assigned. Counting it would let each
+		// cluster a person names raise a boundary against every unnamed one.
 		assert.False(t, ambiguousBestFace(named, 0.7, []faceContender{near(anon)}, false))
 		assert.False(t, ambiguousBestFace(anon, 0.7, []faceContender{near(named)}, false))
 	})
@@ -538,9 +537,8 @@ func TestAmbiguousBestFace(t *testing.T) {
 
 // TestFacesMatchClearsAmbiguousMarker covers what happens to the marker itself.
 //
-// A bridge marker an earlier run assigned is the point: HasFace reports any marker holding a face
-// as already having the best one, so deciding after that check would leave exactly those markers
-// on the cluster the coin toss gave them.
+// A bridge marker an earlier run assigned is the point: HasFace reports any marker holding a face as
+// already having the best one, so deciding after it would leave those on whichever cluster won.
 func TestFacesMatchClearsAmbiguousMarker(t *testing.T) {
 	c := config.TestConfig()
 	w := NewFaces(c)

@@ -335,10 +335,9 @@ func TestFaceMigrationRecropMarkers(t *testing.T) {
 	newMarker(face.ModelFaceNet, face.DetectorYuNet, vector, -1)
 
 	t.Run("CountsTheOtherDetector", func(t *testing.T) {
-		// A marker holding a target-model vector that another detector cropped, plus the one the
-		// current detector cropped without recording an extent: the two others of that detector
-		// are not stale, another model's is stale for a different reason, and one without a
-		// vector has nothing to keep.
+		// A target-model vector another detector cropped, plus one the current detector cropped
+		// without recording an extent. Not the two others of that detector, not another model's,
+		// which is stale for a different reason, and not one without a vector to keep.
 		count, countErr := FaceMigrationRecropMarkers(face.ModelFaceNet, face.DetectorYuNet)
 		require.NoError(t, countErr)
 		assert.Equal(t, beforeYuNet+3, count)

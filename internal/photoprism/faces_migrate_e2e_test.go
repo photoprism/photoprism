@@ -191,7 +191,8 @@ func addMigrateTestFile(t *testing.T, c *config.Config, hash string, withThumb b
 	return f
 }
 
-// addMigrateTestMarker creates a face marker with a stale embedding on the given file.
+// addMigrateTestMarker creates a face marker with a stale embedding on the given file. It records a
+// sample extent, so a case turns on the model or the detector rather than on that column.
 func addMigrateTestMarker(t *testing.T, fileUID, subjSrc, name string) *entity.Marker {
 	t.Helper()
 
@@ -201,6 +202,7 @@ func addMigrateTestMarker(t *testing.T, fileUID, subjSrc, name string) *entity.M
 		MarkerType:     entity.MarkerFace,
 		MarkerSrc:      entity.SrcImage,
 		Size:           face.ClusterSizeThreshold,
+		ThumbSize:      face.ClusterSizeThreshold,
 		Score:          face.ClusterScore("") + 10,
 		X:              0,
 		Y:              0,
@@ -548,6 +550,39 @@ func TestFaces_migrate(t *testing.T) {
 		lost := entity.Marker{}
 		require.NoError(t, entity.UnscopedDb().First(&lost, "marker_uid = ?", stale.MarkerUID).Error)
 		assert.Empty(t, lost.EmbeddingsJSON, "a vector of the previous model is cleared whether it could be replaced or not")
+	})
+	t.Run("MissingSampleExtentTerminates", func(t *testing.T) {
+		// A library already on the target model is skipped whole without this condition, so the
+		// column stays unset for good. The second run is the point: a sampling that cannot measure
+		// one records the attempt, or a run would re-embed the same marker forever.
+		c := newMigrateTestConfig(t, "migrateextent")
+		w := NewFaces(c)
+
+		f := addMigrateTestFile(t, c, "6666666666666666666666666666666666666666", true)
+		m := addMigrateTestMarker(t, f.FileUID, entity.SrcManual, "Jane Doe")
+
+		require.NoError(t, entity.UnscopedDb().Model(&entity.Marker{}).
+			Where("marker_uid = ?", m.MarkerUID).
+			UpdateColumns(entity.Values{"embed_model": face.ModelFaceNet, "thumb_size": -1}).Error)
+
+		plan := FacesMigratePlan{Target: face.ModelFaceNet}
+		opt := FacesMigrateOptions{Target: face.ModelFaceNet}
+
+		first, err := w.migrate(context.Background(), plan, &oneHotEmbedder{dims: 4}, opt, FacesMigrateResult{Target: face.ModelFaceNet})
+		require.NoError(t, err)
+		assert.Equal(t, 1, first.Migrated, "a marker with no recorded extent is re-embedded")
+
+		second, err := w.migrate(context.Background(), plan, &oneHotEmbedder{dims: 4}, opt, FacesMigrateResult{Target: face.ModelFaceNet})
+		require.NoError(t, err)
+		assert.Zero(t, second.Migrated, "the second run has nothing left to do")
+		assert.Equal(t, 1, second.Skipped)
+
+		// The test file records no dimensions, so nothing can be measured from it - which is what
+		// makes it the case that has to settle rather than repeat.
+		stored := entity.Marker{}
+		require.NoError(t, entity.UnscopedDb().First(&stored, "marker_uid = ?", m.MarkerUID).Error)
+		assert.Equal(t, entity.ThumbSizeUnmeasured, stored.ThumbSize)
+		assert.NotEmpty(t, stored.EmbeddingsJSON)
 	})
 	t.Run("Idempotent", func(t *testing.T) {
 		c := newMigrateTestConfig(t, "migrateidempotent")

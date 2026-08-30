@@ -1033,6 +1033,19 @@ func (c *Config) FaceClusterCore() int {
 	return c.options.FaceClusterCore
 }
 
+// FaceRadiusPercentile returns the share of a cluster's member distances its stored radius has to
+// cover, so a calibration run can compare the shipped value against the maximum without a rebuild.
+//
+// 100 is the maximum, which lets one loose member decide how far a whole cluster reaches. Out of
+// range reads as unset, since a percentile below 1 selects no member at all.
+func (c *Config) FaceRadiusPercentile() int {
+	if c.options.FaceRadiusPercentile < 1 || c.options.FaceRadiusPercentile > 100 {
+		return face.RadiusPercentileDefault
+	}
+
+	return c.options.FaceRadiusPercentile
+}
+
 // FaceClusterDist returns the radius of faces forming a cluster core.
 func (c *Config) FaceClusterDist() float64 {
 	return c.faceThreshold("face-cluster-dist", c.options.FaceClusterDist, face.ClusterDistDefault,

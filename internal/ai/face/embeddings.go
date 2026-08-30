@@ -236,10 +236,9 @@ func EmbeddingsMidpoint(embeddings Embeddings) (result Embedding, radius float64
 		dists = append(dists, math.Sqrt(dist))
 	}
 
-	// Epsilon is the tolerance the rest of the comparison path uses, so a sample sitting exactly on
-	// the radius is still inside it. Only a positive percentile is raised by it: zero means the
-	// extent is unmeasurable, which SetEmbeddings answers with the full cluster radius, and flooring
-	// it here would store a number instead and silently narrow a cluster of duplicates.
+	// Epsilon is the tolerance the comparison path uses, so a sample exactly on the radius is still
+	// inside it. Raised only when positive: zero means unmeasurable, which SetEmbeddings answers
+	// with the full cluster radius, and a floor here would consume that meaning.
 	if d := percentileOf(dists, RadiusPercentile); d > 0 {
 		radius = d + Epsilon
 	}

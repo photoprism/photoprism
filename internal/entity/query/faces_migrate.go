@@ -285,12 +285,11 @@ func FaceMigrationLowQualityMarkers(model string) (count int, err error) {
 	return max(total-samples, 0), nil
 }
 
-// FaceMigrationRecropMarkers returns how many markers hold a usable target-model vector that has
-// to be sampled again anyway, so a plan can report the work a re-run to the same model still has.
+// FaceMigrationRecropMarkers returns how many markers hold a usable target-model vector that has to
+// be sampled again anyway, so a plan can report the work a re-run to the same model still has.
 //
-// These markers are not stale in the embedding sense, which is why they are counted apart: a
-// re-embedding that cannot find them again keeps the vector they already hold. An empty detector
-// asks for the crop-based case, where nothing but a missing sample extent makes a marker stale.
+// Counted apart from stale markers, since a re-embedding that fails keeps the vector they hold. An
+// empty detector asks for the crop-based case, where only a missing sample extent makes one stale.
 func FaceMigrationRecropMarkers(model, detector string) (count int, err error) {
 	if model == "" {
 		return 0, fmt.Errorf("faces: migration model is required")
@@ -354,12 +353,12 @@ func SaveFaceMigrationEmbeddings(model, detectModel string, embeddings map[strin
 			}
 
 			// Recorded beside the vector on either path, since a re-crop samples a rendition too.
-			// Blanked rather than left alone when the measurement failed, or the row would judge a
-			// fresh vector by the extent an earlier sampling had.
+			// A failed measurement records that one was attempted rather than leaving the row as
+			// never sampled, or a migration that re-embeds for a missing extent never terminates.
 			if detail := details[markerUID]; detail.ThumbSize > 0 {
 				columns["thumb_size"] = detail.ThumbSize
 			} else {
-				columns["thumb_size"] = -1
+				columns["thumb_size"] = entity.ThumbSizeUnmeasured
 			}
 
 			// Written together, or the recorded detector would attest another one's work: the

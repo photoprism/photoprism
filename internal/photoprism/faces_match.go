@@ -188,9 +188,8 @@ func selectBestFace(embeddings face.Embeddings, idx faceIndex, anchored bool) (*
 
 // ambiguousBestFace reports whether the marker sits between clusters naming two different people.
 //
-// A nameless contender is the same person fragmented rather than a rival, since it has to sit
-// close to contend at all. Not so for an anchored marker, whose name SetFace lets the winner adopt
-// and spread: there the toss names a person, irreversibly.
+// A nameless contender is the same person fragmented rather than a rival, since it has to sit close
+// to contend. Not so for an anchored marker: there the toss names a person, irreversibly.
 func ambiguousBestFace(best *entity.Face, bestDist float64, contenders []faceContender, anchored bool) bool {
 	for _, c := range contenders {
 		if !face.AmbiguousMatch(bestDist, c.dist) {

@@ -4,9 +4,11 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/thumb/crop"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestClusterSizeCond(t *testing.T) {
@@ -56,6 +58,52 @@ func TestMarker_ClusterSizeOf(t *testing.T) {
 	t.Run("Nil", func(t *testing.T) {
 		assert.Equal(t, -1, (*Marker)(nil).ClusterSizeOf())
 	})
+}
+
+// TestMarker_ThumbSizeSettled covers the three states the column holds, only one of which is worth
+// sampling again. All three read as absent to the size bar, which is what makes the difference easy
+// to lose: it exists so a migration that re-embeds for a missing extent terminates.
+func TestMarker_ThumbSizeSettled(t *testing.T) {
+	t.Run("Measured", func(t *testing.T) {
+		assert.True(t, (&Marker{ThumbSize: 112}).ThumbSizeSettled())
+		assert.True(t, (&Marker{ThumbSize: 1}).ThumbSizeSettled(), "1 is a measurement, not a sentinel")
+	})
+	t.Run("TriedAndCouldNotMeasure", func(t *testing.T) {
+		assert.True(t, (&Marker{ThumbSize: ThumbSizeUnmeasured}).ThumbSizeSettled())
+		assert.Equal(t, 60, (&Marker{Size: 60, ThumbSize: ThumbSizeUnmeasured}).ClusterSizeOf(),
+			"the bar still falls back, or recording the attempt would change what clusters")
+	})
+	t.Run("NeverSampled", func(t *testing.T) {
+		// -1 is what a marker with no embedding carries and 0 is what GORM leaves on insert.
+		assert.False(t, (&Marker{ThumbSize: -1}).ThumbSizeSettled())
+		assert.False(t, (&Marker{ThumbSize: 0}).ThumbSizeSettled())
+	})
+	t.Run("Nil", func(t *testing.T) {
+		assert.False(t, (*Marker)(nil).ThumbSizeSettled())
+	})
+}
+
+// TestThumbSizeUnsettledCond pins that the SQL predicate selects the same rows as the Go one, since
+// the migration reads it through the first and prices it through the second.
+func TestThumbSizeUnsettledCond(t *testing.T) {
+	cond := ThumbSizeUnsettledCond()
+
+	assert.Contains(t, cond, "thumb_size IS NULL")
+	assert.Contains(t, cond, "thumb_size <> -2")
+
+	for _, size := range []int{-2, -1, 0, 1, 112} {
+		uid := rnd.GenerateUID('m')
+		m := &Marker{MarkerUID: uid, MarkerType: MarkerFace, MarkerSrc: SrcImage, ThumbSize: size}
+
+		require.NoError(t, Db().Create(m).Error)
+		t.Cleanup(func() { UnscopedDb().Delete(&Marker{}, "marker_uid = ?", uid) })
+
+		var found int
+		require.NoError(t, UnscopedDb().Model(&Marker{}).
+			Where("marker_uid = ?", uid).Where(cond).Count(&found).Error)
+
+		assert.Equal(t, m.ThumbSizeSettled(), found == 0, "thumb_size %d", size)
+	}
 }
 
 // TestMarker_ClusterableByThumbSize is the case the column exists for: a face too small in the

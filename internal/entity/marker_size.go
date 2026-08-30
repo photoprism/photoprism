@@ -2,6 +2,7 @@ package entity
 
 import (
 	"math"
+	"strconv"
 
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/internal/thumb/crop"
@@ -25,6 +26,23 @@ func ClusterSizeCond(alias string, floor int) (string, []any) {
 	}
 
 	return "CASE WHEN " + thumbSize + " >= 1 THEN " + thumbSize + " ELSE " + size + " END >= ?", []any{floor}
+}
+
+// ThumbSizeUnmeasured marks a marker a sampling already tried and could not measure an extent for,
+// as distinct from one nothing has sampled yet. Both read as absent, since the bars compare against
+// 1, and telling them apart is what lets a migration filling the column terminate.
+const ThumbSizeUnmeasured = -2
+
+// ThumbSizeSettled reports whether a sampling has answered for this marker's extent, either by
+// measuring one or by trying and failing. Only an unsettled marker is worth sampling again.
+func (m *Marker) ThumbSizeSettled() bool {
+	return m != nil && (m.ThumbSize >= 1 || m.ThumbSize == ThumbSizeUnmeasured)
+}
+
+// ThumbSizeUnsettledCond selects the markers no sampling has answered for, as one expression the
+// migration and the plan that prices it share.
+func ThumbSizeUnsettledCond() string {
+	return "thumb_size IS NULL OR (thumb_size < 1 AND thumb_size <> " + strconv.Itoa(ThumbSizeUnmeasured) + ")"
 }
 
 // ClusterSizeOf returns the extent a marker is judged by, which is what its embedding was sampled
