@@ -57,9 +57,10 @@ type FacesMigratePlan struct {
 	LowQualitySamples int
 
 	// RecropMarkers counts markers already on the target model whose crop another detector
-	// placed, or that record none. They are re-embedded so the library ends up in one crop
-	// space, and are reported apart from stale markers because they lose nothing if that fails.
-	// On the first run after the provenance column was added, this is every marker.
+	// placed, that record none, or whose sample extent was never measured. They are re-embedded
+	// so the library ends up in one crop space, and are reported apart from stale markers because
+	// they lose nothing if that fails. On the first run after either column was added, this is
+	// every marker.
 	RecropMarkers int
 
 	// OriginalsUnavailable reports that the originals root cannot be read, which is what an
@@ -332,11 +333,16 @@ func (w *Faces) PlanMigration(target string) (result FacesMigratePlan, err error
 	}
 
 	// Only an aligned model consumes landmarks, so only there does the detector that placed them
-	// decide the crop and with it the vector. A crop-based model reads stored geometry instead.
+	// decide the crop and with it the vector. A crop-based model reads stored geometry instead,
+	// and is counted here only for the markers whose sample extent was never recorded.
+	detectModel := ""
+
 	if model := face.FindEmbeddingModel(target); model != nil && model.Aligned() {
-		if result.RecropMarkers, err = query.FaceMigrationRecropMarkers(target, face.ActiveDetector()); err != nil {
-			return result, err
-		}
+		detectModel = face.ActiveDetector()
+	}
+
+	if result.RecropMarkers, err = query.FaceMigrationRecropMarkers(target, detectModel); err != nil {
+		return result, err
 	}
 
 	result.OriginalsUnavailable = originalsUnavailable(w.conf.OriginalsPath())
@@ -862,7 +868,13 @@ func staleMigrationMarkers(markers entity.Markers, embedder face.Embedder, targe
 
 		// Only an aligned embedder consumes landmarks, so only there does the detector decide
 		// the crop. A crop-based one reads the stored geometry whichever detector wrote it.
-		if !embedder.Aligned() || face.DetectorsComparable(markers[i].DetectModel, detector) {
+		foreignCrop := embedder.Aligned() && !face.DetectorsComparable(markers[i].DetectModel, detector)
+
+		// A marker whose sample extent was never recorded is unusable for the same reason as one
+		// from a foreign model: nothing can judge the detail its vector rests on, and only
+		// re-sampling the crop measures it. Without this a library already on the target model
+		// is skipped whole, which is the state indexing on any earlier build leaves it in.
+		if !foreignCrop && markers[i].ThumbSize > 0 {
 			continue
 		}
 

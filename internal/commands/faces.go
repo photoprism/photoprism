@@ -161,10 +161,10 @@ func facesMigrateAction(ctx *cli.Context) error {
 		)
 		// The crop is an axis of the embedding space, so a detector change leaves a library in
 		// two of them. This is the only run that repairs that, and it is why a re-run to the
-		// same model can still have work to do. Every marker indexed before the detector was
-		// recorded counts here, which on a first run is all of them.
+		// same model can still have work to do. Every marker indexed before the detector or the
+		// sample extent was recorded counts here, which on a first run is all of them.
 		if plan.RecropMarkers > 0 {
-			log.Infof("faces: %d of those were cropped by another or an unrecorded detector and are re-embedded, keeping their vector if detection cannot find them again",
+			log.Infof("faces: %d of those were cropped by another or an unrecorded detector, or record no sample extent, and are re-embedded, keeping their vector if detection cannot find them again",
 				plan.RecropMarkers)
 		}
 		// Re-embedding reads the file, so a marker whose file the index has already recorded

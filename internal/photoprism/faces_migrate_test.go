@@ -443,26 +443,38 @@ func TestStaleMigrationMarkers(t *testing.T) {
 	require.NotEmpty(t, detector)
 	require.NotEqual(t, face.DetectorNone, detector)
 
-	current := entity.Marker{MarkerUID: "mcurrent", EmbedModel: face.ModelFaceNet, DetectModel: detector, EmbeddingsJSON: vector}
-	other := entity.Marker{MarkerUID: "mother", EmbedModel: face.ModelFaceNet, DetectModel: "some-other-detector", EmbeddingsJSON: vector}
-	blank := entity.Marker{MarkerUID: "mblank", EmbedModel: face.ModelFaceNet, EmbeddingsJSON: vector}
-	wrongModel := entity.Marker{MarkerUID: "mmodel", EmbedModel: face.ModelSFace, DetectModel: detector, EmbeddingsJSON: vector}
+	// Every fixture but the last records a sample extent, so the cases below turn on the model
+	// and the detector rather than on the column the last one is missing.
+	sampled := face.ClusterSizeThresholdDefault
 
-	markers := entity.Markers{current, other, blank, wrongModel}
+	current := entity.Marker{MarkerUID: "mcurrent", EmbedModel: face.ModelFaceNet, DetectModel: detector, EmbeddingsJSON: vector, ThumbSize: sampled}
+	other := entity.Marker{MarkerUID: "mother", EmbedModel: face.ModelFaceNet, DetectModel: "some-other-detector", EmbeddingsJSON: vector, ThumbSize: sampled}
+	blank := entity.Marker{MarkerUID: "mblank", EmbedModel: face.ModelFaceNet, EmbeddingsJSON: vector, ThumbSize: sampled}
+	wrongModel := entity.Marker{MarkerUID: "mmodel", EmbedModel: face.ModelSFace, DetectModel: detector, EmbeddingsJSON: vector, ThumbSize: sampled}
+	unsampled := entity.Marker{MarkerUID: "msize", EmbedModel: face.ModelFaceNet, DetectModel: detector, EmbeddingsJSON: vector, ThumbSize: -1}
+
+	markers := entity.Markers{current, other, blank, wrongModel, unsampled}
 
 	t.Run("Aligned", func(t *testing.T) {
 		// An aligned embedder consumes the landmarks, so a crop another detector placed is
 		// stale even though its vector is the target's, and is recorded as re-croppable.
 		stale, recrop := staleMigrationMarkers(markers, &migrationTestEmbedder{name: face.ModelFaceNet, dims: 4, aligned: true}, face.ModelFaceNet)
-		assert.Equal(t, []string{"mother", "mblank", "mmodel"}, markerUIDsOf(stale))
-		assert.Equal(t, map[string]bool{"mother": true, "mblank": true}, recrop)
+		assert.Equal(t, []string{"mother", "mblank", "mmodel", "msize"}, markerUIDsOf(stale))
+		assert.Equal(t, map[string]bool{"mother": true, "mblank": true, "msize": true}, recrop)
 	})
 	t.Run("NotAligned", func(t *testing.T) {
-		// A crop-based embedder reads the stored geometry, so the detector that placed it
-		// changes nothing and only the incomparable vector is stale.
+		// A crop-based embedder reads the stored geometry, so the detector that placed it changes
+		// nothing and only the incomparable vector and the unmeasured extent are stale.
 		stale, recrop := staleMigrationMarkers(markers, &migrationTestEmbedder{name: face.ModelFaceNet, dims: 4}, face.ModelFaceNet)
-		assert.Equal(t, []string{"mmodel"}, markerUIDsOf(stale))
-		assert.Empty(t, recrop)
+		assert.Equal(t, []string{"mmodel", "msize"}, markerUIDsOf(stale))
+		assert.Equal(t, map[string]bool{"msize": true}, recrop)
+	})
+	t.Run("MissingSampleExtent", func(t *testing.T) {
+		// The case a library already on the target model is in: nothing about the vector is stale,
+		// and without this the run skips every marker and leaves the column unset for good.
+		stale, recrop := staleMigrationMarkers(entity.Markers{current, unsampled}, &migrationTestEmbedder{name: face.ModelFaceNet, dims: 4, aligned: true}, face.ModelFaceNet)
+		assert.Equal(t, []string{"msize"}, markerUIDsOf(stale))
+		assert.Equal(t, map[string]bool{"msize": true}, recrop, "its vector is the target's, so a failed re-embedding keeps it")
 	})
 	t.Run("UnreadableVector", func(t *testing.T) {
 		// A vector of the wrong width cannot be compared at all, so it is stale outright and

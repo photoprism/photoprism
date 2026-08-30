@@ -299,8 +299,10 @@ func TestFaceMigrationRecropMarkers(t *testing.T) {
 	require.NoError(t, err)
 	beforeSCRFD, err := FaceMigrationRecropMarkers(face.ModelFaceNet, face.DetectorSCRFD)
 	require.NoError(t, err)
+	beforeNone, err := FaceMigrationRecropMarkers(face.ModelFaceNet, face.DetectorNone)
+	require.NoError(t, err)
 
-	newMarker := func(embedModel, detectModel string, vector []byte) *entity.Marker {
+	newMarker := func(embedModel, detectModel string, vector []byte, thumbSize int) *entity.Marker {
 		m := &entity.Marker{
 			MarkerUID:      rnd.GenerateUID('m'),
 			FileUID:        "fs6sg6bw45bnlqdw",
@@ -309,6 +311,7 @@ func TestFaceMigrationRecropMarkers(t *testing.T) {
 			EmbedModel:     embedModel,
 			DetectModel:    detectModel,
 			EmbeddingsJSON: vector,
+			ThumbSize:      thumbSize,
 			W:              0.1,
 			H:              0.1,
 		}
@@ -320,34 +323,40 @@ func TestFaceMigrationRecropMarkers(t *testing.T) {
 
 	vector := face.Embeddings{face.RandomEmbedding()}.JSON()
 
-	newMarker(face.ModelFaceNet, face.DetectorSCRFD, vector)
-	newMarker(face.ModelFaceNet, "", vector)
-	newMarker(face.ModelFaceNet, face.DetectorYuNet, vector)
-	newMarker(face.ModelFaceNet, face.DetectorYuNet, vector)
-	newMarker(face.ModelSFace, face.DetectorSCRFD, vector)
-	newMarker(face.ModelFaceNet, face.DetectorSCRFD, nil)
+	// All but the last record a sample extent, so the detector cases turn on the detector alone.
+	sampled := face.ClusterSizeThresholdDefault
+
+	newMarker(face.ModelFaceNet, face.DetectorSCRFD, vector, sampled)
+	newMarker(face.ModelFaceNet, "", vector, sampled)
+	newMarker(face.ModelFaceNet, face.DetectorYuNet, vector, sampled)
+	newMarker(face.ModelFaceNet, face.DetectorYuNet, vector, sampled)
+	newMarker(face.ModelSFace, face.DetectorSCRFD, vector, sampled)
+	newMarker(face.ModelFaceNet, face.DetectorSCRFD, nil, sampled)
+	newMarker(face.ModelFaceNet, face.DetectorYuNet, vector, -1)
 
 	t.Run("CountsTheOtherDetector", func(t *testing.T) {
-		// Only a marker holding a target-model vector that another detector cropped: the
-		// current detector's is not stale, another model's is stale for a different reason,
-		// and one without a vector has nothing to keep.
+		// A marker holding a target-model vector that another detector cropped, plus the one the
+		// current detector cropped without recording an extent: the two others of that detector
+		// are not stale, another model's is stale for a different reason, and one without a
+		// vector has nothing to keep.
 		count, countErr := FaceMigrationRecropMarkers(face.ModelFaceNet, face.DetectorYuNet)
 		require.NoError(t, countErr)
-		assert.Equal(t, beforeYuNet+2, count)
+		assert.Equal(t, beforeYuNet+3, count)
 	})
 	t.Run("OtherDetectorInForce", func(t *testing.T) {
 		// The same rows, counted against the other detector: which crop is stale follows the
 		// detector in force rather than naming one of them.
 		count, countErr := FaceMigrationRecropMarkers(face.ModelFaceNet, face.DetectorSCRFD)
 		require.NoError(t, countErr)
-		assert.Equal(t, beforeSCRFD+3, count)
+		assert.Equal(t, beforeSCRFD+4, count)
 	})
 	t.Run("NoDetector", func(t *testing.T) {
-		// Detection is off, so there is no detector to disagree with and nothing to re-crop.
+		// Detection is off, so there is no detector to disagree with and only the unmeasured
+		// extent is left - which no detector change can explain and only re-sampling can fill.
 		for _, detector := range []string{"", face.DetectorNone} {
 			count, countErr := FaceMigrationRecropMarkers(face.ModelFaceNet, detector)
 			require.NoError(t, countErr)
-			assert.Zero(t, count, detector)
+			assert.Equal(t, beforeNone+1, count, detector)
 		}
 	})
 	t.Run("ModelRequired", func(t *testing.T) {

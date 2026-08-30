@@ -285,27 +285,30 @@ func FaceMigrationLowQualityMarkers(model string) (count int, err error) {
 	return max(total-samples, 0), nil
 }
 
-// FaceMigrationRecropMarkers returns how many markers hold a usable target-model vector that a
-// different detector's crop produced, so a plan can report the work a detector change creates.
+// FaceMigrationRecropMarkers returns how many markers hold a usable target-model vector that has
+// to be sampled again anyway, so a plan can report the work a re-run to the same model still has.
 //
 // These markers are not stale in the embedding sense, which is why they are counted apart: a
-// re-embedding that cannot find them again keeps the vector they already hold.
+// re-embedding that cannot find them again keeps the vector they already hold. An empty detector
+// asks for the crop-based case, where nothing but a missing sample extent makes a marker stale.
 func FaceMigrationRecropMarkers(model, detector string) (count int, err error) {
 	if model == "" {
 		return 0, fmt.Errorf("faces: migration model is required")
 	}
 
+	stmt := whereEmbeddingModel(Db().Model(&entity.Marker{}).
+		Where("marker_type = ? AND marker_invalid = 0", entity.MarkerFace).
+		Where("LENGTH(embeddings_json) > 0"), model)
+
 	detector = face.NormalizeDetectorName(detector)
 
 	if detector == "" || detector == face.DetectorNone {
-		return 0, nil
+		stmt = stmt.Where("thumb_size IS NULL OR thumb_size < 1")
+	} else {
+		stmt = stmt.Where("detect_model <> ? OR thumb_size IS NULL OR thumb_size < 1", detector)
 	}
 
-	err = whereEmbeddingModel(Db().Model(&entity.Marker{}).
-		Where("marker_type = ? AND marker_invalid = 0", entity.MarkerFace).
-		Where("LENGTH(embeddings_json) > 0").
-		Where("detect_model <> ?", detector), model).
-		Count(&count).Error
+	err = stmt.Count(&count).Error
 
 	return count, err
 }
