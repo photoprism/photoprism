@@ -649,6 +649,14 @@ export default {
         }
       }
 
+      let shownLocally = false;
+      const localThumbs = Thumb.fromPhotos(view.results);
+
+      if (localThumbs.length > index) {
+        this.showThumbs(localThumbs, index, { collection, context });
+        shownLocally = true;
+      }
+
       // Fetch photos from server API.
       view.lightbox.loading = true;
 
@@ -662,7 +670,9 @@ export default {
         .then((response) => {
           const count = response && response.data ? response.data.length : 0;
           if (count === 0) {
-            view.$notify.warn(view.$gettext("No pictures found"));
+            if (!shownLocally) {
+              view.$notify.warn(view.$gettext("No pictures found"));
+            }
             view.lightbox.dirty = true;
             view.lightbox.complete = false;
             return;
@@ -687,8 +697,12 @@ export default {
 
           view.lightbox.results = Thumb.wrap(response.data);
 
-          // Show pictures.
-          this.showThumbs(view.lightbox.results, i, { collection, context });
+          // Show pictures, unless the lightbox is already open with the
+          // locally available results — then the fetched batch is only kept
+          // for the next opening.
+          if (!shownLocally) {
+            this.showThumbs(view.lightbox.results, i, { collection, context });
+          }
           view.lightbox.dirty = false;
         })
         .catch(() => {
