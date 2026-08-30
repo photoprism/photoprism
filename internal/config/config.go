@@ -486,7 +486,7 @@ func (c *Config) Propagate() {
 	face.ClusterScoreThreshold = c.FaceClusterScore()
 	face.ClusterSizeThreshold = c.FaceClusterSize()
 	face.ClusterCore = c.FaceClusterCore()
-	face.RadiusPercentile = c.FaceRadiusPercentile()
+	face.ClusterPercentile = c.FaceClusterPercentile()
 	face.ClusterSplitRounds = c.FaceClusterSplitRounds()
 	face.ClusterSplitShrink = c.FaceClusterSplitShrink()
 	// Derived rather than configured, but it still has to follow FACE_CLUSTER_CORE: leaving it at

@@ -358,10 +358,10 @@ func TestEmbeddings_Radius(t *testing.T) {
 // TestPercentileOf covers the nearest-rank statistic a cluster's radius is taken from.
 func TestPercentileOf(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
-		assert.Zero(t, percentileOf(nil, RadiusPercentile))
+		assert.Zero(t, percentileOf(nil, ClusterPercentile))
 	})
 	t.Run("One", func(t *testing.T) {
-		assert.InDelta(t, 0.4, percentileOf([]float64{0.4}, RadiusPercentile), 1e-9)
+		assert.InDelta(t, 0.4, percentileOf([]float64{0.4}, ClusterPercentile), 1e-9)
 	})
 	t.Run("Unsorted", func(t *testing.T) {
 		assert.InDelta(t, 0.9, percentileOf([]float64{0.9, 0.1, 0.5}, 100), 1e-9)
@@ -375,12 +375,12 @@ func TestPercentileOf(t *testing.T) {
 
 		dists[7] = 9.0
 
-		assert.InDelta(t, 0.1, percentileOf(dists, RadiusPercentile), 1e-9)
+		assert.InDelta(t, 0.1, percentileOf(dists, ClusterPercentile), 1e-9)
 	})
 	t.Run("KeepsEverythingInASmallSet", func(t *testing.T) {
 		// A percentile and a maximum agree below twenty members, which is why the radius narrows
 		// where a group is wide rather than everywhere.
-		assert.InDelta(t, 0.8, percentileOf([]float64{0.1, 0.8}, RadiusPercentile), 1e-9)
+		assert.InDelta(t, 0.8, percentileOf([]float64{0.1, 0.8}, ClusterPercentile), 1e-9)
 	})
 	t.Run("BelowTheFirstRank", func(t *testing.T) {
 		assert.InDelta(t, 0.1, percentileOf([]float64{0.1, 0.8}, 0), 1e-9)

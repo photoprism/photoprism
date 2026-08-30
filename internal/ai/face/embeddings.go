@@ -239,7 +239,7 @@ func EmbeddingsMidpoint(embeddings Embeddings) (result Embedding, radius float64
 	// Epsilon is the tolerance the comparison path uses, so a sample exactly on the radius is still
 	// inside it. Raised only when positive: zero means unmeasurable, which SetEmbeddings answers
 	// with the full cluster radius, and a floor here would consume that meaning.
-	if d := percentileOf(dists, RadiusPercentile); d > 0 {
+	if d := percentileOf(dists, ClusterPercentile); d > 0 {
 		radius = d + Epsilon
 	}
 
@@ -260,7 +260,7 @@ func percentileOf(dists []float64, p int) float64 {
 	return dists[rank-1]
 }
 
-// Radius returns how far from their midpoint RadiusPercentile of the embeddings reach, before
+// Radius returns how far from their midpoint the ClusterPercentile of the embeddings reach, before
 // ClampSampleRadius bounds what a cluster built from them would store. It normalizes its receiver
 // in place, as EmbeddingsMidpoint does, so it is not the pure accessor it reads as.
 func (embeddings Embeddings) Radius() (radius float64) {

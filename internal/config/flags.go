@@ -1454,10 +1454,10 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("FACE_CLUSTER_RADIUS"),
 		}, DocDefault: faceModelDocDefault(func(m *face.EmbeddingModel) float64 { return m.ClusterRadius })}, {
 		Flag: &cli.IntFlag{
-			Name:    "face-radius-percentile",
-			Usage:   "`SHARE` of a cluster's members its stored radius must cover (1-100), where 100 lets one loose face set how far the whole cluster reaches",
-			EnvVars: EnvVars("FACE_RADIUS_PERCENTILE"),
-		}, DocDefault: strconv.Itoa(face.RadiusPercentileDefault)}, {
+			Name:    "face-cluster-percentile",
+			Usage:   "`PERCENTILE` of the member distances a cluster's radius is derived from (1-100), where 100 uses the maximum and lets one loose face decide how far the cluster reaches",
+			EnvVars: EnvVars("FACE_CLUSTER_PERCENTILE"),
+		}, DocDefault: strconv.Itoa(face.ClusterPercentileDefault)}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-match-dist",
 			Usage:   fmt.Sprintf("similarity `OFFSET` for matching faces with existing clusters, calibrated per face model when unset; radius plus match distance may not exceed %g", face.ConfigDistMax),

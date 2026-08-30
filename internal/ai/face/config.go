@@ -53,10 +53,10 @@ const (
 	// ClusterCoreDefault is the default number of faces required to seed a cluster core. DBSCAN
 	// counts the point itself, so a person with fewer clusterable faces forms no cluster at all.
 	ClusterCoreDefault = 5
-	// RadiusPercentileDefault is the default share of a cluster's member distances its radius has
+	// ClusterPercentileDefault is the default share of a cluster's member distances its radius has
 	// to cover. Taking the maximum instead lets one loose member decide how far a whole cluster
 	// reaches, with only the clamp to stop it; below about twenty members the two agree.
-	RadiusPercentileDefault = 95
+	ClusterPercentileDefault = 95
 )
 
 // InterOpThreads is how many threads an ONNX session may use to run graph nodes in
@@ -129,10 +129,10 @@ var (
 	MatchMargin = MatchMarginDefault
 	// ClusterCore is the minimum number of faces required to seed a cluster core.
 	ClusterCore = ClusterCoreDefault
-	// RadiusPercentile is the share of a cluster's member distances its stored radius covers, so
+	// ClusterPercentile is the share of a cluster's member distances its stored radius covers, so
 	// that no single outlier decides how far the cluster reaches. Configurable for calibration:
 	// 100 restores the maximum, and the two disagree from well below the usual link distances.
-	RadiusPercentile = RadiusPercentileDefault
+	ClusterPercentile = ClusterPercentileDefault
 	// SampleThreshold is the number of faces required before automatic clustering begins.
 	SampleThreshold = 2 * ClusterCore
 	// Epsilon is the numeric tolerance used during cluster comparisons.

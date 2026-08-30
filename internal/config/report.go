@@ -418,7 +418,7 @@ func (c *Config) faceConfigRows() []faceConfigRow {
 		{faceSectionRecognition, "face-cluster-split-shrink", fmt.Sprintf("%g", c.FaceClusterSplitShrink())},
 		{faceSectionRecognition, "face-cluster-dist", c.faceDistReport(c.FaceClusterDist)},
 		{faceSectionRecognition, "face-cluster-radius", c.faceDistReport(c.FaceClusterRadius)},
-		{faceSectionRecognition, "face-radius-percentile", fmt.Sprintf("%d", c.FaceRadiusPercentile())},
+		{faceSectionRecognition, "face-cluster-percentile", fmt.Sprintf("%d", c.FaceClusterPercentile())},
 		{faceSectionRecognition, "face-match-dist", c.faceDistReport(c.FaceMatchDist)},
 		{faceSectionRecognition, "face-match-margin", c.faceDistReport(c.FaceMatchMargin)},
 		{faceSectionRecognition, "face-collision-dist", c.faceDistReport(c.FaceCollisionDist)},
@@ -491,7 +491,7 @@ func (c *Config) faceRecognitionNote() string {
 		notes = append(notes, "A group wider than its own accept distance is discarded rather than split.")
 	}
 
-	notes = append(notes, fmt.Sprintf("Cluster radius covers %d%% of a cluster's members.", c.FaceRadiusPercentile()))
+	notes = append(notes, fmt.Sprintf("A cluster's radius is the %dth percentile of the distances to its members.", c.FaceClusterPercentile()))
 
 	return strings.Join(notes, " ")
 }

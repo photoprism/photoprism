@@ -1900,38 +1900,38 @@ func TestConfig_FaceClusterCore(t *testing.T) {
 	assert.Equal(t, 1, c.FaceClusterCore())
 }
 
-// TestConfig_FaceRadiusPercentile covers the calibration knob for how wide a cluster's stored
+// TestConfig_FaceClusterPercentile covers the calibration knob for how wide a cluster's stored
 // radius is, whose two ends are the shipped percentile and the maximum it replaced.
-func TestConfig_FaceRadiusPercentile(t *testing.T) {
+func TestConfig_FaceClusterPercentile(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	t.Run("Default", func(t *testing.T) {
-		assert.Equal(t, face.RadiusPercentileDefault, c.FaceRadiusPercentile())
+		assert.Equal(t, face.ClusterPercentileDefault, c.FaceClusterPercentile())
 	})
 	t.Run("Configured", func(t *testing.T) {
-		c.options.FaceRadiusPercentile = 90
-		assert.Equal(t, 90, c.FaceRadiusPercentile())
+		c.options.FaceClusterPercentile = 90
+		assert.Equal(t, 90, c.FaceClusterPercentile())
 	})
 	t.Run("TheMaximum", func(t *testing.T) {
 		// 100 is what the radius meant before the percentile, so a run can be compared against it.
-		c.options.FaceRadiusPercentile = 100
-		assert.Equal(t, 100, c.FaceRadiusPercentile())
+		c.options.FaceClusterPercentile = 100
+		assert.Equal(t, 100, c.FaceClusterPercentile())
 	})
 	t.Run("OutOfRange", func(t *testing.T) {
 		// Below 1 selects no member at all, so it reads as unset rather than as an empty cluster.
 		for _, value := range []int{0, -1, 101} {
-			c.options.FaceRadiusPercentile = value
-			assert.Equal(t, face.RadiusPercentileDefault, c.FaceRadiusPercentile(), "%d", value)
+			c.options.FaceClusterPercentile = value
+			assert.Equal(t, face.ClusterPercentileDefault, c.FaceClusterPercentile(), "%d", value)
 		}
 	})
 	t.Run("Propagated", func(t *testing.T) {
-		restore := face.RadiusPercentile
-		t.Cleanup(func() { face.RadiusPercentile = restore })
+		restore := face.ClusterPercentile
+		t.Cleanup(func() { face.ClusterPercentile = restore })
 
-		c.options.FaceRadiusPercentile = 80
+		c.options.FaceClusterPercentile = 80
 		c.Propagate()
 
-		assert.Equal(t, 80, face.RadiusPercentile)
+		assert.Equal(t, 80, face.ClusterPercentile)
 	})
 }
 
