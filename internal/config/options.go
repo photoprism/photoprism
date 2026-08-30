@@ -276,19 +276,20 @@ type Options struct {
 	FaceClusterSize           int           `yaml:"-" json:"-" flag:"face-cluster-size"`
 	FaceClusterScore          int           `yaml:"-" json:"-" flag:"face-cluster-score"`
 	FaceClusterCore           int           `yaml:"-" json:"-" flag:"face-cluster-core"`
+	FaceClusterSplitRounds    int           `yaml:"-" json:"-" flag:"face-cluster-split-rounds"`
+	FaceClusterSplitShrink    float64       `yaml:"-" json:"-" flag:"face-cluster-split-shrink"`
 	FaceClusterDist           float64       `yaml:"-" json:"-" flag:"face-cluster-dist"`
 	FaceClusterRadius         float64       `yaml:"-" json:"-" flag:"face-cluster-radius"`
 	FaceRadiusPercentile      int           `yaml:"-" json:"-" flag:"face-radius-percentile"`
-	FaceClusterSplitRounds    int           `yaml:"-" json:"-" flag:"faces-cluster-split-rounds"`
-	FaceClusterSplitShrink    float64       `yaml:"-" json:"-" flag:"faces-cluster-split-shrink"`
-	FaceMatchDist             float64       `yaml:"-" json:"-" flag:"face-match-dist"`
-	FaceMatchMargin           float64       `yaml:"-" json:"-" flag:"face-match-margin"`
-	FaceCollisionDist         float64       `yaml:"-" json:"-" flag:"face-collision-dist"`
-	FaceEpsilonDist           float64       `yaml:"-" json:"-" flag:"face-epsilon-dist"`
-	PIDFilename               string        `yaml:"PIDFilename" json:"-" flag:"pid-filename"`
-	LogFilename               string        `yaml:"LogFilename" json:"-" flag:"log-filename"`
-	DetachServer              bool          `yaml:"DetachServer" json:"-" flag:"detach-server"`
-	Deprecated                struct {
+
+	FaceMatchDist     float64 `yaml:"-" json:"-" flag:"face-match-dist"`
+	FaceMatchMargin   float64 `yaml:"-" json:"-" flag:"face-match-margin"`
+	FaceCollisionDist float64 `yaml:"-" json:"-" flag:"face-collision-dist"`
+	FaceEpsilonDist   float64 `yaml:"-" json:"-" flag:"face-epsilon-dist"`
+	PIDFilename       string  `yaml:"PIDFilename" json:"-" flag:"pid-filename"`
+	LogFilename       string  `yaml:"LogFilename" json:"-" flag:"log-filename"`
+	DetachServer      bool    `yaml:"DetachServer" json:"-" flag:"detach-server"`
+	Deprecated        struct {
 		DatabaseDsn string `yaml:"DatabaseDsn,omitempty" json:"-" flag:"-"`
 	} `yaml:",inline,omitempty" json:"-" flag:"-"`
 }

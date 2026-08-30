@@ -1429,6 +1429,20 @@ var Flags = CliFlags{
 			Value:   face.ClusterCoreDefault,
 			EnvVars: EnvVars("FACE_CLUSTER_CORE"),
 		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "face-cluster-split-rounds",
+			Usage:   "`NUMBER` of times a group wider than its own accept distance may be re-clustered, 0 discards such a group and -1 keeps it whole",
+			Value:   face.ClusterSplitRoundsDefault,
+			EnvVars: EnvVars("FACE_CLUSTER_SPLIT_ROUNDS"),
+			Hidden:  true,
+		}}, {
+		Flag: &cli.Float64Flag{
+			Name:    "face-cluster-split-shrink",
+			Usage:   "`FACTOR` each split round shortens the link distance by, greater than 0 and below 1",
+			Value:   face.ClusterSplitShrinkDefault,
+			EnvVars: EnvVars("FACE_CLUSTER_SPLIT_SHRINK"),
+			Hidden:  true,
+		}}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-cluster-dist",
 			Usage:   fmt.Sprintf("similarity `DISTANCE` of faces forming a cluster core (collision distance to %g), calibrated per face model when unset", face.ConfigDistMax),
@@ -1444,20 +1458,6 @@ var Flags = CliFlags{
 			Usage:   "`SHARE` of a cluster's members its stored radius must cover (1-100), where 100 lets one loose face set how far the whole cluster reaches",
 			EnvVars: EnvVars("FACE_RADIUS_PERCENTILE"),
 		}, DocDefault: strconv.Itoa(face.RadiusPercentileDefault)}, {
-		Flag: &cli.IntFlag{
-			Name:    "faces-cluster-split-rounds",
-			Usage:   "`NUMBER` of times a group wider than its own accept distance may be re-clustered, 0 discards such a group and -1 keeps it whole",
-			Value:   face.ClusterSplitRoundsDefault,
-			EnvVars: EnvVars("FACES_CLUSTER_SPLIT_ROUNDS"),
-			Hidden:  true,
-		}}, {
-		Flag: &cli.Float64Flag{
-			Name:    "faces-cluster-split-shrink",
-			Usage:   "`FACTOR` each split round shortens the link distance by, greater than 0 and below 1",
-			Value:   face.ClusterSplitShrinkDefault,
-			EnvVars: EnvVars("FACES_CLUSTER_SPLIT_SHRINK"),
-			Hidden:  true,
-		}}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-match-dist",
 			Usage:   fmt.Sprintf("similarity `OFFSET` for matching faces with existing clusters, calibrated per face model when unset; radius plus match distance may not exceed %g", face.ConfigDistMax),

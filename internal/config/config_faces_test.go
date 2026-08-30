@@ -1953,16 +1953,16 @@ func setFlagContext(t *testing.T, name, value string) *cli.Context {
 func TestConfig_FlagIsSet(t *testing.T) {
 	t.Run("Set", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
-		c.cliCtx = setFlagContext(t, "faces-cluster-split-rounds", "0")
+		c.cliCtx = setFlagContext(t, "face-cluster-split-rounds", "0")
 
-		assert.True(t, c.flagIsSet("faces-cluster-split-rounds"))
+		assert.True(t, c.flagIsSet("face-cluster-split-rounds"))
 	})
 	t.Run("Unset", func(t *testing.T) {
-		assert.False(t, NewConfig(CliTestContext()).flagIsSet("faces-cluster-split-rounds"))
+		assert.False(t, NewConfig(CliTestContext()).flagIsSet("face-cluster-split-rounds"))
 	})
 	t.Run("NoContext", func(t *testing.T) {
-		assert.False(t, (&Config{}).flagIsSet("faces-cluster-split-rounds"))
-		assert.False(t, (*Config)(nil).flagIsSet("faces-cluster-split-rounds"))
+		assert.False(t, (&Config{}).flagIsSet("face-cluster-split-rounds"))
+		assert.False(t, (*Config)(nil).flagIsSet("face-cluster-split-rounds"))
 	})
 }
 
@@ -1990,7 +1990,7 @@ func TestConfig_FaceClusterSplitRounds(t *testing.T) {
 		assert.Equal(t, face.ClusterSplitRoundsDefault, c.FaceClusterSplitRounds())
 
 		explicit := NewConfig(CliTestContext())
-		explicit.cliCtx = setFlagContext(t, "faces-cluster-split-rounds", "0")
+		explicit.cliCtx = setFlagContext(t, "face-cluster-split-rounds", "0")
 		explicit.options.FaceClusterSplitRounds = 0
 
 		assert.Equal(t, 0, explicit.FaceClusterSplitRounds(), "an explicit zero has to survive")

@@ -1057,7 +1057,7 @@ func (c *Config) FaceClusterSplitRounds() int {
 	// Zero discards a wide group rather than meaning "unset", so it counts only when it was asked
 	// for: an Options built without the flag defaults holds it and would otherwise switch splitting
 	// off for every caller that does not go through the CLI.
-	if value < face.ClusterSplitOff || value == 0 && !c.flagIsSet("faces-cluster-split-rounds") {
+	if value < face.ClusterSplitOff || value == 0 && !c.flagIsSet("face-cluster-split-rounds") {
 		return face.ClusterSplitRoundsDefault
 	}
 

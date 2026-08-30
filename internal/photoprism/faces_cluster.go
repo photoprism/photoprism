@@ -78,9 +78,9 @@ func reportSplitOverrides() {
 
 		switch {
 		case face.ClusterSplitDisabled():
-			log.Warnf("faces: the cluster width guard is off, so a group holding several people is kept whole - unset faces-cluster-split-rounds to restore it")
+			log.Warnf("faces: the cluster width guard is off, so a group holding several people is kept whole - unset face-cluster-split-rounds to restore it")
 		case face.ClusterSplitRounds == 0:
-			log.Warnf("faces: wide groups are discarded rather than split, because faces-cluster-split-rounds is 0")
+			log.Warnf("faces: wide groups are discarded rather than split, because face-cluster-split-rounds is 0")
 		case face.ClusterSplitRounds != face.ClusterSplitRoundsDefault:
 			log.Infof("faces: splitting a wide group over at most %d rounds instead of %d",
 				face.ClusterSplitRounds, face.ClusterSplitRoundsDefault)

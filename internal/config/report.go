@@ -414,6 +414,8 @@ func (c *Config) faceConfigRows() []faceConfigRow {
 		{faceSectionRecognition, "face-cluster-size", fmt.Sprintf("%d", c.FaceClusterSize())},
 		{faceSectionRecognition, "face-cluster-score", fmt.Sprintf("%d", c.FaceClusterScoreEffective())},
 		{faceSectionRecognition, "face-cluster-core", fmt.Sprintf("%d", c.FaceClusterCore())},
+		{faceSectionRecognition, "face-cluster-split-rounds", fmt.Sprintf("%d", c.FaceClusterSplitRounds())},
+		{faceSectionRecognition, "face-cluster-split-shrink", fmt.Sprintf("%g", c.FaceClusterSplitShrink())},
 		{faceSectionRecognition, "face-cluster-dist", c.faceDistReport(c.FaceClusterDist)},
 		{faceSectionRecognition, "face-cluster-radius", c.faceDistReport(c.FaceClusterRadius)},
 		{faceSectionRecognition, "face-radius-percentile", fmt.Sprintf("%d", c.FaceRadiusPercentile())},
@@ -421,8 +423,6 @@ func (c *Config) faceConfigRows() []faceConfigRow {
 		{faceSectionRecognition, "face-match-margin", c.faceDistReport(c.FaceMatchMargin)},
 		{faceSectionRecognition, "face-collision-dist", c.faceDistReport(c.FaceCollisionDist)},
 		{faceSectionRecognition, "face-epsilon-dist", c.faceDistReport(c.FaceEpsilonDist)},
-		{faceSectionRecognition, "faces-cluster-split-rounds", fmt.Sprintf("%d", c.FaceClusterSplitRounds())},
-		{faceSectionRecognition, "faces-cluster-split-shrink", fmt.Sprintf("%g", c.FaceClusterSplitShrink())},
 	}...)
 }
 
