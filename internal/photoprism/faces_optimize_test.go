@@ -228,6 +228,41 @@ func TestFaces_OptimizeSingletons(t *testing.T) {
 		require.NoError(t, err)
 		assert.Zero(t, second.Merged, "a settled subject reports no further merges")
 	})
+	// The case the symmetric criterion exists for, and the one every other subtest here misses:
+	// a tight multi-sample cluster accepts almost nothing, so under a predicate reading the anchor's
+	// own extent the pair is decided by which of the two the fetch order puts first.
+	t.Run("TightAnchorStillMergesItsFarSingleton", func(t *testing.T) {
+		w := isolatedTestFaces(t, "faces-optimize-tight-anchor")
+
+		const subjUID = "js6sg6b1qekk9jd1"
+
+		base := face.FixtureEmbedding(8801)
+		apart := face.ClusterDist * 0.85
+
+		// Five near-identical samples, so the measured extent is small and sorts first on samples.
+		tight := face.Embeddings{base}
+		for i := range 4 {
+			tight = append(tight, face.FixtureEmbeddingAt(base, 0.02, uint64(8802+i)))
+		}
+
+		anchor := entity.NewFace(subjUID, entity.SrcManual, tight, face.EmbeddingModelName())
+		require.NotNil(t, anchor)
+		require.NoError(t, anchor.Create())
+
+		// Beyond what the tight cluster accepts, inside what one midpoint may stand for.
+		require.Greater(t, apart, anchor.AcceptDist())
+		require.LessOrEqual(t, apart, face.ClusterDist)
+
+		namedFace(t, subjUID, face.FixtureEmbeddingAt(anchor.Embedding(), apart, 8807))
+
+		r, err := w.OptimizeFor(subjUID)
+		require.NoError(t, err)
+		assert.Positive(t, r.Merged, "the bound is the clustering distance, not the anchor's extent")
+
+		after, err := query.ManuallyAddedFaces(false, false, subjUID)
+		require.NoError(t, err)
+		assert.Len(t, after, 1)
+	})
 	t.Run("DifferentSubjectsDoNotMerge", func(t *testing.T) {
 		w := isolatedTestFaces(t, "faces-optimize-other-subj")
 

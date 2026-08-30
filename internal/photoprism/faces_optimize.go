@@ -68,11 +68,11 @@ func (w *Faces) OptimizeFor(subjUID string) (result FacesOptimizeResult, err err
 						"faces",
 						"optimize",
 						"retained manual clusters after merge",
-						"subject %s, iteration %d, cluster %d, count %d, ids %s",
+						"subject %s, iteration %d, group %d, count %d, ids %s",
 					}, subject, i, j, len(merge), clusterIDs)
 
 					log.Debugf(
-						"faces: retained manual clusters after merge: kept %s [%s] for subject %s (merge) itr %d cluster %d",
+						"faces: retained manual clusters after merge: kept %s [%s] for subject %s (merge) itr %d group %d",
 						english.Plural(len(merge), "candidate cluster", "candidate clusters"),
 						clusterIDs,
 						subject,
@@ -80,7 +80,7 @@ func (w *Faces) OptimizeFor(subjUID string) (result FacesOptimizeResult, err err
 						j,
 					)
 				} else {
-					log.Errorf("%s (merge) itr %d cluster %d count %d", mergeErr, i, j, len(merge))
+					log.Errorf("%s (merge) itr %d group %d count %d", mergeErr, i, j, len(merge))
 				}
 			} else {
 				// not exactly right, potentially overcounting

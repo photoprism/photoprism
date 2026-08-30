@@ -500,6 +500,27 @@ func TestFace_InheritCollision(t *testing.T) {
 		assert.InDelta(t, narrow, m.CollisionRadius, 1e-9)
 		assert.Equal(t, 3, m.Collisions)
 	})
+	t.Run("ExistingInactiveIsReplaced", func(t *testing.T) {
+		// At or below CollisionDist nothing enforces the stored radius, so the cluster is
+		// effectively unbounded and taking a real bound is a tightening rather than a widening.
+		m := narrowTestFace(t, "uds5ttbeu5yj2sr6", 7751)
+		m.CollisionRadius, m.Collisions = face.CollisionDist, 4
+
+		require.NoError(t, m.InheritCollision(sources(wide, 2)))
+
+		assert.InDelta(t, wide, m.CollisionRadius, 1e-9)
+		assert.Equal(t, 2, m.Collisions)
+	})
+	t.Run("EqualExistingIsLeftAlone", func(t *testing.T) {
+		// Equality has to count as already-tight, or an identical bound rewrites the row and
+		// replaces the collision count that belongs to it on every merge.
+		m := narrowTestFace(t, "uds5ttbeu5yj2sr7", 7761)
+		m.CollisionRadius, m.Collisions = wide, 5
+
+		require.NoError(t, m.InheritCollision(sources(wide, 2)))
+
+		assert.Equal(t, 5, m.Collisions)
+	})
 	t.Run("DroppedBelowOwnExtent", func(t *testing.T) {
 		// A bound inside the merged cluster's own spread would refuse the members it is made of.
 		m := narrowTestFace(t, "uds5ttbeu5yj2sr5", 7741)

@@ -388,9 +388,11 @@ func MergeFaces(merge entity.Faces, ignored bool) (merged *entity.Face, err erro
 		return merged, fmt.Errorf("faces: new cluster is nil for subject %s", clean.Log(subjUID))
 	} else if merged = entity.FirstOrCreateFace(merged); merged == nil {
 		return merged, fmt.Errorf("faces: failed to create new cluster for subject %s", clean.Log(subjUID))
-	} else if err := merged.InheritCollision(merge); err != nil {
-		return merged, err
 	} else if err := merged.MatchMarkers(append(merge.IDs(), "")); err != nil {
+		return merged, err
+	} else if err := merged.InheritCollision(merge); err != nil {
+		// After the markers, never before: a bound narrower than they reach would refuse the ones
+		// this merge exists to move, retaining the source cluster and spending its merge retry.
 		return merged, err
 	}
 
@@ -417,12 +419,21 @@ func MergeFaces(merge entity.Faces, ignored bool) (merged *entity.Face, err erro
 	note := fmt.Sprintf("retained markers after merge attempt on %s", time.Now().UTC().Format(time.RFC3339))
 	retainedIDs := make([]string, 0, len(retained))
 
+	// A group of three or more can retain a cluster because the midpoint of the whole group reaches
+	// none of them, which is not that cluster's own doing - and the counter takes it out of the
+	// rotation for good. Charged only for a pair, where the refusal is between those two alone.
+	charge := len(merge) == 2
+
 	for i := range merge {
 		if !retained[merge[i].ID] {
 			continue
 		}
 
 		retainedIDs = append(retainedIDs, merge[i].ID)
+
+		if !charge {
+			continue
+		}
 
 		updates := entity.Values{
 			"MergeRetry": gorm.Expr("merge_retry + 1"),

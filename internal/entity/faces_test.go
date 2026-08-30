@@ -77,7 +77,8 @@ func TestFaces_CollisionBound(t *testing.T) {
 		assert.Equal(t, 3, collisions)
 	})
 	t.Run("OrderIndependent", func(t *testing.T) {
-		a := Faces{{ID: "A", CollisionRadius: far, Collisions: 1}, {ID: "B", CollisionRadius: near, Collisions: 3}}
+		// Equal radii, so the count is the only thing left to decide and a first-wins rule shows.
+		a := Faces{{ID: "A", CollisionRadius: near, Collisions: 1}, {ID: "B", CollisionRadius: near, Collisions: 7}}
 		b := Faces{a[1], a[0]}
 
 		forward, forwardCount := a.CollisionBound(0.1)
@@ -85,6 +86,18 @@ func TestFaces_CollisionBound(t *testing.T) {
 
 		assert.InDelta(t, forward, reverse, 1e-9)
 		assert.Equal(t, forwardCount, reverseCount)
+		assert.Equal(t, 7, forwardCount, "a tie takes the larger count")
+	})
+	t.Run("TightUnusableDoesNotSuppressLooser", func(t *testing.T) {
+		// The tighter bound cannot be kept, but it must not take the usable one down with it:
+		// inheriting nothing leaves the merged cluster to re-earn a narrowing it was handed.
+		radius, collisions := Faces{
+			{ID: "A", CollisionRadius: near, Collisions: 1},
+			{ID: "B", CollisionRadius: far, Collisions: 2},
+		}.CollisionBound(near + 0.01)
+
+		assert.InDelta(t, far, radius, 1e-9)
+		assert.Equal(t, 2, collisions)
 	})
 	t.Run("IgnoresInactive", func(t *testing.T) {
 		// At or below CollisionDist nothing enforces the radius, so inheriting one would put a
