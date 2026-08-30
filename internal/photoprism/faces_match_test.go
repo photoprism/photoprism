@@ -339,6 +339,11 @@ func TestSelectBestFaceMargin(t *testing.T) {
 	near := &entity.Face{ID: "near", EmbedModel: face.EmbeddingModelName()}
 	far := &entity.Face{ID: "far", EmbedModel: face.EmbeddingModelName()}
 
+	// The runner-up distance that ties with nearDist, expressed against the margin so that the
+	// cases stay about the rule rather than about the value the default happens to hold.
+	const nearDist = 0.70
+	tiedDist := nearDist + face.MatchMarginDefault/2
+
 	selectAt := func(t *testing.T, nearDist, farDist float64) (*entity.Face, float64, bool) {
 		t.Helper()
 
@@ -357,7 +362,7 @@ func TestSelectBestFaceMargin(t *testing.T) {
 
 		t.Cleanup(func() { near.SubjUID, far.SubjUID = "", "" })
 
-		best, dist, ambiguous := selectAt(t, 0.70, 0.72)
+		best, dist, ambiguous := selectAt(t, nearDist, tiedDist)
 		assert.Nil(t, best, "a marker equidistant between two people must not be assigned to either")
 		assert.InDelta(t, -1.0, dist, 1e-9)
 		assert.True(t, ambiguous, "the caller has to tell this apart from a marker nothing accepted")
@@ -366,10 +371,10 @@ func TestSelectBestFaceMargin(t *testing.T) {
 		// Neither carries a name, so the nearer one wins rather than the marker being withheld.
 		// On a freshly reset library every cluster is anonymous, which made this the common case:
 		// deferring here left the run reporting thousands unassigned and nobody recognized.
-		best, dist, ambiguous := selectAt(t, 0.70, 0.72)
+		best, dist, ambiguous := selectAt(t, nearDist, tiedDist)
 		require.NotNil(t, best)
 		assert.Equal(t, "near", best.ID)
-		assert.InDelta(t, 0.70, dist, 0.01)
+		assert.InDelta(t, nearDist, dist, 0.01)
 		assert.False(t, ambiguous)
 	})
 	t.Run("ClearlyNearerClusterStillWins", func(t *testing.T) {
@@ -384,8 +389,8 @@ func TestSelectBestFaceMargin(t *testing.T) {
 		// A cluster that would refuse the marker anyway is no competitor for it.
 		marker := face.Embeddings{base}
 		idx := faceIndex{candidates: []faceCandidate{
-			{ref: near, emb: face.FixtureEmbeddingAt(base, 0.70, 4002), acceptDist: face.AcceptDistMax},
-			{ref: far, emb: face.FixtureEmbeddingAt(base, 0.72, 4003), acceptDist: 0.5},
+			{ref: near, emb: face.FixtureEmbeddingAt(base, nearDist, 4002), acceptDist: face.AcceptDistMax},
+			{ref: far, emb: face.FixtureEmbeddingAt(base, tiedDist, 4003), acceptDist: 0.5},
 		}}
 
 		best, _, _ := selectBestFace(marker, idx, false)
@@ -400,7 +405,7 @@ func TestSelectBestFaceMargin(t *testing.T) {
 
 		t.Cleanup(func() { near.SubjUID, far.SubjUID = "", "" })
 
-		best, _, _ := selectAt(t, 0.70, 0.72)
+		best, _, _ := selectAt(t, nearDist, tiedDist)
 		require.NotNil(t, best)
 		assert.Equal(t, "near", best.ID)
 	})
@@ -410,13 +415,13 @@ func TestSelectBestFaceMargin(t *testing.T) {
 
 		t.Cleanup(func() { near.SubjUID, far.SubjUID = "", "" })
 
-		best, _, _ := selectAt(t, 0.70, 0.72)
+		best, _, _ := selectAt(t, nearDist, tiedDist)
 		assert.Nil(t, best)
 	})
 	t.Run("Disabled", func(t *testing.T) {
 		setMatchMargin(t, 0)
 
-		best, _, _ := selectAt(t, 0.70, 0.72)
+		best, _, _ := selectAt(t, nearDist, tiedDist)
 		require.NotNil(t, best)
 		assert.Equal(t, "near", best.ID)
 	})
@@ -440,9 +445,9 @@ func TestSelectBestFaceMargin(t *testing.T) {
 		third := &entity.Face{ID: "bob", SubjUID: bob, EmbedModel: face.EmbeddingModelName()}
 
 		idx := faceIndex{candidates: []faceCandidate{
-			{ref: first, emb: face.FixtureEmbeddingAt(base, 0.70, 4011), acceptDist: face.AcceptDistMax},
-			{ref: second, emb: face.FixtureEmbeddingAt(base, 0.71, 4012), acceptDist: face.AcceptDistMax},
-			{ref: third, emb: face.FixtureEmbeddingAt(base, 0.72, 4013), acceptDist: face.AcceptDistMax},
+			{ref: first, emb: face.FixtureEmbeddingAt(base, nearDist, 4011), acceptDist: face.AcceptDistMax},
+			{ref: second, emb: face.FixtureEmbeddingAt(base, nearDist+face.MatchMarginDefault/3, 4012), acceptDist: face.AcceptDistMax},
+			{ref: third, emb: face.FixtureEmbeddingAt(base, tiedDist, 4013), acceptDist: face.AcceptDistMax},
 		}}
 
 		best, _, ambiguous := selectBestFace(face.Embeddings{base}, idx, false)
@@ -472,7 +477,9 @@ func TestAmbiguousBestFace(t *testing.T) {
 	same := &entity.Face{ID: "same", SubjUID: "ps6sg6be2lvl0y11"}
 	other := &entity.Face{ID: "other", SubjUID: "ps6sg6be2lvl0y12"}
 
-	near := func(f *entity.Face) faceContender { return faceContender{ref: f, dist: 0.72} }
+	near := func(f *entity.Face) faceContender {
+		return faceContender{ref: f, dist: 0.70 + face.MatchMarginDefault/2}
+	}
 	far := func(f *entity.Face) faceContender { return faceContender{ref: f, dist: 0.90} }
 
 	t.Run("NoContender", func(t *testing.T) {
@@ -538,7 +545,8 @@ func TestFacesMatchClearsAmbiguousMarker(t *testing.T) {
 	markerEmb := face.Embeddings{face.FixtureEmbedding(5001)}
 	near := entity.NewFace(entity.SubjectFixtures.Get("john-doe").SubjUID, entity.SrcManual, markerEmb, face.EmbeddingModelName())
 	require.NotNil(t, near)
-	far := entity.NewFace(entity.SubjectFixtures.Get("jane-doe").SubjUID, entity.SrcManual, face.Embeddings{face.FixtureEmbeddingAt(markerEmb.First(), 0.02, 5002)}, face.EmbeddingModelName())
+	tied := face.MatchMarginDefault / 2
+	far := entity.NewFace(entity.SubjectFixtures.Get("jane-doe").SubjUID, entity.SrcManual, face.Embeddings{face.FixtureEmbeddingAt(markerEmb.First(), tied, 5002)}, face.EmbeddingModelName())
 	require.NotNil(t, far)
 
 	for _, f := range []*entity.Face{near, far} {
@@ -596,7 +604,7 @@ func TestFacesMatchClearsAmbiguousMarker(t *testing.T) {
 		// would collide with the cluster built from it above.
 		anonA := entity.NewFace("", entity.SrcAuto, face.Embeddings{face.FixtureEmbeddingAt(markerEmb.First(), 0.10, 5003)}, face.EmbeddingModelName())
 		require.NotNil(t, anonA)
-		anonB := entity.NewFace("", entity.SrcAuto, face.Embeddings{face.FixtureEmbeddingAt(markerEmb.First(), 0.12, 5004)}, face.EmbeddingModelName())
+		anonB := entity.NewFace("", entity.SrcAuto, face.Embeddings{face.FixtureEmbeddingAt(markerEmb.First(), 0.10+tied, 5004)}, face.EmbeddingModelName())
 		require.NotNil(t, anonB)
 
 		for _, f := range []*entity.Face{anonA, anonB} {

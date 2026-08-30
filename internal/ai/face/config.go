@@ -17,9 +17,10 @@ const (
 	// CollisionDistDefault is the default floor below which a recorded collision radius is discarded.
 	CollisionDistDefault = 0.05
 	// MatchMarginDefault is the default distance by which the nearest cluster has to beat the
-	// runner-up for the marker to be given to it. It shares CollisionDistDefault's value without
-	// being derived from it, the two measuring different quantities.
-	MatchMarginDefault = 0.05
+	// runner-up for the marker to be given to it. Defense in depth rather than a recall lever:
+	// measured against a labeled library it decides two markers, the ambiguity rule deciding the
+	// rest, so the value is kept small enough not to suppress an assignment that rule earns.
+	MatchMarginDefault = 0.01
 	// NoMatchMargin assigns a marker to its nearest cluster however narrowly that one wins,
 	// following the convention the score bars use for "switched off".
 	NoMatchMargin = -1.0
