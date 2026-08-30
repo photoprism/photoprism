@@ -822,3 +822,141 @@ func TestSubject_MergeWith_Verified(t *testing.T) {
 		assert.True(t, survivor.Verified, "a merge does not withdraw what somebody vouched for")
 	})
 }
+
+// TestSubject_SetBirthday pins the normalization, because the column carries a time and a zone that
+// the value it stores does not have: the day is what the check reading it compares.
+func TestSubject_SetBirthday(t *testing.T) {
+	berlin, err := time.LoadLocation("Europe/Berlin")
+	require.NoError(t, err)
+
+	t.Run("Success", func(t *testing.T) {
+		m := &Subject{}
+		born := time.Date(1990, 8, 1, 0, 0, 0, 0, berlin)
+
+		changed, err := m.SetBirthday(&born)
+		require.NoError(t, err)
+		assert.True(t, changed)
+		require.NotNil(t, m.SubjBirthday)
+
+		// Local midnight in Berlin is the previous day in UTC, so a truncating conversion would
+		// store July 31 - the day the calendar date is read in decides this, not the instant.
+		assert.Equal(t, time.Date(1990, 8, 1, 0, 0, 0, 0, time.UTC), *m.SubjBirthday)
+	})
+	t.Run("Unchanged", func(t *testing.T) {
+		m := &Subject{}
+		utc := time.Date(1990, 8, 1, 0, 0, 0, 0, time.UTC)
+		local := time.Date(1990, 8, 1, 0, 0, 0, 0, berlin)
+
+		changed, err := m.SetBirthday(&utc)
+		require.NoError(t, err)
+		require.True(t, changed)
+
+		changed, err = m.SetBirthday(&local)
+		require.NoError(t, err)
+		assert.False(t, changed, "the same day in another zone is not an edit")
+	})
+	t.Run("Clear", func(t *testing.T) {
+		born := time.Date(1990, 8, 1, 0, 0, 0, 0, time.UTC)
+		m := &Subject{SubjBirthday: &born}
+
+		changed, err := m.SetBirthday(nil)
+		require.NoError(t, err)
+		assert.True(t, changed)
+		assert.Nil(t, m.SubjBirthday)
+
+		changed, err = m.SetBirthday(nil)
+		require.NoError(t, err)
+		assert.False(t, changed)
+	})
+	t.Run("Zero", func(t *testing.T) {
+		born := time.Date(1990, 8, 1, 0, 0, 0, 0, time.UTC)
+		m := &Subject{SubjBirthday: &born}
+		zero := time.Time{}
+
+		changed, err := m.SetBirthday(&zero)
+		require.NoError(t, err)
+		assert.True(t, changed)
+		assert.Nil(t, m.SubjBirthday, "a zero time is unset, not the year one")
+	})
+	t.Run("InvalidRequest", func(t *testing.T) {
+		born := time.Date(1990, 8, 1, 0, 0, 0, 0, time.UTC)
+		m := &Subject{SubjBirthday: &born}
+		future := time.Now().UTC().AddDate(0, 0, 3)
+
+		changed, err := m.SetBirthday(&future)
+		assert.Error(t, err)
+		assert.False(t, changed)
+		require.NotNil(t, m.SubjBirthday)
+		assert.Equal(t, born, *m.SubjBirthday, "a rejected value leaves the stored one alone")
+	})
+	t.Run("TooFarInThePast", func(t *testing.T) {
+		born := time.Date(1990, 8, 1, 0, 0, 0, 0, time.UTC)
+		m := &Subject{SubjBirthday: &born}
+		mistyped := time.Date(190, 8, 1, 0, 0, 0, 0, time.UTC)
+
+		changed, err := m.SetBirthday(&mistyped)
+		assert.Error(t, err)
+		assert.False(t, changed)
+		require.NotNil(t, m.SubjBirthday)
+		assert.Equal(t, born, *m.SubjBirthday)
+	})
+	t.Run("OldestPlausible", func(t *testing.T) {
+		// Accepted: portrait photography starts in the 1840s, and a sitter of that decade could have
+		// been born around then - the bound exists to catch a mistyped year, not to date the medium.
+		m := &Subject{}
+		oldest := time.Date(BirthYearMin, 1, 1, 0, 0, 0, 0, time.UTC)
+
+		changed, err := m.SetBirthday(&oldest)
+		require.NoError(t, err)
+		assert.True(t, changed)
+	})
+	t.Run("Tomorrow", func(t *testing.T) {
+		// Accepted, since a date-only value read in the easternmost zones is legitimately a day
+		// ahead of UTC - the bound exists to catch a year, not an hour.
+		m := &Subject{}
+		tomorrow := time.Now().UTC().AddDate(0, 0, 1).Add(-time.Hour)
+
+		changed, err := m.SetBirthday(&tomorrow)
+		require.NoError(t, err)
+		assert.True(t, changed)
+	})
+}
+
+// TestSubject_SaveForm_Birthday covers the field through the database rather than the setter, since
+// the column is created by auto-migration and a map update is what writes the NULL back.
+func TestSubject_SaveForm_Birthday(t *testing.T) {
+	m := NewSubject("Birthday Form Subject", SubjPerson, SrcManual)
+	require.NotNil(t, m)
+	require.NoError(t, m.Create())
+
+	t.Cleanup(func() { UnscopedDb().Delete(&Subject{}, "subj_uid = ?", m.SubjUID) })
+
+	frm, err := form.NewSubject(m)
+	require.NoError(t, err)
+	assert.Nil(t, frm.SubjBirthday, "a new person has no date of birth")
+
+	born := time.Date(1990, 8, 1, 12, 30, 0, 0, time.UTC)
+	frm.SubjBirthday = &born
+
+	changed, err := m.SaveForm(frm)
+	require.NoError(t, err)
+	assert.True(t, changed)
+
+	stored := FindSubject(m.SubjUID)
+	require.NotNil(t, stored)
+	require.NotNil(t, stored.SubjBirthday)
+	assert.Equal(t, 1990, stored.SubjBirthday.Year())
+	assert.Equal(t, time.August, stored.SubjBirthday.Month())
+	assert.Equal(t, 1, stored.SubjBirthday.Day())
+	assert.Equal(t, 0, stored.SubjBirthday.UTC().Hour(), "the time of day is dropped on the way in")
+
+	// And it clears again, or a date entered for the wrong person would be permanent.
+	frm.SubjBirthday = nil
+
+	_, err = m.SaveForm(frm)
+	require.NoError(t, err)
+
+	stored = FindSubject(m.SubjUID)
+	require.NotNil(t, stored)
+	assert.Nil(t, stored.SubjBirthday)
+}

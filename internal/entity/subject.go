@@ -27,6 +27,7 @@ type Subject struct {
 	SubjSlug     string     `gorm:"type:VARBINARY(160);index;default:'';" json:"Slug" yaml:"-"`
 	SubjName     string     `gorm:"size:160;unique_index;default:'';" json:"Name" yaml:"Name"`
 	SubjAlias    string     `gorm:"size:160;default:'';" json:"Alias" yaml:"Alias"`
+	SubjBirthday *time.Time `json:"Birthday" yaml:"Birthday,omitempty"`
 	SubjAbout    string     `gorm:"size:512;" json:"About" yaml:"About,omitempty"`
 	SubjBio      string     `gorm:"size:2048;" json:"Bio" yaml:"Bio,omitempty"`
 	SubjNotes    string     `gorm:"size:1024;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
@@ -317,6 +318,43 @@ func (m *Subject) SetName(name string) error {
 	return nil
 }
 
+// BirthYearMin is the earliest year a subject may be born in, chosen so that the oldest person who
+// could plausibly have been photographed is still accepted: portrait photography starts in the 1840s,
+// and a sitter of that decade could have been born around 1800. It exists to catch a mistyped year.
+const BirthYearMin = 1800
+
+// SetBirthday normalizes a date of birth to UTC midnight and reports whether it changed, or clears it
+// when the value is nil or zero. The calendar date is read in the value's own location, so a client
+// sending local midnight does not store the day before - a birthday has no time and no zone.
+func (m *Subject) SetBirthday(t *time.Time) (changed bool, err error) {
+	var born *time.Time
+
+	if t != nil && !t.IsZero() {
+		y, month, d := t.Date()
+		utc := time.Date(y, month, d, 0, 0, 0, 0, time.UTC)
+
+		// A day of headroom, since a date-only value is legitimately ahead of UTC in eastern zones.
+		if utc.After(time.Now().UTC().AddDate(0, 0, 1)) {
+			return false, fmt.Errorf("birthday must not be in the future")
+		} else if y < BirthYearMin {
+			return false, fmt.Errorf("birthday must not be before %d", BirthYearMin)
+		}
+
+		born = &utc
+	}
+
+	switch {
+	case born == nil && m.SubjBirthday == nil:
+		return false, nil
+	case born != nil && m.SubjBirthday != nil && born.Equal(*m.SubjBirthday):
+		return false, nil
+	}
+
+	m.SubjBirthday = born
+
+	return true, nil
+}
+
 // Visible tests if the subject is generally visible and not hidden in any way.
 func (m *Subject) Visible() bool {
 	return m.DeletedAt == nil && !m.SubjHidden && !m.SubjExcluded && !m.SubjPrivate
@@ -354,6 +392,15 @@ func (m *Subject) SaveForm(frm *form.Subject) (changed bool, err error) {
 		}
 	} else if frm.Thumb != "" && frm.Thumb != m.Thumb && frm.Thumb != thumbCrop {
 		return false, fmt.Errorf("invalid thumb")
+	}
+
+	// Change date of birth?
+	//
+	// Compared after normalizing, so resending the same day in another zone is not a change.
+	if birthdayChanged, birthdayErr := m.SetBirthday(frm.SubjBirthday); birthdayErr != nil {
+		return changed, birthdayErr
+	} else if birthdayChanged {
+		changed = true
 	}
 
 	// Change favorite status?
@@ -397,6 +444,7 @@ func (m *Subject) SaveForm(frm *form.Subject) (changed bool, err error) {
 	// Update index?
 	if changed {
 		values := Values{
+			"SubjBirthday": m.SubjBirthday,
 			"SubjFavorite": m.SubjFavorite,
 			"SubjHidden":   m.SubjHidden,
 			"SubjPrivate":  m.SubjPrivate,

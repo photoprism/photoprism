@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { shallowMount } from "@vue/test-utils";
 import "../../../fixtures";
-import { Subject } from "model/subject";
+import { Subject, BirthYearMin } from "model/subject";
 import PPeopleEditDialog from "component/people/edit/dialog.vue";
 
-const makeWrapper = () => {
-  const person = new Subject({ UID: "sbj1", Name: "Alice", Favorite: false, Hidden: false });
+const makeWrapper = (values = {}) => {
+  const person = new Subject({ UID: "sbj1", Name: "Alice", Favorite: false, Hidden: false, ...values });
 
   const wrapper = shallowMount(PPeopleEditDialog, {
     props: { visible: true, person },
@@ -27,6 +27,12 @@ const makeWrapper = () => {
         VRow: { template: "<div><slot /></div>" },
         VCol: { template: "<div><slot /></div>" },
         VTextField: { template: "<input />" },
+        VDateInput: {
+          name: "VDateInput",
+          props: ["modelValue", "label", "min", "max"],
+          emits: ["update:modelValue"],
+          template: "<input type='date' :data-label='label' />",
+        },
         VCheckbox: { props: ["modelValue", "label"], template: "<input type='checkbox' :data-label='label' />" },
         VBtn: { template: "<button><slot /></button>" },
         VIcon: { template: "<i><slot /></i>" },
@@ -98,6 +104,54 @@ describe("component/people/edit/dialog verified flag", () => {
     expect(wrapper.vm.model.Verified).toBe(true);
     // Sent to the server on save, so a default of undefined would drop it from the payload.
     expect(Object.keys(wrapper.vm.model.getValues(false))).toContain("Verified");
+
+    wrapper.unmount();
+  });
+});
+
+describe("component/people/edit/dialog birthday", () => {
+  // Entered here and nowhere else, so the picker has to be seeded from the person and write back in
+  // the shape the API stores - a local Date on either side, UTC midnight in the model.
+  it("seeds the picker from the stored date", async () => {
+    const wrapper = makeWrapper({ Birthday: "1990-08-01T00:00:00Z" });
+
+    // The person is cloned when the dialog opens, so the model is only seeded across that edge.
+    await wrapper.setProps({ visible: false });
+    await wrapper.setProps({ visible: true });
+
+    const picker = wrapper.findComponent({ name: "VDateInput" });
+
+    expect(picker.props("label")).toBe("Birthday");
+    expect(picker.props("modelValue")).toEqual(new Date(1990, 7, 1));
+
+    wrapper.unmount();
+  });
+
+  it("bounds the picker to the range the API accepts", () => {
+    const wrapper = makeWrapper();
+
+    const picker = wrapper.findComponent({ name: "VDateInput" });
+    const max = picker.props("max");
+    const min = picker.props("min");
+
+    expect(max).toBeInstanceOf(Date);
+    expect(max.getTime()).toBeLessThanOrEqual(Date.now());
+    expect(min).toBeInstanceOf(Date);
+    expect(min.getFullYear()).toBe(BirthYearMin);
+
+    wrapper.unmount();
+  });
+
+  it("writes a picked date back to the model", async () => {
+    const wrapper = makeWrapper();
+
+    expect(wrapper.vm.model.Birthday).toBeNull();
+
+    await wrapper.findComponent({ name: "VDateInput" }).vm.$emit("update:modelValue", new Date(1991, 8, 2));
+    expect(wrapper.vm.model.Birthday).toBe("1991-09-02T00:00:00Z");
+
+    await wrapper.findComponent({ name: "VDateInput" }).vm.$emit("update:modelValue", null);
+    expect(wrapper.vm.model.Birthday).toBeNull();
 
     wrapper.unmount();
   });

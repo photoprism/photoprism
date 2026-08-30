@@ -244,6 +244,21 @@ describe("page/people/recognized.vue refetchResults", () => {
     expect(stub.dirty).toBe(false);
   });
 
+  it("patches a cleared field back to null", async () => {
+    // A nullable column is the one case where the refetch has to overwrite with an absence: a
+    // cleared date of birth arrives as null, and skipping it leaves the list - and the edit
+    // dialog cloned from it - holding a date the row no longer has.
+    const stub = newStub();
+    stub.results = [{ UID: "subj-1", Name: "Bob Tester", Birthday: "1985-03-04T00:00:00Z" }];
+    searchSpy = vi.spyOn(Subject, "search").mockResolvedValue({ models: [{ UID: "subj-1", Name: "Bob Tester", Birthday: null }] });
+
+    refetchResults.call(stub, ["subj-1"]);
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(stub.results[0].Birthday).toBeNull();
+  });
+
   it("removes subjects the scoped search no longer returns", async () => {
     const stub = newStub();
     stub.results = [{ UID: "subj-gone" }];

@@ -13,6 +13,10 @@ export const MaxLength = Object.freeze({
   Name: 160,
 });
 
+// BirthYearMin mirrors the constant of the same name in internal/entity/subject.go, which rejects a
+// date of birth before it. Bounds the picker so an implausible year cannot be offered at all.
+export const BirthYearMin = 1800;
+
 // Subject tracks people and other recognizable subjects derived from face/marker data.
 export class Subject extends Collection {
   getDefaults() {
@@ -23,6 +27,8 @@ export class Subject extends Collection {
       Slug: "",
       Name: "",
       Alias: "",
+      // Null rather than "", so clearing the field sends a JSON null the API reads as "no date".
+      Birthday: null,
       About: "",
       Bio: "",
       Notes: "",
@@ -86,6 +92,34 @@ export class Subject extends Collection {
 
   getTitle() {
     return this.Name;
+  }
+
+  // getBirthday returns the date of birth as a local Date for the picker, or null when it is unset.
+  // Built from the date parts rather than parsed, because parsing the UTC instant lands on the day
+  // before west of Greenwich - which is what storing it at UTC midnight exists to avoid.
+  getBirthday() {
+    const parts = typeof this.Birthday === "string" ? this.Birthday.slice(0, 10).split("-") : [];
+
+    if (parts.length !== 3) {
+      return null;
+    }
+
+    const date = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+
+    return isNaN(date.getTime()) ? null : date;
+  }
+
+  // setBirthday stores a local Date as UTC midnight on the same calendar day, so the day the user
+  // picked is the day the API records. Anything that is not a date clears the field.
+  setBirthday(date) {
+    if (!(date instanceof Date) || isNaN(date.getTime())) {
+      this.Birthday = null;
+      return;
+    }
+
+    const pad = (n, len) => String(n).padStart(len, "0");
+
+    this.Birthday = `${pad(date.getFullYear(), 4)}-${pad(date.getMonth() + 1, 2)}-${pad(date.getDate(), 2)}T00:00:00Z`;
   }
 
   thumbnailUrl(size) {

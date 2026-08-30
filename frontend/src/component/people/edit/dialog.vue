@@ -33,6 +33,19 @@
                 class="input-title"
               ></v-text-field>
             </v-col>
+            <v-col cols="12">
+              <v-date-input
+                :model-value="model.getBirthday()"
+                :label="$gettext('Birthday')"
+                :min="minBirthday"
+                :max="today"
+                :disabled="disabled"
+                view-mode="year"
+                clearable
+                class="input-birthday"
+                @update:model-value="model.setBirthday($event)"
+              ></v-date-input>
+            </v-col>
             <v-col sm="4">
               <v-checkbox v-model="model.Favorite" :disabled="disabled" :label="$gettext('Favorite')" density="comfortable" hide-details> </v-checkbox>
             </v-col>
@@ -65,7 +78,7 @@
   </v-dialog>
 </template>
 <script>
-import Subject, { MaxLength as SubjectMaxLength } from "model/subject";
+import Subject, { BirthYearMin, MaxLength as SubjectMaxLength } from "model/subject";
 import { rules } from "common/form";
 
 export default {
@@ -84,6 +97,9 @@ export default {
   data() {
     return {
       disabled: !this.$config.allow("people", "manage"),
+      // Bound the picker to the range the API accepts, so an implausible year cannot be offered.
+      today: new Date(),
+      minBirthday: new Date(BirthYearMin, 0, 1),
       model: new Subject(),
       rules,
       SubjectMaxLength,
@@ -93,6 +109,8 @@ export default {
     visible: function (show) {
       if (show) {
         this.model = this.person.clone();
+        // Re-read on open rather than once at mount, since the dialog stays mounted between edits.
+        this.today = new Date();
       }
     },
   },

@@ -2,6 +2,7 @@ package search
 
 import (
 	"testing"
+	"time"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
@@ -111,4 +112,26 @@ func TestSubjectUIDs(t *testing.T) {
 		//t.Logf("Names: %#v", names)
 		assert.Len(t, results, 0)
 	})
+}
+
+// TestSubjects_Birthday covers the field through the search projection, which the People page reads
+// and the edit dialog is seeded from: a column the result struct does not map scans as nil in
+// silence, and the dialog would then offer to clear a date it never showed.
+func TestSubjects_Birthday(t *testing.T) {
+	m := entity.NewSubject("Birthday Search Subject", entity.SubjPerson, entity.SrcManual)
+	require.NotNil(t, m)
+
+	born := time.Date(1990, 8, 1, 0, 0, 0, 0, time.UTC)
+	changed, err := m.SetBirthday(&born)
+	require.NoError(t, err)
+	require.True(t, changed)
+	require.NoError(t, m.Create())
+
+	t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Subject{}, "subj_uid = ?", m.SubjUID) })
+
+	results, err := Subjects(form.SearchSubjects{UID: m.SubjUID})
+	require.NoError(t, err)
+	require.Len(t, results, 1)
+	require.NotNil(t, results[0].SubjBirthday)
+	assert.Equal(t, born, results[0].SubjBirthday.UTC())
 }

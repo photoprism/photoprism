@@ -140,6 +140,47 @@ func TestUpdateSubject(t *testing.T) {
 		assert.Equal(t, http.StatusOK, r.Code)
 		assert.False(t, gjson.Get(r.Body.String(), "Verified").Bool())
 	})
+	t.Run("SetBirthday", func(t *testing.T) {
+		// The date is entered here and nowhere else, so the round trip through the API and the list
+		// the people views read is the whole feature - a value the search omits cannot be edited.
+		app, router, _ := NewApiTest()
+
+		SearchSubjects(router)
+		UpdateSubject(router)
+
+		const uid = "js6sg6b1qekk9jx8"
+
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/subjects/"+uid, `{"Birthday": "1990-08-01T00:00:00Z"}`)
+		assert.Equal(t, http.StatusOK, r.Code)
+		assert.Equal(t, "1990-08-01T00:00:00Z", gjson.Get(r.Body.String(), "Birthday").String())
+
+		s := PerformRequest(app, "GET", "/api/v1/subjects?count=100&uid="+uid)
+		assert.Equal(t, http.StatusOK, s.Code)
+		assert.Equal(t, "1990-08-01T00:00:00Z", gjson.Get(s.Body.String(), "0.Birthday").String())
+
+		// Replacing one date with another, which is not the same path as setting the first: the form
+		// is built from the subject, so a shared pointer would let the request edit the subject in
+		// place and the update would compare equal to itself and write nothing.
+		r = PerformRequestWithBody(app, "PUT", "/api/v1/subjects/"+uid, `{"Birthday": "1991-09-02T00:00:00Z"}`)
+		assert.Equal(t, http.StatusOK, r.Code)
+
+		s = PerformRequest(app, "GET", "/api/v1/subjects?count=100&uid="+uid)
+		assert.Equal(t, http.StatusOK, s.Code)
+		assert.Equal(t, "1991-09-02T00:00:00Z", gjson.Get(s.Body.String(), "0.Birthday").String())
+
+		// A date entered for the wrong person has to be removable again.
+		r = PerformRequestWithBody(app, "PUT", "/api/v1/subjects/"+uid, `{"Birthday": null}`)
+		assert.Equal(t, http.StatusOK, r.Code)
+		assert.Equal(t, "", gjson.Get(r.Body.String(), "Birthday").String())
+	})
+	t.Run("ImplausibleBirthday", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		UpdateSubject(router)
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/subjects/js6sg6b1qekk9jx8", `{"Birthday": "2999-01-01T00:00:00Z"}`)
+		assert.Equal(t, http.StatusInternalServerError, r.Code)
+		r = PerformRequestWithBody(app, "PUT", "/api/v1/subjects/js6sg6b1qekk9jx8", `{"Birthday": "0190-01-01T00:00:00Z"}`)
+		assert.Equal(t, http.StatusInternalServerError, r.Code)
+	})
 	t.Run("SetManualCover", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
