@@ -28,9 +28,8 @@ func NewSubject(m any) (*Subject, error) {
 	frm := &Subject{}
 	err := deepcopier.Copy(m).To(frm)
 
-	// Detached from the model, because deepcopier copies the pointer rather than what it points at
-	// and binding a request decodes into the existing pointee. Sharing it edits the subject in place,
-	// which hides the edit from the comparison deciding whether anything is written.
+	// The form owns its own copy of each pointer value, so binding a request writes only into the
+	// form and never back through a shared pointer into the model it was built from.
 	if frm.SubjBirthday != nil {
 		born := *frm.SubjBirthday
 		frm.SubjBirthday = &born

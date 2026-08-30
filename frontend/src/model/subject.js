@@ -95,18 +95,17 @@ export class Subject extends Collection {
   }
 
   // getBirthday returns the date of birth as a local Date for the picker, or null when it is unset.
-  // Built from the date parts rather than parsed, because parsing the UTC instant lands on the day
-  // before west of Greenwich - which is what storing it at UTC midnight exists to avoid.
+  // The day is read in UTC and rebuilt locally, so neither the browser's zone nor the offset the API
+  // happens to render the instant in can move it - the value is stored as UTC midnight, and reading
+  // local parts west of Greenwich or slicing an offset rendering both land on the day before.
   getBirthday() {
-    const parts = typeof this.Birthday === "string" ? this.Birthday.slice(0, 10).split("-") : [];
+    const born = typeof this.Birthday === "string" ? new Date(this.Birthday) : null;
 
-    if (parts.length !== 3) {
+    if (!born || isNaN(born.getTime())) {
       return null;
     }
 
-    const date = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
-
-    return isNaN(date.getTime()) ? null : date;
+    return new Date(born.getUTCFullYear(), born.getUTCMonth(), born.getUTCDate());
   }
 
   // setBirthday stores a local Date as UTC midnight on the same calendar day, so the day the user

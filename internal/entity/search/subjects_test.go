@@ -1,6 +1,7 @@
 package search
 
 import (
+	"encoding/json"
 	"testing"
 	"time"
 
@@ -134,4 +135,16 @@ func TestSubjects_Birthday(t *testing.T) {
 	require.Len(t, results, 1)
 	require.NotNil(t, results[0].SubjBirthday)
 	assert.Equal(t, born, results[0].SubjBirthday.UTC())
+}
+
+// TestSubjects_BirthdayKeyAlwaysPresent pins the absence of omitempty on the field.
+//
+// The client tracks only the keys a response carried, and its live list refresh copies a field by
+// name: an omitted key is never seen, so clearing a date would stop reaching the loaded row. Nothing
+// else fails if a sweep tidies the tag, which is why this asserts on the tag rather than on a value.
+func TestSubjects_BirthdayKeyAlwaysPresent(t *testing.T) {
+	b, err := json.Marshal(Subject{SubjUID: "js6sg6b1qekk9jx8"})
+
+	require.NoError(t, err)
+	assert.Contains(t, string(b), `"Birthday":null`, "an unset date of birth is null, never absent")
 }

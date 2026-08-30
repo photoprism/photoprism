@@ -158,9 +158,8 @@ func TestUpdateSubject(t *testing.T) {
 		assert.Equal(t, http.StatusOK, s.Code)
 		assert.Equal(t, "1990-08-01T00:00:00Z", gjson.Get(s.Body.String(), "0.Birthday").String())
 
-		// Replacing one date with another, which is not the same path as setting the first: the form
-		// is built from the subject, so a shared pointer would let the request edit the subject in
-		// place and the update would compare equal to itself and write nothing.
+		// Replacing one date with another, which setting the first cannot reach: the form is built
+		// from the subject, so both have to own their value for the update to be seen.
 		r = PerformRequestWithBody(app, "PUT", "/api/v1/subjects/"+uid, `{"Birthday": "1991-09-02T00:00:00Z"}`)
 		assert.Equal(t, http.StatusOK, r.Code)
 
@@ -172,6 +171,15 @@ func TestUpdateSubject(t *testing.T) {
 		r = PerformRequestWithBody(app, "PUT", "/api/v1/subjects/"+uid, `{"Birthday": null}`)
 		assert.Equal(t, http.StatusOK, r.Code)
 		assert.Equal(t, "", gjson.Get(r.Body.String(), "Birthday").String())
+
+		// Present as null rather than left out. The client tracks the keys a response carried, so an
+		// omitted one is never sent back and the next date entered would go nowhere. Exists() is the
+		// discriminator: true for an explicit null, false for an absent key.
+		assert.True(t, gjson.Get(r.Body.String(), "Birthday").Exists())
+
+		s = PerformRequest(app, "GET", "/api/v1/subjects?count=100&uid="+uid)
+		assert.Equal(t, http.StatusOK, s.Code)
+		assert.True(t, gjson.Get(s.Body.String(), "0.Birthday").Exists())
 	})
 	t.Run("ImplausibleBirthday", func(t *testing.T) {
 		app, router, _ := NewApiTest()

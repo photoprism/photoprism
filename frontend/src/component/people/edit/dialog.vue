@@ -97,7 +97,7 @@ export default {
   data() {
     return {
       disabled: !this.$config.allow("people", "manage"),
-      // Bound the picker to the range the API accepts, so an implausible year cannot be offered.
+      // Keep the picker inside the range the API accepts, so an implausible year is never offered.
       today: new Date(),
       minBirthday: new Date(BirthYearMin, 0, 1),
       model: new Subject(),

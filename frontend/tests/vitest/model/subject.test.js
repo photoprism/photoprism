@@ -282,7 +282,13 @@ describe("model/subject", () => {
       try {
         fn();
       } finally {
-        process.env.TZ = before;
+        // Deleted rather than reassigned: an unset TZ reads back as undefined, and writing that
+        // stringifies to "undefined" and leaks a bogus zone into every later test in the worker.
+        if (before === undefined) {
+          delete process.env.TZ;
+        } else {
+          process.env.TZ = before;
+        }
       }
     };
 
@@ -304,6 +310,18 @@ describe("model/subject", () => {
       // The picker's lower bound and the API's rejection have to name the same year, or the dialog
       // offers a date that saving refuses.
       expect(BirthYearMin).toBe(1800);
+    });
+
+    it("getBirthday() reads the day the instant stores, whatever offset it arrives in", () => {
+      // A driver configured with a non-UTC loc renders the same instant with an offset. The stored
+      // day is what the check reading it compares, so the rendering must not be able to move it.
+      withTimezone("America/New_York", () => {
+        const utc = new Subject({ UID: "sbj1", Birthday: "1990-08-01T00:00:00Z" });
+        const offset = new Subject({ UID: "sbj2", Birthday: "1990-07-31T20:00:00-04:00" });
+
+        expect(offset.getBirthday()).toEqual(utc.getBirthday());
+        expect(offset.getBirthday().getDate()).toBe(1);
+      });
     });
 
     it("getBirthday() returns null when the field is unset or unusable", () => {

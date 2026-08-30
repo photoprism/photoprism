@@ -774,9 +774,8 @@ export default {
 
             if (model) {
               for (let key in values) {
-                // Null is a value here, not a missing field: a cleared date of birth arrives as one,
-                // and skipping it leaves the list holding a date the row no longer has - which the
-                // edit dialog then clones and offers back.
+                // Null is a value here, not a missing field: a cleared column arrives as one, and
+                // the loaded model has to take it for the list to match the row.
                 if (key !== "UID" && values.hasOwnProperty(key) && (values[key] === null || typeof values[key] !== "object")) {
                   model[key] = values[key];
                 }

@@ -900,6 +900,23 @@ func TestSubject_SetBirthday(t *testing.T) {
 		require.NotNil(t, m.SubjBirthday)
 		assert.Equal(t, born, *m.SubjBirthday)
 	})
+	t.Run("Boundary", func(t *testing.T) {
+		// Literal years, because every other case reads the constant and would follow it anywhere -
+		// while the picker's copy of it in frontend/src/model/subject.js would not.
+		assert.Equal(t, 1800, BirthYearMin)
+
+		m := &Subject{}
+		tooEarly := time.Date(1799, 12, 31, 0, 0, 0, 0, time.UTC)
+		earliest := time.Date(1800, 1, 1, 0, 0, 0, 0, time.UTC)
+
+		changed, err := m.SetBirthday(&tooEarly)
+		assert.Error(t, err)
+		assert.False(t, changed)
+
+		changed, err = m.SetBirthday(&earliest)
+		require.NoError(t, err)
+		assert.True(t, changed)
+	})
 	t.Run("OldestPlausible", func(t *testing.T) {
 		// Accepted: portrait photography starts in the 1840s, and a sitter of that decade could have
 		// been born around then - the bound exists to catch a mistyped year, not to date the medium.
@@ -914,12 +931,42 @@ func TestSubject_SetBirthday(t *testing.T) {
 		// Accepted, since a date-only value read in the easternmost zones is legitimately a day
 		// ahead of UTC - the bound exists to catch a year, not an hour.
 		m := &Subject{}
-		tomorrow := time.Now().UTC().AddDate(0, 0, 1).Add(-time.Hour)
+		// Whole days only: subtracting an hour lands back on today whenever the run starts before
+		// 01:00 UTC, and today's midnight is accepted with or without the headroom.
+		tomorrow := time.Now().UTC().AddDate(0, 0, 1)
 
 		changed, err := m.SetBirthday(&tomorrow)
 		require.NoError(t, err)
 		assert.True(t, changed)
 	})
+}
+
+// TestSubject_SaveForm_RejectsBeforeWriting pins that a value the form refuses is refused before
+// anything reaches the database, since a rename writes as it goes rather than at the end.
+func TestSubject_SaveForm_RejectsBeforeWriting(t *testing.T) {
+	m := NewSubject("Reject Before Writing", SubjPerson, SrcManual)
+	require.NotNil(t, m)
+	require.NoError(t, m.Create())
+
+	t.Cleanup(func() { UnscopedDb().Delete(&Subject{}, "subj_uid = ?", m.SubjUID) })
+
+	frm, err := form.NewSubject(m)
+	require.NoError(t, err)
+
+	// A rename and an impossible date in one request, which the edit dialog sends whenever the user
+	// changes both: the rename must not be committed on a request the client is told failed.
+	future := time.Now().UTC().AddDate(1, 0, 0)
+	frm.SubjName = "Renamed Before Rejecting"
+	frm.SubjBirthday = &future
+
+	_, err = m.SaveForm(frm)
+	assert.Error(t, err)
+
+	stored := FindSubject(m.SubjUID)
+	require.NotNil(t, stored)
+	assert.Equal(t, "Reject Before Writing", stored.SubjName, "the rename must not have been written")
+	assert.Equal(t, "reject-before-writing", stored.SubjSlug)
+	assert.Nil(t, stored.SubjBirthday)
 }
 
 // TestSubject_SaveForm_Birthday covers the field through the database rather than the setter, since

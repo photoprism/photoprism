@@ -368,16 +368,9 @@ func (m *Subject) SaveForm(frm *form.Subject) (changed bool, err error) {
 		return false, fmt.Errorf("subject has no uid")
 	}
 
-	// Update name?
-	if name := clean.Name(frm.SubjName); name != "" && name != m.SubjName {
-		existing, updateErr := m.UpdateName(name)
-
-		if updateErr != nil || existing.SubjUID != m.SubjUID {
-			return updateErr != nil, updateErr
-		}
-
-		changed = true
-	}
+	// Everything the form can reject is checked before the name, because renaming writes as it goes:
+	// UpdateName saves the row, renames every marker and flags the person's photos for re-check. A
+	// rejection after that leaves those committed on a request the client is told failed.
 
 	// Update thumbnail (hash with crop area).
 	thumbChanged := false
@@ -398,8 +391,19 @@ func (m *Subject) SaveForm(frm *form.Subject) (changed bool, err error) {
 	//
 	// Compared after normalizing, so resending the same day in another zone is not a change.
 	if birthdayChanged, birthdayErr := m.SetBirthday(frm.SubjBirthday); birthdayErr != nil {
-		return changed, birthdayErr
+		return false, birthdayErr
 	} else if birthdayChanged {
+		changed = true
+	}
+
+	// Update name?
+	if name := clean.Name(frm.SubjName); name != "" && name != m.SubjName {
+		existing, updateErr := m.UpdateName(name)
+
+		if updateErr != nil || existing.SubjUID != m.SubjUID {
+			return updateErr != nil, updateErr
+		}
+
 		changed = true
 	}
 

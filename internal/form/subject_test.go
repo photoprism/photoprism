@@ -40,8 +40,7 @@ func TestNewSubject(t *testing.T) {
 		assert.Equal(t, false, f.SubjExcluded)
 	})
 	t.Run("Birthday", func(t *testing.T) {
-		// A pointer field, so deepcopier either carries the address across or leaves the form nil
-		// and the update path silently clears a date the client never touched.
+		// A pointer field, which the form has to own rather than share with the model it copies.
 		born := time.Date(1990, 8, 1, 0, 0, 0, 0, time.UTC)
 
 		m := struct {
@@ -59,8 +58,7 @@ func TestNewSubject(t *testing.T) {
 			assert.Equal(t, born, *f.SubjBirthday)
 		}
 
-		// Detached, or binding a request would decode into the model's own value: the update path
-		// compares the form against the entity, and an entity edited in place compares equal.
+		// Detached, so binding a request writes only into the form.
 		assert.NotSame(t, m.SubjBirthday, f.SubjBirthday)
 
 		if err = json.Unmarshal([]byte(`{"Birthday":"1991-09-02T00:00:00Z"}`), f); err != nil {
