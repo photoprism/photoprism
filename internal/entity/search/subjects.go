@@ -13,6 +13,33 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// sessionGrantsPeople reports whether the session is granted perm on people, mirroring
+// sessionGrantsPhotos: a client session needs it on the client role too, since a client acting for a
+// user is limited by both, and a client without a user is evaluated on that role alone. Reading the
+// user role there would resolve to RoleNone and deny what the client was authorized with. A nil
+// session means internal or CLI use, which is not restricted.
+func sessionGrantsPeople(sess *entity.Session, perm acl.Permission) bool {
+	if sess == nil {
+		return true
+	}
+
+	if sess.IsClient() {
+		if !acl.Rules.Allow(acl.ResourcePeople, sess.GetClientRole(), perm) {
+			return false
+		} else if sess.NoUser() {
+			return true
+		}
+	}
+
+	return acl.Rules.Allow(acl.ResourcePeople, sess.GetUserRole(), perm)
+}
+
+// SubjectSessionSeesPrivate reports whether a session may see people marked private, so the search
+// and the handlers that read a single subject answer the same question about the same session.
+func SubjectSessionSeesPrivate(sess *entity.Session) bool {
+	return sessionGrantsPeople(sess, acl.AccessPrivate)
+}
+
 // Subjects searches subjects and returns them without checking rights or permissions.
 func Subjects(frm form.SearchSubjects) (results SubjectResults, err error) {
 	return searchSubjects(frm, nil)
@@ -31,7 +58,7 @@ func searchSubjects(frm form.SearchSubjects, sess *entity.Session) (results Subj
 	}
 
 	// Check session permissions and apply as needed.
-	if sess != nil && acl.Rules.Deny(acl.ResourcePeople, sess.GetUser().AclRole(), acl.AccessPrivate) {
+	if !SubjectSessionSeesPrivate(sess) {
 		// Cleared as well as forced, since "all" skips the visibility filters wholesale.
 		frm.Private = "no"
 		frm.All = false

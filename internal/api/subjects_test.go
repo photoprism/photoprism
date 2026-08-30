@@ -31,9 +31,7 @@ func TestGetSubject(t *testing.T) {
 	})
 }
 
-// TestGetSubjectDeleted pins that a soft-deleted person is not readable by uid. FindSubject is
-// unscoped, so the handler is what has to refuse - and it answers not-found rather than forbidden,
-// so the endpoint does not confirm the row exists.
+// TestGetSubjectDeleted pins that a soft-deleted person reads as not found.
 func TestGetSubjectDeleted(t *testing.T) {
 	app, router, _ := NewApiTest()
 	GetSubject(router)
@@ -51,6 +49,68 @@ func TestGetSubjectDeleted(t *testing.T) {
 
 	r = PerformRequest(app, "GET", "/api/v1/subjects/"+m.SubjUID)
 	assert.Equal(t, http.StatusNotFound, r.Code)
+}
+
+// TestFindSubjectForSession covers the guard the four subject handlers share. Exercised against the
+// helper because CE grants people to admin and client only, both of which hold private access, so
+// the deny side has no CE role that reaches it through a handler.
+func TestFindSubjectForSession(t *testing.T) {
+	m := entity.NewSubject("Private Handler Subject", entity.SubjPerson, entity.SrcManual)
+	require.NotNil(t, m)
+	m.SubjPrivate = true
+	require.NoError(t, m.Create())
+
+	t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Subject{}, "subj_uid = ?", m.SubjUID) })
+
+	t.Run("PrivateDenied", func(t *testing.T) {
+		assert.Nil(t, FindSubjectForSession(m.SubjUID, entity.SessionFixtures.Pointer("visitor")))
+	})
+	t.Run("PrivateAllowed", func(t *testing.T) {
+		assert.NotNil(t, FindSubjectForSession(m.SubjUID, entity.SessionFixtures.Pointer("alice")))
+	})
+	t.Run("Deleted", func(t *testing.T) {
+		// Refused for everyone, including the role that may see a private person.
+		require.NoError(t, m.Delete())
+		assert.Nil(t, FindSubjectForSession(m.SubjUID, entity.SessionFixtures.Pointer("alice")))
+	})
+	t.Run("NotFound", func(t *testing.T) {
+		assert.Nil(t, FindSubjectForSession("js6sg6b1qekk9jzz", entity.SessionFixtures.Pointer("alice")))
+	})
+}
+
+// TestSubjectHandlersRefuseDeleted pins the guard at the handlers rather than at the helper, since
+// a read that refuses and three writes that do not is the state this exists to prevent. Deleted is
+// the case CE can reach: both roles holding people also hold private access.
+func TestSubjectHandlersRefuseDeleted(t *testing.T) {
+	app, router, _ := NewApiTest()
+
+	GetSubject(router)
+	UpdateSubject(router)
+	LikeSubject(router)
+	DislikeSubject(router)
+
+	m := entity.NewSubject("Deleted Handler Subject", entity.SubjPerson, entity.SrcManual)
+	require.NotNil(t, m)
+	require.NoError(t, m.Create())
+
+	t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Subject{}, "subj_uid = ?", m.SubjUID) })
+	require.NoError(t, m.Delete())
+
+	uid := m.SubjUID
+
+	t.Run("Get", func(t *testing.T) {
+		assert.Equal(t, http.StatusNotFound, PerformRequest(app, "GET", "/api/v1/subjects/"+uid).Code)
+	})
+	t.Run("Update", func(t *testing.T) {
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/subjects/"+uid, `{"Favorite": true}`)
+		assert.Equal(t, http.StatusNotFound, r.Code)
+	})
+	t.Run("Like", func(t *testing.T) {
+		assert.Equal(t, http.StatusNotFound, PerformRequest(app, "POST", "/api/v1/subjects/"+uid+"/like").Code)
+	})
+	t.Run("Dislike", func(t *testing.T) {
+		assert.Equal(t, http.StatusNotFound, PerformRequest(app, "DELETE", "/api/v1/subjects/"+uid+"/like").Code)
+	})
 }
 
 func TestLikeSubject(t *testing.T) {

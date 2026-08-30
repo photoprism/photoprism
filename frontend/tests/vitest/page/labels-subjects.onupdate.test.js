@@ -262,6 +262,19 @@ describe("page/people/recognized.vue refetchResults", () => {
     expect(stub.results[0].Birthday).toBeNull();
   });
 
+  it("takes the hidden filter from the list rather than a fixed value", async () => {
+    const stub = newStub();
+    stub.filter = { hidden: "" };
+    stub.results = [{ UID: "subj-1" }];
+    searchSpy = vi.spyOn(Subject, "search").mockResolvedValue({ models: [{ UID: "subj-1" }] });
+
+    refetchResults.call(stub, ["subj-1"]);
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(searchSpy).toHaveBeenCalledWith({ uid: "subj-1", count: 1, hidden: "" });
+  });
+
   it("removes subjects the scoped search no longer returns", async () => {
     const stub = newStub();
     stub.results = [{ UID: "subj-gone" }];

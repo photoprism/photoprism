@@ -969,6 +969,81 @@ func TestSubject_SaveForm_RejectsBeforeWriting(t *testing.T) {
 	assert.Nil(t, stored.SubjBirthday)
 }
 
+// TestNormalizeBirthday covers the validation on its own, since SaveForm calls it before the rename
+// and applies the result after - the two halves have to be usable apart.
+func TestNormalizeBirthday(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		in := time.Date(1990, 8, 1, 23, 30, 0, 0, time.FixedZone("east", 14*60*60))
+
+		born, err := NormalizeBirthday(&in)
+		require.NoError(t, err)
+		require.NotNil(t, born)
+		assert.Equal(t, time.Date(1990, 8, 1, 0, 0, 0, 0, time.UTC), *born)
+	})
+	t.Run("Empty", func(t *testing.T) {
+		zero := time.Time{}
+
+		born, err := NormalizeBirthday(nil)
+		require.NoError(t, err)
+		assert.Nil(t, born)
+
+		born, err = NormalizeBirthday(&zero)
+		require.NoError(t, err)
+		assert.Nil(t, born)
+	})
+	t.Run("InvalidRequest", func(t *testing.T) {
+		future := time.Now().UTC().AddDate(1, 0, 0)
+		early := time.Date(1799, 12, 31, 0, 0, 0, 0, time.UTC)
+
+		for _, in := range []time.Time{future, early} {
+			born, err := NormalizeBirthday(&in)
+			assert.Nil(t, born)
+			require.Error(t, err)
+			// Wrapped, or the handler reports a value the client must correct as a server fault.
+			assert.ErrorIs(t, err, ErrInvalidValue)
+		}
+	})
+}
+
+// TestSubject_SaveForm_Merge pins what a rename onto an existing person does with the rest of the
+// form. Nothing else is applied, because the subject it was applied to no longer exists - and the
+// handler serializes the entity it was given, so a value assigned and not saved would be reported
+// back to the client as if it had been.
+func TestSubject_SaveForm_Merge(t *testing.T) {
+	a := NewSubject("ZZ Merge Form Source", SubjPerson, SrcManual)
+	b := NewSubject("ZZ Merge Form Target", SubjPerson, SrcManual)
+	require.NotNil(t, a)
+	require.NotNil(t, b)
+	require.NoError(t, a.Create())
+	require.NoError(t, b.Create())
+
+	t.Cleanup(func() {
+		UnscopedDb().Delete(&Subject{}, "subj_uid IN (?)", []string{a.SubjUID, b.SubjUID})
+	})
+
+	frm, err := form.NewSubject(a)
+	require.NoError(t, err)
+
+	born := time.Date(1990, 8, 1, 0, 0, 0, 0, time.UTC)
+	frm.SubjName = b.SubjName
+	frm.SubjBirthday = &born
+
+	changed, err := a.SaveForm(frm)
+	require.NoError(t, err)
+	assert.False(t, changed)
+
+	assert.Nil(t, a.SubjBirthday, "an unsaved value must not be left on the entity")
+
+	// The merge itself still happened, and it did not carry the date onto the survivor either.
+	stored := FindSubject(b.SubjUID)
+	require.NotNil(t, stored)
+	assert.Nil(t, stored.SubjBirthday)
+
+	merged := FindSubject(a.SubjUID)
+	require.NotNil(t, merged)
+	assert.True(t, merged.Deleted(), "the renamed person is merged away")
+}
+
 // TestSubject_SaveForm_Birthday covers the field through the database rather than the setter, since
 // the column is created by auto-migration and a map update is what writes the NULL back.
 func TestSubject_SaveForm_Birthday(t *testing.T) {

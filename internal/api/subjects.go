@@ -8,6 +8,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/mutex"
@@ -15,6 +16,21 @@ import (
 	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
+
+// FindSubjectForSession returns the subject with the given uid only when the session may read it.
+// Callers answer not found, so a person a session cannot see reads the same as one that does not
+// exist. entity.FindSubject stays unscoped because renaming needs it; see specs.
+func FindSubjectForSession(uid string, s *entity.Session) *entity.Subject {
+	subj := entity.FindSubject(clean.UID(uid))
+
+	if subj == nil || subj.Deleted() {
+		return nil
+	} else if subj.SubjPrivate && !search.SubjectSessionSeesPrivate(s) {
+		return nil
+	}
+
+	return subj
+}
 
 // GetSubject returns a subject as JSON.
 //
@@ -34,13 +50,9 @@ func GetSubject(router *gin.RouterGroup) {
 			return
 		}
 
-		subj := entity.FindSubject(clean.UID(c.Param("uid")))
+		subj := FindSubjectForSession(c.Param("uid"), s)
 
-		// Answered as not found rather than forbidden, so the endpoint does not confirm that a
-		// person exists to a session that may not see them. FindSubject is unscoped, so a deleted
-		// row reaches here and a private one is only for a role the ACL grants private access.
-		if subj == nil || subj.Deleted() ||
-			subj.SubjPrivate && acl.Rules.Deny(acl.ResourcePeople, s.GetUserRole(), acl.AccessPrivate) {
+		if subj == nil {
 			Abort(c, http.StatusNotFound, i18n.ErrSubjectNotFound)
 			return
 		}
@@ -77,7 +89,7 @@ func UpdateSubject(router *gin.RouterGroup) {
 		}
 
 		uid := clean.UID(c.Param("uid"))
-		m := entity.FindSubject(uid)
+		m := FindSubjectForSession(uid, s)
 
 		if m == nil {
 			Abort(c, http.StatusNotFound, i18n.ErrSubjectNotFound)
@@ -109,8 +121,10 @@ func UpdateSubject(router *gin.RouterGroup) {
 
 		// Update subject from form values.
 		if changed, err := m.SaveForm(frm); errors.Is(err, entity.ErrInvalidValue) {
-			// A value the client must correct is a bad request, not a server fault: reporting it as
-			// one hides real failures in the logs and tells the user nothing they can act on.
+			// A value the client must correct is a bad request, not a server fault. Logged at warn
+			// as well, since AbortBadRequest only reaches the debug log and a caller submitting
+			// rejected values in a loop would otherwise leave no record at all.
+			log.Warnf("subject: %s", err)
 			AbortBadRequest(c, err)
 			return
 		} else if err != nil {
@@ -149,7 +163,7 @@ func LikeSubject(router *gin.RouterGroup) {
 		}
 
 		uid := clean.UID(c.Param("uid"))
-		subj := entity.FindSubject(uid)
+		subj := FindSubjectForSession(uid, s)
 
 		if subj == nil {
 			Abort(c, http.StatusNotFound, i18n.ErrSubjectNotFound)
@@ -186,7 +200,7 @@ func DislikeSubject(router *gin.RouterGroup) {
 		}
 
 		uid := clean.UID(c.Param("uid"))
-		subj := entity.FindSubject(uid)
+		subj := FindSubjectForSession(uid, s)
 
 		if subj == nil {
 			Abort(c, http.StatusNotFound, i18n.ErrSubjectNotFound)

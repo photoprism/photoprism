@@ -323,36 +323,53 @@ func (m *Subject) SetName(name string) error {
 // and a sitter of that decade could have been born around 1800. It exists to catch a mistyped year.
 const BirthYearMin = 1800
 
-// SetBirthday normalizes a date of birth to UTC midnight and reports whether it changed, or clears it
-// when the value is nil or zero. The calendar date is read in the value's own location, so a client
-// sending local midnight does not store the day before - a birthday has no time and no zone.
-func (m *Subject) SetBirthday(t *time.Time) (changed bool, err error) {
-	var born *time.Time
-
-	if t != nil && !t.IsZero() {
-		y, month, d := t.Date()
-		utc := time.Date(y, month, d, 0, 0, 0, 0, time.UTC)
-
-		// A day of headroom, since a date-only value is legitimately ahead of UTC in eastern zones.
-		if utc.After(time.Now().UTC().AddDate(0, 0, 1)) {
-			return false, fmt.Errorf("%w: birthday must not be in the future", ErrInvalidValue)
-		} else if y < BirthYearMin {
-			return false, fmt.Errorf("%w: birthday must not be before %d", ErrInvalidValue, BirthYearMin)
-		}
-
-		born = &utc
+// NormalizeBirthday returns a date of birth at UTC midnight, or nil when the value is nil or zero.
+// The calendar date is read in the value's own location, so a client sending local midnight does not
+// store the day before - a birthday has no time and no zone, while the column has both.
+func NormalizeBirthday(t *time.Time) (born *time.Time, err error) {
+	if t == nil || t.IsZero() {
+		return nil, nil
 	}
 
+	y, month, d := t.Date()
+	utc := time.Date(y, month, d, 0, 0, 0, 0, time.UTC)
+
+	// A day of headroom, since a date-only value is legitimately ahead of UTC in eastern zones.
+	if utc.After(time.Now().UTC().AddDate(0, 0, 1)) {
+		return nil, fmt.Errorf("%w: birthday must not be in the future", ErrInvalidValue)
+	} else if y < BirthYearMin {
+		return nil, fmt.Errorf("%w: birthday must not be before %d", ErrInvalidValue, BirthYearMin)
+	}
+
+	return &utc, nil
+}
+
+// SetBirthday normalizes a date of birth and reports whether it changed, or clears it when the value
+// is nil or zero.
+func (m *Subject) SetBirthday(t *time.Time) (changed bool, err error) {
+	born, err := NormalizeBirthday(t)
+
+	if err != nil {
+		return false, err
+	}
+
+	return m.setBirthday(born), nil
+}
+
+// setBirthday stores an already normalized date of birth and reports whether it changed. Separate
+// from validating one, so a caller can refuse a bad value before writing anything and apply a good
+// one only once the writes it accompanies are known to be going ahead.
+func (m *Subject) setBirthday(born *time.Time) (changed bool) {
 	switch {
 	case born == nil && m.SubjBirthday == nil:
-		return false, nil
+		return false
 	case born != nil && m.SubjBirthday != nil && born.Equal(*m.SubjBirthday):
-		return false, nil
+		return false
 	}
 
 	m.SubjBirthday = born
 
-	return true, nil
+	return true
 }
 
 // Visible tests if the subject is generally visible and not hidden in any way.
@@ -368,35 +385,36 @@ func (m *Subject) SaveForm(frm *form.Subject) (changed bool, err error) {
 		return false, fmt.Errorf("subject has no uid")
 	}
 
-	// Everything the form can reject is checked before the name, because renaming writes as it goes:
-	// UpdateName saves the row, renames every marker and flags the person's photos for re-check. A
-	// rejection after that leaves those committed on a request the client is told failed.
+	// Validated before the name and applied after it: the rename writes as it goes and may divert
+	// into a merge and return, so a value assigned before it is either committed alongside a
+	// refused request or left unsaved on the entity the handler serializes. This orders the writes
+	// rather than making them one - a rename is durable before the trailing Updates runs.
 
-	// Update thumbnail (hash with crop area).
+	// Validate the thumbnail (hash with crop area).
+	thumbCrop := clean.ThumbCrop(frm.Thumb)
 	thumbChanged := false
-	if thumbCrop := clean.ThumbCrop(frm.Thumb); thumbCrop != "" && thumbCrop != m.Thumb {
-		if SrcPriority[frm.ThumbSrc] > 0 {
-			m.Thumb = thumbCrop
-			m.ThumbSrc = frm.ThumbSrc
-			thumbChanged = true
-			changed = true
-		} else {
+
+	if thumbCrop != "" && thumbCrop != m.Thumb {
+		if SrcPriority[frm.ThumbSrc] <= 0 {
 			return false, fmt.Errorf("%w: invalid thumb source", ErrInvalidValue)
 		}
+
+		thumbChanged = true
 	} else if frm.Thumb != "" && frm.Thumb != m.Thumb && frm.Thumb != thumbCrop {
 		return false, fmt.Errorf("%w: invalid thumb", ErrInvalidValue)
 	}
 
-	// Change date of birth?
-	//
-	// Compared after normalizing, so resending the same day in another zone is not a change.
-	if birthdayChanged, birthdayErr := m.SetBirthday(frm.SubjBirthday); birthdayErr != nil {
-		return false, birthdayErr
-	} else if birthdayChanged {
-		changed = true
+	// Validate the date of birth.
+	born, bornErr := NormalizeBirthday(frm.SubjBirthday)
+
+	if bornErr != nil {
+		return false, bornErr
 	}
 
 	// Update name?
+	//
+	// A name another person already owns merges this one into them and returns, which is why nothing
+	// above has been applied yet: the rest of the form belongs to a subject that no longer exists.
 	if name := clean.Name(frm.SubjName); name != "" && name != m.SubjName {
 		existing, updateErr := m.UpdateName(name)
 
@@ -404,6 +422,18 @@ func (m *Subject) SaveForm(frm *form.Subject) (changed bool, err error) {
 			return updateErr != nil, updateErr
 		}
 
+		changed = true
+	}
+
+	// Apply the values validated above.
+	if thumbChanged {
+		m.Thumb = thumbCrop
+		m.ThumbSrc = frm.ThumbSrc
+		changed = true
+	}
+
+	// Compared after normalizing, so resending the same day in another zone is not a change.
+	if m.setBirthday(born) {
 		changed = true
 	}
 

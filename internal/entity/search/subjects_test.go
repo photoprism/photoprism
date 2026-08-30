@@ -8,6 +8,7 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/authn"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -196,15 +197,43 @@ func TestUserSubjects(t *testing.T) {
 		sess := entity.SessionFixtures.Pointer("alice")
 		require.False(t, acl.Rules.Deny(acl.ResourcePeople, sess.GetUser().AclRole(), acl.AccessPrivate))
 
-		results, err := UserSubjects(form.SearchSubjects{UID: m.SubjUID, Count: 1000}, sess)
-		require.NoError(t, err)
-		assert.True(t, holds(t, results), "and must stay reachable for a role that may see it")
+		for name, frm := range forms {
+			t.Run(name, func(t *testing.T) {
+				results, err := UserSubjects(frm, sess)
+				require.NoError(t, err)
+				// The default list excludes nothing here: private is only filtered when asked for.
+				assert.True(t, holds(t, results), "and must stay reachable for a role that may see it")
+			})
+		}
 	})
 	t.Run("NoSession", func(t *testing.T) {
 		// The unscoped entry point is what internal callers use; it must not start filtering.
 		results, err := Subjects(form.SearchSubjects{UID: m.SubjUID, Count: 1000})
 		require.NoError(t, err)
 		assert.True(t, holds(t, results))
+	})
+}
+
+// TestSubjectSessionSeesPrivate pins the role the scoping resolves. A client session carries no
+// user, so reading the user role resolves to RoleNone and refuses what the client was authorized
+// with - the handler admits the request on the client role and the scoping has to agree with it.
+func TestSubjectSessionSeesPrivate(t *testing.T) {
+	t.Run("NoSession", func(t *testing.T) {
+		assert.True(t, SubjectSessionSeesPrivate(nil), "internal and CLI use is not scoped")
+	})
+	t.Run("Admin", func(t *testing.T) {
+		assert.True(t, SubjectSessionSeesPrivate(entity.SessionFixtures.Pointer("alice")))
+	})
+	t.Run("DeniedRole", func(t *testing.T) {
+		assert.False(t, SubjectSessionSeesPrivate(entity.SessionFixtures.Pointer("visitor")))
+	})
+	t.Run("ClientWithoutUser", func(t *testing.T) {
+		sess := &entity.Session{ClientName: "subject-scope-probe", AuthProvider: authn.ProviderClient.String(),
+			AuthMethod: authn.MethodOAuth2.String(), AuthScope: "people"}
+
+		require.True(t, sess.IsClient())
+		require.True(t, sess.NoUser())
+		assert.True(t, SubjectSessionSeesPrivate(sess), "the client role holds full access to people")
 	})
 }
 
