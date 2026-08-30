@@ -270,19 +270,25 @@ func (embeddings Embeddings) Radius() (radius float64) {
 }
 
 // RadiusFrom returns how far from center the ClusterPercentile of the embeddings reach, in the shape
-// SetEmbeddings stores: clamped, and answering an unmeasurable spread with the full cluster radius.
+// SetEmbeddings stores, and reports whether every one of them could be measured.
 //
 // Center is taken as given rather than recomputed, because a cluster's id is the hash of its own
 // centroid - deriving a new one here would change its identity and orphan every marker holding it.
-func RadiusFrom(center Embedding, embeddings Embeddings) (radius float64) {
+func RadiusFrom(center Embedding, embeddings Embeddings) (radius float64, ok bool) {
 	if len(center) == 0 || len(embeddings) == 0 {
-		return ClusterRadius
+		return 0, false
 	}
 
 	dists := make([]float64, 0, len(embeddings))
 
 	for _, emb := range embeddings {
-		if d := center.Dist(emb); d >= 0 {
+		// A vector of another width or holding a non-finite component yields -1, and one with no
+		// magnitude sits a unit from every unit vector. Neither is a distance, and answering with
+		// the widest radius in the schema is what this replaces rather than something to fall back
+		// on - so a set holding either is declined whole.
+		if d := center.Dist(emb); d < 0 || emb.Zero() {
+			return 0, false
+		} else {
 			dists = append(dists, d)
 		}
 	}
@@ -291,13 +297,14 @@ func RadiusFrom(center Embedding, embeddings Embeddings) (radius float64) {
 		radius = ClampSampleRadius(d + Epsilon)
 	}
 
-	// One member measures nothing, and neither does a set of copies - the same case SetEmbeddings
-	// answers with the full radius rather than leaving the cluster narrower than any real pair.
+	// A spread that measured zero - one member, or copies of one crop - is unmeasurable rather than
+	// tight, which SetEmbeddings answers the same way: the full radius, not a cluster narrower than
+	// any real pair of one person's faces.
 	if radius <= 0 {
-		return ClusterRadius
+		return ClusterRadius, true
 	}
 
-	return radius
+	return radius, true
 }
 
 // ClusterFits reports whether a cluster of the given radius would accept its own members.

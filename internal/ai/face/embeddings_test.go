@@ -429,8 +429,9 @@ func TestRadiusFrom(t *testing.T) {
 			members = append(members, FixtureEmbeddingAt(base, d, uint64(9602+i)))
 		}
 
-		radius := RadiusFrom(base, members)
+		radius, ok := RadiusFrom(base, members)
 
+		assert.True(t, ok)
 		assert.GreaterOrEqual(t, radius, 0.14, "the furthest member is inside it at this count")
 		assert.Less(t, radius, ClusterRadius)
 	})
@@ -440,18 +441,56 @@ func TestRadiusFrom(t *testing.T) {
 		offset := FixtureEmbeddingAt(base, 0.30, 9611)
 		members := Embeddings{base, FixtureEmbeddingAt(base, 0.05, 9612)}
 
-		assert.Greater(t, RadiusFrom(offset, members), RadiusFrom(base, members))
+		fromOffset, _ := RadiusFrom(offset, members)
+		fromCenter, _ := RadiusFrom(base, members)
+
+		assert.Greater(t, fromOffset, fromCenter)
 	})
 	t.Run("UnmeasurableIsTheFullRadius", func(t *testing.T) {
 		// One sample measures nothing, which SetEmbeddings answers the same way.
-		assert.InDelta(t, ClusterRadius, RadiusFrom(base, Embeddings{base}), 1e-9)
+		radius, ok := RadiusFrom(base, Embeddings{base})
+
+		assert.True(t, ok, "a spread that measured zero is still a measurement")
+		assert.InDelta(t, ClusterRadius, radius, 1e-9)
 	})
 	t.Run("Empty", func(t *testing.T) {
-		assert.InDelta(t, ClusterRadius, RadiusFrom(base, Embeddings{}), 1e-9)
-		assert.InDelta(t, ClusterRadius, RadiusFrom(Embedding{}, Embeddings{base}), 1e-9)
+		radius, ok := RadiusFrom(base, Embeddings{})
+		assert.False(t, ok)
+		assert.Zero(t, radius)
+
+		radius, ok = RadiusFrom(Embedding{}, Embeddings{base})
+		assert.False(t, ok)
+		assert.Zero(t, radius)
+	})
+	t.Run("NothingComparable", func(t *testing.T) {
+		// A vector of another width is not a distance, and answering it with the widest radius in
+		// the schema is the runaway this measurement replaces rather than a fallback for it.
+		radius, ok := RadiusFrom(base, Embeddings{{0.1, 0.2}})
+
+		assert.False(t, ok)
+		assert.Zero(t, radius)
+	})
+	t.Run("ZeroMember", func(t *testing.T) {
+		// One unit from every unit vector, so it would clamp the whole cluster to the maximum.
+		radius, ok := RadiusFrom(base, Embeddings{base, make(Embedding, len(base))})
+
+		assert.False(t, ok)
+		assert.Zero(t, radius)
+	})
+	t.Run("OneUnusableMemberDeclinesTheSet", func(t *testing.T) {
+		// Declined whole rather than measured over what is left, so the count and the distances
+		// keep describing the same markers.
+		near := FixtureEmbeddingAt(base, 0.05, 9631)
+		radius, ok := RadiusFrom(base, Embeddings{base, near, {0.1, 0.2}})
+
+		assert.False(t, ok)
+		assert.Zero(t, radius)
 	})
 	t.Run("ClampedAtTheMaximum", func(t *testing.T) {
 		far := Embeddings{base, FixtureEmbeddingAt(base, 1.2, 9621), FixtureEmbeddingAt(base, 1.3, 9622)}
-		assert.InDelta(t, ClusterRadius, RadiusFrom(base, far), 1e-9)
+		radius, ok := RadiusFrom(base, far)
+
+		assert.True(t, ok)
+		assert.InDelta(t, ClusterRadius, radius, 1e-9)
 	})
 }

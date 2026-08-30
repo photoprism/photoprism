@@ -13,7 +13,10 @@ func FaceMembers(faceID string) (result entity.Markers, err error) {
 
 	cond, args := entity.FaceMemberCond()
 
-	err = Db().Where(cond, args...).Where("face_id = ?", faceID).Find(&result).Error
+	// Only what a measurement reads: the vectors alone are large, and the landmarks beside them
+	// would double a transfer that runs once per changed cluster per pass.
+	err = Db().Select("marker_uid, embed_model, embeddings_json").
+		Where(cond, args...).Where("face_id = ?", faceID).Find(&result).Error
 
 	return result, err
 }

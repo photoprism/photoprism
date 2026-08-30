@@ -64,9 +64,9 @@ func ClusterScoreCond(alias string, floor int) (string, []any) {
 // FaceMemberCond returns the restriction identifying the markers a cluster is measured over: valid
 // face markers that hold a cluster id and carry a vector.
 //
-// The vector test is explicit rather than left to face_id: XMP regions and some manual markers have
-// none, and one that acquired a cluster id would be counted as a sample while no radius could
-// include it - two columns then describing different sets of markers.
+// The vector test asserts rather than repairs: every writer of a cluster id goes through a distance
+// comparison, so a marker without one cannot hold it today. It is stated here because the columns
+// derived from this set would otherwise disagree if that ever stopped being true.
 func FaceMemberCond() (string, []any) {
 	return "marker_type = ? AND marker_invalid = 0 AND face_id <> '' AND LENGTH(embeddings_json) > 0",
 		[]any{MarkerFace}

@@ -1900,8 +1900,6 @@ func TestConfig_FaceClusterCore(t *testing.T) {
 	assert.Equal(t, 1, c.FaceClusterCore())
 }
 
-// TestConfig_FaceClusterPercentile covers the calibration knob for how wide a cluster's stored
-// radius is, whose two ends are the shipped percentile and the maximum it replaced.
 func TestConfig_FaceRecomputeStats(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
@@ -1921,6 +1919,8 @@ func TestConfig_FaceRecomputeStats(t *testing.T) {
 	})
 }
 
+// TestConfig_FaceClusterPercentile covers the calibration knob for how wide a cluster's stored
+// radius is, whose two ends are the shipped percentile and the maximum it replaced.
 func TestConfig_FaceClusterPercentile(t *testing.T) {
 	c := NewConfig(CliTestContext())
 

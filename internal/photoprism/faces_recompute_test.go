@@ -111,6 +111,50 @@ func TestRecomputeFaceStats(t *testing.T) {
 		require.NoError(t, err)
 		assert.False(t, measured, "a distance across two embedding spaces measures nothing")
 	})
+	t.Run("MeasuresAcrossTheBlankModelAlias", func(t *testing.T) {
+		// A cluster predating the provenance column holds markers stamped facenet, and the two are
+		// one space in both directions - so this must be measured, not declined. String equality
+		// would decline it, and it is the common shape on any library from before that column.
+		const subjUID = "js6sg6b1qekk9je6"
+		isolatedTestFaces(t, "faces-recompute-blank-model")
+
+		f, _ := recomputeTestCluster(t, subjUID, 9351, 0.05, 0.09)
+
+		require.NoError(t, entity.Db().Model(&entity.Marker{}).
+			Where("face_id = ?", f.ID).UpdateColumn("embed_model", face.ModelFaceNet).Error)
+		require.NoError(t, f.Update("EmbedModel", ""))
+		f.EmbedModel = ""
+
+		measured, err := recomputeFaceStats(f)
+
+		require.NoError(t, err)
+		assert.True(t, measured, "a blank model is FaceNet's space, not a foreign one")
+	})
+	t.Run("DeclinesUnmeasurableMembers", func(t *testing.T) {
+		// Same space, but nothing comparable in it: the widest radius in the schema is what this
+		// replaces, so it must not be the answer when the vectors cannot be measured.
+		const subjUID = "js6sg6b1qekk9je7"
+		isolatedTestFaces(t, "faces-recompute-unusable")
+
+		f, _ := recomputeTestCluster(t, subjUID, 9361, 0.05)
+		require.NoError(t, f.SetMatchStats(1, 0.05))
+
+		members, err := query.FaceMembers(f.ID)
+		require.NoError(t, err)
+		require.Len(t, members, 1)
+
+		require.NoError(t, entity.Db().Model(&entity.Marker{}).
+			Where("marker_uid = ?", members[0].MarkerUID).
+			UpdateColumn("embeddings_json", []byte("[[0.1,0.2]]")).Error)
+
+		measured, err := recomputeFaceStats(f)
+		require.NoError(t, err)
+		assert.False(t, measured)
+
+		stored := entity.FindFace(f.ID)
+		require.NotNil(t, stored)
+		assert.InDelta(t, 0.05, stored.SampleRadius, 1e-9, "a declined cluster keeps what it stored")
+	})
 	t.Run("DeclinesWithoutMembers", func(t *testing.T) {
 		const subjUID = "js6sg6b1qekk9je4"
 		isolatedTestFaces(t, "faces-recompute-empty")
@@ -121,6 +165,41 @@ func TestRecomputeFaceStats(t *testing.T) {
 
 		require.NoError(t, err)
 		assert.False(t, measured)
+	})
+}
+
+// TestFacesMatchRecomputeStatsFlag pins the gate rather than the measurement: the flag's whole value
+// is that a run with it off is an uncontaminated baseline, so both arms have to be asserted.
+func TestFacesMatchRecomputeStatsFlag(t *testing.T) {
+	// One cluster stored at the clamp with members far inside it, which is the state the ratchet
+	// produces and a measurement corrects - so the two arms cannot agree.
+	arm := func(t *testing.T, name string, recompute bool) float64 {
+		t.Helper()
+
+		w := isolatedTestFaces(t, name)
+		w.conf.Options().FaceRecomputeStats = recompute
+		require.Equal(t, recompute, w.conf.FaceRecomputeStats())
+
+		f, _ := recomputeTestCluster(t, "js6sg6b1qekk9jf1", 9701, 0.04, 0.06, 0.08)
+		require.NoError(t, f.UpdateMatchStats(1, f.AcceptDist()))
+		require.InDelta(t, face.ClusterRadius, f.SampleRadius, 1e-9)
+
+		_, err := w.Match(FacesOptions{Force: true})
+		require.NoError(t, err)
+
+		stored := entity.FindFace(f.ID)
+		require.NotNil(t, stored)
+
+		return stored.SampleRadius
+	}
+
+	t.Run("Off", func(t *testing.T) {
+		assert.InDelta(t, face.ClusterRadius, arm(t, "faces-flag-off", false), 1e-9,
+			"the ratchet is untouched, which is what makes a flag-off run a baseline")
+	})
+	t.Run("On", func(t *testing.T) {
+		assert.Less(t, arm(t, "faces-flag-on", true), face.ClusterRadius,
+			"the same run measures the members instead")
 	})
 }
 

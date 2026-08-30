@@ -298,14 +298,17 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 		}
 
 		if w.conf.FaceRecomputeStats() {
-			if measured, err := recomputeFaceStats(stat.face); err != nil {
+			measured, err := recomputeFaceStats(stat.face)
+
+			if err != nil {
 				log.Warnf("faces: %s (recompute stats)", err)
-			} else if measured {
-				continue
-			} else {
-				declined++
-				continue
 			}
+
+			if !measured {
+				declined++
+			}
+
+			continue
 		}
 
 		if err := stat.face.UpdateMatchStats(stat.matched, stat.maxDist); err != nil {
@@ -361,11 +364,19 @@ func recomputeFaceStats(f *entity.Face) (measured bool, err error) {
 		embeddings = append(embeddings, members[i].Embeddings()...)
 	}
 
-	if len(embeddings) == 0 {
+	radius, ok := face.RadiusFrom(center, embeddings)
+
+	if !ok {
 		return false, nil
 	}
 
-	return true, f.SetMatchStats(len(members), face.RadiusFrom(center, embeddings))
+	if err = f.SetMatchStats(len(members), radius); err != nil {
+		// Declined rather than measured: SetMatchStats assigns before it writes, so falling through
+		// would ratchet on top of values that never reached the database.
+		return false, err
+	}
+
+	return true, nil
 }
 
 // stampMatchedFaces records that this run compared each cluster against every marker.

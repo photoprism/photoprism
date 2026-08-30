@@ -659,6 +659,47 @@ func TestFace_UpdateMatchStats(t *testing.T) {
 	})
 }
 
+func TestFace_SetMatchStats(t *testing.T) {
+	t.Run("ReplacesRatherThanWidens", func(t *testing.T) {
+		// The property UpdateMatchStats cannot have: a measurement of the whole membership is what
+		// makes a smaller number trustworthy.
+		m := narrowTestFace(t, "uds5ttbeu5yj2ss1", 7801)
+		require.NoError(t, m.UpdateMatchStats(20, 0.30))
+		require.InDelta(t, 0.30+face.Epsilon, m.SampleRadius, 1e-9)
+
+		require.NoError(t, m.SetMatchStats(4, 0.08))
+
+		assert.InDelta(t, 0.08, m.SampleRadius, 1e-9)
+		assert.Equal(t, 4, m.Samples)
+		assert.InDelta(t, 0.08, FindFace(m.ID).SampleRadius, 1e-9, "and it is persisted")
+	})
+	t.Run("ClampsToClusterRadius", func(t *testing.T) {
+		m := narrowTestFace(t, "uds5ttbeu5yj2ss2", 7811)
+		require.NoError(t, m.SetMatchStats(4, face.ClusterRadius*2))
+
+		assert.InDelta(t, face.ClusterRadius, m.SampleRadius, 1e-9)
+	})
+	t.Run("NoFaceId", func(t *testing.T) {
+		m := &Face{}
+		require.NoError(t, m.SetMatchStats(3, 0.2))
+
+		assert.Zero(t, m.Samples)
+		assert.Zero(t, m.SampleRadius)
+	})
+	t.Run("RefusesAnEmptyMeasurement", func(t *testing.T) {
+		// Neither a count nor a radius of zero describes a cluster, so the row is left as it is
+		// rather than written with a value nothing measured.
+		m := narrowTestFace(t, "uds5ttbeu5yj2ss3", 7821)
+		radius, samples := m.SampleRadius, m.Samples
+
+		require.NoError(t, m.SetMatchStats(0, 0.2))
+		require.NoError(t, m.SetMatchStats(3, 0))
+
+		assert.InDelta(t, radius, m.SampleRadius, 1e-9)
+		assert.Equal(t, samples, m.Samples)
+	})
+}
+
 func TestFace_UpdateMatchTime(t *testing.T) {
 	m := NewFace("12345", SrcAuto, face.RandomEmbeddings(1, face.RegularFace), face.EmbeddingModelName())
 	initialMatchTime := m.MatchedAt
