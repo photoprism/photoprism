@@ -3,7 +3,6 @@ package photoprism
 import (
 	"fmt"
 	"math"
-	"os"
 	"strings"
 	"sync"
 	"testing"
@@ -268,13 +267,13 @@ func setFaceThresholds(t *testing.T, clusterDist, clusterRadius, matchDist float
 // variables read inside DBSCAN, so a test that leaves one set makes a later one fail depending on
 // the order it ran in.
 func setFaceClusterSplit(t *testing.T, shrink float64, rounds int) {
-	prevShrink, prevRounds := faceClusterSplitShrink, faceClusterSplitRounds
+	prevShrink, prevRounds := face.ClusterSplitShrink, face.ClusterSplitRounds
 
 	t.Cleanup(func() {
-		faceClusterSplitShrink, faceClusterSplitRounds = prevShrink, prevRounds
+		face.ClusterSplitShrink, face.ClusterSplitRounds = prevShrink, prevRounds
 	})
 
-	faceClusterSplitShrink, faceClusterSplitRounds = shrink, rounds
+	face.ClusterSplitShrink, face.ClusterSplitRounds = shrink, rounds
 }
 
 // betweenEmbeddings returns the unit vector t of the way from a to b along the great circle joining
@@ -461,7 +460,34 @@ func TestSplitWideClusters(t *testing.T) {
 
 		assert.True(t, warned, "giving up on a group must be reported rather than silent")
 	})
+	t.Run("DiscardsAWideGroupWithNoRounds", func(t *testing.T) {
+		// The behavior a zero budget has and reads as not having: it is stricter than the default
+		// rather than looser, because a group that does not fit never reaches the result.
+		setFaceClusterSplit(t, face.ClusterSplitShrinkDefault, 0)
+
+		embeddings, _ := chainedFixture()
+
+		assert.Empty(t, w.splitWideClusters(embeddings, face.ClusterDist, 1),
+			"no rounds discards a wide group rather than keeping it")
+	})
+	t.Run("KeepsAWideGroupWhenDisabled", func(t *testing.T) {
+		// The switch a sweep needs, and the only one that keeps such a group: with the guard off
+		// ClusterFits is never consulted, so the radius definition cannot affect the result either.
+		setFaceClusterSplit(t, face.ClusterSplitShrinkDefault, face.ClusterSplitOff)
+
+		embeddings, _ := chainedFixture()
+
+		parts := w.splitWideClusters(embeddings, face.ClusterDist, 1)
+
+		require.Len(t, parts, 1)
+		assert.Len(t, parts[0], len(embeddings))
+		assert.False(t, face.ClusterFits(parts[0].Radius()), "the fixture must be a group the guard would have cut")
+	})
 	t.Run("Empty", func(t *testing.T) {
+		assert.Empty(t, w.splitWideClusters(face.Embeddings{}, face.ClusterDist, 1))
+	})
+	t.Run("EmptyWhenDisabled", func(t *testing.T) {
+		setFaceClusterSplit(t, face.ClusterSplitShrinkDefault, face.ClusterSplitOff)
 		assert.Empty(t, w.splitWideClusters(face.Embeddings{}, face.ClusterDist, 1))
 	})
 }
@@ -473,7 +499,7 @@ func TestSplitWideClusters(t *testing.T) {
 // real library halved coverage and left the person the check was written for unnameable.
 func TestSplitDist(t *testing.T) {
 	t.Run("Shortens", func(t *testing.T) {
-		assert.InDelta(t, 0.85*faceClusterSplitShrink, splitDist(0.85), 1e-9)
+		assert.InDelta(t, 0.85*face.ClusterSplitShrink, splitDist(0.85), 1e-9)
 	})
 	t.Run("IndependentOfHowWideTheGroupIs", func(t *testing.T) {
 		// The whole point: a group at twice its accept distance takes the same first step as one
@@ -493,7 +519,7 @@ func TestSplitDist(t *testing.T) {
 		// reports its samples unclustered; too much and the group dissolves into noise.
 		dist := face.ClusterDistDefault
 
-		for range faceClusterSplitRounds {
+		for range face.ClusterSplitRounds {
 			dist = splitDist(dist)
 		}
 
@@ -501,55 +527,10 @@ func TestSplitDist(t *testing.T) {
 		assert.Less(t, dist, 0.8*face.ClusterDistDefault, "the budget runs out before a chain separates")
 	})
 	t.Run("FollowsTheShrink", func(t *testing.T) {
-		setFaceClusterSplit(t, 0.5, faceClusterSplitRounds)
+		setFaceClusterSplit(t, 0.5, face.ClusterSplitRounds)
 
 		assert.InDelta(t, 0.425, splitDist(0.85), 1e-9)
 	})
-}
-
-// TestSplitShrinkEnv covers the shrink override, which keeps the default for anything that would
-// stop a round from shortening the link distance.
-func TestSplitShrinkEnv(t *testing.T) {
-	t.Run("Unset", func(t *testing.T) {
-		assert.InDelta(t, 0.90, splitShrinkEnv("", 0.90), 1e-9)
-		assert.InDelta(t, 0.90, splitShrinkEnv("  ", 0.90), 1e-9)
-	})
-	t.Run("InRange", func(t *testing.T) {
-		assert.InDelta(t, 0.95, splitShrinkEnv("0.95", 0.90), 1e-9)
-		assert.InDelta(t, 0.97, splitShrinkEnv(" 0.97 ", 0.90), 1e-9)
-	})
-	// One and above never shortens the distance, so every round would repeat the previous pass.
-	t.Run("OutOfRange", func(t *testing.T) {
-		for _, v := range []string{"0", "1", "1.5", "-0.5", "abc", "0.9x", "NaN", "Inf"} {
-			assert.InDelta(t, 0.90, splitShrinkEnv(v, 0.90), 1e-9, "%q must keep the default", v)
-		}
-	})
-}
-
-// TestSplitRoundsEnv covers the round-budget override. Zero is accepted, because a run that skips
-// splitting entirely is the baseline a sweep compares against.
-func TestSplitRoundsEnv(t *testing.T) {
-	t.Run("Unset", func(t *testing.T) {
-		assert.Equal(t, 6, splitRoundsEnv("", 6))
-		assert.Equal(t, 6, splitRoundsEnv("\t", 6))
-	})
-	t.Run("InRange", func(t *testing.T) {
-		assert.Equal(t, 8, splitRoundsEnv("8", 6))
-		assert.Equal(t, 0, splitRoundsEnv(" 0 ", 6))
-	})
-	t.Run("InvalidRequest", func(t *testing.T) {
-		for _, v := range []string{"-1", "abc", "6.5", ""} {
-			assert.Equal(t, 6, splitRoundsEnv(v, 6), "%q must keep the default", v)
-		}
-	})
-}
-
-// TestFaceClusterSplitInit covers that init applied the environment instead of leaving the limits
-// at their defaults. It reads the variables rather than setting them, because init runs once per
-// binary - so it only bites when a sweep is running, which is exactly when the wiring matters.
-func TestFaceClusterSplitInit(t *testing.T) {
-	assert.InDelta(t, splitShrinkEnv(os.Getenv(envFaceClusterSplitShrink), faceClusterSplitShrinkDefault), faceClusterSplitShrink, 1e-9)
-	assert.Equal(t, splitRoundsEnv(os.Getenv(envFaceClusterSplitRounds), faceClusterSplitRoundsDefault), faceClusterSplitRounds)
 }
 
 // TestReportSplitOverrides covers the line that makes a swept run self-describing.
@@ -575,7 +556,7 @@ func TestReportSplitOverrides(t *testing.T) {
 	}
 
 	t.Run("Defaults", func(t *testing.T) {
-		setFaceClusterSplit(t, faceClusterSplitShrinkDefault, faceClusterSplitRoundsDefault)
+		setFaceClusterSplit(t, face.ClusterSplitShrinkDefault, face.ClusterSplitRoundsDefault)
 
 		assert.Empty(t, report(t), "unchanged limits need no line")
 	})
@@ -585,6 +566,39 @@ func TestReportSplitOverrides(t *testing.T) {
 
 		assert.Contains(t, out, "0.80")
 		assert.Contains(t, out, "8 rounds")
+	})
+	t.Run("Disabled", func(t *testing.T) {
+		// Loud rather than noted: with the guard off nothing bounds the width of an anonymous
+		// cluster, and a run that chained a library into one person cannot be undone but by a reset.
+		setFaceClusterSplit(t, face.ClusterSplitShrinkDefault, face.ClusterSplitOff)
+
+		hook := test.NewLocal(logrus.StandardLogger())
+		defer hook.Reset()
+
+		splitOverrideOnce = sync.Once{}
+		t.Cleanup(func() { splitOverrideOnce = sync.Once{} })
+
+		reportSplitOverrides()
+
+		require.NotEmpty(t, hook.AllEntries())
+		assert.Equal(t, logrus.WarnLevel, hook.AllEntries()[0].Level)
+		assert.Contains(t, hook.AllEntries()[0].Message, "width guard is off")
+	})
+	t.Run("DiscardsWideGroups", func(t *testing.T) {
+		// Zero reads as the loosest of the three and is the strictest, so it is named too.
+		setFaceClusterSplit(t, face.ClusterSplitShrinkDefault, 0)
+
+		hook := test.NewLocal(logrus.StandardLogger())
+		defer hook.Reset()
+
+		splitOverrideOnce = sync.Once{}
+		t.Cleanup(func() { splitOverrideOnce = sync.Once{} })
+
+		reportSplitOverrides()
+
+		require.NotEmpty(t, hook.AllEntries())
+		assert.Equal(t, logrus.WarnLevel, hook.AllEntries()[0].Level)
+		assert.Contains(t, hook.AllEntries()[0].Message, "discarded rather than split")
 	})
 	t.Run("Once", func(t *testing.T) {
 		setFaceClusterSplit(t, 0.8, 8)

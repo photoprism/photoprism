@@ -421,6 +421,8 @@ func (c *Config) faceConfigRows() []faceConfigRow {
 		{faceSectionRecognition, "face-match-margin", c.faceDistReport(c.FaceMatchMargin)},
 		{faceSectionRecognition, "face-collision-dist", c.faceDistReport(c.FaceCollisionDist)},
 		{faceSectionRecognition, "face-epsilon-dist", c.faceDistReport(c.FaceEpsilonDist)},
+		{faceSectionRecognition, "faces-cluster-split-rounds", fmt.Sprintf("%d", c.FaceClusterSplitRounds())},
+		{faceSectionRecognition, "faces-cluster-split-shrink", fmt.Sprintf("%g", c.FaceClusterSplitShrink())},
 	}...)
 }
 
@@ -479,6 +481,17 @@ func (c *Config) faceRecognitionNote() string {
 				detector, c.FaceClusterScoreEffective(), face.ClusterScoreThresholdDefault))
 		}
 	}
+
+	// Zero reads as the loosest of the three and is the strictest, so it is spelled out rather
+	// than left to a number in the table.
+	switch c.FaceClusterSplitRounds() {
+	case face.ClusterSplitOff:
+		notes = append(notes, "The cluster width guard is off, so a group holding several people is kept whole.")
+	case 0:
+		notes = append(notes, "A group wider than its own accept distance is discarded rather than split.")
+	}
+
+	notes = append(notes, fmt.Sprintf("Cluster radius covers %d%% of a cluster's members.", c.FaceRadiusPercentile()))
 
 	return strings.Join(notes, " ")
 }

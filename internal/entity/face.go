@@ -138,9 +138,10 @@ func (m *Face) SetEmbeddings(embeddings face.Embeddings, model face.ModelName) (
 	// Limit sample radius to reduce false positives.
 	m.SampleRadius = face.ClampSampleRadius(m.SampleRadius)
 
-	// An extent of zero is unmeasurable rather than tight, and would leave the cluster narrower
-	// than any real pair of one person's faces. Duplicate samples measure zero too, so this also
-	// gives a cluster of duplicates the reach its near-duplicate equivalent would have.
+	// An extent of zero is unmeasurable rather than tight, and would leave the cluster narrower than
+	// any real pair of one person's faces. Duplicate samples reach this only when rounding in the
+	// mean leaves the extent exactly zero, which 2 and 4 copies do and 3 and 5 do not, so the reach
+	// of a duplicate cluster follows its member count rather than a decision anyone made.
 	if m.SampleRadius <= 0 {
 		m.SampleRadius = face.ClusterRadius
 	}

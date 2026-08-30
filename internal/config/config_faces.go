@@ -1046,6 +1046,40 @@ func (c *Config) FaceRadiusPercentile() int {
 	return c.options.FaceRadiusPercentile
 }
 
+// FaceClusterSplitRounds returns how often a group wider than its own accept distance may be
+// re-clustered before it is given up on. The flag is hidden because it is a probe.
+//
+// Anything below face.ClusterSplitOff reads as unset, so a mistyped -2 cannot silently remove the
+// only width limit an anonymous cluster has.
+func (c *Config) FaceClusterSplitRounds() int {
+	value := c.options.FaceClusterSplitRounds
+
+	// Zero discards a wide group rather than meaning "unset", so it counts only when it was asked
+	// for: an Options built without the flag defaults holds it and would otherwise switch splitting
+	// off for every caller that does not go through the CLI.
+	if value < face.ClusterSplitOff || value == 0 && !c.flagIsSet("faces-cluster-split-rounds") {
+		return face.ClusterSplitRoundsDefault
+	}
+
+	return value
+}
+
+// flagIsSet reports whether a flag was given on the command line or through its environment
+// variable, which is what tells an explicit zero from the zero value of a struct.
+func (c *Config) flagIsSet(name string) bool {
+	return c != nil && c.cliCtx != nil && c.cliCtx.IsSet(name)
+}
+
+// FaceClusterSplitShrink returns how much each split round shortens the link distance by. One or
+// more is refused rather than clamped, since it would spend the budget repeating the previous pass.
+func (c *Config) FaceClusterSplitShrink() float64 {
+	if v := c.options.FaceClusterSplitShrink; v > 0 && v < 1 {
+		return v
+	}
+
+	return face.ClusterSplitShrinkDefault
+}
+
 // FaceClusterDist returns the radius of faces forming a cluster core.
 func (c *Config) FaceClusterDist() float64 {
 	return c.faceThreshold("face-cluster-dist", c.options.FaceClusterDist, face.ClusterDistDefault,

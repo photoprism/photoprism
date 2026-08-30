@@ -279,6 +279,8 @@ type Options struct {
 	FaceClusterDist           float64       `yaml:"-" json:"-" flag:"face-cluster-dist"`
 	FaceClusterRadius         float64       `yaml:"-" json:"-" flag:"face-cluster-radius"`
 	FaceRadiusPercentile      int           `yaml:"-" json:"-" flag:"face-radius-percentile"`
+	FaceClusterSplitRounds    int           `yaml:"-" json:"-" flag:"faces-cluster-split-rounds"`
+	FaceClusterSplitShrink    float64       `yaml:"-" json:"-" flag:"faces-cluster-split-shrink"`
 	FaceMatchDist             float64       `yaml:"-" json:"-" flag:"face-match-dist"`
 	FaceMatchMargin           float64       `yaml:"-" json:"-" flag:"face-match-margin"`
 	FaceCollisionDist         float64       `yaml:"-" json:"-" flag:"face-collision-dist"`

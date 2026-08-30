@@ -2,9 +2,6 @@ package photoprism
 
 import (
 	"fmt"
-	"os"
-	"strconv"
-	"strings"
 	"sync"
 	"time"
 
@@ -64,79 +61,29 @@ func (w *Faces) reportOnce(key string, value int) bool {
 	return true
 }
 
-// Defaults for the limits splitWideClusters works within.
-const (
-	faceClusterSplitRoundsDefault = 6
-	faceClusterSplitShrinkDefault = 0.95
-)
-
-// Environment variables that override the split limits, deliberately not routed through
-// internal/config: they exist to sweep values against a real library without a rebuild, not as
-// options an operator is meant to tune.
-const (
-	envFaceClusterSplitRounds = "PHOTOPRISM_FACES_CLUSTER_SPLIT_ROUNDS"
-	envFaceClusterSplitShrink = "PHOTOPRISM_FACES_CLUSTER_SPLIT_SHRINK"
-)
-
-// faceClusterSplitRounds is how often a group wider than its own accept distance may be re-clustered
-// before it is given up on. A gentler shrink needs more rounds to reach the same separation, and a
-// group that runs out of them is reported unclustered rather than cut further.
-var faceClusterSplitRounds = faceClusterSplitRoundsDefault
-
-// faceClusterSplitShrink is how much a round shortens the link distance by.
-//
-// Flat rather than sized to the overrun, since width is a chaining property and a cut sized to the
-// symptom dissolves the group into noise. Gentle because a cut is large in this many dimensions: a
-// tenth off the distance takes the median sample from ten neighbors to two.
-var faceClusterSplitShrink = faceClusterSplitShrinkDefault
-
 // splitOverrideOnce keeps the override report to one line per process.
 var splitOverrideOnce sync.Once
 
-// init applies the split limits set in the environment, keeping the default for anything invalid.
-func init() {
-	faceClusterSplitRounds = splitRoundsEnv(os.Getenv(envFaceClusterSplitRounds), faceClusterSplitRoundsDefault)
-	faceClusterSplitShrink = splitShrinkEnv(os.Getenv(envFaceClusterSplitShrink), faceClusterSplitShrinkDefault)
-}
-
-// splitShrinkEnv returns the shrink factor an environment value sets, or def when it is unset,
-// unparsable, or outside (0, 1). One or more is rejected rather than clamped, because it would spend
-// the whole round budget on passes that repeat the previous one.
-func splitShrinkEnv(v string, def float64) float64 {
-	if v = strings.TrimSpace(v); v == "" {
-		return def
-	} else if f, err := strconv.ParseFloat(v, 64); err == nil && f > 0 && f < 1 {
-		return f
-	}
-
-	return def
-}
-
-// splitRoundsEnv returns the round budget an environment value sets, or def when it is unset,
-// unparsable, or negative. Zero disables splitting, which is the only width limit an anonymous
-// cluster has, so it is a probe rather than a value to leave configured.
-func splitRoundsEnv(v string, def int) int {
-	if v = strings.TrimSpace(v); v == "" {
-		return def
-	} else if n, err := strconv.Atoi(v); err == nil && n >= 0 {
-		return n
-	}
-
-	return def
-}
-
-// reportSplitOverrides states the split limits a run used when they differ from the defaults, so
-// that a captured log names them and two runs of a sweep can be told apart afterwards.
+// reportSplitOverrides states the split limits a run used when they differ from the defaults, so a
+// captured log names them and two runs of a sweep can be told apart afterwards.
+//
+// A guard that is off warns rather than notes: it is the only width limit an anonymous cluster has,
+// so a run without it can chain a library into one person with no way back but a reset.
 func reportSplitOverrides() {
 	splitOverrideOnce.Do(func() {
-		if faceClusterSplitShrink != faceClusterSplitShrinkDefault {
+		if face.ClusterSplitShrink != face.ClusterSplitShrinkDefault {
 			log.Infof("faces: shortening the link distance by %f per split round instead of %f",
-				faceClusterSplitShrink, faceClusterSplitShrinkDefault)
+				face.ClusterSplitShrink, face.ClusterSplitShrinkDefault)
 		}
 
-		if faceClusterSplitRounds != faceClusterSplitRoundsDefault {
+		switch {
+		case face.ClusterSplitDisabled():
+			log.Warnf("faces: the cluster width guard is off, so a group holding several people is kept whole - unset faces-cluster-split-rounds to restore it")
+		case face.ClusterSplitRounds == 0:
+			log.Warnf("faces: wide groups are discarded rather than split, because faces-cluster-split-rounds is 0")
+		case face.ClusterSplitRounds != face.ClusterSplitRoundsDefault:
 			log.Infof("faces: splitting a wide group over at most %d rounds instead of %d",
-				faceClusterSplitRounds, faceClusterSplitRoundsDefault)
+				face.ClusterSplitRounds, face.ClusterSplitRoundsDefault)
 		}
 	})
 }
@@ -154,6 +101,16 @@ type faceClusterPart struct {
 // between two people chains both into one group that is then named as whoever is recognized in it -
 // which Face.ResolveCollision cannot see while the group is anonymous. One that fits is untouched.
 func (w *Faces) splitWideClusters(cluster face.Embeddings, dist float64, workers int) []face.Embeddings {
+	// Off, so the group passes through untested. ClusterFits is never consulted, which is what makes
+	// this a baseline that measures the guard apart from the radius definition it reads.
+	if face.ClusterSplitDisabled() {
+		if len(cluster) == 0 {
+			return nil
+		}
+
+		return []face.Embeddings{cluster}
+	}
+
 	result := make([]face.Embeddings, 0, 1)
 	queue := []faceClusterPart{{embeddings: cluster, dist: dist}}
 
@@ -179,7 +136,7 @@ func (w *Faces) splitWideClusters(cluster face.Embeddings, dist float64, workers
 			return result
 		}
 
-		if part.round >= faceClusterSplitRounds {
+		if part.round >= face.ClusterSplitRounds {
 			w.reportWideCluster(len(part.embeddings), radius, part.dist)
 			continue
 		}
@@ -216,7 +173,7 @@ func (w *Faces) reportWideCluster(samples int, radius, dist float64) {
 
 // splitDist returns the link distance the next round uses.
 func splitDist(dist float64) float64 {
-	return dist * faceClusterSplitShrink
+	return dist * face.ClusterSplitShrink
 }
 
 // splitCluster re-clusters one group at a shorter link distance. Points left below the core size

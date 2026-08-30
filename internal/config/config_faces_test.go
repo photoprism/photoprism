@@ -1935,6 +1935,104 @@ func TestConfig_FaceRadiusPercentile(t *testing.T) {
 	})
 }
 
+// setFlagContext returns a context in which the named integer flag was given on the command line,
+// which is what tells an explicit value from the zero value of an Options built in code.
+func setFlagContext(t *testing.T, name, value string) *cli.Context {
+	t.Helper()
+
+	flags := flag.NewFlagSet("test", flag.ContinueOnError)
+	flags.Int(name, -99, "doc")
+
+	require.NoError(t, flags.Parse([]string{"--" + name, value}))
+
+	return cli.NewContext(nil, flags, nil)
+}
+
+// TestConfig_FlagIsSet covers the predicate that tells a flag an operator gave from one nobody did,
+// which is the only way a zero with a meaning can be distinguished from an unset struct field.
+func TestConfig_FlagIsSet(t *testing.T) {
+	t.Run("Set", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.cliCtx = setFlagContext(t, "faces-cluster-split-rounds", "0")
+
+		assert.True(t, c.flagIsSet("faces-cluster-split-rounds"))
+	})
+	t.Run("Unset", func(t *testing.T) {
+		assert.False(t, NewConfig(CliTestContext()).flagIsSet("faces-cluster-split-rounds"))
+	})
+	t.Run("NoContext", func(t *testing.T) {
+		assert.False(t, (&Config{}).flagIsSet("faces-cluster-split-rounds"))
+		assert.False(t, (*Config)(nil).flagIsSet("faces-cluster-split-rounds"))
+	})
+}
+
+// TestConfig_FaceClusterSplitRounds covers the width guard's round budget, whose three settings do
+// not order the way their numbers suggest: zero is the strictest and the sentinel is the loosest.
+func TestConfig_FaceClusterSplitRounds(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	t.Run("Default", func(t *testing.T) {
+		assert.Equal(t, face.ClusterSplitRoundsDefault, c.FaceClusterSplitRounds())
+	})
+	t.Run("Configured", func(t *testing.T) {
+		c.options.FaceClusterSplitRounds = 8
+		assert.Equal(t, 8, c.FaceClusterSplitRounds())
+	})
+	t.Run("Off", func(t *testing.T) {
+		c.options.FaceClusterSplitRounds = face.ClusterSplitOff
+		assert.Equal(t, face.ClusterSplitOff, c.FaceClusterSplitRounds())
+	})
+	t.Run("ZeroIsNotUnset", func(t *testing.T) {
+		// The trap this getter exists for. Zero is a value - it discards a wide group - and it is
+		// also what an Options built without the flag defaults holds, so it counts only when the
+		// flag or its environment variable actually carried it.
+		c.options.FaceClusterSplitRounds = 0
+		assert.Equal(t, face.ClusterSplitRoundsDefault, c.FaceClusterSplitRounds())
+
+		explicit := NewConfig(CliTestContext())
+		explicit.cliCtx = setFlagContext(t, "faces-cluster-split-rounds", "0")
+		explicit.options.FaceClusterSplitRounds = 0
+
+		assert.Equal(t, 0, explicit.FaceClusterSplitRounds(), "an explicit zero has to survive")
+	})
+	t.Run("BelowTheSentinel", func(t *testing.T) {
+		// Only one negative value carries a meaning, so a typo cannot remove the guard silently.
+		c.options.FaceClusterSplitRounds = -2
+		assert.Equal(t, face.ClusterSplitRoundsDefault, c.FaceClusterSplitRounds())
+	})
+}
+
+// TestConfig_FaceClusterSplitShrink covers the factor a split round shortens the link distance by.
+func TestConfig_FaceClusterSplitShrink(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	t.Run("Default", func(t *testing.T) {
+		assert.InDelta(t, face.ClusterSplitShrinkDefault, c.FaceClusterSplitShrink(), 1e-9)
+	})
+	t.Run("Configured", func(t *testing.T) {
+		c.options.FaceClusterSplitShrink = 0.8
+		assert.InDelta(t, 0.8, c.FaceClusterSplitShrink(), 1e-9)
+	})
+	t.Run("OutOfRange", func(t *testing.T) {
+		// One or more never shortens the distance, so every round would repeat the previous pass.
+		for _, value := range []float64{0, 1, 1.5, -0.5} {
+			c.options.FaceClusterSplitShrink = value
+			assert.InDelta(t, face.ClusterSplitShrinkDefault, c.FaceClusterSplitShrink(), 1e-9, "%g", value)
+		}
+	})
+	t.Run("Propagated", func(t *testing.T) {
+		rounds, shrink := face.ClusterSplitRounds, face.ClusterSplitShrink
+		t.Cleanup(func() { face.ClusterSplitRounds, face.ClusterSplitShrink = rounds, shrink })
+
+		c.options.FaceClusterSplitShrink = 0.8
+		c.options.FaceClusterSplitRounds = face.ClusterSplitOff
+		c.Propagate()
+
+		assert.InDelta(t, 0.8, face.ClusterSplitShrink, 1e-9)
+		assert.True(t, face.ClusterSplitDisabled())
+	})
+}
+
 // TestConfig_PropagateSampleThreshold pins the clustering trigger to FACE_CLUSTER_CORE. It is
 // derived rather than configured, and leaving it at the package initializer froze it at the
 // shipped default, so raising the core size moved what a cluster is but not what starts a pass.

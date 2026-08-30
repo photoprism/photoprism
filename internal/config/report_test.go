@@ -338,6 +338,8 @@ func TestConfig_FaceReportSections(t *testing.T) {
 			"face-match-margin",
 			"face-collision-dist",
 			"face-epsilon-dist",
+			"faces-cluster-split-rounds",
+			"faces-cluster-split-shrink",
 		}
 
 		for _, name := range expected {
@@ -644,6 +646,8 @@ func TestConfig_faceConfigRows(t *testing.T) {
 			"face-match-margin",
 			"face-collision-dist",
 			"face-epsilon-dist",
+			"faces-cluster-split-rounds",
+			"faces-cluster-split-shrink",
 		}
 
 		rows := c.faceConfigRows()
