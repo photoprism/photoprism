@@ -54,7 +54,6 @@
                 v-model="model.Verified"
                 :disabled="disabled"
                 :label="$gettext('Verified')"
-                :title="$gettext('Keeps this person when face clusters are reset')"
                 density="comfortable"
                 hide-details
               >

@@ -58,8 +58,7 @@ msgstr "%{n} GB ji %{q} GB hat bikaranîn"
 msgid "%{n} labels found"
 msgstr "%{n} پێناس دۆزرایەوە"
 
-#: src/page/people/new.vue:494 src/page/people/new.vue:600
-#: src/page/people/recognized.vue:729
+#: src/page/people/new.vue:249 src/page/people/recognized.vue:279
 msgid "%{n} people found"
 msgstr "%{n} kes hatin dîtin"
 
@@ -448,7 +447,7 @@ msgstr "هەموو %{n} ئەلبومەکان بارکرا"
 msgid "All %{n} labels loaded"
 msgstr "هەموو %{n} پێناسەکان بارکرا"
 
-#: src/page/people/recognized.vue:561
+#: src/page/people/recognized.vue:577
 msgid "All %{n} people loaded"
 msgstr "Hemû %{n} kes bar kirin"
 
@@ -737,7 +736,8 @@ msgstr "Ji ber ku 100% xwe-fînansedar û serbixwe ne, em dikarin soz bidin we k
 msgid "Bio"
 msgstr "Bio"
 
-#: src/page/settings/account.vue:212 src/page/settings/account.vue:196
+#: src/page/settings/account.vue:212 src/component/people/edit/dialog.vue:39
+#: src/page/settings/account.vue:196
 msgid "Birth Date"
 msgstr "Dîroka Jidayikbûnê"
 
@@ -817,9 +817,9 @@ msgstr "ناتوانێت زیاتر بار بکات، گەیشتە سنوور"
 #: src/common/clipboard.js:103 src/common/clipboard.js:139
 #: src/page/albums.vue:1204 src/page/albums.vue:1220 src/page/labels.vue:642
 #: src/page/labels.vue:662 src/page/library/browse.vue:325
-#: src/page/library/browse.vue:341 src/page/people/new.vue:422
-#: src/page/people/new.vue:438 src/page/people/recognized.vue:494
-#: src/page/people/recognized.vue:510
+#: src/page/library/browse.vue:341 src/page/people/new.vue:438
+#: src/page/people/new.vue:454 src/page/people/recognized.vue:510
+#: src/page/people/recognized.vue:526
 msgid "Can't select more items"
 msgstr "ناتوانێت ئایتمی زیاتر دیاری بکات"
 
@@ -843,7 +843,7 @@ msgstr "ناتوانێت ئایتمی زیاتر دیاری بکات"
 #: src/component/meta/face/markers.vue:54
 #: src/component/meta/face/markers.vue:73
 #: src/component/meta/location/dialog.vue:115
-#: src/component/people/edit/dialog.vue:57
+#: src/component/people/edit/dialog.vue:72
 #: src/component/photo/album/dialog.vue:64 src/component/service/add.vue:97
 #: src/component/service/edit.vue:232 src/component/service/remove.vue:19
 #: src/component/service/upload.vue:57 src/component/settings/apps.vue:151
@@ -914,7 +914,7 @@ msgstr "گۆڕینی نیشانەنوێنی تایبەت"
 #: src/component/album/edit/dialog.vue:171
 #: src/component/label/edit/dialog.vue:109
 #: src/component/meta/camera/dialog.vue:214
-#: src/component/people/edit/dialog.vue:123
+#: src/component/people/edit/dialog.vue:143
 #: src/component/photo/batch-edit.vue:1440
 #: src/component/photo/edit/details.vue:636 src/locales.js:376
 #: src/page/settings/account.vue:447 src/page/settings/account.vue:452
@@ -933,8 +933,8 @@ msgstr "گۆڕانکاریەکان پاشەکەوت نەکراوە"
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
-#: src/locales.js:428 src/page/albums.vue:1197 src/page/people/new.vue:810
-#: src/page/people/recognized.vue:304 src/page/settings/advanced.vue:507
+#: src/locales.js:428 src/page/albums.vue:1197 src/page/people/new.vue:814
+#: src/page/people/recognized.vue:320 src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
 #: src/page/settings/general.vue:646
 msgid "Changes successfully saved"
@@ -1819,7 +1819,7 @@ msgstr "خێرا"
 
 #: src/component/album/edit/dialog.vue:77
 #: src/component/label/edit/dialog.vue:37
-#: src/component/people/edit/dialog.vue:37
+#: src/component/people/edit/dialog.vue:50
 #: src/component/photo/batch-edit.vue:1536
 #: src/component/photo/edit/info.vue:121 src/component/photo/edit/info.vue:122
 msgid "Favorite"
@@ -2056,7 +2056,7 @@ msgstr "پاڵپشتی کڕیار"
 
 #: src/component/navigation.vue:369 src/component/navigation.vue:370
 #: src/component/navigation.vue:382 src/component/navigation.vue:391
-#: src/component/navigation.vue:504 src/component/people/edit/dialog.vue:51
+#: src/component/navigation.vue:504 src/component/people/edit/dialog.vue:63
 msgid "Hidden"
 msgstr "شاراوە"
 
@@ -2339,10 +2339,6 @@ msgstr "سنووری قەبارەی JPEG: %{n}px"
 #: src/page/library/import.vue:53
 msgid "JPEGs and thumbnails are automatically rendered as needed."
 msgstr "JPEG و وێنە بچووکەکان بە شێوەیەکی خودکارانە بە پێێ پێویست پیشان دەدرێن."
-
-#: src/component/people/edit/dialog.vue:44
-msgid "Keeps this person when face clusters are reset"
-msgstr ""
 
 #: src/common/util.js:906
 msgid "Keyword"
@@ -2828,8 +2824,8 @@ msgid "No more"
 msgstr "Bêtir na"
 
 #: src/component/photo/edit/people.vue:6 src/page/people/new.vue:23
-#: src/page/people/new.vue:490 src/page/people/new.vue:596
-#: src/page/people/recognized.vue:55 src/page/people/recognized.vue:725
+#: src/page/people/new.vue:245 src/page/people/recognized.vue:275
+#: src/page/people/recognized.vue:55
 msgid "No people found"
 msgstr "Kes nehat dîtin"
 
@@ -2999,8 +2995,7 @@ msgstr "یەك فۆڵدەر دۆزرایەوە"
 msgid "One label found"
 msgstr "Yek label hat dîtin"
 
-#: src/page/people/new.vue:492 src/page/people/new.vue:598
-#: src/page/people/recognized.vue:727
+#: src/page/people/new.vue:247 src/page/people/recognized.vue:277
 msgid "One person found"
 msgstr "Kesek hat dîtin"
 
@@ -3165,7 +3160,7 @@ msgstr "بە هەمیشەیی سڕاوەتەوە"
 msgid "Permission denied"
 msgstr "Destûr hat redkirin"
 
-#: src/model/subject.js:159
+#: src/model/subject.js:192
 msgid "Person"
 msgstr "Şexs"
 
@@ -3361,6 +3356,7 @@ msgstr "سەرەکی"
 #: src/component/navigation.vue:126 src/component/navigation.vue:127
 #: src/component/navigation.vue:139 src/component/navigation.vue:148
 #: src/component/navigation.vue:156 src/component/navigation.vue:176
+#: src/component/people/edit/dialog.vue:66
 #: src/component/photo/batch-edit.vue:1537
 #: src/component/photo/edit/info.vue:129 src/component/photo/edit/info.vue:130
 #: src/page/settings/general.vue:200
@@ -3682,10 +3678,10 @@ msgstr "Satelayt"
 #: src/component/meta/datetime/dialog.vue:38
 #: src/component/meta/datetime/dialog.vue:39
 #: src/component/meta/datetime/dialog.vue:51
-#: src/component/people/edit/dialog.vue:34
-#: src/component/people/edit/dialog.vue:35
-#: src/component/people/edit/dialog.vue:46
-#: src/component/people/edit/dialog.vue:60
+#: src/component/people/edit/dialog.vue:40
+#: src/component/people/edit/dialog.vue:41
+#: src/component/people/edit/dialog.vue:52
+#: src/component/people/edit/dialog.vue:75
 #: src/component/photo/batch-edit.vue:483
 #: src/component/photo/edit/details.vue:396 src/component/service/edit.vue:103
 #: src/component/service/edit.vue:235 src/component/service/edit.vue:93
@@ -4669,7 +4665,7 @@ msgstr "Vectors"
 msgid "Verification Code"
 msgstr "Koda verastkirinê"
 
-#: src/component/people/edit/dialog.vue:43
+#: src/component/people/edit/dialog.vue:56
 msgid "Verified"
 msgstr "Verified"
 
