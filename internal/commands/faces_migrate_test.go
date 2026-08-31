@@ -98,9 +98,9 @@ func TestPercentOf(t *testing.T) {
 	})
 }
 
-// TestReportMigrationCropCoverage covers the pre-flight an operator reads before the prompt. It
-// must warn only about what a thumbnail setting can fix, or a library of small pictures is told
-// to change one that cannot help it.
+// TestReportMigrationCropCoverage covers the forecast an operator reads before the prompt: how much
+// of the crop detail the cache already holds, how much the run renders for itself, and how much is
+// missing from the originals, which is the only part nothing can recover.
 func TestReportMigrationCropCoverage(t *testing.T) {
 	capture := func(t *testing.T) *test.Hook {
 		t.Helper()
@@ -131,74 +131,25 @@ func TestReportMigrationCropCoverage(t *testing.T) {
 		return b.String()
 	}
 
-	t.Run("NamesTheSetting", func(t *testing.T) {
+	t.Run("ForecastsTheRendering", func(t *testing.T) {
 		hook := capture(t)
-
-		cached := thumb.SizeCached
-		thumb.SizeCached = 1920
-		t.Cleanup(func() { thumb.SizeCached = cached })
 
 		reportMigrationCropCoverage(photoprism.FacesMigratePlan{
 			CropCoverage: query.FaceMigrationCropCounts{Total: 41252, FullDetail: 19501, Upscaled: 15689, SourceTooSmall: 6062},
 			ThumbSize:    thumb.Sizes[thumb.Fit1920],
-			ThumbSizeFix: 4096,
 		})
 
 		out := messages(hook)
 		assert.Contains(t, out, "15689 of 41252 markers (38%)")
-		assert.Contains(t, out, "--thumb-size=4096")
+		assert.Contains(t, out, "1920x1200")
+		assert.Contains(t, out, "renders one per file")
 		assert.Contains(t, out, "6062 of 41252 markers (15%)")
+
+		// Nothing is asked of the operator: the run does this itself, and a warning would send
+		// them to regenerate a thumbnail cache they do not need.
+		assert.NotContains(t, out, "thumb-size")
 	})
-	t.Run("Remedy", func(t *testing.T) {
-		t.Run("RaisesTheLimit", func(t *testing.T) {
-			assert.Contains(t, migrationThumbRemedy(4096, 1920), "--thumb-size=4096")
-		})
-		t.Run("GeneratesWhatTheLimitAlreadyCovers", func(t *testing.T) {
-			// Passing a limit that is already in force writes no rendition the operator does not
-			// have, so the same warning would print again and the advice would look broken.
-			remedy := migrationThumbRemedy(4096, 4096)
-
-			assert.Contains(t, remedy, `"photoprism thumbs"`)
-			assert.NotContains(t, remedy, "--thumb-size")
-		})
-		t.Run("NothingClearsIt", func(t *testing.T) {
-			assert.NotContains(t, migrationThumbRemedy(0, 15360), "photoprism")
-		})
-	})
-	t.Run("TheRenditionsWereNeverGenerated", func(t *testing.T) {
-		// The limit already covers the size that clears it, so what the library is missing is the
-		// renditions. Naming the limit again would be advice the operator has already followed.
-		hook := capture(t)
-		cached := thumb.SizeCached
-		thumb.SizeCached = 4096
-		t.Cleanup(func() { thumb.SizeCached = cached })
-
-		reportMigrationCropCoverage(photoprism.FacesMigratePlan{
-			CropCoverage: query.FaceMigrationCropCounts{Total: 100, Upscaled: 10},
-			ThumbSize:    thumb.Sizes[thumb.Fit1920],
-			ThumbSizeFix: 4096,
-		})
-
-		out := messages(hook)
-		assert.Contains(t, out, `"photoprism thumbs"`)
-		assert.NotContains(t, out, "--thumb-size=")
-	})
-	t.Run("NoSettingClearsIt", func(t *testing.T) {
-		// The remedy is measured, so a library no supported size clears must still be warned,
-		// without being told to run a command that would not help.
-		hook := capture(t)
-
-		reportMigrationCropCoverage(photoprism.FacesMigratePlan{
-			CropCoverage: query.FaceMigrationCropCounts{Total: 100, Upscaled: 10},
-			ThumbSize:    thumb.Sizes[thumb.Fit15360],
-		})
-
-		out := messages(hook)
-		assert.Contains(t, out, "10 of 100 markers (10%)")
-		assert.NotContains(t, out, "--thumb-size=")
-		assert.Contains(t, out, "No larger thumbnail would remove this")
-	})
-	t.Run("SmallOriginalsAreNotWarnedAbout", func(t *testing.T) {
+	t.Run("SmallOriginalsAreStatedApart", func(t *testing.T) {
 		hook := capture(t)
 
 		reportMigrationCropCoverage(photoprism.FacesMigratePlan{
@@ -207,11 +158,13 @@ func TestReportMigrationCropCoverage(t *testing.T) {
 		})
 
 		out := messages(hook)
-		assert.NotContains(t, out, "upscaled crops")
+		assert.NotContains(t, out, "renders one per file")
 		assert.Contains(t, out, "60 of 100 markers (60%)")
+		assert.Contains(t, out, "nothing recovers")
 	})
 	t.Run("NothingMeasured", func(t *testing.T) {
-		// A limit below the smallest rendition reports no markers at all, which is not a finding.
+		// A library with no renditions at all is cropped from the originals, so there is no
+		// coverage to report on.
 		hook := capture(t)
 
 		reportMigrationCropCoverage(photoprism.FacesMigratePlan{})

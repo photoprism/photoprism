@@ -16,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/internal/thumb/crop"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -509,6 +510,35 @@ func TestFaces_migrate(t *testing.T) {
 		// raised is gone by then and each replacement has to classify itself. Left unset, the
 		// person would be missing from the "face:1" search filter that reads this column.
 		assert.Equal(t, int(face.RegularFace), cluster.FaceKind)
+	})
+	t.Run("RendersACropThumbnail", func(t *testing.T) {
+		// A library indexed at a lower thumbnail limit has renditions too narrow for its face
+		// crops, and the detail is in the original: the run renders what it needs rather than
+		// embedding upscaled pixels, which nothing downstream could tell apart afterwards.
+		c := newMigrateTestConfig(t, "migraterenders")
+		w := NewFaces(c)
+
+		cached, onDemand := thumb.SizeCached, thumb.SizeOnDemand
+		t.Cleanup(func() { thumb.SizeCached, thumb.SizeOnDemand = cached, onDemand })
+		thumb.SizeCached, thumb.SizeOnDemand = 720, 720
+
+		f := newRenderTestFile(t, c, "4a4d444444444444444444444444444444444447", 2000, 1500)
+		m := addMigrateTestMarker(t, f.FileUID, entity.SrcManual, "Jane Doe")
+
+		// 160/0.1 asks for 1600 px, which only a wider rendition than the cache holds can supply.
+		require.NoError(t, entity.UnscopedDb().Model(&entity.Marker{}).
+			Where("marker_uid = ?", m.MarkerUID).
+			UpdateColumns(entity.Values{"w": 0.1, "h": 0.1}).Error)
+
+		plan := FacesMigratePlan{Target: face.ModelFaceNet}
+		result, err := w.migrate(context.Background(), plan, &oneHotEmbedder{dims: 4},
+			FacesMigrateOptions{Target: face.ModelFaceNet}, FacesMigrateResult{Target: face.ModelFaceNet})
+
+		require.NoError(t, err)
+		assert.Equal(t, 1, result.Migrated)
+		assert.Equal(t, 1, result.RenderedThumbs)
+		assert.True(t, crop.CachedSizeExists(thumb.Sizes[thumb.Fit1920], f.FileHash, c.ThumbCachePath()),
+			"the rendition the crop needs has to be written under the indexed hash")
 	})
 	t.Run("LegacyBlankModel", func(t *testing.T) {
 		c := newMigrateTestConfig(t, "migratelegacy")

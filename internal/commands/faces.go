@@ -19,7 +19,6 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
-	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -245,6 +244,12 @@ func facesMigrateAction(ctx *cli.Context) error {
 			result.PreservedSubjects, result.PreservedMarkers, result.HiddenClusters,
 			result.RebuiltSubjects, result.AttentionSubjects,
 		)
+		// The cache is what a crop is taken from, so a run that had to render is the difference
+		// between this library's vectors and the ones a pre-generated cache would have produced.
+		if result.RenderedThumbs > 0 {
+			log.Infof("faces: rendered %d thumbnail(s) from originals so their face crops were not upscaled",
+				result.RenderedThumbs)
+		}
 		// Reported apart from both, because a retained marker is neither work done nor a loss:
 		// detection did not find it again, most often because a person drew it by hand.
 		if result.Retained > 0 {
@@ -274,11 +279,11 @@ func facesMigrateAction(ctx *cli.Context) error {
 	})
 }
 
-// reportMigrationCropCoverage warns when the pre-generated thumbnails cannot supply the face crops
-// this migration takes, and names the setting that would fix it.
+// reportMigrationCropCoverage states how much of the crop detail the thumbnail cache already holds,
+// what the run renders for itself, and what no rendition can supply.
 //
-// Only the markers whose own original holds the detail are warned about, and the rest are reported
-// as a note: a library of small pictures must not be nagged about a setting that cannot help it.
+// A forecast rather than a warning: the run renders the renditions its crops need as it reaches
+// each file, so the only number an operator has to decide anything about is the last one.
 func reportMigrationCropCoverage(plan photoprism.FacesMigratePlan) {
 	coverage := plan.CropCoverage
 
@@ -287,35 +292,17 @@ func reportMigrationCropCoverage(plan photoprism.FacesMigratePlan) {
 	}
 
 	if coverage.Upscaled > 0 {
-		event.SystemWarn([]string{"faces", "migrate", "%d of %d markers (%d%%) would be embedded from upscaled crops, " +
-			"because the widest thumbnail this library holds (%dx%d) is narrower than their face crops need. %s"},
+		log.Infof("faces: %d of %d markers (%d%%) need a wider crop than the largest thumbnail this library holds (%dx%d), "+
+			"so this run renders one per file from the original as it goes",
 			coverage.Upscaled, coverage.Total, percentOf(coverage.Upscaled, coverage.Total),
-			plan.ThumbSize.Width, plan.ThumbSize.Height, migrationThumbRemedy(plan.ThumbSizeFix, thumb.SizeCached))
+			plan.ThumbSize.Width, plan.ThumbSize.Height)
 	}
 
-	// Stated whether or not anything was warned about, so the two numbers are never confused: this
-	// one does not move with the thumbnail settings, and no larger cache recovers it.
+	// Stated apart, and whatever the line above says: this is the one part of the shortfall that
+	// no rendition recovers, because the detail is not in the original either.
 	if coverage.SourceTooSmall > 0 {
-		log.Infof("faces: %d of %d markers (%d%%) have originals too small for a full-detail face crop, which no setting recovers",
+		log.Infof("faces: %d of %d markers (%d%%) have originals too small for a full-detail face crop, which nothing recovers",
 			coverage.SourceTooSmall, coverage.Total, percentOf(coverage.SourceTooSmall, coverage.Total))
-	}
-}
-
-// migrationThumbRemedy returns the instruction that removes the upscaling, given the thumbnail
-// size that clears it and the limit in force.
-//
-// The two are told apart because they ask for different commands: a limit that already covers the
-// size means the renditions were never generated, and passing it again would look like advice that
-// does not work. A size nothing clears is stated as such rather than left to be inferred.
-func migrationThumbRemedy(fix, cached int) string {
-	switch {
-	case fix < 1:
-		return "No larger thumbnail would remove this, so the crops are as good as the originals can supply"
-	case fix <= cached:
-		return `Running "photoprism thumbs" first avoids re-running this migration, because these renditions have not been generated yet`
-	default:
-		return fmt.Sprintf(`Running "photoprism --thumb-size=%d thumbs" first avoids re-running this migration, `+
-			`and setting THUMB_SIZE keeps newly indexed files at that size`, fix)
 	}
 }
 

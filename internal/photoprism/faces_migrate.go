@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"image"
+	"math"
 	"sort"
 	"strings"
 
@@ -78,12 +79,9 @@ type FacesMigratePlan struct {
 	// be embedded from upscaled pixels while the detail sits on the same disk.
 	CropCoverage query.FaceMigrationCropCounts
 
-	// ThumbSize is the widest rendition the library actually holds and the crops are therefore
-	// taken from, and ThumbSizeFix the thumbnail size that would remove the upscaling, or 0 when
-	// none is needed or none clears it. Both are measured rather than assumed: a box's height
-	// binds for a landscape picture, and a raised limit writes no rendition on its own.
-	ThumbSize    thumb.Size
-	ThumbSizeFix int
+	// ThumbSize is the widest rendition the library already holds, measured rather than derived
+	// from the configured limit, which writes no rendition for a file that is already indexed.
+	ThumbSize thumb.Size
 }
 
 // FacesMigrateResult summarizes a completed face embedding migration.
@@ -113,6 +111,10 @@ type FacesMigrateResult struct {
 	// an unreliable detector indexed; both of these are human effort, and only they judge a floor.
 	FailedNamed  int
 	FailedManual int
+
+	// RenderedThumbs counts the renditions the run had to render because the cache held none wide
+	// enough for a file's crops, which is what it does instead of embedding from upscaled pixels.
+	RenderedThumbs int
 
 	Unlinked          int
 	Invalid           int
@@ -366,10 +368,10 @@ func (w *Faces) PlanMigration(target string) (result FacesMigratePlan, err error
 
 	// Reported rather than returned: this is the only count in the plan that gates nothing, so a
 	// failure to measure it must not refuse the command an operator reaches for.
-	if size, coverage, fix, coverageErr := w.migrationCropCoverage(target); coverageErr != nil {
+	if size, coverage, coverageErr := w.migrationCropCoverage(target); coverageErr != nil {
 		log.Warnf("faces: %s (check thumbnail coverage)", coverageErr)
 	} else {
-		result.ThumbSize, result.CropCoverage, result.ThumbSizeFix = size, coverage, fix
+		result.ThumbSize, result.CropCoverage = size, coverage
 	}
 
 	return result, nil
@@ -427,70 +429,165 @@ func thumbSizeGenerated(size thumb.Size, files []query.FaceMigrationSampleFile, 
 	return checked > 0 && missing*10 <= checked
 }
 
-// migrationCropWidth returns the source width a marker's crop is requested at, which is the
-// model's own input geometry where it warps onto a template, and the box crop otherwise.
+// migrationCropWidth returns the widest source a marker's crop may be requested at.
 //
-// The path this measures is the one nearly every marker takes. A face whose landmarks do not fit
-// the template falls back to a face.CropSize box and so asks for more, but that population is a
-// property of the detector rather than of the thumbnails, and counting the whole library at the
-// fallback's requirement over-reports the shortfall this is used to warn about.
+// The wider of the two the run can ask for: an aligned model warps the landmarks onto its own
+// input geometry, but a face whose landmarks do not fit the template falls back to a face.CropSize
+// box. A rendition rendered for the wider requirement satisfies both, and which of the two a given
+// marker takes is not known until its landmarks have been fitted.
 func migrationCropWidth(target string) int {
-	if model := face.FindEmbeddingModel(target); model != nil && model.Aligned() {
-		if w, _ := model.InputSize(); w > 0 {
-			return w
+	width := face.CropSize.Width
+
+	if model := face.FindEmbeddingModel(target); model != nil {
+		if w, _ := model.InputSize(); w > width {
+			width = w
 		}
 	}
 
-	return face.CropSize.Width
+	return width
 }
 
-// migrationCropCoverage reports the widest rendition the crops are taken from, how much detail it
-// can supply, and the "--thumb-size" that would remove any shortfall.
+// migrationCropSourceWidth returns the widest source these markers ask for, which is what the
+// smallest face among them needs: a rendition that supplies it supplies every larger face too.
+func migrationCropSourceWidth(markers entity.Markers, cropWidth int) int {
+	var required int
+
+	for _, m := range markers {
+		if m.W <= 0 {
+			continue
+		}
+
+		if width := int(math.Ceil(float64(cropWidth) / float64(m.W))); width > required {
+			required = width
+		}
+	}
+
+	return required
+}
+
+// migrationCropThumbSize returns the smallest rendition that can supply a crop of the specified
+// source width from this file, and the one that holds the original at its own resolution when the
+// source is too small for any of them to.
 //
-// Answered before the prompt because it is not recoverable afterwards: a marker embedded from an
-// upscaled crop is indistinguishable from one that was not, so the whole run has to be repeated.
-func (w *Faces) migrationCropCoverage(target string) (widest thumb.Size, counts query.FaceMigrationCropCounts, fix int, err error) {
+// Never wider than that last one, which is also what indexing would have written: a rendition
+// named for a box larger than the picture holds the same pixels under a name nothing else uses.
+func migrationCropThumbSize(file *entity.File, width int) thumb.Name {
+	for _, size := range crop.UsableSizes() {
+		if w, _ := size.Fitted(file.FileWidth, file.FileHeight); w >= width {
+			return size.Name
+		}
+	}
+
+	return thumb.FitBounds(image.Rect(0, 0, file.FileWidth, file.FileHeight)).Name
+}
+
+// cachedCropWidth returns the widest source the renditions already on disk can supply for a file.
+func cachedCropWidth(file *entity.File, thumbPath string) int {
+	var widest int
+
+	for _, size := range crop.UsableSizes() {
+		if !crop.CachedSizeExists(size, file.FileHash, thumbPath) {
+			continue
+		}
+
+		if w, _ := size.Fitted(file.FileWidth, file.FileHeight); w > widest {
+			widest = w
+		}
+	}
+
+	return widest
+}
+
+// cacheMigrationCropThumb renders the rendition this file's markers need when the cache holds none
+// wide enough, and reports whether it asked for one.
+//
+// A crop is taken from a cached rendition, so without this a library indexed at a smaller
+// thumbnail limit is embedded from upscaled pixels while the detail sits in the original on the
+// same disk - and nothing downstream can tell such a vector apart, so the remedy is to run the
+// whole migration again. Rendering one file at a time here costs a decode; pre-generating the
+// whole ladder to avoid it costs the storage and the hours that made operators skip it.
+func (w *Faces) cacheMigrationCropThumb(file *entity.File, markers entity.Markers, cropWidth int) bool {
+	// A file whose dimensions were never recorded is left as it is: which rendition would help
+	// cannot be worked out from it, and the coverage report does not count it either.
+	if w == nil || w.conf == nil || file == nil || file.FileHash == "" || file.FileWidth < 1 || file.FileHeight < 1 {
+		return false
+	}
+
+	required := migrationCropSourceWidth(markers, cropWidth)
+	thumbPath := w.conf.ThumbCachePath()
+
+	if required < 1 {
+		return false
+	}
+
+	size := thumb.Sizes[migrationCropThumbSize(file, required)]
+	want, _ := size.Fitted(file.FileWidth, file.FileHeight)
+
+	// Against what that rendition delivers rather than against what the markers asked for: a face
+	// whose original holds too little detail is at its best there, and comparing with the request
+	// would re-render for it on every run.
+	if want < 1 || cachedCropWidth(file, thumbPath) >= want {
+		return false
+	}
+
+	fileName := ConfigFileName(w.conf, file.FileRoot, file.FileName)
+
+	// Under the hash the index recorded, which is where the crop path looks: rendering through a
+	// media file would hash the bytes again, at the cost of a second full read per file.
+	if _, err := size.FromFile(fileName, file.FileHash, thumbPath, file.FileOrientation); err != nil {
+		// The file is read by the embedding pass a moment later, which reports what it could not
+		// do with it: a marker that keeps or loses its vector is the outcome, not this.
+		log.Debugf("faces: %s (render migration thumbnail)", err)
+		return false
+	}
+
+	return true
+}
+
+// useMigrationThumbSizes lifts the thumbnail size limits for the duration of a migration and
+// returns the function that restores them.
+//
+// The on-demand limit exists because a search results page renders hundreds of thumbnails at once,
+// which saturates a small server. This run has the opposite shape: at most one rendition per file,
+// in a terminal, with indexing held off. Leaving the limit in force would refuse the rendition a
+// crop needs and leave the operator to repeat an hour-long run instead.
+func useMigrationThumbSizes() (restore func()) {
+	cached, onDemand := thumb.SizeCached, thumb.SizeOnDemand
+
+	if sizes := crop.UsableSizes(); len(sizes) > 0 {
+		widest := sizes[len(sizes)-1]
+		thumb.SizeOnDemand = max(thumb.SizeOnDemand, max(widest.Width, widest.Height))
+	}
+
+	return func() {
+		thumb.SizeCached, thumb.SizeOnDemand = cached, onDemand
+	}
+}
+
+// migrationCropCoverage reports the widest rendition the library already holds and how many of the
+// crops it can supply at full detail.
+//
+// A forecast rather than a verdict: the run renders what the cache is missing as it reaches each
+// file, so this states how much of that work is coming, and how much of the shortfall is in the
+// originals instead, where no rendition helps.
+func (w *Faces) migrationCropCoverage(target string) (widest thumb.Size, counts query.FaceMigrationCropCounts, err error) {
 	cropWidth := migrationCropWidth(target)
 
 	sample, err := query.FaceMigrationSampleFiles(facesMigrateThumbSample)
 
 	if err != nil {
-		return widest, counts, 0, err
+		return widest, counts, err
 	}
 
 	widest = w.migrationThumbSize(sample)
 
 	if cropWidth < 1 || widest.Width < 1 {
-		return widest, counts, 0, nil
+		return widest, counts, nil
 	}
 
 	counts, err = query.FaceMigrationCropCoverage(cropWidth, widest.Width, widest.Height)
 
-	if err != nil || counts.Upscaled == 0 {
-		return widest, counts, 0, err
-	}
-
-	// The remedy is measured rather than assumed, because a box does not deliver its own width to
-	// every picture: Fit2560 is 2560x1600, so a 4:3 photo fits to 2133 px and clears less than the
-	// name suggests. Only the markers an original can supply are counted, so a library reaches
-	// zero here even when its own pictures hold too little detail.
-	for _, size := range crop.UsableSizes() {
-		if size.Width <= widest.Width {
-			continue
-		}
-
-		larger, sizeErr := query.FaceMigrationCropCoverage(cropWidth, size.Width, size.Height)
-
-		if sizeErr != nil {
-			return widest, counts, 0, sizeErr
-		} else if larger.Upscaled == 0 {
-			// A size is pre-generated once the limit covers its longer edge, which is the value
-			// the operator passes rather than the name the rendition is known by.
-			return widest, counts, max(size.Width, size.Height), nil
-		}
-	}
-
-	return widest, counts, 0, nil
+	return widest, counts, err
 }
 
 // originalsUnavailable reports whether the originals root is missing or holds nothing, at the cost of
@@ -598,6 +695,9 @@ func (w *Faces) Migrate(ctx context.Context, opt FacesMigrateOptions) (result Fa
 
 // migrate performs the migration itself, once the plan and the embedder are resolved.
 func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder face.Embedder, opt FacesMigrateOptions, result FacesMigrateResult) (FacesMigrateResult, error) {
+	// Here rather than around the lock, so the lift covers exactly the pass that renders crops.
+	defer useMigrationThumbSizes()()
+
 	identities, err := query.FaceMigrationIdentities()
 	if err != nil {
 		return result, err
@@ -646,6 +746,7 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 			result.Retained += fileResult.Retained
 			result.Failed += len(fileResult.Failed)
 			result.Unreadable += fileResult.Unreadable
+			result.RenderedThumbs += fileResult.Rendered
 			result.AttemptedClusterable += fileResult.Attempted
 			result.FailedClusterable += fileResult.Clusterable
 			result.FailedNamed += fileResult.Named
@@ -871,6 +972,8 @@ type faceMigrationFile struct {
 	// Unreadable counts the failed markers this file lost because it could not be read at all,
 	// as distinct from the ones a successful detection did not find again.
 	Unreadable int
+	// Rendered counts the thumbnail this file needed and did not have, which is one at most.
+	Rendered int
 	// Attempted and Clusterable count the markers that cleared both clustering bars: those this
 	// file put at risk, and those it lost. The guard needs both sides of that ratio.
 	Attempted   int
@@ -936,6 +1039,12 @@ func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) 
 		result.Attempted = result.Clusterable
 
 		return result, err
+	}
+
+	// Before either path below, because both select the rendition they crop from by statting the
+	// cache: one that is rendered afterwards is one the run did not use.
+	if w.cacheMigrationCropThumb(file, stale, migrationCropWidth(target)) {
+		result.Rendered = 1
 	}
 
 	var generated map[string]face.Embeddings
