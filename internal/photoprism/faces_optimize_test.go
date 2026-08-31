@@ -77,10 +77,15 @@ func TestMergeGroups(t *testing.T) {
 		assert.Len(t, groups[1], 1)
 	})
 	t.Run("NoneClose", func(t *testing.T) {
-		far := *c
-		far.EmbeddingJSON = face.FixtureEmbeddingAt(base, face.ClusterDist*2.5, 8704).JSON()
+		// Built rather than copied from c: Face.Embedding() caches the decoded vector, so assigning
+		// EmbeddingJSON onto a copy leaves the copy answering with the original's embedding.
+		far := &entity.Face{ID: "F", SubjUID: subjUID, EmbedModel: face.EmbeddingModelName()}
+		far.EmbeddingJSON = face.FixtureEmbeddingAt(base, face.AcceptDist(face.ClusterRadius)+0.05, 8704).JSON()
 
-		groups := mergeGroups(entity.Faces{*a, far})
+		require.Greater(t, a.Embedding().Dist(far.Embedding()), face.AcceptDist(face.ClusterRadius),
+			"the pair has to sit beyond the merge bound for this to test anything")
+
+		groups := mergeGroups(entity.Faces{*a, *far})
 
 		require.Len(t, groups, 2)
 		assert.Len(t, groups[0], 1)

@@ -376,11 +376,11 @@ func TestFace_Mergeable(t *testing.T) {
 
 	anchor := NewFace("js6sg6b1qekk9jx8", SrcManual, face.Embeddings{base}, face.EmbeddingModelName())
 
-	t.Run("WithinClusterDist", func(t *testing.T) {
+	t.Run("WithinTheMergeBound", func(t *testing.T) {
 		// Beyond what either would accept a marker at, since a singleton has no extent and reaches
-		// only MatchDist. Merging says yes anyway, which is the property: the bound is ClusterDist,
-		// not the per-member radius the old criterion read.
-		dist := face.ClusterDist * 0.9
+		// only MatchDist. Merging says yes anyway, which is the property: the bound is what a cluster
+		// may ever accept, not the per-member radius the old criterion read.
+		dist := face.AcceptDist(face.ClusterRadius) * 0.9
 		require.Greater(t, dist, anchor.AcceptDist())
 
 		ok, measured := anchor.Mergeable(clusterAt(dist, 7602))
@@ -388,10 +388,21 @@ func TestFace_Mergeable(t *testing.T) {
 		assert.True(t, ok)
 		assert.InDelta(t, dist, measured, 1e-6)
 	})
-	t.Run("BeyondClusterDist", func(t *testing.T) {
+	t.Run("PastTheLinkDistance", func(t *testing.T) {
+		// The case the bound was widened for: two faces of one person are more often than not
+		// further apart than ClusterDist, and clustering has no say once a person has named them.
 		dist := face.ClusterDist + 0.05
+		require.Less(t, dist, face.AcceptDist(face.ClusterRadius))
 
 		ok, measured := anchor.Mergeable(clusterAt(dist, 7603))
+
+		assert.True(t, ok)
+		assert.InDelta(t, dist, measured, 1e-6)
+	})
+	t.Run("BeyondTheMergeBound", func(t *testing.T) {
+		dist := face.AcceptDist(face.ClusterRadius) + 0.05
+
+		ok, measured := anchor.Mergeable(clusterAt(dist, 7604))
 
 		assert.False(t, ok)
 		assert.InDelta(t, dist, measured, 1e-6)
@@ -399,7 +410,7 @@ func TestFace_Mergeable(t *testing.T) {
 	t.Run("Symmetric", func(t *testing.T) {
 		// The stored radii differ by two orders of magnitude, which under a predicate reading the
 		// anchor's own extent is enough to decide the pair one way in each direction.
-		near, far := clusterAt(face.ClusterDist*0.5, 7604), clusterAt(face.ClusterDist*0.95, 7605)
+		near, far := clusterAt(face.ClusterDist*0.5, 7605), clusterAt(face.ClusterDist*0.95, 7606)
 		near.SampleRadius, far.SampleRadius = 0.01, face.ClusterRadius
 
 		forward, forwardDist := near.Mergeable(far)

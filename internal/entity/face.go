@@ -254,8 +254,9 @@ func (m *Face) Match(embeddings face.Embeddings, model face.ModelName) (match bo
 // Mergeable reports whether one midpoint can stand for this cluster and the given one, and returns
 // the distance between them.
 //
-// Bounded by ClusterDist rather than by Match, which reads this cluster's own extent and collision
-// radius and so answers differently depending on which of the two is asked.
+// Bounded by what a cluster may ever accept - the widest radius one may hold plus MatchDist - rather
+// than by Match, which reads this cluster's own extent and so answers differently depending on which
+// of the two is asked. The bound is a constant for that reason, so the verdict stays symmetric.
 func (m *Face) Mergeable(f *Face) (mergeable bool, dist float64) {
 	dist = -1
 
@@ -278,7 +279,11 @@ func (m *Face) Mergeable(f *Face) (mergeable bool, dist float64) {
 
 	dist = a.Dist(b)
 
-	return dist >= 0 && dist <= face.ClusterDist, dist
+	// Two faces of one person sit further apart than the link distance far more often than not, so
+	// bounding the merge there left hand-labeled clusters waiting indefinitely. The centroid this
+	// builds is still measured from its members and clamped where it is stored, so a merged cluster
+	// cannot reach past what an automatic one of the same width already reaches.
+	return dist >= 0 && dist <= face.AcceptDist(face.ClusterRadius), dist
 }
 
 // ResolveCollision resolves a collision with a different subject's face.
