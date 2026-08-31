@@ -1373,9 +1373,12 @@ var Flags = CliFlags{
 		Flag: &cli.IntFlag{
 			Name:    "face-size-retry",
 			Usage:   "minimum size of faces in `PIXELS` when a picture would otherwise have none, -1 to disable",
-			Value:   face.RetrySizeThreshold,
 			EnvVars: EnvVars("FACE_SIZE_RETRY"),
-		}}, {
+		},
+		// No Value, or the option would be non-zero on every start and FaceSizeRetry would never
+		// reach its derivation: the floor follows what the thumbnail settings let a crop reach.
+		DocDefault: fmt.Sprintf("%d (%d at a thumb-size of 1920 or less, off at 720)",
+			face.RetrySizeThreshold, face.RetrySizeThresholdLimited)}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-score",
 			Usage:   "minimum face `QUALITY` score (1-100), replacing the detector's own calibrated cutoff, -1 disables the check",

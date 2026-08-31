@@ -107,6 +107,10 @@ var (
 	// only when the first finds nothing. Crowd photographs reduce every face below SizeThreshold,
 	// so without it a frame full of people is indexed as containing none.
 	RetrySizeThreshold = 10
+	// RetrySizeThresholdLimited is the second-pass floor where the thumbnail cache cannot supply a
+	// crop much wider than the detection thumbnail, so a smaller face has no rendition to be
+	// embedded from and is detected only to stay unrecognizable.
+	RetrySizeThresholdLimited = 20
 	// MinSizeThreshold is the smallest configurable face size. It is where the detectors stop
 	// being trained rather than a policy choice: YuNet states a lower bound of about ten pixels,
 	// so a smaller setting would ask for faces no model in the registry can find.

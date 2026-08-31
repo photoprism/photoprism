@@ -1766,6 +1766,11 @@ func TestConfig_FaceSize(t *testing.T) {
 
 func TestConfig_FaceSizeRetry(t *testing.T) {
 	c := NewConfig(CliTestContext())
+
+	// Above what the derivation bounds, so these cases turn on the option rather than on the
+	// thumbnail configuration, which TestConfig_faceSizeRetryDefault covers on its own.
+	c.options.ThumbSize = 4096
+
 	assert.Equal(t, face.RetrySizeThreshold, c.FaceSizeRetry())
 	t.Run("Disabled", func(t *testing.T) {
 		c.options.FaceSizeRetry = -1
@@ -1788,8 +1793,73 @@ func TestConfig_FaceSizeRetry(t *testing.T) {
 		c.options.FaceSizeRetry = 40
 		assert.Equal(t, 25, c.FaceSizeRetry())
 	})
+	t.Run("DerivedFromTheThumbnailLimit", func(t *testing.T) {
+		// The option is unset here, so the floor follows what a crop can be taken from.
+		c.options.FaceSize = 0
+		c.options.FaceSizeRetry = 0
+		c.options.ThumbSize = 1920
+
+		assert.Equal(t, face.RetrySizeThresholdLimited, c.FaceSizeRetry())
+	})
+	t.Run("ExplicitValueStands", func(t *testing.T) {
+		// An operator who asked for the smallest faces gets them, whatever the cache holds.
+		c.options.ThumbSize = 720
+		c.options.FaceSizeRetry = 10
+
+		assert.Equal(t, 10, c.FaceSizeRetry())
+	})
+
 	c.options.FaceSize = 0
 	c.options.FaceSizeRetry = 0
+	c.options.ThumbSize = 0
+}
+
+// TestConfig_faceSizeRetryDefault covers the floor derived from the thumbnail configuration. The
+// second pass finds the smallest faces in the library, and where the cache cannot offer a crop
+// wider than the detection thumbnail they are detected only to stay unrecognizable.
+func TestConfig_faceSizeRetryDefault(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	t.Run("OnDemandRendering", func(t *testing.T) {
+		// Consent to render what is missing, so the sizes pre-generated so far bound nothing.
+		c.options.ThumbUncached = true
+		c.options.ThumbSize = 720
+		defer func() { c.options.ThumbUncached = false }()
+
+		assert.Equal(t, face.RetrySizeThreshold, c.faceSizeRetryDefault())
+	})
+	t.Run("SmallestCache", func(t *testing.T) {
+		c.options.ThumbSize = 720
+
+		assert.Zero(t, c.faceSizeRetryDefault())
+	})
+	t.Run("LimitedCache", func(t *testing.T) {
+		c.options.ThumbSize = 1920
+
+		assert.Equal(t, face.RetrySizeThresholdLimited, c.faceSizeRetryDefault())
+	})
+	t.Run("LargeCache", func(t *testing.T) {
+		c.options.ThumbSize = 4096
+
+		assert.Equal(t, face.RetrySizeThreshold, c.faceSizeRetryDefault())
+	})
+	t.Run("NilConfig", func(t *testing.T) {
+		assert.Equal(t, face.RetrySizeThreshold, (*Config)(nil).faceSizeRetryDefault())
+	})
+
+	c.options.ThumbSize = 0
+}
+
+// TestConfig_FaceSizeRetryThroughTheFlagLayer pins that the derivation is reachable at all: a flag
+// Value would make the option non-zero on every start and the getter would never consult it.
+func TestConfig_FaceSizeRetryThroughTheFlagLayer(t *testing.T) {
+	ctx := cliContextWithFlagDefaults(t)
+	c := &Config{cliCtx: ctx, options: NewOptions(ctx)}
+
+	require.Zero(t, c.options.FaceSizeRetry, "an unset option must stay zero to mean derive it")
+	require.Equal(t, 1920, c.options.ThumbSize, "the shipped thumbnail limit decides the default below")
+
+	assert.Equal(t, face.RetrySizeThresholdLimited, c.FaceSizeRetry())
 }
 
 func TestConfig_FaceScore(t *testing.T) {

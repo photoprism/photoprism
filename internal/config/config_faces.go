@@ -14,6 +14,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -322,10 +323,11 @@ func (c *Config) FaceSize() int {
 }
 
 // FaceSizeRetry returns the face size threshold for the second detection pass, which runs only
-// when the first found no face at all. A negative value disables it, and zero selects the default.
+// when the first found no face at all. A negative value disables it, and zero derives one from the
+// thumbnail configuration.
 //
-// Zero has to mean the default, or a configuration that never set the option would turn the
-// fallback off. The result never exceeds the ordinary threshold, which could only find fewer.
+// Zero has to mean the derived default, or a configuration that never set the option would turn
+// the fallback off. The result never exceeds the ordinary threshold, which could only find fewer.
 func (c *Config) FaceSizeRetry() int {
 	size := c.options.FaceSizeRetry
 
@@ -333,10 +335,37 @@ func (c *Config) FaceSizeRetry() int {
 	case size < 0:
 		return 0
 	case size == 0 || size > face.SizeThresholdDefault*10:
-		size = face.RetrySizeThreshold
+		size = c.faceSizeRetryDefault()
 	}
 
 	return min(size, c.FaceSize())
+}
+
+// faceSizeRetryDefault returns the second-pass floor derived from the detail the thumbnails can
+// supply, which is what decides whether a face this pass finds can be recognized at all.
+//
+// A crop is taken from a pre-generated rendition, so where the cache offers none wider than the
+// detection thumbnail, the smallest faces are detected only to stay unrecognizable: they reach
+// neither the model's template nor the clustering bar, however long the library runs. A default
+// that keeps producing them contradicts what the operator configured, so it follows that setting
+// instead. An explicit FACE_SIZE_RETRY still stands, in either direction.
+func (c *Config) faceSizeRetryDefault() int {
+	// On-demand rendering is the operator's consent to render what is missing, so what was
+	// pre-generated does not bound what a crop can reach.
+	if c == nil || c.ThumbUncached() {
+		return face.RetrySizeThreshold
+	}
+
+	switch {
+	case c.ThumbSizePrecached() <= thumb.Sizes[thumb.Fit720].Width:
+		// The crop cannot exceed the thumbnail the detection ran on, so nothing this pass finds
+		// can be embedded from more pixels than it was found in.
+		return 0
+	case c.ThumbSizePrecached() <= thumb.Sizes[thumb.Fit1920].Width:
+		return face.RetrySizeThresholdLimited
+	}
+
+	return face.RetrySizeThreshold
 }
 
 // FaceScore returns the configured minimum detection score on the 0-100 scale, zero when each
