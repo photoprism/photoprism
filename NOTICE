@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2026-08-28
+Date generated: 2026-08-31
 
 ================================================================================
 
@@ -5190,8 +5190,8 @@ the full license text.
 --------------------------------------------------------------------------------
 
 Package: github.com/montanaflynn/stats
-Version: v0.12.4
-License: MIT (https://github.com/montanaflynn/stats/blob/v0.12.4/LICENSE)
+Version: v0.12.5
+License: MIT (https://github.com/montanaflynn/stats/blob/v0.12.5/LICENSE)
 
 The MIT License (MIT)
 
