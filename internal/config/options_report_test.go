@@ -66,3 +66,19 @@ func TestOptions_ReportFrontendUriVisibility(t *testing.T) {
 		assert.True(t, hasFrontendUri(rows))
 	})
 }
+
+// TestOptionsReportOmitsDeprecated keeps the generated YAML reference from offering an option
+// that still works but is no longer the way to configure anything.
+func TestOptionsReportOmitsDeprecated(t *testing.T) {
+	rows, _ := NewOptions(nil).Report()
+
+	names := make([]string, 0, len(rows))
+	for _, row := range rows {
+		names = append(names, row[0])
+	}
+
+	assert.Contains(t, names, "FaceDetector")
+	assert.Contains(t, names, "FaceModel")
+	assert.NotContains(t, names, "FaceEngine")
+	assert.NotContains(t, names, "FaceEngineThreads")
+}

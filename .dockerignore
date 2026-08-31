@@ -27,6 +27,7 @@
 /specs/
 /docs/
 /bin/
+/i
 
 # Docker configuration files:
 .dockerignore
@@ -93,8 +94,10 @@ Thumbs.db
 .glide
 /tmp/
 /internal/tmp/
+/internal/zz*
 *.override.md
 /AGENTS_*
 /REPOS.md
 join_token
 client_secret
+zz_*.go

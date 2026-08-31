@@ -110,12 +110,26 @@ func TestFile_AddFace_UpgradesEmbeddinglessMarker(t *testing.T) {
 	require.NoError(t, xmpMarker.Create())
 	require.Empty(t, xmpMarker.EmbeddingsJSON)
 
-	// A later detection pass finds a real face overlapping the XMP marker.
+	// A later detection pass finds a real face overlapping the XMP marker. The detector
+	// records which model produced the vector, which is what the upgraded row must store.
 	f := face.Face{
 		Rows: 1000, Cols: 1000, Score: 100,
-		Area:       face.Area{Name: "face", Row: 385, Col: 486, Scale: 356},
-		Embeddings: face.Embeddings{testEmbeddings[0]},
+		Area:        face.Area{Name: "face", Row: 385, Col: 486, Scale: 356},
+		DetectModel: face.EngineONNX,
+		EmbedModel:  face.ModelFaceNet,
+		Embeddings:  face.Embeddings{testEmbeddings[0]},
 	}
+
+	restoreModel := face.ConfiguredModel()
+
+	t.Cleanup(func() {
+		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restoreModel, Model: face.FindEmbeddingModel(restoreModel)})
+	})
+
+	require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
+		Name:  face.ModelFaceNet,
+		Model: face.FindEmbeddingModel(face.ModelFaceNet),
+	}))
 
 	file.markers = nil // force reload from DB
 	file.AddFace(f, "")
@@ -124,7 +138,52 @@ func TestFile_AddFace_UpgradesEmbeddinglessMarker(t *testing.T) {
 	require.NoError(t, err)
 	require.Len(t, saved, 1, "must upgrade in place, not create a duplicate")
 	assert.NotEmpty(t, saved[0].EmbeddingsJSON, "embedding-less XMP marker must gain the detected embedding")
+	assert.Equal(t, face.ModelFaceNet, saved[0].EmbedModel, "the upgraded row must record the model that produced the vector")
+	assert.Equal(t, face.EngineONNX, saved[0].DetectModel, "the upgraded row must record the detector that produced the crop")
 	assert.Equal(t, "Alice", saved[0].MarkerName, "XMP name must be preserved")
+}
+
+func TestFile_AddFace_RecordsProducerModel(t *testing.T) {
+	photo := Photo{PhotoUID: rnd.GenerateUID('p'), PhotoName: "xmp-addface3", PhotoType: MediaImage}
+	require.NoError(t, photo.Save())
+	file := &File{
+		PhotoID:     photo.ID,
+		PhotoUID:    photo.PhotoUID,
+		FileUID:     rnd.GenerateUID('f'),
+		FileHash:    "adface00000000000000000000000000000000a3",
+		FileName:    "xmp-addface3/a3.jpg",
+		FileRoot:    RootOriginals,
+		FilePrimary: true,
+		FileType:    "jpg",
+	}
+	require.NoError(t, file.Create())
+
+	restoreModel := face.ConfiguredModel()
+
+	t.Cleanup(func() {
+		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restoreModel, Model: face.FindEmbeddingModel(restoreModel)})
+	})
+
+	// The configured model deliberately differs from the one that produced the vector.
+	require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
+		Name:  face.ModelFaceNet,
+		Model: face.FindEmbeddingModel(face.ModelFaceNet),
+	}))
+
+	f := face.Face{
+		Rows: 1000, Cols: 1000, Score: 100,
+		Area:        face.Area{Name: "face", Row: 385, Col: 486, Scale: 356},
+		DetectModel: face.EngineONNX,
+		EmbedModel:  face.ModelArcFaceR50,
+		Embeddings:  face.Embeddings{testEmbeddings[0]},
+	}
+
+	file.AddFace(f, "")
+
+	added := file.Markers()
+	require.Len(t, *added, 1)
+	assert.Equal(t, face.ModelArcFaceR50, (*added)[0].EmbedModel, "provenance must come from the producer, not the configuration")
+	assert.Equal(t, face.EngineONNX, (*added)[0].DetectModel, "the detector that produced the crop is recorded beside the embedding model")
 }
 
 func TestFile_AddFace_DoesNotResurrectRejected(t *testing.T) {
@@ -164,11 +223,9 @@ func TestFile_AddFace_DoesNotResurrectRejected(t *testing.T) {
 }
 
 func TestMarker_SetFace_XmpNotShared(t *testing.T) {
-	// SetFace propagates a marker's subject onto the shared Face (via
-	// Face.SetSubjectUID) for clustering name sources such as SrcManual, but must
-	// NOT for SrcXmp: an imported XMP name labels only its own marker, so there is
-	// no XMP-driven clustering in v1. SetSubjectUID mutates the passed Face's
-	// SubjUID in memory, so an unchanged f.SubjUID proves propagation was gated.
+	// SetFace propagates a marker's subject onto the shared Face for clustering name sources such
+	// as SrcManual, but must not for SrcXmp: an imported XMP name labels only its own marker.
+	// SetSubjectUID mutates the passed Face in memory, so an unchanged SubjUID proves it was gated.
 	setup := func(t *testing.T, subjSrc, hash, person string) (*Marker, *Face, string) {
 		photo := Photo{PhotoUID: rnd.GenerateUID('p'), PhotoName: "xmp-setface-" + subjSrc, PhotoType: MediaImage}
 		require.NoError(t, photo.Save())
@@ -192,7 +249,7 @@ func TestMarker_SetFace_XmpNotShared(t *testing.T) {
 		m := NewMarker(file, cropArea1, subj.SubjUID, SrcImage, MarkerFace, 100, 100)
 		require.NotNil(t, m)
 		m.SubjSrc = subjSrc
-		m.SetEmbeddings(face.Embeddings{testEmbeddings[0]})
+		m.SetEmbeddings(face.Embeddings{testEmbeddings[0]}, face.EmbeddingModelName(), face.EngineONNX)
 		require.NoError(t, m.Create())
 
 		// A subjectless shared face to observe whether the marker's subject is

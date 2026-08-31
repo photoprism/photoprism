@@ -1,10 +1,12 @@
 package entity
 
 import (
+	"math"
 	"testing"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/pkg/rnd"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -17,40 +19,102 @@ func TestFace_TableName(t *testing.T) {
 
 func TestFace_Match(t *testing.T) {
 	t.Run("Num1000003Four", func(t *testing.T) {
+		// The fixture carries a radius from an earlier calibration, so the clamp on read
+		// is what keeps it from widening the gate to the stored 2.
 		m := FaceFixtures.Get("joe-biden")
-		match, dist := m.Match(MarkerFixtures.Pointer("1000003-4").Embeddings())
+		match, dist := m.Match(MarkerFixtures.Pointer("1000003-4").Embeddings(), face.EmbeddingModelName())
 
-		assert.True(t, match)
-		assert.Greater(t, dist, 1.31)
-		assert.Less(t, dist, 1.32)
+		assert.False(t, match)
+		assert.Greater(t, dist, m.AcceptDist())
+		assert.InDelta(t, face.AcceptDist(face.ClusterRadius), m.AcceptDist(), 1e-9)
 	})
 	t.Run("Num1000003Six", func(t *testing.T) {
+		// Another person's marker, so it is beyond anything a configuration can accept.
 		m := FaceFixtures.Get("joe-biden")
-		match, dist := m.Match(MarkerFixtures.Pointer("1000003-6").Embeddings())
+		match, dist := m.Match(MarkerFixtures.Pointer("1000003-6").Embeddings(), face.EmbeddingModelName())
+
+		assert.False(t, match)
+		assert.Greater(t, dist, float64(face.ConfigDistMax))
+	})
+	t.Run("ClusterRadiusRaised", func(t *testing.T) {
+		// A wider radius reaches the stored row without rewriting it, which is the point
+		// of clamping against the live value instead of trusting the column.
+		m := FaceFixtures.Get("joe-biden")
+		_, dist := m.Match(MarkerFixtures.Pointer("1000003-4").Embeddings(), face.EmbeddingModelName())
+		require.Greater(t, dist, m.AcceptDist())
+
+		restore := face.ClusterRadius
+		t.Cleanup(func() { face.ClusterRadius = restore })
+		face.ClusterRadius = dist - face.MatchDist + face.Epsilon
+
+		match, raised := m.Match(MarkerFixtures.Pointer("1000003-4").Embeddings(), face.EmbeddingModelName())
 
 		assert.True(t, match)
-		assert.Greater(t, dist, 1.27)
-		assert.Less(t, dist, 1.28)
+		assert.InDelta(t, dist, raised, 1e-9)
 	})
 	t.Run("LenEmbeddingsEqualZero", func(t *testing.T) {
 		m := FaceFixtures.Get("joe-biden")
-		match, dist := m.Match(face.Embeddings{})
+		match, dist := m.Match(face.Embeddings{}, face.EmbeddingModelName())
 
 		assert.False(t, match)
 		assert.Equal(t, dist, float64(-1))
 	})
 	t.Run("LenEfacEmbeddingsEqualZero", func(t *testing.T) {
-		m := NewFace("12345", SrcAuto, face.Embeddings{})
-		match, dist := m.Match(MarkerFixtures.Pointer("1000003-6").Embeddings())
+		m := NewFace("12345", SrcAuto, face.Embeddings{}, face.EmbeddingModelName())
+		match, dist := m.Match(MarkerFixtures.Pointer("1000003-6").Embeddings(), face.EmbeddingModelName())
 
 		assert.False(t, match)
 		assert.Equal(t, dist, float64(-1))
 	})
+	t.Run("OrderIndependentWithIncomparableVector", func(t *testing.T) {
+		// A vector of another width yields -1, which used to win the minimum over every
+		// real distance, so the same set matched or did not depending on its order.
+		m := NewFace("", SrcAuto, face.Embeddings{face.RandomEmbedding()}, face.EmbeddingModelName())
+		require.NotNil(t, m)
+
+		near := m.Embedding()
+		short := face.Embedding{0.1, 0.2}
+
+		okShortFirst, distShortFirst := m.Match(face.Embeddings{short, near}, face.EmbeddingModelName())
+		okNearFirst, distNearFirst := m.Match(face.Embeddings{near, short}, face.EmbeddingModelName())
+
+		assert.Equal(t, okNearFirst, okShortFirst)
+		assert.InDelta(t, distNearFirst, distShortFirst, 1e-9)
+		assert.True(t, okShortFirst)
+	})
 	t.Run("JaneDoeNoMatch", func(t *testing.T) {
 		m := FaceFixtures.Get("jane-doe")
-		match, _ := m.Match(MarkerFixtures.Pointer("1000003-5").Embeddings())
+		match, _ := m.Match(MarkerFixtures.Pointer("1000003-5").Embeddings(), face.EmbeddingModelName())
 
 		assert.False(t, match)
+	})
+	t.Run("ClusterWithoutMagnitude", func(t *testing.T) {
+		// Such a cluster is 1 away from every unit embedding, so it would accept whatever a
+		// model reaching past 1 compares with it.
+		m := NewFace("", SrcAuto, face.Embeddings{face.RandomEmbedding()}, face.EmbeddingModelName())
+		require.NotNil(t, m)
+
+		m.EmbeddingJSON = make(face.Embedding, len(m.Embedding())).JSON()
+		m.embedding = nil
+
+		match, dist := m.Match(face.Embeddings{face.RandomEmbedding()}, face.EmbeddingModelName())
+
+		assert.False(t, match)
+		assert.Equal(t, float64(-1), dist)
+	})
+	t.Run("NonFiniteVector", func(t *testing.T) {
+		// A NaN distance is below every threshold it is compared with, so a corrupt vector
+		// would match any cluster and be written to markers.face_dist as the best result.
+		m := NewFace("", SrcAuto, face.Embeddings{face.RandomEmbedding()}, face.EmbeddingModelName())
+		require.NotNil(t, m)
+
+		nan := make(face.Embedding, len(m.Embedding()))
+		nan[0] = math.NaN()
+
+		match, dist := m.Match(face.Embeddings{nan}, face.EmbeddingModelName())
+
+		assert.False(t, match)
+		assert.Equal(t, float64(-1), dist)
 	})
 }
 
@@ -58,10 +122,33 @@ func TestFace_ResolveCollision(t *testing.T) {
 	t.Run("Collision", func(t *testing.T) {
 		m := FaceFixtures.Get("joe-biden")
 
+		// Resolving a collision narrows the cluster and revises what it holds, so the row
+		// goes back to what the fixture says before another test reads it.
+		t.Cleanup(func() {
+			f := FaceFixtures.Get("joe-biden")
+			assert.NoError(t, m.Updates(Values{"collisions": f.Collisions, "collision_radius": f.CollisionRadius}))
+		})
+
+		far := MarkerFixtures.Pointer("1000003-4").Embeddings()
+		farDist := far.Dist(m.Embedding())
+
+		// The nearer collision has to stay outside the marker this cluster holds, or
+		// revising its matches unlinks that marker and leaves the cluster an orphan.
+		nearDist := 0.5 * face.AcceptDist(m.SampleRadius)
+		near := face.Embeddings{face.FixtureEmbeddingAt(m.Embedding(), nearDist, 9001)}
+		require.Greater(t, farDist, nearDist)
+		require.Greater(t, nearDist, MarkerFixtures.Pointer("ms6sg6b14ahkyd24").Embeddings().Dist(m.Embedding()))
+
+		// A collision is only reported for an embedding the cluster still accepts, and the
+		// farther of the two sits outside what the shipped radius allows.
+		restore := face.ClusterRadius
+		t.Cleanup(func() { face.ClusterRadius = restore })
+		face.ClusterRadius = farDist - face.MatchDist + face.Epsilon
+
 		assert.Zero(t, m.Collisions)
 		assert.Zero(t, m.CollisionRadius)
 
-		if reported, err := m.ResolveCollision(MarkerFixtures.Pointer("1000003-4").Embeddings()); err != nil {
+		if reported, err := m.ResolveCollision(far, face.EmbeddingModelName()); err != nil {
 			t.Fatal(err)
 		} else {
 			assert.True(t, reported)
@@ -69,41 +156,31 @@ func TestFace_ResolveCollision(t *testing.T) {
 
 		// Number of collisions must have increased by one.
 		assert.Equal(t, 1, m.Collisions)
+		assert.InDelta(t, farDist-face.Epsilon, m.CollisionRadius, 1e-9)
 
-		// Actual distance is ~1.314040
-		assert.Greater(t, m.CollisionRadius, 1.2)
-		assert.Less(t, m.CollisionRadius, 1.314)
-
-		if reported, err := m.ResolveCollision(MarkerFixtures.Pointer("1000003-6").Embeddings()); err != nil {
+		if reported, err := m.ResolveCollision(near, face.EmbeddingModelName()); err != nil {
 			t.Fatal(err)
 		} else {
 			assert.True(t, reported)
 		}
 
-		// Number of collisions must not have increased.
+		// A nearer collision narrows the radius rather than widening it.
 		assert.Equal(t, 2, m.Collisions)
-
-		// Actual distance is ~1.272604
-		assert.Greater(t, m.CollisionRadius, 1.1)
-		assert.Less(t, m.CollisionRadius, 1.272)
+		assert.InDelta(t, nearDist-face.Epsilon, m.CollisionRadius, 1e-9)
+		assert.Less(t, m.CollisionRadius, farDist-face.Epsilon)
 	})
 	t.Run("SubjectIdEmpty", func(t *testing.T) {
-		childrenEmbeddings := make(face.Embeddings, len(face.Children))
-		for i := range face.Children {
-			childrenEmbeddings[i] = face.Children[i].Embedding
-		}
-
-		m := NewFace("", SrcAuto, childrenEmbeddings)
-		if reported, err := m.ResolveCollision(MarkerFixtures.Pointer("1000003-4").Embeddings()); err != nil {
+		m := NewFace("", SrcAuto, face.RandomEmbeddings(2, face.RegularFace), face.EmbeddingModelName())
+		if reported, err := m.ResolveCollision(MarkerFixtures.Pointer("1000003-4").Embeddings(), face.EmbeddingModelName()); err != nil {
 			t.Fatal(err)
 		} else {
 			assert.False(t, reported)
 		}
 	})
 	t.Run("InvalidFaceId", func(t *testing.T) {
-		m := NewFace("123", SrcAuto, face.Embeddings{})
+		m := NewFace("123", SrcAuto, face.Embeddings{}, face.EmbeddingModelName())
 		m.ID = ""
-		if reported, err := m.ResolveCollision(MarkerFixtures.Pointer("1000003-4").Embeddings()); err == nil {
+		if reported, err := m.ResolveCollision(MarkerFixtures.Pointer("1000003-4").Embeddings(), face.EmbeddingModelName()); err == nil {
 			t.Fatal(err)
 		} else {
 			assert.False(t, reported)
@@ -111,10 +188,10 @@ func TestFace_ResolveCollision(t *testing.T) {
 		}
 	})
 	t.Run("EmbeddingEmpty", func(t *testing.T) {
-		m := NewFace("123", SrcAuto, face.Embeddings{})
+		m := NewFace("123", SrcAuto, face.Embeddings{}, face.EmbeddingModelName())
 		m.EmbeddingJSON = []byte("")
 		m.ID = "foo"
-		if reported, err := m.ResolveCollision(MarkerFixtures.Pointer("1000003-4").Embeddings()); err == nil {
+		if reported, err := m.ResolveCollision(MarkerFixtures.Pointer("1000003-4").Embeddings(), face.EmbeddingModelName()); err == nil {
 			t.Fatal(err)
 		} else {
 			assert.False(t, reported)
@@ -139,7 +216,7 @@ func TestNewFace(t *testing.T) {
 		marker := MarkerFixtures.Get("1000003-4")
 		e := marker.Embeddings()
 
-		r := NewFace("123", SrcAuto, e)
+		r := NewFace("123", SrcAuto, e, face.EmbeddingModelName())
 		assert.Equal(t, "", r.FaceSrc)
 		assert.Equal(t, "123", r.SubjUID)
 	})
@@ -157,13 +234,15 @@ func TestFace_MatchId(t *testing.T) {
 	})
 }
 
-func TestFace_Unsuitable(t *testing.T) {
-	t.Run("True", func(t *testing.T) {
+func TestFace_SkipMatching(t *testing.T) {
+	t.Run("Regular", func(t *testing.T) {
 		m := FaceFixtures.Get("joe-biden")
 		assert.False(t, m.SkipMatching())
 	})
-	t.Run("False", func(t *testing.T) {
-		m := NewFace("", SrcImage, face.Embeddings{{-0.00959064718335867, 0.03787063807249069, -0.0030881548300385475, 0.02789853885769844, 0.017454572021961212, 0.0396987721323967, -0.03091704286634922, 0.005318029318004847, 0.021617550402879715, -0.08214963972568512, -0.003952134400606155, 0.0269720908254385, 0.048880551010370255, -0.03537372127175331, -0.042236171662807465, 0.021553633734583855, 0.03937383368611336, 0.01815507560968399, 0.08373168110847473, -0.11838400363922119, -0.038254253566265106, -0.04993032291531563, 0.07148619741201401, 0.006384310312569141, 0.05344310402870178, -0.027579499408602715, 0.021648988127708435, -0.07013172656297684, -0.06400937587022781, 0.10622639954090118, -0.01507984846830368, -0.02844894863665104, -0.013048898428678513, -0.03571505844593048, -0.022063886746764183, 0.022826166823506355, 0.01703103445470333, 0.00679031852632761, -0.09583312273025513, 0.03446732088923454, -0.045221585780382156, 0.03292521834373474, -0.012820744886994362, 0.06122862547636032, 0.01973198726773262, -0.013975882902741432, 0.027514882385730743, 0.12478502094745636, -0.09630053490400314, -0.008597812615334988, -0.019534612074494362, 0.03927983343601227, 0.04311678186058998, 0.025297729298472404, -0.035719674080610275, 0.05421024188399315, 0.07541341334581375, 0.040334682911634445, -0.0632546916604042, -0.004164006095379591, 0.027950556948781013, 0.017827920615673065, 0.02774866297841072, -0.025094853714108467, 0.00012262807285878807, 0.04165732488036156, -0.03155842795968056, 0.03801475837826729, 0.0031508952379226685, -0.011753040365874767, 0.06262513995170593, 0.05895991623401642, -0.02384188584983349, -0.025149181485176086, -0.016906173899769783, -0.03138834610581398, -0.06759334355592728, 0.018074069172143936, 0.028748946264386177, 0.03350280225276947, 0.001738330232910812, -0.035873714834451675, 0.0050230612978339195, -0.005394259933382273, -0.035111431032419205, 0.005703517701476812, -0.060869812965393066, 0.044046416878700256, 0.05451945215463638, -0.0012109529925510287, 0.04929054155945778, 0.03312966600060463, -0.02503111958503723, -0.0699458047747612, 0.09152142703533173, -0.035196661949157715, -0.02000804804265499, 0.003603762947022915, -0.0549810416996479, 0.041149843484163284, 0.019640415906906128, -0.06913350522518158, -0.08494774252176285, 0.047828249633312225, 0.011485084891319275, 0.11441357433795929, 0.012079037725925446, 0.026444999501109123, 0.008605830371379852, -0.014796323142945766, 0.042191699147224426, 0.0360623262822628, -0.01067506056278944, -0.02117612026631832, -0.0003311904729343951, 0.020912105217576027, 0.02051572874188423, 0.04119933396577835, 0.011461400426924229, 0.02468070574104786, -0.030830683186650276, -0.024522947147488594, 0.07760800421237946, -0.044838037341833115, 0.007875975221395493, 0.03662760183215141, -0.031315844506025314, 0.028968002647161484, -0.007360775955021381, -0.052097514271736145, 0.004892056342214346, 0.0051552411168813705, 0.058972474187612534, -0.05307154729962349, -0.02330617979168892, 0.0560041144490242, -0.06173492223024368, 0.00004632262425730005, 0.007912986911833286, 0.0031768144108355045, -0.08211413770914078, -0.02641596458852291, -0.07240095734596252, -0.04998013749718666, 0.016048355028033257, -0.023686233907938004, 0.08416120707988739, 0.002466161735355854, 0.0017551603959873319, 0.000651281327009201, 0.018105899915099144, -0.05974912270903587, -0.03980677202343941, 0.019075721502304077, 0.0014616637490689754, 0.06682229787111282, 0.02257758192718029, 0.04021807014942169, 0.09144134074449539, 0.020396307110786438, 0.055604636669158936, 0.026022544130682945, -0.03050902672111988, 0.011569516733288765, -0.014519683085381985, 0.0038184933364391327, -0.03115340694785118, 0.029596896842122078, -0.055038318037986755, -0.005584381986409426, -0.015937503427267075, -0.01591162569820881, 0.034234486520290375, 0.010233158245682716, 0.0364360548555851, 0.02957785315811634, 0.038372594863176346, -0.04782934859395027, -0.03462134674191475, -0.0432763509452343, -0.041607096791267395, 0.019871780648827553, -0.026665959507226944, 0.046689242124557495, 0.020541366189718246, 0.03362491726875305, 0.04561452195048332, 0.12613892555236816, 0.02306310087442398, 0.0048497817479074, -0.027223020792007446, -0.0762500986456871, 0.06465625762939453, -0.020680397748947144, -0.02472679689526558, -0.0469549298286438, 0.05494922026991844, 0.011157477274537086, -0.05097919702529907, 0.05126889795064926, 0.03758222982287407, -0.06554574519395828, 0.00288044149056077, 0.014015591703355312, 0.013589163310825825, 0.03634551167488098, 0.0031862170435488224, -0.03541851416230202, -0.011984468437731266, -0.04591989517211914, -0.04950973764061928, 0.014266318641602993, 0.014613134786486626, 0.004269343335181475, 0.0013365329941734672, -0.010044350288808346, 0.025745976716279984, 0.029322613030672073, 0.08641400188207626, 0.00042273724102415144, -0.1199660375714302, -0.11129316687583923, -0.03984867036342621, -0.05681384354829788, 0.009998883120715618, 0.030147377401590347, -0.0286977831274271, -0.0003513149276841432, -0.08627857267856598, -0.023915421217679977, 0.025925707072019577, 0.08490575850009918, 0.031879108399152756, -0.0023629055358469486, 0.0480312779545784, 0.0021763548720628023, 0.020024623721837997, -0.01996619999408722, -0.001396739506162703, -0.026282500475645065, -0.040633674710989, -0.019956767559051514, 0.004316484089940786, -0.031683146953582764, 0.06379353255033493, 0.03608919307589531, 0.008245682343840599, 0.02868475206196308, -0.0009207205730490386, -0.0003780983679462224, 0.02880168706178665, -0.04014896973967552, 0.017292466014623642, 0.049382057040929794, -0.015038374811410904, 0.024192562326788902, 0.03517518192529678, 0.019119804725050926, 0.021942559629678726, 0.07587131857872009, 0.0005678452434949577, -0.04390380531549454, 0.030292486771941185, 0.042298778891563416, -0.06521622836589813, 0.02252770960330963, -0.00466647045686841, -0.024906277656555176, -0.026186272501945496, 0.07858474552631378, -0.05505937710404396, -0.0008577461121603847, 0.00968341063708067, -0.036743391305208206, -0.08478125929832458, -0.025725962594151497, 0.07145383208990097, 0.029407603666186333, -0.0001950680452864617, -0.1292036920785904, 0.02494245208799839, -0.008491290733218193, 0.050918228924274445, -0.011559431441128254, -0.04706485942006111, -0.013783150352537632, 0.009277299977838993, -0.07522283494472504, -0.036186907440423965, -0.06634241342544556, 0.010219116695225239, -0.08408123254776001, -0.014987781643867493, 0.010251465253531933, -0.01592072658240795, -0.035617098212242126, 0.020554568618535995, 0.05061344802379608, 0.0494505874812603, 0.02590356394648552, 0.01528799906373024, -0.00029076842474751174, 0.02353300340473652, 0.0015167297096922994, 0.05400843173265457, 0.04550565034151077, -0.04259566590189934, -0.0060416329652071, -0.00677477428689599, 0.05933074653148651, -0.005193949677050114, 0.014253835193812847, 0.042284123599529266, 0.06695422530174255, 0.04029611125588417, 0.015430709347128868, -0.06947603821754456, 0.0339425727725029, -0.06005615368485451, 0.01404648832976818, 0.06008269265294075, -0.011060234159231186, -0.04977267608046532, 0.05691606178879738, -0.013345426879823208, 0.10078923404216766, 0.08031554520130157, 0.0425117127597332, 0.09008562564849854, 0.04609135910868645, 0.06102297827601433, 0.022890515625476837, -0.03089219331741333, 0.0332498624920845, -0.031279049813747406, -0.009156256914138794, 0.027170570567250252, 0.04901871085166931, 0.07207565009593964, 0.04074881598353386, -0.027857864275574684, -0.025717025622725487, 0.032386474311351776, 0.036552079021930695, -0.055537834763526917, -0.0229702889919281, 0.03349658474326134, 0.03683074936270714, 0.015133108012378216, -0.0632123202085495, -0.030310358852148056, 0.09408748149871826, 0.011012745089828968, -0.10027626156806946, -0.056098587810993195, 0.007266550324857235, 0.09435073286294937, -0.005252359434962273, 0.0414881557226181, -0.07797796279191971, 0.0054626669734716415, -0.027152489870786667, -0.06476820260286331, -0.04554128646850586, -0.020997364073991776, 0.03704288229346275, -0.0041465735994279385, -0.08224689960479736, 0.019587524235248566, 0.05182863399386406, -0.09750733524560928, 0.012806789949536324, 0.014560981653630733, -0.012063717469573021, 0.10477723181247711, 0.04364655539393425, 0.05573931708931923, -0.08249012380838394, 0.002664536237716675, 0.016965137794613838, 0.016157248988747597, -0.07265286147594452, -0.0025825295597314835, -0.011157424189150333, -0.053293049335479736, 0.01613083854317665, 0.003192639909684658, -0.02518875151872635, 0.025411557406187057, -0.04756153002381325, -0.008369989693164825, 0.0018538516014814377, -0.001305201556533575, 0.006403622217476368, 0.020627789199352264, -0.024054545909166336, 0.05217380076646805, 0.0469573549926281, 0.01885838247835636, 0.020833401009440422, -0.04654202610254288, 0.044648706912994385, -0.004453012719750404, -0.021127738058567047, 0.007881376892328262, -0.04722931608557701, -0.009467313066124916, 0.013864696025848389, 0.014279618859291077, 0.01670973189175129, 0.006757605355232954, 0.03243840113282204, -0.08637244999408722, 0.014409483410418034, 0.014930488541722298, -0.021012697368860245, -0.00746690621599555, 0.04036633297801018, 0.0766197144985199, -0.002925584791228175, -0.037694621831178665, 0.01753336563706398, -0.0129204411059618, 0.058751046657562256, -0.003414733335375786, 0.009327893145382404, 0.006946941372007132, 0.036547087132930756, 0.01600072905421257, 0.027991879731416702, -0.024807672947645187, 0.013996168039739132, -0.024033015593886375, 0.020035816356539726, -0.06689176708459854, -0.021769963204860687, 0.019834108650684357, 0.007396597880870104, -0.03514741361141205, -0.038449011743068695, -0.0027228370308876038, -0.060723625123500824, 0.05235403776168823, 0.005773501005023718, 0.022514579817652702, 0.03794749826192856, -0.06979167461395264, -0.0036482769064605236, -0.011913052760064602, -0.01920865662395954, -0.04111270606517792, 0.05357895419001579, -0.023412834852933884, -0.0893779918551445, -0.02306830696761608, -0.03236269950866699, 0.007966117933392525, 0.10357413440942764, 0.02653438411653042, 0.004998756106942892, -0.015604768879711628, -0.022902334108948708, -0.10633908212184906, 0.03903093561530113, 0.05978463217616081, -0.011735391803085804, -0.06194228678941727, 0.03223072364926338, 0.04556537792086601, 0.007720542140305042, 0.039454445242881775, -0.04189905524253845, -0.004674337804317474, -0.01275805663317442, -0.12497187405824661, -0.07940814644098282, 0.023411696776747704, 0.02147858962416649, -0.03503002971410751, 0.016921473667025566, -0.016184881329536438, -0.045962586998939514, 0.08095240592956543, -0.004070675931870937, -0.05266023054718971, 0.13639050722122192, -0.02151007391512394, 0.006739250384271145, 0.03182916343212128, -0.027000118046998978, -0.0030197608284652233, 0.031326163560152054, -0.10159225016832352, -0.06630226224660873, 0.0699416846036911, 0.01672203093767166, -0.04788779094815254, 0.039929479360580444, 0.027769070118665695, 0.01937052048742771, -0.06442618370056152, -0.06701736897230148, 0.039595261216163635, 0.05279085412621498, 0.007269475143402815, 0.06969842314720154, 0.048928432166576385, 0.0164470374584198, -0.014216633513569832, -0.015720434486865997, -0.007112122140824795, -0.10834096372127533}})
+	t.Run("Ambiguous", func(t *testing.T) {
+		// ResolveCollision is the only thing that raises the kind above RegularFace.
+		m := FaceFixtures.Get("joe-biden")
+		m.FaceKind = int(face.AmbiguousFace)
 		assert.True(t, m.SkipMatching())
 	})
 }
@@ -175,45 +254,299 @@ func TestFace_SetEmbeddings(t *testing.T) {
 		m := FaceFixtures.Get("joe-biden")
 		assert.NotEqual(t, e[0][0], m.Embedding()[0])
 
-		err := m.SetEmbeddings(e)
+		err := m.SetEmbeddings(e, face.EmbeddingModelName())
 		if err != nil {
 			t.Fatal(err)
 		}
 		assert.Equal(t, e[0][0], m.Embedding()[0])
 	})
 	t.Run("CapsSampleRadius", func(t *testing.T) {
-		embeddings := make(face.Embeddings, 2)
-		for i := range embeddings {
-			embeddings[i] = make(face.Embedding, len(face.NullEmbedding))
-		}
-		embeddings[0][0] = 1
-		embeddings[1][0] = -1
+		// Far apart but not opposite: an exactly opposite pair averages to a vector with no
+		// magnitude, which SetEmbeddings refuses rather than storing as a cluster.
+		base := face.FixtureEmbedding(4101)
+		embeddings := face.Embeddings{base, face.FixtureEmbeddingAt(base, 1.9, 4102)}
 
 		m := &Face{}
 
-		require.NoError(t, m.SetEmbeddings(embeddings))
+		require.NoError(t, m.SetEmbeddings(embeddings, face.EmbeddingModelName()))
 		require.Equal(t, 2, m.Samples)
 		assert.InDelta(t, face.ClusterRadius, m.SampleRadius, 1e-9)
+	})
+	t.Run("SingleSampleHasNoExtent", func(t *testing.T) {
+		// One embedding is the centroid rather than an average of several, so there is nothing to
+		// measure a spread over. Epsilon is the honest value; a cluster radius would be a width
+		// nothing observed, which is what let a labeled example reach across the library.
+		m := &Face{}
+
+		require.NoError(t, m.SetEmbeddings(face.Embeddings{face.FixtureEmbedding(7301)}, face.EmbeddingModelName()))
+		require.Equal(t, 1, m.Samples)
+		assert.InDelta(t, face.Epsilon, m.SampleRadius, 1e-9)
+	})
+	// Duplicate samples reach the guard as well, so it is not confined to the naming path. Which
+	// counts do is decided by rounding in the mean rather than by the count - here 2 and 4 measure
+	// exactly zero while 3 and 5 do not - so the cases are named individually rather than swept.
+	t.Run("IdenticalSamplesHaveNoExtent", func(t *testing.T) {
+		e := face.FixtureEmbedding(7311)
+
+		for _, samples := range []int{2, 4} {
+			embeddings := make(face.Embeddings, samples)
+			for i := range embeddings {
+				embeddings[i] = e
+			}
+
+			m := &Face{}
+			require.NoError(t, m.SetEmbeddings(embeddings, face.EmbeddingModelName()))
+			require.Equal(t, samples, m.Samples)
+			assert.InDelta(t, face.Epsilon, m.SampleRadius, 1e-9, "%d identical samples", samples)
+		}
+	})
+	// Where the guard stops. A radius is the measured distance plus Epsilon, so samples that merely
+	// sit close record a real extent, and telling that from a tight cluster would take a tolerance.
+	t.Run("NearIdenticalSamplesMeasureAnExtent", func(t *testing.T) {
+		base := face.FixtureEmbedding(7331)
+		m := &Face{}
+
+		require.NoError(t, m.SetEmbeddings(face.Embeddings{base, face.FixtureEmbeddingAt(base, 1e-6, 7332)}, face.EmbeddingModelName()))
+		assert.Greater(t, m.SampleRadius, face.Epsilon)
+		assert.Less(t, m.SampleRadius, face.ClusterRadius)
+	})
+	t.Run("MeasuredRadiusKept", func(t *testing.T) {
+		base := face.FixtureEmbedding(7321)
+		spread := face.ClusterRadius / 2
+		m := &Face{}
+
+		require.NoError(t, m.SetEmbeddings(face.Embeddings{base, face.FixtureEmbeddingAt(base, spread, 7322)}, face.EmbeddingModelName()))
+		require.Equal(t, 2, m.Samples)
+		assert.Greater(t, m.SampleRadius, 0.0)
+		assert.Less(t, m.SampleRadius, face.ClusterRadius)
+	})
+	t.Run("DimensionMismatch", func(t *testing.T) {
+		restore := face.ConfiguredModel()
+
+		t.Cleanup(func() {
+			_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+		})
+
+		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
+			Name:  face.ModelFaceNet,
+			Model: face.FindEmbeddingModel(face.ModelFaceNet),
+		}))
+
+		m := &Face{}
+		err := m.SetEmbeddings(face.Embeddings{make(face.Embedding, 8)}, face.EmbeddingModelName())
+
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), face.ModelFaceNet)
+		assert.Contains(t, err.Error(), "faces migrate")
 	})
 }
 
 func TestFace_Embedding(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
+		// The fixtures are generated for whichever model a run resolves to, so what the
+		// vector has to be is its width, not a particular value.
 		m := FaceFixtures.Get("joe-biden")
 
-		assert.Equal(t, 0.10730543085474682, m.Embedding()[0])
+		assert.Len(t, m.Embedding(), face.ExpectedDims())
+		assert.InDelta(t, 0.0, m.Embedding().Dist(m.Embedding()), 1e-9)
 	})
 	t.Run("EmptyEmbedding", func(t *testing.T) {
-		m := NewFace("12345", SrcAuto, face.Embeddings{})
+		m := NewFace("12345", SrcAuto, face.Embeddings{}, face.EmbeddingModelName())
 		m.EmbeddingJSON = []byte("")
 
 		assert.Empty(t, m.Embedding())
 	})
 	t.Run("InvalidEmbeddingJson", func(t *testing.T) {
-		m := NewFace("12345", SrcAuto, face.Embeddings{})
+		m := NewFace("12345", SrcAuto, face.Embeddings{}, face.EmbeddingModelName())
 		m.EmbeddingJSON = []byte("[false]")
 
 		assert.Equal(t, float64(0), m.Embedding()[0])
+	})
+}
+
+func TestFace_Mergeable(t *testing.T) {
+	base := face.FixtureEmbedding(7601)
+
+	// Each cluster is built from one sample, so any per-member radius they carry is the default
+	// rather than a measurement - which is what the merge criterion must not read.
+	clusterAt := func(dist float64, seed uint64) *Face {
+		return NewFace("js6sg6b1qekk9jx8", SrcManual,
+			face.Embeddings{face.FixtureEmbeddingAt(base, dist, seed)}, face.EmbeddingModelName())
+	}
+
+	anchor := NewFace("js6sg6b1qekk9jx8", SrcManual, face.Embeddings{base}, face.EmbeddingModelName())
+
+	t.Run("WithinTheMergeBound", func(t *testing.T) {
+		// Beyond what either would accept a marker at, since a singleton has no extent and reaches
+		// only MatchDist. Merging says yes anyway, which is the property: the bound is what a cluster
+		// may ever accept, not the per-member radius the old criterion read.
+		dist := face.AcceptDist(face.ClusterRadius) * 0.9
+		require.Greater(t, dist, anchor.AcceptDist())
+
+		ok, measured := anchor.Mergeable(clusterAt(dist, 7602))
+
+		assert.True(t, ok)
+		assert.InDelta(t, dist, measured, 1e-6)
+	})
+	t.Run("PastTheLinkDistance", func(t *testing.T) {
+		// The case the bound was widened for: two faces of one person are more often than not
+		// further apart than ClusterDist, and clustering has no say once a person has named them.
+		dist := face.ClusterDist + 0.05
+		require.Less(t, dist, face.AcceptDist(face.ClusterRadius))
+
+		ok, measured := anchor.Mergeable(clusterAt(dist, 7603))
+
+		assert.True(t, ok)
+		assert.InDelta(t, dist, measured, 1e-6)
+	})
+	t.Run("BeyondTheMergeBound", func(t *testing.T) {
+		dist := face.AcceptDist(face.ClusterRadius) + 0.05
+
+		ok, measured := anchor.Mergeable(clusterAt(dist, 7604))
+
+		assert.False(t, ok)
+		assert.InDelta(t, dist, measured, 1e-6)
+	})
+	t.Run("Symmetric", func(t *testing.T) {
+		// The stored radii differ by two orders of magnitude, which under a predicate reading the
+		// anchor's own extent is enough to decide the pair one way in each direction.
+		near, far := clusterAt(face.ClusterDist*0.5, 7605), clusterAt(face.ClusterDist*0.95, 7606)
+		near.SampleRadius, far.SampleRadius = 0.01, face.ClusterRadius
+
+		forward, forwardDist := near.Mergeable(far)
+		reverse, reverseDist := far.Mergeable(near)
+
+		assert.Equal(t, forward, reverse)
+		assert.InDelta(t, forwardDist, reverseDist, 1e-9)
+	})
+	t.Run("IgnoresCollisionRadius", func(t *testing.T) {
+		// A collision records a stranger nearby, which is a reason to stop matching markers - not
+		// a reason to keep two clusters a person named as the same face apart.
+		other := clusterAt(face.ClusterDist*0.9, 7606)
+		anchor.CollisionRadius = 0.1
+
+		defer func() { anchor.CollisionRadius = 0 }()
+
+		ok, _ := anchor.Mergeable(other)
+		assert.True(t, ok)
+	})
+	t.Run("DifferentEmbeddingSpace", func(t *testing.T) {
+		// Close enough to merge on distance alone, so provenance is the only thing refusing them.
+		a, b := clusterAt(face.ClusterDist*0.1, 7607), clusterAt(face.ClusterDist*0.9, 7608)
+		a.EmbedModel, b.EmbedModel = face.ModelFaceNet, face.ModelSFace
+
+		ok, dist := a.Mergeable(b)
+
+		assert.False(t, ok)
+		assert.Equal(t, float64(-1), dist)
+	})
+	t.Run("Itself", func(t *testing.T) {
+		ok, dist := anchor.Mergeable(anchor)
+
+		assert.False(t, ok)
+		assert.Equal(t, float64(-1), dist)
+	})
+	t.Run("Unsaved", func(t *testing.T) {
+		// A row that was never written has to refuse in both directions, not one.
+		unsaved := clusterAt(face.ClusterDist*0.5, 7609)
+		unsaved.ID = ""
+
+		forward, forwardDist := anchor.Mergeable(unsaved)
+		reverse, reverseDist := unsaved.Mergeable(anchor)
+
+		assert.False(t, forward)
+		assert.Equal(t, forward, reverse)
+		assert.Equal(t, forwardDist, reverseDist)
+	})
+	t.Run("Nil", func(t *testing.T) {
+		ok, dist := anchor.Mergeable(nil)
+
+		assert.False(t, ok)
+		assert.Equal(t, float64(-1), dist)
+	})
+	t.Run("ZeroEmbedding", func(t *testing.T) {
+		// Refused for the same reason Match refuses it, so a stored row cannot slip past.
+		zero := make(face.Embedding, len(base))
+		other := &Face{ID: "ZEROVECTOR", SubjUID: anchor.SubjUID, EmbedModel: anchor.EmbedModel, EmbeddingJSON: zero.JSON()}
+
+		ok, dist := anchor.Mergeable(other)
+
+		assert.False(t, ok)
+		assert.Equal(t, float64(-1), dist)
+	})
+}
+
+func TestFace_InheritCollision(t *testing.T) {
+	// Wide enough that the bounds under test all sit above it, so the extent rule is what decides.
+	const narrow, wide = 0.20, 0.40
+
+	sources := func(radius float64, collisions int) Faces {
+		return Faces{{ID: "SOURCEA"}, {ID: "SOURCEB", CollisionRadius: radius, Collisions: collisions}}
+	}
+
+	t.Run("Inherits", func(t *testing.T) {
+		m := narrowTestFace(t, "uds5ttbeu5yj2sr1", 7701)
+		require.NoError(t, m.InheritCollision(sources(wide, 2)))
+
+		assert.InDelta(t, wide, m.CollisionRadius, 1e-9)
+		assert.Equal(t, 2, m.Collisions)
+		assert.InDelta(t, wide, FindFace(m.ID).CollisionRadius, 1e-9, "and it is persisted")
+	})
+	t.Run("NoneToInherit", func(t *testing.T) {
+		m := narrowTestFace(t, "uds5ttbeu5yj2sr2", 7711)
+		require.NoError(t, m.InheritCollision(Faces{{ID: "SOURCEA"}}))
+
+		assert.Zero(t, m.CollisionRadius)
+		assert.Zero(t, m.Collisions)
+	})
+	t.Run("KeepsTighterExisting", func(t *testing.T) {
+		m := narrowTestFace(t, "uds5ttbeu5yj2sr3", 7721)
+		m.CollisionRadius, m.Collisions = narrow, 5
+
+		require.NoError(t, m.InheritCollision(sources(wide, 2)))
+
+		assert.InDelta(t, narrow, m.CollisionRadius, 1e-9, "inheriting must never widen a bound")
+		assert.Equal(t, 5, m.Collisions)
+	})
+	t.Run("TightensExisting", func(t *testing.T) {
+		m := narrowTestFace(t, "uds5ttbeu5yj2sr4", 7731)
+		m.CollisionRadius, m.Collisions = wide, 1
+
+		require.NoError(t, m.InheritCollision(sources(narrow, 3)))
+
+		assert.InDelta(t, narrow, m.CollisionRadius, 1e-9)
+		assert.Equal(t, 3, m.Collisions)
+	})
+	t.Run("ExistingInactiveIsReplaced", func(t *testing.T) {
+		// At or below CollisionDist nothing enforces the stored radius, so the cluster is
+		// effectively unbounded and taking a real bound is a tightening rather than a widening.
+		m := narrowTestFace(t, "uds5ttbeu5yj2sr6", 7751)
+		m.CollisionRadius, m.Collisions = face.CollisionDist, 4
+
+		require.NoError(t, m.InheritCollision(sources(wide, 2)))
+
+		assert.InDelta(t, wide, m.CollisionRadius, 1e-9)
+		assert.Equal(t, 2, m.Collisions)
+	})
+	t.Run("EqualExistingIsLeftAlone", func(t *testing.T) {
+		// Equality has to count as already-tight, or an identical bound rewrites the row and
+		// replaces the collision count that belongs to it on every merge.
+		m := narrowTestFace(t, "uds5ttbeu5yj2sr7", 7761)
+		m.CollisionRadius, m.Collisions = wide, 5
+
+		require.NoError(t, m.InheritCollision(sources(wide, 2)))
+
+		assert.Equal(t, 5, m.Collisions)
+	})
+	t.Run("DroppedBelowOwnExtent", func(t *testing.T) {
+		// A bound inside the merged cluster's own spread would refuse the members it is made of.
+		m := narrowTestFace(t, "uds5ttbeu5yj2sr5", 7741)
+		require.NoError(t, m.UpdateMatchStats(4, wide))
+		require.Greater(t, m.SampleRadius, narrow)
+
+		require.NoError(t, m.InheritCollision(sources(narrow, 3)))
+
+		assert.Zero(t, m.CollisionRadius)
 	})
 }
 
@@ -223,8 +556,184 @@ func TestFace_MatchMarkersEmpty(t *testing.T) {
 	require.NoError(t, m.MatchMarkers([]string{}))
 }
 
+func TestFace_AcceptDist(t *testing.T) {
+	t.Run("WithinClusterRadius", func(t *testing.T) {
+		m := &Face{SampleRadius: 0.2}
+		assert.InDelta(t, 0.2+face.MatchDist, m.AcceptDist(), 1e-9)
+	})
+	t.Run("StoredRadiusClamped", func(t *testing.T) {
+		m := &Face{SampleRadius: 2}
+		assert.InDelta(t, face.ClusterRadius+face.MatchDist, m.AcceptDist(), 1e-9)
+	})
+	t.Run("CappedAtCeiling", func(t *testing.T) {
+		restoreRadius, restoreDist := face.ClusterRadius, face.MatchDist
+		t.Cleanup(func() { face.ClusterRadius, face.MatchDist = restoreRadius, restoreDist })
+		face.ClusterRadius, face.MatchDist = face.AcceptDistMax, face.AcceptDistMax
+
+		m := &Face{SampleRadius: face.AcceptDistMax}
+		assert.InDelta(t, face.AcceptDistMax, m.AcceptDist(), 1e-9)
+	})
+}
+
+// TestFace_SingletonMatchDistance pins how far a cluster built from one sample reaches. Naming a
+// face is a request to find the rest of that person, and a radius of zero would gate the search at
+// MatchDist, where no pair of one person's faces lands.
+func TestFace_SingletonMatchDistance(t *testing.T) {
+	base := face.FixtureEmbedding(7401)
+	m := NewFace("", SrcManual, face.Embeddings{base}, face.EmbeddingModelName())
+
+	require.Equal(t, 1, m.Samples)
+	// One embedding has no extent, so its reach is the match distance and nothing more.
+	require.InDelta(t, face.Epsilon+face.MatchDist, m.AcceptDist(), 1e-9)
+
+	t.Run("WithinAcceptDist", func(t *testing.T) {
+		dist := m.AcceptDist() - 0.05
+		matched, d := m.Match(face.Embeddings{face.FixtureEmbeddingAt(base, dist, 7402)}, face.EmbeddingModelName())
+
+		assert.True(t, matched)
+		assert.InDelta(t, dist, d, 1e-6)
+	})
+	t.Run("BeyondAcceptDist", func(t *testing.T) {
+		dist := m.AcceptDist() + 0.05
+		matched, d := m.Match(face.Embeddings{face.FixtureEmbeddingAt(base, dist, 7403)}, face.EmbeddingModelName())
+
+		assert.False(t, matched)
+		assert.InDelta(t, dist, d, 1e-6)
+	})
+}
+
+// narrowTestFace returns a saved cluster with a small measured radius. UpdateMatchStats widens and
+// never narrows, so a baseline has to sit below what the step under test asks for - and a cluster
+// built from one sample stores ClusterRadius, which is above every one of them.
+func narrowTestFace(t *testing.T, subjUID string, seed uint64) *Face {
+	t.Helper()
+
+	base := face.FixtureEmbedding(seed)
+	m := NewFace(subjUID, SrcAuto, face.Embeddings{base, face.FixtureEmbeddingAt(base, 0.02, seed+1)}, face.EmbeddingModelName())
+
+	require.Less(t, m.SampleRadius, 0.05)
+	require.NoError(t, m.Create())
+
+	return m
+}
+
+func TestFace_UpdateMatchStats(t *testing.T) {
+	t.Run("NoFaceId", func(t *testing.T) {
+		m := &Face{}
+		require.NoError(t, m.UpdateMatchStats(3, 0.2))
+		assert.Zero(t, m.Samples)
+		assert.Zero(t, m.SampleRadius)
+	})
+	t.Run("NoSamples", func(t *testing.T) {
+		m := FaceFixtures.Pointer("jane-doe")
+		radius := m.SampleRadius
+		require.NoError(t, m.UpdateMatchStats(0, 0.2))
+		assert.Equal(t, radius, m.SampleRadius)
+	})
+	t.Run("AddsEpsilonSlack", func(t *testing.T) {
+		m := narrowTestFace(t, "uds5ttbeu5yj2sqf", 7501)
+		samples := m.Samples
+		require.NoError(t, m.UpdateMatchStats(4, 0.1))
+		assert.Equal(t, samples, m.Samples, "a match run does not change the centroid's inputs")
+		assert.InDelta(t, 0.1+face.Epsilon, m.SampleRadius, 1e-9)
+	})
+	t.Run("ClampsToClusterRadius", func(t *testing.T) {
+		// The slack must not be able to lift the stored radius past the configured cap.
+		m := narrowTestFace(t, "uds5ttbeu5yj2sqg", 7511)
+		require.NoError(t, m.UpdateMatchStats(4, face.ClusterRadius))
+		assert.InDelta(t, face.ClusterRadius, m.SampleRadius, 1e-9)
+	})
+	t.Run("NeverNarrowsTheRadius", func(t *testing.T) {
+		// A run visits only the markers that were unmatched when it started, so one newly
+		// indexed face arriving near the centroid would otherwise rewrite the radius to its
+		// own distance and refuse every member beyond it on the next pass.
+		m := narrowTestFace(t, "uds5ttbeu5yj2sqi", 7521)
+		require.NoError(t, m.UpdateMatchStats(20, 0.30))
+
+		wide := m.SampleRadius
+		accept := m.AcceptDist()
+		require.InDelta(t, 0.30+face.Epsilon, wide, 1e-9)
+
+		require.NoError(t, m.UpdateMatchStats(1, 0.05))
+
+		assert.InDelta(t, wide, m.SampleRadius, 1e-9, "a single close match must not shrink the cluster")
+		assert.InDelta(t, accept, m.AcceptDist(), 1e-9, "so the accept distance holds")
+	})
+	t.Run("StillWidens", func(t *testing.T) {
+		// Growing is the whole point of the statistic: a farther member must still be able
+		// to widen the cluster toward its clamp.
+		m := narrowTestFace(t, "uds5ttbeu5yj2sqj", 7531)
+		require.NoError(t, m.UpdateMatchStats(3, 0.10))
+		require.NoError(t, m.UpdateMatchStats(4, 0.25))
+
+		assert.InDelta(t, 0.25+face.Epsilon, m.SampleRadius, 1e-9)
+	})
+	t.Run("LeavesTheSampleCount", func(t *testing.T) {
+		// Samples counts the embeddings the centroid was averaged from. A match run changes which
+		// markers a cluster holds, not what its centroid was built from, so it must not write it -
+		// otherwise a one-embedding pseudo-centroid reads as a cluster after it recruits.
+		m := NewFace("js6sg6b1qekk9jq1", SrcManual,
+			face.Embeddings{face.FixtureEmbedding(7551)}, face.EmbeddingModelName())
+		require.NotNil(t, m)
+		require.NoError(t, m.Create())
+		require.Equal(t, 1, m.Samples)
+
+		t.Cleanup(func() { UnscopedDb().Delete(&Face{}, "id = ?", m.ID) })
+
+		require.NoError(t, m.UpdateMatchStats(19, 0.30))
+
+		assert.Equal(t, 1, m.Samples, "one embedding stays one embedding")
+		assert.Equal(t, 1, FindFace(m.ID).Samples, "and the stored row agrees")
+	})
+	t.Run("NegativeDistance", func(t *testing.T) {
+		m := narrowTestFace(t, "uds5ttbeu5yj2sqh", 7541)
+		radius := m.SampleRadius
+		require.NoError(t, m.UpdateMatchStats(4, -1))
+		assert.InDelta(t, radius, m.SampleRadius, 1e-9)
+	})
+}
+
+func TestFace_SetSampleRadius(t *testing.T) {
+	t.Run("ReplacesRatherThanWidens", func(t *testing.T) {
+		// The property UpdateMatchStats cannot have: a measurement of the whole membership is what
+		// makes a smaller number trustworthy.
+		m := narrowTestFace(t, "uds5ttbeu5yj2ss1", 7801)
+		require.NoError(t, m.UpdateMatchStats(20, 0.30))
+		require.InDelta(t, 0.30+face.Epsilon, m.SampleRadius, 1e-9)
+
+		samples := m.Samples
+		require.NoError(t, m.SetSampleRadius(0.08))
+
+		assert.InDelta(t, 0.08, m.SampleRadius, 1e-9)
+		assert.Equal(t, samples, m.Samples, "measuring the extent says nothing about the centroid")
+		assert.InDelta(t, 0.08, FindFace(m.ID).SampleRadius, 1e-9, "and it is persisted")
+	})
+	t.Run("ClampsToClusterRadius", func(t *testing.T) {
+		m := narrowTestFace(t, "uds5ttbeu5yj2ss2", 7811)
+		require.NoError(t, m.SetSampleRadius(face.ClusterRadius*2))
+
+		assert.InDelta(t, face.ClusterRadius, m.SampleRadius, 1e-9)
+	})
+	t.Run("NoFaceId", func(t *testing.T) {
+		m := &Face{}
+		require.NoError(t, m.SetSampleRadius(0.2))
+
+		assert.Zero(t, m.SampleRadius)
+	})
+	t.Run("RefusesAnEmptyMeasurement", func(t *testing.T) {
+		// A radius of zero describes no cluster, so the row is left as it is rather than written
+		// with a value nothing measured.
+		m := narrowTestFace(t, "uds5ttbeu5yj2ss3", 7821)
+		radius := m.SampleRadius
+
+		require.NoError(t, m.SetSampleRadius(0))
+
+		assert.InDelta(t, radius, m.SampleRadius, 1e-9)
+	})
+}
+
 func TestFace_UpdateMatchTime(t *testing.T) {
-	m := NewFace("12345", SrcAuto, face.RandomEmbeddings(1, face.RegularFace))
+	m := NewFace("12345", SrcAuto, face.RandomEmbeddings(1, face.RegularFace), face.EmbeddingModelName())
 	initialMatchTime := m.MatchedAt
 	assert.Equal(t, initialMatchTime, m.MatchedAt)
 	if err := m.Matched(); err != nil {
@@ -235,7 +744,7 @@ func TestFace_UpdateMatchTime(t *testing.T) {
 
 func TestFace_Save(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
-		m := NewFace("dhsthrdst", SrcAuto, face.RandomEmbeddings(1, face.RegularFace))
+		m := NewFace("dhsthrdst", SrcAuto, face.RandomEmbeddings(1, face.RegularFace), face.EmbeddingModelName())
 
 		assert.Nil(t, FindFace(m.ID))
 
@@ -247,7 +756,7 @@ func TestFace_Save(t *testing.T) {
 		assert.Equal(t, "dhsthrdst", FindFace(m.ID).SubjUID)
 	})
 	t.Run("Error", func(t *testing.T) {
-		m := NewFace("12345fde", SrcAuto, face.Embeddings{face.Embedding{1}, face.Embedding{2}})
+		m := NewFace("12345fde", SrcAuto, face.Embeddings{face.Embedding{1}, face.Embedding{2}}, face.EmbeddingModelName())
 		assert.Nil(t, FindFace(m.ID))
 		assert.Error(t, m.Create())
 		assert.Nil(t, FindFace(m.ID))
@@ -255,7 +764,7 @@ func TestFace_Save(t *testing.T) {
 }
 
 func TestFace_Update(t *testing.T) {
-	m := NewFace("12345fdef", SrcAuto, face.RandomEmbeddings(2, face.RegularFace))
+	m := NewFace("12345fdef", SrcAuto, face.RandomEmbeddings(2, face.RegularFace), face.EmbeddingModelName())
 	id := m.ID
 
 	m.CreatedAt = time.Now()
@@ -290,7 +799,7 @@ func TestFace_RefreshPhotos(t *testing.T) {
 
 func TestFirstOrCreateFace(t *testing.T) {
 	t.Run("CreateNewFace", func(t *testing.T) {
-		m := NewFace("12345unique", SrcAuto, face.RandomEmbeddings(1, face.RegularFace))
+		m := NewFace("12345unique", SrcAuto, face.RandomEmbeddings(1, face.RegularFace), face.EmbeddingModelName())
 		r := FirstOrCreateFace(m)
 		assert.Equal(t, "12345unique", r.SubjUID)
 	})
@@ -320,4 +829,502 @@ func TestFace_HideAndShow(t *testing.T) {
 	} else if err = f.Show(); err != nil {
 		t.Fatal(err)
 	}
+}
+
+func TestFace_SetSubjectUID(t *testing.T) {
+	f := FindFace(FaceFixtures.Get("joe-biden").ID)
+	assert.NotEmpty(t, f)
+
+	if !assert.Empty(t, f.SetSubjectUID(SubjectFixtures.Get("jane-doe").SubjUID)) {
+		return
+	}
+
+	f = FindFace(FaceFixtures.Get("joe-biden").ID)
+	assert.NotEmpty(t, f)
+
+	if !assert.Empty(t, f.SetSubjectUID(SubjectFixtures.Get("joe-biden").SubjUID)) {
+		return
+	}
+}
+
+func TestFace_SameEmbeddingModel(t *testing.T) {
+	restore := face.ConfiguredModel()
+
+	t.Cleanup(func() {
+		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+	})
+
+	require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
+		Name:  face.ModelFaceNet,
+		Model: face.FindEmbeddingModel(face.ModelFaceNet),
+	}))
+
+	t.Run("SameModel", func(t *testing.T) {
+		m := &Face{EmbedModel: face.ModelFaceNet}
+		assert.True(t, m.SameEmbeddingModel())
+	})
+	t.Run("NotRecorded", func(t *testing.T) {
+		// Rows created before provenance was tracked are FaceNet-compatible.
+		m := &Face{EmbedModel: ""}
+		assert.True(t, m.SameEmbeddingModel())
+	})
+	t.Run("OtherModel", func(t *testing.T) {
+		m := &Face{EmbedModel: face.ModelSFace}
+		assert.False(t, m.SameEmbeddingModel())
+	})
+	t.Run("LegacyOtherModel", func(t *testing.T) {
+		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelSFace}))
+		assert.False(t, (&Face{}).SameEmbeddingModel())
+	})
+}
+
+func TestFace_MatchOtherModel(t *testing.T) {
+	restore := face.ConfiguredModel()
+
+	t.Cleanup(func() {
+		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+	})
+
+	require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
+		Name:  face.ModelFaceNet,
+		Model: face.FindEmbeddingModel(face.ModelFaceNet),
+	}))
+
+	embeddings := face.Embeddings{face.RandomEmbedding()}
+	m := NewFace("", SrcAuto, embeddings, face.EmbeddingModelName())
+	require.NotNil(t, m)
+
+	t.Run("SameModelMatches", func(t *testing.T) {
+		match, dist := m.Match(embeddings, face.EmbeddingModelName())
+		assert.True(t, match)
+		assert.InDelta(t, 0, dist, 0.0001)
+	})
+	t.Run("OtherModelRefused", func(t *testing.T) {
+		other := *m
+		other.EmbedModel = face.ModelArcFaceR50
+		match, dist := other.Match(embeddings, face.EmbeddingModelName())
+		assert.False(t, match)
+		assert.InDelta(t, -1, dist, 0.0001)
+	})
+	// The argument carries its own provenance, so a vector from another 512-dim model must
+	// be refused even though this cluster matches the configured one.
+	t.Run("OtherModelArgumentRefused", func(t *testing.T) {
+		match, dist := m.Match(embeddings, face.ModelArcFaceR50)
+		assert.False(t, match)
+		assert.InDelta(t, -1, dist, 0.0001)
+	})
+	t.Run("LegacyArgumentMatchesFaceNet", func(t *testing.T) {
+		match, _ := m.Match(embeddings, "")
+		assert.True(t, match)
+	})
+}
+
+func TestFace_ReviseMatchesSkipsOtherModels(t *testing.T) {
+	restore := face.ConfiguredModel()
+
+	t.Cleanup(func() {
+		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+	})
+
+	require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
+		Name:  face.ModelFaceNet,
+		Model: face.FindEmbeddingModel(face.ModelFaceNet),
+	}))
+
+	m := NewFace("", SrcAuto, face.Embeddings{face.RandomEmbedding()}, face.EmbeddingModelName())
+	require.NotNil(t, m)
+	require.NoError(t, m.Create())
+
+	t.Cleanup(func() {
+		UnscopedDb().Delete(&Face{}, "id = ?", m.ID)
+	})
+
+	// A marker from another embedding space, far from the cluster in any case.
+	other := Marker{
+		MarkerUID:      rnd.GenerateUID('m'),
+		MarkerType:     MarkerFace,
+		MarkerSrc:      SrcImage,
+		FaceID:         m.ID,
+		EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
+		EmbedModel:     face.ModelArcFaceR50,
+	}
+
+	require.NoError(t, Db().Create(&other).Error)
+
+	t.Cleanup(func() {
+		UnscopedDb().Delete(&Marker{}, "marker_uid = ?", other.MarkerUID)
+	})
+
+	revised, err := m.ReviseMatches()
+	require.NoError(t, err)
+
+	for _, r := range revised {
+		assert.NotEqual(t, other.MarkerUID, r.MarkerUID, "an incomparable marker must not be cleared")
+	}
+
+	stored := Marker{}
+	require.NoError(t, UnscopedDb().First(&stored, "marker_uid = ?", other.MarkerUID).Error)
+	assert.Equal(t, m.ID, stored.FaceID, "the assignment must survive a revision it could not evaluate")
+}
+
+// TestFace_ReviseMatchesFlagsForRematching pins that a marker a conflict drops needs matching again.
+//
+// ClearFace stamps matched_at, true where the matcher found no face - it had just compared against
+// every cluster. After a conflict narrowed one underneath the marker nothing has, and a stamped
+// marker is in neither pass's set, so it would sit unassigned until "faces update --force".
+func TestFace_ReviseMatchesFlagsForRematching(t *testing.T) {
+	m := NewFace("", SrcAuto, face.Embeddings{face.RandomEmbedding()}, face.EmbeddingModelName())
+	require.NotNil(t, m)
+	require.NoError(t, m.Create())
+	t.Cleanup(func() { UnscopedDb().Delete(&Face{}, "id = ?", m.ID) })
+
+	// Assigned to the cluster, stamped, and far enough away that a revision drops it.
+	dropped := Marker{
+		MarkerUID:      rnd.GenerateUID('m'),
+		MarkerType:     MarkerFace,
+		MarkerSrc:      SrcImage,
+		FaceID:         m.ID,
+		EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
+		EmbedModel:     face.EmbeddingModelName(),
+		MatchedAt:      TimeStamp(),
+	}
+
+	require.NoError(t, Db().Create(&dropped).Error)
+	t.Cleanup(func() { UnscopedDb().Delete(&Marker{}, "marker_uid = ?", dropped.MarkerUID) })
+
+	// Narrow the cluster so nothing it holds still matches.
+	m.SampleRadius = 0
+	m.CollisionRadius = 0.0001
+	require.NoError(t, m.Updates(Values{"sample_radius": m.SampleRadius, "collision_radius": m.CollisionRadius}))
+
+	revised, err := m.ReviseMatches()
+	require.NoError(t, err)
+	require.NotEmpty(t, revised, "the marker must be dropped by the revision")
+
+	stored := Marker{}
+	require.NoError(t, UnscopedDb().First(&stored, "marker_uid = ?", dropped.MarkerUID).Error)
+
+	assert.Empty(t, stored.FaceID, "the assignment is removed")
+	assert.Nil(t, stored.MatchedAt, "and the marker is left for the next run to match")
+}
+
+func TestFace_MatchMarkers(t *testing.T) {
+	cluster := FaceFixtures.Pointer("joe-biden")
+
+	// newFacelessMarker persists an unassigned marker well inside what the cluster accepts, so
+	// only the size bound can keep it out.
+	newFacelessMarker := func(t *testing.T, size int, seed uint64) *Marker {
+		t.Helper()
+
+		m := &Marker{
+			FileUID:    "fs6sg6bw45bnlqdw",
+			MarkerType: MarkerFace,
+			MarkerSrc:  SrcImage,
+			Size:       size,
+			Score:      50,
+			X:          0.1,
+			Y:          0.1,
+			W:          0.1,
+			H:          0.1,
+		}
+
+		at := face.FixtureEmbeddingAt(cluster.Embedding(), 0.2*cluster.AcceptDist(), seed)
+		m.SetEmbeddings(face.Embeddings{at}, cluster.EmbedModel, face.DetectorYuNet)
+
+		require.NoError(t, Db().Create(m).Error)
+		t.Cleanup(func() { Db().Delete(m) })
+
+		return m
+	}
+	t.Run("AdmitsAnOrdinaryMarker", func(t *testing.T) {
+		m := newFacelessMarker(t, face.SizeThreshold, 9101)
+
+		require.NoError(t, cluster.MatchMarkers(Faceless))
+
+		found := FindMarker(m.MarkerUID)
+		require.NotNil(t, found)
+		assert.Equal(t, cluster.ID, found.FaceID)
+	})
+	t.Run("RepointsASmallMarkerThatIsAlreadyClustered", func(t *testing.T) {
+		// The merge path calls this to move markers off clusters it is about to purge, so the
+		// size bound must not reach them: one left behind would point at a deleted cluster.
+		m := newFacelessMarker(t, face.SizeThreshold-1, 9104)
+
+		other := NewFace(cluster.SubjUID, SrcAuto, face.Embeddings{cluster.Embedding()}, cluster.EmbedModel)
+		require.NotNil(t, other)
+		other = FirstOrCreateFace(other)
+		require.NotNil(t, other)
+
+		require.NoError(t, m.Update("FaceID", other.ID))
+		require.NoError(t, cluster.MatchMarkers([]string{other.ID}))
+
+		found := FindMarker(m.MarkerUID)
+		require.NotNil(t, found)
+		assert.Equal(t, cluster.ID, found.FaceID, "a clustered marker is re-pointed whatever its size")
+	})
+	t.Run("RefusesAMarkerBelowTheDetectionFloor", func(t *testing.T) {
+		// Only the second detection pass produces one, and it exists to mark a face a crowd
+		// photograph would otherwise lose rather than to name a person from it.
+		m := newFacelessMarker(t, face.SizeThreshold-1, 9102)
+
+		require.NoError(t, cluster.MatchMarkers(Faceless))
+
+		found := FindMarker(m.MarkerUID)
+		require.NotNil(t, found)
+		assert.Empty(t, found.FaceID)
+	})
+}
+
+// TestFace_MatchMarkersCore pins that adoption obeys the same core as matching. Marker.Face() runs
+// this once when a named marker gets a cluster, and the matcher never offers that cluster again -
+// so a labeled example left free to adopt here would keep the reach the gate exists to remove.
+func TestFace_MatchMarkersCore(t *testing.T) {
+	base := face.FixtureEmbedding(9301)
+
+	// One embedding: a labeled example, which may not adopt.
+	singleton := FirstOrCreateFace(NewFace("js6sg6b1qekk9jz1", SrcManual, face.Embeddings{base}, face.EmbeddingModelName()))
+	require.NotNil(t, singleton)
+	require.Equal(t, 1, singleton.Samples)
+
+	// A full core of near-identical embeddings, so its centroid stays close to base and its own
+	// extent is small - the marker below is placed against the accept distance either way.
+	core := face.Embeddings{base}
+	for i := 1; i < face.ManualClusterCore; i++ {
+		core = append(core, face.FixtureEmbeddingAt(base, 0.01, uint64(9310+i)))
+	}
+
+	cluster := FirstOrCreateFace(NewFace("js6sg6b1qekk9jz2", SrcManual, core, face.EmbeddingModelName()))
+	require.NotNil(t, cluster)
+	require.Equal(t, face.ManualClusterCore, cluster.Samples)
+
+	// MatchMarkers may attach fixture markers too, and one left pointing at a deleted cluster
+	// would follow the package for the rest of the run.
+	t.Cleanup(func() {
+		for _, f := range []*Face{singleton, cluster} {
+			Db().Model(&Marker{}).Where("face_id = ?", f.ID).UpdateColumn("face_id", "")
+			Db().Delete(f)
+		}
+	})
+
+	dist := 0.9 * cluster.AcceptDist()
+
+	m := &Marker{
+		FileUID:    "fs6sg6bw45bnlqdw",
+		MarkerType: MarkerFace,
+		MarkerSrc:  SrcImage,
+		Size:       face.SizeThreshold,
+		Score:      50,
+		X:          0.3,
+		Y:          0.3,
+		W:          0.1,
+		H:          0.1,
+	}
+
+	m.SetEmbeddings(face.Embeddings{face.FixtureEmbeddingAt(base, dist, 9302)}, cluster.EmbedModel, face.DetectorYuNet)
+	require.NoError(t, Db().Create(m).Error)
+	t.Cleanup(func() { Db().Delete(m) })
+
+	// The singleton is offered the same marker first and must leave it alone.
+	require.NoError(t, singleton.MatchMarkers(Faceless))
+	require.Empty(t, FindMarker(m.MarkerUID).FaceID, "a labeled example may not adopt")
+
+	require.NoError(t, cluster.MatchMarkers(Faceless))
+
+	// Measured against the cluster's own centroid, which the extra core embeddings move slightly
+	// off base - the marker was placed relative to base.
+	want := m.Embeddings().Dist(cluster.Embedding())
+
+	found := FindMarker(m.MarkerUID)
+	require.NotNil(t, found)
+	assert.Equal(t, cluster.ID, found.FaceID, "a cluster with a core adopts it")
+	assert.InDelta(t, want, found.FaceDist, 1e-6)
+}
+
+// TestFace_Reopened pins the discriminator the matcher needs on its way out. Every cluster a
+// matching pass reads started out unmatched, so a NULL timestamp cannot say whether a collision
+// reopened one during the pass - the flag can, and stamping a reopened cluster would leave the
+// markers ReviseMatches dropped with nothing to be rematched against.
+func TestFace_Reopened(t *testing.T) {
+	t.Run("Fresh", func(t *testing.T) {
+		m := NewFace("", SrcAuto, face.Embeddings{face.RandomEmbedding()}, face.EmbeddingModelName())
+		require.NotNil(t, m)
+		// NewFace computes the id through SetEmbeddings, which reopens by construction.
+		assert.Nil(t, m.MatchedAt)
+	})
+	t.Run("Stamped", func(t *testing.T) {
+		m := &Face{ID: "TESTFACEID", MatchedAt: TimeStamp()}
+		assert.False(t, m.Reopened())
+	})
+	t.Run("Reopen", func(t *testing.T) {
+		m := &Face{ID: "TESTFACEID", MatchedAt: TimeStamp()}
+		m.reopen()
+
+		assert.True(t, m.Reopened())
+		assert.Nil(t, m.MatchedAt, "reopening clears the timestamp as well as raising the flag")
+	})
+	t.Run("SurvivesACopy", func(t *testing.T) {
+		// The matcher reopens through a pointer into the slice and reads the flag back from a
+		// copy of the same element, so the flag has to travel with the value.
+		faces := Faces{{ID: "TESTFACEID", MatchedAt: TimeStamp()}}
+		(&faces[0]).reopen()
+
+		for _, f := range faces {
+			assert.True(t, f.Reopened())
+		}
+	})
+	t.Run("NilFace", func(t *testing.T) {
+		assert.False(t, (*Face)(nil).Reopened())
+	})
+}
+
+// TestFace_HasCollision covers the three states that count as a recorded collision, so that a
+// cluster excluded from matching by the ambiguous kind is not read as collision-free.
+func TestFace_HasCollision(t *testing.T) {
+	t.Run("None", func(t *testing.T) {
+		assert.False(t, (&Face{ID: "TESTFACEID", FaceKind: int(face.RegularFace)}).HasCollision())
+	})
+	t.Run("Count", func(t *testing.T) {
+		assert.True(t, (&Face{ID: "TESTFACEID", Collisions: 1}).HasCollision())
+	})
+	t.Run("Radius", func(t *testing.T) {
+		assert.True(t, (&Face{ID: "TESTFACEID", CollisionRadius: 0.64}).HasCollision())
+	})
+	t.Run("AmbiguousKind", func(t *testing.T) {
+		assert.True(t, (&Face{ID: "TESTFACEID", FaceKind: int(face.AmbiguousFace)}).HasCollision())
+	})
+	t.Run("NilFace", func(t *testing.T) {
+		assert.False(t, (*Face)(nil).HasCollision())
+	})
+}
+
+// TestFace_ClearCollision covers the only path that widens a collision radius. Without it the
+// narrowing is permanent, so a cluster stays gated against faces that are known to belong to it.
+func TestFace_ClearCollision(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		m := &Face{
+			ID:              "CLEARCOLLISION0000000000000000A1",
+			SubjUID:         SubjectFixtures.Get("john-doe").SubjUID,
+			FaceSrc:         SrcManual,
+			SampleRadius:    0.3,
+			Samples:         4,
+			Collisions:      2,
+			CollisionRadius: 0.64,
+			FaceKind:        int(face.AmbiguousFace),
+			MatchedAt:       TimeStamp(),
+		}
+
+		require.NoError(t, Db().Create(m).Error)
+		t.Cleanup(func() { UnscopedDb().Delete(&Face{}, "id = ?", m.ID) })
+
+		require.NoError(t, m.ClearCollision())
+
+		assert.Zero(t, m.Collisions)
+		assert.Zero(t, m.CollisionRadius)
+		assert.Equal(t, int(face.RegularFace), m.FaceKind, "cleared to the kind a cluster is created with")
+		assert.False(t, m.SkipMatching(), "a cleared cluster has to take part in matching again")
+		assert.Nil(t, m.MatchedAt, "the markers it refused while narrowed must be compared again")
+		assert.True(t, m.Reopened())
+
+		var stored Face
+		require.NoError(t, UnscopedDb().Where("id = ?", m.ID).First(&stored).Error)
+		assert.Zero(t, stored.Collisions)
+		assert.Zero(t, stored.CollisionRadius)
+		assert.Equal(t, int(face.RegularFace), stored.FaceKind)
+		assert.Nil(t, stored.MatchedAt)
+	})
+	t.Run("KeepsAnUnrelatedKind", func(t *testing.T) {
+		// Only the ambiguous kind is set by collision resolution, so no other one is reset here.
+		m := &Face{ID: "CLEARCOLLISION0000000000000000A2", Collisions: 1, FaceKind: 7}
+
+		require.NoError(t, m.ClearCollision())
+		assert.Equal(t, 7, m.FaceKind)
+	})
+	t.Run("NoCollision", func(t *testing.T) {
+		m := &Face{ID: "CLEARCOLLISION0000000000000000A3", MatchedAt: TimeStamp()}
+
+		require.NoError(t, m.ClearCollision())
+		assert.NotNil(t, m.MatchedAt, "a cluster without a collision must not be reopened")
+	})
+	t.Run("InvalidRequest", func(t *testing.T) {
+		assert.Error(t, (&Face{Collisions: 1}).ClearCollision())
+	})
+}
+
+// TestClearSubjectCollisions covers the bulk path used where two subjects turn out to be one.
+func TestClearSubjectCollisions(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		// jane-doe rather than john-doe: that fixture already carries a collision, which would
+		// make the count assertion below pass or fail on fixture state rather than on this code.
+		subjUID := SubjectFixtures.Get("jane-doe").SubjUID
+
+		narrowed := &Face{
+			ID: "CLEARCOLLISION0000000000000000B1", SubjUID: subjUID, FaceSrc: SrcManual,
+			SampleRadius: 0.3, Samples: 4, Collisions: 1, CollisionRadius: 0.64,
+		}
+		intact := &Face{
+			ID: "CLEARCOLLISION0000000000000000B2", SubjUID: subjUID, FaceSrc: SrcManual,
+			SampleRadius: 0.3, Samples: 4, MatchedAt: TimeStamp(),
+		}
+
+		require.NoError(t, Db().Create(narrowed).Error)
+		require.NoError(t, Db().Create(intact).Error)
+		t.Cleanup(func() { UnscopedDb().Delete(&Face{}, "id IN (?)", []string{narrowed.ID, intact.ID}) })
+
+		cleared, err := ClearSubjectCollisions(subjUID)
+		require.NoError(t, err)
+		assert.Equal(t, 1, cleared, "only the clusters carrying a collision are touched")
+
+		// Separate variables on purpose: First adds the primary key of an already populated
+		// struct as a further condition, so reusing one silently looks up the previous row.
+		var clearedFace, untouched Face
+
+		require.NoError(t, UnscopedDb().Where("id = ?", narrowed.ID).First(&clearedFace).Error)
+		assert.Zero(t, clearedFace.CollisionRadius)
+		assert.Zero(t, clearedFace.Collisions)
+		assert.Nil(t, clearedFace.MatchedAt)
+
+		require.NoError(t, UnscopedDb().Where("id = ?", intact.ID).First(&untouched).Error)
+		assert.NotNil(t, untouched.MatchedAt, "an untouched cluster keeps its match stamp")
+	})
+	t.Run("NoMatch", func(t *testing.T) {
+		cleared, err := ClearSubjectCollisions(SubjectFixtures.Get("jane-doe").SubjUID)
+
+		require.NoError(t, err)
+		assert.Zero(t, cleared)
+	})
+	t.Run("InvalidRequest", func(t *testing.T) {
+		_, err := ClearSubjectCollisions("")
+		assert.Error(t, err)
+	})
+}
+
+// TestFace_KindIsRecorded pins that a cluster stores its kind rather than leaving the column at zero.
+//
+// The "face:N" search filter reads the stored number, so a cluster formed now has to carry the kind
+// an earlier release gave one, or the same query answers differently on two libraries that differ
+// only in when they were clustered. The zero value cannot say that: it is also what nothing wrote.
+func TestFace_KindIsRecorded(t *testing.T) {
+	t.Run("NewFace", func(t *testing.T) {
+		m := NewFace("", SrcAuto, face.Embeddings{face.FixtureEmbedding(7001)}, face.EmbeddingModelName())
+
+		require.NotNil(t, m)
+		require.NotEmpty(t, m.ID)
+		assert.Equal(t, int(face.RegularFace), m.FaceKind)
+		assert.False(t, m.SkipMatching())
+	})
+	t.Run("AmbiguousIsNotDowngraded", func(t *testing.T) {
+		// Re-embedding gives the cluster a new identity, but a kind that excludes it from matching
+		// is a report about its members and must not be lowered by rebuilding it.
+		m := &Face{FaceKind: int(face.AmbiguousFace)}
+
+		require.NoError(t, m.SetEmbeddings(face.Embeddings{face.FixtureEmbedding(7002)}, face.EmbeddingModelName()))
+		assert.Equal(t, int(face.AmbiguousFace), m.FaceKind)
+	})
+	t.Run("ClearCollisionDoesNotReintroduceZero", func(t *testing.T) {
+		m := &Face{ID: "KINDCLEAR000000000000000000000A1", Collisions: 1, FaceKind: int(face.AmbiguousFace)}
+
+		require.NoError(t, m.ClearCollision())
+		assert.Equal(t, int(face.RegularFace), m.FaceKind)
+		assert.NotEqual(t, int(face.UnclassifiedFace), m.FaceKind)
+	})
 }

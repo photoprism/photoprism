@@ -4,10 +4,53 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
+
+// representativeMarkerJoin returns the join that gives each cluster the marker People shows for it,
+// and its arguments. The marker is picked by the bars automatic clustering applies rather than by
+// literals of this query's own, so a cluster the library formed cannot be one this page hides.
+//
+// Ranked like a person's cover and not by `MIN(marker_uid)`: marker ids order only to the second,
+// so a cluster indexed in one pass would otherwise be represented by an arbitrary one of its faces.
+func representativeMarkerJoin(facesTable, unknown string) (string, []any) {
+	scoreCond, scoreArgs := entity.ClusterScoreCond("m2", face.ClusterScoreAuto)
+	sizeCond, sizeArgs := entity.ClusterSizeCond("m2", face.ClusterSizeThreshold)
+
+	conds := []string{
+		fmt.Sprintf("m2.face_id = %s.id", facesTable),
+		"m2.marker_type = ?",
+		"m2.marker_invalid = 0",
+		"m2.thumb <> ''",
+		sizeCond,
+		scoreCond,
+	}
+
+	args := []any{entity.MarkerFace}
+	args = append(args, sizeArgs...)
+	args = append(args, scoreArgs...)
+
+	// The cluster's own subject decides which markers may represent it, so an unnamed cluster is
+	// not represented by a marker somebody named on its own.
+	if txt.Yes(unknown) {
+		conds = append(conds, "m2.subj_uid = ''")
+	} else if txt.No(unknown) {
+		conds = append(conds, "m2.subj_uid <> ''")
+	}
+
+	// Filtered on the sampled extent but ranked on the detection size, which is deliberate: the two
+	// answer different questions. thumb_size is available detail, which decides whether a vector can
+	// be trusted; size is the face's extent in a fixed-size thumbnail, so it tracks how much of the
+	// frame the face fills, which is what picks a picture to represent a person.
+	return fmt.Sprintf(`JOIN markers m ON m.marker_uid = (
+		SELECT m2.marker_uid FROM markers m2
+		WHERE %s
+		ORDER BY m2.size DESC, m2.score DESC, m2.marker_uid
+		LIMIT 1)`, strings.Join(conds, " AND ")), args
+}
 
 // Faces searches faces and returns them.
 func Faces(frm form.SearchFaces) (results FaceResults, err error) {
@@ -24,30 +67,9 @@ func Faces(frm form.SearchFaces) (results FaceResults, err error) {
 		s = s.Select(fmt.Sprintf(`%s.*, m.marker_uid, m.file_uid, m.marker_name, m.subj_src, m.marker_src, 
 			m.marker_type, m.marker_review, m.marker_invalid, m.size, m.score, m.thumb, m.face_dist`, facesTable))
 
-		if txt.Yes(frm.Unknown) {
-			s = s.Joins(`JOIN (
-	        SELECT face_id, MIN(marker_uid) AS marker_uid FROM markers
-	        WHERE face_id <> '' AND subj_uid = '' AND marker_name = '' AND marker_type = 'face'
-	          AND marker_invalid = 0 AND face_dist <= 0.64 AND size >= 80 AND score >= 15
-	        GROUP BY face_id) fm
-	        ON faces.id = fm.face_id`)
-		} else if txt.No(frm.Unknown) {
-			s = s.Joins(`JOIN (
-	        SELECT face_id, MIN(marker_uid) AS marker_uid FROM markers
-	        WHERE face_id <> '' AND subj_uid <> '' AND marker_name <> '' AND marker_type = 'face'
-	          AND marker_invalid = 0 AND face_dist <= 0.64 AND size >= 80 AND score >= 15
-	        GROUP BY face_id) fm
-	        ON faces.id = fm.face_id`)
-		} else {
-			s = s.Joins(`JOIN (
-	        SELECT face_id, MIN(marker_uid) AS marker_uid FROM markers
-	        WHERE face_id <> '' AND marker_type = 'face' AND marker_invalid = 0
-              AND face_dist <= 0.64 AND size >= 80 AND score >= 15
-	        GROUP BY face_id) fm
-	        ON faces.id = fm.face_id`)
-		}
+		join, args := representativeMarkerJoin(facesTable, frm.Unknown)
 
-		s = s.Joins("JOIN markers m ON m.marker_uid = fm.marker_uid")
+		s = s.Joins(join, args...)
 	} else {
 		s = s.Select(fmt.Sprintf(`%s.*`, facesTable))
 	}
@@ -60,6 +82,11 @@ func Faces(frm form.SearchFaces) (results FaceResults, err error) {
 	}
 
 	// Set sort order.
+	//
+	// Ordering by samples is what People > New asks for and means the size a cluster had when it was
+	// formed, since that column counts the embeddings its centroid was averaged from and nothing
+	// writes it afterwards. Markers matched later are deliberately not part of it. The id breaks ties
+	// so the order is identical across drivers.
 	switch frm.Order {
 	case "subject":
 		s = s.Order(OrderExpr(fmt.Sprintf("%s.subj_uid ASC", facesTable), frm.Reverse))

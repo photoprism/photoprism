@@ -326,7 +326,7 @@ describe("model/user", () => {
 
   // A10 contract: isRemote / hasWebDAV must always return a Boolean, so a
   // `:disabled` binding to these methods never passes undefined / "" to a
-  // Vuetify Boolean prop. See specs/frontend/best-practices.md#a10.
+  // Vuetify Boolean prop.
   describe("isRemote / hasWebDAV Boolean contract", () => {
     it("isRemote returns Boolean false when AuthProvider is missing", () => {
       const user = new User({ ID: 1, Name: "max" });
@@ -422,7 +422,7 @@ describe("model/user", () => {
 
   // isCurrentUser drives the admin-UI self-lockout guards: the table login
   // toggle and the dialog role/auth/login fields lock for the signed-in user so
-  // an operator cannot lock themselves out. See specs/portal/cluster-admin-ui.md.
+  // an operator cannot lock themselves out.
   describe("isCurrentUser", () => {
     it("returns true for the signed-in user and false for others", () => {
       $session.setUser({ ID: 5, UID: "us1234567890self", Name: "max", Role: "admin" });

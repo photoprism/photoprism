@@ -153,7 +153,7 @@ func CreateMarker(router *gin.RouterGroup) {
 		area := crop.NewArea("face", frm.X, frm.Y, frm.W, frm.H)
 
 		// Create new marker entity.
-		marker := entity.NewMarker(*file, area, "", frm.MarkerSrc, frm.MarkerType, int(frm.W*float32(file.FileWidth)), 100)
+		marker := entity.NewMarker(*file, area, "", frm.MarkerSrc, frm.MarkerType, entity.MarkerSize(area, *file), 100)
 
 		// Update marker from form values.
 		if err = marker.Create(); err != nil {

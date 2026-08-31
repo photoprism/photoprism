@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/sortby"
@@ -17,9 +18,7 @@ func TestLabels(t *testing.T) {
 		query.Order = "slug"
 		result, err := Labels(query)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 
 		t.Logf("results: %+v", result)
 
@@ -45,9 +44,7 @@ func TestLabels(t *testing.T) {
 		query.Order = "slug"
 		result, err := Labels(query)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 
 		t.Logf("results: %+v", result)
 
@@ -72,9 +69,7 @@ func TestLabels(t *testing.T) {
 		query.Count = 15
 		result, err := Labels(query)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 
 		assert.LessOrEqual(t, 2, len(result))
 
@@ -99,9 +94,7 @@ func TestLabels(t *testing.T) {
 		query.Order = sortby.Count
 		result, err := Labels(query)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 
 		if len(result) < 2 {
 			t.Fatalf("expected multiple labels")
@@ -117,9 +110,7 @@ func TestLabels(t *testing.T) {
 		query.Order = sortby.Slug
 		result, err := Labels(query)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 
 		if len(result) < 2 {
 			t.Fatalf("expected multiple labels")
@@ -133,9 +124,7 @@ func TestLabels(t *testing.T) {
 		query := form.NewLabelSearch("")
 		result, err := Labels(query)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 
 		for _, label := range result {
 			if !label.LabelFavorite {
@@ -149,9 +138,7 @@ func TestLabels(t *testing.T) {
 		query := form.NewLabelSearch("")
 		result, err := Labels(query)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 
 		t.Log(result)
 		assert.LessOrEqual(t, 3, len(result))
@@ -178,9 +165,7 @@ func TestLabels(t *testing.T) {
 
 		result, err := Labels(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 
 		assert.Equal(t, "cake", result[0].LabelSlug)
 	})
@@ -191,9 +176,7 @@ func TestLabels(t *testing.T) {
 
 		result, err := Labels(f)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 
 		assert.Equal(t, "flower", result[0].LabelSlug)
 	})
@@ -205,9 +188,7 @@ func TestLabels(t *testing.T) {
 
 		result, err := Labels(query)
 
-		if err != nil {
-			t.Fatal(err)
-		}
+		require.NoError(t, err)
 
 		if len(result) != 1 {
 			t.Fatalf("expected one result, got %d", len(result))
@@ -215,5 +196,17 @@ func TestLabels(t *testing.T) {
 
 		assert.Equal(t, second.ID, result[0].ID)
 		assert.Equal(t, "吻", result[0].LabelName)
+	})
+	t.Run("NotNil", func(t *testing.T) {
+		f := form.SearchLabels{
+			Query:  "landscape",
+			Count:  100,
+			Offset: 999999,
+		}
+
+		result, err := Labels(f)
+		require.NoError(t, err)
+		assert.NotNil(t, result)
+		assert.Len(t, result, 0)
 	})
 }

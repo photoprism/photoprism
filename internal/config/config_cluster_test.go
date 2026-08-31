@@ -992,3 +992,30 @@ func TestConfig_ClusterUUID_GenerateAndPersist(t *testing.T) {
 
 	c.options.OptionsYaml = optionsOriginal
 }
+
+func TestConfig_JWTRotateDays(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	original := c.options.JWTRotateDays
+
+	t.Cleanup(func() {
+		c.options.JWTRotateDays = original
+	})
+
+	t.Run("Default", func(t *testing.T) {
+		c.options.JWTRotateDays = 90
+		assert.Equal(t, 90, c.JWTRotateDays())
+	})
+	t.Run("Custom", func(t *testing.T) {
+		c.options.JWTRotateDays = 30
+		assert.Equal(t, 30, c.JWTRotateDays())
+	})
+	t.Run("Disabled", func(t *testing.T) {
+		// 0 means the operator asked for manual rotation, so it must not read as unset.
+		c.options.JWTRotateDays = 0
+		assert.Equal(t, 0, c.JWTRotateDays())
+	})
+	t.Run("Negative", func(t *testing.T) {
+		c.options.JWTRotateDays = -7
+		assert.Equal(t, 0, c.JWTRotateDays())
+	})
+}

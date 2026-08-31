@@ -8,6 +8,7 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 
+	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
@@ -19,6 +20,9 @@ type Faces struct {
 	conf      *config.Config
 	vetoMu    sync.Mutex
 	vetoCache map[string]time.Time
+	// reported carries the last value logged for a recurring condition, so a worker that wakes
+	// every few minutes states it once rather than every time. Guarded by vetoMu.
+	reported map[string]int
 }
 
 const faceVetoTTL = 30 * time.Minute
@@ -89,7 +93,29 @@ func (w *Faces) StartDefault() (err error) {
 }
 
 // Start face clustering and matching.
+//
+// The lock is checked here rather than in start, which a migration calls directly while holding
+// it: clustering is the last thing a migration does, so refusing it there would leave every
+// replacement cluster unbuilt.
 func (w *Faces) Start(opt FacesOptions) (err error) {
+	// A migration replaces every cluster in one transaction and ordinarily runs in another
+	// process, where the worker activity below cannot see it.
+	if held := w.conf.FacesLocked(); held != "" {
+		log.Infof("faces: waiting for the %s to complete", held)
+		return nil
+	}
+
+	if err = mutex.FacesWorker.Start(); err != nil {
+		return err
+	}
+
+	defer mutex.FacesWorker.Stop()
+
+	return w.start(opt)
+}
+
+// start performs face clustering and matching while the caller holds the faces worker lock.
+func (w *Faces) start(opt FacesOptions) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("%s (panic)\nstack: %s", r, debug.Stack())
@@ -101,19 +127,28 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 		return fmt.Errorf("face recognition is disabled")
 	}
 
-	if err = mutex.FacesWorker.Start(); err != nil {
-		return err
+	// Clustering and matching compare stored vectors, so both are paused while the library
+	// holds vectors the configured model cannot read. The reason is reported once when the
+	// configuration is initialized; a worker that wakes every few minutes must not repeat it.
+	if reason := face.EmbeddingsBlockedReason(); reason != "" {
+		log.Debugf("faces: %s, so clustering and matching are paused", reason)
+		return nil
 	}
 
-	defer mutex.FacesWorker.Stop()
-
 	var start time.Time
+
+	// changed records whether this run moved anything the subject counts are computed from, so an
+	// idle wake does not pay for the join that refreshes them; every step below that can reassign a
+	// marker already reports how many it touched. A forced run recomputes regardless, because drift
+	// arising outside the worker - an interrupted run, a photo turned private - moves no marker.
+	changed := opt.Force
 
 	// Remove orphan file markers.
 	start = time.Now()
 	if removed, err := query.RemoveOrphanMarkers(); err != nil {
 		log.Errorf("faces: %s (remove orphan markers)", err)
 	} else if removed > 0 {
+		changed = true
 		log.Infof("faces: removed %d orphan markers [%s]", removed, time.Since(start))
 	} else {
 		log.Debugf("faces: found no orphan markers [%s]", time.Since(start))
@@ -124,6 +159,7 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 	if removed, err := query.FixMarkerReferences(); err != nil {
 		log.Errorf("markers: %s (fix references)", err)
 	} else if removed > 0 {
+		changed = true
 		log.Infof("markers: fixed %d references [%s]", removed, time.Since(start))
 	} else {
 		log.Debugf("markers: found no invalid references [%s]", time.Since(start))
@@ -134,6 +170,7 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 	if affected, err := query.CreateMarkerSubjects(); err != nil {
 		log.Errorf("markers: %s (create subjects)", err)
 	} else if affected > 0 {
+		changed = true
 		log.Infof("markers: added %d known subjects [%s]", affected, time.Since(start))
 	} else {
 		log.Debugf("markers: found no missing subjects [%s]", time.Since(start))
@@ -144,6 +181,7 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 	if c, r, err := query.ResolveFaceCollisions(); err != nil {
 		log.Errorf("faces: %s (resolve ambiguous subjects)", err)
 	} else if c > 0 {
+		changed = true
 		log.Infof("faces: resolved %d / %d ambiguous subjects [%s]", r, c, time.Since(start))
 	} else {
 		log.Debugf("faces: found no ambiguous subjects [%s]", time.Since(start))
@@ -154,6 +192,7 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 	if res, err := w.Optimize(); err != nil {
 		return err
 	} else if res.Merged > 0 {
+		changed = true
 		log.Infof("faces: merged %d clusters [%s]", res.Merged, time.Since(start))
 	} else {
 		log.Debugf("faces: found no clusters to be merged [%s]", time.Since(start))
@@ -181,6 +220,8 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 
 	// Log face matching results.
 	if matches.Updated > 0 {
+		changed = true
+
 		log.Infof("faces: updated %s, recognized %s, %d unknown [%s]", english.Plural(int(matches.Updated), "marker", "markers"), english.Plural(int(matches.Recognized), "face", "faces"), matches.Unknown, time.Since(start))
 	} else {
 		log.Debugf("faces: updated %s, recognized %s, %d unknown [%s]", english.Plural(int(matches.Updated), "marker", "markers"), english.Plural(int(matches.Recognized), "face", "faces"), matches.Unknown, time.Since(start))
@@ -200,6 +241,21 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 		log.Errorf("faces: %s (remove clusters)", err)
 	} else if count > 0 {
 		log.Debugf("faces: removed %d clusters [%s]", count, time.Since(start))
+	}
+
+	// Refresh the subject counts this run invalidated.
+	//
+	// They are read by the people views, which order and filter on file_count, so a person whose
+	// markers this run assigned correctly would otherwise sort last or be filtered out - which is
+	// how a mistyped person stayed invisible long enough to look as though naming had failed.
+	if changed {
+		start = time.Now()
+
+		if err = entity.UpdateSubjectCounts(true); err != nil {
+			log.Errorf("faces: %s (update subject counts)", err)
+		} else {
+			log.Debugf("faces: updated subject counts [%s]", time.Since(start))
+		}
 	}
 
 	entity.UpdateFaces.Store(false)

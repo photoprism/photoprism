@@ -14,13 +14,14 @@ func Clients(limit, offset int, sortOrder, search string) (result entity.Clients
 
 	search = strings.TrimSpace(search)
 
-	if search == "all" {
+	switch {
+	case search == "all":
 		// Don't filter.
-	} else if rnd.IsUID(search, entity.ClientUID) {
+	case rnd.IsUID(search, entity.ClientUID):
 		stmt = stmt.Where("client_uid = ?", search)
-	} else if rnd.IsUID(search, entity.UserUID) {
+	case rnd.IsUID(search, entity.UserUID):
 		stmt = stmt.Where("user_uid = ?", search)
-	} else if search != "" {
+	case search != "":
 		stmt = stmt.Where("client_name LIKE ? OR user_name LIKE ?", search+"%", search+"%")
 	}
 

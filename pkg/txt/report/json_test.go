@@ -32,11 +32,12 @@ func TestRowsToObjectsAndJSONExport(t *testing.T) {
 	assert.NoError(t, json.Unmarshal([]byte(s), &back))
 	assert.Equal(t, objs, back)
 
-	// Duplicate column names collide to the same key; last wins
+	// Columns that canonicalize to one key are suffixed rather than collapsed, so a table holding
+	// two of the same name - a marker source beside a subject source - exports both.
 	rows = [][]string{{"x", "y"}}
 	cols = []string{"A-A", "A A"}
 	objs = RowsToObjects(rows, cols)
-	assert.Equal(t, map[string]string{"a_a": "y"}, objs[0])
+	assert.Equal(t, map[string]string{"a_a": "x", "a_a_2": "y"}, objs[0])
 }
 
 func TestCliFormatStrict(t *testing.T) {
@@ -89,4 +90,32 @@ func TestCliFormatStrict(t *testing.T) {
 			t.Fatalf("expected cli.ExitCoder, got %T", err)
 		}
 	}
+}
+
+func TestUniqueKeys(t *testing.T) {
+	t.Run("Distinct", func(t *testing.T) {
+		assert.Equal(t, []string{"a", "b"}, uniqueKeys([]string{"A", "B"}))
+	})
+	t.Run("Repeated", func(t *testing.T) {
+		// A marker source beside a subject source, both titled "Src" for the reader.
+		assert.Equal(t, []string{"src", "src_2", "src_3"}, uniqueKeys([]string{"Src", "Src", "Src"}))
+	})
+}
+
+func TestRowsToObjectsKeys(t *testing.T) {
+	rows := [][]string{{"x", "y"}}
+
+	t.Run("GivenKeys", func(t *testing.T) {
+		objs := RowsToObjectsKeys(rows, []string{"Src", "Src"}, []string{"marker_src", "subj_src"})
+		assert.Equal(t, map[string]string{"marker_src": "x", "subj_src": "y"}, objs[0])
+	})
+	t.Run("FallsBackToTheHeadings", func(t *testing.T) {
+		objs := RowsToObjectsKeys(rows, []string{"A", "B"}, nil)
+		assert.Equal(t, map[string]string{"a": "x", "b": "y"}, objs[0])
+	})
+	t.Run("PartialKeysFallBackForTheRest", func(t *testing.T) {
+		// Short rather than wrong: the named ones are used and the rest keep a heading-derived key.
+		objs := RowsToObjectsKeys(rows, []string{"A", "B"}, []string{"first"})
+		assert.Equal(t, map[string]string{"first": "x", "b": "y"}, objs[0])
+	})
 }

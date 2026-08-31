@@ -18,6 +18,47 @@ func (f Faces) Embeddings() (embeddings face.Embeddings) {
 	return embeddings
 }
 
+// EmbedModel returns the embedding model shared by all faces in this slice, and reports
+// whether they belong to one embedding space. Legacy rows without a recorded model are
+// FaceNet, so they resolve to the name their siblings carry.
+func (f Faces) EmbedModel() (model face.ModelName, ok bool) {
+	for _, m := range f {
+		if m.EmbedModel != "" {
+			model = m.EmbedModel
+			break
+		}
+	}
+
+	for _, m := range f {
+		if !face.ModelsComparable(m.EmbedModel, model) {
+			return model, false
+		}
+	}
+
+	return model, true
+}
+
+// CollisionBound returns the tightest collision radius in this slice that is active and still covers
+// extent, with the collision count of the cluster carrying it.
+//
+// Each candidate is tested against extent before it competes, so a bound too tight to keep is passed
+// over rather than winning and then disqualifying the looser one behind it. A tie takes the larger
+// count, so the result does not depend on the order the clusters arrived in.
+func (f Faces) CollisionBound(extent float64) (radius float64, collisions int) {
+	for _, m := range f {
+		if m.CollisionRadius <= face.CollisionDist || m.CollisionRadius < extent {
+			continue
+		}
+
+		if radius == 0 || m.CollisionRadius < radius ||
+			m.CollisionRadius == radius && m.Collisions > collisions {
+			radius, collisions = m.CollisionRadius, m.Collisions
+		}
+	}
+
+	return radius, collisions
+}
+
 // IDs returns all face IDs in this slice.
 func (f Faces) IDs() (ids []string) {
 	for _, m := range f {

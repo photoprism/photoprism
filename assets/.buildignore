@@ -1,4 +1,7 @@
 examples
+models/arcface
+models/auraface
+models/scrfd
 README.md
 Thumbs.db
 docs

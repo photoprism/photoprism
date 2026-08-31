@@ -76,22 +76,25 @@ import (
 
 // Config aggregates CLI flags, options.yml overrides, runtime settings, and shared resources (database, caches) for the running instance.
 type Config struct {
-	cliCtx       *cli.Context
-	options      *Options
-	settings     *customize.Settings
-	db           *gorm.DB
-	dbVersion    string
-	hub          *hub.Config
-	hubCancel    context.CancelFunc
-	hubLock      sync.Mutex
-	token        string
-	serial       string
-	tokenKey     []byte
-	tokenKeyOnce sync.Once
-	env          string
-	start        bool
-	ready        atomic.Bool
-	cache        *gc.Cache
+	cliCtx        *cli.Context
+	options       *Options
+	settings      *customize.Settings
+	db            *gorm.DB
+	dbVersion     string
+	hub           *hub.Config
+	hubCancel     context.CancelFunc
+	hubLock       sync.Mutex
+	faceWarned    sync.Map
+	faceModel     string
+	faceModelFlag string
+	token         string
+	serial        string
+	tokenKey      []byte
+	tokenKeyOnce  sync.Once
+	env           string
+	start         bool
+	ready         atomic.Bool
+	cache         *gc.Cache
 }
 
 // Values is a shorthand alias for map[string]interface{}.
@@ -176,6 +179,10 @@ func NewConfig(ctx *cli.Context) *Config {
 		start:   start,
 		cache:   gc.New(time.Minute, 10*time.Minute),
 	}
+
+	// Keep what the environment or the command line asked for, since "options.yml" is loaded
+	// last and a model it names is what an instance must keep using - see initFaceModel.
+	c.faceModelFlag = c.options.FaceModel
 
 	// Override options with values from the "options.yml" file, if it exists.
 	if optionsYaml := c.OptionsYaml(); fs.FileExists(optionsYaml) {
@@ -278,12 +285,11 @@ func (c *Config) Init() error {
 	disk.StorageLowPct = c.StorageFree()
 	DisableStorageCheck.Store(disk.StorageLowPct <= 0)
 
-	// Load optional vision package configuration.
-	if visionYaml := c.VisionYaml(); !fs.FileExistsNotEmpty(visionYaml) {
-		// Do nothing.
-	} else if loadErr := vision.Config.Load(visionYaml); loadErr != nil {
-		log.Warnf("vision: %s", loadErr)
-	}
+	c.LoadVisionConfig()
+
+	// Settle which face embedding model this instance uses, which needs the database and has
+	// to happen before Propagate configures the embedder from it.
+	c.initFaceModel()
 
 	// Update package defaults.
 	c.Propagate()
@@ -474,26 +480,30 @@ func (c *Config) Propagate() {
 	entity.ValidateTokens = !c.Public()
 
 	// Set face recognition parameters.
+	face.SizeThreshold = c.FaceSize()
 	face.ScoreThreshold = c.FaceScore()
 	face.OverlapThreshold = c.FaceOverlap()
 	face.ClusterScoreThreshold = c.FaceClusterScore()
 	face.ClusterSizeThreshold = c.FaceClusterSize()
 	face.ClusterCore = c.FaceClusterCore()
+	face.ClusterPercentile = c.FaceClusterPercentile()
+	face.ClusterSplitRounds = c.FaceClusterSplitRounds()
+	face.ClusterSplitShrink = c.FaceClusterSplitShrink()
+	// Derived rather than configured, but it still has to follow FACE_CLUSTER_CORE: leaving it at
+	// the package initializer froze the clustering trigger at the shipped default, so raising the
+	// core size moved the cluster definition and not the number of markers that starts a pass.
+	face.SampleThreshold = c.FaceSampleThreshold()
 	face.CollisionDist = c.FaceCollisionDist()
 	face.Epsilon = c.FaceEpsilonDist()
 	face.ClusterRadius = c.FaceClusterRadius()
 	face.ClusterDist = c.FaceClusterDist()
 	face.MatchDist = c.FaceMatchDist()
-	face.SkipChildren = c.FaceSkipChildren()
-	face.IgnoreBackground = !c.FaceAllowBackground()
-	if err := face.ConfigureEngine(face.EngineSettings{
-		Name: c.FaceEngine(),
-		ONNX: face.ONNXOptions{
-			ModelPath: c.FaceEngineModelPath(),
-			Threads:   c.FaceEngineThreads(),
-		},
-	}); err != nil {
+	face.MatchMargin = c.FaceMatchMargin()
+	if err := c.ConfigureFaceDetector(0); err != nil {
 		log.Warnf("faces: %s (configure engine)", err)
+	}
+	if err := c.ConfigureFaceEmbedder(c.FaceModel()); err != nil {
+		log.Warnf("faces: %s (configure embedding model)", err)
 	}
 
 	// Set default theme and locale.
@@ -545,6 +555,12 @@ func (c *Config) SaveOptionsPatch(patch Values) (bool, error) {
 		return false, nil
 	}
 
+	// Values are typed against the options they set before anything is written, so that the file
+	// and the running configuration cannot end up holding different numbers.
+	if err := CoerceOptionValues(patch); err != nil {
+		return false, err
+	}
+
 	fileName, values, err := c.loadOptionsYAML()
 	if err != nil {
 		return false, err
@@ -554,7 +570,68 @@ func (c *Config) SaveOptionsPatch(patch Values) (bool, error) {
 		return false, nil
 	}
 
+	if _, err = c.writeOptionsYAML(fileName, values); err != nil {
+		return true, err
+	}
+
+	return true, c.applyOptionValues(patch)
+}
+
+// DeleteOptionsPatch removes the specified keys from "options.yml" and reports whether the file
+// was changed. Removing a key restores the default, which writing an empty value does not: the
+// loader cannot tell an option that was cleared from one that was set to nothing.
+func (c *Config) DeleteOptionsPatch(keys ...string) (bool, error) {
+	if c == nil || c.options == nil || len(keys) == 0 {
+		return false, nil
+	}
+
+	// Nothing to remove from a file that does not exist, and reading one through loadOptionsYAML
+	// would create its directory on the way. A helper that removes a setting must not leave a
+	// directory tree behind as its only effect.
+	if fileName := c.OptionsYaml(); fileName == "" || !fs.FileExists(fileName) {
+		return false, nil
+	}
+
+	fileName, values, err := c.loadOptionsYAML()
+	if err != nil {
+		return false, err
+	}
+
+	changed := false
+
+	for _, key := range keys {
+		if _, ok := values[key]; ok {
+			delete(values, key)
+			changed = true
+		}
+	}
+
+	if !changed {
+		return false, nil
+	}
+
+	// Nothing is applied in return: a removed key leaves no value to read back, and the caller
+	// clears its own field.
 	return c.writeOptionsYAML(fileName, values)
+}
+
+// applyOptionValues applies the patched values, and only those, to the in-memory options.
+//
+// Reading the file back instead would apply every key it holds - including ones a flag or an
+// environment variable overrode for this run, and ones another writer left there. That is how
+// recording a face model came to replace a live database configuration.
+func (c *Config) applyOptionValues(patch Values) error {
+	if c == nil || c.options == nil || len(patch) == 0 {
+		return nil
+	}
+
+	b, err := yaml.Marshal(patch)
+
+	if err != nil {
+		return err
+	}
+
+	return yaml.Unmarshal(b, c.options)
 }
 
 // loadOptionsYAML loads options.yml into a writable map and returns its file path.
@@ -619,7 +696,8 @@ func mergeOptionValues(dst Values, src Values) bool {
 	return changed
 }
 
-// writeOptionsYAML persists merged options values and reloads in-memory options.
+// writeOptionsYAML persists merged options values. It does not touch the in-memory options,
+// which the caller applies through applyOptionValues when it changed one.
 func (c *Config) writeOptionsYAML(fileName string, values Values) (bool, error) {
 	b, err := yaml.Marshal(values)
 	if err != nil {
@@ -628,10 +706,6 @@ func (c *Config) writeOptionsYAML(fileName string, values Values) (bool, error) 
 
 	if err = os.WriteFile(fileName, b, fs.ModeConfigFile); err != nil {
 		return false, err
-	}
-
-	if err = c.options.Load(fileName); err != nil {
-		return true, err
 	}
 
 	return true, nil

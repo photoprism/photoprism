@@ -2,6 +2,7 @@ package sortby
 
 import (
 	"github.com/jinzhu/gorm"
+	// Registers the database drivers, so the random order can be resolved per dialect.
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 

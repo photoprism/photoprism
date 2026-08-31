@@ -1,11 +1,13 @@
 package crop
 
 import (
+	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -64,7 +66,8 @@ func TestThumbFileName(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.True(t, strings.HasSuffix(r, "testdata/b/c/c/bccfeaa526a36e19b555fd4ca5e8f767d5604289_720x720_fit.jpg"), r)
+		// A sliver of a crop asks for a source no rendition has, so the widest one is used.
+		assert.True(t, strings.HasSuffix(r, "testdata/b/c/c/bccfeaa526a36e19b555fd4ca5e8f767d5604289_1280x1024_fit.jpg"), r)
 	})
 }
 
@@ -101,21 +104,21 @@ func TestFindIdealThumbFileName(t *testing.T) {
 		r := findIdealThumbFileName("2105662d3f8d6e68d9e94280449fbf26ed89xxxx", 500, "path/b")
 		assert.Equal(t, "", r)
 	})
-	t.Run("WidthNum500", func(t *testing.T) {
-		r := findIdealThumbFileName("bccfeaa526a36e19b555fd4ca5e8f767d5604289", 500, "./testdata/b/c/c")
-		assert.True(t, strings.HasSuffix(r, "testdata/b/c/c/bccfeaa526a36e19b555fd4ca5e8f767d5604289_720x720_fit.jpg"), r)
-	})
-	t.Run("WidthNum720", func(t *testing.T) {
-		r := findIdealThumbFileName("bccfeaa526a36e19b555fd4ca5e8f767d5604289", 720, "./testdata/b/c/c")
-		assert.True(t, strings.HasSuffix(r, "testdata/b/c/c/bccfeaa526a36e19b555fd4ca5e8f767d5604289_720x720_fit.jpg"), r)
-	})
-	t.Run("WidthNum800", func(t *testing.T) {
-		r := findIdealThumbFileName("bccfeaa526a36e19b555fd4ca5e8f767d5604289", 800, "./testdata/b/c/c")
-		assert.True(t, strings.HasSuffix(r, "testdata/b/c/c/bccfeaa526a36e19b555fd4ca5e8f767d5604289_720x720_fit.jpg"), r)
-	})
-	t.Run("WidthNum60", func(t *testing.T) {
+	// The renditions belong to a portrait picture, so neither reaches the width its name states:
+	// the one called 720x720 is 479 px wide and the one called 1280x1024 is 681 px wide.
+	const fit720 = "testdata/b/c/c/bccfeaa526a36e19b555fd4ca5e8f767d5604289_720x720_fit.jpg"
+	const fit1280 = "testdata/b/c/c/bccfeaa526a36e19b555fd4ca5e8f767d5604289_1280x1024_fit.jpg"
+	t.Run("SmallestThatCovers", func(t *testing.T) {
 		r := findIdealThumbFileName("bccfeaa526a36e19b555fd4ca5e8f767d5604289", 60, "./testdata/b/c/c")
-		assert.True(t, strings.HasSuffix(r, "testdata/b/c/c/bccfeaa526a36e19b555fd4ca5e8f767d5604289_720x720_fit.jpg"), r)
+		assert.True(t, strings.HasSuffix(r, fit720), r)
+	})
+	t.Run("SkipsARenditionNarrowerThanItsName", func(t *testing.T) {
+		r := findIdealThumbFileName("bccfeaa526a36e19b555fd4ca5e8f767d5604289", 500, "./testdata/b/c/c")
+		assert.True(t, strings.HasSuffix(r, fit1280), r)
+	})
+	t.Run("WidestAvailableWhenNoneCovers", func(t *testing.T) {
+		r := findIdealThumbFileName("bccfeaa526a36e19b555fd4ca5e8f767d5604289", 4000, "./testdata/b/c/c")
+		assert.True(t, strings.HasSuffix(r, fit1280), r)
 	})
 }
 
@@ -136,7 +139,7 @@ func TestImageFromThumb(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		img, cropName, err := ImageFromThumb(thumbName, NewArea("crop", 0, 0, 1, 1), Sizes[Tile50], false)
+		img, cropName, srcWidth, err := ImageFromThumb(thumbName, NewArea("crop", 0, 0, 1, 1), Sizes[Tile50], false)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -145,5 +148,93 @@ func TestImageFromThumb(t *testing.T) {
 		assert.Equal(t, filepath.Join(filepath.Dir(thumbName), "bccfeaa526a36e19b555fd4ca5e8f767d5604289_50x50_crop_0000003e83e8.jpg"), cropName)
 		assert.Equal(t, 50, img.Bounds().Dx())
 		assert.Equal(t, 50, img.Bounds().Dy())
+		// The source the crop was taken from, not the crop itself: recording the latter would
+		// store the requested size back, which is a constant and says nothing about quality.
+		assert.Positive(t, srcWidth)
+		assert.NotEqual(t, 50, srcWidth)
 	})
+}
+
+func TestImageFromIdealThumb(t *testing.T) {
+	const hash = "bccfeaa526a36e19b555fd4ca5e8f767d5604289"
+
+	cachePath := t.TempDir()
+	src := fs.Abs("../../../assets/samples/6720px_white.jpg")
+
+	renditionWidth := func(t *testing.T, name thumb.Name) int {
+		t.Helper()
+		size := thumb.Sizes[name]
+		fileName, err := thumb.FromFile(src, hash, cachePath, size.Width, size.Height, thumb.OrientationNormal, size.Options...)
+		require.NoError(t, err)
+		img, _, err := fs.DecodeImageFile(fileName)
+		require.NoError(t, err)
+
+		return img.Bounds().Dx()
+	}
+
+	width720 := renditionWidth(t, thumb.Fit720)
+	width1280 := renditionWidth(t, thumb.Fit1280)
+	require.Greater(t, width1280, width720, "the two renditions must differ for this test to mean anything")
+
+	thumbName, err := thumb.Sizes[thumb.Fit720].FileName(hash, cachePath)
+	require.NoError(t, err)
+
+	t.Run("LargeAreaKeepsSmallestRendition", func(t *testing.T) {
+		// A face filling the frame is already larger than the template, so the detection
+		// thumbnail supplies it without upscaling.
+		img, err := ImageFromIdealThumb(thumbName, NewArea("face", 0, 0, 1, 1), Sizes[Tile160])
+		require.NoError(t, err)
+		assert.Equal(t, width720, img.Bounds().Dx())
+	})
+	t.Run("SmallAreaUpgradesRendition", func(t *testing.T) {
+		// A face covering a fifth of the width needs five times the template width, which
+		// only the larger rendition can supply.
+		img, err := ImageFromIdealThumb(thumbName, NewArea("face", 0.4, 0.4, 0.2, 0.2), Sizes[Tile160])
+		require.NoError(t, err)
+		assert.Equal(t, width1280, img.Bounds().Dx())
+	})
+	t.Run("ReturnsWholeImageNotACrop", func(t *testing.T) {
+		// Callers warp from the source themselves, so this must not crop to the area.
+		img, err := ImageFromIdealThumb(thumbName, NewArea("face", 0, 0, 1, 1), Sizes[Tile160])
+		require.NoError(t, err)
+		assert.Greater(t, img.Bounds().Dx(), Sizes[Tile160].Width)
+	})
+	t.Run("NotAThumbName", func(t *testing.T) {
+		// Without a hash prefix there is no ladder to search, so the file is decoded as is.
+		img, err := ImageFromIdealThumb(src, NewArea("face", 0.4, 0.4, 0.2, 0.2), Sizes[Tile160])
+		require.NoError(t, err)
+		assert.Equal(t, 6720, img.Bounds().Dx())
+	})
+	t.Run("MissingFile", func(t *testing.T) {
+		img, err := ImageFromIdealThumb(filepath.Join(cachePath, "missing.jpg"), NewArea("face", 0, 0, 1, 1), Sizes[Tile160])
+		assert.Error(t, err)
+		assert.Nil(t, img)
+	})
+}
+
+// TestImageFromThumbCachedSource pins that a reused crop reports no source width. The crop's name
+// records its area and dimensions but not what it was drawn from, so any answer would be a
+// prediction of today's rendition rather than a record of the one the vector came from.
+func TestImageFromThumbCachedSource(t *testing.T) {
+	thumbName := "testdata/b/c/c/bccfeaa526a36e19b555fd4ca5e8f767d5604289_720x720_fit.jpg"
+	area := NewArea("crop", 0, 0, 1, 1)
+
+	if _, err := os.Stat(thumbName); err != nil {
+		t.Skip("thumb fixture not available")
+	}
+
+	_, cropName, first, err := ImageFromThumb(thumbName, area, Sizes[Tile50], true)
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = os.Remove(cropName) })
+	assert.Positive(t, first, "the run that creates the crop measures its source")
+
+	_, _, second, err := ImageFromThumb(thumbName, area, Sizes[Tile50], true)
+	require.NoError(t, err)
+	assert.Zero(t, second, "the run that reuses it cannot know, and must not guess")
+
+	// The crop cache is keyed on hash, area and size alone, so the UI's own face thumbnails
+	// satisfy it. A caller that has to record what it sampled therefore opens the source.
+	_, _, source, err := ImageFromSource(thumbName, area, Sizes[Tile50], false)
+	require.NoError(t, err)
+	assert.Equal(t, first, source, "ImageFromSource measures whether or not a crop is cached")
 }

@@ -13,7 +13,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// Filenames of usable thumb sizes.
+// Filenames of usable thumb sizes, ordered so a rendition is never narrower than its predecessor.
 var thumbFileNames = []string{
 	"%s_720x720_fit.jpg",
 	"%s_1280x1024_fit.jpg",
@@ -25,7 +25,7 @@ var thumbFileNames = []string{
 	"%s_15360x8640_fit.jpg",
 }
 
-// Suitable thumb file sizes.
+// Suitable thumb file sizes, in the same order as thumbFileNames.
 var thumbFileSizes = []thumb.Size{
 	thumb.Sizes[thumb.Fit720],
 	thumb.Sizes[thumb.Fit1280],
@@ -37,8 +37,23 @@ var thumbFileSizes = []thumb.Size{
 	thumb.Sizes[thumb.Fit15360],
 }
 
-// ImageFromThumb returns a cropped area from an existing thumbnail image.
-func ImageFromThumb(thumbName string, area Area, size Size, cache bool) (img image.Image, cropName string, err error) {
+// ImageFromThumb returns a cropped area from an existing thumbnail image, reusing a cached crop
+// when one exists. srcWidth is then 0, because a reused crop cannot say what it was drawn from.
+func ImageFromThumb(thumbName string, area Area, size Size, cache bool) (img image.Image, cropName string, srcWidth int, err error) {
+	return cropFromThumb(thumbName, area, size, cache, true)
+}
+
+// ImageFromSource returns a cropped area taken from the source rendition, ignoring any cached crop,
+// and reports the width it sampled.
+//
+// A caller that records what an embedding was drawn from has to use this: the crop cache is keyed
+// on hash, area and size alone, so the UI's own face thumbnails satisfy it and would otherwise
+// leave every such embedding unmeasured.
+func ImageFromSource(thumbName string, area Area, size Size, cache bool) (img image.Image, cropName string, srcWidth int, err error) {
+	return cropFromThumb(thumbName, area, size, cache, false)
+}
+
+func cropFromThumb(thumbName string, area Area, size Size, cache, reuse bool) (img image.Image, cropName string, srcWidth int, err error) {
 	// Use same folder for caching if "cache" is true.
 	filePath := filepath.Dir(thumbName)
 
@@ -47,7 +62,7 @@ func ImageFromThumb(thumbName string, area Area, size Size, cache bool) (img ima
 
 	// Resolve symlinks.
 	if thumbName, err = fs.Resolve(thumbName); err != nil {
-		return nil, "", err
+		return nil, "", 0, err
 	}
 
 	// Compose cached crop image file name.
@@ -55,20 +70,28 @@ func ImageFromThumb(thumbName string, area Area, size Size, cache bool) (img ima
 	cropName = filepath.Join(filePath, cropBase)
 
 	// Cached?
-	if !fs.FileExists(cropName) {
+	if !reuse {
+		// Do nothing.
+	} else if !fs.FileExists(cropName) {
 		// Do nothing.
 	} else if cropImg, _, cropErr := fs.DecodeImageFile(cropName); cropErr != nil {
 		log.Errorf("crop: failed loading %s", filepath.Base(cropName))
 	} else {
-		return cropImg, cropName, nil
+		// Zero rather than resolved: the crop's name records its area and dimensions but not its
+		// source, and a rendition cached since would predict a wider one than this crop came from.
+		return cropImg, cropName, 0, nil
 	}
 
 	// Open thumb image file.
 	img, err = openIdealThumbFile(thumbName, hash, area, size)
 
 	if err != nil {
-		return img, "", err
+		return img, "", srcWidth, err
 	}
+
+	// Exact rather than resolved: this is the image the crop is taken from, whatever selection
+	// produced it, including a path that is not a standard thumbnail name.
+	srcWidth = img.Bounds().Dx()
 
 	// Get absolute crop coordinates and dimension.
 	posMin, posMax, dim := area.Bounds(img)
@@ -92,7 +115,15 @@ func ImageFromThumb(thumbName string, area Area, size Size, cache bool) (img ima
 		}
 	}
 
-	return img, cropName, nil
+	return img, cropName, srcWidth, nil
+}
+
+// ImageFromIdealThumb decodes the smallest cached thumbnail that can still supply the
+// requested crop size for an area, falling back to the given thumbnail when there is
+// none. Callers that need the whole image rather than the crop use this, so that a face
+// warped onto a template is not upscaled from a rendition it outgrew.
+func ImageFromIdealThumb(thumbName string, area Area, size Size) (img image.Image, err error) {
+	return openIdealThumbFile(thumbName, thumbHash(thumbName), area, size)
 }
 
 // ThumbFileName returns the ideal thumb file name.
@@ -143,7 +174,9 @@ func thumbHash(fileName string) (base string) {
 	return base[:i]
 }
 
-// findIdealThumbFileName finds the filename of the ideal thumb size for the given width.
+// findIdealThumbFileName returns the smallest cached thumbnail that covers the given width, or the
+// widest one cached when none does. A name bounds a rendition from above but not below - the file
+// called 1920x1200 holds a 4:3 picture 1600 px wide - so a candidate the name allows is measured.
 func findIdealThumbFileName(hash string, width int, filePath string) (fileName string) {
 	if hash == "" || filePath == "" {
 		return ""
@@ -153,15 +186,20 @@ func findIdealThumbFileName(hash string, width int, filePath string) (fileName s
 		// Resolve symlinks.
 		name, err := fs.Resolve(filepath.Join(filePath, fmt.Sprintf(thumbFileNames[i], hash)))
 
-		switch {
-		case err != nil || !fs.FileExists(name):
+		if err != nil || !fs.FileExists(name) {
 			continue
-		case s.Width < width:
-			fileName = name
-			continue
-		default:
-			return name
 		}
+
+		// Renditions grow with the list, so the last one seen is the widest cached.
+		fileName = name
+
+		if s.Width < width {
+			continue
+		} else if cfg, _, cfgErr := fs.DecodeImageConfigFile(name); cfgErr == nil && cfg.Width < width {
+			continue
+		}
+
+		return name
 	}
 
 	return fileName

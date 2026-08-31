@@ -28,6 +28,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 )
 
+// GeoApi names the service that resolves coordinates to places.
 var GeoApi = "places"
 
 var log = event.Log
@@ -48,6 +49,8 @@ func FlushCaches() {
 	FlushLabelCache()
 	FlushPhotoLabelCache()
 	FlushSessionCache()
+	FlushKeywordCache()
+	FlushPhotoKeywordCache()
 }
 
 // TypeString returns an entity type string for logging, defaulting to "unknown".

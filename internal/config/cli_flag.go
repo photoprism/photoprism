@@ -34,6 +34,23 @@ func (f CliFlag) Fields() reflect.Value {
 	return fields
 }
 
+// ApplyDocDefaults makes "--help" print the documented default of every flag that has one.
+//
+// Without it an option whose getter reads zero as "derive it" advertises "(default: 0)", which
+// reads as a value in force rather than the absence of one. Only the help output is affected,
+// since the generated reference already takes DocDefault ahead of the flag.
+func (f CliFlags) ApplyDocDefaults() {
+	for _, flag := range f {
+		if flag.DocDefault == "" {
+			continue
+		}
+
+		if field := flag.Fields().FieldByName("DefaultText"); field.IsValid() && field.CanSet() && field.String() == "" {
+			field.SetString(flag.DocDefault)
+		}
+	}
+}
+
 // Default returns the documented default value of the flag, never the
 // runtime value urfave/cli writes back into f.Value once an environment
 // variable or CLI argument has been applied. Secret flags collapse to

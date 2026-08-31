@@ -490,7 +490,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 
 		if frm.Review {
 			s = s.Where("photos.photo_quality < 3")
-		} else if frm.Quality != 0 && frm.Private == false {
+		} else if frm.Quality != 0 && !frm.Private {
 			s = s.Where("photos.photo_quality >= ?", frm.Quality)
 		}
 	}
@@ -669,9 +669,7 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 	if txt.NotEmpty(frm.Path) {
 		p := frm.Path
 
-		if strings.HasPrefix(p, "/") {
-			p = p[1:]
-		}
+		p = strings.TrimPrefix(p, "/")
 
 		if strings.HasSuffix(p, "/") {
 			s = s.Where("photos.photo_path = ?", p[:len(p)-1])

@@ -32,6 +32,39 @@ func escapeMarkdownCell(cell string) string {
 	return cell
 }
 
+// rowAlignment returns the per-column alignment for the data rows, or nil where none was asked for.
+//
+// Padded to the column count, since the table writer indexes it positionally and a short slice would
+// otherwise leave the trailing columns unset rather than defaulted.
+func rowAlignment(cols []string, align []Align) []tw.Align {
+	if len(align) == 0 {
+		return nil
+	}
+
+	out := make([]tw.Align, len(cols))
+
+	for i := range out {
+		out[i] = tw.AlignLeft
+	}
+
+	for i, a := range align {
+		if i >= len(out) {
+			break
+		}
+
+		switch a {
+		case AlignRight:
+			out[i] = tw.AlignRight
+		case AlignCenter:
+			out[i] = tw.AlignCenter
+		case AlignLeft, AlignDefault:
+			out[i] = tw.AlignLeft
+		}
+	}
+
+	return out
+}
+
 // MarkdownTable returns a text-formatted table with caption, optionally as valid Markdown,
 // so the output can be pasted into the docs.
 func MarkdownTable(rows [][]string, cols []string, opt Options) string {
@@ -52,12 +85,19 @@ func MarkdownTable(rows [][]string, cols []string, opt Options) string {
 	var tableRenderer tw.Renderer
 	var tableConfig tablewriter.Config
 
+	rowAlign := rowAlignment(cols, opt.Align)
+
 	if opt.Valid {
+		// Set on both because the renderer resolves alignment once, from the header, and Markdown
+		// carries it in the delimiter row for the whole column rather than for the body alone.
 		tableRenderer = renderer.NewMarkdown()
 		tableConfig = tablewriter.Config{
-			Header: tw.CellConfig{Alignment: tw.CellAlignment{Global: tw.AlignLeft}, Formatting: tw.CellFormatting{AutoFormat: -1}},
+			Header: tw.CellConfig{
+				Alignment:  tw.CellAlignment{Global: tw.AlignLeft, PerColumn: rowAlign},
+				Formatting: tw.CellFormatting{AutoFormat: -1},
+			},
 			Row: tw.CellConfig{
-				Alignment: tw.CellAlignment{Global: tw.AlignLeft},
+				Alignment: tw.CellAlignment{Global: tw.AlignLeft, PerColumn: rowAlign},
 			},
 		}
 	} else {
@@ -65,7 +105,7 @@ func MarkdownTable(rows [][]string, cols []string, opt Options) string {
 		tableConfig = tablewriter.Config{
 			Header: tw.CellConfig{Alignment: tw.CellAlignment{Global: tw.AlignCenter}, Formatting: tw.CellFormatting{AutoFormat: -1}},
 			Row: tw.CellConfig{
-				Alignment: tw.CellAlignment{Global: tw.AlignLeft},
+				Alignment: tw.CellAlignment{Global: tw.AlignLeft, PerColumn: rowAlign},
 			},
 		}
 	}

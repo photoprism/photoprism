@@ -27,6 +27,14 @@ func YesFlag() *cli.BoolFlag {
 	return &cli.BoolFlag{Name: "yes", Aliases: []string{"y"}, Usage: "runs the command non-interactively"}
 }
 
+// ForceFlag returns the shared CLI flag definition for forced runs across commands.
+func ForceFlag(usage string) *cli.BoolFlag {
+	if usage == "" {
+		usage = "performs the action even when it is not recommended"
+	}
+	return &cli.BoolFlag{Name: "force", Aliases: []string{"f"}, Usage: usage}
+}
+
 // SuperAdminFlag returns the shared super admin CLI flag definition.
 func SuperAdminFlag(usage string) *cli.BoolFlag {
 	if usage == "" {

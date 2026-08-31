@@ -1,6 +1,7 @@
 FROM photoprism/photoprism:unstable-ce AS build
 # Set environment variables
 ENV DO_NOT_TRACK=true \
+    ORT_DISABLE_TELEMETRY=1 \
     TF_CPP_MIN_LOG_LEVEL=4 \
     TF_ENABLE_ONEDNN_OPTS=1 \
     MALLOC_ARENA_MAX=2 \
@@ -12,6 +13,7 @@ ENV DO_NOT_TRACK=true \
     PHOTOPRISM_EXPERIMENTAL="true" \
     PHOTOPRISM_UPLOAD_NSFW="false" \
     PHOTOPRISM_DETECT_NSFW="false" \
+    PHOTOPRISM_FACE_CLUSTER_CORE=4 \
     PHOTOPRISM_THUMB_LIBRARY="auto" \
     PHOTOPRISM_THUMB_COLOR="auto" \
     PHOTOPRISM_THUMB_SIZE=4096 \

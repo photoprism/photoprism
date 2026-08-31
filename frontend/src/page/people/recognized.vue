@@ -224,6 +224,14 @@ export default {
     },
   },
   watch: {
+    // Events received while the tab was hidden only set the dirty flag. Switching
+    // tabs leaves the filter unchanged, so search() below returns early without
+    // refreshing; a list that went stale while hidden is refreshed here instead.
+    active(value) {
+      if (value && this.dirty) {
+        this.refresh();
+      }
+    },
     $route() {
       // Tab inactive?
       if (!this.active) {
@@ -255,6 +263,22 @@ export default {
     }
   },
   methods: {
+    // notifyResultCount announces how many rows the last search returned, and says nothing for the
+    // tab the user is not looking at. Both tabs are mounted eagerly and search when they are created,
+    // so the hidden one would otherwise report "No people found" over the list that is on screen.
+    notifyResultCount() {
+      if (!this.active) {
+        return;
+      }
+
+      if (!this.results.length) {
+        this.$notify.warn(this.$gettext("No people found"));
+      } else if (this.results.length === 1) {
+        this.$notify.info(this.$gettext("One person found"));
+      } else {
+        this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} people found"), { n: this.results.length }));
+      }
+    },
     edit(subject) {
       if (!subject) {
         return;
@@ -713,13 +737,7 @@ export default {
           this.scrollDisabled = resp.count < resp.limit;
 
           if (this.scrollDisabled) {
-            if (!this.results.length) {
-              this.$notify.warn(this.$gettext("No people found"));
-            } else if (this.results.length === 1) {
-              this.$notify.info(this.$gettext("One person found"));
-            } else {
-              this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} people found"), { n: this.results.length }));
-            }
+            this.notifyResultCount();
           } else {
             // this.$notify.info(this.$gettext('More than 20 people found'));
             this.$nextTick(() => {
@@ -755,7 +773,9 @@ export default {
         return;
       }
 
-      Subject.search({ uid: affected.join("|"), count: affected.length })
+      // Carries the list's own visibility, or the refetch answers a narrower question than the list
+      // asked: with hidden people shown, a uid-scoped search without it drops the row being patched.
+      Subject.search({ uid: affected.join("|"), count: affected.length, hidden: this.filter.hidden })
         .then((resp) => {
           const found = new Set();
 
@@ -766,7 +786,9 @@ export default {
 
             if (model) {
               for (let key in values) {
-                if (key !== "UID" && values.hasOwnProperty(key) && values[key] != null && typeof values[key] !== "object") {
+                // Null is a value here, not a missing field: a cleared column arrives as one, and
+                // the loaded model has to take it for the list to match the row.
+                if (key !== "UID" && values.hasOwnProperty(key) && (values[key] === null || typeof values[key] !== "object")) {
                   model[key] = values[key];
                 }
               }

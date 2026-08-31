@@ -9,7 +9,7 @@
     max-width="360"
     class="p-dialog p-confirm-dialog"
     @keydown.esc.exact="close"
-    @keyup.enter.exact="confirm"
+    @keyup.enter.exact="onEnter"
     @after-enter="afterEnter"
     @after-leave="afterLeave"
   >
@@ -57,12 +57,26 @@ export default {
       type: String,
       default: "highlight",
     },
+    // Set false where the dialog is opened by an Enter keypress. The keydown that raises it is
+    // followed by a keyup that lands on the dialog, which would otherwise confirm it before the
+    // user has seen what it asks.
+    confirmOnEnter: {
+      type: Boolean,
+      default: true,
+    },
   },
   emits: ["close", "confirm"],
   data() {
     return {};
   },
   methods: {
+    onEnter() {
+      if (!this.confirmOnEnter) {
+        return;
+      }
+
+      this.confirm();
+    },
     afterEnter() {
       this.$view.enter(this);
     },

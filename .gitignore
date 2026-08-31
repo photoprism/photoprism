@@ -5,6 +5,7 @@
 *.pid
 *.log
 *.jsonl
+zz_*.go
 *.db
 *.db-journal
 *.sqlite
@@ -40,6 +41,7 @@ venv
 /plus/
 /tmp/
 /internal/tmp/
+/internal/zz*
 /test/
 *-lock.json
 !/package-lock.json
@@ -77,6 +79,7 @@ frontend/coverage/
 /TODO.md
 join_token
 client_secret
+/i
 
 # Files created automatically by editors and/or operating systems:
 .DS_Store

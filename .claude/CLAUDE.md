@@ -27,10 +27,14 @@ Run `make help` for an overview of the most common targets, and `make list` to l
 ## Testing
 
 **Run all tests:**
-- `make test` — runs both JS and Go tests
-- `make test-go` — all Go tests (slow, ~20 min)
+- `make test` — runs the JS and Go tests on SQLite; it does not cover MariaDB or the editions
+- `make test-go` — all Go tests on SQLite (~3-15 min)
+- `make test-mariadb` — the same Go suite against MariaDB (~5-20 min)
 - `make test-js` — frontend unit tests (Vitest)
-- `make test-short` — short Go tests in parallel (~5 min)
+- `make test-short` — short Go tests in parallel (~2-5 min)
+
+Go runs packages concurrently, so wall-clock time depends on the core count, on how warm the
+build cache is, and on what else is using the host. Treat the ranges as orders of magnitude.
 
 **Run targeted Go tests:**
 ```bash
@@ -43,8 +47,20 @@ go test ./internal/entity/... -count=1 -tags="slow,develop"
 - `make vitest-watch` — Vitest in watch mode
 - `make vitest-coverage` — Vitest with coverage report
 
-**Reset test databases before running Go tests:**
-- `make reset-testdb` — clears SQLite test DBs and MariaDB testdb
+**Run the Go tests against MariaDB:**
+- `make test-mariadb` runs the suite against MariaDB instead of SQLite. Each package gets its
+  own database, and the target resets them via `reset-acceptance` before it starts.
+- The editions are not covered by the root target and each need their own run:
+  `make -C plus test-mariadb`, `make -C pro test-mariadb`, `make -C portal test-mariadb`.
+- For a targeted run, export the same `PHOTOPRISM_TEST_DRIVER` and `PHOTOPRISM_TEST_DSN` that
+  `run-test-mariadb` sets in the `Makefile`, then call `go test` on the packages you want.
+
+**Reset test databases:**
+- `make reset-testdb` — the one to reach for: deletes the SQLite test database files, including
+  the `-journal`, `-wal` and `-shm` sidecars, and drops the MariaDB databases the Go tests use.
+- `make reset-acceptance` — drops the MariaDB test databases only. `make test-mariadb` runs it
+  automatically; call it by hand after a targeted or interrupted MariaDB run.
+- `make reset-sqlite` — removes the SQLite test files only.
 
 **Subset targets:** `make test-pkg`, `make test-api`, `make test-entity`, `make test-commands`, `make test-photoprism`, `make test-ai`
 

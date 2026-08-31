@@ -12,9 +12,7 @@ import (
 
 // FilesByPath returns a slice of files in a given originals folder.
 func FilesByPath(limit, offset int, root, dir string, public bool) (files entity.Files, err error) {
-	if strings.HasPrefix(dir, "/") {
-		dir = dir[1:]
-	}
+	dir = strings.TrimPrefix(dir, "/")
 
 	stmt := Db().
 		Table("files").Select("files.*").
@@ -35,9 +33,7 @@ func FilesByPath(limit, offset int, root, dir string, public bool) (files entity
 
 // Files returns not-missing and not-deleted file entities in the range of limit and offset sorted by id.
 func Files(limit, offset int, dir string, includeMissing bool) (files entity.Files, err error) {
-	if strings.HasPrefix(dir, "/") {
-		dir = dir[1:]
-	}
+	dir = strings.TrimPrefix(dir, "/")
 
 	stmt := Db()
 

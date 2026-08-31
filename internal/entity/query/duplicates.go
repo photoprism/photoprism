@@ -8,9 +8,7 @@ import (
 
 // Duplicates finds duplicate files in the range of limit and offset sorted by file name.
 func Duplicates(limit, offset int, dir string) (files entity.Duplicates, err error) {
-	if strings.HasPrefix(dir, "/") {
-		dir = dir[1:]
-	}
+	dir = strings.TrimPrefix(dir, "/")
 
 	stmt := Db()
 

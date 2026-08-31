@@ -7,6 +7,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
+// Users represents a list of user accounts.
 type Users []User
 
 // User represents a person that may optionally log in as user.

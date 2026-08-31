@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
+	"slices"
 	"strings"
 )
 
@@ -14,15 +15,8 @@ type Embeddings []Embedding
 func NewEmbeddings(inference [][]float32) Embeddings {
 	result := make(Embeddings, len(inference))
 
-	var v []float32
-	var i int
-
-	for i, v = range inference {
-		e := NewEmbedding(v)
-
-		if e.CanMatch() {
-			result[i] = e
-		}
+	for i, v := range inference {
+		result[i] = NewEmbedding(v)
 	}
 
 	return result
@@ -46,20 +40,45 @@ func (embeddings Embeddings) Count() int {
 	return len(embeddings)
 }
 
-// Kind returns the type of face e.g. regular, kids, or ignored.
-func (embeddings Embeddings) Kind() (result Kind) {
-	for _, e := range embeddings {
-		if k := e.Kind(); k > result {
-			result = k
-		}
-	}
-
-	return result
-}
-
 // One tests if there is exactly one embedding.
 func (embeddings Embeddings) One() bool {
 	return embeddings.Count() == 1
+}
+
+// ValidEmbeddings checks the cardinality, dimensions, and values of an embedding result.
+// Non-finite values survive JSON and storage but poison every later distance, so they are
+// rejected where the vector enters the index rather than where it is compared.
+func ValidEmbeddings(embeddings Embeddings, dims int) bool {
+	if !embeddings.One() || dims < 1 || len(embeddings[0]) != dims {
+		return false
+	}
+
+	for _, value := range embeddings[0] {
+		if math.IsNaN(value) || math.IsInf(value, 0) {
+			return false
+		}
+	}
+
+	// A vector with no magnitude is not a face, and normalization cannot turn it into one.
+	return !embeddings[0].Zero()
+}
+
+// Dims returns the number of values shared by all embeddings, 0 when there are none,
+// and -1 when they differ, since vectors of different lengths cannot be compared.
+func (embeddings Embeddings) Dims() int {
+	if len(embeddings) < 1 {
+		return 0
+	}
+
+	dims := len(embeddings[0])
+
+	for i := 1; i < len(embeddings); i++ {
+		if len(embeddings[i]) != dims {
+			return -1
+		}
+	}
+
+	return dims
 }
 
 // First returns the first face embedding.
@@ -83,9 +102,11 @@ func (embeddings Embeddings) Float64() [][]float64 {
 }
 
 // Contains tests if another embeddings is contained within a radius.
+// Dist returns -1 for vectors of a different length, which would otherwise read as the
+// closest possible match, so only a non-negative distance can be inside the radius.
 func (embeddings Embeddings) Contains(other Embedding, radius float64) bool {
 	for _, e := range embeddings {
-		if d := e.Dist(other); d < radius {
+		if d := e.Dist(other); d >= 0 && d < radius {
 			return true
 		}
 	}
@@ -93,13 +114,31 @@ func (embeddings Embeddings) Contains(other Embedding, radius float64) bool {
 	return false
 }
 
-// Dist returns the minimum distance to an embedding.
+// Dist returns the minimum distance to an embedding, or -1 when none is comparable.
+// A vector Embedding.Dist cannot compare is skipped rather than counted: it reports -1,
+// which would otherwise win the minimum over every real distance.
 func (embeddings Embeddings) Dist(other Embedding) (dist float64) {
 	dist = -1
 
 	for _, e := range embeddings {
-		if d := e.Dist(other); d < dist || dist < 0 {
+		if d := e.Dist(other); d >= 0 && (dist < 0 || d < dist) {
 			dist = d
+		}
+	}
+
+	return dist
+}
+
+// DistWithin returns the minimum distance to an embedding, or -1 when none is comparable or
+// none is within limit. Each hit tightens the limit for the embeddings that follow it, so the
+// result is the same minimum Dist would report whenever that minimum is within the limit.
+func (embeddings Embeddings) DistWithin(other Embedding, limit float64) (dist float64) {
+	dist = -1
+
+	for _, e := range embeddings {
+		if d := e.DistWithin(other, limit); d >= 0 && (dist < 0 || d < dist) {
+			dist = d
+			limit = d
 		}
 	}
 
@@ -152,7 +191,9 @@ func EmbeddingsMidpoint(embeddings Embeddings) (result Embedding, radius float64
 
 	result = make(Embedding, dim)
 
-	invCount := 1.0 / float64(count)
+	// Vectors of a different length belong to another embedding space, so the mean is
+	// scaled by the vectors that actually contributed rather than by all of them.
+	contributors := 0
 
 	for i := range embeddings {
 		emb := embeddings[i]
@@ -161,6 +202,8 @@ func EmbeddingsMidpoint(embeddings Embeddings) (result Embedding, radius float64
 			continue
 		}
 
+		contributors++
+
 		normalizeEmbedding(emb)
 
 		for j := range dim {
@@ -168,14 +211,21 @@ func EmbeddingsMidpoint(embeddings Embeddings) (result Embedding, radius float64
 		}
 	}
 
+	invCount := 1.0 / float64(contributors)
+
 	for i := range dim {
 		result[i] *= invCount
 	}
 
 	normalizeEmbedding(result)
 
-	// Radius is the max embedding distance + 0.01 from result.
+	dists := make([]float64, 0, count)
+
 	for _, emb := range embeddings {
+		if len(emb) != dim {
+			continue
+		}
+
 		var dist float64
 
 		for i := range dim {
@@ -183,12 +233,87 @@ func EmbeddingsMidpoint(embeddings Embeddings) (result Embedding, radius float64
 			dist += diff * diff
 		}
 
-		if d := math.Sqrt(dist); d > radius {
-			radius = d + 0.01
-		}
+		dists = append(dists, math.Sqrt(dist))
+	}
+
+	// Epsilon is the tolerance the comparison path uses, so a sample exactly on the radius is still
+	// inside it. Raised only when positive: zero means unmeasurable, which SetEmbeddings answers
+	// with the full cluster radius, and a floor here would consume that meaning.
+	if d := percentileOf(dists, ClusterPercentile); d > 0 {
+		radius = d + Epsilon
 	}
 
 	return result, radius, count
+}
+
+// percentileOf returns the distance at the given percentile by nearest rank, so the result is always
+// one of the values passed. It sorts in place, and reports 0 for an empty slice or a percentile at
+// or below zero - which would otherwise select the smallest distance and give a cluster no reach.
+func percentileOf(dists []float64, p int) float64 {
+	if len(dists) == 0 || p < 1 {
+		return 0
+	}
+
+	slices.Sort(dists)
+
+	rank := min(max((p*len(dists)+99)/100, 1), len(dists))
+
+	return dists[rank-1]
+}
+
+// Radius returns how far from their midpoint the ClusterPercentile of the embeddings reach, before
+// ClampSampleRadius bounds what a cluster built from them would store. It normalizes its receiver
+// in place, as EmbeddingsMidpoint does, so it is not the pure accessor it reads as.
+func (embeddings Embeddings) Radius() (radius float64) {
+	_, radius, _ = EmbeddingsMidpoint(embeddings)
+	return radius
+}
+
+// RadiusFrom returns how far from center the ClusterPercentile of the embeddings reach, in the shape
+// SetEmbeddings stores, and reports whether every one of them could be measured.
+//
+// Center is taken as given rather than recomputed, because a cluster's id is the hash of its own
+// centroid - deriving a new one here would change its identity and orphan every marker holding it.
+func RadiusFrom(center Embedding, embeddings Embeddings) (radius float64, ok bool) {
+	if len(center) == 0 || len(embeddings) == 0 {
+		return 0, false
+	}
+
+	dists := make([]float64, 0, len(embeddings))
+
+	for _, emb := range embeddings {
+		// A vector of another width or holding a non-finite component yields -1, and one with no
+		// magnitude sits a unit from every unit vector. Neither is a distance, and answering with
+		// the widest radius in the schema is what this replaces rather than something to fall back
+		// on - so a set holding either is declined whole.
+		if d := center.Dist(emb); d < 0 || emb.Zero() {
+			return 0, false
+		} else {
+			dists = append(dists, d)
+		}
+	}
+
+	if d := percentileOf(dists, ClusterPercentile); d > 0 {
+		radius = ClampSampleRadius(d + Epsilon)
+	}
+
+	// Nothing to measure - one member, or copies of one crop - so the floor is the honest value,
+	// which is what SetEmbeddings stores for the same case. A cluster's width would be an extent
+	// none of these embeddings showed.
+	if radius <= 0 {
+		return Epsilon, true
+	}
+
+	return radius, true
+}
+
+// ClusterFits reports whether a cluster of the given radius would accept its own members.
+//
+// Not implied by ClusterDist: DBSCAN bounds the distance to a neighbor rather than the width of the
+// result. Past ClusterRadius the clamped radius stops the gate widening with the group, so anything
+// beyond that sum is a member its own cluster would refuse.
+func ClusterFits(radius float64) bool {
+	return radius <= AcceptDist(radius)
 }
 
 // UnmarshalEmbeddings parses face embedding JSON.

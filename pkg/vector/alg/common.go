@@ -68,7 +68,29 @@ func (pq *priorityQueue) Update(item *pItem, value int, priority float64) {
 	heap.Fix(pq, item.i)
 }
 
+// dataDims returns the number of dimensions shared by all data points, and reports
+// errRaggedData when they differ so that every point is indexed with its own width.
+func dataDims(data [][]float64) (int, error) {
+	if len(data) == 0 {
+		return 0, errEmptySet
+	}
+
+	dims := len(data[0])
+
+	for i := 1; i < len(data); i++ {
+		if len(data[i]) != dims {
+			return 0, errRaggedData
+		}
+	}
+
+	return dims, nil
+}
+
 func bounds(data [][]float64) []*[2]float64 {
+	if len(data) == 0 || len(data[0]) == 0 {
+		return nil
+	}
+
 	var (
 		wg sync.WaitGroup
 
@@ -90,6 +112,10 @@ func bounds(data [][]float64) []*[2]float64 {
 			defer wg.Done()
 
 			for j := range data {
+				if n >= len(data[j]) {
+					continue
+				}
+
 				if data[j][n] < r[n][0] {
 					r[n][0] = data[j][n]
 				} else if data[j][n] > r[n][1] {

@@ -62,9 +62,9 @@ func UploadToService(router *gin.RouterGroup) {
 
 		folder := frm.Folder
 
-		// Find files to share.
+		// Find files to share within the session's scope.
 		selection := query.ShareSelection(m.ShareOriginals())
-		files, err := query.SelectedFiles(frm.Selection, selection)
+		files, err := query.SelectedFilesForSession(frm.Selection, selection, s)
 
 		if err != nil {
 			AbortEntityNotFound(c)

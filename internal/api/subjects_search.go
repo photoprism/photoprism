@@ -47,7 +47,7 @@ func SearchSubjects(router *gin.RouterGroup) {
 			return
 		}
 
-		result, err := search.Subjects(frm)
+		result, err := search.UserSubjects(frm, s)
 
 		if err != nil {
 			c.AbortWithStatusJSON(400, gin.H{"error": txt.UpperFirst(err.Error())})

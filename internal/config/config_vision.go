@@ -25,6 +25,43 @@ func (c *Config) VisionYaml() string {
 	}
 }
 
+// LoadVisionConfig applies the optional "vision.yml", which schedules the label, NSFW and
+// caption models. Faces are configured through FACE_* options only, so a face entry there is
+// read and reported as ignored rather than obeyed.
+func (c *Config) LoadVisionConfig() {
+	if c == nil || vision.Config == nil {
+		return
+	}
+
+	visionYaml := c.VisionYaml()
+
+	if !fs.FileExistsNotEmpty(visionYaml) {
+		return
+	}
+
+	if err := vision.Config.Load(visionYaml); err != nil {
+		log.Warnf("vision: %s", err)
+	}
+
+	c.reportIgnoredFaceRun(visionYaml)
+}
+
+// reportIgnoredFaceRun reports a face schedule left in "vision.yml", which no longer decides
+// anything. Two ways to set one thing raise a question nobody can answer from the outside -
+// which wins, and where to change it - so the file is read and ignored rather than obeyed.
+func (c *Config) reportIgnoredFaceRun(visionYaml string) {
+	m := vision.Config.Model(vision.ModelTypeFace)
+
+	if m == nil || vision.ParseRunType(m.Run) == vision.RunAuto {
+		return
+	}
+
+	// Warned rather than noted: this used to be the documented way to turn face detection off,
+	// so an operator who set "never" has it running again after an upgrade.
+	c.warnFaceConfig("face-run-ignored", "config: face run type %s in %s is ignored, set FACE_RUN instead",
+		clean.Log(m.Run), clean.Log(visionYaml))
+}
+
 // VisionSchedule returns the cron schedule configured for the vision worker, or "" if disabled.
 func (c *Config) VisionSchedule() string {
 	if c == nil {

@@ -1,11 +1,14 @@
 package api
 
 import (
+	"errors"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
@@ -71,7 +74,18 @@ func SaveConfigOptions(router *gin.RouterGroup) {
 			return
 		}
 
+		// Only options the API returns may be set through it.
+		if removed := config.RemoveUnsupportedOptionValues(v); len(removed) > 0 {
+			log.Debugf("config: ignored %s in options update", strings.Join(removed, ", "))
+		}
+
 		if _, err := conf.SaveOptionsPatch(v); err != nil {
+			// A value that does not fit the option it sets is the request's fault, not the server's.
+			if errors.Is(err, config.ErrInvalidOptionValue) {
+				AbortBadRequest(c, err)
+				return
+			}
+
 			log.Errorf("config: failed saving options patch (%s)", err)
 			c.AbortWithStatusJSON(http.StatusInternalServerError, err)
 			return

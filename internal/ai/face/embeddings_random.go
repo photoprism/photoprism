@@ -7,15 +7,18 @@ import (
 // Kind identifies the type of embedding.
 type Kind int
 
+// Kind values are stored in faces.face_kind, so 2 and 3 stay reserved for the retired
+// children and background classifications rather than being reused.
 const (
-	// RegularFace represents a standard face embedding.
-	RegularFace Kind = iota + 1
-	// ChildrenFace represents a child face embedding.
-	ChildrenFace
-	// BackgroundFace represents non-face/background embeddings.
-	BackgroundFace
+	// UnclassifiedFace is the zero value, so it cannot be told apart from a column that was never
+	// set. Nothing stores it deliberately: an embedding that has no magnitude reports it, and a
+	// cluster built from one is not a face.
+	UnclassifiedFace Kind = 0
+	// RegularFace represents a standard face embedding, which is what every cluster is created
+	// with. Stored rather than left at zero so a value in the column always means something.
+	RegularFace Kind = 1
 	// AmbiguousFace represents embeddings that should be treated as uncertain.
-	AmbiguousFace
+	AmbiguousFace Kind = 4
 )
 
 // RandomDist returns a distance threshold for matching RandomDEmbeddings.
@@ -28,6 +31,17 @@ func RandomFloat64(f, d float64) float64 {
 	return f + (rand.Float64()-0.5)*d //nolint:gosec // pseudo-random is sufficient for test fixtures
 }
 
+// RandomEmbeddingDims returns the vector length that random embeddings must have to be
+// accepted by the configured model, defaulting to the FaceNet length when none is set.
+// Persistence rejects vectors of any other length, so fixtures have to follow the model.
+func RandomEmbeddingDims() int {
+	if dims := ExpectedDims(); dims > 0 {
+		return dims
+	}
+
+	return 512
+}
+
 // RandomEmbeddings returns random embeddings for testing.
 func RandomEmbeddings(n int, k Kind) (result Embeddings) {
 	if n <= 0 {
@@ -37,15 +51,7 @@ func RandomEmbeddings(n int, k Kind) (result Embeddings) {
 	result = make(Embeddings, n)
 
 	for i := range result {
-		switch k {
-		case RegularFace:
-			result[i] = RandomEmbedding()
-		case ChildrenFace:
-			result[i] = RandomChildrenEmbedding()
-		case BackgroundFace:
-			result[i] = RandomBackgroundEmbedding()
-		}
-
+		result[i] = RandomEmbedding()
 	}
 
 	return result
@@ -53,60 +59,13 @@ func RandomEmbeddings(n int, k Kind) (result Embeddings) {
 
 // RandomEmbedding returns a random embedding for testing.
 func RandomEmbedding() (result Embedding) {
-	result = make(Embedding, 512)
+	dims := RandomEmbeddingDims()
+	result = make(Embedding, dims)
 
-	d := 64 / 512.0
-
-	for {
-		i := 0
-		for i = range result {
-			result[i] = RandomFloat64(0, d)
-		}
-		if !result.SkipMatching() {
-			break
-		}
-	}
-
-	normalizeEmbedding(result)
-
-	return result
-}
-
-// RandomChildrenEmbedding returns a random children embedding for testing.
-func RandomChildrenEmbedding() (result Embedding) {
-	result = make(Embedding, 512)
-
-	if len(Children) == 0 {
-		return result
-	}
-
-	d := 0.1 / 512.0
-	n := rand.IntN(len(Children)) //nolint:gosec // deterministic seeding not required for synthetic embeddings
-	e := Children[n].Embedding
+	d := 64 / float64(dims)
 
 	for i := range result {
-		result[i] = RandomFloat64(e[i], d)
-	}
-
-	normalizeEmbedding(result)
-
-	return result
-}
-
-// RandomBackgroundEmbedding returns a random background embedding for testing.
-func RandomBackgroundEmbedding() (result Embedding) {
-	result = make(Embedding, 512)
-
-	if len(Background) == 0 {
-		return result
-	}
-
-	d := 0.1 / 512.0
-	n := rand.IntN(len(Background)) //nolint:gosec // deterministic seeding not required for synthetic embeddings
-	e := Background[n].Embedding
-
-	for i := range result {
-		result[i] = RandomFloat64(e[i], d)
+		result[i] = RandomFloat64(0, d)
 	}
 
 	normalizeEmbedding(result)

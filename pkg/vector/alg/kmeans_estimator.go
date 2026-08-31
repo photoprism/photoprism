@@ -53,8 +53,8 @@ func KMeansEstimator(iterations, clusters int, distance DistFunc) (Estimator, er
 }
 
 func (c *kmeansEstimator) Estimate(data [][]float64) (int, error) {
-	if len(data) == 0 {
-		return 0, errEmptySet
+	if _, err := dataDims(data); err != nil {
+		return 0, err
 	}
 
 	var (

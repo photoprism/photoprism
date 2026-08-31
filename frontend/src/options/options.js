@@ -287,7 +287,9 @@ export const MapsAnimate = () => [
   },
 ];
 
-export const MapsStyle = (experimental) => {
+// MapsStyle returns the selectable map styles.
+// Styles that require a MapTiler API key are omitted unless mapKey is true.
+export const MapsStyle = (experimental, mapKey = true) => {
   const styles = [
     {
       title: $gettext("Default"),
@@ -334,7 +336,7 @@ export const MapsStyle = (experimental) => {
     });
   }
 
-  return styles;
+  return mapKey ? styles : styles.filter((s) => !s.sponsor);
 };
 
 export const PhotoTypes = () => [

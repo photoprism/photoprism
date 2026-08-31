@@ -30,6 +30,7 @@ func (Version) TableName() string {
 	return "versions"
 }
 
+// UnknownVersion is what a database reports when it records no schema version.
 var UnknownVersion = Version{
 	Version: "0.0.0",
 	Edition: "dev",
@@ -37,11 +38,12 @@ var UnknownVersion = Version{
 
 // NeedsMigration tests if the Version is not yet installed.
 func (m *Version) NeedsMigration() bool {
-	if m == nil {
+	switch {
+	case m == nil:
 		return true
-	} else if m.MigratedAt == nil || m.CreatedAt.IsZero() {
+	case m.MigratedAt == nil || m.CreatedAt.IsZero():
 		return true
-	} else if m.Unknown() {
+	case m.Unknown():
 		return true
 	}
 

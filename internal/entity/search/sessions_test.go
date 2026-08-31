@@ -105,6 +105,18 @@ func TestSessions(t *testing.T) {
 			}
 		}
 	})
+	t.Run("SortByLoginAtReverse", func(t *testing.T) {
+		if results, err := Sessions(form.SearchSessions{Count: 100, Offset: 2, Order: sortby.LoginAt, Reverse: true}); err != nil {
+			t.Fatal(err)
+		} else {
+			// t.Logf("sessions: %#v", results)
+			assert.LessOrEqual(t, 1, len(results))
+			if len(results) > 0 {
+				assert.Equal(t, "Analytics", results[0].ClientName)
+				assert.Equal(t, "Invalid", results[1].ClientName)
+			}
+		}
+	})
 	t.Run("SortByCreatedAt", func(t *testing.T) {
 		if results, err := Sessions(form.SearchSessions{Count: 100, Order: sortby.CreatedAt}); err != nil {
 			t.Fatal(err)
