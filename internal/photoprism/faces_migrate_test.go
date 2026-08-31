@@ -1267,10 +1267,22 @@ func TestFaces_useMigrationDetector(t *testing.T) {
 }
 
 func TestMigrationCropWidth(t *testing.T) {
-	t.Run("BoxCropWins", func(t *testing.T) {
-		// SFace consumes a 112 px template, but a face whose landmarks do not fit it falls back
-		// to the box crop, so the width the run can ask for is the wider of the two.
-		assert.Equal(t, face.CropSize.Width, migrationCropWidth(face.ModelSFace))
+	t.Run("AlignedModel", func(t *testing.T) {
+		// SFace warps the landmarks onto its own 112 px template, and that is the width the
+		// rendition is selected for - not the wider box the fallback crop would ask for.
+		model := face.FindEmbeddingModel(face.ModelSFace)
+		require.NotNil(t, model)
+		require.True(t, model.Aligned())
+
+		width, _ := model.InputSize()
+		require.Positive(t, width)
+		require.NotEqual(t, face.CropSize.Width, width, "the two paths have to differ, or this pins nothing")
+
+		assert.Equal(t, width, migrationCropWidth(face.ModelSFace))
+	})
+	t.Run("BoxCropModel", func(t *testing.T) {
+		// FaceNet reads a plain rectangle, which is what face.CropSize describes.
+		assert.Equal(t, face.CropSize.Width, migrationCropWidth(face.ModelFaceNet))
 	})
 	t.Run("UnknownModel", func(t *testing.T) {
 		assert.Equal(t, face.CropSize.Width, migrationCropWidth("nonesuch"))
@@ -1281,7 +1293,8 @@ func TestMigrationCropWidth(t *testing.T) {
 // whether the thumbnails can supply the crops this run takes. A marker embedded from an upscaled
 // crop is indistinguishable from one that was not, so the alternative is repeating the migration.
 func TestMigrationCropCoverage(t *testing.T) {
-	newMigrateTestConfig(t, "migratecoverage")
+	c := newMigrateTestConfig(t, "migratecoverage")
+	w := NewFaces(c)
 
 	restore := thumb.SizeCached
 	t.Cleanup(func() { thumb.SizeCached = restore })
@@ -1291,6 +1304,7 @@ func TestMigrationCropCoverage(t *testing.T) {
 	file := &entity.File{
 		FileUID:    rnd.GenerateUID('f'),
 		PhotoUID:   rnd.GenerateUID('p'),
+		FileHash:   "7a7d777777777777777777777777777777777777",
 		FileName:   "coverage/landscape.jpg",
 		FileRoot:   entity.RootOriginals,
 		FileWidth:  3648,
@@ -1298,21 +1312,38 @@ func TestMigrationCropCoverage(t *testing.T) {
 	}
 	require.NoError(t, entity.Db().Create(file).Error)
 
-	// The required source width is 160/w, so these ask for 320, 1778, 2300 and 8000 px.
-	for _, w := range []float32{0.5, 0.09, 0.0696, 0.02} {
+	// SFace warps onto a 112 px template, so these markers ask for 224, 1867, 2300 and 5600 px
+	// of source width.
+	for _, mw := range []float32{0.5, 0.06, 0.0487, 0.02} {
 		require.NoError(t, entity.Db().Create(&entity.Marker{
 			MarkerUID:  rnd.GenerateUID('m'),
 			FileUID:    file.FileUID,
 			MarkerType: entity.MarkerFace,
-			W:          w,
-			H:          w,
+			W:          mw,
+			H:          mw,
 		}).Error)
 	}
 
-	t.Run("NamesTheSettingThatFixesIt", func(t *testing.T) {
-		thumb.SizeCached = 1920
+	t.Run("NoCachedRendition", func(t *testing.T) {
+		// Nothing is cached yet, and a file with no rendition at all is cropped from the original
+		// instead, so there is no shortfall to report.
+		thumb.SizeCached = 4096
 
-		widest, counts, fix, err := migrationCropCoverage(face.ModelSFace)
+		widest, counts, fix, err := w.migrationCropCoverage(face.ModelSFace)
+
+		require.NoError(t, err)
+		assert.Zero(t, widest.Width)
+		assert.Zero(t, counts.Total)
+		assert.Zero(t, fix)
+	})
+	t.Run("NamesTheSettingThatFixesIt", func(t *testing.T) {
+		// The limit says 4096 while the cache was written at 1920, which is what raising the
+		// setting without running "photoprism thumbs" leaves behind. Reading the limit here would
+		// clear the warning while every crop still comes from the 1920 renditions.
+		thumb.SizeCached = 4096
+		cacheThumbSizes(t, c, file, thumb.Fit1920)
+
+		widest, counts, fix, err := w.migrationCropCoverage(face.ModelSFace)
 
 		require.NoError(t, err)
 		assert.Equal(t, thumb.Fit1920, widest.Name)
@@ -1325,27 +1356,113 @@ func TestMigrationCropCoverage(t *testing.T) {
 		// asking for 2300px upscaled. A remedy read off the box widths would answer 2560 here.
 		assert.Equal(t, 4096, fix)
 	})
-	t.Run("NothingToFix", func(t *testing.T) {
-		// The remaining marker is short of detail in its own original, which no cache recovers,
-		// so a library like this must not be told to change a setting.
-		thumb.SizeCached = 4096
+	t.Run("RenditionsWiderThanTheLimit", func(t *testing.T) {
+		// The other direction: the cache holds renditions the limit no longer pre-generates, and
+		// the crop path reads them, so warning about a setting would be warning about nothing.
+		thumb.SizeCached = 1920
+		cacheThumbSizes(t, c, file, thumb.Fit4096)
 
-		_, counts, fix, err := migrationCropCoverage(face.ModelSFace)
+		widest, counts, fix, err := w.migrationCropCoverage(face.ModelSFace)
 
 		require.NoError(t, err)
+		assert.Equal(t, thumb.Fit4096, widest.Name)
+		assert.Equal(t, 3, counts.FullDetail)
 		assert.Zero(t, counts.Upscaled)
-		assert.Equal(t, 1, counts.SourceTooSmall)
+		assert.Equal(t, 1, counts.SourceTooSmall, "an original too small for the crop is not a cache problem")
 		assert.Zero(t, fix)
 	})
-	t.Run("NoCachedRendition", func(t *testing.T) {
-		// Nothing a crop could be taken from, which is not a shortfall this can report on.
-		thumb.SizeCached = 320
+}
 
-		widest, counts, fix, err := migrationCropCoverage(face.ModelSFace)
+// cacheThumbSizes writes the thumbnail ladder for a file up to and including the named size, so a
+// test can state what the cache holds rather than what the configured limit would generate.
+func cacheThumbSizes(t *testing.T, c *config.Config, file *entity.File, upTo thumb.Name) {
+	t.Helper()
 
+	// Naming a rendition is refused above the configured limit, and what is being staged here is
+	// a cache that was written under a different one.
+	cached := thumb.SizeCached
+	thumb.SizeCached = 15360
+	defer func() { thumb.SizeCached = cached }()
+
+	bounds := image.Rect(0, 0, file.FileWidth, file.FileHeight)
+
+	for _, size := range crop.UsableSizes() {
+		if thumb.Skip(size, bounds) {
+			continue
+		}
+
+		name, err := size.FileName(file.FileHash, c.ThumbCachePath())
 		require.NoError(t, err)
-		assert.Zero(t, widest.Width)
-		assert.Zero(t, counts.Total)
-		assert.Zero(t, fix)
+		require.NoError(t, thumb.Save(image.NewNRGBA(image.Rect(0, 0, 8, 8)), name))
+
+		if size.Name == upTo {
+			return
+		}
+	}
+
+	t.Fatalf("thumbnail size %s is not generated for a %dx%d picture", upTo, file.FileWidth, file.FileHeight)
+}
+
+// TestThumbSizeGenerated covers the check that tells a cache written at a smaller limit from one
+// whose widest renditions were never generated because the sources are smaller than the box.
+func TestThumbSizeGenerated(t *testing.T) {
+	thumbPath := t.TempDir()
+	large := query.FaceMigrationSampleFile{FileHash: "8a8d888888888888888888888888888888888888", FileWidth: 3648, FileHeight: 2736}
+	small := query.FaceMigrationSampleFile{FileHash: "9a9d999999999999999999999999999999999999", FileWidth: 600, FileHeight: 400}
+
+	cached := thumb.SizeCached
+	thumb.SizeCached = 15360
+	t.Cleanup(func() { thumb.SizeCached = cached })
+
+	write := func(t *testing.T, f query.FaceMigrationSampleFile, name thumb.Name) {
+		t.Helper()
+		fileName, err := thumb.Sizes[name].FileName(f.FileHash, thumbPath)
+		require.NoError(t, err)
+		require.NoError(t, thumb.Save(image.NewNRGBA(image.Rect(0, 0, 8, 8)), fileName))
+	}
+
+	files := []query.FaceMigrationSampleFile{large, small}
+
+	t.Run("Missing", func(t *testing.T) {
+		assert.False(t, thumbSizeGenerated(thumb.Sizes[thumb.Fit720], files, thumbPath))
+	})
+	t.Run("Present", func(t *testing.T) {
+		write(t, large, thumb.Fit720)
+		write(t, small, thumb.Fit720)
+
+		assert.True(t, thumbSizeGenerated(thumb.Sizes[thumb.Fit720], files, thumbPath))
+	})
+	t.Run("SkippedForEveryFile", func(t *testing.T) {
+		// No sampled picture is large enough to be given this rendition, so it says nothing about
+		// the cache and must not extend the ladder past the size that holds them at full size.
+		assert.False(t, thumbSizeGenerated(thumb.Sizes[thumb.Fit15360], files, thumbPath))
+	})
+	t.Run("SkippedForTheSmallFileOnly", func(t *testing.T) {
+		// The small picture is never given a 1920 rendition, so only the large one decides.
+		assert.False(t, thumbSizeGenerated(thumb.Sizes[thumb.Fit1920], files, thumbPath))
+
+		write(t, large, thumb.Fit1920)
+
+		assert.True(t, thumbSizeGenerated(thumb.Sizes[thumb.Fit1920], files, thumbPath))
+	})
+	t.Run("NothingToSample", func(t *testing.T) {
+		assert.False(t, thumbSizeGenerated(thumb.Sizes[thumb.Fit720], nil, thumbPath))
+	})
+}
+
+// TestFaces_migrationThumbSize covers the fallback for a library with nothing to sample, which is
+// the only case the configured limit still answers.
+func TestFaces_migrationThumbSize(t *testing.T) {
+	restore := thumb.SizeCached
+	t.Cleanup(func() { thumb.SizeCached = restore })
+	thumb.SizeCached = 2560
+
+	t.Run("NoSample", func(t *testing.T) {
+		w := NewFaces(config.NewMinimalTestConfig(t.TempDir()))
+
+		assert.Equal(t, thumb.Fit2560, w.migrationThumbSize(nil).Name)
+	})
+	t.Run("NilWorker", func(t *testing.T) {
+		assert.Equal(t, thumb.Fit2560, (*Faces)(nil).migrationThumbSize(nil).Name)
 	})
 }

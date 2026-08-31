@@ -84,7 +84,8 @@ func TestFacesMigrateCommand(t *testing.T) {
 
 func TestPercentOf(t *testing.T) {
 	t.Run("Rounds", func(t *testing.T) {
-		assert.Equal(t, 38, percentOf(15689, 41252))
+		// A share of 14.69, so truncating would report a percent less.
+		assert.Equal(t, 15, percentOf(6062, 41252))
 	})
 	t.Run("All", func(t *testing.T) {
 		assert.Equal(t, 100, percentOf(9, 9))
@@ -133,6 +134,10 @@ func TestReportMigrationCropCoverage(t *testing.T) {
 	t.Run("NamesTheSetting", func(t *testing.T) {
 		hook := capture(t)
 
+		cached := thumb.SizeCached
+		thumb.SizeCached = 1920
+		t.Cleanup(func() { thumb.SizeCached = cached })
+
 		reportMigrationCropCoverage(photoprism.FacesMigratePlan{
 			CropCoverage: query.FaceMigrationCropCounts{Total: 41252, FullDetail: 19501, Upscaled: 15689, SourceTooSmall: 6062},
 			ThumbSize:    thumb.Sizes[thumb.Fit1920],
@@ -143,6 +148,40 @@ func TestReportMigrationCropCoverage(t *testing.T) {
 		assert.Contains(t, out, "15689 of 41252 markers (38%)")
 		assert.Contains(t, out, "--thumb-size=4096")
 		assert.Contains(t, out, "6062 of 41252 markers (15%)")
+	})
+	t.Run("Remedy", func(t *testing.T) {
+		t.Run("RaisesTheLimit", func(t *testing.T) {
+			assert.Contains(t, migrationThumbRemedy(4096, 1920), "--thumb-size=4096")
+		})
+		t.Run("GeneratesWhatTheLimitAlreadyCovers", func(t *testing.T) {
+			// Passing a limit that is already in force writes no rendition the operator does not
+			// have, so the same warning would print again and the advice would look broken.
+			remedy := migrationThumbRemedy(4096, 4096)
+
+			assert.Contains(t, remedy, `"photoprism thumbs"`)
+			assert.NotContains(t, remedy, "--thumb-size")
+		})
+		t.Run("NothingClearsIt", func(t *testing.T) {
+			assert.NotContains(t, migrationThumbRemedy(0, 15360), "photoprism")
+		})
+	})
+	t.Run("TheRenditionsWereNeverGenerated", func(t *testing.T) {
+		// The limit already covers the size that clears it, so what the library is missing is the
+		// renditions. Naming the limit again would be advice the operator has already followed.
+		hook := capture(t)
+		cached := thumb.SizeCached
+		thumb.SizeCached = 4096
+		t.Cleanup(func() { thumb.SizeCached = cached })
+
+		reportMigrationCropCoverage(photoprism.FacesMigratePlan{
+			CropCoverage: query.FaceMigrationCropCounts{Total: 100, Upscaled: 10},
+			ThumbSize:    thumb.Sizes[thumb.Fit1920],
+			ThumbSizeFix: 4096,
+		})
+
+		out := messages(hook)
+		assert.Contains(t, out, `"photoprism thumbs"`)
+		assert.NotContains(t, out, "--thumb-size=")
 	})
 	t.Run("NoSettingClearsIt", func(t *testing.T) {
 		// The remedy is measured, so a library no supported size clears must still be warned,
@@ -157,7 +196,7 @@ func TestReportMigrationCropCoverage(t *testing.T) {
 		out := messages(hook)
 		assert.Contains(t, out, "10 of 100 markers (10%)")
 		assert.NotContains(t, out, "--thumb-size=")
-		assert.Contains(t, out, "No larger pre-generated thumbnail")
+		assert.Contains(t, out, "No larger thumbnail would remove this")
 	})
 	t.Run("SmallOriginalsAreNotWarnedAbout", func(t *testing.T) {
 		hook := capture(t)

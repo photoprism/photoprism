@@ -786,12 +786,84 @@ func TestFaceMigrationCropCoverage(t *testing.T) {
 		assert.Equal(t, narrow.SourceTooSmall, wide.SourceTooSmall)
 		assert.Equal(t, narrow.Total, wide.Total)
 	})
+	t.Run("TheBoxWidthBinds", func(t *testing.T) {
+		// The other half of the fit arithmetic, which a 4:3 picture never exercises: a frame wider
+		// than the box's own aspect is bounded by its width, so 1920 is what Fit1920 delivers.
+		wide := entity.File{
+			FileUID:    rnd.GenerateUID('f'),
+			PhotoUID:   rnd.GenerateUID('p'),
+			FileName:   "crop-coverage/wide.jpg",
+			FileRoot:   entity.RootOriginals,
+			FileWidth:  4096,
+			FileHeight: 1716,
+		}
+		require.NoError(t, Db().Create(&wide).Error)
+		t.Cleanup(func() { Db().Unscoped().Delete(&wide) })
+
+		// 160/0.08 asks for 2000 px: more than the 1920 the box width allows, less than the 2427
+		// the box height would, and less than the original holds.
+		marker := entity.Marker{
+			MarkerUID:  rnd.GenerateUID('m'),
+			FileUID:    wide.FileUID,
+			MarkerType: entity.MarkerFace,
+			W:          0.08,
+			H:          0.08,
+		}
+		require.NoError(t, Db().Create(&marker).Error)
+		t.Cleanup(func() { Db().Unscoped().Delete(&marker) })
+
+		after, err := FaceMigrationCropCoverage(160, 1920, 1200)
+		require.NoError(t, err)
+
+		assert.Equal(t, before.Total+4, after.Total)
+		assert.Equal(t, before.Upscaled+2, after.Upscaled, "the box width is what this marker exceeds")
+
+		// Widening the box at the same height clears it, which is what tells the term apart from
+		// the height one: without it the rendition would already deliver 2864 px above.
+		wider, err := FaceMigrationCropCoverage(160, 2560, 1200)
+		require.NoError(t, err)
+
+		assert.Equal(t, after.Upscaled-1, wider.Upscaled)
+	})
 	t.Run("InvalidDimensions", func(t *testing.T) {
 		_, err := FaceMigrationCropCoverage(0, 1920, 1200)
 		require.Error(t, err)
 		_, err = FaceMigrationCropCoverage(160, 0, 1200)
 		require.Error(t, err)
 		_, err = FaceMigrationCropCoverage(160, 1920, 0)
+		require.Error(t, err)
+	})
+}
+
+func TestFaceMigrationSampleFiles(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		result, err := FaceMigrationSampleFiles(3)
+
+		require.NoError(t, err)
+		require.NotEmpty(t, result, "the fixtures must hold files with face markers")
+		assert.LessOrEqual(t, len(result), 3)
+
+		for _, f := range result {
+			assert.NotEmpty(t, f.FileHash)
+			assert.Positive(t, f.FileWidth, "a file with no dimensions cannot be checked")
+			assert.Positive(t, f.FileHeight)
+		}
+	})
+	t.Run("OldestFirst", func(t *testing.T) {
+		// Files indexed since the thumbnail limit was raised do hold the wider renditions, so the
+		// sample has to be the part of the library that answers for the rest of it.
+		result, err := FaceMigrationSampleFiles(100)
+		require.NoError(t, err)
+		require.NotEmpty(t, result)
+
+		first, err := FaceMigrationSampleFiles(1)
+		require.NoError(t, err)
+		require.Len(t, first, 1)
+
+		assert.Equal(t, result[0], first[0])
+	})
+	t.Run("InvalidLimit", func(t *testing.T) {
+		_, err := FaceMigrationSampleFiles(0)
 		require.Error(t, err)
 	})
 }

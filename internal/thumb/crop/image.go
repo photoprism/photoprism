@@ -63,6 +63,31 @@ func UsableSizes() []thumb.Size {
 	return slices.Clone(thumbFileSizes)
 }
 
+// CachedSizeExists reports whether the rendition of the specified size is on disk for a file hash,
+// stating it from the same names the selection walks.
+//
+// Not through thumb.Size.FileName, which refuses a size above the configured limit: the selection
+// stats whatever exists, so a rendition written while the limit was higher is still read from, and
+// a caller asking what the cache holds has to be able to see it.
+func CachedSizeExists(size thumb.Size, hash, thumbPath string) bool {
+	if len(hash) < 4 || thumbPath == "" {
+		return false
+	}
+
+	for i, s := range thumbFileSizes {
+		if s.Name != size.Name {
+			continue
+		}
+
+		filePath := path.Join(thumbPath, hash[0:1], hash[1:2], hash[2:3])
+		name, err := fs.Resolve(filepath.Join(filePath, fmt.Sprintf(thumbFileNames[i], hash)))
+
+		return err == nil && fs.FileExists(name)
+	}
+
+	return false
+}
+
 // ImageFromThumb returns a cropped area from an existing thumbnail image, reusing a cached crop
 // when one exists. srcWidth is then 0, because a reused crop cannot say what it was drawn from.
 func ImageFromThumb(thumbName string, area Area, size Size, cache bool) (img image.Image, cropName string, srcWidth int, err error) {

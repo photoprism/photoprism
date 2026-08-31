@@ -19,6 +19,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -286,18 +287,10 @@ func reportMigrationCropCoverage(plan photoprism.FacesMigratePlan) {
 	}
 
 	if coverage.Upscaled > 0 {
-		// Stated only when a size was measured to clear it: a remedy that turns out not to help
-		// costs a second pass over the whole library, which is what this line exists to prevent.
-		remedy := "No larger pre-generated thumbnail would remove this, so the crops are as good as the cache can supply"
-
-		if plan.ThumbSizeFix > 0 {
-			remedy = fmt.Sprintf("Running \"photoprism --thumb-size=%d thumbs\" first avoids re-running this migration", plan.ThumbSizeFix)
-		}
-
 		event.SystemWarn([]string{"faces", "migrate", "%d of %d markers (%d%%) would be embedded from upscaled crops, " +
-			"because the widest pre-generated thumbnail (%dx%d) is narrower than their face crops need. %s"},
+			"because the widest thumbnail this library holds (%dx%d) is narrower than their face crops need. %s"},
 			coverage.Upscaled, coverage.Total, percentOf(coverage.Upscaled, coverage.Total),
-			plan.ThumbSize.Width, plan.ThumbSize.Height, remedy)
+			plan.ThumbSize.Width, plan.ThumbSize.Height, migrationThumbRemedy(plan.ThumbSizeFix, thumb.SizeCached))
 	}
 
 	// Stated whether or not anything was warned about, so the two numbers are never confused: this
@@ -305,6 +298,24 @@ func reportMigrationCropCoverage(plan photoprism.FacesMigratePlan) {
 	if coverage.SourceTooSmall > 0 {
 		log.Infof("faces: %d of %d markers (%d%%) have originals too small for a full-detail face crop, which no setting recovers",
 			coverage.SourceTooSmall, coverage.Total, percentOf(coverage.SourceTooSmall, coverage.Total))
+	}
+}
+
+// migrationThumbRemedy returns the instruction that removes the upscaling, given the thumbnail
+// size that clears it and the limit in force.
+//
+// The two are told apart because they ask for different commands: a limit that already covers the
+// size means the renditions were never generated, and passing it again would look like advice that
+// does not work. A size nothing clears is stated as such rather than left to be inferred.
+func migrationThumbRemedy(fix, cached int) string {
+	switch {
+	case fix < 1:
+		return "No larger thumbnail would remove this, so the crops are as good as the originals can supply"
+	case fix <= cached:
+		return `Running "photoprism thumbs" first avoids re-running this migration, because these renditions have not been generated yet`
+	default:
+		return fmt.Sprintf(`Running "photoprism --thumb-size=%d thumbs" first avoids re-running this migration, `+
+			`and setting THUMB_SIZE keeps newly indexed files at that size`, fix)
 	}
 }
 

@@ -286,7 +286,8 @@ func FaceMigrationLowQualityMarkers(model string) (count int, err error) {
 }
 
 // FaceMigrationCropCounts counts the markers a migration can crop at full detail, and the two
-// reasons it cannot.
+// reasons it cannot. A marker whose file records no dimensions cannot be judged and is left out of
+// all three, so Total is what could be measured rather than what the run re-embeds.
 type FaceMigrationCropCounts struct {
 	Total      int
 	FullDetail int
@@ -296,6 +297,36 @@ type FaceMigrationCropCounts struct {
 	// SourceTooSmall counts the markers whose own original does not hold the detail, which no
 	// setting recovers. Reported apart, or a library of small pictures is nagged for nothing.
 	SourceTooSmall int
+}
+
+// FaceMigrationSampleFile identifies a file a migration crops from, with what a caller needs to
+// tell a rendition that is missing from one that was never generated because the source is smaller.
+type FaceMigrationSampleFile struct {
+	FileHash   string
+	FileWidth  int
+	FileHeight int
+}
+
+// FaceMigrationSampleFiles returns up to limit of the files that hold face markers, oldest first.
+//
+// Oldest rather than a random draw, because the question a sample answers is whether the thumbnail
+// cache was generated at the limit configured now: files indexed since a limit was raised do hold
+// the wider renditions, so a sample of those reports a cache the rest of the library does not have.
+func FaceMigrationSampleFiles(limit int) (result []FaceMigrationSampleFile, err error) {
+	if limit < 1 {
+		return result, fmt.Errorf("faces: sample limit must be positive")
+	}
+
+	err = Db().Model(&entity.File{}).
+		Select("files.file_hash, files.file_width, files.file_height").
+		Where("files.file_hash <> '' AND files.file_width > 0 AND files.file_height > 0 AND files.file_missing = 0").
+		Where("files.file_uid IN (?)", Db().Model(&entity.Marker{}).
+			Select("file_uid").
+			Where("marker_type = ? AND marker_invalid = 0 AND file_uid <> ''", entity.MarkerFace).
+			QueryExpr()).
+		Order("files.file_uid").Limit(limit).Scan(&result).Error
+
+	return result, err
 }
 
 // FaceMigrationCropCoverage reports how much detail the pre-generated thumbnails can supply for the

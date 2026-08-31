@@ -19,13 +19,15 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-// captureLog records what the shared logger emits for the duration of a test.
+// captureLog records what the shared logger emits for the duration of a test, including the
+// system log, which a message meant for an administrator is sent through instead.
 func captureLog(t *testing.T) *test.Hook {
 	t.Helper()
 
@@ -33,7 +35,13 @@ func captureLog(t *testing.T) *test.Hook {
 	require.True(t, ok)
 
 	hook := test.NewLocal(logger)
-	t.Cleanup(hook.Reset)
+	systemLog := event.SystemLog
+	event.SystemLog = logger
+
+	t.Cleanup(func() {
+		event.SystemLog = systemLog
+		hook.Reset()
+	})
 
 	return hook
 }
@@ -1307,15 +1315,39 @@ func TestConfig_PropagateFaceModel(t *testing.T) {
 		assert.Equal(t, face.EpsilonDefault, face.Epsilon)
 		assert.Equal(t, c.FaceClusterSize(), face.ClusterSizeThreshold)
 	})
+	t.Run("TheClusterSizeFollowsTheModel", func(t *testing.T) {
+		// Every registered model shares one collision distance and epsilon, so the size bar is
+		// the only assignment here that a second model can tell apart at all: FaceNet reads the
+		// rectangular crop and SFace its own template.
+		defer snapshotFaceModelGlobals()()
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = installTestModels(t, face.ModelFaceNet)
+		c.options.FaceModel = face.ModelFaceNet
+
+		c.PropagateFaceModel()
+
+		require.Equal(t, 160, face.ClusterSizeThreshold)
+
+		sface := newSFaceTestConfig(t)
+		sface.PropagateFaceModel()
+
+		assert.Equal(t, 112, face.ClusterSizeThreshold)
+	})
 	t.Run("ConfiguredValuesStand", func(t *testing.T) {
-		// The model calibrates what nobody set, and must not overrule what somebody did.
+		// The model calibrates what nobody set, and must not overrule what somebody did. It is
+		// also what pins the two gaps no registered model moves, which a comparison against
+		// their defaults cannot tell apart from their not being assigned at all.
 		defer snapshotFaceModelGlobals()()
 		c := newSFaceTestConfig(t)
 		c.options.FaceClusterDist = 0.6
+		c.options.FaceCollisionDist = 0.07
+		c.options.FaceEpsilonDist = 0.002
 
 		c.PropagateFaceModel()
 
 		assert.Equal(t, 0.6, face.ClusterDist)
+		assert.Equal(t, 0.07, face.CollisionDist)
+		assert.Equal(t, 0.002, face.Epsilon)
 	})
 	t.Run("NilConfig", func(t *testing.T) {
 		assert.NotPanics(t, func() { (*Config)(nil).PropagateFaceModel() })

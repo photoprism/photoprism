@@ -314,3 +314,35 @@ func TestOpenIdealThumbFile(t *testing.T) {
 		assert.True(t, strings.HasSuffix(opened, "_720x720_fit.jpg"), opened)
 	})
 }
+
+// TestCachedSizeExists covers what a caller asking "what does the cache hold" gets: the same file
+// names the selection stats, rather than the ones the configured limit would permit.
+func TestCachedSizeExists(t *testing.T) {
+	const hash = "bccfeaa526a36e19b555fd4ca5e8f767d5604289"
+
+	restore := thumb.SizeCached
+	t.Cleanup(func() { thumb.SizeCached = restore })
+
+	t.Run("Present", func(t *testing.T) {
+		assert.True(t, CachedSizeExists(thumb.Sizes[thumb.Fit720], hash, "testdata"))
+		assert.True(t, CachedSizeExists(thumb.Sizes[thumb.Fit1280], hash, "testdata"))
+	})
+	t.Run("Missing", func(t *testing.T) {
+		assert.False(t, CachedSizeExists(thumb.Sizes[thumb.Fit4096], hash, "testdata"))
+	})
+	t.Run("AboveTheConfiguredLimit", func(t *testing.T) {
+		// A rendition written while the limit was higher is still read by the selection, so a
+		// check that refused to name it would report a cache the crop path does not have.
+		thumb.SizeCached = 720
+
+		assert.True(t, CachedSizeExists(thumb.Sizes[thumb.Fit1280], hash, "testdata"))
+	})
+	t.Run("NotAUsableSize", func(t *testing.T) {
+		// A crop is never taken from a tile, so it cannot be part of the answer.
+		assert.False(t, CachedSizeExists(thumb.Sizes[thumb.Tile500], hash, "testdata"))
+	})
+	t.Run("InvalidInput", func(t *testing.T) {
+		assert.False(t, CachedSizeExists(thumb.Sizes[thumb.Fit720], "abc", "testdata"))
+		assert.False(t, CachedSizeExists(thumb.Sizes[thumb.Fit720], hash, ""))
+	})
+}

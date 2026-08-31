@@ -12,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -617,8 +618,10 @@ func (c *Config) PropagateFaceModel() {
 	face.ClusterDist = c.FaceClusterDist()
 	face.MatchDist = c.FaceMatchDist()
 
+	// Reported once per model rather than once per call: this runs at every start and again
+	// whenever a model is recorded, so a model that cannot be loaded would say so twice at boot.
 	if err := c.ConfigureFaceEmbedder(c.FaceModel()); err != nil {
-		log.Warnf("faces: %s (configure embedding model)", err)
+		c.warnFaceConfig("face-model-embedder-"+c.FaceModel(), "faces: %s (configure embedding model)", err)
 	}
 }
 
@@ -640,6 +643,10 @@ func (c *Config) ClearFaceModel() error {
 
 	c.faceModel = ""
 	c.options.FaceModel = ""
+
+	// Deliberately not propagated, unlike recording a model: there is no model left to calibrate
+	// for, and unloading the embedder would leave the rest of this process unable to embed the
+	// library it is about to re-index. The next start resolves one again.
 
 	return nil
 }
@@ -716,6 +723,14 @@ func (c *Config) installedFaceModel() face.ModelName {
 func (c *Config) checkFaceModelMismatch(counts []query.MarkerEmbeddingModelCount) {
 	name := c.FaceModel()
 
+	// Asked first, and before either unblock below: a migration commits in its own process and
+	// records its target, which nothing reloads here, so naming the model this one still holds
+	// would ask for the library to be migrated back into the space it was just moved out of. A
+	// library that agrees with the loaded model would otherwise clear a pause a worker had set.
+	if c.CheckFaceModelSuperseded() {
+		return
+	}
+
 	// Embeddings that were turned off are not a mismatch: nothing is generated, and the vectors
 	// a library already holds stay comparable with each other.
 	if name == face.ModelNone && c.FaceModelSetting() == face.ModelNone {
@@ -747,13 +762,6 @@ func (c *Config) checkFaceModelMismatch(counts []query.MarkerEmbeddingModelCount
 		return
 	}
 
-	// A migration commits in its own process and records its target, which nothing reloads here.
-	// Naming the model this one still holds would ask for the library to be migrated back into
-	// the space it was just migrated out of, at the moment the advice is most likely to be taken.
-	if c.CheckFaceModelSuperseded() {
-		return
-	}
-
 	reason := fmt.Sprintf("%d marker(s) use %s, but this instance is configured for %s",
 		stale, txt.JoinAnd(models), clean.Log(name))
 
@@ -775,14 +783,19 @@ func (c *Config) CheckFaceModelSuperseded() bool {
 		return false
 	}
 
-	face.BlockEmbeddings(fmt.Sprintf("face model %s is recorded in %s but not loaded here",
-		clean.Log(superseded), clean.Log(filepath.Base(c.OptionsYaml()))))
+	optionsFile := clean.Log(filepath.Base(c.OptionsYaml()))
 
-	// Keyed by the model, so a second migration in the same process is reported again, while a
-	// worker that wakes every few minutes does not repeat the first.
-	c.warnFaceConfig("face-model-superseded-"+superseded,
-		"faces: face model %s is recorded in %s but not loaded here, so face embeddings are paused until this instance is restarted",
-		clean.Log(superseded), clean.Log(filepath.Base(c.OptionsYaml())))
+	face.BlockEmbeddings(fmt.Sprintf("face model %s is recorded in %s but not loaded here",
+		clean.Log(superseded), optionsFile))
+
+	// Through the system log rather than the package one: this is the one message here that asks
+	// an administrator to act, and the ordinary log is not where they are looking. Keyed by the
+	// model, so a second migration in the same process is reported again while a worker that
+	// wakes every few minutes does not repeat the first.
+	if _, warned := c.faceWarned.LoadOrStore("face-model-superseded-"+superseded, true); !warned {
+		event.SystemWarn([]string{"faces", "face model %s is recorded in %s but not loaded here, " +
+			"so face embeddings are paused until this instance is restarted"}, clean.Log(superseded), optionsFile)
+	}
 
 	return true
 }
