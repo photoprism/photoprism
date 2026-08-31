@@ -82,6 +82,11 @@ func Faces(frm form.SearchFaces) (results FaceResults, err error) {
 	}
 
 	// Set sort order.
+	//
+	// Ordering by samples is what People > New asks for and means the size a cluster had when it was
+	// formed, since that column counts the embeddings its centroid was averaged from and nothing
+	// writes it afterwards. Markers matched later are deliberately not part of it. The id breaks ties
+	// so the order is identical across drivers.
 	switch frm.Order {
 	case "subject":
 		s = s.Order(OrderExpr(fmt.Sprintf("%s.subj_uid ASC", facesTable), frm.Reverse))

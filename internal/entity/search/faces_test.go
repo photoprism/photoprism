@@ -207,3 +207,38 @@ func TestRepresentativeMarkerJoin(t *testing.T) {
 		}
 	})
 }
+
+// TestFacesSampleOrder pins the ranking People > New reads: clusters largest first by the number of
+// embeddings their centroid was built from, which is the size each had when it was formed.
+func TestFacesSampleOrder(t *testing.T) {
+	t.Run("DescendingBySamples", func(t *testing.T) {
+		results, err := Faces(form.SearchFaces{Order: "samples"})
+		require.NoError(t, err)
+		require.Greater(t, len(results), 1, "ordering needs at least two clusters")
+
+		ranked := false
+
+		for i := 1; i < len(results); i++ {
+			assert.GreaterOrEqual(t, results[i-1].Samples, results[i].Samples)
+
+			if results[i-1].Samples != results[i].Samples {
+				ranked = true
+			}
+		}
+
+		// Equal counts throughout would satisfy the loop above without ordering anything.
+		assert.True(t, ranked, "fixtures must differ in samples for the order to be tested")
+	})
+	t.Run("DefaultIsTheSameOrder", func(t *testing.T) {
+		bySamples, err := Faces(form.SearchFaces{Order: "samples"})
+		require.NoError(t, err)
+
+		byDefault, err := Faces(form.SearchFaces{})
+		require.NoError(t, err)
+		require.Equal(t, len(bySamples), len(byDefault))
+
+		for i := range bySamples {
+			assert.Equal(t, bySamples[i].ID, byDefault[i].ID)
+		}
+	})
+}
