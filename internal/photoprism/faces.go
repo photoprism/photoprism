@@ -204,7 +204,8 @@ func (w *Faces) start(opt FacesOptions) (err error) {
 
 	var added entity.Faces
 
-	// Cluster existing face embeddings.
+	// Cluster existing face embeddings. A new cluster carries no person, so it is deliberately
+	// not counted as a change: the matching below is what assigns one, and reports it.
 	start = time.Now()
 	if added, err = w.Cluster(opt); err != nil {
 		log.Errorf("faces: %s (cluster)", err)
@@ -223,7 +224,7 @@ func (w *Faces) start(opt FacesOptions) (err error) {
 	}
 
 	// Log face matching results.
-	if matches.Updated > 0 {
+	if matches.MovedSubjects() {
 		changed = true
 
 		log.Infof("faces: updated %s, recognized %s, %d unknown [%s]", english.Plural(int(matches.Updated), "marker", "markers"), english.Plural(int(matches.Recognized), "face", "faces"), matches.Unknown, time.Since(start))

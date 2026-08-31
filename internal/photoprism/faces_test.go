@@ -1,6 +1,7 @@
 package photoprism
 
 import (
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -10,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // isolatedTestFaces returns a worker on a database of its own, so one test's clusters cannot
@@ -207,6 +209,52 @@ func TestFaces_StartRefreshesSubjectCounts(t *testing.T) {
 		WHERE m.marker_invalid = 0 AND f.deleted_at IS NULL`, subj.SubjUID).Row().Scan(&want))
 
 	assert.Equal(t, want, stored.FileCount)
+}
+
+// TestFaces_StartRefreshesCountsAfterRecognition covers the ordinary case for a library whose
+// clusters are already named: nothing detaches or reassigns a marker, so the run's whole output is
+// the recognition step writing subj_uid - which the counts are computed from.
+//
+// Without --force, deliberately: forcing recomputes regardless and would pass either way.
+func TestFaces_StartRefreshesCountsAfterRecognition(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	w := isolatedTestFaces(t, "faces_counts_recognized")
+
+	// Settle the library first, so the run under test has nothing else left to move.
+	require.NoError(t, w.Start(FacesOptions{Force: true}))
+
+	subj := entity.SubjectFixtures.Get("actress-1")
+
+	// A marker a named cluster holds, with its person taken away: that is what an automatic
+	// assignment looks like before the recognition step restores it.
+	marker := entity.Marker{}
+	require.NoError(t, entity.UnscopedDb().
+		Joins("JOIN faces ON faces.id = markers.face_id AND faces.subj_uid = ?", subj.SubjUID).
+		Where("markers.subj_src = ?", entity.SrcAuto).
+		Where("markers.marker_invalid = 0").
+		First(&marker).Error)
+
+	require.NoError(t, entity.UnscopedDb().Model(&entity.Marker{}).
+		Where("marker_uid = ?", marker.MarkerUID).
+		UpdateColumns(entity.Values{"subj_uid": ""}).Error)
+
+	require.NoError(t, entity.UnscopedDb().Model(&entity.Subject{}).
+		Where("subj_uid = ?", subj.SubjUID).
+		UpdateColumns(entity.Values{"file_count": 4242}).Error)
+
+	require.NoError(t, w.Start(FacesOptions{Force: false}))
+
+	recognized := entity.Marker{}
+	require.NoError(t, entity.UnscopedDb().First(&recognized, "marker_uid = ?", marker.MarkerUID).Error)
+	require.Equal(t, subj.SubjUID, recognized.SubjUID, "the recognition step has to reassign the marker")
+
+	stored := entity.FindSubject(subj.SubjUID)
+	require.NotNil(t, stored)
+
+	assert.NotEqual(t, 4242, stored.FileCount, "a run that recognized markers has to refresh the counts")
 }
 
 // TestFaces_StartSkipsCountsWhenNothingMoved pins the gate, so a scheduled worker that finds

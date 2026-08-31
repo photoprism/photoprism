@@ -46,15 +46,35 @@ func TestFaces_Match(t *testing.T) {
 // is the one an operator reads to judge the match margin, so a pass that dropped it would report
 // a run that merely recognized less.
 func TestFacesMatchResult_Add(t *testing.T) {
-	r := FacesMatchResult{Updated: 1, Recognized: 2, Unknown: 3, Ambiguous: 4}
+	r := FacesMatchResult{Updated: 1, Recognized: 2, Unknown: 3, Ambiguous: 4, Assigned: 5}
 
-	r.Add(FacesMatchResult{Updated: 10, Recognized: 20, Unknown: 30, Ambiguous: 40})
+	r.Add(FacesMatchResult{Updated: 10, Recognized: 20, Unknown: 30, Ambiguous: 40, Assigned: 50})
 
-	assert.Equal(t, FacesMatchResult{Updated: 11, Recognized: 22, Unknown: 33, Ambiguous: 44}, r)
+	assert.Equal(t, FacesMatchResult{Updated: 11, Recognized: 22, Unknown: 33, Ambiguous: 44, Assigned: 55}, r)
 
 	r.Add(FacesMatchResult{})
 
-	assert.Equal(t, FacesMatchResult{Updated: 11, Recognized: 22, Unknown: 33, Ambiguous: 44}, r)
+	assert.Equal(t, FacesMatchResult{Updated: 11, Recognized: 22, Unknown: 33, Ambiguous: 44, Assigned: 55}, r)
+}
+
+// TestFacesMatchResult_MovedSubjects covers the gate the subject counts are refreshed on. A run
+// over a library with named clusters recognizes without updating a single marker through the
+// matcher, so reading Updated alone left the counts stale while subj_uid had moved.
+func TestFacesMatchResult_MovedSubjects(t *testing.T) {
+	t.Run("Updated", func(t *testing.T) {
+		assert.True(t, FacesMatchResult{Updated: 1}.MovedSubjects())
+	})
+	t.Run("Assigned", func(t *testing.T) {
+		assert.True(t, FacesMatchResult{Assigned: 1}.MovedSubjects())
+	})
+	t.Run("RecognizedOnly", func(t *testing.T) {
+		// Recognized also counts a marker that merely has a subject after being matched, so it is
+		// not a signal that anything moved.
+		assert.False(t, FacesMatchResult{Recognized: 9, Unknown: 3, Ambiguous: 2}.MovedSubjects())
+	})
+	t.Run("Idle", func(t *testing.T) {
+		assert.False(t, FacesMatchResult{}.MovedSubjects())
+	})
 }
 
 // TestRecordFaceMatch covers the per-run statistics a match pass accumulates for each cluster.

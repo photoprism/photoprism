@@ -23,6 +23,16 @@ type FacesMatchResult struct {
 	// Ambiguous counts the markers left unassigned because two clusters were within
 	// face.MatchMargin of each other, which is the number an operator judges the margin by.
 	Ambiguous int64
+	// Assigned counts the markers that took the subject of a cluster that already carries one,
+	// which writes subj_uid without going through Updated. Counted apart from Recognized, which
+	// also covers a marker that merely has a subject after being matched.
+	Assigned int64
+}
+
+// MovedSubjects reports whether this run wrote a marker's person assignment, which is what the
+// subject counts are computed from.
+func (r FacesMatchResult) MovedSubjects() bool {
+	return r.Updated > 0 || r.Assigned > 0
 }
 
 // faceMatchStats accumulates per-face matching metrics within a single run.
@@ -77,6 +87,7 @@ func (r *FacesMatchResult) Add(result FacesMatchResult) {
 	r.Recognized += result.Recognized
 	r.Unknown += result.Unknown
 	r.Ambiguous += result.Ambiguous
+	r.Assigned += result.Assigned
 }
 
 // buildFaceIndex filters the provided faces down to candidates that can be matched, decoding each
@@ -287,7 +298,10 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 	if m, err := query.MatchFaceMarkers(); err != nil {
 		return result, err
 	} else {
+		// Counted twice on purpose: this is the run's recognition work, and it is also the only
+		// path that writes subj_uid without touching a marker through Updated.
 		result.Recognized += m
+		result.Assigned += m
 	}
 
 	declined := 0

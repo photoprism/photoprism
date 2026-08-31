@@ -50,9 +50,9 @@ func LikeCond(col string) string {
 
 // SubjectReport describes one person, with the clusters, files and photos their markers support.
 //
-// Counted rather than read from the row: Faces.Start does not call UpdateSubjectCounts, so after a
-// CLI-only reset the stored numbers sit at zero while the markers are assigned. Clusters is stored
-// nowhere and is the fragmentation a sweep reads - a person holds several by design.
+// Counted rather than read from the row: the stored numbers are refreshed by whatever last moved a
+// marker, so a report has to state what the markers say now rather than when they were counted.
+// Clusters is stored nowhere and is the fragmentation a sweep reads - a person holds several by design.
 type SubjectReport struct {
 	SubjUID      string
 	SubjName     string
