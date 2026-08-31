@@ -86,20 +86,21 @@ matching what `HardClusterer.Guesses` reports.
 
 ### Where DBSCAN Departs From the Textbook
 
-Border points - those inside `eps` of a core point without being cores themselves - are assigned
-here, but only while they are still unvisited. A point the scan reached first was labeled noise, and
-that label is final. Two behaviors follow, and callers that read the core size as a guarantee are
-surprised by both:
+**Clusters are the connected components of the core points, and every other point is attached
+afterwards.** A non-core point inside `eps` of exactly one cluster's cores joins it; one that two
+clusters can both reach stays noise rather than going to whichever was walked first. Textbook DBSCAN
+assigns such a point by traversal order, so this is deliberately stricter, and it is what makes the
+result a function of the point set: the same points in a different order produce the same clusters.
 
-- **Which border points get in depends on the order the points arrive in.** Not on scheduling: a
-  rerun over the same slice repeats exactly. Reorder the same data and the assignment moves.
-- **The core size bounds what may seed a cluster, not how large one ends up.** Expansion claims only
-  neighbors that are still unassigned, so a core point reached after an earlier cluster absorbed its
-  neighborhood produces a cluster smaller than `minPts` - down to the seed alone.
+Two consequences are worth knowing:
 
-`Sizes()` therefore reports what each cluster claimed rather than the density that formed it. Filter
-on the result if a caller needs a floor, and do not rely on the clustering being a function of the
-point set alone.
+- **An attached point never extends a cluster.** Only cores propagate reachability, so a chain of
+  border points cannot carry one cluster into the next.
+- **The core size still bounds what may form a cluster, not how large one ends up.** A cluster whose
+  cores' neighbors are all ambiguous keeps only those cores, so it can be smaller than `minPts`.
+  Rare, but filter on the result if a caller needs a floor.
+
+The cost is one neighbor scan per point to find the cores, before the pass that walks them.
 
 Two properties worth knowing before reading a result:
 
