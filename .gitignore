@@ -41,6 +41,7 @@ venv
 /plus/
 /tmp/
 /internal/tmp/
+/internal/zz*
 /test/
 *-lock.json
 !/package-lock.json

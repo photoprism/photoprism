@@ -94,6 +94,7 @@ Thumbs.db
 .glide
 /tmp/
 /internal/tmp/
+/internal/zz*
 *.override.md
 /AGENTS_*
 /REPOS.md
