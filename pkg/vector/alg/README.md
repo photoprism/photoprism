@@ -86,17 +86,20 @@ matching what `HardClusterer.Guesses` reports.
 
 ### Where DBSCAN Departs From the Textbook
 
-Two behaviors follow from the same line, and callers that read the core size as a guarantee are
+Border points - those inside `eps` of a core point without being cores themselves - are assigned
+here, but only while they are still unvisited. A point the scan reached first was labeled noise, and
+that label is final. Two behaviors follow, and callers that read the core size as a guarantee are
 surprised by both:
 
-- **A point labeled noise is never reclaimed.** Canonical DBSCAN lets a later core point adopt it as
-  a border point; here the assignment is final, so the order the points arrive in decides it.
+- **Which border points get in depends on the order the points arrive in.** Not on scheduling: a
+  rerun over the same slice repeats exactly. Reorder the same data and the assignment moves.
 - **The core size bounds what may seed a cluster, not how large one ends up.** Expansion claims only
   neighbors that are still unassigned, so a core point reached after an earlier cluster absorbed its
   neighborhood produces a cluster smaller than `minPts` - down to the seed alone.
 
 `Sizes()` therefore reports what each cluster claimed rather than the density that formed it. Filter
-on the result if a caller needs a floor.
+on the result if a caller needs a floor, and do not rely on the clustering being a function of the
+point set alone.
 
 Two properties worth knowing before reading a result:
 
