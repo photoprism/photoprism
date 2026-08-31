@@ -1896,8 +1896,12 @@ func TestConfig_FaceClusterCore(t *testing.T) {
 	assert.Equal(t, face.ClusterCoreDefault, c.FaceClusterCore())
 	c.options.FaceClusterCore = 1000
 	assert.Equal(t, face.ClusterCoreDefault, c.FaceClusterCore())
+	// A core of one is refused, not honored: it would seed every automatic cluster from a single
+	// embedding, which has no centroid and is never offered to the matcher.
 	c.options.FaceClusterCore = 1
-	assert.Equal(t, 1, c.FaceClusterCore())
+	assert.Equal(t, face.ClusterCoreDefault, c.FaceClusterCore())
+	c.options.FaceClusterCore = 2
+	assert.Equal(t, 2, c.FaceClusterCore())
 }
 
 func TestConfig_FaceRecomputeStats(t *testing.T) {

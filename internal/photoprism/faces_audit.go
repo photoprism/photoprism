@@ -381,7 +381,7 @@ func (w *Faces) recomputeMissingRadius(fix bool, subjUID string) (repaired int, 
 	// since a row already sitting there was written by a current path.
 	stmt := entity.UnscopedDb().Model(&entity.Face{}).
 		Where("sample_radius < ?", face.Epsilon).
-		Where("samples >= ?", face.ManualClusterCore).
+		Where("samples > ?", 1).
 		Where("face_hidden = ?", false).
 		Where("face_kind <= 1")
 

@@ -61,7 +61,9 @@ func TestRecomputeFaceStats(t *testing.T) {
 		const subjUID = "js6sg6b1qekk9je1"
 		isolatedTestFaces(t, "faces-recompute-members")
 
-		f, _ := recomputeTestCluster(t, subjUID, 9101, 0.05, 0.08, 0.11)
+		// Four markers against a three-embedding centroid: the numbers have to differ, or "samples was
+		// left alone" cannot be told from "samples was set to the member count".
+		f, _ := recomputeTestCluster(t, subjUID, 9101, 0.05, 0.08, 0.11, 0.09)
 
 		// The ratchet widens to the clamp, which is what a measurement over the members replaces.
 		require.NoError(t, f.UpdateMatchStats(1, face.ClusterRadius))
@@ -78,7 +80,9 @@ func TestRecomputeFaceStats(t *testing.T) {
 
 		assert.Less(t, stored.SampleRadius, face.ClusterRadius, "the radius stops being the clamp")
 		assert.GreaterOrEqual(t, stored.SampleRadius, 0.11, "while still covering the furthest member")
+		require.Equal(t, face.ManualClusterCore, samples)
 		assert.Equal(t, samples, stored.Samples, "and the centroid's inputs are not what was measured")
+		assert.NotEqual(t, 4, stored.Samples, "which is not the number of markers it holds")
 	})
 	t.Run("KeepsClusterIdentity", func(t *testing.T) {
 		// The centroid is read, never re-derived: faces.id is its hash, so a new one would orphan

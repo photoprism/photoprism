@@ -753,6 +753,34 @@ func TestValidMigrationEmbeddingsUsage(t *testing.T) {
 	assert.False(t, face.ValidEmbeddings(face.Embeddings{{0.1, math.NaN()}}, 2))
 }
 
+// TestBuildFaceMigrationClustersOneMarker pins that the migration does not mint a cluster a matching
+// pass would never offer. One rebuilt from a single embedding is the subject's only cluster, so
+// merging never sees a group either and the person could not be recognized again by any run.
+func TestBuildFaceMigrationClustersOneMarker(t *testing.T) {
+	target := face.ConfiguredModel()
+	subjectUID := rnd.GenerateUID('j')
+
+	for i := 0; i < 1; i++ {
+		m := &entity.Marker{
+			MarkerUID: rnd.GenerateUID('m'), FileUID: "fs6sg6bw45bnlqdw", MarkerType: entity.MarkerFace,
+			SubjUID: subjectUID, SubjSrc: entity.SrcManual,
+			Size: face.ClusterSizeThreshold + 10, Score: face.ClusterScore("") + 10,
+			EmbedModel: target, EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
+			W: 0.1, H: 0.1,
+		}
+		require.NoError(t, entity.Db().Create(m).Error)
+		t.Cleanup(func() { entity.UnscopedDb().Delete(m) })
+	}
+
+	result, _, _, err := buildFaceMigrationClusters(target)
+	require.NoError(t, err)
+
+	for i := range result {
+		assert.NotEqual(t, subjectUID, result[i].Face.SubjUID,
+			"one face must not become a cluster nothing can use")
+	}
+}
+
 func TestBuildFaceMigrationClusters(t *testing.T) {
 	// RandomEmbedding follows the configured model, so the marker has to claim that same
 	// model or its vector is the wrong length for the space the clusters are rebuilt in.

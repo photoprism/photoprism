@@ -1425,7 +1425,7 @@ var Flags = CliFlags{
 		DocDefault: faceDocDefault(float64(face.DefaultDetectorClusterScore()))}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-cluster-core",
-			Usage:   "`NUMBER` of faces forming a cluster core (1-100)",
+			Usage:   "`NUMBER` of faces forming a cluster core (2-100)",
 			Value:   face.ClusterCoreDefault,
 			EnvVars: EnvVars("FACE_CLUSTER_CORE"),
 		}}, {

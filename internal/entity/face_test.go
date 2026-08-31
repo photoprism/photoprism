@@ -1064,27 +1064,36 @@ func TestFace_MatchMarkers(t *testing.T) {
 	})
 }
 
-// TestFace_MatchMarkersFromOneSample covers what naming a face is for. Marker.Face() creates a
-// cluster from that one marker and immediately matches it against the faceless ones, so a radius
-// of zero would gate the search at MatchDist and the feature would find nobody.
-// TestFace_MatchMarkersFromOneSample pins how far a one-embedding cluster reaches. It still matches
-// what sits inside MatchDist of it, which is what lets a merged cluster re-adopt its sources'
-// markers; what it no longer does is carry a cluster's width on the evidence of one photograph.
-func TestFace_MatchMarkersFromOneSample(t *testing.T) {
+// TestFace_MatchMarkersCore pins that adoption obeys the same core as matching. Marker.Face() runs
+// this once when a named marker gets a cluster, and the matcher never offers that cluster again -
+// so a labeled example left free to adopt here would keep the reach the gate exists to remove.
+func TestFace_MatchMarkersCore(t *testing.T) {
 	base := face.FixtureEmbedding(9301)
 
-	cluster := FirstOrCreateFace(NewFace("js6sg6b1qekk9jz1", SrcManual, face.Embeddings{base}, face.EmbeddingModelName()))
+	// One embedding: a labeled example, which may not adopt.
+	singleton := FirstOrCreateFace(NewFace("js6sg6b1qekk9jz1", SrcManual, face.Embeddings{base}, face.EmbeddingModelName()))
+	require.NotNil(t, singleton)
+	require.Equal(t, 1, singleton.Samples)
+
+	// A full core of near-identical embeddings, so its centroid stays close to base and its own
+	// extent is small - the marker below is placed against the accept distance either way.
+	core := face.Embeddings{base}
+	for i := 1; i < face.ManualClusterCore; i++ {
+		core = append(core, face.FixtureEmbeddingAt(base, 0.01, uint64(9310+i)))
+	}
+
+	cluster := FirstOrCreateFace(NewFace("js6sg6b1qekk9jz2", SrcManual, core, face.EmbeddingModelName()))
 	require.NotNil(t, cluster)
+	require.Equal(t, face.ManualClusterCore, cluster.Samples)
 
 	// MatchMarkers may attach fixture markers too, and one left pointing at a deleted cluster
 	// would follow the package for the rest of the run.
 	t.Cleanup(func() {
-		Db().Model(&Marker{}).Where("face_id = ?", cluster.ID).UpdateColumn("face_id", "")
-		Db().Delete(cluster)
+		for _, f := range []*Face{singleton, cluster} {
+			Db().Model(&Marker{}).Where("face_id = ?", f.ID).UpdateColumn("face_id", "")
+			Db().Delete(f)
+		}
 	})
-
-	// A singleton reaches MatchDist and no further, because one embedding has no extent to add.
-	require.InDelta(t, face.Epsilon+face.MatchDist, cluster.AcceptDist(), 1e-9)
 
 	dist := 0.9 * cluster.AcceptDist()
 
@@ -1104,12 +1113,20 @@ func TestFace_MatchMarkersFromOneSample(t *testing.T) {
 	require.NoError(t, Db().Create(m).Error)
 	t.Cleanup(func() { Db().Delete(m) })
 
+	// The singleton is offered the same marker first and must leave it alone.
+	require.NoError(t, singleton.MatchMarkers(Faceless))
+	require.Empty(t, FindMarker(m.MarkerUID).FaceID, "a labeled example may not adopt")
+
 	require.NoError(t, cluster.MatchMarkers(Faceless))
+
+	// Measured against the cluster's own centroid, which the extra core embeddings move slightly
+	// off base - the marker was placed relative to base.
+	want := m.Embeddings().Dist(cluster.Embedding())
 
 	found := FindMarker(m.MarkerUID)
 	require.NotNil(t, found)
-	assert.Equal(t, cluster.ID, found.FaceID)
-	assert.InDelta(t, dist, found.FaceDist, 1e-6)
+	assert.Equal(t, cluster.ID, found.FaceID, "a cluster with a core adopts it")
+	assert.InDelta(t, want, found.FaceDist, 1e-6)
 }
 
 // TestFace_Reopened pins the discriminator the matcher needs on its way out. Every cluster a

@@ -1025,8 +1025,12 @@ func (c *Config) FaceSampleThreshold() int {
 }
 
 // FaceClusterCore returns the number of faces forming a cluster core.
+//
+// Bounded below at 2, since a cluster seeded from one embedding has no centroid and is not offered
+// for matching at all: accepting 1 here would leave every automatic cluster invisible to the
+// matcher, with no error and no result.
 func (c *Config) FaceClusterCore() int {
-	if c.options.FaceClusterCore < 1 || c.options.FaceClusterCore > 100 {
+	if c.options.FaceClusterCore < 2 || c.options.FaceClusterCore > 100 {
 		return face.ClusterCoreDefault
 	}
 

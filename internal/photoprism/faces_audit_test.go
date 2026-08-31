@@ -187,14 +187,19 @@ func TestFaces_recomputeMissingRadius(t *testing.T) {
 	const subjUID = "js6sg6b1qekk9jy2"
 
 	// The row shape an upgraded library holds: SetEmbeddings has written at least the floor since.
-	storedCluster := func(t *testing.T, seed uint64, dists ...float64) *entity.Face {
+	storedClusterFor := func(t *testing.T, subj string, seed uint64, dists ...float64) *entity.Face {
 		t.Helper()
 
-		f, _ := recomputeTestCluster(t, subjUID, seed, dists...)
+		f, _ := recomputeTestCluster(t, subj, seed, dists...)
 		require.NoError(t, entity.Db().Model(&entity.Face{}).Where("id = ?", f.ID).
 			UpdateColumns(entity.Values{"sample_radius": 0, "matched_at": entity.Now()}).Error)
 
 		return f
+	}
+
+	storedCluster := func(t *testing.T, seed uint64, dists ...float64) *entity.Face {
+		t.Helper()
+		return storedClusterFor(t, subjUID, seed, dists...)
 	}
 
 	t.Run("MeasuresTheMembers", func(t *testing.T) {
@@ -225,17 +230,36 @@ func TestFaces_recomputeMissingRadius(t *testing.T) {
 		assert.NotNil(t, after.MatchedAt)
 	})
 	t.Run("LeavesASingletonAlone", func(t *testing.T) {
-		// One embedding has no extent, so there is nothing to repair and nothing to measure.
+		// One embedding has no extent, so there is nothing to repair and nothing to measure. It is
+		// given a marker deliberately: with none, an empty member set would decide the case and the
+		// core predicate this covers would never be what refused it.
 		w := isolatedTestFaces(t, "faces-audit-measure-singleton")
 
-		f := entity.NewFace(subjUID, entity.SrcManual,
-			face.Embeddings{face.FixtureEmbedding(8921)}, face.EmbeddingModelName())
+		base := face.FixtureEmbedding(8921)
+		f := entity.NewFace(subjUID, entity.SrcManual, face.Embeddings{base}, face.EmbeddingModelName())
 		require.NotNil(t, f)
 		require.NoError(t, f.Create())
+		require.Equal(t, 1, f.Samples)
 		require.NoError(t, entity.Db().Model(&entity.Face{}).Where("id = ?", f.ID).
 			UpdateColumn("sample_radius", 0).Error)
 
-		t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Face{}, "id = ?", f.ID) })
+		marker := &entity.Marker{
+			FileUID: "fs6sg6bw45bnlqdw", MarkerType: entity.MarkerFace, MarkerSrc: entity.SrcImage,
+			FaceID: f.ID, SubjUID: subjUID, SubjSrc: entity.SrcManual,
+			Size: face.SizeThreshold, Score: 50, X: 0.2, Y: 0.2, W: 0.1, H: 0.1,
+		}
+		marker.SetEmbeddings(face.Embeddings{face.FixtureEmbeddingAt(base, 0.05, 8922)},
+			f.EmbedModel, face.DetectorYuNet)
+		require.NoError(t, entity.Db().Create(marker).Error)
+
+		t.Cleanup(func() {
+			entity.UnscopedDb().Delete(&entity.Marker{}, "marker_uid = ?", marker.MarkerUID)
+			entity.UnscopedDb().Delete(&entity.Face{}, "id = ?", f.ID)
+		})
+
+		members, err := query.FaceMembers(f.ID)
+		require.NoError(t, err)
+		require.Len(t, members, 1, "so a measurement is available and only the core refuses it")
 
 		n, err := w.recomputeMissingRadius(true, subjUID)
 		require.NoError(t, err)
@@ -244,6 +268,78 @@ func TestFaces_recomputeMissingRadius(t *testing.T) {
 		after := entity.FindFace(f.ID)
 		require.NotNil(t, after)
 		assert.Zero(t, after.SampleRadius)
+	})
+	t.Run("SkipsRowsTheMatcherExcludes", func(t *testing.T) {
+		// Nothing narrows a radius again, so a row the matcher would not read must not be measured:
+		// un-hiding it later would bring it back with its own extent already gone.
+		w := isolatedTestFaces(t, "faces-audit-measure-excluded")
+
+		hidden := storedCluster(t, 8931, 0.05, 0.09, 0.11)
+		require.NoError(t, entity.Db().Model(&entity.Face{}).Where("id = ?", hidden.ID).
+			UpdateColumn("face_hidden", true).Error)
+
+		ignored := storedCluster(t, 8941, 0.05, 0.09, 0.11)
+		require.NoError(t, entity.Db().Model(&entity.Face{}).Where("id = ?", ignored.ID).
+			UpdateColumn("face_kind", int(face.AmbiguousFace)).Error)
+
+		foreign := storedCluster(t, 8951, 0.05, 0.09, 0.11)
+		require.NoError(t, entity.Db().Model(&entity.Face{}).Where("id = ?", foreign.ID).
+			UpdateColumn("embed_model", "not-the-configured-model").Error)
+
+		n, err := w.recomputeMissingRadius(true, subjUID)
+		require.NoError(t, err)
+		assert.Zero(t, n)
+
+		for name, id := range map[string]string{"hidden": hidden.ID, "ignored": ignored.ID, "foreign": foreign.ID} {
+			after := entity.FindFace(id)
+			require.NotNil(t, after, name)
+			assert.Zero(t, after.SampleRadius, name)
+		}
+	})
+	t.Run("KeepsARowAtTheFloor", func(t *testing.T) {
+		// A row already at the floor was written by a current path, so it is current rather than
+		// degenerate. Flipping the predicate to <= would re-measure every singleton in the library.
+		w := isolatedTestFaces(t, "faces-audit-measure-floor")
+
+		f := storedCluster(t, 8961, 0.05, 0.09, 0.11)
+		require.NoError(t, entity.Db().Model(&entity.Face{}).Where("id = ?", f.ID).
+			UpdateColumn("sample_radius", face.Epsilon).Error)
+
+		n, err := w.recomputeMissingRadius(true, subjUID)
+		require.NoError(t, err)
+		assert.Zero(t, n)
+
+		after := entity.FindFace(f.ID)
+		require.NotNil(t, after)
+		assert.InDelta(t, face.Epsilon, after.SampleRadius, 1e-9)
+	})
+	t.Run("AuditAppliesTheMeasurement", func(t *testing.T) {
+		// Pins the wiring rather than the measurement: called directly, every subtest above stays
+		// green while nothing in Audit reaches it at all.
+		// Its own subject, so the audit's other passes see one cluster rather than the several the
+		// subtests above leave behind - their cleanups run when the parent test ends, not sooner.
+		w := isolatedTestFaces(t, "faces-audit-measure-wiring")
+
+		// A real subject row, because Audit --fix clears references to subjects that do not exist -
+		// and its own subject, so the other passes see one cluster rather than the several the
+		// subtests above leave behind (their cleanups run when the parent test ends, not sooner).
+		subj := entity.NewSubject("Audit Wiring Person", entity.SubjPerson, entity.SrcManual)
+		require.NotNil(t, subj)
+		require.NoError(t, subj.Create())
+		t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Subject{}, "subj_uid = ?", subj.SubjUID) })
+
+		wiringUID := subj.SubjUID
+
+		storedClusterFor(t, wiringUID, 8971, 0.05, 0.09, 0.11)
+
+		require.NoError(t, w.Audit(true, wiringUID))
+
+		// Looked up by subject rather than by id: the same run normalizes stored embeddings, which
+		// re-keys a row whose vector was not unit length.
+		var after entity.Faces
+		require.NoError(t, entity.UnscopedDb().Where("subj_uid = ?", wiringUID).Find(&after).Error)
+		require.Len(t, after, 1)
+		assert.GreaterOrEqual(t, after[0].SampleRadius, 0.11, "the audit measured it")
 	})
 }
 

@@ -81,15 +81,11 @@ func facesStmt(knownOnly, unmatchedOnly, hidden, ignored bool) *gorm.DB {
 	}
 
 	// Largest clusters first, because selection bounds each comparison by the best distance found so
-	// far: meeting a likely winner early makes every later candidate cheaper to reject. Counted from
-	// the members, since samples records the centroid's inputs and does not grow as a cluster
-	// recruits. The id breaks ties so the order does not vary between drivers.
-	memberCond, memberArgs := entity.FaceMemberCond()
-
-	join := fmt.Sprintf(`LEFT JOIN (SELECT face_id, COUNT(*) AS members FROM %s WHERE %s GROUP BY face_id)
-		n ON n.face_id = %s.id`, entity.Marker{}.TableName(), memberCond, entity.Face{}.TableName())
-
-	return stmt.Joins(join, memberArgs...).Order("COALESCE(n.members, 0) DESC, id")
+	// far: meeting a likely winner early makes every later candidate cheaper to reject. Ordered by
+	// samples, a weak proxy now that it counts the centroid's inputs rather than membership - but
+	// counting members here costs a full scan of the markers table on the hottest face query, and
+	// this ordering only decides cost. The id breaks ties so the order does not vary between drivers.
+	return stmt.Order("samples DESC, id")
 }
 
 // Faces returns all (known / unmatched) faces from the index, including clusters from
@@ -102,11 +98,11 @@ func Faces(knownOnly, unmatchedOnly, hidden, ignored bool) (result entity.Faces,
 
 // MatchableFaces returns the faces that may be compared with the configured model.
 func MatchableFaces(knownOnly, unmatchedOnly, hidden, ignored bool) (result entity.Faces, err error) {
-	// A centroid averaged from fewer embeddings than the core is not one: it is a labeled example
-	// or a pair, and matching against it casts an accept distance sized for a cluster over the whole
-	// library on that evidence. Automatic clusters are seeded at ClusterCore and never reach here.
+	// One embedding is not a centroid, it is the embedding - so matching against it casts an accept
+	// distance over the whole library on the evidence of one photograph. Two are already an average,
+	// and a pair that exists is worth using even though ManualClusterCore refuses to make one.
 	stmt := facesStmt(knownOnly, unmatchedOnly, hidden, ignored).
-		Where("samples >= ?", face.ManualClusterCore)
+		Where("samples > ?", 1)
 
 	err = whereEmbeddingModel(stmt, face.EmbeddingModelName()).Find(&result).Error
 

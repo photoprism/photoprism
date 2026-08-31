@@ -150,15 +150,17 @@ func TestMatchableFacesClusterCore(t *testing.T) {
 		t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Face{}, "id = ?", id) })
 	}
 
-	newFace(t, "MATCHABLECORE1PAIR", face.ManualClusterCore-1)
-	newFace(t, "MATCHABLECORE2FULL", face.ManualClusterCore)
+	newFace(t, "MATCHABLECORE1ONE", 1)
+	newFace(t, "MATCHABLECORE2PAIR", 2)
+	newFace(t, "MATCHABLECORE3FULL", face.ManualClusterCore)
 
 	result, err := MatchableFaces(true, false, false, false)
 	require.NoError(t, err)
 
 	ids := result.IDs()
-	assert.NotContains(t, ids, "MATCHABLECORE1PAIR", "fewer embeddings than the core is not a cluster")
-	assert.Contains(t, ids, "MATCHABLECORE2FULL")
+	assert.NotContains(t, ids, "MATCHABLECORE1ONE", "one embedding is not a centroid")
+	assert.Contains(t, ids, "MATCHABLECORE2PAIR", "two are already an average, so a pair still matches")
+	assert.Contains(t, ids, "MATCHABLECORE3FULL")
 }
 
 func TestMatchFaceMarkers_ReturnsUpdateError(t *testing.T) {

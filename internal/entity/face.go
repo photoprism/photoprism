@@ -485,6 +485,14 @@ func (m *Face) MatchMarkers(faceIds []string) error {
 		return nil
 	}
 
+	// One embedding may not adopt markers, for the reason it is not offered to the matcher either:
+	// it is a labeled example, and one photograph is not evidence enough to name others from. Gated
+	// here as well, since this runs once when a cluster is created and the matcher never sees it
+	// again.
+	if m.Samples < 2 {
+		return nil
+	}
+
 	var markers Markers
 
 	err := whereSameEmbeddingSpace(Db().

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"sort"
+	"strings"
 
 	"github.com/dustin/go-humanize/english"
 	"github.com/jinzhu/gorm"
@@ -1166,6 +1167,8 @@ func buildFaceMigrationClusters(model string) (result []query.FaceMigrationClust
 		return result, 0, 0, err
 	}
 
+	var belowCore []string
+
 	for _, subjectUID := range subjectUIDs {
 		markers, markerErr := query.FaceMigrationSubjectMarkers(model, subjectUID)
 		if markerErr != nil {
@@ -1193,7 +1196,14 @@ func buildFaceMigrationClusters(model string) (result []query.FaceMigrationClust
 			}
 		}
 
-		if len(embeddings) == 0 {
+		// A one-embedding replacement is a cluster nothing can use: matching will not offer it, and
+		// it is the subject's only one, so merging never sees a group either. The markers keep their
+		// names and stay available to clustering, which is the state they were in before.
+		if len(embeddings) < 2 {
+			if len(embeddings) > 0 {
+				belowCore = append(belowCore, subjectUID)
+			}
+
 			continue
 		}
 
@@ -1210,6 +1220,20 @@ func buildFaceMigrationClusters(model string) (result []query.FaceMigrationClust
 
 		result = append(result, query.FaceMigrationCluster{Face: *cluster, MarkerDistances: distances})
 		rebuilt++
+	}
+
+	// Named, not just counted: "this person stopped being recognized after I switched models" is
+	// otherwise undiagnosable, and the operator's remedy is to label more of their faces.
+	if len(belowCore) > 0 {
+		names := make([]string, 0, len(belowCore))
+		for _, subjUID := range belowCore {
+			names = append(names, entity.SubjNames.Log(subjUID))
+		}
+
+		event.SystemWarn([]string{
+			"faces", "migrate", "rebuilt no cluster for %s with fewer than %d usable faces", "%s",
+		}, english.Plural(len(belowCore), "subject", "subjects"), face.ManualClusterCore,
+			strings.Join(names, ", "))
 	}
 
 	return result, rebuilt, excluded, nil
