@@ -6,6 +6,7 @@ import (
 	"image/draw"
 	"path"
 	"path/filepath"
+	"slices"
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/thumb"
@@ -35,6 +36,31 @@ var thumbFileSizes = []thumb.Size{
 	thumb.Sizes[thumb.Fit5120],
 	thumb.Sizes[thumb.Fit7680],
 	thumb.Sizes[thumb.Fit15360],
+}
+
+// WidestCachedSize returns the widest rendition a crop can be taken from, which is the widest
+// usable size that is still pre-generated at the configured thumbnail limit.
+//
+// The selection below stats cached files, so a size above the limit is rendered on demand, never
+// written to disk, and therefore unreachable here however much detail the original holds. The
+// zero size is returned when the limit excludes even the smallest.
+func WidestCachedSize() (widest thumb.Size) {
+	for _, s := range thumbFileSizes {
+		if s.Uncached() {
+			break
+		}
+
+		widest = s
+	}
+
+	return widest
+}
+
+// UsableSizes returns the renditions a crop can be taken from, in ascending order and whether or
+// not the configured limit pre-generates them. A caller asking what a larger limit would deliver
+// needs the ones above it, which is why this is not filtered.
+func UsableSizes() []thumb.Size {
+	return slices.Clone(thumbFileSizes)
 }
 
 // ImageFromThumb returns a cropped area from an existing thumbnail image, reusing a cached crop
@@ -83,7 +109,7 @@ func cropFromThumb(thumbName string, area Area, size Size, cache, reuse bool) (i
 	}
 
 	// Open thumb image file.
-	img, err = openIdealThumbFile(thumbName, hash, area, size)
+	img, srcName, err := openIdealThumbFile(thumbName, hash, area, size)
 
 	if err != nil {
 		return img, "", srcWidth, err
@@ -96,8 +122,10 @@ func cropFromThumb(thumbName string, area Area, size Size, cache, reuse bool) (i
 	// Get absolute crop coordinates and dimension.
 	posMin, posMax, dim := area.Bounds(img)
 
+	// The rendition that was opened, which the selection may have swapped for a wider one: naming
+	// the requested file instead reports an upscale from a source that was never read.
 	if dim < size.Width {
-		log.Debugf("crop: %s is too small, upscaling %dpx to %dpx", filepath.Base(thumbName), dim, size.Width)
+		log.Debugf("crop: %s is too small, upscaling %dpx to %dpx", filepath.Base(srcName), dim, size.Width)
 	}
 
 	// Crop area from image.
@@ -123,7 +151,9 @@ func cropFromThumb(thumbName string, area Area, size Size, cache, reuse bool) (i
 // none. Callers that need the whole image rather than the crop use this, so that a face
 // warped onto a template is not upscaled from a rendition it outgrew.
 func ImageFromIdealThumb(thumbName string, area Area, size Size) (img image.Image, err error) {
-	return openIdealThumbFile(thumbName, thumbHash(thumbName), area, size)
+	img, _, err = openIdealThumbFile(thumbName, thumbHash(thumbName), area, size)
+
+	return img, err
 }
 
 // ThumbFileName returns the ideal thumb file name.
@@ -205,17 +235,18 @@ func findIdealThumbFileName(hash string, width int, filePath string) (fileName s
 	return fileName
 }
 
-// openIdealThumbFile opens the thumbnail file and returns an image.
-func openIdealThumbFile(fileName, hash string, area Area, size Size) (result image.Image, err error) {
+// openIdealThumbFile opens the thumbnail file and returns the image with the name it was read
+// from, which is not the name that was asked for whenever the selection found a wider rendition.
+func openIdealThumbFile(fileName, hash string, area Area, size Size) (result image.Image, opened string, err error) {
 	// Resolve symlinks.
 	if fileName, err = fs.Resolve(fileName); err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	if len(hash) != 40 || area.W <= 0 || size.Width <= 0 {
 		// Not a standard thumb name with sha1 hash prefix.
 		result, _, err = fs.DecodeImageFile(fileName)
-		return result, err
+		return result, fileName, err
 	}
 
 	if name := findIdealThumbFileName(hash, area.FileWidth(size), filepath.Dir(fileName)); name != "" {
@@ -223,7 +254,8 @@ func openIdealThumbFile(fileName, hash string, area Area, size Size) (result ima
 	}
 
 	result, _, err = fs.DecodeImageFile(fileName)
-	return result, err
+
+	return result, fileName, err
 }
 
 // imageCrop returns a copy of the requested crop rectangle.

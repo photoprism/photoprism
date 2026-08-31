@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"math"
 	"path/filepath"
 	"strings"
 	"time"
@@ -205,6 +206,10 @@ func facesMigrateAction(ctx *cli.Context) error {
 		if stale := plan.Markers.Valid - plan.Markers.Ready; stale > 0 {
 			event.SystemWarn([]string{"faces", "migrate", "%d markers must be re-embedded and lose their stored vectors if that fails"}, stale)
 		}
+		// A crop is taken from a pre-generated thumbnail and never from the original, so a cache
+		// capped below what the crops need embeds a library from upscaled pixels while the detail
+		// sits on the same disk. It is not recoverable afterwards: the whole run has to be redone.
+		reportMigrationCropCoverage(plan)
 
 		if ctx.Bool("dry-run") {
 			log.Infof("faces: dry run completed without changes")
@@ -266,6 +271,50 @@ func facesMigrateAction(ctx *cli.Context) error {
 
 		return nil
 	})
+}
+
+// reportMigrationCropCoverage warns when the pre-generated thumbnails cannot supply the face crops
+// this migration takes, and names the setting that would fix it.
+//
+// Only the markers whose own original holds the detail are warned about, and the rest are reported
+// as a note: a library of small pictures must not be nagged about a setting that cannot help it.
+func reportMigrationCropCoverage(plan photoprism.FacesMigratePlan) {
+	coverage := plan.CropCoverage
+
+	if coverage.Total < 1 {
+		return
+	}
+
+	if coverage.Upscaled > 0 {
+		// Stated only when a size was measured to clear it: a remedy that turns out not to help
+		// costs a second pass over the whole library, which is what this line exists to prevent.
+		remedy := "No larger pre-generated thumbnail would remove this, so the crops are as good as the cache can supply"
+
+		if plan.ThumbSizeFix > 0 {
+			remedy = fmt.Sprintf("Running \"photoprism --thumb-size=%d thumbs\" first avoids re-running this migration", plan.ThumbSizeFix)
+		}
+
+		event.SystemWarn([]string{"faces", "migrate", "%d of %d markers (%d%%) would be embedded from upscaled crops, " +
+			"because the widest pre-generated thumbnail (%dx%d) is narrower than their face crops need. %s"},
+			coverage.Upscaled, coverage.Total, percentOf(coverage.Upscaled, coverage.Total),
+			plan.ThumbSize.Width, plan.ThumbSize.Height, remedy)
+	}
+
+	// Stated whether or not anything was warned about, so the two numbers are never confused: this
+	// one does not move with the thumbnail settings, and no larger cache recovers it.
+	if coverage.SourceTooSmall > 0 {
+		log.Infof("faces: %d of %d markers (%d%%) have originals too small for a full-detail face crop, which no setting recovers",
+			coverage.SourceTooSmall, coverage.Total, percentOf(coverage.SourceTooSmall, coverage.Total))
+	}
+}
+
+// percentOf returns the share of total in whole percent, and 0 when there is nothing to divide by.
+func percentOf(n, total int) int {
+	if total < 1 {
+		return 0
+	}
+
+	return int(math.Round(float64(n) * 100 / float64(total)))
 }
 
 // facesStatsAction shows stats on face embeddings.

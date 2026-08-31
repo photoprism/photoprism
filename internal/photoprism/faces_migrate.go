@@ -66,6 +66,17 @@ type FacesMigratePlan struct {
 	// unmounted volume looks like. The counting queries cannot see it, so a plan would
 	// otherwise be reported as clean and then fail on every file it tried to re-embed.
 	OriginalsUnavailable bool
+
+	// CropCoverage reports how many markers the pre-generated thumbnails can supply a full-detail
+	// crop for. A crop is taken from a cached rendition, never from the original, so a library can
+	// be embedded from upscaled pixels while the detail sits on the same disk.
+	CropCoverage query.FaceMigrationCropCounts
+
+	// ThumbSize is the widest pre-generated rendition the crops are taken from, and ThumbSizeFix
+	// the "--thumb-size" that would remove the upscaling, or 0 when none is needed or none clears
+	// it. Measured rather than assumed: a box's height binds for a landscape picture.
+	ThumbSize    thumb.Size
+	ThumbSizeFix int
 }
 
 // FacesMigrateResult summarizes a completed face embedding migration.
@@ -346,7 +357,70 @@ func (w *Faces) PlanMigration(target string) (result FacesMigratePlan, err error
 
 	result.OriginalsUnavailable = originalsUnavailable(w.conf.OriginalsPath())
 
+	if result.ThumbSize, result.CropCoverage, result.ThumbSizeFix, err = migrationCropCoverage(target); err != nil {
+		return result, err
+	}
+
 	return result, nil
+}
+
+// migrationCropWidth returns the source width a marker's crop is requested at.
+//
+// The wider of the two the run asks for: an aligned model warps the landmarks onto its own input
+// geometry, but a face whose landmarks do not fit the template falls back to the box crop, which
+// asks for face.CropSize whatever the model consumes.
+func migrationCropWidth(target string) int {
+	width := face.CropSize.Width
+
+	if model := face.FindEmbeddingModel(target); model != nil {
+		if w, _ := model.InputSize(); w > width {
+			width = w
+		}
+	}
+
+	return width
+}
+
+// migrationCropCoverage reports the widest rendition the crops are taken from, how much detail it
+// can supply, and the "--thumb-size" that would remove any shortfall.
+//
+// Answered before the prompt because it is not recoverable afterwards: a marker embedded from an
+// upscaled crop is indistinguishable from one that was not, so the whole run has to be repeated.
+func migrationCropCoverage(target string) (widest thumb.Size, counts query.FaceMigrationCropCounts, fix int, err error) {
+	cropWidth := migrationCropWidth(target)
+	widest = crop.WidestCachedSize()
+
+	if cropWidth < 1 || widest.Width < 1 {
+		return widest, counts, 0, nil
+	}
+
+	counts, err = query.FaceMigrationCropCoverage(cropWidth, widest.Width, widest.Height)
+
+	if err != nil || counts.Upscaled == 0 {
+		return widest, counts, 0, err
+	}
+
+	// The remedy is measured rather than assumed, because a box does not deliver its own width to
+	// every picture: Fit2560 is 2560x1600, so a 4:3 photo fits to 2133 px and clears less than the
+	// name suggests. Only the markers an original can supply are counted, so a library reaches
+	// zero here even when its own pictures hold too little detail.
+	for _, size := range crop.UsableSizes() {
+		if size.Width <= widest.Width {
+			continue
+		}
+
+		larger, sizeErr := query.FaceMigrationCropCoverage(cropWidth, size.Width, size.Height)
+
+		if sizeErr != nil {
+			return widest, counts, 0, sizeErr
+		} else if larger.Upscaled == 0 {
+			// A size is pre-generated once the limit covers its longer edge, which is the value
+			// the operator passes rather than the name the rendition is known by.
+			return widest, counts, max(size.Width, size.Height), nil
+		}
+	}
+
+	return widest, counts, 0, nil
 }
 
 // originalsUnavailable reports whether the originals root is missing or holds nothing, at the cost of

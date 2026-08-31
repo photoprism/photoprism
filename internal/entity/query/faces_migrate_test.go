@@ -712,3 +712,86 @@ func TestCountMarkersWithoutThumbSize(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, before, after)
 }
+
+// TestFaceMigrationCropCoverage pins the three buckets a migration plan warns from, measured as
+// deltas against a baseline so the shared fixtures cannot decide the outcome.
+func TestFaceMigrationCropCoverage(t *testing.T) {
+	before, err := FaceMigrationCropCoverage(160, 1920, 1200)
+	require.NoError(t, err)
+
+	// A 4:3 landscape original, which is the case a naive implementation gets wrong: the box
+	// height binds, so Fit1920 delivers 1600 px of width rather than the 1920 in its name.
+	file := entity.File{
+		FileUID:    rnd.GenerateUID('f'),
+		PhotoUID:   rnd.GenerateUID('p'),
+		FileName:   "crop-coverage/landscape.jpg",
+		FileRoot:   entity.RootOriginals,
+		FileWidth:  3648,
+		FileHeight: 2736,
+	}
+	require.NoError(t, Db().Create(&file).Error)
+	t.Cleanup(func() { Db().Unscoped().Delete(&file) })
+
+	// The required source width is 160/w, so these ask for 320, 1778 and 8000 px.
+	widths := []float32{0.5, 0.09, 0.02}
+	markers := make([]entity.Marker, 0, len(widths))
+
+	for _, w := range widths {
+		m := entity.Marker{
+			MarkerUID:  rnd.GenerateUID('m'),
+			FileUID:    file.FileUID,
+			MarkerType: entity.MarkerFace,
+			W:          w,
+			H:          w,
+		}
+		require.NoError(t, Db().Create(&m).Error)
+		markers = append(markers, m)
+	}
+
+	t.Cleanup(func() {
+		for i := range markers {
+			Db().Unscoped().Delete(&markers[i])
+		}
+	})
+
+	t.Run("Buckets", func(t *testing.T) {
+		after, err := FaceMigrationCropCoverage(160, 1920, 1200)
+		require.NoError(t, err)
+
+		assert.Equal(t, before.Total+3, after.Total)
+		assert.Equal(t, before.FullDetail+1, after.FullDetail, "320px is within what the rendition delivers")
+		assert.Equal(t, before.Upscaled+1, after.Upscaled, "1778px is more than the rendition and less than the original")
+		assert.Equal(t, before.SourceTooSmall+1, after.SourceTooSmall, "8000px is more than the original holds")
+	})
+	t.Run("TheBoxHeightBinds", func(t *testing.T) {
+		// The marker asking for 1778 px clears 1920 by name and not by delivered width, so a
+		// check reading the box width would count it as full detail here.
+		narrow, err := FaceMigrationCropCoverage(160, 1920, 1200)
+		require.NoError(t, err)
+
+		wide, err := FaceMigrationCropCoverage(160, 4096, 4096)
+		require.NoError(t, err)
+
+		assert.Equal(t, narrow.FullDetail+1, wide.FullDetail)
+		assert.Equal(t, narrow.Upscaled-1, wide.Upscaled)
+	})
+	t.Run("SourceTooSmallDoesNotMoveWithTheBox", func(t *testing.T) {
+		// It is a property of the originals, so a larger cache must not appear to fix it.
+		narrow, err := FaceMigrationCropCoverage(160, 1920, 1200)
+		require.NoError(t, err)
+
+		wide, err := FaceMigrationCropCoverage(160, 15360, 8640)
+		require.NoError(t, err)
+
+		assert.Equal(t, narrow.SourceTooSmall, wide.SourceTooSmall)
+		assert.Equal(t, narrow.Total, wide.Total)
+	})
+	t.Run("InvalidDimensions", func(t *testing.T) {
+		_, err := FaceMigrationCropCoverage(0, 1920, 1200)
+		require.Error(t, err)
+		_, err = FaceMigrationCropCoverage(160, 0, 1200)
+		require.Error(t, err)
+		_, err = FaceMigrationCropCoverage(160, 1920, 0)
+		require.Error(t, err)
+	})
+}

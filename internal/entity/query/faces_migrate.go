@@ -285,6 +285,55 @@ func FaceMigrationLowQualityMarkers(model string) (count int, err error) {
 	return max(total-samples, 0), nil
 }
 
+// FaceMigrationCropCounts counts the markers a migration can crop at full detail, and the two
+// reasons it cannot.
+type FaceMigrationCropCounts struct {
+	Total      int
+	FullDetail int
+	// Upscaled counts the markers whose face crop is wider than the pre-generated renditions can
+	// supply while the original holds the detail. Only these are fixable by a thumbnail setting.
+	Upscaled int
+	// SourceTooSmall counts the markers whose own original does not hold the detail, which no
+	// setting recovers. Reported apart, or a library of small pictures is nagged for nothing.
+	SourceTooSmall int
+}
+
+// FaceMigrationCropCoverage reports how much detail the pre-generated thumbnails can supply for the
+// face crops a migration takes, given the crop width in pixels and the widest rendition's box.
+//
+// Two columns and arithmetic rather than a filesystem walk, so a plan can state this before the
+// prompt on a library of any size. The box height binds for a landscape picture, so the width a
+// rendition delivers is not the box width - reading the name as a width is wrong for most photos.
+func FaceMigrationCropCoverage(cropWidth, boxWidth, boxHeight int) (result FaceMigrationCropCounts, err error) {
+	if cropWidth < 1 || boxWidth < 1 || boxHeight < 1 {
+		return result, fmt.Errorf("faces: crop and thumbnail dimensions must be positive")
+	}
+
+	// A rendition delivers min(file_width, boxWidth, file_width*boxHeight/file_height) pixels of
+	// width, and a marker needs cropWidth/m.w of them: comparing against each term in turn keeps
+	// the statement to multiplication, which every supported driver agrees on.
+	fits := `? <= m.w * f.file_width AND ? <= m.w * ? AND ? * f.file_height <= m.w * f.file_width * ?`
+
+	stmt := fmt.Sprintf(`SELECT COUNT(*) AS total,
+		COALESCE(SUM(CASE WHEN %s THEN 1 ELSE 0 END), 0) AS full_detail,
+		COALESCE(SUM(CASE WHEN ? > m.w * f.file_width THEN 1 ELSE 0 END), 0) AS source_too_small
+		FROM %s m JOIN %s f ON f.file_uid = m.file_uid
+		WHERE m.marker_type = ? AND m.marker_invalid = 0 AND m.w > 0
+		AND f.file_width > 0 AND f.file_height > 0 AND f.file_missing = 0 AND f.deleted_at IS NULL`,
+		fits, entity.Marker{}.TableName(), entity.File{}.TableName())
+
+	if err = Db().Raw(stmt, cropWidth, cropWidth, boxWidth, cropWidth, boxHeight, cropWidth, entity.MarkerFace).
+		Scan(&result).Error; err != nil {
+		return FaceMigrationCropCounts{}, err
+	}
+
+	// The remainder rather than a third pass: the two conditions are complementary, since a marker
+	// whose original is too narrow cannot satisfy the first term of the fit.
+	result.Upscaled = max(result.Total-result.FullDetail-result.SourceTooSmall, 0)
+
+	return result, nil
+}
+
 // FaceMigrationRecropMarkers returns how many markers hold a usable target-model vector that has to
 // be sampled again anyway, so a plan can report the work a re-run to the same model still has.
 //

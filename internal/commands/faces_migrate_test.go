@@ -3,15 +3,21 @@ package commands
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
+	"github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -73,5 +79,104 @@ func TestFacesMigrateCommand(t *testing.T) {
 		// to say so, because nothing in the code can enforce it.
 		assert.Contains(t, FacesMigrateCommand.Description, "Stop the server")
 		assert.NotEmpty(t, FacesMigrateCommand.Usage)
+	})
+}
+
+func TestPercentOf(t *testing.T) {
+	t.Run("Rounds", func(t *testing.T) {
+		assert.Equal(t, 38, percentOf(15689, 41252))
+	})
+	t.Run("All", func(t *testing.T) {
+		assert.Equal(t, 100, percentOf(9, 9))
+	})
+	t.Run("None", func(t *testing.T) {
+		assert.Equal(t, 0, percentOf(0, 9))
+	})
+	t.Run("NothingToDivideBy", func(t *testing.T) {
+		assert.Equal(t, 0, percentOf(3, 0))
+	})
+}
+
+// TestReportMigrationCropCoverage covers the pre-flight an operator reads before the prompt. It
+// must warn only about what a thumbnail setting can fix, or a library of small pictures is told
+// to change one that cannot help it.
+func TestReportMigrationCropCoverage(t *testing.T) {
+	capture := func(t *testing.T) *test.Hook {
+		t.Helper()
+
+		logger, ok := log.(*logrus.Logger)
+		require.True(t, ok)
+
+		hook := test.NewLocal(logger)
+		system := event.SystemLog
+		event.SystemLog = logger
+
+		t.Cleanup(func() {
+			event.SystemLog = system
+			hook.Reset()
+		})
+
+		return hook
+	}
+
+	messages := func(hook *test.Hook) string {
+		var b strings.Builder
+
+		for _, entry := range hook.AllEntries() {
+			b.WriteString(entry.Message)
+			b.WriteString("\n")
+		}
+
+		return b.String()
+	}
+
+	t.Run("NamesTheSetting", func(t *testing.T) {
+		hook := capture(t)
+
+		reportMigrationCropCoverage(photoprism.FacesMigratePlan{
+			CropCoverage: query.FaceMigrationCropCounts{Total: 41252, FullDetail: 19501, Upscaled: 15689, SourceTooSmall: 6062},
+			ThumbSize:    thumb.Sizes[thumb.Fit1920],
+			ThumbSizeFix: 4096,
+		})
+
+		out := messages(hook)
+		assert.Contains(t, out, "15689 of 41252 markers (38%)")
+		assert.Contains(t, out, "--thumb-size=4096")
+		assert.Contains(t, out, "6062 of 41252 markers (15%)")
+	})
+	t.Run("NoSettingClearsIt", func(t *testing.T) {
+		// The remedy is measured, so a library no supported size clears must still be warned,
+		// without being told to run a command that would not help.
+		hook := capture(t)
+
+		reportMigrationCropCoverage(photoprism.FacesMigratePlan{
+			CropCoverage: query.FaceMigrationCropCounts{Total: 100, Upscaled: 10},
+			ThumbSize:    thumb.Sizes[thumb.Fit15360],
+		})
+
+		out := messages(hook)
+		assert.Contains(t, out, "10 of 100 markers (10%)")
+		assert.NotContains(t, out, "--thumb-size=")
+		assert.Contains(t, out, "No larger pre-generated thumbnail")
+	})
+	t.Run("SmallOriginalsAreNotWarnedAbout", func(t *testing.T) {
+		hook := capture(t)
+
+		reportMigrationCropCoverage(photoprism.FacesMigratePlan{
+			CropCoverage: query.FaceMigrationCropCounts{Total: 100, FullDetail: 40, SourceTooSmall: 60},
+			ThumbSize:    thumb.Sizes[thumb.Fit4096],
+		})
+
+		out := messages(hook)
+		assert.NotContains(t, out, "upscaled crops")
+		assert.Contains(t, out, "60 of 100 markers (60%)")
+	})
+	t.Run("NothingMeasured", func(t *testing.T) {
+		// A limit below the smallest rendition reports no markers at all, which is not a finding.
+		hook := capture(t)
+
+		reportMigrationCropCoverage(photoprism.FacesMigratePlan{})
+
+		assert.Empty(t, messages(hook))
 	})
 }

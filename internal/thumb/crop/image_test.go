@@ -238,3 +238,79 @@ func TestImageFromThumbCachedSource(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, first, source, "ImageFromSource measures whether or not a crop is cached")
 }
+
+func TestWidestCachedSize(t *testing.T) {
+	restore := thumb.SizeCached
+	t.Cleanup(func() { thumb.SizeCached = restore })
+
+	t.Run("Default", func(t *testing.T) {
+		thumb.SizeCached = 2560
+		assert.Equal(t, thumb.Fit2560, WidestCachedSize().Name)
+	})
+	t.Run("BelowTheNextRendition", func(t *testing.T) {
+		// A box is pre-generated only when the limit covers its longer edge, so a limit between
+		// two renditions selects the smaller of them.
+		thumb.SizeCached = 4095
+		assert.Equal(t, thumb.Fit2560, WidestCachedSize().Name)
+	})
+	t.Run("Raised", func(t *testing.T) {
+		thumb.SizeCached = 4096
+		assert.Equal(t, thumb.Fit4096, WidestCachedSize().Name)
+	})
+	t.Run("BelowTheSmallest", func(t *testing.T) {
+		// Nothing a crop could be taken from, which the caller has to be able to tell.
+		thumb.SizeCached = 320
+		assert.Zero(t, WidestCachedSize().Width)
+	})
+}
+
+func TestUsableSizes(t *testing.T) {
+	sizes := UsableSizes()
+
+	require.Len(t, sizes, len(thumbFileNames))
+	assert.Equal(t, thumb.Fit720, sizes[0].Name)
+
+	// Ascending, which is what lets a caller take the first that clears its requirement.
+	for i := 1; i < len(sizes); i++ {
+		assert.GreaterOrEqual(t, sizes[i].Width, sizes[i-1].Width)
+	}
+
+	// A copy, so a caller cannot recalibrate the selection the crop path itself walks.
+	sizes[0] = thumb.Size{}
+	assert.Equal(t, thumb.Fit720, UsableSizes()[0].Name)
+}
+
+// TestOpenIdealThumbFile pins that the name comes back with the image. The selection swaps in a
+// wider rendition, so a caller reporting the name it passed in describes a file it never read -
+// which sent a diagnosis of upscaled face crops to the source photos twice.
+func TestOpenIdealThumbFile(t *testing.T) {
+	const hash = "bccfeaa526a36e19b555fd4ca5e8f767d5604289"
+
+	requested := filepath.Join("testdata", "b", "c", "c", hash+"_720x720_fit.jpg")
+	size := Size{Tile160, Tile160, "Faces", 160, 160, DefaultOptions}
+
+	t.Run("ReportsTheRenditionItRead", func(t *testing.T) {
+		// 160/0.32 asks for 500px, which the 720x720 rendition of this portrait picture cannot
+		// supply: it is 479px wide, so the selection moves up to the next one.
+		img, opened, err := openIdealThumbFile(requested, hash, NewArea("face", 0.5, 0.5, 0.32, 0.32), size)
+
+		require.NoError(t, err)
+		require.NotNil(t, img)
+		assert.True(t, strings.HasSuffix(opened, "_1280x1024_fit.jpg"), opened)
+	})
+	t.Run("ReportsTheRequestedName", func(t *testing.T) {
+		// A small area is covered by the rendition that was asked for, which is then also the
+		// one that was read.
+		_, opened, err := openIdealThumbFile(requested, hash, NewArea("face", 0.5, 0.5, 0.9, 0.9), size)
+
+		require.NoError(t, err)
+		assert.True(t, strings.HasSuffix(opened, "_720x720_fit.jpg"), opened)
+	})
+	t.Run("NotAThumbName", func(t *testing.T) {
+		// Decoded as passed, so the name reported is the one that was opened here too.
+		_, opened, err := openIdealThumbFile(requested, "", NewArea("face", 0.5, 0.5, 0.32, 0.32), size)
+
+		require.NoError(t, err)
+		assert.True(t, strings.HasSuffix(opened, "_720x720_fit.jpg"), opened)
+	})
+}

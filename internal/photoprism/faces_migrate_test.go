@@ -1265,3 +1265,87 @@ func TestFaces_useMigrationDetector(t *testing.T) {
 		assert.NotPanics(t, restore)
 	})
 }
+
+func TestMigrationCropWidth(t *testing.T) {
+	t.Run("BoxCropWins", func(t *testing.T) {
+		// SFace consumes a 112 px template, but a face whose landmarks do not fit it falls back
+		// to the box crop, so the width the run can ask for is the wider of the two.
+		assert.Equal(t, face.CropSize.Width, migrationCropWidth(face.ModelSFace))
+	})
+	t.Run("UnknownModel", func(t *testing.T) {
+		assert.Equal(t, face.CropSize.Width, migrationCropWidth("nonesuch"))
+	})
+}
+
+// TestMigrationCropCoverage covers the pre-flight that tells an operator, before the prompt,
+// whether the thumbnails can supply the crops this run takes. A marker embedded from an upscaled
+// crop is indistinguishable from one that was not, so the alternative is repeating the migration.
+func TestMigrationCropCoverage(t *testing.T) {
+	newMigrateTestConfig(t, "migratecoverage")
+
+	restore := thumb.SizeCached
+	t.Cleanup(func() { thumb.SizeCached = restore })
+
+	// A 4:3 landscape original: Fit1920 fits it to 1600x1200, so the box height decides what the
+	// rendition delivers and the 1920 in its name does not.
+	file := &entity.File{
+		FileUID:    rnd.GenerateUID('f'),
+		PhotoUID:   rnd.GenerateUID('p'),
+		FileName:   "coverage/landscape.jpg",
+		FileRoot:   entity.RootOriginals,
+		FileWidth:  3648,
+		FileHeight: 2736,
+	}
+	require.NoError(t, entity.Db().Create(file).Error)
+
+	// The required source width is 160/w, so these ask for 320, 1778, 2300 and 8000 px.
+	for _, w := range []float32{0.5, 0.09, 0.0696, 0.02} {
+		require.NoError(t, entity.Db().Create(&entity.Marker{
+			MarkerUID:  rnd.GenerateUID('m'),
+			FileUID:    file.FileUID,
+			MarkerType: entity.MarkerFace,
+			W:          w,
+			H:          w,
+		}).Error)
+	}
+
+	t.Run("NamesTheSettingThatFixesIt", func(t *testing.T) {
+		thumb.SizeCached = 1920
+
+		widest, counts, fix, err := migrationCropCoverage(face.ModelSFace)
+
+		require.NoError(t, err)
+		assert.Equal(t, thumb.Fit1920, widest.Name)
+		assert.Equal(t, 4, counts.Total)
+		assert.Equal(t, 1, counts.FullDetail)
+		assert.Equal(t, 2, counts.Upscaled)
+		assert.Equal(t, 1, counts.SourceTooSmall)
+
+		// Fit2560 is a 2560x1600 box, so it fits this picture to 2133px and leaves the marker
+		// asking for 2300px upscaled. A remedy read off the box widths would answer 2560 here.
+		assert.Equal(t, 4096, fix)
+	})
+	t.Run("NothingToFix", func(t *testing.T) {
+		// The remaining marker is short of detail in its own original, which no cache recovers,
+		// so a library like this must not be told to change a setting.
+		thumb.SizeCached = 4096
+
+		_, counts, fix, err := migrationCropCoverage(face.ModelSFace)
+
+		require.NoError(t, err)
+		assert.Zero(t, counts.Upscaled)
+		assert.Equal(t, 1, counts.SourceTooSmall)
+		assert.Zero(t, fix)
+	})
+	t.Run("NoCachedRendition", func(t *testing.T) {
+		// Nothing a crop could be taken from, which is not a shortfall this can report on.
+		thumb.SizeCached = 320
+
+		widest, counts, fix, err := migrationCropCoverage(face.ModelSFace)
+
+		require.NoError(t, err)
+		assert.Zero(t, widest.Width)
+		assert.Zero(t, counts.Total)
+		assert.Zero(t, fix)
+	})
+}
