@@ -691,6 +691,40 @@ func (w *Faces) auditProvenance() {
 	w.auditMarkerEmbeddingModels(face.EmbeddingModelName())
 	w.auditMarkerDetectModels()
 	w.auditMarkerThumbSizes()
+	w.auditMarkerSampleShortfall()
+}
+
+// auditMarkerSampleShortfall reports the markers whose vector rests on too few pixels to be
+// clustered, and how many of them the originals could still supply.
+//
+// It is the one state that leaves no trace in the vectors themselves: a marker embedded from an
+// upscaled crop is indistinguishable from one that was not, so without this an operator whose
+// thumbnail cache is smaller than their faces need, or whose migration could not write a rendition,
+// has no number to read and nothing to act on.
+func (w *Faces) auditMarkerSampleShortfall() {
+	shortfall, err := query.FaceMarkerSampleShortfall(face.ClusterSizeThreshold)
+
+	if err != nil {
+		log.Errorf("faces: %s (audit marker sample sizes)", err)
+		return
+	}
+
+	if shortfall.BelowBar == 0 {
+		log.Debugf("faces: every measured marker was sampled at or above the %d px clustering size",
+			face.ClusterSizeThreshold)
+
+		return
+	}
+
+	log.Infof("faces: %s sampled below the %d px clustering size, of %d measured",
+		english.Plural(shortfall.BelowBar, "marker", "markers"), face.ClusterSizeThreshold, shortfall.Measured)
+
+	if shortfall.Recoverable > 0 {
+		log.Infof("faces: %s of those have originals that hold enough detail, so photoprism faces migrate would sample them above it",
+			english.Plural(shortfall.Recoverable, "marker", "markers"))
+	} else {
+		log.Infof("faces: none of them have an original holding enough detail, so no thumbnail size or migration changes it")
+	}
 }
 
 // auditMarkerThumbSizes counts embedded markers with no recorded sample extent, which the size bar

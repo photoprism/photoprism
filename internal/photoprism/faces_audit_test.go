@@ -555,3 +555,60 @@ func TestFaces_auditMarkerThumbSizes(t *testing.T) {
 	assert.Equal(t, 1, reported, "a marker the bar falls back on must be named")
 	assert.NotPanics(t, func() { (*Faces)(nil).auditMarkerThumbSizes() })
 }
+
+// TestFaces_auditMarkerSampleShortfall covers the one state that leaves no trace in the vectors: a
+// marker embedded from an upscaled crop is indistinguishable from one that was not, so the audit is
+// where an operator finds out that their thumbnails, or a migration that could not write one, cost
+// them recognition.
+func TestFaces_auditMarkerSampleShortfall(t *testing.T) {
+	w := NewFaces(config.TestConfig())
+
+	restore := face.ClusterSizeThreshold
+	t.Cleanup(func() { face.ClusterSizeThreshold = restore })
+
+	file := &entity.File{
+		FileUID:   rnd.GenerateUID('f'),
+		PhotoUID:  rnd.GenerateUID('p'),
+		FileName:  "audit-shortfall/large.jpg",
+		FileRoot:  entity.RootOriginals,
+		FileWidth: 4000,
+	}
+	require.NoError(t, entity.Db().Create(file).Error)
+	t.Cleanup(func() { entity.UnscopedDb().Delete(file) })
+
+	// Sampled at 60 px while its original holds 400, so a re-sampling clears a bar of 112.
+	marker := &entity.Marker{
+		MarkerUID:      rnd.GenerateUID('m'),
+		FileUID:        file.FileUID,
+		MarkerType:     entity.MarkerFace,
+		W:              0.1,
+		H:              0.1,
+		ThumbSize:      60,
+		EmbeddingsJSON: []byte("[[0.1,0.2]]"),
+	}
+	require.NoError(t, entity.Db().Create(marker).Error)
+	t.Cleanup(func() { entity.UnscopedDb().Delete(marker) })
+
+	t.Run("NamesWhatAMigrationWouldRecover", func(t *testing.T) {
+		face.ClusterSizeThreshold = 112
+
+		hook := captureLog(t)
+		w.auditMarkerSampleShortfall()
+
+		reported := strings.Join(loggedMessages(hook, logrus.InfoLevel), "\n")
+		assert.Contains(t, reported, "sampled below the 112 px clustering size")
+		assert.Contains(t, reported, "faces migrate")
+	})
+	t.Run("NothingToReport", func(t *testing.T) {
+		// A bar every measured marker clears is not a finding, so it stays out of the report.
+		face.ClusterSizeThreshold = 1
+
+		hook := captureLog(t)
+		w.auditMarkerSampleShortfall()
+
+		assert.Empty(t, loggedMessages(hook, logrus.InfoLevel))
+	})
+	t.Run("NilWorker", func(t *testing.T) {
+		assert.NotPanics(t, func() { (*Faces)(nil).auditMarkerSampleShortfall() })
+	})
+}

@@ -867,3 +867,72 @@ func TestFaceMigrationSampleFiles(t *testing.T) {
 		require.Error(t, err)
 	})
 }
+
+// TestFaceMarkerSampleShortfall pins the two numbers an operator acts on: how many markers hold a
+// vector too small to be clustered, and how many of those an original could still supply. Measured
+// as deltas, so the shared fixtures cannot decide the outcome.
+func TestFaceMarkerSampleShortfall(t *testing.T) {
+	const clusterSize = 112
+
+	before, err := FaceMarkerSampleShortfall(clusterSize)
+	require.NoError(t, err)
+
+	file := entity.File{
+		FileUID:   rnd.GenerateUID('f'),
+		PhotoUID:  rnd.GenerateUID('p'),
+		FileName:  "sample-shortfall/large.jpg",
+		FileRoot:  entity.RootOriginals,
+		FileWidth: 4000,
+	}
+	require.NoError(t, Db().Create(&file).Error)
+	t.Cleanup(func() { Db().Unscoped().Delete(&file) })
+
+	// The extents are what each marker's embedding was drawn from, and the widths what its
+	// original could supply: 0.1 of 4000 px is 400, and 0.01 of it is 40.
+	cases := []struct {
+		w         float32
+		thumbSize int
+	}{
+		{0.1, 400}, // sampled above the bar
+		{0.1, 60},  // below it, and its original holds 400 px
+		{0.01, 40}, // below it, and its original holds 40
+	}
+
+	for _, c := range cases {
+		m := entity.Marker{
+			MarkerUID:      rnd.GenerateUID('m'),
+			FileUID:        file.FileUID,
+			MarkerType:     entity.MarkerFace,
+			W:              c.w,
+			H:              c.w,
+			ThumbSize:      c.thumbSize,
+			EmbeddingsJSON: []byte("[[0.1,0.2]]"),
+		}
+		require.NoError(t, Db().Create(&m).Error)
+		t.Cleanup(func() { Db().Unscoped().Delete(&m) })
+	}
+
+	t.Run("Counts", func(t *testing.T) {
+		after, err := FaceMarkerSampleShortfall(clusterSize)
+		require.NoError(t, err)
+
+		assert.Equal(t, before.Measured+3, after.Measured)
+		assert.Equal(t, before.BelowBar+2, after.BelowBar)
+		assert.Equal(t, before.Recoverable+1, after.Recoverable, "only one of the two has an original that could supply the bar")
+	})
+	t.Run("AtALowerBar", func(t *testing.T) {
+		// The bar is what decides both numbers, so a smaller one has to move them.
+		low, err := FaceMarkerSampleShortfall(50)
+		require.NoError(t, err)
+
+		after, err := FaceMarkerSampleShortfall(clusterSize)
+		require.NoError(t, err)
+
+		assert.Less(t, low.BelowBar, after.BelowBar)
+		assert.Equal(t, low.Measured, after.Measured)
+	})
+	t.Run("InvalidSize", func(t *testing.T) {
+		_, err := FaceMarkerSampleShortfall(0)
+		require.Error(t, err)
+	})
+}

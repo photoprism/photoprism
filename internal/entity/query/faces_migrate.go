@@ -605,6 +605,43 @@ func CountMarkersWithoutThumbSize() (n int, err error) {
 	return int(count), err
 }
 
+// FaceSampleShortfall counts the markers whose vector rests on fewer pixels than the clustering
+// bar requires, and how many of those the original could still supply.
+type FaceSampleShortfall struct {
+	Measured    int
+	BelowBar    int
+	Recoverable int
+}
+
+// FaceMarkerSampleShortfall reports how many markers were embedded from too few pixels to be
+// clustered, and how many of them a re-sampling at the resolution of their original would lift
+// over the bar.
+//
+// The two numbers separate the causes an operator can act on from the one nobody can: a crop taken
+// from a rendition narrower than the original is what a migration re-samples, while a face that is
+// small in the original itself stays where it is at any thumbnail size. Only markers that recorded
+// an extent are counted, since the ones that did not are reported on their own.
+func FaceMarkerSampleShortfall(clusterSize int) (result FaceSampleShortfall, err error) {
+	if clusterSize < 1 {
+		return result, fmt.Errorf("faces: clustering size must be positive")
+	}
+
+	stmt := fmt.Sprintf(`SELECT COUNT(*) AS measured,
+		COALESCE(SUM(CASE WHEN m.thumb_size < ? THEN 1 ELSE 0 END), 0) AS below_bar,
+		COALESCE(SUM(CASE WHEN m.thumb_size < ? AND m.w * f.file_width >= ? THEN 1 ELSE 0 END), 0) AS recoverable
+		FROM %s m JOIN %s f ON f.file_uid = m.file_uid
+		WHERE m.marker_type = ? AND m.marker_invalid = 0 AND m.thumb_size >= 1 AND m.w > 0
+		AND LENGTH(m.embeddings_json) > 0
+		AND f.file_width > 0 AND f.file_missing = 0 AND f.deleted_at IS NULL`,
+		entity.Marker{}.TableName(), entity.File{}.TableName())
+
+	if err = Db().Raw(stmt, clusterSize, clusterSize, clusterSize, entity.MarkerFace).Scan(&result).Error; err != nil {
+		return FaceSampleShortfall{}, err
+	}
+
+	return result, nil
+}
+
 // SettleMigrationThumbSize records that a sampling reached these markers and produced no extent, so
 // a migration filling the column does not attempt them again on every future run.
 //
