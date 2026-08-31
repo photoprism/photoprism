@@ -217,9 +217,9 @@ func TestFacesMatchRecomputeStatsFlag(t *testing.T) {
 	})
 }
 
-// TestFaceMembers covers the set both columns are derived from, which has to exclude a marker that
-// carries no vector: counting one the radius cannot include would leave the two describing
-// different clusters.
+// TestFaceMembers covers the set the radius is measured over, which has to exclude a marker that
+// carries no vector: a member the measurement cannot reach would describe a different cluster than
+// the one that is stored.
 func TestFaceMembers(t *testing.T) {
 	const subjUID = "js6sg6b1qekk9je5"
 	isolatedTestFaces(t, "faces-members")

@@ -1480,7 +1480,7 @@ var Flags = CliFlags{
 		}, DocDefault: faceDocDefault(face.EpsilonDefault)}, {
 		Flag: &cli.BoolFlag{
 			Name:    "face-recompute-stats",
-			Usage:   "derive a cluster's sample count and radius from the markers it holds, rather than from the widest distance one matching pass accepted",
+			Usage:   "derive a cluster's radius from the markers it holds, rather than from the widest distance one matching pass accepted",
 			EnvVars: EnvVars("FACE_RECOMPUTE_STATS"),
 			Hidden:  true,
 		}}, {

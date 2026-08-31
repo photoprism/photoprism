@@ -125,9 +125,8 @@ func TestFaces_AuditNormalizesEmbeddings(t *testing.T) {
 	require.Equal(t, expectedID, updatedMarker.FaceID)
 }
 
-// TestFaces_repairDegenerateRadius covers the repair for clusters stored before SetEmbeddings
-// widened them. Their radius sits at Epsilon rather than zero, because UpdateMatchStats already
-// lifted it, so the predicate here is not the guard that keeps new ones from being written.
+// normalizeEmbeddingCopy returns a unit-length copy of an embedding, leaving the original untouched
+// so a test can compare what it passed in against what was stored.
 func normalizeEmbeddingCopy(src face.Embedding) face.Embedding {
 	copyEmb := make(face.Embedding, len(src))
 	copy(copyEmb, src)

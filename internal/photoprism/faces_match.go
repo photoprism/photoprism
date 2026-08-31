@@ -333,8 +333,9 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 	return result, nil
 }
 
-// recomputeFaceStats replaces a cluster's sample count and radius with measurements of the markers
-// it holds, and reports whether it could be measured at all.
+// recomputeFaceStats replaces a cluster's radius with a measurement over the markers it holds, and
+// reports whether it could be measured at all. The sample count belongs to the centroid, not to the
+// members, so it is left alone.
 //
 // The stored centroid is reused rather than recomputed: a cluster's id is the hash of its own
 // centroid, so deriving a new one would change its identity and orphan every marker holding it.

@@ -246,7 +246,9 @@ This guarantees that Euclidean distance comparisons are equivalent to cosine com
 
 **A single embedding is a labeled example, not a grouping, and it carries neither a centroid nor a radius.** `EmbeddingsMidpoint` returns that embedding unchanged with an extent of `0.0`, and `Face.SetEmbeddings` stores `Epsilon` for it - the numeric floor, because there is nothing to measure. A cluster's width would be an extent no observation showed, and granting one let a single photograph cast a cluster-sized accept distance over the whole library.
 
-`face.ManualClusterCore` (3) is what turns labeled examples into a cluster. Below it they are neither merged by `Faces.OptimizeFor` nor offered to matching by `query.MatchableFaces`; at it, merging averages the embeddings into a real centroid and measures a real radius. `ClusterCore` (5) is higher because it guards against chance proximity in *unlabeled* data, which is not the risk when each embedding already asserts an identity.
+`face.ManualClusterCore` (3) is what turns labeled examples into a cluster. Below it `Faces.OptimizeFor` will not merge them; at it, merging averages the embeddings into a real centroid and measures a real radius. `ClusterCore` (5) is higher because it guards against chance proximity in *unlabeled* data, which is not the risk when each embedding already asserts an identity.
+
+Building a cluster and using one are gated apart. A pair is not a cluster, so none is manufactured from two - but a pair that exists is an average, so `query.MatchableFaces` still offers `samples > 1` to the matcher and `Face.MatchMarkers` adopts from 2. Only the one-embedding row is held back, which is the case that carries no measurement at all.
 
 Two boundaries are worth knowing:
 

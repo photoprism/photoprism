@@ -1037,8 +1037,8 @@ func (c *Config) FaceClusterCore() int {
 	return c.options.FaceClusterCore
 }
 
-// FaceRecomputeStats reports whether a matching pass should derive a cluster's sample count and
-// radius from the markers it holds, rather than from the widest distance one pass happened to accept.
+// FaceRecomputeStats reports whether a matching pass should derive a cluster's radius from the
+// markers it holds, rather than from the widest distance one pass happened to accept.
 //
 // Transitional, and off while the width guard is calibrated so a percentile sweep moves one variable.
 // It goes away once the recompute is the only behavior, which needs the backfill that reaches the

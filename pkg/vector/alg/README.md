@@ -84,6 +84,20 @@ outliers := h.Outliers()      // GLOSH score, 0 for a full member
 Both return `alg.Labels`, which numbers clusters from 1 and marks unclustered points `alg.Noise`,
 matching what `HardClusterer.Guesses` reports.
 
+### Where DBSCAN Departs From the Textbook
+
+Two behaviors follow from the same line, and callers that read the core size as a guarantee are
+surprised by both:
+
+- **A point labeled noise is never reclaimed.** Canonical DBSCAN lets a later core point adopt it as
+  a border point; here the assignment is final, so the order the points arrive in decides it.
+- **The core size bounds what may seed a cluster, not how large one ends up.** Expansion claims only
+  neighbors that are still unassigned, so a core point reached after an earlier cluster absorbed its
+  neighborhood produces a cluster smaller than `minPts` - down to the seed alone.
+
+`Sizes()` therefore reports what each cluster claimed rather than the density that formed it. Filter
+on the result if a caller needs a floor.
+
 Two properties worth knowing before reading a result:
 
 - **`Probabilities` is scaled per cluster.** Every cluster reaches 1 however sparse it is, so the

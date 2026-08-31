@@ -159,8 +159,8 @@ func FaceReports(person string, count, offset int) (result []FaceReport, err err
 		args = append(args, nameLike)
 	}
 
-	// The set a cluster's stats are measured over, so the reported count and the stored sample count
-	// answer for the same markers.
+	// The set a cluster's radius is measured over, so the reported count and the stored radius answer
+	// for the same markers.
 	memberCond, memberArgs := entity.FaceMemberCond()
 	args = append(memberArgs, args...)
 
