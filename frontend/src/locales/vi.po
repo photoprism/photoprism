@@ -4664,7 +4664,7 @@ msgstr "Mã xác nhận"
 
 #: src/component/people/edit/dialog.vue:56
 msgid "Verified"
-msgstr ""
+msgstr "Đã xác minh"
 
 #: src/locales.js:427
 msgid "Verified email required"

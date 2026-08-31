@@ -4663,7 +4663,7 @@ msgstr "Verifikācijas kods"
 
 #: src/component/people/edit/dialog.vue:56
 msgid "Verified"
-msgstr ""
+msgstr "Pārbaudīts"
 
 #: src/locales.js:427
 msgid "Verified email required"
