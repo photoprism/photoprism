@@ -99,6 +99,42 @@ type faceClusterPart struct {
 	round      int
 }
 
+// createCluster stores one group of embeddings as a face, reporting whether the group was usable at
+// all and the face when a new row was written.
+//
+// A single embedding is not a centroid, so a group of one is refused rather than stored: matching
+// excludes it and it adopts nothing, yet it re-forms on every pass and is written again each time.
+// The core size bars what may form a cluster and is not a floor on the result, so such a group
+// reaches this point and is turned away here.
+func createCluster(part face.Embeddings, model face.ModelName) (added *entity.Face, usable bool) {
+	if len(part) < 2 {
+		return nil, false
+	}
+
+	f := entity.NewFace("", entity.SrcAuto, part, model)
+
+	if f == nil || f.ID == "" {
+		log.Errorf("faces: skipped cluster that could not be created")
+		return nil, true
+	}
+
+	if f.SkipMatching() {
+		log.Infof("faces: skipped cluster %s, its face kind is excluded from matching", f.ID)
+		return nil, true
+	}
+
+	if err := f.Create(); err == nil {
+		log.Debugf("faces: added cluster %s based on %s, radius %f", f.ID, english.Plural(f.Samples, "sample", "samples"), f.SampleRadius)
+		return f, true
+	} else if err = f.Updates(entity.Values{"updated_at": entity.Now()}); err != nil {
+		log.Errorf("faces: %s", err)
+	} else {
+		log.Debugf("faces: updated cluster %s", f.ID)
+	}
+
+	return nil, true
+}
+
 // splitWideClusters divides a group DBSCAN emitted into ones that would accept their own members.
 //
 // DBSCAN bounds the distance to a neighbor rather than the width of the result, so a line of faces
@@ -180,8 +216,9 @@ func splitDist(dist float64) float64 {
 	return dist * face.ClusterSplitShrink
 }
 
-// splitCluster re-clusters one group at a shorter link distance. Points left below the core size
-// stay unclustered, which a later pass can still pick up.
+// splitCluster re-clusters one group at a shorter link distance. A point no part takes - because no
+// core reaches it, or because the cores that do sit in different parts - stays unclustered, which a
+// later pass can still pick up.
 func splitCluster(part faceClusterPart, workers int) ([]faceClusterPart, error) {
 	dist := splitDist(part.dist)
 
@@ -298,6 +335,7 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 
 		start := time.Now()
 		resultLen := len(results)
+		inert := 0
 
 		for i, cluster := range results {
 			if time.Since(start) > time.Duration(time.Minute*15) {
@@ -306,19 +344,19 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 			}
 
 			for _, part := range w.splitWideClusters(cluster, face.ClusterDist, w.conf.IndexWorkers()) {
-				if f := entity.NewFace("", entity.SrcAuto, part, current); f == nil || f.ID == "" {
-					log.Errorf("faces: skipped cluster that could not be created")
-				} else if f.SkipMatching() {
-					log.Infof("faces: skipped cluster %s, its face kind is excluded from matching", f.ID)
-				} else if err = f.Create(); err == nil {
+				if f, ok := createCluster(part, current); !ok {
+					inert++
+				} else if f != nil {
 					added = append(added, *f)
-					log.Debugf("faces: added cluster %s based on %s, radius %f", f.ID, english.Plural(f.Samples, "sample", "samples"), f.SampleRadius)
-				} else if err = f.Updates(entity.Values{"updated_at": entity.Now()}); err != nil {
-					log.Errorf("faces: %s", err)
-				} else {
-					log.Debugf("faces: updated cluster %s", f.ID)
 				}
 			}
+		}
+
+		// Reported rather than dropped quietly, since a run that refuses many of them is describing
+		// a library the link distance does not suit.
+		if inert > 0 {
+			log.Infof("faces: skipped %s holding a single sample",
+				english.Plural(inert, "cluster", "clusters"))
 		}
 	}
 

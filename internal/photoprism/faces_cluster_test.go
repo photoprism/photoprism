@@ -676,3 +676,37 @@ func TestSplitCluster(t *testing.T) {
 		assert.Error(t, err)
 	})
 }
+
+// TestCreateCluster covers the floor the clusterer does not enforce: the core size bars what may
+// form a cluster and is not a floor on the result, so a group of one reaches this point.
+func TestCreateCluster(t *testing.T) {
+	setShippedFaceThresholds(t)
+
+	t.Run("RefusesASingleEmbedding", func(t *testing.T) {
+		part := face.Embeddings{face.FixtureEmbedding(9401)}
+
+		f, usable := createCluster(part, face.ModelSFace)
+
+		assert.False(t, usable, "one embedding is not a centroid and must not be stored")
+		assert.Nil(t, f)
+	})
+	t.Run("RefusesAnEmptyGroup", func(t *testing.T) {
+		f, usable := createCluster(face.Embeddings{}, face.ModelSFace)
+
+		assert.False(t, usable)
+		assert.Nil(t, f)
+	})
+	t.Run("StoresAPair", func(t *testing.T) {
+		// Two are already an average, so the pair a run does produce is kept - the asymmetry that
+		// lets migrated and legacy two-embedding rows keep working.
+		a := face.FixtureEmbedding(9402)
+		part := face.Embeddings{a, face.FixtureEmbeddingAt(a, 0.05, 9403)}
+
+		f, usable := createCluster(part, face.ModelSFace)
+
+		require.True(t, usable)
+		require.NotNil(t, f)
+		assert.Equal(t, 2, f.Samples, "samples counts the embeddings the centroid was built from")
+		assert.NotEmpty(t, f.ID)
+	})
+}

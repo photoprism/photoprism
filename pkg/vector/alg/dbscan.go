@@ -187,7 +187,9 @@ func (c *dbscanClusterer) run() {
 	)
 
 	for i := 0; i < c.l; i++ {
-		c.logProgress(i)
+		// The second half of one scale shared with coreFlags, so the two passes report a progress
+		// that only ever rises. Reporting each pass against c.l would restart the count midway.
+		c.logProgress((c.l + i) / 2)
 
 		if !core[i] || c.a[i] != 0 {
 			continue
@@ -249,6 +251,8 @@ func (c *dbscanClusterer) run() {
 
 // coreFlags reports which points hold at least minpts neighbors within eps, the only ones that may
 // form a cluster or extend one.
+//
+// This is a full neighbor scan, so it costs about as much as the pass that follows it.
 func (c *dbscanClusterer) coreFlags() []bool {
 	var (
 		l  int
@@ -258,7 +262,7 @@ func (c *dbscanClusterer) coreFlags() []bool {
 	core := make([]bool, c.l)
 
 	for i := 0; i < c.l; i++ {
-		c.logProgress(i)
+		c.logProgress(i / 2)
 		c.nearest(i, &l, &ns)
 
 		core[i] = l >= c.minpts

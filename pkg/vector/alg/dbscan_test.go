@@ -1,6 +1,7 @@
 package alg
 
 import (
+	"math/rand"
 	"reflect"
 	"testing"
 	"time"
@@ -183,21 +184,32 @@ func TestDBSCANWithProgress(t *testing.T) {
 		t.Fatal("expected at least one progress update")
 	}
 
+	// Rising and inside the dataset, rather than positive: finding the cores and walking them are two
+	// passes over one scale, and a report from the very start of either is legitimate. What must not
+	// happen is the count going backwards, which reads as a restarted job.
+	last := -1
+
 	for _, entry := range progress {
-		if entry[0] <= 0 {
-			t.Fatalf("expected a positive processed count, got %d", entry[0])
+		if entry[0] < last {
+			t.Fatalf("expected a rising processed count, got %d after %d", entry[0], last)
+		}
+		if entry[0] < 0 || entry[0] >= len(points) {
+			t.Fatalf("expected a processed count inside the dataset, got %d", entry[0])
 		}
 		if entry[1] != len(points) {
 			t.Fatalf("expected total %d, got %d", len(points), entry[1])
 		}
+
+		last = entry[0]
 	}
 }
 
 // borderTestData returns two dense groups of five, far enough apart to stay separate, and a point
 // between them that has too few neighbors to be a core of its own.
 //
-// The spacing is what makes the case: only the last point of each group is within eps of the middle
-// one, so it sees three points including itself and cannot reach minpts.
+// The spacing is what makes the case: of each group only the point nearest the middle is within eps
+// of it, so the middle one sees itself plus one point per group present - two with a single group,
+// three with both - and cannot reach minpts either way.
 func borderTestData() (left, right [][]float64, middle []float64) {
 	left = [][]float64{{0, 0}, {0, 0.02}, {0, 0.04}, {0, 0.06}, {0, 0.15}}
 	right = [][]float64{{0, 2.05}, {0, 2.16}, {0, 2.18}, {0, 2.20}, {0, 2.22}}
@@ -287,19 +299,14 @@ func TestDBSCANBorderPoints(t *testing.T) {
 
 // TestDBSCANIndependentOfPointOrder pins the property the border rule above is there for: the same
 // points presented in a different order have to produce the same clusters.
+//
+// Many permutations rather than one, because a single one only has about even odds of disturbing a
+// given order-dependent implementation - enough to pass while pinning very little.
 func TestDBSCANIndependentOfPointOrder(t *testing.T) {
 	left, right, middle := borderTestData()
 
 	points := append(append([][]float64{}, left...), middle)
 	points = append(points, right...)
-
-	order := []int{7, 2, 10, 0, 5, 9, 1, 6, 3, 8, 4}
-
-	shuffled := make([][]float64, len(points))
-
-	for i, p := range order {
-		shuffled[i] = points[p]
-	}
 
 	first, err := DBSCAN(5, 1, 0, EuclideanDist)
 	if err != nil {
@@ -309,21 +316,6 @@ func TestDBSCANIndependentOfPointOrder(t *testing.T) {
 		t.Fatalf("unexpected learn error: %s", err)
 	}
 
-	second, err := DBSCAN(5, 1, 0, EuclideanDist)
-	if err != nil {
-		t.Fatalf("unexpected constructor error: %s", err)
-	}
-	if err = second.Learn(shuffled); err != nil {
-		t.Fatalf("unexpected learn error: %s", err)
-	}
-
-	// Scored back in the original index space, so the permutation itself cannot read as a difference.
-	back := make([]int, len(points))
-
-	for i, p := range order {
-		back[p] = second.Guesses()[i]
-	}
-
 	partition := partitionOf(first.Guesses())
 
 	// Guards the comparison below, which two empty partitions would also satisfy.
@@ -331,8 +323,101 @@ func TestDBSCANIndependentOfPointOrder(t *testing.T) {
 		t.Fatalf("expected two clusters to compare, got %d", len(partition))
 	}
 
-	if !reflect.DeepEqual(partition, partitionOf(back)) {
-		t.Errorf("reordering changed the clusters: %d vs %d", first.Guesses(), back)
+	//nolint:gosec // a fixed seed is what makes the permutations reproducible.
+	r := rand.New(rand.NewSource(1))
+
+	for k := 0; k < 20; k++ {
+		order := r.Perm(len(points))
+
+		shuffled := make([][]float64, len(points))
+
+		for i, p := range order {
+			shuffled[i] = points[p]
+		}
+
+		second, err := DBSCAN(5, 1, 0, EuclideanDist)
+		if err != nil {
+			t.Fatalf("unexpected constructor error: %s", err)
+		}
+		if err = second.Learn(shuffled); err != nil {
+			t.Fatalf("unexpected learn error: %s", err)
+		}
+
+		// Scored back in the original index space, so the permutation itself cannot read as a change.
+		back := make([]int, len(points))
+
+		for i, p := range order {
+			back[p] = second.Guesses()[i]
+		}
+
+		if !reflect.DeepEqual(partition, partitionOf(back)) {
+			t.Fatalf("permutation %d changed the clusters: %d vs %d", k, first.Guesses(), back)
+		}
+	}
+}
+
+// TestDBSCANParallelNeighborsAgree covers the same property on the concurrent neighbor search, which
+// numWorkers() reserves for a thousand points and up.
+//
+// Worth its own case because that path fills each neighbor list from several goroutines under a
+// mutex, so the list comes back in an order that varies between runs - the one input to clustering
+// that the caller cannot control. The clusterer is built by hand rather than through Learn, which
+// would derive the worker count from the fixture size and take the single-threaded path.
+func TestDBSCANParallelNeighborsAgree(t *testing.T) {
+	left, right, middle := borderTestData()
+
+	points := append(append([][]float64{}, left...), middle)
+	points = append(points, right...)
+
+	learn := func(data [][]float64) []int {
+		c := &dbscanClusterer{minpts: 5, eps: 1, distance: EuclideanDist}
+		c.l = len(data)
+		c.s = 8
+		c.f = partitionSize(c.l, c.s)
+		c.d = data
+		c.a = make([]int, c.l)
+		c.b = make([]int, 0)
+
+		c.startNearestWorkers()
+		c.run()
+		c.endNearestWorkers()
+
+		return c.a
+	}
+
+	expected := partitionOf(learn(points))
+
+	if len(expected) != 2 {
+		t.Fatalf("expected two clusters to compare, got %d", len(expected))
+	}
+
+	//nolint:gosec // a fixed seed is what makes the permutations reproducible.
+	r := rand.New(rand.NewSource(1))
+
+	// Repeated on the same input for run-to-run stability, and on permuted input so that the property
+	// itself is covered here rather than only on the single-threaded path.
+	for k := 0; k < 8; k++ {
+		if got := partitionOf(learn(points)); !reflect.DeepEqual(expected, got) {
+			t.Fatalf("run %d disagreed with the first: %v vs %v", k, got, expected)
+		}
+
+		order := r.Perm(len(points))
+
+		shuffled := make([][]float64, len(points))
+
+		for i, p := range order {
+			shuffled[i] = points[p]
+		}
+
+		back := make([]int, len(points))
+
+		for i, p := range order {
+			back[p] = learn(shuffled)[i]
+		}
+
+		if got := partitionOf(back); !reflect.DeepEqual(expected, got) {
+			t.Fatalf("permutation %d disagreed with the first: %v vs %v", k, got, expected)
+		}
 	}
 }
 
