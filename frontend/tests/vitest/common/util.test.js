@@ -182,8 +182,8 @@ describe("common/util", () => {
     expect(result).toBe("tesng");
   });
   it("should encode html", () => {
-    const result = $util.encodeHTML("Micha & Theresa > < 'Lilly'");
-    expect(result).toBe("Micha &amp; Theresa &gt; &lt; &apos;Lilly&apos;");
+    const result = $util.encodeHTML("Alice & Bob > < 'Carol'");
+    expect(result).toBe("Alice &amp; Bob &gt; &lt; &apos;Carol&apos;");
   });
   it("should encode link", () => {
     const result = $util.encodeHTML("Try this: https://photoswipe.com/options/?foo=bar&bar=baz. It's a link!");
