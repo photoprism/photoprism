@@ -33,15 +33,14 @@ func (w *Faces) OptimizeFor(subjUID string) (result FacesOptimizeResult, err err
 	remaining := 0
 
 	for i := 0; i <= 10; i++ {
-		var n int
 		var c = result.Merged
 		var faces entity.Faces
 
 		// Fetch manually added faces from the database.
 		if faces, err = query.ManuallyAddedFaces(false, false, subjUID); err != nil {
 			return result, err
-		} else if n = len(faces) - 1; n < 1 {
-			// Need at least 2 faces to optimize.
+		} else if len(faces) < 2 {
+			// Nothing to merge with.
 			break
 		}
 
@@ -54,7 +53,14 @@ func (w *Faces) OptimizeFor(subjUID string) (result FacesOptimizeResult, err err
 
 		remaining = len(faces)
 
-		log.Debugf("faces: optimize for %s itr %d n %d", subjUID, i, n)
+		scope := ""
+
+		if subjUID != "" {
+			scope = " of " + entity.SubjNames.Log(subjUID)
+		}
+
+		log.Debugf("faces: optimize pass %d over %s%s", i+1,
+			english.Plural(len(faces), "manual cluster", "manual clusters"), scope)
 
 		// mergeGroup merges one group and reports what became of its candidates.
 		mergeGroup := func(j int, merge entity.Faces) {
