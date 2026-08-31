@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/jinzhu/gorm"
@@ -11,6 +12,131 @@ import (
 )
 
 var photoMergeMutex = sync.Mutex{}
+
+// StackPhotos combines the selected pictures into the first picture without moving or deleting files.
+func StackPhotos(photoUIDs []string) (original Photo, stacked Photos, err error) {
+	photoMergeMutex.Lock()
+	defer photoMergeMutex.Unlock()
+
+	uids := make([]string, 0, len(photoUIDs))
+	seen := make(map[string]struct{}, len(photoUIDs))
+
+	for _, uid := range photoUIDs {
+		if uid == "" {
+			continue
+		} else if _, exists := seen[uid]; exists {
+			continue
+		}
+
+		seen[uid] = struct{}{}
+		uids = append(uids, uid)
+	}
+
+	if len(uids) < 2 {
+		return original, stacked, fmt.Errorf("stack: at least two pictures are required")
+	}
+
+	var selected Photos
+
+	if findErr := UnscopedDb().Where("photo_uid IN (?) AND deleted_at IS NULL", uids).Find(&selected).Error; findErr != nil {
+		return original, stacked, findErr
+	}
+
+	byUID := make(map[string]*Photo, len(selected))
+
+	for _, photo := range selected {
+		if photo != nil {
+			byUID[photo.PhotoUID] = photo
+		}
+	}
+
+	if len(byUID) != len(uids) {
+		return original, stacked, fmt.Errorf("stack: selection contains missing pictures")
+	}
+
+	primary := byUID[uids[0]]
+
+	if primary == nil || !primary.HasID() {
+		return original, stacked, fmt.Errorf("stack: primary picture not found")
+	}
+
+	original = *primary
+	tx := UnscopedDb().Begin()
+
+	if tx.Error != nil {
+		return Photo{}, stacked, tx.Error
+	}
+
+	rollback := func(stackErr error) (Photo, Photos, error) {
+		_ = tx.Rollback().Error
+		return Photo{}, Photos{}, stackErr
+	}
+
+	if updateErr := tx.Exec("UPDATE photos SET photo_stack = ? WHERE id = ?", IsStacked, original.ID).Error; updateErr != nil {
+		return rollback(updateErr)
+	}
+
+	for _, uid := range uids[1:] {
+		photo := byUID[uid]
+
+		if updateErr := tx.Exec("UPDATE files SET photo_id = ?, photo_uid = ?, file_primary = 0 WHERE photo_id = ?", original.ID, original.PhotoUID, photo.ID).Error; updateErr != nil {
+			return rollback(updateErr)
+		}
+
+		deleted := Now()
+
+		if updateErr := tx.Exec("UPDATE photos SET photo_quality = -1, deleted_at = ? WHERE id = ?", deleted, photo.ID).Error; updateErr != nil {
+			return rollback(updateErr)
+		}
+
+		switch DbDialect() {
+		case dsn.DriverMySQL:
+			if updateErr := tx.Exec("UPDATE IGNORE photos_keywords SET photo_id = ? WHERE photo_id = ?", original.ID, photo.ID).Error; updateErr != nil {
+				return rollback(updateErr)
+			}
+			if updateErr := tx.Exec("UPDATE IGNORE photos_labels SET photo_id = ? WHERE photo_id = ?", original.ID, photo.ID).Error; updateErr != nil {
+				return rollback(updateErr)
+			}
+			if updateErr := tx.Exec("UPDATE IGNORE photos_albums SET photo_uid = ? WHERE photo_uid = ?", original.PhotoUID, photo.PhotoUID).Error; updateErr != nil {
+				return rollback(updateErr)
+			}
+		case dsn.DriverSQLite3:
+			if updateErr := tx.Exec("UPDATE OR IGNORE photos_keywords SET photo_id = ? WHERE photo_id = ?", original.ID, photo.ID).Error; updateErr != nil {
+				return rollback(updateErr)
+			}
+			if updateErr := tx.Exec("UPDATE OR IGNORE photos_labels SET photo_id = ? WHERE photo_id = ?", original.ID, photo.ID).Error; updateErr != nil {
+				return rollback(updateErr)
+			}
+			if updateErr := tx.Exec("UPDATE OR IGNORE photos_albums SET photo_uid = ? WHERE photo_uid = ?", original.PhotoUID, photo.PhotoUID).Error; updateErr != nil {
+				return rollback(updateErr)
+			}
+		default:
+			return rollback(fmt.Errorf("stack: unsupported database dialect %s", DbDialect()))
+		}
+
+		photo.DeletedAt = &deleted
+		photo.PhotoQuality = -1
+		stacked = append(stacked, photo)
+	}
+
+	if commitErr := tx.Commit().Error; commitErr != nil {
+		return Photo{}, Photos{}, commitErr
+	}
+
+	original.PhotoStack = IsStacked
+
+	if primaryErr := original.ResolvePrimary(); primaryErr != nil {
+		return original, stacked, primaryErr
+	}
+
+	if typeErr := original.SyncMediaTypeFromFiles(SrcFile); typeErr != nil {
+		return original, stacked, typeErr
+	}
+
+	File{PhotoID: original.ID, PhotoUID: original.PhotoUID}.RegenerateIndex()
+
+	return original, stacked, nil
+}
 
 // ResolvePrimary ensures only one associated file remains marked as primary, delegating to the file helper.
 func (m *Photo) ResolvePrimary() error {
