@@ -294,6 +294,8 @@ func TestDetectorMinScore(t *testing.T) {
 		assert.LessOrEqual(t, d.ClusterScore, 100, d.Name)
 		assert.Positive(t, d.MigrateScore, d.Name)
 		assert.LessOrEqual(t, d.MigrateScore, d.MinScore, d.Name)
+		// Clustering selects from what detection kept, so a bar below the cutoff selects nothing.
+		assert.GreaterOrEqual(t, d.ClusterScore, d.MinScore, d.Name)
 	}
 
 	assert.NotEqual(t, FindDetector(DetectorSCRFD).MinScore, FindDetector(DetectorYuNet).MinScore,

@@ -84,7 +84,7 @@ var Detectors = []*Detector{
 		// release ran, and the demo library answered with three "people" on a bee - so a migration
 		// buys its extra recall from the span above that evidence rather than from the floor.
 		MinScore:     65,
-		ClusterScore: 70,
+		ClusterScore: 85,
 		MigrateScore: 50,
 		Advertise:    true,
 		Default:      true,
