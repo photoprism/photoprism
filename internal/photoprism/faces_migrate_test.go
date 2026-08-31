@@ -1461,6 +1461,15 @@ func TestFaces_cacheMigrationCropThumb(t *testing.T) {
 
 		// Under the hash the index recorded, which is where the crop path looks for it.
 		assert.True(t, crop.CachedSizeExists(thumb.Sizes[thumb.Fit1920], file.FileHash, c.ThumbCachePath()))
+
+		// The point of writing it: the selection that a crop goes through has to choose it, or
+		// the run rendered a file and embedded from the narrow one anyway.
+		area := crop.Area{Name: "face", X: 0.1, Y: 0.1, W: 0.1, H: 0.1}
+		size := crop.Size{Width: 160, Height: 160, Options: crop.DefaultOptions}
+
+		selected, err := crop.ThumbFileName(file.FileHash, area, size, c.ThumbCachePath())
+		require.NoError(t, err)
+		assert.Contains(t, selected, "_1920x1200_fit.jpg")
 	})
 	t.Run("NotAgain", func(t *testing.T) {
 		assert.False(t, w.cacheMigrationCropThumb(file, markers, 160))
