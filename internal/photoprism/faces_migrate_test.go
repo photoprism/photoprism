@@ -1318,6 +1318,15 @@ func TestMigrationCropThumbSize(t *testing.T) {
 	t.Run("SmallOriginal", func(t *testing.T) {
 		assert.Equal(t, thumb.Fit720, migrationCropThumbSize(&entity.File{FileWidth: 600, FileHeight: 400}, 99000))
 	})
+	t.Run("BoundedAtTheMeasuredRung", func(t *testing.T) {
+		// A 24 MP portrait is held at its own resolution only by Fit15360, which nothing else
+		// writes, refreshes or purges - and a face gains nothing measurable above Fit4096.
+		portrait := &entity.File{FileWidth: 4000, FileHeight: 6000}
+
+		assert.Equal(t, thumb.Fit15360, thumb.FitBounds(image.Rect(0, 0, 4000, 6000)).Name)
+		assert.Equal(t, facesMigrateThumbLimit, migrationCropThumbSize(portrait, 99000))
+		assert.Equal(t, facesMigrateThumbLimit, migrationCropThumbSize(&entity.File{FileWidth: 20000, FileHeight: 13000}, 99000))
+	})
 }
 
 // TestMigrationCropCoverage covers the pre-flight that tells an operator, before the prompt,
@@ -1450,14 +1459,19 @@ func TestFaces_cacheMigrationCropThumb(t *testing.T) {
 
 	t.Run("RefusedAtTheOrdinaryLimit", func(t *testing.T) {
 		// The negative control for the case below: naming a rendition above the limit is refused,
-		// so without the lift a migration would silently keep the upscaled crop.
-		assert.False(t, w.cacheMigrationCropThumb(file, markers, 160))
+		// so without the lift a migration would keep the upscaled crop - and has to say so.
+		rendered, err := w.cacheMigrationCropThumb(file, markers, 160)
+
+		assert.False(t, rendered)
+		assert.Error(t, err)
 	})
 
 	defer useMigrationThumbSizes()()
 
 	t.Run("Renders", func(t *testing.T) {
-		require.True(t, w.cacheMigrationCropThumb(file, markers, 160))
+		rendered, err := w.cacheMigrationCropThumb(file, markers, 160)
+		require.NoError(t, err)
+		require.True(t, rendered)
 
 		// Under the hash the index recorded, which is where the crop path looks for it.
 		assert.True(t, crop.CachedSizeExists(thumb.Sizes[thumb.Fit1920], file.FileHash, c.ThumbCachePath()))
@@ -1472,22 +1486,50 @@ func TestFaces_cacheMigrationCropThumb(t *testing.T) {
 		assert.Contains(t, selected, "_1920x1200_fit.jpg")
 	})
 	t.Run("NotAgain", func(t *testing.T) {
-		assert.False(t, w.cacheMigrationCropThumb(file, markers, 160))
+		rendered, err := w.cacheMigrationCropThumb(file, markers, 160)
+
+		assert.NoError(t, err)
+		assert.False(t, rendered)
 	})
 	t.Run("AlreadyCovered", func(t *testing.T) {
-		assert.False(t, w.cacheMigrationCropThumb(file, entity.Markers{{W: 1}}, 160))
+		rendered, err := w.cacheMigrationCropThumb(file, entity.Markers{{W: 1}}, 160)
+
+		assert.NoError(t, err)
+		assert.False(t, rendered)
 	})
 	t.Run("SourceTooSmall", func(t *testing.T) {
 		// The original holds less than the crop asks for, so the rendition it already has is the
 		// best there is: comparing against the request instead would re-render on every run.
 		small := newRenderTestFile(t, c, "4a4d444444444444444444444444444444444446", 600, 400)
 
-		assert.False(t, w.cacheMigrationCropThumb(small, markers, 160))
+		rendered, err := w.cacheMigrationCropThumb(small, markers, 160)
+
+		assert.NoError(t, err)
+		assert.False(t, rendered)
+	})
+	t.Run("ModifiedSinceIndexing", func(t *testing.T) {
+		// The only writer that renders under a hash it did not compute: bytes that are not the
+		// ones the hash names would be written beside the detection thumbnail of the picture they
+		// replaced, and a crop taken across the two describes neither.
+		replaced := newRenderTestFile(t, c, "4a4d444444444444444444444444444444444448", 2000, 1500)
+		require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).
+			Where("file_uid = ?", replaced.FileUID).
+			UpdateColumn("file_size", 4096).Error)
+		replaced.FileSize = 4096
+
+		rendered, err := w.cacheMigrationCropThumb(replaced, markers, 160)
+
+		assert.NoError(t, err, "a file that changed is not a fault, so it is not reported as one")
+		assert.False(t, rendered)
+		assert.False(t, crop.CachedSizeExists(thumb.Sizes[thumb.Fit1920], replaced.FileHash, c.ThumbCachePath()))
 	})
 	t.Run("WithoutDimensions", func(t *testing.T) {
 		// Which rendition would help cannot be worked out, and the coverage report leaves such a
 		// marker out as well.
-		assert.False(t, w.cacheMigrationCropThumb(&entity.File{FileHash: file.FileHash}, markers, 160))
+		rendered, err := w.cacheMigrationCropThumb(&entity.File{FileHash: file.FileHash}, markers, 160)
+
+		assert.NoError(t, err)
+		assert.False(t, rendered)
 	})
 	t.Run("UnreadableFile", func(t *testing.T) {
 		missing := &entity.File{
@@ -1498,11 +1540,17 @@ func TestFaces_cacheMigrationCropThumb(t *testing.T) {
 			FileHeight: 3000,
 		}
 
-		// Reported by the embedding pass that reads the same file a moment later, not here.
-		assert.False(t, w.cacheMigrationCropThumb(missing, markers, 160))
+		// Counted and reported by the caller, which is what makes an unwritable cache visible.
+		rendered, err := w.cacheMigrationCropThumb(missing, markers, 160)
+
+		assert.False(t, rendered)
+		assert.Error(t, err)
 	})
 	t.Run("NilWorker", func(t *testing.T) {
-		assert.False(t, (*Faces)(nil).cacheMigrationCropThumb(file, markers, 160))
+		rendered, err := (*Faces)(nil).cacheMigrationCropThumb(file, markers, 160)
+
+		assert.NoError(t, err)
+		assert.False(t, rendered)
 	})
 }
 
@@ -1533,6 +1581,35 @@ func newRenderTestFile(t *testing.T, c *config.Config, hash string, width, heigh
 	require.NoError(t, thumb.Save(image.NewNRGBA(image.Rect(0, 0, fitted, fitted)), name))
 
 	return file
+}
+
+// TestFaces_insufficientStorage covers the guard that stops a run which cannot write. Its crops
+// would be taken from whatever the cache holds, and nothing in the resulting vectors records that.
+func TestFaces_insufficientStorage(t *testing.T) {
+	t.Run("Sufficient", func(t *testing.T) {
+		assert.False(t, NewFaces(config.NewMinimalTestConfig(t.TempDir())).insufficientStorage())
+	})
+	t.Run("QuotaReached", func(t *testing.T) {
+		// Reading the quota needs a database, which is also what makes this the state the run has
+		// to refuse in: the volume it would write renditions to is the one that is full.
+		oldCfg := Config()
+		c := config.NewMinimalTestConfigWithDb("faces_quota", t.TempDir())
+
+		t.Cleanup(func() {
+			_ = c.CloseDb()
+
+			if oldCfg != nil {
+				oldCfg.RegisterDb()
+			}
+		})
+
+		c.Options().FilesQuota = 1
+
+		assert.True(t, NewFaces(c).insufficientStorage())
+	})
+	t.Run("NilWorker", func(t *testing.T) {
+		assert.False(t, (*Faces)(nil).insufficientStorage())
+	})
 }
 
 // TestUseMigrationThumbSizes covers the limit a migration lifts. The on-demand limit protects a

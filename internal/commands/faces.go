@@ -206,9 +206,9 @@ func facesMigrateAction(ctx *cli.Context) error {
 		if stale := plan.Markers.Valid - plan.Markers.Ready; stale > 0 {
 			event.SystemWarn([]string{"faces", "migrate", "%d markers must be re-embedded and lose their stored vectors if that fails"}, stale)
 		}
-		// A crop is taken from a pre-generated thumbnail and never from the original, so a cache
-		// capped below what the crops need embeds a library from upscaled pixels while the detail
-		// sits on the same disk. It is not recoverable afterwards: the whole run has to be redone.
+		// A crop is taken from a thumbnail and never from the original, so what the cache holds
+		// decides how much detail the vectors rest on. The run renders what it is missing; this
+		// says how much of that is coming, and how much of it the originals cannot supply.
 		reportMigrationCropCoverage(plan)
 
 		if ctx.Bool("dry-run") {
@@ -249,6 +249,13 @@ func facesMigrateAction(ctx *cli.Context) error {
 		if result.RenderedThumbs > 0 {
 			log.Infof("faces: rendered %d thumbnail(s) from originals so their face crops were not upscaled",
 				result.RenderedThumbs)
+		}
+		// The one part of the run whose cost is not visible in the result afterwards: these
+		// markers hold a vector drawn from fewer pixels than their original could supply.
+		if result.FailedThumbs > 0 {
+			event.SystemWarn([]string{"faces", "migrate", "%d file(s) could not be given the wider thumbnail their face crops need, " +
+				"so those markers were embedded from upscaled crops; re-run once the cache volume is writable"},
+				result.FailedThumbs)
 		}
 		// Reported apart from both, because a retained marker is neither work done nor a loss:
 		// detection did not find it again, most often because a person drew it by hand.
@@ -291,17 +298,20 @@ func reportMigrationCropCoverage(plan photoprism.FacesMigratePlan) {
 		return
 	}
 
+	// Markers rather than files, because that is the population the buckets count: a file with
+	// several of them is rendered for once, so the number of renditions is lower than this.
 	if coverage.Upscaled > 0 {
 		log.Infof("faces: %d of %d markers (%d%%) need a wider crop than the largest thumbnail this library holds (%dx%d), "+
-			"so this run renders one per file from the original as it goes",
+			"so their files are rendered again from the original as the run reaches them",
 			coverage.Upscaled, coverage.Total, percentOf(coverage.Upscaled, coverage.Total),
 			plan.ThumbSize.Width, plan.ThumbSize.Height)
 	}
 
-	// Stated apart, and whatever the line above says: this is the one part of the shortfall that
-	// no rendition recovers, because the detail is not in the original either.
+	// Stated apart, because this is the part no rendition recovers: their files are re-rendered
+	// as well, at the resolution the original holds, and the crop is still upscaled onto the
+	// template afterwards.
 	if coverage.SourceTooSmall > 0 {
-		log.Infof("faces: %d of %d markers (%d%%) have originals too small for a full-detail face crop, which nothing recovers",
+		log.Infof("faces: %d of %d markers (%d%%) have originals too small for a full-detail face crop, so theirs stay upscaled",
 			coverage.SourceTooSmall, coverage.Total, percentOf(coverage.SourceTooSmall, coverage.Total))
 	}
 }

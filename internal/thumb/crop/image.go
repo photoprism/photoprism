@@ -68,7 +68,9 @@ func UsableSizes() []thumb.Size {
 //
 // Not through thumb.Size.FileName, which refuses a size above the configured limit: the selection
 // stats whatever exists, so a rendition written while the limit was higher is still read from, and
-// a caller asking what the cache holds has to be able to see it.
+// a caller asking what the cache holds has to be able to see it. An empty file is not one a crop
+// can be taken from - a write interrupted by a signal or a full volume leaves one behind, and the
+// selection would hand it to a decoder that cannot read it.
 func CachedSizeExists(size thumb.Size, hash, thumbPath string) bool {
 	if len(hash) < 4 || thumbPath == "" {
 		return false
@@ -82,7 +84,7 @@ func CachedSizeExists(size thumb.Size, hash, thumbPath string) bool {
 		filePath := path.Join(thumbPath, hash[0:1], hash[1:2], hash[2:3])
 		name, err := fs.Resolve(filepath.Join(filePath, fmt.Sprintf(thumbFileNames[i], hash)))
 
-		return err == nil && fs.FileExists(name)
+		return err == nil && fs.FileExistsNotEmpty(name)
 	}
 
 	return false

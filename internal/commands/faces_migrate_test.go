@@ -142,7 +142,7 @@ func TestReportMigrationCropCoverage(t *testing.T) {
 		out := messages(hook)
 		assert.Contains(t, out, "15689 of 41252 markers (38%)")
 		assert.Contains(t, out, "1920x1200")
-		assert.Contains(t, out, "renders one per file")
+		assert.Contains(t, out, "rendered again from the original")
 		assert.Contains(t, out, "6062 of 41252 markers (15%)")
 
 		// Nothing is asked of the operator: the run does this itself, and a warning would send
@@ -158,9 +158,9 @@ func TestReportMigrationCropCoverage(t *testing.T) {
 		})
 
 		out := messages(hook)
-		assert.NotContains(t, out, "renders one per file")
+		assert.NotContains(t, out, "rendered again from the original")
 		assert.Contains(t, out, "60 of 100 markers (60%)")
-		assert.Contains(t, out, "nothing recovers")
+		assert.Contains(t, out, "stay upscaled")
 	})
 	t.Run("NothingMeasured", func(t *testing.T) {
 		// A library with no renditions at all is cropped from the originals, so there is no

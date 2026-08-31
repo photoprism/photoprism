@@ -341,6 +341,21 @@ func TestCachedSizeExists(t *testing.T) {
 		// A crop is never taken from a tile, so it cannot be part of the answer.
 		assert.False(t, CachedSizeExists(thumb.Sizes[thumb.Tile500], hash, "testdata"))
 	})
+	t.Run("Empty", func(t *testing.T) {
+		// A write interrupted by a signal or a full volume leaves a file the selection would hand
+		// to a decoder that cannot read it, so its presence must not read as a cached rendition.
+		thumbPath := t.TempDir()
+		name, err := thumb.Sizes[thumb.Fit720].FileName(hash, thumbPath)
+		require.NoError(t, err)
+		require.NoError(t, os.MkdirAll(filepath.Dir(name), fs.ModeDir))
+		require.NoError(t, os.WriteFile(name, nil, fs.ModeFile))
+
+		assert.False(t, CachedSizeExists(thumb.Sizes[thumb.Fit720], hash, thumbPath))
+
+		require.NoError(t, os.WriteFile(name, []byte("jpeg"), fs.ModeFile))
+
+		assert.True(t, CachedSizeExists(thumb.Sizes[thumb.Fit720], hash, thumbPath))
+	})
 	t.Run("InvalidInput", func(t *testing.T) {
 		assert.False(t, CachedSizeExists(thumb.Sizes[thumb.Fit720], "abc", "testdata"))
 		assert.False(t, CachedSizeExists(thumb.Sizes[thumb.Fit720], hash, ""))
