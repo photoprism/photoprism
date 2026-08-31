@@ -127,6 +127,30 @@ func TestFaces_StartHoldsOffOnAMigration(t *testing.T) {
 	})
 }
 
+// TestFaces_StartAfterAMigrationInAnotherProcess pins what happens once the lock is gone: the
+// migration recorded its target in "options.yml" and this process still holds the model it
+// replaced, so the pass pauses rather than clustering vectors of two different lengths.
+func TestFaces_StartAfterAMigrationInAnotherProcess(t *testing.T) {
+	c := newMigrateTestConfig(t, "facessuperseded")
+	t.Cleanup(face.UnblockEmbeddings)
+
+	loaded := c.FaceModel()
+	require.NotEqual(t, face.ModelNone, loaded)
+
+	migrated := face.ModelFaceNet
+
+	if loaded == migrated {
+		migrated = face.ModelSFace
+	}
+
+	require.NoError(t, os.WriteFile(c.OptionsYaml(), []byte("FaceModel: "+migrated+"\n"), fs.ModeConfigFile))
+
+	require.NoError(t, NewFaces(c).Start(FacesOptions{Force: true}))
+
+	require.True(t, face.EmbeddingsBlocked())
+	assert.Contains(t, face.EmbeddingsBlockedReason(), migrated)
+}
+
 func TestFaces_reportOnce(t *testing.T) {
 	w := NewFaces(config.TestConfig())
 

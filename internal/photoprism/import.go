@@ -87,6 +87,9 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 		return done
 	}
 
+	// The same applies once it has completed: its target is recorded rather than loaded here.
+	imp.conf.CheckFaceModelSuperseded()
+
 	importPath := opt.Path
 
 	// Check if the import folder exists.

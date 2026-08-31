@@ -2,15 +2,19 @@ package config
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"runtime"
 	"slices"
+
+	"gopkg.in/yaml.v2"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -583,11 +587,39 @@ func (c *Config) SetFaceModel(name face.ModelName) error {
 	c.faceModel = name
 	c.options.FaceModel = name
 
+	// Before the write, so a setting that could not be persisted still applies to this process:
+	// what follows the model is a distance space, and clustering at the previous one's calibration
+	// rewrites the library at thresholds its vectors were never measured in.
+	c.PropagateFaceModel()
+
 	if _, err := c.SaveOptionsPatch(Values{"FaceModel": name}); err != nil {
 		return fmt.Errorf("failed saving face model %s (%s)", clean.Log(name), err)
 	}
 
 	return nil
+}
+
+// PropagateFaceModel assigns the values in the face package that the embedding model in force
+// calibrates, and loads the embedder for it.
+//
+// Called by Propagate as well, but the model is also settled outside a start: a migration commits
+// its vectors and records the new model while the process runs, and every threshold below is in
+// the distance space of a model, not a number that carries from one to the next.
+func (c *Config) PropagateFaceModel() {
+	if c == nil {
+		return
+	}
+
+	face.ClusterSizeThreshold = c.FaceClusterSize()
+	face.CollisionDist = c.FaceCollisionDist()
+	face.Epsilon = c.FaceEpsilonDist()
+	face.ClusterRadius = c.FaceClusterRadius()
+	face.ClusterDist = c.FaceClusterDist()
+	face.MatchDist = c.FaceMatchDist()
+
+	if err := c.ConfigureFaceEmbedder(c.FaceModel()); err != nil {
+		log.Warnf("faces: %s (configure embedding model)", err)
+	}
 }
 
 // ClearFaceModel removes a pinned embedding model from "options.yml" and from this process, so
@@ -715,6 +747,13 @@ func (c *Config) checkFaceModelMismatch(counts []query.MarkerEmbeddingModelCount
 		return
 	}
 
+	// A migration commits in its own process and records its target, which nothing reloads here.
+	// Naming the model this one still holds would ask for the library to be migrated back into
+	// the space it was just migrated out of, at the moment the advice is most likely to be taken.
+	if c.CheckFaceModelSuperseded() {
+		return
+	}
+
 	reason := fmt.Sprintf("%d marker(s) use %s, but this instance is configured for %s",
 		stale, txt.JoinAnd(models), clean.Log(name))
 
@@ -722,6 +761,79 @@ func (c *Config) checkFaceModelMismatch(counts []query.MarkerEmbeddingModelCount
 
 	log.Warnf(`faces: %s, so face embeddings are not processed (run "photoprism faces migrate --to %s" to migrate them)`,
 		reason, clean.Log(name))
+}
+
+// CheckFaceModelSuperseded pauses face embedding work and asks for a restart when "options.yml"
+// records an embedding model this process has not loaded, reporting whether it did.
+//
+// What a completed migration leaves behind is a setting, and a running instance keeps clustering
+// and embedding in the model it started with - which compares vectors of two different lengths.
+func (c *Config) CheckFaceModelSuperseded() bool {
+	superseded := c.SupersededFaceModel()
+
+	if superseded == "" {
+		return false
+	}
+
+	face.BlockEmbeddings(fmt.Sprintf("face model %s is recorded in %s but not loaded here",
+		clean.Log(superseded), clean.Log(filepath.Base(c.OptionsYaml()))))
+
+	// Keyed by the model, so a second migration in the same process is reported again, while a
+	// worker that wakes every few minutes does not repeat the first.
+	c.warnFaceConfig("face-model-superseded-"+superseded,
+		"faces: face model %s is recorded in %s but not loaded here, so face embeddings are paused until this instance is restarted",
+		clean.Log(superseded), clean.Log(filepath.Base(c.OptionsYaml())))
+
+	return true
+}
+
+// SupersededFaceModel returns the embedding model recorded in "options.yml" when this process
+// holds a different one, and an empty name when the two agree or the file names none.
+//
+// The file is read rather than remembered: a migration persists its target from another process,
+// so this is what tells a setting that moved on from an instance pointed at the wrong library.
+// The two look alike from the library and have opposite remedies.
+func (c *Config) SupersededFaceModel() face.ModelName {
+	if c == nil {
+		return ""
+	}
+
+	fileName := c.OptionsYaml()
+
+	if fileName == "" || !fs.FileExists(fileName) {
+		return ""
+	}
+
+	b, err := os.ReadFile(fileName) //nolint:gosec // path derived from the config directory
+
+	if err != nil {
+		return ""
+	}
+
+	values := Values{}
+
+	if err = yaml.Unmarshal(b, &values); err != nil {
+		return ""
+	}
+
+	recorded, _ := values["FaceModel"].(string)
+	persisted := face.ParseModelName(recorded)
+
+	// Only a model that names a vector space is a verdict: "auto" asks for detection, an
+	// unsupported value applies as if nothing were set, and "none" generates no vector at all.
+	if persisted == face.ModelAuto || persisted == face.ModelNone {
+		return ""
+	}
+
+	current := c.FaceModel()
+
+	// A process with no model in force has none to be superseded, and a restart installs no
+	// weights: why it could not be loaded is reported where that is decided.
+	if current == face.ModelNone || face.ModelsComparable(persisted, current) {
+		return ""
+	}
+
+	return persisted
 }
 
 // staleFaceModels returns how many of the counted markers hold a vector the specified model

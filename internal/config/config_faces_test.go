@@ -873,6 +873,142 @@ func TestConfig_checkFaceModelMismatch(t *testing.T) {
 		require.True(t, face.EmbeddingsBlocked())
 		assert.Contains(t, face.EmbeddingsBlockedReason(), "42 marker(s) use facenet,")
 	})
+	t.Run("AfterAMigrationAsksForARestart", func(t *testing.T) {
+		// The library and the recorded setting agree here, and only this process disagrees with
+		// both: advising the model it holds would ask for the migration to be undone.
+		hook := captureLog(t)
+		c := newSupersededTestConfig(t, face.ModelFaceNet, face.ModelSFace)
+
+		c.checkFaceModelMismatch([]query.MarkerEmbeddingModelCount{{EmbedModel: face.ModelSFace, Markers: 41252}})
+
+		require.True(t, face.EmbeddingsBlocked())
+		assert.Contains(t, lastFaceLogMessage(t, hook), "restarted")
+		assert.NotContains(t, lastFaceLogMessage(t, hook), "migrate --to")
+	})
+}
+
+// newSupersededTestConfig returns a config that holds the loaded model while "options.yml"
+// records the recorded one, which is what a completed migration leaves a running instance with.
+func newSupersededTestConfig(t *testing.T, loaded, recorded face.ModelName) *Config {
+	t.Helper()
+
+	c := NewMinimalTestConfig(t.TempDir())
+	c.options.ModelsPath = installTestModels(t, loaded, recorded)
+	c.faceModel = loaded
+	c.options.FaceModel = loaded
+
+	require.NoError(t, os.WriteFile(c.OptionsYaml(), []byte("FaceModel: "+recorded+"\n"), fs.ModeConfigFile))
+
+	return c
+}
+
+// lastFaceLogMessage returns the most recent message the shared logger recorded.
+func lastFaceLogMessage(t *testing.T, hook *test.Hook) string {
+	t.Helper()
+
+	entry := hook.LastEntry()
+	require.NotNil(t, entry)
+
+	return entry.Message
+}
+
+func TestConfig_CheckFaceModelSuperseded(t *testing.T) {
+	t.Cleanup(face.UnblockEmbeddings)
+
+	t.Run("Superseded", func(t *testing.T) {
+		hook := captureLog(t)
+		c := newSupersededTestConfig(t, face.ModelFaceNet, face.ModelSFace)
+
+		require.True(t, c.CheckFaceModelSuperseded())
+
+		assert.True(t, face.EmbeddingsBlocked())
+		assert.Contains(t, face.EmbeddingsBlockedReason(), "sface")
+		assert.Contains(t, lastFaceLogMessage(t, hook), "restarted")
+	})
+	t.Run("ReportedOncePerModel", func(t *testing.T) {
+		// The workers that consult this wake every few minutes, so a repeated verdict must not
+		// repeat the message.
+		hook := captureLog(t)
+		c := newSupersededTestConfig(t, face.ModelFaceNet, face.ModelSFace)
+
+		require.True(t, c.CheckFaceModelSuperseded())
+		require.True(t, c.CheckFaceModelSuperseded())
+
+		warnings := 0
+
+		for _, entry := range hook.AllEntries() {
+			if strings.Contains(entry.Message, "restarted") {
+				warnings++
+			}
+		}
+
+		assert.Equal(t, 1, warnings)
+	})
+	t.Run("Agrees", func(t *testing.T) {
+		defer face.UnblockEmbeddings()
+		c := newSupersededTestConfig(t, face.ModelSFace, face.ModelSFace)
+
+		assert.False(t, c.CheckFaceModelSuperseded())
+	})
+}
+
+func TestConfig_SupersededFaceModel(t *testing.T) {
+	t.Run("Migrated", func(t *testing.T) {
+		c := newSupersededTestConfig(t, face.ModelFaceNet, face.ModelSFace)
+
+		assert.Equal(t, face.ModelSFace, c.SupersededFaceModel())
+	})
+	t.Run("Agrees", func(t *testing.T) {
+		c := newSupersededTestConfig(t, face.ModelSFace, face.ModelSFace)
+
+		assert.Empty(t, c.SupersededFaceModel())
+	})
+	t.Run("ResolvedThroughTheSetting", func(t *testing.T) {
+		// A process that resolves its model from the setting rather than from a pin holds the
+		// same one the file names, so it is not behind it.
+		c := newSupersededTestConfig(t, face.ModelFaceNet, face.ModelFaceNet)
+		c.faceModel = ""
+
+		assert.Empty(t, c.SupersededFaceModel())
+	})
+	t.Run("NoModelInForce", func(t *testing.T) {
+		// A restart installs no weights, and why the model could not be loaded is reported where
+		// that is decided, so an instance holding none is not behind the file either.
+		c := newSupersededTestConfig(t, face.ModelFaceNet, face.ModelSFace)
+		c.faceModel = ""
+		c.options.FaceModel = face.ModelNone
+
+		require.Equal(t, face.ModelNone, c.FaceModel())
+		assert.Empty(t, c.SupersededFaceModel())
+	})
+	t.Run("AutoIsNotAVerdict", func(t *testing.T) {
+		// "auto" asks for detection rather than naming a vector space, so it supersedes nothing.
+		c := newSupersededTestConfig(t, face.ModelFaceNet, face.ModelSFace)
+		require.NoError(t, os.WriteFile(c.OptionsYaml(), []byte("FaceModel: auto\n"), fs.ModeConfigFile))
+
+		assert.Empty(t, c.SupersededFaceModel())
+	})
+	t.Run("UnsupportedValue", func(t *testing.T) {
+		c := newSupersededTestConfig(t, face.ModelFaceNet, face.ModelSFace)
+		require.NoError(t, os.WriteFile(c.OptionsYaml(), []byte("FaceModel: nonesuch\n"), fs.ModeConfigFile))
+
+		assert.Empty(t, c.SupersededFaceModel())
+	})
+	t.Run("Unparsable", func(t *testing.T) {
+		c := newSupersededTestConfig(t, face.ModelFaceNet, face.ModelSFace)
+		require.NoError(t, os.WriteFile(c.OptionsYaml(), []byte("FaceModel: [\n"), fs.ModeConfigFile))
+
+		assert.Empty(t, c.SupersededFaceModel())
+	})
+	t.Run("NoFile", func(t *testing.T) {
+		c := newSupersededTestConfig(t, face.ModelFaceNet, face.ModelSFace)
+		require.NoError(t, os.Remove(c.OptionsYaml()))
+
+		assert.Empty(t, c.SupersededFaceModel())
+	})
+	t.Run("NilConfig", func(t *testing.T) {
+		assert.Empty(t, (*Config)(nil).SupersededFaceModel())
+	})
 }
 
 func TestStaleFaceModels(t *testing.T) {
@@ -1093,6 +1229,10 @@ func seedLegacyMarkers(t *testing.T) []string {
 }
 
 func TestConfig_SetFaceModel(t *testing.T) {
+	// Recording a model propagates its calibration, so every case below moves package values
+	// that the tests after it would otherwise read as their own.
+	defer snapshotFaceModelGlobals()()
+
 	t.Run("Persisted", func(t *testing.T) {
 		c := NewMinimalTestConfig(t.TempDir())
 		require.NoError(t, c.SetFaceModel(face.ModelSFace))
@@ -1116,6 +1256,32 @@ func TestConfig_SetFaceModel(t *testing.T) {
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "failed saving face model")
 	})
+	t.Run("PropagatesTheCalibration", func(t *testing.T) {
+		// Within one process, because Init propagates on its own: a test written across a restart
+		// passes while a migration still clusters at the model it replaced.
+		c := NewMinimalTestConfig(t.TempDir())
+		c.options.ModelsPath = installTestModels(t, face.ModelFaceNet, face.ModelSFace)
+		c.faceModel = face.ModelFaceNet
+		c.PropagateFaceModel()
+		require.Equal(t, face.ClusterDistDefault, face.ClusterDist)
+
+		require.NoError(t, c.SetFaceModel(face.ModelSFace))
+
+		assert.Equal(t, 0.72, face.ClusterDist)
+		assert.Equal(t, 0.70, face.ClusterRadius)
+		assert.Equal(t, 0.25, face.MatchDist)
+	})
+	t.Run("PropagatesAfterAFailedWrite", func(t *testing.T) {
+		// The vectors are the target's either way, so a setting that could not be persisted still
+		// has to apply here - the run reports the write, it does not cluster at the old distances.
+		c := NewMinimalTestConfig(t.TempDir())
+		c.options.ModelsPath = installTestModels(t, face.ModelSFace)
+		require.NoError(t, os.WriteFile(c.OptionsYaml(), []byte("FaceModel: [\n"), fs.ModeFile))
+
+		require.Error(t, c.SetFaceModel(face.ModelSFace))
+
+		assert.Equal(t, 0.72, face.ClusterDist)
+	})
 	t.Run("Empty", func(t *testing.T) {
 		c := NewMinimalTestConfig(t.TempDir())
 		require.NoError(t, c.SetFaceModel(""))
@@ -1124,6 +1290,35 @@ func TestConfig_SetFaceModel(t *testing.T) {
 	})
 	t.Run("NilConfig", func(t *testing.T) {
 		assert.NoError(t, (*Config)(nil).SetFaceModel(face.ModelSFace))
+	})
+}
+
+func TestConfig_PropagateFaceModel(t *testing.T) {
+	t.Run("AssignsTheModelsCalibration", func(t *testing.T) {
+		defer snapshotFaceModelGlobals()()
+		c := newSFaceTestConfig(t)
+
+		c.PropagateFaceModel()
+
+		assert.Equal(t, 0.72, face.ClusterDist)
+		assert.Equal(t, 0.70, face.ClusterRadius)
+		assert.Equal(t, 0.25, face.MatchDist)
+		assert.Equal(t, face.CollisionDistDefault, face.CollisionDist)
+		assert.Equal(t, face.EpsilonDefault, face.Epsilon)
+		assert.Equal(t, c.FaceClusterSize(), face.ClusterSizeThreshold)
+	})
+	t.Run("ConfiguredValuesStand", func(t *testing.T) {
+		// The model calibrates what nobody set, and must not overrule what somebody did.
+		defer snapshotFaceModelGlobals()()
+		c := newSFaceTestConfig(t)
+		c.options.FaceClusterDist = 0.6
+
+		c.PropagateFaceModel()
+
+		assert.Equal(t, 0.6, face.ClusterDist)
+	})
+	t.Run("NilConfig", func(t *testing.T) {
+		assert.NotPanics(t, func() { (*Config)(nil).PropagateFaceModel() })
 	})
 }
 
@@ -1294,9 +1489,23 @@ func restoreFaceModel(t *testing.T, c *Config) func() {
 	t.Helper()
 
 	setting, resolved := c.options.FaceModel, c.faceModel
+	restoreGlobals := snapshotFaceModelGlobals()
 
 	return func() {
 		c.options.FaceModel, c.faceModel = setting, resolved
+		restoreGlobals()
+	}
+}
+
+// snapshotFaceModelGlobals returns a function that restores the values PropagateFaceModel
+// assigns, so a test that changes the model does not leave the tests after it calibrated for it.
+func snapshotFaceModelGlobals() func() {
+	clusterSize, collisionDist, epsilon := face.ClusterSizeThreshold, face.CollisionDist, face.Epsilon
+	clusterRadius, clusterDist, matchDist := face.ClusterRadius, face.ClusterDist, face.MatchDist
+
+	return func() {
+		face.ClusterSizeThreshold, face.CollisionDist, face.Epsilon = clusterSize, collisionDist, epsilon
+		face.ClusterRadius, face.ClusterDist, face.MatchDist = clusterRadius, clusterDist, matchDist
 	}
 }
 
@@ -1738,6 +1947,10 @@ func TestConfig_FacesLocked(t *testing.T) {
 }
 
 func TestConfig_ClearFaceModel(t *testing.T) {
+	// Pinning a model to clear it propagates its calibration, which the cases after this one
+	// would otherwise read as theirs.
+	defer snapshotFaceModelGlobals()()
+
 	t.Run("Success", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.options.ConfigPath = t.TempDir()
@@ -1856,10 +2069,13 @@ func TestConfig_FaceOverlap(t *testing.T) {
 }
 
 func TestConfig_FaceClusterSize(t *testing.T) {
+	// Against the model in force rather than against face.ClusterSizeThreshold: the global is
+	// assigned from this getter, and any test that records a model moves it.
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, face.ClusterSizeThreshold, c.FaceClusterSize())
+	derived := face.ClusterSize(c.EffectiveFaceModel())
+	assert.Equal(t, derived, c.FaceClusterSize())
 	c.options.FaceClusterSize = 10
-	assert.Equal(t, face.ClusterSizeThreshold, c.FaceClusterSize())
+	assert.Equal(t, derived, c.FaceClusterSize())
 	c.options.FaceClusterSize = 66
 	assert.Equal(t, 66, c.FaceClusterSize())
 

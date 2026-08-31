@@ -135,6 +135,18 @@ func savedFaceModel(t *testing.T, c *config.Config) string {
 	return name
 }
 
+// snapshotFaceCalibration returns a function that restores the package values a change of
+// embedding model moves, which a committed migration propagates for the rest of the process.
+func snapshotFaceCalibration() func() {
+	clusterSize, collisionDist, epsilon := face.ClusterSizeThreshold, face.CollisionDist, face.Epsilon
+	clusterRadius, clusterDist, matchDist := face.ClusterRadius, face.ClusterDist, face.MatchDist
+
+	return func() {
+		face.ClusterSizeThreshold, face.CollisionDist, face.Epsilon = clusterSize, collisionDist, epsilon
+		face.ClusterRadius, face.ClusterDist, face.MatchDist = clusterRadius, clusterDist, matchDist
+	}
+}
+
 func newMigrateTestConfig(t *testing.T, name string) *config.Config {
 	t.Helper()
 	useTestDb(t, name)
@@ -145,9 +157,11 @@ func newMigrateTestConfig(t *testing.T, name string) *config.Config {
 	require.NoError(t, c.CreateDirectories())
 
 	SetConfig(c)
+	restoreCalibration := snapshotFaceCalibration()
 	t.Cleanup(func() {
 		SetConfig(oldConfig)
 		oldConfig.RegisterDb()
+		restoreCalibration()
 
 		// Initializing a config reconfigures the process-wide embedder from its models
 		// path, which is empty here, so the previous one has to be reinstated.
@@ -464,6 +478,15 @@ func TestFaces_migrate(t *testing.T) {
 		assert.Zero(t, result.Failed)
 		assert.Equal(t, 1, result.RebuiltSubjects)
 		assert.Zero(t, result.AttentionSubjects)
+
+		// The re-clustering and the audit at the end of this run read these, and a distance means
+		// nothing outside the model it was measured in: asserted within the migrating process,
+		// because a restart propagates them and would pass without the migration doing so.
+		target := face.FindEmbeddingModel(face.ModelSFace)
+		require.NotNil(t, target)
+		assert.Equal(t, target.ClusterDist, face.ClusterDist)
+		assert.Equal(t, target.ClusterRadius, face.ClusterRadius)
+		assert.Equal(t, target.MatchDist, face.MatchDist)
 
 		// Not one assignment may be dropped: losing them empties the person's page and no
 		// later matching run brings them back.

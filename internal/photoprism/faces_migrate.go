@@ -558,7 +558,9 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 	// The vectors are in the target's space from here on, so the setting follows the data even
 	// when markers failed: a start that read the previous model would hide the whole library
 	// from matching. Both have to happen before the clustering below, which is gated on them,
-	// and a write that failed is reported once the run has finished rather than losing it.
+	// and a write that failed is reported once the run has finished rather than losing it. The
+	// setter also re-propagates the target's calibrated distances, which the clustering reads
+	// from the face package rather than from the configuration.
 	settingErr := w.conf.SetFaceModel(plan.Target)
 	face.UnblockEmbeddings()
 

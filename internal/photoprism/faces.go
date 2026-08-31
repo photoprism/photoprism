@@ -105,6 +105,10 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 		return nil
 	}
 
+	// A migration that completed in that other process left its target in "options.yml", which
+	// this one has not loaded: clustering would compare vectors of two different lengths.
+	w.conf.CheckFaceModelSuperseded()
+
 	if err = mutex.FacesWorker.Start(); err != nil {
 		return err
 	}
