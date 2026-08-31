@@ -90,7 +90,8 @@ func reportVectors(n int) string {
 // measured zero: the size bars fall back to another value where it appears.
 const reportUnrecorded = "-"
 
-// reportFrameShare renders how much of the frame's width a marker area covers, as a percentage.
+// reportFrameShare renders how much of the frame's width a marker area covers, as a percentage
+// without the sign, which the column heading carries.
 //
 // Relative because the alternative invites a misreading: the stored size is in pixels of the
 // Fit720 detection thumbnail, and nothing in a table of numbers says so.
@@ -99,7 +100,7 @@ func reportFrameShare(w float32) string {
 		return reportUnrecorded
 	}
 
-	return strconv.FormatFloat(float64(w)*100, 'f', 1, 64) + "%"
+	return strconv.FormatFloat(float64(w)*100, 'f', 1, 64)
 }
 
 // reportThumbSize renders the extent an embedding was sampled at, in pixels of the image it was
@@ -110,6 +111,43 @@ func reportThumbSize(px int) string {
 	}
 
 	return strconv.Itoa(px)
+}
+
+// reportThumbPixels renders the extent an embedding was sampled at with its unit, so the column is
+// not read as the frame share beside it.
+func reportThumbPixels(px int) string {
+	if px < 1 {
+		return reportUnrecorded
+	}
+
+	return strconv.Itoa(px) + "px"
+}
+
+// reportEmbedding renders the vector a marker holds as the model that produced it and its width.
+//
+// The model is named because a distance only means something within one embedding space, and a
+// library holds markers from more than one.
+func reportEmbedding(model string, dims int) string {
+	switch {
+	case dims == query.InvalidJSON:
+		return "invalid"
+	case dims <= 0:
+		return ""
+	case model == "":
+		return strconv.Itoa(dims)
+	default:
+		return model + " " + strconv.Itoa(dims)
+	}
+}
+
+// reportModelName renders the model a row records, marking an unrecorded one rather than leaving the
+// cell blank: a blank reads as "none" where it means the row predates the column.
+func reportModelName(model string) string {
+	if model == "" {
+		return reportUnrecorded
+	}
+
+	return model
 }
 
 // reportPerson returns the person a report command was narrowed to: a subject uid or a name fragment.
@@ -131,9 +169,35 @@ func reportPaging(ctx *cli.Context) (count, offset int) {
 	return count, max(ctx.Int("offset"), 0)
 }
 
-// printReport renders rows in the format the flags selected.
-func printReport(ctx *cli.Context, rows [][]string, cols []string) error {
-	result, err := report.RenderFormat(rows, cols, report.CliFormat(ctx))
+// rightAligned returns the column alignment for a report, right-aligning the columns named.
+//
+// By name rather than by position, so reordering the columns cannot leave the alignment pointing at
+// whatever ends up at that index.
+func rightAligned(cols []string, names ...string) []report.Align {
+	want := make(map[string]bool, len(names))
+
+	for _, n := range names {
+		want[n] = true
+	}
+
+	out := make([]report.Align, len(cols))
+
+	for i, c := range cols {
+		if want[c] {
+			out[i] = report.AlignRight
+		}
+	}
+
+	return out
+}
+
+// printReport renders rows with the alignment and the JSON field names the caller asked for.
+//
+// The field names are given rather than derived, so retitling a column for readability cannot rename
+// a key that something is already reading.
+func printReport(ctx *cli.Context, rows [][]string, cols []string, align []report.Align, keys []string) error {
+	result, err := report.RenderFormatOptions(rows, cols, report.CliFormat(ctx),
+		report.Options{Align: align, Keys: keys})
 
 	if err != nil {
 		return err
@@ -155,20 +219,31 @@ func facesSubjectsAction(ctx *cli.Context) error {
 			return err
 		}
 
-		cols := []string{"Subject", "Name", "Src", "Favorite", "Verified", "Hidden", "Markers", "Clusters", "Files", "Photos", "Created At"}
+		// The counts run smallest to largest, which is also how they nest: a person holds few
+		// clusters, a photo can hold several files, and one face can be marked more than once in a
+		// file - a mirror puts the same person in it twice.
+		cols := []string{"Subject", "Name", "Src", "Birth Date", "Favorite", "Verified", "Hidden", "Private", "Clusters", "Photos", "Files", "Markers", "Created At"}
+
+		keys := []string{
+			"subj_uid", "subj_name", "subj_src", "subj_birthday", "subj_favorite", "verified",
+			"subj_hidden", "subj_private", "clusters", "photo_count", "file_count", "markers", "created_at",
+		}
+
+		align := rightAligned(cols, "Clusters", "Photos", "Files", "Markers")
 		rows := make([][]string, 0, len(people))
 
 		for _, p := range people {
 			rows = append(rows, []string{
-				p.SubjUID, p.SubjName, entity.SrcString(p.SubjSrc),
+				p.SubjUID, p.SubjName, entity.SrcString(p.SubjSrc), report.Date(p.SubjBirthday),
 				reportBool(p.SubjFavorite), reportBool(p.Verified), reportBool(p.SubjHidden),
-				strconv.Itoa(p.Markers), strconv.Itoa(p.Clusters),
-				strconv.Itoa(p.FileCount), strconv.Itoa(p.PhotoCount),
+				reportBool(p.SubjPrivate),
+				strconv.Itoa(p.Clusters), strconv.Itoa(p.PhotoCount),
+				strconv.Itoa(p.FileCount), strconv.Itoa(p.Markers),
 				report.DateTime(&p.CreatedAt),
 			})
 		}
 
-		return printReport(ctx, rows, cols)
+		return printReport(ctx, rows, cols, align, keys)
 	})
 }
 
@@ -183,19 +258,29 @@ func facesListAction(ctx *cli.Context) error {
 			return err
 		}
 
-		cols := []string{"Face", "Name", "Subject", "Src", "Kind", "Markers", "Samples", "Radius", "Collisions", "Collision Radius", "Matched At"}
+		// Samples first and Markers last: the first is what the cluster was built from and the second
+		// what it holds now, and the two drift.
+		cols := []string{"Face", "Name", "Subject", "Src", "Kind", "Embedding", "Samples", "Radius", "Collisions", "Collision Radius", "Markers", "Matched At"}
+
+		keys := []string{
+			"face_id", "subj_name", "subj_uid", "face_src", "face_kind", "embedding",
+			"samples", "sample_radius", "collisions", "collision_radius", "markers", "matched_at",
+		}
+
+		align := rightAligned(cols, "Samples", "Radius", "Collisions", "Collision Radius", "Markers")
 		rows := make([][]string, 0, len(faces))
 
 		for _, f := range faces {
 			rows = append(rows, []string{
 				f.ID, f.SubjName, f.SubjUID, entity.SrcString(f.FaceSrc), face.Kind(f.FaceKind).String(),
-				strconv.Itoa(f.Markers), strconv.Itoa(f.Samples), report.Distance(f.SampleRadius),
+				reportEmbedding(f.EmbedModel, f.EmbeddingDims),
+				strconv.Itoa(f.Samples), report.Distance(f.SampleRadius),
 				strconv.Itoa(f.Collisions), report.Distance(f.CollisionRadius),
-				report.DateTime(f.MatchedAt),
+				strconv.Itoa(f.Markers), report.DateTime(f.MatchedAt),
 			})
 		}
 
-		return printReport(ctx, rows, cols)
+		return printReport(ctx, rows, cols, align, keys)
 	})
 }
 
@@ -393,18 +478,31 @@ func facesMarkersAction(ctx *cli.Context) error {
 			return err
 		}
 
-		cols := []string{"Marker", "Name", "Size", "Thumb px", "Score", "Subject", "Src", "Face", "Dist", "Embedding", "Landmarks", "Invalid", "File", "Matched At"}
+		// Embedding and Landmarks sit together as the two vectors a marker stores, with the detector
+		// that produced the crop after them.
+		cols := []string{"Marker", "Src", "Size", "in %", "Score", "Name", "Subject", "Src", "Face", "Dist", "Invalid", "Embedding", "Landmarks", "Detector", "File", "Matched At"}
+
+		align := rightAligned(cols, "Size", "in %", "Score", "Dist", "Landmarks")
+
+		keys := []string{
+			"marker_uid", "marker_src", "thumb_size", "frame_share", "score",
+			"marker_name", "subj_uid", "subj_src", "face_id", "face_dist", "marker_invalid",
+			"embedding", "landmarks", "detect_model", "file_uid", "matched_at",
+		}
+
 		rows := make([][]string, 0, len(markers))
 
 		for _, m := range markers {
 			rows = append(rows, []string{
-				m.MarkerUID, m.MarkerName, reportFrameShare(m.W), reportThumbSize(m.ThumbSize), strconv.Itoa(m.Score),
-				m.SubjUID, entity.SrcString(m.SubjSrc), m.FaceID, report.Distance(m.FaceDist),
-				reportVectors(m.EmbeddingDims), reportVectors(m.Landmarks),
-				reportBool(m.MarkerInvalid), m.FileUID, report.DateTime(m.MatchedAt),
+				m.MarkerUID, entity.SrcString(m.MarkerSrc),
+				reportThumbPixels(m.ThumbSize), reportFrameShare(m.W), strconv.Itoa(m.Score),
+				m.MarkerName, m.SubjUID, entity.SrcString(m.SubjSrc),
+				m.FaceID, report.Distance(m.FaceDist), reportBool(m.MarkerInvalid),
+				reportEmbedding(m.EmbedModel, m.EmbeddingDims), reportVectors(m.Landmarks),
+				reportModelName(m.DetectModel), m.FileUID, report.DateTime(m.MatchedAt),
 			})
 		}
 
-		return printReport(ctx, rows, cols)
+		return printReport(ctx, rows, cols, align, keys)
 	})
 }

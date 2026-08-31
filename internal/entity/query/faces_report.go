@@ -57,9 +57,11 @@ type SubjectReport struct {
 	SubjUID      string
 	SubjName     string
 	SubjSrc      string
+	SubjBirthday *time.Time
 	SubjFavorite bool
 	Verified     bool
 	SubjHidden   bool
+	SubjPrivate  bool
 	FileCount    int
 	PhotoCount   int
 	Markers      int
@@ -100,7 +102,8 @@ func SubjectReports(person string, count, offset int, live bool) (result []Subje
 			entity.File{}.TableName(), entity.Photo{}.TableName(), entity.Marker{}.TableName())
 	}
 
-	stmt := fmt.Sprintf(`SELECT s.subj_uid, s.subj_name, s.subj_src, s.subj_favorite, s.verified, s.subj_hidden, s.created_at, %s,
+	stmt := fmt.Sprintf(`SELECT s.subj_uid, s.subj_name, s.subj_src, s.subj_birthday, s.subj_favorite,
+		s.verified, s.subj_hidden, s.subj_private, s.created_at, %s,
 		COALESCE(n.markers, 0) AS markers, COALESCE(fc.clusters, 0) AS clusters
 		FROM %s s
 		%s
@@ -142,6 +145,17 @@ type FaceReport struct {
 	CollisionRadius float64
 	Markers         int
 	MatchedAt       *time.Time
+
+	// EmbedModel names the space the centroid lives in and EmbeddingDims its width, 0 where the row
+	// holds no vector and InvalidJSON where what is stored cannot be parsed.
+	EmbedModel    string
+	EmbeddingDims int
+}
+
+// faceReportRow carries the stored vector, which is read for its width and then dropped.
+type faceReportRow struct {
+	FaceReport
+	EmbeddingJSON json.RawMessage
 }
 
 // FaceReports returns clusters ordered by the number of samples they were built from.
@@ -166,6 +180,7 @@ func FaceReports(person string, count, offset int) (result []FaceReport, err err
 
 	stmt := fmt.Sprintf(`SELECT f.id, f.subj_uid, COALESCE(s.subj_name, '') AS subj_name, f.face_src, f.face_kind,
 		f.samples, f.sample_radius, f.collisions, f.collision_radius, f.matched_at,
+		f.embed_model, f.embedding_json,
 		COALESCE(n.markers, 0) AS markers
 		FROM %s f
 		LEFT JOIN %s s ON s.subj_uid = f.subj_uid
@@ -179,20 +194,53 @@ func FaceReports(person string, count, offset int) (result []FaceReport, err err
 		LIMIT ? OFFSET ?`,
 		entity.Face{}.TableName(), entity.Subject{}.TableName(), entity.Marker{}.TableName(), memberCond, where)
 
-	err = UnscopedDb().Raw(stmt, append(args, count, offset)...).Scan(&result).Error
+	var rows []faceReportRow
 
-	return result, err
+	if err = UnscopedDb().Raw(stmt, append(args, count, offset)...).Scan(&rows).Error; err != nil {
+		return result, err
+	}
+
+	result = make([]FaceReport, 0, len(rows))
+
+	for i := range rows {
+		row := rows[i].FaceReport
+		row.EmbeddingDims = faceEmbeddingDims(rows[i].EmbeddingJSON)
+		result = append(result, row)
+	}
+
+	return result, nil
+}
+
+// faceEmbeddingDims returns the width of a cluster's stored centroid.
+//
+// Separate from embeddingDims because a face holds one vector where a marker holds a slice of them,
+// so the two decode differently and reading a face with the marker helper reports a width of one.
+func faceEmbeddingDims(b json.RawMessage) int {
+	if len(b) == 0 {
+		return 0
+	}
+
+	var embedding face.Embedding
+
+	if err := json.Unmarshal(b, &embedding); err != nil {
+		return InvalidJSON
+	}
+
+	return len(embedding)
 }
 
 // MarkerReport describes one face marker. The vectors themselves are never reported - they are most
 // of the row and none of what a diagnosis reads - but their width is, because a marker without
 // embeddings cannot cluster and a marker without landmarks cannot be re-cropped.
 type MarkerReport struct {
-	MarkerUID     string
-	FileUID       string
-	FaceID        string
-	SubjUID       string
+	MarkerUID string
+	FileUID   string
+	FaceID    string
+	SubjUID   string
+	// SubjSrc is how the name was assigned and MarkerSrc where the marker itself came from. They are
+	// independent: an XMP region a person then renamed is SrcXmp with a manual subject.
 	SubjSrc       string
+	MarkerSrc     string
 	MarkerName    string
 	Score         int
 	FaceDist      float64
@@ -212,6 +260,12 @@ type MarkerReport struct {
 	EmbeddingDims int
 	// Landmarks is the number of landmark areas, with the same two conventions.
 	Landmarks int
+
+	// EmbedModel and DetectModel name the models the vector and the crop came from, since a distance
+	// only means something within one embedding space and a library holds more than one. Empty for
+	// rows written before the columns existed.
+	EmbedModel  string
+	DetectModel string
 }
 
 // InvalidJSON marks a stored vector that could not be parsed, which is not the same as an absent
@@ -235,7 +289,7 @@ type MarkerReportFilter struct {
 func MarkerReports(f MarkerReportFilter) (result []MarkerReport, err error) {
 	stmt := UnscopedDb().
 		Table(entity.Marker{}.TableName()).
-		Select("marker_uid, file_uid, face_id, subj_uid, subj_src, marker_name, w, thumb_size, score, face_dist, marker_invalid, matched_at, embeddings_json, landmarks_json").
+		Select("marker_uid, file_uid, face_id, subj_uid, subj_src, marker_src, marker_name, w, thumb_size, score, face_dist, marker_invalid, matched_at, embed_model, detect_model, embeddings_json, landmarks_json").
 		Where("marker_type = ?", entity.MarkerFace)
 
 	if subjUID, nameLike := PersonFilter(f.Person); subjUID != "" {

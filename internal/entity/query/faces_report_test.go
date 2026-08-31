@@ -2,6 +2,7 @@ package query
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -437,4 +438,45 @@ func TestSubjectReports_NameWithWildcard(t *testing.T) {
 		require.NoError(t, err)
 		assert.Empty(t, markers)
 	})
+}
+
+func TestFaceEmbeddingDims(t *testing.T) {
+	t.Run("SingleVector", func(t *testing.T) {
+		// A face stores one vector where a marker stores a slice of them, which is why this exists
+		// beside embeddingDims: reading a face with that one reports a width of 1.
+		assert.Equal(t, 3, faceEmbeddingDims([]byte("[0.1,0.2,0.3]")))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, 0, faceEmbeddingDims(nil))
+		assert.Equal(t, 0, faceEmbeddingDims([]byte{}))
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		assert.Equal(t, InvalidJSON, faceEmbeddingDims([]byte("not json")))
+	})
+	t.Run("NotTheMarkerShape", func(t *testing.T) {
+		// The nested form a marker holds does not decode as a single vector, and reporting it as
+		// invalid is right: a face row storing one would be a defect rather than an absent vector.
+		assert.Equal(t, InvalidJSON, faceEmbeddingDims([]byte("[[0.1,0.2]]")))
+	})
+}
+
+// TestSubjectReports_BirthdayAndPrivate covers the two columns the Edit Person dialog writes, which
+// are read straight off the row rather than derived - so nothing else would notice if the select
+// stopped returning them and every report simply showed them empty.
+func TestSubjectReports_BirthdayAndPrivate(t *testing.T) {
+	born := time.Date(1981, 1, 22, 0, 0, 0, 0, time.UTC)
+
+	subj := entity.NewSubject("Report Birthday Person", entity.SubjPerson, entity.SrcManual)
+	require.NotNil(t, subj)
+	require.NoError(t, subj.Create())
+
+	require.NoError(t, subj.Updates(entity.Values{"subj_birthday": born, "subj_private": true}))
+
+	people, err := SubjectReports(subj.SubjUID, 100, 0, false)
+	require.NoError(t, err)
+	require.Len(t, people, 1)
+
+	require.NotNil(t, people[0].SubjBirthday, "a stored birth date has to survive the select")
+	assert.Equal(t, born.Format("2006-01-02"), people[0].SubjBirthday.Format("2006-01-02"))
+	assert.True(t, people[0].SubjPrivate)
 }

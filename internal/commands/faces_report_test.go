@@ -65,16 +65,21 @@ func TestFacesSubjectsCommand(t *testing.T) {
 		output, err := RunWithTestContext(FacesSubjectsCommand, []string{"subjects"})
 		require.NoError(t, err)
 
-		for _, col := range []string{"Subject", "Name", "Src", "Favorite", "Verified", "Hidden", "Markers", "Clusters", "Files", "Photos", "Created At"} {
+		for _, col := range []string{"Subject", "Name", "Src", "Birth Date", "Favorite", "Verified", "Hidden", "Private", "Clusters", "Photos", "Files", "Markers", "Created At"} {
 			assert.Contains(t, output, col)
 		}
 
-		// A cluster holds markers, so the count of the parts comes before the count of the wholes.
-		assert.Less(t, strings.Index(output, "Markers"), strings.Index(output, "Clusters"))
+		// The counts run smallest to largest, which is how they nest: a person holds few clusters, a
+		// photo can hold several files, and one face can be marked more than once in a file.
+		order := []string{"Clusters", "Photos", "Files", "Markers"}
+
+		for i := 1; i < len(order); i++ {
+			assert.Less(t, strings.Index(output, order[i-1]), strings.Index(output, order[i]),
+				"%s has to come before %s", order[i-1], order[i])
+		}
+
 		assert.Contains(t, output, "Verified")
 		assert.Contains(t, output, "Hidden")
-		assert.Contains(t, output, "Files")
-		assert.Contains(t, output, "Photos")
 	})
 	t.Run("JSON", func(t *testing.T) {
 		output, err := RunWithTestContext(FacesSubjectsCommand, []string{"subjects", "--json"})
@@ -84,10 +89,13 @@ func TestFacesSubjectsCommand(t *testing.T) {
 		require.NoError(t, json.Unmarshal([]byte(output), &rows))
 
 		require.NotEmpty(t, rows)
-		assert.Contains(t, rows[0], "favorite")
+		// The stored column names, which are given explicitly rather than derived from the headings.
+		assert.Contains(t, rows[0], "subj_favorite")
 		assert.Contains(t, rows[0], "verified")
-		assert.Contains(t, rows[0], "hidden")
-		assert.Contains(t, rows[0], "files")
+		assert.Contains(t, rows[0], "subj_hidden")
+		assert.Contains(t, rows[0], "subj_private")
+		assert.Contains(t, rows[0], "subj_birthday")
+		assert.Contains(t, rows[0], "file_count")
 		assert.Contains(t, rows[0], "clusters")
 		assert.Contains(t, rows[0], "created_at")
 	})
@@ -98,7 +106,7 @@ func TestFacesSubjectsCommand(t *testing.T) {
 		var rows []map[string]any
 		require.NoError(t, json.Unmarshal([]byte(output), &rows))
 		require.Len(t, rows, 1)
-		assert.Equal(t, "Actress A", rows[0]["name"])
+		assert.Equal(t, "Actress A", rows[0]["subj_name"])
 	})
 	t.Run("Stored", func(t *testing.T) {
 		// Same shape, without the pass over markers and files that counting live costs.
@@ -108,8 +116,8 @@ func TestFacesSubjectsCommand(t *testing.T) {
 		var rows []map[string]any
 		require.NoError(t, json.Unmarshal([]byte(output), &rows))
 		require.NotEmpty(t, rows)
-		assert.Contains(t, rows[0], "files")
-		assert.Contains(t, rows[0], "photos")
+		assert.Contains(t, rows[0], "file_count")
+		assert.Contains(t, rows[0], "photo_count")
 	})
 	t.Run("CountIsBounded", func(t *testing.T) {
 		// Asserted on reportPaging rather than on the row count: the fixtures hold fewer than 100
@@ -141,7 +149,7 @@ func TestFacesListCommand(t *testing.T) {
 
 		// Samples against the live marker count is the pair worth reading: the first is what the
 		// cluster was built from, the second is what points at it now.
-		for _, col := range []string{"Face", "Name", "Subject", "Src", "Kind", "Markers", "Samples", "Radius", "Collisions", "Collision Radius", "Matched At"} {
+		for _, col := range []string{"Face", "Name", "Subject", "Src", "Kind", "Embedding", "Samples", "Radius", "Collisions", "Collision Radius", "Markers", "Matched At"} {
 			assert.Contains(t, output, col)
 		}
 
@@ -159,7 +167,7 @@ func TestFacesListCommand(t *testing.T) {
 		require.NotEmpty(t, rows)
 
 		for _, row := range rows {
-			assert.Equal(t, "Actress A", row["name"])
+			assert.Equal(t, "Actress A", row["subj_name"])
 		}
 	})
 	t.Run("Markdown", func(t *testing.T) {
@@ -177,7 +185,7 @@ func TestFacesMarkersCommand(t *testing.T) {
 		output, err := RunWithTestContext(FacesMarkersCommand, []string{"markers"})
 		require.NoError(t, err)
 
-		for _, col := range []string{"Marker", "Name", "Size", "Thumb px", "Score", "Subject", "Src", "Face", "Dist", "Embedding", "Landmarks", "Invalid", "File", "Matched At"} {
+		for _, col := range []string{"Marker", "Src", "Size", "in %", "Score", "Name", "Subject", "Src", "Face", "Dist", "Invalid", "Embedding", "Landmarks", "Detector", "File", "Matched At"} {
 			assert.Contains(t, output, col)
 		}
 
@@ -227,9 +235,9 @@ func TestReportVectors(t *testing.T) {
 // TestReportFrameShare covers the relative size column, which answers how prominent a face is in
 // its picture without naming the rendition an absolute one would be measured in.
 func TestReportFrameShare(t *testing.T) {
-	assert.Equal(t, "25.0%", reportFrameShare(0.25))
-	assert.Equal(t, "1.5%", reportFrameShare(0.015))
-	assert.Equal(t, "100.0%", reportFrameShare(1))
+	assert.Equal(t, "25.0", reportFrameShare(0.25))
+	assert.Equal(t, "1.5", reportFrameShare(0.015))
+	assert.Equal(t, "100.0", reportFrameShare(1))
 	assert.Equal(t, reportUnrecorded, reportFrameShare(0), "an unmeasured area is not a face of no width")
 	assert.Equal(t, reportUnrecorded, reportFrameShare(-1))
 }
@@ -472,5 +480,95 @@ func TestFaceConflictNoteWriter(t *testing.T) {
 	t.Run("ReadableFormatsGoToStdout", func(t *testing.T) {
 		assert.Equal(t, os.Stdout, faceConflictNoteWriter(report.Default))
 		assert.Equal(t, os.Stdout, faceConflictNoteWriter(report.Markdown))
+	})
+}
+
+func TestReportThumbPixels(t *testing.T) {
+	t.Run("Recorded", func(t *testing.T) {
+		assert.Equal(t, "83px", reportThumbPixels(83))
+	})
+	t.Run("Unrecorded", func(t *testing.T) {
+		// The state that sends the clustering bar to the detection size, so it has to stay legible
+		// rather than reading as zero pixels.
+		assert.Equal(t, reportUnrecorded, reportThumbPixels(0))
+		assert.Equal(t, reportUnrecorded, reportThumbPixels(-1))
+	})
+}
+
+func TestReportEmbedding(t *testing.T) {
+	t.Run("ModelAndWidth", func(t *testing.T) {
+		assert.Equal(t, "sface 128", reportEmbedding("sface", 128))
+	})
+	t.Run("WidthAloneWithoutAModel", func(t *testing.T) {
+		assert.Equal(t, "128", reportEmbedding("", 128))
+	})
+	t.Run("NoEmbedding", func(t *testing.T) {
+		// Blank rather than "-": an XMP region legitimately holds none, which is not a defect.
+		assert.Equal(t, "", reportEmbedding("sface", 0))
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		assert.Equal(t, "invalid", reportEmbedding("sface", query.InvalidJSON))
+	})
+}
+
+func TestReportModelName(t *testing.T) {
+	t.Run("Recorded", func(t *testing.T) {
+		assert.Equal(t, "yunet", reportModelName("yunet"))
+	})
+	t.Run("Unrecorded", func(t *testing.T) {
+		// Marked rather than blank, since a blank reads as "no detector" where it means the row
+		// predates the column.
+		assert.Equal(t, "-", reportModelName(""))
+	})
+}
+
+// TestFacesMarkersCommandJSONKeys pins the JSON field names, which are given rather than derived from
+// the column headings: retitling a column must not rename a key, and the two columns titled "Src"
+// would otherwise export as one.
+func TestFacesMarkersCommandJSONKeys(t *testing.T) {
+	output, err := RunWithTestContext(FacesMarkersCommand, []string{"markers", "--json", "--count", "1"})
+	assert.NoError(t, err)
+
+	var rows []map[string]string
+	require.NoError(t, json.Unmarshal([]byte(output), &rows))
+	require.NotEmpty(t, rows, "the fixtures have to hold a marker for this to pin anything")
+
+	for _, key := range []string{
+		"marker_uid", "marker_src", "thumb_size", "frame_share", "score",
+		"marker_name", "subj_uid", "subj_src", "face_id", "face_dist", "marker_invalid",
+		"embedding", "landmarks", "detect_model", "file_uid", "matched_at",
+	} {
+		assert.Contains(t, rows[0], key)
+	}
+
+	// The headings would have produced these, and one of them collides.
+	for _, key := range []string{"in", "src", "size", "marker", "name", "subject", "dist", "file"} {
+		assert.NotContains(t, rows[0], key)
+	}
+
+	// Each key has to carry its own column's value. Listing the names alone leaves the pairing
+	// unpinned, so reordering one list against the other would rename every field silently.
+	assert.Regexp(t, `^m[a-z0-9]{15}$`, rows[0]["marker_uid"])
+	assert.Regexp(t, `^f[a-z0-9]{15}$`, rows[0]["file_uid"])
+	assert.Regexp(t, `px$|^-$`, rows[0]["thumb_size"])
+	assert.NotContains(t, rows[0]["frame_share"], "px")
+}
+
+func TestRightAligned(t *testing.T) {
+	cols := []string{"Marker", "Size", "Name", "Score"}
+
+	t.Run("ByName", func(t *testing.T) {
+		got := rightAligned(cols, "Size", "Score")
+		assert.Equal(t, []report.Align{"", report.AlignRight, "", report.AlignRight}, got)
+	})
+	t.Run("SurvivesReordering", func(t *testing.T) {
+		// The reason this takes names: the same request against a different column order has to
+		// follow the columns rather than keep pointing at the old indexes.
+		moved := []string{"Score", "Marker", "Size", "Name"}
+		got := rightAligned(moved, "Size", "Score")
+		assert.Equal(t, []report.Align{report.AlignRight, "", report.AlignRight, ""}, got)
+	})
+	t.Run("UnknownNameIsIgnored", func(t *testing.T) {
+		assert.Equal(t, make([]report.Align, len(cols)), rightAligned(cols, "Nothing"))
 	})
 }
