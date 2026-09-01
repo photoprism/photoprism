@@ -267,11 +267,57 @@ func TestStackPhotos(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	var keywords []Keyword
+	if err := Db().Limit(2).Find(&keywords).Error; err != nil {
+		t.Fatal(err)
+	}
+	if len(keywords) < 2 {
+		t.Fatal("stack test requires two keyword fixtures")
+	}
+
+	var labels []Label
+	if err := Db().Limit(2).Find(&labels).Error; err != nil {
+		t.Fatal(err)
+	}
+	if len(labels) < 2 {
+		t.Fatal("stack test requires two label fixtures")
+	}
+
+	var albums []Album
+	if err := Db().Limit(2).Find(&albums).Error; err != nil {
+		t.Fatal(err)
+	}
+	if len(albums) < 2 {
+		t.Fatal("stack test requires two album fixtures")
+	}
+
+	relations := []interface{}{
+		NewPhotoKeyword(primary.ID, keywords[0].ID),
+		NewPhotoKeyword(secondary.ID, keywords[0].ID),
+		NewPhotoKeyword(secondary.ID, keywords[1].ID),
+		NewPhotoLabel(primary.ID, labels[0].ID, 0, SrcManual),
+		NewPhotoLabel(secondary.ID, labels[0].ID, 5, SrcAuto),
+		NewPhotoLabel(secondary.ID, labels[1].ID, 10, SrcAuto),
+		NewPhotoAlbum(primary.PhotoUID, albums[0].AlbumUID),
+		NewPhotoAlbum(secondary.PhotoUID, albums[0].AlbumUID),
+		NewPhotoAlbum(secondary.PhotoUID, albums[1].AlbumUID),
+	}
+
+	for _, relation := range relations {
+		if err := Db().Create(relation).Error; err != nil {
+			t.Fatal(err)
+		}
+	}
+
 	t.Cleanup(func() {
 		fileUIDs := []string{primaryFile.FileUID, secondaryFile.FileUID}
 		photoIDs := []uint{primary.ID, secondary.ID}
+		photoUIDs := []string{primary.PhotoUID, secondary.PhotoUID}
 
 		_ = UnscopedDb().Where("file_uid IN (?)", fileUIDs).Delete(File{}).Error
+		_ = UnscopedDb().Where("photo_id IN (?)", photoIDs).Delete(PhotoKeyword{}).Error
+		_ = UnscopedDb().Where("photo_id IN (?)", photoIDs).Delete(PhotoLabel{}).Error
+		_ = UnscopedDb().Where("photo_uid IN (?)", photoUIDs).Delete(PhotoAlbum{}).Error
 		_ = UnscopedDb().Where("photo_id IN (?)", photoIDs).Delete(Details{}).Error
 		_ = UnscopedDb().Where("id IN (?)", photoIDs).Delete(Photo{}).Error
 	})
@@ -318,6 +364,27 @@ func TestStackPhotos(t *testing.T) {
 		assert.NoError(t, UnscopedDb().First(&refreshedSecondary, "id = ?", secondary.ID).Error)
 		assert.Equal(t, -1, refreshedSecondary.PhotoQuality)
 		assert.NotNil(t, refreshedSecondary.DeletedAt)
+
+		var keywordRelations []PhotoKeyword
+		assert.NoError(t, UnscopedDb().Where("photo_id IN (?)", []uint{primary.ID, secondary.ID}).Find(&keywordRelations).Error)
+		assert.Len(t, keywordRelations, 2)
+		for _, relation := range keywordRelations {
+			assert.Equal(t, primary.ID, relation.PhotoID)
+		}
+
+		var labelRelations []PhotoLabel
+		assert.NoError(t, UnscopedDb().Where("photo_id IN (?)", []uint{primary.ID, secondary.ID}).Find(&labelRelations).Error)
+		assert.Len(t, labelRelations, 2)
+		for _, relation := range labelRelations {
+			assert.Equal(t, primary.ID, relation.PhotoID)
+		}
+
+		var albumRelations []PhotoAlbum
+		assert.NoError(t, UnscopedDb().Where("photo_uid IN (?)", []string{primary.PhotoUID, secondary.PhotoUID}).Find(&albumRelations).Error)
+		assert.Len(t, albumRelations, 2)
+		for _, relation := range albumRelations {
+			assert.Equal(t, primary.PhotoUID, relation.PhotoUID)
+		}
 	})
 }
 

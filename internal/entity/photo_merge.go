@@ -89,29 +89,8 @@ func StackPhotos(photoUIDs []string) (original Photo, stacked Photos, err error)
 			return rollback(updateErr)
 		}
 
-		switch DbDialect() {
-		case dsn.DriverMySQL:
-			if updateErr := tx.Exec("UPDATE IGNORE photos_keywords SET photo_id = ? WHERE photo_id = ?", original.ID, photo.ID).Error; updateErr != nil {
-				return rollback(updateErr)
-			}
-			if updateErr := tx.Exec("UPDATE IGNORE photos_labels SET photo_id = ? WHERE photo_id = ?", original.ID, photo.ID).Error; updateErr != nil {
-				return rollback(updateErr)
-			}
-			if updateErr := tx.Exec("UPDATE IGNORE photos_albums SET photo_uid = ? WHERE photo_uid = ?", original.PhotoUID, photo.PhotoUID).Error; updateErr != nil {
-				return rollback(updateErr)
-			}
-		case dsn.DriverSQLite3:
-			if updateErr := tx.Exec("UPDATE OR IGNORE photos_keywords SET photo_id = ? WHERE photo_id = ?", original.ID, photo.ID).Error; updateErr != nil {
-				return rollback(updateErr)
-			}
-			if updateErr := tx.Exec("UPDATE OR IGNORE photos_labels SET photo_id = ? WHERE photo_id = ?", original.ID, photo.ID).Error; updateErr != nil {
-				return rollback(updateErr)
-			}
-			if updateErr := tx.Exec("UPDATE OR IGNORE photos_albums SET photo_uid = ? WHERE photo_uid = ?", original.PhotoUID, photo.PhotoUID).Error; updateErr != nil {
-				return rollback(updateErr)
-			}
-		default:
-			return rollback(fmt.Errorf("stack: unsupported database dialect %s", DbDialect()))
+		if moveErr := moveStackAssociations(tx, &original, photo); moveErr != nil {
+			return rollback(moveErr)
 		}
 
 		photo.DeletedAt = &deleted
@@ -136,6 +115,65 @@ func StackPhotos(photoUIDs []string) (original Photo, stacked Photos, err error)
 	File{PhotoID: original.ID, PhotoUID: original.PhotoUID}.RegenerateIndex()
 
 	return original, stacked, nil
+}
+
+// moveStackAssociations transfers keyword, label, and album relations to the
+// primary photo, removing duplicate source rows before updating the remainder.
+func moveStackAssociations(tx *gorm.DB, primary, secondary *Photo) error {
+	if tx == nil || primary == nil || secondary == nil {
+		return fmt.Errorf("stack: photo associations require a transaction and two pictures")
+	}
+
+	var statements []struct {
+		query string
+		args  []any
+	}
+
+	switch DbDialect() {
+	case dsn.DriverMySQL:
+		statements = []struct {
+			query string
+			args  []any
+		}{
+			{"DELETE source FROM photos_keywords AS source INNER JOIN photos_keywords AS target ON target.photo_id = ? AND target.keyword_id = source.keyword_id WHERE source.photo_id = ?", []any{primary.ID, secondary.ID}},
+			{"DELETE source FROM photos_labels AS source INNER JOIN photos_labels AS target ON target.photo_id = ? AND target.label_id = source.label_id WHERE source.photo_id = ?", []any{primary.ID, secondary.ID}},
+			{"DELETE source FROM photos_albums AS source INNER JOIN photos_albums AS target ON target.photo_uid = ? AND target.album_uid = source.album_uid WHERE source.photo_uid = ?", []any{primary.PhotoUID, secondary.PhotoUID}},
+		}
+	case dsn.DriverSQLite3:
+		statements = []struct {
+			query string
+			args  []any
+		}{
+			{"DELETE FROM photos_keywords WHERE photo_id = ? AND EXISTS (SELECT 1 FROM photos_keywords AS target WHERE target.photo_id = ? AND target.keyword_id = photos_keywords.keyword_id)", []any{secondary.ID, primary.ID}},
+			{"DELETE FROM photos_labels WHERE photo_id = ? AND EXISTS (SELECT 1 FROM photos_labels AS target WHERE target.photo_id = ? AND target.label_id = photos_labels.label_id)", []any{secondary.ID, primary.ID}},
+			{"DELETE FROM photos_albums WHERE photo_uid = ? AND EXISTS (SELECT 1 FROM photos_albums AS target WHERE target.photo_uid = ? AND target.album_uid = photos_albums.album_uid)", []any{secondary.PhotoUID, primary.PhotoUID}},
+		}
+	default:
+		return fmt.Errorf("stack: unsupported database dialect %s", DbDialect())
+	}
+
+	statements = append(statements,
+		struct {
+			query string
+			args  []any
+		}{"UPDATE photos_keywords SET photo_id = ? WHERE photo_id = ?", []any{primary.ID, secondary.ID}},
+		struct {
+			query string
+			args  []any
+		}{"UPDATE photos_labels SET photo_id = ? WHERE photo_id = ?", []any{primary.ID, secondary.ID}},
+		struct {
+			query string
+			args  []any
+		}{"UPDATE photos_albums SET photo_uid = ? WHERE photo_uid = ?", []any{primary.PhotoUID, secondary.PhotoUID}},
+	)
+
+	for _, statement := range statements {
+		if err := tx.Exec(statement.query, statement.args...).Error; err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // ResolvePrimary ensures only one associated file remains marked as primary, delegating to the file helper.
