@@ -106,11 +106,6 @@ describe("component/photo/clipboard", () => {
     });
   });
 
-  // downloadAll() reports { downloaded, skipped }; the clipboard picks the
-  // prompt: "Downloading…" when a download started, a warning when every
-  // file of the single selected photo was excluded by the download
-  // settings. Multi-photo downloads always produce a zip, so they keep the
-  // unconditional prompt.
   describe("download() prompt", () => {
     const warnMessage = "No files to download: all files are excluded by the download settings";
 

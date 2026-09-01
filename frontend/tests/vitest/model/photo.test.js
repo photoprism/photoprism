@@ -204,13 +204,7 @@ describe("model/photo", () => {
     expect(result).toBe("/api/v1/dl/97b8cf7b3710bec95f6609487bbdd62489b95fb2?t=2lbh9x09");
   });
 
-  // downloadAll() starts one download per eligible file and reports what
-  // happened as { downloaded, skipped } — the consumers decide which prompt
-  // fits: "Downloading…" when a download started, a warning when every file
-  // was excluded by the settings, silence otherwise.
   describe("downloadAll", () => {
-    // Permissive baseline: download feature on, no originals / sidecar /
-    // raw restriction set.
     const allowAll = (overrides = {}) => ({
       features: { download: true },
       download: { name: "file", ...overrides },
@@ -256,8 +250,6 @@ describe("model/photo", () => {
     });
 
     it("reports every file as skipped when the settings exclude them all", () => {
-      // The reported misconfiguration: RAW downloads are off and the photo
-      // only has a RAW file — before the fix, the click silently did nothing.
       mockSettings(allowAll({ mediaRaw: false }));
       const photo = new Photo({ UID: "pt9x2vksm3p4q8ft", Type: "image", Files: [raw("r1")] });
 
