@@ -1,14 +1,14 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-08-28 02:08+0000\n"
+"PO-Revision-Date: 2026-09-01 06:33+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: none\n"
 "Language: lv\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n % 10 == 0 || n % 100 >= 11 && n % 100 <= 19) ? 0 : ((n % 10 == 1 && n % 100 != 11) ? 1 : 2);\n"
-"X-Generator: Weblate 2026.8\n"
+"X-Generator: Weblate 2026.8.1\n"
 
 #: src/locales.js:272
 msgid "{0} appended action"
@@ -128,7 +128,7 @@ msgstr "Klikšķis nokopēs to starpliktuvē."
 
 #: src/locales.js:428
 msgid "A migration is in progress"
-msgstr ""
+msgstr "Notiek migrācija"
 
 #: src/component/update.vue:53
 msgid "A new version of %{s} is available:"
