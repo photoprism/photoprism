@@ -14,6 +14,7 @@ import (
 // stubEmbedder records the crops it receives so tests can assert how they were prepared.
 type stubEmbedder struct {
 	aligned bool
+	empty   bool
 	dims    int
 	sizes   []image.Rectangle
 }
@@ -37,6 +38,10 @@ func (e *stubEmbedder) Run(img image.Image) face.Embeddings {
 	}
 
 	e.sizes = append(e.sizes, img.Bounds())
+
+	if e.empty {
+		return nil
+	}
 
 	values := make([]float32, e.dims)
 	values[0] = 1
@@ -92,6 +97,15 @@ func TestGenerateEmbeddings(t *testing.T) {
 		assert.Equal(t, face.CropSize.Width, embedder.sizes[0].Dx())
 		assert.False(t, faces[0].Embeddings.Empty())
 		assert.Positive(t, faces[0].ThumbSize, "the unaligned branch records it too")
+	})
+	t.Run("EmptyEmbeddingIsNotCounted", func(t *testing.T) {
+		// The count describes vectors, so a crop the model returned nothing for is not one.
+		embedder := &stubEmbedder{aligned: true, empty: true, dims: 128}
+		faces := testFaces(false)
+		assert.Zero(t, GenerateEmbeddings(embedder, fileName, faces, false))
+
+		require.Len(t, embedder.sizes, 1, "the crop was still taken")
+		assert.True(t, faces[0].Embeddings.Empty())
 	})
 	t.Run("UnalignedModelUsesThumbCrop", func(t *testing.T) {
 		embedder := &stubEmbedder{aligned: false, dims: 512}

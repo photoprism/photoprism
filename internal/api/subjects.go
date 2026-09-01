@@ -75,11 +75,6 @@ func GetSubject(router *gin.RouterGroup) {
 //	@Router		/api/v1/subjects/{uid} [put]
 func UpdateSubject(router *gin.RouterGroup) {
 	router.PUT("/subjects/:uid", func(c *gin.Context) {
-		// Abort if a face migration is rebuilding the people this would rename.
-		if faceMigrationRunning(c) {
-			return
-		}
-
 		if err := mutex.UpdatePeople.Start(); err != nil {
 			AbortBusy(c)
 			return
@@ -90,6 +85,11 @@ func UpdateSubject(router *gin.RouterGroup) {
 		s := Auth(c, acl.ResourcePeople, acl.ActionUpdate)
 
 		if s.Abort(c) {
+			return
+		}
+
+		// Abort if a face migration is rebuilding the people this would rename.
+		if faceMigrationRunning(c) {
 			return
 		}
 

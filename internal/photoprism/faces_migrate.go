@@ -133,9 +133,9 @@ type FacesMigrateResult struct {
 	RenderedThumbs int
 	FailedThumbs   int
 
-	// UnalignedCrops counts the markers an aligned model embedded from a plain box crop, because
-	// their landmarks did not fit its template. Only failures log, and at debug level, so without
-	// this the rate is unobservable on an ordinary run.
+	// UnalignedCrops counts the markers an aligned model embedded from a plain box crop, whether
+	// the landmarks did not fit its template or the source could not be decoded. Only failures
+	// log, and at debug level, so without this the rate is unobservable on an ordinary run.
 	UnalignedCrops int
 
 	Unlinked          int

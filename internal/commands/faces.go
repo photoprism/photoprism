@@ -260,7 +260,7 @@ func facesMigrateAction(ctx *cli.Context) error {
 		// The other cost that leaves no trace in the vectors: an aligned model was trained on
 		// pose-normalized faces, and these reached it as a plain box crop instead.
 		if result.UnalignedCrops > 0 {
-			log.Infof("faces: %d marker(s) were embedded from an unaligned crop because their landmarks did not fit the template",
+			log.Infof("faces: %d marker(s) could not be aligned and were embedded from a plain box crop",
 				result.UnalignedCrops)
 		}
 		// Reported apart from both, because a retained marker is neither work done nor a loss:

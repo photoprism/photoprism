@@ -39,18 +39,16 @@ func wakeupIntervalTooHigh(c *gin.Context) bool {
 // faceMigrationRunning refuses a request with 409 while a face migration holds the lock, and
 // reports whether it did.
 //
-// The migration replaces every cluster in one transaction, so a name typed while it runs is
-// overwritten with no error anywhere. The holder is named in the log rather than in the response,
-// which needs no detail beyond why it was refused.
+// A migration replaces every face cluster in one transaction, so these rows are the migration's
+// for its duration. The refusal is the response rather than a log line: an authenticated caller
+// can repeat it, and the operator running the migration already has its own output.
 func faceMigrationRunning(c *gin.Context) bool {
-	held := get.Config().FacesLocked()
-
-	if held == "" {
+	if get.Config().FacesLocked() == "" {
 		return false
 	}
 
-	log.Warnf("faces: refused %s while a migration is running (%s)", clean.Log(c.FullPath()), held)
-	AbortFaceMigrationRunning(c)
+	log.Debugf("faces: refused %s while a migration is running", clean.Log(c.FullPath()))
+	AbortMigrationInProgress(c)
 
 	return true
 }
@@ -107,7 +105,8 @@ func findFileMarker(c *gin.Context) (file *entity.File, marker *entity.Marker, e
 //
 //	@Tags		Files
 //	@Produce	json
-//	@Success	201	{object}	entity.Marker
+//	@Success	201					{object}	entity.Marker
+//	@Failure	400,401,403,409,500	{object}	i18n.Response
 //	@Router		/api/v1/markers [post]
 func CreateMarker(router *gin.RouterGroup) {
 	router.POST("/markers", func(c *gin.Context) {
@@ -242,11 +241,6 @@ func UpdateMarker(router *gin.RouterGroup) {
 			return
 		}
 
-		// Abort if a face migration is replacing the clusters this would write to.
-		if faceMigrationRunning(c) {
-			return
-		}
-
 		// Abort if another update is running.
 		if err := mutex.UpdatePeople.Start(); err != nil {
 			AbortBusy(c)
@@ -259,6 +253,11 @@ func UpdateMarker(router *gin.RouterGroup) {
 
 		if err != nil {
 			log.Debugf("faces: %s (find marker to update)", err)
+			return
+		}
+
+		// Abort if a face migration is replacing the clusters this would write to.
+		if faceMigrationRunning(c) {
 			return
 		}
 
@@ -351,11 +350,6 @@ func ClearMarkerSubject(router *gin.RouterGroup) {
 			return
 		}
 
-		// Abort if a face migration is replacing the clusters this would write to.
-		if faceMigrationRunning(c) {
-			return
-		}
-
 		// Abort if another update is running.
 		if err := mutex.UpdatePeople.Start(); err != nil {
 			AbortBusy(c)
@@ -368,6 +362,11 @@ func ClearMarkerSubject(router *gin.RouterGroup) {
 
 		if err != nil {
 			log.Debugf("faces: %s (find marker to clear subject)", err)
+			return
+		}
+
+		// Abort if a face migration is replacing the clusters this would write to.
+		if faceMigrationRunning(c) {
 			return
 		}
 

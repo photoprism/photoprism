@@ -10,8 +10,8 @@ import (
 )
 
 // GenerateEmbeddings runs the embedding model on each detected face and assigns the result.
-// It returns how many an aligned model had to embed from an unaligned crop, a quality cost
-// that leaves no trace in the vectors themselves.
+// It returns how many an aligned model had to embed from a plain box crop, a quality cost that
+// leaves no trace in the vectors themselves. Each cause logs its own reason.
 func GenerateEmbeddings(embedder face.Embedder, fileName string, faces face.Faces, cacheCrop bool) (unaligned int) {
 	if embedder == nil || len(faces) == 0 {
 		return 0
@@ -48,16 +48,18 @@ func GenerateEmbeddings(embedder face.Embedder, fileName string, faces face.Face
 			continue
 		}
 
-		if embedder.Aligned() && !aligned {
-			unaligned++
-		}
-
 		// The name is recorded next to the vector because this is the last frame where the
 		// producer is known: everything downstream would have to ask global configuration.
 		if embeddings := embedder.Run(img); !embeddings.Empty() {
 			f.Embeddings = embeddings
 			f.EmbedModel = embedder.ModelName()
 			f.SetThumbSize(srcWidth)
+
+			// Counted here rather than at the crop, since a crop nothing was embedded from
+			// leaves no vector to describe.
+			if embedder.Aligned() && !aligned {
+				unaligned++
+			}
 		}
 	}
 

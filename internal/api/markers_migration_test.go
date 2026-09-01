@@ -109,6 +109,32 @@ func TestFaceMigrationRefusesWrites(t *testing.T) {
 		r := PerformRequestWithBody(app, "PUT", "/api/v1/subjects/js6sg6b1qekk9jx8", `{"Name": "Renamed While Migrating"}`)
 		assert.Equal(t, http.StatusConflict, r.Code)
 	})
+	t.Run("UpdateFace", func(t *testing.T) {
+		// The fifth path a person edits people through: hiding a cluster and naming one both
+		// write rows the finalize replaces, and a subject written mid-run rolls it back.
+		app, router, conf := NewApiTest()
+		UpdateFace(router)
+
+		holdFacesLock(t, conf)
+
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/faces/PN6QO5INYTUSAATOFL43LL2ABAV5ACzk", `{"SubjUID": "js6sg6b1qekk9jx8"}`)
+		assert.Equal(t, http.StatusConflict, r.Code)
+	})
+	t.Run("UnauthorizedBeforeRefused", func(t *testing.T) {
+		// The gate sits behind the authorization check, so a caller without a session learns
+		// nothing about what the instance is doing.
+		app, router, conf := NewApiTest()
+		UpdateMarker(router)
+		_, markerUID := markerFixtureUIDs(t, app, router)
+
+		conf.SetAuthMode(config.AuthModePasswd)
+		t.Cleanup(func() { conf.SetAuthMode(config.AuthModePublic) })
+
+		holdFacesLock(t, conf)
+
+		r := PerformRequestWithBody(app, "PUT", fmt.Sprintf("/api/v1/markers/%s", markerUID), `{"MarkerInvalid": false}`)
+		assert.Equal(t, http.StatusUnauthorized, r.Code)
+	})
 	t.Run("ExpiredLockDoesNotRefuse", func(t *testing.T) {
 		// A killed migration leaves its file behind, and a file-exists check would wedge every
 		// write path until somebody deleted it by hand.

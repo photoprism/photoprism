@@ -554,7 +554,10 @@ func ResolveFaceCollisions() (conflicts, resolved int, err error) {
 
 				r := f1.AcceptDist()
 
-				log.Infof("faces: face %s has ambiguous subject at dist %f, Ø %f from %d samples, collision Ø %f", f1.ID, dist, r, f1.Samples, f1.CollisionRadius)
+				// At debug level with the two below it: the caller reports how many pairs were
+				// found and how many it resolved, and a pass right after a migration meets
+				// hundreds of them. photoprism faces conflicts lists them on demand.
+				log.Debugf("faces: face %s has ambiguous subject at dist %f, Ø %f from %d samples, collision Ø %f", f1.ID, dist, r, f1.Samples, f1.CollisionRadius)
 
 				if f1.SubjUID != "" {
 					log.Debugf("faces: face %s has %s subject %s (%s)", f1.ID, entity.SrcString(f1.FaceSrc), entity.SubjNames.Log(f1.SubjUID), f1.SubjUID)

@@ -58,6 +58,7 @@ const (
 	ErrQuotaExceeded
 	ErrRegistrationDisabled
 	ErrVerifiedEmailRequired
+	ErrMigrationInProgress
 
 	MsgChangesSaved
 	MsgAlbumCreated
@@ -105,10 +106,6 @@ const (
 	MsgRestored
 	MsgVerified
 	MsgActivated
-
-	// New identifiers are appended here rather than inserted above, because the numeric value is
-	// what a response carries and clients compare against.
-	ErrFaceMigrationRunning
 )
 
 // Messages holds default English message strings.
@@ -168,8 +165,7 @@ var Messages = MessageMap{
 	ErrQuotaExceeded:         gettext("Quota exceeded"),
 	ErrRegistrationDisabled:  gettext("Registration disabled"),
 	ErrVerifiedEmailRequired: gettext("Verified email required"),
-
-	ErrFaceMigrationRunning: gettext("A face migration is running, please try again when it is complete"),
+	ErrMigrationInProgress:   gettext("A migration is in progress"),
 
 	// Info and confirmation messages:
 	MsgChangesSaved:          gettext("Changes successfully saved"),
