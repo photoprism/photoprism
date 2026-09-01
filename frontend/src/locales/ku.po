@@ -79,15 +79,15 @@ msgstr ""
 msgid "%{s} is too short"
 msgstr ""
 
-#: src/locales.js:437
+#: src/locales.js:438
 msgid "%d entries added to %s"
 msgstr "%d تێکراو زیاد کرایە  %s"
 
-#: src/locales.js:439
+#: src/locales.js:440
 msgid "%d entries removed from %s"
 msgstr "%d تێکراو لابرا لە %s"
 
-#: src/locales.js:461
+#: src/locales.js:462
 msgid "%d files uploaded in %d s"
 msgstr "%d پەڕگە بارکرە بە %d چرکە"
 
@@ -95,7 +95,7 @@ msgstr "%d پەڕگە بارکرە بە %d چرکە"
 msgid "%s already exists"
 msgstr "%s پێشتر هەیە"
 
-#: src/locales.js:471
+#: src/locales.js:472
 msgid "%s has been restored"
 msgstr ""
 
@@ -129,6 +129,10 @@ msgstr "٤ کاتژمێر"
 #: src/component/share/dialog.vue:116
 msgid "A click will copy it to your clipboard."
 msgstr "کرتەیەک کۆپی دەکاتە کلیپ بۆردەکەت"
+
+#: src/locales.js:428
+msgid "A migration is in progress"
+msgstr ""
 
 #: src/component/update.vue:53
 msgid "A new version of %{s} is available:"
@@ -176,12 +180,12 @@ msgid "Account"
 msgstr "هەژمار"
 
 #: src/component/user/add/dialog.vue:261 src/component/user/add/dialog.vue:277
-#: src/component/service/add.vue:131 src/locales.js:440
+#: src/component/service/add.vue:131 src/locales.js:441
 msgid "Account created"
 msgstr "هەژمارەکە دروستکرا"
 
 #: src/component/user/remove/dialog.vue:63 src/component/service/remove.vue:74
-#: src/locales.js:442
+#: src/locales.js:443
 msgid "Account deleted"
 msgstr "هەژمارەکە سڕایەوە"
 
@@ -197,7 +201,7 @@ msgstr "هەژمارەکە نەدۆزرایەوە"
 msgid "Account restored"
 msgstr ""
 
-#: src/locales.js:441
+#: src/locales.js:442
 msgid "Account saved"
 msgstr "هەژمارەکە پاشەکەوتکرا"
 
@@ -394,7 +398,7 @@ msgstr "دوای ٢ هەفتە"
 msgid "Album"
 msgstr "ئەلبوم"
 
-#: src/locales.js:431
+#: src/locales.js:432
 msgid "Album %s deleted"
 msgstr "ئەلبومی %s سڕایەوە"
 
@@ -402,11 +406,11 @@ msgstr "ئەلبومی %s سڕایەوە"
 msgid "Album Backups"
 msgstr "Album Backups"
 
-#: src/locales.js:432
+#: src/locales.js:433
 msgid "Album contents cloned"
 msgstr "ناوەڕۆکەکانی ئەلبومەکە هاووێنە کرا"
 
-#: src/locales.js:429 src/page/albums.vue:1194
+#: src/locales.js:430 src/page/albums.vue:1194
 msgid "Album created"
 msgstr "ئەلبومەکە دروستکرا"
 
@@ -418,7 +422,7 @@ msgstr ""
 msgid "Album not found"
 msgstr "ئەلبومەکە نەدۆزرایەوە"
 
-#: src/locales.js:430
+#: src/locales.js:431
 msgid "Album saved"
 msgstr "ئەلبومەکە پاشەکەوتکرا"
 
@@ -431,7 +435,7 @@ msgstr "ئەلبومەکە پاشەکەوتکرا"
 msgid "Albums"
 msgstr "ئەلبومەکان"
 
-#: src/component/album/clipboard.vue:194 src/locales.js:468
+#: src/component/album/clipboard.vue:194 src/locales.js:469
 msgid "Albums deleted"
 msgstr "ئەلبومەکان سڕایەوە"
 
@@ -933,7 +937,7 @@ msgstr "گۆڕانکاریەکان پاشەکەوت نەکراوە"
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
-#: src/locales.js:428 src/page/albums.vue:1197 src/page/people/new.vue:814
+#: src/locales.js:429 src/page/albums.vue:1197 src/page/people/new.vue:814
 #: src/page/people/recognized.vue:320 src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
 #: src/page/settings/general.vue:646
@@ -1165,7 +1169,7 @@ msgstr "کۆپی کرایە کلیپ بۆرد"
 msgid "Copy"
 msgstr ""
 
-#: src/locales.js:453
+#: src/locales.js:454
 msgid "Copying files from %s"
 msgstr "کۆپی کردنی پەڕگە لە%s"
 
@@ -1860,7 +1864,7 @@ msgstr "گەڕۆکی پەڕگە"
 msgid "File Conversion"
 msgstr ""
 
-#: src/locales.js:434
+#: src/locales.js:435
 msgid "File deleted"
 msgstr "پەڕگە سڕایەوە"
 
@@ -1874,7 +1878,7 @@ msgstr "پەڕگە"
 msgid "File not found"
 msgstr "دۆسیەکە نەدۆزرایەوە"
 
-#: src/locales.js:433
+#: src/locales.js:434
 msgid "File removed from stack"
 msgstr "دۆسیەکە کۆژاوەتەوە لە کەڵەکەکە"
 
@@ -1886,7 +1890,7 @@ msgstr "پەڕگە"
 msgid "File too large"
 msgstr ""
 
-#: src/locales.js:460
+#: src/locales.js:461
 msgid "File uploaded"
 msgstr ""
 
@@ -2123,11 +2127,11 @@ msgstr ""
 msgid "Import"
 msgstr "هاوردن"
 
-#: src/locales.js:446
+#: src/locales.js:447
 msgid "Import canceled"
 msgstr "هاوردن هەڵوەشێنرایەوە"
 
-#: src/locales.js:445
+#: src/locales.js:446
 msgid "Import completed in %d s"
 msgstr "هاوردن تەواو بوو بە %d  چرکە"
 
@@ -2189,11 +2193,11 @@ msgstr "نیشاندەر"
 msgid "Indexing"
 msgstr "نیشانەسازی"
 
-#: src/locales.js:450
+#: src/locales.js:451
 msgid "Indexing canceled"
 msgstr "نیشانەکردن هەڵوەشێنرایەوە"
 
-#: src/locales.js:447
+#: src/locales.js:448
 msgid "Indexing completed in %d s"
 msgstr "نیشانە کردن تەواو بوو بە %d چرکە"
 
@@ -2201,7 +2205,7 @@ msgstr "نیشانە کردن تەواو بوو بە %d چرکە"
 msgid "Indexing failed"
 msgstr "نیشانەسازی شکستی هێنا"
 
-#: src/locales.js:449
+#: src/locales.js:450
 msgid "Indexing files in %s"
 msgstr "نیشانەکردنی پەڕگەکان لە %s"
 
@@ -2209,7 +2213,7 @@ msgstr "نیشانەکردنی پەڕگەکان لە %s"
 msgid "Indexing media and sidecar files…"
 msgstr "پێڕستکردنی پەڕگەکانی میدیا و لاتەنیشتەکان…"
 
-#: src/locales.js:448
+#: src/locales.js:449
 msgid "Indexing originals..."
 msgstr "نیشانەکردنی ڕەسەنەکان..."
 
@@ -2359,7 +2363,7 @@ msgstr "پێناس"
 msgid "Label not found"
 msgstr "پێناسەکە نەدۆزرایەوە"
 
-#: src/locales.js:455
+#: src/locales.js:456
 msgid "Label saved"
 msgstr "پێناسەکە پاشەکەوتکرا"
 
@@ -2375,7 +2379,7 @@ msgstr "پێناسەکە پاشەکەوتکرا"
 msgid "Labels"
 msgstr "پێناسەکان"
 
-#: src/component/label/clipboard.vue:131 src/locales.js:454
+#: src/component/label/clipboard.vue:131 src/locales.js:455
 msgid "Labels deleted"
 msgstr "پێناسەکان سڕانەوە"
 
@@ -2687,7 +2691,7 @@ msgstr "گرنگترین"
 msgid "Move Files"
 msgstr "دۆسیەی زیاتر"
 
-#: src/locales.js:452
+#: src/locales.js:453
 msgid "Moving files from %s"
 msgstr "گواستنەوەی پەڕگە لە %s"
 
@@ -2975,11 +2979,11 @@ msgstr "جارێك لەهەفتەیەكدا"
 msgid "One album found"
 msgstr "یەك ئەلبوم دۆزرایەوە"
 
-#: src/locales.js:436
+#: src/locales.js:437
 msgid "One entry added to %s"
 msgstr "یەک تێکراو زیاد کرایە %s"
 
-#: src/locales.js:438
+#: src/locales.js:439
 msgid "One entry removed from %s"
 msgstr "یەک تێکراو لابرا لە %s"
 
@@ -3124,7 +3128,7 @@ msgstr ""
 msgid "Password"
 msgstr "تێپەڕەوشە"
 
-#: src/component/settings/password.vue:162 src/locales.js:444
+#: src/component/settings/password.vue:162 src/locales.js:445
 msgid "Password changed"
 msgstr "تێپەڕەوشە گۆڕدرا"
 
@@ -3152,7 +3156,7 @@ msgid "People you share a link with will be able to view public contents."
 msgstr "ئەو کەسانەی بەستەرێکی هاوبەشیان لەگەڵ دا دروست دەکەیت، توانای بینینی ناوەڕۆکە گشتیەکانی دەبێت."
 
 #: src/component/photo/clipboard.vue:303 src/component/photo/toolbar.vue:522
-#: src/locales.js:470
+#: src/locales.js:471
 msgid "Permanently deleted"
 msgstr "بە هەمیشەیی سڕاوەتەوە"
 
@@ -3168,7 +3172,7 @@ msgstr ""
 msgid "Person cover updated"
 msgstr ""
 
-#: src/locales.js:459
+#: src/locales.js:460
 msgid "Person deleted"
 msgstr "ئەلبومەکان سڕانەوە"
 
@@ -3177,7 +3181,7 @@ msgstr "ئەلبومەکان سڕانەوە"
 msgid "Person not found"
 msgstr "هیچ ئەلبومێکی نەدۆزیوەتەوە"
 
-#: src/locales.js:458
+#: src/locales.js:459
 msgid "Person saved"
 msgstr "ڕێکخستنەکان پاشەکەوتکراو"
 
@@ -3363,7 +3367,7 @@ msgstr "سەرەکی"
 msgid "Private"
 msgstr "تایبەتی"
 
-#: src/locales.js:462
+#: src/locales.js:463
 msgid "Processing upload..."
 msgstr ""
 
@@ -3549,7 +3553,7 @@ msgstr ""
 msgid "Removed %{name}"
 msgstr ""
 
-#: src/locales.js:451
+#: src/locales.js:452
 msgid "Removed %d files and %d photos"
 msgstr "لابردنی %d پەڕگە و  %d وێنە"
 
@@ -3797,19 +3801,19 @@ msgstr ""
 msgid "Selection"
 msgstr ""
 
-#: src/locales.js:435
+#: src/locales.js:436
 msgid "Selection added to %s"
 msgstr "دەستنیشان کراو زیادکرایە %s"
 
-#: src/component/photo/clipboard.vue:251 src/locales.js:464
+#: src/component/photo/clipboard.vue:251 src/locales.js:465
 msgid "Selection approved"
 msgstr "دەستنیشان کراو پەسەند کرا"
 
-#: src/component/photo/clipboard.vue:282 src/locales.js:465
+#: src/component/photo/clipboard.vue:282 src/locales.js:466
 msgid "Selection archived"
 msgstr "هەڵبژاردەکە ئەرشیفکرا"
 
-#: src/locales.js:467
+#: src/locales.js:468
 msgid "Selection marked as private"
 msgstr "دەستنیشانکراوەکان کران بە تایبەتی"
 
@@ -3817,7 +3821,7 @@ msgstr "دەستنیشانکراوەکان کران بە تایبەتی"
 msgid "Selection not found"
 msgstr "هەڵبژاردەکان نەدۆزرایەوە"
 
-#: src/component/photo/clipboard.vue:318 src/locales.js:466
+#: src/component/photo/clipboard.vue:318 src/locales.js:467
 msgid "Selection restored"
 msgstr "هەڵبژاردەکە دووبارەکۆگاکرایەوە"
 
@@ -3876,7 +3880,7 @@ msgid "Settings"
 msgstr "ڕێکخستنەکان"
 
 #: src/page/settings/account.vue:533 src/page/settings/account.vue:562
-#: src/component/settings/passcode.vue:366 src/locales.js:443
+#: src/component/settings/passcode.vue:366 src/locales.js:444
 #: src/page/settings/account.vue:441 src/page/settings/account.vue:470
 msgid "Settings saved"
 msgstr "ڕێکخستنەکان پاشەکەوتکرا"
@@ -4159,7 +4163,7 @@ msgstr "شەقامەکان"
 msgid "Subject"
 msgstr "ناونیشان"
 
-#: src/locales.js:457
+#: src/locales.js:458
 msgid "Subject deleted"
 msgstr "ناونیشان"
 
@@ -4167,11 +4171,11 @@ msgstr "ناونیشان"
 msgid "Subject not found"
 msgstr "ناونیشان"
 
-#: src/locales.js:456
+#: src/locales.js:457
 msgid "Subject saved"
 msgstr "ناونیشان"
 
-#: src/component/settings/passcode.vue:351 src/locales.js:473
+#: src/component/settings/passcode.vue:351 src/locales.js:474
 msgid "Successfully activated"
 msgstr ""
 
@@ -4184,7 +4188,7 @@ msgstr ""
 msgid "Successfully deleted"
 msgstr ""
 
-#: src/component/settings/passcode.vue:323 src/locales.js:472
+#: src/component/settings/passcode.vue:323 src/locales.js:473
 msgid "Successfully verified"
 msgstr ""
 
@@ -4540,7 +4544,7 @@ msgstr "بارکردن تەواو بوو. نیشانەکردن…"
 msgid "Upload failed"
 msgstr "بارکردنەکە سەرکەوتوو نەبوو"
 
-#: src/locales.js:463
+#: src/locales.js:464
 msgid "Upload has been processed"
 msgstr ""
 
@@ -4873,7 +4877,7 @@ msgstr ""
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr ""
 
-#: src/locales.js:469
+#: src/locales.js:470
 msgid "Zip created in %d s"
 msgstr "زیپ بە %d چرکە دروستکرا"
 

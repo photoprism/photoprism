@@ -79,15 +79,15 @@ msgstr "%{s} är för lång"
 msgid "%{s} is too short"
 msgstr "%{s} är för kort"
 
-#: src/locales.js:437
+#: src/locales.js:438
 msgid "%d entries added to %s"
 msgstr "%d poster tillagda till %s"
 
-#: src/locales.js:439
+#: src/locales.js:440
 msgid "%d entries removed from %s"
 msgstr "%d poster raderade från %s"
 
-#: src/locales.js:461
+#: src/locales.js:462
 msgid "%d files uploaded in %d s"
 msgstr "%d filer uppladdade på %d s"
 
@@ -95,7 +95,7 @@ msgstr "%d filer uppladdade på %d s"
 msgid "%s already exists"
 msgstr "%s finns redan"
 
-#: src/locales.js:471
+#: src/locales.js:472
 msgid "%s has been restored"
 msgstr "%s har återställts"
 
@@ -129,6 +129,10 @@ msgstr "4 timmar"
 #: src/component/share/dialog.vue:116
 msgid "A click will copy it to your clipboard."
 msgstr "Ett klick kopierar den till urklippshanteraren."
+
+#: src/locales.js:428
+msgid "A migration is in progress"
+msgstr ""
 
 #: src/component/update.vue:53
 msgid "A new version of %{s} is available:"
@@ -176,12 +180,12 @@ msgid "Account"
 msgstr "Konto"
 
 #: src/component/user/add/dialog.vue:261 src/component/user/add/dialog.vue:277
-#: src/component/service/add.vue:131 src/locales.js:440
+#: src/component/service/add.vue:131 src/locales.js:441
 msgid "Account created"
 msgstr "Kontot har skapats"
 
 #: src/component/user/remove/dialog.vue:63 src/component/service/remove.vue:74
-#: src/locales.js:442
+#: src/locales.js:443
 msgid "Account deleted"
 msgstr "Kontot raderat"
 
@@ -197,7 +201,7 @@ msgstr "Kontot kunde inte hittas"
 msgid "Account restored"
 msgstr "Konto återställt"
 
-#: src/locales.js:441
+#: src/locales.js:442
 msgid "Account saved"
 msgstr "Kontot sparat"
 
@@ -394,7 +398,7 @@ msgstr "Efter två veckor"
 msgid "Album"
 msgstr "Album"
 
-#: src/locales.js:431
+#: src/locales.js:432
 msgid "Album %s deleted"
 msgstr "Album %s raderat"
 
@@ -402,11 +406,11 @@ msgstr "Album %s raderat"
 msgid "Album Backups"
 msgstr "Säkerhetskopiering av album"
 
-#: src/locales.js:432
+#: src/locales.js:433
 msgid "Album contents cloned"
 msgstr "Innehållet i albumet kopieras"
 
-#: src/locales.js:429 src/page/albums.vue:1194
+#: src/locales.js:430 src/page/albums.vue:1194
 msgid "Album created"
 msgstr "Album skapat"
 
@@ -418,7 +422,7 @@ msgstr "Albumet raderat"
 msgid "Album not found"
 msgstr "Albumet finns inte"
 
-#: src/locales.js:430
+#: src/locales.js:431
 msgid "Album saved"
 msgstr "Album sparat"
 
@@ -431,7 +435,7 @@ msgstr "Album sparat"
 msgid "Albums"
 msgstr "Album"
 
-#: src/component/album/clipboard.vue:194 src/locales.js:468
+#: src/component/album/clipboard.vue:194 src/locales.js:469
 msgid "Albums deleted"
 msgstr "Album raderade"
 
@@ -933,7 +937,7 @@ msgstr "Ändringarna kunde inte sparas"
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
-#: src/locales.js:428 src/page/albums.vue:1197 src/page/people/new.vue:814
+#: src/locales.js:429 src/page/albums.vue:1197 src/page/people/new.vue:814
 #: src/page/people/recognized.vue:320 src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
 #: src/page/settings/general.vue:646
@@ -1165,7 +1169,7 @@ msgstr "Kopierad till urklippshanteraren"
 msgid "Copy"
 msgstr "Kopiera"
 
-#: src/locales.js:453
+#: src/locales.js:454
 msgid "Copying files from %s"
 msgstr "Kopierar filer från %s"
 
@@ -1860,7 +1864,7 @@ msgstr "Filhanterare"
 msgid "File Conversion"
 msgstr "Konvertering av filer"
 
-#: src/locales.js:434
+#: src/locales.js:435
 msgid "File deleted"
 msgstr "Fil raderad"
 
@@ -1874,7 +1878,7 @@ msgstr "Filnamn"
 msgid "File not found"
 msgstr "Filen kunde inte hittas"
 
-#: src/locales.js:433
+#: src/locales.js:434
 msgid "File removed from stack"
 msgstr "Filen tas bort från stapeln"
 
@@ -1886,7 +1890,7 @@ msgstr "Fil"
 msgid "File too large"
 msgstr "Filen är för stor"
 
-#: src/locales.js:460
+#: src/locales.js:461
 msgid "File uploaded"
 msgstr "Uppladdad fil"
 
@@ -2123,11 +2127,11 @@ msgstr "Bildkvalitet"
 msgid "Import"
 msgstr "Import"
 
-#: src/locales.js:446
+#: src/locales.js:447
 msgid "Import canceled"
 msgstr "Importen avbruten"
 
-#: src/locales.js:445
+#: src/locales.js:446
 msgid "Import completed in %d s"
 msgstr "Importen slutfördes på %d s"
 
@@ -2189,11 +2193,11 @@ msgstr "Index"
 msgid "Indexing"
 msgstr "Indexerar"
 
-#: src/locales.js:450
+#: src/locales.js:451
 msgid "Indexing canceled"
 msgstr "Indexering avbruten"
 
-#: src/locales.js:447
+#: src/locales.js:448
 msgid "Indexing completed in %d s"
 msgstr "Indexering slutförd på %d s"
 
@@ -2201,7 +2205,7 @@ msgstr "Indexering slutförd på %d s"
 msgid "Indexing failed"
 msgstr "Indexeringen misslyckades"
 
-#: src/locales.js:449
+#: src/locales.js:450
 msgid "Indexing files in %s"
 msgstr "Indexering av filer i %s"
 
@@ -2209,7 +2213,7 @@ msgstr "Indexering av filer i %s"
 msgid "Indexing media and sidecar files…"
 msgstr "Indexerar media och sidecar-filer…"
 
-#: src/locales.js:448
+#: src/locales.js:449
 msgid "Indexing originals..."
 msgstr "Indexering av original..."
 
@@ -2359,7 +2363,7 @@ msgstr "Etikett"
 msgid "Label not found"
 msgstr "Etikett saknas"
 
-#: src/locales.js:455
+#: src/locales.js:456
 msgid "Label saved"
 msgstr "Etikett sparad"
 
@@ -2375,7 +2379,7 @@ msgstr "Etikett sparad"
 msgid "Labels"
 msgstr "Etiketter"
 
-#: src/component/label/clipboard.vue:131 src/locales.js:454
+#: src/component/label/clipboard.vue:131 src/locales.js:455
 msgid "Labels deleted"
 msgstr "Etiketter raderade"
 
@@ -2687,7 +2691,7 @@ msgstr "Mest relevant"
 msgid "Move Files"
 msgstr "Flytta filer"
 
-#: src/locales.js:452
+#: src/locales.js:453
 msgid "Moving files from %s"
 msgstr "Flyttar filer från %s"
 
@@ -2975,11 +2979,11 @@ msgstr "En gång i veckan"
 msgid "One album found"
 msgstr "Ett album hittat"
 
-#: src/locales.js:436
+#: src/locales.js:437
 msgid "One entry added to %s"
 msgstr "En post tillagd i %s"
 
-#: src/locales.js:438
+#: src/locales.js:439
 msgid "One entry removed from %s"
 msgstr "En post borttagen från %s"
 
@@ -3124,7 +3128,7 @@ msgstr "Del av några utvalda foton"
 msgid "Password"
 msgstr "Lösenord"
 
-#: src/component/settings/password.vue:162 src/locales.js:444
+#: src/component/settings/password.vue:162 src/locales.js:445
 msgid "Password changed"
 msgstr "Lösenordet har ändrats"
 
@@ -3152,7 +3156,7 @@ msgid "People you share a link with will be able to view public contents."
 msgstr "Personer som du delar en länk med kan se det offentliga innehållet."
 
 #: src/component/photo/clipboard.vue:303 src/component/photo/toolbar.vue:522
-#: src/locales.js:470
+#: src/locales.js:471
 msgid "Permanently deleted"
 msgstr "Permanent borttagen"
 
@@ -3168,7 +3172,7 @@ msgstr "Person"
 msgid "Person cover updated"
 msgstr "Personskydd uppdaterat"
 
-#: src/locales.js:459
+#: src/locales.js:460
 msgid "Person deleted"
 msgstr "Person raderad"
 
@@ -3177,7 +3181,7 @@ msgstr "Person raderad"
 msgid "Person not found"
 msgstr "Personen kunde inte hittas"
 
-#: src/locales.js:458
+#: src/locales.js:459
 msgid "Person saved"
 msgstr "Person sparad"
 
@@ -3363,7 +3367,7 @@ msgstr "Primär"
 msgid "Private"
 msgstr "Privat"
 
-#: src/locales.js:462
+#: src/locales.js:463
 msgid "Processing upload..."
 msgstr "Behandling av uppladdning..."
 
@@ -3549,7 +3553,7 @@ msgstr "Borttagen"
 msgid "Removed %{name}"
 msgstr "%{name} har tagits bort"
 
-#: src/locales.js:451
+#: src/locales.js:452
 msgid "Removed %d files and %d photos"
 msgstr "Tog bort %d filer och %d bilder"
 
@@ -3797,19 +3801,19 @@ msgstr "Välj tid"
 msgid "Selection"
 msgstr "Urval"
 
-#: src/locales.js:435
+#: src/locales.js:436
 msgid "Selection added to %s"
 msgstr "Urval tillagt i %s"
 
-#: src/component/photo/clipboard.vue:251 src/locales.js:464
+#: src/component/photo/clipboard.vue:251 src/locales.js:465
 msgid "Selection approved"
 msgstr "Urvalet är godkänt"
 
-#: src/component/photo/clipboard.vue:282 src/locales.js:465
+#: src/component/photo/clipboard.vue:282 src/locales.js:466
 msgid "Selection archived"
 msgstr "Urval arkiverat"
 
-#: src/locales.js:467
+#: src/locales.js:468
 msgid "Selection marked as private"
 msgstr "Urval markerat som privat"
 
@@ -3817,7 +3821,7 @@ msgstr "Urval markerat som privat"
 msgid "Selection not found"
 msgstr "Urvalet kunde inte hittas"
 
-#: src/component/photo/clipboard.vue:318 src/locales.js:466
+#: src/component/photo/clipboard.vue:318 src/locales.js:467
 msgid "Selection restored"
 msgstr "Urvalet har återställts"
 
@@ -3876,7 +3880,7 @@ msgid "Settings"
 msgstr "Inställningar"
 
 #: src/page/settings/account.vue:533 src/page/settings/account.vue:562
-#: src/component/settings/passcode.vue:366 src/locales.js:443
+#: src/component/settings/passcode.vue:366 src/locales.js:444
 #: src/page/settings/account.vue:441 src/page/settings/account.vue:470
 msgid "Settings saved"
 msgstr "Inställningarna har sparats"
@@ -4159,7 +4163,7 @@ msgstr "Gator"
 msgid "Subject"
 msgstr "Ämne"
 
-#: src/locales.js:457
+#: src/locales.js:458
 msgid "Subject deleted"
 msgstr "Ämne raderat"
 
@@ -4167,11 +4171,11 @@ msgstr "Ämne raderat"
 msgid "Subject not found"
 msgstr "Ämnet finns inte"
 
-#: src/locales.js:456
+#: src/locales.js:457
 msgid "Subject saved"
 msgstr "Ämne sparat"
 
-#: src/component/settings/passcode.vue:351 src/locales.js:473
+#: src/component/settings/passcode.vue:351 src/locales.js:474
 msgid "Successfully activated"
 msgstr "Lyckades aktiverad"
 
@@ -4184,7 +4188,7 @@ msgstr "Framgångsrikt ansluten"
 msgid "Successfully deleted"
 msgstr "Framgångsrikt raderat"
 
-#: src/component/settings/passcode.vue:323 src/locales.js:472
+#: src/component/settings/passcode.vue:323 src/locales.js:473
 msgid "Successfully verified"
 msgstr "Verifierad"
 
@@ -4540,7 +4544,7 @@ msgstr "Uppladdningen är klar. Indexerar…"
 msgid "Upload failed"
 msgstr "Uppladdning misslyckades"
 
-#: src/locales.js:463
+#: src/locales.js:464
 msgid "Upload has been processed"
 msgstr "Uppladdningen har behandlats"
 
@@ -4873,7 +4877,7 @@ msgstr "Ditt fortsatta stöd hjälper oss att tillhandahålla regelbundna uppdat
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "Ditt bibliotek analyseras kontinuerligt för att automatiskt skapa album med speciella ögonblick, resor och platser."
 
-#: src/locales.js:469
+#: src/locales.js:470
 msgid "Zip created in %d s"
 msgstr "Zip skapad på %d s"
 

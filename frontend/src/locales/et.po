@@ -76,15 +76,15 @@ msgstr "%{s} on liiga pikk"
 msgid "%{s} is too short"
 msgstr "%{s} on liiga lühike"
 
-#: src/locales.js:437
+#: src/locales.js:438
 msgid "%d entries added to %s"
 msgstr "%d kirjet lisatud albumisse %s"
 
-#: src/locales.js:439
+#: src/locales.js:440
 msgid "%d entries removed from %s"
 msgstr "%d kirjet eemaldatud albumist %s"
 
-#: src/locales.js:461
+#: src/locales.js:462
 msgid "%d files uploaded in %d s"
 msgstr "%d faili üles laaditud %d sekundiga"
 
@@ -92,7 +92,7 @@ msgstr "%d faili üles laaditud %d sekundiga"
 msgid "%s already exists"
 msgstr "%s on juba olemas"
 
-#: src/locales.js:471
+#: src/locales.js:472
 msgid "%s has been restored"
 msgstr "%s on taastatud"
 
@@ -126,6 +126,10 @@ msgstr "4 tundi"
 #: src/component/share/dialog.vue:116
 msgid "A click will copy it to your clipboard."
 msgstr "Klõpsamine kopeerib selle lõikelauale."
+
+#: src/locales.js:428
+msgid "A migration is in progress"
+msgstr ""
 
 #: src/component/update.vue:53
 msgid "A new version of %{s} is available:"
@@ -173,12 +177,12 @@ msgid "Account"
 msgstr "Konto"
 
 #: src/component/user/add/dialog.vue:261 src/component/user/add/dialog.vue:277
-#: src/component/service/add.vue:131 src/locales.js:440
+#: src/component/service/add.vue:131 src/locales.js:441
 msgid "Account created"
 msgstr "Konto loodud"
 
 #: src/component/user/remove/dialog.vue:63 src/component/service/remove.vue:74
-#: src/locales.js:442
+#: src/locales.js:443
 msgid "Account deleted"
 msgstr "Konto kustutatud"
 
@@ -194,7 +198,7 @@ msgstr "Kontot ei leitud"
 msgid "Account restored"
 msgstr "Konto taastatakse"
 
-#: src/locales.js:441
+#: src/locales.js:442
 msgid "Account saved"
 msgstr "Konto salvestatud"
 
@@ -391,7 +395,7 @@ msgstr "Kahe nädala pärast"
 msgid "Album"
 msgstr "Album"
 
-#: src/locales.js:431
+#: src/locales.js:432
 msgid "Album %s deleted"
 msgstr "Album %s kustutatud"
 
@@ -399,11 +403,11 @@ msgstr "Album %s kustutatud"
 msgid "Album Backups"
 msgstr "Albumite varukoopiad"
 
-#: src/locales.js:432
+#: src/locales.js:433
 msgid "Album contents cloned"
 msgstr "Albumi sisu kloonitud"
 
-#: src/locales.js:429 src/page/albums.vue:1194
+#: src/locales.js:430 src/page/albums.vue:1194
 msgid "Album created"
 msgstr "Album lisatud"
 
@@ -415,7 +419,7 @@ msgstr "Album kustutatud"
 msgid "Album not found"
 msgstr "Albumit ei leitud"
 
-#: src/locales.js:430
+#: src/locales.js:431
 msgid "Album saved"
 msgstr "Album salvestatud"
 
@@ -428,7 +432,7 @@ msgstr "Album salvestatud"
 msgid "Albums"
 msgstr "Albumid"
 
-#: src/component/album/clipboard.vue:194 src/locales.js:468
+#: src/component/album/clipboard.vue:194 src/locales.js:469
 msgid "Albums deleted"
 msgstr "Albumid kustutatud"
 
@@ -930,7 +934,7 @@ msgstr "Muudatuste salvestamine ebaõnnestus"
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
-#: src/locales.js:428 src/page/albums.vue:1197 src/page/people/new.vue:814
+#: src/locales.js:429 src/page/albums.vue:1197 src/page/people/new.vue:814
 #: src/page/people/recognized.vue:320 src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
 #: src/page/settings/general.vue:646
@@ -1162,7 +1166,7 @@ msgstr "Kopeeritud lõikelauale"
 msgid "Copy"
 msgstr "Kopeeri"
 
-#: src/locales.js:453
+#: src/locales.js:454
 msgid "Copying files from %s"
 msgstr "Failide kopeerimine asukohast %s"
 
@@ -1857,7 +1861,7 @@ msgstr "Failibrauser"
 msgid "File Conversion"
 msgstr "Faili konverteerimine"
 
-#: src/locales.js:434
+#: src/locales.js:435
 msgid "File deleted"
 msgstr "Fail kustutatud"
 
@@ -1871,7 +1875,7 @@ msgstr "Faili nimi"
 msgid "File not found"
 msgstr "Faili ei leitud"
 
-#: src/locales.js:433
+#: src/locales.js:434
 msgid "File removed from stack"
 msgstr "Fail virnast eemaldatud"
 
@@ -1883,7 +1887,7 @@ msgstr "Faili suurus"
 msgid "File too large"
 msgstr "Fail on liiga suur"
 
-#: src/locales.js:460
+#: src/locales.js:461
 msgid "File uploaded"
 msgstr "File üles laaditud"
 
@@ -2120,11 +2124,11 @@ msgstr "Pildi kvaliteet"
 msgid "Import"
 msgstr "Import"
 
-#: src/locales.js:446
+#: src/locales.js:447
 msgid "Import canceled"
 msgstr "Import tühistatud"
 
-#: src/locales.js:445
+#: src/locales.js:446
 msgid "Import completed in %d s"
 msgstr "Import tehtud %d sekundiga"
 
@@ -2186,11 +2190,11 @@ msgstr "Indeks"
 msgid "Indexing"
 msgstr "Indekseerimine"
 
-#: src/locales.js:450
+#: src/locales.js:451
 msgid "Indexing canceled"
 msgstr "Indekseerimine tühistatud"
 
-#: src/locales.js:447
+#: src/locales.js:448
 msgid "Indexing completed in %d s"
 msgstr "Indekseerimine lõpetatud %d sekundiga"
 
@@ -2198,7 +2202,7 @@ msgstr "Indekseerimine lõpetatud %d sekundiga"
 msgid "Indexing failed"
 msgstr "Indekseerimine ebaõnnestus"
 
-#: src/locales.js:449
+#: src/locales.js:450
 msgid "Indexing files in %s"
 msgstr "Failide indekseerimine: %s"
 
@@ -2206,7 +2210,7 @@ msgstr "Failide indekseerimine: %s"
 msgid "Indexing media and sidecar files…"
 msgstr "Meedia- ja abifailide indekseerimine…"
 
-#: src/locales.js:448
+#: src/locales.js:449
 msgid "Indexing originals..."
 msgstr "Originaalide indekseerimine..."
 
@@ -2356,7 +2360,7 @@ msgstr "Silt"
 msgid "Label not found"
 msgstr "Silti ei leitud"
 
-#: src/locales.js:455
+#: src/locales.js:456
 msgid "Label saved"
 msgstr "Silt salvestatud"
 
@@ -2372,7 +2376,7 @@ msgstr "Silt salvestatud"
 msgid "Labels"
 msgstr "Sildid"
 
-#: src/component/label/clipboard.vue:131 src/locales.js:454
+#: src/component/label/clipboard.vue:131 src/locales.js:455
 msgid "Labels deleted"
 msgstr "Sildid kustutatud"
 
@@ -2684,7 +2688,7 @@ msgstr "Asjakohasemad eespool"
 msgid "Move Files"
 msgstr "Liiguta failid"
 
-#: src/locales.js:452
+#: src/locales.js:453
 msgid "Moving files from %s"
 msgstr "Failide liigutamine asukohast %s"
 
@@ -2972,11 +2976,11 @@ msgstr "Üks kord nädalas"
 msgid "One album found"
 msgstr "Üks album leitud"
 
-#: src/locales.js:436
+#: src/locales.js:437
 msgid "One entry added to %s"
 msgstr "Üks kirje lisatud albumisse %s"
 
-#: src/locales.js:438
+#: src/locales.js:439
 msgid "One entry removed from %s"
 msgstr "Üks kirje eemaldatud albumist %s"
 
@@ -3121,7 +3125,7 @@ msgstr "Osa valitud fotodest"
 msgid "Password"
 msgstr "Parool"
 
-#: src/component/settings/password.vue:162 src/locales.js:444
+#: src/component/settings/password.vue:162 src/locales.js:445
 msgid "Password changed"
 msgstr "Parool muudetud"
 
@@ -3149,7 +3153,7 @@ msgid "People you share a link with will be able to view public contents."
 msgstr "Inimesed, kellega linki jagad, saavad avalikku sisu vaadata."
 
 #: src/component/photo/clipboard.vue:303 src/component/photo/toolbar.vue:522
-#: src/locales.js:470
+#: src/locales.js:471
 msgid "Permanently deleted"
 msgstr "Lõplikult kustutatud"
 
@@ -3165,7 +3169,7 @@ msgstr "Isik"
 msgid "Person cover updated"
 msgstr "Isiku kate ajakohastatud"
 
-#: src/locales.js:459
+#: src/locales.js:460
 msgid "Person deleted"
 msgstr "Isik kustutatud"
 
@@ -3174,7 +3178,7 @@ msgstr "Isik kustutatud"
 msgid "Person not found"
 msgstr "Isikut ei leitud"
 
-#: src/locales.js:458
+#: src/locales.js:459
 msgid "Person saved"
 msgstr "Isik salvestatud"
 
@@ -3360,7 +3364,7 @@ msgstr "Primaarne"
 msgid "Private"
 msgstr "Isiklik"
 
-#: src/locales.js:462
+#: src/locales.js:463
 msgid "Processing upload..."
 msgstr "Üleslaaditud faili töötlemine..."
 
@@ -3546,7 +3550,7 @@ msgstr "Eemaldatud"
 msgid "Removed %{name}"
 msgstr "%{name} eemaldati"
 
-#: src/locales.js:451
+#: src/locales.js:452
 msgid "Removed %d files and %d photos"
 msgstr "Eemaldatud %d faili ja %d fotot"
 
@@ -3794,19 +3798,19 @@ msgstr "Valige aeg"
 msgid "Selection"
 msgstr "Valik"
 
-#: src/locales.js:435
+#: src/locales.js:436
 msgid "Selection added to %s"
 msgstr "Valik lisatud albumisse %s"
 
-#: src/component/photo/clipboard.vue:251 src/locales.js:464
+#: src/component/photo/clipboard.vue:251 src/locales.js:465
 msgid "Selection approved"
 msgstr "Valik heaks kiidetud"
 
-#: src/component/photo/clipboard.vue:282 src/locales.js:465
+#: src/component/photo/clipboard.vue:282 src/locales.js:466
 msgid "Selection archived"
 msgstr "Valik arhiveeritud"
 
-#: src/locales.js:467
+#: src/locales.js:468
 msgid "Selection marked as private"
 msgstr "Valik privaatseks märgitud"
 
@@ -3814,7 +3818,7 @@ msgstr "Valik privaatseks märgitud"
 msgid "Selection not found"
 msgstr "Valikut ei leitud"
 
-#: src/component/photo/clipboard.vue:318 src/locales.js:466
+#: src/component/photo/clipboard.vue:318 src/locales.js:467
 msgid "Selection restored"
 msgstr "Valik taastatud"
 
@@ -3873,7 +3877,7 @@ msgid "Settings"
 msgstr "Seaded"
 
 #: src/page/settings/account.vue:533 src/page/settings/account.vue:562
-#: src/component/settings/passcode.vue:366 src/locales.js:443
+#: src/component/settings/passcode.vue:366 src/locales.js:444
 #: src/page/settings/account.vue:441 src/page/settings/account.vue:470
 msgid "Settings saved"
 msgstr "Seaded salvestatud"
@@ -4156,7 +4160,7 @@ msgstr "Tänavad"
 msgid "Subject"
 msgstr "Subjekt"
 
-#: src/locales.js:457
+#: src/locales.js:458
 msgid "Subject deleted"
 msgstr "Teema kustutatud"
 
@@ -4164,11 +4168,11 @@ msgstr "Teema kustutatud"
 msgid "Subject not found"
 msgstr "Teemat ei leitud"
 
-#: src/locales.js:456
+#: src/locales.js:457
 msgid "Subject saved"
 msgstr "Teema salvestatud"
 
-#: src/component/settings/passcode.vue:351 src/locales.js:473
+#: src/component/settings/passcode.vue:351 src/locales.js:474
 msgid "Successfully activated"
 msgstr "Edukalt aktiveeritud"
 
@@ -4181,7 +4185,7 @@ msgstr "Edukalt ühendatud"
 msgid "Successfully deleted"
 msgstr "Edukalt kustutatud"
 
-#: src/component/settings/passcode.vue:323 src/locales.js:472
+#: src/component/settings/passcode.vue:323 src/locales.js:473
 msgid "Successfully verified"
 msgstr "Edukalt kinnitatud"
 
@@ -4537,7 +4541,7 @@ msgstr "Üleslaadimine lõpetatud. Indekseerimine…"
 msgid "Upload failed"
 msgstr "Üleslaadimine ebaõnnestus"
 
-#: src/locales.js:463
+#: src/locales.js:464
 msgid "Upload has been processed"
 msgstr "Üleslaaditud fail on töödeldud"
 
@@ -4870,7 +4874,7 @@ msgstr "Sinu jätkuv toetus aitab meil pakkuda regulaarseid uuendusi ja jääda 
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "Sinu fototeeki analüüsitakse pidevalt, et luua automaatselt albumied erilistest hetkedest, reisidest ja kohtadest."
 
-#: src/locales.js:469
+#: src/locales.js:470
 msgid "Zip created in %d s"
 msgstr "ZIP-fail loodud %d sekundiga"
 

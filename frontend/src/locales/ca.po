@@ -79,15 +79,15 @@ msgstr "%{s} és massa llarg"
 msgid "%{s} is too short"
 msgstr "%{s} és massa curt"
 
-#: src/locales.js:437
+#: src/locales.js:438
 msgid "%d entries added to %s"
 msgstr "%d entrades afegides a %s"
 
-#: src/locales.js:439
+#: src/locales.js:440
 msgid "%d entries removed from %s"
 msgstr "S'han eliminat %d entrades de %s"
 
-#: src/locales.js:461
+#: src/locales.js:462
 msgid "%d files uploaded in %d s"
 msgstr "%d fitxers penjats en %d s"
 
@@ -95,7 +95,7 @@ msgstr "%d fitxers penjats en %d s"
 msgid "%s already exists"
 msgstr "%s El nom ja existeix"
 
-#: src/locales.js:471
+#: src/locales.js:472
 msgid "%s has been restored"
 msgstr "%s s'ha restaurat"
 
@@ -129,6 +129,10 @@ msgstr "4 hores"
 #: src/component/share/dialog.vue:116
 msgid "A click will copy it to your clipboard."
 msgstr "Un clic ho copiarà al porta-retalls."
+
+#: src/locales.js:428
+msgid "A migration is in progress"
+msgstr ""
 
 #: src/component/update.vue:53
 msgid "A new version of %{s} is available:"
@@ -176,12 +180,12 @@ msgid "Account"
 msgstr "Compte"
 
 #: src/component/user/add/dialog.vue:261 src/component/user/add/dialog.vue:277
-#: src/component/service/add.vue:131 src/locales.js:440
+#: src/component/service/add.vue:131 src/locales.js:441
 msgid "Account created"
 msgstr "Compte creat"
 
 #: src/component/user/remove/dialog.vue:63 src/component/service/remove.vue:74
-#: src/locales.js:442
+#: src/locales.js:443
 msgid "Account deleted"
 msgstr "Compte suprimit"
 
@@ -197,7 +201,7 @@ msgstr "Compte no trobat"
 msgid "Account restored"
 msgstr "S'ha restaurat el compte"
 
-#: src/locales.js:441
+#: src/locales.js:442
 msgid "Account saved"
 msgstr "Compte desat"
 
@@ -394,7 +398,7 @@ msgstr "Després de dues setmanes"
 msgid "Album"
 msgstr "Àlbum"
 
-#: src/locales.js:431
+#: src/locales.js:432
 msgid "Album %s deleted"
 msgstr "S'ha suprimit l'àlbum %s"
 
@@ -402,11 +406,11 @@ msgstr "S'ha suprimit l'àlbum %s"
 msgid "Album Backups"
 msgstr "Còpies de seguretat d'àlbums"
 
-#: src/locales.js:432
+#: src/locales.js:433
 msgid "Album contents cloned"
 msgstr "Contingut de l'àlbum clonat"
 
-#: src/locales.js:429 src/page/albums.vue:1194
+#: src/locales.js:430 src/page/albums.vue:1194
 msgid "Album created"
 msgstr "Àlbum creat"
 
@@ -418,7 +422,7 @@ msgstr "Àlbum suprimit"
 msgid "Album not found"
 msgstr "No s'ha trobat l'àlbum"
 
-#: src/locales.js:430
+#: src/locales.js:431
 msgid "Album saved"
 msgstr "Àlbum desat"
 
@@ -431,7 +435,7 @@ msgstr "Àlbum desat"
 msgid "Albums"
 msgstr "Àlbums"
 
-#: src/component/album/clipboard.vue:194 src/locales.js:468
+#: src/component/album/clipboard.vue:194 src/locales.js:469
 msgid "Albums deleted"
 msgstr "Àlbums suprimits"
 
@@ -933,7 +937,7 @@ msgstr "No s'han pogut desar els canvis"
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
-#: src/locales.js:428 src/page/albums.vue:1197 src/page/people/new.vue:814
+#: src/locales.js:429 src/page/albums.vue:1197 src/page/people/new.vue:814
 #: src/page/people/recognized.vue:320 src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
 #: src/page/settings/general.vue:646
@@ -1165,7 +1169,7 @@ msgstr "S'ha copiat al porta-retalls"
 msgid "Copy"
 msgstr "Còpia"
 
-#: src/locales.js:453
+#: src/locales.js:454
 msgid "Copying files from %s"
 msgstr "S'estan copiant fitxers de %s"
 
@@ -1860,7 +1864,7 @@ msgstr "Navegador de fitxers"
 msgid "File Conversion"
 msgstr "Conversió de fitxers"
 
-#: src/locales.js:434
+#: src/locales.js:435
 msgid "File deleted"
 msgstr "S'ha suprimit el fitxer"
 
@@ -1874,7 +1878,7 @@ msgstr "Nom de fitxer"
 msgid "File not found"
 msgstr "No s'ha trobat el fitxer"
 
-#: src/locales.js:433
+#: src/locales.js:434
 msgid "File removed from stack"
 msgstr "S'ha eliminat el fitxer de la pila"
 
@@ -1886,7 +1890,7 @@ msgstr "Tamany arxiu"
 msgid "File too large"
 msgstr "Fitxer massa gran"
 
-#: src/locales.js:460
+#: src/locales.js:461
 msgid "File uploaded"
 msgstr "Fitxer penjat"
 
@@ -2123,11 +2127,11 @@ msgstr "Qualitat d'imatge"
 msgid "Import"
 msgstr "Importa"
 
-#: src/locales.js:446
+#: src/locales.js:447
 msgid "Import canceled"
 msgstr "Importació cancel·lada"
 
-#: src/locales.js:445
+#: src/locales.js:446
 msgid "Import completed in %d s"
 msgstr "Importació completada en %d s"
 
@@ -2189,11 +2193,11 @@ msgstr "Índex"
 msgid "Indexing"
 msgstr "S'està indexant"
 
-#: src/locales.js:450
+#: src/locales.js:451
 msgid "Indexing canceled"
 msgstr "S'ha cancel·lat la indexació"
 
-#: src/locales.js:447
+#: src/locales.js:448
 msgid "Indexing completed in %d s"
 msgstr "Indexació completada en %d s"
 
@@ -2201,7 +2205,7 @@ msgstr "Indexació completada en %d s"
 msgid "Indexing failed"
 msgstr "S'ha produït un error en la indexació"
 
-#: src/locales.js:449
+#: src/locales.js:450
 msgid "Indexing files in %s"
 msgstr "Indexant fitxers a %s"
 
@@ -2209,7 +2213,7 @@ msgstr "Indexant fitxers a %s"
 msgid "Indexing media and sidecar files…"
 msgstr "S'estan indexant fitxers multimèdia i sidecar..."
 
-#: src/locales.js:448
+#: src/locales.js:449
 msgid "Indexing originals..."
 msgstr "S'estan indexant els originals..."
 
@@ -2359,7 +2363,7 @@ msgstr "Etiqueta"
 msgid "Label not found"
 msgstr "No s'ha trobat l'etiqueta"
 
-#: src/locales.js:455
+#: src/locales.js:456
 msgid "Label saved"
 msgstr "S'ha desat l'etiqueta"
 
@@ -2375,7 +2379,7 @@ msgstr "S'ha desat l'etiqueta"
 msgid "Labels"
 msgstr "Etiquetes"
 
-#: src/component/label/clipboard.vue:131 src/locales.js:454
+#: src/component/label/clipboard.vue:131 src/locales.js:455
 msgid "Labels deleted"
 msgstr "S'han suprimit les etiquetes"
 
@@ -2687,7 +2691,7 @@ msgstr "El més rellevant"
 msgid "Move Files"
 msgstr "Mou arxius"
 
-#: src/locales.js:452
+#: src/locales.js:453
 msgid "Moving files from %s"
 msgstr "S'estan movent fitxers de %s"
 
@@ -2975,11 +2979,11 @@ msgstr "Una vegada per setmana"
 msgid "One album found"
 msgstr "S'ha trobat un àlbum"
 
-#: src/locales.js:436
+#: src/locales.js:437
 msgid "One entry added to %s"
 msgstr "S'ha afegit una entrada a %s"
 
-#: src/locales.js:438
+#: src/locales.js:439
 msgid "One entry removed from %s"
 msgstr "S'ha eliminat una entrada de %s"
 
@@ -3124,7 +3128,7 @@ msgstr "Part d'algunes fotos seleccionades"
 msgid "Password"
 msgstr "Contrasenya"
 
-#: src/component/settings/password.vue:162 src/locales.js:444
+#: src/component/settings/password.vue:162 src/locales.js:445
 msgid "Password changed"
 msgstr "S’ha canviat la contrasenya"
 
@@ -3152,7 +3156,7 @@ msgid "People you share a link with will be able to view public contents."
 msgstr "Les persones amb qui comparteixis un enllaç podran veure contingut públic."
 
 #: src/component/photo/clipboard.vue:303 src/component/photo/toolbar.vue:522
-#: src/locales.js:470
+#: src/locales.js:471
 msgid "Permanently deleted"
 msgstr "Esborrat permanentment"
 
@@ -3168,7 +3172,7 @@ msgstr "Persona"
 msgid "Person cover updated"
 msgstr "Portada de persona actualitzada"
 
-#: src/locales.js:459
+#: src/locales.js:460
 msgid "Person deleted"
 msgstr "S'ha suprimit la persona"
 
@@ -3177,7 +3181,7 @@ msgstr "S'ha suprimit la persona"
 msgid "Person not found"
 msgstr "Persona no trobada"
 
-#: src/locales.js:458
+#: src/locales.js:459
 msgid "Person saved"
 msgstr "Persona salvada"
 
@@ -3363,7 +3367,7 @@ msgstr "Primari"
 msgid "Private"
 msgstr "Privada"
 
-#: src/locales.js:462
+#: src/locales.js:463
 msgid "Processing upload..."
 msgstr "S'està processant la càrrega..."
 
@@ -3549,7 +3553,7 @@ msgstr "Eliminat"
 msgid "Removed %{name}"
 msgstr "Eliminat %{name}"
 
-#: src/locales.js:451
+#: src/locales.js:452
 msgid "Removed %d files and %d photos"
 msgstr "S'han eliminat %d fitxers i %d fotos"
 
@@ -3797,19 +3801,19 @@ msgstr "Seleccioneu Hora"
 msgid "Selection"
 msgstr "Selecció"
 
-#: src/locales.js:435
+#: src/locales.js:436
 msgid "Selection added to %s"
 msgstr "S'ha afegit una selecció a %s"
 
-#: src/component/photo/clipboard.vue:251 src/locales.js:464
+#: src/component/photo/clipboard.vue:251 src/locales.js:465
 msgid "Selection approved"
 msgstr "Selecció aprovada"
 
-#: src/component/photo/clipboard.vue:282 src/locales.js:465
+#: src/component/photo/clipboard.vue:282 src/locales.js:466
 msgid "Selection archived"
 msgstr "Selecció arxivada"
 
-#: src/locales.js:467
+#: src/locales.js:468
 msgid "Selection marked as private"
 msgstr "La selecció s'ha marcat com a privada"
 
@@ -3817,7 +3821,7 @@ msgstr "La selecció s'ha marcat com a privada"
 msgid "Selection not found"
 msgstr "No s'ha trobat la selecció"
 
-#: src/component/photo/clipboard.vue:318 src/locales.js:466
+#: src/component/photo/clipboard.vue:318 src/locales.js:467
 msgid "Selection restored"
 msgstr "S'ha restaurat la selecció"
 
@@ -3876,7 +3880,7 @@ msgid "Settings"
 msgstr "Configuració"
 
 #: src/page/settings/account.vue:533 src/page/settings/account.vue:562
-#: src/component/settings/passcode.vue:366 src/locales.js:443
+#: src/component/settings/passcode.vue:366 src/locales.js:444
 #: src/page/settings/account.vue:441 src/page/settings/account.vue:470
 msgid "Settings saved"
 msgstr "Configuració desada"
@@ -4159,7 +4163,7 @@ msgstr "Carrers"
 msgid "Subject"
 msgstr "Assumpte"
 
-#: src/locales.js:457
+#: src/locales.js:458
 msgid "Subject deleted"
 msgstr "S'ha suprimit el tema"
 
@@ -4167,11 +4171,11 @@ msgstr "S'ha suprimit el tema"
 msgid "Subject not found"
 msgstr "No s'ha trobat el tema"
 
-#: src/locales.js:456
+#: src/locales.js:457
 msgid "Subject saved"
 msgstr "Assumpte desat"
 
-#: src/component/settings/passcode.vue:351 src/locales.js:473
+#: src/component/settings/passcode.vue:351 src/locales.js:474
 msgid "Successfully activated"
 msgstr "S'ha activat correctament"
 
@@ -4184,7 +4188,7 @@ msgstr "Connectat correctament"
 msgid "Successfully deleted"
 msgstr "S'ha suprimit correctament"
 
-#: src/component/settings/passcode.vue:323 src/locales.js:472
+#: src/component/settings/passcode.vue:323 src/locales.js:473
 msgid "Successfully verified"
 msgstr "Verificat correctament"
 
@@ -4540,7 +4544,7 @@ msgstr "Càrrega completa. S'està indexant..."
 msgid "Upload failed"
 msgstr "La càrrega ha fallat"
 
-#: src/locales.js:463
+#: src/locales.js:464
 msgid "Upload has been processed"
 msgstr "S'ha processat la càrrega"
 
@@ -4873,7 +4877,7 @@ msgstr "El vostre suport continuat ens ajuda a oferir actualitzacions periòdiqu
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "La vostra biblioteca s'analitza contínuament per crear automàticament àlbums de moments, viatges i llocs especials."
 
-#: src/locales.js:469
+#: src/locales.js:470
 msgid "Zip created in %d s"
 msgstr "Zip creat en %d s"
 

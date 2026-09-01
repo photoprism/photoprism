@@ -79,15 +79,15 @@ msgstr "%{s} خیلی طولانی است"
 msgid "%{s} is too short"
 msgstr "%{s} خیلی کوتاه است"
 
-#: src/locales.js:437
+#: src/locales.js:438
 msgid "%d entries added to %s"
 msgstr "%d مورد به %s اضافه شد"
 
-#: src/locales.js:439
+#: src/locales.js:440
 msgid "%d entries removed from %s"
 msgstr "%d مورد از %s حذف شد"
 
-#: src/locales.js:461
+#: src/locales.js:462
 msgid "%d files uploaded in %d s"
 msgstr "%d فایل در %d ثانیه آپلود شد"
 
@@ -95,7 +95,7 @@ msgstr "%d فایل در %d ثانیه آپلود شد"
 msgid "%s already exists"
 msgstr "%s از قبل وجود دارد"
 
-#: src/locales.js:471
+#: src/locales.js:472
 msgid "%s has been restored"
 msgstr "%s بازیابی شده است"
 
@@ -129,6 +129,10 @@ msgstr "4 ساعت"
 #: src/component/share/dialog.vue:116
 msgid "A click will copy it to your clipboard."
 msgstr "یک کلیک آن را در کلیپ بورد شما کپی می کند."
+
+#: src/locales.js:428
+msgid "A migration is in progress"
+msgstr ""
 
 #: src/component/update.vue:53
 msgid "A new version of %{s} is available:"
@@ -176,12 +180,12 @@ msgid "Account"
 msgstr "حساب کاربری"
 
 #: src/component/user/add/dialog.vue:261 src/component/user/add/dialog.vue:277
-#: src/component/service/add.vue:131 src/locales.js:440
+#: src/component/service/add.vue:131 src/locales.js:441
 msgid "Account created"
 msgstr "حساب کاربری ایجاد شد"
 
 #: src/component/user/remove/dialog.vue:63 src/component/service/remove.vue:74
-#: src/locales.js:442
+#: src/locales.js:443
 msgid "Account deleted"
 msgstr "حساب کاربری حذف شد"
 
@@ -197,7 +201,7 @@ msgstr "حساب کاربری پیدا نشد"
 msgid "Account restored"
 msgstr "حساب بازیابی شد"
 
-#: src/locales.js:441
+#: src/locales.js:442
 msgid "Account saved"
 msgstr "حساب کاربری ذخیره شد"
 
@@ -394,7 +398,7 @@ msgstr "بعد از دو هفته"
 msgid "Album"
 msgstr "آلبوم"
 
-#: src/locales.js:431
+#: src/locales.js:432
 msgid "Album %s deleted"
 msgstr "آلبوم %s حذف شد"
 
@@ -402,11 +406,11 @@ msgstr "آلبوم %s حذف شد"
 msgid "Album Backups"
 msgstr "پشتیبان گیری از آلبوم"
 
-#: src/locales.js:432
+#: src/locales.js:433
 msgid "Album contents cloned"
 msgstr "محتویات آلبوم کلون شد"
 
-#: src/locales.js:429 src/page/albums.vue:1194
+#: src/locales.js:430 src/page/albums.vue:1194
 msgid "Album created"
 msgstr "آلبوم ایجاد شد"
 
@@ -418,7 +422,7 @@ msgstr "آلبوم حذف شد"
 msgid "Album not found"
 msgstr "آلبوم پیدا نشد"
 
-#: src/locales.js:430
+#: src/locales.js:431
 msgid "Album saved"
 msgstr "آلبوم ذخیره شد"
 
@@ -431,7 +435,7 @@ msgstr "آلبوم ذخیره شد"
 msgid "Albums"
 msgstr "آلبوم ها"
 
-#: src/component/album/clipboard.vue:194 src/locales.js:468
+#: src/component/album/clipboard.vue:194 src/locales.js:469
 msgid "Albums deleted"
 msgstr "آلبوم ها حذف شدند"
 
@@ -933,7 +937,7 @@ msgstr "تغییرات را نمی توان ذخیره کرد"
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
-#: src/locales.js:428 src/page/albums.vue:1197 src/page/people/new.vue:814
+#: src/locales.js:429 src/page/albums.vue:1197 src/page/people/new.vue:814
 #: src/page/people/recognized.vue:320 src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
 #: src/page/settings/general.vue:646
@@ -1165,7 +1169,7 @@ msgstr "کپی شده در کلیپ بورد"
 msgid "Copy"
 msgstr "کپی 🀄"
 
-#: src/locales.js:453
+#: src/locales.js:454
 msgid "Copying files from %s"
 msgstr "کپی کردن فایل ها از %s"
 
@@ -1860,7 +1864,7 @@ msgstr "مرورگر فایل"
 msgid "File Conversion"
 msgstr "تبدیل فایل"
 
-#: src/locales.js:434
+#: src/locales.js:435
 msgid "File deleted"
 msgstr "فایل حذف شد"
 
@@ -1874,7 +1878,7 @@ msgstr "نام فایل"
 msgid "File not found"
 msgstr "فایل پیدا نشد"
 
-#: src/locales.js:433
+#: src/locales.js:434
 msgid "File removed from stack"
 msgstr "فایل از پشته حذف شد"
 
@@ -1886,7 +1890,7 @@ msgstr "فایل"
 msgid "File too large"
 msgstr "فایل خیلی بزرگ است"
 
-#: src/locales.js:460
+#: src/locales.js:461
 msgid "File uploaded"
 msgstr "فایل بارگذاری شد"
 
@@ -2123,11 +2127,11 @@ msgstr "کیفیت تصویر"
 msgid "Import"
 msgstr "وارد کردن"
 
-#: src/locales.js:446
+#: src/locales.js:447
 msgid "Import canceled"
 msgstr "وارد کردن لغو شد"
 
-#: src/locales.js:445
+#: src/locales.js:446
 msgid "Import completed in %d s"
 msgstr "وارد کردن در %d ثانیه تکمیل شد"
 
@@ -2189,11 +2193,11 @@ msgstr "نمایه"
 msgid "Indexing"
 msgstr "نمایه سازی"
 
-#: src/locales.js:450
+#: src/locales.js:451
 msgid "Indexing canceled"
 msgstr "نمایه سازی لغو شد"
 
-#: src/locales.js:447
+#: src/locales.js:448
 msgid "Indexing completed in %d s"
 msgstr "نمایه سازی در %d ثانیه تکمیل شد"
 
@@ -2201,7 +2205,7 @@ msgstr "نمایه سازی در %d ثانیه تکمیل شد"
 msgid "Indexing failed"
 msgstr "نمایه سازی انجام نشد"
 
-#: src/locales.js:449
+#: src/locales.js:450
 msgid "Indexing files in %s"
 msgstr "نمایه سازی فایل ها در %s"
 
@@ -2209,7 +2213,7 @@ msgstr "نمایه سازی فایل ها در %s"
 msgid "Indexing media and sidecar files…"
 msgstr "نمایه سازی رسانه و فایل های جانبی…"
 
-#: src/locales.js:448
+#: src/locales.js:449
 msgid "Indexing originals..."
 msgstr "نمایه سازی نسخه های اصلی ..."
 
@@ -2359,7 +2363,7 @@ msgstr "برچسب"
 msgid "Label not found"
 msgstr "برچسب پیدا نشد"
 
-#: src/locales.js:455
+#: src/locales.js:456
 msgid "Label saved"
 msgstr "برچسب ذخیره شد"
 
@@ -2375,7 +2379,7 @@ msgstr "برچسب ذخیره شد"
 msgid "Labels"
 msgstr "برچسب ها"
 
-#: src/component/label/clipboard.vue:131 src/locales.js:454
+#: src/component/label/clipboard.vue:131 src/locales.js:455
 msgid "Labels deleted"
 msgstr "برچسب ها حذف شدند"
 
@@ -2687,7 +2691,7 @@ msgstr "بسیار مرتبط"
 msgid "Move Files"
 msgstr "جابجایی فایل ها"
 
-#: src/locales.js:452
+#: src/locales.js:453
 msgid "Moving files from %s"
 msgstr "انتقال فایل ها از %s"
 
@@ -2975,11 +2979,11 @@ msgstr "یک بار در هفته"
 msgid "One album found"
 msgstr "یک آلبوم پیدا شد"
 
-#: src/locales.js:436
+#: src/locales.js:437
 msgid "One entry added to %s"
 msgstr "یک مورد به %s اضافه شد"
 
-#: src/locales.js:438
+#: src/locales.js:439
 msgid "One entry removed from %s"
 msgstr "یک مورد از %s حذف شد"
 
@@ -3124,7 +3128,7 @@ msgstr "بخشی از عکس‌های منتخب"
 msgid "Password"
 msgstr "رمزعبور"
 
-#: src/component/settings/password.vue:162 src/locales.js:444
+#: src/component/settings/password.vue:162 src/locales.js:445
 msgid "Password changed"
 msgstr "رمز عبور تغییر کرد"
 
@@ -3152,7 +3156,7 @@ msgid "People you share a link with will be able to view public contents."
 msgstr "افرادی که لینکی را با آنها به اشتراک می گذارید می توانند محتوای عمومی را مشاهده کنند."
 
 #: src/component/photo/clipboard.vue:303 src/component/photo/toolbar.vue:522
-#: src/locales.js:470
+#: src/locales.js:471
 msgid "Permanently deleted"
 msgstr "برای همیشه حذف شد"
 
@@ -3168,7 +3172,7 @@ msgstr "شخص"
 msgid "Person cover updated"
 msgstr "جلد شخص به‌روزرسانی شد"
 
-#: src/locales.js:459
+#: src/locales.js:460
 msgid "Person deleted"
 msgstr "فرد حذف شد"
 
@@ -3177,7 +3181,7 @@ msgstr "فرد حذف شد"
 msgid "Person not found"
 msgstr "فرد پیدا نشد"
 
-#: src/locales.js:458
+#: src/locales.js:459
 msgid "Person saved"
 msgstr "فرد ذخیره شد"
 
@@ -3363,7 +3367,7 @@ msgstr "اولیه"
 msgid "Private"
 msgstr "خصوصی"
 
-#: src/locales.js:462
+#: src/locales.js:463
 msgid "Processing upload..."
 msgstr "در حال بارگذاری..."
 
@@ -3549,7 +3553,7 @@ msgstr "حذف شد"
 msgid "Removed %{name}"
 msgstr "%{name} حذف شد"
 
-#: src/locales.js:451
+#: src/locales.js:452
 msgid "Removed %d files and %d photos"
 msgstr "%d فایل و %d عکس حذف شد"
 
@@ -3797,19 +3801,19 @@ msgstr "زمان را انتخاب کنید"
 msgid "Selection"
 msgstr "انتخاب"
 
-#: src/locales.js:435
+#: src/locales.js:436
 msgid "Selection added to %s"
 msgstr "مورد انتخابی به %s اضافه شد"
 
-#: src/component/photo/clipboard.vue:251 src/locales.js:464
+#: src/component/photo/clipboard.vue:251 src/locales.js:465
 msgid "Selection approved"
 msgstr "انتخاب تایید شد"
 
-#: src/component/photo/clipboard.vue:282 src/locales.js:465
+#: src/component/photo/clipboard.vue:282 src/locales.js:466
 msgid "Selection archived"
 msgstr "انتخاب بایگانی شد"
 
-#: src/locales.js:467
+#: src/locales.js:468
 msgid "Selection marked as private"
 msgstr "مورد انتخابی به‌عنوان خصوصی علامت‌گذاری شد"
 
@@ -3817,7 +3821,7 @@ msgstr "مورد انتخابی به‌عنوان خصوصی علامت‌گذا
 msgid "Selection not found"
 msgstr "انتخاب پیدا نشد"
 
-#: src/component/photo/clipboard.vue:318 src/locales.js:466
+#: src/component/photo/clipboard.vue:318 src/locales.js:467
 msgid "Selection restored"
 msgstr "انتخاب بازگردانده شد"
 
@@ -3876,7 +3880,7 @@ msgid "Settings"
 msgstr "تنظیمات"
 
 #: src/page/settings/account.vue:533 src/page/settings/account.vue:562
-#: src/component/settings/passcode.vue:366 src/locales.js:443
+#: src/component/settings/passcode.vue:366 src/locales.js:444
 #: src/page/settings/account.vue:441 src/page/settings/account.vue:470
 msgid "Settings saved"
 msgstr "تنظیمات ذخیره شد"
@@ -4159,7 +4163,7 @@ msgstr "خیابان ها"
 msgid "Subject"
 msgstr "موضوع"
 
-#: src/locales.js:457
+#: src/locales.js:458
 msgid "Subject deleted"
 msgstr "موضوع حذف شد"
 
@@ -4167,11 +4171,11 @@ msgstr "موضوع حذف شد"
 msgid "Subject not found"
 msgstr "موضوع پیدا نشد"
 
-#: src/locales.js:456
+#: src/locales.js:457
 msgid "Subject saved"
 msgstr "موضوع ذخیره شد"
 
-#: src/component/settings/passcode.vue:351 src/locales.js:473
+#: src/component/settings/passcode.vue:351 src/locales.js:474
 msgid "Successfully activated"
 msgstr "با موفقیت فعال شد"
 
@@ -4184,7 +4188,7 @@ msgstr "با موفقیت وصل شد"
 msgid "Successfully deleted"
 msgstr "با موفقیت حذف شد"
 
-#: src/component/settings/passcode.vue:323 src/locales.js:472
+#: src/component/settings/passcode.vue:323 src/locales.js:473
 msgid "Successfully verified"
 msgstr "با موفقیت تأیید شد"
 
@@ -4540,7 +4544,7 @@ msgstr "آپلود کامل شد. در حال نمایه سازی…"
 msgid "Upload failed"
 msgstr "آپلود انجام نشد"
 
-#: src/locales.js:463
+#: src/locales.js:464
 msgid "Upload has been processed"
 msgstr "بارگذاری انجام شد"
 
@@ -4873,7 +4877,7 @@ msgstr "پشتیبانی مستمر شما به ما کمک می‌کند تا �
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "کتابخانه شما به طور مداوم تجزیه و تحلیل می شود تا به طور خودکار آلبوم هایی از لحظات، سفرها و مکان های خاص ایجاد شود."
 
-#: src/locales.js:469
+#: src/locales.js:470
 msgid "Zip created in %d s"
 msgstr "فایل فشرده در %d ثانیه ایجاد شد"
 

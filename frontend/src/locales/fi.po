@@ -76,15 +76,15 @@ msgstr "%{s} on liian pitkä"
 msgid "%{s} is too short"
 msgstr "%{s} on liian lyhyt"
 
-#: src/locales.js:437
+#: src/locales.js:438
 msgid "%d entries added to %s"
 msgstr "%d merkintöjä lisätty %s"
 
-#: src/locales.js:439
+#: src/locales.js:440
 msgid "%d entries removed from %s"
 msgstr "%d merkinnät poistettu %s"
 
-#: src/locales.js:461
+#: src/locales.js:462
 msgid "%d files uploaded in %d s"
 msgstr "%d tiedostoa ladattu %d s aikana"
 
@@ -92,7 +92,7 @@ msgstr "%d tiedostoa ladattu %d s aikana"
 msgid "%s already exists"
 msgstr "%s on jo olemassa"
 
-#: src/locales.js:471
+#: src/locales.js:472
 msgid "%s has been restored"
 msgstr "%s on palautettu"
 
@@ -126,6 +126,10 @@ msgstr "4 tuntia"
 #: src/component/share/dialog.vue:116
 msgid "A click will copy it to your clipboard."
 msgstr "Napsauttamalla sitä voit kopioida sen leikepöydälle."
+
+#: src/locales.js:428
+msgid "A migration is in progress"
+msgstr ""
 
 #: src/component/update.vue:53
 msgid "A new version of %{s} is available:"
@@ -173,12 +177,12 @@ msgid "Account"
 msgstr "Tili"
 
 #: src/component/user/add/dialog.vue:261 src/component/user/add/dialog.vue:277
-#: src/component/service/add.vue:131 src/locales.js:440
+#: src/component/service/add.vue:131 src/locales.js:441
 msgid "Account created"
 msgstr "Tili luotu"
 
 #: src/component/user/remove/dialog.vue:63 src/component/service/remove.vue:74
-#: src/locales.js:442
+#: src/locales.js:443
 msgid "Account deleted"
 msgstr "Tili poistettu"
 
@@ -194,7 +198,7 @@ msgstr "Tiliä ei löydy"
 msgid "Account restored"
 msgstr "Tili palautettu"
 
-#: src/locales.js:441
+#: src/locales.js:442
 msgid "Account saved"
 msgstr "Tallennettu tili"
 
@@ -391,7 +395,7 @@ msgstr "Kahden viikon kuluttua"
 msgid "Album"
 msgstr "Albumi"
 
-#: src/locales.js:431
+#: src/locales.js:432
 msgid "Album %s deleted"
 msgstr "Albumi %s poistettu"
 
@@ -399,11 +403,11 @@ msgstr "Albumi %s poistettu"
 msgid "Album Backups"
 msgstr "Albumin varmuuskopiot"
 
-#: src/locales.js:432
+#: src/locales.js:433
 msgid "Album contents cloned"
 msgstr "Albumin sisältö kloonattu"
 
-#: src/locales.js:429 src/page/albums.vue:1194
+#: src/locales.js:430 src/page/albums.vue:1194
 msgid "Album created"
 msgstr "Albumi luotu"
 
@@ -415,7 +419,7 @@ msgstr "Albumi poistettu"
 msgid "Album not found"
 msgstr "Albumia ei löydy"
 
-#: src/locales.js:430
+#: src/locales.js:431
 msgid "Album saved"
 msgstr "Albumi tallennettu"
 
@@ -428,7 +432,7 @@ msgstr "Albumi tallennettu"
 msgid "Albums"
 msgstr "Albumit"
 
-#: src/component/album/clipboard.vue:194 src/locales.js:468
+#: src/component/album/clipboard.vue:194 src/locales.js:469
 msgid "Albums deleted"
 msgstr "Albumit poistettu"
 
@@ -930,7 +934,7 @@ msgstr "Muutoksia ei voitu tallentaa"
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
-#: src/locales.js:428 src/page/albums.vue:1197 src/page/people/new.vue:814
+#: src/locales.js:429 src/page/albums.vue:1197 src/page/people/new.vue:814
 #: src/page/people/recognized.vue:320 src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
 #: src/page/settings/general.vue:646
@@ -1162,7 +1166,7 @@ msgstr "Kopioitu leikepöydälle"
 msgid "Copy"
 msgstr "Kopio"
 
-#: src/locales.js:453
+#: src/locales.js:454
 msgid "Copying files from %s"
 msgstr "Tiedostojen kopiointi %s"
 
@@ -1857,7 +1861,7 @@ msgstr "Tiedostoselain"
 msgid "File Conversion"
 msgstr "Tiedoston muuntaminen"
 
-#: src/locales.js:434
+#: src/locales.js:435
 msgid "File deleted"
 msgstr "Tiedosto poistettu"
 
@@ -1871,7 +1875,7 @@ msgstr "Tiedoston nimi"
 msgid "File not found"
 msgstr "Tiedostoa ei löydy"
 
-#: src/locales.js:433
+#: src/locales.js:434
 msgid "File removed from stack"
 msgstr "Tiedosto poistettu pinosta"
 
@@ -1883,7 +1887,7 @@ msgstr "Tiedosto"
 msgid "File too large"
 msgstr "Tiedosto liian suuri"
 
-#: src/locales.js:460
+#: src/locales.js:461
 msgid "File uploaded"
 msgstr "Ladattu tiedosto"
 
@@ -2120,11 +2124,11 @@ msgstr "Kuvan laatu"
 msgid "Import"
 msgstr "Tuo"
 
-#: src/locales.js:446
+#: src/locales.js:447
 msgid "Import canceled"
 msgstr "Tuonti peruutettu"
 
-#: src/locales.js:445
+#: src/locales.js:446
 msgid "Import completed in %d s"
 msgstr "Tuonti valmis %d s"
 
@@ -2186,11 +2190,11 @@ msgstr "Indeksi"
 msgid "Indexing"
 msgstr "Indeksointi"
 
-#: src/locales.js:450
+#: src/locales.js:451
 msgid "Indexing canceled"
 msgstr "Indeksointi peruutettu"
 
-#: src/locales.js:447
+#: src/locales.js:448
 msgid "Indexing completed in %d s"
 msgstr "Indeksointi valmis %d s"
 
@@ -2198,7 +2202,7 @@ msgstr "Indeksointi valmis %d s"
 msgid "Indexing failed"
 msgstr "Indeksointi epäonnistui"
 
-#: src/locales.js:449
+#: src/locales.js:450
 msgid "Indexing files in %s"
 msgstr "Tiedostojen indeksointi osoitteessa %s"
 
@@ -2206,7 +2210,7 @@ msgstr "Tiedostojen indeksointi osoitteessa %s"
 msgid "Indexing media and sidecar files…"
 msgstr "Indeksoidaan media- ja sivutiedostoja…"
 
-#: src/locales.js:448
+#: src/locales.js:449
 msgid "Indexing originals..."
 msgstr "Alkuperäiskappaleiden indeksointi..."
 
@@ -2356,7 +2360,7 @@ msgstr "Tunniste"
 msgid "Label not found"
 msgstr "Tarraa ei löydy"
 
-#: src/locales.js:455
+#: src/locales.js:456
 msgid "Label saved"
 msgstr "Tarra tallennettu"
 
@@ -2372,7 +2376,7 @@ msgstr "Tarra tallennettu"
 msgid "Labels"
 msgstr "Tunnisteet"
 
-#: src/component/label/clipboard.vue:131 src/locales.js:454
+#: src/component/label/clipboard.vue:131 src/locales.js:455
 msgid "Labels deleted"
 msgstr "Tunnisteet poistettu"
 
@@ -2684,7 +2688,7 @@ msgstr "Tärkein"
 msgid "Move Files"
 msgstr "Siirrä tiedostoja"
 
-#: src/locales.js:452
+#: src/locales.js:453
 msgid "Moving files from %s"
 msgstr "Tiedostojen siirtäminen %s"
 
@@ -2972,11 +2976,11 @@ msgstr "Kerran viikossa"
 msgid "One album found"
 msgstr "Yksi albumi löytyi"
 
-#: src/locales.js:436
+#: src/locales.js:437
 msgid "One entry added to %s"
 msgstr "Yksi merkintä lisätty kohtaan %s"
 
-#: src/locales.js:438
+#: src/locales.js:439
 msgid "One entry removed from %s"
 msgstr "Yksi merkintä poistettu kohdasta %s"
 
@@ -3121,7 +3125,7 @@ msgstr "Osa joistakin valituista valokuvista"
 msgid "Password"
 msgstr "Salasana"
 
-#: src/component/settings/password.vue:162 src/locales.js:444
+#: src/component/settings/password.vue:162 src/locales.js:445
 msgid "Password changed"
 msgstr "Salasana vaihdettu"
 
@@ -3149,7 +3153,7 @@ msgid "People you share a link with will be able to view public contents."
 msgstr "Ihmiset, joille jaat linkin, voivat tarkastella julkista sisältöä."
 
 #: src/component/photo/clipboard.vue:303 src/component/photo/toolbar.vue:522
-#: src/locales.js:470
+#: src/locales.js:471
 msgid "Permanently deleted"
 msgstr "Poistettu pysyvästi"
 
@@ -3165,7 +3169,7 @@ msgstr "Henkilö"
 msgid "Person cover updated"
 msgstr "Henkilön kansi päivitetty"
 
-#: src/locales.js:459
+#: src/locales.js:460
 msgid "Person deleted"
 msgstr "Henkilö poistettu"
 
@@ -3174,7 +3178,7 @@ msgstr "Henkilö poistettu"
 msgid "Person not found"
 msgstr "Henkilöä ei löydy"
 
-#: src/locales.js:458
+#: src/locales.js:459
 msgid "Person saved"
 msgstr "Tallennettu henkilö"
 
@@ -3360,7 +3364,7 @@ msgstr "Ensisijainen"
 msgid "Private"
 msgstr "Yksityinen"
 
-#: src/locales.js:462
+#: src/locales.js:463
 msgid "Processing upload..."
 msgstr "Käsittelen latausta..."
 
@@ -3546,7 +3550,7 @@ msgstr "Poistettu"
 msgid "Removed %{name}"
 msgstr "Poistettu %{name}"
 
-#: src/locales.js:451
+#: src/locales.js:452
 msgid "Removed %d files and %d photos"
 msgstr "Poistettiin %d tiedostoa ja %d valokuvaa"
 
@@ -3794,19 +3798,19 @@ msgstr "Valitse aika"
 msgid "Selection"
 msgstr "Valinta"
 
-#: src/locales.js:435
+#: src/locales.js:436
 msgid "Selection added to %s"
 msgstr "Valinta lisätty %s"
 
-#: src/component/photo/clipboard.vue:251 src/locales.js:464
+#: src/component/photo/clipboard.vue:251 src/locales.js:465
 msgid "Selection approved"
 msgstr "Valinta hyväksytty"
 
-#: src/component/photo/clipboard.vue:282 src/locales.js:465
+#: src/component/photo/clipboard.vue:282 src/locales.js:466
 msgid "Selection archived"
 msgstr "Valinta arkistoitu"
 
-#: src/locales.js:467
+#: src/locales.js:468
 msgid "Selection marked as private"
 msgstr "Valinta merkitty yksityiseksi"
 
@@ -3814,7 +3818,7 @@ msgstr "Valinta merkitty yksityiseksi"
 msgid "Selection not found"
 msgstr "Valintaa ei löydy"
 
-#: src/component/photo/clipboard.vue:318 src/locales.js:466
+#: src/component/photo/clipboard.vue:318 src/locales.js:467
 msgid "Selection restored"
 msgstr "Valinta palautettu"
 
@@ -3873,7 +3877,7 @@ msgid "Settings"
 msgstr "Asetukset"
 
 #: src/page/settings/account.vue:533 src/page/settings/account.vue:562
-#: src/component/settings/passcode.vue:366 src/locales.js:443
+#: src/component/settings/passcode.vue:366 src/locales.js:444
 #: src/page/settings/account.vue:441 src/page/settings/account.vue:470
 msgid "Settings saved"
 msgstr "Asetukset tallennettu"
@@ -4156,7 +4160,7 @@ msgstr "Kadut"
 msgid "Subject"
 msgstr "Aihe"
 
-#: src/locales.js:457
+#: src/locales.js:458
 msgid "Subject deleted"
 msgstr "Aihe poistettu"
 
@@ -4164,11 +4168,11 @@ msgstr "Aihe poistettu"
 msgid "Subject not found"
 msgstr "Aihetta ei löydy"
 
-#: src/locales.js:456
+#: src/locales.js:457
 msgid "Subject saved"
 msgstr "Aihe tallennettu"
 
-#: src/component/settings/passcode.vue:351 src/locales.js:473
+#: src/component/settings/passcode.vue:351 src/locales.js:474
 msgid "Successfully activated"
 msgstr "Aktivointi onnistui"
 
@@ -4181,7 +4185,7 @@ msgstr "Onnistuneesti yhdistetty"
 msgid "Successfully deleted"
 msgstr "Poistettu onnistuneesti"
 
-#: src/component/settings/passcode.vue:323 src/locales.js:472
+#: src/component/settings/passcode.vue:323 src/locales.js:473
 msgid "Successfully verified"
 msgstr "Vahvistettu onnistuneesti"
 
@@ -4537,7 +4541,7 @@ msgstr "Lähetys valmis. Indeksoidaan…"
 msgid "Upload failed"
 msgstr "Lähetys epäonnistui"
 
-#: src/locales.js:463
+#: src/locales.js:464
 msgid "Upload has been processed"
 msgstr "Lataus on käsitelty"
 
@@ -4870,7 +4874,7 @@ msgstr "Jatkuva tukesi auttaa meitä tarjoamaan säännöllisiä päivityksiä j
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "Kirjastoasi analysoidaan jatkuvasti ja luodaan automaattisesti albumeita erityisistä hetkistä, matkoista ja paikoista."
 
-#: src/locales.js:469
+#: src/locales.js:470
 msgid "Zip created in %d s"
 msgstr "Zip luotu %d s"
 

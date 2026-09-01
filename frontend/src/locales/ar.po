@@ -79,15 +79,15 @@ msgstr "%{s} طويل جدًا"
 msgid "%{s} is too short"
 msgstr "%{s} قصير جدًا"
 
-#: src/locales.js:437
+#: src/locales.js:438
 msgid "%d entries added to %s"
 msgstr "تمت إضافة %d مدخلات إلى %s"
 
-#: src/locales.js:439
+#: src/locales.js:440
 msgid "%d entries removed from %s"
 msgstr "تمت إزالة %d مدخلات من %s"
 
-#: src/locales.js:461
+#: src/locales.js:462
 msgid "%d files uploaded in %d s"
 msgstr "تم تحميل %d ملف في %d ثانية"
 
@@ -95,7 +95,7 @@ msgstr "تم تحميل %d ملف في %d ثانية"
 msgid "%s already exists"
 msgstr "%s موجود بالفعل"
 
-#: src/locales.js:471
+#: src/locales.js:472
 msgid "%s has been restored"
 msgstr "تمت استعادة %s"
 
@@ -129,6 +129,10 @@ msgstr "4 ساعات"
 #: src/component/share/dialog.vue:116
 msgid "A click will copy it to your clipboard."
 msgstr "انقر للنسخ إلى الحافظة الخاصة بك."
+
+#: src/locales.js:428
+msgid "A migration is in progress"
+msgstr ""
 
 #: src/component/update.vue:53
 msgid "A new version of %{s} is available:"
@@ -176,12 +180,12 @@ msgid "Account"
 msgstr "الحساب"
 
 #: src/component/user/add/dialog.vue:261 src/component/user/add/dialog.vue:277
-#: src/component/service/add.vue:131 src/locales.js:440
+#: src/component/service/add.vue:131 src/locales.js:441
 msgid "Account created"
 msgstr "تم إنشاء الحساب"
 
 #: src/component/user/remove/dialog.vue:63 src/component/service/remove.vue:74
-#: src/locales.js:442
+#: src/locales.js:443
 msgid "Account deleted"
 msgstr "تم حذف الحساب"
 
@@ -197,7 +201,7 @@ msgstr "لا يمكن العثور على الحساب"
 msgid "Account restored"
 msgstr "تم استعادة الحساب"
 
-#: src/locales.js:441
+#: src/locales.js:442
 msgid "Account saved"
 msgstr "تم حفظ الحساب"
 
@@ -394,7 +398,7 @@ msgstr "بعد أسبوعين"
 msgid "Album"
 msgstr "ألبوم"
 
-#: src/locales.js:431
+#: src/locales.js:432
 msgid "Album %s deleted"
 msgstr "تم حذف الألبوم %s"
 
@@ -402,11 +406,11 @@ msgstr "تم حذف الألبوم %s"
 msgid "Album Backups"
 msgstr "النسخ الاحتياطية للألبوم"
 
-#: src/locales.js:432
+#: src/locales.js:433
 msgid "Album contents cloned"
 msgstr "تم نسخ محتويات الألبوم"
 
-#: src/locales.js:429 src/page/albums.vue:1194
+#: src/locales.js:430 src/page/albums.vue:1194
 msgid "Album created"
 msgstr "تم إنشاء الألبوم"
 
@@ -418,7 +422,7 @@ msgstr "تم حذف الألبوم"
 msgid "Album not found"
 msgstr "لا يمكن العثور على الألبوم"
 
-#: src/locales.js:430
+#: src/locales.js:431
 msgid "Album saved"
 msgstr "تم حفظ الألبوم"
 
@@ -431,7 +435,7 @@ msgstr "تم حفظ الألبوم"
 msgid "Albums"
 msgstr "ألبومات"
 
-#: src/component/album/clipboard.vue:194 src/locales.js:468
+#: src/component/album/clipboard.vue:194 src/locales.js:469
 msgid "Albums deleted"
 msgstr "تم حذف الألبومات"
 
@@ -933,7 +937,7 @@ msgstr "لا يمكن حفظ التغييرات"
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
-#: src/locales.js:428 src/page/albums.vue:1197 src/page/people/new.vue:814
+#: src/locales.js:429 src/page/albums.vue:1197 src/page/people/new.vue:814
 #: src/page/people/recognized.vue:320 src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
 #: src/page/settings/general.vue:646
@@ -1165,7 +1169,7 @@ msgstr "نسخ إلى الحافظة"
 msgid "Copy"
 msgstr "نسخ"
 
-#: src/locales.js:453
+#: src/locales.js:454
 msgid "Copying files from %s"
 msgstr "نسخ ملفات من %s"
 
@@ -1860,7 +1864,7 @@ msgstr "متصفح الملفات"
 msgid "File Conversion"
 msgstr "تحويل الملف"
 
-#: src/locales.js:434
+#: src/locales.js:435
 msgid "File deleted"
 msgstr "تم حذف الملف"
 
@@ -1874,7 +1878,7 @@ msgstr "اسم الملف"
 msgid "File not found"
 msgstr "لم يتم العثور على الملف"
 
-#: src/locales.js:433
+#: src/locales.js:434
 msgid "File removed from stack"
 msgstr "تمت إزالة الملف من المكدس"
 
@@ -1886,7 +1890,7 @@ msgstr "حجم الملف"
 msgid "File too large"
 msgstr "الملف كبير جدًا"
 
-#: src/locales.js:460
+#: src/locales.js:461
 msgid "File uploaded"
 msgstr "تم تحميل الملف"
 
@@ -2123,11 +2127,11 @@ msgstr "جودة الصورة"
 msgid "Import"
 msgstr "يستورد"
 
-#: src/locales.js:446
+#: src/locales.js:447
 msgid "Import canceled"
 msgstr "تم إلغاء الاستيراد"
 
-#: src/locales.js:445
+#: src/locales.js:446
 msgid "Import completed in %d s"
 msgstr "اكتمل الاستيراد في %d ثانية"
 
@@ -2189,11 +2193,11 @@ msgstr "فِهرِس"
 msgid "Indexing"
 msgstr "الفهرسة"
 
-#: src/locales.js:450
+#: src/locales.js:451
 msgid "Indexing canceled"
 msgstr "تم إلغاء الفهرسة"
 
-#: src/locales.js:447
+#: src/locales.js:448
 msgid "Indexing completed in %d s"
 msgstr "اكتملت الفهرسة في %d ثانية"
 
@@ -2201,7 +2205,7 @@ msgstr "اكتملت الفهرسة في %d ثانية"
 msgid "Indexing failed"
 msgstr "فشلت الفهرسة"
 
-#: src/locales.js:449
+#: src/locales.js:450
 msgid "Indexing files in %s"
 msgstr "فهرسة الملفات في %s"
 
@@ -2209,7 +2213,7 @@ msgstr "فهرسة الملفات في %s"
 msgid "Indexing media and sidecar files…"
 msgstr "جارٍ فهرسة الوسائط والملفات الجانبية …"
 
-#: src/locales.js:448
+#: src/locales.js:449
 msgid "Indexing originals..."
 msgstr "تتم فهرسة الصور الأصلية ..."
 
@@ -2359,7 +2363,7 @@ msgstr "مُلصَق"
 msgid "Label not found"
 msgstr "لا يمكن العثور على التصنيف"
 
-#: src/locales.js:455
+#: src/locales.js:456
 msgid "Label saved"
 msgstr "تم حفظ التصنيف"
 
@@ -2375,7 +2379,7 @@ msgstr "تم حفظ التصنيف"
 msgid "Labels"
 msgstr "ملصقات"
 
-#: src/component/label/clipboard.vue:131 src/locales.js:454
+#: src/component/label/clipboard.vue:131 src/locales.js:455
 msgid "Labels deleted"
 msgstr "تم حذف التصنيفات"
 
@@ -2687,7 +2691,7 @@ msgstr "الأكثر صلة"
 msgid "Move Files"
 msgstr "نقل الملفات"
 
-#: src/locales.js:452
+#: src/locales.js:453
 msgid "Moving files from %s"
 msgstr "نقل الملفات من %s"
 
@@ -2975,11 +2979,11 @@ msgstr "مرة في الأسبوع"
 msgid "One album found"
 msgstr "تم العثور على ألبوم واحد"
 
-#: src/locales.js:436
+#: src/locales.js:437
 msgid "One entry added to %s"
 msgstr "تمت إضافة إدخال واحد إلى %s"
 
-#: src/locales.js:438
+#: src/locales.js:439
 msgid "One entry removed from %s"
 msgstr "تمت إزالة إدخال واحد من %s"
 
@@ -3124,7 +3128,7 @@ msgstr "جزء من بعض الصور المختارة"
 msgid "Password"
 msgstr "كلمة المرور"
 
-#: src/component/settings/password.vue:162 src/locales.js:444
+#: src/component/settings/password.vue:162 src/locales.js:445
 msgid "Password changed"
 msgstr "تم تغيير كلمة السر"
 
@@ -3152,7 +3156,7 @@ msgid "People you share a link with will be able to view public contents."
 msgstr "سيتمكن الأشخاص الذين تشارك الرابط معهم من عرض المحتويات العامة."
 
 #: src/component/photo/clipboard.vue:303 src/component/photo/toolbar.vue:522
-#: src/locales.js:470
+#: src/locales.js:471
 msgid "Permanently deleted"
 msgstr "تم الحذف بشكل نهائي"
 
@@ -3168,7 +3172,7 @@ msgstr "شخص"
 msgid "Person cover updated"
 msgstr "تم تحديث غطاء الشخص"
 
-#: src/locales.js:459
+#: src/locales.js:460
 msgid "Person deleted"
 msgstr "تم حذف الشخص"
 
@@ -3177,7 +3181,7 @@ msgstr "تم حذف الشخص"
 msgid "Person not found"
 msgstr "لم يتم العثور على الشخص"
 
-#: src/locales.js:458
+#: src/locales.js:459
 msgid "Person saved"
 msgstr "حفظ الشخص"
 
@@ -3363,7 +3367,7 @@ msgstr "الأولية"
 msgid "Private"
 msgstr "خاص"
 
-#: src/locales.js:462
+#: src/locales.js:463
 msgid "Processing upload..."
 msgstr "جارٍ معالجة التحميل ..."
 
@@ -3549,7 +3553,7 @@ msgstr "تمت الإزالة"
 msgid "Removed %{name}"
 msgstr "تم حذف %{name}"
 
-#: src/locales.js:451
+#: src/locales.js:452
 msgid "Removed %d files and %d photos"
 msgstr "تمت إزالة %d ملفات و %d صورة"
 
@@ -3797,19 +3801,19 @@ msgstr "حدد الوقت"
 msgid "Selection"
 msgstr "الاختيار"
 
-#: src/locales.js:435
+#: src/locales.js:436
 msgid "Selection added to %s"
 msgstr "تمت إضافة التحديد إلى %s"
 
-#: src/component/photo/clipboard.vue:251 src/locales.js:464
+#: src/component/photo/clipboard.vue:251 src/locales.js:465
 msgid "Selection approved"
 msgstr "تمت الموافقة على الاختيار"
 
-#: src/component/photo/clipboard.vue:282 src/locales.js:465
+#: src/component/photo/clipboard.vue:282 src/locales.js:466
 msgid "Selection archived"
 msgstr "تمت أرشفة المحتوى المحدد"
 
-#: src/locales.js:467
+#: src/locales.js:468
 msgid "Selection marked as private"
 msgstr "تم تحديد الاختيار على أنه خاص"
 
@@ -3817,7 +3821,7 @@ msgstr "تم تحديد الاختيار على أنه خاص"
 msgid "Selection not found"
 msgstr "الاختيار غير موجود"
 
-#: src/component/photo/clipboard.vue:318 src/locales.js:466
+#: src/component/photo/clipboard.vue:318 src/locales.js:467
 msgid "Selection restored"
 msgstr "تم استعادة المحتوى المحدد"
 
@@ -3876,7 +3880,7 @@ msgid "Settings"
 msgstr "الإعدادات"
 
 #: src/page/settings/account.vue:533 src/page/settings/account.vue:562
-#: src/component/settings/passcode.vue:366 src/locales.js:443
+#: src/component/settings/passcode.vue:366 src/locales.js:444
 #: src/page/settings/account.vue:441 src/page/settings/account.vue:470
 msgid "Settings saved"
 msgstr "تم حفظ الإعدادات"
@@ -4159,7 +4163,7 @@ msgstr "الشوارع"
 msgid "Subject"
 msgstr "المواضيع"
 
-#: src/locales.js:457
+#: src/locales.js:458
 msgid "Subject deleted"
 msgstr "تم حذف الموضوع"
 
@@ -4167,11 +4171,11 @@ msgstr "تم حذف الموضوع"
 msgid "Subject not found"
 msgstr "لا يمكن العثور على الموضوع"
 
-#: src/locales.js:456
+#: src/locales.js:457
 msgid "Subject saved"
 msgstr "تم حفظ الموضوع"
 
-#: src/component/settings/passcode.vue:351 src/locales.js:473
+#: src/component/settings/passcode.vue:351 src/locales.js:474
 msgid "Successfully activated"
 msgstr "تم التفعيل بنجاح"
 
@@ -4184,7 +4188,7 @@ msgstr "تم الاتصال بنجاح"
 msgid "Successfully deleted"
 msgstr "تم الحذف بنجاح"
 
-#: src/component/settings/passcode.vue:323 src/locales.js:472
+#: src/component/settings/passcode.vue:323 src/locales.js:473
 msgid "Successfully verified"
 msgstr "تم التحقق بنجاح"
 
@@ -4540,7 +4544,7 @@ msgstr "اكتمل التحميل. جارٍ الفهرسة …"
 msgid "Upload failed"
 msgstr "فشل التحميل"
 
-#: src/locales.js:463
+#: src/locales.js:464
 msgid "Upload has been processed"
 msgstr "تمت معالجة التحميل"
 
@@ -4873,7 +4877,7 @@ msgstr "يساعدنا دعمك المستمر في توفير تحديثات م
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "يتم تحليل مكتبتك بشكل مستمر لإنشاء ألبومات الحظات الخاصة والرحلات والأماكن تلقائيًا."
 
-#: src/locales.js:469
+#: src/locales.js:470
 msgid "Zip created in %d s"
 msgstr "تم إنشاء الملف المضغوط خلال %d ثوانٍ"
 

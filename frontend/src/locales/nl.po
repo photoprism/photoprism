@@ -79,15 +79,15 @@ msgstr "%{s} is te lang"
 msgid "%{s} is too short"
 msgstr "%{s} is te kort"
 
-#: src/locales.js:437
+#: src/locales.js:438
 msgid "%d entries added to %s"
 msgstr "%d items toegevoegd aan %s"
 
-#: src/locales.js:439
+#: src/locales.js:440
 msgid "%d entries removed from %s"
 msgstr "%d items verwijderd uit %s"
 
-#: src/locales.js:461
+#: src/locales.js:462
 msgid "%d files uploaded in %d s"
 msgstr "%d bestanden geüpload in %d s"
 
@@ -95,7 +95,7 @@ msgstr "%d bestanden geüpload in %d s"
 msgid "%s already exists"
 msgstr "%s bestaat al"
 
-#: src/locales.js:471
+#: src/locales.js:472
 msgid "%s has been restored"
 msgstr "%s is hersteld"
 
@@ -129,6 +129,10 @@ msgstr "4 uren"
 #: src/component/share/dialog.vue:116
 msgid "A click will copy it to your clipboard."
 msgstr "Een klik zal het naar uw klembord kopiëren."
+
+#: src/locales.js:428
+msgid "A migration is in progress"
+msgstr ""
 
 #: src/component/update.vue:53
 msgid "A new version of %{s} is available:"
@@ -176,12 +180,12 @@ msgid "Account"
 msgstr "Account"
 
 #: src/component/user/add/dialog.vue:261 src/component/user/add/dialog.vue:277
-#: src/component/service/add.vue:131 src/locales.js:440
+#: src/component/service/add.vue:131 src/locales.js:441
 msgid "Account created"
 msgstr "Account aangemaakt"
 
 #: src/component/user/remove/dialog.vue:63 src/component/service/remove.vue:74
-#: src/locales.js:442
+#: src/locales.js:443
 msgid "Account deleted"
 msgstr "Account verwijderd"
 
@@ -197,7 +201,7 @@ msgstr "Account niet gevonden"
 msgid "Account restored"
 msgstr "Account hersteld"
 
-#: src/locales.js:441
+#: src/locales.js:442
 msgid "Account saved"
 msgstr "Account opgeslagen"
 
@@ -394,7 +398,7 @@ msgstr "Na twee weken"
 msgid "Album"
 msgstr "Album"
 
-#: src/locales.js:431
+#: src/locales.js:432
 msgid "Album %s deleted"
 msgstr "Album %s verwijderd"
 
@@ -402,11 +406,11 @@ msgstr "Album %s verwijderd"
 msgid "Album Backups"
 msgstr "Back-ups van albums"
 
-#: src/locales.js:432
+#: src/locales.js:433
 msgid "Album contents cloned"
 msgstr "Albuminhoud gekopieerd"
 
-#: src/locales.js:429 src/page/albums.vue:1194
+#: src/locales.js:430 src/page/albums.vue:1194
 msgid "Album created"
 msgstr "Album aangemaakt"
 
@@ -418,7 +422,7 @@ msgstr "Album verwijderd"
 msgid "Album not found"
 msgstr "Album niet gevonden"
 
-#: src/locales.js:430
+#: src/locales.js:431
 msgid "Album saved"
 msgstr "Album opgeslagen"
 
@@ -431,7 +435,7 @@ msgstr "Album opgeslagen"
 msgid "Albums"
 msgstr "Albums"
 
-#: src/component/album/clipboard.vue:194 src/locales.js:468
+#: src/component/album/clipboard.vue:194 src/locales.js:469
 msgid "Albums deleted"
 msgstr "Albums verwijderd"
 
@@ -933,7 +937,7 @@ msgstr "Wijzigingen kunnen niet worden opgeslagen"
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
-#: src/locales.js:428 src/page/albums.vue:1197 src/page/people/new.vue:814
+#: src/locales.js:429 src/page/albums.vue:1197 src/page/people/new.vue:814
 #: src/page/people/recognized.vue:320 src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
 #: src/page/settings/general.vue:646
@@ -1165,7 +1169,7 @@ msgstr "Gekopieerd naar klembord"
 msgid "Copy"
 msgstr "Kopiëren"
 
-#: src/locales.js:453
+#: src/locales.js:454
 msgid "Copying files from %s"
 msgstr "Bestanden kopiëren uit %s"
 
@@ -1860,7 +1864,7 @@ msgstr "Bestands Browser"
 msgid "File Conversion"
 msgstr "Bestandsconversie"
 
-#: src/locales.js:434
+#: src/locales.js:435
 msgid "File deleted"
 msgstr "Bestand verwijderd"
 
@@ -1874,7 +1878,7 @@ msgstr "Bestandsnaam"
 msgid "File not found"
 msgstr "Bestand niet gevonden"
 
-#: src/locales.js:433
+#: src/locales.js:434
 msgid "File removed from stack"
 msgstr "Bestand uit stapel verwijderd"
 
@@ -1886,7 +1890,7 @@ msgstr "Bestandsgrootte"
 msgid "File too large"
 msgstr "Bestand te groot"
 
-#: src/locales.js:460
+#: src/locales.js:461
 msgid "File uploaded"
 msgstr "Bestand geüpload"
 
@@ -2123,11 +2127,11 @@ msgstr "Beeldkwaliteit"
 msgid "Import"
 msgstr "Importeren"
 
-#: src/locales.js:446
+#: src/locales.js:447
 msgid "Import canceled"
 msgstr "Importeren geannuleerd"
 
-#: src/locales.js:445
+#: src/locales.js:446
 msgid "Import completed in %d s"
 msgstr "Importeren voltooid in %d s"
 
@@ -2189,11 +2193,11 @@ msgstr "Index"
 msgid "Indexing"
 msgstr "Indexeren"
 
-#: src/locales.js:450
+#: src/locales.js:451
 msgid "Indexing canceled"
 msgstr "Indexeren geannuleerd"
 
-#: src/locales.js:447
+#: src/locales.js:448
 msgid "Indexing completed in %d s"
 msgstr "Indexeren voltooid in %d s"
 
@@ -2201,7 +2205,7 @@ msgstr "Indexeren voltooid in %d s"
 msgid "Indexing failed"
 msgstr "Indexeren mislukt"
 
-#: src/locales.js:449
+#: src/locales.js:450
 msgid "Indexing files in %s"
 msgstr "Bestanden indexeren in %s"
 
@@ -2209,7 +2213,7 @@ msgstr "Bestanden indexeren in %s"
 msgid "Indexing media and sidecar files…"
 msgstr "Foto’s en sidecar-bestanden aan het indexeren…"
 
-#: src/locales.js:448
+#: src/locales.js:449
 msgid "Indexing originals..."
 msgstr "Originelen indexeren…"
 
@@ -2359,7 +2363,7 @@ msgstr "Label"
 msgid "Label not found"
 msgstr "Label niet gevonden"
 
-#: src/locales.js:455
+#: src/locales.js:456
 msgid "Label saved"
 msgstr "Labels opgeslagen"
 
@@ -2375,7 +2379,7 @@ msgstr "Labels opgeslagen"
 msgid "Labels"
 msgstr "Labels"
 
-#: src/component/label/clipboard.vue:131 src/locales.js:454
+#: src/component/label/clipboard.vue:131 src/locales.js:455
 msgid "Labels deleted"
 msgstr "Labels verwijderd"
 
@@ -2687,7 +2691,7 @@ msgstr "Meest relevant"
 msgid "Move Files"
 msgstr "Bestanden verplaatsen"
 
-#: src/locales.js:452
+#: src/locales.js:453
 msgid "Moving files from %s"
 msgstr "Bestanden verplaatsen uit %s"
 
@@ -2975,11 +2979,11 @@ msgstr "Eenmaal per week"
 msgid "One album found"
 msgstr "Een album gevonden"
 
-#: src/locales.js:436
+#: src/locales.js:437
 msgid "One entry added to %s"
 msgstr "Eén item toegevoegd aan %s"
 
-#: src/locales.js:438
+#: src/locales.js:439
 msgid "One entry removed from %s"
 msgstr "Eén item verwijderd uit %s"
 
@@ -3124,7 +3128,7 @@ msgstr "Deel van een aantal geselecteerde foto's"
 msgid "Password"
 msgstr "Wachtwoord"
 
-#: src/component/settings/password.vue:162 src/locales.js:444
+#: src/component/settings/password.vue:162 src/locales.js:445
 msgid "Password changed"
 msgstr "Wachtwoord gewijzigd"
 
@@ -3152,7 +3156,7 @@ msgid "People you share a link with will be able to view public contents."
 msgstr "Mensen met wie je een link deelt, kunnen de openbare inhoud bekijken."
 
 #: src/component/photo/clipboard.vue:303 src/component/photo/toolbar.vue:522
-#: src/locales.js:470
+#: src/locales.js:471
 msgid "Permanently deleted"
 msgstr "Permanent verwijderd"
 
@@ -3168,7 +3172,7 @@ msgstr "Persoon"
 msgid "Person cover updated"
 msgstr "Persoon cover bijgewerkt"
 
-#: src/locales.js:459
+#: src/locales.js:460
 msgid "Person deleted"
 msgstr "Persoon verwijderd"
 
@@ -3177,7 +3181,7 @@ msgstr "Persoon verwijderd"
 msgid "Person not found"
 msgstr "Persoon niet gevonden"
 
-#: src/locales.js:458
+#: src/locales.js:459
 msgid "Person saved"
 msgstr "Persoon gered"
 
@@ -3363,7 +3367,7 @@ msgstr "Primair"
 msgid "Private"
 msgstr "Privé"
 
-#: src/locales.js:462
+#: src/locales.js:463
 msgid "Processing upload..."
 msgstr "Verwerking upload..."
 
@@ -3549,7 +3553,7 @@ msgstr "Verwijderd"
 msgid "Removed %{name}"
 msgstr "%{name} verwijderd"
 
-#: src/locales.js:451
+#: src/locales.js:452
 msgid "Removed %d files and %d photos"
 msgstr "%d bestanden en %d foto’s verwijderd"
 
@@ -3797,19 +3801,19 @@ msgstr "Selecteer tijd"
 msgid "Selection"
 msgstr "Selectie"
 
-#: src/locales.js:435
+#: src/locales.js:436
 msgid "Selection added to %s"
 msgstr "Selectie toegevoegd aan %s"
 
-#: src/component/photo/clipboard.vue:251 src/locales.js:464
+#: src/component/photo/clipboard.vue:251 src/locales.js:465
 msgid "Selection approved"
 msgstr "Selectie goedgekeurd"
 
-#: src/component/photo/clipboard.vue:282 src/locales.js:465
+#: src/component/photo/clipboard.vue:282 src/locales.js:466
 msgid "Selection archived"
 msgstr "Selectie gearchiveerd"
 
-#: src/locales.js:467
+#: src/locales.js:468
 msgid "Selection marked as private"
 msgstr "Selectie gemarkeerd als privé"
 
@@ -3817,7 +3821,7 @@ msgstr "Selectie gemarkeerd als privé"
 msgid "Selection not found"
 msgstr "Selectie niet gevonden"
 
-#: src/component/photo/clipboard.vue:318 src/locales.js:466
+#: src/component/photo/clipboard.vue:318 src/locales.js:467
 msgid "Selection restored"
 msgstr "Selectie hersteld"
 
@@ -3876,7 +3880,7 @@ msgid "Settings"
 msgstr "Instellingen"
 
 #: src/page/settings/account.vue:533 src/page/settings/account.vue:562
-#: src/component/settings/passcode.vue:366 src/locales.js:443
+#: src/component/settings/passcode.vue:366 src/locales.js:444
 #: src/page/settings/account.vue:441 src/page/settings/account.vue:470
 msgid "Settings saved"
 msgstr "Instellingen opgeslagen"
@@ -4159,7 +4163,7 @@ msgstr "Straat"
 msgid "Subject"
 msgstr "Onderwerp"
 
-#: src/locales.js:457
+#: src/locales.js:458
 msgid "Subject deleted"
 msgstr "Onderwerp verwijderd"
 
@@ -4167,11 +4171,11 @@ msgstr "Onderwerp verwijderd"
 msgid "Subject not found"
 msgstr "Onderwerp niet gevonden"
 
-#: src/locales.js:456
+#: src/locales.js:457
 msgid "Subject saved"
 msgstr "Onderwerp opgeslagen"
 
-#: src/component/settings/passcode.vue:351 src/locales.js:473
+#: src/component/settings/passcode.vue:351 src/locales.js:474
 msgid "Successfully activated"
 msgstr "Met succes geactiveerd"
 
@@ -4184,7 +4188,7 @@ msgstr "Succesvol aangesloten"
 msgid "Successfully deleted"
 msgstr "Succesvol verwijderd"
 
-#: src/component/settings/passcode.vue:323 src/locales.js:472
+#: src/component/settings/passcode.vue:323 src/locales.js:473
 msgid "Successfully verified"
 msgstr "Met succes geverifieerd"
 
@@ -4540,7 +4544,7 @@ msgstr "Uploaden klaar. Indexeren…"
 msgid "Upload failed"
 msgstr "Uploaden mislukt"
 
-#: src/locales.js:463
+#: src/locales.js:464
 msgid "Upload has been processed"
 msgstr "Upload is verwerkt"
 
@@ -4873,7 +4877,7 @@ msgstr "Uw blijvende steun helpt ons om regelmatig updates te geven en onafhanke
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "Uw bibliotheek wordt voortdurend geanalyseerd om automatisch albums te maken van speciale momenten, reizen en plaatsen."
 
-#: src/locales.js:469
+#: src/locales.js:470
 msgid "Zip created in %d s"
 msgstr "Zip gemaakt in %d s"
 

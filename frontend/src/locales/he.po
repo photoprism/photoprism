@@ -79,15 +79,15 @@ msgstr "%{s} ארוך מדי"
 msgid "%{s} is too short"
 msgstr "%{s} קצר מדי"
 
-#: src/locales.js:437
+#: src/locales.js:438
 msgid "%d entries added to %s"
 msgstr "%d רשומות נוספו ל-%s"
 
-#: src/locales.js:439
+#: src/locales.js:440
 msgid "%d entries removed from %s"
 msgstr "%d רשומות הוסרו מ-%s"
 
-#: src/locales.js:461
+#: src/locales.js:462
 msgid "%d files uploaded in %d s"
 msgstr "%d קבצים הועלו תוך %d שניות"
 
@@ -95,7 +95,7 @@ msgstr "%d קבצים הועלו תוך %d שניות"
 msgid "%s already exists"
 msgstr "%s כבר קיים"
 
-#: src/locales.js:471
+#: src/locales.js:472
 msgid "%s has been restored"
 msgstr "%s שוחזר"
 
@@ -129,6 +129,10 @@ msgstr "4 שעות"
 #: src/component/share/dialog.vue:116
 msgid "A click will copy it to your clipboard."
 msgstr "להקיש כדי להעתיק ללוח־הגזירים."
+
+#: src/locales.js:428
+msgid "A migration is in progress"
+msgstr ""
 
 #: src/component/update.vue:53
 msgid "A new version of %{s} is available:"
@@ -176,12 +180,12 @@ msgid "Account"
 msgstr "חשבון"
 
 #: src/component/user/add/dialog.vue:261 src/component/user/add/dialog.vue:277
-#: src/component/service/add.vue:131 src/locales.js:440
+#: src/component/service/add.vue:131 src/locales.js:441
 msgid "Account created"
 msgstr "חשבון נוצר"
 
 #: src/component/user/remove/dialog.vue:63 src/component/service/remove.vue:74
-#: src/locales.js:442
+#: src/locales.js:443
 msgid "Account deleted"
 msgstr "חשבון נמחק"
 
@@ -197,7 +201,7 @@ msgstr "החשבון לא נמצא"
 msgid "Account restored"
 msgstr "חשבון שוחזר"
 
-#: src/locales.js:441
+#: src/locales.js:442
 msgid "Account saved"
 msgstr "החשבון נשמר"
 
@@ -394,7 +398,7 @@ msgstr "לאחר שבועיים"
 msgid "Album"
 msgstr "אלבום"
 
-#: src/locales.js:431
+#: src/locales.js:432
 msgid "Album %s deleted"
 msgstr "האלבום %s נמחק"
 
@@ -402,11 +406,11 @@ msgstr "האלבום %s נמחק"
 msgid "Album Backups"
 msgstr "גיבויי אלבומים"
 
-#: src/locales.js:432
+#: src/locales.js:433
 msgid "Album contents cloned"
 msgstr "תוכן האלבום שוכפל"
 
-#: src/locales.js:429 src/page/albums.vue:1194
+#: src/locales.js:430 src/page/albums.vue:1194
 msgid "Album created"
 msgstr "אלבום נוצר"
 
@@ -418,7 +422,7 @@ msgstr "אלבום נמחק"
 msgid "Album not found"
 msgstr "האלבום לא נמצא"
 
-#: src/locales.js:430
+#: src/locales.js:431
 msgid "Album saved"
 msgstr "האלבום נשמר"
 
@@ -431,7 +435,7 @@ msgstr "האלבום נשמר"
 msgid "Albums"
 msgstr "אלבומים"
 
-#: src/component/album/clipboard.vue:194 src/locales.js:468
+#: src/component/album/clipboard.vue:194 src/locales.js:469
 msgid "Albums deleted"
 msgstr "אלבומים נמחקו"
 
@@ -933,7 +937,7 @@ msgstr "לא ניתן לשמור שינויים"
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
-#: src/locales.js:428 src/page/albums.vue:1197 src/page/people/new.vue:814
+#: src/locales.js:429 src/page/albums.vue:1197 src/page/people/new.vue:814
 #: src/page/people/recognized.vue:320 src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
 #: src/page/settings/general.vue:646
@@ -1165,7 +1169,7 @@ msgstr "הועתק ללוח"
 msgid "Copy"
 msgstr "עותק"
 
-#: src/locales.js:453
+#: src/locales.js:454
 msgid "Copying files from %s"
 msgstr "מעתיק קבצים מ-%s"
 
@@ -1860,7 +1864,7 @@ msgstr "סייר קבצים"
 msgid "File Conversion"
 msgstr "המרת קבצים"
 
-#: src/locales.js:434
+#: src/locales.js:435
 msgid "File deleted"
 msgstr "הקובץ נמחק"
 
@@ -1874,7 +1878,7 @@ msgstr "שם קובץ"
 msgid "File not found"
 msgstr "קובץ לא נמצא"
 
-#: src/locales.js:433
+#: src/locales.js:434
 msgid "File removed from stack"
 msgstr "הקובץ הוסר מהאיחוד"
 
@@ -1886,7 +1890,7 @@ msgstr "גודל הקובץ"
 msgid "File too large"
 msgstr "קובץ גדול מדי"
 
-#: src/locales.js:460
+#: src/locales.js:461
 msgid "File uploaded"
 msgstr "הקובץ הועלה"
 
@@ -2123,11 +2127,11 @@ msgstr "איכות תמונה"
 msgid "Import"
 msgstr "ייבוא"
 
-#: src/locales.js:446
+#: src/locales.js:447
 msgid "Import canceled"
 msgstr "הייבוא בוטל"
 
-#: src/locales.js:445
+#: src/locales.js:446
 msgid "Import completed in %d s"
 msgstr "הייבוא הושלם ב-%d שניות"
 
@@ -2189,11 +2193,11 @@ msgstr "אינדקס"
 msgid "Indexing"
 msgstr "מאנדקס"
 
-#: src/locales.js:450
+#: src/locales.js:451
 msgid "Indexing canceled"
 msgstr "יצירת האינדקס בוטלה"
 
-#: src/locales.js:447
+#: src/locales.js:448
 msgid "Indexing completed in %d s"
 msgstr "האינדוקס הושלם ב-%d שניות"
 
@@ -2201,7 +2205,7 @@ msgstr "האינדוקס הושלם ב-%d שניות"
 msgid "Indexing failed"
 msgstr "אינדוקס נכשל"
 
-#: src/locales.js:449
+#: src/locales.js:450
 msgid "Indexing files in %s"
 msgstr "מאנדקס קבצים תוך %s"
 
@@ -2209,7 +2213,7 @@ msgstr "מאנדקס קבצים תוך %s"
 msgid "Indexing media and sidecar files…"
 msgstr "יצירת אינדקס של קבצי מדיה וקבצי עזר…"
 
-#: src/locales.js:448
+#: src/locales.js:449
 msgid "Indexing originals..."
 msgstr "מאנדקס קבצי מקור..."
 
@@ -2359,7 +2363,7 @@ msgstr "תווית"
 msgid "Label not found"
 msgstr "התווית לא נמצאה"
 
-#: src/locales.js:455
+#: src/locales.js:456
 msgid "Label saved"
 msgstr "התווית נשמרה"
 
@@ -2375,7 +2379,7 @@ msgstr "התווית נשמרה"
 msgid "Labels"
 msgstr "תוויות"
 
-#: src/component/label/clipboard.vue:131 src/locales.js:454
+#: src/component/label/clipboard.vue:131 src/locales.js:455
 msgid "Labels deleted"
 msgstr "תוויות נמחקו"
 
@@ -2687,7 +2691,7 @@ msgstr "הכי רלוונטי"
 msgid "Move Files"
 msgstr "העבר קבצים"
 
-#: src/locales.js:452
+#: src/locales.js:453
 msgid "Moving files from %s"
 msgstr "מעביר קבצים מ-%s"
 
@@ -2975,11 +2979,11 @@ msgstr "פעם בשבוע"
 msgid "One album found"
 msgstr "אלבום אחד נמצא"
 
-#: src/locales.js:436
+#: src/locales.js:437
 msgid "One entry added to %s"
 msgstr "רשומה אחת נוספה ל-%s"
 
-#: src/locales.js:438
+#: src/locales.js:439
 msgid "One entry removed from %s"
 msgstr "רשומה אחת הוסרה מ-%s"
 
@@ -3124,7 +3128,7 @@ msgstr "חלק מתמונות נבחרות"
 msgid "Password"
 msgstr "סיסמה"
 
-#: src/component/settings/password.vue:162 src/locales.js:444
+#: src/component/settings/password.vue:162 src/locales.js:445
 msgid "Password changed"
 msgstr "סיסמא שונתה"
 
@@ -3152,7 +3156,7 @@ msgid "People you share a link with will be able to view public contents."
 msgstr "אנשים שעימם אתה חולק קישור יוכלו להציג תכנים ציבוריים."
 
 #: src/component/photo/clipboard.vue:303 src/component/photo/toolbar.vue:522
-#: src/locales.js:470
+#: src/locales.js:471
 msgid "Permanently deleted"
 msgstr "נמחק לצמיתות"
 
@@ -3168,7 +3172,7 @@ msgstr "אָדָם"
 msgid "Person cover updated"
 msgstr "כיסוי אדם עודכן"
 
-#: src/locales.js:459
+#: src/locales.js:460
 msgid "Person deleted"
 msgstr "אדם נמחק"
 
@@ -3177,7 +3181,7 @@ msgstr "אדם נמחק"
 msgid "Person not found"
 msgstr "אדם לא נמצא"
 
-#: src/locales.js:458
+#: src/locales.js:459
 msgid "Person saved"
 msgstr "אדם נשמר"
 
@@ -3363,7 +3367,7 @@ msgstr "ראשי"
 msgid "Private"
 msgstr "פרטי"
 
-#: src/locales.js:462
+#: src/locales.js:463
 msgid "Processing upload..."
 msgstr "מעבד העלאה..."
 
@@ -3549,7 +3553,7 @@ msgstr "הוסר"
 msgid "Removed %{name}"
 msgstr "%{name} הוסר"
 
-#: src/locales.js:451
+#: src/locales.js:452
 msgid "Removed %d files and %d photos"
 msgstr "הוסרו %d קבצים ו-%d תמונות"
 
@@ -3797,19 +3801,19 @@ msgstr "בחר זמן"
 msgid "Selection"
 msgstr "בחירה"
 
-#: src/locales.js:435
+#: src/locales.js:436
 msgid "Selection added to %s"
 msgstr "הבחירה נוספה ל-%s"
 
-#: src/component/photo/clipboard.vue:251 src/locales.js:464
+#: src/component/photo/clipboard.vue:251 src/locales.js:465
 msgid "Selection approved"
 msgstr "הבחירה אושרה"
 
-#: src/component/photo/clipboard.vue:282 src/locales.js:465
+#: src/component/photo/clipboard.vue:282 src/locales.js:466
 msgid "Selection archived"
 msgstr "הבחירה הועברה לארכיון"
 
-#: src/locales.js:467
+#: src/locales.js:468
 msgid "Selection marked as private"
 msgstr "הבחירה סומנה כפרטית"
 
@@ -3817,7 +3821,7 @@ msgstr "הבחירה סומנה כפרטית"
 msgid "Selection not found"
 msgstr "הבחירה לא נמצאה"
 
-#: src/component/photo/clipboard.vue:318 src/locales.js:466
+#: src/component/photo/clipboard.vue:318 src/locales.js:467
 msgid "Selection restored"
 msgstr "הבחירה שוחזרה"
 
@@ -3876,7 +3880,7 @@ msgid "Settings"
 msgstr "הגדרות"
 
 #: src/page/settings/account.vue:533 src/page/settings/account.vue:562
-#: src/component/settings/passcode.vue:366 src/locales.js:443
+#: src/component/settings/passcode.vue:366 src/locales.js:444
 #: src/page/settings/account.vue:441 src/page/settings/account.vue:470
 msgid "Settings saved"
 msgstr "ההגדרות נשמרו"
@@ -4159,7 +4163,7 @@ msgstr "רחובות"
 msgid "Subject"
 msgstr "נושא"
 
-#: src/locales.js:457
+#: src/locales.js:458
 msgid "Subject deleted"
 msgstr "הנושא נמחק"
 
@@ -4167,11 +4171,11 @@ msgstr "הנושא נמחק"
 msgid "Subject not found"
 msgstr "הנושא לא נמצא"
 
-#: src/locales.js:456
+#: src/locales.js:457
 msgid "Subject saved"
 msgstr "הנושא נשמר"
 
-#: src/component/settings/passcode.vue:351 src/locales.js:473
+#: src/component/settings/passcode.vue:351 src/locales.js:474
 msgid "Successfully activated"
 msgstr "הופעל בהצלחה"
 
@@ -4184,7 +4188,7 @@ msgstr "מחובר בהצלחה"
 msgid "Successfully deleted"
 msgstr "נמחק בהצלחה"
 
-#: src/component/settings/passcode.vue:323 src/locales.js:472
+#: src/component/settings/passcode.vue:323 src/locales.js:473
 msgid "Successfully verified"
 msgstr "אומת בהצלחה"
 
@@ -4540,7 +4544,7 @@ msgstr "העלאה הושלמה, מאנדקס…"
 msgid "Upload failed"
 msgstr "העלאה כשלה"
 
-#: src/locales.js:463
+#: src/locales.js:464
 msgid "Upload has been processed"
 msgstr "ההעלאה עובדה"
 
@@ -4873,7 +4877,7 @@ msgstr "התמיכה המתמשכת שלך עוזרת לנו לספק עדכונ
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "הספרייה שלך מנותחת באופן רציף ליצירת אלבומים של רגעים מיוחדים, טיולים ומקומות באופן אוטומטי."
 
-#: src/locales.js:469
+#: src/locales.js:470
 msgid "Zip created in %d s"
 msgstr "קובץ Zip נוצר תוך %d שניות"
 

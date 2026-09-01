@@ -76,15 +76,15 @@ msgstr "Tá %{s} rófhada"
 msgid "%{s} is too short"
 msgstr "Tá %{s} ró-ghearr"
 
-#: src/locales.js:437
+#: src/locales.js:438
 msgid "%d entries added to %s"
 msgstr "%d iontráil curtha le %s"
 
-#: src/locales.js:439
+#: src/locales.js:440
 msgid "%d entries removed from %s"
 msgstr "%d iontráil bainte de %s"
 
-#: src/locales.js:461
+#: src/locales.js:462
 msgid "%d files uploaded in %d s"
 msgstr "%d comhaid uaslódáilte i %d s"
 
@@ -92,7 +92,7 @@ msgstr "%d comhaid uaslódáilte i %d s"
 msgid "%s already exists"
 msgstr "%s ann cheana"
 
-#: src/locales.js:471
+#: src/locales.js:472
 msgid "%s has been restored"
 msgstr "%s athchóirithe"
 
@@ -126,6 +126,10 @@ msgstr "4 uair an chloig"
 #: src/component/share/dialog.vue:116
 msgid "A click will copy it to your clipboard."
 msgstr "Déanfaidh cliceáil é a chóipeáil chuig do ghearrthaisce."
+
+#: src/locales.js:428
+msgid "A migration is in progress"
+msgstr ""
 
 #: src/component/update.vue:53
 msgid "A new version of %{s} is available:"
@@ -173,12 +177,12 @@ msgid "Account"
 msgstr "Cuntas"
 
 #: src/component/user/add/dialog.vue:261 src/component/user/add/dialog.vue:277
-#: src/component/service/add.vue:131 src/locales.js:440
+#: src/component/service/add.vue:131 src/locales.js:441
 msgid "Account created"
 msgstr "Cuntas cruthaithe"
 
 #: src/component/user/remove/dialog.vue:63 src/component/service/remove.vue:74
-#: src/locales.js:442
+#: src/locales.js:443
 msgid "Account deleted"
 msgstr "Scriosadh an cuntas"
 
@@ -194,7 +198,7 @@ msgstr "Cuntas gan aimsiú"
 msgid "Account restored"
 msgstr "Cuntas athchóirithe"
 
-#: src/locales.js:441
+#: src/locales.js:442
 msgid "Account saved"
 msgstr "Cuntas sábháilte"
 
@@ -391,7 +395,7 @@ msgstr "Tar éis dhá sheachtain"
 msgid "Album"
 msgstr "Albam"
 
-#: src/locales.js:431
+#: src/locales.js:432
 msgid "Album %s deleted"
 msgstr "Albam %s scriosta"
 
@@ -399,11 +403,11 @@ msgstr "Albam %s scriosta"
 msgid "Album Backups"
 msgstr "Cúltaca Albam"
 
-#: src/locales.js:432
+#: src/locales.js:433
 msgid "Album contents cloned"
 msgstr "Clónáilte ábhar albam"
 
-#: src/locales.js:429 src/page/albums.vue:1194
+#: src/locales.js:430 src/page/albums.vue:1194
 msgid "Album created"
 msgstr "Albam cruthaithe"
 
@@ -415,7 +419,7 @@ msgstr "Scriosadh an t-albam"
 msgid "Album not found"
 msgstr "Albam gan aimsiú"
 
-#: src/locales.js:430
+#: src/locales.js:431
 msgid "Album saved"
 msgstr "Sábháilte albam"
 
@@ -428,7 +432,7 @@ msgstr "Sábháilte albam"
 msgid "Albums"
 msgstr "Albaim"
 
-#: src/component/album/clipboard.vue:194 src/locales.js:468
+#: src/component/album/clipboard.vue:194 src/locales.js:469
 msgid "Albums deleted"
 msgstr "Albaim scriosta"
 
@@ -930,7 +934,7 @@ msgstr "Níorbh fhéidir na hathruithe a shábháil"
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
-#: src/locales.js:428 src/page/albums.vue:1197 src/page/people/new.vue:814
+#: src/locales.js:429 src/page/albums.vue:1197 src/page/people/new.vue:814
 #: src/page/people/recognized.vue:320 src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
 #: src/page/settings/general.vue:646
@@ -1162,7 +1166,7 @@ msgstr "Cóipeáladh chuig an ngearrthaisce"
 msgid "Copy"
 msgstr "Cóip"
 
-#: src/locales.js:453
+#: src/locales.js:454
 msgid "Copying files from %s"
 msgstr "Comhaid á gcóipeáil ó %s"
 
@@ -1857,7 +1861,7 @@ msgstr "Brabhsálaí Comhad"
 msgid "File Conversion"
 msgstr "Tiontú Comhad"
 
-#: src/locales.js:434
+#: src/locales.js:435
 msgid "File deleted"
 msgstr "Scriosadh an comhad"
 
@@ -1871,7 +1875,7 @@ msgstr "Ainm an Chomhaid"
 msgid "File not found"
 msgstr "Comhad gan aimsiú"
 
-#: src/locales.js:433
+#: src/locales.js:434
 msgid "File removed from stack"
 msgstr "Baineadh an comhad den chruach"
 
@@ -1883,7 +1887,7 @@ msgstr "Méid an Chomhaid"
 msgid "File too large"
 msgstr "Comhad ró-mhór"
 
-#: src/locales.js:460
+#: src/locales.js:461
 msgid "File uploaded"
 msgstr "Comhad uaslódáilte"
 
@@ -2120,11 +2124,11 @@ msgstr "Cáilíocht Íomhá"
 msgid "Import"
 msgstr "Iompórtáil"
 
-#: src/locales.js:446
+#: src/locales.js:447
 msgid "Import canceled"
 msgstr "Cealaíodh an iompórtáil"
 
-#: src/locales.js:445
+#: src/locales.js:446
 msgid "Import completed in %d s"
 msgstr "Iompórtáil críochnaithe i %d s"
 
@@ -2186,11 +2190,11 @@ msgstr "Innéacs"
 msgid "Indexing"
 msgstr "Innéacsú"
 
-#: src/locales.js:450
+#: src/locales.js:451
 msgid "Indexing canceled"
 msgstr "Innéacsú cealaithe"
 
-#: src/locales.js:447
+#: src/locales.js:448
 msgid "Indexing completed in %d s"
 msgstr "Innéacsú curtha i gcrích in %d s"
 
@@ -2198,7 +2202,7 @@ msgstr "Innéacsú curtha i gcrích in %d s"
 msgid "Indexing failed"
 msgstr "Theip ar an innéacsú"
 
-#: src/locales.js:449
+#: src/locales.js:450
 msgid "Indexing files in %s"
 msgstr "Comhaid á innéacsú in %s"
 
@@ -2206,7 +2210,7 @@ msgstr "Comhaid á innéacsú in %s"
 msgid "Indexing media and sidecar files…"
 msgstr "Meáin agus comhaid taobhcharr á innéacsú…"
 
-#: src/locales.js:448
+#: src/locales.js:449
 msgid "Indexing originals..."
 msgstr "Buntéacs á innéacsú..."
 
@@ -2356,7 +2360,7 @@ msgstr "Lipéad"
 msgid "Label not found"
 msgstr "Níor aimsíodh an lipéad"
 
-#: src/locales.js:455
+#: src/locales.js:456
 msgid "Label saved"
 msgstr "Lipéad sábháilte"
 
@@ -2372,7 +2376,7 @@ msgstr "Lipéad sábháilte"
 msgid "Labels"
 msgstr "Lipéid"
 
-#: src/component/label/clipboard.vue:131 src/locales.js:454
+#: src/component/label/clipboard.vue:131 src/locales.js:455
 msgid "Labels deleted"
 msgstr "Scriosadh na lipéid"
 
@@ -2684,7 +2688,7 @@ msgstr "Is Ábhartha"
 msgid "Move Files"
 msgstr "Bog Comhaid"
 
-#: src/locales.js:452
+#: src/locales.js:453
 msgid "Moving files from %s"
 msgstr "Comhaid á mbogadh ó %s"
 
@@ -2972,11 +2976,11 @@ msgstr "Uair sa tseachtain"
 msgid "One album found"
 msgstr "Aimsíodh albam amháin"
 
-#: src/locales.js:436
+#: src/locales.js:437
 msgid "One entry added to %s"
 msgstr "Cuireadh iontráil amháin le %s"
 
-#: src/locales.js:438
+#: src/locales.js:439
 msgid "One entry removed from %s"
 msgstr "Baineadh iontráil amháin de %s"
 
@@ -3121,7 +3125,7 @@ msgstr "Cuid de roinnt grianghraf roghnaithe"
 msgid "Password"
 msgstr "Pasfhocal"
 
-#: src/component/settings/password.vue:162 src/locales.js:444
+#: src/component/settings/password.vue:162 src/locales.js:445
 msgid "Password changed"
 msgstr "Athraíodh an pasfhocal"
 
@@ -3149,7 +3153,7 @@ msgid "People you share a link with will be able to view public contents."
 msgstr "Beidh daoine a roinneann tú nasc leo in ann féachaint ar inneachar poiblí."
 
 #: src/component/photo/clipboard.vue:303 src/component/photo/toolbar.vue:522
-#: src/locales.js:470
+#: src/locales.js:471
 msgid "Permanently deleted"
 msgstr "Scriosta go buan"
 
@@ -3165,7 +3169,7 @@ msgstr "Duine"
 msgid "Person cover updated"
 msgstr "Clúdach duine nuashonraithe"
 
-#: src/locales.js:459
+#: src/locales.js:460
 msgid "Person deleted"
 msgstr "Scriosadh an duine"
 
@@ -3174,7 +3178,7 @@ msgstr "Scriosadh an duine"
 msgid "Person not found"
 msgstr "Ní bhfuarthas an duine"
 
-#: src/locales.js:458
+#: src/locales.js:459
 msgid "Person saved"
 msgstr "Sábháladh an duine"
 
@@ -3360,7 +3364,7 @@ msgstr "Bunscoile"
 msgid "Private"
 msgstr "Príobháideach"
 
-#: src/locales.js:462
+#: src/locales.js:463
 msgid "Processing upload..."
 msgstr "Uaslódáil á phróiseáil..."
 
@@ -3546,7 +3550,7 @@ msgstr "Bainte"
 msgid "Removed %{name}"
 msgstr "Baineadh %{name}"
 
-#: src/locales.js:451
+#: src/locales.js:452
 msgid "Removed %d files and %d photos"
 msgstr "Baineadh %d comhaid agus %d grianghraif"
 
@@ -3794,19 +3798,19 @@ msgstr "Roghnaigh Am"
 msgid "Selection"
 msgstr "Rogha"
 
-#: src/locales.js:435
+#: src/locales.js:436
 msgid "Selection added to %s"
 msgstr "Cuireadh an rogha le %s"
 
-#: src/component/photo/clipboard.vue:251 src/locales.js:464
+#: src/component/photo/clipboard.vue:251 src/locales.js:465
 msgid "Selection approved"
 msgstr "Faomhadh an roghnúcháin"
 
-#: src/component/photo/clipboard.vue:282 src/locales.js:465
+#: src/component/photo/clipboard.vue:282 src/locales.js:466
 msgid "Selection archived"
 msgstr "Roghnaithe sa chartlann"
 
-#: src/locales.js:467
+#: src/locales.js:468
 msgid "Selection marked as private"
 msgstr "Roghnú marcáilte mar phríobháideach"
 
@@ -3814,7 +3818,7 @@ msgstr "Roghnú marcáilte mar phríobháideach"
 msgid "Selection not found"
 msgstr "Níor aimsíodh an rogha"
 
-#: src/component/photo/clipboard.vue:318 src/locales.js:466
+#: src/component/photo/clipboard.vue:318 src/locales.js:467
 msgid "Selection restored"
 msgstr "Athchóiríodh an roghnúchán"
 
@@ -3873,7 +3877,7 @@ msgid "Settings"
 msgstr "Socruithe"
 
 #: src/page/settings/account.vue:533 src/page/settings/account.vue:562
-#: src/component/settings/passcode.vue:366 src/locales.js:443
+#: src/component/settings/passcode.vue:366 src/locales.js:444
 #: src/page/settings/account.vue:441 src/page/settings/account.vue:470
 msgid "Settings saved"
 msgstr "Socruithe sábháilte"
@@ -4156,7 +4160,7 @@ msgstr "Sráideanna"
 msgid "Subject"
 msgstr "Ábhar"
 
-#: src/locales.js:457
+#: src/locales.js:458
 msgid "Subject deleted"
 msgstr "Scriosadh an t-ábhar"
 
@@ -4164,11 +4168,11 @@ msgstr "Scriosadh an t-ábhar"
 msgid "Subject not found"
 msgstr "Ní bhfuarthas an t-ábhar"
 
-#: src/locales.js:456
+#: src/locales.js:457
 msgid "Subject saved"
 msgstr "Ábhar sábháilte"
 
-#: src/component/settings/passcode.vue:351 src/locales.js:473
+#: src/component/settings/passcode.vue:351 src/locales.js:474
 msgid "Successfully activated"
 msgstr "Cuireadh i ngníomh go rathúil"
 
@@ -4181,7 +4185,7 @@ msgstr "D'éirigh leis Ceangailte"
 msgid "Successfully deleted"
 msgstr "Scriosadh go rathúil"
 
-#: src/component/settings/passcode.vue:323 src/locales.js:472
+#: src/component/settings/passcode.vue:323 src/locales.js:473
 msgid "Successfully verified"
 msgstr "D'éirigh leis a fhíorú"
 
@@ -4537,7 +4541,7 @@ msgstr "Uaslódáil iomlán. Innéacsú…"
 msgid "Upload failed"
 msgstr "Theip ar an uaslódáil"
 
-#: src/locales.js:463
+#: src/locales.js:464
 msgid "Upload has been processed"
 msgstr "Próiseáladh an t-uaslódáil"
 
@@ -4870,7 +4874,7 @@ msgstr "Cuidíonn do thacaíocht leanúnach linn nuashonruithe rialta a sholáth
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "Déantar anailís leanúnach ar do leabharlann chun albam chuimhneacháin, thurais agus áiteanna speisialta a chruthú go huathoibríoch."
 
-#: src/locales.js:469
+#: src/locales.js:470
 msgid "Zip created in %d s"
 msgstr "Zip cruthaithe i %d s"
 

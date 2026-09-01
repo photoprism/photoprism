@@ -79,15 +79,15 @@ msgstr "%{s} ยาวเกินไป"
 msgid "%{s} is too short"
 msgstr "%{s} สั้นเกินไป"
 
-#: src/locales.js:437
+#: src/locales.js:438
 msgid "%d entries added to %s"
 msgstr "%d รายการถูกเพิ่มไปยัง %s"
 
-#: src/locales.js:439
+#: src/locales.js:440
 msgid "%d entries removed from %s"
 msgstr "%d รายการถูกลบออกจาก %s"
 
-#: src/locales.js:461
+#: src/locales.js:462
 msgid "%d files uploaded in %d s"
 msgstr "%d ไฟล์ถูกอัปโหลดในเวลา %d วินาที"
 
@@ -95,7 +95,7 @@ msgstr "%d ไฟล์ถูกอัปโหลดในเวลา %d ว�
 msgid "%s already exists"
 msgstr "%s มีอยู่แล้ว"
 
-#: src/locales.js:471
+#: src/locales.js:472
 msgid "%s has been restored"
 msgstr "%s ได้รับการกู้คืนแล้ว"
 
@@ -129,6 +129,10 @@ msgstr "4 ชั่วโมง"
 #: src/component/share/dialog.vue:116
 msgid "A click will copy it to your clipboard."
 msgstr "คลิกเพื่อคัดลอกไปยังคลิปบอร์ด"
+
+#: src/locales.js:428
+msgid "A migration is in progress"
+msgstr ""
 
 #: src/component/update.vue:53
 msgid "A new version of %{s} is available:"
@@ -176,12 +180,12 @@ msgid "Account"
 msgstr "บัญชี"
 
 #: src/component/user/add/dialog.vue:261 src/component/user/add/dialog.vue:277
-#: src/component/service/add.vue:131 src/locales.js:440
+#: src/component/service/add.vue:131 src/locales.js:441
 msgid "Account created"
 msgstr "สร้างบัญชีแล้ว"
 
 #: src/component/user/remove/dialog.vue:63 src/component/service/remove.vue:74
-#: src/locales.js:442
+#: src/locales.js:443
 msgid "Account deleted"
 msgstr "ลบบัญชีแล้ว"
 
@@ -197,7 +201,7 @@ msgstr "ไม่พบบัญชี"
 msgid "Account restored"
 msgstr "บัญชีได้รับการคืนสภาพแล้ว"
 
-#: src/locales.js:441
+#: src/locales.js:442
 msgid "Account saved"
 msgstr "บัญชีถูกบันทึกแล้ว"
 
@@ -394,7 +398,7 @@ msgstr "หลังจากสองสัปดาห์"
 msgid "Album"
 msgstr "อัลบั้ม"
 
-#: src/locales.js:431
+#: src/locales.js:432
 msgid "Album %s deleted"
 msgstr "อัลบั้ม %s ถูก삭제"
 
@@ -402,11 +406,11 @@ msgstr "อัลบั้ม %s ถูก삭제"
 msgid "Album Backups"
 msgstr "การสำรองข้อมูลอัลบั้ม"
 
-#: src/locales.js:432
+#: src/locales.js:433
 msgid "Album contents cloned"
 msgstr "เนื้อหาอัลบั้มถูกคัดลอก"
 
-#: src/locales.js:429 src/page/albums.vue:1194
+#: src/locales.js:430 src/page/albums.vue:1194
 msgid "Album created"
 msgstr "สร้างอัลบั้มแล้ว"
 
@@ -418,7 +422,7 @@ msgstr "อัลบั้มถูกลบแล้ว"
 msgid "Album not found"
 msgstr "ไม่พบอัลบั้ม"
 
-#: src/locales.js:430
+#: src/locales.js:431
 msgid "Album saved"
 msgstr "อัลบั้มบันทึกแล้ว"
 
@@ -431,7 +435,7 @@ msgstr "อัลบั้มบันทึกแล้ว"
 msgid "Albums"
 msgstr "อัลบั้ม"
 
-#: src/component/album/clipboard.vue:194 src/locales.js:468
+#: src/component/album/clipboard.vue:194 src/locales.js:469
 msgid "Albums deleted"
 msgstr "ลบอัลบั้มแล้ว"
 
@@ -933,7 +937,7 @@ msgstr "ไม่สามารถบันทึกการเปลี่ย
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
-#: src/locales.js:428 src/page/albums.vue:1197 src/page/people/new.vue:814
+#: src/locales.js:429 src/page/albums.vue:1197 src/page/people/new.vue:814
 #: src/page/people/recognized.vue:320 src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
 #: src/page/settings/general.vue:646
@@ -1165,7 +1169,7 @@ msgstr "คัดลอกไปยังคลิปบอร์ดแล้ว
 msgid "Copy"
 msgstr "สำเนา"
 
-#: src/locales.js:453
+#: src/locales.js:454
 msgid "Copying files from %s"
 msgstr "คัดลอกไฟล์จาก %s"
 
@@ -1860,7 +1864,7 @@ msgstr "ไฟล์เบราว์เซอร์"
 msgid "File Conversion"
 msgstr "การแปลงไฟล์"
 
-#: src/locales.js:434
+#: src/locales.js:435
 msgid "File deleted"
 msgstr "ไฟล์ถูกลบ"
 
@@ -1874,7 +1878,7 @@ msgstr "ชื่อไฟล์"
 msgid "File not found"
 msgstr "ไม่พบไฟล์"
 
-#: src/locales.js:433
+#: src/locales.js:434
 msgid "File removed from stack"
 msgstr "ไฟล์ถูกลบออกจากสแตก"
 
@@ -1886,7 +1890,7 @@ msgstr "ไฟล์"
 msgid "File too large"
 msgstr "ไฟล์มีขนาดใหญ่เกินไป"
 
-#: src/locales.js:460
+#: src/locales.js:461
 msgid "File uploaded"
 msgstr "ไฟล์ถูกอัปโหลดแล้ว"
 
@@ -2123,11 +2127,11 @@ msgstr "คุณภาพของภาพ"
 msgid "Import"
 msgstr "นำเข้า"
 
-#: src/locales.js:446
+#: src/locales.js:447
 msgid "Import canceled"
 msgstr "ยกเลิกการนำเข้า"
 
-#: src/locales.js:445
+#: src/locales.js:446
 msgid "Import completed in %d s"
 msgstr "การนำเข้าเสร็จสมบูรณ์ในเวลา %d วินาที"
 
@@ -2189,11 +2193,11 @@ msgstr "ดัชนี"
 msgid "Indexing"
 msgstr "การจัดทำดัชนี"
 
-#: src/locales.js:450
+#: src/locales.js:451
 msgid "Indexing canceled"
 msgstr "ยกเลิกการจัดทำดัชนี"
 
-#: src/locales.js:447
+#: src/locales.js:448
 msgid "Indexing completed in %d s"
 msgstr "การดัชนีเสร็จสมบูรณ์ใน %d วินาที"
 
@@ -2201,7 +2205,7 @@ msgstr "การดัชนีเสร็จสมบูรณ์ใน %d �
 msgid "Indexing failed"
 msgstr "การจัดทำดัชนีล้มเหลว"
 
-#: src/locales.js:449
+#: src/locales.js:450
 msgid "Indexing files in %s"
 msgstr "การจัดทำดัชนีไฟล์ใน %s"
 
@@ -2209,7 +2213,7 @@ msgstr "การจัดทำดัชนีไฟล์ใน %s"
 msgid "Indexing media and sidecar files…"
 msgstr "กำลังสร้างดัชนีสื่อและไฟล์ไซด์คาร์…"
 
-#: src/locales.js:448
+#: src/locales.js:449
 msgid "Indexing originals..."
 msgstr "กำลังจัดทำดัชนีต้นฉบับ..."
 
@@ -2359,7 +2363,7 @@ msgstr "ฉลาก"
 msgid "Label not found"
 msgstr "ไม่พบป้ายกำกับ"
 
-#: src/locales.js:455
+#: src/locales.js:456
 msgid "Label saved"
 msgstr "ป้ายบันทึกแล้ว"
 
@@ -2375,7 +2379,7 @@ msgstr "ป้ายบันทึกแล้ว"
 msgid "Labels"
 msgstr "ป้าย"
 
-#: src/component/label/clipboard.vue:131 src/locales.js:454
+#: src/component/label/clipboard.vue:131 src/locales.js:455
 msgid "Labels deleted"
 msgstr "ป้ายกำกับถูกลบ"
 
@@ -2687,7 +2691,7 @@ msgstr "ที่เกี่ยวข้องมากที่สุด"
 msgid "Move Files"
 msgstr "ย้ายไฟล์"
 
-#: src/locales.js:452
+#: src/locales.js:453
 msgid "Moving files from %s"
 msgstr "ย้ายไฟล์จาก %s"
 
@@ -2975,11 +2979,11 @@ msgstr "สัปดาห์ละครั้ง"
 msgid "One album found"
 msgstr "พบหนึ่งอัลบั้ม"
 
-#: src/locales.js:436
+#: src/locales.js:437
 msgid "One entry added to %s"
 msgstr "มีการเพิ่มรายการหนึ่งไปยัง %s"
 
-#: src/locales.js:438
+#: src/locales.js:439
 msgid "One entry removed from %s"
 msgstr "รายการหนึ่งถูกลบออกจาก %s"
 
@@ -3124,7 +3128,7 @@ msgstr "ส่วนหนึ่งของภาพถ่ายที่คั
 msgid "Password"
 msgstr "รหัสผ่าน"
 
-#: src/component/settings/password.vue:162 src/locales.js:444
+#: src/component/settings/password.vue:162 src/locales.js:445
 msgid "Password changed"
 msgstr "รหัสผ่านเปลี่ยน"
 
@@ -3152,7 +3156,7 @@ msgid "People you share a link with will be able to view public contents."
 msgstr "คนที่คุณแชร์ลิงก์ด้วยจะสามารถดูเนื้อหาสาธารณะได้"
 
 #: src/component/photo/clipboard.vue:303 src/component/photo/toolbar.vue:522
-#: src/locales.js:470
+#: src/locales.js:471
 msgid "Permanently deleted"
 msgstr "ลบอย่างถาวร"
 
@@ -3168,7 +3172,7 @@ msgstr "บุคคล"
 msgid "Person cover updated"
 msgstr "อัพเดทปกบุคคล"
 
-#: src/locales.js:459
+#: src/locales.js:460
 msgid "Person deleted"
 msgstr "บุคคลถูกลบ"
 
@@ -3177,7 +3181,7 @@ msgstr "บุคคลถูกลบ"
 msgid "Person not found"
 msgstr "ไม่พบบุคคล"
 
-#: src/locales.js:458
+#: src/locales.js:459
 msgid "Person saved"
 msgstr "บุคคลที่ได้รับการช่วยเหลือ"
 
@@ -3363,7 +3367,7 @@ msgstr "หลัก"
 msgid "Private"
 msgstr "ส่วนตัว"
 
-#: src/locales.js:462
+#: src/locales.js:463
 msgid "Processing upload..."
 msgstr "กำลังประมวลผลไฟล์ที่อัปโหลด..."
 
@@ -3549,7 +3553,7 @@ msgstr "ลบออก"
 msgid "Removed %{name}"
 msgstr "ลบ %{name}"
 
-#: src/locales.js:451
+#: src/locales.js:452
 msgid "Removed %d files and %d photos"
 msgstr "ลบไฟล์ %d ไฟล์ และรูปภาพ %d รูป"
 
@@ -3797,19 +3801,19 @@ msgstr "เลือกเวลา"
 msgid "Selection"
 msgstr "การคัดเลือก"
 
-#: src/locales.js:435
+#: src/locales.js:436
 msgid "Selection added to %s"
 msgstr "เพิ่มการคัดเลือกไปยัง %s"
 
-#: src/component/photo/clipboard.vue:251 src/locales.js:464
+#: src/component/photo/clipboard.vue:251 src/locales.js:465
 msgid "Selection approved"
 msgstr "อนุมัติการคัดเลือก"
 
-#: src/component/photo/clipboard.vue:282 src/locales.js:465
+#: src/component/photo/clipboard.vue:282 src/locales.js:466
 msgid "Selection archived"
 msgstr "การเลือกที่เก็บถาวร"
 
-#: src/locales.js:467
+#: src/locales.js:468
 msgid "Selection marked as private"
 msgstr "การเลือกที่ถูกทำเครื่องหมายเป็นส่วนตัว"
 
@@ -3817,7 +3821,7 @@ msgstr "การเลือกที่ถูกทำเครื่องห
 msgid "Selection not found"
 msgstr "ไม่พบสิ่งที่เลือก"
 
-#: src/component/photo/clipboard.vue:318 src/locales.js:466
+#: src/component/photo/clipboard.vue:318 src/locales.js:467
 msgid "Selection restored"
 msgstr "คืนค่าการเลือกแล้ว"
 
@@ -3876,7 +3880,7 @@ msgid "Settings"
 msgstr "การตั้งค่า"
 
 #: src/page/settings/account.vue:533 src/page/settings/account.vue:562
-#: src/component/settings/passcode.vue:366 src/locales.js:443
+#: src/component/settings/passcode.vue:366 src/locales.js:444
 #: src/page/settings/account.vue:441 src/page/settings/account.vue:470
 msgid "Settings saved"
 msgstr "การตั้งค่าที่บันทึกไว้"
@@ -4159,7 +4163,7 @@ msgstr "ถนน"
 msgid "Subject"
 msgstr "เรื่อง"
 
-#: src/locales.js:457
+#: src/locales.js:458
 msgid "Subject deleted"
 msgstr "หัวข้อถูกลบ"
 
@@ -4167,11 +4171,11 @@ msgstr "หัวข้อถูกลบ"
 msgid "Subject not found"
 msgstr "ไม่พบหัวข้อ"
 
-#: src/locales.js:456
+#: src/locales.js:457
 msgid "Subject saved"
 msgstr "บันทึกหัวข้อแล้ว"
 
-#: src/component/settings/passcode.vue:351 src/locales.js:473
+#: src/component/settings/passcode.vue:351 src/locales.js:474
 msgid "Successfully activated"
 msgstr "เปิดใช้งานสำเร็จแล้ว"
 
@@ -4184,7 +4188,7 @@ msgstr "เชื่อมต่อเรียบร้อยแล้ว"
 msgid "Successfully deleted"
 msgstr "ลบเรียบร้อยแล้ว"
 
-#: src/component/settings/passcode.vue:323 src/locales.js:472
+#: src/component/settings/passcode.vue:323 src/locales.js:473
 msgid "Successfully verified"
 msgstr "ตรวจสอบเรียบร้อยแล้ว"
 
@@ -4540,7 +4544,7 @@ msgstr "อัพโหลดเสร็จแล้ว กำลังจั�
 msgid "Upload failed"
 msgstr "การอัพโหลดล้มเหลว"
 
-#: src/locales.js:463
+#: src/locales.js:464
 msgid "Upload has been processed"
 msgstr "การอัปโหลดได้รับการประมวลผลแล้ว"
 
@@ -4873,7 +4877,7 @@ msgstr "การสนับสนุนอย่างต่อเนื่อ
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "คลังของคุณได้รับการวิเคราะห์อย่างต่อเนื่องเพื่อสร้างอัลบั้มของช่วงเวลา การเดินทาง และสถานที่พิเศษโดยอัตโนมัติ"
 
-#: src/locales.js:469
+#: src/locales.js:470
 msgid "Zip created in %d s"
 msgstr "สร้างซิปเสร็จใน %d วินาที"
 

@@ -79,15 +79,15 @@ msgstr "%{s} terlalu panjang"
 msgid "%{s} is too short"
 msgstr "%{s} terlalu pendek"
 
-#: src/locales.js:437
+#: src/locales.js:438
 msgid "%d entries added to %s"
 msgstr "%d entri ditambahkan ke %s"
 
-#: src/locales.js:439
+#: src/locales.js:440
 msgid "%d entries removed from %s"
 msgstr "%d entri dihapus dari %s"
 
-#: src/locales.js:461
+#: src/locales.js:462
 msgid "%d files uploaded in %d s"
 msgstr "%d file diupload di %d detik"
 
@@ -95,7 +95,7 @@ msgstr "%d file diupload di %d detik"
 msgid "%s already exists"
 msgstr "%s sudah ada"
 
-#: src/locales.js:471
+#: src/locales.js:472
 msgid "%s has been restored"
 msgstr "%s telah dipulihkan"
 
@@ -129,6 +129,10 @@ msgstr "4 jam"
 #: src/component/share/dialog.vue:116
 msgid "A click will copy it to your clipboard."
 msgstr "Satu klik akan menyalinnya ke clipboard Anda."
+
+#: src/locales.js:428
+msgid "A migration is in progress"
+msgstr ""
 
 #: src/component/update.vue:53
 msgid "A new version of %{s} is available:"
@@ -176,12 +180,12 @@ msgid "Account"
 msgstr "Akun"
 
 #: src/component/user/add/dialog.vue:261 src/component/user/add/dialog.vue:277
-#: src/component/service/add.vue:131 src/locales.js:440
+#: src/component/service/add.vue:131 src/locales.js:441
 msgid "Account created"
 msgstr "Akun dibuat"
 
 #: src/component/user/remove/dialog.vue:63 src/component/service/remove.vue:74
-#: src/locales.js:442
+#: src/locales.js:443
 msgid "Account deleted"
 msgstr "Akun dihapus"
 
@@ -197,7 +201,7 @@ msgstr "Akun tidak ditemukan"
 msgid "Account restored"
 msgstr "Akun dipulihkan"
 
-#: src/locales.js:441
+#: src/locales.js:442
 msgid "Account saved"
 msgstr "Akun disimpan"
 
@@ -394,7 +398,7 @@ msgstr "Setelah 2 minggu"
 msgid "Album"
 msgstr "Album"
 
-#: src/locales.js:431
+#: src/locales.js:432
 msgid "Album %s deleted"
 msgstr "Album %s dihapus"
 
@@ -402,11 +406,11 @@ msgstr "Album %s dihapus"
 msgid "Album Backups"
 msgstr "Cadangan Album"
 
-#: src/locales.js:432
+#: src/locales.js:433
 msgid "Album contents cloned"
 msgstr "Konten album dikloning"
 
-#: src/locales.js:429 src/page/albums.vue:1194
+#: src/locales.js:430 src/page/albums.vue:1194
 msgid "Album created"
 msgstr "Album dibuat"
 
@@ -418,7 +422,7 @@ msgstr "Album dihapus"
 msgid "Album not found"
 msgstr "Album tidak ditemukan"
 
-#: src/locales.js:430
+#: src/locales.js:431
 msgid "Album saved"
 msgstr "Album disimpan"
 
@@ -431,7 +435,7 @@ msgstr "Album disimpan"
 msgid "Albums"
 msgstr "Koleksi Album"
 
-#: src/component/album/clipboard.vue:194 src/locales.js:468
+#: src/component/album/clipboard.vue:194 src/locales.js:469
 msgid "Albums deleted"
 msgstr "Koleksi album dihapus"
 
@@ -933,7 +937,7 @@ msgstr "Perubahan tidak dapat disimpan"
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
-#: src/locales.js:428 src/page/albums.vue:1197 src/page/people/new.vue:814
+#: src/locales.js:429 src/page/albums.vue:1197 src/page/people/new.vue:814
 #: src/page/people/recognized.vue:320 src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
 #: src/page/settings/general.vue:646
@@ -1165,7 +1169,7 @@ msgstr "Disalin ke papan klip"
 msgid "Copy"
 msgstr "Menyalin"
 
-#: src/locales.js:453
+#: src/locales.js:454
 msgid "Copying files from %s"
 msgstr "Menyalin file dari %s"
 
@@ -1860,7 +1864,7 @@ msgstr "Peramban Berkas"
 msgid "File Conversion"
 msgstr "Konversi File"
 
-#: src/locales.js:434
+#: src/locales.js:435
 msgid "File deleted"
 msgstr "Berkas dihapus"
 
@@ -1874,7 +1878,7 @@ msgstr "Nama Berkas"
 msgid "File not found"
 msgstr "Berkas tidak ditemukan"
 
-#: src/locales.js:433
+#: src/locales.js:434
 msgid "File removed from stack"
 msgstr "File dihapus dari tumpukan"
 
@@ -1886,7 +1890,7 @@ msgstr "Berkas"
 msgid "File too large"
 msgstr "Berkas terlalu besar"
 
-#: src/locales.js:460
+#: src/locales.js:461
 msgid "File uploaded"
 msgstr "File diunggah"
 
@@ -2123,11 +2127,11 @@ msgstr "Kualitas Gambar"
 msgid "Import"
 msgstr "Impor"
 
-#: src/locales.js:446
+#: src/locales.js:447
 msgid "Import canceled"
 msgstr "Impor dibatalkan"
 
-#: src/locales.js:445
+#: src/locales.js:446
 msgid "Import completed in %d s"
 msgstr "Impor selesai dalam %d detik"
 
@@ -2189,11 +2193,11 @@ msgstr "Indeks"
 msgid "Indexing"
 msgstr "Pengindeksan"
 
-#: src/locales.js:450
+#: src/locales.js:451
 msgid "Indexing canceled"
 msgstr "Pengindeksan dibatalkan"
 
-#: src/locales.js:447
+#: src/locales.js:448
 msgid "Indexing completed in %d s"
 msgstr "Pengindeksan selesai dalam %d detik"
 
@@ -2201,7 +2205,7 @@ msgstr "Pengindeksan selesai dalam %d detik"
 msgid "Indexing failed"
 msgstr "Pengindeksan gagal"
 
-#: src/locales.js:449
+#: src/locales.js:450
 msgid "Indexing files in %s"
 msgstr "Mengindeks file dalam %s"
 
@@ -2209,7 +2213,7 @@ msgstr "Mengindeks file dalam %s"
 msgid "Indexing media and sidecar files…"
 msgstr "Mengindeks file media dan sidecar…"
 
-#: src/locales.js:448
+#: src/locales.js:449
 msgid "Indexing originals..."
 msgstr "Mengindeks dokumen asli..."
 
@@ -2359,7 +2363,7 @@ msgstr "Label"
 msgid "Label not found"
 msgstr "Label tidak ditemukan"
 
-#: src/locales.js:455
+#: src/locales.js:456
 msgid "Label saved"
 msgstr "Label disimpan"
 
@@ -2375,7 +2379,7 @@ msgstr "Label disimpan"
 msgid "Labels"
 msgstr "Label"
 
-#: src/component/label/clipboard.vue:131 src/locales.js:454
+#: src/component/label/clipboard.vue:131 src/locales.js:455
 msgid "Labels deleted"
 msgstr "Label dihapus"
 
@@ -2687,7 +2691,7 @@ msgstr "Paling relevan"
 msgid "Move Files"
 msgstr "Pindahkan File"
 
-#: src/locales.js:452
+#: src/locales.js:453
 msgid "Moving files from %s"
 msgstr "Memindahkan file dari %s"
 
@@ -2975,11 +2979,11 @@ msgstr "Seminggu sekali"
 msgid "One album found"
 msgstr "Satu album ditemukan"
 
-#: src/locales.js:436
+#: src/locales.js:437
 msgid "One entry added to %s"
 msgstr "Satu entri ditambahkan ke %s"
 
-#: src/locales.js:438
+#: src/locales.js:439
 msgid "One entry removed from %s"
 msgstr "Satu entri dihapus dari %s"
 
@@ -3124,7 +3128,7 @@ msgstr "Sebagian dari beberapa foto yang dipilih"
 msgid "Password"
 msgstr "Kata sandi"
 
-#: src/component/settings/password.vue:162 src/locales.js:444
+#: src/component/settings/password.vue:162 src/locales.js:445
 msgid "Password changed"
 msgstr "Kata sandi diubah"
 
@@ -3152,7 +3156,7 @@ msgid "People you share a link with will be able to view public contents."
 msgstr "Orang lain yang Anda bagikan tautan ini dapat melihat konten secara publik."
 
 #: src/component/photo/clipboard.vue:303 src/component/photo/toolbar.vue:522
-#: src/locales.js:470
+#: src/locales.js:471
 msgid "Permanently deleted"
 msgstr "Dihapus permanen"
 
@@ -3168,7 +3172,7 @@ msgstr "Orang"
 msgid "Person cover updated"
 msgstr "Penutup orang diperbarui"
 
-#: src/locales.js:459
+#: src/locales.js:460
 msgid "Person deleted"
 msgstr "Orang dihapus"
 
@@ -3177,7 +3181,7 @@ msgstr "Orang dihapus"
 msgid "Person not found"
 msgstr "Orang tidak ditemukan"
 
-#: src/locales.js:458
+#: src/locales.js:459
 msgid "Person saved"
 msgstr "Orang disimpan"
 
@@ -3363,7 +3367,7 @@ msgstr "Utama"
 msgid "Private"
 msgstr "Pribadi"
 
-#: src/locales.js:462
+#: src/locales.js:463
 msgid "Processing upload..."
 msgstr "Memproses unggahan..."
 
@@ -3549,7 +3553,7 @@ msgstr "Dihapus"
 msgid "Removed %{name}"
 msgstr "%{name} telah dihapus"
 
-#: src/locales.js:451
+#: src/locales.js:452
 msgid "Removed %d files and %d photos"
 msgstr "Menghapus %d file dan %d foto"
 
@@ -3797,19 +3801,19 @@ msgstr "Pilih Waktu"
 msgid "Selection"
 msgstr "Seleksi"
 
-#: src/locales.js:435
+#: src/locales.js:436
 msgid "Selection added to %s"
 msgstr "Pilihan ditambahkan ke %s"
 
-#: src/component/photo/clipboard.vue:251 src/locales.js:464
+#: src/component/photo/clipboard.vue:251 src/locales.js:465
 msgid "Selection approved"
 msgstr "Pilihan disetujui"
 
-#: src/component/photo/clipboard.vue:282 src/locales.js:465
+#: src/component/photo/clipboard.vue:282 src/locales.js:466
 msgid "Selection archived"
 msgstr "Pilihan diarsipkan"
 
-#: src/locales.js:467
+#: src/locales.js:468
 msgid "Selection marked as private"
 msgstr "Pilihan ditandai sebagai pribadi"
 
@@ -3817,7 +3821,7 @@ msgstr "Pilihan ditandai sebagai pribadi"
 msgid "Selection not found"
 msgstr "Pilihan tidak ditemukan"
 
-#: src/component/photo/clipboard.vue:318 src/locales.js:466
+#: src/component/photo/clipboard.vue:318 src/locales.js:467
 msgid "Selection restored"
 msgstr "Pilihan dipulihkan"
 
@@ -3876,7 +3880,7 @@ msgid "Settings"
 msgstr "Pengaturan"
 
 #: src/page/settings/account.vue:533 src/page/settings/account.vue:562
-#: src/component/settings/passcode.vue:366 src/locales.js:443
+#: src/component/settings/passcode.vue:366 src/locales.js:444
 #: src/page/settings/account.vue:441 src/page/settings/account.vue:470
 msgid "Settings saved"
 msgstr "Pengaturan disimpan"
@@ -4159,7 +4163,7 @@ msgstr "Jalan"
 msgid "Subject"
 msgstr "Subjek"
 
-#: src/locales.js:457
+#: src/locales.js:458
 msgid "Subject deleted"
 msgstr "Subjek dihapus"
 
@@ -4167,11 +4171,11 @@ msgstr "Subjek dihapus"
 msgid "Subject not found"
 msgstr "Subjek tidak ditemukan"
 
-#: src/locales.js:456
+#: src/locales.js:457
 msgid "Subject saved"
 msgstr "Subjek disimpan"
 
-#: src/component/settings/passcode.vue:351 src/locales.js:473
+#: src/component/settings/passcode.vue:351 src/locales.js:474
 msgid "Successfully activated"
 msgstr "Berhasil diaktifkan"
 
@@ -4184,7 +4188,7 @@ msgstr "Berhasil Terhubung"
 msgid "Successfully deleted"
 msgstr "Berhasil dihapus"
 
-#: src/component/settings/passcode.vue:323 src/locales.js:472
+#: src/component/settings/passcode.vue:323 src/locales.js:473
 msgid "Successfully verified"
 msgstr "Berhasil diverifikasi"
 
@@ -4540,7 +4544,7 @@ msgstr "Unggahan selesai. Melakukan pengindeksan…"
 msgid "Upload failed"
 msgstr "Unggahan gagal"
 
-#: src/locales.js:463
+#: src/locales.js:464
 msgid "Upload has been processed"
 msgstr "Unggahan telah diproses"
 
@@ -4873,7 +4877,7 @@ msgstr "Dukungan Anda yang berkelanjutan membantu kami menyediakan layanan seper
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "Perpustakaan Anda akan terus dianalisis secara otomatis dalam membuat album momen spesial, perjalanan, dan tempat."
 
-#: src/locales.js:469
+#: src/locales.js:470
 msgid "Zip created in %d s"
 msgstr "Zip dibuat dalam %d detik"
 

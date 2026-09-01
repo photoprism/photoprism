@@ -79,15 +79,15 @@ msgstr "%{s} je predug"
 msgid "%{s} is too short"
 msgstr "%{s} je prekratak"
 
-#: src/locales.js:437
+#: src/locales.js:438
 msgid "%d entries added to %s"
 msgstr "%d unosi dodani u %s"
 
-#: src/locales.js:439
+#: src/locales.js:440
 msgid "%d entries removed from %s"
 msgstr "%d unosi uklonjeni iz %s"
 
-#: src/locales.js:461
+#: src/locales.js:462
 msgid "%d files uploaded in %d s"
 msgstr "%d datoteke prenesene u %d s"
 
@@ -95,7 +95,7 @@ msgstr "%d datoteke prenesene u %d s"
 msgid "%s already exists"
 msgstr "%s već postoji"
 
-#: src/locales.js:471
+#: src/locales.js:472
 msgid "%s has been restored"
 msgstr "%s je vraćen"
 
@@ -129,6 +129,10 @@ msgstr "4 sata"
 #: src/component/share/dialog.vue:116
 msgid "A click will copy it to your clipboard."
 msgstr "Klik će kopirati u međuspremnik."
+
+#: src/locales.js:428
+msgid "A migration is in progress"
+msgstr ""
 
 #: src/component/update.vue:53
 msgid "A new version of %{s} is available:"
@@ -176,12 +180,12 @@ msgid "Account"
 msgstr "Račun"
 
 #: src/component/user/add/dialog.vue:261 src/component/user/add/dialog.vue:277
-#: src/component/service/add.vue:131 src/locales.js:440
+#: src/component/service/add.vue:131 src/locales.js:441
 msgid "Account created"
 msgstr "Račun kreiran"
 
 #: src/component/user/remove/dialog.vue:63 src/component/service/remove.vue:74
-#: src/locales.js:442
+#: src/locales.js:443
 msgid "Account deleted"
 msgstr "Račun je izbrisan"
 
@@ -197,7 +201,7 @@ msgstr "račun nije pronađen"
 msgid "Account restored"
 msgstr "Račun vraćen"
 
-#: src/locales.js:441
+#: src/locales.js:442
 msgid "Account saved"
 msgstr "Račun spremljen"
 
@@ -394,7 +398,7 @@ msgstr "Nakon dva tjedna"
 msgid "Album"
 msgstr "Album"
 
-#: src/locales.js:431
+#: src/locales.js:432
 msgid "Album %s deleted"
 msgstr "Album %s je izbrisan"
 
@@ -402,11 +406,11 @@ msgstr "Album %s je izbrisan"
 msgid "Album Backups"
 msgstr "Sigurnosne kopije albuma"
 
-#: src/locales.js:432
+#: src/locales.js:433
 msgid "Album contents cloned"
 msgstr "Sadržaj albuma je kloniran"
 
-#: src/locales.js:429 src/page/albums.vue:1194
+#: src/locales.js:430 src/page/albums.vue:1194
 msgid "Album created"
 msgstr "Album stvoren"
 
@@ -418,7 +422,7 @@ msgstr "Album je izbrisan"
 msgid "Album not found"
 msgstr "Album nije pronađen"
 
-#: src/locales.js:430
+#: src/locales.js:431
 msgid "Album saved"
 msgstr "Album je spremljen"
 
@@ -431,7 +435,7 @@ msgstr "Album je spremljen"
 msgid "Albums"
 msgstr "Albumi"
 
-#: src/component/album/clipboard.vue:194 src/locales.js:468
+#: src/component/album/clipboard.vue:194 src/locales.js:469
 msgid "Albums deleted"
 msgstr "Albumi su izbrisani"
 
@@ -933,7 +937,7 @@ msgstr "Promjene se nisu mogle spremiti"
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
-#: src/locales.js:428 src/page/albums.vue:1197 src/page/people/new.vue:814
+#: src/locales.js:429 src/page/albums.vue:1197 src/page/people/new.vue:814
 #: src/page/people/recognized.vue:320 src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
 #: src/page/settings/general.vue:646
@@ -1165,7 +1169,7 @@ msgstr "Kopirano u međuspremnik"
 msgid "Copy"
 msgstr "Kopirati"
 
-#: src/locales.js:453
+#: src/locales.js:454
 msgid "Copying files from %s"
 msgstr "Kopiranje datoteka s %s"
 
@@ -1860,7 +1864,7 @@ msgstr "Preglednik datoteka"
 msgid "File Conversion"
 msgstr "Pretvorba datoteke"
 
-#: src/locales.js:434
+#: src/locales.js:435
 msgid "File deleted"
 msgstr "Datoteka je izbrisana"
 
@@ -1874,7 +1878,7 @@ msgstr "Datoteka"
 msgid "File not found"
 msgstr "Datoteka nije pronađena"
 
-#: src/locales.js:433
+#: src/locales.js:434
 msgid "File removed from stack"
 msgstr "Datoteka je uklonjena iz hrpe"
 
@@ -1886,7 +1890,7 @@ msgstr "Datoteka"
 msgid "File too large"
 msgstr "Datoteka je prevelika"
 
-#: src/locales.js:460
+#: src/locales.js:461
 msgid "File uploaded"
 msgstr "Datoteka je prenesena"
 
@@ -2123,11 +2127,11 @@ msgstr "Kvaliteta slike"
 msgid "Import"
 msgstr "Uvoz"
 
-#: src/locales.js:446
+#: src/locales.js:447
 msgid "Import canceled"
 msgstr "Uvoz je otkazan"
 
-#: src/locales.js:445
+#: src/locales.js:446
 msgid "Import completed in %d s"
 msgstr "Uvoz dovršen za %d s"
 
@@ -2189,11 +2193,11 @@ msgstr "Početna"
 msgid "Indexing"
 msgstr "Indeksiranje"
 
-#: src/locales.js:450
+#: src/locales.js:451
 msgid "Indexing canceled"
 msgstr "Indeksiranje je otkazano"
 
-#: src/locales.js:447
+#: src/locales.js:448
 msgid "Indexing completed in %d s"
 msgstr "Indeksiranje dovršeno za %d s"
 
@@ -2201,7 +2205,7 @@ msgstr "Indeksiranje dovršeno za %d s"
 msgid "Indexing failed"
 msgstr "Indeksiranje nije uspjelo"
 
-#: src/locales.js:449
+#: src/locales.js:450
 msgid "Indexing files in %s"
 msgstr "Indeksiranje datoteka u %s"
 
@@ -2209,7 +2213,7 @@ msgstr "Indeksiranje datoteka u %s"
 msgid "Indexing media and sidecar files…"
 msgstr "Indeksiranje medijskih i bočnih datoteka…"
 
-#: src/locales.js:448
+#: src/locales.js:449
 msgid "Indexing originals..."
 msgstr "Indeksiranje originala..."
 
@@ -2359,7 +2363,7 @@ msgstr "Oznaka"
 msgid "Label not found"
 msgstr "Oznaka nije pronađena"
 
-#: src/locales.js:455
+#: src/locales.js:456
 msgid "Label saved"
 msgstr "Oznaka je spremljena"
 
@@ -2375,7 +2379,7 @@ msgstr "Oznaka je spremljena"
 msgid "Labels"
 msgstr "Oznake"
 
-#: src/component/label/clipboard.vue:131 src/locales.js:454
+#: src/component/label/clipboard.vue:131 src/locales.js:455
 msgid "Labels deleted"
 msgstr "Oznake su izbrisane"
 
@@ -2687,7 +2691,7 @@ msgstr "Najvažnije"
 msgid "Move Files"
 msgstr "Premjesti datoteke"
 
-#: src/locales.js:452
+#: src/locales.js:453
 msgid "Moving files from %s"
 msgstr "Premještanje datoteka iz %s"
 
@@ -2975,11 +2979,11 @@ msgstr "Jednom tjedno"
 msgid "One album found"
 msgstr "Pronađen jedan album"
 
-#: src/locales.js:436
+#: src/locales.js:437
 msgid "One entry added to %s"
 msgstr "Jedan unos dodan u %s"
 
-#: src/locales.js:438
+#: src/locales.js:439
 msgid "One entry removed from %s"
 msgstr "Jedan unos uklonjen iz %s"
 
@@ -3124,7 +3128,7 @@ msgstr "Dio nekih odabranih fotografija"
 msgid "Password"
 msgstr "Lozinka"
 
-#: src/component/settings/password.vue:162 src/locales.js:444
+#: src/component/settings/password.vue:162 src/locales.js:445
 msgid "Password changed"
 msgstr "Lozinka je promijenjena"
 
@@ -3152,7 +3156,7 @@ msgid "People you share a link with will be able to view public contents."
 msgstr "Osobe s kojima podijelite vezu moći će vidjeti javni sadržaj."
 
 #: src/component/photo/clipboard.vue:303 src/component/photo/toolbar.vue:522
-#: src/locales.js:470
+#: src/locales.js:471
 msgid "Permanently deleted"
 msgstr "Trajno izbrisano"
 
@@ -3168,7 +3172,7 @@ msgstr "Osoba"
 msgid "Person cover updated"
 msgstr "Naslovnica osobe ažurirana"
 
-#: src/locales.js:459
+#: src/locales.js:460
 msgid "Person deleted"
 msgstr "Osoba je izbrisana"
 
@@ -3177,7 +3181,7 @@ msgstr "Osoba je izbrisana"
 msgid "Person not found"
 msgstr "Osoba nije pronađena"
 
-#: src/locales.js:458
+#: src/locales.js:459
 msgid "Person saved"
 msgstr "Osoba je spremljena"
 
@@ -3363,7 +3367,7 @@ msgstr "Glavni"
 msgid "Private"
 msgstr "Privatno"
 
-#: src/locales.js:462
+#: src/locales.js:463
 msgid "Processing upload..."
 msgstr "Učitavanje..."
 
@@ -3549,7 +3553,7 @@ msgstr "Uklonjeno"
 msgid "Removed %{name}"
 msgstr "Uklonjeno %{name}"
 
-#: src/locales.js:451
+#: src/locales.js:452
 msgid "Removed %d files and %d photos"
 msgstr "Uklonjene %d datoteke i %d fotografije"
 
@@ -3797,19 +3801,19 @@ msgstr "Odaberite vrijeme"
 msgid "Selection"
 msgstr "Izbor"
 
-#: src/locales.js:435
+#: src/locales.js:436
 msgid "Selection added to %s"
 msgstr "Odabir je dodan u %s"
 
-#: src/component/photo/clipboard.vue:251 src/locales.js:464
+#: src/component/photo/clipboard.vue:251 src/locales.js:465
 msgid "Selection approved"
 msgstr "Odabir odobren"
 
-#: src/component/photo/clipboard.vue:282 src/locales.js:465
+#: src/component/photo/clipboard.vue:282 src/locales.js:466
 msgid "Selection archived"
 msgstr "Odabir je arhiviran"
 
-#: src/locales.js:467
+#: src/locales.js:468
 msgid "Selection marked as private"
 msgstr "Odabir je označen kao privatan"
 
@@ -3817,7 +3821,7 @@ msgstr "Odabir je označen kao privatan"
 msgid "Selection not found"
 msgstr "Odabir nije pronađen"
 
-#: src/component/photo/clipboard.vue:318 src/locales.js:466
+#: src/component/photo/clipboard.vue:318 src/locales.js:467
 msgid "Selection restored"
 msgstr "Odabir je vraćen"
 
@@ -3876,7 +3880,7 @@ msgid "Settings"
 msgstr "Postavke"
 
 #: src/page/settings/account.vue:533 src/page/settings/account.vue:562
-#: src/component/settings/passcode.vue:366 src/locales.js:443
+#: src/component/settings/passcode.vue:366 src/locales.js:444
 #: src/page/settings/account.vue:441 src/page/settings/account.vue:470
 msgid "Settings saved"
 msgstr "Postavke spremljene"
@@ -4159,7 +4163,7 @@ msgstr "Ulice"
 msgid "Subject"
 msgstr "Predmet"
 
-#: src/locales.js:457
+#: src/locales.js:458
 msgid "Subject deleted"
 msgstr "Predmet je izbrisan"
 
@@ -4167,11 +4171,11 @@ msgstr "Predmet je izbrisan"
 msgid "Subject not found"
 msgstr "Predmet nije pronađen"
 
-#: src/locales.js:456
+#: src/locales.js:457
 msgid "Subject saved"
 msgstr "Predmet je spremljen"
 
-#: src/component/settings/passcode.vue:351 src/locales.js:473
+#: src/component/settings/passcode.vue:351 src/locales.js:474
 msgid "Successfully activated"
 msgstr "Uspješno aktiviran"
 
@@ -4184,7 +4188,7 @@ msgstr "Uspješno spojen"
 msgid "Successfully deleted"
 msgstr "Uspješno izbrisano"
 
-#: src/component/settings/passcode.vue:323 src/locales.js:472
+#: src/component/settings/passcode.vue:323 src/locales.js:473
 msgid "Successfully verified"
 msgstr "Uspješno potvrđeno"
 
@@ -4540,7 +4544,7 @@ msgstr "Prijenos je završen. Indeksiranje…"
 msgid "Upload failed"
 msgstr "Prijenos nije uspio"
 
-#: src/locales.js:463
+#: src/locales.js:464
 msgid "Upload has been processed"
 msgstr "Učitavanje je obavljeno"
 
@@ -4873,7 +4877,7 @@ msgstr "Vaša stalna podrška pomaže nam pružiti redovita ažuriranja i usluge
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "Vaša se knjižnica kontinuirano analizira kako bi se automatski izradili albumi posebnih trenutaka, putovanja i mjesta."
 
-#: src/locales.js:469
+#: src/locales.js:470
 msgid "Zip created in %d s"
 msgstr "Zip stvoren u %d s"
 

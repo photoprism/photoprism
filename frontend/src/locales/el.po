@@ -76,15 +76,15 @@ msgstr "Το %{s} είναι πολύ μεγάλο"
 msgid "%{s} is too short"
 msgstr "Το %{s} είναι πολύ μικρό"
 
-#: src/locales.js:437
+#: src/locales.js:438
 msgid "%d entries added to %s"
 msgstr "%d καταχωρήσεις προστέθηκαν στο %s"
 
-#: src/locales.js:439
+#: src/locales.js:440
 msgid "%d entries removed from %s"
 msgstr "%d καταχωρήσεις αφαιρέθηκαν από %s"
 
-#: src/locales.js:461
+#: src/locales.js:462
 msgid "%d files uploaded in %d s"
 msgstr "%d αρχεία ανεβάστηκαν σε %d s"
 
@@ -92,7 +92,7 @@ msgstr "%d αρχεία ανεβάστηκαν σε %d s"
 msgid "%s already exists"
 msgstr "%s υπάρχει ήδη"
 
-#: src/locales.js:471
+#: src/locales.js:472
 msgid "%s has been restored"
 msgstr "%s έχει αποκατασταθεί"
 
@@ -126,6 +126,10 @@ msgstr "4 ώρες"
 #: src/component/share/dialog.vue:116
 msgid "A click will copy it to your clipboard."
 msgstr "Ένα κλικ θα το αντιγράψει στο πρόχειρο."
+
+#: src/locales.js:428
+msgid "A migration is in progress"
+msgstr ""
 
 #: src/component/update.vue:53
 msgid "A new version of %{s} is available:"
@@ -173,12 +177,12 @@ msgid "Account"
 msgstr "Λογαριασμός"
 
 #: src/component/user/add/dialog.vue:261 src/component/user/add/dialog.vue:277
-#: src/component/service/add.vue:131 src/locales.js:440
+#: src/component/service/add.vue:131 src/locales.js:441
 msgid "Account created"
 msgstr "Ο λογαριασμός δημιουργήθηκε"
 
 #: src/component/user/remove/dialog.vue:63 src/component/service/remove.vue:74
-#: src/locales.js:442
+#: src/locales.js:443
 msgid "Account deleted"
 msgstr "Ο λογαριασμός διαγράφηκε"
 
@@ -194,7 +198,7 @@ msgstr "Ο λογαριασμός δεν βρέθηκε"
 msgid "Account restored"
 msgstr "Επαναφορά λογαριασμού"
 
-#: src/locales.js:441
+#: src/locales.js:442
 msgid "Account saved"
 msgstr "Ο λογαριασμός αποθηκεύτηκε"
 
@@ -391,7 +395,7 @@ msgstr "Μετά από δύο εβδομάδες"
 msgid "Album"
 msgstr "Άλμπουμ"
 
-#: src/locales.js:431
+#: src/locales.js:432
 msgid "Album %s deleted"
 msgstr "Το άλμπουμ %s διαγράφηκε"
 
@@ -399,11 +403,11 @@ msgstr "Το άλμπουμ %s διαγράφηκε"
 msgid "Album Backups"
 msgstr "Αντίγραφα Ασφαλείας Άλμπουμ"
 
-#: src/locales.js:432
+#: src/locales.js:433
 msgid "Album contents cloned"
 msgstr "Τα περιεχόμενα του άλμπουμ αντιγράφηκαν"
 
-#: src/locales.js:429 src/page/albums.vue:1194
+#: src/locales.js:430 src/page/albums.vue:1194
 msgid "Album created"
 msgstr "Το άλμπουμ δημιουργήθηκε"
 
@@ -415,7 +419,7 @@ msgstr "Το άλμπουμ διαγράφηκε"
 msgid "Album not found"
 msgstr "Το άλμπουμ δεν βρέθηκε"
 
-#: src/locales.js:430
+#: src/locales.js:431
 msgid "Album saved"
 msgstr "Το άλμπουμ αποθηκεύθηκε"
 
@@ -428,7 +432,7 @@ msgstr "Το άλμπουμ αποθηκεύθηκε"
 msgid "Albums"
 msgstr "Άλμπουμ"
 
-#: src/component/album/clipboard.vue:194 src/locales.js:468
+#: src/component/album/clipboard.vue:194 src/locales.js:469
 msgid "Albums deleted"
 msgstr "Διαγραμμένα άλμπουμ"
 
@@ -930,7 +934,7 @@ msgstr "Οι αλλαγές δεν ήταν δυνατό να αποθηκευτ
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
-#: src/locales.js:428 src/page/albums.vue:1197 src/page/people/new.vue:814
+#: src/locales.js:429 src/page/albums.vue:1197 src/page/people/new.vue:814
 #: src/page/people/recognized.vue:320 src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
 #: src/page/settings/general.vue:646
@@ -1162,7 +1166,7 @@ msgstr "Αντιγραφή στο πρόχειρο"
 msgid "Copy"
 msgstr "Αντίγραφο"
 
-#: src/locales.js:453
+#: src/locales.js:454
 msgid "Copying files from %s"
 msgstr "Αντιγραφή αρχείων από %s"
 
@@ -1857,7 +1861,7 @@ msgstr "Πρόγραμμα περιήγησης αρχείων"
 msgid "File Conversion"
 msgstr "Μετατροπή Αρχείων"
 
-#: src/locales.js:434
+#: src/locales.js:435
 msgid "File deleted"
 msgstr "Το αρχείο διαγράφηκε"
 
@@ -1871,7 +1875,7 @@ msgstr "Όνομα Αρχείου"
 msgid "File not found"
 msgstr "Το αρχείο δεν βρέθηκε"
 
-#: src/locales.js:433
+#: src/locales.js:434
 msgid "File removed from stack"
 msgstr "Αφαίρεση αρχείου από τη στοίβα"
 
@@ -1883,7 +1887,7 @@ msgstr "Αρχείο"
 msgid "File too large"
 msgstr "Το αρχείο είναι πολύ μεγάλο"
 
-#: src/locales.js:460
+#: src/locales.js:461
 msgid "File uploaded"
 msgstr "Το αρχείο μεταφορτώθηκε"
 
@@ -2120,11 +2124,11 @@ msgstr "Ποιότητα Εικόνας"
 msgid "Import"
 msgstr "Εισαγωγή"
 
-#: src/locales.js:446
+#: src/locales.js:447
 msgid "Import canceled"
 msgstr "Η εισαγωγή ακυρώθηκε"
 
-#: src/locales.js:445
+#: src/locales.js:446
 msgid "Import completed in %d s"
 msgstr "Η εισαγωγή ολοκληρώθηκε σε %d s"
 
@@ -2186,11 +2190,11 @@ msgstr "Ευρετήριο"
 msgid "Indexing"
 msgstr "Δημιουργία ευρετηρίου"
 
-#: src/locales.js:450
+#: src/locales.js:451
 msgid "Indexing canceled"
 msgstr "Η δημιουργία ευρετηρίου ακυρώθηκε"
 
-#: src/locales.js:447
+#: src/locales.js:448
 msgid "Indexing completed in %d s"
 msgstr "Η δημιουργία ευρετηρίου σε %d s"
 
@@ -2198,7 +2202,7 @@ msgstr "Η δημιουργία ευρετηρίου σε %d s"
 msgid "Indexing failed"
 msgstr "Αποτυχία δημιουργίας ευρετηρίου"
 
-#: src/locales.js:449
+#: src/locales.js:450
 msgid "Indexing files in %s"
 msgstr "Δημιουργία ευρετηρίου αρχείων σε %s"
 
@@ -2206,7 +2210,7 @@ msgstr "Δημιουργία ευρετηρίου αρχείων σε %s"
 msgid "Indexing media and sidecar files…"
 msgstr "Δημιουργία ευρετηρίου μέσων και αρχείων sidecar…"
 
-#: src/locales.js:448
+#: src/locales.js:449
 msgid "Indexing originals..."
 msgstr "Δημιουργία ευρετηρίου για τα πρωτότυπα..."
 
@@ -2356,7 +2360,7 @@ msgstr "Ετικέτα"
 msgid "Label not found"
 msgstr "Η ετικέτα δεν βρέθηκε"
 
-#: src/locales.js:455
+#: src/locales.js:456
 msgid "Label saved"
 msgstr "Η ετικέτα αποθηκεύτηκε"
 
@@ -2372,7 +2376,7 @@ msgstr "Η ετικέτα αποθηκεύτηκε"
 msgid "Labels"
 msgstr "Ετικέτες"
 
-#: src/component/label/clipboard.vue:131 src/locales.js:454
+#: src/component/label/clipboard.vue:131 src/locales.js:455
 msgid "Labels deleted"
 msgstr "Οι ετικέτες διαγράφηκαν"
 
@@ -2684,7 +2688,7 @@ msgstr "Το πιο Σχετικό"
 msgid "Move Files"
 msgstr "Μετακίνηση Αρχείων"
 
-#: src/locales.js:452
+#: src/locales.js:453
 msgid "Moving files from %s"
 msgstr "Μετακίνηση αρχείων από %s"
 
@@ -2972,11 +2976,11 @@ msgstr "Μία φορά την εβδομάδα"
 msgid "One album found"
 msgstr "Βρέθηκε ένα άλμπουμ"
 
-#: src/locales.js:436
+#: src/locales.js:437
 msgid "One entry added to %s"
 msgstr "Μία εγγραφή προστέθηκε στο %s"
 
-#: src/locales.js:438
+#: src/locales.js:439
 msgid "One entry removed from %s"
 msgstr "Μία καταχώρηση αφαιρέθηκε από %s"
 
@@ -3121,7 +3125,7 @@ msgstr "Μέρος ορισμένων επιλεγμένων φωτογραφι�
 msgid "Password"
 msgstr "Κωδικός πρόσβασης"
 
-#: src/component/settings/password.vue:162 src/locales.js:444
+#: src/component/settings/password.vue:162 src/locales.js:445
 msgid "Password changed"
 msgstr "Ο κωδικός πρόσβασης άλλαξε"
 
@@ -3149,7 +3153,7 @@ msgid "People you share a link with will be able to view public contents."
 msgstr "Τα άτομα με τα οποία μοιράζεστε έναν σύνδεσμο θα μπορούν να βλέπουν το δημόσιο περιεχόμενο."
 
 #: src/component/photo/clipboard.vue:303 src/component/photo/toolbar.vue:522
-#: src/locales.js:470
+#: src/locales.js:471
 msgid "Permanently deleted"
 msgstr "Διαγράφηκε μόνιμα"
 
@@ -3165,7 +3169,7 @@ msgstr "Άτομο"
 msgid "Person cover updated"
 msgstr "Η εικόνα εξωφύλλου του ατόμου ενημερώθηκε"
 
-#: src/locales.js:459
+#: src/locales.js:460
 msgid "Person deleted"
 msgstr "Το άτομο διαγράφηκε"
 
@@ -3174,7 +3178,7 @@ msgstr "Το άτομο διαγράφηκε"
 msgid "Person not found"
 msgstr "Το άτομο δεν βρέθηκε"
 
-#: src/locales.js:458
+#: src/locales.js:459
 msgid "Person saved"
 msgstr "Το άτομο αποθηκεύτηκε"
 
@@ -3360,7 +3364,7 @@ msgstr "Κύριο"
 msgid "Private"
 msgstr "Ιδιωτικό"
 
-#: src/locales.js:462
+#: src/locales.js:463
 msgid "Processing upload..."
 msgstr "Επεξεργασία ανεβάσματος..."
 
@@ -3546,7 +3550,7 @@ msgstr "Αφαιρέθηκε"
 msgid "Removed %{name}"
 msgstr "Διαγράφηκε το %{name}"
 
-#: src/locales.js:451
+#: src/locales.js:452
 msgid "Removed %d files and %d photos"
 msgstr "Αφαίρεση %d αρχείων και %d φωτογραφιών"
 
@@ -3794,19 +3798,19 @@ msgstr "Επιλογή ώρας"
 msgid "Selection"
 msgstr "Επιλογή"
 
-#: src/locales.js:435
+#: src/locales.js:436
 msgid "Selection added to %s"
 msgstr "Η επιλογή προστέθηκε στο %s"
 
-#: src/component/photo/clipboard.vue:251 src/locales.js:464
+#: src/component/photo/clipboard.vue:251 src/locales.js:465
 msgid "Selection approved"
 msgstr "Η επιλογή εγκρίθηκε"
 
-#: src/component/photo/clipboard.vue:282 src/locales.js:465
+#: src/component/photo/clipboard.vue:282 src/locales.js:466
 msgid "Selection archived"
 msgstr "Η επιλογή αρχειοθετήθηκε"
 
-#: src/locales.js:467
+#: src/locales.js:468
 msgid "Selection marked as private"
 msgstr "Η επιλογή μαρκαρίστηκε ως ιδιωτική"
 
@@ -3814,7 +3818,7 @@ msgstr "Η επιλογή μαρκαρίστηκε ως ιδιωτική"
 msgid "Selection not found"
 msgstr "Η επιλογή δεν βρέθηκε"
 
-#: src/component/photo/clipboard.vue:318 src/locales.js:466
+#: src/component/photo/clipboard.vue:318 src/locales.js:467
 msgid "Selection restored"
 msgstr "Η επιλογή αποκαταστάθηκε"
 
@@ -3873,7 +3877,7 @@ msgid "Settings"
 msgstr "Ρυθμίσεις"
 
 #: src/page/settings/account.vue:533 src/page/settings/account.vue:562
-#: src/component/settings/passcode.vue:366 src/locales.js:443
+#: src/component/settings/passcode.vue:366 src/locales.js:444
 #: src/page/settings/account.vue:441 src/page/settings/account.vue:470
 msgid "Settings saved"
 msgstr "Οι ρυθμίσεις αποθηκεύτηκαν"
@@ -4156,7 +4160,7 @@ msgstr "Δρόμοι"
 msgid "Subject"
 msgstr "Θέμα"
 
-#: src/locales.js:457
+#: src/locales.js:458
 msgid "Subject deleted"
 msgstr "Το θέμα διαγράφηκε"
 
@@ -4164,11 +4168,11 @@ msgstr "Το θέμα διαγράφηκε"
 msgid "Subject not found"
 msgstr "Το θέμα δεν βρέθηκε"
 
-#: src/locales.js:456
+#: src/locales.js:457
 msgid "Subject saved"
 msgstr "Το θέμα αποθηκεύθηκε"
 
-#: src/component/settings/passcode.vue:351 src/locales.js:473
+#: src/component/settings/passcode.vue:351 src/locales.js:474
 msgid "Successfully activated"
 msgstr "Επιτυχής ενεργοποίηση"
 
@@ -4181,7 +4185,7 @@ msgstr "Επιτυχής σύνδεση"
 msgid "Successfully deleted"
 msgstr "Επιτυχής διαγραφή"
 
-#: src/component/settings/passcode.vue:323 src/locales.js:472
+#: src/component/settings/passcode.vue:323 src/locales.js:473
 msgid "Successfully verified"
 msgstr "Επιτυχής επαλήθευση"
 
@@ -4537,7 +4541,7 @@ msgstr "Το ανέβασμα ολοκληρώθηκε. Δημιουργία ε�
 msgid "Upload failed"
 msgstr "Αποτυχία ανεβάσματος"
 
-#: src/locales.js:463
+#: src/locales.js:464
 msgid "Upload has been processed"
 msgstr "Το ανέβασμα έχει ολοκληρωθεί"
 
@@ -4870,7 +4874,7 @@ msgstr "Η συνεχής υποστήριξή σας μας βοηθά να π�
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "Η βιβλιοθήκη σας αναλύεται συνεχώς για να δημιουργούνται αυτόματα άλμουμ με ιδιαίτερες στιγμές, ταξίδια και τοποθεσίες."
 
-#: src/locales.js:469
+#: src/locales.js:470
 msgid "Zip created in %d s"
 msgstr "Το αρχείο zip δημιουργήθηκε σε %d s"
 

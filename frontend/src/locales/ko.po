@@ -79,15 +79,15 @@ msgstr "%{s}가 너무 깁니다."
 msgid "%{s} is too short"
 msgstr "%{s}가 너무 짧습니다."
 
-#: src/locales.js:437
+#: src/locales.js:438
 msgid "%d entries added to %s"
 msgstr "%d 항목이 %s에 추가됨"
 
-#: src/locales.js:439
+#: src/locales.js:440
 msgid "%d entries removed from %s"
 msgstr "%d 항목이 %s에서 제거됨"
 
-#: src/locales.js:461
+#: src/locales.js:462
 msgid "%d files uploaded in %d s"
 msgstr "%d개의 파일이 %d초에 업로드됨"
 
@@ -95,7 +95,7 @@ msgstr "%d개의 파일이 %d초에 업로드됨"
 msgid "%s already exists"
 msgstr "%s가 이미 존재함"
 
-#: src/locales.js:471
+#: src/locales.js:472
 msgid "%s has been restored"
 msgstr "%s이(가) 복원되었습니다"
 
@@ -129,6 +129,10 @@ msgstr "4시간"
 #: src/component/share/dialog.vue:116
 msgid "A click will copy it to your clipboard."
 msgstr "클릭하면 클립보드에 복사됩니다."
+
+#: src/locales.js:428
+msgid "A migration is in progress"
+msgstr ""
 
 #: src/component/update.vue:53
 msgid "A new version of %{s} is available:"
@@ -176,12 +180,12 @@ msgid "Account"
 msgstr "계정"
 
 #: src/component/user/add/dialog.vue:261 src/component/user/add/dialog.vue:277
-#: src/component/service/add.vue:131 src/locales.js:440
+#: src/component/service/add.vue:131 src/locales.js:441
 msgid "Account created"
 msgstr "계정 생성됨"
 
 #: src/component/user/remove/dialog.vue:63 src/component/service/remove.vue:74
-#: src/locales.js:442
+#: src/locales.js:443
 msgid "Account deleted"
 msgstr "계정 삭제됨"
 
@@ -197,7 +201,7 @@ msgstr "계정을 찾을 수 없음"
 msgid "Account restored"
 msgstr "계정이 복원되었습니다."
 
-#: src/locales.js:441
+#: src/locales.js:442
 msgid "Account saved"
 msgstr "계정이 저장됨"
 
@@ -394,7 +398,7 @@ msgstr "2주 후"
 msgid "Album"
 msgstr "앨범"
 
-#: src/locales.js:431
+#: src/locales.js:432
 msgid "Album %s deleted"
 msgstr "앨범 %s이(가) 삭제됨"
 
@@ -402,11 +406,11 @@ msgstr "앨범 %s이(가) 삭제됨"
 msgid "Album Backups"
 msgstr "앨범 백업"
 
-#: src/locales.js:432
+#: src/locales.js:433
 msgid "Album contents cloned"
 msgstr "복제된 앨범 콘텐츠"
 
-#: src/locales.js:429 src/page/albums.vue:1194
+#: src/locales.js:430 src/page/albums.vue:1194
 msgid "Album created"
 msgstr "앨범 생성됨"
 
@@ -418,7 +422,7 @@ msgstr "앨범 삭제됨"
 msgid "Album not found"
 msgstr "앨범을 찾을 수 없음"
 
-#: src/locales.js:430
+#: src/locales.js:431
 msgid "Album saved"
 msgstr "앨범 저장됨"
 
@@ -431,7 +435,7 @@ msgstr "앨범 저장됨"
 msgid "Albums"
 msgstr "앨범"
 
-#: src/component/album/clipboard.vue:194 src/locales.js:468
+#: src/component/album/clipboard.vue:194 src/locales.js:469
 msgid "Albums deleted"
 msgstr "앨범 삭제됨"
 
@@ -933,7 +937,7 @@ msgstr "변경 사항을 저장할 수 없음"
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
-#: src/locales.js:428 src/page/albums.vue:1197 src/page/people/new.vue:814
+#: src/locales.js:429 src/page/albums.vue:1197 src/page/people/new.vue:814
 #: src/page/people/recognized.vue:320 src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
 #: src/page/settings/general.vue:646
@@ -1165,7 +1169,7 @@ msgstr "클립보드에 복사했습니다"
 msgid "Copy"
 msgstr "복사"
 
-#: src/locales.js:453
+#: src/locales.js:454
 msgid "Copying files from %s"
 msgstr "%s에서 파일 복사"
 
@@ -1860,7 +1864,7 @@ msgstr "파일 탐색기"
 msgid "File Conversion"
 msgstr "파일 변환"
 
-#: src/locales.js:434
+#: src/locales.js:435
 msgid "File deleted"
 msgstr "파일이 삭제됨"
 
@@ -1874,7 +1878,7 @@ msgstr "파일 이름"
 msgid "File not found"
 msgstr "파일을 찾을 수 없음"
 
-#: src/locales.js:433
+#: src/locales.js:434
 msgid "File removed from stack"
 msgstr "스택에서 제거된 파일"
 
@@ -1886,7 +1890,7 @@ msgstr "파일 크기"
 msgid "File too large"
 msgstr "파일이 너무 큽니다"
 
-#: src/locales.js:460
+#: src/locales.js:461
 msgid "File uploaded"
 msgstr "업로드된 파일 1개"
 
@@ -2123,11 +2127,11 @@ msgstr "이미지 품질"
 msgid "Import"
 msgstr "가져오기"
 
-#: src/locales.js:446
+#: src/locales.js:447
 msgid "Import canceled"
 msgstr "가져오기 취소됨"
 
-#: src/locales.js:445
+#: src/locales.js:446
 msgid "Import completed in %d s"
 msgstr "%d초 후에 가져오기 완료"
 
@@ -2189,11 +2193,11 @@ msgstr "색인"
 msgid "Indexing"
 msgstr "색인중"
 
-#: src/locales.js:450
+#: src/locales.js:451
 msgid "Indexing canceled"
 msgstr "인덱싱 취소됨"
 
-#: src/locales.js:447
+#: src/locales.js:448
 msgid "Indexing completed in %d s"
 msgstr "%d초 후에 인덱싱 완료"
 
@@ -2201,7 +2205,7 @@ msgstr "%d초 후에 인덱싱 완료"
 msgid "Indexing failed"
 msgstr "색인 실패"
 
-#: src/locales.js:449
+#: src/locales.js:450
 msgid "Indexing files in %s"
 msgstr "%s에서 파일 색인 생성"
 
@@ -2209,7 +2213,7 @@ msgstr "%s에서 파일 색인 생성"
 msgid "Indexing media and sidecar files…"
 msgstr "미디어 및 사이드카 파일 색인중…"
 
-#: src/locales.js:448
+#: src/locales.js:449
 msgid "Indexing originals..."
 msgstr "원본 색인 생성 중..."
 
@@ -2359,7 +2363,7 @@ msgstr "라벨"
 msgid "Label not found"
 msgstr "라벨을 찾을 수 없음"
 
-#: src/locales.js:455
+#: src/locales.js:456
 msgid "Label saved"
 msgstr "라벨이 저장되었습니다"
 
@@ -2375,7 +2379,7 @@ msgstr "라벨이 저장되었습니다"
 msgid "Labels"
 msgstr "라벨"
 
-#: src/component/label/clipboard.vue:131 src/locales.js:454
+#: src/component/label/clipboard.vue:131 src/locales.js:455
 msgid "Labels deleted"
 msgstr "라벨 삭제됨"
 
@@ -2687,7 +2691,7 @@ msgstr "가장 관련성"
 msgid "Move Files"
 msgstr "파일 이동하기"
 
-#: src/locales.js:452
+#: src/locales.js:453
 msgid "Moving files from %s"
 msgstr "%s에서 파일 이동"
 
@@ -2975,11 +2979,11 @@ msgstr "일주일에 한 번"
 msgid "One album found"
 msgstr "1개 앨범 찾음"
 
-#: src/locales.js:436
+#: src/locales.js:437
 msgid "One entry added to %s"
 msgstr "%s에 항목 1개 추가됨"
 
-#: src/locales.js:438
+#: src/locales.js:439
 msgid "One entry removed from %s"
 msgstr "%s에서 항목 1개 삭제됨"
 
@@ -3124,7 +3128,7 @@ msgstr "일부 선택된 사진의 일부"
 msgid "Password"
 msgstr "비밀번호"
 
-#: src/component/settings/password.vue:162 src/locales.js:444
+#: src/component/settings/password.vue:162 src/locales.js:445
 msgid "Password changed"
 msgstr "비밀번호 변경됨"
 
@@ -3152,7 +3156,7 @@ msgid "People you share a link with will be able to view public contents."
 msgstr "링크를 공유한 사람들은 공개 콘텐츠를 볼 수 있습니다."
 
 #: src/component/photo/clipboard.vue:303 src/component/photo/toolbar.vue:522
-#: src/locales.js:470
+#: src/locales.js:471
 msgid "Permanently deleted"
 msgstr "영구 삭제됨"
 
@@ -3168,7 +3172,7 @@ msgstr "사람"
 msgid "Person cover updated"
 msgstr "인물 표지 업데이트"
 
-#: src/locales.js:459
+#: src/locales.js:460
 msgid "Person deleted"
 msgstr "삭제된 사람"
 
@@ -3177,7 +3181,7 @@ msgstr "삭제된 사람"
 msgid "Person not found"
 msgstr "사람을 찾을 수 없음"
 
-#: src/locales.js:458
+#: src/locales.js:459
 msgid "Person saved"
 msgstr "사람이 저장됨"
 
@@ -3363,7 +3367,7 @@ msgstr "주요"
 msgid "Private"
 msgstr "비공개"
 
-#: src/locales.js:462
+#: src/locales.js:463
 msgid "Processing upload..."
 msgstr "업로드 처리 중..."
 
@@ -3549,7 +3553,7 @@ msgstr "제거됨"
 msgid "Removed %{name}"
 msgstr "%{name}을(를) 삭제했습니다."
 
-#: src/locales.js:451
+#: src/locales.js:452
 msgid "Removed %d files and %d photos"
 msgstr "파일 %d개와 사진 %d개를 삭제했습니다"
 
@@ -3797,19 +3801,19 @@ msgstr "시간 선택"
 msgid "Selection"
 msgstr "선택"
 
-#: src/locales.js:435
+#: src/locales.js:436
 msgid "Selection added to %s"
 msgstr "선택 항목이 %s에 추가됨"
 
-#: src/component/photo/clipboard.vue:251 src/locales.js:464
+#: src/component/photo/clipboard.vue:251 src/locales.js:465
 msgid "Selection approved"
 msgstr "선택 항목 승인됨"
 
-#: src/component/photo/clipboard.vue:282 src/locales.js:465
+#: src/component/photo/clipboard.vue:282 src/locales.js:466
 msgid "Selection archived"
 msgstr "선택 항목 보관됨"
 
-#: src/locales.js:467
+#: src/locales.js:468
 msgid "Selection marked as private"
 msgstr "비공개로 표시된 선택"
 
@@ -3817,7 +3821,7 @@ msgstr "비공개로 표시된 선택"
 msgid "Selection not found"
 msgstr "선택 항목을 찾을 수 없음"
 
-#: src/component/photo/clipboard.vue:318 src/locales.js:466
+#: src/component/photo/clipboard.vue:318 src/locales.js:467
 msgid "Selection restored"
 msgstr "선택 항목 복원됨"
 
@@ -3876,7 +3880,7 @@ msgid "Settings"
 msgstr "설정"
 
 #: src/page/settings/account.vue:533 src/page/settings/account.vue:562
-#: src/component/settings/passcode.vue:366 src/locales.js:443
+#: src/component/settings/passcode.vue:366 src/locales.js:444
 #: src/page/settings/account.vue:441 src/page/settings/account.vue:470
 msgid "Settings saved"
 msgstr "설정 저장됨"
@@ -4159,7 +4163,7 @@ msgstr "거리"
 msgid "Subject"
 msgstr "주제"
 
-#: src/locales.js:457
+#: src/locales.js:458
 msgid "Subject deleted"
 msgstr "제목 삭제됨"
 
@@ -4167,11 +4171,11 @@ msgstr "제목 삭제됨"
 msgid "Subject not found"
 msgstr "제목을 찾을 수 없음"
 
-#: src/locales.js:456
+#: src/locales.js:457
 msgid "Subject saved"
 msgstr "주제가 저장됨"
 
-#: src/component/settings/passcode.vue:351 src/locales.js:473
+#: src/component/settings/passcode.vue:351 src/locales.js:474
 msgid "Successfully activated"
 msgstr "성공적으로 활성화되었습니다"
 
@@ -4184,7 +4188,7 @@ msgstr "성공적으로 연결됨"
 msgid "Successfully deleted"
 msgstr "삭제 성공"
 
-#: src/component/settings/passcode.vue:323 src/locales.js:472
+#: src/component/settings/passcode.vue:323 src/locales.js:473
 msgid "Successfully verified"
 msgstr "성공적으로 확인되었습니다"
 
@@ -4540,7 +4544,7 @@ msgstr "업로드 완료. 색인중…"
 msgid "Upload failed"
 msgstr "업로드 실패"
 
-#: src/locales.js:463
+#: src/locales.js:464
 msgid "Upload has been processed"
 msgstr "업로드가 처리되었습니다"
 
@@ -4873,7 +4877,7 @@ msgstr "귀하의 지속적인 지원은 정기적인 업데이트를 제공하�
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "라이브러리는 지속적으로 분석되어 특별한 순간, 여행 및 장소의 앨범을 자동으로 생성합니다."
 
-#: src/locales.js:469
+#: src/locales.js:470
 msgid "Zip created in %d s"
 msgstr "%d초에 생성된 우편번호"
 
