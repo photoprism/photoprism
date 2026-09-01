@@ -278,6 +278,120 @@ func BatchPhotosApprove(router *gin.RouterGroup) {
 	})
 }
 
+// BatchPhotosStack manually combines selected pictures into a non-destructive file stack.
+//
+//	@Summary	manually combines selected pictures into a file stack
+//	@Id			BatchPhotosStack
+//	@Tags		Photos, Stacks
+//	@Accept		json
+//	@Produce	json
+//	@Success	200					{object}	i18n.Response
+//	@Failure	400,401,403,404,429,500	{object}	i18n.Response
+//	@Param		photos					body		form.Selection	true	"Photo Selection"
+//	@Router		/api/v1/batch/photos/stack [post]
+func BatchPhotosStack(router *gin.RouterGroup) {
+	router.POST("/batch/photos/stack", func(c *gin.Context) {
+		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)
+
+		if s.Abort(c) {
+			return
+		}
+
+		conf := get.Config()
+
+		if conf.ReadOnly() || !conf.Settings().Features.Edit {
+			AbortFeatureDisabled(c)
+			return
+		}
+
+		var frm form.Selection
+
+		LimitRequestBodyBytes(c, MaxSelectionRequestBytes)
+
+		if err := c.BindJSON(&frm); err != nil {
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
+			AbortBadRequest(c, err)
+			return
+		}
+
+		requested := append([]string(nil), frm.Photos...)
+		uniqueRequested := make([]string, 0, len(requested))
+		requestedSet := make(map[string]struct{}, len(requested))
+
+		for _, uid := range requested {
+			if uid == "" {
+				continue
+			} else if _, exists := requestedSet[uid]; exists {
+				continue
+			}
+
+			requestedSet[uid] = struct{}{}
+			uniqueRequested = append(uniqueRequested, uid)
+		}
+
+		if len(uniqueRequested) < 2 {
+			Abort(c, http.StatusBadRequest, i18n.ErrNoItemsSelected)
+			return
+		}
+
+		frm.Photos = uniqueRequested
+
+		if !restrictPhotoSelection(c, s, &frm) {
+			return
+		}
+
+		allowed := make(map[string]struct{}, len(frm.Photos))
+
+		for _, uid := range frm.Photos {
+			allowed[uid] = struct{}{}
+		}
+
+		if len(allowed) != len(uniqueRequested) {
+			AbortForbidden(c)
+			return
+		}
+
+		frm.Photos = frm.Photos[:0]
+
+		for _, uid := range uniqueRequested {
+			if _, ok := allowed[uid]; ok {
+				frm.Photos = append(frm.Photos, uid)
+			}
+		}
+
+		log.Infof("photos: stacking %s", clean.Log(frm.String()))
+
+		original, stacked, err := entity.StackPhotos(frm.Photos)
+
+		if err != nil {
+			log.Errorf("stack: %s", err)
+			AbortSaveFailed(c)
+			return
+		}
+
+		stackedUIDs := stacked.UIDs()
+
+		SaveSidecarYaml(&original)
+		entity.UpdateCountsAsync()
+		query.UpdateCoversAsync()
+		UpdateClientConfig()
+		FlushCoverCache()
+		event.EntitiesUpdated("photos", []string{original.PhotoUID})
+		event.EntitiesDeleted("photos", stackedUIDs)
+
+		c.JSON(http.StatusOK, gin.H{
+			"code":    http.StatusOK,
+			"message": i18n.NewResponse(http.StatusOK, i18n.MsgChangesSaved).Message,
+			"photo":   original.PhotoUID,
+			"stacked": stackedUIDs,
+		})
+	})
+}
+
 // BatchPhotosPrivate toggles private state of multiple photos.
 //
 //	@Summary	toggles private state of multiple photos

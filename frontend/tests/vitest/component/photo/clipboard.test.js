@@ -1,5 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
-import { shallowMount } from "@vue/test-utils";
+import { flushPromises, shallowMount } from "@vue/test-utils";
+import $api from "common/api";
+import $notify from "common/notify";
+import Photo from "model/photo";
 import PPhotoClipboard from "component/photo/clipboard.vue";
 
 const baseFeatures = {
@@ -100,5 +103,28 @@ describe("component/photo/clipboard", () => {
       album: wrapper.vm.album,
       index: 0,
     });
+  });
+
+  it("stacks the selected pictures and refreshes the view", async () => {
+    const refresh = vi.fn();
+    const post = vi.spyOn($api, "post").mockResolvedValue({});
+    const notify = vi.spyOn($notify, "success").mockImplementation(() => {});
+    const evictCache = vi.spyOn(Photo, "evictCache").mockImplementation(() => {});
+    const { wrapper, clipboard } = mountClipboard();
+
+    await wrapper.setProps({ refresh });
+    wrapper.vm.batchStack();
+    await flushPromises();
+
+    expect(post).toHaveBeenCalledWith("batch/photos/stack", { photos: clipboard.selection });
+    expect(notify).toHaveBeenCalledWith("Pictures stacked");
+    expect(evictCache).toHaveBeenCalledTimes(clipboard.selection.length);
+    expect(clipboard.clear).toHaveBeenCalledOnce();
+    expect(refresh).toHaveBeenCalledOnce();
+    expect(wrapper.vm.busy).toBe(false);
+
+    post.mockRestore();
+    notify.mockRestore();
+    evictCache.mockRestore();
   });
 });

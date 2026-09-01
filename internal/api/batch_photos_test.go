@@ -10,7 +10,10 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/tidwall/gjson"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/media"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestBatchPhotosArchive(t *testing.T) {
@@ -100,6 +103,99 @@ func TestBatchPhotosRestore(t *testing.T) {
 		BatchPhotosRestore(router)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/batch/photos/restore", `{"photos": 123}`)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
+	})
+}
+
+func TestBatchPhotosStack(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		primary := entity.NewPhoto(true)
+		primary.PhotoUID = rnd.GenerateUID(entity.PhotoUID)
+		primary.PhotoPath = "api-stack"
+		primary.PhotoName = "Primary"
+		primary.PhotoType = entity.MediaImage
+		primary.TypeSrc = entity.SrcAuto
+
+		if err := primary.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		secondary := entity.NewPhoto(true)
+		secondary.PhotoUID = rnd.GenerateUID(entity.PhotoUID)
+		secondary.PhotoPath = "api-stack"
+		secondary.PhotoName = "Secondary"
+		secondary.PhotoType = entity.MediaImage
+		secondary.TypeSrc = entity.SrcAuto
+
+		if err := secondary.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		primaryFile := entity.File{
+			PhotoID:     primary.ID,
+			PhotoUID:    primary.PhotoUID,
+			FileUID:     rnd.GenerateUID(entity.FileUID),
+			FileName:    "api-stack/" + primary.PhotoUID + ".jpg",
+			FileRoot:    entity.RootOriginals,
+			FileHash:    "api-stack-primary-" + primary.PhotoUID,
+			FileType:    "jpg",
+			MediaType:   media.Image.String(),
+			FilePrimary: true,
+		}
+
+		if err := primaryFile.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		secondaryFile := entity.File{
+			PhotoID:     secondary.ID,
+			PhotoUID:    secondary.PhotoUID,
+			FileUID:     rnd.GenerateUID(entity.FileUID),
+			FileName:    "api-stack/" + secondary.PhotoUID + ".jpg",
+			FileRoot:    entity.RootOriginals,
+			FileHash:    "api-stack-secondary-" + secondary.PhotoUID,
+			FileType:    "jpg",
+			MediaType:   media.Image.String(),
+			FilePrimary: true,
+		}
+
+		if err := secondaryFile.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		t.Cleanup(func() {
+			fileUIDs := []string{primaryFile.FileUID, secondaryFile.FileUID}
+			photoIDs := []uint{primary.ID, secondary.ID}
+
+			_ = entity.UnscopedDb().Where("file_uid IN (?)", fileUIDs).Delete(entity.File{}).Error
+			_ = entity.UnscopedDb().Where("photo_id IN (?)", photoIDs).Delete(entity.Details{}).Error
+			_ = entity.UnscopedDb().Where("id IN (?)", photoIDs).Delete(entity.Photo{}).Error
+		})
+
+		app, router, _ := NewApiTest()
+		BatchPhotosStack(router)
+
+		body := fmt.Sprintf(`{"photos":["%s","%s"]}`, primary.PhotoUID, secondary.PhotoUID)
+		response := PerformRequestWithBody(app, http.MethodPost, "/api/v1/batch/photos/stack", body)
+
+		assert.Equal(t, http.StatusOK, response.Code)
+		assert.Equal(t, primary.PhotoUID, gjson.Get(response.Body.String(), "photo").String())
+		assert.Equal(t, secondary.PhotoUID, gjson.Get(response.Body.String(), "stacked.0").String())
+
+		var files entity.Files
+		assert.NoError(t, entity.UnscopedDb().Where("file_uid IN (?)", []string{primaryFile.FileUID, secondaryFile.FileUID}).Find(&files).Error)
+		assert.Len(t, files, 2)
+		for _, file := range files {
+			assert.Equal(t, primary.ID, file.PhotoID)
+		}
+	})
+
+	t.Run("RequiresTwoPictures", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		BatchPhotosStack(router)
+
+		response := PerformRequestWithBody(app, http.MethodPost, "/api/v1/batch/photos/stack", `{"photos":["ps6sg6be2lvl0yh8"]}`)
+
+		assert.Equal(t, http.StatusBadRequest, response.Code)
 	})
 }
 
