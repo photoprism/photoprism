@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-08-28 02:08+0000\n"
+"PO-Revision-Date: 2026-09-01 06:33+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: af\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 2026.8\n"
+"X-Generator: Weblate 2026.8.1\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -129,7 +129,7 @@ msgstr "'n Klik sal dit na jou knipbord kopieer."
 
 #: src/locales.js:428
 msgid "A migration is in progress"
-msgstr ""
+msgstr "'n migrasie is aan die gang"
 
 #: src/component/update.vue:53
 msgid "A new version of %{s} is available:"

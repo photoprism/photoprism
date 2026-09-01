@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-08-28 02:08+0000\n"
+"PO-Revision-Date: 2026-09-01 06:33+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Turkish <https://translate.photoprism.app/projects/photoprism/frontend/tr/>\n"
 "Language: tr\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 2026.8\n"
+"X-Generator: Weblate 2026.8.1\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -132,7 +132,7 @@ msgstr "Tıklayarak panoya kopyalayabilirsiniz."
 
 #: src/locales.js:428
 msgid "A migration is in progress"
-msgstr ""
+msgstr "Bir taşıma işlemi devam ediyor"
 
 #: src/component/update.vue:53
 msgid "A new version of %{s} is available:"
