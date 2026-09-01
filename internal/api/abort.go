@@ -149,6 +149,11 @@ func AbortQuotaExceeded(c *gin.Context) {
 	Abort(c, http.StatusForbidden, i18n.ErrQuotaExceeded)
 }
 
+// AbortFaceMigrationRunning responds with HTTP 409 while a face migration holds the lock.
+func AbortFaceMigrationRunning(c *gin.Context) {
+	Abort(c, http.StatusConflict, i18n.ErrFaceMigrationRunning)
+}
+
 // AbortBusy responds with HTTP 429 to signal temporary overload.
 func AbortBusy(c *gin.Context) {
 	Abort(c, http.StatusTooManyRequests, i18n.ErrBusy)

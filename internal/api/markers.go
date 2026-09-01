@@ -36,6 +36,25 @@ func wakeupIntervalTooHigh(c *gin.Context) bool {
 	}
 }
 
+// faceMigrationRunning refuses a request with 409 while a face migration holds the lock, and
+// reports whether it did.
+//
+// The migration replaces every cluster in one transaction, so a name typed while it runs is
+// overwritten with no error anywhere. The holder is named in the log rather than in the response,
+// which needs no detail beyond why it was refused.
+func faceMigrationRunning(c *gin.Context) bool {
+	held := get.Config().FacesLocked()
+
+	if held == "" {
+		return false
+	}
+
+	log.Warnf("faces: refused %s while a migration is running (%s)", clean.Log(c.FullPath()), held)
+	AbortFaceMigrationRunning(c)
+
+	return true
+}
+
 // findFileMarker returns a file and marker entity matching the api request.
 func findFileMarker(c *gin.Context) (file *entity.File, marker *entity.Marker, err error) {
 	// Check authorization.
@@ -96,6 +115,11 @@ func CreateMarker(router *gin.RouterGroup) {
 
 		// Abort if permission is not granted.
 		if s.Abort(c) {
+			return
+		}
+
+		// Abort if a face migration is replacing the clusters this would write to.
+		if faceMigrationRunning(c) {
 			return
 		}
 
@@ -206,15 +230,20 @@ func CreateMarker(router *gin.RouterGroup) {
 //	@Tags		Files
 //	@Accept		json
 //	@Produce	json
-//	@Param		marker_uid			path		string		true	"marker uid"
-//	@Param		marker				body		form.Marker	true	"marker properties"
-//	@Success	200					{object}	entity.Marker
-//	@Failure	400,401,403,404,429	{object}	i18n.Response
+//	@Param		marker_uid				path		string		true	"marker uid"
+//	@Param		marker					body		form.Marker	true	"marker properties"
+//	@Success	200						{object}	entity.Marker
+//	@Failure	400,401,403,404,409,429	{object}	i18n.Response
 //	@Router		/api/v1/markers/{marker_uid} [put]
 func UpdateMarker(router *gin.RouterGroup) {
 	router.PUT("/markers/:marker_uid", func(c *gin.Context) {
 		// Abort if workers runs less than once per hour.
 		if wakeupIntervalTooHigh(c) {
+			return
+		}
+
+		// Abort if a face migration is replacing the clusters this would write to.
+		if faceMigrationRunning(c) {
 			return
 		}
 
@@ -311,14 +340,19 @@ func UpdateMarker(router *gin.RouterGroup) {
 //	@Id			ClearMarkerSubject
 //	@Tags		Files
 //	@Produce	json
-//	@Param		marker_uid			path		string	true	"marker uid"
-//	@Success	200					{object}	entity.Marker
-//	@Failure	400,401,403,404,429	{object}	i18n.Response
+//	@Param		marker_uid				path		string	true	"marker uid"
+//	@Success	200						{object}	entity.Marker
+//	@Failure	400,401,403,404,409,429	{object}	i18n.Response
 //	@Router		/api/v1/markers/{marker_uid}/subject [delete]
 func ClearMarkerSubject(router *gin.RouterGroup) {
 	router.DELETE("/markers/:marker_uid/subject", func(c *gin.Context) {
 		// Abort if workers runs less than once per hour.
 		if wakeupIntervalTooHigh(c) {
+			return
+		}
+
+		// Abort if a face migration is replacing the clusters this would write to.
+		if faceMigrationRunning(c) {
 			return
 		}
 
