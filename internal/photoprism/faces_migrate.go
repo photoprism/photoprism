@@ -957,8 +957,11 @@ func (w *Faces) settleFaceClusters() error {
 		result, err := w.start(FacesOptions{Force: true})
 
 		if err == nil && result.Moved() {
-			log.Infof("faces: clustering pass %d updated %s and recognized %s",
+			// Assigned is named beside Updated because a pass whose only work was propagating
+			// subjects from named clusters would otherwise report nothing it did.
+			log.Infof("faces: clustering pass %d updated %s, assigned %s and recognized %s",
 				round, english.Plural(result.Updated, "marker", "markers"),
+				english.Plural(result.Assigned, "marker", "markers"),
 				english.Plural(result.Recognized, "face", "faces"))
 		}
 

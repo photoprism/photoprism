@@ -129,12 +129,19 @@ type facesRunResult struct {
 	Merged     int
 	Added      int
 	Updated    int
+	Assigned   int
 	Recognized int
 }
 
 // Moved reports whether the pass changed anything a further pass could build on.
+//
+// Matching contributes both of its counters through the predicate the pass itself logs by, so a
+// run that only propagated subjects from clusters that already carry one - which writes subj_uid
+// without touching Updated - cannot read as idle here while reading as work there.
 func (r facesRunResult) Moved() bool {
-	return r.Subjects > 0 || r.Resolved > 0 || r.Merged > 0 || r.Added > 0 || r.Updated > 0
+	matches := FacesMatchResult{Updated: int64(r.Updated), Assigned: int64(r.Assigned)}
+
+	return r.Subjects > 0 || r.Resolved > 0 || r.Merged > 0 || r.Added > 0 || matches.MovedSubjects()
 }
 
 // start performs face clustering and matching while the caller holds the faces worker lock.
@@ -247,6 +254,7 @@ func (w *Faces) start(opt FacesOptions) (result facesRunResult, err error) {
 	}
 
 	result.Updated = int(matches.Updated)
+	result.Assigned = int(matches.Assigned)
 	result.Recognized = int(matches.Recognized)
 
 	// Log face matching results.

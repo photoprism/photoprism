@@ -74,6 +74,32 @@ func TestFaces_start(t *testing.T) {
 	require.Error(t, err)
 }
 
+// TestFaces_startCountsAssignedMarkers pins that a pass reports the subjects it propagated from
+// clusters that already carry one. query.MatchFaceMarkers writes subj_uid without going through
+// Updated, so a run whose only work was this would otherwise read as idle and stop the settle loop.
+func TestFaces_startCountsAssignedMarkers(t *testing.T) {
+	w := isolatedTestFaces(t, "faces_assigned")
+
+	marker := entity.MarkerFixtures.Get("actress-a-2")
+	require.NotEmpty(t, marker.FaceID)
+
+	// The one state MatchFaceMarkers acts on: an automatic marker in a named cluster that does
+	// not carry that cluster's subject yet.
+	require.NoError(t, entity.UnscopedDb().Model(&entity.Marker{}).
+		Where("marker_uid = ?", marker.MarkerUID).
+		UpdateColumns(entity.Values{"subj_uid": "", "subj_src": entity.SrcAuto}).Error)
+
+	result, err := w.start(FacesOptions{})
+	require.NoError(t, err)
+
+	assert.GreaterOrEqual(t, result.Assigned, 1, "the marker took its cluster's subject")
+	assert.True(t, result.Moved(), "an assignment is work a later pass builds on")
+
+	assigned := entity.FindMarker(marker.MarkerUID)
+	require.NotNil(t, assigned)
+	assert.Equal(t, marker.SubjUID, assigned.SubjUID)
+}
+
 func TestFaces_startBlocked(t *testing.T) {
 	t.Run("PausedWhileTheLibraryDisagrees", func(t *testing.T) {
 		// Clustering and matching compare stored vectors, so both wait for the migration

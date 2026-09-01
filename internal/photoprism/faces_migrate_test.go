@@ -1752,6 +1752,18 @@ func TestFacesRunResult_Moved(t *testing.T) {
 		assert.True(t, facesRunResult{Added: 1}.Moved())
 		assert.True(t, facesRunResult{Updated: 1}.Moved())
 	})
+	t.Run("AssignedOnly", func(t *testing.T) {
+		// A pass that only propagated subjects from clusters that already carry one writes
+		// subj_uid without touching Updated, and the markers it moved are work.
+		assert.True(t, facesRunResult{Assigned: 1, Recognized: 9791}.Moved())
+	})
+	t.Run("MatchesTheMatchPredicate", func(t *testing.T) {
+		// The two must not diverge: this is the same question the pass logs by.
+		for _, r := range []facesRunResult{{}, {Updated: 1}, {Assigned: 1}, {Updated: 1, Assigned: 1}} {
+			matches := FacesMatchResult{Updated: int64(r.Updated), Assigned: int64(r.Assigned)}
+			assert.Equal(t, matches.MovedSubjects(), r.Moved())
+		}
+	})
 }
 
 // TestSettleFaceClusters covers the loop a migration runs after replacing the clusters: a pass
