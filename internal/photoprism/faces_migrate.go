@@ -1300,7 +1300,7 @@ func (w *Faces) cropMigrationEmbeddings(embedder face.Embedder, file *entity.Fil
 					ThumbSize: thumbSize,
 					// Against the box this crop asked for, which is the one the embedder was
 					// handed: a box-crop model resamples it onto its own input afterwards.
-					EmbedUpscaled: face.EmbedDetail(thumbSize, size.Width),
+					EmbedDetail: face.EmbedDetail(thumbSize, size.Width),
 				}
 			}
 		}
@@ -1346,11 +1346,11 @@ func (w *Faces) detectMigrationEmbeddings(embedder face.Embedder, file *entity.F
 			detectModel = detectedFace.DetectModel
 
 			details[markerUID] = query.MigrationDetection{
-				Landmarks:     detectedFace.RelativeLandmarksJSON(),
-				Size:          detectedFace.Size(),
-				Score:         detectedFace.Score,
-				ThumbSize:     detectedFace.ThumbSize,
-				EmbedUpscaled: detectedFace.EmbedUpscaled,
+				Landmarks:   detectedFace.RelativeLandmarksJSON(),
+				Size:        detectedFace.Size(),
+				Score:       detectedFace.Score,
+				ThumbSize:   detectedFace.ThumbSize,
+				EmbedDetail: detectedFace.EmbedDetail,
 			}
 		}
 	}

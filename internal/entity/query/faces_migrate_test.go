@@ -476,7 +476,7 @@ func TestSaveFaceMigrationEmbeddings(t *testing.T) {
 	detectedPoints := json.RawMessage(`[{"name":"eye_l","x":-0.05},{"name":"eye_r","x":0.05}]`)
 	require.NoError(t, SaveFaceMigrationEmbeddings(face.ModelFaceNet, face.DetectorYuNet,
 		map[string]face.Embeddings{marker.MarkerUID: embeddings},
-		map[string]MigrationDetection{marker.MarkerUID: {Landmarks: detectedPoints, Size: 84, Score: 91, ThumbSize: 96, EmbedUpscaled: 86}}))
+		map[string]MigrationDetection{marker.MarkerUID: {Landmarks: detectedPoints, Size: 84, Score: 91, ThumbSize: 96, EmbedDetail: 86}}))
 
 	stored, err := MarkerByUID(marker.MarkerUID)
 	require.NoError(t, err)
@@ -492,7 +492,7 @@ func TestSaveFaceMigrationEmbeddings(t *testing.T) {
 	assert.Equal(t, 91, stored.Score, "the score of the detection that produced the vector")
 	assert.Equal(t, 84, stored.Size, "and its size, in the pixels of the same detection thumbnail")
 	assert.Equal(t, 96, stored.ThumbSize, "the extent the vector was sampled at")
-	assert.Equal(t, 86, stored.EmbedUpscaled, "and how much of the crop that extent supplied")
+	assert.Equal(t, 86, stored.EmbedDetail, "and how much of the crop that extent supplied")
 
 	t.Run("BlankDetectorKeepsProvenance", func(t *testing.T) {
 		// Re-cropping runs no detector, so overwriting either would attribute the crop to one
@@ -510,7 +510,7 @@ func TestSaveFaceMigrationEmbeddings(t *testing.T) {
 		// A re-crop samples a rendition too, so both travel even with no detector - and a sampling
 		// that measured neither records that it was attempted rather than leaving the row unsettled.
 		assert.Equal(t, entity.ThumbSizeUnmeasured, kept.ThumbSize)
-		assert.Equal(t, entity.EmbedUpscaledUnknown, kept.EmbedUpscaled)
+		assert.Equal(t, entity.EmbedDetailUnknown, kept.EmbedDetail)
 	})
 	t.Run("MalformedLandmarksClearTheColumn", func(t *testing.T) {
 		// The detector and the landmarks are written as a pair. A payload that is not valid JSON

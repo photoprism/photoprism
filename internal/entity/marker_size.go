@@ -33,11 +33,11 @@ func ClusterSizeCond(alias string, floor int) (string, []any) {
 // 1, and telling them apart is what lets a migration filling the column terminate.
 const ThumbSizeUnmeasured = -2
 
-// EmbedUpscaledUnknown marks a marker a migration sampled without the share of the crop its
+// EmbedDetailUnknown marks a marker a migration sampled without the share of the crop its
 // source supplied being measurable, beside the ThumbSizeUnmeasured its partner column records for
 // the same pass. Negative rather than zero for the same reason as that one: GORM omits a zero
 // field on insert where the column has a default, so a zero would read back as never sampled.
-const EmbedUpscaledUnknown = -2
+const EmbedDetailUnknown = -2
 
 // ThumbSizeSettled reports whether a sampling has answered for this marker's extent, either by
 // measuring one or by trying and failing. Only an unsettled marker is worth sampling again.

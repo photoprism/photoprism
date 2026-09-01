@@ -69,7 +69,7 @@ func TestDetectFacesCropSource(t *testing.T) {
 		f := detect(t, "crop-source-rendered.jpg", 210)
 
 		assert.Greater(t, f.ThumbSize, f.Size(), "the crop was taken from a wider rendition than detection ran on")
-		assert.Equal(t, 100, f.EmbedUpscaled, "so the source supplied the whole crop")
+		assert.Equal(t, 100, f.EmbedDetail, "so the source supplied the whole crop")
 	})
 	t.Run("CacheOnly", func(t *testing.T) {
 		// The control, and what the option turns off: the same face embedded from the detection
@@ -79,8 +79,8 @@ func TestDetectFacesCropSource(t *testing.T) {
 		f := detect(t, "crop-source-cached.jpg", 90)
 
 		assert.Equal(t, f.Size(), f.ThumbSize, "the detection thumbnail is all the cache holds")
-		assert.Less(t, f.EmbedUpscaled, 100, "so the crop was interpolated up to the template")
-		assert.Positive(t, f.EmbedUpscaled)
+		assert.Less(t, f.EmbedDetail, 100, "so the crop was interpolated up to the template")
+		assert.Positive(t, f.EmbedDetail)
 	})
 }
 

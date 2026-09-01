@@ -403,9 +403,9 @@ type MigrationDetection struct {
 	// ThumbSize is the extent the embedding was sampled at, which a re-crop records as well: it
 	// belongs to the vector rather than to a detection, so it travels even with no detector.
 	ThumbSize int
-	// EmbedUpscaled is the percentage of the crop width that extent supplied, which belongs to
+	// EmbedDetail is the percentage of the crop width that extent supplied, which belongs to
 	// the vector for the same reason.
-	EmbedUpscaled int
+	EmbedDetail int
 }
 
 // SaveFaceMigrationEmbeddings checkpoints generated embeddings for a single file, along with the
@@ -448,10 +448,10 @@ func SaveFaceMigrationEmbeddings(model, detectModel string, embeddings map[strin
 
 			// Recorded for every sampled marker, including one whose ratio could not be measured,
 			// so a row nothing has sampled stays apart from both.
-			if detail := details[markerUID]; detail.EmbedUpscaled > 0 {
-				columns["embed_upscaled"] = detail.EmbedUpscaled
+			if detail := details[markerUID]; detail.EmbedDetail > 0 {
+				columns["embed_detail"] = detail.EmbedDetail
 			} else {
-				columns["embed_upscaled"] = entity.EmbedUpscaledUnknown
+				columns["embed_detail"] = entity.EmbedDetailUnknown
 			}
 
 			// Written together, or the recorded detector would attest another one's work: the

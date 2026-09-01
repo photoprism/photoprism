@@ -48,9 +48,9 @@ type Face struct {
 	// ThumbSize is the face's extent in pixels of the thumbnail its embedding was sampled from,
 	// which is a different image than Size measures. Zero until an embedding is generated.
 	ThumbSize int `json:"thumbSize,omitempty"`
-	// EmbedUpscaled is the percentage of the crop width the source supplied, clamped at 100, so
+	// EmbedDetail is the percentage of the crop width the source supplied, clamped at 100, so
 	// a value below it says the crop was upscaled and by how much. Zero until measured.
-	EmbedUpscaled int `json:"embedUpscaled,omitempty"`
+	EmbedDetail int `json:"embedDetail,omitempty"`
 }
 
 // SetThumbSize records the face's extent in an image of the given width, which is what the
@@ -79,18 +79,18 @@ func EmbedDetail(extent, cropWidth int) int {
 	return min(100, max(1, int(math.Round(float64(extent)*100/float64(cropWidth)))))
 }
 
-// SetEmbedUpscaled records how much of the crop the embedder asked for the source could supply.
+// SetEmbedDetail records how much of the crop the embedder asked for the source could supply.
 // It is measured here rather than derived later, because face.CropSize is a property of the
 // current template and not of the vector that was produced.
 //
 // SetThumbSize has to have run first: it holds the face's extent in the image the crop was taken
 // from, which is the numerator. An unmeasurable ratio is left unset, so no guess is stored.
-func (f *Face) SetEmbedUpscaled(cropWidth int) {
+func (f *Face) SetEmbedDetail(cropWidth int) {
 	if f == nil {
 		return
 	}
 
-	f.EmbedUpscaled = EmbedDetail(f.ThumbSize, cropWidth)
+	f.EmbedDetail = EmbedDetail(f.ThumbSize, cropWidth)
 }
 
 // Size returns the absolute face size in pixels.

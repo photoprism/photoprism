@@ -58,9 +58,9 @@ func GenerateEmbeddings(embedder face.Embedder, fileName string, faces face.Face
 			// The crop the embedder was handed: an aligned model warps the landmarks onto its
 			// own input, and the fallback resamples a face.CropSize box.
 			if aligned {
-				f.SetEmbedUpscaled(width)
+				f.SetEmbedDetail(width)
 			} else {
-				f.SetEmbedUpscaled(face.CropSize.Width)
+				f.SetEmbedDetail(face.CropSize.Width)
 			}
 
 			// Counted here rather than at the crop, since a crop nothing was embedded from

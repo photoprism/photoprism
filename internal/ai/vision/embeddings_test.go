@@ -113,7 +113,7 @@ func TestGenerateEmbeddings(t *testing.T) {
 
 		require.False(t, faces[0].Embeddings.Empty())
 		assert.Equal(t, 284, faces[0].ThumbSize)
-		assert.Equal(t, 100, faces[0].EmbedUpscaled)
+		assert.Equal(t, 100, faces[0].EmbedDetail)
 	})
 	t.Run("RecordsTheShortfallOfASmallFace", func(t *testing.T) {
 		// The same picture and a 40 px face, which covers 57 px of it: the crop the model reads
@@ -124,7 +124,7 @@ func TestGenerateEmbeddings(t *testing.T) {
 
 		require.False(t, faces[0].Embeddings.Empty())
 		assert.Equal(t, 57, faces[0].ThumbSize)
-		assert.Equal(t, 51, faces[0].EmbedUpscaled)
+		assert.Equal(t, 51, faces[0].EmbedDetail)
 	})
 	t.Run("MeasuredAgainstTheFallbackCrop", func(t *testing.T) {
 		// The unaligned branch resamples a 160 px box rather than the 112 px template, so the
@@ -134,7 +134,7 @@ func TestGenerateEmbeddings(t *testing.T) {
 		require.Equal(t, 1, GenerateEmbeddings(embedder, fileName, faces, false))
 
 		assert.Equal(t, 57, faces[0].ThumbSize)
-		assert.Equal(t, 36, faces[0].EmbedUpscaled)
+		assert.Equal(t, 36, faces[0].EmbedDetail)
 	})
 	t.Run("EmptyEmbeddingIsNotCounted", func(t *testing.T) {
 		// The count describes vectors, so a crop the model returned nothing for is not one.
@@ -144,7 +144,7 @@ func TestGenerateEmbeddings(t *testing.T) {
 
 		require.Len(t, embedder.sizes, 1, "the crop was still taken")
 		assert.True(t, faces[0].Embeddings.Empty())
-		assert.Zero(t, faces[0].EmbedUpscaled, "a crop no vector came out of describes nothing")
+		assert.Zero(t, faces[0].EmbedDetail, "a crop no vector came out of describes nothing")
 	})
 	t.Run("UnalignedModelUsesThumbCrop", func(t *testing.T) {
 		embedder := &stubEmbedder{aligned: false, dims: 512}

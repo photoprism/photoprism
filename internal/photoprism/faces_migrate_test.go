@@ -534,9 +534,9 @@ func TestFaces_cropMigrationEmbeddings(t *testing.T) {
 		require.NoError(t, cropErr)
 
 		assert.Equal(t, 12, details["m3"].ThumbSize)
-		assert.Equal(t, 75, details["m3"].EmbedUpscaled, "12 px of the 16 px the crop asked for")
+		assert.Equal(t, 75, details["m3"].EmbedDetail, "12 px of the 16 px the crop asked for")
 		assert.Equal(t, 640, details["m4"].ThumbSize)
-		assert.Equal(t, 100, details["m4"].EmbedUpscaled, "a face larger than the crop is not upscaled")
+		assert.Equal(t, 100, details["m4"].EmbedDetail, "a face larger than the crop is not upscaled")
 	})
 }
 

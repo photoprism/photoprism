@@ -86,32 +86,32 @@ func TestEmbedDetail(t *testing.T) {
 	})
 }
 
-// TestFace_SetEmbedUpscaled covers the detail recorded beside an embedding, which is measured at
+// TestFace_SetEmbedDetail covers the detail recorded beside an embedding, which is measured at
 // the crop rather than derived afterwards from a template that may since have changed.
-func TestFace_SetEmbedUpscaled(t *testing.T) {
+func TestFace_SetEmbedDetail(t *testing.T) {
 	t.Run("AlignedTemplate", func(t *testing.T) {
 		f := &Face{Cols: 720, Area: Area{Scale: 60}}
 		f.SetThumbSize(720)
-		f.SetEmbedUpscaled(ArcFaceTemplateSize)
+		f.SetEmbedDetail(ArcFaceTemplateSize)
 
 		assert.Equal(t, 60, f.ThumbSize)
-		assert.Equal(t, 54, f.EmbedUpscaled)
+		assert.Equal(t, 54, f.EmbedDetail)
 	})
 	t.Run("WiderRenditionRemovesTheUpscale", func(t *testing.T) {
 		// The same face embedded from a 1920 px rendition instead of the detection thumbnail.
 		f := &Face{Cols: 720, Area: Area{Scale: 60}}
 		f.SetThumbSize(1920)
-		f.SetEmbedUpscaled(ArcFaceTemplateSize)
+		f.SetEmbedDetail(ArcFaceTemplateSize)
 
-		assert.Equal(t, 100, f.EmbedUpscaled)
+		assert.Equal(t, 100, f.EmbedDetail)
 	})
 	t.Run("UnsampledLeavesItUnset", func(t *testing.T) {
 		f := &Face{Cols: 720, Area: Area{Scale: 60}}
-		f.SetEmbedUpscaled(ArcFaceTemplateSize)
+		f.SetEmbedDetail(ArcFaceTemplateSize)
 
-		assert.Zero(t, f.EmbedUpscaled, "no extent was recorded to measure against")
+		assert.Zero(t, f.EmbedDetail, "no extent was recorded to measure against")
 	})
 	t.Run("Nil", func(t *testing.T) {
-		assert.NotPanics(t, func() { (*Face)(nil).SetEmbedUpscaled(112) })
+		assert.NotPanics(t, func() { (*Face)(nil).SetEmbedDetail(112) })
 	})
 }

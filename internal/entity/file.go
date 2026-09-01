@@ -897,7 +897,7 @@ func (m *File) AddFace(f face.Face, subjUid string) {
 			// From the marker this detection would have created, so an upgrade records the
 			// sampling exactly as a new marker does. Unmeasured stays at the sentinel rather
 			// than keeping a value recorded for another sampling.
-			thumbSize, embedUpscaled := marker.ThumbSize, marker.EmbedUpscaled
+			thumbSize, embedDetail := marker.ThumbSize, marker.EmbedDetail
 
 			// For an already-saved marker, persist first and mutate in-memory
 			// only on success: a failed write must not leave an unpersisted
@@ -913,7 +913,7 @@ func (m *File) AddFace(f face.Face, subjUid string) {
 					"detect_model":    f.DetectModel,
 					"landmarks_json":  landmarks,
 					"thumb_size":      thumbSize,
-					"embed_upscaled":  embedUpscaled,
+					"embed_detail":    embedDetail,
 					"score":           f.Score,
 				}
 
@@ -926,7 +926,7 @@ func (m *File) AddFace(f face.Face, subjUid string) {
 			existing.SetEmbeddings(f.Embeddings, f.EmbedModel, f.DetectModel)
 			existing.LandmarksJSON = landmarks
 			existing.ThumbSize = thumbSize
-			existing.EmbedUpscaled = embedUpscaled
+			existing.EmbedDetail = embedDetail
 			existing.Score = f.Score
 		}
 

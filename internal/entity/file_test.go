@@ -712,14 +712,14 @@ func TestFile_AddFaceUpgradesProvenance(t *testing.T) {
 	file.markers = &markers
 
 	f := face.Face{
-		Rows:          2000,
-		Cols:          3000,
-		Score:         88,
-		Area:          face.NewArea("face", 1000, 1500, 300),
-		Embeddings:    face.Embeddings{face.RandomEmbedding()},
-		EmbedModel:    face.EmbeddingModelName(),
-		ThumbSize:     97,
-		EmbedUpscaled: 87,
+		Rows:        2000,
+		Cols:        3000,
+		Score:       88,
+		Area:        face.NewArea("face", 1000, 1500, 300),
+		Embeddings:  face.Embeddings{face.RandomEmbedding()},
+		EmbedModel:  face.EmbeddingModelName(),
+		ThumbSize:   97,
+		EmbedDetail: 87,
 	}
 
 	file.AddFace(f, "")
@@ -728,10 +728,10 @@ func TestFile_AddFaceUpgradesProvenance(t *testing.T) {
 	require.NoError(t, UnscopedDb().First(stored, "marker_uid = ?", existing.MarkerUID).Error)
 
 	assert.Equal(t, 97, stored.ThumbSize, "the extent the vector was sampled at must be recorded")
-	assert.Equal(t, 87, stored.EmbedUpscaled, "and how much of the crop that extent supplied")
+	assert.Equal(t, 87, stored.EmbedDetail, "and how much of the crop that extent supplied")
 	assert.Equal(t, 88, stored.Score, "the score must come from the detector that produced the vector")
 	assert.Equal(t, 97, (*file.Markers())[0].ThumbSize, "and the in-memory marker must match the row")
-	assert.Equal(t, 87, (*file.Markers())[0].EmbedUpscaled)
+	assert.Equal(t, 87, (*file.Markers())[0].EmbedDetail)
 }
 
 func TestFile_ValidFaceCount(t *testing.T) {
