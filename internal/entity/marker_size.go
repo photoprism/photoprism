@@ -4,7 +4,6 @@ import (
 	"math"
 	"strconv"
 
-	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/internal/thumb/crop"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -34,23 +33,11 @@ func ClusterSizeCond(alias string, floor int) (string, []any) {
 // 1, and telling them apart is what lets a migration filling the column terminate.
 const ThumbSizeUnmeasured = -2
 
-// EmbedUpscaledUnknown marks a marker whose embedding was sampled without the share of the crop
-// its source supplied being measurable, as distinct from the -1 of a marker nothing has sampled.
-// Negative rather than zero, and the same value ThumbSizeUnmeasured uses: GORM omits a zero field
-// on insert where the column has a default, so a zero would read back as never sampled.
+// EmbedUpscaledUnknown marks a marker a migration sampled without the share of the crop its
+// source supplied being measurable, beside the ThumbSizeUnmeasured its partner column records for
+// the same pass. Negative rather than zero for the same reason as that one: GORM omits a zero
+// field on insert where the column has a default, so a zero would read back as never sampled.
 const EmbedUpscaledUnknown = -2
-
-// MarkerEmbedUpscaled returns what a marker records for a face an embedding was generated for:
-// the percentage of the crop width its source supplied, or EmbedUpscaledUnknown where the
-// sampling could not measure one. Stored rather than derived, because the crop width is
-// face.CropSize or a model's own input today, so a later computation changes meaning with them.
-func MarkerEmbedUpscaled(f face.Face) int {
-	if f.EmbedUpscaled > 0 {
-		return f.EmbedUpscaled
-	}
-
-	return EmbedUpscaledUnknown
-}
 
 // ThumbSizeSettled reports whether a sampling has answered for this marker's extent, either by
 // measuring one or by trying and failing. Only an unsettled marker is worth sampling again.

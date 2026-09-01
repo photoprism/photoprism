@@ -112,6 +112,10 @@ func (c *Config) ThumbSizeUncached() int {
 // and an aligned model warps its own template out of the source, so neither changes with this. It
 // is independent of the other thumbnail options because indexing renders at most one rendition per
 // file it already reads, where the on-demand limit prices a page rendering hundreds at once.
+//
+// What it writes stays: indexing skips a size above the pre-generated limit, "photoprism thumbs"
+// never refreshes one and nothing purges by size, so a ceiling above the shipped 4096 buys a face
+// nothing measurable and leaves a rung per file that no other pass maintains.
 func (c *Config) ThumbSizeFace() int {
 	if c == nil {
 		return 0

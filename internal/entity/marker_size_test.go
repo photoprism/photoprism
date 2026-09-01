@@ -146,23 +146,8 @@ func TestMarkerThumbSize(t *testing.T) {
 	})
 }
 
-// TestMarkerEmbedUpscaled covers what a marker records about the detail its embedding was drawn
-// at, which is the one property of a crop that cannot be recovered from the vector afterwards.
-func TestMarkerEmbedUpscaled(t *testing.T) {
-	t.Run("Measured", func(t *testing.T) {
-		assert.Equal(t, 46, MarkerEmbedUpscaled(face.Face{EmbedUpscaled: 46}))
-		assert.Equal(t, 100, MarkerEmbedUpscaled(face.Face{EmbedUpscaled: 100}))
-	})
-	t.Run("Unmeasured", func(t *testing.T) {
-		// A sampling that could not measure a ratio still says one was attempted, which is what
-		// keeps it apart from the -1 of a marker no crop was ever taken for.
-		assert.Equal(t, EmbedUpscaledUnknown, MarkerEmbedUpscaled(face.Face{}))
-		assert.Equal(t, EmbedUpscaledUnknown, MarkerEmbedUpscaled(face.Face{EmbedUpscaled: -3}))
-	})
-}
-
-// TestNewFaceMarkerEmbedUpscaled pins the three states a stored marker distinguishes, since a
-// column that only ever holds two of them is a bool that cost a SMALLINT.
+// TestNewFaceMarkerEmbedUpscaled pins the states a stored marker distinguishes, since a column
+// that only ever holds two of them is a bool that cost a SMALLINT.
 func TestNewFaceMarkerEmbedUpscaled(t *testing.T) {
 	file := FileFixtures.Get("exampleFileName.jpg")
 	area := face.NewArea("face", 300, 300, 200)
@@ -179,10 +164,15 @@ func TestNewFaceMarkerEmbedUpscaled(t *testing.T) {
 
 		require.Equal(t, 51, NewFaceMarker(f, file, "").EmbedUpscaled)
 	})
-	t.Run("SampledWithoutARatio", func(t *testing.T) {
+	t.Run("SampledWithoutAnExtent", func(t *testing.T) {
+		// An endpoint embeds from a reused crop, which reports no source width, so neither
+		// number was measured. The pair has to agree: one column saying a crop was taken while
+		// the other says none ever was is a state no migration can settle.
 		f := face.Face{Rows: 720, Cols: 720, Area: area, Embeddings: face.Embeddings{face.RandomEmbedding()}}
+		m := NewFaceMarker(f, file, "")
 
-		require.Equal(t, EmbedUpscaledUnknown, NewFaceMarker(f, file, "").EmbedUpscaled)
+		require.Equal(t, -1, m.EmbedUpscaled)
+		assert.Equal(t, -1, m.ThumbSize)
 	})
 	t.Run("NeverSampled", func(t *testing.T) {
 		// The state every marker written before the column existed is in, and the one a hand-drawn

@@ -53,9 +53,10 @@ type Marker struct {
 	Size           int             `gorm:"default:-1;" json:"Size" yaml:"Size,omitempty"`
 	ThumbSize      int             `gorm:"column:thumb_size;default:-1;" json:"ThumbSize" yaml:"ThumbSize,omitempty"`
 	// EmbedUpscaled is the percentage of the crop its source supplied, 100 where it supplied all
-	// of it, EmbedUpscaledUnknown where a sampling could not measure one, and -1 where nothing
-	// has sampled the marker. It describes the embedding, which is why it sits beside embed_model
-	// rather than under the thumb_ prefix its partner thumb_size carries.
+	// of it, EmbedUpscaledUnknown where a migration sampled the marker without measuring one, and
+	// -1 where nothing has. It describes the embedding, which is why it sits beside embed_model
+	// rather than under the thumb_ prefix its partner thumb_size carries, and it is written under
+	// the same condition as that partner so the two cannot disagree about what was sampled.
 	EmbedUpscaled int        `gorm:"column:embed_upscaled;type:SMALLINT;default:-1;" json:"-" yaml:"EmbedUpscaled,omitempty"`
 	Score         int        `gorm:"type:SMALLINT;" json:"Score" yaml:"Score,omitempty"`
 	Thumb         string     `gorm:"type:VARBINARY(128);index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
@@ -134,15 +135,15 @@ func NewFaceMarker(f face.Face, file File, subjUid string) *Marker {
 	m.LandmarksJSON = f.RelativeLandmarksJSON()
 
 	// Only when an embedding was actually sampled: a zero would read as a measurement of nothing,
-	// where -1 says the marker never had a crop taken.
+	// where -1 says the marker never had a crop taken. The pair is written under one condition,
+	// or a marker whose vector came from an endpoint records a crop on one column and none on the
+	// other - a migration settles both together and has to find them in the same state.
 	if f.ThumbSize > 0 {
 		m.ThumbSize = f.ThumbSize
-	}
 
-	// The detail the crop was drawn at is recorded for every sampled marker, including one it
-	// could not be measured for, so a row that never had a crop taken stays apart from both.
-	if !f.Embeddings.Empty() {
-		m.EmbedUpscaled = MarkerEmbedUpscaled(f)
+		if f.EmbedUpscaled > 0 {
+			m.EmbedUpscaled = f.EmbedUpscaled
+		}
 	}
 
 	return m

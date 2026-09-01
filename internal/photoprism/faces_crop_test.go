@@ -4,6 +4,7 @@ import (
 	"image"
 	"image/color"
 	"image/draw"
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -11,6 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/ai/onnx"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/thumb"
@@ -22,18 +24,73 @@ import (
 // embedding can take, since which one a face takes is only known once its landmarks were fitted.
 func TestEmbedCropWidth(t *testing.T) {
 	t.Run("CoversEveryRegisteredModel", func(t *testing.T) {
+		// Every model shipped today has an input of 112 or none, both under the 160 px box, so
+		// the box decides for all of them - which is also why the case below is needed.
 		for name := range face.EmbeddingModels {
 			width := embedCropWidth(name)
 
-			assert.GreaterOrEqual(t, width, face.CropSize.Width, name)
+			assert.Equal(t, face.CropSize.Width, width, name)
 
 			if input, _ := face.FindEmbeddingModel(name).InputSize(); input > 0 {
 				assert.GreaterOrEqual(t, width, input, name)
 			}
 		}
 	})
+	t.Run("ModelWiderThanTheBox", func(t *testing.T) {
+		// The other half of "the wider of the two", which no registered model exercises: a model
+		// asking for more than the fallback box must decide the rendition itself.
+		const name = face.ModelName("zz_wide_input")
+
+		face.EmbeddingModels[name] = &face.EmbeddingModel{
+			Name:    name,
+			Runtime: face.RuntimeONNX,
+			ONNX:    &onnx.ModelInfo{Input: &onnx.Input{Width: 224, Height: 224}},
+		}
+
+		t.Cleanup(func() { delete(face.EmbeddingModels, name) })
+
+		require.Greater(t, 224, face.CropSize.Width, "the case only tests something above the box")
+		assert.Equal(t, 224, embedCropWidth(string(name)))
+	})
 	t.Run("UnknownModel", func(t *testing.T) {
 		assert.Equal(t, face.CropSize.Width, embedCropWidth("nonesuch"))
+	})
+}
+
+// TestCachedCropWidth covers what the renditions on disk can supply, which is the question the
+// rendering decision turns on.
+func TestCachedCropWidth(t *testing.T) {
+	thumbPath := t.TempDir()
+
+	restore := thumb.SizeCached
+	t.Cleanup(func() { thumb.SizeCached = restore })
+	thumb.SizeCached = 15360
+
+	const hash = "5a5d555555555555555555555555555555555555"
+	const fileWidth, fileHeight = 3648, 2736
+
+	t.Run("NothingCached", func(t *testing.T) {
+		assert.Zero(t, cachedCropWidth(hash, fileWidth, fileHeight, thumbPath))
+	})
+	t.Run("TheBoxHeightBinds", func(t *testing.T) {
+		// Fit1920 is a 1920x1200 box, so this 4:3 picture is 1600 px wide in it. Reading the box
+		// width here would report 1920 and skip a rendition the crop still needs.
+		name, err := thumb.Sizes[thumb.Fit1920].FileName(hash, thumbPath)
+		require.NoError(t, err)
+		require.NoError(t, thumb.Save(image.NewNRGBA(image.Rect(0, 0, 8, 8)), name))
+
+		assert.Equal(t, 1600, cachedCropWidth(hash, fileWidth, fileHeight, thumbPath))
+	})
+	t.Run("NativeResolution", func(t *testing.T) {
+		name, err := thumb.Sizes[thumb.Fit4096].FileName(hash, thumbPath)
+		require.NoError(t, err)
+		require.NoError(t, thumb.Save(image.NewNRGBA(image.Rect(0, 0, 8, 8)), name))
+
+		assert.Equal(t, 3648, cachedCropWidth(hash, fileWidth, fileHeight, thumbPath))
+	})
+	t.Run("UnknownFile", func(t *testing.T) {
+		assert.Zero(t, cachedCropWidth("", fileWidth, fileHeight, thumbPath))
+		assert.Zero(t, cachedCropWidth(hash, 0, 0, thumbPath))
 	})
 }
 
@@ -196,6 +253,20 @@ func TestCacheFaceCropSource(t *testing.T) {
 		rendered, err := cacheFaceCropSource(c, m, nil)
 		require.NoError(t, err)
 		assert.False(t, rendered)
+	})
+	t.Run("RenderFails", func(t *testing.T) {
+		// A regular file where the cache directory belongs, so the rendition cannot even be
+		// named. The error is reported rather than swallowed, since the crops are then taken
+		// from whatever the cache does hold and no vector says so afterwards.
+		broken := config.NewMinimalTestConfig(t.TempDir())
+		broken.Options().ThumbSizeFace = 4096
+
+		require.NoError(t, fs.MkdirAll(filepath.Dir(broken.ThumbCachePath())))
+		require.NoError(t, os.WriteFile(broken.ThumbCachePath(), []byte("not a directory"), fs.ModeFile))
+
+		rendered, err := cacheFaceCropSource(broken, m, faces)
+		assert.False(t, rendered)
+		assert.Error(t, err)
 	})
 	t.Run("NilInput", func(t *testing.T) {
 		rendered, err := cacheFaceCropSource(nil, m, faces)

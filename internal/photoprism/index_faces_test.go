@@ -46,11 +46,21 @@ func TestDetectFacesCropSource(t *testing.T) {
 		faces, err := DetectFaces(m, 0)
 		require.NoError(t, err)
 
-		if len(faces) == 0 || faces[0].Embeddings.Empty() {
+		// The largest, not the first: the canvas is flat enough that the detector also returns a
+		// smaller candidate, and its order is not a contract this test should depend on.
+		largest := face.Face{}
+
+		for i := range faces {
+			if faces[i].Size() > largest.Size() && !faces[i].Embeddings.Empty() {
+				largest = faces[i]
+			}
+		}
+
+		if largest.Embeddings.Empty() {
 			t.Skip("faces: skipping, the detector or the embedder is not available here")
 		}
 
-		return faces[0]
+		return largest
 	}
 
 	t.Run("RenderedSource", func(t *testing.T) {

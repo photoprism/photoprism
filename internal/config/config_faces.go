@@ -356,8 +356,9 @@ func (c *Config) faceSizeRetryDefault() int {
 
 	// What a crop can reach is the wider of the two, since on-demand face rendering lifts the
 	// pre-generated limit for exactly this path rather than replacing what it already covers.
-	// THUMB_UNCACHED is not asked: it governs what a request may render for delivery, and no
-	// crop consults it.
+	// THUMB_UNCACHED is deliberately not a term. What it renders does land in the same cache a
+	// crop is taken from, but only for the files somebody happened to open, and a floor derived
+	// from browsing history would move on its own.
 	available := max(c.ThumbSizePrecached(), c.ThumbSizeFace())
 
 	switch {

@@ -41,9 +41,10 @@ var thumbFileSizes = []thumb.Size{
 // WidestCachedSize returns the widest rendition a crop can be taken from, which is the widest
 // usable size that is still pre-generated at the configured thumbnail limit.
 //
-// The selection below stats cached files, so a size above the limit is rendered on demand, never
-// written to disk, and therefore unreachable here however much detail the original holds. The
-// zero size is returned when the limit excludes even the smallest.
+// The selection below stats cached files, so this answers what a complete cache holds rather than
+// what a crop can reach: a size above the limit is written only where something rendered it on
+// demand for one file - an API request or a face crop - and never for the library. The zero size
+// is returned when the limit excludes even the smallest.
 func WidestCachedSize() (widest thumb.Size) {
 	for _, s := range thumbFileSizes {
 		if s.Uncached() {

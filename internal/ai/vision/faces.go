@@ -45,17 +45,22 @@ func DetectFaces(fileName string, minSize, retrySize int, cacheCrop bool, expect
 			return result, nil
 		}
 
+		uri, method := model.Endpoint()
+		endpoint := uri != "" && method != ""
+
 		// Before either path below, because both select the rendition they crop from by statting
-		// the cache: one that is rendered afterwards is one the embeddings did not use. An
-		// instance that embeds nothing takes no crop either, so it renders nothing for one.
-		if cropSource != nil && !face.EmbeddingsDisabled() {
+		// the cache: one that is rendered afterwards is one the embeddings did not use. Only for a
+		// run that can actually embed - an instance whose weights failed to load would otherwise
+		// pay a decode and a write per file for vectors it never produces. FaceModel is asked only
+		// where no endpoint is configured, since that is the sole branch that loads one.
+		if cropSource != nil && !face.EmbeddingsDisabled() && (endpoint || model.FaceModel() != nil) {
 			cropSource(result)
 		}
 
-		if uri, method := model.Endpoint(); uri != "" && method != "" && face.EmbeddingsDisabled() {
+		if endpoint && face.EmbeddingsDisabled() {
 			// An endpoint does not exempt the instance from the embeddings setting.
 			log.Debugf("vision: skipping face embeddings")
-		} else if uri != "" && method != "" {
+		} else if endpoint {
 			var faceCrops []string
 			var apiRequest *ApiRequest
 			var apiResponse *ApiResponse

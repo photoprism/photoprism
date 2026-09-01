@@ -16,8 +16,11 @@ import (
 //
 // The wider of the two a run can ask for: an aligned model warps the landmarks onto its own input
 // geometry, but a face whose landmarks do not fit the template falls back to a face.CropSize box.
-// A rendition rendered for the wider requirement satisfies both, and which of the two a given face
-// takes is not known until its landmarks have been fitted.
+// Which of the two a face takes is not known until its landmarks have been fitted, so every file
+// pays for the box - the alternative is rendering a second time for the few that fall back.
+//
+// The model's registered input rather than the loaded embedder's, which an ONNX graph may declare
+// for itself: the two agree for every bundled model, and only this one is known before a crop.
 func embedCropWidth(target string) int {
 	width := face.CropSize.Width
 
