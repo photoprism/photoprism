@@ -77,6 +77,11 @@ func (w *Faces) Audit(fix bool, subjUID string) (err error) {
 	conflicts := 0
 	resolved := 0
 
+	// Counted beside the pairs: a handful of people account for hundreds of them, and only
+	// the people are something an operator acts on.
+	conflictClusters := make(map[string]bool)
+	conflictSubjects := make(map[string]bool)
+
 	faces, ids, err := query.FacesByID(false, false, false, false)
 
 	if err != nil {
@@ -178,21 +183,19 @@ func (w *Faces) Audit(fix bool, subjUID string) (err error) {
 
 				conflicts++
 
-				r := f1.AcceptDist()
+				conflictClusters[f1.ID] = true
+				conflictClusters[f2.ID] = true
 
-				log.Infof("faces: face %s has ambiguous subject at dist %f, Ø %f from %d samples, collision Ø %f", f1.ID, dist, r, f1.Samples, f1.CollisionRadius)
-
-				if f1.SubjUID != "" {
-					log.Infof("faces: face %s belongs to subject %s (%s %s)", f1.ID, entity.SubjNames.Log(f1.SubjUID), f1.SubjUID, entity.SrcString(f1.FaceSrc))
-				} else {
-					log.Infof("faces: face %s has no subject assigned (%s)", f1.ID, entity.SrcString(f1.FaceSrc))
+				for _, uid := range []string{f1.SubjUID, f2.SubjUID} {
+					if uid != "" {
+						conflictSubjects[uid] = true
+					}
 				}
 
-				if f2.SubjUID != "" {
-					log.Infof("faces: face %s belongs to subject %s (%s %s)", f2.ID, entity.SubjNames.Log(f2.SubjUID), f2.SubjUID, entity.SrcString(f2.FaceSrc))
-				} else {
-					log.Infof("faces: face %s has no subject assigned (%s)", f2.ID, entity.SrcString(f2.FaceSrc))
-				}
+				// One line per pair rather than three, and at debug level: after a migration
+				// this reports hundreds of unsettled pairs, which buries every other finding.
+				// photoprism faces conflicts prints them as a table, on demand.
+				log.Debugf("%s", ambiguousPairMessage(f1, f2, dist))
 
 				// Skip fix?
 				if !fix {
@@ -234,22 +237,43 @@ func (w *Faces) Audit(fix bool, subjUID string) (err error) {
 	case conflicts == 0:
 		log.Infof("faces: found no ambiguous subjects")
 	case !fix:
-		log.Infof("faces: found %s", english.Plural(conflicts, "ambiguous subject", "ambiguous subjects"))
+		log.Infof("faces: found %s", ambiguousPairSummary(conflicts, len(conflictClusters), len(conflictSubjects)))
 	default:
-		log.Infof("faces: found %s, %d resolved", english.Plural(conflicts, "ambiguous subject", "ambiguous subjects"), resolved)
+		log.Infof("faces: found %s, %d resolved", ambiguousPairSummary(conflicts, len(conflictClusters), len(conflictSubjects)), resolved)
 	}
 
-	// Show remaining issues.
-	if markers, err := query.MarkersWithSubjectConflict(); err != nil {
+	// After a migration the clusters compared here are freshly built and mostly at the maximum
+	// distance they may accept, and matching settles most of them: this is a ceiling, not a state.
+	if conflicts > 0 {
+		log.Infof("faces: this is counted before matching settles the clusters, so it is provisional - use 'photoprism faces conflicts' to list the pairs")
+	}
+
+	// Show remaining issues, over every cluster including the hidden and ignored ones: a marker
+	// pointing at one of those is matched rather than dangling, and a row that really does not
+	// exist is reported by MarkersWithNonExistentReferences above.
+	allFaces, _, err := query.FacesByID(false, false, true, true)
+
+	if err != nil {
+		logErr("faces", "find clusters", err)
+	} else if markers, err := query.MarkersWithSubjectConflict(); err != nil {
 		logErr("faces", "find marker conflicts", err)
 	} else {
+		anonymous := 0
+
 		for _, m := range markers {
 			if m.FaceID == "" {
 				log.Warnf("faces: marker %s has an empty face id - you may have found a bug", m.MarkerUID)
 				continue
 			}
 
-			faceEntry, ok := faces[m.FaceID]
+			faceEntry, ok := allFaces[m.FaceID]
+
+			// A run scoped to one subject reports the markers that subject is part of, on either
+			// side of the conflict, and leaves everybody else's alone.
+			if subjUID != "" && m.SubjUID != subjUID && (!ok || faceEntry.SubjUID != subjUID) {
+				continue
+			}
+
 			if !ok {
 				msg := fmt.Sprintf("faces: marker %s references missing face %s while subject is %s (%s)", m.MarkerUID, m.FaceID, entity.SubjNames.Log(m.SubjUID), m.SubjUID)
 				if fix {
@@ -272,6 +296,13 @@ func (w *Faces) Audit(fix bool, subjUID string) (err error) {
 			faceSubject := entity.SubjNames.Log(faceEntry.SubjUID)
 
 			if faceEntry.SubjUID == "" {
+				// A marker whose subject the matcher assigned must not name its cluster, or one
+				// guess would spread over every other marker in it. This is what SetFace produces.
+				if !m.NamesFace() {
+					anonymous++
+					continue
+				}
+
 				msg := fmt.Sprintf("faces: marker %s with %s subject %s (%s) points to face %s without a subject", m.MarkerUID, entity.SrcString(m.SubjSrc), markerSubject, m.SubjUID, m.FaceID)
 
 				if fix {
@@ -341,6 +372,11 @@ func (w *Faces) Audit(fix bool, subjUID string) (err error) {
 			}
 
 		}
+
+		if anonymous > 0 {
+			log.Infof("faces: %s carry a subject the matcher assigned, whose cluster is unnamed as a result",
+				english.Plural(anonymous, "marker", "markers"))
+		}
 	}
 
 	// Find and fix orphan face clusters.
@@ -370,6 +406,32 @@ func (w *Faces) Audit(fix bool, subjUID string) (err error) {
 	}
 
 	return nil
+}
+
+// ambiguousPairMessage describes two clusters that accept each other while naming different people.
+// The distance is reported against what the first one accepts, since that is the bar that decided
+// the pair, and the sample count says how much evidence it rests on.
+func ambiguousPairMessage(f1, f2 entity.Face, dist float64) string {
+	return fmt.Sprintf("faces: face %s (%s) has an ambiguous subject with face %s (%s) at dist %f, Ø %f from %d samples, collision Ø %f",
+		f1.ID, faceSubjectLabel(f1), f2.ID, faceSubjectLabel(f2), dist, f1.AcceptDist(), f1.Samples, f1.CollisionRadius)
+}
+
+// faceSubjectLabel names the subject a cluster carries, or reports that it carries none.
+func faceSubjectLabel(f entity.Face) string {
+	if f.SubjUID == "" {
+		return fmt.Sprintf("no subject, %s", entity.SrcString(f.FaceSrc))
+	}
+
+	return fmt.Sprintf("subject %s %s, %s", entity.SubjNames.Log(f.SubjUID), f.SubjUID, entity.SrcString(f.FaceSrc))
+}
+
+// ambiguousPairSummary reports how many pairs were found, and across how many clusters and people.
+// The three differ by an order of magnitude after a migration, and only the last is actionable.
+func ambiguousPairSummary(pairs, clusters, subjects int) string {
+	return fmt.Sprintf("%s across %s and %s",
+		english.Plural(pairs, "ambiguous pair", "ambiguous pairs"),
+		english.Plural(clusters, "cluster", "clusters"),
+		english.Plural(subjects, "subject", "subjects"))
 }
 
 // recomputeMissingRadius measures the extent of clusters stored without one, over the markers they

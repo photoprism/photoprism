@@ -1,6 +1,6 @@
 ## Face Detection & Embedding Guidelines
 
-**Last Updated:** August 31, 2026
+**Last Updated:** September 1, 2026
 
 ### Overview
 
@@ -376,6 +376,10 @@ Four read-only commands describe what a library currently holds, so two tuning r
 **The JSON field names are given rather than derived from the headings**, so a column can be retitled for readability without renaming a key something already reads: `faces markers --json` returns `thumb_size` and `frame_share` whatever those columns are called, and the two `Src` columns export as `marker_src` and `subj_src` instead of collapsing into one.
 
 **`faces markers` measures the stored vectors instead of printing them.** The `Embedding` column is the width of the marker's vector and `Landmarks` the number of areas, so a marker that cannot cluster and one embedded by a different model are both visible; blank means none was stored and `invalid` means what is stored could not be parsed. Reading them costs one page of vectors and about a millisecond of parsing at the default count.
+
+**`faces audit` counts those pairs; it does not list them.** The count is reported as pairs, distinct clusters and distinct people, because the three differ by an order of magnitude and only the last is something to act on: right after a migration one library reported 553 pairs across 152 clusters, and the very next matching pass had 8 ambiguous subjects left. The audit compares clusters as it finds them, which after a migration means freshly built, mostly anonymous and mostly at the maximum distance they may accept, so it says the number is provisional and points at `faces conflicts` for the table. The per-pair line is one line at debug level rather than three at info - on that run the triplet was 51 % of the whole output.
+
+**A marker whose subject the matcher assigned is not a conflict.** `Marker.SetFace` lets a marker name an anonymous cluster only when `subjSrcSharesFace` holds, so an automatic or XMP subject deliberately leaves its cluster unnamed - one guess must not become authoritative for every other marker in it. `query.MarkersWithSubjectConflict` makes no distinction on `subj_src`, so the audit splits the two at the emit site: `Marker.NamesFace` false is counted for a single summary line, and only a cluster that is still unnamed under a marker that *should* have named it is a warning. The cluster a marker points at is looked up over every row, hidden and ignored included, since a marker on one of those is matched rather than dangling - and `--fix` cleared exactly those references before.
 
 **`faces conflicts` recomputes the pairs rather than reading them.** `faces.collisions` and `faces.collision_radius` record no counterparty and are history - a narrowed cluster may no longer reach the pair that narrowed it - so the report walks the eligible clusters live, over the set `faces audit` walks. Its `Resolution` column names what `Face.ResolveCollision` would actually do: `ambiguous` below `AmbiguityDist`, which retires the cluster from matching; `narrow` above `CollisionDist + Epsilon`, where the recorded radius is large enough for `Face.Match` to enforce; `inert` between the two, where resolution records a radius nothing enforces; and `none` where the first cluster names nobody, since resolution ignores those. All three cutoffs are read from the configured values, so a changed `PHOTOPRISM_FACE_COLLISION_DIST` moves the labels with it. Because `Match` gates on the receiver's own accept distance and collision radius, each pair is tried in both directions and reported from the side that accepts it; which side that is follows the walk's own `samples DESC, id` order, not the person argument, so a pair reads the same filtered and unfiltered.
 
