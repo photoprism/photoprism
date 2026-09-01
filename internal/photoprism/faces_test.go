@@ -66,10 +66,12 @@ func TestFaces_start(t *testing.T) {
 	c := config.TestConfig()
 	m := NewFaces(c)
 
-	require.NoError(t, m.start(FacesOptions{Force: true, Threshold: 1}))
+	_, err := m.start(FacesOptions{Force: true, Threshold: 1})
+	require.NoError(t, err)
 
 	var invalid *Faces
-	require.Error(t, invalid.start(FacesOptions{}))
+	_, err = invalid.start(FacesOptions{})
+	require.Error(t, err)
 }
 
 func TestFaces_startBlocked(t *testing.T) {
@@ -85,7 +87,8 @@ func TestFaces_startBlocked(t *testing.T) {
 
 		w := NewFaces(config.TestConfig())
 
-		require.NoError(t, w.start(FacesOptions{}))
+		_, err := w.start(FacesOptions{})
+		require.NoError(t, err)
 		assert.True(t, entity.UpdateFaces.Load(), "a paused run must leave the work outstanding")
 	})
 	t.Run("RunsWhenNothingIsBlocked", func(t *testing.T) {
@@ -98,7 +101,8 @@ func TestFaces_startBlocked(t *testing.T) {
 
 		w := NewFaces(config.TestConfig())
 
-		require.NoError(t, w.start(FacesOptions{}))
+		_, err := w.start(FacesOptions{})
+		require.NoError(t, err)
 		assert.False(t, entity.UpdateFaces.Load())
 	})
 }
@@ -121,7 +125,8 @@ func TestFaces_StartHoldsOffOnAMigration(t *testing.T) {
 	})
 	t.Run("StartRunsWhileTheMigrationHoldsIt", func(t *testing.T) {
 		// The migration's own re-clustering goes through this path while it holds the lock.
-		assert.NoError(t, w.start(FacesOptions{Force: true}))
+		_, err := w.start(FacesOptions{Force: true})
+		assert.NoError(t, err)
 	})
 	t.Run("StartRunsOnceReleased", func(t *testing.T) {
 		lock.Release()

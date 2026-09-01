@@ -115,11 +115,30 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 
 	defer mutex.FacesWorker.Stop()
 
-	return w.start(opt)
+	_, err = w.start(opt)
+
+	return err
+}
+
+// facesRunResult counts what one clustering and matching pass moved. The steps run in a fixed
+// order and each consumes what an earlier one produced, so a pass that moved something leaves work
+// for the next: the clusters it adds are created after collisions and merges were evaluated.
+type facesRunResult struct {
+	Subjects   int
+	Resolved   int
+	Merged     int
+	Added      int
+	Updated    int
+	Recognized int
+}
+
+// Moved reports whether the pass changed anything a further pass could build on.
+func (r facesRunResult) Moved() bool {
+	return r.Subjects > 0 || r.Resolved > 0 || r.Merged > 0 || r.Added > 0 || r.Updated > 0
 }
 
 // start performs face clustering and matching while the caller holds the faces worker lock.
-func (w *Faces) start(opt FacesOptions) (err error) {
+func (w *Faces) start(opt FacesOptions) (result facesRunResult, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("%s (panic)\nstack: %s", r, debug.Stack())
@@ -128,7 +147,7 @@ func (w *Faces) start(opt FacesOptions) (err error) {
 	}()
 
 	if w.Disabled() {
-		return fmt.Errorf("face recognition is disabled")
+		return result, fmt.Errorf("face recognition is disabled")
 	}
 
 	// Clustering and matching compare stored vectors, so both are paused while the library
@@ -136,7 +155,7 @@ func (w *Faces) start(opt FacesOptions) (err error) {
 	// configuration is initialized; a worker that wakes every few minutes must not repeat it.
 	if reason := face.EmbeddingsBlockedReason(); reason != "" {
 		log.Debugf("faces: %s, so clustering and matching are paused", reason)
-		return nil
+		return result, nil
 	}
 
 	var start time.Time
@@ -175,6 +194,7 @@ func (w *Faces) start(opt FacesOptions) (err error) {
 		log.Errorf("markers: %s (create subjects)", err)
 	} else if affected > 0 {
 		changed = true
+		result.Subjects = int(affected)
 		log.Infof("markers: added %d known subjects [%s]", affected, time.Since(start))
 	} else {
 		log.Debugf("markers: found no missing subjects [%s]", time.Since(start))
@@ -186,6 +206,7 @@ func (w *Faces) start(opt FacesOptions) (err error) {
 		log.Errorf("faces: %s (resolve ambiguous subjects)", err)
 	} else if c > 0 {
 		changed = true
+		result.Resolved = r
 		log.Infof("faces: resolved %d / %d ambiguous subjects [%s]", r, c, time.Since(start))
 	} else {
 		log.Debugf("faces: found no ambiguous subjects [%s]", time.Since(start))
@@ -194,9 +215,10 @@ func (w *Faces) start(opt FacesOptions) (err error) {
 	// Optimize existing face clusters.
 	start = time.Now()
 	if res, err := w.Optimize(); err != nil {
-		return err
+		return result, err
 	} else if res.Merged > 0 {
 		changed = true
+		result.Merged = res.Merged
 		log.Infof("faces: merged %d clusters [%s]", res.Merged, time.Since(start))
 	} else {
 		log.Debugf("faces: found no clusters to be merged [%s]", time.Since(start))
@@ -210,6 +232,7 @@ func (w *Faces) start(opt FacesOptions) (err error) {
 	if added, err = w.Cluster(opt); err != nil {
 		log.Errorf("faces: %s (cluster)", err)
 	} else if n := len(added); n > 0 {
+		result.Added = n
 		log.Infof("faces: added %d new faces [%s]", n, time.Since(start))
 	} else {
 		log.Debugf("faces: found no new faces [%s]", time.Since(start))
@@ -222,6 +245,9 @@ func (w *Faces) start(opt FacesOptions) (err error) {
 	if err != nil {
 		log.Errorf("faces: %s (match)", err)
 	}
+
+	result.Updated = int(matches.Updated)
+	result.Recognized = int(matches.Recognized)
 
 	// Log face matching results.
 	if matches.MovedSubjects() {
@@ -265,7 +291,7 @@ func (w *Faces) start(opt FacesOptions) (err error) {
 
 	entity.UpdateFaces.Store(false)
 
-	return nil
+	return result, nil
 }
 
 // Cancel stops the current operation.

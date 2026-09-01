@@ -888,7 +888,7 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 	face.UnblockEmbeddings()
 
 	entity.UpdateFaces.Store(true)
-	if err = w.start(FacesOptions{Force: true}); err != nil {
+	if err = w.settleFaceClusters(); err != nil {
 		return result, unrecordedFaceModel(settingErr, plan.Target, err)
 	} else if err = w.Audit(false, ""); err != nil {
 		return result, unrecordedFaceModel(settingErr, plan.Target, err)
@@ -941,6 +941,48 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 	}
 
 	return result, nil
+}
+
+// facesMigrateSettleRounds bounds the clustering passes a migration runs after replacing the
+// clusters. A pass evaluates collisions and merges before it clusters, so the clusters it adds
+// defer their own to the next one, and a single pass is never a fixed point. Measured on a
+// 49,056-marker library: 12,395 markers moved, then 5,195, then 139, then none. A pass is
+// scan-dominated and costs about the same whether or not it moves anything.
+const facesMigrateSettleRounds = 4
+
+// settleFaceClusters runs clustering and matching until a pass moves nothing, or the rounds are
+// spent. Reported per round, because the operator is watching a run that is already hours old.
+func (w *Faces) settleFaceClusters() error {
+	return settleFaceClusters(facesMigrateSettleRounds, func(round int) (facesRunResult, error) {
+		result, err := w.start(FacesOptions{Force: true})
+
+		if err == nil && result.Moved() {
+			log.Infof("faces: clustering pass %d updated %s and recognized %s",
+				round, english.Plural(result.Updated, "marker", "markers"),
+				english.Plural(result.Recognized, "face", "faces"))
+		}
+
+		return result, err
+	})
+}
+
+// settleFaceClusters repeats a pass until it reports no work or the rounds are spent, and returns
+// the first error. The cap is what keeps a run terminating: a pass that keeps finding work would
+// otherwise hold the lock indefinitely, and the remainder is what the worker converges anyway.
+func settleFaceClusters(rounds int, run func(round int) (facesRunResult, error)) error {
+	for round := 1; round <= rounds; round++ {
+		result, err := run(round)
+
+		if err != nil {
+			return err
+		} else if !result.Moved() {
+			return nil
+		}
+	}
+
+	log.Debugf("faces: clustering did not settle within %d passes, which the worker continues", rounds)
+
+	return nil
 }
 
 // migrationEmbedder loads the embedder that writes the target's vectors and validates its

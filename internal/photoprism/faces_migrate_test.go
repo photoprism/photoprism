@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"image"
 	"math"
 	"os"
@@ -1731,5 +1732,74 @@ func TestFaces_migrationThumbSize(t *testing.T) {
 	})
 	t.Run("NilWorker", func(t *testing.T) {
 		assert.Equal(t, thumb.Fit2560, (*Faces)(nil).migrationThumbSize(nil).Name)
+	})
+}
+
+// TestFacesRunResult_Moved covers the predicate the settle loop terminates on. It must not read
+// FacesOptions.Force, which a migration's pass sets by construction, and Recognized alone is not
+// work: a marker recognized without being updated changed nothing a later pass can build on.
+func TestFacesRunResult_Moved(t *testing.T) {
+	t.Run("Nothing", func(t *testing.T) {
+		assert.False(t, facesRunResult{}.Moved())
+	})
+	t.Run("RecognizedOnly", func(t *testing.T) {
+		assert.False(t, facesRunResult{Recognized: 9791}.Moved())
+	})
+	t.Run("EachKindOfWork", func(t *testing.T) {
+		assert.True(t, facesRunResult{Subjects: 1}.Moved())
+		assert.True(t, facesRunResult{Resolved: 1}.Moved())
+		assert.True(t, facesRunResult{Merged: 1}.Moved())
+		assert.True(t, facesRunResult{Added: 1}.Moved())
+		assert.True(t, facesRunResult{Updated: 1}.Moved())
+	})
+}
+
+// TestSettleFaceClusters covers the loop a migration runs after replacing the clusters: a pass
+// evaluates collisions and merges before it clusters, so the clusters it adds defer their own and
+// one pass is never a fixed point.
+func TestSettleFaceClusters(t *testing.T) {
+	t.Run("StopsWhenNothingMoved", func(t *testing.T) {
+		// The shape a real run has: work falls off sharply and the last pass is a no-op.
+		moved := []int{12395, 5195, 139, 0}
+		rounds := 0
+
+		err := settleFaceClusters(8, func(round int) (facesRunResult, error) {
+			assert.Equal(t, rounds+1, round, "the round number counts from one")
+			rounds++
+
+			return facesRunResult{Updated: moved[rounds-1]}, nil
+		})
+
+		require.NoError(t, err)
+		assert.Equal(t, 4, rounds, "it stops on the pass that moved nothing, not before")
+	})
+	t.Run("StopsAtTheCap", func(t *testing.T) {
+		// A pass that keeps finding work must not hold the migration lock indefinitely.
+		rounds := 0
+
+		err := settleFaceClusters(3, func(int) (facesRunResult, error) {
+			rounds++
+			return facesRunResult{Updated: 1}, nil
+		})
+
+		require.NoError(t, err)
+		assert.Equal(t, 3, rounds)
+	})
+	t.Run("ReturnsTheFirstError", func(t *testing.T) {
+		rounds := 0
+
+		err := settleFaceClusters(4, func(int) (facesRunResult, error) {
+			rounds++
+			return facesRunResult{Updated: 1}, fmt.Errorf("clustering failed")
+		})
+
+		require.Error(t, err)
+		assert.Equal(t, 1, rounds, "a failed pass is not retried here")
+	})
+	t.Run("NoRounds", func(t *testing.T) {
+		assert.NoError(t, settleFaceClusters(0, func(int) (facesRunResult, error) {
+			t.Fatal("must not run")
+			return facesRunResult{}, nil
+		}))
 	})
 }
