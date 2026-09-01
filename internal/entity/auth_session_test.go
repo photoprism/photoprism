@@ -341,6 +341,9 @@ func TestSession_Create(t *testing.T) {
 
 		err := s.Create()
 		assert.Empty(t, err)
+		t.Cleanup(func() {
+			assert.NoError(t, s.Delete())
+		})
 	})
 	t.Run("LongNumericAuthID", func(t *testing.T) {
 		refID := rnd.RefID("ts")
@@ -422,7 +425,9 @@ func TestSession_Updates(t *testing.T) {
 	if err := m.Updates(Session{UserName: "anton"}); err != nil {
 		t.Fatal(err)
 	}
-
+	t.Cleanup(func() {
+		assert.NoError(t, m.Updates(Session{UserName: "alice"}))
+	})
 	assert.Equal(t, "anton", m.UserName)
 }
 
@@ -760,6 +765,7 @@ func TestSession_ChangePassword(t *testing.T) {
 
 	err3 := m.ChangePassword("123")
 	assert.Error(t, err3)
+	assert.NoError(t, Db().Save(PasswordFixtures.Pointer("bob")).Error)
 }
 
 func TestSession_ValidateScope(t *testing.T) {
@@ -961,7 +967,6 @@ func TestSession_IsSuperAdmin(t *testing.T) {
 
 	m := &Session{}
 	assert.False(t, m.IsSuperAdmin())
-
 }
 
 func TestSession_IsApplication(t *testing.T) {
@@ -999,7 +1004,6 @@ func TestSession_NotRegistered(t *testing.T) {
 
 	m := &Session{}
 	assert.True(t, m.NotRegistered())
-
 }
 
 func TestSession_NoShares(t *testing.T) {
@@ -1077,6 +1081,13 @@ func TestSession_RedeemToken(t *testing.T) {
 		assert.Equal(t, 0, bob.RedeemToken("1234"))
 		assert.Empty(t, bob.GetUser().UserShares)
 		assert.Equal(t, 1, bob.RedeemToken("1jxf3jfn2k"))
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Where("1=1").Delete(&UserShare{}).Error)
+			CreateUserShareFixtures()
+			if l, ok := LinkFixtures["1jxf3jfn2k"]; ok {
+				assert.NoError(t, UnscopedDb().Save(&l).Error)
+			}
+		})
 		bob.GetUser().RefreshShares()
 		assert.Equal(t, "as6sg6bxpogaaba8", bob.GetUser().UserShares[0].ShareUID)
 	})
@@ -1159,6 +1170,9 @@ func TestSession_UpdateLastActive(t *testing.T) {
 			assert.Empty(t, err)
 			return
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, DeleteSession(m))
+		})
 
 		m = m.UpdateLastActive(true)
 

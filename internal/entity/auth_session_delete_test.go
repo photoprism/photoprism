@@ -97,6 +97,9 @@ func TestDeleteClientSessions(t *testing.T) {
 		if err := sess.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, DeleteSession(sess))
+		})
 	}
 
 	// Check if the expected number of sessions is deleted until none are left.

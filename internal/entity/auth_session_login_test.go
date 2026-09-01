@@ -89,6 +89,9 @@ func TestAuthSession(t *testing.T) {
 		c, _ := gin.CreateTestContext(httptest.NewRecorder())
 		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(f))
 		c.Request.RemoteAddr = "1.2.3.4"
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Save(SessionFixtures.Pointer("alice_token_personal")).Error)
+		})
 
 		// Check authentication result.
 		authSess, authUser, authErr := AuthSession(f, c)
@@ -127,6 +130,9 @@ func TestAuthSession(t *testing.T) {
 		c, _ := gin.CreateTestContext(httptest.NewRecorder())
 		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(f))
 		c.Request.RemoteAddr = "1.2.3.4"
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Save(SessionFixtures.Pointer("alice_token_webdav")).Error)
+		})
 
 		// Check authentication result.
 		authSess, authUser, authErr := AuthSession(f, c)
@@ -416,6 +422,7 @@ func TestSessionLogIn(t *testing.T) {
 		if err := m.LogIn(frm, c); err != nil {
 			t.Fatal(err)
 		}
+		assert.NoError(t, UnscopedDb().Save(UserFixtures.Pointer("jane")).Error)
 	})
 	t.Run("InvalidPasscode", func(t *testing.T) {
 		m := NewSession(unix.Day, unix.Hour*6)
@@ -437,6 +444,7 @@ func TestSessionLogIn(t *testing.T) {
 		err := m.LogIn(frm, c)
 
 		assert.ErrorIs(t, err, authn.ErrInvalidPasscode)
+		assert.NoError(t, UnscopedDb().Save(UserFixtures.Pointer("jane")).Error)
 	})
 	t.Run("PasscodeRequired", func(t *testing.T) {
 		m := NewSession(unix.Day, unix.Hour*6)
@@ -457,6 +465,7 @@ func TestSessionLogIn(t *testing.T) {
 		err := m.LogIn(frm, c)
 
 		assert.ErrorIs(t, err, authn.ErrPasscodeRequired)
+		assert.NoError(t, UnscopedDb().Save(UserFixtures.Pointer("jane")).Error)
 	})
 	t.Run("InvalidPassword", func(t *testing.T) {
 		m := NewSession(unix.Day, unix.Hour*6)
@@ -517,6 +526,9 @@ func TestSessionLogIn(t *testing.T) {
 		if err := m.LogIn(frm, c); err != nil {
 			t.Fatal(err)
 		}
+		assert.NoError(t, UnscopedDb().Where("1=1").Delete(&UserShare{}).Error)
+		CreateUserShareFixtures()
+		assert.NoError(t, Db().Save(LinkFixtures.Pointer("1jxf3jfn2k")).Error)
 	})
 	t.Run("UnknownUserWithInvalidToken", func(t *testing.T) {
 		m := NewSession(unix.Day, unix.Hour*6)
@@ -573,6 +585,9 @@ func TestSessionLogIn(t *testing.T) {
 		if err := m.LogIn(frm, c); err != nil {
 			t.Fatal(err)
 		}
+		assert.NoError(t, UnscopedDb().Where("1=1").Delete(&UserShare{}).Error)
+		CreateUserShareFixtures()
+		assert.NoError(t, Db().Save(LinkFixtures.Pointer("1jxf3jfn2k")).Error)
 	})
 	t.Run("KnownUserWithInvalidToken", func(t *testing.T) {
 		m := FindSessionByRefID("sessxkkcabch")
@@ -618,5 +633,7 @@ func TestSessionLogIn(t *testing.T) {
 		if err := m.LogIn(frm, c); err != nil {
 			t.Fatal(err)
 		}
+		assert.NoError(t, UnscopedDb().Save(UserFixtures.Pointer("jane")).Error)
+		assert.NoError(t, UnscopedDb().Model(&Passcode{}).Where("uid = ?", PasscodeFixtureJane.UID).UpdateColumn("verified_at", nil).Error)
 	})
 }

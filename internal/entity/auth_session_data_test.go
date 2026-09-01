@@ -33,6 +33,7 @@ func TestSessionData_RedeemToken(t *testing.T) {
 	data.RedeemToken("1jxf3jfn2k")
 	assert.True(t, data.HasShare("def444"))
 	assert.True(t, data.HasShare("as6sg6bxpogaaba8"))
+	assert.NoError(t, Db().Save(LinkFixtures.Pointer("1jxf3jfn2k")).Error)
 }
 
 func TestSessionData_SetGroups(t *testing.T) {
@@ -99,5 +100,4 @@ func TestSessionData_SharedUIDs(t *testing.T) {
 	data2 := SessionData{Shares: []string{},
 		Tokens: []string{"5jxf3jfn2k"}}
 	assert.Equal(t, "fs6sg6bw45bn0004", data2.SharedUIDs()[0])
-
 }

@@ -32,6 +32,8 @@ func TestCreateUserSettings(t *testing.T) {
 		require.NoError(t, Db().Create(m).Error) // Have to create a user BEFORE adding settings to it.
 		require.NoError(t, CreateUserSettings(m))
 		assert.NotNil(t, m.UserSettings)
+		assert.NoError(t, UnscopedDb().Delete(&UserSettings{UserUID: m.UserUID}).Error)
+		assert.NoError(t, UnscopedDb().Delete(&User{ID: m.ID}).Error)
 	})
 }
 

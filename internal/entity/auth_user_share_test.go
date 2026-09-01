@@ -109,6 +109,7 @@ func TestUserShare_Create(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	assert.NoError(t, UnscopedDb().Delete(&m).Error)
 }
 
 func TestUserShare_UpdateLink(t *testing.T) {
@@ -133,6 +134,7 @@ func TestUserShare_UpdateLink(t *testing.T) {
 
 		assert.Equal(t, "ss62xpryd1ob8xxx", m.LinkUID)
 		assert.Equal(t, "Wedding", m.Comment)
+		assert.NoError(t, UnscopedDb().Save(UserShareFixtures.Pointer("AliceAlbum")).Error)
 	})
 	t.Run("UidMismatch", func(t *testing.T) {
 		m := UserShare{
