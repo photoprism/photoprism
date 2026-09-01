@@ -430,6 +430,65 @@ func TestPhoto_MediaInfo(t *testing.T) {
 		assert.Equal(t, 1920, width)
 		assert.Equal(t, 1080, height)
 	})
+	t.Run("RawFisheyeEquirectangularDerivativePreferred", func(t *testing.T) {
+		// The dewarp derivative holds the pixels the sphere viewer shows, so its 2:1 frame is
+		// reported instead of the fisheye original's portrait frame.
+		r := Photo{
+			PhotoType:  media.Raw.String(),
+			FileHash:   "primary-jpeg",
+			FileWidth:  5760,
+			FileHeight: 2880,
+			Files: []entity.File{
+				{MediaType: media.Raw.String(), FileHash: "fisheye-dng", FileMime: "image/x-raw", FileCodec: "raw", FileWidth: 3264, FileHeight: 6528, FileProjection: projection.DualFisheye.String()},
+				{MediaType: media.Image.String(), FileHash: "sphere-jpeg", FileMime: "image/jpeg", FileCodec: "jpeg", FileWidth: 5760, FileHeight: 2880, FileProjection: projection.Equirectangular.String()},
+			},
+		}
+
+		assert.Equal(t, projection.Equirectangular.String(), r.MediaProjection())
+
+		mediaHash, mediaCodec, mediaMime, width, height := r.MediaInfo()
+		assert.Equal(t, "primary-jpeg", mediaHash)
+		assert.Equal(t, "jpeg", mediaCodec)
+		assert.Equal(t, "image/jpeg", mediaMime)
+		assert.Equal(t, 5760, width)
+		assert.Equal(t, 2880, height)
+	})
+	t.Run("RawStackedEquirectangularNotPreferred", func(t *testing.T) {
+		// Without a fisheye original there is nothing to substitute, so an unrelated 360° file
+		// stacked on a normal RAW must not replace its dimensions.
+		r := Photo{
+			PhotoType: media.Raw.String(),
+			FileHash:  "primary-jpeg",
+			Files: []entity.File{
+				{MediaType: media.Raw.String(), FileHash: "flat-dng", FileMime: "image/x-raw", FileCodec: "raw", FileWidth: 6000, FileHeight: 4000},
+				{MediaType: media.Image.String(), FileHash: "sphere-jpeg", FileMime: "image/jpeg", FileCodec: "jpeg", FileWidth: 5760, FileHeight: 2880, FileProjection: projection.Equirectangular.String()},
+			},
+		}
+
+		mediaHash, mediaCodec, mediaMime, width, height := r.MediaInfo()
+		assert.Equal(t, "primary-jpeg", mediaHash)
+		assert.Equal(t, "raw", mediaCodec)
+		assert.Equal(t, "image/x-raw", mediaMime)
+		assert.Equal(t, 6000, width)
+		assert.Equal(t, 4000, height)
+	})
+	t.Run("RawFisheyeWithoutDerivative", func(t *testing.T) {
+		// A failed or disabled dewarp leaves no derivative, so the original's frame is reported.
+		r := Photo{
+			PhotoType: media.Raw.String(),
+			FileHash:  "primary-jpeg",
+			Files: []entity.File{
+				{MediaType: media.Raw.String(), FileHash: "fisheye-dng", FileMime: "image/x-raw", FileCodec: "raw", FileWidth: 3264, FileHeight: 6528, FileProjection: projection.DualFisheye.String()},
+			},
+		}
+
+		mediaHash, mediaCodec, mediaMime, width, height := r.MediaInfo()
+		assert.Equal(t, "primary-jpeg", mediaHash)
+		assert.Equal(t, "raw", mediaCodec)
+		assert.Equal(t, "image/x-raw", mediaMime)
+		assert.Equal(t, 3264, width)
+		assert.Equal(t, 6528, height)
+	})
 	t.Run("Animated", func(t *testing.T) {
 		r := Photo{
 			ID:           1111154,
