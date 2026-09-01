@@ -136,10 +136,11 @@ func AlignedCrop(img image.Image, f *Face, width, height int) (*image.RGBA, erro
 
 	forward, residual, err := similarityTransform(src, ScaledArcFaceTemplate(width, height))
 
-	// Every attempt, not only the ones that fail: the failures describe the tail above the
-	// threshold and say nothing about where the fit starts degrading, which is the number a
-	// size floor has to be derived from. Paired with the size the face was detected at.
-	log.Debugf("faces: landmark fit residual %.2f at %d px, max %.1f", residual, f.Size(), maxAlignResidual)
+	// At trace, because this is one line per face and the standard loggers write to the console:
+	// it is here to diagnose a library whose crops align badly on demand, not to report a run.
+	// Every attempt, not only the ones that fail, since the failures describe the tail above the
+	// threshold and say nothing about where the fit starts degrading.
+	log.Tracef("faces: landmark fit residual %.2f at %d px, max %.1f", residual, f.Size(), maxAlignResidual)
 
 	if err != nil {
 		return nil, err

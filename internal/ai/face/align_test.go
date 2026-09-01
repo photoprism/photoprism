@@ -228,13 +228,13 @@ func TestAlignedCrop(t *testing.T) {
 	f := testFaceWithLandmarks(src, 120)
 
 	t.Run("ReportsTheResidualOfEveryAttempt", func(t *testing.T) {
-		// The size floor for alignment has to be derived from where fits start degrading, and
-		// only the failures carry a residual in their error, which is the tail above the bar.
+		// At trace, and for every attempt: only the failures carry a residual in their error,
+		// which is the tail above the bar and not where fits start degrading.
 		logger, ok := log.(*logrus.Logger)
 		require.True(t, ok)
 
 		prevLevel := logger.GetLevel()
-		logger.SetLevel(logrus.DebugLevel)
+		logger.SetLevel(logrus.TraceLevel)
 		hook := test.NewLocal(logger)
 
 		t.Cleanup(func() {
@@ -255,6 +255,27 @@ func TestAlignedCrop(t *testing.T) {
 
 		require.NotEmpty(t, reported, "a successful fit reports its residual too")
 		assert.Contains(t, reported, fmt.Sprintf("%d px", f.Size()), "beside the size it was detected at")
+	})
+	t.Run("SilentAtDebugLevel", func(t *testing.T) {
+		// One line per face belongs to diagnosis on demand, so debug must stay clean.
+		logger, ok := log.(*logrus.Logger)
+		require.True(t, ok)
+
+		prevLevel := logger.GetLevel()
+		logger.SetLevel(logrus.DebugLevel)
+		hook := test.NewLocal(logger)
+
+		t.Cleanup(func() {
+			logger.SetLevel(prevLevel)
+			hook.Reset()
+		})
+
+		_, err := AlignedCrop(img, f, ArcFaceTemplateSize, ArcFaceTemplateSize)
+		require.NoError(t, err)
+
+		for _, entry := range hook.AllEntries() {
+			assert.NotContains(t, entry.Message, "landmark fit residual")
+		}
 	})
 	t.Run("MarkersMatchTemplate", func(t *testing.T) {
 		out, err := AlignedCrop(img, f, ArcFaceTemplateSize, ArcFaceTemplateSize)
