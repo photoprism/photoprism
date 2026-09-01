@@ -3,6 +3,7 @@ import "../fixtures";
 import * as media from "common/media";
 import { Photo, BatchSize, MaxLength } from "model/photo";
 import $event from "common/event";
+import { $config } from "app/session";
 
 // Drains the pubsub-js async queue so subscribers configured as `async: true`
 // have run by the time the test asserts.
@@ -201,6 +202,76 @@ describe("model/photo", () => {
     const photo = new Photo(values);
     const result = photo.getDownloadUrl();
     expect(result).toBe("/api/v1/dl/97b8cf7b3710bec95f6609487bbdd62489b95fb2?t=2lbh9x09");
+  });
+
+  // downloadAll() starts one download per eligible file and reports what
+  // happened as { downloaded, skipped } — the consumers decide which prompt
+  // fits: "Downloading…" when a download started, a warning when every file
+  // was excluded by the settings, silence otherwise.
+  describe("downloadAll", () => {
+    // Permissive baseline: download feature on, no originals / sidecar /
+    // raw restriction set.
+    const allowAll = (overrides = {}) => ({
+      features: { download: true },
+      download: { name: "file", ...overrides },
+    });
+
+    const mockSettings = (settings) => vi.spyOn($config, "getSettings").mockReturnValue(settings);
+    const jpg = (hash, name = "1980/01/kitten.jpg") => ({ Hash: hash, Name: name, Root: "/", FileType: "jpg", MediaType: "image" });
+    const raw = (hash, name = "1980/01/kitten.cr2") => ({ Hash: hash, Name: name, Root: "/", FileType: "cr2", MediaType: "raw" });
+
+    // common/download() renders each started download as a hidden <a
+    // download> click. Spying on the anchor click observes those requests
+    // (and their URLs / file names) without hitting the network.
+    let clicks;
+    let clickSpy;
+
+    const hrefs = () => clicks.map((c) => c.href);
+
+    beforeEach(() => {
+      clicks = [];
+      clickSpy = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(function () {
+        clicks.push({ href: this.getAttribute("href"), name: this.getAttribute("download") });
+      });
+    });
+
+    it("downloads eligible files and reports the counts", () => {
+      mockSettings(allowAll());
+      const photo = new Photo({ UID: "pt9x2vksm3p4q8ft", Type: "image", Files: [jpg("f1"), jpg("f2", "1980/01/second.jpg")] });
+
+      expect(photo.downloadAll()).toEqual({ downloaded: 2, skipped: 0 });
+      expect(clicks).toHaveLength(2);
+      expect(hrefs()).toEqual(["/api/v1/dl/f1?t=2lbh9x09", "/api/v1/dl/f2?t=2lbh9x09"]);
+      expect(clicks.map((c) => c.name)).toEqual(["kitten.jpg", "second.jpg"]);
+    });
+
+    it("downloads the primary file when no file list exists", () => {
+      mockSettings(allowAll());
+      const photo = new Photo({ UID: "pt9x2vksm3p4q8ft", Hash: "primary1", FileName: "1980/01/tiger.jpg" });
+
+      expect(photo.downloadAll()).toEqual({ downloaded: 1, skipped: 0 });
+      expect(clicks).toHaveLength(1);
+      expect(clicks[0].href).toContain("/dl/primary1?t=2lbh9x09");
+      expect(clicks[0].name).toBe("tiger.jpg");
+    });
+
+    it("reports every file as skipped when the settings exclude them all", () => {
+      // The reported misconfiguration: RAW downloads are off and the photo
+      // only has a RAW file — before the fix, the click silently did nothing.
+      mockSettings(allowAll({ mediaRaw: false }));
+      const photo = new Photo({ UID: "pt9x2vksm3p4q8ft", Type: "image", Files: [raw("r1")] });
+
+      expect(photo.downloadAll()).toEqual({ downloaded: 0, skipped: 1 });
+      expect(clicks).toHaveLength(0);
+    });
+
+    it("reports mixed results when only some files are excluded", () => {
+      mockSettings(allowAll({ mediaRaw: false }));
+      const photo = new Photo({ UID: "pt9x2vksm3p4q8ft", Type: "image", Files: [jpg("f1"), raw("r1")] });
+
+      expect(photo.downloadAll()).toEqual({ downloaded: 1, skipped: 1 });
+      expect(hrefs()).toEqual(["/api/v1/dl/f1?t=2lbh9x09"]);
+    });
   });
 
   it("should calculate photo size", () => {
