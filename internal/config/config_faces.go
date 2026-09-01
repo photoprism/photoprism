@@ -350,18 +350,22 @@ func (c *Config) FaceSizeRetry() int {
 // that keeps producing them contradicts what the operator configured, so it follows that setting
 // instead. An explicit FACE_SIZE_RETRY still stands, in either direction.
 func (c *Config) faceSizeRetryDefault() int {
-	// On-demand rendering is the operator's consent to render what is missing, so what was
-	// pre-generated does not bound what a crop can reach.
-	if c == nil || c.ThumbUncached() {
+	if c == nil {
 		return face.RetrySizeThreshold
 	}
 
+	// What a crop can reach is the wider of the two, since on-demand face rendering lifts the
+	// pre-generated limit for exactly this path rather than replacing what it already covers.
+	// THUMB_UNCACHED is not asked: it governs what a request may render for delivery, and no
+	// crop consults it.
+	available := max(c.ThumbSizePrecached(), c.ThumbSizeFace())
+
 	switch {
-	case c.ThumbSizePrecached() <= thumb.Sizes[thumb.Fit720].Width:
+	case available <= thumb.Sizes[thumb.Fit720].Width:
 		// The crop cannot exceed the thumbnail the detection ran on, so nothing this pass finds
 		// can be embedded from more pixels than it was found in.
 		return 0
-	case c.ThumbSizePrecached() <= thumb.Sizes[thumb.Fit1920].Width:
+	case available <= thumb.Sizes[thumb.Fit1920].Width:
 		return face.RetrySizeThresholdLimited
 	}
 

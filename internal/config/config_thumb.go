@@ -104,3 +104,29 @@ func (c *Config) ThumbSizeUncached() int {
 
 	return limit
 }
+
+// ThumbSizeFace returns the size limit in pixels (720-15360) for the source rendition rendered on
+// demand when a face crop would otherwise be taken from too few pixels, or zero when that is off.
+//
+// It bounds the picture a crop is drawn from, not the crop itself: a face crop is face.CropSize,
+// and an aligned model warps its own template out of the source, so neither changes with this. It
+// is independent of the other thumbnail options because indexing renders at most one rendition per
+// file it already reads, where the on-demand limit prices a page rendering hundreds at once.
+func (c *Config) ThumbSizeFace() int {
+	if c == nil {
+		return 0
+	}
+
+	size := c.options.ThumbSizeFace
+
+	switch {
+	case size <= 0:
+		return 0
+	case size < 720:
+		return 720 // Mobile, TV
+	case size > 15360:
+		return 15360 // 16K, e.g. for 360° media
+	}
+
+	return size
+}

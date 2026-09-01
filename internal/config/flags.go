@@ -1264,6 +1264,12 @@ var Flags = CliFlags{
 			Value:   thumb.SizeOnDemand,
 			EnvVars: EnvVars("THUMB_SIZE_UNCACHED"),
 		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "thumb-size-face",
+			Usage:   "maximum size in `PIXELS` (720-15360) of the source rendered on demand so face crops are not upscaled, 0 to disable",
+			Value:   thumb.SizeFit4096.Width,
+			EnvVars: EnvVars("THUMB_SIZE_FACE"),
+		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "thumb-uncached",
 			Aliases: []string{"u"},
@@ -1376,8 +1382,9 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("FACE_SIZE_RETRY"),
 		},
 		// No Value, or the option would be non-zero on every start and FaceSizeRetry would never
-		// reach its derivation: the floor follows what the thumbnail settings let a crop reach.
-		DocDefault: fmt.Sprintf("%d (%d at a thumb-size of 1920 or less, off at 720)",
+		// reach its derivation: the floor follows what the thumbnail settings let a crop reach,
+		// which is the wider of thumb-size and thumb-size-face.
+		DocDefault: fmt.Sprintf("%d (%d where a crop can reach no further than 1920, off at 720)",
 			face.RetrySizeThreshold, face.RetrySizeThresholdLimited)}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-score",

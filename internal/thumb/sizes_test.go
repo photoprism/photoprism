@@ -16,6 +16,28 @@ func TestMaxSize(t *testing.T) {
 	SizeOnDemand = 7680
 }
 
+// TestMaxRenderSize covers the bound rendering obeys, which the face crop source may raise above
+// the delivered sizes: it is rendered once per indexed file rather than per request.
+func TestMaxRenderSize(t *testing.T) {
+	cached, onDemand, faceSize := SizeCached, SizeOnDemand, SizeFace
+	t.Cleanup(func() { SizeCached, SizeOnDemand, SizeFace = cached, onDemand, faceSize })
+
+	t.Run("AboveWhatIsDelivered", func(t *testing.T) {
+		SizeCached, SizeOnDemand, SizeFace = 720, 720, 4096
+
+		assert.Equal(t, 720, MaxSize(), "what is delivered must not follow it")
+		assert.Equal(t, 4096, MaxRenderSize())
+		assert.False(t, InvalidSize(4096))
+		assert.True(t, InvalidSize(4097))
+		assert.True(t, Sizes[Fit4096].ExceedsLimit(), "a request must still be clamped to 720")
+	})
+	t.Run("BelowWhatIsDelivered", func(t *testing.T) {
+		SizeCached, SizeOnDemand, SizeFace = 720, 7680, 0
+
+		assert.Equal(t, 7680, MaxRenderSize())
+	})
+}
+
 func TestSize_ExceedsLimit(t *testing.T) {
 	SizeCached = 1024
 	SizeOnDemand = 2048

@@ -1269,41 +1269,6 @@ func TestFaces_useMigrationDetector(t *testing.T) {
 	})
 }
 
-// TestMigrationCropWidth pins that the width a rendition is rendered for covers both paths a run
-// can take, since which one a marker takes is only known once its landmarks have been fitted.
-func TestMigrationCropWidth(t *testing.T) {
-	t.Run("CoversEveryRegisteredModel", func(t *testing.T) {
-		for name := range face.EmbeddingModels {
-			width := migrationCropWidth(name)
-
-			assert.GreaterOrEqual(t, width, face.CropSize.Width, name)
-
-			if input, _ := face.FindEmbeddingModel(name).InputSize(); input > 0 {
-				assert.GreaterOrEqual(t, width, input, name)
-			}
-		}
-	})
-	t.Run("UnknownModel", func(t *testing.T) {
-		assert.Equal(t, face.CropSize.Width, migrationCropWidth("nonesuch"))
-	})
-}
-
-func TestMigrationCropSourceWidth(t *testing.T) {
-	t.Run("SmallestFaceDecides", func(t *testing.T) {
-		markers := entity.Markers{{W: 0.5}, {W: 0.05}, {W: 0.25}}
-
-		assert.Equal(t, 3200, migrationCropSourceWidth(markers, 160))
-	})
-	t.Run("RoundsUp", func(t *testing.T) {
-		// 160/0.3 is 533.3, and a rendition one pixel short still upscales the crop.
-		assert.Equal(t, 534, migrationCropSourceWidth(entity.Markers{{W: 0.3}}, 160))
-	})
-	t.Run("WithoutGeometry", func(t *testing.T) {
-		assert.Zero(t, migrationCropSourceWidth(entity.Markers{{W: 0}}, 160))
-		assert.Zero(t, migrationCropSourceWidth(nil, 160))
-	})
-}
-
 func TestMigrationCropThumbSize(t *testing.T) {
 	landscape := &entity.File{FileWidth: 3648, FileHeight: 2736}
 
@@ -1634,41 +1599,6 @@ func TestUseMigrationThumbSizes(t *testing.T) {
 
 	assert.Equal(t, 720, thumb.SizeOnDemand)
 	assert.Equal(t, 720, thumb.SizeCached)
-}
-
-// TestCachedCropWidth covers what the renditions on disk can supply, which is the question the
-// rendering decision turns on.
-func TestCachedCropWidth(t *testing.T) {
-	c := newMigrateTestConfig(t, "migratecachedwidth")
-
-	restore := thumb.SizeCached
-	t.Cleanup(func() { thumb.SizeCached = restore })
-	thumb.SizeCached = 15360
-
-	file := &entity.File{
-		FileHash:   "5a5d555555555555555555555555555555555555",
-		FileWidth:  3648,
-		FileHeight: 2736,
-	}
-
-	t.Run("NothingCached", func(t *testing.T) {
-		assert.Zero(t, cachedCropWidth(file, c.ThumbCachePath()))
-	})
-	t.Run("TheBoxHeightBinds", func(t *testing.T) {
-		// Fit1920 is a 1920x1200 box, so this 4:3 picture is 1600 px wide in it.
-		name, err := thumb.Sizes[thumb.Fit1920].FileName(file.FileHash, c.ThumbCachePath())
-		require.NoError(t, err)
-		require.NoError(t, thumb.Save(image.NewNRGBA(image.Rect(0, 0, 8, 8)), name))
-
-		assert.Equal(t, 1600, cachedCropWidth(file, c.ThumbCachePath()))
-	})
-	t.Run("NativeResolution", func(t *testing.T) {
-		name, err := thumb.Sizes[thumb.Fit4096].FileName(file.FileHash, c.ThumbCachePath())
-		require.NoError(t, err)
-		require.NoError(t, thumb.Save(image.NewNRGBA(image.Rect(0, 0, 8, 8)), name))
-
-		assert.Equal(t, 3648, cachedCropWidth(file, c.ThumbCachePath()))
-	})
 }
 
 // TestThumbSizeGenerated covers the check that tells a cache written at a smaller limit from one

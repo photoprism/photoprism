@@ -11,6 +11,7 @@ var (
 	Filter             = ResampleLanczos   // Filter specifies the default downscaling filter.
 	SizeCached         = SizeFit1920.Width // Pre-generated thumbnail size limit.
 	SizeOnDemand       = SizeFit7680.Width // On-demand thumbnail size limit.
+	SizeFace           = SizeFit4096.Width // Size limit for the source a face crop is rendered from.
 	JpegQualityDefault = QualityMedium     // JpegQualityDefault sets the compression level of newly created JPEGs.
 	CachePublic        = false             // Specifies if static content may be cached by a CDN or caching proxy.
 	SamplesPath        = fs.Abs("../../assets/samples")

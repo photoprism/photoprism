@@ -324,6 +324,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"thumb-color", c.ThumbColor()},
 		{"thumb-size", fmt.Sprintf("%d", c.ThumbSizePrecached())},
 		{"thumb-size-uncached", fmt.Sprintf("%d", c.ThumbSizeUncached())},
+		{"thumb-size-face", fmt.Sprintf("%d", c.ThumbSizeFace())},
 		{"thumb-uncached", fmt.Sprintf("%t", c.ThumbUncached())},
 		{"jpeg-quality", fmt.Sprintf("%d", c.JpegQuality())},
 		{"jpeg-size", fmt.Sprintf("%d", c.JpegSize())},

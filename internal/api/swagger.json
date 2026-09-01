@@ -815,6 +815,9 @@
                 "ThumbSize": {
                     "type": "integer"
                 },
+                "ThumbSizeFace": {
+                    "type": "integer"
+                },
                 "ThumbSizeUncached": {
                     "type": "integer"
                 },

@@ -62,7 +62,7 @@ func TestDetectFaces(t *testing.T) {
 		t.Cleanup(face.UnblockEmbeddings)
 		face.BlockEmbeddings("12 marker(s) use facenet, but this instance is configured for sface")
 
-		result, detectErr := DetectFaces(fileName, 20, 0, false, 0)
+		result, detectErr := DetectFaces(fileName, 20, 0, false, 0, nil)
 
 		require.NoError(t, detectErr)
 
@@ -90,7 +90,7 @@ func TestDetectFaces(t *testing.T) {
 
 		face.BlockEmbeddings("12 marker(s) use sface, but this instance is configured for facenet")
 
-		result, detectErr := DetectFaces(fileName, 20, 0, false, 0)
+		result, detectErr := DetectFaces(fileName, 20, 0, false, 0, nil)
 
 		// An endpoint that was called would fail against a closed port, so no error is what
 		// proves it was not.
@@ -100,15 +100,62 @@ func TestDetectFaces(t *testing.T) {
 			assert.True(t, result[0].Embeddings.Empty())
 		}
 	})
+	t.Run("RendersTheCropSourceBeforeEmbedding", func(t *testing.T) {
+		// Both embedding paths select the rendition they crop from by statting the cache, so one
+		// rendered afterwards is one no vector was drawn from.
+		var detected face.Faces
+		var embedded bool
+
+		result, detectErr := DetectFaces(fileName, 20, 0, false, 0, func(faces face.Faces) {
+			detected = faces
+			embedded = !faces[0].Embeddings.Empty()
+		})
+
+		require.NoError(t, detectErr)
+
+		if len(result) == 0 {
+			t.Skip("faces: skipping, the detector found no face to render for")
+		}
+
+		require.Len(t, detected, len(result), "the detections decide how wide the rendition has to be")
+		assert.False(t, embedded, "the crops must not have been taken yet")
+	})
+	t.Run("PausedRendersNothing", func(t *testing.T) {
+		// A paused instance takes no crop, so rendering one would be work for nobody.
+		t.Cleanup(face.UnblockEmbeddings)
+		face.BlockEmbeddings("12 marker(s) use facenet, but this instance is configured for sface")
+
+		called := false
+
+		_, detectErr := DetectFaces(fileName, 20, 0, false, 0, func(faces face.Faces) { called = true })
+
+		require.NoError(t, detectErr)
+		assert.False(t, called)
+	})
+	t.Run("DisabledEmbeddingsRenderNothing", func(t *testing.T) {
+		// The same for an instance configured to embed nothing at all.
+		prev := face.ConfiguredModel()
+		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelNone}))
+		t.Cleanup(func() {
+			require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: prev}))
+		})
+
+		called := false
+
+		_, detectErr := DetectFaces(fileName, 20, 0, false, 0, func(faces face.Faces) { called = true })
+
+		require.NoError(t, detectErr)
+		assert.False(t, called)
+	})
 	t.Run("MissingFilename", func(t *testing.T) {
-		_, detectErr := DetectFaces("", 20, 0, false, 0)
+		_, detectErr := DetectFaces("", 20, 0, false, 0, nil)
 		require.Error(t, detectErr)
 	})
 	t.Run("NoFaceModel", func(t *testing.T) {
 		Config = &ConfigValues{Models: Models{}}
 		t.Cleanup(func() { Config = &ConfigValues{Models: Models{{Name: "facenet", Type: ModelTypeFace}}} })
 
-		_, detectErr := DetectFaces(fileName, 20, 0, false, 0)
+		_, detectErr := DetectFaces(fileName, 20, 0, false, 0, nil)
 		require.Error(t, detectErr)
 	})
 }

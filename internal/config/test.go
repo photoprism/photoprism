@@ -406,6 +406,7 @@ func NewTestConfig(dbName string) *Config {
 
 	thumb.SizeCached = c.ThumbSizePrecached()
 	thumb.SizeOnDemand = c.ThumbSizeUncached()
+	thumb.SizeFace = c.ThumbSizeFace()
 	thumb.Filter = c.ThumbFilter()
 	thumb.JpegQualityDefault = c.JpegQuality()
 

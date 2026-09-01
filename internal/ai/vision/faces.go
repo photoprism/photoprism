@@ -9,8 +9,14 @@ import (
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
+// CropSource renders the rendition the detected faces are cropped from, so an embedding is not
+// drawn from upscaled pixels. It runs between detection and embedding because the smallest face
+// decides how wide that rendition has to be, and only the caller can reach the original one is
+// rendered from. A nil value leaves the crops to what the cache already holds.
+type CropSource func(faces face.Faces)
+
 // DetectFaces detects faces in the specified image and generates embeddings from them.
-func DetectFaces(fileName string, minSize, retrySize int, cacheCrop bool, expected int) (result face.Faces, err error) {
+func DetectFaces(fileName string, minSize, retrySize int, cacheCrop bool, expected int, cropSource CropSource) (result face.Faces, err error) {
 	if fileName == "" {
 		return result, errors.New("missing image filename")
 	}
@@ -37,6 +43,13 @@ func DetectFaces(fileName string, minSize, retrySize int, cacheCrop bool, expect
 		if face.EmbeddingsBlocked() {
 			log.Debugf("vision: skipping face embeddings while they are paused")
 			return result, nil
+		}
+
+		// Before either path below, because both select the rendition they crop from by statting
+		// the cache: one that is rendered afterwards is one the embeddings did not use. An
+		// instance that embeds nothing takes no crop either, so it renders nothing for one.
+		if cropSource != nil && !face.EmbeddingsDisabled() {
+			cropSource(result)
 		}
 
 		if uri, method := model.Endpoint(); uri != "" && method != "" && face.EmbeddingsDisabled() {

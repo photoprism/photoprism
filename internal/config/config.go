@@ -412,6 +412,7 @@ func (c *Config) Propagate() {
 	thumb.Filter = c.ThumbFilter()
 	thumb.SizeCached = c.ThumbSizePrecached()
 	thumb.SizeOnDemand = c.ThumbSizeUncached()
+	thumb.SizeFace = c.ThumbSizeFace()
 	thumb.JpegQualityDefault = c.JpegQuality()
 	thumb.CachePublic = c.HttpCachePublic()
 	thumb.SamplesPath = c.SamplesPath()

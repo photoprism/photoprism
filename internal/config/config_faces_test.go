@@ -1820,13 +1820,31 @@ func TestConfig_FaceSizeRetry(t *testing.T) {
 func TestConfig_faceSizeRetryDefault(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	t.Run("OnDemandRendering", func(t *testing.T) {
-		// Consent to render what is missing, so the sizes pre-generated so far bound nothing.
+	t.Run("OnDemandFaceRendering", func(t *testing.T) {
+		// A crop reaches what this renders for it, whatever was pre-generated.
+		c.options.ThumbSizeFace = 4096
+		c.options.ThumbSize = 720
+		defer func() { c.options.ThumbSizeFace = 0 }()
+
+		assert.Equal(t, face.RetrySizeThreshold, c.faceSizeRetryDefault())
+	})
+	t.Run("OnDemandFaceRenderingIsBounded", func(t *testing.T) {
+		// It is a ceiling rather than consent: one that reaches no further than 1920 leaves the
+		// floor where a pre-generated 1920 would.
+		c.options.ThumbSizeFace = 1920
+		c.options.ThumbSize = 720
+		defer func() { c.options.ThumbSizeFace = 0 }()
+
+		assert.Equal(t, face.RetrySizeThresholdLimited, c.faceSizeRetryDefault())
+	})
+	t.Run("DeliveryRenderingDoesNotCount", func(t *testing.T) {
+		// THUMB_UNCACHED governs what a request may render for delivery, and no crop path
+		// consults it, so it must not move a floor that describes what a crop can reach.
 		c.options.ThumbUncached = true
 		c.options.ThumbSize = 720
 		defer func() { c.options.ThumbUncached = false }()
 
-		assert.Equal(t, face.RetrySizeThreshold, c.faceSizeRetryDefault())
+		assert.Zero(t, c.faceSizeRetryDefault())
 	})
 	t.Run("SmallestCache", func(t *testing.T) {
 		c.options.ThumbSize = 720
@@ -1857,9 +1875,12 @@ func TestConfig_FaceSizeRetryThroughTheFlagLayer(t *testing.T) {
 	c := &Config{cliCtx: ctx, options: NewOptions(ctx)}
 
 	require.Zero(t, c.options.FaceSizeRetry, "an unset option must stay zero to mean derive it")
-	require.Equal(t, 1920, c.options.ThumbSize, "the shipped thumbnail limit decides the default below")
+	require.Equal(t, 1920, c.options.ThumbSize, "what the shipped configuration pre-generates")
+	require.Equal(t, 4096, c.options.ThumbSizeFace, "and what it renders on demand for a face crop")
 
-	assert.Equal(t, face.RetrySizeThresholdLimited, c.FaceSizeRetry())
+	// The wider of the two decides it, so the shipped configuration reaches the smallest faces
+	// even though its pre-generated renditions alone would not.
+	assert.Equal(t, face.RetrySizeThreshold, c.FaceSizeRetry())
 }
 
 func TestConfig_FaceScore(t *testing.T) {

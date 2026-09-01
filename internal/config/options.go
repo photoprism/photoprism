@@ -248,6 +248,7 @@ type Options struct {
 	ThumbColor                string        `yaml:"ThumbColor" json:"ThumbColor" flag:"thumb-color"`
 	ThumbSize                 int           `yaml:"ThumbSize" json:"ThumbSize" flag:"thumb-size"`
 	ThumbSizeUncached         int           `yaml:"ThumbSizeUncached" json:"ThumbSizeUncached" flag:"thumb-size-uncached"`
+	ThumbSizeFace             int           `yaml:"ThumbSizeFace" json:"ThumbSizeFace" flag:"thumb-size-face"`
 	ThumbUncached             bool          `yaml:"ThumbUncached" json:"ThumbUncached" flag:"thumb-uncached"`
 	JpegQuality               int           `yaml:"JpegQuality" json:"JpegQuality" flag:"jpeg-quality"`
 	JpegSize                  int           `yaml:"JpegSize" json:"JpegSize" flag:"jpeg-size"`
