@@ -12,7 +12,6 @@ import countries from "options/countries.json";
 import { $gettext } from "common/gettext";
 import { PhotoClipboard } from "common/clipboard";
 import download from "common/download";
-import $notify from "common/notify";
 import * as src from "common/src";
 import * as media from "common/media";
 import * as formats from "options/formats";
@@ -749,12 +748,13 @@ export class Photo extends RestModel {
   }
 
   // Downloads all related files if they exist and depending on the settings.
+  // Returns { downloaded, skipped } so a prompt can be shown to report download status
   downloadAll() {
     const s = $config.getSettings();
 
     if (!s || !s.features || !s.download || !s.features.download || s.download.disabled) {
       console.log("download: disabled in settings", s.features, s.download);
-      return;
+      return { downloaded: 0, skipped: 0 };
     }
 
     const token = $config.downloadToken;
@@ -765,11 +765,12 @@ export class Photo extends RestModel {
 
       if (hash) {
         download(`/${$config.apiUri}/dl/${hash}?t=${token}`, this.baseName(false));
+        return { downloaded: 1, skipped: 0 };
       } else if ($config.debug) {
         console.log("download: failed, empty file hash", this);
       }
 
-      return;
+      return { downloaded: 0, skipped: 0 };
     }
 
     let downloaded = 0;
@@ -823,9 +824,7 @@ export class Photo extends RestModel {
       downloaded++;
     });
 
-    if (downloaded === 0 && skipped > 0) {
-      $notify.warn($gettext("No files to download: all files are excluded by the download settings"));
-    }
+    return { downloaded, skipped };
   }
 
   calculateSize(width, height) {
