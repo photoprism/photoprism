@@ -133,6 +133,11 @@ type FacesMigrateResult struct {
 	RenderedThumbs int
 	FailedThumbs   int
 
+	// UnalignedCrops counts the markers an aligned model embedded from a plain box crop, because
+	// their landmarks did not fit its template. Only failures log, and at debug level, so without
+	// this the rate is unobservable on an ordinary run.
+	UnalignedCrops int
+
 	Unlinked          int
 	Invalid           int
 	DetectedFiles     int
@@ -812,6 +817,7 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 			result.Unreadable += fileResult.Unreadable
 			result.RenderedThumbs += fileResult.Rendered
 			result.FailedThumbs += fileResult.RenderFailed
+			result.UnalignedCrops += fileResult.Unaligned
 			result.AttemptedClusterable += fileResult.Attempted
 			result.FailedClusterable += fileResult.Clusterable
 			result.FailedNamed += fileResult.Named
@@ -1048,6 +1054,8 @@ type faceMigrationFile struct {
 	// RenderFailed the one it needed and could not be given.
 	Rendered     int
 	RenderFailed int
+	// Unaligned counts the markers an aligned model had to embed from a plain box crop.
+	Unaligned int
 	// Attempted and Clusterable count the markers that cleared both clustering bars: those this
 	// file put at risk, and those it lost. The guard needs both sides of that ratio.
 	Attempted   int
@@ -1141,7 +1149,7 @@ func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) 
 
 	if embedder.Aligned() {
 		result.Detected = true
-		generated, details, detectModel, err = w.detectMigrationEmbeddings(embedder, file, markers, stale)
+		generated, details, detectModel, result.Unaligned, err = w.detectMigrationEmbeddings(embedder, file, markers, stale)
 	} else {
 		generated, details, err = w.cropMigrationEmbeddings(embedder, file, stale)
 	}
@@ -1334,13 +1342,13 @@ func (w *Faces) cropMigrationEmbeddings(embedder face.Embedder, file *entity.Fil
 // size and score have to travel with it: the clustering bars are looked up by detect_model, so a
 // marker labeled with the new detector while holding the old one's score is judged at a
 // calibration it was never scored against.
-func (w *Faces) detectMigrationEmbeddings(embedder face.Embedder, file *entity.File, markers, stale entity.Markers) (result map[string]face.Embeddings, details map[string]query.MigrationDetection, detectModel string, err error) {
+func (w *Faces) detectMigrationEmbeddings(embedder face.Embedder, file *entity.File, markers, stale entity.Markers) (result map[string]face.Embeddings, details map[string]query.MigrationDetection, detectModel string, unaligned int, err error) {
 	result = make(map[string]face.Embeddings, len(stale))
 	details = make(map[string]query.MigrationDetection, len(stale))
 
 	thumbName, err := migrationDetectionThumb(w.conf, w.conf.ThumbCachePath(), file)
 	if err != nil {
-		return result, details, "", err
+		return result, details, "", 0, err
 	}
 
 	// FACE_MIGRATE_SIZE rather than FACE_SIZE: a marker's size is in pixels of the thumbnail it was
@@ -1349,14 +1357,14 @@ func (w *Faces) detectMigrationEmbeddings(embedder face.Embedder, file *entity.F
 	// when a picture yields nothing, which is not this case.
 	detected, err := face.Detect(thumbName, w.conf.FaceMigrateSize())
 	if err != nil {
-		return result, details, "", err
+		return result, details, "", 0, err
 	}
 
 	// Only the detections a stored marker claims are embedded. Everything else this floor admits
 	// would be inferred and thrown away, and the smallest face decides the crop rendition for the
 	// whole file, so embedding them all would make the real crops worse as well as slower.
 	assigned, order := assignedMigrationDetections(markers, stale, detected)
-	vision.GenerateEmbeddings(embedder, thumbName, assigned, true)
+	unaligned = vision.GenerateEmbeddings(embedder, thumbName, assigned, true)
 
 	for markerUID, i := range order {
 		if detectedFace := assigned[i]; face.ValidEmbeddings(detectedFace.Embeddings, embedder.Dims()) {
@@ -1372,7 +1380,7 @@ func (w *Faces) detectMigrationEmbeddings(embedder face.Embedder, file *entity.F
 		}
 	}
 
-	return result, details, detectModel, nil
+	return result, details, detectModel, unaligned, nil
 }
 
 // assignedMigrationDetections returns the detections the stale markers claim, and where each

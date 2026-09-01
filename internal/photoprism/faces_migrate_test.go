@@ -523,11 +523,12 @@ func TestFaces_detectMigrationEmbeddings(t *testing.T) {
 	embedder := &migrationTestEmbedder{name: face.ModelSFace, dims: 4, aligned: true}
 	w := NewFaces(config.TestConfig())
 
-	result, landmarks, detectModel, err := w.detectMigrationEmbeddings(embedder, nil, nil, nil)
+	result, landmarks, detectModel, unaligned, err := w.detectMigrationEmbeddings(embedder, nil, nil, nil)
 	require.Error(t, err)
 	assert.Empty(t, result)
 	assert.Empty(t, landmarks)
 	assert.Empty(t, detectModel, "a run that could not detect names no detector")
+	assert.Zero(t, unaligned, "and embedded nothing, aligned or not")
 }
 
 // TestFaces_detectMigrationEmbeddings_Landmarks pins the producer half of the provenance pair:
@@ -576,9 +577,10 @@ func TestFaces_detectMigrationEmbeddings_Landmarks(t *testing.T) {
 	embedder := &migrationTestEmbedder{name: face.ModelSFace, dims: 4, aligned: true}
 
 	w := NewFaces(c)
-	result, details, detectModel, err := w.detectMigrationEmbeddings(embedder, file, markers, markers)
+	result, details, detectModel, unaligned, err := w.detectMigrationEmbeddings(embedder, file, markers, markers)
 
 	require.NoError(t, err)
+	assert.Zero(t, unaligned, "a detection that placed a complete landmark set aligns onto the template")
 	require.Contains(t, result, marker.MarkerUID)
 	assert.Equal(t, face.DefaultDetector().Name, detectModel)
 	require.Contains(t, details, marker.MarkerUID, "what the detection recorded must travel with the vector")

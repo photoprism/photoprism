@@ -72,7 +72,7 @@ func TestGenerateEmbeddings(t *testing.T) {
 	t.Run("AlignedCrop", func(t *testing.T) {
 		embedder := &stubEmbedder{aligned: true, dims: 128}
 		faces := testFaces(true)
-		GenerateEmbeddings(embedder, fileName, faces, false)
+		assert.Zero(t, GenerateEmbeddings(embedder, fileName, faces, false))
 
 		require.Len(t, embedder.sizes, 1)
 		assert.Equal(t, 112, embedder.sizes[0].Dx())
@@ -82,10 +82,11 @@ func TestGenerateEmbeddings(t *testing.T) {
 		assert.Positive(t, faces[0].ThumbSize, "an embedded face records what it was sampled at")
 	})
 	t.Run("FallsBackWithoutLandmarks", func(t *testing.T) {
-		// Alignment is impossible, so the plain thumb crop is used instead.
+		// Alignment is impossible, so the plain thumb crop is used instead. It is counted because
+		// nothing in the resulting vector says it was produced without pose normalization.
 		embedder := &stubEmbedder{aligned: true, dims: 128}
 		faces := testFaces(false)
-		GenerateEmbeddings(embedder, fileName, faces, false)
+		assert.Equal(t, 1, GenerateEmbeddings(embedder, fileName, faces, false))
 
 		require.Len(t, embedder.sizes, 1)
 		assert.Equal(t, face.CropSize.Width, embedder.sizes[0].Dx())
@@ -95,7 +96,8 @@ func TestGenerateEmbeddings(t *testing.T) {
 	t.Run("UnalignedModelUsesThumbCrop", func(t *testing.T) {
 		embedder := &stubEmbedder{aligned: false, dims: 512}
 		faces := testFaces(true)
-		GenerateEmbeddings(embedder, fileName, faces, false)
+		// A box crop is what this model expects, so it is not a fallback and is not counted.
+		assert.Zero(t, GenerateEmbeddings(embedder, fileName, faces, false))
 
 		require.Len(t, embedder.sizes, 1)
 		assert.Equal(t, face.CropSize.Width, embedder.sizes[0].Dx())
@@ -121,7 +123,8 @@ func TestGenerateEmbeddings(t *testing.T) {
 	t.Run("UndecodableFile", func(t *testing.T) {
 		embedder := &stubEmbedder{aligned: true, dims: 128}
 		faces := testFaces(true)
-		GenerateEmbeddings(embedder, filepath.Join(t.TempDir(), "missing.jpg"), faces, false)
+		// No crop was produced at all, so there is no vector to describe as unaligned.
+		assert.Zero(t, GenerateEmbeddings(embedder, filepath.Join(t.TempDir(), "missing.jpg"), faces, false))
 		assert.Empty(t, embedder.sizes)
 	})
 }
@@ -151,8 +154,9 @@ func TestFaceCropImage(t *testing.T) {
 
 	t.Run("Aligned", func(t *testing.T) {
 		faces := testFaces(true)
-		img, srcWidth, cropErr := faceCropImage(&stubEmbedder{aligned: true, dims: 128}, src, fileName, &faces[0], 112, 112, false)
+		img, srcWidth, aligned, cropErr := faceCropImage(&stubEmbedder{aligned: true, dims: 128}, src, fileName, &faces[0], 112, 112, false)
 		require.NoError(t, cropErr)
+		assert.True(t, aligned)
 		assert.Equal(t, 112, img.Bounds().Dx())
 		// The width reported is the source the crop was warped from, not the crop's own: the crop
 		// is always the model input size, which would record a constant.
@@ -160,8 +164,9 @@ func TestFaceCropImage(t *testing.T) {
 	})
 	t.Run("BoundingBox", func(t *testing.T) {
 		faces := testFaces(true)
-		img, srcWidth, cropErr := faceCropImage(&stubEmbedder{aligned: false, dims: 512}, src, fileName, &faces[0], 112, 112, false)
+		img, srcWidth, aligned, cropErr := faceCropImage(&stubEmbedder{aligned: false, dims: 512}, src, fileName, &faces[0], 112, 112, false)
 		require.NoError(t, cropErr)
+		assert.False(t, aligned)
 		assert.Equal(t, face.CropSize.Width, img.Bounds().Dx())
 		// The unaligned branch selects its own rendition, so the width comes back from there
 		// rather than from the image decoded for the aligned models.
@@ -169,7 +174,8 @@ func TestFaceCropImage(t *testing.T) {
 	})
 	t.Run("MissingThumb", func(t *testing.T) {
 		faces := testFaces(false)
-		_, _, cropErr := faceCropImage(&stubEmbedder{aligned: true, dims: 128}, src, filepath.Join(t.TempDir(), "missing.jpg"), &faces[0], 112, 112, false)
+		_, _, aligned, cropErr := faceCropImage(&stubEmbedder{aligned: true, dims: 128}, src, filepath.Join(t.TempDir(), "missing.jpg"), &faces[0], 112, 112, false)
 		require.Error(t, cropErr)
+		assert.False(t, aligned, "a crop that failed was not aligned either")
 	})
 }

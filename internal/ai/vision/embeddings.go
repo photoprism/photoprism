@@ -10,9 +10,11 @@ import (
 )
 
 // GenerateEmbeddings runs the embedding model on each detected face and assigns the result.
-func GenerateEmbeddings(embedder face.Embedder, fileName string, faces face.Faces, cacheCrop bool) {
+// It returns how many an aligned model had to embed from an unaligned crop, a quality cost
+// that leaves no trace in the vectors themselves.
+func GenerateEmbeddings(embedder face.Embedder, fileName string, faces face.Faces, cacheCrop bool) (unaligned int) {
 	if embedder == nil || len(faces) == 0 {
-		return
+		return 0
 	}
 
 	width, height := embedder.CropSize()
@@ -39,11 +41,15 @@ func GenerateEmbeddings(embedder face.Embedder, fileName string, faces face.Face
 			continue
 		}
 
-		img, srcWidth, err := faceCropImage(embedder, srcImg, fileName, f, width, height, cacheCrop)
+		img, srcWidth, aligned, err := faceCropImage(embedder, srcImg, fileName, f, width, height, cacheCrop)
 
 		if err != nil {
 			log.Errorf("vision: failed to create face crop (%s)", err)
 			continue
+		}
+
+		if embedder.Aligned() && !aligned {
+			unaligned++
 		}
 
 		// The name is recorded next to the vector because this is the last frame where the
@@ -54,6 +60,8 @@ func GenerateEmbeddings(embedder face.Embedder, fileName string, faces face.Face
 			f.SetThumbSize(srcWidth)
 		}
 	}
+
+	return unaligned
 }
 
 // smallestFaceArea returns the crop area of the smallest detected face, which is the one
@@ -71,11 +79,12 @@ func smallestFaceArea(faces face.Faces) crop.Area {
 }
 
 // faceCropImage returns the image to run inference on, aligned on the detected landmarks
-// when the model expects it, and a plain bounding box crop otherwise.
-func faceCropImage(embedder face.Embedder, srcImg image.Image, fileName string, f *face.Face, width, height int, cacheCrop bool) (image.Image, int, error) {
+// when the model expects it, and a plain bounding box crop otherwise. The flag says which of
+// the two it is, so a caller can count what an aligned model did not get.
+func faceCropImage(embedder face.Embedder, srcImg image.Image, fileName string, f *face.Face, width, height int, cacheCrop bool) (image.Image, int, bool, error) {
 	if embedder.Aligned() && srcImg != nil {
 		if img, err := face.AlignedCrop(srcImg, f, width, height); err == nil {
-			return img, srcImg.Bounds().Dx(), nil
+			return img, srcImg.Bounds().Dx(), true, nil
 		} else {
 			// Faces without a complete landmark set still get an embedding, at the cost
 			// of the pose normalization the aligned models were trained with.
@@ -87,5 +96,5 @@ func faceCropImage(embedder face.Embedder, srcImg image.Image, fileName string, 
 	// thumbnails under the same name, so the extent would go unrecorded on every indexed library.
 	img, _, srcWidth, err := crop.ImageFromSource(fileName, f.CropArea(), face.CropSize, cacheCrop)
 
-	return img, srcWidth, err
+	return img, srcWidth, false, err
 }
