@@ -3304,9 +3304,15 @@ export default {
         return;
       }
 
-      this.$notify.success(this.$gettext("Downloading…"));
+      new Photo().find(this.model.UID).then((p) => {
+        const { downloaded, skipped } = p.downloadAll();
 
-      new Photo().find(this.model.UID).then((p) => p.downloadAll());
+        if (downloaded > 0) {
+          this.$notify.success(this.$gettext("Downloading…"));
+        } else if (skipped > 0) {
+          this.$notify.warn(this.$gettext("No files to download: all files are excluded by the download settings"));
+        }
+      });
     },
     onEdit() {
       this.pauseLightbox();
