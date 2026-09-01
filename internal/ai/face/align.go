@@ -134,7 +134,12 @@ func AlignedCrop(img image.Image, f *Face, width, height int) (*image.RGBA, erro
 		}
 	}
 
-	forward, err := similarityTransform(src, ScaledArcFaceTemplate(width, height))
+	forward, residual, err := similarityTransform(src, ScaledArcFaceTemplate(width, height))
+
+	// Every attempt, not only the ones that fail: the failures describe the tail above the
+	// threshold and say nothing about where the fit starts degrading, which is the number a
+	// size floor has to be derived from. Paired with the size the face was detected at.
+	log.Debugf("faces: landmark fit residual %.2f at %d px, max %.1f", residual, f.Size(), maxAlignResidual)
 
 	if err != nil {
 		return nil, err
@@ -161,11 +166,12 @@ func AlignedCrop(img image.Image, f *Face, width, height int) (*image.RGBA, erro
 }
 
 // similarityTransform maps src onto dst with the smallest squared error, using rotation, uniform
-// scale and translation only.
+// scale and translation only. It returns the RMS fit error beside the transform, and -1 where the
+// landmarks admit none, so a caller can report how well a face fitted rather than only whether it did.
 //
 // The Umeyama estimate InsightFace and OpenCV apply, restricted to proper rotations: a reflection
 // cannot be represented, so a mirrored set fits poorly and, like coincident landmarks, errors.
-func similarityTransform(src, dst [NumLandmarks][2]float64) (affine2D, error) {
+func similarityTransform(src, dst [NumLandmarks][2]float64) (affine2D, float64, error) {
 	var srcMean, dstMean [2]float64
 
 	for i := range src {
@@ -196,7 +202,7 @@ func similarityTransform(src, dst [NumLandmarks][2]float64) (affine2D, error) {
 	}
 
 	if variance <= 0 {
-		return affine2D{}, fmt.Errorf("faces: coincident landmarks")
+		return affine2D{}, -1, fmt.Errorf("faces: coincident landmarks")
 	}
 
 	a /= variance
@@ -210,11 +216,13 @@ func similarityTransform(src, dst [NumLandmarks][2]float64) (affine2D, error) {
 	// A mirrored set cannot be expressed by a proper rotation, so it comes back as a poor
 	// fit rather than an error. Measured on the template: a rotated or scaled copy fits at
 	// 0, an extreme yaw at ~9.9, and a horizontal mirror at ~22.6.
-	if residual := fitResidual(result, src, dst); residual > maxAlignResidual {
-		return affine2D{}, fmt.Errorf("faces: landmarks do not fit the template, residual %.1f", residual)
+	residual := fitResidual(result, src, dst)
+
+	if residual > maxAlignResidual {
+		return affine2D{}, residual, fmt.Errorf("faces: landmarks do not fit the template, residual %.1f", residual)
 	}
 
-	return result, nil
+	return result, residual, nil
 }
 
 // fitResidual returns the RMS distance between the transformed source landmarks and the

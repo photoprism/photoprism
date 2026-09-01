@@ -192,3 +192,29 @@ func TestArea_OverlapPercent(t *testing.T) {
 	assert.Equal(t, 0, a1.OverlapPercent(a3))
 	assert.Equal(t, 96, a1.OverlapPercent(a4))
 }
+
+// TestNewOffsetArea covers the constructor for a position measured from a reference point, whose
+// coordinates are signed. NewArea clips them, which is right for a crop box and wrong for a
+// landmark: half of a face sits left of or above the point its landmarks are measured from.
+func TestNewOffsetArea(t *testing.T) {
+	t.Run("KeepsNegativeCoordinates", func(t *testing.T) {
+		a := NewOffsetArea("eye_l", -0.048, -0.004, 0.03, 0.02)
+
+		assert.Equal(t, "eye_l", a.Name)
+		assert.InDelta(t, -0.048, a.X, 1e-6)
+		assert.InDelta(t, -0.004, a.Y, 1e-6)
+	})
+	t.Run("ClipsTheSize", func(t *testing.T) {
+		a := NewOffsetArea("mark", 0.5, 0.5, 1.5, -0.2)
+
+		assert.InDelta(t, 1, a.W, 1e-6, "a size cannot exceed the image")
+		assert.InDelta(t, 0, a.H, 1e-6, "and cannot be negative")
+	})
+	t.Run("NewAreaStillClips", func(t *testing.T) {
+		// The crop box keeps its own contract: it names a region of an image.
+		a := NewArea("crop", -0.25, -0.25, 0.5, 0.5)
+
+		assert.InDelta(t, 0, a.X, 1e-6)
+		assert.InDelta(t, 0, a.Y, 1e-6)
+	})
+}
