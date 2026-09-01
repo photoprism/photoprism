@@ -145,3 +145,85 @@ func TestMarkerThumbSize(t *testing.T) {
 		assert.Equal(t, -1, MarkerThumbSize(area, File{}, 1800))
 	})
 }
+
+// TestMarkerEmbedUpscaled covers what a marker records about the detail its embedding was drawn
+// at, which is the one property of a crop that cannot be recovered from the vector afterwards.
+func TestMarkerEmbedUpscaled(t *testing.T) {
+	t.Run("Measured", func(t *testing.T) {
+		assert.Equal(t, 46, MarkerEmbedUpscaled(face.Face{EmbedUpscaled: 46}))
+		assert.Equal(t, 100, MarkerEmbedUpscaled(face.Face{EmbedUpscaled: 100}))
+	})
+	t.Run("Unmeasured", func(t *testing.T) {
+		// A sampling that could not measure a ratio still says one was attempted, which is what
+		// keeps it apart from the -1 of a marker no crop was ever taken for.
+		assert.Equal(t, EmbedUpscaledUnknown, MarkerEmbedUpscaled(face.Face{}))
+		assert.Equal(t, EmbedUpscaledUnknown, MarkerEmbedUpscaled(face.Face{EmbedUpscaled: -3}))
+	})
+}
+
+// TestNewFaceMarkerEmbedUpscaled pins the three states a stored marker distinguishes, since a
+// column that only ever holds two of them is a bool that cost a SMALLINT.
+func TestNewFaceMarkerEmbedUpscaled(t *testing.T) {
+	file := FileFixtures.Get("exampleFileName.jpg")
+	area := face.NewArea("face", 300, 300, 200)
+
+	t.Run("FullDetail", func(t *testing.T) {
+		f := face.Face{Rows: 720, Cols: 720, Area: area, ThumbSize: 284, EmbedUpscaled: 100,
+			Embeddings: face.Embeddings{face.RandomEmbedding()}}
+
+		require.Equal(t, 100, NewFaceMarker(f, file, "").EmbedUpscaled)
+	})
+	t.Run("Upscaled", func(t *testing.T) {
+		f := face.Face{Rows: 720, Cols: 720, Area: area, ThumbSize: 57, EmbedUpscaled: 51,
+			Embeddings: face.Embeddings{face.RandomEmbedding()}}
+
+		require.Equal(t, 51, NewFaceMarker(f, file, "").EmbedUpscaled)
+	})
+	t.Run("SampledWithoutARatio", func(t *testing.T) {
+		f := face.Face{Rows: 720, Cols: 720, Area: area, Embeddings: face.Embeddings{face.RandomEmbedding()}}
+
+		require.Equal(t, EmbedUpscaledUnknown, NewFaceMarker(f, file, "").EmbedUpscaled)
+	})
+	t.Run("NeverSampled", func(t *testing.T) {
+		// The state every marker written before the column existed is in, and the one a hand-drawn
+		// marker stays in: nothing has taken a crop for it, so there is nothing to describe.
+		f := face.Face{Rows: 720, Cols: 720, Area: area}
+
+		require.Equal(t, -1, NewFaceMarker(f, file, "").EmbedUpscaled)
+		assert.Equal(t, -1, NewMarker(file, crop.NewArea("face", 0.4, 0.4, 0.1, 0.1), "", SrcImage, MarkerFace, 100, 50).EmbedUpscaled)
+	})
+}
+
+// TestMarkerEmbedUpscaledRoundTrip pins that every state survives an insert. The unmeasurable one
+// is negative for exactly this reason: GORM omits a zero field where the column has a default, so
+// a zero would be stored as the -1 that means the marker was never sampled.
+func TestMarkerEmbedUpscaledRoundTrip(t *testing.T) {
+	file := FileFixtures.Get("exampleFileName.jpg")
+
+	stored := func(t *testing.T, value int) int {
+		t.Helper()
+
+		m := NewMarker(file, crop.NewArea("face", 0.4, 0.4, 0.1, 0.1), "", SrcImage, MarkerFace, 100, 50)
+		m.MarkerUID = rnd.GenerateUID('m')
+		m.EmbedUpscaled = value
+
+		require.NoError(t, Db().Create(m).Error)
+		t.Cleanup(func() { UnscopedDb().Delete(m) })
+
+		found := FindMarker(m.MarkerUID)
+		require.NotNil(t, found)
+
+		return found.EmbedUpscaled
+	}
+
+	t.Run("Measured", func(t *testing.T) {
+		assert.Equal(t, 51, stored(t, 51))
+		assert.Equal(t, 100, stored(t, 100))
+	})
+	t.Run("Unmeasured", func(t *testing.T) {
+		assert.Equal(t, EmbedUpscaledUnknown, stored(t, EmbedUpscaledUnknown))
+	})
+	t.Run("NeverSampled", func(t *testing.T) {
+		assert.Equal(t, -1, stored(t, -1))
+	})
+}

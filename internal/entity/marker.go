@@ -52,11 +52,16 @@ type Marker struct {
 	H              float32         `gorm:"type:FLOAT;" json:"H" yaml:"H,omitempty"`
 	Size           int             `gorm:"default:-1;" json:"Size" yaml:"Size,omitempty"`
 	ThumbSize      int             `gorm:"column:thumb_size;default:-1;" json:"ThumbSize" yaml:"ThumbSize,omitempty"`
-	Score          int             `gorm:"type:SMALLINT;" json:"Score" yaml:"Score,omitempty"`
-	Thumb          string          `gorm:"type:VARBINARY(128);index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
-	MatchedAt      *time.Time      `sql:"index" json:"MatchedAt" yaml:"MatchedAt,omitempty"`
-	CreatedAt      time.Time
-	UpdatedAt      time.Time
+	// EmbedUpscaled is the percentage of the crop its source supplied, 100 where it supplied all
+	// of it, EmbedUpscaledUnknown where a sampling could not measure one, and -1 where nothing
+	// has sampled the marker. It describes the embedding, which is why it sits beside embed_model
+	// rather than under the thumb_ prefix its partner thumb_size carries.
+	EmbedUpscaled int        `gorm:"column:embed_upscaled;type:SMALLINT;default:-1;" json:"-" yaml:"EmbedUpscaled,omitempty"`
+	Score         int        `gorm:"type:SMALLINT;" json:"Score" yaml:"Score,omitempty"`
+	Thumb         string     `gorm:"type:VARBINARY(128);index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
+	MatchedAt     *time.Time `sql:"index" json:"MatchedAt" yaml:"MatchedAt,omitempty"`
+	CreatedAt     time.Time
+	UpdatedAt     time.Time
 }
 
 // TableName returns the entity table name.
@@ -94,6 +99,7 @@ func NewMarker(file File, area crop.Area, subjUID, markerSrc, markerType string,
 		H:             area.H,
 		Size:          size,
 		ThumbSize:     -1,
+		EmbedUpscaled: -1,
 		Score:         score,
 		Thumb:         area.Thumb(file.FileHash),
 		MatchedAt:     nil,
@@ -131,6 +137,12 @@ func NewFaceMarker(f face.Face, file File, subjUid string) *Marker {
 	// where -1 says the marker never had a crop taken.
 	if f.ThumbSize > 0 {
 		m.ThumbSize = f.ThumbSize
+	}
+
+	// The detail the crop was drawn at is recorded for every sampled marker, including one it
+	// could not be measured for, so a row that never had a crop taken stays apart from both.
+	if !f.Embeddings.Empty() {
+		m.EmbedUpscaled = MarkerEmbedUpscaled(f)
 	}
 
 	return m

@@ -518,6 +518,26 @@ func TestFaces_cropMigrationEmbeddings(t *testing.T) {
 	)
 	require.NoError(t, err)
 	assert.NotEmpty(t, result)
+
+	t.Run("RecordsWhatTheCropWasDrawnFrom", func(t *testing.T) {
+		// The extent the vector was sampled at, and how much of the 16 px crop this embedder
+		// asked for that extent supplied. A re-crop runs no detector, so these are all it records.
+		sized := "1123456789012345678901234567890123456789"
+		name, nameErr := thumb.Sizes[thumb.Fit720].FileName(sized, successConf.ThumbCachePath())
+		require.NoError(t, nameErr)
+		require.NoError(t, thumb.Save(image.NewNRGBA(image.Rect(0, 0, 640, 480)), name))
+
+		file := &entity.File{FileHash: sized, FileWidth: 640, FileHeight: 480}
+
+		_, details, cropErr := successWorker.cropMigrationEmbeddings(embedder, file,
+			entity.Markers{{MarkerUID: "m3", W: 0.02, H: 0.02}, {MarkerUID: "m4", W: 1, H: 1}})
+		require.NoError(t, cropErr)
+
+		assert.Equal(t, 12, details["m3"].ThumbSize)
+		assert.Equal(t, 75, details["m3"].EmbedUpscaled, "12 px of the 16 px the crop asked for")
+		assert.Equal(t, 640, details["m4"].ThumbSize)
+		assert.Equal(t, 100, details["m4"].EmbedUpscaled, "a face larger than the crop is not upscaled")
+	})
 }
 
 func TestFaces_detectMigrationEmbeddings(t *testing.T) {

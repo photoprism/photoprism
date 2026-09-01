@@ -54,7 +54,13 @@ func (e *stubEmbedder) Close() error { return nil }
 
 // testFaces returns a detected face with landmarks and one without.
 func testFaces(withLandmarks bool) face.Faces {
-	f := face.Face{Rows: 720, Cols: 720, Score: 40, Area: face.NewArea("face", 300, 300, 200)}
+	return testFacesOfSize(withLandmarks, 200)
+}
+
+// testFacesOfSize returns a detected face of the given size in pixels of a 720 px detection image,
+// which is what decides how much of the crop the source can supply.
+func testFacesOfSize(withLandmarks bool, size int) face.Faces {
+	f := face.Face{Rows: 720, Cols: 720, Score: 40, Area: face.NewArea("face", 300, 300, size)}
 
 	if withLandmarks {
 		var kps [face.NumLandmarks * 2]float32
@@ -98,6 +104,38 @@ func TestGenerateEmbeddings(t *testing.T) {
 		assert.False(t, faces[0].Embeddings.Empty())
 		assert.Positive(t, faces[0].ThumbSize, "the unaligned branch records it too")
 	})
+	t.Run("RecordsFullDetailForALargeFace", func(t *testing.T) {
+		// 1.jpg is 1024 px wide, so a face 200 px across in the 720 px detection image covers 284
+		// px there - more than the 112 px template needs, and the surplus is not detail either.
+		embedder := &stubEmbedder{aligned: true, dims: 128}
+		faces := testFaces(true)
+		GenerateEmbeddings(embedder, fileName, faces, false)
+
+		require.False(t, faces[0].Embeddings.Empty())
+		assert.Equal(t, 284, faces[0].ThumbSize)
+		assert.Equal(t, 100, faces[0].EmbedUpscaled)
+	})
+	t.Run("RecordsTheShortfallOfASmallFace", func(t *testing.T) {
+		// The same picture and a 40 px face, which covers 57 px of it: the crop the model reads
+		// is interpolated from half the pixels it asks for, and nothing in the vector says so.
+		embedder := &stubEmbedder{aligned: true, dims: 128}
+		faces := testFacesOfSize(true, 40)
+		GenerateEmbeddings(embedder, fileName, faces, false)
+
+		require.False(t, faces[0].Embeddings.Empty())
+		assert.Equal(t, 57, faces[0].ThumbSize)
+		assert.Equal(t, 51, faces[0].EmbedUpscaled)
+	})
+	t.Run("MeasuredAgainstTheFallbackCrop", func(t *testing.T) {
+		// The unaligned branch resamples a 160 px box rather than the 112 px template, so the
+		// same face is short by more there. Reading one crop width for both would misstate it.
+		embedder := &stubEmbedder{aligned: true, dims: 128}
+		faces := testFacesOfSize(false, 40)
+		require.Equal(t, 1, GenerateEmbeddings(embedder, fileName, faces, false))
+
+		assert.Equal(t, 57, faces[0].ThumbSize)
+		assert.Equal(t, 36, faces[0].EmbedUpscaled)
+	})
 	t.Run("EmptyEmbeddingIsNotCounted", func(t *testing.T) {
 		// The count describes vectors, so a crop the model returned nothing for is not one.
 		embedder := &stubEmbedder{aligned: true, empty: true, dims: 128}
@@ -106,6 +144,7 @@ func TestGenerateEmbeddings(t *testing.T) {
 
 		require.Len(t, embedder.sizes, 1, "the crop was still taken")
 		assert.True(t, faces[0].Embeddings.Empty())
+		assert.Zero(t, faces[0].EmbedUpscaled, "a crop no vector came out of describes nothing")
 	})
 	t.Run("UnalignedModelUsesThumbCrop", func(t *testing.T) {
 		embedder := &stubEmbedder{aligned: false, dims: 512}

@@ -59,3 +59,59 @@ func TestFace_SetThumbSize(t *testing.T) {
 		assert.NotPanics(t, func() { (*Face)(nil).SetThumbSize(1800) })
 	})
 }
+
+// TestEmbedDetail covers how much of the crop the embedder asked for a source could supply, which
+// is what tells a vector drawn from real pixels from one interpolated up to the same size.
+func TestEmbedDetail(t *testing.T) {
+	t.Run("Upscaled", func(t *testing.T) {
+		assert.Equal(t, 46, EmbedDetail(52, 112), "a 52 px face stretched onto a 112 px template")
+		assert.Equal(t, 30, EmbedDetail(48, 160))
+		assert.Equal(t, 95, EmbedDetail(106, 112), "close is still short")
+	})
+	t.Run("FullDetail", func(t *testing.T) {
+		assert.Equal(t, 100, EmbedDetail(112, 112))
+	})
+	t.Run("ClampedAtFullDetail", func(t *testing.T) {
+		// Headroom above the crop is spent on the resample, so it is not detail the model sees.
+		assert.Equal(t, 100, EmbedDetail(1600, 112))
+	})
+	t.Run("NeverZeroWhenMeasured", func(t *testing.T) {
+		// Zero is the "could not be measured" state, so a real ratio that rounds to it is 1.
+		assert.Equal(t, 1, EmbedDetail(1, 4096))
+	})
+	t.Run("Unmeasurable", func(t *testing.T) {
+		assert.Zero(t, EmbedDetail(0, 112))
+		assert.Zero(t, EmbedDetail(52, 0))
+		assert.Zero(t, EmbedDetail(-1, 112))
+	})
+}
+
+// TestFace_SetEmbedUpscaled covers the detail recorded beside an embedding, which is measured at
+// the crop rather than derived afterwards from a template that may since have changed.
+func TestFace_SetEmbedUpscaled(t *testing.T) {
+	t.Run("AlignedTemplate", func(t *testing.T) {
+		f := &Face{Cols: 720, Area: Area{Scale: 60}}
+		f.SetThumbSize(720)
+		f.SetEmbedUpscaled(ArcFaceTemplateSize)
+
+		assert.Equal(t, 60, f.ThumbSize)
+		assert.Equal(t, 54, f.EmbedUpscaled)
+	})
+	t.Run("WiderRenditionRemovesTheUpscale", func(t *testing.T) {
+		// The same face embedded from a 1920 px rendition instead of the detection thumbnail.
+		f := &Face{Cols: 720, Area: Area{Scale: 60}}
+		f.SetThumbSize(1920)
+		f.SetEmbedUpscaled(ArcFaceTemplateSize)
+
+		assert.Equal(t, 100, f.EmbedUpscaled)
+	})
+	t.Run("UnsampledLeavesItUnset", func(t *testing.T) {
+		f := &Face{Cols: 720, Area: Area{Scale: 60}}
+		f.SetEmbedUpscaled(ArcFaceTemplateSize)
+
+		assert.Zero(t, f.EmbedUpscaled, "no extent was recorded to measure against")
+	})
+	t.Run("Nil", func(t *testing.T) {
+		assert.NotPanics(t, func() { (*Face)(nil).SetEmbedUpscaled(112) })
+	})
+}
