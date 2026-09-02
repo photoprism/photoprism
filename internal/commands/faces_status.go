@@ -14,17 +14,16 @@ import (
 // FacesStatusCommand reports the face detection and recognition configuration together with the
 // state a database connection reveals: the model the library holds, whether embeddings are paused,
 // and which threshold is holding automatic clustering back. It is named for the status rather than
-// the configuration, because `photoprism config` reports the same options and cannot state any of
-// it; "doctor" is an alias, since diagnosing is what an operator comes here to do.
+// the configuration, because `photoprism config` reports the same options and cannot state any of it.
 var FacesStatusCommand = &cli.Command{
 	Name:    "status",
-	Aliases: []string{"config", "doctor"},
-	Usage:   "Reports the face detection and recognition status",
+	Aliases: []string{"config"},
+	Usage:   "Reports the current status and configuration details",
 	Flags:   report.CliFlags,
 	Action:  facesStatusAction,
 }
 
-// facesStatusAction prints the face detection and recognition status.
+// facesStatusAction prints the current status and configuration details.
 func facesStatusAction(ctx *cli.Context) error {
 	conf, err := InitCoreConfig(ctx, true)
 
@@ -54,7 +53,7 @@ func facesStatusAction(ctx *cli.Context) error {
 		return printFacesStatusJSON(status, sections)
 	}
 
-	fmt.Printf("%s\n\n", strings.Join(status, " "))
+	fmt.Printf("\n%s\n\n", strings.Join(status, " "))
 
 	for _, section := range sections {
 		result, renderErr := report.Render(section.Rows, section.Cols, report.Options{Format: format, NoWrap: true})

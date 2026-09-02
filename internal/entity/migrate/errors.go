@@ -2,6 +2,7 @@ package migrate
 
 import "strings"
 
+// QueryErr maps a query substring to the error strings it may safely produce.
 type QueryErr map[string][]string
 
 // Matches checks if there is a match for the specified query and error string.
@@ -21,6 +22,8 @@ func (m QueryErr) Matches(query, err string) bool {
 	return false
 }
 
+// IgnoreErr lists the errors a migration may report without having failed, because the change
+// it describes was already in place.
 var IgnoreErr = QueryErr{
 	"rename":              {"no such", "already exists"},
 	"replace":             {"no such", "exist", "exists"},

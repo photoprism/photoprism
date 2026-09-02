@@ -21,6 +21,7 @@ const FolderUID = byte('d')
 
 var folderMutex = sync.Mutex{}
 
+// Folders represents a list of folders.
 type Folders []Folder
 
 // Folder represents a file system directory.

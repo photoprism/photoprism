@@ -19,7 +19,7 @@ type TableMap struct {
 	TableDefinition any
 }
 
-// Tables is the map to allow ordered table setup/teardown
+// Tables maps a table name to the entity that defines its schema.
 type Tables map[int]TableMap
 
 // Entities is the list of tables in the order that they must be processed for setup/teardown

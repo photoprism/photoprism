@@ -3,7 +3,6 @@ package photoprism
 import (
 	"fmt"
 	"math"
-	"os"
 	"strings"
 	"sync"
 	"testing"
@@ -16,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/vector/alg"
 )
@@ -124,7 +124,7 @@ func TestFaces_Cluster(t *testing.T) {
 				MarkerUID:      rnd.GenerateUID('m'),
 				MarkerType:     entity.MarkerFace,
 				MarkerSrc:      entity.SrcImage,
-				Size:           100,
+				Size:           face.ClusterSizeThreshold,
 				Score:          face.ClusterScore("") + 10,
 				EmbeddingsJSON: values.JSON(),
 				EmbedModel:     face.ModelSFace,
@@ -145,9 +145,63 @@ func TestFaces_Cluster(t *testing.T) {
 	})
 }
 
-// TestFaces_reportClusteringSkipped pins that a library where nothing ever clusters says so. It
-// was a debug line, which made it indistinguishable from one where clustering ran and found
-// nothing - and the thresholds that exclude a marker are not the ones a person judges a face by.
+// TestFaces_reportNoClustersFormed pins that a pass which ran and formed nothing says so, rather
+// than reading as an idle instance while the run repeats on every wake.
+func TestFaces_reportNoClustersFormed(t *testing.T) {
+	w := NewFaces(config.TestConfig())
+
+	hook := test.NewGlobal()
+	t.Cleanup(hook.Reset)
+
+	w.reportNoClustersFormed(42)
+
+	var reported int
+
+	for _, entry := range hook.AllEntries() {
+		if entry.Level == logrus.InfoLevel && strings.Contains(entry.Message, "formed no cluster") {
+			reported++
+
+			assert.Contains(t, entry.Message, "42 samples")
+			// Actionable rather than only observed: the two thresholds that decide whether any
+			// group forms are what an operator would have to change.
+			assert.Contains(t, entry.Message, fmt.Sprintf("%d faces", face.ClusterCore))
+		}
+	}
+
+	require.Equal(t, 1, reported, "a pass that formed nothing must be visible above debug")
+
+	// A worker that wakes every few minutes must not repeat an unchanged condition.
+	w.reportNoClustersFormed(42)
+
+	reported = 0
+
+	for _, entry := range hook.AllEntries() {
+		if entry.Level == logrus.InfoLevel && strings.Contains(entry.Message, "formed no cluster") {
+			reported++
+		}
+	}
+
+	assert.Equal(t, 1, reported, "an unchanged condition must not be repeated")
+
+	// A changed count is a changed condition and is reported again.
+	w.reportNoClustersFormed(43)
+
+	reported = 0
+
+	for _, entry := range hook.AllEntries() {
+		if entry.Level == logrus.InfoLevel && strings.Contains(entry.Message, "formed no cluster") {
+			reported++
+		}
+	}
+
+	assert.Equal(t, 2, reported)
+
+	assert.NotPanics(t, func() { (*Faces)(nil).reportNoClustersFormed(1) })
+}
+
+// TestFaces_reportClusteringSkipped pins that a library where too few markers clear the bars says
+// so, and names them: the thresholds that exclude a marker are not the ones a person judges a face
+// by, so the count alone would not be actionable.
 func TestFaces_reportClusteringSkipped(t *testing.T) {
 	w := NewFaces(config.TestConfig())
 
@@ -190,6 +244,16 @@ func TestFaces_reportClusteringSkipped(t *testing.T) {
 
 // setFaceThresholds applies clustering thresholds for the duration of a test, so a fixture built
 // against the shipped distances is judged by them rather than by whatever ran last.
+// Prefer setShippedFaceThresholds, which cannot fall behind a recalibration.
+func setShippedFaceThresholds(t *testing.T) {
+	t.Helper()
+
+	m := face.FindEmbeddingModel(face.ModelSFace)
+	require.NotNil(t, m)
+
+	setFaceThresholds(t, m.ClusterDist, m.ClusterRadius, m.MatchDist)
+}
+
 func setFaceThresholds(t *testing.T, clusterDist, clusterRadius, matchDist float64) {
 	dist, radius, match := face.ClusterDist, face.ClusterRadius, face.MatchDist
 
@@ -204,13 +268,13 @@ func setFaceThresholds(t *testing.T, clusterDist, clusterRadius, matchDist float
 // variables read inside DBSCAN, so a test that leaves one set makes a later one fail depending on
 // the order it ran in.
 func setFaceClusterSplit(t *testing.T, shrink float64, rounds int) {
-	prevShrink, prevRounds := faceClusterSplitShrink, faceClusterSplitRounds
+	prevShrink, prevRounds := face.ClusterSplitShrink, face.ClusterSplitRounds
 
 	t.Cleanup(func() {
-		faceClusterSplitShrink, faceClusterSplitRounds = prevShrink, prevRounds
+		face.ClusterSplitShrink, face.ClusterSplitRounds = prevShrink, prevRounds
 	})
 
-	faceClusterSplitShrink, faceClusterSplitRounds = shrink, rounds
+	face.ClusterSplitShrink, face.ClusterSplitRounds = shrink, rounds
 }
 
 // betweenEmbeddings returns the unit vector t of the way from a to b along the great circle joining
@@ -281,7 +345,7 @@ func chainedFixture() (embeddings face.Embeddings, group []int) {
 // TestChainFixture pins that the fixture reproduces the failure it stands for. A green split test
 // against a fixture that never chains would be a test of the early return.
 func TestChainFixture(t *testing.T) {
-	setFaceThresholds(t, 0.85, 0.60, 0.35)
+	setShippedFaceThresholds(t)
 
 	groupA, groupB, bridge := chainFixture()
 	chained, _ := chainedFixture()
@@ -316,7 +380,7 @@ func TestChainFixture(t *testing.T) {
 func TestSplitWideClusters(t *testing.T) {
 	// The parts have to be judged against the shipped SFace distances rather than whatever the
 	// package configured last, or the fixture would measure a different question.
-	setFaceThresholds(t, 0.85, 0.60, 0.35)
+	setShippedFaceThresholds(t)
 
 	w := NewFaces(config.TestConfig())
 
@@ -397,7 +461,34 @@ func TestSplitWideClusters(t *testing.T) {
 
 		assert.True(t, warned, "giving up on a group must be reported rather than silent")
 	})
+	t.Run("DiscardsAWideGroupWithNoRounds", func(t *testing.T) {
+		// The behavior a zero budget has and reads as not having: it is stricter than the default
+		// rather than looser, because a group that does not fit never reaches the result.
+		setFaceClusterSplit(t, face.ClusterSplitShrinkDefault, 0)
+
+		embeddings, _ := chainedFixture()
+
+		assert.Empty(t, w.splitWideClusters(embeddings, face.ClusterDist, 1),
+			"no rounds discards a wide group rather than keeping it")
+	})
+	t.Run("KeepsAWideGroupWhenDisabled", func(t *testing.T) {
+		// The switch a sweep needs, and the only one that keeps such a group: with the guard off
+		// ClusterFits is never consulted, so the radius definition cannot affect the result either.
+		setFaceClusterSplit(t, face.ClusterSplitShrinkDefault, face.ClusterSplitOff)
+
+		embeddings, _ := chainedFixture()
+
+		parts := w.splitWideClusters(embeddings, face.ClusterDist, 1)
+
+		require.Len(t, parts, 1)
+		assert.Len(t, parts[0], len(embeddings))
+		assert.False(t, face.ClusterFits(parts[0].Radius()), "the fixture must be a group the guard would have cut")
+	})
 	t.Run("Empty", func(t *testing.T) {
+		assert.Empty(t, w.splitWideClusters(face.Embeddings{}, face.ClusterDist, 1))
+	})
+	t.Run("EmptyWhenDisabled", func(t *testing.T) {
+		setFaceClusterSplit(t, face.ClusterSplitShrinkDefault, face.ClusterSplitOff)
 		assert.Empty(t, w.splitWideClusters(face.Embeddings{}, face.ClusterDist, 1))
 	})
 }
@@ -409,7 +500,7 @@ func TestSplitWideClusters(t *testing.T) {
 // real library halved coverage and left the person the check was written for unnameable.
 func TestSplitDist(t *testing.T) {
 	t.Run("Shortens", func(t *testing.T) {
-		assert.InDelta(t, 0.85*faceClusterSplitShrink, splitDist(0.85), 1e-9)
+		assert.InDelta(t, 0.85*face.ClusterSplitShrink, splitDist(0.85), 1e-9)
 	})
 	t.Run("IndependentOfHowWideTheGroupIs", func(t *testing.T) {
 		// The whole point: a group at twice its accept distance takes the same first step as one
@@ -429,7 +520,7 @@ func TestSplitDist(t *testing.T) {
 		// reports its samples unclustered; too much and the group dissolves into noise.
 		dist := face.ClusterDistDefault
 
-		for range faceClusterSplitRounds {
+		for range face.ClusterSplitRounds {
 			dist = splitDist(dist)
 		}
 
@@ -437,55 +528,10 @@ func TestSplitDist(t *testing.T) {
 		assert.Less(t, dist, 0.8*face.ClusterDistDefault, "the budget runs out before a chain separates")
 	})
 	t.Run("FollowsTheShrink", func(t *testing.T) {
-		setFaceClusterSplit(t, 0.5, faceClusterSplitRounds)
+		setFaceClusterSplit(t, 0.5, face.ClusterSplitRounds)
 
 		assert.InDelta(t, 0.425, splitDist(0.85), 1e-9)
 	})
-}
-
-// TestSplitShrinkEnv covers the shrink override, which keeps the default for anything that would
-// stop a round from shortening the link distance.
-func TestSplitShrinkEnv(t *testing.T) {
-	t.Run("Unset", func(t *testing.T) {
-		assert.InDelta(t, 0.90, splitShrinkEnv("", 0.90), 1e-9)
-		assert.InDelta(t, 0.90, splitShrinkEnv("  ", 0.90), 1e-9)
-	})
-	t.Run("InRange", func(t *testing.T) {
-		assert.InDelta(t, 0.95, splitShrinkEnv("0.95", 0.90), 1e-9)
-		assert.InDelta(t, 0.97, splitShrinkEnv(" 0.97 ", 0.90), 1e-9)
-	})
-	// One and above never shortens the distance, so every round would repeat the previous pass.
-	t.Run("OutOfRange", func(t *testing.T) {
-		for _, v := range []string{"0", "1", "1.5", "-0.5", "abc", "0.9x", "NaN", "Inf"} {
-			assert.InDelta(t, 0.90, splitShrinkEnv(v, 0.90), 1e-9, "%q must keep the default", v)
-		}
-	})
-}
-
-// TestSplitRoundsEnv covers the round-budget override. Zero is accepted, because a run that skips
-// splitting entirely is the baseline a sweep compares against.
-func TestSplitRoundsEnv(t *testing.T) {
-	t.Run("Unset", func(t *testing.T) {
-		assert.Equal(t, 6, splitRoundsEnv("", 6))
-		assert.Equal(t, 6, splitRoundsEnv("\t", 6))
-	})
-	t.Run("InRange", func(t *testing.T) {
-		assert.Equal(t, 8, splitRoundsEnv("8", 6))
-		assert.Equal(t, 0, splitRoundsEnv(" 0 ", 6))
-	})
-	t.Run("InvalidRequest", func(t *testing.T) {
-		for _, v := range []string{"-1", "abc", "6.5", ""} {
-			assert.Equal(t, 6, splitRoundsEnv(v, 6), "%q must keep the default", v)
-		}
-	})
-}
-
-// TestFaceClusterSplitInit covers that init applied the environment instead of leaving the limits
-// at their defaults. It reads the variables rather than setting them, because init runs once per
-// binary - so it only bites when a sweep is running, which is exactly when the wiring matters.
-func TestFaceClusterSplitInit(t *testing.T) {
-	assert.InDelta(t, splitShrinkEnv(os.Getenv(envFaceClusterSplitShrink), faceClusterSplitShrinkDefault), faceClusterSplitShrink, 1e-9)
-	assert.Equal(t, splitRoundsEnv(os.Getenv(envFaceClusterSplitRounds), faceClusterSplitRoundsDefault), faceClusterSplitRounds)
 }
 
 // TestReportSplitOverrides covers the line that makes a swept run self-describing.
@@ -511,7 +557,7 @@ func TestReportSplitOverrides(t *testing.T) {
 	}
 
 	t.Run("Defaults", func(t *testing.T) {
-		setFaceClusterSplit(t, faceClusterSplitShrinkDefault, faceClusterSplitRoundsDefault)
+		setFaceClusterSplit(t, face.ClusterSplitShrinkDefault, face.ClusterSplitRoundsDefault)
 
 		assert.Empty(t, report(t), "unchanged limits need no line")
 	})
@@ -521,6 +567,51 @@ func TestReportSplitOverrides(t *testing.T) {
 
 		assert.Contains(t, out, "0.80")
 		assert.Contains(t, out, "8 rounds")
+	})
+	// A guard that is off or discarding reaches the operator through the system log rather than the
+	// browser stream, so it is hooked separately from the ordinary override notes above.
+	reportSystem := func(t *testing.T) *test.Hook {
+		t.Helper()
+
+		hook := test.NewLocal(logrus.StandardLogger())
+		event.SystemLog.ReplaceHooks(logrus.LevelHooks{})
+		event.SystemLog.AddHook(hook)
+
+		splitOverrideOnce = sync.Once{}
+
+		t.Cleanup(func() {
+			event.SystemLog.ReplaceHooks(logrus.LevelHooks{})
+			hook.Reset()
+			splitOverrideOnce = sync.Once{}
+		})
+
+		reportSplitOverrides()
+
+		return hook
+	}
+
+	t.Run("Disabled", func(t *testing.T) {
+		// Loud rather than noted: with the guard off nothing bounds the width of an anonymous
+		// cluster, and a run that chained a library into one person cannot be undone but by a reset.
+		setFaceClusterSplit(t, face.ClusterSplitShrinkDefault, face.ClusterSplitOff)
+
+		entries := reportSystem(t).AllEntries()
+
+		require.NotEmpty(t, entries)
+		assert.Equal(t, logrus.WarnLevel, entries[0].Level)
+		assert.Contains(t, entries[0].Message, "width guard is off")
+		assert.Contains(t, entries[0].Message, "0 discards", "the value an operator reaches for first has to be named")
+	})
+	t.Run("DiscardsWideGroups", func(t *testing.T) {
+		// Zero reads as the loosest of the three and is the strictest, so it is named too.
+		setFaceClusterSplit(t, face.ClusterSplitShrinkDefault, 0)
+
+		entries := reportSystem(t).AllEntries()
+
+		require.NotEmpty(t, entries)
+		assert.Equal(t, logrus.WarnLevel, entries[0].Level)
+		assert.Contains(t, entries[0].Message, "discarded rather than split")
+		assert.Contains(t, entries[0].Message, "-1 is what switches it off")
 	})
 	t.Run("Once", func(t *testing.T) {
 		setFaceClusterSplit(t, 0.8, 8)
@@ -542,7 +633,7 @@ func TestReportSplitOverrides(t *testing.T) {
 // TestSplitCluster covers the one round the split takes, which shortens the link distance in
 // proportion to how far past its accept distance the group reaches.
 func TestSplitCluster(t *testing.T) {
-	setFaceThresholds(t, 0.85, 0.60, 0.35)
+	setShippedFaceThresholds(t)
 
 	embeddings, _ := chainedFixture()
 
@@ -583,5 +674,39 @@ func TestSplitCluster(t *testing.T) {
 	t.Run("InvalidDistance", func(t *testing.T) {
 		_, err := splitCluster(faceClusterPart{embeddings: embeddings, dist: 0}, 1)
 		assert.Error(t, err)
+	})
+}
+
+// TestCreateCluster covers the floor the clusterer does not enforce: the core size bars what may
+// form a cluster and is not a floor on the result, so a group of one reaches this point.
+func TestCreateCluster(t *testing.T) {
+	setShippedFaceThresholds(t)
+
+	t.Run("RefusesASingleEmbedding", func(t *testing.T) {
+		part := face.Embeddings{face.FixtureEmbedding(9401)}
+
+		f, usable := createCluster(part, face.ModelSFace)
+
+		assert.False(t, usable, "one embedding is not a centroid and must not be stored")
+		assert.Nil(t, f)
+	})
+	t.Run("RefusesAnEmptyGroup", func(t *testing.T) {
+		f, usable := createCluster(face.Embeddings{}, face.ModelSFace)
+
+		assert.False(t, usable)
+		assert.Nil(t, f)
+	})
+	t.Run("StoresAPair", func(t *testing.T) {
+		// Two are already an average, so the pair a run does produce is kept - the asymmetry that
+		// lets migrated and legacy two-embedding rows keep working.
+		a := face.FixtureEmbedding(9402)
+		part := face.Embeddings{a, face.FixtureEmbeddingAt(a, 0.05, 9403)}
+
+		f, usable := createCluster(part, face.ModelSFace)
+
+		require.True(t, usable)
+		require.NotNil(t, f)
+		assert.Equal(t, 2, f.Samples, "samples counts the embeddings the centroid was built from")
+		assert.NotEmpty(t, f.ID)
 	})
 }

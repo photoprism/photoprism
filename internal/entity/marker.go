@@ -20,6 +20,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
+// Marker types, naming what a marker points at.
 const (
 	MarkerUnknown = ""
 	MarkerFace    = "face"  // MarkerType for faces (implemented).
@@ -51,11 +52,18 @@ type Marker struct {
 	W              float32         `json:"W" yaml:"W,omitempty"`
 	H              float32         `json:"H" yaml:"H,omitempty"`
 	Size           int             `gorm:"default:-1;" json:"Size" yaml:"Size,omitempty"`
-	Score          int             `gorm:"type:int;size:16;" json:"Score" yaml:"Score,omitempty"`
-	Thumb          string          `gorm:"type:bytes;size:128;index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
-	MatchedAt      *time.Time      `gorm:"index" json:"MatchedAt" yaml:"MatchedAt,omitempty"`
-	CreatedAt      time.Time
-	UpdatedAt      time.Time
+	ThumbSize      int             `gorm:"column:thumb_size;default:-1;" json:"ThumbSize" yaml:"ThumbSize,omitempty"`
+	// EmbedDetail is the percentage of the crop its source supplied, 100 where it supplied all
+	// of it, EmbedDetailUnknown where a migration sampled the marker without measuring one, and
+	// -1 where nothing has. It describes the embedding, which is why it sits beside embed_model
+	// rather than under the thumb_ prefix its partner thumb_size carries, and it is written under
+	// the same condition as that partner so the two cannot disagree about what was sampled.
+	EmbedDetail int        `gorm:"column:embed_detail;type:int;size:16;default:-1;" json:"-" yaml:"EmbedDetail,omitempty"`
+	Score       int        `gorm:"type:int;size:16;" json:"Score" yaml:"Score,omitempty"`
+	Thumb       string     `gorm:"type:bytes;size:128;index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
+	MatchedAt   *time.Time `gorm:"index" json:"MatchedAt" yaml:"MatchedAt,omitempty"`
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 // TableName returns the entity table name.
@@ -93,6 +101,8 @@ func NewMarker(file File, area crop.Area, subjUID, markerSrc, markerType string,
 		W:             area.W,
 		H:             area.H,
 		Size:          size,
+		ThumbSize:     -1,
+		EmbedDetail:   -1,
 		Score:         score,
 		Thumb:         area.Thumb(file.FileHash),
 		MatchedAt:     nil,
@@ -125,6 +135,18 @@ func NewFaceMarker(f face.Face, file File, subjUid string) *Marker {
 
 	m.SetEmbeddings(f.Embeddings, f.EmbedModel, f.DetectModel)
 	m.LandmarksJSON = f.RelativeLandmarksJSON()
+
+	// Only when an embedding was actually sampled: a zero would read as a measurement of nothing,
+	// where -1 says the marker never had a crop taken. The pair is written under one condition,
+	// or a marker whose vector came from an endpoint records a crop on one column and none on the
+	// other - a migration settles both together and has to find them in the same state.
+	if f.ThumbSize > 0 {
+		m.ThumbSize = f.ThumbSize
+
+		if f.EmbedDetail > 0 {
+			m.EmbedDetail = f.EmbedDetail
+		}
+	}
 
 	return m
 }
@@ -258,6 +280,13 @@ func (m *Marker) HasFace(f *Face, dist float64) bool {
 // labels only its own marker - there is no XMP-driven clustering in v1.
 func subjSrcSharesFace(src string) bool {
 	return src != SrcAuto && src != SrcXmp
+}
+
+// NamesFace reports whether assigning this marker to an anonymous cluster would name that cluster
+// after its subject. SetFace does exactly that, and SetSubjectUID then spreads the name across the
+// cluster, so a caller choosing between clusters needs to know.
+func (m *Marker) NamesFace() bool {
+	return m != nil && m.SubjUID != "" && subjSrcSharesFace(m.SubjSrc)
 }
 
 // SetSubjectLink links the marker to an already-resolved subject without renaming it, so
@@ -435,7 +464,7 @@ func (m *Marker) InvalidArea() error {
 	}
 
 	// Ok?
-	if false == (m.X > 1 || m.Y > 1 || m.X < 0 || m.Y < 0 || m.W <= 0 || m.H <= 0 || m.W > 1 || m.H > 1) {
+	if !(m.X > 1 || m.Y > 1 || m.X < 0 || m.Y < 0 || m.W <= 0 || m.H <= 0 || m.W > 1 || m.H > 1) {
 		return nil
 	}
 
@@ -587,7 +616,7 @@ func (m *Marker) Face() (f *Face) {
 	// and XMP names must not seed the shared face (no XMP clustering in v1).
 	if subjSrcSharesFace(m.SubjSrc) && m.FaceID == "" {
 		if !m.Clusterable() {
-			log.Debugf("faces: marker %s skipped adding face due to low-quality (size %d, score %d)", clean.Log(m.MarkerUID), m.Size, m.Score)
+			log.Debugf("faces: marker %s skipped adding face due to low-quality (size %d, score %d)", clean.Log(m.MarkerUID), m.ClusterSizeOf(), m.Score)
 			return nil
 		}
 
@@ -677,12 +706,10 @@ func (m *Marker) Matched() error {
 	return UnscopedDb().Model(m).UpdateColumns(Values{"matched_at": m.MatchedAt}).Error
 }
 
-// Unmatched clears the match timestamp, so the next run compares this marker against every
-// cluster again.
+// Unmatched clears the match timestamp, so the next run compares this marker against every cluster.
 //
-// ClearFace stamps instead, which is right where the matcher itself found no face: it had just
-// compared against all of them. It is wrong after a conflict narrowed a cluster and dropped the
-// marker, because nothing has compared it against anything since.
+// ClearFace stamps instead, right where the matcher found no face: it had just compared against all
+// of them. Wrong after a conflict narrowed a cluster and dropped the marker, since nothing has.
 func (m *Marker) Unmatched() error {
 	m.MatchedAt = nil
 	return UnscopedDb().Model(m).UpdateColumns(Values{"matched_at": nil}).Error
@@ -767,7 +794,7 @@ func (m *Marker) DetectedFace() bool {
 // an automatic cluster. The score bar comes from the detector that scored it, because a library
 // holds markers from more than one and nothing recomputes a score.
 func (m *Marker) Clusterable() bool {
-	return m != nil && m.Size >= face.ClusterSizeThreshold && m.Score >= face.ClusterScore(m.DetectModel)
+	return m != nil && m.ClusterSizeOf() >= face.ClusterSizeThreshold && m.Score >= face.ClusterScore(m.DetectModel)
 }
 
 // Uncertainty returns the detection uncertainty based on the score in percent. The scale is

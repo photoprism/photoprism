@@ -1,5 +1,6 @@
 package sortby
 
+// Sort orders accepted by the search API, with Default leaving the choice to the query.
 const (
 	Default     = ""
 	Relevance   = "relevance"

@@ -16,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestFaces_Audit(t *testing.T) {
@@ -114,135 +115,8 @@ func TestFaces_AuditNormalizesEmbeddings(t *testing.T) {
 	require.Equal(t, expectedID, updatedMarker.FaceID)
 }
 
-// TestFaces_repairDegenerateRadius covers the repair for clusters stored before SetEmbeddings
-// widened them. Their radius sits at Epsilon rather than zero, because UpdateMatchStats already
-// lifted it, so the predicate here is not the guard that keeps new ones from being written.
-func TestFaces_repairDegenerateRadius(t *testing.T) {
-	// The subject scopes every assertion away from the seeded fixtures, one of which stores a
-	// radius of 0 and would otherwise satisfy a count a subtest meant to make about its own row.
-	const subjUID = "js6sg6b1qekk9jy1"
-
-	// storedFace saves a cluster and forces the radius past SetEmbeddings, which is the only way
-	// to reach the row shape a library upgraded from an earlier release holds.
-	storedFace := func(t *testing.T, seed uint64, radius float64, samples int) *entity.Face {
-		t.Helper()
-
-		m := entity.NewFace(subjUID, entity.SrcManual, face.Embeddings{face.FixtureEmbedding(seed)}, face.EmbeddingModelName())
-
-		require.NotNil(t, m)
-		require.NoError(t, m.Create())
-		require.NoError(t, entity.Db().Model(&entity.Face{}).Where("id = ?", m.ID).
-			UpdateColumns(entity.Values{"sample_radius": radius, "samples": samples, "matched_at": entity.Now()}).Error)
-
-		return m
-	}
-
-	reload := func(t *testing.T, id string) entity.Face {
-		t.Helper()
-
-		var result entity.Face
-		require.NoError(t, entity.Db().Where("id = ?", id).First(&result).Error)
-
-		return result
-	}
-
-	t.Run("ReportsWithoutFixing", func(t *testing.T) {
-		w := isolatedTestFaces(t, "faces-repair-radius-report")
-		stored := storedFace(t, 8401, face.Epsilon, 1)
-
-		n, err := w.repairDegenerateRadius(false, subjUID)
-		require.NoError(t, err)
-		assert.EqualValues(t, 1, n, "the report counts the subject's own degenerate cluster")
-
-		after := reload(t, stored.ID)
-		assert.InDelta(t, face.Epsilon, after.SampleRadius, 1e-9, "a dry run must not write")
-		assert.NotNil(t, after.MatchedAt)
-	})
-	t.Run("WidensStoredSingletons", func(t *testing.T) {
-		w := isolatedTestFaces(t, "faces-repair-radius-fix")
-		stored := storedFace(t, 8411, face.Epsilon, 1)
-
-		n, err := w.repairDegenerateRadius(true, subjUID)
-		require.NoError(t, err)
-		assert.EqualValues(t, 1, n)
-
-		after := reload(t, stored.ID)
-		assert.InDelta(t, face.ClusterRadius, after.SampleRadius, 1e-9)
-		assert.InDelta(t, face.ClusterRadius+face.MatchDist, after.AcceptDist(), 1e-9)
-		assert.Nil(t, after.MatchedAt, "the cluster has to be compared against the markers again")
-	})
-	// Pins the wiring rather than the repair: called directly, the subtests above stay green
-	// while nothing in Audit reaches the repair at all.
-	t.Run("AuditAppliesTheRepair", func(t *testing.T) {
-		w := isolatedTestFaces(t, "faces-repair-radius-audit")
-		stored := storedFace(t, 8431, face.Epsilon, 1)
-
-		// A cluster no marker points at is an orphan, which the same run deletes.
-		marker := &entity.Marker{
-			FileUID:    "fs6sg6bw45bnlqdw",
-			MarkerType: entity.MarkerFace,
-			MarkerSrc:  entity.SrcImage,
-			FaceID:     stored.ID,
-			Size:       face.SizeThreshold,
-			Score:      50,
-			X:          0.4,
-			Y:          0.4,
-			W:          0.1,
-			H:          0.1,
-		}
-
-		marker.SetEmbeddings(face.Embeddings{stored.Embedding()}, stored.EmbedModel, face.DetectorYuNet)
-		require.NoError(t, entity.Db().Create(marker).Error)
-
-		require.NoError(t, w.Audit(true, subjUID))
-
-		after := reload(t, stored.ID)
-		assert.InDelta(t, face.ClusterRadius, after.SampleRadius, 1e-9)
-		assert.Nil(t, after.MatchedAt)
-	})
-	// Nothing narrows a radius again, so a row the matcher would not read must not be widened:
-	// un-hiding it later would bring it back at the maximum with its own extent already gone.
-	t.Run("SkipsRowsTheMatcherExcludes", func(t *testing.T) {
-		w := isolatedTestFaces(t, "faces-repair-radius-excluded")
-
-		hidden := storedFace(t, 8441, face.Epsilon, 1)
-		require.NoError(t, entity.Db().Model(&entity.Face{}).Where("id = ?", hidden.ID).
-			UpdateColumn("face_hidden", true).Error)
-
-		ignored := storedFace(t, 8451, face.Epsilon, 1)
-		require.NoError(t, entity.Db().Model(&entity.Face{}).Where("id = ?", ignored.ID).
-			UpdateColumn("face_kind", int(face.AmbiguousFace)).Error)
-
-		foreign := storedFace(t, 8461, face.Epsilon, 1)
-		require.NoError(t, entity.Db().Model(&entity.Face{}).Where("id = ?", foreign.ID).
-			UpdateColumn("embed_model", "not-the-configured-model").Error)
-
-		n, err := w.repairDegenerateRadius(true, subjUID)
-		require.NoError(t, err)
-		assert.Zero(t, n)
-
-		for name, id := range map[string]string{"hidden": hidden.ID, "ignored": ignored.ID, "foreign": foreign.ID} {
-			after := reload(t, id)
-			assert.InDelta(t, face.Epsilon, after.SampleRadius, 1e-9, "%s stays as stored", name)
-			assert.NotNil(t, after.MatchedAt, "%s keeps its match timestamp", name)
-		}
-	})
-	t.Run("KeepsMeasuredRadius", func(t *testing.T) {
-		w := isolatedTestFaces(t, "faces-repair-radius-measured")
-		// Just above the predicate, and how a cluster that has since attracted a second marker
-		// records its extent: EmbeddingsMidpoint stores the distance it measured plus Epsilon.
-		stored := storedFace(t, 8421, 0.2388, 2)
-
-		n, err := w.repairDegenerateRadius(true, subjUID)
-		require.NoError(t, err)
-		assert.Zero(t, n, "a measured extent is not degenerate")
-
-		after := reload(t, stored.ID)
-		assert.InDelta(t, 0.2388, after.SampleRadius, 1e-9)
-		assert.NotNil(t, after.MatchedAt)
-	})
-}
-
+// normalizeEmbeddingCopy returns a unit-length copy of an embedding, leaving the original untouched
+// so a test can compare what it passed in against what was stored.
 func normalizeEmbeddingCopy(src face.Embedding) face.Embedding {
 	copyEmb := make(face.Embedding, len(src))
 	copy(copyEmb, src)
@@ -293,6 +167,169 @@ func loggedMessages(hook *test.Hook, level logrus.Level) []string {
 	}
 
 	return result
+}
+
+// TestFaces_recomputeMissingRadius covers the repair audit --fix applies to a cluster stored without
+// an extent. It measures over the members rather than writing a constant, because a width nothing
+// observed is what the singleton rule exists to remove - and a singleton has nothing to measure.
+func TestFaces_recomputeMissingRadius(t *testing.T) {
+	const subjUID = "js6sg6b1qekk9jy2"
+
+	// The row shape an upgraded library holds: SetEmbeddings has written at least the floor since.
+	storedClusterFor := func(t *testing.T, subj string, seed uint64, dists ...float64) *entity.Face {
+		t.Helper()
+
+		f, _ := recomputeTestCluster(t, subj, seed, dists...)
+		require.NoError(t, entity.Db().Model(&entity.Face{}).Where("id = ?", f.ID).
+			UpdateColumns(entity.Values{"sample_radius": 0, "matched_at": entity.Now()}).Error)
+
+		return f
+	}
+
+	storedCluster := func(t *testing.T, seed uint64, dists ...float64) *entity.Face {
+		t.Helper()
+		return storedClusterFor(t, subjUID, seed, dists...)
+	}
+
+	t.Run("MeasuresTheMembers", func(t *testing.T) {
+		w := isolatedTestFaces(t, "faces-audit-measure-fix")
+		f := storedCluster(t, 8901, 0.05, 0.08, 0.11)
+
+		n, err := w.recomputeMissingRadius(true, subjUID)
+		require.NoError(t, err)
+		assert.Equal(t, 1, n)
+
+		after := entity.FindFace(f.ID)
+		require.NotNil(t, after)
+		assert.GreaterOrEqual(t, after.SampleRadius, 0.11, "the extent covers the furthest member")
+		assert.Less(t, after.SampleRadius, face.ClusterRadius, "and is measured, not a constant")
+		assert.Nil(t, after.MatchedAt, "so the cluster is compared against the markers again")
+	})
+	t.Run("ReportsWithoutFixing", func(t *testing.T) {
+		w := isolatedTestFaces(t, "faces-audit-measure-report")
+		f := storedCluster(t, 8911, 0.05, 0.09)
+
+		n, err := w.recomputeMissingRadius(false, subjUID)
+		require.NoError(t, err)
+		assert.Equal(t, 1, n)
+
+		after := entity.FindFace(f.ID)
+		require.NotNil(t, after)
+		assert.Zero(t, after.SampleRadius, "a dry run must not write")
+		assert.NotNil(t, after.MatchedAt)
+	})
+	t.Run("LeavesASingletonAlone", func(t *testing.T) {
+		// One embedding has no extent, so there is nothing to repair and nothing to measure. It is
+		// given a marker deliberately: with none, an empty member set would decide the case and the
+		// core predicate this covers would never be what refused it.
+		w := isolatedTestFaces(t, "faces-audit-measure-singleton")
+
+		base := face.FixtureEmbedding(8921)
+		f := entity.NewFace(subjUID, entity.SrcManual, face.Embeddings{base}, face.EmbeddingModelName())
+		require.NotNil(t, f)
+		require.NoError(t, f.Create())
+		require.Equal(t, 1, f.Samples)
+		require.NoError(t, entity.Db().Model(&entity.Face{}).Where("id = ?", f.ID).
+			UpdateColumn("sample_radius", 0).Error)
+
+		marker := &entity.Marker{
+			FileUID: "fs6sg6bw45bnlqdw", MarkerType: entity.MarkerFace, MarkerSrc: entity.SrcImage,
+			FaceID: f.ID, SubjUID: subjUID, SubjSrc: entity.SrcManual,
+			Size: face.SizeThreshold, Score: 50, X: 0.2, Y: 0.2, W: 0.1, H: 0.1,
+		}
+		marker.SetEmbeddings(face.Embeddings{face.FixtureEmbeddingAt(base, 0.05, 8922)},
+			f.EmbedModel, face.DetectorYuNet)
+		require.NoError(t, entity.Db().Create(marker).Error)
+
+		t.Cleanup(func() {
+			entity.UnscopedDb().Delete(&entity.Marker{}, "marker_uid = ?", marker.MarkerUID)
+			entity.UnscopedDb().Delete(&entity.Face{}, "id = ?", f.ID)
+		})
+
+		members, err := query.FaceMembers(f.ID)
+		require.NoError(t, err)
+		require.Len(t, members, 1, "so a measurement is available and only the core refuses it")
+
+		n, err := w.recomputeMissingRadius(true, subjUID)
+		require.NoError(t, err)
+		assert.Zero(t, n)
+
+		after := entity.FindFace(f.ID)
+		require.NotNil(t, after)
+		assert.Zero(t, after.SampleRadius)
+	})
+	t.Run("SkipsRowsTheMatcherExcludes", func(t *testing.T) {
+		// Nothing narrows a radius again, so a row the matcher would not read must not be measured:
+		// un-hiding it later would bring it back with its own extent already gone.
+		w := isolatedTestFaces(t, "faces-audit-measure-excluded")
+
+		hidden := storedCluster(t, 8931, 0.05, 0.09, 0.11)
+		require.NoError(t, entity.Db().Model(&entity.Face{}).Where("id = ?", hidden.ID).
+			UpdateColumn("face_hidden", true).Error)
+
+		ignored := storedCluster(t, 8941, 0.05, 0.09, 0.11)
+		require.NoError(t, entity.Db().Model(&entity.Face{}).Where("id = ?", ignored.ID).
+			UpdateColumn("face_kind", int(face.AmbiguousFace)).Error)
+
+		foreign := storedCluster(t, 8951, 0.05, 0.09, 0.11)
+		require.NoError(t, entity.Db().Model(&entity.Face{}).Where("id = ?", foreign.ID).
+			UpdateColumn("embed_model", "not-the-configured-model").Error)
+
+		n, err := w.recomputeMissingRadius(true, subjUID)
+		require.NoError(t, err)
+		assert.Zero(t, n)
+
+		for name, id := range map[string]string{"hidden": hidden.ID, "ignored": ignored.ID, "foreign": foreign.ID} {
+			after := entity.FindFace(id)
+			require.NotNil(t, after, name)
+			assert.Zero(t, after.SampleRadius, name)
+		}
+	})
+	t.Run("KeepsARowAtTheFloor", func(t *testing.T) {
+		// A row already at the floor was written by a current path, so it is current rather than
+		// degenerate. Flipping the predicate to <= would re-measure every singleton in the library.
+		w := isolatedTestFaces(t, "faces-audit-measure-floor")
+
+		f := storedCluster(t, 8961, 0.05, 0.09, 0.11)
+		require.NoError(t, entity.Db().Model(&entity.Face{}).Where("id = ?", f.ID).
+			UpdateColumn("sample_radius", face.Epsilon).Error)
+
+		n, err := w.recomputeMissingRadius(true, subjUID)
+		require.NoError(t, err)
+		assert.Zero(t, n)
+
+		after := entity.FindFace(f.ID)
+		require.NotNil(t, after)
+		assert.InDelta(t, face.Epsilon, after.SampleRadius, 1e-9)
+	})
+	t.Run("AuditAppliesTheMeasurement", func(t *testing.T) {
+		// Pins the wiring rather than the measurement: called directly, every subtest above stays
+		// green while nothing in Audit reaches it at all.
+		// Its own subject, so the audit's other passes see one cluster rather than the several the
+		// subtests above leave behind - their cleanups run when the parent test ends, not sooner.
+		w := isolatedTestFaces(t, "faces-audit-measure-wiring")
+
+		// A real subject row, because Audit --fix clears references to subjects that do not exist -
+		// and its own subject, so the other passes see one cluster rather than the several the
+		// subtests above leave behind (their cleanups run when the parent test ends, not sooner).
+		subj := entity.NewSubject("Audit Wiring Person", entity.SubjPerson, entity.SrcManual)
+		require.NotNil(t, subj)
+		require.NoError(t, subj.Create())
+		t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Subject{}, "subj_uid = ?", subj.SubjUID) })
+
+		wiringUID := subj.SubjUID
+
+		storedClusterFor(t, wiringUID, 8971, 0.05, 0.09, 0.11)
+
+		require.NoError(t, w.Audit(true, wiringUID))
+
+		// Looked up by subject rather than by id: the same run normalizes stored embeddings, which
+		// re-keys a row whose vector was not unit length.
+		var after entity.Faces
+		require.NoError(t, entity.UnscopedDb().Where("subj_uid = ?", wiringUID).Find(&after).Error)
+		require.Len(t, after, 1)
+		assert.GreaterOrEqual(t, after[0].SampleRadius, 0.11, "the audit measured it")
+	})
 }
 
 func TestFaces_auditEmbeddingModels(t *testing.T) {
@@ -466,5 +503,102 @@ func TestFaces_auditProvenance(t *testing.T) {
 		logged := strings.Join(loggedMessages(hook, logrus.InfoLevel), "\n")
 		assert.Contains(t, logged, "wired-detector", "the detector report runs")
 		assert.Contains(t, logged, "embedding model", "the model reports still run")
+	})
+}
+
+// TestFaces_auditMarkerThumbSizes pins that the audit reports markers judged by their detection
+// size rather than by what their embedding was sampled from. It only counts: synthesizing the
+// value would write today's rendition choice against a vector produced under another one.
+func TestFaces_auditMarkerThumbSizes(t *testing.T) {
+	w := NewFaces(config.TestConfig())
+
+	hook := test.NewGlobal()
+	t.Cleanup(hook.Reset)
+
+	m := &entity.Marker{
+		MarkerUID:      rnd.GenerateUID('m'),
+		FileUID:        "fs6sg6bw45bnlqdw",
+		MarkerType:     entity.MarkerFace,
+		MarkerSrc:      entity.SrcImage,
+		Size:           200,
+		ThumbSize:      -1,
+		Score:          100,
+		EmbedModel:     face.EmbeddingModelName(),
+		EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
+		W:              0.1,
+		H:              0.1,
+	}
+	require.NoError(t, entity.Db().Create(m).Error)
+	t.Cleanup(func() { entity.UnscopedDb().Delete(m) })
+
+	w.auditMarkerThumbSizes()
+
+	var reported int
+
+	for _, entry := range hook.AllEntries() {
+		if strings.Contains(entry.Message, "no recorded sample size") {
+			reported++
+			assert.Equal(t, logrus.InfoLevel, entry.Level)
+		}
+	}
+
+	assert.Equal(t, 1, reported, "a marker the bar falls back on must be named")
+	assert.NotPanics(t, func() { (*Faces)(nil).auditMarkerThumbSizes() })
+}
+
+// TestFaces_auditMarkerSampleShortfall covers the one state that leaves no trace in the vectors: a
+// marker embedded from an upscaled crop is indistinguishable from one that was not, so the audit is
+// where an operator finds out that their thumbnails, or a migration that could not write one, cost
+// them recognition.
+func TestFaces_auditMarkerSampleShortfall(t *testing.T) {
+	w := NewFaces(config.TestConfig())
+
+	restore := face.ClusterSizeThreshold
+	t.Cleanup(func() { face.ClusterSizeThreshold = restore })
+
+	file := &entity.File{
+		FileUID:   rnd.GenerateUID('f'),
+		PhotoUID:  rnd.GenerateUID('p'),
+		FileName:  "audit-shortfall/large.jpg",
+		FileRoot:  entity.RootOriginals,
+		FileWidth: 4000,
+	}
+	require.NoError(t, entity.Db().Create(file).Error)
+	t.Cleanup(func() { entity.UnscopedDb().Delete(file) })
+
+	// Sampled at 60 px while its original holds 400, so a re-sampling clears a bar of 112.
+	marker := &entity.Marker{
+		MarkerUID:      rnd.GenerateUID('m'),
+		FileUID:        file.FileUID,
+		MarkerType:     entity.MarkerFace,
+		W:              0.1,
+		H:              0.1,
+		ThumbSize:      60,
+		EmbeddingsJSON: []byte("[[0.1,0.2]]"),
+	}
+	require.NoError(t, entity.Db().Create(marker).Error)
+	t.Cleanup(func() { entity.UnscopedDb().Delete(marker) })
+
+	t.Run("NamesWhatAMigrationWouldRecover", func(t *testing.T) {
+		face.ClusterSizeThreshold = 112
+
+		hook := captureLog(t)
+		w.auditMarkerSampleShortfall()
+
+		reported := strings.Join(loggedMessages(hook, logrus.InfoLevel), "\n")
+		assert.Contains(t, reported, "sampled below the 112 px clustering size")
+		assert.Contains(t, reported, "faces migrate")
+	})
+	t.Run("NothingToReport", func(t *testing.T) {
+		// A bar every measured marker clears is not a finding, so it stays out of the report.
+		face.ClusterSizeThreshold = 1
+
+		hook := captureLog(t)
+		w.auditMarkerSampleShortfall()
+
+		assert.Empty(t, loggedMessages(hook, logrus.InfoLevel))
+	})
+	t.Run("NilWorker", func(t *testing.T) {
+		assert.NotPanics(t, func() { (*Faces)(nil).auditMarkerSampleShortfall() })
 	})
 }

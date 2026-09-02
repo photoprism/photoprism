@@ -20,6 +20,8 @@ import (
 )
 
 var faceMutex = sync.Mutex{}
+
+// UpdateFaces reports whether a matching pass changed a cluster, so callers know to refresh.
 var UpdateFaces = atomic.Bool{}
 
 // Face represents the face of a Subject.
@@ -118,14 +120,30 @@ func (m *Face) SetEmbeddings(embeddings face.Embeddings, model face.ModelName) (
 
 	m.EmbedModel = model
 
+	// A midpoint with no magnitude describes no face and sits one unit from every unit vector, so
+	// a cluster built from it would accept whatever a model reaching past 1 compares with it.
+	// Refused here as well as in Match, so such a row cannot be stored in the first place - which
+	// is also what keeps the recorded kind and the migration predicate in agreement.
+	if m.embedding.Zero() {
+		return fmt.Errorf("embedding has no magnitude")
+	}
+
+	// Classified from the midpoint that is stored, not from the inputs it was computed over: two
+	// opposite vectors are each regular while their mean is not a face. Recorded rather than left
+	// at zero because the "face:N" search filter reads the number, and raised rather than assigned
+	// so a cluster already reported as ambiguous is not downgraded.
+	if k := int(m.embedding.Kind()); k > m.FaceKind {
+		m.FaceKind = k
+	}
+
 	// Limit sample radius to reduce false positives.
 	m.SampleRadius = face.ClampSampleRadius(m.SampleRadius)
 
-	// An extent of zero is unmeasurable rather than tight, and would leave the cluster narrower
-	// than any real pair of one person's faces. Duplicate samples measure zero too, so this also
-	// gives a cluster of duplicates the reach its near-duplicate equivalent would have.
+	// One embedding has no extent, and neither do copies of one crop: the honest value is the
+	// numeric tolerance, not the width of a cluster nothing measured. A centroid and a radius are
+	// what merging produces, so a singleton carries neither until it becomes part of one.
 	if m.SampleRadius <= 0 {
-		m.SampleRadius = face.ClusterRadius
+		m.SampleRadius = face.Epsilon
 	}
 
 	m.EmbeddingJSON, err = json.Marshal(m.embedding)
@@ -234,6 +252,41 @@ func (m *Face) Match(embeddings face.Embeddings, model face.ModelName) (match bo
 	return true, dist
 }
 
+// Mergeable reports whether one midpoint can stand for this cluster and the given one, and returns
+// the distance between them.
+//
+// Bounded by what a cluster may ever accept - the widest radius one may hold plus MatchDist - rather
+// than by Match, which reads this cluster's own extent and so answers differently depending on which
+// of the two is asked. The bound is a constant for that reason, so the verdict stays symmetric.
+func (m *Face) Mergeable(f *Face) (mergeable bool, dist float64) {
+	dist = -1
+
+	// An id on both sides, or the verdict would depend on the direction asked.
+	if m == nil || f == nil || m.ID == "" || f.ID == "" || m.ID == f.ID {
+		return false, dist
+	}
+
+	// Averaging vectors from two models yields a midpoint that describes neither.
+	if !face.SameEmbeddingSpace(m.EmbedModel, f.EmbedModel) {
+		return false, dist
+	}
+
+	a, b := m.Embedding(), f.Embedding()
+
+	// Refused as in Match: such a midpoint is one unit from every unit vector.
+	if len(a) == 0 || len(b) == 0 || a.Zero() || b.Zero() {
+		return false, dist
+	}
+
+	dist = a.Dist(b)
+
+	// Two faces of one person sit further apart than the link distance far more often than not, so
+	// bounding the merge there left hand-labeled clusters waiting indefinitely. The centroid this
+	// builds is still measured from its members and clamped where it is stored, so a merged cluster
+	// cannot reach past what an automatic one of the same width already reaches.
+	return dist >= 0 && dist <= face.AcceptDist(face.ClusterRadius), dist
+}
+
 // ResolveCollision resolves a collision with a different subject's face.
 func (m *Face) ResolveCollision(embeddings face.Embeddings, model face.ModelName) (resolved bool, err error) {
 	if m.SubjUID == "" {
@@ -287,12 +340,27 @@ func (m *Face) ResolveCollision(embeddings face.Embeddings, model face.ModelName
 	return true, nil
 }
 
-// ClearCollision discards a recorded collision, so the cluster matches at its full accept distance
-// again and is no longer excluded from matching.
+// InheritCollision narrows this cluster to the tightest collision bound its sources recorded.
+//
+// NewFace sets none, so a merged row would otherwise start unbounded and re-earn its narrowing.
+// Only ever tightens, since FirstOrCreateFace may return a row already carrying one.
+func (m *Face) InheritCollision(from Faces) error {
+	radius, collisions := from.CollisionBound(m.SampleRadius)
+
+	if radius == 0 || m.CollisionRadius > face.CollisionDist && m.CollisionRadius <= radius {
+		return nil
+	}
+
+	m.Collisions, m.CollisionRadius = collisions, radius
+
+	return m.Updates(Values{"collisions": m.Collisions, "collision_radius": m.CollisionRadius})
+}
+
+// ClearCollision discards a recorded collision, so the cluster matches at its full accept distance.
 //
 // A collision records that two subjects competed for the same embeddings. Once an operator states
-// that those subjects are one person, the premise is gone, and the narrowing that followed from it
-// gates the cluster against faces it should hold. A later pass re-derives a collision that is real.
+// they are one person the premise is gone, and the narrowing gates the cluster against faces it
+// should hold; a later pass re-derives a collision that is still real.
 func (m *Face) ClearCollision() error {
 	if m.ID == "" {
 		return fmt.Errorf("invalid face id")
@@ -311,8 +379,8 @@ func (m *Face) ClearCollision() error {
 	values := Values{"collisions": m.Collisions, "collision_radius": m.CollisionRadius, "matched_at": m.MatchedAt}
 
 	// Only ResolveCollision raises the kind, so a cluster carrying the ambiguous kind was marked by
-	// that path and returns to a regular one. Any other kind is left alone, and so is the zero a
-	// row written before kinds existed holds, since both already take part in matching.
+	// that path and returns to the regular one every cluster is created with. Any other kind is
+	// left alone.
 	if m.FaceKind == int(face.AmbiguousFace) {
 		m.FaceKind = int(face.RegularFace)
 		values["face_kind"] = m.FaceKind
@@ -423,6 +491,14 @@ func (m *Face) MatchMarkers(faceIds []string) error {
 		return nil
 	}
 
+	// One embedding may not adopt markers, for the reason it is not offered to the matcher either:
+	// it is a labeled example, and one photograph is not evidence enough to name others from. Gated
+	// here as well, since this runs once when a cluster is created and the matcher never sees it
+	// again.
+	if m.Samples < 2 {
+		return nil
+	}
+
 	var markers Markers
 
 	err := whereSameEmbeddingSpace(Db().
@@ -453,30 +529,50 @@ func (m *Face) MatchMarkers(faceIds []string) error {
 	return nil
 }
 
-// UpdateMatchStats persists sample statistics from recent matches, only ever widening the extent.
+// UpdateMatchStats widens the extent a cluster reaches after a match run, and never narrows it.
 //
 // A run visits only the markers that were unmatched when it started, so one face arriving near the
-// centroid would otherwise shrink the radius and refuse the members beyond it. SetEmbeddings
-// recomputes both from membership, which is the path that may shrink a cluster.
-func (m *Face) UpdateMatchStats(samples int, maxDistance float64) error {
-	if m.ID == "" || samples <= 0 {
+// centroid would otherwise shrink the radius and refuse the members beyond it. It leaves Samples
+// alone: that counts the embeddings the centroid was averaged from, which matching does not change.
+func (m *Face) UpdateMatchStats(matched int, maxDistance float64) error {
+	if m.ID == "" || matched <= 0 {
 		return nil
 	}
 
 	// The epsilon slack is applied before clamping so it can never lift the stored
 	// radius above the configured maximum.
 	radius := face.ClampSampleRadius(max(maxDistance+face.Epsilon, m.SampleRadius))
-	samples = max(samples, m.Samples)
 
-	if m.Samples == samples && m.SampleRadius == radius {
+	if m.SampleRadius == radius {
 		return nil
 	}
 
-	m.Samples = samples
 	m.SampleRadius = radius
 	UpdateFaces.Store(true)
 
-	return m.Updates(Values{"samples": m.Samples, "sample_radius": m.SampleRadius})
+	return m.Updates(Values{"sample_radius": m.SampleRadius})
+}
+
+// SetSampleRadius replaces the extent with one measured over the cluster's members, which is what
+// makes a smaller value trustworthy where UpdateMatchStats can only widen.
+//
+// Samples is not touched. The centroid is read rather than recomputed - a cluster's id is its hash -
+// so the number of embeddings averaged into it is unchanged however far its members now reach.
+func (m *Face) SetSampleRadius(radius float64) error {
+	if m.ID == "" || radius <= 0 {
+		return nil
+	}
+
+	radius = face.ClampSampleRadius(radius)
+
+	if m.SampleRadius == radius {
+		return nil
+	}
+
+	m.SampleRadius = radius
+	UpdateFaces.Store(true)
+
+	return m.Updates(Values{"sample_radius": m.SampleRadius})
 }
 
 // SetSubjectUID updates the face's subject uid and related markers.

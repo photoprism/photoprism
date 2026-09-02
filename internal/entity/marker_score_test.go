@@ -83,3 +83,12 @@ func TestEmbeddingModelCond(t *testing.T) {
 		assert.Equal(t, []any{face.ModelSFace, face.ModelSFace, face.ModelFaceNet}, args)
 	})
 }
+
+func TestFaceMemberCond(t *testing.T) {
+	cond, args := FaceMemberCond()
+
+	assert.Contains(t, cond, "marker_invalid = 0")
+	assert.Contains(t, cond, "face_id <> ''")
+	assert.Contains(t, cond, "LENGTH(embeddings_json) > 0")
+	assert.Equal(t, []any{MarkerFace}, args)
+}

@@ -16,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/internal/thumb/crop"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -135,6 +136,18 @@ func savedFaceModel(t *testing.T, c *config.Config) string {
 	return name
 }
 
+// snapshotFaceCalibration returns a function that restores the package values a change of
+// embedding model moves, which a committed migration propagates for the rest of the process.
+func snapshotFaceCalibration() func() {
+	clusterSize, collisionDist, epsilon := face.ClusterSizeThreshold, face.CollisionDist, face.Epsilon
+	clusterRadius, clusterDist, matchDist := face.ClusterRadius, face.ClusterDist, face.MatchDist
+
+	return func() {
+		face.ClusterSizeThreshold, face.CollisionDist, face.Epsilon = clusterSize, collisionDist, epsilon
+		face.ClusterRadius, face.ClusterDist, face.MatchDist = clusterRadius, clusterDist, matchDist
+	}
+}
+
 func newMigrateTestConfig(t *testing.T, name string) *config.Config {
 	t.Helper()
 
@@ -144,9 +157,11 @@ func newMigrateTestConfig(t *testing.T, name string) *config.Config {
 	require.NoError(t, c.CreateDirectories())
 
 	SetConfig(c)
+	restoreCalibration := snapshotFaceCalibration()
 	t.Cleanup(func() {
 		SetConfig(oldConfig)
 		oldConfig.RegisterDb()
+		restoreCalibration()
 
 		// Initializing a config reconfigures the process-wide embedder from its models
 		// path, which is empty here, so the previous one has to be reinstated.
@@ -198,7 +213,8 @@ func addMigrateTestFile(t *testing.T, c *config.Config, hash string, withThumb b
 	return f
 }
 
-// addMigrateTestMarker creates a face marker with a stale embedding on the given file.
+// addMigrateTestMarker creates a face marker with a stale embedding on the given file. It records a
+// sample extent, so a case turns on the model or the detector rather than on that column.
 func addMigrateTestMarker(t *testing.T, fileUID, subjSrc, name string) *entity.Marker {
 	t.Helper()
 
@@ -207,7 +223,8 @@ func addMigrateTestMarker(t *testing.T, fileUID, subjSrc, name string) *entity.M
 		FileUID:        fileUID,
 		MarkerType:     entity.MarkerFace,
 		MarkerSrc:      entity.SrcImage,
-		Size:           100,
+		Size:           face.ClusterSizeThreshold,
+		ThumbSize:      face.ClusterSizeThreshold,
 		Score:          face.ClusterScore("") + 10,
 		X:              0,
 		Y:              0,
@@ -469,6 +486,15 @@ func TestFaces_migrate(t *testing.T) {
 		assert.Equal(t, 1, result.RebuiltSubjects)
 		assert.Zero(t, result.AttentionSubjects)
 
+		// The re-clustering and the audit at the end of this run read these, and a distance means
+		// nothing outside the model it was measured in: asserted within the migrating process,
+		// because a restart propagates them and would pass without the migration doing so.
+		target := face.FindEmbeddingModel(face.ModelSFace)
+		require.NotNil(t, target)
+		assert.Equal(t, target.ClusterDist, face.ClusterDist)
+		assert.Equal(t, target.ClusterRadius, face.ClusterRadius)
+		assert.Equal(t, target.MatchDist, face.MatchDist)
+
 		// Not one assignment may be dropped: losing them empties the person's page and no
 		// later matching run brings them back.
 		for _, m := range append(entity.Markers{*manual}, automatic...) {
@@ -485,6 +511,40 @@ func TestFaces_migrate(t *testing.T) {
 		require.NoError(t, entity.UnscopedDb().First(&cluster, "subj_uid = ?", manual.SubjUID).Error)
 		assert.Equal(t, face.ModelSFace, cluster.EmbedModel)
 		assert.Equal(t, 4, cluster.Samples)
+
+		// A migration deletes every cluster and rebuilds it, so whatever the schema migration
+		// raised is gone by then and each replacement has to classify itself. Left unset, the
+		// person would be missing from the "face:1" search filter that reads this column.
+		assert.Equal(t, int(face.RegularFace), cluster.FaceKind)
+	})
+	t.Run("RendersACropThumbnail", func(t *testing.T) {
+		// A library indexed at a lower thumbnail limit has renditions too narrow for its face
+		// crops, and the detail is in the original: the run renders what it needs rather than
+		// embedding upscaled pixels, which nothing downstream could tell apart afterwards.
+		c := newMigrateTestConfig(t, "migraterenders")
+		w := NewFaces(c)
+
+		cached, onDemand := thumb.SizeCached, thumb.SizeOnDemand
+		t.Cleanup(func() { thumb.SizeCached, thumb.SizeOnDemand = cached, onDemand })
+		thumb.SizeCached, thumb.SizeOnDemand = 720, 720
+
+		f := newRenderTestFile(t, c, "4a4d444444444444444444444444444444444447", 2000, 1500)
+		m := addMigrateTestMarker(t, f.FileUID, entity.SrcManual, "Jane Doe")
+
+		// 160/0.1 asks for 1600 px, which only a wider rendition than the cache holds can supply.
+		require.NoError(t, entity.UnscopedDb().Model(&entity.Marker{}).
+			Where("marker_uid = ?", m.MarkerUID).
+			UpdateColumns(entity.Values{"w": 0.1, "h": 0.1}).Error)
+
+		plan := FacesMigratePlan{Target: face.ModelFaceNet}
+		result, err := w.migrate(context.Background(), plan, &oneHotEmbedder{dims: 4},
+			FacesMigrateOptions{Target: face.ModelFaceNet}, FacesMigrateResult{Target: face.ModelFaceNet})
+
+		require.NoError(t, err)
+		assert.Equal(t, 1, result.Migrated)
+		assert.Equal(t, 1, result.RenderedThumbs)
+		assert.True(t, crop.CachedSizeExists(thumb.Sizes[thumb.Fit1920], f.FileHash, c.ThumbCachePath()),
+			"the rendition the crop needs has to be written under the indexed hash")
 	})
 	t.Run("LegacyBlankModel", func(t *testing.T) {
 		c := newMigrateTestConfig(t, "migratelegacy")
@@ -549,6 +609,69 @@ func TestFaces_migrate(t *testing.T) {
 		lost := entity.Marker{}
 		require.NoError(t, entity.UnscopedDb().First(&lost, "marker_uid = ?", stale.MarkerUID).Error)
 		assert.Empty(t, lost.EmbeddingsJSON, "a vector of the previous model is cleared whether it could be replaced or not")
+	})
+	t.Run("MissingSampleExtentTerminates", func(t *testing.T) {
+		// A library already on the target model is skipped whole without this condition, so the
+		// column stays unset for good. The second run is the point: a sampling that cannot measure
+		// one records the attempt, or a run would re-embed the same marker forever.
+		c := newMigrateTestConfig(t, "migrateextent")
+		w := NewFaces(c)
+
+		f := addMigrateTestFile(t, c, "6666666666666666666666666666666666666666", true)
+		m := addMigrateTestMarker(t, f.FileUID, entity.SrcManual, "Jane Doe")
+
+		require.NoError(t, entity.UnscopedDb().Model(&entity.Marker{}).
+			Where("marker_uid = ?", m.MarkerUID).
+			UpdateColumns(entity.Values{"embed_model": face.ModelFaceNet, "thumb_size": -1}).Error)
+
+		plan := FacesMigratePlan{Target: face.ModelFaceNet}
+		opt := FacesMigrateOptions{Target: face.ModelFaceNet}
+
+		first, err := w.migrate(context.Background(), plan, &oneHotEmbedder{dims: 4}, opt, FacesMigrateResult{Target: face.ModelFaceNet})
+		require.NoError(t, err)
+		assert.Equal(t, 1, first.Migrated, "a marker with no recorded extent is re-embedded")
+
+		second, err := w.migrate(context.Background(), plan, &oneHotEmbedder{dims: 4}, opt, FacesMigrateResult{Target: face.ModelFaceNet})
+		require.NoError(t, err)
+		assert.Zero(t, second.Migrated, "the second run has nothing left to do")
+		assert.Equal(t, 1, second.Skipped)
+
+		// The test file records no dimensions, so nothing can be measured from it - which is what
+		// makes it the case that has to settle rather than repeat.
+		stored := entity.Marker{}
+		require.NoError(t, entity.UnscopedDb().First(&stored, "marker_uid = ?", m.MarkerUID).Error)
+		assert.Equal(t, entity.ThumbSizeUnmeasured, stored.ThumbSize)
+		assert.NotEmpty(t, stored.EmbeddingsJSON)
+	})
+	t.Run("FailedReembeddingTerminates", func(t *testing.T) {
+		// The other half of termination: a marker the sampling reached and could not re-embed keeps
+		// its vector, so nothing records an extent for it and it would be stale on every run. The
+		// file has no thumb, which is how this harness makes every re-embedding on it fail.
+		c := newMigrateTestConfig(t, "migrateunreadable")
+		w := NewFaces(c)
+
+		f := addMigrateTestFile(t, c, "7777777777777777777777777777777777777777", false)
+		m := addMigrateTestMarker(t, f.FileUID, entity.SrcManual, "Jane Doe")
+
+		require.NoError(t, entity.UnscopedDb().Model(&entity.Marker{}).
+			Where("marker_uid = ?", m.MarkerUID).
+			UpdateColumns(entity.Values{"embed_model": face.ModelFaceNet, "thumb_size": -1}).Error)
+
+		plan := FacesMigratePlan{Target: face.ModelFaceNet}
+		opt := FacesMigrateOptions{Target: face.ModelFaceNet}
+
+		_, err := w.migrate(context.Background(), plan, &oneHotEmbedder{dims: 4}, opt, FacesMigrateResult{Target: face.ModelFaceNet})
+		require.NoError(t, err)
+
+		stored := entity.Marker{}
+		require.NoError(t, entity.UnscopedDb().First(&stored, "marker_uid = ?", m.MarkerUID).Error)
+
+		assert.NotEmpty(t, stored.EmbeddingsJSON, "a failed re-embedding must keep the vector it holds")
+		assert.True(t, stored.ThumbSizeSettled(), "and must not be sampled again on every future run")
+
+		second, err := w.migrate(context.Background(), plan, &oneHotEmbedder{dims: 4}, opt, FacesMigrateResult{Target: face.ModelFaceNet})
+		require.NoError(t, err)
+		assert.Equal(t, 1, second.Skipped, "the second run has nothing left to attempt")
 	})
 	t.Run("Idempotent", func(t *testing.T) {
 		c := newMigrateTestConfig(t, "migrateidempotent")

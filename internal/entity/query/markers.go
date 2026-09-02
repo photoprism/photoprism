@@ -100,7 +100,8 @@ func Embeddings(single, unclustered bool, size, score int, model string) (result
 	stmt = whereEmbeddingModel(stmt, model)
 
 	if size > 0 {
-		stmt = stmt.Where("size >= ?", size)
+		sizeCond, sizeArgs := entity.ClusterSizeCond("", size)
+		stmt = stmt.Where(sizeCond, sizeArgs...)
 	}
 
 	stmt = whereClusterScore(stmt, score)
@@ -266,12 +267,9 @@ func ResetAllFaceMarkerMatches() (removed int64, err error) {
 }
 
 // resetFaceMarkerMatches clears the subject and face references of the face markers a scope selects.
-// Geometry, embeddings, size and score are left alone, which is what lets a later run re-cluster
-// without decoding a single file.
-//
-// The columns are listed explicitly rather than written through the struct, and a test instance
-// relies on that: a column this package does not name survives a reset, which is how a
-// hand-verified name is kept across repeated re-clustering.
+// Geometry, embeddings, size and score are left alone, which lets a later run re-cluster without
+// decoding a file. The columns are listed explicitly rather than written through the struct, and a
+// test instance relies on that: a column this package does not name survives a reset.
 func resetFaceMarkerMatches(scope *gorm.DB) (removed int64, err error) {
 	res := scope.Model(&entity.Marker{}).
 		Where("marker_type = ?", entity.MarkerFace).

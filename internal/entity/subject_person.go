@@ -8,6 +8,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// Subject types, of which people are the only one recognized automatically.
 const (
 	SubjPerson = "person" // SubjType for people.
 )

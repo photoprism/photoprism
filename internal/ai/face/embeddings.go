@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
+	"slices"
 	"strings"
 )
 
@@ -218,8 +219,8 @@ func EmbeddingsMidpoint(embeddings Embeddings) (result Embedding, radius float64
 
 	normalizeEmbedding(result)
 
-	// Radius is the max embedding distance from result, plus the tolerance the rest of the
-	// comparison path uses, so a sample sitting exactly on the radius is still inside it.
+	dists := make([]float64, 0, count)
+
 	for _, emb := range embeddings {
 		if len(emb) != dim {
 			continue
@@ -232,20 +233,78 @@ func EmbeddingsMidpoint(embeddings Embeddings) (result Embedding, radius float64
 			dist += diff * diff
 		}
 
-		if d := math.Sqrt(dist); d > radius {
-			radius = d + Epsilon
-		}
+		dists = append(dists, math.Sqrt(dist))
+	}
+
+	// Epsilon is the tolerance the comparison path uses, so a sample exactly on the radius is still
+	// inside it. Raised only when positive: zero means unmeasurable, which SetEmbeddings answers
+	// with the full cluster radius, and a floor here would consume that meaning.
+	if d := percentileOf(dists, ClusterPercentile); d > 0 {
+		radius = d + Epsilon
 	}
 
 	return result, radius, count
 }
 
-// Radius returns the distance from the midpoint of the embeddings to the one furthest from it,
-// before ClampSampleRadius bounds what a cluster built from them would store. It normalizes its
-// receiver in place, as EmbeddingsMidpoint does, so it is not the pure accessor it reads as.
+// percentileOf returns the distance at the given percentile by nearest rank, so the result is always
+// one of the values passed. It sorts in place, and reports 0 for an empty slice or a percentile at
+// or below zero - which would otherwise select the smallest distance and give a cluster no reach.
+func percentileOf(dists []float64, p int) float64 {
+	if len(dists) == 0 || p < 1 {
+		return 0
+	}
+
+	slices.Sort(dists)
+
+	rank := min(max((p*len(dists)+99)/100, 1), len(dists))
+
+	return dists[rank-1]
+}
+
+// Radius returns how far from their midpoint the ClusterPercentile of the embeddings reach, before
+// ClampSampleRadius bounds what a cluster built from them would store. It normalizes its receiver
+// in place, as EmbeddingsMidpoint does, so it is not the pure accessor it reads as.
 func (embeddings Embeddings) Radius() (radius float64) {
 	_, radius, _ = EmbeddingsMidpoint(embeddings)
 	return radius
+}
+
+// RadiusFrom returns how far from center the ClusterPercentile of the embeddings reach, in the shape
+// SetEmbeddings stores, and reports whether every one of them could be measured.
+//
+// Center is taken as given rather than recomputed, because a cluster's id is the hash of its own
+// centroid - deriving a new one here would change its identity and orphan every marker holding it.
+func RadiusFrom(center Embedding, embeddings Embeddings) (radius float64, ok bool) {
+	if len(center) == 0 || len(embeddings) == 0 {
+		return 0, false
+	}
+
+	dists := make([]float64, 0, len(embeddings))
+
+	for _, emb := range embeddings {
+		// A vector of another width or holding a non-finite component yields -1, and one with no
+		// magnitude sits a unit from every unit vector. Neither is a distance, and answering with
+		// the widest radius in the schema is what this replaces rather than something to fall back
+		// on - so a set holding either is declined whole.
+		if d := center.Dist(emb); d < 0 || emb.Zero() {
+			return 0, false
+		} else {
+			dists = append(dists, d)
+		}
+	}
+
+	if d := percentileOf(dists, ClusterPercentile); d > 0 {
+		radius = ClampSampleRadius(d + Epsilon)
+	}
+
+	// Nothing to measure - one member, or copies of one crop - so the floor is the honest value,
+	// which is what SetEmbeddings stores for the same case. A cluster's width would be an extent
+	// none of these embeddings showed.
+	if radius <= 0 {
+		return Epsilon, true
+	}
+
+	return radius, true
 }
 
 // ClusterFits reports whether a cluster of the given radius would accept its own members.

@@ -63,6 +63,17 @@ func ClusterScoreCond(alias string, floor int) (string, []any) {
 	return score + " >= CASE " + detector + bars.String() + " ELSE ? END", args
 }
 
+// FaceMemberCond returns the restriction identifying the markers a cluster is measured over: valid
+// face markers that hold a cluster id and carry a vector.
+//
+// The vector test asserts rather than repairs: every writer of a cluster id goes through a distance
+// comparison, so a marker without one cannot hold it today. It is stated here because the columns
+// derived from this set would otherwise disagree if that ever stopped being true.
+func FaceMemberCond() (string, []any) {
+	return "marker_type = ? AND marker_invalid = 0 AND face_id <> '' AND LENGTH(embeddings_json) > 0",
+		[]any{MarkerFace}
+}
+
 // EmbeddingModelCond returns the restriction matching vectors that can be compared with the given
 // model, as an SQL fragment and its arguments, or an empty fragment when no model is configured.
 // A row with no recorded model is FaceNet's, which is why the blank case is not simply excluded.

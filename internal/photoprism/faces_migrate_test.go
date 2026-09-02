@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"image"
 	"math"
 	"os"
@@ -443,26 +444,38 @@ func TestStaleMigrationMarkers(t *testing.T) {
 	require.NotEmpty(t, detector)
 	require.NotEqual(t, face.DetectorNone, detector)
 
-	current := entity.Marker{MarkerUID: "mcurrent", EmbedModel: face.ModelFaceNet, DetectModel: detector, EmbeddingsJSON: vector}
-	other := entity.Marker{MarkerUID: "mother", EmbedModel: face.ModelFaceNet, DetectModel: "some-other-detector", EmbeddingsJSON: vector}
-	blank := entity.Marker{MarkerUID: "mblank", EmbedModel: face.ModelFaceNet, EmbeddingsJSON: vector}
-	wrongModel := entity.Marker{MarkerUID: "mmodel", EmbedModel: face.ModelSFace, DetectModel: detector, EmbeddingsJSON: vector}
+	// Every fixture but the last records a sample extent, so the cases below turn on the model
+	// and the detector rather than on the column the last one is missing.
+	sampled := face.ClusterSizeThresholdDefault
 
-	markers := entity.Markers{current, other, blank, wrongModel}
+	current := entity.Marker{MarkerUID: "mcurrent", EmbedModel: face.ModelFaceNet, DetectModel: detector, EmbeddingsJSON: vector, ThumbSize: sampled}
+	other := entity.Marker{MarkerUID: "mother", EmbedModel: face.ModelFaceNet, DetectModel: "some-other-detector", EmbeddingsJSON: vector, ThumbSize: sampled}
+	blank := entity.Marker{MarkerUID: "mblank", EmbedModel: face.ModelFaceNet, EmbeddingsJSON: vector, ThumbSize: sampled}
+	wrongModel := entity.Marker{MarkerUID: "mmodel", EmbedModel: face.ModelSFace, DetectModel: detector, EmbeddingsJSON: vector, ThumbSize: sampled}
+	unsampled := entity.Marker{MarkerUID: "msize", EmbedModel: face.ModelFaceNet, DetectModel: detector, EmbeddingsJSON: vector, ThumbSize: -1}
+
+	markers := entity.Markers{current, other, blank, wrongModel, unsampled}
 
 	t.Run("Aligned", func(t *testing.T) {
 		// An aligned embedder consumes the landmarks, so a crop another detector placed is
 		// stale even though its vector is the target's, and is recorded as re-croppable.
 		stale, recrop := staleMigrationMarkers(markers, &migrationTestEmbedder{name: face.ModelFaceNet, dims: 4, aligned: true}, face.ModelFaceNet)
-		assert.Equal(t, []string{"mother", "mblank", "mmodel"}, markerUIDsOf(stale))
-		assert.Equal(t, map[string]bool{"mother": true, "mblank": true}, recrop)
+		assert.Equal(t, []string{"mother", "mblank", "mmodel", "msize"}, markerUIDsOf(stale))
+		assert.Equal(t, map[string]bool{"mother": true, "mblank": true, "msize": true}, recrop)
 	})
 	t.Run("NotAligned", func(t *testing.T) {
-		// A crop-based embedder reads the stored geometry, so the detector that placed it
-		// changes nothing and only the incomparable vector is stale.
+		// A crop-based embedder reads the stored geometry, so the detector that placed it changes
+		// nothing and only the incomparable vector and the unmeasured extent are stale.
 		stale, recrop := staleMigrationMarkers(markers, &migrationTestEmbedder{name: face.ModelFaceNet, dims: 4}, face.ModelFaceNet)
-		assert.Equal(t, []string{"mmodel"}, markerUIDsOf(stale))
-		assert.Empty(t, recrop)
+		assert.Equal(t, []string{"mmodel", "msize"}, markerUIDsOf(stale))
+		assert.Equal(t, map[string]bool{"msize": true}, recrop)
+	})
+	t.Run("MissingSampleExtent", func(t *testing.T) {
+		// The case a library already on the target model is in: nothing about the vector is stale,
+		// and without this the run skips every marker and leaves the column unset for good.
+		stale, recrop := staleMigrationMarkers(entity.Markers{current, unsampled}, &migrationTestEmbedder{name: face.ModelFaceNet, dims: 4, aligned: true}, face.ModelFaceNet)
+		assert.Equal(t, []string{"msize"}, markerUIDsOf(stale))
+		assert.Equal(t, map[string]bool{"msize": true}, recrop, "its vector is the target's, so a failed re-embedding keeps it")
 	})
 	t.Run("UnreadableVector", func(t *testing.T) {
 		// A vector of the wrong width cannot be compared at all, so it is stale outright and
@@ -478,28 +491,17 @@ func TestStaleMigrationMarkers(t *testing.T) {
 	})
 }
 
-// markerUIDsOf returns the marker UIDs in their current order, so a test can assert on the
-// selection a helper made rather than on the marker rows it copied.
-func markerUIDsOf(markers entity.Markers) []string {
-	result := make([]string, 0, len(markers))
-	for _, marker := range markers {
-		result = append(result, marker.MarkerUID)
-	}
-
-	return result
-}
-
 func TestFaces_cropMigrationEmbeddings(t *testing.T) {
 	embedder := &migrationTestEmbedder{name: face.ModelFaceNet, dims: 4}
 	w := NewFaces(config.TestConfig())
 	file := &entity.File{FileHash: "0123456789012345678901234567890123456789", FileName: "missing.jpg", FileRoot: entity.RootOriginals}
 	markers := entity.Markers{{MarkerUID: "m1", MarkerType: entity.MarkerFace, W: 0.5, H: 0.5}}
 
-	result, err := w.cropMigrationEmbeddings(embedder, file, markers)
+	result, _, err := w.cropMigrationEmbeddings(embedder, file, markers)
 	require.NoError(t, err)
 	assert.Empty(t, result)
 
-	_, err = w.cropMigrationEmbeddings(embedder, nil, markers)
+	_, _, err = w.cropMigrationEmbeddings(embedder, nil, markers)
 	require.Error(t, err)
 
 	successConf := config.NewMinimalTestConfig(t.TempDir())
@@ -509,24 +511,45 @@ func TestFaces_cropMigrationEmbeddings(t *testing.T) {
 	thumbName, err := thumb.Sizes[thumb.Fit720].FileName(hash, successConf.ThumbCachePath())
 	require.NoError(t, err)
 	require.NoError(t, thumb.Save(image.NewNRGBA(image.Rect(0, 0, 64, 64)), thumbName))
-	result, err = successWorker.cropMigrationEmbeddings(
+	result, _, err = successWorker.cropMigrationEmbeddings(
 		embedder,
 		&entity.File{FileHash: hash},
 		entity.Markers{{MarkerUID: "m2", W: 1, H: 1}},
 	)
 	require.NoError(t, err)
 	assert.NotEmpty(t, result)
+
+	t.Run("RecordsWhatTheCropWasDrawnFrom", func(t *testing.T) {
+		// The extent the vector was sampled at, and how much of the 16 px crop this embedder
+		// asked for that extent supplied. A re-crop runs no detector, so these are all it records.
+		sized := "1123456789012345678901234567890123456789"
+		name, nameErr := thumb.Sizes[thumb.Fit720].FileName(sized, successConf.ThumbCachePath())
+		require.NoError(t, nameErr)
+		require.NoError(t, thumb.Save(image.NewNRGBA(image.Rect(0, 0, 640, 480)), name))
+
+		file := &entity.File{FileHash: sized, FileWidth: 640, FileHeight: 480}
+
+		_, details, cropErr := successWorker.cropMigrationEmbeddings(embedder, file,
+			entity.Markers{{MarkerUID: "m3", W: 0.02, H: 0.02}, {MarkerUID: "m4", W: 1, H: 1}})
+		require.NoError(t, cropErr)
+
+		assert.Equal(t, 12, details["m3"].ThumbSize)
+		assert.Equal(t, 75, details["m3"].EmbedDetail, "12 px of the 16 px the crop asked for")
+		assert.Equal(t, 640, details["m4"].ThumbSize)
+		assert.Equal(t, 100, details["m4"].EmbedDetail, "a face larger than the crop is not upscaled")
+	})
 }
 
 func TestFaces_detectMigrationEmbeddings(t *testing.T) {
 	embedder := &migrationTestEmbedder{name: face.ModelSFace, dims: 4, aligned: true}
 	w := NewFaces(config.TestConfig())
 
-	result, landmarks, detectModel, err := w.detectMigrationEmbeddings(embedder, nil, nil, nil)
+	result, landmarks, detectModel, unaligned, err := w.detectMigrationEmbeddings(embedder, nil, nil, nil)
 	require.Error(t, err)
 	assert.Empty(t, result)
 	assert.Empty(t, landmarks)
 	assert.Empty(t, detectModel, "a run that could not detect names no detector")
+	assert.Zero(t, unaligned, "and embedded nothing, aligned or not")
 }
 
 // TestFaces_detectMigrationEmbeddings_Landmarks pins the producer half of the provenance pair:
@@ -575,9 +598,10 @@ func TestFaces_detectMigrationEmbeddings_Landmarks(t *testing.T) {
 	embedder := &migrationTestEmbedder{name: face.ModelSFace, dims: 4, aligned: true}
 
 	w := NewFaces(c)
-	result, details, detectModel, err := w.detectMigrationEmbeddings(embedder, file, markers, markers)
+	result, details, detectModel, unaligned, err := w.detectMigrationEmbeddings(embedder, file, markers, markers)
 
 	require.NoError(t, err)
+	assert.Zero(t, unaligned, "a detection that placed a complete landmark set aligns onto the template")
 	require.Contains(t, result, marker.MarkerUID)
 	assert.Equal(t, face.DefaultDetector().Name, detectModel)
 	require.Contains(t, details, marker.MarkerUID, "what the detection recorded must travel with the vector")
@@ -750,6 +774,34 @@ func TestValidMigrationEmbeddingsUsage(t *testing.T) {
 	assert.False(t, face.ValidEmbeddings(nil, 2))
 	assert.False(t, face.ValidEmbeddings(face.Embeddings{{0.1}}, 2))
 	assert.False(t, face.ValidEmbeddings(face.Embeddings{{0.1, math.NaN()}}, 2))
+}
+
+// TestBuildFaceMigrationClustersOneMarker pins that the migration does not mint a cluster a matching
+// pass would never offer. One rebuilt from a single embedding is the subject's only cluster, so
+// merging never sees a group either and the person could not be recognized again by any run.
+func TestBuildFaceMigrationClustersOneMarker(t *testing.T) {
+	target := face.ConfiguredModel()
+	subjectUID := rnd.GenerateUID('j')
+
+	for i := 0; i < 1; i++ {
+		m := &entity.Marker{
+			MarkerUID: rnd.GenerateUID('m'), FileUID: "fs6sg6bw45bnlqdw", MarkerType: entity.MarkerFace,
+			SubjUID: subjectUID, SubjSrc: entity.SrcManual,
+			Size: face.ClusterSizeThreshold + 10, Score: face.ClusterScore("") + 10,
+			EmbedModel: target, EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
+			W: 0.1, H: 0.1,
+		}
+		require.NoError(t, entity.Db().Create(m).Error)
+		t.Cleanup(func() { entity.UnscopedDb().Delete(m) })
+	}
+
+	result, _, _, err := buildFaceMigrationClusters(target)
+	require.NoError(t, err)
+
+	for i := range result {
+		assert.NotEqual(t, subjectUID, result[i].Face.SubjUID,
+			"one face must not become a cluster nothing can use")
+	}
 }
 
 func TestBuildFaceMigrationClusters(t *testing.T) {
@@ -1234,5 +1286,482 @@ func TestFaces_useMigrationDetector(t *testing.T) {
 		require.NoError(t, err)
 		require.NotNil(t, restore)
 		assert.NotPanics(t, restore)
+	})
+}
+
+func TestMigrationCropThumbSize(t *testing.T) {
+	landscape := &entity.File{FileWidth: 3648, FileHeight: 2736}
+
+	t.Run("SmallestThatSupplies", func(t *testing.T) {
+		// Fit1920 delivers 1600 px of this 4:3 picture and Fit2560 delivers 2133.
+		assert.Equal(t, thumb.Fit1920, migrationCropThumbSize(landscape, 1600))
+		assert.Equal(t, thumb.Fit2560, migrationCropThumbSize(landscape, 1601))
+	})
+	t.Run("NativeResolution", func(t *testing.T) {
+		// Fit4096 holds this picture at its own resolution, which is the most any rendition can
+		// supply, so a requirement above it must not name a wider box than indexing would write.
+		assert.Equal(t, thumb.Fit4096, migrationCropThumbSize(landscape, 3648))
+		assert.Equal(t, thumb.Fit4096, migrationCropThumbSize(landscape, 99000))
+	})
+	t.Run("SmallOriginal", func(t *testing.T) {
+		assert.Equal(t, thumb.Fit720, migrationCropThumbSize(&entity.File{FileWidth: 600, FileHeight: 400}, 99000))
+	})
+	t.Run("BoundedAtTheMeasuredRung", func(t *testing.T) {
+		// A 24 MP portrait is held at its own resolution only by Fit15360, which nothing else
+		// writes, refreshes or purges - and a face gains nothing measurable above Fit4096.
+		portrait := &entity.File{FileWidth: 4000, FileHeight: 6000}
+
+		assert.Equal(t, thumb.Fit15360, thumb.FitBounds(image.Rect(0, 0, 4000, 6000)).Name)
+		assert.Equal(t, facesMigrateThumbLimit, migrationCropThumbSize(portrait, 99000))
+		assert.Equal(t, facesMigrateThumbLimit, migrationCropThumbSize(&entity.File{FileWidth: 20000, FileHeight: 13000}, 99000))
+	})
+}
+
+// TestMigrationCropCoverage covers the pre-flight that tells an operator, before the prompt,
+// whether the thumbnails can supply the crops this run takes. A marker embedded from an upscaled
+// crop is indistinguishable from one that was not, so the alternative is repeating the migration.
+func TestMigrationCropCoverage(t *testing.T) {
+	c := newMigrateTestConfig(t, "migratecoverage")
+	w := NewFaces(c)
+
+	restore := thumb.SizeCached
+	t.Cleanup(func() { thumb.SizeCached = restore })
+
+	// A 4:3 landscape original: Fit1920 fits it to 1600x1200, so the box height decides what the
+	// rendition delivers and the 1920 in its name does not.
+	file := &entity.File{
+		FileUID:    rnd.GenerateUID('f'),
+		PhotoUID:   rnd.GenerateUID('p'),
+		FileHash:   "7a7d777777777777777777777777777777777777",
+		FileName:   "coverage/landscape.jpg",
+		FileRoot:   entity.RootOriginals,
+		FileWidth:  3648,
+		FileHeight: 2736,
+	}
+	require.NoError(t, entity.Db().Create(file).Error)
+
+	// The crops are requested at 160 px, so these markers ask for 320, 2667, 3286 and 8000 px of
+	// source width.
+	for _, mw := range []float32{0.5, 0.06, 0.0487, 0.02} {
+		require.NoError(t, entity.Db().Create(&entity.Marker{
+			MarkerUID:  rnd.GenerateUID('m'),
+			FileUID:    file.FileUID,
+			MarkerType: entity.MarkerFace,
+			W:          mw,
+			H:          mw,
+		}).Error)
+	}
+
+	t.Run("NoCachedRendition", func(t *testing.T) {
+		// Nothing is cached yet, and a file with no rendition at all is cropped from the original
+		// instead, so there is no shortfall to report.
+		thumb.SizeCached = 4096
+
+		widest, counts, err := w.migrationCropCoverage(face.ModelSFace)
+
+		require.NoError(t, err)
+		assert.Zero(t, widest.Width)
+		assert.Zero(t, counts.Total)
+	})
+	t.Run("MeasuresTheCacheNotTheLimit", func(t *testing.T) {
+		// The limit says 4096 while the cache was written at 1920, which is what raising the
+		// setting without running "photoprism thumbs" leaves behind. Reading the limit here would
+		// report full coverage while every crop still comes from the 1920 renditions.
+		thumb.SizeCached = 4096
+		cacheThumbSizes(t, c, file, thumb.Fit1920)
+
+		widest, counts, err := w.migrationCropCoverage(face.ModelSFace)
+
+		require.NoError(t, err)
+		assert.Equal(t, thumb.Fit1920, widest.Name)
+		assert.Equal(t, 4, counts.Total)
+		assert.Equal(t, 1, counts.FullDetail)
+		assert.Equal(t, 2, counts.Upscaled, "two markers need more than the 1600px this box delivers")
+		assert.Equal(t, 1, counts.SourceTooSmall)
+	})
+	t.Run("RenditionsWiderThanTheLimit", func(t *testing.T) {
+		// The other direction: the cache holds renditions the limit no longer pre-generates, and
+		// the crop path reads them, so there is nothing left to forecast.
+		thumb.SizeCached = 1920
+		cacheThumbSizes(t, c, file, thumb.Fit4096)
+
+		widest, counts, err := w.migrationCropCoverage(face.ModelSFace)
+
+		require.NoError(t, err)
+		assert.Equal(t, thumb.Fit4096, widest.Name)
+		assert.Equal(t, 3, counts.FullDetail)
+		assert.Zero(t, counts.Upscaled)
+		assert.Equal(t, 1, counts.SourceTooSmall, "an original too small for the crop is not a cache problem")
+	})
+}
+
+// cacheThumbSizes writes the thumbnail ladder for a file up to and including the named size, so a
+// test can state what the cache holds rather than what the configured limit would generate.
+func cacheThumbSizes(t *testing.T, c *config.Config, file *entity.File, upTo thumb.Name) {
+	t.Helper()
+
+	// Naming a rendition is refused above the configured limit, and what is being staged here is
+	// a cache that was written under a different one.
+	cached := thumb.SizeCached
+	thumb.SizeCached = 15360
+	defer func() { thumb.SizeCached = cached }()
+
+	bounds := image.Rect(0, 0, file.FileWidth, file.FileHeight)
+
+	for _, size := range crop.UsableSizes() {
+		if thumb.Skip(size, bounds) {
+			continue
+		}
+
+		name, err := size.FileName(file.FileHash, c.ThumbCachePath())
+		require.NoError(t, err)
+		require.NoError(t, thumb.Save(image.NewNRGBA(image.Rect(0, 0, 8, 8)), name))
+
+		if size.Name == upTo {
+			return
+		}
+	}
+
+	t.Fatalf("thumbnail size %s is not generated for a %dx%d picture", upTo, file.FileWidth, file.FileHeight)
+}
+
+// TestFaces_cacheMigrationCropThumb covers the rendition a migration renders for itself when the
+// cache holds none wide enough, which is what it does instead of embedding from upscaled pixels
+// and leaving the operator to repeat the whole run.
+func TestFaces_cacheMigrationCropThumb(t *testing.T) {
+	c := newMigrateTestConfig(t, "migraterender")
+	w := NewFaces(c)
+
+	cached, onDemand := thumb.SizeCached, thumb.SizeOnDemand
+	t.Cleanup(func() { thumb.SizeCached, thumb.SizeOnDemand = cached, onDemand })
+
+	// Below what the crops need, which is the configuration this exists for: what indexing wrote
+	// is all the cache has, and raising the limit regenerates nothing.
+	thumb.SizeCached, thumb.SizeOnDemand = 720, 720
+
+	file := newRenderTestFile(t, c, "4a4d444444444444444444444444444444444444", 2000, 1500)
+
+	// 160/0.1 asks for 1600 px, which is what Fit1920 delivers for this 4:3 picture and five
+	// times what the 720 px rendition on disk holds.
+	markers := entity.Markers{{W: 0.1, H: 0.1}}
+
+	t.Run("RefusedAtTheOrdinaryLimit", func(t *testing.T) {
+		// The negative control for the case below: naming a rendition above the limit is refused,
+		// so without the lift a migration would keep the upscaled crop - and has to say so.
+		rendered, err := w.cacheMigrationCropThumb(file, markers, 160)
+
+		assert.False(t, rendered)
+		assert.Error(t, err)
+	})
+
+	defer useMigrationThumbSizes()()
+
+	t.Run("Renders", func(t *testing.T) {
+		rendered, err := w.cacheMigrationCropThumb(file, markers, 160)
+		require.NoError(t, err)
+		require.True(t, rendered)
+
+		// Under the hash the index recorded, which is where the crop path looks for it.
+		assert.True(t, crop.CachedSizeExists(thumb.Sizes[thumb.Fit1920], file.FileHash, c.ThumbCachePath()))
+
+		// The point of writing it: the selection that a crop goes through has to choose it, or
+		// the run rendered a file and embedded from the narrow one anyway.
+		area := crop.Area{Name: "face", X: 0.1, Y: 0.1, W: 0.1, H: 0.1}
+		size := crop.Size{Width: 160, Height: 160, Options: crop.DefaultOptions}
+
+		selected, err := crop.ThumbFileName(file.FileHash, area, size, c.ThumbCachePath())
+		require.NoError(t, err)
+		assert.Contains(t, selected, "_1920x1200_fit.jpg")
+	})
+	t.Run("NotAgain", func(t *testing.T) {
+		rendered, err := w.cacheMigrationCropThumb(file, markers, 160)
+
+		assert.NoError(t, err)
+		assert.False(t, rendered)
+	})
+	t.Run("AlreadyCovered", func(t *testing.T) {
+		rendered, err := w.cacheMigrationCropThumb(file, entity.Markers{{W: 1}}, 160)
+
+		assert.NoError(t, err)
+		assert.False(t, rendered)
+	})
+	t.Run("SourceTooSmall", func(t *testing.T) {
+		// The original holds less than the crop asks for, so the rendition it already has is the
+		// best there is: comparing against the request instead would re-render on every run.
+		small := newRenderTestFile(t, c, "4a4d444444444444444444444444444444444446", 600, 400)
+
+		rendered, err := w.cacheMigrationCropThumb(small, markers, 160)
+
+		assert.NoError(t, err)
+		assert.False(t, rendered)
+	})
+	t.Run("ModifiedSinceIndexing", func(t *testing.T) {
+		// The only writer that renders under a hash it did not compute: bytes that are not the
+		// ones the hash names would be written beside the detection thumbnail of the picture they
+		// replaced, and a crop taken across the two describes neither.
+		replaced := newRenderTestFile(t, c, "4a4d444444444444444444444444444444444448", 2000, 1500)
+		require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).
+			Where("file_uid = ?", replaced.FileUID).
+			UpdateColumn("file_size", 4096).Error)
+		replaced.FileSize = 4096
+
+		rendered, err := w.cacheMigrationCropThumb(replaced, markers, 160)
+
+		assert.NoError(t, err, "a file that changed is not a fault, so it is not reported as one")
+		assert.False(t, rendered)
+		assert.False(t, crop.CachedSizeExists(thumb.Sizes[thumb.Fit1920], replaced.FileHash, c.ThumbCachePath()))
+	})
+	t.Run("WithoutDimensions", func(t *testing.T) {
+		// Which rendition would help cannot be worked out, and the coverage report leaves such a
+		// marker out as well.
+		rendered, err := w.cacheMigrationCropThumb(&entity.File{FileHash: file.FileHash}, markers, 160)
+
+		assert.NoError(t, err)
+		assert.False(t, rendered)
+	})
+	t.Run("UnreadableFile", func(t *testing.T) {
+		missing := &entity.File{
+			FileHash:   "4a4d444444444444444444444444444444444445",
+			FileName:   "coverage/not-here.jpg",
+			FileRoot:   entity.RootOriginals,
+			FileWidth:  4000,
+			FileHeight: 3000,
+		}
+
+		// Counted and reported by the caller, which is what makes an unwritable cache visible.
+		rendered, err := w.cacheMigrationCropThumb(missing, markers, 160)
+
+		assert.False(t, rendered)
+		assert.Error(t, err)
+	})
+	t.Run("NilWorker", func(t *testing.T) {
+		rendered, err := (*Faces)(nil).cacheMigrationCropThumb(file, markers, 160)
+
+		assert.NoError(t, err)
+		assert.False(t, rendered)
+	})
+}
+
+// newRenderTestFile writes an original of the given size with only its smallest rendition cached,
+// which is the state a library indexed at a lower thumbnail limit is in.
+func newRenderTestFile(t *testing.T, c *config.Config, hash string, width, height int) *entity.File {
+	t.Helper()
+
+	file := &entity.File{
+		FileUID:    rnd.GenerateUID('f'),
+		PhotoUID:   rnd.GenerateUID('p'),
+		FileHash:   hash,
+		FileName:   "coverage/" + hash + ".jpg",
+		FileRoot:   entity.RootOriginals,
+		FileWidth:  width,
+		FileHeight: height,
+	}
+
+	require.NoError(t, entity.Db().Create(file).Error)
+
+	originalName := FileName(file.FileRoot, file.FileName)
+	require.NoError(t, fs.MkdirAll(filepath.Dir(originalName)))
+	require.NoError(t, thumb.Save(image.NewNRGBA(image.Rect(0, 0, width, height)), originalName))
+
+	name, err := thumb.Sizes[thumb.Fit720].FileName(hash, c.ThumbCachePath())
+	require.NoError(t, err)
+	fitted, _ := thumb.Sizes[thumb.Fit720].Fitted(width, height)
+	require.NoError(t, thumb.Save(image.NewNRGBA(image.Rect(0, 0, fitted, fitted)), name))
+
+	return file
+}
+
+// TestFaces_insufficientStorage covers the guard that stops a run which cannot write. Its crops
+// would be taken from whatever the cache holds, and nothing in the resulting vectors records that.
+func TestFaces_insufficientStorage(t *testing.T) {
+	t.Run("Sufficient", func(t *testing.T) {
+		assert.False(t, NewFaces(config.NewMinimalTestConfig(t.TempDir())).insufficientStorage())
+	})
+	t.Run("QuotaReached", func(t *testing.T) {
+		// Reading the quota needs a database, which is also what makes this the state the run has
+		// to refuse in: the volume it would write renditions to is the one that is full.
+		oldCfg := Config()
+		c := config.NewMinimalTestConfigWithDb("faces_quota", t.TempDir())
+
+		t.Cleanup(func() {
+			_ = c.CloseDb()
+
+			if oldCfg != nil {
+				oldCfg.RegisterDb()
+			}
+		})
+
+		c.Options().FilesQuota = 1
+
+		assert.True(t, NewFaces(c).insufficientStorage())
+	})
+	t.Run("NilWorker", func(t *testing.T) {
+		assert.False(t, (*Faces)(nil).insufficientStorage())
+	})
+}
+
+// TestUseMigrationThumbSizes covers the limit a migration lifts. The on-demand limit protects a
+// search results page from rendering hundreds of thumbnails at once, which a batch run in a
+// terminal does not do - and leaving it in force would refuse the one rendition a crop needs.
+func TestUseMigrationThumbSizes(t *testing.T) {
+	cached, onDemand := thumb.SizeCached, thumb.SizeOnDemand
+	t.Cleanup(func() { thumb.SizeCached, thumb.SizeOnDemand = cached, onDemand })
+
+	thumb.SizeCached, thumb.SizeOnDemand = 720, 720
+	widest := crop.UsableSizes()[len(crop.UsableSizes())-1]
+
+	restore := useMigrationThumbSizes()
+
+	assert.GreaterOrEqual(t, thumb.MaxSize(), max(widest.Width, widest.Height))
+	assert.Equal(t, 720, thumb.SizeCached, "what indexing pre-generates must not change")
+
+	restore()
+
+	assert.Equal(t, 720, thumb.SizeOnDemand)
+	assert.Equal(t, 720, thumb.SizeCached)
+}
+
+// TestThumbSizeGenerated covers the check that tells a cache written at a smaller limit from one
+// whose widest renditions were never generated because the sources are smaller than the box.
+func TestThumbSizeGenerated(t *testing.T) {
+	thumbPath := t.TempDir()
+	large := query.FaceMigrationSampleFile{FileHash: "8a8d888888888888888888888888888888888888", FileWidth: 3648, FileHeight: 2736}
+	small := query.FaceMigrationSampleFile{FileHash: "9a9d999999999999999999999999999999999999", FileWidth: 600, FileHeight: 400}
+
+	cached := thumb.SizeCached
+	thumb.SizeCached = 15360
+	t.Cleanup(func() { thumb.SizeCached = cached })
+
+	write := func(t *testing.T, f query.FaceMigrationSampleFile, name thumb.Name) {
+		t.Helper()
+		fileName, err := thumb.Sizes[name].FileName(f.FileHash, thumbPath)
+		require.NoError(t, err)
+		require.NoError(t, thumb.Save(image.NewNRGBA(image.Rect(0, 0, 8, 8)), fileName))
+	}
+
+	files := []query.FaceMigrationSampleFile{large, small}
+
+	t.Run("Missing", func(t *testing.T) {
+		assert.False(t, thumbSizeGenerated(thumb.Sizes[thumb.Fit720], files, thumbPath))
+	})
+	t.Run("Present", func(t *testing.T) {
+		write(t, large, thumb.Fit720)
+		write(t, small, thumb.Fit720)
+
+		assert.True(t, thumbSizeGenerated(thumb.Sizes[thumb.Fit720], files, thumbPath))
+	})
+	t.Run("SkippedForEveryFile", func(t *testing.T) {
+		// No sampled picture is large enough to be given this rendition, so it says nothing about
+		// the cache and must not extend the ladder past the size that holds them at full size.
+		assert.False(t, thumbSizeGenerated(thumb.Sizes[thumb.Fit15360], files, thumbPath))
+	})
+	t.Run("SkippedForTheSmallFileOnly", func(t *testing.T) {
+		// The small picture is never given a 1920 rendition, so only the large one decides.
+		assert.False(t, thumbSizeGenerated(thumb.Sizes[thumb.Fit1920], files, thumbPath))
+
+		write(t, large, thumb.Fit1920)
+
+		assert.True(t, thumbSizeGenerated(thumb.Sizes[thumb.Fit1920], files, thumbPath))
+	})
+	t.Run("NothingToSample", func(t *testing.T) {
+		assert.False(t, thumbSizeGenerated(thumb.Sizes[thumb.Fit720], nil, thumbPath))
+	})
+}
+
+// TestFaces_migrationThumbSize covers the fallback for a library with nothing to sample, which is
+// the only case the configured limit still answers.
+func TestFaces_migrationThumbSize(t *testing.T) {
+	restore := thumb.SizeCached
+	t.Cleanup(func() { thumb.SizeCached = restore })
+	thumb.SizeCached = 2560
+
+	t.Run("NoSample", func(t *testing.T) {
+		w := NewFaces(config.NewMinimalTestConfig(t.TempDir()))
+
+		assert.Equal(t, thumb.Fit2560, w.migrationThumbSize(nil).Name)
+	})
+	t.Run("NilWorker", func(t *testing.T) {
+		assert.Equal(t, thumb.Fit2560, (*Faces)(nil).migrationThumbSize(nil).Name)
+	})
+}
+
+// TestFacesRunResult_Moved covers the predicate the settle loop terminates on. It must not read
+// FacesOptions.Force, which a migration's pass sets by construction, and Recognized alone is not
+// work: a marker recognized without being updated changed nothing a later pass can build on.
+func TestFacesRunResult_Moved(t *testing.T) {
+	t.Run("Nothing", func(t *testing.T) {
+		assert.False(t, facesRunResult{}.Moved())
+	})
+	t.Run("RecognizedOnly", func(t *testing.T) {
+		assert.False(t, facesRunResult{Recognized: 9791}.Moved())
+	})
+	t.Run("EachKindOfWork", func(t *testing.T) {
+		assert.True(t, facesRunResult{Subjects: 1}.Moved())
+		assert.True(t, facesRunResult{Resolved: 1}.Moved())
+		assert.True(t, facesRunResult{Merged: 1}.Moved())
+		assert.True(t, facesRunResult{Added: 1}.Moved())
+		assert.True(t, facesRunResult{Updated: 1}.Moved())
+	})
+	t.Run("AssignedOnly", func(t *testing.T) {
+		// A pass that only propagated subjects from clusters that already carry one writes
+		// subj_uid without touching Updated, and the markers it moved are work.
+		assert.True(t, facesRunResult{Assigned: 1, Recognized: 9791}.Moved())
+	})
+	t.Run("MatchesTheMatchPredicate", func(t *testing.T) {
+		// The two must not diverge: this is the same question the pass logs by.
+		for _, r := range []facesRunResult{{}, {Updated: 1}, {Assigned: 1}, {Updated: 1, Assigned: 1}} {
+			matches := FacesMatchResult{Updated: int64(r.Updated), Assigned: int64(r.Assigned)}
+			assert.Equal(t, matches.MovedSubjects(), r.Moved())
+		}
+	})
+}
+
+// TestSettleFaceClusters covers the loop a migration runs after replacing the clusters: a pass
+// evaluates collisions and merges before it clusters, so the clusters it adds defer their own and
+// one pass is never a fixed point.
+func TestSettleFaceClusters(t *testing.T) {
+	t.Run("StopsWhenNothingMoved", func(t *testing.T) {
+		// The shape a real run has: work falls off sharply and the last pass is a no-op.
+		moved := []int{12395, 5195, 139, 0}
+		rounds := 0
+
+		err := settleFaceClusters(8, func(round int) (facesRunResult, error) {
+			assert.Equal(t, rounds+1, round, "the round number counts from one")
+			rounds++
+
+			return facesRunResult{Updated: moved[rounds-1]}, nil
+		})
+
+		require.NoError(t, err)
+		assert.Equal(t, 4, rounds, "it stops on the pass that moved nothing, not before")
+	})
+	t.Run("StopsAtTheCap", func(t *testing.T) {
+		// A pass that keeps finding work must not hold the migration lock indefinitely.
+		rounds := 0
+
+		err := settleFaceClusters(3, func(int) (facesRunResult, error) {
+			rounds++
+			return facesRunResult{Updated: 1}, nil
+		})
+
+		require.NoError(t, err)
+		assert.Equal(t, 3, rounds)
+	})
+	t.Run("ReturnsTheFirstError", func(t *testing.T) {
+		rounds := 0
+
+		err := settleFaceClusters(4, func(int) (facesRunResult, error) {
+			rounds++
+			return facesRunResult{Updated: 1}, fmt.Errorf("clustering failed")
+		})
+
+		require.Error(t, err)
+		assert.Equal(t, 1, rounds, "a failed pass is not retried here")
+	})
+	t.Run("NoRounds", func(t *testing.T) {
+		assert.NoError(t, settleFaceClusters(0, func(int) (facesRunResult, error) {
+			t.Fatal("must not run")
+			return facesRunResult{}, nil
+		}))
 	})
 }

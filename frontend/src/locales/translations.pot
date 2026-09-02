@@ -46,9 +46,8 @@ msgstr ""
 msgid "%{n} labels found"
 msgstr ""
 
-#: src/page/people/new.vue:494
-#: src/page/people/new.vue:600
-#: src/page/people/recognized.vue:729
+#: src/page/people/new.vue:249
+#: src/page/people/recognized.vue:279
 msgid "%{n} people found"
 msgstr ""
 
@@ -73,15 +72,15 @@ msgstr ""
 msgid "%{s} is too short"
 msgstr ""
 
-#: src/locales.js:437
+#: src/locales.js:438
 msgid "%d entries added to %s"
 msgstr ""
 
-#: src/locales.js:439
+#: src/locales.js:440
 msgid "%d entries removed from %s"
 msgstr ""
 
-#: src/locales.js:461
+#: src/locales.js:462
 msgid "%d files uploaded in %d s"
 msgstr ""
 
@@ -89,7 +88,7 @@ msgstr ""
 msgid "%s already exists"
 msgstr ""
 
-#: src/locales.js:471
+#: src/locales.js:472
 msgid "%s has been restored"
 msgstr ""
 
@@ -126,6 +125,10 @@ msgstr ""
 
 #: src/component/share/dialog.vue:116
 msgid "A click will copy it to your clipboard."
+msgstr ""
+
+#: src/locales.js:428
+msgid "A migration is in progress"
 msgstr ""
 
 #: src/component/update.vue:53
@@ -197,7 +200,7 @@ msgstr ""
 #: src/component/user/add/dialog.vue:277
 #: src/component/user/add/dialog.vue:277
 #: src/component/service/add.vue:131
-#: src/locales.js:440
+#: src/locales.js:441
 msgid "Account created"
 msgstr ""
 
@@ -205,7 +208,7 @@ msgstr ""
 #: src/component/user/remove/dialog.vue:63
 #: src/component/user/remove/dialog.vue:63
 #: src/component/service/remove.vue:74
-#: src/locales.js:442
+#: src/locales.js:443
 msgid "Account deleted"
 msgstr ""
 
@@ -223,7 +226,7 @@ msgstr ""
 msgid "Account restored"
 msgstr ""
 
-#: src/locales.js:441
+#: src/locales.js:442
 msgid "Account saved"
 msgstr ""
 
@@ -318,6 +321,7 @@ msgstr ""
 
 #: src/component/lightbox/sidebar.vue:480
 #: src/component/photo/edit/people.vue:97
+#: src/page/people/new.vue:198
 msgid "Add %{s}?"
 msgstr ""
 
@@ -461,7 +465,7 @@ msgstr ""
 msgid "Album"
 msgstr ""
 
-#: src/locales.js:431
+#: src/locales.js:432
 msgid "Album %s deleted"
 msgstr ""
 
@@ -469,11 +473,11 @@ msgstr ""
 msgid "Album Backups"
 msgstr ""
 
-#: src/locales.js:432
+#: src/locales.js:433
 msgid "Album contents cloned"
 msgstr ""
 
-#: src/locales.js:429
+#: src/locales.js:430
 #: src/page/albums.vue:1194
 msgid "Album created"
 msgstr ""
@@ -486,7 +490,7 @@ msgstr ""
 msgid "Album not found"
 msgstr ""
 
-#: src/locales.js:430
+#: src/locales.js:431
 msgid "Album saved"
 msgstr ""
 
@@ -505,7 +509,7 @@ msgid "Albums"
 msgstr ""
 
 #: src/component/album/clipboard.vue:194
-#: src/locales.js:468
+#: src/locales.js:469
 msgid "Albums deleted"
 msgstr ""
 
@@ -522,7 +526,7 @@ msgstr ""
 msgid "All %{n} labels loaded"
 msgstr ""
 
-#: src/page/people/recognized.vue:561
+#: src/page/people/recognized.vue:577
 msgid "All %{n} people loaded"
 msgstr ""
 
@@ -858,6 +862,7 @@ msgstr ""
 
 #: src/page/settings/account.vue:212
 #: src/page/settings/account.vue:212
+#: src/component/people/edit/dialog.vue:39
 #: src/page/settings/account.vue:196
 msgid "Birth Date"
 msgstr ""
@@ -957,10 +962,10 @@ msgstr ""
 #: src/page/labels.vue:662
 #: src/page/library/browse.vue:325
 #: src/page/library/browse.vue:341
-#: src/page/people/new.vue:422
 #: src/page/people/new.vue:438
-#: src/page/people/recognized.vue:494
+#: src/page/people/new.vue:454
 #: src/page/people/recognized.vue:510
+#: src/page/people/recognized.vue:526
 msgid "Can't select more items"
 msgstr ""
 
@@ -994,7 +999,7 @@ msgstr ""
 #: src/component/meta/face/markers.vue:54
 #: src/component/meta/face/markers.vue:73
 #: src/component/meta/location/dialog.vue:115
-#: src/component/people/edit/dialog.vue:46
+#: src/component/people/edit/dialog.vue:72
 #: src/component/photo/album/dialog.vue:64
 #: src/component/service/add.vue:97
 #: src/component/service/edit.vue:232
@@ -1091,7 +1096,7 @@ msgstr ""
 #: src/component/album/edit/dialog.vue:171
 #: src/component/label/edit/dialog.vue:109
 #: src/component/meta/camera/dialog.vue:214
-#: src/component/people/edit/dialog.vue:112
+#: src/component/people/edit/dialog.vue:143
 #: src/component/photo/batch-edit.vue:1440
 #: src/component/photo/edit/details.vue:636
 #: src/locales.js:376
@@ -1116,10 +1121,10 @@ msgstr ""
 #: src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225
 #: src/component/share/dialog.vue:244
-#: src/locales.js:428
+#: src/locales.js:429
 #: src/page/albums.vue:1197
-#: src/page/people/new.vue:789
-#: src/page/people/recognized.vue:304
+#: src/page/people/new.vue:814
+#: src/page/people/recognized.vue:320
 #: src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247
 #: src/page/settings/content.vue:313
@@ -1302,6 +1307,7 @@ msgstr ""
 #: src/component/settings/passcode.vue:69
 #: src/component/settings/passcode.vue:78
 #: src/component/settings/passcode.vue:94
+#: src/page/people/new.vue:101
 msgid "Confirm"
 msgstr ""
 
@@ -1414,7 +1420,7 @@ msgstr ""
 msgid "Copy"
 msgstr ""
 
-#: src/locales.js:453
+#: src/locales.js:454
 msgid "Copying files from %s"
 msgstr ""
 
@@ -1449,14 +1455,6 @@ msgstr ""
 #: src/component/photo/toolbar.vue:100
 #: src/page/settings/account.vue:286
 msgid "Country"
-msgstr ""
-
-#: src/page/people/new.vue:101
-msgid "Create"
-msgstr ""
-
-#: src/page/people/new.vue:198
-msgid "Create a new person named %{name}?"
 msgstr ""
 
 #: src/page/auth/login.vue:123
@@ -2192,7 +2190,7 @@ msgstr ""
 
 #: src/component/album/edit/dialog.vue:77
 #: src/component/label/edit/dialog.vue:37
-#: src/component/people/edit/dialog.vue:37
+#: src/component/people/edit/dialog.vue:50
 #: src/component/photo/batch-edit.vue:1536
 #: src/component/photo/edit/info.vue:121
 #: src/component/photo/edit/info.vue:122
@@ -2238,7 +2236,7 @@ msgstr ""
 msgid "File Conversion"
 msgstr ""
 
-#: src/locales.js:434
+#: src/locales.js:435
 msgid "File deleted"
 msgstr ""
 
@@ -2253,7 +2251,7 @@ msgstr ""
 msgid "File not found"
 msgstr ""
 
-#: src/locales.js:433
+#: src/locales.js:434
 msgid "File removed from stack"
 msgstr ""
 
@@ -2265,7 +2263,7 @@ msgstr ""
 msgid "File too large"
 msgstr ""
 
-#: src/locales.js:460
+#: src/locales.js:461
 msgid "File uploaded"
 msgstr ""
 
@@ -2467,7 +2465,7 @@ msgstr ""
 #: src/component/navigation.vue:382
 #: src/component/navigation.vue:391
 #: src/component/navigation.vue:504
-#: src/component/people/edit/dialog.vue:40
+#: src/component/people/edit/dialog.vue:63
 msgid "Hidden"
 msgstr ""
 
@@ -2540,11 +2538,11 @@ msgstr ""
 msgid "Import"
 msgstr ""
 
-#: src/locales.js:446
+#: src/locales.js:447
 msgid "Import canceled"
 msgstr ""
 
-#: src/locales.js:445
+#: src/locales.js:446
 msgid "Import completed in %d s"
 msgstr ""
 
@@ -2613,11 +2611,11 @@ msgstr ""
 msgid "Indexing"
 msgstr ""
 
-#: src/locales.js:450
+#: src/locales.js:451
 msgid "Indexing canceled"
 msgstr ""
 
-#: src/locales.js:447
+#: src/locales.js:448
 msgid "Indexing completed in %d s"
 msgstr ""
 
@@ -2625,7 +2623,7 @@ msgstr ""
 msgid "Indexing failed"
 msgstr ""
 
-#: src/locales.js:449
+#: src/locales.js:450
 msgid "Indexing files in %s"
 msgstr ""
 
@@ -2633,7 +2631,7 @@ msgstr ""
 msgid "Indexing media and sidecar files…"
 msgstr ""
 
-#: src/locales.js:448
+#: src/locales.js:449
 msgid "Indexing originals..."
 msgstr ""
 
@@ -2813,7 +2811,7 @@ msgstr ""
 msgid "Label not found"
 msgstr ""
 
-#: src/locales.js:455
+#: src/locales.js:456
 msgid "Label saved"
 msgstr ""
 
@@ -2834,7 +2832,7 @@ msgid "Labels"
 msgstr ""
 
 #: src/component/label/clipboard.vue:131
-#: src/locales.js:454
+#: src/locales.js:455
 msgid "Labels deleted"
 msgstr ""
 
@@ -3218,7 +3216,7 @@ msgstr ""
 msgid "Move Files"
 msgstr ""
 
-#: src/locales.js:452
+#: src/locales.js:453
 msgid "Moving files from %s"
 msgstr ""
 
@@ -3378,10 +3376,9 @@ msgstr ""
 
 #: src/component/photo/edit/people.vue:6
 #: src/page/people/new.vue:23
-#: src/page/people/new.vue:490
-#: src/page/people/new.vue:596
+#: src/page/people/new.vue:245
+#: src/page/people/recognized.vue:275
 #: src/page/people/recognized.vue:55
-#: src/page/people/recognized.vue:725
 msgid "No people found"
 msgstr ""
 
@@ -3553,11 +3550,11 @@ msgstr ""
 msgid "One album found"
 msgstr ""
 
-#: src/locales.js:436
+#: src/locales.js:437
 msgid "One entry added to %s"
 msgstr ""
 
-#: src/locales.js:438
+#: src/locales.js:439
 msgid "One entry removed from %s"
 msgstr ""
 
@@ -3573,9 +3570,8 @@ msgstr ""
 msgid "One label found"
 msgstr ""
 
-#: src/page/people/new.vue:492
-#: src/page/people/new.vue:598
-#: src/page/people/recognized.vue:727
+#: src/page/people/new.vue:247
+#: src/page/people/recognized.vue:277
 msgid "One person found"
 msgstr ""
 
@@ -3736,7 +3732,7 @@ msgid "Password"
 msgstr ""
 
 #: src/component/settings/password.vue:162
-#: src/locales.js:444
+#: src/locales.js:445
 msgid "Password changed"
 msgstr ""
 
@@ -3770,7 +3766,7 @@ msgstr ""
 
 #: src/component/photo/clipboard.vue:303
 #: src/component/photo/toolbar.vue:522
-#: src/locales.js:470
+#: src/locales.js:471
 msgid "Permanently deleted"
 msgstr ""
 
@@ -3778,7 +3774,7 @@ msgstr ""
 msgid "Permission denied"
 msgstr ""
 
-#: src/model/subject.js:158
+#: src/model/subject.js:192
 msgid "Person"
 msgstr ""
 
@@ -3786,7 +3782,7 @@ msgstr ""
 msgid "Person cover updated"
 msgstr ""
 
-#: src/locales.js:459
+#: src/locales.js:460
 msgid "Person deleted"
 msgstr ""
 
@@ -3796,7 +3792,7 @@ msgstr ""
 msgid "Person not found"
 msgstr ""
 
-#: src/locales.js:458
+#: src/locales.js:459
 msgid "Person saved"
 msgstr ""
 
@@ -3999,6 +3995,7 @@ msgstr ""
 #: src/component/navigation.vue:148
 #: src/component/navigation.vue:156
 #: src/component/navigation.vue:176
+#: src/component/people/edit/dialog.vue:66
 #: src/component/photo/batch-edit.vue:1537
 #: src/component/photo/edit/info.vue:129
 #: src/component/photo/edit/info.vue:130
@@ -4006,7 +4003,7 @@ msgstr ""
 msgid "Private"
 msgstr ""
 
-#: src/locales.js:462
+#: src/locales.js:463
 msgid "Processing upload..."
 msgstr ""
 
@@ -4229,7 +4226,7 @@ msgstr ""
 msgid "Removed %{name}"
 msgstr ""
 
-#: src/locales.js:451
+#: src/locales.js:452
 msgid "Removed %d files and %d photos"
 msgstr ""
 
@@ -4378,10 +4375,10 @@ msgstr ""
 #: src/component/meta/datetime/dialog.vue:38
 #: src/component/meta/datetime/dialog.vue:39
 #: src/component/meta/datetime/dialog.vue:51
-#: src/component/people/edit/dialog.vue:30
-#: src/component/people/edit/dialog.vue:31
-#: src/component/people/edit/dialog.vue:42
-#: src/component/people/edit/dialog.vue:49
+#: src/component/people/edit/dialog.vue:40
+#: src/component/people/edit/dialog.vue:41
+#: src/component/people/edit/dialog.vue:52
+#: src/component/people/edit/dialog.vue:75
 #: src/component/photo/batch-edit.vue:483
 #: src/component/photo/edit/details.vue:396
 #: src/component/service/edit.vue:103
@@ -4528,21 +4525,21 @@ msgstr ""
 msgid "Selection"
 msgstr ""
 
-#: src/locales.js:435
+#: src/locales.js:436
 msgid "Selection added to %s"
 msgstr ""
 
 #: src/component/photo/clipboard.vue:251
-#: src/locales.js:464
+#: src/locales.js:465
 msgid "Selection approved"
 msgstr ""
 
 #: src/component/photo/clipboard.vue:282
-#: src/locales.js:465
+#: src/locales.js:466
 msgid "Selection archived"
 msgstr ""
 
-#: src/locales.js:467
+#: src/locales.js:468
 msgid "Selection marked as private"
 msgstr ""
 
@@ -4551,7 +4548,7 @@ msgid "Selection not found"
 msgstr ""
 
 #: src/component/photo/clipboard.vue:318
-#: src/locales.js:466
+#: src/locales.js:467
 msgid "Selection restored"
 msgstr ""
 
@@ -4635,7 +4632,7 @@ msgstr ""
 #: src/page/settings/account.vue:533
 #: src/page/settings/account.vue:562
 #: src/component/settings/passcode.vue:366
-#: src/locales.js:443
+#: src/locales.js:444
 #: src/page/settings/account.vue:441
 #: src/page/settings/account.vue:470
 msgid "Settings saved"
@@ -4952,7 +4949,7 @@ msgstr ""
 msgid "Subject"
 msgstr ""
 
-#: src/locales.js:457
+#: src/locales.js:458
 msgid "Subject deleted"
 msgstr ""
 
@@ -4960,12 +4957,12 @@ msgstr ""
 msgid "Subject not found"
 msgstr ""
 
-#: src/locales.js:456
+#: src/locales.js:457
 msgid "Subject saved"
 msgstr ""
 
 #: src/component/settings/passcode.vue:351
-#: src/locales.js:473
+#: src/locales.js:474
 msgid "Successfully activated"
 msgstr ""
 
@@ -4983,7 +4980,7 @@ msgid "Successfully deleted"
 msgstr ""
 
 #: src/component/settings/passcode.vue:323
-#: src/locales.js:472
+#: src/locales.js:473
 msgid "Successfully verified"
 msgstr ""
 
@@ -5426,7 +5423,7 @@ msgstr ""
 msgid "Upload failed"
 msgstr ""
 
-#: src/locales.js:463
+#: src/locales.js:464
 msgid "Upload has been processed"
 msgstr ""
 
@@ -5579,6 +5576,10 @@ msgstr ""
 #: src/component/settings/passcode.vue:92
 #: src/page/auth/login.vue:62
 msgid "Verification Code"
+msgstr ""
+
+#: src/component/people/edit/dialog.vue:56
+msgid "Verified"
 msgstr ""
 
 #: src/locales.js:427
@@ -5836,7 +5837,7 @@ msgstr ""
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr ""
 
-#: src/locales.js:469
+#: src/locales.js:470
 msgid "Zip created in %d s"
 msgstr ""
 

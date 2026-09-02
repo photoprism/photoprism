@@ -22,17 +22,10 @@ func DetectFaces(jpeg *MediaFile, expected int) (face.Faces, error) {
 
 	start := time.Now()
 
-	engineName := face.ActiveEngineName()
-
-	var thumbSize thumb.Name
-
-	if engineName == face.EngineONNX || Config().ThumbSizePrecached() < 1280 {
-		thumbSize = thumb.Fit720
-	} else {
-		thumbSize = thumb.Fit1280
-	}
-
-	thumbName, err := jpeg.Thumbnail(Config().ThumbCachePath(), thumbSize)
+	// Always Fit720, which entity.ClusterSizeCond depends on: markers.size is recorded in the
+	// pixels of whatever image detection ran on, and it is a lower bound on the extent an
+	// embedding was sampled from only while that image is the narrowest rendition.
+	thumbName, err := jpeg.Thumbnail(Config().ThumbCachePath(), thumb.Fit720)
 
 	if err != nil {
 		log.Debugf("%s (detect faces)", err)
@@ -40,11 +33,20 @@ func DetectFaces(jpeg *MediaFile, expected int) (face.Faces, error) {
 	}
 
 	if thumbName == "" {
-		log.Debugf("vision: thumb %s not found in %s (detect faces)", thumbSize, clean.Log(jpeg.BaseName()))
-		return face.Faces{}, fmt.Errorf("thumbnail %s not found", thumbSize)
+		log.Debugf("vision: thumb %s not found in %s (detect faces)", thumb.Fit720, clean.Log(jpeg.BaseName()))
+		return face.Faces{}, fmt.Errorf("thumbnail %s not found", thumb.Fit720)
 	}
 
-	faces, err := vision.DetectFaces(thumbName, Config().FaceSize(), Config().FaceSizeRetry(), true, expected)
+	// The rendition a crop is taken from is rendered between detection and embedding, since the
+	// smallest face found decides how wide it has to be. A failure is not fatal: the crops are
+	// then taken from what the cache does hold, which is what every index did before.
+	renderCropSource := func(faces face.Faces) {
+		if _, renderErr := cacheFaceCropSource(Config(), jpeg, faces); renderErr != nil {
+			log.Debugf("vision: %s in %s (render face crop source)", renderErr, clean.Log(jpeg.BaseName()))
+		}
+	}
+
+	faces, err := vision.DetectFaces(thumbName, Config().FaceSize(), Config().FaceSizeRetry(), true, expected, renderCropSource)
 
 	if err != nil {
 		log.Debugf("vision: %s in %s (detect faces)", err, clean.Log(jpeg.BaseName()))

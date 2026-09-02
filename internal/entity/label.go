@@ -17,6 +17,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// Label constants, including the prefix that identifies a generated label UID.
 const (
 	LabelUID = byte('l')
 )
@@ -301,13 +302,7 @@ func (m *Label) InvalidName() bool {
 		return true
 	}
 
-	labelSlug := txt.Slug(labelName)
-
-	if labelSlug == "" {
-		return true
-	}
-
-	return false
+	return txt.Slug(labelName) == ""
 }
 
 // GetSlug returns the label slug.

@@ -7,7 +7,9 @@
 
 - Tests live next to sources (`<file>_test.go`); group cases with `t.Run(...)` using **PascalCase** names (`Success`, `InvalidRequest`). Consecutive subtests inside the same `Test*` function are written without blank lines between them so the cases read as a compact table; reserve blank lines for separating distinct setup blocks.
 - Do not run multiple test commands in parallel — suites share fixtures, temp assets, and DB state.
-- Keep Go scratch work inside `internal/...` (Go refuses `internal/` imports from `/tmp`).
+- Keep Go scratch work inside `internal/...` (Go refuses `internal/` imports from `/tmp`), and name
+  it `internal/zz<something>` — that prefix is gitignored, so a `git add` that sweeps a directory
+  cannot carry a throwaway copy of a package into a commit. Single files follow `zz_*.go`.
 - Prefer focused runs: `go test ./internal/<pkg> -run <Name> -count=1`. Avoid `./...` unless needed; heavy packages (`internal/entity`, `internal/photoprism`) take 30–120s on first run.
 
 ### Fast, Focused Test Recipes
@@ -61,6 +63,8 @@ A test that passes alone and in the full package but fails under `-run` subsets 
 - Non-interactive: set `PHOTOPRISM_CLI=noninteractive` and/or pass `--yes`.
 - SQLite DSN from `NewTestConfig("<pkg>")` is a per-suite path like `.<pkg>.db` — don't assert empty.
 - Reuse shared flag helpers (`DryRunFlag(...)`, `YesFlag()`) for new CLI flags.
+- **`NewTestContextWithParse` applies the *app's* flags, not a subcommand's**, so `ctx.Bool("all")` or `ctx.Int("count")` reads the zero value for a flag the subcommand declares and the test passes while asserting nothing. Build the context from `cmd.Flags` instead - apply each to a `flag.NewFlagSet`, parse the args, and wrap with `cli.NewContext`. `newFacesResetContext` and `newCommandContext` in `internal/commands` are the pattern.
+- A flag whose effect the fixtures cannot show is untestable through the command: with fewer than 100 people, `--count 0`, `--count 2000` and the default all print the same table, so assert on the helper that reads the flag rather than on the output.
 
 ### FFmpeg & Hardware Gating
 

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-08-07 14:04+0000\n"
+"PO-Revision-Date: 2026-09-01 06:33+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Slovak <https://translate.photoprism.app/projects/photoprism/frontend/sk/>\n"
 "Language: sk\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Weblate 2026.8\n"
+"X-Generator: Weblate 2026.8.1\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -58,8 +58,7 @@ msgstr "%{n} GB z %{q} GB použitých"
 msgid "%{n} labels found"
 msgstr "%{n} nájdených štítkov"
 
-#: src/page/people/new.vue:494 src/page/people/new.vue:600
-#: src/page/people/recognized.vue:729
+#: src/page/people/new.vue:249 src/page/people/recognized.vue:279
 msgid "%{n} people found"
 msgstr "%{n} nájdených ľudí"
 
@@ -80,15 +79,15 @@ msgstr "%{s} je príliš dlhé"
 msgid "%{s} is too short"
 msgstr "%{s} je príliš krátke"
 
-#: src/locales.js:437
+#: src/locales.js:438
 msgid "%d entries added to %s"
 msgstr "%d záznamov pridaných do %s"
 
-#: src/locales.js:439
+#: src/locales.js:440
 msgid "%d entries removed from %s"
 msgstr "%d záznamov odstránených z %s"
 
-#: src/locales.js:461
+#: src/locales.js:462
 msgid "%d files uploaded in %d s"
 msgstr "%d súborov nahraných za %d sekúnd"
 
@@ -96,7 +95,7 @@ msgstr "%d súborov nahraných za %d sekúnd"
 msgid "%s already exists"
 msgstr "%s už existuje"
 
-#: src/locales.js:471
+#: src/locales.js:472
 msgid "%s has been restored"
 msgstr "%s bolo obnovené"
 
@@ -130,6 +129,10 @@ msgstr "4 hodiny"
 #: src/component/share/dialog.vue:116
 msgid "A click will copy it to your clipboard."
 msgstr "Kliknutím skopírujete obsah."
+
+#: src/locales.js:428
+msgid "A migration is in progress"
+msgstr "Prebieha migrácia"
 
 #: src/component/update.vue:53
 msgid "A new version of %{s} is available:"
@@ -177,12 +180,12 @@ msgid "Account"
 msgstr "Účet"
 
 #: src/component/user/add/dialog.vue:261 src/component/user/add/dialog.vue:277
-#: src/component/service/add.vue:131 src/locales.js:440
+#: src/component/service/add.vue:131 src/locales.js:441
 msgid "Account created"
 msgstr "Účet vytvorený"
 
 #: src/component/user/remove/dialog.vue:63 src/component/service/remove.vue:74
-#: src/locales.js:442
+#: src/locales.js:443
 msgid "Account deleted"
 msgstr "Účet odstránený"
 
@@ -198,7 +201,7 @@ msgstr "Účet nenájdený"
 msgid "Account restored"
 msgstr "Obnovenie účtu"
 
-#: src/locales.js:441
+#: src/locales.js:442
 msgid "Account saved"
 msgstr "Účet uložený"
 
@@ -265,7 +268,7 @@ msgid "Add"
 msgstr "Pridať"
 
 #: src/component/lightbox/sidebar.vue:480
-#: src/component/photo/edit/people.vue:97
+#: src/component/photo/edit/people.vue:97 src/page/people/new.vue:198
 msgid "Add %{s}?"
 msgstr "Pridať %{s}?"
 
@@ -395,7 +398,7 @@ msgstr "Po dvoch týždňoch"
 msgid "Album"
 msgstr "Album"
 
-#: src/locales.js:431
+#: src/locales.js:432
 msgid "Album %s deleted"
 msgstr "Album %s vymazaný"
 
@@ -403,11 +406,11 @@ msgstr "Album %s vymazaný"
 msgid "Album Backups"
 msgstr "Zálohy albumov"
 
-#: src/locales.js:432
+#: src/locales.js:433
 msgid "Album contents cloned"
 msgstr "Obsah albumu prekopírovaný"
 
-#: src/locales.js:429 src/page/albums.vue:1194
+#: src/locales.js:430 src/page/albums.vue:1194
 msgid "Album created"
 msgstr "Album vytvorený"
 
@@ -419,7 +422,7 @@ msgstr "Album vymazaný"
 msgid "Album not found"
 msgstr "Album nenájdený"
 
-#: src/locales.js:430
+#: src/locales.js:431
 msgid "Album saved"
 msgstr "Album uložený"
 
@@ -432,7 +435,7 @@ msgstr "Album uložený"
 msgid "Albums"
 msgstr "Albumy"
 
-#: src/component/album/clipboard.vue:194 src/locales.js:468
+#: src/component/album/clipboard.vue:194 src/locales.js:469
 msgid "Albums deleted"
 msgstr "Albumy odstránené"
 
@@ -448,7 +451,7 @@ msgstr "Všetkých %{n} albumov bolo načítaných"
 msgid "All %{n} labels loaded"
 msgstr "Všetkých %{n} štítkov načítaných"
 
-#: src/page/people/recognized.vue:561
+#: src/page/people/recognized.vue:577
 msgid "All %{n} people loaded"
 msgstr "Všetkých %{n} ľudí načítaných"
 
@@ -737,7 +740,8 @@ msgstr "Keďže sme financovaní 100% selfmi a sme nezávislí, môžeme vám s�
 msgid "Bio"
 msgstr "Bio"
 
-#: src/page/settings/account.vue:212 src/page/settings/account.vue:196
+#: src/page/settings/account.vue:212 src/component/people/edit/dialog.vue:39
+#: src/page/settings/account.vue:196
 msgid "Birth Date"
 msgstr "Datum narodenia"
 
@@ -817,9 +821,9 @@ msgstr "Nemožno načítať viac, limit dosiahnutý"
 #: src/common/clipboard.js:103 src/common/clipboard.js:139
 #: src/page/albums.vue:1204 src/page/albums.vue:1220 src/page/labels.vue:642
 #: src/page/labels.vue:662 src/page/library/browse.vue:325
-#: src/page/library/browse.vue:341 src/page/people/new.vue:422
-#: src/page/people/new.vue:438 src/page/people/recognized.vue:494
-#: src/page/people/recognized.vue:510
+#: src/page/library/browse.vue:341 src/page/people/new.vue:438
+#: src/page/people/new.vue:454 src/page/people/recognized.vue:510
+#: src/page/people/recognized.vue:526
 msgid "Can't select more items"
 msgstr "Nemožno označiť viac položiek"
 
@@ -843,7 +847,7 @@ msgstr "Nemožno označiť viac položiek"
 #: src/component/meta/face/markers.vue:54
 #: src/component/meta/face/markers.vue:73
 #: src/component/meta/location/dialog.vue:115
-#: src/component/people/edit/dialog.vue:46
+#: src/component/people/edit/dialog.vue:72
 #: src/component/photo/album/dialog.vue:64 src/component/service/add.vue:97
 #: src/component/service/edit.vue:232 src/component/service/remove.vue:19
 #: src/component/service/upload.vue:57 src/component/settings/apps.vue:151
@@ -914,7 +918,7 @@ msgstr "Zmeniť privátne označenie"
 #: src/component/album/edit/dialog.vue:171
 #: src/component/label/edit/dialog.vue:109
 #: src/component/meta/camera/dialog.vue:214
-#: src/component/people/edit/dialog.vue:112
+#: src/component/people/edit/dialog.vue:143
 #: src/component/photo/batch-edit.vue:1440
 #: src/component/photo/edit/details.vue:636 src/locales.js:376
 #: src/page/settings/account.vue:447 src/page/settings/account.vue:452
@@ -933,8 +937,8 @@ msgstr "Zmeny sa neuložili"
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
-#: src/locales.js:428 src/page/albums.vue:1197 src/page/people/new.vue:789
-#: src/page/people/recognized.vue:304 src/page/settings/advanced.vue:507
+#: src/locales.js:429 src/page/albums.vue:1197 src/page/people/new.vue:814
+#: src/page/people/recognized.vue:320 src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
 #: src/page/settings/general.vue:646
 msgid "Changes successfully saved"
@@ -1086,7 +1090,7 @@ msgstr "Zhoda"
 #: src/component/settings/passcode.vue:68
 #: src/component/settings/passcode.vue:69
 #: src/component/settings/passcode.vue:78
-#: src/component/settings/passcode.vue:94
+#: src/component/settings/passcode.vue:94 src/page/people/new.vue:101
 msgid "Confirm"
 msgstr "Potvrďte"
 
@@ -1165,7 +1169,7 @@ msgstr "Skopírované do schránky"
 msgid "Copy"
 msgstr "Kopírovať"
 
-#: src/locales.js:453
+#: src/locales.js:454
 msgid "Copying files from %s"
 msgstr "Kopírovanie súborov z %s"
 
@@ -1198,14 +1202,6 @@ msgstr "Nič nenájdené."
 #: src/page/settings/account.vue:286
 msgid "Country"
 msgstr "Štát"
-
-#: src/page/people/new.vue:101
-msgid "Create"
-msgstr ""
-
-#: src/page/people/new.vue:198
-msgid "Create a new person named %{name}?"
-msgstr ""
 
 #: src/page/auth/login.vue:123 src/page/auth/login.vue:130
 msgid "Create Account"
@@ -1827,7 +1823,7 @@ msgstr "Rýchle"
 
 #: src/component/album/edit/dialog.vue:77
 #: src/component/label/edit/dialog.vue:37
-#: src/component/people/edit/dialog.vue:37
+#: src/component/people/edit/dialog.vue:50
 #: src/component/photo/batch-edit.vue:1536
 #: src/component/photo/edit/info.vue:121 src/component/photo/edit/info.vue:122
 msgid "Favorite"
@@ -1868,7 +1864,7 @@ msgstr "Prehliadač Súborov"
 msgid "File Conversion"
 msgstr "Konverzia súborov"
 
-#: src/locales.js:434
+#: src/locales.js:435
 msgid "File deleted"
 msgstr "Súbor odstránený"
 
@@ -1882,7 +1878,7 @@ msgstr "Názov súboru"
 msgid "File not found"
 msgstr "Súbor nenájdený"
 
-#: src/locales.js:433
+#: src/locales.js:434
 msgid "File removed from stack"
 msgstr "Súbor odstránený zo stohu"
 
@@ -1894,7 +1890,7 @@ msgstr "Veľkosť súboru"
 msgid "File too large"
 msgstr "Súbor je príliš veľký"
 
-#: src/locales.js:460
+#: src/locales.js:461
 msgid "File uploaded"
 msgstr "Súbor bol nahratý"
 
@@ -2064,7 +2060,7 @@ msgstr "Pomoc a podpora"
 
 #: src/component/navigation.vue:369 src/component/navigation.vue:370
 #: src/component/navigation.vue:382 src/component/navigation.vue:391
-#: src/component/navigation.vue:504 src/component/people/edit/dialog.vue:40
+#: src/component/navigation.vue:504 src/component/people/edit/dialog.vue:63
 msgid "Hidden"
 msgstr "Skryté"
 
@@ -2131,11 +2127,11 @@ msgstr "Kvalita obrazu"
 msgid "Import"
 msgstr "Importovať"
 
-#: src/locales.js:446
+#: src/locales.js:447
 msgid "Import canceled"
 msgstr "Import zrušený"
 
-#: src/locales.js:445
+#: src/locales.js:446
 msgid "Import completed in %d s"
 msgstr "Import hotový za %d sekúnd"
 
@@ -2197,11 +2193,11 @@ msgstr "Index"
 msgid "Indexing"
 msgstr "Indexovanie"
 
-#: src/locales.js:450
+#: src/locales.js:451
 msgid "Indexing canceled"
 msgstr "Indexovanie zrušené"
 
-#: src/locales.js:447
+#: src/locales.js:448
 msgid "Indexing completed in %d s"
 msgstr "Indexovanie hotové za %d sekúnd"
 
@@ -2209,7 +2205,7 @@ msgstr "Indexovanie hotové za %d sekúnd"
 msgid "Indexing failed"
 msgstr "Indexovanie zlyhalo"
 
-#: src/locales.js:449
+#: src/locales.js:450
 msgid "Indexing files in %s"
 msgstr "Indexovanie súborov v %s"
 
@@ -2217,7 +2213,7 @@ msgstr "Indexovanie súborov v %s"
 msgid "Indexing media and sidecar files…"
 msgstr "Indexovanie médií a pripojených súborov…"
 
-#: src/locales.js:448
+#: src/locales.js:449
 msgid "Indexing originals..."
 msgstr "Indexovanie originálov..."
 
@@ -2367,7 +2363,7 @@ msgstr "Štítok"
 msgid "Label not found"
 msgstr "Štítok nenájdený"
 
-#: src/locales.js:455
+#: src/locales.js:456
 msgid "Label saved"
 msgstr "Štítok uložený"
 
@@ -2383,7 +2379,7 @@ msgstr "Štítok uložený"
 msgid "Labels"
 msgstr "Štítky"
 
-#: src/component/label/clipboard.vue:131 src/locales.js:454
+#: src/component/label/clipboard.vue:131 src/locales.js:455
 msgid "Labels deleted"
 msgstr "Štítky odstránené"
 
@@ -2695,7 +2691,7 @@ msgstr "Najrelevantnejšie"
 msgid "Move Files"
 msgstr "Presunúť Súbory"
 
-#: src/locales.js:452
+#: src/locales.js:453
 msgid "Moving files from %s"
 msgstr "Presúvanie súborov z %s"
 
@@ -2832,8 +2828,8 @@ msgid "No more"
 msgstr "Nie viac"
 
 #: src/component/photo/edit/people.vue:6 src/page/people/new.vue:23
-#: src/page/people/new.vue:490 src/page/people/new.vue:596
-#: src/page/people/recognized.vue:55 src/page/people/recognized.vue:725
+#: src/page/people/new.vue:245 src/page/people/recognized.vue:275
+#: src/page/people/recognized.vue:55
 msgid "No people found"
 msgstr "Neboli nájdení žiadni ľudia"
 
@@ -2983,11 +2979,11 @@ msgstr "Raz za týždeň"
 msgid "One album found"
 msgstr "Našiel sa jeden album"
 
-#: src/locales.js:436
+#: src/locales.js:437
 msgid "One entry added to %s"
 msgstr "Jeden záznam pridaný do %s"
 
-#: src/locales.js:438
+#: src/locales.js:439
 msgid "One entry removed from %s"
 msgstr "Jeden záznam odstránený z %s"
 
@@ -3003,8 +2999,7 @@ msgstr "Našla sa jedna zložka"
 msgid "One label found"
 msgstr "Našiel sa jeden štítok"
 
-#: src/page/people/new.vue:492 src/page/people/new.vue:598
-#: src/page/people/recognized.vue:727
+#: src/page/people/new.vue:247 src/page/people/recognized.vue:277
 msgid "One person found"
 msgstr "Našla sa jedna osoba"
 
@@ -3133,7 +3128,7 @@ msgstr "Časť vybraných fotografií"
 msgid "Password"
 msgstr "Heslo"
 
-#: src/component/settings/password.vue:162 src/locales.js:444
+#: src/component/settings/password.vue:162 src/locales.js:445
 msgid "Password changed"
 msgstr "Heslo bolo zmenené"
 
@@ -3161,7 +3156,7 @@ msgid "People you share a link with will be able to view public contents."
 msgstr "Ľudia s ktorými zdieľate odkaz, budú vidieť verejný obsah."
 
 #: src/component/photo/clipboard.vue:303 src/component/photo/toolbar.vue:522
-#: src/locales.js:470
+#: src/locales.js:471
 msgid "Permanently deleted"
 msgstr "Trvalo odstránené"
 
@@ -3169,7 +3164,7 @@ msgstr "Trvalo odstránené"
 msgid "Permission denied"
 msgstr "Oprávnenie zamietnuté"
 
-#: src/model/subject.js:158
+#: src/model/subject.js:192
 msgid "Person"
 msgstr "Osoba"
 
@@ -3177,7 +3172,7 @@ msgstr "Osoba"
 msgid "Person cover updated"
 msgstr "Aktualizovaný kryt osoby"
 
-#: src/locales.js:459
+#: src/locales.js:460
 msgid "Person deleted"
 msgstr "Osoba odstránená"
 
@@ -3186,7 +3181,7 @@ msgstr "Osoba odstránená"
 msgid "Person not found"
 msgstr "Osoba nenájdená"
 
-#: src/locales.js:458
+#: src/locales.js:459
 msgid "Person saved"
 msgstr "Osoba uložená"
 
@@ -3365,13 +3360,14 @@ msgstr "Primárne"
 #: src/component/navigation.vue:126 src/component/navigation.vue:127
 #: src/component/navigation.vue:139 src/component/navigation.vue:148
 #: src/component/navigation.vue:156 src/component/navigation.vue:176
+#: src/component/people/edit/dialog.vue:66
 #: src/component/photo/batch-edit.vue:1537
 #: src/component/photo/edit/info.vue:129 src/component/photo/edit/info.vue:130
 #: src/page/settings/general.vue:200
 msgid "Private"
 msgstr "Súkromné"
 
-#: src/locales.js:462
+#: src/locales.js:463
 msgid "Processing upload..."
 msgstr "Spracovávam nahratie..."
 
@@ -3557,7 +3553,7 @@ msgstr "Odstránené"
 msgid "Removed %{name}"
 msgstr "Odstránené %{name}"
 
-#: src/locales.js:451
+#: src/locales.js:452
 msgid "Removed %d files and %d photos"
 msgstr "Bolo odstránených %d súborov a %d fotiek"
 
@@ -3686,10 +3682,10 @@ msgstr "Satelitná"
 #: src/component/meta/datetime/dialog.vue:38
 #: src/component/meta/datetime/dialog.vue:39
 #: src/component/meta/datetime/dialog.vue:51
-#: src/component/people/edit/dialog.vue:30
-#: src/component/people/edit/dialog.vue:31
-#: src/component/people/edit/dialog.vue:42
-#: src/component/people/edit/dialog.vue:49
+#: src/component/people/edit/dialog.vue:40
+#: src/component/people/edit/dialog.vue:41
+#: src/component/people/edit/dialog.vue:52
+#: src/component/people/edit/dialog.vue:75
 #: src/component/photo/batch-edit.vue:483
 #: src/component/photo/edit/details.vue:396 src/component/service/edit.vue:103
 #: src/component/service/edit.vue:235 src/component/service/edit.vue:93
@@ -3805,19 +3801,19 @@ msgstr "Vyberte čas"
 msgid "Selection"
 msgstr "Výber"
 
-#: src/locales.js:435
+#: src/locales.js:436
 msgid "Selection added to %s"
 msgstr "Výber pridaný do %s"
 
-#: src/component/photo/clipboard.vue:251 src/locales.js:464
+#: src/component/photo/clipboard.vue:251 src/locales.js:465
 msgid "Selection approved"
 msgstr "Označenie schválené"
 
-#: src/component/photo/clipboard.vue:282 src/locales.js:465
+#: src/component/photo/clipboard.vue:282 src/locales.js:466
 msgid "Selection archived"
 msgstr "Označenie archivované"
 
-#: src/locales.js:467
+#: src/locales.js:468
 msgid "Selection marked as private"
 msgstr "Označenie označené ako súkromné"
 
@@ -3825,7 +3821,7 @@ msgstr "Označenie označené ako súkromné"
 msgid "Selection not found"
 msgstr "Výber nenájdený"
 
-#: src/component/photo/clipboard.vue:318 src/locales.js:466
+#: src/component/photo/clipboard.vue:318 src/locales.js:467
 msgid "Selection restored"
 msgstr "Označenie obnovené"
 
@@ -3884,7 +3880,7 @@ msgid "Settings"
 msgstr "Nastavenia"
 
 #: src/page/settings/account.vue:533 src/page/settings/account.vue:562
-#: src/component/settings/passcode.vue:366 src/locales.js:443
+#: src/component/settings/passcode.vue:366 src/locales.js:444
 #: src/page/settings/account.vue:441 src/page/settings/account.vue:470
 msgid "Settings saved"
 msgstr "Nastavenia uložené"
@@ -4167,7 +4163,7 @@ msgstr "Ulice"
 msgid "Subject"
 msgstr "Predmet"
 
-#: src/locales.js:457
+#: src/locales.js:458
 msgid "Subject deleted"
 msgstr "Predmet odstránený"
 
@@ -4175,11 +4171,11 @@ msgstr "Predmet odstránený"
 msgid "Subject not found"
 msgstr "Predmet nenájdený"
 
-#: src/locales.js:456
+#: src/locales.js:457
 msgid "Subject saved"
 msgstr "Predmet uložený"
 
-#: src/component/settings/passcode.vue:351 src/locales.js:473
+#: src/component/settings/passcode.vue:351 src/locales.js:474
 msgid "Successfully activated"
 msgstr "Úspešne aktivované"
 
@@ -4192,7 +4188,7 @@ msgstr "Úspešne pripojené"
 msgid "Successfully deleted"
 msgstr "Úspešne odstránené"
 
-#: src/component/settings/passcode.vue:323 src/locales.js:472
+#: src/component/settings/passcode.vue:323 src/locales.js:473
 msgid "Successfully verified"
 msgstr "Úspešne overené"
 
@@ -4548,7 +4544,7 @@ msgstr "Odovzdávanie hotové. Indexuje sa…"
 msgid "Upload failed"
 msgstr "Odovzdávanie zlyhalo"
 
-#: src/locales.js:463
+#: src/locales.js:464
 msgid "Upload has been processed"
 msgstr "Nahratie bolo spracované"
 
@@ -4672,6 +4668,10 @@ msgstr "Vektory"
 #: src/component/settings/passcode.vue:92 src/page/auth/login.vue:62
 msgid "Verification Code"
 msgstr "Overovací kód"
+
+#: src/component/people/edit/dialog.vue:56
+msgid "Verified"
+msgstr "Overený"
 
 #: src/locales.js:427
 msgid "Verified email required"
@@ -4877,7 +4877,7 @@ msgstr "Vaša podpora nám pomáha poskytovať pravidelné aktualizácie a zosta
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "Vaša knižnica sa priebežne analyzuje aby mohla automaticky vytvárať albumy špeciálnych momentov, výletov a miest."
 
-#: src/locales.js:469
+#: src/locales.js:470
 msgid "Zip created in %d s"
 msgstr "Súbor ZIP vytvorený za %d sekúnd"
 
@@ -4935,6 +4935,12 @@ msgstr "Titulok"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Archivovať"
+
+#~ msgid "Create"
+#~ msgstr "Vytvorené"
+
+#~ msgid "Create a new person named %{name}?"
+#~ msgstr "Chcete vytvoriť novú osobu s názvom %{name}?"
 
 #~ msgid "%{n} files uploaded"
 #~ msgstr "%{n} odovzdaných súborov"
@@ -5419,9 +5425,6 @@ msgstr "Archivovať"
 
 #~ msgid "Why are some features only available to sponsors?"
 #~ msgstr "Prečo sú niektoré funkcie dostupné len pre sponzorov?"
-
-#~ msgid "Verified"
-#~ msgstr "Overený"
 
 #~ msgid "Proceed"
 #~ msgstr "Postupujte podľa"

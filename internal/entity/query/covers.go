@@ -612,6 +612,9 @@ func UpdateSubjectCovers(public bool) (err error) {
 		// One statement for both dialects, so a library cannot get a different cover per backend.
 		// The uid guard keeps an empty subject uid from correlating against every unassigned marker,
 		// and a person left without an eligible marker gets no cover rather than a null one.
+		//
+		// Ranked on size rather than thumb_size: a cover wants the face that fills most of the frame,
+		// which a fixed-size detection thumbnail measures, not the one with the most available detail.
 		res = Db().Exec(`UPDATE subjects SET thumb = COALESCE((
 			SELECT m.thumb FROM markers m
 				JOIN files f ON f.file_uid = m.file_uid AND f.deleted_at IS NULL
@@ -644,13 +647,11 @@ func UpdateSubjectCovers(public bool) (err error) {
 	return err
 }
 
-// UpdateCoversAsync runs UpdateCovers in a goroutine and logs the
-// returned error, if any, as a warning. The launched goroutine is
-// registered with the shared entity package WaitGroup so config.CloseDb
-// can drain in-flight work via entity.WaitForAsyncJobs before tearing
-// down the database connection. A deferred recover guards against any
-// future shutdown race producing a process-killing panic instead of a
-// clean log line.
+// UpdateCoversAsync runs UpdateCovers in a goroutine and logs a returned error as a warning.
+//
+// Registered with the shared WaitGroup so config.CloseDb can drain in-flight work through
+// entity.WaitForAsyncJobs before closing the connection, and a deferred recover keeps a shutdown
+// race from killing the process.
 func UpdateCoversAsync() {
 	entity.AsyncJobAdd()
 	go func() {

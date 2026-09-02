@@ -1,0 +1,482 @@
+package query
+
+import (
+	"testing"
+	"time"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
+	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/rnd"
+)
+
+// TestSubjectReports covers the people report, whose point is the two count columns.
+func TestSubjectReports(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		people, err := SubjectReports("", 100, 0, true)
+		require.NoError(t, err)
+		require.NotEmpty(t, people)
+
+		byUID := make(map[string]SubjectReport, len(people))
+		for _, p := range people {
+			byUID[p.SubjUID] = p
+			assert.NotEmpty(t, p.SubjName, "a report row has to name its person")
+		}
+
+		// The persisted counts are whatever the last refresh left; the live ones are computed
+		// here, so a subject with markers has to report them even when the stored count is stale.
+		known := entity.SubjectFixtures.Get("actress-1")
+		got, ok := byUID[known.SubjUID]
+		require.True(t, ok, "a person with markers has to appear")
+		assert.Positive(t, got.Markers, "the live marker count is computed, not read from the row")
+		assert.Positive(t, got.Clusters, "and so is the cluster count, which is the fragmentation a sweep reads")
+		assert.False(t, got.CreatedAt.IsZero(), "when a person was added is what tells an accidental one apart")
+	})
+	// Counted from the faces table rather than read from a column, since nothing stores it: a person
+	// holds several clusters by design and how many is what the thresholds decide.
+	t.Run("ClusterCount", func(t *testing.T) {
+		people, err := SubjectReports("", 100, 0, true)
+		require.NoError(t, err)
+		require.NotEmpty(t, people)
+
+		for _, p := range people {
+			var want int
+			require.NoError(t, UnscopedDb().Model(&entity.Face{}).
+				Where("subj_uid = ?", p.SubjUID).Count(&want).Error)
+
+			assert.Equal(t, want, p.Clusters, "cluster count for %s", p.SubjName)
+		}
+	})
+	t.Run("Stored", func(t *testing.T) {
+		// The cheap variant skips the join over markers and files, which is half a second on a
+		// large library, and reports whatever the last refresh left on the row instead.
+		stored, err := SubjectReports("", 100, 0, false)
+		require.NoError(t, err)
+		require.NotEmpty(t, stored)
+
+		live, err := SubjectReports("", 100, 0, true)
+		require.NoError(t, err)
+		require.Len(t, stored, len(live), "the two variants describe the same people")
+
+		for i := range stored {
+			assert.Equal(t, live[i].SubjUID, stored[i].SubjUID)
+			assert.Equal(t, live[i].Markers, stored[i].Markers, "the marker count is live either way")
+		}
+	})
+	t.Run("Paginates", func(t *testing.T) {
+		first, err := SubjectReports("", 1, 0, true)
+		require.NoError(t, err)
+		require.Len(t, first, 1)
+
+		second, err := SubjectReports("", 1, 1, true)
+		require.NoError(t, err)
+		require.Len(t, second, 1)
+
+		assert.NotEqual(t, first[0].SubjUID, second[0].SubjUID, "an offset has to move the window")
+	})
+	t.Run("OffsetPastTheEnd", func(t *testing.T) {
+		people, err := SubjectReports("", 10, 100000, true)
+		require.NoError(t, err)
+		assert.Empty(t, people)
+	})
+}
+
+// TestFaceReports covers the cluster report.
+func TestFaceReports(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		faces, err := FaceReports("", 100, 0)
+		require.NoError(t, err)
+		require.NotEmpty(t, faces)
+
+		for _, f := range faces {
+			assert.NotEmpty(t, f.ID)
+		}
+
+		// Ordered by the samples a cluster was built from, so the widest is first and two runs of
+		// the report are comparable.
+		for i := 1; i < len(faces); i++ {
+			assert.GreaterOrEqual(t, faces[i-1].Samples, faces[i].Samples)
+		}
+	})
+	t.Run("NamesTheSubject", func(t *testing.T) {
+		faces, err := FaceReports("", 100, 0)
+		require.NoError(t, err)
+
+		var named int
+		for _, f := range faces {
+			if f.SubjName != "" {
+				named++
+			}
+		}
+
+		assert.Positive(t, named, "a cluster with a subject has to report the person's name")
+	})
+	t.Run("OffsetPastTheEnd", func(t *testing.T) {
+		faces, err := FaceReports("", 10, 100000)
+		require.NoError(t, err)
+		assert.Empty(t, faces)
+	})
+}
+
+// TestMarkerReports covers the marker report and each filter it offers.
+func TestMarkerReports(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		markers, err := MarkerReports(MarkerReportFilter{Count: 10})
+		require.NoError(t, err)
+		require.NotEmpty(t, markers)
+
+		for _, m := range markers {
+			assert.NotEmpty(t, m.MarkerUID)
+		}
+	})
+	t.Run("BySubject", func(t *testing.T) {
+		subjUID := entity.SubjectFixtures.Get("actress-1").SubjUID
+
+		markers, err := MarkerReports(MarkerReportFilter{Person: subjUID, Count: 100})
+		require.NoError(t, err)
+		require.NotEmpty(t, markers)
+
+		for _, m := range markers {
+			assert.Equal(t, subjUID, m.SubjUID)
+		}
+	})
+	t.Run("ByFace", func(t *testing.T) {
+		faceID := entity.FaceFixtures.Get("actress-1").ID
+
+		markers, err := MarkerReports(MarkerReportFilter{FaceID: faceID, Count: 100})
+		require.NoError(t, err)
+		require.NotEmpty(t, markers)
+
+		for _, m := range markers {
+			assert.Equal(t, faceID, m.FaceID)
+		}
+	})
+	t.Run("Unassigned", func(t *testing.T) {
+		markers, err := MarkerReports(MarkerReportFilter{Unassigned: true, Count: 100})
+		require.NoError(t, err)
+
+		for _, m := range markers {
+			assert.NotEmpty(t, m.SubjUID)
+			assert.Empty(t, m.FaceID)
+		}
+	})
+	t.Run("Dangling", func(t *testing.T) {
+		markers, err := MarkerReports(MarkerReportFilter{Dangling: true, Count: 100})
+		require.NoError(t, err)
+
+		// Every one it returns must really point at a cluster that is gone.
+		for _, m := range markers {
+			require.NotEmpty(t, m.FaceID)
+			assert.Nil(t, entity.FindFace(m.FaceID), "a dangling marker names a cluster that no longer exists")
+		}
+	})
+	t.Run("SizeColumns", func(t *testing.T) {
+		// Two different questions, so both are carried: how prominent the face is in the frame,
+		// and how much detail its vector rests on. Neither is derivable from the other.
+		faceID := "report-size-columns"
+		m := &entity.Marker{
+			MarkerUID:  rnd.GenerateUID('m'),
+			FileUID:    "fs6sg6bw45bnlqdw",
+			MarkerType: entity.MarkerFace,
+			MarkerSrc:  entity.SrcImage,
+			FaceID:     faceID,
+			W:          0.25,
+			H:          0.4,
+			ThumbSize:  312,
+		}
+
+		require.NoError(t, entity.Db().Create(m).Error)
+		t.Cleanup(func() { entity.UnscopedDb().Delete(m) })
+
+		markers, err := MarkerReports(MarkerReportFilter{FaceID: faceID, Count: 10})
+		require.NoError(t, err)
+		require.Len(t, markers, 1)
+
+		assert.InDelta(t, 0.25, markers[0].W, 1e-6)
+		assert.Equal(t, 312, markers[0].ThumbSize)
+	})
+	t.Run("ExcludesNonFaceMarkers", func(t *testing.T) {
+		markers, err := MarkerReports(MarkerReportFilter{Count: 1000})
+		require.NoError(t, err)
+
+		for _, m := range markers {
+			var stored entity.Marker
+			require.NoError(t, UnscopedDb().Where("marker_uid = ?", m.MarkerUID).First(&stored).Error)
+			assert.Equal(t, entity.MarkerFace, stored.MarkerType)
+		}
+	})
+}
+
+// TestEmbeddingDims covers the width a marker report shows, whose two zero-ish answers mean
+// different things: a marker that was never embedded and one whose stored vector is broken.
+func TestEmbeddingDims(t *testing.T) {
+	t.Run("Absent", func(t *testing.T) {
+		assert.Equal(t, 0, embeddingDims(nil))
+		assert.Equal(t, 0, embeddingDims([]byte{}))
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		assert.Equal(t, InvalidJSON, embeddingDims([]byte("not json")))
+		assert.Equal(t, InvalidJSON, embeddingDims([]byte(`{"a":1}`)))
+	})
+	t.Run("Dims", func(t *testing.T) {
+		assert.Equal(t, 3, embeddingDims([]byte(`[[0.1,0.2,0.3]]`)))
+		assert.Equal(t, 2, embeddingDims([]byte(`[[0.1,0.2],[0.3,0.4]]`)))
+	})
+	t.Run("EmptyArray", func(t *testing.T) {
+		assert.Equal(t, 0, embeddingDims([]byte(`[]`)))
+	})
+}
+
+// TestLandmarkCount covers the landmark column, which follows the same conventions.
+func TestLandmarkCount(t *testing.T) {
+	t.Run("Absent", func(t *testing.T) {
+		assert.Equal(t, 0, landmarkCount(nil))
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		assert.Equal(t, InvalidJSON, landmarkCount([]byte("{")))
+	})
+	t.Run("Count", func(t *testing.T) {
+		assert.Equal(t, 2, landmarkCount([]byte(`[{"Name":"eye_l"},{"Name":"eye_r"}]`)))
+		assert.Equal(t, 0, landmarkCount([]byte(`[]`)))
+	})
+}
+
+// TestMarkerReports_Vectors covers that the report measures the stored vectors rather than
+// returning them, since the vectors are most of the row and none of what a diagnosis reads.
+func TestMarkerReports_Vectors(t *testing.T) {
+	markers, err := MarkerReports(MarkerReportFilter{Count: 100})
+	require.NoError(t, err)
+	require.NotEmpty(t, markers)
+
+	var embedded int
+
+	for _, m := range markers {
+		assert.NotEqual(t, InvalidJSON, m.EmbeddingDims, "a fixture must not hold unparsable embeddings")
+		assert.NotEqual(t, InvalidJSON, m.Landmarks, "nor unparsable landmarks")
+
+		if m.EmbeddingDims > 0 {
+			embedded++
+		}
+	}
+
+	assert.Positive(t, embedded, "the fixtures have to include an embedded marker for this to mean anything")
+}
+
+// TestPersonFilter covers how a report argument is read, which decides whether "js6sg6b..." selects
+// one person or is searched for as a name.
+func TestPersonFilter(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		uid, like := PersonFilter("")
+		assert.Empty(t, uid)
+		assert.Empty(t, like)
+
+		uid, like = PersonFilter("   ")
+		assert.Empty(t, uid)
+		assert.Empty(t, like)
+	})
+	t.Run("SubjectUID", func(t *testing.T) {
+		uid, like := PersonFilter(entity.SubjectFixtures.Get("actress-1").SubjUID)
+		assert.Equal(t, entity.SubjectFixtures.Get("actress-1").SubjUID, uid)
+		assert.Empty(t, like, "a uid selects one person rather than being searched for")
+	})
+	t.Run("Name", func(t *testing.T) {
+		uid, like := PersonFilter("Actress")
+		assert.Empty(t, uid)
+		assert.Equal(t, "%Actress%", like)
+	})
+	// A name is matched literally: an operator typing a name that holds one of these is looking for
+	// that person, not writing a pattern. Pair with LikeCond, which supplies the ESCAPE clause.
+	t.Run("EscapesWildcards", func(t *testing.T) {
+		_, like := PersonFilter("a_b")
+		assert.Equal(t, "%a"+LikeEscape+"_b%", like)
+
+		_, like = PersonFilter("50%")
+		assert.Equal(t, "%50"+LikeEscape+"%%", like)
+
+		// The escape character escapes itself, or it would escape the ones added after it.
+		_, like = PersonFilter("Hi" + LikeEscape)
+		assert.Equal(t, "%Hi"+LikeEscape+LikeEscape+"%", like)
+	})
+	// A backslash is not the escape character: MySQL reads one inside a string literal as an escape
+	// while SQLite does not, so the ESCAPE clause itself could not be written for both.
+	t.Run("LeavesBackslashAlone", func(t *testing.T) {
+		_, like := PersonFilter(`back\slash`)
+		assert.Equal(t, `%back\slash%`, like)
+	})
+	t.Run("LikeCond", func(t *testing.T) {
+		assert.Equal(t, "subj_name LIKE ? ESCAPE '"+LikeEscape+"'", LikeCond("subj_name"))
+	})
+	t.Run("UIDOfAnotherType", func(t *testing.T) {
+		// Only a subject uid selects by id; a marker uid is a name nobody has.
+		uid, like := PersonFilter(entity.MarkerFixtures.Get("actress-a-1").MarkerUID)
+		assert.Empty(t, uid)
+		assert.NotEmpty(t, like)
+	})
+}
+
+// TestFaceReports_Person covers narrowing the cluster report, so one person can be inspected
+// without piping the output through grep.
+func TestFaceReports_Person(t *testing.T) {
+	name := entity.SubjectFixtures.Get("actress-1").SubjName
+	subjUID := entity.SubjectFixtures.Get("actress-1").SubjUID
+
+	t.Run("ByName", func(t *testing.T) {
+		faces, err := FaceReports(name, 100, 0)
+		require.NoError(t, err)
+		require.NotEmpty(t, faces)
+
+		for _, f := range faces {
+			assert.Equal(t, name, f.SubjName)
+		}
+	})
+	t.Run("BySubjectUID", func(t *testing.T) {
+		faces, err := FaceReports(subjUID, 100, 0)
+		require.NoError(t, err)
+		require.NotEmpty(t, faces)
+
+		for _, f := range faces {
+			assert.Equal(t, subjUID, f.SubjUID)
+		}
+	})
+	t.Run("NoMatch", func(t *testing.T) {
+		faces, err := FaceReports("Nobody By That Name", 100, 0)
+		require.NoError(t, err)
+		assert.Empty(t, faces)
+	})
+}
+
+// TestSubjectReports_Person covers narrowing the people report.
+func TestSubjectReports_Person(t *testing.T) {
+	known := entity.SubjectFixtures.Get("actress-1")
+
+	t.Run("ByName", func(t *testing.T) {
+		people, err := SubjectReports(known.SubjName, 100, 0, true)
+		require.NoError(t, err)
+		require.Len(t, people, 1)
+		assert.Equal(t, known.SubjUID, people[0].SubjUID)
+	})
+	t.Run("BySubjectUID", func(t *testing.T) {
+		people, err := SubjectReports(known.SubjUID, 100, 0, false)
+		require.NoError(t, err)
+		require.Len(t, people, 1)
+		assert.Equal(t, known.SubjUID, people[0].SubjUID)
+	})
+	t.Run("PartialName", func(t *testing.T) {
+		people, err := SubjectReports("ctress", 100, 0, true)
+		require.NoError(t, err)
+		assert.NotEmpty(t, people, "a fragment matches anywhere in the name")
+	})
+	t.Run("NoMatch", func(t *testing.T) {
+		people, err := SubjectReports("Nobody By That Name", 100, 0, true)
+		require.NoError(t, err)
+		assert.Empty(t, people)
+	})
+}
+
+// TestMarkerReports_Person covers narrowing the marker report by person.
+func TestMarkerReports_Person(t *testing.T) {
+	known := entity.SubjectFixtures.Get("actress-1")
+
+	t.Run("ByName", func(t *testing.T) {
+		markers, err := MarkerReports(MarkerReportFilter{Person: known.SubjName, Count: 100})
+		require.NoError(t, err)
+		require.NotEmpty(t, markers)
+
+		for _, m := range markers {
+			assert.Equal(t, known.SubjUID, m.SubjUID)
+		}
+	})
+	t.Run("NoMatch", func(t *testing.T) {
+		markers, err := MarkerReports(MarkerReportFilter{Person: "Nobody By That Name", Count: 100})
+		require.NoError(t, err)
+		assert.Empty(t, markers)
+	})
+}
+
+// TestSubjectReports_NameWithWildcard covers the escaping end to end rather than as a string.
+//
+// The pattern alone proves nothing: SQLite has no default LIKE escape character, so a pattern that
+// matches correctly on MariaDB matched nothing there - the same command reporting that a person who
+// exists does not, on the default driver. Only running the query catches that.
+func TestSubjectReports_NameWithWildcard(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	t.Cleanup(entity.ResetTestFixtures)
+
+	literal := entity.NewSubject("ZZ Ann_Marie Wildcard", entity.SubjPerson, entity.SrcManual)
+	decoy := entity.NewSubject("ZZ AnnXMarie Wildcard", entity.SubjPerson, entity.SrcManual)
+	require.NotNil(t, literal)
+	require.NotNil(t, decoy)
+	require.NoError(t, literal.Create())
+	require.NoError(t, decoy.Create())
+
+	t.Cleanup(func() {
+		entity.UnscopedDb().Delete(&entity.Subject{}, "subj_uid IN (?)", []string{literal.SubjUID, decoy.SubjUID})
+	})
+
+	t.Run("UnderscoreIsLiteral", func(t *testing.T) {
+		people, err := SubjectReports("ZZ Ann_Marie Wildcard", 100, 0, false)
+		require.NoError(t, err)
+		require.Len(t, people, 1, "the underscore must match itself, not any character")
+		assert.Equal(t, literal.SubjUID, people[0].SubjUID)
+	})
+	t.Run("PlainFragmentStillMatchesBoth", func(t *testing.T) {
+		people, err := SubjectReports("ZZ Ann", 100, 0, false)
+		require.NoError(t, err)
+		assert.Len(t, people, 2, "escaping must not stop an ordinary fragment from matching")
+	})
+	t.Run("FaceAndMarkerReportsAgree", func(t *testing.T) {
+		// The same pattern is built into three different statements, so each needs the clause.
+		faces, err := FaceReports("ZZ Ann_Marie Wildcard", 100, 0)
+		require.NoError(t, err)
+		assert.Empty(t, faces, "the person has no clusters, but the query must not error")
+
+		markers, err := MarkerReports(MarkerReportFilter{Person: "ZZ Ann_Marie Wildcard", Count: 100})
+		require.NoError(t, err)
+		assert.Empty(t, markers)
+	})
+}
+
+func TestFaceEmbeddingDims(t *testing.T) {
+	t.Run("SingleVector", func(t *testing.T) {
+		// A face stores one vector where a marker stores a slice of them, which is why this exists
+		// beside embeddingDims: reading a face with that one reports a width of 1.
+		assert.Equal(t, 3, faceEmbeddingDims([]byte("[0.1,0.2,0.3]")))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, 0, faceEmbeddingDims(nil))
+		assert.Equal(t, 0, faceEmbeddingDims([]byte{}))
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		assert.Equal(t, InvalidJSON, faceEmbeddingDims([]byte("not json")))
+	})
+	t.Run("NotTheMarkerShape", func(t *testing.T) {
+		// The nested form a marker holds does not decode as a single vector, and reporting it as
+		// invalid is right: a face row storing one would be a defect rather than an absent vector.
+		assert.Equal(t, InvalidJSON, faceEmbeddingDims([]byte("[[0.1,0.2]]")))
+	})
+}
+
+// TestSubjectReports_BirthdayAndPrivate covers the two columns the Edit Person dialog writes, which
+// are read straight off the row rather than derived - so nothing else would notice if the select
+// stopped returning them and every report simply showed them empty.
+func TestSubjectReports_BirthdayAndPrivate(t *testing.T) {
+	born := time.Date(1981, 1, 22, 0, 0, 0, 0, time.UTC)
+
+	subj := entity.NewSubject("Report Birthday Person", entity.SubjPerson, entity.SrcManual)
+	require.NotNil(t, subj)
+	require.NoError(t, subj.Create())
+
+	require.NoError(t, subj.Updates(entity.Values{"subj_birthday": born, "subj_private": true}))
+
+	people, err := SubjectReports(subj.SubjUID, 100, 0, false)
+	require.NoError(t, err)
+	require.Len(t, people, 1)
+
+	require.NotNil(t, people[0].SubjBirthday, "a stored birth date has to survive the select")
+	assert.Equal(t, born.Format("2006-01-02"), people[0].SubjBirthday.Format("2006-01-02"))
+	assert.True(t, people[0].SubjPrivate)
+}

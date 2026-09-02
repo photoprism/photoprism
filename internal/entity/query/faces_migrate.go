@@ -215,8 +215,8 @@ func whereFaceMigrationSamples(stmt *gorm.DB, model string) *gorm.DB {
 		Where("subj_uid <> ''").
 		Where("LENGTH(embeddings_json) > 0")
 
-	if face.ClusterSizeThreshold > 0 {
-		stmt = stmt.Where("size >= ?", face.ClusterSizeThreshold)
+	if sizeCond, sizeArgs := entity.ClusterSizeCond("", face.ClusterSizeThreshold); sizeArgs != nil {
+		stmt = stmt.Where(sizeCond, sizeArgs...)
 	}
 
 	stmt = whereClusterScore(stmt, face.ClusterScoreAuto)
@@ -284,27 +284,111 @@ func FaceMigrationLowQualityMarkers(model string) (count int64, err error) {
 	return max(total-samples, 0), nil
 }
 
-// FaceMigrationRecropMarkers returns how many markers hold a usable target-model vector that a
-// different detector's crop produced, so a plan can report the work a detector change creates.
+// FaceMigrationCropCounts counts the markers a migration can crop at full detail, and the two
+// reasons it cannot. A marker whose file records no dimensions cannot be judged and is left out of
+// all three, so Total is what could be measured rather than what the run re-embeds.
+type FaceMigrationCropCounts struct {
+	Total      int
+	FullDetail int
+	// Upscaled counts the markers whose face crop is wider than the pre-generated renditions can
+	// supply while the original holds the detail. Only these are fixable by a thumbnail setting.
+	Upscaled int
+	// SourceTooSmall counts the markers whose own original does not hold the detail, which no
+	// setting recovers. Reported apart, or a library of small pictures is nagged for nothing.
+	SourceTooSmall int
+}
+
+// FaceMigrationSampleFile identifies a file a migration crops from, with what a caller needs to
+// tell a rendition that is missing from one that was never generated because the source is smaller.
+type FaceMigrationSampleFile struct {
+	FileHash   string
+	FileWidth  int
+	FileHeight int
+}
+
+// FaceMigrationSampleFiles returns up to limit of the files that hold face markers, oldest first.
 //
-// These markers are not stale in the embedding sense, which is why they are counted apart: a
-// re-embedding that cannot find them again keeps the vector they already hold.
+// Oldest rather than a random draw, because the question a sample answers is whether the thumbnail
+// cache was generated at the limit configured now: files indexed since a limit was raised do hold
+// the wider renditions, so a sample of those reports a cache the rest of the library does not have.
+func FaceMigrationSampleFiles(limit int) (result []FaceMigrationSampleFile, err error) {
+	if limit < 1 {
+		return result, fmt.Errorf("faces: sample limit must be positive")
+	}
+
+	err = Db().Model(&entity.File{}).
+		Select("files.file_hash, files.file_width, files.file_height").
+		Where("files.file_hash <> '' AND files.file_width > 0 AND files.file_height > 0 AND files.file_missing = 0").
+		Where("files.file_uid IN (?)", Db().Model(&entity.Marker{}).
+			Select("file_uid").
+			Where("marker_type = ? AND marker_invalid = 0 AND file_uid <> ''", entity.MarkerFace).
+			QueryExpr()).
+		Order("files.file_uid").Limit(limit).Scan(&result).Error
+
+	return result, err
+}
+
+// FaceMigrationCropCoverage reports how much detail the pre-generated thumbnails can supply for the
+// face crops a migration takes, given the crop width in pixels and the widest rendition's box.
+//
+// Two columns and arithmetic rather than a filesystem walk, so a plan can state this before the
+// prompt on a library of any size. The box height binds for a landscape picture, so the width a
+// rendition delivers is not the box width - reading the name as a width is wrong for most photos.
+func FaceMigrationCropCoverage(cropWidth, boxWidth, boxHeight int) (result FaceMigrationCropCounts, err error) {
+	if cropWidth < 1 || boxWidth < 1 || boxHeight < 1 {
+		return result, fmt.Errorf("faces: crop and thumbnail dimensions must be positive")
+	}
+
+	// A rendition delivers min(file_width, boxWidth, file_width*boxHeight/file_height) pixels of
+	// width, and a marker needs cropWidth/m.w of them: comparing against each term in turn keeps
+	// the statement to multiplication, which every supported driver agrees on.
+	fits := `? <= m.w * f.file_width AND ? <= m.w * ? AND ? * f.file_height <= m.w * f.file_width * ?`
+
+	stmt := fmt.Sprintf(`SELECT COUNT(*) AS total,
+		COALESCE(SUM(CASE WHEN %s THEN 1 ELSE 0 END), 0) AS full_detail,
+		COALESCE(SUM(CASE WHEN ? > m.w * f.file_width THEN 1 ELSE 0 END), 0) AS source_too_small
+		FROM %s m JOIN %s f ON f.file_uid = m.file_uid
+		WHERE m.marker_type = ? AND m.marker_invalid = 0 AND m.w > 0
+		AND f.file_width > 0 AND f.file_height > 0 AND f.file_missing = 0 AND f.deleted_at IS NULL`,
+		fits, entity.Marker{}.TableName(), entity.File{}.TableName())
+
+	if err = Db().Raw(stmt, cropWidth, cropWidth, boxWidth, cropWidth, boxHeight, cropWidth, entity.MarkerFace).
+		Scan(&result).Error; err != nil {
+		return FaceMigrationCropCounts{}, err
+	}
+
+	// The remainder rather than a third pass: the two conditions are complementary, since a marker
+	// whose original is too narrow cannot satisfy the first term of the fit.
+	result.Upscaled = max(result.Total-result.FullDetail-result.SourceTooSmall, 0)
+
+	return result, nil
+}
+
+// FaceMigrationRecropMarkers returns how many markers hold a usable target-model vector that has to
+// be sampled again anyway, so a plan can report the work a re-run to the same model still has.
+//
+// Counted apart from stale markers, since a re-embedding that fails keeps the vector they hold. An
+// empty detector asks for the crop-based case, where only a missing sample extent makes one stale.
 func FaceMigrationRecropMarkers(model, detector string) (count int64, err error) {
 	if model == "" {
 		return 0, fmt.Errorf("faces: migration model is required")
 	}
 
+	stmt := whereEmbeddingModel(Db().Model(&entity.Marker{}).
+		Where("marker_type = ? AND marker_invalid = 0", entity.MarkerFace).
+		Where("LENGTH(embeddings_json) > 0"), model)
+
 	detector = face.NormalizeDetectorName(detector)
 
+	// The predicate staleMigrationMarkers applies, so the plan prices what the run does. Counting
+	// every unrecorded extent instead would keep quoting markers a sampling already gave up on.
 	if detector == "" || detector == face.DetectorNone {
-		return 0, nil
+		stmt = stmt.Where(entity.ThumbSizeUnsettledCond())
+	} else {
+		stmt = stmt.Where("detect_model <> ? OR "+entity.ThumbSizeUnsettledCond(), detector)
 	}
 
-	err = whereEmbeddingModel(Db().Model(&entity.Marker{}).
-		Where("marker_type = ? AND marker_invalid = FALSE", entity.MarkerFace).
-		Where("LENGTH(embeddings_json) > 0").
-		Where("detect_model <> ?", detector), model).
-		Count(&count).Error
+	err = stmt.Count(&count).Error
 
 	return count, err
 }
@@ -315,6 +399,12 @@ type MigrationDetection struct {
 	Landmarks json.RawMessage
 	Size      int
 	Score     int
+	// ThumbSize is the extent the embedding was sampled at, which a re-crop records as well: it
+	// belongs to the vector rather than to a detection, so it travels even with no detector.
+	ThumbSize int
+	// EmbedDetail is the percentage of the crop width that extent supplied, which belongs to
+	// the vector for the same reason.
+	EmbedDetail int
 }
 
 // SaveFaceMigrationEmbeddings checkpoints generated embeddings for a single file, along with the
@@ -346,12 +436,27 @@ func SaveFaceMigrationEmbeddings(model, detectModel string, embeddings map[strin
 				"matched_at":      nil,
 			}
 
-			// Written together, or the recorded detector would attest another one's work. The
-			// score matters most: the clustering bars are looked up by detect_model, so a marker
-			// relabeled without it is judged at a calibration it was never scored against. Size
-			// travels for the same reason, and both are in the pixels of the same Fit720 thumbnail
-			// indexing detects on. A detection that produced no usable landmarks blanks the column
-			// rather than leaving an earlier detector's behind.
+			// Recorded beside the vector on either path, since a re-crop samples a rendition too.
+			// A failed measurement records that one was attempted rather than leaving the row as
+			// never sampled, or a migration that re-embeds for a missing extent never terminates.
+			if detail := details[markerUID]; detail.ThumbSize > 0 {
+				columns["thumb_size"] = detail.ThumbSize
+			} else {
+				columns["thumb_size"] = entity.ThumbSizeUnmeasured
+			}
+
+			// Recorded for every sampled marker, including one whose ratio could not be measured,
+			// so a row nothing has sampled stays apart from both.
+			if detail := details[markerUID]; detail.EmbedDetail > 0 {
+				columns["embed_detail"] = detail.EmbedDetail
+			} else {
+				columns["embed_detail"] = entity.EmbedDetailUnknown
+			}
+
+			// Written together, or the recorded detector would attest another one's work: the
+			// clustering bars are looked up by detect_model, so a marker relabeled without its
+			// score is judged at a calibration it was never scored against. Landmarks are blanked
+			// rather than left behind when a detection produced none.
 			if detectModel != "" {
 				detection := details[markerUID]
 				points := detection.Landmarks
@@ -491,4 +596,91 @@ func sameFaceMigrationIdentities(expected, actual []FaceMigrationIdentity) bool 
 	}
 
 	return true
+}
+
+// CountMarkersWithoutThumbSize counts embedded face markers that record no sample extent, so an
+// audit can report how many are still judged by their detection size.
+//
+// Includes the ones a sampling tried and could not measure, because they fall back the same way.
+// CountMarkersUnsettledThumbSize is the subset a migration would still act on.
+func CountMarkersWithoutThumbSize() (n int, err error) {
+	var count int64
+
+	err = UnscopedDb().Model(&entity.Marker{}).
+		Where("marker_type = ? AND marker_invalid = 0", entity.MarkerFace).
+		Where("LENGTH(embeddings_json) > 0").
+		Where("thumb_size IS NULL OR thumb_size < 1").
+		Count(&count).Error
+
+	return int(count), err
+}
+
+// FaceSampleShortfall counts the markers whose vector rests on fewer pixels than the clustering
+// bar requires, and how many of those the original could still supply.
+type FaceSampleShortfall struct {
+	Measured    int
+	BelowBar    int
+	Recoverable int
+}
+
+// FaceMarkerSampleShortfall reports how many markers were embedded from too few pixels to be
+// clustered, and how many of them a re-sampling at the resolution of their original would lift
+// over the bar.
+//
+// The two numbers separate the causes an operator can act on from the one nobody can: a crop taken
+// from a rendition narrower than the original is what a migration re-samples, while a face that is
+// small in the original itself stays where it is at any thumbnail size. Only markers that recorded
+// an extent are counted, since the ones that did not are reported on their own.
+func FaceMarkerSampleShortfall(clusterSize int) (result FaceSampleShortfall, err error) {
+	if clusterSize < 1 {
+		return result, fmt.Errorf("faces: clustering size must be positive")
+	}
+
+	stmt := fmt.Sprintf(`SELECT COUNT(*) AS measured,
+		COALESCE(SUM(CASE WHEN m.thumb_size < ? THEN 1 ELSE 0 END), 0) AS below_bar,
+		COALESCE(SUM(CASE WHEN m.thumb_size < ? AND m.w * f.file_width >= ? THEN 1 ELSE 0 END), 0) AS recoverable
+		FROM %s m JOIN %s f ON f.file_uid = m.file_uid
+		WHERE m.marker_type = ? AND m.marker_invalid = 0 AND m.thumb_size >= 1 AND m.w > 0
+		AND LENGTH(m.embeddings_json) > 0
+		AND f.file_width > 0 AND f.file_missing = 0 AND f.deleted_at IS NULL`,
+		entity.Marker{}.TableName(), entity.File{}.TableName())
+
+	if err = Db().Raw(stmt, clusterSize, clusterSize, clusterSize, entity.MarkerFace).Scan(&result).Error; err != nil {
+		return FaceSampleShortfall{}, err
+	}
+
+	return result, nil
+}
+
+// SettleMigrationThumbSize records that a sampling reached these markers and produced no extent, so
+// a migration filling the column does not attempt them again on every future run.
+//
+// Only for markers whose file was read and whose vector is kept: an unreadable file is a transient
+// fault the next run should retry, and settling one would hide it for good.
+func SettleMigrationThumbSize(markerUIDs []string) error {
+	if len(markerUIDs) == 0 {
+		return nil
+	}
+
+	return UnscopedDb().Model(&entity.Marker{}).
+		Where("marker_uid IN (?) AND marker_type = ?", markerUIDs, entity.MarkerFace).
+		Where(entity.ThumbSizeUnsettledCond()).
+		UpdateColumn("thumb_size", entity.ThumbSizeUnmeasured).Error
+}
+
+// CountMarkersUnsettledThumbSize counts the embedded face markers a migration would sample again for
+// their extent, which is the number that reaches zero once one has run.
+//
+// Reported beside the total, or an audit promises a figure no run can clear: a marker whose extent
+// could not be measured keeps falling back to its detection size and is counted by the other.
+func CountMarkersUnsettledThumbSize() (n int, err error) {
+	var count int64
+
+	err = UnscopedDb().Model(&entity.Marker{}).
+		Where("marker_type = ? AND marker_invalid = 0", entity.MarkerFace).
+		Where("LENGTH(embeddings_json) > 0").
+		Where(entity.ThumbSizeUnsettledCond()).
+		Count(&count).Error
+
+	return int(count), err
 }

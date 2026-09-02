@@ -80,7 +80,7 @@ func BenchmarkSelectBestFace(b *testing.B) {
 	markerEmb := face.Embeddings{benchmarkEmbeddingAt(base, 0.1, rnd)}
 
 	for b.Loop() {
-		selectBestFace(markerEmb, index)
+		selectBestFace(markerEmb, index, false)
 	}
 
 	// b.Loop() resets the timer and the extra metrics on its first iteration, so a metric
@@ -98,7 +98,7 @@ func BenchmarkSelectBestFaceUnmatched(b *testing.B) {
 	markerEmb := face.Embeddings{benchmarkEmbeddingAt(base, 1.41, rnd)}
 
 	for b.Loop() {
-		selectBestFace(markerEmb, index)
+		selectBestFace(markerEmb, index, false)
 	}
 
 	// b.Loop() resets the timer and the extra metrics on its first iteration, so a metric
@@ -131,7 +131,7 @@ func benchmarkSelectBestFaceAt(b *testing.B, pos int) {
 	index.candidates[pos] = faceCandidate{ref: winner, emb: winner.Embedding(), acceptDist: winner.AcceptDist()}
 
 	for b.Loop() {
-		selectBestFace(markerEmb, index)
+		selectBestFace(markerEmb, index, false)
 	}
 }
 

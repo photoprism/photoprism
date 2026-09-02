@@ -4,6 +4,7 @@ import (
 	"time"
 )
 
+// Status values a file sync moves through.
 const (
 	FileSyncNew        = "new"
 	FileSyncIgnore     = "ignore"

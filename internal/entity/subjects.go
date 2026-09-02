@@ -18,12 +18,14 @@ func (m Subjects) Delete() error {
 	return nil
 }
 
-// OrphanPeople returns unused subjects.
+// OrphanPeople returns unused subjects, excluding the ones a person marked verified.
 func OrphanPeople() (Subjects, error) {
 	orphans := Subjects{}
 
+	// A verified person is kept even with nothing left pointing at them: the flag records that
+	// somebody vouched for the name, and re-clustering is expected to leave them unreferenced.
 	err := Db().
-		Where("subj_type = ?", SubjPerson).
+		Where("subj_type = ? AND verified = ?", SubjPerson, false).
 		Where(fmt.Sprintf("subj_uid NOT IN (SELECT DISTINCT subj_uid FROM %s)", Marker{}.TableName())).
 		Find(&orphans).Error
 

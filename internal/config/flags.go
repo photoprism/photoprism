@@ -844,6 +844,12 @@ var Flags = CliFlags{
 			Value:   60,
 			EnvVars: EnvVars("JWT_LEEWAY"),
 		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "jwt-rotate-days",
+			Usage:   "portal JWT signing key lifetime in `DAYS`, -1 to rotate manually only",
+			Value:   90,
+			EnvVars: EnvVars("JWT_ROTATE_DAYS"),
+		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "portal-oidc-issuer",
 			Usage:   "Portal OIDC OP issuer `URL` advertised in discovery and ID tokens (defaults to site-url)",
@@ -1258,6 +1264,12 @@ var Flags = CliFlags{
 			Value:   thumb.SizeOnDemand,
 			EnvVars: EnvVars("THUMB_SIZE_UNCACHED"),
 		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "thumb-size-face",
+			Usage:   "maximum size in `PIXELS` (720-15360) of the source rendered on demand so face crops are not upscaled, 0 to disable",
+			Value:   thumb.SizeFit4096.Width,
+			EnvVars: EnvVars("THUMB_SIZE_FACE"),
+		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "thumb-uncached",
 			Aliases: []string{"u"},
@@ -1367,9 +1379,13 @@ var Flags = CliFlags{
 		Flag: &cli.IntFlag{
 			Name:    "face-size-retry",
 			Usage:   "minimum size of faces in `PIXELS` when a picture would otherwise have none, -1 to disable",
-			Value:   face.RetrySizeThreshold,
 			EnvVars: EnvVars("FACE_SIZE_RETRY"),
-		}}, {
+		},
+		// No Value, or the option would be non-zero on every start and FaceSizeRetry would never
+		// reach its derivation: the floor follows what the thumbnail settings let a crop reach,
+		// which is the wider of thumb-size and thumb-size-face.
+		DocDefault: fmt.Sprintf("%d (%d where a crop can reach no further than 1920, off at 720)",
+			face.RetrySizeThreshold, face.RetrySizeThresholdLimited)}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-score",
 			Usage:   "minimum face `QUALITY` score (1-100), replacing the detector's own calibrated cutoff, -1 disables the check",
@@ -1407,10 +1423,10 @@ var Flags = CliFlags{
 		}, DocDefault: "auto"}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-cluster-size",
-			Usage:   "minimum size of automatically clustered faces in `PIXELS` (20-10000)",
-			Value:   face.ClusterSizeThreshold,
+			Usage:   "minimum size of automatically clustered faces in `PIXELS` of the image their embedding was sampled from (20-10000), calibrated per face model when unset",
 			EnvVars: EnvVars("FACE_CLUSTER_SIZE"),
-		}}, {
+		},
+		DocDefault: faceDocDefault(float64(face.ClusterSize(face.DefaultModelName())))}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-cluster-score",
 			Usage:   "minimum `QUALITY` score of automatically clustered faces (1-100), overriding the bar calibrated per detector, -1 disables the check",
@@ -1419,9 +1435,23 @@ var Flags = CliFlags{
 		DocDefault: faceDocDefault(float64(face.DefaultDetectorClusterScore()))}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-cluster-core",
-			Usage:   "`NUMBER` of faces forming a cluster core (1-100)",
+			Usage:   "`NUMBER` of faces forming a cluster core (2-100)",
 			Value:   face.ClusterCoreDefault,
 			EnvVars: EnvVars("FACE_CLUSTER_CORE"),
+		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "face-cluster-split-rounds",
+			Usage:   "`NUMBER` of times a group wider than its own accept distance may be re-clustered, 0 discards such a group and -1 keeps it whole",
+			Value:   face.ClusterSplitRoundsDefault,
+			EnvVars: EnvVars("FACE_CLUSTER_SPLIT_ROUNDS"),
+			Hidden:  true,
+		}}, {
+		Flag: &cli.Float64Flag{
+			Name:    "face-cluster-split-shrink",
+			Usage:   "`FACTOR` each split round shortens the link distance by, greater than 0 and below 1",
+			Value:   face.ClusterSplitShrinkDefault,
+			EnvVars: EnvVars("FACE_CLUSTER_SPLIT_SHRINK"),
+			Hidden:  true,
 		}}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-cluster-dist",
@@ -1433,6 +1463,11 @@ var Flags = CliFlags{
 			Usage:   fmt.Sprintf("maximum cluster `RADIUS` accepted for automatic matches, calibrated per face model when unset; radius plus match distance may not exceed %g", face.ConfigDistMax),
 			EnvVars: EnvVars("FACE_CLUSTER_RADIUS"),
 		}, DocDefault: faceModelDocDefault(func(m *face.EmbeddingModel) float64 { return m.ClusterRadius })}, {
+		Flag: &cli.IntFlag{
+			Name:    "face-cluster-percentile",
+			Usage:   "`PERCENTILE` of the member distances a cluster's radius is derived from (1-100), where 100 uses the maximum and lets one loose face decide how far the cluster reaches",
+			EnvVars: EnvVars("FACE_CLUSTER_PERCENTILE"),
+		}, DocDefault: strconv.Itoa(face.ClusterPercentileDefault)}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-match-dist",
 			Usage:   fmt.Sprintf("similarity `OFFSET` for matching faces with existing clusters, calibrated per face model when unset; radius plus match distance may not exceed %g", face.ConfigDistMax),
@@ -1450,9 +1485,15 @@ var Flags = CliFlags{
 		}, DocDefault: faceDocDefault(face.CollisionDistDefault)}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-epsilon-dist",
-			Usage:   "collision tolerance `DELTA` appended to max match distances (up to 0.01), the same for every face model; twice it is the distance at which a colliding cluster is retired for good",
+			Usage:   fmt.Sprintf("collision tolerance `DELTA` appended to max match distances (up to %g), the same for every face model; twice it is the distance at which a colliding cluster is retired for good", face.EpsilonDistMax),
 			EnvVars: EnvVars("FACE_EPSILON_DIST"),
 		}, DocDefault: faceDocDefault(face.EpsilonDefault)}, {
+		Flag: &cli.BoolFlag{
+			Name:    "face-recompute-stats",
+			Usage:   "derive a cluster's radius from the markers it holds, rather than from the widest distance one matching pass accepted",
+			EnvVars: EnvVars("FACE_RECOMPUTE_STATS"),
+			Hidden:  true,
+		}}, {
 		Flag: &cli.StringFlag{
 			Name:      "pid-filename",
 			Usage:     "process id `FILENAME` *daemon-mode only*",

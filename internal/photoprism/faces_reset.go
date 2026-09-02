@@ -29,8 +29,8 @@ func (w *Faces) Reset() (err error) {
 
 // ResetAll additionally removes the clusters and matches a person or an XMP sidecar created, so a
 // library returns to the state it had before any face was recognized. Markers and their embeddings
-// are kept, which is what makes it far cheaper than detecting again - but a hand-verified name is
-// held nowhere else, so it does not survive.
+// are kept, which makes it far cheaper than detecting again; a name survives only where the person
+// is flagged subjects.verified, which keeps their row.
 func (w *Faces) ResetAll() (err error) {
 	return w.reset(true)
 }

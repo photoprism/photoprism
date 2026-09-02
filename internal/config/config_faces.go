@@ -2,16 +2,22 @@ package config
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"runtime"
 	"slices"
+
+	"gopkg.in/yaml.v2"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -83,11 +89,9 @@ func (c *Config) FaceEngineShouldRun(when vision.RunType) bool {
 	when = vision.ParseRunType(when)
 	run := c.FaceEngineRunType()
 
-	// Faces stay out of the scheduled sweep unless the schedule was asked for by name. Re-detecting
-	// pictures an earlier pass already examined finds nothing while the detector is unchanged, and
-	// the sweep costs a full decode per file - so "on demand" means a person or an import asked,
-	// not a cron tick. Changing detector is what makes another pass worthwhile, and that is a
-	// migration or an explicit run.
+	// Faces stay out of the scheduled sweep unless it was asked for by name: re-detecting pictures
+	// an earlier pass examined finds nothing while the detector is unchanged, and costs a full
+	// decode per file. A detector change is what makes another pass worthwhile.
 	if when == vision.RunOnSchedule && run != vision.RunOnSchedule && run != vision.RunAlways {
 		return false
 	}
@@ -320,10 +324,11 @@ func (c *Config) FaceSize() int {
 }
 
 // FaceSizeRetry returns the face size threshold for the second detection pass, which runs only
-// when the first found no face at all. A negative value disables it, and zero selects the default.
+// when the first found no face at all. A negative value disables it, and zero derives one from the
+// thumbnail configuration.
 //
-// Zero has to mean the default, or a configuration that never set the option would turn the
-// fallback off. The result never exceeds the ordinary threshold, which could only find fewer.
+// Zero has to mean the derived default, or a configuration that never set the option would turn
+// the fallback off. The result never exceeds the ordinary threshold, which could only find fewer.
 func (c *Config) FaceSizeRetry() int {
 	size := c.options.FaceSizeRetry
 
@@ -331,10 +336,42 @@ func (c *Config) FaceSizeRetry() int {
 	case size < 0:
 		return 0
 	case size == 0 || size > face.SizeThresholdDefault*10:
-		size = face.RetrySizeThreshold
+		size = c.faceSizeRetryDefault()
 	}
 
 	return min(size, c.FaceSize())
+}
+
+// faceSizeRetryDefault returns the second-pass floor derived from the detail the thumbnails can
+// supply, which is what decides whether a face this pass finds can be recognized at all.
+//
+// A crop is taken from a pre-generated rendition, so where the cache offers none wider than the
+// detection thumbnail, the smallest faces are detected only to stay unrecognizable: they reach
+// neither the model's template nor the clustering bar, however long the library runs. A default
+// that keeps producing them contradicts what the operator configured, so it follows that setting
+// instead. An explicit FACE_SIZE_RETRY still stands, in either direction.
+func (c *Config) faceSizeRetryDefault() int {
+	if c == nil {
+		return face.RetrySizeThreshold
+	}
+
+	// What a crop can reach is the wider of the two, since on-demand face rendering lifts the
+	// pre-generated limit for exactly this path rather than replacing what it already covers.
+	// THUMB_UNCACHED is deliberately not a term. What it renders does land in the same cache a
+	// crop is taken from, but only for the files somebody happened to open, and a floor derived
+	// from browsing history would move on its own.
+	available := max(c.ThumbSizePrecached(), c.ThumbSizeFace())
+
+	switch {
+	case available <= thumb.Sizes[thumb.Fit720].Width:
+		// The crop cannot exceed the thumbnail the detection ran on, so nothing this pass finds
+		// can be embedded from more pixels than it was found in.
+		return 0
+	case available <= thumb.Sizes[thumb.Fit1920].Width:
+		return face.RetrySizeThresholdLimited
+	}
+
+	return face.RetrySizeThreshold
 }
 
 // FaceScore returns the configured minimum detection score on the 0-100 scale, zero when each
@@ -586,11 +623,41 @@ func (c *Config) SetFaceModel(name face.ModelName) error {
 	c.faceModel = name
 	c.options.FaceModel = name
 
+	// Before the write, so a setting that could not be persisted still applies to this process:
+	// what follows the model is a distance space, and clustering at the previous one's calibration
+	// rewrites the library at thresholds its vectors were never measured in.
+	c.PropagateFaceModel()
+
 	if _, err := c.SaveOptionsPatch(Values{"FaceModel": name}); err != nil {
 		return fmt.Errorf("failed saving face model %s (%s)", clean.Log(name), err)
 	}
 
 	return nil
+}
+
+// PropagateFaceModel assigns the values in the face package that the embedding model in force
+// calibrates, and loads the embedder for it.
+//
+// Called by Propagate as well, but the model is also settled outside a start: a migration commits
+// its vectors and records the new model while the process runs, and every threshold below is in
+// the distance space of a model, not a number that carries from one to the next.
+func (c *Config) PropagateFaceModel() {
+	if c == nil {
+		return
+	}
+
+	face.ClusterSizeThreshold = c.FaceClusterSize()
+	face.CollisionDist = c.FaceCollisionDist()
+	face.Epsilon = c.FaceEpsilonDist()
+	face.ClusterRadius = c.FaceClusterRadius()
+	face.ClusterDist = c.FaceClusterDist()
+	face.MatchDist = c.FaceMatchDist()
+
+	// Reported once per model rather than once per call: this runs at every start and again
+	// whenever a model is recorded, so a model that cannot be loaded would say so twice at boot.
+	if err := c.ConfigureFaceEmbedder(c.FaceModel()); err != nil {
+		c.warnFaceConfig("face-model-embedder-"+c.FaceModel(), "faces: %s (configure embedding model)", err)
+	}
 }
 
 // ClearFaceModel removes a pinned embedding model from "options.yml" and from this process, so
@@ -611,6 +678,10 @@ func (c *Config) ClearFaceModel() error {
 
 	c.faceModel = ""
 	c.options.FaceModel = ""
+
+	// Deliberately not propagated, unlike recording a model: there is no model left to calibrate
+	// for, and unloading the embedder would leave the rest of this process unable to embed the
+	// library it is about to re-index. The next start resolves one again.
 
 	return nil
 }
@@ -687,6 +758,14 @@ func (c *Config) installedFaceModel() face.ModelName {
 func (c *Config) checkFaceModelMismatch(counts []query.MarkerEmbeddingModelCount) {
 	name := c.FaceModel()
 
+	// Asked first, and before either unblock below: a migration commits in its own process and
+	// records its target, which nothing reloads here, so naming the model this one still holds
+	// would ask for the library to be migrated back into the space it was just moved out of. A
+	// library that agrees with the loaded model would otherwise clear a pause a worker had set.
+	if c.CheckFaceModelSuperseded() {
+		return
+	}
+
 	// Embeddings that were turned off are not a mismatch: nothing is generated, and the vectors
 	// a library already holds stay comparable with each other.
 	if name == face.ModelNone && c.FaceModelSetting() == face.ModelNone {
@@ -725,6 +804,84 @@ func (c *Config) checkFaceModelMismatch(counts []query.MarkerEmbeddingModelCount
 
 	log.Warnf(`faces: %s, so face embeddings are not processed (run "photoprism faces migrate --to %s" to migrate them)`,
 		reason, clean.Log(name))
+}
+
+// CheckFaceModelSuperseded pauses face embedding work and asks for a restart when "options.yml"
+// records an embedding model this process has not loaded, reporting whether it did.
+//
+// What a completed migration leaves behind is a setting, and a running instance keeps clustering
+// and embedding in the model it started with - which compares vectors of two different lengths.
+func (c *Config) CheckFaceModelSuperseded() bool {
+	superseded := c.SupersededFaceModel()
+
+	if superseded == "" {
+		return false
+	}
+
+	optionsFile := clean.Log(filepath.Base(c.OptionsYaml()))
+
+	face.BlockEmbeddings(fmt.Sprintf("face model %s is recorded in %s but not loaded here",
+		clean.Log(superseded), optionsFile))
+
+	// Through the system log rather than the package one: this is the one message here that asks
+	// an administrator to act, and the ordinary log is not where they are looking. Keyed by the
+	// model, so a second migration in the same process is reported again while a worker that
+	// wakes every few minutes does not repeat the first.
+	if _, warned := c.faceWarned.LoadOrStore("face-model-superseded-"+superseded, true); !warned {
+		event.SystemWarn([]string{"faces", "face model %s is recorded in %s but not loaded here, " +
+			"so face embeddings are paused until this instance is restarted"}, clean.Log(superseded), optionsFile)
+	}
+
+	return true
+}
+
+// SupersededFaceModel returns the embedding model recorded in "options.yml" when this process
+// holds a different one, and an empty name when the two agree or the file names none.
+//
+// The file is read rather than remembered: a migration persists its target from another process,
+// so this is what tells a setting that moved on from an instance pointed at the wrong library.
+// The two look alike from the library and have opposite remedies.
+func (c *Config) SupersededFaceModel() face.ModelName {
+	if c == nil {
+		return ""
+	}
+
+	fileName := c.OptionsYaml()
+
+	if fileName == "" || !fs.FileExists(fileName) {
+		return ""
+	}
+
+	b, err := os.ReadFile(fileName) //nolint:gosec // path derived from the config directory
+
+	if err != nil {
+		return ""
+	}
+
+	values := Values{}
+
+	if err = yaml.Unmarshal(b, &values); err != nil {
+		return ""
+	}
+
+	recorded, _ := values["FaceModel"].(string)
+	persisted := face.ParseModelName(recorded)
+
+	// Only a model that names a vector space is a verdict: "auto" asks for detection, an
+	// unsupported value applies as if nothing were set, and "none" generates no vector at all.
+	if persisted == face.ModelAuto || persisted == face.ModelNone {
+		return ""
+	}
+
+	current := c.FaceModel()
+
+	// A process with no model in force has none to be superseded, and a restart installs no
+	// weights: why it could not be loaded is reported where that is decided.
+	if current == face.ModelNone || face.ModelsComparable(persisted, current) {
+		return ""
+	}
+
+	return persisted
 }
 
 // staleFaceModels returns how many of the counted markers hold a vector the specified model
@@ -963,26 +1120,32 @@ func (c *Config) FaceCollisionDist() float64 {
 }
 
 // FaceEpsilonDist returns the distance slack applied to collision checks.
+//
+// Bounded by face.EpsilonDistMax rather than by the default: the ceiling states how far the
+// ambiguity cutoff may be widened, so lowering the default cannot invalidate a setting in range.
 func (c *Config) FaceEpsilonDist() float64 {
 	value := c.options.FaceEpsilonDist
 	configured := c.faceThresholdIsSet("face-epsilon-dist", value)
 
-	if value > 0 && value <= face.EpsilonDefault && configured {
+	if value > 0 && value <= face.EpsilonDistMax && configured {
 		return value
 	}
 
 	resolved := faceModelThreshold(c.FaceEmbeddingModel(),
 		func(m *face.EmbeddingModel) float64 { return m.Epsilon }, face.EpsilonDefault)
 
-	c.warnFaceThreshold(configured && value != 0, "face-epsilon-dist", value, 0, face.EpsilonDefault, resolved)
+	c.warnFaceThreshold(configured && value != 0, "face-epsilon-dist", value, 0, face.EpsilonDistMax, resolved)
 
 	return resolved
 }
 
 // FaceClusterSize returns the size threshold for faces forming a cluster in pixels.
+//
+// Resolved from the configured model when unset, because the bar means "the model consumes this
+// without interpolating" and every model states that as its own input geometry.
 func (c *Config) FaceClusterSize() int {
 	if c.options.FaceClusterSize < 20 || c.options.FaceClusterSize > 10000 {
-		return face.ClusterSizeThresholdDefault
+		return face.ClusterSize(c.EffectiveFaceModel())
 	}
 
 	return c.options.FaceClusterSize
@@ -1035,12 +1198,73 @@ func (c *Config) FaceSampleThreshold() int {
 }
 
 // FaceClusterCore returns the number of faces forming a cluster core.
+//
+// Bounded below at 2, since a cluster seeded from one embedding has no centroid and is not offered
+// for matching at all: accepting 1 here would leave every automatic cluster invisible to the
+// matcher, with no error and no result.
 func (c *Config) FaceClusterCore() int {
-	if c.options.FaceClusterCore < 1 || c.options.FaceClusterCore > 100 {
+	if c.options.FaceClusterCore < 2 || c.options.FaceClusterCore > 100 {
 		return face.ClusterCoreDefault
 	}
 
 	return c.options.FaceClusterCore
+}
+
+// FaceRecomputeStats reports whether a matching pass should derive a cluster's radius from the
+// markers it holds, rather than from the widest distance one pass happened to accept.
+//
+// Transitional, and off while the width guard is calibrated so a percentile sweep moves one variable.
+// It goes away once the recompute is the only behavior, which needs the backfill that reaches the
+// clusters a pass never visits - until then a run would fix the active rows and leave the stale ones.
+func (c *Config) FaceRecomputeStats() bool {
+	return c != nil && c.options.FaceRecomputeStats
+}
+
+// FaceClusterPercentile returns the percentile of a cluster's member distances its stored radius is
+// derived from, so a calibration run can compare the shipped value against the maximum.
+//
+// 100 is the maximum, which lets one loose member decide how far a whole cluster reaches. Out of
+// range reads as unset, since a percentile below 1 selects no member at all.
+func (c *Config) FaceClusterPercentile() int {
+	if c.options.FaceClusterPercentile < 1 || c.options.FaceClusterPercentile > 100 {
+		return face.ClusterPercentileDefault
+	}
+
+	return c.options.FaceClusterPercentile
+}
+
+// FaceClusterSplitRounds returns how often a group wider than its own accept distance may be
+// re-clustered before it is given up on. The flag is hidden because it is a probe.
+//
+// Anything below face.ClusterSplitOff reads as unset, so a mistyped -2 cannot silently remove the
+// only width limit an anonymous cluster has.
+func (c *Config) FaceClusterSplitRounds() int {
+	value := c.options.FaceClusterSplitRounds
+
+	// Zero discards a wide group rather than meaning "unset", so it counts only when it was asked
+	// for: an Options built without the flag defaults holds it and would otherwise switch splitting
+	// off for every caller that does not go through the CLI.
+	if value < face.ClusterSplitOff || value == 0 && !c.flagIsSet("face-cluster-split-rounds") {
+		return face.ClusterSplitRoundsDefault
+	}
+
+	return value
+}
+
+// flagIsSet reports whether a flag was given on the command line or through its environment
+// variable, which is what tells an explicit zero from the zero value of a struct.
+func (c *Config) flagIsSet(name string) bool {
+	return c != nil && c.cliCtx != nil && c.cliCtx.IsSet(name)
+}
+
+// FaceClusterSplitShrink returns how much each split round shortens the link distance by. One or
+// more is refused rather than clamped, since it would spend the budget repeating the previous pass.
+func (c *Config) FaceClusterSplitShrink() float64 {
+	if v := c.options.FaceClusterSplitShrink; v > 0 && v < 1 {
+		return v
+	}
+
+	return face.ClusterSplitShrinkDefault
 }
 
 // FaceClusterDist returns the radius of faces forming a cluster core.

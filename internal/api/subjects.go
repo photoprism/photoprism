@@ -1,12 +1,14 @@
 package api
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/mutex"
@@ -14,6 +16,21 @@ import (
 	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
+
+// FindSubjectForSession returns the subject with the given uid only when the session may read it.
+// Callers answer not found, so a person a session cannot see reads the same as one that does not
+// exist. entity.FindSubject stays unscoped because renaming needs it; see specs.
+func FindSubjectForSession(uid string, s *entity.Session) *entity.Subject {
+	subj := entity.FindSubject(clean.UID(uid))
+
+	if subj == nil || subj.Deleted() {
+		return nil
+	} else if subj.SubjPrivate && !search.SubjectSessionSeesPrivate(s) {
+		return nil
+	}
+
+	return subj
+}
 
 // GetSubject returns a subject as JSON.
 //
@@ -33,12 +50,14 @@ func GetSubject(router *gin.RouterGroup) {
 			return
 		}
 
-		if subj := entity.FindSubject(clean.UID(c.Param("uid"))); subj == nil {
+		subj := FindSubjectForSession(c.Param("uid"), s)
+
+		if subj == nil {
 			Abort(c, http.StatusNotFound, i18n.ErrSubjectNotFound)
 			return
-		} else {
-			c.JSON(http.StatusOK, subj)
 		}
+
+		c.JSON(http.StatusOK, subj)
 	})
 }
 
@@ -49,10 +68,10 @@ func GetSubject(router *gin.RouterGroup) {
 //	@Tags		Subjects
 //	@Accept		json
 //	@Produce	json
-//	@Success	200						{object}	entity.Subject
-//	@Failure	400,401,403,404,429,500	{object}	i18n.Response
-//	@Param		uid						path		string			true	"subject uid"
-//	@Param		subject					body		form.Subject	true	"properties to be updated (only submit values that should be changed)"
+//	@Success	200							{object}	entity.Subject
+//	@Failure	400,401,403,404,409,429,500	{object}	i18n.Response
+//	@Param		uid							path		string			true	"subject uid"
+//	@Param		subject						body		form.Subject	true	"properties to be updated (only submit values that should be changed)"
 //	@Router		/api/v1/subjects/{uid} [put]
 func UpdateSubject(router *gin.RouterGroup) {
 	router.PUT("/subjects/:uid", func(c *gin.Context) {
@@ -69,8 +88,13 @@ func UpdateSubject(router *gin.RouterGroup) {
 			return
 		}
 
+		// Abort if a face migration is rebuilding the people this would rename.
+		if faceMigrationRunning(c) {
+			return
+		}
+
 		uid := clean.UID(c.Param("uid"))
-		m := entity.FindSubject(uid)
+		m := FindSubjectForSession(uid, s)
 
 		if m == nil {
 			Abort(c, http.StatusNotFound, i18n.ErrSubjectNotFound)
@@ -101,7 +125,14 @@ func UpdateSubject(router *gin.RouterGroup) {
 		}
 
 		// Update subject from form values.
-		if changed, err := m.SaveForm(frm); err != nil {
+		if changed, err := m.SaveForm(frm); errors.Is(err, entity.ErrInvalidValue) {
+			// A value the client must correct is a bad request, not a server fault. Logged at warn
+			// as well, since AbortBadRequest only reaches the debug log and a caller submitting
+			// rejected values in a loop would otherwise leave no record at all.
+			log.Warnf("subject: %s", err)
+			AbortBadRequest(c, err)
+			return
+		} else if err != nil {
 			log.Errorf("subject: %s", err)
 			AbortSaveFailed(c)
 			return
@@ -137,7 +168,7 @@ func LikeSubject(router *gin.RouterGroup) {
 		}
 
 		uid := clean.UID(c.Param("uid"))
-		subj := entity.FindSubject(uid)
+		subj := FindSubjectForSession(uid, s)
 
 		if subj == nil {
 			Abort(c, http.StatusNotFound, i18n.ErrSubjectNotFound)
@@ -174,7 +205,7 @@ func DislikeSubject(router *gin.RouterGroup) {
 		}
 
 		uid := clean.UID(c.Param("uid"))
-		subj := entity.FindSubject(uid)
+		subj := FindSubjectForSession(uid, s)
 
 		if subj == nil {
 			Abort(c, http.StatusNotFound, i18n.ErrSubjectNotFound)

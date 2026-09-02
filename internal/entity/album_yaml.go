@@ -31,11 +31,12 @@ func (m *Album) Yaml() (out []byte, err error) {
 
 // SaveAsYaml writes the album metadata to a YAML backup file with the specified filename.
 func (m *Album) SaveAsYaml(fileName string) error {
-	if m == nil {
+	switch {
+	case m == nil:
 		return fmt.Errorf("album entity is nil - you may have found a bug")
-	} else if m.AlbumUID == "" {
+	case m.AlbumUID == "":
 		return fmt.Errorf("album uid is empty")
-	} else if fileName == "" {
+	case fileName == "":
 		return fmt.Errorf("yaml filename is empty")
 	}
 
@@ -54,11 +55,7 @@ func (m *Album) SaveAsYaml(fileName string) error {
 	defer albumYamlMutex.Unlock()
 
 	// Write YAML data to file.
-	if err = fs.WriteFile(fileName, data, fs.ModeFile); err != nil {
-		return err
-	}
-
-	return nil
+	return fs.WriteFile(fileName, data, fs.ModeFile)
 }
 
 // YamlFileName returns the absolute file path for the YAML backup file.
@@ -82,11 +79,12 @@ func (m *Album) YamlFileName(backupPath string) (absolute, relative string, err 
 
 // SaveBackupYaml writes the album metadata to a YAML backup file based on the specified storage paths.
 func (m *Album) SaveBackupYaml(backupPath string) error {
-	if m == nil {
+	switch {
+	case m == nil:
 		return fmt.Errorf("album entity is nil - you may have found a bug")
-	} else if m.AlbumUID == "" {
+	case m.AlbumUID == "":
 		return fmt.Errorf("album uid is empty")
-	} else if backupPath == "" {
+	case backupPath == "":
 		return fmt.Errorf("backup path is empty")
 	}
 

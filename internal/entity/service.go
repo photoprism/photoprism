@@ -17,6 +17,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt/clip"
 )
 
+// Status values a service sync moves through.
 const (
 	SyncStatusRefresh  = "refresh"
 	SyncStatusDownload = "download"
@@ -24,6 +25,7 @@ const (
 	SyncStatusSynced   = "synced"
 )
 
+// Services represents a list of remote services.
 type Services []Service
 
 // Service represents a remote service, e.g. for uploading, downloading or syncing media files.

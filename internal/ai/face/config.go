@@ -17,16 +17,16 @@ const (
 	// CollisionDistDefault is the default floor below which a recorded collision radius is discarded.
 	CollisionDistDefault = 0.05
 	// MatchMarginDefault is the default distance by which the nearest cluster has to beat the
-	// runner-up for the marker to be given to it. It shares CollisionDistDefault's value without
-	// being derived from it, the two measuring different quantities.
-	MatchMarginDefault = 0.05
+	// runner-up for the marker to be given to it. Defense in depth rather than a recall lever: it
+	// decides two markers on a labeled library, so it is kept below what the ambiguity rule earns.
+	MatchMarginDefault = 0.01
 	// NoMatchMargin assigns a marker to its nearest cluster however narrowly that one wins,
 	// following the convention the score bars use for "switched off".
 	NoMatchMargin = -1.0
 	// EpsilonDefault is the numeric tolerance used during cluster comparisons, and the same for
 	// every model unlike the calibrated distances: it is the gap a resolved collision leaves, which
 	// is a void where nothing matches, so a wider one strands embeddings rather than separating anyone.
-	EpsilonDefault = 0.01
+	EpsilonDefault = 0.001
 	// SizeThresholdDefault is the default minimum detected face size, in pixels.
 	SizeThresholdDefault = 25
 	// ScoreThresholdDefault leaves the cutoff to the detector, on the 0-100 confidence scale the
@@ -46,10 +46,17 @@ const (
 	// OverlapThresholdDefault is the default face area overlap percentage above which two
 	// detections are treated as identical.
 	OverlapThresholdDefault = 42
-	// ClusterSizeThresholdDefault is the default minimum face size, in pixels, for clustering.
-	ClusterSizeThresholdDefault = 60
-	// ClusterCoreDefault is the default number of faces required to seed a cluster core.
-	ClusterCoreDefault = 4
+	// ClusterSizeThresholdDefault is the default minimum face size, in pixels, for clustering, and
+	// bounds the source pixels an embedding rests on. Measured rather than derived: quality turns
+	// at the aligned crop size and is flat above it.
+	ClusterSizeThresholdDefault = ArcFaceTemplateSize
+	// ClusterCoreDefault is the default number of faces required to seed a cluster core. DBSCAN
+	// counts the point itself, so a person with fewer clusterable faces forms no cluster at all.
+	ClusterCoreDefault = 5
+	// ClusterPercentileDefault is the default share of a cluster's member distances its radius has
+	// to cover. Taking the maximum instead lets one loose member decide how far a whole cluster
+	// reaches, with only the clamp to stop it; under twenty members the two are the same value.
+	ClusterPercentileDefault = 95
 )
 
 // InterOpThreads is how many threads an ONNX session may use to run graph nodes in
@@ -69,6 +76,10 @@ const AcceptDistMax = 1.4
 // were calibrated in; past it a cluster accepts about as readily as it refuses. A value above is
 // refused rather than clipped on read, which would leave the report echoing a number that never applies.
 const ConfigDistMax = 1.25
+
+// EpsilonDistMax is the widest configurable collision tolerance. Twice it bounds AmbiguityDist, so
+// the cutoff under which a colliding cluster is retired can be narrowed but never widened past it.
+const EpsilonDistMax = 0.01
 
 var (
 	// CropSize is the rectangular face crop, used by FaceNet, by the fallback for a face whose
@@ -96,6 +107,10 @@ var (
 	// only when the first finds nothing. Crowd photographs reduce every face below SizeThreshold,
 	// so without it a frame full of people is indexed as containing none.
 	RetrySizeThreshold = 10
+	// RetrySizeThresholdLimited is the second-pass floor where the thumbnail cache cannot supply a
+	// crop much wider than the detection thumbnail, so a smaller face has no rendition to be
+	// embedded from and is detected only to stay unrecognizable.
+	RetrySizeThresholdLimited = 20
 	// MinSizeThreshold is the smallest configurable face size. It is where the detectors stop
 	// being trained rather than a policy choice: YuNet states a lower bound of about ten pixels,
 	// so a smaller setting would ask for faces no model in the registry can find.
@@ -118,11 +133,35 @@ var (
 	MatchMargin = MatchMarginDefault
 	// ClusterCore is the minimum number of faces required to seed a cluster core.
 	ClusterCore = ClusterCoreDefault
+	// ManualClusterCore is the number of manually assigned faces required to form a cluster, and so
+	// also the fewest that can be merged. Lower than ClusterCore because each already asserts an
+	// identity: one is a labeled example and two are a pair, neither of which is a grouping.
+	ManualClusterCore = 3
+	// ClusterPercentile is the share of a cluster's member distances its stored radius covers, so
+	// that no single outlier decides how far the cluster reaches. Configurable for calibration:
+	// 100 restores the maximum, and the two disagree from well below the usual link distances.
+	ClusterPercentile = ClusterPercentileDefault
 	// SampleThreshold is the number of faces required before automatic clustering begins.
 	SampleThreshold = 2 * ClusterCore
 	// Epsilon is the numeric tolerance used during cluster comparisons.
 	Epsilon = EpsilonDefault
 )
+
+// ClusterSize returns the minimum face size, in pixels of the image an embedding was sampled from,
+// that the named model consumes without interpolating. It is the model's own input geometry, so a
+// bar meaning "not invented by interpolation" keeps that meaning when the model changes.
+func ClusterSize(model ModelName) int {
+	if m := FindEmbeddingModel(model); m != nil {
+		if w, h := m.InputSize(); w > 0 && h > 0 {
+			return max(w, h)
+		} else if !m.Aligned() {
+			// Box-aligned models read the rectangular crop instead of the landmark template.
+			return CropSize.Width
+		}
+	}
+
+	return ClusterSizeThresholdDefault
+}
 
 // ClusterScore returns the score a marker the named detector produced has to reach to contribute
 // to automatic clustering. FACE_CLUSTER_SCORE outranks the per-detector bars and a negative value

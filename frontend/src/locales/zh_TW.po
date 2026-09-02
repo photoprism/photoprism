@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-08-07 14:04+0000\n"
+"PO-Revision-Date: 2026-09-01 06:33+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Chinese (Traditional) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hant/>\n"
 "Language: zh_TW\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 2026.8\n"
+"X-Generator: Weblate 2026.8.1\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -58,8 +58,7 @@ msgstr "已使用 %{n} GB（共 %{q} GB）"
 msgid "%{n} labels found"
 msgstr "找到了 %{n} 個標籤"
 
-#: src/page/people/new.vue:494 src/page/people/new.vue:600
-#: src/page/people/recognized.vue:729
+#: src/page/people/new.vue:249 src/page/people/recognized.vue:279
 msgid "%{n} people found"
 msgstr "找到 %{n} 個人"
 
@@ -80,15 +79,15 @@ msgstr "%{s} 太長"
 msgid "%{s} is too short"
 msgstr "%{s} 太短"
 
-#: src/locales.js:437
+#: src/locales.js:438
 msgid "%d entries added to %s"
 msgstr "%d個項目已加入%s"
 
-#: src/locales.js:439
+#: src/locales.js:440
 msgid "%d entries removed from %s"
 msgstr "%d 個項目已從 %s 移除"
 
-#: src/locales.js:461
+#: src/locales.js:462
 msgid "%d files uploaded in %d s"
 msgstr "已上傳 %d 個檔案, 共用 %d 秒"
 
@@ -96,7 +95,7 @@ msgstr "已上傳 %d 個檔案, 共用 %d 秒"
 msgid "%s already exists"
 msgstr "%s 已存在"
 
-#: src/locales.js:471
+#: src/locales.js:472
 msgid "%s has been restored"
 msgstr "%s 已被回復"
 
@@ -130,6 +129,10 @@ msgstr "4 小時"
 #: src/component/share/dialog.vue:116
 msgid "A click will copy it to your clipboard."
 msgstr "點擊以複製到剪貼簿。"
+
+#: src/locales.js:428
+msgid "A migration is in progress"
+msgstr "遷移作業正在進行中"
 
 #: src/component/update.vue:53
 msgid "A new version of %{s} is available:"
@@ -177,12 +180,12 @@ msgid "Account"
 msgstr "帳號"
 
 #: src/component/user/add/dialog.vue:261 src/component/user/add/dialog.vue:277
-#: src/component/service/add.vue:131 src/locales.js:440
+#: src/component/service/add.vue:131 src/locales.js:441
 msgid "Account created"
 msgstr "帳號已建立"
 
 #: src/component/user/remove/dialog.vue:63 src/component/service/remove.vue:74
-#: src/locales.js:442
+#: src/locales.js:443
 msgid "Account deleted"
 msgstr "帳號已刪除"
 
@@ -198,7 +201,7 @@ msgstr "未找到帳號"
 msgid "Account restored"
 msgstr "帳戶已恢復"
 
-#: src/locales.js:441
+#: src/locales.js:442
 msgid "Account saved"
 msgstr "帳號已儲存"
 
@@ -265,7 +268,7 @@ msgid "Add"
 msgstr "新增"
 
 #: src/component/lightbox/sidebar.vue:480
-#: src/component/photo/edit/people.vue:97
+#: src/component/photo/edit/people.vue:97 src/page/people/new.vue:198
 msgid "Add %{s}?"
 msgstr "添加%{s}？"
 
@@ -395,7 +398,7 @@ msgstr "2 星期後"
 msgid "Album"
 msgstr "相簿"
 
-#: src/locales.js:431
+#: src/locales.js:432
 msgid "Album %s deleted"
 msgstr "相簿 %s 已刪除"
 
@@ -403,11 +406,11 @@ msgstr "相簿 %s 已刪除"
 msgid "Album Backups"
 msgstr "相册备份"
 
-#: src/locales.js:432
+#: src/locales.js:433
 msgid "Album contents cloned"
 msgstr "相簿内容已被複製"
 
-#: src/locales.js:429 src/page/albums.vue:1194
+#: src/locales.js:430 src/page/albums.vue:1194
 msgid "Album created"
 msgstr "相簿已建立"
 
@@ -419,7 +422,7 @@ msgstr "相簿已刪除"
 msgid "Album not found"
 msgstr "未找到相簿"
 
-#: src/locales.js:430
+#: src/locales.js:431
 msgid "Album saved"
 msgstr "相簿已儲存"
 
@@ -432,7 +435,7 @@ msgstr "相簿已儲存"
 msgid "Albums"
 msgstr "相簿"
 
-#: src/component/album/clipboard.vue:194 src/locales.js:468
+#: src/component/album/clipboard.vue:194 src/locales.js:469
 msgid "Albums deleted"
 msgstr "相簿已刪除"
 
@@ -448,7 +451,7 @@ msgstr "共 %{n} 本相簿已載入"
 msgid "All %{n} labels loaded"
 msgstr "共 %{n} 個標籤已載入"
 
-#: src/page/people/recognized.vue:561
+#: src/page/people/recognized.vue:577
 msgid "All %{n} people loaded"
 msgstr "共 %{n} 人已讀取"
 
@@ -737,7 +740,8 @@ msgstr "作為 100% 自籌資金和獨立的公司，我們可以向您保證，
 msgid "Bio"
 msgstr "個人資料"
 
-#: src/page/settings/account.vue:212 src/page/settings/account.vue:196
+#: src/page/settings/account.vue:212 src/component/people/edit/dialog.vue:39
+#: src/page/settings/account.vue:196
 msgid "Birth Date"
 msgstr "出生日期"
 
@@ -817,9 +821,9 @@ msgstr "已達上限，無法再載入更多"
 #: src/common/clipboard.js:103 src/common/clipboard.js:139
 #: src/page/albums.vue:1204 src/page/albums.vue:1220 src/page/labels.vue:642
 #: src/page/labels.vue:662 src/page/library/browse.vue:325
-#: src/page/library/browse.vue:341 src/page/people/new.vue:422
-#: src/page/people/new.vue:438 src/page/people/recognized.vue:494
-#: src/page/people/recognized.vue:510
+#: src/page/library/browse.vue:341 src/page/people/new.vue:438
+#: src/page/people/new.vue:454 src/page/people/recognized.vue:510
+#: src/page/people/recognized.vue:526
 msgid "Can't select more items"
 msgstr "無法選取更多項目"
 
@@ -843,7 +847,7 @@ msgstr "無法選取更多項目"
 #: src/component/meta/face/markers.vue:54
 #: src/component/meta/face/markers.vue:73
 #: src/component/meta/location/dialog.vue:115
-#: src/component/people/edit/dialog.vue:46
+#: src/component/people/edit/dialog.vue:72
 #: src/component/photo/album/dialog.vue:64 src/component/service/add.vue:97
 #: src/component/service/edit.vue:232 src/component/service/remove.vue:19
 #: src/component/service/upload.vue:57 src/component/settings/apps.vue:151
@@ -914,7 +918,7 @@ msgstr "更改私人選項"
 #: src/component/album/edit/dialog.vue:171
 #: src/component/label/edit/dialog.vue:109
 #: src/component/meta/camera/dialog.vue:214
-#: src/component/people/edit/dialog.vue:112
+#: src/component/people/edit/dialog.vue:143
 #: src/component/photo/batch-edit.vue:1440
 #: src/component/photo/edit/details.vue:636 src/locales.js:376
 #: src/page/settings/account.vue:447 src/page/settings/account.vue:452
@@ -933,8 +937,8 @@ msgstr "無法儲存更改項目"
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
-#: src/locales.js:428 src/page/albums.vue:1197 src/page/people/new.vue:789
-#: src/page/people/recognized.vue:304 src/page/settings/advanced.vue:507
+#: src/locales.js:429 src/page/albums.vue:1197 src/page/people/new.vue:814
+#: src/page/people/recognized.vue:320 src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
 #: src/page/settings/general.vue:646
 msgid "Changes successfully saved"
@@ -1086,7 +1090,7 @@ msgstr "可信度"
 #: src/component/settings/passcode.vue:68
 #: src/component/settings/passcode.vue:69
 #: src/component/settings/passcode.vue:78
-#: src/component/settings/passcode.vue:94
+#: src/component/settings/passcode.vue:94 src/page/people/new.vue:101
 msgid "Confirm"
 msgstr "確認"
 
@@ -1165,7 +1169,7 @@ msgstr "已複製到剪貼簿"
 msgid "Copy"
 msgstr "複製"
 
-#: src/locales.js:453
+#: src/locales.js:454
 msgid "Copying files from %s"
 msgstr "正在從 %s 中複製檔案"
 
@@ -1198,14 +1202,6 @@ msgstr "找不到任何東西。"
 #: src/page/settings/account.vue:286
 msgid "Country"
 msgstr "國家"
-
-#: src/page/people/new.vue:101
-msgid "Create"
-msgstr ""
-
-#: src/page/people/new.vue:198
-msgid "Create a new person named %{name}?"
-msgstr ""
 
 #: src/page/auth/login.vue:123 src/page/auth/login.vue:130
 msgid "Create Account"
@@ -1827,7 +1823,7 @@ msgstr "快"
 
 #: src/component/album/edit/dialog.vue:77
 #: src/component/label/edit/dialog.vue:37
-#: src/component/people/edit/dialog.vue:37
+#: src/component/people/edit/dialog.vue:50
 #: src/component/photo/batch-edit.vue:1536
 #: src/component/photo/edit/info.vue:121 src/component/photo/edit/info.vue:122
 msgid "Favorite"
@@ -1868,7 +1864,7 @@ msgstr "檔案瀏覽器"
 msgid "File Conversion"
 msgstr "檔案轉換"
 
-#: src/locales.js:434
+#: src/locales.js:435
 msgid "File deleted"
 msgstr "檔案已刪除"
 
@@ -1882,7 +1878,7 @@ msgstr "檔案名稱"
 msgid "File not found"
 msgstr "未找到檔案"
 
-#: src/locales.js:433
+#: src/locales.js:434
 msgid "File removed from stack"
 msgstr "檔案已從堆疊中移除"
 
@@ -1894,7 +1890,7 @@ msgstr "檔案大小"
 msgid "File too large"
 msgstr "文件過大"
 
-#: src/locales.js:460
+#: src/locales.js:461
 msgid "File uploaded"
 msgstr "檔案上傳成功"
 
@@ -2064,7 +2060,7 @@ msgstr "支援與幫助"
 
 #: src/component/navigation.vue:369 src/component/navigation.vue:370
 #: src/component/navigation.vue:382 src/component/navigation.vue:391
-#: src/component/navigation.vue:504 src/component/people/edit/dialog.vue:40
+#: src/component/navigation.vue:504 src/component/people/edit/dialog.vue:63
 msgid "Hidden"
 msgstr "隱藏"
 
@@ -2131,11 +2127,11 @@ msgstr "影像品質"
 msgid "Import"
 msgstr "匯入"
 
-#: src/locales.js:446
+#: src/locales.js:447
 msgid "Import canceled"
 msgstr "匯入取消"
 
-#: src/locales.js:445
+#: src/locales.js:446
 msgid "Import completed in %d s"
 msgstr "匯入成功, 共用 %d 秒"
 
@@ -2197,11 +2193,11 @@ msgstr "索引"
 msgid "Indexing"
 msgstr "建立索引中"
 
-#: src/locales.js:450
+#: src/locales.js:451
 msgid "Indexing canceled"
 msgstr "建立索引取消"
 
-#: src/locales.js:447
+#: src/locales.js:448
 msgid "Indexing completed in %d s"
 msgstr "索引建立成功, 共用 %d 秒"
 
@@ -2209,7 +2205,7 @@ msgstr "索引建立成功, 共用 %d 秒"
 msgid "Indexing failed"
 msgstr "建立索引失敗"
 
-#: src/locales.js:449
+#: src/locales.js:450
 msgid "Indexing files in %s"
 msgstr "建立 %s 中的檔案索引"
 
@@ -2217,7 +2213,7 @@ msgstr "建立 %s 中的檔案索引"
 msgid "Indexing media and sidecar files…"
 msgstr "正在建立媒體和sidecar檔案的索引…"
 
-#: src/locales.js:448
+#: src/locales.js:449
 msgid "Indexing originals..."
 msgstr "索引原始檔案..."
 
@@ -2367,7 +2363,7 @@ msgstr "標籤"
 msgid "Label not found"
 msgstr "未找到標籤"
 
-#: src/locales.js:455
+#: src/locales.js:456
 msgid "Label saved"
 msgstr "標籤已儲存"
 
@@ -2383,7 +2379,7 @@ msgstr "標籤已儲存"
 msgid "Labels"
 msgstr "標籤"
 
-#: src/component/label/clipboard.vue:131 src/locales.js:454
+#: src/component/label/clipboard.vue:131 src/locales.js:455
 msgid "Labels deleted"
 msgstr "已刪除標籤"
 
@@ -2695,7 +2691,7 @@ msgstr "最相關的"
 msgid "Move Files"
 msgstr "移動檔案"
 
-#: src/locales.js:452
+#: src/locales.js:453
 msgid "Moving files from %s"
 msgstr "正在從 %s 中移動檔案"
 
@@ -2832,8 +2828,8 @@ msgid "No more"
 msgstr "不再"
 
 #: src/component/photo/edit/people.vue:6 src/page/people/new.vue:23
-#: src/page/people/new.vue:490 src/page/people/new.vue:596
-#: src/page/people/recognized.vue:55 src/page/people/recognized.vue:725
+#: src/page/people/new.vue:245 src/page/people/recognized.vue:275
+#: src/page/people/recognized.vue:55
 msgid "No people found"
 msgstr "找不到人"
 
@@ -2983,11 +2979,11 @@ msgstr "一周一次"
 msgid "One album found"
 msgstr "找到 1 本相簿"
 
-#: src/locales.js:436
+#: src/locales.js:437
 msgid "One entry added to %s"
 msgstr "已在 %s 增加一個項目"
 
-#: src/locales.js:438
+#: src/locales.js:439
 msgid "One entry removed from %s"
 msgstr "已從 %s 移除一個項目"
 
@@ -3003,8 +2999,7 @@ msgstr "找到 1 個資料夾"
 msgid "One label found"
 msgstr "找到一個標籤"
 
-#: src/page/people/new.vue:492 src/page/people/new.vue:598
-#: src/page/people/recognized.vue:727
+#: src/page/people/new.vue:247 src/page/people/recognized.vue:277
 msgid "One person found"
 msgstr "找到一個人"
 
@@ -3133,7 +3128,7 @@ msgstr "部分精選照片"
 msgid "Password"
 msgstr "密碼"
 
-#: src/component/settings/password.vue:162 src/locales.js:444
+#: src/component/settings/password.vue:162 src/locales.js:445
 msgid "Password changed"
 msgstr "密碼已更改"
 
@@ -3161,7 +3156,7 @@ msgid "People you share a link with will be able to view public contents."
 msgstr "擁有連結的人可以看到公開內容。"
 
 #: src/component/photo/clipboard.vue:303 src/component/photo/toolbar.vue:522
-#: src/locales.js:470
+#: src/locales.js:471
 msgid "Permanently deleted"
 msgstr "永久刪除"
 
@@ -3169,7 +3164,7 @@ msgstr "永久刪除"
 msgid "Permission denied"
 msgstr "權限遭拒"
 
-#: src/model/subject.js:158
+#: src/model/subject.js:192
 msgid "Person"
 msgstr "人"
 
@@ -3177,7 +3172,7 @@ msgstr "人"
 msgid "Person cover updated"
 msgstr "人物封面已更新"
 
-#: src/locales.js:459
+#: src/locales.js:460
 msgid "Person deleted"
 msgstr "人物已刪除"
 
@@ -3186,7 +3181,7 @@ msgstr "人物已刪除"
 msgid "Person not found"
 msgstr "找不到人"
 
-#: src/locales.js:458
+#: src/locales.js:459
 msgid "Person saved"
 msgstr "人物已儲存"
 
@@ -3365,13 +3360,14 @@ msgstr "主要的"
 #: src/component/navigation.vue:126 src/component/navigation.vue:127
 #: src/component/navigation.vue:139 src/component/navigation.vue:148
 #: src/component/navigation.vue:156 src/component/navigation.vue:176
+#: src/component/people/edit/dialog.vue:66
 #: src/component/photo/batch-edit.vue:1537
 #: src/component/photo/edit/info.vue:129 src/component/photo/edit/info.vue:130
 #: src/page/settings/general.vue:200
 msgid "Private"
 msgstr "私人的"
 
-#: src/locales.js:462
+#: src/locales.js:463
 msgid "Processing upload..."
 msgstr "正在處理上傳..."
 
@@ -3557,7 +3553,7 @@ msgstr "已移除"
 msgid "Removed %{name}"
 msgstr "已移除 %{name}"
 
-#: src/locales.js:451
+#: src/locales.js:452
 msgid "Removed %d files and %d photos"
 msgstr "刪除了 %d 個檔案和 %d 張照片"
 
@@ -3686,10 +3682,10 @@ msgstr "衛星"
 #: src/component/meta/datetime/dialog.vue:38
 #: src/component/meta/datetime/dialog.vue:39
 #: src/component/meta/datetime/dialog.vue:51
-#: src/component/people/edit/dialog.vue:30
-#: src/component/people/edit/dialog.vue:31
-#: src/component/people/edit/dialog.vue:42
-#: src/component/people/edit/dialog.vue:49
+#: src/component/people/edit/dialog.vue:40
+#: src/component/people/edit/dialog.vue:41
+#: src/component/people/edit/dialog.vue:52
+#: src/component/people/edit/dialog.vue:75
 #: src/component/photo/batch-edit.vue:483
 #: src/component/photo/edit/details.vue:396 src/component/service/edit.vue:103
 #: src/component/service/edit.vue:235 src/component/service/edit.vue:93
@@ -3805,19 +3801,19 @@ msgstr "選擇時間"
 msgid "Selection"
 msgstr "選拔"
 
-#: src/locales.js:435
+#: src/locales.js:436
 msgid "Selection added to %s"
 msgstr "選取項目已加入 %s"
 
-#: src/component/photo/clipboard.vue:251 src/locales.js:464
+#: src/component/photo/clipboard.vue:251 src/locales.js:465
 msgid "Selection approved"
 msgstr "選取項目已認可"
 
-#: src/component/photo/clipboard.vue:282 src/locales.js:465
+#: src/component/photo/clipboard.vue:282 src/locales.js:466
 msgid "Selection archived"
 msgstr "選取項目已封存"
 
-#: src/locales.js:467
+#: src/locales.js:468
 msgid "Selection marked as private"
 msgstr "選取項目已設為私人"
 
@@ -3825,7 +3821,7 @@ msgstr "選取項目已設為私人"
 msgid "Selection not found"
 msgstr "未找到選取項目"
 
-#: src/component/photo/clipboard.vue:318 src/locales.js:466
+#: src/component/photo/clipboard.vue:318 src/locales.js:467
 msgid "Selection restored"
 msgstr "選取項目已被復原"
 
@@ -3884,7 +3880,7 @@ msgid "Settings"
 msgstr "設定"
 
 #: src/page/settings/account.vue:533 src/page/settings/account.vue:562
-#: src/component/settings/passcode.vue:366 src/locales.js:443
+#: src/component/settings/passcode.vue:366 src/locales.js:444
 #: src/page/settings/account.vue:441 src/page/settings/account.vue:470
 msgid "Settings saved"
 msgstr "設定已儲存"
@@ -4167,7 +4163,7 @@ msgstr "街"
 msgid "Subject"
 msgstr "主題"
 
-#: src/locales.js:457
+#: src/locales.js:458
 msgid "Subject deleted"
 msgstr "已刪除主題"
 
@@ -4175,11 +4171,11 @@ msgstr "已刪除主題"
 msgid "Subject not found"
 msgstr "未找到主體"
 
-#: src/locales.js:456
+#: src/locales.js:457
 msgid "Subject saved"
 msgstr "主題已儲存"
 
-#: src/component/settings/passcode.vue:351 src/locales.js:473
+#: src/component/settings/passcode.vue:351 src/locales.js:474
 msgid "Successfully activated"
 msgstr "激活成功"
 
@@ -4192,7 +4188,7 @@ msgstr "成功連接"
 msgid "Successfully deleted"
 msgstr "已成功删除"
 
-#: src/component/settings/passcode.vue:323 src/locales.js:472
+#: src/component/settings/passcode.vue:323 src/locales.js:473
 msgid "Successfully verified"
 msgstr "驗證成功"
 
@@ -4548,7 +4544,7 @@ msgstr "上傳完成。索引中…"
 msgid "Upload failed"
 msgstr "上傳失敗"
 
-#: src/locales.js:463
+#: src/locales.js:464
 msgid "Upload has been processed"
 msgstr "上傳已處理完畢"
 
@@ -4672,6 +4668,10 @@ msgstr "向量"
 #: src/component/settings/passcode.vue:92 src/page/auth/login.vue:62
 msgid "Verification Code"
 msgstr "驗證碼"
+
+#: src/component/people/edit/dialog.vue:56
+msgid "Verified"
+msgstr "已驗證"
 
 #: src/locales.js:427
 msgid "Verified email required"
@@ -4877,7 +4877,7 @@ msgstr "您的持續支持有助於我們提供定期更新並保持獨立，因
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "您的資料庫會持續進行分析，以自動建立有關特殊時刻、旅行和地點的相簿。"
 
-#: src/locales.js:469
+#: src/locales.js:470
 msgid "Zip created in %d s"
 msgstr "Zip檔建立成功, 共用 %d 秒"
 
@@ -4935,6 +4935,12 @@ msgstr "標題"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "封存"
+
+#~ msgid "Create"
+#~ msgstr "已新增"
+
+#~ msgid "Create a new person named %{name}?"
+#~ msgstr "要建立一位名為 %{name} 的新人物嗎？"
 
 #~ msgid "%{n} files uploaded"
 #~ msgstr "%{n} 個檔案上傳完成"
@@ -5423,9 +5429,6 @@ msgstr "封存"
 
 #~ msgid "Why are some features only available to sponsors?"
 #~ msgstr "為什麼有些功能只對贊助者開放？"
-
-#~ msgid "Verified"
-#~ msgstr "已驗證"
 
 #~ msgid "Proceed"
 #~ msgstr "繼續"

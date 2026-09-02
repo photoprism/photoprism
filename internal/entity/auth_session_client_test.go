@@ -73,7 +73,7 @@ func TestNewClientSession_ReleasesTokensOnDelete(t *testing.T) {
 	// tokens (via SetUser) before SetAuthToken finalizes its ID. Deleting the app password
 	// and the user's remaining session must release the tokens from the lookup cache so they
 	// stop resolving once no active session or app password uses them.
-	u := &User{
+	u := &User{ //nolint:gosec // test fixture user, not a credential
 		UserUID:      rnd.GenerateUID(UserUID),
 		UserName:     "app-pw-lifecycle",
 		UserRole:     acl.RoleAdmin.String(),

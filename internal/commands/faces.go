@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"math"
 	"path/filepath"
 	"strings"
 	"time"
@@ -26,12 +27,40 @@ import (
 var FacesCommands = &cli.Command{
 	Name:  "faces",
 	Usage: "Face recognition subcommands",
+	// Ordered as an operator meets them: what the instance is doing, the passes that change the
+	// index, then the reports that describe it, and last the ones that diagnose or destroy.
 	Subcommands: []*cli.Command{
+		FacesStatusCommand,
 		{
-			Name:   "stats",
-			Usage:  "Shows stats on face samples",
-			Action: facesStatsAction,
+			Name:  "update",
+			Usage: "Performs face clustering and matching",
+			Flags: []cli.Flag{
+				ForceFlag("update all faces"),
+			},
+			Action: facesUpdateAction,
 		},
+		{
+			Name:      "index",
+			Usage:     "Searches originals for faces",
+			ArgsUsage: "[subfolder]",
+			Action:    facesIndexAction,
+		},
+		{
+			Name:  "optimize",
+			Usage: "Optimizes face clusters",
+			Flags: []cli.Flag{
+				&cli.BoolFlag{
+					Name:  "retry",
+					Usage: "reset merge retry counters before optimizing",
+				},
+			},
+			Action: facesOptimizeAction,
+		},
+		FacesMigrateCommand,
+		FacesListCommand,
+		FacesMarkersCommand,
+		FacesSubjectsCommand,
+		FacesConflictsCommand,
 		{
 			Name:  "audit",
 			Usage: "Scans the index for issues",
@@ -47,6 +76,11 @@ var FacesCommands = &cli.Command{
 				},
 			},
 			Action: facesAuditAction,
+		},
+		{
+			Name:   "stats",
+			Usage:  "Shows stats on face samples",
+			Action: facesStatsAction,
 		},
 		{
 			Name:  "reset",
@@ -70,40 +104,13 @@ var FacesCommands = &cli.Command{
 			},
 			Action: facesResetAction,
 		},
-		FacesMigrateCommand,
-		{
-			Name:      "index",
-			Usage:     "Searches originals for faces",
-			ArgsUsage: "[subfolder]",
-			Action:    facesIndexAction,
-		},
-		{
-			Name:  "update",
-			Usage: "Performs face clustering and matching",
-			Flags: []cli.Flag{
-				ForceFlag("update all faces"),
-			},
-			Action: facesUpdateAction,
-		},
-		{
-			Name:  "optimize",
-			Usage: "Optimizes face clusters",
-			Flags: []cli.Flag{
-				&cli.BoolFlag{
-					Name:  "retry",
-					Usage: "reset merge retry counters before optimizing",
-				},
-			},
-			Action: facesOptimizeAction,
-		},
-		FacesStatusCommand,
 	},
 }
 
 // FacesMigrateCommand configures the face embedding migration command.
 var FacesMigrateCommand = &cli.Command{
 	Name:  "migrate",
-	Usage: "Migrates face embeddings to the supported model",
+	Usage: "Migrates face embeddings to a supported model",
 	Description: "This is how the face embedding model is changed: every marker is re-embedded and " +
 		"the target is recorded as the configured model. It defaults to " + face.DefaultModelName() +
 		", the model this release supports, so an ordinary migration needs no target. Stop the server " +
@@ -147,18 +154,19 @@ func facesMigrateAction(ctx *cli.Context) error {
 			log.Infof("faces: %d of those are too small or too low-scoring to seed a cluster",
 				plan.LowQualitySamples)
 		}
-		// Ready tells an operator that a re-run has nothing left to do, and unlinked
-		// markers are cleared by every run regardless of how the migration goes.
+		// Ready counts the markers already on the target model, which a re-run still samples again
+		// where they record no extent - the line below carries that number. Unlinked markers are
+		// cleared by every run regardless of how the migration goes.
 		log.Infof(
 			"faces: %d markers already use %s, %d have no file, and %d were identified manually",
 			plan.Markers.Ready, clean.Log(plan.Target), plan.Markers.Unlinked, plan.Markers.Manual,
 		)
 		// The crop is an axis of the embedding space, so a detector change leaves a library in
 		// two of them. This is the only run that repairs that, and it is why a re-run to the
-		// same model can still have work to do. Every marker indexed before the detector was
-		// recorded counts here, which on a first run is all of them.
+		// same model can still have work to do. Every marker indexed before the detector or the
+		// sample extent was recorded counts here, which on a first run is all of them.
 		if plan.RecropMarkers > 0 {
-			log.Infof("faces: %d of those were cropped by another or an unrecorded detector and are re-embedded, keeping their vector if detection cannot find them again",
+			log.Infof("faces: %d of those were cropped by another or an unrecorded detector, or record no sample extent, and are re-embedded, keeping their vector if detection cannot find them again",
 				plan.RecropMarkers)
 		}
 		// Re-embedding reads the file, so a marker whose file the index has already recorded
@@ -198,6 +206,10 @@ func facesMigrateAction(ctx *cli.Context) error {
 		if stale := plan.Markers.Valid - plan.Markers.Ready; stale > 0 {
 			event.SystemWarn([]string{"faces", "migrate", "%d markers must be re-embedded and lose their stored vectors if that fails"}, stale)
 		}
+		// A crop is taken from a thumbnail and never from the original, so what the cache holds
+		// decides how much detail the vectors rest on. The run renders what it is missing; this
+		// says how much of that is coming, and how much of it the originals cannot supply.
+		reportMigrationCropCoverage(plan)
 
 		if ctx.Bool("dry-run") {
 			log.Infof("faces: dry run completed without changes")
@@ -232,6 +244,25 @@ func facesMigrateAction(ctx *cli.Context) error {
 			result.PreservedSubjects, result.PreservedMarkers, result.HiddenClusters,
 			result.RebuiltSubjects, result.AttentionSubjects,
 		)
+		// The cache is what a crop is taken from, so a run that had to render is the difference
+		// between this library's vectors and the ones a pre-generated cache would have produced.
+		if result.RenderedThumbs > 0 {
+			log.Infof("faces: rendered %d thumbnail(s) from originals so their face crops were not upscaled",
+				result.RenderedThumbs)
+		}
+		// The one part of the run whose cost is not visible in the result afterwards: these
+		// markers hold a vector drawn from fewer pixels than their original could supply.
+		if result.FailedThumbs > 0 {
+			event.SystemWarn([]string{"faces", "migrate", "%d file(s) could not be given the wider thumbnail their face crops need, " +
+				"so those markers were embedded from upscaled crops; re-run once the cache volume is writable"},
+				result.FailedThumbs)
+		}
+		// The other cost that leaves no trace in the vectors: an aligned model was trained on
+		// pose-normalized faces, and these reached it as a plain box crop instead.
+		if result.UnalignedCrops > 0 {
+			log.Infof("faces: %d marker(s) could not be aligned and were embedded from a plain box crop",
+				result.UnalignedCrops)
+		}
 		// Reported apart from both, because a retained marker is neither work done nor a loss:
 		// detection did not find it again, most often because a person drew it by hand.
 		if result.Retained > 0 {
@@ -259,6 +290,45 @@ func facesMigrateAction(ctx *cli.Context) error {
 
 		return nil
 	})
+}
+
+// reportMigrationCropCoverage states how much of the crop detail the thumbnail cache already holds,
+// what the run renders for itself, and what no rendition can supply.
+//
+// A forecast rather than a warning: the run renders the renditions its crops need as it reaches
+// each file, so the only number an operator has to decide anything about is the last one.
+func reportMigrationCropCoverage(plan photoprism.FacesMigratePlan) {
+	coverage := plan.CropCoverage
+
+	if coverage.Total < 1 {
+		return
+	}
+
+	// Markers rather than files, because that is the population the buckets count: a file with
+	// several of them is rendered for once, so the number of renditions is lower than this.
+	if coverage.Upscaled > 0 {
+		log.Infof("faces: %d of %d markers (%d%%) need a wider crop than the largest thumbnail this library holds (%dx%d), "+
+			"so their files are rendered again from the original as the run reaches them",
+			coverage.Upscaled, coverage.Total, percentOf(coverage.Upscaled, coverage.Total),
+			plan.ThumbSize.Width, plan.ThumbSize.Height)
+	}
+
+	// Stated apart, because this is the part no rendition recovers: their files are re-rendered
+	// as well, at the resolution the original holds, and the crop is still upscaled onto the
+	// template afterwards.
+	if coverage.SourceTooSmall > 0 {
+		log.Infof("faces: %d of %d markers (%d%%) have originals too small for a full-detail face crop, so theirs stay upscaled",
+			coverage.SourceTooSmall, coverage.Total, percentOf(coverage.SourceTooSmall, coverage.Total))
+	}
+}
+
+// percentOf returns the share of total in whole percent, and 0 when there is nothing to divide by.
+func percentOf(n, total int) int {
+	if total < 1 {
+		return 0
+	}
+
+	return int(math.Round(float64(n) * 100 / float64(total)))
 }
 
 // facesStatsAction shows stats on face embeddings.

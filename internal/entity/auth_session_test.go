@@ -327,7 +327,7 @@ func TestSession_Create(t *testing.T) {
 		assert.Error(t, err)
 	})
 	t.Run("BadRefIDandID", func(t *testing.T) {
-		authToken := "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7cad"
+		authToken := "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7cad" //nolint:gosec // fixture token, not a credential
 
 		s := &Session{
 			UserName:    "freddy",

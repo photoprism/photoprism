@@ -466,11 +466,12 @@ func (m *Session) clientRole(resolve bool) acl.Role {
 
 // GetUser returns the related user entity.
 func (m *Session) GetUser() *User {
-	if m == nil {
+	switch {
+	case m == nil:
 		return &User{}
-	} else if m.user != nil {
+	case m.user != nil:
 		return m.user
-	} else if m.UserUID == "" {
+	case m.UserUID == "":
 		return &User{}
 	}
 
@@ -1045,8 +1046,6 @@ func (m *Session) SetUserAgent(ua string) {
 	}
 
 	m.UserAgent = ua
-
-	return
 }
 
 // SetClientIP sets the client IP address.
@@ -1067,8 +1066,6 @@ func (m *Session) SetClientIP(ip string) {
 		m.LoginIP = ip
 		m.LoginAt = TimeStamp()
 	}
-
-	return
 }
 
 // IP returns the client IP address, or "unknown" if it is unknown.

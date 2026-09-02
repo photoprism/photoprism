@@ -609,9 +609,7 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 	if frm.Path != "" {
 		p := frm.Path
 
-		if strings.HasPrefix(p, "/") {
-			p = p[1:]
-		}
+		p = strings.TrimPrefix(p, "/")
 
 		if strings.HasSuffix(p, "/") {
 			s = s.Where("photos.photo_path = ?", p[:len(p)-1])
@@ -697,7 +695,7 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 
 		if frm.Review {
 			s = s.Where("photos.photo_quality < 3")
-		} else if frm.Quality != 0 && frm.Private == false {
+		} else if frm.Quality != 0 && !frm.Private {
 			s = s.Where("photos.photo_quality >= ?", frm.Quality)
 		}
 	}

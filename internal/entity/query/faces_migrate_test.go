@@ -304,8 +304,10 @@ func TestFaceMigrationRecropMarkers(t *testing.T) {
 	require.NoError(t, err)
 	beforeSCRFD, err := FaceMigrationRecropMarkers(face.ModelFaceNet, face.DetectorSCRFD)
 	require.NoError(t, err)
+	beforeNone, err := FaceMigrationRecropMarkers(face.ModelFaceNet, face.DetectorNone)
+	require.NoError(t, err)
 
-	newMarker := func(embedModel, detectModel string, vector []byte) *entity.Marker {
+	newMarker := func(embedModel, detectModel string, vector []byte, thumbSize int) *entity.Marker {
 		m := &entity.Marker{
 			MarkerUID:      rnd.GenerateUID('m'),
 			FileUID:        "fs6sg6bw45bnlqdw",
@@ -314,6 +316,7 @@ func TestFaceMigrationRecropMarkers(t *testing.T) {
 			EmbedModel:     embedModel,
 			DetectModel:    detectModel,
 			EmbeddingsJSON: vector,
+			ThumbSize:      thumbSize,
 			W:              0.1,
 			H:              0.1,
 		}
@@ -325,39 +328,138 @@ func TestFaceMigrationRecropMarkers(t *testing.T) {
 
 	vector := face.Embeddings{face.RandomEmbedding()}.JSON()
 
-	newMarker(face.ModelFaceNet, face.DetectorSCRFD, vector)
-	newMarker(face.ModelFaceNet, "", vector)
-	newMarker(face.ModelFaceNet, face.DetectorYuNet, vector)
-	newMarker(face.ModelFaceNet, face.DetectorYuNet, vector)
-	newMarker(face.ModelSFace, face.DetectorSCRFD, vector)
-	newMarker(face.ModelFaceNet, face.DetectorSCRFD, nil)
+	// All but the last record a sample extent, so the detector cases turn on the detector alone.
+	sampled := face.ClusterSizeThresholdDefault
+
+	newMarker(face.ModelFaceNet, face.DetectorSCRFD, vector, sampled)
+	newMarker(face.ModelFaceNet, "", vector, sampled)
+	newMarker(face.ModelFaceNet, face.DetectorYuNet, vector, sampled)
+	newMarker(face.ModelFaceNet, face.DetectorYuNet, vector, sampled)
+	newMarker(face.ModelSFace, face.DetectorSCRFD, vector, sampled)
+	newMarker(face.ModelFaceNet, face.DetectorSCRFD, nil, sampled)
+	newMarker(face.ModelFaceNet, face.DetectorYuNet, vector, -1)
+	newMarker(face.ModelFaceNet, face.DetectorYuNet, vector, entity.ThumbSizeUnmeasured)
 
 	t.Run("CountsTheOtherDetector", func(t *testing.T) {
-		// Only a marker holding a target-model vector that another detector cropped: the
-		// current detector's is not stale, another model's is stale for a different reason,
-		// and one without a vector has nothing to keep.
+		// A target-model vector another detector cropped, plus one the current detector cropped
+		// without recording an extent. Not the two others of that detector, not another model's,
+		// which is stale for a different reason, and not one without a vector to keep.
 		count, countErr := FaceMigrationRecropMarkers(face.ModelFaceNet, face.DetectorYuNet)
 		require.NoError(t, countErr)
-		assert.Equal(t, beforeYuNet+2, count)
+		assert.Equal(t, beforeYuNet+3, count)
 	})
 	t.Run("OtherDetectorInForce", func(t *testing.T) {
 		// The same rows, counted against the other detector: which crop is stale follows the
 		// detector in force rather than naming one of them.
 		count, countErr := FaceMigrationRecropMarkers(face.ModelFaceNet, face.DetectorSCRFD)
 		require.NoError(t, countErr)
-		assert.Equal(t, beforeSCRFD+3, count)
+		assert.Equal(t, beforeSCRFD+5, count,
+			"a settled extent is still re-cropped for a detector change, which is a separate reason")
+	})
+	t.Run("SkipsAnExtentAlreadyGivenUpOn", func(t *testing.T) {
+		// The row that tells the two predicates apart. A sampling that tried and could not measure
+		// records ThumbSizeUnmeasured, and pricing it as work would quote a number no run can clear.
+		count, countErr := FaceMigrationRecropMarkers(face.ModelFaceNet, face.DetectorYuNet)
+		require.NoError(t, countErr)
+
+		settled, countErr := FaceMigrationRecropMarkers(face.ModelFaceNet, face.DetectorNone)
+		require.NoError(t, countErr)
+
+		assert.Equal(t, beforeYuNet+3, count, "the settled marker must not be counted")
+		assert.Equal(t, beforeNone+1, settled)
 	})
 	t.Run("NoDetector", func(t *testing.T) {
-		// Detection is off, so there is no detector to disagree with and nothing to re-crop.
+		// Detection is off, so there is no detector to disagree with and only the unmeasured
+		// extent is left - which no detector change can explain and only re-sampling can fill.
 		for _, detector := range []string{"", face.DetectorNone} {
 			count, countErr := FaceMigrationRecropMarkers(face.ModelFaceNet, detector)
 			require.NoError(t, countErr)
-			assert.Zero(t, count, detector)
+			assert.Equal(t, beforeNone+1, count, detector)
 		}
 	})
 	t.Run("ModelRequired", func(t *testing.T) {
 		_, countErr := FaceMigrationRecropMarkers("", face.DetectorYuNet)
 		require.Error(t, countErr)
+	})
+}
+
+// TestCountMarkersUnsettledThumbSize covers the count an audit reports as actionable, which excludes
+// the markers a sampling already gave up on - the total beside it does not, and both are needed.
+func TestCountMarkersUnsettledThumbSize(t *testing.T) {
+	beforeAll, err := CountMarkersWithoutThumbSize()
+	require.NoError(t, err)
+	beforeOpen, err := CountMarkersUnsettledThumbSize()
+	require.NoError(t, err)
+
+	vector := face.Embeddings{face.RandomEmbedding()}.JSON()
+
+	for _, size := range []int{-1, entity.ThumbSizeUnmeasured} {
+		uid := rnd.GenerateUID('m')
+		m := &entity.Marker{
+			MarkerUID:      uid,
+			MarkerType:     entity.MarkerFace,
+			MarkerSrc:      entity.SrcImage,
+			EmbeddingsJSON: vector,
+			ThumbSize:      size,
+		}
+
+		require.NoError(t, entity.Db().Create(m).Error)
+		t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Marker{}, "marker_uid = ?", uid) })
+	}
+
+	all, err := CountMarkersWithoutThumbSize()
+	require.NoError(t, err)
+	open, err := CountMarkersUnsettledThumbSize()
+	require.NoError(t, err)
+
+	assert.Equal(t, beforeAll+2, all, "both still fall back to the detection size")
+	assert.Equal(t, beforeOpen+1, open, "only one is worth sampling again")
+}
+
+// TestSettleMigrationThumbSize covers the write that lets a migration filling the column terminate.
+func TestSettleMigrationThumbSize(t *testing.T) {
+	vector := face.Embeddings{face.RandomEmbedding()}.JSON()
+
+	newMarker := func(t *testing.T, size int) string {
+		t.Helper()
+
+		uid := rnd.GenerateUID('m')
+		m := &entity.Marker{
+			MarkerUID:      uid,
+			MarkerType:     entity.MarkerFace,
+			MarkerSrc:      entity.SrcImage,
+			EmbeddingsJSON: vector,
+			ThumbSize:      size,
+		}
+
+		require.NoError(t, entity.Db().Create(m).Error)
+		t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Marker{}, "marker_uid = ?", uid) })
+
+		return uid
+	}
+
+	stored := func(t *testing.T, uid string) int {
+		t.Helper()
+
+		var m entity.Marker
+		require.NoError(t, entity.UnscopedDb().First(&m, "marker_uid = ?", uid).Error)
+
+		return m.ThumbSize
+	}
+
+	t.Run("Settles", func(t *testing.T) {
+		uid := newMarker(t, -1)
+		require.NoError(t, SettleMigrationThumbSize([]string{uid}))
+		assert.Equal(t, entity.ThumbSizeUnmeasured, stored(t, uid))
+	})
+	t.Run("KeepsAMeasurement", func(t *testing.T) {
+		// It records that a sampling found nothing, so it must never overwrite one that found something.
+		uid := newMarker(t, 112)
+		require.NoError(t, SettleMigrationThumbSize([]string{uid}))
+		assert.Equal(t, 112, stored(t, uid))
+	})
+	t.Run("NoMarkers", func(t *testing.T) {
+		assert.NoError(t, SettleMigrationThumbSize(nil))
 	})
 }
 
@@ -379,7 +481,7 @@ func TestSaveFaceMigrationEmbeddings(t *testing.T) {
 	detectedPoints := json.RawMessage(`[{"name":"eye_l","x":-0.05},{"name":"eye_r","x":0.05}]`)
 	require.NoError(t, SaveFaceMigrationEmbeddings(face.ModelFaceNet, face.DetectorYuNet,
 		map[string]face.Embeddings{marker.MarkerUID: embeddings},
-		map[string]MigrationDetection{marker.MarkerUID: {Landmarks: detectedPoints, Size: 84, Score: 91}}))
+		map[string]MigrationDetection{marker.MarkerUID: {Landmarks: detectedPoints, Size: 84, Score: 91, ThumbSize: 96, EmbedDetail: 86}}))
 
 	stored, err := MarkerByUID(marker.MarkerUID)
 	require.NoError(t, err)
@@ -394,6 +496,8 @@ func TestSaveFaceMigrationEmbeddings(t *testing.T) {
 	// while holding the old one's score would be judged at a calibration it was never scored against.
 	assert.Equal(t, 91, stored.Score, "the score of the detection that produced the vector")
 	assert.Equal(t, 84, stored.Size, "and its size, in the pixels of the same detection thumbnail")
+	assert.Equal(t, 96, stored.ThumbSize, "the extent the vector was sampled at")
+	assert.Equal(t, 86, stored.EmbedDetail, "and how much of the crop that extent supplied")
 
 	t.Run("BlankDetectorKeepsProvenance", func(t *testing.T) {
 		// Re-cropping runs no detector, so overwriting either would attribute the crop to one
@@ -408,6 +512,10 @@ func TestSaveFaceMigrationEmbeddings(t *testing.T) {
 		assert.JSONEq(t, string(detectedPoints), string(kept.LandmarksJSON))
 		assert.Equal(t, 91, kept.Score, "no detection ran, so nothing may overwrite what one recorded")
 		assert.Equal(t, 84, kept.Size)
+		// A re-crop samples a rendition too, so both travel even with no detector - and a sampling
+		// that measured neither records that it was attempted rather than leaving the row unsettled.
+		assert.Equal(t, entity.ThumbSizeUnmeasured, kept.ThumbSize)
+		assert.Equal(t, entity.EmbedDetailUnknown, kept.EmbedDetail)
 	})
 	t.Run("MalformedLandmarksClearTheColumn", func(t *testing.T) {
 		// The detector and the landmarks are written as a pair. A payload that is not valid JSON
@@ -579,4 +687,263 @@ func TestSameFaceMigrationIdentities(t *testing.T) {
 	assert.True(t, sameFaceMigrationIdentities(identities, identities))
 	assert.False(t, sameFaceMigrationIdentities(identities, nil))
 	assert.False(t, sameFaceMigrationIdentities(identities, []FaceMigrationIdentity{{MarkerUID: "m2"}}))
+}
+
+// TestCountMarkersWithoutThumbSize covers the audit count, which reports how many embedded markers
+// are still judged by their detection size rather than by what their embedding was sampled from.
+func TestCountMarkersWithoutThumbSize(t *testing.T) {
+	before, err := CountMarkersWithoutThumbSize()
+	require.NoError(t, err)
+
+	m := &entity.Marker{
+		MarkerUID:      rnd.GenerateUID('m'),
+		FileUID:        "fs6sg6bw45bnlqdw",
+		MarkerType:     entity.MarkerFace,
+		MarkerSrc:      entity.SrcImage,
+		Size:           200,
+		ThumbSize:      -1,
+		Score:          100,
+		EmbedModel:     face.ModelFaceNet,
+		EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
+		W:              0.1,
+		H:              0.1,
+	}
+	require.NoError(t, entity.Db().Create(m).Error)
+	t.Cleanup(func() { entity.UnscopedDb().Delete(m) })
+
+	after, err := CountMarkersWithoutThumbSize()
+	require.NoError(t, err)
+	assert.Equal(t, before+1, after, "an embedded marker with no recorded sample size must be counted")
+
+	// A recorded value takes it back out, however small: 1 is a measurement, not a sentinel.
+	require.NoError(t, entity.Db().Model(&entity.Marker{}).Where("marker_uid = ?", m.MarkerUID).
+		Update("thumb_size", 1).Error)
+
+	after, err = CountMarkersWithoutThumbSize()
+	require.NoError(t, err)
+	assert.Equal(t, before, after)
+}
+
+// TestFaceMigrationCropCoverage pins the three buckets a migration plan warns from, measured as
+// deltas against a baseline so the shared fixtures cannot decide the outcome.
+func TestFaceMigrationCropCoverage(t *testing.T) {
+	before, err := FaceMigrationCropCoverage(160, 1920, 1200)
+	require.NoError(t, err)
+
+	// A 4:3 landscape original, which is the case a naive implementation gets wrong: the box
+	// height binds, so Fit1920 delivers 1600 px of width rather than the 1920 in its name.
+	file := entity.File{
+		FileUID:    rnd.GenerateUID('f'),
+		PhotoUID:   rnd.GenerateUID('p'),
+		FileName:   "crop-coverage/landscape.jpg",
+		FileRoot:   entity.RootOriginals,
+		FileWidth:  3648,
+		FileHeight: 2736,
+	}
+	require.NoError(t, Db().Create(&file).Error)
+	t.Cleanup(func() { Db().Unscoped().Delete(&file) })
+
+	// The required source width is 160/w, so these ask for 320, 1778 and 8000 px.
+	widths := []float32{0.5, 0.09, 0.02}
+	markers := make([]entity.Marker, 0, len(widths))
+
+	for _, w := range widths {
+		m := entity.Marker{
+			MarkerUID:  rnd.GenerateUID('m'),
+			FileUID:    file.FileUID,
+			MarkerType: entity.MarkerFace,
+			W:          w,
+			H:          w,
+		}
+		require.NoError(t, Db().Create(&m).Error)
+		markers = append(markers, m)
+	}
+
+	t.Cleanup(func() {
+		for i := range markers {
+			Db().Unscoped().Delete(&markers[i])
+		}
+	})
+
+	t.Run("Buckets", func(t *testing.T) {
+		after, err := FaceMigrationCropCoverage(160, 1920, 1200)
+		require.NoError(t, err)
+
+		assert.Equal(t, before.Total+3, after.Total)
+		assert.Equal(t, before.FullDetail+1, after.FullDetail, "320px is within what the rendition delivers")
+		assert.Equal(t, before.Upscaled+1, after.Upscaled, "1778px is more than the rendition and less than the original")
+		assert.Equal(t, before.SourceTooSmall+1, after.SourceTooSmall, "8000px is more than the original holds")
+	})
+	t.Run("TheBoxHeightBinds", func(t *testing.T) {
+		// The marker asking for 1778 px clears 1920 by name and not by delivered width, so a
+		// check reading the box width would count it as full detail here.
+		narrow, err := FaceMigrationCropCoverage(160, 1920, 1200)
+		require.NoError(t, err)
+
+		wide, err := FaceMigrationCropCoverage(160, 4096, 4096)
+		require.NoError(t, err)
+
+		assert.Equal(t, narrow.FullDetail+1, wide.FullDetail)
+		assert.Equal(t, narrow.Upscaled-1, wide.Upscaled)
+	})
+	t.Run("SourceTooSmallDoesNotMoveWithTheBox", func(t *testing.T) {
+		// It is a property of the originals, so a larger cache must not appear to fix it.
+		narrow, err := FaceMigrationCropCoverage(160, 1920, 1200)
+		require.NoError(t, err)
+
+		wide, err := FaceMigrationCropCoverage(160, 15360, 8640)
+		require.NoError(t, err)
+
+		assert.Equal(t, narrow.SourceTooSmall, wide.SourceTooSmall)
+		assert.Equal(t, narrow.Total, wide.Total)
+	})
+	t.Run("TheBoxWidthBinds", func(t *testing.T) {
+		// The other half of the fit arithmetic, which a 4:3 picture never exercises: a frame wider
+		// than the box's own aspect is bounded by its width, so 1920 is what Fit1920 delivers.
+		wide := entity.File{
+			FileUID:    rnd.GenerateUID('f'),
+			PhotoUID:   rnd.GenerateUID('p'),
+			FileName:   "crop-coverage/wide.jpg",
+			FileRoot:   entity.RootOriginals,
+			FileWidth:  4096,
+			FileHeight: 1716,
+		}
+		require.NoError(t, Db().Create(&wide).Error)
+		t.Cleanup(func() { Db().Unscoped().Delete(&wide) })
+
+		// 160/0.08 asks for 2000 px: more than the 1920 the box width allows, less than the 2427
+		// the box height would, and less than the original holds.
+		marker := entity.Marker{
+			MarkerUID:  rnd.GenerateUID('m'),
+			FileUID:    wide.FileUID,
+			MarkerType: entity.MarkerFace,
+			W:          0.08,
+			H:          0.08,
+		}
+		require.NoError(t, Db().Create(&marker).Error)
+		t.Cleanup(func() { Db().Unscoped().Delete(&marker) })
+
+		after, err := FaceMigrationCropCoverage(160, 1920, 1200)
+		require.NoError(t, err)
+
+		assert.Equal(t, before.Total+4, after.Total)
+		assert.Equal(t, before.Upscaled+2, after.Upscaled, "the box width is what this marker exceeds")
+
+		// Widening the box at the same height clears it, which is what tells the term apart from
+		// the height one: without it the rendition would already deliver 2864 px above.
+		wider, err := FaceMigrationCropCoverage(160, 2560, 1200)
+		require.NoError(t, err)
+
+		assert.Equal(t, after.Upscaled-1, wider.Upscaled)
+	})
+	t.Run("InvalidDimensions", func(t *testing.T) {
+		_, err := FaceMigrationCropCoverage(0, 1920, 1200)
+		require.Error(t, err)
+		_, err = FaceMigrationCropCoverage(160, 0, 1200)
+		require.Error(t, err)
+		_, err = FaceMigrationCropCoverage(160, 1920, 0)
+		require.Error(t, err)
+	})
+}
+
+func TestFaceMigrationSampleFiles(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		result, err := FaceMigrationSampleFiles(3)
+
+		require.NoError(t, err)
+		require.NotEmpty(t, result, "the fixtures must hold files with face markers")
+		assert.LessOrEqual(t, len(result), 3)
+
+		for _, f := range result {
+			assert.NotEmpty(t, f.FileHash)
+			assert.Positive(t, f.FileWidth, "a file with no dimensions cannot be checked")
+			assert.Positive(t, f.FileHeight)
+		}
+	})
+	t.Run("OldestFirst", func(t *testing.T) {
+		// Files indexed since the thumbnail limit was raised do hold the wider renditions, so the
+		// sample has to be the part of the library that answers for the rest of it.
+		result, err := FaceMigrationSampleFiles(100)
+		require.NoError(t, err)
+		require.NotEmpty(t, result)
+
+		first, err := FaceMigrationSampleFiles(1)
+		require.NoError(t, err)
+		require.Len(t, first, 1)
+
+		assert.Equal(t, result[0], first[0])
+	})
+	t.Run("InvalidLimit", func(t *testing.T) {
+		_, err := FaceMigrationSampleFiles(0)
+		require.Error(t, err)
+	})
+}
+
+// TestFaceMarkerSampleShortfall pins the two numbers an operator acts on: how many markers hold a
+// vector too small to be clustered, and how many of those an original could still supply. Measured
+// as deltas, so the shared fixtures cannot decide the outcome.
+func TestFaceMarkerSampleShortfall(t *testing.T) {
+	const clusterSize = 112
+
+	before, err := FaceMarkerSampleShortfall(clusterSize)
+	require.NoError(t, err)
+
+	file := entity.File{
+		FileUID:   rnd.GenerateUID('f'),
+		PhotoUID:  rnd.GenerateUID('p'),
+		FileName:  "sample-shortfall/large.jpg",
+		FileRoot:  entity.RootOriginals,
+		FileWidth: 4000,
+	}
+	require.NoError(t, Db().Create(&file).Error)
+	t.Cleanup(func() { Db().Unscoped().Delete(&file) })
+
+	// The extents are what each marker's embedding was drawn from, and the widths what its
+	// original could supply: 0.1 of 4000 px is 400, and 0.01 of it is 40.
+	cases := []struct {
+		w         float32
+		thumbSize int
+	}{
+		{0.1, 400}, // sampled above the bar
+		{0.1, 60},  // below it, and its original holds 400 px
+		{0.01, 40}, // below it, and its original holds 40
+	}
+
+	for _, c := range cases {
+		m := entity.Marker{
+			MarkerUID:      rnd.GenerateUID('m'),
+			FileUID:        file.FileUID,
+			MarkerType:     entity.MarkerFace,
+			W:              c.w,
+			H:              c.w,
+			ThumbSize:      c.thumbSize,
+			EmbeddingsJSON: []byte("[[0.1,0.2]]"),
+		}
+		require.NoError(t, Db().Create(&m).Error)
+		t.Cleanup(func() { Db().Unscoped().Delete(&m) })
+	}
+
+	t.Run("Counts", func(t *testing.T) {
+		after, err := FaceMarkerSampleShortfall(clusterSize)
+		require.NoError(t, err)
+
+		assert.Equal(t, before.Measured+3, after.Measured)
+		assert.Equal(t, before.BelowBar+2, after.BelowBar)
+		assert.Equal(t, before.Recoverable+1, after.Recoverable, "only one of the two has an original that could supply the bar")
+	})
+	t.Run("AtALowerBar", func(t *testing.T) {
+		// The bar is what decides both numbers, so a smaller one has to move them.
+		low, err := FaceMarkerSampleShortfall(50)
+		require.NoError(t, err)
+
+		after, err := FaceMarkerSampleShortfall(clusterSize)
+		require.NoError(t, err)
+
+		assert.Less(t, low.BelowBar, after.BelowBar)
+		assert.Equal(t, low.Measured, after.Measured)
+	})
+	t.Run("InvalidSize", func(t *testing.T) {
+		_, err := FaceMarkerSampleShortfall(0)
+		require.Error(t, err)
+	})
 }

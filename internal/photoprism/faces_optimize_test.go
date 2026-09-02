@@ -1,6 +1,7 @@
 package photoprism
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -26,6 +27,75 @@ func TestFaces_Optimize(t *testing.T) {
 	t.Log(r)
 }
 
+// TestMergeGroups covers the partition Optimize merges, which has to follow the distances rather
+// than the order the clusters were fetched in.
+func TestMergeGroups(t *testing.T) {
+	const subjUID = "js6sg6b1qekk9jc1"
+
+	// A chain: a-b and b-c are within the clustering distance, a-c is not. Anchored on whichever
+	// cluster comes first, c joins when b anchors and is dropped when a does.
+	base := face.FixtureEmbedding(8701)
+	near := face.ClusterDist * 0.9
+
+	a := &entity.Face{ID: "A", SubjUID: subjUID, EmbedModel: face.EmbeddingModelName()}
+	b := &entity.Face{ID: "B", SubjUID: subjUID, EmbedModel: face.EmbeddingModelName()}
+	c := &entity.Face{ID: "C", SubjUID: subjUID, EmbedModel: face.EmbeddingModelName()}
+
+	a.EmbeddingJSON = base.JSON()
+	b.EmbeddingJSON = face.FixtureEmbeddingAt(base, near, 8702).JSON()
+	c.EmbeddingJSON = face.FixtureEmbeddingAt(b.Embedding(), near, 8703).JSON()
+
+	require.Greater(t, a.Embedding().Dist(c.Embedding()), face.ClusterDist,
+		"the fixture has to reproduce a chain the ends of which do not merge directly")
+
+	t.Run("LinksTransitively", func(t *testing.T) {
+		groups := mergeGroups(entity.Faces{*a, *b, *c})
+
+		require.Len(t, groups, 1)
+		assert.Len(t, groups[0], 3)
+	})
+	t.Run("SameForEveryOrder", func(t *testing.T) {
+		for _, order := range []entity.Faces{
+			{*a, *b, *c}, {*a, *c, *b}, {*b, *a, *c},
+			{*b, *c, *a}, {*c, *a, *b}, {*c, *b, *a},
+		} {
+			groups := mergeGroups(order)
+
+			require.Len(t, groups, 1, "order %s", strings.Join(order.IDs(), ""))
+			assert.Len(t, groups[0], 3, "order %s", strings.Join(order.IDs(), ""))
+		}
+	})
+	t.Run("SplitsBySubject", func(t *testing.T) {
+		// Same geometry, so only the subject keeps them apart.
+		other := *c
+		other.SubjUID = "js6sg6b1qekk9jc2"
+
+		groups := mergeGroups(entity.Faces{*a, *b, other})
+
+		require.Len(t, groups, 2)
+		assert.Len(t, groups[0], 2)
+		assert.Len(t, groups[1], 1)
+	})
+	t.Run("NoneClose", func(t *testing.T) {
+		// Built rather than copied from c: Face.Embedding() caches the decoded vector, so assigning
+		// EmbeddingJSON onto a copy leaves the copy answering with the original's embedding.
+		far := &entity.Face{ID: "F", SubjUID: subjUID, EmbedModel: face.EmbeddingModelName()}
+		far.EmbeddingJSON = face.FixtureEmbeddingAt(base, face.AcceptDist(face.ClusterRadius)+0.05, 8704).JSON()
+
+		require.Greater(t, a.Embedding().Dist(far.Embedding()), face.AcceptDist(face.ClusterRadius),
+			"the pair has to sit beyond the merge bound for this to test anything")
+
+		groups := mergeGroups(entity.Faces{*a, *far})
+
+		require.Len(t, groups, 2)
+		assert.Len(t, groups[0], 1)
+		assert.Len(t, groups[1], 1)
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Empty(t, mergeGroups(nil))
+	})
+}
+
 // namedFace saves a manual cluster of one sample, which is what naming a face in the app creates.
 func namedFace(t *testing.T, subjUID string, e face.Embedding) *entity.Face {
 	t.Helper()
@@ -38,15 +108,15 @@ func namedFace(t *testing.T, subjUID string, e face.Embedding) *entity.Face {
 	return m
 }
 
-// TestFaces_OptimizeSingletons covers the clusters naming a face by hand produces. A one-sample
-// cluster stores no measurable extent, so what it accepts is decided entirely by the default
-// SetEmbeddings applies - and at a radius of zero it accepts nothing and merges with nothing.
+// TestFaces_OptimizeSingletons covers the clusters naming a face by hand produces. Each stores no
+// measurable extent, so the distances are expressed against the clustering distance the merge is
+// bounded by rather than against a radius none of them measured.
 func TestFaces_OptimizeSingletons(t *testing.T) {
 	t.Run("SameSubjectMerges", func(t *testing.T) {
 		w := isolatedTestFaces(t, "faces-optimize-same-subj")
 
 		base := face.FixtureEmbedding(8101)
-		near := face.AcceptDist(face.ClusterRadius) * 0.9
+		near := face.ClusterDist * 0.9
 
 		for i, e := range []face.Embedding{
 			base,
@@ -54,7 +124,7 @@ func TestFaces_OptimizeSingletons(t *testing.T) {
 			face.FixtureEmbeddingAt(base, near, 8103),
 		} {
 			f := namedFace(t, "js6sg6b1qekk9jx8", e)
-			require.InDelta(t, face.ClusterRadius, f.SampleRadius, 1e-9, "cluster %d", i)
+			require.InDelta(t, face.Epsilon, f.SampleRadius, 1e-9, "cluster %d", i)
 		}
 
 		before, err := query.ManuallyAddedFaces(false, false, "js6sg6b1qekk9jx8")
@@ -69,36 +139,56 @@ func TestFaces_OptimizeSingletons(t *testing.T) {
 		require.NoError(t, err)
 		assert.Less(t, len(after), len(before), "the subject ends up with fewer clusters")
 	})
-	t.Run("SameSubjectPairMerges", func(t *testing.T) {
+	// Two labels of one person are close enough to link, and still must not merge: their midpoint
+	// would be a pair's average, and a centroid needs a core to be one.
+	t.Run("SameSubjectPairWaits", func(t *testing.T) {
 		w := isolatedTestFaces(t, "faces-optimize-same-subj-pair")
 
 		base := face.FixtureEmbedding(8301)
-		near := face.AcceptDist(face.ClusterRadius) * 0.9
+		near := face.ClusterDist * 0.9
 
-		namedFace(t, "js6sg6b1qekk9jx7", base)
-		namedFace(t, "js6sg6b1qekk9jx7", face.FixtureEmbeddingAt(base, near, 8302))
+		a := namedFace(t, "js6sg6b1qekk9jx7", base)
+		b := namedFace(t, "js6sg6b1qekk9jx7", face.FixtureEmbeddingAt(base, near, 8302))
+
+		mergeable, _ := a.Mergeable(b)
+		require.True(t, mergeable, "the pair links, so only the core decides")
 
 		r, err := w.OptimizeFor("js6sg6b1qekk9jx7")
 		require.NoError(t, err)
-		assert.Positive(t, r.Merged, "naming a second face of one person has to be able to merge")
+		assert.Zero(t, r.Merged)
 
 		after, err := query.ManuallyAddedFaces(false, false, "js6sg6b1qekk9jx7")
 		require.NoError(t, err)
-		assert.Len(t, after, 1)
+		assert.Len(t, after, 2, "both wait for a third")
+
+		// And the third completes the group in one pass, since the link is transitive.
+		namedFace(t, "js6sg6b1qekk9jx7", face.FixtureEmbeddingAt(base, near, 8303))
+
+		r, err = w.OptimizeFor("js6sg6b1qekk9jx7")
+		require.NoError(t, err)
+		assert.Positive(t, r.Merged)
+
+		after, err = query.ManuallyAddedFaces(false, false, "js6sg6b1qekk9jx7")
+		require.NoError(t, err)
+		require.Len(t, after, 1)
+		assert.Equal(t, face.ManualClusterCore, after[0].Samples, "the centroid records its inputs")
+		assert.Greater(t, after[0].SampleRadius, face.Epsilon, "and now has a measured extent")
 	})
-	// The clusters arrive ordered by subject, and a subject that follows another is the case a
-	// boundary can lose: the cluster the run crosses into has to anchor the next group rather
-	// than be passed over, or every subject but the first merges nothing.
+	// The clusters arrive ordered by subject, so a subject that follows another is the case a
+	// boundary can lose: one run must not consume the clusters the next subject needs.
 	t.Run("EachSubjectsRunMergesIndependently", func(t *testing.T) {
 		w := isolatedTestFaces(t, "faces-optimize-two-subjects")
 
-		near := face.AcceptDist(face.ClusterRadius) * 0.9
+		near := face.ClusterDist * 0.9
 		subjects := []string{"js6sg6b1qekk9ja1", "js6sg6b1qekk9ja2"}
 
 		for i, subjUID := range subjects {
 			base := face.FixtureEmbedding(uint64(8501 + i*10))
 			namedFace(t, subjUID, base)
-			namedFace(t, subjUID, face.FixtureEmbeddingAt(base, near, uint64(8502+i*10)))
+
+			for j := 1; j < face.ManualClusterCore; j++ {
+				namedFace(t, subjUID, face.FixtureEmbeddingAt(base, near, uint64(8502+i*10+j)))
+			}
 		}
 
 		r, err := w.Optimize()
@@ -108,7 +198,7 @@ func TestFaces_OptimizeSingletons(t *testing.T) {
 		for _, subjUID := range subjects {
 			after, err := query.ManuallyAddedFaces(false, false, subjUID)
 			require.NoError(t, err)
-			assert.Len(t, after, 1, "subject %s merges its own pair", subjUID)
+			assert.Len(t, after, 1, "subject %s merges its own core", subjUID)
 		}
 	})
 	// A merge builds its midpoint from the source centroids alone, so it can be narrower than
@@ -120,7 +210,7 @@ func TestFaces_OptimizeSingletons(t *testing.T) {
 		const subjUID = "js6sg6b1qekk9jb1"
 
 		base := face.FixtureEmbedding(8601)
-		apart := face.AcceptDist(face.ClusterRadius) * 0.75
+		apart := face.ClusterDist * 0.95
 
 		c1 := namedFace(t, subjUID, base)
 		c2 := namedFace(t, subjUID, face.FixtureEmbeddingAt(base, apart, 8602))
@@ -164,11 +254,49 @@ func TestFaces_OptimizeSingletons(t *testing.T) {
 		require.NoError(t, err)
 		assert.Zero(t, second.Merged, "a settled subject reports no further merges")
 	})
+	// The case the symmetric criterion exists for, and the one every other subtest here misses:
+	// a tight multi-sample cluster accepts almost nothing, so under a predicate reading the anchor's
+	// own extent the pair is decided by which of the two the fetch order puts first.
+	t.Run("TightAnchorStillMergesItsFarSingleton", func(t *testing.T) {
+		w := isolatedTestFaces(t, "faces-optimize-tight-anchor")
+
+		const subjUID = "js6sg6b1qekk9jd1"
+
+		base := face.FixtureEmbedding(8801)
+		apart := face.ClusterDist * 0.85
+
+		// Five near-identical samples, so the measured extent is small and sorts first on samples.
+		tight := face.Embeddings{base}
+		for i := range 4 {
+			tight = append(tight, face.FixtureEmbeddingAt(base, 0.02, uint64(8802+i)))
+		}
+
+		anchor := entity.NewFace(subjUID, entity.SrcManual, tight, face.EmbeddingModelName())
+		require.NotNil(t, anchor)
+		require.NoError(t, anchor.Create())
+
+		// Beyond what the tight cluster accepts, inside what one midpoint may stand for.
+		require.Greater(t, apart, anchor.AcceptDist())
+		require.LessOrEqual(t, apart, face.ClusterDist)
+
+		// Enough singletons to complete a core with the anchor, all beyond what it would accept.
+		for i := 1; i < face.ManualClusterCore; i++ {
+			namedFace(t, subjUID, face.FixtureEmbeddingAt(anchor.Embedding(), apart, uint64(8806+i)))
+		}
+
+		r, err := w.OptimizeFor(subjUID)
+		require.NoError(t, err)
+		assert.Positive(t, r.Merged, "the bound is the clustering distance, not the anchor's extent")
+
+		after, err := query.ManuallyAddedFaces(false, false, subjUID)
+		require.NoError(t, err)
+		assert.Len(t, after, 1)
+	})
 	t.Run("DifferentSubjectsDoNotMerge", func(t *testing.T) {
 		w := isolatedTestFaces(t, "faces-optimize-other-subj")
 
 		base := face.FixtureEmbedding(8201)
-		near := face.AcceptDist(face.ClusterRadius) * 0.9
+		near := face.ClusterDist * 0.9
 
 		// Same geometry as above, so only the subject decides the outcome. ManuallyAddedFaces
 		// groups by subject, which is why it holds however far the clusters reach.

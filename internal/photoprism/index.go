@@ -117,6 +117,10 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 		return found, updated
 	}
 
+	// Indexing continues after it completed, but its target is recorded in "options.yml" and not
+	// loaded here, so the markers this run adds wait for a restart to receive their vectors.
+	ind.conf.CheckFaceModelSuperseded()
+
 	originalsPath := ind.originalsPath()
 	optionsPath, resolveErr := ResolveIndexPath(originalsPath, o.Path)
 

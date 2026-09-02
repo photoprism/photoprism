@@ -9,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
+// Values accepted by UserDetails.UserGender.
 const (
 	GenderMale   = "male"
 	GenderFemale = "female"

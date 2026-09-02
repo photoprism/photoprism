@@ -3,15 +3,21 @@ package commands
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
+	"github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -73,5 +79,96 @@ func TestFacesMigrateCommand(t *testing.T) {
 		// to say so, because nothing in the code can enforce it.
 		assert.Contains(t, FacesMigrateCommand.Description, "Stop the server")
 		assert.NotEmpty(t, FacesMigrateCommand.Usage)
+	})
+}
+
+func TestPercentOf(t *testing.T) {
+	t.Run("Rounds", func(t *testing.T) {
+		// A share of 14.69, so truncating would report a percent less.
+		assert.Equal(t, 15, percentOf(6062, 41252))
+	})
+	t.Run("All", func(t *testing.T) {
+		assert.Equal(t, 100, percentOf(9, 9))
+	})
+	t.Run("None", func(t *testing.T) {
+		assert.Equal(t, 0, percentOf(0, 9))
+	})
+	t.Run("NothingToDivideBy", func(t *testing.T) {
+		assert.Equal(t, 0, percentOf(3, 0))
+	})
+}
+
+// TestReportMigrationCropCoverage covers the forecast an operator reads before the prompt: how much
+// of the crop detail the cache already holds, how much the run renders for itself, and how much is
+// missing from the originals, which is the only part nothing can recover.
+func TestReportMigrationCropCoverage(t *testing.T) {
+	capture := func(t *testing.T) *test.Hook {
+		t.Helper()
+
+		logger, ok := log.(*logrus.Logger)
+		require.True(t, ok)
+
+		hook := test.NewLocal(logger)
+		system := event.SystemLog
+		event.SystemLog = logger
+
+		t.Cleanup(func() {
+			event.SystemLog = system
+			hook.Reset()
+		})
+
+		return hook
+	}
+
+	messages := func(hook *test.Hook) string {
+		var b strings.Builder
+
+		for _, entry := range hook.AllEntries() {
+			b.WriteString(entry.Message)
+			b.WriteString("\n")
+		}
+
+		return b.String()
+	}
+
+	t.Run("ForecastsTheRendering", func(t *testing.T) {
+		hook := capture(t)
+
+		reportMigrationCropCoverage(photoprism.FacesMigratePlan{
+			CropCoverage: query.FaceMigrationCropCounts{Total: 41252, FullDetail: 19501, Upscaled: 15689, SourceTooSmall: 6062},
+			ThumbSize:    thumb.Sizes[thumb.Fit1920],
+		})
+
+		out := messages(hook)
+		assert.Contains(t, out, "15689 of 41252 markers (38%)")
+		assert.Contains(t, out, "1920x1200")
+		assert.Contains(t, out, "rendered again from the original")
+		assert.Contains(t, out, "6062 of 41252 markers (15%)")
+
+		// Nothing is asked of the operator: the run does this itself, and a warning would send
+		// them to regenerate a thumbnail cache they do not need.
+		assert.NotContains(t, out, "thumb-size")
+	})
+	t.Run("SmallOriginalsAreStatedApart", func(t *testing.T) {
+		hook := capture(t)
+
+		reportMigrationCropCoverage(photoprism.FacesMigratePlan{
+			CropCoverage: query.FaceMigrationCropCounts{Total: 100, FullDetail: 40, SourceTooSmall: 60},
+			ThumbSize:    thumb.Sizes[thumb.Fit4096],
+		})
+
+		out := messages(hook)
+		assert.NotContains(t, out, "rendered again from the original")
+		assert.Contains(t, out, "60 of 100 markers (60%)")
+		assert.Contains(t, out, "stay upscaled")
+	})
+	t.Run("NothingMeasured", func(t *testing.T) {
+		// A library with no renditions at all is cropped from the originals, so there is no
+		// coverage to report on.
+		hook := capture(t)
+
+		reportMigrationCropCoverage(photoprism.FacesMigratePlan{})
+
+		assert.Empty(t, messages(hook))
 	})
 }

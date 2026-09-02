@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-08-07 14:04+0000\n"
+"PO-Revision-Date: 2026-09-01 06:33+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: sl\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
-"X-Generator: Weblate 2026.8\n"
+"X-Generator: Weblate 2026.8.1\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -55,8 +55,7 @@ msgstr "%{n} GB od %{q} GB uporabljenih"
 msgid "%{n} labels found"
 msgstr "%{n} najdenih značk"
 
-#: src/page/people/new.vue:494 src/page/people/new.vue:600
-#: src/page/people/recognized.vue:729
+#: src/page/people/new.vue:249 src/page/people/recognized.vue:279
 msgid "%{n} people found"
 msgstr "%{n} najdenih oseb"
 
@@ -77,15 +76,15 @@ msgstr "%{s} je predolg"
 msgid "%{s} is too short"
 msgstr "%{s} je prekratek"
 
-#: src/locales.js:437
+#: src/locales.js:438
 msgid "%d entries added to %s"
 msgstr "%d vnosi dodani v %s"
 
-#: src/locales.js:439
+#: src/locales.js:440
 msgid "%d entries removed from %s"
 msgstr "%d vnosi odstranjeni iz %s"
 
-#: src/locales.js:461
+#: src/locales.js:462
 msgid "%d files uploaded in %d s"
 msgstr "%d datoteke, naložene v %d s"
 
@@ -93,7 +92,7 @@ msgstr "%d datoteke, naložene v %d s"
 msgid "%s already exists"
 msgstr "%s že obstaja"
 
-#: src/locales.js:471
+#: src/locales.js:472
 msgid "%s has been restored"
 msgstr "%s je bil obnovljen"
 
@@ -127,6 +126,10 @@ msgstr "4 ure"
 #: src/component/share/dialog.vue:116
 msgid "A click will copy it to your clipboard."
 msgstr "S klikom ga boste kopirali v odložišče."
+
+#: src/locales.js:428
+msgid "A migration is in progress"
+msgstr "Poteka migracija"
 
 #: src/component/update.vue:53
 msgid "A new version of %{s} is available:"
@@ -174,12 +177,12 @@ msgid "Account"
 msgstr "Račun"
 
 #: src/component/user/add/dialog.vue:261 src/component/user/add/dialog.vue:277
-#: src/component/service/add.vue:131 src/locales.js:440
+#: src/component/service/add.vue:131 src/locales.js:441
 msgid "Account created"
 msgstr "Ustvarjen račun"
 
 #: src/component/user/remove/dialog.vue:63 src/component/service/remove.vue:74
-#: src/locales.js:442
+#: src/locales.js:443
 msgid "Account deleted"
 msgstr "Račun je izbrisan"
 
@@ -195,7 +198,7 @@ msgstr "Račun ni najden"
 msgid "Account restored"
 msgstr "Obnovljen račun"
 
-#: src/locales.js:441
+#: src/locales.js:442
 msgid "Account saved"
 msgstr "Shranjen račun"
 
@@ -262,7 +265,7 @@ msgid "Add"
 msgstr "Dodaj"
 
 #: src/component/lightbox/sidebar.vue:480
-#: src/component/photo/edit/people.vue:97
+#: src/component/photo/edit/people.vue:97 src/page/people/new.vue:198
 msgid "Add %{s}?"
 msgstr "Dodaj %{s}?"
 
@@ -392,7 +395,7 @@ msgstr "Po dveh tednih"
 msgid "Album"
 msgstr "Album"
 
-#: src/locales.js:431
+#: src/locales.js:432
 msgid "Album %s deleted"
 msgstr "Album %s izbrisano"
 
@@ -400,11 +403,11 @@ msgstr "Album %s izbrisano"
 msgid "Album Backups"
 msgstr "Varnostne kopije albumov"
 
-#: src/locales.js:432
+#: src/locales.js:433
 msgid "Album contents cloned"
 msgstr "Vsebina albuma klonirana"
 
-#: src/locales.js:429 src/page/albums.vue:1194
+#: src/locales.js:430 src/page/albums.vue:1194
 msgid "Album created"
 msgstr "Ustvarjen album"
 
@@ -416,7 +419,7 @@ msgstr "Izbrisan album"
 msgid "Album not found"
 msgstr "Album ni najden"
 
-#: src/locales.js:430
+#: src/locales.js:431
 msgid "Album saved"
 msgstr "Shranjen album"
 
@@ -429,7 +432,7 @@ msgstr "Shranjen album"
 msgid "Albums"
 msgstr "Albumi"
 
-#: src/component/album/clipboard.vue:194 src/locales.js:468
+#: src/component/album/clipboard.vue:194 src/locales.js:469
 msgid "Albums deleted"
 msgstr "Izbrisani albumi"
 
@@ -445,7 +448,7 @@ msgstr "Vseh %{n} je bilo naloženih"
 msgid "All %{n} labels loaded"
 msgstr "Vseh %{n} nalepk je bilo naloženih"
 
-#: src/page/people/recognized.vue:561
+#: src/page/people/recognized.vue:577
 msgid "All %{n} people loaded"
 msgstr "Vseh %{n} oseb je bilo dodanih"
 
@@ -734,7 +737,8 @@ msgstr "Ker se financiramo sami in smo 100-odstotno neodvisni, vam lahko obljubi
 msgid "Bio"
 msgstr "Bio"
 
-#: src/page/settings/account.vue:212 src/page/settings/account.vue:196
+#: src/page/settings/account.vue:212 src/component/people/edit/dialog.vue:39
+#: src/page/settings/account.vue:196
 msgid "Birth Date"
 msgstr "Datum rojstva"
 
@@ -814,9 +818,9 @@ msgstr "Ne morem naložiti več, omejitev je dosežena"
 #: src/common/clipboard.js:103 src/common/clipboard.js:139
 #: src/page/albums.vue:1204 src/page/albums.vue:1220 src/page/labels.vue:642
 #: src/page/labels.vue:662 src/page/library/browse.vue:325
-#: src/page/library/browse.vue:341 src/page/people/new.vue:422
-#: src/page/people/new.vue:438 src/page/people/recognized.vue:494
-#: src/page/people/recognized.vue:510
+#: src/page/library/browse.vue:341 src/page/people/new.vue:438
+#: src/page/people/new.vue:454 src/page/people/recognized.vue:510
+#: src/page/people/recognized.vue:526
 msgid "Can't select more items"
 msgstr "Ne morete izbrati več elementov"
 
@@ -840,7 +844,7 @@ msgstr "Ne morete izbrati več elementov"
 #: src/component/meta/face/markers.vue:54
 #: src/component/meta/face/markers.vue:73
 #: src/component/meta/location/dialog.vue:115
-#: src/component/people/edit/dialog.vue:46
+#: src/component/people/edit/dialog.vue:72
 #: src/component/photo/album/dialog.vue:64 src/component/service/add.vue:97
 #: src/component/service/edit.vue:232 src/component/service/remove.vue:19
 #: src/component/service/upload.vue:57 src/component/settings/apps.vue:151
@@ -911,7 +915,7 @@ msgstr "Sprememba zasebne zastave"
 #: src/component/album/edit/dialog.vue:171
 #: src/component/label/edit/dialog.vue:109
 #: src/component/meta/camera/dialog.vue:214
-#: src/component/people/edit/dialog.vue:112
+#: src/component/people/edit/dialog.vue:143
 #: src/component/photo/batch-edit.vue:1440
 #: src/component/photo/edit/details.vue:636 src/locales.js:376
 #: src/page/settings/account.vue:447 src/page/settings/account.vue:452
@@ -930,8 +934,8 @@ msgstr "Sprememb ni bilo mogoče shraniti"
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
-#: src/locales.js:428 src/page/albums.vue:1197 src/page/people/new.vue:789
-#: src/page/people/recognized.vue:304 src/page/settings/advanced.vue:507
+#: src/locales.js:429 src/page/albums.vue:1197 src/page/people/new.vue:814
+#: src/page/people/recognized.vue:320 src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
 #: src/page/settings/general.vue:646
 msgid "Changes successfully saved"
@@ -1083,7 +1087,7 @@ msgstr "Zaupanje"
 #: src/component/settings/passcode.vue:68
 #: src/component/settings/passcode.vue:69
 #: src/component/settings/passcode.vue:78
-#: src/component/settings/passcode.vue:94
+#: src/component/settings/passcode.vue:94 src/page/people/new.vue:101
 msgid "Confirm"
 msgstr "Potrdi"
 
@@ -1162,7 +1166,7 @@ msgstr "Kopiranje v odložišče"
 msgid "Copy"
 msgstr "Kopirati"
 
-#: src/locales.js:453
+#: src/locales.js:454
 msgid "Copying files from %s"
 msgstr "Kopiranje datotek iz %s"
 
@@ -1195,14 +1199,6 @@ msgstr "Ničesar nisem našel."
 #: src/page/settings/account.vue:286
 msgid "Country"
 msgstr "Država"
-
-#: src/page/people/new.vue:101
-msgid "Create"
-msgstr ""
-
-#: src/page/people/new.vue:198
-msgid "Create a new person named %{name}?"
-msgstr ""
 
 #: src/page/auth/login.vue:123 src/page/auth/login.vue:130
 msgid "Create Account"
@@ -1824,7 +1820,7 @@ msgstr "Hitro"
 
 #: src/component/album/edit/dialog.vue:77
 #: src/component/label/edit/dialog.vue:37
-#: src/component/people/edit/dialog.vue:37
+#: src/component/people/edit/dialog.vue:50
 #: src/component/photo/batch-edit.vue:1536
 #: src/component/photo/edit/info.vue:121 src/component/photo/edit/info.vue:122
 msgid "Favorite"
@@ -1865,7 +1861,7 @@ msgstr "Brskalnik za datoteke"
 msgid "File Conversion"
 msgstr "Pretvarjanje datotek"
 
-#: src/locales.js:434
+#: src/locales.js:435
 msgid "File deleted"
 msgstr "Izbrisana datoteka"
 
@@ -1879,7 +1875,7 @@ msgstr "Ime datoteke"
 msgid "File not found"
 msgstr "Datoteka ni najdena"
 
-#: src/locales.js:433
+#: src/locales.js:434
 msgid "File removed from stack"
 msgstr "Datoteka odstranjena iz sklada"
 
@@ -1891,7 +1887,7 @@ msgstr "Datoteka"
 msgid "File too large"
 msgstr "Prevelika datoteka"
 
-#: src/locales.js:460
+#: src/locales.js:461
 msgid "File uploaded"
 msgstr "Prenesena datoteka"
 
@@ -2061,7 +2057,7 @@ msgstr "Pomoč in podpora"
 
 #: src/component/navigation.vue:369 src/component/navigation.vue:370
 #: src/component/navigation.vue:382 src/component/navigation.vue:391
-#: src/component/navigation.vue:504 src/component/people/edit/dialog.vue:40
+#: src/component/navigation.vue:504 src/component/people/edit/dialog.vue:63
 msgid "Hidden"
 msgstr "Skriti"
 
@@ -2128,11 +2124,11 @@ msgstr "Kakovost slike"
 msgid "Import"
 msgstr "Uvoz"
 
-#: src/locales.js:446
+#: src/locales.js:447
 msgid "Import canceled"
 msgstr "Uvoz preklican"
 
-#: src/locales.js:445
+#: src/locales.js:446
 msgid "Import completed in %d s"
 msgstr "Uvoz se zaključi v %d s"
 
@@ -2194,11 +2190,11 @@ msgstr "Indeks"
 msgid "Indexing"
 msgstr "Indeksiranje"
 
-#: src/locales.js:450
+#: src/locales.js:451
 msgid "Indexing canceled"
 msgstr "Indeksiranje preklicano"
 
-#: src/locales.js:447
+#: src/locales.js:448
 msgid "Indexing completed in %d s"
 msgstr "Indeksiranje je končano v %d s"
 
@@ -2206,7 +2202,7 @@ msgstr "Indeksiranje je končano v %d s"
 msgid "Indexing failed"
 msgstr "Indeksiranje ni uspelo"
 
-#: src/locales.js:449
+#: src/locales.js:450
 msgid "Indexing files in %s"
 msgstr "Indeksiranje datotek v %s"
 
@@ -2214,7 +2210,7 @@ msgstr "Indeksiranje datotek v %s"
 msgid "Indexing media and sidecar files…"
 msgstr "Indeksiranje medijskih in stranskih datotek…"
 
-#: src/locales.js:448
+#: src/locales.js:449
 msgid "Indexing originals..."
 msgstr "Indeksiranje izvirnikov..."
 
@@ -2364,7 +2360,7 @@ msgstr "Značka"
 msgid "Label not found"
 msgstr "Oznaka ni bila najdena"
 
-#: src/locales.js:455
+#: src/locales.js:456
 msgid "Label saved"
 msgstr "Shranjena nalepka"
 
@@ -2380,7 +2376,7 @@ msgstr "Shranjena nalepka"
 msgid "Labels"
 msgstr "Značke"
 
-#: src/component/label/clipboard.vue:131 src/locales.js:454
+#: src/component/label/clipboard.vue:131 src/locales.js:455
 msgid "Labels deleted"
 msgstr "Značke izbrisane"
 
@@ -2692,7 +2688,7 @@ msgstr "Najpomembnejši"
 msgid "Move Files"
 msgstr "Premikanje datotek"
 
-#: src/locales.js:452
+#: src/locales.js:453
 msgid "Moving files from %s"
 msgstr "Premikanje datotek iz %s"
 
@@ -2829,8 +2825,8 @@ msgid "No more"
 msgstr "Ne več"
 
 #: src/component/photo/edit/people.vue:6 src/page/people/new.vue:23
-#: src/page/people/new.vue:490 src/page/people/new.vue:596
-#: src/page/people/recognized.vue:55 src/page/people/recognized.vue:725
+#: src/page/people/new.vue:245 src/page/people/recognized.vue:275
+#: src/page/people/recognized.vue:55
 msgid "No people found"
 msgstr "Ni bilo najdenih oseb"
 
@@ -2980,11 +2976,11 @@ msgstr "Enkrat na teden"
 msgid "One album found"
 msgstr "Najden je bil en album"
 
-#: src/locales.js:436
+#: src/locales.js:437
 msgid "One entry added to %s"
 msgstr "En vnos dodan v %s"
 
-#: src/locales.js:438
+#: src/locales.js:439
 msgid "One entry removed from %s"
 msgstr "En vnos odstranjen iz %s"
 
@@ -3000,8 +2996,7 @@ msgstr "Najdena je bila ena mapa"
 msgid "One label found"
 msgstr "Najdena je bila ena nalepka"
 
-#: src/page/people/new.vue:492 src/page/people/new.vue:598
-#: src/page/people/recognized.vue:727
+#: src/page/people/new.vue:247 src/page/people/recognized.vue:277
 msgid "One person found"
 msgstr "Ena oseba je našla"
 
@@ -3130,7 +3125,7 @@ msgstr "Del nekaterih izbranih fotografij"
 msgid "Password"
 msgstr "Geslo"
 
-#: src/component/settings/password.vue:162 src/locales.js:444
+#: src/component/settings/password.vue:162 src/locales.js:445
 msgid "Password changed"
 msgstr "Spremenjeno geslo"
 
@@ -3158,7 +3153,7 @@ msgid "People you share a link with will be able to view public contents."
 msgstr "Osebe, s katerimi delite povezavo, si bodo lahko ogledale javno vsebino."
 
 #: src/component/photo/clipboard.vue:303 src/component/photo/toolbar.vue:522
-#: src/locales.js:470
+#: src/locales.js:471
 msgid "Permanently deleted"
 msgstr "Trajno izbrisano"
 
@@ -3166,7 +3161,7 @@ msgstr "Trajno izbrisano"
 msgid "Permission denied"
 msgstr "Dovoljenje Zavrnjeno"
 
-#: src/model/subject.js:158
+#: src/model/subject.js:192
 msgid "Person"
 msgstr "Oseba"
 
@@ -3174,7 +3169,7 @@ msgstr "Oseba"
 msgid "Person cover updated"
 msgstr "Posodobljeno pokrivalo osebe"
 
-#: src/locales.js:459
+#: src/locales.js:460
 msgid "Person deleted"
 msgstr "Izbrisana oseba"
 
@@ -3183,7 +3178,7 @@ msgstr "Izbrisana oseba"
 msgid "Person not found"
 msgstr "Oseba ni bila najdena"
 
-#: src/locales.js:458
+#: src/locales.js:459
 msgid "Person saved"
 msgstr "Rešena oseba"
 
@@ -3362,13 +3357,14 @@ msgstr "Primarni"
 #: src/component/navigation.vue:126 src/component/navigation.vue:127
 #: src/component/navigation.vue:139 src/component/navigation.vue:148
 #: src/component/navigation.vue:156 src/component/navigation.vue:176
+#: src/component/people/edit/dialog.vue:66
 #: src/component/photo/batch-edit.vue:1537
 #: src/component/photo/edit/info.vue:129 src/component/photo/edit/info.vue:130
 #: src/page/settings/general.vue:200
 msgid "Private"
 msgstr "Zasebno"
 
-#: src/locales.js:462
+#: src/locales.js:463
 msgid "Processing upload..."
 msgstr "Obdelava nalaganja..."
 
@@ -3554,7 +3550,7 @@ msgstr "Odstranjeno"
 msgid "Removed %{name}"
 msgstr "Odstranjeno %{name}"
 
-#: src/locales.js:451
+#: src/locales.js:452
 msgid "Removed %d files and %d photos"
 msgstr "Odstranjene %d datoteke in %d fotografije"
 
@@ -3683,10 +3679,10 @@ msgstr "Satelit"
 #: src/component/meta/datetime/dialog.vue:38
 #: src/component/meta/datetime/dialog.vue:39
 #: src/component/meta/datetime/dialog.vue:51
-#: src/component/people/edit/dialog.vue:30
-#: src/component/people/edit/dialog.vue:31
-#: src/component/people/edit/dialog.vue:42
-#: src/component/people/edit/dialog.vue:49
+#: src/component/people/edit/dialog.vue:40
+#: src/component/people/edit/dialog.vue:41
+#: src/component/people/edit/dialog.vue:52
+#: src/component/people/edit/dialog.vue:75
 #: src/component/photo/batch-edit.vue:483
 #: src/component/photo/edit/details.vue:396 src/component/service/edit.vue:103
 #: src/component/service/edit.vue:235 src/component/service/edit.vue:93
@@ -3802,19 +3798,19 @@ msgstr "Izberite čas"
 msgid "Selection"
 msgstr "Izbor"
 
-#: src/locales.js:435
+#: src/locales.js:436
 msgid "Selection added to %s"
 msgstr "Izbor dodan v %s"
 
-#: src/component/photo/clipboard.vue:251 src/locales.js:464
+#: src/component/photo/clipboard.vue:251 src/locales.js:465
 msgid "Selection approved"
 msgstr "Odobren izbor"
 
-#: src/component/photo/clipboard.vue:282 src/locales.js:465
+#: src/component/photo/clipboard.vue:282 src/locales.js:466
 msgid "Selection archived"
 msgstr "Arhiviran izbor"
 
-#: src/locales.js:467
+#: src/locales.js:468
 msgid "Selection marked as private"
 msgstr "Izbor označen kot zasebni"
 
@@ -3822,7 +3818,7 @@ msgstr "Izbor označen kot zasebni"
 msgid "Selection not found"
 msgstr "Izbor ni najden"
 
-#: src/component/photo/clipboard.vue:318 src/locales.js:466
+#: src/component/photo/clipboard.vue:318 src/locales.js:467
 msgid "Selection restored"
 msgstr "Obnovljen izbor"
 
@@ -3881,7 +3877,7 @@ msgid "Settings"
 msgstr "Nastavitve"
 
 #: src/page/settings/account.vue:533 src/page/settings/account.vue:562
-#: src/component/settings/passcode.vue:366 src/locales.js:443
+#: src/component/settings/passcode.vue:366 src/locales.js:444
 #: src/page/settings/account.vue:441 src/page/settings/account.vue:470
 msgid "Settings saved"
 msgstr "Shranjene nastavitve"
@@ -4164,7 +4160,7 @@ msgstr "Ulice"
 msgid "Subject"
 msgstr "Zadeva"
 
-#: src/locales.js:457
+#: src/locales.js:458
 msgid "Subject deleted"
 msgstr "Predmet izbrisanih"
 
@@ -4172,11 +4168,11 @@ msgstr "Predmet izbrisanih"
 msgid "Subject not found"
 msgstr "Zadeva ni bila najdena"
 
-#: src/locales.js:456
+#: src/locales.js:457
 msgid "Subject saved"
 msgstr "Zadeva je shranjena"
 
-#: src/component/settings/passcode.vue:351 src/locales.js:473
+#: src/component/settings/passcode.vue:351 src/locales.js:474
 msgid "Successfully activated"
 msgstr "Uspešno aktiviran"
 
@@ -4189,7 +4185,7 @@ msgstr "Uspešno povezano"
 msgid "Successfully deleted"
 msgstr "Uspešno izbrisan"
 
-#: src/component/settings/passcode.vue:323 src/locales.js:472
+#: src/component/settings/passcode.vue:323 src/locales.js:473
 msgid "Successfully verified"
 msgstr "Uspešno preverjeno"
 
@@ -4545,7 +4541,7 @@ msgstr "Nalaganje je končano. Indeksiranje…"
 msgid "Upload failed"
 msgstr "Nalaganje ni uspelo"
 
-#: src/locales.js:463
+#: src/locales.js:464
 msgid "Upload has been processed"
 msgstr "Prenos je bil obdelan"
 
@@ -4669,6 +4665,10 @@ msgstr "Vektorji"
 #: src/component/settings/passcode.vue:92 src/page/auth/login.vue:62
 msgid "Verification Code"
 msgstr "Koda za preverjanje"
+
+#: src/component/people/edit/dialog.vue:56
+msgid "Verified"
+msgstr "Preverjeno"
 
 #: src/locales.js:427
 msgid "Verified email required"
@@ -4874,7 +4874,7 @@ msgstr "Vaša stalna podpora nam pomaga zagotavljati redne posodobitve in ostati
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "Vaša knjižnica se nenehno analizira in samodejno ustvarja albume posebnih trenutkov, potovanj in krajev."
 
-#: src/locales.js:469
+#: src/locales.js:470
 msgid "Zip created in %d s"
 msgstr "Zip, ustvarjen v %d s"
 
@@ -4932,6 +4932,12 @@ msgstr "Naslov"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Arhiv"
+
+#~ msgid "Create"
+#~ msgstr "Ustvari"
+
+#~ msgid "Create a new person named %{name}?"
+#~ msgstr "Ali želite ustvariti novo osebo z imenom %{name}?"
 
 #~ msgid "%{n} files uploaded"
 #~ msgstr "%{n} naloženih datotek"
@@ -5416,9 +5422,6 @@ msgstr "Arhiv"
 
 #~ msgid "Why are some features only available to sponsors?"
 #~ msgstr "Zakaj so nekatere funkcije na voljo samo sponzorjem?"
-
-#~ msgid "Verified"
-#~ msgstr "Preverjeno"
 
 #~ msgid "Proceed"
 #~ msgstr "Nadaljuj"

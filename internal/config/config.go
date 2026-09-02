@@ -412,6 +412,7 @@ func (c *Config) Propagate() {
 	thumb.Filter = c.ThumbFilter()
 	thumb.SizeCached = c.ThumbSizePrecached()
 	thumb.SizeOnDemand = c.ThumbSizeUncached()
+	thumb.SizeFace = c.ThumbSizeFace()
 	thumb.JpegQualityDefault = c.JpegQuality()
 	thumb.CachePublic = c.HttpCachePublic()
 	thumb.SamplesPath = c.SamplesPath()
@@ -484,24 +485,21 @@ func (c *Config) Propagate() {
 	face.ScoreThreshold = c.FaceScore()
 	face.OverlapThreshold = c.FaceOverlap()
 	face.ClusterScoreThreshold = c.FaceClusterScore()
-	face.ClusterSizeThreshold = c.FaceClusterSize()
 	face.ClusterCore = c.FaceClusterCore()
+	face.ClusterPercentile = c.FaceClusterPercentile()
+	face.ClusterSplitRounds = c.FaceClusterSplitRounds()
+	face.ClusterSplitShrink = c.FaceClusterSplitShrink()
 	// Derived rather than configured, but it still has to follow FACE_CLUSTER_CORE: leaving it at
 	// the package initializer froze the clustering trigger at the shipped default, so raising the
 	// core size moved the cluster definition and not the number of markers that starts a pass.
 	face.SampleThreshold = c.FaceSampleThreshold()
-	face.CollisionDist = c.FaceCollisionDist()
-	face.Epsilon = c.FaceEpsilonDist()
-	face.ClusterRadius = c.FaceClusterRadius()
-	face.ClusterDist = c.FaceClusterDist()
-	face.MatchDist = c.FaceMatchDist()
 	face.MatchMargin = c.FaceMatchMargin()
 	if err := c.ConfigureFaceDetector(0); err != nil {
 		log.Warnf("faces: %s (configure engine)", err)
 	}
-	if err := c.ConfigureFaceEmbedder(c.FaceModel()); err != nil {
-		log.Warnf("faces: %s (configure embedding model)", err)
-	}
+	// Everything the embedding model calibrates is assigned apart, because a migration changes the
+	// model long after this ran and has to re-apply it without a restart.
+	c.PropagateFaceModel()
 
 	// Set default theme and locale.
 	customize.DefaultTheme = c.DefaultTheme()

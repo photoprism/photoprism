@@ -27,6 +27,7 @@ type Subject struct {
 	SubjSlug     string         `gorm:"type:bytes;size:160;index;default:'';" json:"Slug" yaml:"-"`
 	SubjName     string         `gorm:"size:160;uniqueIndex;default:'';" json:"Name" yaml:"Name"`
 	SubjAlias    string         `gorm:"size:160;default:'';" json:"Alias" yaml:"Alias"`
+	SubjBirthday *time.Time     `json:"Birthday" yaml:"Birthday,omitempty"`
 	SubjAbout    string         `gorm:"size:512;" json:"About" yaml:"About,omitempty"`
 	SubjBio      string         `gorm:"size:2048;" json:"Bio" yaml:"Bio,omitempty"`
 	SubjNotes    string         `gorm:"size:1024;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
@@ -36,6 +37,7 @@ type Subject struct {
 	SubjExcluded bool           `gorm:"default:false;" json:"Excluded" yaml:"Excluded,omitempty"`
 	FileCount    int            `gorm:"default:0;" json:"FileCount" yaml:"-"`
 	PhotoCount   int            `gorm:"default:0;" json:"PhotoCount" yaml:"-"`
+	Verified     bool           `gorm:"default:false;" json:"Verified" yaml:"Verified,omitempty"`
 	Thumb        string         `gorm:"type:bytes;size:128;index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
 	ThumbSrc     string         `gorm:"type:bytes;size:8;default:'';" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
 	CreatedAt    time.Time      `json:"CreatedAt" yaml:"-"`
@@ -316,6 +318,60 @@ func (m *Subject) SetName(name string) error {
 	return nil
 }
 
+// BirthYearMin is the earliest year a subject may be born in, chosen so that the oldest person who
+// could plausibly have been photographed is still accepted: portrait photography starts in the 1840s,
+// and a sitter of that decade could have been born around 1800. It exists to catch a mistyped year.
+const BirthYearMin = 1800
+
+// NormalizeBirthday returns a date of birth at UTC midnight, or nil when the value is nil or zero.
+// The calendar date is read in the value's own location, so a client sending local midnight does not
+// store the day before - a birthday has no time and no zone, while the column has both.
+func NormalizeBirthday(t *time.Time) (born *time.Time, err error) {
+	if t == nil || t.IsZero() {
+		return nil, nil
+	}
+
+	y, month, d := t.Date()
+	utc := time.Date(y, month, d, 0, 0, 0, 0, time.UTC)
+
+	// A day of headroom, since a date-only value is legitimately ahead of UTC in eastern zones.
+	if utc.After(time.Now().UTC().AddDate(0, 0, 1)) {
+		return nil, fmt.Errorf("%w: birthday must not be in the future", ErrInvalidValue)
+	} else if y < BirthYearMin {
+		return nil, fmt.Errorf("%w: birthday must not be before %d", ErrInvalidValue, BirthYearMin)
+	}
+
+	return &utc, nil
+}
+
+// SetBirthday normalizes a date of birth and reports whether it changed, or clears it when the value
+// is nil or zero.
+func (m *Subject) SetBirthday(t *time.Time) (changed bool, err error) {
+	born, err := NormalizeBirthday(t)
+
+	if err != nil {
+		return false, err
+	}
+
+	return m.setBirthday(born), nil
+}
+
+// setBirthday stores an already normalized date of birth and reports whether it changed. Separate
+// from validating one, so a caller can refuse a bad value before writing anything and apply a good
+// one only once the writes it accompanies are known to be going ahead.
+func (m *Subject) setBirthday(born *time.Time) (changed bool) {
+	switch {
+	case born == nil && m.SubjBirthday == nil:
+		return false
+	case born != nil && m.SubjBirthday != nil && born.Equal(*m.SubjBirthday):
+		return false
+	}
+
+	m.SubjBirthday = born
+
+	return true
+}
+
 // Visible tests if the subject is generally visible and not hidden in any way.
 func (m *Subject) Visible() bool {
 	return m.DeletedAt.Valid == false && !m.SubjHidden && !m.SubjExcluded && !m.SubjPrivate
@@ -329,7 +385,36 @@ func (m *Subject) SaveForm(frm *form.Subject) (changed bool, err error) {
 		return false, fmt.Errorf("subject has no uid")
 	}
 
+	// Validated before the name and applied after it: the rename writes as it goes and may divert
+	// into a merge and return, so a value assigned before it is either committed alongside a
+	// refused request or left unsaved on the entity the handler serializes. This orders the writes
+	// rather than making them one - a rename is durable before the trailing Updates runs.
+
+	// Validate the thumbnail (hash with crop area).
+	thumbCrop := clean.ThumbCrop(frm.Thumb)
+	thumbChanged := false
+
+	if thumbCrop != "" && thumbCrop != m.Thumb {
+		if SrcPriority[frm.ThumbSrc] <= 0 {
+			return false, fmt.Errorf("%w: invalid thumb source", ErrInvalidValue)
+		}
+
+		thumbChanged = true
+	} else if frm.Thumb != "" && frm.Thumb != m.Thumb && frm.Thumb != thumbCrop {
+		return false, fmt.Errorf("%w: invalid thumb", ErrInvalidValue)
+	}
+
+	// Validate the date of birth.
+	born, bornErr := NormalizeBirthday(frm.SubjBirthday)
+
+	if bornErr != nil {
+		return false, bornErr
+	}
+
 	// Update name?
+	//
+	// A name another person already owns merges this one into them and returns, which is why nothing
+	// above has been applied yet: the rest of the form belongs to a subject that no longer exists.
 	if name := clean.Name(frm.SubjName); name != "" && name != m.SubjName {
 		existing, updateErr := m.UpdateName(name)
 
@@ -340,24 +425,31 @@ func (m *Subject) SaveForm(frm *form.Subject) (changed bool, err error) {
 		changed = true
 	}
 
-	// Update thumbnail (hash with crop area).
-	thumbChanged := false
-	if thumbCrop := clean.ThumbCrop(frm.Thumb); thumbCrop != "" && thumbCrop != m.Thumb {
-		if SrcPriority[frm.ThumbSrc] > 0 {
-			m.Thumb = thumbCrop
-			m.ThumbSrc = frm.ThumbSrc
-			thumbChanged = true
-			changed = true
-		} else {
-			return false, fmt.Errorf("invalid thumb source")
-		}
-	} else if frm.Thumb != "" && frm.Thumb != m.Thumb && frm.Thumb != thumbCrop {
-		return false, fmt.Errorf("invalid thumb")
+	// Apply the values validated above.
+	if thumbChanged {
+		m.Thumb = thumbCrop
+		m.ThumbSrc = frm.ThumbSrc
+		changed = true
+	}
+
+	// Compared after normalizing, so resending the same day in another zone is not a change.
+	if m.setBirthday(born) {
+		changed = true
 	}
 
 	// Change favorite status?
 	if m.SubjFavorite != frm.SubjFavorite {
 		m.SubjFavorite = frm.SubjFavorite
+		changed = true
+	}
+
+	// Change verification?
+	//
+	// Set here and nowhere else. A flag the matcher, the clusterer, a propagation pass or an import
+	// could raise stops meaning "a person vouched for this name" within a release, which is how
+	// markers.q drifted from what it claimed until it was removed.
+	if m.Verified != frm.Verified {
+		m.Verified = frm.Verified
 		changed = true
 	}
 
@@ -386,10 +478,12 @@ func (m *Subject) SaveForm(frm *form.Subject) (changed bool, err error) {
 	// Update index?
 	if changed {
 		values := Values{
+			"SubjBirthday": m.SubjBirthday,
 			"SubjFavorite": m.SubjFavorite,
 			"SubjHidden":   m.SubjHidden,
 			"SubjPrivate":  m.SubjPrivate,
 			"SubjExcluded": m.SubjExcluded,
+			"Verified":     m.Verified,
 		}
 
 		if thumbChanged {
@@ -565,9 +659,14 @@ func (m *Subject) MergeWith(other *Subject) error {
 	}
 
 	// Updated subject entity values.
+	//
+	// Verified carries over from either side: the flag records that somebody vouched for the
+	// person, and a merge does not withdraw that. Dropping it would leave the survivor unprotected
+	// by the orphan sweeps, so the next reset would delete the name the operator vouched for.
 	updates := Values{
 		"FileCount":  other.FileCount + m.FileCount,
 		"PhotoCount": other.PhotoCount + m.PhotoCount,
+		"Verified":   other.Verified || m.Verified,
 	}
 
 	// Use existing thumbnail image?
@@ -579,6 +678,18 @@ func (m *Subject) MergeWith(other *Subject) error {
 	// Update subject entity.
 	if err := UnscopedDb().Model(other).Updates(updates).Error; err != nil {
 		return err
+	}
+
+	other.Verified = other.Verified || m.Verified
+
+	// Cleared on the row about to be deleted: the survivor now carries the flag, so leaving it here
+	// would claim two people were vouched for where the operator vouched for one.
+	if m.Verified {
+		m.Verified = false
+
+		if err := m.Updates(Values{"Verified": false}); err != nil {
+			return err
+		}
 	}
 
 	return m.Delete()

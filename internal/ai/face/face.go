@@ -26,6 +26,7 @@ package face
 
 import (
 	"encoding/json"
+	"math"
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/thumb/crop"
@@ -44,6 +45,52 @@ type Face struct {
 	DetectModel EngineName `json:"detector,omitempty"`
 	EmbedModel  ModelName  `json:"model,omitempty"`
 	Embeddings  Embeddings `json:"embeddings,omitempty"`
+	// ThumbSize is the face's extent in pixels of the thumbnail its embedding was sampled from,
+	// which is a different image than Size measures. Zero until an embedding is generated.
+	ThumbSize int `json:"thumbSize,omitempty"`
+	// EmbedDetail is the percentage of the crop width the source supplied, clamped at 100, so
+	// a value below it says the crop was upscaled and by how much. Zero until measured.
+	EmbedDetail int `json:"embedDetail,omitempty"`
+}
+
+// SetThumbSize records the face's extent in an image of the given width, which is what the
+// embedding was drawn from. Unknown leaves it unset rather than storing a guess.
+//
+// Cols is checked directly rather than through ImageScale, whose "1 when unknown" is a coordinate
+// convention: it would turn an unrecorded detection width into a scale of srcWidth itself.
+func (f *Face) SetThumbSize(srcWidth int) {
+	if f == nil || srcWidth < 1 || f.Cols < 2 {
+		return
+	}
+
+	f.ThumbSize = max(1, int(math.Round(float64(f.Size())*f.ImageScale(srcWidth))))
+}
+
+// EmbedDetail returns how much of a crop of cropWidth pixels a source holding the face at extent
+// px could supply, as a percentage clamped at 100, and zero where that cannot be measured.
+//
+// Clamped, because headroom above the crop is spent on the resample and is not detail the model
+// sees, which keeps 100 a clean predicate for "not upscaled".
+func EmbedDetail(extent, cropWidth int) int {
+	if extent < 1 || cropWidth < 1 {
+		return 0
+	}
+
+	return min(100, max(1, int(math.Round(float64(extent)*100/float64(cropWidth)))))
+}
+
+// SetEmbedDetail records how much of the crop the embedder asked for the source could supply.
+// It is measured here rather than derived later, because face.CropSize is a property of the
+// current template and not of the vector that was produced.
+//
+// SetThumbSize has to have run first: it holds the face's extent in the image the crop was taken
+// from, which is the numerator. An unmeasurable ratio is left unset, so no guess is stored.
+func (f *Face) SetEmbedDetail(cropWidth int) {
+	if f == nil {
+		return
+	}
+
+	f.EmbedDetail = EmbedDetail(f.ThumbSize, cropWidth)
 }
 
 // Size returns the absolute face size in pixels.

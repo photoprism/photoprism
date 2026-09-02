@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2026-08-27
+Date generated: 2026-08-31
 
 ================================================================================
 
@@ -1453,8 +1453,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: github.com/go-logr/logr
-Version: v1.4.3
-License: Apache-2.0 (https://github.com/go-logr/logr/blob/v1.4.3/LICENSE)
+Version: v1.4.4
+License: Apache-2.0 (https://github.com/go-logr/logr/blob/v1.4.4/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -5190,8 +5190,8 @@ the full license text.
 --------------------------------------------------------------------------------
 
 Package: github.com/montanaflynn/stats
-Version: v0.12.4
-License: MIT (https://github.com/montanaflynn/stats/blob/v0.12.4/LICENSE)
+Version: v0.12.5
+License: MIT (https://github.com/montanaflynn/stats/blob/v0.12.5/LICENSE)
 
 The MIT License (MIT)
 
@@ -7275,8 +7275,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: github.com/zitadel/oidc/v3
-Version: v3.49.2
-License: Apache-2.0 (https://github.com/zitadel/oidc/blob/v3.49.2/LICENSE)
+Version: v3.49.4
+License: Apache-2.0 (https://github.com/zitadel/oidc/blob/v3.49.4/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -7933,8 +7933,8 @@ License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go-instrume
 --------------------------------------------------------------------------------
 
 Package: go.opentelemetry.io/otel
-Version: v1.44.0
-License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/v1.44.0/LICENSE)
+Version: v1.45.0
+License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/v1.45.0/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -8170,8 +8170,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: go.opentelemetry.io/otel/metric
-Version: v1.44.0
-License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/metric/v1.44.0/metric/LICENSE)
+Version: v1.45.0
+License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/metric/v1.45.0/metric/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -8407,8 +8407,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: go.opentelemetry.io/otel/trace
-Version: v1.44.0
-License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/trace/v1.44.0/trace/LICENSE)
+Version: v1.45.0
+License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/trace/v1.45.0/trace/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004

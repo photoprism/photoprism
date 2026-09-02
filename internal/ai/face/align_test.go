@@ -1,11 +1,15 @@
 package face
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 	"math"
+	"strings"
 	"testing"
 
+	"github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -138,8 +142,9 @@ func TestScaledArcFaceTemplate(t *testing.T) {
 
 func TestSimilarityTransform(t *testing.T) {
 	t.Run("Identity", func(t *testing.T) {
-		m, err := similarityTransform(ArcFaceTemplate, ArcFaceTemplate)
+		m, residual, err := similarityTransform(ArcFaceTemplate, ArcFaceTemplate)
 		require.NoError(t, err)
+		assert.InDelta(t, 0, residual, 0.0001, "the template fits itself exactly")
 		assert.InDelta(t, 1, m[0], 0.0001)
 		assert.InDelta(t, 0, m[1], 0.0001)
 		assert.InDelta(t, 0, m[2], 0.0001)
@@ -150,8 +155,9 @@ func TestSimilarityTransform(t *testing.T) {
 	t.Run("RecoversKnownTransform", func(t *testing.T) {
 		// A transform fitted to warped points must map them back onto the template.
 		src := transformPoints(math.Pi/6, 1.5, 40, 25)
-		m, err := similarityTransform(src, ArcFaceTemplate)
+		m, residual, err := similarityTransform(src, ArcFaceTemplate)
 		require.NoError(t, err)
+		assert.InDelta(t, 0, residual, 0.0001, "a rotated and scaled copy fits exactly")
 
 		for i := range src {
 			x, y := m.apply(src[i][0], src[i][1])
@@ -166,9 +172,10 @@ func TestSimilarityTransform(t *testing.T) {
 			src[i] = [2]float64{10, 10}
 		}
 
-		_, err := similarityTransform(src, ArcFaceTemplate)
+		_, residual, err := similarityTransform(src, ArcFaceTemplate)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "coincident")
+		assert.Negative(t, residual, "landmarks that admit no fit report no residual")
 	})
 }
 
@@ -220,6 +227,56 @@ func TestAlignedCrop(t *testing.T) {
 
 	f := testFaceWithLandmarks(src, 120)
 
+	t.Run("ReportsTheResidualOfEveryAttempt", func(t *testing.T) {
+		// At trace, and for every attempt: only the failures carry a residual in their error,
+		// which is the tail above the bar and not where fits start degrading.
+		logger, ok := log.(*logrus.Logger)
+		require.True(t, ok)
+
+		prevLevel := logger.GetLevel()
+		logger.SetLevel(logrus.TraceLevel)
+		hook := test.NewLocal(logger)
+
+		t.Cleanup(func() {
+			logger.SetLevel(prevLevel)
+			hook.Reset()
+		})
+
+		_, err := AlignedCrop(img, f, ArcFaceTemplateSize, ArcFaceTemplateSize)
+		require.NoError(t, err)
+
+		var reported string
+
+		for _, entry := range hook.AllEntries() {
+			if strings.Contains(entry.Message, "landmark fit residual") {
+				reported = entry.Message
+			}
+		}
+
+		require.NotEmpty(t, reported, "a successful fit reports its residual too")
+		assert.Contains(t, reported, fmt.Sprintf("%d px", f.Size()), "beside the size it was detected at")
+	})
+	t.Run("SilentAtDebugLevel", func(t *testing.T) {
+		// One line per face belongs to diagnosis on demand, so debug must stay clean.
+		logger, ok := log.(*logrus.Logger)
+		require.True(t, ok)
+
+		prevLevel := logger.GetLevel()
+		logger.SetLevel(logrus.DebugLevel)
+		hook := test.NewLocal(logger)
+
+		t.Cleanup(func() {
+			logger.SetLevel(prevLevel)
+			hook.Reset()
+		})
+
+		_, err := AlignedCrop(img, f, ArcFaceTemplateSize, ArcFaceTemplateSize)
+		require.NoError(t, err)
+
+		for _, entry := range hook.AllEntries() {
+			assert.NotContains(t, entry.Message, "landmark fit residual")
+		}
+	})
 	t.Run("MarkersMatchTemplate", func(t *testing.T) {
 		out, err := AlignedCrop(img, f, ArcFaceTemplateSize, ArcFaceTemplateSize)
 		require.NoError(t, err)
@@ -345,9 +402,10 @@ func TestSimilarityTransformResidual(t *testing.T) {
 			src[i][1] = 2*(tpl[i][0]*math.Sin(r)+tpl[i][1]*math.Cos(r)) + 30
 		}
 
-		tr, err := similarityTransform(src, tpl)
+		tr, residual, err := similarityTransform(src, tpl)
 		require.NoError(t, err)
 		assert.InDelta(t, 0, fitResidual(tr, src, tpl), 1e-6)
+		assert.InDelta(t, fitResidual(tr, src, tpl), residual, 1e-9, "and it is the value that was reported")
 	})
 	t.Run("ExtremeYawAccepted", func(t *testing.T) {
 		// A profile face compresses one axis and must still align rather than fall back.
@@ -357,8 +415,9 @@ func TestSimilarityTransformResidual(t *testing.T) {
 			src[i][1] = tpl[i][1]
 		}
 
-		_, err := similarityTransform(src, tpl)
+		_, residual, err := similarityTransform(src, tpl)
 		assert.NoError(t, err)
+		assert.Less(t, residual, maxAlignResidual, "an extreme yaw fits inside the bar")
 	})
 	t.Run("MirroredRejected", func(t *testing.T) {
 		// A reflection cannot be expressed by a proper rotation, so it must be refused
@@ -369,8 +428,9 @@ func TestSimilarityTransformResidual(t *testing.T) {
 			src[i][1] = tpl[i][1]
 		}
 
-		_, err := similarityTransform(src, tpl)
+		_, residual, err := similarityTransform(src, tpl)
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "do not fit the template")
+		assert.Greater(t, residual, maxAlignResidual, "the fit it could not use is still reported")
 	})
 }

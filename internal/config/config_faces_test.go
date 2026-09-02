@@ -19,13 +19,15 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-// captureLog records what the shared logger emits for the duration of a test.
+// captureLog records what the shared logger emits for the duration of a test, including the
+// system log, which a message meant for an administrator is sent through instead.
 func captureLog(t *testing.T) *test.Hook {
 	t.Helper()
 
@@ -33,7 +35,13 @@ func captureLog(t *testing.T) *test.Hook {
 	require.True(t, ok)
 
 	hook := test.NewLocal(logger)
-	t.Cleanup(hook.Reset)
+	systemLog := event.SystemLog
+	event.SystemLog = logger
+
+	t.Cleanup(func() {
+		event.SystemLog = systemLog
+		hook.Reset()
+	})
 
 	return hook
 }
@@ -873,6 +881,142 @@ func TestConfig_checkFaceModelMismatch(t *testing.T) {
 		require.True(t, face.EmbeddingsBlocked())
 		assert.Contains(t, face.EmbeddingsBlockedReason(), "42 marker(s) use facenet,")
 	})
+	t.Run("AfterAMigrationAsksForARestart", func(t *testing.T) {
+		// The library and the recorded setting agree here, and only this process disagrees with
+		// both: advising the model it holds would ask for the migration to be undone.
+		hook := captureLog(t)
+		c := newSupersededTestConfig(t, face.ModelFaceNet, face.ModelSFace)
+
+		c.checkFaceModelMismatch([]query.MarkerEmbeddingModelCount{{EmbedModel: face.ModelSFace, Markers: 41252}})
+
+		require.True(t, face.EmbeddingsBlocked())
+		assert.Contains(t, lastFaceLogMessage(t, hook), "restarted")
+		assert.NotContains(t, lastFaceLogMessage(t, hook), "migrate --to")
+	})
+}
+
+// newSupersededTestConfig returns a config that holds the loaded model while "options.yml"
+// records the recorded one, which is what a completed migration leaves a running instance with.
+func newSupersededTestConfig(t *testing.T, loaded, recorded face.ModelName) *Config {
+	t.Helper()
+
+	c := NewMinimalTestConfig(t.TempDir())
+	c.options.ModelsPath = installTestModels(t, loaded, recorded)
+	c.faceModel = loaded
+	c.options.FaceModel = loaded
+
+	require.NoError(t, os.WriteFile(c.OptionsYaml(), []byte("FaceModel: "+recorded+"\n"), fs.ModeConfigFile))
+
+	return c
+}
+
+// lastFaceLogMessage returns the most recent message the shared logger recorded.
+func lastFaceLogMessage(t *testing.T, hook *test.Hook) string {
+	t.Helper()
+
+	entry := hook.LastEntry()
+	require.NotNil(t, entry)
+
+	return entry.Message
+}
+
+func TestConfig_CheckFaceModelSuperseded(t *testing.T) {
+	t.Cleanup(face.UnblockEmbeddings)
+
+	t.Run("Superseded", func(t *testing.T) {
+		hook := captureLog(t)
+		c := newSupersededTestConfig(t, face.ModelFaceNet, face.ModelSFace)
+
+		require.True(t, c.CheckFaceModelSuperseded())
+
+		assert.True(t, face.EmbeddingsBlocked())
+		assert.Contains(t, face.EmbeddingsBlockedReason(), "sface")
+		assert.Contains(t, lastFaceLogMessage(t, hook), "restarted")
+	})
+	t.Run("ReportedOncePerModel", func(t *testing.T) {
+		// The workers that consult this wake every few minutes, so a repeated verdict must not
+		// repeat the message.
+		hook := captureLog(t)
+		c := newSupersededTestConfig(t, face.ModelFaceNet, face.ModelSFace)
+
+		require.True(t, c.CheckFaceModelSuperseded())
+		require.True(t, c.CheckFaceModelSuperseded())
+
+		warnings := 0
+
+		for _, entry := range hook.AllEntries() {
+			if strings.Contains(entry.Message, "restarted") {
+				warnings++
+			}
+		}
+
+		assert.Equal(t, 1, warnings)
+	})
+	t.Run("Agrees", func(t *testing.T) {
+		defer face.UnblockEmbeddings()
+		c := newSupersededTestConfig(t, face.ModelSFace, face.ModelSFace)
+
+		assert.False(t, c.CheckFaceModelSuperseded())
+	})
+}
+
+func TestConfig_SupersededFaceModel(t *testing.T) {
+	t.Run("Migrated", func(t *testing.T) {
+		c := newSupersededTestConfig(t, face.ModelFaceNet, face.ModelSFace)
+
+		assert.Equal(t, face.ModelSFace, c.SupersededFaceModel())
+	})
+	t.Run("Agrees", func(t *testing.T) {
+		c := newSupersededTestConfig(t, face.ModelSFace, face.ModelSFace)
+
+		assert.Empty(t, c.SupersededFaceModel())
+	})
+	t.Run("ResolvedThroughTheSetting", func(t *testing.T) {
+		// A process that resolves its model from the setting rather than from a pin holds the
+		// same one the file names, so it is not behind it.
+		c := newSupersededTestConfig(t, face.ModelFaceNet, face.ModelFaceNet)
+		c.faceModel = ""
+
+		assert.Empty(t, c.SupersededFaceModel())
+	})
+	t.Run("NoModelInForce", func(t *testing.T) {
+		// A restart installs no weights, and why the model could not be loaded is reported where
+		// that is decided, so an instance holding none is not behind the file either.
+		c := newSupersededTestConfig(t, face.ModelFaceNet, face.ModelSFace)
+		c.faceModel = ""
+		c.options.FaceModel = face.ModelNone
+
+		require.Equal(t, face.ModelNone, c.FaceModel())
+		assert.Empty(t, c.SupersededFaceModel())
+	})
+	t.Run("AutoIsNotAVerdict", func(t *testing.T) {
+		// "auto" asks for detection rather than naming a vector space, so it supersedes nothing.
+		c := newSupersededTestConfig(t, face.ModelFaceNet, face.ModelSFace)
+		require.NoError(t, os.WriteFile(c.OptionsYaml(), []byte("FaceModel: auto\n"), fs.ModeConfigFile))
+
+		assert.Empty(t, c.SupersededFaceModel())
+	})
+	t.Run("UnsupportedValue", func(t *testing.T) {
+		c := newSupersededTestConfig(t, face.ModelFaceNet, face.ModelSFace)
+		require.NoError(t, os.WriteFile(c.OptionsYaml(), []byte("FaceModel: nonesuch\n"), fs.ModeConfigFile))
+
+		assert.Empty(t, c.SupersededFaceModel())
+	})
+	t.Run("Unparsable", func(t *testing.T) {
+		c := newSupersededTestConfig(t, face.ModelFaceNet, face.ModelSFace)
+		require.NoError(t, os.WriteFile(c.OptionsYaml(), []byte("FaceModel: [\n"), fs.ModeConfigFile))
+
+		assert.Empty(t, c.SupersededFaceModel())
+	})
+	t.Run("NoFile", func(t *testing.T) {
+		c := newSupersededTestConfig(t, face.ModelFaceNet, face.ModelSFace)
+		require.NoError(t, os.Remove(c.OptionsYaml()))
+
+		assert.Empty(t, c.SupersededFaceModel())
+	})
+	t.Run("NilConfig", func(t *testing.T) {
+		assert.Empty(t, (*Config)(nil).SupersededFaceModel())
+	})
 }
 
 func TestStaleFaceModels(t *testing.T) {
@@ -1093,6 +1237,10 @@ func seedLegacyMarkers(t *testing.T) []string {
 }
 
 func TestConfig_SetFaceModel(t *testing.T) {
+	// Recording a model propagates its calibration, so every case below moves package values
+	// that the tests after it would otherwise read as their own.
+	defer snapshotFaceModelGlobals()()
+
 	t.Run("Persisted", func(t *testing.T) {
 		c := NewMinimalTestConfig(t.TempDir())
 		require.NoError(t, c.SetFaceModel(face.ModelSFace))
@@ -1116,6 +1264,32 @@ func TestConfig_SetFaceModel(t *testing.T) {
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "failed saving face model")
 	})
+	t.Run("PropagatesTheCalibration", func(t *testing.T) {
+		// Within one process, because Init propagates on its own: a test written across a restart
+		// passes while a migration still clusters at the model it replaced.
+		c := NewMinimalTestConfig(t.TempDir())
+		c.options.ModelsPath = installTestModels(t, face.ModelFaceNet, face.ModelSFace)
+		c.faceModel = face.ModelFaceNet
+		c.PropagateFaceModel()
+		require.Equal(t, face.ClusterDistDefault, face.ClusterDist)
+
+		require.NoError(t, c.SetFaceModel(face.ModelSFace))
+
+		assert.Equal(t, 0.72, face.ClusterDist)
+		assert.Equal(t, 0.70, face.ClusterRadius)
+		assert.Equal(t, 0.25, face.MatchDist)
+	})
+	t.Run("PropagatesAfterAFailedWrite", func(t *testing.T) {
+		// The vectors are the target's either way, so a setting that could not be persisted still
+		// has to apply here - the run reports the write, it does not cluster at the old distances.
+		c := NewMinimalTestConfig(t.TempDir())
+		c.options.ModelsPath = installTestModels(t, face.ModelSFace)
+		require.NoError(t, os.WriteFile(c.OptionsYaml(), []byte("FaceModel: [\n"), fs.ModeFile))
+
+		require.Error(t, c.SetFaceModel(face.ModelSFace))
+
+		assert.Equal(t, 0.72, face.ClusterDist)
+	})
 	t.Run("Empty", func(t *testing.T) {
 		c := NewMinimalTestConfig(t.TempDir())
 		require.NoError(t, c.SetFaceModel(""))
@@ -1124,6 +1298,59 @@ func TestConfig_SetFaceModel(t *testing.T) {
 	})
 	t.Run("NilConfig", func(t *testing.T) {
 		assert.NoError(t, (*Config)(nil).SetFaceModel(face.ModelSFace))
+	})
+}
+
+func TestConfig_PropagateFaceModel(t *testing.T) {
+	t.Run("AssignsTheModelsCalibration", func(t *testing.T) {
+		defer snapshotFaceModelGlobals()()
+		c := newSFaceTestConfig(t)
+
+		c.PropagateFaceModel()
+
+		assert.Equal(t, 0.72, face.ClusterDist)
+		assert.Equal(t, 0.70, face.ClusterRadius)
+		assert.Equal(t, 0.25, face.MatchDist)
+		assert.Equal(t, face.CollisionDistDefault, face.CollisionDist)
+		assert.Equal(t, face.EpsilonDefault, face.Epsilon)
+		assert.Equal(t, c.FaceClusterSize(), face.ClusterSizeThreshold)
+	})
+	t.Run("TheClusterSizeFollowsTheModel", func(t *testing.T) {
+		// Every registered model shares one collision distance and epsilon, so the size bar is
+		// the only assignment here that a second model can tell apart at all: FaceNet reads the
+		// rectangular crop and SFace its own template.
+		defer snapshotFaceModelGlobals()()
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = installTestModels(t, face.ModelFaceNet)
+		c.options.FaceModel = face.ModelFaceNet
+
+		c.PropagateFaceModel()
+
+		require.Equal(t, 160, face.ClusterSizeThreshold)
+
+		sface := newSFaceTestConfig(t)
+		sface.PropagateFaceModel()
+
+		assert.Equal(t, 112, face.ClusterSizeThreshold)
+	})
+	t.Run("ConfiguredValuesStand", func(t *testing.T) {
+		// The model calibrates what nobody set, and must not overrule what somebody did. It is
+		// also what pins the two gaps no registered model moves, which a comparison against
+		// their defaults cannot tell apart from their not being assigned at all.
+		defer snapshotFaceModelGlobals()()
+		c := newSFaceTestConfig(t)
+		c.options.FaceClusterDist = 0.6
+		c.options.FaceCollisionDist = 0.07
+		c.options.FaceEpsilonDist = 0.002
+
+		c.PropagateFaceModel()
+
+		assert.Equal(t, 0.6, face.ClusterDist)
+		assert.Equal(t, 0.07, face.CollisionDist)
+		assert.Equal(t, 0.002, face.Epsilon)
+	})
+	t.Run("NilConfig", func(t *testing.T) {
+		assert.NotPanics(t, func() { (*Config)(nil).PropagateFaceModel() })
 	})
 }
 
@@ -1294,9 +1521,23 @@ func restoreFaceModel(t *testing.T, c *Config) func() {
 	t.Helper()
 
 	setting, resolved := c.options.FaceModel, c.faceModel
+	restoreGlobals := snapshotFaceModelGlobals()
 
 	return func() {
 		c.options.FaceModel, c.faceModel = setting, resolved
+		restoreGlobals()
+	}
+}
+
+// snapshotFaceModelGlobals returns a function that restores the values PropagateFaceModel
+// assigns, so a test that changes the model does not leave the tests after it calibrated for it.
+func snapshotFaceModelGlobals() func() {
+	clusterSize, collisionDist, epsilon := face.ClusterSizeThreshold, face.CollisionDist, face.Epsilon
+	clusterRadius, clusterDist, matchDist := face.ClusterRadius, face.ClusterDist, face.MatchDist
+
+	return func() {
+		face.ClusterSizeThreshold, face.CollisionDist, face.Epsilon = clusterSize, collisionDist, epsilon
+		face.ClusterRadius, face.ClusterDist, face.MatchDist = clusterRadius, clusterDist, matchDist
 	}
 }
 
@@ -1526,6 +1767,11 @@ func TestConfig_FaceSize(t *testing.T) {
 
 func TestConfig_FaceSizeRetry(t *testing.T) {
 	c := NewConfig(CliTestContext())
+
+	// Above what the derivation bounds, so these cases turn on the option rather than on the
+	// thumbnail configuration, which TestConfig_faceSizeRetryDefault covers on its own.
+	c.options.ThumbSize = 4096
+
 	assert.Equal(t, face.RetrySizeThreshold, c.FaceSizeRetry())
 	t.Run("Disabled", func(t *testing.T) {
 		c.options.FaceSizeRetry = -1
@@ -1548,8 +1794,94 @@ func TestConfig_FaceSizeRetry(t *testing.T) {
 		c.options.FaceSizeRetry = 40
 		assert.Equal(t, 25, c.FaceSizeRetry())
 	})
+	t.Run("DerivedFromTheThumbnailLimit", func(t *testing.T) {
+		// The option is unset here, so the floor follows what a crop can be taken from.
+		c.options.FaceSize = 0
+		c.options.FaceSizeRetry = 0
+		c.options.ThumbSize = 1920
+
+		assert.Equal(t, face.RetrySizeThresholdLimited, c.FaceSizeRetry())
+	})
+	t.Run("ExplicitValueStands", func(t *testing.T) {
+		// An operator who asked for the smallest faces gets them, whatever the cache holds.
+		c.options.ThumbSize = 720
+		c.options.FaceSizeRetry = 10
+
+		assert.Equal(t, 10, c.FaceSizeRetry())
+	})
+
 	c.options.FaceSize = 0
 	c.options.FaceSizeRetry = 0
+	c.options.ThumbSize = 0
+}
+
+// TestConfig_faceSizeRetryDefault covers the floor derived from the thumbnail configuration. The
+// second pass finds the smallest faces in the library, and where the cache cannot offer a crop
+// wider than the detection thumbnail they are detected only to stay unrecognizable.
+func TestConfig_faceSizeRetryDefault(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	t.Run("OnDemandFaceRendering", func(t *testing.T) {
+		// A crop reaches what this renders for it, whatever was pre-generated.
+		c.options.ThumbSizeFace = 4096
+		c.options.ThumbSize = 720
+		defer func() { c.options.ThumbSizeFace = 0 }()
+
+		assert.Equal(t, face.RetrySizeThreshold, c.faceSizeRetryDefault())
+	})
+	t.Run("OnDemandFaceRenderingIsBounded", func(t *testing.T) {
+		// It is a ceiling rather than consent: one that reaches no further than 1920 leaves the
+		// floor where a pre-generated 1920 would.
+		c.options.ThumbSizeFace = 1920
+		c.options.ThumbSize = 720
+		defer func() { c.options.ThumbSizeFace = 0 }()
+
+		assert.Equal(t, face.RetrySizeThresholdLimited, c.faceSizeRetryDefault())
+	})
+	t.Run("DeliveryRenderingDoesNotCount", func(t *testing.T) {
+		// THUMB_UNCACHED governs what a request may render for delivery, and no crop path
+		// consults it, so it must not move a floor that describes what a crop can reach.
+		c.options.ThumbUncached = true
+		c.options.ThumbSize = 720
+		defer func() { c.options.ThumbUncached = false }()
+
+		assert.Zero(t, c.faceSizeRetryDefault())
+	})
+	t.Run("SmallestCache", func(t *testing.T) {
+		c.options.ThumbSize = 720
+
+		assert.Zero(t, c.faceSizeRetryDefault())
+	})
+	t.Run("LimitedCache", func(t *testing.T) {
+		c.options.ThumbSize = 1920
+
+		assert.Equal(t, face.RetrySizeThresholdLimited, c.faceSizeRetryDefault())
+	})
+	t.Run("LargeCache", func(t *testing.T) {
+		c.options.ThumbSize = 4096
+
+		assert.Equal(t, face.RetrySizeThreshold, c.faceSizeRetryDefault())
+	})
+	t.Run("NilConfig", func(t *testing.T) {
+		assert.Equal(t, face.RetrySizeThreshold, (*Config)(nil).faceSizeRetryDefault())
+	})
+
+	c.options.ThumbSize = 0
+}
+
+// TestConfig_FaceSizeRetryThroughTheFlagLayer pins that the derivation is reachable at all: a flag
+// Value would make the option non-zero on every start and the getter would never consult it.
+func TestConfig_FaceSizeRetryThroughTheFlagLayer(t *testing.T) {
+	ctx := cliContextWithFlagDefaults(t)
+	c := &Config{cliCtx: ctx, options: NewOptions(ctx)}
+
+	require.Zero(t, c.options.FaceSizeRetry, "an unset option must stay zero to mean derive it")
+	require.Equal(t, 1920, c.options.ThumbSize, "what the shipped configuration pre-generates")
+	require.Equal(t, 4096, c.options.ThumbSizeFace, "and what it renders on demand for a face crop")
+
+	// The wider of the two decides it, so the shipped configuration reaches the smallest faces
+	// even though its pre-generated renditions alone would not.
+	assert.Equal(t, face.RetrySizeThreshold, c.FaceSizeRetry())
 }
 
 func TestConfig_FaceScore(t *testing.T) {
@@ -1739,6 +2071,10 @@ func TestConfig_FacesLocked(t *testing.T) {
 }
 
 func TestConfig_ClearFaceModel(t *testing.T) {
+	// Pinning a model to clear it propagates its calibration, which the cases after this one
+	// would otherwise read as theirs.
+	defer snapshotFaceModelGlobals()()
+
 	t.Run("Success", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.options.ConfigPath = t.TempDir()
@@ -1857,12 +2193,31 @@ func TestConfig_FaceOverlap(t *testing.T) {
 }
 
 func TestConfig_FaceClusterSize(t *testing.T) {
+	// Against the model in force rather than against face.ClusterSizeThreshold: the global is
+	// assigned from this getter, and any test that records a model moves it.
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, face.ClusterSizeThreshold, c.FaceClusterSize())
+	derived := face.ClusterSize(c.EffectiveFaceModel())
+	assert.Equal(t, derived, c.FaceClusterSize())
 	c.options.FaceClusterSize = 10
-	assert.Equal(t, face.ClusterSizeThreshold, c.FaceClusterSize())
+	assert.Equal(t, derived, c.FaceClusterSize())
 	c.options.FaceClusterSize = 66
 	assert.Equal(t, 66, c.FaceClusterSize())
+
+	t.Run("DerivedFromTheModelThroughTheFlagLayer", func(t *testing.T) {
+		// Built from the registered flags rather than by assigning the option, because that is
+		// where the derivation was defeated: a flag Value made the option non-zero on every
+		// start, so the getter never reached the per-model branch. Literals, not the propagated
+		// global, which Propagate assigns from this getter and would compare against itself.
+		ctx := cliContextWithFlagDefaults(t)
+
+		for model, want := range map[string]int{face.ModelFaceNet: 160, face.ModelSFace: 112} {
+			c := &Config{cliCtx: ctx, options: NewOptions(ctx)}
+			c.options.FaceModel = model
+
+			require.Zero(t, c.options.FaceClusterSize, "an unset option must stay zero to mean derive it")
+			assert.Equal(t, want, c.FaceClusterSize(), model)
+		}
+	})
 }
 
 func TestConfig_FaceClusterScore(t *testing.T) {
@@ -1878,11 +2233,167 @@ func TestConfig_FaceClusterScore(t *testing.T) {
 
 func TestConfig_FaceClusterCore(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, 4, c.FaceClusterCore())
+	assert.Equal(t, face.ClusterCoreDefault, c.FaceClusterCore())
 	c.options.FaceClusterCore = 1000
-	assert.Equal(t, 4, c.FaceClusterCore())
+	assert.Equal(t, face.ClusterCoreDefault, c.FaceClusterCore())
+	// A core of one is refused, not honored: it would seed every automatic cluster from a single
+	// embedding, which has no centroid and is never offered to the matcher.
 	c.options.FaceClusterCore = 1
-	assert.Equal(t, 1, c.FaceClusterCore())
+	assert.Equal(t, face.ClusterCoreDefault, c.FaceClusterCore())
+	c.options.FaceClusterCore = 2
+	assert.Equal(t, 2, c.FaceClusterCore())
+}
+
+func TestConfig_FaceRecomputeStats(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	t.Run("DefaultsOff", func(t *testing.T) {
+		// Off while the width guard is calibrated, so a percentile sweep moves one variable.
+		assert.False(t, c.FaceRecomputeStats())
+	})
+	t.Run("Configured", func(t *testing.T) {
+		c.options.FaceRecomputeStats = true
+		defer func() { c.options.FaceRecomputeStats = false }()
+
+		assert.True(t, c.FaceRecomputeStats())
+	})
+	t.Run("Nil", func(t *testing.T) {
+		var nilConf *Config
+		assert.False(t, nilConf.FaceRecomputeStats())
+	})
+}
+
+// TestConfig_FaceClusterPercentile covers the calibration knob for how wide a cluster's stored
+// radius is, whose two ends are the shipped percentile and the maximum it replaced.
+func TestConfig_FaceClusterPercentile(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	t.Run("Default", func(t *testing.T) {
+		assert.Equal(t, face.ClusterPercentileDefault, c.FaceClusterPercentile())
+	})
+	t.Run("Configured", func(t *testing.T) {
+		c.options.FaceClusterPercentile = 90
+		assert.Equal(t, 90, c.FaceClusterPercentile())
+	})
+	t.Run("TheMaximum", func(t *testing.T) {
+		// 100 is what the radius meant before the percentile, so a run can be compared against it.
+		c.options.FaceClusterPercentile = 100
+		assert.Equal(t, 100, c.FaceClusterPercentile())
+	})
+	t.Run("OutOfRange", func(t *testing.T) {
+		// Below 1 selects no member at all, so it reads as unset rather than as an empty cluster.
+		for _, value := range []int{0, -1, 101} {
+			c.options.FaceClusterPercentile = value
+			assert.Equal(t, face.ClusterPercentileDefault, c.FaceClusterPercentile(), "%d", value)
+		}
+	})
+	t.Run("Propagated", func(t *testing.T) {
+		restore := face.ClusterPercentile
+		t.Cleanup(func() { face.ClusterPercentile = restore })
+
+		c.options.FaceClusterPercentile = 80
+		c.Propagate()
+
+		assert.Equal(t, 80, face.ClusterPercentile)
+	})
+}
+
+// setFlagContext returns a context in which the named integer flag was given on the command line,
+// which is what tells an explicit value from the zero value of an Options built in code.
+func setFlagContext(t *testing.T, name, value string) *cli.Context {
+	t.Helper()
+
+	flags := flag.NewFlagSet("test", flag.ContinueOnError)
+	flags.Int(name, -99, "doc")
+
+	require.NoError(t, flags.Parse([]string{"--" + name, value}))
+
+	return cli.NewContext(nil, flags, nil)
+}
+
+// TestConfig_FlagIsSet covers the predicate that tells a flag an operator gave from one nobody did,
+// which is the only way a zero with a meaning can be distinguished from an unset struct field.
+func TestConfig_FlagIsSet(t *testing.T) {
+	t.Run("Set", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.cliCtx = setFlagContext(t, "face-cluster-split-rounds", "0")
+
+		assert.True(t, c.flagIsSet("face-cluster-split-rounds"))
+	})
+	t.Run("Unset", func(t *testing.T) {
+		assert.False(t, NewConfig(CliTestContext()).flagIsSet("face-cluster-split-rounds"))
+	})
+	t.Run("NoContext", func(t *testing.T) {
+		assert.False(t, (&Config{}).flagIsSet("face-cluster-split-rounds"))
+		assert.False(t, (*Config)(nil).flagIsSet("face-cluster-split-rounds"))
+	})
+}
+
+// TestConfig_FaceClusterSplitRounds covers the width guard's round budget, whose three settings do
+// not order the way their numbers suggest: zero is the strictest and the sentinel is the loosest.
+func TestConfig_FaceClusterSplitRounds(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	t.Run("Default", func(t *testing.T) {
+		assert.Equal(t, face.ClusterSplitRoundsDefault, c.FaceClusterSplitRounds())
+	})
+	t.Run("Configured", func(t *testing.T) {
+		c.options.FaceClusterSplitRounds = 8
+		assert.Equal(t, 8, c.FaceClusterSplitRounds())
+	})
+	t.Run("Off", func(t *testing.T) {
+		c.options.FaceClusterSplitRounds = face.ClusterSplitOff
+		assert.Equal(t, face.ClusterSplitOff, c.FaceClusterSplitRounds())
+	})
+	t.Run("ZeroIsNotUnset", func(t *testing.T) {
+		// The trap this getter exists for. Zero is a value - it discards a wide group - and it is
+		// also what an Options built without the flag defaults holds, so it counts only when the
+		// flag or its environment variable actually carried it.
+		c.options.FaceClusterSplitRounds = 0
+		assert.Equal(t, face.ClusterSplitRoundsDefault, c.FaceClusterSplitRounds())
+
+		explicit := NewConfig(CliTestContext())
+		explicit.cliCtx = setFlagContext(t, "face-cluster-split-rounds", "0")
+		explicit.options.FaceClusterSplitRounds = 0
+
+		assert.Equal(t, 0, explicit.FaceClusterSplitRounds(), "an explicit zero has to survive")
+	})
+	t.Run("BelowTheSentinel", func(t *testing.T) {
+		// Only one negative value carries a meaning, so a typo cannot remove the guard silently.
+		c.options.FaceClusterSplitRounds = -2
+		assert.Equal(t, face.ClusterSplitRoundsDefault, c.FaceClusterSplitRounds())
+	})
+}
+
+// TestConfig_FaceClusterSplitShrink covers the factor a split round shortens the link distance by.
+func TestConfig_FaceClusterSplitShrink(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	t.Run("Default", func(t *testing.T) {
+		assert.InDelta(t, face.ClusterSplitShrinkDefault, c.FaceClusterSplitShrink(), 1e-9)
+	})
+	t.Run("Configured", func(t *testing.T) {
+		c.options.FaceClusterSplitShrink = 0.8
+		assert.InDelta(t, 0.8, c.FaceClusterSplitShrink(), 1e-9)
+	})
+	t.Run("OutOfRange", func(t *testing.T) {
+		// One or more never shortens the distance, so every round would repeat the previous pass.
+		for _, value := range []float64{0, 1, 1.5, -0.5} {
+			c.options.FaceClusterSplitShrink = value
+			assert.InDelta(t, face.ClusterSplitShrinkDefault, c.FaceClusterSplitShrink(), 1e-9, "%g", value)
+		}
+	})
+	t.Run("Propagated", func(t *testing.T) {
+		rounds, shrink := face.ClusterSplitRounds, face.ClusterSplitShrink
+		t.Cleanup(func() { face.ClusterSplitRounds, face.ClusterSplitShrink = rounds, shrink })
+
+		c.options.FaceClusterSplitShrink = 0.8
+		c.options.FaceClusterSplitRounds = face.ClusterSplitOff
+		c.Propagate()
+
+		assert.InDelta(t, 0.8, face.ClusterSplitShrink, 1e-9)
+		assert.True(t, face.ClusterSplitDisabled())
+	})
 }
 
 // TestConfig_PropagateSampleThreshold pins the clustering trigger to FACE_CLUSTER_CORE. It is
@@ -1938,9 +2449,9 @@ func TestConfig_FaceThresholdsPerModel(t *testing.T) {
 		c.options.ModelsPath = installTestModels(t, face.ModelSFace)
 		c.options.FaceModel = face.ModelSFace
 
-		assert.Equal(t, 0.85, c.FaceClusterDist())
-		assert.Equal(t, 0.60, c.FaceClusterRadius())
-		assert.Equal(t, 0.35, c.FaceMatchDist())
+		assert.Equal(t, 0.72, c.FaceClusterDist())
+		assert.Equal(t, 0.70, c.FaceClusterRadius())
+		assert.Equal(t, 0.25, c.FaceMatchDist())
 		// Neither gap scales with the model: a collision floor that did would exclude the members
 		// of both clusters, and a wider Epsilon strands embeddings rather than telling anyone apart.
 		assert.Equal(t, face.CollisionDistDefault, c.FaceCollisionDist())
@@ -1990,9 +2501,9 @@ func TestConfig_FaceThresholdsPerModel(t *testing.T) {
 
 		require.Zero(t, c.options.FaceClusterDist)
 		require.Zero(t, c.options.FaceCollisionDist)
-		assert.Equal(t, 0.85, c.FaceClusterDist())
-		assert.Equal(t, 0.60, c.FaceClusterRadius())
-		assert.Equal(t, 0.35, c.FaceMatchDist())
+		assert.Equal(t, 0.72, c.FaceClusterDist())
+		assert.Equal(t, 0.70, c.FaceClusterRadius())
+		assert.Equal(t, 0.25, c.FaceMatchDist())
 		assert.Equal(t, face.CollisionDistDefault, c.FaceCollisionDist())
 		assert.Equal(t, face.EpsilonDefault, c.FaceEpsilonDist())
 	})
@@ -2046,8 +2557,8 @@ func TestConfig_FaceThreshold(t *testing.T) {
 		c.options.ModelsPath = installTestModels(t, face.ModelSFace)
 		c.options.FaceModel = face.ModelSFace
 
-		assert.Equal(t, 0.35, c.faceThreshold("face-match-dist", 1.6, face.MatchDistDefault, pick))
-		assert.Equal(t, 0.35, c.faceThreshold("face-match-dist", 0.001, face.MatchDistDefault, pick))
+		assert.Equal(t, 0.25, c.faceThreshold("face-match-dist", 1.6, face.MatchDistDefault, pick))
+		assert.Equal(t, 0.25, c.faceThreshold("face-match-dist", 0.001, face.MatchDistDefault, pick))
 	})
 	t.Run("InRange", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
@@ -2065,8 +2576,8 @@ func TestConfig_FaceThreshold(t *testing.T) {
 		// unguarded warning would repeat for the lifetime of the process.
 		hook := captureLog(t)
 
-		assert.Equal(t, 0.35, c.faceThreshold("face-match-dist", 1.6, face.MatchDistDefault, pick))
-		assert.Equal(t, 0.35, c.faceThreshold("face-match-dist", 1.6, face.MatchDistDefault, pick))
+		assert.Equal(t, 0.25, c.faceThreshold("face-match-dist", 1.6, face.MatchDistDefault, pick))
+		assert.Equal(t, 0.25, c.faceThreshold("face-match-dist", 1.6, face.MatchDistDefault, pick))
 
 		var warnings []string
 
@@ -2119,7 +2630,7 @@ func TestFaceModelThreshold(t *testing.T) {
 	pick := func(m *face.EmbeddingModel) float64 { return m.MatchDist }
 
 	t.Run("Model", func(t *testing.T) {
-		assert.Equal(t, 0.35, faceModelThreshold(face.FindEmbeddingModel(face.ModelSFace), pick, 0.4))
+		assert.Equal(t, 0.25, faceModelThreshold(face.FindEmbeddingModel(face.ModelSFace), pick, 0.4))
 	})
 	t.Run("NilModel", func(t *testing.T) {
 		assert.Equal(t, 0.4, faceModelThreshold(nil, pick, 0.4))
@@ -2240,17 +2751,25 @@ func TestConfig_FaceEpsilonDist(t *testing.T) {
 	c.options.FaceEpsilonDist = 0
 	assert.Equal(t, sface, c.FaceEpsilonDist())
 
-	t.Run("CappedAtTheDefault", func(t *testing.T) {
+	t.Run("CappedAtTheConfigurableCeiling", func(t *testing.T) {
 		// The gap is a void where nothing matches, and twice it retires a colliding cluster for
-		// good. Capping it at the default keeps the ambiguity cutoff at or below the fixed 0.02 it
-		// had before it became derivable, so the option can narrow that door but never widen it.
+		// good. EpsilonDistMax holds the ambiguity cutoff at or below 0.02, so the option can
+		// narrow that door but never widen it.
 		c := newSFaceTestConfig(t)
 
-		c.options.FaceEpsilonDist = face.EpsilonDefault
-		assert.Equal(t, face.EpsilonDefault, c.FaceEpsilonDist())
+		c.options.FaceEpsilonDist = face.EpsilonDistMax
+		assert.Equal(t, face.EpsilonDistMax, c.FaceEpsilonDist())
 
-		c.options.FaceEpsilonDist = face.EpsilonDefault * 2
+		c.options.FaceEpsilonDist = face.EpsilonDistMax * 2
 		assert.Equal(t, sface, c.FaceEpsilonDist(), "above the cap resolves to the model value")
+	})
+	t.Run("AboveTheDefaultButInRange", func(t *testing.T) {
+		// The ceiling does not follow the default, so narrowing the default leaves a setting that
+		// was in range still valid.
+		c := newSFaceTestConfig(t)
+
+		c.options.FaceEpsilonDist = face.EpsilonDefault * 5
+		assert.Equal(t, face.EpsilonDefault*5, c.FaceEpsilonDist())
 	})
 
 	t.Run("OutOfRangeWarns", func(t *testing.T) {

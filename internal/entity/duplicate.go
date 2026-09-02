@@ -8,7 +8,10 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
+// Duplicates represents a list of duplicate files.
 type Duplicates []Duplicate
+
+// DuplicatesMap indexes duplicate files by their name.
 type DuplicatesMap map[string]Duplicate
 
 // Duplicate represents an exact file duplicate.
@@ -96,7 +99,7 @@ func (m *Duplicate) Create() error {
 	return UnscopedDb().Create(m).Error
 }
 
-// Saves the duplicates in the database.
+// Save stores the duplicate in the database.
 func (m *Duplicate) Save() error {
 	if m.FileName == "" {
 		return fmt.Errorf("duplicate name must not be empty (save)")

@@ -99,7 +99,8 @@ func ShareSelection(originals bool) FileSelection {
 	}
 }
 
-// SelectedFiles finds files based on the given selection form, e.g. for downloading or sharing.
+// SelectedFiles finds files based on the given selection form, without limiting the result to a
+// session's scope. Handlers serving a request use SelectedFilesForSession instead.
 func SelectedFiles(frm form.Selection, o FileSelection) (results entity.Files, err error) {
 	return selectedFiles(frm, o, nil)
 }

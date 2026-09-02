@@ -4,7 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"image"
+	"os"
+	"path/filepath"
 	"sort"
+	"strings"
 
 	"github.com/dustin/go-humanize/english"
 	"gorm.io/gorm"
@@ -21,9 +25,25 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/convert"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/fs/disk"
+	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
 const facesMigrateBatchSize = 100
+
+// facesMigrateThumbSample is how many of the library's files the plan stats renditions for when it
+// measures what the thumbnail cache holds. Large enough that one unrendered file cannot decide it,
+// small enough to stay a rounding error beside the counting queries beside it.
+const facesMigrateThumbSample = 50
+
+// facesMigrateThumbLimit bounds the rendition a migration renders for a crop.
+//
+// Measured on the reference library: 83 % of the displacement between Fit1920 and the original is
+// recovered by 2560 and under 0.02 remains beyond 4096, so a wider rendition buys a face nothing.
+// It would also outlive the run: indexing skips a size above the configured limit, "photoprism
+// thumbs" never refreshes one, and nothing purges it by size.
+const facesMigrateThumbLimit = thumb.Fit4096
 
 // facesMigrateMaxFailureRatio bounds the share of attempted markers that may lose a vector the
 // library could have used, before the destructive finalize is refused. Only markers clearing both
@@ -57,16 +77,24 @@ type FacesMigratePlan struct {
 	// replacement centroid. They keep their person; they just cannot define one.
 	LowQualitySamples int64
 
-	// RecropMarkers counts markers already on the target model whose crop another detector
-	// placed, or that record none. They are re-embedded so the library ends up in one crop
-	// space, and are reported apart from stale markers because they lose nothing if that fails.
-	// On the first run after the provenance column was added, this is every marker.
+	// RecropMarkers counts markers already on the target model whose crop another detector placed,
+	// that record none, or whose sample extent was never measured. Reported apart from stale
+	// markers because they lose nothing if the re-embedding fails.
 	RecropMarkers int64
 
 	// OriginalsUnavailable reports that the originals root cannot be read, which is what an
 	// unmounted volume looks like. The counting queries cannot see it, so a plan would
 	// otherwise be reported as clean and then fail on every file it tried to re-embed.
 	OriginalsUnavailable bool
+
+	// CropCoverage reports how many markers the pre-generated thumbnails can supply a full-detail
+	// crop for. A crop is taken from a cached rendition, never from the original, so a library can
+	// be embedded from upscaled pixels while the detail sits on the same disk.
+	CropCoverage query.FaceMigrationCropCounts
+
+	// ThumbSize is the widest rendition the library already holds, measured rather than derived
+	// from the configured limit, which writes no rendition for a file that is already indexed.
+	ThumbSize thumb.Size
 }
 
 // FacesMigrateResult summarizes a completed face embedding migration.
@@ -96,6 +124,19 @@ type FacesMigrateResult struct {
 	// an unreliable detector indexed; both of these are human effort, and only they judge a floor.
 	FailedNamed  int
 	FailedManual int
+
+	// RenderedThumbs counts the renditions the run had to render because the cache held none wide
+	// enough for a file's crops, which is what it does instead of embedding from upscaled pixels.
+	// FailedThumbs counts the files it could not write one for, whose crops were upscaled after
+	// all - a storage fault rather than a property of the library, and the one part of this that
+	// nothing in the resulting vectors records.
+	RenderedThumbs int
+	FailedThumbs   int
+
+	// UnalignedCrops counts the markers an aligned model embedded from a plain box crop, whether
+	// the landmarks did not fit its template or the source could not be decoded. Only failures
+	// log, and at debug level, so without this the rate is unobservable on an ordinary run.
+	UnalignedCrops int
 
 	Unlinked          int64
 	Invalid           int64
@@ -333,16 +374,205 @@ func (w *Faces) PlanMigration(target string) (result FacesMigratePlan, err error
 	}
 
 	// Only an aligned model consumes landmarks, so only there does the detector that placed them
-	// decide the crop and with it the vector. A crop-based model reads stored geometry instead.
+	// decide the crop and with it the vector. A crop-based model reads stored geometry instead,
+	// and is counted here only for the markers whose sample extent was never recorded.
+	detectModel := ""
+
 	if model := face.FindEmbeddingModel(target); model != nil && model.Aligned() {
-		if result.RecropMarkers, err = query.FaceMigrationRecropMarkers(target, face.ActiveDetector()); err != nil {
-			return result, err
-		}
+		detectModel = face.ActiveDetector()
+	}
+
+	if result.RecropMarkers, err = query.FaceMigrationRecropMarkers(target, detectModel); err != nil {
+		return result, err
 	}
 
 	result.OriginalsUnavailable = originalsUnavailable(w.conf.OriginalsPath())
 
+	// Reported rather than returned: this is the only count in the plan that gates nothing, so a
+	// failure to measure it must not refuse the command an operator reaches for.
+	if size, coverage, coverageErr := w.migrationCropCoverage(target); coverageErr != nil {
+		log.Warnf("faces: %s (check thumbnail coverage)", coverageErr)
+	} else {
+		result.ThumbSize, result.CropCoverage = size, coverage
+	}
+
 	return result, nil
+}
+
+// migrationThumbSize returns the widest rendition the sampled files actually hold, and the one the
+// configured limit would pre-generate when there is nothing to sample.
+//
+// Measured rather than derived, because the crop path reads the files on disk while the limit only
+// says what indexing writes: raising it without running "photoprism thumbs" would otherwise report
+// coverage the crops do not have. A run renders as it goes, so a second one samples a cache the
+// first partly wrote and forecasts less work - which is true rather than misleading, since that
+// work is done.
+func (w *Faces) migrationThumbSize(files []query.FaceMigrationSampleFile) thumb.Size {
+	if w == nil || w.conf == nil || len(files) == 0 {
+		return crop.WidestCachedSize()
+	}
+
+	thumbPath := w.conf.ThumbCachePath()
+	widest := thumb.Size{}
+
+	// Ascending, stopping at the first the library does not hold: the ladder is generated as a
+	// whole, so a gap in it is where the cache was last written rather than one absent file.
+	for _, size := range crop.UsableSizes() {
+		if !thumbSizeGenerated(size, files, thumbPath) {
+			break
+		}
+
+		widest = size
+	}
+
+	return widest
+}
+
+// thumbSizeGenerated reports whether the sampled files hold this rendition.
+//
+// Files that would not be given one anyway are left out, and that question is asked of thumb.Skip
+// rather than answered here: a size the generator skips is absent from a complete cache too. A
+// size no sampled file could have ends the ladder rather than extending it, since the one below it
+// already holds those pictures at their own resolution. A tenth may be missing, because one file
+// that failed to render must not decide this for the library.
+func thumbSizeGenerated(size thumb.Size, files []query.FaceMigrationSampleFile, thumbPath string) bool {
+	var checked, missing int
+
+	for _, f := range files {
+		if thumb.Skip(size, image.Rect(0, 0, f.FileWidth, f.FileHeight)) {
+			continue
+		}
+
+		checked++
+
+		if !crop.CachedSizeExists(size, f.FileHash, thumbPath) {
+			missing++
+		}
+	}
+
+	return checked > 0 && missing*10 <= checked
+}
+
+// migrationCropThumbSize returns the smallest rendition a migration may take a crop of the
+// specified source width from, bounded by the rung it renders up to.
+func migrationCropThumbSize(file *entity.File, width int) thumb.Name {
+	return cropThumbSize(file.FileWidth, file.FileHeight, width, thumb.Sizes[facesMigrateThumbLimit])
+}
+
+// cacheMigrationCropThumb renders the rendition this file's markers need when the cache holds none
+// wide enough, and reports whether it asked for one.
+//
+// A crop is taken from a cached rendition, so without this a library indexed at a smaller
+// thumbnail limit is embedded from upscaled pixels while the detail sits in the original on the
+// same disk - and nothing downstream can tell such a vector apart, so the remedy is to run the
+// whole migration again. Rendering one file at a time here costs a decode; pre-generating the
+// whole ladder to avoid it costs the storage and the hours that made operators skip it.
+func (w *Faces) cacheMigrationCropThumb(file *entity.File, markers entity.Markers, cropWidth int) (rendered bool, err error) {
+	// A file whose dimensions were never recorded is left as it is: which rendition would help
+	// cannot be worked out from it, and the coverage report does not count it either.
+	if w == nil || w.conf == nil || file == nil || file.FileHash == "" || file.FileWidth < 1 || file.FileHeight < 1 {
+		return false, nil
+	}
+
+	required := markersCropSourceWidth(markers, cropWidth)
+	thumbPath := w.conf.ThumbCachePath()
+
+	if required < 1 {
+		return false, nil
+	}
+
+	size := thumb.Sizes[migrationCropThumbSize(file, required)]
+	want, _ := size.Fitted(file.FileWidth, file.FileHeight)
+
+	// Against what that rendition delivers rather than against what the markers asked for: a face
+	// whose original holds too little detail is at its best there, and comparing with the request
+	// would re-render for it on every run.
+	if want < 1 || cachedCropWidth(file.FileHash, file.FileWidth, file.FileHeight, thumbPath) >= want {
+		return false, nil
+	}
+
+	fileName := ConfigFileName(w.conf, file.FileRoot, file.FileName)
+
+	// The bytes have to be the ones the hash names, because this is the only writer that renders
+	// under a hash it did not compute: a file replaced in place since indexing would be written
+	// beside the detection thumbnail of the picture it replaced, and the crop taken across the two
+	// describes neither. One stat, against the second full read that hashing again would cost.
+	if info, statErr := os.Stat(fileName); statErr != nil {
+		return false, statErr
+	} else if file.FileSize > 0 && file.Changed(info.Size(), info.ModTime()) {
+		log.Debugf("faces: %s was modified after indexing, so no thumbnail is rendered for it",
+			clean.Log(filepath.Base(fileName)))
+
+		return false, nil
+	}
+
+	// Under the hash the index recorded, which is where the crop path looks: rendering through a
+	// media file would hash the bytes again, at the cost of a second full read per file.
+	if _, err = size.FromFile(fileName, file.FileHash, thumbPath, file.FileOrientation); err != nil {
+		return false, disk.AsInsufficientStorage(err)
+	}
+
+	return true, nil
+}
+
+// insufficientStorage reports whether the run must stop because the files quota is reached or the
+// storage path is critically low on free disk space, which the thumbnail worker also refuses on.
+func (w *Faces) insufficientStorage() bool {
+	if w == nil || w.conf == nil || !w.conf.InsufficientStorage() {
+		return false
+	}
+
+	// Do not leak server internals like the size of the storage volume.
+	log.Errorf("faces: aborting the migration due to insufficient storage")
+	event.ErrorMsg(i18n.ErrInsufficientStorage)
+
+	return true
+}
+
+// useMigrationThumbSizes lifts the thumbnail size limits for the duration of a migration and
+// returns the function that restores them.
+//
+// The on-demand limit exists because a search results page renders hundreds of thumbnails at once,
+// which saturates a small server. This run has the opposite shape: at most one rendition per file,
+// in a terminal, with indexing held off. Leaving the limit in force would refuse the rendition a
+// crop needs and leave the operator to repeat an hour-long run instead.
+func useMigrationThumbSizes() (restore func()) {
+	cached, onDemand := thumb.SizeCached, thumb.SizeOnDemand
+
+	if sizes := crop.UsableSizes(); len(sizes) > 0 {
+		widest := sizes[len(sizes)-1]
+		thumb.SizeOnDemand = max(thumb.SizeOnDemand, max(widest.Width, widest.Height))
+	}
+
+	return func() {
+		thumb.SizeCached, thumb.SizeOnDemand = cached, onDemand
+	}
+}
+
+// migrationCropCoverage reports the widest rendition the library already holds and how many of the
+// crops it can supply at full detail.
+//
+// A forecast rather than a verdict: the run renders what the cache is missing as it reaches each
+// file, so this states how much of that work is coming, and how much of the shortfall is in the
+// originals instead, where no rendition helps.
+func (w *Faces) migrationCropCoverage(target string) (widest thumb.Size, counts query.FaceMigrationCropCounts, err error) {
+	cropWidth := embedCropWidth(target)
+
+	sample, err := query.FaceMigrationSampleFiles(facesMigrateThumbSample)
+
+	if err != nil {
+		return widest, counts, err
+	}
+
+	widest = w.migrationThumbSize(sample)
+
+	if cropWidth < 1 || widest.Width < 1 {
+		return widest, counts, nil
+	}
+
+	counts, err = query.FaceMigrationCropCoverage(cropWidth, widest.Width, widest.Height)
+
+	return widest, counts, err
 }
 
 // originalsUnavailable reports whether the originals root is missing or holds nothing, at the cost of
@@ -450,6 +680,18 @@ func (w *Faces) Migrate(ctx context.Context, opt FacesMigrateOptions) (result Fa
 
 // migrate performs the migration itself, once the plan and the embedder are resolved.
 func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder face.Embedder, opt FacesMigrateOptions, result FacesMigrateResult) (FacesMigrateResult, error) {
+	// Here rather than around the lock, so the lift covers exactly the pass that renders crops.
+	defer useMigrationThumbSizes()()
+
+	// A run that cannot write renders its crops from whatever the cache holds, which is the
+	// outcome this pass exists to prevent and which nothing in the vectors records afterwards.
+	// Read fresh, so a volume that was freed since is not held against it.
+	disk.FlushFree()
+
+	if w.insufficientStorage() {
+		return result, status.ErrInsufficientStorage
+	}
+
 	identities, err := query.FaceMigrationIdentities()
 	if err != nil {
 		return result, err
@@ -498,6 +740,9 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 			result.Retained += fileResult.Retained
 			result.Failed += len(fileResult.Failed)
 			result.Unreadable += fileResult.Unreadable
+			result.RenderedThumbs += fileResult.Rendered
+			result.FailedThumbs += fileResult.RenderFailed
+			result.UnalignedCrops += fileResult.Unaligned
 			result.AttemptedClusterable += fileResult.Attempted
 			result.FailedClusterable += fileResult.Clusterable
 			result.FailedNamed += fileResult.Named
@@ -520,6 +765,13 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 		}
 
 		after = fileUIDs[len(fileUIDs)-1]
+
+		// Checked per batch rather than per file: the pass renders as it goes, so a volume that
+		// fills up halfway would otherwise embed the rest of the library from upscaled crops. The
+		// vectors written so far are checkpointed, so a re-run resumes rather than repeating them.
+		if w.insufficientStorage() {
+			return result, status.ErrInsufficientStorage
+		}
 
 		// A batch boundary is the natural cadence: the loop is cursor-paged, so it needs no timer,
 		// and a run over a large library is otherwise silent for the best part of an hour.
@@ -554,12 +806,14 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 	// The vectors are in the target's space from here on, so the setting follows the data even
 	// when markers failed: a start that read the previous model would hide the whole library
 	// from matching. Both have to happen before the clustering below, which is gated on them,
-	// and a write that failed is reported once the run has finished rather than losing it.
+	// and a write that failed is reported once the run has finished rather than losing it. The
+	// setter also re-propagates the target's calibrated distances, which the clustering reads
+	// from the face package rather than from the configuration.
 	settingErr := w.conf.SetFaceModel(plan.Target)
 	face.UnblockEmbeddings()
 
 	entity.UpdateFaces.Store(true)
-	if err = w.start(FacesOptions{Force: true}); err != nil {
+	if err = w.settleFaceClusters(); err != nil {
 		return result, unrecordedFaceModel(settingErr, plan.Target, err)
 	} else if err = w.Audit(false, ""); err != nil {
 		return result, unrecordedFaceModel(settingErr, plan.Target, err)
@@ -612,6 +866,51 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 	}
 
 	return result, nil
+}
+
+// facesMigrateSettleRounds bounds the clustering passes a migration runs after replacing the
+// clusters. A pass evaluates collisions and merges before it clusters, so the clusters it adds
+// defer their own to the next one, and a single pass is never a fixed point. Measured on a
+// 49,056-marker library: 12,395 markers moved, then 5,195, then 139, then none. A pass is
+// scan-dominated and costs about the same whether or not it moves anything.
+const facesMigrateSettleRounds = 4
+
+// settleFaceClusters runs clustering and matching until a pass moves nothing, or the rounds are
+// spent. Reported per round, because the operator is watching a run that is already hours old.
+func (w *Faces) settleFaceClusters() error {
+	return settleFaceClusters(facesMigrateSettleRounds, func(round int) (facesRunResult, error) {
+		result, err := w.start(FacesOptions{Force: true})
+
+		if err == nil && result.Moved() {
+			// Assigned is named beside Updated because a pass whose only work was propagating
+			// subjects from named clusters would otherwise report nothing it did.
+			log.Infof("faces: clustering pass %d updated %s, assigned %s and recognized %s",
+				round, english.Plural(result.Updated, "marker", "markers"),
+				english.Plural(result.Assigned, "marker", "markers"),
+				english.Plural(result.Recognized, "face", "faces"))
+		}
+
+		return result, err
+	})
+}
+
+// settleFaceClusters repeats a pass until it reports no work or the rounds are spent, and returns
+// the first error. The cap is what keeps a run terminating: a pass that keeps finding work would
+// otherwise hold the lock indefinitely, and the remainder is what the worker converges anyway.
+func settleFaceClusters(rounds int, run func(round int) (facesRunResult, error)) error {
+	for round := 1; round <= rounds; round++ {
+		result, err := run(round)
+
+		if err != nil {
+			return err
+		} else if !result.Moved() {
+			return nil
+		}
+	}
+
+	log.Debugf("faces: clustering did not settle within %d passes, which the worker continues", rounds)
+
+	return nil
 }
 
 // migrationEmbedder loads the embedder that writes the target's vectors and validates its
@@ -721,6 +1020,12 @@ type faceMigrationFile struct {
 	// Unreadable counts the failed markers this file lost because it could not be read at all,
 	// as distinct from the ones a successful detection did not find again.
 	Unreadable int
+	// Rendered counts the thumbnail this file needed and did not have, which is one at most, and
+	// RenderFailed the one it needed and could not be given.
+	Rendered     int
+	RenderFailed int
+	// Unaligned counts the markers an aligned model had to embed from a plain box crop.
+	Unaligned int
 	// Attempted and Clusterable count the markers that cleared both clustering bars: those this
 	// file put at risk, and those it lost. The guard needs both sides of that ratio.
 	Attempted   int
@@ -788,6 +1093,22 @@ func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) 
 		return result, err
 	}
 
+	// Before either path below, because both select the rendition they crop from by statting the
+	// cache: one that is rendered afterwards is one the run did not use.
+	if rendered, renderErr := w.cacheMigrationCropThumb(file, stale, embedCropWidth(target)); renderErr != nil {
+		// Not fatal - the crops are taken from what the cache does hold - but it is the outcome
+		// this pass exists to prevent, and it is invisible in the vectors afterwards, so it is
+		// counted and reported once rather than left to a debug line nobody has enabled.
+		result.RenderFailed = 1
+
+		if w.reportOnce("migrate-render-failed", 1) {
+			event.SystemWarn([]string{"faces", "migrate", "%s could not be given the wider thumbnail its face crops need (%s), " +
+				"so they are taken from what the cache holds"}, clean.Log(filepath.Base(file.FileName)), renderErr)
+		}
+	} else if rendered {
+		result.Rendered = 1
+	}
+
 	var generated map[string]face.Embeddings
 	var details map[string]query.MigrationDetection
 
@@ -798,9 +1119,9 @@ func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) 
 
 	if embedder.Aligned() {
 		result.Detected = true
-		generated, details, detectModel, err = w.detectMigrationEmbeddings(embedder, file, markers, stale)
+		generated, details, detectModel, result.Unaligned, err = w.detectMigrationEmbeddings(embedder, file, markers, stale)
 	} else {
-		generated, err = w.cropMigrationEmbeddings(embedder, file, stale)
+		generated, details, err = w.cropMigrationEmbeddings(embedder, file, stale)
 	}
 	if err != nil {
 		// Detection reads the file, so a failure here is the file rather than the detector
@@ -842,14 +1163,35 @@ func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) 
 		}
 	}
 
+	// A marker the sampling reached and could not re-embed keeps its vector and would otherwise be
+	// stale again on every future run, since only a regenerated one records an extent. The file was
+	// read to get here, so this is the detector declining rather than a fault that may clear.
+	if retained := retainedMigrationMarkers(unresolved, recrop); len(retained) > 0 {
+		if err = query.SettleMigrationThumbSize(markerUIDsOf(retained)); err != nil {
+			log.Warnf("faces: %s (settle sample extent)", err)
+		}
+	}
+
 	return result, nil
 }
 
-// staleMigrationMarkers returns the markers a migration to target has to re-embed, and the subset
-// of them that only needs a new crop.
+// markerUIDsOf returns the uids of the passed markers, in their current order, so a caller can name
+// a selection rather than carry the rows it was made from.
+func markerUIDsOf(markers entity.Markers) []string {
+	uids := make([]string, 0, len(markers))
+
+	for i := range markers {
+		uids = append(uids, markers[i].MarkerUID)
+	}
+
+	return uids
+}
+
+// staleMigrationMarkers returns the markers a migration to target has to re-embed, and the subset of
+// them that only needs a new crop.
 //
 // The crop is an axis of the embedding space, so an unrecorded or foreign detector makes a marker
-// stale even when its vector is the target's. A first run therefore re-crops everything.
+// stale even when its vector is the target's, and a first run re-crops everything.
 func staleMigrationMarkers(markers entity.Markers, embedder face.Embedder, target string) (stale entity.Markers, recrop map[string]bool) {
 	stale = make(entity.Markers, 0, len(markers))
 	recrop = make(map[string]bool)
@@ -863,7 +1205,12 @@ func staleMigrationMarkers(markers entity.Markers, embedder face.Embedder, targe
 
 		// Only an aligned embedder consumes landmarks, so only there does the detector decide
 		// the crop. A crop-based one reads the stored geometry whichever detector wrote it.
-		if !embedder.Aligned() || face.DetectorsComparable(markers[i].DetectModel, detector) {
+		foreignCrop := embedder.Aligned() && !face.DetectorsComparable(markers[i].DetectModel, detector)
+
+		// An unrecorded sample extent is stale for the same reason a foreign model is: nothing can
+		// judge the detail the vector rests on until a crop is sampled again. Without it a library
+		// already on the target model is skipped whole, which is where an earlier build leaves it.
+		if !foreignCrop && markers[i].ThumbSizeSettled() {
 			continue
 		}
 
@@ -919,10 +1266,12 @@ type faceMigrationLoss struct {
 }
 
 // cropMigrationEmbeddings generates embeddings directly from stored marker geometry.
-func (w *Faces) cropMigrationEmbeddings(embedder face.Embedder, file *entity.File, markers entity.Markers) (result map[string]face.Embeddings, err error) {
+func (w *Faces) cropMigrationEmbeddings(embedder face.Embedder, file *entity.File, markers entity.Markers) (result map[string]face.Embeddings, details map[string]query.MigrationDetection, err error) {
 	result = make(map[string]face.Embeddings, len(markers))
+	details = make(map[string]query.MigrationDetection, len(markers))
+
 	if w == nil || w.conf == nil || embedder == nil || file == nil {
-		return result, fmt.Errorf("faces: migration crop input is invalid")
+		return result, details, fmt.Errorf("faces: migration crop input is invalid")
 	}
 
 	width, height := embedder.CropSize()
@@ -936,7 +1285,9 @@ func (w *Faces) cropMigrationEmbeddings(embedder face.Embedder, file *entity.Fil
 			thumbName = source
 		}
 
-		img, _, cropErr := crop.ImageFromThumb(thumbName, area, size, false)
+		// ImageFromSource, not ImageFromThumb: a reused crop reports no source width, and the
+		// recorded extent is the point of this pass.
+		img, _, srcWidth, cropErr := crop.ImageFromSource(thumbName, area, size, false)
 		if cropErr != nil {
 			event.SystemWarn([]string{"faces", "migrate", "failed cropping marker %s (%s)"}, clean.Log(marker.MarkerUID), cropErr)
 			continue
@@ -944,10 +1295,19 @@ func (w *Faces) cropMigrationEmbeddings(embedder face.Embedder, file *entity.Fil
 
 		if embeddings := embedder.Run(img); face.ValidEmbeddings(embeddings, embedder.Dims()) {
 			result[marker.MarkerUID] = embeddings
+
+			if thumbSize := entity.MarkerThumbSize(area, *file, srcWidth); thumbSize > 0 {
+				details[marker.MarkerUID] = query.MigrationDetection{
+					ThumbSize: thumbSize,
+					// Against the box this crop asked for, which is the one the embedder was
+					// handed: a box-crop model resamples it onto its own input afterwards.
+					EmbedDetail: face.EmbedDetail(thumbSize, size.Width),
+				}
+			}
 		}
 	}
 
-	return result, nil
+	return result, details, nil
 }
 
 // detectMigrationEmbeddings redetects a file and maps aligned embeddings to stored markers, also
@@ -957,13 +1317,13 @@ func (w *Faces) cropMigrationEmbeddings(embedder face.Embedder, file *entity.Fil
 // size and score have to travel with it: the clustering bars are looked up by detect_model, so a
 // marker labeled with the new detector while holding the old one's score is judged at a
 // calibration it was never scored against.
-func (w *Faces) detectMigrationEmbeddings(embedder face.Embedder, file *entity.File, markers, stale entity.Markers) (result map[string]face.Embeddings, details map[string]query.MigrationDetection, detectModel string, err error) {
+func (w *Faces) detectMigrationEmbeddings(embedder face.Embedder, file *entity.File, markers, stale entity.Markers) (result map[string]face.Embeddings, details map[string]query.MigrationDetection, detectModel string, unaligned int, err error) {
 	result = make(map[string]face.Embeddings, len(stale))
 	details = make(map[string]query.MigrationDetection, len(stale))
 
 	thumbName, err := migrationDetectionThumb(w.conf, w.conf.ThumbCachePath(), file)
 	if err != nil {
-		return result, details, "", err
+		return result, details, "", 0, err
 	}
 
 	// FACE_MIGRATE_SIZE rather than FACE_SIZE: a marker's size is in pixels of the thumbnail it was
@@ -972,14 +1332,14 @@ func (w *Faces) detectMigrationEmbeddings(embedder face.Embedder, file *entity.F
 	// when a picture yields nothing, which is not this case.
 	detected, err := face.Detect(thumbName, w.conf.FaceMigrateSize())
 	if err != nil {
-		return result, details, "", err
+		return result, details, "", 0, err
 	}
 
 	// Only the detections a stored marker claims are embedded. Everything else this floor admits
 	// would be inferred and thrown away, and the smallest face decides the crop rendition for the
 	// whole file, so embedding them all would make the real crops worse as well as slower.
 	assigned, order := assignedMigrationDetections(markers, stale, detected)
-	vision.GenerateEmbeddings(embedder, thumbName, assigned, true)
+	unaligned = vision.GenerateEmbeddings(embedder, thumbName, assigned, true)
 
 	for markerUID, i := range order {
 		if detectedFace := assigned[i]; face.ValidEmbeddings(detectedFace.Embeddings, embedder.Dims()) {
@@ -987,14 +1347,16 @@ func (w *Faces) detectMigrationEmbeddings(embedder face.Embedder, file *entity.F
 			detectModel = detectedFace.DetectModel
 
 			details[markerUID] = query.MigrationDetection{
-				Landmarks: detectedFace.RelativeLandmarksJSON(),
-				Size:      detectedFace.Size(),
-				Score:     detectedFace.Score,
+				Landmarks:   detectedFace.RelativeLandmarksJSON(),
+				Size:        detectedFace.Size(),
+				Score:       detectedFace.Score,
+				ThumbSize:   detectedFace.ThumbSize,
+				EmbedDetail: detectedFace.EmbedDetail,
 			}
 		}
 	}
 
-	return result, details, detectModel, nil
+	return result, details, detectModel, unaligned, nil
 }
 
 // assignedMigrationDetections returns the detections the stale markers claim, and where each
@@ -1128,6 +1490,8 @@ func buildFaceMigrationClusters(model string) (result []query.FaceMigrationClust
 		return result, 0, 0, err
 	}
 
+	var belowCore []string
+
 	for _, subjectUID := range subjectUIDs {
 		markers, markerErr := query.FaceMigrationSubjectMarkers(model, subjectUID)
 		if markerErr != nil {
@@ -1155,7 +1519,14 @@ func buildFaceMigrationClusters(model string) (result []query.FaceMigrationClust
 			}
 		}
 
-		if len(embeddings) == 0 {
+		// A one-embedding replacement is a cluster nothing can use: matching will not offer it, and
+		// it is the subject's only one, so merging never sees a group either. The markers keep their
+		// names and stay available to clustering, which is the state they were in before.
+		if len(embeddings) < 2 {
+			if len(embeddings) > 0 {
+				belowCore = append(belowCore, subjectUID)
+			}
+
 			continue
 		}
 
@@ -1172,6 +1543,20 @@ func buildFaceMigrationClusters(model string) (result []query.FaceMigrationClust
 
 		result = append(result, query.FaceMigrationCluster{Face: *cluster, MarkerDistances: distances})
 		rebuilt++
+	}
+
+	// Named, not just counted: "this person stopped being recognized after I switched models" is
+	// otherwise undiagnosable, and the operator's remedy is to label more of their faces.
+	if len(belowCore) > 0 {
+		names := make([]string, 0, len(belowCore))
+		for _, subjUID := range belowCore {
+			names = append(names, entity.SubjNames.Log(subjUID))
+		}
+
+		event.SystemWarn([]string{
+			"faces", "migrate", "rebuilt no cluster for %s with fewer than %d usable faces", "%s",
+		}, english.Plural(len(belowCore), "subject", "subjects"), face.ManualClusterCore,
+			strings.Join(names, ", "))
 	}
 
 	return result, rebuilt, excluded, nil

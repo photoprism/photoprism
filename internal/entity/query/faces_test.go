@@ -134,6 +134,34 @@ func TestMatchFaceMarkers(t *testing.T) {
 	}
 }
 
+// TestMatchableFacesClusterCore pins that a centroid built from fewer embeddings than the core is
+// not offered for matching. It is the whole point of the count: a labeled example or a pair would
+// otherwise cast a cluster-sized accept distance over the library on that evidence.
+func TestMatchableFacesClusterCore(t *testing.T) {
+	subj := rnd.GenerateUID('j')
+
+	newFace := func(t *testing.T, id string, samples int) {
+		t.Helper()
+		require.NoError(t, entity.UnscopedDb().Create(&entity.Face{
+			ID: id, FaceSrc: entity.SrcManual, FaceKind: int(face.RegularFace),
+			SubjUID: subj, Samples: samples, EmbedModel: string(face.EmbeddingModelName()),
+		}).Error)
+		t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Face{}, "id = ?", id) })
+	}
+
+	newFace(t, "MATCHABLECORE1ONE", 1)
+	newFace(t, "MATCHABLECORE2PAIR", 2)
+	newFace(t, "MATCHABLECORE3FULL", face.ManualClusterCore)
+
+	result, err := MatchableFaces(true, false, false, false)
+	require.NoError(t, err)
+
+	ids := result.IDs()
+	assert.NotContains(t, ids, "MATCHABLECORE1ONE", "one embedding is not a centroid")
+	assert.Contains(t, ids, "MATCHABLECORE2PAIR", "two are already an average, so a pair still matches")
+	assert.Contains(t, ids, "MATCHABLECORE3FULL")
+}
+
 func TestMatchFaceMarkers_ReturnsUpdateError(t *testing.T) {
 	t.Cleanup(func() {
 		require.NoError(t, entity.Db().Migrator().RenameTable("broken", entity.Marker{}.TableName()))
@@ -319,7 +347,8 @@ func TestMergeFaces(t *testing.T) {
 		assert.Equal(t, entity.SrcManual, result.FaceSrc)
 		assert.Equal(t, "jqynvsf28rhn6b0c", result.SubjUID)
 		assert.Equal(t, 2, result.Samples)
-		assert.InDelta(t, 0.040200777224183845, result.SampleRadius, 1e-9)
+		// The stored radius is the measured spread plus Epsilon, so it follows the tolerance.
+		assert.InDelta(t, 0.030200777224183826+face.Epsilon, result.SampleRadius, 1e-9)
 		assert.Equal(t, 0, result.Collisions)
 		assert.Equal(t, float64(0), result.CollisionRadius)
 

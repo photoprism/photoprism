@@ -2,9 +2,6 @@ package photoprism
 
 import (
 	"fmt"
-	"os"
-	"strconv"
-	"strings"
 	"sync"
 	"time"
 
@@ -13,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/vector/alg"
 )
 
@@ -28,6 +26,17 @@ func (w *Faces) reportClusteringSkipped(eligible, required int) {
 
 	log.Infof("faces: %d of the %d new markers required for clustering clear the %d px size and %d score thresholds",
 		eligible, required, face.ClusterSizeThreshold, face.ClusterScore(face.ActiveDetector()))
+}
+
+// reportNoClustersFormed states that a pass ran on enough samples and formed nothing. The run
+// repeats on every wake, since no cluster advances the recency cut that would retire the samples.
+func (w *Faces) reportNoClustersFormed(samples int) {
+	if w == nil || !w.reportOnce("cluster-none-formed", samples) {
+		return
+	}
+
+	log.Infof("faces: %d samples formed no cluster, which needs %d faces of one person within a distance of %g",
+		samples, face.ClusterCore, face.ClusterDist)
 }
 
 // reportOnce reports whether a recurring condition has changed since it was last logged, so a
@@ -53,79 +62,32 @@ func (w *Faces) reportOnce(key string, value int) bool {
 	return true
 }
 
-// Defaults for the limits splitWideClusters works within.
-const (
-	faceClusterSplitRoundsDefault = 6
-	faceClusterSplitShrinkDefault = 0.95
-)
-
-// Environment variables that override the split limits, deliberately not routed through
-// internal/config: they exist to sweep values against a real library without a rebuild, not as
-// options an operator is meant to tune.
-const (
-	envFaceClusterSplitRounds = "PHOTOPRISM_FACES_CLUSTER_SPLIT_ROUNDS"
-	envFaceClusterSplitShrink = "PHOTOPRISM_FACES_CLUSTER_SPLIT_SHRINK"
-)
-
-// faceClusterSplitRounds is how often a group wider than its own accept distance may be re-clustered
-// before it is given up on. A gentler shrink needs more rounds to reach the same separation, and a
-// group that runs out of them is reported unclustered rather than cut further.
-var faceClusterSplitRounds = faceClusterSplitRoundsDefault
-
-// faceClusterSplitShrink is how much a round shortens the link distance by.
-//
-// Flat rather than sized to the overrun, since width is a chaining property and a cut sized to the
-// symptom dissolves the group into noise. Gentle because a cut is large in this many dimensions: a
-// tenth off the distance takes the median sample from ten neighbors to two.
-var faceClusterSplitShrink = faceClusterSplitShrinkDefault
-
 // splitOverrideOnce keeps the override report to one line per process.
 var splitOverrideOnce sync.Once
 
-// init applies the split limits set in the environment, keeping the default for anything invalid.
-func init() {
-	faceClusterSplitRounds = splitRoundsEnv(os.Getenv(envFaceClusterSplitRounds), faceClusterSplitRoundsDefault)
-	faceClusterSplitShrink = splitShrinkEnv(os.Getenv(envFaceClusterSplitShrink), faceClusterSplitShrinkDefault)
-}
-
-// splitShrinkEnv returns the shrink factor an environment value sets, or def when it is unset,
-// unparsable, or outside (0, 1). One or more is rejected rather than clamped, because it would spend
-// the whole round budget on passes that repeat the previous one.
-func splitShrinkEnv(v string, def float64) float64 {
-	if v = strings.TrimSpace(v); v == "" {
-		return def
-	} else if f, err := strconv.ParseFloat(v, 64); err == nil && f > 0 && f < 1 {
-		return f
-	}
-
-	return def
-}
-
-// splitRoundsEnv returns the round budget an environment value sets, or def when it is unset,
-// unparsable, or negative. Zero disables splitting, which is the only width limit an anonymous
-// cluster has, so it is a probe rather than a value to leave configured.
-func splitRoundsEnv(v string, def int) int {
-	if v = strings.TrimSpace(v); v == "" {
-		return def
-	} else if n, err := strconv.Atoi(v); err == nil && n >= 0 {
-		return n
-	}
-
-	return def
-}
-
-// reportSplitOverrides states the split limits a run used when they differ from the defaults, so
-// that a captured log names them and two runs of a sweep can be told apart afterwards.
+// reportSplitOverrides states the split limits a run used when they differ from the defaults, so a
+// captured log names them and two runs of a sweep can be told apart afterwards.
+//
+// A guard that is off warns rather than notes: it is the only width limit an anonymous cluster has,
+// so a run without it can chain a library into one person with no way back but a reset.
 func reportSplitOverrides() {
 	splitOverrideOnce.Do(func() {
-		if faceClusterSplitShrink != faceClusterSplitShrinkDefault {
+		if face.ClusterSplitShrink != face.ClusterSplitShrinkDefault {
 			log.Infof("faces: shortening the link distance by %f per split round instead of %f",
-				faceClusterSplitShrink, faceClusterSplitShrinkDefault)
+				face.ClusterSplitShrink, face.ClusterSplitShrinkDefault)
 		}
 
-		if faceClusterSplitRounds != faceClusterSplitRoundsDefault {
+		switch {
+		case face.ClusterSplitDisabled():
+			event.SystemWarn([]string{"faces", "cluster", "the cluster width guard is off, so a group holding " +
+				"several people is kept whole - unset face-cluster-split-rounds to restore it, and note that 0 " +
+				"discards such a group rather than disabling the guard"})
+		case face.ClusterSplitRounds == 0:
+			event.SystemWarn([]string{"faces", "cluster", "wide groups are discarded rather than split, because " +
+				"face-cluster-split-rounds is 0 - the guard is still on, and -1 is what switches it off"})
+		case face.ClusterSplitRounds != face.ClusterSplitRoundsDefault:
 			log.Infof("faces: splitting a wide group over at most %d rounds instead of %d",
-				faceClusterSplitRounds, faceClusterSplitRoundsDefault)
+				face.ClusterSplitRounds, face.ClusterSplitRoundsDefault)
 		}
 	})
 }
@@ -137,12 +99,58 @@ type faceClusterPart struct {
 	round      int
 }
 
+// createCluster stores one group of embeddings as a face, reporting whether the group was usable at
+// all and the face when a new row was written.
+//
+// A single embedding is not a centroid, so a group of one is refused rather than stored: matching
+// excludes it and it adopts nothing, yet it re-forms on every pass and is written again each time.
+// The core size bars what may form a cluster and is not a floor on the result, so such a group
+// reaches this point and is turned away here.
+func createCluster(part face.Embeddings, model face.ModelName) (added *entity.Face, usable bool) {
+	if len(part) < 2 {
+		return nil, false
+	}
+
+	f := entity.NewFace("", entity.SrcAuto, part, model)
+
+	if f == nil || f.ID == "" {
+		log.Errorf("faces: skipped cluster that could not be created")
+		return nil, true
+	}
+
+	if f.SkipMatching() {
+		log.Infof("faces: skipped cluster %s, its face kind is excluded from matching", f.ID)
+		return nil, true
+	}
+
+	if err := f.Create(); err == nil {
+		log.Debugf("faces: added cluster %s based on %s, radius %f", f.ID, english.Plural(f.Samples, "sample", "samples"), f.SampleRadius)
+		return f, true
+	} else if err = f.Updates(entity.Values{"updated_at": entity.Now()}); err != nil {
+		log.Errorf("faces: %s", err)
+	} else {
+		log.Debugf("faces: updated cluster %s", f.ID)
+	}
+
+	return nil, true
+}
+
 // splitWideClusters divides a group DBSCAN emitted into ones that would accept their own members.
 //
 // DBSCAN bounds the distance to a neighbor rather than the width of the result, so a line of faces
 // between two people chains both into one group that is then named as whoever is recognized in it -
 // which Face.ResolveCollision cannot see while the group is anonymous. One that fits is untouched.
 func (w *Faces) splitWideClusters(cluster face.Embeddings, dist float64, workers int) []face.Embeddings {
+	// Off, so the group passes through untested. ClusterFits is never consulted, which is what makes
+	// this a baseline that measures the guard apart from the radius definition it reads.
+	if face.ClusterSplitDisabled() {
+		if len(cluster) == 0 {
+			return nil
+		}
+
+		return []face.Embeddings{cluster}
+	}
+
 	result := make([]face.Embeddings, 0, 1)
 	queue := []faceClusterPart{{embeddings: cluster, dist: dist}}
 
@@ -168,7 +176,7 @@ func (w *Faces) splitWideClusters(cluster face.Embeddings, dist float64, workers
 			return result
 		}
 
-		if part.round >= faceClusterSplitRounds {
+		if part.round >= face.ClusterSplitRounds {
 			w.reportWideCluster(len(part.embeddings), radius, part.dist)
 			continue
 		}
@@ -205,11 +213,12 @@ func (w *Faces) reportWideCluster(samples int, radius, dist float64) {
 
 // splitDist returns the link distance the next round uses.
 func splitDist(dist float64) float64 {
-	return dist * faceClusterSplitShrink
+	return dist * face.ClusterSplitShrink
 }
 
-// splitCluster re-clusters one group at a shorter link distance. Points left below the core size
-// stay unclustered, which a later pass can still pick up.
+// splitCluster re-clusters one group at a shorter link distance. A point no part takes - because no
+// core reaches it, or because the cores that do sit in different parts - stays unclustered, which a
+// later pass can still pick up.
 func splitCluster(part faceClusterPart, workers int) ([]faceClusterPart, error) {
 	dist := splitDist(part.dist)
 
@@ -305,7 +314,7 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 		if len(sizes) > 0 {
 			log.Infof("faces: found %s", english.Plural(len(sizes), "new cluster", "new clusters"))
 		} else {
-			log.Debugf("faces: found no new clusters")
+			w.reportNoClustersFormed(len(embeddings))
 		}
 
 		results := make([]face.Embeddings, len(sizes))
@@ -326,6 +335,7 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 
 		start := time.Now()
 		resultLen := len(results)
+		inert := 0
 
 		for i, cluster := range results {
 			if time.Since(start) > time.Duration(time.Minute*15) {
@@ -334,19 +344,19 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 			}
 
 			for _, part := range w.splitWideClusters(cluster, face.ClusterDist, w.conf.IndexWorkers()) {
-				if f := entity.NewFace("", entity.SrcAuto, part, current); f == nil || f.ID == "" {
-					log.Errorf("faces: skipped cluster that could not be created")
-				} else if f.SkipMatching() {
-					log.Infof("faces: skipped cluster %s, its face kind is excluded from matching", f.ID)
-				} else if err = f.Create(); err == nil {
+				if f, ok := createCluster(part, current); !ok {
+					inert++
+				} else if f != nil {
 					added = append(added, *f)
-					log.Debugf("faces: added cluster %s based on %s, radius %f", f.ID, english.Plural(f.Samples, "sample", "samples"), f.SampleRadius)
-				} else if err = f.Updates(entity.Values{"updated_at": entity.Now()}); err != nil {
-					log.Errorf("faces: %s", err)
-				} else {
-					log.Debugf("faces: updated cluster %s", f.ID)
 				}
 			}
+		}
+
+		// Reported rather than dropped quietly, since a run that refuses many of them is describing
+		// a library the link distance does not suit.
+		if inert > 0 {
+			log.Infof("faces: skipped %s holding a single sample",
+				english.Plural(inert, "cluster", "clusters"))
 		}
 	}
 

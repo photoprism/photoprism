@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-08-07 14:04+0000\n"
+"PO-Revision-Date: 2026-09-01 06:33+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: ga\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=5; plural=n==1 ? 0 : n==2 ? 1 : (n>2 && n<7) ? 2 :(n>6 && n<11) ? 3 : 4;\n"
-"X-Generator: Weblate 2026.8\n"
+"X-Generator: Weblate 2026.8.1\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -55,8 +55,7 @@ msgstr "Úsáideadh %{n} GB as %{q} GB"
 msgid "%{n} labels found"
 msgstr "Aimsíodh %{n} lipéad"
 
-#: src/page/people/new.vue:494 src/page/people/new.vue:600
-#: src/page/people/recognized.vue:729
+#: src/page/people/new.vue:249 src/page/people/recognized.vue:279
 msgid "%{n} people found"
 msgstr "Aimsíodh %{n} duine"
 
@@ -77,15 +76,15 @@ msgstr "Tá %{s} rófhada"
 msgid "%{s} is too short"
 msgstr "Tá %{s} ró-ghearr"
 
-#: src/locales.js:437
+#: src/locales.js:438
 msgid "%d entries added to %s"
 msgstr "%d iontráil curtha le %s"
 
-#: src/locales.js:439
+#: src/locales.js:440
 msgid "%d entries removed from %s"
 msgstr "%d iontráil bainte de %s"
 
-#: src/locales.js:461
+#: src/locales.js:462
 msgid "%d files uploaded in %d s"
 msgstr "%d comhaid uaslódáilte i %d s"
 
@@ -93,7 +92,7 @@ msgstr "%d comhaid uaslódáilte i %d s"
 msgid "%s already exists"
 msgstr "%s ann cheana"
 
-#: src/locales.js:471
+#: src/locales.js:472
 msgid "%s has been restored"
 msgstr "%s athchóirithe"
 
@@ -127,6 +126,10 @@ msgstr "4 uair an chloig"
 #: src/component/share/dialog.vue:116
 msgid "A click will copy it to your clipboard."
 msgstr "Déanfaidh cliceáil é a chóipeáil chuig do ghearrthaisce."
+
+#: src/locales.js:428
+msgid "A migration is in progress"
+msgstr "Tá imirce ar siúl"
 
 #: src/component/update.vue:53
 msgid "A new version of %{s} is available:"
@@ -174,12 +177,12 @@ msgid "Account"
 msgstr "Cuntas"
 
 #: src/component/user/add/dialog.vue:261 src/component/user/add/dialog.vue:277
-#: src/component/service/add.vue:131 src/locales.js:440
+#: src/component/service/add.vue:131 src/locales.js:441
 msgid "Account created"
 msgstr "Cuntas cruthaithe"
 
 #: src/component/user/remove/dialog.vue:63 src/component/service/remove.vue:74
-#: src/locales.js:442
+#: src/locales.js:443
 msgid "Account deleted"
 msgstr "Scriosadh an cuntas"
 
@@ -195,7 +198,7 @@ msgstr "Cuntas gan aimsiú"
 msgid "Account restored"
 msgstr "Cuntas athchóirithe"
 
-#: src/locales.js:441
+#: src/locales.js:442
 msgid "Account saved"
 msgstr "Cuntas sábháilte"
 
@@ -262,7 +265,7 @@ msgid "Add"
 msgstr "Cuir"
 
 #: src/component/lightbox/sidebar.vue:480
-#: src/component/photo/edit/people.vue:97
+#: src/component/photo/edit/people.vue:97 src/page/people/new.vue:198
 msgid "Add %{s}?"
 msgstr "Cuir %{s} leis?"
 
@@ -392,7 +395,7 @@ msgstr "Tar éis dhá sheachtain"
 msgid "Album"
 msgstr "Albam"
 
-#: src/locales.js:431
+#: src/locales.js:432
 msgid "Album %s deleted"
 msgstr "Albam %s scriosta"
 
@@ -400,11 +403,11 @@ msgstr "Albam %s scriosta"
 msgid "Album Backups"
 msgstr "Cúltaca Albam"
 
-#: src/locales.js:432
+#: src/locales.js:433
 msgid "Album contents cloned"
 msgstr "Clónáilte ábhar albam"
 
-#: src/locales.js:429 src/page/albums.vue:1194
+#: src/locales.js:430 src/page/albums.vue:1194
 msgid "Album created"
 msgstr "Albam cruthaithe"
 
@@ -416,7 +419,7 @@ msgstr "Scriosadh an t-albam"
 msgid "Album not found"
 msgstr "Albam gan aimsiú"
 
-#: src/locales.js:430
+#: src/locales.js:431
 msgid "Album saved"
 msgstr "Sábháilte albam"
 
@@ -429,7 +432,7 @@ msgstr "Sábháilte albam"
 msgid "Albums"
 msgstr "Albaim"
 
-#: src/component/album/clipboard.vue:194 src/locales.js:468
+#: src/component/album/clipboard.vue:194 src/locales.js:469
 msgid "Albums deleted"
 msgstr "Albaim scriosta"
 
@@ -445,7 +448,7 @@ msgstr "Gach %{n} albam luchtaithe"
 msgid "All %{n} labels loaded"
 msgstr "Gach %{n} lipéad luchtaithe"
 
-#: src/page/people/recognized.vue:561
+#: src/page/people/recognized.vue:577
 msgid "All %{n} people loaded"
 msgstr "Gach %{n} duine luchtaithe"
 
@@ -734,7 +737,8 @@ msgstr "Agus sinn 100% féinmhaoinithe agus neamhspleách, is féidir linn geall
 msgid "Bio"
 msgstr "Bith"
 
-#: src/page/settings/account.vue:212 src/page/settings/account.vue:196
+#: src/page/settings/account.vue:212 src/component/people/edit/dialog.vue:39
+#: src/page/settings/account.vue:196
 msgid "Birth Date"
 msgstr "Dáta Breithe"
 
@@ -814,9 +818,9 @@ msgstr "Ní féidir níos mó a lódáil, shroich an teorainn"
 #: src/common/clipboard.js:103 src/common/clipboard.js:139
 #: src/page/albums.vue:1204 src/page/albums.vue:1220 src/page/labels.vue:642
 #: src/page/labels.vue:662 src/page/library/browse.vue:325
-#: src/page/library/browse.vue:341 src/page/people/new.vue:422
-#: src/page/people/new.vue:438 src/page/people/recognized.vue:494
-#: src/page/people/recognized.vue:510
+#: src/page/library/browse.vue:341 src/page/people/new.vue:438
+#: src/page/people/new.vue:454 src/page/people/recognized.vue:510
+#: src/page/people/recognized.vue:526
 msgid "Can't select more items"
 msgstr "Ní féidir níos mó míreanna a roghnú"
 
@@ -840,7 +844,7 @@ msgstr "Ní féidir níos mó míreanna a roghnú"
 #: src/component/meta/face/markers.vue:54
 #: src/component/meta/face/markers.vue:73
 #: src/component/meta/location/dialog.vue:115
-#: src/component/people/edit/dialog.vue:46
+#: src/component/people/edit/dialog.vue:72
 #: src/component/photo/album/dialog.vue:64 src/component/service/add.vue:97
 #: src/component/service/edit.vue:232 src/component/service/remove.vue:19
 #: src/component/service/upload.vue:57 src/component/settings/apps.vue:151
@@ -911,7 +915,7 @@ msgstr "Athraigh bratach phríobháideach"
 #: src/component/album/edit/dialog.vue:171
 #: src/component/label/edit/dialog.vue:109
 #: src/component/meta/camera/dialog.vue:214
-#: src/component/people/edit/dialog.vue:112
+#: src/component/people/edit/dialog.vue:143
 #: src/component/photo/batch-edit.vue:1440
 #: src/component/photo/edit/details.vue:636 src/locales.js:376
 #: src/page/settings/account.vue:447 src/page/settings/account.vue:452
@@ -930,8 +934,8 @@ msgstr "Níorbh fhéidir na hathruithe a shábháil"
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
-#: src/locales.js:428 src/page/albums.vue:1197 src/page/people/new.vue:789
-#: src/page/people/recognized.vue:304 src/page/settings/advanced.vue:507
+#: src/locales.js:429 src/page/albums.vue:1197 src/page/people/new.vue:814
+#: src/page/people/recognized.vue:320 src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
 #: src/page/settings/general.vue:646
 msgid "Changes successfully saved"
@@ -1083,7 +1087,7 @@ msgstr "Muinín"
 #: src/component/settings/passcode.vue:68
 #: src/component/settings/passcode.vue:69
 #: src/component/settings/passcode.vue:78
-#: src/component/settings/passcode.vue:94
+#: src/component/settings/passcode.vue:94 src/page/people/new.vue:101
 msgid "Confirm"
 msgstr "Deimhnigh"
 
@@ -1162,7 +1166,7 @@ msgstr "Cóipeáladh chuig an ngearrthaisce"
 msgid "Copy"
 msgstr "Cóip"
 
-#: src/locales.js:453
+#: src/locales.js:454
 msgid "Copying files from %s"
 msgstr "Comhaid á gcóipeáil ó %s"
 
@@ -1195,14 +1199,6 @@ msgstr "Níorbh fhéidir aon rud a aimsiú."
 #: src/page/settings/account.vue:286
 msgid "Country"
 msgstr "Tír"
-
-#: src/page/people/new.vue:101
-msgid "Create"
-msgstr ""
-
-#: src/page/people/new.vue:198
-msgid "Create a new person named %{name}?"
-msgstr ""
 
 #: src/page/auth/login.vue:123 src/page/auth/login.vue:130
 msgid "Create Account"
@@ -1824,7 +1820,7 @@ msgstr "Go tapa"
 
 #: src/component/album/edit/dialog.vue:77
 #: src/component/label/edit/dialog.vue:37
-#: src/component/people/edit/dialog.vue:37
+#: src/component/people/edit/dialog.vue:50
 #: src/component/photo/batch-edit.vue:1536
 #: src/component/photo/edit/info.vue:121 src/component/photo/edit/info.vue:122
 msgid "Favorite"
@@ -1865,7 +1861,7 @@ msgstr "Brabhsálaí Comhad"
 msgid "File Conversion"
 msgstr "Tiontú Comhad"
 
-#: src/locales.js:434
+#: src/locales.js:435
 msgid "File deleted"
 msgstr "Scriosadh an comhad"
 
@@ -1879,7 +1875,7 @@ msgstr "Ainm an Chomhaid"
 msgid "File not found"
 msgstr "Comhad gan aimsiú"
 
-#: src/locales.js:433
+#: src/locales.js:434
 msgid "File removed from stack"
 msgstr "Baineadh an comhad den chruach"
 
@@ -1891,7 +1887,7 @@ msgstr "Méid an Chomhaid"
 msgid "File too large"
 msgstr "Comhad ró-mhór"
 
-#: src/locales.js:460
+#: src/locales.js:461
 msgid "File uploaded"
 msgstr "Comhad uaslódáilte"
 
@@ -2061,7 +2057,7 @@ msgstr "Cabhair & Tacaíocht"
 
 #: src/component/navigation.vue:369 src/component/navigation.vue:370
 #: src/component/navigation.vue:382 src/component/navigation.vue:391
-#: src/component/navigation.vue:504 src/component/people/edit/dialog.vue:40
+#: src/component/navigation.vue:504 src/component/people/edit/dialog.vue:63
 msgid "Hidden"
 msgstr "i bhfolach"
 
@@ -2128,11 +2124,11 @@ msgstr "Cáilíocht Íomhá"
 msgid "Import"
 msgstr "Iompórtáil"
 
-#: src/locales.js:446
+#: src/locales.js:447
 msgid "Import canceled"
 msgstr "Cealaíodh an iompórtáil"
 
-#: src/locales.js:445
+#: src/locales.js:446
 msgid "Import completed in %d s"
 msgstr "Iompórtáil críochnaithe i %d s"
 
@@ -2194,11 +2190,11 @@ msgstr "Innéacs"
 msgid "Indexing"
 msgstr "Innéacsú"
 
-#: src/locales.js:450
+#: src/locales.js:451
 msgid "Indexing canceled"
 msgstr "Innéacsú cealaithe"
 
-#: src/locales.js:447
+#: src/locales.js:448
 msgid "Indexing completed in %d s"
 msgstr "Innéacsú curtha i gcrích in %d s"
 
@@ -2206,7 +2202,7 @@ msgstr "Innéacsú curtha i gcrích in %d s"
 msgid "Indexing failed"
 msgstr "Theip ar an innéacsú"
 
-#: src/locales.js:449
+#: src/locales.js:450
 msgid "Indexing files in %s"
 msgstr "Comhaid á innéacsú in %s"
 
@@ -2214,7 +2210,7 @@ msgstr "Comhaid á innéacsú in %s"
 msgid "Indexing media and sidecar files…"
 msgstr "Meáin agus comhaid taobhcharr á innéacsú…"
 
-#: src/locales.js:448
+#: src/locales.js:449
 msgid "Indexing originals..."
 msgstr "Buntéacs á innéacsú..."
 
@@ -2364,7 +2360,7 @@ msgstr "Lipéad"
 msgid "Label not found"
 msgstr "Níor aimsíodh an lipéad"
 
-#: src/locales.js:455
+#: src/locales.js:456
 msgid "Label saved"
 msgstr "Lipéad sábháilte"
 
@@ -2380,7 +2376,7 @@ msgstr "Lipéad sábháilte"
 msgid "Labels"
 msgstr "Lipéid"
 
-#: src/component/label/clipboard.vue:131 src/locales.js:454
+#: src/component/label/clipboard.vue:131 src/locales.js:455
 msgid "Labels deleted"
 msgstr "Scriosadh na lipéid"
 
@@ -2692,7 +2688,7 @@ msgstr "Is Ábhartha"
 msgid "Move Files"
 msgstr "Bog Comhaid"
 
-#: src/locales.js:452
+#: src/locales.js:453
 msgid "Moving files from %s"
 msgstr "Comhaid á mbogadh ó %s"
 
@@ -2829,8 +2825,8 @@ msgid "No more"
 msgstr "Níl níos mó"
 
 #: src/component/photo/edit/people.vue:6 src/page/people/new.vue:23
-#: src/page/people/new.vue:490 src/page/people/new.vue:596
-#: src/page/people/recognized.vue:55 src/page/people/recognized.vue:725
+#: src/page/people/new.vue:245 src/page/people/recognized.vue:275
+#: src/page/people/recognized.vue:55
 msgid "No people found"
 msgstr "Níor aimsíodh daoine"
 
@@ -2980,11 +2976,11 @@ msgstr "Uair sa tseachtain"
 msgid "One album found"
 msgstr "Aimsíodh albam amháin"
 
-#: src/locales.js:436
+#: src/locales.js:437
 msgid "One entry added to %s"
 msgstr "Cuireadh iontráil amháin le %s"
 
-#: src/locales.js:438
+#: src/locales.js:439
 msgid "One entry removed from %s"
 msgstr "Baineadh iontráil amháin de %s"
 
@@ -3000,8 +2996,7 @@ msgstr "Fuarthas fillteán amháin"
 msgid "One label found"
 msgstr "Fuarthas lipéad amháin"
 
-#: src/page/people/new.vue:492 src/page/people/new.vue:598
-#: src/page/people/recognized.vue:727
+#: src/page/people/new.vue:247 src/page/people/recognized.vue:277
 msgid "One person found"
 msgstr "Fuair duine amháin"
 
@@ -3130,7 +3125,7 @@ msgstr "Cuid de roinnt grianghraf roghnaithe"
 msgid "Password"
 msgstr "Pasfhocal"
 
-#: src/component/settings/password.vue:162 src/locales.js:444
+#: src/component/settings/password.vue:162 src/locales.js:445
 msgid "Password changed"
 msgstr "Athraíodh an pasfhocal"
 
@@ -3158,7 +3153,7 @@ msgid "People you share a link with will be able to view public contents."
 msgstr "Beidh daoine a roinneann tú nasc leo in ann féachaint ar inneachar poiblí."
 
 #: src/component/photo/clipboard.vue:303 src/component/photo/toolbar.vue:522
-#: src/locales.js:470
+#: src/locales.js:471
 msgid "Permanently deleted"
 msgstr "Scriosta go buan"
 
@@ -3166,7 +3161,7 @@ msgstr "Scriosta go buan"
 msgid "Permission denied"
 msgstr "Cead diúltaithe"
 
-#: src/model/subject.js:158
+#: src/model/subject.js:192
 msgid "Person"
 msgstr "Duine"
 
@@ -3174,7 +3169,7 @@ msgstr "Duine"
 msgid "Person cover updated"
 msgstr "Clúdach duine nuashonraithe"
 
-#: src/locales.js:459
+#: src/locales.js:460
 msgid "Person deleted"
 msgstr "Scriosadh an duine"
 
@@ -3183,7 +3178,7 @@ msgstr "Scriosadh an duine"
 msgid "Person not found"
 msgstr "Ní bhfuarthas an duine"
 
-#: src/locales.js:458
+#: src/locales.js:459
 msgid "Person saved"
 msgstr "Sábháladh an duine"
 
@@ -3362,13 +3357,14 @@ msgstr "Bunscoile"
 #: src/component/navigation.vue:126 src/component/navigation.vue:127
 #: src/component/navigation.vue:139 src/component/navigation.vue:148
 #: src/component/navigation.vue:156 src/component/navigation.vue:176
+#: src/component/people/edit/dialog.vue:66
 #: src/component/photo/batch-edit.vue:1537
 #: src/component/photo/edit/info.vue:129 src/component/photo/edit/info.vue:130
 #: src/page/settings/general.vue:200
 msgid "Private"
 msgstr "Príobháideach"
 
-#: src/locales.js:462
+#: src/locales.js:463
 msgid "Processing upload..."
 msgstr "Uaslódáil á phróiseáil..."
 
@@ -3554,7 +3550,7 @@ msgstr "Bainte"
 msgid "Removed %{name}"
 msgstr "Baineadh %{name}"
 
-#: src/locales.js:451
+#: src/locales.js:452
 msgid "Removed %d files and %d photos"
 msgstr "Baineadh %d comhaid agus %d grianghraif"
 
@@ -3683,10 +3679,10 @@ msgstr "Satailít"
 #: src/component/meta/datetime/dialog.vue:38
 #: src/component/meta/datetime/dialog.vue:39
 #: src/component/meta/datetime/dialog.vue:51
-#: src/component/people/edit/dialog.vue:30
-#: src/component/people/edit/dialog.vue:31
-#: src/component/people/edit/dialog.vue:42
-#: src/component/people/edit/dialog.vue:49
+#: src/component/people/edit/dialog.vue:40
+#: src/component/people/edit/dialog.vue:41
+#: src/component/people/edit/dialog.vue:52
+#: src/component/people/edit/dialog.vue:75
 #: src/component/photo/batch-edit.vue:483
 #: src/component/photo/edit/details.vue:396 src/component/service/edit.vue:103
 #: src/component/service/edit.vue:235 src/component/service/edit.vue:93
@@ -3802,19 +3798,19 @@ msgstr "Roghnaigh Am"
 msgid "Selection"
 msgstr "Rogha"
 
-#: src/locales.js:435
+#: src/locales.js:436
 msgid "Selection added to %s"
 msgstr "Cuireadh an rogha le %s"
 
-#: src/component/photo/clipboard.vue:251 src/locales.js:464
+#: src/component/photo/clipboard.vue:251 src/locales.js:465
 msgid "Selection approved"
 msgstr "Faomhadh an roghnúcháin"
 
-#: src/component/photo/clipboard.vue:282 src/locales.js:465
+#: src/component/photo/clipboard.vue:282 src/locales.js:466
 msgid "Selection archived"
 msgstr "Roghnaithe sa chartlann"
 
-#: src/locales.js:467
+#: src/locales.js:468
 msgid "Selection marked as private"
 msgstr "Roghnú marcáilte mar phríobháideach"
 
@@ -3822,7 +3818,7 @@ msgstr "Roghnú marcáilte mar phríobháideach"
 msgid "Selection not found"
 msgstr "Níor aimsíodh an rogha"
 
-#: src/component/photo/clipboard.vue:318 src/locales.js:466
+#: src/component/photo/clipboard.vue:318 src/locales.js:467
 msgid "Selection restored"
 msgstr "Athchóiríodh an roghnúchán"
 
@@ -3881,7 +3877,7 @@ msgid "Settings"
 msgstr "Socruithe"
 
 #: src/page/settings/account.vue:533 src/page/settings/account.vue:562
-#: src/component/settings/passcode.vue:366 src/locales.js:443
+#: src/component/settings/passcode.vue:366 src/locales.js:444
 #: src/page/settings/account.vue:441 src/page/settings/account.vue:470
 msgid "Settings saved"
 msgstr "Socruithe sábháilte"
@@ -4164,7 +4160,7 @@ msgstr "Sráideanna"
 msgid "Subject"
 msgstr "Ábhar"
 
-#: src/locales.js:457
+#: src/locales.js:458
 msgid "Subject deleted"
 msgstr "Scriosadh an t-ábhar"
 
@@ -4172,11 +4168,11 @@ msgstr "Scriosadh an t-ábhar"
 msgid "Subject not found"
 msgstr "Ní bhfuarthas an t-ábhar"
 
-#: src/locales.js:456
+#: src/locales.js:457
 msgid "Subject saved"
 msgstr "Ábhar sábháilte"
 
-#: src/component/settings/passcode.vue:351 src/locales.js:473
+#: src/component/settings/passcode.vue:351 src/locales.js:474
 msgid "Successfully activated"
 msgstr "Cuireadh i ngníomh go rathúil"
 
@@ -4189,7 +4185,7 @@ msgstr "D'éirigh leis Ceangailte"
 msgid "Successfully deleted"
 msgstr "Scriosadh go rathúil"
 
-#: src/component/settings/passcode.vue:323 src/locales.js:472
+#: src/component/settings/passcode.vue:323 src/locales.js:473
 msgid "Successfully verified"
 msgstr "D'éirigh leis a fhíorú"
 
@@ -4545,7 +4541,7 @@ msgstr "Uaslódáil iomlán. Innéacsú…"
 msgid "Upload failed"
 msgstr "Theip ar an uaslódáil"
 
-#: src/locales.js:463
+#: src/locales.js:464
 msgid "Upload has been processed"
 msgstr "Próiseáladh an t-uaslódáil"
 
@@ -4669,6 +4665,10 @@ msgstr "Veicteoirí"
 #: src/component/settings/passcode.vue:92 src/page/auth/login.vue:62
 msgid "Verification Code"
 msgstr "Cód Fíoraithe"
+
+#: src/component/people/edit/dialog.vue:56
+msgid "Verified"
+msgstr "Fíoraithe"
 
 #: src/locales.js:427
 msgid "Verified email required"
@@ -4874,7 +4874,7 @@ msgstr "Cuidíonn do thacaíocht leanúnach linn nuashonruithe rialta a sholáth
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "Déantar anailís leanúnach ar do leabharlann chun albam chuimhneacháin, thurais agus áiteanna speisialta a chruthú go huathoibríoch."
 
-#: src/locales.js:469
+#: src/locales.js:470
 msgid "Zip created in %d s"
 msgstr "Zip cruthaithe i %d s"
 
@@ -4932,6 +4932,12 @@ msgstr "Teideal"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Cartlann"
+
+#~ msgid "Create"
+#~ msgstr "Cruthaithe"
+
+#~ msgid "Create a new person named %{name}?"
+#~ msgstr "Cruthaigh duine nua darbh ainm %{name}?"
 
 #~ msgid "%{n} files uploaded"
 #~ msgstr "%{n} comhad uaslódála"

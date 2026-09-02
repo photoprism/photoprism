@@ -68,6 +68,13 @@ func TestAcceptDist(t *testing.T) {
 	})
 }
 
+// TestClusterSizeThresholdDefault pins the clustering bar to the aligned crop the models consume,
+// which is what makes it independent of the thumbnail cache. A literal would let the two drift.
+func TestClusterSizeThresholdDefault(t *testing.T) {
+	assert.Equal(t, ArcFaceTemplateSize, ClusterSizeThresholdDefault)
+	assert.Greater(t, ClusterSizeThresholdDefault, SizeThresholdDefault, "a face may be detected without being able to seed a person")
+}
+
 // TestAmbiguityDist pins the cutoff to Epsilon rather than to a literal. The two came apart once
 // already: the cutoff stayed at 0.02 while Epsilon was scaled per model.
 func TestAmbiguityDist(t *testing.T) {
@@ -76,7 +83,21 @@ func TestAmbiguityDist(t *testing.T) {
 
 	t.Run("Default", func(t *testing.T) {
 		Epsilon = EpsilonDefault
-		assert.InDelta(t, 0.02, AmbiguityDist(), 0.0001)
+		assert.InDelta(t, 0.002, AmbiguityDist(), 1e-9)
+	})
+	t.Run("BoundedByTheConfigurableCeiling", func(t *testing.T) {
+		// EpsilonDistMax is what an operator may set, so the cutoff can be narrowed from the
+		// default but never widened past the 0.02 that the ceiling produces.
+		Epsilon = EpsilonDistMax
+		assert.InDelta(t, 0.02, AmbiguityDist(), 1e-9)
+	})
+	t.Run("DefaultLeavesRoomToWiden", func(t *testing.T) {
+		// The ceiling has to stay above the default, or an operator could only ever narrow the
+		// cutoff and a value that was in range before would resolve back to the default.
+		assert.Less(t, float64(EpsilonDefault), float64(EpsilonDistMax))
+		// Below CollisionDist, since a gap wider than the floor a recorded radius has to clear
+		// would leave resolution recording a radius nothing enforces at any distance.
+		assert.Less(t, float64(EpsilonDistMax), float64(CollisionDistDefault))
 	})
 	t.Run("FollowsEpsilon", func(t *testing.T) {
 		// FACE_EPSILON_DIST reaches this through Config.Propagate, so an operator narrowing the
@@ -96,7 +117,7 @@ func TestAmbiguousMatch(t *testing.T) {
 	MatchMargin = MatchMarginDefault
 
 	t.Run("RunnerUpTooClose", func(t *testing.T) {
-		assert.True(t, AmbiguousMatch(0.70, 0.72))
+		assert.True(t, AmbiguousMatch(0.70, 0.70+MatchMarginDefault/2))
 	})
 	t.Run("ClearWinner", func(t *testing.T) {
 		assert.False(t, AmbiguousMatch(0.40, 0.90))

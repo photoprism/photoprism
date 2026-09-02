@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: photoprism\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-08-07 14:04+0000\n"
+"PO-Revision-Date: 2026-09-01 06:33+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Hungarian <https://translate.photoprism.app/projects/photoprism/frontend/hu/>\n"
 "Language: hu\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 2026.8\n"
+"X-Generator: Weblate 2026.8.1\n"
 
 #: src/locales.js:272
 msgid "{0} appended action"
@@ -57,8 +57,7 @@ msgstr "%{n} GB %{q} GB használt"
 msgid "%{n} labels found"
 msgstr "%{n} címke találat"
 
-#: src/page/people/new.vue:494 src/page/people/new.vue:600
-#: src/page/people/recognized.vue:729
+#: src/page/people/new.vue:249 src/page/people/recognized.vue:279
 msgid "%{n} people found"
 msgstr "%{n} ember találat"
 
@@ -79,15 +78,15 @@ msgstr "%{s} túl hosszú"
 msgid "%{s} is too short"
 msgstr "%{s} túl rövid"
 
-#: src/locales.js:437
+#: src/locales.js:438
 msgid "%d entries added to %s"
 msgstr "%d bejegyzés hozzáadva a következőhöz: %s"
 
-#: src/locales.js:439
+#: src/locales.js:440
 msgid "%d entries removed from %s"
 msgstr "%d bejegyzés eltávolítva innen: %s"
 
-#: src/locales.js:461
+#: src/locales.js:462
 msgid "%d files uploaded in %d s"
 msgstr "%d fájl feltöltve %d másodperc alatt"
 
@@ -95,7 +94,7 @@ msgstr "%d fájl feltöltve %d másodperc alatt"
 msgid "%s already exists"
 msgstr "%s már létezik"
 
-#: src/locales.js:471
+#: src/locales.js:472
 msgid "%s has been restored"
 msgstr "%s visszaállítva"
 
@@ -129,6 +128,10 @@ msgstr "4 óra"
 #: src/component/share/dialog.vue:116
 msgid "A click will copy it to your clipboard."
 msgstr "A kattintás egy másolatot helyez a vágólapra."
+
+#: src/locales.js:428
+msgid "A migration is in progress"
+msgstr "A migráció jelenleg is zajlik"
 
 #: src/component/update.vue:53
 msgid "A new version of %{s} is available:"
@@ -176,12 +179,12 @@ msgid "Account"
 msgstr "Fiók"
 
 #: src/component/user/add/dialog.vue:261 src/component/user/add/dialog.vue:277
-#: src/component/service/add.vue:131 src/locales.js:440
+#: src/component/service/add.vue:131 src/locales.js:441
 msgid "Account created"
 msgstr "Fiók létrehozva"
 
 #: src/component/user/remove/dialog.vue:63 src/component/service/remove.vue:74
-#: src/locales.js:442
+#: src/locales.js:443
 msgid "Account deleted"
 msgstr "Fiók törölve"
 
@@ -197,7 +200,7 @@ msgstr "Fiók nem található"
 msgid "Account restored"
 msgstr "Fiók visszaállítva"
 
-#: src/locales.js:441
+#: src/locales.js:442
 msgid "Account saved"
 msgstr "Fiók mentve"
 
@@ -264,7 +267,7 @@ msgid "Add"
 msgstr "Add"
 
 #: src/component/lightbox/sidebar.vue:480
-#: src/component/photo/edit/people.vue:97
+#: src/component/photo/edit/people.vue:97 src/page/people/new.vue:198
 msgid "Add %{s}?"
 msgstr "Add %{s}?"
 
@@ -394,7 +397,7 @@ msgstr "Két hét után"
 msgid "Album"
 msgstr "Album"
 
-#: src/locales.js:431
+#: src/locales.js:432
 msgid "Album %s deleted"
 msgstr "%s album törölve"
 
@@ -402,11 +405,11 @@ msgstr "%s album törölve"
 msgid "Album Backups"
 msgstr "Album biztonsági mentések"
 
-#: src/locales.js:432
+#: src/locales.js:433
 msgid "Album contents cloned"
 msgstr "Album tartalma klónozva"
 
-#: src/locales.js:429 src/page/albums.vue:1194
+#: src/locales.js:430 src/page/albums.vue:1194
 msgid "Album created"
 msgstr "Album létrehozva"
 
@@ -418,7 +421,7 @@ msgstr "Album törölve"
 msgid "Album not found"
 msgstr "Album nem található"
 
-#: src/locales.js:430
+#: src/locales.js:431
 msgid "Album saved"
 msgstr "Album mentve"
 
@@ -431,7 +434,7 @@ msgstr "Album mentve"
 msgid "Albums"
 msgstr "Albumok"
 
-#: src/component/album/clipboard.vue:194 src/locales.js:468
+#: src/component/album/clipboard.vue:194 src/locales.js:469
 msgid "Albums deleted"
 msgstr "Albumok törölve"
 
@@ -447,7 +450,7 @@ msgstr "Összesen %{n} album betöltve"
 msgid "All %{n} labels loaded"
 msgstr "Összesen %{n} címke betöltve"
 
-#: src/page/people/recognized.vue:561
+#: src/page/people/recognized.vue:577
 msgid "All %{n} people loaded"
 msgstr "Összesen %{n} ember betöltve"
 
@@ -736,7 +739,8 @@ msgstr "Mivel 100%-ban önfinanszírozók és függetlenek vagyunk, megígérhet
 msgid "Bio"
 msgstr "Bio"
 
-#: src/page/settings/account.vue:212 src/page/settings/account.vue:196
+#: src/page/settings/account.vue:212 src/component/people/edit/dialog.vue:39
+#: src/page/settings/account.vue:196
 msgid "Birth Date"
 msgstr "Születési dátum"
 
@@ -816,9 +820,9 @@ msgstr "Nem tölthet be többet, elérte a korlátot"
 #: src/common/clipboard.js:103 src/common/clipboard.js:139
 #: src/page/albums.vue:1204 src/page/albums.vue:1220 src/page/labels.vue:642
 #: src/page/labels.vue:662 src/page/library/browse.vue:325
-#: src/page/library/browse.vue:341 src/page/people/new.vue:422
-#: src/page/people/new.vue:438 src/page/people/recognized.vue:494
-#: src/page/people/recognized.vue:510
+#: src/page/library/browse.vue:341 src/page/people/new.vue:438
+#: src/page/people/new.vue:454 src/page/people/recognized.vue:510
+#: src/page/people/recognized.vue:526
 msgid "Can't select more items"
 msgstr "Nem lehet több elemet kiválasztani"
 
@@ -842,7 +846,7 @@ msgstr "Nem lehet több elemet kiválasztani"
 #: src/component/meta/face/markers.vue:54
 #: src/component/meta/face/markers.vue:73
 #: src/component/meta/location/dialog.vue:115
-#: src/component/people/edit/dialog.vue:46
+#: src/component/people/edit/dialog.vue:72
 #: src/component/photo/album/dialog.vue:64 src/component/service/add.vue:97
 #: src/component/service/edit.vue:232 src/component/service/remove.vue:19
 #: src/component/service/upload.vue:57 src/component/settings/apps.vue:151
@@ -913,7 +917,7 @@ msgstr "Privát fotóként jelölés"
 #: src/component/album/edit/dialog.vue:171
 #: src/component/label/edit/dialog.vue:109
 #: src/component/meta/camera/dialog.vue:214
-#: src/component/people/edit/dialog.vue:112
+#: src/component/people/edit/dialog.vue:143
 #: src/component/photo/batch-edit.vue:1440
 #: src/component/photo/edit/details.vue:636 src/locales.js:376
 #: src/page/settings/account.vue:447 src/page/settings/account.vue:452
@@ -932,8 +936,8 @@ msgstr "Módosításokat nem sikerült menteni"
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
-#: src/locales.js:428 src/page/albums.vue:1197 src/page/people/new.vue:789
-#: src/page/people/recognized.vue:304 src/page/settings/advanced.vue:507
+#: src/locales.js:429 src/page/albums.vue:1197 src/page/people/new.vue:814
+#: src/page/people/recognized.vue:320 src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
 #: src/page/settings/general.vue:646
 msgid "Changes successfully saved"
@@ -1085,7 +1089,7 @@ msgstr "Pontosság"
 #: src/component/settings/passcode.vue:68
 #: src/component/settings/passcode.vue:69
 #: src/component/settings/passcode.vue:78
-#: src/component/settings/passcode.vue:94
+#: src/component/settings/passcode.vue:94 src/page/people/new.vue:101
 msgid "Confirm"
 msgstr "megerősít"
 
@@ -1164,7 +1168,7 @@ msgstr "Vágólapra másolva"
 msgid "Copy"
 msgstr "Másolat"
 
-#: src/locales.js:453
+#: src/locales.js:454
 msgid "Copying files from %s"
 msgstr "Fájlok másolása innen: %s"
 
@@ -1197,14 +1201,6 @@ msgstr "Nem találtunk semmit."
 #: src/page/settings/account.vue:286
 msgid "Country"
 msgstr "Ország"
-
-#: src/page/people/new.vue:101
-msgid "Create"
-msgstr ""
-
-#: src/page/people/new.vue:198
-msgid "Create a new person named %{name}?"
-msgstr ""
 
 #: src/page/auth/login.vue:123 src/page/auth/login.vue:130
 msgid "Create Account"
@@ -1826,7 +1822,7 @@ msgstr "Gyors"
 
 #: src/component/album/edit/dialog.vue:77
 #: src/component/label/edit/dialog.vue:37
-#: src/component/people/edit/dialog.vue:37
+#: src/component/people/edit/dialog.vue:50
 #: src/component/photo/batch-edit.vue:1536
 #: src/component/photo/edit/info.vue:121 src/component/photo/edit/info.vue:122
 msgid "Favorite"
@@ -1867,7 +1863,7 @@ msgstr "Fájl böngésző"
 msgid "File Conversion"
 msgstr "Fájl átalakítás"
 
-#: src/locales.js:434
+#: src/locales.js:435
 msgid "File deleted"
 msgstr "Fájl törölve"
 
@@ -1881,7 +1877,7 @@ msgstr "Fájlnév"
 msgid "File not found"
 msgstr "Fájl nem található"
 
-#: src/locales.js:433
+#: src/locales.js:434
 msgid "File removed from stack"
 msgstr "Fájl eltávolítva a halomból"
 
@@ -1893,7 +1889,7 @@ msgstr "Fájl méret"
 msgid "File too large"
 msgstr "Túl nagy fájl"
 
-#: src/locales.js:460
+#: src/locales.js:461
 msgid "File uploaded"
 msgstr "Fájl feltöltve"
 
@@ -2063,7 +2059,7 @@ msgstr "Segítség & Támogatás"
 
 #: src/component/navigation.vue:369 src/component/navigation.vue:370
 #: src/component/navigation.vue:382 src/component/navigation.vue:391
-#: src/component/navigation.vue:504 src/component/people/edit/dialog.vue:40
+#: src/component/navigation.vue:504 src/component/people/edit/dialog.vue:63
 msgid "Hidden"
 msgstr "Rejtett"
 
@@ -2130,11 +2126,11 @@ msgstr "Képminőség"
 msgid "Import"
 msgstr "Importálás"
 
-#: src/locales.js:446
+#: src/locales.js:447
 msgid "Import canceled"
 msgstr "Importálás megszakítva"
 
-#: src/locales.js:445
+#: src/locales.js:446
 msgid "Import completed in %d s"
 msgstr "Importálás %d másodperc alatt befejeződött"
 
@@ -2196,11 +2192,11 @@ msgstr "Index"
 msgid "Indexing"
 msgstr "Indexelés"
 
-#: src/locales.js:450
+#: src/locales.js:451
 msgid "Indexing canceled"
 msgstr "Indexelés megszakítva"
 
-#: src/locales.js:447
+#: src/locales.js:448
 msgid "Indexing completed in %d s"
 msgstr "Indexelés %d másodperc alatt befejeződött"
 
@@ -2208,7 +2204,7 @@ msgstr "Indexelés %d másodperc alatt befejeződött"
 msgid "Indexing failed"
 msgstr "Az indexelés nem sikerült"
 
-#: src/locales.js:449
+#: src/locales.js:450
 msgid "Indexing files in %s"
 msgstr "Fájlok indexelése itt: %s"
 
@@ -2216,7 +2212,7 @@ msgstr "Fájlok indexelése itt: %s"
 msgid "Indexing media and sidecar files…"
 msgstr "Média- és oldalsó fájlok indexelése…"
 
-#: src/locales.js:448
+#: src/locales.js:449
 msgid "Indexing originals..."
 msgstr "Eredeti dokumentumok indexelése..."
 
@@ -2366,7 +2362,7 @@ msgstr "Címke"
 msgid "Label not found"
 msgstr "Címke nem található"
 
-#: src/locales.js:455
+#: src/locales.js:456
 msgid "Label saved"
 msgstr "Címkék mentve"
 
@@ -2382,7 +2378,7 @@ msgstr "Címkék mentve"
 msgid "Labels"
 msgstr "Címkék"
 
-#: src/component/label/clipboard.vue:131 src/locales.js:454
+#: src/component/label/clipboard.vue:131 src/locales.js:455
 msgid "Labels deleted"
 msgstr "Címkék törölve"
 
@@ -2694,7 +2690,7 @@ msgstr "Legrelevánsabb"
 msgid "Move Files"
 msgstr "Fájlok áthelyezése"
 
-#: src/locales.js:452
+#: src/locales.js:453
 msgid "Moving files from %s"
 msgstr "Fájlok áthelyezése innen: %s"
 
@@ -2831,8 +2827,8 @@ msgid "No more"
 msgstr "Nem több"
 
 #: src/component/photo/edit/people.vue:6 src/page/people/new.vue:23
-#: src/page/people/new.vue:490 src/page/people/new.vue:596
-#: src/page/people/recognized.vue:55 src/page/people/recognized.vue:725
+#: src/page/people/new.vue:245 src/page/people/recognized.vue:275
+#: src/page/people/recognized.vue:55
 msgid "No people found"
 msgstr "Nem találhatók személyek"
 
@@ -2982,11 +2978,11 @@ msgstr "Hetente egyszer"
 msgid "One album found"
 msgstr "Egy albumot találtunk"
 
-#: src/locales.js:436
+#: src/locales.js:437
 msgid "One entry added to %s"
 msgstr "Egy bejegyzés hozzáadva a következőhöz: %s"
 
-#: src/locales.js:438
+#: src/locales.js:439
 msgid "One entry removed from %s"
 msgstr "Egy bejegyzés eltávolítva innen: %s"
 
@@ -3002,8 +2998,7 @@ msgstr "Egy mappa található"
 msgid "One label found"
 msgstr "Egy címkét találtunk"
 
-#: src/page/people/new.vue:492 src/page/people/new.vue:598
-#: src/page/people/recognized.vue:727
+#: src/page/people/new.vue:247 src/page/people/recognized.vue:277
 msgid "One person found"
 msgstr "Egy személyt találtak"
 
@@ -3132,7 +3127,7 @@ msgstr "Néhány kiválasztott fotó egy része"
 msgid "Password"
 msgstr "Jelszó"
 
-#: src/component/settings/password.vue:162 src/locales.js:444
+#: src/component/settings/password.vue:162 src/locales.js:445
 msgid "Password changed"
 msgstr "A jelszó megváltozott"
 
@@ -3160,7 +3155,7 @@ msgid "People you share a link with will be able to view public contents."
 msgstr "Azok, akikkel megoszt egy linket, nyilvános tartalmakat tekinthetnek meg."
 
 #: src/component/photo/clipboard.vue:303 src/component/photo/toolbar.vue:522
-#: src/locales.js:470
+#: src/locales.js:471
 msgid "Permanently deleted"
 msgstr "Véglegesen törölve"
 
@@ -3168,7 +3163,7 @@ msgstr "Véglegesen törölve"
 msgid "Permission denied"
 msgstr "Engedély megtagadva"
 
-#: src/model/subject.js:158
+#: src/model/subject.js:192
 msgid "Person"
 msgstr "Személy"
 
@@ -3176,7 +3171,7 @@ msgstr "Személy"
 msgid "Person cover updated"
 msgstr "Személyi fedezet frissítve"
 
-#: src/locales.js:459
+#: src/locales.js:460
 msgid "Person deleted"
 msgstr "Személy törölve"
 
@@ -3185,7 +3180,7 @@ msgstr "Személy törölve"
 msgid "Person not found"
 msgstr "Személy nem található"
 
-#: src/locales.js:458
+#: src/locales.js:459
 msgid "Person saved"
 msgstr "Személy mentve"
 
@@ -3364,13 +3359,14 @@ msgstr "Elsődleges"
 #: src/component/navigation.vue:126 src/component/navigation.vue:127
 #: src/component/navigation.vue:139 src/component/navigation.vue:148
 #: src/component/navigation.vue:156 src/component/navigation.vue:176
+#: src/component/people/edit/dialog.vue:66
 #: src/component/photo/batch-edit.vue:1537
 #: src/component/photo/edit/info.vue:129 src/component/photo/edit/info.vue:130
 #: src/page/settings/general.vue:200
 msgid "Private"
 msgstr "Privát"
 
-#: src/locales.js:462
+#: src/locales.js:463
 msgid "Processing upload..."
 msgstr "Feltöltés feldolgozása..."
 
@@ -3556,7 +3552,7 @@ msgstr "Eltávolított"
 msgid "Removed %{name}"
 msgstr "A %{name} eltávolítva"
 
-#: src/locales.js:451
+#: src/locales.js:452
 msgid "Removed %d files and %d photos"
 msgstr "%d fájl és %d fénykép eltávolítva"
 
@@ -3685,10 +3681,10 @@ msgstr "Műholdas"
 #: src/component/meta/datetime/dialog.vue:38
 #: src/component/meta/datetime/dialog.vue:39
 #: src/component/meta/datetime/dialog.vue:51
-#: src/component/people/edit/dialog.vue:30
-#: src/component/people/edit/dialog.vue:31
-#: src/component/people/edit/dialog.vue:42
-#: src/component/people/edit/dialog.vue:49
+#: src/component/people/edit/dialog.vue:40
+#: src/component/people/edit/dialog.vue:41
+#: src/component/people/edit/dialog.vue:52
+#: src/component/people/edit/dialog.vue:75
 #: src/component/photo/batch-edit.vue:483
 #: src/component/photo/edit/details.vue:396 src/component/service/edit.vue:103
 #: src/component/service/edit.vue:235 src/component/service/edit.vue:93
@@ -3804,19 +3800,19 @@ msgstr "Idő kiválasztása"
 msgid "Selection"
 msgstr "Kiválasztás"
 
-#: src/locales.js:435
+#: src/locales.js:436
 msgid "Selection added to %s"
 msgstr "Választék hozzáadva a következőhöz: %s"
 
-#: src/component/photo/clipboard.vue:251 src/locales.js:464
+#: src/component/photo/clipboard.vue:251 src/locales.js:465
 msgid "Selection approved"
 msgstr "Kiválasztás jóváhagyva"
 
-#: src/component/photo/clipboard.vue:282 src/locales.js:465
+#: src/component/photo/clipboard.vue:282 src/locales.js:466
 msgid "Selection archived"
 msgstr "A kijelölés archiválva"
 
-#: src/locales.js:467
+#: src/locales.js:468
 msgid "Selection marked as private"
 msgstr "A kijelölés privátként megjelölve"
 
@@ -3824,7 +3820,7 @@ msgstr "A kijelölés privátként megjelölve"
 msgid "Selection not found"
 msgstr "Kiválasztás nem található"
 
-#: src/component/photo/clipboard.vue:318 src/locales.js:466
+#: src/component/photo/clipboard.vue:318 src/locales.js:467
 msgid "Selection restored"
 msgstr "Kiválasztás visszaállítva"
 
@@ -3883,7 +3879,7 @@ msgid "Settings"
 msgstr "Beállítások"
 
 #: src/page/settings/account.vue:533 src/page/settings/account.vue:562
-#: src/component/settings/passcode.vue:366 src/locales.js:443
+#: src/component/settings/passcode.vue:366 src/locales.js:444
 #: src/page/settings/account.vue:441 src/page/settings/account.vue:470
 msgid "Settings saved"
 msgstr "Beállítások elmentve"
@@ -4166,7 +4162,7 @@ msgstr "Utcák"
 msgid "Subject"
 msgstr "Tárgy"
 
-#: src/locales.js:457
+#: src/locales.js:458
 msgid "Subject deleted"
 msgstr "Tárgy törölve"
 
@@ -4174,11 +4170,11 @@ msgstr "Tárgy törölve"
 msgid "Subject not found"
 msgstr "Tárgy nem található"
 
-#: src/locales.js:456
+#: src/locales.js:457
 msgid "Subject saved"
 msgstr "Tárgy mentve"
 
-#: src/component/settings/passcode.vue:351 src/locales.js:473
+#: src/component/settings/passcode.vue:351 src/locales.js:474
 msgid "Successfully activated"
 msgstr "Sikeres aktiválás"
 
@@ -4191,7 +4187,7 @@ msgstr "Sikeresen csatlakoztatva"
 msgid "Successfully deleted"
 msgstr "Sikeresen törölve"
 
-#: src/component/settings/passcode.vue:323 src/locales.js:472
+#: src/component/settings/passcode.vue:323 src/locales.js:473
 msgid "Successfully verified"
 msgstr "Sikeresen ellenőrizve"
 
@@ -4547,7 +4543,7 @@ msgstr "Feltöltés kész. Indexelés…"
 msgid "Upload failed"
 msgstr "Feltöltés sikertelen"
 
-#: src/locales.js:463
+#: src/locales.js:464
 msgid "Upload has been processed"
 msgstr "Feltöltött fájlok feldolgozva"
 
@@ -4671,6 +4667,10 @@ msgstr "Vektorok"
 #: src/component/settings/passcode.vue:92 src/page/auth/login.vue:62
 msgid "Verification Code"
 msgstr "Ellenőrző kód"
+
+#: src/component/people/edit/dialog.vue:56
+msgid "Verified"
+msgstr "Ellenőrzött"
 
 #: src/locales.js:427
 msgid "Verified email required"
@@ -4876,7 +4876,7 @@ msgstr "Folyamatos támogatása segít nekünk olyan szolgáltatásokat nyújtan
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "Könyvtárát folyamatosan elemzi a rendszer, hogy automatikusan létrehozza a különleges pillanatokat, utazásokat és helyeket tartalmazó albumokat."
 
-#: src/locales.js:469
+#: src/locales.js:470
 msgid "Zip created in %d s"
 msgstr "A tömörített fájl létrejött %d másodperc alatt"
 
@@ -4934,6 +4934,12 @@ msgstr "Cím"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Archívum"
+
+#~ msgid "Create"
+#~ msgstr "Létrehozva"
+
+#~ msgid "Create a new person named %{name}?"
+#~ msgstr "Létrehozzon egy új személyt %{name} néven?"
 
 #~ msgid "%{n} files uploaded"
 #~ msgstr "%{n} fájl feltöltve"
@@ -5418,9 +5424,6 @@ msgstr "Archívum"
 
 #~ msgid "Why are some features only available to sponsors?"
 #~ msgstr "Miért vannak olyan funkciók, amelyek csak a szponzorok számára elérhetőek?"
-
-#~ msgid "Verified"
-#~ msgstr "Ellenőrzött"
 
 #~ msgid "Proceed"
 #~ msgstr "Folytassa a"

@@ -60,6 +60,10 @@ func (w *Meta) Start(delay, interval time.Duration, force bool) (err error) {
 		return nil
 	}
 
+	// Its target is recorded in "options.yml" once it completes, so a marker this worker adds
+	// afterwards waits for a restart rather than receiving a vector no cluster can read.
+	w.conf.CheckFaceModelSuperseded()
+
 	if err = mutex.MetaWorker.Start(); err != nil {
 		return err
 	}
