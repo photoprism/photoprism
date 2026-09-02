@@ -27,6 +27,9 @@ func TestFirstOrCreateFileSync(t *testing.T) {
 		if result == nil {
 			t.Fatal("result must not be nil")
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&fileSync).Error)
+		})
 
 		if result.FileID != fileSync.FileID {
 			t.Errorf("FileID should be the same: %d %d", result.FileID, fileSync.FileID)
@@ -43,6 +46,9 @@ func TestFirstOrCreateFileSync(t *testing.T) {
 		if result == nil {
 			t.Fatal("result share must not be nil")
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&fileSync).Error)
+		})
 
 		if result.FileID != fileSync.FileID {
 			t.Errorf("FileID should be the same: %d %d", result.FileID, fileSync.FileID)
@@ -66,6 +72,10 @@ func TestFileSync_Updates(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&fileSync).Error)
+		})
+
 		assert.Equal(t, "NameAfterUpdate", fileSync.RemoteName)
 		assert.Equal(t, uint(0x3e7), fileSync.ServiceID)
 	})
@@ -82,6 +92,10 @@ func TestFileSync_Update(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&fileSync).Error)
+		})
+
 		assert.Equal(t, "new-name", fileSync.RemoteName)
 		assert.Equal(t, uint(0x7b), fileSync.ServiceID)
 	})
@@ -98,6 +112,9 @@ func TestFileSync_Save(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&fileSync).Error)
+		})
 		afterDate := fileSync.UpdatedAt
 
 		assert.True(t, afterDate.After(initialDate))

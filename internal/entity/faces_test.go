@@ -31,6 +31,9 @@ func TestDeleteOrphanFaces(t *testing.T) {
 		} else {
 			t.Logf("deleted %d faces", count)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Save(FaceFixtures.Pointer("jane-doe")).Error)
+		})
 	})
 }
 

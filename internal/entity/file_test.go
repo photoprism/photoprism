@@ -261,6 +261,9 @@ func TestFile_Create(t *testing.T) {
 	t.Run("FileAlreadyExists", func(t *testing.T) {
 		file := &File{PhotoID: 123, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix()}
 		assert.Nil(t, file.Create())
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(file).Error)
+		})
 		assert.Error(t, file.Create())
 	})
 	t.Run("Success", func(t *testing.T) {
@@ -273,6 +276,10 @@ func TestFile_Create(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(file).Error)
+			assert.NoError(t, UnscopedDb().Delete(photo).Error)
+		})
 	})
 }
 
@@ -333,6 +340,11 @@ func TestFile_Save(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(file).Error)
+			assert.NoError(t, UnscopedDb().Delete(photo).Error)
+		})
+
 	})
 }
 
@@ -373,6 +385,9 @@ func TestFile_Update(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(file).Error)
+		})
 
 		assert.Equal(t, "ToBeUpdated", file.FileName)
 
@@ -524,6 +539,9 @@ func TestFile_Delete(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(file).Error)
+		})
 		assert.Equal(t, "ToBeDeleted", file.FileName)
 
 		err2 := file.Delete(false)
@@ -606,7 +624,11 @@ func TestFile_DownloadName(t *testing.T) {
 
 func TestFile_Undelete(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		file := &File{Photo: nil, FileType: "jpg", FileSize: 500}
+		file := &File{PhotoID: PhotoFixtures.Get("Photo01").ID, FileType: "jpg", FileSize: 500}
+		assert.NoError(t, file.Save()) // If you don't save the File then EVERY File record is updated by the .Undelete().
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&file).Error)
+		})
 		assert.Equal(t, nil, file.Purge())
 		assert.Equal(t, true, file.FileMissing)
 		err := file.Undelete()
@@ -649,6 +671,11 @@ func TestFile_AddFaces(t *testing.T) {
 		if err := file.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&Marker{}, "file_uid = ?", file.FileUID).Error)
+			assert.NoError(t, UnscopedDb().Delete(file).Error)
+			assert.NoError(t, UnscopedDb().Model(&File{ID: 1000011}).UpdateColumn("file_primary", true).Error)
+		})
 
 		assert.Equal(t, false, file.FileMissing)
 		assert.NotEmpty(t, file.FileUID)
@@ -800,6 +827,14 @@ func TestFile_UnsavedMarkers(t *testing.T) {
 }
 
 func TestFile_ReplaceHash(t *testing.T) {
+	t.Cleanup(func() {
+		for _, a := range AlbumFixtures {
+			assert.NoError(t, UnscopedDb().Model(&a).UpdateColumns(Values{"thumb": a.Thumb, "thumb_src": a.ThumbSrc}).Error)
+		}
+		for _, l := range LabelFixtures {
+			assert.NoError(t, UnscopedDb().Model(&l).UpdateColumns(Values{"thumb": l.Thumb, "thumb_src": l.ThumbSrc}).Error)
+		}
+	})
 	t.Run("ExampleFileNameJpg", func(t *testing.T) {
 		m := FileFixtures.Get("exampleFileName.jpg")
 

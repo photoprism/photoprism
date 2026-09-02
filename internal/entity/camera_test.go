@@ -43,6 +43,9 @@ func TestFirstOrCreateCamera(t *testing.T) {
 		camera := &Camera{ID: 10000000, CameraSlug: "camera-slug"}
 
 		result := FirstOrCreateCamera(camera)
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&camera).Error)
+		})
 
 		if result == nil {
 			t.Fatal("result must not be nil")
@@ -264,8 +267,9 @@ func TestCamera_UpdateMakeModel(t *testing.T) {
 		camera := NewCamera(CameraFixtures.Get(fixture).CameraMake, CameraFixtures.Get(fixture).CameraModel)
 
 		result := FirstOrCreateCamera(camera)
-
-		defer assert.NoError(t, UnscopedDb().Save(CameraFixtures.Pointer(fixture)).Error)
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Save(CameraFixtures.Pointer(fixture)).Error)
+		})
 		makeName := "Pentax"
 		modelName := "K-1"
 		err := result.UpdateMakeModel(makeName, modelName)
@@ -279,7 +283,9 @@ func TestCamera_UpdateMakeModel(t *testing.T) {
 	t.Run("NewCamera", func(t *testing.T) {
 		setup := NewCamera("", "9 99")
 		camera := FirstOrCreateCamera(setup)
-		defer assert.NoError(t, UnscopedDb().Delete(&Camera{}, "id = ?", camera.ID).Error)
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&Camera{}, "id = ?", camera.ID).Error)
+		})
 		makeName := "Pentax"
 		modelName := "K-1"
 		err := camera.UpdateMakeModel(makeName, modelName)
@@ -381,7 +387,9 @@ func TestCamera_SaveForm(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		fixture := "canon-eos-7d"
 		camera := FirstOrCreateCamera(NewCamera(CameraFixtures.Get(fixture).CameraMake, CameraFixtures.Get(fixture).CameraModel))
-		defer assert.NoError(t, UnscopedDb().Save(CameraFixtures.Pointer(fixture)).Error)
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Save(CameraFixtures.Pointer(fixture)).Error)
+		})
 		err := camera.SaveForm(&form.Camera{CameraMake: "Pentax", CameraModel: "K-1"})
 		assert.NoError(t, err)
 		assert.Equal(t, CameraMakes["Pentax"], camera.CameraMake)

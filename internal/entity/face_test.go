@@ -444,6 +444,9 @@ func TestFace_UpdateMatchStats(t *testing.T) {
 	})
 	t.Run("AddsEpsilonSlack", func(t *testing.T) {
 		m := narrowTestFace(t, "uds5ttbeu5yj2sqf", 7501)
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&m).Error)
+		})
 		require.NoError(t, m.UpdateMatchStats(4, 0.1))
 		assert.Equal(t, 4, m.Samples)
 		assert.InDelta(t, 0.1+face.Epsilon, m.SampleRadius, 1e-9)
@@ -451,6 +454,9 @@ func TestFace_UpdateMatchStats(t *testing.T) {
 	t.Run("ClampsToClusterRadius", func(t *testing.T) {
 		// The slack must not be able to lift the stored radius past the configured cap.
 		m := narrowTestFace(t, "uds5ttbeu5yj2sqg", 7511)
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&m).Error)
+		})
 		require.NoError(t, m.UpdateMatchStats(4, face.ClusterRadius))
 		assert.InDelta(t, face.ClusterRadius, m.SampleRadius, 1e-9)
 	})
@@ -459,6 +465,9 @@ func TestFace_UpdateMatchStats(t *testing.T) {
 		// indexed face arriving near the centroid would otherwise rewrite the radius to its
 		// own distance and refuse every member beyond it on the next pass.
 		m := narrowTestFace(t, "uds5ttbeu5yj2sqi", 7521)
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&m).Error)
+		})
 		require.NoError(t, m.UpdateMatchStats(20, 0.30))
 
 		wide := m.SampleRadius
@@ -475,6 +484,9 @@ func TestFace_UpdateMatchStats(t *testing.T) {
 		// Growing is the whole point of the statistic: a farther member must still be able
 		// to widen the cluster toward its clamp.
 		m := narrowTestFace(t, "uds5ttbeu5yj2sqj", 7531)
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&m).Error)
+		})
 		require.NoError(t, m.UpdateMatchStats(3, 0.10))
 		require.NoError(t, m.UpdateMatchStats(4, 0.25))
 
@@ -483,6 +495,9 @@ func TestFace_UpdateMatchStats(t *testing.T) {
 	})
 	t.Run("NegativeDistance", func(t *testing.T) {
 		m := narrowTestFace(t, "uds5ttbeu5yj2sqh", 7541)
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&m).Error)
+		})
 		radius := m.SampleRadius
 		require.NoError(t, m.UpdateMatchStats(4, -1))
 		assert.InDelta(t, radius, m.SampleRadius, 1e-9)
@@ -508,7 +523,9 @@ func TestFace_Save(t *testing.T) {
 		if err := m.Create(); err != nil {
 			t.Fatal(err)
 		}
-
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&m).Error)
+		})
 		assert.NotNil(t, FindFace(m.ID))
 		assert.Equal(t, "dhsthrdst", FindFace(m.ID).SubjUID)
 	})
@@ -533,6 +550,9 @@ func TestFace_Update(t *testing.T) {
 		t.Fatal(err)
 		return
 	}
+	t.Cleanup(func() {
+		assert.NoError(t, UnscopedDb().Delete(&m).Error)
+	})
 
 	assert.NotNil(t, FindFace(id))
 	assert.Equal(t, "12345fdef", FindFace(m.ID).SubjUID)
@@ -552,6 +572,10 @@ func TestFace_RefreshPhotos(t *testing.T) {
 	if err := f.RefreshPhotos(); err != nil {
 		t.Fatal(err)
 	}
+	t.Cleanup(func() {
+		assert.NoError(t, UnscopedDb().Model(PhotoFixtures.Pointer("19800101_000002_D640C559")).UpdateColumn("checked_at", PhotoFixtures.Get("19800101_000002_D640C559").CheckedAt).Error)
+	})
+
 }
 
 func TestFirstOrCreateFace(t *testing.T) {
@@ -559,6 +583,9 @@ func TestFirstOrCreateFace(t *testing.T) {
 		m := NewFace("12345unique", SrcAuto, face.RandomEmbeddings(1, face.RegularFace), face.EmbeddingModelName())
 		r := FirstOrCreateFace(m)
 		assert.Equal(t, "12345unique", r.SubjUID)
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&m).Error)
+		})
 	})
 	t.Run("ReturnExistingEntity", func(t *testing.T) {
 		m := FaceFixtures.Pointer("joe-biden")
@@ -595,6 +622,11 @@ func TestFace_SetSubjectUID(t *testing.T) {
 	if !assert.Empty(t, f.SetSubjectUID(SubjectFixtures.Get("jane-doe").SubjUID)) {
 		return
 	}
+	t.Cleanup(func() {
+		assert.NoError(t, UnscopedDb().Model(FaceFixtures.Pointer("joe-biden")).UpdateColumns(Values{"subj_uid": SubjectFixtures.Get("joe-biden").SubjUID}).Error)
+		assert.NoError(t, UnscopedDb().Model(MarkerFixtures.Pointer("ms6sg6b14ahkyd24")).UpdateColumns(Values{"subj_uid": MarkerFixtures.Get("ms6sg6b14ahkyd24").SubjUID}).Error)
+		assert.NoError(t, UnscopedDb().Model(PhotoFixtures.Pointer("19800101_000002_D640C559")).UpdateColumn("checked_at", PhotoFixtures.Get("19800101_000002_D640C559").CheckedAt).Error)
+	})
 
 	f = FindFace(FaceFixtures.Get("joe-biden").ID)
 	assert.NotEmpty(t, f)
@@ -792,12 +824,15 @@ func TestFace_MatchMarkers(t *testing.T) {
 		m.SetEmbeddings(face.Embeddings{at}, cluster.EmbedModel, face.DetectorYuNet)
 
 		require.NoError(t, Db().Create(m).Error)
-		t.Cleanup(func() { Db().Delete(m) })
+		t.Cleanup(func() { UnscopedDb().Delete(m) })
 
 		return m
 	}
 	t.Run("AdmitsAnOrdinaryMarker", func(t *testing.T) {
 		m := newFacelessMarker(t, face.SizeThreshold, 9101)
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&m).Error)
+		})
 
 		require.NoError(t, cluster.MatchMarkers(Faceless))
 
@@ -809,11 +844,18 @@ func TestFace_MatchMarkers(t *testing.T) {
 		// The merge path calls this to move markers off clusters it is about to purge, so the
 		// size bound must not reach them: one left behind would point at a deleted cluster.
 		m := newFacelessMarker(t, face.SizeThreshold-1, 9104)
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&m).Error)
+			assert.NoError(t, UnscopedDb().Model(PhotoFixtures.Pointer("19800101_000002_D640C559")).UpdateColumn("checked_at", PhotoFixtures.Get("19800101_000002_D640C559").CheckedAt).Error)
+		})
 
 		other := NewFace(cluster.SubjUID, SrcAuto, face.Embeddings{cluster.Embedding()}, cluster.EmbedModel)
 		require.NotNil(t, other)
 		other = FirstOrCreateFace(other)
 		require.NotNil(t, other)
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&other).Error)
+		})
 
 		require.NoError(t, m.Update("FaceID", other.ID))
 		require.NoError(t, cluster.MatchMarkers([]string{other.ID}))
@@ -826,6 +868,9 @@ func TestFace_MatchMarkers(t *testing.T) {
 		// Only the second detection pass produces one, and it exists to mark a face a crowd
 		// photograph would otherwise lose rather than to name a person from it.
 		m := newFacelessMarker(t, face.SizeThreshold-1, 9102)
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&m).Error)
+		})
 
 		require.NoError(t, cluster.MatchMarkers(Faceless))
 
@@ -848,7 +893,7 @@ func TestFace_MatchMarkersFromOneSample(t *testing.T) {
 	// would follow the package for the rest of the run.
 	t.Cleanup(func() {
 		Db().Model(&Marker{}).Where("face_id = ?", cluster.ID).UpdateColumn("face_id", "")
-		Db().Delete(cluster)
+		UnscopedDb().Delete(cluster)
 	})
 
 	dist := 0.9 * cluster.AcceptDist()
@@ -868,9 +913,12 @@ func TestFace_MatchMarkersFromOneSample(t *testing.T) {
 
 	m.SetEmbeddings(face.Embeddings{face.FixtureEmbeddingAt(base, dist, 9302)}, cluster.EmbedModel, face.DetectorYuNet)
 	require.NoError(t, Db().Create(m).Error)
-	t.Cleanup(func() { Db().Delete(m) })
+	t.Cleanup(func() { UnscopedDb().Delete(m) })
 
 	require.NoError(t, cluster.MatchMarkers(Faceless))
+	t.Cleanup(func() {
+		assert.NoError(t, UnscopedDb().Model(PhotoFixtures.Pointer("19800101_000002_D640C559")).UpdateColumn("checked_at", PhotoFixtures.Get("19800101_000002_D640C559").CheckedAt).Error)
+	})
 
 	found := FindMarker(m.MarkerUID)
 	require.NotNil(t, found)

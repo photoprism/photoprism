@@ -184,5 +184,13 @@ func TestUpdateSubjectCounts(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		require.NoError(t, UpdateSubjectCounts(true))
 		require.NoError(t, UpdateSubjectCounts(false))
+		t.Cleanup(func() {
+			for _, s := range SubjectFixtures {
+				assert.NoError(t, UnscopedDb().Model(&Subject{SubjUID: s.SubjUID}).UpdateColumns(Values{"file_count": s.FileCount, "photo_count": s.PhotoCount}).Error)
+			}
+			for _, l := range LabelFixtures {
+				assert.NoError(t, UnscopedDb().Model(&Label{ID: l.ID}).UpdateColumns(Values{"photo_count": l.PhotoCount}).Error)
+			}
+		})
 	})
 }

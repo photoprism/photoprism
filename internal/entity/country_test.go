@@ -36,6 +36,9 @@ func TestFirstOrCreateCountry(t *testing.T) {
 		if country == nil {
 			t.Fatal("country must not be nil")
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&country).Error)
+		})
 	})
 	t.Run("De", func(t *testing.T) {
 		country := &Country{ID: "de"}

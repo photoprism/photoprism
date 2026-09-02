@@ -38,6 +38,9 @@ func TestAddDuplicate(t *testing.T) {
 		} else if duplicate.ModTime != time.Date(2019, 3, 6, 2, 6, 51, 0, time.UTC).Unix() {
 			t.Fatalf("mod time should be %d", time.Date(2019, 3, 6, 2, 6, 51, 0, time.UTC).Unix())
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&duplicate).Error)
+		})
 	})
 	t.Run("ErrorFilenameEmpty", func(t *testing.T) {
 		err := AddDuplicate(
