@@ -13,6 +13,10 @@ func TestFindLabel(t *testing.T) {
 		if err := label.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&label).Error)
+			FlushLabelCache()
+		})
 
 		uncached, findErr := FindLabel("find-me-label", false)
 

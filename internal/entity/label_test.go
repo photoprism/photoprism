@@ -288,6 +288,10 @@ func TestLabel_UpdateClassify(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(result).Error)
+			FlushLabelCache()
+		})
 
 		assert.Equal(t, 5, result.LabelPriority)
 		assert.Equal(t, "customslug", result.LabelSlug)
@@ -307,6 +311,10 @@ func TestLabel_UpdateClassify(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(result).Error)
+			FlushLabelCache()
+		})
 
 		assert.Equal(t, 5, result.LabelPriority)
 		assert.Equal(t, "labelslug", result.LabelSlug)
@@ -327,6 +335,11 @@ func TestLabel_UpdateClassify(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(result).Error)
+			assert.NoError(t, UnscopedDb().Debug().Delete(&Label{}, "label_name = ?", "Plant").Error)
+			FlushLabelCache()
+		})
 
 		assert.Equal(t, 5, result.LabelPriority)
 		assert.Equal(t, "labelslug2", result.LabelSlug)
@@ -412,6 +425,10 @@ func TestLabel_Save(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&label).Error)
+			FlushLabelCache()
+		})
 
 		afterDate := label.UpdatedAt
 
@@ -427,6 +444,10 @@ func TestLabel_Delete(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&label).Error)
+			FlushLabelCache()
+		})
 		assert.False(t, label.Deleted())
 
 		var labels Labels
@@ -458,6 +479,10 @@ func TestLabel_Restore(t *testing.T) {
 		if err := label.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&label).Error)
+			FlushLabelCache()
+		})
 
 		assert.True(t, label.Deleted())
 

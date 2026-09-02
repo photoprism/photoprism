@@ -17,6 +17,9 @@ func TestFindKeyword(t *testing.T) {
 		keyword := NewKeyword(keywordName)
 
 		require.NoError(t, keyword.Save())
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&keyword).Error)
+		})
 
 		uncached, err := FindKeyword(keyword.Keyword, false)
 		assert.NoError(t, err)
