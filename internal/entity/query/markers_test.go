@@ -362,30 +362,48 @@ func TestMarkerCountsByFaceIDs(t *testing.T) {
 
 func TestRemoveInvalidMarkerReferences(t *testing.T) {
 	affected, err := RemoveInvalidMarkerReferences()
+	t.Cleanup(func() {
+		for _, marker := range entity.MarkerFixtures {
+			require.NoError(t, UnscopedDb().Model(&marker).UpdateColumns(entity.Values{"subj_uid": marker.SubjUID, "face_id": marker.FaceID, "face_dist": marker.FaceDist, "matched_at": marker.MatchedAt, "updated_at": marker.UpdatedAt}).Error)
+		}
+	})
 
 	assert.NoError(t, err)
 	assert.GreaterOrEqual(t, affected, int64(0))
 }
 
 func TestRemoveNonExistentMarkerFaces(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping test in short mode.")
-	}
-
 	// Make sure that the data is valid for the test.
 	_, err := RemoveAutoFaceClusters()
 	require.NoError(t, err)
+	t.Cleanup(func() {
+		for _, face := range entity.FaceFixtures {
+			if face.FaceSrc == entity.SrcAuto {
+				require.NoError(t, UnscopedDb().Create(&face).Error)
+			}
+		}
+	})
 
 	affected, err := RemoveNonExistentMarkerFaces()
+	t.Cleanup(func() {
+		for _, marker := range entity.MarkerFixtures {
+			if marker.MarkerType == entity.MarkerFace {
+				require.NoError(t, UnscopedDb().Model(&marker).UpdateColumns(entity.Values{"face_id": marker.FaceID, "face_dist": marker.FaceDist, "matched_at": marker.MatchedAt, "updated_at": marker.UpdatedAt}).Error)
+			}
+		}
+	})
 
 	assert.NoError(t, err)
 	assert.GreaterOrEqual(t, affected, int64(1))
-	// Post test cleanup
-	entity.ResetTestFixtures()
 }
 
 func TestRemoveNonExistentMarkerSubjects(t *testing.T) {
 	affected, err := RemoveNonExistentMarkerSubjects()
+	t.Cleanup(func() {
+		for _, marker := range entity.MarkerFixtures {
+			require.NoError(t, UnscopedDb().Model(&marker).UpdateColumns(entity.Values{"subj_uid": marker.SubjUID, "face_id": marker.FaceID, "face_dist": marker.FaceDist, "matched_at": marker.MatchedAt, "updated_at": marker.UpdatedAt}).Error)
+		}
+	})
 
 	assert.NoError(t, err)
 	assert.GreaterOrEqual(t, affected, int64(1))
@@ -393,6 +411,11 @@ func TestRemoveNonExistentMarkerSubjects(t *testing.T) {
 
 func TestFixMarkerReferences(t *testing.T) {
 	affected, err := FixMarkerReferences()
+	t.Cleanup(func() {
+		for _, marker := range entity.MarkerFixtures {
+			require.NoError(t, UnscopedDb().Model(&marker).UpdateColumns(entity.Values{"subj_uid": marker.SubjUID, "face_id": marker.FaceID, "face_dist": marker.FaceDist, "matched_at": marker.MatchedAt, "updated_at": marker.UpdatedAt}).Error)
+		}
+	})
 
 	assert.NoError(t, err)
 	assert.GreaterOrEqual(t, affected, int64(0))

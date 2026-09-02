@@ -312,7 +312,9 @@ func TestUser_Create(t *testing.T) {
 		if err := m.Create(); err != nil {
 			t.Fatal(err)
 		}
-
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&m).Error)
+		})
 		assert.Equal(t, "example", m.Username())
 		assert.Equal(t, "example", m.UserName)
 
@@ -321,9 +323,13 @@ func TestUser_Create(t *testing.T) {
 		}
 	})
 	t.Run("NewUser", func(t *testing.T) {
-		if err := NewUser().Create(); err != nil {
+		m := NewUser()
+		if err := m.Create(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&m).Error)
+		})
 	})
 	t.Run("LongNumericAuthID", func(t *testing.T) {
 		useruid := rnd.GenerateUID(UserUID)
@@ -386,6 +392,9 @@ func TestUser_UpdateUsername(t *testing.T) {
 			t.Fatal(err)
 		}
 
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&m).Error)
+		})
 		assert.Nil(t, FindUserByName("bar"))
 
 		err2 := m.UpdateUsername("bar")
@@ -416,6 +425,9 @@ func TestUser_SetUsername(t *testing.T) {
 
 		assert.Equal(t, "photoprism", m.Username())
 		assert.Equal(t, "photoprism", m.UserName)
+		if err := m.SetUsername("admin"); err != nil {
+			t.Fatal(err)
+		}
 	})
 	t.Run("SystemUsersCannotBeModified", func(t *testing.T) {
 		assert.Equal(t, "system users cannot be modified", Visitor.SetUsername("newname").Error())
@@ -453,6 +465,10 @@ func TestUser_InvalidPassword(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&p).Error)
+		})
+
 		assert.True(t, p.InvalidPassword("abcdef"))
 
 	})
@@ -475,11 +491,18 @@ func TestUser_Save(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&p).Error)
+		})
 	})
 	t.Run("NewUser", func(t *testing.T) {
-		if err := NewUser().Save(); err != nil {
+		m := NewUser()
+		if err := m.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&m).Error)
+		})
 	})
 }
 
@@ -491,6 +514,9 @@ func TestFirstOrCreateUser(t *testing.T) {
 		if result == nil {
 			t.Fatal("result must not be nil")
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&p).Error)
+		})
 
 		assert.NotEmpty(t, result.ID)
 
@@ -502,6 +528,9 @@ func TestFirstOrCreateUser(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&p).Error)
+		})
 
 		result := FirstOrCreateUser(p)
 
@@ -601,6 +630,9 @@ func TestFindUser(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&u).Error)
+		})
 
 		m := FindUser(User{UserUID: u.UserUID})
 
@@ -852,6 +884,7 @@ func TestUser_SetPassword(t *testing.T) {
 		assert.NoError(t, m.SetPassword("insecure"))
 		assert.NoError(t, m.DeletePassword())
 		assert.NoError(t, m.SetPassword("insecure"))
+		assert.NoError(t, UnscopedDb().Where("uid = ?", m.UserUID).Delete(&Password{}).Error)
 	})
 	t.Run("NotRegistered", func(t *testing.T) {
 		m := User{ID: 0, UserUID: "", UserName: "Hanna", DisplayName: "", UserRole: acl.RoleAdmin.String()}
@@ -872,6 +905,9 @@ func TestUser_InitAccount(t *testing.T) {
 		p := User{ID: 9, UserUID: "u000000000000009", UserName: "Hanna", DisplayName: "", UserRole: acl.RoleAdmin.String(), AuthProvider: authn.ProviderLocal.String(), CanLogin: true}
 		assert.Nil(t, FindPassword("u000000000000009"))
 		assert.True(t, p.InitAccount("Hanna", "insecure", ""))
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Where("uid = ?", p.UserUID).Delete(&Password{}).Error)
+		})
 		m := FindPassword("u000000000000009")
 
 		if m == nil {
@@ -884,6 +920,10 @@ func TestUser_InitAccount(t *testing.T) {
 		if err := p.Save(); err != nil {
 			t.Logf("failed to create user: %s", err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Where("uid = ?", p.UserUID).Delete(&Password{}).Error)
+			assert.NoError(t, UnscopedDb().Delete(&p).Error)
+		})
 
 		if err := p.SetPassword("insecure"); err != nil {
 			t.Fatal(err)
@@ -978,8 +1018,11 @@ func TestUser_Validate(t *testing.T) {
 		assert.Error(t, u.Validate())
 	})
 	t.Run("NameNotUnique", func(t *testing.T) {
-		FirstOrCreateUser(&User{
+		p := FirstOrCreateUser(&User{
 			UserName: "notunique1",
+		})
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&p).Error)
 		})
 
 		u := &User{
@@ -992,8 +1035,11 @@ func TestUser_Validate(t *testing.T) {
 		assert.Error(t, u.Validate())
 	})
 	t.Run("EmailNotUnique", func(t *testing.T) {
-		FirstOrCreateUser(&User{
+		p := FirstOrCreateUser(&User{
 			UserEmail: "notunique2@example.com",
+		})
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&p).Error)
 		})
 
 		u := &User{
@@ -1006,7 +1052,7 @@ func TestUser_Validate(t *testing.T) {
 		assert.Error(t, u.Validate())
 	})
 	t.Run("EmailNotUnique", func(t *testing.T) {
-		FirstOrCreateUser(&User{
+		a := FirstOrCreateUser(&User{
 			UserName:    "notunique3",
 			UserEmail:   "notunique3@example.com",
 			DisplayName: "Not Unique",
@@ -1018,6 +1064,10 @@ func TestUser_Validate(t *testing.T) {
 			UserEmail:   "notunique3@example.com",
 			DisplayName: "Not Unique",
 			UserRole:    acl.RoleAdmin.String(),
+		})
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&a).Error)
+			assert.NoError(t, UnscopedDb().Delete(&u).Error)
 		})
 
 		u.UserName = "notunique3"
@@ -1045,8 +1095,11 @@ func TestUser_Validate(t *testing.T) {
 		assert.Error(t, u.Validate())
 	})
 	t.Run("EmailEmpty", func(t *testing.T) {
-		FirstOrCreateUser(&User{
+		a := FirstOrCreateUser(&User{
 			UserName: "nnomail",
+		})
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&a).Error)
 		})
 
 		u := &User{
@@ -1134,6 +1187,10 @@ func TestAddUser(t *testing.T) {
 
 		err := AddUser(u)
 		assert.Nil(t, err)
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&Password{}, "uid = (select user_uid from auth_users where user_name = ?)", "thomas2").Error)
+			assert.NoError(t, UnscopedDb().Delete(&User{}, "user_name = ?", "thomas2").Error)
+		})
 	})
 	t.Run("ValidOidcUser", func(t *testing.T) {
 		u := form.User{
@@ -1147,6 +1204,10 @@ func TestAddUser(t *testing.T) {
 
 		err := AddUser(u)
 		assert.Nil(t, err)
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&Password{}, "uid = (select user_uid from auth_users where user_name = ?)", "thomasoidc").Error)
+			assert.NoError(t, UnscopedDb().Delete(&User{}, "user_name = ?", "thomasoidc").Error)
+		})
 	})
 	t.Run("AuthIDMissing", func(t *testing.T) {
 		u := form.User{
@@ -1172,6 +1233,9 @@ func TestDeleteUser(t *testing.T) {
 		}
 
 		u = FirstOrCreateUser(u)
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&u).Error)
+		})
 		err := u.Delete()
 		assert.NoError(t, err)
 	})
@@ -1232,6 +1296,7 @@ func TestUser_UpdateLoginTime(t *testing.T) {
 		time3 := alice.LoginAt
 		assert.NotNil(t, time3)
 		assert.True(t, time3.After(*time2) || time3.Equal(*time2))
+		assert.NoError(t, UnscopedDb().Model(&User{}).Where("id = ?", UserFixtures.Get("alice").ID).UpdateColumn("login_at", nil).Error)
 	})
 	t.Run("UserDeleted", func(t *testing.T) {
 		u := NewUser()
@@ -1250,6 +1315,9 @@ func TestUser_UpdateLoginTime(t *testing.T) {
 		if err := u.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&u).Error)
+		})
 
 		// Simulate a leftover out-of-edition role written outside this edition's
 		// validation (e.g. a Portal cluster_admin row on a Plus instance).
@@ -1581,6 +1649,7 @@ func TestUser_SaveForm(t *testing.T) {
 
 		m = FindUserByUID(Admin.UserUID)
 		assert.Equal(t, "New Name", m.DisplayName)
+		assert.NoError(t, UnscopedDb().Model(&User{}).Where("id = ?", m.ID).UpdateColumns(Values{"display_name": "Admin"}).Error)
 	})
 	t.Run("AnotherSuperAdminCanDisableInitialAdminLogin", func(t *testing.T) {
 		// The seed admin is no longer special-cased: another super admin may
@@ -1830,6 +1899,10 @@ func TestUser_SaveForm(t *testing.T) {
 			t.Fatal(err)
 		}
 
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&u).Error)
+		})
+
 		frm, err := u.Form()
 		if err != nil {
 			t.Fatal(err)
@@ -1851,6 +1924,9 @@ func TestUser_SaveForm(t *testing.T) {
 		if err := u.Create(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&u).Error)
+		})
 
 		frm, err := u.Form()
 		if err != nil {
@@ -1873,6 +1949,9 @@ func TestUser_SaveForm(t *testing.T) {
 		if err := u.Create(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&u).Error)
+		})
 
 		frm, err := u.Form()
 		if err != nil {
@@ -1894,6 +1973,9 @@ func TestUser_SaveForm(t *testing.T) {
 		if err := u.Create(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&u).Error)
+		})
 
 		frm, err := u.Form()
 		if err != nil {
@@ -2011,6 +2093,11 @@ func TestUser_SetAvatar(t *testing.T) {
 	t.Run("NoPermissions", func(t *testing.T) {
 		err := Admin.SetAvatar("ebfc0aea7d3fd018b5fff57c76806b35181855ed", SrcAuto)
 		assert.Error(t, err)
+	})
+	t.Cleanup(func() {
+		assert.NoError(t, UnscopedDb().Model(&User{}).Where("id = ?", Admin.ID).UpdateColumns(Values{"thumb_src": "", "thumb": ""}).Error)
+		Admin.ThumbSrc = ""
+		Admin.Thumb = ""
 	})
 }
 
@@ -2145,6 +2232,7 @@ func TestUser_UpdateAuthID(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, uuid, m.AuthID)
 		assert.Equal(t, "", m.AuthIssuer)
+		assert.NoError(t, Db().Model(&User{}).Where("id = ?", UserFixtures.Pointer("friend").ID).UpdateColumn("auth_id", nil).Error)
 	})
 	t.Run("InvalidUUID", func(t *testing.T) {
 		m := User{UserUID: "123"}
@@ -2169,6 +2257,7 @@ func TestUser_UpdateAuthID(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Equal(t, longnumber, m.AuthID)
 		assert.Equal(t, "", m.AuthIssuer)
+		assert.NoError(t, Db().Model(&User{}).Where("id = ?", UserFixtures.Pointer("friend").ID).UpdateColumn("auth_id", nil).Error)
 	})
 }
 
@@ -2458,6 +2547,9 @@ func TestUser_RevokeDerivedSessions(t *testing.T) {
 
 		assert.Equal(t, 0, m.RevokeDerivedSessions([]string{rnd.SessionID("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0")}))
 		assert.Equal(t, 1, m.RevokeDerivedSessions([]string{}))
+		t.Cleanup(func() {
+			assert.NoError(t, SessionFixtures.Pointer("alice").Create())
+		})
 	})
 }
 
@@ -2503,16 +2595,19 @@ func TestUser_RevokeSessions(t *testing.T) {
 		assert.Equal(t, 4, countUserSessions(t, u.UserUID))
 		assert.Equal(t, 1, u.RevokeSessions(nil, authn.RevokeLoginSessions))
 		assert.Equal(t, 3, countUserSessions(t, u.UserUID))
+		assert.NoError(t, UnscopedDb().Where("user_name = 'revoke-test'").Delete(&Session{}).Error)
 	})
 	t.Run("DerivedSessions", func(t *testing.T) {
 		u := newRevokeTestUser(t)
 		assert.Equal(t, 2, u.RevokeSessions(nil, authn.RevokeDerivedSessions))
 		assert.Equal(t, 2, countUserSessions(t, u.UserUID))
+		assert.NoError(t, UnscopedDb().Where("user_name = 'revoke-test'").Delete(&Session{}).Error)
 	})
 	t.Run("AllSessions", func(t *testing.T) {
 		u := newRevokeTestUser(t)
 		assert.Equal(t, 4, u.RevokeSessions(nil, authn.RevokeAllSessions))
 		assert.Equal(t, 0, countUserSessions(t, u.UserUID))
+		assert.NoError(t, UnscopedDb().Where("user_name = 'revoke-test'").Delete(&Session{}).Error)
 	})
 	t.Run("OmitKeepsSession", func(t *testing.T) {
 		u := newRevokeTestUser(t)
@@ -2521,6 +2616,7 @@ func TestUser_RevokeSessions(t *testing.T) {
 		require.Len(t, login, 1)
 		assert.Equal(t, 0, u.RevokeSessions([]string{login[0].ID}, authn.RevokeLoginSessions))
 		assert.Equal(t, 4, countUserSessions(t, u.UserUID))
+		assert.NoError(t, UnscopedDb().Where("user_name = 'revoke-test'").Delete(&Session{}).Error)
 	})
 	t.Run("CrossUserIsolation", func(t *testing.T) {
 		// The `auth_method = 'session'` clause must stay scoped to the target user, so
@@ -2540,6 +2636,7 @@ func TestUser_RevokeSessions(t *testing.T) {
 		sB, err := FindSession(derivedB.ID)
 		require.NoError(t, err)
 		require.NotNil(t, sB)
+		assert.NoError(t, UnscopedDb().Where("user_name = 'revoke-test'").Delete(&Session{}).Error)
 	})
 }
 
@@ -2571,6 +2668,10 @@ func TestUser_VerifyPassword(t *testing.T) {
 func TestUser_InvalidPasscode(t *testing.T) {
 	m := UserFixtures.Get("jane")
 	passcode := m.Passcode("totp")
+	t.Cleanup(func() {
+		assert.NoError(t, UnscopedDb().Create(PasscodeFixtureJane).Error)
+		assert.NoError(t, UnscopedDb().Model(&User{}).Where("id = ?", m.ID).UpdateColumn("auth_method", UserFixtures.Get("jane").AuthMethod).Error)
+	})
 
 	assert.True(t, m.InvalidPasscode("xxxxxx"))
 	assert.False(t, m.InvalidPasscode(passcode.RecoveryCode))
@@ -2620,7 +2721,8 @@ func TestUser_Passcodes(t *testing.T) {
 		}
 
 		assert.Equal(t, "default", m.AuthMethod)
-
+		assert.NoError(t, UnscopedDb().Create(PasscodeFixtureAlice).Error)
+		assert.NoError(t, UnscopedDb().Model(&User{}).Where("id = ?", m.ID).UpdateColumn("auth_method", UserFixtures.Get("alice").AuthMethod).Error)
 	})
 	t.Run("PassCodeNotSetup", func(t *testing.T) {
 		m := UserFixtures.Get("bob")
@@ -2726,6 +2828,10 @@ func TestUser_RegenerateTokens_StaleReloadDoesNotResurrect(t *testing.T) {
 	}
 	require.NoError(t, u.Save())
 
+	t.Cleanup(func() {
+		assert.NoError(t, UnscopedDb().Delete(&u).Error)
+	})
+
 	oldPreview := u.PreviewToken
 
 	// Mint and persist an app-password session that inherits the user's tokens.
@@ -2787,6 +2893,9 @@ func TestUser_RedeemToken(t *testing.T) {
 		assert.Equal(t, "as6sg6bxpogaaba7", m.UserShares[0].ShareUID)
 		assert.Equal(t, "as6sg6bxpogaaba9", m.UserShares[1].ShareUID)
 	})
+	assert.NoError(t, UnscopedDb().Where("1=1").Delete(&UserShare{}).Error)
+	CreateUserShareFixtures()
+	assert.NoError(t, UnscopedDb().Model(&Link{}).Where("share_uid = 'as6sg6bxpogaaba7'").UpdateColumn("link_views", 0).Error)
 }
 
 func TestUser_ScopeHelpers(t *testing.T) {
@@ -2855,6 +2964,7 @@ func TestUser_SetValuesFromCliScope(t *testing.T) {
 	original := user.UserScope
 	t.Cleanup(func() {
 		user.UserScope = original
+		assert.NoError(t, UnscopedDb().Save(SessionFixtures.Pointer("alice")).Error)
 	})
 
 	app := cli.NewApp()

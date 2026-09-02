@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -213,6 +214,10 @@ func TestAlbum_LoadFromYaml(t *testing.T) {
 		if err := m.Save(); err != nil {
 			t.Fatal(err)
 		}
+
+		t.Cleanup(func() {
+			require.NoError(t, m.DeletePermanently())
+		})
 
 		a := Album{AlbumUID: "as6sg6bxpoaaaaaa"}
 

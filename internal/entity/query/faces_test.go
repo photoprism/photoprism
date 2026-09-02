@@ -117,7 +117,13 @@ func TestMatchFaceMarkers(t *testing.T) {
 		UpdateColumn("subj_uid", "").Error; err != nil {
 		t.Fatal(err)
 	}
-
+	t.Cleanup(func() {
+		for _, marker := range entity.MarkerFixtures {
+			if marker.SubjSrc == entity.SrcAuto {
+				require.NoError(t, UnscopedDb().Save(&marker).Error)
+			}
+		}
+	})
 	affected, err := MatchFaceMarkers()
 
 	if err != nil {
@@ -204,6 +210,14 @@ func TestRemoveAnonymousFaceClusters(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	t.Cleanup(func() {
+		for _, face := range entity.FaceFixtures {
+			if face.FaceSrc == entity.SrcAuto && face.SubjUID == "" {
+				require.NoError(t, UnscopedDb().Create(&face).Error)
+			}
+		}
+	})
 
 	assert.Equal(t, 2, removed)
 }
@@ -337,10 +351,16 @@ func TestMergeFaces(t *testing.T) {
 		if err := face1.Create(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			require.NoError(t, UnscopedDb().Delete(&face1).Error)
+		})
 
 		if err := face2.Create(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			require.NoError(t, UnscopedDb().Delete(&face2).Error)
+		})
 
 		faces := entity.Faces{*face1, *face2}
 
@@ -387,6 +407,20 @@ func TestMergeFaces(t *testing.T) {
 			face.EmbeddingModelName(),
 		)
 
+		if err := face1.Create(); err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() {
+			require.NoError(t, UnscopedDb().Delete(&face1).Error)
+		})
+
+		if err := face2.Create(); err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() {
+			require.NoError(t, UnscopedDb().Delete(&face2).Error)
+		})
+
 		faces := entity.Faces{*face1, *face2}
 
 		result, err := MergeFaces(faces, false)
@@ -410,9 +444,15 @@ func TestMergeFacesRetainedClusters(t *testing.T) {
 
 	faceA := entity.NewFace(subjUID, entity.SrcManual, embeddingA, face.EmbeddingModelName())
 	require.NoError(t, faceA.Create())
+	t.Cleanup(func() {
+		require.NoError(t, UnscopedDb().Delete(&faceA).Error)
+	})
 
 	faceB := entity.NewFace(subjUID, entity.SrcManual, embeddingB, face.EmbeddingModelName())
 	require.NoError(t, faceB.Create())
+	t.Cleanup(func() {
+		require.NoError(t, UnscopedDb().Delete(&faceB).Error)
+	})
 
 	// Create markers that deliberately fail to match the merged embedding.
 	neutralEmbedding := face.Embeddings{face.NullEmbedding}
@@ -438,6 +478,9 @@ func TestMergeFacesRetainedClusters(t *testing.T) {
 	for _, marker := range markers {
 		require.NoError(t, entity.Db().Create(marker).Error)
 	}
+	t.Cleanup(func() {
+		require.NoError(t, UnscopedDb().Where("face_id in (?)", []string{faceA.ID, faceB.ID}).Delete(&entity.Marker{}).Error)
+	})
 
 	_, err := MergeFaces(entity.Faces{*faceA, *faceB}, false)
 	require.Error(t, err)
@@ -506,6 +549,14 @@ func TestResolveFaceCollisions(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	t.Cleanup(func() {
+		for _, face := range entity.FaceFixtures {
+			require.NoError(t, UnscopedDb().Save(&face).Error)
+		}
+		for _, marker := range entity.MarkerFixtures {
+			require.NoError(t, UnscopedDb().Save(&marker).Error)
+		}
+	})
 
 	assert.LessOrEqual(t, 1, c)
 	assert.LessOrEqual(t, 1, r)
@@ -525,22 +576,44 @@ func TestRemoveAutoFaceClusters(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	t.Cleanup(func() {
+		for _, face := range entity.FaceFixtures {
+			if face.FaceSrc == entity.SrcAuto {
+				require.NoError(t, UnscopedDb().Create(&face).Error)
+			}
+		}
+	})
+
 	assert.LessOrEqual(t, 3, removed)
 }
 
 func TestRemovePeopleAndFaces(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping test in short mode.")
-	}
-
 	err := RemovePeopleAndFaces()
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	// replace all the fixtures as the previous statement kills a lot of other tests.
-	entity.ResetTestFixtures()
+	t.Cleanup(func() {
+		for _, subject := range entity.SubjectFixtures {
+			if subject.SubjType == entity.SubjPerson {
+				require.NoError(t, UnscopedDb().Save(&subject).Error)
+			}
+		}
+		for _, face := range entity.FaceFixtures {
+			require.NoError(t, UnscopedDb().Create(&face).Error)
+		}
+		for _, marker := range entity.MarkerFixtures {
+			if marker.MarkerType == entity.MarkerFace {
+				require.NoError(t, UnscopedDb().Save(&marker).Error)
+			}
+		}
+		for _, photo := range entity.PhotoFixtures {
+			pCols := entity.Photo{PhotoFaces: photo.PhotoFaces, UpdatedAt: photo.UpdatedAt}
+			require.NoError(t, UnscopedDb().Model(&photo).UpdateColumns(pCols).Error)
+		}
+		// Labels people and portrait do not exist in the testing database, so no need to clean these up.
+	})
 }
 
 func TestFaceEmbeddingModels(t *testing.T) {

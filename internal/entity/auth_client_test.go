@@ -270,6 +270,10 @@ func TestClient_Create(t *testing.T) {
 		if err := m.Create(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, m.Delete())
+			assert.NoError(t, UnscopedDb().Delete(m).Error)
+		})
 	})
 	t.Run("AlreadyExists", func(t *testing.T) {
 		var m = ClientFixtures.Get("alice")
@@ -287,12 +291,17 @@ func TestClient_Save(t *testing.T) {
 		if err := m.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, m.Delete())
+			assert.NoError(t, UnscopedDb().Delete(m).Error)
+		})
 
 		c = FindClientByUID("cs5cpu17n6gj2aaa")
 
 		if c == nil {
 			t.Fatal("result must not be nil")
 		}
+
 	})
 }
 
@@ -302,6 +311,10 @@ func TestClient_Delete(t *testing.T) {
 		if err := m.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, m.Delete())
+			assert.NoError(t, UnscopedDb().Delete(m).Error)
+		})
 
 		err := m.Delete()
 
@@ -341,6 +354,9 @@ func TestClient_Updates(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, Db().Model(&Client{}).Where("client_uid = ?", m.ClientUID).UpdateColumn("auth_scope", "").Error)
+		})
 
 		assert.Equal(t, "metrics", m.AuthScope)
 	})
@@ -352,12 +368,19 @@ func TestClient_NewSecret(t *testing.T) {
 		if err := m.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, m.Delete())
+			assert.NoError(t, UnscopedDb().Delete(m).Error)
+		})
 
 		s, err := m.NewSecret()
 
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&Password{UID: m.ClientUID}).Error)
+		})
 		assert.True(t, m.VerifySecret(s))
 		assert.NotEmpty(t, s)
 	})
@@ -425,6 +448,9 @@ func TestClient_UpdateLastActive(t *testing.T) {
 		if err := m.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&m).Error)
+		})
 
 		assert.Empty(t, m.LastActive)
 
@@ -612,6 +638,9 @@ func TestClient_SetFormValues(t *testing.T) {
 		if err := m.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&m).Error)
+		})
 
 		var values = form.Client{
 			ClientName:   "New Name",
@@ -636,6 +665,9 @@ func TestClient_SetFormValues(t *testing.T) {
 		if err := m.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&m).Error)
+		})
 
 		var values = form.Client{
 			ClientName:   "Annika",
@@ -660,6 +692,9 @@ func TestClient_SetFormValues(t *testing.T) {
 		if err := m.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&m).Error)
+		})
 
 		var values = form.Client{
 			ClientName:   "Friend",
@@ -685,6 +720,9 @@ func TestClient_SetFormValues(t *testing.T) {
 		if err := m.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&m).Error)
+		})
 
 		var values = form.Client{
 			ClientName:   "Friend",
@@ -716,6 +754,9 @@ func TestClient_SetFormValues_Role(t *testing.T) {
 		if err := m.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&m).Error)
+		})
 
 		// Apply role via form.
 		c := m.SetFormValues(form.Client{ClientRole: "portal"})
@@ -729,6 +770,9 @@ func TestClient_SetFormValues_Role(t *testing.T) {
 		if err := m.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&m).Error)
+		})
 
 		// Unknown role → default to client.
 		c := m.SetFormValues(form.Client{ClientRole: "superuser"})
@@ -745,6 +789,9 @@ func TestClient_SetFormValues_Role(t *testing.T) {
 		if err := m.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&m).Error)
+		})
 		assert.True(t, m.HasRole(acl.RoleClient))
 
 		// Change to admin via form.
@@ -763,6 +810,9 @@ func TestClient_SetFormValues_AuthEnabledToggle(t *testing.T) {
 	if err := m.Save(); err != nil {
 		t.Fatal(err)
 	}
+	t.Cleanup(func() {
+		assert.NoError(t, UnscopedDb().Delete(&m).Error)
+	})
 
 	m.SetFormValues(form.Client{AuthEnabled: false})
 	assert.True(t, m.AuthEnabled, "SetFormValues should not disable when AuthEnabled=false")
@@ -781,6 +831,9 @@ func TestClient_SetFormValues_SetUser(t *testing.T) {
 		if err := m.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&m).Error)
+		})
 
 		uid := UserFixtures.Pointer("friend").UserUID
 		c := m.SetFormValues(form.Client{UserUID: uid})
@@ -795,6 +848,9 @@ func TestClient_SetFormValues_SetUser(t *testing.T) {
 		if err := m.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&m).Error)
+		})
 
 		c := m.SetFormValues(form.Client{UserName: "alice"})
 
@@ -811,6 +867,9 @@ func TestClient_SetFormValues_SetUser(t *testing.T) {
 		if err := m.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&m).Error)
+		})
 
 		prevUID := m.UserUID
 		c := m.SetFormValues(form.Client{UserUID: "u0000000000000xx", UserName: "nonexistent"})
@@ -847,6 +906,9 @@ func TestClient_SetFormValues_DoesNotOverrideUID(t *testing.T) {
 	if err := m.Save(); err != nil {
 		t.Fatal(err)
 	}
+	t.Cleanup(func() {
+		assert.NoError(t, UnscopedDb().Delete(&m).Error)
+	})
 
 	// Attempt to override with a different id via form; should be ignored.
 	c := m.SetFormValues(form.Client{ClientID: "cs5cpu17n6gj9zzz", ClientName: "KeepUID2"})
