@@ -41,11 +41,11 @@ func TestSubjectReports(t *testing.T) {
 		require.NotEmpty(t, people)
 
 		for _, p := range people {
-			var want int
+			var want int64
 			require.NoError(t, UnscopedDb().Model(&entity.Face{}).
 				Where("subj_uid = ?", p.SubjUID).Count(&want).Error)
 
-			assert.Equal(t, want, p.Clusters, "cluster count for %s", p.SubjName)
+			assert.EqualValues(t, want, p.Clusters, "cluster count for %s", p.SubjName)
 		}
 	})
 	t.Run("Stored", func(t *testing.T) {

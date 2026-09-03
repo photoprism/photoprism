@@ -1329,9 +1329,14 @@ func TestMigrationCropCoverage(t *testing.T) {
 
 	// A 4:3 landscape original: Fit1920 fits it to 1600x1200, so the box height decides what the
 	// rendition delivers and the 1920 in its name does not.
+	photo := entity.NewPhoto(false)
+	photo.PhotoUID = rnd.GenerateUID('p')
+	require.NoError(t, entity.Db().Create(&photo).Error)
+
 	file := &entity.File{
 		FileUID:    rnd.GenerateUID('f'),
-		PhotoUID:   rnd.GenerateUID('p'),
+		PhotoUID:   photo.PhotoUID,
+		PhotoID:    photo.ID,
 		FileHash:   "7a7d777777777777777777777777777777777777",
 		FileName:   "coverage/landscape.jpg",
 		FileRoot:   entity.RootOriginals,
@@ -1339,6 +1344,10 @@ func TestMigrationCropCoverage(t *testing.T) {
 		FileHeight: 2736,
 	}
 	require.NoError(t, entity.Db().Create(file).Error)
+	t.Cleanup(func() {
+		entity.UnscopedDb().Delete(file)
+		entity.UnscopedDb().Delete(&photo)
+	})
 
 	// The crops are requested at 160 px, so these markers ask for 320, 2667, 3286 and 8000 px of
 	// source width.
@@ -1547,9 +1556,14 @@ func TestFaces_cacheMigrationCropThumb(t *testing.T) {
 func newRenderTestFile(t *testing.T, c *config.Config, hash string, width, height int) *entity.File {
 	t.Helper()
 
+	photo := entity.NewPhoto(false)
+	photo.PhotoUID = rnd.GenerateUID('p')
+	require.NoError(t, entity.Db().Create(&photo).Error)
+
 	file := &entity.File{
 		FileUID:    rnd.GenerateUID('f'),
-		PhotoUID:   rnd.GenerateUID('p'),
+		PhotoUID:   photo.PhotoUID,
+		PhotoID:    photo.ID,
 		FileHash:   hash,
 		FileName:   "coverage/" + hash + ".jpg",
 		FileRoot:   entity.RootOriginals,
@@ -1558,6 +1572,10 @@ func newRenderTestFile(t *testing.T, c *config.Config, hash string, width, heigh
 	}
 
 	require.NoError(t, entity.Db().Create(file).Error)
+	t.Cleanup(func() {
+		entity.UnscopedDb().Delete(file)
+		entity.UnscopedDb().Delete(&photo)
+	})
 
 	originalName := FileName(file.FileRoot, file.FileName)
 	require.NoError(t, fs.MkdirAll(filepath.Dir(originalName)))
@@ -1581,7 +1599,7 @@ func TestFaces_insufficientStorage(t *testing.T) {
 		// Reading the quota needs a database, which is also what makes this the state the run has
 		// to refuse in: the volume it would write renditions to is the one that is full.
 		oldCfg := Config()
-		c := config.NewMinimalTestConfigWithDb("faces_quota", t.TempDir())
+		c := config.NewMinimalTestConfigWithDbTTest("faces_quota", t.TempDir(), t)
 
 		t.Cleanup(func() {
 			_ = c.CloseDb()

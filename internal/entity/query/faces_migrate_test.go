@@ -730,18 +730,26 @@ func TestFaceMigrationCropCoverage(t *testing.T) {
 	before, err := FaceMigrationCropCoverage(160, 1920, 1200)
 	require.NoError(t, err)
 
+	photo := entity.NewPhoto(false)
+	photo.PhotoUID = rnd.GenerateUID('p')
+	require.NoError(t, Db().Create(&photo).Error)
+
 	// A 4:3 landscape original, which is the case a naive implementation gets wrong: the box
 	// height binds, so Fit1920 delivers 1600 px of width rather than the 1920 in its name.
 	file := entity.File{
 		FileUID:    rnd.GenerateUID('f'),
-		PhotoUID:   rnd.GenerateUID('p'),
+		PhotoUID:   photo.PhotoUID,
+		PhotoID:    photo.ID,
 		FileName:   "crop-coverage/landscape.jpg",
 		FileRoot:   entity.RootOriginals,
 		FileWidth:  3648,
 		FileHeight: 2736,
 	}
 	require.NoError(t, Db().Create(&file).Error)
-	t.Cleanup(func() { Db().Unscoped().Delete(&file) })
+	t.Cleanup(func() {
+		Db().Unscoped().Delete(&file)
+		Db().Unscoped().Delete(&photo)
+	})
 
 	// The required source width is 160/w, so these ask for 320, 1778 and 8000 px.
 	widths := []float32{0.5, 0.09, 0.02}
@@ -802,7 +810,8 @@ func TestFaceMigrationCropCoverage(t *testing.T) {
 		// than the box's own aspect is bounded by its width, so 1920 is what Fit1920 delivers.
 		wide := entity.File{
 			FileUID:    rnd.GenerateUID('f'),
-			PhotoUID:   rnd.GenerateUID('p'),
+			PhotoUID:   photo.PhotoUID,
+			PhotoID:    photo.ID,
 			FileName:   "crop-coverage/wide.jpg",
 			FileRoot:   entity.RootOriginals,
 			FileWidth:  4096,
@@ -888,15 +897,23 @@ func TestFaceMarkerSampleShortfall(t *testing.T) {
 	before, err := FaceMarkerSampleShortfall(clusterSize)
 	require.NoError(t, err)
 
+	photo := entity.NewPhoto(false)
+	photo.PhotoUID = rnd.GenerateUID('p')
+	require.NoError(t, Db().Create(&photo).Error)
+
 	file := entity.File{
 		FileUID:   rnd.GenerateUID('f'),
-		PhotoUID:  rnd.GenerateUID('p'),
+		PhotoUID:  photo.PhotoUID,
+		PhotoID:   photo.ID,
 		FileName:  "sample-shortfall/large.jpg",
 		FileRoot:  entity.RootOriginals,
 		FileWidth: 4000,
 	}
 	require.NoError(t, Db().Create(&file).Error)
-	t.Cleanup(func() { Db().Unscoped().Delete(&file) })
+	t.Cleanup(func() {
+		Db().Unscoped().Delete(&file)
+		Db().Unscoped().Delete(&photo)
+	})
 
 	// The extents are what each marker's embedding was drawn from, and the widths what its
 	// original could supply: 0.1 of 4000 px is 400, and 0.01 of it is 40.

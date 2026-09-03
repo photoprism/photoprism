@@ -556,15 +556,23 @@ func TestFaces_auditMarkerSampleShortfall(t *testing.T) {
 	restore := face.ClusterSizeThreshold
 	t.Cleanup(func() { face.ClusterSizeThreshold = restore })
 
+	photo := entity.NewPhoto(false)
+	photo.PhotoUID = rnd.GenerateUID('p')
+	require.NoError(t, entity.Db().Create(&photo).Error)
+
 	file := &entity.File{
 		FileUID:   rnd.GenerateUID('f'),
-		PhotoUID:  rnd.GenerateUID('p'),
+		PhotoUID:  photo.PhotoUID,
+		PhotoID:   photo.ID,
 		FileName:  "audit-shortfall/large.jpg",
 		FileRoot:  entity.RootOriginals,
 		FileWidth: 4000,
 	}
 	require.NoError(t, entity.Db().Create(file).Error)
-	t.Cleanup(func() { entity.UnscopedDb().Delete(file) })
+	t.Cleanup(func() {
+		entity.UnscopedDb().Delete(file)
+		entity.UnscopedDb().Delete(&photo)
+	})
 
 	// Sampled at 60 px while its original holds 400, so a re-sampling clears a bar of 112.
 	marker := &entity.Marker{

@@ -94,9 +94,9 @@ func SubjectReports(person string, count, offset int, live bool) (result []Subje
 		joins = fmt.Sprintf(`LEFT JOIN (
 			SELECT m.subj_uid, COUNT(DISTINCT f.id) AS live_files, COUNT(DISTINCT f.photo_id) AS live_photos
 			FROM %s f
-			JOIN %s p ON p.id = f.photo_id AND p.deleted_at IS NULL AND p.photo_private = 0
+			JOIN %s p ON p.id = f.photo_id AND p.deleted_at IS NULL AND p.photo_private = FALSE
 			JOIN %s m ON f.file_uid = m.file_uid AND m.subj_uid <> ''
-			WHERE m.marker_invalid = 0 AND f.deleted_at IS NULL
+			WHERE m.marker_invalid = FALSE AND f.deleted_at IS NULL
 			GROUP BY m.subj_uid
 		) c ON c.subj_uid = s.subj_uid`,
 			entity.File{}.TableName(), entity.Photo{}.TableName(), entity.Marker{}.TableName())
@@ -109,7 +109,7 @@ func SubjectReports(person string, count, offset int, live bool) (result []Subje
 		%s
 		LEFT JOIN (
 			SELECT subj_uid, COUNT(*) AS markers FROM %s
-			WHERE marker_type = ? AND marker_invalid = 0 AND subj_uid <> ''
+			WHERE marker_type = ? AND marker_invalid = FALSE AND subj_uid <> ''
 			GROUP BY subj_uid
 		) n ON n.subj_uid = s.subj_uid
 		LEFT JOIN (

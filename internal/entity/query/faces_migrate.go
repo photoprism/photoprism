@@ -318,11 +318,10 @@ func FaceMigrationSampleFiles(limit int) (result []FaceMigrationSampleFile, err 
 
 	err = Db().Model(&entity.File{}).
 		Select("files.file_hash, files.file_width, files.file_height").
-		Where("files.file_hash <> '' AND files.file_width > 0 AND files.file_height > 0 AND files.file_missing = 0").
+		Where("files.file_hash <> '' AND files.file_width > 0 AND files.file_height > 0 AND files.file_missing = FALSE").
 		Where("files.file_uid IN (?)", Db().Model(&entity.Marker{}).
 			Select("file_uid").
-			Where("marker_type = ? AND marker_invalid = 0 AND file_uid <> ''", entity.MarkerFace).
-			QueryExpr()).
+			Where("marker_type = ? AND marker_invalid = FALSE AND file_uid <> ''", entity.MarkerFace)).
 		Order("files.file_uid").Limit(limit).Scan(&result).Error
 
 	return result, err
@@ -348,8 +347,8 @@ func FaceMigrationCropCoverage(cropWidth, boxWidth, boxHeight int) (result FaceM
 		COALESCE(SUM(CASE WHEN %s THEN 1 ELSE 0 END), 0) AS full_detail,
 		COALESCE(SUM(CASE WHEN ? > m.w * f.file_width THEN 1 ELSE 0 END), 0) AS source_too_small
 		FROM %s m JOIN %s f ON f.file_uid = m.file_uid
-		WHERE m.marker_type = ? AND m.marker_invalid = 0 AND m.w > 0
-		AND f.file_width > 0 AND f.file_height > 0 AND f.file_missing = 0 AND f.deleted_at IS NULL`,
+		WHERE m.marker_type = ? AND m.marker_invalid = FALSE AND m.w > 0
+		AND f.file_width > 0 AND f.file_height > 0 AND f.file_missing = FALSE AND f.deleted_at IS NULL`,
 		fits, entity.Marker{}.TableName(), entity.File{}.TableName())
 
 	if err = Db().Raw(stmt, cropWidth, cropWidth, boxWidth, cropWidth, boxHeight, cropWidth, entity.MarkerFace).
@@ -375,7 +374,7 @@ func FaceMigrationRecropMarkers(model, detector string) (count int64, err error)
 	}
 
 	stmt := whereEmbeddingModel(Db().Model(&entity.Marker{}).
-		Where("marker_type = ? AND marker_invalid = 0", entity.MarkerFace).
+		Where("marker_type = ? AND marker_invalid = FALSE", entity.MarkerFace).
 		Where("LENGTH(embeddings_json) > 0"), model)
 
 	detector = face.NormalizeDetectorName(detector)
@@ -607,7 +606,7 @@ func CountMarkersWithoutThumbSize() (n int, err error) {
 	var count int64
 
 	err = UnscopedDb().Model(&entity.Marker{}).
-		Where("marker_type = ? AND marker_invalid = 0", entity.MarkerFace).
+		Where("marker_type = ? AND marker_invalid = FALSE", entity.MarkerFace).
 		Where("LENGTH(embeddings_json) > 0").
 		Where("thumb_size IS NULL OR thumb_size < 1").
 		Count(&count).Error
@@ -640,9 +639,9 @@ func FaceMarkerSampleShortfall(clusterSize int) (result FaceSampleShortfall, err
 		COALESCE(SUM(CASE WHEN m.thumb_size < ? THEN 1 ELSE 0 END), 0) AS below_bar,
 		COALESCE(SUM(CASE WHEN m.thumb_size < ? AND m.w * f.file_width >= ? THEN 1 ELSE 0 END), 0) AS recoverable
 		FROM %s m JOIN %s f ON f.file_uid = m.file_uid
-		WHERE m.marker_type = ? AND m.marker_invalid = 0 AND m.thumb_size >= 1 AND m.w > 0
+		WHERE m.marker_type = ? AND m.marker_invalid = FALSE AND m.thumb_size >= 1 AND m.w > 0
 		AND LENGTH(m.embeddings_json) > 0
-		AND f.file_width > 0 AND f.file_missing = 0 AND f.deleted_at IS NULL`,
+		AND f.file_width > 0 AND f.file_missing = FALSE AND f.deleted_at IS NULL`,
 		entity.Marker{}.TableName(), entity.File{}.TableName())
 
 	if err = Db().Raw(stmt, clusterSize, clusterSize, clusterSize, entity.MarkerFace).Scan(&result).Error; err != nil {
@@ -677,7 +676,7 @@ func CountMarkersUnsettledThumbSize() (n int, err error) {
 	var count int64
 
 	err = UnscopedDb().Model(&entity.Marker{}).
-		Where("marker_type = ? AND marker_invalid = 0", entity.MarkerFace).
+		Where("marker_type = ? AND marker_invalid = FALSE", entity.MarkerFace).
 		Where("LENGTH(embeddings_json) > 0").
 		Where(entity.ThumbSizeUnsettledCond()).
 		Count(&count).Error

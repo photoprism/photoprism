@@ -151,7 +151,7 @@ func TestRemoveOrphanSubjects_Tombstones(t *testing.T) {
 		_, err := RemoveOrphanSubjects()
 		require.NoError(t, err)
 
-		var n int
+		var n int64
 		require.NoError(t, entity.UnscopedDb().Model(&entity.Subject{}).
 			Where("subj_uid = ?", s.SubjUID).Count(&n).Error)
 

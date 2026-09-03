@@ -52,7 +52,7 @@ type Marker struct {
 	W              float32         `json:"W" yaml:"W,omitempty"`
 	H              float32         `json:"H" yaml:"H,omitempty"`
 	Size           int             `gorm:"default:-1;" json:"Size" yaml:"Size,omitempty"`
-	ThumbSize      int             `gorm:"column:thumb_size;default:-1;" json:"ThumbSize" yaml:"ThumbSize,omitempty"`
+	ThumbSize      int             `gorm:"default:-1;" json:"ThumbSize" yaml:"ThumbSize,omitempty"`
 	// EmbedDetail is the percentage of the crop its source supplied, 100 where it supplied all
 	// of it, EmbedDetailUnknown where a migration sampled the marker without measuring one, and
 	// -1 where nothing has. It describes the embedding, which is why it sits beside embed_model

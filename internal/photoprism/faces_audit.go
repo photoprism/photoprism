@@ -455,7 +455,7 @@ func (w *Faces) recomputeMissingRadius(fix bool, subjUID string) (repaired int, 
 		stmt = stmt.Where("subj_uid = ?", subjUID)
 	}
 
-	var faces entity.Faces64
+	var faces entity.Faces
 
 	if err = stmt.Find(&faces).Error; err != nil {
 		return 0, err

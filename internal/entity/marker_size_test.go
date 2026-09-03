@@ -99,7 +99,7 @@ func TestThumbSizeUnsettledCond(t *testing.T) {
 		require.NoError(t, Db().Create(m).Error)
 		t.Cleanup(func() { UnscopedDb().Delete(&Marker{}, "marker_uid = ?", uid) })
 
-		var found int
+		var found int64
 		require.NoError(t, UnscopedDb().Model(&Marker{}).
 			Where("marker_uid = ?", uid).Where(cond).Count(&found).Error)
 

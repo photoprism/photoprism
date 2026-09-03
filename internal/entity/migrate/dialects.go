@@ -9,7 +9,7 @@ import (
 // Dialects maps a database driver to the migrations written for it.
 var Dialects = map[string]Migrations{
 	dsn.DriverMySQL:      DialectMySQL,
-	dsn.DriverSQLite3:    DialectSQLite,
+	dsn.DriverSQLite3:    DialectSQLite3,
 	dsn.DriverPostgres:   DialectPostgres,
 	dsn.DriverPostgreSQL: DialectPostgres,
 }

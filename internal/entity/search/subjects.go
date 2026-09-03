@@ -110,25 +110,25 @@ func searchSubjects(frm form.SearchSubjects, sess *entity.Session) (results Subj
 
 	if !frm.All {
 		if txt.Yes(frm.Favorite) {
-			s = s.Where("subj_favorite = 1")
+			s = s.Where("subj_favorite = TRUE")
 		} else if txt.No(frm.Favorite) {
-			s = s.Where("subj_favorite = 0")
+			s = s.Where("subj_favorite = FALSE")
 		}
 
 		if !txt.Yes(frm.Hidden) {
-			s = s.Where("subj_hidden = 0")
+			s = s.Where("subj_hidden = FALSE")
 		}
 
 		if txt.Yes(frm.Private) {
-			s = s.Where("subj_private = 1")
+			s = s.Where("subj_private = TRUE")
 		} else if txt.No(frm.Private) {
-			s = s.Where("subj_private = 0")
+			s = s.Where("subj_private = FALSE")
 		}
 
 		if txt.Yes(frm.Excluded) {
-			s = s.Where("subj_excluded = 1")
+			s = s.Where("subj_excluded = TRUE")
 		} else if txt.No(frm.Excluded) {
-			s = s.Where("subj_excluded = 0")
+			s = s.Where("subj_excluded = FALSE")
 		}
 	}
 

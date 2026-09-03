@@ -70,7 +70,7 @@ func ClusterScoreCond(alias string, floor int) (string, []any) {
 // comparison, so a marker without one cannot hold it today. It is stated here because the columns
 // derived from this set would otherwise disagree if that ever stopped being true.
 func FaceMemberCond() (string, []any) {
-	return "marker_type = ? AND marker_invalid = 0 AND face_id <> '' AND LENGTH(embeddings_json) > 0",
+	return "marker_type = ? AND marker_invalid = FALSE AND face_id <> '' AND LENGTH(embeddings_json) > 0",
 		[]any{MarkerFace}
 }
 
