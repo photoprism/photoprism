@@ -154,6 +154,7 @@ func TestVersion(t *testing.T) {
 		now := time.Now()
 		version.MigratedAt = &now
 		beforeUpdated := version.UpdatedAt
+		time.Sleep(2 * time.Second)
 		require.NoError(t, version.Save(db))
 		assert.NotEqual(t, beforeUpdated, version.UpdatedAt)
 	})
