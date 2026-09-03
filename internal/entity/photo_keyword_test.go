@@ -47,6 +47,9 @@ func TestPhotoKeyword_Delete(t *testing.T) {
 	require.NoError(t, Db().First(photo).Error)
 	keyword := NewKeyword(fmt.Sprintf("photo-keyword-delete-%d", time.Now().UnixNano()))
 	require.NoError(t, keyword.Save())
+	t.Cleanup(func() {
+		assert.NoError(t, UnscopedDb().Delete(keyword).Error)
+	})
 
 	relation := NewPhotoKeyword(photo.ID, keyword.ID)
 	require.NoError(t, relation.Create())

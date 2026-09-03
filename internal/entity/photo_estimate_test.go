@@ -118,6 +118,12 @@ func TestPhoto_EstimateCountry(t *testing.T) {
 }
 
 func TestPhoto_EstimateLocation(t *testing.T) {
+	st := Now().UTC().Truncate(time.Second)
+	t.Cleanup(func() {
+		// Randomness creaps in and sometimes creates a new place.
+		assert.NoError(t, UnscopedDb().Delete(&Place{}, "created_at > ?", st).Error)
+		assert.NoError(t, UnscopedDb().Delete(&Country{ID: "mx"}).Error)
+	})
 	t.Run("HasLocation", func(t *testing.T) {
 		p := &Place{ID: "1000000001", PlaceCountry: "mx"}
 		m := Photo{

@@ -110,6 +110,7 @@ func TestPassword_Create(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(&p).Error) })
 	})
 }
 
@@ -123,6 +124,7 @@ func TestFindPassword(t *testing.T) {
 		if err := p.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(&p).Error) })
 		r := FindPassword("urrwaxd19ldtz68x")
 		assert.NotEmpty(t, r)
 	})

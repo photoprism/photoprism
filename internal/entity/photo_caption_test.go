@@ -80,9 +80,14 @@ func TestPhoto_GetCaption(t *testing.T) {
 }
 
 func TestPhoto_UpdateCaptionLabels(t *testing.T) {
-	FirstOrCreateLabel(NewLabel("Food", 1))
-	FirstOrCreateLabel(NewLabel("Wine", 2))
-	FirstOrCreateLabel(&Label{LabelName: "Bar", LabelSlug: "bar", CustomSlug: "bar", DeletedAt: TimeStamp()})
+	fl := FirstOrCreateLabel(NewLabel("Food", 1))
+	wl := FirstOrCreateLabel(NewLabel("Wine", 2))
+	bl := FirstOrCreateLabel(&Label{LabelName: "Bar", LabelSlug: "bar", CustomSlug: "bar", DeletedAt: TimeStamp()})
+	t.Cleanup(func() {
+		assert.NoError(t, UnscopedDb().Delete(fl).Error)
+		assert.NoError(t, UnscopedDb().Delete(wl).Error)
+		assert.NoError(t, UnscopedDb().Delete(bl).Error)
+	})
 
 	t.Run("SuccessCaptionSourceMeta", func(t *testing.T) {
 		details := &Details{Keywords: "snake, otter", KeywordsSrc: SrcMeta}
@@ -91,7 +96,11 @@ func TestPhoto_UpdateCaptionLabels(t *testing.T) {
 		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
-
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&PhotoLabel{}, "photo_id = ?", photo.ID).Error)
+			assert.NoError(t, UnscopedDb().Delete(&Details{}, "photo_id = ?", photo.ID).Error)
+			assert.NoError(t, UnscopedDb().Delete(photo).Error)
+		})
 		p := FindPhoto(photo)
 
 		assert.Equal(t, 0, len(p.Labels))
@@ -115,6 +124,11 @@ func TestPhoto_UpdateCaptionLabels(t *testing.T) {
 		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&PhotoLabel{}, "photo_id = ?", photo.ID).Error)
+			assert.NoError(t, UnscopedDb().Delete(&Details{}, "photo_id = ?", photo.ID).Error)
+			assert.NoError(t, UnscopedDb().Delete(photo).Error)
+		})
 
 		p := FindPhoto(photo)
 
@@ -129,8 +143,9 @@ func TestPhoto_UpdateCaptionLabels(t *testing.T) {
 		assert.Equal(t, "I was in a nice Bar!", p.PhotoTitle)
 		assert.Equal(t, "globe, wine, food", p.PhotoCaption)
 		assert.Equal(t, "snake, otter", p.Details.Keywords)
-		assert.Equal(t, 2, len(p.Labels))
-		assert.Equal(t, 20, p.Labels[0].Uncertainty)
+		if assert.Equal(t, 2, len(p.Labels)) {
+			assert.Equal(t, 20, p.Labels[0].Uncertainty)
+		}
 	})
 	t.Run("CaptionSourceEstimate", func(t *testing.T) {
 		details := &Details{Keywords: "snake, otter", KeywordsSrc: SrcMeta}
@@ -139,6 +154,11 @@ func TestPhoto_UpdateCaptionLabels(t *testing.T) {
 		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&PhotoLabel{}, "photo_id = ?", photo.ID).Error)
+			assert.NoError(t, UnscopedDb().Delete(&Details{}, "photo_id = ?", photo.ID).Error)
+			assert.NoError(t, UnscopedDb().Delete(photo).Error)
+		})
 
 		p := FindPhoto(photo)
 
@@ -162,6 +182,11 @@ func TestPhoto_UpdateCaptionLabels(t *testing.T) {
 		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&PhotoLabel{}, "photo_id = ?", photo.ID).Error)
+			assert.NoError(t, UnscopedDb().Delete(&Details{}, "photo_id = ?", photo.ID).Error)
+			assert.NoError(t, UnscopedDb().Delete(photo).Error)
+		})
 
 		p := FindPhoto(photo)
 

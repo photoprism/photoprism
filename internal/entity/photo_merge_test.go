@@ -98,6 +98,17 @@ func TestPhoto_Merge(t *testing.T) {
 		}
 		assert.EqualValues(t, 1000023, original.ID)
 		assert.EqualValues(t, 1000024, merged[0].ID)
+		t.Cleanup(func() {
+			ff := FileFixtures.Get("Photo24.jpg")
+			assert.NoError(t, UnscopedDb().Model(&File{}).Where("id = ?", ff.ID).UpdateColumns(Values{"photo_id": ff.PhotoID, "photo_uid": ff.PhotoUID, "photo_taken_at": ff.PhotoTakenAt, "media_id": ff.MediaID, "media_utc": ff.MediaUTC, "file_primary": ff.FilePrimary}).Error)
+			ff = FileFixtures.Get("Photo24.cr2")
+			assert.NoError(t, UnscopedDb().Model(&File{}).Where("id = ?", ff.ID).UpdateColumns(Values{"photo_id": ff.PhotoID, "photo_uid": ff.PhotoUID, "photo_taken_at": ff.PhotoTakenAt, "media_id": ff.MediaID, "media_utc": ff.MediaUTC, "file_primary": ff.FilePrimary}).Error)
+			pf := PhotoFixtures.Get("Photo23")
+			assert.NoError(t, UnscopedDb().Model(&Photo{}).Where("id = ?", pf.ID).UpdateColumns(Values{"photo_type": pf.PhotoType, "type_src": pf.TypeSrc, "photo_quality": pf.PhotoQuality, "deleted_at": pf.DeletedAt}).Error)
+			pf = PhotoFixtures.Get("Photo24")
+			assert.NoError(t, UnscopedDb().Model(&Photo{}).Where("id = ?", pf.ID).UpdateColumns(Values{"photo_type": pf.PhotoType, "type_src": pf.TypeSrc, "photo_quality": pf.PhotoQuality, "deleted_at": pf.DeletedAt}).Error)
+			assert.NoError(t, UnscopedDb().Exec("update photos_labels set photo_id = 1000024 where photo_id = 1000023 and label_id = 1000007").Error)
+		})
 
 		actual = FindPhoto(Photo{ID: original.ID})
 		assert.Equal(t, 2, len(actual.Labels))

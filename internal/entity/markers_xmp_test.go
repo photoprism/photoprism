@@ -90,6 +90,10 @@ var _ = crop.Area{}
 func TestFile_AddFace_UpgradesEmbeddinglessMarker(t *testing.T) {
 	photo := Photo{PhotoUID: rnd.GenerateUID('p'), PhotoName: "xmp-addface", PhotoType: MediaImage}
 	require.NoError(t, photo.Save())
+	t.Cleanup(func() {
+		assert.NoError(t, UnscopedDb().Delete(&Details{}, "photo_id = ?", photo.ID).Error)
+		assert.NoError(t, UnscopedDb().Delete(&photo).Error)
+	})
 	file := &File{
 		PhotoID:     photo.ID,
 		PhotoUID:    photo.PhotoUID,
@@ -101,6 +105,7 @@ func TestFile_AddFace_UpgradesEmbeddinglessMarker(t *testing.T) {
 		FileType:    "jpg",
 	}
 	require.NoError(t, file.Create())
+	t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(file).Error) })
 
 	// Persist an embedding-less XMP marker (as a prior pass would have).
 	xmpMarker := NewMarker(*file, cropArea1, "", SrcXmp, MarkerFace, 100, 30)
@@ -108,6 +113,7 @@ func TestFile_AddFace_UpgradesEmbeddinglessMarker(t *testing.T) {
 	xmpMarker.MarkerName = "Alice"
 	xmpMarker.SubjSrc = SrcXmp
 	require.NoError(t, xmpMarker.Create())
+	t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(xmpMarker).Error) })
 	require.Empty(t, xmpMarker.EmbeddingsJSON)
 
 	// A later detection pass finds a real face overlapping the XMP marker. The detector
@@ -146,6 +152,10 @@ func TestFile_AddFace_UpgradesEmbeddinglessMarker(t *testing.T) {
 func TestFile_AddFace_RecordsProducerModel(t *testing.T) {
 	photo := Photo{PhotoUID: rnd.GenerateUID('p'), PhotoName: "xmp-addface3", PhotoType: MediaImage}
 	require.NoError(t, photo.Save())
+	t.Cleanup(func() {
+		assert.NoError(t, UnscopedDb().Delete(&Details{}, "photo_id = ?", photo.ID).Error)
+		assert.NoError(t, UnscopedDb().Delete(&photo).Error)
+	})
 	file := &File{
 		PhotoID:     photo.ID,
 		PhotoUID:    photo.PhotoUID,
@@ -157,6 +167,7 @@ func TestFile_AddFace_RecordsProducerModel(t *testing.T) {
 		FileType:    "jpg",
 	}
 	require.NoError(t, file.Create())
+	t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(file).Error) })
 
 	restoreModel := face.ConfiguredModel()
 
@@ -189,6 +200,10 @@ func TestFile_AddFace_RecordsProducerModel(t *testing.T) {
 func TestFile_AddFace_DoesNotResurrectRejected(t *testing.T) {
 	photo := Photo{PhotoUID: rnd.GenerateUID('p'), PhotoName: "xmp-addface2", PhotoType: MediaImage}
 	require.NoError(t, photo.Save())
+	t.Cleanup(func() {
+		assert.NoError(t, UnscopedDb().Delete(&Details{}, "photo_id = ?", photo.ID).Error)
+		assert.NoError(t, UnscopedDb().Delete(&photo).Error)
+	})
 	file := &File{
 		PhotoID:     photo.ID,
 		PhotoUID:    photo.PhotoUID,
@@ -200,11 +215,13 @@ func TestFile_AddFace_DoesNotResurrectRejected(t *testing.T) {
 		FileType:    "jpg",
 	}
 	require.NoError(t, file.Create())
+	t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(file).Error) })
 
 	rejected := NewMarker(*file, cropArea1, "", SrcImage, MarkerFace, 100, 30)
 	require.NotNil(t, rejected)
 	rejected.MarkerInvalid = true
 	require.NoError(t, rejected.Create())
+	t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(rejected).Error) })
 
 	f := face.Face{
 		Rows: 1000, Cols: 1000, Score: 100,
@@ -229,6 +246,10 @@ func TestMarker_SetFace_XmpNotShared(t *testing.T) {
 	setup := func(t *testing.T, subjSrc, hash, person string) (*Marker, *Face, string) {
 		photo := Photo{PhotoUID: rnd.GenerateUID('p'), PhotoName: "xmp-setface-" + subjSrc, PhotoType: MediaImage}
 		require.NoError(t, photo.Save())
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&Details{}, "photo_id = ?", photo.ID).Error)
+			assert.NoError(t, UnscopedDb().Delete(&photo).Error)
+		})
 		file := File{
 			PhotoID:     photo.ID,
 			PhotoUID:    photo.PhotoUID,
@@ -240,9 +261,11 @@ func TestMarker_SetFace_XmpNotShared(t *testing.T) {
 			FileType:    "jpg",
 		}
 		require.NoError(t, file.Create())
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(file).Error) })
 
 		subj := FirstOrCreateSubject(NewSubject(person, SubjPerson, SrcManual))
 		require.NotNil(t, subj)
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(subj).Error) })
 
 		// Model a detected AI marker (MarkerSrc = SrcImage) that has since gained a
 		// name from the given source, so SetFace exercises the box-vs-name split.
@@ -251,6 +274,7 @@ func TestMarker_SetFace_XmpNotShared(t *testing.T) {
 		m.SubjSrc = subjSrc
 		m.SetEmbeddings(face.Embeddings{testEmbeddings[0]}, face.EmbeddingModelName(), face.EngineONNX)
 		require.NoError(t, m.Create())
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(m).Error) })
 
 		// A subjectless shared face to observe whether the marker's subject is
 		// pushed onto it; a unique id keeps the manual-case DB write local.

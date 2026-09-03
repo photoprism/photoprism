@@ -76,8 +76,7 @@ func TestFirstOrCreateLens(t *testing.T) {
 
 		result := FirstOrCreateLens(lens)
 
-		assert.NotNil(t, result)
-		if result != nil {
+		if assert.NotNil(t, result) {
 			assert.Equal(t, LensFixtures.Get(fixture).ID, result.ID)
 			assert.Equal(t, LensFixtures.Get(fixture).LensMake, result.LensMake)
 			assert.Equal(t, LensFixtures.Get(fixture).LensModel, result.LensModel)
@@ -120,7 +119,10 @@ func TestLensUpdateMakeModel(t *testing.T) {
 
 		result := FirstOrCreateLens(lens)
 
-		defer assert.NoError(t, UnscopedDb().Save(LensFixtures.Pointer(fixture)).Error)
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Save(LensFixtures.Pointer(fixture)).Error)
+			FlushLensCache()
+		})
 		make := "Tamron"
 		model := "Tamron SP AF 24-135mm F3.5-5.6 AD AL (190D)"
 		err := result.UpdateMakeModel(make, model)
@@ -134,7 +136,10 @@ func TestLensUpdateMakeModel(t *testing.T) {
 	t.Run("NewLens", func(t *testing.T) {
 		setup := NewLens("", "4 38")
 		lens := FirstOrCreateLens(setup)
-		defer assert.NoError(t, UnscopedDb().Delete(&Lens{}, "id = ?", lens.ID).Error)
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&Lens{}, "id = ?", lens.ID).Error)
+			FlushLensCache()
+		})
 		make := "Pentax"
 		model := "smc PENTAX-FA 28-105mm F3.2-4.5 AL[IF]"
 		err := lens.UpdateMakeModel(make, model)
@@ -204,7 +209,10 @@ func TestLens_EntityEvents(t *testing.T) {
 		fixture := "lens-f-380"
 		lens := Lens{}
 		assert.NoError(t, UnscopedDb().First(&lens, "id = ?", LensFixtures.Get(fixture).ID).Error)
-		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Save(LensFixtures.Pointer(fixture)).Error) })
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Save(LensFixtures.Pointer(fixture)).Error)
+			FlushLensCache()
+		})
 
 		updated := event.Subscribe("lenses.updated")
 		t.Cleanup(func() { event.Unsubscribe(updated) })
@@ -237,7 +245,10 @@ func TestLens_SaveForm(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		lens := Lens{}
 		assert.NoError(t, UnscopedDb().First(&lens, "id = ?", LensFixtures.Get("lens-f-380").ID).Error)
-		defer assert.NoError(t, UnscopedDb().Save(LensFixtures.Pointer("lens-f-380")).Error)
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Save(LensFixtures.Pointer("lens-f-380")).Error)
+			FlushLensCache()
+		})
 		err := lens.SaveForm(&form.Lens{LensMake: "Sigma", LensModel: "85mm F1.4"})
 		assert.NoError(t, err)
 		assert.Equal(t, CameraMakes["Sigma"], lens.LensMake) // NewLens normalizes the make.

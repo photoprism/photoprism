@@ -11,6 +11,10 @@ import (
 )
 
 func TestPhoto_SetPosition(t *testing.T) {
+	t.Cleanup(func() {
+		assert.NoError(t, UnscopedDb().Delete(&Cell{}, "place_id = ?", "zz:NjeJTM9IXJSv").Error)
+		assert.NoError(t, UnscopedDb().Delete(&Place{}, "id = ?", "zz:NjeJTM9IXJSv").Error)
+	})
 	t.Run("SrcAuto", func(t *testing.T) {
 		p := Photo{ID: 1, Place: nil, PlaceID: "", CellID: "s2:479a03fda123", PhotoLat: 0, PhotoLng: 0, PlaceSrc: SrcAuto}
 		pos := geo.Position{Lat: 1, Lng: -1, Estimate: true}
@@ -431,6 +435,12 @@ func TestPhoto_CountryName(t *testing.T) {
 }
 
 func TestUpdateLocation(t *testing.T) {
+	st := Now().UTC().Truncate(time.Second)
+	t.Cleanup(func() {
+		// Randomness creaps in and sometimes creates a new place.
+		assert.NoError(t, UnscopedDb().Delete(&Place{}, "created_at > ?", st).Error)
+		assert.NoError(t, UnscopedDb().Delete(&Country{ID: "mx"}).Error)
+	})
 	t.Run("Estimate", func(t *testing.T) {
 		m := Photo{
 			PhotoName:    "test_photo_2",

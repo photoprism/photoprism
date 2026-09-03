@@ -56,6 +56,7 @@ func TestLink_Redeem(t *testing.T) {
 	if err := link.Save(); err != nil {
 		t.Fatal(err)
 	}
+	t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(&link).Error) })
 
 	link.Redeem()
 
@@ -76,6 +77,7 @@ func TestLink_SetPassword(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(&Password{}, "uid = ?", link.LinkUID).Error) })
 	assert.Equal(t, true, link.HasPassword)
 }
 
@@ -91,6 +93,7 @@ func TestLink_InvalidPassword(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(&Password{}, "uid = ?", link.LinkUID).Error) })
 		assert.False(t, link.InvalidPassword("123"))
 	})
 	t.Run("ValidPassword", func(t *testing.T) {
@@ -100,6 +103,7 @@ func TestLink_InvalidPassword(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(&Password{}, "uid = ?", link.LinkUID).Error) })
 		assert.True(t, link.InvalidPassword("123"))
 	})
 }
@@ -123,6 +127,7 @@ func TestLink_Save(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(&link).Error) })
 	})
 }
 
@@ -156,11 +161,12 @@ func TestFindLink(t *testing.T) {
 		if err := link.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(&link).Error) })
 		uid := link.LinkUID
 		t.Logf("%#v", link)
 		r := FindLink(uid)
 		t.Log(r)
-		//TODO Why does it fail?
+		//TODO Why does it fail? <- because LinkToken is generated random token.
 		//assert.Equal(t, "1jxf3jfn2k", r.LinkToken)
 	})
 	t.Run("Nil", func(t *testing.T) {
