@@ -547,6 +547,8 @@ build-js:
 	(cd frontend &&	env BUILD_ENV=production NODE_ENV=production npm run build)
 	(cd frontend && node scripts/precompress.js)
 build-go: build-develop
+build-notf:
+	go build -tags notf -o $(BINARY_NAME) ./cmd/photoprism
 build-develop:
 	rm -f $(BINARY_NAME)
 	scripts/build.sh develop $(BINARY_NAME)
