@@ -92,6 +92,11 @@ func TestClientRegistry_DeleteAllByUUID(t *testing.T) {
 func TestClientRegistry_ListOnlyUUID(t *testing.T) {
 	c := newRegistryTestConfig(t, "cluster-registry-list-only-uuid")
 
+	// Remove the fixture records
+	if !assert.Empty(t, entity.UnscopedDb().Delete(entity.Client{}, "client_uid = ?", entity.ClientFixtures.Get("node").ClientUID).Error) {
+		return
+	}
+
 	// Create one client with empty NodeUUID (non-node), and one proper node
 	nonNode := entity.NewClient().SetName("webapp").SetRole(acl.RoleClient.String())
 	assert.NoError(t, nonNode.Create())
@@ -112,6 +117,8 @@ func TestClientRegistry_ListOnlyUUID(t *testing.T) {
 	}
 
 	assert.Nil(t, listNodeByName(list, "webapp"), "non-node client must be excluded")
+
+	entity.Db().Create(entity.ClientFixtures.Get("node"))
 }
 
 // Put should prefer UUID over ClientID when both are provided, avoiding cross-attachment.

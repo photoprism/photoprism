@@ -25,7 +25,7 @@ Additional information can be found in our Developer Guide:
 package query
 
 import (
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
@@ -68,13 +68,13 @@ func UnscopedDb() *gorm.DB {
 
 // DbDialect returns the sql database dialect name.
 func DbDialect() string {
-	return Db().Dialect().GetName()
+	return Db().Dialector.Name()
 }
 
 // BatchSize returns the maximum query parameter number based on the current sql database dialect.
 func BatchSize() int {
 	switch DbDialect() {
-	case dsn.DriverSQLite3:
+	case dsn.DialectSQLite:
 		return 333
 	default:
 		return 1000

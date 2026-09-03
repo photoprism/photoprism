@@ -1,0 +1,1 @@
+CREATE COLLATION IF NOT EXISTS caseinsensitive (provider = icu, locale = 'und', deterministic = false);

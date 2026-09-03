@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"time"
 
@@ -128,7 +129,20 @@ func (m *Photo) LoadFromYaml(fileName string) error {
 	}
 
 	if err = yaml.Unmarshal(data, m); err != nil {
-		return err
+		if strings.Contains(err.Error(), "gorm.DeletedAt") && strings.Count(err.Error(), "\n") == 1 {
+			// try and fix the gorm.DeletedAt structure change
+			deletedAt := JustDeletedAt{}
+			if err = yaml.Unmarshal(data, &deletedAt); err != nil {
+				log.Errorf("photo: yaml: unable to reparse DeletedAt with %s", err.Error())
+				return err
+			} else {
+				m.DeletedAt.Time = deletedAt.DeletedAt
+				m.DeletedAt.Valid = true
+			}
+
+		} else {
+			return err
+		}
 	}
 
 	m.NormalizeValues()

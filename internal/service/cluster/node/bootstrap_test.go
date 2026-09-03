@@ -28,12 +28,7 @@ import (
 // newBootstrapTestConfig creates a minimal test config and closes its database on test cleanup.
 func newBootstrapTestConfig(t *testing.T, name string) *config.Config {
 	t.Helper()
-	c := config.NewMinimalTestConfigWithDb(name, t.TempDir())
-	t.Cleanup(func() {
-		assert.NoError(t, c.CloseDb())
-	})
-
-	return c
+	return config.NewMinimalTestConfigWithDbTTest(name, t.TempDir(), t)
 }
 
 func TestInitConfig_NoPortal_NoOp(t *testing.T) {
@@ -614,6 +609,11 @@ func TestThemeInstall_VersionMismatch(t *testing.T) {
 }
 
 func TestRegister_SQLite_NoDBPersist(t *testing.T) {
+	c := newBootstrapTestConfig(t, "bootstrap-sqlite")
+	if c.DatabaseDriver() != dsn.DriverSQLite3 {
+		t.Skip("Test only valid for SQLite")
+	}
+
 	// Portal responds with DB DSN, but local driver is SQLite → must not persist DB.
 	var jwksURL3 string
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -637,24 +637,73 @@ func TestRegister_SQLite_NoDBPersist(t *testing.T) {
 	defer srv.Close()
 
 	// Pin the driver, as this test is about nodes that do not run on MySQL.
-	t.Setenv("PHOTOPRISM_TEST_DRIVER", dsn.DriverSQLite3)
-	t.Setenv("PHOTOPRISM_TEST_DSN", filepath.Join(t.TempDir(), "bootstrap-sqlite.db"))
+	t.Setenv("PHOTOPRISM_TEST_DSN_NAME", dsn.DriverSQLite3)
+	t.Setenv("PHOTOPRISM_TEST_DSN_SQLITEFILE", (&dsn.DSN{Driver: dsn.DriverSQLite3, Server: t.TempDir(), Name: "bootstrap-sqlite.db"}).ToString())
 
-	c := newBootstrapTestConfig(t, "bootstrap-sqlite")
+	// c := newBootstrapTestConfig(t, "bootstrap-sqlite")
 
 	// SQLite driver by default; set Portal.
 	c.Options().PortalUrl = srv.URL
 	c.Options().JoinToken = cluster.ExampleJoinToken
 	// Remember original DSN so we can ensure it is not changed.
 	origDSN := c.Options().DatabaseDSN
+	origDriver := c.DatabaseDriver()
 	t.Cleanup(func() { _ = os.Remove(origDSN) })
 
 	// Run bootstrap.
 	assert.NoError(t, InitConfig(c))
 
 	// NodeClientSecret should persist, but DB should remain SQLite (no DSN update).
+	assert.Equal(t, origDriver, c.DatabaseDriver())
 	assert.Equal(t, cluster.ExampleClientSecret, c.NodeClientSecret())
 	assert.Equal(t, dsn.DriverSQLite3, c.DatabaseDriver())
+	assert.Equal(t, origDSN, c.Options().DatabaseDSN)
+	assert.Equal(t, srv.URL+"/.well-known/jwks.json", c.JWKSUrl())
+	assert.Equal(t, "203.0.113.0/24", c.ClusterCIDR())
+}
+
+func TestRegister_Postgres_NoDBPersist(t *testing.T) {
+	c := newBootstrapTestConfig(t, "bootstrap-postgres")
+	if c.DatabaseDriver() != dsn.DriverPostgreSQL {
+		t.Skip("Test only valid for Postgres")
+	}
+
+	// Portal responds with DB DSN, but local driver is Postgres → must not persist DB.
+	var jwksURL3 string
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/api/v1/cluster/nodes/register":
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusCreated)
+			resp := cluster.RegisterResponse{
+				Node:        cluster.Node{Name: "pp-node-01"},
+				Secrets:     &cluster.RegisterSecrets{ClientSecret: cluster.ExampleClientSecret},
+				ClusterCIDR: "203.0.113.0/24",
+				JWKSUrl:     jwksURL3,
+				Database:    cluster.RegisterDatabase{Host: "db.local", Port: 3306, Name: "pp_db", User: "pp_user", Password: "pp_pw", DSN: "pp_user:pp_pw@tcp(db.local:3306)/pp_db?charset=utf8mb4&parseTime=true"},
+			}
+			_ = json.NewEncoder(w).Encode(resp)
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	jwksURL3 = srv.URL + "/.well-known/jwks.json"
+	defer srv.Close()
+
+	// SQLite driver by default; set Portal.
+	c.Options().PortalUrl = srv.URL
+	c.Options().JoinToken = cluster.ExampleJoinToken
+	// Remember original DSN so we can ensure it is not changed.
+	origDSN := c.Options().DatabaseDSN
+	origDriver := c.DatabaseDriver()
+
+	// Run bootstrap.
+	assert.NoError(t, InitConfig(c))
+
+	// NodeClientSecret should persist, but DB should remain SQLite (no DSN update).
+	assert.Equal(t, origDriver, c.DatabaseDriver())
+	assert.Equal(t, cluster.ExampleClientSecret, c.NodeClientSecret())
+	assert.Equal(t, dsn.DriverPostgreSQL, c.DatabaseDriver())
 	assert.Equal(t, origDSN, c.Options().DatabaseDSN)
 	assert.Equal(t, srv.URL+"/.well-known/jwks.json", c.JWKSUrl())
 	assert.Equal(t, "203.0.113.0/24", c.ClusterCIDR())

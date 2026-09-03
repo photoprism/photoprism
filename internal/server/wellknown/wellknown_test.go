@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/testextras"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -20,11 +21,11 @@ func runTestMain(m *testing.M) (code int) {
 	c := config.TestConfig()
 	defer c.CleanupTestFolder()
 	defer func() {
-		c.CloseDb()
+		_ = c.CloseDb()
 		// Remove temporary SQLite files after running the tests.
 		fs.PurgeTestDbFiles(".", false)
 	}()
 
 	// Run unit tests.
-	return m.Run()
+	return testextras.TestDbCleanup(m.Run())
 }

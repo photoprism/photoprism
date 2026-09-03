@@ -4,17 +4,16 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"path/filepath"
 	"runtime"
+	"runtime/debug"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql" // register mysql dialect
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"golang.org/x/mod/semver"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/migrate"
@@ -25,8 +24,6 @@ import (
 	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
-
-var postgresSupportWarnOnce sync.Once
 
 // Auto requests automatic detection of an implementation-defined default
 // (e.g. the database driver). The canonical SQL driver identifiers live in
@@ -40,14 +37,10 @@ func (c *Config) DatabaseDriver() string {
 	switch dsn.ParseDriver(c.options.DatabaseDriver) {
 	case dsn.DriverMySQL, dsn.DriverMariaDB:
 		c.options.DatabaseDriver = dsn.DriverMySQL
-	case dsn.DriverPostgres:
-		// See issue #47 and <https://github.com/photoprism/photoprism/pull/4831>.
-		postgresSupportWarnOnce.Do(func() {
-			log.Warnf("config: support for PostgreSQL is not yet available in this version")
-		})
-		c.options.DatabaseDriver = dsn.DriverPostgres
 	case dsn.DriverSQLite3, dsn.DriverNone, dsn.DriverAuto:
 		c.options.DatabaseDriver = dsn.DriverSQLite3
+	case dsn.DriverPostgreSQL, dsn.DriverPostgres:
+		c.options.DatabaseDriver = dsn.DriverPostgreSQL
 	case dsn.DriverTiDB:
 		log.Warnf("config: database driver 'tidb' is deprecated, using sqlite")
 		c.options.DatabaseDriver = dsn.DriverSQLite3
@@ -67,10 +60,10 @@ func (c *Config) DatabaseDriverName() string {
 	switch c.DatabaseDriver() {
 	case dsn.DriverMySQL:
 		return "MariaDB"
-	case dsn.DriverPostgres:
-		return "PostgreSQL"
 	case dsn.DriverSQLite3:
 		return "SQLite"
+	case dsn.DriverPostgreSQL:
+		return "PostgreSQL"
 	case dsn.DriverAuto:
 		return "Auto"
 	default:
@@ -123,44 +116,37 @@ func (c *Config) DatabaseDSN() string {
 	if c.NoDatabaseDSN() {
 		switch c.DatabaseDriver() {
 		case dsn.DriverMySQL:
-			databaseServer := c.DatabaseServer()
-
+			databaseNet := "tcp"
 			// Connect via Unix Domain Socket?
-			if strings.HasPrefix(databaseServer, "/") {
+			if strings.HasPrefix(c.DatabaseServer(), "/") {
 				log.Debugf("mariadb: connecting via Unix domain socket")
-				databaseServer = fmt.Sprintf("unix(%s)", databaseServer)
-			} else {
-				databaseServer = fmt.Sprintf("tcp(%s)", databaseServer)
+				databaseNet = "unix"
 			}
-
-			return fmt.Sprintf(
-				"%s:%s@%s/%s?%s&timeout=%ds",
-				c.DatabaseUser(),
-				c.DatabasePassword(),
-				databaseServer,
-				c.DatabaseName(),
-				dsn.Params[dsn.DriverMySQL],
-				c.DatabaseTimeout(),
-			)
-		case dsn.DriverPostgres:
-			databaseServer := c.DatabaseServer()
-			d := dsn.DSN{
-				Driver: dsn.DriverPostgres,
-				Server: databaseServer,
-			}
-
-			return fmt.Sprintf(
-				"user=%s password=%s dbname=%s host=%s port=%d connect_timeout=%d %s",
-				c.DatabaseUser(),
-				c.DatabasePassword(),
-				c.DatabaseName(),
-				d.Host(),
-				d.Port(),
-				c.DatabaseTimeout(),
-				dsn.Params[dsn.DriverPostgres],
-			)
+			return (&dsn.DSN{
+				Driver:   dsn.DriverMySQL,
+				User:     c.DatabaseUser(),
+				Password: c.DatabasePassword(),
+				Server:   c.DatabaseServer(),
+				Net:      databaseNet,
+				Name:     c.DatabaseName(),
+				Params:   fmt.Sprintf("%s&timeout=%ds", dsn.Params[dsn.DriverMySQL], c.DatabaseTimeout()),
+			}).ToString()
+		case dsn.DriverPostgres, dsn.DriverPostgreSQL:
+			return (&dsn.DSN{
+				Driver:   dsn.DriverPostgreSQL,
+				User:     c.DatabaseUser(),
+				Password: c.DatabasePassword(),
+				Server:   c.DatabaseServer(),
+				Name:     c.DatabaseName(),
+				Params:   fmt.Sprintf("connect_timeout=%d&%s", c.DatabaseTimeout()*1000, dsn.Params[dsn.DriverPostgreSQL]), // Postgres GO driver only supports milliseconds
+			}).ToString()
 		case dsn.DriverSQLite3:
-			return filepath.Join(c.StoragePath(), fmt.Sprintf("index.db?%s", dsn.Params[dsn.DriverSQLite3]))
+			return (&dsn.DSN{
+				Driver: dsn.DriverSQLite3,
+				Server: c.StoragePath(),
+				Name:   "index.db",
+				Params: fmt.Sprintf("%s", dsn.Params[dsn.DriverSQLite3]),
+			}).ToString()
 		default:
 			log.Errorf("config: empty database dsn")
 			return ""
@@ -170,10 +156,18 @@ func (c *Config) DatabaseDSN() string {
 	// If missing, add the required parameters to the configured MySQL/MariaDB DSN.
 	if c.DatabaseDriver() == dsn.DriverMySQL && !strings.Contains(c.options.DatabaseDSN, "?") {
 		c.options.DatabaseDSN = fmt.Sprintf(
-			"%s?%s&timeout=%ds",
+			"%s?timeout=%ds&%s",
 			c.options.DatabaseDSN,
-			dsn.Params[dsn.DriverMySQL],
-			c.DatabaseTimeout())
+			c.DatabaseTimeout(),
+			dsn.Params[dsn.DriverMySQL])
+	}
+	// If missing, add the required parameters to the configured MySQL/MariaDB DSN.
+	if c.DatabaseDriver() == dsn.DriverPostgreSQL && !strings.Contains(c.options.DatabaseDSN, "?") {
+		c.options.DatabaseDSN = fmt.Sprintf(
+			"%s?connect_timeout=%d&%s",
+			c.options.DatabaseDSN,
+			c.DatabaseTimeout()*1000, // Postgres GO driver only supports milliseconds
+			dsn.Params[dsn.DriverPostgreSQL])
 	}
 
 	return c.options.DatabaseDSN
@@ -240,8 +234,9 @@ func (c *Config) DatabaseServer() string {
 func (c *Config) DatabaseHost() string {
 	c.ParseDatabaseDSN()
 
-	if c.DatabaseDriver() == dsn.DriverSQLite3 {
-		return ""
+	if c.DatabaseDriver() == dsn.DriverSQLite3 || c.NoDatabaseDSN() {
+		d := dsn.DSN{Driver: c.DatabaseDriver(), Server: c.DatabaseServer(), DSN: ""}
+		return d.Host()
 	}
 
 	d := dsn.Parse(c.DatabaseDSN())
@@ -252,8 +247,9 @@ func (c *Config) DatabaseHost() string {
 func (c *Config) DatabasePort() int {
 	c.ParseDatabaseDSN()
 
-	if c.DatabaseDriver() == dsn.DriverSQLite3 {
-		return 0
+	if c.DatabaseDriver() == dsn.DriverSQLite3 || c.NoDatabaseDSN() {
+		d := dsn.DSN{Driver: c.DatabaseDriver(), Server: c.DatabaseServer(), DSN: ""}
+		return d.Port()
 	}
 
 	d := dsn.Parse(c.DatabaseDSN())
@@ -430,6 +426,7 @@ func (c *Config) DatabaseConnsIdle() int {
 // Db returns the db connection.
 func (c *Config) Db() *gorm.DB {
 	if c.db == nil {
+		log.Debugf(fmt.Sprintf("Stack Trace: %s", debug.Stack()))
 		log.Fatal("config: database not connected")
 	}
 
@@ -451,38 +448,53 @@ func (c *Config) CloseDb() error {
 	}
 
 	if c.db != nil {
-		if err := c.db.Close(); err == nil {
-			c.db = nil
+		sqldb, dberr := c.db.DB()
+		if dberr == nil {
+			log.Debug("config: closing database")
+			if err := sqldb.Close(); err != nil {
+				return err
+			}
 			entity.SetDbProvider(nil)
+			c.db = nil
 		} else {
-			return err
+			return dberr
+		}
+		if c.pool != nil {
+			log.Debug("config: closing postgres pool")
+			c.pool.Close()
+			c.pool = nil
 		}
 	}
 
 	return nil
 }
 
-// IsDbOpen reports whether the database is connected and responding.
+// IsDbOpen determines if the database is available to use
 func (c *Config) IsDbOpen() bool {
 	if c.db == nil {
 		log.Debug("config: database not connected")
 		return false
+	} else {
+		if sqlDB, err := c.db.DB(); err != nil {
+			log.Debugf("config: database not available (%s)", err)
+			return false
+		} else {
+			if sqlErr := sqlDB.Ping(); sqlErr != nil {
+				log.Debugf("config: database not available (%s)", sqlErr)
+				return false
+			} else {
+				return true
+			}
+		}
 	}
-
-	if err := c.db.DB().Ping(); err != nil {
-		log.Debugf("config: database not available (%s)", err)
-		return false
-	}
-
-	return true
 }
 
 // SetDbOptions sets the database collation to unicode if supported.
 func (c *Config) SetDbOptions() {
 	switch c.DatabaseDriver() {
 	case dsn.DriverMySQL, dsn.DriverMariaDB:
-		c.Db().Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci")
-	case dsn.DriverPostgres:
+		c.Db().Set("gorm:table_options", "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC")
+	case dsn.DriverPostgres, dsn.DriverPostgreSQL:
 		// Ignore for now.
 	case dsn.DriverSQLite3:
 		// Not required as Unicode is default.
@@ -534,11 +546,11 @@ func (c *Config) MigrateDb(runFailed bool, ids []string) {
 // InitTestDb drops all tables in the currently configured database and re-creates them.
 func (c *Config) InitTestDb() {
 	// Make sure that the migrations and versions tables are already there, as once prevents these from being handled correctly in tests.
-	if (!c.db.HasTable(&migrate.Migration{})) {
-		c.db.AutoMigrate(&migrate.Migration{})
+	if (!c.db.Migrator().HasTable(&migrate.Migration{})) {
+		LogErr(c.db.Migrator().AutoMigrate(&migrate.Migration{}))
 	}
-	if (!c.db.HasTable(&migrate.Version{})) {
-		c.db.AutoMigrate(&migrate.Version{})
+	if (!c.db.Migrator().HasTable(&migrate.Version{})) {
+		LogErr(c.db.Migrator().AutoMigrate(&migrate.Version{}))
 	}
 	entity.ResetTestFixtures()
 
@@ -593,6 +605,20 @@ func (c *Config) checkDb(db *gorm.DB) error {
 		case !c.IsDatabaseVersion("v10.5.12"):
 			return fmt.Errorf("MariaDB %s is not supported, see https://docs.photoprism.app/getting-started/#databases", c.dbVersion)
 		}
+	case dsn.DriverPostgres, dsn.DriverPostgreSQL:
+		var versions []string
+		err := db.Raw("SELECT VERSION() AS Value").Pluck("value", &versions).Error
+		// Version query not supported.
+		if err != nil {
+			log.Tracef("config: failed to detect database version (%s)", err)
+			return nil
+		}
+
+		c.dbVersion = clean.Version(versions[0])
+
+		if c.dbVersion == "" {
+			log.Warnf("config: unknown database server version")
+		}
 	case dsn.DriverSQLite3:
 		type Res struct {
 			Value string `gorm:"column:Value;"`
@@ -618,6 +644,26 @@ func (c *Config) checkDb(db *gorm.DB) error {
 	return nil
 }
 
+// Configure database logging.
+func gormConfig() *gorm.Config {
+	return &gorm.Config{
+		Logger: logger.New(
+			log, // This should be dummy.NewLogger(), to match GORM1.  Set to log before release...
+			logger.Config{
+				SlowThreshold:             time.Second,  // Slow SQL threshold
+				LogLevel:                  logger.Error, // Log level  <-- This should be Silent to match GORM1, set to Error before release...
+				IgnoreRecordNotFoundError: true,         // Ignore ErrRecordNotFound error for logger
+				ParameterizedQueries:      true,         // Don't include params in the SQL log
+				Colorful:                  false,        // Disable color
+			},
+		),
+		// Set UTC as the default for created and updated timestamps.
+		NowFunc: func() time.Time {
+			return time.Now().UTC()
+		},
+	}
+}
+
 // connectDb establishes a database connection.
 func (c *Config) connectDb() error {
 	// Make sure this is not running twice.
@@ -631,67 +677,91 @@ func (c *Config) connectDb() error {
 
 	// Get database driver and data source name.
 	dbDriver := c.DatabaseDriver()
-	dbDsn := c.DatabaseDSN()
+	dbDSN := c.DatabaseDSN()
 
 	if dbDriver == "" {
 		return errors.New("driver not specified")
 	}
 
-	if dbDsn == "" {
+	if dbDSN == "" {
 		return errors.New("DSN not specified")
 	}
 
-	// Open database connection.
-	db, err := gorm.Open(dbDriver, dbDsn)
-	if err != nil || db == nil {
-		log.Infof("config: waiting for the database to become available")
+	if c.IsDbOpen() {
+		log.Info("config: database is already open")
+	} else {
 
-		for i := 1; i <= 12; i++ {
-			db, err = gorm.Open(dbDriver, dbDsn)
+		// Open database connection.
+		var db *gorm.DB
+		var err error
+		if dbDriver == dsn.DriverPostgres || dbDriver == dsn.DriverPostgreSQL {
+			postgresDB, pgxPool := entity.OpenPostgreSQL(dbDSN)
+			c.pool = pgxPool
+			db, err = gorm.Open(postgres.New(postgres.Config{Conn: postgresDB}), gormConfig())
+		} else {
+			c.pool = nil
+			db, err = gorm.Open(dsn.GormDrivers[dbDriver](dbDSN), gormConfig())
+		}
+		if err != nil || db == nil {
+			log.Infof("config: waiting for the database to become available")
 
-			if db != nil && err == nil {
-				break
+			for i := 1; i <= 12; i++ {
+				if dbDriver == dsn.DriverPostgres || dbDriver == dsn.DriverPostgreSQL {
+					postgresDB, pgxPool := entity.OpenPostgreSQL(dbDSN)
+					c.pool = pgxPool
+					db, err = gorm.Open(postgres.New(postgres.Config{Conn: postgresDB}), gormConfig())
+				} else {
+					c.pool = nil
+					db, err = gorm.Open(dsn.GormDrivers[dbDriver](dbDSN), gormConfig())
+				}
+
+				if db != nil && err == nil {
+					break
+				}
+
+				time.Sleep(5 * time.Second)
 			}
 
-			time.Sleep(5 * time.Second)
+			if err != nil || db == nil {
+				return err
+			}
 		}
 
-		if err != nil || db == nil {
-			return err
+		// Set database connection parameters.
+		if dbDriver != dsn.DriverPostgres && dbDriver != dsn.DriverPostgreSQL {
+			sqlDB, err := db.DB()
+			if err != nil {
+				return err
+			}
+			sqlDB.SetMaxOpenConns(c.DatabaseConns())
+			sqlDB.SetMaxIdleConns(c.DatabaseConnsIdle())
+			sqlDB.SetConnMaxLifetime(time.Hour)
 		}
-	}
 
-	// Configure database logging.
-	db.LogMode(false)
-	db.SetLogger(log)
-
-	// Set database connection parameters.
-	db.DB().SetMaxOpenConns(c.DatabaseConns())
-	db.DB().SetMaxIdleConns(c.DatabaseConnsIdle())
-	db.DB().SetConnMaxLifetime(time.Hour)
-
-	// Check database server version.
-	if err = c.checkDb(db); err != nil {
-		if c.Unsafe() {
-			// Report via the system log so a database problem is not written to
-			// the database-persisted error log.
-			event.SystemError([]string{"config", "database", "check", "%s"}, clean.Error(err))
-		} else {
-			return err
+		// Check database server version.
+		if err = c.checkDb(db); err != nil {
+			if c.Unsafe() {
+				// Report via the system log so a database problem is not written to
+				// the database-persisted error log.
+				event.SystemError([]string{"config", "database", "check", "%s"}, clean.Error(err))
+			} else {
+				return err
+			}
 		}
-	}
 
-	if dbVersion := c.DatabaseVersion(); dbVersion != "" {
-		log.Debugf("database: opened connection to %s %s", c.DatabaseDriverName(), dbVersion)
-	}
+		if dbVersion := c.DatabaseVersion(); dbVersion != "" {
+			log.Debugf("database: opened connection to %s %s", c.DatabaseDriverName(), dbVersion)
+		}
 
-	// Ok.
-	c.db = db
+		// Ok.
+		c.db = db
+	}
 
 	return nil
 }
 
 // ImportSQL imports a file to the currently configured database.
+// All lines, including comments, must be terminated with a ;\n
 func (c *Config) ImportSQL(filename string) {
 	contents, err := os.ReadFile(filename) //nolint:gosec // import path is provided by trusted caller
 

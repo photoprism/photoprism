@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/time/unix"
 )
@@ -42,7 +43,13 @@ func Sessions(limit, offset int, sortOrder, search string) (result entity.Sessio
 	case rnd.IsUID(search, entity.UserUID):
 		stmt = stmt.Where("user_uid = ?", search)
 	case search != "":
-		stmt = stmt.Where("user_name LIKE ? OR auth_provider LIKE ?", search+"%", search+"%")
+		switch DbDialect() {
+		case dsn.DialectPostgreSQL:
+			stmt = stmt.Where("user_name ILIKE ? OR auth_provider LIKE ?", search+"%", search+"%")
+		default:
+			stmt = stmt.Where("user_name LIKE ? OR auth_provider LIKE ?", search+"%", search+"%")
+		}
+
 	}
 
 	if sortOrder == "" {

@@ -8,6 +8,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/testextras"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -31,5 +32,5 @@ func runTestMain(m *testing.M) int {
 		fs.PurgeTestDbFiles(".", false)
 	}()
 
-	return m.Run()
+	return testextras.TestDbCleanup(m.Run())
 }

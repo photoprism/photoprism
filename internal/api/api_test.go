@@ -24,6 +24,7 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/server/limiter"
+	"github.com/photoprism/photoprism/internal/testextras"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/header"
@@ -62,7 +63,7 @@ func runTestMain(m *testing.M) int {
 	limiter.Auth = limiter.NewLimit(1, 10000)
 
 	// Run unit tests.
-	return m.Run()
+	return testextras.TestDbCleanup(m.Run())
 }
 
 type CloseableResponseRecorder struct {
@@ -172,18 +173,18 @@ func CreateTestOriginal(t *testing.T, f *entity.File) []byte {
 
 	// Tests that ran before may have flagged the fixture as missing or removed the photo it
 	// belongs to, because its original is not part of the test data.
-	if err := entity.UnscopedDb().Model(entity.File{}).Where("id = ?", f.ID).
+	if err := entity.UnscopedDb().Model(&entity.File{}).Where("id = ?", f.ID).
 		Updates(entity.Values{"file_missing": false, "deleted_at": nil}).Error; err != nil {
 		t.Fatal(err)
-	} else if err = entity.UnscopedDb().Model(entity.Photo{}).Where("photo_uid = ?", f.PhotoUID).
+	} else if err = entity.UnscopedDb().Model(&entity.Photo{}).Where("photo_uid = ?", f.PhotoUID).
 		Update("deleted_at", nil).Error; err != nil {
 		t.Fatal(err)
 	}
 
 	t.Cleanup(func() {
-		_ = entity.UnscopedDb().Model(entity.File{}).Where("id = ?", f.ID).
+		_ = entity.UnscopedDb().Model(&entity.File{}).Where("id = ?", f.ID).
 			Updates(entity.Values{"file_missing": f.FileMissing, "deleted_at": f.DeletedAt}).Error
-		_ = entity.UnscopedDb().Model(entity.Photo{}).Where("photo_uid = ?", f.PhotoUID).
+		_ = entity.UnscopedDb().Model(&entity.Photo{}).Where("photo_uid = ?", f.PhotoUID).
 			Update("deleted_at", p.DeletedAt).Error
 	})
 
@@ -299,7 +300,7 @@ func SetTestFileBounds(t *testing.T, fileHash string, w, h int) {
 	}
 
 	setBounds := func(w, h int) error {
-		return entity.UnscopedDb().Model(entity.File{}).Where("id = ?", f.ID).
+		return entity.UnscopedDb().Model(&entity.File{}).Where("id = ?", f.ID).
 			Updates(entity.Values{"file_width": w, "file_height": h}).Error
 	}
 

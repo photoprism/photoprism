@@ -10,25 +10,37 @@ fixture`Test helper`
 
 function cleanAlbumsFilesAndLabels(jsonBody) {
   let items = JSON.parse(JSON.stringify(jsonBody.Albums));
-  jsonBody.Albums.length = 0;
-  for (let item of items) {
-    delete item.UpdatedAt;
-    delete item.ThumbSrc;
-    jsonBody.Albums.push(item);
+  if (jsonBody.Albums == null) {
+    jsonBody.Albums = [];
+  } else {
+    jsonBody.Albums.length = 0;
+    for (let item of items) {
+      delete item.UpdatedAt;
+      delete item.ThumbSrc;
+      jsonBody.Albums.push(item);
+    }
   }
   items = JSON.parse(JSON.stringify(jsonBody.Files));
-  jsonBody.Files.length = 0;
-  for (let item of items) {
-    delete item.UpdatedAt;
-    jsonBody.Files.push(item);
+  if (jsonBody.Files == null) {
+    jsonBody.Files = [];
+  } else {
+    jsonBody.Files.length = 0;
+    for (let item of items) {
+      delete item.UpdatedAt;
+      jsonBody.Files.push(item);
+    }
   }
   items = JSON.parse(JSON.stringify(jsonBody.Labels));
-  jsonBody.Labels.length = 0;
-  for (let item of items) {
-    delete item.Label.UpdatedAt;
-    delete item.LabelSrc; // can't be set by API
-    delete item.Uncertainty; // when Src changes, the uncertainty changes.
-    jsonBody.Labels.push(item);
+  if (jsonBody.Labels == null) {
+    jsonBody.Labels = [];
+  } else {
+    jsonBody.Labels.length = 0;
+    for (let item of items) {
+      delete item.Label.UpdatedAt;
+      delete item.LabelSrc; // can't be set by API
+      delete item.Uncertainty; // when Src changes, the uncertainty changes.
+      jsonBody.Labels.push(item);
+    }
   }
 }
 

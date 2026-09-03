@@ -228,10 +228,12 @@ func TestLoadOrCreateOIDCSessionKey(t *testing.T) {
 	// newPortalJWTFixture; a DB-less config would leave the global entity DB unusable
 	// for later tests in this package.
 	withTempConfig := func(t *testing.T, suffix string) *config.Config {
-		conf := config.NewMinimalTestConfigWithDb("oidc-session-key-"+suffix, t.TempDir())
+		conf := config.NewMinimalTestConfigWithDbTTest("oidc-session-key-"+suffix, t.TempDir(), t)
 		orig := get.Config()
 		get.SetConfig(conf)
-		t.Cleanup(func() { get.SetConfig(orig) })
+		t.Cleanup(func() {
+			get.SetConfig(orig)
+		})
 		return conf
 	}
 	t.Run("PersistsAndReloads", func(t *testing.T) {

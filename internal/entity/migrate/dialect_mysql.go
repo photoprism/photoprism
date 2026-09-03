@@ -74,7 +74,7 @@ var DialectMySQL = Migrations{
 		ID:         "20220329-083000",
 		Dialect:    "mysql",
 		Stage:      "main",
-		Statements: []string{"UPDATE files SET media_id = CASE WHEN file_missing = 0 AND deleted_at IS NULL THEN CONCAT((10000000000 - photo_id), '-', 1 + file_sidecar - file_primary, '-', file_uid) END;"},
+		Statements: []string{"UPDATE files SET media_id = CASE WHEN file_missing = FALSE AND deleted_at IS NULL THEN CONCAT((10000000000 - photo_id), '-', 1 + file_sidecar - file_primary, '-', file_uid) END;"},
 	},
 	{
 		ID:         "20220329-090000",
@@ -92,7 +92,7 @@ var DialectMySQL = Migrations{
 		ID:         "20220329-093000",
 		Dialect:    "mysql",
 		Stage:      "main",
-		Statements: []string{"UPDATE files SET time_index = CASE WHEN file_missing = 0 AND deleted_at IS NULL THEN CONCAT(100000000000000 - CAST(photo_taken_at AS UNSIGNED), '-', media_id) END;"},
+		Statements: []string{"UPDATE files SET time_index = CASE WHEN file_missing = FALSE AND deleted_at IS NULL THEN CONCAT(100000000000000 - CAST(photo_taken_at AS UNSIGNED), '-', media_id) END;"},
 	},
 	{
 		ID:         "20220421-200000",
@@ -191,10 +191,40 @@ var DialectMySQL = Migrations{
 		Statements: []string{"ALTER TABLE photos MODIFY photo_lat DOUBLE;", "ALTER TABLE photos MODIFY photo_lng DOUBLE;"},
 	},
 	{
+		ID:         "20240929-000001",
+		Dialect:    "mysql",
+		Stage:      "pre",
+		Statements: []string{"ALTER IGNORE TABLE files RENAME COLUMN File_luminance TO file_luminance;"},
+	},
+	{
+		ID:         "20240929-000002",
+		Dialect:    "mysql",
+		Stage:      "main",
+		Statements: []string{"ALTER IGNORE TABLE files RENAME COLUMN File_luminance TO file_luminance;"},
+	},
+	{
 		ID:         "20241010-000001",
 		Dialect:    "mysql",
 		Stage:      "main",
 		Statements: []string{"UPDATE countries SET country_name = 'United States' WHERE country_name = 'USA' AND country_slug = 'usa';", "UPDATE albums SET album_location = 'United States' WHERE album_location = 'USA' AND album_type = 'state';"},
+	},
+	{
+		ID:         "20241011-000001",
+		Dialect:    "mysql",
+		Stage:      "pre",
+		Statements: []string{"DELETE FROM auth_users_details WHERE user_uid NOT IN (SELECT user_uid FROM auth_users);", "DELETE FROM auth_users_settings WHERE user_uid NOT IN (SELECT user_uid FROM auth_users);", "DELETE FROM auth_users_shares WHERE user_uid NOT IN (SELECT user_uid FROM auth_users);", "DELETE FROM categories WHERE label_id NOT IN (SELECT id FROM labels) OR category_id NOT IN (SELECT id FROM labels);", "UPDATE cells SET place_id = 'zz' WHERE place_id NOT IN (SELECT id FROM places);", "UPDATE countries SET country_photo_id = NULL WHERE country_photo_id NOT IN (SELECT id FROM photos) AND country_photo_id IS NOT NULL;", "DELETE FROM details WHERE photo_id NOT IN (SELECT id FROM photos);", "UPDATE files SET photo_id = NULL WHERE photo_id NOT IN (SELECT id FROM photos) AND photo_id IS NOT NULL;", "UPDATE files, photos SET files.photo_id = photos.id WHERE files.photo_uid = photos.photo_uid AND files.photo_id IS NULL AND files.photo_uid IS NOT NULL;", "UPDATE files SET photo_uid = NULL WHERE photo_id IS NULL AND photo_uid IS NOT NULL;", "DELETE FROM files_share WHERE file_id NOT IN (SELECT id FROM files) OR service_id NOT IN (SELECT id FROM services);", "UPDATE files_sync SET file_id = NULL WHERE file_id NOT IN (SELECT id FROM files);", "DELETE FROM files_sync WHERE service_id NOT IN (SELECT id FROM services);", "UPDATE photos, cameras SET photos.camera_id = cameras.id WHERE cameras.camera_slug = 'zz' AND photos.camera_id NOT IN (SELECT id FROM cameras) AND photos.camera_id IS NOT NULL;", "UPDATE photos SET cell_id = 'zz' WHERE cell_id NOT IN (SELECT id FROM cells) AND cell_id IS NOT NULL;", "UPDATE photos, lenses SET photos.lens_id = lenses.id WHERE lenses.lens_slug = 'zz' AND photos.lens_id NOT IN (SELECT id FROM lenses) AND photos.lens_id IS NOT NULL;", "UPDATE photos SET place_id = 'zz' WHERE place_id NOT IN (SELECT id FROM places) AND place_id IS NOT NULL;", "DELETE FROM photos_albums WHERE photo_uid NOT IN (SELECT photo_uid FROM photos) OR album_uid NOT IN (SELECT album_uid FROM albums);", "DELETE FROM photos_keywords WHERE photo_id NOT IN (SELECT id FROM photos) OR keyword_id NOT IN (SELECT id FROM keywords);", "DELETE FROM photos_labels WHERE photo_id NOT IN (SELECT id FROM photos) OR label_id NOT IN (SELECT id FROM labels);"},
+	},
+	{
+		ID:         "20241011-000002",
+		Dialect:    "mysql",
+		Stage:      "pre",
+		Statements: []string{"ALTER TABLE photos MODIFY IF EXISTS id BIGINT unsigned AUTO_INCREMENT;", "ALTER TABLE photos_keywords MODIFY IF EXISTS photo_id BIGINT unsigned;", "ALTER TABLE details MODIFY IF EXISTS photo_id BIGINT unsigned;", "ALTER TABLE photos_labels MODIFY IF EXISTS photo_id BIGINT unsigned;", "ALTER TABLE files MODIFY IF EXISTS id BIGINT unsigned AUTO_INCREMENT;", "ALTER TABLE files_share MODIFY IF EXISTS file_id BIGINT unsigned;", "ALTER TABLE cameras MODIFY IF EXISTS id BIGINT unsigned AUTO_INCREMENT;", "ALTER TABLE photos MODIFY IF EXISTS camera_id BIGINT unsigned;", "ALTER TABLE photos MODIFY IF EXISTS lens_id BIGINT unsigned;", "ALTER TABLE markers MODIFY IF EXISTS size BIGINT;", "ALTER TABLE files_share MODIFY IF EXISTS service_id BIGINT unsigned;", "ALTER TABLE places MODIFY IF EXISTS photo_count BIGINT;", "ALTER TABLE photos_keywords MODIFY IF EXISTS keyword_id BIGINT unsigned;", "ALTER TABLE keywords MODIFY IF EXISTS id BIGINT unsigned AUTO_INCREMENT;", "ALTER TABLE labels MODIFY IF EXISTS id BIGINT unsigned AUTO_INCREMENT;", "ALTER TABLE labels MODIFY IF EXISTS photo_count BIGINT;", "ALTER TABLE subjects MODIFY IF EXISTS file_count BIGINT;", "ALTER TABLE subjects MODIFY IF EXISTS photo_count BIGINT;", "ALTER TABLE lenses MODIFY IF EXISTS id BIGINT unsigned AUTO_INCREMENT;", "ALTER TABLE categories MODIFY IF EXISTS label_id BIGINT unsigned;", "ALTER TABLE categories MODIFY IF EXISTS category_id BIGINT unsigned;", "ALTER TABLE albums MODIFY IF EXISTS id BIGINT unsigned AUTO_INCREMENT;", "ALTER TABLE albums MODIFY IF EXISTS album_path varbinary(1024);", "ALTER TABLE services MODIFY IF EXISTS id BIGINT unsigned AUTO_INCREMENT;", "ALTER TABLE files_sync MODIFY IF EXISTS service_id BIGINT unsigned;", "ALTER TABLE photos_labels MODIFY IF EXISTS label_id BIGINT unsigned;", "ALTER TABLE errors MODIFY IF EXISTS id BIGINT unsigned AUTO_INCREMENT;"},
+	},
+	{
+		ID:         "20241011-000003",
+		Dialect:    "mysql",
+		Stage:      "main",
+		Statements: []string{"ALTER TABLE albums MODIFY IF EXISTS album_path varbinary(1024);"},
 	},
 	{
 		ID:         "20241202-000001",
@@ -233,6 +263,18 @@ var DialectMySQL = Migrations{
 		Statements: []string{"UPDATE photos SET indexed_at = checked_at WHERE indexed_at IS NULL;"},
 	},
 	{
+		ID:         "20260303-000001",
+		Dialect:    "mysql",
+		Stage:      "pre",
+		Statements: []string{"ALTER TABLE auth_users MODIFY IF EXISTS id BIGINT AUTO_INCREMENT;"},
+	},
+	{
+		ID:         "20260305-000001",
+		Dialect:    "mysql",
+		Stage:      "pre",
+		Statements: []string{"ALTER TABLE markers MODIFY IF EXISTS size BIGINT;"},
+	},
+	{
 		ID:         "20260601-000001",
 		Dialect:    "mysql",
 		Stage:      "main",
@@ -249,6 +291,18 @@ var DialectMySQL = Migrations{
 		Dialect:    "mysql",
 		Stage:      "main",
 		Statements: []string{"ALTER TABLE auth_sessions MODIFY data_json VARBINARY(16384);"},
+	},
+	{
+		ID:         "20260615-000001",
+		Dialect:    "mysql",
+		Stage:      "main",
+		Statements: []string{"ALTER TABLE files MODIFY IF EXISTS file_diff BIGINT DEFAULT -1;", "ALTER TABLE files MODIFY IF EXISTS file_chroma SMALLINT(6) DEFAULT -1;", "ALTER TABLE auth_sessions MODIFY IF EXISTS refresh_token VARBINARY(2048) DEFAULT '';", "ALTER TABLE auth_sessions MODIFY IF EXISTS id_token VARBINARY(2048) DEFAULT '';", "DROP INDEX IF EXISTS idx_accounts_deleted_at ON services;", "DROP INDEX IF EXISTS idx_files_file_main_color ON files;"},
+	},
+	{
+		ID:         "20260711-000001",
+		Dialect:    "mysql",
+		Stage:      "post",
+		Statements: []string{"CREATE OR REPLACE INDEX idx_albums_album_filter ON albums (album_filter(512));", "CREATE OR REPLACE INDEX idx_albums_album_path ON albums (album_path(512));"},
 	},
 	{
 		ID:         "20260721-000001",

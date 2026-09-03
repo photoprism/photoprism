@@ -29,10 +29,11 @@ func TestParseDriver(t *testing.T) {
 		assert.Equal(t, DriverMySQL, ParseDriver("MariaDB"))
 	})
 	t.Run("Postgres", func(t *testing.T) {
-		assert.Equal(t, DriverPostgres, ParseDriver("postgres"))
-		// URI-style DSNs spell the driver "postgresql"; accept it as a Postgres alias.
-		assert.Equal(t, DriverPostgres, ParseDriver("postgresql"))
-		assert.Equal(t, DriverPostgres, ParseDriver("PostgreSQL"))
+		assert.Equal(t, DriverPostgreSQL, ParseDriver("postgres"))
+		assert.Equal(t, DriverPostgreSQL, ParseDriver("Postgres"))
+		// URI-style DSNs spell the driver "postgresql".  Keep these as postgresql.
+		assert.Equal(t, DriverPostgreSQL, ParseDriver("postgresql"))
+		assert.Equal(t, DriverPostgreSQL, ParseDriver("PostgreSQL"))
 	})
 	t.Run("SQLite3", func(t *testing.T) {
 		assert.Equal(t, DriverSQLite3, ParseDriver("sqlite3"))

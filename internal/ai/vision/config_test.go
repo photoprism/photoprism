@@ -14,7 +14,7 @@ import (
 )
 
 func TestOptions(t *testing.T) {
-	var configPath = fs.Abs("testdata")
+	var configPath = t.TempDir()
 	var configFile = filepath.Join(configPath, "vision.yml")
 
 	t.Run("Save", func(t *testing.T) {
@@ -47,6 +47,7 @@ func TestOptions(t *testing.T) {
 		err := options.Load(filepath.Join(configPath, "invalid.yml"))
 		assert.Error(t, err)
 	})
+	_ = os.RemoveAll(configPath)
 }
 
 func TestConfigValues_Load(t *testing.T) {

@@ -11,6 +11,7 @@ services:
         WORKING_DIR: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}"
     image: photoprism/photoprism:develop
     depends_on:
+      - postgres
       - mariadb
       - dummy-webdav
       - dummy-oidc
@@ -114,8 +115,12 @@ services:
       PHOTOPRISM_DATABASE_NAME: "photoprism"
       PHOTOPRISM_DATABASE_USER: "root"
       PHOTOPRISM_DATABASE_PASSWORD: "photoprism"
-      PHOTOPRISM_TEST_DRIVER: "sqlite"
+      PHOTOPRISM_TEST_DSN_NAME: "sqlite"
       # PHOTOPRISM_TEST_DSN_MYSQL8: "root:photoprism@tcp(mysql:${MARIADB_PORT:-4001})/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s"
+      PHOTOPRISM_TEST_DSN_MARIADB: "root:photoprism@tcp(mariadb:${MARIADB_PORT:-4001})/mysql?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true" # Admin account and database which is used for creating/removing test databases
+      PHOTOPRISM_TEST_DSN_SQLITE: ""
+      PHOTOPRISM_TEST_DSN_SQLITEFILE: "file:/go/src/github.com/photoprism/photoprism/storage/testdata/unit.test.db?_foreign_keys=on&_busy_timeout=5000"
+      PHOTOPRISM_TEST_DSN_POSTGRES: "postgresql://photoprism:photoprism@postgres:${POSTGRES_PORT:-4002}/postgres?TimeZone=UTC&connect_timeout=15&lock_timeout=5000&sslmode=disable"  # Admin account and database which is used for creating/removing test databases
       WORKING_DIR: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}"
       PHOTOPRISM_ASSETS_PATH: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/assets"
       PHOTOPRISM_STORAGE_PATH: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/storage"
@@ -145,7 +150,7 @@ services:
       PHOTOPRISM_FFMPEG_SIZE: "1920"                 # video size limit in pixels (720-15360) (default: 3840)
       # PHOTOPRISM_FFMPEG_BITRATE: "64"              # video bitrate limit in Mbps (default: 60)
       ## Run/install on first startup (options: update tensorflow https intel gpu davfs yt-dlp):
-      PHOTOPRISM_INIT: "https"
+      PHOTOPRISM_INIT: "https postgresql"
       ## Computer Vision (https://docs.photoprism.app/getting-started/config-options/#computer-vision):
       PHOTOPRISM_VISION_API: "true"                              # server: enables service API endpoints under /api/v1/vision (requires access token)
       PHOTOPRISM_VISION_URI: "${PHOTOPRISM_VISION_URI:-}"        # client: service URI, e.g. http://hostname/api/v1/vision (leave blank to disable)
@@ -235,10 +240,8 @@ services:
   ## Release Notes: https://www.postgresql.org/docs/release/
   postgres:
     image: postgres:18-alpine
-    ## Only starts if the "all" or "postgres" profile is specified:
-    ## docker compose --profile postgres up -d
-    profiles: [ "all", "postgres" ]
     stop_grace_period: 15s
+    command: ["postgres", "-c", "lock_timeout=120s"]
     expose:
       - "${POSTGRES_PORT:-4002}"
     ## Publish the PostgreSQL port on the host for direct access from the host:
@@ -518,6 +521,8 @@ services:
 ## Create named volume for Go module cache
 volumes:
   go-mod:
+    driver: local
+  postgresql:
     driver: local
   mariadb:
     driver: local

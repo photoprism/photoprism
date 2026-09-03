@@ -8,6 +8,7 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 	gc "github.com/patrickmn/go-cache"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -161,7 +162,7 @@ func FindLabel(name string, cached bool) (*Label, error) {
 		}
 	}
 
-	if find := Db().First(result, "(label_slug <> '' AND label_slug = ? OR custom_slug <> '' AND custom_slug = ?)", slugKey, slugKey); find.RecordNotFound() {
+	if find := Db().First(result, "(label_slug <> '' AND label_slug = ? OR custom_slug <> '' AND custom_slug = ?)", slugKey, slugKey); errors.Is(find.Error, gorm.ErrRecordNotFound) {
 		if nameCacheKey != "" {
 			labelCache.Set(nameCacheKey, result, labelCacheErrorExpiration)
 		}
@@ -225,7 +226,7 @@ func FindPhotoLabel(photoId, labelId uint, cached bool) (*PhotoLabel, error) {
 	// Fetch and cache photo-label.
 	result := &PhotoLabel{}
 
-	if find := Db().First(result, "photo_id = ? AND label_id = ?", photoId, labelId); find.RecordNotFound() {
+	if find := Db().Preload("Label").First(result, "photo_id = ? AND label_id = ?", photoId, labelId); errors.Is(find.Error, gorm.ErrRecordNotFound) {
 		if cached && UsePhotoLabelsCache {
 			photoLabelCache.Set(cacheKey, *result, labelCacheErrorExpiration)
 		}

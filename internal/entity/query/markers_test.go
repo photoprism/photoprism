@@ -9,6 +9,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/convert"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -230,20 +231,20 @@ func TestFaceMarkersWithoutConfiguredModel(t *testing.T) {
 		assert.True(t, found(markers))
 	})
 	t.Run("CountUnmatchedFaceMarkers", func(t *testing.T) {
-		var expected int
+		var expected int64
 		require.NoError(t, entity.Db().Model(&entity.Markers{}).
-			Where("matched_at IS NULL AND marker_invalid = 0 AND LENGTH(embeddings_json) > 0").
+			Where("matched_at IS NULL AND marker_invalid = FALSE AND LENGTH(embeddings_json) > 0").
 			Where("marker_type = ?", entity.MarkerFace).
 			Count(&expected).Error)
-		assert.Equal(t, expected, CountUnmatchedFaceMarkers())
+		assert.Equal(t, convert.SafeInt64toint(expected), CountUnmatchedFaceMarkers())
 	})
 	t.Run("CountNewFaceMarkers", func(t *testing.T) {
-		var expected int
+		var expected int64
 		require.NoError(t, entity.Db().Model(&entity.Markers{}).
 			Where("marker_type = ?", entity.MarkerFace).
-			Where("face_id = '' AND marker_invalid = 0 AND LENGTH(embeddings_json) > 0").
+			Where("face_id = '' AND marker_invalid = FALSE AND LENGTH(embeddings_json) > 0").
 			Count(&expected).Error)
-		assert.Equal(t, expected, CountNewFaceMarkers(0, 0))
+		assert.Equal(t, convert.SafeInt64toint(expected), CountNewFaceMarkers(0, 0))
 	})
 }
 
@@ -363,7 +364,7 @@ func TestMarkerCountsByFaceIDs(t *testing.T) {
 func TestRemoveInvalidMarkerReferences(t *testing.T) {
 	affected, err := RemoveInvalidMarkerReferences()
 
-	assert.NoError(t, err)
+	require.Nil(t, err)
 	assert.GreaterOrEqual(t, affected, int64(0))
 }
 
@@ -387,21 +388,21 @@ func TestRemoveNonExistentMarkerFaces(t *testing.T) {
 func TestRemoveNonExistentMarkerSubjects(t *testing.T) {
 	affected, err := RemoveNonExistentMarkerSubjects()
 
-	assert.NoError(t, err)
+	require.Nil(t, err)
 	assert.GreaterOrEqual(t, affected, int64(1))
 }
 
 func TestFixMarkerReferences(t *testing.T) {
 	affected, err := FixMarkerReferences()
 
-	assert.NoError(t, err)
+	require.Nil(t, err)
 	assert.GreaterOrEqual(t, affected, int64(0))
 }
 
 func TestMarkersWithNonExistentReferences(t *testing.T) {
 	f, s, err := MarkersWithNonExistentReferences()
 
-	assert.NoError(t, err)
+	require.Nil(t, err)
 
 	assert.GreaterOrEqual(t, len(f), 0)
 	assert.GreaterOrEqual(t, len(s), 0)
@@ -410,7 +411,7 @@ func TestMarkersWithNonExistentReferences(t *testing.T) {
 func TestMarkersWithSubjectConflict(t *testing.T) {
 	m, err := MarkersWithSubjectConflict()
 
-	assert.NoError(t, err)
+	require.Nil(t, err)
 
 	assert.GreaterOrEqual(t, len(m), 0)
 }
@@ -425,6 +426,20 @@ func TestCountMarkers(t *testing.T) {
 	n := CountMarkers(entity.MarkerFace)
 
 	assert.GreaterOrEqual(t, n, 1)
+}
+
+func TestResetFaceMarkerMatches(t *testing.T) {
+	n, err := ResetFaceMarkerMatches()
+
+	require.Nil(t, err)
+	assert.GreaterOrEqual(t, n, int64(0))
+}
+
+func TestRemoveOrphanMarkers(t *testing.T) {
+	n, err := RemoveOrphanMarkers()
+
+	require.Nil(t, err)
+	assert.GreaterOrEqual(t, n, int64(0))
 }
 
 // TestWhereClusterScore pins the bar that decides which markers clustering may use. It is per
@@ -454,11 +469,11 @@ func TestWhereClusterScore(t *testing.T) {
 	matched := func(t *testing.T, uid string, floor int) bool {
 		t.Helper()
 
-		var n int
+		var n int64
 		require.NoError(t, whereClusterScore(entity.Db().Model(&entity.Marker{}).Where("marker_uid = ?", uid), floor).
 			Count(&n).Error)
 
-		return n == 1
+		return n == int64(1)
 	}
 	yunet := face.ClusterScore(face.DetectorYuNet)
 	scrfd := face.ClusterScore(face.DetectorSCRFD)

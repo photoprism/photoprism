@@ -3,7 +3,7 @@ package entity
 import (
 	"errors"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
 )
@@ -14,14 +14,14 @@ type PhotoLabels []PhotoLabel
 // PhotoLabel represents the many-to-many relation between Photo and Label.
 // Labels are weighted by uncertainty (100 - confidence).
 type PhotoLabel struct {
-	PhotoID     uint   `gorm:"primary_key;auto_increment:false" json:"PhotoID,omitempty" yaml:"PhotoID"`
-	LabelID     uint   `gorm:"primary_key;auto_increment:false;index" json:"LabelID,omitempty" yaml:"LabelID"`
-	LabelSrc    string `gorm:"type:VARBINARY(8);" json:"LabelSrc,omitempty" yaml:"LabelSrc,omitempty"`
-	Uncertainty int    `gorm:"type:SMALLINT" json:"Uncertainty" yaml:"Uncertainty"`
-	Topicality  int    `gorm:"type:SMALLINT;default:0;" json:"Topicality" yaml:"Topicality,omitempty"`
-	NSFW        int    `gorm:"type:SMALLINT;column:nsfw;default:0;" json:"NSFW,omitempty" yaml:"NSFW,omitempty"`
-	Photo       *Photo `gorm:"PRELOAD:false" json:"-" yaml:"-"`
-	Label       *Label `gorm:"PRELOAD:true" json:"Label,omitempty" yaml:"-"`
+	PhotoID     uint   `gorm:"primaryKey;autoIncrement:false" json:"PhotoID,omitempty" yaml:"PhotoID"`
+	LabelID     uint   `gorm:"primaryKey;autoIncrement:false;index" json:"LabelID,omitempty" yaml:"LabelID"`
+	LabelSrc    string `gorm:"type:bytes;size:8;" json:"LabelSrc,omitempty" yaml:"LabelSrc,omitempty"`
+	Uncertainty int    `gorm:"type:int;size:16;" json:"Uncertainty" yaml:"Uncertainty"`
+	Topicality  int    `gorm:"type:int;size:16;default:0;" json:"Topicality" yaml:"Topicality,omitempty"`
+	NSFW        int    `gorm:"type:int;size:16;column:nsfw;default:0;" json:"NSFW,omitempty" yaml:"NSFW,omitempty"`
+	Photo       *Photo `gorm:"foreignKey:PhotoID;references:ID;" yaml:"-" json:"-" yaml:"-"`
+	Label       *Label `gorm:"foreignKey:LabelID;references:ID;" json:"Label,omitempty" yaml:"-"`
 }
 
 // TableName returns the database table name for PhotoLabel.
@@ -76,14 +76,24 @@ func (m *PhotoLabel) Update(attr string, value any) error {
 // Save updates the record in the database or inserts a new record if it does not already exist.
 func (m *PhotoLabel) Save() error {
 	if m.Photo != nil {
+		if m.PhotoID == 0 {
+			m.PhotoID = m.Photo.ID
+		}
 		// Clear the eager-loaded Photo pointer so GORM does not attempt to persist it again.
 		m.Photo = nil
+	}
+	if m.PhotoID == 0 {
+		return errors.New("PK value not provided")
 	}
 
 	if m.Label == nil {
 		// Do nothing.
 	} else if !m.Label.SetName(m.Label.LabelName) {
 		return ErrInvalidName
+	} else {
+		if err := m.Label.Save(); err != nil {
+			return err
+		}
 	}
 
 	return Db().Save(m).Error
@@ -96,7 +106,7 @@ func (m *PhotoLabel) Create() error {
 }
 
 // AfterCreate flushes the label cache once a relation has been persisted.
-func (m *PhotoLabel) AfterCreate(scope *gorm.Scope) error {
+func (m *PhotoLabel) AfterCreate(tx *gorm.DB) (err error) {
 	FlushCachedPhotoLabel(m)
 	return nil
 }
@@ -116,7 +126,7 @@ func (m *PhotoLabel) Delete() error {
 // AfterDelete flushes the label cache when a label is deleted.
 func (m *PhotoLabel) AfterDelete(tx *gorm.DB) (err error) {
 	FlushCachedPhotoLabel(m)
-	return
+	return nil
 }
 
 // HasID tests if both a photo and label ID are set.

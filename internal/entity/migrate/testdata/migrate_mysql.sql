@@ -1,14 +1,66 @@
-CREATE DATABASE IF NOT EXISTS `migrate`;
-CREATE USER IF NOT EXISTS 'migrate'@'%' IDENTIFIED BY 'migrate';
-GRANT ALL PRIVILEGES ON `migrate`.* TO 'migrate'@'%';
+-- CREATE DATABASE IF NOT EXISTS `migrate`;
+-- CREATE USER IF NOT EXISTS 'migrate'@'%' IDENTIFIED BY 'migrate';
+-- GRANT ALL PRIVILEGES ON `migrate`.* TO 'migrate'@'%';
 
-FLUSH PRIVILEGES;
+-- FLUSH PRIVILEGES;
 
--- ----------------------------------------------------------------------------------------
--- init "migrate" db
--- ----------------------------------------------------------------------------------------
+-- -- ----------------------------------------------------------------------------------------
+-- -- init "migrate" db
+-- -- ----------------------------------------------------------------------------------------
 
-USE migrate;
+-- USE migrate;
+
+-- Drop all tables that exist as at 2025-02-20
+DROP TABLE IF EXISTS `accounts`;
+DROP TABLE IF EXISTS `addresses`;
+DROP TABLE IF EXISTS `albums`;
+DROP TABLE IF EXISTS `albums_users`;
+DROP TABLE IF EXISTS `auth_clients`;
+DROP TABLE IF EXISTS `auth_sessions`;
+DROP TABLE IF EXISTS `auth_users`;
+DROP TABLE IF EXISTS `auth_users_details`;
+DROP TABLE IF EXISTS `auth_users_settings`;
+DROP TABLE IF EXISTS `auth_users_shares`;
+DROP TABLE IF EXISTS `cameras`;
+DROP TABLE IF EXISTS `categories`;
+DROP TABLE IF EXISTS `cells`;
+DROP TABLE IF EXISTS `countries`;
+DROP TABLE IF EXISTS `details`;
+DROP TABLE IF EXISTS `duplicates`;
+DROP TABLE IF EXISTS `errors`;
+DROP TABLE IF EXISTS `faces`;
+DROP TABLE IF EXISTS `files`;
+DROP TABLE IF EXISTS `files_share`;
+DROP TABLE IF EXISTS `files_sync`;
+DROP TABLE IF EXISTS `folders`;
+DROP TABLE IF EXISTS `keywords`;
+DROP TABLE IF EXISTS `labels`;
+DROP TABLE IF EXISTS `lenses`;
+DROP TABLE IF EXISTS `links`;
+DROP TABLE IF EXISTS `markers`;
+DROP TABLE IF EXISTS `migrations`;
+DROP TABLE IF EXISTS `passcodes`;
+DROP TABLE IF EXISTS `passwords`;
+DROP TABLE IF EXISTS `photos`;
+DROP TABLE IF EXISTS `photos_albums`;
+DROP TABLE IF EXISTS `photos_keywords`;
+DROP TABLE IF EXISTS `photos_labels`;
+DROP TABLE IF EXISTS `photos_users`;
+DROP TABLE IF EXISTS `places`;
+DROP TABLE IF EXISTS `reactions`;
+DROP TABLE IF EXISTS `services`;
+DROP TABLE IF EXISTS `subjects`;
+DROP TABLE IF EXISTS `test_tables`;
+DROP TABLE IF EXISTS `users`;
+DROP TABLE IF EXISTS `versions`;
+DROP TABLE IF EXISTS `cameras`;
+DROP TABLE IF EXISTS `lenses`;
+DROP TABLE IF EXISTS `cells`;
+DROP TABLE IF EXISTS `places`;
+DROP TABLE IF EXISTS `auth_users`;
+DROP TABLE IF EXISTS `photos`;
+DROP TABLE IF EXISTS `countries`;
+
 
 -- MariaDB dump 10.19  Distrib 10.6.7-MariaDB, for debian-linux-gnu (x86_64)
 --

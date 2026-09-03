@@ -1,6 +1,10 @@
 package entity
 
-import "github.com/photoprism/photoprism/pkg/txt/report"
+import (
+	"gorm.io/gorm/clause"
+
+	"github.com/photoprism/photoprism/pkg/txt/report"
+)
 
 type DetailsMap map[string]Details
 
@@ -130,6 +134,9 @@ var DetailsFixtures = DetailsMap{
 // CreateDetailsFixtures inserts known entities into the database for testing.
 func CreateDetailsFixtures() {
 	for _, entity := range DetailsFixtures {
-		fixtureDb().Create(&entity)
+		fixtureDb().Clauses(clause.OnConflict{
+			Columns:   []clause.Column{{Name: "photo_id"}},
+			UpdateAll: true,
+		}).Create(&entity)
 	}
 }

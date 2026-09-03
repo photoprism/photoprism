@@ -13,7 +13,6 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Near = "ps6sg6be2lvl0y24"
-
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
@@ -39,7 +38,7 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		f.Near = "%gold"
 		_, err := PhotosGeo(f)
 
-		assert.Equal(t, err.Error(), "Not found")
+		assert.Equal(t, "Not found", err.Error())
 	})
 	t.Run("CenterPercent", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -47,7 +46,7 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		f.Near = "I love % dog"
 		_, err := PhotosGeo(f)
 
-		assert.Equal(t, err.Error(), "Not found")
+		assert.Equal(t, "Not found", err.Error())
 	})
 	//TODO error
 	/*t.Run("EndsWithPercent", func(t *testing.T) {

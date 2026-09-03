@@ -5,26 +5,24 @@ import (
 	"testing"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/dsn"
-
 	"github.com/photoprism/photoprism/internal/entity/migrate"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 func TestMySQL8(t *testing.T) {
-	dbDsn := os.Getenv("PHOTOPRISM_TEST_DSN_MYSQL8")
+	dbDSN := os.Getenv("PHOTOPRISM_TEST_DSN_MYSQL8")
 
-	if dbDsn == "" {
+	if dbDSN == "" {
 		t.Skip("skipping MySQL 8 test: PHOTOPRISM_TEST_DSN_MYSQL8 is not set")
 	}
 
-	dbDriver := dsn.DriverMySQL
-	db, err := gorm.Open(dbDriver, dbDsn)
+	db, err := gorm.Open(mysql.Open(dbDSN))
 
 	if err != nil || db == nil {
 		for i := 1; i <= 5; i++ {
-			db, err = gorm.Open(dbDriver, dbDsn)
+			db, err = gorm.Open(mysql.Open(dbDSN))
 
 			if db != nil && err == nil {
 				break
@@ -38,9 +36,8 @@ func TestMySQL8(t *testing.T) {
 		}
 	}
 
-	defer db.Close()
-
-	db.LogMode(false)
+	sqldb, _ := db.DB()
+	defer sqldb.Close()
 
 	DeprecatedTables.Drop(db)
 	Entities.Drop(db)

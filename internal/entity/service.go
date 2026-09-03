@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/ulule/deepcopier"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/service"
@@ -36,34 +37,34 @@ type Services []Service
 // - AccSync enables automatic file synchronization, see SyncDownload and SyncUpload.
 // - RetryLimit specifies the number of retry attempts, a negative value disables the limit.
 type Service struct {
-	ID            uint         `gorm:"primary_key" json:"ID"`
-	AccName       string       `gorm:"type:VARCHAR(160);" json:"AccName"`
-	AccOwner      string       `gorm:"type:VARCHAR(160);" json:"AccOwner"`
-	AccURL        string       `gorm:"type:VARCHAR(255);" json:"AccURL"`
-	AccType       string       `gorm:"type:VARBINARY(255);" json:"AccType"`
-	AccKey        string       `gorm:"type:VARBINARY(255);" json:"-"`
-	AccUser       string       `gorm:"type:VARBINARY(255);" json:"AccUser"`
-	AccPass       string       `gorm:"type:VARBINARY(255);" json:"-"`
-	AccTimeout    string       `gorm:"type:VARBINARY(16);" json:"AccTimeout"`
-	AccError      string       `gorm:"type:VARBINARY(512);" json:"AccError"`
-	AccErrors     int          `json:"AccErrors"`
-	AccShare      bool         `json:"AccShare"`
-	AccSync       bool         `json:"AccSync"`
-	RetryLimit    int          `json:"RetryLimit"`
-	SharePath     string       `gorm:"type:VARBINARY(1024);" json:"SharePath"`
-	ShareSize     string       `gorm:"type:VARBINARY(16);" json:"ShareSize"`
-	ShareExpires  int          `json:"ShareExpires"`
-	SyncPath      string       `gorm:"type:VARBINARY(1024);" json:"SyncPath"`
-	SyncStatus    string       `gorm:"type:VARBINARY(16);" json:"SyncStatus"`
-	SyncInterval  int          `json:"SyncInterval"`
-	SyncDate      sql.NullTime `deepcopier:"skip" json:"SyncDate"`
-	SyncUpload    bool         `json:"SyncUpload"`
-	SyncDownload  bool         `json:"SyncDownload"`
-	SyncFilenames bool         `json:"SyncFilenames"`
-	SyncRaw       bool         `json:"SyncRaw"`
-	CreatedAt     time.Time    `deepcopier:"skip" json:"CreatedAt"`
-	UpdatedAt     time.Time    `deepcopier:"skip" json:"UpdatedAt"`
-	DeletedAt     *time.Time   `deepcopier:"skip" sql:"index" json:"DeletedAt"`
+	ID            uint           `gorm:"primaryKey;" json:"ID"`
+	AccName       string         `gorm:"size:160;" json:"AccName"`
+	AccOwner      string         `gorm:"size:160;" json:"AccOwner"`
+	AccURL        string         `gorm:"size:255;" json:"AccURL"`
+	AccType       string         `gorm:"type:bytes;size:255;" json:"AccType"`
+	AccKey        string         `gorm:"type:bytes;size:255;" json:"-"`
+	AccUser       string         `gorm:"type:bytes;size:255;" json:"AccUser"`
+	AccPass       string         `gorm:"type:bytes;size:255;" json:"-"`
+	AccTimeout    string         `gorm:"type:bytes;size:16;" json:"AccTimeout"`
+	AccError      string         `gorm:"type:bytes;size:512;" json:"AccError"`
+	AccErrors     int            `json:"AccErrors"`
+	AccShare      bool           `json:"AccShare"`
+	AccSync       bool           `json:"AccSync"`
+	RetryLimit    int            `json:"RetryLimit"`
+	SharePath     string         `gorm:"type:bytes;size:1024;" json:"SharePath"`
+	ShareSize     string         `gorm:"type:bytes;size:16;" json:"ShareSize"`
+	ShareExpires  int            `json:"ShareExpires"`
+	SyncPath      string         `gorm:"type:bytes;size:1024;" json:"SyncPath"`
+	SyncStatus    string         `gorm:"type:bytes;size:16;" json:"SyncStatus"`
+	SyncInterval  int            `json:"SyncInterval"`
+	SyncDate      sql.NullTime   `deepcopier:"skip" json:"SyncDate"`
+	SyncUpload    bool           `json:"SyncUpload"`
+	SyncDownload  bool           `json:"SyncDownload"`
+	SyncFilenames bool           `json:"SyncFilenames"`
+	SyncRaw       bool           `json:"SyncRaw"`
+	CreatedAt     time.Time      `deepcopier:"skip" json:"CreatedAt"`
+	UpdatedAt     time.Time      `deepcopier:"skip" json:"UpdatedAt"`
+	DeletedAt     gorm.DeletedAt `deepcopier:"skip" gorm:"index" json:"DeletedAt"`
 }
 
 // TableName returns the entity table name.
@@ -84,6 +85,11 @@ func AddService(form form.Service) (model *Service, err error) {
 	err = model.SaveForm(form)
 
 	return model, err
+}
+
+// Equivalent to the NewRecord of Gorm V1
+func (m *Service) IsNew() bool {
+	return m.CreatedAt.IsZero()
 }
 
 // LogErr updates the service error count and message.
@@ -107,7 +113,13 @@ func (m *Service) LogErr(err error) error {
 
 // ResetErrors resets the service and related file error messages and counters.
 func (m *Service) ResetErrors(share, sync bool) error {
-	if !share && !sync || Db().NewRecord(m) {
+	//if !share && !sync || m.IsNew() {
+	value, err := NewRecord(m)
+	if err != nil {
+		return err
+	}
+
+	if !share && !sync || value {
 		return nil
 	}
 
@@ -116,13 +128,13 @@ func (m *Service) ResetErrors(share, sync bool) error {
 	}
 
 	if share {
-		if err := Db().Model(FileShare{}).Where("service_id = ?", m.ID).Updates(Values{"error": "", "errors": 0}).Error; err != nil {
+		if err := Db().Model(&FileShare{}).Where("service_id = ?", m.ID).Updates(Values{"error": "", "errors": 0}).Error; err != nil {
 			return err
 		}
 	}
 
 	if sync {
-		if err := Db().Model(FileSync{}).Where("service_id = ?", m.ID).Updates(Values{"error": "", "errors": 0}).Error; err != nil {
+		if err := Db().Model(&FileSync{}).Where("service_id = ?", m.ID).Updates(Values{"error": "", "errors": 0}).Error; err != nil {
 			return err
 		}
 	}
@@ -176,7 +188,9 @@ func (m *Service) SaveForm(form form.Service) error {
 	}
 
 	// Reset error counters if account already exists.
-	if !Db().NewRecord(m) {
+	value, err := NewRecord(m)
+	Log("service", "reset errors", err)
+	if value {
 		Log("service", "reset errors", m.ResetErrors(m.AccShare, m.AccSync))
 	}
 

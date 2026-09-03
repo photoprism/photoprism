@@ -118,6 +118,7 @@ func selectedFiles(frm form.Selection, o FileSelection, sess *entity.Session) (r
 		return results, errors.New("no items selected")
 	}
 
+	results = make(entity.Files, 0)
 	// Resolve photos in smart albums.
 	if photoIds, err := AlbumsPhotoUIDs(frm.Albums, false, o.Private); err != nil {
 		log.Warnf("query: failed to resolve smart album members for selection (%s)", clean.Error(err))
@@ -127,32 +128,50 @@ func selectedFiles(frm form.Selection, o FileSelection, sess *entity.Session) (r
 
 	var concat string
 	switch DbDialect() {
-	case dsn.DriverMySQL:
+	case dsn.DialectPostgreSQL:
+		concat = "CONCAT(convert_from(a.path,'UTF8'), '/%')"
+	case dsn.DialectMySQL:
 		concat = "CONCAT(a.path, '/%')"
-	case dsn.DriverSQLite3:
+	case dsn.DialectSQLite:
 		concat = "a.path || '/%'"
 	default:
 		return results, fmt.Errorf("unknown sql dialect: %s", DbDialect())
 	}
 
 	// Search condition.
-	where := fmt.Sprintf(`photos.photo_uid IN (?) 
+	where := ""
+	switch DbDialect() {
+	case dsn.DialectPostgreSQL:
+		where = fmt.Sprintf(`photos.photo_uid IN (?) 
+		OR photos.place_id IN (?) 
+		OR photos.photo_uid IN (SELECT photo_uid FROM files WHERE file_uid IN (?))
+		OR photos.photo_path IN (
+			SELECT a.path FROM folders a WHERE a.folder_uid IN (?) UNION
+			SELECT b.path FROM folders a JOIN folders b ON convert_from(b.path, 'UTF8') LIKE %s WHERE a.folder_uid IN (?))
+		OR photos.photo_uid IN (SELECT photo_uid FROM photos_albums WHERE hidden = FALSE AND album_uid IN (?))
+		OR files.file_uid IN (SELECT file_uid FROM %s m WHERE m.subj_uid IN (?))
+		OR photos.id IN (SELECT pl.photo_id FROM photos_labels pl JOIN labels l ON pl.label_id = l.id AND pl.uncertainty < 100 AND l.deleted_at IS NULL WHERE l.label_uid IN (?))
+		OR photos.id IN (SELECT pl.photo_id FROM photos_labels pl JOIN categories c ON c.label_id = pl.label_id AND pl.uncertainty < 100 JOIN labels lc ON lc.id = c.category_id AND lc.deleted_at IS NULL WHERE lc.label_uid IN (?))`,
+			concat, entity.Marker{}.TableName())
+	case dsn.DialectMySQL, dsn.DialectSQLite:
+		where = fmt.Sprintf(`photos.photo_uid IN (?) 
 		OR photos.place_id IN (?) 
 		OR photos.photo_uid IN (SELECT photo_uid FROM files WHERE file_uid IN (?))
 		OR photos.photo_path IN (
 			SELECT a.path FROM folders a WHERE a.folder_uid IN (?) UNION
 			SELECT b.path FROM folders a JOIN folders b ON b.path LIKE %s WHERE a.folder_uid IN (?))
-		OR photos.photo_uid IN (SELECT photo_uid FROM photos_albums WHERE hidden = 0 AND album_uid IN (?))
+		OR photos.photo_uid IN (SELECT photo_uid FROM photos_albums WHERE hidden = FALSE AND album_uid IN (?))
 		OR files.file_uid IN (SELECT file_uid FROM %s m WHERE m.subj_uid IN (?))
 		OR photos.id IN (SELECT pl.photo_id FROM photos_labels pl JOIN labels l ON pl.label_id = l.id AND pl.uncertainty < 100 AND l.deleted_at IS NULL WHERE l.label_uid IN (?))
 		OR photos.id IN (SELECT pl.photo_id FROM photos_labels pl JOIN categories c ON c.label_id = pl.label_id AND pl.uncertainty < 100 JOIN labels lc ON lc.id = c.category_id AND lc.deleted_at IS NULL WHERE lc.label_uid IN (?))`,
-		concat, entity.Marker{}.TableName())
+			concat, entity.Marker{}.TableName())
+	}
 
 	// Build search query.
 	s := UnscopedDb().Table("files").
 		Select("files.*").
 		Joins("JOIN photos ON photos.id = files.photo_id").
-		Where("files.file_missing = 0 AND files.file_name <> '' AND files.file_hash <> ''").
+		Where("files.file_missing = FALSE AND files.file_name <> '' AND files.file_hash <> ''").
 		Where(where, frm.Photos, frm.Places, frm.Files, frm.Files, frm.Files, frm.Albums, frm.Subjects, frm.Labels, frm.Labels).
 		Group("files.id")
 
@@ -183,7 +202,7 @@ func selectedFiles(frm form.Selection, o FileSelection, sess *entity.Session) (r
 
 	// Previews files only?
 	if o.Primary {
-		s = s.Where("files.file_primary = 1")
+		s = s.Where("files.file_primary = TRUE")
 	}
 
 	// Files in originals only?
@@ -193,7 +212,7 @@ func selectedFiles(frm form.Selection, o FileSelection, sess *entity.Session) (r
 
 	// Exclude private?
 	if !o.Private {
-		s = s.Where("photos.photo_private <> 1")
+		s = s.Where("photos.photo_private = false")
 	}
 
 	// Exclude hidden photos?

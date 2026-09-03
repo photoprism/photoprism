@@ -2,6 +2,7 @@ package entity
 
 import (
 	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/entity/legacy"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/log/status"
@@ -65,22 +66,24 @@ func CreateDefaultUsers() {
 	if admin := FindUser(Admin); admin != nil {
 		Admin = *admin
 	} else {
-		// Set legacy values.
-		if leg := FindLegacyUser(Admin); leg != nil {
-			Admin.UserUID = leg.UserUID
-			if leg.UserName != "" {
-				Admin.UserName = leg.UserName
+		// Set legacy values if the legacy table exists.
+		if Db().Migrator().HasTable(&legacy.User{}) {
+			if leg := FindLegacyUser(Admin); leg != nil {
+				Admin.UserUID = leg.UserUID
+				if leg.UserName != "" {
+					Admin.UserName = leg.UserName
+				}
+				if leg.PrimaryEmail != "" {
+					Admin.UserEmail = leg.PrimaryEmail
+				}
+				if leg.FullName != "" {
+					Admin.DisplayName = leg.FullName
+				}
+				if leg.LoginAt != nil {
+					Admin.LoginAt = leg.LoginAt
+				}
+				log.Infof("users: migrating %s account", Admin.UserName)
 			}
-			if leg.PrimaryEmail != "" {
-				Admin.UserEmail = leg.PrimaryEmail
-			}
-			if leg.FullName != "" {
-				Admin.DisplayName = leg.FullName
-			}
-			if leg.LoginAt != nil {
-				Admin.LoginAt = leg.LoginAt
-			}
-			log.Infof("users: migrating %s account", Admin.UserName)
 		}
 
 		// Set default values.

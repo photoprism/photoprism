@@ -15,6 +15,13 @@ type Map = Values
 
 // ModelValues extracts exported struct fields into a Values map, optionally omitting selected names.
 func ModelValues(m any, omit ...string) (result Values, omitted []any, err error) {
+	return ModelValuesStructOption(m, true, omit...)
+}
+
+// ModelValuesStructOption extracts Values from an entity model, with the option to includeAll fields like before.
+// When using this for entity Updates includeAll MUST be false, so that GormV2 is forced to behave like GormV1.
+// There are two white lists which need to be maintained if new data types are used, or pointers to existing types are used.
+func ModelValuesStructOption(m any, includeAll bool, omit ...string) (result Values, omitted []any, err error) {
 	mustOmit := func(name string) bool {
 		return slices.Contains(omit, name)
 	}
@@ -54,12 +61,51 @@ func ModelValues(m any, omit ...string) (result Values, omitted []any, err error
 		}
 
 		v := values.Field(i)
+		// log.Debugf("field %v is %v with name %v or string %v and is exported %v", fieldName, v.Kind(), v.Type().Name(), v.Type().String(), field.IsExported())
 
 		switch v.Kind() {
-		case reflect.Slice, reflect.Chan, reflect.Func, reflect.Map, reflect.UnsafePointer:
+		case reflect.Chan, reflect.Func, reflect.Map, reflect.UnsafePointer:
+			if v.IsZero() {
+				continue
+			}
+			if !includeAll {
+				v.SetZero()
+			}
 			continue
+		case reflect.Slice:
+			if v.IsZero() {
+				continue
+			}
+			whitelist := false
+			switch v.Type().String() {
+			case "json.RawMessage", "jsontext.Value":
+				whitelist = true
+			}
+			if !whitelist && !includeAll {
+				v.SetZero()
+				continue
+			}
 		case reflect.Struct:
 			if v.IsZero() {
+				continue
+			}
+			whitelist := false
+			switch v.Type().String() {
+			case "sql.NullTime", "time.Time", "time.Duration", "json.RawMessage", "jsontext.Value", "otp.Key":
+				whitelist = true
+			}
+			if !whitelist && !includeAll {
+				v.SetZero()
+				continue
+			}
+		case reflect.Pointer:
+			whitelist := false
+			switch v.Type().String() {
+			case "*time.Time", "*time.Duration", "*bool", "*uint", "*uint64", "*uint32", "*int", "*int64", "*int32", "*string", "*float32", "*float64", "*otp.Key", "*sql.NullTime", "*json.RawMessage", "*jsontext.Value":
+				whitelist = true
+			}
+			if !whitelist && !includeAll {
+				v.SetZero()
 				continue
 			}
 		}

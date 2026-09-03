@@ -1,0 +1,1 @@
+ALTER TABLE albums MODIFY IF EXISTS album_path varbinary(1024);

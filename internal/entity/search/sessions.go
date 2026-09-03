@@ -8,6 +8,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity/sortby"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 // Sessions finds user sessions.
@@ -65,7 +66,11 @@ func Sessions(frm form.SearchSessions) (result entity.Sessions, err error) {
 			Where("client_name <> '' AND client_name IS NOT NULL").
 			Order(OrderExpr("client_name, created_at, id", frm.Reverse))
 	case sortby.Login, sortby.LoginAt:
-		stmt = stmt.Order(OrderExpr("login_at DESC, user_name, client_name, id", frm.Reverse))
+		if entity.DbDialect() == dsn.DialectPostgreSQL {
+			stmt = stmt.Order(OrderExpr("login_at DESC NULLS LAST, user_name, client_name, id", frm.Reverse))
+		} else {
+			stmt = stmt.Order(OrderExpr("login_at DESC, user_name, client_name, id", frm.Reverse))
+		}
 	case sortby.Created, sortby.CreatedAt:
 		stmt = stmt.Order(OrderExpr("created_at ASC, user_name, client_name, id", frm.Reverse))
 	case sortby.Updated, sortby.UpdatedAt:

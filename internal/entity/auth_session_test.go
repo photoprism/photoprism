@@ -303,6 +303,7 @@ func TestSession_Create(t *testing.T) {
 
 		s.SetAuthToken("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7xxx")
 
+		log.Info("Expect duplicate key violation Error or SQLSTATE from session.Create")
 		err := s.Create()
 		require.Nil(t, err)
 

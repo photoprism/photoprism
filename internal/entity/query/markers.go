@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/convert"
 )
 
 // MarkerByUID returns a Marker based on the UID.
@@ -54,7 +55,7 @@ func Markers(limit, offset int, markerType string, embeddings, subjects bool, ma
 func UnmatchedFaceMarkers(limit int, after string, matchedBefore *time.Time) (result entity.Markers, err error) {
 	db := whereEmbeddingModel(Db().
 		Where("marker_type = ?", entity.MarkerFace).
-		Where("marker_invalid = 0").
+		Where("marker_invalid = FALSE").
 		Where("LENGTH(embeddings_json) > 0"), face.EmbeddingModelName())
 
 	if matchedBefore == nil {
@@ -92,7 +93,7 @@ func Embeddings(single, unclustered bool, size, score int, model string) (result
 	stmt := Db().
 		Model(&entity.Marker{}).
 		Where("marker_type = ?", entity.MarkerFace).
-		Where("marker_invalid = 0").
+		Where("marker_invalid = FALSE").
 		Where("LENGTH(embeddings_json) > 0").
 		Order("marker_uid")
 
@@ -150,7 +151,7 @@ func MarkerCountsByFaceIDs(faceIDs []string) (map[string]int, error) {
 	if err := Db().
 		Model(&entity.Marker{}).
 		Select("face_id, COUNT(*) AS count").
-		Where("marker_invalid = 0").
+		Where("marker_invalid = FALSE").
 		Where("marker_type = ?", entity.MarkerFace).
 		Where("face_id IN (?)", faceIDs).
 		Group("face_id").
@@ -169,7 +170,7 @@ func MarkerCountsByFaceIDs(faceIDs []string) (map[string]int, error) {
 func RemoveInvalidMarkerReferences() (removed int64, err error) {
 	result := Db().
 		Model(&entity.Marker{}).
-		Where("marker_invalid = 1 AND (subj_uid <> '' OR face_id <> '')").
+		Where("marker_invalid = TRUE AND (subj_uid <> '' OR face_id <> '')").
 		UpdateColumns(entity.Values{"subj_uid": "", "face_id": "", "face_dist": -1.0, "matched_at": nil})
 
 	return result.RowsAffected, result.Error
@@ -279,30 +280,32 @@ func resetFaceMarkerMatches(scope *gorm.DB) (removed int64, err error) {
 
 // CountUnmatchedFaceMarkers counts the number of unmatched face markers in the index.
 func CountUnmatchedFaceMarkers() (n int) {
+	nData := int64(0)
 	q := whereEmbeddingModel(Db().Model(&entity.Markers{}).
-		Where("matched_at IS NULL AND marker_invalid = 0 AND LENGTH(embeddings_json) > 0").
+		Where("matched_at IS NULL AND marker_invalid = FALSE AND LENGTH(embeddings_json) > 0").
 		Where("marker_type = ?", entity.MarkerFace), face.EmbeddingModelName())
 
-	if err := q.Count(&n).Error; err != nil {
+	if err := q.Count(&nData).Error; err != nil {
 		log.Errorf("faces: %s (count unmatched markers)", err)
 	}
 
-	return n
+	return convert.SafeInt64toint(nData)
 }
 
 // CountMarkers counts the number of face markers in the index.
 func CountMarkers(markerType string) (n int) {
+	nData := int64(0)
 	q := Db().Model(&entity.Markers{})
 
 	if markerType != "" {
 		q = q.Where("marker_type = ?", markerType)
 	}
 
-	if err := q.Count(&n).Error; err != nil {
+	if err := q.Count(&nData).Error; err != nil {
 		log.Errorf("faces: %s (count markers)", err)
 	}
 
-	return n
+	return convert.SafeInt64toint(nData)
 }
 
 // RemoveOrphanMarkers removes markers without an existing file.

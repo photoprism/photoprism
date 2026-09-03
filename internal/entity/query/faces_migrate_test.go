@@ -35,11 +35,11 @@ func TestFaceMigrationUnreadableFileCount(t *testing.T) {
 	require.NoError(t, err)
 
 	// Counted independently, as a left join rather than the NOT IN under test.
-	var want int
+	var want int64
 	row := Db().Raw("SELECT COUNT(*) FROM markers m LEFT JOIN files f"+
 		" ON f.file_uid = m.file_uid AND f.deleted_at IS NULL"+
-		" WHERE m.marker_type = ? AND m.marker_invalid = 0 AND m.file_uid <> ''"+
-		" AND (f.file_uid IS NULL OR f.file_missing = 1 OR f.file_error <> '')", entity.MarkerFace).Row()
+		" WHERE m.marker_type = ? AND m.marker_invalid = FALSE AND m.file_uid <> ''"+
+		" AND (f.file_uid IS NULL OR f.file_missing = TRUE OR f.file_error <> '')", entity.MarkerFace).Row()
 	require.NoError(t, row.Scan(&want))
 
 	require.Positive(t, want, "fixtures must include a face marker whose file cannot be read")
@@ -58,9 +58,13 @@ func TestFaceMigrationSoftDeletedFileCount(t *testing.T) {
 	before, err := FaceMigrationCounts(face.ModelFaceNet)
 	require.NoError(t, err)
 
+	photo := entity.NewPhoto(false)
+	require.NoError(t, Db().Create(&photo).Error)
+
 	file := entity.File{
 		FileUID:  rnd.GenerateUID('f'),
-		PhotoUID: rnd.GenerateUID('p'),
+		PhotoID:  photo.ID,
+		PhotoUID: photo.PhotoUID,
 		FileName: "soft-deleted/migrate-test.jpg",
 		FileRoot: entity.RootOriginals,
 	}
@@ -76,6 +80,7 @@ func TestFaceMigrationSoftDeletedFileCount(t *testing.T) {
 	t.Cleanup(func() {
 		Db().Unscoped().Delete(&marker)
 		Db().Unscoped().Delete(&file)
+		Db().Unscoped().Delete(&photo)
 	})
 
 	// A readable file must not be counted, so the marker is invisible while the file is live.
@@ -272,17 +277,17 @@ func TestFaceMigrationSubjectMarkers(t *testing.T) {
 	t.Run("LowQualityMarkers", func(t *testing.T) {
 		count, countErr := FaceMigrationLowQualityMarkers(face.ModelFaceNet)
 		require.NoError(t, countErr)
-		assert.GreaterOrEqual(t, count, 2, "the tiny and faint markers are counted")
+		assert.GreaterOrEqual(t, count, int64(2), "the tiny and faint markers are counted")
 
 		// It reports the complement of what seeds a cluster, so the two have to agree on the
 		// bars: a count with its own copy of them describes a set the rebuild does not use.
-		var assigned int
+		var assigned int64
 		require.NoError(t, whereEmbeddingModel(Db().Model(&entity.Marker{}).
-			Where("marker_type = ? AND marker_invalid = 0", entity.MarkerFace).
+			Where("marker_type = ? AND marker_invalid = FALSE", entity.MarkerFace).
 			Where("subj_uid <> ''").
 			Where("LENGTH(embeddings_json) > 0"), face.ModelFaceNet).Count(&assigned).Error)
 
-		var seeds int
+		var seeds int64
 		require.NoError(t, whereFaceMigrationSamples(Db().Model(&entity.Marker{}), face.ModelFaceNet).Count(&seeds).Error)
 
 		assert.Equal(t, assigned-seeds, count)
@@ -546,7 +551,7 @@ func TestFinalizeFaceMigration(t *testing.T) {
 	tempConn := &entity.DbConn{Driver: dsn.DriverSQLite3, Dsn: filepath.Join(t.TempDir(), "faces-migrate.db")}
 	tempDb := tempConn.Db()
 	require.NotNil(t, tempDb)
-	require.NoError(t, tempDb.AutoMigrate(&entity.Face{}, &entity.Marker{}).Error)
+	require.NoError(t, tempDb.AutoMigrate(&entity.Face{}, &entity.Marker{}))
 
 	entity.SetDbProvider(tempConn)
 	t.Cleanup(func() {
@@ -635,7 +640,7 @@ func TestFinalizeFaceMigration(t *testing.T) {
 		MarkerDistances: map[string]float64{manual.MarkerUID: 0, imported.MarkerUID: 0.2},
 	}}, []string{automatic.MarkerUID}))
 
-	var staleCount int
+	var staleCount int64
 	require.NoError(t, tempDb.Unscoped().Model(&entity.Face{}).Where("id = ?", stale.ID).Count(&staleCount).Error)
 	assert.Zero(t, staleCount, "the previous run's clusters must be replaced")
 
@@ -664,7 +669,7 @@ func TestFinalizeFaceMigration(t *testing.T) {
 	assert.Equal(t, cluster.ID, storedImported.FaceID)
 	assert.Equal(t, subjectUID, storedImported.SubjUID)
 
-	var facesBefore, facesAfter int
+	var facesBefore, facesAfter int64
 	require.NoError(t, tempDb.Model(&entity.Face{}).Count(&facesBefore).Error)
 	changedErr := FinalizeFaceMigration(face.ModelFaceNet, []FaceMigrationIdentity{{MarkerUID: "changed"}}, nil, nil)
 	require.Error(t, changedErr)
@@ -725,18 +730,26 @@ func TestFaceMigrationCropCoverage(t *testing.T) {
 	before, err := FaceMigrationCropCoverage(160, 1920, 1200)
 	require.NoError(t, err)
 
+	photo := entity.NewPhoto(false)
+	photo.PhotoUID = rnd.GenerateUID('p')
+	require.NoError(t, Db().Create(&photo).Error)
+
 	// A 4:3 landscape original, which is the case a naive implementation gets wrong: the box
 	// height binds, so Fit1920 delivers 1600 px of width rather than the 1920 in its name.
 	file := entity.File{
 		FileUID:    rnd.GenerateUID('f'),
-		PhotoUID:   rnd.GenerateUID('p'),
+		PhotoUID:   photo.PhotoUID,
+		PhotoID:    photo.ID,
 		FileName:   "crop-coverage/landscape.jpg",
 		FileRoot:   entity.RootOriginals,
 		FileWidth:  3648,
 		FileHeight: 2736,
 	}
 	require.NoError(t, Db().Create(&file).Error)
-	t.Cleanup(func() { Db().Unscoped().Delete(&file) })
+	t.Cleanup(func() {
+		Db().Unscoped().Delete(&file)
+		Db().Unscoped().Delete(&photo)
+	})
 
 	// The required source width is 160/w, so these ask for 320, 1778 and 8000 px.
 	widths := []float32{0.5, 0.09, 0.02}
@@ -797,7 +810,8 @@ func TestFaceMigrationCropCoverage(t *testing.T) {
 		// than the box's own aspect is bounded by its width, so 1920 is what Fit1920 delivers.
 		wide := entity.File{
 			FileUID:    rnd.GenerateUID('f'),
-			PhotoUID:   rnd.GenerateUID('p'),
+			PhotoUID:   photo.PhotoUID,
+			PhotoID:    photo.ID,
 			FileName:   "crop-coverage/wide.jpg",
 			FileRoot:   entity.RootOriginals,
 			FileWidth:  4096,
@@ -883,15 +897,23 @@ func TestFaceMarkerSampleShortfall(t *testing.T) {
 	before, err := FaceMarkerSampleShortfall(clusterSize)
 	require.NoError(t, err)
 
+	photo := entity.NewPhoto(false)
+	photo.PhotoUID = rnd.GenerateUID('p')
+	require.NoError(t, Db().Create(&photo).Error)
+
 	file := entity.File{
 		FileUID:   rnd.GenerateUID('f'),
-		PhotoUID:  rnd.GenerateUID('p'),
+		PhotoUID:  photo.PhotoUID,
+		PhotoID:   photo.ID,
 		FileName:  "sample-shortfall/large.jpg",
 		FileRoot:  entity.RootOriginals,
 		FileWidth: 4000,
 	}
 	require.NoError(t, Db().Create(&file).Error)
-	t.Cleanup(func() { Db().Unscoped().Delete(&file) })
+	t.Cleanup(func() {
+		Db().Unscoped().Delete(&file)
+		Db().Unscoped().Delete(&photo)
+	})
 
 	// The extents are what each marker's embedding was drawn from, and the widths what its
 	// original could supply: 0.1 of 4000 px is 400, and 0.01 of it is 40.

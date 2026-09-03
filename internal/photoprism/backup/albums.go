@@ -6,6 +6,8 @@ import (
 	"regexp"
 	"time"
 
+	"gorm.io/gorm"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/event"
@@ -113,6 +115,11 @@ func RestoreAlbums(backupPath string, force bool) (count int, result error) {
 		return count, nil
 	}
 
+	photocount, err := query.CountPhotos()
+	if err != nil {
+		return count, err
+	}
+
 	if !fs.PathExists(backupPath) {
 		backupPath = c.BackupAlbumsPath()
 	}
@@ -142,10 +149,30 @@ func RestoreAlbums(backupPath string, force bool) (count int, result error) {
 			log.Debugf("albums: skipped %s (restore)", clean.Log(filepath.Base(fileName)))
 		} else if found := a.Find(); found != nil {
 			log.Infof("%s: %s already exists (restore)", found.AlbumType, clean.Log(found.AlbumTitle))
-		} else if err = a.Create(); err != nil {
-			log.Errorf("%s: %s in %s (restore)", a.AlbumType, err, clean.Log(filepath.Base(fileName)))
 		} else {
-			count++
+			if len(a.Photos) > 0 && photocount == 0 {
+				// Preload empty photo records where they do not exist
+				for _, yamlPhoto := range a.Photos {
+					if oldPhoto := entity.FindPhoto(entity.Photo{PhotoUID: yamlPhoto.PhotoUID}); oldPhoto == nil {
+						photo := entity.NewPhoto(true)
+						photo.PhotoUID = yamlPhoto.PhotoUID
+						// Set the photo as MediaRestoring as it's not real.
+						photo.PhotoType = entity.MediaRestoring
+						// Set it as Purged
+						photo.DeletedAt = gorm.DeletedAt{Valid: true, Time: time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC)}
+						photo.PhotoQuality = -1
+						if err := photo.Save(); err != nil {
+							log.Errorf("%s: %s in %s (restore create dummy photos)", a.AlbumType, err, clean.Log(filepath.Base(fileName)))
+						}
+					}
+				}
+			}
+
+			if err = a.Create(); err != nil {
+				log.Errorf("%s: %s in %s (restore)", a.AlbumType, err, clean.Log(filepath.Base(fileName)))
+			} else {
+				count++
+			}
 		}
 	}
 

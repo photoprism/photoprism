@@ -1,7 +1,9 @@
 package commands
 
 import (
+	"strings"
 	"testing"
+	"unicode"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -14,6 +16,14 @@ func TestUsersLegacyCommand(t *testing.T) {
 		// Check command output for plausibility.
 		// t.Logf(output)
 		assert.NoError(t, err)
-		assert.Contains(t, output, "│ ID │ UID │ Name │ User │ Email │ Admin │ Created At │")
+		// remove spaces as this test will fail if there are records in the table due to dynamic sizing of headings
+		var result strings.Builder
+		result.Grow(len(output))
+		for _, char := range output {
+			if !unicode.IsSpace(char) {
+				result.WriteRune(char)
+			}
+		}
+		assert.Contains(t, result.String(), "│ID│UID│Name│User│Email│Admin│CreatedAt│")
 	})
 }

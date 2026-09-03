@@ -16,7 +16,7 @@ func TestExtractImageCmd(t *testing.T) {
 	opt := encode.NewPreviewImageOptions("/usr/bin/ffmpeg", time.Second*9)
 
 	srcName := fs.Abs("./testdata/25fps.vp9")
-	destName := fs.Abs("./testdata/25fps.jpg")
+	destName := filepath.Join(t.TempDir(), "25fps.jpg")
 
 	cmd := ExtractImageCmd(srcName, destName, opt)
 
@@ -33,7 +33,7 @@ func TestExtractJpegImageCmd(t *testing.T) {
 	opt := encode.NewPreviewImageOptions("/usr/bin/ffmpeg", time.Second*9)
 
 	srcName := fs.Abs("./testdata/25fps.vp9")
-	destName := fs.Abs("./testdata/25fps.jpeg")
+	destName := filepath.Join(t.TempDir(), "25fps.jpeg")
 
 	cmd := ExtractJpegImageCmd(srcName, destName, opt)
 
@@ -50,7 +50,7 @@ func TestExtractPngImageCmd(t *testing.T) {
 	opt := encode.NewPreviewImageOptions("/usr/bin/ffmpeg", time.Second*9)
 
 	srcName := fs.Abs("./testdata/25fps.vp9")
-	destName := fs.Abs("./testdata/25fps.png")
+	destName := filepath.Join(t.TempDir(), "25fps.png")
 
 	cmd := ExtractPngImageCmd(srcName, destName, opt)
 

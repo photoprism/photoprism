@@ -7,7 +7,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/list"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 // Migrations represents a sorted list of migrations.
@@ -25,7 +25,7 @@ func Existing(db *gorm.DB, stage string) MigrationMap {
 	}
 
 	// Get SQL dialect name.
-	name := db.Dialect().GetName()
+	name := db.Dialector.Name()
 
 	if name == "" {
 		return make(MigrationMap)
@@ -33,10 +33,11 @@ func Existing(db *gorm.DB, stage string) MigrationMap {
 
 	// Make sure a "migrations" table exists.
 	once[name].Do(func() {
-		err = db.AutoMigrate(&Migration{}).Error
+		err = db.AutoMigrate(&Migration{})
 	})
 
 	if err != nil {
+		log.Errorf("migrate: Cannot create / update migrations table: %s", err)
 		return make(MigrationMap)
 	}
 
@@ -107,14 +108,22 @@ func (m *Migrations) Start(db *gorm.DB, opt Options) {
 			continue
 		}
 
-		// Run migration.
-		if err := migration.Execute(db); err != nil {
-			migration.Fail(err, db)
-			log.Errorf("migrate: executing %s failed with %s [%s]", migration.ID, err, time.Since(start))
-		} else if err = migration.Finish(db); err != nil {
-			log.Warnf("migrate: updating %s failed with %s [%s]", migration.ID, err, time.Since(start))
+		if opt.NewDatabase && opt.StageName() != StagePost {
+			if err := migration.Finish(db); err != nil {
+				log.Warnf("migrate: updating %s failed with %s [%s]", migration.ID, err, time.Since(start))
+			} else {
+				log.Infof("migrate: %s bypassed [%s] due new database", migration.ID, time.Since(start))
+			}
 		} else {
-			log.Infof("migrate: %s successful [%s]", migration.ID, time.Since(start))
+			// Run migration.
+			if err := migration.Execute(db); err != nil {
+				migration.Fail(err, db)
+				log.Errorf("migrate: executing %s failed with %s [%s]", migration.ID, err, time.Since(start))
+			} else if err = migration.Finish(db); err != nil {
+				log.Warnf("migrate: updating %s failed with %s [%s]", migration.ID, err, time.Since(start))
+			} else {
+				log.Infof("migrate: %s successful [%s]", migration.ID, time.Since(start))
+			}
 		}
 	}
 }

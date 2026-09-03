@@ -20,7 +20,7 @@ import (
 func newIndexRelatedTestConfig(t *testing.T, dbName string) *config.Config {
 	t.Helper()
 
-	return config.NewMinimalTestConfigWithDb(dbName, filepath.Join(t.TempDir(), "storage"))
+	return config.NewMinimalTestConfigWithDbTTest(dbName, filepath.Join(t.TempDir(), "storage"), t)
 }
 
 func TestIndexRelated(t *testing.T) {

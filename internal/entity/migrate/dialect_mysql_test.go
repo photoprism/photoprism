@@ -1,32 +1,44 @@
 package migrate
 
 import (
-	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"github.com/photoprism/photoprism/internal/testextras"
+	"github.com/photoprism/photoprism/pkg/dsn"
+
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 func TestDialectMysql(t *testing.T) {
+	driver, _ := dsn.PhotoPrismTestToDriverDSN()
+	if driver != "mysql" {
+		t.Skip("skipping test as not MariaDB")
+	}
+
+	dbDSN := testextras.TestDbDSN(dsn.DriverMySQL, "migrate")
 	dumpName, err := filepath.Abs("./testdata/migrate_mysql.sql")
 	if err != nil {
+		t.Fatal(err)
+	} else if err = testextras.ResetMariaDB(dsn.Parse(dbDSN).Name, "migrate"); err != nil {
 		t.Fatal(err)
 	}
 
 	//nolint:gosec // G204: dumpName comes from a fixed local fixture path in testdata.
-	if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", "migrate",
+	if err = exec.Command("mariadb", "-u", "migrate", "-pmigrate", dsn.Parse(dbDSN).Name,
 		"-e", "source "+dumpName).Run(); err != nil {
 		t.Fatal(err)
 	}
 
+	log.Info("Expect many table does not exist or no such table Error or SQLSTATE from migration.go")
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.TraceLevel)
 
@@ -35,9 +47,20 @@ func TestDialectMysql(t *testing.T) {
 		port = "4001"
 	}
 
-	db, err := gorm.Open(
-		"mysql",
-		fmt.Sprintf("migrate:migrate@tcp(mariadb:%s)/migrate?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true", port),
+	db, err := gorm.Open(mysql.Open(
+		dbDSN),
+		&gorm.Config{
+			Logger: logger.New(
+				log,
+				logger.Config{
+					SlowThreshold:             time.Second,  // Slow SQL threshold
+					LogLevel:                  logger.Error, // Log level
+					IgnoreRecordNotFoundError: true,         // Ignore ErrRecordNotFound error for logger
+					ParameterizedQueries:      true,         // Don't include params in the SQL log
+					Colorful:                  false,        // Disable color
+				},
+			),
+		},
 	)
 
 	if err != nil || db == nil {
@@ -48,10 +71,8 @@ func TestDialectMysql(t *testing.T) {
 		return
 	}
 
-	defer db.Close()
-
-	db.LogMode(false)
-	db.SetLogger(log)
+	sqldb, _ := db.DB()
+	defer sqldb.Close()
 
 	opt := Opt(true, true, nil)
 
@@ -65,14 +86,20 @@ func TestDialectMysql(t *testing.T) {
 		t.Error(err)
 	}
 
+	// Run post-migrations.
+	if err = Run(db, opt.Post()); err != nil {
+		t.Error(err)
+	}
+
 	stmt := db.Table("photos").Where("photo_caption = '' OR photo_caption IS NULL")
 
-	count := 0
+	count := int64(0)
 
 	// Fetch count from database.
 	if err = stmt.Count(&count).Error; err != nil {
 		t.Error(err)
 	} else {
-		assert.Equal(t, 0, count)
+		assert.Equal(t, int64(0), count)
 	}
+	log.Info("End Expect many table does not exist or no such table Error or SQLSTATE from migration.go")
 }

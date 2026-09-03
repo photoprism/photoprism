@@ -15,6 +15,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service/hub"
+	"github.com/photoprism/photoprism/internal/testextras"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -47,7 +48,7 @@ func runTestMain(m *testing.M) int {
 		fs.PurgeTestDbFiles(".", false)
 	}()
 
-	return m.Run()
+	return testextras.TestDbCleanup(m.Run())
 }
 
 func TestNewConfig(t *testing.T) {

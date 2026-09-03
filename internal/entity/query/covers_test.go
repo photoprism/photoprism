@@ -62,12 +62,12 @@ func TestRefreshManualAlbumCoverPrivate(t *testing.T) {
 	origThumb, origSrc, origPrivate := album.Thumb, album.ThumbSrc, photo.PhotoPrivate
 
 	t.Cleanup(func() {
-		_ = UnscopedDb().Model(entity.Photo{}).Where("id = ?", file.PhotoID).Update("photo_private", origPrivate).Error
+		_ = UnscopedDb().Model(&entity.Photo{}).Where("id = ?", file.PhotoID).Update("photo_private", origPrivate).Error
 		_ = entity.UpdateAlbum(album.AlbumUID, entity.Values{"thumb": origThumb, "thumb_src": origSrc})
 		entity.FlushAlbumCache()
 	})
 
-	require.NoError(t, UnscopedDb().Model(entity.Photo{}).Where("id = ?", file.PhotoID).Update("photo_private", true).Error)
+	require.NoError(t, UnscopedDb().Model(&entity.Photo{}).Where("id = ?", file.PhotoID).Update("photo_private", true).Error)
 	require.NoError(t, entity.UpdateAlbum(album.AlbumUID, entity.Values{"thumb": "", "thumb_src": entity.SrcAuto}))
 	entity.FlushAlbumCache()
 
@@ -92,8 +92,8 @@ func TestUpdateAlbumFolderCoversFiltered(t *testing.T) {
 	if err := UnscopedDb().Where("album_type = ? AND thumb_src = ? AND album_path <> '' AND thumb <> ''", entity.AlbumFolder, entity.SrcAuto).First(&album).Error; err != nil {
 		// Make the data look like it is needed for the test.  Updating the fixtures directly breaks to many other tests.
 		require.NoError(t, Db().Save(entity.AlbumFixtures.Pointer("april-1990")).Error)
-		require.NoError(t, UnscopedDb().Model(entity.Album{}).Where("id = ?", entity.AlbumFixtures.Get("april-1990").ID).UpdateColumns(entity.Values{"thumb": "justtestdata", "thumb_src": entity.SrcAuto}).Error)
-		require.NoError(t, UnscopedDb().Model(entity.Photo{}).Where("id = ?", entity.PhotoFixtures.Get("pho44to").ID).UpdateColumns(entity.Values{"photo_year": 1990, "photo_month": 4}).Error)
+		require.NoError(t, UnscopedDb().Model(&entity.Album{}).Where("id = ?", entity.AlbumFixtures.Get("april-1990").ID).UpdateColumns(entity.Values{"thumb": "justtestdata", "thumb_src": entity.SrcAuto}).Error)
+		require.NoError(t, UnscopedDb().Model(&entity.Photo{}).Where("id = ?", entity.PhotoFixtures.Get("pho44to").ID).UpdateColumns(entity.Values{"photo_year": 1990, "photo_month": 4}).Error)
 		require.NoError(t, UnscopedDb().Where("album_type = ? AND thumb_src = ? AND album_path <> '' AND thumb <> ''", entity.AlbumFolder, entity.SrcAuto).First(&album).Error)
 		origThumb = entity.AlbumFixtures.Get("april-1990").Thumb
 		origSrc = entity.AlbumFixtures.Get("april-1990").ThumbSrc
@@ -133,8 +133,8 @@ func TestUpdateAlbumMonthCoversFiltered(t *testing.T) {
 	if err := UnscopedDb().Where("album_type = ? AND thumb_src = ? AND album_year <> 0 AND thumb <> ''", entity.AlbumMonth, entity.SrcAuto).First(&album).Error; err != nil {
 		// Make the data look like it is needed for the test.  Updating the fixtures directly breaks to many other tests.
 		require.NoError(t, UnscopedDb().Save(entity.AlbumFixtures.Pointer("september-2021")).Error)
-		require.NoError(t, UnscopedDb().Model(entity.Album{}).Where("id = ?", entity.AlbumFixtures.Get("september-2021").ID).UpdateColumns(entity.Values{"thumb": "justtestdata", "thumb_src": entity.SrcAuto}).Error)
-		require.NoError(t, UnscopedDb().Model(entity.Photo{}).Where("id = ?", entity.PhotoFixtures.Get("pho44to").ID).UpdateColumns(entity.Values{"photo_year": 2021, "photo_month": 9}).Error)
+		require.NoError(t, UnscopedDb().Model(&entity.Album{}).Where("id = ?", entity.AlbumFixtures.Get("september-2021").ID).UpdateColumns(entity.Values{"thumb": "justtestdata", "thumb_src": entity.SrcAuto}).Error)
+		require.NoError(t, UnscopedDb().Model(&entity.Photo{}).Where("id = ?", entity.PhotoFixtures.Get("pho44to").ID).UpdateColumns(entity.Values{"photo_year": 2021, "photo_month": 9}).Error)
 		require.NoError(t, UnscopedDb().Where("album_type = ? AND thumb_src = ? AND album_year <> 0 AND thumb <> ''", entity.AlbumMonth, entity.SrcAuto).First(&album).Error)
 		origThumb = entity.AlbumFixtures.Get("september-2021").Thumb
 		origSrc = entity.AlbumFixtures.Get("september-2021").ThumbSrc
@@ -227,7 +227,7 @@ func coverThumb(t *testing.T, subjUID string) string {
 	t.Helper()
 
 	var subj entity.Subject
-	var nulls int
+	var nulls int64
 
 	require.NoError(t, UnscopedDb().Where("subj_uid = ?", subjUID).First(&subj).Error)
 	require.NoError(t, UnscopedDb().Model(entity.Subject{}).Where("subj_uid = ? AND thumb IS NULL", subjUID).Count(&nulls).Error)

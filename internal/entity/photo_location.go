@@ -147,7 +147,7 @@ func (m *Photo) RemoveLocation(source string, force bool) {
 // RemoveLocationLabels removes labels created from prior location data to keep annotations consistent.
 func (m *Photo) RemoveLocationLabels() {
 	if len(m.Labels) == 0 {
-		res := Db().Delete(PhotoLabel{}, "photo_id = ? AND label_src = ?", m.ID, SrcLocation)
+		res := Db().Delete(&PhotoLabel{}, "photo_id = ? AND label_src = ?", m.ID, SrcLocation)
 
 		if res.Error != nil {
 			Log("photo", "remove location labels", res.Error)

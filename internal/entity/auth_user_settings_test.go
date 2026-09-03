@@ -41,12 +41,12 @@ func TestUserSettings_HasID(t *testing.T) {
 }
 
 func TestUserSettings_Updates(t *testing.T) {
-	m := &User{
-		UserUID: "1234",
-		UserSettings: &UserSettings{
-			UITheme:    "carbon",
-			UILanguage: "de",
-		}}
+	m := NewUser()
+	m.UserSettings = &UserSettings{
+		UserUID:    m.UserUID, // Required to prevent WHERE conditions required error.
+		UITheme:    "carbon",
+		UILanguage: "de",
+	}
 
 	assert.NoError(t, m.UserSettings.Updates(UserSettings{UITheme: "vanta", UILanguage: "en"}))
 	assert.Equal(t, "vanta", m.UserSettings.UITheme)

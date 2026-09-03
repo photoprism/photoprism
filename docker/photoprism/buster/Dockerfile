@@ -108,6 +108,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
       sudo \
       bash \
       mariadb-client \
+      postgresql-client \
       sqlite3 \
       tzdata \
       libc6 \

@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/ulule/deepcopier"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
@@ -21,17 +22,17 @@ type Cameras []Camera
 
 // Camera model and make (as extracted from UpdateExif metadata)
 type Camera struct {
-	ID                uint       `gorm:"primary_key" json:"ID" yaml:"ID"`
-	CameraSlug        string     `gorm:"type:VARBINARY(160);unique_index;" json:"Slug" yaml:"-"`
-	CameraName        string     `gorm:"type:VARCHAR(160);" json:"Name" yaml:"Name"`
-	CameraMake        string     `gorm:"type:VARCHAR(160);" json:"Make" yaml:"Make,omitempty"`
-	CameraModel       string     `gorm:"type:VARCHAR(160);" json:"Model" yaml:"Model,omitempty"`
-	CameraType        string     `gorm:"type:VARCHAR(100);" json:"Type,omitempty" yaml:"Type,omitempty"`
-	CameraDescription string     `gorm:"type:VARCHAR(2048);" json:"Description,omitempty" yaml:"Description,omitempty"`
-	CameraNotes       string     `gorm:"type:VARCHAR(1024);" json:"Notes,omitempty" yaml:"Notes,omitempty"`
-	CreatedAt         time.Time  `json:"-" yaml:"-"`
-	UpdatedAt         time.Time  `json:"-" yaml:"-"`
-	DeletedAt         *time.Time `sql:"index" json:"-" yaml:"-"`
+	ID                uint           `gorm:"primaryKey;" json:"ID" yaml:"ID"`
+	CameraSlug        string         `gorm:"type:bytes;size:160;uniqueIndex;" json:"Slug" yaml:"-"`
+	CameraName        string         `gorm:"size:160;" json:"Name" yaml:"Name"`
+	CameraMake        string         `gorm:"size:160;" json:"Make" yaml:"Make,omitempty"`
+	CameraModel       string         `gorm:"size:160;" json:"Model" yaml:"Model,omitempty"`
+	CameraType        string         `gorm:"size:100;" json:"Type,omitempty" yaml:"Type,omitempty"`
+	CameraDescription string         `gorm:"size:2048;" json:"Description,omitempty" yaml:"Description,omitempty"`
+	CameraNotes       string         `gorm:"size:1024;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
+	CreatedAt         time.Time      `json:"-" yaml:"-"`
+	UpdatedAt         time.Time      `json:"-" yaml:"-"`
+	DeletedAt         gorm.DeletedAt `gorm:"index" json:"-" yaml:"-"`
 }
 
 // TableName returns the entity table name.
@@ -238,4 +239,15 @@ func (m *Camera) SaveForm(f *form.Camera) error {
 	}
 
 	return m.UpdateMakeModel(f.CameraMake, f.CameraModel)
+}
+
+// ScopedSearchFirstCamera populates camera with the results of a Where(query, values) excluding soft delete records
+func ScopedSearchFirstCamera(camera *Camera, query string, values ...any) (tx *gorm.DB) {
+	// Preload related entities if a matching record is found.
+	stmt := Db()
+	tempCamera := &Camera{}
+	if tx = stmt.Where(query, values...).First(tempCamera); tx.Error == nil {
+		deepcopier.Copy(tempCamera).To(camera)
+	}
+	return tx
 }

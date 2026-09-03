@@ -1,0 +1,46 @@
+## FOR TEST AND DEVELOPMENT ONLY, DO NOT USE IN PRODUCTION   ##
+## Setup: https://docs.photoprism.app/developer-guide/setup/ ##
+
+services:
+  ## PostgreSQL Database Server
+  ## Docs: https://www.postgresql.org/docs/
+  postgres-18:
+    image: postgres:18-alpine
+    stop_grace_period: 15s
+    command: ["postgres", "-c", "lock_timeout=120s"]
+    expose:
+      - "${POSTGRES_PORT:-4002}"
+    ports:
+      - "${SERVICES_BIND_HOST:-127.0.0.1}:${POSTGRES_PORT:-4002}:${POSTGRES_PORT:-4002}" # PostgreSQL
+    volumes:
+      - "postgresql:/var/lib/postgresql"
+      - "./scripts/sql/postgresql-init.sql:/docker-entrypoint-initdb.d/init.sql"
+    environment:
+      POSTGRES_DB: photoprism
+      POSTGRES_USER: photoprism
+      POSTGRES_PASSWORD: photoprism
+
+  ## PostgreSQL Database Server
+  ## Docs: https://www.postgresql.org/docs/
+  postgres-17:
+    image: postgres:17-alpine
+    stop_grace_period: 15s
+    command: ["postgres", "-c", "lock_timeout=120s"]
+    expose:
+      - "${POSTGRES_PORT:-4002}"
+    ports:
+      - "${SERVICES_BIND_HOST:-127.0.0.1}:${POSTGRES_PORT:-4002}:${POSTGRES_PORT:-4002}" # PostgreSQL
+    volumes:
+      - "postgresql:/var/lib/postgresql"
+      - "./scripts/sql/postgresql-init.sql:/docker-entrypoint-initdb.d/init.sql"
+    environment:
+      POSTGRES_DB: photoprism
+      POSTGRES_USER: photoprism
+      POSTGRES_PASSWORD: photoprism
+
+
+## Join shared "photoprism" network
+networks:
+  default:
+    name: photoprism
+    external: true

@@ -8,6 +8,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestFirstOrCreateCamera(t *testing.T) {
@@ -394,5 +395,54 @@ func TestCamera_SaveForm(t *testing.T) {
 	t.Run("EmptyMake", func(t *testing.T) {
 		camera := &Camera{ID: CameraFixtures.Get("canon-eos-7d").ID}
 		assert.Error(t, camera.SaveForm(&form.Camera{CameraMake: "", CameraModel: "K-1"}))
+	})
+}
+
+func TestCamera_ScopedSearchFirst(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
+		m := CameraFixtures.Get("apple-iphone-se")
+		Db().Save(&m) // reset back to base
+
+		camera := Camera{}
+		if res := ScopedSearchFirstCamera(&camera, "camera_slug = ?", CameraFixtures.Get("apple-iphone-se").CameraSlug); res.Error != nil {
+			assert.Nil(t, res.Error)
+			t.FailNow()
+		}
+		camera1 := CameraFixtures.Get("apple-iphone-se")
+
+		// Only check items that are preloaded
+		// Except Labels as they are filtered.
+		assert.Equal(t, camera1.ID, camera.ID)
+		assert.Equal(t, camera1.CameraSlug, camera.CameraSlug)
+		assert.Equal(t, camera1.CameraName, camera.CameraName)
+		assert.Equal(t, camera1.CameraMake, camera.CameraMake)
+		assert.Equal(t, camera1.CameraModel, camera.CameraModel)
+		assert.Equal(t, camera1.CameraType, camera.CameraType)
+		assert.Equal(t, camera1.CameraDescription, camera.CameraDescription)
+		assert.Equal(t, camera1.CameraNotes, camera.CameraNotes)
+	})
+
+	t.Run("Nothing Found", func(t *testing.T) {
+
+		camera := Camera{}
+		if res := ScopedSearchFirstCamera(&camera, "camera_slug = ?", rnd.UUID()); res.Error != nil {
+			assert.NotNil(t, res.Error)
+			assert.ErrorContains(t, res.Error, "record not found")
+		} else {
+			assert.Equal(t, int64(0), res.RowsAffected)
+		}
+	})
+
+	t.Run("Error", func(t *testing.T) {
+		camera := Camera{}
+		log.Info("Expect unknown column Error or SQLSTATE on camera_slugs from ScopedSearchFirstCamera")
+		if res := ScopedSearchFirstCamera(&camera, "camera_slugs = ?", rnd.UUID()); res.Error == nil {
+			assert.NotNil(t, res.Error)
+			t.FailNow()
+		} else {
+			assert.Error(t, res.Error)
+			assert.ErrorContains(t, res.Error, "camera_slugs")
+			assert.Equal(t, int64(0), res.RowsAffected)
+		}
 	})
 }

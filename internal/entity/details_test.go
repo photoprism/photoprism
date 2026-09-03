@@ -7,14 +7,20 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestFirstOrCreateDetails(t *testing.T) {
+func TestDetails_FirstOrCreateDetails(t *testing.T) {
 	t.Run("NotExistingDetails", func(t *testing.T) {
+		newPhoto := &Photo{ID: 123} // Can't add details if there isn't a photo in the database.
+		Db().Create(newPhoto)
+
 		details := &Details{PhotoID: 123, Keywords: ""}
 		details = FirstOrCreateDetails(details)
 
 		if details == nil {
 			t.Fatal("details must not be nil")
+		} else {
+			UnscopedDb().Delete(details)
 		}
+		UnscopedDb().Delete(newPhoto)
 	})
 	t.Run("ExistingDetails", func(t *testing.T) {
 		details := &Details{PhotoID: 1000000}
@@ -121,7 +127,7 @@ func TestDetails_NoLicense(t *testing.T) {
 	})
 }
 
-func TestNewDetails(t *testing.T) {
+func TestDetails_NewDetails(t *testing.T) {
 	t.Run("AddToPhoto", func(t *testing.T) {
 		p := NewPhoto(true)
 
@@ -143,7 +149,6 @@ func TestNewDetails(t *testing.T) {
 	})
 }
 
-// TODO fails on mariadb
 func TestDetails_Create(t *testing.T) {
 	t.Run("Error", func(t *testing.T) {
 		details := Details{PhotoID: 0}
@@ -151,19 +156,27 @@ func TestDetails_Create(t *testing.T) {
 		assert.Error(t, details.Create())
 	})
 	t.Run("Success", func(t *testing.T) {
-		details := Details{PhotoID: 900000001}
+		newPhoto := &Photo{ID: 1236799955432} // Can't add details if there isn't a photo in the database.
+		Db().Create(newPhoto)
+
+		details := Details{PhotoID: newPhoto.ID}
 
 		err := details.Create()
-
 		if err != nil {
 			t.Fatal(err)
+		} else {
+			UnscopedDb().Delete(&details)
 		}
+		UnscopedDb().Delete(newPhoto)
 	})
 }
 
 func TestDetails_Save(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		details := Details{PhotoID: 900000002, UpdatedAt: time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC)}
+		newPhoto := &Photo{ID: 123678955432} // Can't add details if there isn't a photo in the database.
+		Db().Create(newPhoto)
+
+		details := Details{PhotoID: newPhoto.ID, UpdatedAt: time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC)}
 		initialDate := details.UpdatedAt
 
 		err := details.Save()
@@ -174,6 +187,8 @@ func TestDetails_Save(t *testing.T) {
 		afterDate := details.UpdatedAt
 
 		assert.True(t, afterDate.After(initialDate))
+		UnscopedDb().Delete(&details)
+		UnscopedDb().Delete(newPhoto)
 	})
 	t.Run("Error", func(t *testing.T) {
 		details := Details{PhotoID: 0}

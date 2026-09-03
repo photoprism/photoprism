@@ -1,6 +1,8 @@
 package dsn
 
 import (
+	"encoding/json"
+	"net/url"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -97,7 +99,7 @@ func TestDSN_ParsePostgres(t *testing.T) {
 			in:   "user=alice password=s3cr3t dbname=app",
 			want: DSN{
 				DSN:      "user=alice password=s3cr3t dbname=app",
-				Driver:   DriverPostgres,
+				Driver:   DriverPostgreSQL,
 				User:     "alice",
 				Password: "s3cr3t",
 				Name:     "app",
@@ -109,12 +111,12 @@ func TestDSN_ParsePostgres(t *testing.T) {
 			in:   "user=alice password=s3cr3t dbname=app host=db.internal port=5432 connect_timeout=5 sslmode=require",
 			want: DSN{
 				DSN:      "user=alice password=s3cr3t dbname=app host=db.internal port=5432 connect_timeout=5 sslmode=require",
-				Driver:   DriverPostgres,
+				Driver:   DriverPostgreSQL,
 				User:     "alice",
 				Password: "s3cr3t",
 				Server:   "db.internal:5432",
 				Name:     "app",
-				Params:   "connect_timeout=5 sslmode=require",
+				Params:   "connect_timeout=5&sslmode=require",
 			},
 			ok: true,
 		},
@@ -123,7 +125,7 @@ func TestDSN_ParsePostgres(t *testing.T) {
 			in:   `user="alice" password="s ec ret" dbname="app" host=db.internal`,
 			want: DSN{
 				DSN:      `user="alice" password="s ec ret" dbname="app" host=db.internal`,
-				Driver:   DriverPostgres,
+				Driver:   DriverPostgreSQL,
 				User:     "alice",
 				Password: "s ec ret",
 				Server:   "db.internal",
@@ -134,7 +136,7 @@ func TestDSN_ParsePostgres(t *testing.T) {
 		{
 			name: "MissingDatabase",
 			in:   "user=alice host=db.internal",
-			want: DSN{DSN: "user=alice host=db.internal"},
+			want: DSN{DSN: "user=alice host=db.internal"}, // Parsing should abort as dbname is missing.
 			ok:   false,
 		},
 	}
@@ -145,14 +147,411 @@ func TestDSN_ParsePostgres(t *testing.T) {
 			ok := d.parsePostgres()
 
 			assert.Equal(t, tt.in, d.String())
+			assert.Equal(t, tt.ok, ok)
+			assert.Equal(t, tt.want, d)
+		})
+	}
+}
 
-			if ok != tt.ok {
-				t.Fatalf("parsePostgres(%q) ok=%v, want %v", tt.in, ok, tt.ok)
-			}
+//nolint:gosec // G101: DSN parsing tests intentionally use inline credential samples.
+func TestDSN_ToString(t *testing.T) {
+	cases := []struct {
+		name string
+		in   DSN
+		want string
+	}{
+		{
+			name: "NoDriver",
+			in: DSN{
+				Name:   "test.db",
+				Server: "storage/unittest",
+			},
+			want: "storage/unittest/test.db?_busy_timeout=5000&_foreign_keys=on",
+		},
+		{
+			name: "NoDriverWithParms",
+			in: DSN{
+				Name:   "test.db",
+				Server: "storage/unittest",
+				Params: "_busy_timeout=15000&_foreign_keys=off",
+			},
+			want: "storage/unittest/test.db?_busy_timeout=15000&_foreign_keys=off",
+		},
+		{
+			name: "SQLite",
+			in: DSN{
+				Driver: DriverSQLite3,
+				Name:   "test.db",
+				Server: "storage/unittest",
+			},
+			want: "storage/unittest/test.db?_busy_timeout=5000&_foreign_keys=on",
+		},
+		{
+			name: "SQLiteWithParms",
+			in: DSN{
+				Driver: DriverSQLite3,
+				Name:   "test.db",
+				Server: "storage/unittest",
+				Params: "_busy_timeout=15000&_foreign_keys=off",
+			},
+			want: "storage/unittest/test.db?_busy_timeout=15000&_foreign_keys=off",
+		},
+		{
+			name: "SQLitefile",
+			in: DSN{
+				Driver: "sqlitefile",
+				Name:   "test.db",
+				Server: "storage/unittest",
+			},
+			want: "storage/unittest/test.db?_busy_timeout=5000&_foreign_keys=on",
+		},
+		{
+			name: "SQLitefileWithParms",
+			in: DSN{
+				Driver: "sqlitefile",
+				Name:   "test.db",
+				Server: "storage/unittest",
+				Params: "_busy_timeout=15000&_foreign_keys=off",
+			},
+			want: "storage/unittest/test.db?_busy_timeout=15000&_foreign_keys=off",
+		},
+		{
+			name: "Postgres",
+			in: DSN{
+				Driver:   DriverPostgres,
+				Name:     "testdb",
+				Server:   "postgres:5432",
+				User:     "myuser",
+				Password: "password",
+			},
+			want: "postgresql://myuser:password@postgres:5432/testdb?sslmode=disable&TimeZone=UTC",
+		},
+		{
+			name: "PostgresWithParms",
+			in: DSN{
+				Driver:   DriverPostgres,
+				Name:     "testdb",
+				Server:   "postgres:5432",
+				User:     "myuser",
+				Password: "password",
+				Params:   "sslmode=require TimeZone=UTC",
+			},
+			want: "postgresql://myuser:password@postgres:5432/testdb?sslmode=require&TimeZone=UTC",
+		},
+		{
+			name: "PostgreSQL",
+			in: DSN{
+				Driver:   DriverPostgreSQL,
+				Name:     "testdb",
+				Server:   "postgres:5432",
+				User:     "myuser",
+				Password: "password",
+			},
+			want: "postgresql://myuser:password@postgres:5432/testdb?sslmode=disable&TimeZone=UTC",
+		},
+		{
+			name: "PostgreSQLWithParms",
+			in: DSN{
+				Driver:   DriverPostgreSQL,
+				Name:     "testdb",
+				Server:   "postgres:5432",
+				User:     "myuser",
+				Password: "password",
+				Params:   "sslmode=require&TimeZone=UTC&connect_timeout=5000",
+			},
+			want: "postgresql://myuser:password@postgres:5432/testdb?sslmode=require&TimeZone=UTC&connect_timeout=5000",
+		},
+		{
+			name: "PostgreSQLEncodedPassword",
+			in: DSN{
+				Driver:   DriverPostgreSQL,
+				Name:     "testdb",
+				Server:   "postgres:5432",
+				User:     "myuser",
+				Password: "spec[char$@2&",
+			},
+			want: "postgresql://myuser:spec%5Bchar$%402&@postgres:5432/testdb?sslmode=disable&TimeZone=UTC",
+		},
+		{
+			name: "PostgreSQLWithParmsEncodedPassword",
+			in: DSN{
+				Driver:   DriverPostgreSQL,
+				Name:     "testdb",
+				Server:   "postgres:5432",
+				User:     "myuser",
+				Password: "spec[char@$2&",
+				Params:   "sslmode=require&TimeZone=UTC&connect_timeout=5000",
+			},
+			want: "postgresql://myuser:spec%5Bchar%40$2&@postgres:5432/testdb?sslmode=require&TimeZone=UTC&connect_timeout=5000",
+		},
+		{
+			name: "MariaDB",
+			in: DSN{
+				Driver:   DriverMariaDB,
+				Name:     "testdb",
+				Server:   "mariadb:4001",
+				User:     "myuser",
+				Password: "password",
+			},
+			want: "myuser:password@mariadb:4001/testdb?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true",
+		},
+		{
+			name: "MariaDBNet",
+			in: DSN{
+				Driver:   DriverMariaDB,
+				Name:     "testdb",
+				Server:   "mariadb:4001",
+				User:     "myuser",
+				Password: "password",
+				Net:      "tcp",
+			},
+			want: "myuser:password@tcp(mariadb:4001)/testdb?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true",
+		},
+		{
+			name: "MariaDBWithParms",
+			in: DSN{
+				Driver:   DriverMariaDB,
+				Name:     "testdb",
+				Server:   "mariadb:4001",
+				User:     "myuser",
+				Password: "password",
+				Params:   "charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&useSSL=false",
+			},
+			want: "myuser:password@mariadb:4001/testdb?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&useSSL=false",
+		},
+		{
+			name: "MySQL",
+			in: DSN{
+				Driver:   DriverMySQL,
+				Name:     "testdb",
+				Server:   "mariadb:4001",
+				User:     "myuser",
+				Password: "password",
+			},
+			want: "myuser:password@mariadb:4001/testdb?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true",
+		},
+		{
+			name: "MySQLWithParms",
+			in: DSN{
+				Driver:   DriverMySQL,
+				Name:     "testdb",
+				Server:   "mariadb:4001",
+				User:     "myuser",
+				Password: "password",
+				Params:   "charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&useSSL=false",
+			},
+			want: "myuser:password@mariadb:4001/testdb?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&useSSL=false",
+		},
+	}
 
-			if ok && d != tt.want {
-				t.Fatalf("parsePostgres(%q) = %#v, want %#v", tt.in, d, tt.want)
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			d := tt.in
+
+			if d.Driver == DriverPostgreSQL || d.Driver == DriverPostgres {
+				// Postgres uses a URI, which means that the Query part is not ordered.  Causing string assert.Equal to fail (sometimes).
+				expected, eerr := url.Parse(tt.want)
+				actual, aerr := url.Parse(d.ToString())
+				assert.Equal(t, eerr, aerr)
+				exQ := expected.Query()
+				acQ := actual.Query()
+				expected.RawQuery = ""
+				actual.RawQuery = ""
+				assert.Equal(t, expected, actual)
+				exJ, _ := json.Marshal(exQ)
+				acJ, _ := json.Marshal(acQ)
+				assert.JSONEq(t, string(exJ), string(acJ))
+			} else {
+				assert.Equal(t, tt.want, d.ToString())
 			}
+		})
+	}
+}
+
+//nolint:gosec // G101: DSN parsing tests intentionally use inline credential samples.
+func TestDSN_ForPSQL(t *testing.T) {
+	cases := []struct {
+		name string
+		in   DSN
+		want string
+	}{
+		{
+			name: "Postgres",
+			in: DSN{
+				Driver:   DriverPostgres,
+				Name:     "testdb",
+				Server:   "postgres:5432",
+				User:     "myuser",
+				Password: "password",
+			},
+			want: "postgresql://myuser:password@postgres:5432/testdb",
+		},
+		{
+			name: "PostgresWithParms",
+			in: DSN{
+				Driver:   DriverPostgres,
+				Name:     "testdb",
+				Server:   "postgres:5432",
+				User:     "myuser",
+				Password: "password",
+				Params:   "sslmode=require&TimeZone=UTC&connect_timeout=5000",
+			},
+			want: "postgresql://myuser:password@postgres:5432/testdb",
+		},
+		{
+			name: "PostgreSQL",
+			in: DSN{
+				Driver:   DriverPostgreSQL,
+				Name:     "testdb",
+				Server:   "postgres:5432",
+				User:     "myuser",
+				Password: "password",
+			},
+			want: "postgresql://myuser:password@postgres:5432/testdb",
+		},
+		{
+			name: "PostgreSQLWithParms",
+			in: DSN{
+				Driver:   DriverPostgreSQL,
+				Name:     "testdb",
+				Server:   "postgres:5432",
+				User:     "myuser",
+				Password: "password",
+				Params:   "sslmode=require&TimeZone=UTC&connect_timeout=5000",
+			},
+			want: "postgresql://myuser:password@postgres:5432/testdb",
+		},
+		{
+			name: "MariaDB",
+			in: DSN{
+				Driver:   DriverMariaDB,
+				Name:     "testdb",
+				Server:   "mariadb:4001",
+				User:     "myuser",
+				Password: "password",
+			},
+			want: "postgresql://myuser:password@mariadb:4001/testdb",
+		},
+		{
+			name: "PostgreSQLEncodedPassword",
+			in: DSN{
+				Driver:   DriverPostgreSQL,
+				Name:     "testdb",
+				Server:   "postgres:5432",
+				User:     "myuser",
+				Password: "spec[char$@2&",
+			},
+			want: "postgresql://myuser:spec%5Bchar$%402&@postgres:5432/testdb",
+		},
+	}
+
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			d := tt.in
+
+			assert.Equal(t, tt.want, d.ForPSQL())
+		})
+	}
+}
+
+func TestPostgresEncodeParams(t *testing.T) {
+	cases := []struct {
+		name string
+		in   DSN
+		want string
+	}{
+		{
+			name: "SingleParam",
+			in: DSN{
+				Params: "_busy_timeout=5000",
+			},
+			want: "_busy_timeout=5000",
+		},
+		{
+			name: "TwoParams",
+			in: DSN{
+				Params: "_busy_timeout=15000 _foreign_keys=off",
+			},
+			want: "_busy_timeout=15000&_foreign_keys=off",
+		},
+		{
+			name: "ThreeParams",
+			in: DSN{
+				Params: "sslmode=require TimeZone=UTC connect_timeout=5000",
+			},
+			want: "sslmode=require&TimeZone=UTC&connect_timeout=5000",
+		},
+		{
+			name: "AlreadyEncoded",
+			in: DSN{
+				Params: "_busy_timeout=15000&_foreign_keys=off",
+			},
+			want: "_busy_timeout=15000&_foreign_keys=off",
+		},
+	}
+
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			d := tt.in
+			postgresEncodeParams(&d)
+
+			exQ, eerr := url.ParseQuery(tt.want)
+			acQ, aerr := url.ParseQuery(d.Params)
+			exJ, _ := json.Marshal(exQ)
+			acJ, _ := json.Marshal(acQ)
+			assert.Nil(t, eerr)
+			assert.Equal(t, eerr, aerr)
+			assert.JSONEq(t, string(exJ), string(acJ))
+		})
+	}
+}
+
+func TestPostgresDequote(t *testing.T) {
+	cases := []struct {
+		name string
+		in   string
+		want string
+	}{
+		{
+			name: "Quoted",
+			in:   "'quotedstring'",
+			want: "quotedstring",
+		},
+		{
+			name: "QuotedEscapedBackSlash",
+			in:   `'quoted\\backslash'`,
+			want: `quoted\backslash`,
+		},
+		{
+			name: "QuotedEscapedQuote",
+			in:   `'quoted\'quote'`,
+			want: `quoted'quote`,
+		},
+		{
+			name: "LeadingQuote",
+			in:   `'leadingquote`,
+			want: `'leadingquote`,
+		},
+		{
+			name: "TrailingQuote",
+			in:   `trailingquote'`,
+			want: `trailingquote'`,
+		},
+		{
+			name: "EscapedBackSlash",
+			in:   `escaped\\backslash`,
+			want: `escaped\backslash`,
+		},
+		{
+			name: "EscapedQuote",
+			in:   `escaped\'quote`,
+			want: `escaped'quote`,
+		},
+	}
+
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, postgresDequote(tt.in))
 		})
 	}
 }

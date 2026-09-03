@@ -5,12 +5,11 @@ import (
 
 	"errors"
 	"math"
-	"path/filepath"
 	"testing"
 
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -164,37 +163,25 @@ func TestMatchableFacesClusterCore(t *testing.T) {
 }
 
 func TestMatchFaceMarkers_ReturnsUpdateError(t *testing.T) {
-	originalDb := entity.Db()
-	require.NotNil(t, originalDb)
-
-	tempConn := &entity.DbConn{
-		Driver: dsn.DriverSQLite3,
-		Dsn:    filepath.Join(t.TempDir(), "match-face-markers-error.db"),
-	}
-
-	tempDb := tempConn.Db()
-	require.NotNil(t, tempDb)
-	require.NoError(t, tempDb.AutoMigrate(&entity.Face{}).Error)
-	require.NoError(t, tempDb.Create(&entity.Face{
-		ID:         "FACE-MATCH-ERR-1",
-		FaceSrc:    entity.SrcManual,
-		FaceKind:   int(face.RegularFace),
-		FaceHidden: false,
-		SubjUID:    rnd.GenerateUID('j'),
-		// A real cluster, or MatchableFaces excludes it and the error path is never reached.
-		Samples: face.ManualClusterCore,
-	}).Error)
-
-	entity.SetDbProvider(tempConn)
 	t.Cleanup(func() {
-		entity.SetDbProvider(staticDbProvider{db: originalDb})
-		tempConn.Close()
+		require.NoError(t, entity.Db().Migrator().RenameTable("broken", entity.Marker{}.TableName()))
 	})
+	require.NoError(t, entity.Db().Migrator().RenameTable(entity.Marker{}.TableName(), "broken"))
 
+	log.Info("Expect Table Missing error")
 	affected, err := MatchFaceMarkers()
 	require.Error(t, err)
 	assert.Equal(t, int64(0), affected)
-	assert.Contains(t, err.Error(), "no such table")
+	switch DbDialect() {
+	case dsn.DialectMySQL:
+		assert.Contains(t, err.Error(), "Table")
+		assert.Contains(t, err.Error(), "doesn't exist")
+	case dsn.DialectPostgreSQL:
+		assert.Contains(t, err.Error(), "relation")
+		assert.Contains(t, err.Error(), "does not exist")
+	case dsn.DialectSQLite:
+		assert.Contains(t, err.Error(), "no such table")
+	}
 	assert.Contains(t, err.Error(), entity.Marker{}.TableName())
 }
 
@@ -777,16 +764,16 @@ func TestWhereEmbeddingModel(t *testing.T) {
 		return Db().Model(&entity.Marker{}).Where("marker_type = ?", entity.MarkerFace)
 	}
 
-	var total int
+	var total int64
 	require.NoError(t, base().Count(&total).Error)
 
 	t.Run("EmptyModelAppliesNoFilter", func(t *testing.T) {
-		var count int
+		var count int64
 		require.NoError(t, whereEmbeddingModel(base(), "").Count(&count).Error)
 		assert.Equal(t, total, count)
 	})
 	t.Run("NamedModelFilters", func(t *testing.T) {
-		var count int
+		var count int64
 		require.NoError(t, whereEmbeddingModel(base(), face.ModelSFace).Count(&count).Error)
 		assert.LessOrEqual(t, count, total)
 	})
@@ -814,13 +801,13 @@ func TestNotEmbeddingModel(t *testing.T) {
 		})
 	}
 
-	var total int
+	var total int64
 	require.NoError(t, base().Count(&total).Error)
 
 	t.Run("EmptyModelMatchesNothing", func(t *testing.T) {
 		cond, args := notEmbeddingModel("")
 
-		var count int
+		var count int64
 		require.NoError(t, base().Where(cond, args...).Count(&count).Error)
 		assert.Zero(t, count)
 	})
@@ -830,7 +817,7 @@ func TestNotEmbeddingModel(t *testing.T) {
 		t.Run("Partitions"+target, func(t *testing.T) {
 			cond, args := notEmbeddingModel(target)
 
-			var kept, cleared int
+			var kept, cleared int64
 			require.NoError(t, whereEmbeddingModel(base(), target).Count(&kept).Error)
 			require.NoError(t, base().Where(cond, args...).Count(&cleared).Error)
 			assert.Equal(t, total, kept+cleared)
@@ -849,7 +836,7 @@ func TestFacesFromOtherModels(t *testing.T) {
 		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelNone}))
 		count, err := FacesFromOtherModels()
 		require.NoError(t, err)
-		assert.Equal(t, 0, count)
+		assert.Equal(t, int64(0), count)
 	})
 	t.Run("CountsOtherModels", func(t *testing.T) {
 		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
@@ -972,7 +959,7 @@ func TestRemoveAllFaceClusters(t *testing.T) {
 
 	t.Cleanup(entity.ResetTestFixtures)
 
-	var manual int
+	var manual int64
 
 	require.NoError(t, entity.Db().Model(&entity.Face{}).
 		Where("face_src = ?", entity.SrcManual).Count(&manual).Error)
@@ -982,15 +969,15 @@ func TestRemoveAllFaceClusters(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var before int
+	var before int64
 	require.NoError(t, entity.Db().Model(&entity.Face{}).Count(&before).Error)
 	assert.Equal(t, manual, before, "the automatic scope must leave the hand-created clusters")
 
 	removed, err := RemoveAllFaceClusters()
 	require.NoError(t, err)
-	assert.Equal(t, manual, removed)
+	assert.EqualValues(t, manual, removed)
 
-	var after int
+	var after int64
 	require.NoError(t, entity.Db().Model(&entity.Face{}).Count(&after).Error)
 	assert.Zero(t, after)
 }

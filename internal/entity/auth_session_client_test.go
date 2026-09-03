@@ -161,14 +161,14 @@ func TestAddClientSession(t *testing.T) {
 
 		assert.Nil(t, sess.LoginAt)
 
-		var nullCount int
+		var nullCount int64
 		if err = UnscopedDb().Table("auth_sessions").
 			Where("id = ? AND login_at IS NULL", sess.ID).
 			Count(&nullCount).Error; err != nil {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, 1, nullCount, "login_at must be NULL when no client IP was set")
+		assert.Equal(t, int64(1), nullCount, "login_at must be NULL when no client IP was set")
 	})
 	t.Run("ClientIPSetsLoginAt", func(t *testing.T) {
 		sess := NewClientSession("", unix.Day, "metrics", authn.GrantClientCredentials, nil)
@@ -180,13 +180,13 @@ func TestAddClientSession(t *testing.T) {
 			t.Fatal("login_at must be set when a client IP is present")
 		}
 
-		var nullCount int
+		var nullCount int64
 		if err := UnscopedDb().Table("auth_sessions").
 			Where("id = ? AND login_at IS NULL", sess.ID).
 			Count(&nullCount).Error; err != nil {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, 0, nullCount, "login_at must not be NULL when a client IP was set")
+		assert.Equal(t, int64(0), nullCount, "login_at must not be NULL when a client IP was set")
 	})
 }

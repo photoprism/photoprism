@@ -14,14 +14,14 @@ const (
 
 // FileShare represents remote-sharing state for a file and a single connected service account.
 type FileShare struct {
-	FileID     uint      `gorm:"primary_key;auto_increment:false" json:"FileID" yaml:"FileID,omitempty"`
-	ServiceID  uint      `gorm:"primary_key;auto_increment:false" json:"ServiceID" yaml:"ServiceID,omitempty"`
-	RemoteName string    `gorm:"primary_key;auto_increment:false;type:VARBINARY(255)" json:"RemoteName" yaml:"RemoteName,omitempty"`
-	Status     string    `gorm:"type:VARBINARY(16);" json:"Status" yaml:"Status,omitempty"`
-	Error      string    `gorm:"type:VARBINARY(512);" json:"Error,omitempty" yaml:"Error,omitempty"`
+	FileID     uint      `gorm:"primaryKey;autoIncrement:false" json:"FileID" yaml:"FileID,omitempty"`
+	ServiceID  uint      `gorm:"primaryKey;autoIncrement:false" json:"ServiceID" yaml:"ServiceID,omitempty"`
+	RemoteName string    `gorm:"type:bytes;size:255;primaryKey;autoIncrement:false" json:"RemoteName" yaml:"RemoteName,omitempty"`
+	Status     string    `gorm:"type:bytes;size:16;" json:"Status" yaml:"Status,omitempty"`
+	Error      string    `gorm:"type:bytes;size:512;" json:"Error,omitempty" yaml:"Error,omitempty"`
 	Errors     int       `json:"Errors,omitempty" yaml:"Errors,omitempty"`
-	File       *File     `json:"File,omitempty" yaml:"-"`
-	Account    *Service  `json:"Account,omitempty" yaml:"-"`
+	File       *File     `gorm:"foreignKey:FileID" json:"File,omitempty" yaml:"-"`
+	Account    *Service  `gorm:"foreignKey:ServiceID" json:"Account,omitempty" yaml:"-"`
 	CreatedAt  time.Time `json:"CreatedAt" yaml:"CreatedAt"`
 	UpdatedAt  time.Time `json:"UpdatedAt" yaml:"UpdatedAt"`
 }

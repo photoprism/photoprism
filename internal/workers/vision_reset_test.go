@@ -12,8 +12,7 @@ import (
 )
 
 func TestVisionReset(t *testing.T) {
-	conf := config.NewMinimalTestConfigWithDb("workers-vision-reset", t.TempDir())
-
+	conf := config.NewMinimalTestConfigWithDbTTest("workers-vision-reset", t.TempDir(), t)
 	worker := NewVision(conf)
 	fixture := entity.PhotoFixtures.Get("VisionResetTarget")
 	require.NotEmpty(t, fixture.PhotoUID)
@@ -50,7 +49,7 @@ func TestVisionReset(t *testing.T) {
 	assert.Equal(t, "", refreshed.PhotoCaption)
 	assert.Equal(t, "", refreshed.CaptionSrc)
 
-	var labelCount int
+	var labelCount int64
 	require.NoError(t, entity.Db().Model(&entity.PhotoLabel{}).Where("photo_id = ? AND label_src = ?", targetID, entity.SrcOllama).Count(&labelCount).Error)
 	assert.Zero(t, labelCount)
 }

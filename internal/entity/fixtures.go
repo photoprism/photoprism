@@ -3,7 +3,7 @@ package entity
 import (
 	"sync"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 var (
@@ -65,6 +65,12 @@ func CreateTestFixtures() {
 	CreatePasscodeFixtures()
 	CreatePasswordFixtures()
 	CreateUserShareFixtures()
+
+	if err := Entities.ResetSequences(fixtureDb()); err != nil {
+		log.Error(err)
+		panic(err)
+	}
+
 }
 
 // beginFixtureTx opens a transaction for fixtureDb and returns the function that closes it:

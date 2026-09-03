@@ -39,7 +39,7 @@ export default class Page {
         } catch {
           // ignore the error as the item may not show up
           logMessage("After  Click In Catch in waitForSpecficEvent");
-          console.trace("notify close missed in waitForSpecficEvent " + event);
+          showLogs && console.trace("notify close missed in waitForSpecficEvent " + event);
         } finally {
           return;
         }

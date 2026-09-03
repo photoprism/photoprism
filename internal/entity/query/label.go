@@ -50,8 +50,8 @@ func LabelHasThumb(labelUID string) bool {
 
 	var result []string
 
-	if err := Db().Model(entity.Label{}).
-		Joins("JOIN files ON files.file_hash = labels.thumb AND files.file_missing = 0 AND files.file_error = '' AND files.deleted_at IS NULL").
+	if err := Db().Model(&entity.Label{}).
+		Joins("JOIN files ON files.file_hash = labels.thumb AND files.file_missing = FALSE AND files.file_error = '' AND files.deleted_at IS NULL").
 		Where("labels.label_uid = ?", labelUID).
 		Limit(1).
 		Pluck("labels.thumb", &result).Error; err != nil {
@@ -70,7 +70,7 @@ func LabelThumbBySlug(labelSlug string) (*entity.File, error) {
 	if err := Db().Where("files.file_primary AND files.file_type IN (?) AND files.deleted_at IS NULL", media.PreviewExpr).
 		Joins("JOIN labels ON labels.label_slug = ?", labelSlug).
 		Joins("JOIN photos_labels ON photos_labels.label_id = labels.id AND photos_labels.photo_id = files.photo_id AND photos_labels.uncertainty < 100").
-		Joins("JOIN photos ON photos.id = files.photo_id AND photos.photo_private = 0 AND photos.deleted_at IS NULL").
+		Joins("JOIN photos ON photos.id = files.photo_id AND photos.photo_private = FALSE AND photos.deleted_at IS NULL").
 		Order("photos.photo_quality DESC, photos_labels.uncertainty ASC").
 		First(result).Error; err != nil {
 		return result, err
@@ -91,7 +91,7 @@ func LabelThumbByUID(labelUID string) (*entity.File, error) {
 	err := Db().Where("files.file_primary AND files.deleted_at IS NULL").
 		Joins("JOIN labels ON labels.label_uid = ?", labelUID).
 		Joins("JOIN photos_labels ON photos_labels.label_id = labels.id AND photos_labels.photo_id = files.photo_id AND photos_labels.uncertainty < 100").
-		Joins("JOIN photos ON photos.id = files.photo_id AND photos.photo_private = 0 AND photos.deleted_at IS NULL").
+		Joins("JOIN photos ON photos.id = files.photo_id AND photos.photo_private = FALSE AND photos.deleted_at IS NULL").
 		Order("photos.photo_quality DESC, photos_labels.uncertainty ASC").
 		First(result).Error
 
@@ -104,7 +104,7 @@ func LabelThumbByUID(labelUID string) (*entity.File, error) {
 		Joins("JOIN photos_labels ON photos_labels.photo_id = files.photo_id AND photos_labels.uncertainty < 100").
 		Joins("JOIN categories c ON photos_labels.label_id = c.label_id").
 		Joins("JOIN labels ON c.category_id = labels.id AND labels.label_uid= ?", labelUID).
-		Joins("JOIN photos ON photos.id = files.photo_id AND photos.photo_private = 0 AND photos.deleted_at IS NULL").
+		Joins("JOIN photos ON photos.id = files.photo_id AND photos.photo_private = FALSE AND photos.deleted_at IS NULL").
 		Order("photos.photo_quality DESC, photos_labels.uncertainty ASC").
 		First(result).Error
 

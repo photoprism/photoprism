@@ -13,21 +13,21 @@ var photoDetailsMutex = sync.Mutex{}
 
 // Details stores denormalized photo metadata to speed up search and filtering.
 type Details struct {
-	PhotoID      uint      `gorm:"primary_key;auto_increment:false" json:"PhotoID" yaml:"-"`
-	Keywords     string    `gorm:"type:VARCHAR(2048);" json:"Keywords" yaml:"Keywords"`
-	KeywordsSrc  string    `gorm:"type:VARBINARY(8);" json:"KeywordsSrc" yaml:"KeywordsSrc,omitempty"`
-	Notes        string    `gorm:"type:VARCHAR(2048);" json:"Notes" yaml:"Notes,omitempty"`
-	NotesSrc     string    `gorm:"type:VARBINARY(8);" json:"NotesSrc" yaml:"NotesSrc,omitempty"`
-	Subject      string    `gorm:"type:VARCHAR(1024);" json:"Subject" yaml:"Subject,omitempty"`
-	SubjectSrc   string    `gorm:"type:VARBINARY(8);" json:"SubjectSrc" yaml:"SubjectSrc,omitempty"`
-	Artist       string    `gorm:"type:VARCHAR(1024);" json:"Artist" yaml:"Artist,omitempty"`
-	ArtistSrc    string    `gorm:"type:VARBINARY(8);" json:"ArtistSrc" yaml:"ArtistSrc,omitempty"`
-	Copyright    string    `gorm:"type:VARCHAR(1024);" json:"Copyright" yaml:"Copyright,omitempty"`
-	CopyrightSrc string    `gorm:"type:VARBINARY(8);" json:"CopyrightSrc" yaml:"CopyrightSrc,omitempty"`
-	License      string    `gorm:"type:VARCHAR(1024);" json:"License" yaml:"License,omitempty"`
-	LicenseSrc   string    `gorm:"type:VARBINARY(8);" json:"LicenseSrc" yaml:"LicenseSrc,omitempty"`
-	Software     string    `gorm:"type:VARCHAR(1024);" json:"Software" yaml:"Software,omitempty"`
-	SoftwareSrc  string    `gorm:"type:VARBINARY(8);" json:"SoftwareSrc" yaml:"SoftwareSrc,omitempty"`
+	PhotoID      uint      `gorm:"primaryKey;autoIncrement:false" json:"PhotoID" yaml:"-"`
+	Keywords     string    `gorm:"size:2048;" json:"Keywords" yaml:"Keywords"`
+	KeywordsSrc  string    `gorm:"type:bytes;size:8;" json:"KeywordsSrc" yaml:"KeywordsSrc,omitempty"`
+	Notes        string    `gorm:"size:2048;" json:"Notes" yaml:"Notes,omitempty"`
+	NotesSrc     string    `gorm:"type:bytes;size:8;" json:"NotesSrc" yaml:"NotesSrc,omitempty"`
+	Subject      string    `gorm:"size:1024;" json:"Subject" yaml:"Subject,omitempty"`
+	SubjectSrc   string    `gorm:"type:bytes;size:8;" json:"SubjectSrc" yaml:"SubjectSrc,omitempty"`
+	Artist       string    `gorm:"size:1024;" json:"Artist" yaml:"Artist,omitempty"`
+	ArtistSrc    string    `gorm:"type:bytes;size:8;" json:"ArtistSrc" yaml:"ArtistSrc,omitempty"`
+	Copyright    string    `gorm:"size:1024;" json:"Copyright" yaml:"Copyright,omitempty"`
+	CopyrightSrc string    `gorm:"type:bytes;size:8;" json:"CopyrightSrc" yaml:"CopyrightSrc,omitempty"`
+	License      string    `gorm:"size:1024;" json:"License" yaml:"License,omitempty"`
+	LicenseSrc   string    `gorm:"type:bytes;size:8;" json:"LicenseSrc" yaml:"LicenseSrc,omitempty"`
+	Software     string    `gorm:"size:1024;" json:"Software" yaml:"Software,omitempty"`
+	SoftwareSrc  string    `gorm:"type:bytes;size:8;" json:"SoftwareSrc" yaml:"SoftwareSrc,omitempty"`
 	CreatedAt    time.Time `json:"CreatedAt" yaml:"-"`
 	UpdatedAt    time.Time `json:"UpdatedAt" yaml:"-"`
 }
@@ -91,7 +91,13 @@ func (m *Details) Updates(values any) error {
 func FirstOrCreateDetails(m *Details) *Details {
 	result := Details{}
 
-	if err := m.Create(); err == nil {
+	if err := Db().Where("photo_id = ?", m.PhotoID).First(&result).Error; err == nil {
+		if m.CreatedAt.IsZero() {
+			m.CreatedAt = Now()
+		}
+
+		return &result
+	} else if createErr := m.Create(); createErr == nil {
 		return m
 	} else if err := Db().Where("photo_id = ?", m.PhotoID).First(&result).Error; err == nil {
 		if m.CreatedAt.IsZero() {
@@ -100,7 +106,7 @@ func FirstOrCreateDetails(m *Details) *Details {
 
 		return &result
 	} else {
-		log.Errorf("details: %s (find or create %d)", err, m.PhotoID)
+		log.Errorf("details: %s (find or create %d)", createErr, m.PhotoID)
 	}
 
 	return nil

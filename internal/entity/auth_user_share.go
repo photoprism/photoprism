@@ -66,13 +66,13 @@ func (m UserShares) Contains(uid string) bool {
 
 // UserShare represents a share relationship granting a user access to another entity.
 type UserShare struct {
-	UserUID   string     `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"-" yaml:"UserUID"`
-	ShareUID  string     `gorm:"type:VARBINARY(42);primary_key;index;" json:"ShareUID" yaml:"ShareUID"`
-	LinkUID   string     `gorm:"type:VARBINARY(42);" json:"LinkUID,omitempty" yaml:"LinkUID,omitempty"`
-	ExpiresAt *time.Time `sql:"index" json:"ExpiresAt,omitempty" yaml:"ExpiresAt,omitempty"`
+	UserUID   string     `gorm:"type:bytes;size:42;primaryKey;autoIncrement:false;" json:"-" yaml:"UserUID"`
+	ShareUID  string     `gorm:"type:bytes;size:42;primaryKey;index;" json:"ShareUID" yaml:"ShareUID"`
+	LinkUID   string     `gorm:"type:bytes;size:42;" json:"LinkUID,omitempty" yaml:"LinkUID,omitempty"`
+	ExpiresAt *time.Time `gorm:"index" json:"ExpiresAt,omitempty" yaml:"ExpiresAt,omitempty"`
 	Comment   string     `gorm:"size:512;" json:"Comment,omitempty" yaml:"Comment,omitempty"`
 	Perm      uint       `json:"Perm,omitempty" yaml:"Perm,omitempty"`
-	RefID     string     `gorm:"type:VARBINARY(16);" json:"-" yaml:"-"`
+	RefID     string     `gorm:"type:bytes;size:16;" json:"-" yaml:"-"`
 	CreatedAt time.Time  `json:"CreatedAt" yaml:"-"`
 	UpdatedAt time.Time  `json:"UpdatedAt" yaml:"-"`
 }

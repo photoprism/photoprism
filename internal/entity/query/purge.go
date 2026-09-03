@@ -66,8 +66,8 @@ func PurgeOrphanDuplicates() error {
 	defer mutex.Index.Unlock()
 
 	result := UnscopedDb().
-		Delete(entity.Duplicate{},
-			"file_hash NOT IN (SELECT file_hash FROM files WHERE file_missing = 0 AND deleted_at IS NULL)")
+		Delete(&entity.Duplicate{},
+			"file_hash NOT IN (SELECT file_hash FROM files WHERE file_missing = FALSE AND deleted_at IS NULL)")
 
 	return result.Error
 }

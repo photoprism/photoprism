@@ -20,7 +20,7 @@ func isolatedTestFaces(t *testing.T, name string) *Faces {
 	t.Helper()
 
 	oldCfg := Config()
-	c := config.NewMinimalTestConfigWithDb(name, t.TempDir())
+	c := config.NewMinimalTestConfigWithDbTTest(name, t.TempDir(), t)
 
 	t.Cleanup(func() {
 		_ = c.CloseDb()
@@ -235,9 +235,9 @@ func TestFaces_StartRefreshesSubjectCounts(t *testing.T) {
 	// The refreshed value has to be the one UpdateSubjectCounts computes, not merely different.
 	var want int
 	require.NoError(t, entity.UnscopedDb().Raw(`SELECT COUNT(DISTINCT f.id) FROM files f
-		JOIN photos p ON p.id = f.photo_id AND p.deleted_at IS NULL AND p.photo_private = 0
+		JOIN photos p ON p.id = f.photo_id AND p.deleted_at IS NULL AND p.photo_private = FALSE
 		JOIN markers m ON f.file_uid = m.file_uid AND m.subj_uid = ?
-		WHERE m.marker_invalid = 0 AND f.deleted_at IS NULL`, subj.SubjUID).Row().Scan(&want))
+		WHERE m.marker_invalid = FALSE AND f.deleted_at IS NULL`, subj.SubjUID).Row().Scan(&want))
 
 	assert.Equal(t, want, stored.FileCount)
 }
@@ -265,7 +265,7 @@ func TestFaces_StartRefreshesCountsAfterRecognition(t *testing.T) {
 	require.NoError(t, entity.UnscopedDb().
 		Joins("JOIN faces ON faces.id = markers.face_id AND faces.subj_uid = ?", subj.SubjUID).
 		Where("markers.subj_src = ?", entity.SrcAuto).
-		Where("markers.marker_invalid = 0").
+		Where("markers.marker_invalid = FALSE").
 		First(&marker).Error)
 
 	require.NoError(t, entity.UnscopedDb().Model(&entity.Marker{}).

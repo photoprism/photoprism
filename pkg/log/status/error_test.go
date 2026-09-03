@@ -8,8 +8,6 @@ import (
 )
 
 func TestError(t *testing.T) {
-	t.Helper()
-
 	tests := []struct {
 		name string
 		err  error

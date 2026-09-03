@@ -1014,14 +1014,14 @@ var Flags = CliFlags{
 		Flag: &cli.StringFlag{
 			Name:    "database-driver",
 			Aliases: []string{"db"},
-			Usage:   "database `DRIVER` (sqlite, mysql)",
+			Usage:   "database `DRIVER` (sqlite, mysql, postgres)",
 			Value:   "sqlite",
 			EnvVars: EnvVars("DATABASE_DRIVER"),
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "database-dsn",
 			Aliases: []string{"dsn"},
-			Usage:   "database connection `DSN` (sqlite file, optional for mysql)",
+			Usage:   "database connection `DSN` (sqlite file, optional for mysql and postgres)",
 			EnvVars: EnvVars("DATABASE_DSN"),
 		}}, {
 		Flag: &cli.StringFlag{
@@ -1506,6 +1506,45 @@ var Flags = CliFlags{
 			Value:     "",
 			EnvVars:   EnvVars("LOG_FILENAME"),
 			TakesFile: true,
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "transfer-driver",
+			Aliases: []string{"tfr-db"},
+			Usage:   "database `DRIVER` (sqlite, mysql, postgres)",
+			Value:   "sqlite",
+			EnvVars: EnvVars("TRANSFER_DRIVER"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "transfer-dsn",
+			Aliases: []string{"tfr-dsn"},
+			Usage:   "database connection `DSN` (sqlite file, optional for mysql and postgres)",
+			EnvVars: EnvVars("TRANSFER_DSN"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "transfer-name",
+			Aliases: []string{"tfr-db-name"},
+			Value:   "photoprism",
+			Usage:   "database schema `NAME`",
+			EnvVars: EnvVars("TRANSFER_NAME"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "transfer-server",
+			Aliases: []string{"tfr-db-server"},
+			Usage:   "database `HOST` incl. port e.g. \"mariadb:3306\" (or socket path)",
+			EnvVars: EnvVars("TRANSFER_SERVER"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "transfer-user",
+			Aliases: []string{"tfr-db-user"},
+			Value:   "photoprism",
+			Usage:   "database user `NAME`",
+			EnvVars: EnvVars("TRANSFER_USER"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "transfer-password",
+			Aliases: []string{"tfr-db-pass"},
+			Usage:   "database user `PASSWORD`",
+			EnvVars: EnvVars("TRANSFER_PASSWORD"),
 		}},
 }
 

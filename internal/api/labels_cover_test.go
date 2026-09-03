@@ -44,7 +44,7 @@ func TestLabelCover(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.Options().ThumbUncached = true
 		defer func() { conf.Options().ThumbUncached = false }()
-		SetTestCoverFile(t, entity.Label{}, "label_uid = ?", "ls6sg6b1wowuy3c2", "")
+		SetTestCoverFile(t, &entity.Label{}, "label_uid = ?", "ls6sg6b1wowuy3c2", "")
 		original := CreateTestLabelCover(t, "ls6sg6b1wowuy3c2", "2007/12/PhotoWithEditedAt.jpg")
 		LabelCover(router)
 		r := PerformRequest(app, "GET", "/api/v1/labels/ls6sg6b1wowuy3c2/t/"+conf.PreviewToken()+"/fit_15360")
@@ -56,7 +56,7 @@ func TestLabelCover(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.Options().ThumbUncached = true
 		defer func() { conf.Options().ThumbUncached = false }()
-		SetTestCoverFile(t, entity.Label{}, "label_uid = ?", "ls6sg6b1wowuy3c2", "")
+		SetTestCoverFile(t, &entity.Label{}, "label_uid = ?", "ls6sg6b1wowuy3c2", "")
 		CreateTestLabelCover(t, "ls6sg6b1wowuy3c2", "2007/12/PhotoWithEditedAt.jpg")
 		LabelCover(router)
 		small := PerformRequest(app, "GET", "/api/v1/labels/ls6sg6b1wowuy3c2/t/"+conf.PreviewToken()+"/fit_720")
@@ -70,7 +70,7 @@ func TestLabelCover(t *testing.T) {
 		conf.Options().ThumbUncached = true
 		defer func() { conf.Options().ThumbUncached = false }()
 		original := CreateTestLabelCover(t, "ls6sg6b1wowuy3c2", "2007/12/PhotoWithEditedAt.jpg")
-		SetTestCoverFile(t, entity.Label{}, "label_uid = ?", "ls6sg6b1wowuy3c2", "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818")
+		SetTestCoverFile(t, &entity.Label{}, "label_uid = ?", "ls6sg6b1wowuy3c2", "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818")
 		LabelCover(router)
 		r := PerformRequest(app, "GET", "/api/v1/labels/ls6sg6b1wowuy3c2/t/"+conf.PreviewToken()+"/tile_500")
 		assert.Equal(t, http.StatusOK, r.Code)

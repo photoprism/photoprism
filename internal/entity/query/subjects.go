@@ -5,10 +5,12 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/convert"
 )
 
 // People returns the sorted names of the first 2000 people.
 func People() (people entity.People, err error) {
+	people = make(entity.People, 0)
 	err = UnscopedDb().
 		Table(entity.Subject{}.TableName()).
 		Select("subj_uid, subj_name, subj_alias, subj_favorite, subj_hidden").
@@ -22,14 +24,15 @@ func People() (people entity.People, err error) {
 
 // PeopleCount returns the total number of people in the index.
 func PeopleCount() (count int, err error) {
+	countData := int64(0)
 	err = Db().
 		Table(entity.Subject{}.TableName()).
 		Where("deleted_at IS NULL").
-		Where("subj_hidden = 0").
+		Where("subj_hidden = FALSE").
 		Where("subj_type = ?", entity.SubjPerson).
-		Count(&count).Error
+		Count(&countData).Error
 
-	return count, err
+	return convert.SafeInt64toint(countData), err
 }
 
 // Subjects returns subjects from the index.
@@ -67,12 +70,28 @@ func SubjectMap() (result map[string]entity.Subject, err error) {
 // what makes the same name comparable across runs. A soft-deleted one is collected whatever the flag
 // says, since this is also the garbage collection for the tombstone MergeWith leaves.
 func RemoveOrphanSubjects() (removed int64, err error) {
+
+	// Gather all the uid's to be removed
+	results := []string{}
+	UnscopedDb().
+		Model(&entity.Subject{}).
+		Select("subj_uid").
+		Where("subj_src = ?", entity.SrcMarker).
+		Where(fmt.Sprintf("subj_uid NOT IN (SELECT subj_uid FROM %s)", entity.Face{}.TableName())).
+		Where(fmt.Sprintf("subj_uid NOT IN (SELECT subj_uid FROM %s)", entity.Marker{}.TableName())).
+		Scan(&results)
+
 	res := UnscopedDb().
 		Where("subj_src = ?", entity.SrcMarker).
 		Where("(deleted_at IS NOT NULL OR verified = ?)", false).
 		Where(fmt.Sprintf("subj_uid NOT IN (SELECT subj_uid FROM %s)", entity.Face{}.TableName())).
 		Where(fmt.Sprintf("subj_uid NOT IN (SELECT subj_uid FROM %s)", entity.Marker{}.TableName())).
 		Delete(&entity.Subject{})
+
+	if res.Error == nil {
+		// Remove from the cache.  This is because BulkDelete appears to trigger a single AfterDelete that doesn't have the SubjUID in it.
+		entity.SubjNames.BulkRemove(results)
+	}
 
 	return res.RowsAffected, res.Error
 }
@@ -83,7 +102,7 @@ func CreateMarkerSubjects() (affected int64, err error) {
 
 	if err = Db().
 		Where("subj_uid = '' AND marker_name <> '' AND subj_src <> ?", entity.SrcAuto).
-		Where("marker_invalid = 0 AND marker_type = ?", entity.MarkerFace).
+		Where("marker_invalid = FALSE AND marker_type = ?", entity.MarkerFace).
 		Order("marker_name").
 		Find(&markers).Error; err != nil {
 		return affected, err

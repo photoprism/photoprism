@@ -15,13 +15,13 @@ var cellMutex = sync.Mutex{}
 
 // Cell represents an S2 cell with reverse-geocoded metadata and a linked place.
 type Cell struct {
-	ID           string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
-	CellName     string    `gorm:"type:VARCHAR(200);" json:"Name" yaml:"Name,omitempty"`
-	CellStreet   string    `gorm:"type:VARCHAR(100);" json:"Street" yaml:"Street,omitempty"`
-	CellPostcode string    `gorm:"type:VARCHAR(50);" json:"Postcode" yaml:"Postcode,omitempty"`
-	CellCategory string    `gorm:"type:VARCHAR(50);" json:"Category" yaml:"Category,omitempty"`
-	PlaceID      string    `gorm:"type:VARBINARY(42);default:'zz'" json:"-" yaml:"PlaceID"`
-	Place        *Place    `gorm:"PRELOAD:true" json:"Place" yaml:"-"`
+	ID           string    `gorm:"type:bytes;size:42;primaryKey;autoIncrement:false;" json:"ID" yaml:"ID"`
+	CellName     string    `gorm:"size:200;" json:"Name" yaml:"Name,omitempty"`
+	CellStreet   string    `gorm:"size:100;" json:"Street" yaml:"Street,omitempty"`
+	CellPostcode string    `gorm:"size:50;" json:"Postcode" yaml:"Postcode,omitempty"`
+	CellCategory string    `gorm:"size:50;" json:"Category" yaml:"Category,omitempty"`
+	PlaceID      string    `gorm:"type:bytes;size:42;default:'zz'" json:"-" yaml:"PlaceID"`
+	Place        *Place    `json:"Place" yaml:"-"`
 	CreatedAt    time.Time `json:"CreatedAt" yaml:"-"`
 	UpdatedAt    time.Time `json:"UpdatedAt" yaml:"-"`
 }
@@ -215,7 +215,10 @@ func (m *Cell) Find(api string) error {
 	m.CellPostcode = l.Postcode()
 	m.CellCategory = l.Category()
 
-	if createErr := db.Create(m).Error; createErr == nil {
+	if findErr := db.Preload("Place").First(m, "id = ?", m.ID).Error; findErr == nil {
+		log.Tracef("cell: found %s [%s]", m.ID, time.Since(start))
+		return nil
+	} else if createErr := db.Create(m).Error; createErr == nil {
 		log.Debugf("cell: added %s [%s]", m.ID, time.Since(start))
 		return nil
 	} else if findErr := db.Preload("Place").First(m, "id = ?", m.ID).Error; findErr != nil {

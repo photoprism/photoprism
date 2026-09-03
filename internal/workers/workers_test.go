@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/internal/testextras"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -40,5 +41,5 @@ func runTestMain(m *testing.M) (code int) {
 	photoprism.SetConfig(c)
 
 	// Run unit tests.
-	return m.Run()
+	return testextras.TestDbCleanup(m.Run())
 }

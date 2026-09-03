@@ -7,6 +7,7 @@ import (
 )
 
 func TestUsersAddCommand(t *testing.T) {
+	resetConfigAndOpenDB()
 	t.Run("AddUserThatAlreadyExists", func(t *testing.T) {
 		// Run command with test context.
 		output, err := RunWithTestContext(UsersAddCommand, []string{"add", "--name=Alice", "--email=jane@test.de", "--password=test1234", "--role=admin", "alice"})

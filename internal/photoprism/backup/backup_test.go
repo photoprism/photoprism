@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/internal/testextras"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -39,5 +40,5 @@ func runTestMain(m *testing.M) int {
 	get.SetConfig(c)
 	photoprism.SetConfig(c)
 
-	return m.Run()
+	return testextras.TestDbCleanup(m.Run())
 }

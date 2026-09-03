@@ -8,6 +8,8 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/testextras"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -26,12 +28,14 @@ func runTestMain(m *testing.M) int {
 	// Remove temporary SQLite files after running the tests.
 	defer fs.PurgeTestDbFiles(".", false)
 
+	driver, dsname := dsn.PhotoPrismTestToDriverDSN()
 	db := InitTestDb(
-		os.Getenv("PHOTOPRISM_TEST_DRIVER"),
-		os.Getenv("PHOTOPRISM_TEST_DSN"))
+		driver,
+		dsname)
+
 	defer db.Close()
 
-	return m.Run()
+	return testextras.TestDbCleanup(m.Run())
 }
 
 func TestTypeString(t *testing.T) {

@@ -107,8 +107,12 @@ services:
       PHOTOPRISM_DATABASE_NAME: "photoprism"
       PHOTOPRISM_DATABASE_USER: "root"
       PHOTOPRISM_DATABASE_PASSWORD: "photoprism"
-      PHOTOPRISM_TEST_DRIVER: "sqlite"
+      PHOTOPRISM_TEST_DSN_NAME: "sqlite"
       # PHOTOPRISM_TEST_DSN_MYSQL8: "root:photoprism@tcp(mysql:${MARIADB_PORT:-4001})/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s"
+      PHOTOPRISM_TEST_DSN_MARIADB: "root:photoprism@tcp(mariadb:${MARIADB_PORT:-4001})/mysql?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true" # Admin account and database which is used for creating/removing test databases
+      PHOTOPRISM_TEST_DSN_SQLITE: ""
+      PHOTOPRISM_TEST_DSN_SQLITEFILE: "file:/go/src/github.com/photoprism/photoprism/storage/testdata/unit.test.db?_foreign_keys=on&_busy_timeout=5000"
+      PHOTOPRISM_TEST_DSN_POSTGRES: "postgresql://photoprism:photoprism@postgres:${POSTGRES_PORT:-4002}/postgres?TimeZone=UTC&connect_timeout=15&lock_timeout=5000&sslmode=disable"  # Admin account and database which is used for creating/removing test databases
       WORKING_DIR: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}"
       PHOTOPRISM_ASSETS_PATH: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/assets"
       PHOTOPRISM_STORAGE_PATH: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/storage"

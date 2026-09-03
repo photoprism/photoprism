@@ -7,6 +7,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/testextras"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -33,7 +34,7 @@ func runTestMain(m *testing.M) (code int) {
 	}()
 
 	// Run unit tests.
-	return m.Run()
+	return testextras.TestDbCleanup(m.Run())
 }
 
 func TestStart(t *testing.T) {

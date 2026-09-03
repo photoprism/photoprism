@@ -8,6 +8,7 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 	gc "github.com/patrickmn/go-cache"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/pkg/clean"
 )
@@ -119,7 +120,7 @@ func FindKeyword(keyword string, cached bool) (*Keyword, error) {
 	// Fetch and cache keyword.
 	result := &Keyword{}
 
-	if find := Db().First(result, "keyword = ?", keyword); find.RecordNotFound() {
+	if find := Db().First(result, "keyword = ?", keyword); errors.Is(find.Error, gorm.ErrRecordNotFound) {
 		keywordCache.Set(keyword, result, keywordCacheErrorExpiration)
 		return result, fmt.Errorf("keyword not found")
 	} else if find.Error != nil {
@@ -165,7 +166,7 @@ func FindPhotoKeyword(photoId, keywordId uint, cached bool) (*PhotoKeyword, erro
 	// Fetch and cache photo-keyword.
 	result := &PhotoKeyword{}
 
-	if find := Db().First(result, "photo_id = ? AND keyword_id = ?", photoId, keywordId); find.RecordNotFound() {
+	if find := Db().First(result, "photo_id = ? AND keyword_id = ?", photoId, keywordId); errors.Is(find.Error, gorm.ErrRecordNotFound) {
 		photoKeywordCache.Set(cacheKey, *result, keywordCacheErrorExpiration)
 		return result, fmt.Errorf("photo-keyword not found")
 	} else if find.Error != nil {

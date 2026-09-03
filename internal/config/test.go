@@ -13,15 +13,14 @@ import (
 	"time"
 
 	gc "github.com/patrickmn/go-cache"
+	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v2"
-
-	_ "github.com/jinzhu/gorm/dialects/mysql" // register mysql dialect
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
 
 	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service/hub"
+	"github.com/photoprism/photoprism/internal/testextras"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/capture"
@@ -127,8 +126,7 @@ func NewTestOptionsForPath(dbName, dataPath string) *Options {
 	// MariaDB service, which defaults to 4001 unless MARIADB_PORT overrides it):
 	// - "photoprism:photoprism@tcp(mariadb:4001)/photoprism?parseTime=true"
 	dbName = PkgNameRegexp.ReplaceAllString(dbName, "")
-	testDriver := os.Getenv("PHOTOPRISM_TEST_DRIVER")
-	testDsn := os.Getenv("PHOTOPRISM_TEST_DSN")
+	testDriver, testDsn := dsn.PhotoPrismTestToDriverDSN()
 
 	// Set default test database driver.
 	if testDriver == "test" || testDriver == "sqlite" || testDriver == "" || testDsn == "" {
@@ -136,25 +134,7 @@ func NewTestOptionsForPath(dbName, dataPath string) *Options {
 	}
 
 	// Set default database DSN.
-	if testDriver == dsn.DriverSQLite3 {
-		if testDsn == "" && dbName != "" {
-			if testDsn = fmt.Sprintf(".%s.db", clean.TypeLower(dbName)); !fs.FileExists(testDsn) {
-				log.Tracef("sqlite: test database %s does not already exist", clean.Log(testDsn))
-			} else if err := os.Remove(testDsn); err != nil {
-				log.Errorf("sqlite: failed to remove existing test database %s (%s)", clean.Log(testDsn), err)
-			}
-		} else if testDsn == "" || testDsn == dsn.SQLiteTestDB {
-			testDsn = dsn.SQLiteTestDB
-			if !fs.FileExists(testDsn) {
-				log.Tracef("sqlite: test database %s does not already exist", clean.Log(testDsn))
-			} else if err := os.Remove(testDsn); err != nil {
-				log.Errorf("sqlite: failed to remove existing test database %s (%s)", clean.Log(testDsn), err)
-			}
-		}
-	} else {
-		// Give the package a database of its own, so that tests can run in parallel.
-		testDsn = entity.TestDbDSN(testDriver, testDsn)
-	}
+	testDsn = testextras.TestDbDSN(testDriver, "testdb")
 
 	// Test config options.
 	opts := &Options{
@@ -274,28 +254,43 @@ func NewMinimalTestConfig(dataPath string) *Config {
 var testDbCache []byte
 var testDbMutex sync.Mutex
 
-// NewMinimalTestConfigWithDb creates a lightweight test Config (minimal filesystem).
+// NewMinimalTestConfigWithDbTTest creates a lightweight test Config (minimal filesystem).
 //
-// Creates an isolated SQLite DB (cached after first run) without seeding media fixtures.
-func NewMinimalTestConfigWithDb(dbName, dataPath string) *Config {
+// For SQLite a cached isolated DB is created by first run without seeding media fixtures.
+func NewMinimalTestConfigWithDbTTest(dbName, dataPath string, t *testing.T) *Config {
+	c := NewMinimalTestConfigWithDbTMain(dbName, dataPath)
+	t.Cleanup(func() {
+		if c.DatabaseName() == TestConfig().DatabaseName() {
+			// Reopen the database if it's not already open.
+			if !c.IsDbOpen() {
+				c.RegisterDb()
+			}
+			// Reset the database as it is the same as the TestConfig db, which is shared.
+			c.InitTestDb()
+		}
+		require.NoError(t, c.CloseDb())
+		// Reopen the default config just in case
+		TestConfig().RegisterDb()
+	})
+	return c
+}
+
+// NewMinimalTestConfigWithDbTMain creates a lightweight test Config (minimal filesystem).
+// For use within TestMain where testing.T is not available.
+// Use NewMinimalTestConfigWithDbTTest in tests.
+// If the DatabaseDriver is SQLite then it creates an isolated SQLite DB (cached after first run) without seeding media fixtures,
+// otherwise it truncates and reloads the test fixtures for other DBMS'.
+func NewMinimalTestConfigWithDbTMain(dbName, dataPath string) *Config {
 	c := NewIsolatedTestConfig(dbName, dataPath, true)
 
-	cachedDb := false
-
-	// Try to restore test db from cache.
-	if len(testDbCache) > 0 && c.DatabaseDriver() == dsn.DriverSQLite3 && !fs.FileExists(c.DatabaseDSN()) {
-		if err := os.WriteFile(c.DatabaseDSN(), testDbCache, fs.ModeFile); err != nil {
-			log.Warnf("config: %s (restore test database)", err)
-		} else {
-			cachedDb = true
-		}
-	}
+	cachedDb := RestoreDBFromCache(c)
 
 	if err := c.Init(); err != nil {
 		log.Fatalf("config: %s (init)", err.Error())
 	}
 
-	c.RegisterDb()
+	// Force all caches to be cleared
+	entity.FlushCaches()
 
 	if cachedDb {
 		return c
@@ -303,7 +298,7 @@ func NewMinimalTestConfigWithDb(dbName, dataPath string) *Config {
 
 	c.InitTestDb()
 
-	if testDbCache == nil && c.DatabaseDriver() == dsn.DriverSQLite3 && fs.FileExistsNotEmpty(c.DatabaseDSN()) {
+	if testDbCache == nil && c.DatabaseDriver() == dsn.DriverSQLite3 && fs.FileExistsNotEmpty(c.DatabaseFile()) {
 		testDbMutex.Lock()
 		defer testDbMutex.Unlock()
 
@@ -311,9 +306,10 @@ func NewMinimalTestConfigWithDb(dbName, dataPath string) *Config {
 			return c
 		}
 
-		if testDb, readErr := os.ReadFile(c.DatabaseDSN()); readErr != nil {
+		if testDb, readErr := os.ReadFile(c.DatabaseFile()); readErr != nil {
 			log.Warnf("config: could not cache test database (%s)", readErr)
 		} else {
+			log.Infof("config: test database %s has been cached", c.DatabaseFile())
 			testDbCache = testDb
 		}
 	}

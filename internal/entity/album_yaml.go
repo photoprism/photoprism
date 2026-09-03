@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"time"
 
@@ -20,7 +21,7 @@ func (m *Album) Yaml() (out []byte, err error) {
 	m.CreatedAt = m.CreatedAt.UTC().Truncate(time.Second)
 	m.UpdatedAt = m.UpdatedAt.UTC().Truncate(time.Second)
 
-	if err = Db().Model(m).Association("Photos").Find(&m.Photos).Error; err != nil {
+	if err = Db().Model(m).Association("Photos").Find(&m.Photos); err != nil {
 		log.Errorf("album: %s (yaml)", err)
 		return out, err
 	}
@@ -135,7 +136,20 @@ func (m *Album) LoadFromYaml(fileName string) error {
 	}
 
 	if err = yaml.Unmarshal(data, m); err != nil {
-		return err
+		if strings.Contains(err.Error(), "gorm.DeletedAt") && strings.Count(err.Error(), "\n") == 1 {
+			// try and fix the gorm.DeletedAt structure change
+			deletedAt := JustDeletedAt{}
+			if err = yaml.Unmarshal(data, &deletedAt); err != nil {
+				log.Errorf("album: yaml: unable to reparse DeletedAt with %s", err.Error())
+				return err
+			} else {
+				m.DeletedAt.Time = deletedAt.DeletedAt
+				m.DeletedAt.Valid = true
+			}
+
+		} else {
+			return err
+		}
 	}
 
 	// Clip the restored path to the album_path column's byte budget so a backup

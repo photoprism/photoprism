@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/pkg/list"
 )
@@ -18,7 +18,7 @@ func Status(db *gorm.DB, ids []string) (result Migrations, err error) {
 	}
 
 	// Get SQL dialect name.
-	name := db.Dialect().GetName()
+	name := db.Dialector.Name()
 
 	if name == "" {
 		return result, fmt.Errorf("migrate: failed to determine sql dialect")
@@ -26,7 +26,7 @@ func Status(db *gorm.DB, ids []string) (result Migrations, err error) {
 
 	// Make sure a "migrations" table exists.
 	once[name].Do(func() {
-		err = db.AutoMigrate(&Migration{}).Error
+		err = db.AutoMigrate(&Migration{})
 	})
 
 	if err != nil {

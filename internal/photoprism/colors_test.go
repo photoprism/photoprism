@@ -18,7 +18,7 @@ import (
 func TestMediaFile_Colors_Testdata(t *testing.T) {
 	conf := config.TestConfig()
 
-	thumbsPath := os.TempDir() + "/TestMediaFile_Colors_Testdata"
+	thumbsPath := filepath.Join(t.TempDir(), "TestMediaFile_Colors_Testdata")
 	defer os.RemoveAll(thumbsPath)
 
 	/*

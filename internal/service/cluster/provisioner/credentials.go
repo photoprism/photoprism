@@ -37,7 +37,7 @@ func EnsureCredentials(ctx context.Context, conf *config.Config, nodeUUID, nodeN
 	switch driver {
 	case dsn.DriverMySQL, dsn.DriverMariaDB:
 		// ok
-	case dsn.DriverSQLite3, dsn.DriverPostgres:
+	case dsn.DriverSQLite3, dsn.DriverPostgres, dsn.DriverPostgreSQL:
 		return out, false, errors.New("database must be MySQL/MariaDB for auto-provisioning")
 	default:
 		// Driver is configured externally for the provisioner (decoupled from app config).

@@ -41,14 +41,13 @@ import (
 	"gopkg.in/yaml.v2"
 
 	"github.com/dustin/go-humanize"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"  // register mysql dialect
-	_ "github.com/jinzhu/gorm/dialects/sqlite" // register sqlite dialect
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/klauspost/cpuid/v2"
 	gc "github.com/patrickmn/go-cache"
 	"github.com/pbnjay/memory"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/vision"
@@ -80,6 +79,7 @@ type Config struct {
 	options       *Options
 	settings      *customize.Settings
 	db            *gorm.DB
+	pool          *pgxpool.Pool
 	dbVersion     string
 	hub           *hub.Config
 	hubCancel     context.CancelFunc
@@ -1003,6 +1003,9 @@ func (c *Config) Shutdown() {
 	// Shutdown thumbnail library.
 	thumb.Shutdown()
 
+	// Close the subscriptions
+	event.SharedHub().Close()
+
 	// Reported on the console-only system log, as the database backing the error log is going away.
 	if err := c.CloseDb(); err != nil {
 		event.SystemError([]string{"config", "database", "close", "%s"}, clean.Error(err))
@@ -1093,4 +1096,44 @@ func (c *Config) Hub() *hub.Config {
 	c.initHub()
 
 	return c.hub
+}
+
+// Swap the database and transfer settings in the config.
+func (c *Config) SwapDBAndTransfer() error {
+	if c.db != nil {
+		return fmt.Errorf("config: database must not be initialised")
+	}
+
+	if c.options.DBTransferDriver == "" &&
+		c.options.DBTransferDSN == "" &&
+		c.options.DBTransferName == "" &&
+		c.options.DBTransferServer == "" {
+		return fmt.Errorf("config: transfer config must be provided")
+	}
+
+	tempString := c.options.DBTransferDriver
+	c.options.DBTransferDriver = c.options.DatabaseDriver
+	c.options.DatabaseDriver = tempString
+
+	tempString = c.options.DBTransferDSN
+	c.options.DBTransferDSN = c.options.DatabaseDSN
+	c.options.DatabaseDSN = tempString
+
+	tempString = c.options.DBTransferName
+	c.options.DBTransferName = c.options.DatabaseName
+	c.options.DatabaseName = tempString
+
+	tempString = c.options.DBTransferPassword
+	c.options.DBTransferPassword = c.options.DatabasePassword
+	c.options.DatabasePassword = tempString
+
+	tempString = c.options.DBTransferServer
+	c.options.DBTransferServer = c.options.DatabaseServer
+	c.options.DatabaseServer = tempString
+
+	tempString = c.options.DBTransferUser
+	c.options.DBTransferUser = c.options.DatabaseUser
+	c.options.DatabaseUser = tempString
+
+	return nil
 }
