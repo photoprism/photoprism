@@ -200,9 +200,17 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		s = s.Where("files.file_diff > 0")
 		s = s.Order(OrderExpr("photos.photo_color ASC, photos.cell_id ASC, files.file_diff, files.photo_id, files.time_index", frm.Reverse))
 	case sortby.Name:
-		s = s.Order(OrderExpr("photos.photo_path ASC, photos.photo_name ASC, files.time_index", frm.Reverse))
+		if entity.DbDialect() == entity.MySQL {
+			s = s.Order(OrderExpr("NATURAL_SORT_KEY(photos.photo_path) ASC, NATURAL_SORT_KEY(photos.photo_name) ASC, files.time_index", frm.Reverse))
+		} else {
+			s = s.Order(OrderExpr("photos.photo_path ASC, photos.photo_name ASC, files.time_index", frm.Reverse))
+		}
 	case sortby.Title:
-		s = s.Order(OrderExpr("photos.photo_title ASC, photos.photo_name ASC, files.time_index", frm.Reverse))
+		if entity.DbDialect() == entity.MySQL {
+			s = s.Order(OrderExpr("NATURAL_SORT_KEY(photos.photo_title) ASC, NATURAL_SORT_KEY(photos.photo_name) ASC, files.time_index", frm.Reverse))
+		} else {
+			s = s.Order(OrderExpr("photos.photo_title ASC, photos.photo_name ASC, files.time_index", frm.Reverse))
+		}
 	case sortby.Random:
 		s = s.Order(sortby.RandomExpr(s.Dialect()))
 	case sortby.Default, sortby.Imported, sortby.Added:
