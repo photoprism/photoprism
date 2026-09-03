@@ -404,8 +404,10 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		photo.OriginalName = clean.StripControl(fs.StripKnownExt(file.OriginalName))
 	}
 
-	if photo.PhotoQuality == -1 && (file.FilePrimary || fileChanged) {
-		// Restore pictures that have been purged automatically.
+	if photo.PhotoQuality == -1 && (file.FilePrimary || fileChanged) && photo.AllFilesMissing() {
+		// Restore pictures that have been purged automatically. Do not touch
+		// pictures the user archived while one of their files is still present
+		// (photoprism/photoprism#5766).
 		photo.DeletedAt = entity.DeletedAt{}
 	} else if o.SkipArchived && photo.DeletedAt.Valid && photo.HasID() {
 		// Skip archived pictures for faster indexing, but add those restored from a backup.
