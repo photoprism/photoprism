@@ -1,29 +1,42 @@
 Models:
 - Type: labels
   Default: true
-  Name: nasnet
-  Version: mobile
+  Name: efficientformerv2_s1
+  Version: latest
   Resolution: 224
-  TensorFlow:
-    Tags:
-    - photoprism
+  ONNX:
+    File: efficientformerv2_s1.onnx
+    Source: https://huggingface.co/timm/efficientformerv2_s1.snap_dist_in1k/resolve/0c1fc60a0e89b6309d9de451cdacc11ac0a8b987/model.safetensors
+    SHA256: e289689ae6ae1e32f81f0346e7e59004d4d15b4c8df6899c008ade6f826892da
+    License: unverified
+    Quantization: fp32
     Input:
-      Name: input_1
-      Intervals:
-      - Start: -1
-        End: 1
-      ResizeOperation: CenterCrop
-      ColorChannelOrder: RGB
-      Height: 224
+      Name: input
       Width: 224
-      Shape:
-      - Batch
-      - Height
-      - Width
-      - Color
+      Height: 224
+      Layout: NCHW
+      ColorOrder: RGB
+      Normalization:
+        Mean:
+        - 123.675
+        - 116.28
+        - 103.53
+        StdDev:
+        - 58.395
+        - 57.12
+        - 57.375
+      Resize:
+        Mode: center-crop
+        ShortEdge: 236
+        CropRatio: 0.95
+        Interpolation: bicubic
     Output:
-      Name: predictions/Softmax
-      Outputs: 1000
+      Name: logits
+      Width: 1000
+      Count: 1
+      Logits: true
+  LabelFile: ../nasnet/labels.txt
+  CanonicalOrder: true
 - Type: nsfw
   Default: true
   Name: nsfw

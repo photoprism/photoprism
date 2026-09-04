@@ -13,6 +13,7 @@ import (
 
 var detectorModelPath, _ = filepath.Abs("../../../assets/models/yunet/face_detection_yunet_2026may.onnx")
 var embeddingModelPath, _ = filepath.Abs("../../../assets/models/sface/face_recognition_sface_2021dec.onnx")
+var labelModelPath, _ = filepath.Abs("../../../assets/models/efficientformerv2_s1/efficientformerv2_s1.onnx")
 
 // requireRuntime skips a test when the ONNX Runtime or the model it needs is unavailable,
 // which is the case in build environments that did not run "make dep".
@@ -51,6 +52,18 @@ func TestInspect(t *testing.T) {
 		assert.Equal(t, 112, info.Input.Height)
 		assert.Equal(t, LayoutNCHW, info.Input.Layout)
 		assert.Equal(t, 128, info.Output.Width)
+		assert.Equal(t, 1, info.Output.Count)
+	})
+	t.Run("LabelModel", func(t *testing.T) {
+		requireRuntime(t, labelModelPath)
+
+		info, err := Inspect(labelModelPath, nil)
+		require.NoError(t, err)
+		assert.Equal(t, 224, info.Input.Width)
+		assert.Equal(t, 224, info.Input.Height)
+		assert.Equal(t, 1000, info.Output.Width)
+		assert.Equal(t, 1, info.Output.Count)
+		t.Logf("input %q, output %q", info.Input.Name, info.Output.Name)
 	})
 	t.Run("PreprocessingStaysUnset", func(t *testing.T) {
 		// Channel order, normalization, and the resize convention are not present in a
@@ -86,6 +99,24 @@ func TestMetadata(t *testing.T) {
 
 		_, err := Metadata(filepath.Join(t.TempDir(), "missing.onnx"))
 		require.Error(t, err)
+	})
+	t.Run("LabelExport", func(t *testing.T) {
+		requireRuntime(t, labelModelPath)
+
+		values, err := Metadata(labelModelPath)
+		require.NoError(t, err)
+		assert.NotEmpty(t, values["source"])
+		assert.NotEmpty(t, values["checkpoint"])
+		assert.Equal(t, "17", values["opset"])
+
+		info, err := InfoFromMetadata(values)
+		require.NoError(t, err)
+		assert.Equal(t, values["source"], info.Source)
+		assert.Equal(t, LayoutNCHW, info.Input.Layout)
+		assert.Equal(t, RGB, info.Input.ColorOrder)
+		assert.Equal(t, ResizeCenterCrop, info.Input.Resize.Mode)
+		assert.Equal(t, InterpolationBicubic, info.Input.Resize.Interpolation)
+		t.Logf("metadata: %#v", values)
 	})
 }
 

@@ -14,6 +14,7 @@ import (
 var (
 	runtimeOnce    sync.Once
 	runtimeInitErr error
+	runtimePath    string
 	executableVar  = os.Executable
 )
 
@@ -38,6 +39,7 @@ func EnsureRuntime(libraryPath string) error {
 
 			// Successfully initialized; stop retrying.
 			runtimeInitErr = nil
+			runtimePath = candidate
 			return
 		}
 
@@ -50,6 +52,11 @@ func EnsureRuntime(libraryPath string) error {
 	})
 
 	return runtimeInitErr
+}
+
+// RuntimeLibraryPath returns the shared-library candidate used to initialize ONNX Runtime.
+func RuntimeLibraryPath() string {
+	return runtimePath
 }
 
 // SharedLibraryCandidates lists the library paths to try when loading the ONNX Runtime,

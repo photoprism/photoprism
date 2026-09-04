@@ -9,6 +9,9 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/ai/classify"
+	"github.com/photoprism/photoprism/internal/ai/onnx"
+	"github.com/photoprism/photoprism/internal/ai/tensorflow"
 	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -49,7 +52,66 @@ func TestOptions(t *testing.T) {
 	})
 }
 
+// TestNewConfigClonesModels verifies per-config runtime state is independent.
+func TestNewConfigClonesModels(t *testing.T) {
+	first := NewConfig()
+	second := NewConfig()
+
+	firstLabel := first.Model(ModelTypeLabels)
+	secondLabel := second.Model(ModelTypeLabels)
+	require.NotNil(t, firstLabel)
+	require.NotNil(t, secondLabel)
+	require.NotSame(t, firstLabel, secondLabel)
+
+	firstLabel.classifyModel = &classify.Model{}
+	firstLabel.Options = &ModelOptions{Stop: []string{"first"}}
+	firstLabel.TensorFlow = &tensorflow.ModelInfo{
+		Tags:  []string{"first"},
+		Input: &tensorflow.PhotoInput{Intervals: []tensorflow.Interval{{Start: -1, End: 1}}},
+	}
+	clone := firstLabel.Clone()
+	require.NotNil(t, clone)
+	assert.Nil(t, clone.classifyModel)
+	require.NotNil(t, clone.Options)
+	clone.Options.Stop[0] = "second"
+	assert.Equal(t, "first", firstLabel.Options.Stop[0])
+	require.NotNil(t, clone.TensorFlow)
+	clone.TensorFlow.Tags[0] = "second"
+	clone.TensorFlow.Input.Intervals[0].Start = 0
+	assert.Equal(t, "first", firstLabel.TensorFlow.Tags[0])
+	assert.Equal(t, float32(-1), firstLabel.TensorFlow.Input.Intervals[0].Start)
+
+	firstLabel.Disabled = true
+	assert.NotNil(t, second.Model(ModelTypeLabels))
+	assert.False(t, NasnetModel.Disabled)
+}
+
 func TestConfigValues_Load(t *testing.T) {
+	t.Run("RejectsMultipleLocalRuntimes", func(t *testing.T) {
+		tempDir := t.TempDir()
+		configFile := filepath.Join(tempDir, "vision.yml")
+		err := os.WriteFile(configFile, []byte("Models:\n- Type: labels\n  Name: invalid\n  TensorFlow: {}\n  ONNX: {}\n"), fs.ModeConfigFile)
+		require.NoError(t, err)
+
+		cfg := NewConfig()
+		err = cfg.Load(configFile)
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "both TensorFlow and ONNX")
+	})
+	t.Run("PreservesProbabilityOutput", func(t *testing.T) {
+		configFile := filepath.Join(t.TempDir(), "vision.yml")
+		err := os.WriteFile(configFile, []byte("Models:\n- Type: labels\n  Name: custom\n  ONNX:\n    Output:\n      Logits: false\n"), fs.ModeConfigFile)
+		require.NoError(t, err)
+
+		cfg := NewConfig()
+		require.NoError(t, cfg.Load(configFile))
+		model := cfg.Model(ModelTypeLabels)
+		require.NotNil(t, model)
+		require.NotNil(t, model.ONNX)
+		require.NotNil(t, model.ONNX.Output)
+		require.NotNil(t, model.ONNX.Output.Logits)
+		assert.False(t, model.ONNX.Output.OutputsLogits())
+	})
 	t.Run("DefaultModelWithCustomRun", func(t *testing.T) {
 		originalRun := NasnetModel.Run
 		t.Cleanup(func() {
@@ -212,6 +274,18 @@ func TestConfigValues_Load(t *testing.T) {
 		assert.Equal(t, NormalizeAuto, m.Normalize)
 		assert.Equal(t, NormalizeWord, m.GetNormalize())
 	})
+}
+
+// TestConfigValues_SetModel verifies replacement and append behavior by model type.
+func TestConfigValues_SetModel(t *testing.T) {
+	cfg := &ConfigValues{Models: Models{{Type: ModelTypeCaption, Name: "caption"}}}
+	cfg.SetModel(&Model{Type: ModelTypeLabels, Name: "first", ONNX: &onnx.ModelInfo{}})
+	assert.Len(t, cfg.Models, 2)
+	assert.Equal(t, "first", cfg.Model(ModelTypeLabels).Name)
+
+	cfg.SetModel(&Model{Type: ModelTypeLabels, Name: "second", ONNX: &onnx.ModelInfo{}})
+	assert.Len(t, cfg.Models, 2)
+	assert.Equal(t, "second", cfg.Model(ModelTypeLabels).Name)
 }
 
 func TestConfigValues_applyDefaultModels(t *testing.T) {

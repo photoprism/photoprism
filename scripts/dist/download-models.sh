@@ -35,6 +35,10 @@ MODELS="\
 facenet|${TENSORFLOW_URL}/facenet.zip||bf9ae0945d2ac53ac3db27082162d2b9dda5ba2c564c0e4c4f539f31f8b670af|zip|facenet|
 nasnet|${TENSORFLOW_URL}/nasnet.zip||a0e1ad8d5a5a0ff9efc4b3ed89898bf008563ee36cacd0c804a384f8fc661588|zip|nasnet|
 nsfw|${TENSORFLOW_URL}/nsfw.zip||eb5e5d22e37961c3192a4757efff883f77bc989c0efceabb1395e0959d966f14|zip|nsfw|
+efficientformerv2_s1|${ONNX_URL}/efficientformerv2_s1.onnx||e289689ae6ae1e32f81f0346e7e59004d4d15b4c8df6899c008ade6f826892da|file|efficientformerv2_s1|efficientformerv2_s1.onnx
+repvit_m1_0|${ONNX_URL}/repvit_m1_0.onnx||54721552c81f62e5d8067f3a0b6006c90414f079e890230c70370c0b906bba6f|file|repvit_m1_0|repvit_m1_0.onnx
+efficientnet_b0|${ONNX_URL}/efficientnet_b0.onnx||d6e1fd53f644f738b6c939d16957112fb41d93eaf44637d6106edcd1fd46f726|file|efficientnet_b0|efficientnet_b0.onnx
+efficientformerv2_s2|${ONNX_URL}/efficientformerv2_s2.onnx||34b3ff40a9e637cab47bd05baf4f1f10b8544b6d1ea3a152413876fbac988a64|file|efficientformerv2_s2|efficientformerv2_s2.onnx
 sface|${ONNX_URL}/face_recognition_sface_2021dec.onnx|${OPENCV_ZOO_URL}/face_recognition_sface/face_recognition_sface_2021dec.onnx|0ba9fbfa01b5270c96627c4ef784da859931e02f04419c829e83484087c34e79|file|sface|face_recognition_sface_2021dec.onnx
 auraface|${ONNX_URL}/auraface_v1_glintr100.onnx|https://huggingface.co/fal/AuraFace-v1/resolve/main/glintr100.onnx?download=true|a7933ea5330113b01c9b60351d8f4c33003f145d8470ac5f0e52ee2effe25c60|file|auraface|auraface_v1_glintr100.onnx
 yunet|${ONNX_URL}/face_detection_yunet_2026may.onnx|${OPENCV_ZOO_URL}/face_detection_yunet/face_detection_yunet_2026may.onnx|ebafce4e3c118d6554634be5c27ab333b4c047a9a8c3faf1d7cf93101c22f0f0|file|yunet|face_detection_yunet_2026may.onnx

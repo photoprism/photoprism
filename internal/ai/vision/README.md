@@ -1,12 +1,13 @@
 ## PhotoPrism — Vision Package
 
-**Last Updated:** August 23, 2026
+**Last Updated:** September 2, 2026
 
 ### Overview
 
-`internal/ai/vision` provides the shared model registry, request builders, and parsers that power PhotoPrism’s caption, label, face, NSFW, and future generate workflows. It reads `vision.yml`, normalizes models, and dispatches calls to one of three engines:
+`internal/ai/vision` provides the shared model registry, request builders, and parsers that power PhotoPrism’s caption, label, face, NSFW, and future generate workflows. It reads `vision.yml`, normalizes models, and dispatches calls to local ONNX/TensorFlow engines or remote services:
 
-- **TensorFlow (built‑in)** — default Nasnet / NSFW / Facenet models, no remote service required. Long-running TensorFlow inference can accumulate C-allocated tensor memory until GC finalizers run, so PhotoPrism periodically triggers garbage collection to return that memory to the OS; tune with `PHOTOPRISM_TF_GC_EVERY` (default **200**, `0` disables). Lower values reduce peak RSS but increase GC overhead and can slow indexing, so keep the default unless memory pressure is severe.
+- **ONNX Runtime (built-in labels)** — fixed-taxonomy ImageNet classifiers run locally with per-model preprocessing and checksum validation.
+- **TensorFlow (transitional)** — built-in NSFW and FaceNet models remain local while their separate ONNX migrations are completed. Long-running TensorFlow inference can accumulate C-allocated tensor memory until GC finalizers run, so PhotoPrism periodically triggers garbage collection; tune with `PHOTOPRISM_TF_GC_EVERY` (default **200**, `0` disables).
 - **Ollama** — local or proxied multimodal LLMs. See [`ollama/README.md`](ollama/README.md) for tuning and schema details. The engine defaults to `${OLLAMA_BASE_URL:-http://ollama:11434}/api/generate`, trimming any trailing slash on the base URL; set `OLLAMA_BASE_URL=https://ollama.com` to opt into cloud defaults. The default model is `gemma4:latest` (self-hosted) or `minimax-m3:cloud` (cloud), and reasoning is disabled by default (`Service.Think: "false"`) so thinking-capable models do not leak reasoning into results. That flag is a correctness guard rather than a performance one — a reasoning build still generates the reasoning and bills the tokens for it, so prefer a non-reasoning tag (for example `qwen3-vl:4b-instruct` over `qwen3-vl:4b`) where one exists.
 - **OpenAI** — cloud Responses API. See [`openai/README.md`](openai/README.md) for prompts, schema variants, and header requirements.
 
@@ -28,14 +29,17 @@ The `vision.yml` file is usually kept in the `storage/config` directory (overrid
 | `Version`               | `latest` (non-OpenAI)                  | OpenAI payloads omit version.                                                      |
 | `Engine`                | inferred from service/alias            | Aliases set formats, file scheme, resolution. Explicit `Service` values still win. |
 | `Run`                   | `auto`                                 | See Run modes table below; ignored for `Type: face`, which follows `FACE_RUN`.     |
-| `Default`               | `false`                                | Keep one per type for TensorFlow fallbacks.                                        |
+| `Default`               | `false`                                | Select the built-in model for a type.                                              |
 | `Disabled`              | `false`                                | Registered but inactive.                                                           |
-| `Resolution`            | 224 (TensorFlow) / 720 (Ollama/OpenAI) | Thumbnail edge in px; TensorFlow models default to 224 unless you override.        |
+| `Resolution`            | model-specific / 720 (Ollama/OpenAI)  | Local ONNX geometry comes from its description or graph.                           |
 | `System` / `Prompt`     | engine defaults                        | Override prompts per model.                                                        |
 | `Format`                | `""`                                   | Response hint (`json`, `text`, `markdown`).                                        |
 | `Normalize`             | engine default                         | Label name normalization; see the table below. Labels models only.                 |
 | `Schema` / `SchemaFile` | engine defaults / empty                | Inline vs file JSON schema (labels).                                               |
 | `TensorFlow`            | nil                                    | Local TF model info (paths, tags).                                                 |
+| `ONNX`                  | nil                                    | Shared local ONNX artifact and preprocessing description.                         |
+| `LabelFile`             | `labels.txt`                           | Vocabulary paired with a local labels model.                                      |
+| `CanonicalOrder`        | `false`                                | Require canonical ImageNet-1k order and reject a background offset.               |
 | `Options`               | nil                                    | Sampling/settings merged with engine defaults.                                     |
 | `Service`               | nil                                    | Remote endpoint config (see below).                                                |
 
@@ -66,7 +70,7 @@ Phrase mode pairs with a system prompt that does not demand single-word nouns �
 
 | Value           | When it runs                                                     | Recommended use                                |
 |:----------------|:-----------------------------------------------------------------|:-----------------------------------------------|
-| `auto`          | TensorFlow defaults during index; external via metadata/schedule | Leave as-is for most setups.                   |
+| `auto`          | Built-in local defaults during index; external via metadata/schedule | Leave as-is for most setups.                 |
 | `manual`        | Only when explicitly invoked (CLI/API)                           | Experiments and diagnostics.                   |
 | `on-index`      | During indexing + manual                                         | Fast built-in models only.                     |
 | `newly-indexed` | Metadata worker after indexing + manual                          | External/Ollama/OpenAI without slowing import. |
@@ -75,7 +79,7 @@ Phrase mode pairs with a system prompt that does not demand single-word nouns �
 | `always`        | Indexing, metadata, scheduled, manual                            | High-priority models; watch resource use.      |
 | `never`         | Never executes                                                   | Keep definition without running it.            |
 
-> **Note:** For performance reasons, `on-index` is only supported for the built-in TensorFlow models.
+> **Note:** For performance reasons, `on-index` is only supported for built-in local models.
 
 #### Model Options
 
@@ -123,7 +127,7 @@ Configures the endpoint URL, method, format, and authentication for [Ollama](oll
 
 | Field                              | Default                                  | Notes                                                                                                                                                                                                                                                                                         |
 |:-----------------------------------|:-----------------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `Uri`                              | required for remote                      | Endpoint base. Empty keeps model local (TensorFlow). Ollama alias fills `${OLLAMA_BASE_URL}/api/generate`, defaulting to `http://ollama:11434`.                                                                                                                                               |
+| `Uri`                              | required for remote                      | Endpoint base. Empty keeps a configured ONNX or TensorFlow model local. Ollama alias fills `${OLLAMA_BASE_URL}/api/generate`, defaulting to `http://ollama:11434`.                                                                                                                           |
 | `Method`                           | `POST`                                   | Override verb if provider needs it.                                                                                                                                                                                                                                                           |
 | `Key`                              | `""`                                     | Bearer token; prefer env expansion (OpenAI: `OPENAI_API_KEY`, Ollama: `OLLAMA_API_KEY`).                                                                                                                                                                                                      |
 | `Username` / `Password`            | `""`                                     | Injected as basic auth when URI lacks userinfo.                                                                                                                                                                                                                                               |
@@ -150,7 +154,7 @@ Configures the endpoint URL, method, format, and authentication for [Ollama](oll
 
 ### Minimal Examples
 
-#### TensorFlow (built‑in defaults)
+#### Built-in Local Defaults
 
 ```yaml
 Models:
@@ -212,27 +216,29 @@ Models:
 
 More OpenAI guidance: [`internal/ai/vision/openai/README.md`](openai/README.md).
 
-#### Custom TensorFlow Labels (SavedModel)
+#### Custom ONNX Labels
 
 ```yaml
 Models:
   - Type: labels
-    Name: transformer
-    Engine: tensorflow
-    Path: transformer   # resolved under assets/models
-    Resolution: 224     # keep standard TF input size unless your model differs
-    TensorFlow:
+    Name: custom_21k
+    Engine: onnx
+    Path: custom_21k
+    LabelFile: labels-imagenet21k.txt
+    ONNX:
+      File: custom_21k.onnx
       Output:
-        Logits: true    # set true for most TF2 SavedModel classifiers
+        Logits: true
 ```
 
-### Custom TensorFlow Models — What’s Supported
+### Custom ONNX Label Models — What’s Supported
 
-- Scope: Classification tasks only (`labels`). TensorFlow models cannot generate captions today; use Ollama or OpenAI for captions.
+- Scope: Fixed-taxonomy local classification (`labels`). Use Ollama or OpenAI for captions and open-vocabulary labels.
 - Location & paths: If `Path` is empty, the model is loaded from `assets/models/<name>` (lowercased, underscores). If `Path` is set, it is still searched under `assets/models`; absolute paths are not supported.
-- Expected files: `saved_model.pb`, a `variables/` directory, and a `labels.txt` alongside the model; use TF2 SavedModel classifiers.
-- Resolution: Stays at 224px unless your model requires a different input size; adjust `Resolution` and the `TensorFlow.Input` block if needed.
-- Sources: Labels produced by TensorFlow models are recorded with source `image`; overriding the source isn’t supported yet.
+- Expected files: One `.onnx` graph and the exact label file declared by `LabelFile`. The output width must equal the number of labels.
+- Preprocessing: Declare geometry, layout, color order, mean/std, resize/crop convention, and interpolation in `ONNX.Input` or embedded `photoprism.*` metadata. `Resolution` remains an explicit override for graphs with dynamic spatial axes.
+- Output: One tensor is required. Declare `ONNX.Output.Logits`; omitted output semantics default to raw logits with a warning.
+- Sources: Labels produced by local ONNX models are recorded with source `image`; overriding the source isn’t supported yet.
 - Config file: `vision.yml` is the conventional name; in the latest version, `.yaml` is also supported by the loader.
 
 ### CLI Quick Reference
@@ -243,7 +249,8 @@ Models:
 
 ### When to Choose Each Engine
 
-- **TensorFlow**: fast, offline defaults for core features (labels, faces, NSFW). Zero external deps.
+- **ONNX Runtime**: fast, offline fixed-taxonomy labels and face models with one shared native runtime.
+- **TensorFlow**: transitional local FaceNet and NSFW support until their ONNX migrations land.
 - **Ollama**: private, GPU/CPU-hosted multimodal LLMs; best for richer captions/labels without cloud traffic.
 - **OpenAI**: highest quality reasoning and multimodal support; requires API key and network access.
 
@@ -257,7 +264,7 @@ The runtime guards in `internal/photoprism/index_mediafile.go` and `internal/wor
 
 ### Model Unload on Idle
 
-PhotoPrism currently keeps TensorFlow models resident for the lifetime of the process to avoid repeated load costs. A future “model unload on idle” mode would track last-use timestamps and close the TensorFlow session/graph after a configurable idle period, releasing the model’s memory footprint back to the OS. The trade-off is higher latency and CPU overhead when a model is used again, plus extra I/O to reload weights. This may be attractive for low-frequency or memory-constrained deployments but would slow continuous indexing jobs, so it is not enabled today.
+PhotoPrism currently keeps local ONNX and TensorFlow models resident for the lifetime of the process to avoid repeated load costs. A future “model unload on idle” mode would track last-use timestamps and close the session after a configurable idle period. The trade-off is higher latency and CPU overhead on the next request, so it is not enabled today.
 
 ### Troubleshooting
 

@@ -3789,6 +3789,167 @@
             },
             "type": "object"
         },
+        "onnx.ColorOrder": {
+            "enum": [
+                "",
+                "RGB",
+                "BGR"
+            ],
+            "type": "string",
+            "x-enum-varnames": [
+                "OrderUndefined",
+                "RGB",
+                "BGR"
+            ]
+        },
+        "onnx.Input": {
+            "properties": {
+                "colorOrder": {
+                    "$ref": "#/definitions/onnx.ColorOrder"
+                },
+                "height": {
+                    "type": "integer"
+                },
+                "layout": {
+                    "$ref": "#/definitions/onnx.Layout"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "normalization": {
+                    "$ref": "#/definitions/onnx.Normalization"
+                },
+                "resize": {
+                    "$ref": "#/definitions/onnx.Resize"
+                },
+                "width": {
+                    "type": "integer"
+                }
+            },
+            "type": "object"
+        },
+        "onnx.Interpolation": {
+            "enum": [
+                "",
+                "nearest",
+                "linear",
+                "bicubic",
+                "lanczos"
+            ],
+            "type": "string",
+            "x-enum-varnames": [
+                "InterpolationUndefined",
+                "InterpolationNearest",
+                "InterpolationLinear",
+                "InterpolationBicubic",
+                "InterpolationLanczos"
+            ]
+        },
+        "onnx.Layout": {
+            "enum": [
+                "",
+                "NCHW",
+                "NHWC"
+            ],
+            "type": "string",
+            "x-enum-varnames": [
+                "LayoutUndefined",
+                "LayoutNCHW",
+                "LayoutNHWC"
+            ]
+        },
+        "onnx.ModelInfo": {
+            "properties": {
+                "file": {
+                    "type": "string"
+                },
+                "input": {
+                    "$ref": "#/definitions/onnx.Input"
+                },
+                "license": {
+                    "type": "string"
+                },
+                "output": {
+                    "$ref": "#/definitions/onnx.Output"
+                },
+                "quantization": {
+                    "type": "string"
+                },
+                "sha256": {
+                    "type": "string"
+                },
+                "source": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "onnx.Normalization": {
+            "properties": {
+                "mean": {
+                    "items": {
+                        "type": "number"
+                    },
+                    "type": "array"
+                },
+                "stdDev": {
+                    "items": {
+                        "type": "number"
+                    },
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        },
+        "onnx.Output": {
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "logits": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "width": {
+                    "type": "integer"
+                }
+            },
+            "type": "object"
+        },
+        "onnx.Resize": {
+            "properties": {
+                "cropRatio": {
+                    "type": "number"
+                },
+                "interpolation": {
+                    "$ref": "#/definitions/onnx.Interpolation"
+                },
+                "mode": {
+                    "$ref": "#/definitions/onnx.ResizeMode"
+                },
+                "shortEdge": {
+                    "type": "integer"
+                }
+            },
+            "type": "object"
+        },
+        "onnx.ResizeMode": {
+            "enum": [
+                "",
+                "stretch",
+                "center-crop",
+                "pad"
+            ],
+            "type": "string",
+            "x-enum-varnames": [
+                "ResizeUndefined",
+                "ResizeStretch",
+                "ResizeCenterCrop",
+                "ResizePad"
+            ]
+        },
         "places.Location": {
             "properties": {
                 "category": {
@@ -4982,6 +5143,9 @@
                     ],
                     "description": "\"auto\", \"never\", \"manual\", \"always\", \"newly-indexed\", \"on-schedule\""
                 },
+                "canonicalOrder": {
+                    "type": "boolean"
+                },
                 "default": {
                     "type": "boolean"
                 },
@@ -4992,6 +5156,9 @@
                     "$ref": "#/definitions/vision.ModelEngine"
                 },
                 "format": {
+                    "type": "string"
+                },
+                "labelFile": {
                     "type": "string"
                 },
                 "model": {
@@ -5007,6 +5174,9 @@
                         }
                     ],
                     "description": "\"single-word\", \"phrase\", or \"false\""
+                },
+                "onnx": {
+                    "$ref": "#/definitions/onnx.ModelInfo"
                 },
                 "options": {
                     "$ref": "#/definitions/vision.ModelOptions"
@@ -5045,12 +5215,14 @@
             "enum": [
                 "vision",
                 "tensorflow",
+                "onnx",
                 "local"
             ],
             "type": "string",
             "x-enum-varnames": [
                 "EngineVision",
                 "EngineTensorFlow",
+                "EngineONNX",
                 "EngineLocal"
             ]
         },

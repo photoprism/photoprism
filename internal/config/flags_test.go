@@ -7,8 +7,26 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/ai/face"
 )
+
+// TestLabelModelDocDefault verifies the published default and registry-derived choices.
+func TestLabelModelDocDefault(t *testing.T) {
+	for _, flag := range Flags {
+		if flag.Name() != "label-model" {
+			continue
+		}
+
+		assert.Equal(t, string(classify.ModelAuto), flag.Default())
+		for _, name := range classify.ModelNames() {
+			assert.Contains(t, flag.Usage(), name)
+		}
+		return
+	}
+
+	t.Fatal("label-model flag not found")
+}
 
 // TestFaceDocDefaults pins that the face options publish the number that actually applies on a
 // default install. The generated end-user reference and "--help" both print a numeric option

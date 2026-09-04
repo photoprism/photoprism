@@ -75,7 +75,13 @@ func (i *Input) Merge(other *Input) {
 type Output struct {
 	Name   string `yaml:"Name,omitempty" json:"name,omitempty"`
 	Width  int    `yaml:"Width,omitempty" json:"width,omitempty"`
-	Logits bool   `yaml:"Logits,omitempty" json:"logits,omitempty"`
+	Count  int    `yaml:"Count,omitempty" json:"count,omitempty"`
+	Logits *bool  `yaml:"Logits,omitempty" json:"logits,omitempty"`
+}
+
+// OutputsLogits reports whether the output is explicitly declared as raw logits.
+func (o *Output) OutputsLogits() bool {
+	return o != nil && o.Logits != nil && *o.Logits
 }
 
 // Merge fills empty fields from other.
@@ -92,18 +98,28 @@ func (o *Output) Merge(other *Output) {
 		o.Width = other.Width
 	}
 
-	if !o.Logits {
+	if o.Count <= 0 {
+		o.Count = other.Count
+	}
+
+	if o.Logits == nil {
 		o.Logits = other.Logits
 	}
 }
 
+// Bool returns a pointer to value for optional ONNX model flags.
+func Bool(value bool) *bool {
+	return &value
+}
+
 // ModelInfo describes an ONNX model artifact and the preprocessing contract it requires.
 //
-// SHA256 identifies the artifact, because names collide across publishers and the wrong
-// preprocessing fails quietly. Download URLs live in scripts/dist/download-models.sh instead, which
-// verifies the same checksums, so a source that moves upstream changes in one place.
+// SHA256 identifies the exported artifact, because names collide across publishers and the wrong
+// preprocessing fails quietly. Source records the immutable publisher checkpoint provenance;
+// operational mirror and fallback download URLs live in scripts/dist/download-models.sh.
 type ModelInfo struct {
 	File         string  `yaml:"File,omitempty" json:"file,omitempty"`
+	Source       string  `yaml:"Source,omitempty" json:"source,omitempty"`
 	SHA256       string  `yaml:"SHA256,omitempty" json:"sha256,omitempty"`
 	License      string  `yaml:"License,omitempty" json:"license,omitempty"`
 	Quantization string  `yaml:"Quantization,omitempty" json:"quantization,omitempty"`
@@ -147,6 +163,10 @@ func (m *ModelInfo) Merge(other *ModelInfo) {
 
 	if m.File == "" {
 		m.File = other.File
+	}
+
+	if m.Source == "" {
+		m.Source = other.Source
 	}
 
 	if m.SHA256 == "" {

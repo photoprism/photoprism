@@ -59,6 +59,10 @@ func (m *ModelInfo) VerifyGraph(graph *ModelInfo) error {
 		if err := verifyAxis("output width", m.Output.Width, graph.Output.Width); err != nil {
 			return err
 		}
+
+		if err := verifyAxis("output count", m.Output.Count, graph.Output.Count); err != nil {
+			return err
+		}
 	}
 
 	return nil

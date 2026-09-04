@@ -343,7 +343,7 @@ func lookupExistingLabel(name string) (canonicalLabel, bool) {
 	return canonicalLabel{}, false
 }
 
-// canonicalLabelFor reads canonical names from classify.Rules (TensorFlow vocabulary).
+// canonicalLabelFor reads canonical names from the fixed classify.Rules vocabulary.
 func canonicalLabelFor(name string) (canonicalLabel, bool) {
 	ensureCanonicalLabels()
 

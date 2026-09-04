@@ -111,7 +111,7 @@ func labelsInternal(images Files, mediaSrc media.Src, labelSrc entity.Src) (resu
 				result = append(result, label.ToClassify(labelSrc))
 			}
 		} else if tf := model.ClassifyModel(); tf != nil {
-			// Predict labels with local TensorFlow model.
+			// Predict labels with a local ONNX model.
 			for i := range images {
 				var labels classify.Labels
 

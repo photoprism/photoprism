@@ -18,44 +18,50 @@ import (
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
+// TestGenerateLabels verifies local ONNX labeling and error handling.
 func TestGenerateLabels(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		result, err := GenerateLabels(Files{samplesPath + "/chameleon_lime.jpg"}, media.SrcLocal, entity.SrcAuto)
+		result, err := GenerateLabels(Files{samplesPath + "/dog_orange.jpg"}, media.SrcLocal, entity.SrcAuto)
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.IsType(t, classify.Labels{}, result)
-		assert.Equal(t, 1, len(result))
+		require.Len(t, result, 1)
 
 		t.Log(result)
 
-		assert.Equal(t, "chameleon", result[0].Name)
-		assert.InDelta(t, 7, result[0].Uncertainty, 3)
+		assert.Equal(t, "dog", result[0].Name)
+	})
+	t.Run("ChameleonBelowRuleThreshold", func(t *testing.T) {
+		result, err := GenerateLabels(Files{samplesPath + "/chameleon_lime.jpg"}, media.SrcLocal, entity.SrcAuto)
+
+		require.NoError(t, err)
+		assert.Empty(t, result)
 	})
 	t.Run("Cat224", func(t *testing.T) {
 		result, err := GenerateLabels(Files{samplesPath + "/cat_224.jpeg"}, media.SrcLocal, entity.SrcAuto)
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.IsType(t, classify.Labels{}, result)
-		assert.Equal(t, 1, len(result))
+		require.Len(t, result, 1)
 
 		t.Log(result)
 
 		assert.Equal(t, "cat", result[0].Name)
-		assert.InDelta(t, 59, result[0].Uncertainty, 10)
-		assert.InDelta(t, float32(0.41), result[0].Confidence(), 0.1)
+		assert.InDelta(t, 21, result[0].Uncertainty, 10)
+		assert.InDelta(t, float32(0.79), result[0].Confidence(), 0.1)
 	})
 	t.Run("Cat720", func(t *testing.T) {
 		result, err := GenerateLabels(Files{samplesPath + "/cat_720.jpeg"}, media.SrcLocal, entity.SrcAuto)
 
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.IsType(t, classify.Labels{}, result)
-		assert.Equal(t, 1, len(result))
+		require.Len(t, result, 1)
 
 		t.Log(result)
 
 		assert.Equal(t, "cat", result[0].Name)
-		assert.InDelta(t, 60, result[0].Uncertainty, 10)
-		assert.InDelta(t, float32(0.4), result[0].Confidence(), 0.1)
+		assert.InDelta(t, 30, result[0].Uncertainty, 10)
+		assert.InDelta(t, float32(0.7), result[0].Confidence(), 0.1)
 	})
 	t.Run("CustomSourceLocal", func(t *testing.T) {
 		labels, err := GenerateLabels(Files{samplesPath + "/cat_224.jpeg"}, media.SrcLocal, entity.SrcManual)

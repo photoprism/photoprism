@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/nsfw"
+	"github.com/photoprism/photoprism/internal/ai/onnx"
 	"github.com/photoprism/photoprism/internal/ai/tensorflow"
 	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
 	"github.com/photoprism/photoprism/internal/ai/vision/openai"
@@ -34,34 +35,47 @@ var (
 
 // Model represents a computer vision model configuration.
 type Model struct {
-	Type          ModelType             `yaml:"Type,omitempty" json:"type,omitempty"`
-	Default       bool                  `yaml:"Default,omitempty" json:"default,omitempty"`
-	Model         string                `yaml:"Model,omitempty" json:"model,omitempty"`
-	Name          string                `yaml:"Name,omitempty" json:"name,omitempty"`
-	Version       string                `yaml:"Version,omitempty" json:"version,omitempty"`
-	Engine        ModelEngine           `yaml:"Engine,omitempty" json:"engine,omitempty"`
-	Run           RunType               `yaml:"Run,omitempty" json:"Run,omitempty"` // "auto", "never", "manual", "always", "newly-indexed", "on-schedule"
-	System        string                `yaml:"System,omitempty" json:"system,omitempty"`
-	Prompt        string                `yaml:"Prompt,omitempty" json:"prompt,omitempty"`
-	Format        string                `yaml:"Format,omitempty" json:"format,omitempty"`
-	Normalize     NormalizeType         `yaml:"Normalize,omitempty" json:"normalize,omitempty"` // "single-word", "phrase", or "false"
-	Schema        string                `yaml:"Schema,omitempty" json:"schema,omitempty"`
-	SchemaFile    string                `yaml:"SchemaFile,omitempty" json:"schemaFile,omitempty"`
-	Resolution    int                   `yaml:"Resolution,omitempty" json:"resolution,omitempty"`
-	TensorFlow    *tensorflow.ModelInfo `yaml:"TensorFlow,omitempty" json:"tensorflow,omitempty"`
-	Options       *ModelOptions         `yaml:"Options,omitempty" json:"options,omitempty"`
-	Service       Service               `yaml:"Service,omitempty" json:"service"`
-	Path          string                `yaml:"Path,omitempty" json:"-"`
-	Disabled      bool                  `yaml:"Disabled,omitempty" json:"disabled,omitempty"`
-	classifyModel *classify.Model
-	faceModel     face.Embedder
-	nsfwModel     *nsfw.Model
-	schemaOnce    sync.Once
-	schema        string
+	Type           ModelType             `yaml:"Type,omitempty" json:"type,omitempty"`
+	Default        bool                  `yaml:"Default,omitempty" json:"default,omitempty"`
+	Model          string                `yaml:"Model,omitempty" json:"model,omitempty"`
+	Name           string                `yaml:"Name,omitempty" json:"name,omitempty"`
+	Version        string                `yaml:"Version,omitempty" json:"version,omitempty"`
+	Engine         ModelEngine           `yaml:"Engine,omitempty" json:"engine,omitempty"`
+	Run            RunType               `yaml:"Run,omitempty" json:"Run,omitempty"` // "auto", "never", "manual", "always", "newly-indexed", "on-schedule"
+	System         string                `yaml:"System,omitempty" json:"system,omitempty"`
+	Prompt         string                `yaml:"Prompt,omitempty" json:"prompt,omitempty"`
+	Format         string                `yaml:"Format,omitempty" json:"format,omitempty"`
+	Normalize      NormalizeType         `yaml:"Normalize,omitempty" json:"normalize,omitempty"` // "single-word", "phrase", or "false"
+	Schema         string                `yaml:"Schema,omitempty" json:"schema,omitempty"`
+	SchemaFile     string                `yaml:"SchemaFile,omitempty" json:"schemaFile,omitempty"`
+	Resolution     int                   `yaml:"Resolution,omitempty" json:"resolution,omitempty"`
+	TensorFlow     *tensorflow.ModelInfo `yaml:"TensorFlow,omitempty" json:"tensorflow,omitempty"`
+	ONNX           *onnx.ModelInfo       `yaml:"ONNX,omitempty" json:"onnx,omitempty"`
+	LabelFile      string                `yaml:"LabelFile,omitempty" json:"labelFile,omitempty"`
+	CanonicalOrder bool                  `yaml:"CanonicalOrder,omitempty" json:"canonicalOrder,omitempty"`
+	Options        *ModelOptions         `yaml:"Options,omitempty" json:"options,omitempty"`
+	Service        Service               `yaml:"Service,omitempty" json:"service"`
+	Path           string                `yaml:"Path,omitempty" json:"-"`
+	Disabled       bool                  `yaml:"Disabled,omitempty" json:"disabled,omitempty"`
+	classifyModel  *classify.Model
+	faceModel      face.Embedder
+	nsfwModel      *nsfw.Model
+	schemaOnce     sync.Once
+	schema         string
 }
 
 // Models represents a set of computer vision models.
 type Models []*Model
+
+// Clone returns model copies with independent lazy state.
+func (m Models) Clone() Models {
+	result := make(Models, len(m))
+	for i, model := range m {
+		result[i] = model.Clone()
+	}
+
+	return result
+}
 
 // GetModel returns the normalized model identifier, name, and version strings
 // used in service requests. Callers can always destructure the tuple because
@@ -152,17 +166,13 @@ func (m *Model) IsDefault() bool {
 		return true
 	}
 
-	if m.TensorFlow == nil {
-		return false
-	}
-
 	switch m.Type {
 	case ModelTypeLabels:
-		return m.Name == NasnetModel.Name
+		return m.ONNX != nil && m.Name == NasnetModel.Name
 	case ModelTypeNsfw:
-		return m.Name == NsfwModel.Name
+		return m.TensorFlow != nil && m.Name == NsfwModel.Name
 	case ModelTypeFace:
-		return m.Name == FacenetModel.Name
+		return m.TensorFlow != nil && m.Name == FacenetModel.Name
 	}
 
 	return false
@@ -489,6 +499,10 @@ func (m *Model) EngineName() string {
 		return EngineTensorFlow
 	}
 
+	if m.ONNX != nil {
+		return EngineONNX
+	}
+
 	return EngineLocal
 }
 
@@ -664,16 +678,17 @@ func (m *Model) ClassifyModel() *classify.Model {
 		return m.classifyModel
 	}
 
-	switch m.Name {
-	case "":
+	switch {
+	case m.Name == "":
 		log.Warnf("vision: missing name, model instance cannot be created")
 		return nil
-	case NasnetModel.Name, "nasnet":
-		// Load and initialize the Nasnet image classification model.
-		if model := classify.NewNasnet(GetModelsPath(), m.Disabled); model == nil {
+	case classify.FindModel(classify.ModelName(m.Name)) != nil:
+		// Load and initialize a registered ONNX image classification model.
+		if model := classify.NewRegisteredModel(GetModelsPath(), classify.ModelName(m.Name), m.Disabled); model == nil {
 			return nil
 		} else if err := model.Init(); err != nil {
-			log.Errorf("vision: %s (init nasnet model)", err)
+			m.Disabled = true
+			log.Warnf("vision: %s (disable %s model)", err, clean.Log(m.Name))
 			return nil
 		} else {
 			m.classifyModel = model
@@ -684,26 +699,54 @@ func (m *Model) ClassifyModel() *classify.Model {
 			m.Path = clean.Path(clean.TypeLowerUnderscore(m.Name))
 		}
 
-		if m.TensorFlow == nil {
-			m.TensorFlow = &tensorflow.ModelInfo{}
+		if m.ONNX == nil {
+			m.ONNX = &onnx.ModelInfo{}
 		}
 
-		// Set default thumbnail resolution if no tags are configured.
-		if m.Resolution <= 0 {
-			m.Resolution = DefaultResolution
+		if m.ONNX.Input == nil && m.Resolution > 0 {
+			m.ONNX.Input = &onnx.Input{Width: m.Resolution, Height: m.Resolution}
+		} else if m.ONNX.Input != nil && m.Resolution > 0 {
+			if m.ONNX.Input.Width <= 0 {
+				m.ONNX.Input.Width = m.Resolution
+			}
+			if m.ONNX.Input.Height <= 0 {
+				m.ONNX.Input.Height = m.Resolution
+			}
 		}
 
-		if m.TensorFlow.Input == nil {
-			m.TensorFlow.Input = new(tensorflow.PhotoInput)
+		modelPath := filepath.Join(GetModelsPath(), clean.Path(m.Path))
+		modelDir := modelPath
+		if !strings.EqualFold(filepath.Ext(modelPath), ".onnx") {
+			modelDir = modelPath
+			if m.ONNX.File == "" {
+				m.ONNX.File = filepath.Base(m.Path) + ".onnx"
+			}
+			modelPath = m.ONNX.FilePath(modelDir)
+		} else {
+			modelDir = filepath.Dir(modelPath)
 		}
 
-		m.TensorFlow.Input.SetResolution(m.Resolution)
+		labelFile := m.LabelFile
+		if labelFile == "" {
+			labelFile = "labels.txt"
+		}
+		if !filepath.IsAbs(labelFile) {
+			labelFile = filepath.Join(modelDir, labelFile)
+		}
 
-		// Try to load custom model based on the configuration values.
-		if model := classify.NewModel(GetModelsPath(), m.Path, GetNasnetModelPath(), m.TensorFlow, m.Disabled); model == nil {
+		// Try to load a custom ONNX model based on the configuration values.
+		if model := classify.NewModel(classify.Settings{
+			Name:           classify.ModelName(m.Name),
+			ModelPath:      modelPath,
+			LabelPath:      labelFile,
+			Info:           m.ONNX,
+			CanonicalOrder: m.CanonicalOrder,
+			Disabled:       m.Disabled,
+		}); model == nil {
 			return nil
 		} else if err := model.Init(); err != nil {
-			log.Errorf("vision: %s (init %s)", err, m.Path)
+			m.Disabled = true
+			log.Warnf("vision: %s (disable %s)", err, m.Path)
 			return nil
 		} else {
 			m.classifyModel = model
@@ -896,6 +939,51 @@ func (m *Model) Clone() *Model {
 
 	c.schemaOnce = sync.Once{}
 	c.schema = ""
+	c.classifyModel = nil
+	c.faceModel = nil
+	c.nsfwModel = nil
+	c.Options = cloneOptions(m.Options)
+	if m.TensorFlow != nil {
+		tensorFlowInfo := *m.TensorFlow
+		tensorFlowInfo.Tags = append([]string(nil), m.TensorFlow.Tags...)
+		if m.TensorFlow.Input != nil {
+			input := *m.TensorFlow.Input
+			input.Intervals = append([]tensorflow.Interval(nil), m.TensorFlow.Input.Intervals...)
+			for i := range input.Intervals {
+				if input.Intervals[i].Mean != nil {
+					mean := *input.Intervals[i].Mean
+					input.Intervals[i].Mean = &mean
+				}
+				if input.Intervals[i].StdDev != nil {
+					stdDev := *input.Intervals[i].StdDev
+					input.Intervals[i].StdDev = &stdDev
+				}
+			}
+			input.Shape = append([]tensorflow.ShapeComponent(nil), m.TensorFlow.Input.Shape...)
+			tensorFlowInfo.Input = &input
+		}
+		if m.TensorFlow.Output != nil {
+			output := *m.TensorFlow.Output
+			tensorFlowInfo.Output = &output
+		}
+		c.TensorFlow = &tensorFlowInfo
+	}
+	if m.ONNX != nil {
+		onnxInfo := *m.ONNX
+		if m.ONNX.Input != nil {
+			input := *m.ONNX.Input
+			onnxInfo.Input = &input
+		}
+		if m.ONNX.Output != nil {
+			output := *m.ONNX.Output
+			if m.ONNX.Output.Logits != nil {
+				logits := *m.ONNX.Output.Logits
+				output.Logits = &logits
+			}
+			onnxInfo.Output = &output
+		}
+		c.ONNX = &onnxInfo
+	}
 
 	return &c
 }
