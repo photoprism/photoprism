@@ -60,6 +60,7 @@ type Model struct {
 	classifyModel  *classify.Model
 	faceModel      face.Embedder
 	nsfwModel      *nsfw.Model
+	nsfwErr        error
 	schemaOnce     sync.Once
 	schema         string
 }
@@ -876,20 +877,26 @@ func (m *Model) NsfwModel() *nsfw.Model {
 		return m.nsfwModel
 	}
 
+	// Cache initialization failure separately from the operator-controlled Disabled setting.
+	if m.nsfwErr != nil {
+		return nil
+	}
+
 	switch m.Name {
 	case "":
 		log.Warnf("vision: missing name, model instance cannot be created")
 		return nil
 	case NsfwModel.Name, "nsfw":
-		// Load and initialize the Nasnet image classification model.
-		if model := nsfw.NewModel(GetNsfwModelPath(), NsfwModel.TensorFlow, m.Disabled); model == nil {
+		// Load and initialize the bundled TensorFlow detector.
+		model := nsfw.NewModel(GetNsfwModelPath(), NsfwModel.TensorFlow, m.Disabled)
+
+		if err := model.Init(); err != nil {
+			m.nsfwErr = err
+			log.Warnf("vision: %s (init %s model)", clean.Error(err), clean.Log(m.Name))
 			return nil
-		} else if err := model.Init(); err != nil {
-			log.Errorf("vision: %s (init %s)", err, m.Path)
-			return nil
-		} else {
-			m.nsfwModel = model
 		}
+
+		m.nsfwModel = model
 	default:
 		// Set model path from model name if no path is configured.
 		if m.Path == "" {
@@ -901,25 +908,26 @@ func (m *Model) NsfwModel() *nsfw.Model {
 			m.Resolution = DefaultResolution
 		}
 
+		if m.TensorFlow == nil {
+			m.TensorFlow = &tensorflow.ModelInfo{}
+		}
+
 		if m.TensorFlow.Input == nil {
 			m.TensorFlow.Input = new(tensorflow.PhotoInput)
 		}
 
 		m.TensorFlow.Input.SetResolution(m.Resolution)
 
-		if m.TensorFlow == nil {
-			m.TensorFlow = &tensorflow.ModelInfo{}
+		// Try to load custom model based on the configuration values.
+		model := nsfw.NewModel(GetModelPath(m.Path), m.TensorFlow, m.Disabled)
+
+		if err := model.Init(); err != nil {
+			m.nsfwErr = err
+			log.Warnf("vision: %s (init %s)", clean.Error(err), clean.Log(m.Path))
+			return nil
 		}
 
-		// Try to load custom model based on the configuration values.
-		if model := nsfw.NewModel(GetModelPath(m.Path), m.TensorFlow, m.Disabled); model == nil {
-			return nil
-		} else if err := model.Init(); err != nil {
-			log.Errorf("vision: %s (init %s)", err, m.Path)
-			return nil
-		} else {
-			m.nsfwModel = model
-		}
+		m.nsfwModel = model
 	}
 
 	return m.nsfwModel
@@ -942,6 +950,7 @@ func (m *Model) Clone() *Model {
 	c.classifyModel = nil
 	c.faceModel = nil
 	c.nsfwModel = nil
+	c.nsfwErr = nil
 	c.Options = cloneOptions(m.Options)
 	if m.TensorFlow != nil {
 		tensorFlowInfo := *m.TensorFlow

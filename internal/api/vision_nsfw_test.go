@@ -9,6 +9,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/scheme"
@@ -54,14 +55,20 @@ func TestPostVisionNsfw(t *testing.T) {
 
 		if len(apiResponse.Result.Nsfw) != 1 {
 			t.Fatal("one nsfw result expected")
-		} else if nsfw := apiResponse.Result.Nsfw[0]; !nsfw.IsNsfw(0.6) {
-			t.Fatalf("image should not be safe for work: %#v", nsfw)
+		} else if result := apiResponse.Result.Nsfw[0]; !result.Decide(0.6).IsUnsafe() {
+			t.Fatalf("image should not be safe for work: %#v", result)
 		} else {
 			// Drawing:7.547473e-05, Hentai:0.19912475, Neutral:0.00097554235, Porn:0.67095983, Sexy:0.12886441
-			assert.InDelta(t, nsfw.Drawing, 0.01, 0.2)
-			assert.InDelta(t, nsfw.Hentai, 0.2, 0.2)
-			assert.InDelta(t, nsfw.Porn, 0.7, 0.2)
-			assert.InDelta(t, nsfw.Sexy, 0.1, 0.2)
+			assert.InDelta(t, result.Drawing, 0.01, 0.2)
+			assert.InDelta(t, result.Hentai, 0.2, 0.2)
+			assert.InDelta(t, result.Porn, 0.7, 0.2)
+			assert.InDelta(t, result.Sexy, 0.1, 0.2)
+
+			// The service decides against its own threshold and records which one, so a client
+			// with a stricter policy can re-decide the same scores without asking again.
+			assert.True(t, result.IsSafe())
+			assert.InDelta(t, nsfw.DefaultThreshold, result.Threshold, 1e-6)
+			assert.InDelta(t, result.Porn, result.Score, 1e-6)
 		}
 
 		assert.Equal(t, vision.ModelTypeNsfw, apiResponse.Model.Type)

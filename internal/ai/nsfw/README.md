@@ -1,18 +1,32 @@
 ## PhotoPrism — NSFW Package
 
-**Last Updated:** May 21, 2026
+**Last Updated:** September 2, 2026
 
 ### Overview
 
 `internal/ai/nsfw` runs the built-in TensorFlow NSFW classifier to score images for drawing, hentai, neutral, porn, and sexy content. It is the default backend that powers the `Type: nsfw` model entry in [`internal/ai/vision`](../vision/README.md) and is the only NSFW engine that ships with PhotoPrism out of the box; operators can override it through `vision.yml` with an Ollama or OpenAI endpoint when they prefer to run NSFW detection on a remote LLM.
 
+### The Result Contract
+
+`Result` carries a three-valued `Status` — `safe`, `unsafe`, or `unavailable` — alongside the `Score` it was decided from and the `Threshold` it was compared against. **The zero value is `unavailable`**, so a result that no detector filled in reads as "nothing was decided" rather than as a clearance.
+
+That inversion is the point of the type. A safety signal whose zero value means safe cannot be told apart from a detector that never ran, and every path that could fail — a missing model, an unreadable thumbnail, a decode error, a disabled detector — produced exactly that value.
+
+- `IsSafe()` is true **only** for an explicit clearance, never for a missing or failed check.
+- `IsUnsafe()` is true only for an explicit detection.
+- `IsUnavailable()` is true for everything else, including the zero value.
+- `Decide(threshold)` reduces class scores to a decision. A result with no scores stays unavailable.
+- `Unavailable(reason)` records why nothing was decided, which is what the callers log.
+
+`ErrNotConfigured` and `ErrDetectorUnavailable` distinguish a detector the operator turned off from one that broke. The upload path treats those differently, so they must not be collapsed.
+
 ### Where It Gets Called
 
-The package itself only exposes the model loader and a thin scoring API (`Result.IsSafe`, `Result.IsNsfw(threshold)`). Two upstream callers wire it into the runtime:
+Two upstream callers wire the package into the runtime, and they answer an undecided result differently on purpose:
 
-1. **Upload handler — [`internal/api/users_upload.go`](../../api/users_upload.go).** When `PHOTOPRISM_UPLOAD_NSFW=false` (default `true`), every accepted upload is screened by `vision.DetectNSFW` before indexing. Files that score above the threshold are deleted on the spot — they never reach `originals/`. When `UPLOAD_NSFW=true`, the upload path skips the check entirely.
+1. **Upload handler — [`internal/api/users_upload.go`](../../api/users_upload.go).** When `PHOTOPRISM_UPLOAD_NSFW=false` (the default, since the flag has no value of its own), every accepted upload is screened by `vision.DetectNSFW` before indexing. Files that are flagged are deleted on the spot — they never reach `originals/`. **This path fails closed:** an upload is admitted only on an explicit `IsSafe()`, because admitting a file the detector could not read leaves exactly the content the check exists to keep out. The one exception is `ErrNotConfigured`, which admits — that is the operator having turned screening off, and rejecting would delete every upload on those instances. The mismatch is reported once at startup instead.
 
-2. **Index + vision-worker pipelines — [`internal/photoprism/index_mediafile.go`](../../photoprism/index_mediafile.go), [`internal/workers/vision.go`](../../workers/vision.go), [`internal/workers/meta.go`](../../workers/meta.go).** When `PHOTOPRISM_DETECT_NSFW=true` (default `false`), the indexer marks new photos as `PhotoPrivate = true` if the NSFW model flags them. Both code paths short-circuit when `DetectNSFW()` is false — the model is then neither loaded nor invoked.
+2. **Index + vision-worker pipelines — [`internal/photoprism/index_mediafile.go`](../../photoprism/index_mediafile.go), [`internal/workers/vision.go`](../../workers/vision.go), [`internal/workers/meta.go`](../../workers/meta.go).** When `PHOTOPRISM_DETECT_NSFW=true` (default `false`), the indexer marks new photos as `PhotoPrivate = true` if the model flags them. **Indexing fails neutral:** an undecided result logs a warning and writes nothing, because marking a whole library private on a missing model file would be the worse outcome and an operator could not tell those photos apart afterwards. **The vision worker fails closed:** an undecided result never changes the flag, so `vision run --force`, which re-examines photos that are already private, cannot un-private them when the detector is broken.
 
 Both flags are independent: you can reject uploads without flagging existing imports, flag existing imports without policing uploads, or both. The user-facing matrix lives at [docs.photoprism.app/user-guide/ai/nsfw/](https://docs.photoprism.app/user-guide/ai/nsfw/).
 
@@ -26,16 +40,21 @@ When the shortcut is active, the labels-path check in `index_mediafile.go` (`lab
 
 - **Model Loading** — Loads the NSFW SavedModel from `assets/models/` and resolves input/output ops (inferred if missing).
 - **Input Preparation** — JPEG thumbnails (default size `Fit720`, see `MediaFile.DetectNSFW`) are decoded and transformed to the configured input resolution.
-- **Inference & Output** — Produces five class probabilities mapped into a `Result` struct for downstream thresholds and UI badges.
+- **Inference & Output** — Produces five class probabilities, which `getScores` validates and maps positionally. A graph of another width is rejected rather than read under the wrong class names.
+- **Decision** — `Decide` reduces the classes to `max(Porn, Sexy, Hentai)` and compares that to the threshold. `Neutral` is not consulted: it used to veto a detection whenever it exceeded `0.25`, which a five-way softmax makes unreachable above a threshold of `0.5` and, below that, only ever suppressed the detections a lower threshold was asking for.
 
 ### Threshold
 
-`vision.yml` carries a `Thresholds.NSFW` value (default `75`, range `0-100`) that controls how confident the model must be before a picture is flagged. Lower values are more aggressive; higher values more permissive. The threshold applies to both the dedicated NSFW model and the NSFW fields returned via the label-generation shortcut.
+`vision.yml` carries a `Thresholds.NSFW` value (range `0-100`) that controls how confident the model must be before a picture is flagged. Lower values are more aggressive; higher values more permissive. It governs the dedicated NSFW model and the NSFW fields returned via the label-generation shortcut alike.
 
 ```yaml
 Thresholds:
   NSFW: 75
 ```
+
+Left unset it resolves to `75` (`vision.DefaultNSFWThreshold`). Unset is a distinct state rather than a synonym for 75: it is what lets a model's own calibrated default apply, since a threshold tuned for one model's output distribution says nothing about where another puts its decision boundary. `Thresholds.NSFWIsSet` is the predicate that tells the two apart.
+
+> ⚠ **Instances upgrading from a release before this threshold was honored were flagging at a hardcoded `0.98` while indexing**, not at the documented value. Detection is therefore more aggressive by default after the change, and photos scoring between the two are flagged on the next index or `vision run --force`. Set `Thresholds: {NSFW: 98}` to keep the previous behavior. There is no way to reverse this per photo — `photos.photo_private` is a single boolean with no record of what set it.
 
 ### Memory & Performance
 

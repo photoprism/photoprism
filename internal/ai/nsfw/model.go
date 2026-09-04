@@ -16,6 +16,9 @@ import (
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
+// Classes is the number of scores the bundled TensorFlow model emits.
+const Classes = 5
+
 // Model uses TensorFlow to label drawing, hentai, neutral, porn and sexy images.
 type Model struct {
 	model     *tf.SavedModel
@@ -39,40 +42,48 @@ func NewModel(modelPath string, meta *tensorflow.ModelInfo, disabled bool) *Mode
 	}
 }
 
-// File checks the specified JPEG file for inappropriate content.
-func (m *Model) File(fileName string) (result Result, err error) {
+// File returns the decision for a local JPEG file, scored against threshold.
+func (m *Model) File(fileName string, threshold float32) (result Result, err error) {
+	if m == nil || m.disabled {
+		return Unavailable("detector is disabled"), nil
+	}
+
 	if fs.MimeType(fileName) != header.ContentTypeJpeg {
-		return result, fmt.Errorf("%s is not a jpeg file", clean.Log(filepath.Base(fileName)))
+		return Unavailable("not a jpeg file"), fmt.Errorf("%s is not a jpeg file", clean.Log(filepath.Base(fileName)))
 	}
 
 	var img []byte
 
 	if img, err = os.ReadFile(fileName); err != nil { //nolint:gosec // fileName is provided by trusted callers; reading local test fixtures is intentional
-		return result, err
+		return Unavailable(clean.Error(err)), err
 	}
 
-	return m.Run(img)
+	return m.Run(img, threshold)
 }
 
-// Url checks the JPEG file from the specified https or data URL for inappropriate content.
-func (m *Model) Url(imgUrl string) (result Result, err error) {
-	if m.disabled {
-		return result, nil
+// Url returns the decision for an image at an https or data URL, scored against threshold.
+func (m *Model) Url(imgUrl string, threshold float32) (result Result, err error) {
+	if m == nil || m.disabled {
+		return Unavailable("detector is disabled"), nil
 	}
 
 	var img []byte
 
 	if img, err = media.ReadUrlImage(imgUrl, scheme.HttpsData); err != nil {
-		return result, err
+		return Unavailable(clean.Error(err)), err
 	}
 
-	return m.Run(img)
+	return m.Run(img, threshold)
 }
 
-// Run returns matching labels for a jpeg media string.
-func (m *Model) Run(img []byte) (result Result, err error) {
+// Run returns the decision for an encoded JPEG image, scored against threshold.
+func (m *Model) Run(img []byte, threshold float32) (result Result, err error) {
+	if m == nil || m.disabled {
+		return Unavailable("detector is disabled"), nil
+	}
+
 	if loadErr := m.loadModel(); loadErr != nil {
-		return result, loadErr
+		return Unavailable(clean.Error(loadErr)), loadErr
 	}
 
 	defer tensorflow.MaybeCollectTensorMemory()
@@ -82,7 +93,7 @@ func (m *Model) Run(img []byte) (result Result, err error) {
 		img, fs.ImageJpeg, m.meta.Input.Resolution())
 
 	if err != nil {
-		return result, fmt.Errorf("%s", err)
+		return Unavailable(clean.Error(err)), fmt.Errorf("%s", err)
 	}
 
 	// Run inference.
@@ -96,15 +107,23 @@ func (m *Model) Run(img []byte) (result Result, err error) {
 		nil)
 
 	if err != nil {
-		return result, fmt.Errorf("%s (run inference)", err.Error())
+		return Unavailable(clean.Error(err)), fmt.Errorf("%s (run inference)", err.Error())
 	}
 
 	if len(output) < 1 {
-		return result, fmt.Errorf("inference failed, no output")
+		return Unavailable("no output"), fmt.Errorf("inference failed, no output")
 	}
 
-	// Return best labels.
-	result = m.getLabels(output[0].Value().([][]float32)[0])
+	scores, ok := output[0].Value().([][]float32)
+	if !ok || len(scores) < 1 {
+		return Unavailable("unexpected output type"), fmt.Errorf("inference returned an unexpected output type")
+	}
+
+	if result, err = m.getScores(scores[0]); err != nil {
+		return Unavailable(clean.Error(err)), err
+	}
+
+	result = result.Decide(threshold)
 
 	log.Tracef("nsfw: image classified as %+v", result)
 
@@ -131,21 +150,22 @@ func (m *Model) loadModel() error {
 		return nil
 	}
 
-	log.Infof("nsfw: loading %s", clean.Log(filepath.Base(m.modelPath)))
+	modelName := clean.Log(filepath.Base(m.modelPath))
+	log.Infof("nsfw: loading %s", modelName)
 
 	if len(m.meta.Tags) == 0 {
 		infos, err := tensorflow.GetModelTagsInfo(m.modelPath)
 
 		switch {
 		case err != nil:
-			log.Errorf("nsfw: could not get the model info at %s: %v", clean.Log(m.modelPath))
+			log.Errorf("nsfw: could not get the model info for %s (%s)", modelName, clean.Error(err))
 		case len(infos) == 1:
 			log.Debugf("nsfw: model info: %+v", infos[0])
 			m.meta.Merge(&infos[0])
 		case len(infos) > 1:
 			log.Warnf("nsfw: found %d metagraphs... that's too many", len(infos))
 		default:
-			log.Warnf("nsfw: no metagraphs found in %s", clean.Log(m.modelPath))
+			log.Warnf("nsfw: no metagraphs found in %s", modelName)
 		}
 	}
 
@@ -188,12 +208,23 @@ func (m *Model) loadLabels(modelPath string) (err error) {
 	return err
 }
 
-func (m *Model) getLabels(p []float32) Result {
+// getScores maps exactly five positional model outputs onto their classes.
+func (m *Model) getScores(p []float32) (Result, error) {
+	if len(p) != Classes {
+		return Result{}, fmt.Errorf("model returned %d values, expected %d", len(p), Classes)
+	}
+
+	for _, score := range p {
+		if err := ValidateScore(score); err != nil {
+			return Result{}, err
+		}
+	}
+
 	return Result{
 		Drawing: p[0],
 		Hentai:  p[1],
 		Neutral: p[2],
 		Porn:    p[3],
 		Sexy:    p[4],
-	}
+	}, nil
 }

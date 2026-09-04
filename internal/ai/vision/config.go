@@ -132,8 +132,12 @@ func (c *ConfigValues) Load(fileName string) error {
 		c.Thresholds.Topicality = DefaultThresholds.Topicality
 	}
 
-	if c.Thresholds.NSFW <= 0 || c.Thresholds.NSFW > 100 {
-		c.Thresholds.NSFW = DefaultThresholds.NSFW
+	// Only the upper bound is corrected: a missing or zero value stays unset so that the
+	// selected model's own default threshold can apply, which GetNSFW resolves.
+	if c.Thresholds.NSFW < 0 {
+		c.Thresholds.NSFW = 0
+	} else if c.Thresholds.NSFW > 100 {
+		c.Thresholds.NSFW = 100
 	}
 
 	return nil

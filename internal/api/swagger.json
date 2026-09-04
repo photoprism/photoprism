@@ -3766,24 +3766,41 @@
         },
         "nsfw.Result": {
             "properties": {
-                "drawing": {
-                    "format": "float32",
+                "Drawing": {
+                    "description": "Class probabilities of the bundled TensorFlow model. Detectors with a binary taxonomy\nleave these zero, so a client must read Status. The JSON names are capitalized because\nthat is what this endpoint has always emitted for these untagged fields.",
                     "type": "number"
                 },
-                "hentai": {
-                    "format": "float32",
+                "Hentai": {
                     "type": "number"
                 },
-                "neutral": {
-                    "format": "float32",
+                "Neutral": {
                     "type": "number"
                 },
-                "porn": {
-                    "format": "float32",
+                "Porn": {
                     "type": "number"
                 },
-                "sexy": {
-                    "format": "float32",
+                "Sexy": {
+                    "type": "number"
+                },
+                "reason": {
+                    "description": "Reason names why no decision was made, and is empty otherwise.",
+                    "type": "string"
+                },
+                "score": {
+                    "description": "Score is the probability that the image is unsafe, from 0 to 1.",
+                    "type": "number"
+                },
+                "status": {
+                    "description": "Status is the decision, and the only field a caller may act on. The tag spells the wire\nvalues out because the zero value serializes as \"unavailable\" rather than as itself.",
+                    "enum": [
+                        "safe",
+                        "unsafe",
+                        "unavailable"
+                    ],
+                    "type": "string"
+                },
+                "threshold": {
+                    "description": "Threshold is the value Score was compared against, recorded so a decision can be\nexplained, or re-derived by a caller, without running inference again.",
                     "type": "number"
                 }
             },

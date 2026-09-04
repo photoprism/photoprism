@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -12,6 +13,7 @@ import (
 	"github.com/dustin/go-humanize/english"
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -222,22 +224,9 @@ func UploadUserFiles(router *gin.RouterGroup) {
 			containsNSFW := false
 
 			for _, filename := range uploads {
-				labels, nsfwErr := vision.DetectNSFW([]string{filename}, media.SrcLocal)
-
-				switch {
-				case nsfwErr != nil:
-					log.Debug(nsfwErr)
-					continue
-				case len(labels) < 1:
-					log.Errorf("nsfw: model returned no result")
-					continue
-				case labels[0].IsSafe():
-					continue
+				if nsfwRejectsUpload(filename) {
+					containsNSFW = true
 				}
-
-				log.Infof("nsfw: %s might be offensive", clean.Log(filename))
-
-				containsNSFW = true
 			}
 
 			if containsNSFW {
@@ -420,4 +409,38 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 
 		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgUploadProcessed))
 	})
+}
+
+// nsfwRejectsUpload reports whether screening rejects an uploaded file.
+// Unavailable checks reject, while an explicitly unconfigured detector admits.
+func nsfwRejectsUpload(fileName string) bool {
+	results, err := vision.DetectNSFW([]string{fileName}, media.SrcLocal)
+
+	if errors.Is(err, nsfw.ErrNotConfigured) {
+		log.Debugf("nsfw: no detector configured, %s was not screened", clean.Log(fileName))
+		return false
+	}
+
+	var result nsfw.Result
+
+	switch {
+	case err != nil:
+		result = nsfw.Unavailable(clean.Error(err))
+	case len(results) < 1:
+		result = nsfw.Unavailable("no result")
+	default:
+		result = results[0]
+	}
+
+	if result.IsSafe() {
+		return false
+	}
+
+	if result.IsUnavailable() {
+		log.Warnf("nsfw: cannot screen %s (%s)", clean.Log(fileName), clean.Log(result.Reason))
+	} else {
+		log.Infof("nsfw: %s might be offensive", clean.Log(fileName))
+	}
+
+	return true
 }

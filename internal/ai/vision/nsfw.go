@@ -26,17 +26,39 @@ func DetectNSFW(images Files, mediaSrc media.Src) (result []nsfw.Result, err err
 	return nsfwFunc(images, mediaSrc)
 }
 
+// NsfwThreshold returns the configured unsafe probability or the package default.
+func NsfwThreshold() float32 {
+	if Config != nil && Config.Thresholds.NSFWIsSet() {
+		return Config.Thresholds.GetNSFWFloat32()
+	}
+
+	return nsfw.DefaultThreshold
+}
+
+// undecidedResults returns count undecided results, so a caller that ignores the error still
+// reads "nothing was decided" rather than a clearance.
+func undecidedResults(count int, reason string) []nsfw.Result {
+	result := make([]nsfw.Result, count)
+
+	for i := range result {
+		result[i] = nsfw.Unavailable(reason)
+	}
+
+	return result
+}
+
 func nsfwInternal(images Files, mediaSrc media.Src) (result []nsfw.Result, err error) {
 	// Return if no thumbnail filenames were given.
 	if len(images) == 0 {
 		return result, errors.New("at least one image required")
 	}
 
-	result = make([]nsfw.Result, len(images))
+	result = undecidedResults(len(images), "not evaluated")
+	threshold := NsfwThreshold()
 
 	// Return if there is no configuration or no image classification models are configured.
 	if Config == nil {
-		return result, errors.New("vision service is not configured")
+		return result, fmt.Errorf("%w: vision service is not configured", nsfw.ErrNotConfigured)
 	} else if model := Config.Model(ModelTypeNsfw); model != nil {
 		// Use remote service API if a server endpoint has been configured.
 		if uri, method := model.Endpoint(); uri != "" && method != "" {
@@ -68,17 +90,17 @@ func nsfwInternal(images Files, mediaSrc media.Src) (result []nsfw.Result, err e
 				return result, err
 			}
 
-			result = apiResponse.Result.Nsfw
-		} else if tf := model.NsfwModel(); tf != nil {
-			// Predict labels with local TensorFlow model.
+			result = normalizeNsfwResults(apiResponse.Result.Nsfw, len(images), threshold)
+		} else if detector := model.NsfwModel(); detector != nil {
+			// Detect with the local model.
 			for i := range images {
-				var labels nsfw.Result
+				var detected nsfw.Result
 
 				switch mediaSrc {
 				case media.SrcLocal:
-					labels, err = tf.File(images[i])
+					detected, err = detector.File(images[i], threshold)
 				case media.SrcRemote:
-					labels, err = tf.Url(images[i])
+					detected, err = detector.Url(images[i], threshold)
 				default:
 					return result, fmt.Errorf("invalid media source %s", clean.Log(mediaSrc))
 				}
@@ -91,16 +113,44 @@ func nsfwInternal(images Files, mediaSrc media.Src) (result []nsfw.Result, err e
 					}
 
 					log.Debugf("nsfw: %s", err)
+
+					// Record why this image has no decision instead of leaving a zero value,
+					// which a caller could not tell apart from a clearance.
+					detected = nsfw.Unavailable(clean.Error(err))
 				}
 
-				result[i] = labels
+				result[i] = detected
 			}
 		} else {
-			return result, errors.New("invalid nsfw model configuration")
+			return result, fmt.Errorf("%w: invalid nsfw model configuration", nsfw.ErrDetectorUnavailable)
 		}
 	} else {
-		return result, errors.New("missing nsfw model")
+		return result, fmt.Errorf("%w: missing nsfw model", nsfw.ErrNotConfigured)
 	}
 
 	return result, nil
+}
+
+// normalizeNsfwResults aligns remote results without shifting decisions between images.
+// Legacy results carrying only class scores are decided locally.
+func normalizeNsfwResults(results []nsfw.Result, count int, threshold float32) []nsfw.Result {
+	if len(results) != count {
+		log.Warnf("nsfw: service returned %d results for %d images", len(results), count)
+	}
+
+	normalized := undecidedResults(count, "no result")
+
+	for i, result := range results {
+		if i >= count {
+			break
+		}
+
+		if result.IsUnavailable() && result.HasScores() {
+			normalized[i] = result.Decide(threshold)
+		} else {
+			normalized[i] = result
+		}
+	}
+
+	return normalized
 }

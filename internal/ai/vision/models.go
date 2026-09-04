@@ -71,9 +71,13 @@ var (
 	DefaultThresholds = Thresholds{
 		Confidence: 10, // 0-100%
 		Topicality: 0,  // 0-100%
-		NSFW:       75, // 1-100%
+		NSFW:       0,  // Unset, see Thresholds.GetNSFW and DefaultNSFWThreshold.
 	}
 )
+
+// DefaultNSFWThreshold is the fallback unsafe-score percentage.
+// DefaultThresholds leaves it unset so an explicit operator value remains distinguishable.
+const DefaultNSFWThreshold = 75
 
 // defaultLabelModel returns the registered bundled ONNX classifier as a vision model.
 func defaultLabelModel() *Model {

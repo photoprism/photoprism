@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/ai/vision"
@@ -141,6 +142,42 @@ func TestConfig_NSFWModelPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	assert.Contains(t, c.NsfwModelPath(), "/assets/models/nsfw")
+}
+
+// TestConfig_reportUnscreenedUploads verifies the missing-detector warning conditions.
+func TestConfig_reportUnscreenedUploads(t *testing.T) {
+	t.Run("MissingDetector", func(t *testing.T) {
+		withVisionConfig(t, &vision.ConfigValues{})
+		c := NewConfig(CliTestContext())
+		c.options.UploadNSFW = false
+		hook := captureLog(t)
+
+		c.reportUnscreenedUploads()
+
+		entry := hook.LastEntry()
+		require.NotNil(t, entry)
+		assert.Contains(t, entry.Message, "no nsfw model is configured")
+	})
+	t.Run("UploadsAllowed", func(t *testing.T) {
+		withVisionConfig(t, &vision.ConfigValues{})
+		c := NewConfig(CliTestContext())
+		c.options.UploadNSFW = true
+		hook := captureLog(t)
+
+		c.reportUnscreenedUploads()
+
+		assert.Empty(t, hook.AllEntries())
+	})
+	t.Run("DetectorConfigured", func(t *testing.T) {
+		withVisionConfig(t, vision.NewConfig())
+		c := NewConfig(CliTestContext())
+		c.options.UploadNSFW = false
+		hook := captureLog(t)
+
+		c.reportUnscreenedUploads()
+
+		assert.Empty(t, hook.AllEntries())
+	})
 }
 
 func TestConfig_FaceNetModelPath(t *testing.T) {

@@ -45,6 +45,16 @@ func (c *Config) LoadVisionConfig() {
 	}
 
 	c.applyLabelModel()
+	c.reportUnscreenedUploads()
+}
+
+// reportUnscreenedUploads warns when upload screening has no configured detector.
+func (c *Config) reportUnscreenedUploads() {
+	if c.UploadNSFW() || vision.Config.Model(vision.ModelTypeNsfw) != nil {
+		return
+	}
+
+	log.Warnf("config: uploads are screened for offensive content, but no nsfw model is configured")
 }
 
 // LabelModelSetting returns the configured label model without resolving auto.
