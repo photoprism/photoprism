@@ -3,12 +3,14 @@ package config
 import (
 	"bytes"
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/pkg/dsn"
+	"github.com/photoprism/photoprism/pkg/fs"
 
 	"github.com/photoprism/photoprism/internal/service/cluster"
 )
@@ -788,4 +790,146 @@ func TestConfig_checkDb(t *testing.T) {
 	assert.NoError(t, c.checkDb(nil))
 	t.Setenv("PHOTOPRISM_DATABASE_SKIP_VERSION_CHECK", "")
 	assert.Error(t, c.checkDb(nil))
+}
+
+func TestConfig_connectDB(t *testing.T) {
+	tmpDir := t.TempDir()
+	t.Cleanup(func() {
+		cl := TestConfig()
+		cl.RegisterDb()
+	})
+	t.Run("NotExistPath", func(t *testing.T) {
+		c := NewMinimalTestConfig(tmpDir)
+		c.options.DatabaseDSN = filepath.Join(tmpDir, "NotExistPath", ".test.db")
+		c.options.DatabaseDriver = dsn.DriverSQLite3
+
+		require.NoError(t, c.connectDb())
+		assert.NoError(t, c.CloseDb())
+	})
+	t.Run("NotExistPathNoWriteAccess", func(t *testing.T) {
+		c := NewMinimalTestConfig(tmpDir)
+		path := filepath.Join(tmpDir, "NotExistPathNoWriteAccess")
+		require.NoError(t, fs.MkdirAll(path))
+		require.NoError(t, os.Chmod(path, 0555)) //nolint:gosec // G302 - remove write permissions
+		path = filepath.Join(path, "NoAccess")
+		c.options.DatabaseDSN = filepath.Join(path, ".test.db")
+		c.options.DatabaseDriver = dsn.DriverSQLite3
+
+		err := c.connectDb()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "permission denied")
+		assert.NoError(t, c.CloseDb())
+	})
+	t.Run("ExistPath", func(t *testing.T) {
+		c := NewMinimalTestConfig(tmpDir)
+		require.NoError(t, fs.MkdirAll(filepath.Join(tmpDir, "ExistPath")))
+		c.options.DatabaseDSN = filepath.Join(tmpDir, "ExistPath", ".test.db")
+		c.options.DatabaseDriver = dsn.DriverSQLite3
+
+		require.NoError(t, c.connectDb())
+		assert.NoError(t, c.CloseDb())
+	})
+	t.Run("ExistPathNoWriteAccess", func(t *testing.T) {
+		c := NewMinimalTestConfig(tmpDir)
+		path := filepath.Join(tmpDir, "ExistPathNoWrite")
+		require.NoError(t, fs.MkdirAll(path))
+		require.NoError(t, os.Chmod(path, 0555)) //nolint:gosec // G302 - remove write permissions
+		c.options.DatabaseDSN = filepath.Join(path, ".test.db")
+		c.options.DatabaseDriver = dsn.DriverSQLite3
+
+		err := c.connectDb()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "config: database path from dsn not writable")
+		assert.NoError(t, c.CloseDb())
+	})
+	t.Run("ExistDatabase", func(t *testing.T) {
+		c := NewMinimalTestConfig(tmpDir)
+		require.NoError(t, fs.MkdirAll(filepath.Join(tmpDir, "ExistDatabase")))
+		c.options.DatabaseDSN = filepath.Join(tmpDir, "ExistDatabase", ".test.db")
+		c.options.DatabaseDriver = dsn.DriverSQLite3
+		require.NoError(t, fs.WriteFile(c.options.DatabaseDSN, []byte{}, fs.ModeFile))
+
+		require.NoError(t, c.connectDb())
+		assert.NoError(t, c.CloseDb())
+	})
+	t.Run("ExistDatabaseNotWritable", func(t *testing.T) {
+		c := NewMinimalTestConfig(tmpDir)
+		require.NoError(t, fs.MkdirAll(filepath.Join(tmpDir, "ExistDatabaseNotWritable")))
+		c.options.DatabaseDSN = filepath.Join(tmpDir, "ExistDatabaseNotWritable", ".test.db")
+		c.options.DatabaseDriver = dsn.DriverSQLite3
+		require.NoError(t, fs.WriteFile(c.options.DatabaseDSN, []byte{}, fs.ModeFile))
+		require.NoError(t, os.Chmod(c.options.DatabaseDSN, 0555)) //nolint:gosec // G302 - remove write permissions
+
+		err := c.connectDb()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "config: database file from dsn not writable")
+		assert.NoError(t, c.CloseDb())
+	})
+	t.Run("ExistDatabaseFolderNotWritable", func(t *testing.T) {
+		c := NewMinimalTestConfig(tmpDir)
+		path := filepath.Join(tmpDir, "ExistDatabaseFolderNotWritable")
+		require.NoError(t, fs.MkdirAll(path))
+		c.options.DatabaseDSN = filepath.Join(path, ".test.db")
+		c.options.DatabaseDriver = dsn.DriverSQLite3
+		require.NoError(t, fs.WriteFile(c.options.DatabaseDSN, []byte{}, fs.ModeFile))
+		require.NoError(t, os.Chmod(path, 0555)) //nolint:gosec // G302 - remove write permissions
+		t.Cleanup(func() {
+			require.NoError(t, os.Chmod(path, 0755)) //nolint:gosec // G302 - add write permissions
+		})
+
+		err := c.connectDb()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "config: database path from dsn not writable and db files need to be created")
+		assert.NoError(t, c.CloseDb())
+	})
+	t.Run("ExistDatabaseShmWritable", func(t *testing.T) {
+		c := NewMinimalTestConfig(tmpDir)
+		require.NoError(t, fs.MkdirAll(filepath.Join(tmpDir, "ExistDatabaseShmWritable")))
+		c.options.DatabaseDSN = filepath.Join(tmpDir, "ExistDatabaseShmWritable", ".test.db")
+		c.options.DatabaseDriver = dsn.DriverSQLite3
+		require.NoError(t, fs.WriteFile(c.options.DatabaseDSN, []byte{}, fs.ModeFile))
+		require.NoError(t, fs.WriteFile(c.options.DatabaseDSN+"-shm", []byte{}, fs.ModeFile))
+
+		assert.NoError(t, c.connectDb())
+		assert.NoError(t, c.CloseDb())
+	})
+	t.Run("ExistDatabaseShmNotWritable", func(t *testing.T) {
+		c := NewMinimalTestConfig(tmpDir)
+		require.NoError(t, fs.MkdirAll(filepath.Join(tmpDir, "ExistDatabaseShmNotWritable")))
+		c.options.DatabaseDSN = filepath.Join(tmpDir, "ExistDatabaseShmNotWritable", ".test.db")
+		c.options.DatabaseDriver = dsn.DriverSQLite3
+		require.NoError(t, fs.WriteFile(c.options.DatabaseDSN, []byte{}, fs.ModeFile))
+		require.NoError(t, fs.WriteFile(c.options.DatabaseDSN+"-shm", []byte{}, fs.ModeFile))
+		require.NoError(t, os.Chmod(c.options.DatabaseDSN+"-shm", 0555)) //nolint:gosec // G302 - remove write permissions
+
+		err := c.connectDb()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "config: database shm file from dsn not writable")
+		assert.NoError(t, c.CloseDb())
+	})
+	t.Run("ExistDatabaseWalWritable", func(t *testing.T) {
+		c := NewMinimalTestConfig(tmpDir)
+		require.NoError(t, fs.MkdirAll(filepath.Join(tmpDir, "ExistDatabaseWalWritable")))
+		c.options.DatabaseDSN = filepath.Join(tmpDir, "ExistDatabaseWalWritable", ".test.db")
+		c.options.DatabaseDriver = dsn.DriverSQLite3
+		require.NoError(t, fs.WriteFile(c.options.DatabaseDSN, []byte{}, fs.ModeFile))
+		require.NoError(t, fs.WriteFile(c.options.DatabaseDSN+"-wal", []byte{}, fs.ModeFile))
+
+		assert.NoError(t, c.connectDb())
+		assert.NoError(t, c.CloseDb())
+	})
+	t.Run("ExistDatabaseWalNotWritable", func(t *testing.T) {
+		c := NewMinimalTestConfig(tmpDir)
+		require.NoError(t, fs.MkdirAll(filepath.Join(tmpDir, "ExistDatabaseWalNotWritable")))
+		c.options.DatabaseDSN = filepath.Join(tmpDir, "ExistDatabaseWalNotWritable", ".test.db")
+		c.options.DatabaseDriver = dsn.DriverSQLite3
+		require.NoError(t, fs.WriteFile(c.options.DatabaseDSN, []byte{}, fs.ModeFile))
+		require.NoError(t, fs.WriteFile(c.options.DatabaseDSN+"-wal", []byte{}, fs.ModeFile))
+		require.NoError(t, os.Chmod(c.options.DatabaseDSN+"-wal", 0555)) //nolint:gosec // G302 - remove write permissions
+
+		err := c.connectDb()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "config: database wal file from dsn not writable")
+		assert.NoError(t, c.CloseDb())
+	})
 }
