@@ -26,6 +26,7 @@ Additional information can be found in our Developer Guide:
 package dsn
 
 import (
+	"fmt"
 	"net"
 	"net/url"
 	"path/filepath"
@@ -237,11 +238,61 @@ func (d *DSN) parse() {
 			if uri.Opaque == "" && uri.Scheme != "" {
 				// This has been recognized as a valid URI based dsn, so keep it.
 				d.Driver = uri.Scheme
-				d.Name = strings.TrimPrefix(uri.Path, "/")
-				d.Server = uri.Host
-				d.User = uri.User.Username()
-				d.Password, _ = uri.User.Password()
-				d.Params = uri.RawQuery
+				// Parse the query string
+				pq := uri.Query()
+				// Allow the parsed query string to overide the named parts
+				// removing the used parts as you go along
+
+				// Postgres dbname
+				switch {
+				case pq.Has("dbname"):
+					d.Name = pq.Get("dbname")
+					pq.Del("dbname")
+				default:
+					d.Name = strings.TrimPrefix(uri.Path, "/")
+				}
+				// MariaDB database
+				switch {
+				case pq.Has("database"):
+					d.Name = pq.Get("database")
+					pq.Del("database")
+				default:
+					d.Name = strings.TrimPrefix(uri.Path, "/")
+				}
+				switch {
+				case pq.Has("host") && pq.Has("port"):
+					if strings.HasPrefix(pq.Get("host"), "/") {
+						d.Server = fmt.Sprintf("%s.s.PGSQL.%s", pq.Get("host"), pq.Get("port"))
+					} else {
+						d.Server = fmt.Sprintf("%s:%s", pq.Get("host"), pq.Get("port"))
+					}
+					pq.Del("host")
+					pq.Del("port")
+				case pq.Has("host"):
+					d.Server = pq.Get("host")
+					pq.Del("host")
+				case pq.Has("port"):
+					h, _, _ := strings.Cut(uri.Host, ":")
+					d.Server = fmt.Sprintf("%s:%s", h, pq.Get("port"))
+					pq.Del("port")
+				default:
+					d.Server = uri.Host
+				}
+				switch {
+				case pq.Has("user"):
+					d.User = pq.Get("user")
+					pq.Del("user")
+				default:
+					d.User = uri.User.Username()
+				}
+				switch {
+				case pq.Has("password"):
+					d.Password = pq.Get("password")
+					pq.Del("password")
+				default:
+					d.Password, _ = uri.User.Password()
+				}
+				d.Params = pq.Encode()
 				d.detectDriver()
 				return
 			}
