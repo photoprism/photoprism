@@ -69,6 +69,9 @@ func ServeMCP(router *gin.RouterGroup) {
 
 	// Streamable HTTP handler with warn-level logging and an explicit
 	// CrossOriginProtection (go-sdk no longer enables it implicitly).
+	//
+	// The option is deprecated in favor of wrapping the handler, and is still honored as of
+	// go-sdk v1.7.0 - so an upgrade has to confirm the check still runs rather than assume it.
 	handler := sdkmcp.NewStreamableHTTPHandler(
 		func(r *http.Request) *sdkmcp.Server { return mcpServer },
 		&sdkmcp.StreamableHTTPOptions{

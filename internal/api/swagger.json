@@ -815,6 +815,9 @@
                 "ThumbSize": {
                     "type": "integer"
                 },
+                "ThumbSizeFace": {
+                    "type": "integer"
+                },
                 "ThumbSizeUncached": {
                     "type": "integer"
                 },
@@ -1793,9 +1796,6 @@
                 "Name": {
                     "type": "string"
                 },
-                "Q": {
-                    "type": "integer"
-                },
                 "Review": {
                     "type": "boolean"
                 },
@@ -1816,6 +1816,9 @@
                 },
                 "Thumb": {
                     "type": "string"
+                },
+                "ThumbSize": {
+                    "type": "integer"
                 },
                 "Type": {
                     "type": "string"
@@ -2299,6 +2302,9 @@
                 "Bio": {
                     "type": "string"
                 },
+                "Birthday": {
+                    "type": "string"
+                },
                 "CreatedAt": {
                     "type": "string"
                 },
@@ -2349,6 +2355,9 @@
                 },
                 "UpdatedAt": {
                     "type": "string"
+                },
+                "Verified": {
+                    "type": "boolean"
                 }
             },
             "type": "object"
@@ -3258,6 +3267,9 @@
                 "Bio": {
                     "type": "string"
                 },
+                "Birthday": {
+                    "type": "string"
+                },
                 "Excluded": {
                     "type": "boolean"
                 },
@@ -3281,6 +3293,9 @@
                 },
                 "ThumbSrc": {
                     "type": "string"
+                },
+                "Verified": {
+                    "type": "boolean"
                 }
             },
             "type": "object"
@@ -4469,6 +4484,9 @@
                 "Alias": {
                     "type": "string"
                 },
+                "Birthday": {
+                    "type": "string"
+                },
                 "Excluded": {
                     "type": "boolean"
                 },
@@ -4510,6 +4528,9 @@
                 },
                 "UID": {
                     "type": "string"
+                },
+                "Verified": {
+                    "type": "boolean"
                 }
             },
             "type": "object"
@@ -4699,7 +4720,7 @@
                     "type": "integer"
                 },
                 "seconds": {
-                    "description": "Represents seconds of UTC time since Unix epoch 1970-01-01T00:00:00Z. Must\nbe between -315576000000 and 315576000000 inclusive (which corresponds to\n0001-01-01T00:00:00Z to 9999-12-31T23:59:59Z).",
+                    "description": "Represents seconds of UTC time since Unix epoch 1970-01-01T00:00:00Z. Must\nbe between -62135596800 and 253402300799 inclusive (which corresponds to\n0001-01-01T00:00:00Z to 9999-12-31T23:59:59Z).",
                     "type": "integer"
                 }
             },
@@ -8075,6 +8096,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
@@ -9174,6 +9201,36 @@
                         "schema": {
                             "$ref": "#/definitions/entity.Marker"
                         }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
                     }
                 },
                 "tags": [
@@ -9239,6 +9296,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
@@ -9294,6 +9357,12 @@
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
@@ -12363,6 +12432,12 @@
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }

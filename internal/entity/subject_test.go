@@ -6,7 +6,9 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/event"
 
 	"github.com/photoprism/photoprism/internal/form"
@@ -265,11 +267,13 @@ func TestSubject_String(t *testing.T) {
 	t.Run("Nil", func(t *testing.T) {
 		var m *Subject
 		assert.Equal(t, "Subject<nil>", m.String())
+		//nolint:staticcheck // the point is that fmt reaches String(), which calling it cannot show.
 		assert.Equal(t, "Subject<nil>", fmt.Sprintf("%s", m))
 	})
 	t.Run("New", func(t *testing.T) {
 		m := &Subject{}
 		assert.Equal(t, "*Subject", m.String())
+		//nolint:staticcheck // the point is that fmt reaches String(), which calling it cannot show.
 		assert.Equal(t, "*Subject", fmt.Sprintf("%s", m))
 	})
 	t.Run("JohnDoe", func(t *testing.T) {
@@ -616,4 +620,465 @@ func TestSubject_DeletePermanently(t *testing.T) {
 
 	assert.NotEmpty(t, m.DeletedAt)
 	assert.Empty(t, FindSubject(m.SubjUID))
+}
+
+func TestReassignSubject(t *testing.T) {
+	t.Run("OtherPersonOwnsName", func(t *testing.T) {
+		subj := FirstOrCreateSubject(NewSubject("Reassign Lookup Source", SubjPerson, SrcManual))
+		other := FirstOrCreateSubject(NewSubject("Reassign Lookup Target", SubjPerson, SrcManual))
+
+		if subj == nil || other == nil {
+			t.Fatal("failed creating test subjects")
+		}
+
+		found := ReassignSubject(subj, "Reassign Lookup Target")
+
+		if assert.NotNil(t, found) {
+			assert.Equal(t, other.SubjUID, found.SubjUID)
+		}
+	})
+	t.Run("NameIsUnused", func(t *testing.T) {
+		subj := FirstOrCreateSubject(NewSubject("Reassign Lookup Unused", SubjPerson, SrcManual))
+
+		if subj == nil {
+			t.Fatal("failed creating test subject")
+		}
+
+		assert.Nil(t, ReassignSubject(subj, "Reassign Lookup Nobody Has This"))
+	})
+	t.Run("SamePerson", func(t *testing.T) {
+		subj := FirstOrCreateSubject(NewSubject("Reassign Lookup Self", SubjPerson, SrcManual))
+
+		if subj == nil {
+			t.Fatal("failed creating test subject")
+		}
+
+		assert.Nil(t, ReassignSubject(subj, "Reassign Lookup Self"))
+	})
+	t.Run("EmptyName", func(t *testing.T) {
+		subj := FirstOrCreateSubject(NewSubject("Reassign Lookup Empty", SubjPerson, SrcManual))
+
+		if subj == nil {
+			t.Fatal("failed creating test subject")
+		}
+
+		assert.Nil(t, ReassignSubject(subj, ""))
+		assert.Nil(t, ReassignSubject(subj, "   "))
+	})
+	t.Run("NilSubject", func(t *testing.T) {
+		assert.Nil(t, ReassignSubject(nil, "Reassign Lookup Target"))
+	})
+	t.Run("DeletedPersonOwnsName", func(t *testing.T) {
+		subj := FirstOrCreateSubject(NewSubject("Reassign Lookup Live", SubjPerson, SrcManual))
+		gone := FirstOrCreateSubject(NewSubject("Reassign Lookup Gone", SubjPerson, SrcManual))
+
+		if subj == nil || gone == nil {
+			t.Fatal("failed creating test subjects")
+		}
+
+		if err := gone.Delete(); err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Nil(t, ReassignSubject(subj, "Reassign Lookup Gone"))
+	})
+}
+
+// TestSubject_MergeWith_ClearsCollisions pins that stating two subjects are one person also
+// retracts the geometry that treating them as two produced.
+//
+// A collision narrows a cluster's accept distance and nothing else widens it again, so without
+// this the clusters stay gated against faces that the merge just established do belong to them.
+func TestSubject_MergeWith_ClearsCollisions(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		typo := NewSubject("Merge Collision Typo", SubjPerson, SrcManual)
+		require.NotNil(t, typo)
+		require.NoError(t, typo.Create())
+
+		keep := NewSubject("Merge Collision Keep", SubjPerson, SrcManual)
+		require.NotNil(t, keep)
+		require.NoError(t, keep.Create())
+
+		// One narrowed cluster per subject: the merge has to reach both, because the collision was
+		// recorded on each side of the same false premise.
+		typoFace := &Face{
+			ID: "MERGECOLLISION0000000000000000C1", SubjUID: typo.SubjUID, FaceSrc: SrcManual,
+			SampleRadius: 0.3, Samples: 4, Collisions: 1, CollisionRadius: 0.64,
+			FaceKind: int(face.AmbiguousFace),
+		}
+		keepFace := &Face{
+			ID: "MERGECOLLISION0000000000000000C2", SubjUID: keep.SubjUID, FaceSrc: SrcManual,
+			SampleRadius: 0.3, Samples: 4, Collisions: 2, CollisionRadius: 0.802,
+		}
+
+		require.NoError(t, Db().Create(typoFace).Error)
+		require.NoError(t, Db().Create(keepFace).Error)
+
+		t.Cleanup(func() {
+			UnscopedDb().Delete(&Face{}, "id IN (?)", []string{typoFace.ID, keepFace.ID})
+			UnscopedDb().Delete(&Subject{}, "subj_uid IN (?)", []string{typo.SubjUID, keep.SubjUID})
+		})
+
+		require.NoError(t, typo.MergeWith(keep))
+
+		var merged, kept Face
+
+		require.NoError(t, UnscopedDb().Where("id = ?", typoFace.ID).First(&merged).Error)
+		assert.Equal(t, keep.SubjUID, merged.SubjUID, "the cluster moves to the surviving subject")
+		assert.Zero(t, merged.Collisions)
+		assert.Zero(t, merged.CollisionRadius)
+		assert.Equal(t, int(face.RegularFace), merged.FaceKind, "and takes part in matching again")
+		assert.Nil(t, merged.MatchedAt, "so the markers it refused are compared against it again")
+
+		require.NoError(t, UnscopedDb().Where("id = ?", keepFace.ID).First(&kept).Error)
+		assert.Zero(t, kept.Collisions, "the surviving subject's own clusters are cleared too")
+		assert.Zero(t, kept.CollisionRadius)
+	})
+}
+
+// TestSubject_SaveForm_Verified covers the one path that may set the verified flag.
+//
+// The rule the column depends on is that nothing automatic writes it: a flag the matcher, the
+// clusterer or an import could raise stops meaning "a person vouched for this name".
+func TestSubject_SaveForm_Verified(t *testing.T) {
+	m := NewSubject("Verified Form Subject", SubjPerson, SrcManual)
+	require.NotNil(t, m)
+	require.NoError(t, m.Create())
+
+	t.Cleanup(func() { UnscopedDb().Delete(&Subject{}, "subj_uid = ?", m.SubjUID) })
+
+	assert.False(t, m.Verified, "a new person is not vouched for")
+
+	frm, err := form.NewSubject(m)
+	require.NoError(t, err)
+	assert.False(t, frm.Verified, "and the form round-trips that")
+
+	frm.Verified = true
+
+	changed, err := m.SaveForm(frm)
+	require.NoError(t, err)
+	assert.True(t, changed)
+
+	stored := FindSubject(m.SubjUID)
+	require.NotNil(t, stored)
+	assert.True(t, stored.Verified, "the flag has to persist, not only stick to the instance")
+
+	// And it clears again, so a wrong assertion is not permanent.
+	frm.Verified = false
+
+	_, err = m.SaveForm(frm)
+	require.NoError(t, err)
+
+	stored = FindSubject(m.SubjUID)
+	require.NotNil(t, stored)
+	assert.False(t, stored.Verified)
+}
+
+// TestSubject_MergeWith_Verified pins that the flag follows the person rather than the row.
+//
+// The survivor keeps it, or the most ordinary People action - renaming one person onto another -
+// would silently strip the protection and the next reset would delete the name. The absorbed row
+// loses it, or the tombstone becomes uncollectable: the orphan sweep skips a verified row.
+func TestSubject_MergeWith_Verified(t *testing.T) {
+	merge := func(t *testing.T, vouchedIsAbsorbed bool) (survivor, absorbed *Subject) {
+		t.Helper()
+
+		a := NewSubject("ZZ Merge Verified A", SubjPerson, SrcManual)
+		b := NewSubject("ZZ Merge Verified B", SubjPerson, SrcManual)
+		require.NotNil(t, a)
+		require.NotNil(t, b)
+
+		if vouchedIsAbsorbed {
+			a.Verified = true
+		} else {
+			b.Verified = true
+		}
+
+		require.NoError(t, a.Create())
+		require.NoError(t, b.Create())
+
+		t.Cleanup(func() {
+			UnscopedDb().Delete(&Subject{}, "subj_uid IN (?)", []string{a.SubjUID, b.SubjUID})
+		})
+
+		require.NoError(t, a.MergeWith(b))
+
+		var stored, gone Subject
+		require.NoError(t, UnscopedDb().Where("subj_uid = ?", b.SubjUID).First(&stored).Error)
+		require.NoError(t, UnscopedDb().Where("subj_uid = ?", a.SubjUID).First(&gone).Error)
+
+		return &stored, &gone
+	}
+
+	t.Run("AbsorbedWasVerified", func(t *testing.T) {
+		survivor, absorbed := merge(t, true)
+
+		assert.True(t, survivor.Verified, "the survivor inherits it, or a reset deletes the name")
+		assert.False(t, absorbed.Verified, "and the deleted row gives it up, or it can never be collected")
+	})
+	t.Run("SurvivorWasVerified", func(t *testing.T) {
+		survivor, _ := merge(t, false)
+
+		assert.True(t, survivor.Verified, "a merge does not withdraw what somebody vouched for")
+	})
+}
+
+// TestSubject_SetBirthday pins the normalization, because the column carries a time and a zone that
+// the value it stores does not have: the day is what the check reading it compares.
+func TestSubject_SetBirthday(t *testing.T) {
+	berlin, err := time.LoadLocation("Europe/Berlin")
+	require.NoError(t, err)
+
+	t.Run("Success", func(t *testing.T) {
+		m := &Subject{}
+		born := time.Date(1990, 8, 1, 0, 0, 0, 0, berlin)
+
+		changed, err := m.SetBirthday(&born)
+		require.NoError(t, err)
+		assert.True(t, changed)
+		require.NotNil(t, m.SubjBirthday)
+
+		// Local midnight in Berlin is the previous day in UTC, so a truncating conversion would
+		// store July 31 - the day the calendar date is read in decides this, not the instant.
+		assert.Equal(t, time.Date(1990, 8, 1, 0, 0, 0, 0, time.UTC), *m.SubjBirthday)
+	})
+	t.Run("Unchanged", func(t *testing.T) {
+		m := &Subject{}
+		utc := time.Date(1990, 8, 1, 0, 0, 0, 0, time.UTC)
+		local := time.Date(1990, 8, 1, 0, 0, 0, 0, berlin)
+
+		changed, err := m.SetBirthday(&utc)
+		require.NoError(t, err)
+		require.True(t, changed)
+
+		changed, err = m.SetBirthday(&local)
+		require.NoError(t, err)
+		assert.False(t, changed, "the same day in another zone is not an edit")
+	})
+	t.Run("Clear", func(t *testing.T) {
+		born := time.Date(1990, 8, 1, 0, 0, 0, 0, time.UTC)
+		m := &Subject{SubjBirthday: &born}
+
+		changed, err := m.SetBirthday(nil)
+		require.NoError(t, err)
+		assert.True(t, changed)
+		assert.Nil(t, m.SubjBirthday)
+
+		changed, err = m.SetBirthday(nil)
+		require.NoError(t, err)
+		assert.False(t, changed)
+	})
+	t.Run("Zero", func(t *testing.T) {
+		born := time.Date(1990, 8, 1, 0, 0, 0, 0, time.UTC)
+		m := &Subject{SubjBirthday: &born}
+		zero := time.Time{}
+
+		changed, err := m.SetBirthday(&zero)
+		require.NoError(t, err)
+		assert.True(t, changed)
+		assert.Nil(t, m.SubjBirthday, "a zero time is unset, not the year one")
+	})
+	t.Run("InvalidRequest", func(t *testing.T) {
+		born := time.Date(1990, 8, 1, 0, 0, 0, 0, time.UTC)
+		m := &Subject{SubjBirthday: &born}
+		future := time.Now().UTC().AddDate(0, 0, 3)
+
+		changed, err := m.SetBirthday(&future)
+		assert.Error(t, err)
+		assert.False(t, changed)
+		require.NotNil(t, m.SubjBirthday)
+		assert.Equal(t, born, *m.SubjBirthday, "a rejected value leaves the stored one alone")
+	})
+	t.Run("TooFarInThePast", func(t *testing.T) {
+		born := time.Date(1990, 8, 1, 0, 0, 0, 0, time.UTC)
+		m := &Subject{SubjBirthday: &born}
+		mistyped := time.Date(190, 8, 1, 0, 0, 0, 0, time.UTC)
+
+		changed, err := m.SetBirthday(&mistyped)
+		assert.Error(t, err)
+		assert.False(t, changed)
+		require.NotNil(t, m.SubjBirthday)
+		assert.Equal(t, born, *m.SubjBirthday)
+	})
+	t.Run("Boundary", func(t *testing.T) {
+		// Literal years, because every other case reads the constant and would follow it anywhere -
+		// while the picker's copy of it in frontend/src/model/subject.js would not.
+		assert.Equal(t, 1800, BirthYearMin)
+
+		m := &Subject{}
+		tooEarly := time.Date(1799, 12, 31, 0, 0, 0, 0, time.UTC)
+		earliest := time.Date(1800, 1, 1, 0, 0, 0, 0, time.UTC)
+
+		changed, err := m.SetBirthday(&tooEarly)
+		assert.Error(t, err)
+		assert.False(t, changed)
+
+		changed, err = m.SetBirthday(&earliest)
+		require.NoError(t, err)
+		assert.True(t, changed)
+	})
+	t.Run("OldestPlausible", func(t *testing.T) {
+		// Accepted: portrait photography starts in the 1840s, and a sitter of that decade could have
+		// been born around then - the bound exists to catch a mistyped year, not to date the medium.
+		m := &Subject{}
+		oldest := time.Date(BirthYearMin, 1, 1, 0, 0, 0, 0, time.UTC)
+
+		changed, err := m.SetBirthday(&oldest)
+		require.NoError(t, err)
+		assert.True(t, changed)
+	})
+	t.Run("Tomorrow", func(t *testing.T) {
+		// Accepted, since a date-only value read in the easternmost zones is legitimately a day
+		// ahead of UTC - the bound exists to catch a year, not an hour.
+		m := &Subject{}
+		// Whole days only: subtracting an hour lands back on today whenever the run starts before
+		// 01:00 UTC, and today's midnight is accepted with or without the headroom.
+		tomorrow := time.Now().UTC().AddDate(0, 0, 1)
+
+		changed, err := m.SetBirthday(&tomorrow)
+		require.NoError(t, err)
+		assert.True(t, changed)
+	})
+}
+
+// TestSubject_SaveForm_RejectsBeforeWriting pins that a value the form refuses is refused before
+// anything reaches the database, since a rename writes as it goes rather than at the end.
+func TestSubject_SaveForm_RejectsBeforeWriting(t *testing.T) {
+	m := NewSubject("Reject Before Writing", SubjPerson, SrcManual)
+	require.NotNil(t, m)
+	require.NoError(t, m.Create())
+
+	t.Cleanup(func() { UnscopedDb().Delete(&Subject{}, "subj_uid = ?", m.SubjUID) })
+
+	frm, err := form.NewSubject(m)
+	require.NoError(t, err)
+
+	// A rename and an impossible date in one request, which the edit dialog sends whenever the user
+	// changes both: the rename must not be committed on a request the client is told failed.
+	future := time.Now().UTC().AddDate(1, 0, 0)
+	frm.SubjName = "Renamed Before Rejecting"
+	frm.SubjBirthday = &future
+
+	_, err = m.SaveForm(frm)
+	assert.Error(t, err)
+
+	stored := FindSubject(m.SubjUID)
+	require.NotNil(t, stored)
+	assert.Equal(t, "Reject Before Writing", stored.SubjName, "the rename must not have been written")
+	assert.Equal(t, "reject-before-writing", stored.SubjSlug)
+	assert.Nil(t, stored.SubjBirthday)
+}
+
+// TestNormalizeBirthday covers the validation on its own, since SaveForm calls it before the rename
+// and applies the result after - the two halves have to be usable apart.
+func TestNormalizeBirthday(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		in := time.Date(1990, 8, 1, 23, 30, 0, 0, time.FixedZone("east", 14*60*60))
+
+		born, err := NormalizeBirthday(&in)
+		require.NoError(t, err)
+		require.NotNil(t, born)
+		assert.Equal(t, time.Date(1990, 8, 1, 0, 0, 0, 0, time.UTC), *born)
+	})
+	t.Run("Empty", func(t *testing.T) {
+		zero := time.Time{}
+
+		born, err := NormalizeBirthday(nil)
+		require.NoError(t, err)
+		assert.Nil(t, born)
+
+		born, err = NormalizeBirthday(&zero)
+		require.NoError(t, err)
+		assert.Nil(t, born)
+	})
+	t.Run("InvalidRequest", func(t *testing.T) {
+		future := time.Now().UTC().AddDate(1, 0, 0)
+		early := time.Date(1799, 12, 31, 0, 0, 0, 0, time.UTC)
+
+		for _, in := range []time.Time{future, early} {
+			born, err := NormalizeBirthday(&in)
+			assert.Nil(t, born)
+			require.Error(t, err)
+			// Wrapped, or the handler reports a value the client must correct as a server fault.
+			assert.ErrorIs(t, err, ErrInvalidValue)
+		}
+	})
+}
+
+// TestSubject_SaveForm_Merge pins what a rename onto an existing person does with the rest of the
+// form. Nothing else is applied, because the subject it was applied to no longer exists - and the
+// handler serializes the entity it was given, so a value assigned and not saved would be reported
+// back to the client as if it had been.
+func TestSubject_SaveForm_Merge(t *testing.T) {
+	a := NewSubject("ZZ Merge Form Source", SubjPerson, SrcManual)
+	b := NewSubject("ZZ Merge Form Target", SubjPerson, SrcManual)
+	require.NotNil(t, a)
+	require.NotNil(t, b)
+	require.NoError(t, a.Create())
+	require.NoError(t, b.Create())
+
+	t.Cleanup(func() {
+		UnscopedDb().Delete(&Subject{}, "subj_uid IN (?)", []string{a.SubjUID, b.SubjUID})
+	})
+
+	frm, err := form.NewSubject(a)
+	require.NoError(t, err)
+
+	born := time.Date(1990, 8, 1, 0, 0, 0, 0, time.UTC)
+	frm.SubjName = b.SubjName
+	frm.SubjBirthday = &born
+
+	changed, err := a.SaveForm(frm)
+	require.NoError(t, err)
+	assert.False(t, changed)
+
+	assert.Nil(t, a.SubjBirthday, "an unsaved value must not be left on the entity")
+
+	// The merge itself still happened, and it did not carry the date onto the survivor either.
+	stored := FindSubject(b.SubjUID)
+	require.NotNil(t, stored)
+	assert.Nil(t, stored.SubjBirthday)
+
+	merged := FindSubject(a.SubjUID)
+	require.NotNil(t, merged)
+	assert.True(t, merged.Deleted(), "the renamed person is merged away")
+}
+
+// TestSubject_SaveForm_Birthday covers the field through the database rather than the setter, since
+// the column is created by auto-migration and a map update is what writes the NULL back.
+func TestSubject_SaveForm_Birthday(t *testing.T) {
+	m := NewSubject("Birthday Form Subject", SubjPerson, SrcManual)
+	require.NotNil(t, m)
+	require.NoError(t, m.Create())
+
+	t.Cleanup(func() { UnscopedDb().Delete(&Subject{}, "subj_uid = ?", m.SubjUID) })
+
+	frm, err := form.NewSubject(m)
+	require.NoError(t, err)
+	assert.Nil(t, frm.SubjBirthday, "a new person has no date of birth")
+
+	born := time.Date(1990, 8, 1, 12, 30, 0, 0, time.UTC)
+	frm.SubjBirthday = &born
+
+	changed, err := m.SaveForm(frm)
+	require.NoError(t, err)
+	assert.True(t, changed)
+
+	stored := FindSubject(m.SubjUID)
+	require.NotNil(t, stored)
+	require.NotNil(t, stored.SubjBirthday)
+	assert.Equal(t, 1990, stored.SubjBirthday.Year())
+	assert.Equal(t, time.August, stored.SubjBirthday.Month())
+	assert.Equal(t, 1, stored.SubjBirthday.Day())
+	assert.Equal(t, 0, stored.SubjBirthday.UTC().Hour(), "the time of day is dropped on the way in")
+
+	// And it clears again, or a date entered for the wrong person would be permanent.
+	frm.SubjBirthday = nil
+
+	_, err = m.SaveForm(frm)
+	require.NoError(t, err)
+
+	stored = FindSubject(m.SubjUID)
+	require.NotNil(t, stored)
+	assert.Nil(t, stored.SubjBirthday)
 }

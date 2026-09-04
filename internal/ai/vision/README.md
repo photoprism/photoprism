@@ -1,6 +1,6 @@
 ## PhotoPrism — Vision Package
 
-**Last Updated:** August 9, 2026
+**Last Updated:** August 23, 2026
 
 ### Overview
 
@@ -9,6 +9,10 @@
 - **TensorFlow (built‑in)** — default Nasnet / NSFW / Facenet models, no remote service required. Long-running TensorFlow inference can accumulate C-allocated tensor memory until GC finalizers run, so PhotoPrism periodically triggers garbage collection to return that memory to the OS; tune with `PHOTOPRISM_TF_GC_EVERY` (default **200**, `0` disables). Lower values reduce peak RSS but increase GC overhead and can slow indexing, so keep the default unless memory pressure is severe.
 - **Ollama** — local or proxied multimodal LLMs. See [`ollama/README.md`](ollama/README.md) for tuning and schema details. The engine defaults to `${OLLAMA_BASE_URL:-http://ollama:11434}/api/generate`, trimming any trailing slash on the base URL; set `OLLAMA_BASE_URL=https://ollama.com` to opt into cloud defaults. The default model is `gemma4:latest` (self-hosted) or `minimax-m3:cloud` (cloud), and reasoning is disabled by default (`Service.Think: "false"`) so thinking-capable models do not leak reasoning into results. That flag is a correctness guard rather than a performance one — a reasoning build still generates the reasoning and bills the tokens for it, so prefer a non-reasoning tag (for example `qwen3-vl:4b-instruct` over `qwen3-vl:4b`) where one exists.
 - **OpenAI** — cloud Responses API. See [`openai/README.md`](openai/README.md) for prompts, schema variants, and header requirements.
+
+Faces are the one type this registry does not own. A `face` entry in `vision.yml` schedules nothing - `FACE_RUN` decides when detection and embedding run, and a `Run` value on that entry is read and reported as ignored - and *which* model turns a crop into a vector is settled per instance by `FACE_MODEL`, which is detected once and recorded in `options.yml`. `Model.FaceModel()` returns that embedder before it looks at the `vision.yml` entry, and `nil` when embeddings are off (`FACE_MODEL=none`), when the configured weights are missing or license-refused, or while a library the model cannot read has embedding work paused. `MigrationFaceModel()` is the one caller exempt from the last gate, because `photoprism faces migrate` is what resolves that mismatch.
+
+**A custom face model in `vision.yml` is therefore deprecated.** `FACE_MODEL` is authoritative; a custom entry is still loaded while no embedding model is active, logs a deprecation warning, and has its vectors recorded under the configured model's name rather than its own. Unlike a caption or label model, every face model needs code that knows its preprocessing contract — channel order, normalization, input geometry, alignment mode — so there is nothing useful to point at a different artifact here. The registry, thresholds, and provenance columns live in [`internal/ai/face`](../face/README.md).
 
 ### Configuration
 
@@ -23,7 +27,7 @@ The `vision.yml` file is usually kept in the `storage/config` directory (overrid
 | `Model`                 | `""`                                   | Raw identifier override; precedence: `Service.Model` → `Model` → `Name`.           |
 | `Version`               | `latest` (non-OpenAI)                  | OpenAI payloads omit version.                                                      |
 | `Engine`                | inferred from service/alias            | Aliases set formats, file scheme, resolution. Explicit `Service` values still win. |
-| `Run`                   | `auto`                                 | See Run modes table below.                                                         |
+| `Run`                   | `auto`                                 | See Run modes table below; ignored for `Type: face`, which follows `FACE_RUN`.     |
 | `Default`               | `false`                                | Keep one per type for TensorFlow fallbacks.                                        |
 | `Disabled`              | `false`                                | Registered but inactive.                                                           |
 | `Resolution`            | 224 (TensorFlow) / 720 (Ollama/OpenAI) | Thumbnail edge in px; TensorFlow models default to 224 unless you override.        |
@@ -160,7 +164,6 @@ Models:
 
   - Type: face
     Default: true
-    Run: auto
 ```
 
 #### Ollama Labels
@@ -261,7 +264,7 @@ PhotoPrism currently keeps TensorFlow models resident for the lifetime of the pr
 - If face model initialization fails with `Read less bytes than requested` (often followed by `invalid face model configuration` in `GenerateFaceEmbeddings` tests), reinstall the local FaceNet assets:
   - `rm -f /tmp/photoprism/facenet.zip`
   - `rm -rf assets/models/facenet`
-  - `make dep-tensorflow` (or `scripts/dist/download-models.sh facenet`)
+  - `make dep-models` (or `scripts/dist/download-models.sh facenet`)
   - Re-run: `go test ./internal/ai/face -run TestNet -count=1` and `go test ./internal/ai/vision -run TestGenerateFaceEmbeddings -count=1`
 
 ### Related Docs

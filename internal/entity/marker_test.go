@@ -6,12 +6,29 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/pkg/dsn"
 
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/thumb/crop"
 )
+
+func TestMarker_SameEmbeddingModel(t *testing.T) {
+	restore := face.ConfiguredModel()
+	t.Cleanup(func() {
+		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+	})
+
+	assert.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelFaceNet, Model: face.FindEmbeddingModel(face.ModelFaceNet)}))
+	assert.True(t, (&Marker{EmbedModel: face.ModelFaceNet}).SameEmbeddingModel())
+	assert.True(t, (&Marker{}).SameEmbeddingModel())
+	assert.False(t, (&Marker{EmbedModel: face.ModelSFace}).SameEmbeddingModel())
+
+	assert.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelSFace}))
+	assert.False(t, (&Marker{}).SameEmbeddingModel())
+}
 
 var testArea = crop.Area{
 	Name: "face",
@@ -56,11 +73,50 @@ func TestNewMarker(t *testing.T) {
 	assert.Equal(t, "fs6sg6bw45bnlqdw", m.FileUID)
 	assert.Equal(t, "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818-1340ce163163", m.Thumb)
 	assert.Equal(t, "ls6sg6b1wowuy3c3", m.SubjUID)
-	assert.True(t, m.MarkerReview)
-	assert.Equal(t, 59, m.Q)
 	assert.Equal(t, 29, m.Score)
 	assert.Equal(t, SrcImage, m.MarkerSrc)
 	assert.Equal(t, MarkerLabel, m.MarkerType)
+}
+
+func TestMarkerSize(t *testing.T) {
+	area := crop.NewArea("face", 0.4, 0.4, 0.1, 0.1)
+	t.Run("Landscape", func(t *testing.T) {
+		// Fit720 draws a 4:3 original at 720x540, so a tenth of the frame spans 72 px.
+		assert.Equal(t, 72, MarkerSize(area, File{FileWidth: 4000, FileHeight: 3000}))
+	})
+	t.Run("Portrait", func(t *testing.T) {
+		assert.Equal(t, 72, MarkerSize(area, File{FileWidth: 3000, FileHeight: 4000}))
+	})
+	t.Run("SmallOriginal", func(t *testing.T) {
+		// A fit thumbnail never enlarges, so a small original is detected at its own size.
+		assert.Equal(t, 64, MarkerSize(area, File{FileWidth: 640, FileHeight: 480}))
+	})
+	t.Run("UnknownDimensions", func(t *testing.T) {
+		assert.Equal(t, -1, MarkerSize(area, File{}))
+	})
+	t.Run("SubPixelArea", func(t *testing.T) {
+		// Never 0: GORM omits it on insert, so the row would read back as -1 and a second pass
+		// would see a change that did not happen.
+		tiny := crop.NewArea("face", 0.4, 0.4, 0.0001, 0.0001)
+		assert.Equal(t, 1, MarkerSize(tiny, File{FileWidth: 640, FileHeight: 480}))
+	})
+}
+
+// TestNewMarkerReview pins what "needs review" means on the score scale: a marker that exists but
+// cannot contribute to a cluster is one a person has to look at. Stated against the threshold
+// rather than a literal, because a literal is what let this drift onto the wrong scale before.
+func TestNewMarkerReview(t *testing.T) {
+	file := FileFixtures.Get("exampleFileName.jpg")
+
+	// The shared default rather than the configurable variable, which is what NewMarker reads:
+	// the review flag is stored, so it cannot follow a threshold an operator changes later.
+	below := NewMarker(file, testArea, "ls6sg6b1wowuy3c3", SrcImage, MarkerFace, 100, face.ClusterScoreThresholdDefault-1)
+	require.NotNil(t, below)
+	assert.True(t, below.MarkerReview, "a marker under the clustering bar needs review")
+
+	atBar := NewMarker(file, testArea, "ls6sg6b1wowuy3c3", SrcImage, MarkerFace, 100, face.ClusterScoreThresholdDefault)
+	require.NotNil(t, atBar)
+	assert.False(t, atBar.MarkerReview, "a marker scored above the bar does not")
 }
 
 func TestMarker_SetName(t *testing.T) {
@@ -515,9 +571,13 @@ func TestMarker_Create(t *testing.T) {
 
 func TestMarker_Embeddings(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
+		// The fixtures are generated for whichever model a run resolves to, so what the
+		// vector has to be is its width and its provenance, not a particular value.
 		m := MarkerFixtures.Get("1000003-4")
 
-		assert.Equal(t, 0.013083286379677253, m.Embeddings()[0][0])
+		require.Len(t, m.Embeddings(), 1)
+		assert.Len(t, m.Embeddings()[0], face.ExpectedDims())
+		assert.True(t, m.SameEmbeddingModel())
 	})
 	t.Run("EmptyEmbedding", func(t *testing.T) {
 		m := Marker{}
@@ -646,7 +706,7 @@ func TestMarker_GetFace(t *testing.T) {
 			EmbeddingsJSON: MarkerFixtures.Get("actress-a-1").EmbeddingsJSON,
 			SubjSrc:        SrcManual,
 			Size:           160,
-			Score:          40,
+			Score:          80,
 		}
 
 		if m.Face() == nil {
@@ -754,15 +814,150 @@ func TestMarker_String(t *testing.T) {
 	t.Run("Nil", func(t *testing.T) {
 		var m *Marker
 		assert.Equal(t, "Marker<nil>", m.String())
+		//nolint:staticcheck // the point is that fmt reaches String(), which calling it cannot show.
 		assert.Equal(t, "Marker<nil>", fmt.Sprintf("%s", m))
 	})
 	t.Run("New", func(t *testing.T) {
 		m := &Marker{}
 		assert.Equal(t, "*Marker", m.String())
+		//nolint:staticcheck // the point is that fmt reaches String(), which calling it cannot show.
 		assert.Equal(t, "*Marker", fmt.Sprintf("%s", m))
 	})
 	t.Run("Name", func(t *testing.T) {
 		m := MarkerFixtures.Pointer("1000003-4")
 		assert.Equal(t, "Jens Mander", m.String())
+	})
+}
+
+func TestMarker_SetEmbeddings(t *testing.T) {
+	t.Run("RecordsTheProducingModel", func(t *testing.T) {
+		// Provenance is what keeps two embedding spaces apart. A vector stored without it
+		// reads as legacy FaceNet and would be admitted into FaceNet clusters whatever
+		// model actually produced it.
+		m := &Marker{MarkerType: MarkerFace}
+		m.SetEmbeddings(face.Embeddings{face.RandomEmbedding()}, face.ModelSFace, face.EngineONNX)
+
+		assert.Equal(t, face.ModelSFace, m.EmbedModel)
+		assert.NotEmpty(t, m.EmbeddingsJSON)
+		assert.False(t, m.Embeddings().Empty())
+	})
+	t.Run("RecordsTheProducingDetector", func(t *testing.T) {
+		// The detector decides the landmarks and therefore the aligned crop, so a vector
+		// whose detector is unknown cannot be told apart from one a legacy set produced.
+		m := &Marker{MarkerType: MarkerFace}
+		m.SetEmbeddings(face.Embeddings{face.RandomEmbedding()}, face.ModelSFace, face.EngineONNX)
+
+		assert.Equal(t, face.EngineONNX, m.DetectModel)
+	})
+	t.Run("EmptyClearsTheModel", func(t *testing.T) {
+		// A marker whose vector was cleared must not keep claiming a model, or a later
+		// migration counts it as already done.
+		m := &Marker{MarkerType: MarkerFace, EmbedModel: face.ModelSFace, DetectModel: face.EngineONNX}
+		m.SetEmbeddings(face.Embeddings{}, face.ModelSFace, face.EngineONNX)
+
+		assert.Empty(t, m.EmbedModel)
+		assert.Empty(t, m.DetectModel)
+	})
+	t.Run("ReplacesAPreviousModel", func(t *testing.T) {
+		m := &Marker{MarkerType: MarkerFace}
+		m.SetEmbeddings(face.Embeddings{face.RandomEmbedding()}, face.ModelFaceNet, face.EngineONNX)
+		m.SetEmbeddings(face.Embeddings{face.RandomEmbedding()}, face.ModelSFace, face.EngineONNX)
+
+		assert.Equal(t, face.ModelSFace, m.EmbedModel)
+	})
+}
+
+func TestMarker_Clusterable(t *testing.T) {
+	t.Run("ClearsBothBars", func(t *testing.T) {
+		m := &Marker{Size: face.ClusterSizeThreshold, Score: 100}
+		assert.True(t, m.Clusterable())
+	})
+	t.Run("TooSmall", func(t *testing.T) {
+		m := &Marker{Size: face.ClusterSizeThreshold - 1, Score: 100}
+		assert.False(t, m.Clusterable())
+	})
+	t.Run("TooLowScoring", func(t *testing.T) {
+		m := &Marker{Size: face.ClusterSizeThreshold, Score: 0}
+		assert.False(t, m.Clusterable())
+	})
+	t.Run("ScoreBarFollowsTheDetector", func(t *testing.T) {
+		// A library holds markers from more than one detector and nothing recomputes a score, so
+		// judging one by the active detector's bar would exclude it for a calibration it was
+		// never scored against.
+		score := face.ClusterScore(face.DetectorSCRFD)
+		m := &Marker{Size: face.ClusterSizeThreshold, Score: score, DetectModel: face.DetectorSCRFD}
+
+		assert.True(t, m.Clusterable())
+		assert.Equal(t, score >= face.ClusterScore(""), (&Marker{Size: m.Size, Score: score}).Clusterable())
+	})
+	t.Run("NilMarker", func(t *testing.T) {
+		assert.False(t, (*Marker)(nil).Clusterable())
+	})
+}
+
+// TestMarker_Unmatched pins the flag a conflict has to leave behind. ClearFace stamps, which is
+// right where the matcher found no face and wrong after a cluster narrowed underneath a marker:
+// a stamped marker is in neither matching pass's set and waits for a forced run.
+func TestMarker_Unmatched(t *testing.T) {
+	m := &Marker{
+		FileUID:        "fs6sg6bw45bnlqdw",
+		MarkerType:     MarkerFace,
+		MarkerSrc:      SrcImage,
+		Size:           100,
+		Score:          100,
+		EmbedModel:     face.EmbeddingModelName(),
+		EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
+		W:              0.1,
+		H:              0.1,
+	}
+	require.NoError(t, Db().Create(m).Error)
+	t.Cleanup(func() { UnscopedDb().Delete(m) })
+
+	require.NoError(t, m.Matched())
+	require.NotNil(t, m.MatchedAt)
+
+	stored := FindMarker(m.MarkerUID)
+	require.NotNil(t, stored)
+	require.NotNil(t, stored.MatchedAt)
+
+	require.NoError(t, m.Unmatched())
+
+	assert.Nil(t, m.MatchedAt)
+
+	stored = FindMarker(m.MarkerUID)
+	require.NotNil(t, stored)
+	assert.Nil(t, stored.MatchedAt, "the column must be cleared, not only the field")
+}
+
+// TestMarker_NamesFace covers the predicate deciding whether choosing a cluster also names it.
+//
+// Narrower than "a person set this subject": an XMP name labels its own marker only, so it cannot
+// mint an identity and must not be withheld as though it could.
+func TestMarker_NamesFace(t *testing.T) {
+	t.Run("Manual", func(t *testing.T) {
+		assert.True(t, (&Marker{SubjUID: "js6sg6b1qekk9jx8", SubjSrc: SrcManual}).NamesFace())
+	})
+	t.Run("Image", func(t *testing.T) {
+		assert.True(t, (&Marker{SubjUID: "js6sg6b1qekk9jx8", SubjSrc: SrcImage}).NamesFace())
+	})
+	t.Run("Automatic", func(t *testing.T) {
+		assert.False(t, (&Marker{SubjUID: "js6sg6b1qekk9jx8", SubjSrc: SrcAuto}).NamesFace())
+	})
+	t.Run("Xmp", func(t *testing.T) {
+		// SetFace refuses to propagate it, so nothing is minted and nothing is withheld.
+		assert.False(t, (&Marker{SubjUID: "js6sg6b1qekk9jx8", SubjSrc: SrcXmp}).NamesFace())
+	})
+	t.Run("NoSubject", func(t *testing.T) {
+		assert.False(t, (&Marker{SubjSrc: SrcManual}).NamesFace())
+	})
+	t.Run("NilMarker", func(t *testing.T) {
+		assert.False(t, (*Marker)(nil).NamesFace())
+	})
+	t.Run("MatchesTheAdoptionBranch", func(t *testing.T) {
+		// The point of the method: it must not drift from what SetFace gates the adoption on.
+		for _, src := range []string{SrcAuto, SrcXmp, SrcManual, SrcImage, SrcMeta, SrcMarker} {
+			m := &Marker{SubjUID: "js6sg6b1qekk9jx8", SubjSrc: src}
+			assert.Equal(t, subjSrcSharesFace(src), m.NamesFace(), "source %q", src)
+		}
 	})
 }

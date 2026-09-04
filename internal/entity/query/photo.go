@@ -9,6 +9,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 // PhotoByID returns a Photo based on the ID.
@@ -257,4 +258,52 @@ func FlagHiddenPhotos() (err error) {
 	}
 
 	return nil
+}
+
+// photoPathMaxDates returns the maximum TakenAtLocal DATE for each PhotoPath as a map.
+// Paths whose maximum is NULL are omitted rather than mapped to a placeholder, so callers
+// skip them instead of stamping a date that was never indexed.
+func photoPathMaxDates() (photoPathDates map[string]time.Time, err error) {
+	photoPathDates = make(map[string]time.Time)
+	type pathMaxDate struct {
+		PhotoPath string
+		TakenMax  *string
+	}
+	var pathDates []pathMaxDate
+	// Get all the paths and dates.
+	if err = entity.Db().Raw(`SELECT photo_path, MAX(DATE(taken_at_local)) AS taken_max
+	 			FROM photos WHERE taken_src = 'meta' AND photos.photo_quality >= 3 AND photos.deleted_at IS NULL
+	 			GROUP BY photo_path`).Scan(&pathDates).Error; err != nil {
+		log.Errorf("photo: get photo dates (%v)", err)
+		return photoPathDates, err
+	}
+	var takenMax time.Time
+	for _, photoPath := range pathDates {
+		// Null max dates are not to be written to database.
+		if photoPath.TakenMax != nil {
+			var parseFormat string
+			switch entity.DbDialect() {
+			case dsn.DriverSQLite3:
+				parseFormat = "2006-01-02"
+			case dsn.DriverMySQL:
+				parseFormat = time.RFC3339
+			default:
+				log.Errorf("photo: dialect %s is not supported", entity.DbDialect())
+				return photoPathDates, fmt.Errorf("photo: dialect %s is not supported", entity.DbDialect())
+			}
+			// Parsed into its own error, because err is the named return: assigning to it here
+			// aborts the caller's whole date refresh on a row this loop deliberately skips.
+			parsed, parseErr := time.Parse(parseFormat, *photoPath.TakenMax)
+
+			if parseErr != nil {
+				log.Errorf("photo: get photo dates unable to parse %s (%v)", *photoPath.TakenMax, parseErr)
+				// Don't abort, as the MAX(DATE(taken_at_local)) has already forced the data into a date within Go's limitations, so this shouldn't happen.
+				continue
+			}
+
+			takenMax = parsed
+			photoPathDates[photoPath.PhotoPath] = takenMax
+		}
+	}
+	return photoPathDates, err
 }

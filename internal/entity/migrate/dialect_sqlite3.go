@@ -2,6 +2,7 @@ package migrate
 
 // Generated code, do not edit.
 
+// DialectSQLite3 lists the migrations that run on SQLite.
 var DialectSQLite3 = Migrations{
 	{
 		ID:         "20211121-094727",
@@ -146,5 +147,14 @@ var DialectSQLite3 = Migrations{
 		Dialect:    "sqlite3",
 		Stage:      "main",
 		Statements: []string{"UPDATE photos SET indexed_at = checked_at WHERE indexed_at IS NULL;"},
+	},
+	{
+		ID:      "20260828-000001",
+		Dialect: "sqlite3",
+		Stage:   "main",
+		// Clusters formed while nothing classified a face were left at the zero value, which the
+		// "face:N" search filter reads: without this the same query answers differently depending
+		// on when a library was last clustered.
+		Statements: []string{"UPDATE faces SET face_kind = 1 WHERE face_kind = 0 AND embedding_json IS NOT NULL AND LENGTH(embedding_json) > 0;"},
 	},
 }

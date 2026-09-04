@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-08-07 14:04+0000\n"
+"PO-Revision-Date: 2026-09-01 06:33+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: sl\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
-"X-Generator: Weblate 2026.8\n"
+"X-Generator: Weblate 2026.8.1\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -55,8 +55,7 @@ msgstr "%{n} GB od %{q} GB uporabljenih"
 msgid "%{n} labels found"
 msgstr "%{n} najdenih značk"
 
-#: src/page/people/new.vue:467 src/page/people/new.vue:573
-#: src/page/people/recognized.vue:721
+#: src/page/people/new.vue:249 src/page/people/recognized.vue:279
 msgid "%{n} people found"
 msgstr "%{n} najdenih oseb"
 
@@ -77,15 +76,15 @@ msgstr "%{s} je predolg"
 msgid "%{s} is too short"
 msgstr "%{s} je prekratek"
 
-#: src/locales.js:437
+#: src/locales.js:438
 msgid "%d entries added to %s"
 msgstr "%d vnosi dodani v %s"
 
-#: src/locales.js:439
+#: src/locales.js:440
 msgid "%d entries removed from %s"
 msgstr "%d vnosi odstranjeni iz %s"
 
-#: src/locales.js:461
+#: src/locales.js:462
 msgid "%d files uploaded in %d s"
 msgstr "%d datoteke, naložene v %d s"
 
@@ -93,15 +92,15 @@ msgstr "%d datoteke, naložene v %d s"
 msgid "%s already exists"
 msgstr "%s že obstaja"
 
-#: src/locales.js:471
+#: src/locales.js:472
 msgid "%s has been restored"
 msgstr "%s je bil obnovljen"
 
-#: src/options/options.js:423
+#: src/options/options.js:425
 msgid "1 hour"
 msgstr "1 ura"
 
-#: src/options/options.js:425
+#: src/options/options.js:427
 msgid "12 hours"
 msgstr "12 ur"
 
@@ -120,13 +119,17 @@ msgstr "2-faktorsko preverjanje pristnosti"
 msgid "2FA"
 msgstr "2FA"
 
-#: src/options/options.js:424
+#: src/options/options.js:426
 msgid "4 hours"
 msgstr "4 ure"
 
 #: src/component/share/dialog.vue:116
 msgid "A click will copy it to your clipboard."
 msgstr "S klikom ga boste kopirali v odložišče."
+
+#: src/locales.js:428
+msgid "A migration is in progress"
+msgstr "Poteka migracija"
 
 #: src/component/update.vue:53
 msgid "A new version of %{s} is available:"
@@ -174,12 +177,12 @@ msgid "Account"
 msgstr "Račun"
 
 #: src/component/user/add/dialog.vue:261 src/component/user/add/dialog.vue:277
-#: src/component/service/add.vue:131 src/locales.js:440
+#: src/component/service/add.vue:131 src/locales.js:441
 msgid "Account created"
 msgstr "Ustvarjen račun"
 
 #: src/component/user/remove/dialog.vue:63 src/component/service/remove.vue:74
-#: src/locales.js:442
+#: src/locales.js:443
 msgid "Account deleted"
 msgstr "Račun je izbrisan"
 
@@ -195,7 +198,7 @@ msgstr "Račun ni najden"
 msgid "Account restored"
 msgstr "Obnovljen račun"
 
-#: src/locales.js:441
+#: src/locales.js:442
 msgid "Account saved"
 msgstr "Shranjen račun"
 
@@ -262,7 +265,7 @@ msgid "Add"
 msgstr "Dodaj"
 
 #: src/component/lightbox/sidebar.vue:480
-#: src/component/photo/edit/people.vue:97
+#: src/component/photo/edit/people.vue:97 src/page/people/new.vue:198
 msgid "Add %{s}?"
 msgstr "Dodaj %{s}?"
 
@@ -352,15 +355,15 @@ msgstr "Napredno"
 msgid "Advertise URL"
 msgstr "Oglaševanje URL"
 
-#: src/options/options.js:433
+#: src/options/options.js:435
 msgid "After 1 day"
 msgstr "Po 1 dnevu"
 
-#: src/options/options.js:434
+#: src/options/options.js:436
 msgid "After 3 days"
 msgstr "Po 3 dneh"
 
-#: src/options/options.js:435
+#: src/options/options.js:437
 msgid "After 7 days"
 msgstr "Po 7 dneh"
 
@@ -368,11 +371,11 @@ msgstr "Po 7 dneh"
 msgid "After entering your password for confirmation, you can set up two-factor authentication with a compatible authenticator app or device:"
 msgstr "Ko vnesete geslo za potrditev, lahko nastavite dvostopenjsko avtentikacijo z združljivo aplikacijo ali napravo za preverjanje pristnosti:"
 
-#: src/options/options.js:437
+#: src/options/options.js:439
 msgid "After one month"
 msgstr "Po enem mesecu"
 
-#: src/options/options.js:439
+#: src/options/options.js:441
 msgid "After one year"
 msgstr "Po enem letu"
 
@@ -380,11 +383,11 @@ msgstr "Po enem letu"
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
 msgstr "Ko izberete slike iz rezultatov iskanja, jih lahko s pomočjo kontekstnega menija dodate v album."
 
-#: src/options/options.js:438
+#: src/options/options.js:440
 msgid "After two months"
 msgstr "Po dveh mesecih"
 
-#: src/options/options.js:436
+#: src/options/options.js:438
 msgid "After two weeks"
 msgstr "Po dveh tednih"
 
@@ -392,7 +395,7 @@ msgstr "Po dveh tednih"
 msgid "Album"
 msgstr "Album"
 
-#: src/locales.js:431
+#: src/locales.js:432
 msgid "Album %s deleted"
 msgstr "Album %s izbrisano"
 
@@ -400,11 +403,11 @@ msgstr "Album %s izbrisano"
 msgid "Album Backups"
 msgstr "Varnostne kopije albumov"
 
-#: src/locales.js:432
+#: src/locales.js:433
 msgid "Album contents cloned"
 msgstr "Vsebina albuma klonirana"
 
-#: src/locales.js:429 src/page/albums.vue:1194
+#: src/locales.js:430 src/page/albums.vue:1194
 msgid "Album created"
 msgstr "Ustvarjen album"
 
@@ -416,7 +419,7 @@ msgstr "Izbrisan album"
 msgid "Album not found"
 msgstr "Album ni najden"
 
-#: src/locales.js:430
+#: src/locales.js:431
 msgid "Album saved"
 msgstr "Shranjen album"
 
@@ -429,7 +432,7 @@ msgstr "Shranjen album"
 msgid "Albums"
 msgstr "Albumi"
 
-#: src/component/album/clipboard.vue:194 src/locales.js:468
+#: src/component/album/clipboard.vue:194 src/locales.js:469
 msgid "Albums deleted"
 msgstr "Izbrisani albumi"
 
@@ -445,7 +448,7 @@ msgstr "Vseh %{n} je bilo naloženih"
 msgid "All %{n} labels loaded"
 msgstr "Vseh %{n} nalepk je bilo naloženih"
 
-#: src/page/people/recognized.vue:553
+#: src/page/people/recognized.vue:577
 msgid "All %{n} people loaded"
 msgstr "Vseh %{n} oseb je bilo dodanih"
 
@@ -551,7 +554,7 @@ msgstr "AM"
 #: src/component/photo/edit/files.vue:147
 #: src/component/photo/view/cards.vue:113
 #: src/component/photo/view/cards.vue:230 src/component/photo/view/list.vue:82
-#: src/component/photo/view/mosaic.vue:68 src/options/options.js:362
+#: src/component/photo/view/mosaic.vue:68 src/options/options.js:364
 msgid "Animated"
 msgstr "Animirani"
 
@@ -658,7 +661,7 @@ msgstr "Atributi"
 #: src/app/routes.js:416 src/common/util.js:862
 #: src/component/navigation.vue:204 src/component/navigation.vue:205
 #: src/component/navigation.vue:217 src/component/navigation.vue:226
-#: src/component/navigation.vue:254 src/options/options.js:358
+#: src/component/navigation.vue:254 src/options/options.js:360
 msgid "Audio"
 msgstr "Audio"
 
@@ -734,19 +737,20 @@ msgstr "Ker se financiramo sami in smo 100-odstotno neodvisni, vam lahko obljubi
 msgid "Bio"
 msgstr "Bio"
 
-#: src/page/settings/account.vue:212 src/page/settings/account.vue:196
+#: src/page/settings/account.vue:212 src/component/people/edit/dialog.vue:39
+#: src/page/settings/account.vue:196
 msgid "Birth Date"
 msgstr "Datum rojstva"
 
-#: src/options/options.js:458
+#: src/options/options.js:460
 msgid "Black"
 msgstr "Črna"
 
-#: src/options/options.js:454
+#: src/options/options.js:456
 msgid "Blue"
 msgstr "Modra"
 
-#: src/options/options.js:455
+#: src/options/options.js:457
 msgid "Brown"
 msgstr "Rjava"
 
@@ -764,7 +768,7 @@ msgstr "Brskanje po datotekah"
 msgid "Browse Pictures"
 msgstr "Brskanje po slikah"
 
-#: src/options/options.js:464
+#: src/options/options.js:466
 msgid "Bug Report"
 msgstr "Poročilo o napaki"
 
@@ -814,9 +818,9 @@ msgstr "Ne morem naložiti več, omejitev je dosežena"
 #: src/common/clipboard.js:103 src/common/clipboard.js:139
 #: src/page/albums.vue:1204 src/page/albums.vue:1220 src/page/labels.vue:642
 #: src/page/labels.vue:662 src/page/library/browse.vue:325
-#: src/page/library/browse.vue:341 src/page/people/new.vue:395
-#: src/page/people/new.vue:411 src/page/people/recognized.vue:486
-#: src/page/people/recognized.vue:502
+#: src/page/library/browse.vue:341 src/page/people/new.vue:438
+#: src/page/people/new.vue:454 src/page/people/recognized.vue:510
+#: src/page/people/recognized.vue:526
 msgid "Can't select more items"
 msgstr "Ne morete izbrati več elementov"
 
@@ -840,7 +844,7 @@ msgstr "Ne morete izbrati več elementov"
 #: src/component/meta/face/markers.vue:54
 #: src/component/meta/face/markers.vue:73
 #: src/component/meta/location/dialog.vue:115
-#: src/component/people/edit/dialog.vue:46
+#: src/component/people/edit/dialog.vue:72
 #: src/component/photo/album/dialog.vue:64 src/component/service/add.vue:97
 #: src/component/service/edit.vue:232 src/component/service/remove.vue:19
 #: src/component/service/upload.vue:57 src/component/settings/apps.vue:151
@@ -911,7 +915,7 @@ msgstr "Sprememba zasebne zastave"
 #: src/component/album/edit/dialog.vue:171
 #: src/component/label/edit/dialog.vue:109
 #: src/component/meta/camera/dialog.vue:214
-#: src/component/people/edit/dialog.vue:112
+#: src/component/people/edit/dialog.vue:143
 #: src/component/photo/batch-edit.vue:1440
 #: src/component/photo/edit/details.vue:636 src/locales.js:376
 #: src/page/settings/account.vue:447 src/page/settings/account.vue:452
@@ -930,8 +934,8 @@ msgstr "Sprememb ni bilo mogoče shraniti"
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
-#: src/locales.js:428 src/page/albums.vue:1197
-#: src/page/people/recognized.vue:296 src/page/settings/advanced.vue:507
+#: src/locales.js:429 src/page/albums.vue:1197 src/page/people/new.vue:814
+#: src/page/people/recognized.vue:320 src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
 #: src/page/settings/general.vue:646
 msgid "Changes successfully saved"
@@ -1083,7 +1087,7 @@ msgstr "Zaupanje"
 #: src/component/settings/passcode.vue:68
 #: src/component/settings/passcode.vue:69
 #: src/component/settings/passcode.vue:78
-#: src/component/settings/passcode.vue:94
+#: src/component/settings/passcode.vue:94 src/page/people/new.vue:101
 msgid "Confirm"
 msgstr "Potrdi"
 
@@ -1162,7 +1166,7 @@ msgstr "Kopiranje v odložišče"
 msgid "Copy"
 msgstr "Kopirati"
 
-#: src/locales.js:453
+#: src/locales.js:454
 msgid "Copying files from %s"
 msgstr "Kopiranje datotek iz %s"
 
@@ -1226,7 +1230,7 @@ msgstr "Ustvarjeno"
 msgid "Creating thumbnails for"
 msgstr "Ustvarjanje sličic za"
 
-#: src/options/options.js:501
+#: src/options/options.js:503
 msgid "Current Name"
 msgstr "Trenutno ime"
 
@@ -1238,11 +1242,11 @@ msgstr "Trenutno geslo"
 msgid "Custom"
 msgstr "Po meri"
 
-#: src/options/options.js:453
+#: src/options/options.js:455
 msgid "Cyan"
 msgstr "Cyan"
 
-#: src/options/options.js:426
+#: src/options/options.js:428
 msgid "Daily"
 msgstr "Dnevno"
 
@@ -1282,8 +1286,8 @@ msgstr "Dnevniki za odpravljanje napak"
 #: src/page/admin/users.vue:374 src/common/util.js:886 src/model/session.js:42
 #: src/model/user.js:343 src/options/auth.js:40 src/options/auth.js:41
 #: src/options/auth.js:69 src/options/auth.js:70 src/options/options.js:252
-#: src/options/options.js:255 src/options/options.js:293
-#: src/options/options.js:377 src/options/themes.js:863
+#: src/options/options.js:255 src/options/options.js:295
+#: src/options/options.js:379 src/options/themes.js:863
 msgid "Default"
 msgstr "Privzeto"
 
@@ -1471,7 +1475,7 @@ msgstr "Prikazovanje naslovov slik v rezultatih iskanja."
 #: src/common/util.js:868 src/component/photo/view/cards.vue:115
 #: src/component/photo/view/cards.vue:239
 #: src/component/photo/view/mosaic.vue:70 src/model/thumb.js:247
-#: src/options/options.js:370
+#: src/options/options.js:372
 msgid "Document"
 msgstr "Dokument"
 
@@ -1685,7 +1689,7 @@ msgstr "Ocenjevanje lokacij"
 msgid "Estimate the approximate location of pictures without GPS coordinates."
 msgstr "Ocenite približno lokacijo slik brez koordinat GPS."
 
-#: src/options/options.js:427
+#: src/options/options.js:429
 msgid "Every two days"
 msgstr "Vsaka dva dni"
 
@@ -1816,7 +1820,7 @@ msgstr "Hitro"
 
 #: src/component/album/edit/dialog.vue:77
 #: src/component/label/edit/dialog.vue:37
-#: src/component/people/edit/dialog.vue:37
+#: src/component/people/edit/dialog.vue:50
 #: src/component/photo/batch-edit.vue:1536
 #: src/component/photo/edit/info.vue:121 src/component/photo/edit/info.vue:122
 msgid "Favorite"
@@ -1832,7 +1836,7 @@ msgstr "Priljubljeno"
 msgid "Feature disabled"
 msgstr "Funkcija je onemogočena"
 
-#: src/options/options.js:463
+#: src/options/options.js:465
 msgid "Feature Request"
 msgstr "Zahteva za funkcijo"
 
@@ -1840,7 +1844,7 @@ msgstr "Zahteva za funkcijo"
 msgid "Features"
 msgstr "Značilnosti"
 
-#: src/options/options.js:487
+#: src/options/options.js:489
 msgid "Female"
 msgstr "Ženske"
 
@@ -1857,13 +1861,13 @@ msgstr "Brskalnik za datoteke"
 msgid "File Conversion"
 msgstr "Pretvarjanje datotek"
 
-#: src/locales.js:434
+#: src/locales.js:435
 msgid "File deleted"
 msgstr "Izbrisana datoteka"
 
 #: src/component/photo/batch-edit.vue:606
 #: src/component/photo/batch-edit.vue:626 src/component/photo/view/list.vue:34
-#: src/options/options.js:514
+#: src/options/options.js:516
 msgid "File Name"
 msgstr "Ime datoteke"
 
@@ -1871,11 +1875,11 @@ msgstr "Ime datoteke"
 msgid "File not found"
 msgstr "Datoteka ni najdena"
 
-#: src/locales.js:433
+#: src/locales.js:434
 msgid "File removed from stack"
 msgstr "Datoteka odstranjena iz sklada"
 
-#: src/options/options.js:515
+#: src/options/options.js:517
 msgid "File Size"
 msgstr "Datoteka"
 
@@ -1883,7 +1887,7 @@ msgstr "Datoteka"
 msgid "File too large"
 msgstr "Prevelika datoteka"
 
-#: src/locales.js:460
+#: src/locales.js:461
 msgid "File uploaded"
 msgstr "Prenesena datoteka"
 
@@ -2015,15 +2019,15 @@ msgstr "Pojdi na stran {0}"
 msgid "Go to Page %{n}"
 msgstr "Pojdi na stran %{n}"
 
-#: src/options/options.js:448
+#: src/options/options.js:450
 msgid "Gold"
 msgstr "Zlato"
 
-#: src/options/options.js:451
+#: src/options/options.js:453
 msgid "Green"
 msgstr "Zelena"
 
-#: src/options/options.js:457
+#: src/options/options.js:459
 msgid "Grey"
 msgstr "Siva"
 
@@ -2053,7 +2057,7 @@ msgstr "Pomoč in podpora"
 
 #: src/component/navigation.vue:369 src/component/navigation.vue:370
 #: src/component/navigation.vue:382 src/component/navigation.vue:391
-#: src/component/navigation.vue:504 src/component/people/edit/dialog.vue:40
+#: src/component/navigation.vue:504 src/component/people/edit/dialog.vue:63
 msgid "Hidden"
 msgstr "Skriti"
 
@@ -2085,7 +2089,7 @@ msgstr "Skrij drsnik"
 msgid "Hide the permanent scrollbar shown by some desktop browsers."
 msgstr "Skrij stalni drsnik, ki ga prikazujejo nekateri namizni brskalniki."
 
-#: src/options/options.js:381
+#: src/options/options.js:383
 msgid "High"
 msgstr "Visoka"
 
@@ -2096,7 +2100,7 @@ msgstr "Visoka"
 msgid "High Dynamic Range (HDR)"
 msgstr "Visok dinamični razpon (HDR)"
 
-#: src/options/options.js:304
+#: src/options/options.js:306
 msgid "Hybrid"
 msgstr "Hibridni"
 
@@ -2106,7 +2110,7 @@ msgstr "Če izgubite dostop do aplikacije ali naprave za preverjanje pristnosti,
 
 #: src/common/util.js:854 src/common/util.js:894
 #: src/component/photo/view/cards.vue:246 src/model/file.js:199
-#: src/options/options.js:342
+#: src/options/options.js:344
 msgid "Image"
 msgstr "Slika"
 
@@ -2120,11 +2124,11 @@ msgstr "Kakovost slike"
 msgid "Import"
 msgstr "Uvoz"
 
-#: src/locales.js:446
+#: src/locales.js:447
 msgid "Import canceled"
 msgstr "Uvoz preklican"
 
-#: src/locales.js:445
+#: src/locales.js:446
 msgid "Import completed in %d s"
 msgstr "Uvoz se zaključi v %d s"
 
@@ -2186,11 +2190,11 @@ msgstr "Indeks"
 msgid "Indexing"
 msgstr "Indeksiranje"
 
-#: src/locales.js:450
+#: src/locales.js:451
 msgid "Indexing canceled"
 msgstr "Indeksiranje preklicano"
 
-#: src/locales.js:447
+#: src/locales.js:448
 msgid "Indexing completed in %d s"
 msgstr "Indeksiranje je končano v %d s"
 
@@ -2198,7 +2202,7 @@ msgstr "Indeksiranje je končano v %d s"
 msgid "Indexing failed"
 msgstr "Indeksiranje ni uspelo"
 
-#: src/locales.js:449
+#: src/locales.js:450
 msgid "Indexing files in %s"
 msgstr "Indeksiranje datotek v %s"
 
@@ -2206,7 +2210,7 @@ msgstr "Indeksiranje datotek v %s"
 msgid "Indexing media and sidecar files…"
 msgstr "Indeksiranje medijskih in stranskih datotek…"
 
-#: src/locales.js:448
+#: src/locales.js:449
 msgid "Indexing originals..."
 msgstr "Indeksiranje izvirnikov..."
 
@@ -2356,7 +2360,7 @@ msgstr "Značka"
 msgid "Label not found"
 msgstr "Oznaka ni bila najdena"
 
-#: src/locales.js:455
+#: src/locales.js:456
 msgid "Label saved"
 msgstr "Shranjena nalepka"
 
@@ -2372,7 +2376,7 @@ msgstr "Shranjena nalepka"
 msgid "Labels"
 msgstr "Značke"
 
-#: src/component/label/clipboard.vue:131 src/locales.js:454
+#: src/component/label/clipboard.vue:131 src/locales.js:455
 msgid "Labels deleted"
 msgstr "Značke izbrisane"
 
@@ -2459,7 +2463,7 @@ msgstr "Licenca"
 msgid "Like"
 msgstr "Všeč mi je"
 
-#: src/options/options.js:450
+#: src/options/options.js:452
 msgid "Lime"
 msgstr "Lime"
 
@@ -2482,7 +2486,7 @@ msgstr "Pogled na seznam"
 #: src/common/util.js:858 src/component/photo/batch-edit.vue:124
 #: src/component/photo/batch-edit.vue:65 src/component/photo/view/cards.vue:112
 #: src/component/photo/view/cards.vue:224 src/component/photo/view/list.vue:81
-#: src/component/photo/view/mosaic.vue:67 src/options/options.js:350
+#: src/component/photo/view/mosaic.vue:67 src/options/options.js:352
 msgid "Live"
 msgstr "V živo"
 
@@ -2550,11 +2554,11 @@ msgstr "Zemljepisna dolžina"
 msgid "Lost server connection"
 msgstr "Izgubljena povezava s strežnikom"
 
-#: src/options/options.js:385
+#: src/options/options.js:387
 msgid "Low"
 msgstr "Nizka"
 
-#: src/options/options.js:444
+#: src/options/options.js:446
 msgid "Magenta"
 msgstr "Magenta"
 
@@ -2565,7 +2569,7 @@ msgstr "Magenta"
 msgid "Main Color"
 msgstr "Glavna barva"
 
-#: src/options/options.js:486
+#: src/options/options.js:488
 msgid "Male"
 msgstr "Moški"
 
@@ -2676,7 +2680,7 @@ msgstr "Več možnosti"
 msgid "Mosaic"
 msgstr "Mozaik"
 
-#: src/options/options.js:518
+#: src/options/options.js:520
 msgid "Most Relevant"
 msgstr "Najpomembnejši"
 
@@ -2684,7 +2688,7 @@ msgstr "Najpomembnejši"
 msgid "Move Files"
 msgstr "Premikanje datotek"
 
-#: src/locales.js:452
+#: src/locales.js:453
 msgid "Moving files from %s"
 msgstr "Premikanje datotek iz %s"
 
@@ -2729,8 +2733,8 @@ msgid "Name too long"
 msgstr "Predolgo ime"
 
 #: src/page/admin/users.vue:261 src/page/admin/users.vue:458
-#: src/page/admin/users.vue:402 src/options/options.js:422
-#: src/options/options.js:432 src/page/services.vue:251
+#: src/page/admin/users.vue:402 src/options/options.js:424
+#: src/options/options.js:434 src/page/services.vue:251
 msgid "Never"
 msgstr "Nikoli"
 
@@ -2742,7 +2746,7 @@ msgstr "Novo"
 msgid "New Password"
 msgstr "Novo geslo"
 
-#: src/options/options.js:508 src/page/albums.vue:395
+#: src/options/options.js:510 src/page/albums.vue:395
 msgid "Newest First"
 msgstr "Najprej najnovejše"
 
@@ -2821,15 +2825,15 @@ msgid "No more"
 msgstr "Ne več"
 
 #: src/component/photo/edit/people.vue:6 src/page/people/new.vue:23
-#: src/page/people/new.vue:463 src/page/people/new.vue:569
-#: src/page/people/recognized.vue:55 src/page/people/recognized.vue:717
+#: src/page/people/new.vue:245 src/page/people/recognized.vue:275
+#: src/page/people/recognized.vue:55
 msgid "No people found"
 msgstr "Ni bilo najdenih oseb"
 
 #: src/component/photo/view/cards.vue:9 src/component/photo/view/list.vue:9
 #: src/component/photo/view/mosaic.vue:9 src/page/album/photos.vue:582
 #: src/page/library/browse.vue:31 src/page/photos.vue:720
-#: src/page/places.vue:765 src/page/places.vue:886
+#: src/page/places.vue:761 src/page/places.vue:882
 msgid "No pictures found"
 msgstr "Ni bilo najdenih slik"
 
@@ -2884,7 +2888,7 @@ msgstr "Vozlišča"
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Nefotografske slike in slike nizke kakovosti je treba pred prikazom v rezultatih iskanja pregledati."
 
-#: src/options/auth.js:52 src/options/options.js:273 src/options/options.js:389
+#: src/options/auth.js:52 src/options/options.js:273 src/options/options.js:391
 msgid "None"
 msgstr "Ni"
 
@@ -2943,7 +2947,7 @@ msgstr "Tu še ni ničesar za videti. Bodite potrpežljivi."
 msgid "Nothing was found."
 msgstr "Ničesar nismo našli."
 
-#: src/options/options.js:331
+#: src/options/options.js:333
 msgid "Offline"
 msgstr "Brez povezave"
 
@@ -2951,7 +2955,7 @@ msgstr "Brez povezave"
 msgid "OK"
 msgstr "V REDU"
 
-#: src/options/options.js:509 src/page/albums.vue:396
+#: src/options/options.js:511 src/page/albums.vue:396
 msgid "Oldest First"
 msgstr "Najprej najstarejši"
 
@@ -2964,7 +2968,7 @@ msgstr "V operacijskem sistemu Windows v pogovorno okno za povezavo vnesite nasl
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
 msgstr "Ustvarjanje sličic na zahtevo lahko povzroči veliko porabo procesorja in pomnilnika. To ni priporočljivo za strežnike in naprave NAS z omejenimi viri."
 
-#: src/options/options.js:428
+#: src/options/options.js:430
 msgid "Once a week"
 msgstr "Enkrat na teden"
 
@@ -2972,11 +2976,11 @@ msgstr "Enkrat na teden"
 msgid "One album found"
 msgstr "Najden je bil en album"
 
-#: src/locales.js:436
+#: src/locales.js:437
 msgid "One entry added to %s"
 msgstr "En vnos dodan v %s"
 
-#: src/locales.js:438
+#: src/locales.js:439
 msgid "One entry removed from %s"
 msgstr "En vnos odstranjen iz %s"
 
@@ -2992,8 +2996,7 @@ msgstr "Najdena je bila ena mapa"
 msgid "One label found"
 msgstr "Najdena je bila ena nalepka"
 
-#: src/page/people/new.vue:465 src/page/people/new.vue:571
-#: src/page/people/recognized.vue:719
+#: src/page/people/new.vue:247 src/page/people/recognized.vue:277
 msgid "One person found"
 msgstr "Ena oseba je našla"
 
@@ -3027,7 +3030,7 @@ msgstr "neobvezno"
 msgid "or"
 msgstr "ali"
 
-#: src/options/options.js:447
+#: src/options/options.js:449
 msgid "Orange"
 msgstr "Oranžna"
 
@@ -3049,14 +3052,14 @@ msgstr "Originalna imena datotek bodo shranjena in indeksirana."
 #: src/component/photo/edit/files.vue:103
 #: src/component/photo/edit/files.vue:111 src/component/photo/edit/files.vue:96
 #: src/component/photo/edit/files.vue:97 src/component/photo/edit/info.vue:44
-#: src/component/photo/edit/info.vue:45 src/options/options.js:502
+#: src/component/photo/edit/info.vue:45 src/options/options.js:504
 msgid "Original Name"
 msgstr "Izvirno ime"
 
 #: src/component/navigation.vue:362 src/component/navigation.vue:363
 #: src/component/navigation.vue:375 src/component/navigation.vue:384
 #: src/component/navigation.vue:497 src/model/file.js:180
-#: src/options/options.js:474 src/page/library/browse.vue:7
+#: src/options/options.js:476 src/page/library/browse.vue:7
 #: src/page/settings/collections.vue:42 src/page/settings/content.vue:185
 #: src/page/settings/general.vue:364
 msgid "Originals"
@@ -3066,7 +3069,7 @@ msgstr "Izvirniki"
 msgid "Originals folder is empty"
 msgstr "Mapa Originali je prazna"
 
-#: src/options/options.js:465 src/options/options.js:488
+#: src/options/options.js:467 src/options/options.js:490
 msgid "Other"
 msgstr "Drugo"
 
@@ -3075,7 +3078,7 @@ msgstr "Drugo"
 msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
 msgstr "Naše poslanstvo je zagotoviti uporabniku in zasebnosti najbolj prijazno rešitev za urejanje in dostop do vaših slik."
 
-#: src/options/options.js:316
+#: src/options/options.js:318
 msgid "Outdoor"
 msgstr "Na prostem"
 
@@ -3122,7 +3125,7 @@ msgstr "Del nekaterih izbranih fotografij"
 msgid "Password"
 msgstr "Geslo"
 
-#: src/component/settings/password.vue:162 src/locales.js:444
+#: src/component/settings/password.vue:162 src/locales.js:445
 msgid "Password changed"
 msgstr "Spremenjeno geslo"
 
@@ -3150,7 +3153,7 @@ msgid "People you share a link with will be able to view public contents."
 msgstr "Osebe, s katerimi delite povezavo, si bodo lahko ogledale javno vsebino."
 
 #: src/component/photo/clipboard.vue:303 src/component/photo/toolbar.vue:522
-#: src/locales.js:470
+#: src/locales.js:471
 msgid "Permanently deleted"
 msgstr "Trajno izbrisano"
 
@@ -3158,7 +3161,7 @@ msgstr "Trajno izbrisano"
 msgid "Permission denied"
 msgstr "Dovoljenje Zavrnjeno"
 
-#: src/model/subject.js:158
+#: src/model/subject.js:192
 msgid "Person"
 msgstr "Oseba"
 
@@ -3166,7 +3169,7 @@ msgstr "Oseba"
 msgid "Person cover updated"
 msgstr "Posodobljeno pokrivalo osebe"
 
-#: src/locales.js:459
+#: src/locales.js:460
 msgid "Person deleted"
 msgstr "Izbrisana oseba"
 
@@ -3175,7 +3178,7 @@ msgstr "Izbrisana oseba"
 msgid "Person not found"
 msgstr "Oseba ni bila najdena"
 
-#: src/locales.js:458
+#: src/locales.js:459
 msgid "Person saved"
 msgstr "Rešena oseba"
 
@@ -3204,11 +3207,11 @@ msgstr "Fotografije"
 msgid "Picture"
 msgstr "Slika"
 
-#: src/options/options.js:513
+#: src/options/options.js:515
 msgid "Picture Title"
 msgstr "Naslov slike"
 
-#: src/options/options.js:445
+#: src/options/options.js:447
 msgid "Pink"
 msgstr "Roza"
 
@@ -3354,17 +3357,18 @@ msgstr "Primarni"
 #: src/component/navigation.vue:126 src/component/navigation.vue:127
 #: src/component/navigation.vue:139 src/component/navigation.vue:148
 #: src/component/navigation.vue:156 src/component/navigation.vue:176
+#: src/component/people/edit/dialog.vue:66
 #: src/component/photo/batch-edit.vue:1537
 #: src/component/photo/edit/info.vue:129 src/component/photo/edit/info.vue:130
 #: src/page/settings/general.vue:200
 msgid "Private"
 msgstr "Zasebno"
 
-#: src/locales.js:462
+#: src/locales.js:463
 msgid "Processing upload..."
 msgstr "Obdelava nalaganja..."
 
-#: src/options/options.js:462
+#: src/options/options.js:464
 msgid "Product Feedback"
 msgstr "Povratne informacije o izdelku"
 
@@ -3375,7 +3379,7 @@ msgstr "Povratne informacije o izdelku"
 msgid "Projection"
 msgstr "Projekcija"
 
-#: src/options/options.js:443
+#: src/options/options.js:445
 msgid "Purple"
 msgstr "Vijolična"
 
@@ -3399,7 +3403,7 @@ msgstr "Naključno"
 msgid "Rating {0} of {1}"
 msgstr "Ocena {0} od {1}"
 
-#: src/common/util.js:856 src/options/options.js:346
+#: src/common/util.js:856 src/options/options.js:348
 msgid "Raw"
 msgstr "Surovo"
 
@@ -3421,15 +3425,15 @@ msgstr "Preberite območja obrazov in imena iz metapodatkov XMP, da ustvarite oz
 msgid "Read-Only Mode"
 msgstr "Način samo za branje"
 
-#: src/options/options.js:510 src/page/albums.vue:397
+#: src/options/options.js:512 src/page/albums.vue:397
 msgid "Recently Added"
 msgstr "Nedavno dodano"
 
-#: src/options/options.js:511
+#: src/options/options.js:513
 msgid "Recently Archived"
 msgstr "Nedavno arhivirano"
 
-#: src/options/options.js:512 src/page/albums.vue:398
+#: src/options/options.js:514 src/page/albums.vue:398
 msgid "Recently Edited"
 msgstr "Nedavno urejeno"
 
@@ -3446,7 +3450,7 @@ msgstr "Priznani"
 msgid "Recovery Code"
 msgstr "Koda za izterjavo"
 
-#: src/options/options.js:446
+#: src/options/options.js:448
 msgid "Red"
 msgstr "Rdeča"
 
@@ -3546,7 +3550,7 @@ msgstr "Odstranjeno"
 msgid "Removed %{name}"
 msgstr "Odstranjeno %{name}"
 
-#: src/locales.js:451
+#: src/locales.js:452
 msgid "Removed %d files and %d photos"
 msgstr "Odstranjene %d datoteke in %d fotografije"
 
@@ -3635,7 +3639,7 @@ msgstr "Obrnjeno"
 msgid "Rows per page:"
 msgstr "Vrstice na stran:"
 
-#: src/options/options.js:310
+#: src/options/options.js:312
 msgid "Satellite"
 msgstr "Satelit"
 
@@ -3675,10 +3679,10 @@ msgstr "Satelit"
 #: src/component/meta/datetime/dialog.vue:38
 #: src/component/meta/datetime/dialog.vue:39
 #: src/component/meta/datetime/dialog.vue:51
-#: src/component/people/edit/dialog.vue:30
-#: src/component/people/edit/dialog.vue:31
-#: src/component/people/edit/dialog.vue:42
-#: src/component/people/edit/dialog.vue:49
+#: src/component/people/edit/dialog.vue:40
+#: src/component/people/edit/dialog.vue:41
+#: src/component/people/edit/dialog.vue:52
+#: src/component/people/edit/dialog.vue:75
 #: src/component/photo/batch-edit.vue:483
 #: src/component/photo/edit/details.vue:396 src/component/service/edit.vue:103
 #: src/component/service/edit.vue:235 src/component/service/edit.vue:93
@@ -3794,19 +3798,19 @@ msgstr "Izberite čas"
 msgid "Selection"
 msgstr "Izbor"
 
-#: src/locales.js:435
+#: src/locales.js:436
 msgid "Selection added to %s"
 msgstr "Izbor dodan v %s"
 
-#: src/component/photo/clipboard.vue:251 src/locales.js:464
+#: src/component/photo/clipboard.vue:251 src/locales.js:465
 msgid "Selection approved"
 msgstr "Odobren izbor"
 
-#: src/component/photo/clipboard.vue:282 src/locales.js:465
+#: src/component/photo/clipboard.vue:282 src/locales.js:466
 msgid "Selection archived"
 msgstr "Arhiviran izbor"
 
-#: src/locales.js:467
+#: src/locales.js:468
 msgid "Selection marked as private"
 msgstr "Izbor označen kot zasebni"
 
@@ -3814,7 +3818,7 @@ msgstr "Izbor označen kot zasebni"
 msgid "Selection not found"
 msgstr "Izbor ni najden"
 
-#: src/component/photo/clipboard.vue:318 src/locales.js:466
+#: src/component/photo/clipboard.vue:318 src/locales.js:467
 msgid "Selection restored"
 msgstr "Obnovljen izbor"
 
@@ -3873,7 +3877,7 @@ msgid "Settings"
 msgstr "Nastavitve"
 
 #: src/page/settings/account.vue:533 src/page/settings/account.vue:562
-#: src/component/settings/passcode.vue:366 src/locales.js:443
+#: src/component/settings/passcode.vue:366 src/locales.js:444
 #: src/page/settings/account.vue:441 src/page/settings/account.vue:470
 msgid "Settings saved"
 msgstr "Shranjene nastavitve"
@@ -3900,7 +3904,7 @@ msgstr "Delite"
 msgid "Share %{s}"
 msgstr "Skupna raba %{s}"
 
-#: src/options/options.js:503
+#: src/options/options.js:505
 msgid "Share Friendly"
 msgstr "Delite z drugimi"
 
@@ -4144,7 +4148,7 @@ msgstr "Prenehaj z metanjem"
 msgid "Storage"
 msgstr "Shranjevanje"
 
-#: src/options/options.js:298
+#: src/options/options.js:300
 msgid "Streets"
 msgstr "Ulice"
 
@@ -4156,7 +4160,7 @@ msgstr "Ulice"
 msgid "Subject"
 msgstr "Zadeva"
 
-#: src/locales.js:457
+#: src/locales.js:458
 msgid "Subject deleted"
 msgstr "Predmet izbrisanih"
 
@@ -4164,11 +4168,11 @@ msgstr "Predmet izbrisanih"
 msgid "Subject not found"
 msgstr "Zadeva ni bila najdena"
 
-#: src/locales.js:456
+#: src/locales.js:457
 msgid "Subject saved"
 msgstr "Zadeva je shranjena"
 
-#: src/component/settings/passcode.vue:351 src/locales.js:473
+#: src/component/settings/passcode.vue:351 src/locales.js:474
 msgid "Successfully activated"
 msgstr "Uspešno aktiviran"
 
@@ -4181,7 +4185,7 @@ msgstr "Uspešno povezano"
 msgid "Successfully deleted"
 msgstr "Uspešno izbrisan"
 
-#: src/component/settings/passcode.vue:323 src/locales.js:472
+#: src/component/settings/passcode.vue:323 src/locales.js:473
 msgid "Successfully verified"
 msgstr "Uspešno preverjeno"
 
@@ -4213,11 +4217,11 @@ msgstr "Sinhronizacija neobdelanih in video datotek"
 msgid "Taken"
 msgstr "Prevzeto"
 
-#: src/options/options.js:452
+#: src/options/options.js:454
 msgid "Teal"
 msgstr "Teal"
 
-#: src/options/options.js:322
+#: src/options/options.js:324
 msgid "Terrain"
 msgstr "Teren"
 
@@ -4537,7 +4541,7 @@ msgstr "Nalaganje je končano. Indeksiranje…"
 msgid "Upload failed"
 msgstr "Nalaganje ni uspelo"
 
-#: src/locales.js:463
+#: src/locales.js:464
 msgid "Upload has been processed"
 msgstr "Prenos je bil obdelan"
 
@@ -4647,7 +4651,7 @@ msgstr "UUID"
 
 #: src/common/util.js:866 src/component/photo/view/cards.vue:114
 #: src/component/photo/view/cards.vue:239
-#: src/component/photo/view/mosaic.vue:69 src/options/options.js:366
+#: src/component/photo/view/mosaic.vue:69 src/options/options.js:368
 msgid "Vector"
 msgstr "Vektor"
 
@@ -4662,6 +4666,10 @@ msgstr "Vektorji"
 msgid "Verification Code"
 msgstr "Koda za preverjanje"
 
+#: src/component/people/edit/dialog.vue:56
+msgid "Verified"
+msgstr "Preverjeno"
+
 #: src/locales.js:427
 msgid "Verified email required"
 msgstr "Zahtevan je potrjen e-poštni naslov"
@@ -4674,11 +4682,11 @@ msgstr "Različica"
 #: src/component/photo/batch-edit.vue:69 src/component/photo/view/cards.vue:122
 #: src/component/photo/view/cards.vue:220 src/component/photo/view/list.vue:83
 #: src/component/photo/view/mosaic.vue:77 src/model/file.js:202
-#: src/model/photo.js:1015 src/model/photo.js:997 src/options/options.js:354
+#: src/model/photo.js:1015 src/model/photo.js:997 src/options/options.js:356
 msgid "Video"
 msgstr "Videoposnetek"
 
-#: src/options/options.js:516
+#: src/options/options.js:518
 msgid "Video Duration"
 msgstr "Trajanje"
 
@@ -4711,7 +4719,7 @@ msgstr "Vizija"
 msgid "Visitor"
 msgstr "Obiskovalec"
 
-#: src/options/options.js:517
+#: src/options/options.js:519
 msgid "Visual Similarity"
 msgstr "Skupine po podobnosti"
 
@@ -4732,7 +4740,7 @@ msgstr "Spletna prijava"
 #: src/page/admin/users.vue:188 src/component/cluster/node/user-edit.vue:232
 #: src/component/user/add/dialog.vue:148 src/component/user/edit/dialog.vue:298
 #: src/page/admin/users.vue:280 src/options/auth.js:85 src/options/auth.js:98
-#: src/options/options.js:498
+#: src/options/options.js:500
 msgid "WebDAV"
 msgstr "WebDAV"
 
@@ -4748,7 +4756,7 @@ msgstr "Odjemalci WebDAV, kot sta Microsoftov Windows Explorer ali Applov Finder
 msgid "WebDAV Upload"
 msgstr "Nalaganje prek protokola WebDAV"
 
-#: src/page/places.vue:445
+#: src/page/places.vue:441
 msgid "WebGL support is disabled in your browser"
 msgstr "Podpora WebGL je v vašem brskalniku onemogočena"
 
@@ -4757,7 +4765,7 @@ msgstr "Podpora WebGL je v vašem brskalniku onemogočena"
 msgid "Website"
 msgstr "Spletna stran"
 
-#: src/options/options.js:456
+#: src/options/options.js:458
 msgid "White"
 msgstr "Bela"
 
@@ -4772,7 +4780,7 @@ msgstr "Podrobnosti"
 msgid "Year"
 msgstr "Leto"
 
-#: src/options/options.js:449
+#: src/options/options.js:451
 msgid "Yellow"
 msgstr "Rumena"
 
@@ -4852,7 +4860,7 @@ msgstr "Vašega računa ni bilo mogoče povezati"
 msgid "Your account has been successfully connected."
 msgstr "Vaš račun je bil uspešno povezan."
 
-#: src/page/places.vue:449
+#: src/page/places.vue:445
 msgid "Your browser does not support WebGL"
 msgstr "Vaš brskalnik ne podpira WebGL"
 
@@ -4866,7 +4874,7 @@ msgstr "Vaša stalna podpora nam pomaga zagotavljati redne posodobitve in ostati
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "Vaša knjižnica se nenehno analizira in samodejno ustvarja albume posebnih trenutkov, potovanj in krajev."
 
-#: src/locales.js:469
+#: src/locales.js:470
 msgid "Zip created in %d s"
 msgstr "Zip, ustvarjen v %d s"
 
@@ -4924,6 +4932,12 @@ msgstr "Naslov"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Arhiv"
+
+#~ msgid "Create"
+#~ msgstr "Ustvari"
+
+#~ msgid "Create a new person named %{name}?"
+#~ msgstr "Ali želite ustvariti novo osebo z imenom %{name}?"
 
 #~ msgid "%{n} files uploaded"
 #~ msgstr "%{n} naloženih datotek"
@@ -5408,9 +5422,6 @@ msgstr "Arhiv"
 
 #~ msgid "Why are some features only available to sponsors?"
 #~ msgstr "Zakaj so nekatere funkcije na voljo samo sponzorjem?"
-
-#~ msgid "Verified"
-#~ msgstr "Preverjeno"
 
 #~ msgid "Proceed"
 #~ msgstr "Nadaljuj"

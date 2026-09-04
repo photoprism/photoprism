@@ -1,13 +1,17 @@
 package vision
 
 import (
+	"bytes"
 	"os"
 	"path/filepath"
 	"sync"
 	"testing"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/tensorflow"
 	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
 	"github.com/photoprism/photoprism/internal/ai/vision/openai"
@@ -493,6 +497,75 @@ func TestModel_IsDefault(t *testing.T) {
 	}
 }
 
+func TestModel_FaceModel(t *testing.T) {
+	restore := face.ConfiguredModel()
+
+	t.Cleanup(func() {
+		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
+	})
+
+	t.Run("EmbeddingsDisabled", func(t *testing.T) {
+		// FACE_MODEL=none must win over the model configured in vision.yml, otherwise
+		// the TensorFlow fallback keeps generating embeddings that were turned off.
+		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelNone}))
+		assert.Nil(t, (&Model{Name: "facenet", Type: ModelTypeFace}).FaceModel())
+	})
+	t.Run("EmbeddingsBlocked", func(t *testing.T) {
+		// A library the configured model cannot read is migrated rather than added to, so
+		// nothing generates embeddings until it is.
+		t.Cleanup(face.UnblockEmbeddings)
+		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
+			Name:  face.ModelFaceNet,
+			Model: face.FindEmbeddingModel(face.ModelFaceNet),
+		}))
+		face.BlockEmbeddings("12 marker(s) use sface, but this instance is configured for facenet")
+
+		assert.Nil(t, (&Model{Name: "facenet", Type: ModelTypeFace}).FaceModel())
+	})
+	t.Run("ActiveEmbedder", func(t *testing.T) {
+		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
+			Name:  face.ModelFaceNet,
+			Model: face.FindEmbeddingModel(face.ModelFaceNet),
+		}))
+
+		embedder := &stubEmbedder{dims: 128}
+		prev := face.UseEmbedder(embedder)
+
+		t.Cleanup(func() { face.UseEmbedder(prev) })
+
+		assert.Equal(t, embedder, (&Model{Name: "facenet", Type: ModelTypeFace}).FaceModel())
+	})
+	t.Run("CustomModelDeprecated", func(t *testing.T) {
+		// FACE_MODEL decides which model produces embeddings, so a custom face entry has
+		// to say it is on the way out rather than look like a supported way to configure
+		// one. Selecting it is what the operator would otherwise never be told about.
+		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
+			Name:  face.ModelFaceNet,
+			Model: face.FindEmbeddingModel(face.ModelFaceNet),
+		}))
+
+		prev := face.UseEmbedder(nil)
+		t.Cleanup(func() { face.UseEmbedder(prev) })
+
+		logger, ok := log.(*logrus.Logger)
+		require.True(t, ok)
+
+		originalOutput := logger.Out
+		buffer := &bytes.Buffer{}
+		logger.SetOutput(buffer)
+		t.Cleanup(func() { logger.SetOutput(originalOutput) })
+
+		(&Model{Name: "custom-face-net", Type: ModelTypeFace}).FaceModel()
+
+		assert.Contains(t, buffer.String(), "custom-face-net")
+		assert.Contains(t, buffer.String(), "deprecated")
+		assert.Contains(t, buffer.String(), "FACE_MODEL")
+	})
+	t.Run("NilModel", func(t *testing.T) {
+		assert.Nil(t, (*Model)(nil).FaceModel())
+	})
+}
+
 func TestModel_IsCloud(t *testing.T) {
 	cases := []struct {
 		name  string
@@ -520,4 +593,26 @@ func TestModel_IsCloud(t *testing.T) {
 			assert.Equal(t, tc.want, tc.model.IsCloud())
 		})
 	}
+}
+
+func TestModel_MigrationFaceModel(t *testing.T) {
+	t.Run("IgnoresTheBlock", func(t *testing.T) {
+		// A migration writes every vector in its own target's space, so the gate against
+		// mixing spaces would only stop the work that resolves the mismatch.
+		t.Cleanup(face.UnblockEmbeddings)
+
+		embedder := &stubEmbedder{dims: 128}
+		prev := face.UseEmbedder(embedder)
+		t.Cleanup(func() { face.UseEmbedder(prev) })
+
+		face.BlockEmbeddings("12 marker(s) use sface, but this instance is configured for facenet")
+
+		m := &Model{Name: "facenet", Type: ModelTypeFace}
+
+		assert.Nil(t, m.FaceModel())
+		assert.Equal(t, embedder, m.MigrationFaceModel())
+	})
+	t.Run("NilModel", func(t *testing.T) {
+		assert.Nil(t, (*Model)(nil).MigrationFaceModel())
+	})
 }

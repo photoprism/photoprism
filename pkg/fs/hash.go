@@ -2,6 +2,7 @@ package fs
 
 import (
 	"crypto/sha1" //nolint:gosec // SHA1 retained for legacy hash compatibility
+	"crypto/sha256"
 	"encoding/hex"
 	"hash/crc32"
 	"io"
@@ -25,6 +26,34 @@ func Hash(fileName string) string {
 	}()
 
 	hash := sha1.New() //nolint:gosec // legacy SHA1 hashes retained for compatibility
+
+	buf := getCopyBuffer()
+	defer putCopyBuffer(buf)
+
+	if _, err = io.CopyBuffer(hash, file, buf); err != nil {
+		return ""
+	}
+
+	return hex.EncodeToString(hash.Sum(result))
+}
+
+// Sha256 returns the SHA256 hash of a file as string, or an empty string if it
+// cannot be read. It identifies model weights and other artifacts whose publisher
+// states a SHA256, so the value can be compared without re-encoding it.
+func Sha256(fileName string) string {
+	var result []byte
+
+	file, err := os.Open(fileName) //nolint:gosec // caller-controlled path; intended file read
+
+	if err != nil {
+		return ""
+	}
+
+	defer func() {
+		_ = file.Close()
+	}()
+
+	hash := sha256.New()
 
 	buf := getCopyBuffer()
 	defer putCopyBuffer(buf)

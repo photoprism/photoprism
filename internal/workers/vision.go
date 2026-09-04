@@ -96,6 +96,17 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 		}
 	}()
 
+	// A face migration runs from another process and rewrites every marker vector, so generating
+	// embeddings alongside it would write them in the model it is migrating away from.
+	if held := w.conf.FacesLocked(); held != "" {
+		log.Infof("vision: waiting for the %s to complete", held)
+		return nil
+	}
+
+	// Once it has completed, its target is in "options.yml" and not in this process, so embeddings
+	// stay paused rather than being generated in the model the migration moved away from.
+	w.conf.CheckFaceModelSuperseded()
+
 	if err = mutex.VisionWorker.Start(); err != nil {
 		return err
 	}

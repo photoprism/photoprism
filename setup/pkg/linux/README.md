@@ -74,7 +74,7 @@ If you have used a *.deb* package for installation, you may need to remove the c
 
 ### Dependencies
 
-PhotoPrism packages bundle TensorFlow 2.18.0 and ONNX Runtime 1.28.0 as described in [`ai/face/README.md`](https://github.com/photoprism/photoprism/blob/develop/internal/ai/face/README.md). The shared libraries for both frameworks are shipped inside `/opt/photoprism/lib`, so no additional system packages are needed to switch `PHOTOPRISM_FACE_ENGINE` to `onnx`. The binaries still rely on glibc ≥ 2.35 and the standard C/C++ runtime libraries (`libstdc++6`, `libgcc_s1`, `libgomp1`, …) provided by your distribution.
+PhotoPrism packages bundle TensorFlow and ONNX Runtime; the versions are pinned by `scripts/dist/install-tensorflow.sh` and `scripts/dist/install-onnx.sh`. The shared libraries for both frameworks are shipped inside `/opt/photoprism/lib`, so no additional system packages are needed to run the ONNX face detector and embedding models. The binaries still rely on glibc ≥ 2.35 and the standard C/C++ runtime libraries (`libstdc++6`, `libgcc_s1`, `libgomp1`, …) provided by your distribution.
 
 #### Required Runtime Packages
 

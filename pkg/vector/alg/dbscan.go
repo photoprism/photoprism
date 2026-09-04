@@ -36,9 +36,6 @@ type dbscanClusterer struct {
 	// current point
 	p []float64
 
-	// visited points
-	v []bool
-
 	// dataset
 	d [][]float64
 
@@ -99,8 +96,8 @@ func (c *dbscanClusterer) WithOnline(o Online) HardClusterer {
 }
 
 func (c *dbscanClusterer) Learn(data [][]float64) error {
-	if len(data) == 0 {
-		return errEmptySet
+	if _, err := dataDims(data); err != nil {
+		return err
 	}
 
 	c.mu.Lock()
@@ -110,8 +107,6 @@ func (c *dbscanClusterer) Learn(data [][]float64) error {
 	c.f = partitionSize(c.l, c.s)
 
 	c.d = data
-
-	c.v = make([]bool, c.l)
 
 	c.a = make([]int, c.l)
 	c.b = make([]int, 0)
@@ -123,7 +118,6 @@ func (c *dbscanClusterer) Learn(data [][]float64) error {
 
 	c.endNearestWorkers()
 
-	c.v = nil
 	c.p = nil
 	c.r = nil
 
@@ -147,6 +141,12 @@ func (c *dbscanClusterer) Guesses() []int {
 }
 
 func (c *dbscanClusterer) Predict(p []float64) int {
+	// Without training data, or for an observation of a different width, there is no
+	// cluster to assign, which this algorithm already labels as noise.
+	if len(c.d) == 0 || len(p) != len(c.d[0]) {
+		return -1
+	}
+
 	var (
 		l int
 		d float64
@@ -167,54 +167,108 @@ func (c *dbscanClusterer) Online(observations chan []float64, done chan struct{}
 	return nil
 }
 
-// private
+// run assigns every point to a cluster or to noise.
+//
+// Clusters are the connected components of the core points, so which points share one depends on the
+// point set rather than on the order it arrives in. Every other point is attached afterwards, and
+// only where the cores around it agree on a single cluster: one that two clusters can both reach
+// stays noise rather than joining whichever was walked first.
 func (c *dbscanClusterer) run() {
+	core := c.coreFlags()
+
+	// The cluster a non-core point may join: 0 while none has been seen, -1 once two have.
+	border := make([]int, c.l)
+
 	var (
-		n, m, l, k = 1, 0, 0, 0
-		ns, nss    = make([]int, 0), make([]int, 0)
+		n     = 1
+		l     int
+		ns    = make([]int, 0)
+		queue = make([]int, 0)
 	)
 
 	for i := 0; i < c.l; i++ {
-		c.logProgress(i)
+		// The second half of one scale shared with coreFlags, so the two passes report a progress
+		// that only ever rises. Reporting each pass against c.l would restart the count midway.
+		c.logProgress((c.l + i) / 2)
 
-		if c.v[i] {
+		if !core[i] || c.a[i] != 0 {
 			continue
 		}
 
-		c.v[i] = true
+		c.a[i] = n
+		c.b = append(c.b, 1)
 
-		c.nearest(i, &l, &ns)
+		queue = append(queue[:0], i)
 
-		if l < c.minpts {
-			c.a[i] = -1
-		} else {
-			c.a[i] = n
+		for len(queue) > 0 {
+			p := queue[len(queue)-1]
+			queue = queue[:len(queue)-1]
 
-			c.b = append(c.b, 0)
-			c.b[m]++
+			c.nearest(p, &l, &ns)
 
 			for j := 0; j < l; j++ {
-				if !c.v[ns[j]] {
-					c.v[ns[j]] = true
+				q := ns[j]
 
-					c.nearest(ns[j], &k, &nss)
-
-					if k >= c.minpts {
-						l += k
-						ns = append(ns, nss...)
+				// Only a core extends a cluster, so a point attached below never widens the reach.
+				if core[q] {
+					if c.a[q] == 0 {
+						c.a[q] = n
+						c.b[n-1]++
+						queue = append(queue, q)
 					}
+
+					continue
 				}
 
-				if c.a[ns[j]] == 0 {
-					c.a[ns[j]] = n
-					c.b[m]++
+				// Recorded from the core's side, which is the same set of pairs a symmetric distance
+				// would report from the other. An asymmetric DistFunc would make the two differ.
+				switch border[q] {
+				case 0:
+					border[q] = n
+				case n, -1:
+				default:
+					border[q] = -1
 				}
 			}
+		}
 
-			n++
-			m++
+		n++
+	}
+
+	for i := 0; i < c.l; i++ {
+		if core[i] {
+			continue
+		}
+
+		if b := border[i]; b > 0 {
+			c.a[i] = b
+			c.b[b-1]++
+		} else {
+			c.a[i] = -1
 		}
 	}
+}
+
+// coreFlags reports which points hold at least minpts neighbors within eps, the only ones that may
+// form a cluster or extend one.
+//
+// This is a full neighbor scan, so it costs about as much as the pass that follows it.
+func (c *dbscanClusterer) coreFlags() []bool {
+	var (
+		l  int
+		ns = make([]int, 0)
+	)
+
+	core := make([]bool, c.l)
+
+	for i := 0; i < c.l; i++ {
+		c.logProgress(i / 2)
+		c.nearest(i, &l, &ns)
+
+		core[i] = l >= c.minpts
+	}
+
+	return core
 }
 
 // logProgress emits an optional progress update when the reporting interval has elapsed.

@@ -19,6 +19,7 @@ const (
 	LinkPrefix = "link"
 )
 
+// Links represents a list of share links.
 type Links []Link
 
 // Link represents a link to share content.
@@ -81,7 +82,7 @@ func NewUserLink(shareUid, userUid string) Link {
 
 // Redeem increases the number of link visitors by one.
 func (m *Link) Redeem() *Link {
-	m.LinkViews += 1
+	m.LinkViews++
 
 	if err := Db().Model(m).UpdateColumn("link_views", gorm.Expr("link_views + 1")).Error; err != nil {
 		event.AuditWarn([]string{"link %s", "update views", status.Error(err)}, clean.Log(m.RefID))

@@ -893,11 +893,36 @@ var AlbumFixtures = AlbumMap{
 		UpdatedAt:        time.Date(2025, 2, 1, 0, 0, 0, 0, time.UTC),
 		DeletedAt:        nil,
 	},
+	"cows": {
+		ID:               1000035,
+		AlbumUID:         "as6sg6bipotaajfa",
+		AlbumSlug:        "cows",
+		AlbumPath:        "",
+		AlbumType:        AlbumMoment,
+		AlbumTitle:       "Cows",
+		AlbumFilter:      "public:true label:cow",
+		AlbumLocation:    "",
+		AlbumCategory:    "",
+		AlbumCaption:     "",
+		AlbumDescription: "",
+		AlbumNotes:       "",
+		AlbumOrder:       "name",
+		AlbumTemplate:    "",
+		AlbumCountry:     "zz",
+		AlbumYear:        0,
+		AlbumMonth:       0,
+		AlbumDay:         0,
+		AlbumFavorite:    false,
+		AlbumPrivate:     false,
+		CreatedAt:        time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
+		UpdatedAt:        time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC),
+		DeletedAt:        nil,
+	},
 }
 
 // CreateAlbumFixtures inserts known entities into the database for testing.
 func CreateAlbumFixtures() {
 	for _, entity := range AlbumFixtures {
-		Db().Create(&entity)
+		fixtureDb().Create(&entity)
 	}
 }

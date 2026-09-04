@@ -1,7 +1,6 @@
 package face
 
 import (
-	"errors"
 	"fmt"
 	"image"
 	"image/draw"
@@ -11,12 +10,13 @@ import (
 	"path/filepath"
 	"runtime"
 	"sort"
-	"strings"
 	"sync"
 
 	onnxruntime "github.com/yalue/onnxruntime_go"
 	xdraw "golang.org/x/image/draw"
 
+	"github.com/photoprism/photoprism/internal/ai/onnx"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -30,14 +30,37 @@ type ONNXOptions struct {
 }
 
 const (
-	// DefaultONNXModelFilename is the bundled ONNX model name used when none is provided.
-	DefaultONNXModelFilename  = "scrfd.onnx"
 	onnxDefaultScoreThreshold = 0.50
 	onnxDefaultNMSThreshold   = 0.40
-	onnxDefaultInputSize      = 640
-	onnxInputMean             = 127.5
-	onnxInputStd              = 128.0
+
+	// maxDetectorInputSize bounds the input geometry a detector graph may declare. The
+	// detector runs on a thumbnail and the blob is sized from these values, so an axis
+	// beyond this describes a graph that cannot be run rather than a wider export.
+	maxDetectorInputSize = 4096
 )
+
+// detectorInputSize returns the geometry to run the specified detector at, given what its
+// graph declares. A dynamic axis reports zero and falls back to the registered size; an axis
+// larger than a detector input can be is refused, because the blob is sized from it.
+func detectorInputSize(detector *Detector, graphWidth, graphHeight int) (width, height int, err error) {
+	defaultWidth, defaultHeight := detector.ONNX.InputSize()
+
+	width, height = graphWidth, graphHeight
+
+	if width < 1 {
+		width = defaultWidth
+	}
+
+	if height < 1 {
+		height = defaultHeight
+	}
+
+	if width > maxDetectorInputSize || height > maxDetectorInputSize {
+		return 0, 0, fmt.Errorf("faces: detector input %dx%d exceeds %d", width, height, maxDetectorInputSize)
+	}
+
+	return width, height, nil
+}
 
 // anchorCacheKey uniquely identifies cached anchor center grids.
 type anchorCacheKey struct {
@@ -54,92 +77,20 @@ type onnxEngine struct {
 	outputNames    []string
 	inputWidth     int
 	inputHeight    int
+	colorOrder     onnx.ColorOrder
+	mean           [onnx.Channels]float32
+	scales         [onnx.Channels]float32
 	featStrides    []int
 	numAnchors     int
 	batched        bool
+	useKps         bool
+	decode         DecodeKind
+	detector       DetectorName
 	scoreThreshold float32
 	nmsThreshold   float32
+	sessionMu      sync.Mutex
 	centerMu       sync.Mutex
 	centerCache    map[anchorCacheKey][]float32
-}
-
-var (
-	onnxOnce          sync.Once
-	onnxInitErr       error
-	onnxExecutableVar = os.Executable
-)
-
-// ensureONNXRuntime loads the ONNX runtime shared library and initializes the global environment.
-func ensureONNXRuntime(libraryPath string) error {
-	onnxOnce.Do(func() {
-		candidates := onnxSharedLibraryCandidates(libraryPath)
-		var errs []string
-
-		for _, candidate := range candidates {
-			onnxruntime.SetSharedLibraryPath(candidate)
-
-			if err := onnxruntime.InitializeEnvironment(); err != nil {
-				// Collect errors so we can surface meaningful diagnostics when all options fail.
-				errs = append(errs, fmt.Sprintf("%s (%v)", candidate, err))
-				continue
-			}
-
-			// Successfully initialized; stop retrying.
-			onnxInitErr = nil
-			return
-		}
-
-		if len(errs) == 0 {
-			onnxInitErr = errors.New("faces: no ONNX runtime library candidates")
-			return
-		}
-
-		onnxInitErr = fmt.Errorf("faces: failed to load ONNX runtime: %s", strings.Join(errs, "; "))
-	})
-
-	return onnxInitErr
-}
-
-// onnxSharedLibraryCandidates lists library paths to try when loading the ONNX runtime.
-func onnxSharedLibraryCandidates(explicit string) []string {
-	appendUnique := func(list []string, seen map[string]struct{}, values ...string) []string {
-		for _, value := range values {
-			if value == "" {
-				continue
-			}
-			if _, ok := seen[value]; ok {
-				continue
-			}
-			list = append(list, value)
-			seen[value] = struct{}{}
-		}
-		return list
-	}
-
-	seen := make(map[string]struct{})
-	candidates := make([]string, 0, 8)
-	candidates = appendUnique(candidates, seen, explicit)
-	candidates = appendUnique(candidates, seen,
-		"libonnxruntime.so",
-		"libonnxruntime.so.1",
-		"onnxruntime.so",
-	)
-
-	if exePath, err := onnxExecutableVar(); err == nil {
-		exeDir := filepath.Dir(exePath)
-		rootDir := filepath.Dir(exeDir)
-
-		candidates = appendUnique(candidates, seen,
-			filepath.Join(exeDir, "libonnxruntime.so"),
-			filepath.Join(exeDir, "lib", "libonnxruntime.so"),
-		)
-
-		if rootDir != "" && rootDir != "." && rootDir != exeDir {
-			candidates = appendUnique(candidates, seen, filepath.Join(rootDir, "lib", "libonnxruntime.so"))
-		}
-	}
-
-	return candidates
 }
 
 // NewONNXEngine loads the SCRFD model and returns an ONNX-backed DetectionEngine.
@@ -152,15 +103,46 @@ func NewONNXEngine(opts ONNXOptions) (DetectionEngine, error) {
 		return nil, fmt.Errorf("faces: %w", err)
 	}
 
-	if opts.ScoreThreshold <= 0 {
-		opts.ScoreThreshold = onnxDefaultScoreThreshold
-	}
-
 	if opts.NMSThreshold <= 0 {
 		opts.NMSThreshold = onnxDefaultNMSThreshold
 	}
 
-	if err := ensureONNXRuntime(opts.LibraryPath); err != nil {
+	// Which detector this is decides the channel order and normalization, which cannot be read
+	// from a graph. An unknown artifact falls back to the default rather than refusing, so a
+	// re-export still runs, and its layout is still derived from the graph.
+	detector := DetectorForFile(opts.ModelPath)
+
+	if detector == nil {
+		if detector = DefaultDetector(); detector == nil {
+			return nil, fmt.Errorf("faces: no detector is registered")
+		}
+
+		log.Warnf("faces: unrecognized detector %s, assuming %s preprocessing", clean.Log(filepath.Base(opts.ModelPath)), detector.Name)
+	}
+
+	// Detectors do not score alike, so the cutoff is registered per detector rather than shared.
+	// A negative value switches it off, which is the only way to ask for that: zero is taken by
+	// "let the detector decide", and a detector always registers one.
+	switch {
+	case opts.ScoreThreshold < 0:
+		opts.ScoreThreshold = 0
+	case opts.ScoreThreshold > 0:
+		// Keep the caller's cutoff, whether it is above the detector's or below it.
+	case detector.MinScore > 0:
+		// Registered on the 0-100 scale operators read scores in, applied on the 0-1 one the
+		// decoder reports.
+		opts.ScoreThreshold = float32(detector.MinScore) / 100
+	default:
+		opts.ScoreThreshold = onnxDefaultScoreThreshold
+	}
+
+	// Operators may point MODELS_PATH at another export, whose layout is read from the graph,
+	// so a checksum other than the registered one is reported and accepted.
+	if err := detector.ONNX.VerifyChecksum(opts.ModelPath); err != nil {
+		log.Warnf("faces: %s", err)
+	}
+
+	if err := onnx.EnsureRuntime(opts.LibraryPath); err != nil {
 		return nil, fmt.Errorf("faces: %w", err)
 	}
 
@@ -183,7 +165,7 @@ func NewONNXEngine(opts ONNXOptions) (DetectionEngine, error) {
 		return nil, fmt.Errorf("faces: configure intra-op threads: %w", err)
 	}
 
-	if err := sessionOpts.SetInterOpNumThreads(threads); err != nil {
+	if err := sessionOpts.SetInterOpNumThreads(InterOpThreads); err != nil {
 		return nil, fmt.Errorf("faces: configure inter-op threads: %w", err)
 	}
 
@@ -205,18 +187,11 @@ func NewONNXEngine(opts ONNXOptions) (DetectionEngine, error) {
 	}
 
 	inputName := inputInfos[0].Name
-	inputDims := inputInfos[0].Dimensions
+	graphWidth, graphHeight, _ := onnx.InputGeometry(inputInfos[0].Dimensions)
 
-	width := onnxDefaultInputSize
-	height := onnxDefaultInputSize
-
-	if len(inputDims) >= 4 {
-		if w := int(inputDims[len(inputDims)-1]); w > 0 {
-			width = w
-		}
-		if h := int(inputDims[len(inputDims)-2]); h > 0 {
-			height = h
-		}
+	width, height, err := detectorInputSize(detector, graphWidth, graphHeight)
+	if err != nil {
+		return nil, err
 	}
 
 	outputNames := make([]string, len(outputInfos))
@@ -224,7 +199,7 @@ func NewONNXEngine(opts ONNXOptions) (DetectionEngine, error) {
 		outputNames[i] = out.Name
 	}
 
-	fmc, numAnchors, _, batched, err := deriveONNXLayout(outputInfos)
+	fmc, numAnchors, useKps, batched, err := deriveONNXLayout(outputInfos)
 	if err != nil {
 		return nil, err
 	}
@@ -242,9 +217,15 @@ func NewONNXEngine(opts ONNXOptions) (DetectionEngine, error) {
 		outputNames:    outputNames,
 		inputWidth:     width,
 		inputHeight:    height,
+		colorOrder:     detector.ONNX.Input.ColorOrder,
+		mean:           detector.ONNX.Input.Normalization.Mean,
+		scales:         detector.ONNX.Input.Normalization.Scales(),
+		decode:         detector.Decode,
+		detector:       detector.Name,
 		featStrides:    featStrides,
 		numAnchors:     numAnchors,
 		batched:        batched,
+		useKps:         useKps,
 		scoreThreshold: opts.ScoreThreshold,
 		nmsThreshold:   opts.NMSThreshold,
 		centerCache:    make(map[anchorCacheKey][]float32),
@@ -268,6 +249,11 @@ func deriveONNXLayout(outputs []onnxruntime.InputOutputInfo) (fmc, anchors int, 
 	case 10:
 		fmc = 5
 		anchors = 1
+	case 12:
+		// YuNet: cls, obj, bbox and kps at three strides, one prior per cell.
+		fmc = 3
+		anchors = 1
+		useKps = true
 	case 15:
 		fmc = 5
 		anchors = 1
@@ -297,15 +283,24 @@ func (o *onnxEngine) Name() string {
 	return EngineONNX
 }
 
+// Detector returns the name of the detection model this session loaded.
+func (o *onnxEngine) Detector() DetectorName {
+	return o.detector
+}
+
+// Close releases the ONNX session.
 func (o *onnxEngine) Close() error {
-	if o.session != nil {
-		if err := o.session.Destroy(); err != nil {
-			return err
-		}
-		o.session = nil
+	o.sessionMu.Lock()
+	defer o.sessionMu.Unlock()
+
+	if o.session == nil {
+		return nil
 	}
 
-	return nil
+	err := o.session.Destroy()
+	o.session = nil
+
+	return err
 }
 
 // Detect identifies faces in the provided image using the ONNX runtime session.
@@ -339,7 +334,20 @@ func (o *onnxEngine) Detect(fileName string, minSize int) (Faces, error) {
 
 	inputs := []onnxruntime.Value{tensor}
 	outputs := make([]onnxruntime.Value, len(o.outputNames))
-	if err := o.session.Run(inputs, outputs); err != nil {
+
+	// Reconfiguring the detector closes this session while indexing workers may still
+	// hold it, so the nil check has to happen under the lock that Close takes.
+	o.sessionMu.Lock()
+
+	if o.session == nil {
+		o.sessionMu.Unlock()
+		return Faces{}, fmt.Errorf("faces: detector was closed while detecting")
+	}
+
+	err = o.session.Run(inputs, outputs)
+	o.sessionMu.Unlock()
+
+	if err != nil {
 		return Faces{}, fmt.Errorf("faces: run session: %w", err)
 	}
 	for _, out := range outputs {
@@ -353,7 +361,13 @@ func (o *onnxEngine) Detect(fileName string, minSize int) (Faces, error) {
 		}
 	}
 
-	detections, err := o.parseDetections(outputs, detScale, width, height)
+	var detections []onnxDetection
+
+	if o.decode == DecodeYuNet {
+		detections, err = o.parseYuNetDetections(outputs, detScale, width, height)
+	} else {
+		detections, err = o.parseDetections(outputs, detScale, width, height)
+	}
 	if err != nil {
 		return Faces{}, err
 	}
@@ -385,6 +399,10 @@ func (o *onnxEngine) Detect(fileName string, minSize int) (Faces, error) {
 			Area:  NewArea("face", row, col, size),
 		}
 
+		if det.hasKps {
+			f.Eyes, f.Landmarks = LandmarkAreas(det.kps, size)
+		}
+
 		result.Append(f)
 	}
 
@@ -393,16 +411,10 @@ func (o *onnxEngine) Detect(fileName string, minSize int) (Faces, error) {
 
 // buildBlob normalizes the input image into the tensor layout expected by SCRFD.
 func (o *onnxEngine) buildBlob(img image.Image) ([]float32, float32, error) {
+	// detectorInputSize resolved these before the session was created, so they are known
+	// to be within bounds and non-zero here.
 	inputWidth := o.inputWidth
 	inputHeight := o.inputHeight
-
-	if inputWidth < 1 {
-		inputWidth = onnxDefaultInputSize
-	}
-
-	if inputHeight < 1 {
-		inputHeight = onnxDefaultInputSize
-	}
 
 	bounds := img.Bounds()
 	width := bounds.Dx()
@@ -434,7 +446,9 @@ func (o *onnxEngine) buildBlob(img image.Image) ([]float32, float32, error) {
 	resized := resizeLinearImage(img, newWidth, newHeight)
 
 	planeSize := inputWidth * inputHeight
-	blob := make([]float32, planeSize*3)
+	blob := make([]float32, planeSize*onnx.Channels)
+
+	rIndex, gIndex, bIndex := o.colorOrder.Indices()
 
 	for y := 0; y < inputHeight; y++ {
 		for x := 0; x < inputWidth; x++ {
@@ -447,9 +461,11 @@ func (o *onnxEngine) buildBlob(img image.Image) ([]float32, float32, error) {
 				b = float32((cb >> 8) & 0xff)
 			}
 
-			blob[idx] = (r - onnxInputMean) / onnxInputStd
-			blob[idx+planeSize] = (g - onnxInputMean) / onnxInputStd
-			blob[idx+planeSize*2] = (b - onnxInputMean) / onnxInputStd
+			// The padded area is normalized like every other pixel, so the value the model
+			// sees there stays the one it was trained to treat as empty.
+			blob[idx+planeSize*rIndex] = (r - o.mean[0]) * o.scales[0]
+			blob[idx+planeSize*gIndex] = (g - o.mean[1]) * o.scales[1]
+			blob[idx+planeSize*bIndex] = (b - o.mean[2]) * o.scales[2]
 		}
 	}
 
@@ -506,6 +522,7 @@ func (o *onnxEngine) parseDetections(values []onnxruntime.Value, detScale float3
 		}
 
 		centers := o.anchorCenters(height, width, stride, anchors)
+		landmarks := o.landmarkData(values, level, fmc, expected)
 
 		for idx, score := range scores {
 			if score < o.scoreThreshold {
@@ -529,17 +546,65 @@ func (o *onnxEngine) parseDetections(values []onnxruntime.Value, detScale float3
 				continue
 			}
 
-			detections = append(detections, onnxDetection{
+			det := onnxDetection{
 				x1:    x1,
 				y1:    y1,
 				x2:    x2,
 				y2:    y2,
 				score: score,
-			})
+			}
+
+			if landmarks != nil {
+				kpsOffset := idx * NumLandmarks * 2
+
+				// Keypoints are kept unclamped, unlike the box above. similarityTransform
+				// is a least-squares fit over all five, so snapping one point that the
+				// detector placed outside the frame rotates and scales the whole crop.
+				// Sampling out of bounds is already handled by transparent black.
+				for p := range NumLandmarks {
+					det.kps[p*2] = (cx + landmarks[kpsOffset+p*2]*float32(stride)) / detScale
+					det.kps[p*2+1] = (cy + landmarks[kpsOffset+p*2+1]*float32(stride)) / detScale
+				}
+
+				det.hasKps = true
+			}
+
+			detections = append(detections, det)
 		}
 	}
 
 	return detections, nil
+}
+
+// landmarkData returns the raw landmark predictions for a feature map level, or nil
+// when the model has no landmark outputs. An unexpected tensor layout degrades to nil
+// so detection keeps working and embedding falls back to unaligned crops.
+func (o *onnxEngine) landmarkData(values []onnxruntime.Value, level, fmc, expected int) []float32 {
+	if !o.useKps {
+		return nil
+	}
+
+	index := level + fmc*2
+
+	if index >= len(values) {
+		return nil
+	}
+
+	tensor, ok := values[index].(*onnxruntime.Tensor[float32])
+
+	if !ok {
+		log.Debugf("faces: unexpected tensor type for landmarks")
+		return nil
+	}
+
+	data := tensor.GetData()
+
+	if len(data) != expected*NumLandmarks*2 {
+		log.Debugf("faces: unexpected landmark tensor size %d (expected %d)", len(data), expected*NumLandmarks*2)
+		return nil
+	}
+
+	return data
 }
 
 // anchorCenters returns cached anchor centers for the given feature map shape.
@@ -574,11 +639,13 @@ func (o *onnxEngine) anchorCenters(height, width, stride, anchors int) []float32
 
 // onnxDetection stores a single detection candidate in image coordinates.
 type onnxDetection struct {
-	x1    float32
-	y1    float32
-	x2    float32
-	y2    float32
-	score float32
+	x1     float32
+	y1     float32
+	x2     float32
+	y2     float32
+	score  float32
+	kps    [NumLandmarks * 2]float32
+	hasKps bool
 }
 
 // nonMaxSuppression filters overlapping detection boxes using IoU thresholding.

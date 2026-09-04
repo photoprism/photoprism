@@ -7,6 +7,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// NonPhotographicKeywords names the keywords that mark a picture as not a photograph.
 var NonPhotographicKeywords = map[string]bool{
 	"screenshot":  true,
 	"screenshots": true,

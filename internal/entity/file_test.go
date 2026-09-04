@@ -6,11 +6,13 @@ import (
 	"time"
 	"unicode/utf8"
 
+	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/config/customize"
+	"github.com/photoprism/photoprism/internal/thumb/crop"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/header"
@@ -21,23 +23,71 @@ import (
 
 func TestFile_RegenerateIndex(t *testing.T) {
 	t.Run("ID", func(t *testing.T) {
+		Db().Model(&File{ID: 1000000}).Update("media_id", gorm.Expr("null")).Update("photo_taken_at", gorm.Expr("null")).Update("time_index", gorm.Expr("null"))
 		File{ID: 1000000}.RegenerateIndex()
+		result := File{}
+		if err := Db().Model(&File{ID: 1000000}).First(&result).Error; err != nil {
+			t.Error(err)
+		}
+		assert.False(t, result.PhotoTakenAt.IsZero())
+		assert.NotNil(t, result.MediaID)
+		assert.NotNil(t, result.TimeIndex)
 	})
 	t.Run("PhotoID", func(t *testing.T) {
+		Db().Model(&File{}).Where("photo_id = ?", 1000039).Update("media_id", gorm.Expr("null")).Update("photo_taken_at", gorm.Expr("null")).Update("time_index", gorm.Expr("null"))
 		File{PhotoID: 1000039}.RegenerateIndex()
+		result := File{}
+		if err := Db().Model(&File{}).Where("photo_id = ?", 1000039).First(&result).Error; err != nil {
+			t.Error(err)
+		}
+		assert.False(t, result.PhotoTakenAt.IsZero())
+		assert.NotNil(t, result.MediaID)
+		assert.NotNil(t, result.TimeIndex)
 	})
 	t.Run("PhotoUID", func(t *testing.T) {
+		Db().Model(&File{}).Where("photo_uid = ?", "ps6sg6byk7wrbk32").Update("media_id", gorm.Expr("null")).Update("photo_taken_at", gorm.Expr("null")).Update("time_index", gorm.Expr("null"))
 		File{PhotoUID: "ps6sg6byk7wrbk32"}.RegenerateIndex()
+		result := File{}
+		if err := Db().Model(&File{}).Where("photo_uid = ?", "ps6sg6byk7wrbk32").First(&result).Error; err != nil {
+			t.Error(err)
+		}
+		assert.False(t, result.PhotoTakenAt.IsZero())
+		assert.NotNil(t, result.MediaID)
+		assert.NotNil(t, result.TimeIndex)
+		assert.Equal(t, time.Date(2020, 11, 11, 15, 7, 18, 0, time.UTC), result.PhotoTakenAt)
+		if result.MediaID != nil {
+			assert.Equal(t, "9998999960-0-fs6sg6bw15bnl342", *result.MediaID)
+		}
+		if result.TimeIndex != nil {
+			assert.Equal(t, "79798888849282-9998999960-0-fs6sg6bw15bnl342", *result.TimeIndex)
+		}
 	})
 	t.Run("FirstFileByHash", func(t *testing.T) {
 		f, err := FirstFileByHash("2cad9168fa6acc5c5c2965ddf6ec465ca42fd818")
 		if err != nil {
 			t.Fatal(err)
 		}
+		Db().Model(&f).Update("media_id", gorm.Expr("null")).Update("photo_taken_at", gorm.Expr("null")).Update("time_index", gorm.Expr("null"))
 		f.RegenerateIndex()
+
+		result, err := FirstFileByHash("2cad9168fa6acc5c5c2965ddf6ec465ca42fd818")
+		require.NoError(t, err)
+		assert.False(t, result.PhotoTakenAt.IsZero())
+		assert.NotNil(t, result.MediaID)
+		assert.NotNil(t, result.TimeIndex)
 	})
 	t.Run("All", func(t *testing.T) {
+		Db().Exec("UPDATE files SET media_id = null, photo_taken_at = null, time_index = null WHERE photo_id IS NOT NULL")
 		File{}.RegenerateIndex()
+		count := int64(0)
+		Db().Model(&File{}).Where(gorm.Expr("photo_id IS NOT NULL AND photo_taken_at IS NOT NULL")).Count(&count)
+		assert.Greater(t, count, int64(67))
+		count = int64(0)
+		Db().Model(&File{}).Where(gorm.Expr("photo_id IS NOT NULL AND media_id IS NOT NULL")).Count(&count)
+		assert.Greater(t, count, int64(67))
+		count = int64(0)
+		Db().Model(&File{}).Where(gorm.Expr("photo_id IS NOT NULL AND time_index IS NOT NULL")).Count(&count)
+		assert.Greater(t, count, int64(67))
 	})
 }
 
@@ -605,6 +655,23 @@ func TestFile_AddFaces(t *testing.T) {
 		assert.NotEmpty(t, file.FileUID)
 		assert.NotEmpty(t, file.Markers())
 	})
+	t.Run("WidthDisagreesWithModel", func(t *testing.T) {
+		// A vector that claims a model but does not have that model's width belongs to no
+		// embedding space, which is what a remote service returning the wrong shape looks
+		// like. Comparing it with anything later would silently compare nothing.
+		file := &File{FileUID: "fs6sg6bp4sjk3kd2", FileHash: "246b3897eec9ef75e35fbf0bbc4c83c55ca41e31", FileType: "jpg", FileWidth: 720, FileName: "FacesTest", PhotoID: 1000003, FilePrimary: false}
+
+		file.AddFaces(face.Faces{face.Face{
+			Rows:       480,
+			Cols:       720,
+			Score:      45,
+			Area:       face.NewArea("face", 250, 200, 10),
+			EmbedModel: face.ModelSFace,
+			Embeddings: face.Embeddings{{0.1, 0.2, 0.3}},
+		}})
+
+		assert.Empty(t, *file.Markers())
+	})
 	t.Run("NoEmbeddings", func(t *testing.T) {
 		file := &File{FileUID: "fs6sg6bp4sjk3kd1", FileHash: "146b3897eec9ef75e35fbf0bbc4c83c55ca41e31", FileType: "jpg", FileWidth: 720, FileName: "FacesTest", PhotoID: 1000003, FilePrimary: false}
 
@@ -621,6 +688,50 @@ func TestFile_AddFaces(t *testing.T) {
 
 		assert.Equal(t, 0, len(*file.Markers()))
 	})
+}
+
+// TestFile_AddFaceUpgradesProvenance pins that upgrading an embedding-less marker carries the
+// detector's own numbers with the vector. Left behind, the size bar falls back to an XMP box extent
+// and the score bar is looked up by the newly written detect_model.
+func TestFile_AddFaceUpgradesProvenance(t *testing.T) {
+	file := &File{
+		FileUID:    "fs6sg6bw45bnlqdw",
+		FileHash:   "0e3d3e2e5b2f4b1a9a3d7c1e5f6a8b9c0d1e2f30",
+		FileWidth:  3000,
+		FileHeight: 2000,
+	}
+
+	// A sidecar region: a generous box, no embedding, and a score from no detector.
+	area := crop.Area{Name: "face", X: 0.4, Y: 0.4, W: 0.2, H: 0.2}
+	existing := NewMarker(*file, area, "", SrcXmp, MarkerFace, MarkerSize(area, *file), 10)
+	require.NotNil(t, existing)
+	require.NoError(t, existing.Create())
+	t.Cleanup(func() { UnscopedDb().Delete(existing) })
+
+	markers := Markers{*existing}
+	file.markers = &markers
+
+	f := face.Face{
+		Rows:        2000,
+		Cols:        3000,
+		Score:       88,
+		Area:        face.NewArea("face", 1000, 1500, 300),
+		Embeddings:  face.Embeddings{face.RandomEmbedding()},
+		EmbedModel:  face.EmbeddingModelName(),
+		ThumbSize:   97,
+		EmbedDetail: 87,
+	}
+
+	file.AddFace(f, "")
+
+	stored := &Marker{}
+	require.NoError(t, UnscopedDb().First(stored, "marker_uid = ?", existing.MarkerUID).Error)
+
+	assert.Equal(t, 97, stored.ThumbSize, "the extent the vector was sampled at must be recorded")
+	assert.Equal(t, 87, stored.EmbedDetail, "and how much of the crop that extent supplied")
+	assert.Equal(t, 88, stored.Score, "the score must come from the detector that produced the vector")
+	assert.Equal(t, 97, (*file.Markers())[0].ThumbSize, "and the in-memory marker must match the row")
+	assert.Equal(t, 87, (*file.Markers())[0].EmbedDetail)
 }
 
 func TestFile_ValidFaceCount(t *testing.T) {
@@ -738,6 +849,21 @@ func TestFile_ReplaceHash(t *testing.T) {
 		m := FileFixtures.Get("exampleFileName.jpg")
 
 		if err := m.ReplaceHash(""); err != nil {
+			t.Fatal(err)
+		}
+
+		if err := m.ReplaceHash(FileFixtures.Get("exampleFileName.jpg").FileHash); err != nil {
+			t.Fatal(err)
+		}
+	})
+	t.Run("exampleXmpFile.xmp", func(t *testing.T) {
+		m := FileFixtures.Get("exampleXmpFile.xmp")
+
+		if err := m.ReplaceHash("ocad9168fa6acc5c5c2965ddf6ec465ca42fdbib"); err != nil {
+			t.Fatal(err)
+		}
+
+		if err := m.ReplaceHash(FileFixtures.Get("exampleXmpFile.xmp").FileHash); err != nil {
 			t.Fatal(err)
 		}
 	})
@@ -999,5 +1125,26 @@ func TestFile_ContentType(t *testing.T) {
 		hevc := FileFixtures.Get("Photo21.mp4")
 		assert.Equal(t, true, hevc.FileVideo)
 		assert.Equal(t, header.ContentTypeMp4HvcMain10, hevc.ContentType())
+	})
+}
+
+func TestFile_MissingPhotoID(t *testing.T) {
+	t.Run("No PhotoID or Photo", func(t *testing.T) {
+		file := File{}
+		err := file.Create()
+		assert.Error(t, err)
+		assert.ErrorContains(t, err, "file: cannot create file with empty photo id")
+	})
+	t.Run("No PhotoID and Photo.ID = 0", func(t *testing.T) {
+		file := File{Photo: &Photo{ID: 0}}
+		err := file.Create()
+		assert.Error(t, err)
+		assert.ErrorContains(t, err, "file: cannot create file with empty photo id")
+	})
+	t.Run("PhotoID = 0 and Photo.ID = 0", func(t *testing.T) {
+		file := File{PhotoID: 0, Photo: &Photo{ID: 0}}
+		err := file.Create()
+		assert.Error(t, err)
+		assert.ErrorContains(t, err, "file: cannot create file with empty photo id")
 	})
 }

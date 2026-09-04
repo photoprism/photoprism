@@ -4,9 +4,9 @@ Privately browse, organize, and share your photo collection.
 
 ### Description
 
-PhotoPrism® is a privately hosted app for browsing, organizing, and sharing your photo collection. It makes use of the latest technologies to tag and find pictures automatically without getting in your way. Say goodbye to uploading your visual memories to the cloud!
+PhotoPrism® is an AI-powered, privacy-first app for browsing, organizing, and sharing photos and videos. It helps tag, search, and rediscover media without getting in your way.
 
-To learn more, visit https://www.photoprism.app/ or try our [demo](https://demo.photoprism.app/).
+Visit [photoprism.app](https://www.photoprism.app/) to learn more, or try our public demo at [demo.photoprism.app](https://demo.photoprism.app/).
 
 ### Software Included
 

@@ -36,6 +36,23 @@ func wakeupIntervalTooHigh(c *gin.Context) bool {
 	}
 }
 
+// faceMigrationRunning refuses a request with 409 while a face migration holds the lock, and
+// reports whether it did.
+//
+// A migration replaces every face cluster in one transaction, so these rows are the migration's
+// for its duration. The refusal is the response rather than a log line: an authenticated caller
+// can repeat it, and the operator running the migration already has its own output.
+func faceMigrationRunning(c *gin.Context) bool {
+	if get.Config().FacesLocked() == "" {
+		return false
+	}
+
+	log.Debugf("faces: refused %s while a migration is running", clean.Log(c.FullPath()))
+	AbortMigrationInProgress(c)
+
+	return true
+}
+
 // findFileMarker returns a file and marker entity matching the api request.
 func findFileMarker(c *gin.Context) (file *entity.File, marker *entity.Marker, err error) {
 	// Check authorization.
@@ -88,7 +105,8 @@ func findFileMarker(c *gin.Context) (file *entity.File, marker *entity.Marker, e
 //
 //	@Tags		Files
 //	@Produce	json
-//	@Success	201	{object}	entity.Marker
+//	@Success	201					{object}	entity.Marker
+//	@Failure	400,401,403,409,500	{object}	i18n.Response
 //	@Router		/api/v1/markers [post]
 func CreateMarker(router *gin.RouterGroup) {
 	router.POST("/markers", func(c *gin.Context) {
@@ -96,6 +114,11 @@ func CreateMarker(router *gin.RouterGroup) {
 
 		// Abort if permission is not granted.
 		if s.Abort(c) {
+			return
+		}
+
+		// Abort if a face migration is replacing the clusters this would write to.
+		if faceMigrationRunning(c) {
 			return
 		}
 
@@ -153,7 +176,7 @@ func CreateMarker(router *gin.RouterGroup) {
 		area := crop.NewArea("face", frm.X, frm.Y, frm.W, frm.H)
 
 		// Create new marker entity.
-		marker := entity.NewMarker(*file, area, "", frm.MarkerSrc, frm.MarkerType, int(frm.W*float32(file.FileWidth)), 100)
+		marker := entity.NewMarker(*file, area, "", frm.MarkerSrc, frm.MarkerType, entity.MarkerSize(area, *file), 100)
 
 		// Update marker from form values.
 		if err = marker.Create(); err != nil {
@@ -206,10 +229,10 @@ func CreateMarker(router *gin.RouterGroup) {
 //	@Tags		Files
 //	@Accept		json
 //	@Produce	json
-//	@Param		marker_uid			path		string		true	"marker uid"
-//	@Param		marker				body		form.Marker	true	"marker properties"
-//	@Success	200					{object}	entity.Marker
-//	@Failure	400,401,403,404,429	{object}	i18n.Response
+//	@Param		marker_uid				path		string		true	"marker uid"
+//	@Param		marker					body		form.Marker	true	"marker properties"
+//	@Success	200						{object}	entity.Marker
+//	@Failure	400,401,403,404,409,429	{object}	i18n.Response
 //	@Router		/api/v1/markers/{marker_uid} [put]
 func UpdateMarker(router *gin.RouterGroup) {
 	router.PUT("/markers/:marker_uid", func(c *gin.Context) {
@@ -230,6 +253,11 @@ func UpdateMarker(router *gin.RouterGroup) {
 
 		if err != nil {
 			log.Debugf("faces: %s (find marker to update)", err)
+			return
+		}
+
+		// Abort if a face migration is replacing the clusters this would write to.
+		if faceMigrationRunning(c) {
 			return
 		}
 
@@ -311,9 +339,9 @@ func UpdateMarker(router *gin.RouterGroup) {
 //	@Id			ClearMarkerSubject
 //	@Tags		Files
 //	@Produce	json
-//	@Param		marker_uid			path		string	true	"marker uid"
-//	@Success	200					{object}	entity.Marker
-//	@Failure	400,401,403,404,429	{object}	i18n.Response
+//	@Param		marker_uid				path		string	true	"marker uid"
+//	@Success	200						{object}	entity.Marker
+//	@Failure	400,401,403,404,409,429	{object}	i18n.Response
 //	@Router		/api/v1/markers/{marker_uid}/subject [delete]
 func ClearMarkerSubject(router *gin.RouterGroup) {
 	router.DELETE("/markers/:marker_uid/subject", func(c *gin.Context) {
@@ -334,6 +362,11 @@ func ClearMarkerSubject(router *gin.RouterGroup) {
 
 		if err != nil {
 			log.Debugf("faces: %s (find marker to clear subject)", err)
+			return
+		}
+
+		// Abort if a face migration is replacing the clusters this would write to.
+		if faceMigrationRunning(c) {
 			return
 		}
 

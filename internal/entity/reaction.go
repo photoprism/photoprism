@@ -49,7 +49,7 @@ func FindReaction(uid, userUid string) (m *Reaction) {
 // React adds a react.Emoji reaction.
 func (m *Reaction) React(emo react.Emoji) *Reaction {
 	m.Reaction = emo.String()
-	m.Reacted += 1
+	m.Reacted++
 	return m
 }
 
@@ -98,7 +98,7 @@ func (m *Reaction) Save() (err error) {
 	if err = Db().Model(Reaction{}).
 		Where("uid = ? AND user_uid = ?", m.UID, m.UserUID).
 		UpdateColumns(values).Error; err == nil {
-		m.Reacted += 1
+		m.Reacted++
 		m.ReactedAt = reactedAt
 	}
 

@@ -13,9 +13,21 @@ func MaxSize() int {
 	return SizeOnDemand
 }
 
+// MaxRenderSize returns the largest size in pixels that may be rendered at all, which the face
+// crop source can exceed the delivered sizes by: it is generated once per indexed file, while
+// SizeOnDemand prices a page rendering hundreds of thumbnails at once. What clients are offered
+// and what a request may render for delivery follow MaxSize instead.
+func MaxRenderSize() int {
+	if SizeFace > MaxSize() {
+		return SizeFace
+	}
+
+	return MaxSize()
+}
+
 // InvalidSize tests if the size in pixels is invalid.
 func InvalidSize(size int) bool {
-	return size < 0 || size > MaxSize()
+	return size < 0 || size > MaxRenderSize()
 }
 
 // SizeList represents a list of sizes.

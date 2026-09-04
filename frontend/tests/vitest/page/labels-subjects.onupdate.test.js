@@ -8,6 +8,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 
 import PPageLabels from "page/labels.vue";
 import PPageSubjects from "page/people/recognized.vue";
+import PPageNewFaces from "page/people/new.vue";
 import Label from "model/label";
 import Subject from "model/subject";
 
@@ -16,12 +17,51 @@ function newStub() {
   return {
     listen: true,
     dirty: false,
+    // The refetch has to ask the question the list asked, hidden people included.
+    filter: { hidden: "yes" },
     results: [],
     refresh: vi.fn(),
     refetchResults: vi.fn(),
     removeSelection: vi.fn(),
   };
 }
+
+describe("page/people/recognized.vue active watcher", () => {
+  const onActive = PPageSubjects.watch.active;
+
+  it("refreshes a list that went stale while the tab was hidden", () => {
+    const stub = newStub();
+    stub.dirty = true;
+
+    onActive.call(stub, true);
+
+    expect(stub.refresh).toHaveBeenCalledTimes(1);
+  });
+  it("does not refresh an up-to-date list", () => {
+    const stub = newStub();
+
+    onActive.call(stub, true);
+
+    expect(stub.refresh).not.toHaveBeenCalled();
+  });
+  it("does not refresh when the tab is being hidden", () => {
+    const stub = newStub();
+    stub.dirty = true;
+
+    onActive.call(stub, false);
+
+    expect(stub.refresh).not.toHaveBeenCalled();
+  });
+  it("refreshes after subjects.created marked the list dirty", () => {
+    const stub = newStub();
+
+    PPageSubjects.methods.onUpdate.call(stub, "subjects.created", { entities: ["ps-1"] });
+    expect(stub.dirty).toBe(true);
+
+    onActive.call(stub, true);
+    expect(stub.refresh).toHaveBeenCalledTimes(1);
+  });
+});
 
 describe("page/labels.vue onUpdate", () => {
   const onUpdate = PPageLabels.methods.onUpdate;
@@ -201,10 +241,38 @@ describe("page/people/recognized.vue refetchResults", () => {
     await Promise.resolve();
     await Promise.resolve();
 
-    expect(searchSpy).toHaveBeenCalledWith({ uid: "subj-1", count: 1 });
+    expect(searchSpy).toHaveBeenCalledWith({ uid: "subj-1", count: 1, hidden: "yes" });
     expect(stub.results[0].Name).toBe("New Name");
     expect(stub.results[0].Favorite).toBe(true);
     expect(stub.dirty).toBe(false);
+  });
+
+  it("patches a cleared field back to null", async () => {
+    // A nullable column is the one case where the refetch has to overwrite with an absence: a
+    // cleared date of birth arrives as null, and skipping it leaves the list - and the edit
+    // dialog cloned from it - holding a date the row no longer has.
+    const stub = newStub();
+    stub.results = [{ UID: "subj-1", Name: "Bob Tester", Birthday: "1985-03-04T00:00:00Z" }];
+    searchSpy = vi.spyOn(Subject, "search").mockResolvedValue({ models: [{ UID: "subj-1", Name: "Bob Tester", Birthday: null }] });
+
+    refetchResults.call(stub, ["subj-1"]);
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(stub.results[0].Birthday).toBeNull();
+  });
+
+  it("takes the hidden filter from the list rather than a fixed value", async () => {
+    const stub = newStub();
+    stub.filter = { hidden: "" };
+    stub.results = [{ UID: "subj-1" }];
+    searchSpy = vi.spyOn(Subject, "search").mockResolvedValue({ models: [{ UID: "subj-1" }] });
+
+    refetchResults.call(stub, ["subj-1"]);
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(searchSpy).toHaveBeenCalledWith({ uid: "subj-1", count: 1, hidden: "" });
   });
 
   it("removes subjects the scoped search no longer returns", async () => {
@@ -231,4 +299,49 @@ describe("page/people/recognized.vue refetchResults", () => {
 
     expect(stub.dirty).toBe(true);
   });
+});
+
+describe("people tabs notifyResultCount", () => {
+  // Both tabs are mounted eagerly and search when created, so the one the user is not looking at
+  // used to announce its own empty result over the list that is on screen.
+  const cases = [
+    ["page/people/recognized.vue", PPageSubjects],
+    ["page/people/new.vue", PPageNewFaces],
+  ];
+
+  const newNotifyStub = (active, results) => ({
+    active,
+    results,
+    $notify: { warn: vi.fn(), info: vi.fn() },
+    $gettext: (s) => s,
+    $gettextInterpolate: (s) => s,
+  });
+
+  for (const [name, page] of cases) {
+    it(`${name} stays quiet while its tab is inactive`, () => {
+      const stub = newNotifyStub(false, []);
+
+      page.methods.notifyResultCount.call(stub);
+
+      expect(stub.$notify.warn).not.toHaveBeenCalled();
+      expect(stub.$notify.info).not.toHaveBeenCalled();
+    });
+
+    it(`${name} reports an empty result while its tab is active`, () => {
+      const stub = newNotifyStub(true, []);
+
+      page.methods.notifyResultCount.call(stub);
+
+      expect(stub.$notify.warn).toHaveBeenCalledWith("No people found");
+    });
+
+    it(`${name} reports a non-empty result while its tab is active`, () => {
+      const stub = newNotifyStub(true, [{}, {}]);
+
+      page.methods.notifyResultCount.call(stub);
+
+      expect(stub.$notify.warn).not.toHaveBeenCalled();
+      expect(stub.$notify.info).toHaveBeenCalled();
+    });
+  }
 });

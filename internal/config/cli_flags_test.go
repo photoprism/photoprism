@@ -323,3 +323,18 @@ func TestCliFlags_ThemeURLHiddenByDefault(t *testing.T) {
 		}
 	}
 }
+
+func TestCliFlags_Deprecated(t *testing.T) {
+	t.Run("Deprecated", func(t *testing.T) {
+		assert.True(t, Flags.Deprecated("face-engine"))
+		assert.True(t, Flags.Deprecated("face-engine-threads"))
+	})
+	t.Run("Supported", func(t *testing.T) {
+		assert.False(t, Flags.Deprecated("face-detector"))
+		assert.False(t, Flags.Deprecated("face-model"))
+	})
+	t.Run("Unknown", func(t *testing.T) {
+		assert.False(t, Flags.Deprecated("nonexistent"))
+		assert.False(t, Flags.Deprecated(""))
+	})
+}

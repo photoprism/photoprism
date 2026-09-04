@@ -175,11 +175,12 @@ func (m *Client) NoName() bool {
 
 // String returns the client id or name for use in logs and reports.
 func (m *Client) String() string {
-	if m == nil {
+	switch {
+	case m == nil:
 		return report.NotAssigned
-	} else if m.HasUID() {
+	case m.HasUID():
 		return m.GetUID()
-	} else if m.HasName() {
+	case m.HasName():
 		return m.Name()
 	}
 
@@ -289,11 +290,12 @@ func (m *Client) SetUser(u *User) *Client {
 
 // UserInfo reports the user that is assigned to this client.
 func (m *Client) UserInfo() string {
-	if m == nil {
+	switch {
+	case m == nil:
 		return ""
-	} else if m.UserUID == "" {
+	case m.UserUID == "":
 		return report.NotAssigned
-	} else if m.UserName != "" {
+	case m.UserName != "":
 		return m.UserName
 	}
 
@@ -371,11 +373,7 @@ func (m *Client) DeleteSessions() (deleted int, err error) {
 
 // Deleted checks if the client has been deleted.
 func (m *Client) Deleted() bool {
-	if m == nil {
-		return true
-	}
-
-	return false
+	return m == nil
 }
 
 // Disabled checks if the client authentication has been disabled.
@@ -417,11 +415,7 @@ func (m *Client) SetSecret(secret string) (err error) {
 
 	pw := NewPassword(m.ClientUID, secret, false)
 
-	if err = pw.Save(); err != nil {
-		return err
-	}
-
-	return nil
+	return pw.Save()
 }
 
 // VerifySecret checks if the given client secret is correct.
@@ -529,11 +523,7 @@ func (m *Client) NewSession(c *gin.Context, t authn.GrantType) *Session {
 
 // EnforceAuthTokenLimit deletes client sessions above the configured limit and returns the number of deleted sessions.
 func (m *Client) EnforceAuthTokenLimit() (deleted int) {
-	if m == nil {
-		return 0
-	} else if !m.HasUID() {
-		return 0
-	} else if m.AuthTokens < 0 {
+	if m == nil || !m.HasUID() || m.AuthTokens < 0 {
 		return 0
 	}
 

@@ -81,6 +81,15 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 		return done
 	}
 
+	// Importing indexes what it moves, so it reaches the same marker writes indexing does.
+	if held := imp.conf.FacesLocked(); held != "" {
+		log.Infof("import: waiting for the %s to complete", held)
+		return done
+	}
+
+	// The same applies once it has completed: its target is recorded rather than loaded here.
+	imp.conf.CheckFaceModelSuperseded()
+
 	importPath := opt.Path
 
 	// Check if the import folder exists.

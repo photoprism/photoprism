@@ -30,7 +30,7 @@ func authRemoveAction(ctx *cli.Context) error {
 			return cli.ShowSubcommandHelp(ctx)
 		}
 
-		if cliMode == NONINTERACTIVE {
+		if RunNonInteractively(false) {
 			// proceed without prompt
 			if m, err := query.Session(id); err != nil {
 				return errors.New("session not found")

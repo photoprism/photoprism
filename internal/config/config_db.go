@@ -478,6 +478,21 @@ func (c *Config) CloseDb() error {
 	return nil
 }
 
+// IsDbOpen reports whether the database is connected and responding.
+func (c *Config) IsDbOpen() bool {
+	if c.db == nil {
+		log.Debug("config: database not connected")
+		return false
+	}
+
+	if err := c.db.DB().Ping(); err != nil {
+		log.Debugf("config: database not available (%s)", err)
+		return false
+	}
+
+	return true
+}
+
 // SetDbOptions sets the database collation to unicode if supported.
 func (c *Config) SetDbOptions() {
 	switch c.DatabaseDriver() {
@@ -534,6 +549,13 @@ func (c *Config) MigrateDb(runFailed bool, ids []string) {
 
 // InitTestDb drops all tables in the currently configured database and re-creates them.
 func (c *Config) InitTestDb() {
+	// Make sure that the migrations and versions tables are already there, as once prevents these from being handled correctly in tests.
+	if (!c.db.HasTable(&migrate.Migration{})) {
+		c.db.AutoMigrate(&migrate.Migration{})
+	}
+	if (!c.db.HasTable(&migrate.Version{})) {
+		c.db.AutoMigrate(&migrate.Version{})
+	}
 	entity.ResetTestFixtures()
 
 	if c.AdminPassword() == "" {
@@ -703,8 +725,9 @@ func (c *Config) ImportSQL(filename string) {
 			continue
 		}
 
-		var result struct{}
-
-		q.Raw(stmt).Scan(&result)
+		if err := q.Exec(stmt).Error; err != nil {
+			log.Error(err)
+			return
+		}
 	}
 }

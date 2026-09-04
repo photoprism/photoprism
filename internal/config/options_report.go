@@ -34,6 +34,12 @@ func (o Options) Report() (rows [][]string, cols []string) {
 			continue
 		}
 
+		// A deprecated option keeps working and keeps being read from "options.yml", but the
+		// generated reference must not offer it.
+		if Flags.Deprecated(flagName) {
+			continue
+		}
+
 		// Skip options by feature set if tags are set.
 		if tags := field.Tag.Get("tags"); tags == "" {
 			// Report.

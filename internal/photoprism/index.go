@@ -109,6 +109,18 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 		return found, updated
 	}
 
+	// Checked here rather than per caller, so the API, the CLI and the workers all inherit it.
+	// A marker this run adds is written in the model the migration is moving away from, and the
+	// finalize compares the identity set against a snapshot - a new named marker rolls it back.
+	if held := ind.conf.FacesLocked(); held != "" {
+		log.Infof("index: waiting for the %s to complete", held)
+		return found, updated
+	}
+
+	// Indexing continues after it completed, but its target is recorded in "options.yml" and not
+	// loaded here, so the markers this run adds wait for a restart to receive their vectors.
+	ind.conf.CheckFaceModelSuperseded()
+
 	originalsPath := ind.originalsPath()
 	optionsPath, resolveErr := ResolveIndexPath(originalsPath, o.Path)
 

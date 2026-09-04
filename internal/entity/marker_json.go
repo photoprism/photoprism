@@ -32,7 +32,6 @@ func (m *Marker) MarshalJSON() ([]byte, error) {
 		Y         float32
 		W         float32 `json:",omitempty"`
 		H         float32 `json:",omitempty"`
-		Q         int     `json:",omitempty"`
 		Size      int     `json:",omitempty"`
 		Score     int     `json:",omitempty"`
 		Thumb     string
@@ -53,7 +52,6 @@ func (m *Marker) MarshalJSON() ([]byte, error) {
 		Y:         m.Y,
 		W:         m.W,
 		H:         m.H,
-		Q:         m.Q,
 		Size:      m.Size,
 		Score:     m.Score,
 		Thumb:     m.Thumb,

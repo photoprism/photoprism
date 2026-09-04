@@ -17,6 +17,17 @@ func TestHash(t *testing.T) {
 	})
 }
 
+func TestSha256(t *testing.T) {
+	t.Run("ExistingImage", func(t *testing.T) {
+		hash := Sha256("testdata/test.jpg")
+		assert.Equal(t, "8f369a042acb190cf5aa1189b5007f36f2ab91580267b65b5f3dfdd71210a442", hash)
+	})
+	t.Run("NotExistingImage", func(t *testing.T) {
+		hash := Sha256("testdata/xxx.jpg")
+		assert.Equal(t, "", hash)
+	})
+}
+
 func TestChecksum(t *testing.T) {
 	t.Run("ExistingImage", func(t *testing.T) {
 		hash := Checksum("testdata/test.jpg")

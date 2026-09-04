@@ -1,10 +1,12 @@
 package config
 
 import (
+	"bytes"
 	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/pkg/dsn"
 
@@ -754,6 +756,29 @@ func TestConfig_DatabaseConnsIdle(t *testing.T) {
 
 	c.options.DatabaseConnsIdle = 35
 	assert.Equal(t, 28, c.DatabaseConnsIdle())
+}
+
+func TestImportSQL(t *testing.T) {
+	c := NewMinimalTestConfigWithDb("config", t.TempDir())
+
+	// Setup and capture SQL Logging output
+	buffer := bytes.Buffer{}
+	log.SetOutput(&buffer)
+
+	c.ImportSQL("./testdata/importtest.sql")
+
+	// Reset logger
+	log.SetOutput(os.Stdout)
+
+	assert.NotContains(t, buffer.String(), "level=error")
+	assert.True(t, c.db.HasTable("importtest"))
+
+	log.SetOutput(&buffer)
+	c.ImportSQL("./testdata/importtest.sql")
+	// Reset logger
+	log.SetOutput(os.Stdout)
+	assert.Contains(t, buffer.String(), "level=error")
+	require.NoError(t, c.db.DropTableIfExists("importtest").Error)
 }
 
 func TestConfig_checkDb(t *testing.T) {

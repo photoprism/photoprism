@@ -54,6 +54,6 @@ func RunCommandTest(t *testing.T, encoder encode.Encoder, srcName, destName stri
 
 	// Delete destination file after test.
 	if removeErr := os.Remove(destName); removeErr != nil {
-		t.Fatalf("%s: failed to remove %s after successful test (%s)", encoder, srcName, removeErr)
+		t.Fatalf("%s: failed to remove %s after successful test (%s)", encoder, destName, removeErr)
 	}
 }

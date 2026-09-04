@@ -72,6 +72,7 @@ func WaitForAsyncJobsTimeout(timeout time.Duration) bool {
 	}
 }
 
+// LabelPhotoCount reports how many photos carry a label.
 type LabelPhotoCount struct {
 	LabelID    int
 	PhotoCount int

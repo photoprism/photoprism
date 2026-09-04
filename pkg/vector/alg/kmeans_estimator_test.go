@@ -4,6 +4,19 @@ import (
 	"testing"
 )
 
+func TestKmeansEstimatorRaggedData(t *testing.T) {
+	// Estimate calls bounds, which reads every row at the width of the first one from a
+	// goroutine, so ragged input is rejected before it gets there.
+	c, err := KMeansEstimator(10, 2, EuclideanDist)
+	if err != nil {
+		t.Fatalf("unexpected constructor error: %s", err)
+	}
+
+	if _, err = c.Estimate([][]float64{{1, 1}, {2}}); err != errRaggedData {
+		t.Errorf("expected errRaggedData, got %v", err)
+	}
+}
+
 func TestKmeansEstimator(t *testing.T) {
 	const (
 		C = 10

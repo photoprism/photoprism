@@ -11,13 +11,14 @@ import (
 
 // Session finds an existing session by its id.
 func Session(id string) (result entity.Session, err error) {
-	if l := len(id); l < 6 || l > 2048 {
+	switch l := len(id); {
+	case l < 6 || l > 2048:
 		return result, errors.New("invalid session id")
-	} else if rnd.IsRefID(id) {
+	case rnd.IsRefID(id):
 		err = Db().Where("ref_id = ?", id).First(&result).Error
-	} else if rnd.IsSessionID(id) {
+	case rnd.IsSessionID(id):
 		err = Db().Where("id LIKE ?", id).First(&result).Error
-	} else {
+	default:
 		err = Db().Where("id LIKE ?", rnd.SessionID(id)).First(&result).Error
 	}
 
@@ -31,15 +32,16 @@ func Sessions(limit, offset int, sortOrder, search string) (result entity.Sessio
 
 	search = strings.TrimSpace(search)
 
-	if search == "expired" {
+	switch {
+	case search == "expired":
 		stmt = stmt.Where("sess_expires > 0 AND sess_expires < ?", unix.Now())
-	} else if rnd.IsSessionID(search) {
+	case rnd.IsSessionID(search):
 		stmt = stmt.Where("id = ?", search)
-	} else if rnd.IsAuthToken(search) {
+	case rnd.IsAuthToken(search):
 		stmt = stmt.Where("id = ?", rnd.SessionID(search))
-	} else if rnd.IsUID(search, entity.UserUID) {
+	case rnd.IsUID(search, entity.UserUID):
 		stmt = stmt.Where("user_uid = ?", search)
-	} else if search != "" {
+	case search != "":
 		stmt = stmt.Where("user_name LIKE ? OR auth_provider LIKE ?", search+"%", search+"%")
 	}
 

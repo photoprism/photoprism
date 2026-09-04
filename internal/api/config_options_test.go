@@ -102,6 +102,75 @@ func TestSaveConfigOptions(t *testing.T) {
 		assert.Equal(t, "https://photos.example.com/", merged["SiteUrl"])
 		assert.Equal(t, true, merged["HttpCachePublic"])
 	})
+	t.Run("IgnoresOptionsTheApiDoesNotReturn", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+
+		SaveConfigOptions(router)
+
+		prepareConfigOptionsSuccessTest(t, conf)
+
+		authToken := AuthenticateAdmin(app, router)
+
+		tempCfg := t.TempDir()
+		conf.Options().ConfigPath = tempCfg
+		conf.Options().OptionsYaml = filepath.Join(tempCfg, "options.yml")
+
+		body := `{"SiteUrl":"https://photos.example.com/","VisionKey":"test-key","AdminPassword":"test-pass","NotAnOption":"value"}`
+		r := AuthenticatedRequestWithBody(app, "POST", "/api/v1/config/options", body, authToken)
+
+		assert.Equal(t, http.StatusOK, r.Code)
+
+		optionsData, readErr := os.ReadFile(conf.OptionsYaml())
+		assert.NoError(t, readErr)
+
+		var merged map[string]any
+		assert.NoError(t, yaml.Unmarshal(optionsData, &merged))
+		assert.Equal(t, "https://photos.example.com/", merged["SiteUrl"])
+		assert.NotContains(t, merged, "VisionKey")
+		assert.NotContains(t, merged, "AdminPassword")
+		assert.NotContains(t, merged, "NotAnOption")
+		assert.Empty(t, conf.Options().VisionKey)
+	})
+	t.Run("TypesNumericValues", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+
+		SaveConfigOptions(router)
+
+		prepareConfigOptionsSuccessTest(t, conf)
+
+		authToken := AuthenticateAdmin(app, router)
+
+		tempCfg := t.TempDir()
+		conf.Options().ConfigPath = tempCfg
+		conf.Options().OptionsYaml = filepath.Join(tempCfg, "options.yml")
+
+		body := `{"JpegQuality":85.61960784313726}`
+		r := AuthenticatedRequestWithBody(app, "POST", "/api/v1/config/options", body, authToken)
+
+		assert.Equal(t, http.StatusOK, r.Code)
+
+		optionsData, readErr := os.ReadFile(conf.OptionsYaml())
+		assert.NoError(t, readErr)
+		assert.Contains(t, string(optionsData), "JpegQuality: 86")
+	})
+	t.Run("BadRequest", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+
+		SaveConfigOptions(router)
+
+		prepareConfigOptionsSuccessTest(t, conf)
+
+		authToken := AuthenticateAdmin(app, router)
+
+		tempCfg := t.TempDir()
+		conf.Options().ConfigPath = tempCfg
+		conf.Options().OptionsYaml = filepath.Join(tempCfg, "options.yml")
+
+		body := `{"JpegQuality":1e19}`
+		r := AuthenticatedRequestWithBody(app, "POST", "/api/v1/config/options", body, authToken)
+
+		assert.Equal(t, http.StatusBadRequest, r.Code)
+	})
 	t.Run("RequestTooLarge", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 

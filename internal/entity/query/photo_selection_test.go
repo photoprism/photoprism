@@ -73,51 +73,54 @@ func TestPhotoSelection(t *testing.T) {
 
 		r, err := SelectedPhotos(f)
 
-		if err != nil {
-			t.Fatal(err)
+		if assert.Nil(t, err) {
+			assert.Equal(t, 2, len(r))
+			assert.IsType(t, entity.Photos{}, r)
 		}
-
-		assert.Equal(t, 2, len(r))
-		assert.IsType(t, entity.Photos{}, r)
 	})
 	t.Run("FindAlbums", func(t *testing.T) {
 		r, err := SelectedPhotos(albums)
 
-		if err != nil {
-			t.Fatal(err)
+		if assert.Nil(t, err) {
+			assert.Equal(t, 9, len(r))
+			assert.IsType(t, entity.Photos{}, r)
 		}
-
-		assert.Equal(t, 9, len(r))
-		assert.IsType(t, entity.Photos{}, r)
 	})
 	t.Run("FindMonths", func(t *testing.T) {
 		r, err := SelectedPhotos(months)
 
-		if err != nil {
-			t.Fatal(err)
+		if assert.Nil(t, err) {
+			assert.Equal(t, 0, len(r))
+			assert.IsType(t, entity.Photos{}, r)
 		}
-
-		assert.Equal(t, 0, len(r))
-		assert.IsType(t, entity.Photos{}, r)
 	})
 	t.Run("FindFolders", func(t *testing.T) {
 		r, err := SelectedPhotos(folders)
 
-		if err != nil {
-			t.Fatal(err)
+		if assert.Nil(t, err) {
+			assert.Equal(t, 2, len(r))
+			assert.IsType(t, entity.Photos{}, r)
 		}
-
-		assert.Equal(t, 2, len(r))
-		assert.IsType(t, entity.Photos{}, r)
 	})
 	t.Run("FindStates", func(t *testing.T) {
 		r, err := SelectedPhotos(states)
 
-		if err != nil {
-			t.Fatal(err)
+		if assert.Nil(t, err) {
+			assert.Equal(t, 4, len(r))
+			assert.IsType(t, entity.Photos{}, r)
+		}
+	})
+	t.Run("NotNil", func(t *testing.T) {
+		f := form.Selection{
+			Photos: []string{"pszzzzzzzzzzzzzz"},
 		}
 
-		assert.Equal(t, 4, len(r))
-		assert.IsType(t, entity.Photos{}, r)
+		r, err := SelectedPhotos(f)
+
+		if assert.Nil(t, err) {
+			assert.NotNil(t, r)
+			assert.Len(t, r, 0)
+		}
 	})
+
 }

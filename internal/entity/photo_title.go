@@ -195,11 +195,7 @@ func (m *Photo) GenerateAndSaveTitle() error {
 		log.Errorf("photo: %s", err.Error())
 	}
 
-	if err := m.Save(); err != nil {
-		return err
-	}
-
-	return nil
+	return m.Save()
 }
 
 // FileTitle returns a photo title based on the file name and/or path.

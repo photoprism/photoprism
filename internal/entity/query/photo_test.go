@@ -5,8 +5,10 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -175,6 +177,9 @@ func TestFixPrimaries(t *testing.T) {
 		if err := Db().Create(&p).Error; err != nil {
 			t.Fatal(err)
 		}
+		defer func() {
+			require.NoError(t, UnscopedDb().Delete(&p).Error)
+		}()
 		// Primary file that has since been soft-deleted but still carries the primary flag.
 		deletedPrimary := entity.File{
 			PhotoID:     p.ID,
@@ -190,6 +195,9 @@ func TestFixPrimaries(t *testing.T) {
 		if err := Db().Create(&deletedPrimary).Error; err != nil {
 			t.Fatal(err)
 		}
+		defer func() {
+			require.NoError(t, UnscopedDb().Delete(&deletedPrimary).Error)
+		}()
 		// Present preview file that is not yet flagged primary.
 		present := entity.File{
 			PhotoID:  p.ID,
@@ -203,6 +211,9 @@ func TestFixPrimaries(t *testing.T) {
 		if err := Db().Create(&present).Error; err != nil {
 			t.Fatal(err)
 		}
+		defer func() {
+			require.NoError(t, UnscopedDb().Delete(&present).Error)
+		}()
 
 		if err := FixPrimaries(); err != nil {
 			t.Fatal(err)
@@ -224,6 +235,11 @@ func TestFixPrimaries(t *testing.T) {
 
 // TestFlagHiddenPhotos validates photo query behavior.
 func TestFlagHiddenPhotos(t *testing.T) {
+	defer func() {
+		for _, photo := range entity.PhotoFixtures {
+			require.NoError(t, UnscopedDb().Model(&entity.Photo{}).Where("id = ?", photo.ID).UpdateColumn("photo_quality", photo.PhotoQuality).Error)
+		}
+	}()
 	t.Run("Success", func(t *testing.T) {
 		// Set photo quality scores to -1 if files are missing.
 		if err := FlagHiddenPhotos(); err != nil {
@@ -234,7 +250,7 @@ func TestFlagHiddenPhotos(t *testing.T) {
 		var checkedTime = time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC)
 		// Load 1000 photos that need to be hidden
 		for range 1000 {
-			newPhoto := entity.Photo{ //JPG, Geo from metadata, indexed
+			newPhoto := entity.Photo{ // JPG, Geo from metadata, indexed
 				//ID:               1000049,
 				PhotoUID:         rnd.GenerateUID(entity.PhotoUID),
 				TakenAt:          time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
@@ -307,6 +323,93 @@ func TestFlagHiddenPhotos(t *testing.T) {
 
 		if err := UnscopedDb().Where("photo_name = ? AND photo_quality = ?", "SuccessWith1000", -1).Delete(&entity.Photo{}).Error; err != nil {
 			t.Fatal(err)
+		}
+	})
+}
+
+// qualifyingPhotoPaths returns the distinct photo paths photoPathMaxDates is expected to
+// report, so the assertions below track the fixtures instead of a hard-coded total.
+func qualifyingPhotoPaths() map[string]bool {
+	paths := make(map[string]bool)
+
+	for _, photo := range entity.PhotoFixtures {
+		if photo.DeletedAt == nil && photo.PhotoQuality >= 3 && photo.TakenSrc == entity.SrcMeta && !photo.TakenAtLocal.IsZero() {
+			paths[photo.PhotoPath] = true
+		}
+	}
+
+	return paths
+}
+
+// reportedPaths returns the key set of a photoPathMaxDates result for comparison.
+func reportedPaths(m map[string]time.Time) map[string]bool {
+	paths := make(map[string]bool, len(m))
+
+	for path := range m {
+		paths[path] = true
+	}
+
+	return paths
+}
+
+func TestPhotoPathMaxDates(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		p, err := photoPathMaxDates()
+		require.NoError(t, err)
+		assert.Equal(t, qualifyingPhotoPaths(), reportedPaths(p))
+		minDate := entity.PhotoFixtures.Get("Photo03").TakenAtLocal
+		maxDate := entity.PhotoFixtures.Get("Photo55").TakenAtLocal
+		for path, d := range p {
+			assert.LessOrEqual(t, d.UTC().Format(time.DateOnly), maxDate.UTC().Format(time.DateOnly), path)
+			assert.GreaterOrEqual(t, d.UTC().Format(time.DateOnly), minDate.UTC().Format(time.DateOnly), path)
+		}
+		for _, photo := range entity.PhotoFixtures {
+			if (photo.DeletedAt == nil && photo.PhotoQuality >= 3 && photo.TakenSrc == entity.SrcMeta && photo.TakenAtLocal != time.Time{}) {
+				_, ok := p[photo.PhotoPath]
+				assert.True(t, ok, photo.PhotoPath)
+			}
+		}
+	})
+	t.Run("ForcedBadDate", func(t *testing.T) {
+		if entity.DbDialect() != dsn.DriverSQLite3 {
+			t.Skip("This test is only for SQLite")
+		}
+		bp := entity.PhotoFixtures.Pointer("Photo18")
+		bp.PhotoQuality = 4
+		bp.DeletedAt = nil
+		require.NoError(t, entity.UnscopedDb().Save(bp).Error)
+
+		// Saving Photo18 above adds its path to the reported set; the unreadable date below
+		// removes it again, since no other qualifying picture shares that path.
+		withoutPhoto18 := qualifyingPhotoPaths()
+		promoted := qualifyingPhotoPaths()
+		promoted[bp.PhotoPath] = true
+
+		p, err := photoPathMaxDates()
+		require.NoError(t, err)
+		assert.Equal(t, promoted, reportedPaths(p))
+
+		// Force the taken_at_local to return a NULL from MAX(DATE('RUBBISH'))
+		require.NoError(t, entity.UnscopedDb().Exec("UPDATE photos SET taken_at_local = 'RUBBISH' WHERE id = ?", bp.ID).Error)
+		defer func() {
+			require.NoError(t, entity.UnscopedDb().Save(entity.PhotoFixtures.Pointer("Photo18")).Error)
+		}()
+
+		p, err = photoPathMaxDates()
+		require.NoError(t, err)
+		assert.Equal(t, withoutPhoto18, reportedPaths(p))
+
+		minDate := entity.PhotoFixtures.Get("Photo03").TakenAtLocal
+		maxDate := entity.PhotoFixtures.Get("Photo55").TakenAtLocal
+		for path, d := range p {
+			assert.LessOrEqual(t, d.UTC().Format(time.DateOnly), maxDate.UTC().Format(time.DateOnly), path)
+			assert.GreaterOrEqual(t, d.UTC().Format(time.DateOnly), minDate.UTC().Format(time.DateOnly), path)
+		}
+		for _, photo := range entity.PhotoFixtures {
+			if (photo.DeletedAt == nil && photo.PhotoQuality >= 3 && photo.TakenSrc == entity.SrcMeta && photo.TakenAtLocal != time.Time{}) {
+				_, ok := p[photo.PhotoPath]
+				assert.True(t, ok, photo.PhotoPath)
+			}
 		}
 	})
 }
