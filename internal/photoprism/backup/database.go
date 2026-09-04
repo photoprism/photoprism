@@ -124,13 +124,17 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 			)
 		}
 	case dsn.DriverSQLite3:
-		if !fs.FileExistsNotEmpty(c.DatabaseFile()) {
-			return fmt.Errorf("sqlite database file %s not found", clean.LogQuote(c.DatabaseFile()))
+		databaseFile := c.DatabaseFile()
+		if databaseFile == "" {
+			return fmt.Errorf("sqlite database file name resolution failed for DSN %s, you may have found a bug", clean.LogQuote(c.DatabaseDSN()))
+		}
+		if !fs.FileExistsNotEmpty(databaseFile) {
+			return fmt.Errorf("sqlite database file %s not found", clean.LogQuote(databaseFile))
 		}
 
 		cmd = exec.Command( // #nosec G204 sqlite dump uses configured binary and db path
 			c.SqliteBin(),
-			c.DatabaseFile(),
+			databaseFile,
 			".dump",
 		)
 	default:

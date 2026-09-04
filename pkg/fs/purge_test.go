@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestPurgeTestDbFiles_Recursive(t *testing.T) {
@@ -199,5 +200,71 @@ func TestPurgeExpired(t *testing.T) {
 		assert.Equal(t, 0, removed)
 		assert.Equal(t, 0, remaining)
 		assert.Equal(t, 0, failed)
+	})
+}
+
+func TestPurgeSQLiteDbFiles(t *testing.T) {
+	testPath := t.TempDir()
+	createFile := func(name string) {
+		file, err := os.Create(name) //nolint:gosec //G304 created in new temp directory
+		require.NoError(t, err)
+		_, err = file.WriteString("Test Data")
+		require.NoError(t, err)
+		require.NoError(t, file.Close())
+	}
+
+	t.Run("NoFiles", func(t *testing.T) {
+		fileName := filepath.Join(testPath, ".test.db")
+		assert.NoError(t, PurgeSQLiteDbFiles(fileName))
+	})
+	t.Run("DbFileOnly", func(t *testing.T) {
+		fileName := filepath.Join(testPath, ".DbFileOnly.db")
+		createFile(fileName)
+		assert.FileExists(t, fileName)
+		assert.NoError(t, PurgeSQLiteDbFiles(fileName))
+		assert.NoFileExists(t, fileName)
+	})
+	t.Run("JournalFileOnly", func(t *testing.T) {
+		fileName := filepath.Join(testPath, ".JournalFileOnly.db")
+		createFile(fileName + "-journal")
+		assert.FileExists(t, fileName+"-journal")
+		assert.NoError(t, PurgeSQLiteDbFiles(fileName))
+		assert.NoFileExists(t, fileName+"-journal")
+	})
+	t.Run("WALFileOnly", func(t *testing.T) {
+		fileName := filepath.Join(testPath, ".WALFileOnly.db")
+		createFile(fileName + "-wal")
+		assert.FileExists(t, fileName+"-wal")
+		assert.NoError(t, PurgeSQLiteDbFiles(fileName))
+		assert.NoFileExists(t, fileName+"-wal")
+	})
+	t.Run("SHMFileOnly", func(t *testing.T) {
+		fileName := filepath.Join(testPath, ".SHMFileOnly.db")
+		createFile(fileName + "-shm")
+		assert.FileExists(t, fileName+"-shm")
+		assert.NoError(t, PurgeSQLiteDbFiles(fileName))
+		assert.NoFileExists(t, fileName+"-shm")
+	})
+	t.Run("AllFiles", func(t *testing.T) {
+		fileName := filepath.Join(testPath, ".AllFiles.db")
+		createFile(fileName)
+		createFile(fileName + "-shm")
+		createFile(fileName + "-wal")
+		createFile(fileName + "-journal")
+		assert.FileExists(t, fileName)
+		assert.FileExists(t, fileName+"-shm")
+		assert.FileExists(t, fileName+"-wal")
+		assert.FileExists(t, fileName+"-journal")
+		assert.NoError(t, PurgeSQLiteDbFiles(fileName))
+		assert.NoFileExists(t, fileName)
+		assert.NoFileExists(t, fileName+"-shm")
+		assert.NoFileExists(t, fileName+"-wal")
+		assert.NoFileExists(t, fileName+"-journal")
+	})
+	t.Run("DbFileSpecial", func(t *testing.T) {
+		fileName := "/dev/zero"
+		require.True(t, FileExists(fileName))
+		assert.Error(t, PurgeSQLiteDbFiles(fileName))
+		assert.FileExists(t, fileName)
 	})
 }
