@@ -143,6 +143,37 @@ func TestConvert_ToImage(t *testing.T) {
 
 		_ = os.Remove(jpgFilename)
 	})
+	t.Run("RawEmbeddedPreviewOrientation", func(t *testing.T) {
+		if !cnf.ExifToolEnabled() {
+			t.Skip("ExifTool must be available for the RAW embedded-preview fallback")
+		}
+
+		disableRaw := cnf.Options().DisableRaw
+		cnf.Options().DisableRaw = true
+		rawFile := filepath.Join(cnf.OriginalsPath(), "portrait-preview-orientation.dng")
+
+		t.Cleanup(func() {
+			cnf.Options().DisableRaw = disableRaw
+			_ = os.Remove(rawFile)
+		})
+
+		require.NoError(t, fs.Copy(filepath.Join(samplesPath, "canon_eos_6d.dng"), rawFile, true))
+		// #nosec G204 -- arguments are the configured ExifTool binary and a test fixture path.
+		require.NoError(t, exec.Command(cnf.ExifToolBin(), "-q", "-overwrite_original", "-n", "-Orientation=8", rawFile).Run())
+
+		rawMediaFile, err := NewMediaFile(rawFile)
+		require.NoError(t, err)
+		assert.Equal(t, 8, rawMediaFile.Orientation())
+
+		preview, err := convert.ToImage(rawMediaFile, true)
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = preview.Remove() })
+		assert.Equal(t, 8, preview.Orientation())
+
+		img, err := thumb.Open(preview.FileName(), preview.Orientation())
+		require.NoError(t, err)
+		assert.Less(t, img.Bounds().Dx(), img.Bounds().Dy(), "preview must render in portrait orientation")
+	})
 	t.Run("Svg", func(t *testing.T) {
 		svgFile := fs.Abs("./testdata/agpl.svg")
 
@@ -610,6 +641,8 @@ func TestConvert_JpegConvertCmds_RawEmbeddedPreview(t *testing.T) {
 	assert.GreaterOrEqual(t, jpgFromRaw, 0, "expected a -JpgFromRaw extraction command")
 	assert.GreaterOrEqual(t, previewImage, 0, "expected a -PreviewImage extraction command")
 	assert.Less(t, jpgFromRaw, previewImage, "JpgFromRaw must be tried before PreviewImage")
+	assert.Equal(t, mediaFile.Orientation(), cmds[jpgFromRaw].SourceOrientation, "JpgFromRaw must preserve the RAW orientation")
+	assert.Equal(t, mediaFile.Orientation(), cmds[previewImage].SourceOrientation, "PreviewImage must preserve the RAW orientation")
 	if cnf.RawTherapeeEnabled() {
 		assert.GreaterOrEqual(t, rawTherapee, 0, "expected a RawTherapee command")
 		assert.Less(t, rawTherapee, jpgFromRaw, "RawTherapee must be tried before the embedded preview")
