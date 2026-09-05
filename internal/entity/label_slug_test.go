@@ -7,6 +7,7 @@ import (
 )
 
 func TestAcceptLabelSlugMatch(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Nil", func(t *testing.T) {
 		assert.False(t, acceptLabelSlugMatch(nil, "Cat"))
 	})

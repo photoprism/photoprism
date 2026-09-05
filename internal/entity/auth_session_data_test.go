@@ -9,22 +9,26 @@ import (
 )
 
 func TestUIDs_String(t *testing.T) {
+	ValidateFixtures(t)
 	uid := UIDs{"dghjkfd", "dfgehrih"}
 	assert.Equal(t, "dghjkfd,dfgehrih", uid.String())
 }
 
 func TestUIDs_Join(t *testing.T) {
+	ValidateFixtures(t)
 	uid := UIDs{"dghjkfd", "dfgehrih"}
 	assert.Equal(t, "dghjkfd|dfgehrih", uid.Join("|"))
 }
 
 func TestData_HasShare(t *testing.T) {
+	ValidateFixtures(t)
 	data := SessionData{Shares: []string{"abc123", "def444"}}
 	assert.True(t, data.HasShare("def444"))
 	assert.False(t, data.HasShare("xxx"))
 }
 
 func TestSessionData_RedeemToken(t *testing.T) {
+	ValidateFixtures(t)
 	data := SessionData{Shares: []string{"abc123", "def444"}}
 	assert.True(t, data.HasShare("def444"))
 	assert.False(t, data.HasShare("as6sg6bxpogaaba8"))
@@ -37,6 +41,7 @@ func TestSessionData_RedeemToken(t *testing.T) {
 }
 
 func TestSessionData_SetGroups(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		data := NewSessionData()
 		data.SetGroups([]string{"media-acme-admin", "media-acme-viewer"})
@@ -75,6 +80,7 @@ func TestSessionData_SetGroups(t *testing.T) {
 }
 
 func TestSessionData_Redacted(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("StripsGroups", func(t *testing.T) {
 		data := &SessionData{
 			Tokens: []string{"1jxf3jfn2k"},
@@ -94,6 +100,7 @@ func TestSessionData_Redacted(t *testing.T) {
 }
 
 func TestSessionData_SharedUIDs(t *testing.T) {
+	ValidateFixtures(t)
 	data := SessionData{Shares: []string{"abc123", "def444"},
 		Tokens: []string{"5jxf3jfn2k"}}
 	assert.Equal(t, "abc123", data.SharedUIDs()[0])

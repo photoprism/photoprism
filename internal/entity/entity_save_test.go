@@ -9,6 +9,7 @@ import (
 )
 
 func TestSave(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("HasCreatedUpdatedAt", func(t *testing.T) {
 		id := missingPhotoID()
 		m := Photo{ID: id, PhotoUID: rnd.GenerateUID(PhotoUID), UpdatedAt: Now(), CreatedAt: Now()}

@@ -39,6 +39,7 @@ func countTestRows(t *testing.T, db *gorm.DB, name string) int {
 }
 
 func TestTruncateTable(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		db := createTestTable(t, "test_truncate")
 		assert.Equal(t, 2, countTestRows(t, db, "test_truncate"))
@@ -51,6 +52,7 @@ func TestTruncateTable(t *testing.T) {
 }
 
 func TestTables_Truncate(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("KeepsSchemaTables", func(t *testing.T) {
 		db := createTestTable(t, "test_truncate_list")
 		versions := migrate.Version{}.TableName()

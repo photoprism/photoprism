@@ -21,6 +21,7 @@ var testEmbeddings = face.Embeddings{
 }
 
 func TestMarkers_Contains(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Examples", func(t *testing.T) {
 		m1 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea1, "ls6sg6b1wowuy1c1", SrcImage, MarkerFace, 100, 72)
 		m2 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea2, "ls6sg6b1wowuy1c2", SrcImage, MarkerFace, 100, 65)
@@ -71,6 +72,7 @@ func TestMarkers_Contains(t *testing.T) {
 }
 
 func TestMarkers_DetectedFaceCount(t *testing.T) {
+	ValidateFixtures(t)
 	m1 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea1, "ls6sg6b1wowuy1c1", SrcImage, MarkerFace, 100, 72)
 	m2 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea4, "ls6sg6b1wowuy1c2", SrcManual, MarkerFace, 100, 65)
 	m3 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea3, "ls6sg6b1wowuy1c3", SrcManual, MarkerFace, 100, 65)
@@ -82,6 +84,7 @@ func TestMarkers_DetectedFaceCount(t *testing.T) {
 }
 
 func TestMarkers_ValidFaceCount(t *testing.T) {
+	ValidateFixtures(t)
 	m1 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea1, "ls6sg6b1wowuy1c1", SrcImage, MarkerFace, 100, 72)
 	m2 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea4, "ls6sg6b1wowuy1c2", SrcManual, MarkerFace, 100, 65)
 	m3 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea3, "ls6sg6b1wowuy1c3", SrcManual, MarkerFace, 100, 65)
@@ -93,6 +96,7 @@ func TestMarkers_ValidFaceCount(t *testing.T) {
 }
 
 func TestMarkers_SubjectNames(t *testing.T) {
+	ValidateFixtures(t)
 	m1 := MarkerFixtures.Get("1000003-3")
 	m2 := MarkerFixtures.Get("1000003-4")
 	m3 := MarkerFixtures.Get("1000003-5")
@@ -105,6 +109,7 @@ func TestMarkers_SubjectNames(t *testing.T) {
 }
 
 func TestMarkers_Labels(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("None", func(t *testing.T) {
 		m := Markers{}
 
@@ -165,6 +170,7 @@ func TestMarkers_Labels(t *testing.T) {
 }
 
 func TestMarkers_AppendWithEmbedding(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Ok", func(t *testing.T) {
 		m1 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea1, "ls6sg6b1wowuy1c1", SrcImage, MarkerFace, 100, 72)
 		m2 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea3, "ls6sg6b1wowuy1c3", SrcImage, MarkerFace, 100, 72)

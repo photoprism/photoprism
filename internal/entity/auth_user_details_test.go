@@ -7,6 +7,7 @@ import (
 )
 
 func TestCreateUserDetails(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("EmptyUid", func(t *testing.T) {
 		m := &User{UserUID: ""}
 		assert.Error(t, CreateUserDetails(m))
@@ -25,11 +26,13 @@ func TestCreateUserDetails(t *testing.T) {
 }
 
 func TestUserDetails_HasID(t *testing.T) {
+	ValidateFixtures(t)
 	u := FindUserByName("alice")
 	assert.True(t, u.UserDetails.HasID())
 }
 
 func TestUserDetails_Updates(t *testing.T) {
+	ValidateFixtures(t)
 	m := &User{
 		UserUID: "1234",
 		UserDetails: &UserDetails{
@@ -46,6 +49,7 @@ func TestUserDetails_Updates(t *testing.T) {
 }
 
 func TestUserDetails_DisplayName(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("DrJohnDoe", func(t *testing.T) {
 		m := &User{
 			UserUID: "1234",

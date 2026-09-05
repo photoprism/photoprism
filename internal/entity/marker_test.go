@@ -16,6 +16,7 @@ import (
 )
 
 func TestMarker_SameEmbeddingModel(t *testing.T) {
+	ValidateFixtures(t)
 	restore := face.ConfiguredModel()
 	t.Cleanup(func() {
 		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
@@ -63,11 +64,13 @@ var invalidArea3 = crop.Area{
 }
 
 func TestMarker_TableName(t *testing.T) {
+	ValidateFixtures(t)
 	m := &Marker{}
 	assert.Contains(t, m.TableName(), "markers")
 }
 
 func TestNewMarker(t *testing.T) {
+	ValidateFixtures(t)
 	m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), testArea, "ls6sg6b1wowuy3c3", SrcImage, MarkerLabel, 100, 29)
 	assert.IsType(t, &Marker{}, m)
 	assert.Equal(t, "fs6sg6bw45bnlqdw", m.FileUID)
@@ -79,6 +82,7 @@ func TestNewMarker(t *testing.T) {
 }
 
 func TestMarkerSize(t *testing.T) {
+	ValidateFixtures(t)
 	area := crop.NewArea("face", 0.4, 0.4, 0.1, 0.1)
 	t.Run("Landscape", func(t *testing.T) {
 		// Fit720 draws a 4:3 original at 720x540, so a tenth of the frame spans 72 px.
@@ -106,6 +110,7 @@ func TestMarkerSize(t *testing.T) {
 // cannot contribute to a cluster is one a person has to look at. Stated against the threshold
 // rather than a literal, because a literal is what let this drift onto the wrong scale before.
 func TestNewMarkerReview(t *testing.T) {
+	ValidateFixtures(t)
 	file := FileFixtures.Get("exampleFileName.jpg")
 
 	// The shared default rather than the configurable variable, which is what NewMarker reads:
@@ -120,6 +125,7 @@ func TestNewMarkerReview(t *testing.T) {
 }
 
 func TestMarker_SetName(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("InvalidName", func(t *testing.T) {
 		m := MarkerFixtures.Get("actress-a-1")
 		assert.IsType(t, Marker{}, m)
@@ -145,6 +151,7 @@ func TestMarker_SetName(t *testing.T) {
 }
 
 func TestMarker_SaveForm(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("FaGeAddNewNameToMarkerThenRenameMarker", func(t *testing.T) {
 		t.Cleanup(func() {
 			assert.NoError(t, UnscopedDb().Model(&Face{}).Where("id = ?", FaceFixtures.Get("fa-gr").ID).UpdateColumns(Values{"subj_uid": FaceFixtures.Get("fa-gr").SubjUID}).Error)
@@ -223,6 +230,7 @@ func TestMarker_SaveForm(t *testing.T) {
 }
 
 func TestUpdateOrCreateMarker(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), testArea, "ls6sg6b1wowuy3c3", SrcImage, MarkerLabel, 100, 65)
 		assert.IsType(t, &Marker{}, m)
@@ -249,6 +257,7 @@ func TestUpdateOrCreateMarker(t *testing.T) {
 }
 
 func TestMarker_Delete(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), crop.Area{Name: "face", X: 0.01, Y: 0.01, W: 0.02, H: 0.02}, "", SrcXmp, MarkerFace, 100, 30)
 		if err := m.Create(); err != nil {
@@ -273,6 +282,7 @@ func TestMarker_Delete(t *testing.T) {
 }
 
 func TestMarker_Updates(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), testArea, "ls6sg6b1wowuy3c4", SrcImage, MarkerLabel, 100, 65)
 		m, err := CreateMarkerIfNotExists(m)
@@ -298,6 +308,7 @@ func TestMarker_Updates(t *testing.T) {
 }
 
 func TestMarker_Update(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), testArea, "ls6sg6b1wowuy3c4", SrcImage, MarkerLabel, 100, 65)
 		m, err := CreateMarkerIfNotExists(m)
@@ -322,6 +333,7 @@ func TestMarker_Update(t *testing.T) {
 }
 
 func TestMarker_InvalidArea(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("TestArea", func(t *testing.T) {
 		m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), testArea, "ls6sg6b1wowuy3c4", SrcImage, MarkerFace, 100, 65)
 		assert.Nil(t, m.InvalidArea())
@@ -352,6 +364,7 @@ func TestMarker_InvalidArea(t *testing.T) {
 
 // TODO fails on mariadb
 func TestMarker_Save(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), testArea, "ls6sg6b1wowuy3c4", SrcImage, MarkerLabel, 100, 65)
 
@@ -404,6 +417,7 @@ func TestMarker_Save(t *testing.T) {
 }
 
 func TestMarker_ClearSubject(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Num1000003Two", func(t *testing.T) {
 		m := MarkerFixtures.Get("1000003-2")
 
@@ -513,6 +527,7 @@ func TestMarker_ClearSubject(t *testing.T) {
 }
 
 func TestMarker_ClearFace(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Num1000003Two", func(t *testing.T) {
 		m := MarkerFixtures.Get("1000003-2")
 
@@ -593,6 +608,7 @@ func TestMarker_ClearFace(t *testing.T) {
 }
 
 func TestMarker_SyncSubject(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NoFaceMarker", func(t *testing.T) {
 		m := Marker{MarkerType: "test", subject: nil}
 		assert.Nil(t, m.SyncSubject(false))
@@ -634,6 +650,7 @@ func TestMarker_SyncSubject(t *testing.T) {
 }
 
 func TestMarker_Create(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("InvalidPosition", func(t *testing.T) {
 		m := Marker{X: 0, Y: 0, MarkerType: MarkerFace}
 		err := m.Create()
@@ -646,6 +663,7 @@ func TestMarker_Create(t *testing.T) {
 }
 
 func TestMarker_Embeddings(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		// The fixtures are generated for whichever model a run resolves to, so what the
 		// vector has to be is its width and its provenance, not a particular value.
@@ -670,6 +688,7 @@ func TestMarker_Embeddings(t *testing.T) {
 }
 
 func TestMarker_HasFace(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("True", func(t *testing.T) {
 		m := MarkerFixtures.Get("1000003-6")
 
@@ -699,6 +718,7 @@ func TestMarker_HasFace(t *testing.T) {
 }
 
 func TestMarker_Subject(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("EmptySubjUID", func(t *testing.T) {
 		m := Marker{SubjUID: "", subject: &Subject{SubjUID: "", SubjName: "Test Subject"}}
 
@@ -748,6 +768,7 @@ func TestMarker_Subject(t *testing.T) {
 }
 
 func TestMarker_GetFace(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("ExistingFaceID", func(t *testing.T) {
 		m := Marker{MarkerUID: "ms6sg6b14ahkyd24", FaceID: "1234", face: &Face{ID: "1234"}}
 
@@ -804,12 +825,14 @@ func TestMarker_GetFace(t *testing.T) {
 }
 
 func TestFindMarker(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Nil", func(t *testing.T) {
 		assert.Nil(t, FindMarker("0000"))
 	})
 }
 
 func TestMarker_SetFace(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("FaceEqualNil", func(t *testing.T) {
 		m := MarkerFixtures.Pointer("1000003-6")
 		assert.Equal(t, "PN6QO5INYTUSAATOFL43LL2ABAV5ACZK", m.FaceID)
@@ -852,6 +875,7 @@ func TestMarker_SetFace(t *testing.T) {
 }
 
 func TestMarker_RefreshPhotos(t *testing.T) {
+	ValidateFixtures(t)
 	m := MarkerFixtures.Get("1000003-6")
 
 	t.Cleanup(func() {
@@ -867,6 +891,7 @@ func TestMarker_RefreshPhotos(t *testing.T) {
 }
 
 func TestMarker_SurfaceRatio(t *testing.T) {
+	ValidateFixtures(t)
 	m1 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea1, "ls6sg6b1wowuy1c1", SrcImage, MarkerFace, 100, 65)
 	m2 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea2, "ls6sg6b1wowuy1c2", SrcImage, MarkerFace, 100, 65)
 	m3 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea3, "ls6sg6b1wowuy1c3", SrcImage, MarkerFace, 100, 65)
@@ -882,6 +907,7 @@ func TestMarker_SurfaceRatio(t *testing.T) {
 }
 
 func TestMarker_OverlapArea(t *testing.T) {
+	ValidateFixtures(t)
 	m1 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea1, "ls6sg6b1wowuy1c1", SrcImage, MarkerFace, 100, 65)
 	m2 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea2, "ls6sg6b1wowuy1c2", SrcImage, MarkerFace, 100, 65)
 	m3 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea3, "ls6sg6b1wowuy1c3", SrcImage, MarkerFace, 100, 65)
@@ -896,6 +922,7 @@ func TestMarker_OverlapArea(t *testing.T) {
 }
 
 func TestMarker_OverlapPercent(t *testing.T) {
+	ValidateFixtures(t)
 	m1 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea1, "ls6sg6b1wowuy1c1", SrcImage, MarkerFace, 100, 65)
 	m2 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea2, "ls6sg6b1wowuy1c2", SrcImage, MarkerFace, 100, 65)
 	m3 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea3, "ls6sg6b1wowuy1c3", SrcImage, MarkerFace, 100, 65)
@@ -909,6 +936,7 @@ func TestMarker_OverlapPercent(t *testing.T) {
 }
 
 func TestMarker_String(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Nil", func(t *testing.T) {
 		var m *Marker
 		assert.Equal(t, "Marker<nil>", m.String())
@@ -926,6 +954,7 @@ func TestMarker_String(t *testing.T) {
 }
 
 func TestMarker_SetEmbeddings(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("RecordsTheProducingModel", func(t *testing.T) {
 		// Provenance is what keeps two embedding spaces apart. A vector stored without it
 		// reads as legacy FaceNet and would be admitted into FaceNet clusters whatever
@@ -964,6 +993,7 @@ func TestMarker_SetEmbeddings(t *testing.T) {
 }
 
 func TestMarker_Clusterable(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("ClearsBothBars", func(t *testing.T) {
 		m := &Marker{Size: face.ClusterSizeThreshold, Score: 100}
 		assert.True(t, m.Clusterable())
@@ -995,6 +1025,7 @@ func TestMarker_Clusterable(t *testing.T) {
 // right where the matcher found no face and wrong after a cluster narrowed underneath a marker:
 // a stamped marker is in neither matching pass's set and waits for a forced run.
 func TestMarker_Unmatched(t *testing.T) {
+	ValidateFixtures(t)
 	m := &Marker{
 		FileUID:        "fs6sg6bw45bnlqdw",
 		MarkerType:     MarkerFace,

@@ -9,6 +9,7 @@ import (
 )
 
 func TestNewLink(t *testing.T) {
+	ValidateFixtures(t)
 	link := NewLink("ss6sg6bxpogaaba1", true, false)
 	assert.Equal(t, "ss6sg6bxpogaaba1", link.ShareUID)
 	assert.Equal(t, 10, len(link.LinkToken))
@@ -16,6 +17,7 @@ func TestNewLink(t *testing.T) {
 }
 
 func TestLink_Expired(t *testing.T) {
+	ValidateFixtures(t)
 	const oneDay = 60 * 60 * 24
 
 	link := NewLink("ss6sg6bxpogaaba1", true, false)
@@ -45,6 +47,7 @@ func TestLink_Expired(t *testing.T) {
 }
 
 func TestLink_Redeem(t *testing.T) {
+	ValidateFixtures(t)
 	link := NewLink(rnd.GenerateUID(AlbumUID), false, false)
 
 	assert.Equal(t, uint(0), link.LinkViews)
@@ -64,6 +67,7 @@ func TestLink_Redeem(t *testing.T) {
 }
 
 func TestLink_SetSlug(t *testing.T) {
+	ValidateFixtures(t)
 	link := Link{}
 	assert.Equal(t, "", link.ShareSlug)
 	link.SetSlug("test Slug")
@@ -71,6 +75,7 @@ func TestLink_SetSlug(t *testing.T) {
 }
 
 func TestLink_SetPassword(t *testing.T) {
+	ValidateFixtures(t)
 	link := Link{LinkUID: "dftjdfkvh"}
 	assert.Equal(t, false, link.HasPassword)
 	err := link.SetPassword("123")
@@ -82,6 +87,7 @@ func TestLink_SetPassword(t *testing.T) {
 }
 
 func TestLink_InvalidPassword(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NoPassword", func(t *testing.T) {
 		link := Link{LinkUID: "dftjdfkvhjh", HasPassword: false}
 		assert.False(t, link.InvalidPassword("123"))
@@ -109,6 +115,7 @@ func TestLink_InvalidPassword(t *testing.T) {
 }
 
 func TestLink_Save(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("InvalidShareUid", func(t *testing.T) {
 		link := NewLink("dhfjfjh", false, false)
 
@@ -132,6 +139,7 @@ func TestLink_Save(t *testing.T) {
 }
 
 func TestLink_Delete(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		link := NewLink("ls6sg6bffgtreoft", false, false)
 
@@ -153,6 +161,7 @@ func TestLink_Delete(t *testing.T) {
 }
 
 func TestFindLink(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := NewLink("ls6sg6bffgtrjoft", false, false)
 
@@ -176,12 +185,14 @@ func TestFindLink(t *testing.T) {
 }
 
 func TestDeleteShareLinks(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("EmptyShareUid", func(t *testing.T) {
 		assert.Error(t, DeleteShareLinks(""))
 	})
 }
 
 func TestFindLinks(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("FindByToken", func(t *testing.T) {
 		r := FindLinks("1jxf3jfn2k", "")
 		assert.Equal(t, "as6sg6bxpogaaba8", r[0].ShareUID)
@@ -201,6 +212,7 @@ func TestFindLinks(t *testing.T) {
 }
 
 func TestFindValidLinksLinks(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		r := FindValidLinks("1jxf3jfn2k", "")
 		assert.Equal(t, "as6sg6bxpogaaba8", r[0].ShareUID)
@@ -208,6 +220,7 @@ func TestFindValidLinksLinks(t *testing.T) {
 }
 
 func TestLink_String(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		link := NewLink("jhgko", false, false)
 		uid := link.LinkUID

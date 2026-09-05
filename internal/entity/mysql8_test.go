@@ -13,6 +13,7 @@ import (
 )
 
 func TestMySQL8(t *testing.T) {
+	ValidateFixtures(t)
 	dbDsn := os.Getenv("PHOTOPRISM_TEST_DSN_MYSQL8")
 
 	if dbDsn == "" {

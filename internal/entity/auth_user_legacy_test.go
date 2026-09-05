@@ -10,6 +10,7 @@ import (
 )
 
 func TestFindLegacyUser(t *testing.T) {
+	ValidateFixtures(t)
 	notFound := FindLegacyUser(Admin)
 	assert.Nil(t, notFound)
 
@@ -40,6 +41,7 @@ func TestFindLegacyUser(t *testing.T) {
 }
 
 func TestFindLegacyUsers(t *testing.T) {
+	ValidateFixtures(t)
 	notFound := FindLegacyUsers("all")
 	assert.Len(t, notFound, 0)
 

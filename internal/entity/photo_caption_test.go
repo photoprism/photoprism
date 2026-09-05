@@ -7,6 +7,7 @@ import (
 )
 
 func TestPhoto_HasCaption(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("False", func(t *testing.T) {
 		photo := Photo{PhotoCaption: ""}
 		assert.False(t, photo.HasCaption())
@@ -18,6 +19,7 @@ func TestPhoto_HasCaption(t *testing.T) {
 }
 
 func TestPhoto_NoCaption(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("True", func(t *testing.T) {
 		photo := Photo{PhotoCaption: ""}
 		assert.True(t, photo.NoCaption())
@@ -29,6 +31,7 @@ func TestPhoto_NoCaption(t *testing.T) {
 }
 
 func TestPhoto_GetCaption(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
 		assert.Equal(t, "Europe/Berlin", m.TimeZone)
@@ -80,6 +83,7 @@ func TestPhoto_GetCaption(t *testing.T) {
 }
 
 func TestPhoto_UpdateCaptionLabels(t *testing.T) {
+	ValidateFixtures(t)
 	fl := FirstOrCreateLabel(NewLabel("Food", 1))
 	wl := FirstOrCreateLabel(NewLabel("Wine", 2))
 	bl := FirstOrCreateLabel(&Label{LabelName: "Bar", LabelSlug: "bar", CustomSlug: "bar", DeletedAt: TimeStamp()})
@@ -206,6 +210,7 @@ func TestPhoto_UpdateCaptionLabels(t *testing.T) {
 }
 
 func TestPhoto_SetCaption(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("SetEmptyCaption", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
 		assert.Equal(t, "photo caption non-photographic", m.PhotoCaption)

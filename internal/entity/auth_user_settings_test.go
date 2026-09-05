@@ -11,6 +11,7 @@ import (
 )
 
 func TestCreateUserSettings(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("EmptyUid", func(t *testing.T) {
 		m := &User{UserUID: ""}
 		assert.Error(t, CreateUserSettings(m))
@@ -38,11 +39,13 @@ func TestCreateUserSettings(t *testing.T) {
 }
 
 func TestUserSettings_HasID(t *testing.T) {
+	ValidateFixtures(t)
 	u := FindUserByName("alice")
 	assert.True(t, u.UserSettings.HasID())
 }
 
 func TestUserSettings_Updates(t *testing.T) {
+	ValidateFixtures(t)
 	m := &User{
 		UserUID: "1234",
 		UserSettings: &UserSettings{
@@ -56,6 +59,7 @@ func TestUserSettings_Updates(t *testing.T) {
 }
 
 func TestUserSettings_Apply(t *testing.T) {
+	ValidateFixtures(t)
 	m := &UserSettings{
 		UITheme:    "carbon",
 		UILanguage: "de",
@@ -165,6 +169,7 @@ func TestUserSettings_Apply(t *testing.T) {
 }
 
 func TestUserSettings_ApplyTo(t *testing.T) {
+	ValidateFixtures(t)
 	m := &UserSettings{
 		UITheme:              "lavender",
 		UILanguage:           "ch",

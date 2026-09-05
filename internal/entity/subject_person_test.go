@@ -7,6 +7,7 @@ import (
 )
 
 func TestNewPerson(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("BillGates", func(t *testing.T) {
 		subj := Subject{
 			SubjUID:      "jqytw12v8jjeu3e6",

@@ -7,6 +7,7 @@ import (
 )
 
 func TestPhoto_Optimize(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Update", func(t *testing.T) {
 		photo := PhotoFixtures.Get("Photo19")
 

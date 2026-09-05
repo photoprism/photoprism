@@ -7,6 +7,7 @@ import (
 )
 
 func TestLocationMap_Get(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("GetExistingLocation", func(t *testing.T) {
 		r := CellFixtures.Get("mexico")
 		assert.Equal(t, "Adosada Platform", r.CellName)
@@ -21,6 +22,7 @@ func TestLocationMap_Get(t *testing.T) {
 }
 
 func TestLocationMap_Pointer(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("GetExistingLocationPointer", func(t *testing.T) {
 		r := CellFixtures.Pointer("mexico")
 		assert.Equal(t, "Adosada Platform", r.CellName)

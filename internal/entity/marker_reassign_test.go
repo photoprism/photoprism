@@ -14,6 +14,7 @@ import (
 // is reassigned when it receives the name of another person, as sent by the people tab
 // of the photo editor.
 func TestMarkerSaveForm_Reassign(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("MarkerLinkedToOtherSubject", func(t *testing.T) {
 		// Two existing people, each with a marker of their own.
 		subjA := FirstOrCreateSubject(NewSubject("Reassign Person A", SubjPerson, SrcManual))

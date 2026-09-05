@@ -7,11 +7,13 @@ import (
 )
 
 func TestCreateUnknownPlace(t *testing.T) {
+	ValidateFixtures(t)
 	r := FirstOrCreatePlace(&UnknownPlace)
 	assert.True(t, r.Unknown())
 }
 
 func TestFindPlace(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("HolidayPark", func(t *testing.T) {
 		r := FindPlace("de:HFqPHxa2Hsol")
 
@@ -55,6 +57,7 @@ func TestFindPlace(t *testing.T) {
 }
 
 func TestFirstOrCreatePlace(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("ExistingPlace", func(t *testing.T) {
 		m := PlaceFixtures.Pointer("zinkwazi")
 		r := FirstOrCreatePlace(m)
@@ -71,6 +74,7 @@ func TestFirstOrCreatePlace(t *testing.T) {
 }
 
 func TestPlace_LongCity(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("True", func(t *testing.T) {
 		p := Place{PlaceCity: "veryveryveryverylongcity"}
 		assert.True(t, p.LongCity())
@@ -82,6 +86,7 @@ func TestPlace_LongCity(t *testing.T) {
 }
 
 func TestPlace_NoCity(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("True", func(t *testing.T) {
 		p := Place{PlaceCity: ""}
 		assert.True(t, p.NoCity())
@@ -93,6 +98,7 @@ func TestPlace_NoCity(t *testing.T) {
 }
 
 func TestPlace_CityContains(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("True", func(t *testing.T) {
 		p := Place{PlaceCity: "Munich"}
 		assert.True(t, p.CityContains("Munich"))

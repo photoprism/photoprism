@@ -12,6 +12,7 @@ import (
 )
 
 func TestDeleteSession(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		id := rnd.SessionID("77be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac1")
 		m := &Session{ID: id, PreviewToken: "preview123"}
@@ -69,6 +70,7 @@ func TestDeleteSession(t *testing.T) {
 }
 
 func TestDeleteChildSessions(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("New", func(t *testing.T) {
 		s := NewSession(3600, 0)
 		assert.Equal(t, 0, DeleteChildSessions(s))
@@ -76,6 +78,7 @@ func TestDeleteChildSessions(t *testing.T) {
 }
 
 func TestDeleteClientSessions(t *testing.T) {
+	ValidateFixtures(t)
 	// Test client UID.
 	clientUID := "cs5gfen1bgx00000"
 
@@ -112,6 +115,7 @@ func TestDeleteClientSessions(t *testing.T) {
 }
 
 func TestDeleteExpiredSessions(t *testing.T) {
+	ValidateFixtures(t)
 	assert.Equal(t, 0, DeleteExpiredSessions())
 	m := NewSession(unix.Day, unix.Hour)
 	m.Expires(time.Date(2000, 01, 15, 12, 30, 0, 0, time.UTC))
@@ -122,6 +126,7 @@ func TestDeleteExpiredSessions(t *testing.T) {
 }
 
 func TestDeleteFromSessionCache(t *testing.T) {
+	ValidateFixtures(t)
 	id := rnd.SessionID("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac1")
 	sessionCache.Flush()
 	bob := FindSessionByRefID("sessxkkcabce")

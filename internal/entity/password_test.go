@@ -7,6 +7,7 @@ import (
 )
 
 func TestNewPassword(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		p := NewPassword("urrwaxd19ldtz68x", "passwd", false)
 		assert.Len(t, p.Hash, 60)
@@ -18,6 +19,7 @@ func TestNewPassword(t *testing.T) {
 }
 
 func TestPassword_SetPassword(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Text", func(t *testing.T) {
 		p := NewPassword("urrwaxd19ldtz68x", "passwd", false)
 		assert.Len(t, p.Hash, 60)
@@ -56,6 +58,7 @@ func TestPassword_SetPassword(t *testing.T) {
 }
 
 func TestPassword_Valid(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("EmptyHash", func(t *testing.T) {
 		p := Password{Hash: ""}
 		assert.True(t, p.Empty())
@@ -79,6 +82,7 @@ func TestPassword_Valid(t *testing.T) {
 }
 
 func TestPassword_Invalid(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("EmptyHash", func(t *testing.T) {
 		p := Password{Hash: ""}
 		assert.True(t, p.Empty())
@@ -102,6 +106,7 @@ func TestPassword_Invalid(t *testing.T) {
 }
 
 func TestPassword_Create(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		p := Password{UID: "uriku0138hqql4bz"}
 
@@ -115,6 +120,7 @@ func TestPassword_Create(t *testing.T) {
 }
 
 func TestFindPassword(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NotFound", func(t *testing.T) {
 		r := FindPassword("xxx")
 		assert.Nil(t, r)
@@ -145,6 +151,7 @@ func TestFindPassword(t *testing.T) {
 }
 
 func TestPassword_Cost(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("DefaultPasswordCost", func(t *testing.T) {
 		p := NewPassword("urrwaxd19ldtz68x", "photoprism", false)
 		if cost, err := p.Cost(); err != nil {
@@ -169,6 +176,7 @@ func TestPassword_Cost(t *testing.T) {
 }
 
 func TestPassword_String(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("BCrypt", func(t *testing.T) {
 		p := NewPassword("urrwaxd19ldtz68x", "lkjhgtyu", false)
 		assert.Len(t, p.String(), 60)
@@ -176,6 +184,7 @@ func TestPassword_String(t *testing.T) {
 }
 
 func TestPassword_IsEmpty(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("False", func(t *testing.T) {
 		p := NewPassword("urrwaxd19ldtz68x", "lkjhgtyu", false)
 		assert.False(t, p.Empty())

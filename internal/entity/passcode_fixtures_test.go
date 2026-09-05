@@ -7,6 +7,7 @@ import (
 )
 
 func TestPasscodeMap_Get(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("GetExistingPasscode", func(t *testing.T) {
 		r := PasscodeFixtures.Get("alice")
 		assert.Equal(t, "uqxetse3cy5eo9z2", r.UID)
@@ -20,6 +21,7 @@ func TestPasscodeMap_Get(t *testing.T) {
 }
 
 func TestPasscodeMap_Pointer(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("GetExistingPasscode", func(t *testing.T) {
 		r := PasscodeFixtures.Pointer("alice")
 		assert.Equal(t, "uqxetse3cy5eo9z2", r.UID)

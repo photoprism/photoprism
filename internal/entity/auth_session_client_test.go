@@ -12,6 +12,7 @@ import (
 )
 
 func TestNewClientSession(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Anonymous", func(t *testing.T) {
 		sess := NewClientSession("Anonymous", unix.Day, "metrics", authn.GrantClientCredentials, nil)
 
@@ -69,6 +70,7 @@ func TestNewClientSession(t *testing.T) {
 }
 
 func TestNewClientSession_ReleasesTokensOnDelete(t *testing.T) {
+	ValidateFixtures(t)
 	// Reproduces #5733: an app-password session inherits the user's preview and download
 	// tokens (via SetUser) before SetAuthToken finalizes its ID. Deleting the app password
 	// and the user's remaining session must release the tokens from the lookup cache so they
@@ -121,6 +123,7 @@ func TestNewClientSession_ReleasesTokensOnDelete(t *testing.T) {
 }
 
 func TestAddClientSession(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Anonymous", func(t *testing.T) {
 		sess, err := AddClientSession("", unix.Day, "metrics", authn.GrantClientCredentials, nil)
 

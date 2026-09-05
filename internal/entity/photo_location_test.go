@@ -11,6 +11,7 @@ import (
 )
 
 func TestPhoto_SetPosition(t *testing.T) {
+	ValidateFixtures(t)
 	t.Cleanup(func() {
 		assert.NoError(t, UnscopedDb().Delete(&Cell{}, "place_id = ?", "zz:NjeJTM9IXJSv").Error)
 		assert.NoError(t, UnscopedDb().Delete(&Place{}, "id = ?", "zz:NjeJTM9IXJSv").Error)
@@ -33,6 +34,7 @@ func TestPhoto_SetPosition(t *testing.T) {
 }
 
 func TestPhoto_AdoptPlace(t *testing.T) {
+	ValidateFixtures(t)
 	place := PlaceFixtures.Get("mexico")
 	t.Run("SrcAuto", func(t *testing.T) {
 		p := Photo{ID: 1, Place: nil, PlaceID: "", CellID: "s2:479a03fda123", PhotoLat: -1, PhotoLng: 1, PlaceSrc: SrcAuto}
@@ -82,6 +84,7 @@ func TestPhoto_AdoptPlace(t *testing.T) {
 }
 
 func TestPhoto_RemoveLocation(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("SrcAuto", func(t *testing.T) {
 		m := Photo{ID: 1, PlaceID: "zz:NjeJTM9IXJSv", CellID: "s2:479a03fda18c", PhotoLat: 1, PhotoLng: -1, PlaceSrc: SrcAuto}
 		assert.NotEmpty(t, m.CellID)
@@ -105,6 +108,7 @@ func TestPhoto_RemoveLocation(t *testing.T) {
 }
 
 func TestPhoto_SetAltitude(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("ViaSetCoordinates", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
 		assert.Equal(t, SrcMeta, m.PlaceSrc)
@@ -165,6 +169,7 @@ func TestPhoto_SetAltitude(t *testing.T) {
 }
 
 func TestPhoto_SetCoordinates(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("EmptyCoordinates", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
 		assert.Equal(t, SrcMeta, m.PlaceSrc)
@@ -259,6 +264,7 @@ func TestPhoto_SetCoordinates(t *testing.T) {
 }
 
 func TestNormalizeCoordinateBounds(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NoChange", func(t *testing.T) {
 		lat, lng, changed := geo.NormalizeCoordinateBounds(48.51885, 9.0531866)
 		assert.False(t, changed)
@@ -286,6 +292,7 @@ func TestNormalizeCoordinateBounds(t *testing.T) {
 }
 
 func TestPhoto_UnknownLocation(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NoLocation", func(t *testing.T) {
 		m := PhotoFixtures.Get("19800101_000002_D640C559")
 		assert.True(t, m.UnknownLocation())
@@ -307,6 +314,7 @@ func TestPhoto_UnknownLocation(t *testing.T) {
 }
 
 func TestPhoto_TrustedLocation(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("SrcAuto", func(t *testing.T) {
 		m := Photo{ID: 1, CellID: "s2:479a03fda18c", PhotoLat: 1, PhotoLng: -1, PlaceSrc: SrcAuto}
 		assert.False(t, m.TrustedLocation())
@@ -326,6 +334,7 @@ func TestPhoto_TrustedLocation(t *testing.T) {
 }
 
 func TestPhoto_HasLocation(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Num19800101Num000002DNum640CNum559", func(t *testing.T) {
 		m := PhotoFixtures.Get("19800101_000002_D640C559")
 		assert.False(t, m.HasLocation())
@@ -337,6 +346,7 @@ func TestPhoto_HasLocation(t *testing.T) {
 }
 
 func TestPhoto_HasLatLng(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Photo01", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
 		assert.True(t, m.HasLatLng())
@@ -351,6 +361,7 @@ func TestPhoto_HasLatLng(t *testing.T) {
 }
 
 func TestPhoto_NoLatLng(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Photo01", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
 		assert.False(t, m.NoLatLng())
@@ -365,6 +376,7 @@ func TestPhoto_NoLatLng(t *testing.T) {
 }
 
 func TestPhoto_NoPlace(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Num19800101Num000002DNum640CNum559", func(t *testing.T) {
 		m := PhotoFixtures.Get("19800101_000002_D640C559")
 		assert.True(t, m.UnknownPlace())
@@ -376,6 +388,7 @@ func TestPhoto_NoPlace(t *testing.T) {
 }
 
 func TestPhoto_HasPlace(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Num19800101Num000002DNum640CNum559", func(t *testing.T) {
 		m := PhotoFixtures.Get("19800101_000002_D640C559")
 		assert.False(t, m.HasPlace())
@@ -387,6 +400,7 @@ func TestPhoto_HasPlace(t *testing.T) {
 }
 
 func TestPhoto_LocationTimeZone(t *testing.T) {
+	ValidateFixtures(t)
 	m := Photo{}
 	m.PhotoLat = 48.533905555
 	m.PhotoLng = 9.01
@@ -399,6 +413,7 @@ func TestPhoto_LocationTimeZone(t *testing.T) {
 }
 
 func TestPhoto_GetTakenAt(t *testing.T) {
+	ValidateFixtures(t)
 	m := Photo{}
 	m.PhotoLat = 48.533905555
 	m.PhotoLng = 9.01
@@ -424,6 +439,7 @@ func TestPhoto_GetTakenAt(t *testing.T) {
 }
 
 func TestPhoto_CountryName(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Unknown", func(t *testing.T) {
 		m := Photo{PhotoCountry: "xx"}
 		assert.Equal(t, "Unknown", m.CountryName())
@@ -435,6 +451,7 @@ func TestPhoto_CountryName(t *testing.T) {
 }
 
 func TestUpdateLocation(t *testing.T) {
+	ValidateFixtures(t)
 	st := Now().UTC().Truncate(time.Second)
 	t.Cleanup(func() {
 		// Randomness creaps in and sometimes creates a new place.

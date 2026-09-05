@@ -7,6 +7,7 @@ import (
 )
 
 func TestKeywordMap_Get(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("GetExistingKeyword", func(t *testing.T) {
 		r := KeywordFixtures.Get("bridge")
 		assert.Equal(t, uint(1000000), r.ID)
@@ -21,6 +22,7 @@ func TestKeywordMap_Get(t *testing.T) {
 }
 
 func TestKeywordMap_Pointer(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("GetExistingKeywordPointer", func(t *testing.T) {
 		r := KeywordFixtures.Pointer("bridge")
 		assert.Equal(t, uint(1000000), r.ID)

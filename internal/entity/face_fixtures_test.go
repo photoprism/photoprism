@@ -7,6 +7,7 @@ import (
 )
 
 func TestFaceMap_Get(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("GetExistingFace", func(t *testing.T) {
 		r := FaceFixtures.Get("jane-doe")
 		assert.Equal(t, "js6sg6b1h1njaaab", r.SubjUID)
@@ -21,6 +22,7 @@ func TestFaceMap_Get(t *testing.T) {
 }
 
 func TestFaceMap_Pointer(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("GetExistingFace", func(t *testing.T) {
 		r := FaceFixtures.Pointer("jane-doe")
 		assert.Equal(t, "js6sg6b1h1njaaab", r.SubjUID)

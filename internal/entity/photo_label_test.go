@@ -12,6 +12,7 @@ import (
 )
 
 func TestNewPhotoLabel(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NameChristmasNum2018", func(t *testing.T) {
 		photoLabel := NewPhotoLabel(1, 3, 80, "source")
 		assert.Equal(t, uint(0x1), photoLabel.PhotoID)
@@ -22,6 +23,7 @@ func TestNewPhotoLabel(t *testing.T) {
 }
 
 func TestPhotoLabel_TableName(t *testing.T) {
+	ValidateFixtures(t)
 	photoLabel := &PhotoLabel{}
 	tableName := photoLabel.TableName()
 
@@ -29,6 +31,7 @@ func TestPhotoLabel_TableName(t *testing.T) {
 }
 
 func TestFirstOrCreatePhotoLabel(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		model := LabelFixtures.PhotoLabel(1000000, "flower", 38, "image")
 		result := FirstOrCreatePhotoLabel(&model)
@@ -68,6 +71,7 @@ func TestFirstOrCreatePhotoLabel(t *testing.T) {
 }
 
 func TestPhotoLabel_ClassifyLabel(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		pl := LabelFixtures.PhotoLabel(1000000, "flower", 38, "image")
 		r := pl.ClassifyLabel()
@@ -83,6 +87,7 @@ func TestPhotoLabel_ClassifyLabel(t *testing.T) {
 }
 
 func TestPhotoLabel_Save(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		photoLabel := NewPhotoLabel(13, 1000, 99, "image")
 		err := photoLabel.Save()
@@ -108,6 +113,7 @@ func TestPhotoLabel_Save(t *testing.T) {
 }
 
 func TestPhotoLabel_Update(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("FlushesCache", func(t *testing.T) {
 		FlushPhotoLabelCache()
 		relation := createTestPhotoLabel(t)
@@ -132,6 +138,7 @@ func TestPhotoLabel_Update(t *testing.T) {
 }
 
 func TestPhotoLabel_Updates(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("FlushesCache", func(t *testing.T) {
 		FlushPhotoLabelCache()
 		relation := createTestPhotoLabel(t)
@@ -156,6 +163,7 @@ func TestPhotoLabel_Updates(t *testing.T) {
 }
 
 func TestPhotoLabel_Delete(t *testing.T) {
+	ValidateFixtures(t)
 	FlushPhotoLabelCache()
 	relation := createTestPhotoLabel(t)
 	photoLabelCache.SetDefault(relation.CacheKey(), *relation)
@@ -167,6 +175,7 @@ func TestPhotoLabel_Delete(t *testing.T) {
 }
 
 func TestPhotoLabel_HasID(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Nil", func(t *testing.T) {
 		var label *PhotoLabel
 		assert.False(t, label.HasID())
@@ -182,6 +191,7 @@ func TestPhotoLabel_HasID(t *testing.T) {
 }
 
 func TestPhotoLabel_CacheKey(t *testing.T) {
+	ValidateFixtures(t)
 	label := &PhotoLabel{PhotoID: 1, LabelID: 2}
 	assert.Equal(t, "1-2", label.CacheKey())
 }

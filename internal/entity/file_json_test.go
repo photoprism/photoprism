@@ -3,6 +3,7 @@ package entity
 import "testing"
 
 func TestFile_MarshalJSON(t *testing.T) {
+	ValidateFixtures(t)
 	if m := FileFixtures.Pointer("Video.mp4"); m == nil {
 		t.Fatal("must not be nil")
 	} else if j, err := m.MarshalJSON(); err != nil {

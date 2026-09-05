@@ -10,6 +10,7 @@ import (
 )
 
 func TestFolderAlbumSlugCandidates(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Empty", func(t *testing.T) {
 		assert.Nil(t, folderAlbumSlugCandidates(""))
 	})

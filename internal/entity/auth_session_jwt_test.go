@@ -17,6 +17,7 @@ import (
 )
 
 func TestNewSessionFromJWT(t *testing.T) {
+	ValidateFixtures(t)
 	issuedAt := time.Date(2025, time.October, 28, 9, 0, 0, 0, time.UTC)
 	notBefore := issuedAt.Add(15 * time.Second)
 	expiresAt := issuedAt.Add(5 * time.Minute)

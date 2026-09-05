@@ -13,11 +13,13 @@ import (
 )
 
 func TestFace_TableName(t *testing.T) {
+	ValidateFixtures(t)
 	m := &Face{}
 	assert.Contains(t, m.TableName(), "faces")
 }
 
 func TestFace_Match(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Num1000003Four", func(t *testing.T) {
 		// The fixture carries a radius from an earlier calibration, so the clamp on read
 		// is what keeps it from widening the gate to the stored 2.
@@ -119,6 +121,7 @@ func TestFace_Match(t *testing.T) {
 }
 
 func TestFace_ResolveCollision(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Collision", func(t *testing.T) {
 		m := FaceFixtures.Get("joe-biden")
 
@@ -201,6 +204,7 @@ func TestFace_ResolveCollision(t *testing.T) {
 }
 
 func TestFace_ReviseMatches(t *testing.T) {
+	ValidateFixtures(t)
 	m := FaceFixtures.Get("joe-biden")
 	removed, err := m.ReviseMatches()
 
@@ -212,6 +216,7 @@ func TestFace_ReviseMatches(t *testing.T) {
 }
 
 func TestNewFace(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		marker := MarkerFixtures.Get("1000003-4")
 		e := marker.Embeddings()
@@ -223,6 +228,7 @@ func TestNewFace(t *testing.T) {
 }
 
 func TestFace_MatchId(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("ANum123BNum456", func(t *testing.T) {
 		f1 := Face{ID: "A123"}
 		f2 := Face{ID: "B456"}
@@ -235,6 +241,7 @@ func TestFace_MatchId(t *testing.T) {
 }
 
 func TestFace_SkipMatching(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Regular", func(t *testing.T) {
 		m := FaceFixtures.Get("joe-biden")
 		assert.False(t, m.SkipMatching())
@@ -248,6 +255,7 @@ func TestFace_SkipMatching(t *testing.T) {
 }
 
 func TestFace_SetEmbeddings(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		marker := MarkerFixtures.Get("1000003-4")
 		e := marker.Embeddings()
@@ -341,6 +349,7 @@ func TestFace_SetEmbeddings(t *testing.T) {
 }
 
 func TestFace_Embedding(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		// The fixtures are generated for whichever model a run resolves to, so what the
 		// vector has to be is its width, not a particular value.
@@ -364,12 +373,14 @@ func TestFace_Embedding(t *testing.T) {
 }
 
 func TestFace_MatchMarkersEmpty(t *testing.T) {
+	ValidateFixtures(t)
 	m := FaceFixtures.Get("joe-biden")
 	require.NoError(t, m.MatchMarkers(nil))
 	require.NoError(t, m.MatchMarkers([]string{}))
 }
 
 func TestFace_AcceptDist(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("WithinClusterRadius", func(t *testing.T) {
 		m := &Face{SampleRadius: 0.2}
 		assert.InDelta(t, 0.2+face.MatchDist, m.AcceptDist(), 1e-9)
@@ -392,6 +403,7 @@ func TestFace_AcceptDist(t *testing.T) {
 // face is a request to find the rest of that person, and a radius of zero would gate the search at
 // MatchDist, where no pair of one person's faces lands.
 func TestFace_SingletonMatchDistance(t *testing.T) {
+	ValidateFixtures(t)
 	base := face.FixtureEmbedding(7401)
 	m := NewFace("", SrcManual, face.Embeddings{base}, face.EmbeddingModelName())
 
@@ -430,6 +442,7 @@ func narrowTestFace(t *testing.T, subjUID string, seed uint64) *Face {
 }
 
 func TestFace_UpdateMatchStats(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NoFaceId", func(t *testing.T) {
 		m := &Face{}
 		require.NoError(t, m.UpdateMatchStats(3, 0.2))
@@ -505,6 +518,7 @@ func TestFace_UpdateMatchStats(t *testing.T) {
 }
 
 func TestFace_UpdateMatchTime(t *testing.T) {
+	ValidateFixtures(t)
 	m := NewFace("12345", SrcAuto, face.RandomEmbeddings(1, face.RegularFace), face.EmbeddingModelName())
 	initialMatchTime := m.MatchedAt
 	assert.Equal(t, initialMatchTime, m.MatchedAt)
@@ -515,6 +529,7 @@ func TestFace_UpdateMatchTime(t *testing.T) {
 }
 
 func TestFace_Save(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Ok", func(t *testing.T) {
 		m := NewFace("dhsthrdst", SrcAuto, face.RandomEmbeddings(1, face.RegularFace), face.EmbeddingModelName())
 
@@ -538,6 +553,7 @@ func TestFace_Save(t *testing.T) {
 }
 
 func TestFace_Update(t *testing.T) {
+	ValidateFixtures(t)
 	m := NewFace("12345fdef", SrcAuto, face.RandomEmbeddings(2, face.RegularFace), face.EmbeddingModelName())
 	id := m.ID
 
@@ -567,6 +583,7 @@ func TestFace_Update(t *testing.T) {
 }
 
 func TestFace_RefreshPhotos(t *testing.T) {
+	ValidateFixtures(t)
 	f := FaceFixtures.Get("joe-biden")
 
 	if err := f.RefreshPhotos(); err != nil {
@@ -579,6 +596,7 @@ func TestFace_RefreshPhotos(t *testing.T) {
 }
 
 func TestFirstOrCreateFace(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("CreateNewFace", func(t *testing.T) {
 		m := NewFace("12345unique", SrcAuto, face.RandomEmbeddings(1, face.RegularFace), face.EmbeddingModelName())
 		r := FirstOrCreateFace(m)
@@ -596,6 +614,7 @@ func TestFirstOrCreateFace(t *testing.T) {
 }
 
 func TestFindFace(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("ExistingFace", func(t *testing.T) {
 		assert.NotNil(t, FindFace("VF7ANLDET2BKZNT4VQWJMMC6HBEFDOG7"))
 		assert.Equal(t, 3, FindFace("VF7ANLDET2BKZNT4VQWJMMC6HBEFDOG7").Samples)
@@ -606,6 +625,7 @@ func TestFindFace(t *testing.T) {
 }
 
 func TestFace_HideAndShow(t *testing.T) {
+	ValidateFixtures(t)
 	f := FaceFixtures.Get("joe-biden")
 
 	if err := f.Hide(); err != nil {
@@ -616,6 +636,7 @@ func TestFace_HideAndShow(t *testing.T) {
 }
 
 func TestFace_SetSubjectUID(t *testing.T) {
+	ValidateFixtures(t)
 	f := FindFace(FaceFixtures.Get("joe-biden").ID)
 	assert.NotEmpty(t, f)
 
@@ -637,6 +658,7 @@ func TestFace_SetSubjectUID(t *testing.T) {
 }
 
 func TestFace_SameEmbeddingModel(t *testing.T) {
+	ValidateFixtures(t)
 	restore := face.ConfiguredModel()
 
 	t.Cleanup(func() {
@@ -668,6 +690,7 @@ func TestFace_SameEmbeddingModel(t *testing.T) {
 }
 
 func TestFace_MatchOtherModel(t *testing.T) {
+	ValidateFixtures(t)
 	restore := face.ConfiguredModel()
 
 	t.Cleanup(func() {
@@ -709,6 +732,7 @@ func TestFace_MatchOtherModel(t *testing.T) {
 }
 
 func TestFace_ReviseMatchesSkipsOtherModels(t *testing.T) {
+	ValidateFixtures(t)
 	restore := face.ConfiguredModel()
 
 	t.Cleanup(func() {
@@ -765,6 +789,7 @@ func TestFace_ReviseMatchesSkipsOtherModels(t *testing.T) {
 // set: pass one reads matched_at IS NULL, pass two runs only while some cluster is unmatched. It
 // would sit unassigned until "faces update --force".
 func TestFace_ReviseMatchesFlagsForRematching(t *testing.T) {
+	ValidateFixtures(t)
 	m := NewFace("", SrcAuto, face.Embeddings{face.RandomEmbedding()}, face.EmbeddingModelName())
 	require.NotNil(t, m)
 	require.NoError(t, m.Create())
@@ -801,6 +826,7 @@ func TestFace_ReviseMatchesFlagsForRematching(t *testing.T) {
 }
 
 func TestFace_MatchMarkers(t *testing.T) {
+	ValidateFixtures(t)
 	cluster := FaceFixtures.Pointer("joe-biden")
 
 	// newFacelessMarker persists an unassigned marker well inside what the cluster accepts, so
@@ -884,6 +910,7 @@ func TestFace_MatchMarkers(t *testing.T) {
 // cluster from that one marker and immediately matches it against the faceless ones, so a radius
 // of zero would gate the search at MatchDist and the feature would find nobody.
 func TestFace_MatchMarkersFromOneSample(t *testing.T) {
+	ValidateFixtures(t)
 	base := face.FixtureEmbedding(9301)
 
 	cluster := FirstOrCreateFace(NewFace("js6sg6b1qekk9jz1", SrcManual, face.Embeddings{base}, face.EmbeddingModelName()))
@@ -931,6 +958,7 @@ func TestFace_MatchMarkersFromOneSample(t *testing.T) {
 // reopened one during the pass - the flag can, and stamping a reopened cluster would leave the
 // markers ReviseMatches dropped with nothing to be rematched against.
 func TestFace_Reopened(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Fresh", func(t *testing.T) {
 		m := NewFace("", SrcAuto, face.Embeddings{face.RandomEmbedding()}, face.EmbeddingModelName())
 		require.NotNil(t, m)
@@ -966,6 +994,7 @@ func TestFace_Reopened(t *testing.T) {
 // TestFace_HasCollision covers the three states that count as a recorded collision, so that a
 // cluster excluded from matching by the ambiguous kind is not read as collision-free.
 func TestFace_HasCollision(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("None", func(t *testing.T) {
 		assert.False(t, (&Face{ID: "TESTFACEID", FaceKind: int(face.RegularFace)}).HasCollision())
 	})
@@ -986,6 +1015,7 @@ func TestFace_HasCollision(t *testing.T) {
 // TestFace_ClearCollision covers the only path that widens a collision radius. Without it the
 // narrowing is permanent, so a cluster stays gated against faces that are known to belong to it.
 func TestFace_ClearCollision(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := &Face{
 			ID:              "CLEARCOLLISION0000000000000000A1",
@@ -1038,6 +1068,7 @@ func TestFace_ClearCollision(t *testing.T) {
 
 // TestClearSubjectCollisions covers the bulk path used where two subjects turn out to be one.
 func TestClearSubjectCollisions(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		// jane-doe rather than john-doe: that fixture already carries a collision, which would
 		// make the count assertion below pass or fail on fixture state rather than on this code.

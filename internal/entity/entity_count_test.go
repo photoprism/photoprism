@@ -7,6 +7,7 @@ import (
 )
 
 func TestCount(t *testing.T) {
+	ValidateFixtures(t)
 	m := PhotoFixtures.Pointer("Photo01")
 	_, keys, err := ModelValues(m, "ID", "PhotoUID")
 

@@ -7,6 +7,7 @@ import (
 )
 
 func TestFileShareMap_Get(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("GetExistingFileshare", func(t *testing.T) {
 		r := FileShareFixtures.Get("FileShare1", 0, 0, "")
 		assert.Equal(t, uint(1000000), r.ServiceID)
@@ -22,6 +23,7 @@ func TestFileShareMap_Get(t *testing.T) {
 }
 
 func TestFileShareMap_Pointer(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("GetExistingFilesharePointer", func(t *testing.T) {
 		r := FileShareFixtures.Pointer("FileShare1", 0, 0, "")
 		assert.Equal(t, uint(1000000), r.ServiceID)

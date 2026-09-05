@@ -7,6 +7,7 @@ import (
 )
 
 func TestClientMap_Get(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Alice", func(t *testing.T) {
 		r := ClientFixtures.Get("alice")
 		assert.Equal(t, "Alice", r.ClientName)
@@ -22,6 +23,7 @@ func TestClientMap_Get(t *testing.T) {
 }
 
 func TestClientMap_Pointer(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Alice", func(t *testing.T) {
 		r := ClientFixtures.Pointer("alice")
 		assert.Equal(t, "cs5gfen1bgxz7s9i", r.ClientUID)

@@ -7,11 +7,13 @@ import (
 )
 
 func TestFileShare_TableName(t *testing.T) {
+	ValidateFixtures(t)
 	fileShare := &FileShare{}
 	assert.Equal(t, "files_share", fileShare.TableName())
 }
 
 func TestNewFileShare(t *testing.T) {
+	ValidateFixtures(t)
 	r := NewFileShare(123, 123, "test")
 	assert.IsType(t, &FileShare{}, r)
 	assert.Equal(t, uint(0x7b), r.FileID)
@@ -21,6 +23,7 @@ func TestNewFileShare(t *testing.T) {
 }
 
 func TestFirstOrCreateFileShare(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NotYetExisting", func(t *testing.T) {
 		fileShare := &FileShare{FileID: 123, ServiceID: 888, RemoteName: "test888"}
 		result := FirstOrCreateFileShare(fileShare)
@@ -62,6 +65,7 @@ func TestFirstOrCreateFileShare(t *testing.T) {
 }
 
 func TestFileShare_Updates(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		fileShare := NewFileShare(123, 123, "NameBeforeUpdate")
 
@@ -82,6 +86,7 @@ func TestFileShare_Updates(t *testing.T) {
 }
 
 func TestFileShare_Update(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		fileShare := NewFileShare(123, 123, "NameBeforeUpdate2")
 		assert.Equal(t, "NameBeforeUpdate2", fileShare.RemoteName)
@@ -101,6 +106,7 @@ func TestFileShare_Update(t *testing.T) {
 }
 
 func TestFileShare_Save(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		fileShare := NewFileShare(123, 123, "Nameavc")
 

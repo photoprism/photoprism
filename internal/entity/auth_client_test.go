@@ -12,6 +12,7 @@ import (
 )
 
 func TestNewClient(t *testing.T) {
+	ValidateFixtures(t)
 	m := NewClient()
 	assert.Equal(t, "", m.AuthScope)
 	assert.Equal(t, m.AuthScope, m.Scope())
@@ -21,6 +22,7 @@ func TestNewClient(t *testing.T) {
 }
 
 func TestClient_GetData(t *testing.T) {
+	ValidateFixtures(t)
 	c := NewClient()
 	d := &ClientData{
 		Theme: "portal",
@@ -36,6 +38,7 @@ func TestClient_GetData(t *testing.T) {
 }
 
 func TestClient_GetData_OIDCFields(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("RoundTripThroughDataJSON", func(t *testing.T) {
 		src := NewClient()
 		src.SetData(&ClientData{
@@ -72,6 +75,7 @@ func TestClient_GetData_OIDCFields(t *testing.T) {
 }
 
 func TestFindClient(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Alice", func(t *testing.T) {
 		expected := ClientFixtures.Get("alice")
 
@@ -121,6 +125,7 @@ func TestFindClient(t *testing.T) {
 }
 
 func TestClient_NoUID(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("True", func(t *testing.T) {
 		c := Client{ClientUID: ""}
 		assert.True(t, c.InvalidUID())
@@ -132,6 +137,7 @@ func TestClient_NoUID(t *testing.T) {
 }
 
 func TestClient_NoName(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("True", func(t *testing.T) {
 		c := Client{ClientName: ""}
 		assert.True(t, c.NoName())
@@ -143,6 +149,7 @@ func TestClient_NoName(t *testing.T) {
 }
 
 func TestClient_SetRole(t *testing.T) {
+	ValidateFixtures(t)
 	c := Client{ClientName: "Test Test"}
 	assert.False(t, c.HasRole("admin"))
 	c.SetRole("admin")
@@ -150,6 +157,7 @@ func TestClient_SetRole(t *testing.T) {
 }
 
 func TestClient_SetDisplayName(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("InstanceReportSets", func(t *testing.T) {
 		c := Client{}
 		c.SetDisplayName("Reported", SrcAuto)
@@ -187,6 +195,7 @@ func TestClient_SetDisplayName(t *testing.T) {
 }
 
 func TestClient_User(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Alice", func(t *testing.T) {
 		alice := ClientFixtures.Get("alice")
 
@@ -248,6 +257,7 @@ func TestClient_User(t *testing.T) {
 }
 
 func TestClient_SetUser(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("John", func(t *testing.T) {
 		c := Client{ClientName: "test"}
 		u := &User{UserUID: "uqxc08w3d0ej2111", UserName: "john"}
@@ -265,6 +275,7 @@ func TestClient_SetUser(t *testing.T) {
 }
 
 func TestClient_Create(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		var m = Client{ClientName: "test"}
 		if err := m.Create(); err != nil {
@@ -283,6 +294,7 @@ func TestClient_Create(t *testing.T) {
 }
 
 func TestClient_Save(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		c := FindClientByUID("cs5cpu17n6gj2aaa")
 		assert.Nil(t, c)
@@ -306,6 +318,7 @@ func TestClient_Save(t *testing.T) {
 }
 
 func TestClient_Delete(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		var m = Client{ClientName: "David", ClientUID: "cs5cpu17n6gj2bbb"}
 		if err := m.Save(); err != nil {
@@ -330,6 +343,7 @@ func TestClient_Delete(t *testing.T) {
 }
 
 func TestClient_Deleted(t *testing.T) {
+	ValidateFixtures(t)
 	var ptr *Client
 	assert.False(t, ClientFixtures.Pointer("alice").Deleted())
 	assert.False(t, ClientFixtures.Pointer("deleted").Deleted())
@@ -337,6 +351,7 @@ func TestClient_Deleted(t *testing.T) {
 }
 
 func TestClient_Disabled(t *testing.T) {
+	ValidateFixtures(t)
 	var ptr *Client
 	assert.False(t, ClientFixtures.Pointer("alice").Disabled())
 	assert.True(t, ClientFixtures.Pointer("deleted").Disabled())
@@ -344,6 +359,7 @@ func TestClient_Disabled(t *testing.T) {
 }
 
 func TestClient_Updates(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		var m = Client{ClientName: "Peter", ClientUID: "cs5cpu17n6gj2ddd"}
 
@@ -363,6 +379,7 @@ func TestClient_Updates(t *testing.T) {
 }
 
 func TestClient_NewSecret(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		var m = Client{ClientName: "Anna", ClientUID: "cs5cpu17n6gj2eee"}
 		if err := m.Save(); err != nil {
@@ -396,6 +413,7 @@ func TestClient_NewSecret(t *testing.T) {
 }
 
 func TestClient_SetSecret(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("EmptyUID", func(t *testing.T) {
 		var m = Client{ClientName: "No UUID"}
 
@@ -413,6 +431,7 @@ func TestClient_SetSecret(t *testing.T) {
 }
 
 func TestClient_Provider(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("New", func(t *testing.T) {
 		client := NewClient()
 		assert.Equal(t, authn.ProviderClient, client.Provider())
@@ -428,6 +447,7 @@ func TestClient_Provider(t *testing.T) {
 }
 
 func TestClient_Method(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("New", func(t *testing.T) {
 		client := NewClient()
 		assert.Equal(t, authn.MethodOAuth2, client.Method())
@@ -443,6 +463,7 @@ func TestClient_Method(t *testing.T) {
 }
 
 func TestClient_UpdateLastActive(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		var m = Client{ClientName: "Anne", ClientUID: "cs5cpu17n6gj2fff"}
 		if err := m.Save(); err != nil {
@@ -468,6 +489,7 @@ func TestClient_UpdateLastActive(t *testing.T) {
 }
 
 func TestClient_Tokens(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Set", func(t *testing.T) {
 		var m = Client{ClientName: "cs5cpu17n6gj2bbb", AuthTokens: 0}
 		assert.Equal(t, int64(1), m.Tokens())
@@ -493,6 +515,7 @@ func TestClient_Tokens(t *testing.T) {
 }
 
 func TestClient_EnforceAuthTokenLimit(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("EmptyUID", func(t *testing.T) {
 		var m = Client{ClientName: "No UUID"}
 
@@ -517,6 +540,7 @@ func TestClient_EnforceAuthTokenLimit(t *testing.T) {
 }
 
 func TestClient_VerifySecret(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Alice", func(t *testing.T) {
 		expected := ClientFixtures.Get("alice")
 
@@ -558,6 +582,7 @@ func TestClient_VerifySecret(t *testing.T) {
 }
 
 func TestClient_Expires(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Metrics", func(t *testing.T) {
 		m := ClientFixtures.Get("metrics")
 
@@ -575,6 +600,7 @@ func TestClient_Expires(t *testing.T) {
 }
 
 func TestClient_String(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Default", func(t *testing.T) {
 		m := &Client{}
 		assert.Equal(t, m.String(), "n/a")
@@ -599,6 +625,7 @@ func TestClient_String(t *testing.T) {
 }
 
 func TestClient_UserInfo(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("New", func(t *testing.T) {
 		assert.Equal(t, report.NotAssigned, NewClient().UserInfo())
 	})
@@ -611,6 +638,7 @@ func TestClient_UserInfo(t *testing.T) {
 }
 
 func TestClient_AuthInfo(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("New", func(t *testing.T) {
 		assert.Equal(t, "Client (OAuth2)", NewClient().AuthInfo())
 	})
@@ -623,6 +651,7 @@ func TestClient_AuthInfo(t *testing.T) {
 }
 
 func TestClient_Report(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Metrics", func(t *testing.T) {
 		m := ClientFixtures.Get("metrics")
 
@@ -632,6 +661,7 @@ func TestClient_Report(t *testing.T) {
 }
 
 func TestClient_SetFormValues(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		var m = Client{ClientName: "Neo", ClientUID: "cs5cpu17n6gj3aab"}
 
@@ -747,6 +777,7 @@ func TestClient_SetFormValues(t *testing.T) {
 }
 
 func TestClient_SetFormValues_Role(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("SetValidRoleFromForm", func(t *testing.T) {
 		m := Client{ClientName: "RoleTest", ClientUID: "cs5cpu17n6gj9r01"}
 
@@ -802,6 +833,7 @@ func TestClient_SetFormValues_Role(t *testing.T) {
 }
 
 func TestClient_SetFormValues_AuthEnabledToggle(t *testing.T) {
+	ValidateFixtures(t)
 	// Start enabled; attempt to disable via form should NOT flip to false.
 	m := NewClient()
 	m.ClientName = "ToggleEnabled"
@@ -824,6 +856,7 @@ func TestClient_SetFormValues_AuthEnabledToggle(t *testing.T) {
 }
 
 func TestClient_SetFormValues_SetUser(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("ByUID", func(t *testing.T) {
 		m := NewClient()
 		m.ClientName = "SetUserByUID"
@@ -880,6 +913,7 @@ func TestClient_SetFormValues_SetUser(t *testing.T) {
 }
 
 func TestClient_AclRole_Resolution(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("EmptyIsNone", func(t *testing.T) {
 		m := &Client{ClientRole: ""}
 		assert.Equal(t, acl.RoleNone, m.AclRole())
@@ -891,6 +925,7 @@ func TestClient_AclRole_Resolution(t *testing.T) {
 }
 
 func TestClient_SetRole_AliasNoneAndCase(t *testing.T) {
+	ValidateFixtures(t)
 	m := &Client{}
 	m.SetRole("NoNe")
 	assert.True(t, m.HasRole(acl.RoleNone))
@@ -900,6 +935,7 @@ func TestClient_SetRole_AliasNoneAndCase(t *testing.T) {
 }
 
 func TestClient_SetFormValues_DoesNotOverrideUID(t *testing.T) {
+	ValidateFixtures(t)
 	m := NewClient()
 	m.ClientName = "KeepUID"
 	m.ClientUID = "cs5cpu17n6gj9r08"
@@ -917,6 +953,7 @@ func TestClient_SetFormValues_DoesNotOverrideUID(t *testing.T) {
 }
 
 func TestClient_Validate(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := Client{
 			ClientName:   "test",
@@ -994,6 +1031,7 @@ func TestClient_Validate(t *testing.T) {
 	})
 }
 func TestFindClientByNodeUUID(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("node", func(t *testing.T) {
 		expected := ClientFixtures.Get("node")
 

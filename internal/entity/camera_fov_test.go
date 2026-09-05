@@ -7,6 +7,7 @@ import (
 )
 
 func TestCameraFisheyeFov(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("InstaX", func(t *testing.T) {
 		assert.Equal(t, 190, CameraFisheyeFov("Insta360", "Insta360 X4"))
 	})
@@ -46,6 +47,7 @@ func TestCameraFisheyeFov(t *testing.T) {
 
 // TestCameraFisheyeRoll verifies that only the validated OneRS profile receives a correction.
 func TestCameraFisheyeRoll(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("OneRS", func(t *testing.T) {
 		assert.Equal(t, 180, CameraFisheyeRoll("Insta360", "Insta360 OneRS"))
 	})

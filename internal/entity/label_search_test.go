@@ -8,6 +8,7 @@ import (
 )
 
 func TestActiveLabelByExactName(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Empty", func(t *testing.T) {
 		assert.Nil(t, activeLabelByExactName(""))
 	})
@@ -46,6 +47,7 @@ func TestActiveLabelByExactName(t *testing.T) {
 }
 
 func TestLabelSlugs(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("PipeSeparated", func(t *testing.T) {
 		assert.Equal(t, []string{"cake", "flower"}, LabelSlugs("cake|flower", "|"))
 	})
@@ -58,6 +60,7 @@ func TestLabelSlugs(t *testing.T) {
 }
 
 func TestFindLabels(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("FindsExistingNameIgnoringCase", func(t *testing.T) {
 		labels, err := FindLabels("cow", " ")
 		require.NoError(t, err)
@@ -120,6 +123,7 @@ func TestFindLabels(t *testing.T) {
 }
 
 func TestFindLabelIDs(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("WithoutCategories", func(t *testing.T) {
 		labelIDs, err := FindLabelIDs("landscape", " ", false)
 		require.NoError(t, err)
@@ -135,6 +139,7 @@ func TestFindLabelIDs(t *testing.T) {
 }
 
 func TestUnescapeLabelTerm(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Empty", func(t *testing.T) {
 		assert.Equal(t, "", unescapeLabelTerm(""))
 	})
@@ -156,6 +161,7 @@ func TestUnescapeLabelTerm(t *testing.T) {
 }
 
 func TestResolveLabelGroup(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("SingleExact", func(t *testing.T) {
 		ids := resolveLabelGroup("cake")
 		assert.Equal(t, []uint{LabelFixtures.Get("cake").ID}, ids)
@@ -180,6 +186,7 @@ func TestResolveLabelGroup(t *testing.T) {
 }
 
 func TestParseLabelFilter(t *testing.T) {
+	ValidateFixtures(t)
 	cakeID := LabelFixtures.Get("cake").ID
 	cowID := LabelFixtures.Get("cow").ID
 	flowerID := LabelFixtures.Get("flower").ID

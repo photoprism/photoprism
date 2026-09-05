@@ -7,6 +7,7 @@ import (
 )
 
 func TestSession_Report(t *testing.T) {
+	ValidateFixtures(t)
 	m := FindSessionByRefID("sessxkkcabcd")
 
 	r, _ := m.Report(false)

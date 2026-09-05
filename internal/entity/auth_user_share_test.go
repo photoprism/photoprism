@@ -10,6 +10,7 @@ import (
 )
 
 func TestUserShares_Contains(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("False", func(t *testing.T) {
 		m := UserShares{UserShare{UserUID: "uqxetse3cy5eo9z2", ShareUID: "as6sg6bxpogaaba9"}}
 		assert.False(t, m.Contains("as6sg6bxpogaaxxx"))
@@ -25,6 +26,7 @@ func TestUserShares_Contains(t *testing.T) {
 }
 
 func TestNewUserShare(t *testing.T) {
+	ValidateFixtures(t)
 	expires := Now().Add(time.Hour * 48)
 	m := NewUserShare(Admin.GetUID(), AlbumFixtures.Get("berlin-2019").AlbumUID, PermReact, &expires)
 
@@ -39,6 +41,7 @@ func TestNewUserShare(t *testing.T) {
 }
 
 func TestPerm(t *testing.T) {
+	ValidateFixtures(t)
 	assert.Equal(t, uint(0), PermDefault)
 	assert.Equal(t, uint(1), PermNone)
 	assert.Equal(t, uint(2), PermView)
@@ -51,6 +54,7 @@ func TestPerm(t *testing.T) {
 }
 
 func TestFindUserShare(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("AliceAlbum", func(t *testing.T) {
 		m := FindUserShare(UserShare{UserUID: "uqxetse3cy5eo9z2", ShareUID: "as6sg6bxpogaaba9"})
 
@@ -75,6 +79,7 @@ func TestFindUserShare(t *testing.T) {
 }
 
 func TestFindUserShares(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Alice", func(t *testing.T) {
 		found := FindUserShares(UserFixtures.Pointer("alice").GetUID())
 		assert.NotNil(t, found)
@@ -103,6 +108,7 @@ func TestFindUserShares(t *testing.T) {
 }
 
 func TestUserShare_Create(t *testing.T) {
+	ValidateFixtures(t)
 	m := UserShare{UserUID: "uqxc08w3d0ej2283", ShareUID: "as6sg6bxpogaaba7"}
 	err := m.Create()
 
@@ -113,6 +119,7 @@ func TestUserShare_Create(t *testing.T) {
 }
 
 func TestUserShare_UpdateLink(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := UserShare{
 			ShareUID: "as6sg6bxpogaaba9",

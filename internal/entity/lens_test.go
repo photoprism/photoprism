@@ -11,6 +11,7 @@ import (
 )
 
 func TestNewLens(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Unknown", func(t *testing.T) {
 		lens := NewLens("", "")
 		assert.Equal(t, UnknownID, lens.LensSlug)
@@ -59,17 +60,20 @@ func TestNewLens(t *testing.T) {
 }
 
 func TestLens_TableName(t *testing.T) {
+	ValidateFixtures(t)
 	lens := NewLens("Canon", "F500-99")
 	tableName := lens.TableName()
 	assert.Equal(t, "lenses", tableName)
 }
 
 func TestLens_String(t *testing.T) {
+	ValidateFixtures(t)
 	lens := NewLens("samsung", "F500-99")
 	assert.Equal(t, "'Samsung F500-99'", lens.String())
 }
 
 func TestFirstOrCreateLens(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("ExistingLens", func(t *testing.T) {
 		fixture := "4.15mm-f/2.2"
 		lens := NewLens(LensFixtures.Get(fixture).LensMake, "iPhone SE back camera 4.15mm f/2.2") // Use value that comes back from exiftool
@@ -113,6 +117,7 @@ func TestFirstOrCreateLens(t *testing.T) {
 }
 
 func TestLensUpdateMakeModel(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("ExistingLens", func(t *testing.T) {
 		fixture := "4-37"
 		lens := NewLens(LensFixtures.Get(fixture).LensMake, LensFixtures.Get(fixture).LensModel)
@@ -175,6 +180,7 @@ func TestLensUpdateMakeModel(t *testing.T) {
 // invariant: lenses.created/updated carry a []string of stable slugs, never entity
 // fields, and an update does not republish the lens count.
 func TestLens_EntityEvents(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("CreatedPublishesSlugOnly", func(t *testing.T) {
 		m := NewLens("Acme", "Test Lens 6789")
 
@@ -242,6 +248,7 @@ func TestLens_EntityEvents(t *testing.T) {
 }
 
 func TestLens_SaveForm(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		lens := Lens{}
 		assert.NoError(t, UnscopedDb().First(&lens, "id = ?", LensFixtures.Get("lens-f-380").ID).Error)

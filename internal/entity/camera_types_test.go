@@ -7,6 +7,7 @@ import (
 )
 
 func TestCamera_CameraType(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Unknown", func(t *testing.T) {
 		camera := NewCamera("", "")
 		assert.Equal(t, CameraTypeUnknown, camera.CameraType)

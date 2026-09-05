@@ -11,6 +11,7 @@ import (
 )
 
 func TestFirstOrCreateCamera(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("UnknownCamera", func(t *testing.T) {
 		m := UnknownCamera
 
@@ -56,6 +57,7 @@ func TestFirstOrCreateCamera(t *testing.T) {
 }
 
 func TestNewCamera(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Unknown", func(t *testing.T) {
 		camera := NewCamera("", "")
 
@@ -117,6 +119,7 @@ func TestNewCamera(t *testing.T) {
 }
 
 func TestCamera_String(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Unknown", func(t *testing.T) {
 		camera := NewCamera("", "")
 		cameraString := camera.String()
@@ -140,6 +143,7 @@ func TestCamera_String(t *testing.T) {
 }
 
 func TestCamera_Scanner(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Unknown", func(t *testing.T) {
 		camera := NewCamera("", "")
 		assert.False(t, camera.Scanner())
@@ -172,6 +176,7 @@ func TestCamera_Scanner(t *testing.T) {
 }
 
 func TestCamera_Mobile(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("CanonEOSD30", func(t *testing.T) {
 		camera := NewCamera(MakeCanon, "EOS D30")
 		assert.Equal(t, CameraTypeBody, camera.CameraType)
@@ -262,6 +267,7 @@ func TestCamera_Mobile(t *testing.T) {
 }
 
 func TestCamera_UpdateMakeModel(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("ExistingCamera", func(t *testing.T) {
 		fixture := "canon-eos-7d"
 		camera := NewCamera(CameraFixtures.Get(fixture).CameraMake, CameraFixtures.Get(fixture).CameraModel)
@@ -321,6 +327,7 @@ func TestCamera_UpdateMakeModel(t *testing.T) {
 // invariant: cameras.created/updated carry a []string of stable slugs, never entity
 // fields, and an update does not republish the camera count.
 func TestCamera_EntityEvents(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("CreatedPublishesSlugOnly", func(t *testing.T) {
 		m := NewCamera("Acme", "Test Camera 6789")
 
@@ -384,6 +391,7 @@ func TestCamera_EntityEvents(t *testing.T) {
 }
 
 func TestCamera_SaveForm(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		fixture := "canon-eos-7d"
 		camera := FirstOrCreateCamera(NewCamera(CameraFixtures.Get(fixture).CameraMake, CameraFixtures.Get(fixture).CameraModel))

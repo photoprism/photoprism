@@ -8,6 +8,7 @@ import (
 )
 
 func TestAddDuplicate(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		if err := AddDuplicate(
 			"foobar.jpg",
@@ -97,6 +98,7 @@ func TestAddDuplicate(t *testing.T) {
 }
 
 func TestCreateDuplicate(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("ErrorModTimeZero", func(t *testing.T) {
 		duplicate := &Duplicate{FileName: "foobar.jpg", FileHash: "12345tghy", FileRoot: RootOriginals, ModTime: 0}
 		err := duplicate.Create()
@@ -128,6 +130,7 @@ func TestCreateDuplicate(t *testing.T) {
 }
 
 func TestSaveDuplicate(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("ErrorModTimeZero", func(t *testing.T) {
 		duplicate := &Duplicate{FileName: "foobar.jpg", FileHash: "12345tghy", FileRoot: RootOriginals, ModTime: 0}
 		err := duplicate.Save()
@@ -159,6 +162,7 @@ func TestSaveDuplicate(t *testing.T) {
 }
 
 func TestDuplicate_Purge(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		if err := AddDuplicate(
 			"forpurge.jpg",
@@ -194,6 +198,7 @@ func TestDuplicate_Purge(t *testing.T) {
 }
 
 func TestPurgeDuplicate(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("EmptyFilename", func(t *testing.T) {
 		assert.Error(t, PurgeDuplicate("", RootOriginals))
 	})

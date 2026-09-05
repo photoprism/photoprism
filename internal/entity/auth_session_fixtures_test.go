@@ -7,6 +7,7 @@ import (
 )
 
 func TestSessionMap_Get(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Alice", func(t *testing.T) {
 		r := SessionFixtures.Get("alice")
 		assert.Equal(t, "alice", r.UserName)
@@ -23,6 +24,7 @@ func TestSessionMap_Get(t *testing.T) {
 }
 
 func TestSessionMap_Pointer(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Alice", func(t *testing.T) {
 		r := SessionFixtures.Pointer("alice")
 		assert.Equal(t, "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0", r.AuthToken())

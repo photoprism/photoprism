@@ -12,6 +12,7 @@ import (
 )
 
 func TestMarkers_Overlapping(t *testing.T) {
+	ValidateFixtures(t)
 	file := File{FileHash: "a6c46e43b83fc02309b1c49e1ed7273f1f414610"}
 	// The existing marker (cropArea2) fully covers the smaller XMP probe (cropArea1).
 	existing := *NewMarker(file, cropArea2, "ls6sg6b1wowuy1c1", SrcImage, MarkerFace, 100, 65)
@@ -38,6 +39,7 @@ func TestMarkers_Overlapping(t *testing.T) {
 }
 
 func TestMarkers_OverlapsInvalid(t *testing.T) {
+	ValidateFixtures(t)
 	file := File{FileHash: "a6c46e43b83fc02309b1c49e1ed7273f1f414610"}
 	probe := *NewMarker(file, cropArea1, "", SrcXmp, MarkerFace, 50, 50)
 
@@ -61,6 +63,7 @@ func TestMarkers_OverlapsInvalid(t *testing.T) {
 }
 
 func TestSubjSrcSharesFace(t *testing.T) {
+	ValidateFixtures(t)
 	assert.False(t, subjSrcSharesFace(SrcAuto))
 	assert.False(t, subjSrcSharesFace(SrcXmp))
 	assert.True(t, subjSrcSharesFace(SrcManual))
@@ -69,6 +72,7 @@ func TestSubjSrcSharesFace(t *testing.T) {
 }
 
 func TestMarker_SetSubjectLink(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Link", func(t *testing.T) {
 		m := &Marker{}
 		subj := &Subject{SubjUID: "js6sg6b1wowuy3c5", SubjName: "Alice"}
@@ -88,6 +92,7 @@ func TestMarker_SetSubjectLink(t *testing.T) {
 var _ = crop.Area{}
 
 func TestFile_AddFace_UpgradesEmbeddinglessMarker(t *testing.T) {
+	ValidateFixtures(t)
 	photo := Photo{PhotoUID: rnd.GenerateUID('p'), PhotoName: "xmp-addface", PhotoType: MediaImage}
 	require.NoError(t, photo.Save())
 	t.Cleanup(func() {
@@ -150,6 +155,7 @@ func TestFile_AddFace_UpgradesEmbeddinglessMarker(t *testing.T) {
 }
 
 func TestFile_AddFace_RecordsProducerModel(t *testing.T) {
+	ValidateFixtures(t)
 	photo := Photo{PhotoUID: rnd.GenerateUID('p'), PhotoName: "xmp-addface3", PhotoType: MediaImage}
 	require.NoError(t, photo.Save())
 	t.Cleanup(func() {
@@ -198,6 +204,7 @@ func TestFile_AddFace_RecordsProducerModel(t *testing.T) {
 }
 
 func TestFile_AddFace_DoesNotResurrectRejected(t *testing.T) {
+	ValidateFixtures(t)
 	photo := Photo{PhotoUID: rnd.GenerateUID('p'), PhotoName: "xmp-addface2", PhotoType: MediaImage}
 	require.NoError(t, photo.Save())
 	t.Cleanup(func() {
@@ -240,6 +247,7 @@ func TestFile_AddFace_DoesNotResurrectRejected(t *testing.T) {
 }
 
 func TestMarker_SetFace_XmpNotShared(t *testing.T) {
+	ValidateFixtures(t)
 	// SetFace propagates a marker's subject onto the shared Face for clustering name sources such
 	// as SrcManual, but must not for SrcXmp: an imported XMP name labels only its own marker.
 	// SetSubjectUID mutates the passed Face in memory, so an unchanged SubjUID proves it was gated.

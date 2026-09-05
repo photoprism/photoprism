@@ -7,6 +7,7 @@ import (
 )
 
 func TestLensMap_Get(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("GetExistingLens", func(t *testing.T) {
 		r := LensFixtures.Get("lens-f-380")
 		assert.Equal(t, uint(1000000), r.ID)
@@ -21,6 +22,7 @@ func TestLensMap_Get(t *testing.T) {
 }
 
 func TestLensMap_Pointer(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("GetExistingLensPointer", func(t *testing.T) {
 		r := LensFixtures.Pointer("lens-f-380")
 		assert.Equal(t, uint(1000000), r.ID)

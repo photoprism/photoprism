@@ -10,6 +10,7 @@ import (
 )
 
 func TestNewCountry(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("UnknownCountry", func(t *testing.T) {
 		country := NewCountry("", "")
 
@@ -30,6 +31,7 @@ func TestNewCountry(t *testing.T) {
 }
 
 func TestFirstOrCreateCountry(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Es", func(t *testing.T) {
 		country := NewCountry("es", "spain")
 		country = FirstOrCreateCountry(country)
@@ -52,6 +54,7 @@ func TestFirstOrCreateCountry(t *testing.T) {
 // TestCountry_EntityEvents pins the countries content-channel payload to the UID-only
 // invariant: countries.created carries a []string of stable country codes, never entity fields.
 func TestCountry_EntityEvents(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("CreatedPublishesCodeOnly", func(t *testing.T) {
 		const code = "qq" // User-assigned ISO 3166 range; not a real fixture country.
 
@@ -87,11 +90,13 @@ func TestCountry_EntityEvents(t *testing.T) {
 }
 
 func TestCountry_Name(t *testing.T) {
+	ValidateFixtures(t)
 	country := NewCountry("xy", "Neverland")
 	assert.Equal(t, "Neverland", country.Name())
 }
 
 func TestCountry_Code(t *testing.T) {
+	ValidateFixtures(t)
 	country := NewCountry("xy", "Neverland")
 	assert.Equal(t, "xy", country.Code())
 }

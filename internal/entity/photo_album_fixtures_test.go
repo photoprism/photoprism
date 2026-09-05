@@ -7,6 +7,7 @@ import (
 )
 
 func TestPhotoAlbumMap_Get(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("GetExistingPhotoalbum", func(t *testing.T) {
 		r := PhotoAlbumFixtures.Get("1", "", "")
 		assert.Equal(t, "as6sg6bxpogaaba8", r.AlbumUID)
@@ -22,6 +23,7 @@ func TestPhotoAlbumMap_Get(t *testing.T) {
 }
 
 func TestPhotoAlbumMap_Pointer(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("GetExistingPhotoalbumPointer", func(t *testing.T) {
 		r := PhotoAlbumFixtures.Pointer("1", "", "")
 		assert.Equal(t, "as6sg6bxpogaaba8", r.AlbumUID)

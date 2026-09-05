@@ -11,6 +11,7 @@ import (
 )
 
 func TestPhoto_Stackable(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("IsStackable", func(t *testing.T) {
 		m := Photo{ID: 1, PhotoUID: "pr32t8j3feogit2t", PhotoName: "foo", PhotoStack: IsStackable, TakenAt: Now(), TakenAtLocal: time.Time{}, TakenSrc: SrcMeta, TimeZone: "Europe/Berlin"}
 		assert.True(t, m.Stackable())
@@ -38,6 +39,7 @@ func TestPhoto_Stackable(t *testing.T) {
 }
 
 func TestPhoto_IdenticalIdentical(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		photo := PhotoFixtures.Get("Photo19")
 
@@ -86,6 +88,7 @@ func TestPhoto_IdenticalIdentical(t *testing.T) {
 }
 
 func TestPhoto_Merge(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		photo := PhotoFixtures.Get("Photo23")
 		actual := FindPhoto(Photo{ID: photo.ID})
@@ -222,6 +225,7 @@ func TestPhoto_Merge(t *testing.T) {
 }
 
 func TestPhoto_SyncMediaTypeFromFiles(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NoMainFiles", func(t *testing.T) {
 		photo := NewPhoto(true)
 		photo.PhotoUID = rnd.GenerateUID(PhotoUID)

@@ -7,11 +7,13 @@ import (
 )
 
 func TestFileSync_TableName(t *testing.T) {
+	ValidateFixtures(t)
 	fileSync := &FileSync{}
 	assert.Equal(t, "files_sync", fileSync.TableName())
 }
 
 func TestNewFileSync(t *testing.T) {
+	ValidateFixtures(t)
 	r := NewFileSync(123, "test")
 	assert.IsType(t, &FileSync{}, r)
 	assert.Equal(t, uint(0x7b), r.ServiceID)
@@ -20,6 +22,7 @@ func TestNewFileSync(t *testing.T) {
 }
 
 func TestFirstOrCreateFileSync(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NotYetExisting", func(t *testing.T) {
 		fileSync := &FileSync{ServiceID: 123, FileID: 888, RemoteName: "test123"}
 		result := FirstOrCreateFileSync(fileSync)
@@ -61,6 +64,7 @@ func TestFirstOrCreateFileSync(t *testing.T) {
 }
 
 func TestFileSync_Updates(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		fileSync := NewFileSync(123, "NameBeforeUpdate")
 
@@ -82,6 +86,7 @@ func TestFileSync_Updates(t *testing.T) {
 }
 
 func TestFileSync_Update(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		fileSync := NewFileSync(123, "NameBeforeUpdate2")
 		assert.Equal(t, "NameBeforeUpdate2", fileSync.RemoteName)
@@ -102,6 +107,7 @@ func TestFileSync_Update(t *testing.T) {
 }
 
 func TestFileSync_Save(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		fileSync := NewFileSync(123, "Nameavc")
 

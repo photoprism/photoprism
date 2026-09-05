@@ -12,6 +12,7 @@ import (
 )
 
 func TestAlbum_Yaml(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("BerlinNum2019", func(t *testing.T) {
 		m := AlbumFixtures.Get("berlin-2019")
 
@@ -49,6 +50,7 @@ func TestAlbum_Yaml(t *testing.T) {
 }
 
 func TestAlbum_SaveAsYaml(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := AlbumFixtures.Get("berlin-2019")
 
@@ -114,6 +116,7 @@ func TestAlbum_SaveAsYaml(t *testing.T) {
 }
 
 func TestAlbum_YamlFileName(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := AlbumFixtures.Get("berlin-2019")
 
@@ -156,6 +159,7 @@ func TestAlbum_YamlFileName(t *testing.T) {
 }
 
 func TestAlbum_SaveBackupYaml(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := AlbumFixtures.Get("berlin-2019")
 
@@ -202,6 +206,7 @@ func TestAlbum_SaveBackupYaml(t *testing.T) {
 }
 
 func TestAlbum_LoadFromYaml(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("BerlinNum2020", func(t *testing.T) {
 		fileName := "testdata/album/as6sg6bxpoaaaaaa.yml"
 
@@ -216,6 +221,7 @@ func TestAlbum_LoadFromYaml(t *testing.T) {
 		}
 
 		t.Cleanup(func() {
+			require.NoError(t, UnscopedDb().Delete(&PhotoAlbum{}, "album_uid = ?", m.AlbumUID).Error)
 			require.NoError(t, m.DeletePermanently())
 		})
 

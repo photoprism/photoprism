@@ -9,6 +9,7 @@ import (
 )
 
 func TestUserMap_Get(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Alice", func(t *testing.T) {
 		r := UserFixtures.Get("alice")
 		assert.Equal(t, "alice", r.UserName)
@@ -24,6 +25,7 @@ func TestUserMap_Get(t *testing.T) {
 }
 
 func TestUserMap_Pointer(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Alice", func(t *testing.T) {
 		r := UserFixtures.Pointer("alice")
 		assert.Equal(t, "alice", r.Username())

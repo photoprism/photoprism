@@ -21,6 +21,7 @@ import (
 )
 
 func TestFile_RegenerateIndex(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("ID", func(t *testing.T) {
 		Db().Model(&File{ID: 1000000}).Update("media_id", gorm.Expr("null")).Update("photo_taken_at", gorm.Expr("null")).Update("time_index", gorm.Expr("null"))
 		File{ID: 1000000}.RegenerateIndex()
@@ -91,6 +92,7 @@ func TestFile_RegenerateIndex(t *testing.T) {
 }
 
 func TestRegenerateIndexForPhotoIDs(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Empty", func(t *testing.T) {
 		RegenerateIndexForPhotoIDs(nil)
 		RegenerateIndexForPhotoIDs([]uint{})
@@ -135,6 +137,7 @@ func TestRegenerateIndexForPhotoIDs(t *testing.T) {
 }
 
 func TestFirstFileByHash(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NotExistingFile", func(t *testing.T) {
 		f, err := FirstFileByHash("xxx")
 
@@ -151,6 +154,7 @@ func TestFirstFileByHash(t *testing.T) {
 }
 
 func TestFile_ShareFileName(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("WithPhotoTitle", func(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
 		file := &File{Photo: photo, FileType: "jpg", FileUID: "foobar345678765", FileHash: "e98eb86480a72bd585d228a709f0622f90e86cbc"}
@@ -212,6 +216,7 @@ func TestFile_ShareFileName(t *testing.T) {
 }
 
 func TestFile_Changed(t *testing.T) {
+	ValidateFixtures(t)
 	var deletedAt = time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)
 	t.Run("DifferentModifiedTimes", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix()}
@@ -236,6 +241,7 @@ func TestFile_Changed(t *testing.T) {
 }
 
 func TestFile_Missing(t *testing.T) {
+	ValidateFixtures(t)
 	var deletedAt = time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)
 
 	t.Run("Deleted", func(t *testing.T) {
@@ -253,6 +259,7 @@ func TestFile_Missing(t *testing.T) {
 }
 
 func TestFile_Create(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("PhotoIdEqualZero", func(t *testing.T) {
 		file := File{PhotoID: 0}
 
@@ -284,6 +291,7 @@ func TestFile_Create(t *testing.T) {
 }
 
 func TestFile_Purge(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileSize: 500}
 		assert.Equal(t, nil, file.Purge())
@@ -291,6 +299,7 @@ func TestFile_Purge(t *testing.T) {
 }
 
 func TestFile_Found(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileSize: 500}
 		assert.Equal(t, nil, file.Purge())
@@ -305,6 +314,7 @@ func TestFile_Found(t *testing.T) {
 }
 
 func TestFile_AllFilesMissing(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("True", func(t *testing.T) {
 		file := FileFixtures.Get("missing.jpg")
 		assert.True(t, file.AllFilesMissing())
@@ -316,6 +326,7 @@ func TestFile_AllFilesMissing(t *testing.T) {
 }
 
 func TestFile_Save(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("SaveWithoutPhoto", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", PhotoUID: "123", FileUID: "123"}
 		err := file.Save()
@@ -349,6 +360,7 @@ func TestFile_Save(t *testing.T) {
 }
 
 func TestFile_UpdateVideoInfos(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		file := &File{FileType: "jpg", FileWidth: 600, FileName: "VideoUpdate", PhotoID: 1000003}
 
@@ -377,6 +389,7 @@ func TestFile_UpdateVideoInfos(t *testing.T) {
 }
 
 func TestFile_Update(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		file := &File{FileType: "jpg", FileSize: 500, FileName: "ToBeUpdated", FileRoot: "", PhotoID: 5678}
 
@@ -401,6 +414,7 @@ func TestFile_Update(t *testing.T) {
 }
 
 func TestFile_Links(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Result", func(t *testing.T) {
 		file := FileFixturesExampleBridge
 		links := file.Links()
@@ -413,6 +427,7 @@ func TestFile_Links(t *testing.T) {
 }
 
 func TestFile_NoJpeg(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("True", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "xmp", FileSize: 500}
 		assert.True(t, file.NoJpeg())
@@ -424,6 +439,7 @@ func TestFile_NoJpeg(t *testing.T) {
 }
 
 func TestFile_NoPng(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("True", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "xmp", FileSize: 500}
 		assert.True(t, file.NoPng())
@@ -435,6 +451,7 @@ func TestFile_NoPng(t *testing.T) {
 }
 
 func TestFile_Type(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Xmp", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "xmp", FileSize: 500}
 		assert.Equal(t, fs.SidecarXMP, file.Type())
@@ -446,6 +463,7 @@ func TestFile_Type(t *testing.T) {
 }
 
 func TestFile_Panorama(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Num3000", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileSidecar: false, FileWidth: 3000, FileHeight: 1000}
 		assert.True(t, file.Panorama())
@@ -477,6 +495,7 @@ func TestFile_Panorama(t *testing.T) {
 }
 
 func TestFile_SetProjection(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Unknown", func(t *testing.T) {
 		m := &File{}
 		m.SetProjection(Unknown)
@@ -517,6 +536,7 @@ func TestFile_SetProjection(t *testing.T) {
 }
 
 func TestFile_Delete(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Permanently", func(t *testing.T) {
 		file := &File{FileType: "jpg", FileSize: 500, FileName: "ToBePermanentlyDeleted", FileRoot: "", PhotoID: 5678}
 
@@ -551,6 +571,7 @@ func TestFile_Delete(t *testing.T) {
 }
 
 func TestPrimaryFile(t *testing.T) {
+	ValidateFixtures(t)
 	file, err := PrimaryFile("ps6sg6be2lvl0y17")
 	if err != nil {
 		t.Fatal(err)
@@ -559,6 +580,7 @@ func TestPrimaryFile(t *testing.T) {
 }
 
 func TestFile_OriginalBase(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("OriginalNameEmptyFilenameEmpty", func(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
 		file := &File{Photo: photo, FileType: "jpg", FileUID: "foobar345678765", FileHash: "e98eb86480a72bd585d228a709f0622f90e86cbc", OriginalName: "", FileName: ""}
@@ -604,6 +626,7 @@ func TestFile_OriginalBase(t *testing.T) {
 }
 
 func TestFile_DownloadName(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("DownloadNameFile", func(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
 		file := &File{Photo: photo, FileType: "jpg", FileUID: "foobar345678765", FileHash: "e98eb86480a72bd585d228a709f0622f90e86cbc", OriginalName: "originalName.jpg", FileName: "filename.jpg"}
@@ -623,6 +646,7 @@ func TestFile_DownloadName(t *testing.T) {
 }
 
 func TestFile_Undelete(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		file := &File{PhotoID: PhotoFixtures.Get("Photo01").ID, FileType: "jpg", FileSize: 500}
 		assert.NoError(t, file.Save()) // If you don't save the File then EVERY File record is updated by the .Undelete().
@@ -651,6 +675,7 @@ func TestFile_Undelete(t *testing.T) {
 }
 
 func TestFile_AddFaces(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Primary", func(t *testing.T) {
 		file := &File{FileUID: "fs6sg6bp4sjk3kdn", FileHash: "346b3897eec9ef75e35fbf0bbc4c83c55ca41e31", FileType: "jpg", FileWidth: 720, FileName: "FacesTest", PhotoID: 1000003, FilePrimary: true}
 
@@ -717,6 +742,7 @@ func TestFile_AddFaces(t *testing.T) {
 }
 
 func TestFile_ValidFaceCount(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("FileFixturesExampleBridge", func(t *testing.T) {
 		file := FileFixturesExampleBridge
 
@@ -727,6 +753,7 @@ func TestFile_ValidFaceCount(t *testing.T) {
 }
 
 func TestFile_Rename(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := FileFixtures.Get("exampleFileName.jpg")
 
@@ -765,6 +792,7 @@ func TestFile_Rename(t *testing.T) {
 }
 
 func TestFile_SubjectNames(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("PhotoNum27Jpg", func(t *testing.T) {
 		m := FileFixtures.Get("Photo27.jpg")
 
@@ -801,6 +829,7 @@ func TestFile_SubjectNames(t *testing.T) {
 }
 
 func TestFile_UnsavedMarkers(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Bridge2Jpg", func(t *testing.T) {
 		m := FileFixtures.Get("bridge2.jpg")
 		assert.Equal(t, "fs6sg6bw15bnlqdw", m.FileUID)
@@ -827,6 +856,7 @@ func TestFile_UnsavedMarkers(t *testing.T) {
 }
 
 func TestFile_ReplaceHash(t *testing.T) {
+	ValidateFixtures(t)
 	t.Cleanup(func() {
 		for _, a := range AlbumFixtures {
 			assert.NoError(t, UnscopedDb().Model(&a).UpdateColumns(Values{"thumb": a.Thumb, "thumb_src": a.ThumbSrc}).Error)
@@ -860,6 +890,7 @@ func TestFile_ReplaceHash(t *testing.T) {
 }
 
 func TestFile_SetHDR(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Ok", func(t *testing.T) {
 		m := FileFixtures.Get("exampleFileName.jpg")
 
@@ -874,6 +905,7 @@ func TestFile_SetHDR(t *testing.T) {
 }
 
 func TestFile_SetColorProfile(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("DisplayP3", func(t *testing.T) {
 		m := FileFixtures.Get("exampleFileName.jpg")
 
@@ -902,6 +934,7 @@ func TestFile_SetColorProfile(t *testing.T) {
 }
 
 func TestFile_SetInstanceID(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Stored", func(t *testing.T) {
 		m := &File{}
 		m.SetInstanceID("xmp.iid:6f1c8b2e-0000-4000-8000-000000000001")
@@ -924,6 +957,7 @@ func TestFile_SetInstanceID(t *testing.T) {
 }
 
 func TestFile_SetFPS(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("FileDuration", func(t *testing.T) {
 		m := File{FileDuration: time.Second * 60}
 
@@ -953,6 +987,7 @@ func TestFile_SetFPS(t *testing.T) {
 }
 
 func TestFile_SetFrames(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("FileDuration", func(t *testing.T) {
 		m := File{FileDuration: time.Second * 60}
 
@@ -982,6 +1017,7 @@ func TestFile_SetFrames(t *testing.T) {
 }
 
 func TestFile_SetPages(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := File{FilePages: 4}
 
@@ -1002,6 +1038,7 @@ func TestFile_SetPages(t *testing.T) {
 }
 
 func TestFile_SetDuration(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("FileFPS", func(t *testing.T) {
 		m := File{FileFPS: 20}
 
@@ -1047,6 +1084,7 @@ func TestFile_SetDuration(t *testing.T) {
 }
 
 func TestFile_Bitrate(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("HasDuration", func(t *testing.T) {
 		m := File{FileDuration: 1e9 * 20.302, FileSize: 1826192}
 
@@ -1065,6 +1103,7 @@ func TestFile_Bitrate(t *testing.T) {
 }
 
 func TestFile_Orientation(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Valid", func(t *testing.T) {
 		m := File{FileOrientation: 8}
 		assert.Equal(t, 8, m.Orientation())
@@ -1084,6 +1123,7 @@ func TestFile_Orientation(t *testing.T) {
 }
 
 func TestFile_SetOrientation(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Valid", func(t *testing.T) {
 		m := File{FileOrientation: 8}
 		assert.Equal(t, 8, m.Orientation())
@@ -1103,6 +1143,7 @@ func TestFile_SetOrientation(t *testing.T) {
 }
 
 func TestFile_ContentType(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Image", func(t *testing.T) {
 		m := FileFixtures.Get("exampleFileName.jpg")
 		assert.Equal(t, false, m.FileVideo)
@@ -1119,6 +1160,7 @@ func TestFile_ContentType(t *testing.T) {
 }
 
 func TestFile_MissingPhotoID(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("No PhotoID or Photo", func(t *testing.T) {
 		file := File{}
 		err := file.Create()

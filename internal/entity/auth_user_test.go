@@ -45,6 +45,7 @@ func createScopedTestUser(t *testing.T) *User {
 }
 
 func TestNewUser(t *testing.T) {
+	ValidateFixtures(t)
 	m := NewUser()
 
 	assert.True(t, rnd.IsRefID(m.RefID))
@@ -52,6 +53,7 @@ func TestNewUser(t *testing.T) {
 }
 
 func TestOidcUser(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		info := &oidc.UserInfo{}
 		info.Name = "Jane Doe"
@@ -131,11 +133,13 @@ func TestOidcUser(t *testing.T) {
 }
 
 func TestLdapUser(t *testing.T) {
+	ValidateFixtures(t)
 	m := LdapUser("user-ldap", "ldap@test.com")
 	assert.Equal(t, "ldap", m.AuthProvider)
 }
 
 func TestFindLocalUser(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Admin", func(t *testing.T) {
 		m := FindLocalUser("admin")
 
@@ -221,6 +225,7 @@ func TestFindLocalUser(t *testing.T) {
 }
 
 func TestFindUserByName(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Admin", func(t *testing.T) {
 		m := FindUserByName("admin")
 
@@ -300,6 +305,7 @@ func TestFindUserByName(t *testing.T) {
 }
 
 func TestUser_Create(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Slug", func(t *testing.T) {
 		var m = User{
 			UserName:    "example",
@@ -360,6 +366,7 @@ func TestUser_Create(t *testing.T) {
 }
 
 func TestUser_UpdateUsername(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Exists", func(t *testing.T) {
 		var m = User{
 			ID:          2,
@@ -409,6 +416,7 @@ func TestUser_UpdateUsername(t *testing.T) {
 }
 
 func TestUser_SetUsername(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("PhotoPrism", func(t *testing.T) {
 		m := FindUserByName("admin")
 
@@ -441,6 +449,7 @@ func TestUser_SetUsername(t *testing.T) {
 }
 
 func TestUser_InvalidPassword(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Admin", func(t *testing.T) {
 		m := FindUserByName("admin")
 
@@ -483,6 +492,7 @@ func TestUser_InvalidPassword(t *testing.T) {
 }
 
 func TestUser_Save(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Ok", func(t *testing.T) {
 		p := User{}
 
@@ -507,6 +517,7 @@ func TestUser_Save(t *testing.T) {
 }
 
 func TestFirstOrCreateUser(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NotExisting", func(t *testing.T) {
 		p := &User{ID: 555}
 
@@ -542,6 +553,7 @@ func TestFirstOrCreateUser(t *testing.T) {
 }
 
 func TestUserEmailAvailable(t *testing.T) {
+	ValidateFixtures(t)
 	alice := FindUserByName("alice")
 	require.NotNil(t, alice)
 	require.NotEmpty(t, alice.UserEmail)
@@ -562,6 +574,7 @@ func TestUserEmailAvailable(t *testing.T) {
 }
 
 func TestUser_EmailVerified(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NilVerifiedAt", func(t *testing.T) {
 		assert.False(t, (&User{}).EmailVerified())
 	})
@@ -575,6 +588,7 @@ func TestUser_EmailVerified(t *testing.T) {
 }
 
 func TestFindUser(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("ID", func(t *testing.T) {
 		m := FindUser(User{ID: 1})
 
@@ -682,6 +696,7 @@ func TestFindUser(t *testing.T) {
 }
 
 func TestFindUserByUID(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Visitor", func(t *testing.T) {
 		m := FindUserByUID("u000000000000002")
 
@@ -771,6 +786,7 @@ func TestFindUserByUID(t *testing.T) {
 }
 
 func TestUser_SameUID(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("True", func(t *testing.T) {
 		m := FindUserByUID("uqxc08w3d0ej2283")
 
@@ -803,6 +819,7 @@ func TestUser_SameUID(t *testing.T) {
 }
 
 func TestUser_String(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("UID", func(t *testing.T) {
 		p := User{UserUID: "abc123", UserName: "", DisplayName: ""}
 		assert.Equal(t, "abc123", p.String())
@@ -818,6 +835,7 @@ func TestUser_String(t *testing.T) {
 }
 
 func TestUser_Admin(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("SuperAdmin", func(t *testing.T) {
 		p := User{ID: 8, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", SuperAdmin: true}
 		assert.True(t, p.IsAdmin())
@@ -837,6 +855,7 @@ func TestUser_Admin(t *testing.T) {
 }
 
 func TestUser_IsUnknown(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("ID", func(t *testing.T) {
 		p := User{ID: UnknownUser.ID, UserUID: "u000000000000008", UserName: "", DisplayName: "", SuperAdmin: false, UserRole: acl.RoleAdmin.String()}
 		assert.True(t, p.IsUnknown())
@@ -864,6 +883,7 @@ func TestUser_IsUnknown(t *testing.T) {
 }
 
 func TestUser_IsVisitor(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("True", func(t *testing.T) {
 		p := User{UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", UserRole: acl.RoleVisitor.String()}
 		assert.True(t, p.IsVisitor())
@@ -879,6 +899,7 @@ func TestUser_IsVisitor(t *testing.T) {
 }
 
 func TestUser_SetPassword(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Ok", func(t *testing.T) {
 		m := User{ID: 8, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", UserRole: acl.RoleAdmin.String()}
 		assert.NoError(t, m.SetPassword("insecure"))
@@ -901,6 +922,7 @@ func TestUser_SetPassword(t *testing.T) {
 }
 
 func TestUser_InitAccount(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Ok", func(t *testing.T) {
 		p := User{ID: 9, UserUID: "u000000000000009", UserName: "Hanna", DisplayName: "", UserRole: acl.RoleAdmin.String(), AuthProvider: authn.ProviderLocal.String(), CanLogin: true}
 		assert.Nil(t, FindPassword("u000000000000009"))
@@ -964,6 +986,7 @@ func TestUser_InitAccount(t *testing.T) {
 }
 
 func TestUser_AclRole(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("SuperAdmin", func(t *testing.T) {
 		p := User{ID: 8, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", SuperAdmin: true, UserRole: ""}
 		assert.Equal(t, acl.RoleAdmin, p.AclRole())
@@ -997,6 +1020,7 @@ func TestUser_AclRole(t *testing.T) {
 }
 
 func TestUser_Validate(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NameValid", func(t *testing.T) {
 		u := &User{
 			UserName:    "validate",
@@ -1144,6 +1168,7 @@ func TestUser_Validate(t *testing.T) {
 }
 
 func TestAddUser(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("TooShort", func(t *testing.T) {
 		u := form.User{
 			UserName:  "thomas1",
@@ -1224,6 +1249,7 @@ func TestAddUser(t *testing.T) {
 }
 
 func TestDeleteUser(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Ok", func(t *testing.T) {
 		u := &User{
 			UserName:    "thomasdel",
@@ -1261,11 +1287,13 @@ func TestDeleteUser(t *testing.T) {
 }
 
 func TestUser_Deleted(t *testing.T) {
+	ValidateFixtures(t)
 	assert.False(t, UserFixtures.Pointer("alice").IsDeleted())
 	assert.True(t, UserFixtures.Pointer("deleted").IsDeleted())
 }
 
 func TestUser_Expired(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("False", func(t *testing.T) {
 		assert.False(t, UserFixtures.Pointer("alice").IsExpired())
 		assert.False(t, UserFixtures.Pointer("deleted").IsExpired())
@@ -1280,11 +1308,13 @@ func TestUser_Expired(t *testing.T) {
 }
 
 func TestUser_Disabled(t *testing.T) {
+	ValidateFixtures(t)
 	assert.False(t, UserFixtures.Pointer("alice").IsDisabled())
 	assert.True(t, UserFixtures.Pointer("deleted").IsDisabled())
 }
 
 func TestUser_UpdateLoginTime(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		alice := UserFixtures.Get("alice")
 		time1 := alice.LoginAt
@@ -1340,6 +1370,7 @@ func TestUser_UpdateLoginTime(t *testing.T) {
 }
 
 func TestUser_NormalizeAdminRole(t *testing.T) {
+	ValidateFixtures(t)
 	// CE registers admin but not cluster_admin, so the edition target is admin.
 	t.Run("ForeignSuperAdminRoleReset", func(t *testing.T) {
 		m := &User{UserName: "norm-foreign", SuperAdmin: true, UserRole: acl.RoleClusterAdmin.String()}
@@ -1368,6 +1399,7 @@ func TestUser_NormalizeAdminRole(t *testing.T) {
 }
 
 func TestUser_CanLogIn(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("True", func(t *testing.T) {
 		alice := UserFixtures.Get("alice")
 		assert.True(t, alice.CanLogIn())
@@ -1395,6 +1427,7 @@ func TestUser_CanLogIn(t *testing.T) {
 }
 
 func TestUser_CanUseWebDAV(t *testing.T) {
+	ValidateFixtures(t)
 	alice := UserFixtures.Get("alice")
 	assert.True(t, alice.CanUseWebDAV())
 	alice.SetProvider(authn.ProviderNone)
@@ -1415,6 +1448,7 @@ func TestUser_CanUseWebDAV(t *testing.T) {
 }
 
 func TestUser_CanUpload(t *testing.T) {
+	ValidateFixtures(t)
 	alice := UserFixtures.Get("alice")
 	assert.True(t, alice.CanUpload())
 	alice.SetProvider(authn.ProviderNone)
@@ -1435,6 +1469,7 @@ func TestUser_CanUpload(t *testing.T) {
 }
 
 func TestUser_SharedUIDs(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("AliceAlbum", func(t *testing.T) {
 		m := UserFixtures.Pointer("alice")
 		assert.NotNil(t, m)
@@ -1447,6 +1482,7 @@ func TestUser_SharedUIDs(t *testing.T) {
 }
 
 func TestUser_Form(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Alice", func(t *testing.T) {
 		m := FindUserByName("alice")
 
@@ -1468,6 +1504,7 @@ func TestUser_Form(t *testing.T) {
 }
 
 func TestUser_PrivilegeLevelChange(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("TrueRoleChanged", func(t *testing.T) {
 		m := FindUserByName("alice")
 
@@ -1571,6 +1608,7 @@ func TestUser_PrivilegeLevelChange(t *testing.T) {
 }
 
 func TestUser_SaveForm(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("UnknownUser", func(t *testing.T) {
 		frm, err := UnknownUser.Form()
 		assert.NoError(t, err)
@@ -1994,6 +2032,7 @@ func TestUser_SaveForm(t *testing.T) {
 }
 
 func TestUser_SetDisplayName(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("BillGates", func(t *testing.T) {
 		user := NewUser()
 		user.SetDisplayName("Sir William Henry Gates III", SrcAuto)
@@ -2033,6 +2072,7 @@ func TestUser_SetDisplayName(t *testing.T) {
 }
 
 func TestUser_SetGivenName(t *testing.T) {
+	ValidateFixtures(t)
 	user := User{
 		ID:      1234567,
 		UserUID: "urqdrfb72479n047",
@@ -2050,6 +2090,7 @@ func TestUser_SetGivenName(t *testing.T) {
 }
 
 func TestUser_SetFamilyName(t *testing.T) {
+	ValidateFixtures(t)
 	user := User{
 		ID:      1234567,
 		UserUID: "urqdrfb72479n047",
@@ -2067,6 +2108,7 @@ func TestUser_SetFamilyName(t *testing.T) {
 }
 
 func TestUser_SetAvatar(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Visitor", func(t *testing.T) {
 		assert.False(t, Visitor.HasAvatar())
 		err := Visitor.SetAvatar("ebfc0aea7d3fd018b5fff57c76806b35181855ed", SrcManual)
@@ -2102,6 +2144,7 @@ func TestUser_SetAvatar(t *testing.T) {
 }
 
 func TestUser_Username(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Visitor", func(t *testing.T) {
 		assert.Equal(t, "", Visitor.Username())
 	})
@@ -2114,6 +2157,7 @@ func TestUser_Username(t *testing.T) {
 }
 
 func TestUser_Provider(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Visitor", func(t *testing.T) {
 		assert.Equal(t, authn.ProviderLink, Visitor.Provider())
 		Visitor.AuthProvider = ""
@@ -2139,6 +2183,7 @@ func TestUser_Provider(t *testing.T) {
 }
 
 func TestUser_SetProvider(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("TwoFa", func(t *testing.T) {
 		m := UserFixtures.Get("alice")
 		assert.Equal(t, authn.ProviderLocal, m.Provider())
@@ -2154,6 +2199,7 @@ func TestUser_SetProvider(t *testing.T) {
 }
 
 func TestUser_SetMethod(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("TwoFa", func(t *testing.T) {
 		m := UserFixtures.Get("unauthorized")
 		assert.Equal(t, authn.ProviderNone, m.Provider())
@@ -2165,6 +2211,7 @@ func TestUser_SetMethod(t *testing.T) {
 }
 
 func TestUser_SetAuthID(t *testing.T) {
+	ValidateFixtures(t)
 	uuid := rnd.UUID()
 	issuer := "http://dummy-oidc:9998"
 
@@ -2215,6 +2262,7 @@ func TestUser_SetAuthID(t *testing.T) {
 }
 
 func TestUser_UpdateAuthID(t *testing.T) {
+	ValidateFixtures(t)
 	uuid := rnd.UUID()
 	issuer := "http://dummy-oidc:9998"
 	longnumber := "12345678901234567890"
@@ -2262,6 +2310,7 @@ func TestUser_UpdateAuthID(t *testing.T) {
 }
 
 func TestUser_AuthInfo(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Alice", func(t *testing.T) {
 		m := UserFixtures.Get("alice")
 		assert.Equal(t, "Local", m.AuthInfo())
@@ -2277,6 +2326,7 @@ func TestUser_AuthInfo(t *testing.T) {
 }
 
 func TestUser_Passcode(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Jane", func(t *testing.T) {
 		m := UserFixtures.Get("jane")
 		assert.IsType(t, &Passcode{}, m.Passcode("totp"))
@@ -2284,6 +2334,7 @@ func TestUser_Passcode(t *testing.T) {
 }
 
 func TestUser_GetBasePath(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Visitor", func(t *testing.T) {
 		assert.Equal(t, "", Visitor.GetBasePath())
 	})
@@ -2296,6 +2347,7 @@ func TestUser_GetBasePath(t *testing.T) {
 }
 
 func TestUser_SetBasePath(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Test", func(t *testing.T) {
 		u := User{
 			ID:          1234567,
@@ -2318,6 +2370,7 @@ func TestUser_SetBasePath(t *testing.T) {
 }
 
 func TestUser_GetUploadPath(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Visitor", func(t *testing.T) {
 		assert.Equal(t, "", Visitor.GetUploadPath())
 	})
@@ -2344,6 +2397,7 @@ func TestUser_GetUploadPath(t *testing.T) {
 }
 
 func TestUser_SetUploadPath(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Test", func(t *testing.T) {
 		u := User{
 			ID:          1234567,
@@ -2368,6 +2422,7 @@ func TestUser_SetUploadPath(t *testing.T) {
 }
 
 func TestUser_Handle(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Default", func(t *testing.T) {
 		u := User{
 			ID:          1234567,
@@ -2395,6 +2450,7 @@ func TestUser_Handle(t *testing.T) {
 }
 
 func TestUser_FullName(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Default", func(t *testing.T) {
 		u := User{
 			ID:          1234567,
@@ -2466,6 +2522,7 @@ func TestUser_FullName(t *testing.T) {
 }
 
 func TestUser_Settings(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("ReturnSettings", func(t *testing.T) {
 		u := User{
 			ID:       1234567,
@@ -2498,6 +2555,7 @@ func TestUser_Settings(t *testing.T) {
 }
 
 func TestUser_Details(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("ReturnDetails", func(t *testing.T) {
 		u := User{
 			ID:       1234567,
@@ -2527,11 +2585,13 @@ func TestUser_Details(t *testing.T) {
 }
 
 func TestUser_Equal(t *testing.T) {
+	ValidateFixtures(t)
 	assert.True(t, Admin.Equal(&Admin))
 	assert.False(t, Admin.Equal(&Visitor))
 }
 
 func TestUser_RevokeDerivedSessions(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("EmptyUid", func(t *testing.T) {
 		u := User{
 			ID:       1234567,
@@ -2586,6 +2646,7 @@ func newRevokeTestUser(t *testing.T) *User {
 }
 
 func TestUser_RevokeSessions(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("EmptyUid", func(t *testing.T) {
 		u := &User{ID: 1234567, UserUID: "", UserName: "test", UserRole: "user"}
 		assert.Equal(t, 0, u.RevokeSessions(nil, authn.RevokeAllSessions))
@@ -2641,6 +2702,7 @@ func TestUser_RevokeSessions(t *testing.T) {
 }
 
 func TestUser_DenyLogIn(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Active", func(t *testing.T) {
 		assert.False(t, UserFixtures.Pointer("alice").DenyLogIn())
 	})
@@ -2661,11 +2723,13 @@ func TestUser_DenyLogIn(t *testing.T) {
 }
 
 func TestUser_VerifyPassword(t *testing.T) {
+	ValidateFixtures(t)
 	assert.True(t, Admin.VerifyPassword("photoprism"))
 	assert.False(t, Admin.VerifyPassword("wrong"))
 }
 
 func TestUser_InvalidPasscode(t *testing.T) {
+	ValidateFixtures(t)
 	m := UserFixtures.Get("jane")
 	passcode := m.Passcode("totp")
 	t.Cleanup(func() {
@@ -2678,6 +2742,7 @@ func TestUser_InvalidPasscode(t *testing.T) {
 }
 
 func TestUser_Passcodes(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Alice", func(t *testing.T) {
 		m := UserFixtures.Get("alice")
 		assert.Equal(t, "default", m.AuthMethod)
@@ -2764,6 +2829,7 @@ func TestUser_Passcodes(t *testing.T) {
 }
 
 func TestUser_RegenerateTokens(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Visitor", func(t *testing.T) {
 		assert.Nil(t, Visitor.RegenerateTokens())
 	})
@@ -2786,6 +2852,7 @@ func TestUser_RegenerateTokens(t *testing.T) {
 }
 
 func TestUser_RegenerateTokens_ReleaseSurvivesReCache(t *testing.T) {
+	ValidateFixtures(t)
 	// Regression guard for #5733: StringMap.Set does not retract a key from a replaced
 	// value's reverse-lookup list, so RegenerateTokens must explicitly release the old
 	// token. Otherwise re-caching a session (which reassigns the same session key to the
@@ -2815,6 +2882,7 @@ func TestUser_RegenerateTokens_ReleaseSurvivesReCache(t *testing.T) {
 }
 
 func TestUser_RegenerateTokens_StaleReloadDoesNotResurrect(t *testing.T) {
+	ValidateFixtures(t)
 	// Regression guard for #5733: an app password survives a password change with its
 	// preview/download token stored in its sessions row. RegenerateTokens must rewrite
 	// that row, otherwise a reload from the database (after the 15-minute cache expiry or
@@ -2860,6 +2928,7 @@ func TestUser_RegenerateTokens_StaleReloadDoesNotResurrect(t *testing.T) {
 }
 
 func TestUser_HasShares(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Visitor", func(t *testing.T) {
 		assert.False(t, Visitor.HasShares())
 	})
@@ -2870,6 +2939,7 @@ func TestUser_HasShares(t *testing.T) {
 }
 
 func TestUser_HasShare(t *testing.T) {
+	ValidateFixtures(t)
 	m := FindLocalUser("alice")
 	m.RefreshShares()
 	assert.True(t, m.HasShare("as6sg6bxpogaaba9"))
@@ -2878,6 +2948,7 @@ func TestUser_HasShare(t *testing.T) {
 }
 
 func TestUser_RedeemToken(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Visitor", func(t *testing.T) {
 		assert.Equal(t, 0, Visitor.RedeemToken("1234"))
 	})
@@ -2899,6 +2970,7 @@ func TestUser_RedeemToken(t *testing.T) {
 }
 
 func TestUser_ScopeHelpers(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Default", func(t *testing.T) {
 		u := &User{}
 		assert.Equal(t, "*", u.Scope())
@@ -2920,6 +2992,7 @@ func TestUser_ScopeHelpers(t *testing.T) {
 }
 
 func TestUser_UpdateScope(t *testing.T) {
+	ValidateFixtures(t)
 	user := createScopedTestUser(t)
 
 	err := user.UpdateScope(" photos:view  LOGS:* ")
@@ -2930,6 +3003,7 @@ func TestUser_UpdateScope(t *testing.T) {
 }
 
 func TestUser_UpdateAttr(t *testing.T) {
+	ValidateFixtures(t)
 	user := createScopedTestUser(t)
 
 	err := user.UpdateAttr(" photos:view logs:false ")
@@ -2938,6 +3012,7 @@ func TestUser_UpdateAttr(t *testing.T) {
 }
 
 func TestUser_SetFormValuesScope(t *testing.T) {
+	ValidateFixtures(t)
 	formValues := form.User{
 		UserName:  "scopeuser",
 		UserEmail: "scope@example.com",
@@ -2958,6 +3033,7 @@ func TestUser_SetFormValuesScope(t *testing.T) {
 }
 
 func TestUser_SetValuesFromCliScope(t *testing.T) {
+	ValidateFixtures(t)
 	user := FindLocalUser("alice")
 	require.NotNil(t, user)
 
@@ -2978,6 +3054,7 @@ func TestUser_SetValuesFromCliScope(t *testing.T) {
 }
 
 func TestUser_AuthIDSQLite(t *testing.T) {
+	ValidateFixtures(t)
 	user := FindLocalUser("alice")
 	require.NotNil(t, user)
 

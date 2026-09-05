@@ -10,6 +10,7 @@ import (
 )
 
 func TestFindKeyword(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		FlushKeywordCache()
 
@@ -53,6 +54,7 @@ func TestFindKeyword(t *testing.T) {
 }
 
 func TestFindPhotoKeyword(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		FlushPhotoKeywordCache()
 		require.NoError(t, CachePhotoKeywords())
@@ -95,6 +97,7 @@ func TestFindPhotoKeyword(t *testing.T) {
 }
 
 func TestCachePhotoKeywords(t *testing.T) {
+	ValidateFixtures(t)
 	FlushPhotoKeywordCache()
 	require.NoError(t, CachePhotoKeywords())
 
@@ -104,6 +107,7 @@ func TestCachePhotoKeywords(t *testing.T) {
 }
 
 func TestFlushCachedPhotoKeyword(t *testing.T) {
+	ValidateFixtures(t)
 	FlushPhotoKeywordCache()
 	fixture := PhotoKeywordFixtures["3"]
 	cacheKey := photoKeywordCacheKey(fixture.PhotoID, fixture.KeywordID)

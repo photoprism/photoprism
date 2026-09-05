@@ -7,6 +7,7 @@ import (
 )
 
 func TestFindLabel(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		label := &Label{LabelSlug: "find-me-label", LabelName: "Find Me"}
 
@@ -63,6 +64,7 @@ func TestFindLabel(t *testing.T) {
 }
 
 func TestFindPhotoLabel(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		if err := CachePhotoLabels(); err != nil {
 			t.Fatal(err)

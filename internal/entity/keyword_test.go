@@ -10,6 +10,7 @@ import (
 )
 
 func TestNewKeyword(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Cat", func(t *testing.T) {
 		keyword := NewKeyword("cat")
 		assert.Equal(t, "cat", keyword.Keyword)
@@ -23,11 +24,13 @@ func TestNewKeyword(t *testing.T) {
 }
 
 func TestKeyword_TableName(t *testing.T) {
+	ValidateFixtures(t)
 	keyword := &Keyword{}
 	assert.Equal(t, "keywords", keyword.TableName())
 }
 
 func TestFirstOrCreateKeyword(t *testing.T) {
+	ValidateFixtures(t)
 	keyword := NewKeyword("food")
 	result := FirstOrCreateKeyword(keyword)
 	t.Cleanup(func() {
@@ -44,6 +47,7 @@ func TestFirstOrCreateKeyword(t *testing.T) {
 }
 
 func TestKeyword_Updates(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		keyword := NewKeyword("KeywordBeforeUpdate")
 
@@ -80,6 +84,7 @@ func TestKeyword_Updates(t *testing.T) {
 }
 
 func TestKeyword_Update(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		keyword := NewKeyword("KeywordBeforeUpdate2")
 
@@ -125,6 +130,7 @@ func TestKeyword_Update(t *testing.T) {
 }
 
 func TestKeyword_Save(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		keyword := NewKeyword("KeywordName")
 
@@ -140,6 +146,7 @@ func TestKeyword_Save(t *testing.T) {
 }
 
 func TestFlushCachedKeyword(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("DeletesCachedEntry", func(t *testing.T) {
 		FlushKeywordCache()
 		keyword := NewKeyword(fmt.Sprintf("flush-%d", time.Now().UnixNano()))
@@ -161,6 +168,7 @@ func TestFlushCachedKeyword(t *testing.T) {
 }
 
 func TestKeyword_Create(t *testing.T) {
+	ValidateFixtures(t)
 	FlushKeywordCache()
 	keyword := NewKeyword(fmt.Sprintf("keyword-create-%d", time.Now().UnixNano()))
 	require.NoError(t, keyword.Create())
@@ -174,6 +182,7 @@ func TestKeyword_Create(t *testing.T) {
 }
 
 func TestKeyword_HasID(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Nil", func(t *testing.T) {
 		var keyword *Keyword
 		assert.False(t, keyword.HasID())
@@ -193,6 +202,7 @@ func TestKeyword_HasID(t *testing.T) {
 }
 
 func TestFirstOrCreateKeyword_Cached(t *testing.T) {
+	ValidateFixtures(t)
 	name := fmt.Sprintf("keyword-firstorcreate-%d", time.Now().UnixNano())
 	keyword := NewKeyword(name)
 	result := FirstOrCreateKeyword(keyword)

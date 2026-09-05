@@ -35,6 +35,7 @@ func runTestMain(m *testing.M) int {
 }
 
 func TestTypeString(t *testing.T) {
+	ValidateFixtures(t)
 	assert.Equal(t, "unknown", TypeString(""))
 	assert.Equal(t, "foo", TypeString("foo"))
 }

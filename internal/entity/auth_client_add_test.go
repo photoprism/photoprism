@@ -10,6 +10,7 @@ import (
 )
 
 func Test_AddClient(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := form.Client{
 			ClientName:   "test",
@@ -62,6 +63,7 @@ func Test_AddClient(t *testing.T) {
 }
 
 func Test_AddClient_WithRole(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("AdminRole", func(t *testing.T) {
 		frm := form.Client{
 			ClientID:     "cs5cpu17n6gj9r10",

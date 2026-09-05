@@ -8,6 +8,7 @@ import (
 )
 
 func TestFixtureDb(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NoTransaction", func(t *testing.T) {
 		assert.Nil(t, fixtureTx)
 		assert.Equal(t, Db(), fixtureDb())
@@ -23,6 +24,7 @@ func TestFixtureDb(t *testing.T) {
 }
 
 func TestBeginFixtureTx(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		done := beginFixtureTx()
 		require.NotNil(t, done)
