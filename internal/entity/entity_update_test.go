@@ -21,6 +21,7 @@ func missingPhotoID() uint {
 }
 
 func TestUpdate(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("IDMissing", func(t *testing.T) {
 		uid := rnd.GenerateUID(PhotoUID)
 		m := &Photo{ID: 0, PhotoUID: uid, UpdatedAt: Now(), CreatedAt: Now(), PhotoTitle: "Foo"}
@@ -97,6 +98,7 @@ func TestUpdate(t *testing.T) {
 		if err := Update(m, "ID", "PhotoUID"); err == nil {
 			t.Errorf("expected error: %#v", m)
 		} else {
+			t.Cleanup(func() { removeTestPhoto(t, *m) })
 			assert.ErrorContains(t, err, "record not found")
 			assert.Greater(t, m.UpdatedAt.UTC(), updatedAt.UTC())
 		}

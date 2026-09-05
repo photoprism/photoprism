@@ -12,6 +12,7 @@ import (
 )
 
 func TestShouldUpdateLabelCounts(t *testing.T) {
+	ValidateFixtures(t)
 	prev := updateLabelCountsLastUpdated.Load()
 	defer updateLabelCountsLastUpdated.Store(prev)
 
@@ -37,8 +38,15 @@ func TestShouldUpdateLabelCounts(t *testing.T) {
 }
 
 func TestUpdateLabelCountsIfNeeded(t *testing.T) {
+	ValidateFixtures(t)
 	prev := updateLabelCountsLastUpdated.Load()
 	defer updateLabelCountsLastUpdated.Store(prev)
+	t.Cleanup(func() {
+		WaitForAsyncJobsTimeout(15 * time.Second)
+		for _, fl := range LabelFixtures {
+			assert.NoError(t, UnscopedDb().Model(&Label{}).Where("id = ?", fl.ID).Updates(Values{"photo_count": fl.PhotoCount}).Error)
+		}
+	})
 
 	recent := unix.Now()
 	updateLabelCountsLastUpdated.Store(recent)
@@ -68,6 +76,7 @@ func TestUpdateLabelCountsIfNeeded(t *testing.T) {
 }
 
 func TestUpdateCounts_NilDbReturnsCleanly(t *testing.T) {
+	ValidateFixtures(t)
 	// Simulate the post-CloseDb shutdown state where the entity DB
 	// provider has been nilled. UpdateCounts must return nil instead of
 	// panicking on a nil dialect lookup, otherwise an in-flight async
@@ -82,6 +91,7 @@ func TestUpdateCounts_NilDbReturnsCleanly(t *testing.T) {
 }
 
 func TestWaitForAsyncJobs_DrainsRegisteredWork(t *testing.T) {
+	ValidateFixtures(t)
 	// Models the contract that config.CloseDb relies on: WaitForAsyncJobs
 	// must block until every AsyncJobAdd has a matching AsyncJobDone, so
 	// async count/cover update goroutines finish before the DB connection
@@ -134,6 +144,7 @@ func TestWaitForAsyncJobs_DrainsRegisteredWork(t *testing.T) {
 }
 
 func TestWaitForAsyncJobsTimeout(t *testing.T) {
+	ValidateFixtures(t)
 	// Ensure any prior async work has drained so the counter starts clean.
 	WaitForAsyncJobs()
 
@@ -158,6 +169,7 @@ func TestWaitForAsyncJobsTimeout(t *testing.T) {
 }
 
 func TestLabelPhotoCounts(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NilTesting", func(t *testing.T) {
 		if testing.Short() {
 			t.Skip("skipping test in short mode.")
@@ -181,6 +193,7 @@ func TestLabelPhotoCounts(t *testing.T) {
 }
 
 func TestUpdateSubjectCounts(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		require.NoError(t, UpdateSubjectCounts(true))
 		require.NoError(t, UpdateSubjectCounts(false))

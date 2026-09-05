@@ -15,11 +15,13 @@ import (
 )
 
 func TestSubject_TableName(t *testing.T) {
+	ValidateFixtures(t)
 	m := &Subject{}
 	assert.Contains(t, m.TableName(), "subjects")
 }
 
 func TestNewSubject(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("JensMander", func(t *testing.T) {
 		m := NewSubject("Jens Mander", SubjPerson, SrcAuto)
 		assert.Equal(t, "Jens Mander", m.SubjName)
@@ -39,6 +41,7 @@ func TestNewSubject(t *testing.T) {
 }
 
 func TestSubject_SetName(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Ok", func(t *testing.T) {
 		m := NewSubject("Jens Mander", SubjPerson, SrcAuto)
 
@@ -81,6 +84,7 @@ func TestSubject_SetName(t *testing.T) {
 }
 
 func TestFirstOrCreatePerson(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NotYetExistingPerson", func(t *testing.T) {
 		m := NewSubject("Create Me", SubjPerson, SrcAuto)
 		result := FirstOrCreateSubject(m)
@@ -88,6 +92,7 @@ func TestFirstOrCreatePerson(t *testing.T) {
 		if result == nil {
 			t.Fatal("result must not be nil")
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(m).Error) })
 
 		assert.Equal(t, "Create Me", m.SubjName)
 		assert.Equal(t, "create-me", m.SubjSlug)
@@ -107,6 +112,7 @@ func TestFirstOrCreatePerson(t *testing.T) {
 }
 
 func TestSubject_Save(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := NewSubject("Save Me", SubjPerson, SrcAuto)
 		initialDate := m.UpdatedAt
@@ -115,6 +121,7 @@ func TestSubject_Save(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(m).Error) })
 
 		afterDate := m.UpdatedAt
 
@@ -124,6 +131,7 @@ func TestSubject_Save(t *testing.T) {
 }
 
 func TestSubject_Delete(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := NewSubject("Jens Mander", SubjPerson, SrcAuto)
 		err := m.Save()
@@ -131,6 +139,7 @@ func TestSubject_Delete(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.False(t, m.Deleted())
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(m).Error) })
 
 		var subj Subjects
 
@@ -159,6 +168,7 @@ func TestSubject_Delete(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.False(t, m.Deleted())
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(m).Error) })
 
 		time := Now()
 		m.DeletedAt = &time
@@ -170,6 +180,7 @@ func TestSubject_Delete(t *testing.T) {
 }
 
 func TestSubject_Restore(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		var deleteTime = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
 
@@ -179,6 +190,7 @@ func TestSubject_Restore(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.True(t, m.Deleted())
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(m).Error) })
 
 		err = m.Restore()
 		if err != nil {
@@ -197,12 +209,14 @@ func TestSubject_Restore(t *testing.T) {
 }
 
 func TestFindSubject(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := NewSubject("Find Me", SubjPerson, SrcAuto)
 
 		if err := m.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(m).Error) })
 
 		if s := FindSubject(m.SubjName); s != nil {
 			t.Fatal("result must be nil")
@@ -225,6 +239,7 @@ func TestFindSubject(t *testing.T) {
 }
 
 func TestFindSubjectByName(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		r := FindSubjectByName("John Doe", false)
 		assert.Equal(t, "John Doe", r.SubjName)
@@ -242,6 +257,7 @@ func TestFindSubjectByName(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(m).Error) })
 
 		assert.True(t, m.Deleted())
 
@@ -256,6 +272,7 @@ func TestFindSubjectByName(t *testing.T) {
 }
 
 func TestSubject_Links(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NoResult", func(t *testing.T) {
 		m := SubjectFixtures.Pointer("john-doe")
 		links := m.Links()
@@ -264,6 +281,7 @@ func TestSubject_Links(t *testing.T) {
 }
 
 func TestSubject_String(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Nil", func(t *testing.T) {
 		var m *Subject
 		assert.Equal(t, "Subject<nil>", m.String())
@@ -281,12 +299,14 @@ func TestSubject_String(t *testing.T) {
 }
 
 func TestSubject_Update(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := NewSubject("Update Me", SubjPerson, SrcAuto)
 
 		if err := m.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(m).Error) })
 
 		if err := m.Update("SubjName", "Updated Name"); err != nil {
 			t.Fatal(err)
@@ -299,12 +319,14 @@ func TestSubject_Update(t *testing.T) {
 
 // TODO fails on mariadb
 func TestSubject_Updates(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := NewSubject("Update Me", SubjPerson, SrcAuto)
 
 		if err := m.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(m).Error) })
 
 		if err := m.Updates(Subject{SubjName: "UpdatedName", SubjType: "newtype"}); err != nil {
 			t.Fatal(err)
@@ -317,6 +339,7 @@ func TestSubject_Updates(t *testing.T) {
 }
 
 func TestSubject_Visible(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Hidden", func(t *testing.T) {
 		subj := NewSubject("Jens Mander", SubjPerson, SrcManual)
 		assert.True(t, subj.Visible())
@@ -338,6 +361,7 @@ func TestSubject_Visible(t *testing.T) {
 }
 
 func TestSubject_SaveForm(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		subj := NewSubject("Save Form Test", SubjPerson, SrcManual)
 
@@ -349,6 +373,7 @@ func TestSubject_SaveForm(t *testing.T) {
 		if err := subj.Create(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(subj).Error) })
 
 		subjForm, err := form.NewSubject(subj)
 
@@ -386,6 +411,13 @@ func TestSubject_SaveForm(t *testing.T) {
 		if err := subj.Create(); err != nil {
 			t.Fatal(err)
 		}
+		cleanSubUID := subj.SubjUID
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&Subject{SubjUID: cleanSubUID}).Error)
+			for _, fs := range SubjectFixtures {
+				assert.NoError(t, UnscopedDb().Model(&Subject{}).Where("subj_uid = ?", fs.SubjUID).Updates(Values{"photo_count": fs.PhotoCount, "file_count": fs.FileCount}).Error)
+			}
+		})
 
 		subjForm, err := form.NewSubject(subj)
 
@@ -406,6 +438,7 @@ func TestSubject_SaveForm(t *testing.T) {
 		if err := subj.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(subj).Error) })
 
 		subjForm, err := form.NewSubject(subj)
 		if err != nil {
@@ -433,6 +466,7 @@ func TestSubject_SaveForm(t *testing.T) {
 		if err := subj.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(subj).Error) })
 
 		subjForm, err := form.NewSubject(subj)
 		if err != nil {
@@ -459,6 +493,7 @@ func TestSubject_SaveForm(t *testing.T) {
 		if err := subj.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(subj).Error) })
 
 		subjForm, err := form.NewSubject(subj)
 		if err != nil {
@@ -479,12 +514,14 @@ func TestSubject_SaveForm(t *testing.T) {
 }
 
 func TestSubject_UpdateName(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := NewSubject("Test Person", SubjPerson, SrcAuto)
 
 		if err := m.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(m).Error) })
 
 		assert.Equal(t, "Test Person", m.SubjName)
 		assert.Equal(t, "test-person", m.SubjSlug)
@@ -506,6 +543,7 @@ func TestSubject_UpdateName(t *testing.T) {
 		if err := m.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(m).Error) })
 
 		sub := event.Subscribe("subjects.updated", "people.updated")
 		t.Cleanup(func() { event.Unsubscribe(sub) })
@@ -534,6 +572,7 @@ func TestSubject_UpdateName(t *testing.T) {
 		if err := m.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(m).Error) })
 
 		m.SubjName = ""
 
@@ -549,6 +588,8 @@ func TestSubject_UpdateName(t *testing.T) {
 		if err := m.Save(); err != nil {
 			t.Fatal(err)
 		}
+		cleanSubjUID := m.SubjUID
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(&Subject{SubjUID: cleanSubjUID}).Error) })
 
 		m.SubjUID = ""
 
@@ -564,6 +605,7 @@ func TestSubject_UpdateName(t *testing.T) {
 		if err := m.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(m).Error) })
 
 		assert.Equal(t, "Test Person2", m.SubjName)
 		assert.Equal(t, "test-person2", m.SubjSlug)
@@ -582,14 +624,17 @@ func TestSubject_UpdateName(t *testing.T) {
 }
 
 func TestSubject_RefreshPhotos(t *testing.T) {
+	ValidateFixtures(t)
 	subj := SubjectFixtures.Get("john-doe")
 
 	if err := subj.RefreshPhotos(); err != nil {
 		t.Fatal(err)
 	}
+	t.Cleanup(func() { assert.NoError(t, UnscopedDb().Save(PhotoFixtures.Pointer("Photo04")).Error) })
 }
 
 func TestSubject_DeletePermanently(t *testing.T) {
+	ValidateFixtures(t)
 	m := NewSubject("Tim Doe", SubjPerson, SrcAuto)
 
 	if err := m.Save(); err != nil {
@@ -621,6 +666,7 @@ func TestSubject_DeletePermanently(t *testing.T) {
 }
 
 func TestReassignSubject(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("OtherPersonOwnsName", func(t *testing.T) {
 		subj := FirstOrCreateSubject(NewSubject("Reassign Lookup Source", SubjPerson, SrcManual))
 		other := FirstOrCreateSubject(NewSubject("Reassign Lookup Target", SubjPerson, SrcManual))
@@ -628,6 +674,10 @@ func TestReassignSubject(t *testing.T) {
 		if subj == nil || other == nil {
 			t.Fatal("failed creating test subjects")
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(subj).Error)
+			assert.NoError(t, UnscopedDb().Delete(other).Error)
+		})
 
 		found := ReassignSubject(subj, "Reassign Lookup Target")
 
@@ -641,6 +691,7 @@ func TestReassignSubject(t *testing.T) {
 		if subj == nil {
 			t.Fatal("failed creating test subject")
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(subj).Error) })
 
 		assert.Nil(t, ReassignSubject(subj, "Reassign Lookup Nobody Has This"))
 	})
@@ -650,6 +701,7 @@ func TestReassignSubject(t *testing.T) {
 		if subj == nil {
 			t.Fatal("failed creating test subject")
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(subj).Error) })
 
 		assert.Nil(t, ReassignSubject(subj, "Reassign Lookup Self"))
 	})
@@ -659,6 +711,7 @@ func TestReassignSubject(t *testing.T) {
 		if subj == nil {
 			t.Fatal("failed creating test subject")
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(subj).Error) })
 
 		assert.Nil(t, ReassignSubject(subj, ""))
 		assert.Nil(t, ReassignSubject(subj, "   "))
@@ -673,6 +726,10 @@ func TestReassignSubject(t *testing.T) {
 		if subj == nil || gone == nil {
 			t.Fatal("failed creating test subjects")
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(subj).Error)
+			assert.NoError(t, UnscopedDb().Delete(gone).Error)
+		})
 
 		if err := gone.Delete(); err != nil {
 			t.Fatal(err)
@@ -688,6 +745,7 @@ func TestReassignSubject(t *testing.T) {
 // A collision narrows a cluster's accept distance and nothing else widens it again, so without
 // this the clusters stay gated against faces that the merge just established do belong to them.
 func TestSubject_MergeWith_ClearsCollisions(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		typo := NewSubject("Merge Collision Typo", SubjPerson, SrcManual)
 		require.NotNil(t, typo)
@@ -715,6 +773,9 @@ func TestSubject_MergeWith_ClearsCollisions(t *testing.T) {
 		t.Cleanup(func() {
 			UnscopedDb().Delete(&Face{}, "id IN (?)", []string{typoFace.ID, keepFace.ID})
 			UnscopedDb().Delete(&Subject{}, "subj_uid IN (?)", []string{typo.SubjUID, keep.SubjUID})
+			for _, fs := range SubjectFixtures {
+				assert.NoError(t, UnscopedDb().Model(&Subject{}).Where("subj_uid = ?", fs.SubjUID).Updates(Values{"photo_count": fs.PhotoCount, "file_count": fs.FileCount}).Error)
+			}
 		})
 
 		require.NoError(t, typo.MergeWith(keep))

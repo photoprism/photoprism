@@ -17,6 +17,7 @@ import (
 )
 
 func TestNewLabel(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NameUnicornNum2000PriorityFive", func(t *testing.T) {
 		label := NewLabel("Unicorn2000", 5)
 		assert.Equal(t, "Unicorn2000", label.LabelName)
@@ -32,11 +33,13 @@ func TestNewLabel(t *testing.T) {
 }
 
 func TestLabel_TableName(t *testing.T) {
+	ValidateFixtures(t)
 	label := &Label{}
 	assert.Equal(t, "labels", label.TableName())
 }
 
 func TestLabel_SaveForm(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		label := createTestLabel(t, "save-form")
 		frm := &form.Label{
@@ -66,12 +69,14 @@ func TestLabel_SaveForm(t *testing.T) {
 }
 
 func TestFlushLabelCache(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		FlushLabelCache()
 	})
 }
 
 func TestLabel_SetName(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("SetName", func(t *testing.T) {
 		entity := LabelFixtures["landscape"]
 
@@ -101,6 +106,7 @@ func TestLabel_SetName(t *testing.T) {
 }
 
 func TestLabel_HasID(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Nil", func(t *testing.T) {
 		var label *Label
 		assert.False(t, label.HasID())
@@ -116,6 +122,7 @@ func TestLabel_HasID(t *testing.T) {
 }
 
 func TestLabel_HasUID(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Nil", func(t *testing.T) {
 		var label *Label
 		assert.False(t, label.HasUID())
@@ -132,6 +139,7 @@ func TestLabel_HasUID(t *testing.T) {
 }
 
 func TestLabel_Skip(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Nil", func(t *testing.T) {
 		var label *Label
 		assert.True(t, label.Skip())
@@ -153,6 +161,7 @@ func TestLabel_Skip(t *testing.T) {
 }
 
 func TestLabel_InvalidName(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Empty", func(t *testing.T) {
 		label := &Label{LabelName: ""}
 		assert.True(t, label.InvalidName())
@@ -164,6 +173,7 @@ func TestLabel_InvalidName(t *testing.T) {
 }
 
 func TestLabel_GetSlug(t *testing.T) {
+	ValidateFixtures(t)
 	label := &Label{CustomSlug: "custom", LabelSlug: "orig", LabelName: "Name"}
 	assert.Equal(t, "custom", label.GetSlug())
 
@@ -175,6 +185,7 @@ func TestLabel_GetSlug(t *testing.T) {
 }
 
 func TestFirstOrCreateLabel(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Existing", func(t *testing.T) {
 		label := LabelFixtures.Get("flower")
 		result := FirstOrCreateLabel(&label)
@@ -274,6 +285,7 @@ func TestFirstOrCreateLabel(t *testing.T) {
 }
 
 func TestLabel_UpdateClassify(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("UpdatePriorityAndLabelSlug", func(t *testing.T) {
 		classifyLabel := &classify.Label{Name: "classify", Uncertainty: 30, Source: "manual", Priority: 5}
 		result := &Label{LabelName: "label", LabelSlug: "", CustomSlug: "customslug", LabelPriority: 4}
@@ -289,7 +301,8 @@ func TestLabel_UpdateClassify(t *testing.T) {
 			t.Fatal(err)
 		}
 		t.Cleanup(func() {
-			assert.NoError(t, UnscopedDb().Delete(result).Error)
+			require.NoError(t, UnscopedDb().Delete(&Category{}, "label_id = ?", result.ID).Error)
+			require.NoError(t, UnscopedDb().Delete(result).Error)
 			FlushLabelCache()
 		})
 
@@ -312,7 +325,8 @@ func TestLabel_UpdateClassify(t *testing.T) {
 			t.Fatal(err)
 		}
 		t.Cleanup(func() {
-			assert.NoError(t, UnscopedDb().Delete(result).Error)
+			require.NoError(t, UnscopedDb().Delete(&Category{}, "label_id = ?", result.ID).Error)
+			require.NoError(t, UnscopedDb().Delete(result).Error)
 			FlushLabelCache()
 		})
 
@@ -336,8 +350,9 @@ func TestLabel_UpdateClassify(t *testing.T) {
 			t.Fatal(err)
 		}
 		t.Cleanup(func() {
-			assert.NoError(t, UnscopedDb().Delete(result).Error)
-			assert.NoError(t, UnscopedDb().Debug().Delete(&Label{}, "label_name = ?", "Plant").Error)
+			require.NoError(t, UnscopedDb().Delete(&Category{}, "label_id = ?", result.ID).Error)
+			require.NoError(t, UnscopedDb().Delete(result).Error)
+			require.NoError(t, UnscopedDb().Delete(&Label{}, "label_name = ?", "Plant").Error)
 			FlushLabelCache()
 		})
 
@@ -350,6 +365,7 @@ func TestLabel_UpdateClassify(t *testing.T) {
 }
 
 func TestLabel_Update(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		label := createTestLabel(t, "update")
 		oldPriority := label.LabelPriority
@@ -370,6 +386,7 @@ func TestLabel_Update(t *testing.T) {
 }
 
 func TestLabel_SaveForm_CollidingSlug(t *testing.T) {
+	ValidateFixtures(t)
 	base := FirstOrCreateLabel(NewLabel("问", 0))
 	other := createTestLabel(t, "save-form-collision")
 
@@ -392,6 +409,7 @@ func TestLabel_SaveForm_CollidingSlug(t *testing.T) {
 }
 
 func TestLabel_Updates(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		label := createTestLabel(t, "updates")
 		err := label.Updates(&Label{LabelDescription: "updated", LabelNotes: "notes"})
@@ -417,6 +435,7 @@ func TestLabel_Updates(t *testing.T) {
 }
 
 func TestLabel_Save(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		label := NewLabel("Unicorn2000", 5)
 		initialDate := label.UpdatedAt
@@ -426,7 +445,7 @@ func TestLabel_Save(t *testing.T) {
 			t.Fatal(err)
 		}
 		t.Cleanup(func() {
-			assert.NoError(t, UnscopedDb().Delete(&label).Error)
+			require.NoError(t, UnscopedDb().Delete(&label).Error)
 			FlushLabelCache()
 		})
 
@@ -438,6 +457,7 @@ func TestLabel_Save(t *testing.T) {
 }
 
 func TestLabel_Delete(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		label := NewLabel("LabelToBeDeleted", 5)
 		err := label.Save()
@@ -445,7 +465,7 @@ func TestLabel_Delete(t *testing.T) {
 			t.Fatal(err)
 		}
 		t.Cleanup(func() {
-			assert.NoError(t, UnscopedDb().Delete(&label).Error)
+			require.NoError(t, UnscopedDb().Delete(&label).Error)
 			FlushLabelCache()
 		})
 		assert.False(t, label.Deleted())
@@ -472,6 +492,7 @@ func TestLabel_Delete(t *testing.T) {
 }
 
 func TestLabel_Restore(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		var deletedAt = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
 		label := &Label{DeletedAt: &deletedAt, LabelName: "ToBeRestored"}
@@ -480,7 +501,7 @@ func TestLabel_Restore(t *testing.T) {
 			t.Fatal(err)
 		}
 		t.Cleanup(func() {
-			assert.NoError(t, UnscopedDb().Delete(&label).Error)
+			require.NoError(t, UnscopedDb().Delete(&label).Error)
 			FlushLabelCache()
 		})
 
@@ -504,6 +525,7 @@ func TestLabel_Restore(t *testing.T) {
 }
 
 func TestLabel_Links(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("OneResult", func(t *testing.T) {
 		label := LabelFixtures.Get("flower")
 		links := label.Links()

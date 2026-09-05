@@ -7,6 +7,7 @@ import (
 )
 
 func TestDescriptionMap_Get(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("GetExistingDescription", func(t *testing.T) {
 		r := DetailsFixtures.Get("lake", 1000000)
 		assert.Equal(t, uint(1000000), r.PhotoID)
@@ -22,6 +23,7 @@ func TestDescriptionMap_Get(t *testing.T) {
 }
 
 func TestDescriptionMap_Pointer(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("GetExistingDescriptionPointer", func(t *testing.T) {
 		r := DetailsFixtures.Pointer("lake", 1000000)
 		assert.Equal(t, uint(1000000), r.PhotoID)

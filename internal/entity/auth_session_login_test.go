@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/form"
@@ -16,6 +17,7 @@ import (
 )
 
 func TestAuthSession(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("RandomAppPassword", func(t *testing.T) {
 		// Create test request form.
 		f := form.Login{
@@ -179,6 +181,7 @@ func TestAuthSession(t *testing.T) {
 }
 
 func TestAuthLocal(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Alice", func(t *testing.T) {
 		m := FindSessionByRefID("sessxkkcabch")
 		u := FindUserByName("alice")
@@ -294,6 +297,9 @@ func TestAuthLocal(t *testing.T) {
 		c, _ := gin.CreateTestContext(httptest.NewRecorder())
 		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(frm))
 		c.Request.RemoteAddr = "1.2.3.4"
+		t.Cleanup(func() {
+			require.NoError(t, UnscopedDb().Save(SessionFixtures.Pointer("alice_token")).Error)
+		})
 
 		// Check authentication result.
 		if provider, method, err := AuthLocal(u, frm, m, c); err != nil {
@@ -318,6 +324,9 @@ func TestAuthLocal(t *testing.T) {
 		c, _ := gin.CreateTestContext(httptest.NewRecorder())
 		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(frm))
 		c.Request.RemoteAddr = "1.2.3.4"
+		t.Cleanup(func() {
+			require.NoError(t, UnscopedDb().Save(SessionFixtures.Pointer("alice_token_webdav")).Error)
+		})
 
 		// Check authentication result.
 		if provider, method, err := AuthLocal(u, frm, m, c); err == nil {
@@ -342,6 +351,9 @@ func TestAuthLocal(t *testing.T) {
 		c, _ := gin.CreateTestContext(httptest.NewRecorder())
 		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(frm))
 		c.Request.RemoteAddr = "1.2.3.4"
+		t.Cleanup(func() {
+			require.NoError(t, UnscopedDb().Save(SessionFixtures.Pointer("alice_token_personal")).Error)
+		})
 
 		// Check authentication result.
 		if provider, method, err := AuthLocal(u, frm, m, c); err == nil {
@@ -374,6 +386,7 @@ func TestAuthLocal(t *testing.T) {
 }
 
 func TestSessionLogIn(t *testing.T) {
+	ValidateFixtures(t)
 	const clientIp = "1.2.3.4"
 	rec := httptest.NewRecorder()
 

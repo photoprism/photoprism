@@ -5,12 +5,15 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestFirstOrCreateDetails(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NotExistingDetails", func(t *testing.T) {
 		details := &Details{PhotoID: 123, Keywords: ""}
 		details = FirstOrCreateDetails(details)
+		t.Cleanup(func() { require.NoError(t, UnscopedDb().Delete(details).Error) })
 
 		if details == nil {
 			t.Fatal("details must not be nil")
@@ -31,6 +34,7 @@ func TestFirstOrCreateDetails(t *testing.T) {
 }
 
 func TestDetails_NoKeywords(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NoKeywords", func(t *testing.T) {
 		description := &Details{PhotoID: 123, Keywords: ""}
 
@@ -46,6 +50,7 @@ func TestDetails_NoKeywords(t *testing.T) {
 }
 
 func TestDetails_NoSubject(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NoSubject", func(t *testing.T) {
 		description := &Details{PhotoID: 123, Subject: ""}
 
@@ -61,6 +66,7 @@ func TestDetails_NoSubject(t *testing.T) {
 }
 
 func TestDetails_NoNotes(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NoNotes", func(t *testing.T) {
 		description := &Details{PhotoID: 123, Notes: ""}
 
@@ -76,6 +82,7 @@ func TestDetails_NoNotes(t *testing.T) {
 }
 
 func TestDetails_NoArtist(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NoArtist", func(t *testing.T) {
 		description := &Details{PhotoID: 123, Artist: ""}
 
@@ -92,6 +99,7 @@ func TestDetails_NoArtist(t *testing.T) {
 }
 
 func TestDetails_NoCopyright(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NoCopyright", func(t *testing.T) {
 		description := &Details{PhotoID: 123, Copyright: ""}
 
@@ -107,6 +115,7 @@ func TestDetails_NoCopyright(t *testing.T) {
 }
 
 func TestDetails_NoLicense(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NoLicense", func(t *testing.T) {
 		description := &Details{PhotoID: 123, License: ""}
 
@@ -122,6 +131,7 @@ func TestDetails_NoLicense(t *testing.T) {
 }
 
 func TestNewDetails(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("AddToPhoto", func(t *testing.T) {
 		p := NewPhoto(true)
 
@@ -137,6 +147,7 @@ func TestNewDetails(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { removeTestPhoto(t, p) })
 
 		// t.Logf("PHOTO: %#v", p)
 		// t.Logf("DETAILS: %#v", d)
@@ -145,6 +156,7 @@ func TestNewDetails(t *testing.T) {
 
 // TODO fails on mariadb
 func TestDetails_Create(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Error", func(t *testing.T) {
 		details := Details{PhotoID: 0}
 
@@ -158,10 +170,12 @@ func TestDetails_Create(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { require.NoError(t, UnscopedDb().Delete(&details).Error) })
 	})
 }
 
 func TestDetails_Save(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		details := Details{PhotoID: 900000002, UpdatedAt: time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC)}
 		initialDate := details.UpdatedAt
@@ -171,6 +185,7 @@ func TestDetails_Save(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { require.NoError(t, UnscopedDb().Delete(&details).Error) })
 		afterDate := details.UpdatedAt
 
 		assert.True(t, afterDate.After(initialDate))
@@ -183,6 +198,7 @@ func TestDetails_Save(t *testing.T) {
 }
 
 func TestDetails_SetKeywords(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NoKeywords", func(t *testing.T) {
 		description := &Details{PhotoID: 123, Keywords: ""}
 		assert.False(t, description.HasKeywords())
@@ -214,6 +230,7 @@ func TestDetails_SetKeywords(t *testing.T) {
 }
 
 func TestDetails_SetSubject(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NoSubject", func(t *testing.T) {
 		description := &Details{PhotoID: 123, Subject: ""}
 		assert.False(t, description.HasSubject())
@@ -238,6 +255,7 @@ func TestDetails_SetSubject(t *testing.T) {
 }
 
 func TestDetails_SetNotes(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NoNotes", func(t *testing.T) {
 		description := &Details{PhotoID: 123, Notes: ""}
 		assert.False(t, description.HasNotes())
@@ -262,6 +280,7 @@ func TestDetails_SetNotes(t *testing.T) {
 }
 
 func TestDetails_SetArtist(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NoArtist", func(t *testing.T) {
 		description := &Details{PhotoID: 123, Artist: ""}
 		assert.False(t, description.HasArtist())
@@ -286,6 +305,7 @@ func TestDetails_SetArtist(t *testing.T) {
 }
 
 func TestDetails_SetCopyright(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NoCopyright", func(t *testing.T) {
 		description := &Details{PhotoID: 123, Copyright: ""}
 		assert.False(t, description.HasCopyright())
@@ -310,6 +330,7 @@ func TestDetails_SetCopyright(t *testing.T) {
 }
 
 func TestDetails_SetLicense(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NoLicense", func(t *testing.T) {
 		description := &Details{PhotoID: 123, License: ""}
 		assert.False(t, description.HasLicense())
@@ -334,6 +355,7 @@ func TestDetails_SetLicense(t *testing.T) {
 }
 
 func TestDetails_SetSoftware(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Empty", func(t *testing.T) {
 		description := &Details{PhotoID: 123, Software: ""}
 		assert.False(t, description.HasSoftware())

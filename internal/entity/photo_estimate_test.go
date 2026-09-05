@@ -8,6 +8,7 @@ import (
 )
 
 func TestPhoto_EstimateCountry(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("UnitedKingdom", func(t *testing.T) {
 		m := Photo{
 			CameraID:     2,
@@ -118,10 +119,12 @@ func TestPhoto_EstimateCountry(t *testing.T) {
 }
 
 func TestPhoto_EstimateLocation(t *testing.T) {
+	ValidateFixtures(t)
 	st := Now().UTC().Truncate(time.Second)
 	t.Cleanup(func() {
 		// Randomness creaps in and sometimes creates a new place.
-		assert.NoError(t, UnscopedDb().Delete(&Place{}, "created_at > ?", st).Error)
+		assert.NoError(t, UnscopedDb().Delete(&Cell{}, "created_at >= ? AND place_id like 'mx%'", st).Error)
+		assert.NoError(t, UnscopedDb().Delete(&Place{}, "created_at >= ?", st).Error)
 		assert.NoError(t, UnscopedDb().Delete(&Country{ID: "mx"}).Error)
 	})
 	t.Run("HasLocation", func(t *testing.T) {

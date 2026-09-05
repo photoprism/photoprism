@@ -10,6 +10,7 @@ import (
 )
 
 func TestPhoto_HasTitle(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("False", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo03")
 		assert.False(t, m.HasTitle())
@@ -21,6 +22,7 @@ func TestPhoto_HasTitle(t *testing.T) {
 }
 
 func TestPhoto_NoTitle(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("True", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo03")
 		assert.True(t, m.NoTitle())
@@ -32,6 +34,7 @@ func TestPhoto_NoTitle(t *testing.T) {
 }
 
 func TestPhoto_SetTitle(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("ManuallyDeleteTitle", func(t *testing.T) {
 		// Photo15 has title source "name" (SrcName).
 		m := PhotoFixtures.Get("Photo15")
@@ -62,6 +65,7 @@ func TestPhoto_SetTitle(t *testing.T) {
 }
 
 func TestPhoto_GenerateTitle(t *testing.T) {
+	ValidateFixtures(t)
 	// Reset Markers before test to ensure stableness.
 	for _, entity := range MarkerFixtures {
 		UnscopedDb().Save(&entity)
@@ -249,6 +253,7 @@ func TestPhoto_GenerateTitle(t *testing.T) {
 }
 
 func TestPhoto_FileTitle(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NonLatin", func(t *testing.T) {
 		photo := Photo{PhotoName: "桥", PhotoPath: "", OriginalName: ""}
 		result := photo.FileTitle()
@@ -277,10 +282,16 @@ func TestPhoto_FileTitle(t *testing.T) {
 }
 
 func TestPhoto_UpdateTitleLabels(t *testing.T) {
-	FirstOrCreateLabel(NewLabel("Food", 1))
-	FirstOrCreateLabel(NewLabel("Wine", 2))
-	FirstOrCreateLabel(&Label{LabelName: "Bar", LabelSlug: "bar", CustomSlug: "bar", DeletedAt: TimeStamp()})
+	ValidateFixtures(t)
+	lf := FirstOrCreateLabel(NewLabel("Food", 1))
+	lw := FirstOrCreateLabel(NewLabel("Wine", 2))
+	lb := FirstOrCreateLabel(&Label{LabelName: "Bar", LabelSlug: "bar", CustomSlug: "bar", DeletedAt: TimeStamp()})
 
+	t.Cleanup(func() {
+		assert.NoError(t, UnscopedDb().Delete(lf).Error)
+		assert.NoError(t, UnscopedDb().Delete(lw).Error)
+		assert.NoError(t, UnscopedDb().Delete(lb).Error)
+	})
 	t.Run("Success", func(t *testing.T) {
 		details := &Details{Keywords: "snake, otter, food", KeywordsSrc: SrcMeta}
 		photo := Photo{ID: 234567, PhotoTitle: "I was in a nice Wine Bar!", TitleSrc: SrcName, PhotoCaption: "cow, flower, food", CaptionSrc: SrcMeta, Details: details}
@@ -288,7 +299,7 @@ func TestPhoto_UpdateTitleLabels(t *testing.T) {
 		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
-
+		t.Cleanup(func() { removeTestPhoto(t, photo) })
 		p := FindPhoto(photo)
 
 		assert.Equal(t, 0, len(p.Labels))
@@ -315,6 +326,7 @@ func TestPhoto_UpdateTitleLabels(t *testing.T) {
 		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { removeTestPhoto(t, photo) })
 
 		p := FindPhoto(photo)
 

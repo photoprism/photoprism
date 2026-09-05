@@ -19,7 +19,17 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// removeTestPhoto removes completely a test photo and any linked table records.
+func removeTestPhoto(t *testing.T, photo Photo) {
+	require.NoError(t, UnscopedDb().Delete(&PhotoLabel{}, "photo_id = ?", photo.ID).Error)
+	require.NoError(t, UnscopedDb().Delete(&PhotoKeyword{}, "photo_id = ?", photo.ID).Error)
+	require.NoError(t, UnscopedDb().Delete(&Details{}, "photo_id = ?", photo.ID).Error)
+	require.NoError(t, UnscopedDb().Delete(&File{}, "photo_id = ?", photo.ID).Error)
+	require.NoError(t, UnscopedDb().Delete(&photo).Error)
+}
+
 func TestSavePhotoForm(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Ok", func(t *testing.T) {
 		f := form.Photo{
 			TakenAt:          time.Date(2008, 1, 1, 2, 0, 0, 0, time.UTC),
@@ -61,6 +71,25 @@ func TestSavePhotoForm(t *testing.T) {
 		if err := SavePhotoForm(&m, f); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			WaitForAsyncJobsTimeout(15 * time.Second)
+			for _, fl := range LabelFixtures {
+				require.NoError(t, UnscopedDb().Model(&Label{}).Where("id = ?", fl.ID).Updates(Values{"photo_count": fl.PhotoCount}).Error)
+			}
+			require.NoError(t, UnscopedDb().Delete(&Place{}, "id = ?", "ng:dYmDeCZoSM0l").Error)
+			for _, fp := range PlaceFixtures {
+				require.NoError(t, UnscopedDb().Model(&Place{}).Where("id = ?", fp.ID).Updates(Values{"photo_count": fp.PhotoCount}).Error)
+			}
+			for _, fs := range SubjectFixtures {
+				require.NoError(t, UnscopedDb().Model(&Subject{}).Where("subj_uid = ?", fs.SubjUID).Updates(Values{"photo_count": fs.PhotoCount, "file_count": fs.FileCount}).Error)
+			}
+			require.NoError(t, UnscopedDb().Delete(&Cell{}, "id = ?", "s2:1050bf0480e4").Error)
+			require.NoError(t, UnscopedDb().Delete(&PhotoKeyword{}, "photo_id = ?", m.ID).Error)
+			require.NoError(t, UnscopedDb().Delete(&Keyword{}, "keyword in ('animals','bender','benue','cat','dog','guma','landscape','nigeria','pink','test')").Error)
+			require.NoError(t, UnscopedDb().Delete(&Details{}, "photo_id = ?", m.ID).Error)
+			require.NoError(t, UnscopedDb().Save(PhotoFixtures.Pointer("Photo08")).Error)
+			require.NoError(t, UnscopedDb().Delete(&Country{}, "id = ?", "ng").Error)
+		})
 
 		Db().First(&m)
 
@@ -101,6 +130,22 @@ func TestSavePhotoForm(t *testing.T) {
 
 		require.NoError(t, SavePhotoForm(&photo, formSnapshot))
 		require.NoError(t, Db().First(&photo, photo.ID).Error)
+		t.Cleanup(func() {
+			WaitForAsyncJobsTimeout(15 * time.Second)
+			for _, fl := range LabelFixtures {
+				require.NoError(t, UnscopedDb().Model(&Label{}).Where("id = ?", fl.ID).Updates(Values{"photo_count": fl.PhotoCount}).Error)
+			}
+			for _, fp := range PlaceFixtures {
+				require.NoError(t, UnscopedDb().Model(&Place{}).Where("id = ?", fp.ID).Updates(Values{"photo_count": fp.PhotoCount}).Error)
+			}
+			for _, fs := range SubjectFixtures {
+				require.NoError(t, UnscopedDb().Model(&Subject{}).Where("subj_uid = ?", fs.SubjUID).Updates(Values{"photo_count": fs.PhotoCount, "file_count": fs.FileCount}).Error)
+			}
+			require.NoError(t, UnscopedDb().Delete(&PhotoKeyword{}, "photo_id = ?", photo.ID).Error)
+			require.NoError(t, UnscopedDb().Delete(&Keyword{}, "keyword in ('frog','hans','lake','nature','teotihuacán', 'landscape')").Error)
+			require.NoError(t, UnscopedDb().Delete(&Details{}, "photo_id = ?", photo.ID).Error)
+			require.NoError(t, UnscopedDb().Save(PhotoFixtures.Pointer("Photo09")).Error)
+		})
 
 		location := tz.Find(photo.TimeZone)
 		require.NotNil(t, location)
@@ -123,6 +168,7 @@ func TestSavePhotoForm(t *testing.T) {
 }
 
 func TestPhoto_LabelKeywords(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("CollectsSearchableKeywords", func(t *testing.T) {
 		photo := Photo{
 			Labels: []PhotoLabel{
@@ -168,6 +214,7 @@ func TestPhoto_LabelKeywords(t *testing.T) {
 }
 
 func TestPhoto_GetUID(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("ReturnsPhotoUID", func(t *testing.T) {
 		uid := rnd.GenerateUID(PhotoUID)
 		photo := &Photo{PhotoUID: uid}
@@ -205,6 +252,7 @@ func photoKeywordWords(t *testing.T, photoID uint) []string {
 }
 
 func TestPhoto_LabelKeywordIndexing(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("SaveLabels", func(t *testing.T) {
 		fixture := PhotoFixtures.Get("Photo56")
 		photo := FindPhoto(fixture)
@@ -216,6 +264,24 @@ func TestPhoto_LabelKeywordIndexing(t *testing.T) {
 		originalKeywords := photo.GetDetails().Keywords
 
 		require.NoError(t, photo.SaveLabels())
+		t.Cleanup(func() {
+			WaitForAsyncJobsTimeout(15 * time.Second)
+			for _, fl := range LabelFixtures {
+				require.NoError(t, UnscopedDb().Model(&Label{}).Where("id = ?", fl.ID).Updates(Values{"photo_count": fl.PhotoCount}).Error)
+			}
+			for _, fp := range PlaceFixtures {
+				require.NoError(t, UnscopedDb().Model(&Place{}).Where("id = ?", fp.ID).Updates(Values{"photo_count": fp.PhotoCount}).Error)
+			}
+			for _, fs := range SubjectFixtures {
+				require.NoError(t, UnscopedDb().Model(&Subject{}).Where("subj_uid = ?", fs.SubjUID).Updates(Values{"photo_count": fs.PhotoCount, "file_count": fs.FileCount}).Error)
+			}
+			require.NoError(t, UnscopedDb().Delete(&PhotoKeyword{}, "photo_id = ?", photo.ID).Error)
+			for _, fpk := range PhotoKeywordFixtures {
+				require.NoError(t, UnscopedDb().Save(&fpk).Error)
+			}
+			require.NoError(t, UnscopedDb().Delete(&Keyword{}, "keyword in ('cake','cute','dog','john','landscape','little','wuff')").Error)
+			require.NoError(t, UnscopedDb().Save(PhotoFixtures.Pointer("Photo56")).Error)
+		})
 
 		reloaded := FindPhoto(*photo)
 		require.NotNil(t, reloaded)
@@ -238,6 +304,24 @@ func TestPhoto_LabelKeywordIndexing(t *testing.T) {
 
 		_, _, err := photo.Optimize(false, false, false, false)
 		require.NoError(t, err)
+		t.Cleanup(func() {
+			WaitForAsyncJobsTimeout(15 * time.Second)
+			for _, fl := range LabelFixtures {
+				require.NoError(t, UnscopedDb().Model(&Label{}).Where("id = ?", fl.ID).Updates(Values{"photo_count": fl.PhotoCount}).Error)
+			}
+			for _, fp := range PlaceFixtures {
+				require.NoError(t, UnscopedDb().Model(&Place{}).Where("id = ?", fp.ID).Updates(Values{"photo_count": fp.PhotoCount}).Error)
+			}
+			for _, fs := range SubjectFixtures {
+				require.NoError(t, UnscopedDb().Model(&Subject{}).Where("subj_uid = ?", fs.SubjUID).Updates(Values{"photo_count": fs.PhotoCount, "file_count": fs.FileCount}).Error)
+			}
+			require.NoError(t, UnscopedDb().Delete(&PhotoKeyword{}, "photo_id = ?", photo.ID).Error)
+			for _, fpk := range PhotoKeywordFixtures {
+				require.NoError(t, UnscopedDb().Save(&fpk).Error)
+			}
+			require.NoError(t, UnscopedDb().Delete(&Keyword{}, "keyword in ('cake','cute','dog','john','landscape','little','wuff')").Error)
+			require.NoError(t, UnscopedDb().Save(PhotoFixtures.Pointer("Photo57")).Error)
+		})
 
 		reloaded := FindPhoto(*photo)
 		require.NotNil(t, reloaded)
@@ -249,6 +333,7 @@ func TestPhoto_LabelKeywordIndexing(t *testing.T) {
 }
 
 func TestPhoto_HasUID(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("True", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
 		assert.True(t, m.HasID())
@@ -262,6 +347,7 @@ func TestPhoto_HasUID(t *testing.T) {
 }
 
 func TestPhoto_GetID(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
 		assert.Equal(t, uint(1000001), m.GetID())
@@ -269,6 +355,7 @@ func TestPhoto_GetID(t *testing.T) {
 }
 
 func TestPhoto_MediaType(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Image", func(t *testing.T) {
 		m := PhotoFixtures.Get("19800101_000002_D640C559")
 		assert.Equal(t, media.Image, m.MediaType())
@@ -295,6 +382,7 @@ func TestPhoto_MediaType(t *testing.T) {
 }
 
 func TestPhoto_HasMediaType(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Image", func(t *testing.T) {
 		m := PhotoFixtures.Get("19800101_000002_D640C559")
 		assert.True(t, m.HasMediaType(media.Image))
@@ -312,6 +400,7 @@ func TestPhoto_HasMediaType(t *testing.T) {
 }
 
 func TestPhoto_SetMediaType(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Image", func(t *testing.T) {
 		m := PhotoFixtures.Get("19800101_000002_D640C559")
 		assert.Equal(t, media.Image, m.MediaType())
@@ -348,6 +437,7 @@ func TestPhoto_SetMediaType(t *testing.T) {
 }
 
 func TestPhoto_SaveLabels(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NewPhoto", func(t *testing.T) {
 		photo := Photo{
 			ID:               11111,
@@ -396,10 +486,29 @@ func TestPhoto_SaveLabels(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			WaitForAsyncJobsTimeout(15 * time.Second)
+			for _, fl := range LabelFixtures {
+				require.NoError(t, UnscopedDb().Model(&Label{}).Where("id = ?", fl.ID).Updates(Values{"photo_count": fl.PhotoCount}).Error)
+			}
+			for _, fp := range PlaceFixtures {
+				require.NoError(t, UnscopedDb().Model(&Place{}).Where("id = ?", fp.ID).Updates(Values{"photo_count": fp.PhotoCount}).Error)
+			}
+			for _, fs := range SubjectFixtures {
+				require.NoError(t, UnscopedDb().Model(&Subject{}).Where("subj_uid = ?", fs.SubjUID).Updates(Values{"photo_count": fs.PhotoCount, "file_count": fs.FileCount}).Error)
+			}
+			require.NoError(t, UnscopedDb().Delete(&PhotoKeyword{}, "photo_id = ?", m.ID).Error)
+			for _, fpk := range PhotoKeywordFixtures {
+				require.NoError(t, UnscopedDb().Save(&fpk).Error)
+			}
+			require.NoError(t, UnscopedDb().Delete(&Keyword{}, "keyword in ('actor','cake','frog','hans','lake','nature')").Error)
+			require.NoError(t, UnscopedDb().Save(PhotoFixtures.Pointer("19800101_000002_D640C559")).Error)
+		})
 	})
 }
 
 func TestPhoto_ShouldGenerateLabels(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NoLabels", func(t *testing.T) {
 		p := Photo{}
 		assert.True(t, p.ShouldGenerateLabels(false))
@@ -437,6 +546,7 @@ func TestPhoto_ShouldGenerateLabels(t *testing.T) {
 }
 
 func TestPhoto_ShouldGenerateCaption(t *testing.T) {
+	ValidateFixtures(t)
 	ctx := []struct {
 		name   string
 		photo  Photo
@@ -486,6 +596,7 @@ func TestPhoto_ShouldGenerateCaption(t *testing.T) {
 }
 
 func TestPhoto_ClassifyLabels(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NewPhoto", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo19")
 		Db().Set("gorm:auto_preload", true).Model(&m).Related(&m.Labels)
@@ -506,6 +617,7 @@ func TestPhoto_ClassifyLabels(t *testing.T) {
 }
 
 func TestPhoto_PreloadFiles(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Ok", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
 		assert.Empty(t, m.Files)
@@ -515,6 +627,7 @@ func TestPhoto_PreloadFiles(t *testing.T) {
 }
 
 func TestPhoto_PreloadKeywords(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Ok", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
 		assert.Empty(t, m.Keywords)
@@ -524,6 +637,7 @@ func TestPhoto_PreloadKeywords(t *testing.T) {
 }
 
 func TestPhoto_PreloadAlbums(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Ok", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
 		assert.Empty(t, m.Albums)
@@ -533,6 +647,7 @@ func TestPhoto_PreloadAlbums(t *testing.T) {
 }
 
 func TestPhoto_PreloadMany(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Ok", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
 		assert.Empty(t, m.Albums)
@@ -548,6 +663,7 @@ func TestPhoto_PreloadMany(t *testing.T) {
 }
 
 func TestPhoto_NoCameraSerial(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("True", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo04")
 		assert.True(t, m.NoCameraSerial())
@@ -559,6 +675,7 @@ func TestPhoto_NoCameraSerial(t *testing.T) {
 }
 
 func TestPhoto_GetDetails(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("True", func(t *testing.T) {
 		m := PhotoFixtures.Get("19800101_000002_D640C559")
 		result := m.GetDetails()
@@ -591,16 +708,21 @@ func TestPhoto_GetDetails(t *testing.T) {
 	t.Run("NewPhotoWithID", func(t *testing.T) {
 		m := Photo{ID: 79550, PhotoUID: "prjwufg1z97rcxff"}
 		result := m.GetDetails()
+		t.Cleanup(
+			func() {
+				removeTestPhoto(t, m)
+			})
 		assert.Equal(t, uint(0x136be), result.PhotoID)
 	})
 }
 
 func TestPhoto_AddLabels(t *testing.T) {
+	ValidateFixtures(t)
 	resetLabel := func(t *testing.T, photoName, labelName, src string, uncertainty int) {
 		t.Helper()
 		photo := PhotoFixtures.Get(photoName)
 		label := LabelFixtures.Get(labelName)
-		assert.NoError(t, UnscopedDb().Model(&PhotoLabel{}).
+		require.NoError(t, UnscopedDb().Model(&PhotoLabel{}).
 			Where("photo_id = ? AND label_id = ?", photo.ID, label.ID).
 			UpdateColumns(Values{"uncertainty": uncertainty, "label_src": src}).Error)
 	}
@@ -611,6 +733,11 @@ func TestPhoto_AddLabels(t *testing.T) {
 		len1 := len(m.Labels)
 		m.AddLabels(classifyLabels)
 		assert.Greater(t, len(m.Labels), len1)
+		t.Cleanup(func() {
+			require.NoError(t, UnscopedDb().Delete(&PhotoLabel{}, "label_id in (select id from labels where label_slug in ('cactus','plant'))").Error)
+			require.NoError(t, UnscopedDb().Delete(&Category{}, "label_id in (select id from labels where label_slug in ('cactus','plant'))").Error)
+			require.NoError(t, UnscopedDb().Delete(&Label{}, "label_slug in ('cactus','plant')").Error)
+		})
 	})
 	t.Run("Update", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
@@ -619,6 +746,12 @@ func TestPhoto_AddLabels(t *testing.T) {
 		assert.Equal(t, SrcImage, m.Labels[0].LabelSrc)
 		len1 := len(m.Labels)
 		m.AddLabels(classifyLabels)
+		t.Cleanup(func() {
+			require.NoError(t, UnscopedDb().Delete(&Category{}, "label_id in (select id from labels where label_slug in ('plant', 'landscape'))").Error)
+			require.NoError(t, UnscopedDb().Delete(&Label{}, "label_slug in ('plant')").Error)
+			require.NoError(t, UnscopedDb().Model(&Label{}).Where("label_slug = 'landscape'").UpdateColumns(Values{"label_priority": 0}).Error)
+			require.NoError(t, UnscopedDb().Model(&PhotoLabel{}).Where("photo_id = 1000015 and label_id = 1000000").UpdateColumns(Values{"uncertainty": 20, "label_src": SrcImage}).Error)
+		})
 		assert.Equal(t, len(m.Labels), len1)
 		assert.Equal(t, 10, m.Labels[0].Uncertainty)
 		assert.Equal(t, SrcManual, m.Labels[0].LabelSrc)
@@ -631,6 +764,9 @@ func TestPhoto_AddLabels(t *testing.T) {
 		photo := PhotoFixtures.Get(photoName)
 		classifyLabels := classify.Labels{{Name: labelName, Uncertainty: 5, Source: SrcOllama}}
 		photo.AddLabels(classifyLabels)
+		t.Cleanup(func() {
+			resetLabel(t, photoName, labelName, SrcImage, 20)
+		})
 
 		updated, err := FindPhotoLabel(photo.ID, LabelFixtures.Get(labelName).ID, true)
 		if err != nil {
@@ -647,6 +783,10 @@ func TestPhoto_AddLabels(t *testing.T) {
 		photo := PhotoFixtures.Get(photoName)
 		classifyLabels := classify.Labels{{Name: labelName, Uncertainty: 40, Source: SrcOllama}}
 		photo.AddLabels(classifyLabels)
+		t.Cleanup(func() {
+			require.NoError(t, UnscopedDb().Model(&Label{}).Where("label_slug = 'flower'").UpdateColumns(Values{"label_priority": 1}).Error)
+			resetLabel(t, photoName, labelName, SrcImage, 38)
+		})
 
 		updated, err := FindPhotoLabel(photo.ID, LabelFixtures.Get(labelName).ID, true)
 		if err != nil {
@@ -661,6 +801,9 @@ func TestPhoto_AddLabels(t *testing.T) {
 
 		classifyLabels := classify.Labels{{Name: label.LabelSlug, Uncertainty: 15, Source: SrcManual, Topicality: 55}}
 		photo.AddLabels(classifyLabels)
+		t.Cleanup(func() {
+			require.NoError(t, UnscopedDb().Model(&PhotoLabel{}).Where("photo_id = 1000015 and label_id = 1000000").UpdateColumns(Values{"label_src": SrcImage, "uncertainty": 20, "topicality": 0}).Error)
+		})
 
 		updated, err := FindPhotoLabel(photo.ID, label.ID, true)
 		if err != nil {
@@ -676,6 +819,10 @@ func TestPhoto_AddLabels(t *testing.T) {
 		photo := PhotoFixtures.Get(photoName)
 		classifyLabels := classify.Labels{{Name: labelName, Uncertainty: 15, Source: "OlLaMa"}}
 		photo.AddLabels(classifyLabels)
+		t.Cleanup(func() {
+			require.NoError(t, UnscopedDb().Delete(&PhotoLabel{}, "photo_id = 1000001 and label_id = 1000003").Error)
+			require.NoError(t, UnscopedDb().Model(&Label{}).Where("label_slug = 'cow'").UpdateColumns(Values{"label_priority": -1}).Error)
+		})
 
 		updated, err := FindPhotoLabel(photo.ID, LabelFixtures.Get(labelName).ID, true)
 		if err != nil {
@@ -728,6 +875,9 @@ func TestPhoto_AddLabels(t *testing.T) {
 
 		photo := PhotoFixtures.Get("19800101_000002_D640C559")
 		photo.AddLabels(classify.Labels{{Name: "RenameClassifyA", Uncertainty: 30, Source: SrcImage, Priority: 0}})
+		t.Cleanup(func() {
+			require.NoError(t, UnscopedDb().Delete(&PhotoLabel{}, "photo_id = 1000000 and label_id = ?", original.ID).Error)
+		})
 
 		var after int
 		require.NoError(t, UnscopedDb().Model(&Label{}).
@@ -763,6 +913,7 @@ func TestPhoto_AddLabels(t *testing.T) {
 }
 
 func TestPhoto_Delete(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NotPermanent", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo16")
 		files, err := m.Delete(false)
@@ -770,6 +921,9 @@ func TestPhoto_Delete(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.Len(t, files, 1)
+		t.Cleanup(func() {
+			require.NoError(t, UnscopedDb().Model(&File{}).Where("id = ?", FileFixtures.Get("Photo16.jpg").ID).UpdateColumn("deleted_at", nil).Error)
+		})
 	})
 	t.Run("Permanent", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo16")
@@ -778,6 +932,9 @@ func TestPhoto_Delete(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.Len(t, files, 1)
+		t.Cleanup(func() {
+			require.NoError(t, UnscopedDb().Create(FileFixtures.Pointer("Photo16.jpg")).Error)
+		})
 	})
 	t.Run("NoID", func(t *testing.T) {
 		m := Photo{}
@@ -788,6 +945,7 @@ func TestPhoto_Delete(t *testing.T) {
 }
 
 func TestPhotos_UIDs(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Ok", func(t *testing.T) {
 		uid1 := rnd.GenerateUID(PhotoUID)
 		uid2 := rnd.GenerateUID(PhotoUID)
@@ -799,6 +957,7 @@ func TestPhotos_UIDs(t *testing.T) {
 }
 
 func TestPhoto_String(t *testing.T) {
+	ValidateFixtures(t)
 	generatedUID := rnd.GenerateUID(PhotoUID)
 	testcases := []struct {
 		name     string
@@ -866,22 +1025,30 @@ func TestPhoto_String(t *testing.T) {
 }
 
 func TestPhoto_Create(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Ok", func(t *testing.T) {
 		photo := Photo{PhotoUID: rnd.GenerateUID(PhotoUID), PhotoName: "Holiday", OriginalName: "holidayOriginal2"}
 		err := photo.Create()
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			removeTestPhoto(t, photo)
+		})
 	})
 }
 
 func TestPhoto_Save(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Ok", func(t *testing.T) {
 		photo := Photo{PhotoUID: rnd.GenerateUID(PhotoUID), PhotoName: "Holiday", OriginalName: "holidayOriginal2"}
 		err := photo.Save()
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			removeTestPhoto(t, photo)
+		})
 	})
 	t.Run("Error", func(t *testing.T) {
 		photo := Photo{PhotoUID: "ps6sg6be2lvl0yh0"}
@@ -890,12 +1057,16 @@ func TestPhoto_Save(t *testing.T) {
 }
 
 func TestFindPhoto(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Save", func(t *testing.T) {
 		photo := Photo{PhotoUID: "pt9atdre2lvl0yhx", PhotoName: "Holiday", OriginalName: "holidayOriginal2"}
 
 		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			removeTestPhoto(t, photo)
+		})
 
 		assert.NotNil(t, FindPhoto(photo))
 	})
@@ -926,6 +1097,7 @@ func TestFindPhoto(t *testing.T) {
 }
 
 func TestPhoto_RemoveKeyword(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Ok", func(t *testing.T) {
 		keyword := Keyword{Keyword: "snake"}
 		keyword2 := Keyword{Keyword: "otter"}
@@ -941,10 +1113,14 @@ func TestPhoto_RemoveKeyword(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.Equal(t, 2, len(photo.Keywords))
+		t.Cleanup(func() {
+			removeTestPhoto(t, *photo)
+		})
 	})
 }
 
 func TestPhoto_UpdateLabels(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		labelNative := Label{LabelName: "Native", LabelSlug: "native"}
 		var deletedTime = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
@@ -954,11 +1130,13 @@ func TestPhoto_UpdateLabels(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { require.NoError(t, UnscopedDb().Delete(&labelWindow).Error) })
 
 		err = labelNative.Save()
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { require.NoError(t, UnscopedDb().Delete(&labelNative).Error) })
 
 		details := &Details{
 			Subject:     "native",
@@ -972,6 +1150,9 @@ func TestPhoto_UpdateLabels(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			removeTestPhoto(t, photo)
+		})
 
 		p := FindPhoto(photo)
 
@@ -990,6 +1171,7 @@ func TestPhoto_UpdateLabels(t *testing.T) {
 }
 
 func TestPhoto_SubjectNames(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Photo09", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo09")
 
@@ -1018,6 +1200,7 @@ func TestPhoto_SubjectNames(t *testing.T) {
 }
 
 func TestPhoto_UpdateSubjectLabels(t *testing.T) {
+	ValidateFixtures(t)
 	labelEgg := Label{LabelName: "Egg", LabelSlug: "egg"}
 	var deletedTime = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
 	labelBird := Label{LabelName: "Bird", LabelSlug: "bird", DeletedAt: &deletedTime}
@@ -1025,11 +1208,11 @@ func TestPhoto_UpdateSubjectLabels(t *testing.T) {
 	if err := labelBird.Save(); err != nil {
 		t.Fatal(err)
 	}
-
+	t.Cleanup(func() { require.NoError(t, UnscopedDb().Delete(&labelBird).Error) })
 	if err := labelEgg.Save(); err != nil {
 		t.Fatal(err)
 	}
-
+	t.Cleanup(func() { require.NoError(t, UnscopedDb().Delete(&labelEgg).Error) })
 	t.Run(`Success`, func(t *testing.T) {
 		details := &Details{Subject: "cow, egg, bird", SubjectSrc: SrcMeta}
 		photo := Photo{ID: 334567, TitleSrc: SrcName, Details: details}
@@ -1037,6 +1220,9 @@ func TestPhoto_UpdateSubjectLabels(t *testing.T) {
 		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			removeTestPhoto(t, photo)
+		})
 
 		p := FindPhoto(photo)
 
@@ -1058,6 +1244,9 @@ func TestPhoto_UpdateSubjectLabels(t *testing.T) {
 		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			removeTestPhoto(t, photo)
+		})
 
 		p := FindPhoto(photo)
 
@@ -1075,6 +1264,7 @@ func TestPhoto_UpdateSubjectLabels(t *testing.T) {
 }
 
 func TestPhoto_UpdateKeywordLabels(t *testing.T) {
+	ValidateFixtures(t)
 	labelOtter := Label{LabelName: "Otter", LabelSlug: "otter"}
 	var deletedTime = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
 	labelSnake := Label{LabelName: "Snake", LabelSlug: "snake", DeletedAt: &deletedTime}
@@ -1082,11 +1272,11 @@ func TestPhoto_UpdateKeywordLabels(t *testing.T) {
 	if err := labelSnake.Save(); err != nil {
 		t.Fatal(err)
 	}
-
+	t.Cleanup(func() { require.NoError(t, UnscopedDb().Delete(&labelSnake).Error) })
 	if err := labelOtter.Save(); err != nil {
 		t.Fatal(err)
 	}
-
+	t.Cleanup(func() { require.NoError(t, UnscopedDb().Delete(&labelOtter).Error) })
 	t.Run("Success", func(t *testing.T) {
 		details := &Details{Keywords: "cow, flower, snake, otter", KeywordsSrc: SrcAuto}
 		photo := Photo{ID: 434567, Details: details}
@@ -1094,6 +1284,9 @@ func TestPhoto_UpdateKeywordLabels(t *testing.T) {
 		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			removeTestPhoto(t, photo)
+		})
 
 		p := FindPhoto(photo)
 
@@ -1117,6 +1310,9 @@ func TestPhoto_UpdateKeywordLabels(t *testing.T) {
 		}
 
 		p := FindPhoto(photo)
+		t.Cleanup(func() {
+			removeTestPhoto(t, photo)
+		})
 
 		assert.Equal(t, 0, len(p.Labels))
 
@@ -1132,6 +1328,7 @@ func TestPhoto_UpdateKeywordLabels(t *testing.T) {
 }
 
 func TestPhoto_LocationLoaded(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Photo", func(t *testing.T) {
 		photo := Photo{PhotoUID: rnd.GenerateUID(PhotoUID), PhotoName: "Holiday", OriginalName: "holidayOriginal2"}
 		assert.False(t, photo.LocationLoaded())
@@ -1144,6 +1341,7 @@ func TestPhoto_LocationLoaded(t *testing.T) {
 }
 
 func TestPhoto_LoadLocation(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Ok", func(t *testing.T) {
 		photo := PhotoFixtures.Get("Photo03")
 		if err := photo.LoadLocation(); err != nil {
@@ -1163,6 +1361,7 @@ func TestPhoto_LoadLocation(t *testing.T) {
 }
 
 func TestPhoto_PlaceLoaded(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("False", func(t *testing.T) {
 		photo := Photo{PhotoUID: rnd.GenerateUID(PhotoUID), PhotoName: "Holiday", OriginalName: "holidayOriginal2"}
 		assert.False(t, photo.PlaceLoaded())
@@ -1170,6 +1369,7 @@ func TestPhoto_PlaceLoaded(t *testing.T) {
 }
 
 func TestPhoto_LoadPlace(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Ok", func(t *testing.T) {
 		photo := PhotoFixtures.Get("Photo03")
 		err := photo.LoadPlace()
@@ -1185,6 +1385,7 @@ func TestPhoto_LoadPlace(t *testing.T) {
 }
 
 func TestPhoto_AllFilesMissing(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("True", func(t *testing.T) {
 		photo := Photo{ID: 6969866}
 		assert.True(t, photo.AllFilesMissing())
@@ -1192,12 +1393,16 @@ func TestPhoto_AllFilesMissing(t *testing.T) {
 }
 
 func TestPhoto_Updates(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Ok", func(t *testing.T) {
 		photo := Photo{PhotoCaption: "bcss", PhotoName: "InitialName"}
 
 		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			removeTestPhoto(t, photo)
+		})
 
 		assert.Equal(t, "InitialName", photo.PhotoName)
 		assert.Equal(t, "bcss", photo.PhotoCaption)
@@ -1213,12 +1418,16 @@ func TestPhoto_Updates(t *testing.T) {
 }
 
 func TestPhoto_SetFavorite(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("SetTrue", func(t *testing.T) {
 		photo := Photo{PhotoFavorite: true}
 
 		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			removeTestPhoto(t, photo)
+		})
 
 		if err := photo.SetFavorite(false); err != nil {
 			t.Fatal(err)
@@ -1232,6 +1441,9 @@ func TestPhoto_SetFavorite(t *testing.T) {
 		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			removeTestPhoto(t, photo)
+		})
 
 		if err := photo.SetFavorite(true); err != nil {
 			t.Fatal(err)
@@ -1242,16 +1454,19 @@ func TestPhoto_SetFavorite(t *testing.T) {
 }
 
 func TestPhoto_SetStack(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Ignore", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo27")
 		assert.Equal(t, IsStackable, m.PhotoStack)
 		m.SetStack(IsStackable)
+		t.Cleanup(func() { require.NoError(t, UnscopedDb().Save(PhotoFixtures.Pointer("Photo27")).Error) })
 		assert.Equal(t, IsStackable, m.PhotoStack)
 	})
 	t.Run("Update", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo27")
 		assert.Equal(t, IsStackable, m.PhotoStack)
 		m.SetStack(IsUnstacked)
+		t.Cleanup(func() { require.NoError(t, UnscopedDb().Save(PhotoFixtures.Pointer("Photo27")).Error) })
 		assert.Equal(t, IsUnstacked, m.PhotoStack)
 		m.SetStack(IsStackable)
 		assert.Equal(t, IsStackable, m.PhotoStack)
@@ -1259,16 +1474,32 @@ func TestPhoto_SetStack(t *testing.T) {
 }
 
 func TestPhoto_Approve(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Quality4", func(t *testing.T) {
 		photo := Photo{PhotoQuality: 4}
 
 		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			removeTestPhoto(t, photo)
+		})
 
 		if err := photo.Approve(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			WaitForAsyncJobsTimeout(15 * time.Second)
+			for _, fl := range LabelFixtures {
+				require.NoError(t, UnscopedDb().Model(&Label{}).Where("id = ?", fl.ID).Updates(Values{"photo_count": fl.PhotoCount}).Error)
+			}
+			for _, fp := range PlaceFixtures {
+				require.NoError(t, UnscopedDb().Model(&Place{}).Where("id = ?", fp.ID).Updates(Values{"photo_count": fp.PhotoCount}).Error)
+			}
+			for _, fs := range SubjectFixtures {
+				require.NoError(t, UnscopedDb().Model(&Subject{}).Where("subj_uid = ?", fs.SubjUID).Updates(Values{"photo_count": fs.PhotoCount, "file_count": fs.FileCount}).Error)
+			}
+		})
 
 		assert.Equal(t, 4, photo.PhotoQuality)
 	})
@@ -1278,12 +1509,27 @@ func TestPhoto_Approve(t *testing.T) {
 		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			removeTestPhoto(t, photo)
+		})
 
 		assert.False(t, photo.Approved())
 
 		if err := photo.Approve(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			WaitForAsyncJobsTimeout(15 * time.Second)
+			for _, fl := range LabelFixtures {
+				require.NoError(t, UnscopedDb().Model(&Label{}).Where("id = ?", fl.ID).Updates(Values{"photo_count": fl.PhotoCount}).Error)
+			}
+			for _, fp := range PlaceFixtures {
+				require.NoError(t, UnscopedDb().Model(&Place{}).Where("id = ?", fp.ID).Updates(Values{"photo_count": fp.PhotoCount}).Error)
+			}
+			for _, fs := range SubjectFixtures {
+				require.NoError(t, UnscopedDb().Model(&Subject{}).Where("subj_uid = ?", fs.SubjUID).Updates(Values{"photo_count": fs.PhotoCount, "file_count": fs.FileCount}).Error)
+			}
+		})
 
 		assert.Equal(t, 3, photo.PhotoQuality)
 		assert.True(t, photo.Approved())
@@ -1298,6 +1544,7 @@ func TestPhoto_Approve(t *testing.T) {
 }
 
 func TestPhoto_Links(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("OneResult", func(t *testing.T) {
 		photo := Photo{PhotoUID: "ps6sg6b1wowuy3c3"}
 		links := photo.Links()
@@ -1306,6 +1553,7 @@ func TestPhoto_Links(t *testing.T) {
 }
 
 func TestPhoto_SetPrimary(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NoChange", func(t *testing.T) {
 		m := PhotoFixtures.Get("19800101_000002_D640C559")
 
@@ -1314,7 +1562,7 @@ func TestPhoto_SetPrimary(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-
+		t.Cleanup(func() { require.NoError(t, UnscopedDb().Save(PhotoFixtures.Pointer("19800101_000002_D640C559")).Error) })
 		if err := m.SetPrimary(""); err != nil {
 			t.Fatal(err)
 		}
@@ -1335,6 +1583,7 @@ func TestPhoto_SetPrimary(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { require.NoError(t, UnscopedDb().Save(PhotoFixtures.Pointer("Photo06")).Error) })
 
 		assert.NotEqual(t, f1.FileUID, "fs6sg6bqhhinlplo")
 
@@ -1402,10 +1651,12 @@ func TestPhoto_SetPrimary(t *testing.T) {
 }
 
 func TestMapKey(t *testing.T) {
+	ValidateFixtures(t)
 	assert.Equal(t, "ogh006/abc236", MapKey(time.Date(2016, 11, 11, 9, 7, 18, 0, time.UTC), "abc236"))
 }
 
 func TestNewPhoto(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Stackable", func(t *testing.T) {
 		m := NewPhoto(true)
 		assert.Equal(t, IsStackable, m.PhotoStack)
@@ -1419,6 +1670,7 @@ func TestNewPhoto(t *testing.T) {
 }
 
 func TestPhoto_FirstOrCreate(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("ExistingPhoto", func(t *testing.T) {
 		initialUID := "567454"
 		photo := Photo{PhotoUID: initialUID, PhotoName: "Light", OriginalName: "lightBlub.jpg"}
@@ -1426,6 +1678,9 @@ func TestPhoto_FirstOrCreate(t *testing.T) {
 		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			removeTestPhoto(t, photo)
+		})
 
 		assert.NotNil(t, FindPhoto(photo))
 		assert.Nil(t, FindPhoto(Photo{PhotoUID: initialUID}))
@@ -1445,6 +1700,10 @@ func TestPhoto_FirstOrCreate(t *testing.T) {
 		if created := photo.FirstOrCreate(); created == nil {
 			t.Fatal("created must not be nil")
 		} else {
+			t.Cleanup(func() {
+				removeTestPhoto(t, photo)
+			})
+
 			assert.Truef(t, created.ID > 0, "%d should be > 0", created.ID)
 			assert.Equal(t, photo.PhotoUID, created.PhotoUID)
 			assert.Nil(t, FindPhoto(Photo{PhotoUID: initialUID}))
@@ -1455,6 +1714,7 @@ func TestPhoto_FirstOrCreate(t *testing.T) {
 }
 
 func TestPhoto_UnknownCamera(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("True", func(t *testing.T) {
 		photo := Photo{}
 		assert.True(t, photo.UnknownCamera())
@@ -1466,6 +1726,7 @@ func TestPhoto_UnknownCamera(t *testing.T) {
 }
 
 func TestPhoto_UnknownLens(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("True", func(t *testing.T) {
 		photo := Photo{}
 		assert.True(t, photo.UnknownLens())
@@ -1477,6 +1738,7 @@ func TestPhoto_UnknownLens(t *testing.T) {
 }
 
 func TestPhoto_UpdateDateFields(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("YearTooSmall", func(t *testing.T) {
 		photo := &Photo{TakenAt: time.Date(900, 11, 11, 9, 7, 18, 0, time.UTC)}
 		photo.UpdateDateFields()
@@ -1491,6 +1753,7 @@ func TestPhoto_UpdateDateFields(t *testing.T) {
 }
 
 func TestPhoto_SetCamera(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("CameraNil", func(t *testing.T) {
 		photo := &Photo{}
 		photo.SetCamera(nil, SrcAuto)
@@ -1533,6 +1796,7 @@ func TestPhoto_SetCamera(t *testing.T) {
 }
 
 func TestPhoto_SetLens(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("LensNil", func(t *testing.T) {
 		photo := &Photo{}
 		photo.SetLens(nil, SrcAuto)
@@ -1563,6 +1827,7 @@ func TestPhoto_SetLens(t *testing.T) {
 }
 
 func TestPhoto_SetExposure(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Priority", func(t *testing.T) {
 		photo := &Photo{PhotoFocalLength: 5, PhotoFNumber: 3, PhotoIso: 300, PhotoExposure: "45", CameraSrc: SrcMeta}
 		photo.SetExposure(8, 9, 500, "66", SrcManual)
@@ -1595,6 +1860,7 @@ func TestPhoto_SetExposure(t *testing.T) {
 }
 
 func TestPhoto_AllFiles(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("PhotoWithFiles", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
 		files := m.AllFiles()
@@ -1608,6 +1874,7 @@ func TestPhoto_AllFiles(t *testing.T) {
 }
 
 func TestPhoto_ArchiveRestore(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NotYetArchived", func(t *testing.T) {
 		m := &Photo{ID: 10000, PhotoUID: "prjwufg1z97rcxff", PhotoTitle: "HappyLilly"}
 		assert.Empty(t, m.DeletedAt)
@@ -1647,6 +1914,7 @@ func TestPhoto_ArchiveRestore(t *testing.T) {
 }
 
 func TestPhoto_SetCameraSerial(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := &Photo{}
 		assert.Empty(t, m.CameraSerial)
@@ -1665,6 +1933,7 @@ func TestPhoto_SetCameraSerial(t *testing.T) {
 }
 
 func TestPhoto_SetDocumentID(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Stored", func(t *testing.T) {
 		m := &Photo{}
 		m.SetDocumentID("adobe:docid:photoshop:7d592d87-eb1e-1040-809a-e16c6b85b3fd")
@@ -1687,11 +1956,13 @@ func TestPhoto_SetDocumentID(t *testing.T) {
 }
 
 func TestPhoto_MapKey(t *testing.T) {
+	ValidateFixtures(t)
 	m := &Photo{TakenAt: time.Date(2016, 11, 11, 9, 7, 18, 0, time.UTC), CellID: "abc236"}
 	assert.Equal(t, "ogh006/abc236", m.MapKey())
 }
 
 func TestPhoto_FaceCount(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Photo04", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo04")
 		assert.Equal(t, 3, m.FaceCount())
@@ -1699,6 +1970,7 @@ func TestPhoto_FaceCount(t *testing.T) {
 }
 
 func TestPhoto_Indexed(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		photo := Photo{}
 		assert.True(t, photo.IsNewlyIndexed())
@@ -1709,6 +1981,7 @@ func TestPhoto_Indexed(t *testing.T) {
 }
 
 func TestPhoto_IsNewlyIndexed(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("ChangeStatus", func(t *testing.T) {
 		photo := Photo{IndexedAt: nil}
 		assert.True(t, photo.IsNewlyIndexed())
