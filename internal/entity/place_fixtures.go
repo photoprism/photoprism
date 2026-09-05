@@ -132,6 +132,18 @@ var PlaceFixtures = PlacesMap{
 		CreatedAt:     Now(),
 		UpdatedAt:     Now(),
 	},
+	"Mandemi": {
+		ID:            s2.TokenPrefix + "1ef75a71a36c",
+		PlaceLabel:    "Mandeni, KwaZulu-Natal, South Africa",
+		PlaceCity:     "Mandeni",
+		PlaceState:    "KwaZulu-Natal",
+		PlaceCountry:  "za",
+		PlaceKeywords: "",
+		PlaceFavorite: false,
+		PhotoCount:    1,
+		CreatedAt:     Now(),
+		UpdatedAt:     Now(),
+	},
 }
 
 // CreatePlaceFixtures inserts known entities into the database for testing.

@@ -54,6 +54,7 @@ var UserFixtures = UserMap{
 			NickName:   "Lys",
 			UserGender: GenderFemale,
 		},
+		UserScope: "*",
 	},
 	"bob": {
 		ID:           7,
@@ -82,6 +83,7 @@ var UserFixtures = UserMap{
 			BirthMonth: 1,
 			BirthYear:  1981,
 		},
+		UserScope: "*",
 	},
 	"friend": {
 		ID:           8,
@@ -106,6 +108,7 @@ var UserFixtures = UserMap{
 		UserDetails: &UserDetails{
 			UserGender: GenderOther,
 		},
+		UserScope: "*",
 	},
 	"deleted": {
 		ID:           10000008,
@@ -128,6 +131,7 @@ var UserFixtures = UserMap{
 			UILanguage:  "de",
 			UITimeZone:  "",
 		},
+		UserScope: "*",
 	},
 	"unauthorized": {
 		ID:           10000009,
@@ -152,6 +156,7 @@ var UserFixtures = UserMap{
 		UserDetails: &UserDetails{
 			UserGender: GenderMale,
 		},
+		UserScope: "*",
 	},
 	"fowler": {
 		ID:           10000023,
@@ -174,6 +179,7 @@ var UserFixtures = UserMap{
 			UILanguage:  "en",
 			UITimeZone:  "UTC",
 		},
+		UserScope: "*",
 	},
 	"jane": {
 		ID:           10000024,
@@ -203,7 +209,8 @@ var UserFixtures = UserMap{
 			BirthMonth: 5,
 			BirthYear:  2001,
 		},
-		LoginAt: TimePointer(Now().Add(time.Second * -24)),
+		LoginAt:   TimePointer(Now().Add(time.Second * -24)),
+		UserScope: "*",
 	},
 	"guest": {
 		ID:           10000025,
@@ -233,6 +240,7 @@ var UserFixtures = UserMap{
 			BirthMonth: 1,
 			BirthYear:  1999,
 		},
+		UserScope: "*",
 	},
 	"no_local_auth": {
 		ID:           10000026,
@@ -255,6 +263,7 @@ var UserFixtures = UserMap{
 			UILanguage:  "en",
 			UITimeZone:  "UTC",
 		},
+		UserScope: "*",
 	},
 	"2fa": {
 		ID:          10000027,
@@ -278,6 +287,7 @@ var UserFixtures = UserMap{
 			UILanguage:  "en",
 			UITimeZone:  "UTC",
 		},
+		UserScope: "*",
 	},
 	"gandalf": {
 		ID:           10000028,
@@ -294,6 +304,7 @@ var UserFixtures = UserMap{
 		CanInvite:    false,
 		InviteToken:  "",
 		LoginAt:      TimePointer(Now().Add(time.Millisecond * -24)),
+		UserScope:    "*",
 	},
 }
 

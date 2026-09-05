@@ -3582,11 +3582,11 @@ var PhotoFixtures = PhotoMap{
 		PhotoQuality:     3,
 		PhotoResolution:  0,
 		Camera:           &UnknownCamera,
-		CameraID:         UnknownCamera.ID,
+		CameraID:         1, // UnknownCamera.ID, // Value is not known at compile time!
 		CameraSerial:     "",
 		CameraSrc:        "",
 		Lens:             &UnknownLens,
-		LensID:           UnknownLens.ID,
+		LensID:           1, // UnknownLens.ID, // Value is not known at compile time!
 		Keywords:         []Keyword{},
 		Albums:           []Album{},
 		Files:            []File{},
@@ -3851,11 +3851,11 @@ var PhotoFixtures = PhotoMap{
 		PhotoQuality:     3,
 		PhotoResolution:  20,
 		Camera:           &UnknownCamera,
-		CameraID:         UnknownCamera.ID,
+		CameraID:         1, // UnknownCamera.ID, // Value is not known at compile time!
 		CameraSerial:     "",
 		CameraSrc:        SrcAuto,
 		Lens:             &UnknownLens,
-		LensID:           UnknownLens.ID,
+		LensID:           1, // UnknownLens.ID, // Value is not known at compile time!
 		Keywords:         []Keyword{},
 		Albums:           []Album{},
 		Files:            []File{},

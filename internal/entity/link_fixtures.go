@@ -5,6 +5,24 @@ import "time"
 // LinkMap represents a map of share link fixtures keyed by token.
 type LinkMap map[string]Link
 
+// Get retrieves the named link
+func (m LinkMap) Get(name string) Link {
+	if result, ok := m[name]; ok {
+		return result
+	}
+
+	return Link{}
+}
+
+// Get retrieves the pointer to the named link
+func (m LinkMap) Pointer(name string) *Link {
+	if result, ok := m[name]; ok {
+		return &result
+	}
+
+	return &Link{}
+}
+
 // LinkFixtures provides share link fixtures for use in tests.
 //
 //nolint:gosec // G101: Deterministic fixture tokens for tests only.
