@@ -72,7 +72,7 @@ type ConfigValues struct {
 // NewConfig returns a new computer vision config with defaults.
 func NewConfig() *ConfigValues {
 	cfg := &ConfigValues{
-		Models:     DefaultModels,
+		Models:     DefaultModels.Clone(),
 		Thresholds: DefaultThresholds,
 	}
 
@@ -110,6 +110,10 @@ func (c *ConfigValues) Load(fileName string) error {
 	c.ensureDefaultModels()
 
 	for _, model := range c.Models {
+		if model.TensorFlow != nil && model.ONNX != nil {
+			return fmt.Errorf("vision model %s declares both TensorFlow and ONNX runtimes", clean.Log(model.Name))
+		}
+
 		model.ApplyEngineDefaults()
 
 		// Report a misspelled mode once instead of silently normalizing names the other way.
@@ -128,11 +132,31 @@ func (c *ConfigValues) Load(fileName string) error {
 		c.Thresholds.Topicality = DefaultThresholds.Topicality
 	}
 
-	if c.Thresholds.NSFW <= 0 || c.Thresholds.NSFW > 100 {
-		c.Thresholds.NSFW = DefaultThresholds.NSFW
+	// Only the upper bound is corrected: a missing or zero value stays unset so that the
+	// selected model's own default threshold can apply, which GetNSFW resolves.
+	if c.Thresholds.NSFW < 0 {
+		c.Thresholds.NSFW = 0
+	} else if c.Thresholds.NSFW > 100 {
+		c.Thresholds.NSFW = 100
 	}
 
 	return nil
+}
+
+// SetModel replaces the configured model of the same type or appends it when missing.
+func (c *ConfigValues) SetModel(model *Model) {
+	if c == nil || model == nil {
+		return
+	}
+
+	for i := len(c.Models) - 1; i >= 0; i-- {
+		if c.Models[i] != nil && c.Models[i].Type == model.Type {
+			c.Models[i] = model
+			return
+		}
+	}
+
+	c.Models = append(c.Models, model)
 }
 
 // applyDefaultModels swaps entries marked as Default with the built-in

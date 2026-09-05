@@ -123,25 +123,29 @@ func (m *MediaFile) GenerateLabels(labelSrc entity.Src) (labels classify.Labels)
 	return labels
 }
 
-// DetectNSFW returns true if media file might be offensive and detection is enabled.
-func (m *MediaFile) DetectNSFW() bool {
+// DetectNSFW returns an explicit safe, unsafe, or unavailable decision for the media file.
+func (m *MediaFile) DetectNSFW() nsfw.Result {
 	filename, err := m.Thumbnail(Config().ThumbCachePath(), thumb.Fit720)
 
 	if err != nil {
-		log.Error(err)
-		return false
+		log.Errorf("vision: %s in %s (detect nsfw)", clean.Error(err), clean.Log(m.RootRelName()))
+		return nsfw.Unavailable(clean.Error(err))
 	}
 
-	if results, modelErr := vision.DetectNSFW([]string{filename}, media.SrcLocal); modelErr != nil {
+	results, modelErr := vision.DetectNSFW([]string{filename}, media.SrcLocal)
+
+	switch {
+	case modelErr != nil:
 		log.Errorf("vision: %s in %s (detect nsfw)", modelErr, clean.Log(m.RootRelName()))
-		return false
-	} else if len(results) < 1 {
+		return nsfw.Unavailable(clean.Error(modelErr))
+	case len(results) < 1:
 		log.Errorf("vision: nsfw model returned no result for %s", clean.Log(m.RootRelName()))
-		return false
-	} else if results[0].IsNsfw(nsfw.ThresholdHigh) {
-		log.Warnf("vision: detected offensive content in %s", clean.Log(m.RootRelName()))
-		return true
+		return nsfw.Unavailable("no result")
 	}
 
-	return false
+	if results[0].IsUnsafe() {
+		log.Warnf("vision: detected offensive content in %s", clean.Log(m.RootRelName()))
+	}
+
+	return results[0]
 }

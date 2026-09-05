@@ -1,49 +1,77 @@
 Models:
 - Type: labels
   Default: true
-  Name: nasnet
-  Version: mobile
-  Resolution: 224
-  TensorFlow:
-    Tags:
-    - photoprism
-    Input:
-      Name: input_1
-      Intervals:
-      - Start: -1
-        End: 1
-      ResizeOperation: CenterCrop
-      ColorChannelOrder: RGB
-      Height: 224
-      Width: 224
-      Shape:
-      - Batch
-      - Height
-      - Width
-      - Color
-    Output:
-      Name: predictions/Softmax
-      Outputs: 1000
-- Type: nsfw
-  Default: true
-  Name: nsfw
+  Name: efficientformerv2_s1
   Version: latest
   Resolution: 224
-  TensorFlow:
-    Tags:
-    - serve
+  ONNX:
+    File: efficientformerv2_s1.onnx
+    Source: https://huggingface.co/timm/efficientformerv2_s1.snap_dist_in1k/resolve/0c1fc60a0e89b6309d9de451cdacc11ac0a8b987/model.safetensors
+    SHA256: e289689ae6ae1e32f81f0346e7e59004d4d15b4c8df6899c008ade6f826892da
+    License: Apache-2.0
+    Quantization: fp32
     Input:
-      Name: input_tensor
-      Height: 224
+      Name: input
       Width: 224
-      Shape:
-      - Batch
-      - Height
-      - Width
-      - Color
+      Height: 224
+      Layout: NCHW
+      ColorOrder: RGB
+      Normalization:
+        Mean:
+        - 123.675
+        - 116.28
+        - 103.53
+        StdDev:
+        - 58.395
+        - 57.12
+        - 57.375
+      Resize:
+        Mode: center-crop
+        ShortEdge: 236
+        CropRatio: 0.95
+        Interpolation: bicubic
     Output:
-      Name: nsfw_cls_model/final_prediction
-      Outputs: 5
+      Name: logits
+      Width: 1000
+      Count: 1
+      Logits: true
+  LabelFile: ../nasnet/labels.txt
+  CanonicalOrder: true
+- Type: nsfw
+  Default: true
+  Name: adamcodd_vit_base_nsfw_int8
+  Version: latest
+  Resolution: 384
+  ONNX:
+    File: adamcodd_vit_base_nsfw_int8.onnx
+    Source: https://huggingface.co/AdamCodd/vit-base-nsfw-detector/resolve/8587de998f441aac03fdd57a85d2e4cb808c7d64/onnx/model_int8.onnx
+    SHA256: d25aa73fe1eec78459e35ff911e2af98f652ee919b48d9c54316c86d5ff435fa
+    License: Apache-2.0
+    Quantization: int8
+    Input:
+      Width: 384
+      Height: 384
+      Layout: NCHW
+      ColorOrder: RGB
+      Normalization:
+        Mean:
+        - 127.5
+        - 127.5
+        - 127.5
+        StdDev:
+        - 127.5
+        - 127.5
+        - 127.5
+      Resize:
+        Mode: stretch
+        Interpolation: linear
+    Output:
+      Width: 2
+      Count: 1
+      Logits: true
+  Reduction: softmax-unsafe
+  UnsafeClassIndex: 1
+  DefaultThreshold: 0.98
 - Type: face
   Default: true
   Name: facenet
@@ -78,4 +106,3 @@ Models:
     ResponseFormat: ollama
 Thresholds:
   Confidence: 10
-  NSFW: 75

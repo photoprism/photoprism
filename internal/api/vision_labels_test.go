@@ -85,7 +85,7 @@ func TestPostVisionLabels(t *testing.T) {
 			t.Fatal(apiErr)
 		}
 
-		assert.Len(t, apiResponse.Result.Labels, 2)
+		assert.NotEmpty(t, apiResponse.Result.Labels)
 		assert.Equal(t, vision.ModelTypeLabels, apiResponse.Model.Type)
 		assert.Equal(t, http.StatusOK, r.Code)
 	})

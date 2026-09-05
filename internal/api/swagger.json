@@ -3764,30 +3764,221 @@
             },
             "type": "object"
         },
+        "nsfw.Reduction": {
+            "enum": [
+                "softmax-unsafe",
+                "sigmoid-unsafe",
+                "neutral-complement"
+            ],
+            "type": "string",
+            "x-enum-varnames": [
+                "ReductionSoftmaxUnsafe",
+                "ReductionSigmoidUnsafe",
+                "ReductionNeutralComplement"
+            ]
+        },
         "nsfw.Result": {
             "properties": {
-                "drawing": {
-                    "format": "float32",
+                "Drawing": {
+                    "description": "Class probabilities used by legacy and remote models. Detectors with a binary taxonomy\nleave these zero, so a client must read Status. The JSON names are capitalized because\nthat is what this endpoint has always emitted for these untagged fields.",
                     "type": "number"
                 },
-                "hentai": {
-                    "format": "float32",
+                "Hentai": {
                     "type": "number"
                 },
-                "neutral": {
-                    "format": "float32",
+                "Neutral": {
                     "type": "number"
                 },
-                "porn": {
-                    "format": "float32",
+                "Porn": {
                     "type": "number"
                 },
-                "sexy": {
-                    "format": "float32",
+                "Sexy": {
+                    "type": "number"
+                },
+                "reason": {
+                    "description": "Reason names why no decision was made, and is empty otherwise.",
+                    "type": "string"
+                },
+                "score": {
+                    "description": "Score is the probability that the image is unsafe, from 0 to 1.",
+                    "type": "number"
+                },
+                "status": {
+                    "description": "Status is the decision, and the only field a caller may act on. The tag spells the wire\nvalues out because the zero value serializes as \"unavailable\" rather than as itself.",
+                    "enum": [
+                        "safe",
+                        "unsafe",
+                        "unavailable"
+                    ],
+                    "type": "string"
+                },
+                "threshold": {
+                    "description": "Threshold is the value Score was compared against, recorded so a decision can be\nexplained, or re-derived by a caller, without running inference again.",
                     "type": "number"
                 }
             },
             "type": "object"
+        },
+        "onnx.ColorOrder": {
+            "enum": [
+                "",
+                "RGB",
+                "BGR"
+            ],
+            "type": "string",
+            "x-enum-varnames": [
+                "OrderUndefined",
+                "RGB",
+                "BGR"
+            ]
+        },
+        "onnx.Input": {
+            "properties": {
+                "colorOrder": {
+                    "$ref": "#/definitions/onnx.ColorOrder"
+                },
+                "height": {
+                    "type": "integer"
+                },
+                "layout": {
+                    "$ref": "#/definitions/onnx.Layout"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "normalization": {
+                    "$ref": "#/definitions/onnx.Normalization"
+                },
+                "resize": {
+                    "$ref": "#/definitions/onnx.Resize"
+                },
+                "width": {
+                    "type": "integer"
+                }
+            },
+            "type": "object"
+        },
+        "onnx.Interpolation": {
+            "enum": [
+                "",
+                "nearest",
+                "linear",
+                "bicubic",
+                "lanczos"
+            ],
+            "type": "string",
+            "x-enum-varnames": [
+                "InterpolationUndefined",
+                "InterpolationNearest",
+                "InterpolationLinear",
+                "InterpolationBicubic",
+                "InterpolationLanczos"
+            ]
+        },
+        "onnx.Layout": {
+            "enum": [
+                "",
+                "NCHW",
+                "NHWC"
+            ],
+            "type": "string",
+            "x-enum-varnames": [
+                "LayoutUndefined",
+                "LayoutNCHW",
+                "LayoutNHWC"
+            ]
+        },
+        "onnx.ModelInfo": {
+            "properties": {
+                "file": {
+                    "type": "string"
+                },
+                "input": {
+                    "$ref": "#/definitions/onnx.Input"
+                },
+                "license": {
+                    "type": "string"
+                },
+                "output": {
+                    "$ref": "#/definitions/onnx.Output"
+                },
+                "quantization": {
+                    "type": "string"
+                },
+                "sha256": {
+                    "type": "string"
+                },
+                "source": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "onnx.Normalization": {
+            "properties": {
+                "mean": {
+                    "items": {
+                        "type": "number"
+                    },
+                    "type": "array"
+                },
+                "stdDev": {
+                    "items": {
+                        "type": "number"
+                    },
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        },
+        "onnx.Output": {
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "logits": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "width": {
+                    "type": "integer"
+                }
+            },
+            "type": "object"
+        },
+        "onnx.Resize": {
+            "properties": {
+                "cropRatio": {
+                    "type": "number"
+                },
+                "interpolation": {
+                    "$ref": "#/definitions/onnx.Interpolation"
+                },
+                "mode": {
+                    "$ref": "#/definitions/onnx.ResizeMode"
+                },
+                "shortEdge": {
+                    "type": "integer"
+                }
+            },
+            "type": "object"
+        },
+        "onnx.ResizeMode": {
+            "enum": [
+                "",
+                "stretch",
+                "center-crop",
+                "pad"
+            ],
+            "type": "string",
+            "x-enum-varnames": [
+                "ResizeUndefined",
+                "ResizeStretch",
+                "ResizeCenterCrop",
+                "ResizePad"
+            ]
         },
         "places.Location": {
             "properties": {
@@ -4982,8 +5173,14 @@
                     ],
                     "description": "\"auto\", \"never\", \"manual\", \"always\", \"newly-indexed\", \"on-schedule\""
                 },
+                "canonicalOrder": {
+                    "type": "boolean"
+                },
                 "default": {
                     "type": "boolean"
+                },
+                "defaultThreshold": {
+                    "type": "number"
                 },
                 "disabled": {
                     "type": "boolean"
@@ -4994,11 +5191,17 @@
                 "format": {
                     "type": "string"
                 },
+                "labelFile": {
+                    "type": "string"
+                },
                 "model": {
                     "type": "string"
                 },
                 "name": {
                     "type": "string"
+                },
+                "neutralClassIndex": {
+                    "type": "integer"
                 },
                 "normalize": {
                     "allOf": [
@@ -5008,11 +5211,17 @@
                     ],
                     "description": "\"single-word\", \"phrase\", or \"false\""
                 },
+                "onnx": {
+                    "$ref": "#/definitions/onnx.ModelInfo"
+                },
                 "options": {
                     "$ref": "#/definitions/vision.ModelOptions"
                 },
                 "prompt": {
                     "type": "string"
+                },
+                "reduction": {
+                    "$ref": "#/definitions/nsfw.Reduction"
                 },
                 "resolution": {
                     "type": "integer"
@@ -5035,6 +5244,9 @@
                 "type": {
                     "$ref": "#/definitions/vision.ModelType"
                 },
+                "unsafeClassIndex": {
+                    "type": "integer"
+                },
                 "version": {
                     "type": "string"
                 }
@@ -5045,12 +5257,14 @@
             "enum": [
                 "vision",
                 "tensorflow",
+                "onnx",
                 "local"
             ],
             "type": "string",
             "x-enum-varnames": [
                 "EngineVision",
                 "EngineTensorFlow",
+                "EngineONNX",
                 "EngineLocal"
             ]
         },

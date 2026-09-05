@@ -33,6 +33,12 @@ func TestConfig_Report(t *testing.T) {
 	}
 
 	assert.Equal(t, m.FrontendUri(""), values["frontend-uri"])
+	assert.Equal(t, string(m.EffectiveLabelModel()), values["label-model"])
+	assert.Equal(t, m.LabelModelPath(), values["label-model-path"])
+	assert.Equal(t, m.LabelModelRuntime(), values["label-model-runtime"])
+	assert.Equal(t, string(m.EffectiveNSFWModel()), values["nsfw-model"])
+	assert.Equal(t, m.NsfwModelPath(), values["nsfw-model-path"])
+	assert.Equal(t, m.NsfwModelRuntime(), values["nsfw-model-runtime"])
 }
 
 func TestConfig_ReportServicesCIDROrder(t *testing.T) {

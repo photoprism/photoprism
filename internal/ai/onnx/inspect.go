@@ -44,6 +44,7 @@ func Inspect(modelPath string, sessionOpts *onnxruntime.SessionOptions) (*ModelI
 		Output: &Output{
 			Name:  outputs[0].Name,
 			Width: tensorAxis(outputs[0].Dimensions, len(outputs[0].Dimensions)-1),
+			Count: len(outputs),
 		},
 	}, nil
 }

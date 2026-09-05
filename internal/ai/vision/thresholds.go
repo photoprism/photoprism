@@ -10,10 +10,10 @@ type Thresholds struct {
 
 // GetConfidence returns the Confidence threshold in percent from 0 to 100.
 func (t *Thresholds) GetConfidence() int {
-	if t.Confidence < 0 {
+	if t == nil || t.Confidence < 0 {
 		return 0
 	} else if t.Confidence > 100 {
-		return 1
+		return 100
 	}
 
 	return t.Confidence
@@ -26,10 +26,10 @@ func (t *Thresholds) GetConfidenceFloat32() float32 {
 
 // GetTopicality returns the Topicality threshold in percent from 0 to 100.
 func (t *Thresholds) GetTopicality() int {
-	if t.Topicality < 0 {
+	if t == nil || t.Topicality < 0 {
 		return 0
 	} else if t.Topicality > 100 {
-		return 1
+		return 100
 	}
 
 	return t.Topicality
@@ -40,15 +40,21 @@ func (t *Thresholds) GetTopicalityFloat32() float32 {
 	return float32(t.GetTopicality()) / 100
 }
 
-// GetNSFW returns the NSFW threshold in percent from 0 to 100.
+// GetNSFW returns the effective NSFW threshold in percent from 0 to 100.
 func (t *Thresholds) GetNSFW() int {
-	if t.NSFW <= 0 {
-		return DefaultThresholds.NSFW
+	if t == nil || t.NSFW <= 0 {
+		return DefaultNSFWThreshold
 	} else if t.NSFW > 100 {
-		return 1
+		return 100
 	}
 
 	return t.NSFW
+}
+
+// NSFWIsSet reports whether the operator configured an NSFW threshold.
+// An unset value allows the selected model's calibrated default to apply.
+func (t *Thresholds) NSFWIsSet() bool {
+	return t != nil && t.NSFW > 0
 }
 
 // GetNSFWFloat32 returns the NSFW threshold as float32 for comparison.
