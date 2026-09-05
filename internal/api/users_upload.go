@@ -414,7 +414,26 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 // nsfwRejectsUpload reports whether screening rejects an uploaded file.
 // Unavailable checks reject, while an explicitly unconfigured detector admits.
 func nsfwRejectsUpload(fileName string) bool {
-	results, err := vision.DetectNSFW([]string{fileName}, media.SrcLocal)
+	if vision.Config == nil {
+		log.Debugf("nsfw: no detector configured, %s was not screened", clean.Log(fileName))
+		return false
+	}
+	configured := vision.Config.Model(vision.ModelTypeNsfw)
+	if configured == nil || configured.Disabled {
+		log.Debugf("nsfw: no detector configured, %s was not screened", clean.Log(fileName))
+		return false
+	}
+	previewName, cleanup, previewErr := nsfwUploadPreview(fileName)
+	if previewErr != nil {
+		log.Warnf("nsfw: cannot create preview for %s (%s)", clean.Log(fileName), clean.Error(previewErr))
+		return true
+	}
+	if previewName == "" {
+		return false
+	}
+	defer cleanup()
+
+	results, err := vision.DetectNSFWWithDefault([]string{previewName}, media.SrcLocal, nsfw.UploadThreshold)
 
 	if errors.Is(err, nsfw.ErrNotConfigured) {
 		log.Debugf("nsfw: no detector configured, %s was not screened", clean.Log(fileName))
@@ -443,4 +462,21 @@ func nsfwRejectsUpload(fileName string) bool {
 	}
 
 	return true
+}
+
+var nsfwUploadPreview = uploadScreeningPreview
+
+// uploadScreeningPreview returns a directly decodable image or a temporary JPEG derivative.
+func uploadScreeningPreview(fileName string) (string, func(), error) {
+	if _, _, err := fs.DecodeImageFile(fileName); err == nil {
+		return fileName, func() {}, nil
+	}
+	mediaFile, err := photoprism.NewMediaFile(fileName)
+	if err != nil {
+		return "", nil, err
+	}
+	if !mediaFile.IsMedia() {
+		return "", func() {}, nil
+	}
+	return get.Convert().TempPreview(mediaFile)
 }

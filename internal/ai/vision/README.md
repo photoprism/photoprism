@@ -1,13 +1,13 @@
 ## PhotoPrism — Vision Package
 
-**Last Updated:** September 2, 2026
+**Last Updated:** September 5, 2026
 
 ### Overview
 
 `internal/ai/vision` provides the shared model registry, request builders, and parsers that power PhotoPrism’s caption, label, face, NSFW, and future generate workflows. It reads `vision.yml`, normalizes models, and dispatches calls to local ONNX/TensorFlow engines or remote services:
 
-- **ONNX Runtime (built-in labels)** — fixed-taxonomy ImageNet classifiers run locally with per-model preprocessing and checksum validation.
-- **TensorFlow (transitional)** — built-in NSFW and FaceNet models remain local while their separate ONNX migrations are completed. Long-running TensorFlow inference can accumulate C-allocated tensor memory until GC finalizers run, so PhotoPrism periodically triggers garbage collection; tune with `PHOTOPRISM_TF_GC_EVERY` (default **200**, `0` disables).
+- **ONNX Runtime (built-in labels and NSFW)** — fixed-taxonomy classifiers run locally with per-model preprocessing and checksum validation.
+- **TensorFlow (transitional)** — FaceNet remains local until its separate ONNX migration is completed.
 - **Ollama** — local or proxied multimodal LLMs. See [`ollama/README.md`](ollama/README.md) for tuning and schema details. The engine defaults to `${OLLAMA_BASE_URL:-http://ollama:11434}/api/generate`, trimming any trailing slash on the base URL; set `OLLAMA_BASE_URL=https://ollama.com` to opt into cloud defaults. The default model is `gemma4:latest` (self-hosted) or `minimax-m3:cloud` (cloud), and reasoning is disabled by default (`Service.Think: "false"`) so thinking-capable models do not leak reasoning into results. That flag is a correctness guard rather than a performance one — a reasoning build still generates the reasoning and bills the tokens for it, so prefer a non-reasoning tag (for example `qwen3-vl:4b-instruct` over `qwen3-vl:4b`) where one exists.
 - **OpenAI** — cloud Responses API. See [`openai/README.md`](openai/README.md) for prompts, schema variants, and header requirements.
 
@@ -250,13 +250,13 @@ Models:
 ### When to Choose Each Engine
 
 - **ONNX Runtime**: fast, offline fixed-taxonomy labels and face models with one shared native runtime.
-- **TensorFlow**: transitional local FaceNet and NSFW support until their ONNX migrations land.
+- **TensorFlow**: transitional local FaceNet support until its ONNX migration lands.
 - **Ollama**: private, GPU/CPU-hosted multimodal LLMs; best for richer captions/labels without cloud traffic.
 - **OpenAI**: highest quality reasoning and multimodal support; requires API key and network access.
 
 ### NSFW Detection
 
-NSFW is wired through the same model registry as labels, captions, and faces — `Type: nsfw` resolves to the built-in TensorFlow classifier by default, and can be overridden in `vision.yml` to point at an Ollama or OpenAI endpoint.
+NSFW is wired through the same model registry as labels, captions, and faces. `Type: nsfw` resolves to the registered ONNX classifier selected by `PHOTOPRISM_NSFW_MODEL`, and can be overridden in `vision.yml` with a custom ONNX graph or an Ollama or OpenAI endpoint.
 
 There is also a fast-path: when `Type: labels` is served by an LLM, PhotoPrism can ask the labels call to include `nsfw` + `nsfw_confidence` in the same response. This is gated by the package-level global `DetectNSFWLabels`, set from `config.go` as `DetectNSFW() && Experimental()` — both `PHOTOPRISM_DETECT_NSFW=true` **and** `PHOTOPRISM_EXPERIMENTAL=true` are required. When either flag is off, the labels prompt stays on `LabelPromptDefault` (no NSFW fields), and `labels.IsNSFW()` cannot trigger.
 

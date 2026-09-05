@@ -3764,10 +3764,23 @@
             },
             "type": "object"
         },
+        "nsfw.Reduction": {
+            "enum": [
+                "softmax-unsafe",
+                "sigmoid-unsafe",
+                "neutral-complement"
+            ],
+            "type": "string",
+            "x-enum-varnames": [
+                "ReductionSoftmaxUnsafe",
+                "ReductionSigmoidUnsafe",
+                "ReductionNeutralComplement"
+            ]
+        },
         "nsfw.Result": {
             "properties": {
                 "Drawing": {
-                    "description": "Class probabilities of the bundled TensorFlow model. Detectors with a binary taxonomy\nleave these zero, so a client must read Status. The JSON names are capitalized because\nthat is what this endpoint has always emitted for these untagged fields.",
+                    "description": "Class probabilities used by legacy and remote models. Detectors with a binary taxonomy\nleave these zero, so a client must read Status. The JSON names are capitalized because\nthat is what this endpoint has always emitted for these untagged fields.",
                     "type": "number"
                 },
                 "Hentai": {
@@ -5166,6 +5179,9 @@
                 "default": {
                     "type": "boolean"
                 },
+                "defaultThreshold": {
+                    "type": "number"
+                },
                 "disabled": {
                     "type": "boolean"
                 },
@@ -5184,6 +5200,9 @@
                 "name": {
                     "type": "string"
                 },
+                "neutralClassIndex": {
+                    "type": "integer"
+                },
                 "normalize": {
                     "allOf": [
                         {
@@ -5200,6 +5219,9 @@
                 },
                 "prompt": {
                     "type": "string"
+                },
+                "reduction": {
+                    "$ref": "#/definitions/nsfw.Reduction"
                 },
                 "resolution": {
                     "type": "integer"
@@ -5221,6 +5243,9 @@
                 },
                 "type": {
                     "$ref": "#/definitions/vision.ModelType"
+                },
+                "unsafeClassIndex": {
+                    "type": "integer"
                 },
                 "version": {
                     "type": "string"

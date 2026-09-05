@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
+	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -141,7 +142,49 @@ func TestConfig_TensorFlowDisabled(t *testing.T) {
 func TestConfig_NSFWModelPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Contains(t, c.NsfwModelPath(), "/assets/models/nsfw")
+	assert.Contains(t, c.NsfwModelPath(), filepath.Join("assets", "models", string(nsfw.DefaultModelName())))
+	assert.Equal(t, vision.EngineONNX, c.NsfwModelRuntime())
+}
+
+// TestConfig_NSFWModel verifies automatic, named, disabled, and custom model selection.
+func TestConfig_NSFWModel(t *testing.T) {
+	t.Run("Auto", func(t *testing.T) {
+		withVisionConfig(t, vision.NewConfig())
+		c := NewConfig(CliTestContext())
+		c.options.NsfwModel = "auto"
+		c.applyNSFWModel()
+		assert.Equal(t, nsfw.DefaultModelName(), c.EffectiveNSFWModel())
+		assert.Equal(t, vision.EngineONNX, c.NsfwModelRuntime())
+	})
+	t.Run("Named", func(t *testing.T) {
+		withVisionConfig(t, vision.NewConfig())
+		c := NewConfig(CliTestContext())
+		c.options.NsfwModel = string(nsfw.ModelYahoo)
+		c.applyNSFWModel()
+		assert.Equal(t, nsfw.ModelYahoo, c.EffectiveNSFWModel())
+		assert.Contains(t, c.NsfwModelPath(), string(nsfw.ModelYahoo))
+	})
+	t.Run("None", func(t *testing.T) {
+		withVisionConfig(t, vision.NewConfig())
+		c := NewConfig(CliTestContext())
+		c.options.NsfwModel = "none"
+		c.applyNSFWModel()
+		assert.Equal(t, nsfw.ModelNone, c.EffectiveNSFWModel())
+		assert.Empty(t, c.NsfwModelPath())
+		assert.Equal(t, "none", c.NsfwModelRuntime())
+		assert.Nil(t, vision.Config.Model(vision.ModelTypeNsfw))
+		require.True(t, vision.Config.Models[1].Disabled)
+	})
+	t.Run("CustomFromVisionYaml", func(t *testing.T) {
+		withVisionConfig(t, &vision.ConfigValues{Models: vision.Models{&vision.Model{
+			Type: vision.ModelTypeNsfw, Name: "custom_nsfw", Path: "custom/model.onnx",
+		}}})
+		c := NewConfig(CliTestContext())
+		c.options.NsfwModel = "auto"
+		c.applyNSFWModel()
+		assert.Equal(t, nsfw.ModelName("custom_nsfw"), c.EffectiveNSFWModel())
+		assert.Equal(t, filepath.Join(c.ModelsPath(), "custom", "model.onnx"), c.NsfwModelPath())
+	})
 }
 
 // TestConfig_reportUnscreenedUploads verifies the missing-detector warning conditions.

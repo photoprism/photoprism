@@ -25,7 +25,7 @@ func TestModels(t *testing.T) {
 			require.NotNil(t, model.ONNX.Output)
 			assert.Equal(t, name, model.Name)
 			assert.NotEmpty(t, model.DisplayName)
-			assert.Equal(t, "unverified", model.ONNX.License)
+			assert.Equal(t, "Apache-2.0", model.ONNX.License)
 			assert.Contains(t, model.ONNX.Source, "/resolve/")
 			assert.True(t, strings.HasSuffix(model.ONNX.Source, "/model.safetensors"))
 			assert.Len(t, model.ONNX.SHA256, 64)

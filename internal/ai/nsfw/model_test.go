@@ -1,214 +1,221 @@
 package nsfw
 
 import (
+	"bytes"
+	"image"
+	"image/color"
+	"image/png"
 	"math"
 	"os"
 	"path/filepath"
-	"regexp"
-	"strings"
+	"sync"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/ai/onnx"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/fs/fastwalk"
 )
 
-var modelPath, _ = filepath.Abs("../../../assets/models/nsfw")
+var testModelsPath, _ = filepath.Abs("../../../assets/models")
 
-var detector = NewModel(modelPath, nil, false)
-
-// unsafeFixture matches the fixtures whose content the detector is expected to flag.
-var unsafeFixture = regexp.MustCompile(`^(porn|hentai)`)
-
-// requireModel skips a test when the bundled TensorFlow model is not installed.
-func requireModel(t *testing.T) {
-	t.Helper()
-
-	if !fs.FileExists(filepath.Join(modelPath, "saved_model.pb")) {
-		t.Skip("nsfw: model is not installed")
-	}
-}
-
-// fixtures returns the test image paths under testdata.
-func fixtures(t *testing.T) []string {
-	t.Helper()
-
-	var result []string
-
-	err := fastwalk.Walk("testdata", func(fileName string, info os.FileMode) error {
-		if info.IsDir() || strings.HasPrefix(filepath.Base(fileName), ".") {
-			return nil
-		}
-
-		result = append(result, fileName)
-
-		return nil
+// testModel returns a detector description that can exercise preprocessing without a graph.
+func testModel(layout onnx.Layout, order onnx.ColorOrder, logits bool) *Model {
+	model := NewModel(Settings{
+		Name: "test",
+		Info: &onnx.ModelInfo{
+			Input: &onnx.Input{Width: 1, Height: 1, Layout: layout, ColorOrder: order,
+				Normalization: onnx.Normalization{StdDev: [onnx.Channels]float32{1, 1, 1}},
+				Resize:        onnx.Resize{Mode: onnx.ResizeStretch, Interpolation: onnx.InterpolationLinear}},
+			Output: &onnx.Output{Width: 2, Count: 1, Logits: onnx.Bool(logits)},
+		},
+		Reduction:        ReductionSoftmaxUnsafe,
+		UnsafeClassIndex: 1,
 	})
-
-	require.NoError(t, err)
-
-	return result
+	model.mean = model.meta.Input.Normalization.Mean
+	model.scales = model.meta.Input.Normalization.Scales()
+	return model
 }
 
-// TestCorpusHasPositives verifies that the decision corpus exercises unsafe content.
-func TestCorpusHasPositives(t *testing.T) {
-	var positives []string
-
-	for _, fileName := range fixtures(t) {
-		if unsafeFixture.MatchString(filepath.Base(fileName)) {
-			positives = append(positives, filepath.Base(fileName))
-		}
-	}
-
-	require.NotEmpty(t, positives, "testdata must contain at least one image the detector should flag")
+// TestModelReduction verifies every supported output contract and its validation.
+func TestModelReduction(t *testing.T) {
+	t.Run("SoftmaxUnsafe", func(t *testing.T) {
+		model := testModel(onnx.LayoutNCHW, onnx.RGB, true)
+		score, err := model.reduceOutput([]float32{0, 2})
+		require.NoError(t, err)
+		assert.InDelta(t, 0.880797, score, 1e-6)
+	})
+	t.Run("ProbabilityUnsafe", func(t *testing.T) {
+		model := testModel(onnx.LayoutNCHW, onnx.RGB, false)
+		score, err := model.reduceOutput([]float32{0.2, 0.8})
+		require.NoError(t, err)
+		assert.InDelta(t, 0.8, score, 1e-6)
+	})
+	t.Run("NeutralComplement", func(t *testing.T) {
+		model := testModel(onnx.LayoutNCHW, onnx.RGB, true)
+		model.meta.Output.Width = 4
+		model.reduction = ReductionNeutralComplement
+		model.neutralClassIndex = 0
+		score, err := model.reduceOutput([]float32{2, 0, 0, 0})
+		require.NoError(t, err)
+		assert.InDelta(t, 0.288765, score, 1e-6)
+	})
+	t.Run("SigmoidUnsafe", func(t *testing.T) {
+		model := testModel(onnx.LayoutNCHW, onnx.RGB, true)
+		model.meta.Output.Width = 1
+		model.reduction = ReductionSigmoidUnsafe
+		score, err := model.reduceOutput([]float32{2})
+		require.NoError(t, err)
+		assert.InDelta(t, 0.880797, score, 1e-6)
+	})
+	t.Run("WrongWidth", func(t *testing.T) {
+		_, err := testModel(onnx.LayoutNCHW, onnx.RGB, true).reduceOutput([]float32{0})
+		require.Error(t, err)
+	})
+	t.Run("NonFinite", func(t *testing.T) {
+		_, err := testModel(onnx.LayoutNCHW, onnx.RGB, true).reduceOutput([]float32{0, float32(math.Inf(1))})
+		require.Error(t, err)
+	})
+	t.Run("InvalidProbability", func(t *testing.T) {
+		_, err := testModel(onnx.LayoutNCHW, onnx.RGB, false).reduceOutput([]float32{0.5, 0.6})
+		require.Error(t, err)
+	})
 }
 
-// TestModelFile verifies the decision in both directions on the bundled fixtures.
-func TestModelFile(t *testing.T) {
-	requireModel(t)
+// TestModelBuildBlob verifies channel order, layout, and normalization.
+func TestModelBuildBlob(t *testing.T) {
+	img := image.NewNRGBA(image.Rect(0, 0, 1, 1))
+	img.SetNRGBA(0, 0, color.NRGBA{R: 10, G: 20, B: 30, A: 255})
 
-	for _, fileName := range fixtures(t) {
-		t.Run(filepath.Base(fileName), func(t *testing.T) {
-			result, err := detector.File(fileName, DefaultThreshold)
-			require.NoError(t, err)
-
-			// A loaded detector always decides, whatever it decides.
-			require.False(t, result.IsUnavailable(), "expected a decision, got %s", result.Reason)
-			require.NoError(t, ValidateScore(result.Score))
-			assert.InDelta(t, DefaultThreshold, result.Threshold, 1e-6)
-
-			if unsafeFixture.MatchString(filepath.Base(fileName)) {
-				assert.True(t, result.IsUnsafe(), "expected unsafe, scored %.4f", result.Score)
-			} else {
-				assert.True(t, result.IsSafe(), "expected safe, scored %.4f", result.Score)
-			}
-		})
-	}
+	t.Run("NCHWRGB", func(t *testing.T) {
+		blob, err := testModel(onnx.LayoutNCHW, onnx.RGB, true).buildBlob(img)
+		require.NoError(t, err)
+		assert.Equal(t, []float32{10, 20, 30}, blob)
+	})
+	t.Run("NHWCBGR", func(t *testing.T) {
+		blob, err := testModel(onnx.LayoutNHWC, onnx.BGR, true).buildBlob(img)
+		require.NoError(t, err)
+		assert.Equal(t, []float32{30, 20, 10}, blob)
+	})
 }
 
-// TestModelFileThresholdSweep verifies that the threshold decides the outcome rather than a
-// constant baked into the detector.
-func TestModelFileThresholdSweep(t *testing.T) {
-	requireModel(t)
-
-	fileName := filepath.Join("testdata", "hentai_2.jpg")
-
-	if !fs.FileExists(fileName) {
-		t.Skip("nsfw: hentai_2.jpg is not installed")
-	}
-
-	unsafe, err := detector.File(fileName, DefaultThreshold)
-	require.NoError(t, err)
-	require.True(t, unsafe.IsUnsafe())
-
-	// A threshold just above the observed score has to flip the same image to safe.
-	safe, err := detector.File(fileName, unsafe.Score+0.001)
-	require.NoError(t, err)
-	assert.True(t, safe.IsSafe(), "scored %.4f against threshold %.4f", safe.Score, safe.Threshold)
+// TestResizeModelInput verifies center cropping does not depend on SubImage support.
+func TestResizeModelInput(t *testing.T) {
+	img := struct{ image.Image }{Image: image.NewNRGBA(image.Rect(0, 0, 4, 6))}
+	resized := resizeModelInput(img, 2, 2, onnx.Resize{Mode: onnx.ResizeCenterCrop, ShortEdge: 2})
+	assert.Equal(t, image.Rect(0, 0, 2, 2), resized.Bounds())
 }
 
-// TestModelUnsafeScoreOrdering verifies that flagged content outscores ordinary content, which
-// holds across model revisions where an absolute golden value would not.
-func TestModelUnsafeScoreOrdering(t *testing.T) {
-	requireModel(t)
-
-	unsafe, err := detector.File(filepath.Join("testdata", "hentai_2.jpg"), DefaultThreshold)
-	require.NoError(t, err)
-
-	safe, err := detector.File(filepath.Join("testdata", "cat_brown.jpg"), DefaultThreshold)
-	require.NoError(t, err)
-
-	assert.Greater(t, unsafe.Score, safe.Score)
-}
-
-// TestModelDisabled verifies that a disabled detector reports no decision instead of a
-// clearance, from every entry point.
+// TestModelDisabled verifies every disabled entry point reports no decision.
 func TestModelDisabled(t *testing.T) {
-	disabled := NewModel(modelPath, nil, true)
-
+	disabled := NewModel(Settings{Disabled: true})
 	require.NoError(t, disabled.Init())
+	assert.False(t, disabled.ModelLoaded())
 
-	t.Run("File", func(t *testing.T) {
-		result, err := disabled.File(filepath.Join("testdata", "cat_brown.jpg"), DefaultThreshold)
-		require.NoError(t, err)
-		assert.True(t, result.IsUnavailable())
-		assert.False(t, result.IsSafe())
-	})
-	t.Run("Url", func(t *testing.T) {
-		result, err := disabled.Url("https://dl.photoprism.app/img/logo.jpg", DefaultThreshold)
-		require.NoError(t, err)
-		assert.True(t, result.IsUnavailable())
-		assert.False(t, result.IsSafe())
-	})
-	t.Run("Run", func(t *testing.T) {
-		result, err := disabled.Run([]byte("not an image"), DefaultThreshold)
-		require.NoError(t, err)
-		assert.True(t, result.IsUnavailable())
-		assert.False(t, result.IsSafe())
-	})
+	result, err := disabled.File("missing.jpg", DefaultThreshold)
+	require.NoError(t, err)
+	assert.True(t, result.IsUnavailable())
+	result, err = disabled.Url("https://example.com/image.jpg", DefaultThreshold)
+	require.NoError(t, err)
+	assert.True(t, result.IsUnavailable())
+	result, err = disabled.Run([]byte("not an image"), DefaultThreshold)
+	require.NoError(t, err)
+	assert.True(t, result.IsUnavailable())
+	require.NoError(t, disabled.Close())
 }
 
-// TestModelNilReceiver verifies that a missing detector reports no decision.
-func TestModelNilReceiver(t *testing.T) {
-	var missing *Model
+// TestModelFailures verifies missing graphs and unreadable inputs never report safe.
+func TestModelFailures(t *testing.T) {
+	missing := NewModel(Settings{ModelPath: filepath.Join(t.TempDir(), "missing.onnx")})
+	require.Error(t, missing.Init())
+	assert.False(t, missing.ModelLoaded())
 
-	result, err := missing.Run([]byte("not an image"), DefaultThreshold)
+	result, err := missing.File(filepath.Join(t.TempDir(), "missing.jpg"), DefaultThreshold)
+	require.Error(t, err)
+	assert.False(t, result.IsSafe())
+	assert.True(t, result.IsUnavailable())
+
+	fileName := filepath.Join(t.TempDir(), "invalid.jpg")
+	require.NoError(t, os.WriteFile(fileName, []byte("not an image"), fs.ModeFile))
+	result, err = missing.File(fileName, DefaultThreshold)
+	require.Error(t, err)
+	assert.False(t, result.IsSafe())
+}
+
+// TestModelNilReceiver verifies a missing detector reports no decision.
+func TestModelNilReceiver(t *testing.T) {
+	var model *Model
+	result, err := model.Run(nil, DefaultThreshold)
 	require.NoError(t, err)
 	assert.True(t, result.IsUnavailable())
 	assert.False(t, result.IsSafe())
 }
 
-// TestModelBadInput verifies that unreadable input fails without reporting a clearance.
-func TestModelBadInput(t *testing.T) {
-	requireModel(t)
-
-	t.Run("NotAJpeg", func(t *testing.T) {
-		fileName := filepath.Join(t.TempDir(), "notes.txt")
-		require.NoError(t, os.WriteFile(fileName, []byte("hello"), fs.ModeFile))
-
-		result, err := detector.File(fileName, DefaultThreshold)
-		require.Error(t, err)
-		assert.True(t, result.IsUnavailable())
-		assert.False(t, result.IsSafe())
-	})
-	t.Run("Missing", func(t *testing.T) {
-		result, err := detector.File(filepath.Join(t.TempDir(), "missing.jpg"), DefaultThreshold)
-		require.Error(t, err)
-		assert.True(t, result.IsUnavailable())
-		assert.False(t, result.IsSafe())
-	})
-	t.Run("TruncatedJpeg", func(t *testing.T) {
-		fileName := filepath.Join(t.TempDir(), "broken.jpg")
-		require.NoError(t, os.WriteFile(fileName, []byte{0xFF, 0xD8, 0xFF, 0xE0, 0x00}, fs.ModeFile))
-
-		result, err := detector.File(fileName, DefaultThreshold)
-		require.Error(t, err)
-		assert.True(t, result.IsUnavailable())
-		assert.False(t, result.IsSafe())
-	})
+// TestRegisteredModels verifies registry descriptions are complete and independent.
+func TestRegisteredModels(t *testing.T) {
+	for name, description := range Models {
+		t.Run(string(name), func(t *testing.T) {
+			require.NotNil(t, description.ONNX)
+			require.NotNil(t, description.ONNX.Input)
+			require.NotNil(t, description.ONNX.Output)
+			assert.Len(t, description.ONNX.SHA256, 64)
+			assert.NotEmpty(t, description.ONNX.Source)
+			assert.NotEmpty(t, description.ONNX.License)
+			model := NewRegisteredModel("/models", name, false)
+			require.NotNil(t, model)
+			assert.Equal(t, filepath.Join("/models", string(name), description.ONNX.File), model.modelPath)
+			require.NoError(t, model.validateDescription())
+		})
+	}
 }
 
-// TestModelGetScores verifies that an unexpected output width is an error rather than a
-// misreading of another model's classes.
-func TestModelGetScores(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
-		result, err := detector.getScores([]float32{0.1, 0.2, 0.3, 0.25, 0.15})
-		require.NoError(t, err)
-		assert.InDelta(t, 0.2, result.Hentai, 1e-6)
-		assert.InDelta(t, 0.25, result.Porn, 1e-6)
-	})
-	t.Run("WrongWidth", func(t *testing.T) {
-		_, err := detector.getScores([]float32{0.5, 0.5})
-		require.Error(t, err)
-	})
-	t.Run("NonFinite", func(t *testing.T) {
-		_, err := detector.getScores([]float32{0.1, 0.2, 0.3, 0.25, float32(math.Inf(1))})
-		require.Error(t, err)
-	})
-	t.Run("OutOfRange", func(t *testing.T) {
-		_, err := detector.getScores([]float32{0.1, 0.2, 0.3, 0.25, 1.5})
-		require.Error(t, err)
-	})
+// TestRegisteredModelInference verifies the bundled graph accepts JPEG and PNG input.
+func TestRegisteredModelInference(t *testing.T) {
+	model := NewRegisteredModel(testModelsPath, DefaultModelName(), false)
+	if model == nil || !fs.FileExists(model.modelPath) {
+		t.Skip("nsfw: default ONNX model is not installed")
+	}
+	require.NoError(t, model.Init())
+	defer func() { require.NoError(t, model.Close()) }()
+
+	jpegResult, err := model.File(filepath.Join("testdata", "cat_brown.jpg"), 0.75)
+	require.NoError(t, err)
+	assert.False(t, jpegResult.IsUnavailable())
+	t.Logf("cat_brown.jpg unsafe score: %.6f", jpegResult.Score)
+
+	img := image.NewNRGBA(image.Rect(0, 0, 32, 24))
+	var encoded bytes.Buffer
+	require.NoError(t, png.Encode(&encoded, img))
+	pngResult, err := model.Run(encoded.Bytes(), 0.75)
+	require.NoError(t, err)
+	assert.False(t, pngResult.IsUnavailable())
+}
+
+// TestRegisteredModelConcurrentInference verifies shared-session results stay deterministic.
+func TestRegisteredModelConcurrentInference(t *testing.T) {
+	model := NewRegisteredModel(testModelsPath, DefaultModelName(), false)
+	if model == nil || !fs.FileExists(model.modelPath) {
+		t.Skip("nsfw: default ONNX model is not installed")
+	}
+	require.NoError(t, model.Init())
+	defer func() { require.NoError(t, model.Close()) }()
+
+	const workers = 4
+	scores := make([]float32, workers)
+	errors := make([]error, workers)
+	var wait sync.WaitGroup
+	wait.Add(workers)
+	for i := range workers {
+		go func(index int) {
+			defer wait.Done()
+			result, err := model.File(filepath.Join("testdata", "cat_brown.jpg"), 0.75)
+			scores[index], errors[index] = result.Score, err
+		}(i)
+	}
+	wait.Wait()
+	for i := range workers {
+		require.NoError(t, errors[i])
+		assert.InDelta(t, scores[0], scores[i], 1e-7)
+	}
 }

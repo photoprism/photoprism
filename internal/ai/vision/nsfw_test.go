@@ -31,15 +31,28 @@ func TestNsfwThreshold(t *testing.T) {
 	})
 	t.Run("UnsetFallsBackToDefault", func(t *testing.T) {
 		withConfig(t, &ConfigValues{Thresholds: Thresholds{}})
-		assert.InDelta(t, nsfw.DefaultThreshold, NsfwThreshold(), 1e-6)
+		assert.InDelta(t, 0.75, NsfwThreshold(), 1e-6)
 	})
 	t.Run("NoConfig", func(t *testing.T) {
 		withConfig(t, nil)
-		assert.InDelta(t, nsfw.DefaultThreshold, NsfwThreshold(), 1e-6)
+		assert.InDelta(t, 0.75, NsfwThreshold(), 1e-6)
 	})
 	t.Run("AboveMaxClamps", func(t *testing.T) {
 		withConfig(t, &ConfigValues{Thresholds: Thresholds{NSFW: 500}})
 		assert.InDelta(t, 1.0, NsfwThreshold(), 1e-6)
+	})
+}
+
+// TestResolvedNSFWThreshold verifies explicit settings override model defaults.
+func TestResolvedNSFWThreshold(t *testing.T) {
+	model := nsfw.NewModel(nsfw.Settings{DefaultThreshold: 0.63, Disabled: true})
+	t.Run("ModelDefault", func(t *testing.T) {
+		withConfig(t, &ConfigValues{})
+		assert.InDelta(t, 0.63, resolvedNSFWThreshold(model), 1e-6)
+	})
+	t.Run("OperatorOverride", func(t *testing.T) {
+		withConfig(t, &ConfigValues{Thresholds: Thresholds{NSFW: 91}})
+		assert.InDelta(t, 0.91, resolvedNSFWThreshold(model), 1e-6)
 	})
 }
 
@@ -49,7 +62,7 @@ func TestDetectNSFWNoModel(t *testing.T) {
 	t.Run("NoModelConfigured", func(t *testing.T) {
 		withConfig(t, &ConfigValues{})
 
-		result, err := nsfwInternal(Files{"a.jpg", "b.jpg"}, media.SrcLocal)
+		result, err := nsfwInternal(Files{"a.jpg", "b.jpg"}, media.SrcLocal, nil)
 		require.Error(t, err)
 		require.ErrorIs(t, err, nsfw.ErrNotConfigured)
 		require.Len(t, result, 2)
@@ -62,7 +75,7 @@ func TestDetectNSFWNoModel(t *testing.T) {
 	t.Run("NoConfig", func(t *testing.T) {
 		withConfig(t, nil)
 
-		result, err := nsfwInternal(Files{"a.jpg"}, media.SrcLocal)
+		result, err := nsfwInternal(Files{"a.jpg"}, media.SrcLocal, nil)
 		require.ErrorIs(t, err, nsfw.ErrNotConfigured)
 		require.Len(t, result, 1)
 		assert.False(t, result[0].IsSafe())
@@ -70,7 +83,7 @@ func TestDetectNSFWNoModel(t *testing.T) {
 	t.Run("NoImages", func(t *testing.T) {
 		withConfig(t, &ConfigValues{})
 
-		_, err := nsfwInternal(Files{}, media.SrcLocal)
+		_, err := nsfwInternal(Files{}, media.SrcLocal, nil)
 		require.Error(t, err)
 	})
 }
@@ -78,9 +91,10 @@ func TestDetectNSFWNoModel(t *testing.T) {
 // TestDetectNSFWPartialBatch verifies that one unreadable file leaves its own result undecided
 // instead of contaminating the batch or reading as safe.
 func TestDetectNSFWPartialBatch(t *testing.T) {
-	modelPath := filepath.Join(assetsPath, "models", "nsfw")
+	modelPath := filepath.Join(assetsPath, "models", string(nsfw.DefaultModelName()))
 
-	if !fs.FileExists(filepath.Join(modelPath, "saved_model.pb")) {
+	modelInfo := nsfw.FindModel(nsfw.DefaultModelName())
+	if modelInfo == nil || !fs.FileExists(modelInfo.ONNX.FilePath(modelPath)) {
 		t.Skip("nsfw: model is not installed")
 	}
 
@@ -89,7 +103,7 @@ func TestDetectNSFWPartialBatch(t *testing.T) {
 	good := filepath.Join("..", "nsfw", "testdata", "cat_brown.jpg")
 	bad := filepath.Join("..", "nsfw", "testdata", "does-not-exist.jpg")
 
-	result, err := nsfwInternal(Files{good, bad}, media.SrcLocal)
+	result, err := nsfwInternal(Files{good, bad}, media.SrcLocal, nil)
 
 	// Local batches stay tolerant, so one unreadable file does not abort the run.
 	require.NoError(t, err)

@@ -9,6 +9,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/ai/nsfw"
 )
 
 // TestLabelModelDocDefault verifies the published default and registry-derived choices.
@@ -26,6 +27,21 @@ func TestLabelModelDocDefault(t *testing.T) {
 	}
 
 	t.Fatal("label-model flag not found")
+}
+
+// TestNSFWModelDocDefault verifies the published default and registry-derived choices.
+func TestNSFWModelDocDefault(t *testing.T) {
+	for _, flag := range Flags {
+		if flag.Name() != "nsfw-model" {
+			continue
+		}
+		assert.Equal(t, string(nsfw.ModelAuto), flag.Default())
+		for name := range nsfw.Models {
+			assert.Contains(t, flag.Usage(), name)
+		}
+		return
+	}
+	t.Fatal("nsfw-model flag not found")
 }
 
 // TestFaceDocDefaults pins that the face options publish the number that actually applies on a

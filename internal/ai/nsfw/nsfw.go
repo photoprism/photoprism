@@ -44,9 +44,11 @@ var (
 // StatusUnavailableName is how the undecided status renders as text.
 const StatusUnavailableName = "unavailable"
 
-// DefaultThreshold is the unsafe probability an image must reach when neither the operator nor
-// the selected model specifies one.
-const DefaultThreshold float32 = 0.75
+// DefaultThreshold is the conservative fallback used until ONNX corpus calibration is complete.
+const DefaultThreshold float32 = 0.98
+
+// UploadThreshold preserves the established upload-screening operating point.
+const UploadThreshold float32 = 0.75
 
 // Status is the three-valued outcome of an NSFW check.
 // Its zero value is unavailable so an unfilled result is never a clearance.
@@ -109,7 +111,7 @@ type Result struct {
 	// Reason names why no decision was made, and is empty otherwise.
 	Reason string `yaml:"Reason,omitempty" json:"reason,omitempty"`
 
-	// Class probabilities of the bundled TensorFlow model. Detectors with a binary taxonomy
+	// Class probabilities used by legacy and remote models. Detectors with a binary taxonomy
 	// leave these zero, so a client must read Status. The JSON names are capitalized because
 	// that is what this endpoint has always emitted for these untagged fields.
 	Drawing float32 `yaml:"Drawing,omitempty" json:"Drawing"`

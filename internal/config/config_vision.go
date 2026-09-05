@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
+	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -45,7 +46,77 @@ func (c *Config) LoadVisionConfig() {
 	}
 
 	c.applyLabelModel()
+	c.applyNSFWModel()
 	c.reportUnscreenedUploads()
+}
+
+// NSFWModelSetting returns the configured NSFW model without resolving auto.
+func (c *Config) NSFWModelSetting() nsfw.ModelName {
+	if c == nil {
+		return nsfw.ModelNone
+	}
+
+	return nsfw.ParseModelName(c.options.NsfwModel)
+}
+
+// EffectiveNSFWModel returns the local detector selected for this instance.
+func (c *Config) EffectiveNSFWModel() nsfw.ModelName {
+	setting := c.NSFWModelSetting()
+	if setting != nsfw.ModelAuto {
+		return setting
+	}
+
+	if vision.Config != nil {
+		if model := vision.Config.Model(vision.ModelTypeNsfw); model != nil && !model.Default {
+			return nsfw.NormalizeModelName(nsfw.ModelName(model.Name))
+		}
+	}
+
+	return nsfw.DefaultModelName()
+}
+
+// applyNSFWModel applies NSFW_MODEL to the local detector entry in vision.Config.
+func (c *Config) applyNSFWModel() {
+	if c == nil || vision.Config == nil {
+		return
+	}
+
+	current := vision.Config.Model(vision.ModelTypeNsfw)
+	setting := c.NSFWModelSetting()
+	if setting == nsfw.ModelNone {
+		if current == nil {
+			current = vision.NewNsfwModel(nsfw.DefaultModelName())
+		} else {
+			current = current.Clone()
+		}
+		if current != nil {
+			current.Disabled = true
+			vision.Config.SetModel(current)
+		}
+		return
+	}
+
+	if setting == nsfw.ModelAuto && current != nil && !current.Default {
+		return
+	}
+
+	selected := setting
+	if selected == nsfw.ModelAuto {
+		selected = nsfw.DefaultModelName()
+	}
+	if registered := vision.NewNsfwModel(selected); registered != nil {
+		if current != nil {
+			registered.Run = current.Run
+		}
+		vision.Config.SetModel(registered)
+		return
+	}
+
+	if current != nil && nsfw.NormalizeModelName(nsfw.ModelName(current.Name)) == selected {
+		return
+	}
+
+	vision.Config.SetModel(&vision.Model{Type: vision.ModelTypeNsfw, Name: string(selected), Path: string(selected)})
 }
 
 // reportUnscreenedUploads warns when upload screening has no configured detector.
@@ -333,13 +404,55 @@ func (c *Config) FacenetModelPath() string {
 	return filepath.Join(c.ModelsPath(), "facenet")
 }
 
-// NsfwModelPath returns the "not safe for work" TensorFlow model path.
+// NsfwModelPath returns the selected ONNX detector path.
 func (c *Config) NsfwModelPath() string {
 	if c == nil {
 		return ""
 	}
 
-	return filepath.Join(c.ModelsPath(), "nsfw")
+	name := c.EffectiveNSFWModel()
+	if name == nsfw.ModelNone {
+		return ""
+	}
+	if model := nsfw.FindModel(name); model != nil {
+		return model.ONNX.FilePath(filepath.Join(c.ModelsPath(), string(model.Name)))
+	}
+	if vision.Config == nil {
+		return ""
+	}
+	model := vision.Config.Model(vision.ModelTypeNsfw)
+	if model == nil {
+		return ""
+	}
+	path := model.Path
+	if path == "" {
+		path = clean.TypeLowerUnderscore(model.Name)
+	}
+	path = filepath.Join(c.ModelsPath(), clean.Path(path))
+	if strings.EqualFold(filepath.Ext(path), ".onnx") {
+		return path
+	}
+	fileName := filepath.Base(path) + ".onnx"
+	if model.ONNX != nil && model.ONNX.File != "" {
+		fileName = model.ONNX.File
+	}
+	return filepath.Join(path, fileName)
+}
+
+// NsfwModelRuntime returns the engine used by the configured NSFW model.
+func (c *Config) NsfwModelRuntime() string {
+	if c == nil || c.EffectiveNSFWModel() == nsfw.ModelNone {
+		return "none"
+	}
+	if vision.Config != nil {
+		if model := vision.Config.Model(vision.ModelTypeNsfw); model != nil {
+			if runtime := model.EngineName(); runtime != vision.EngineLocal {
+				return runtime
+			}
+			return vision.EngineONNX
+		}
+	}
+	return vision.EngineONNX
 }
 
 // DetectNSFW checks if NSFW photos should be detected and flagged.

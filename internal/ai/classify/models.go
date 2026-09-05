@@ -97,7 +97,7 @@ func imageNetModel(name ModelName, displayName, fileName, sha256, source string,
 			File:         fileName,
 			Source:       source,
 			SHA256:       sha256,
-			License:      "unverified",
+			License:      "Apache-2.0",
 			Quantization: "fp32",
 			Input: &onnx.Input{
 				Name:       "input",

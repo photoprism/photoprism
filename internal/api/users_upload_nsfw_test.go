@@ -3,12 +3,16 @@ package api
 import (
 	"errors"
 	"fmt"
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/ai/vision"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
@@ -19,12 +23,36 @@ func stubNSFW(t *testing.T, results []nsfw.Result, err error) {
 	vision.SetNSFWFunc(func(vision.Files, media.Src) ([]nsfw.Result, error) {
 		return results, err
 	})
+	previousPreview := nsfwUploadPreview
+	nsfwUploadPreview = func(fileName string) (string, func(), error) {
+		return fileName, func() {}, nil
+	}
 
-	t.Cleanup(func() { vision.SetNSFWFunc(nil) })
+	t.Cleanup(func() {
+		vision.SetNSFWFunc(nil)
+		nsfwUploadPreview = previousPreview
+	})
+}
+
+// TestUploadScreeningPreview verifies sidecars are not sent to the image detector.
+func TestUploadScreeningPreview(t *testing.T) {
+	fileName := filepath.Join(t.TempDir(), "photo.xmp")
+	require.NoError(t, os.WriteFile(fileName, []byte("<x:xmpmeta/>"), fs.ModeFile))
+	preview, cleanup, err := uploadScreeningPreview(fileName)
+	require.NoError(t, err)
+	assert.Empty(t, preview)
+	require.NotNil(t, cleanup)
+	cleanup()
 }
 
 // TestNsfwRejectsUpload verifies that screening requires an explicit safe decision.
 func TestNsfwRejectsUpload(t *testing.T) {
+	t.Run("DisabledDetectorIsAdmitted", func(t *testing.T) {
+		previous := vision.Config
+		vision.Config = &vision.ConfigValues{Models: vision.Models{{Type: vision.ModelTypeNsfw, Disabled: true}}}
+		t.Cleanup(func() { vision.Config = previous })
+		assert.False(t, nsfwRejectsUpload("unscreened.jpg"))
+	})
 	t.Run("SafeIsAdmitted", func(t *testing.T) {
 		stubNSFW(t, []nsfw.Result{nsfw.NewResult(0.01, nsfw.DefaultThreshold)}, nil)
 		assert.False(t, nsfwRejectsUpload("holiday.jpg"))
@@ -60,5 +88,12 @@ func TestNsfwRejectsUpload(t *testing.T) {
 	t.Run("NotConfiguredIsAdmitted", func(t *testing.T) {
 		stubNSFW(t, nil, fmt.Errorf("%w: missing nsfw model", nsfw.ErrNotConfigured))
 		assert.False(t, nsfwRejectsUpload("unscreened.jpg"))
+	})
+	t.Run("PreviewFailureIsRejected", func(t *testing.T) {
+		stubNSFW(t, []nsfw.Result{nsfw.NewResult(0.01, nsfw.DefaultThreshold)}, nil)
+		nsfwUploadPreview = func(string) (string, func(), error) {
+			return "", nil, errors.New("preview failed")
+		}
+		assert.True(t, nsfwRejectsUpload("camera.raw"))
 	})
 }

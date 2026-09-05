@@ -342,7 +342,9 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"label-model-runtime", c.LabelModelRuntime()},
 		{"nasnet-model-path", c.NasnetModelPath()},
 		{"facenet-model-path", c.FacenetModelPath()},
+		{"nsfw-model", string(c.EffectiveNSFWModel())},
 		{"nsfw-model-path", c.NsfwModelPath()},
+		{"nsfw-model-runtime", c.NsfwModelRuntime()},
 		{"detect-nsfw", fmt.Sprintf("%t", c.DetectNSFW())},
 	}...)
 

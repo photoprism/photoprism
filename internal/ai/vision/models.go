@@ -2,37 +2,15 @@ package vision
 
 import (
 	"github.com/photoprism/photoprism/internal/ai/classify"
+	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/ai/tensorflow"
 	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
 )
 
 // Default computer vision model configuration.
 var (
-	NasnetModel = defaultLabelModel()
-	NsfwModel   = &Model{
-		Type:       ModelTypeNsfw,
-		Default:    true,
-		Name:       "nsfw",
-		Version:    VersionLatest,
-		Resolution: 224,
-		TensorFlow: &tensorflow.ModelInfo{
-			TFVersion: "1.12.0",
-			Tags:      []string{"serve"},
-			Input: &tensorflow.PhotoInput{
-				Name:        "input_tensor",
-				Height:      224,
-				Width:       224,
-				OutputIndex: 0,
-				Shape:       tensorflow.DefaultPhotoInputShape(),
-			},
-			Output: &tensorflow.ModelOutput{
-				Name:          "nsfw_cls_model/final_prediction",
-				NumOutputs:    5,
-				OutputIndex:   0,
-				OutputsLogits: false,
-			},
-		},
-	}
+	NasnetModel  = defaultLabelModel()
+	NsfwModel    = NewNsfwModel(nsfw.DefaultModelName())
 	FacenetModel = &Model{
 		Type:       ModelTypeFace,
 		Default:    true,
@@ -100,5 +78,26 @@ func NewLabelModel(name classify.ModelName) *Model {
 		ONNX:           description.ONNX,
 		LabelFile:      description.LabelFile,
 		CanonicalOrder: description.CanonicalOrder,
+	}
+}
+
+// NewNsfwModel returns a vision model backed by a registered ONNX detector.
+func NewNsfwModel(name nsfw.ModelName) *Model {
+	description := nsfw.FindModel(name)
+	if description == nil {
+		return nil
+	}
+
+	return &Model{
+		Type:              ModelTypeNsfw,
+		Default:           description.Name == nsfw.DefaultModelName(),
+		Name:              string(description.Name),
+		Version:           VersionLatest,
+		Resolution:        description.ONNX.Input.Width,
+		ONNX:              description.ONNX,
+		Reduction:         description.Reduction,
+		UnsafeClassIndex:  description.UnsafeClassIndex,
+		NeutralClassIndex: description.NeutralClassIndex,
+		DefaultThreshold:  description.DefaultThreshold,
 	}
 }

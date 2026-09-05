@@ -35,34 +35,38 @@ var (
 
 // Model represents a computer vision model configuration.
 type Model struct {
-	Type           ModelType             `yaml:"Type,omitempty" json:"type,omitempty"`
-	Default        bool                  `yaml:"Default,omitempty" json:"default,omitempty"`
-	Model          string                `yaml:"Model,omitempty" json:"model,omitempty"`
-	Name           string                `yaml:"Name,omitempty" json:"name,omitempty"`
-	Version        string                `yaml:"Version,omitempty" json:"version,omitempty"`
-	Engine         ModelEngine           `yaml:"Engine,omitempty" json:"engine,omitempty"`
-	Run            RunType               `yaml:"Run,omitempty" json:"Run,omitempty"` // "auto", "never", "manual", "always", "newly-indexed", "on-schedule"
-	System         string                `yaml:"System,omitempty" json:"system,omitempty"`
-	Prompt         string                `yaml:"Prompt,omitempty" json:"prompt,omitempty"`
-	Format         string                `yaml:"Format,omitempty" json:"format,omitempty"`
-	Normalize      NormalizeType         `yaml:"Normalize,omitempty" json:"normalize,omitempty"` // "single-word", "phrase", or "false"
-	Schema         string                `yaml:"Schema,omitempty" json:"schema,omitempty"`
-	SchemaFile     string                `yaml:"SchemaFile,omitempty" json:"schemaFile,omitempty"`
-	Resolution     int                   `yaml:"Resolution,omitempty" json:"resolution,omitempty"`
-	TensorFlow     *tensorflow.ModelInfo `yaml:"TensorFlow,omitempty" json:"tensorflow,omitempty"`
-	ONNX           *onnx.ModelInfo       `yaml:"ONNX,omitempty" json:"onnx,omitempty"`
-	LabelFile      string                `yaml:"LabelFile,omitempty" json:"labelFile,omitempty"`
-	CanonicalOrder bool                  `yaml:"CanonicalOrder,omitempty" json:"canonicalOrder,omitempty"`
-	Options        *ModelOptions         `yaml:"Options,omitempty" json:"options,omitempty"`
-	Service        Service               `yaml:"Service,omitempty" json:"service"`
-	Path           string                `yaml:"Path,omitempty" json:"-"`
-	Disabled       bool                  `yaml:"Disabled,omitempty" json:"disabled,omitempty"`
-	classifyModel  *classify.Model
-	faceModel      face.Embedder
-	nsfwModel      *nsfw.Model
-	nsfwErr        error
-	schemaOnce     sync.Once
-	schema         string
+	Type              ModelType             `yaml:"Type,omitempty" json:"type,omitempty"`
+	Default           bool                  `yaml:"Default,omitempty" json:"default,omitempty"`
+	Model             string                `yaml:"Model,omitempty" json:"model,omitempty"`
+	Name              string                `yaml:"Name,omitempty" json:"name,omitempty"`
+	Version           string                `yaml:"Version,omitempty" json:"version,omitempty"`
+	Engine            ModelEngine           `yaml:"Engine,omitempty" json:"engine,omitempty"`
+	Run               RunType               `yaml:"Run,omitempty" json:"Run,omitempty"` // "auto", "never", "manual", "always", "newly-indexed", "on-schedule"
+	System            string                `yaml:"System,omitempty" json:"system,omitempty"`
+	Prompt            string                `yaml:"Prompt,omitempty" json:"prompt,omitempty"`
+	Format            string                `yaml:"Format,omitempty" json:"format,omitempty"`
+	Normalize         NormalizeType         `yaml:"Normalize,omitempty" json:"normalize,omitempty"` // "single-word", "phrase", or "false"
+	Schema            string                `yaml:"Schema,omitempty" json:"schema,omitempty"`
+	SchemaFile        string                `yaml:"SchemaFile,omitempty" json:"schemaFile,omitempty"`
+	Resolution        int                   `yaml:"Resolution,omitempty" json:"resolution,omitempty"`
+	TensorFlow        *tensorflow.ModelInfo `yaml:"TensorFlow,omitempty" json:"tensorflow,omitempty"`
+	ONNX              *onnx.ModelInfo       `yaml:"ONNX,omitempty" json:"onnx,omitempty"`
+	LabelFile         string                `yaml:"LabelFile,omitempty" json:"labelFile,omitempty"`
+	CanonicalOrder    bool                  `yaml:"CanonicalOrder,omitempty" json:"canonicalOrder,omitempty"`
+	Reduction         nsfw.Reduction        `yaml:"Reduction,omitempty" json:"reduction,omitempty"`
+	UnsafeClassIndex  int                   `yaml:"UnsafeClassIndex,omitempty" json:"unsafeClassIndex,omitempty"`
+	NeutralClassIndex int                   `yaml:"NeutralClassIndex,omitempty" json:"neutralClassIndex,omitempty"`
+	DefaultThreshold  float32               `yaml:"DefaultThreshold,omitempty" json:"defaultThreshold,omitempty"`
+	Options           *ModelOptions         `yaml:"Options,omitempty" json:"options,omitempty"`
+	Service           Service               `yaml:"Service,omitempty" json:"service"`
+	Path              string                `yaml:"Path,omitempty" json:"-"`
+	Disabled          bool                  `yaml:"Disabled,omitempty" json:"disabled,omitempty"`
+	classifyModel     *classify.Model
+	faceModel         face.Embedder
+	nsfwModel         *nsfw.Model
+	nsfwErr           error
+	schemaOnce        sync.Once
+	schema            string
 }
 
 // Models represents a set of computer vision models.
@@ -171,7 +175,7 @@ func (m *Model) IsDefault() bool {
 	case ModelTypeLabels:
 		return m.ONNX != nil && m.Name == NasnetModel.Name
 	case ModelTypeNsfw:
-		return m.TensorFlow != nil && m.Name == NsfwModel.Name
+		return m.ONNX != nil && m.Name == NsfwModel.Name
 	case ModelTypeFace:
 		return m.TensorFlow != nil && m.Name == FacenetModel.Name
 	}
@@ -882,13 +886,13 @@ func (m *Model) NsfwModel() *nsfw.Model {
 		return nil
 	}
 
-	switch m.Name {
-	case "":
+	switch {
+	case m.Name == "":
 		log.Warnf("vision: missing name, model instance cannot be created")
 		return nil
-	case NsfwModel.Name, "nsfw":
-		// Load and initialize the bundled TensorFlow detector.
-		model := nsfw.NewModel(GetNsfwModelPath(), NsfwModel.TensorFlow, m.Disabled)
+	case nsfw.FindModel(nsfw.ModelName(m.Name)) != nil:
+		// Load and initialize a registered ONNX detector.
+		model := nsfw.NewRegisteredModel(GetModelsPath(), nsfw.ModelName(m.Name), m.Disabled)
 
 		if err := model.Init(); err != nil {
 			m.nsfwErr = err
@@ -896,6 +900,7 @@ func (m *Model) NsfwModel() *nsfw.Model {
 			return nil
 		}
 
+		log.Infof("vision: initialized %s nsfw model at threshold %.4f", clean.Log(m.Name), resolvedNSFWThreshold(model))
 		m.nsfwModel = model
 	default:
 		// Set model path from model name if no path is configured.
@@ -903,23 +908,24 @@ func (m *Model) NsfwModel() *nsfw.Model {
 			m.Path = clean.Path(clean.TypeLowerUnderscore(m.Name))
 		}
 
-		// Set default thumbnail resolution if no tags are configured.
-		if m.Resolution <= 0 {
-			m.Resolution = DefaultResolution
+		if m.ONNX == nil {
+			m.ONNX = &onnx.ModelInfo{}
+		}
+		if m.ONNX.Input == nil && m.Resolution > 0 {
+			m.ONNX.Input = &onnx.Input{Width: m.Resolution, Height: m.Resolution}
+		}
+		modelPath := filepath.Join(GetModelsPath(), clean.Path(m.Path))
+		if !strings.EqualFold(filepath.Ext(modelPath), ".onnx") {
+			if m.ONNX.File == "" {
+				m.ONNX.File = filepath.Base(m.Path) + ".onnx"
+			}
+			modelPath = m.ONNX.FilePath(modelPath)
 		}
 
-		if m.TensorFlow == nil {
-			m.TensorFlow = &tensorflow.ModelInfo{}
-		}
-
-		if m.TensorFlow.Input == nil {
-			m.TensorFlow.Input = new(tensorflow.PhotoInput)
-		}
-
-		m.TensorFlow.Input.SetResolution(m.Resolution)
-
-		// Try to load custom model based on the configuration values.
-		model := nsfw.NewModel(GetModelPath(m.Path), m.TensorFlow, m.Disabled)
+		// Try to load a custom ONNX model based on the configuration values.
+		model := nsfw.NewModel(nsfw.Settings{Name: nsfw.ModelName(m.Name), ModelPath: modelPath,
+			Info: m.ONNX, Reduction: m.Reduction, UnsafeClassIndex: m.UnsafeClassIndex,
+			NeutralClassIndex: m.NeutralClassIndex, DefaultThreshold: m.DefaultThreshold, Disabled: m.Disabled})
 
 		if err := model.Init(); err != nil {
 			m.nsfwErr = err
@@ -927,10 +933,19 @@ func (m *Model) NsfwModel() *nsfw.Model {
 			return nil
 		}
 
+		log.Infof("vision: initialized %s nsfw model at threshold %.4f", clean.Log(m.Name), resolvedNSFWThreshold(model))
 		m.nsfwModel = model
 	}
 
 	return m.nsfwModel
+}
+
+// resolvedNSFWThreshold returns the explicit operating point or the model fallback.
+func resolvedNSFWThreshold(model *nsfw.Model) float32 {
+	if Config != nil && Config.Thresholds.NSFWIsSet() {
+		return Config.Thresholds.GetNSFWFloat32()
+	}
+	return model.DefaultThreshold()
 }
 
 // Clone returns a copy of the model with its own lazily derived state. Nil receivers return nil.

@@ -18,12 +18,22 @@ func SetNSFWFunc(fn func(Files, media.Src) ([]nsfw.Result, error)) {
 		return
 	}
 
-	nsfwFunc = fn
+	nsfwFunc = func(images Files, mediaSrc media.Src, _ *float32) ([]nsfw.Result, error) {
+		return fn(images, mediaSrc)
+	}
 }
 
 // DetectNSFW checks images for inappropriate content and generates probability scores grouped by category.
 func DetectNSFW(images Files, mediaSrc media.Src) (result []nsfw.Result, err error) {
-	return nsfwFunc(images, mediaSrc)
+	return nsfwFunc(images, mediaSrc, nil)
+}
+
+// DetectNSFWWithDefault uses fallback unless an operator threshold is configured.
+func DetectNSFWWithDefault(images Files, mediaSrc media.Src, fallback float32) (result []nsfw.Result, err error) {
+	if Config != nil && Config.Thresholds.NSFWIsSet() {
+		return nsfwFunc(images, mediaSrc, nil)
+	}
+	return nsfwFunc(images, mediaSrc, &fallback)
 }
 
 // NsfwThreshold returns the configured unsafe probability or the package default.
@@ -32,7 +42,7 @@ func NsfwThreshold() float32 {
 		return Config.Thresholds.GetNSFWFloat32()
 	}
 
-	return nsfw.DefaultThreshold
+	return float32(DefaultNSFWThreshold) / 100
 }
 
 // undecidedResults returns count undecided results, so a caller that ignores the error still
@@ -47,7 +57,7 @@ func undecidedResults(count int, reason string) []nsfw.Result {
 	return result
 }
 
-func nsfwInternal(images Files, mediaSrc media.Src) (result []nsfw.Result, err error) {
+func nsfwInternal(images Files, mediaSrc media.Src, fallback *float32) (result []nsfw.Result, err error) {
 	// Return if no thumbnail filenames were given.
 	if len(images) == 0 {
 		return result, errors.New("at least one image required")
@@ -55,6 +65,9 @@ func nsfwInternal(images Files, mediaSrc media.Src) (result []nsfw.Result, err e
 
 	result = undecidedResults(len(images), "not evaluated")
 	threshold := NsfwThreshold()
+	if fallback != nil && *fallback > 0 && *fallback <= 1 {
+		threshold = *fallback
+	}
 
 	// Return if there is no configuration or no image classification models are configured.
 	if Config == nil {
@@ -92,6 +105,9 @@ func nsfwInternal(images Files, mediaSrc media.Src) (result []nsfw.Result, err e
 
 			result = normalizeNsfwResults(apiResponse.Result.Nsfw, len(images), threshold)
 		} else if detector := model.NsfwModel(); detector != nil {
+			if fallback == nil && !Config.Thresholds.NSFWIsSet() {
+				threshold = detector.DefaultThreshold()
+			}
 			// Detect with the local model.
 			for i := range images {
 				var detected nsfw.Result

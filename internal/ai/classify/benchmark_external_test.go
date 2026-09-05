@@ -28,6 +28,10 @@ type labelBenchmarkCorpus struct {
 	ConfidenceThreshold          int                   `json:"confidenceThreshold"`
 	Thresholds                   []int                 `json:"thresholds"`
 	Models                       []ModelName           `json:"models"`
+	BaselineLoadMilliseconds     float64               `json:"baselineLoadMilliseconds,omitempty"`
+	BaselineP50Milliseconds      float64               `json:"baselineP50Milliseconds,omitempty"`
+	BaselineP95Milliseconds      float64               `json:"baselineP95Milliseconds,omitempty"`
+	BaselinePeakRSSBytes         uint64                `json:"baselinePeakRssBytes,omitempty"`
 	BaselineThresholdActivations map[string]int        `json:"baselineThresholdActivations"`
 	Images                       []labelBenchmarkImage `json:"images"`
 }

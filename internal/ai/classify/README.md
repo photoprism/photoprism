@@ -1,6 +1,6 @@
 ## PhotoPrism — Classification Package
 
-**Last Updated:** September 2, 2026
+**Last Updated:** September 5, 2026
 
 ### Overview
 
@@ -42,14 +42,15 @@ Use `vision.yml` to override `Path`, `LabelFile`, `Resolution`, or `ONNX` fields
 
 ### Exporting Candidates
 
-The offline exporter downloads an immutable publisher checkpoint, records the source and artifact SHA-256 values, exports a fixed `[1, 3, 224, 224]` FP32 graph at opset 17, embeds preprocessing/provenance metadata, runs the ONNX checker and shape inference, and compares a normalized fixture through PyTorch and ONNX Runtime:
+The offline exporter downloads an immutable Apache-2.0 publisher checkpoint, records the source and artifact SHA-256 values, exports a fixed `[1, 3, 224, 224]` FP32 graph at opset 17, embeds preprocessing/provenance metadata, runs the ONNX checker and shape inference, and compares a normalized fixture through PyTorch and ONNX Runtime:
 
 ```bash
 scripts/ai/export-label-models.py --model all \
+  --license Apache-2.0 \
   --exported-at 2026-09-02T04:30:00Z
 ```
 
-Its manifest records the command, fixed metadata timestamp, and Python, PyTorch, timm, ONNX, ONNX Runtime, and NumPy versions. Supplying the same timestamp prevents wall-clock metadata from changing an otherwise identical graph checksum. RepViT is reparameterized before export, and distilled models must return one final combined logits tensor in eval mode. The embedded license defaults to `unverified`; pass `--license` only after the weight-specific review is complete.
+Its manifest records the command, fixed metadata timestamp, and Python, PyTorch, timm, ONNX, ONNX Runtime, and NumPy versions. Supplying the same timestamp prevents wall-clock metadata from changing an otherwise identical graph checksum. RepViT is reparameterized before export, and distilled models must return one final combined logits tensor in eval mode. Pass the reviewed license with `--license Apache-2.0` so newly exported metadata records the same publisher terms as the registry.
 
 ### Benchmarking & Calibration
 

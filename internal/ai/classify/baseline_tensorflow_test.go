@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
 	tf "github.com/wamuir/graft/tensorflow"
@@ -39,18 +40,23 @@ func TestGenerateTensorFlowLabelBaseline(t *testing.T) {
 		t.Skipf("set %s and %s to generate a baseline", labelBaselineDirEnv, labelBaselineReportEnv)
 	}
 
+	loadStarted := time.Now()
 	baseline := newTensorFlowBaseline(t)
 	corpus := &labelBenchmarkCorpus{
 		ConfidenceThreshold:          10,
 		Thresholds:                   labelBenchmarkThresholds(),
+		BaselineLoadMilliseconds:     durationMilliseconds(time.Since(loadStarted)),
 		BaselineThresholdActivations: make(map[string]int),
 	}
 
+	latencies := make([]time.Duration, 0)
 	imagePaths := labelBaselineImages(t, corpusDir)
 	for _, imagePath := range imagePaths {
 		data, err := os.ReadFile(imagePath) //nolint:gosec // explicit benchmark corpus
 		require.NoError(t, err)
+		started := time.Now()
 		probabilities := baseline.infer(t, data)
+		latencies = append(latencies, time.Since(started))
 		model := &Model{labels: baseline.labels}
 		visible := labelNames(model.bestLabels(probabilities, corpus.ConfidenceThreshold))
 		relative, relErr := filepath.Rel(filepath.Dir(reportPath), imagePath)
@@ -65,6 +71,10 @@ func TestGenerateTensorFlowLabelBaseline(t *testing.T) {
 			corpus.BaselineThresholdActivations[key] += len(model.bestLabels(probabilities, threshold))
 		}
 	}
+	sort.Slice(latencies, func(i, j int) bool { return latencies[i] < latencies[j] })
+	corpus.BaselineP50Milliseconds = durationMilliseconds(percentileDuration(latencies, 0.50))
+	corpus.BaselineP95Milliseconds = durationMilliseconds(percentileDuration(latencies, 0.95))
+	corpus.BaselinePeakRSSBytes = peakRSSBytes()
 
 	require.NotEmpty(t, corpus.Images)
 	data, err := json.MarshalIndent(corpus, "", "  ")
