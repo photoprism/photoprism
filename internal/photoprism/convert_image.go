@@ -84,6 +84,7 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 
 	fileName := f.RelName(w.conf.OriginalsPath())
 	fileOrientation := media.KeepOrientation
+	sourceOrientation := 0
 	fileProjection := projection.Unknown
 	xmpName := fs.SidecarXMP.Find(f.FileName(), false)
 
@@ -220,6 +221,7 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 
 		log.Infof("convert: %s created in %s (%s)", clean.Log(filepath.Base(imageName)), time.Since(start), filepath.Base(cmd.Path))
 		fileOrientation = c.Orientation
+		sourceOrientation = c.SourceOrientation
 		fileProjection = c.Projection
 		break
 	}
@@ -238,6 +240,12 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 	if fileOrientation == media.ResetOrientation {
 		if err = result.ChangeOrientation(1); err != nil {
 			log.Warnf("convert: %s in %s (change orientation)", err, clean.Log(result.RootRelName()))
+		}
+	} else if sourceOrientation > 1 {
+		if err = result.ChangeOrientation(sourceOrientation); err != nil {
+			log.Warnf("convert: %s in %s (copy source orientation)", err, clean.Log(result.RootRelName()))
+		} else if result, err = NewMediaFile(imageName); err != nil {
+			return result, err
 		}
 	}
 
