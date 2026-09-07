@@ -1,10 +1,10 @@
 ## PhotoPrism — NSFW Package
 
-**Last Updated:** September 5, 2026
+**Last Updated:** September 7, 2026
 
 ### Overview
 
-`internal/ai/nsfw` runs local NSFW classifiers through ONNX Runtime and reduces model-specific outputs to one unsafe probability. AdamCodd ViT-Base INT8 is the bundled default; FP32, Falconsai, Freepik, Yahoo OpenNSFW, custom ONNX graphs, and remote vision services use the same result contract.
+`internal/ai/nsfw` runs local NSFW classifiers through ONNX Runtime and reduces model-specific outputs to one unsafe probability. Yahoo OpenNSFW is the bundled default; AdamCodd FP32/INT8, Falconsai, Freepik, custom ONNX graphs, and remote vision services use the same result contract.
 
 ### The Result Contract
 
@@ -53,10 +53,10 @@ When the shortcut is active, the labels-path check in `index_mediafile.go` (`lab
 
 ```yaml
 Thresholds:
-  NSFW: 98
+  NSFW: 80
 ```
 
-Left unset, local ONNX indexing uses the conservative provisional model default of `98` until the representative corpus review is complete. Upload screening keeps its established `75` operating point. An explicit `Thresholds.NSFW` value overrides both. Unset is a distinct state because a threshold tuned for one model's output distribution does not transfer to another model.
+Left unset, local ONNX indexing uses the selected model's fallback threshold. Yahoo OpenNSFW uses `80`; the other bundled models keep their conservative provisional `98` fallback. Upload screening keeps its established `75` operating point. An explicit `Thresholds.NSFW` value overrides both. Unset is a distinct state because a threshold tuned for one model's output distribution does not transfer to another model.
 
 ### Calibration & Benchmarking
 

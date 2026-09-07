@@ -9,6 +9,15 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// TestDefaultModel verifies the bundled detector and its calibrated fallback threshold.
+func TestDefaultModel(t *testing.T) {
+	description := FindModel(DefaultModelName())
+
+	require.NotNil(t, description)
+	assert.Equal(t, ModelYahoo, description.Name)
+	assert.InDelta(t, 0.80, description.DefaultThreshold, 1e-6)
+}
+
 // TestResultZeroValue verifies that an unfilled result is never read as a clearance.
 func TestResultZeroValue(t *testing.T) {
 	var result Result

@@ -50,6 +50,8 @@ type Description struct {
 	DefaultThreshold  float32
 }
 
+const yahooDefaultThreshold float32 = 0.80
+
 // Models contains the supported NSFW model descriptions.
 var Models = map[ModelName]*Description{
 	ModelAdamCoddFP32: binaryModel(
@@ -126,7 +128,7 @@ var Models = map[ModelName]*Description{
 		},
 		Reduction:        ReductionSoftmaxUnsafe,
 		UnsafeClassIndex: 1,
-		DefaultThreshold: DefaultThreshold,
+		DefaultThreshold: yahooDefaultThreshold,
 	},
 }
 
@@ -157,9 +159,9 @@ func binaryModel(name ModelName, displayName, fileName, sha256, source, quantiza
 	}
 }
 
-// DefaultModelName returns the provisional bundled detector.
+// DefaultModelName returns the bundled detector.
 func DefaultModelName() ModelName {
-	return ModelAdamCoddINT8
+	return ModelYahoo
 }
 
 // FindModel returns the registered description for name.
