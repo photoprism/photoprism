@@ -23,6 +23,7 @@ import (
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -176,6 +177,18 @@ func (c *Config) DatabaseDSN() string {
 			c.DatabaseTimeout())
 	}
 
+	// If missing, add the required parameters to the configured SQLite DSN.
+	if c.DatabaseDriver() == dsn.DriverSQLite3 && !strings.Contains(c.options.DatabaseDSN, "?") {
+		c.options.DatabaseDSN = fmt.Sprintf(
+			"%s?%s",
+			c.options.DatabaseDSN,
+			dsn.Params[dsn.DriverSQLite3])
+	}
+	// If sqlite: alias, replace with file: for SQLite driver's DSN
+	if c.DatabaseDriver() == dsn.DriverSQLite3 && strings.HasPrefix(strings.ToLower(c.options.DatabaseDSN), "sqlite:") {
+		c.options.DatabaseDSN = "file:" + c.options.DatabaseDSN[7:]
+	}
+
 	return c.options.DatabaseDSN
 }
 
@@ -219,8 +232,7 @@ func (c *Config) ParseDatabaseDSN() {
 
 // DatabaseFile returns the filename part of a sqlite database DSN.
 func (c *Config) DatabaseFile() string {
-	fileName, _, _ := strings.Cut(strings.TrimPrefix(c.DatabaseDSN(), "file:"), "?")
-	return fileName
+	return dsn.Parse(c.DatabaseDSN()).SQLiteFilename()
 }
 
 // DatabaseServer the database server.
@@ -451,6 +463,11 @@ func (c *Config) CloseDb() error {
 	}
 
 	if c.db != nil {
+		if c.DatabaseDriver() == dsn.DriverSQLite3 {
+			if err := c.db.Exec("PRAGMA wal_checkpoint(FULL)").Error; err != nil {
+				log.Warnf("config: could not initiate wal_checkpoint (%v)", err)
+			}
+		}
 		if err := c.db.Close(); err == nil {
 			c.db = nil
 			entity.SetDbProvider(nil)
@@ -639,6 +656,75 @@ func (c *Config) connectDb() error {
 
 	if dbDsn == "" {
 		return errors.New("DSN not specified")
+	}
+
+	// Make sure that the database and associated files exist or can be created.
+	if dbDriver == dsn.DriverSQLite3 {
+		dbFileName := c.DatabaseFile()
+		dbShmFileName := dbFileName + "-shm"
+		dbWalFileName := dbFileName + "-wal"
+		dbFilePath := filepath.Dir(dbFileName)
+		dbwOk, dbsOk, dbpOk := false, false, false
+		if fs.PathExists(dbFilePath) {
+			dbpOk = fs.Writable(dbFilePath)
+			if fs.FileExists(dbFileName) {
+				if fs.Writable(dbFileName) {
+					if fs.FileExists(dbShmFileName) {
+						if !fs.Writable(dbShmFileName) {
+							err := fmt.Errorf("config: database shm file from dsn not writable")
+							event.SystemError([]string{"config", "database shm", "file", "%s"}, clean.Error(err))
+							return err
+						}
+						dbsOk = true
+					}
+					if fs.FileExists(dbWalFileName) {
+						if !fs.Writable(dbWalFileName) {
+							err := fmt.Errorf("config: database wal file from dsn not writable")
+							event.SystemError([]string{"config", "database wal", "file", "%s"}, clean.Error(err))
+							return err
+						}
+						dbwOk = true
+					}
+					if (!dbsOk || !dbwOk) && !dbpOk {
+						err := fmt.Errorf("config: database path from dsn not writable and db files need to be created")
+						event.SystemError([]string{"config", "database files", "path", "%s"}, clean.Error(err))
+						return err
+					}
+				} else {
+					err := fmt.Errorf("config: database file from dsn not writable")
+					event.SystemError([]string{"config", "database", "file", "%s"}, clean.Error(err))
+					return err
+				}
+			} else {
+				if dbpOk {
+					// As the database doesn't exist (and we have write access to the path),
+					// the wal and shm should also not exist.  journal file is ignored as it's not used in wal mode.
+					// The driver seems to remove them automatically, but just in case there are permissions issues
+					// try and remove them ourselves, so you get a clear error.
+					if fs.FileExists(dbShmFileName) {
+						if err := os.Remove(dbShmFileName); err != nil {
+							event.SystemError([]string{"config", "database", "shm remove", "%s"}, clean.Error(err))
+							return err
+						}
+					}
+					if fs.FileExists(dbWalFileName) {
+						if err := os.Remove(dbWalFileName); err != nil {
+							event.SystemError([]string{"config", "database", "wal remove", "%s"}, clean.Error(err))
+							return err
+						}
+					}
+				} else {
+					err := fmt.Errorf("config: database path from dsn not writable")
+					event.SystemError([]string{"config", "database", "path", "%s"}, clean.Error(err))
+					return err
+				}
+			}
+		} else {
+			if err := fs.MkdirAll(dbFilePath); err != nil {
+				event.SystemError([]string{"config", "database", "path", "%s"}, clean.Error(err))
+				return err
+			}
+		}
 	}
 
 	// Open database connection.

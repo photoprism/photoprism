@@ -138,17 +138,19 @@ func NewTestOptionsForPath(dbName, dataPath string) *Options {
 	// Set default database DSN.
 	if testDriver == dsn.DriverSQLite3 {
 		if testDsn == "" && dbName != "" {
-			if testDsn = fmt.Sprintf(".%s.db", clean.TypeLower(dbName)); !fs.FileExists(testDsn) {
-				log.Tracef("sqlite: test database %s does not already exist", clean.Log(testDsn))
-			} else if err := os.Remove(testDsn); err != nil {
-				log.Errorf("sqlite: failed to remove existing test database %s (%s)", clean.Log(testDsn), err)
+			wDsn := dsn.Parse(fmt.Sprintf(".%s.db?%s", clean.TypeLower(dbName), dsn.Params[dsn.DriverSQLite3]))
+			if testDsn = wDsn.DSN; !fs.FileExists(wDsn.SQLiteFilename()) {
+				log.Tracef("sqlite: test database %s does not already exist", clean.Log(wDsn.SQLiteFilename()))
+			} else if err := fs.PurgeSQLiteDbFiles(wDsn.SQLiteFilename()); err != nil {
+				log.Errorf("sqlite: failed to remove existing test database %s (%s)", clean.Log(wDsn.SQLiteFilename()), err)
 			}
 		} else if testDsn == "" || testDsn == dsn.SQLiteTestDB {
 			testDsn = dsn.SQLiteTestDB
-			if !fs.FileExists(testDsn) {
-				log.Tracef("sqlite: test database %s does not already exist", clean.Log(testDsn))
-			} else if err := os.Remove(testDsn); err != nil {
-				log.Errorf("sqlite: failed to remove existing test database %s (%s)", clean.Log(testDsn), err)
+			wDsn := dsn.Parse(testDsn)
+			if !fs.FileExists(wDsn.SQLiteFilename()) {
+				log.Tracef("sqlite: test database %s does not already exist", clean.Log(wDsn.SQLiteFilename()))
+			} else if err := fs.PurgeSQLiteDbFiles(wDsn.SQLiteFilename()); err != nil {
+				log.Errorf("sqlite: failed to remove existing test database %s (%s)", clean.Log(wDsn.SQLiteFilename()), err)
 			}
 		}
 	} else {
@@ -283,8 +285,10 @@ func NewMinimalTestConfigWithDb(dbName, dataPath string) *Config {
 	cachedDb := false
 
 	// Try to restore test db from cache.
-	if len(testDbCache) > 0 && c.DatabaseDriver() == dsn.DriverSQLite3 && !fs.FileExists(c.DatabaseDSN()) {
-		if err := os.WriteFile(c.DatabaseDSN(), testDbCache, fs.ModeFile); err != nil {
+	if len(testDbCache) > 0 && c.DatabaseDriver() == dsn.DriverSQLite3 && !fs.FileExists(c.DatabaseFile()) {
+		if err := fs.PurgeSQLiteDbFiles(c.DatabaseFile()); err != nil { // Make sure journal, wal and shm files are also removed
+			log.Warnf("config: %s (remove test database)", err)
+		} else if err := os.WriteFile(c.DatabaseFile(), testDbCache, fs.ModeFile); err != nil {
 			log.Warnf("config: %s (restore test database)", err)
 		} else {
 			cachedDb = true
@@ -303,7 +307,7 @@ func NewMinimalTestConfigWithDb(dbName, dataPath string) *Config {
 
 	c.InitTestDb()
 
-	if testDbCache == nil && c.DatabaseDriver() == dsn.DriverSQLite3 && fs.FileExistsNotEmpty(c.DatabaseDSN()) {
+	if testDbCache == nil && c.DatabaseDriver() == dsn.DriverSQLite3 && fs.FileExistsNotEmpty(c.DatabaseFile()) {
 		testDbMutex.Lock()
 		defer testDbMutex.Unlock()
 
@@ -311,9 +315,12 @@ func NewMinimalTestConfigWithDb(dbName, dataPath string) *Config {
 			return c
 		}
 
-		if testDb, readErr := os.ReadFile(c.DatabaseDSN()); readErr != nil {
+		if err := c.db.Exec("PRAGMA wal_checkpoint(FULL)").Error; err != nil {
+			log.Warnf("config: could not initiate wal_checkpoint (%v)", err)
+		} else if testDb, readErr := os.ReadFile(c.DatabaseFile()); readErr != nil {
 			log.Warnf("config: could not cache test database (%s)", readErr)
 		} else {
+			log.Infof("config: cached test database (%s)", c.DatabaseFile())
 			testDbCache = testDb
 		}
 	}
