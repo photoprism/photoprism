@@ -389,14 +389,16 @@ func (m *Model) buildBlob(img image.Image) ([]float32, error) {
 	for y := range input.Height {
 		for x := range input.Width {
 			red, green, blue, _ := img.At(bounds.Min.X+x, bounds.Min.Y+y).RGBA()
-			channels := [onnx.Channels]float32{(float32(red>>8) - m.mean[0]) * m.scales[0],
-				(float32(green>>8) - m.mean[1]) * m.scales[1], (float32(blue>>8) - m.mean[2]) * m.scales[2]}
+			channels := [onnx.Channels]float32{}
+			channels[rIndex] = (float32(red>>8) - m.mean[rIndex]) * m.scales[rIndex]
+			channels[gIndex] = (float32(green>>8) - m.mean[gIndex]) * m.scales[gIndex]
+			channels[bIndex] = (float32(blue>>8) - m.mean[bIndex]) * m.scales[bIndex]
 			pixel := y*input.Width + x
 			if input.Layout == onnx.LayoutNHWC {
 				base := pixel * onnx.Channels
-				blob[base+rIndex], blob[base+gIndex], blob[base+bIndex] = channels[0], channels[1], channels[2]
+				blob[base+rIndex], blob[base+gIndex], blob[base+bIndex] = channels[rIndex], channels[gIndex], channels[bIndex]
 			} else {
-				blob[pixel+planeSize*rIndex], blob[pixel+planeSize*gIndex], blob[pixel+planeSize*bIndex] = channels[0], channels[1], channels[2]
+				blob[pixel+planeSize*rIndex], blob[pixel+planeSize*gIndex], blob[pixel+planeSize*bIndex] = channels[rIndex], channels[gIndex], channels[bIndex]
 			}
 		}
 	}

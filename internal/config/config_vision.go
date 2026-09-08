@@ -81,7 +81,7 @@ func (c *Config) applyNSFWModel() {
 		return
 	}
 
-	current := vision.Config.Model(vision.ModelTypeNsfw)
+	current := configuredVisionModel(vision.Config, vision.ModelTypeNsfw)
 	setting := c.NSFWModelSetting()
 	if setting == nsfw.ModelNone {
 		if current == nil {
@@ -107,6 +107,9 @@ func (c *Config) applyNSFWModel() {
 	if registered := vision.NewNsfwModel(selected); registered != nil {
 		if current != nil {
 			registered.Run = current.Run
+			if setting == nsfw.ModelAuto {
+				registered.Disabled = current.Disabled
+			}
 		}
 		vision.Config.SetModel(registered)
 		return
@@ -159,7 +162,7 @@ func (c *Config) applyLabelModel() {
 		return
 	}
 
-	current := vision.Config.Model(vision.ModelTypeLabels)
+	current := configuredVisionModel(vision.Config, vision.ModelTypeLabels)
 	setting := c.LabelModelSetting()
 
 	if setting == classify.ModelNone {
@@ -187,6 +190,9 @@ func (c *Config) applyLabelModel() {
 	if registered := vision.NewLabelModel(selected); registered != nil {
 		if current != nil {
 			registered.Run = current.Run
+			if setting == classify.ModelAuto {
+				registered.Disabled = current.Disabled
+			}
 		}
 		vision.Config.SetModel(registered)
 		return
@@ -201,6 +207,22 @@ func (c *Config) applyLabelModel() {
 		Name: string(selected),
 		Path: string(selected),
 	})
+}
+
+// configuredVisionModel returns the latest configured model of a type, including disabled models.
+func configuredVisionModel(config *vision.ConfigValues, modelType vision.ModelType) *vision.Model {
+	if config == nil {
+		return nil
+	}
+
+	for i := len(config.Models) - 1; i >= 0; i-- {
+		model := config.Models[i]
+		if model != nil && model.Type == modelType {
+			return model
+		}
+	}
+
+	return nil
 }
 
 // reportIgnoredFaceRun reports a face schedule left in "vision.yml", which no longer decides

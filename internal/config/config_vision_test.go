@@ -77,6 +77,15 @@ func TestConfig_LabelModel(t *testing.T) {
 		assert.Contains(t, c.LabelModelPath(), string(classify.DefaultModelName()))
 		assert.Equal(t, vision.EngineONNX, c.LabelModelRuntime())
 	})
+	t.Run("AutoPreservesDisabled", func(t *testing.T) {
+		config := vision.NewConfig()
+		config.Models[0].Disabled = true
+		withVisionConfig(t, config)
+		c := NewConfig(CliTestContext())
+		c.options.LabelModel = "auto"
+		c.applyLabelModel()
+		assert.True(t, vision.Config.Models[0].Disabled)
+	})
 	t.Run("Named", func(t *testing.T) {
 		withVisionConfig(t, vision.NewConfig())
 		c := NewConfig(CliTestContext())
@@ -155,6 +164,15 @@ func TestConfig_NSFWModel(t *testing.T) {
 		c.applyNSFWModel()
 		assert.Equal(t, nsfw.DefaultModelName(), c.EffectiveNSFWModel())
 		assert.Equal(t, vision.EngineONNX, c.NsfwModelRuntime())
+	})
+	t.Run("AutoPreservesDisabled", func(t *testing.T) {
+		config := vision.NewConfig()
+		config.Models[1].Disabled = true
+		withVisionConfig(t, config)
+		c := NewConfig(CliTestContext())
+		c.options.NsfwModel = "auto"
+		c.applyNSFWModel()
+		assert.True(t, vision.Config.Models[1].Disabled)
 	})
 	t.Run("Named", func(t *testing.T) {
 		withVisionConfig(t, vision.NewConfig())

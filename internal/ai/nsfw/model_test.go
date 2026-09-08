@@ -94,9 +94,11 @@ func TestModelBuildBlob(t *testing.T) {
 		assert.Equal(t, []float32{10, 20, 30}, blob)
 	})
 	t.Run("NHWCBGR", func(t *testing.T) {
-		blob, err := testModel(onnx.LayoutNHWC, onnx.BGR, true).buildBlob(img)
+		model := testModel(onnx.LayoutNHWC, onnx.BGR, true)
+		model.mean = [onnx.Channels]float32{3, 2, 1}
+		blob, err := model.buildBlob(img)
 		require.NoError(t, err)
-		assert.Equal(t, []float32{30, 20, 10}, blob)
+		assert.Equal(t, []float32{27, 18, 9}, blob)
 	})
 }
 
