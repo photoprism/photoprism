@@ -12,7 +12,7 @@ func initSubjNames() {
 	var results KeyValues
 
 	// Fetch subjects from the database.
-	if err := UnscopedDb().Model(Subject{}).Select("subj_uid AS k, subj_name AS v").
+	if err := UnscopedDb().Model(&Subject{}).Select("subj_uid AS k, subj_name AS v").
 		Scan(&results).Error; err != nil {
 		log.Warnf("subjects: %s (init lookup)", err)
 	} else {

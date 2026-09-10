@@ -22,7 +22,7 @@ func TestPhotoAlbum_TableName(t *testing.T) {
 }
 
 func TestFirstOrCreatePhotoAlbum(t *testing.T) {
-	t.Run("ExistingAlbum", func(t *testing.T) {
+	t.Run("ExistingPhotoAlbum", func(t *testing.T) {
 		model := PhotoAlbumFixtures.Get("1", "ps6sg6be2lvl0yh7", "as6sg6bxpogaaba8")
 		result := FirstOrCreatePhotoAlbum(&model)
 
@@ -53,6 +53,7 @@ func TestFirstOrCreatePhotoAlbum(t *testing.T) {
 		if result.PhotoUID != model.PhotoUID {
 			t.Errorf("PhotoUID should be the same: %s %s", result.PhotoUID, model.PhotoUID)
 		}
+		UnscopedDb().Delete(model)
 	})
 }
 
@@ -65,5 +66,8 @@ func TestPhotoAlbum_Save(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		// Cleanup
+		result := UnscopedDb().Model(&PhotoAlbum{}).Delete(&p)
+		assert.Equal(t, int64(1), result.RowsAffected)
 	})
 }

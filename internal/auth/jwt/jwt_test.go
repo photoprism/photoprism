@@ -8,6 +8,7 @@ import (
 
 	cfg "github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/testextras"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -29,7 +30,7 @@ func runTestMain(m *testing.M) int {
 	defer fs.PurgeTestDbFiles(".", false)
 
 	// Run unit tests.
-	return m.Run()
+	return testextras.TestDbCleanup(m.Run())
 }
 
 func newTestConfig(t *testing.T) *cfg.Config {

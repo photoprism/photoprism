@@ -11,6 +11,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/vision"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
@@ -920,12 +921,25 @@ func (c *Config) libraryFaceModels() (counts []query.MarkerEmbeddingModelCount, 
 		return nil, false
 	}
 
-	counts, err := query.RecordedMarkerEmbeddingModels()
+	// The schema is migrated after the configuration is propagated, so on the first
+	// start after an upgrade the provenance column does not exist yet. Its face markers
+	// prove what they hold: a library that records no model can only hold FaceNet.
+	if !c.db.Migrator().HasTable(&entity.Marker{}) {
+		log.Debug("config: no markers table (find face embedding models)")
+		return nil, false
+	}
+
+	// If this startup is run against an old schema database (before migrate has been run)
+	// then the embed_model column will not exist, and will throw a database error.
+	// To prevent that appearing in the dbms logs, check for existence first.
+	var err error
+	if !c.db.Migrator().HasColumn(&entity.Marker{}, "EmbedModel") {
+		err = fmt.Errorf("no embed_model column in markers table")
+	} else {
+		counts, err = query.RecordedMarkerEmbeddingModels()
+	}
 
 	if err != nil {
-		// The schema is migrated after the configuration is propagated, so on the first
-		// start after an upgrade the provenance column does not exist yet. Its face markers
-		// prove what they hold: a library that records no model can only hold FaceNet.
 		log.Debugf("config: %s (find face embedding models)", err)
 
 		markers, countErr := query.FaceMarkersWithVectors()

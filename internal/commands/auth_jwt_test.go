@@ -15,6 +15,7 @@ import (
 )
 
 func TestAuthJWTCommands(t *testing.T) {
+	defer resetConfigAndOpenDB()
 	conf := get.Config()
 
 	origEdition := conf.Options().Edition

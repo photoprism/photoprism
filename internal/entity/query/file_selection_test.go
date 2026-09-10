@@ -82,6 +82,13 @@ func TestSelectedFilesForSession(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Empty(t, files)
 	})
+	t.Run("NotNil", func(t *testing.T) {
+		frm := form.Selection{Photos: []string{"pszzzzzzzzzzzzzz"}}
+		base, err := SelectedFiles(frm, o)
+		assert.NoError(t, err)
+		assert.NotNil(t, base)
+		assert.Len(t, base, 0)
+	})
 }
 
 func TestFileSelection(t *testing.T) {

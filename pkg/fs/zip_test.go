@@ -333,7 +333,7 @@ func TestUnzipFileWithLimit_DetectsOverrun(t *testing.T) {
 
 func TestZip(t *testing.T) {
 	t.Run("Compressed", func(t *testing.T) {
-		zipDir := filepath.Join(os.TempDir(), "pkg/fs")
+		zipDir := filepath.Join(t.TempDir(), "pkg/fs")
 		zipName := filepath.Join(zipDir, "compressed.zip")
 		unzipDir := filepath.Join(zipDir, "compressed")
 		files := []string{"./testdata/directory/example.jpg"}
@@ -366,7 +366,7 @@ func TestZip(t *testing.T) {
 		}
 	})
 	t.Run("Uncompressed", func(t *testing.T) {
-		zipDir := filepath.Join(os.TempDir(), "pkg/fs")
+		zipDir := filepath.Join(t.TempDir(), "pkg/fs")
 		zipName := filepath.Join(zipDir, "uncompressed.zip")
 		unzipDir := filepath.Join(zipDir, "uncompressed")
 		files := []string{"./testdata/directory/example.jpg"}

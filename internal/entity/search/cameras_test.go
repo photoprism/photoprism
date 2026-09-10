@@ -90,8 +90,10 @@ func TestCameras(t *testing.T) {
 		query.NoMake = true
 		result, err := Cameras(query)
 
-		assert.NoError(t, err)
-		assert.Empty(t, result)
+		if assert.NoError(t, err) {
+			assert.Empty(t, result)
+			assert.NotNil(t, result)
+		}
 	})
 	t.Run("SearchWithInvalidQueryString", func(t *testing.T) {
 		query := form.NewCameraSearch("xxx:bla")

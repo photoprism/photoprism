@@ -2,13 +2,14 @@ package entity
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"math"
 	"strings"
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/form"
@@ -28,39 +29,39 @@ const (
 
 // Marker represents an image marker point.
 type Marker struct {
-	MarkerUID      string          `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"UID" yaml:"UID"`
-	FileUID        string          `gorm:"type:VARBINARY(42);index;default:'';" json:"FileUID" yaml:"FileUID"`
-	MarkerType     string          `gorm:"type:VARBINARY(8);default:'';" json:"Type" yaml:"Type"`
-	MarkerSrc      string          `gorm:"type:VARBINARY(8);default:'';" json:"Src" yaml:"Src,omitempty"`
-	MarkerName     string          `gorm:"type:VARCHAR(160);" json:"Name" yaml:"Name,omitempty"`
+	MarkerUID      string          `gorm:"type:bytes;size:42;primaryKey;autoIncrement:false;" json:"UID" yaml:"UID"`
+	FileUID        string          `gorm:"type:bytes;size:42;index;default:'';" json:"FileUID" yaml:"FileUID"`
+	MarkerType     string          `gorm:"type:bytes;size:8;default:'';" json:"Type" yaml:"Type"`
+	MarkerSrc      string          `gorm:"type:bytes;size:8;default:'';" json:"Src" yaml:"Src,omitempty"`
+	MarkerName     string          `gorm:"size:160;" json:"Name" yaml:"Name,omitempty"`
 	MarkerReview   bool            `json:"Review" yaml:"Review,omitempty"`
 	MarkerInvalid  bool            `json:"Invalid" yaml:"Invalid,omitempty"`
-	SubjUID        string          `gorm:"type:VARBINARY(42);index:idx_markers_subj_uid_src;" json:"SubjUID" yaml:"SubjUID,omitempty"`
-	SubjSrc        string          `gorm:"type:VARBINARY(8);index:idx_markers_subj_uid_src;default:'';" json:"SubjSrc" yaml:"SubjSrc,omitempty"`
-	subject        *Subject        `gorm:"foreignkey:SubjUID;association_foreignkey:SubjUID;association_autoupdate:false;association_autocreate:false;association_save_reference:false"`
-	FaceID         string          `gorm:"type:VARBINARY(64);index;" json:"FaceID" yaml:"FaceID,omitempty"`
+	SubjUID        string          `gorm:"type:bytes;size:42;index:idx_markers_subj_uid_src;" json:"SubjUID" yaml:"SubjUID,omitempty"`
+	SubjSrc        string          `gorm:"type:bytes;size:8;index:idx_markers_subj_uid_src;default:'';" json:"SubjSrc" yaml:"SubjSrc,omitempty"`
+	subject        *Subject        `gorm:"foreignKey:SubjUID;"`
+	FaceID         string          `gorm:"type:bytes;size:64;index;" json:"FaceID" yaml:"FaceID,omitempty"`
 	FaceDist       float64         `gorm:"default:-1;" json:"FaceDist" yaml:"FaceDist,omitempty"`
-	face           *Face           `gorm:"foreignkey:FaceID;association_foreignkey:ID;association_autoupdate:false;association_autocreate:false;association_save_reference:false"`
-	EmbedModel     string          `gorm:"column:embed_model;type:VARBINARY(32);index;default:'';" json:"-" yaml:"EmbedModel,omitempty"`
-	DetectModel    string          `gorm:"column:detect_model;type:VARBINARY(32);index;default:'';" json:"-" yaml:"DetectModel,omitempty"`
-	EmbeddingsJSON json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"-" yaml:"EmbeddingsJSON,omitempty"`
+	face           *Face           `gorm:"foreignKey:FaceID;"`
+	EmbedModel     string          `gorm:"type:bytes;size:32;column:embed_model;index;default:'';" json:"-" yaml:"EmbedModel,omitempty"`
+	DetectModel    string          `gorm:"type:bytes;size:32;column:detect_model;index;default:'';" json:"-" yaml:"DetectModel,omitempty"`
+	EmbeddingsJSON json.RawMessage `gorm:"type:bytes;size:66666;" json:"-" yaml:"EmbeddingsJSON,omitempty"`
 	embeddings     face.Embeddings `gorm:"-" yaml:"-"`
-	LandmarksJSON  json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"-" yaml:"LandmarksJSON,omitempty"`
-	X              float32         `gorm:"type:FLOAT;" json:"X" yaml:"X,omitempty"`
-	Y              float32         `gorm:"type:FLOAT;" json:"Y" yaml:"Y,omitempty"`
-	W              float32         `gorm:"type:FLOAT;" json:"W" yaml:"W,omitempty"`
-	H              float32         `gorm:"type:FLOAT;" json:"H" yaml:"H,omitempty"`
+	LandmarksJSON  json.RawMessage `gorm:"type:bytes;size:66666;" json:"-" yaml:"LandmarksJSON,omitempty"`
+	X              float32         `json:"X" yaml:"X,omitempty"`
+	Y              float32         `json:"Y" yaml:"Y,omitempty"`
+	W              float32         `json:"W" yaml:"W,omitempty"`
+	H              float32         `json:"H" yaml:"H,omitempty"`
 	Size           int             `gorm:"default:-1;" json:"Size" yaml:"Size,omitempty"`
-	ThumbSize      int             `gorm:"column:thumb_size;default:-1;" json:"ThumbSize" yaml:"ThumbSize,omitempty"`
+	ThumbSize      int             `gorm:"default:-1;" json:"ThumbSize" yaml:"ThumbSize,omitempty"`
 	// EmbedDetail is the percentage of the crop its source supplied, 100 where it supplied all
 	// of it, EmbedDetailUnknown where a migration sampled the marker without measuring one, and
 	// -1 where nothing has. It describes the embedding, which is why it sits beside embed_model
 	// rather than under the thumb_ prefix its partner thumb_size carries, and it is written under
 	// the same condition as that partner so the two cannot disagree about what was sampled.
-	EmbedDetail int        `gorm:"column:embed_detail;type:SMALLINT;default:-1;" json:"-" yaml:"EmbedDetail,omitempty"`
-	Score       int        `gorm:"type:SMALLINT;" json:"Score" yaml:"Score,omitempty"`
-	Thumb       string     `gorm:"type:VARBINARY(128);index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
-	MatchedAt   *time.Time `sql:"index" json:"MatchedAt" yaml:"MatchedAt,omitempty"`
+	EmbedDetail int        `gorm:"column:embed_detail;type:int;size:16;default:-1;" json:"-" yaml:"EmbedDetail,omitempty"`
+	Score       int        `gorm:"type:int;size:16;" json:"Score" yaml:"Score,omitempty"`
+	Thumb       string     `gorm:"type:bytes;size:128;index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
+	MatchedAt   *time.Time `gorm:"index" json:"MatchedAt" yaml:"MatchedAt,omitempty"`
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }
@@ -71,12 +72,13 @@ func (Marker) TableName() string {
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
-func (m *Marker) BeforeCreate(scope *gorm.Scope) error {
+func (m *Marker) BeforeCreate(scope *gorm.DB) error {
 	if rnd.IsUnique(m.MarkerUID, 'm') {
 		return nil
 	}
 
-	return scope.SetColumn("MarkerUID", rnd.GenerateUID('m'))
+	scope.Statement.SetColumn("MarkerUID", rnd.GenerateUID('m'))
+	return scope.Error
 }
 
 // NewMarker creates a new entity.
@@ -681,7 +683,7 @@ func (m *Marker) RefreshPhotos() error {
 
 	var err error
 	switch DbDialect() {
-	case dsn.DriverMySQL:
+	case dsn.DialectMySQL:
 		err = UnscopedDb().Exec(`UPDATE photos p JOIN files f ON f.photo_id = p.id
 			JOIN ? m ON m.file_uid = f.file_uid SET p.checked_at = NULL
 			WHERE m.marker_uid = ?`,
@@ -698,6 +700,9 @@ func (m *Marker) RefreshPhotos() error {
 // Matched updates the match timestamp.
 func (m *Marker) Matched() error {
 	m.MatchedAt = TimeStamp()
+	if m.MarkerUID == "" {
+		return errors.New("markeruid required but not provided")
+	}
 	return UnscopedDb().Model(m).UpdateColumns(Values{"matched_at": m.MatchedAt}).Error
 }
 

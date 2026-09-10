@@ -81,8 +81,10 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 					folder := entity.NewFolder(entity.RootOriginals, destDirRel, fs.ModTime(destDir))
 
-					if createErr := folder.Create(); createErr == nil {
-						log.Infof("import: created folder /%s", folder.Path)
+					if newFolder, newRec, createErr := entity.FirstOrCreateFolder(&folder); createErr == nil && newRec {
+						log.Infof("import: created folder /%s", newFolder.Path)
+					} else if createErr != nil {
+						log.Errorf("import: failed to create folder record for %s (%s)", clean.Log(destDirRel), createErr)
 					}
 				}
 

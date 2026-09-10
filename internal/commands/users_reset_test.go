@@ -8,12 +8,13 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 func TestUsersResetCommand(t *testing.T) {
 	c := resetConfigAndOpenDB()
 	// reset as this test removes all users
-	defer resetConfigAndDB()
+	defer resetConfigAndDB(t)
 
 	t.Run("NotConfirmed", func(t *testing.T) {
 		// Run command with test context.
@@ -51,8 +52,7 @@ func TestUsersResetCommand(t *testing.T) {
 		}
 		assert.Greater(t, count, int64(3)) // Make sure we have a populated database
 
-		dbDrv := os.Getenv("PHOTOPRISM_TEST_DRIVER")
-		dbDSN := os.Getenv("PHOTOPRISM_TEST_DSN")
+		dbDrv, dbDSN := dsn.PhotoPrismTestToDriverDSN()
 		// Run command with test context.
 		appArgs := []string{"photoprism",
 			"--database-driver", dbDrv,
@@ -84,4 +84,5 @@ func TestUsersResetCommand(t *testing.T) {
 		}
 		assert.Equal(t, int64(0), count)
 	})
+
 }

@@ -1,7 +1,9 @@
 package entity
 
 import (
+	"bytes"
 	"flag"
+	"os"
 	"testing"
 	"time"
 
@@ -10,6 +12,8 @@ import (
 	"github.com/zitadel/oidc/v3/pkg/oidc"
 
 	"github.com/urfave/cli/v2"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/form"
@@ -448,7 +452,8 @@ func TestUser_InvalidPassword(t *testing.T) {
 		assert.True(t, m.InvalidPassword("wrong-password"))
 	})
 	t.Run("NoPasswordExisting", func(t *testing.T) {
-		p := User{UserUID: "u000000000000010", UserName: "Hans", DisplayName: ""}
+		expected := rnd.GenerateUID(UserUID)
+		p := User{UserUID: expected, UserName: "HansNP", DisplayName: ""}
 		err := p.Save()
 		if err != nil {
 			t.Fatal(err)
@@ -647,6 +652,76 @@ func TestFindUser(t *testing.T) {
 			t.Fatal("result should be nil")
 		}
 	})
+	t.Run("AuthProviderAndAuthID", func(t *testing.T) {
+		if err := AddUser(form.User{UserName: "AuthProviderAndAuthID", UserEmail: "auth@test.com", AuthProvider: string(authn.ProviderOIDC), AuthID: "MyAuthID", Password: "InsecurePassword", UserRole: "admin"}); err != nil {
+			assert.Empty(t, err)
+			return
+		}
+
+		m := FindUser(User{AuthProvider: string(authn.ProviderOIDC), AuthID: "MyAuthID"})
+
+		assert.NotEmpty(t, m)
+		if m == nil {
+			return
+		}
+
+		assert.Equal(t, "authproviderandauthid", m.UserName)
+
+		assert.Empty(t, m.Delete())
+		assert.Empty(t, Db().Unscoped().Delete(&m).Error)
+
+		if err := AddUser(form.User{UserName: "AuthProviderAndAuthID2", UserEmail: "auth@test.com", AuthProvider: string(authn.ProviderLDAP), AuthID: "MyAuthID", Password: "InsecurePassword", UserRole: "admin"}); err != nil {
+			assert.Empty(t, err)
+			return
+		}
+
+		m = FindUser(User{AuthProvider: string(authn.ProviderLDAP), AuthID: "MyAuthID"})
+
+		assert.NotEmpty(t, m)
+		if m == nil {
+			return
+		}
+
+		assert.Equal(t, "authproviderandauthid2", m.UserName)
+
+		assert.Empty(t, m.Delete())
+		assert.Empty(t, Db().Unscoped().Delete(&m).Error)
+	})
+	t.Run("AuthProviderAndAuthIssuerAndAuthID", func(t *testing.T) {
+		if err := AddUser(form.User{UserName: "AuthProviderAndAuthIssuerAndAuthID", UserEmail: "auth@test.com", AuthProvider: string(authn.ProviderOIDC), AuthID: "MyAuthID", Password: "InsecurePassword", UserRole: "admin", AuthIssuer: "google"}); err != nil {
+			assert.Empty(t, err)
+			return
+		}
+
+		m := FindUser(User{AuthProvider: string(authn.ProviderOIDC), AuthID: "MyAuthID", AuthIssuer: "google"})
+
+		assert.NotEmpty(t, m)
+		if m == nil {
+			return
+		}
+
+		assert.Equal(t, "authproviderandauthissuerandauthid", m.UserName)
+
+		assert.Empty(t, m.Delete())
+		assert.Empty(t, Db().Unscoped().Delete(&m).Error)
+
+		if err := AddUser(form.User{UserName: "AuthProviderAndAuthIssuerAndAuthID2", UserEmail: "auth@test.com", AuthProvider: string(authn.ProviderLDAP), AuthID: "MyAuthID", Password: "InsecurePassword", UserRole: "admin", AuthIssuer: "google"}); err != nil {
+			assert.Empty(t, err)
+			return
+		}
+
+		m = FindUser(User{AuthProvider: string(authn.ProviderLDAP), AuthID: "MyAuthID", AuthIssuer: "google"})
+
+		assert.NotEmpty(t, m)
+		if m == nil {
+			return
+		}
+
+		assert.Equal(t, "authproviderandauthissuerandauthid2", m.UserName)
+
+		assert.Empty(t, m.Delete())
+		assert.Empty(t, Db().Unscoped().Delete(&m).Error)
+	})
 }
 
 func TestFindUserByUID(t *testing.T) {
@@ -772,16 +847,24 @@ func TestUser_SameUID(t *testing.T) {
 
 func TestUser_String(t *testing.T) {
 	t.Run("UID", func(t *testing.T) {
-		p := User{UserUID: "abc123", UserName: "", DisplayName: ""}
-		assert.Equal(t, "abc123", p.String())
+		expected := rnd.GenerateUID(UserUID) // Use a valid UID, otherwise it will be replaced by BeforeCreate.
+		p := User{UserUID: expected, UserName: "", DisplayName: ""}
+		p.Create()
+		// GormV2 internal failure created in p.String() as the UserDetails fails to save as there isn't a user record.
+		assert.Equal(t, expected, p.String())
+		UnscopedDb().Delete(&p)
 	})
 	t.Run("FullName", func(t *testing.T) {
 		p := User{UserUID: "abc123", UserName: "", DisplayName: "Test"}
+		p.Create()
 		assert.Equal(t, "'Test'", p.String())
+		UnscopedDb().Delete(&p)
 	})
 	t.Run("UserName", func(t *testing.T) {
 		p := User{UserUID: "abc123", UserName: "Super-User ", DisplayName: "Test"}
+		p.Create()
 		assert.Equal(t, "'super-user'", p.String())
+		UnscopedDb().Delete(&p)
 	})
 }
 
@@ -1235,8 +1318,8 @@ func TestUser_UpdateLoginTime(t *testing.T) {
 	})
 	t.Run("UserDeleted", func(t *testing.T) {
 		u := NewUser()
-		var deleted = time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC)
-		u.DeletedAt = &deleted
+		var deleted = gorm.DeletedAt{Time: time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC), Valid: true}
+		u.DeletedAt = deleted
 		assert.Nil(t, u.UpdateLoginTime())
 	})
 	t.Run("NormalizesOutOfEditionSuperAdminRole", func(t *testing.T) {
@@ -2319,6 +2402,11 @@ func TestUser_FullName(t *testing.T) {
 			CanInvite:   false,
 		}
 
+		if err := u.Create(); err != nil {
+			t.Logf("user create fail %s", err)
+			t.FailNow()
+		}
+
 		assert.Equal(t, "Mr-Happy", u.FullName())
 
 		u.UserName = "mr.happy@cat.com"
@@ -2336,6 +2424,11 @@ func TestUser_FullName(t *testing.T) {
 		u.SetDisplayName("Jane Doe", SrcManual)
 
 		assert.Equal(t, "Jane Doe", u.FullName())
+
+		if err := UnscopedDb().Delete(&u).Error; err != nil {
+			t.Logf("user delete fail %s", err)
+			t.FailNow()
+		}
 	})
 	t.Run("NameFromDetails", func(t *testing.T) {
 		u := User{
@@ -2370,9 +2463,19 @@ func TestUser_FullName(t *testing.T) {
 			CanInvite:   false,
 		}
 
+		if err := u.Create(); err != nil {
+			t.Logf("user create fail %s", err)
+			t.FailNow()
+		}
+
 		assert.Equal(t, "jens.mander", u.Handle())
 		assert.Equal(t, "domain\\jens mander", u.Username())
 		assert.Equal(t, "Jens Mander", u.FullName())
+
+		if err := UnscopedDb().Delete(&u).Error; err != nil {
+			t.Logf("user delete fail %s", err)
+			t.FailNow()
+		}
 	})
 }
 
@@ -2784,8 +2887,116 @@ func TestUser_RedeemToken(t *testing.T) {
 		assert.Equal(t, "as6sg6bxpogaaba9", m.UserShares[0].ShareUID)
 		assert.Equal(t, 1, m.RedeemToken("4jxf3jfn2k"))
 		m.RefreshShares()
-		assert.Equal(t, "as6sg6bxpogaaba7", m.UserShares[0].ShareUID)
-		assert.Equal(t, "as6sg6bxpogaaba9", m.UserShares[1].ShareUID)
+		// m.UserShares is not ordered, so sometimes this test would fail
+		assert.Equal(t, 2, len(m.UserShares))
+		var shareUIDs []string
+		for _, shareUID := range m.UserShares {
+			shareUIDs = append(shareUIDs, shareUID.ShareUID)
+		}
+		assert.Contains(t, shareUIDs, "as6sg6bxpogaaba7")
+		assert.Contains(t, shareUIDs, "as6sg6bxpogaaba9")
+	})
+}
+
+func TestUser_ValidatePreload(t *testing.T) {
+	t.Run("FindUser_UserDetails", func(t *testing.T) {
+		// Setup and capture SQL Logging output
+		beforeLogMode := Db().Config.Logger
+		buffer := bytes.Buffer{}
+		Db().Config.Logger = Db().Config.Logger.LogMode(logger.Info)
+		log.SetOutput(&buffer)
+
+		m := FindUser(User{ID: 7}) // User = Bob
+
+		// Reset logger
+		log.SetOutput(os.Stdout)
+		Db().Config.Logger = beforeLogMode
+
+		assert.Equal(t, "bob", m.UserName)
+		assert.Equal(t, "Robert Rich", m.DisplayName)
+		assert.NotEmpty(t, m.UserDetails)
+		assert.Equal(t, "Bob", m.UserDetails.NickName)
+		assert.Equal(t, 1981, m.UserDetails.BirthYear)
+		assert.Contains(t, buffer.String(), "auth_users_details")
+		// Verify that Preload loaded the data
+		assert.NotContains(t, buffer.String(), "auth_user_details.go")
+	})
+
+	t.Run("FindUser_UserSettings", func(t *testing.T) {
+		// Setup and capture SQL Logging output
+		beforeLogMode := Db().Config.Logger
+		buffer := bytes.Buffer{}
+		Db().Config.Logger = Db().Config.Logger.LogMode(logger.Info)
+		log.SetOutput(&buffer)
+
+		m := FindUser(User{ID: 7}) // User = Bob
+
+		// Reset logger
+		log.SetOutput(os.Stdout)
+		Db().Config.Logger = beforeLogMode
+
+		assert.Equal(t, "bob", m.UserName)
+		assert.Equal(t, "Robert Rich", m.DisplayName)
+		assert.NotEmpty(t, m.UserSettings)
+		assert.Equal(t, "grayscale", m.UserSettings.UITheme)
+		assert.Equal(t, "topographique", m.UserSettings.MapsStyle)
+		assert.Contains(t, buffer.String(), "auth_users_settings")
+		// Verify that Preload loaded the data
+		assert.NotContains(t, buffer.String(), "auth_users_settings.go")
+	})
+
+	t.Run("FindLocalUser_UserSettings", func(t *testing.T) {
+		// Setup and capture SQL Logging output
+		beforeLogMode := Db().Config.Logger
+		buffer := bytes.Buffer{}
+		Db().Config.Logger = Db().Config.Logger.LogMode(logger.Info)
+		log.SetOutput(&buffer)
+
+		m := FindLocalUser("jane")
+
+		// Reset logger
+		log.SetOutput(os.Stdout)
+		Db().Config.Logger = beforeLogMode
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		assert.Equal(t, "jane", m.UserName)
+		assert.Equal(t, "Jane Dow", m.DisplayName)
+		assert.NotEmpty(t, m.UserSettings)
+		assert.Equal(t, "default", m.UserSettings.UITheme)
+		assert.Equal(t, "hybrid", m.UserSettings.MapsStyle)
+		assert.Contains(t, buffer.String(), "auth_users_settings")
+		// Verify that Preload loaded the data
+		assert.NotContains(t, buffer.String(), "auth_users_settings.go")
+	})
+
+	t.Run("FindLocalUser_UserDetails", func(t *testing.T) {
+		// Setup and capture SQL Logging output
+		beforeLogMode := Db().Config.Logger
+		buffer := bytes.Buffer{}
+		Db().Config.Logger = Db().Config.Logger.LogMode(logger.Info)
+		log.SetOutput(&buffer)
+
+		m := FindLocalUser("jane")
+
+		// Reset logger
+		log.SetOutput(os.Stdout)
+		Db().Config.Logger = beforeLogMode
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		assert.Equal(t, "jane", m.UserName)
+		assert.Equal(t, "Jane Dow", m.DisplayName)
+		assert.NotEmpty(t, m.UserDetails)
+		assert.Equal(t, "Jane", m.UserDetails.NickName)
+		assert.Equal(t, 2001, m.UserDetails.BirthYear)
+		assert.Contains(t, buffer.String(), "auth_users_details")
+		// Verify that Preload loaded the data
+		assert.NotContains(t, buffer.String(), "auth_users_details.go")
 	})
 }
 

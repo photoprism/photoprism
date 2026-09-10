@@ -169,11 +169,11 @@ type FaceConflictNotes struct {
 // radius counts cover only clusters the walk compares, or they would describe rows the same notes
 // have just said were skipped.
 func FaceConflictReportNotes() (notes FaceConflictNotes, err error) {
-	compared := "face_hidden = 0 AND face_kind <= 1"
+	compared := "face_hidden = FALSE AND face_kind <= 1"
 
 	stmt := fmt.Sprintf(`SELECT
 		COALESCE(SUM(CASE WHEN face_kind > 1 THEN 1 ELSE 0 END), 0) AS ambiguous,
-		COALESCE(SUM(CASE WHEN face_hidden = 1 THEN 1 ELSE 0 END), 0) AS hidden,
+		COALESCE(SUM(CASE WHEN face_hidden = TRUE THEN 1 ELSE 0 END), 0) AS hidden,
 		COALESCE(SUM(CASE WHEN %[1]s AND collision_radius > 0 AND collision_radius <= ? THEN 1 ELSE 0 END), 0) AS inert_radius,
 		COALESCE(SUM(CASE WHEN %[1]s AND collision_radius > ? AND collision_radius < sample_radius THEN 1 ELSE 0 END), 0) AS below_own_spread
 		FROM %[2]s`, compared, entity.Face{}.TableName())

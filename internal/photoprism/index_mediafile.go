@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/ai/vision"
@@ -148,7 +148,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	switch {
 	case !fileExists && photoUID != "":
 		// Find existing photo by UID.
-		photoQuery = entity.UnscopedDb().First(&photo, "photo_uid = ?", photoUID)
+		photoQuery = entity.UnscopedSearchFirstPhoto(&photo, "photo_uid = ?", photoUID)
 
 		if photoQuery.Error == nil {
 			// Found.
@@ -161,12 +161,12 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		}
 	case !fileExists:
 		// Find existing photo by matching path and name.
-		if photoQuery = entity.UnscopedDb().First(&photo, "photo_path = ? AND photo_name = ?", filePath, fullBase); photoQuery.Error == nil || fileBase == fullBase || !o.Stack {
+		if photoQuery = entity.UnscopedSearchFirstPhoto(&photo, "photo_path = ? AND photo_name = ?", filePath, fullBase); photoQuery.Error == nil || fileBase == fullBase || !o.Stack {
 			// Skip next query.
-		} else if photoQuery = entity.UnscopedDb().First(&photo, "photo_path = ? AND photo_name = ? AND photo_stack > -1", filePath, fileBase); photoQuery.Error == nil {
+		} else if photoQuery = entity.UnscopedSearchFirstPhoto(&photo, "photo_path = ? AND photo_name = ? AND photo_stack > -1", filePath, fileBase); photoQuery.Error == nil {
 			// Found.
 			fileStacked = true
-		} else if photoQuery = entity.UnscopedDb().First(&photo, "id IN (SELECT photo_id FROM files WHERE file_name = LIKE ? AND file_root = ? AND file_sidecar = 0 AND file_missing = 0) AND photo_path = ? AND photo_stack > -1", fs.StripKnownExt(fileName)+".%", entity.RootOriginals, filePath); photoQuery.Error == nil {
+		} else if photoQuery = entity.UnscopedSearchFirstPhoto(&photo, "id IN (SELECT photo_id FROM files WHERE file_name = LIKE ? AND file_root = ? AND file_sidecar = FALSE AND file_missing = FALSE) AND photo_path = ? AND photo_stack > -1", fs.StripKnownExt(fileName)+".%", entity.RootOriginals, filePath); photoQuery.Error == nil {
 			// Found.
 			fileStacked = true
 		}
@@ -175,7 +175,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		if o.Stack {
 			// Same unique ID?
 			if photoQuery.Error != nil && Config().Settings().StackUUID() && m.MetaData().HasDocumentID() {
-				photoQuery = entity.UnscopedDb().First(&photo, "uuid <> '' AND uuid = ?", clean.Log(m.MetaData().DocumentID))
+				photoQuery = entity.UnscopedSearchFirstPhoto(&photo, "uuid <> '' AND uuid = ?", clean.Log(m.MetaData().DocumentID))
 
 				if photoQuery.Error == nil {
 					// Found.
@@ -186,7 +186,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			// Matching location and time metadata?
 			if photoQuery.Error != nil && Config().Settings().StackMeta() && m.MetaData().HasTimeAndPlace() {
 				metaData = m.MetaData()
-				photoQuery = entity.UnscopedDb().First(&photo, "photo_lat = ? AND photo_lng = ? AND taken_at = ? AND taken_src = 'meta' AND camera_serial = ?", metaData.Lat, metaData.Lng, metaData.TakenAt, metaData.CameraSerial)
+				photoQuery = entity.UnscopedSearchFirstPhoto(&photo, "photo_lat = ? AND photo_lng = ? AND taken_at = ? AND taken_src = 'meta' AND camera_serial = ?", metaData.Lat, metaData.Lng, metaData.TakenAt, metaData.CameraSerial)
 
 				if photoQuery.Error == nil {
 					// Found.
@@ -198,9 +198,9 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		// Find photo by the id or uid assigned to the file.
 		switch {
 		case file.PhotoID > 0:
-			photoQuery = entity.UnscopedDb().First(&photo, "id = ?", file.PhotoID)
+			photoQuery = entity.UnscopedSearchFirstPhoto(&photo, "id = ?", file.PhotoID)
 		case rnd.IsUID(file.PhotoUID, entity.PhotoUID):
-			photoQuery = entity.UnscopedDb().First(&photo, "photo_uid = ?", file.PhotoUID)
+			photoQuery = entity.UnscopedSearchFirstPhoto(&photo, "photo_uid = ?", file.PhotoUID)
 		default:
 			// Should never happen.
 			result.Status = IndexFailed
@@ -216,6 +216,10 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 
 	// Found a photo?
 	photoExists = photoQuery.Error == nil
+	if !photoExists {
+		// Preload as an empty photo.
+		photo = entity.NewUserPhoto(o.Stack, userUID)
+	}
 
 	// Detect changes in existing files.
 	if fileExists {
@@ -281,6 +285,17 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			} else if photo.HasUID() {
 				photoExists = true
 				log.Infof("index: metadata of photo uid %s restored from %s", photo.PhotoUID, clean.Log(filepath.Base(yamlName)))
+				if oldPhoto := entity.FindPhoto(entity.Photo{PhotoUID: photo.PhotoUID}); oldPhoto != nil {
+					// If the photo in the database exists and has a PhotoType of restorng then it's a special case
+					// as the record has been created by the Album Restore process.
+					if oldPhoto.ID > 0 && oldPhoto.PhotoType == entity.MediaRestoring {
+						photo.ID = oldPhoto.ID
+						if oldPhoto.DeletedAt.Valid && !photo.DeletedAt.Valid {
+							// Remove Archival status of database copy of photo as you can't update value to null with entity.Update
+							oldPhoto.Restore()
+						}
+					}
+				}
 			}
 		}
 	}
@@ -303,7 +318,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	// Flag first JPEG as primary file for this photo.
 	if !file.FilePrimary {
 		if photoExists {
-			if res := entity.UnscopedDb().Where("photo_id = ? AND file_primary = 1 AND file_type IN (?) AND file_error = ''", photo.ID, media.PreviewExpr).First(&primaryFile); res.Error != nil {
+			if res := entity.UnscopedDb().Where("photo_id = ? AND file_primary = TRUE AND file_type IN (?) AND file_error = ''", photo.ID, media.PreviewExpr).First(&primaryFile); res.Error != nil {
 				file.FilePrimary = m.IsPreviewImage()
 			}
 		} else {
@@ -342,8 +357,8 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 
 	if photo.PhotoQuality == -1 && (file.FilePrimary || fileChanged) {
 		// Restore pictures that have been purged automatically.
-		photo.DeletedAt = nil
-	} else if o.SkipArchived && photo.DeletedAt != nil {
+		photo.DeletedAt = gorm.DeletedAt{}
+	} else if o.SkipArchived && photo.DeletedAt.Valid {
 		// Skip archived pictures for faster indexing.
 		result.Status = IndexArchived
 		return result
@@ -880,7 +895,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	}
 
 	// File obviously exists: remove deleted and missing flags.
-	file.DeletedAt = nil
+	file.DeletedAt = gorm.DeletedAt{}
 	file.FileMissing = false
 
 	// Previews files are used for rendering thumbnails and image classification, plus sidecar files if they exist.

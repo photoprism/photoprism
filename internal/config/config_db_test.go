@@ -8,9 +8,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/photoprism/photoprism/pkg/dsn"
-
 	"github.com/photoprism/photoprism/internal/service/cluster"
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 // resetDatabaseOptions clears all DB-related option fields so tests start from defaults even if
@@ -82,6 +81,12 @@ func TestConfig_DatabaseDriverName(t *testing.T) {
 		c.options.DatabaseDriver = dsn.DriverPostgres
 		assert.Equal(t, "PostgreSQL", c.DatabaseDriverName())
 	})
+	t.Run("PostgreSQLReportsAsPostgreSQL", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		resetDatabaseOptions(c)
+		c.options.DatabaseDriver = dsn.DriverPostgreSQL
+		assert.Equal(t, "PostgreSQL", c.DatabaseDriverName())
+	})
 	t.Run("DeprecatedTiDBReportsAsSQLite", func(t *testing.T) {
 		// DatabaseDriver() warns and rewrites "tidb" to SQLite3 before this runs.
 		c := NewConfig(CliTestContext())
@@ -107,27 +112,53 @@ func TestConfig_DatabaseVersion(t *testing.T) {
 
 func TestConfig_DatabaseSsl(t *testing.T) {
 	c := TestConfig()
-
-	// MariaDB enables zero-configuration SSL as of v11.4, other databases don't.
-	if c.DatabaseDriver() == dsn.DriverMySQL && c.IsDatabaseVersion("v11.4") {
-		assert.True(t, c.DatabaseSsl())
-	} else {
+	driver := c.DatabaseDriverName()
+	switch driver {
+	case "SQLite":
 		assert.False(t, c.DatabaseSsl())
+	case "MariaDB":
+		// MariaDB enables zero-configuration SSL as of v11.4, other databases don't.
+		if c.IsDatabaseVersion("v11.4") {
+			assert.True(t, c.DatabaseSsl())
+		} else {
+			assert.False(t, c.DatabaseSsl())
+		}
+	case "PostgreSQL":
+		assert.False(t, c.DatabaseSsl())
+	default:
+		assert.Empty(t, driver)
+		assert.Fail(t, "driver not recognised")
 	}
 }
 
 func TestConfig_normalizeDatabaseDSN(t *testing.T) {
-	c := NewConfig(CliTestContext())
+	t.Run("MariaDB", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
 
-	c.options.Deprecated.DatabaseDsn = "foo:b@r@tcp(honeypot:1234)/baz?charset=utf8mb4,utf8&parseTime=true"
-	c.options.DatabaseDriver = dsn.DriverMySQL
+		c.options.Deprecated.DatabaseDsn = "foo:b@r@tcp(honeypot:1234)/baz?charset=utf8mb4,utf8&parseTime=true"
+		c.options.DatabaseDriver = dsn.DriverMySQL
 
-	assert.Equal(t, "honeypot:1234", c.DatabaseServer())
-	assert.Equal(t, "honeypot", c.DatabaseHost())
-	assert.Equal(t, 1234, c.DatabasePort())
-	assert.Equal(t, "baz", c.DatabaseName())
-	assert.Equal(t, "foo", c.DatabaseUser())
-	assert.Equal(t, "b@r", c.DatabasePassword())
+		assert.Equal(t, "honeypot:1234", c.DatabaseServer())
+		assert.Equal(t, "honeypot", c.DatabaseHost())
+		assert.Equal(t, 1234, c.DatabasePort())
+		assert.Equal(t, "baz", c.DatabaseName())
+		assert.Equal(t, "foo", c.DatabaseUser())
+		assert.Equal(t, "b@r", c.DatabasePassword())
+	})
+
+	t.Run("Postgres", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+
+		c.options.Deprecated.DatabaseDsn = "postgresql://foo:b@r@honeypot:1234/baz?TimeZone=UTC&connect_timeout=15000&sslmode=disable"
+		c.options.DatabaseDriver = dsn.DriverPostgreSQL
+
+		assert.Equal(t, "honeypot:1234", c.DatabaseServer())
+		assert.Equal(t, "honeypot", c.DatabaseHost())
+		assert.Equal(t, 1234, c.DatabasePort())
+		assert.Equal(t, "baz", c.DatabaseName())
+		assert.Equal(t, "foo", c.DatabaseUser())
+		assert.Equal(t, "b@r", c.DatabasePassword())
+	})
 }
 
 func TestConfig_ParseDatabaseDSN(t *testing.T) {
@@ -259,7 +290,7 @@ func TestConfig_DatabasePortString(t *testing.T) {
 func TestConfig_DatabaseName(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	resetDatabaseOptions(c)
-	assert.Equal(t, ProjectRoot+"/storage/testdata/index.db?_busy_timeout=5000", c.DatabaseName())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/index.db?_busy_timeout=5000&_foreign_keys=on", c.DatabaseName())
 }
 
 func TestConfig_DatabaseUser(t *testing.T) {
@@ -332,21 +363,33 @@ func TestShouldAutoRotateDatabase(t *testing.T) {
 }
 
 func TestConfig_DatabaseDSN(t *testing.T) {
-	c := NewConfig(CliTestContext())
-	resetDatabaseOptions(c)
-	driver := c.DatabaseDriver()
-	assert.Equal(t, dsn.DriverSQLite3, driver)
-	c.options.DatabaseDSN = ""
-	c.options.DatabaseDriver = "MariaDB"
-	assert.Equal(t, "photoprism:@tcp(localhost)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s", c.DatabaseDSN())
-	c.options.DatabaseDriver = "tidb"
-	assert.Equal(t, ProjectRoot+"/storage/testdata/index.db?_busy_timeout=5000", c.DatabaseDSN())
-	c.options.DatabaseDriver = "Postgres"
-	assert.Equal(t, "user=photoprism password= dbname=photoprism host=localhost port=5432 connect_timeout=15 sslmode=disable TimeZone=UTC", c.DatabaseDSN())
-	c.options.DatabaseDriver = "SQLite"
-	assert.Equal(t, ProjectRoot+"/storage/testdata/index.db?_busy_timeout=5000", c.DatabaseDSN())
-	c.options.DatabaseDriver = ""
-	assert.Equal(t, ProjectRoot+"/storage/testdata/index.db?_busy_timeout=5000", c.DatabaseDSN())
+	t.Run("Drivers", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		resetDatabaseOptions(c)
+		driver := c.DatabaseDriver()
+		assert.Equal(t, dsn.DriverSQLite3, driver)
+		c.options.DatabaseDSN = ""
+		c.options.DatabaseDriver = "MariaDB"
+		assert.Equal(t, "photoprism:@tcp(localhost)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s", c.DatabaseDSN())
+		c.options.DatabaseDriver = "tidb"
+		assert.Equal(t, ProjectRoot+"/storage/testdata/index.db?_busy_timeout=5000&_foreign_keys=on", c.DatabaseDSN())
+		c.options.DatabaseDriver = "Postgres"
+		assert.Equal(t, "postgresql://photoprism:@localhost/photoprism?connect_timeout=15000&sslmode=disable&TimeZone=UTC", c.DatabaseDSN())
+		c.options.DatabaseDriver = "SQLite"
+		assert.Equal(t, ProjectRoot+"/storage/testdata/index.db?_busy_timeout=5000&_foreign_keys=on", c.DatabaseDSN())
+		c.options.DatabaseDriver = ""
+		assert.Equal(t, ProjectRoot+"/storage/testdata/index.db?_busy_timeout=5000&_foreign_keys=on", c.DatabaseDSN())
+	})
+
+	t.Run("PostgresPassword", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		resetDatabaseOptions(c)
+		driver := c.DatabaseDriver()
+		assert.Equal(t, dsn.DriverSQLite3, driver)
+		c.options.DatabaseDriver = "Postgres"
+		c.options.DatabasePassword = "spec[char@$2&"
+		assert.Equal(t, "postgresql://photoprism:spec%5Bchar%40$2&@localhost/photoprism?connect_timeout=15000&sslmode=disable&TimeZone=UTC", c.DatabaseDSN()) //nolint:gosec // This is a mock value used strictly for unit testing
+	})
 
 	t.Run("CustomServer", func(t *testing.T) {
 		conf := NewConfig(CliTestContext())
@@ -359,7 +402,7 @@ func TestConfig_DatabaseDSN(t *testing.T) {
 		conf.options.DatabasePassword = "secret"
 		conf.options.DatabaseTimeout = 42
 
-		want := "instance:secret@tcp(proxy.internal:6032)/instancedb?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=42s"
+		want := "instance:secret@tcp(proxy.internal:6032)/instancedb?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=42s" //nolint:gosec // This is a mock value used strictly for unit testing
 		if got := conf.DatabaseDSN(); got != want {
 			t.Fatalf("DatabaseDSN() = %q, want %q", got, want)
 		}
@@ -375,7 +418,7 @@ func TestConfig_DatabaseDSN(t *testing.T) {
 		conf.options.DatabasePassword = "secret"
 		conf.options.DatabaseTimeout = 21
 
-		want := "instance:secret@unix(/var/run/mysql.sock)/instancedb?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=21s"
+		want := "instance:secret@unix(/var/run/mysql.sock)/instancedb?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=21s" //nolint:gosec // This is a mock value used strictly for unit testing
 		if got := conf.DatabaseDSN(); got != want {
 			t.Fatalf("DatabaseDSN() = %q, want %q", got, want)
 		}
@@ -390,7 +433,7 @@ func TestConfig_DatabaseDSN(t *testing.T) {
 		conf.options.DatabasePassword = "secret"
 		conf.options.DatabaseTimeout = 12
 
-		want := "user=instance password=secret dbname=instancedb host=localhost port=5432 connect_timeout=12 sslmode=disable TimeZone=UTC"
+		want := "postgresql://instance:secret@localhost/instancedb?connect_timeout=12000&sslmode=disable&TimeZone=UTC" //nolint:gosec // This is a mock value used strictly for unit testing
 		if got := conf.DatabaseDSN(); got != want {
 			t.Fatalf("DatabaseDSN() = %q, want %q", got, want)
 		}
@@ -409,7 +452,7 @@ func TestConfig_DatabaseDSN(t *testing.T) {
 		conf.options.DatabasePassword = "secret"
 		conf.options.DatabaseTimeout = 9
 
-		want := "user=instance password=secret dbname=instancedb host=postgres.internal port=5433 connect_timeout=9 sslmode=disable TimeZone=UTC"
+		want := "postgresql://instance:secret@postgres.internal:5433/instancedb?connect_timeout=9000&sslmode=disable&TimeZone=UTC" //nolint:gosec // This is a mock value used strictly for unit testing
 		if got := conf.DatabaseDSN(); got != want {
 			t.Fatalf("DatabaseDSN() = %q, want %q", got, want)
 		}
@@ -436,7 +479,19 @@ func TestConfig_DatabaseDSNFlags(t *testing.T) {
 
 		assert.False(t, conf.NoDatabaseDSN())
 		assert.True(t, conf.HasDatabaseDSN())
-		assert.Equal(t, "user:pass@tcp(db.internal:3306)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s", conf.DatabaseDSN())
+		assert.Equal(t, "user:pass@tcp(db.internal:3306)/photoprism?timeout=15s&charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true", conf.DatabaseDSN()) //nolint:gosec // This is a mock value used strictly for unit testing
+		assert.Empty(t, conf.options.Deprecated.DatabaseDsn)
+	})
+	t.Run("DeprecatedDatabaseDsnPostgres", func(t *testing.T) {
+		conf := NewConfig(CliTestContext())
+		resetDatabaseOptions(conf)
+
+		conf.options.DatabaseDriver = dsn.DriverPostgreSQL
+		conf.options.Deprecated.DatabaseDsn = "postgresql://user:pass@db.internal:4002/photoprism"
+
+		assert.False(t, conf.NoDatabaseDSN())
+		assert.True(t, conf.HasDatabaseDSN())
+		assert.Equal(t, "postgresql://user:pass@db.internal:4002/photoprism?connect_timeout=15000&sslmode=disable&TimeZone=UTC", conf.DatabaseDSN()) //nolint:gosec // This is a mock value used strictly for unit testing
 		assert.Empty(t, conf.options.Deprecated.DatabaseDsn)
 	})
 }
@@ -452,7 +507,7 @@ func TestConfig_ReportDatabaseDSN(t *testing.T) {
 	conf.options.DatabaseDSN = ""
 	assert.False(t, conf.ReportDatabaseDSN())
 
-	conf.options.DatabaseDSN = "user:pass@tcp(db.internal:3306)/photoprism"
+	conf.options.DatabaseDSN = "user:pass@tcp(db.internal:3306)/photoprism" //nolint:gosec // This is a mock value used strictly for unit testing
 	assert.True(t, conf.ReportDatabaseDSN())
 }
 
@@ -464,7 +519,7 @@ func TestConfig_DatabaseFile(t *testing.T) {
 	assert.Equal(t, dsn.DriverSQLite3, driver)
 	c.options.DatabaseDSN = ""
 	assert.Equal(t, ProjectRoot+"/storage/testdata/index.db", c.DatabaseFile())
-	assert.Equal(t, ProjectRoot+"/storage/testdata/index.db?_busy_timeout=5000", c.DatabaseDSN())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/index.db?_busy_timeout=5000&_foreign_keys=on", c.DatabaseDSN())
 }
 
 func TestConfig_DatabaseTimeout(t *testing.T) {
@@ -505,7 +560,7 @@ func TestConfig_DatabaseConnsIdle(t *testing.T) {
 }
 
 func TestImportSQL(t *testing.T) {
-	c := NewMinimalTestConfigWithDb("config", t.TempDir())
+	c := NewMinimalTestConfigWithDbTTest("config", t.TempDir(), t)
 
 	// Setup and capture SQL Logging output
 	buffer := bytes.Buffer{}
@@ -517,14 +572,14 @@ func TestImportSQL(t *testing.T) {
 	log.SetOutput(os.Stdout)
 
 	assert.NotContains(t, buffer.String(), "level=error")
-	assert.True(t, c.db.HasTable("importtest"))
+	assert.True(t, c.db.Migrator().HasTable("importtest"))
 
 	log.SetOutput(&buffer)
 	c.ImportSQL("./testdata/importtest.sql")
 	// Reset logger
 	log.SetOutput(os.Stdout)
 	assert.Contains(t, buffer.String(), "level=error")
-	require.NoError(t, c.db.DropTableIfExists("importtest").Error)
+	require.NoError(t, c.db.Migrator().DropTable("importtest"))
 }
 
 func TestConfig_checkDb(t *testing.T) {

@@ -133,6 +133,12 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 			c.DatabaseFile(),
 			".dump",
 		)
+	case dsn.DriverPostgreSQL, dsn.DriverPostgres:
+		dbDSN := dsn.DSN{Driver: dsn.DriverPostgreSQL, User: c.DatabaseUser(), Password: c.DatabasePassword(), Server: c.DatabaseServer(), Name: c.DatabaseName()}
+		cmd = exec.Command(
+			c.PostgreSQLDumpBin(),
+			"-d", dbDSN.ForPSQL(),
+		)
 	default:
 		return fmt.Errorf("unsupported database type: %s", c.DatabaseDriver())
 	}
@@ -314,6 +320,14 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 			c.SqliteBin(),
 			c.DatabaseFile(),
 		)
+	case dsn.DriverPostgreSQL, dsn.DriverPostgres:
+		dbDSN := dsn.DSN{Driver: dsn.DriverPostgreSQL, User: c.DatabaseUser(), Password: c.DatabasePassword(), Server: c.DatabaseServer(), Name: c.DatabaseName()}
+		cmd = exec.Command(
+			c.PostgreSQLRestoreBin(),
+			"-d", dbDSN.ForPSQL(),
+			"--clean", "--create",
+		)
+
 	default:
 		return fmt.Errorf("unsupported database type: %s", c.DatabaseDriver())
 	}

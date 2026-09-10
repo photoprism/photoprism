@@ -173,6 +173,11 @@ var PhotoKeywordFixtures = PhotoKeywordMap{
 // CreatePhotoKeywordFixtures inserts known entities into the database for testing.
 func CreatePhotoKeywordFixtures() {
 	for _, entity := range PhotoKeywordFixtures {
-		fixtureDb().Create(&entity)
+		firstEntity := &PhotoKeyword{}
+		if err := fixtureDb().Model(&PhotoKeyword{}).Where("photo_id = ? and keyword_id = ?", entity.PhotoID, entity.KeywordID).First(&firstEntity).Error; err != nil {
+			fixtureDb().Create(&entity)
+		} else {
+			fixtureDb().Save(&entity)
+		}
 	}
 }

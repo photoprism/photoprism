@@ -1,13 +1,13 @@
 package entity
 
 import (
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 // PhotoKeyword represents the many-to-many relation between Photo and Keyword.
 type PhotoKeyword struct {
-	PhotoID   uint `gorm:"primary_key;auto_increment:false"`
-	KeywordID uint `gorm:"primary_key;auto_increment:false;index"`
+	PhotoID   uint `gorm:"primaryKey;autoIncrement:false"`
+	KeywordID uint `gorm:"primaryKey;autoIncrement:false;index"`
 }
 
 // TableName returns the entity table name.
@@ -31,7 +31,7 @@ func (m *PhotoKeyword) Create() error {
 }
 
 // AfterCreate flushes the keyword cache once a relation has been persisted.
-func (m *PhotoKeyword) AfterCreate(scope *gorm.Scope) error {
+func (m *PhotoKeyword) AfterCreate(tx *gorm.DB) error {
 	FlushCachedPhotoKeyword(m)
 	return nil
 }

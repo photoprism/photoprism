@@ -1,7 +1,7 @@
 package entity
 
 import (
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 // Set UTC, truncated to whole seconds, as the default for created and updated
@@ -9,7 +9,7 @@ import (
 // generating second-precision values keeps in-memory and persisted times in sync
 // and makes timestamp comparisons behave the same on SQLite and MariaDB.
 func init() {
-	gorm.NowFunc = Now
+	gormConfig().NowFunc = Now
 }
 
 // Db returns the default *gorm.DB connection.

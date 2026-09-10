@@ -10,53 +10,67 @@ import (
 )
 
 func TestFindLegacyUser(t *testing.T) {
+	// Handle case where we are using a real database, rather than sqlite in memory db
+	if Db().Migrator().HasTable("users") {
+		if err := Db().Migrator().DropTable(legacy.User{}); err != nil {
+			log.Errorf("TestFindLegacyUser: failed dropping legacy.User")
+			t.Error(err)
+		}
+	}
 	notFound := FindLegacyUser(Admin)
 	assert.Nil(t, notFound)
 
 	// t.Logf("Legacy Admin: %#v", notFound)
 
-	if err := Db().AutoMigrate(legacy.User{}).Error; err != nil {
+	if err := Db().AutoMigrate(&legacy.User{}); err != nil {
 		log.Debugf("TestFindLegacyUser: %s (waiting 1s)", err.Error())
 
 		time.Sleep(time.Second)
 
-		if err = Db().AutoMigrate(legacy.User{}).Error; err != nil {
+		if err = Db().AutoMigrate(&legacy.User{}); err != nil {
 			log.Errorf("TestFindLegacyUser: failed migrating legacy.User")
 			t.Error(err)
 		}
 	}
 
-	Db().Save(legacy.Admin)
+	Db().Save(&legacy.Admin)
 
 	found := FindLegacyUser(Admin)
 	assert.NotNil(t, found)
 
 	// t.Logf("Legacy Admin: %#v", found)
 
-	if err := Db().DropTable(legacy.User{}).Error; err != nil {
+	if err := Db().Migrator().DropTable(legacy.User{}); err != nil {
 		log.Errorf("TestFindLegacyUser: failed dropping legacy.User")
 		t.Error(err)
 	}
 }
 
 func TestFindLegacyUsers(t *testing.T) {
+	// Handle case where we are using a real database, rather than sqlite in memory db
+	if Db().Migrator().HasTable("users") {
+		if err := Db().Migrator().DropTable(legacy.User{}); err != nil {
+			log.Errorf("TestFindLegacyUser: failed dropping legacy.User")
+			t.Error(err)
+		}
+	}
 	notFound := FindLegacyUsers("all")
 	assert.Len(t, notFound, 0)
 
 	// t.Logf("Legacy Users: %#v", notFound)
 
-	if err := Db().AutoMigrate(legacy.User{}).Error; err != nil {
+	if err := Db().AutoMigrate(&legacy.User{}); err != nil {
 		log.Debugf("TestFindLegacyUser: %s (waiting 1s)", err.Error())
 
 		time.Sleep(time.Second)
 
-		if err = Db().AutoMigrate(legacy.User{}).Error; err != nil {
+		if err = Db().AutoMigrate(&legacy.User{}); err != nil {
 			log.Errorf("TestFindLegacyUser: failed migrating legacy.User")
 			t.Error(err)
 		}
 	}
 
-	Db().Save(legacy.Admin)
+	Db().Save(&legacy.Admin)
 
 	found := FindLegacyUsers("all")
 
@@ -65,7 +79,7 @@ func TestFindLegacyUsers(t *testing.T) {
 
 	// t.Logf("Legacy Users: %#v", found)
 
-	if err := Db().DropTable(legacy.User{}).Error; err != nil {
+	if err := Db().Migrator().DropTable(legacy.User{}); err != nil {
 		log.Errorf("TestFindLegacyUser: failed dropping legacy.User")
 		t.Error(err)
 	}

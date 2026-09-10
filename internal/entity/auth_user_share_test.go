@@ -109,6 +109,7 @@ func TestUserShare_Create(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	UnscopedDb().Delete(m)
 }
 
 func TestUserShare_UpdateLink(t *testing.T) {

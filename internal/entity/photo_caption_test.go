@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 )
 
 func TestPhoto_HasCaption(t *testing.T) {
@@ -82,12 +83,13 @@ func TestPhoto_GetCaption(t *testing.T) {
 func TestPhoto_UpdateCaptionLabels(t *testing.T) {
 	FirstOrCreateLabel(NewLabel("Food", 1))
 	FirstOrCreateLabel(NewLabel("Wine", 2))
-	FirstOrCreateLabel(&Label{LabelName: "Bar", LabelSlug: "bar", CustomSlug: "bar", DeletedAt: TimeStamp()})
+	FirstOrCreateLabel(&Label{LabelName: "Bar", LabelSlug: "bar", CustomSlug: "bar", DeletedAt: gorm.DeletedAt{Time: *TimeStamp(), Valid: true}})
 
 	t.Run("SuccessCaptionSourceMeta", func(t *testing.T) {
 		details := &Details{Keywords: "snake, otter", KeywordsSrc: SrcMeta}
 		photo := Photo{ID: 234667, PhotoTitle: "I was in a nice Bar!", TitleSrc: SrcName, PhotoCaption: "globe, wine, food", CaptionSrc: SrcMeta, Details: details}
 
+		log.Info("Expect 2 x foreign key violation Error or SQLSTATE from entity_save")
 		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
@@ -112,6 +114,7 @@ func TestPhoto_UpdateCaptionLabels(t *testing.T) {
 		details := &Details{Keywords: "snake, otter", KeywordsSrc: SrcMeta}
 		photo := Photo{ID: 234668, PhotoTitle: "I was in a nice Bar!", TitleSrc: SrcName, PhotoCaption: "globe, wine, food", CaptionSrc: SrcImage, Details: details}
 
+		log.Info("Expect 2 x foreign key violation Error or SQLSTATE from entity_save")
 		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
@@ -136,6 +139,7 @@ func TestPhoto_UpdateCaptionLabels(t *testing.T) {
 		details := &Details{Keywords: "snake, otter", KeywordsSrc: SrcMeta}
 		photo := Photo{ID: 234669, PhotoTitle: "I was in a nice Bar!", TitleSrc: SrcName, PhotoCaption: "globe, wine, food", CaptionSrc: SrcEstimate, Details: details}
 
+		log.Info("Expect 2 x foreign key violation Error or SQLSTATE from entity_save")
 		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
@@ -157,8 +161,9 @@ func TestPhoto_UpdateCaptionLabels(t *testing.T) {
 	})
 	t.Run("EmptyCaption", func(t *testing.T) {
 		details := &Details{Keywords: "snake, otter, food", KeywordsSrc: SrcMeta}
-		photo := Photo{ID: 234669, PhotoTitle: "cow, wine, food", TitleSrc: SrcName, PhotoCaption: "", CaptionSrc: SrcMeta, Details: details}
+		photo := Photo{ID: 234670, PhotoTitle: "cow, wine, food", TitleSrc: SrcName, PhotoCaption: "", CaptionSrc: SrcMeta, Details: details}
 
+		log.Info("Expect 2 x foreign key violation Error or SQLSTATE from entity_save")
 		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}

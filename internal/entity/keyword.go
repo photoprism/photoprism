@@ -2,10 +2,11 @@ package entity
 
 import (
 	"errors"
+	"reflect"
 	"strings"
 	"sync"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -14,8 +15,8 @@ var keywordMutex = sync.Mutex{}
 
 // Keyword represents a normalized word used for full-text search and tagging.
 type Keyword struct {
-	ID      uint   `gorm:"primary_key" json:"ID,omitempty" yaml:"ID,omitempty"`
-	Keyword string `gorm:"type:VARCHAR(64);index;" json:"Keyword" yaml:"Keyword,omitempty"`
+	ID      uint   `gorm:"primaryKey;" json:"ID,omitempty" yaml:"ID,omitempty"`
+	Keyword string `gorm:"size:64;index;" json:"Keyword" yaml:"Keyword,omitempty"`
 	Skip    bool   `json:"Skip" yaml:"Skip"`
 }
 
@@ -33,6 +34,23 @@ func NewKeyword(keyword string) *Keyword {
 	}
 
 	return result
+}
+
+// Retrieves the ID value from the values interface
+func getIDInValuesOrZero(values any) (result any) {
+	switch reflect.TypeOf(values).Kind() {
+	case reflect.Struct:
+		t := reflect.TypeOf(values)
+		v := reflect.ValueOf(values)
+		for i := 0; i < t.NumField(); i++ {
+			if t.Field(i).Name == "ID" {
+				return v.Field(i).Interface()
+			}
+		}
+	default:
+		log.Errorf("Unsupported Type %v in getIDInValuesOrZero", reflect.TypeOf(values).Kind())
+	}
+	return 0
 }
 
 // Update modifies a single column on an already persisted keyword and relies on
@@ -56,7 +74,14 @@ func (m *Keyword) Updates(values any) error {
 	} else if m == nil {
 		return errors.New("keyword must not be nil - you may have found a bug")
 	} else if !m.HasID() {
-		return errors.New("keyword ID must not be empty - you may have found a bug")
+		id := getIDInValuesOrZero(values)
+		if id != uint(0x0) {
+			return UnscopedDb().Model(m).
+				Where("id = ?", id).
+				UpdateColumns(values).Error
+		} else {
+			return errors.New("keyword ID must not be empty - you may have found a bug")
+		}
 	}
 
 	// Omit FlushCachedKeyword() because this should automatically trigger the AfterUpdate() hook.
@@ -89,7 +114,7 @@ func (m *Keyword) AfterDelete(tx *gorm.DB) (err error) {
 }
 
 // AfterCreate flushes the cache when the entity is created.
-func (m *Keyword) AfterCreate(scope *gorm.Scope) error {
+func (m *Keyword) AfterCreate(tx *gorm.DB) error {
 	FlushCachedKeyword(m)
 	return nil
 }

@@ -26,7 +26,9 @@ Additional information can be found in our Developer Guide:
 package dsn
 
 import (
+	"fmt"
 	"net"
+	"net/url"
 	"regexp"
 	"strconv"
 	"strings"
@@ -126,7 +128,7 @@ func (d *DSN) Port() int {
 	switch d.Driver {
 	case DriverMySQL, DriverMariaDB:
 		defaultPort = 3306
-	case DriverPostgres:
+	case DriverPostgres, DriverPostgreSQL:
 		defaultPort = 5432
 	}
 
@@ -202,16 +204,24 @@ func (d *DSN) parse() {
 	}
 
 	d.detectDriver()
+
+	if d.Driver == DriverPostgres {
+		// Need to encode the Params if they aren't encoded, as key value pair is translated to uri.
+		// But this can only happen if this routine is called by something other than Parse.
+		d.Driver = DriverPostgreSQL
+		postgresEncodeParams(d)
+	}
 }
 
-// parsePostgres extracts connection settings from PostgreSQL key/value style DSNs and
+// parsePostgres extracts connection settings from PostgreSQL key/value style DSNs,
+// converts it to a postgresql URI connection string and
 // returns true on success.
 func (d *DSN) parsePostgres() bool {
 	if !strings.Contains(d.DSN, "password=") || !strings.Contains(d.DSN, "user=") {
 		return false
 	}
 
-	fields, ok := d.splitKeyValue(d.DSN)
+	fields, ok := splitKeyValue(d.DSN)
 
 	if !ok {
 		return false
@@ -249,12 +259,12 @@ func (d *DSN) parsePostgres() bool {
 		}
 	}
 
-	d.Driver = DriverPostgres
-	d.User = values["user"]
-	d.Password = values["password"]
-	d.Name = name
+	d.Driver = DriverPostgreSQL
+	d.User = postgresDequote(values["user"])
+	d.Password = postgresDequote(values["password"])
+	d.Name = postgresDequote(name)
 
-	host := values["host"]
+	host := postgresDequote(values["host"])
 	port := values["port"]
 
 	switch {
@@ -274,26 +284,23 @@ func (d *DSN) parsePostgres() bool {
 	delete(values, "host")
 	delete(values, "port")
 
-	params := make([]string, 0, len(values))
+	params := url.Values{}
 
 	for _, key := range order {
 		if val, ok := values[key]; ok {
-			if strings.Contains(val, " ") {
-				val = `"` + val + `"`
-			}
-			params = append(params, key+"="+val)
+			params.Add(key, val)
 		}
 	}
 
 	if len(params) > 0 {
-		d.Params = strings.Join(params, " ")
+		d.Params = params.Encode()
 	}
 
 	return true
 }
 
 // splitKeyValue tokenizes PostgreSQL key/value DSNs, supporting quoted values with spaces.
-func (d *DSN) splitKeyValue(input string) ([]string, bool) {
+func splitKeyValue(input string) ([]string, bool) {
 	runes := []rune(strings.TrimSpace(input))
 
 	if len(runes) == 0 || !strings.Contains(input, "=") {
@@ -382,7 +389,7 @@ func (d *DSN) detectDriver() {
 	lower := strings.ToLower(d.DSN)
 
 	if strings.Contains(lower, "postgres://") || strings.Contains(lower, "postgresql://") {
-		d.Driver = DriverPostgres
+		d.Driver = DriverPostgreSQL
 		return
 	}
 
@@ -403,5 +410,114 @@ func (d *DSN) detectDriver() {
 
 	if d.Server != "" && (strings.Contains(d.Server, ":") || d.Net != "") && d.Driver == "" {
 		d.Driver = DriverMySQL
+	}
+}
+
+// ToString returns the DSN in the format that gorm expects created from the parts, with default Params if not provided.
+func (d *DSN) ToString() string {
+	driver := d.Driver
+	if driver == "" {
+		if d.User == "" {
+			driver = DriverSQLite3
+		} else {
+			driver = DriverMariaDB
+		}
+	}
+
+	switch driver {
+	case DriverSQLite3, "sqlitefile":
+		if d.Params != "" {
+			return fmt.Sprintf("%s/%s?%s", d.Server, d.Name, d.Params)
+		} else {
+			return fmt.Sprintf("%s/%s?%s", d.Server, d.Name, Params[DriverSQLite3])
+		}
+	case DriverPostgreSQL, DriverPostgres:
+		if d.Params != "" {
+			// May need to encode the Params if the driver is DriverPostgres, and Parse hasn't been used.
+			if driver == DriverPostgres {
+				postgresEncodeParams(d)
+			}
+			return (&url.URL{
+				Scheme:   DriverPostgreSQL,
+				User:     url.UserPassword(d.User, d.Password),
+				Host:     d.Server,
+				Path:     d.Name,
+				RawQuery: d.Params,
+			}).String()
+		} else {
+			return (&url.URL{
+				Scheme:   DriverPostgreSQL,
+				User:     url.UserPassword(d.User, d.Password),
+				Host:     d.Server,
+				Path:     d.Name,
+				RawQuery: fmt.Sprintf("%s", Params[DriverPostgreSQL]),
+			}).String()
+		}
+	case DriverMariaDB, DriverMySQL:
+		databaseServer := d.Server
+		if d.Net != "" {
+			databaseServer = fmt.Sprintf("%s(%s)", d.Net, databaseServer)
+		}
+		if d.Params != "" {
+			return fmt.Sprintf("%s:%s@%s/%s?%s", d.User, d.Password, databaseServer, d.Name, d.Params)
+		} else {
+			return fmt.Sprintf("%s:%s@%s/%s?%s", d.User, d.Password, databaseServer, d.Name, Params[DriverMariaDB])
+		}
+	default:
+		return ""
+	}
+}
+
+// ForPSQL returns the DSN in the format that psql expects for postgresql.
+func (d *DSN) ForPSQL() string {
+	return (&url.URL{
+		Scheme: DriverPostgreSQL,
+		User:   url.UserPassword(d.User, d.Password),
+		Host:   d.Server,
+		Path:   d.Name,
+	}).String()
+}
+
+// postgresDequote removes the required character escaping from a postgres connection string variable
+func postgresDequote(s string) string {
+	if len(s) > 1 {
+		if s[0] == '\'' && s[len(s)-1] == '\'' {
+			s = s[1 : len(s)-1]
+		}
+		s = strings.ReplaceAll(s, `\\`, `\`)
+		s = strings.ReplaceAll(s, `\'`, `'`)
+	}
+	return s
+}
+
+// postgresEncodeParams encodes d.Params if they are key value pairs.
+func postgresEncodeParams(d *DSN) {
+	if kvp, ok := splitKeyValue(d.Params); ok {
+		if len(kvp) > 1 {
+			order := make([]string, 0, len(kvp))
+			values := make(map[string]string, len(kvp))
+			for _, field := range kvp {
+				parts := strings.SplitN(field, "=", 2)
+				key := strings.TrimSpace(parts[0])
+				val := strings.TrimSpace(parts[1])
+
+				// Trim optional surrounding quotes.
+				val = strings.Trim(val, `"`)
+
+				values[key] = val
+				order = append(order, key)
+			}
+
+			params := url.Values{}
+			for _, key := range order {
+				if val, ok := values[key]; ok {
+					params.Add(key, val)
+				}
+			}
+
+			if len(params) > 0 {
+				d.Params = params.Encode()
+			}
+		}
 	}
 }

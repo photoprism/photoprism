@@ -81,6 +81,9 @@ func TestEnsureCredentials_MariaDB(t *testing.T) {
 	if creds2.Password != "" || creds2.DSN != "" {
 		t.Fatalf("expected no password/DSN without rotation; got: %+v", creds2)
 	}
+
+	// Cleanup: drop user and database to keep the dev DB tidy.
+	cleanupDB(t, ctx, creds)
 }
 
 // TestEnsureCredentials_DriverNormalization verifies driver normalization and rejections.

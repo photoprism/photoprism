@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/internal/testextras"
 	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -24,13 +25,12 @@ var savedPath string
 // and re-registers the DB provider before each command invocation. If you see
 // "config: database not connected" during test runs, consider moving shutdown
 // behavior behind an interface or gating it for tests.
-
 // TestMain executes runTestMain returning it's results.  It is done this way so that defer can be used to cleanup.
 func TestMain(m *testing.M) {
 	os.Exit(runTestMain(m))
 }
 
-func runTestMain(m *testing.M) int {
+func runTestMain(m *testing.M) (code int) {
 	_ = os.Setenv("TF_CPP_MIN_LOG_LEVEL", "3")
 
 	log = logrus.StandardLogger()
@@ -47,7 +47,7 @@ func runTestMain(m *testing.M) int {
 	savedPath = tempDir
 	defer os.RemoveAll(tempDir)
 
-	c := config.NewMinimalTestConfigWithDb("commands", tempDir)
+	c := config.NewMinimalTestConfigWithDbTMain("commands", tempDir)
 	defer c.CleanupTestFolder()
 	defer func() {
 		if err := c.CloseDb(); err != nil {
@@ -75,7 +75,7 @@ func runTestMain(m *testing.M) int {
 	}
 
 	// Run unit tests.
-	return m.Run()
+	return testextras.TestDbCleanup(m.Run())
 }
 
 // SetEnvForTest sets an environment variable and restores its original value after the test.
@@ -203,16 +203,16 @@ func RunWithProvidedTestContext(ctx *cli.Context, cmd *cli.Command, args []strin
 
 	// Reset the config options just in case they have been affected
 	*conf.Options() = previousOptions
-	// // Re-open the database after the command completed so follow-up checks
-	// // (potentially issued by the test itself) have an active connection.
+	// Re-open the database after the command completed so follow-up checks
+	// (potentially issued by the test itself) have an active connection.
 	_ = reopenConnection()
 
 	return output, err
 }
 
 // resetConfigAndDB replaces the config with a generated minimal config, and may replace the database if it doesn't exist.
-func resetConfigAndDB() *config.Config {
-	c := config.NewMinimalTestConfigWithDb("commands", savedPath)
+func resetConfigAndDB(t *testing.T) *config.Config {
+	c := config.NewMinimalTestConfigWithDbTTest("commands", savedPath, t)
 	get.SetConfig(c)
 	entity.SetDbProvider(c)
 

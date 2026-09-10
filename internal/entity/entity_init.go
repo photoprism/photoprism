@@ -1,13 +1,10 @@
 package entity
 
 import (
-	"os"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/entity/migrate"
-	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/dsn"
-	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/internal/testextras"
 )
 
 // onReady stores callbacks to execute once database initialization finishes.
@@ -54,25 +51,25 @@ func InitTestDb(driver, dbDsn string) *DbConn {
 
 	start := time.Now()
 
-	// Set default test database driver.
-	if driver == "test" || driver == "sqlite" || driver == "" || dbDsn == "" {
-		driver = dsn.DriverSQLite3
-	}
+	// // Set default test database driver.
+	// if driver == "test" || driver == "sqlite" || driver == "" || dbDsn == "" {
+	// 	driver = dsn.DriverSQLite3
+	// }
 
-	// Set default database DSN.
-	if driver == dsn.DriverSQLite3 {
-		if dbDsn == "" || dbDsn == dsn.SQLiteTestDB {
-			dbDsn = dsn.SQLiteTestDB
-			if !fs.FileExists(dbDsn) {
-				log.Debugf("sqlite: test database %s does not already exist", clean.Log(dbDsn))
-			} else if err := os.Remove(dbDsn); err != nil {
-				log.Errorf("sqlite: failed to remove existing test database %s (%s)", clean.Log(dbDsn), err)
-			}
-		}
-	}
+	// // Set default database DSN.
+	// if driver == dsn.DriverSQLite3 {
+	// 	if dbDsn == "" || dbDsn == dsn.SQLiteTestDB {
+	// 		dbDsn = dsn.SQLiteTestDB
+	// 		if !fs.FileExists(dbDsn) {
+	// 			log.Debugf("sqlite: test database %s does not already exist", clean.Log(dbDsn))
+	// 		} else if err := os.Remove(dbDsn); err != nil {
+	// 			log.Errorf("sqlite: failed to remove existing test database %s (%s)", clean.Log(dbDsn), err)
+	// 		}
+	// 	}
+	// }
 
 	// Give the package a database of its own, so that tests can run in parallel.
-	dbDsn = TestDbDSN(driver, dbDsn)
+	dbDsn = testextras.TestDbDSN(driver, "testdb")
 
 	log.Infof("initializing %s test db in %s", driver, dbDsn)
 

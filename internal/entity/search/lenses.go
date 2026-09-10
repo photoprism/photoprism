@@ -3,7 +3,9 @@ package search
 import (
 	"strings"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -13,6 +15,7 @@ func Lenses(frm form.SearchLenses) (results []Lens, err error) {
 		return results, err
 	}
 
+	results = make([]Lens, 0)
 	s := Db()
 	// s.LogMode(true)
 
@@ -47,7 +50,14 @@ func Lenses(frm form.SearchLenses) (results []Lens, err error) {
 
 	if frm.Query != "" {
 		likeString := SqlParam(frm.Query, "%", "%")
-		s = s.Where("lenses.lens_name LIKE ? OR lenses.lens_make LIKE ? OR lenses.lens_model LIKE ?", likeString, likeString, likeString)
+		switch entity.DbDialect() {
+		case dsn.DialectPostgreSQL:
+			where, values := OrLikeCols([]string{"lower(lenses.lens_name)", "lower(lenses.lens_make)", "lower(lenses.lens_model)"}, strings.ToLower(likeString))
+			s = s.Where(where, values...)
+		default:
+			where, values := OrLikeCols([]string{"lenses.lens_name", "lenses.lens_make", "lenses.lens_model"}, likeString)
+			s = s.Where(where, values...)
+		}
 	}
 
 	if result := s.Scan(&results); result.Error != nil {

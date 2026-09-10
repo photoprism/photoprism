@@ -166,10 +166,7 @@ func TestLabelPhotoCounts(t *testing.T) {
 			ResetTestFixtures()
 		})
 		// Clean the database as if it's brand new
-		Entities.Truncate(Db())
-		CreateDefaultFixtures()
-		FlushCaches()
-		File{}.RegenerateIndex()
+		ResetNoTestFixtures()
 
 		result := LabelCounts()
 

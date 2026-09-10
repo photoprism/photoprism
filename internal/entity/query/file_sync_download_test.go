@@ -32,7 +32,7 @@ func TestSetDownloadFileID(t *testing.T) {
 			ServiceID:  serviceID,
 			RemoteName: remoteName,
 			Status:     entity.FileSyncDownloaded,
-			FileID:     0,
+			FileID:     nil,
 		}
 
 		if err := entity.Db().Create(&entry).Error; err != nil {
@@ -57,6 +57,6 @@ func TestSetDownloadFileID(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, uint(1000000), updated.FileID)
+		assert.Equal(t, uint(1000000), *updated.FileID)
 	})
 }

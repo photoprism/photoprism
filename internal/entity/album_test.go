@@ -56,11 +56,11 @@ func TestAddPhotoToAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		photo_updatedAt := strings.Split(entries[0].UpdatedAt.String(), ".")[0]
-		album_updatedAt := strings.Split(album.UpdatedAt.String(), ".")[0]
+		photoUpdatedAt := strings.Split(entries[0].UpdatedAt.String(), ".")[0]
+		albumUpdatedAt := strings.Split(album.UpdatedAt.String(), ".")[0]
 
 		assert.Truef(
-			t, photo_updatedAt <= album_updatedAt,
+			t, photoUpdatedAt <= albumUpdatedAt,
 			"Expected the UpdatedAt field of an album to be updated when"+
 				" new photos are added",
 		)
@@ -107,11 +107,11 @@ func TestAddPhotoToAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		photo_updatedAt := strings.Split(entries[0].UpdatedAt.String(), ".")[0]
-		album_updatedAt := strings.Split(album.UpdatedAt.String(), ".")[0]
+		photoUpdatedAt := strings.Split(entries[0].UpdatedAt.String(), ".")[0]
+		albumUpdatedAt := strings.Split(album.UpdatedAt.String(), ".")[0]
 
 		assert.Truef(
-			t, photo_updatedAt <= album_updatedAt,
+			t, photoUpdatedAt <= albumUpdatedAt,
 			"Expected the UpdatedAt field of an album to be updated when"+
 				" new photos are added",
 		)
@@ -150,11 +150,11 @@ func TestAddPhotoToUserAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		photo_updatedAt := strings.Split(entries[0].UpdatedAt.String(), ".")[0]
-		album_updatedAt := strings.Split(album.UpdatedAt.String(), ".")[0]
+		photoUpdatedAt := strings.Split(entries[0].UpdatedAt.String(), ".")[0]
+		albumUpdatedAt := strings.Split(album.UpdatedAt.String(), ".")[0]
 
 		assert.Truef(
-			t, photo_updatedAt <= album_updatedAt,
+			t, photoUpdatedAt <= albumUpdatedAt,
 			"Expected the UpdatedAt field of an album to be updated when"+
 				" new photos are added",
 		)
@@ -231,11 +231,11 @@ func TestAddPhotoToUserAlbumsConcurrentCreate(t *testing.T) {
 		t.Fatalf("expected a single album, got %d", len(albums))
 	}
 
-	var relationCount int
+	var relationCount int64
 	if err := Db().Table(PhotoAlbum{}.TableName()).Where("album_uid = ?", albums[0].AlbumUID).Count(&relationCount).Error; err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, len(photos), relationCount)
+	assert.Equal(t, len(photos), int(relationCount))
 }
 
 // TestNewAlbum exercises the related album behavior.
@@ -789,6 +789,26 @@ func TestFindAlbum(t *testing.T) {
 		}
 
 		assert.Equal(t, "April 1990", result.AlbumTitle)
+	})
+	t.Run("AlbumFilterNoSlug", func(t *testing.T) {
+		album := Album{AlbumSlug: UnknownSlug, AlbumType: AlbumFolder, AlbumFilter: `path:"1990/04" public:true`}
+		result := FindAlbum(album)
+
+		if result == nil {
+			t.Fatal("album should not be nil")
+		}
+
+		assert.Equal(t, "April 1990", result.AlbumTitle)
+	})
+	t.Run("AlbumTitleNoSlug", func(t *testing.T) {
+		album := Album{AlbumSlug: UnknownSlug, AlbumType: AlbumManual, AlbumTitle: `route%`}
+		result := FindAlbum(album)
+
+		if result == nil {
+			t.Fatal("album should not be nil")
+		}
+
+		assert.Equal(t, "Route 66", result.AlbumTitle)
 	})
 	t.Run("AlbumManual", func(t *testing.T) {
 		album := Album{AlbumSlug: "berlin-2019", AlbumType: AlbumManual}
@@ -1457,6 +1477,13 @@ func TestAlbum_DeletePermanently(t *testing.T) {
 			t.Fatal("should find album")
 		}
 
+		photo1 := PhotoFixtures.Get("19800101_000002_D640C559")
+		photo2 := PhotoFixtures.Get("Photo01")
+		photos := Photos{&photo1, &photo2}
+		added := album.AddPhotos(photos)
+
+		assert.Len(t, added, 2)
+
 		if err := album.DeletePermanently(); err != nil {
 			t.Fatal(err)
 		}
@@ -1686,17 +1713,17 @@ func TestAlbum_RemovePhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		first_photo_updatedAt := strings.Split(entries[0].UpdatedAt.String(), ".")[0]
-		second_photo_updatedAt := strings.Split(entries[1].UpdatedAt.String(), ".")[0]
-		album_updatedAt := strings.Split(a.UpdatedAt.String(), ".")[0]
+		firstPhotoUpdatedAt := strings.Split(entries[0].UpdatedAt.String(), ".")[0]
+		secondPhotoUpdatedAt := strings.Split(entries[1].UpdatedAt.String(), ".")[0]
+		albumUpdatedAt := strings.Split(a.UpdatedAt.String(), ".")[0]
 
 		assert.Truef(
-			t, first_photo_updatedAt <= album_updatedAt,
+			t, firstPhotoUpdatedAt <= albumUpdatedAt,
 			"Expected the UpdatedAt field of an album to be updated when"+
 				" photos are removed",
 		)
 		assert.Truef(
-			t, second_photo_updatedAt <= album_updatedAt,
+			t, secondPhotoUpdatedAt <= albumUpdatedAt,
 			"Expected the UpdatedAt field of an album to be updated when"+
 				" photos are removed",
 		)

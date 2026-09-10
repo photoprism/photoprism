@@ -92,6 +92,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
       chromium-driver \
       chromium-sandbox \
       mariadb-client \
+      postgresql-client \
       sqlite3 \
       libc6-dev \
       libssl-dev \

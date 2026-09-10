@@ -33,10 +33,9 @@ func FoldersByPath(rootName, rootPath, path string, recursive bool) (folders ent
 	for i, dir := range dirs {
 		newFolder := entity.NewFolder(rootName, filepath.Join(path, dir), fs.ModTime(filepath.Join(rootPath, dir)))
 
-		if err = newFolder.Create(); err == nil {
-			folders[i] = newFolder
-		} else if folder := entity.FindFolder(rootName, filepath.Join(path, dir)); folder != nil {
-			folders[i] = *folder
+		result, _, err := entity.FirstOrCreateFolder(&newFolder)
+		if err == nil {
+			folders[i] = *result
 		} else {
 			log.Errorf("folders: %s (create folder)", err)
 		}
@@ -61,8 +60,8 @@ func FolderCoverByUID(uid string) (file entity.File, err error) {
 		return file, fmt.Errorf("invalid folder uid")
 	}
 
-	if err = Db().Where("files.file_primary = 1 AND files.file_missing = 0 AND files.file_type IN (?) AND files.deleted_at IS NULL", media.PreviewExpr).
-		Joins("JOIN photos ON photos.id = files.photo_id AND photos.deleted_at IS NULL AND photos.photo_quality > -1 AND photos.photo_private = 0").
+	if err = Db().Where("files.file_primary = TRUE AND files.file_missing = FALSE AND files.file_type IN (?) AND files.deleted_at IS NULL", media.PreviewExpr).
+		Joins("JOIN photos ON photos.id = files.photo_id AND photos.deleted_at IS NULL AND photos.photo_quality > -1 AND photos.photo_private = FALSE").
 		Joins("JOIN folders ON photos.photo_path = folders.path AND folders.folder_uid = ?", uid).
 		Order("photos.photo_quality DESC").
 		Limit(1).
@@ -75,11 +74,12 @@ func FolderCoverByUID(uid string) (file entity.File, err error) {
 
 // AlbumFolders returns folders that should be added as album.
 func AlbumFolders(threshold int) (folders entity.Folders, err error) {
+	folders = make(entity.Folders, 0)
 	db := UnscopedDb().Table("folders").
 		Select("folders.path, folders.root, folders.folder_uid, folders.folder_title, folders.folder_country, folders.folder_year, folders.folder_month, COUNT(photos.id) AS photo_count").
-		Joins("JOIN photos ON photos.photo_path = folders.path AND photos.deleted_at IS NULL AND photos.photo_quality >= 3 AND photos.photo_private = 0").
+		Joins("JOIN photos ON photos.photo_path = folders.path AND photos.deleted_at IS NULL AND photos.photo_quality >= 3 AND photos.photo_private = FALSE").
 		Group("folders.path, folders.root, folders.folder_uid, folders.folder_title, folders.folder_country, folders.folder_year, folders.folder_month").
-		Having("photo_count >= ?", threshold)
+		Having("COUNT(photos.id) >= ?", threshold)
 
 	if err = db.Scan(&folders).Error; err != nil {
 		return folders, err
@@ -94,7 +94,7 @@ func UpdateFolderDates() (updated int, err error) {
 	defer mutex.Index.Unlock()
 
 	switch DbDialect() {
-	case dsn.DriverMySQL:
+	case dsn.DialectMySQL:
 		result := UnscopedDb().Exec(`UPDATE folders
 		INNER JOIN
 			(SELECT photo_path, MAX(taken_at_local) AS taken_max
@@ -106,7 +106,19 @@ func UpdateFolderDates() (updated int, err error) {
 			OR DATE(p.taken_max) <> COALESCE(STR_TO_DATE(CONCAT(folder_year, '-', folder_month,'-', folder_day), '%Y-%c-%e'), DATE('1000-01-01'))
 		)`, entity.RootOriginals)
 		return int(result.RowsAffected), result.Error
-	case dsn.DriverSQLite3:
+	case dsn.DialectPostgreSQL:
+		result := UnscopedDb().Exec(`UPDATE folders
+			SET folder_year = date_part('year', taken_max), folder_month = date_part('month', taken_max), folder_day = date_part('day', taken_max)
+			FROM (SELECT photo_path, MAX(taken_at_local) AS taken_max
+	 			FROM photos WHERE taken_src = 'meta' AND photos.photo_quality >= 3 AND photos.deleted_at IS NULL
+	 			GROUP BY photo_path
+			) AS p
+			WHERE folders.path = p.photo_path AND p.taken_max IS NOT NULL and root = ?
+			AND (folder_year = 0 OR folder_month = 0 OR folder_day = 0
+				OR DATE(p.taken_max) <> coalesce(safe_make_date(folder_year, folder_month, folder_day), make_date(1000, 1, 1))
+			)`, entity.RootOriginals)
+		return int(result.RowsAffected), result.Error
+	case dsn.DialectSQLite:
 		// SQLite has potential locking issues if the update is done on all folders at once.
 		var folders entity.Folders
 		// Only update Original's folders.

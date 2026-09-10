@@ -8,6 +8,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity/sortby"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
@@ -1906,7 +1907,7 @@ func TestPhotos(t *testing.T) {
 		}
 
 		t.Logf("results: %+v", photos)
-		assert.Len(t, photos, 1)
+		require.Len(t, photos, 1)
 		assert.Equal(t, photos[0].PhotoTitle, "Neckarbrücke")
 	})
 	t.Run("SortByFileSize", func(t *testing.T) {
@@ -1928,7 +1929,7 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.GreaterOrEqual(t, len(photos), 1)
+		require.GreaterOrEqual(t, len(photos), 4)
 		assert.GreaterOrEqual(t, photos[0].FileSize, photos[3].FileSize)
 
 		for _, r := range photos {
@@ -1995,8 +1996,10 @@ func TestPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.GreaterOrEqual(t, len(photos), 1)
-		assert.Equal(t, photos[0].PlaceCountry, photos[3].PlaceCountry)
+		assert.GreaterOrEqual(t, len(photos), 4)
+		if len(photos) > 3 {
+			assert.Equal(t, photos[0].PlaceCountry, photos[3].PlaceCountry)
+		}
 
 		for _, r := range photos {
 			assert.IsType(t, Photo{}, r)

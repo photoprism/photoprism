@@ -7,6 +7,8 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/testextras"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -24,16 +26,17 @@ func runTestMain(m *testing.M) int {
 	// Remove temporary SQLite files after running the tests.
 	defer fs.PurgeTestDbFiles(".", false)
 
+	driver, dsname := dsn.PhotoPrismTestToDriverDSN()
 	db := entity.InitTestDb(
-		os.Getenv("PHOTOPRISM_TEST_DRIVER"),
-		os.Getenv("PHOTOPRISM_TEST_DSN"))
+		driver,
+		dsname)
 	defer db.Close()
 
-	return m.Run()
+	return testextras.TestDbCleanup(m.Run())
 }
 
 // testDialect returns the name of the SQL dialect the test database runs on, so
 // that tests can account for collation and sort order differences.
 func testDialect() string {
-	return entity.Db().Dialect().GetName()
+	return entity.Db().Dialector.Name()
 }

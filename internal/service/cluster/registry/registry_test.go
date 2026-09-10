@@ -9,6 +9,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/service/cluster"
+	"github.com/photoprism/photoprism/internal/testextras"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -26,7 +27,7 @@ func runTestMain(m *testing.M) int {
 	defer fs.PurgeTestDbFiles(".", false)
 
 	// Run unit tests.
-	return m.Run()
+	return testextras.TestDbCleanup(m.Run())
 }
 
 func TestClientRegistry_GetAndDelete(t *testing.T) {

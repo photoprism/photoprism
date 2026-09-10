@@ -107,3 +107,4 @@ Dockerfile.local*
 .c9revisions
 .settings
 .swp
+.vscode

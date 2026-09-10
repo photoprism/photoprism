@@ -31,30 +31,28 @@ func TestUserAlbums(t *testing.T) {
 		query.Type = entity.AlbumManual
 		result, err := UserAlbums(query, entity.SessionFixtures.Pointer("alice"))
 
-		if err != nil {
-			t.Fatal(err)
+		if assert.Nil(t, err) {
+			assert.Equal(t, "Christmas 2030", result[0].AlbumTitle)
 		}
-
-		assert.Equal(t, "Christmas 2030", result[0].AlbumTitle)
 	})
 	t.Run("Visitor", func(t *testing.T) {
 		query := form.NewAlbumSearch("christmas")
 		query.Type = entity.AlbumFolder
 		_, err := UserAlbums(query, entity.SessionFixtures.Pointer("unauthorized"))
 
-		assert.Error(t, err)
-		assert.Equal(t, err.Error(), "Permission denied")
+		if assert.Error(t, err) {
+			assert.Equal(t, err.Error(), "Permission denied")
+		}
 	})
 	t.Run("GuestAppPassword", func(t *testing.T) {
 		query := form.NewAlbumSearch("france")
 		query.Type = entity.AlbumMoment
 		result, err := UserAlbums(query, entity.SessionFixtures.Pointer("gandalf_app_password_full_access"))
 
-		if err != nil {
-			t.Fatal(err)
+		if assert.Nil(t, err) {
+			assert.Equal(t, 0, len(result))
+			assert.NotNil(t, result)
 		}
-
-		assert.Equal(t, 0, len(result))
 	})
 	t.Run("SearchByUidWithoutType", func(t *testing.T) {
 		// Regression for the share-link "Permission denied" error: a lookup by album UID without
@@ -98,6 +96,7 @@ func TestAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 
+		require.Greater(t, len(result), 0)
 		assert.Equal(t, "Christmas 2030", result[0].AlbumTitle)
 	})
 	t.Run("SearchWithSlug", func(t *testing.T) {
@@ -109,6 +108,7 @@ func TestAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 
+		require.Greater(t, len(result), 0)
 		assert.Equal(t, "Holiday 2030", result[0].AlbumTitle)
 	})
 	t.Run("SearchWithCountry", func(t *testing.T) {
@@ -119,6 +119,7 @@ func TestAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 
+		require.Greater(t, len(result), 0)
 		assert.Equal(t, "April 1990", result[0].AlbumTitle)
 	})
 	t.Run("FavoritesTrue", func(t *testing.T) {
@@ -132,6 +133,7 @@ func TestAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 
+		require.Greater(t, len(result), 0)
 		assert.Equal(t, "Holiday 2030", result[0].AlbumTitle)
 	})
 	t.Run("EmptyQuery", func(t *testing.T) {
@@ -178,7 +180,9 @@ func TestAlbums(t *testing.T) {
 		}
 
 		assert.Equal(t, 1, len(result))
-		assert.Equal(t, "christmas-2030", result[0].AlbumSlug)
+		if len(result) == 1 {
+			assert.Equal(t, "christmas-2030", result[0].AlbumSlug)
+		}
 	})
 	t.Run("SearchWithMultipleFilters", func(t *testing.T) {
 		f := form.SearchAlbums{
@@ -199,7 +203,9 @@ func TestAlbums(t *testing.T) {
 		}
 
 		assert.Equal(t, 1, len(result))
-		assert.Equal(t, "Empty Moment", result[0].AlbumTitle)
+		if len(result) == 1 {
+			assert.Equal(t, "Empty Moment", result[0].AlbumTitle)
+		}
 	})
 	t.Run("SearchForYearMonthDay", func(t *testing.T) {
 		f := form.SearchAlbums{
@@ -246,6 +252,7 @@ func TestAlbums(t *testing.T) {
 			t.Fatal(err)
 		}
 
+		require.Greater(t, len(result), 0)
 		assert.Equal(t, "April 1990", result[0].AlbumTitle)
 	})
 	t.Run("California", func(t *testing.T) {

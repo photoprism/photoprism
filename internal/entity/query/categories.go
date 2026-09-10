@@ -10,7 +10,8 @@ type CategoryLabel struct {
 
 // CategoryLabels returns category labels with pagination, normalizing the display title for each entry.
 func CategoryLabels(limit, offset int) (results []CategoryLabel) {
-	s := Db().NewScope(nil).DB()
+	results = make([]CategoryLabel, 0)
+	s := Db()
 
 	s = s.Table("categories").
 		Select("label_name AS name").

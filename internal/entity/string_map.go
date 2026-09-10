@@ -177,6 +177,28 @@ func (s *StringMap) Unset(key string) {
 	delete(s.m, key)
 }
 
+// Remove a list of keys from the map
+func (s *StringMap) BulkRemove(keys []string) {
+	if keys == nil {
+		return
+	}
+
+	s.Lock()
+	defer s.Unlock()
+
+	for _, key := range keys {
+		if v := strings.ToLower(s.m[key]); v != "" {
+			if keys := list.Remove(s.r[v], key); len(keys) == 0 {
+				delete(s.r, v)
+			} else {
+				s.r[v] = keys
+			}
+		}
+
+		delete(s.m, key)
+	}
+}
+
 // UnsetValue removes all keys currently mapped to the specified value.
 func (s *StringMap) UnsetValue(val string) {
 	if val == "" {

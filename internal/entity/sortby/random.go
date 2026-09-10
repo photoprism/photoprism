@@ -1,24 +1,27 @@
 package sortby
 
 import (
-	"github.com/jinzhu/gorm"
-	// Registers the database drivers, so the random order can be resolved per dialect.
-	_ "github.com/jinzhu/gorm/dialects/mysql"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 // RandomExpr returns the name of the random function depending on the SQL dialect.
-func RandomExpr(dialect gorm.Dialect) *gorm.SqlExpr {
-	switch dialect.GetName() {
-	case dsn.DriverMySQL:
+func RandomExpr(dialect gorm.Dialector) clause.Expr {
+	switch dialect.Name() {
+	case dsn.DialectMySQL:
 		// A seed integer can be passed as an argument, e.g. "RAND(2342)", to generate
 		// reproducible pseudo-random values, see https://mariadb.com/kb/en/rand/.
 		return gorm.Expr("RAND()")
-	case dsn.DriverSQLite3:
+	case dsn.DialectSQLite:
 		// SQLite does not support specifying a seed to generate a deterministic sequence
 		// of pseudo-random values, see https://www.sqlite.org/lang_corefunc.html#random.
+		return gorm.Expr("RANDOM()")
+	case dsn.DialectPostgreSQL:
+		// Postgres does not support specifying a seed to generate a deterministic sequence
+		// of pseudo-random values, see https://www.postgresql.org/docs/8.2/functions-math.html.
+		// random value in the range 0.0 <= x < 1.0
 		return gorm.Expr("RANDOM()")
 	default:
 		return gorm.Expr("RAND()")

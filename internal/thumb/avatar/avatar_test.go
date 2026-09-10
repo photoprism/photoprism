@@ -9,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/internal/testextras"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -27,7 +28,7 @@ func runTestMain(m *testing.M) (code int) {
 	}
 	defer os.RemoveAll(tempDir)
 
-	c := config.NewMinimalTestConfigWithDb("avatar", tempDir)
+	c := config.NewMinimalTestConfigWithDbTMain("avatar", tempDir)
 	defer c.CleanupTestFolder()
 	defer func() {
 		if err := c.CloseDb(); err != nil {
@@ -39,5 +40,5 @@ func runTestMain(m *testing.M) (code int) {
 	get.SetConfig(c)
 	photoprism.SetConfig(c)
 
-	return m.Run()
+	return testextras.TestDbCleanup(m.Run())
 }

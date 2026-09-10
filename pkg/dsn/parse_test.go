@@ -77,15 +77,41 @@ func TestParse(t *testing.T) {
 		},
 		{
 			name: "PostgresKeyValue",
-			in:   "user=alice password=s3cr3t dbname=app host=db.internal port=5432 connect_timeout=5 sslmode=require",
+			in:   "user=alice password='s3 cr3t' dbname=app host=db.internal port=5432 connect_timeout=5 sslmode=require",
 			want: DSN{
-				DSN:      "user=alice password=s3cr3t dbname=app host=db.internal port=5432 connect_timeout=5 sslmode=require",
-				Driver:   DriverPostgres,
+				DSN:      "user=alice password='s3 cr3t' dbname=app host=db.internal port=5432 connect_timeout=5 sslmode=require",
+				Driver:   DriverPostgreSQL,
 				User:     "alice",
-				Password: "s3cr3t",
+				Password: "s3 cr3t",
 				Server:   "db.internal:5432",
 				Name:     "app",
-				Params:   "connect_timeout=5 sslmode=require",
+				Params:   "connect_timeout=5&sslmode=require",
+			},
+		},
+		{
+			name: "PostgreSQLURI1",
+			in:   "postgresql://john:pass@postgres:5432/my_db?TimeZone=UTC&connect_timeout=15&sslmode=disable",
+			want: DSN{
+				DSN:      "postgresql://john:pass@postgres:5432/my_db?TimeZone=UTC&connect_timeout=15&sslmode=disable",
+				Driver:   DriverPostgreSQL,
+				User:     "john",
+				Password: "pass",
+				Server:   "postgres:5432",
+				Name:     "my_db",
+				Params:   "TimeZone=UTC&connect_timeout=15&sslmode=disable",
+			},
+		},
+		{
+			name: "PostgreSQLURI2",
+			in:   "postgres://john:pass@postgres:5432/my_db?TimeZone=UTC&connect_timeout=15&sslmode=disable",
+			want: DSN{
+				DSN:      "postgres://john:pass@postgres:5432/my_db?TimeZone=UTC&connect_timeout=15&sslmode=disable",
+				Driver:   DriverPostgreSQL,
+				User:     "john",
+				Password: "pass",
+				Server:   "postgres:5432",
+				Name:     "my_db",
+				Params:   "TimeZone=UTC&connect_timeout=15&sslmode=disable",
 			},
 		},
 		{
@@ -99,9 +125,12 @@ func TestParse(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got := Parse(tt.in)
 			assert.Equal(t, tt.in, got.String())
-			if got != tt.want {
-				t.Fatalf("Parse(%q) = %#v, want %#v", tt.in, got, tt.want)
-			}
+			assert.Equal(t, tt.want, got)
+			/*
+				if got != tt.want {
+					t.Fatalf("Parse(%q) = %#v, want %#v", tt.in, got, tt.want)
+				}
+			*/
 		})
 	}
 }
@@ -109,13 +138,25 @@ func TestParse(t *testing.T) {
 // TestParse_DriverDetection exercises detectDriver via Parse: alias unification
 // with ParseDriver and the preserve-unknown contract.
 func TestParse_DriverDetection(t *testing.T) {
-	t.Run("PostgresqlAliasNormalizes", func(t *testing.T) {
+	t.Run("PostgresqlURIKeeps", func(t *testing.T) {
 		got := Parse("postgresql://alice:s3cr3t@db.local:5432/app")
-		assert.Equal(t, DriverPostgres, got.Driver)
+		assert.Equal(t, DriverPostgreSQL, got.Driver)
 	})
-	t.Run("PostgresqlAliasCaseInsensitive", func(t *testing.T) {
+	t.Run("PostgresqlURIKeepsCaseInsensitive", func(t *testing.T) {
 		got := Parse("POSTGRESQL://alice:s3cr3t@db.local:5432/app")
-		assert.Equal(t, DriverPostgres, got.Driver)
+		assert.Equal(t, DriverPostgreSQL, got.Driver)
+	})
+	t.Run("PostgresqlURIAlias", func(t *testing.T) {
+		got := Parse("postgres://alice:s3cr3t@db.local:5432/app")
+		assert.Equal(t, DriverPostgreSQL, got.Driver)
+	})
+	t.Run("PostgresqlURIAliasCaseInsensitive", func(t *testing.T) {
+		got := Parse("Postgres://alice:s3cr3t@db.local:5432/app")
+		assert.Equal(t, DriverPostgreSQL, got.Driver)
+	})
+	t.Run("PostgresqlKeyValuePair", func(t *testing.T) {
+		got := Parse("user=alice password=s3cr3t host=db.local port=5432 database=app")
+		assert.Equal(t, DriverPostgreSQL, got.Driver)
 	})
 	t.Run("MariaDBAliasCollapsesToMySQL", func(t *testing.T) {
 		got := Parse("mariadb://user:secret@db.local:3306/app")

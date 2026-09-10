@@ -5,12 +5,13 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/sortby"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -28,11 +29,12 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 		log.Debugf("albums: %s", err)
 		return AlbumResults{}, err
 	}
+	results = make(AlbumResults, 0)
 
 	// Base query.
 	s := UnscopedDb().Table("albums").
 		Select("albums.*, cp.photo_count, cl.link_count, CASE WHEN albums.album_year = 0 THEN 0 ELSE 1 END AS has_year, CASE WHEN albums.album_location = '' THEN 1 ELSE 0 END AS no_location").
-		Joins("LEFT JOIN (SELECT album_uid, count(photo_uid) AS photo_count FROM photos_albums WHERE hidden = 0 AND missing = 0 GROUP BY album_uid) AS cp ON cp.album_uid = albums.album_uid").
+		Joins("LEFT JOIN (SELECT album_uid, count(photo_uid) AS photo_count FROM photos_albums WHERE hidden = FALSE AND missing = FALSE GROUP BY album_uid) AS cp ON cp.album_uid = albums.album_uid").
 		Joins("LEFT JOIN (SELECT share_uid, count(share_uid) AS link_count FROM links GROUP BY share_uid) AS cl ON cl.share_uid = albums.album_uid").
 		Where("albums.deleted_at IS NULL")
 
@@ -94,7 +96,11 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 	// Set sort order.
 	switch frm.Order {
 	case sortby.Count:
-		s = s.Order(OrderExpr("photo_count DESC, albums.album_title, albums.album_uid DESC", frm.Reverse))
+		if entity.DbDialect() == dsn.DialectPostgreSQL {
+			s = s.Order(OrderExpr("photo_count DESC NULLS LAST, albums.album_title, albums.album_uid DESC", frm.Reverse))
+		} else {
+			s = s.Order(OrderExpr("photo_count DESC, albums.album_title, albums.album_uid DESC", frm.Reverse))
+		}
 	case sortby.Moment, sortby.Newest:
 		switch frm.Type {
 		case entity.AlbumManual, entity.AlbumState:
@@ -159,19 +165,31 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 	if txt.NotEmpty(frm.Query) {
 		q := "%" + strings.Trim(frm.Query, " *%") + "%"
 
-		if frm.Type == entity.AlbumFolder {
-			// album_path is VARBINARY and matched case-insensitively so a lowercased query still
-			// finds uppercase folder paths; album_title and album_location are VARCHAR (already
-			// case-insensitive).
-			s = s.Where("albums.album_title LIKE ? OR albums.album_location LIKE ? OR "+PathLike(s.Dialect().GetName(), "albums.album_path"), q, q, q)
-		} else {
-			s = s.Where("albums.album_title LIKE ? OR albums.album_location LIKE ?", q, q)
+		switch entity.DbDialect() {
+		case dsn.DialectPostgreSQL:
+			if frm.Type == entity.AlbumFolder {
+				// album_path is VARBINARY and matched case-insensitively so a lowercased query still
+				// finds uppercase folder paths; album_title and album_location are VARCHAR (already
+				// case-insensitive).
+				s = s.Where("albums.album_title ILIKE ? OR albums.album_location ILIKE ? OR "+PathLike(s.Name(), "albums.album_path"), q, q, q)
+			} else {
+				s = s.Where("albums.album_title ILIKE ? OR albums.album_location ILIKE ?", q, q)
+			}
+		default:
+			if frm.Type == entity.AlbumFolder {
+				// album_path is VARBINARY and matched case-insensitively so a lowercased query still
+				// finds uppercase folder paths; album_title and album_location are VARCHAR (already
+				// case-insensitive).
+				s = s.Where("albums.album_title LIKE ? OR albums.album_location LIKE ? OR "+PathLike(s.Name(), "albums.album_path"), q, q, q)
+			} else {
+				s = s.Where("albums.album_title LIKE ? OR albums.album_location LIKE ?", q, q)
+			}
 		}
 	}
 
 	// Filter private albums.
 	if frm.Public {
-		s = s.Where("albums.album_private = 0 AND (albums.album_type <> 'folder' OR albums.album_path IN (SELECT photo_path FROM photos WHERE photo_private = 0 AND photo_quality > -1 AND deleted_at IS NULL))")
+		s = s.Where("albums.album_private = FALSE AND (albums.album_type <> 'folder' OR albums.album_path IN (SELECT photo_path FROM photos WHERE photo_private = FALSE AND photo_quality > -1 AND deleted_at IS NULL))")
 	} else {
 		s = s.Where("albums.album_type <> 'folder' OR albums.album_path IN (SELECT photo_path FROM photos WHERE photo_quality > -1 AND deleted_at IS NULL)")
 	}
@@ -194,7 +212,7 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 
 	// Favorites only?
 	if frm.Favorite {
-		s = s.Where("albums.album_favorite = 1")
+		s = s.Where("albums.album_favorite = TRUE")
 	}
 
 	// Filter by year?
@@ -204,7 +222,7 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 		w, v := AnyInt("albums.album_year", frm.Year, txt.Or, entity.UnknownYear, txt.YearMax)
 		if frm.Type == entity.AlbumManual {
 			s = s.Where("? OR albums.album_uid IN (SELECT DISTINCT pay.album_uid FROM photos_albums pay "+
-				"JOIN photos py ON pay.photo_uid = py.photo_uid WHERE py.photo_year IN (?) AND pay.hidden = 0 AND pay.missing = 0)",
+				"JOIN photos py ON pay.photo_uid = py.photo_uid WHERE py.photo_year IN (?) AND pay.hidden = FALSE AND pay.missing = FALSE)",
 				gorm.Expr(w, v...), strings.Split(frm.Year, txt.Or))
 		} else {
 			s = s.Where(w, v...)

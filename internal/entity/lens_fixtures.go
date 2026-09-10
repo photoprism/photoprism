@@ -2,6 +2,8 @@ package entity
 
 import (
 	"time"
+
+	"gorm.io/gorm"
 )
 
 type LensMap map[string]Lens
@@ -35,7 +37,7 @@ var LensFixtures = LensMap{
 		LensNotes:       "Notes",
 		CreatedAt:       time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:       time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{},
 	},
 	"4.15mm-f/2.2": {
 		ID:              1000001,
@@ -48,7 +50,7 @@ var LensFixtures = LensMap{
 		LensNotes:       "Notes",
 		CreatedAt:       time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:       time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{},
 	},
 	"4-37": {
 		ID:              1000002,
@@ -61,12 +63,18 @@ var LensFixtures = LensMap{
 		LensNotes:       "",
 		CreatedAt:       time.Date(2026, 06, 12, 10, 0, 0, 0, time.UTC),
 		UpdatedAt:       time.Date(2026, 06, 12, 10, 0, 0, 0, time.UTC),
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{},
 	}}
 
 // CreateLensFixtures inserts known entities into the database for testing.
 func CreateLensFixtures() {
 	for _, entity := range LensFixtures {
-		fixtureDb().Create(&entity)
+		firstEntity := &Lens{}
+		if err := fixtureDb().Model(&Lens{}).Where("id = ?", entity.ID).First(&firstEntity).Error; err != nil {
+			fixtureDb().Create(&entity)
+		}
+		// Save updates the UpdatedAt, which breaks some tests.
+		// So assume that the record already being there means that the other fixture
+		// has used the complete definition.
 	}
 }

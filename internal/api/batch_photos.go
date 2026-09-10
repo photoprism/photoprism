@@ -8,7 +8,7 @@ import (
 	"github.com/dustin/go-humanize/english"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config"
@@ -323,8 +323,8 @@ func BatchPhotosPrivate(router *gin.RouterGroup) {
 
 		log.Infof("photos: updating private flag for %s", clean.Log(frm.String()))
 
-		if err := entity.Db().Model(entity.Photo{}).Where("photo_uid IN (?)", frm.Photos).UpdateColumn("photo_private",
-			gorm.Expr("CASE WHEN photo_private > 0 THEN 0 ELSE 1 END")).Error; err != nil {
+		if err := entity.Db().Model(&entity.Photo{}).Where("photo_uid IN (?)", frm.Photos).UpdateColumn("photo_private",
+			gorm.Expr("CASE WHEN photo_private THEN false ELSE true END")).Error; err != nil {
 			log.Errorf("private: %s", err)
 			AbortSaveFailed(c)
 			return

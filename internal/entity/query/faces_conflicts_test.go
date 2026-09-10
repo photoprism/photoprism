@@ -21,7 +21,7 @@ func conflictTestSubject(t *testing.T, name string) *entity.Subject {
 	require.NoError(t, s.Create())
 
 	t.Cleanup(func() {
-		UnscopedDb().Delete(entity.Subject{}, "subj_uid = ?", s.SubjUID)
+		UnscopedDb().Delete(&entity.Subject{}, "subj_uid = ?", s.SubjUID)
 	})
 
 	return s

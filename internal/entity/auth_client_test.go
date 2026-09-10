@@ -273,6 +273,7 @@ func TestClient_Create(t *testing.T) {
 	})
 	t.Run("AlreadyExists", func(t *testing.T) {
 		var m = ClientFixtures.Get("alice")
+		log.Info("Expect duplicate key violation Error or SQLSTATE from client.Create")
 		err := m.Create()
 		assert.Error(t, err)
 	})

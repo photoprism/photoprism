@@ -710,7 +710,7 @@ func TestFacesMatchRespectsVeto(t *testing.T) {
 	w := NewFaces(c)
 
 	var marker entity.Marker
-	require.NoError(t, entity.Db().Where("marker_type = ? AND marker_invalid = 0 AND face_id <> ''", entity.MarkerFace).Take(&marker).Error)
+	require.NoError(t, entity.Db().Where("marker_type = ? AND marker_invalid = FALSE AND face_id <> ''", entity.MarkerFace).Take(&marker).Error)
 
 	origFaceID := marker.FaceID
 	require.NotEqual(t, "", origFaceID)

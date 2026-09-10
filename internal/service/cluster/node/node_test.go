@@ -4,6 +4,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/testextras"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -12,7 +13,6 @@ func TestMain(m *testing.M) {
 	os.Exit(runTestMain(m))
 }
 
-// TestMain ensures SQLite test DB artifacts are purged after the suite runs.
 func runTestMain(m *testing.M) int {
 	// Remove temporary SQLite files before running the tests.
 	fs.PurgeTestDbFiles(".", false)
@@ -20,5 +20,5 @@ func runTestMain(m *testing.M) int {
 	defer fs.PurgeTestDbFiles(".", false)
 
 	// Run unit tests.
-	return m.Run()
+	return testextras.TestDbCleanup(m.Run())
 }

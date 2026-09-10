@@ -36,7 +36,7 @@ func albumState(t *testing.T) map[string]string {
 	for _, a := range albums {
 		state[a.AlbumUID] = fmt.Sprintf("%s|%s|%s|%s|%s|deleted=%v|%04d-%02d-%02d",
 			a.AlbumType, a.AlbumTitle, a.AlbumSlug, a.AlbumPath, a.AlbumFilter,
-			a.DeletedAt != nil, a.AlbumYear, a.AlbumMonth, a.AlbumDay)
+			a.DeletedAt.Valid, a.AlbumYear, a.AlbumMonth, a.AlbumDay)
 	}
 
 	return state

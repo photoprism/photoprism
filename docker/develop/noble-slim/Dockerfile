@@ -68,6 +68,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         ghostscript gsfonts \
     && \
     /scripts/install-mariadb.sh mariadb-client && \
+    /scripts/install-postgresql.sh postgresql-client && \
     /scripts/install-darktable.sh && \
     /scripts/install-libheif.sh && \
     cp /scripts/convert/policy.xml /etc/ImageMagick-6/policy.xml && \

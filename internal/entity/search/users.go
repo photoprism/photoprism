@@ -6,6 +6,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/sortby"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -64,12 +65,16 @@ func Users(frm form.SearchUsers) (result entity.Users, err error) {
 	case sortby.DisplayName:
 		sortOrder = OrderExpr("display_name ASC, id ASC", frm.Reverse)
 	case sortby.Login, sortby.LoginAt:
-		sortOrder = OrderExpr("login_at DESC, id ASC", frm.Reverse)
+		if entity.DbDialect() == dsn.DialectPostgreSQL {
+			sortOrder = OrderExpr("login_at DESC NULLS LAST, id ASC", frm.Reverse)
+		} else {
+			sortOrder = OrderExpr("login_at DESC, id ASC", frm.Reverse)
+		}
 	case sortby.Created, sortby.CreatedAt:
 		sortOrder = OrderExpr("created_at ASC, id ASC", frm.Reverse)
 	case sortby.Updated, sortby.UpdatedAt:
 		sortOrder = OrderExpr("updated_at DESC, id ASC", frm.Reverse)
-	case sortby.Deleted, sortby.DeletedAt:
+	case sortby.Deleted, sortby.DeletedAt: // Although deleted_at is nullable, it can only be retrieved if it is not null, so no extra Postgres handling needed
 		sortOrder = OrderExpr("deleted_at DESC, created_at DESC, id ASC", frm.Reverse)
 	case sortby.Email:
 		sortOrder = OrderExpr("user_email ASC, id ASC", frm.Reverse)

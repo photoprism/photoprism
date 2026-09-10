@@ -3,7 +3,7 @@ package search
 import (
 	"strings"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -88,7 +88,7 @@ func scopePhotosForSession(stmt *gorm.DB, sess *entity.Session, allowUIDs []stri
 	user := sess.GetUser()
 
 	// Pictures shared through a regular album resolve via their photos_albums rows.
-	conds := []string{"photos.photo_uid IN (SELECT photo_uid FROM photos_albums WHERE hidden = 0 AND missing = 0 AND album_uid IN (?))"}
+	conds := []string{"photos.photo_uid IN (SELECT photo_uid FROM photos_albums WHERE hidden = FALSE AND missing = FALSE AND album_uid IN (?))"}
 	args := []interface{}{sess.SharedUIDs()}
 
 	// Explicitly-allowed photo UIDs (e.g. members of shared smart albums resolved by their filter).
@@ -115,7 +115,7 @@ func scopePhotosForSession(stmt *gorm.DB, sess *entity.Session, allowUIDs []stri
 // query unless the session may access them (client and user role intersection).
 func excludeRestrictedPhotos(stmt *gorm.DB, sess *entity.Session) *gorm.DB {
 	if !sessionGrantsPhotos(sess, acl.AccessPrivate) {
-		stmt = stmt.Where("photos.photo_private = 0")
+		stmt = stmt.Where("photos.photo_private = FALSE")
 	}
 
 	if !sessionGrantsPhotos(sess, acl.ActionDelete) {
@@ -166,7 +166,7 @@ func PhotoVisibleToSession(photoUID string, sess *entity.Session) (bool, error) 
 	// matching GetPhoto / searchPhotos.
 	stmt := ScopeVisiblePhotos(UnscopedDb().Table("photos").Where("photos.photo_uid = ?", photoUID), sess)
 
-	var count int
+	var count int64
 	if err := stmt.Count(&count).Error; err != nil {
 		return false, err
 	} else if count > 0 {
@@ -197,7 +197,7 @@ func FileVisibleToSession(fileHash string, sess *entity.Session) (bool, error) {
 		sess,
 	)
 
-	var count int
+	var count int64
 	if err := stmt.Count(&count).Error; err != nil {
 		return false, err
 	} else if count > 0 {
@@ -226,11 +226,11 @@ func FileVisibleToPublic(fileHash string) (bool, error) {
 		return false, nil
 	}
 
-	var count int
+	var count int64
 	err := UnscopedDb().Table("files").
 		Joins("JOIN photos ON photos.id = files.photo_id").
 		Where("files.file_hash = ? AND files.deleted_at IS NULL", fileHash).
-		Where("photos.photo_private = 0 AND photos.deleted_at IS NULL AND photos.photo_quality > -1").
+		Where("photos.photo_private = FALSE AND photos.deleted_at IS NULL AND photos.photo_quality > -1").
 		Count(&count).Error
 
 	return count > 0, err
@@ -244,9 +244,9 @@ func PhotoVisibleToPublic(photoUID string) (bool, error) {
 		return false, nil
 	}
 
-	var count int
+	var count int64
 	err := UnscopedDb().Table("photos").
-		Where("photo_uid = ? AND photo_private = 0 AND deleted_at IS NULL AND photo_quality > -1", photoUID).
+		Where("photo_uid = ? AND photo_private = FALSE AND deleted_at IS NULL AND photo_quality > -1", photoUID).
 		Count(&count).Error
 
 	return count > 0, err

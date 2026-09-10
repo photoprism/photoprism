@@ -41,7 +41,7 @@ func TestFirstOrCreateKeyword(t *testing.T) {
 }
 
 func TestKeyword_Updates(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
+	t.Run("Success no ID on keyword", func(t *testing.T) {
 		keyword := NewKeyword("KeywordBeforeUpdate")
 
 		assert.NoError(t, keyword.Save())
@@ -70,6 +70,38 @@ func TestKeyword_Updates(t *testing.T) {
 		err := keyword.Updates(Keyword{Keyword: "value"})
 		assert.EqualError(t, err, "keyword ID must not be empty - you may have found a bug")
 	})
+
+	t.Run("success ID on keyword", func(t *testing.T) {
+		keyword := NewKeyword("KeywordBeforeUpdate3")
+		Db().Create(keyword)
+		assert.Equal(t, "keywordbeforeupdate3", keyword.Keyword)
+		assert.NotEqual(t, 0, keyword.ID)
+
+		err := keyword.Updates(Keyword{Keyword: "KeywordAfterUpdate3"})
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, "KeywordAfterUpdate3", keyword.Keyword)
+		assert.NotEqual(t, uint(0x3e7), keyword.ID)
+	})
+
+	t.Run("failure", func(t *testing.T) {
+		keyword := NewKeyword("KeywordBeforeUpdate4")
+
+		assert.Equal(t, "keywordbeforeupdate4", keyword.Keyword)
+
+		err := keyword.Updates(Keyword{Keyword: "KeywordAfterUpdate4"})
+
+		if err != nil {
+			assert.Error(t, err)
+			assert.ErrorContains(t, err, "keyword ID must not be empty - you may have found a bug")
+		} else {
+			assert.Fail(t, "error was expected but not set")
+		}
+		assert.Equal(t, "keywordbeforeupdate4", keyword.Keyword)
+		assert.Equal(t, uint(0x0), keyword.ID)
+	})
 }
 
 func TestKeyword_Update(t *testing.T) {
@@ -79,6 +111,7 @@ func TestKeyword_Update(t *testing.T) {
 		require.NoError(t, keyword.Save())
 		assert.Equal(t, "keywordbeforeupdate2", keyword.Keyword)
 
+		keyword.ID = 99966 // Gorm2 requires PK to be set on Model if not using Where clause.
 		err := keyword.Update("Keyword", "new-name")
 
 		if err != nil {
@@ -86,6 +119,7 @@ func TestKeyword_Update(t *testing.T) {
 		}
 
 		assert.Equal(t, "new-name", keyword.Keyword)
+
 	})
 	t.Run("NilKeyword", func(t *testing.T) {
 		var keyword *Keyword
@@ -108,6 +142,14 @@ func TestKeyword_Update(t *testing.T) {
 
 		_, found := keywordCache.Get(keyword.Keyword)
 		assert.False(t, found)
+	})
+	t.Run("failure", func(t *testing.T) {
+		keyword := NewKeyword("KeywordBeforeUpdate6")
+		assert.Equal(t, "keywordbeforeupdate6", keyword.Keyword)
+
+		err := keyword.Update("Keyword", "new-name")
+		assert.Error(t, err)
+		assert.ErrorContains(t, err, "keyword ID must not be empty - you may have found a bug")
 	})
 }
 
@@ -137,7 +179,7 @@ func TestFlushCachedKeyword(t *testing.T) {
 		assert.False(t, found)
 	})
 	t.Run("NilKeyword", func(t *testing.T) {
-		FlushCachedKeyword(nil)
+		require.NotPanics(t, func() { FlushCachedKeyword(nil) })
 	})
 }
 

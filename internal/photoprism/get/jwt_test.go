@@ -24,13 +24,10 @@ func TestJWTVerifierResetOnConfigChange(t *testing.T) {
 	verifier1 := JWTVerifier()
 	require.NotNil(t, verifier1)
 
-	tempConf := config.NewMinimalTestConfigWithDb("jwt-reset", t.TempDir())
+	tempConf := config.NewMinimalTestConfigWithDbTTest("jwt-reset", t.TempDir(), t)
 	SetConfig(tempConf)
 	t.Cleanup(func() {
 		SetConfig(orig)
-		if err := tempConf.CloseDb(); err != nil {
-			t.Logf("close db: %v", err)
-		}
 		orig.RegisterDb()
 	})
 

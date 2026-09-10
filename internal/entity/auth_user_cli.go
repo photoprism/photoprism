@@ -2,6 +2,7 @@ package entity
 
 import (
 	"github.com/urfave/cli/v2"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/authn"
@@ -119,7 +120,7 @@ func (m *User) SetValuesFromCli(ctx *cli.Context) error {
 
 // RestoreFromCli restores a deleted account from CLI input and optionally sets a new password.
 func (m *User) RestoreFromCli(ctx *cli.Context, newPassword string) (err error) {
-	m.DeletedAt = nil
+	m.DeletedAt = gorm.DeletedAt{}
 
 	// Set values.
 	if err = m.SetValuesFromCli(ctx); err != nil {

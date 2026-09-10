@@ -2,17 +2,18 @@ package media
 
 // Content is categorized and compared based on the following media types:
 const (
-	Unknown  Type = ""
-	Image    Type = "image"
-	Raw      Type = "raw"
-	Live     Type = "live"
-	Video    Type = "video"
-	Animated Type = "animated"
-	Audio    Type = "audio"
-	Vector   Type = "vector"
-	Document Type = "document"
-	Sidecar  Type = "sidecar"
-	Archive  Type = "archive"
+	Unknown   Type = ""
+	Image     Type = "image"
+	Raw       Type = "raw"
+	Live      Type = "live"
+	Video     Type = "video"
+	Animated  Type = "animated"
+	Audio     Type = "audio"
+	Vector    Type = "vector"
+	Document  Type = "document"
+	Sidecar   Type = "sidecar"
+	Archive   Type = "archive"
+	Restoring Type = "restorng"
 )
 
 // PriorityImage specifies the minimum priority for main media types, which can be indexed and displayed on their own,

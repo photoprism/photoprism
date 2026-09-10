@@ -4,7 +4,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/pkg/time/tz"
@@ -22,7 +21,7 @@ func TestUTC(t *testing.T) {
 	})
 	t.Run("RunGorm", func(t *testing.T) {
 		utc := UTC()
-		utcGorm := gorm.NowFunc()
+		utcGorm := gormConfig().NowFunc()
 
 		t.Logf("NOW: %s, %s", utc.String(), utcGorm.String())
 

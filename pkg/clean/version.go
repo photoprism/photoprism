@@ -3,10 +3,14 @@ package clean
 import (
 	"fmt"
 	"regexp"
+	"strings"
 )
 
 // VersionRegexp finds semantic version-like strings.
 var VersionRegexp = regexp.MustCompile(`(\d+\.)(\d+\.)(\*|\d+)`)
+
+// PostgreSQLVersionRegexp finds Postgres specific semantic version-like strings
+var PostgreSQLVersionRegexp = regexp.MustCompile(`PostgreSQL \d+\.\d+(\.\d)?`)
 
 // Version parses and returns a semantic version string.
 func Version(s string) string {
@@ -16,6 +20,9 @@ func Version(s string) string {
 
 	// Find version string with regular expression
 	// and return it with "v" prefix if found.
+	if v := PostgreSQLVersionRegexp.FindString(s); v != "" {
+		return fmt.Sprintf("v%s", strings.Replace(v, "PostgreSQL ", "", -1))
+	}
 	if v := VersionRegexp.FindString(s); v != "" {
 		return fmt.Sprintf("v%s", v)
 	}

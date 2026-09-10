@@ -2,6 +2,8 @@ package entity
 
 import (
 	"time"
+
+	"gorm.io/gorm"
 )
 
 // FolderMap is the type to hold Folder test data
@@ -25,7 +27,7 @@ func (m FolderMap) Pointer(name string) *Folder {
 	return &Folder{Path: name}
 }
 
-var deletedAt = time.Date(2026, 8, 19, 2, 16, 12, 0, time.UTC)
+var deletedAt = gorm.DeletedAt{Valid: true, Time: time.Date(2026, 8, 19, 2, 16, 12, 0, time.UTC)}
 
 // FolderFixtures is the map of test data for Folder
 var FolderFixtures = FolderMap{
@@ -49,7 +51,7 @@ var FolderFixtures = FolderMap{
 		CreatedAt:         time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt:         time.Date(2020, 3, 28, 14, 6, 0, 0, time.UTC),
 		ModifiedAt:        time.Date(2020, 3, 20, 14, 6, 0, 0, time.UTC),
-		DeletedAt:         nil,
+		DeletedAt:         gorm.DeletedAt{},
 	},
 	"1990/04": {
 		FolderUID:         "dqo63pn2f87f02xj",
@@ -71,7 +73,7 @@ var FolderFixtures = FolderMap{
 		CreatedAt:         time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt:         time.Date(2020, 3, 28, 14, 6, 0, 0, time.UTC),
 		ModifiedAt:        time.Date(2020, 3, 20, 14, 6, 0, 0, time.UTC),
-		DeletedAt:         nil,
+		DeletedAt:         gorm.DeletedAt{},
 	},
 	"2007/12": {
 		FolderUID:         "dqo63pn2f87f02oi",
@@ -93,7 +95,7 @@ var FolderFixtures = FolderMap{
 		CreatedAt:         time.Date(2007, 12, 25, 2, 6, 51, 0, time.UTC),
 		UpdatedAt:         time.Date(2020, 3, 30, 14, 6, 0, 0, time.UTC),
 		ModifiedAt:        time.Date(2020, 3, 20, 14, 6, 0, 0, time.UTC),
-		DeletedAt:         nil,
+		DeletedAt:         gorm.DeletedAt{},
 	},
 	"2156/12": {
 		FolderUID:         "dtjzq269o56db218",
@@ -115,7 +117,7 @@ var FolderFixtures = FolderMap{
 		CreatedAt:         time.Date(2026, 8, 19, 2, 6, 51, 0, time.UTC),
 		UpdatedAt:         time.Date(2026, 8, 19, 2, 6, 59, 0, time.UTC),
 		ModifiedAt:        time.Date(2026, 8, 19, 2, 16, 12, 0, time.UTC),
-		DeletedAt:         &deletedAt,
+		DeletedAt:         deletedAt,
 	},
 }
 

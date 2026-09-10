@@ -1,0 +1,1 @@
+UPDATE photos SET time_zone = 'Local' WHERE time_zone = '' OR time_zone IS NULL;

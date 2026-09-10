@@ -7,7 +7,7 @@ import (
 	"math"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -658,7 +658,7 @@ func (w *Faces) persistNormalizedFace(candidate faceNormalizationCandidate) (int
 		targetID := candidate.newID
 
 		if candidate.rekey {
-			var existing int
+			var existing int64
 
 			if err := tx.Model(&entity.Face{}).Where("id = ?", candidate.newID).Count(&existing).Error; err != nil {
 				return err

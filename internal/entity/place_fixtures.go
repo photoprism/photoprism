@@ -137,6 +137,11 @@ var PlaceFixtures = PlacesMap{
 // CreatePlaceFixtures inserts known entities into the database for testing.
 func CreatePlaceFixtures() {
 	for _, entity := range PlaceFixtures {
-		fixtureDb().Create(&entity)
+		firstEntity := &Place{}
+		if err := fixtureDb().Model(&Place{}).Where("id = ?", entity.ID).First(&firstEntity).Error; err != nil {
+			fixtureDb().Create(&entity)
+		} else {
+			fixtureDb().Save(&entity)
+		}
 	}
 }

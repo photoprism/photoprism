@@ -18,11 +18,14 @@ import (
 // already ASCII case-insensitive, and any other or unknown dialect falls back to a plain LIKE (its
 // default semantics, never an error). The dialect is the GORM dialect name, e.g. s.Dialect().GetName().
 func PathLike(dialect, col string) string {
-	if dialect == dsn.DriverMySQL {
+	switch dialect {
+	case dsn.DialectMySQL:
 		return "CONVERT(" + col + " USING utf8mb4) COLLATE utf8mb4_general_ci LIKE ?"
+	case dsn.DialectPostgreSQL:
+		return "convert_from(" + col + ", 'UTF8') ILIKE ?"
+	default:
+		return col + " LIKE ?"
 	}
-
-	return col + " LIKE ?"
 }
 
 // SqlParam sanitizes user input for use as a LIKE-clause bind value. The

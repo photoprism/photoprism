@@ -113,3 +113,16 @@ func TestEnsureCredentials_SqliteRejected(t *testing.T) {
 		assert.Contains(t, err.Error(), "database must be MySQL/MariaDB")
 	}
 }
+
+func TestGetCredentials_PostgresRejected(t *testing.T) {
+	ctx := context.Background()
+	c := config.NewConfig(config.CliTestContext())
+	origDriver := DatabaseDriver
+	DatabaseDriver = dsn.DriverPostgreSQL
+	t.Cleanup(func() { DatabaseDriver = origDriver })
+
+	_, _, err := EnsureCredentials(ctx, c, "11111111-1111-4111-8111-111111111111", "pp-node-01", false)
+	if assert.Error(t, err) {
+		assert.Contains(t, err.Error(), "database must be MySQL/MariaDB")
+	}
+}

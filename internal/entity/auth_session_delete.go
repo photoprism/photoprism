@@ -7,6 +7,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/authn"
+	"github.com/photoprism/photoprism/pkg/convert"
 	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/time/unix"
@@ -89,7 +90,8 @@ func DeleteClientSessions(client *Client, authMethod authn.MethodType, limit int
 		q = q.Where("auth_method = ?", authMethod.String())
 	}
 
-	q = q.Order("created_at DESC").Limit(1000000000).Offset(limit)
+	// NOTE: this loses precision of the token limit. But I think int64 does not make sense for that limit type anyway.
+	q = q.Order("created_at DESC").Limit(1000000000).Offset(convert.SafeInt64toint(limit))
 
 	found := Sessions{}
 

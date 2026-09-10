@@ -8,6 +8,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestNewLens(t *testing.T) {
@@ -237,7 +238,9 @@ func TestLens_SaveForm(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		lens := Lens{}
 		assert.NoError(t, UnscopedDb().First(&lens, "id = ?", LensFixtures.Get("lens-f-380").ID).Error)
-		defer assert.NoError(t, UnscopedDb().Save(LensFixtures.Pointer("lens-f-380")).Error)
+		defer func() {
+			assert.NoError(t, UnscopedDb().Model(&Lens{ID: LensFixtures.Get("lens-f-380").ID}).UpdateColumns(LensFixtures.Pointer("lens-f-380")).Error)
+		}()
 		err := lens.SaveForm(&form.Lens{LensMake: "Sigma", LensModel: "85mm F1.4"})
 		assert.NoError(t, err)
 		assert.Equal(t, CameraMakes["Sigma"], lens.LensMake) // NewLens normalizes the make.
@@ -251,5 +254,54 @@ func TestLens_SaveForm(t *testing.T) {
 	t.Run("EmptyMake", func(t *testing.T) {
 		lens := &Lens{ID: LensFixtures.Get("lens-f-380").ID}
 		assert.Error(t, lens.SaveForm(&form.Lens{LensMake: "", LensModel: "85mm F1.4"}))
+	})
+}
+
+func TestLens_ScopedSearchFirst(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
+		m := LensFixtures.Get("4.15mm-f/2.2")
+		Db().Save(&m) // reset back to base
+
+		lens := Lens{}
+		if res := ScopedSearchFirstLens(&lens, "lens_slug = ?", LensFixtures.Get("4.15mm-f/2.2").LensSlug); res.Error != nil {
+			assert.Nil(t, res.Error)
+			t.FailNow()
+		}
+		lens1 := LensFixtures.Get("4.15mm-f/2.2")
+
+		// Only check items that are preloaded
+		// Except Labels as they are filtered.
+		assert.Equal(t, lens1.ID, lens.ID)
+		assert.Equal(t, lens1.LensSlug, lens.LensSlug)
+		assert.Equal(t, lens1.LensName, lens.LensName)
+		assert.Equal(t, lens1.LensMake, lens.LensMake)
+		assert.Equal(t, lens1.LensModel, lens.LensModel)
+		assert.Equal(t, lens1.LensType, lens.LensType)
+		assert.Equal(t, lens1.LensDescription, lens.LensDescription)
+		assert.Equal(t, lens1.LensNotes, lens.LensNotes)
+	})
+
+	t.Run("Nothing Found", func(t *testing.T) {
+
+		lens := Lens{}
+		if res := ScopedSearchFirstLens(&lens, "lens_slug = ?", rnd.UUID()); res.Error != nil {
+			assert.NotNil(t, res.Error)
+			assert.ErrorContains(t, res.Error, "record not found")
+		} else {
+			assert.Equal(t, int64(0), res.RowsAffected)
+		}
+	})
+
+	t.Run("Error", func(t *testing.T) {
+		lens := Lens{}
+		log.Info("Expect unknown column Error or SQLSTATE on lens_slugs from ScopedSearchFirstLens")
+		if res := ScopedSearchFirstLens(&lens, "lens_slugs = ?", rnd.UUID()); res.Error == nil {
+			assert.NotNil(t, res.Error)
+			t.FailNow()
+		} else {
+			assert.Error(t, res.Error)
+			assert.ErrorContains(t, res.Error, "lens_slugs")
+			assert.Equal(t, int64(0), res.RowsAffected)
+		}
 	})
 }

@@ -1,5 +1,7 @@
 package entity
 
+import "gorm.io/gorm"
+
 type LabelMap map[string]Label
 
 func (m LabelMap) Get(name string) Label {
@@ -42,7 +44,7 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 		New:              false,
 	},
 	"flower": {
@@ -59,7 +61,7 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 		New:              false,
 	},
 	"cake": {
@@ -76,7 +78,7 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 		New:              false,
 	},
 	"cow": {
@@ -93,7 +95,7 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 		New:              false,
 	},
 	"batchdelete": {
@@ -110,7 +112,7 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 		New:              false,
 	},
 	"updateLabel": {
@@ -127,7 +129,7 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 		New:              false,
 	},
 	"updatePhotoLabel": {
@@ -144,7 +146,7 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 		New:              false,
 	},
 	"likeLabel": {
@@ -161,7 +163,7 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 		New:              false,
 	},
 	"no-jpeg": {
@@ -178,7 +180,7 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 		New:              false,
 	},
 	"apilikeLabel": {
@@ -195,7 +197,7 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 		New:              false,
 	},
 	"apidislikeLabel": {
@@ -212,7 +214,7 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 		New:              false,
 	},
 	"%tennis": {
@@ -229,7 +231,7 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 		New:              false,
 	},
 	"chem%stry": {
@@ -246,7 +248,7 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 		New:              false,
 	},
 	"cell%": {
@@ -263,7 +265,7 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 		New:              false,
 	},
 	"&friendship": {
@@ -280,7 +282,7 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 		New:              false,
 	},
 	"construction&failure": {
@@ -297,7 +299,7 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 		New:              false,
 	},
 	"goal&": {
@@ -314,7 +316,7 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 		New:              false,
 	},
 	"'activity": {
@@ -331,7 +333,7 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 		New:              false,
 	},
 	"funera'l": {
@@ -348,7 +350,7 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 		New:              false,
 	},
 	"technology'": {
@@ -365,7 +367,7 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 		New:              false,
 	},
 	"*tea": {
@@ -382,7 +384,7 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 		New:              false,
 	},
 	"soup*menu": {
@@ -399,7 +401,7 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 		New:              false,
 	},
 	"proposal*": {
@@ -416,7 +418,7 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 		New:              false,
 	},
 	"|college": {
@@ -433,7 +435,7 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 		New:              false,
 	},
 	"potato|couch": {
@@ -450,7 +452,7 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 		New:              false,
 	},
 	"mall|": {
@@ -467,7 +469,7 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 		New:              false,
 	},
 	"2020-world": {
@@ -484,7 +486,7 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 		New:              false,
 	},
 	"sport-2021-event": {
@@ -501,7 +503,7 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 		New:              false,
 	},
 	"oven-3000": {
@@ -518,7 +520,7 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 		New:              false,
 	},
 	"\"king": {
@@ -535,7 +537,7 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 		New:              false,
 	},
 	"town\"ship": {
@@ -552,7 +554,7 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 		New:              false,
 	},
 	"ladder\"": {
@@ -569,7 +571,7 @@ var LabelFixtures = LabelMap{
 		LabelCategories:  []*Label{},
 		CreatedAt:        Now(),
 		UpdatedAt:        Now(),
-		DeletedAt:        nil,
+		DeletedAt:        gorm.DeletedAt{},
 		New:              false,
 	},
 }

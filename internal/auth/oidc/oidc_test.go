@@ -7,6 +7,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/testextras"
 )
 
 // TestMain executes runTestMain returning it's results.  It is done this way so that defer can be used to cleanup.
@@ -21,5 +22,5 @@ func runTestMain(m *testing.M) int {
 	event.AuditLog = log
 
 	// Run unit tests.
-	return m.Run()
+	return testextras.TestDbCleanup(m.Run())
 }

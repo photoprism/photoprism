@@ -9,9 +9,10 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/photoprism/photoprism/internal/event"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -67,7 +68,8 @@ func TestLabel_SaveForm(t *testing.T) {
 
 func TestFlushLabelCache(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		FlushLabelCache()
+		require.NotPanics(t, func() { FlushLabelCache() })
+		assert.Equal(t, 0, labelCache.ItemCount())
 	})
 }
 
@@ -143,7 +145,7 @@ func TestLabel_Skip(t *testing.T) {
 	t.Run("Deleted", func(t *testing.T) {
 		label := createTestLabel(t, "skip-deleted")
 		now := time.Now()
-		label.DeletedAt = &now
+		label.DeletedAt = gorm.DeletedAt{Time: now, Valid: true}
 		assert.True(t, label.Skip())
 	})
 	t.Run("Active", func(t *testing.T) {
@@ -452,9 +454,9 @@ func TestLabel_Delete(t *testing.T) {
 
 func TestLabel_Restore(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		var deletedAt = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
-		label := &Label{DeletedAt: &deletedAt, LabelName: "ToBeRestored"}
+		var deletedAt = gorm.DeletedAt{Time: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC), Valid: true}
 
+		label := &Label{DeletedAt: deletedAt, LabelName: "ToBeRestored"}
 		if err := label.Save(); err != nil {
 			t.Fatal(err)
 		}
@@ -468,8 +470,7 @@ func TestLabel_Restore(t *testing.T) {
 		assert.False(t, label.Deleted())
 	})
 	t.Run("LabelNotDeleted", func(t *testing.T) {
-		label := &Label{DeletedAt: nil, LabelName: "NotDeleted1234"}
-
+		label := &Label{DeletedAt: gorm.DeletedAt{}, LabelName: "NotDeleted1234"}
 		if err := label.Restore(); err != nil {
 			t.Fatal(err)
 		}

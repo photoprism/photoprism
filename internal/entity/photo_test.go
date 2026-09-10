@@ -9,6 +9,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/form"
@@ -38,7 +39,132 @@ func TestSavePhotoForm(t *testing.T) {
 			PhotoFocalLength: 10,
 			PhotoFNumber:     3.3,
 			PhotoExposure:    "exposure",
+			CameraID:         CameraFixtures.Pointer("apple-iphone-7").ID,
+			CameraSrc:        SrcMeta,
+			LensID:           LensFixtures.Pointer("4.15mm-f/2.2").ID,
+			CellID:           "1234",
+			PlaceSrc:         SrcManual,
+			PlaceID:          "765",
+			PhotoCountry:     "de",
+			Details: form.Details{
+				PhotoID:   uint(1000008),
+				Keywords:  "test cat dog",
+				Subject:   "animals",
+				Artist:    "Bender",
+				Notes:     "notes",
+				Copyright: "copy",
+				License:   "",
+			},
+		}
+
+		m := PhotoFixtures.Get("Photo08")
+
+		if err := SavePhotoForm(&m, f); err != nil {
+			t.Fatal(err)
+		}
+
+		Db().First(&m)
+
+		assert.Equal(t, "manual", m.TakenSrc)
+		assert.Equal(t, "test", m.TimeZone)
+		assert.Equal(t, "Pink beach", m.PhotoTitle)
+		assert.Equal(t, "manual", m.TitleSrc)
+		assert.Equal(t, true, m.PhotoFavorite)
+		assert.Equal(t, true, m.PhotoPrivate)
+		assert.Equal(t, "image", m.PhotoType)
+		assert.InEpsilon(t, 7.9999, m.PhotoLat, 0.0001)
+		assert.InEpsilon(t, 8.8888, m.PhotoLng, 0.0001)
+		assert.NotNil(t, m.EditedAt)
+		assert.NotEqual(t, UnknownCamera.ID, m.CameraID)
+		assert.NotEqual(t, UnknownLens.ID, m.LensID)
+
+		t.Log(m.GetDetails().Keywords)
+
+		m = PhotoFixtures.Get("Photo08")
+		Db().Save(&m)
+	})
+
+	t.Run("BadCamera", func(t *testing.T) {
+		f := form.Photo{
+			TakenAt:          time.Date(2008, 1, 1, 2, 0, 0, 0, time.UTC),
+			TakenAtLocal:     time.Date(2008, 1, 1, 2, 0, 0, 0, time.UTC),
+			TakenSrc:         "manual",
+			TimeZone:         "test",
+			PhotoTitle:       "Pink beach",
+			TitleSrc:         SrcManual,
+			PhotoFavorite:    true,
+			PhotoPrivate:     true,
+			PhotoType:        "image",
+			PhotoLat:         7.9999,
+			PhotoLng:         8.8888,
+			PhotoAltitude:    2,
+			PhotoIso:         5,
+			PhotoFocalLength: 10,
+			PhotoFNumber:     3.3,
+			PhotoExposure:    "exposure",
 			CameraID:         uint(3),
+			CameraSrc:        SrcMeta,
+			LensID:           LensFixtures.Pointer("4.15mm-f/2.2").ID,
+			CellID:           "1234",
+			PlaceSrc:         SrcManual,
+			PlaceID:          "765",
+			PhotoCountry:     "de",
+			Details: form.Details{
+				PhotoID:   uint(1000008),
+				Keywords:  "test cat dog",
+				Subject:   "animals",
+				Artist:    "Bender",
+				Notes:     "notes",
+				Copyright: "copy",
+				License:   "",
+			},
+		}
+
+		m := PhotoFixtures.Get("Photo08")
+
+		if err := SavePhotoForm(&m, f); err != nil {
+			t.Fatal(err)
+		}
+
+		Db().First(&m)
+
+		assert.Equal(t, "manual", m.TakenSrc)
+		assert.Equal(t, "test", m.TimeZone)
+		assert.Equal(t, "Pink beach", m.PhotoTitle)
+		assert.Equal(t, "manual", m.TitleSrc)
+		assert.Equal(t, true, m.PhotoFavorite)
+		assert.Equal(t, true, m.PhotoPrivate)
+		assert.Equal(t, "image", m.PhotoType)
+		assert.InEpsilon(t, 7.9999, m.PhotoLat, 0.0001)
+		assert.InEpsilon(t, 8.8888, m.PhotoLng, 0.0001)
+		assert.NotNil(t, m.EditedAt)
+		assert.Equal(t, UnknownCamera.ID, m.CameraID)
+		assert.NotEqual(t, UnknownLens.ID, m.LensID)
+
+		t.Log(m.GetDetails().Keywords)
+		m = PhotoFixtures.Get("Photo08")
+		Db().Save(&m)
+	})
+
+	t.Run("BadLens", func(t *testing.T) {
+		f := form.Photo{
+			TakenAt:          time.Date(2008, 1, 1, 2, 0, 0, 0, time.UTC),
+			TakenAtLocal:     time.Date(2008, 1, 1, 2, 0, 0, 0, time.UTC),
+			TakenSrc:         "manual",
+			TimeZone:         "test",
+			PhotoTitle:       "Pink beach",
+			TitleSrc:         SrcManual,
+			PhotoFavorite:    true,
+			PhotoPrivate:     true,
+			PhotoType:        "image",
+			PhotoLat:         7.9999,
+			PhotoLng:         8.8888,
+			PhotoAltitude:    2,
+			PhotoIso:         5,
+			PhotoFocalLength: 10,
+			PhotoFNumber:     3.3,
+			PhotoExposure:    "exposure",
+			CameraID:         CameraFixtures.Pointer("apple-iphone-7").ID,
 			CameraSrc:        SrcMeta,
 			LensID:           uint(6),
 			CellID:           "1234",
@@ -74,8 +200,12 @@ func TestSavePhotoForm(t *testing.T) {
 		assert.InEpsilon(t, 7.9999, m.PhotoLat, 0.0001)
 		assert.InEpsilon(t, 8.8888, m.PhotoLng, 0.0001)
 		assert.NotNil(t, m.EditedAt)
+		assert.NotEqual(t, UnknownCamera.ID, m.CameraID)
+		assert.Equal(t, UnknownLens.ID, m.LensID)
 
 		t.Log(m.GetDetails().Keywords)
+		m = PhotoFixtures.Get("Photo08")
+		Db().Save(&m)
 	})
 	t.Run("BatchDateChangeKeepsTimeZone", func(t *testing.T) {
 		photo := PhotoFixtures.Get("Photo09")
@@ -487,14 +617,36 @@ func TestPhoto_ShouldGenerateCaption(t *testing.T) {
 
 func TestPhoto_ClassifyLabels(t *testing.T) {
 	t.Run("NewPhoto", func(t *testing.T) {
-		m := PhotoFixtures.Get("Photo19")
-		Db().Set("gorm:auto_preload", true).Model(&m).Related(&m.Labels)
+		m := Photo{}
+		Db().Preload("Labels", func(db *gorm.DB) *gorm.DB {
+			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
+		}).
+			Preload("Labels.Label").
+			Preload("Camera").
+			Preload("Lens").
+			Preload("Details").
+			Preload("Place").
+			Preload("Cell").
+			Preload("Cell.Place").
+			Where("photos.id = ?", PhotoFixtures.Get("Photo19").ID).
+			Find(&m)
 		labels := m.ClassifyLabels()
 		assert.Empty(t, labels)
 	})
 	t.Run("ExistingPhoto", func(t *testing.T) {
-		m := PhotoFixtures.Get("19800101_000002_D640C559")
-		Db().Set("gorm:auto_preload", true).Model(&m).Related(&m.Labels)
+		m := Photo{}
+		Db().Preload("Labels", func(db *gorm.DB) *gorm.DB {
+			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
+		}).
+			Preload("Labels.Label").
+			Preload("Camera").
+			Preload("Lens").
+			Preload("Details").
+			Preload("Place").
+			Preload("Cell").
+			Preload("Cell.Place").
+			Where("photos.id = ?", PhotoFixtures.Get("19800101_000002_D640C559").ID).
+			Find(&m)
 		labels := m.ClassifyLabels()
 		assert.LessOrEqual(t, 2, labels.Len())
 	})
@@ -512,6 +664,15 @@ func TestPhoto_PreloadFiles(t *testing.T) {
 		m.PreloadFiles()
 		assert.NotEmpty(t, m.Files)
 	})
+	t.Run("NotNil", func(t *testing.T) {
+		var m Photo
+		err := UnscopedDb().Where("photo_uid = ?", PhotoFixtures.Get("Photo26").PhotoUID).First(&m).Error
+		if assert.NoError(t, err) {
+			m.PreloadFiles()
+			assert.NotNil(t, m.Files)
+			assert.Len(t, m.Files, 0)
+		}
+	})
 }
 
 func TestPhoto_PreloadKeywords(t *testing.T) {
@@ -521,6 +682,15 @@ func TestPhoto_PreloadKeywords(t *testing.T) {
 		m.PreloadKeywords()
 		assert.NotEmpty(t, m.Keywords)
 	})
+	t.Run("NotNil", func(t *testing.T) {
+		var m Photo
+		err := UnscopedDb().Where("photo_uid = ?", PhotoFixtures.Get("Photo26").PhotoUID).First(&m).Error
+		if assert.NoError(t, err) {
+			m.PreloadKeywords()
+			assert.NotNil(t, m.Keywords)
+			assert.Len(t, m.Keywords, 0)
+		}
+	})
 }
 
 func TestPhoto_PreloadAlbums(t *testing.T) {
@@ -529,6 +699,15 @@ func TestPhoto_PreloadAlbums(t *testing.T) {
 		assert.Empty(t, m.Albums)
 		m.PreloadAlbums()
 		assert.NotEmpty(t, m.Albums)
+	})
+	t.Run("NotNil", func(t *testing.T) {
+		var m Photo
+		err := UnscopedDb().Where("photo_uid = ?", PhotoFixtures.Get("Photo26").PhotoUID).First(&m).Error
+		if assert.NoError(t, err) {
+			m.PreloadAlbums()
+			assert.NotNil(t, m.Albums)
+			assert.Len(t, m.Albums, 0)
+		}
 	})
 }
 
@@ -590,6 +769,14 @@ func TestPhoto_GetDetails(t *testing.T) {
 	})
 	t.Run("NewPhotoWithID", func(t *testing.T) {
 		m := Photo{ID: 79550, PhotoUID: "prjwufg1z97rcxff"}
+		if err := m.Create(); err != nil { // Create the photo otherwise the GetDetails generates a foreign key violation.
+			t.Error(err)
+		}
+		t.Cleanup(func() {
+			if _, err := m.DeletePermanently(); err != nil {
+				t.Error(err)
+			}
+		})
 		result := m.GetDetails()
 		assert.Equal(t, uint(0x136be), result.PhotoID)
 	})
@@ -611,6 +798,9 @@ func TestPhoto_AddLabels(t *testing.T) {
 		len1 := len(m.Labels)
 		m.AddLabels(classifyLabels)
 		assert.Greater(t, len(m.Labels), len1)
+		for _, l := range m.Labels {
+			assert.NotNil(t, l.Label)
+		}
 	})
 	t.Run("Update", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
@@ -619,9 +809,12 @@ func TestPhoto_AddLabels(t *testing.T) {
 		assert.Equal(t, SrcImage, m.Labels[0].LabelSrc)
 		len1 := len(m.Labels)
 		m.AddLabels(classifyLabels)
-		assert.Equal(t, len(m.Labels), len1)
+		assert.Equal(t, len1, len(m.Labels))
 		assert.Equal(t, 10, m.Labels[0].Uncertainty)
 		assert.Equal(t, SrcManual, m.Labels[0].LabelSrc)
+		for _, l := range m.Labels {
+			assert.NotNil(t, l.Label)
+		}
 	})
 	t.Run("OllamaReplacesLowerConfidence", func(t *testing.T) {
 		photoName := "Photo15"
@@ -688,7 +881,7 @@ func TestPhoto_AddLabels(t *testing.T) {
 		photo := PhotoFixtures.Get("Photo15")
 		initialLen := len(photo.Labels)
 
-		var labelCountBefore int
+		var labelCountBefore int64
 		if err := Db().Model(&Label{}).Where("label_slug = ?", "unknown").Count(&labelCountBefore).Error; err != nil {
 			t.Fatalf("count before failed: %v", err)
 		}
@@ -698,7 +891,7 @@ func TestPhoto_AddLabels(t *testing.T) {
 
 		assert.Equal(t, initialLen, len(photo.Labels))
 
-		var labelCountAfter int
+		var labelCountAfter int64
 		if err := Db().Model(&Label{}).Where("label_slug = ?", "unknown").Count(&labelCountAfter).Error; err != nil {
 			t.Fatalf("count after failed: %v", err)
 		}
@@ -712,7 +905,8 @@ func TestPhoto_AddLabels(t *testing.T) {
 		require.NotNil(t, original)
 
 		t.Cleanup(func() {
-			_ = Db().Unscoped().Delete(original).Error
+			require.NoError(t, Db().Unscoped().Where("label_id = ?", original.ID).Delete(&PhotoLabel{}).Error)
+			require.NoError(t, Db().Unscoped().Select("PhotoLabel").Delete(original).Error)
 			FlushLabelCache()
 		})
 
@@ -720,20 +914,20 @@ func TestPhoto_AddLabels(t *testing.T) {
 		require.NoError(t, Db().Save(original).Error)
 		FlushLabelCache()
 
-		var before int
+		var before int64
 		require.NoError(t, UnscopedDb().Model(&Label{}).
 			Where("label_slug LIKE ? OR custom_slug LIKE ?", "renameclassify%", "renameclassify%").
 			Count(&before).Error)
-		assert.Equal(t, 1, before)
+		assert.Equal(t, int64(1), before)
 
 		photo := PhotoFixtures.Get("19800101_000002_D640C559")
 		photo.AddLabels(classify.Labels{{Name: "RenameClassifyA", Uncertainty: 30, Source: SrcImage, Priority: 0}})
 
-		var after int
+		var after int64
 		require.NoError(t, UnscopedDb().Model(&Label{}).
 			Where("label_slug LIKE ? OR custom_slug LIKE ?", "renameclassify%", "renameclassify%").
 			Count(&after).Error)
-		assert.Equal(t, 1, after, "classifier with old name must not create a duplicate label")
+		assert.Equal(t, int64(1), after, "classifier with old name must not create a duplicate label")
 
 		joined, err := FindPhotoLabel(photo.ID, original.ID, false)
 		require.NoError(t, err)
@@ -744,7 +938,7 @@ func TestPhoto_AddLabels(t *testing.T) {
 		initialLen := len(photo.Labels)
 
 		labelSlug := "zero-probability"
-		var labelCountBefore int
+		var labelCountBefore int64
 		if err := Db().Model(&Label{}).Where("label_slug = ?", labelSlug).Count(&labelCountBefore).Error; err != nil {
 			t.Fatalf("count before failed: %v", err)
 		}
@@ -754,7 +948,7 @@ func TestPhoto_AddLabels(t *testing.T) {
 
 		assert.Equal(t, initialLen, len(photo.Labels))
 
-		var labelCountAfter int
+		var labelCountAfter int64
 		if err := Db().Model(&Label{}).Where("label_slug = ?", labelSlug).Count(&labelCountAfter).Error; err != nil {
 			t.Fatalf("count after failed: %v", err)
 		}
@@ -887,7 +1081,124 @@ func TestPhoto_Save(t *testing.T) {
 	})
 	t.Run("Error", func(t *testing.T) {
 		photo := Photo{PhotoUID: "ps6sg6be2lvl0yh0"}
+		log.Info("Expect 2 x duplicate key violation Error or SQLSTATE from entity_save")
 		assert.Error(t, photo.Save())
+	})
+
+	t.Run("BadCameraID", func(t *testing.T) {
+		photo := Photo{PhotoUID: rnd.UUID(), PhotoName: "Holiday", OriginalName: "holidayOriginal2", Camera: CameraFixtures.Pointer("apple-iphone-se"), CameraID: UnknownCamera.ID}
+		errorMessage := fmt.Sprintf("%%photo.Save has inconsistent Camera.ID %v and CameraID %v", photo.Camera.ID, photo.CameraID)
+
+		beforeErrors := Errors{}
+		res := Db().Where("error_message like ?", errorMessage).Find(&beforeErrors)
+		if res.Error != nil {
+			t.Fatal(res.Error)
+		}
+
+		log.Info("Expect inconsistent .ID and ID warnings Error or SQLSTATE from photo.save")
+		err := photo.Save()
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() {
+			_ = Db().Where("error_message like ?", errorMessage).Delete(&Errors{})
+			_, _ = photo.DeletePermanently()
+		})
+
+		afterErrors := Errors{}
+		res = Db().Where("error_message like ?", errorMessage).Find(&afterErrors)
+		if res.Error != nil {
+			t.Fatal(res.Error)
+		}
+
+		assert.Equal(t, len(beforeErrors)+1, len(afterErrors))
+	})
+
+	t.Run("BadCellID", func(t *testing.T) {
+		photo := Photo{PhotoUID: rnd.UUID(), PhotoName: "Holiday", OriginalName: "holidayOriginal2", Cell: CellFixtures.Pointer("mexico"), CellID: UnknownPlace.ID}
+		errorMessage := fmt.Sprintf("%%photo.Save has inconsistent Cell.ID %v and CellID %v", photo.Cell.ID, photo.CellID)
+
+		beforeErrors := Errors{}
+		res := Db().Where("error_message like ?", errorMessage).Find(&beforeErrors)
+		if res.Error != nil {
+			t.Fatal(res.Error)
+		}
+
+		log.Info("Expect inconsistent .ID and ID warnings Error or SQLSTATE from photo.save")
+		err := photo.Save()
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() {
+			_ = Db().Where("error_message like ?", errorMessage).Delete(&Errors{})
+			_, _ = photo.DeletePermanently()
+		})
+
+		afterErrors := Errors{}
+		res = Db().Where("error_message like ?", errorMessage).Find(&afterErrors)
+		if res.Error != nil {
+			t.Fatal(res.Error)
+		}
+
+		assert.Equal(t, len(beforeErrors)+1, len(afterErrors))
+	})
+
+	t.Run("BadLensID", func(t *testing.T) {
+		photo := Photo{PhotoUID: rnd.UUID(), PhotoName: "Holiday", OriginalName: "holidayOriginal2", Lens: LensFixtures.Pointer("lens-f-380"), LensID: UnknownLens.ID}
+		errorMessage := fmt.Sprintf("%%photo.Save has inconsistent Lens.ID %v and LensID %v", photo.Lens.ID, photo.LensID)
+
+		beforeErrors := Errors{}
+		res := Db().Where("error_message like ?", errorMessage).Find(&beforeErrors)
+		if res.Error != nil {
+			t.Fatal(res.Error)
+		}
+
+		log.Info("Expect inconsistent .ID and ID warnings Error or SQLSTATE from photo.save")
+		err := photo.Save()
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() {
+			_ = Db().Where("error_message like ?", errorMessage).Delete(&Errors{})
+			_, _ = photo.DeletePermanently()
+		})
+
+		afterErrors := Errors{}
+		res = Db().Where("error_message like ?", errorMessage).Find(&afterErrors)
+		if res.Error != nil {
+			t.Fatal(res.Error)
+		}
+
+		assert.Equal(t, len(beforeErrors)+1, len(afterErrors))
+	})
+
+	t.Run("BadPlaceID", func(t *testing.T) {
+		photo := Photo{PhotoUID: rnd.UUID(), PhotoName: "Holiday", OriginalName: "holidayOriginal2", Place: PlaceFixtures.Pointer("mexico"), PlaceID: UnknownPlace.ID}
+		errorMessage := fmt.Sprintf("%%photo.Save has inconsistent Place.ID %v and PlaceID %v", photo.Place.ID, photo.PlaceID)
+
+		beforeErrors := Errors{}
+		res := Db().Where("error_message like ?", errorMessage).Find(&beforeErrors)
+		if res.Error != nil {
+			t.Fatal(res.Error)
+		}
+
+		log.Info("Expect inconsistent .ID and ID warnings Error or SQLSTATE from photo.save")
+		err := photo.Save()
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() {
+			_ = Db().Where("error_message like ?", errorMessage).Delete(&Errors{})
+			_, _ = photo.DeletePermanently()
+		})
+
+		afterErrors := Errors{}
+		res = Db().Where("error_message like ?", errorMessage).Find(&afterErrors)
+		if res.Error != nil {
+			t.Fatal(res.Error)
+		}
+
+		assert.Equal(t, len(beforeErrors)+1, len(afterErrors))
 	})
 }
 
@@ -949,8 +1260,8 @@ func TestPhoto_RemoveKeyword(t *testing.T) {
 func TestPhoto_UpdateLabels(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		labelNative := Label{LabelName: "Native", LabelSlug: "native"}
-		var deletedTime = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
-		labelWindow := Label{LabelName: "Window", LabelSlug: "window", DeletedAt: &deletedTime}
+		var deletedTime = gorm.DeletedAt{Time: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC), Valid: true}
+		labelWindow := Label{LabelName: "Window", LabelSlug: "window", DeletedAt: deletedTime}
 
 		err := labelWindow.Save()
 		if err != nil {
@@ -970,11 +1281,16 @@ func TestPhoto_UpdateLabels(t *testing.T) {
 		}
 		photo := Photo{ID: 134567, PhotoTitle: "Cat in the House", Details: details}
 
+		log.Info("Expect 2 x foreign key violation Error or SQLSTATE from entity_save")
 		err = photo.Save()
 		if err != nil {
 			t.Fatal(err)
 		}
-
+		t.Cleanup(func() {
+			_, _ = photo.DeletePermanently()
+			_ = UnscopedDb().Delete(&labelNative)
+			_ = UnscopedDb().Delete(&labelWindow)
+		})
 		p := FindPhoto(photo)
 
 		assert.Equal(t, 0, len(p.Labels))
@@ -1021,8 +1337,8 @@ func TestPhoto_SubjectNames(t *testing.T) {
 
 func TestPhoto_UpdateSubjectLabels(t *testing.T) {
 	labelEgg := Label{LabelName: "Egg", LabelSlug: "egg"}
-	var deletedTime = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
-	labelBird := Label{LabelName: "Bird", LabelSlug: "bird", DeletedAt: &deletedTime}
+	var deletedTime = gorm.DeletedAt{Time: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC), Valid: true}
+	labelBird := Label{LabelName: "Bird", LabelSlug: "bird", DeletedAt: deletedTime}
 
 	if err := labelBird.Save(); err != nil {
 		t.Fatal(err)
@@ -1036,6 +1352,7 @@ func TestPhoto_UpdateSubjectLabels(t *testing.T) {
 		details := &Details{Subject: "cow, egg, bird", SubjectSrc: SrcMeta}
 		photo := Photo{ID: 334567, TitleSrc: SrcName, Details: details}
 
+		log.Info("Expect 2 x foreign key violation Error or SQLSTATE from entity_save")
 		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
@@ -1057,6 +1374,7 @@ func TestPhoto_UpdateSubjectLabels(t *testing.T) {
 		details := &Details{Subject: "", SubjectSrc: SrcMeta}
 		photo := Photo{ID: 334568, TitleSrc: SrcName, Details: details}
 
+		log.Info("Expect 2 x foreign key violation Error or SQLSTATE from entity_save")
 		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
@@ -1078,8 +1396,8 @@ func TestPhoto_UpdateSubjectLabels(t *testing.T) {
 
 func TestPhoto_UpdateKeywordLabels(t *testing.T) {
 	labelOtter := Label{LabelName: "Otter", LabelSlug: "otter"}
-	var deletedTime = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
-	labelSnake := Label{LabelName: "Snake", LabelSlug: "snake", DeletedAt: &deletedTime}
+	var deletedTime = gorm.DeletedAt{Time: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC), Valid: true}
+	labelSnake := Label{LabelName: "Snake", LabelSlug: "snake", DeletedAt: deletedTime}
 
 	if err := labelSnake.Save(); err != nil {
 		t.Fatal(err)
@@ -1093,6 +1411,7 @@ func TestPhoto_UpdateKeywordLabels(t *testing.T) {
 		details := &Details{Keywords: "cow, flower, snake, otter", KeywordsSrc: SrcAuto}
 		photo := Photo{ID: 434567, Details: details}
 
+		log.Info("Expect 2 x foreign key violation Error or SQLSTATE from entity_save")
 		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
@@ -1114,6 +1433,7 @@ func TestPhoto_UpdateKeywordLabels(t *testing.T) {
 		details := &Details{Keywords: "", KeywordsSrc: SrcAuto}
 		photo := Photo{ID: 434568, Details: details}
 
+		log.Info("Expect 2 x foreign key violation Error or SQLSTATE from entity_save")
 		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
@@ -1389,7 +1709,7 @@ func TestPhoto_SetPrimary(t *testing.T) {
 			tempConn.Close()
 		})
 
-		require.NoError(t, tempConn.Db().AutoMigrate(&File{}).Error)
+		require.NoError(t, tempConn.Db().AutoMigrate(&File{}))
 
 		m := Photo{
 			ID:           1001,
@@ -1625,8 +1945,8 @@ func TestPhoto_ArchiveRestore(t *testing.T) {
 		assert.Empty(t, m.DeletedAt)
 	})
 	t.Run("AlreadyArchived", func(t *testing.T) {
-		var deletedTime = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
-		m := &Photo{ID: 10000, PhotoUID: "prjwufg1z97rcxff", PhotoTitle: "HappyLilly", DeletedAt: &deletedTime}
+		var deletedTime = gorm.DeletedAt{Time: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC), Valid: true}
+		m := &Photo{ID: 10000, PhotoUID: "prjwufg1z97rcxff", PhotoTitle: "HappyLilly", DeletedAt: deletedTime}
 		assert.NotEmpty(t, m.DeletedAt)
 		err := m.Archive()
 		if err != nil {
@@ -1727,7 +2047,129 @@ func TestPhoto_IsNewlyIndexed(t *testing.T) {
 		assert.False(t, photo.IsNewlyIndexed())
 	})
 	t.Run("HasDeletedAt", func(t *testing.T) {
-		photo := Photo{IndexedAt: nil, DeletedAt: TimeStamp()}
+		ts := TimeStamp()
+		photo := Photo{IndexedAt: nil, DeletedAt: gorm.DeletedAt{Time: *ts, Valid: true}}
 		assert.False(t, photo.IsNewlyIndexed())
+	})
+}
+
+func TestPhoto_UnscopedSearch(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo08")
+		log.Debugf("m.CameraID = %v", m.CameraID)
+		log.Debugf("m.Camera = %v", m.Camera)
+		assert.Equal(t, m.Camera.ID, m.CameraID, "CameraID Check")
+		Db().Save(&m) // reset back to base
+
+		photo := Photo{}
+		if res := UnscopedSearchFirstPhoto(&photo, "photo_uid = ?", PhotoFixtures.Get("Photo08").PhotoUID); res.Error != nil {
+			assert.Nil(t, res.Error)
+			t.FailNow()
+		}
+		log.Debugf("photo.CameraID = %v", photo.CameraID)
+		log.Debugf("photo.Camera = %v", photo.Camera)
+		photo1 := PhotoFixtures.Get("Photo08")
+		log.Debugf("photo1.CameraID = %v", photo1.CameraID)
+		log.Debugf("photo1.Camera = %v", photo1.Camera)
+
+		// Only check items that are preloaded
+		// Except Labels as they are filtered.
+		assert.Equal(t, photo1.ID, photo.ID)
+		assert.Equal(t, photo1.UUID, photo.UUID)
+		assert.Equal(t, photo1.TakenAt, photo.TakenAt)
+		assert.Equal(t, photo1.TakenSrc, photo.TakenSrc)
+		assert.Equal(t, photo1.PhotoUID, photo.PhotoUID)
+		assert.Equal(t, photo1.PhotoPath, photo.PhotoPath)
+		assert.Equal(t, photo1.Camera, photo.Camera)
+		assert.Equal(t, photo1.CameraID, photo.CameraID)
+		assert.Equal(t, photo1.Lens, photo.Lens)
+		assert.Equal(t, photo1.LensID, photo.LensID)
+		assert.Equal(t, photo1.Place.PlaceLabel, photo.Place.PlaceLabel)
+		assert.Equal(t, photo1.PlaceID, photo.PlaceID)
+		assert.Equal(t, photo1.Cell.CellName, photo.Cell.CellName) // CellName as PhotoCount can cause this to fail
+		assert.Equal(t, photo1.CellID, photo.CellID)
+	})
+
+	t.Run("Nothing Found", func(t *testing.T) {
+		photo := Photo{}
+
+		res := &gorm.DB{}
+		if res = UnscopedSearchFirstPhoto(&photo, "photo_uid = ?", rnd.UUID()); res.Error != nil {
+			assert.NotNil(t, res.Error)
+			assert.ErrorContains(t, res.Error, "record not found")
+		}
+
+		assert.Equal(t, int64(0), res.RowsAffected)
+	})
+
+	t.Run("Error", func(t *testing.T) {
+		photo := Photo{}
+
+		res := &gorm.DB{}
+		log.Info("Expect unknown column Error or SQLSTATE on photo_uids from UnscopedSearchFirstPhoto")
+		if res = UnscopedSearchFirstPhoto(&photo, "photo_uids = ?", rnd.UUID()); res.Error == nil {
+			assert.NotNil(t, res.Error)
+			t.FailNow()
+		}
+		assert.Error(t, res.Error)
+		assert.ErrorContains(t, res.Error, "photo_uids")
+		assert.Equal(t, int64(0), res.RowsAffected)
+	})
+}
+
+func TestPhoto_ScopedSearch(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo08")
+		Db().Save(&m) // reset back to base
+
+		photo := Photo{}
+		if res := ScopedSearchFirstPhoto(&photo, "photo_uid = ?", PhotoFixtures.Get("Photo08").PhotoUID); res.Error != nil {
+			assert.Nil(t, res.Error)
+			t.FailNow()
+		}
+		photo1 := PhotoFixtures.Get("Photo08")
+
+		// Only check items that are preloaded
+		// Except Labels as they are filtered.
+		assert.Equal(t, photo1.ID, photo.ID)
+		assert.Equal(t, photo1.UUID, photo.UUID)
+		assert.Equal(t, photo1.TakenAt, photo.TakenAt)
+		assert.Equal(t, photo1.TakenSrc, photo.TakenSrc)
+		assert.Equal(t, photo1.PhotoUID, photo.PhotoUID)
+		assert.Equal(t, photo1.PhotoPath, photo.PhotoPath)
+		assert.Equal(t, photo1.Camera, photo.Camera)
+		assert.Equal(t, photo1.CameraID, photo.CameraID)
+		assert.Equal(t, photo1.Lens, photo.Lens)
+		assert.Equal(t, photo1.LensID, photo.LensID)
+		assert.Equal(t, photo1.Place.PlaceLabel, photo.Place.PlaceLabel)
+		assert.Equal(t, photo1.PlaceID, photo.PlaceID)
+		assert.Equal(t, photo1.Cell.CellName, photo.Cell.CellName) // CellName as PhotoCount can cause this to fail
+		assert.Equal(t, photo1.CellID, photo.CellID)
+	})
+
+	t.Run("Nothing Found", func(t *testing.T) {
+		photo := Photo{}
+
+		res := &gorm.DB{}
+		if res = ScopedSearchFirstPhoto(&photo, "photo_uid in (?)", rnd.UUID()); res.Error != nil {
+			assert.NotNil(t, res.Error)
+			assert.ErrorContains(t, res.Error, "record not found")
+		}
+
+		assert.Equal(t, int64(0), res.RowsAffected)
+	})
+
+	t.Run("Error", func(t *testing.T) {
+		photo := Photo{}
+
+		res := &gorm.DB{}
+		log.Info("Expect unknown column Error or SQLSTATE on photo_uids from ScopedSearchFirstPhoto")
+		if res = ScopedSearchFirstPhoto(&photo, "photo_uids in (?, ?, ?)", rnd.UUID(), rnd.UUID(), rnd.UUID()); res.Error == nil {
+			assert.NotNil(t, res.Error)
+			t.FailNow()
+		}
+		assert.Error(t, res.Error)
+		assert.ErrorContains(t, res.Error, "photo_uids")
+		assert.Equal(t, int64(0), res.RowsAffected)
 	})
 }
