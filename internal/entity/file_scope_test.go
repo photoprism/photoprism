@@ -7,6 +7,7 @@ import (
 )
 
 func TestFile_RedactForSession(t *testing.T) {
+	ValidateFixtures(t)
 	session := func(name string) *Session {
 		s := &Session{}
 		s.SetUser(UserFixtures.Pointer(name))

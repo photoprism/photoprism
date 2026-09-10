@@ -10,6 +10,7 @@ import (
 )
 
 func TestFileShares(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("SearchForIdAndStatus", func(t *testing.T) {
 		r, err := FileShares(uint(1000001), "new")
 		if err != nil {
@@ -24,6 +25,7 @@ func TestFileShares(t *testing.T) {
 }
 
 func TestExpiredFileShares(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("ExpiredFileShareExists", func(t *testing.T) {
 		time.Sleep(2 * time.Second)
 		r, err := ExpiredFileShares(entity.ServiceFixtureWebdavDummy)

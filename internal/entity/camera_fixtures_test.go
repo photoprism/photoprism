@@ -7,6 +7,7 @@ import (
 )
 
 func TestCameraMap_Get(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("GetExistingCamera", func(t *testing.T) {
 		r := CameraFixtures.Get("apple-iphone-se")
 		assert.Equal(t, uint(0xf4240), r.ID)
@@ -21,6 +22,7 @@ func TestCameraMap_Get(t *testing.T) {
 }
 
 func TestCameraMap_Pointer(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("GetExistingCameraPointer", func(t *testing.T) {
 		r := CameraFixtures.Pointer("apple-iphone-se")
 		assert.Equal(t, uint(0xf4240), r.ID)

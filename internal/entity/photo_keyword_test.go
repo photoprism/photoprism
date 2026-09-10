@@ -10,6 +10,7 @@ import (
 )
 
 func TestNewPhotoKeyword(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NewKeyword", func(t *testing.T) {
 		m := NewPhotoKeyword(uint(3), uint(8))
 		assert.Equal(t, uint(3), m.PhotoID)
@@ -18,6 +19,7 @@ func TestNewPhotoKeyword(t *testing.T) {
 }
 
 func TestPhotoKeyword_TableName(t *testing.T) {
+	ValidateFixtures(t)
 	photoKeyword := &PhotoKeyword{}
 	tableName := photoKeyword.TableName()
 
@@ -25,6 +27,7 @@ func TestPhotoKeyword_TableName(t *testing.T) {
 }
 
 func TestFirstOrCreatePhotoKeyword(t *testing.T) {
+	ValidateFixtures(t)
 	model := PhotoKeywordFixtures["1"]
 	result := FirstOrCreatePhotoKeyword(&model)
 
@@ -42,11 +45,15 @@ func TestFirstOrCreatePhotoKeyword(t *testing.T) {
 }
 
 func TestPhotoKeyword_Delete(t *testing.T) {
+	ValidateFixtures(t)
 	FlushPhotoKeywordCache()
 	photo := &Photo{}
 	require.NoError(t, Db().First(photo).Error)
 	keyword := NewKeyword(fmt.Sprintf("photo-keyword-delete-%d", time.Now().UnixNano()))
 	require.NoError(t, keyword.Save())
+	t.Cleanup(func() {
+		assert.NoError(t, UnscopedDb().Delete(keyword).Error)
+	})
 
 	relation := NewPhotoKeyword(photo.ID, keyword.ID)
 	require.NoError(t, relation.Create())

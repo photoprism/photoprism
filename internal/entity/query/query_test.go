@@ -57,12 +57,14 @@ func runTestMain(m *testing.M) int {
 }
 
 func TestDbDialect(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("TestDriver", func(t *testing.T) {
 		assert.Equal(t, testDriver(), DbDialect())
 	})
 }
 
 func TestBatchSize(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("SQLite", func(t *testing.T) {
 		if testDriver() != dsn.DriverSQLite3 {
 			t.Skip("test database is not SQLite")

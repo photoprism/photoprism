@@ -7,6 +7,7 @@ import (
 )
 
 func TestPhoto_RedactForSession(t *testing.T) {
+	ValidateFixtures(t)
 	// newPhoto returns a photo populated with the fields RedactForSession may trim.
 	newPhoto := func() *Photo {
 		return &Photo{

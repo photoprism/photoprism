@@ -5,11 +5,13 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
 func TestPurgeOrphans(t *testing.T) {
+	entity.ValidateFixtures(t)
 	fileName := "hd89e5yhb8p9h.jpg"
 
 	if err := entity.AddDuplicate(
@@ -25,9 +27,18 @@ func TestPurgeOrphans(t *testing.T) {
 	if err := PurgeOrphans(); err != nil {
 		t.Fatal(err)
 	}
+	t.Cleanup(func() {
+		cameras := []string{"canon-eos-7d", "canon-eos-5d", "apple-iphone-6"}
+		for _, camera := range cameras {
+			require.NoError(t, Db().Create(entity.CameraFixtures.Pointer(camera)).Error)
+		}
+		require.NoError(t, Db().Create(entity.FileFixtures.Pointer("FileWithoutPhoto.mp4")).Error)
+		require.NoError(t, Db().Create(entity.LensFixtures.Pointer("4-37")).Error)
+	})
 }
 
 func TestPurgeOrphanFiles(t *testing.T) {
+	entity.ValidateFixtures(t)
 	files, err := OrphanFiles()
 
 	if err != nil {
@@ -45,6 +56,9 @@ func TestPurgeOrphanFiles(t *testing.T) {
 	} else {
 		t.Logf("removed %d orphan files", count)
 	}
+	t.Cleanup(func() {
+		require.NoError(t, Db().Create(entity.FileFixtures.Pointer("FileWithoutPhoto.mp4")).Error)
+	})
 
 	if result, err := OrphanFiles(); err != nil {
 		t.Fatal(err)
@@ -54,6 +68,7 @@ func TestPurgeOrphanFiles(t *testing.T) {
 }
 
 func TestPurgeFileDuplicates(t *testing.T) {
+	entity.ValidateFixtures(t)
 	fileName := "hd89e5yhb8p9h.jpg"
 
 	if err := entity.AddDuplicate(
@@ -84,19 +99,32 @@ func TestPurgeFileDuplicates(t *testing.T) {
 }
 
 func TestPurgeUnusedCountries(t *testing.T) {
+	entity.ValidateFixtures(t)
 	if err := PurgeOrphanCountries(); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestPurgeUnusedCameras(t *testing.T) {
+	entity.ValidateFixtures(t)
 	if err := PurgeOrphanCameras(); err != nil {
 		t.Fatal(err)
 	}
+	t.Cleanup(func() {
+		cameras := []string{"canon-eos-7d", "canon-eos-5d", "apple-iphone-6"}
+		for _, camera := range cameras {
+			require.NoError(t, Db().Create(entity.CameraFixtures.Pointer(camera)).Error)
+		}
+	})
+
 }
 
 func TestPurgeUnusedLenses(t *testing.T) {
+	entity.ValidateFixtures(t)
 	if err := PurgeOrphanLenses(); err != nil {
 		t.Fatal(err)
 	}
+	t.Cleanup(func() {
+		require.NoError(t, Db().Create(entity.LensFixtures.Pointer("4-37")).Error)
+	})
 }

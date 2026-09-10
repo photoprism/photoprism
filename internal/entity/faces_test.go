@@ -9,6 +9,7 @@ import (
 )
 
 func TestFaces_Embeddings(t *testing.T) {
+	ValidateFixtures(t)
 	m := FaceFixtures.Get("joe-biden")
 	m1 := FaceFixtures.Get("jane-doe")
 	r := Faces{m, m1}.Embeddings()
@@ -18,6 +19,7 @@ func TestFaces_Embeddings(t *testing.T) {
 }
 
 func TestFaces_IDs(t *testing.T) {
+	ValidateFixtures(t)
 	m := FaceFixtures.Get("joe-biden")
 	m1 := FaceFixtures.Get("jane-doe")
 	r := Faces{m, m1}.IDs()
@@ -25,16 +27,21 @@ func TestFaces_IDs(t *testing.T) {
 }
 
 func TestDeleteOrphanFaces(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Ok", func(t *testing.T) {
 		if count, err := DeleteOrphanFaces(); err != nil {
 			t.Fatal(err)
 		} else {
 			t.Logf("deleted %d faces", count)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Save(FaceFixtures.Pointer("jane-doe")).Error)
+		})
 	})
 }
 
 func TestFaces_EmbedModel(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("AllBlank", func(t *testing.T) {
 		model, ok := Faces{{EmbedModel: ""}, {EmbedModel: ""}}.EmbedModel()
 		assert.True(t, ok)
@@ -56,6 +63,7 @@ func TestFaces_EmbedModel(t *testing.T) {
 }
 
 func TestFaces_CollisionBound(t *testing.T) {
+	ValidateFixtures(t)
 	// Comfortably above CollisionDist, so the floor is not what any of these cases turn on.
 	const near, far = 0.30, 0.50
 

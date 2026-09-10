@@ -2,9 +2,12 @@ package query
 
 import (
 	"testing"
+
+	"github.com/photoprism/photoprism/internal/entity"
 )
 
 func TestCellIDs(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		result, err := CellIDs()
 
@@ -16,6 +19,7 @@ func TestCellIDs(t *testing.T) {
 	})
 }
 func TestPurgePlaces(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		if err := PurgePlaces(); err != nil {
 			t.Fatal(err)

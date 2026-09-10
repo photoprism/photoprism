@@ -88,7 +88,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumFilter:      "",
 		AlbumOrder:       "oldest",
 		AlbumTemplate:    "",
-		AlbumCountry:     "",
+		AlbumCountry:     UnknownID, // This is set to zz by the default...
 		AlbumYear:        0,
 		AlbumMonth:       0,
 		AlbumDay:         0,
@@ -808,7 +808,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumFilter:      "path:\"2015/11\" public:true",
 		AlbumOrder:       "added",
 		AlbumTemplate:    "",
-		AlbumCountry:     "",
+		AlbumCountry:     UnknownID, // This is set to zz by the default...
 		AlbumYear:        2015,
 		AlbumMonth:       11,
 		AlbumDay:         30,
@@ -833,7 +833,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumFilter:      "path:\"Holiday\" public:true",
 		AlbumOrder:       "added",
 		AlbumTemplate:    "",
-		AlbumCountry:     "",
+		AlbumCountry:     UnknownID, // This is set to zz by the default...
 		AlbumYear:        2020,
 		AlbumMonth:       11,
 		AlbumDay:         30,
@@ -858,7 +858,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumFilter:      "year:2020 country:fr public:true",
 		AlbumOrder:       "added",
 		AlbumTemplate:    "",
-		AlbumCountry:     "",
+		AlbumCountry:     UnknownID, // This is set to zz by the default...
 		AlbumYear:        2020,
 		AlbumMonth:       0,
 		AlbumDay:         0,
@@ -883,7 +883,7 @@ var AlbumFixtures = AlbumMap{
 		AlbumFilter:      "year:2024 country:gr public:true",
 		AlbumOrder:       "added",
 		AlbumTemplate:    "",
-		AlbumCountry:     "",
+		AlbumCountry:     UnknownID, // This is set to zz by the default...
 		AlbumYear:        2024,
 		AlbumMonth:       0,
 		AlbumDay:         0,

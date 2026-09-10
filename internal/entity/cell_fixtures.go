@@ -36,7 +36,7 @@ var CellFixtures = CellMap{
 		ID:      s2.TokenPrefix + "1ef75a71a36c",
 		PlaceID: s2.TokenPrefix + "1ef75a71a36c",
 		Place: &Place{
-			ID:           s2.TokenPrefix + "1ef75a71a36",
+			ID:           s2.TokenPrefix + "1ef75a71a36c",
 			PlaceLabel:   "Mandeni, KwaZulu-Natal, South Africa",
 			PlaceCity:    "Mandeni",
 			PlaceState:   "KwaZulu-Natal",
@@ -95,7 +95,7 @@ var CellFixtures = CellMap{
 		UpdatedAt:    Now(),
 	},
 	"mediumLongLocName": {
-		ID:           s2.TokenPrefix + "1ef744d1e283",
+		ID:           s2.TokenPrefix + "1ef744d1e284", // Updated to match PlaceFixtures
 		PlaceID:      PlaceFixtures.Get("mediumLongLocName").ID,
 		Place:        PlaceFixtures.Pointer("mediumLongLocName"),
 		CellName:     "longlonglonglonglonglongName",
@@ -104,7 +104,7 @@ var CellFixtures = CellMap{
 		UpdatedAt:    Now(),
 	},
 	"Neckarbrücke": {
-		ID:           s2.TokenPrefix + "1ef744d1e284",
+		ID:           s2.TokenPrefix + "1ef744d1e285", // Updated to match PlaceFixtures
 		PlaceID:      PlaceFixtures.Get("Germany").ID,
 		Place:        PlaceFixtures.Pointer("Germany"),
 		CellName:     "Neckarbrücke",

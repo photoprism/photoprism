@@ -11,10 +11,18 @@ import (
 )
 
 func TestUpdateAlbumManualCovers(t *testing.T) {
+	entity.ValidateFixtures(t)
 	assert.NoError(t, UpdateAlbumManualCovers())
+	t.Cleanup(func() {
+		for _, fa := range entity.AlbumFixtures {
+			require.NoError(t, UnscopedDb().Save(fa).Error)
+			entity.FlushAlbumCache()
+		}
+	})
 }
 
 func TestUpdateAlbumManualCoversFiltered(t *testing.T) {
+	entity.ValidateFixtures(t)
 	var album entity.Album
 
 	assert.NoError(t, UpdateAlbumManualCovers())
@@ -27,6 +35,10 @@ func TestUpdateAlbumManualCoversFiltered(t *testing.T) {
 
 	t.Cleanup(func() {
 		_ = entity.UpdateAlbum(album.AlbumUID, entity.Values{"thumb": origThumb, "thumb_src": origSrc})
+		for _, fa := range entity.AlbumFixtures {
+			require.NoError(t, UnscopedDb().Save(fa).Error)
+			entity.FlushAlbumCache()
+		}
 		entity.FlushAlbumCache()
 	})
 
@@ -42,6 +54,7 @@ func TestUpdateAlbumManualCoversFiltered(t *testing.T) {
 }
 
 func TestRefreshManualAlbumCoverPrivate(t *testing.T) {
+	entity.ValidateFixtures(t)
 	// A cover is published as a file hash that clients resolve through the thumbnail endpoint,
 	// which applies no privacy filter, so a private picture must never become the cover.
 	var album entity.Album
@@ -80,10 +93,18 @@ func TestRefreshManualAlbumCoverPrivate(t *testing.T) {
 }
 
 func TestUpdateAlbumFolderCovers(t *testing.T) {
+	entity.ValidateFixtures(t)
 	assert.NoError(t, UpdateAlbumFolderCovers())
+	t.Cleanup(func() {
+		for _, fa := range entity.AlbumFixtures {
+			require.NoError(t, UnscopedDb().Save(fa).Error)
+			entity.FlushAlbumCache()
+		}
+	})
 }
 
 func TestUpdateAlbumFolderCoversFiltered(t *testing.T) {
+	entity.ValidateFixtures(t)
 	var album entity.Album
 
 	origThumb := album.Thumb
@@ -121,10 +142,12 @@ func TestUpdateAlbumFolderCoversFiltered(t *testing.T) {
 }
 
 func TestUpdateAlbumMonthCovers(t *testing.T) {
+	entity.ValidateFixtures(t)
 	assert.NoError(t, UpdateAlbumMonthCovers())
 }
 
 func TestUpdateAlbumMonthCoversFiltered(t *testing.T) {
+	entity.ValidateFixtures(t)
 	var album entity.Album
 
 	origThumb := album.Thumb
@@ -162,11 +185,25 @@ func TestUpdateAlbumMonthCoversFiltered(t *testing.T) {
 }
 
 func TestUpdateAlbumCovers(t *testing.T) {
+	entity.ValidateFixtures(t)
 	assert.NoError(t, UpdateAlbumCovers())
+	t.Cleanup(func() {
+		for _, fa := range entity.AlbumFixtures {
+			require.NoError(t, UnscopedDb().Save(fa).Error)
+			entity.FlushAlbumCache()
+		}
+	})
 }
 
 func TestUpdateLabelCovers(t *testing.T) {
+	entity.ValidateFixtures(t)
 	assert.NoError(t, UpdateLabelCovers())
+	t.Cleanup(func() {
+		for _, fl := range entity.LabelFixtures {
+			require.NoError(t, UnscopedDb().Save(&fl).Error)
+			entity.FlushLabelCache()
+		}
+	})
 }
 
 // Files the cover tests attach their markers to: bridge.jpg belongs to a public picture,
@@ -190,7 +227,7 @@ func newCoverSubject(t *testing.T, thumb, thumbSrc string) *entity.Subject {
 	}
 
 	require.NoError(t, entity.Db().Create(subj).Error)
-	t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Subject{}, "subj_uid = ?", subj.SubjUID) })
+	t.Cleanup(func() { require.NoError(t, entity.UnscopedDb().Delete(&entity.Subject{SubjUID: subj.SubjUID}).Error) })
 
 	return subj
 }
@@ -216,7 +253,7 @@ func newCoverMarker(t *testing.T, m entity.Marker) *entity.Marker {
 	m.X, m.Y, m.W, m.H = 0.1, 0.1, 0.2, 0.2
 
 	require.NoError(t, entity.Db().Create(&m).Error)
-	t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Marker{}, "marker_uid = ?", m.MarkerUID) })
+	t.Cleanup(func() { require.NoError(t, entity.UnscopedDb().Delete(&entity.Marker{MarkerUID: m.MarkerUID}).Error) })
 
 	return &m
 }
@@ -237,9 +274,15 @@ func coverThumb(t *testing.T, subjUID string) string {
 }
 
 func TestUpdateSubjectCovers(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		assert.NoError(t, UpdateSubjectCovers(false))
 		assert.NoError(t, UpdateSubjectCovers(true))
+		t.Cleanup(func() {
+			for _, fs := range entity.SubjectFixtures {
+				require.NoError(t, UnscopedDb().Model(&fs).UpdateColumns(entity.Values{"thumb": fs.Thumb, "updated_at": fs.UpdatedAt}).Error)
+			}
+		})
 	})
 	t.Run("PicksTheLargestFace", func(t *testing.T) {
 		subj := newCoverSubject(t, "", entity.SrcAuto)
@@ -248,6 +291,11 @@ func TestUpdateSubjectCovers(t *testing.T) {
 		newCoverMarker(t, entity.Marker{SubjUID: subj.SubjUID, Size: 200, Score: 70, Thumb: "aaa-" + subj.SubjUID})
 		newCoverMarker(t, entity.Marker{SubjUID: subj.SubjUID, Size: 120, Score: 80, Thumb: "mmm-" + subj.SubjUID})
 		require.NoError(t, UpdateSubjectCovers(true))
+		t.Cleanup(func() {
+			for _, fs := range entity.SubjectFixtures {
+				require.NoError(t, UnscopedDb().Model(&fs).UpdateColumns(entity.Values{"thumb": fs.Thumb, "updated_at": fs.UpdatedAt}).Error)
+			}
+		})
 		assert.Equal(t, "aaa-"+subj.SubjUID, coverThumb(t, subj.SubjUID))
 	})
 	t.Run("PrefersAnAssignedSubject", func(t *testing.T) {
@@ -255,6 +303,11 @@ func TestUpdateSubjectCovers(t *testing.T) {
 		newCoverMarker(t, entity.Marker{SubjUID: subj.SubjUID, SubjSrc: entity.SrcManual, Size: 60, Score: 70, Thumb: "manual-" + subj.SubjUID})
 		newCoverMarker(t, entity.Marker{SubjUID: subj.SubjUID, SubjSrc: entity.SrcAuto, Size: 400, Score: 95, Thumb: "auto-" + subj.SubjUID})
 		require.NoError(t, UpdateSubjectCovers(true))
+		t.Cleanup(func() {
+			for _, fs := range entity.SubjectFixtures {
+				require.NoError(t, UnscopedDb().Model(&fs).UpdateColumns(entity.Values{"thumb": fs.Thumb, "updated_at": fs.UpdatedAt}).Error)
+			}
+		})
 		assert.Equal(t, "manual-"+subj.SubjUID, coverThumb(t, subj.SubjUID))
 	})
 	t.Run("RanksAssignedSubjectsBySize", func(t *testing.T) {
@@ -264,6 +317,11 @@ func TestUpdateSubjectCovers(t *testing.T) {
 		newCoverMarker(t, entity.Marker{SubjUID: subj.SubjUID, SubjSrc: entity.SrcXmp, Size: 60, Score: 95, Thumb: "xmp-" + subj.SubjUID})
 		newCoverMarker(t, entity.Marker{SubjUID: subj.SubjUID, SubjSrc: entity.SrcManual, Size: 200, Score: 70, Thumb: "manual-" + subj.SubjUID})
 		require.NoError(t, UpdateSubjectCovers(true))
+		t.Cleanup(func() {
+			for _, fs := range entity.SubjectFixtures {
+				require.NoError(t, UnscopedDb().Model(&fs).UpdateColumns(entity.Values{"thumb": fs.Thumb, "updated_at": fs.UpdatedAt}).Error)
+			}
+		})
 		assert.Equal(t, "manual-"+subj.SubjUID, coverThumb(t, subj.SubjUID))
 	})
 	t.Run("RanksASidecarNameByTheSameRule", func(t *testing.T) {
@@ -274,6 +332,11 @@ func TestUpdateSubjectCovers(t *testing.T) {
 		newCoverMarker(t, entity.Marker{SubjUID: subj.SubjUID, SubjSrc: entity.SrcManual, Size: 60, Score: 95, Thumb: "manual-" + subj.SubjUID})
 		newCoverMarker(t, entity.Marker{SubjUID: subj.SubjUID, SubjSrc: entity.SrcXmp, Size: 200, Score: 70, Thumb: "xmp-" + subj.SubjUID})
 		require.NoError(t, UpdateSubjectCovers(true))
+		t.Cleanup(func() {
+			for _, fs := range entity.SubjectFixtures {
+				require.NoError(t, UnscopedDb().Model(&fs).UpdateColumns(entity.Values{"thumb": fs.Thumb, "updated_at": fs.UpdatedAt}).Error)
+			}
+		})
 		assert.Equal(t, "xmp-"+subj.SubjUID, coverThumb(t, subj.SubjUID))
 	})
 	t.Run("PicksTheMostConfidentOfEqualSize", func(t *testing.T) {
@@ -281,6 +344,11 @@ func TestUpdateSubjectCovers(t *testing.T) {
 		newCoverMarker(t, entity.Marker{SubjUID: subj.SubjUID, Size: 200, Score: 70, Thumb: "zzz-" + subj.SubjUID})
 		newCoverMarker(t, entity.Marker{SubjUID: subj.SubjUID, Size: 200, Score: 95, Thumb: "aaa-" + subj.SubjUID})
 		require.NoError(t, UpdateSubjectCovers(true))
+		t.Cleanup(func() {
+			for _, fs := range entity.SubjectFixtures {
+				require.NoError(t, UnscopedDb().Model(&fs).UpdateColumns(entity.Values{"thumb": fs.Thumb, "updated_at": fs.UpdatedAt}).Error)
+			}
+		})
 		assert.Equal(t, "aaa-"+subj.SubjUID, coverThumb(t, subj.SubjUID))
 	})
 	t.Run("IgnoresInvalidMarkers", func(t *testing.T) {
@@ -288,6 +356,11 @@ func TestUpdateSubjectCovers(t *testing.T) {
 		newCoverMarker(t, entity.Marker{SubjUID: subj.SubjUID, MarkerInvalid: true, Size: 400, Score: 95, Thumb: "invalid-" + subj.SubjUID})
 		newCoverMarker(t, entity.Marker{SubjUID: subj.SubjUID, Size: 120, Score: 80, Thumb: "valid-" + subj.SubjUID})
 		require.NoError(t, UpdateSubjectCovers(true))
+		t.Cleanup(func() {
+			for _, fs := range entity.SubjectFixtures {
+				require.NoError(t, UnscopedDb().Model(&fs).UpdateColumns(entity.Values{"thumb": fs.Thumb, "updated_at": fs.UpdatedAt}).Error)
+			}
+		})
 		assert.Equal(t, "valid-"+subj.SubjUID, coverThumb(t, subj.SubjUID))
 	})
 	t.Run("IgnoresNonFaceMarkers", func(t *testing.T) {
@@ -295,6 +368,11 @@ func TestUpdateSubjectCovers(t *testing.T) {
 		newCoverMarker(t, entity.Marker{SubjUID: subj.SubjUID, MarkerType: entity.MarkerLabel, Size: 400, Score: 95, Thumb: "label-" + subj.SubjUID})
 		newCoverMarker(t, entity.Marker{SubjUID: subj.SubjUID, Size: 120, Score: 80, Thumb: "face-" + subj.SubjUID})
 		require.NoError(t, UpdateSubjectCovers(true))
+		t.Cleanup(func() {
+			for _, fs := range entity.SubjectFixtures {
+				require.NoError(t, UnscopedDb().Model(&fs).UpdateColumns(entity.Values{"thumb": fs.Thumb, "updated_at": fs.UpdatedAt}).Error)
+			}
+		})
 		assert.Equal(t, "face-"+subj.SubjUID, coverThumb(t, subj.SubjUID))
 	})
 	t.Run("ClearsTheCoverWhenNothingIsEligible", func(t *testing.T) {
@@ -303,6 +381,11 @@ func TestUpdateSubjectCovers(t *testing.T) {
 		subj := newCoverSubject(t, "stale-"+rnd.GenerateUID('j'), entity.SrcAuto)
 		newCoverMarker(t, entity.Marker{SubjUID: subj.SubjUID, FileUID: coverPrivateFileUID, Size: 400, Score: 95, Thumb: "private-" + subj.SubjUID})
 		require.NoError(t, UpdateSubjectCovers(true))
+		t.Cleanup(func() {
+			for _, fs := range entity.SubjectFixtures {
+				require.NoError(t, UnscopedDb().Model(&fs).UpdateColumns(entity.Values{"thumb": fs.Thumb, "updated_at": fs.UpdatedAt}).Error)
+			}
+		})
 		assert.Empty(t, coverThumb(t, subj.SubjUID))
 		// The same marker is eligible once private pictures count, so only privacy excluded it.
 		require.NoError(t, UpdateSubjectCovers(false))
@@ -313,6 +396,11 @@ func TestUpdateSubjectCovers(t *testing.T) {
 		first := newCoverMarker(t, entity.Marker{SubjUID: subj.SubjUID, Size: 200, Score: 80, Thumb: "one-" + subj.SubjUID})
 		second := newCoverMarker(t, entity.Marker{SubjUID: subj.SubjUID, Size: 200, Score: 80, Thumb: "two-" + subj.SubjUID})
 		require.NoError(t, UpdateSubjectCovers(true))
+		t.Cleanup(func() {
+			for _, fs := range entity.SubjectFixtures {
+				require.NoError(t, UnscopedDb().Model(&fs).UpdateColumns(entity.Values{"thumb": fs.Thumb, "updated_at": fs.UpdatedAt}).Error)
+			}
+		})
 		picked := coverThumb(t, subj.SubjUID)
 		require.NoError(t, UpdateSubjectCovers(true))
 		assert.Equal(t, picked, coverThumb(t, subj.SubjUID))
@@ -326,20 +414,38 @@ func TestUpdateSubjectCovers(t *testing.T) {
 		subj := newCoverSubject(t, "chosen-"+rnd.GenerateUID('j'), entity.SrcManual)
 		newCoverMarker(t, entity.Marker{SubjUID: subj.SubjUID, Size: 400, Score: 95, Thumb: "better-" + subj.SubjUID})
 		require.NoError(t, UpdateSubjectCovers(true))
+		t.Cleanup(func() {
+			for _, fs := range entity.SubjectFixtures {
+				require.NoError(t, UnscopedDb().Model(&fs).UpdateColumns(entity.Values{"thumb": fs.Thumb, "updated_at": fs.UpdatedAt}).Error)
+			}
+		})
 		assert.Equal(t, subj.Thumb, coverThumb(t, subj.SubjUID))
 	})
 }
 
 func TestUpdateCovers(t *testing.T) {
+	entity.ValidateFixtures(t)
 	// coversBusy.Store(true)
 	UpdateCoversAsync()
 	// Drain the async goroutine so it doesn't race the next test that
 	// might temporarily swap out the entity DB provider.
 	entity.WaitForAsyncJobs()
 	assert.NoError(t, UpdateCovers())
+	t.Cleanup(func() {
+		for _, fs := range entity.SubjectFixtures {
+			require.NoError(t, UnscopedDb().Model(&fs).UpdateColumns(entity.Values{"thumb": fs.Thumb, "updated_at": fs.UpdatedAt}).Error)
+		}
+		for _, fl := range entity.LabelFixtures {
+			require.NoError(t, UnscopedDb().Model(&fl).UpdateColumns(entity.Values{"thumb": fl.Thumb, "updated_at": fl.UpdatedAt}).Error)
+		}
+		for _, fa := range entity.AlbumFixtures {
+			require.NoError(t, UnscopedDb().Model(&fa).UpdateColumns(entity.Values{"thumb": fa.Thumb, "updated_at": fa.UpdatedAt}).Error)
+		}
+	})
 }
 
 func TestUpdateCovers_NilDbReturnsCleanly(t *testing.T) {
+	entity.ValidateFixtures(t)
 	// Mirrors TestUpdateCounts_NilDbReturnsCleanly: after CloseDb has
 	// nilled the entity DB provider, UpdateCovers must return nil instead
 	// of panicking on a nil dialect lookup so a stray UpdateCoversAsync

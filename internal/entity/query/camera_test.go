@@ -9,6 +9,7 @@ import (
 )
 
 func TestFindCameraBySlug(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("ExistingCamera", func(t *testing.T) {
 		camera := FindCameraBySlug(entity.CameraFixtures.Get("canon-eos-7d").CameraSlug)
 		assert.NotNil(t, camera)
@@ -28,6 +29,7 @@ func TestFindCameraBySlug(t *testing.T) {
 }
 
 func TestFindCameraByID(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("ExistingCamera", func(t *testing.T) {
 		camera := FindCameraByID(entity.CameraFixtures.Get("canon-eos-7d").ID)
 		assert.NotNil(t, camera)

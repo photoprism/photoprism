@@ -9,11 +9,13 @@ import (
 )
 
 func TestToASCII(t *testing.T) {
+	ValidateFixtures(t)
 	result := ToASCII("幸福 = Happiness.")
 	assert.Equal(t, " = Happiness.", result)
 }
 
 func TestClip(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Foo", func(t *testing.T) {
 		result := Clip("Foo", 16)
 		assert.Equal(t, "Foo", result)
@@ -44,6 +46,7 @@ func TestClip(t *testing.T) {
 // TestClipPath verifies that paths are limited to the PathBytes byte budget
 // without splitting a multi-byte rune.
 func TestClipPath(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("ShortPath", func(t *testing.T) {
 		assert.Equal(t, "2024/Vacation", ClipPath("2024/Vacation"))
 	})
@@ -61,12 +64,14 @@ func TestClipPath(t *testing.T) {
 }
 
 func TestClipType(t *testing.T) {
+	ValidateFixtures(t)
 	result := ClipType(" 幸福 Hanzi are logograms developed for the writing of Chinese! Expressions in an index may not ...!")
 	assert.Equal(t, "Hanzi are logograms developed for the writing of Chinese! Expres", result) // codespell:ignore
 	assert.Equal(t, TypeBytes, len(result))
 }
 
 func TestClipTypeLower(t *testing.T) {
+	ValidateFixtures(t)
 	result := ClipTypeLower(" 幸福 Hanzi are logograms developed for the writing of Chinese! Expressions in an index may not ...!")
 	assert.Equal(t, "hanzi are logograms developed for the writing of chinese! expres", result) // codespell:ignore
 	assert.Equal(t, TypeBytes, len(result))

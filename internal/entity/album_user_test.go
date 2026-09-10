@@ -9,6 +9,7 @@ import (
 )
 
 func TestNewAlbumUser(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Ok", func(t *testing.T) {
 		uid := rnd.GenerateUID('n')
 		userUID := rnd.GenerateUID(UserUID)
@@ -24,6 +25,7 @@ func TestNewAlbumUser(t *testing.T) {
 }
 
 func TestCreateAlbumUser(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Ok", func(t *testing.T) {
 		uid := rnd.GenerateUID('n')
 		userUID := rnd.GenerateUID(UserUID)
@@ -40,6 +42,7 @@ func TestCreateAlbumUser(t *testing.T) {
 }
 
 func TestSaveAlbumUser(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Ok", func(t *testing.T) {
 		uid := rnd.GenerateUID('n')
 		userUID := rnd.GenerateUID(UserUID)
@@ -61,6 +64,7 @@ func TestSaveAlbumUser(t *testing.T) {
 }
 
 func TestFirstOrCreateAlbumUser(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Ok", func(t *testing.T) {
 		uid := rnd.GenerateUID('n')
 		userUID := rnd.GenerateUID(UserUID)

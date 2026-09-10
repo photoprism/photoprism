@@ -7,6 +7,7 @@ import (
 )
 
 func TestNewCell(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NewCell", func(t *testing.T) {
 		l := NewCell(1, 1)
 		l.CellCategory = "restaurant"
@@ -34,6 +35,7 @@ func TestNewCell(t *testing.T) {
 }
 
 func TestCell_Keywords(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Mexico", func(t *testing.T) {
 		m := CellFixtures["mexico"]
 		r := m.Keywords()
@@ -52,6 +54,7 @@ func TestCell_Keywords(t *testing.T) {
 }
 
 func TestCell_Find(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("CellInDb", func(t *testing.T) {
 		m := CellFixtures["mexico"]
 		r := m.Find("")
@@ -89,6 +92,7 @@ func TestCell_Find(t *testing.T) {
 }
 
 func TestFirstOrCreateCell(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("IdEmpty", func(t *testing.T) {
 		loc := &Cell{}
 
@@ -112,6 +116,7 @@ func TestFirstOrCreateCell(t *testing.T) {
 }
 
 func TestCell_Refresh(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("ApiEmpty", func(t *testing.T) {
 		l := NewCell(2, 1)
 		err := l.Refresh("")

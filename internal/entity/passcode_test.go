@@ -11,6 +11,7 @@ import (
 )
 
 func TestNewAuthKey(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Valid", func(t *testing.T) {
 		uid := "us7gqkzx1g9a82h4"
 		keyUrl := "otpauth://totp/Example:alice@google.com?secret=JBSWY3DPEHPK3PXP&issuer=Example&algorithm=sha256&digits=8"
@@ -66,6 +67,7 @@ func TestNewAuthKey(t *testing.T) {
 }
 
 func TestAuthKey_Key(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Valid", func(t *testing.T) {
 		uid := "us7gqkzx1g9a82h4"
 		keyUrl := "otpauth://totp/Example:alice@google.com?secret=JBSWY3DPEHPK3PXP&issuer=Example&algorithm=sha256&digits=8"
@@ -122,6 +124,7 @@ func TestAuthKey_Key(t *testing.T) {
 }
 
 func TestPasscode_Delete(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("UidNotSet", func(t *testing.T) {
 		m := &Passcode{
 			UID:          "",
@@ -136,6 +139,7 @@ func TestPasscode_Delete(t *testing.T) {
 }
 
 func TestPasscode_SetUID(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Valid", func(t *testing.T) {
 		m := &Passcode{
 			UID:          "123",
@@ -165,6 +169,7 @@ func TestPasscode_SetUID(t *testing.T) {
 }
 
 func TestPasscode_SetKey(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		uid := "uqxc08w3d0ej2283"
 		keyUrl := "otpauth://totp/Example:alice?secret=JBSWY3DPEHPK3PXP"
@@ -245,6 +250,7 @@ func TestPasscode_SetKey(t *testing.T) {
 }
 
 func TestPasscode_Secret(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		uid := "uqxc08w3d0ej2283"
 		keyUrl := "otpauth://totp/Example:alice?secret=JBSWY3DPEHPK3PXP"
@@ -270,6 +276,7 @@ func TestPasscode_Secret(t *testing.T) {
 }
 
 func TestPasscode_GenerateCode(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := &Passcode{
 			UID:          "uqxc08w3d0ej2283",
@@ -302,6 +309,7 @@ func TestPasscode_GenerateCode(t *testing.T) {
 }
 
 func TestPasscode_Verify(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("ValidCode", func(t *testing.T) {
 		m := &Passcode{
 			UID:          "uqxc08w3d0ej2283",
@@ -448,6 +456,7 @@ func TestPasscode_Verify(t *testing.T) {
 }
 
 func TestPasscode_Activate(t *testing.T) {
+	ValidateFixtures(t)
 	m := &Passcode{
 		UID:          "uqxc08w3d0ej2283",
 		KeyURL:       "otpauth://totp/Example:alice",

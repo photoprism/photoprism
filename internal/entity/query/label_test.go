@@ -9,6 +9,7 @@ import (
 )
 
 func TestLabelBySlug(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		result, err := LabelBySlug("flower")
 
@@ -29,6 +30,7 @@ func TestLabelBySlug(t *testing.T) {
 }
 
 func TestLabelByUID(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		result, err := LabelByUID("ls6sg6b1wowuy3c5")
 
@@ -49,6 +51,7 @@ func TestLabelByUID(t *testing.T) {
 }
 
 func TestLabelThumbBySlug(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		result, err := LabelThumbBySlug("cow")
 
@@ -71,6 +74,7 @@ func TestLabelThumbBySlug(t *testing.T) {
 }
 
 func TestLabelHasThumb(t *testing.T) {
+	entity.ValidateFixtures(t)
 	// Other tests assign covers through UpdateCovers(), so the fixture value is set explicitly
 	// and restored afterwards.
 	setLabelThumb := func(t *testing.T, uid, hash string) {
@@ -116,6 +120,7 @@ func TestLabelHasThumb(t *testing.T) {
 }
 
 func TestLabelThumbByUID(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("InvalidUID", func(t *testing.T) {
 		for _, uid := range []string{"", "xxx", "as6sg6bxpogaaba8"} {
 			_, err := LabelThumbByUID(uid)
@@ -141,6 +146,7 @@ func TestLabelThumbByUID(t *testing.T) {
 }
 
 func TestPhotoLabel(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		result, err := PhotoLabel(uint(1000000), uint(1000001))
 

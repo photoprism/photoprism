@@ -154,13 +154,15 @@ func (m *Subject) DeletePermanently() error {
 
 // AfterDelete resets file and photo counters when the entity was deleted.
 func (m *Subject) AfterDelete(tx *gorm.DB) (err error) {
-	tx.Model(m).Updates(Values{
-		"FileCount":  0,
-		"PhotoCount": 0,
-	})
+	// Prevent this from updating EVERY record if a delete was issued using an empty model and a where clause.
+	if m.SubjUID != "" {
+		tx.Model(m).Updates(Values{
+			"FileCount":  0,
+			"PhotoCount": 0,
+		})
 
-	SubjNames.Unset(m.SubjUID)
-
+		SubjNames.Unset(m.SubjUID)
+	}
 	return
 }
 

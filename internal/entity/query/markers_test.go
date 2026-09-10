@@ -13,6 +13,7 @@ import (
 )
 
 func TestMarkerByUID(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Found", func(t *testing.T) {
 		if m, err := MarkerByUID("ms6sg6b1wowuy888"); err != nil {
 			t.Fatal(err)
@@ -28,6 +29,7 @@ func TestMarkerByUID(t *testing.T) {
 }
 
 func TestMarkers(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("FindUmatched", func(t *testing.T) {
 		results, err := Markers(3, 0, entity.MarkerFace, false, false, entity.Now())
 
@@ -79,6 +81,7 @@ func TestMarkers(t *testing.T) {
 }
 
 func TestUnmatchedFaceMarkers(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("All", func(t *testing.T) {
 		results, err := UnmatchedFaceMarkers(3, "", nil)
 
@@ -120,6 +123,7 @@ func TestUnmatchedFaceMarkers(t *testing.T) {
 }
 
 func TestFaceMarkers(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("All", func(t *testing.T) {
 		results, err := FaceMarkers(3, 0)
 
@@ -132,6 +136,7 @@ func TestFaceMarkers(t *testing.T) {
 }
 
 func TestFaceMarkerModelBoundaries(t *testing.T) {
+	entity.ValidateFixtures(t)
 	restore := face.ConfiguredModel()
 	t.Cleanup(func() {
 		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
@@ -190,6 +195,7 @@ func TestFaceMarkerModelBoundaries(t *testing.T) {
 }
 
 func TestFaceMarkersWithoutConfiguredModel(t *testing.T) {
+	entity.ValidateFixtures(t)
 	restore := face.ConfiguredModel()
 	t.Cleanup(func() {
 		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
@@ -248,6 +254,7 @@ func TestFaceMarkersWithoutConfiguredModel(t *testing.T) {
 }
 
 func TestFaceMarkersWithEmptyEmbeddings(t *testing.T) {
+	entity.ValidateFixtures(t)
 	restore := face.ConfiguredModel()
 	t.Cleanup(func() {
 		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
@@ -289,6 +296,7 @@ func TestFaceMarkersWithEmptyEmbeddings(t *testing.T) {
 }
 
 func TestEmbeddings(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("All", func(t *testing.T) {
 		results, err := Embeddings(false, false, 0, 0, "")
 
@@ -331,6 +339,7 @@ func TestEmbeddings(t *testing.T) {
 }
 
 func TestMarkerCountsByFaceIDs(t *testing.T) {
+	entity.ValidateFixtures(t)
 	counts, err := MarkerCountsByFaceIDs(nil)
 	if err != nil {
 		t.Fatal(err)
@@ -361,44 +370,72 @@ func TestMarkerCountsByFaceIDs(t *testing.T) {
 }
 
 func TestRemoveInvalidMarkerReferences(t *testing.T) {
+	entity.ValidateFixtures(t)
 	affected, err := RemoveInvalidMarkerReferences()
+	t.Cleanup(func() {
+		for _, marker := range entity.MarkerFixtures {
+			require.NoError(t, UnscopedDb().Model(&marker).UpdateColumns(entity.Values{"subj_uid": marker.SubjUID, "face_id": marker.FaceID, "face_dist": marker.FaceDist, "matched_at": marker.MatchedAt, "updated_at": marker.UpdatedAt}).Error)
+		}
+	})
 
 	assert.NoError(t, err)
 	assert.GreaterOrEqual(t, affected, int64(0))
 }
 
 func TestRemoveNonExistentMarkerFaces(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping test in short mode.")
-	}
-
+	entity.ValidateFixtures(t)
 	// Make sure that the data is valid for the test.
 	_, err := RemoveAutoFaceClusters()
 	require.NoError(t, err)
+	t.Cleanup(func() {
+		for _, face := range entity.FaceFixtures {
+			if face.FaceSrc == entity.SrcAuto {
+				require.NoError(t, UnscopedDb().Create(&face).Error)
+			}
+		}
+	})
 
 	affected, err := RemoveNonExistentMarkerFaces()
+	t.Cleanup(func() {
+		for _, marker := range entity.MarkerFixtures {
+			if marker.MarkerType == entity.MarkerFace {
+				require.NoError(t, UnscopedDb().Model(&marker).UpdateColumns(entity.Values{"face_id": marker.FaceID, "face_dist": marker.FaceDist, "matched_at": marker.MatchedAt, "updated_at": marker.UpdatedAt}).Error)
+			}
+		}
+	})
 
 	assert.NoError(t, err)
 	assert.GreaterOrEqual(t, affected, int64(1))
-	// Post test cleanup
-	entity.ResetTestFixtures()
 }
 
 func TestRemoveNonExistentMarkerSubjects(t *testing.T) {
+	entity.ValidateFixtures(t)
 	affected, err := RemoveNonExistentMarkerSubjects()
+	t.Cleanup(func() {
+		for _, marker := range entity.MarkerFixtures {
+			require.NoError(t, UnscopedDb().Model(&marker).UpdateColumns(entity.Values{"subj_uid": marker.SubjUID, "face_id": marker.FaceID, "face_dist": marker.FaceDist, "matched_at": marker.MatchedAt, "updated_at": marker.UpdatedAt}).Error)
+		}
+	})
 
 	assert.NoError(t, err)
 	assert.GreaterOrEqual(t, affected, int64(1))
 }
 
 func TestFixMarkerReferences(t *testing.T) {
+	entity.ValidateFixtures(t)
 	affected, err := FixMarkerReferences()
+	t.Cleanup(func() {
+		for _, marker := range entity.MarkerFixtures {
+			require.NoError(t, UnscopedDb().Model(&marker).UpdateColumns(entity.Values{"subj_uid": marker.SubjUID, "face_id": marker.FaceID, "face_dist": marker.FaceDist, "matched_at": marker.MatchedAt, "updated_at": marker.UpdatedAt}).Error)
+		}
+	})
 
 	assert.NoError(t, err)
 	assert.GreaterOrEqual(t, affected, int64(0))
 }
 
 func TestMarkersWithNonExistentReferences(t *testing.T) {
+	entity.ValidateFixtures(t)
 	f, s, err := MarkersWithNonExistentReferences()
 
 	assert.NoError(t, err)
@@ -408,6 +445,7 @@ func TestMarkersWithNonExistentReferences(t *testing.T) {
 }
 
 func TestMarkersWithSubjectConflict(t *testing.T) {
+	entity.ValidateFixtures(t)
 	m, err := MarkersWithSubjectConflict()
 
 	assert.NoError(t, err)
@@ -416,12 +454,14 @@ func TestMarkersWithSubjectConflict(t *testing.T) {
 }
 
 func TestCountUnmatchedFaceMarkers(t *testing.T) {
+	entity.ValidateFixtures(t)
 	n := CountUnmatchedFaceMarkers()
 
 	assert.GreaterOrEqual(t, n, 1)
 }
 
 func TestCountMarkers(t *testing.T) {
+	entity.ValidateFixtures(t)
 	n := CountMarkers(entity.MarkerFace)
 
 	assert.GreaterOrEqual(t, n, 1)
@@ -431,6 +471,7 @@ func TestCountMarkers(t *testing.T) {
 // marker, from the detector that produced it, so an upgrade cannot exclude a marker for a
 // calibration it was never scored against.
 func TestWhereClusterScore(t *testing.T) {
+	entity.ValidateFixtures(t)
 	newMarker := func(t *testing.T, detector string, score int) *entity.Marker {
 		t.Helper()
 
@@ -518,6 +559,7 @@ func TestWhereClusterScore(t *testing.T) {
 // TestResetAllFaceMarkerMatches covers the difference between the two reset scopes, which is
 // whether a marker a person named keeps its identity.
 func TestResetAllFaceMarkerMatches(t *testing.T) {
+	entity.ValidateFixtures(t)
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
 	}

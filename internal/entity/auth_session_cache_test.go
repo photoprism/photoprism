@@ -11,6 +11,7 @@ import (
 )
 
 func TestFlushSessionCache(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Ok", func(t *testing.T) {
 		require.NotPanics(t, func() { FlushSessionCache() })
 		assert.Equal(t, 0, sessionCache.ItemCount())
@@ -18,6 +19,7 @@ func TestFlushSessionCache(t *testing.T) {
 }
 
 func TestFindSessionByAuthToken(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("EmptyID", func(t *testing.T) {
 		if _, err := FindSessionByAuthToken(""); err == nil {
 			t.Fatal("error expected")
@@ -41,6 +43,9 @@ func TestFindSessionByAuthToken(t *testing.T) {
 			assert.Equal(t, UserFixtures.Pointer("alice").UserUID, result.UserUID)
 			assert.Equal(t, UserFixtures.Pointer("alice").UserName, result.UserName)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Model(&Session{}).Where("id = ?", SessionFixtures.Pointer("alice").ID).UpdateColumns(Values{"login_at": SessionFixtures.Pointer("alice").LoginAt, "last_active": SessionFixtures.Pointer("alice").LastActive}).Error)
+		})
 		if cached, err := FindSessionByAuthToken("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0"); err != nil {
 			t.Fatal(err)
 		} else {
@@ -57,6 +62,9 @@ func TestFindSessionByAuthToken(t *testing.T) {
 			assert.Equal(t, UserFixtures.Pointer("bob").UserUID, result.UserUID)
 			assert.Equal(t, UserFixtures.Pointer("bob").UserName, result.UserName)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Model(&Session{}).Where("id = ?", SessionFixtures.Pointer("bob").ID).UpdateColumns(Values{"login_at": SessionFixtures.Pointer("bob").LoginAt, "last_active": SessionFixtures.Pointer("bob").LastActive}).Error)
+		})
 		if cached, err := FindSessionByAuthToken("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac1"); err != nil {
 			t.Fatal(err)
 		} else {
@@ -73,6 +81,9 @@ func TestFindSessionByAuthToken(t *testing.T) {
 			assert.Equal(t, Visitor.UserUID, result.UserUID)
 			assert.Equal(t, Visitor.UserName, result.UserName)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Model(&Session{}).Where("id = ?", SessionFixtures.Pointer("visitor").ID).UpdateColumns(Values{"login_at": SessionFixtures.Pointer("visitor").LoginAt, "last_active": SessionFixtures.Pointer("visitor").LastActive}).Error)
+		})
 		if cached, err := FindSessionByAuthToken("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac3"); err != nil {
 			t.Fatal(err)
 		} else {
@@ -84,6 +95,7 @@ func TestFindSessionByAuthToken(t *testing.T) {
 }
 
 func TestFindSession(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("EmptyID", func(t *testing.T) {
 		if _, err := FindSession(""); err == nil {
 			t.Fatal("error expected")
@@ -107,6 +119,9 @@ func TestFindSession(t *testing.T) {
 			assert.Equal(t, UserFixtures.Pointer("alice").UserUID, result.UserUID)
 			assert.Equal(t, UserFixtures.Pointer("alice").UserName, result.UserName)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Model(&Session{}).Where("id = ?", SessionFixtures.Pointer("alice").ID).UpdateColumns(Values{"login_at": SessionFixtures.Pointer("alice").LoginAt, "last_active": SessionFixtures.Pointer("alice").LastActive}).Error)
+		})
 		if cached, err := FindSession(rnd.SessionID("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0")); err != nil {
 			t.Fatal(err)
 		} else {
@@ -123,6 +138,9 @@ func TestFindSession(t *testing.T) {
 			assert.Equal(t, UserFixtures.Pointer("bob").UserUID, result.UserUID)
 			assert.Equal(t, UserFixtures.Pointer("bob").UserName, result.UserName)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Model(&Session{}).Where("id = ?", SessionFixtures.Pointer("bob").ID).UpdateColumns(Values{"login_at": SessionFixtures.Pointer("bob").LoginAt, "last_active": SessionFixtures.Pointer("bob").LastActive}).Error)
+		})
 		if cached, err := FindSession(rnd.SessionID("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac1")); err != nil {
 			t.Fatal(err)
 		} else {
@@ -139,6 +157,9 @@ func TestFindSession(t *testing.T) {
 			assert.Equal(t, Visitor.UserUID, result.UserUID)
 			assert.Equal(t, Visitor.UserName, result.UserName)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Model(&Session{}).Where("id = ?", SessionFixtures.Pointer("visitor").ID).UpdateColumns(Values{"login_at": SessionFixtures.Pointer("visitor").LoginAt, "last_active": SessionFixtures.Pointer("visitor").LastActive}).Error)
+		})
 		if cached, err := FindSession(rnd.SessionID("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac3")); err != nil {
 			t.Fatal(err)
 		} else {
@@ -150,6 +171,7 @@ func TestFindSession(t *testing.T) {
 }
 
 func TestCacheSession(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Bob", func(t *testing.T) {
 		sessionCache.Flush()
 		r, b := sessionCache.Get(rnd.SessionID("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac1"))

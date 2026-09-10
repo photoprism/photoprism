@@ -5,10 +5,12 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestSession(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Empty", func(t *testing.T) {
 		result, err := Session("")
 		t.Logf("session: %#v", result)
@@ -52,6 +54,7 @@ func TestSession(t *testing.T) {
 }
 
 func TestSessions(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Default", func(t *testing.T) {
 		if results, err := Sessions(0, 0, "", ""); err != nil {
 			t.Fatal(err)

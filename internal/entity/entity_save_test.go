@@ -9,6 +9,7 @@ import (
 )
 
 func TestSave(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("HasCreatedUpdatedAt", func(t *testing.T) {
 		id := missingPhotoID()
 		m := Photo{ID: id, PhotoUID: rnd.GenerateUID(PhotoUID), UpdatedAt: Now(), CreatedAt: Now()}
@@ -17,6 +18,10 @@ func TestSave(t *testing.T) {
 			t.Fatal(err)
 			return
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&Details{}, "photo_id = ?", m.ID).Error)
+			assert.NoError(t, UnscopedDb().Delete(&m).Error)
+		})
 
 		assert.Equal(t, id, m.ID)
 		assert.NotNil(t, FindPhoto(m))
@@ -28,6 +33,10 @@ func TestSave(t *testing.T) {
 			t.Fatal(err)
 			return
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&Details{}, "photo_id = ?", m.ID).Error)
+			assert.NoError(t, UnscopedDb().Delete(&m).Error)
+		})
 
 		assert.NotNil(t, FindPhoto(m))
 	})
@@ -38,6 +47,10 @@ func TestSave(t *testing.T) {
 			t.Fatal(err)
 			return
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&Details{}, "photo_id = ?", m.ID).Error)
+			assert.NoError(t, UnscopedDb().Delete(&m).Error)
+		})
 
 		assert.NotNil(t, FindPhoto(m))
 	})

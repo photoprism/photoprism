@@ -10,6 +10,7 @@ import (
 )
 
 func TestSelectedPhotoUIDsForSession(t *testing.T) {
+	entity.ValidateFixtures(t)
 	const (
 		normalUID  = "ps6sg6be2lvl0yh7" // not private, not archived, not shared with guests
 		privateUID = "ps6sg6be2lvl0y13" // "Photo06", private
@@ -48,6 +49,7 @@ func TestSelectedPhotoUIDsForSession(t *testing.T) {
 }
 
 func TestPhotoSelection(t *testing.T) {
+	entity.ValidateFixtures(t)
 	albums := form.Selection{Albums: []string{"as6sg6bxpogaaba9", "as6sg6bitoga0004", "as6sg6bxpogaaba8", "as6sg6bxpogaaba7"}}
 
 	months := form.Selection{Albums: []string{"as6sg6bipogaabj9"}}

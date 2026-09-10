@@ -16,6 +16,7 @@ import (
 )
 
 func TestFaceMigrationCounts(t *testing.T) {
+	entity.ValidateFixtures(t)
 	result, err := FaceMigrationCounts(face.ModelFaceNet)
 	require.NoError(t, err)
 	assert.Positive(t, result.Total)
@@ -31,6 +32,7 @@ func TestFaceMigrationCounts(t *testing.T) {
 // five markers and left them with no vector at all, because a soft-deleted file row does not
 // resolve and so never looked unlinked.
 func TestFaceMigrationUnreadableFileCount(t *testing.T) {
+	entity.ValidateFixtures(t)
 	result, err := FaceMigrationCounts(face.ModelFaceNet)
 	require.NoError(t, err)
 
@@ -55,6 +57,7 @@ func TestFaceMigrationUnreadableFileCount(t *testing.T) {
 // nothing, so the marker neither looks unlinked nor looks flagged, and counting it is the only
 // thing that lets a plan predict the failure.
 func TestFaceMigrationSoftDeletedFileCount(t *testing.T) {
+	entity.ValidateFixtures(t)
 	before, err := FaceMigrationCounts(face.ModelFaceNet)
 	require.NoError(t, err)
 
@@ -93,6 +96,7 @@ func TestFaceMigrationSoftDeletedFileCount(t *testing.T) {
 }
 
 func TestFaceMigrationFileUIDs(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		result, err := FaceMigrationFileUIDs("", 2)
 		require.NoError(t, err)
@@ -106,6 +110,7 @@ func TestFaceMigrationFileUIDs(t *testing.T) {
 }
 
 func TestFaceMigrationMarkers(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		result, err := FaceMigrationMarkers("fs6sg6bw45bnlqdw")
 		require.NoError(t, err)
@@ -118,6 +123,7 @@ func TestFaceMigrationMarkers(t *testing.T) {
 }
 
 func TestHiddenFaceMarkers(t *testing.T) {
+	entity.ValidateFixtures(t)
 	hiddenFace := &entity.Face{
 		ID:            "HIDDENCLUSTERFORMIGRATIONTEST00000000000",
 		FaceSrc:       entity.SrcAuto,
@@ -146,6 +152,7 @@ func TestHiddenFaceMarkers(t *testing.T) {
 }
 
 func TestRestoreHiddenFaces(t *testing.T) {
+	entity.ValidateFixtures(t)
 	newCluster := func(id string) *entity.Face {
 		f := &entity.Face{ID: id, FaceSrc: entity.SrcAuto, EmbedModel: face.ModelFaceNet, EmbeddingJSON: []byte("[0.1,0.2]")}
 		require.NoError(t, entity.Db().Create(f).Error)
@@ -197,6 +204,7 @@ func TestRestoreHiddenFaces(t *testing.T) {
 }
 
 func TestFaceMigrationIdentities(t *testing.T) {
+	entity.ValidateFixtures(t)
 	result, err := FaceMigrationIdentities()
 	require.NoError(t, err)
 	for _, identity := range result {
@@ -207,6 +215,7 @@ func TestFaceMigrationIdentities(t *testing.T) {
 }
 
 func TestFaceMigrationSubjectMarkers(t *testing.T) {
+	entity.ValidateFixtures(t)
 	// An automatic assignment is what the old model recorded about a person, not about
 	// its own embedding space, so it has to seed the replacement cluster as well.
 	newMarker := func(subjUID, subjSrc string, size, score int) *entity.Marker {
@@ -293,6 +302,7 @@ func TestFaceMigrationSubjectMarkers(t *testing.T) {
 }
 
 func TestFaceMigrationRecropMarkers(t *testing.T) {
+	entity.ValidateFixtures(t)
 	// Absolute counts depend on what else the library holds, and every fixture marker records
 	// no detector, so the assertions are on what these rows add.
 	beforeYuNet, err := FaceMigrationRecropMarkers(face.ModelFaceNet, face.DetectorYuNet)
@@ -381,6 +391,7 @@ func TestFaceMigrationRecropMarkers(t *testing.T) {
 // TestCountMarkersUnsettledThumbSize covers the count an audit reports as actionable, which excludes
 // the markers a sampling already gave up on - the total beside it does not, and both are needed.
 func TestCountMarkersUnsettledThumbSize(t *testing.T) {
+	entity.ValidateFixtures(t)
 	beforeAll, err := CountMarkersWithoutThumbSize()
 	require.NoError(t, err)
 	beforeOpen, err := CountMarkersUnsettledThumbSize()
@@ -413,6 +424,7 @@ func TestCountMarkersUnsettledThumbSize(t *testing.T) {
 
 // TestSettleMigrationThumbSize covers the write that lets a migration filling the column terminate.
 func TestSettleMigrationThumbSize(t *testing.T) {
+	entity.ValidateFixtures(t)
 	vector := face.Embeddings{face.RandomEmbedding()}.JSON()
 
 	newMarker := func(t *testing.T, size int) string {
@@ -459,6 +471,7 @@ func TestSettleMigrationThumbSize(t *testing.T) {
 }
 
 func TestSaveFaceMigrationEmbeddings(t *testing.T) {
+	entity.ValidateFixtures(t)
 	marker := &entity.Marker{
 		MarkerUID:  rnd.GenerateUID('m'),
 		FileUID:    "fs6sg6bw45bnlqdw",
@@ -534,6 +547,7 @@ func TestSaveFaceMigrationEmbeddings(t *testing.T) {
 }
 
 func TestFinalizeFaceMigration(t *testing.T) {
+	entity.ValidateFixtures(t)
 	restore := face.ConfiguredModel()
 	require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelFaceNet, Model: face.FindEmbeddingModel(face.ModelFaceNet)}))
 	t.Cleanup(func() {
@@ -678,6 +692,7 @@ func TestFinalizeFaceMigration(t *testing.T) {
 }
 
 func TestSameFaceMigrationIdentities(t *testing.T) {
+	entity.ValidateFixtures(t)
 	identities := []FaceMigrationIdentity{{MarkerUID: "m1", SubjUID: "s1", MarkerName: "Alice", SubjSrc: entity.SrcManual}}
 	assert.True(t, sameFaceMigrationIdentities(identities, identities))
 	assert.False(t, sameFaceMigrationIdentities(identities, nil))
@@ -687,6 +702,7 @@ func TestSameFaceMigrationIdentities(t *testing.T) {
 // TestCountMarkersWithoutThumbSize covers the audit count, which reports how many embedded markers
 // are still judged by their detection size rather than by what their embedding was sampled from.
 func TestCountMarkersWithoutThumbSize(t *testing.T) {
+	entity.ValidateFixtures(t)
 	before, err := CountMarkersWithoutThumbSize()
 	require.NoError(t, err)
 
@@ -722,6 +738,7 @@ func TestCountMarkersWithoutThumbSize(t *testing.T) {
 // TestFaceMigrationCropCoverage pins the three buckets a migration plan warns from, measured as
 // deltas against a baseline so the shared fixtures cannot decide the outcome.
 func TestFaceMigrationCropCoverage(t *testing.T) {
+	entity.ValidateFixtures(t)
 	before, err := FaceMigrationCropCoverage(160, 1920, 1200)
 	require.NoError(t, err)
 
@@ -842,6 +859,7 @@ func TestFaceMigrationCropCoverage(t *testing.T) {
 }
 
 func TestFaceMigrationSampleFiles(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		result, err := FaceMigrationSampleFiles(3)
 
@@ -878,6 +896,7 @@ func TestFaceMigrationSampleFiles(t *testing.T) {
 // vector too small to be clustered, and how many of those an original could still supply. Measured
 // as deltas, so the shared fixtures cannot decide the outcome.
 func TestFaceMarkerSampleShortfall(t *testing.T) {
+	entity.ValidateFixtures(t)
 	const clusterSize = 112
 
 	before, err := FaceMarkerSampleShortfall(clusterSize)

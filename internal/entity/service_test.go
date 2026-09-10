@@ -8,12 +8,14 @@ import (
 	"unicode/utf8"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 func TestCreateService(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		account := Service{AccName: "Foo", AccOwner: "bar", AccURL: "test.com", AccType: "webdav", AccKey: "123", AccUser: "testuser", AccPass: "testpass",
 			AccError: "", AccShare: true, AccSync: true, RetryLimit: 4, SharePath: "/home", ShareSize: "500", ShareExpires: 3500, SyncPath: "/sync",
@@ -30,6 +32,7 @@ func TestCreateService(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(model).Error) })
 
 		assert.Equal(t, "/home", model.SharePath)
 		assert.Equal(t, 3500, model.ShareExpires)
@@ -56,6 +59,7 @@ func TestCreateService(t *testing.T) {
 }
 
 func TestService_SaveForm(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		account := Service{AccName: "Foo", AccOwner: "bar", AccURL: "test.com", AccType: "test", AccKey: "123", AccUser: "testuser", AccPass: "testpass",
 			AccError: "", AccShare: true, AccSync: true, RetryLimit: 4, SharePath: "/home", ShareSize: "500", ShareExpires: 3500, SyncPath: "/sync",
@@ -71,6 +75,7 @@ func TestService_SaveForm(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(model).Error) })
 
 		assert.Equal(t, true, model.SyncDownload)
 		assert.Equal(t, false, model.SyncUpload)
@@ -103,6 +108,7 @@ func TestService_SaveForm(t *testing.T) {
 }
 
 func TestService_Delete(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		account := Service{AccName: "DeleteAccount", AccOwner: "Delete", AccURL: "test.com", AccType: "test", AccKey: "123", AccUser: "testuser", AccPass: "testpass",
 			AccError: "", AccShare: true, AccSync: true, RetryLimit: 4, SharePath: "/home", ShareSize: "500", ShareExpires: 3500, SyncPath: "/sync",
@@ -124,12 +130,16 @@ func TestService_Delete(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		// TODO how to assert deletion?
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(model).Error) })
 
+		var found Service
+		require.NoError(t, UnscopedDb().Model(&Service{}).Where("id = ?", model.ID).First(&found).Error)
+		assert.NotNil(t, found.DeletedAt)
 	})
 }
 
 func TestService_Directories(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		account := Service{AccName: "DirectoriesAccount", AccOwner: "Owner", AccURL: "http://dummy-webdav/", AccType: "webdav", AccKey: "123", AccUser: "admin", AccPass: "photoprism",
 			AccError: "", AccShare: true, AccSync: true, RetryLimit: 4, SharePath: "/home", ShareSize: "500", ShareExpires: 3500, SyncPath: "/sync",
@@ -145,7 +155,7 @@ func TestService_Directories(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(model).Error) })
 		result, err := model.Directories("")
 
 		if err != nil {
@@ -170,7 +180,7 @@ func TestService_Directories(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(model).Error) })
 		result, err := model.Directories("")
 
 		if err != nil {
@@ -182,6 +192,7 @@ func TestService_Directories(t *testing.T) {
 }
 
 func TestService_Updates(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		account := Service{AccName: "DeleteAccount", AccOwner: "Delete", AccURL: "test.com", AccType: "test", AccKey: "123", AccUser: "testuser", AccPass: "testpass",
 			AccError: "", AccShare: true, AccSync: true, RetryLimit: 4, SharePath: "/home", ShareSize: "500", ShareExpires: 3500, SyncPath: "/sync",
@@ -193,12 +204,13 @@ func TestService_Updates(t *testing.T) {
 			t.Fatal(err)
 		}
 		model, err := AddService(accountForm)
-		assert.Equal(t, "testuser", model.AccUser)
-		assert.Equal(t, "DeleteAccount", model.AccName)
-
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(model).Error) })
+
+		assert.Equal(t, "testuser", model.AccUser)
+		assert.Equal(t, "DeleteAccount", model.AccName)
 
 		err = model.Updates(Service{AccName: "UpdatedName", AccUser: "UpdatedUser"})
 		assert.Equal(t, "UpdatedUser", model.AccUser)
@@ -212,6 +224,7 @@ func TestService_Updates(t *testing.T) {
 }
 
 func TestService_Update(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		account := Service{AccName: "DeleteAccount", AccOwner: "Delete", AccURL: "test.com", AccType: "test", AccKey: "123", AccUser: "testuser", AccPass: "testpass",
 			AccError: "", AccShare: true, AccSync: true, RetryLimit: 4, SharePath: "/home", ShareSize: "500", ShareExpires: 3500, SyncPath: "/sync",
@@ -227,6 +240,7 @@ func TestService_Update(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(model).Error) })
 		assert.Equal(t, "testuser", model.AccUser)
 
 		err = model.Update("AccUser", "UpdatedUser")
@@ -240,6 +254,7 @@ func TestService_Update(t *testing.T) {
 
 // TODO fails on mariadb
 func TestService_Save(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		account := Service{AccName: "DeleteAccount", AccOwner: "Delete", AccURL: "test.com", AccType: "test", AccKey: "123", AccUser: "testuser", AccPass: "testpass",
 			AccError: "", AccShare: true, AccSync: true, RetryLimit: 4, SharePath: "/home", ShareSize: "500", ShareExpires: 3500, SyncPath: "/sync",
@@ -255,6 +270,7 @@ func TestService_Save(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(model).Error) })
 		initialDate := model.UpdatedAt
 
 		err = model.Save()
@@ -272,6 +288,7 @@ func TestService_Save(t *testing.T) {
 }
 
 func TestService_LogErr(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("ClipsMultiByteErrorMessage", func(t *testing.T) {
 		// acc_error is a bounded VARBINARY column and LogErr budgets messages to
 		// txt.ClipError (255) bytes; a long multi-byte error must be clipped on a rune
@@ -287,6 +304,7 @@ func TestService_LogErr(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(model).Error) })
 
 		longErr := errors.New(strings.Repeat("世", 100)) // 100 runes x 3 bytes = 300 bytes.
 
@@ -320,6 +338,7 @@ func TestService_LogErr(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(model).Error) })
 
 		if err = model.LogErr(errors.New("boom")); err != nil {
 			t.Fatal(err)
@@ -335,6 +354,7 @@ func TestService_LogErr(t *testing.T) {
 }
 
 func TestService_Create(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		account := Service{}
 
@@ -343,5 +363,6 @@ func TestService_Create(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(&account).Error) })
 	})
 }

@@ -21,6 +21,7 @@ import (
 )
 
 func TestNewSession(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NoSessionData", func(t *testing.T) {
 		m := NewSession(unix.Day, unix.Hour*6)
 
@@ -66,6 +67,7 @@ func TestNewSession(t *testing.T) {
 }
 
 func TestNewSessionFromToken(t *testing.T) {
+	ValidateFixtures(t)
 	gin.SetMode(gin.TestMode)
 
 	t.Run("EmptyToken", func(t *testing.T) {
@@ -101,6 +103,7 @@ func TestNewSessionFromToken(t *testing.T) {
 }
 
 func TestSession_SetData(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Nil", func(t *testing.T) {
 		m := NewSession(unix.Day, unix.Hour*6)
 
@@ -128,6 +131,7 @@ func TestSession_SetData(t *testing.T) {
 }
 
 func TestSession_Expires(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("SetExpiryDate", func(t *testing.T) {
 		m := NewSession(unix.Day, unix.Hour)
 		initialExpiryDate := m.SessExpires
@@ -146,24 +150,28 @@ func TestSession_Expires(t *testing.T) {
 }
 
 func TestSessionStatusUnauthorized(t *testing.T) {
+	ValidateFixtures(t)
 	m := SessionStatusUnauthorized()
 	assert.Equal(t, http.StatusUnauthorized, m.Status)
 	assert.IsType(t, &Session{}, m)
 }
 
 func TestSessionStatusForbidden(t *testing.T) {
+	ValidateFixtures(t)
 	m := SessionStatusForbidden()
 	assert.Equal(t, http.StatusForbidden, m.Status)
 	assert.IsType(t, &Session{}, m)
 }
 
 func TestSessionStatusTooManyRequests(t *testing.T) {
+	ValidateFixtures(t)
 	m := SessionStatusTooManyRequests()
 	assert.Equal(t, http.StatusTooManyRequests, m.Status)
 	assert.IsType(t, &Session{}, m)
 }
 
 func TestFindSessionByRefID(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Nil", func(t *testing.T) {
 		assert.Nil(t, FindSessionByRefID(""))
 	})
@@ -175,6 +183,7 @@ func TestFindSessionByRefID(t *testing.T) {
 }
 
 func TestSession_Regenerate(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NewSession", func(t *testing.T) {
 		m := NewSession(unix.Day, unix.Hour)
 		assert.Equal(t, int64(0), m.LastActive)
@@ -203,6 +212,7 @@ func TestSession_Regenerate(t *testing.T) {
 }
 
 func TestSession_AuthToken(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("New", func(t *testing.T) {
 		alice := SessionFixtures.Get("alice")
 		sess := &Session{}
@@ -240,6 +250,7 @@ func TestSession_AuthToken(t *testing.T) {
 }
 
 func TestSession_Create(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := FindSessionByRefID("sessxkkcxxxx")
 		assert.Empty(t, m)
@@ -341,6 +352,9 @@ func TestSession_Create(t *testing.T) {
 
 		err := s.Create()
 		assert.Empty(t, err)
+		t.Cleanup(func() {
+			assert.NoError(t, s.Delete())
+		})
 	})
 	t.Run("LongNumericAuthID", func(t *testing.T) {
 		refID := rnd.RefID("ts")
@@ -370,6 +384,7 @@ func TestSession_Create(t *testing.T) {
 }
 
 func TestSession_Save(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := FindSessionByRefID("sessxkkcxxxy")
 		assert.Empty(t, m)
@@ -416,17 +431,21 @@ func TestSession_Save(t *testing.T) {
 }
 
 func TestSession_Updates(t *testing.T) {
+	ValidateFixtures(t)
 	m := FindSessionByRefID("sessxkkcabcd")
 	assert.Equal(t, "alice", m.UserName)
 
 	if err := m.Updates(Session{UserName: "anton"}); err != nil {
 		t.Fatal(err)
 	}
-
+	t.Cleanup(func() {
+		assert.NoError(t, m.Updates(Session{UserName: "alice"}))
+	})
 	assert.Equal(t, "anton", m.UserName)
 }
 
 func TestSession_Client(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Alice", func(t *testing.T) {
 		m := FindSessionByRefID("sessxkkcabcd")
 		assert.Equal(t, "uqxetse3cy5eo9z2", m.UserUID)
@@ -466,6 +485,7 @@ func TestSession_Client(t *testing.T) {
 }
 
 func TestSession_ClientRole(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Alice", func(t *testing.T) {
 		m := SessionFixtures.Get("alice")
 		assert.Equal(t, acl.RoleNone, m.GetClientRole())
@@ -514,6 +534,7 @@ func TestSession_ClientRole(t *testing.T) {
 }
 
 func TestSession_ClientInfo(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Alice", func(t *testing.T) {
 		m := SessionFixtures.Get("alice")
 		assert.Equal(t, "n/a", m.GetClientInfo())
@@ -525,6 +546,7 @@ func TestSession_ClientInfo(t *testing.T) {
 }
 
 func TestSession_NoClient(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Alice", func(t *testing.T) {
 		m := SessionFixtures.Get("alice")
 		assert.True(t, m.NoClient())
@@ -536,6 +558,7 @@ func TestSession_NoClient(t *testing.T) {
 }
 
 func TestSession_SetClient(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Alice", func(t *testing.T) {
 		m := SessionFixtures.Get("alice")
 		assert.Equal(t, acl.RoleNone, m.GetClientRole())
@@ -547,6 +570,7 @@ func TestSession_SetClient(t *testing.T) {
 }
 
 func TestSession_SetClientName(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Empty", func(t *testing.T) {
 		m := SessionFixtures.Get("alice_token_personal")
 		assert.Equal(t, "", m.ClientUID)
@@ -573,6 +597,7 @@ func TestSession_SetClientName(t *testing.T) {
 }
 
 func TestSession_User(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Alice", func(t *testing.T) {
 		m := FindSessionByRefID("sessxkkcabcd")
 		assert.Equal(t, "uqxetse3cy5eo9z2", m.GetUser().UserUID)
@@ -584,6 +609,7 @@ func TestSession_User(t *testing.T) {
 }
 
 func TestSession_UserInfo(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Alice", func(t *testing.T) {
 		m := SessionFixtures.Get("alice")
 		assert.Equal(t, "alice", m.UserInfo())
@@ -595,6 +621,7 @@ func TestSession_UserInfo(t *testing.T) {
 }
 
 func TestSession_UserRole(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Alice", func(t *testing.T) {
 		m := FindSessionByRefID("sessxkkcabcd")
 		assert.Equal(t, acl.RoleAdmin, m.GetUserRole())
@@ -610,6 +637,7 @@ func TestSession_UserRole(t *testing.T) {
 }
 
 func TestSession_RefreshUser(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Bob", func(t *testing.T) {
 		m := FindSessionByRefID("sessxkkcabce")
 
@@ -630,6 +658,7 @@ func TestSession_RefreshUser(t *testing.T) {
 }
 
 func TestSession_AuthInfo(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Bob", func(t *testing.T) {
 		m := FindSessionByRefID("sessxkkcabce")
 
@@ -647,6 +676,7 @@ func TestSession_AuthInfo(t *testing.T) {
 }
 
 func TestSession_SetAuthID(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Empty", func(t *testing.T) {
 		s := &Session{
 			UserName: "test",
@@ -674,6 +704,7 @@ func TestSession_SetAuthID(t *testing.T) {
 }
 
 func TestSession_SetMethod(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Empty", func(t *testing.T) {
 		s := &Session{
 			UserName:     "test",
@@ -730,6 +761,7 @@ func TestSession_SetMethod(t *testing.T) {
 }
 
 func TestSession_SetProvider(t *testing.T) {
+	ValidateFixtures(t)
 	m := FindSessionByRefID("sessxkkcabce")
 	assert.Equal(t, authn.ProviderDefault, m.GetProvider())
 	m.SetProvider("")
@@ -741,6 +773,7 @@ func TestSession_SetProvider(t *testing.T) {
 }
 
 func TestSession_ChangePassword(t *testing.T) {
+	ValidateFixtures(t)
 	m := FindSessionByRefID("sessxkkcabce")
 	assert.Empty(t, m.PreviewToken)
 
@@ -760,9 +793,11 @@ func TestSession_ChangePassword(t *testing.T) {
 
 	err3 := m.ChangePassword("123")
 	assert.Error(t, err3)
+	assert.NoError(t, Db().Save(PasswordFixtures.Pointer("bob")).Error)
 }
 
 func TestSession_ValidateScope(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("AnyScope", func(t *testing.T) {
 		s := &Session{
 			UserName:  "test",
@@ -824,6 +859,7 @@ func TestSession_ValidateScope(t *testing.T) {
 }
 
 func TestSession_InsufficientScope(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Empty", func(t *testing.T) {
 		s := &Session{
 			UserName:  "test",
@@ -853,6 +889,7 @@ func TestSession_InsufficientScope(t *testing.T) {
 }
 
 func TestSession_SetScope(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("EmptyScope", func(t *testing.T) {
 		s := &Session{
 			UserName:  "test",
@@ -878,6 +915,7 @@ func TestSession_SetScope(t *testing.T) {
 }
 
 func TestSession_SetGrantType(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Password", func(t *testing.T) {
 		m := &Session{
 			UserName:  "test",
@@ -911,6 +949,7 @@ func TestSession_SetGrantType(t *testing.T) {
 }
 
 func TestSession_SetPreviewToken(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := &Session{ID: "12345678"}
 		m.SetPreviewToken("12345")
@@ -924,6 +963,7 @@ func TestSession_SetPreviewToken(t *testing.T) {
 }
 
 func TestSession_SetAuthToken(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("MigratesTokensWhenIdChanges", func(t *testing.T) {
 		// A session that already carries preview/download tokens must move their lookup-cache
 		// registrations to the new ID when SetAuthToken reassigns it, so the old ID does not
@@ -951,6 +991,7 @@ func TestSession_SetAuthToken(t *testing.T) {
 }
 
 func TestSession_IsSuperAdmin(t *testing.T) {
+	ValidateFixtures(t)
 	alice := FindSessionByRefID("sessxkkcabcd")
 	alice.RefreshUser()
 	assert.True(t, alice.IsSuperAdmin())
@@ -961,10 +1002,10 @@ func TestSession_IsSuperAdmin(t *testing.T) {
 
 	m := &Session{}
 	assert.False(t, m.IsSuperAdmin())
-
 }
 
 func TestSession_IsApplication(t *testing.T) {
+	ValidateFixtures(t)
 	user := FindUserByName("alice")
 	assert.NotNil(t, user)
 
@@ -993,16 +1034,17 @@ func TestSession_IsApplication(t *testing.T) {
 }
 
 func TestSession_NotRegistered(t *testing.T) {
+	ValidateFixtures(t)
 	alice := FindSessionByRefID("sessxkkcabcd")
 	alice.RefreshUser()
 	assert.False(t, alice.NotRegistered())
 
 	m := &Session{}
 	assert.True(t, m.NotRegistered())
-
 }
 
 func TestSession_NoShares(t *testing.T) {
+	ValidateFixtures(t)
 	alice := FindSessionByRefID("sessxkkcabcd")
 	alice.RefreshUser()
 	alice.GetUser().RefreshShares()
@@ -1017,6 +1059,7 @@ func TestSession_NoShares(t *testing.T) {
 }
 
 func TestSession_NoUser(t *testing.T) {
+	ValidateFixtures(t)
 	alice := FindSessionByRefID("sessxkkcabcd")
 	assert.False(t, alice.NoUser())
 
@@ -1028,6 +1071,7 @@ func TestSession_NoUser(t *testing.T) {
 }
 
 func TestSession_HasRegisteredUser(t *testing.T) {
+	ValidateFixtures(t)
 	alice := FindSessionByRefID("sessxkkcabcd")
 	assert.True(t, alice.HasRegisteredUser())
 
@@ -1039,6 +1083,7 @@ func TestSession_HasRegisteredUser(t *testing.T) {
 }
 
 func TestSession_HasShare(t *testing.T) {
+	ValidateFixtures(t)
 	alice := FindSessionByRefID("sessxkkcabcd")
 	alice.RefreshUser()
 	alice.GetUser().RefreshShares()
@@ -1055,6 +1100,7 @@ func TestSession_HasShare(t *testing.T) {
 }
 
 func TestSession_SharedUIDs(t *testing.T) {
+	ValidateFixtures(t)
 	alice := FindSessionByRefID("sessxkkcabcd")
 	alice.RefreshUser()
 	alice.GetUser().RefreshShares()
@@ -1070,6 +1116,7 @@ func TestSession_SharedUIDs(t *testing.T) {
 }
 
 func TestSession_RedeemToken(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Bob", func(t *testing.T) {
 		bob := FindSessionByRefID("sessxkkcabce")
 		bob.RefreshUser()
@@ -1077,6 +1124,13 @@ func TestSession_RedeemToken(t *testing.T) {
 		assert.Equal(t, 0, bob.RedeemToken("1234"))
 		assert.Empty(t, bob.GetUser().UserShares)
 		assert.Equal(t, 1, bob.RedeemToken("1jxf3jfn2k"))
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Where("1=1").Delete(&UserShare{}).Error)
+			CreateUserShareFixtures()
+			if l, ok := LinkFixtures["1jxf3jfn2k"]; ok {
+				assert.NoError(t, UnscopedDb().Save(&l).Error)
+			}
+		})
 		bob.GetUser().RefreshShares()
 		assert.Equal(t, "as6sg6bxpogaaba8", bob.GetUser().UserShares[0].ShareUID)
 	})
@@ -1087,6 +1141,7 @@ func TestSession_RedeemToken(t *testing.T) {
 }
 
 func TestSession_TimedOut(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NewSession", func(t *testing.T) {
 		m := NewSession(unix.Day, unix.Hour)
 		assert.False(t, m.TimeoutAt().IsZero())
@@ -1133,6 +1188,7 @@ func TestSession_TimedOut(t *testing.T) {
 }
 
 func TestSession_UpdateLastActive(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NewSession", func(t *testing.T) {
 		m := NewSession(unix.Day, unix.Hour)
 		t.Logf("Timeout: %s, Expiration: %s", m.TimeoutAt().String(), m.ExpiresAt())
@@ -1159,6 +1215,9 @@ func TestSession_UpdateLastActive(t *testing.T) {
 			assert.Empty(t, err)
 			return
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, DeleteSession(m))
+		})
 
 		m = m.UpdateLastActive(true)
 
@@ -1167,6 +1226,7 @@ func TestSession_UpdateLastActive(t *testing.T) {
 }
 
 func TestSession_Expired(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NewSession", func(t *testing.T) {
 		m := NewSession(unix.Day, unix.Hour)
 		t.Logf("Timeout: %s, Expiration: %s", m.TimeoutAt().String(), m.ExpiresAt())
@@ -1219,6 +1279,7 @@ func TestSession_Expired(t *testing.T) {
 }
 
 func TestSession_SetUserAgent(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("UserAgentEmpty", func(t *testing.T) {
 		m := &Session{}
 		assert.Equal(t, "", m.UserAgent)
@@ -1238,6 +1299,7 @@ func TestSession_SetUserAgent(t *testing.T) {
 }
 
 func TestSession_SetClientIP(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("IpEmpty", func(t *testing.T) {
 		m := &Session{}
 		assert.Equal(t, "", m.ClientIP)
@@ -1259,6 +1321,7 @@ func TestSession_SetClientIP(t *testing.T) {
 }
 
 func TestSession_HttpStatus(t *testing.T) {
+	ValidateFixtures(t)
 	m := &Session{}
 	assert.Equal(t, 401, m.HttpStatus())
 	m.Status = 403
@@ -1268,6 +1331,7 @@ func TestSession_HttpStatus(t *testing.T) {
 }
 
 func TestSession_NoScopeAndHasScope(t *testing.T) {
+	ValidateFixtures(t)
 	var sess Session
 
 	assert.True(t, sess.NoScope())
@@ -1283,6 +1347,7 @@ func TestSession_NoScopeAndHasScope(t *testing.T) {
 }
 
 func TestSession_SetUserScopeDefault(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("DefaultsToUserScope", func(t *testing.T) {
 		sess := &Session{}
 		user := &User{UserUID: "u123", UserName: "scopeuser", UserScope: "photos:view"}
@@ -1304,6 +1369,7 @@ func TestSession_SetUserScopeDefault(t *testing.T) {
 }
 
 func TestClampIdToken(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Empty", func(t *testing.T) {
 		clamped, truncated := ClampIdToken("")
 		assert.Equal(t, "", clamped)

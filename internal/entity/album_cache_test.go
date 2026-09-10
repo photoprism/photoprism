@@ -8,6 +8,7 @@ import (
 )
 
 func TestFlushAlbumCache(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Ok", func(t *testing.T) {
 		require.NotPanics(t, func() { FlushAlbumCache() })
 		assert.Equal(t, 0, albumCache.ItemCount())
@@ -15,6 +16,7 @@ func TestFlushAlbumCache(t *testing.T) {
 }
 
 func TestCachedAlbumByUID(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("EmptyUID", func(t *testing.T) {
 		if _, err := CachedAlbumByUID(""); err == nil {
 			t.Fatal("error expected")

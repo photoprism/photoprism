@@ -12,6 +12,7 @@ import (
 )
 
 func TestClusterSizeCond(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("PrefersTheSampledExtent", func(t *testing.T) {
 		cond, args := ClusterSizeCond("", 112)
 
@@ -51,6 +52,7 @@ func TestClusterSizeCond(t *testing.T) {
 // TestEmbedDetailCond covers the condition that keeps embeddings drawn from upscaled crops out of
 // clustering whatever the size bar is set to.
 func TestEmbedDetailCond(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NamesNullExplicitly", func(t *testing.T) {
 		// NULL < 1 evaluates to NULL rather than true, so without this branch the condition would
 		// exclude every marker written before the column existed - which today is all of them.
@@ -73,6 +75,7 @@ func TestEmbedDetailCond(t *testing.T) {
 // TestMarker_ClusterSizeOf pins which extent the bar reads. The two columns measure different
 // images, so a marker that clears one may not clear the other.
 func TestMarker_ClusterSizeOf(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("SampledExtentWins", func(t *testing.T) {
 		m := &Marker{Size: 60, ThumbSize: 150}
 		assert.Equal(t, 150, m.ClusterSizeOf())
@@ -95,6 +98,7 @@ func TestMarker_ClusterSizeOf(t *testing.T) {
 // sampling again. All three read as absent to the size bar, which is what makes the difference easy
 // to lose: it exists so a migration that re-embeds for a missing extent terminates.
 func TestMarker_ThumbSizeSettled(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Measured", func(t *testing.T) {
 		assert.True(t, (&Marker{ThumbSize: 112}).ThumbSizeSettled())
 		assert.True(t, (&Marker{ThumbSize: 1}).ThumbSizeSettled(), "1 is a measurement, not a sentinel")
@@ -118,6 +122,7 @@ func TestMarker_ThumbSizeSettled(t *testing.T) {
 // migration decides through Marker.ThumbSizeSettled and FaceMigrationRecropMarkers prices through
 // this, so a divergence would quote work no run performs.
 func TestThumbSizeUnsettledCond(t *testing.T) {
+	ValidateFixtures(t)
 	cond := ThumbSizeUnsettledCond()
 
 	assert.Contains(t, cond, "thumb_size IS NULL")
@@ -141,6 +146,7 @@ func TestThumbSizeUnsettledCond(t *testing.T) {
 // TestMarker_ClusterableByThumbSize is the case the column exists for: a face too small in the
 // detection thumbnail, but sampled at full template size from a wider rendition.
 func TestMarker_ClusterableByThumbSize(t *testing.T) {
+	ValidateFixtures(t)
 	restore := face.ClusterSizeThreshold
 	t.Cleanup(func() { face.ClusterSizeThreshold = restore })
 
@@ -162,6 +168,7 @@ func TestMarker_ClusterableByThumbSize(t *testing.T) {
 }
 
 func TestMarkerThumbSize(t *testing.T) {
+	ValidateFixtures(t)
 	file := File{FileWidth: 3000, FileHeight: 2000}
 	area := crop.Area{Name: "face", X: 0.4, Y: 0.4, W: 0.1, H: 0.1}
 
@@ -180,6 +187,7 @@ func TestMarkerThumbSize(t *testing.T) {
 // TestNewFaceMarkerEmbedDetail pins the states a stored marker distinguishes, since a column
 // that only ever holds two of them is a bool that cost a SMALLINT.
 func TestNewFaceMarkerEmbedDetail(t *testing.T) {
+	ValidateFixtures(t)
 	file := FileFixtures.Get("exampleFileName.jpg")
 	area := face.NewArea("face", 300, 300, 200)
 
@@ -219,6 +227,7 @@ func TestNewFaceMarkerEmbedDetail(t *testing.T) {
 // is negative for exactly this reason: GORM omits a zero field where the column has a default, so
 // a zero would be stored as the -1 that means the marker was never sampled.
 func TestMarkerEmbedDetailRoundTrip(t *testing.T) {
+	ValidateFixtures(t)
 	file := FileFixtures.Get("exampleFileName.jpg")
 
 	stored := func(t *testing.T, value int) int {

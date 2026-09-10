@@ -19,6 +19,7 @@ import (
 )
 
 func TestFaces(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Known", func(t *testing.T) {
 		results, err := Faces(true, false, false, false)
 
@@ -66,6 +67,7 @@ func TestFaces(t *testing.T) {
 }
 
 func TestManuallyAddedFaces(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Ok", func(t *testing.T) {
 		results, err := ManuallyAddedFaces(false, false, "")
 
@@ -100,6 +102,7 @@ func TestManuallyAddedFaces(t *testing.T) {
 }
 
 func TestMatchFaceMarkers(t *testing.T) {
+	entity.ValidateFixtures(t)
 	const faceFixtureId = "ms6sg6b1wowuy444"
 
 	if m, err := MarkerByUID(faceFixtureId); err != nil {
@@ -117,7 +120,13 @@ func TestMatchFaceMarkers(t *testing.T) {
 		UpdateColumn("subj_uid", "").Error; err != nil {
 		t.Fatal(err)
 	}
-
+	t.Cleanup(func() {
+		for _, marker := range entity.MarkerFixtures {
+			if marker.SubjSrc == entity.SrcAuto {
+				require.NoError(t, UnscopedDb().Save(&marker).Error)
+			}
+		}
+	})
 	affected, err := MatchFaceMarkers()
 
 	if err != nil {
@@ -139,6 +148,7 @@ func TestMatchFaceMarkers(t *testing.T) {
 // not offered for matching. It is the whole point of the count: a labeled example or a pair would
 // otherwise cast a cluster-sized accept distance over the library on that evidence.
 func TestMatchableFacesClusterCore(t *testing.T) {
+	entity.ValidateFixtures(t)
 	subj := rnd.GenerateUID('j')
 
 	newFace := func(t *testing.T, id string, samples int) {
@@ -164,6 +174,7 @@ func TestMatchableFacesClusterCore(t *testing.T) {
 }
 
 func TestMatchFaceMarkers_ReturnsUpdateError(t *testing.T) {
+	entity.ValidateFixtures(t)
 	originalDb := entity.Db()
 	require.NotNil(t, originalDb)
 
@@ -199,16 +210,26 @@ func TestMatchFaceMarkers_ReturnsUpdateError(t *testing.T) {
 }
 
 func TestRemoveAnonymousFaceClusters(t *testing.T) {
+	entity.ValidateFixtures(t)
 	removed, err := RemoveAnonymousFaceClusters()
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
+	t.Cleanup(func() {
+		for _, face := range entity.FaceFixtures {
+			if face.FaceSrc == entity.SrcAuto && face.SubjUID == "" {
+				require.NoError(t, UnscopedDb().Create(&face).Error)
+			}
+		}
+	})
+
 	assert.Equal(t, 2, removed)
 }
 
 func TestCountNewFaceMarkers(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("All", func(t *testing.T) {
 		assert.GreaterOrEqual(t, CountNewFaceMarkers(0, 0), 1)
 	})
@@ -226,6 +247,7 @@ func TestCountNewFaceMarkers(t *testing.T) {
 // TestCountFaceClusterGates pins that each bar is counted on its own, which is what lets a report
 // name the one that is actually holding rather than only that clustering did not run.
 func TestCountFaceClusterGates(t *testing.T) {
+	entity.ValidateFixtures(t)
 	model := face.EmbeddingModelName()
 
 	t.Run("EachBarIsCountedOnItsOwn", func(t *testing.T) {
@@ -314,6 +336,7 @@ func TestCountFaceClusterGates(t *testing.T) {
 }
 
 func TestMergeFaces(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("SameSubjects", func(t *testing.T) {
 		face1 := entity.NewFace(
 			"jqynvsf28rhn6b0c",
@@ -337,10 +360,16 @@ func TestMergeFaces(t *testing.T) {
 		if err := face1.Create(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			require.NoError(t, UnscopedDb().Delete(&face1).Error)
+		})
 
 		if err := face2.Create(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			require.NoError(t, UnscopedDb().Delete(&face2).Error)
+		})
 
 		faces := entity.Faces{*face1, *face2}
 
@@ -354,6 +383,9 @@ func TestMergeFaces(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			require.NoError(t, UnscopedDb().Delete(result).Error)
+		})
 
 		assert.NotEmpty(t, result.ID)
 		assert.Equal(t, expected.ID, result.ID)
@@ -387,6 +419,20 @@ func TestMergeFaces(t *testing.T) {
 			face.EmbeddingModelName(),
 		)
 
+		if err := face1.Create(); err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() {
+			require.NoError(t, UnscopedDb().Delete(&face1).Error)
+		})
+
+		if err := face2.Create(); err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() {
+			require.NoError(t, UnscopedDb().Delete(&face2).Error)
+		})
+
 		faces := entity.Faces{*face1, *face2}
 
 		result, err := MergeFaces(faces, false)
@@ -403,6 +449,7 @@ func TestMergeFaces(t *testing.T) {
 }
 
 func TestMergeFacesRetainedClusters(t *testing.T) {
+	entity.ValidateFixtures(t)
 	subjUID := rnd.GenerateUID('j')
 
 	embeddingA := face.RandomEmbeddings(1, face.RegularFace)
@@ -410,9 +457,15 @@ func TestMergeFacesRetainedClusters(t *testing.T) {
 
 	faceA := entity.NewFace(subjUID, entity.SrcManual, embeddingA, face.EmbeddingModelName())
 	require.NoError(t, faceA.Create())
+	t.Cleanup(func() {
+		require.NoError(t, UnscopedDb().Delete(&faceA).Error)
+	})
 
 	faceB := entity.NewFace(subjUID, entity.SrcManual, embeddingB, face.EmbeddingModelName())
 	require.NoError(t, faceB.Create())
+	t.Cleanup(func() {
+		require.NoError(t, UnscopedDb().Delete(&faceB).Error)
+	})
 
 	// Create markers that deliberately fail to match the merged embedding.
 	neutralEmbedding := face.Embeddings{face.NullEmbedding}
@@ -438,10 +491,16 @@ func TestMergeFacesRetainedClusters(t *testing.T) {
 	for _, marker := range markers {
 		require.NoError(t, entity.Db().Create(marker).Error)
 	}
+	t.Cleanup(func() {
+		require.NoError(t, UnscopedDb().Where("face_id in (?)", []string{faceA.ID, faceB.ID}).Delete(&entity.Marker{}).Error)
+	})
 
-	_, err := MergeFaces(entity.Faces{*faceA, *faceB}, false)
+	result, err := MergeFaces(entity.Faces{*faceA, *faceB}, false)
 	require.Error(t, err)
 	require.True(t, errors.Is(err, ErrRetainedManualClusters))
+	t.Cleanup(func() {
+		require.NoError(t, UnscopedDb().Delete(result).Error)
+	})
 
 	var updated entity.Face
 	require.NoError(t, entity.Db().Where("id = ?", faceA.ID).First(&updated).Error)
@@ -458,6 +517,7 @@ func TestMergeFacesRetainedClusters(t *testing.T) {
 }
 
 func TestResolveFaceCollisions(t *testing.T) {
+	entity.ValidateFixtures(t)
 	restore := face.ConfiguredModel()
 	require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{
 		Name:  face.ModelFaceNet,
@@ -506,6 +566,14 @@ func TestResolveFaceCollisions(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	t.Cleanup(func() {
+		for _, face := range entity.FaceFixtures {
+			require.NoError(t, UnscopedDb().Save(&face).Error)
+		}
+		for _, marker := range entity.MarkerFixtures {
+			require.NoError(t, UnscopedDb().Save(&marker).Error)
+		}
+	})
 
 	assert.LessOrEqual(t, 1, c)
 	assert.LessOrEqual(t, 1, r)
@@ -519,31 +587,56 @@ func TestResolveFaceCollisions(t *testing.T) {
 }
 
 func TestRemoveAutoFaceClusters(t *testing.T) {
+	entity.ValidateFixtures(t)
 	removed, err := RemoveAutoFaceClusters()
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
+	t.Cleanup(func() {
+		for _, face := range entity.FaceFixtures {
+			if face.FaceSrc == entity.SrcAuto {
+				require.NoError(t, UnscopedDb().Create(&face).Error)
+			}
+		}
+	})
+
 	assert.LessOrEqual(t, 3, removed)
 }
 
 func TestRemovePeopleAndFaces(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping test in short mode.")
-	}
-
+	entity.ValidateFixtures(t)
 	err := RemovePeopleAndFaces()
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	// replace all the fixtures as the previous statement kills a lot of other tests.
-	entity.ResetTestFixtures()
+	t.Cleanup(func() {
+		for _, subject := range entity.SubjectFixtures {
+			if subject.SubjType == entity.SubjPerson {
+				require.NoError(t, UnscopedDb().Save(&subject).Error)
+			}
+		}
+		for _, face := range entity.FaceFixtures {
+			require.NoError(t, UnscopedDb().Create(&face).Error)
+		}
+		for _, marker := range entity.MarkerFixtures {
+			if marker.MarkerType == entity.MarkerFace {
+				require.NoError(t, UnscopedDb().Save(&marker).Error)
+			}
+		}
+		for _, photo := range entity.PhotoFixtures {
+			pCols := entity.Photo{PhotoFaces: photo.PhotoFaces, UpdatedAt: photo.UpdatedAt}
+			require.NoError(t, UnscopedDb().Model(&photo).UpdateColumns(pCols).Error)
+		}
+		// Labels people and portrait do not exist in the testing database, so no need to clean these up.
+	})
 }
 
 func TestFaceEmbeddingModels(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Fixtures", func(t *testing.T) {
 		result, err := FaceEmbeddingModels()
 		require.NoError(t, err)
@@ -561,6 +654,7 @@ func TestFaceEmbeddingModels(t *testing.T) {
 }
 
 func TestMarkerDetectModels(t *testing.T) {
+	entity.ValidateFixtures(t)
 	// newFaceMarker persists a face marker attributed to the specified detector.
 	newFaceMarker := func(t *testing.T, detector string, embeddings face.Embeddings) {
 		t.Helper()
@@ -608,6 +702,7 @@ func TestMarkerDetectModels(t *testing.T) {
 }
 
 func TestMarkerEmbeddingModels(t *testing.T) {
+	entity.ValidateFixtures(t)
 	// newFaceMarker persists a face marker with the specified embedding model.
 	newFaceMarker := func(t *testing.T, model string, embeddings face.Embeddings) *entity.Marker {
 		t.Helper()
@@ -673,6 +768,7 @@ func TestMarkerEmbeddingModels(t *testing.T) {
 }
 
 func TestLegacyFaceMarkersWithVectors(t *testing.T) {
+	entity.ValidateFixtures(t)
 	// newFaceMarker persists a face marker with the specified embedding model.
 	newFaceMarker := func(t *testing.T, model string, embeddings face.Embeddings) *entity.Marker {
 		t.Helper()
@@ -749,6 +845,7 @@ func TestLegacyFaceMarkersWithVectors(t *testing.T) {
 }
 
 func TestFaceMarkersWithVectors(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("CountsFixtures", func(t *testing.T) {
 		count, err := FaceMarkersWithVectors()
 		require.NoError(t, err)
@@ -773,6 +870,7 @@ func TestFaceMarkersWithVectors(t *testing.T) {
 }
 
 func TestWhereEmbeddingModel(t *testing.T) {
+	entity.ValidateFixtures(t)
 	base := func() *gorm.DB {
 		return Db().Model(&entity.Marker{}).Where("marker_type = ?", entity.MarkerFace)
 	}
@@ -793,6 +891,7 @@ func TestWhereEmbeddingModel(t *testing.T) {
 }
 
 func TestNotEmbeddingModel(t *testing.T) {
+	entity.ValidateFixtures(t)
 	base := func() *gorm.DB {
 		return Db().Model(&entity.Marker{}).Where("marker_type = ?", entity.MarkerFace)
 	}
@@ -839,6 +938,7 @@ func TestNotEmbeddingModel(t *testing.T) {
 }
 
 func TestFacesFromOtherModels(t *testing.T) {
+	entity.ValidateFixtures(t)
 	restore := face.ConfiguredModel()
 
 	t.Cleanup(func() {
@@ -893,6 +993,7 @@ func TestFacesFromOtherModels(t *testing.T) {
 }
 
 func TestMatchableFaces(t *testing.T) {
+	entity.ValidateFixtures(t)
 	restore := face.ConfiguredModel()
 
 	t.Cleanup(func() {
@@ -942,6 +1043,7 @@ func TestMatchableFaces(t *testing.T) {
 }
 
 func TestRetainedFaceIDs(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		f := entity.NewFace(rnd.GenerateUID('j'), entity.SrcManual, face.RandomEmbeddings(1, face.RegularFace), face.EmbeddingModelName())
 		require.NotNil(t, f)
@@ -966,6 +1068,7 @@ func TestRetainedFaceIDs(t *testing.T) {
 // TestRemoveAllFaceClusters covers the unfiltered scope, which is what the automatic one leaves
 // behind: the clusters a person or a sidecar created.
 func TestRemoveAllFaceClusters(t *testing.T) {
+	entity.ValidateFixtures(t)
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
 	}

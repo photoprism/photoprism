@@ -11,6 +11,7 @@ import (
 )
 
 func TestAlbumHasThumb(t *testing.T) {
+	entity.ValidateFixtures(t)
 	// Other tests assign covers through UpdateCovers(), so the fixture value is set explicitly
 	// and restored afterwards. The direct update bypasses the hooks that clear the album cache.
 	setAlbumThumb := func(t *testing.T, uid, hash string) {
@@ -58,6 +59,7 @@ func TestAlbumHasThumb(t *testing.T) {
 }
 
 func TestAlbumByUID(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		if album, err := AlbumByUID("as6sg6bxpogaaba7"); err != nil {
 			t.Fatal(err)
@@ -84,6 +86,7 @@ func TestAlbumByUID(t *testing.T) {
 }
 
 func TestAlbumCoverByUID(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("ExistingUidDefaultAlbum", func(t *testing.T) {
 		file, err := AlbumCoverByUID("as6sg6bxpogaaba8", true)
 
@@ -115,13 +118,14 @@ func TestAlbumCoverByUID(t *testing.T) {
 	})
 	t.Run("ExistingUidEmptyMonthAlbum", func(t *testing.T) {
 		file, err := AlbumCoverByUID("as6sg6bipogaabj9", true)
-
+		t.Cleanup(func() { require.NoError(t, UnscopedDb().Save(entity.AlbumFixtures.Pointer("september-2021")).Error) })
 		assert.EqualError(t, err, "no cover found", err)
 		assert.Equal(t, "", file.FileName)
 	})
 }
 
 func TestUpdateAlbumDates(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		album := entity.FindAlbum(entity.Album{AlbumUID: entity.AlbumFixtures.Get("april-1990").AlbumUID})
 		assert.Equal(t, 11, album.AlbumDay)
@@ -318,14 +322,20 @@ func TestUpdateAlbumDates(t *testing.T) {
 }
 
 func TestUpdateMissingAlbumEntries(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		if err := UpdateMissingAlbumEntries(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			require.NoError(t, UnscopedDb().Save(entity.PhotoAlbumFixtures.Pointer("4", "ps6sg6bexxvl0yh0", "as6sg6bxpogaaba9")).Error)
+			require.NoError(t, UnscopedDb().Save(entity.AlbumFixtures.Pointer("berlin-2019")).Error)
+		})
 	})
 }
 
 func TestAlbumEntryFound(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		if err := AlbumEntryFound("ps6sg6bexxvl0yh0"); err != nil {
 			t.Fatal(err)
@@ -334,6 +344,7 @@ func TestAlbumEntryFound(t *testing.T) {
 }
 
 func TestAlbums(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		results, err := Albums(0, 3)
 
@@ -346,6 +357,7 @@ func TestAlbums(t *testing.T) {
 }
 
 func TestAlbumsByUID(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		results, err := AlbumsByUID([]string{"as6sg6bxpogaaba7", "as6sg6bxpogaaba8"}, false)
 
@@ -367,6 +379,7 @@ func TestAlbumsByUID(t *testing.T) {
 }
 
 func TestAlbumsByType(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("AlbumFolder", func(t *testing.T) {
 		actual, err := AlbumsByType(entity.AlbumFolder, false)
 		require.NoError(t, err)
@@ -381,6 +394,7 @@ func TestAlbumsByType(t *testing.T) {
 		require.NoError(t, m.Delete())
 		defer func() {
 			require.NoError(t, m.Restore())
+			require.NoError(t, UnscopedDb().Save(entity.LinkFixtures.Pointer("4jxf3jfn2k")).Error)
 		}()
 		actual, err = AlbumsByType(entity.AlbumManual, false)
 		require.NoError(t, err)

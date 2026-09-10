@@ -11,6 +11,7 @@ import (
 )
 
 func TestNewLens(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Unknown", func(t *testing.T) {
 		lens := NewLens("", "")
 		assert.Equal(t, UnknownID, lens.LensSlug)
@@ -59,25 +60,27 @@ func TestNewLens(t *testing.T) {
 }
 
 func TestLens_TableName(t *testing.T) {
+	ValidateFixtures(t)
 	lens := NewLens("Canon", "F500-99")
 	tableName := lens.TableName()
 	assert.Equal(t, "lenses", tableName)
 }
 
 func TestLens_String(t *testing.T) {
+	ValidateFixtures(t)
 	lens := NewLens("samsung", "F500-99")
 	assert.Equal(t, "'Samsung F500-99'", lens.String())
 }
 
 func TestFirstOrCreateLens(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("ExistingLens", func(t *testing.T) {
 		fixture := "4.15mm-f/2.2"
 		lens := NewLens(LensFixtures.Get(fixture).LensMake, "iPhone SE back camera 4.15mm f/2.2") // Use value that comes back from exiftool
 
 		result := FirstOrCreateLens(lens)
 
-		assert.NotNil(t, result)
-		if result != nil {
+		if assert.NotNil(t, result) {
 			assert.Equal(t, LensFixtures.Get(fixture).ID, result.ID)
 			assert.Equal(t, LensFixtures.Get(fixture).LensMake, result.LensMake)
 			assert.Equal(t, LensFixtures.Get(fixture).LensModel, result.LensModel)
@@ -114,13 +117,17 @@ func TestFirstOrCreateLens(t *testing.T) {
 }
 
 func TestLensUpdateMakeModel(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("ExistingLens", func(t *testing.T) {
 		fixture := "4-37"
 		lens := NewLens(LensFixtures.Get(fixture).LensMake, LensFixtures.Get(fixture).LensModel)
 
 		result := FirstOrCreateLens(lens)
 
-		defer assert.NoError(t, UnscopedDb().Save(LensFixtures.Pointer(fixture)).Error)
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Save(LensFixtures.Pointer(fixture)).Error)
+			FlushLensCache()
+		})
 		make := "Tamron"
 		model := "Tamron SP AF 24-135mm F3.5-5.6 AD AL (190D)"
 		err := result.UpdateMakeModel(make, model)
@@ -134,7 +141,10 @@ func TestLensUpdateMakeModel(t *testing.T) {
 	t.Run("NewLens", func(t *testing.T) {
 		setup := NewLens("", "4 38")
 		lens := FirstOrCreateLens(setup)
-		defer assert.NoError(t, UnscopedDb().Delete(&Lens{}, "id = ?", lens.ID).Error)
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&Lens{}, "id = ?", lens.ID).Error)
+			FlushLensCache()
+		})
 		make := "Pentax"
 		model := "smc PENTAX-FA 28-105mm F3.2-4.5 AL[IF]"
 		err := lens.UpdateMakeModel(make, model)
@@ -170,6 +180,7 @@ func TestLensUpdateMakeModel(t *testing.T) {
 // invariant: lenses.created/updated carry a []string of stable slugs, never entity
 // fields, and an update does not republish the lens count.
 func TestLens_EntityEvents(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("CreatedPublishesSlugOnly", func(t *testing.T) {
 		m := NewLens("Acme", "Test Lens 6789")
 
@@ -204,7 +215,10 @@ func TestLens_EntityEvents(t *testing.T) {
 		fixture := "lens-f-380"
 		lens := Lens{}
 		assert.NoError(t, UnscopedDb().First(&lens, "id = ?", LensFixtures.Get(fixture).ID).Error)
-		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Save(LensFixtures.Pointer(fixture)).Error) })
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Save(LensFixtures.Pointer(fixture)).Error)
+			FlushLensCache()
+		})
 
 		updated := event.Subscribe("lenses.updated")
 		t.Cleanup(func() { event.Unsubscribe(updated) })
@@ -234,10 +248,14 @@ func TestLens_EntityEvents(t *testing.T) {
 }
 
 func TestLens_SaveForm(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		lens := Lens{}
 		assert.NoError(t, UnscopedDb().First(&lens, "id = ?", LensFixtures.Get("lens-f-380").ID).Error)
-		defer assert.NoError(t, UnscopedDb().Save(LensFixtures.Pointer("lens-f-380")).Error)
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Save(LensFixtures.Pointer("lens-f-380")).Error)
+			FlushLensCache()
+		})
 		err := lens.SaveForm(&form.Lens{LensMake: "Sigma", LensModel: "85mm F1.4"})
 		assert.NoError(t, err)
 		assert.Equal(t, CameraMakes["Sigma"], lens.LensMake) // NewLens normalizes the make.

@@ -8,6 +8,7 @@ import (
 )
 
 func TestPhoto_QualityScore(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("PhotoFixtureNum19800101Num000002DNum640CNum559", func(t *testing.T) {
 		assert.Equal(t, 3, PhotoFixtures.Pointer("19800101_000002_D640C559").QualityScore())
 	})
@@ -26,6 +27,7 @@ func TestPhoto_QualityScore(t *testing.T) {
 }
 
 func TestPhoto_UpdateQuality(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Hidden", func(t *testing.T) {
 		p := &Photo{PhotoQuality: -1}
 		err := p.UpdateQuality()
@@ -45,6 +47,7 @@ func TestPhoto_UpdateQuality(t *testing.T) {
 }
 
 func TestPhoto_QualityScorePhotographicMetadataFloor(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("ImageWithISO", func(t *testing.T) {
 		p := &Photo{
 			PhotoType: MediaImage,
@@ -74,6 +77,7 @@ func TestPhoto_QualityScorePhotographicMetadataFloor(t *testing.T) {
 }
 
 func TestPhoto_IsNonPhotographic(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Raw", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
 		assert.False(t, m.IsNonPhotographic())

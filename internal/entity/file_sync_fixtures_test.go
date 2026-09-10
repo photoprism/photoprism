@@ -7,6 +7,7 @@ import (
 )
 
 func TestFileSyncMap_Get(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("GetExistingFilesync", func(t *testing.T) {
 		r := FileSyncFixtures.Get("FileSync1", 0, "")
 		assert.Equal(t, uint(1000000), r.ServiceID)
@@ -22,6 +23,7 @@ func TestFileSyncMap_Get(t *testing.T) {
 }
 
 func TestFileSyncMap_Pointer(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("GetExistingFilesyncPointer", func(t *testing.T) {
 		r := FileSyncFixtures.Pointer("FileSync1", 0, "")
 		assert.Equal(t, uint(1000000), r.ServiceID)

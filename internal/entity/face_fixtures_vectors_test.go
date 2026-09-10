@@ -10,6 +10,7 @@ import (
 )
 
 func TestGenerateFaceFixtureVectors(t *testing.T) {
+	ValidateFixtures(t)
 	GenerateFaceFixtureVectors()
 
 	model := face.EmbeddingModelName()
@@ -81,6 +82,7 @@ func TestGenerateFaceFixtureVectors(t *testing.T) {
 }
 
 func TestFaceFixtureMarkerEmbedding(t *testing.T) {
+	ValidateFixtures(t)
 	GenerateFaceFixtureVectors()
 
 	biden := FaceFixtures.Get("joe-biden")
@@ -110,6 +112,7 @@ func TestFaceFixtureMarkerEmbedding(t *testing.T) {
 }
 
 func TestFixtureSeed(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Deterministic", func(t *testing.T) {
 		assert.Equal(t, fixtureSeed("marker-a"), fixtureSeed("marker-a"))
 	})

@@ -18,6 +18,7 @@ import (
 // Each marker's effect is measured on its own against a baseline. Counting both at once cannot tell
 // the two gates apart, because the pair is a mirror: whichever column is read, exactly one passes.
 func TestClusterSizeGateReadSites(t *testing.T) {
+	entity.ValidateFixtures(t)
 	const floor = 112
 
 	model := face.EmbeddingModelName()
@@ -94,6 +95,7 @@ func TestClusterSizeGateReadSites(t *testing.T) {
 // Measured one marker at a time against a baseline, because the populations overlap: a count taken
 // over several at once cannot say which of them the gate admitted.
 func TestEmbedDetailGate(t *testing.T) {
+	entity.ValidateFixtures(t)
 	const floor = 112
 
 	model := face.EmbeddingModelName()

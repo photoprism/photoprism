@@ -11,6 +11,7 @@ import (
 )
 
 func TestFirstOrCreateCamera(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("UnknownCamera", func(t *testing.T) {
 		m := UnknownCamera
 
@@ -43,6 +44,9 @@ func TestFirstOrCreateCamera(t *testing.T) {
 		camera := &Camera{ID: 10000000, CameraSlug: "camera-slug"}
 
 		result := FirstOrCreateCamera(camera)
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&camera).Error)
+		})
 
 		if result == nil {
 			t.Fatal("result must not be nil")
@@ -53,6 +57,7 @@ func TestFirstOrCreateCamera(t *testing.T) {
 }
 
 func TestNewCamera(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Unknown", func(t *testing.T) {
 		camera := NewCamera("", "")
 
@@ -114,6 +119,7 @@ func TestNewCamera(t *testing.T) {
 }
 
 func TestCamera_String(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Unknown", func(t *testing.T) {
 		camera := NewCamera("", "")
 		cameraString := camera.String()
@@ -137,6 +143,7 @@ func TestCamera_String(t *testing.T) {
 }
 
 func TestCamera_Scanner(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Unknown", func(t *testing.T) {
 		camera := NewCamera("", "")
 		assert.False(t, camera.Scanner())
@@ -169,6 +176,7 @@ func TestCamera_Scanner(t *testing.T) {
 }
 
 func TestCamera_Mobile(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("CanonEOSD30", func(t *testing.T) {
 		camera := NewCamera(MakeCanon, "EOS D30")
 		assert.Equal(t, CameraTypeBody, camera.CameraType)
@@ -259,13 +267,15 @@ func TestCamera_Mobile(t *testing.T) {
 }
 
 func TestCamera_UpdateMakeModel(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("ExistingCamera", func(t *testing.T) {
 		fixture := "canon-eos-7d"
 		camera := NewCamera(CameraFixtures.Get(fixture).CameraMake, CameraFixtures.Get(fixture).CameraModel)
 
 		result := FirstOrCreateCamera(camera)
-
-		defer assert.NoError(t, UnscopedDb().Save(CameraFixtures.Pointer(fixture)).Error)
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Save(CameraFixtures.Pointer(fixture)).Error)
+		})
 		makeName := "Pentax"
 		modelName := "K-1"
 		err := result.UpdateMakeModel(makeName, modelName)
@@ -279,7 +289,9 @@ func TestCamera_UpdateMakeModel(t *testing.T) {
 	t.Run("NewCamera", func(t *testing.T) {
 		setup := NewCamera("", "9 99")
 		camera := FirstOrCreateCamera(setup)
-		defer assert.NoError(t, UnscopedDb().Delete(&Camera{}, "id = ?", camera.ID).Error)
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&Camera{}, "id = ?", camera.ID).Error)
+		})
 		makeName := "Pentax"
 		modelName := "K-1"
 		err := camera.UpdateMakeModel(makeName, modelName)
@@ -315,6 +327,7 @@ func TestCamera_UpdateMakeModel(t *testing.T) {
 // invariant: cameras.created/updated carry a []string of stable slugs, never entity
 // fields, and an update does not republish the camera count.
 func TestCamera_EntityEvents(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("CreatedPublishesSlugOnly", func(t *testing.T) {
 		m := NewCamera("Acme", "Test Camera 6789")
 
@@ -378,10 +391,13 @@ func TestCamera_EntityEvents(t *testing.T) {
 }
 
 func TestCamera_SaveForm(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		fixture := "canon-eos-7d"
 		camera := FirstOrCreateCamera(NewCamera(CameraFixtures.Get(fixture).CameraMake, CameraFixtures.Get(fixture).CameraModel))
-		defer assert.NoError(t, UnscopedDb().Save(CameraFixtures.Pointer(fixture)).Error)
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Save(CameraFixtures.Pointer(fixture)).Error)
+		})
 		err := camera.SaveForm(&form.Camera{CameraMake: "Pentax", CameraModel: "K-1"})
 		assert.NoError(t, err)
 		assert.Equal(t, CameraMakes["Pentax"], camera.CameraMake)

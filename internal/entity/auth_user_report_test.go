@@ -7,6 +7,7 @@ import (
 )
 
 func TestUser_Report(t *testing.T) {
+	ValidateFixtures(t)
 	m := FindUserByName("alice")
 
 	r, _ := m.Report(false)

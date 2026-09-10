@@ -11,6 +11,7 @@ import (
 
 // TODO test non empty case
 func TestErrors(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("NotExisting", func(t *testing.T) {
 		errors, err := Errors(1000, 0, "notexistingErrorString")
 		if err != nil {
@@ -36,6 +37,7 @@ func TestErrors(t *testing.T) {
 }
 
 func TestDeleteErrors(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("OneError", func(t *testing.T) {
 		expected := "OneError Testing Message"
 		if err := Db().Create(&entity.Error{ID: 999999, ErrorTime: time.Now(), ErrorLevel: "debug", ErrorMessage: expected}).Error; err != nil {

@@ -9,6 +9,7 @@ import (
 )
 
 func TestFileSyncs(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		r, err := FileSyncs(uint(1000001), "downloaded", 10)
 		if err != nil {

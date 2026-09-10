@@ -12,6 +12,7 @@ import (
 )
 
 func TestPhotoResetCaption(t *testing.T) {
+	ValidateFixtures(t)
 	photo := createTestPhoto(t)
 
 	require.NoError(t, Db().Model(&photo).Updates(Values{
@@ -23,8 +24,8 @@ func TestPhotoResetCaption(t *testing.T) {
 	require.NoError(t, label.Create())
 
 	t.Cleanup(func() {
-		_ = Db().Delete(&PhotoLabel{}, "photo_id = ?", photo.ID).Error
-		_ = Db().Delete(label).Error
+		_ = UnscopedDb().Delete(&PhotoLabel{}, "photo_id = ?", photo.ID).Error
+		_ = UnscopedDb().Delete(label).Error
 	})
 
 	require.NotNil(t, FirstOrCreatePhotoLabel(NewPhotoLabel(photo.ID, label.ID, 10, SrcCaption)))
@@ -48,14 +49,15 @@ func TestPhotoResetCaption(t *testing.T) {
 }
 
 func TestPhotoResetLabels(t *testing.T) {
+	ValidateFixtures(t)
 	photo := createTestPhoto(t)
 
 	label := NewLabel(fmt.Sprintf("reset-label-%s", rnd.GenerateUID(LabelUID)), 10)
 	require.NoError(t, label.Create())
 
 	t.Cleanup(func() {
-		_ = Db().Delete(&PhotoLabel{}, "photo_id = ?", photo.ID).Error
-		_ = Db().Delete(label).Error
+		_ = UnscopedDb().Delete(&PhotoLabel{}, "photo_id = ?", photo.ID).Error
+		_ = UnscopedDb().Delete(label).Error
 	})
 
 	require.NotNil(t, FirstOrCreatePhotoLabel(NewPhotoLabel(photo.ID, label.ID, 10, SrcOllama)))
@@ -87,8 +89,8 @@ func createTestPhoto(t *testing.T) Photo {
 	require.NoError(t, Db().Create(&photo).Error)
 
 	t.Cleanup(func() {
-		_ = Db().Delete(&PhotoLabel{}, "photo_id = ?", photo.ID).Error
-		_ = Db().Delete(&Photo{}, photo.ID).Error
+		_ = UnscopedDb().Delete(&PhotoLabel{}, "photo_id = ?", photo.ID).Error
+		_ = UnscopedDb().Delete(&Photo{}, photo.ID).Error
 	})
 
 	return photo

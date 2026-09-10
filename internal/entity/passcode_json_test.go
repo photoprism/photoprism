@@ -7,6 +7,7 @@ import (
 )
 
 func TestPasscode_MarshalJSON(t *testing.T) {
+	ValidateFixtures(t)
 	m := &Passcode{
 		UID:          "uqxc08w3d0ej2283",
 		KeyURL:       "otpauth://totp/Example:alice",

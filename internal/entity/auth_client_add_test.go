@@ -10,6 +10,7 @@ import (
 )
 
 func Test_AddClient(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := form.Client{
 			ClientName:   "test",
@@ -23,6 +24,10 @@ func Test_AddClient(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, c.Delete())
+			assert.NoError(t, UnscopedDb().Delete(c).Error)
+		})
 
 		assert.Equal(t, "test", c.ClientName)
 	})
@@ -58,6 +63,7 @@ func Test_AddClient(t *testing.T) {
 }
 
 func Test_AddClient_WithRole(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("AdminRole", func(t *testing.T) {
 		frm := form.Client{
 			ClientID:     "cs5cpu17n6gj9r10",
@@ -72,6 +78,10 @@ func Test_AddClient_WithRole(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, c.Delete())
+			assert.NoError(t, UnscopedDb().Delete(c).Error)
+		})
 
 		assert.Equal(t, "admin", c.ClientRole)
 		assert.True(t, c.HasRole(acl.RoleAdmin))
@@ -97,6 +107,10 @@ func Test_AddClient_WithRole(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, c.Delete())
+			assert.NoError(t, UnscopedDb().Delete(c).Error)
+		})
 
 		assert.Equal(t, "client", c.ClientRole)
 		assert.True(t, c.HasRole(acl.RoleClient))

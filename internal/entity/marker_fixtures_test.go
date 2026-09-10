@@ -7,6 +7,7 @@ import (
 )
 
 func TestMarkerMap_Get(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("GetExistingMarker", func(t *testing.T) {
 		r := MarkerFixtures.Get("1000003-3")
 		assert.Equal(t, "Center", r.MarkerName)
@@ -21,6 +22,7 @@ func TestMarkerMap_Get(t *testing.T) {
 }
 
 func TestMarkerMap_Pointer(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("GetExistingMarkerPointer", func(t *testing.T) {
 		r := MarkerFixtures.Pointer("1000003-3")
 		assert.Equal(t, "Center", r.MarkerName)

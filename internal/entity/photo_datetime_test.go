@@ -10,6 +10,7 @@ import (
 )
 
 func TestPhoto_TrustedTime(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("MissingTakenAt", func(t *testing.T) {
 		m := Photo{ID: 1, TakenAt: time.Time{}, TakenAtLocal: Now(), TakenSrc: SrcMeta, TimeZone: "Europe/Berlin"}
 		assert.False(t, m.TrustedTime())
@@ -41,6 +42,7 @@ func TestPhoto_TrustedTime(t *testing.T) {
 }
 
 func TestPhoto_SetTakenAt(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Empty", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
 		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
@@ -251,6 +253,7 @@ func TestPhoto_SetTakenAt(t *testing.T) {
 }
 
 func TestPhoto_UpdateTimeZone(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("PhotoTimeZone", func(t *testing.T) {
 		m := PhotoFixtures.Get("PhotoTimeZone")
 

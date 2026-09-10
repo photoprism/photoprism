@@ -16,6 +16,7 @@ import (
 )
 
 func TestMarker_SameEmbeddingModel(t *testing.T) {
+	ValidateFixtures(t)
 	restore := face.ConfiguredModel()
 	t.Cleanup(func() {
 		_ = face.ConfigureEmbedder(face.EmbedderSettings{Name: restore, Model: face.FindEmbeddingModel(restore)})
@@ -63,11 +64,13 @@ var invalidArea3 = crop.Area{
 }
 
 func TestMarker_TableName(t *testing.T) {
+	ValidateFixtures(t)
 	m := &Marker{}
 	assert.Contains(t, m.TableName(), "markers")
 }
 
 func TestNewMarker(t *testing.T) {
+	ValidateFixtures(t)
 	m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), testArea, "ls6sg6b1wowuy3c3", SrcImage, MarkerLabel, 100, 29)
 	assert.IsType(t, &Marker{}, m)
 	assert.Equal(t, "fs6sg6bw45bnlqdw", m.FileUID)
@@ -79,6 +82,7 @@ func TestNewMarker(t *testing.T) {
 }
 
 func TestMarkerSize(t *testing.T) {
+	ValidateFixtures(t)
 	area := crop.NewArea("face", 0.4, 0.4, 0.1, 0.1)
 	t.Run("Landscape", func(t *testing.T) {
 		// Fit720 draws a 4:3 original at 720x540, so a tenth of the frame spans 72 px.
@@ -106,6 +110,7 @@ func TestMarkerSize(t *testing.T) {
 // cannot contribute to a cluster is one a person has to look at. Stated against the threshold
 // rather than a literal, because a literal is what let this drift onto the wrong scale before.
 func TestNewMarkerReview(t *testing.T) {
+	ValidateFixtures(t)
 	file := FileFixtures.Get("exampleFileName.jpg")
 
 	// The shared default rather than the configurable variable, which is what NewMarker reads:
@@ -120,6 +125,7 @@ func TestNewMarkerReview(t *testing.T) {
 }
 
 func TestMarker_SetName(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("InvalidName", func(t *testing.T) {
 		m := MarkerFixtures.Get("actress-a-1")
 		assert.IsType(t, Marker{}, m)
@@ -145,7 +151,27 @@ func TestMarker_SetName(t *testing.T) {
 }
 
 func TestMarker_SaveForm(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("FaGeAddNewNameToMarkerThenRenameMarker", func(t *testing.T) {
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Model(&Face{}).Where("id = ?", FaceFixtures.Get("fa-gr").ID).UpdateColumns(Values{"subj_uid": FaceFixtures.Get("fa-gr").SubjUID}).Error)
+			fm := MarkerFixtures.Get("fa-gr-1")
+			assert.NoError(t, UnscopedDb().Model(&Marker{}).Where("marker_uid = ?", fm.MarkerUID).UpdateColumns(Values{"subj_uid": fm.SubjUID, "subj_src": fm.SubjSrc, "marker_name": fm.MarkerName, "landmarks_json": fm.LandmarksJSON, "score": fm.Score}).Error)
+			fm = MarkerFixtures.Get("fa-gr-2")
+			assert.NoError(t, UnscopedDb().Model(&Marker{}).Where("marker_uid = ?", fm.MarkerUID).UpdateColumns(Values{"subj_uid": fm.SubjUID, "subj_src": fm.SubjSrc, "marker_name": fm.MarkerName, "landmarks_json": fm.LandmarksJSON, "score": fm.Score}).Error)
+			fm = MarkerFixtures.Get("fa-gr-3")
+			assert.NoError(t, UnscopedDb().Model(&Marker{}).Where("marker_uid = ?", fm.MarkerUID).UpdateColumns(Values{"subj_uid": fm.SubjUID, "subj_src": fm.SubjSrc, "marker_name": fm.MarkerName, "landmarks_json": fm.LandmarksJSON, "score": fm.Score}).Error)
+			fm = MarkerFixtures.Get("ma-ba-1")
+			assert.NoError(t, UnscopedDb().Model(&Marker{}).Where("marker_uid = ?", fm.MarkerUID).UpdateColumns(Values{"subj_uid": fm.SubjUID, "subj_src": fm.SubjSrc, "marker_name": fm.MarkerName, "landmarks_json": fm.LandmarksJSON, "score": fm.Score}).Error)
+			fp := PhotoFixtures.Get("19800101_000002_D640C559")
+			assert.NoError(t, UnscopedDb().Model(&Photo{}).Where("id = ?", fp.ID).UpdateColumns(Values{"checked_at": fp.CheckedAt}).Error)
+			fp = PhotoFixtures.Get("Photo03")
+			assert.NoError(t, UnscopedDb().Model(&Photo{}).Where("id = ?", fp.ID).UpdateColumns(Values{"checked_at": fp.CheckedAt}).Error)
+			fp = PhotoFixtures.Get("Photo27")
+			assert.NoError(t, UnscopedDb().Model(&Photo{}).Where("id = ?", fp.ID).UpdateColumns(Values{"checked_at": fp.CheckedAt}).Error)
+			fs := SubjectFixtures.Get("jane-doe")
+			assert.NoError(t, UnscopedDb().Model(&Subject{}).Where("subj_uid = ?", fs.SubjUID).UpdateColumns(Values{"subj_slug": fs.SubjSlug, "subj_name": fs.SubjName}).Error)
+		})
 		m := MarkerFixtures.Get("fa-gr-1")
 		m2 := MarkerFixtures.Get("fa-gr-2")
 		m3 := MarkerFixtures.Get("fa-gr-3")
@@ -204,6 +230,7 @@ func TestMarker_SaveForm(t *testing.T) {
 }
 
 func TestUpdateOrCreateMarker(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), testArea, "ls6sg6b1wowuy3c3", SrcImage, MarkerLabel, 100, 65)
 		assert.IsType(t, &Marker{}, m)
@@ -221,6 +248,7 @@ func TestUpdateOrCreateMarker(t *testing.T) {
 		if m == nil {
 			t.Fatal("result must not be nil")
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(m).Error) })
 
 		if m.MarkerUID == "" || m.FileUID == "" {
 			t.Errorf("UIDs should not be empty")
@@ -229,11 +257,13 @@ func TestUpdateOrCreateMarker(t *testing.T) {
 }
 
 func TestMarker_Delete(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), crop.Area{Name: "face", X: 0.01, Y: 0.01, W: 0.02, H: 0.02}, "", SrcXmp, MarkerFace, 100, 30)
 		if err := m.Create(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(m).Error) })
 		if m.MarkerUID == "" || FindMarker(m.MarkerUID) == nil {
 			t.Fatal("created marker not found")
 		}
@@ -252,6 +282,7 @@ func TestMarker_Delete(t *testing.T) {
 }
 
 func TestMarker_Updates(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), testArea, "ls6sg6b1wowuy3c4", SrcImage, MarkerLabel, 100, 65)
 		m, err := CreateMarkerIfNotExists(m)
@@ -259,7 +290,7 @@ func TestMarker_Updates(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(m).Error) })
 		assert.Equal(t, SrcImage, m.MarkerSrc)
 		assert.Equal(t, MarkerLabel, m.MarkerType)
 
@@ -277,6 +308,7 @@ func TestMarker_Updates(t *testing.T) {
 }
 
 func TestMarker_Update(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), testArea, "ls6sg6b1wowuy3c4", SrcImage, MarkerLabel, 100, 65)
 		m, err := CreateMarkerIfNotExists(m)
@@ -284,7 +316,7 @@ func TestMarker_Update(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(m).Error) })
 		assert.Equal(t, MarkerLabel, m.MarkerType)
 
 		if err := m.Update("MarkerSrc", SrcMeta); err != nil {
@@ -301,6 +333,7 @@ func TestMarker_Update(t *testing.T) {
 }
 
 func TestMarker_InvalidArea(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("TestArea", func(t *testing.T) {
 		m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), testArea, "ls6sg6b1wowuy3c4", SrcImage, MarkerFace, 100, 65)
 		assert.Nil(t, m.InvalidArea())
@@ -331,6 +364,7 @@ func TestMarker_InvalidArea(t *testing.T) {
 
 // TODO fails on mariadb
 func TestMarker_Save(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := NewMarker(FileFixtures.Get("exampleFileName.jpg"), testArea, "ls6sg6b1wowuy3c4", SrcImage, MarkerLabel, 100, 65)
 
@@ -339,7 +373,7 @@ func TestMarker_Save(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(m).Error) })
 		assert.Equal(t, MarkerLabel, m.MarkerType)
 
 		m.MarkerSrc = SrcMeta
@@ -383,11 +417,25 @@ func TestMarker_Save(t *testing.T) {
 }
 
 func TestMarker_ClearSubject(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Num1000003Two", func(t *testing.T) {
 		m := MarkerFixtures.Get("1000003-2")
 
 		assert.NotEmpty(t, m.MarkerName)
-
+		t.Cleanup(func() {
+			fm := MarkerFixtures.Get("1000003-2")
+			assert.NoError(t, UnscopedDb().Model(&Marker{}).Where("marker_uid = ?", fm.MarkerUID).UpdateColumns(Values{"marker_name": fm.MarkerName, "face_id": fm.FaceID, "face_dist": fm.FaceDist, "subj_uid": fm.SubjUID, "subj_src": fm.SubjSrc}).Error)
+			ff := FaceFixtures.Get("joe-biden")
+			assert.NoError(t, UnscopedDb().Model(&Face{}).Where("id = ?", ff.ID).UpdateColumns(Values{"subj_uid": ff.SubjUID}).Error)
+			ff = FaceFixtures.Get("jane-doe")
+			assert.NoError(t, UnscopedDb().Model(&Face{}).Where("id = ?", ff.ID).UpdateColumns(Values{"subj_uid": ff.SubjUID}).Error)
+			fs := SubjectFixtures.Get("joe-biden")
+			assert.NoError(t, UnscopedDb().Model(&Subject{}).Where("subj_uid = ?", fs.SubjUID).UpdateColumns(Values{"subj_slug": fs.SubjSlug, "subj_name": fs.SubjName, "deleted_at": fs.DeletedAt}).Error)
+			fs = SubjectFixtures.Get("jane-doe")
+			assert.NoError(t, UnscopedDb().Model(&Subject{}).Where("subj_uid = ?", fs.SubjUID).UpdateColumns(Values{"subj_slug": fs.SubjSlug, "subj_name": fs.SubjName, "deleted_at": fs.DeletedAt}).Error)
+			fs = SubjectFixtures.Get("dangling")
+			assert.NoError(t, UnscopedDb().Model(&Subject{}).Where("subj_uid = ?", fs.SubjUID).UpdateColumns(Values{"subj_slug": fs.SubjSlug, "subj_name": fs.SubjName, "deleted_at": fs.DeletedAt}).Error)
+		})
 		err := m.ClearSubject(SrcAuto)
 
 		if err != nil {
@@ -410,6 +458,37 @@ func TestMarker_ClearSubject(t *testing.T) {
 		assert.NotNil(t, m2.Face())
 		assert.NotNil(t, m3.Face())
 		assert.NotNil(t, m4.Face())
+
+		t.Cleanup(func() {
+			ff := FaceFixtures.Get("joe-biden")
+			assert.NoError(t, UnscopedDb().Model(&Face{}).Where("id = ?", ff.ID).UpdateColumns(Values{"subj_uid": ff.SubjUID}).Error)
+			ff = FaceFixtures.Get("jane-doe")
+			assert.NoError(t, UnscopedDb().Model(&Face{}).Where("id = ?", ff.ID).UpdateColumns(Values{"subj_uid": ff.SubjUID}).Error)
+			ff = FaceFixtures.Get("actor-1")
+			assert.NoError(t, UnscopedDb().Model(&Face{}).Where("id = ?", ff.ID).UpdateColumns(Values{"subj_uid": ff.SubjUID, "collisions": ff.Collisions, "collision_radius": ff.CollisionRadius}).Error)
+			fs := SubjectFixtures.Get("joe-biden")
+			assert.NoError(t, UnscopedDb().Model(&Subject{}).Where("subj_uid = ?", fs.SubjUID).UpdateColumns(Values{"subj_slug": fs.SubjSlug, "subj_name": fs.SubjName, "deleted_at": fs.DeletedAt}).Error)
+			fs = SubjectFixtures.Get("jane-doe")
+			assert.NoError(t, UnscopedDb().Model(&Subject{}).Where("subj_uid = ?", fs.SubjUID).UpdateColumns(Values{"subj_slug": fs.SubjSlug, "subj_name": fs.SubjName, "deleted_at": fs.DeletedAt}).Error)
+			fs = SubjectFixtures.Get("dangling")
+			assert.NoError(t, UnscopedDb().Model(&Subject{}).Where("subj_uid = ?", fs.SubjUID).UpdateColumns(Values{"subj_slug": fs.SubjSlug, "subj_name": fs.SubjName, "deleted_at": fs.DeletedAt}).Error)
+			fs = SubjectFixtures.Get("actor-1")
+			assert.NoError(t, UnscopedDb().Model(&Subject{}).Where("subj_uid = ?", fs.SubjUID).UpdateColumns(Values{"subj_slug": fs.SubjSlug, "subj_name": fs.SubjName, "deleted_at": fs.DeletedAt}).Error)
+			fm := MarkerFixtures.Get("actor-a-1")
+			assert.NoError(t, UnscopedDb().Model(&Marker{}).Where("marker_uid = ?", fm.MarkerUID).UpdateColumns(Values{"subj_uid": fm.SubjUID, "subj_src": fm.SubjSrc, "marker_name": fm.MarkerName, "landmarks_json": fm.LandmarksJSON, "score": fm.Score, "face_id": fm.FaceID, "face_dist": fm.FaceDist}).Error)
+			fm = MarkerFixtures.Get("actor-a-2")
+			assert.NoError(t, UnscopedDb().Model(&Marker{}).Where("marker_uid = ?", fm.MarkerUID).UpdateColumns(Values{"subj_uid": fm.SubjUID, "subj_src": fm.SubjSrc, "marker_name": fm.MarkerName, "landmarks_json": fm.LandmarksJSON, "score": fm.Score, "face_id": fm.FaceID, "face_dist": fm.FaceDist}).Error)
+			fm = MarkerFixtures.Get("actor-a-3")
+			assert.NoError(t, UnscopedDb().Model(&Marker{}).Where("marker_uid = ?", fm.MarkerUID).UpdateColumns(Values{"subj_uid": fm.SubjUID, "subj_src": fm.SubjSrc, "marker_name": fm.MarkerName, "landmarks_json": fm.LandmarksJSON, "score": fm.Score, "face_id": fm.FaceID, "face_dist": fm.FaceDist}).Error)
+			fm = MarkerFixtures.Get("actor-a-4")
+			assert.NoError(t, UnscopedDb().Model(&Marker{}).Where("marker_uid = ?", fm.MarkerUID).UpdateColumns(Values{"subj_uid": fm.SubjUID, "subj_src": fm.SubjSrc, "marker_name": fm.MarkerName, "landmarks_json": fm.LandmarksJSON, "score": fm.Score, "face_id": fm.FaceID, "face_dist": fm.FaceDist}).Error)
+			fp := PhotoFixtures.Get("Photo10")
+			assert.NoError(t, UnscopedDb().Model(&Photo{}).Where("id = ?", fp.ID).UpdateColumns(Values{"checked_at": fp.CheckedAt}).Error)
+			fp = PhotoFixtures.Get("Photo02")
+			assert.NoError(t, UnscopedDb().Model(&Photo{}).Where("id = ?", fp.ID).UpdateColumns(Values{"checked_at": fp.CheckedAt}).Error)
+			fp = PhotoFixtures.Get("Photo05")
+			assert.NoError(t, UnscopedDb().Model(&Photo{}).Where("id = ?", fp.ID).UpdateColumns(Values{"checked_at": fp.CheckedAt}).Error)
+		})
 
 		if m := FindMarker("ms6sg6b1wowu1002"); m == nil {
 			t.Fatal("marker is nil")
@@ -448,10 +527,17 @@ func TestMarker_ClearSubject(t *testing.T) {
 }
 
 func TestMarker_ClearFace(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Num1000003Two", func(t *testing.T) {
 		m := MarkerFixtures.Get("1000003-2")
 
 		assert.NotEmpty(t, m.FaceID)
+		t.Cleanup(func() {
+			fm := MarkerFixtures.Get("1000003-2")
+			assert.NoError(t, UnscopedDb().Model(&Marker{}).Where("marker_uid = ?", fm.MarkerUID).UpdateColumns(Values{"subj_uid": fm.SubjUID, "subj_src": fm.SubjSrc, "marker_name": fm.MarkerName, "landmarks_json": fm.LandmarksJSON, "score": fm.Score, "face_id": fm.FaceID, "face_dist": fm.FaceDist, "matched_at": fm.MatchedAt}).Error)
+			fp := PhotoFixtures.Get("Photo04")
+			assert.NoError(t, UnscopedDb().Model(&Photo{}).Where("id = ?", fp.ID).UpdateColumns(Values{"checked_at": fp.CheckedAt}).Error)
+		})
 
 		updated, err := m.ClearFace()
 
@@ -470,6 +556,11 @@ func TestMarker_ClearFace(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			for _, fm := range MarkerFixtures {
+				assert.NoError(t, UnscopedDb().Model(&Marker{}).Where("marker_uid = ?", fm.MarkerUID).UpdateColumns(Values{"subj_uid": fm.SubjUID, "subj_src": fm.SubjSrc, "marker_name": fm.MarkerName, "landmarks_json": fm.LandmarksJSON, "score": fm.Score, "face_id": fm.FaceID, "face_dist": fm.FaceDist, "matched_at": fm.MatchedAt}).Error)
+			}
+		})
 
 		assert.False(t, updated)
 		assert.Empty(t, m.FaceID)
@@ -517,6 +608,7 @@ func TestMarker_ClearFace(t *testing.T) {
 }
 
 func TestMarker_SyncSubject(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NoFaceMarker", func(t *testing.T) {
 		m := Marker{MarkerType: "test", subject: nil}
 		assert.Nil(t, m.SyncSubject(false))
@@ -558,6 +650,7 @@ func TestMarker_SyncSubject(t *testing.T) {
 }
 
 func TestMarker_Create(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("InvalidPosition", func(t *testing.T) {
 		m := Marker{X: 0, Y: 0, MarkerType: MarkerFace}
 		err := m.Create()
@@ -570,6 +663,7 @@ func TestMarker_Create(t *testing.T) {
 }
 
 func TestMarker_Embeddings(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		// The fixtures are generated for whichever model a run resolves to, so what the
 		// vector has to be is its width and its provenance, not a particular value.
@@ -594,6 +688,7 @@ func TestMarker_Embeddings(t *testing.T) {
 }
 
 func TestMarker_HasFace(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("True", func(t *testing.T) {
 		m := MarkerFixtures.Get("1000003-6")
 
@@ -623,6 +718,7 @@ func TestMarker_HasFace(t *testing.T) {
 }
 
 func TestMarker_Subject(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("EmptySubjUID", func(t *testing.T) {
 		m := Marker{SubjUID: "", subject: &Subject{SubjUID: "", SubjName: "Test Subject"}}
 
@@ -658,6 +754,13 @@ func TestMarker_Subject(t *testing.T) {
 		if s := m.Subject(); s == nil {
 			t.Fatal("return value must not be nil")
 		} else {
+			t.Cleanup(func() {
+				assert.NoError(t, UnscopedDb().Delete(&Subject{}, "subj_name = ?", "Hans Mayer").Error)
+				assert.NoError(t, UnscopedDb().Delete(&Marker{}, "marker_name = ?", "Hans Mayer").Error)
+				for _, fs := range SubjectFixtures {
+					assert.NoError(t, UnscopedDb().Model(&Subject{}).Where("subj_uid = ?", fs.SubjUID).UpdateColumns(Values{"subj_slug": fs.SubjSlug, "subj_name": fs.SubjName, "deleted_at": fs.DeletedAt, "file_count": fs.FileCount, "thumb": fs.Thumb, "photo_count": fs.PhotoCount}).Error)
+				}
+			})
 			assert.Equal(t, "Hans Mayer", s.SubjName)
 			assert.NotEmpty(t, s.SubjUID)
 		}
@@ -665,6 +768,7 @@ func TestMarker_Subject(t *testing.T) {
 }
 
 func TestMarker_GetFace(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("ExistingFaceID", func(t *testing.T) {
 		m := Marker{MarkerUID: "ms6sg6b14ahkyd24", FaceID: "1234", face: &Face{ID: "1234"}}
 
@@ -712,18 +816,23 @@ func TestMarker_GetFace(t *testing.T) {
 		if m.Face() == nil {
 			t.Fatal("return value must not be nil")
 		} else {
+			t.Cleanup(func() {
+				assert.NoError(t, UnscopedDb().Delete(&Face{}, "id = ?", m.Face().ID).Error)
+			})
 			assert.NotEmpty(t, m.Face().ID)
 		}
 	})
 }
 
 func TestFindMarker(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Nil", func(t *testing.T) {
 		assert.Nil(t, FindMarker("0000"))
 	})
 }
 
 func TestMarker_SetFace(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("FaceEqualNil", func(t *testing.T) {
 		m := MarkerFixtures.Pointer("1000003-6")
 		assert.Equal(t, "PN6QO5INYTUSAATOFL43LL2ABAV5ACZK", m.FaceID)
@@ -740,6 +849,11 @@ func TestMarker_SetFace(t *testing.T) {
 	t.Run("SkipSameFace", func(t *testing.T) {
 		m := Marker{MarkerType: MarkerFace, SubjUID: "js6sg6b1qekk9jx8", FaceID: "99876uyt"}
 		updated, _ := m.SetFace(&Face{ID: "99876uyt", SubjUID: "js6sg6b1qekk9jx8"}, -1)
+		t.Cleanup(func() {
+			for _, fm := range MarkerFixtures {
+				assert.NoError(t, UnscopedDb().Model(&Marker{}).Where("marker_uid = ?", fm.MarkerUID).UpdateColumns(Values{"subj_uid": fm.SubjUID, "subj_src": fm.SubjSrc, "marker_name": fm.MarkerName, "landmarks_json": fm.LandmarksJSON, "score": fm.Score, "face_id": fm.FaceID, "face_dist": fm.FaceDist, "matched_at": fm.MatchedAt}).Error)
+			}
+		})
 		assert.False(t, updated)
 		assert.Equal(t, "99876uyt", m.FaceID)
 	})
@@ -761,7 +875,15 @@ func TestMarker_SetFace(t *testing.T) {
 }
 
 func TestMarker_RefreshPhotos(t *testing.T) {
+	ValidateFixtures(t)
 	m := MarkerFixtures.Get("1000003-6")
+
+	t.Cleanup(func() {
+		fm := MarkerFixtures.Get("1000003-6")
+		assert.NoError(t, UnscopedDb().Model(&Marker{}).Where("marker_uid = ?", fm.MarkerUID).UpdateColumns(Values{"subj_uid": fm.SubjUID, "subj_src": fm.SubjSrc, "marker_name": fm.MarkerName, "landmarks_json": fm.LandmarksJSON, "score": fm.Score, "face_id": fm.FaceID, "face_dist": fm.FaceDist, "matched_at": fm.MatchedAt}).Error)
+		fp := PhotoFixtures.Get("Photo04")
+		assert.NoError(t, UnscopedDb().Model(&Photo{}).Where("id = ?", fp.ID).UpdateColumns(Values{"checked_at": fp.CheckedAt}).Error)
+	})
 
 	if err := m.RefreshPhotos(); err != nil {
 		t.Fatal(err)
@@ -769,6 +891,7 @@ func TestMarker_RefreshPhotos(t *testing.T) {
 }
 
 func TestMarker_SurfaceRatio(t *testing.T) {
+	ValidateFixtures(t)
 	m1 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea1, "ls6sg6b1wowuy1c1", SrcImage, MarkerFace, 100, 65)
 	m2 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea2, "ls6sg6b1wowuy1c2", SrcImage, MarkerFace, 100, 65)
 	m3 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea3, "ls6sg6b1wowuy1c3", SrcImage, MarkerFace, 100, 65)
@@ -784,6 +907,7 @@ func TestMarker_SurfaceRatio(t *testing.T) {
 }
 
 func TestMarker_OverlapArea(t *testing.T) {
+	ValidateFixtures(t)
 	m1 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea1, "ls6sg6b1wowuy1c1", SrcImage, MarkerFace, 100, 65)
 	m2 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea2, "ls6sg6b1wowuy1c2", SrcImage, MarkerFace, 100, 65)
 	m3 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea3, "ls6sg6b1wowuy1c3", SrcImage, MarkerFace, 100, 65)
@@ -798,6 +922,7 @@ func TestMarker_OverlapArea(t *testing.T) {
 }
 
 func TestMarker_OverlapPercent(t *testing.T) {
+	ValidateFixtures(t)
 	m1 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea1, "ls6sg6b1wowuy1c1", SrcImage, MarkerFace, 100, 65)
 	m2 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea2, "ls6sg6b1wowuy1c2", SrcImage, MarkerFace, 100, 65)
 	m3 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea3, "ls6sg6b1wowuy1c3", SrcImage, MarkerFace, 100, 65)
@@ -811,6 +936,7 @@ func TestMarker_OverlapPercent(t *testing.T) {
 }
 
 func TestMarker_String(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Nil", func(t *testing.T) {
 		var m *Marker
 		assert.Equal(t, "Marker<nil>", m.String())
@@ -830,6 +956,7 @@ func TestMarker_String(t *testing.T) {
 }
 
 func TestMarker_SetEmbeddings(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("RecordsTheProducingModel", func(t *testing.T) {
 		// Provenance is what keeps two embedding spaces apart. A vector stored without it
 		// reads as legacy FaceNet and would be admitted into FaceNet clusters whatever
@@ -868,6 +995,7 @@ func TestMarker_SetEmbeddings(t *testing.T) {
 }
 
 func TestMarker_Clusterable(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("ClearsBothBars", func(t *testing.T) {
 		m := &Marker{Size: face.ClusterSizeThreshold, Score: 100}
 		assert.True(t, m.Clusterable())
@@ -899,6 +1027,7 @@ func TestMarker_Clusterable(t *testing.T) {
 // right where the matcher found no face and wrong after a cluster narrowed underneath a marker:
 // a stamped marker is in neither matching pass's set and waits for a forced run.
 func TestMarker_Unmatched(t *testing.T) {
+	ValidateFixtures(t)
 	m := &Marker{
 		FileUID:        "fs6sg6bw45bnlqdw",
 		MarkerType:     MarkerFace,
@@ -934,6 +1063,7 @@ func TestMarker_Unmatched(t *testing.T) {
 // Narrower than "a person set this subject": an XMP name labels its own marker only, so it cannot
 // mint an identity and must not be withheld as though it could.
 func TestMarker_NamesFace(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Manual", func(t *testing.T) {
 		assert.True(t, (&Marker{SubjUID: "js6sg6b1qekk9jx8", SubjSrc: SrcManual}).NamesFace())
 	})

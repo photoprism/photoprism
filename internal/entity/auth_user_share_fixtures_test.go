@@ -7,6 +7,7 @@ import (
 )
 
 func TestUserShareMap_Get(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("AliceAlbum", func(t *testing.T) {
 		r := UserShareFixtures.Get("AliceAlbum")
 		assert.Equal(t, "The quick brown fox jumps over the lazy dog.", r.Comment)
@@ -22,6 +23,7 @@ func TestUserShareMap_Get(t *testing.T) {
 }
 
 func TestUserShareMap_Pointer(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("AliceAlbum", func(t *testing.T) {
 		r := UserShareFixtures.Pointer("AliceAlbum")
 		assert.Equal(t, "The quick brown fox jumps over the lazy dog.", r.Comment)

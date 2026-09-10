@@ -7,6 +7,7 @@ import (
 )
 
 func TestModelValues(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NoInterface", func(t *testing.T) {
 		m := Photo{}
 		values, keys, err := ModelValues(m, "ID", "PhotoUID")

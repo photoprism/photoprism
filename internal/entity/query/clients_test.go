@@ -3,10 +3,12 @@ package query
 import (
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestClients(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Default", func(t *testing.T) {
 		if results, err := Clients(0, 0, "", ""); err != nil {
 			t.Fatal(err)

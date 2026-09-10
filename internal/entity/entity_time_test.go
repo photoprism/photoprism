@@ -11,6 +11,7 @@ import (
 )
 
 func TestUTC(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Zone", func(t *testing.T) {
 		utc := UTC()
 
@@ -43,6 +44,7 @@ func TestUTC(t *testing.T) {
 }
 
 func TestNow(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("UTC", func(t *testing.T) {
 		if Now().Location() != time.UTC {
 			t.Fatal("timestamp zone must be UTC")
@@ -122,6 +124,7 @@ func TestNow(t *testing.T) {
 }
 
 func TestTimeStamp(t *testing.T) {
+	ValidateFixtures(t)
 	result := TimeStamp()
 
 	if result == nil {
@@ -138,6 +141,7 @@ func TestTimeStamp(t *testing.T) {
 }
 
 func TestTimePointer(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NonZero", func(t *testing.T) {
 		now := Now()
 		result := TimePointer(now)
@@ -152,6 +156,7 @@ func TestTimePointer(t *testing.T) {
 }
 
 func TestTime(t *testing.T) {
+	ValidateFixtures(t)
 	result := Time("2022-01-02T13:04:05+01:00")
 
 	if result == nil {
@@ -162,6 +167,7 @@ func TestTime(t *testing.T) {
 }
 
 func TestSeconds(t *testing.T) {
+	ValidateFixtures(t)
 	result := Seconds(23)
 
 	if result != 23*time.Second {
@@ -170,6 +176,7 @@ func TestSeconds(t *testing.T) {
 }
 
 func TestYesterday(t *testing.T) {
+	ValidateFixtures(t)
 	now := time.Now()
 	result := Yesterday()
 

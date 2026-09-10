@@ -25,6 +25,7 @@ func testMysqlDSN(t *testing.T) string {
 }
 
 func TestTestDbDSN(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("SQLite", func(t *testing.T) {
 		assert.Equal(t, ".test.db", TestDbDSN(dsn.DriverSQLite3, ".test.db"))
 	})
@@ -54,6 +55,7 @@ func TestTestDbDSN(t *testing.T) {
 }
 
 func TestTestDbName(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("PackageSuffix", func(t *testing.T) {
 		name := testDbName("acceptance")
 		assert.True(t, strings.HasPrefix(name, "acceptance_entity_"), name)
@@ -70,6 +72,7 @@ func TestTestDbName(t *testing.T) {
 }
 
 func TestCleanTestDbName(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Lowercase", func(t *testing.T) {
 		assert.Equal(t, "acceptance", cleanTestDbName("Acceptance"))
 	})
@@ -82,6 +85,7 @@ func TestCleanTestDbName(t *testing.T) {
 }
 
 func TestCreateTestDb(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		conf, err := mysql.ParseDSN(testMysqlDSN(t))
 		require.NoError(t, err)

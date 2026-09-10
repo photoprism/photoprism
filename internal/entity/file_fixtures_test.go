@@ -13,6 +13,7 @@ import (
 // a file name, so no test can pass against a type combination that never occurs in production.
 // MediaType was added after these fixtures were written, so values are easily stale or missing.
 func TestFileFixtures_TypesMatchFileName(t *testing.T) {
+	ValidateFixtures(t)
 	for name, f := range FileFixtures {
 		if f.FileName == "" {
 			continue
@@ -26,6 +27,7 @@ func TestFileFixtures_TypesMatchFileName(t *testing.T) {
 }
 
 func TestFileMap_Get(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("GetExistingFile", func(t *testing.T) {
 		r := FileFixtures.Get("exampleFileName.jpg")
 		assert.Equal(t, "fs6sg6bw45bnlqdw", r.FileUID)
@@ -40,6 +42,7 @@ func TestFileMap_Get(t *testing.T) {
 }
 
 func TestFileMap_Pointer(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("GetExistingFile", func(t *testing.T) {
 		r := FileFixtures.Pointer("exampleFileName.jpg")
 		assert.Equal(t, "fs6sg6bw45bnlqdw", r.FileUID)

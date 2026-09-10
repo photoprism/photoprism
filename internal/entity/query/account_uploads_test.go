@@ -11,6 +11,7 @@ import (
 )
 
 func TestAccountUploads(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("FindUploads", func(t *testing.T) {
 		results, err := AccountUploads(entity.Service{ID: 1, SyncRaw: false}, 10)
 

@@ -7,6 +7,7 @@ import (
 )
 
 func TestPhoto_HasCaption(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("False", func(t *testing.T) {
 		photo := Photo{PhotoCaption: ""}
 		assert.False(t, photo.HasCaption())
@@ -18,6 +19,7 @@ func TestPhoto_HasCaption(t *testing.T) {
 }
 
 func TestPhoto_NoCaption(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("True", func(t *testing.T) {
 		photo := Photo{PhotoCaption: ""}
 		assert.True(t, photo.NoCaption())
@@ -29,6 +31,7 @@ func TestPhoto_NoCaption(t *testing.T) {
 }
 
 func TestPhoto_GetCaption(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
 		assert.Equal(t, "Europe/Berlin", m.TimeZone)
@@ -80,9 +83,15 @@ func TestPhoto_GetCaption(t *testing.T) {
 }
 
 func TestPhoto_UpdateCaptionLabels(t *testing.T) {
-	FirstOrCreateLabel(NewLabel("Food", 1))
-	FirstOrCreateLabel(NewLabel("Wine", 2))
-	FirstOrCreateLabel(&Label{LabelName: "Bar", LabelSlug: "bar", CustomSlug: "bar", DeletedAt: TimeStamp()})
+	ValidateFixtures(t)
+	fl := FirstOrCreateLabel(NewLabel("Food", 1))
+	wl := FirstOrCreateLabel(NewLabel("Wine", 2))
+	bl := FirstOrCreateLabel(&Label{LabelName: "Bar", LabelSlug: "bar", CustomSlug: "bar", DeletedAt: TimeStamp()})
+	t.Cleanup(func() {
+		assert.NoError(t, UnscopedDb().Delete(fl).Error)
+		assert.NoError(t, UnscopedDb().Delete(wl).Error)
+		assert.NoError(t, UnscopedDb().Delete(bl).Error)
+	})
 
 	t.Run("SuccessCaptionSourceMeta", func(t *testing.T) {
 		details := &Details{Keywords: "snake, otter", KeywordsSrc: SrcMeta}
@@ -91,7 +100,11 @@ func TestPhoto_UpdateCaptionLabels(t *testing.T) {
 		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
-
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&PhotoLabel{}, "photo_id = ?", photo.ID).Error)
+			assert.NoError(t, UnscopedDb().Delete(&Details{}, "photo_id = ?", photo.ID).Error)
+			assert.NoError(t, UnscopedDb().Delete(photo).Error)
+		})
 		p := FindPhoto(photo)
 
 		assert.Equal(t, 0, len(p.Labels))
@@ -115,6 +128,11 @@ func TestPhoto_UpdateCaptionLabels(t *testing.T) {
 		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&PhotoLabel{}, "photo_id = ?", photo.ID).Error)
+			assert.NoError(t, UnscopedDb().Delete(&Details{}, "photo_id = ?", photo.ID).Error)
+			assert.NoError(t, UnscopedDb().Delete(photo).Error)
+		})
 
 		p := FindPhoto(photo)
 
@@ -129,8 +147,9 @@ func TestPhoto_UpdateCaptionLabels(t *testing.T) {
 		assert.Equal(t, "I was in a nice Bar!", p.PhotoTitle)
 		assert.Equal(t, "globe, wine, food", p.PhotoCaption)
 		assert.Equal(t, "snake, otter", p.Details.Keywords)
-		assert.Equal(t, 2, len(p.Labels))
-		assert.Equal(t, 20, p.Labels[0].Uncertainty)
+		if assert.Equal(t, 2, len(p.Labels)) {
+			assert.Equal(t, 20, p.Labels[0].Uncertainty)
+		}
 	})
 	t.Run("CaptionSourceEstimate", func(t *testing.T) {
 		details := &Details{Keywords: "snake, otter", KeywordsSrc: SrcMeta}
@@ -139,6 +158,11 @@ func TestPhoto_UpdateCaptionLabels(t *testing.T) {
 		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&PhotoLabel{}, "photo_id = ?", photo.ID).Error)
+			assert.NoError(t, UnscopedDb().Delete(&Details{}, "photo_id = ?", photo.ID).Error)
+			assert.NoError(t, UnscopedDb().Delete(photo).Error)
+		})
 
 		p := FindPhoto(photo)
 
@@ -162,6 +186,11 @@ func TestPhoto_UpdateCaptionLabels(t *testing.T) {
 		if err := photo.Save(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&PhotoLabel{}, "photo_id = ?", photo.ID).Error)
+			assert.NoError(t, UnscopedDb().Delete(&Details{}, "photo_id = ?", photo.ID).Error)
+			assert.NoError(t, UnscopedDb().Delete(photo).Error)
+		})
 
 		p := FindPhoto(photo)
 
@@ -181,6 +210,7 @@ func TestPhoto_UpdateCaptionLabels(t *testing.T) {
 }
 
 func TestPhoto_SetCaption(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("SetEmptyCaption", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
 		assert.Equal(t, "photo caption non-photographic", m.PhotoCaption)

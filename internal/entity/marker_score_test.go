@@ -11,6 +11,7 @@ import (
 )
 
 func TestClusterScoreCond(t *testing.T) {
+	ValidateFixtures(t)
 	restore := face.ClusterScoreThreshold
 	t.Cleanup(func() { face.ClusterScoreThreshold = restore })
 
@@ -65,6 +66,7 @@ func TestClusterScoreCond(t *testing.T) {
 }
 
 func TestEmbeddingModelCond(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NoModel", func(t *testing.T) {
 		cond, args := EmbeddingModelCond("")
 		assert.Empty(t, cond, "an unset model restricts nothing")
@@ -85,6 +87,7 @@ func TestEmbeddingModelCond(t *testing.T) {
 }
 
 func TestFaceMemberCond(t *testing.T) {
+	ValidateFixtures(t)
 	cond, args := FaceMemberCond()
 
 	assert.Contains(t, cond, "marker_invalid = 0")

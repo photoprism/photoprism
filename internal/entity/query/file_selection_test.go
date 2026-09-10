@@ -25,6 +25,7 @@ func visitorSessionWithShares(tokens ...string) *entity.Session {
 }
 
 func TestAlbumDownloadSelection(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("ExcludesArchivedAndHidden", func(t *testing.T) {
 		sel := AlbumDownloadSelection(true, true, false, true)
 		assert.False(t, sel.Archived)
@@ -41,6 +42,7 @@ func TestAlbumDownloadSelection(t *testing.T) {
 }
 
 func TestSelectedFilesForSession(t *testing.T) {
+	entity.ValidateFixtures(t)
 	// Include private pictures in the base selection so the session scope is what filters them.
 	o := FileSelection{Private: true, MaxSize: 1024 * MiB}
 	private := form.Selection{Photos: []string{"ps6sg6be2lvl0y13"}} // "Photo06", private
@@ -85,6 +87,7 @@ func TestSelectedFilesForSession(t *testing.T) {
 }
 
 func TestFileSelection(t *testing.T) {
+	entity.ValidateFixtures(t)
 	none := form.Selection{Photos: []string{}}
 
 	one := form.Selection{Photos: []string{"ps6sg6be2lvl0yh8"}}

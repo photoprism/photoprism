@@ -3,11 +3,13 @@ package query
 import (
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/stretchr/testify/assert"
 )
 
 // TODO find duplicates
 func TestDuplicates(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		if files, err := Duplicates(10, 0, ""); err != nil {
 			t.Fatal(err)

@@ -3,10 +3,12 @@ package query
 import (
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestCountFileHashes(t *testing.T) {
+	entity.ValidateFixtures(t)
 	count := CountFileHashes()
 
 	t.Logf("FILE HASH COUNT: %d", count)
@@ -15,6 +17,7 @@ func TestCountFileHashes(t *testing.T) {
 }
 
 func TestFileHashMap(t *testing.T) {
+	entity.ValidateFixtures(t)
 	result, err := FileHashMap()
 
 	if err != nil {
@@ -29,6 +32,7 @@ func TestFileHashMap(t *testing.T) {
 }
 
 func TestThumbHashMap(t *testing.T) {
+	entity.ValidateFixtures(t)
 	result, err := ThumbHashMap()
 
 	if err != nil {

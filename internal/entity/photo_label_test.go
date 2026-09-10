@@ -12,6 +12,7 @@ import (
 )
 
 func TestNewPhotoLabel(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NameChristmasNum2018", func(t *testing.T) {
 		photoLabel := NewPhotoLabel(1, 3, 80, "source")
 		assert.Equal(t, uint(0x1), photoLabel.PhotoID)
@@ -22,6 +23,7 @@ func TestNewPhotoLabel(t *testing.T) {
 }
 
 func TestPhotoLabel_TableName(t *testing.T) {
+	ValidateFixtures(t)
 	photoLabel := &PhotoLabel{}
 	tableName := photoLabel.TableName()
 
@@ -29,6 +31,7 @@ func TestPhotoLabel_TableName(t *testing.T) {
 }
 
 func TestFirstOrCreatePhotoLabel(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		model := LabelFixtures.PhotoLabel(1000000, "flower", 38, "image")
 		result := FirstOrCreatePhotoLabel(&model)
@@ -68,6 +71,7 @@ func TestFirstOrCreatePhotoLabel(t *testing.T) {
 }
 
 func TestPhotoLabel_ClassifyLabel(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		pl := LabelFixtures.PhotoLabel(1000000, "flower", 38, "image")
 		r := pl.ClassifyLabel()
@@ -83,12 +87,14 @@ func TestPhotoLabel_ClassifyLabel(t *testing.T) {
 }
 
 func TestPhotoLabel_Save(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		photoLabel := NewPhotoLabel(13, 1000, 99, "image")
 		err := photoLabel.Save()
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(photoLabel).Error) })
 	})
 	t.Run("PhotoNotNilAndLabelNotNil", func(t *testing.T) {
 		label := &Label{LabelName: "LabelSaveUnique", LabelSlug: "unique-slug"}
@@ -99,10 +105,15 @@ func TestPhotoLabel_Save(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(photoLabel).Error)
+			assert.NoError(t, UnscopedDb().Delete(&Label{}, "label_slug = ?", "unique-slug").Error)
+		})
 	})
 }
 
 func TestPhotoLabel_Update(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("FlushesCache", func(t *testing.T) {
 		FlushPhotoLabelCache()
 		relation := createTestPhotoLabel(t)
@@ -127,6 +138,7 @@ func TestPhotoLabel_Update(t *testing.T) {
 }
 
 func TestPhotoLabel_Updates(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("FlushesCache", func(t *testing.T) {
 		FlushPhotoLabelCache()
 		relation := createTestPhotoLabel(t)
@@ -151,6 +163,7 @@ func TestPhotoLabel_Updates(t *testing.T) {
 }
 
 func TestPhotoLabel_Delete(t *testing.T) {
+	ValidateFixtures(t)
 	FlushPhotoLabelCache()
 	relation := createTestPhotoLabel(t)
 	photoLabelCache.SetDefault(relation.CacheKey(), *relation)
@@ -162,6 +175,7 @@ func TestPhotoLabel_Delete(t *testing.T) {
 }
 
 func TestPhotoLabel_HasID(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Nil", func(t *testing.T) {
 		var label *PhotoLabel
 		assert.False(t, label.HasID())
@@ -177,6 +191,7 @@ func TestPhotoLabel_HasID(t *testing.T) {
 }
 
 func TestPhotoLabel_CacheKey(t *testing.T) {
+	ValidateFixtures(t)
 	label := &PhotoLabel{PhotoID: 1, LabelID: 2}
 	assert.Equal(t, "1-2", label.CacheKey())
 }
@@ -192,8 +207,8 @@ func createTestPhotoLabel(t *testing.T) *PhotoLabel {
 	require.NoError(t, relation.Create())
 
 	t.Cleanup(func() {
-		_ = Db().Where("photo_id = ? AND label_id = ?", relation.PhotoID, relation.LabelID).Delete(&PhotoLabel{}).Error
-		_ = Db().Delete(label).Error
+		_ = UnscopedDb().Where("photo_id = ? AND label_id = ?", relation.PhotoID, relation.LabelID).Delete(&PhotoLabel{}).Error
+		_ = UnscopedDb().Delete(label).Error
 	})
 
 	return relation

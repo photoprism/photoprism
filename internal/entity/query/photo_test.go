@@ -14,6 +14,7 @@ import (
 
 // TestPhotoByID validates photo query behavior.
 func TestPhotoByID(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("PhotoFound", func(t *testing.T) {
 		result, err := PhotoByID(1000000)
 		if err != nil {
@@ -30,6 +31,7 @@ func TestPhotoByID(t *testing.T) {
 
 // TestPhotoByUID validates photo query behavior.
 func TestPhotoByUID(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("PhotoFound", func(t *testing.T) {
 		result, err := PhotoByUID("ps6sg6be2lvl0y12")
 		if err != nil {
@@ -46,6 +48,7 @@ func TestPhotoByUID(t *testing.T) {
 
 // TestPreloadPhotoByUID validates photo query behavior.
 func TestPreloadPhotoByUID(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("PhotoFound", func(t *testing.T) {
 		result, err := PhotoPreloadByUID("ps6sg6be2lvl0y12")
 		if err != nil {
@@ -62,6 +65,7 @@ func TestPreloadPhotoByUID(t *testing.T) {
 
 // TestPhotoPreloadByUIDs validates photo query behavior.
 func TestPhotoPreloadByUIDs(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Multiple", func(t *testing.T) {
 		uids := []string{"ps6sg6be2lvl0y12", "ps6sg6be2lvl0y25", "ps6sg6be2lvl0y12"}
 		photos, err := PhotoPreloadByUIDs(uids)
@@ -105,6 +109,7 @@ func TestPhotoPreloadByUIDs(t *testing.T) {
 
 // TestMissingPhotos validates photo query behavior.
 func TestMissingPhotos(t *testing.T) {
+	entity.ValidateFixtures(t)
 	result, err := MissingPhotos(15, 0)
 
 	if err != nil {
@@ -116,6 +121,7 @@ func TestMissingPhotos(t *testing.T) {
 
 // TestArchivedPhotos validates photo query behavior.
 func TestArchivedPhotos(t *testing.T) {
+	entity.ValidateFixtures(t)
 	results, err := ArchivedPhotos(15, 0)
 
 	if err != nil {
@@ -133,6 +139,7 @@ func TestArchivedPhotos(t *testing.T) {
 
 // TestPhotosMetadataUpdate validates photo query behavior.
 func TestPhotosMetadataUpdate(t *testing.T) {
+	entity.ValidateFixtures(t)
 	interval := entity.MetadataUpdateInterval
 	result, err := PhotosMetadataUpdate(10, 0, time.Second, interval)
 
@@ -145,6 +152,7 @@ func TestPhotosMetadataUpdate(t *testing.T) {
 
 // TestOrphanPhotos validates photo query behavior.
 func TestOrphanPhotos(t *testing.T) {
+	entity.ValidateFixtures(t)
 	result, err := OrphanPhotos()
 
 	if err != nil {
@@ -156,11 +164,18 @@ func TestOrphanPhotos(t *testing.T) {
 
 // TestFixPrimaries validates photo query behavior.
 func TestFixPrimaries(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		err := FixPrimaries()
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			ff := entity.FileFixtures.Get("reunion.jpg")
+			require.NoError(t, Db().Model(&entity.File{}).Where("id = ?", ff.ID).UpdateColumns(entity.Values{"photo_taken_at": ff.PhotoTakenAt, "time_index": ff.TimeIndex, "media_id": ff.MediaID, "file_primary": ff.FilePrimary}).Error)
+			ff = entity.FileFixtures.Get("missing.jpg")
+			require.NoError(t, Db().Model(&entity.File{}).Where("id = ?", ff.ID).UpdateColumns(entity.Values{"photo_taken_at": ff.PhotoTakenAt, "time_index": ff.TimeIndex, "media_id": ff.MediaID, "file_primary": ff.FilePrimary}).Error)
+		})
 	})
 	t.Run("PromotesPresentFileWhenPrimaryDeleted", func(t *testing.T) {
 		taken := time.Date(2017, 5, 5, 12, 0, 0, 0, time.UTC)
@@ -177,9 +192,10 @@ func TestFixPrimaries(t *testing.T) {
 		if err := Db().Create(&p).Error; err != nil {
 			t.Fatal(err)
 		}
-		defer func() {
+		t.Cleanup(func() {
+			require.NoError(t, UnscopedDb().Delete(&entity.Details{}, "photo_id = ?", p.ID).Error)
 			require.NoError(t, UnscopedDb().Delete(&p).Error)
-		}()
+		})
 		// Primary file that has since been soft-deleted but still carries the primary flag.
 		deletedPrimary := entity.File{
 			PhotoID:     p.ID,
@@ -218,6 +234,12 @@ func TestFixPrimaries(t *testing.T) {
 		if err := FixPrimaries(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			ff := entity.FileFixtures.Get("reunion.jpg")
+			require.NoError(t, Db().Model(&entity.File{}).Where("id = ?", ff.ID).UpdateColumns(entity.Values{"photo_taken_at": ff.PhotoTakenAt, "time_index": ff.TimeIndex, "media_id": ff.MediaID, "file_primary": ff.FilePrimary}).Error)
+			ff = entity.FileFixtures.Get("missing.jpg")
+			require.NoError(t, Db().Model(&entity.File{}).Where("id = ?", ff.ID).UpdateColumns(entity.Values{"photo_taken_at": ff.PhotoTakenAt, "time_index": ff.TimeIndex, "media_id": ff.MediaID, "file_primary": ff.FilePrimary}).Error)
+		})
 
 		var gotFile entity.File
 		if err := Db().Where("file_uid = ?", present.FileUID).First(&gotFile).Error; err != nil {
@@ -235,6 +257,7 @@ func TestFixPrimaries(t *testing.T) {
 
 // TestFlagHiddenPhotos validates photo query behavior.
 func TestFlagHiddenPhotos(t *testing.T) {
+	entity.ValidateFixtures(t)
 	defer func() {
 		for _, photo := range entity.PhotoFixtures {
 			require.NoError(t, UnscopedDb().Model(&entity.Photo{}).Where("id = ?", photo.ID).UpdateColumn("photo_quality", photo.PhotoQuality).Error)
@@ -353,6 +376,7 @@ func reportedPaths(m map[string]time.Time) map[string]bool {
 }
 
 func TestPhotoPathMaxDates(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		p, err := photoPathMaxDates()
 		require.NoError(t, err)

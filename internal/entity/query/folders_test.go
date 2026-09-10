@@ -11,6 +11,7 @@ import (
 )
 
 func TestFolderCoverByUID(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Num1990Num04", func(t *testing.T) {
 		if result, err := FolderCoverByUID("dqo63pn2f87f02xj"); err != nil {
 			t.Fatal(err)
@@ -38,9 +39,13 @@ func TestFolderCoverByUID(t *testing.T) {
 }
 
 func TestFoldersByPath(t *testing.T) {
+	entity.ValidateFixtures(t)
+	var albumMaxID uint
+	require.NoError(t, Db().Model(&entity.Album{}).Select("max(ID)").Row().Scan(&albumMaxID))
+	t.Log(albumMaxID)
 	before, err := FoldersByRoot(entity.RootOriginals, true)
 	require.NoError(t, err)
-	defer func() {
+	t.Cleanup(func() {
 		after, err := FoldersByRoot(entity.RootOriginals, true)
 		require.NoError(t, err)
 		for _, afterFolder := range after {
@@ -55,7 +60,8 @@ func TestFoldersByPath(t *testing.T) {
 				require.NoError(t, entity.UnscopedDb().Delete(&afterFolder).Error)
 			}
 		}
-	}()
+		require.NoError(t, UnscopedDb().Delete(&entity.Album{}, "id > ?", albumMaxID).Error)
+	})
 	t.Run("Root", func(t *testing.T) {
 		folders, err := FoldersByPath(entity.RootOriginals, "testdata", "", false)
 
@@ -81,6 +87,7 @@ func TestFoldersByPath(t *testing.T) {
 }
 
 func TestAlbumFolders(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Root", func(t *testing.T) {
 		folders, err := AlbumFolders(1)
 
@@ -101,6 +108,7 @@ func TestAlbumFolders(t *testing.T) {
 }
 
 func TestUpdateFolderDates(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		actual := entity.FindFolder("/", "1990/04")
 		assert.Equal(t, 0, actual.FolderDay)
@@ -259,6 +267,7 @@ func TestUpdateFolderDates(t *testing.T) {
 }
 
 func TestFoldersByRoot(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		actual, err := FoldersByRoot(entity.RootOriginals, true)
 		require.NoError(t, err)

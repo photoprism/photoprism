@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity/sortby"
 	"github.com/photoprism/photoprism/internal/form"
@@ -13,6 +14,7 @@ import (
 )
 
 func TestNewFolder(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Num2020Num05", func(t *testing.T) {
 		folder := NewFolder(RootOriginals, "2020/05", time.Now().UTC())
 		assert.Equal(t, RootOriginals, folder.Root)
@@ -94,6 +96,7 @@ func TestNewFolder(t *testing.T) {
 }
 
 func TestFirstOrCreateFolder(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("ExistingRootFolder", func(t *testing.T) {
 		folder := NewFolder(RootOriginals, RootPath, time.Now().UTC())
 		result := FirstOrCreateFolder(&folder)
@@ -101,6 +104,7 @@ func TestFirstOrCreateFolder(t *testing.T) {
 		if result == nil {
 			t.Fatal("result must not be nil")
 		}
+		t.Cleanup(func() { require.NoError(t, UnscopedDb().Delete(&folder).Error) })
 
 		if folder.FolderTitle != "Originals" {
 			t.Errorf("FolderTitle should be 'Originals'")
@@ -156,6 +160,7 @@ func TestFirstOrCreateFolder(t *testing.T) {
 }
 
 func TestFolder_SetValuesFromPath(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Root", func(t *testing.T) {
 		folder := NewFolder("new", "", time.Now().UTC())
 		folder.SetValuesFromPath()
@@ -164,6 +169,7 @@ func TestFolder_SetValuesFromPath(t *testing.T) {
 }
 
 func TestFolder_Slug(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Root", func(t *testing.T) {
 		folder := Folder{FolderTitle: "Beautiful beach", Root: "sidecar", Path: "ugly/beach"}
 		assert.Equal(t, "ugly-beach", folder.Slug())
@@ -171,6 +177,7 @@ func TestFolder_Slug(t *testing.T) {
 }
 
 func TestFolder_Title(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Root", func(t *testing.T) {
 		folder := Folder{FolderTitle: "Beautiful beach"}
 		assert.Equal(t, "Beautiful beach", folder.Title())
@@ -178,6 +185,7 @@ func TestFolder_Title(t *testing.T) {
 }
 
 func TestFolder_RootPath(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Rainbow", func(t *testing.T) {
 		folder := Folder{FolderTitle: "Beautiful beach", Root: "/", Path: "rainbow"}
 		assert.Equal(t, "/rainbow", folder.RootPath())
@@ -185,6 +193,7 @@ func TestFolder_RootPath(t *testing.T) {
 }
 
 func TestFindFolder(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("NotFound", func(t *testing.T) {
 		assert.Nil(t, FindFolder("vvfgt", "jgfuyf"))
 	})
@@ -242,6 +251,7 @@ func TestFindFolder(t *testing.T) {
 }
 
 func TestFolder_Updates(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		folder := NewFolder("oldRoot", "oldPath", time.Now().UTC())
 
@@ -260,6 +270,7 @@ func TestFolder_Updates(t *testing.T) {
 }
 
 func TestFolder_SetForm(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		formValues := Folder{FolderTitle: "Beautiful beach"}
 
@@ -288,6 +299,7 @@ func TestFolder_SetForm(t *testing.T) {
 }
 
 func TestFolder_Create(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		folder := Folder{FolderTitle: "Holiday 2020", Root: RootOriginals, Path: "2020/Greece"}
 		err := folder.Create()
@@ -295,6 +307,10 @@ func TestFolder_Create(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			require.NoError(t, UnscopedDb().Delete(&Album{}, "album_slug = ? and album_type = ?", "2020-greece", AlbumFolder).Error)
+			require.NoError(t, UnscopedDb().Delete(&folder).Error)
+		})
 
 		result := FindFolder(RootOriginals, "2020/Greece")
 

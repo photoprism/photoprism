@@ -14,6 +14,7 @@ import (
 
 // TestSubjectReports covers the people report, whose point is the two count columns.
 func TestSubjectReports(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		people, err := SubjectReports("", 100, 0, true)
 		require.NoError(t, err)
@@ -85,6 +86,7 @@ func TestSubjectReports(t *testing.T) {
 
 // TestFaceReports covers the cluster report.
 func TestFaceReports(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		faces, err := FaceReports("", 100, 0)
 		require.NoError(t, err)
@@ -127,6 +129,7 @@ func TestFaceReports(t *testing.T) {
 // means nothing, and a cluster of good crops with two unsampled members would read in the eighties
 // for arithmetic reasons alone.
 func TestFaceReportsEmbedDetail(t *testing.T) {
+	entity.ValidateFixtures(t)
 	model := face.EmbeddingModelName()
 
 	newCluster := func(t *testing.T, details ...int) string {
@@ -203,6 +206,7 @@ func TestFaceReportsEmbedDetail(t *testing.T) {
 
 // TestMarkerReports covers the marker report and each filter it offers.
 func TestMarkerReports(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		markers, err := MarkerReports(MarkerReportFilter{Count: 10})
 		require.NoError(t, err)
@@ -293,6 +297,7 @@ func TestMarkerReports(t *testing.T) {
 // TestEmbeddingDims covers the width a marker report shows, whose two zero-ish answers mean
 // different things: a marker that was never embedded and one whose stored vector is broken.
 func TestEmbeddingDims(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Absent", func(t *testing.T) {
 		assert.Equal(t, 0, embeddingDims(nil))
 		assert.Equal(t, 0, embeddingDims([]byte{}))
@@ -312,6 +317,7 @@ func TestEmbeddingDims(t *testing.T) {
 
 // TestLandmarkCount covers the landmark column, which follows the same conventions.
 func TestLandmarkCount(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Absent", func(t *testing.T) {
 		assert.Equal(t, 0, landmarkCount(nil))
 	})
@@ -327,6 +333,7 @@ func TestLandmarkCount(t *testing.T) {
 // TestMarkerReports_Vectors covers that the report measures the stored vectors rather than
 // returning them, since the vectors are most of the row and none of what a diagnosis reads.
 func TestMarkerReports_Vectors(t *testing.T) {
+	entity.ValidateFixtures(t)
 	markers, err := MarkerReports(MarkerReportFilter{Count: 100})
 	require.NoError(t, err)
 	require.NotEmpty(t, markers)
@@ -348,6 +355,7 @@ func TestMarkerReports_Vectors(t *testing.T) {
 // TestPersonFilter covers how a report argument is read, which decides whether "js6sg6b..." selects
 // one person or is searched for as a name.
 func TestPersonFilter(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Empty", func(t *testing.T) {
 		uid, like := PersonFilter("")
 		assert.Empty(t, uid)
@@ -400,6 +408,7 @@ func TestPersonFilter(t *testing.T) {
 // TestFaceReports_Person covers narrowing the cluster report, so one person can be inspected
 // without piping the output through grep.
 func TestFaceReports_Person(t *testing.T) {
+	entity.ValidateFixtures(t)
 	name := entity.SubjectFixtures.Get("actress-1").SubjName
 	subjUID := entity.SubjectFixtures.Get("actress-1").SubjUID
 
@@ -430,6 +439,7 @@ func TestFaceReports_Person(t *testing.T) {
 
 // TestSubjectReports_Person covers narrowing the people report.
 func TestSubjectReports_Person(t *testing.T) {
+	entity.ValidateFixtures(t)
 	known := entity.SubjectFixtures.Get("actress-1")
 
 	t.Run("ByName", func(t *testing.T) {
@@ -458,6 +468,7 @@ func TestSubjectReports_Person(t *testing.T) {
 
 // TestMarkerReports_Person covers narrowing the marker report by person.
 func TestMarkerReports_Person(t *testing.T) {
+	entity.ValidateFixtures(t)
 	known := entity.SubjectFixtures.Get("actress-1")
 
 	t.Run("ByName", func(t *testing.T) {
@@ -482,6 +493,7 @@ func TestMarkerReports_Person(t *testing.T) {
 // matches correctly on MariaDB matched nothing there - the same command reporting that a person who
 // exists does not, on the default driver. Only running the query catches that.
 func TestSubjectReports_NameWithWildcard(t *testing.T) {
+	entity.ValidateFixtures(t)
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
 	}
@@ -523,6 +535,7 @@ func TestSubjectReports_NameWithWildcard(t *testing.T) {
 }
 
 func TestFaceEmbeddingDims(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("SingleVector", func(t *testing.T) {
 		// A face stores one vector where a marker stores a slice of them, which is why this exists
 		// beside embeddingDims: reading a face with that one reports a width of 1.
@@ -546,11 +559,13 @@ func TestFaceEmbeddingDims(t *testing.T) {
 // are read straight off the row rather than derived - so nothing else would notice if the select
 // stopped returning them and every report simply showed them empty.
 func TestSubjectReports_BirthdayAndPrivate(t *testing.T) {
+	entity.ValidateFixtures(t)
 	born := time.Date(1981, 1, 22, 0, 0, 0, 0, time.UTC)
 
 	subj := entity.NewSubject("Report Birthday Person", entity.SubjPerson, entity.SrcManual)
 	require.NotNil(t, subj)
 	require.NoError(t, subj.Create())
+	t.Cleanup(func() { require.NoError(t, UnscopedDb().Delete(subj).Error) })
 
 	require.NoError(t, subj.Updates(entity.Values{"subj_birthday": born, "subj_private": true}))
 

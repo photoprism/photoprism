@@ -10,6 +10,7 @@ import (
 )
 
 func TestNewKeyword(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Cat", func(t *testing.T) {
 		keyword := NewKeyword("cat")
 		assert.Equal(t, "cat", keyword.Keyword)
@@ -23,13 +24,18 @@ func TestNewKeyword(t *testing.T) {
 }
 
 func TestKeyword_TableName(t *testing.T) {
+	ValidateFixtures(t)
 	keyword := &Keyword{}
 	assert.Equal(t, "keywords", keyword.TableName())
 }
 
 func TestFirstOrCreateKeyword(t *testing.T) {
+	ValidateFixtures(t)
 	keyword := NewKeyword("food")
 	result := FirstOrCreateKeyword(keyword)
+	t.Cleanup(func() {
+		assert.NoError(t, UnscopedDb().Delete(&keyword).Error)
+	})
 
 	if result == nil {
 		t.Fatal("result must not be nil")
@@ -41,10 +47,15 @@ func TestFirstOrCreateKeyword(t *testing.T) {
 }
 
 func TestKeyword_Updates(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		keyword := NewKeyword("KeywordBeforeUpdate")
 
 		assert.NoError(t, keyword.Save())
+		kid := keyword.ID
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&Keyword{ID: kid}).Error)
+		})
 		assert.Equal(t, "keywordbeforeupdate", keyword.Keyword)
 
 		err := keyword.Updates(Keyword{Keyword: "KeywordAfterUpdate", ID: 999})
@@ -73,10 +84,14 @@ func TestKeyword_Updates(t *testing.T) {
 }
 
 func TestKeyword_Update(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		keyword := NewKeyword("KeywordBeforeUpdate2")
 
 		require.NoError(t, keyword.Save())
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&keyword).Error)
+		})
 		assert.Equal(t, "keywordbeforeupdate2", keyword.Keyword)
 
 		err := keyword.Update("Keyword", "new-name")
@@ -101,6 +116,9 @@ func TestKeyword_Update(t *testing.T) {
 		FlushKeywordCache()
 		keyword := NewKeyword(fmt.Sprintf("cache-update-%d", time.Now().UnixNano()))
 		require.NoError(t, keyword.Save())
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&keyword).Error)
+		})
 
 		keywordCache.SetDefault(keyword.Keyword, keyword)
 
@@ -112,6 +130,7 @@ func TestKeyword_Update(t *testing.T) {
 }
 
 func TestKeyword_Save(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		keyword := NewKeyword("KeywordName")
 
@@ -120,14 +139,21 @@ func TestKeyword_Save(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&keyword).Error)
+		})
 	})
 }
 
 func TestFlushCachedKeyword(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("DeletesCachedEntry", func(t *testing.T) {
 		FlushKeywordCache()
 		keyword := NewKeyword(fmt.Sprintf("flush-%d", time.Now().UnixNano()))
 		require.NoError(t, keyword.Save())
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&keyword).Error)
+		})
 
 		keywordCache.SetDefault(keyword.Keyword, keyword)
 
@@ -142,9 +168,13 @@ func TestFlushCachedKeyword(t *testing.T) {
 }
 
 func TestKeyword_Create(t *testing.T) {
+	ValidateFixtures(t)
 	FlushKeywordCache()
 	keyword := NewKeyword(fmt.Sprintf("keyword-create-%d", time.Now().UnixNano()))
 	require.NoError(t, keyword.Create())
+	t.Cleanup(func() {
+		assert.NoError(t, UnscopedDb().Delete(&keyword).Error)
+	})
 	assert.True(t, keyword.HasID())
 	var fetched Keyword
 	require.NoError(t, Db().First(&fetched, keyword.ID).Error)
@@ -152,6 +182,7 @@ func TestKeyword_Create(t *testing.T) {
 }
 
 func TestKeyword_HasID(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Nil", func(t *testing.T) {
 		var keyword *Keyword
 		assert.False(t, keyword.HasID())
@@ -163,14 +194,21 @@ func TestKeyword_HasID(t *testing.T) {
 	t.Run("Saved", func(t *testing.T) {
 		keyword := NewKeyword(fmt.Sprintf("keyword-hasid-%d", time.Now().UnixNano()))
 		require.NoError(t, keyword.Save())
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&keyword).Error)
+		})
 		assert.True(t, keyword.HasID())
 	})
 }
 
 func TestFirstOrCreateKeyword_Cached(t *testing.T) {
+	ValidateFixtures(t)
 	name := fmt.Sprintf("keyword-firstorcreate-%d", time.Now().UnixNano())
 	keyword := NewKeyword(name)
 	result := FirstOrCreateKeyword(keyword)
+	t.Cleanup(func() {
+		assert.NoError(t, UnscopedDb().Delete(&keyword).Error)
+	})
 	require.NotNil(t, result)
 	assert.Equal(t, keyword.Keyword, result.Keyword)
 

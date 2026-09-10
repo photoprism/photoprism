@@ -7,6 +7,7 @@ import (
 )
 
 func TestPriorities_Report(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Len", func(t *testing.T) {
 		rows, cols := SrcPriority.Report()
 		assert.Len(t, cols, 3)

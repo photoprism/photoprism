@@ -7,6 +7,7 @@ import (
 )
 
 func TestSubjectMap_Get(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("GetExistingSubject", func(t *testing.T) {
 		r := SubjectFixtures.Get("joe-biden")
 		assert.Equal(t, "Joe Biden", r.SubjName)
@@ -20,6 +21,7 @@ func TestSubjectMap_Get(t *testing.T) {
 }
 
 func TestSubjectMap_Pointer(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("GetExistingSubject", func(t *testing.T) {
 		r := SubjectFixtures.Pointer("joe-biden")
 		assert.Equal(t, "Joe Biden", r.SubjName)

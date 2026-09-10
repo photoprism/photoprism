@@ -9,6 +9,7 @@ import (
 )
 
 func TestFindLensBySlug(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("ExistingLens", func(t *testing.T) {
 		lens := FindLensBySlug(entity.LensFixtures.Get("4.15mm-f/2.2").LensSlug)
 		assert.NotNil(t, lens)
@@ -24,6 +25,7 @@ func TestFindLensBySlug(t *testing.T) {
 }
 
 func TestFindLensByID(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("ExistingLens", func(t *testing.T) {
 		lens := FindLensByID(entity.LensFixtures.Get("4.15mm-f/2.2").ID)
 		assert.NotNil(t, lens)

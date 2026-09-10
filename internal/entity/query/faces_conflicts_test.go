@@ -76,6 +76,7 @@ func findConflict(conflicts []FaceConflict, a, b string) *FaceConflict {
 }
 
 func TestFaceConflicts(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		alice := conflictTestSubject(t, "Conflict Alice")
 		bob := conflictTestSubject(t, "Conflict Bob")
@@ -181,6 +182,7 @@ func TestFaceConflicts(t *testing.T) {
 }
 
 func TestFaceConflict_Ambiguous(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("BelowAmbiguityDist", func(t *testing.T) {
 		assert.True(t, FaceConflict{Dist: face.AmbiguityDist() / 2}.Ambiguous())
 	})
@@ -198,6 +200,7 @@ func TestFaceConflict_Ambiguous(t *testing.T) {
 }
 
 func TestFaceConflict_Narrows(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("AboveTheEnforcedFloor", func(t *testing.T) {
 		assert.True(t, FaceConflict{Dist: face.CollisionDist + face.Epsilon + 0.001}.Narrows())
 	})
@@ -221,6 +224,7 @@ func TestFaceConflict_Narrows(t *testing.T) {
 }
 
 func TestConflictScope(t *testing.T) {
+	entity.ValidateFixtures(t)
 	faces := FaceMap{
 		"A": entity.Face{ID: "A", SubjUID: "js6sg6b1qekk9jx8"},
 		"B": entity.Face{ID: "B", SubjUID: "js6sg6b1h1njaaab"},
@@ -252,6 +256,7 @@ func TestConflictScope(t *testing.T) {
 }
 
 func TestSortFaceConflicts(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("ClosestFirst", func(t *testing.T) {
 		conflicts := []FaceConflict{{ID: "B", Dist: 0.9}, {ID: "A", Dist: 0.1}}
 		sortFaceConflicts(conflicts)
@@ -273,6 +278,7 @@ func TestSortFaceConflicts(t *testing.T) {
 }
 
 func TestPageFaceConflicts(t *testing.T) {
+	entity.ValidateFixtures(t)
 	conflicts := []FaceConflict{{ID: "A"}, {ID: "B"}, {ID: "C"}}
 	t.Run("FirstPage", func(t *testing.T) {
 		assert.Len(t, pageFaceConflicts(conflicts, 2, 0), 2)
@@ -294,6 +300,7 @@ func TestPageFaceConflicts(t *testing.T) {
 }
 
 func TestFaceConflictReportNotes(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("CountsAHiddenCluster", func(t *testing.T) {
 		s := conflictTestSubject(t, "Notes Hidden Person")
 		f := conflictTestFace(t, s.SubjUID, 1, 0.05)
@@ -368,6 +375,7 @@ func TestFaceConflictReportNotes(t *testing.T) {
 }
 
 func TestFaceConflictNames(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		s := conflictTestSubject(t, "Name Lookup Person")
 		conflicts := []FaceConflict{{SubjUID: s.SubjUID, OtherSubjUID: s.SubjUID}}

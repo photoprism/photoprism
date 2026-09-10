@@ -11,6 +11,7 @@ import (
 )
 
 func TestPhoto_Yaml(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
 		m.PreloadFiles()
@@ -25,6 +26,7 @@ func TestPhoto_Yaml(t *testing.T) {
 }
 
 func TestPhoto_SaveAsYaml(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
 		m.PreloadFiles()
@@ -64,6 +66,7 @@ func TestPhoto_SaveAsYaml(t *testing.T) {
 }
 
 func TestPhoto_YamlFileName(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
 		m.PreloadFiles()
@@ -79,6 +82,7 @@ func TestPhoto_YamlFileName(t *testing.T) {
 }
 
 func TestPhoto_SaveSidecarYaml(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
 		m.PreloadFiles()
@@ -169,6 +173,7 @@ func TestPhoto_SaveSidecarYaml(t *testing.T) {
 }
 
 func TestPhoto_LoadFromYaml(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("EmptyFilename", func(t *testing.T) {
 		m := Photo{}
 

@@ -7,6 +7,7 @@ import (
 )
 
 func TestPhotos_Photos(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Ok", func(t *testing.T) {
 
 		photo1 := PhotoFixtures.Get("Photo08")

@@ -8,6 +8,7 @@ import (
 	"github.com/dustin/go-humanize/english"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -21,6 +22,7 @@ func albumRowExists(uid string) bool {
 }
 
 func TestMomentsTime(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("PublicOnly", func(t *testing.T) {
 		results, err := MomentsTime(1, true)
 
@@ -80,6 +82,7 @@ func TestMomentsTime(t *testing.T) {
 }
 
 func TestMomentsCountries(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("PublicOnly", func(t *testing.T) {
 		results, err := MomentsCountries(1, true)
 
@@ -139,6 +142,7 @@ func TestMomentsCountries(t *testing.T) {
 }
 
 func TestMomentsStates(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("PublicOnly", func(t *testing.T) {
 		results, err := MomentsStates(1, true)
 
@@ -198,6 +202,7 @@ func TestMomentsStates(t *testing.T) {
 }
 
 func TestMomentsCategories(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("PublicOnly", func(t *testing.T) {
 		results, err := MomentsLabels(1, true)
 
@@ -259,6 +264,7 @@ func TestMomentsCategories(t *testing.T) {
 }
 
 func TestMoment_Title(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Country", func(t *testing.T) {
 		moment := Moment{
 			Label:      "",
@@ -334,10 +340,15 @@ func TestMoment_Title(t *testing.T) {
 }
 
 func TestRemoveDuplicateMoments(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Ok", func(t *testing.T) {
 		if removed, err := RemoveDuplicateMoments(); err != nil {
 			t.Fatal(err)
 		} else {
+			t.Cleanup(func() {
+				require.NoError(t, Db().Create(entity.AlbumFixtures.Pointer("california-duplicate-1")).Error)
+				require.NoError(t, Db().Create(entity.AlbumFixtures.Pointer("california-duplicate-2")).Error)
+			})
 			t.Logf("moments: removed %s", english.Plural(removed, "duplicate", "duplicates"))
 
 			// TODO: Needs review, variable number of results.
@@ -373,6 +384,10 @@ func TestRemoveDuplicateMoments(t *testing.T) {
 		if _, err := RemoveDuplicateMoments(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			require.NoError(t, Db().Create(entity.AlbumFixtures.Pointer("california-duplicate-1")).Error)
+			require.NoError(t, Db().Create(entity.AlbumFixtures.Pointer("california-duplicate-2")).Error)
+		})
 
 		assert.NotNil(t, entity.FindFolderAlbum(pathA), "albumA should survive RemoveDuplicateMoments")
 		assert.NotNil(t, entity.FindFolderAlbum(pathB), "albumB should survive RemoveDuplicateMoments")
@@ -406,6 +421,10 @@ func TestRemoveDuplicateMoments(t *testing.T) {
 		if _, err := RemoveDuplicateMoments(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			require.NoError(t, Db().Create(entity.AlbumFixtures.Pointer("california-duplicate-1")).Error)
+			require.NoError(t, Db().Create(entity.AlbumFixtures.Pointer("california-duplicate-2")).Error)
+		})
 
 		assert.NotNil(t, entity.FindFolderAlbum(pathMirror), "mirror album should survive RemoveDuplicateMoments")
 		assert.NotNil(t, entity.FindFolderAlbum(pathPumpkin), "pumpkin album should survive RemoveDuplicateMoments")
@@ -441,6 +460,10 @@ func TestRemoveDuplicateMoments(t *testing.T) {
 		if _, err := RemoveDuplicateMoments(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			require.NoError(t, Db().Create(entity.AlbumFixtures.Pointer("california-duplicate-1")).Error)
+			require.NoError(t, Db().Create(entity.AlbumFixtures.Pointer("california-duplicate-2")).Error)
+		})
 
 		assert.True(t, albumRowExists(albumA.AlbumUID), "albumA should survive RemoveDuplicateMoments")
 		assert.True(t, albumRowExists(albumB.AlbumUID), "albumB should survive RemoveDuplicateMoments")
@@ -468,6 +491,10 @@ func TestRemoveDuplicateMoments(t *testing.T) {
 		if _, err := RemoveDuplicateMoments(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			require.NoError(t, Db().Create(entity.AlbumFixtures.Pointer("california-duplicate-1")).Error)
+			require.NoError(t, Db().Create(entity.AlbumFixtures.Pointer("california-duplicate-2")).Error)
+		})
 
 		remaining := 0
 		if albumRowExists(first.AlbumUID) {

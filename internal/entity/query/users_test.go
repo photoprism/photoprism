@@ -3,10 +3,12 @@ package query
 import (
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestRegisteredUsers(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		users := RegisteredUsers()
 
@@ -20,6 +22,7 @@ func TestRegisteredUsers(t *testing.T) {
 }
 
 func TestCountUsers(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("All", func(t *testing.T) {
 		assert.LessOrEqual(t, CountUsers(false, false, nil, nil), 14)
 	})
@@ -49,6 +52,7 @@ func TestCountUsers(t *testing.T) {
 }
 
 func TestUsers(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Default", func(t *testing.T) {
 		if results, err := Users(0, 0, "", "", false); err != nil {
 			t.Fatal(err)

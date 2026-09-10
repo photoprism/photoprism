@@ -14,6 +14,7 @@ import (
 // is reassigned when it receives the name of another person, as sent by the people tab
 // of the photo editor.
 func TestMarkerSaveForm_Reassign(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("MarkerLinkedToOtherSubject", func(t *testing.T) {
 		// Two existing people, each with a marker of their own.
 		subjA := FirstOrCreateSubject(NewSubject("Reassign Person A", SubjPerson, SrcManual))
@@ -22,13 +23,20 @@ func TestMarkerSaveForm_Reassign(t *testing.T) {
 		if subjA == nil || subjB == nil {
 			t.Fatal("failed creating test subjects")
 		}
-
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(subjA).Error)
+			assert.NoError(t, UnscopedDb().Delete(subjB).Error)
+		})
 		// Own photo and file, so the added markers cannot affect other tests.
 		photo := Photo{PhotoUID: rnd.GenerateUID(PhotoUID), PhotoName: "reassign-test", PhotoPath: "2790/07"}
 
 		if err := photo.Create(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&Details{}, "photo_id = ?", photo.ID).Error)
+			assert.NoError(t, UnscopedDb().Delete(&photo).Error)
+		})
 
 		file := File{
 			PhotoID:     photo.ID,
@@ -45,7 +53,7 @@ func TestMarkerSaveForm_Reassign(t *testing.T) {
 		if err := file.Create(); err != nil {
 			t.Fatal(err)
 		}
-
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(&file).Error) })
 		markerA := NewMarker(file, crop.Area{Name: "face", X: 0.31, Y: 0.31, W: 0.05, H: 0.05}, subjA.SubjUID, SrcImage, MarkerFace, 100, 65)
 		markerA.MarkerName = subjA.SubjName
 		markerA.SubjSrc = SrcManual
@@ -53,6 +61,7 @@ func TestMarkerSaveForm_Reassign(t *testing.T) {
 		if err := markerA.Create(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(markerA).Error) })
 
 		markerB := NewMarker(file, crop.Area{Name: "face", X: 0.61, Y: 0.61, W: 0.05, H: 0.05}, subjB.SubjUID, SrcImage, MarkerFace, 100, 65)
 		markerB.MarkerName = subjB.SubjName
@@ -61,6 +70,7 @@ func TestMarkerSaveForm_Reassign(t *testing.T) {
 		if err := markerB.Create(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(markerB).Error) })
 
 		// A third marker, linked to Person A, is assigned to Person B: this is what the
 		// people tab sends when its state says the marker has no subject yet.
@@ -71,6 +81,7 @@ func TestMarkerSaveForm_Reassign(t *testing.T) {
 		if err := markerC.Create(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(markerC).Error) })
 
 		frm, err := form.NewMarker(*markerC)
 
@@ -121,12 +132,13 @@ func TestMarkerSaveForm_Reassign(t *testing.T) {
 		if subj == nil {
 			t.Fatal("failed creating test subject")
 		}
-
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(subj).Error) })
 		photo := Photo{PhotoUID: rnd.GenerateUID(PhotoUID), PhotoName: "rename-test", PhotoPath: "2790/08"}
 
 		if err := photo.Create(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(&photo).Error) })
 
 		file := File{
 			PhotoID:     photo.ID,
@@ -143,6 +155,10 @@ func TestMarkerSaveForm_Reassign(t *testing.T) {
 		if err := file.Create(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Delete(&Details{}, "photo_id = ?", photo.ID).Error)
+			assert.NoError(t, UnscopedDb().Delete(&file).Error)
+		})
 
 		marker := NewMarker(file, crop.Area{Name: "face", X: 0.41, Y: 0.41, W: 0.05, H: 0.05}, subj.SubjUID, SrcImage, MarkerFace, 100, 65)
 		marker.MarkerName = subj.SubjName
@@ -151,6 +167,7 @@ func TestMarkerSaveForm_Reassign(t *testing.T) {
 		if err := marker.Create(); err != nil {
 			t.Fatal(err)
 		}
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(marker).Error) })
 
 		frm, err := form.NewMarker(*marker)
 

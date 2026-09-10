@@ -7,6 +7,7 @@ import (
 )
 
 func TestNewStringMap(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("Nil", func(t *testing.T) {
 		m := NewStringMap(nil)
 
@@ -25,6 +26,7 @@ func TestNewStringMap(t *testing.T) {
 }
 
 func TestStringMap_Set(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("StartingEmpty", func(t *testing.T) {
 		m := NewStringMap(nil)
 
@@ -70,6 +72,7 @@ func TestStringMap_Set(t *testing.T) {
 }
 
 func TestStringMap_Key(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("StartingEmpty", func(t *testing.T) {
 		m := NewStringMap(nil)
 
@@ -114,6 +117,7 @@ func TestStringMap_Key(t *testing.T) {
 }
 
 func TestStringMap_KeyExists(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("True", func(t *testing.T) {
 		assert.True(t, NewStringMap(Strings{"foo": "bar"}).Has("foo"))
 		assert.True(t, NewStringMap(Strings{"foo": "bar", "zzz": "bar"}).Has("zzz"))
@@ -125,6 +129,7 @@ func TestStringMap_KeyExists(t *testing.T) {
 }
 
 func TestStringMap_Missing(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("False", func(t *testing.T) {
 		assert.False(t, NewStringMap(Strings{"foo": "bar"}).Missing("foo"))
 		assert.False(t, NewStringMap(Strings{"foo": "bar", "zzz": "bar"}).Missing("zzz"))
@@ -136,6 +141,7 @@ func TestStringMap_Missing(t *testing.T) {
 }
 
 func TestStringMap_ValueExists(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("True", func(t *testing.T) {
 		assert.True(t, NewStringMap(Strings{"foo": "bar"}).HasValue("bar"))
 		assert.True(t, NewStringMap(Strings{"foo": "bar", "zzz": "bar"}).HasValue("bar"))
@@ -147,6 +153,7 @@ func TestStringMap_ValueExists(t *testing.T) {
 }
 
 func TestStringMap_MissingValue(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("False", func(t *testing.T) {
 		assert.False(t, NewStringMap(Strings{"foo": "bar"}).MissingValue("bar"))
 		assert.False(t, NewStringMap(Strings{"foo": "bar", "zzz": "bar"}).MissingValue("bar"))
@@ -158,6 +165,7 @@ func TestStringMap_MissingValue(t *testing.T) {
 }
 
 func TestStringMap_SharedValueRefcount(t *testing.T) {
+	ValidateFixtures(t)
 	m := NewStringMap(nil)
 
 	// Two keys share the same value.
@@ -175,6 +183,7 @@ func TestStringMap_SharedValueRefcount(t *testing.T) {
 }
 
 func TestStringMap_SetValueChangeKeepsOldValueUntilUnset(t *testing.T) {
+	ValidateFixtures(t)
 	m := NewStringMap(nil)
 	m.Set("k", "old")
 
@@ -195,6 +204,7 @@ func TestStringMap_SetValueChangeKeepsOldValueUntilUnset(t *testing.T) {
 }
 
 func TestStringMap_UnsetValue(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("RemovesAllKeys", func(t *testing.T) {
 		m := NewStringMap(nil)
 		m.Set("s1", "token")
@@ -218,6 +228,7 @@ func TestStringMap_UnsetValue(t *testing.T) {
 }
 
 func TestStringMap_Unset(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("StartingEmpty", func(t *testing.T) {
 		m := NewStringMap(nil)
 

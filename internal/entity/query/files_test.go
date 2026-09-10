@@ -5,11 +5,13 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
 func TestFilesByPath(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Holiday", func(t *testing.T) {
 		files, err := FilesByPath(10, 0, entity.RootOriginals, "Holiday", false)
 
@@ -57,6 +59,7 @@ func TestFilesByPath(t *testing.T) {
 }
 
 func TestExistingFiles(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("FilesFound", func(t *testing.T) {
 		files, err := Files(1000, 0, "/", true)
 
@@ -91,6 +94,7 @@ func TestExistingFiles(t *testing.T) {
 }
 
 func TestFilesByUID(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("FilesFound", func(t *testing.T) {
 		files, err := FilesByUID([]string{"fs6sg6bw45bnlqdw"}, 100, 0)
 
@@ -129,6 +133,7 @@ func TestFilesByUID(t *testing.T) {
 }
 
 func TestFileByPhotoUID(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("FilesFound", func(t *testing.T) {
 		file, err := FileByPhotoUID("ps6sg6be2lvl0y11")
 
@@ -146,6 +151,7 @@ func TestFileByPhotoUID(t *testing.T) {
 }
 
 func TestVideoByPhotoUID(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("FilesFound", func(t *testing.T) {
 		file, err := VideoByPhotoUID("ps6sg6be2lvl0yh0")
 
@@ -163,6 +169,7 @@ func TestVideoByPhotoUID(t *testing.T) {
 }
 
 func TestDocumentByPhotoUID(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("FileFound", func(t *testing.T) {
 		file, err := DocumentByPhotoUID("ps6sg6byk7wrbk48")
 
@@ -185,6 +192,7 @@ func TestDocumentByPhotoUID(t *testing.T) {
 }
 
 func TestFileByUID(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("FilesFound", func(t *testing.T) {
 		file, err := FileByUID("fs6sg6bw45bnlqdw")
 
@@ -207,6 +215,7 @@ func TestFileByUID(t *testing.T) {
 }
 
 func TestFileByHash(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("FilesFound", func(t *testing.T) {
 		file, err := FileByHash("2cad9168fa6acc5c5c2965ddf6ec465ca42fd818")
 
@@ -224,6 +233,7 @@ func TestFileByHash(t *testing.T) {
 }
 
 func TestSetPhotoPrimary(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		assert.Equal(t, false, entity.FileFixturesExampleXMP.FilePrimary)
 
@@ -258,15 +268,22 @@ func TestSetPhotoPrimary(t *testing.T) {
 }
 
 func TestSetFileError(t *testing.T) {
-	assert.Equal(t, "", entity.FileFixturesExampleXMP.FileError)
+	entity.ValidateFixtures(t)
+	file := entity.FileFixtures.Get("bridge3.jpg")
+	var actual entity.File
+	require.NoError(t, Db().Model(&entity.File{}).Where("id = ?", file.ID).First(&actual).Error)
+	assert.Equal(t, "", actual.FileError)
 
-	SetFileError("fs6sg6bwhhbnlqdn", "errorFromTest")
-
-	// TODO How to assert
-	// assert.Equal(t, true, entity.FileFixturesExampleXMP.FilePrimary)
+	SetFileError(file.FileUID, "errorFromTest")
+	t.Cleanup(func() {
+		require.NoError(t, Db().Model(&entity.File{}).Where("id = ?", file.ID).UpdateColumns(entity.Values{"file_error": "", "photo_taken_at": file.PhotoTakenAt, "time_index": file.TimeIndex, "media_id": file.MediaID}).Error)
+	})
+	require.NoError(t, Db().Model(&entity.File{}).Where("id = ?", file.ID).First(&actual).Error)
+	assert.Equal(t, "errorFromTest", actual.FileError)
 }
 
 func TestRenameFile(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("EmptyName", func(t *testing.T) {
 		err := RenameFile("xxx", "", "yyy", "yyy")
 
@@ -275,20 +292,27 @@ func TestRenameFile(t *testing.T) {
 		}
 	})
 	t.Run("Success", func(t *testing.T) {
-		assert.Equal(t, "2790/02/Photo01.xmp", entity.FileFixturesExampleXMP.FileName)
-		assert.Equal(t, "/", entity.FileFixturesExampleXMP.FileRoot)
-		err := RenameFile("/", "exampleXmpFile.xmp", "test-root", "yyy.jpg")
+		var actual entity.File
+		require.NoError(t, Db().Model(&entity.File{}).Where("id = ?", entity.FileFixturesExampleXMP.ID).First(&actual).Error)
+		assert.Equal(t, "2790/02/Photo01.xmp", actual.FileName)
+		assert.Equal(t, "/", actual.FileRoot)
+		err := RenameFile(entity.FileFixturesExampleXMP.FileRoot, entity.FileFixturesExampleXMP.FileName, "test-root", "yyy.jpg")
 
 		if err != nil {
 			t.Fatal(err)
 		}
-		// TODO how to assert?
-		// assert.Equal(t, "", entity.FileFixturesExampleXMP.FileName)
+		t.Cleanup(func() {
+			require.NoError(t, Db().Model(&entity.File{}).Where("id = ?", entity.FileFixturesExampleXMP.ID).UpdateColumns(entity.Values{"time_index": entity.FileFixturesExampleXMP.TimeIndex, "media_id": entity.FileFixturesExampleXMP.MediaID, "file_name": entity.FileFixturesExampleXMP.FileName, "file_root": entity.FileFixturesExampleXMP.FileRoot}).Error)
+		})
+		require.NoError(t, Db().Model(&entity.File{}).Where("id = ?", entity.FileFixturesExampleXMP.ID).First(&actual).Error)
+		assert.Equal(t, "yyy.jpg", actual.FileName)
+		assert.Equal(t, "test-root", actual.FileRoot)
 	})
 
 }
 
 func TestIndexedFiles(t *testing.T) {
+	entity.ValidateFixtures(t)
 	if err := entity.AddDuplicate(
 		"Photo18.jpg",
 		entity.RootSidecar,
@@ -298,6 +322,9 @@ func TestIndexedFiles(t *testing.T) {
 	); err != nil {
 		t.Fatal(err)
 	}
+	t.Cleanup(func() {
+		require.NoError(t, UnscopedDb().Delete(&entity.Duplicate{}, "1=1").Error)
+	})
 
 	result, err := IndexedFiles()
 
@@ -309,6 +336,7 @@ func TestIndexedFiles(t *testing.T) {
 }
 
 func TestOrphanFiles(t *testing.T) {
+	entity.ValidateFixtures(t)
 	files, err := OrphanFiles()
 
 	if err != nil {

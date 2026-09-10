@@ -11,6 +11,7 @@ import (
 )
 
 func TestSetDownloadFileID(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		err := SetDownloadFileID("exampleFileName.jpg", 1000000)
 		if err != nil {

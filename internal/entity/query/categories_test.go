@@ -9,6 +9,7 @@ import (
 )
 
 func TestCategoryLabels(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Ok", func(t *testing.T) {
 		categories := CategoryLabels(1000, 0)
 

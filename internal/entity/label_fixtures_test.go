@@ -7,6 +7,7 @@ import (
 )
 
 func TestLabelMap_Get(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("GetExistingLabel", func(t *testing.T) {
 		r := LabelFixtures.Get("landscape")
 		assert.Equal(t, "ls6sg6b1wowuy3c2", r.LabelUID)
@@ -21,6 +22,7 @@ func TestLabelMap_Get(t *testing.T) {
 }
 
 func TestLabelMap_Pointer(t *testing.T) {
+	ValidateFixtures(t)
 	t.Run("GetExistingLabelPointer", func(t *testing.T) {
 		r := LabelFixtures.Pointer("landscape")
 		assert.Equal(t, "ls6sg6b1wowuy3c2", r.LabelUID)
@@ -35,6 +37,7 @@ func TestLabelMap_Pointer(t *testing.T) {
 }
 
 func TestLabelMap_PhotoLabel(t *testing.T) {
+	ValidateFixtures(t)
 	r := LabelFixtures.PhotoLabel(123, "landscape", 25, "")
 	assert.IsType(t, PhotoLabel{}, r)
 }
