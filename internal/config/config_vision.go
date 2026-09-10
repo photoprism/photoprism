@@ -148,8 +148,12 @@ func (c *Config) EffectiveLabelModel() classify.ModelName {
 	}
 
 	if vision.Config != nil {
-		if model := vision.Config.Model(vision.ModelTypeLabels); model != nil && !model.Default {
-			return classify.NormalizeModelName(classify.ModelName(model.Name))
+		if model := configuredVisionModel(vision.Config, vision.ModelTypeLabels); model != nil {
+			if model.Disabled {
+				return classify.ModelNone
+			} else if !model.Default {
+				return classify.NormalizeModelName(classify.ModelName(model.Name))
+			}
 		}
 	}
 

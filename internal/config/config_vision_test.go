@@ -11,6 +11,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/ai/nsfw"
+	"github.com/photoprism/photoprism/internal/ai/tensorflow"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -85,6 +86,19 @@ func TestConfig_LabelModel(t *testing.T) {
 		c.options.LabelModel = "auto"
 		c.applyLabelModel()
 		assert.True(t, vision.Config.Models[0].Disabled)
+		assert.Equal(t, classify.ModelNone, c.EffectiveLabelModel())
+		assert.Empty(t, c.LabelModelPath())
+		assert.Equal(t, "none", c.LabelModelRuntime())
+	})
+	t.Run("AutoDisablesCustomTensorFlow", func(t *testing.T) {
+		custom := &vision.Model{Type: vision.ModelTypeLabels, Name: "custom", TensorFlow: &tensorflow.ModelInfo{}, Disabled: true}
+		withVisionConfig(t, &vision.ConfigValues{Models: vision.Models{custom}})
+		c := NewConfig(CliTestContext())
+		c.options.LabelModel = "auto"
+		c.applyLabelModel()
+		assert.Equal(t, classify.ModelNone, c.EffectiveLabelModel())
+		assert.Empty(t, c.LabelModelPath())
+		assert.Equal(t, "none", c.LabelModelRuntime())
 	})
 	t.Run("Named", func(t *testing.T) {
 		withVisionConfig(t, vision.NewConfig())

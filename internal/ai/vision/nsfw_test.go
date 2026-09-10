@@ -116,7 +116,7 @@ func TestDetectNSFWPartialBatch(t *testing.T) {
 }
 
 // TestNormalizeNsfwResults verifies that a remote response is aligned with the images it was
-// requested for, and that a response predating Status is still decided.
+// requested for, and that current and legacy scores use the local threshold.
 func TestNormalizeNsfwResults(t *testing.T) {
 	t.Run("TooFew", func(t *testing.T) {
 		result := normalizeNsfwResults([]nsfw.Result{nsfw.NewResult(0.9, 0.75)}, 3, 0.75)
@@ -151,6 +151,24 @@ func TestNormalizeNsfwResults(t *testing.T) {
 	})
 	t.Run("EmptyLegacyResultStaysUndecided", func(t *testing.T) {
 		result := normalizeNsfwResults([]nsfw.Result{{}}, 1, 0.75)
+		require.Len(t, result, 1)
+		assert.True(t, result[0].IsUnavailable())
+		assert.False(t, result[0].IsSafe())
+	})
+	t.Run("CurrentUnsafeBecomesSafeAtHigherLocalThreshold", func(t *testing.T) {
+		result := normalizeNsfwResults([]nsfw.Result{nsfw.NewResult(0.85, 0.8)}, 1, 0.9)
+		require.Len(t, result, 1)
+		assert.True(t, result[0].IsSafe())
+		assert.InDelta(t, 0.9, result[0].Threshold, 1e-6)
+	})
+	t.Run("CurrentSafeBecomesUnsafeAtLowerLocalThreshold", func(t *testing.T) {
+		result := normalizeNsfwResults([]nsfw.Result{nsfw.NewResult(0.85, 0.9)}, 1, 0.8)
+		require.Len(t, result, 1)
+		assert.True(t, result[0].IsUnsafe())
+		assert.InDelta(t, 0.8, result[0].Threshold, 1e-6)
+	})
+	t.Run("InvalidCurrentScoreStaysUndecided", func(t *testing.T) {
+		result := normalizeNsfwResults([]nsfw.Result{{Status: nsfw.StatusSafe, Score: 2}}, 1, 0.8)
 		require.Len(t, result, 1)
 		assert.True(t, result[0].IsUnavailable())
 		assert.False(t, result[0].IsSafe())

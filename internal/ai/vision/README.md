@@ -1,6 +1,6 @@
 ## PhotoPrism — Vision Package
 
-**Last Updated:** September 5, 2026
+**Last Updated:** September 10, 2026
 
 ### Overview
 
@@ -20,6 +20,8 @@ Faces are the one type this registry does not own. A `face` entry in `vision.yml
 #### Models
 
 The `vision.yml` file is usually kept in the `storage/config` directory (override with `PHOTOPRISM_VISION_YAML`). It defines a list of models under `Models:`. Key fields are captured below. If a type is omitted entirely, PhotoPrism will auto-append the built-in defaults (labels, nsfw, face, caption) so you no longer need placeholder stanzas. The `Thresholds` block is optional; missing or out-of-range values fall back to defaults.
+
+Custom label classifiers are ONNX-only. A `labels` entry that still declares `TensorFlow` is disabled with a migration warning instead of being interpreted as an ONNX model or silently replaced with the bundled default.
 
 | Field                   | Default                                | Notes                                                                              |
 |:------------------------|:---------------------------------------|:-----------------------------------------------------------------------------------|

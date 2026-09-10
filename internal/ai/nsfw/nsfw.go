@@ -144,9 +144,15 @@ func NewResult(score, threshold float32) Result {
 }
 
 // Decide returns a copy of r decided against threshold.
-// A result without class scores stays unavailable.
+// Current results use Score, while legacy results derive it from class probabilities.
 func (r Result) Decide(threshold float32) Result {
-	if !r.HasScores() {
+	var score float32
+
+	if !r.IsUnavailable() {
+		score = r.Score
+	} else if r.HasScores() {
+		score = r.UnsafeScore()
+	} else {
 		if r.Status == StatusUnavailable && r.Reason == "" {
 			r.Reason = "no scores"
 		}
@@ -154,7 +160,7 @@ func (r Result) Decide(threshold float32) Result {
 		return r
 	}
 
-	decided := NewResult(r.UnsafeScore(), threshold)
+	decided := NewResult(score, threshold)
 	decided.Drawing, decided.Hentai = r.Drawing, r.Hentai
 	decided.Neutral, decided.Porn, decided.Sexy = r.Neutral, r.Porn, r.Sexy
 

@@ -94,6 +94,18 @@ func TestResultDecide(t *testing.T) {
 		assert.True(t, result.IsUnsafe())
 		assert.InDelta(t, 0.8, result.Score, 1e-6)
 	})
+	t.Run("CurrentResultUsesScore", func(t *testing.T) {
+		result := NewResult(0.85, 0.8).Decide(0.9)
+		assert.True(t, result.IsSafe())
+		assert.InDelta(t, 0.85, result.Score, 1e-6)
+		assert.InDelta(t, 0.9, result.Threshold, 1e-6)
+	})
+	t.Run("InvalidCurrentScoreIsUnavailable", func(t *testing.T) {
+		result := Result{Status: StatusSafe, Score: 2}.Decide(0.75)
+		assert.True(t, result.IsUnavailable())
+		assert.False(t, result.IsSafe())
+		assert.NotEmpty(t, result.Reason)
+	})
 }
 
 // TestResultUnsafeScore verifies that only unsafe classes contribute to the reduced score.

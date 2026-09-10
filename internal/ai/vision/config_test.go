@@ -98,6 +98,18 @@ func TestConfigValues_Load(t *testing.T) {
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "both TensorFlow and ONNX")
 	})
+	t.Run("DisablesTensorFlowLabelModel", func(t *testing.T) {
+		configFile := filepath.Join(t.TempDir(), "vision.yml")
+		err := os.WriteFile(configFile, []byte("Models:\n- Type: labels\n  Name: custom\n  TensorFlow: {}\n"), fs.ModeConfigFile)
+		require.NoError(t, err)
+
+		cfg := NewConfig()
+		require.NoError(t, cfg.Load(configFile))
+		assert.Nil(t, cfg.Model(ModelTypeLabels))
+		require.Len(t, cfg.Models, len(DefaultModels))
+		assert.True(t, cfg.Models[0].Disabled)
+		assert.NotNil(t, cfg.Models[0].TensorFlow)
+	})
 	t.Run("PreservesProbabilityOutput", func(t *testing.T) {
 		configFile := filepath.Join(t.TempDir(), "vision.yml")
 		err := os.WriteFile(configFile, []byte("Models:\n- Type: labels\n  Name: custom\n  ONNX:\n    Output:\n      Logits: false\n"), fs.ModeConfigFile)

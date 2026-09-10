@@ -147,8 +147,8 @@ func nsfwInternal(images Files, mediaSrc media.Src, fallback *float32) (result [
 	return result, nil
 }
 
-// normalizeNsfwResults aligns remote results without shifting decisions between images.
-// Legacy results carrying only class scores are decided locally.
+// normalizeNsfwResults aligns remote results and decides every available score locally.
+// This keeps the configured threshold authoritative for current and legacy services.
 func normalizeNsfwResults(results []nsfw.Result, count int, threshold float32) []nsfw.Result {
 	if len(results) != count {
 		log.Warnf("nsfw: service returned %d results for %d images", len(results), count)
@@ -161,11 +161,7 @@ func normalizeNsfwResults(results []nsfw.Result, count int, threshold float32) [
 			break
 		}
 
-		if result.IsUnavailable() && result.HasScores() {
-			normalized[i] = result.Decide(threshold)
-		} else {
-			normalized[i] = result
-		}
+		normalized[i] = result.Decide(threshold)
 	}
 
 	return normalized

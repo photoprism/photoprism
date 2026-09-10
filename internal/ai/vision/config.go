@@ -114,6 +114,12 @@ func (c *ConfigValues) Load(fileName string) error {
 			return fmt.Errorf("vision model %s declares both TensorFlow and ONNX runtimes", clean.Log(model.Name))
 		}
 
+		// Disable unsupported TensorFlow classifiers instead of interpreting their paths as ONNX.
+		if model.Type == ModelTypeLabels && model.TensorFlow != nil {
+			model.Disabled = true
+			log.Warnf("vision: TensorFlow label model %s is unsupported, migrate it to ONNX (disable model)", clean.Log(model.Name))
+		}
+
 		model.ApplyEngineDefaults()
 
 		// Report a misspelled mode once instead of silently normalizing names the other way.
