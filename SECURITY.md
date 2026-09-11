@@ -11,9 +11,9 @@ At a minimum, your report should include the following:
 
 When we receive a meaningful and verifiable vulnerability report from you, we will try to reproduce the issue, determine the impact and get back to you as soon as possible.
 
-We kindly ask you not to send HTML emails for this purpose, but only plain text. Confirmed vulnerabilities will be fixed within 90 days, depending on the severity and whether third-party packages are affected.
+We kindly ask you not to send HTML emails for this purpose, but only plain text. Confirmed vulnerabilities will be fixed within 90 days, depending on the severity and, where a third-party component is affected, on when its maintainers publish a fix we can ship.
 
-*This Security Policy was last updated on August 13, 2026.*
+*This Security Policy was last updated on September 11, 2026.*
 
 ## Responsible Disclosure
 
@@ -29,6 +29,8 @@ We kindly ask you not to send HTML emails for this purpose, but only plain text.
 We ask for **90 days** between your report and any public disclosure, including a request for a CVE ID. That is the same period within which we commit to fixing confirmed vulnerabilities. If a fix is available sooner, we will tell you, and you are welcome to publish once users are able to update. If we need longer, we will say so and explain why.
 
 **If you intend to request a CVE ID, please tell us first.** Contact us before you approach a CVE Numbering Authority (CNA), and if an identifier has already been requested or assigned, please include it together with the name of the assigning CNA in your first message to us. Under the CVE Program's CNA Operational Rules, a CNA is expected to make a good faith effort to notify the vendor before a record is published. Our contact details are published in [security.txt](https://www.photoprism.app/.well-known/security.txt) and in the `SECURITY.md` file of our public repository, so there is always a documented way to reach us.
+
+**A vulnerability in a third-party component belongs to that component.** When the affected code is in a library or other dependency we ship — a system package in one of our container images, for example — the CVE Program's counting rules assign the identifier to that component, not to each product that includes it. Please tell us rather than requesting a second identifier for the same flaw: we will update the dependency and name the release that contains the update, and any advisory we publish will reference the existing identifier. If our own code makes the flaw reachable in a way that record does not describe, that is a finding about PhotoPrism and we would like to hear it.
 
 When a record is published without an attempt to contact us, we ask the assigning CNA to correct or reject it. We also raise the matter with the CNA's Root if the rules were not followed and publish our own assessment alongside the record. However, we would much rather agree on an accurate advisory with you before publication.
 
