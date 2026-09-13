@@ -62,6 +62,13 @@ func SharePreview(router *gin.RouterGroup) {
 		if info, err := os.Stat(previewFilename); err != nil {
 			log.Debugf("share: creating new preview for %s", clean.Log(shared))
 		} else if info.ModTime().After(expires) {
+			// An empty file marks an album that composed no image, so that answer is as cheap to
+			// repeat as a cached card and expires on the same schedule.
+			if info.Size() == 0 {
+				c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
+				return
+			}
+
 			log.Debugf("share: using cached preview for %s", clean.Log(shared))
 			c.File(previewFilename)
 			return
@@ -146,6 +153,15 @@ func SharePreview(router *gin.RouterGroup) {
 			images = append(images, img)
 		}
 
+		// A selection that yields no image has nothing to compose, so the request serves the site
+		// preview and marks the album with an empty file for the lifetime of a preview.
+		if len(images) == 0 {
+			log.Debugf("share: no image to compose for %s", clean.Log(shared))
+			markEmptyPreview(previewFilename)
+			c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
+			return
+		}
+
 		// Create album preview from thumbnail images.
 		preview, err := frame.Collage(frame.Polaroid, images)
 		if err != nil {
@@ -168,4 +184,20 @@ func SharePreview(router *gin.RouterGroup) {
 
 		c.File(previewFilename)
 	})
+}
+
+// markEmptyPreview creates the empty file that marks an album as composing no preview image. The
+// name is claimed exclusively, so only a call that finds it free writes the marker.
+func markEmptyPreview(fileName string) {
+	// #nosec G304 -- the name is a validated UID under the thumbnail cache.
+	f, err := os.OpenFile(fileName, os.O_CREATE|os.O_EXCL|os.O_WRONLY, fs.ModeFile)
+
+	if err != nil {
+		log.Debugf("share: %s (mark preview)", clean.Error(err))
+		return
+	}
+
+	if err = f.Close(); err != nil {
+		log.Debugf("share: %s (mark preview)", clean.Error(err))
+	}
 }

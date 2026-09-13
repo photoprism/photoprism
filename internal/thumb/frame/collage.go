@@ -32,23 +32,33 @@ func Collage(t Type, images []image.Image) (collage image.Image, err error) {
 	return collage, err
 }
 
-// polaroidCollage embeds images into a Polaroid collage and returns the resulting image.
+// polaroidCollage embeds images into a Polaroid collage and returns the resulting image. The layout
+// is chosen by the number of images, so each count has a placement of its own and the background is
+// returned unchanged when there is none.
 func polaroidCollage(collage image.Image, images []image.Image) (image.Image, error) {
-	n := len(images) - 1
-
-	if n == 1 {
+	switch len(images) {
+	case 0:
+		return collage, nil
+	case 1:
+		if framed, err := polaroid(images[0], RandomAngle(15)); err != nil {
+			return collage, err
+		} else {
+			collage = overlayImage(collage, framed, image.Pt(275, -50))
+		}
+	case 2:
 		if framed, err := polaroid(images[0], RandomAngle(20)); err != nil {
 			return collage, err
 		} else {
 			collage = overlayImage(collage, framed, image.Pt(50, -80))
 		}
 
-		if framed, err := polaroid(images[1], RandomAngle(20)); err != nil {
+		if framed, err := polaroid(images[1], RandomAngle(20)); err != nil { //nolint:gosec // the case holds two images
 			return collage, err
 		} else {
 			collage = overlayImage(collage, framed, image.Pt(500, -30))
 		}
-	} else {
+	default:
+		n := len(images) - 1
 		dl := 1500 / n
 		dr := 1350 / n
 
