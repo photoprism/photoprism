@@ -82,7 +82,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 					folder := entity.NewFolder(entity.RootOriginals, destDirRel, fs.ModTime(destDir))
 
 					if createErr := folder.Create(); createErr == nil {
-						log.Infof("import: created folder /%s", folder.Path)
+						log.Infof("import: created folder /%s", clean.Log(folder.Path))
 					}
 				}
 
@@ -96,13 +96,13 @@ func ImportWorker(jobs <-chan ImportJob) {
 				if opt.Move {
 					if moveErr := f.Move(destFileName, false); moveErr != nil {
 						logRelName := clean.Log(fs.RelName(destMainFileName, imp.originalsPath()))
-						log.Error(moveErr)
+						log.Errorf("import: %s (move file)", clean.Error(moveErr))
 						log.Warnf("import: could not move file to %s, is another import running?", logRelName)
 					}
 				} else {
 					if copyErr := f.Copy(destFileName, false); copyErr != nil {
 						logRelName := clean.Log(fs.RelName(destMainFileName, imp.originalsPath()))
-						log.Error(copyErr)
+						log.Errorf("import: %s (copy file)", clean.Error(copyErr))
 						log.Warnf("import: could not copy file to %s, is another import running?", logRelName)
 					}
 				}
@@ -115,7 +115,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 				} else if file, fileErr := entity.FirstFileByHash(fileHash); fileErr != nil {
 					// Do nothing.
 				} else if albumErr := entity.AddPhotoToUserAlbums(file.PhotoUID, opt.Albums, imp.conf.Settings().Albums.Order.Album, opt.UID); albumErr != nil {
-					log.Warn(albumErr)
+					log.Warnf("import: %s (add duplicate to albums)", clean.Error(albumErr))
 				}
 
 				// Remember the original filename for duplicates so that indexing can still persist
@@ -167,7 +167,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 			// Ensure that a JPEG and the configured default thumbnail sizes exist.
 			if img, imgErr := f.PreviewImage(); imgErr != nil {
-				log.Error(imgErr)
+				log.Errorf("import: %s for %s (create preview image)", clean.Error(imgErr), clean.Log(f.RootRelName()))
 			} else if _, limitErr := img.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
 				log.Errorf("import: %s", limitErr)
 				continue
@@ -240,7 +240,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 					// Add photo to album if a list of albums was provided when importing.
 					if albumErr := entity.AddPhotoToUserAlbums(photoUID, opt.Albums, imp.conf.Settings().Albums.Order.Album, opt.UID); albumErr != nil {
-						log.Warn(albumErr)
+						log.Warnf("import: %s (add picture to albums)", clean.Error(albumErr))
 					}
 				}
 			} else {

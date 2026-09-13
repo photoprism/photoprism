@@ -5,6 +5,7 @@ import (
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/service/webdav"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
@@ -22,13 +23,13 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 
 	// Ensure remote folder exists.
 	if err = client.MkdirAll(a.SyncPath); err != nil {
-		log.Debugf("sync: %s", err)
+		log.Debugf("sync: %s (create remote folder)", clean.Error(err))
 	}
 
 	subDirs, err := client.Directories(a.SyncPath, true, webdav.MaxRequestDuration)
 
 	if err != nil {
-		log.Errorf("sync: %s", err)
+		log.Errorf("sync: %s (list remote folders)", clean.Error(err))
 		return false, err
 	}
 
@@ -42,7 +43,7 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 		files, err := client.Files(dir, false)
 
 		if err != nil {
-			log.Error(err)
+			log.Errorf("sync: %s (list remote files)", clean.Error(err))
 			return false, err
 		}
 

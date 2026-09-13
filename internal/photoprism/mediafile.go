@@ -650,7 +650,7 @@ func (m *MediaFile) openFile() (handle *os.File, err error) {
 	handle, err = os.Open(fileName)
 
 	if err != nil {
-		log.Error(err.Error())
+		log.Errorf("media: %s (open file)", clean.Error(err))
 		return nil, err
 	}
 
@@ -695,7 +695,7 @@ func (m *MediaFile) Move(filePath string, force bool) (err error) {
 	// Resolve absolute destination file path
 	// and return an error if unsuccessful.
 	if filePath, err = filepath.Abs(filePath); err != nil {
-		return fmt.Errorf("move: could not resolve destination file path (%s)", err)
+		return fmt.Errorf("move: could not resolve destination file path (%w)", err)
 	}
 
 	destName := filepath.Base(filePath)
@@ -721,7 +721,7 @@ func (m *MediaFile) Move(filePath string, force bool) (err error) {
 
 	// Make sure the target directory exists.
 	if err = fs.MkdirAll(destDir); err != nil {
-		return fmt.Errorf("move: could not create target directory (%s)", err)
+		return fmt.Errorf("move: could not create target directory (%w)", err)
 	}
 
 	// Remember file modification time.
@@ -741,11 +741,11 @@ func (m *MediaFile) Move(filePath string, force bool) (err error) {
 	// If renaming the file is not possible, copy its
 	// contents and then delete the original file.
 	if copyErr := m.Copy(filePath, force); copyErr != nil {
-		return fmt.Errorf("%s (move fallback)", copyErr)
+		return fmt.Errorf("%w (move fallback)", copyErr)
 	}
 
 	if rmErr := os.Remove(m.fileName); rmErr != nil {
-		return fmt.Errorf("move: %s", rmErr)
+		return fmt.Errorf("move: %w", rmErr)
 	}
 
 	m.SetFileName(filePath)
@@ -770,7 +770,7 @@ func (m *MediaFile) Copy(filePath string, force bool) (err error) {
 
 	// Resolve absolute destination file path and return an error if unsuccessful.
 	if filePath, err = filepath.Abs(filePath); err != nil {
-		return fmt.Errorf("copy: could not resolve destination file path (%s)", err)
+		return fmt.Errorf("copy: could not resolve destination file path (%w)", err)
 	}
 
 	destName := filepath.Base(filePath)
@@ -796,7 +796,7 @@ func (m *MediaFile) Copy(filePath string, force bool) (err error) {
 
 	// Make sure the target directory exists.
 	if err = fs.MkdirAll(destDir); err != nil {
-		return fmt.Errorf("copy: could not create target directory (%s)", err)
+		return fmt.Errorf("copy: could not create target directory (%w)", err)
 	}
 
 	m.fileMutex.Lock()
@@ -805,7 +805,7 @@ func (m *MediaFile) Copy(filePath string, force bool) (err error) {
 	thisFile, err := m.openFile()
 
 	if err != nil {
-		return fmt.Errorf("copy: source file %s cannot be opened (%s)", m.BaseName(), err)
+		return fmt.Errorf("copy: source file %s cannot be opened (%w)", m.BaseName(), err)
 	}
 
 	defer thisFile.Close()
@@ -815,16 +815,22 @@ func (m *MediaFile) Copy(filePath string, force bool) (err error) {
 	destFile, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, fs.ModeFile)
 
 	if err != nil {
-		log.Error(err.Error())
-		return fmt.Errorf("copy: destination file %s cannot be opened (%s)", logName, err)
+		return fmt.Errorf("copy: destination file %s cannot be opened (%w)", logName, err)
 	}
 
 	defer func() {
-		// Update the file timestamp after the file has been copied and closed.
-		if err = destFile.Close(); err != nil {
-			log.Debugf("copy: could not close destination file %s (%s)", logName, clean.Error(err))
-		} else if err = os.Chtimes(filePath, time.Time{}, m.ModTime()); err != nil {
-			log.Debugf("copy: could not set Mtime for destination file %s (%s)", logName, clean.Error(err))
+		// Update the file timestamp after the file has been copied and closed. A failure here is
+		// reported only when the copy itself succeeded, so it never replaces the copy's own error.
+		deferErr := destFile.Close()
+
+		if deferErr != nil {
+			log.Debugf("copy: could not close destination file %s (%s)", logName, clean.Error(deferErr))
+		} else if deferErr = os.Chtimes(filePath, time.Time{}, m.ModTime()); deferErr != nil {
+			log.Debugf("copy: could not set Mtime for destination file %s (%s)", logName, clean.Error(deferErr))
+		}
+
+		if err == nil {
+			err = deferErr
 		}
 	}()
 
@@ -832,7 +838,7 @@ func (m *MediaFile) Copy(filePath string, force bool) (err error) {
 	_, err = io.Copy(destFile, thisFile)
 
 	if err != nil {
-		return fmt.Errorf("copy: %s", err)
+		return fmt.Errorf("copy: %w", err)
 	}
 
 	return nil

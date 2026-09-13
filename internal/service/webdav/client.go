@@ -455,7 +455,7 @@ func (c *Client) Download(src, dest string, force bool) (err error) {
 	if err != nil {
 		// Create local storage path.
 		if err = fs.MkdirAll(dir); err != nil {
-			return fmt.Errorf("webdav: cannot create folder %s (%s)", clean.Log(dir), err)
+			return fmt.Errorf("webdav: cannot create folder %s (%s)", clean.Log(dir), clean.Error(err))
 		}
 	} else if !dirInfo.IsDir() {
 		return fmt.Errorf("webdav: %s is not a folder", clean.Log(dir))
@@ -606,7 +606,6 @@ func (c *Client) DownloadDir(src, dest string, recursive, force bool) (errs []er
 		// Download file from remote server.
 		if err = c.Download(file.Abs, fileName, force); err != nil {
 			errs = append(errs, err)
-			log.Error(err)
 			continue
 		}
 	}

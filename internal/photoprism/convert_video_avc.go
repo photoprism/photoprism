@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -110,7 +111,7 @@ func (w *Convert) ToAvc(f *MediaFile, encoder encode.Encoder, noMutex, force boo
 
 	// Return if an error occurred.
 	if err != nil {
-		log.Error(err)
+		log.Errorf("convert: %s for %s (transcode command)", clean.Error(err), logFileName)
 		return nil, err
 	}
 
@@ -150,7 +151,7 @@ func (w *Convert) ToAvc(f *MediaFile, encoder encode.Encoder, noMutex, force boo
 		"xmpName":  "",
 	})
 
-	log.Infof("%s: transcoding %s to %s", encoder, relName, fs.VideoAvc)
+	log.Infof("%s: transcoding %s to %s", encoder, clean.Log(relName), fs.VideoAvc)
 
 	// Log exact command for debugging in trace mode.
 	log.Trace(cmd.String())
@@ -166,17 +167,13 @@ func (w *Convert) ToAvc(f *MediaFile, encoder encode.Encoder, noMutex, force boo
 
 	start := time.Now()
 	if err = proc.Run(cmd, budget); err != nil {
-		if s := stderr.String(); s != "" {
-			err = fmt.Errorf("%w: %s", err, s)
-		}
-
-		// Log ffmpeg output for debugging.
-		if err.Error() != "" {
-			log.Debug(err)
+		// Log the transcoder output for debugging, which is console-only.
+		if s := strings.TrimSpace(stderr.String()); s != "" {
+			log.Debugf("%s: %s for %s", encoder, s, logFileName)
 		}
 
 		// Log filename and transcoding time.
-		log.Warnf("%s: failed to transcode %s [%s]", encoder, relName, time.Since(start))
+		log.Warnf("%s: failed to transcode %s [%s]", encoder, clean.Log(relName), time.Since(start))
 
 		// Remove broken video file.
 		if !fs.FileExists(avcName) {

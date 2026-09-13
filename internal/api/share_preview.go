@@ -50,7 +50,7 @@ func SharePreview(router *gin.RouterGroup) {
 		thumbPath := path.Join(conf.ThumbCachePath(), "share")
 
 		if err := fs.MkdirAll(thumbPath); err != nil {
-			log.Error(err)
+			log.Errorf("share: %s (create preview path)", clean.Error(err))
 			c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
 			return
 		}
@@ -81,7 +81,7 @@ func SharePreview(router *gin.RouterGroup) {
 		a, err := query.AlbumByUID(shared)
 
 		if err != nil {
-			log.Error(err)
+			log.Errorf("share: %s (find album)", clean.Error(err))
 			c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
 			return
 		}
@@ -104,7 +104,7 @@ func SharePreview(router *gin.RouterGroup) {
 		frm.Order = a.AlbumOrder
 
 		if parseErr := frm.ParseQueryString(); parseErr != nil {
-			log.Errorf("preview: %s", parseErr)
+			log.Errorf("share: %s (parse album order)", clean.Error(parseErr))
 			c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
 			return
 		}
@@ -112,7 +112,7 @@ func SharePreview(router *gin.RouterGroup) {
 		p, count, err := search.SharedPhotos(frm)
 
 		if err != nil {
-			log.Error(err)
+			log.Errorf("share: %s (find pictures)", clean.Error(err))
 			c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
 			return
 		}
@@ -139,14 +139,14 @@ func SharePreview(router *gin.RouterGroup) {
 			thumbnail, imgErr := thumb.FromFile(fileName, file.FileHash, conf.ThumbCachePath(), size.Width, size.Height, file.FileOrientation, size.Options...)
 
 			if imgErr != nil {
-				log.Warn(imgErr)
+				log.Warnf("share: %s (create thumbnail)", clean.Error(imgErr))
 				continue
 			}
 
 			img, _, imgErr := fs.DecodeImageFile(thumbnail)
 
 			if imgErr != nil {
-				log.Warn(imgErr)
+				log.Warnf("share: %s (decode thumbnail)", clean.Error(imgErr))
 				continue
 			}
 
@@ -165,7 +165,7 @@ func SharePreview(router *gin.RouterGroup) {
 		// Create album preview from thumbnail images.
 		preview, err := frame.Collage(frame.Polaroid, images)
 		if err != nil {
-			log.Warnf("preview collage: %v", err)
+			log.Warnf("share: %s (compose preview)", clean.Error(err))
 			c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
 			return
 		}
@@ -177,7 +177,7 @@ func SharePreview(router *gin.RouterGroup) {
 		err = thumb.Save(preview, previewFilename, thumb.JpegQualitySmall())
 
 		if err != nil {
-			log.Error(err)
+			log.Errorf("share: %s (save preview)", clean.Error(err))
 			c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
 			return
 		}

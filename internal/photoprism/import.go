@@ -8,6 +8,7 @@ import (
 	"runtime"
 	"runtime/debug"
 	"sort"
+	"strings"
 	"sync"
 
 	"github.com/karrick/godirwalk"
@@ -92,6 +93,17 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 
 	importPath := opt.Path
 
+	// Folder records name the configured import namespace, so a walk of that path or of a
+	// subfolder is recorded relative to it. A walk rooted elsewhere, such as a per-session upload
+	// directory, has no place in that namespace and records none.
+	folderBase := ""
+
+	if base := imp.conf.ImportPath(); base != "" {
+		if rel, relErr := filepath.Rel(base, importPath); relErr == nil && rel != ".." && !strings.HasPrefix(rel, ".."+string(filepath.Separator)) {
+			folderBase = base
+		}
+	}
+
 	// Check if the import folder exists.
 	if !fs.PathExists(importPath) {
 		event.Error(fmt.Sprintf("import: directory %s not found", importPath))
@@ -143,7 +155,7 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 	}
 
 	ignore.Log = func(fileName string) {
-		log.Infof(`import: ignored "%s"`, fs.RelName(fileName, importPath))
+		log.Infof(`import: ignored "%s"`, clean.Log(fs.RelName(fileName, importPath)))
 	}
 
 	err := godirwalk.Walk(importPath, &godirwalk.Options{
@@ -179,10 +191,12 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 					directories = append(directories, fileName)
 				}
 
-				folder := entity.NewFolder(entity.RootImport, fs.RelName(fileName, imp.conf.ImportPath()), fs.ModTime(fileName))
+				if folderBase != "" {
+					folder := entity.NewFolder(entity.RootImport, fs.RelName(fileName, folderBase), fs.ModTime(fileName))
 
-				if err := folder.Create(); err == nil {
-					log.Infof("import: added folder /%s", folder.Path)
+					if err := folder.Create(); err == nil && folder.Path != "" {
+						log.Infof("import: added folder /%s", clean.Log(folder.Path))
+					}
 				}
 
 				return result

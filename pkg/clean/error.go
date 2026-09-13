@@ -27,11 +27,23 @@ const (
 	errorOmitted = "error details omitted"
 )
 
+// errorNil reports whether an error is absent, treating a non-nil interface that holds a nil
+// pointer as absent.
+func errorNil(err error) bool {
+	if err == nil {
+		return true
+	}
+
+	v := reflect.ValueOf(err)
+
+	return v.Kind() == reflect.Pointer && v.IsNil()
+}
+
 // Error sanitizes an error message so that it can be safely logged or displayed, replacing the
 // file paths the errors in its chain carry with a placeholder. A path that a wrapper rendered
 // into message text stays, so producers wrap with %w. Use ErrorFull where the reader is an operator.
 func Error(err error) string {
-	if err == nil {
+	if errorNil(err) {
 		return "no error"
 	}
 
@@ -58,7 +70,7 @@ func Error(err error) string {
 // ErrorFull sanitizes an error message and keeps the file paths it names. Reserve it for the
 // console and the CLI, where the path is the detail an operator acts on.
 func ErrorFull(err error) string {
-	if err == nil {
+	if errorNil(err) {
 		return "no error"
 	}
 

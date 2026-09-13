@@ -427,3 +427,20 @@ func TestErrorFlattenedUrl(t *testing.T) {
 		assert.Contains(t, out, UriRedactedValue)
 	})
 }
+
+func TestErrorNil(t *testing.T) {
+	// A non-nil interface may hold a nil pointer, and both spellings of absent render the same.
+	var typed *iofs.PathError
+
+	t.Run("TypedNil", func(t *testing.T) {
+		assert.Equal(t, "no error", Error(typed))
+		assert.Equal(t, "no error", ErrorFull(typed))
+	})
+	t.Run("Nil", func(t *testing.T) {
+		assert.Equal(t, "no error", Error(nil))
+		assert.Equal(t, "no error", ErrorFull(nil))
+	})
+	t.Run("Present", func(t *testing.T) {
+		assert.NotEqual(t, "no error", Error(&iofs.PathError{Op: "open", Path: "/tmp/x", Err: os.ErrNotExist}))
+	})
+}
