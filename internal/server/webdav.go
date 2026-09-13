@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/net/webdav"
 
 	"github.com/photoprism/photoprism/internal/api"
@@ -133,6 +134,30 @@ func WebDAV(dir string, router *gin.RouterGroup, conf *config.Config) {
 			if limit := conf.OriginalsLimitBytes(); limit > 0 {
 				api.LimitRequestBodyBytes(c, limit)
 			}
+		}
+
+		// Bound the XML bodies the metadata methods parse into memory. A declared length over the
+		// bound is refused outright; anything else is bounded as it is read, so a body of unknown
+		// length is still accepted.
+		switch c.Request.Method {
+		case header.MethodLock, header.MethodPropfind, header.MethodProppatch:
+			if c.Request.ContentLength > api.MaxWebDAVMetadataRequestBytes {
+				// Reported on the console-only system log, since the refusal returns before the
+				// handler's own logger runs. A write method is reported at the level that logger
+				// gives it, so the two agree on how loud a refused write is.
+				level := logrus.DebugLevel
+
+				if WebDAVWriteMethod(c.Request.Method) {
+					level = logrus.WarnLevel
+				}
+
+				event.System(level, []string{"webdav", "%s %s exceeds the metadata limit"}, clean.Log(c.Request.Method), clean.Log(c.Request.URL.String()))
+				c.AbortWithStatus(http.StatusRequestEntityTooLarge)
+
+				return
+			}
+
+			api.LimitRequestBodyBytes(c, api.MaxWebDAVMetadataRequestBytes)
 		}
 
 		// Clamp the requested LOCK lifetime so a client cannot mint infinite or
