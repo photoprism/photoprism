@@ -1406,18 +1406,29 @@ func (m *User) RedeemToken(token string) (n int) {
 	created := false
 
 	// A share this link issued is counted without a new redemption, as the sharing page redeems on
-	// every load. Every other outcome, a first share and one a different link issued alike, needs
-	// the link to admit it.
+	// every load. Every other outcome needs the link to admit it, and a link that admits none leaves
+	// the share as it stands.
 	for _, link := range FindRedeemedLinksByToken(token, "") {
 		found := FindUserShare(UserShare{UserUID: m.GetUID(), ShareUID: link.ShareUID})
 
-		if !found.IssuedBy(link) && !link.Redeemable() {
+		if !link.Redeemable() {
+			if found.IssuedBy(link) {
+				n++
+			}
+
 			continue
 		}
 
 		if found != nil {
+			// A lapsed row grants nothing, so reinstating it admits the account and counts a view as a
+			// first share does. Taking over a row that still grants the record counts none, since the
+			// account holds it either way.
+			readmitted := found.Expired()
+
 			if err := found.UpdateLink(link); err != nil {
 				event.AuditErr([]string{"user %s", "share token update failed", status.Error(err)}, m.RefID)
+			} else if readmitted {
+				link.Redeem()
 			}
 
 			n++

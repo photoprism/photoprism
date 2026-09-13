@@ -247,21 +247,38 @@ func TestLinkRedemption(t *testing.T) {
 		assert.Equal(t, UIDs{link.ShareUID}, sess.SharedUIDs())
 	})
 	t.Run("RegisteredUserRedeemsTheSameTokenOnlyOnce", func(t *testing.T) {
+		// The link carries an expiry so the row it issues holds a value a second write would move.
 		link := newTestLink(t, 1)
+		link.LinkExpires = 3600
+
+		if err := link.Save(); err != nil {
+			t.Fatal(err)
+		}
 
 		first, err := redeemInNewSession(t, link.LinkToken, "alice", "Alice123!")
 		require.NoError(t, err)
 		require.True(t, first.HasShare(link.ShareUID))
 		require.Equal(t, uint(1), linkViews(t, link))
 
-		// Correct credentials with a token the account already holds must not be refused, and must
-		// not count another view.
+		share := FindUserShare(UserShare{UserUID: first.UserUID, ShareUID: link.ShareUID})
+		require.NotNil(t, share)
+		require.NotNil(t, share.ExpiresAt)
+
+		issued := *share.ExpiresAt
+
+		// Correct credentials with a token the account already holds must not be refused, must not
+		// count another view, and must leave the row as it was issued.
 		second, err := redeemInNewSession(t, link.LinkToken, "alice", "Alice123!")
 
 		require.NoError(t, err)
 		assert.Equal(t, http.StatusOK, second.Status)
 		assert.True(t, second.HasShare(link.ShareUID))
 		assert.Equal(t, uint(1), linkViews(t, link))
+
+		after := FindUserShare(UserShare{UserUID: first.UserUID, ShareUID: link.ShareUID})
+		require.NotNil(t, after)
+		require.NotNil(t, after.ExpiresAt)
+		assert.WithinDuration(t, issued, *after.ExpiresAt, time.Second)
 	})
 	t.Run("ExhaustedCoTokenLinkGrantsNoNewSession", func(t *testing.T) {
 		// The unique index is (share_uid, link_token), so two records may share one token. The
@@ -357,9 +374,93 @@ func TestLinkRedemption(t *testing.T) {
 		assert.False(t, user.RefreshShares().HasShare(link.ShareUID))
 		assert.Equal(t, uint(1), linkViews(t, link))
 	})
+	t.Run("ExhaustedLinkDoesNotMoveTheExpiryOfTheShareItIssued", func(t *testing.T) {
+		// A share is a snapshot of the terms it was redeemed under, and the sharing page re-presents
+		// the token on every load, so a link with no budget left counts the row and writes nothing.
+		link := newTestLink(t, 1)
+		link.LinkExpires = 3600
+		link.ModifiedAt = Now().Add(-30 * time.Minute)
+
+		values := Values{"link_expires": link.LinkExpires, "modified_at": link.ModifiedAt}
+
+		if err := Db().Model(&Link{}).Where("link_uid = ?", link.LinkUID).Updates(values).Error; err != nil {
+			t.Fatal(err)
+		}
+
+		sess, err := redeemInNewSession(t, link.LinkToken, "alice", "Alice123!")
+		require.NoError(t, err)
+		require.True(t, sess.HasShare(link.ShareUID))
+		require.Equal(t, uint(1), linkViews(t, link))
+
+		user := FindUser(User{UserName: "alice"})
+		require.NotNil(t, user)
+
+		share := FindUserShare(UserShare{UserUID: user.GetUID(), ShareUID: link.ShareUID})
+		require.NotNil(t, share)
+		require.NotNil(t, share.ExpiresAt)
+
+		issued := *share.ExpiresAt
+
+		// The owner edits the spent link, which slides the link's own window forward.
+		edited := FindLink(link.LinkUID)
+		require.NotNil(t, edited)
+		edited.Perm = 64
+
+		if err = edited.Save(); err != nil {
+			t.Fatal(err)
+		}
+
+		require.True(t, edited.ExpiresAt().After(issued), "the edit must move the link's own expiration time")
+
+		assert.Equal(t, 1, user.RedeemToken(link.LinkToken))
+
+		after := FindUserShare(UserShare{UserUID: user.GetUID(), ShareUID: link.ShareUID})
+		require.NotNil(t, after)
+		require.NotNil(t, after.ExpiresAt)
+		assert.WithinDuration(t, issued, *after.ExpiresAt, time.Second, "the share must keep the expiration time it was issued with")
+		assert.Equal(t, uint(0), after.Perm, "the share must keep the permissions it was issued with")
+		assert.Equal(t, uint(1), linkViews(t, link))
+	})
+	t.Run("ExhaustedLinkDoesNotMakeTheShareItIssuedPermanent", func(t *testing.T) {
+		// Clearing a link's expiry is what an owner does by saving the share dialog without one, so
+		// this is the shape in which a spent link must still leave the row bounded.
+		link := newTestLink(t, 1)
+		link.LinkExpires = 3600
+
+		if err := link.Save(); err != nil {
+			t.Fatal(err)
+		}
+
+		sess, err := redeemInNewSession(t, link.LinkToken, "alice", "Alice123!")
+		require.NoError(t, err)
+		require.True(t, sess.HasShare(link.ShareUID))
+
+		user := FindUser(User{UserName: "alice"})
+		require.NotNil(t, user)
+
+		share := FindUserShare(UserShare{UserUID: user.GetUID(), ShareUID: link.ShareUID})
+		require.NotNil(t, share)
+		require.NotNil(t, share.ExpiresAt)
+
+		edited := FindLink(link.LinkUID)
+		require.NotNil(t, edited)
+		edited.LinkExpires = 0
+
+		if err = edited.Save(); err != nil {
+			t.Fatal(err)
+		}
+
+		require.Nil(t, edited.ExpiresAt(), "the edited link must no longer expire")
+
+		assert.Equal(t, 1, user.RedeemToken(link.LinkToken))
+
+		after := FindUserShare(UserShare{UserUID: user.GetUID(), ShareUID: link.ShareUID})
+		require.NotNil(t, after)
+		assert.NotNil(t, after.ExpiresAt, "the share must keep the expiration time it was issued with")
+	})
 	t.Run("RedeemableLinkRefreshesTheRegisteredShareItTakesOver", func(t *testing.T) {
 		// A second link that still admits a redemption may take the row over, and it carries its own
-		// terms when it does.
+		// terms and spends a view when it does.
 		issued := newTestLink(t, 0)
 		taking := newTestLinkWithToken(t, "", 0)
 		taking.ShareUID = issued.ShareUID
@@ -385,6 +486,80 @@ func TestLinkRedemption(t *testing.T) {
 		assert.Equal(t, uint(64), share.Perm)
 		require.NotNil(t, share.ExpiresAt)
 		assert.WithinDuration(t, *taking.ExpiresAt(), *share.ExpiresAt, time.Minute)
+		assert.Equal(t, uint(0), linkViews(t, taking), "a share the account already holds counts no view")
+
+		// Re-presenting the token the row now names counts none either.
+		assert.Equal(t, 1, user.RedeemToken(taking.LinkToken))
+		assert.Equal(t, uint(0), linkViews(t, taking))
+	})
+	t.Run("ReinstatingALapsedShareCountsAView", func(t *testing.T) {
+		// A lapsed row grants nothing, so the link that writes it again is admitting the account, and
+		// its budget bounds how often that may happen.
+		link := newTestLink(t, 2)
+
+		sess, err := redeemInNewSession(t, link.LinkToken, "alice", "Alice123!")
+		require.NoError(t, err)
+		require.True(t, sess.HasShare(link.ShareUID))
+		require.Equal(t, uint(1), linkViews(t, link))
+
+		user := FindUser(User{UserName: "alice"})
+		require.NotNil(t, user)
+
+		share := FindUserShare(UserShare{UserUID: user.GetUID(), ShareUID: link.ShareUID})
+		require.NotNil(t, share)
+
+		if err = share.Updates(Values{"expires_at": Now().Add(-time.Minute)}); err != nil {
+			t.Fatal(err)
+		}
+
+		require.False(t, user.RefreshShares().HasShare(link.ShareUID))
+
+		assert.Equal(t, 1, user.RedeemToken(link.LinkToken))
+		assert.True(t, user.RefreshShares().HasShare(link.ShareUID))
+		assert.Equal(t, uint(2), linkViews(t, link), "reinstating a lapsed share must count a view")
+
+		// The budget is now spent, so the next visitor is refused.
+		stranger, err := redeemInNewSession(t, link.LinkToken, "", "")
+
+		require.Error(t, err)
+		assert.Equal(t, http.StatusNotFound, stranger.Status)
+		assert.Equal(t, uint(2), linkViews(t, link))
+	})
+	t.Run("AlternatingTwoTokensForOneRecordCountsNoFurtherView", func(t *testing.T) {
+		// Each link records itself on the row it writes, so alternating the two tokens of one record
+		// re-points the row on every presentation. The account holds the record throughout, so only
+		// the first share counts.
+		first := newTestLink(t, 3)
+		second := newTestLinkWithToken(t, "", 3)
+		second.ShareUID = first.ShareUID
+
+		if err := second.Save(); err != nil {
+			t.Fatal(err)
+		}
+
+		sess, err := redeemInNewSession(t, first.LinkToken, "alice", "Alice123!")
+		require.NoError(t, err)
+		require.True(t, sess.HasShare(first.ShareUID))
+		require.Equal(t, uint(1), linkViews(t, first))
+
+		user := FindUser(User{UserName: "alice"})
+		require.NotNil(t, user)
+
+		for range 3 {
+			assert.Equal(t, 1, user.RedeemToken(second.LinkToken))
+			assert.Equal(t, 1, user.RedeemToken(first.LinkToken))
+		}
+
+		assert.Equal(t, uint(1), linkViews(t, first))
+		assert.Equal(t, uint(0), linkViews(t, second))
+
+		// Both budgets are intact, so each still admits its own visitors.
+		for _, link := range []*Link{first, second} {
+			visitor, visitErr := redeemInNewSession(t, link.LinkToken, "", "")
+
+			require.NoError(t, visitErr)
+			assert.Equal(t, UIDs{link.ShareUID}, visitor.SharedUIDs())
+		}
 	})
 	t.Run("ExhaustedLinkIsNotRescuedByACoTokenSibling", func(t *testing.T) {
 		// One record reachable through two tokens, the second of which also carries a link on another
