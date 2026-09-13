@@ -1403,29 +1403,46 @@ func (m *User) RedeemToken(token string) (n int) {
 		return 0
 	}
 
-	// Find links.
-	links := FindValidLinksByToken(token, "")
+	created := false
 
-	// Found?
-	if n = len(links); n == 0 {
-		return n
+	// A share this link issued is counted without a new redemption, as the sharing page redeems on
+	// every load. Every other outcome, a first share and one a different link issued alike, needs
+	// the link to admit it.
+	for _, link := range FindRedeemedLinksByToken(token, "") {
+		found := FindUserShare(UserShare{UserUID: m.GetUID(), ShareUID: link.ShareUID})
+
+		if !found.IssuedBy(link) && !link.Redeemable() {
+			continue
+		}
+
+		if found != nil {
+			if err := found.UpdateLink(link); err != nil {
+				event.AuditErr([]string{"user %s", "share token update failed", status.Error(err)}, m.RefID)
+			}
+
+			n++
+
+			continue
+		}
+
+		share := NewUserShare(m.GetUID(), link.ShareUID, link.Perm, link.ExpiresAt())
+		share.LinkUID = link.LinkUID
+		share.Comment = link.Comment
+
+		if err := share.Save(); err != nil {
+			event.AuditErr([]string{"user %s", "share token redeem failed", status.Error(err)}, m.RefID)
+			continue
+		}
+
+		link.Redeem()
+
+		created = true
+		n++
 	}
 
-	// Find shares.
-	for _, link := range links {
-		if found := FindUserShare(UserShare{UserUID: m.GetUID(), ShareUID: link.ShareUID}); found == nil {
-			share := NewUserShare(m.GetUID(), link.ShareUID, link.Perm, link.ExpiresAt())
-			share.LinkUID = link.LinkUID
-			share.Comment = link.Comment
-
-			if err := share.Save(); err != nil {
-				event.AuditErr([]string{"user %s", "share token redeem failed", status.Error(err)}, m.RefID)
-			} else {
-				link.Redeem()
-			}
-		} else if err := found.UpdateLink(link); err != nil {
-			event.AuditErr([]string{"user %s", "share token update failed", status.Error(err)}, m.RefID)
-		}
+	// Reload the shares, so the caller sees the ones this redemption created.
+	if created {
+		m.RefreshShares()
 	}
 
 	return n

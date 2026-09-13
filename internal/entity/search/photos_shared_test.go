@@ -28,7 +28,7 @@ func sharedFilterAlbum(t *testing.T, filter string) *entity.Album {
 	require.NoError(t, link.Save())
 	t.Cleanup(func() { _ = entity.UnscopedDb().Delete(link).Error })
 
-	require.Len(t, entity.FindValidLinksByToken(link.LinkToken, album.AlbumUID), 1)
+	require.Len(t, entity.FindRedeemableLinksByToken(link.LinkToken, album.AlbumUID), 1)
 
 	return album
 }

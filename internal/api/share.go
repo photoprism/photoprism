@@ -40,7 +40,7 @@ func ShareToken(router *gin.RouterGroup) {
 		conf := get.Config()
 
 		token := clean.ShareToken(c.Param("token"))
-		links := entity.FindValidLinksByToken(token, "")
+		links := entity.FindRedeemableLinksByToken(token, "")
 
 		if len(links) == 0 {
 			log.Debugf("share: invalid token")
@@ -74,7 +74,7 @@ func ShareTokenShared(router *gin.RouterGroup) {
 		token := clean.ShareToken(c.Param("token"))
 		shared := clean.Token(c.Param("shared"))
 
-		links := entity.FindValidLinksByToken(token, shared)
+		links := entity.FindRedeemableLinksByToken(token, shared)
 
 		if len(links) < 1 {
 			log.Debugf("share: invalid token or slug")

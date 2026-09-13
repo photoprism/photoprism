@@ -43,7 +43,7 @@ func TestSharePreview_StoredFilter(t *testing.T) {
 	require.NoError(t, link.Save())
 	t.Cleanup(func() { _ = entity.UnscopedDb().Delete(link).Error })
 
-	require.Len(t, entity.FindValidLinksByToken(link.LinkToken, album.AlbumUID), 1)
+	require.Len(t, entity.FindRedeemableLinksByToken(link.LinkToken, album.AlbumUID), 1)
 
 	// Fixture sanity: the album's filter matches content, so an empty preview below reflects the
 	// selection contract rather than an album that matches nothing.

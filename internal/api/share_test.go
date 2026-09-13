@@ -6,6 +6,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestShareToken(t *testing.T) {
@@ -15,13 +18,6 @@ func TestShareToken(t *testing.T) {
 		r := PerformRequest(app, "GET", "/api/v1/xxx")
 		assert.Equal(t, http.StatusTemporaryRedirect, r.Code)
 	})
-	// TODO Why does it panic?
-	/*t.Run("ValidToken", func(t *testing.T) {
-		app, router, _ := NewApiTest()
-		ShareToken(router)
-		r := PerformRequest(app, "GET", "/api/v1/4jxf3jfn2k")
-		assert.Equal(t, http.StatusTemporaryRedirect, r.Code)
-	})*/
 }
 
 func TestShareBootstrapConfig(t *testing.T) {
@@ -72,4 +68,44 @@ func TestShareTokenShared(t *testing.T) {
 		r := PerformRequest(app, "GET", "/api/v1/4jxf3jfn2k/as6sg6bxpogaaba7")
 		assert.Equal(t, http.StatusTemporaryRedirect, r.Code)
 	})*/
+}
+
+func TestShareTokenViewLimit(t *testing.T) {
+	// The sharing pages admit a redemption, so a link that has reached its view limit no longer
+	// resolves there and the request is sent to the base site.
+	newLink := func(t *testing.T, maxViews uint) entity.Link {
+		t.Helper()
+
+		link := entity.NewLink(rnd.GenerateUID(entity.AlbumUID), false, false)
+		link.MaxViews = maxViews
+
+		if err := link.Save(); err != nil {
+			t.Fatal(err)
+		}
+
+		return link
+	}
+
+	t.Run("RedeemableLinkIsNotRedirected", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		app.LoadHTMLFiles(conf.TemplateFiles()...)
+		ShareToken(router)
+
+		link := newLink(t, 1)
+		r := PerformRequest(app, "GET", "/api/v1/"+link.LinkToken)
+
+		assert.Equal(t, http.StatusOK, r.Code)
+	})
+	t.Run("ReachedViewLimitIsRedirected", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		app.LoadHTMLFiles(conf.TemplateFiles()...)
+		ShareToken(router)
+
+		link := newLink(t, 1)
+		link.Redeem()
+
+		r := PerformRequest(app, "GET", "/api/v1/"+link.LinkToken)
+
+		assert.Equal(t, http.StatusTemporaryRedirect, r.Code)
+	})
 }
