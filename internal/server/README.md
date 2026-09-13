@@ -1,6 +1,6 @@
 ## PhotoPrism — HTTP Server
 
-**Last Updated:** May 3, 2026
+**Last Updated:** September 13, 2026
 
 ### Overview
 
@@ -10,7 +10,7 @@
 
 - Uses the configured `config.Config` to decide TLS, AutoTLS, Unix sockets, proxies, compression, and trusted headers.
 - Middleware must stay small and deterministic because it runs on every request; heavy logic belongs in handlers.
-- Panics are recovered by `Recovery()` which logs stack traces and returns 500.
+- Panics are recovered by `Recovery()`, which returns 500 and writes a debug-level entry holding the stack trace, the caller, the request method, its route template and an allowlist of headers.
 - Startup supports mutually exclusive endpoints: Unix socket, HTTPS with certs, AutoTLS (with redirect listener), or plain HTTP.
 
 #### Goals

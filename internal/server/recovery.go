@@ -4,11 +4,16 @@ import (
 	"bytes"
 	"fmt"
 	"net/http"
-	"net/http/httputil"
 	"os"
 	"runtime"
+	"strings"
 
 	"github.com/gin-gonic/gin"
+
+	"github.com/photoprism/photoprism/internal/api"
+	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/txt/clip"
 )
 
 var (
@@ -18,19 +23,74 @@ var (
 	slash     = []byte("/")
 )
 
+// recoveryHeaders lists the request headers a panic summary reports, in the order it reports them.
+// Adding a header here makes it part of the log output, so the list holds media negotiation and
+// client identification only.
+var recoveryHeaders = []string{
+	header.ContentType,
+	header.Accept,
+	header.AcceptEncoding,
+	header.Range,
+	header.UserAgent,
+}
+
+const (
+	// unknownRoute is what a request summary reports in place of a route template when the request
+	// matched none.
+	unknownRoute = "?"
+	// summaryValueBytes is the budget a request summary gives each value it renders, so the length
+	// of the message follows the allowlist and every listed field is reported.
+	summaryValueBytes = 128
+)
+
 // Recovery returns a middleware that recovers from any panics and writes a 500 if there was one.
 func Recovery() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		defer func() {
 			if err := recover(); err != nil {
-				stack := stack(3)
-				req, _ := httputil.DumpRequest(c.Request, false)
-				log.Debugf("server: %s (%s)\n%s", err, string(req), stack)
+				log.Debugf("server: %s (%s)\n%s", clean.Log(fmt.Sprint(err)), requestSummary(c), stack(3))
 				c.AbortWithStatus(http.StatusInternalServerError)
 			}
 		}()
 		c.Next()
 	}
+}
+
+// requestSummary renders the caller, the method, the route template and the allowlisted headers of
+// a request for a diagnostic log message. The template is the registered pattern rather than the
+// requested path, so a request reports the values named by the allowlist rather than the URI it
+// asked for.
+func requestSummary(c *gin.Context) string {
+	if c == nil || c.Request == nil {
+		return unknownRoute
+	}
+
+	route := c.FullPath()
+
+	if route == "" {
+		route = unknownRoute
+	}
+
+	// The parsed length is reported rather than the header, which the transport removes from a
+	// chunked request.
+	out := make([]string, 0, len(recoveryHeaders)+3)
+	out = append(out, api.ClientIP(c))
+	out = append(out, summaryValue(c.Request.Method)+" "+summaryValue(route))
+	out = append(out, fmt.Sprintf("%s: %d", header.ContentLength, c.Request.ContentLength))
+
+	for _, name := range recoveryHeaders {
+		if v := c.Request.Header.Get(name); v != "" {
+			out = append(out, name+": "+summaryValue(v))
+		}
+	}
+
+	return strings.Join(out, ", ")
+}
+
+// summaryValue renders one value of a request summary within its budget and in quotes, so its
+// extent does not depend on the characters it holds.
+func summaryValue(s string) string {
+	return clean.LogQuote(clip.Bytes(s, summaryValueBytes))
 }
 
 // stack returns a nicely formatted stack frame, skipping skip frames.
