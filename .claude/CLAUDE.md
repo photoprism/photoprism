@@ -27,7 +27,9 @@ Run `make help` for an overview of the most common targets, and `make list` to l
 ## Testing
 
 **Run all tests:**
-- `make test` — runs the JS and Go tests on SQLite; it does not cover MariaDB or the editions
+- `make test` — runs the JS and Go tests on SQLite; it does not cover MariaDB. Its Go half sweeps
+  `./pkg/... ./internal/... ./.../internal/...`, so the editions' `internal/` packages **are** included;
+  what it leaves out is MariaDB and each edition's own `make -C <edition> test` extras
 - `make test-go` — all Go tests on SQLite (~3-15 min)
 - `make test-mariadb` — the same Go suite against MariaDB (~5-20 min)
 - `make test-js` — frontend unit tests (Vitest)

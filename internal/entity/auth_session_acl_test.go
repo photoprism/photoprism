@@ -18,6 +18,16 @@ func mixedPrincipalSession() *Session {
 	return s
 }
 
+// broadClientNarrowUserSession builds the mirror of mixedPrincipalSession: a full-access client
+// role, which is what a credential is minted with by default, owned by a narrow account.
+func broadClientNarrowUserSession() *Session {
+	s := &Session{}
+	s.SetClient(&Client{ClientRole: acl.RoleClient.String(), AuthProvider: authn.ProviderClient.String()})
+	s.SetUser(UserFixtures.Pointer("guest"))
+
+	return s
+}
+
 func TestSession_Grants(t *testing.T) {
 	t.Run("NilUnrestricted", func(t *testing.T) {
 		var s *Session
@@ -43,6 +53,17 @@ func TestSession_Grants(t *testing.T) {
 		assert.False(t, s.Grants(acl.ResourcePlaces, acl.AccessPrivate))
 		assert.False(t, s.Grants(acl.ResourceAlbums, acl.AccessLibrary))
 		assert.False(t, s.Grants(acl.ResourceFiles, acl.AccessAll))
+	})
+	t.Run("UserRoleLimitsBroadClient", func(t *testing.T) {
+		// The mirror of the case above, and the shape a credential takes by default: the client role
+		// carries full access and the owning account does not, so the account is what limits it.
+		s := broadClientNarrowUserSession()
+		assert.True(t, s.IsClient())
+		assert.Equal(t, acl.RoleClient, s.GetClientRole())
+		assert.True(t, acl.Rules.Allow(acl.ResourcePhotos, acl.RoleClient, acl.AccessPrivate))
+		assert.False(t, s.Grants(acl.ResourcePhotos, acl.AccessPrivate))
+		assert.False(t, s.Grants(acl.ResourceFiles, acl.AccessLibrary))
+		assert.False(t, s.Grants(acl.ResourceAlbums, acl.AccessLibrary))
 	})
 	t.Run("ClientWithoutUserKeepsClientRole", func(t *testing.T) {
 		s := &Session{}
@@ -107,6 +128,13 @@ func TestSession_HasSharedAccessOnly(t *testing.T) {
 		// The admin owner is not shared-only, but the instance client is, so the session is.
 		s := mixedPrincipalSession()
 		assert.False(t, s.GetUser().HasSharedAccessOnly(acl.ResourcePhotos))
+		assert.True(t, s.HasSharedAccessOnly(acl.ResourcePhotos))
+		assert.True(t, s.HasSharedAccessOnly(acl.ResourceAlbums))
+	})
+	t.Run("BroadClientNarrowUser", func(t *testing.T) {
+		// A full-access client role does not lift the owning account out of shared-only access.
+		s := broadClientNarrowUserSession()
+		assert.False(t, acl.Rules.Deny(acl.ResourcePhotos, acl.RoleClient, acl.AccessLibrary))
 		assert.True(t, s.HasSharedAccessOnly(acl.ResourcePhotos))
 		assert.True(t, s.HasSharedAccessOnly(acl.ResourceAlbums))
 	})

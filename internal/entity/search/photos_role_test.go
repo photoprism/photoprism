@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -69,6 +70,42 @@ func TestUserPhotos_EffectiveRole(t *testing.T) {
 		results, _, err := UserPhotos(form.SearchPhotos{Private: true, Count: 1000}, scopeSession("alice"))
 		assert.NoError(t, err)
 		assert.Contains(t, photoUIDs(results), roleTestPrivatePhoto)
+	})
+	t.Run("MixedPrincipalSharedScopeExcludesPrivateMember", func(t *testing.T) {
+		// The share admits the scope, and the client role still withholds the private member inside
+		// it, so the scope decides which album is reachable and the role decides what it shows.
+		member := entity.NewPhotoAlbum(roleTestPrivatePhoto, roleTestSharedAlbum)
+		require.NoError(t, member.Save())
+		entity.FlushAlbumCache()
+
+		t.Cleanup(func() {
+			_ = entity.UnscopedDb().Delete(member).Error
+			entity.FlushAlbumCache()
+		})
+
+		sess := clientSessionFor(acl.RoleInstance, "alice")
+		results, _, err := UserPhotos(form.SearchPhotos{Scope: roleTestSharedAlbum, Private: true, Count: 1000}, sess)
+		require.NoError(t, err)
+		require.NotEmpty(t, results, "the scope must still return the album's other members")
+		assert.NotContains(t, photoUIDs(results), roleTestPrivatePhoto)
+
+		admin, _, err := UserPhotos(form.SearchPhotos{Scope: roleTestSharedAlbum, Private: true, Count: 1000}, scopeSession("alice"))
+		require.NoError(t, err)
+		assert.Contains(t, photoUIDs(admin), roleTestPrivatePhoto, "the fixture must place the private picture in the shared album")
+	})
+	t.Run("BroadClientNarrowUserExcludesPrivate", func(t *testing.T) {
+		// The mirror principal, and the shape a credential takes by default: a full-access client role
+		// owned by a narrow account. The account is what limits it, so a request for private pictures
+		// is answered as a public one. The guest fixture holds no share, so the listing is empty here
+		// and the predicate is what carries the case.
+		sess := clientSessionFor(acl.RoleClient, "guest")
+		assert.True(t, acl.Rules.Allow(acl.ResourcePhotos, acl.RoleClient, acl.AccessPrivate))
+		assert.False(t, PhotoSessionSeesPrivate(sess))
+		assert.True(t, sess.HasSharedAccessOnly(acl.ResourcePhotos))
+
+		results, _, err := UserPhotos(form.SearchPhotos{Private: true, Count: 1000}, sess)
+		require.NoError(t, err)
+		assert.NotContains(t, photoUIDs(results), roleTestPrivatePhoto)
 	})
 	t.Run("MixedPrincipalExcludesArchived", func(t *testing.T) {
 		// The client role carries no delete grant, so a request for archived pictures is answered as
@@ -137,6 +174,24 @@ func TestUserPhotos_NearVisibility(t *testing.T) {
 		_, _, err := UserPhotos(form.SearchPhotos{Near: roleTestPublicPhoto}, scopeSession("alice"))
 		assert.NoError(t, err)
 	})
+	t.Run("MixedPrincipalAbsentReferenceNotFound", func(t *testing.T) {
+		// A UID with no row behind it cannot be found whatever the visibility check answers, so this
+		// states the contract rather than detecting a change in it.
+		_, _, err := UserPhotos(form.SearchPhotos{Near: "ps6sg6be2lvl0000"}, clientSessionFor(acl.RoleInstance, "alice"))
+		assert.Equal(t, ErrNotFound, err)
+	})
+	t.Run("MixedPrincipalInvisibleReferenceTakesTheSamePath", func(t *testing.T) {
+		// The owner is an admin and sees this reference, so the refusal comes from the client role.
+		_, _, err := UserPhotos(form.SearchPhotos{Near: roleTestPrivatePhoto}, clientSessionFor(acl.RoleInstance, "alice"))
+		assert.Equal(t, ErrNotFound, err)
+
+		_, _, err = UserPhotos(form.SearchPhotos{Near: roleTestPrivatePhoto}, scopeSession("alice"))
+		assert.NoError(t, err)
+	})
+	t.Run("MixedPrincipalVisibleReferenceAccepted", func(t *testing.T) {
+		_, _, err := UserPhotos(form.SearchPhotos{Near: roleTestPublicPhoto}, clientSessionFor(acl.RoleInstance, "alice"))
+		assert.NoError(t, err)
+	})
 	t.Run("NoSessionUnrestricted", func(t *testing.T) {
 		_, _, err := UserPhotos(form.SearchPhotos{Near: roleTestPrivatePhoto}, nil)
 		assert.NoError(t, err)
@@ -155,6 +210,20 @@ func TestUserPhotosGeo_NearVisibility(t *testing.T) {
 	t.Run("VisibleReferenceAccepted", func(t *testing.T) {
 		_, err := UserPhotosGeo(form.SearchPhotosGeo{Near: roleTestPublicPhoto}, scopeSession("alice"))
 		assert.NoError(t, err)
+	})
+	t.Run("MixedPrincipalAbsentReference", func(t *testing.T) {
+		// The map view refuses an instance client outright, so these three cases also pin that the
+		// reference is resolved before the search gate runs.
+		_, err := UserPhotosGeo(form.SearchPhotosGeo{Near: "ps6sg6be2lvl0000"}, clientSessionFor(acl.RoleInstance, "alice"))
+		assert.Equal(t, ErrNotFound, err)
+	})
+	t.Run("MixedPrincipalInvisibleReference", func(t *testing.T) {
+		_, err := UserPhotosGeo(form.SearchPhotosGeo{Near: roleTestPrivateGeoPhoto}, clientSessionFor(acl.RoleInstance, "alice"))
+		assert.Equal(t, ErrNotFound, err)
+	})
+	t.Run("MixedPrincipalVisibleReferenceReachesTheSearchGate", func(t *testing.T) {
+		_, err := UserPhotosGeo(form.SearchPhotosGeo{Near: roleTestPublicPhoto}, clientSessionFor(acl.RoleInstance, "alice"))
+		assert.Equal(t, ErrForbidden, err)
 	})
 	t.Run("NoSessionUnrestricted", func(t *testing.T) {
 		_, err := UserPhotosGeo(form.SearchPhotosGeo{Near: roleTestPrivatePhoto}, nil)
