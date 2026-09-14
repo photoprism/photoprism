@@ -228,21 +228,40 @@ func TestFileSelection(t *testing.T) {
 // TestShareSelection_OmitTypes verifies that sharing converted files omits every image format
 // except JPEG, so a newly supported type does not reach a share as its original by default.
 func TestShareSelection_OmitTypes(t *testing.T) {
+	// Named one by one rather than read back from the format table the selection is built from, so
+	// a format that stops being an image is caught here instead of quietly leaving the omit list.
+	pinned := []fs.Type{
+		fs.ImagePng,
+		fs.ImageWebp,
+		fs.ImageTiff,
+		fs.ImageAvif,
+		fs.ImageHeic,
+		fs.ImageBmp,
+		fs.ImageGif,
+		fs.ImagePsd,
+		fs.ImageJpegXL,
+		fs.ImageCineon,
+	}
+
 	t.Run("Converted", func(t *testing.T) {
+		omit := ShareSelection(false).OmitTypes
+
+		for _, fileType := range pinned {
+			assert.Containsf(t, omit, fileType.String(), "%s must not be shared as the original", fileType)
+		}
+
+		assert.NotContains(t, omit, fs.ImageJpeg.String(), "jpeg is the format that is shared")
+	})
+	t.Run("CoversEveryImageType", func(t *testing.T) {
 		omit := ShareSelection(false).OmitTypes
 
 		for _, fileType := range media.FileTypes(media.Image) {
 			if fileType == fs.ImageJpeg {
-				assert.NotContainsf(t, omit, fileType.String(), "%s is the shared format", fileType)
 				continue
 			}
 
 			assert.Containsf(t, omit, fileType.String(), "%s must not be shared as the original", fileType)
 		}
-
-		assert.Contains(t, omit, fs.ImagePsd.String())
-		assert.Contains(t, omit, fs.ImageJpegXL.String())
-		assert.Contains(t, omit, fs.ImageCineon.String())
 	})
 	t.Run("Originals", func(t *testing.T) {
 		assert.Empty(t, ShareSelection(true).OmitTypes)
