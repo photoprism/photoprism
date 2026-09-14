@@ -166,11 +166,8 @@ func TestSearchQuality_EffectiveRole(t *testing.T) {
 		assert.Contains(t, found(t, "/api/v1/photos", acl.RoleClient), target)
 	})
 	t.Run("MapSearchAdmitsOnTheSameIntersection", func(t *testing.T) {
-		// The map view carries its own copy of the gate, and no principal can currently observe it:
-		// one that may search places may also manage pictures, so the gate is inert for it, and the
-		// instance client that may not manage is refused before reaching it. What is pinned here is
-		// that admission split; the content assertion wants a fixture giving a narrow account map
-		// content, which none does today.
+		// The map view carries its own copy of the gate, and this case pins the admission split only.
+		// Pro has the principal that reaches the gate itself, so the content case lives there.
 		refused := AuthenticatedRequest(app, http.MethodGet, "/api/v1/geo?count=1000",
 			mixedPrincipalToken(t, acl.RoleInstance, "alice"))
 		assert.Equal(t, http.StatusForbidden, refused.Code)

@@ -44,7 +44,10 @@ func mixedPrincipalToken(t *testing.T, role acl.Role, userName string) string {
 	sess := entity.NewSession(client.AuthExpires, 0).SetClient(client).SetGrantType(authn.GrantClientCredentials)
 	sess.SetUser(user)
 	require.NoError(t, sess.Create())
-	t.Cleanup(func() { _ = entity.UnscopedDb().Delete(sess).Error })
+
+	// Deleted through the entity, since a database-only delete leaves the credential resolvable from
+	// the session cache with its preview token still registered.
+	t.Cleanup(func() { _ = sess.Delete() })
 
 	require.True(t, sess.IsClient())
 	require.Equal(t, role, sess.GetClientRole())
@@ -61,10 +64,8 @@ func TestSearchFolders_EffectiveRole(t *testing.T) {
 	SearchFoldersOriginals(router)
 
 	t.Run("MixedPrincipalRefused", func(t *testing.T) {
-		// An instance client is limited by the client role, which carries no library access to files,
-		// so the listing refuses it even though the owning account is an administrator. The refusal
-		// comes from the client-role gate in AuthAny, ahead of the per-session filtering inside the
-		// handler.
+		// The client role carries no library access to files, so the listing refuses the session even
+		// though the owning account is an administrator. AuthAny answers this, before the handler.
 		token := mixedPrincipalToken(t, acl.RoleInstance, "alice")
 		r := AuthenticatedRequest(app, http.MethodGet, "/api/v1/folders/originals?files=true", token)
 
@@ -79,14 +80,10 @@ func TestSearchFolders_EffectiveRole(t *testing.T) {
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 	t.Run("NoRoleInThisTableReachesTheListingWithoutPrivateAccess", func(t *testing.T) {
-		// A property of this rule table, not of the handler: every role granted library access to
-		// files also has private access to pictures. A session is admitted on the intersection of two
-		// roles, and an intersection reaches the listing only if both members do, so checking the
-		// single roles covers every pair as well.
-		//
-		// The editions have roles where the two come apart - a service client in Pro and Portal, a
-		// viewer in all three - so their own packages carry the behavior case for the exclusion this
-		// table cannot reach. Do not read this subtest as coverage of that branch.
+		// A property of this rule table rather than of the handler: every role with library access to
+		// files also has private access to pictures, and an intersection reaches the listing only if
+		// both of its roles do. The editions have roles where the two come apart, so the behavior case
+		// lives in their packages rather than here.
 		reached := 0
 
 		for role := range acl.Rules[acl.ResourceFiles] {
