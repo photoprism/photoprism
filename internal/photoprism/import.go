@@ -343,9 +343,9 @@ func (imp *Import) Cancel() {
 	mutex.IndexWorker.Cancel()
 }
 
-// StoredCopyOf returns the indexed file that already holds the same content, if there is one. A
-// recorded name that no longer holds the file is not one, so a caller that removes its source on the
-// strength of this cannot remove the only copy.
+// StoredCopyOf returns the indexed file that already holds the same content, if there is one. The
+// answer comes from the file rather than from the row, since a caller removes its source on the
+// strength of it and an index records what a file held when it was read.
 func StoredCopyOf(mediaFile *MediaFile) *entity.File {
 	if mediaFile == nil {
 		return nil
@@ -363,7 +363,8 @@ func StoredCopyOf(mediaFile *MediaFile) *entity.File {
 		return nil
 	}
 
-	if storedName := FileName(stored.FileRoot, stored.FileName); !fs.FileExists(storedName) {
+	// A name that holds nothing hashes to the empty string, so this covers an absent file too.
+	if storedName := FileName(stored.FileRoot, stored.FileName); fs.Hash(storedName) != fileHash {
 		return nil
 	}
 

@@ -67,13 +67,41 @@ func TestStoredCopyOf(t *testing.T) {
 
 		assert.Nil(t, StoredCopyOf(mediaFile))
 	})
+	t.Run("IndexedButContentChanged", func(t *testing.T) {
+		// The row records what the file held when it was read. If the file has changed since, the
+		// library no longer holds this content, and answering otherwise removes the only copy.
+		photo := entity.PhotoFixtures.Get("Photo01")
+		stored := "zz-stored/changed.cr2"
+		storedPath := filepath.Join(cfg.OriginalsPath(), stored)
+
+		require.NoError(t, os.MkdirAll(filepath.Dir(storedPath), fs.ModeDir))
+		require.NoError(t, os.WriteFile(storedPath, []byte("different content"), fs.ModeFile))
+
+		file := &entity.File{
+			PhotoID:  photo.ID,
+			PhotoUID: photo.PhotoUID,
+			FileRoot: entity.RootOriginals,
+			FileName: stored,
+			FileHash: mediaFile.Hash(),
+		}
+		require.NoError(t, file.Save())
+
+		t.Cleanup(func() {
+			_ = entity.UnscopedDb().Delete(file).Error
+			_ = os.RemoveAll(filepath.Dir(storedPath))
+		})
+
+		require.NotEqual(t, mediaFile.Hash(), fs.Hash(storedPath), "the file must no longer match its row")
+
+		assert.Nil(t, StoredCopyOf(mediaFile))
+	})
 	t.Run("IndexedAndOnDisk", func(t *testing.T) {
 		photo := entity.PhotoFixtures.Get("Photo01")
 		stored := "zz-stored/present.cr2"
 		storedPath := filepath.Join(cfg.OriginalsPath(), stored)
 
 		require.NoError(t, os.MkdirAll(filepath.Dir(storedPath), fs.ModeDir))
-		require.NoError(t, os.WriteFile(storedPath, []byte("content"), fs.ModeFile))
+		require.NoError(t, fs.Copy(mediaFile.FileName(), storedPath, false))
 
 		file := &entity.File{
 			PhotoID:  photo.ID,
