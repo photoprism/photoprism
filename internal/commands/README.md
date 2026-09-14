@@ -34,7 +34,9 @@ that check.
 
 ### Video Output Permissions
 
-Remux, trim, and transcode retain the output permissions established during file creation rather than applying a final default mode. The process umask is inherited by FFmpeg; container launch wrappers apply `PHOTOPRISM_UMASK` before starting PhotoPrism. Existing transcodes that are reused keep their permissions. Remux working files remain beside the destination, so publication does not require copying large media across volume mounts.
+New remux, trim, and transcode outputs use umask-filtered creation permissions. Remux and trim preserve an existing regular destination's permission bits before replacement, including trim with a backup; backups use `fs.ModeBackupFile`. A reused transcode keeps its permissions. The process umask is inherited by FFmpeg; container launch wrappers apply `PHOTOPRISM_UMASK` before starting PhotoPrism.
+
+Remux and trim reserve temporary siblings with `fs.CreateStageFile` until publication and clean them up on failure. Working files stay beside their destinations, so publication requires no extra copying of large media across volume mounts. Permission preservation does not copy ownership, extended attributes, or ACLs.
 
 ### Positional Arguments & Flag Order
 

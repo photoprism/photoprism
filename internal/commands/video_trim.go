@@ -225,7 +225,6 @@ func videoTrimFile(conf *config.Config, convert *photoprism.Convert, plan videoT
 		return fmt.Errorf("remaining duration too short for %s", clean.Log(plan.SrcPath))
 	}
 
-	destDir := filepath.Dir(plan.DestPath)
 	ext := filepath.Ext(plan.DestPath)
 	if ext == "" {
 		ext = filepath.Ext(plan.SrcPath)
@@ -234,10 +233,22 @@ func videoTrimFile(conf *config.Config, convert *photoprism.Convert, plan videoT
 		ext = ".tmp"
 	}
 
-	tempPath, err := videoTempPath(destDir, ".trim-*"+ext)
+	tempDest := plan.DestPath
+	if filepath.Ext(tempDest) == "" {
+		tempDest += ext
+	}
+
+	tempPath, err := fs.CreateStageFile(tempDest)
 	if err != nil {
 		return err
 	}
+
+	published := false
+	defer func() {
+		if !published {
+			_ = os.Remove(tempPath)
+		}
+	}()
 
 	cmd := videoTrimCmd(conf.FFmpegBin(), plan.SrcPath, tempPath, start, remaining)
 	cmd.Env = append(cmd.Env, fmt.Sprintf("HOME=%s", conf.CmdCachePath()))
@@ -252,18 +263,19 @@ func videoTrimFile(conf *config.Config, convert *photoprism.Convert, plan videoT
 	}
 
 	if !fs.FileExistsNotEmpty(tempPath) {
-		_ = os.Remove(tempPath)
 		return fmt.Errorf("trim output missing for %s", clean.Log(plan.SrcPath))
+	}
+
+	if err = videoPreserveMode(tempPath, plan.DestPath); err != nil {
+		return err
 	}
 
 	if plan.Sidecar {
 		if fs.FileExists(plan.DestPath) {
-			_ = os.Remove(tempPath)
 			return fmt.Errorf("output already exists %s", clean.Log(plan.DestPath))
 		}
 
 		if err = os.Rename(tempPath, plan.DestPath); err != nil {
-			_ = os.Remove(tempPath)
 			return err
 		}
 	} else {
@@ -275,17 +287,17 @@ func videoTrimFile(conf *config.Config, convert *photoprism.Convert, plan videoT
 				_ = os.Remove(backupPath)
 			}
 			if err = os.Rename(plan.DestPath, backupPath); err != nil {
-				_ = os.Remove(tempPath)
 				return err
 			}
 			_ = os.Chmod(backupPath, fs.ModeBackupFile)
 		}
 
 		if err = os.Rename(tempPath, plan.DestPath); err != nil {
-			_ = os.Remove(tempPath)
 			return err
 		}
 	}
+
+	published = true
 
 	mediaFile, err := photoprism.NewMediaFile(plan.DestPath)
 	if err != nil {
