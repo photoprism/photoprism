@@ -77,8 +77,9 @@ func stageName(dest string) string {
 	return dir + prefix + base + suffix
 }
 
-// stageFile creates the file a copy writes before it is published.
-func stageFile(dest string) (*os.File, error) {
+// OpenStageFile creates an exclusive temporary sibling with the default file creation mode.
+// The caller owns the handle and must remove or publish its pathname.
+func OpenStageFile(dest string) (*os.File, error) {
 	return os.OpenFile(stageName(dest), os.O_WRONLY|os.O_CREATE|os.O_EXCL, ModeFile) //nolint:gosec // the name is derived from a validated destination
 }
 
@@ -87,7 +88,7 @@ func stageFile(dest string) (*os.File, error) {
 // what makes it theirs; it publishes with PublishFile and removes the file on every other way out.
 // The directory must already exist, and the staged file gets ModeFile rather than the destination's.
 func CreateStageFile(dest string) (name string, err error) {
-	f, err := stageFile(dest)
+	f, err := OpenStageFile(dest)
 
 	if err != nil {
 		return "", err
@@ -205,7 +206,7 @@ func Copy(src, dest string, force bool) (err error) {
 	}()
 
 	// Write through a staged sibling, so the destination is never opened by name.
-	destFile, err := stageFile(dest)
+	destFile, err := OpenStageFile(dest)
 
 	if err != nil {
 		return err

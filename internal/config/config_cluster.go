@@ -592,10 +592,6 @@ func (c *Config) NodeClientSecret() string {
 			return string(b)
 		}
 
-		if err := os.Chmod(filepath.Dir(fileName), fs.ModeDir); err != nil {
-			log.Debugf("config: failed to set node secrets dir permissions (%s)", err)
-		}
-
 		if _, err := os.Stat(fileName); os.IsNotExist(err) {
 			event.SystemDebug([]string{"config", "node client secret", "%s", "not found"}, clean.Log(fileName))
 		} else if err != nil {

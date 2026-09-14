@@ -256,10 +256,6 @@ func videoTrimFile(conf *config.Config, convert *photoprism.Convert, plan videoT
 		return fmt.Errorf("trim output missing for %s", clean.Log(plan.SrcPath))
 	}
 
-	if err = os.Chmod(tempPath, fs.ModeFile); err != nil {
-		return err
-	}
-
 	if plan.Sidecar {
 		if fs.FileExists(plan.DestPath) {
 			_ = os.Remove(tempPath)

@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
+// TestSave checks image encoding and publication.
 func TestSave(t *testing.T) {
 	t.Run("JPEG", func(t *testing.T) {
 		dst := filepath.Join(t.TempDir(), "test.jpg")
@@ -59,6 +60,28 @@ func TestSave(t *testing.T) {
 		entries, _ := os.ReadDir(dir)
 		assert.Equal(t, 1, len(entries), "only the final file should remain")
 	})
+}
+
+// TestSaveCreationMode checks that image publication keeps ordinary creation permissions.
+func TestSaveCreationMode(t *testing.T) {
+	for _, format := range []struct{ name, ext string }{{"JPEG", "jpg"}, {"PNG", "png"}} {
+		t.Run(format.name, func(t *testing.T) {
+			dir := t.TempDir()
+			control := filepath.Join(dir, "mode-control")
+			require.NoError(t, os.WriteFile(control, nil, fs.ModeFile))
+			want, err := os.Stat(control)
+			require.NoError(t, err)
+			dest := filepath.Join(dir, "image."+format.ext)
+			require.NoError(t, Save(image.NewNRGBA(image.Rect(0, 0, 8, 8)), dest))
+			got, err := os.Stat(dest)
+			require.NoError(t, err)
+			assert.Equal(t, want.Mode().Perm(), got.Mode().Perm())
+			entries, err := os.ReadDir(dir)
+			require.NoError(t, err)
+			assert.Len(t, entries, 2, "only the image and control file remain")
+			t.Logf("image mode: %04o", got.Mode().Perm())
+		})
+	}
 }
 
 func TestCloneImage(t *testing.T) {

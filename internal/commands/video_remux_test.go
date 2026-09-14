@@ -83,6 +83,12 @@ printf 'remuxed' > "$output"
 			data, err := os.ReadFile(dest) // #nosec G304 -- the fixture owns this temporary path.
 			require.NoError(t, err)
 			assert.Equal(t, "remuxed", string(data))
+			want, err := os.Stat(backup)
+			require.NoError(t, err)
+			got, err := os.Stat(dest)
+			require.NoError(t, err)
+			assert.Equal(t, want.Mode().Perm(), got.Mode().Perm())
+			t.Logf("remux mode: %04o", got.Mode().Perm())
 			data, err = os.ReadFile(backup) // #nosec G304 -- the fixture owns this temporary path.
 			require.NoError(t, err)
 			assert.Equal(t, "existing backup", string(data))

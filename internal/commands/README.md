@@ -1,5 +1,7 @@
 ## Commands Package Guide
 
+**Last Updated:** September 14, 2026
+
 ### Overview
 
 The `commands` package hosts the CLI implementation for the PhotoPrism binary. Command wiring begins in `commands.go`, where each `*cli.Command` is registered on the shared slice consumed by `cmd/photoprism/photoprism.go`. Supporting utilities such as flag builders, shared error handling, and helper structs are colocated with their related command files. Keep commands cohesive: each file should focus on a single functional area (for example, `download.go` for the downloader entry point and `download_impl.go` for reusable logic). Whenever you introduce new commands, align naming with existing patterns and expose `--json` or `--yes` options when automation benefits from them.
@@ -29,6 +31,10 @@ Intentional same-file remuxing is supported; publication writes the planned outp
 destination. `--force` controls ordinary replacement, not conflicts within the selection. Directory
 aliases are resolved during planning; other processes changing paths after preflight remain outside
 that check.
+
+### Video Output Permissions
+
+Remux, trim, and transcode retain the output permissions established during file creation rather than applying a final default mode. The process umask is inherited by FFmpeg; container launch wrappers apply `PHOTOPRISM_UMASK` before starting PhotoPrism. Existing transcodes that are reused keep their permissions. Remux working files remain beside the destination, so publication does not require copying large media across volume mounts.
 
 ### Positional Arguments & Flag Order
 

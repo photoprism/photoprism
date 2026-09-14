@@ -81,12 +81,13 @@ func TestDestExists(t *testing.T) {
 	assert.NotContains(t, err.Error(), "/originals", "the message names the file rather than its path")
 }
 
-func TestStageFile(t *testing.T) {
+// TestOpenStageFile checks exclusive sibling creation and ordinary creation permissions.
+func TestOpenStageFile(t *testing.T) {
 	dir := t.TempDir()
 	dest := filepath.Join(dir, "photo.jpg")
 
 	t.Run("Success", func(t *testing.T) {
-		f, err := stageFile(dest)
+		f, err := OpenStageFile(dest)
 		require.NoError(t, err)
 
 		defer func() {
@@ -99,25 +100,34 @@ func TestStageFile(t *testing.T) {
 		assert.True(t, strings.HasSuffix(base, ".tmp.jpg"), "the staged name must carry the temporary extension: %s", base)
 		assert.Equal(t, dir, filepath.Dir(f.Name()), "the staged file must be a sibling of the destination")
 		assert.NoFileExists(t, dest, "staging must not create the destination")
+		control := filepath.Join(dir, "mode-control")
+		require.NoError(t, os.WriteFile(control, nil, ModeFile))
+		want, err := os.Stat(control)
+		require.NoError(t, err)
+		got, err := f.Stat()
+		require.NoError(t, err)
+		assert.Equal(t, want.Mode().Perm(), got.Mode().Perm())
+		t.Logf("staged file mode: %04o", got.Mode().Perm())
 
 		// A second call must not collide with the first.
-		second, err := stageFile(dest)
+		second, err := OpenStageFile(dest)
 		require.NoError(t, err)
 		assert.NotEqual(t, f.Name(), second.Name())
 		_ = second.Close()
 		_ = os.Remove(second.Name())
 	})
 	t.Run("MissingDirectory", func(t *testing.T) {
-		_, err := stageFile(filepath.Join(dir, "absent", "photo.jpg"))
+		_, err := OpenStageFile(filepath.Join(dir, "absent", "photo.jpg"))
 		assert.Error(t, err)
 	})
 }
 
+// TestPublishFile checks staged publication and replacement rules.
 func TestPublishFile(t *testing.T) {
 	staged := func(t *testing.T, dir, content string) string {
 		t.Helper()
 
-		f, err := stageFile(filepath.Join(dir, "photo.jpg"))
+		f, err := OpenStageFile(filepath.Join(dir, "photo.jpg"))
 		require.NoError(t, err)
 		_, err = f.WriteString(content)
 		require.NoError(t, err)
@@ -704,7 +714,7 @@ func TestPublishFile_WithoutLinks(t *testing.T) {
 	staged := func(t *testing.T, dir, content string) string {
 		t.Helper()
 
-		f, err := stageFile(filepath.Join(dir, "photo.jpg"))
+		f, err := OpenStageFile(filepath.Join(dir, "photo.jpg"))
 		require.NoError(t, err)
 		_, err = f.WriteString(content)
 		require.NoError(t, err)
