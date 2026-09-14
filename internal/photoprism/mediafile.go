@@ -707,6 +707,12 @@ func (m *MediaFile) Move(filePath string, force bool) (err error) {
 		return fmt.Errorf("move: cannot overwrite file %s with itself", logName)
 	}
 
+	// A symbolic link is left to whoever created it: links to files and directories inside the
+	// library are a supported layout, so the file it names is neither written nor replaced.
+	if fs.IsSymlink(filePath) {
+		return fmt.Errorf("move: destination name %s is a symbolic link", logName)
+	}
+
 	// Error if destination exists (and is not empty) without the force flag being used.
 	if fs.Exists(filePath) {
 		switch {
@@ -780,6 +786,11 @@ func (m *MediaFile) Copy(filePath string, force bool) (err error) {
 	// Error if source and destination file path are the same.
 	if filePath == m.FileName() {
 		return fmt.Errorf("copy: cannot overwrite file %s with itself", logName)
+	}
+
+	// A symbolic link is left to whoever created it, as it is by Move.
+	if fs.IsSymlink(filePath) {
+		return fmt.Errorf("copy: destination name %s is a symbolic link", logName)
 	}
 
 	// Error if destination exists (and is not empty) without the force flag being used.

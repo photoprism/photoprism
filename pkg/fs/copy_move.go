@@ -21,13 +21,6 @@ func destExists(dest string) error {
 	return fmt.Errorf("destination %s already exists: %w", filepath.Base(dest), os.ErrExist)
 }
 
-// destLinked reports whether the destination name is a symbolic link.
-func destLinked(dest string) bool {
-	info, err := os.Lstat(dest)
-
-	return err == nil && info.Mode()&os.ModeSymlink != 0
-}
-
 // destReplaceable reports whether a destination may be replaced without the force flag, which an
 // empty regular file may be. It reads the name itself rather than what it resolves to.
 func destReplaceable(dest string) bool {
@@ -41,7 +34,7 @@ func checkDest(dest string, force bool) error {
 	// Links to files and directories inside the library are a supported layout, so a call leaves one
 	// to its owner: it writes neither through a link nor over it, and the target and whatever keeps
 	// it are left as they are.
-	if destLinked(dest) {
+	if IsSymlink(dest) {
 		return fmt.Errorf("destination %s is a symbolic link", filepath.Base(dest))
 	}
 

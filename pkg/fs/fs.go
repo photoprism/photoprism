@@ -84,8 +84,9 @@ func SocketExists(socketName string) bool {
 	return true
 }
 
-// Exists returns true if the specified file system path exists,
-// regardless of whether it is a file, directory, or link.
+// Exists returns true if the specified file system path exists and resolves,
+// whether it is a file, a directory, or a link to one. A link with no target
+// resolves to nothing, so use IsSymlink to test the name itself.
 func Exists(fsPath string) bool {
 	if fsPath == "" {
 		return false
@@ -94,6 +95,18 @@ func Exists(fsPath string) bool {
 	_, err := os.Stat(fsPath)
 
 	return err == nil
+}
+
+// IsSymlink returns true if a symbolic link exists under the specified name,
+// whether or not it resolves.
+func IsSymlink(fsPath string) bool {
+	if fsPath == "" {
+		return false
+	}
+
+	info, err := os.Lstat(fsPath)
+
+	return err == nil && info.Mode()&os.ModeSymlink != 0
 }
 
 // FileExists returns true if a file exists at the specified path.
