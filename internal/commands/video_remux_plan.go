@@ -41,7 +41,7 @@ func videoRemuxPath(name string) (string, error) {
 
 // videoValidateRemuxPlans validates the entire selection before a batch can publish output.
 func videoValidateRemuxPlans(plans []videoRemuxPlan, inputs []string) error {
-	sources := make(map[string]map[string]bool, len(inputs))
+	sources := make(map[string]map[string]string, len(inputs))
 	for _, input := range inputs {
 		entry, err := videoRemuxPath(input)
 		if err != nil {
@@ -53,12 +53,12 @@ func videoValidateRemuxPlans(plans []videoRemuxPlan, inputs []string) error {
 		}
 		for _, key := range []string{entry, target} {
 			if sources[key] == nil {
-				sources[key] = make(map[string]bool)
+				sources[key] = make(map[string]string)
 			}
-			sources[key][entry] = true
+			sources[key][entry] = input
 		}
 	}
-	destinations := make(map[string]bool, len(plans))
+	destinations := make(map[string]string, len(plans))
 	for _, plan := range plans {
 		source, err := videoRemuxPath(plan.SrcPath)
 		if err != nil {
@@ -68,13 +68,13 @@ func videoValidateRemuxPlans(plans []videoRemuxPlan, inputs []string) error {
 		if err != nil {
 			return fmt.Errorf("remux: resolve output: %w", err)
 		}
-		if destinations[destination] {
-			return fmt.Errorf("remux: output %s is selected more than once", clean.Log(plan.DestPath))
+		if previous, exists := destinations[destination]; exists {
+			return fmt.Errorf("remux: output %s is selected more than once by %s and %s", clean.Log(plan.DestPath), clean.Log(previous), clean.Log(plan.SrcPath))
 		}
-		destinations[destination] = true
-		for input := range sources[destination] {
+		destinations[destination] = plan.SrcPath
+		for input, name := range sources[destination] {
 			if input != source {
-				return fmt.Errorf("remux: output %s is another selected input", clean.Log(plan.DestPath))
+				return fmt.Errorf("remux: output %s from %s is another selected input %s", clean.Log(plan.DestPath), clean.Log(plan.SrcPath), clean.Log(name))
 			}
 		}
 	}

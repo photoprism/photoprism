@@ -53,3 +53,44 @@ func TestVideoBuildRemuxPlans(t *testing.T) {
 		assert.Equal(t, 1, skipped)
 	})
 }
+
+// TestVideoRemuxFile_PublishesPlan checks publication without an implicit backup destination.
+func TestVideoRemuxFile_PublishesPlan(t *testing.T) {
+	for _, sameFile := range []bool{false, true} {
+		name := "SeparateOutput"
+		if sameFile {
+			name = "SameFile"
+		}
+		t.Run(name, func(t *testing.T) {
+			conf, _ := remuxPlanFixture(t, "clip.mts")
+			src := filepath.Join(conf.OriginalsPath(), "clip.mts")
+			dest := filepath.Join(conf.OriginalsPath(), "clip.mp4")
+			if sameFile {
+				dest = src
+			}
+			backup := src + ".backup"
+			require.NoError(t, os.WriteFile(backup, []byte("existing backup"), fs.ModeFile))
+			stub := filepath.Join(t.TempDir(), "ffmpeg")
+			require.NoError(t, os.WriteFile(stub, []byte(`#!/bin/sh
+for output do :; done
+printf 'remuxed' > "$output"
+`), fs.ModeDir))
+			conf.Options().FFmpegBin = stub
+
+			// Empty IndexPath stops at the reindex boundary after publication.
+			err := videoRemuxFile(conf, nil, videoRemuxPlan{SrcPath: src, DestPath: dest}, true)
+			require.EqualError(t, err, "index: missing filename")
+			data, err := os.ReadFile(dest) // #nosec G304 -- the fixture owns this temporary path.
+			require.NoError(t, err)
+			assert.Equal(t, "remuxed", string(data))
+			data, err = os.ReadFile(backup) // #nosec G304 -- the fixture owns this temporary path.
+			require.NoError(t, err)
+			assert.Equal(t, "existing backup", string(data))
+			if !sameFile {
+				data, err = os.ReadFile(src) // #nosec G304 -- the fixture owns this temporary path.
+				require.NoError(t, err)
+				assert.Equal(t, "original clip.mts", string(data))
+			}
+		})
+	}
+}

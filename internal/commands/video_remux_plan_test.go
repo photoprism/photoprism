@@ -41,6 +41,9 @@ func TestVideoBuildRemuxPlans_Batch(t *testing.T) {
 			conf, results := remuxPlanFixture(t, "clip.mts", "clip.tod")
 			plans, preflight, _, err := videoBuildRemuxPlans(conf, results, force)
 			require.ErrorContains(t, err, "selected more than once")
+			for _, name := range []string{"clip.mts", "clip.tod", "clip.mp4"} {
+				assert.Contains(t, err.Error(), filepath.Join(conf.OriginalsPath(), name))
+			}
 			assert.Empty(t, plans)
 			assert.Empty(t, preflight)
 			for _, name := range []string{"clip.mts", "clip.tod"} {
@@ -152,7 +155,11 @@ func TestVideoValidateRemuxPlans(t *testing.T) {
 		require.NoError(t, os.WriteFile(b, []byte("two"), fs.ModeFile))
 		require.NoError(t, os.Symlink(b, alias))
 		plans := []videoRemuxPlan{{SrcPath: a, DestPath: b}}
-		require.ErrorContains(t, videoValidateRemuxPlans(plans, []string{a, alias}), "another selected input")
+		err := videoValidateRemuxPlans(plans, []string{a, alias})
+		require.ErrorContains(t, err, "another selected input")
+		for _, name := range []string{a, b, alias} {
+			assert.Contains(t, err.Error(), name)
+		}
 		require.NoError(t, videoValidateRemuxPlans([]videoRemuxPlan{{SrcPath: b, DestPath: b}}, []string{b}))
 	})
 	t.Run("InvalidInput", func(t *testing.T) {

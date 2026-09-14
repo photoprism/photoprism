@@ -86,7 +86,7 @@ func videoRemuxAction(ctx *cli.Context) error {
 				continue
 			}
 
-			if err = videoRemuxFile(conf, convert, plan, ctx.Bool(videoForceFlag.Name), true); err != nil {
+			if err = videoRemuxFile(conf, convert, plan, ctx.Bool(videoForceFlag.Name)); err != nil {
 				log.Errorf("remux: %s", clean.ErrorFull(err))
 				failed++
 				continue
@@ -216,7 +216,7 @@ func videoBuildRemuxPlans(conf *config.Config, results []search.Photo, force boo
 }
 
 // videoRemuxFile runs ffmpeg remuxing and refreshes previews/thumbnails before reindexing.
-func videoRemuxFile(conf *config.Config, convert *photoprism.Convert, plan videoRemuxPlan, force, noBackup bool) error {
+func videoRemuxFile(conf *config.Config, convert *photoprism.Convert, plan videoRemuxPlan, force bool) error {
 	tempDir := filepath.Dir(plan.DestPath)
 	tempPath, err := videoTempPath(tempDir, ".remux-*.mp4")
 	if err != nil {
@@ -261,22 +261,6 @@ func videoRemuxFile(conf *config.Config, convert *photoprism.Convert, plan video
 		if plan.DestPath != plan.SrcPath && fs.FileExists(plan.DestPath) && !force {
 			_ = os.Remove(tempPath)
 			return fmt.Errorf("output already exists %s", clean.Log(plan.DestPath))
-		}
-
-		if noBackup {
-			if plan.DestPath != plan.SrcPath {
-				_ = os.Remove(plan.DestPath)
-			}
-		} else {
-			backupPath := plan.SrcPath + ".backup"
-			if fs.FileExists(backupPath) {
-				_ = os.Remove(backupPath)
-			}
-			if err = os.Rename(plan.SrcPath, backupPath); err != nil {
-				_ = os.Remove(tempPath)
-				return err
-			}
-			_ = os.Chmod(backupPath, fs.ModeBackupFile)
 		}
 
 		if plan.DestPath != plan.SrcPath && fs.FileExists(plan.DestPath) {
