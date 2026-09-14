@@ -56,9 +56,10 @@
 
 Transport-stream conversions share compatible in-flight work by output destination across `Convert`
 instances in the same process. Coordination includes remuxing and any fallback transcode. Requests
-with different source versions/configuration/encoder/force settings queue for that destination and recheck the
-output; unrelated destinations retain their existing scheduling. Each caller receives its own media
-object. Completed operations are released, so errors can be retried. Unique staging is unchanged.
+with different source versions, configuration objects, FFmpeg exclusion snapshots, encoders or
+force/mutex settings queue for that destination and recheck the output; unrelated destinations retain
+their existing scheduling. Each caller receives its own media object. Completed operations are
+released for later retries; overlapping compatible callers share failures. Unique staging is unchanged.
 This is not a cross-process lock and does not alter animated-WebP or encoder mutex behavior.
 
 ### Operational Notes

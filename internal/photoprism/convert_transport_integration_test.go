@@ -13,8 +13,10 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/ffmpeg"
 	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/media/video"
 )
 
 // transportShellQuote quotes a test-owned path as one shell argument.
@@ -295,4 +297,65 @@ func TestConvert_CoordinatedTransportInvalidPath(t *testing.T) {
 	require.Error(t, err)
 	_, err = convert.coordinatedTransport(&MediaFile{fileName: filepath.Join(t.TempDir(), "missing.m2ts")}, encode.SoftwareAvc, false, false)
 	require.Error(t, err)
+}
+
+// TestConvert_CoordinatedTransportExcludes queues distinct exclusion snapshots on one config.
+func TestConvert_CoordinatedTransportExcludes(t *testing.T) {
+	conf := config.TestConfig()
+	if !conf.FFmpegEnabled() || !conf.ExifToolJson() {
+		t.Skip("FFmpeg and ExifTool are required")
+	}
+	source := filepath.Join(t.TempDir(), "retry.m2ts")
+	require.NoError(t, os.WriteFile(source, []byte("unreadable transport stream"), fs.ModeFile))
+	logName, remuxRelease, encodeRelease := transportFFmpeg(t, conf)
+	saved := ffmpeg.Exclude()
+	t.Cleanup(func() { ffmpeg.SetExclude(saved) })
+	ffmpeg.SetExclude(video.NewFormats("avi"))
+	first := NewConvert(conf)
+	ffmpeg.SetExclude(video.NewFormats("mov"))
+	second := NewConvert(conf)
+	results := make(chan error, 2)
+	var workers sync.WaitGroup
+	defer func() {
+		_ = os.WriteFile(remuxRelease, nil, fs.ModeFile)
+		_ = os.WriteFile(encodeRelease, nil, fs.ModeFile)
+		workers.Wait()
+	}()
+	launch := func(convert *Convert) {
+		input, err := NewMediaFile(source)
+		require.NoError(t, err)
+		_ = input.MetaData()
+		require.True(t, convert.FFmpegAllowed(input))
+		workers.Add(1)
+		go func() {
+			defer workers.Done()
+			_, err := convert.ToAvc(input, encode.SoftwareAvc, false, false)
+			results <- err
+		}()
+	}
+	launch(first)
+	require.Eventually(t, func() bool { return transportStarts(logName, "r") == 1 }, 5*time.Second, 10*time.Millisecond)
+	launch(second)
+	require.Eventually(t, func() bool {
+		transportConversions.mutex.Lock()
+		defer transportConversions.mutex.Unlock()
+		for _, call := range transportConversions.calls {
+			if call.request.source == source && call.previous != nil {
+				return true
+			}
+		}
+		return false
+	}, 3*time.Second, 10*time.Millisecond)
+	assert.Equal(t, 1, transportStarts(logName, "r"))
+	require.NoError(t, os.WriteFile(remuxRelease, nil, fs.ModeFile))
+	require.NoError(t, os.WriteFile(encodeRelease, nil, fs.ModeFile))
+	for range 2 {
+		select {
+		case err := <-results:
+			require.Error(t, err)
+		case <-time.After(10 * time.Second):
+			t.Fatal("conversion did not complete")
+		}
+	}
+	assert.Equal(t, 2, transportStarts(logName, "r"))
 }

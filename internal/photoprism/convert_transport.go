@@ -24,13 +24,14 @@ type transportRequest struct {
 	source  string
 	conf    *config.Config
 	encoder encode.Encoder
+	exclude string
 	noMutex bool
 	force   bool
 }
 
 // matches reports whether callers share both conversion settings and the observed source version.
 func (r transportRequest) matches(other transportRequest) bool {
-	if r.source != other.source || r.conf != other.conf || r.encoder != other.encoder || r.noMutex != other.noMutex || r.force != other.force {
+	if r.source != other.source || r.conf != other.conf || r.encoder != other.encoder || r.exclude != other.exclude || r.noMutex != other.noMutex || r.force != other.force {
 		return false
 	}
 	if r.info == nil || other.info == nil {
@@ -123,7 +124,7 @@ func (w *Convert) coordinatedTransport(f *MediaFile, encoder encode.Encoder, noM
 	if err != nil {
 		return nil, fmt.Errorf("convert: %w (remux)", err)
 	}
-	request := transportRequest{source: source, info: info, conf: w.conf, encoder: encoder, noMutex: noMutex, force: force}
+	request := transportRequest{source: source, info: info, conf: w.conf, encoder: encoder, exclude: w.ffmpegExclude.String(), noMutex: noMutex, force: force}
 	call := transportConversions.start(filepath.Join(parent, filepath.Base(destination)), request, func() (string, error) {
 		file, runErr := w.toAvc(f, encoder, noMutex, force, false)
 		if file == nil {

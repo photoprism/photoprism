@@ -111,6 +111,7 @@ func TestTransportGroup_Start(t *testing.T) {
 			{"Source", transportRequest{source: "other.mts"}},
 			{"Config", transportRequest{conf: &config.Config{}}},
 			{"Encoder", transportRequest{encoder: encode.SoftwareAvc}},
+			{"Exclude", transportRequest{exclude: "avi"}},
 			{"NoMutex", transportRequest{noMutex: true}},
 			{"Force", transportRequest{force: true}},
 		}
