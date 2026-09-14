@@ -57,12 +57,10 @@ func TestNormalizeEdition(t *testing.T) {
 	}
 }
 
-// TestBuildConfigOptionsReturnsDocumentedDefaults pins the dataset
-// contract that backs photoprism://config-options and list_config_keys:
-// the rows reflect the documented defaults compiled into the binary,
-// never the runtime values an operator supplies through environment
-// variables. Each marker below maps to one Secret-annotated flag whose
-// Default field must remain empty regardless of the env override.
+// TestBuildConfigOptionsReturnsDocumentedDefaults pins the dataset contract behind
+// photoprism://config-options and list_config_keys: rows carry the defaults compiled
+// into the binary, never the runtime values an operator supplies. Each marker maps to
+// one Secret-annotated flag whose Default must stay empty.
 func TestBuildConfigOptionsReturnsDocumentedDefaults(t *testing.T) {
 	const (
 		adminMarker    = "TestBuildConfigOptionsReturnsDocumentedDefaults-admin"
@@ -72,16 +70,21 @@ func TestBuildConfigOptionsReturnsDocumentedDefaults(t *testing.T) {
 		downloadMarker = "TestBuildConfigOptionsReturnsDocumentedDefaults-download"
 		previewMarker  = "TestBuildConfigOptionsReturnsDocumentedDefaults-preview"
 		visionMarker   = "TestBuildConfigOptionsReturnsDocumentedDefaults-vision"
+		authMarker     = "TestBuildConfigOptionsReturnsDocumentedDefaults-auth"
+		nodeMarker     = "TestBuildConfigOptionsReturnsDocumentedDefaults-node"
 	)
 
+	// Covers every flag that TestFlagsSecretAnnotation requires to set Secret.
 	env := map[string]string{
-		"PHOTOPRISM_ADMIN_PASSWORD":    adminMarker,
-		"PHOTOPRISM_DATABASE_PASSWORD": dbMarker,
-		"PHOTOPRISM_OIDC_SECRET":       oidcMarker,
-		"PHOTOPRISM_JOIN_TOKEN":        joinMarker,
-		"PHOTOPRISM_DOWNLOAD_TOKEN":    downloadMarker,
-		"PHOTOPRISM_PREVIEW_TOKEN":     previewMarker,
-		"PHOTOPRISM_VISION_KEY":        visionMarker,
+		"PHOTOPRISM_ADMIN_PASSWORD":     adminMarker,
+		"PHOTOPRISM_DATABASE_PASSWORD":  dbMarker,
+		"PHOTOPRISM_OIDC_SECRET":        oidcMarker,
+		"PHOTOPRISM_JOIN_TOKEN":         joinMarker,
+		"PHOTOPRISM_DOWNLOAD_TOKEN":     downloadMarker,
+		"PHOTOPRISM_PREVIEW_TOKEN":      previewMarker,
+		"PHOTOPRISM_VISION_KEY":         visionMarker,
+		"PHOTOPRISM_AUTH_SECRET":        authMarker,
+		"PHOTOPRISM_NODE_CLIENT_SECRET": nodeMarker,
 	}
 
 	for k, v := range env {
@@ -96,7 +99,7 @@ func TestBuildConfigOptionsReturnsDocumentedDefaults(t *testing.T) {
 	items := buildConfigOptions()
 	require.NotEmpty(t, items)
 
-	markers := []string{adminMarker, dbMarker, oidcMarker, joinMarker, downloadMarker, previewMarker, visionMarker}
+	markers := []string{adminMarker, dbMarker, oidcMarker, joinMarker, downloadMarker, previewMarker, visionMarker, authMarker, nodeMarker}
 
 	for _, item := range items {
 		fields := []struct {
@@ -118,13 +121,15 @@ func TestBuildConfigOptionsReturnsDocumentedDefaults(t *testing.T) {
 	}
 
 	expectEmpty := map[string]struct{}{
-		"PHOTOPRISM_ADMIN_PASSWORD":    {},
-		"PHOTOPRISM_DATABASE_PASSWORD": {},
-		"PHOTOPRISM_OIDC_SECRET":       {},
-		"PHOTOPRISM_JOIN_TOKEN":        {},
-		"PHOTOPRISM_DOWNLOAD_TOKEN":    {},
-		"PHOTOPRISM_PREVIEW_TOKEN":     {},
-		"PHOTOPRISM_VISION_KEY":        {},
+		"PHOTOPRISM_ADMIN_PASSWORD":     {},
+		"PHOTOPRISM_DATABASE_PASSWORD":  {},
+		"PHOTOPRISM_OIDC_SECRET":        {},
+		"PHOTOPRISM_JOIN_TOKEN":         {},
+		"PHOTOPRISM_DOWNLOAD_TOKEN":     {},
+		"PHOTOPRISM_PREVIEW_TOKEN":      {},
+		"PHOTOPRISM_VISION_KEY":         {},
+		"PHOTOPRISM_AUTH_SECRET":        {},
+		"PHOTOPRISM_NODE_CLIENT_SECRET": {},
 	}
 
 	for _, item := range items {
