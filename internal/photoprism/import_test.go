@@ -1,11 +1,15 @@
 package photoprism
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestNewImport(t *testing.T) {
@@ -54,6 +58,24 @@ func TestImport_DestinationFilename(t *testing.T) {
 		}
 
 		assert.Equal(t, cfg.OriginalsPath()+"/users/guest/2019/07/20190705_153230_C167C6FD.cr2", fileName)
+	})
+	t.Run("StepsOverASymbolicLink", func(t *testing.T) {
+		// A link holds the name whether or not it resolves, and the move that follows refuses one, so
+		// a search that overlooked it would hand back a name the import can never take.
+		taken := cfg.OriginalsPath() + "/2019/07/20190705_153230_C167C6FD.cr2"
+
+		require.NoError(t, os.MkdirAll(filepath.Dir(taken), fs.ModeDir))
+		require.NoError(t, os.Symlink(filepath.Join(cfg.OriginalsPath(), "no-such-target.cr2"), taken))
+
+		t.Cleanup(func() { _ = os.Remove(taken) })
+
+		require.False(t, fs.FileExists(taken), "the link must not resolve, which is the case at issue")
+
+		fileName, err := imp.DestinationFilename(rawFile, rawFile, "")
+
+		require.NoError(t, err)
+		assert.NotEqual(t, taken, fileName, "the name a link holds must not be handed back")
+		assert.Equal(t, cfg.OriginalsPath()+"/2019/07/20190705_153230_C167C6FD.00001.cr2", fileName)
 	})
 }
 

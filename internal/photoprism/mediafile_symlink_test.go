@@ -11,9 +11,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// annexLibrary builds the shape a git-annex library has: every original is a symbolic link into the
-// annex object store, and a file whose content has been dropped is a link with nothing behind it.
-// Returns the library root and the object store path.
+// annexLibrary builds the shape a git-annex library has: every original is a relative symbolic link
+// into the annex object store. Returns the library root and the object store path.
 func annexLibrary(t *testing.T) (root, objects string) {
 	t.Helper()
 
@@ -25,13 +24,20 @@ func annexLibrary(t *testing.T) (root, objects string) {
 	return root, objects
 }
 
-// annexFile links a library name to an object, writing the object only when present is true.
+// annexObject returns the path an object key occupies, which is nested and named for the key twice.
+func annexObject(objects, key string) string {
+	return filepath.Join(objects, key[:2], key[2:4], key, key)
+}
+
+// annexFile links a library name to an object. Dropping the content removes the whole key directory,
+// so a dropped file is a link whose parent directory is gone too.
 func annexFile(t *testing.T, root, objects, name, key string, present bool) string {
 	t.Helper()
 
-	object := filepath.Join(objects, key)
+	object := annexObject(objects, key)
 
 	if present {
+		require.NoError(t, os.MkdirAll(filepath.Dir(object), fs.ModeDir))
 		require.NoError(t, os.WriteFile(object, []byte("annexed "+key), fs.ModeFile))
 	}
 
@@ -60,50 +66,80 @@ func TestMediaFile_AnnexDestinations(t *testing.T) {
 		return f
 	}
 
-	t.Run("CopyRefusesADroppedAnnexFile", func(t *testing.T) {
-		// A locked annex file whose content was dropped is a link with no target, which an existence
-		// check that resolves the name cannot see.
-		root, objects := annexLibrary(t)
-		link := annexFile(t, root, objects, "2030/05/photo.jpg", "SHA256-dropped", false)
-
-		require.False(t, fs.Exists(link), "a dropped annex file does not resolve")
-		require.True(t, fs.IsSymlink(link), "and is still a name in the library")
-
+	t.Run("CopyRefusesALinkWithNoTarget", func(t *testing.T) {
+		// A link whose target does not resolve is what an unmounted drive or a removed object leaves
+		// behind, and it is the case an existence check that resolves the name reads as free.
 		for _, force := range []bool{false, true} {
+			root, objects := annexLibrary(t)
+			link := annexFile(t, root, objects, "2030/05/photo.jpg", "SHA256E-dropped", false)
+
+			require.False(t, fs.Exists(link), "a link with no target does not resolve")
+			require.True(t, fs.IsSymlink(link), "and is still a name in the library")
+
 			err := source(t, t.TempDir()).Copy(link, force)
 
-			require.Error(t, err, "force=%v", force)
-			assert.Contains(t, err.Error(), "symbolic link")
-			assert.NoFileExists(t, filepath.Join(objects, "SHA256-dropped"), "the annex object must not be created")
+			assert.Error(t, err, "force=%v", force)
+			assert.Contains(t, err.Error(), "symbolic link", "force=%v", force)
+			assert.NoFileExists(t, annexObject(objects, "SHA256E-dropped"), "the object must not be created")
+			assert.True(t, fs.IsSymlink(link), "the link must be left in place")
 		}
 	})
 	t.Run("CopyRefusesAPresentAnnexFile", func(t *testing.T) {
-		root, objects := annexLibrary(t)
-		link := annexFile(t, root, objects, "2030/05/photo.jpg", "SHA256-present", true)
-
+		// The corruptible case: the object is there, so a write through the link would reach it. The
+		// real store keeps objects read-only, which stops that for an unprivileged process but not
+		// for one running as root, as the container does by default.
 		for _, force := range []bool{false, true} {
+			root, objects := annexLibrary(t)
+			link := annexFile(t, root, objects, "2030/05/photo.jpg", "SHA256E-present", true)
+
 			err := source(t, t.TempDir()).Copy(link, force)
 
-			require.Error(t, err, "force=%v", force)
+			assert.Error(t, err, "force=%v", force)
+			assert.Contains(t, err.Error(), "symbolic link", "force=%v", force)
 
-			b, readErr := os.ReadFile(filepath.Join(objects, "SHA256-present")) //nolint:gosec // test reads a temp file
+			b, readErr := os.ReadFile(annexObject(objects, "SHA256E-present")) //nolint:gosec // test reads a temp file
 			require.NoError(t, readErr)
-			assert.Equal(t, "annexed SHA256-present", string(b), "the annex object must be left as it was")
+			assert.Equal(t, "annexed SHA256E-present", string(b), "the object must be left as it was")
 		}
 	})
-	t.Run("MoveRefusesADroppedAnnexFile", func(t *testing.T) {
-		root, objects := annexLibrary(t)
-		link := annexFile(t, root, objects, "2030/05/photo.jpg", "SHA256-dropped", false)
-
+	t.Run("MoveRefusesALinkWithNoTarget", func(t *testing.T) {
 		for _, force := range []bool{false, true} {
-			dir := t.TempDir()
-			f := source(t, dir)
+			root, objects := annexLibrary(t)
+			link := annexFile(t, root, objects, "2030/05/photo.jpg", "SHA256E-dropped", false)
+
+			f := source(t, t.TempDir())
+			srcName := f.FileName()
 
 			err := f.Move(link, force)
 
-			require.Error(t, err, "force=%v", force)
-			assert.NoFileExists(t, filepath.Join(objects, "SHA256-dropped"), "the annex object must not be created")
-			assert.FileExists(t, f.FileName(), "a refused move must keep its source")
+			assert.Error(t, err, "force=%v", force)
+			assert.Contains(t, err.Error(), "symbolic link", "force=%v", force)
+			assert.NoFileExists(t, annexObject(objects, "SHA256E-dropped"), "the object must not be created")
+			assert.FileExists(t, srcName, "a refused move must keep its source")
+			assert.Equal(t, srcName, f.FileName(), "and must not adopt the destination name")
+		}
+	})
+	t.Run("MoveRefusesAPresentAnnexFile", func(t *testing.T) {
+		// A move onto a live link would replace it, detaching the object from the store, so this is
+		// the half a dangling-only guard would let through.
+		for _, force := range []bool{false, true} {
+			root, objects := annexLibrary(t)
+			link := annexFile(t, root, objects, "2030/05/photo.jpg", "SHA256E-present", true)
+
+			f := source(t, t.TempDir())
+			srcName := f.FileName()
+
+			err := f.Move(link, force)
+
+			assert.Error(t, err, "force=%v", force)
+			assert.Contains(t, err.Error(), "symbolic link", "force=%v", force)
+			assert.True(t, fs.IsSymlink(link), "the link must still be a link")
+			assert.FileExists(t, srcName, "a refused move must keep its source")
+			assert.Equal(t, srcName, f.FileName())
+
+			b, readErr := os.ReadFile(annexObject(objects, "SHA256E-present")) //nolint:gosec // test reads a temp file
+			require.NoError(t, readErr)
+			assert.Equal(t, "annexed SHA256E-present", string(b), "the object must be left as it was")
 		}
 	})
 	t.Run("AnnexDirectoryStillReceivesTheFile", func(t *testing.T) {

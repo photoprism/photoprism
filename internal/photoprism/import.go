@@ -356,7 +356,7 @@ func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 	if !mediaFile.IsSidecar() {
 		if f, err := entity.FirstFileByHash(mediaFile.Hash()); err == nil {
 			existingFilename := FileName(f.FileRoot, f.FileName)
-			if fs.FileExists(existingFilename) {
+			if fs.FileExists(existingFilename) || fs.IsSymlink(existingFilename) {
 				return existingFilename, fmt.Errorf("%s is identical to %s (sha1 %s)", clean.Log(filepath.Base(mediaFile.FileName())), clean.Log(f.FileName), mediaFile.Hash())
 			} else {
 				return existingFilename, nil
@@ -364,12 +364,14 @@ func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 		}
 	}
 
-	// Find and return the next available file name if the default name is already being used by another file.
+	// Find and return the next available file name if the default name is already being used by another
+	// file. A symbolic link holds the name whether or not it resolves, so the search steps over one
+	// rather than picking a name the move would then refuse.
 	i := 0
 	pathName := filepath.Join(imp.originalsPath(), folder, dateCreated.Format(pathPattern))
 	filePath := filepath.Join(pathName, fileName+fileExtension)
 
-	for fs.FileExists(filePath) {
+	for fs.FileExists(filePath) || fs.IsSymlink(filePath) {
 		if mediaFile.Hash() == fs.Hash(filePath) {
 			return filePath, fmt.Errorf("%s already exists", clean.Log(fs.RelName(filePath, imp.originalsPath())))
 		}

@@ -821,9 +821,10 @@ func (m *MediaFile) Copy(filePath string, force bool) (err error) {
 
 	defer thisFile.Close()
 
-	// Open the target file path for writing, discarding any trailing bytes.
+	// Open the target file path for writing, discarding any trailing bytes. The no-follow flag puts
+	// the symbolic link rule in the call itself rather than only in the check above it.
 	// #nosec G304 -- destination path is validated and absolute.
-	destFile, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, fs.ModeFile)
+	destFile, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC|fs.OpenNoFollow, fs.ModeFile)
 
 	if err != nil {
 		return fmt.Errorf("copy: destination file %s cannot be opened (%w)", logName, err)
