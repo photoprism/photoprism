@@ -82,10 +82,10 @@ var Models = map[ModelName]*ModelDescription{
 
 // AutoModelPreference lists automatic model selection in priority order.
 var AutoModelPreference = []ModelName{
+	ModelEfficientFormerV2S2,
 	ModelEfficientFormerV2S1,
 	ModelRepViTM10,
 	ModelEfficientNetB0,
-	ModelEfficientFormerV2S2,
 }
 
 // imageNetModel returns a canonical ImageNet-1k classifier description.
@@ -151,7 +151,7 @@ func FindModel(name ModelName) *ModelDescription {
 
 // DefaultModelName returns the bundled default model name.
 func DefaultModelName() ModelName {
-	return ModelEfficientFormerV2S1
+	return ModelEfficientFormerV2S2
 }
 
 // DefaultModel returns the bundled default model description.

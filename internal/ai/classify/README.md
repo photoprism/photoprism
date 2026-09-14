@@ -1,6 +1,6 @@
 ## PhotoPrism — Classification Package
 
-**Last Updated:** September 5, 2026
+**Last Updated:** September 14, 2026
 
 ### Overview
 
@@ -21,7 +21,7 @@ The graph is inspected at initialization and must agree with all recorded struct
 
 ### Configuration
 
-`PHOTOPRISM_LABEL_MODEL` accepts `auto`, `none`, a registered name, or a custom model name. `auto` resolves to the bundled default, while `none` disables local classification. `photoprism config` reports `label-model`, `label-model-path`, and `label-model-runtime`.
+`PHOTOPRISM_LABEL_MODEL` accepts `auto`, `none`, a registered name, or a custom model name. `auto` resolves to the bundled `efficientformerv2_s2` default, while `none` disables local classification. `photoprism config` reports `label-model`, `label-model-path`, and `label-model-runtime`.
 
 A custom model is resolved under `PHOTOPRISM_MODELS_PATH` as:
 

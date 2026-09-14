@@ -531,7 +531,7 @@ frontend-update:
 dep-upgrade-js: frontend-update
 # Installs every model a development build runs or ships.
 dep-models:
-	scripts/dist/download-models.sh facenet efficientformerv2_s1 yahoo_open_nsfw sface yunet
+	scripts/dist/download-models.sh facenet efficientformerv2_s2 yahoo_open_nsfw sface yunet
 dep-tensorflow: dep-models
 dep-onnx: dep-models
 dep-acceptance: storage/acceptance

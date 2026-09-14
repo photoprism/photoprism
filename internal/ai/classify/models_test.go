@@ -94,3 +94,10 @@ func TestModelNames(t *testing.T) {
 	assert.NotNil(t, DefaultModel())
 	assert.Contains(t, ModelUsageString(), string(DefaultModelName()))
 }
+
+// TestDefaultModelName pins the default and automatic label-model preference.
+func TestDefaultModelName(t *testing.T) {
+	assert.Equal(t, ModelEfficientFormerV2S2, DefaultModelName())
+	require.NotEmpty(t, AutoModelPreference)
+	assert.Equal(t, DefaultModelName(), AutoModelPreference[0])
+}
