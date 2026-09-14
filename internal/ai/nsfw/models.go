@@ -50,7 +50,13 @@ type Description struct {
 	DefaultThreshold  float32
 }
 
-const yahooDefaultThreshold float32 = 0.80
+const (
+	adamCoddFP32DefaultThreshold float32 = 0.96
+	adamCoddINT8DefaultThreshold float32 = 0.95
+	falconsaiDefaultThreshold    float32 = 0.99
+	freepikDefaultThreshold      float32 = 0.999
+	yahooDefaultThreshold        float32 = 0.80
+)
 
 // Models contains the supported NSFW model descriptions.
 var Models = map[ModelName]*Description{
@@ -62,6 +68,7 @@ var Models = map[ModelName]*Description{
 		"https://huggingface.co/AdamCodd/vit-base-nsfw-detector/resolve/8587de998f441aac03fdd57a85d2e4cb808c7d64/onnx/model.onnx",
 		"fp32",
 		384,
+		adamCoddFP32DefaultThreshold,
 	),
 	ModelAdamCoddINT8: binaryModel(
 		ModelAdamCoddINT8,
@@ -71,6 +78,7 @@ var Models = map[ModelName]*Description{
 		"https://huggingface.co/AdamCodd/vit-base-nsfw-detector/resolve/8587de998f441aac03fdd57a85d2e4cb808c7d64/onnx/model_int8.onnx",
 		"int8",
 		384,
+		adamCoddINT8DefaultThreshold,
 	),
 	ModelFalconsai: binaryModel(
 		ModelFalconsai,
@@ -80,6 +88,7 @@ var Models = map[ModelName]*Description{
 		"https://huggingface.co/Falconsai/nsfw_image_detection/resolve/04367978d3474804ab1a00a9bd6548b741764069/model.safetensors",
 		"fp32",
 		224,
+		falconsaiDefaultThreshold,
 	),
 	ModelFreepik: {
 		Name:        ModelFreepik,
@@ -105,7 +114,7 @@ var Models = map[ModelName]*Description{
 		},
 		Reduction:         ReductionNeutralComplement,
 		NeutralClassIndex: 0,
-		DefaultThreshold:  DefaultThreshold,
+		DefaultThreshold:  freepikDefaultThreshold,
 	},
 	ModelYahoo: {
 		Name:        ModelYahoo,
@@ -133,7 +142,7 @@ var Models = map[ModelName]*Description{
 }
 
 // binaryModel returns the common ViT binary-detector description.
-func binaryModel(name ModelName, displayName, fileName, sha256, source, quantization string, resolution int) *Description {
+func binaryModel(name ModelName, displayName, fileName, sha256, source, quantization string, resolution int, defaultThreshold float32) *Description {
 	return &Description{
 		Name:        name,
 		DisplayName: displayName,
@@ -155,7 +164,7 @@ func binaryModel(name ModelName, displayName, fileName, sha256, source, quantiza
 		},
 		Reduction:        ReductionSoftmaxUnsafe,
 		UnsafeClassIndex: 1,
-		DefaultThreshold: DefaultThreshold,
+		DefaultThreshold: defaultThreshold,
 	}
 }
 

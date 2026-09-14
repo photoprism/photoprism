@@ -22,7 +22,7 @@ func TestPostVisionNsfw(t *testing.T) {
 		PostVisionNsfw(router)
 
 		files := vision.Files{
-			fs.Abs("./testdata/nsfw_224x224.jpg"),
+			fs.Abs("../ai/nsfw/testdata/hentai_2.jpg"),
 		}
 
 		req, err := vision.NewApiRequestImages(files, scheme.Data, media.SrcLocal)
@@ -60,7 +60,7 @@ func TestPostVisionNsfw(t *testing.T) {
 		} else {
 			assert.NoError(t, nsfw.ValidateScore(result.Score))
 			assert.Greater(t, result.Score, float32(0.9))
-			assert.InDelta(t, nsfw.DefaultThreshold, result.Threshold, 1e-6)
+			assert.InDelta(t, nsfw.FindModel(nsfw.DefaultModelName()).DefaultThreshold, result.Threshold, 1e-6)
 			assert.Zero(t, result.Drawing)
 			assert.Zero(t, result.Hentai)
 			assert.Zero(t, result.Neutral)

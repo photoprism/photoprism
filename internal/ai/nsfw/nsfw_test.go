@@ -18,6 +18,23 @@ func TestDefaultModel(t *testing.T) {
 	assert.InDelta(t, 0.80, description.DefaultThreshold, 1e-6)
 }
 
+// TestRegisteredModelThresholds verifies the corpus-calibrated detector thresholds.
+func TestRegisteredModelThresholds(t *testing.T) {
+	expected := map[ModelName]float32{
+		ModelAdamCoddFP32: 0.96,
+		ModelAdamCoddINT8: 0.95,
+		ModelFalconsai:    0.99,
+		ModelFreepik:      0.999,
+		ModelYahoo:        0.80,
+	}
+
+	for name, threshold := range expected {
+		description := FindModel(name)
+		require.NotNil(t, description)
+		assert.InDelta(t, threshold, description.DefaultThreshold, 1e-6, name)
+	}
+}
+
 // TestResultZeroValue verifies that an unfilled result is never read as a clearance.
 func TestResultZeroValue(t *testing.T) {
 	var result Result

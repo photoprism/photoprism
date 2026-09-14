@@ -44,7 +44,7 @@ var (
 // StatusUnavailableName is how the undecided status renders as text.
 const StatusUnavailableName = "unavailable"
 
-// DefaultThreshold is the conservative fallback used until ONNX corpus calibration is complete.
+// DefaultThreshold is the conservative fallback for detectors without a calibrated threshold.
 const DefaultThreshold float32 = 0.98
 
 // UploadThreshold preserves the established upload-screening operating point.

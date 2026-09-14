@@ -38,7 +38,7 @@ func TestGenerateTensorFlowNSFWBaseline(t *testing.T) {
 	baseline := newTensorFlowNSFWBaseline(t)
 	corpus := nsfwBenchmarkCorpus{
 		Models:                   []ModelName{ModelAdamCoddFP32, ModelAdamCoddINT8, ModelFalconsai, ModelFreepik, ModelYahoo},
-		Thresholds:               []float32{0.25, 0.5, 0.75, 0.85, 0.95, 0.98},
+		Thresholds:               []float32{0.25, 0.5, 0.75, 0.8, 0.85, 0.95, 0.96, 0.98, 0.99, 0.999},
 		MinimumRecall:            0.99,
 		BaselineThreshold:        0.98,
 		BaselineLoadMilliseconds: float64(time.Since(loadStarted).Microseconds()) / 1000,

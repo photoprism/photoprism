@@ -1,6 +1,6 @@
 ## PhotoPrism — NSFW Package
 
-**Last Updated:** September 7, 2026
+**Last Updated:** September 11, 2026
 
 ### Overview
 
@@ -56,7 +56,7 @@ Thresholds:
   NSFW: 80
 ```
 
-Left unset, local ONNX indexing uses the selected model's fallback threshold. Yahoo OpenNSFW uses `80`; the other bundled models keep their conservative provisional `98` fallback. Upload screening keeps its established `75` operating point. An explicit `Thresholds.NSFW` value overrides both. Unset is a distinct state because a threshold tuned for one model's output distribution does not transfer to another model.
+Left unset, local ONNX indexing uses the selected model's calibrated fallback threshold: AdamCodd FP32 uses `96`, AdamCodd INT8 uses `95`, Falconsai uses `99`, Freepik uses `99.9`, and Yahoo OpenNSFW uses `80`. Upload screening keeps its established `75` operating point. An explicit `Thresholds.NSFW` value overrides both. Unset is a distinct state because a threshold tuned for one model's output distribution does not transfer to another model.
 
 ### Calibration & Benchmarking
 
@@ -75,7 +75,19 @@ PHOTOPRISM_TEST_NSFW_REPORT=/path/to/report.json \
 go test ./internal/ai/nsfw -run '^TestExternalNSFWBenchmark$' -count=1 -v
 ```
 
-Run it on both x86-64 and ARM64. The report includes load time, p50/p95 latency, peak RSS, artifact size, unsafe recall, benign false-positive rate, average precision, AUROC, Brier score, expected calibration error, operating points, and newly-safe/newly-unsafe identities when incumbent scores are present. `Example_nsfwBenchmarkCorpus` in `benchmark_external_test.go` documents the manifest shape. The checked-in unit corpus is only a smoke test; selecting the default threshold requires the representative reviewed corpus described in the intelligence specification.
+Run it on both x86-64 and ARM64. The report includes load time, p50/p95 latency, peak RSS, artifact size, unsafe recall, benign false-positive rate, average precision, AUROC, Brier score, expected calibration error, operating points, and newly-safe/newly-unsafe identities when incumbent scores are present. Threshold selection minimizes false positives among points that meet the requested recall; if none meet it, the highest-accuracy point is returned instead. `Example_nsfwBenchmarkCorpus` in `benchmark_external_test.go` documents the manifest shape. The checked-in unit corpus is only a smoke test; selecting the default threshold requires the representative reviewed corpus described in the intelligence specification.
+
+The registered fallbacks were calibrated on the manually reviewed [SIMAS sexual-content subset](https://zenodo.org/records/15423637): 500 unsafe and 500 matched safe images, with each label decided by agreement of at least two of three annotators. The selected rounded points stay within 0.3 percentage points of maximum accuracy on the balanced corpus while preferring recall when accuracy ties. Five-fold stratified validation checks that the operating points are not artifacts of a single split.
+
+| Model | Threshold | Recall | False-Positive Rate | Accuracy | ARM64 p50 |
+|:------|----------:|-------:|--------------------:|---------:|----------:|
+| AdamCodd FP32 | 0.96 | 82.4% | 18.8% | 81.8% | 663 ms |
+| AdamCodd INT8 | 0.95 | 84.0% | 20.8% | 81.6% | 294 ms |
+| Falconsai | 0.99 | 83.6% | 1.8% | 90.9% | 209 ms |
+| Freepik | 0.999 | 87.2% | 1.4% | 92.9% | 1,378 ms |
+| Yahoo OpenNSFW | 0.80 | 88.0% | 2.0% | 93.0% | 22 ms |
+
+The latency figures describe the four-core ARM64 calibration host and are comparative rather than universal. At its historical `0.98` threshold, the previous TensorFlow detector reached 25.9% recall and a 1.7% false-positive rate on the 838 JPEG images in the same corpus. Yahoo therefore remains the default: it has the highest rounded operating-point accuracy, stays near the incumbent false-positive rate, and is substantially faster and smaller than the alternatives on the measured host.
 
 Generate the incumbent TensorFlow scores before running the ONNX comparison:
 

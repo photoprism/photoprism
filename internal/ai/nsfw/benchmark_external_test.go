@@ -137,7 +137,7 @@ func loadNSFWBenchmarkCorpus(t *testing.T, corpusPath string) nsfwBenchmarkCorpu
 	require.NotEmpty(t, corpus.Models)
 	require.NotEmpty(t, corpus.Images)
 	if len(corpus.Thresholds) == 0 {
-		corpus.Thresholds = []float32{0.25, 0.5, 0.75, 0.85, 0.95, 0.98}
+		corpus.Thresholds = []float32{0.25, 0.5, 0.75, 0.8, 0.85, 0.95, 0.96, 0.98, 0.99, 0.999}
 	}
 	if corpus.MinimumRecall <= 0 || corpus.MinimumRecall > 1 {
 		corpus.MinimumRecall = 0.99
@@ -245,19 +245,26 @@ func benchmarkOperatingPoints(corpus nsfwBenchmarkCorpus, scores []nsfwBenchmark
 }
 
 // recommendNSFWThreshold selects the lowest-FPR point meeting the recall target.
+// If the target is unreachable, it returns the highest-accuracy operating point.
 func recommendNSFWThreshold(points []nsfwOperatingPoint, minimumRecall float64) float32 {
 	best := nsfwOperatingPoint{FPR: 2}
 	found := false
+	fallback := nsfwOperatingPoint{}
+	fallbackAccuracy := -1.0
 	for _, point := range points {
 		if point.Recall >= minimumRecall && (!found || point.FPR < best.FPR || point.FPR == best.FPR && point.Threshold > best.Threshold) {
 			best, found = point, true
+		}
+		accuracy := ratio(point.TP+point.TN, point.TP+point.FP+point.TN+point.FN)
+		if accuracy > fallbackAccuracy || accuracy == fallbackAccuracy && point.Recall > fallback.Recall {
+			fallback, fallbackAccuracy = point, accuracy
 		}
 	}
 	if found {
 		return best.Threshold
 	}
 	if len(points) > 0 {
-		return points[0].Threshold
+		return fallback.Threshold
 	}
 	return DefaultThreshold
 }
@@ -456,6 +463,10 @@ func TestNSFWBenchmarkMetrics(t *testing.T) {
 	require.Len(t, points, 2)
 	assert := require.New(t)
 	assert.Equal(float32(0.8), recommendNSFWThreshold(points, 1))
+	assert.Equal(float32(0.8), recommendNSFWThreshold([]nsfwOperatingPoint{
+		{Threshold: 0.5, TP: 8, FP: 4, TN: 6, FN: 2, Recall: 0.8, FPR: 0.4},
+		{Threshold: 0.8, TP: 7, FP: 0, TN: 10, FN: 3, Recall: 0.7, FPR: 0},
+	}, 0.99))
 	assert.InDelta(1, averagePrecision([]float64{0.9, 0.2}, []bool{true, false}), 1e-9)
 	assert.InDelta(1, areaUnderROC([]float64{0.9, 0.2}, []bool{true, false}), 1e-9)
 	assert.InDelta(0.025, brierScore([]float64{0.9, 0.2}, []bool{true, false}), 1e-9)
