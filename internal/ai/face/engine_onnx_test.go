@@ -11,6 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 	onnxruntime "github.com/yalue/onnxruntime_go"
 
+	"github.com/photoprism/photoprism/internal/ai/onnx"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -96,6 +97,24 @@ func TestONNXEngineBuildBlob(t *testing.T) {
 	require.InDelta(t, (255-127.5)/128.0, blob[0], 1e-3)
 	require.InDelta(t, (0-127.5)/128.0, blob[16], 1e-3)
 	require.Equal(t, float32(4), scale)
+}
+
+// TestONNXEngineBuildBlobBGR verifies detector normalization follows tensor channel order.
+func TestONNXEngineBuildBlobBGR(t *testing.T) {
+	engine := &onnxEngine{
+		inputWidth:  1,
+		inputHeight: 1,
+		colorOrder:  onnx.BGR,
+		mean:        [onnx.Channels]float32{1, 2, 3},
+		scales:      [onnx.Channels]float32{1, 0.5, 0.25},
+	}
+	img := image.NewRGBA(image.Rect(0, 0, 1, 1))
+	img.Set(0, 0, color.RGBA{R: 10, G: 20, B: 30, A: 255})
+
+	blob, scale, err := engine.buildBlob(img)
+	require.NoError(t, err)
+	assert.Equal(t, []float32{29, 9, 1.75}, blob)
+	assert.Equal(t, float32(1), scale)
 }
 
 func TestONNXEngineDetectLandmarks(t *testing.T) {

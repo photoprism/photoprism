@@ -97,8 +97,21 @@ func (c *ConfigValues) Load(fileName string) error {
 		return err
 	}
 
+	// Seed the sentinel so an omitted field remains distinguishable from an explicit zero.
+	c.Thresholds.NSFW = NSFWThresholdAuto
 	if err = yaml.Unmarshal(yamlConfig, c); err != nil {
 		return err
+	}
+
+	legacyDefaultTensorFlow := false
+	for _, model := range c.Models {
+		if model != nil && model.Type == ModelTypeNsfw && model.TensorFlow != nil && (model.Default || model.Name == "nsfw") {
+			legacyDefaultTensorFlow = true
+			break
+		}
+	}
+	if legacyDefaultTensorFlow && c.Thresholds.NSFW == DefaultNSFWThreshold {
+		c.Thresholds.NSFW = NSFWThresholdAuto
 	}
 
 	// Replace default placeholders with canonical defaults while respecting
@@ -114,10 +127,10 @@ func (c *ConfigValues) Load(fileName string) error {
 			return fmt.Errorf("vision model %s declares both TensorFlow and ONNX runtimes", clean.Log(model.Name))
 		}
 
-		// Disable unsupported TensorFlow classifiers instead of interpreting their paths as ONNX.
-		if model.Type == ModelTypeLabels && model.TensorFlow != nil {
+		// Disable unsupported TensorFlow models instead of interpreting their paths as ONNX.
+		if (model.Type == ModelTypeLabels || model.Type == ModelTypeNsfw) && model.TensorFlow != nil {
 			model.Disabled = true
-			log.Warnf("vision: TensorFlow label model %s is unsupported, migrate it to ONNX (disable model)", clean.Log(model.Name))
+			log.Warnf("vision: TensorFlow %s model %s is unsupported, migrate it to ONNX (disable model)", model.Type, clean.Log(model.Name))
 		}
 
 		model.ApplyEngineDefaults()
@@ -138,10 +151,8 @@ func (c *ConfigValues) Load(fileName string) error {
 		c.Thresholds.Topicality = DefaultThresholds.Topicality
 	}
 
-	// Only the upper bound is corrected: a missing or zero value stays unset so that the
-	// selected model's own default threshold can apply, which GetNSFW resolves.
-	if c.Thresholds.NSFW < 0 {
-		c.Thresholds.NSFW = 0
+	if c.Thresholds.NSFW < NSFWThresholdAuto {
+		c.Thresholds.NSFW = NSFWThresholdAuto
 	} else if c.Thresholds.NSFW > 100 {
 		c.Thresholds.NSFW = 100
 	}

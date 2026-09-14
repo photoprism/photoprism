@@ -1,6 +1,8 @@
 package classify
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"os"
 	"path/filepath"
 	"strings"
@@ -41,7 +43,7 @@ func TestModels(t *testing.T) {
 			assert.Equal(t, "logits", model.ONNX.Output.Name)
 			assert.Equal(t, 1, model.ONNX.Output.Count)
 			assert.True(t, model.ONNX.Output.OutputsLogits())
-			assert.Equal(t, "../nasnet/labels.txt", model.LabelFile)
+			assert.Empty(t, model.LabelFile)
 			assert.True(t, model.CanonicalOrder)
 		})
 	}
@@ -49,14 +51,13 @@ func TestModels(t *testing.T) {
 
 // TestModelArtifacts verifies installed candidates and the shared vocabulary match the registry.
 func TestModelArtifacts(t *testing.T) {
-	labels, err := readLabels(filepath.Join(modelsPath, "nasnet", "labels.txt"))
-	if os.IsNotExist(err) {
-		t.Skip("ImageNet labels are not installed")
-	}
-	require.NoError(t, err)
+	labels := imageNetLabelNames
 	require.Len(t, labels, ImageNetClasses)
 	assert.Equal(t, "tench fish", labels[0])
 	assert.Equal(t, "goldfish", labels[1])
+	assert.Equal(t, "toilet tissue", labels[len(labels)-1])
+	digest := sha256.Sum256([]byte(imageNetLabels))
+	assert.Equal(t, "7137cf8c32076dfd6369ce6b08f2e26207164a385141a61aff0ae7c4a8fcdc13", hex.EncodeToString(digest[:]))
 	assert.NotEqual(t, "background", strings.ToLower(strings.TrimSpace(labels[0])))
 
 	for name, model := range Models {
@@ -69,6 +70,14 @@ func TestModelArtifacts(t *testing.T) {
 			assert.Equal(t, model.ONNX.SHA256, fs.Sha256(modelPath))
 		})
 	}
+}
+
+// TestModelDescriptionInstalled verifies registered artifact discovery.
+func TestModelDescriptionInstalled(t *testing.T) {
+	description := DefaultModel()
+	require.NotNil(t, description)
+	assert.False(t, description.Installed(t.TempDir()))
+	assert.Equal(t, fs.FileExists(description.ONNX.FilePath(filepath.Join(modelsPath, string(description.Name)))), description.Installed(modelsPath))
 }
 
 // TestModelDownloadRegistry verifies every selectable candidate has a checksum-pinned installer entry.

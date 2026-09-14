@@ -1,6 +1,6 @@
 ## PhotoPrism — Vision Package
 
-**Last Updated:** September 10, 2026
+**Last Updated:** September 14, 2026
 
 ### Overview
 
@@ -21,7 +21,7 @@ Faces are the one type this registry does not own. A `face` entry in `vision.yml
 
 The `vision.yml` file is usually kept in the `storage/config` directory (override with `PHOTOPRISM_VISION_YAML`). It defines a list of models under `Models:`. Key fields are captured below. If a type is omitted entirely, PhotoPrism will auto-append the built-in defaults (labels, nsfw, face, caption) so you no longer need placeholder stanzas. The `Thresholds` block is optional; missing or out-of-range values fall back to defaults.
 
-Custom label classifiers are ONNX-only. A `labels` entry that still declares `TensorFlow` is disabled with a migration warning instead of being interpreted as an ONNX model or silently replaced with the bundled default.
+Custom label and NSFW classifiers are ONNX-only. An entry of either type that still declares `TensorFlow` is disabled with a migration warning instead of being interpreted as an ONNX model or silently replaced with the bundled default.
 
 | Field                   | Default                                | Notes                                                                              |
 |:------------------------|:---------------------------------------|:-----------------------------------------------------------------------------------|
@@ -40,8 +40,12 @@ Custom label classifiers are ONNX-only. A `labels` entry that still declares `Te
 | `Schema` / `SchemaFile` | engine defaults / empty                | Inline vs file JSON schema (labels).                                               |
 | `TensorFlow`            | nil                                    | Local TF model info (paths, tags).                                                 |
 | `ONNX`                  | nil                                    | Shared local ONNX artifact and preprocessing description.                         |
-| `LabelFile`             | `labels.txt`                           | Vocabulary paired with a local labels model.                                      |
+| `LabelFile`             | `labels.txt`                           | Custom vocabulary; registered ImageNet models use the embedded vocabulary.        |
 | `CanonicalOrder`        | `false`                                | Require canonical ImageNet-1k order and reject a background offset.               |
+| `Reduction`             | —                                      | NSFW output reduction: `softmax-unsafe`, `sigmoid-unsafe`, or `neutral-complement`. |
+| `UnsafeClassIndex`      | —                                      | Required for `softmax-unsafe`; an explicit `0` is valid.                           |
+| `NeutralClassIndex`     | —                                      | Required for `neutral-complement`; an explicit `0` is valid.                       |
+| `DefaultThreshold`      | model-specific                         | Custom NSFW fallback as a probability from 0 to 1.                                 |
 | `Options`               | nil                                    | Sampling/settings merged with engine defaults.                                     |
 | `Service`               | nil                                    | Remote endpoint config (see below).                                                |
 
@@ -238,7 +242,7 @@ Models:
 - Scope: Fixed-taxonomy local classification (`labels`). Use Ollama or OpenAI for captions and open-vocabulary labels.
 - Location & paths: If `Path` is empty, the model is loaded from `assets/models/<name>` (lowercased, underscores). If `Path` is set, it is still searched under `assets/models`; absolute paths are not supported.
 - Expected files: One `.onnx` graph and the exact label file declared by `LabelFile`. The output width must equal the number of labels.
-- Preprocessing: Declare geometry, layout, color order, mean/std, resize/crop convention, and interpolation in `ONNX.Input` or embedded `photoprism.*` metadata. `Resolution` remains an explicit override for graphs with dynamic spatial axes.
+- Preprocessing: Declare geometry, layout, color order, mean/std, resize/crop convention, and interpolation in `ONNX.Input` or embedded `photoprism.*` metadata. Mean and standard-deviation arrays follow tensor channel order after `ColorOrder` is applied. `Resolution` remains an explicit override for graphs with dynamic spatial axes.
 - Output: One tensor is required. Declare `ONNX.Output.Logits`; omitted output semantics default to raw logits with a warning.
 - Sources: Labels produced by local ONNX models are recorded with source `image`; overriding the source isn’t supported yet.
 - Config file: `vision.yml` is the conventional name; in the latest version, `.yaml` is also supported by the loader.
@@ -264,7 +268,7 @@ There is also a fast-path: when `Type: labels` is served by an LLM, PhotoPrism c
 
 The runtime guards in `internal/photoprism/index_mediafile.go` and `internal/workers/vision.go` additionally short-circuit any NSFW promotion on `conf.DetectNSFW()`. The dedicated `Type: nsfw` model is filtered out of scheduled runs by `VisionModelShouldRun` whenever `DetectNSFW()` is false.
 
-`DetectNSFW` returns one `nsfw.Result` per image, and a result that no detector decided is `unavailable` rather than safe — including when the batch never ran, when a remote service returns fewer results than images, and when a single local file could not be read. Callers must act on `Status`, never on the class scores alone. `Thresholds.NSFW` is the operating point for both the dedicated model and the labels fast-path; left unset it resolves to `DefaultNSFWThreshold`. See [`internal/ai/nsfw/README.md`](../nsfw/README.md) for the result contract, the full call-graph, and the user-facing matrix at [docs.photoprism.app/user-guide/ai/nsfw/](https://docs.photoprism.app/user-guide/ai/nsfw/).
+`DetectNSFW` returns one `nsfw.Result` per image, and a result that no detector decided is `unavailable` rather than safe — including when the batch never ran, when a remote service returns fewer results than images, and when a single local file could not be read. Callers must act on `Status`, never on the class scores alone. `Thresholds.NSFW` is the operating point for both the dedicated model and the labels fast-path: `-1` selects the detector's calibrated default, while `0` through `100` are explicit operator values. See [`internal/ai/nsfw/README.md`](../nsfw/README.md) for the result contract, the full call-graph, and the user-facing matrix at [docs.photoprism.app/user-guide/ai/nsfw/](https://docs.photoprism.app/user-guide/ai/nsfw/).
 
 ### Model Unload on Idle
 

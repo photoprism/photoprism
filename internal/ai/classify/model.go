@@ -45,6 +45,7 @@ type Settings struct {
 	Name           ModelName
 	ModelPath      string
 	LabelPath      string
+	Labels         []string
 	Info           *onnx.ModelInfo
 	CanonicalOrder bool
 	Disabled       bool
@@ -62,6 +63,7 @@ func NewModel(settings Settings) *Model {
 		name:           NormalizeModelName(settings.Name),
 		modelPath:      settings.ModelPath,
 		labelPath:      settings.LabelPath,
+		labels:         append([]string(nil), settings.Labels...),
 		meta:           info,
 		canonicalOrder: settings.CanonicalOrder,
 		disabled:       settings.Disabled,
@@ -81,7 +83,7 @@ func NewRegisteredModel(modelsPath string, name ModelName, disabled bool) *Model
 	return NewModel(Settings{
 		Name:           description.Name,
 		ModelPath:      description.ONNX.FilePath(modelDir),
-		LabelPath:      filepath.Join(modelDir, description.LabelFile),
+		Labels:         imageNetLabelNames,
 		Info:           description.ONNX,
 		CanonicalOrder: description.CanonicalOrder,
 		Disabled:       disabled,
@@ -448,6 +450,15 @@ func (m *Model) applyDefaults() error {
 
 // loadLabels loads and validates the model's explicitly selected label file.
 func (m *Model) loadLabels() error {
+	if len(m.labels) > 0 {
+		if len(m.labels) != m.meta.Output.Width {
+			return fmt.Errorf("classify: embedded vocabulary contains %d labels, expected %d", len(m.labels), m.meta.Output.Width)
+		}
+
+		log.Infof("classify: loading embedded ImageNet labels")
+		return nil
+	}
+
 	if m.labelPath == "" {
 		return fmt.Errorf("classify: label file path is empty")
 	}
@@ -558,9 +569,9 @@ func (m *Model) buildBlob(img image.Image) ([]float32, error) {
 		for x := range input.Width {
 			red, green, blue, _ := img.At(bounds.Min.X+x, bounds.Min.Y+y).RGBA()
 			channels := [onnx.Channels]float32{
-				(float32(red>>8) - m.mean[0]) * m.scales[0],
-				(float32(green>>8) - m.mean[1]) * m.scales[1],
-				(float32(blue>>8) - m.mean[2]) * m.scales[2],
+				(float32(red>>8) - m.mean[rIndex]) * m.scales[rIndex],
+				(float32(green>>8) - m.mean[gIndex]) * m.scales[gIndex],
+				(float32(blue>>8) - m.mean[bIndex]) * m.scales[bIndex],
 			}
 
 			pixel := y*input.Width + x

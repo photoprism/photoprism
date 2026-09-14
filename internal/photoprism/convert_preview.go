@@ -49,7 +49,7 @@ func (w *Convert) TempPreview(f *MediaFile) (fileName string, cleanup func(), er
 		var stdout, stderr bytes.Buffer
 		candidate.Cmd.Stdout = &stdout
 		candidate.Cmd.Stderr = &stderr
-		candidate.Cmd.Env = append(os.Environ(),
+		candidate.Cmd.Env = append([]string(nil),
 			fmt.Sprintf("HOME=%s", w.conf.CmdCachePath()),
 			fmt.Sprintf("LD_LIBRARY_PATH=%s", w.conf.CmdLibPath()))
 		if runErr := candidate.Cmd.Run(); runErr != nil {

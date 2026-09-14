@@ -42,7 +42,7 @@ import (
 //	@Param		token					path		string	true	"upload token"
 //	@Param		files					formData	file	true	"one or more files to upload (repeat the field for multiple files)"
 //	@Success	200						{object}	i18n.Response
-//	@Failure	400,401,403,413,429,507	{object}	i18n.Response
+//	@Failure	400,401,403,413,429,503,507	{object}	i18n.Response
 //	@Router		/api/v1/users/{uid}/upload/{token} [post]
 func UploadUserFiles(router *gin.RouterGroup) {
 	router.POST("/users/:uid/upload/:token", func(c *gin.Context) {
@@ -221,22 +221,21 @@ func UploadUserFiles(router *gin.RouterGroup) {
 
 		// Check if the uploaded file may contain inappropriate content.
 		if len(uploads) > 0 && !conf.UploadNSFW() {
-			containsNSFW := false
+			screeningStatus := nsfw.StatusSafe
 
 			for _, filename := range uploads {
-				if nsfwRejectsUpload(filename) {
-					containsNSFW = true
+				status := nsfwUploadStatus(filename)
+				if status == nsfw.StatusUnavailable {
+					screeningStatus = nsfw.StatusUnavailable
+				} else if status == nsfw.StatusUnsafe && screeningStatus == nsfw.StatusSafe {
+					screeningStatus = nsfw.StatusUnsafe
 				}
 			}
 
-			if containsNSFW {
-				for _, filename := range uploads {
-					if err := os.Remove(filename); err != nil {
-						log.Errorf("nsfw: could not delete %s", clean.Log(filename))
-					}
-				}
-
-				Abort(c, http.StatusForbidden, i18n.ErrOffensiveUpload)
+			if screeningStatus != nsfw.StatusSafe {
+				removeScreenedUploads(uploads)
+				code, message := nsfwUploadError(screeningStatus)
+				Abort(c, code, message)
 				return
 			}
 		}
@@ -411,33 +410,33 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 	})
 }
 
-// nsfwRejectsUpload reports whether screening rejects an uploaded file.
-// Unavailable checks reject, while an explicitly unconfigured detector admits.
-func nsfwRejectsUpload(fileName string) bool {
+// nsfwUploadStatus reports the screening decision for an uploaded file.
+// An explicitly unconfigured detector admits the file as safe.
+func nsfwUploadStatus(fileName string) nsfw.Status {
 	if vision.Config == nil {
 		log.Debugf("nsfw: no detector configured, %s was not screened", clean.Log(fileName))
-		return false
+		return nsfw.StatusSafe
 	}
 	configured := vision.Config.Model(vision.ModelTypeNsfw)
 	if configured == nil || configured.Disabled {
 		log.Debugf("nsfw: no detector configured, %s was not screened", clean.Log(fileName))
-		return false
+		return nsfw.StatusSafe
 	}
 	previewName, cleanup, previewErr := nsfwUploadPreview(fileName)
 	if previewErr != nil {
 		log.Warnf("nsfw: cannot create preview for %s (%s)", clean.Log(fileName), clean.Error(previewErr))
-		return true
+		return nsfw.StatusUnavailable
 	}
 	if previewName == "" {
-		return false
+		return nsfw.StatusSafe
 	}
 	defer cleanup()
 
-	results, err := vision.DetectNSFWWithDefault([]string{previewName}, media.SrcLocal, nsfw.UploadThreshold)
+	results, err := vision.DetectNSFW([]string{previewName}, media.SrcLocal)
 
 	if errors.Is(err, nsfw.ErrNotConfigured) {
 		log.Debugf("nsfw: no detector configured, %s was not screened", clean.Log(fileName))
-		return false
+		return nsfw.StatusSafe
 	}
 
 	var result nsfw.Result
@@ -452,7 +451,7 @@ func nsfwRejectsUpload(fileName string) bool {
 	}
 
 	if result.IsSafe() {
-		return false
+		return nsfw.StatusSafe
 	}
 
 	if result.IsUnavailable() {
@@ -461,7 +460,25 @@ func nsfwRejectsUpload(fileName string) bool {
 		log.Infof("nsfw: %s might be offensive", clean.Log(fileName))
 	}
 
-	return true
+	return result.Status
+}
+
+// nsfwUploadError returns the HTTP response for a failed upload screening decision.
+func nsfwUploadError(screeningStatus nsfw.Status) (int, i18n.Message) {
+	if screeningStatus == nsfw.StatusUnavailable {
+		return http.StatusServiceUnavailable, i18n.ErrContentScreeningUnavailable
+	}
+
+	return http.StatusForbidden, i18n.ErrOffensiveUpload
+}
+
+// removeScreenedUploads deletes a temporary upload batch rejected by content screening.
+func removeScreenedUploads(uploads []string) {
+	for _, filename := range uploads {
+		if err := os.Remove(filename); err != nil {
+			log.Errorf("nsfw: could not delete %s", clean.Log(filename))
+		}
+	}
 }
 
 var nsfwUploadPreview = uploadScreeningPreview

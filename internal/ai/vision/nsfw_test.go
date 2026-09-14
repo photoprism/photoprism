@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/ai/nsfw"
+	"github.com/photoprism/photoprism/internal/ai/onnx"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
 )
@@ -30,7 +31,7 @@ func TestNsfwThreshold(t *testing.T) {
 		assert.InDelta(t, 0.9, NsfwThreshold(), 1e-6)
 	})
 	t.Run("UnsetFallsBackToDefault", func(t *testing.T) {
-		withConfig(t, &ConfigValues{Thresholds: Thresholds{}})
+		withConfig(t, &ConfigValues{Thresholds: Thresholds{NSFW: NSFWThresholdAuto}})
 		assert.InDelta(t, 0.75, NsfwThreshold(), 1e-6)
 	})
 	t.Run("NoConfig", func(t *testing.T) {
@@ -47,12 +48,28 @@ func TestNsfwThreshold(t *testing.T) {
 func TestResolvedNSFWThreshold(t *testing.T) {
 	model := nsfw.NewModel(nsfw.Settings{DefaultThreshold: 0.63, Disabled: true})
 	t.Run("ModelDefault", func(t *testing.T) {
-		withConfig(t, &ConfigValues{})
+		withConfig(t, &ConfigValues{Thresholds: Thresholds{NSFW: NSFWThresholdAuto}})
 		assert.InDelta(t, 0.63, resolvedNSFWThreshold(model), 1e-6)
 	})
 	t.Run("OperatorOverride", func(t *testing.T) {
 		withConfig(t, &ConfigValues{Thresholds: Thresholds{NSFW: 91}})
 		assert.InDelta(t, 0.91, resolvedNSFWThreshold(model), 1e-6)
+	})
+}
+
+// TestCustomNSFWClassIndexRequired verifies zero is valid only when explicitly configured.
+func TestCustomNSFWClassIndexRequired(t *testing.T) {
+	t.Run("UnsafeIndexMissing", func(t *testing.T) {
+		model := &Model{Name: "custom", Path: "missing", ONNX: &onnx.ModelInfo{}, Reduction: nsfw.ReductionSoftmaxUnsafe}
+		assert.Nil(t, model.NsfwModel())
+		require.Error(t, model.nsfwErr)
+		assert.Contains(t, model.nsfwErr.Error(), "unsafe class index is required")
+	})
+	t.Run("NeutralIndexMissing", func(t *testing.T) {
+		model := &Model{Name: "custom", Path: "missing", ONNX: &onnx.ModelInfo{}, Reduction: nsfw.ReductionNeutralComplement}
+		assert.Nil(t, model.NsfwModel())
+		require.Error(t, model.nsfwErr)
+		assert.Contains(t, model.nsfwErr.Error(), "neutral class index is required")
 	})
 }
 
@@ -62,7 +79,7 @@ func TestDetectNSFWNoModel(t *testing.T) {
 	t.Run("NoModelConfigured", func(t *testing.T) {
 		withConfig(t, &ConfigValues{})
 
-		result, err := nsfwInternal(Files{"a.jpg", "b.jpg"}, media.SrcLocal, nil)
+		result, err := nsfwInternal(Files{"a.jpg", "b.jpg"}, media.SrcLocal)
 		require.Error(t, err)
 		require.ErrorIs(t, err, nsfw.ErrNotConfigured)
 		require.Len(t, result, 2)
@@ -75,7 +92,7 @@ func TestDetectNSFWNoModel(t *testing.T) {
 	t.Run("NoConfig", func(t *testing.T) {
 		withConfig(t, nil)
 
-		result, err := nsfwInternal(Files{"a.jpg"}, media.SrcLocal, nil)
+		result, err := nsfwInternal(Files{"a.jpg"}, media.SrcLocal)
 		require.ErrorIs(t, err, nsfw.ErrNotConfigured)
 		require.Len(t, result, 1)
 		assert.False(t, result[0].IsSafe())
@@ -83,7 +100,7 @@ func TestDetectNSFWNoModel(t *testing.T) {
 	t.Run("NoImages", func(t *testing.T) {
 		withConfig(t, &ConfigValues{})
 
-		_, err := nsfwInternal(Files{}, media.SrcLocal, nil)
+		_, err := nsfwInternal(Files{}, media.SrcLocal)
 		require.Error(t, err)
 	})
 }
@@ -103,7 +120,7 @@ func TestDetectNSFWPartialBatch(t *testing.T) {
 	good := filepath.Join("..", "nsfw", "testdata", "cat_brown.jpg")
 	bad := filepath.Join("..", "nsfw", "testdata", "does-not-exist.jpg")
 
-	result, err := nsfwInternal(Files{good, bad}, media.SrcLocal, nil)
+	result, err := nsfwInternal(Files{good, bad}, media.SrcLocal)
 
 	// Local batches stay tolerant, so one unreadable file does not abort the run.
 	require.NoError(t, err)

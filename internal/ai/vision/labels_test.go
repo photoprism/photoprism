@@ -20,6 +20,11 @@ import (
 
 // TestGenerateLabels verifies local ONNX labeling and error handling.
 func TestGenerateLabels(t *testing.T) {
+	description := classify.DefaultModel()
+	if description == nil || !description.Installed(GetModelsPath()) {
+		t.Skip("classify: default ONNX model is not installed")
+	}
+
 	t.Run("Success", func(t *testing.T) {
 		result, err := GenerateLabels(Files{samplesPath + "/dog_orange.jpg"}, media.SrcLocal, entity.SrcAuto)
 
@@ -31,11 +36,12 @@ func TestGenerateLabels(t *testing.T) {
 
 		assert.Equal(t, "dog", result[0].Name)
 	})
-	t.Run("ChameleonBelowRuleThreshold", func(t *testing.T) {
+	t.Run("Chameleon", func(t *testing.T) {
 		result, err := GenerateLabels(Files{samplesPath + "/chameleon_lime.jpg"}, media.SrcLocal, entity.SrcAuto)
 
 		require.NoError(t, err)
-		assert.Empty(t, result)
+		require.Len(t, result, 1)
+		assert.Equal(t, "chameleon", result[0].Name)
 	})
 	t.Run("Cat224", func(t *testing.T) {
 		result, err := GenerateLabels(Files{samplesPath + "/cat_224.jpeg"}, media.SrcLocal, entity.SrcAuto)
@@ -60,8 +66,8 @@ func TestGenerateLabels(t *testing.T) {
 		t.Log(result)
 
 		assert.Equal(t, "cat", result[0].Name)
-		assert.InDelta(t, 30, result[0].Uncertainty, 10)
-		assert.InDelta(t, float32(0.7), result[0].Confidence(), 0.1)
+		assert.InDelta(t, 20, result[0].Uncertainty, 10)
+		assert.InDelta(t, float32(0.8), result[0].Confidence(), 0.1)
 	})
 	t.Run("CustomSourceLocal", func(t *testing.T) {
 		labels, err := GenerateLabels(Files{samplesPath + "/cat_224.jpeg"}, media.SrcLocal, entity.SrcManual)

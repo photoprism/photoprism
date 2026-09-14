@@ -47,9 +47,6 @@ const StatusUnavailableName = "unavailable"
 // DefaultThreshold is the conservative fallback for detectors without a calibrated threshold.
 const DefaultThreshold float32 = 0.98
 
-// UploadThreshold preserves the established upload-screening operating point.
-const UploadThreshold float32 = 0.75
-
 // Status is the three-valued outcome of an NSFW check.
 // Its zero value is unavailable so an unfilled result is never a clearance.
 type Status string

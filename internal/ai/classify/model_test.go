@@ -84,19 +84,22 @@ func TestModelBuildBlob(t *testing.T) {
 	img.SetNRGBA(0, 0, color.NRGBA{R: 10, G: 20, B: 30, A: 255})
 
 	model := NewModel(Settings{Info: &onnx.ModelInfo{Input: &onnx.Input{
-		Width:         1,
-		Height:        1,
-		Layout:        onnx.LayoutNCHW,
-		ColorOrder:    onnx.BGR,
-		Normalization: onnx.Uniform(0, 10),
-		Resize:        onnx.Resize{Mode: onnx.ResizeStretch},
+		Width:      1,
+		Height:     1,
+		Layout:     onnx.LayoutNCHW,
+		ColorOrder: onnx.BGR,
+		Normalization: onnx.Normalization{
+			Mean:   [onnx.Channels]float32{1, 2, 3},
+			StdDev: [onnx.Channels]float32{1, 2, 4},
+		},
+		Resize: onnx.Resize{Mode: onnx.ResizeStretch},
 	}}})
 	model.mean = model.meta.Input.Normalization.Mean
 	model.scales = model.meta.Input.Normalization.Scales()
 
 	blob, err := model.buildBlob(img)
 	require.NoError(t, err)
-	assert.Equal(t, []float32{3, 2, 1}, blob)
+	assert.Equal(t, []float32{29, 9, 1.75}, blob)
 }
 
 // TestRegisteredModelBuildBlob verifies the default model's complete preprocessing tensor.
@@ -186,6 +189,11 @@ func TestReadLabels(t *testing.T) {
 
 // TestModelLoadLabels verifies custom widths and mismatched vocabularies.
 func TestModelLoadLabels(t *testing.T) {
+	t.Run("Embedded", func(t *testing.T) {
+		model := &Model{labels: append([]string(nil), imageNetLabelNames...), meta: &onnx.ModelInfo{Output: &onnx.Output{Width: ImageNetClasses}}}
+		require.NoError(t, model.loadLabels())
+		require.NoError(t, model.validateLabels())
+	})
 	t.Run("CustomWidth", func(t *testing.T) {
 		fileName := filepath.Join(t.TempDir(), "custom-21k.txt")
 		require.NoError(t, os.WriteFile(fileName, []byte("first\nsecond\nthird\n"), fs.ModeFile))

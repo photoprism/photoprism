@@ -2,6 +2,7 @@ package face
 
 import (
 	"image"
+	"image/color"
 	"image/jpeg"
 	"math"
 	"os"
@@ -366,6 +367,23 @@ func TestEmbedderOutputDims(t *testing.T) {
 	t.Run("NoOutput", func(t *testing.T) {
 		assert.Equal(t, m.Dims, embedderOutputDims(m, &onnx.ModelInfo{}))
 	})
+}
+
+// TestONNXEmbedderBuildBlob verifies normalization follows tensor channel order.
+func TestONNXEmbedderBuildBlob(t *testing.T) {
+	embedder := &onnxEmbedder{
+		width:      1,
+		height:     1,
+		colorOrder: onnx.BGR,
+		mean:       [onnx.Channels]float32{1, 2, 3},
+		scales:     [onnx.Channels]float32{1, 0.5, 0.25},
+	}
+	img := image.NewNRGBA(image.Rect(0, 0, 1, 1))
+	img.SetNRGBA(0, 0, color.NRGBA{R: 10, G: 20, B: 30, A: 255})
+
+	blob, err := embedder.buildBlob(img)
+	require.NoError(t, err)
+	assert.Equal(t, []float32{29, 9, 1.75}, blob)
 }
 
 func TestONNXEmbedder_Close(t *testing.T) {

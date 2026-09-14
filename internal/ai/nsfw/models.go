@@ -1,17 +1,19 @@
 package nsfw
 
 import (
+	"path/filepath"
 	"sort"
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/ai/onnx"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // ModelName identifies a supported local NSFW detector.
 type ModelName string
 
 const (
-	// ModelAuto selects the bundled default detector.
+	// ModelAuto selects the first installed detector in preference order.
 	ModelAuto ModelName = "auto"
 	// ModelNone disables the local detector.
 	ModelNone ModelName = "none"
@@ -141,6 +143,15 @@ var Models = map[ModelName]*Description{
 	},
 }
 
+// AutoModelPreference lists automatic detector selection in priority order.
+var AutoModelPreference = []ModelName{
+	ModelYahoo,
+	ModelAdamCoddINT8,
+	ModelAdamCoddFP32,
+	ModelFalconsai,
+	ModelFreepik,
+}
+
 // binaryModel returns the common ViT binary-detector description.
 func binaryModel(name ModelName, displayName, fileName, sha256, source, quantization string, resolution int, defaultThreshold float32) *Description {
 	return &Description{
@@ -176,6 +187,15 @@ func DefaultModelName() ModelName {
 // FindModel returns the registered description for name.
 func FindModel(name ModelName) *Description {
 	return Models[NormalizeModelName(name)]
+}
+
+// Installed reports whether the registered model artifact exists below modelsPath.
+func (m *Description) Installed(modelsPath string) bool {
+	if m == nil || m.ONNX == nil {
+		return false
+	}
+
+	return fs.FileExists(m.ONNX.FilePath(filepath.Join(modelsPath, string(m.Name))))
 }
 
 // NormalizeModelName normalizes a configured model name.

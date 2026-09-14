@@ -54,8 +54,8 @@ type Model struct {
 	LabelFile         string                `yaml:"LabelFile,omitempty" json:"labelFile,omitempty"`
 	CanonicalOrder    bool                  `yaml:"CanonicalOrder,omitempty" json:"canonicalOrder,omitempty"`
 	Reduction         nsfw.Reduction        `yaml:"Reduction,omitempty" json:"reduction,omitempty"`
-	UnsafeClassIndex  int                   `yaml:"UnsafeClassIndex,omitempty" json:"unsafeClassIndex,omitempty"`
-	NeutralClassIndex int                   `yaml:"NeutralClassIndex,omitempty" json:"neutralClassIndex,omitempty"`
+	UnsafeClassIndex  *int                  `yaml:"UnsafeClassIndex,omitempty" json:"unsafeClassIndex,omitempty"`
+	NeutralClassIndex *int                  `yaml:"NeutralClassIndex,omitempty" json:"neutralClassIndex,omitempty"`
 	DefaultThreshold  float32               `yaml:"DefaultThreshold,omitempty" json:"defaultThreshold,omitempty"`
 	Options           *ModelOptions         `yaml:"Options,omitempty" json:"options,omitempty"`
 	Service           Service               `yaml:"Service,omitempty" json:"service"`
@@ -922,10 +922,27 @@ func (m *Model) NsfwModel() *nsfw.Model {
 			modelPath = m.ONNX.FilePath(modelPath)
 		}
 
+		unsafeClassIndex := 0
+		neutralClassIndex := 0
+		if m.UnsafeClassIndex != nil {
+			unsafeClassIndex = *m.UnsafeClassIndex
+		} else if m.Reduction == nsfw.ReductionSoftmaxUnsafe {
+			m.nsfwErr = fmt.Errorf("nsfw: unsafe class index is required for %s", m.Reduction)
+			log.Warnf("vision: %s (init %s)", clean.Error(m.nsfwErr), clean.Log(m.Path))
+			return nil
+		}
+		if m.NeutralClassIndex != nil {
+			neutralClassIndex = *m.NeutralClassIndex
+		} else if m.Reduction == nsfw.ReductionNeutralComplement {
+			m.nsfwErr = fmt.Errorf("nsfw: neutral class index is required for %s", m.Reduction)
+			log.Warnf("vision: %s (init %s)", clean.Error(m.nsfwErr), clean.Log(m.Path))
+			return nil
+		}
+
 		// Try to load a custom ONNX model based on the configuration values.
 		model := nsfw.NewModel(nsfw.Settings{Name: nsfw.ModelName(m.Name), ModelPath: modelPath,
-			Info: m.ONNX, Reduction: m.Reduction, UnsafeClassIndex: m.UnsafeClassIndex,
-			NeutralClassIndex: m.NeutralClassIndex, DefaultThreshold: m.DefaultThreshold, Disabled: m.Disabled})
+			Info: m.ONNX, Reduction: m.Reduction, UnsafeClassIndex: unsafeClassIndex,
+			NeutralClassIndex: neutralClassIndex, DefaultThreshold: m.DefaultThreshold, Disabled: m.Disabled})
 
 		if err := model.Init(); err != nil {
 			m.nsfwErr = err
@@ -957,16 +974,40 @@ func (m *Model) Clone() *Model {
 		return nil
 	}
 
-	//nolint:govet // Copying the guard is safe because the copy is reset before it is used.
-	c := *m
-
-	c.schemaOnce = sync.Once{}
-	c.schema = ""
-	c.classifyModel = nil
-	c.faceModel = nil
-	c.nsfwModel = nil
-	c.nsfwErr = nil
-	c.Options = cloneOptions(m.Options)
+	c := Model{
+		Type:             m.Type,
+		Default:          m.Default,
+		Model:            m.Model,
+		Name:             m.Name,
+		Version:          m.Version,
+		Engine:           m.Engine,
+		Run:              m.Run,
+		System:           m.System,
+		Prompt:           m.Prompt,
+		Format:           m.Format,
+		Normalize:        m.Normalize,
+		Schema:           m.Schema,
+		SchemaFile:       m.SchemaFile,
+		Resolution:       m.Resolution,
+		TensorFlow:       m.TensorFlow,
+		ONNX:             m.ONNX,
+		LabelFile:        m.LabelFile,
+		CanonicalOrder:   m.CanonicalOrder,
+		Reduction:        m.Reduction,
+		DefaultThreshold: m.DefaultThreshold,
+		Options:          cloneOptions(m.Options),
+		Service:          m.Service,
+		Path:             m.Path,
+		Disabled:         m.Disabled,
+	}
+	if m.UnsafeClassIndex != nil {
+		index := *m.UnsafeClassIndex
+		c.UnsafeClassIndex = &index
+	}
+	if m.NeutralClassIndex != nil {
+		index := *m.NeutralClassIndex
+		c.NeutralClassIndex = &index
+	}
 	if m.TensorFlow != nil {
 		tensorFlowInfo := *m.TensorFlow
 		tensorFlowInfo.Tags = append([]string(nil), m.TensorFlow.Tags...)

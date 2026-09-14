@@ -6,7 +6,7 @@
 
 `internal/ai/classify` runs fixed-taxonomy image classification through ONNX Runtime. It decodes an image, applies the preprocessing declared for the selected model, executes one output tensor, converts raw logits with stable softmax, and maps the resulting probabilities through the existing label rules.
 
-The default and optional ImageNet-1k candidates share the existing 1000-entry vocabulary in `assets/models/nasnet/labels.txt`. No label index, rule, stored label, or `classify.Labels` consumer changes when the model changes.
+The default and optional ImageNet-1k candidates share the 1000-entry vocabulary embedded from `internal/ai/classify/labels.txt`. It remains readable and diffable in the repository but no longer depends on a legacy NASNet asset directory at runtime. No label index, rule, stored label, or `classify.Labels` consumer changes when the model changes.
 
 ### Registered Models
 
@@ -21,7 +21,7 @@ The graph is inspected at initialization and must agree with all recorded struct
 
 ### Configuration
 
-`PHOTOPRISM_LABEL_MODEL` accepts `auto`, `none`, a registered name, or a custom model name. `auto` resolves to the bundled `efficientformerv2_s2` default, while `none` disables local classification. `photoprism config` reports `label-model`, `label-model-path`, and `label-model-runtime`.
+`PHOTOPRISM_LABEL_MODEL` accepts `auto`, `none`, a registered name, or a custom model name. `auto` selects the first installed registered model in preference order, starting with `efficientformerv2_s2`, and resolves to `none` when no artifact is installed. `none` disables local classification. `photoprism config` reports `label-model`, `label-model-path`, and `label-model-runtime`.
 
 A custom model is resolved under `PHOTOPRISM_MODELS_PATH` as:
 

@@ -1,11 +1,14 @@
 package classify
 
 import (
+	_ "embed"
+	"path/filepath"
 	"sort"
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/ai/onnx"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // ModelName identifies a selectable image classification model.
@@ -36,6 +39,13 @@ type ModelDescription struct {
 	LabelFile      string
 	CanonicalOrder bool
 }
+
+// imageNetLabels contains the canonical ImageNet-1k vocabulary used by registered classifiers.
+//
+//go:embed labels.txt
+var imageNetLabels string
+
+var imageNetLabelNames = strings.Split(strings.TrimSpace(imageNetLabels), "\n")
 
 var imageNetMean = [onnx.Channels]float32{123.675, 116.28, 103.53}
 var imageNetStdDev = [onnx.Channels]float32{58.395, 57.12, 57.375}
@@ -118,9 +128,17 @@ func imageNetModel(name ModelName, displayName, fileName, sha256, source string,
 			},
 			Output: &onnx.Output{Name: "logits", Width: ImageNetClasses, Count: 1, Logits: onnx.Bool(true)},
 		},
-		LabelFile:      "../nasnet/labels.txt",
 		CanonicalOrder: true,
 	}
+}
+
+// Installed reports whether the registered model artifact exists below modelsPath.
+func (m *ModelDescription) Installed(modelsPath string) bool {
+	if m == nil || m.ONNX == nil {
+		return false
+	}
+
+	return fs.FileExists(m.ONNX.FilePath(filepath.Join(modelsPath, string(m.Name))))
 }
 
 // imageNetNormalization returns the default ImageNet normalization over 0-255 values.

@@ -49,7 +49,7 @@ var (
 	DefaultThresholds = Thresholds{
 		Confidence: 10, // 0-100%
 		Topicality: 0,  // 0-100%
-		NSFW:       0,  // Unset, see Thresholds.GetNSFW and DefaultNSFWThreshold.
+		NSFW:       NSFWThresholdAuto,
 	}
 )
 
@@ -88,16 +88,25 @@ func NewNsfwModel(name nsfw.ModelName) *Model {
 		return nil
 	}
 
-	return &Model{
-		Type:              ModelTypeNsfw,
-		Default:           description.Name == nsfw.DefaultModelName(),
-		Name:              string(description.Name),
-		Version:           VersionLatest,
-		Resolution:        description.ONNX.Input.Width,
-		ONNX:              description.ONNX,
-		Reduction:         description.Reduction,
-		UnsafeClassIndex:  description.UnsafeClassIndex,
-		NeutralClassIndex: description.NeutralClassIndex,
-		DefaultThreshold:  description.DefaultThreshold,
+	model := &Model{
+		Type:             ModelTypeNsfw,
+		Default:          description.Name == nsfw.DefaultModelName(),
+		Name:             string(description.Name),
+		Version:          VersionLatest,
+		Resolution:       description.ONNX.Input.Width,
+		ONNX:             description.ONNX,
+		Reduction:        description.Reduction,
+		DefaultThreshold: description.DefaultThreshold,
 	}
+
+	if description.Reduction == nsfw.ReductionSoftmaxUnsafe {
+		index := description.UnsafeClassIndex
+		model.UnsafeClassIndex = &index
+	}
+	if description.Reduction == nsfw.ReductionNeutralComplement {
+		index := description.NeutralClassIndex
+		model.NeutralClassIndex = &index
+	}
+
+	return model
 }

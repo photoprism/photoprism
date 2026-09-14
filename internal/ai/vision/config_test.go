@@ -81,6 +81,13 @@ func TestNewConfigClonesModels(t *testing.T) {
 	assert.Equal(t, "first", firstLabel.TensorFlow.Tags[0])
 	assert.Equal(t, float32(-1), firstLabel.TensorFlow.Input.Intervals[0].Start)
 
+	unsafeClassIndex := 0
+	nsfwModel := &Model{UnsafeClassIndex: &unsafeClassIndex}
+	nsfwClone := nsfwModel.Clone()
+	require.NotNil(t, nsfwClone.UnsafeClassIndex)
+	require.NotSame(t, nsfwModel.UnsafeClassIndex, nsfwClone.UnsafeClassIndex)
+	assert.Equal(t, 0, *nsfwClone.UnsafeClassIndex)
+
 	firstLabel.Disabled = true
 	assert.NotNil(t, second.Model(ModelTypeLabels))
 	assert.False(t, NasnetModel.Disabled)
@@ -109,6 +116,73 @@ func TestConfigValues_Load(t *testing.T) {
 		require.Len(t, cfg.Models, len(DefaultModels))
 		assert.True(t, cfg.Models[0].Disabled)
 		assert.NotNil(t, cfg.Models[0].TensorFlow)
+	})
+	t.Run("DisablesTensorFlowNSFWModel", func(t *testing.T) {
+		configFile := filepath.Join(t.TempDir(), "vision.yml")
+		err := os.WriteFile(configFile, []byte("Models:\n- Type: nsfw\n  Name: nsfw\n  TensorFlow: {}\n"), fs.ModeConfigFile)
+		require.NoError(t, err)
+
+		cfg := NewConfig()
+		require.NoError(t, cfg.Load(configFile))
+		assert.Nil(t, cfg.Model(ModelTypeNsfw))
+		var configured *Model
+		for _, model := range cfg.Models {
+			if model != nil && model.Type == ModelTypeNsfw {
+				configured = model
+			}
+		}
+		require.NotNil(t, configured)
+		assert.True(t, configured.Disabled)
+		assert.NotNil(t, configured.TensorFlow)
+	})
+	t.Run("MigratesLegacyNSFWThreshold", func(t *testing.T) {
+		configFile := filepath.Join(t.TempDir(), "vision.yml")
+		err := os.WriteFile(configFile, []byte("Models:\n- Type: nsfw\n  Name: nsfw\n  TensorFlow: {}\nThresholds:\n  NSFW: 75\n"), fs.ModeConfigFile)
+		require.NoError(t, err)
+
+		cfg := NewConfig()
+		require.NoError(t, cfg.Load(configFile))
+		assert.Equal(t, NSFWThresholdAuto, cfg.Thresholds.NSFW)
+	})
+	t.Run("PreservesExplicitNSFWThreshold", func(t *testing.T) {
+		configFile := filepath.Join(t.TempDir(), "vision.yml")
+		err := os.WriteFile(configFile, []byte("Models:\n- Type: nsfw\n  Name: custom\n  ONNX: {}\nThresholds:\n  NSFW: 75\n"), fs.ModeConfigFile)
+		require.NoError(t, err)
+
+		cfg := NewConfig()
+		require.NoError(t, cfg.Load(configFile))
+		assert.Equal(t, 75, cfg.Thresholds.NSFW)
+	})
+	t.Run("PreservesExplicitNSFWThresholdWithLegacyLabels", func(t *testing.T) {
+		configFile := filepath.Join(t.TempDir(), "vision.yml")
+		err := os.WriteFile(configFile, []byte("Models:\n- Type: labels\n  Name: nasnet\n  TensorFlow: {}\n- Type: nsfw\n  Name: custom\n  ONNX: {}\nThresholds:\n  NSFW: 75\n"), fs.ModeConfigFile)
+		require.NoError(t, err)
+
+		cfg := NewConfig()
+		require.NoError(t, cfg.Load(configFile))
+		assert.Equal(t, 75, cfg.Thresholds.NSFW)
+	})
+	t.Run("PreservesExplicitZeroNSFWThreshold", func(t *testing.T) {
+		configFile := filepath.Join(t.TempDir(), "vision.yml")
+		err := os.WriteFile(configFile, []byte("Thresholds:\n  NSFW: 0\n"), fs.ModeConfigFile)
+		require.NoError(t, err)
+
+		cfg := NewConfig()
+		require.NoError(t, cfg.Load(configFile))
+		assert.Equal(t, 0, cfg.Thresholds.NSFW)
+		assert.True(t, cfg.Thresholds.NSFWIsSet())
+	})
+	t.Run("PreservesExplicitClassIndexZero", func(t *testing.T) {
+		configFile := filepath.Join(t.TempDir(), "vision.yml")
+		err := os.WriteFile(configFile, []byte("Models:\n- Type: nsfw\n  Name: custom\n  Reduction: softmax-unsafe\n  UnsafeClassIndex: 0\n  ONNX: {}\n"), fs.ModeConfigFile)
+		require.NoError(t, err)
+
+		cfg := NewConfig()
+		require.NoError(t, cfg.Load(configFile))
+		model := cfg.Model(ModelTypeNsfw)
+		require.NotNil(t, model)
+		require.NotNil(t, model.UnsafeClassIndex)
+		assert.Equal(t, 0, *model.UnsafeClassIndex)
 	})
 	t.Run("PreservesProbabilityOutput", func(t *testing.T) {
 		configFile := filepath.Join(t.TempDir(), "vision.yml")
@@ -378,7 +452,7 @@ func TestConfigValues_ensureDefaultModels(t *testing.T) {
 }
 
 func TestConfigModelPrefersLastEnabled(t *testing.T) {
-	defaultModel := *NasnetModel //nolint:govet // copy for test to avoid mutating shared model
+	defaultModel := NasnetModel.Clone()
 	defaultModel.Disabled = false
 	defaultModel.Name = "nasnet-default"
 
@@ -391,7 +465,7 @@ func TestConfigModelPrefersLastEnabled(t *testing.T) {
 
 	cfg := &ConfigValues{
 		Models: Models{
-			&defaultModel,
+			defaultModel,
 			customModel,
 		},
 	}

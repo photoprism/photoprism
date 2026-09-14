@@ -72,6 +72,8 @@ func TestConfig_LabelModel(t *testing.T) {
 	t.Run("Auto", func(t *testing.T) {
 		withVisionConfig(t, vision.NewConfig())
 		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = t.TempDir()
+		installVisionTestArtifact(t, c.ModelsPath(), string(classify.ModelEfficientFormerV2S2), classify.FindModel(classify.ModelEfficientFormerV2S2).ONNX.File)
 		c.options.LabelModel = "auto"
 		c.applyLabelModel()
 		assert.Equal(t, classify.DefaultModelName(), c.EffectiveLabelModel())
@@ -83,6 +85,8 @@ func TestConfig_LabelModel(t *testing.T) {
 		config.Models[0].Disabled = true
 		withVisionConfig(t, config)
 		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = t.TempDir()
+		installVisionTestArtifact(t, c.ModelsPath(), string(classify.ModelEfficientFormerV2S2), classify.FindModel(classify.ModelEfficientFormerV2S2).ONNX.File)
 		c.options.LabelModel = "auto"
 		c.applyLabelModel()
 		assert.True(t, vision.Config.Models[0].Disabled)
@@ -90,10 +94,20 @@ func TestConfig_LabelModel(t *testing.T) {
 		assert.Empty(t, c.LabelModelPath())
 		assert.Equal(t, "none", c.LabelModelRuntime())
 	})
+	t.Run("AutoMissingDisables", func(t *testing.T) {
+		withVisionConfig(t, vision.NewConfig())
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = t.TempDir()
+		c.options.LabelModel = "auto"
+		c.applyLabelModel()
+		assert.Equal(t, classify.ModelNone, c.EffectiveLabelModel())
+		require.True(t, vision.Config.Models[0].Disabled)
+	})
 	t.Run("AutoDisablesCustomTensorFlow", func(t *testing.T) {
 		custom := &vision.Model{Type: vision.ModelTypeLabels, Name: "custom", TensorFlow: &tensorflow.ModelInfo{}, Disabled: true}
 		withVisionConfig(t, &vision.ConfigValues{Models: vision.Models{custom}})
 		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = t.TempDir()
 		c.options.LabelModel = "auto"
 		c.applyLabelModel()
 		assert.Equal(t, classify.ModelNone, c.EffectiveLabelModel())
@@ -103,10 +117,14 @@ func TestConfig_LabelModel(t *testing.T) {
 	t.Run("Named", func(t *testing.T) {
 		withVisionConfig(t, vision.NewConfig())
 		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = t.TempDir()
 		c.options.LabelModel = string(classify.ModelRepViTM10)
+		hook := captureLog(t)
 		c.applyLabelModel()
 		assert.Equal(t, classify.ModelRepViTM10, c.EffectiveLabelModel())
 		assert.Equal(t, string(classify.ModelRepViTM10), vision.Config.Model(vision.ModelTypeLabels).Name)
+		require.NotNil(t, hook.LastEntry())
+		assert.Contains(t, hook.LastEntry().Message, "scripts/dist/download-models.sh repvit_m1_0")
 	})
 	t.Run("Cli", func(t *testing.T) {
 		withVisionConfig(t, vision.NewConfig())
@@ -174,6 +192,8 @@ func TestConfig_NSFWModel(t *testing.T) {
 	t.Run("Auto", func(t *testing.T) {
 		withVisionConfig(t, vision.NewConfig())
 		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = t.TempDir()
+		installVisionTestArtifact(t, c.ModelsPath(), string(nsfw.ModelYahoo), nsfw.FindModel(nsfw.ModelYahoo).ONNX.File)
 		c.options.NsfwModel = "auto"
 		c.applyNSFWModel()
 		assert.Equal(t, nsfw.DefaultModelName(), c.EffectiveNSFWModel())
@@ -184,17 +204,33 @@ func TestConfig_NSFWModel(t *testing.T) {
 		config.Models[1].Disabled = true
 		withVisionConfig(t, config)
 		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = t.TempDir()
+		installVisionTestArtifact(t, c.ModelsPath(), string(nsfw.ModelYahoo), nsfw.FindModel(nsfw.ModelYahoo).ONNX.File)
 		c.options.NsfwModel = "auto"
 		c.applyNSFWModel()
 		assert.True(t, vision.Config.Models[1].Disabled)
+		assert.Equal(t, nsfw.ModelNone, c.EffectiveNSFWModel())
+	})
+	t.Run("AutoMissingDisables", func(t *testing.T) {
+		withVisionConfig(t, vision.NewConfig())
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = t.TempDir()
+		c.options.NsfwModel = "auto"
+		c.applyNSFWModel()
+		assert.Equal(t, nsfw.ModelNone, c.EffectiveNSFWModel())
+		require.True(t, vision.Config.Models[1].Disabled)
 	})
 	t.Run("Named", func(t *testing.T) {
 		withVisionConfig(t, vision.NewConfig())
 		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = t.TempDir()
 		c.options.NsfwModel = string(nsfw.ModelYahoo)
+		hook := captureLog(t)
 		c.applyNSFWModel()
 		assert.Equal(t, nsfw.ModelYahoo, c.EffectiveNSFWModel())
 		assert.Contains(t, c.NsfwModelPath(), string(nsfw.ModelYahoo))
+		require.NotNil(t, hook.LastEntry())
+		assert.Contains(t, hook.LastEntry().Message, "scripts/dist/download-models.sh yahoo_open_nsfw")
 	})
 	t.Run("None", func(t *testing.T) {
 		withVisionConfig(t, vision.NewConfig())
@@ -212,11 +248,46 @@ func TestConfig_NSFWModel(t *testing.T) {
 			Type: vision.ModelTypeNsfw, Name: "custom_nsfw", Path: "custom/model.onnx",
 		}}})
 		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = t.TempDir()
 		c.options.NsfwModel = "auto"
 		c.applyNSFWModel()
 		assert.Equal(t, nsfw.ModelName("custom_nsfw"), c.EffectiveNSFWModel())
 		assert.Equal(t, filepath.Join(c.ModelsPath(), "custom", "model.onnx"), c.NsfwModelPath())
 	})
+}
+
+// TestConfig_installedVisionModels verifies automatic selection follows installed artifacts.
+func TestConfig_installedVisionModels(t *testing.T) {
+	t.Run("Labels", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = t.TempDir()
+		assert.Equal(t, classify.ModelNone, c.installedLabelModel())
+
+		installVisionTestArtifact(t, c.ModelsPath(), string(classify.ModelEfficientFormerV2S1), classify.FindModel(classify.ModelEfficientFormerV2S1).ONNX.File)
+		assert.Equal(t, classify.ModelEfficientFormerV2S1, c.installedLabelModel())
+
+		installVisionTestArtifact(t, c.ModelsPath(), string(classify.ModelEfficientFormerV2S2), classify.FindModel(classify.ModelEfficientFormerV2S2).ONNX.File)
+		assert.Equal(t, classify.ModelEfficientFormerV2S2, c.installedLabelModel())
+	})
+	t.Run("NSFW", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = t.TempDir()
+		assert.Equal(t, nsfw.ModelNone, c.installedNSFWModel())
+
+		installVisionTestArtifact(t, c.ModelsPath(), string(nsfw.ModelAdamCoddINT8), nsfw.FindModel(nsfw.ModelAdamCoddINT8).ONNX.File)
+		assert.Equal(t, nsfw.ModelAdamCoddINT8, c.installedNSFWModel())
+
+		installVisionTestArtifact(t, c.ModelsPath(), string(nsfw.ModelYahoo), nsfw.FindModel(nsfw.ModelYahoo).ONNX.File)
+		assert.Equal(t, nsfw.ModelYahoo, c.installedNSFWModel())
+	})
+}
+
+// installVisionTestArtifact creates an empty file for installed-model selection tests.
+func installVisionTestArtifact(t *testing.T, modelsPath, name, fileName string) {
+	t.Helper()
+	dir := filepath.Join(modelsPath, name)
+	require.NoError(t, os.MkdirAll(dir, fs.ModeDir))
+	require.NoError(t, os.WriteFile(filepath.Join(dir, fileName), nil, fs.ModeFile))
 }
 
 // TestConfig_reportUnscreenedUploads verifies the missing-detector warning conditions.

@@ -18,22 +18,12 @@ func SetNSFWFunc(fn func(Files, media.Src) ([]nsfw.Result, error)) {
 		return
 	}
 
-	nsfwFunc = func(images Files, mediaSrc media.Src, _ *float32) ([]nsfw.Result, error) {
-		return fn(images, mediaSrc)
-	}
+	nsfwFunc = fn
 }
 
 // DetectNSFW checks images for inappropriate content and generates probability scores grouped by category.
 func DetectNSFW(images Files, mediaSrc media.Src) (result []nsfw.Result, err error) {
-	return nsfwFunc(images, mediaSrc, nil)
-}
-
-// DetectNSFWWithDefault uses fallback unless an operator threshold is configured.
-func DetectNSFWWithDefault(images Files, mediaSrc media.Src, fallback float32) (result []nsfw.Result, err error) {
-	if Config != nil && Config.Thresholds.NSFWIsSet() {
-		return nsfwFunc(images, mediaSrc, nil)
-	}
-	return nsfwFunc(images, mediaSrc, &fallback)
+	return nsfwFunc(images, mediaSrc)
 }
 
 // NsfwThreshold returns the configured unsafe probability or the package default.
@@ -57,7 +47,8 @@ func undecidedResults(count int, reason string) []nsfw.Result {
 	return result
 }
 
-func nsfwInternal(images Files, mediaSrc media.Src, fallback *float32) (result []nsfw.Result, err error) {
+// nsfwInternal evaluates local or remote detectors with the resolved operating threshold.
+func nsfwInternal(images Files, mediaSrc media.Src) (result []nsfw.Result, err error) {
 	// Return if no thumbnail filenames were given.
 	if len(images) == 0 {
 		return result, errors.New("at least one image required")
@@ -65,9 +56,6 @@ func nsfwInternal(images Files, mediaSrc media.Src, fallback *float32) (result [
 
 	result = undecidedResults(len(images), "not evaluated")
 	threshold := NsfwThreshold()
-	if fallback != nil && *fallback > 0 && *fallback <= 1 {
-		threshold = *fallback
-	}
 
 	// Return if there is no configuration or no image classification models are configured.
 	if Config == nil {
@@ -105,7 +93,7 @@ func nsfwInternal(images Files, mediaSrc media.Src, fallback *float32) (result [
 
 			result = normalizeNsfwResults(apiResponse.Result.Nsfw, len(images), threshold)
 		} else if detector := model.NsfwModel(); detector != nil {
-			if fallback == nil && !Config.Thresholds.NSFWIsSet() {
+			if !Config.Thresholds.NSFWIsSet() {
 				threshold = detector.DefaultThreshold()
 			}
 			// Detect with the local model.

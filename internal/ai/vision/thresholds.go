@@ -1,5 +1,8 @@
 package vision
 
+// NSFWThresholdAuto selects the calibrated threshold of the active detector.
+const NSFWThresholdAuto = -1
+
 // Thresholds are expressed as percentages (0-100) and gate label acceptance,
 // topicality, and NSFW handling for the configured vision models.
 type Thresholds struct {
@@ -42,7 +45,7 @@ func (t *Thresholds) GetTopicalityFloat32() float32 {
 
 // GetNSFW returns the effective NSFW threshold in percent from 0 to 100.
 func (t *Thresholds) GetNSFW() int {
-	if t == nil || t.NSFW <= 0 {
+	if t == nil || t.NSFW < 0 {
 		return DefaultNSFWThreshold
 	} else if t.NSFW > 100 {
 		return 100
@@ -54,7 +57,7 @@ func (t *Thresholds) GetNSFW() int {
 // NSFWIsSet reports whether the operator configured an NSFW threshold.
 // An unset value allows the selected model's calibrated default to apply.
 func (t *Thresholds) NSFWIsSet() bool {
-	return t != nil && t.NSFW > 0
+	return t != nil && t.NSFW >= 0
 }
 
 // GetNSFWFloat32 returns the NSFW threshold as float32 for comparison.

@@ -156,6 +156,9 @@ func TestModelNilReceiver(t *testing.T) {
 
 // TestRegisteredModels verifies registry descriptions are complete and independent.
 func TestRegisteredModels(t *testing.T) {
+	require.Len(t, AutoModelPreference, len(Models))
+	require.Equal(t, DefaultModelName(), AutoModelPreference[0])
+
 	for name, description := range Models {
 		t.Run(string(name), func(t *testing.T) {
 			require.NotNil(t, description.ONNX)
@@ -170,6 +173,14 @@ func TestRegisteredModels(t *testing.T) {
 			require.NoError(t, model.validateDescription())
 		})
 	}
+}
+
+// TestDescriptionInstalled verifies registered detector artifact discovery.
+func TestDescriptionInstalled(t *testing.T) {
+	description := FindModel(DefaultModelName())
+	require.NotNil(t, description)
+	assert.False(t, description.Installed(t.TempDir()))
+	assert.Equal(t, fs.FileExists(description.ONNX.FilePath(filepath.Join(testModelsPath, string(description.Name)))), description.Installed(testModelsPath))
 }
 
 // TestRegisteredModelInference verifies the bundled graph accepts JPEG and PNG input.

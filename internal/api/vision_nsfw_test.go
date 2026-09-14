@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/ai/vision"
@@ -68,6 +69,7 @@ func TestPostVisionNsfw(t *testing.T) {
 			assert.Zero(t, result.Sexy)
 		}
 
+		require.NotNil(t, apiResponse.Model)
 		assert.Equal(t, vision.ModelTypeNsfw, apiResponse.Model.Type)
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
@@ -105,6 +107,7 @@ func TestPostVisionNsfw(t *testing.T) {
 		}
 
 		assert.Len(t, apiResponse.Result.Nsfw, 2)
+		require.NotNil(t, apiResponse.Model)
 		assert.Equal(t, vision.ModelTypeNsfw, apiResponse.Model.Type)
 		assert.Equal(t, http.StatusOK, r.Code)
 	})

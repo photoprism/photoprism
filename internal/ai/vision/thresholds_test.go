@@ -60,9 +60,15 @@ func TestThresholds_GetTopicality(t *testing.T) {
 
 func TestThresholds_GetNSFW(t *testing.T) {
 	t.Run("Default", func(t *testing.T) {
-		th := Thresholds{NSFW: 0}
+		th := Thresholds{NSFW: NSFWThresholdAuto}
 		if got := th.GetNSFW(); got != DefaultNSFWThreshold {
 			t.Fatalf("expected default %d, got %d", DefaultNSFWThreshold, got)
+		}
+	})
+	t.Run("Zero", func(t *testing.T) {
+		th := Thresholds{NSFW: 0}
+		if got := th.GetNSFW(); got != 0 {
+			t.Fatalf("expected 0, got %d", got)
 		}
 	})
 	t.Run("AboveMax", func(t *testing.T) {
@@ -89,9 +95,15 @@ func TestThresholds_GetNSFW(t *testing.T) {
 // one who chose nothing, which is what lets a model's own default apply.
 func TestThresholds_NSFWIsSet(t *testing.T) {
 	t.Run("Unset", func(t *testing.T) {
-		th := Thresholds{}
+		th := Thresholds{NSFW: NSFWThresholdAuto}
 		if th.NSFWIsSet() {
 			t.Fatal("expected an unset threshold")
+		}
+	})
+	t.Run("ZeroCountsAsSet", func(t *testing.T) {
+		th := Thresholds{NSFW: 0}
+		if !th.NSFWIsSet() {
+			t.Fatal("expected zero to be configured")
 		}
 	})
 	t.Run("Set", func(t *testing.T) {

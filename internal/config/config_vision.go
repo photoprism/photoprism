@@ -67,12 +67,32 @@ func (c *Config) EffectiveNSFWModel() nsfw.ModelName {
 	}
 
 	if vision.Config != nil {
-		if model := vision.Config.Model(vision.ModelTypeNsfw); model != nil && !model.Default {
-			return nsfw.NormalizeModelName(nsfw.ModelName(model.Name))
+		if model := configuredVisionModel(vision.Config, vision.ModelTypeNsfw); model != nil {
+			if model.Disabled {
+				return nsfw.ModelNone
+			} else if !model.Default {
+				return nsfw.NormalizeModelName(nsfw.ModelName(model.Name))
+			}
 		}
 	}
 
-	return nsfw.DefaultModelName()
+	return c.installedNSFWModel()
+}
+
+// installedNSFWModel returns the first installed detector in automatic preference order.
+func (c *Config) installedNSFWModel() nsfw.ModelName {
+	if c == nil {
+		return nsfw.ModelNone
+	}
+
+	modelsPath := c.ModelsPath()
+	for _, candidate := range nsfw.AutoModelPreference {
+		if nsfw.FindModel(candidate).Installed(modelsPath) {
+			return candidate
+		}
+	}
+
+	return nsfw.ModelNone
 }
 
 // applyNSFWModel applies NSFW_MODEL to the local detector entry in vision.Config.
@@ -83,7 +103,16 @@ func (c *Config) applyNSFWModel() {
 
 	current := configuredVisionModel(vision.Config, vision.ModelTypeNsfw)
 	setting := c.NSFWModelSetting()
-	if setting == nsfw.ModelNone {
+	if setting == nsfw.ModelAuto && current != nil && !current.Default {
+		return
+	}
+
+	selected := setting
+	if setting == nsfw.ModelAuto {
+		selected = c.installedNSFWModel()
+	}
+
+	if selected == nsfw.ModelNone {
 		if current == nil {
 			current = vision.NewNsfwModel(nsfw.DefaultModelName())
 		} else {
@@ -96,15 +125,10 @@ func (c *Config) applyNSFWModel() {
 		return
 	}
 
-	if setting == nsfw.ModelAuto && current != nil && !current.Default {
-		return
-	}
-
-	selected := setting
-	if selected == nsfw.ModelAuto {
-		selected = nsfw.DefaultModelName()
-	}
 	if registered := vision.NewNsfwModel(selected); registered != nil {
+		if description := nsfw.FindModel(selected); description != nil && !description.Installed(c.ModelsPath()) {
+			log.Warnf("config: nsfw model %s is not installed; run scripts/dist/download-models.sh %s", clean.Log(string(selected)), clean.Log(string(selected)))
+		}
 		if current != nil {
 			registered.Run = current.Run
 			if setting == nsfw.ModelAuto {
@@ -157,7 +181,23 @@ func (c *Config) EffectiveLabelModel() classify.ModelName {
 		}
 	}
 
-	return classify.DefaultModelName()
+	return c.installedLabelModel()
+}
+
+// installedLabelModel returns the first installed classifier in automatic preference order.
+func (c *Config) installedLabelModel() classify.ModelName {
+	if c == nil {
+		return classify.ModelNone
+	}
+
+	modelsPath := c.ModelsPath()
+	for _, candidate := range classify.AutoModelPreference {
+		if classify.FindModel(candidate).Installed(modelsPath) {
+			return candidate
+		}
+	}
+
+	return classify.ModelNone
 }
 
 // applyLabelModel applies LABEL_MODEL to the local labels entry in vision.Config.
@@ -168,8 +208,16 @@ func (c *Config) applyLabelModel() {
 
 	current := configuredVisionModel(vision.Config, vision.ModelTypeLabels)
 	setting := c.LabelModelSetting()
+	if setting == classify.ModelAuto && current != nil && !current.Default {
+		return
+	}
 
-	if setting == classify.ModelNone {
+	selected := setting
+	if setting == classify.ModelAuto {
+		selected = c.installedLabelModel()
+	}
+
+	if selected == classify.ModelNone {
 		if current == nil {
 			current = vision.NewLabelModel(classify.DefaultModelName())
 		} else {
@@ -182,16 +230,10 @@ func (c *Config) applyLabelModel() {
 		return
 	}
 
-	if setting == classify.ModelAuto && current != nil && !current.Default {
-		return
-	}
-
-	selected := setting
-	if selected == classify.ModelAuto {
-		selected = classify.DefaultModelName()
-	}
-
 	if registered := vision.NewLabelModel(selected); registered != nil {
+		if description := classify.FindModel(selected); description != nil && !description.Installed(c.ModelsPath()) {
+			log.Warnf("config: label model %s is not installed; run scripts/dist/download-models.sh %s", clean.Log(string(selected)), clean.Log(string(selected)))
+		}
 		if current != nil {
 			registered.Run = current.Run
 			if setting == classify.ModelAuto {

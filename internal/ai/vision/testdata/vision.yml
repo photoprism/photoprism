@@ -1,13 +1,13 @@
 Models:
 - Type: labels
   Default: true
-  Name: efficientformerv2_s1
+  Name: efficientformerv2_s2
   Version: latest
   Resolution: 224
   ONNX:
-    File: efficientformerv2_s1.onnx
-    Source: https://huggingface.co/timm/efficientformerv2_s1.snap_dist_in1k/resolve/0c1fc60a0e89b6309d9de451cdacc11ac0a8b987/model.safetensors
-    SHA256: e289689ae6ae1e32f81f0346e7e59004d4d15b4c8df6899c008ade6f826892da
+    File: efficientformerv2_s2.onnx
+    Source: https://huggingface.co/timm/efficientformerv2_s2.snap_dist_in1k/resolve/1c56a76355000c79568559d34ba3fa24416b5107/model.safetensors
+    SHA256: 34b3ff40a9e637cab47bd05baf4f1f10b8544b6d1ea3a152413876fbac988a64
     License: Apache-2.0
     Quantization: fp32
     Input:
@@ -35,7 +35,6 @@ Models:
       Width: 1000
       Count: 1
       Logits: true
-  LabelFile: ../nasnet/labels.txt
   CanonicalOrder: true
 - Type: nsfw
   Default: true
@@ -108,3 +107,4 @@ Models:
     ResponseFormat: ollama
 Thresholds:
   Confidence: 10
+  NSFW: -1
