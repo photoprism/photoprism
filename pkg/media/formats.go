@@ -2,6 +2,7 @@ package media
 
 import (
 	"sort"
+	"sync"
 
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -71,6 +72,24 @@ var Formats = map[fs.Type]Type{
 	fs.VideoInsv:       Video,
 	fs.TypeUnknown:     Sidecar,
 }
+
+// ImageTypesExceptJpeg returns every image file format except JPEG as type strings, sorted by
+// name, for callers that treat JPEG as the format they deliver. Deriving the set here keeps it
+// from going stale when a format is added. Computed once and shared, so it must not be modified.
+var ImageTypesExceptJpeg = sync.OnceValue(func() []string {
+	fileTypes := FileTypes(Image)
+	result := make([]string, 0, len(fileTypes))
+
+	for _, fileType := range fileTypes {
+		if fileType != fs.ImageJpeg {
+			result = append(result, fileType.String())
+		}
+	}
+
+	// Cap the slice to its length so a caller that appends reallocates instead of
+	// writing into the shared array.
+	return result[:len(result):len(result)]
+})
 
 // FileTypes returns the file types that belong to the specified media type, sorted by name.
 // A media type groups several file types, so Raw covers both fs.ImageRaw and fs.ImageDng.

@@ -7,6 +7,8 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/media"
 )
 
 // aclSession builds an in-memory session for the named user fixture.
@@ -220,5 +222,29 @@ func TestFileSelection(t *testing.T) {
 			log.Debugf("ShareStates Result: %#v", results[0])
 			assert.Len(t, results, 5)
 		}
+	})
+}
+
+// TestShareSelection_OmitTypes verifies that sharing converted files omits every image format
+// except JPEG, so a newly supported type does not reach a share as its original by default.
+func TestShareSelection_OmitTypes(t *testing.T) {
+	t.Run("Converted", func(t *testing.T) {
+		omit := ShareSelection(false).OmitTypes
+
+		for _, fileType := range media.FileTypes(media.Image) {
+			if fileType == fs.ImageJpeg {
+				assert.NotContainsf(t, omit, fileType.String(), "%s is the shared format", fileType)
+				continue
+			}
+
+			assert.Containsf(t, omit, fileType.String(), "%s must not be shared as the original", fileType)
+		}
+
+		assert.Contains(t, omit, fs.ImagePsd.String())
+		assert.Contains(t, omit, fs.ImageJpegXL.String())
+		assert.Contains(t, omit, fs.ImageCineon.String())
+	})
+	t.Run("Originals", func(t *testing.T) {
+		assert.Empty(t, ShareSelection(true).OmitTypes)
 	})
 }

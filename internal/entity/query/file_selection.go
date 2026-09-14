@@ -6,7 +6,6 @@ import (
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
-	"github.com/photoprism/photoprism/pkg/fs"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/search"
@@ -77,15 +76,9 @@ func ShareSelection(originals bool) FileSelection {
 			media.Sidecar.String(),
 		}
 
-		omitTypes = []string{
-			fs.ImagePng.String(),
-			fs.ImageWebp.String(),
-			fs.ImageTiff.String(),
-			fs.ImageAvif.String(),
-			fs.ImageHeic.String(),
-			fs.ImageBmp.String(),
-			fs.ImageGif.String(),
-		}
+		// A share size is configured, and workers.Share resizes JPEG only, so any other image
+		// format would upload at its original size. Share the generated JPEG for those instead.
+		omitTypes = media.ImageTypesExceptJpeg()
 	}
 
 	return FileSelection{

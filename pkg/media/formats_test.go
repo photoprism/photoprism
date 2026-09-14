@@ -45,3 +45,34 @@ func TestFileTypeStrings(t *testing.T) {
 		assert.Empty(t, FileTypeStrings(Type("invalid")))
 	})
 }
+
+func TestImageTypesExceptJpeg(t *testing.T) {
+	t.Run("Contents", func(t *testing.T) {
+		result := ImageTypesExceptJpeg()
+
+		assert.NotEmpty(t, result)
+		assert.NotContains(t, result, fs.ImageJpeg.String())
+		assert.Contains(t, result, fs.ImagePng.String())
+		assert.Contains(t, result, fs.ImagePsd.String())
+		assert.Contains(t, result, fs.ImageCineon.String())
+		assert.NotContains(t, result, fs.VideoMp4.String())
+		assert.NotContains(t, result, fs.ImageRaw.String())
+	})
+	t.Run("CoversEveryImageType", func(t *testing.T) {
+		for _, fileType := range FileTypes(Image) {
+			if fileType == fs.ImageJpeg {
+				continue
+			}
+			assert.Containsf(t, ImageTypesExceptJpeg(), fileType.String(), "%s is missing", fileType)
+		}
+	})
+	t.Run("AppendReallocates", func(t *testing.T) {
+		// Every call hands out the same backing array, so spare capacity would let one
+		// caller's append overwrite another's entry. Full capacity forces a copy instead.
+		first := append(ImageTypesExceptJpeg(), "first")
+		second := append(ImageTypesExceptJpeg(), "second")
+
+		assert.Equal(t, "first", first[len(first)-1])
+		assert.Equal(t, "second", second[len(second)-1])
+	})
+}
