@@ -98,8 +98,7 @@ func Exists(fsPath string) bool {
 }
 
 // OpenNoFollow refuses an open whose final path element is a symbolic link,
-// so a call enforces that rule itself rather than relying only on a check
-// that precedes it.
+// so the call carries the rule rather than only the check before it.
 const OpenNoFollow = syscall.O_NOFOLLOW
 
 // IsSymlink returns true if a symbolic link exists under the specified name,

@@ -126,8 +126,8 @@ func ImportWorker(jobs <-chan ImportJob) {
 					}
 				}
 
-				// Remove duplicates to save storage. The source is removed only when the library
-				// demonstrably holds the same content, never merely because a name was refused.
+				// Remove duplicates to save storage, and only where the library demonstrably holds
+				// the same content.
 				if opt.RemoveExistingFiles && stored != nil {
 					if removeErr := f.Remove(); removeErr != nil {
 						log.Errorf("import: failed to delete %s (%s)", clean.Log(f.BaseName()), removeErr.Error())

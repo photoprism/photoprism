@@ -95,9 +95,8 @@ func TestUserPhotos_EffectiveRole(t *testing.T) {
 	})
 	t.Run("BroadClientNarrowUserExcludesPrivate", func(t *testing.T) {
 		// The mirror principal, and the shape a credential takes by default: a full-access client role
-		// owned by a narrow account. The account is what limits it, so a request for private pictures
-		// is answered as a public one. The guest fixture holds no share, so the listing is empty here
-		// and the predicate is what carries the case.
+		// owned by a narrow account, where the account is what limits it. The guest fixture holds no
+		// share, so the predicate carries this case rather than the listing.
 		sess := clientSessionFor(acl.RoleClient, "guest")
 		assert.True(t, acl.Rules.Allow(acl.ResourcePhotos, acl.RoleClient, acl.AccessPrivate))
 		assert.False(t, PhotoSessionSeesPrivate(sess))

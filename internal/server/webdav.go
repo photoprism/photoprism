@@ -143,8 +143,7 @@ func WebDAV(dir string, router *gin.RouterGroup, conf *config.Config) {
 		case header.MethodLock, header.MethodPropfind, header.MethodProppatch:
 			if c.Request.ContentLength > api.MaxWebDAVMetadataRequestBytes {
 				// Reported on the console-only system log, since the refusal returns before the
-				// handler's own logger runs. A write method is reported at the level that logger
-				// gives it, so the two agree on how loud a refused write is.
+				// handler's own logger runs, and at the level that logger gives the method.
 				level := logrus.DebugLevel
 
 				if WebDAVWriteMethod(c.Request.Method) {

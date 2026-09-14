@@ -77,10 +77,8 @@ func ErrorFull(err error) string {
 	return errorText(err.Error())
 }
 
-// errorText renders an error message for a reader: it removes the credential of any URL, bounds
-// the length, and maps the problematic characters, the field separator among them. That order
-// matters, since the character map would otherwise hide a percent-encoded credential from the scrub. A message is a sentence rather than a value, so it is folded into one
-// field instead of being quoted the way Log bounds the values it renders.
+// errorText renders an error message for a reader. The credential scrub runs before the character
+// map, which would otherwise hide a percent-encoded credential from it.
 func errorText(s string) string {
 	if s = strings.TrimSpace(s); s == "" {
 		return "unknown error"

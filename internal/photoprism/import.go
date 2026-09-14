@@ -345,7 +345,7 @@ func (imp *Import) Cancel() {
 
 // StoredCopyOf returns the indexed file that already holds the same content, if there is one. The
 // answer comes from the file rather than from the row, since a caller removes its source on the
-// strength of it and an index records what a file held when it was read.
+// strength of it.
 func StoredCopyOf(mediaFile *MediaFile) *entity.File {
 	if mediaFile == nil {
 		return nil
@@ -397,8 +397,7 @@ func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 	}
 
 	// Find and return the next available file name if the default name is already being used by another
-	// file. A symbolic link holds the name whether or not it resolves, so the search steps over one
-	// rather than picking a name the move would then refuse.
+	// file. A symbolic link holds the name whether or not it resolves, so the search steps over one.
 	i := 0
 	pathName := filepath.Join(imp.originalsPath(), folder, dateCreated.Format(pathPattern))
 	filePath := filepath.Join(pathName, fileName+fileExtension)

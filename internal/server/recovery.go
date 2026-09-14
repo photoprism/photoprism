@@ -57,9 +57,7 @@ func Recovery() gin.HandlerFunc {
 }
 
 // requestSummary renders the caller, the method, the route template and the allowlisted headers of
-// a request for a diagnostic log message. The template is the registered pattern rather than the
-// requested path, so a request reports the values named by the allowlist rather than the URI it
-// asked for.
+// a request. The template is the registered pattern rather than the requested path.
 func requestSummary(c *gin.Context) string {
 	if c == nil || c.Request == nil {
 		return unknownRoute

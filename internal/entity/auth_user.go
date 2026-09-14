@@ -1453,8 +1453,8 @@ func (m *User) RedeemToken(token string) (n int) {
 		n++
 	}
 
-	// Reload the shares, so the caller sees what this redemption added. A cached list that already
-	// holds something is not refreshed on read, so a share reinstated beside it would stay hidden.
+	// Reload the shares, so the caller sees what this redemption added. A cached list is re-derived
+	// on read only while it is empty.
 	if granted {
 		m.RefreshShares()
 	}
