@@ -30,6 +30,7 @@ type transportRequest struct {
 }
 
 // matches reports whether callers share both conversion settings and the observed source version.
+// Exclusion strings use Formats.String, whose sorted keys make equal sets compare identically.
 func (r transportRequest) matches(other transportRequest) bool {
 	if r.source != other.source || r.conf != other.conf || r.encoder != other.encoder || r.exclude != other.exclude || r.noMutex != other.noMutex || r.force != other.force {
 		return false

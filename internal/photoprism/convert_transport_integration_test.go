@@ -335,17 +335,24 @@ func TestConvert_CoordinatedTransportExcludes(t *testing.T) {
 	}
 	launch(first)
 	require.Eventually(t, func() bool { return transportStarts(logName, "r") == 1 }, 5*time.Second, 10*time.Millisecond)
+	var key string
+	var firstCall *transportCall
+	transportConversions.mutex.Lock()
+	for destination, call := range transportConversions.calls {
+		if call.request.source == source {
+			key, firstCall = destination, call
+			break
+		}
+	}
+	transportConversions.mutex.Unlock()
+	require.NotNil(t, firstCall)
 	launch(second)
 	require.Eventually(t, func() bool {
 		transportConversions.mutex.Lock()
 		defer transportConversions.mutex.Unlock()
-		for _, call := range transportConversions.calls {
-			if call.request.source == source && call.previous != nil {
-				return true
-			}
-		}
-		return false
-	}, 3*time.Second, 10*time.Millisecond)
+		call := transportConversions.calls[key]
+		return call != nil && call != firstCall
+	}, 3*time.Second, 10*time.Millisecond, "distinct exclusion snapshots must queue separate operations")
 	assert.Equal(t, 1, transportStarts(logName, "r"))
 	require.NoError(t, os.WriteFile(remuxRelease, nil, fs.ModeFile))
 	require.NoError(t, os.WriteFile(encodeRelease, nil, fs.ModeFile))

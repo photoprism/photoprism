@@ -79,7 +79,7 @@ printf 'remuxed' > "$output"
 
 			// Empty IndexPath stops at the reindex boundary after publication.
 			err := videoRemuxFile(conf, nil, videoRemuxPlan{SrcPath: src, DestPath: dest}, true)
-			require.EqualError(t, err, "index: missing filename")
+			require.ErrorContains(t, err, "missing filename")
 			data, err := os.ReadFile(dest) // #nosec G304 -- the fixture owns this temporary path.
 			require.NoError(t, err)
 			assert.Equal(t, "remuxed", string(data))

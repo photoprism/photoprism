@@ -25,9 +25,10 @@ The `commands` package hosts the CLI implementation for the PhotoPrism binary. C
 `photoprism video remux` validates its entire selection before conversion, including in dry-run mode.
 Each output must be unique and may not name another selected input, including inputs skipped by a
 format rule. A conflict stops the batch and names the participating inputs and output.
-Intentional same-file remuxing is supported; publication writes the planned output without a backup destination. `--force` controls ordinary replacement,
-not conflicts within the selection. Directory aliases are resolved during planning; other processes
-changing paths after preflight remain outside that check.
+Intentional same-file remuxing is supported; publication writes the planned output without a backup
+destination. `--force` controls ordinary replacement, not conflicts within the selection. Directory
+aliases are resolved during planning; other processes changing paths after preflight remain outside
+that check.
 
 ### Positional Arguments & Flag Order
 
