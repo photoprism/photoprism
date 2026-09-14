@@ -68,7 +68,7 @@ func TestMediaFile_AnnexDestinations(t *testing.T) {
 
 	t.Run("CopyRefusesALinkWithNoTarget", func(t *testing.T) {
 		// A link whose target does not resolve is what an unmounted drive or a removed object leaves
-		// behind, and it is the case an existence check that resolves the name reads as free.
+		// behind, and it is the case fs.Exists answers about the target rather than about the name.
 		for _, force := range []bool{false, true} {
 			root, objects := annexLibrary(t)
 			link := annexFile(t, root, objects, "2030/05/photo.jpg", "SHA256E-dropped", false)
@@ -85,9 +85,8 @@ func TestMediaFile_AnnexDestinations(t *testing.T) {
 		}
 	})
 	t.Run("CopyRefusesAPresentAnnexFile", func(t *testing.T) {
-		// The corruptible case: the object is there, so a write through the link would reach it. The
-		// real store keeps objects read-only, which stops that for an unprivileged process but not
-		// for one running as root, as the container does by default.
+		// The object is present, so this is the case where the destination name and a stored object
+		// are the same file. The rule is the same either way: the link is left alone.
 		for _, force := range []bool{false, true} {
 			root, objects := annexLibrary(t)
 			link := annexFile(t, root, objects, "2030/05/photo.jpg", "SHA256E-present", true)
@@ -120,8 +119,8 @@ func TestMediaFile_AnnexDestinations(t *testing.T) {
 		}
 	})
 	t.Run("MoveRefusesAPresentAnnexFile", func(t *testing.T) {
-		// A move onto a live link would replace it, detaching the object from the store, so this is
-		// the half a dangling-only guard would let through.
+		// A move replaces the name it is given, so a link whose object is present is covered by the
+		// same rule as one whose object is not.
 		for _, force := range []bool{false, true} {
 			root, objects := annexLibrary(t)
 			link := annexFile(t, root, objects, "2030/05/photo.jpg", "SHA256E-present", true)
@@ -141,6 +140,40 @@ func TestMediaFile_AnnexDestinations(t *testing.T) {
 			require.NoError(t, readErr)
 			assert.Equal(t, "annexed SHA256E-present", string(b), "the object must be left as it was")
 		}
+	})
+	t.Run("ALinkPlantedDuringTheWriteIsStillNotFollowed", func(t *testing.T) {
+		// The check reads the name before the open, so the call also carries the rule: the target of
+		// a link appearing between the two is never written.
+		dir := t.TempDir()
+
+		target := filepath.Join(dir, "target.bin")
+		require.NoError(t, os.WriteFile(target, []byte("target"), fs.ModeFile))
+
+		dest := filepath.Join(dir, "photo.jpg")
+		f := source(t, t.TempDir())
+
+		done := make(chan struct{})
+
+		go func() {
+			defer close(done)
+
+			for range 2000 {
+				_ = os.Symlink(target, dest)
+				_ = os.Remove(dest)
+			}
+		}()
+
+		for range 2000 {
+			_ = f.Copy(dest, true)
+		}
+
+		<-done
+
+		_ = os.Remove(dest)
+
+		b, err := os.ReadFile(target) //nolint:gosec // test reads a temp file
+		require.NoError(t, err)
+		assert.Equal(t, "target", string(b), "the link target must never be written")
 	})
 	t.Run("AnnexDirectoryStillReceivesTheFile", func(t *testing.T) {
 		// Only the destination name is refused. A library whose folders are links, which is the other

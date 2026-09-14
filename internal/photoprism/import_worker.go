@@ -93,17 +93,17 @@ func ImportWorker(jobs <-chan ImportJob) {
 					log.Infof("import: moving related %s file %s to %s", f.FileType(), clean.Log(relFileName), clean.Log(fs.RelName(destFileName, imp.originalsPath())))
 				}
 
+				logRelName := clean.Log(fs.RelName(destFileName, imp.originalsPath()))
+
 				if opt.Move {
 					if moveErr := f.Move(destFileName, false); moveErr != nil {
-						logRelName := clean.Log(fs.RelName(destMainFileName, imp.originalsPath()))
 						log.Errorf("import: %s (move file)", clean.Error(moveErr))
-						log.Warnf("import: could not move file to %s, is another import running?", logRelName)
+						log.Warnf("import: could not move file to %s", logRelName)
 					}
 				} else {
 					if copyErr := f.Copy(destFileName, false); copyErr != nil {
-						logRelName := clean.Log(fs.RelName(destMainFileName, imp.originalsPath()))
 						log.Errorf("import: %s (copy file)", clean.Error(copyErr))
-						log.Warnf("import: could not copy file to %s, is another import running?", logRelName)
+						log.Warnf("import: could not copy file to %s", logRelName)
 					}
 				}
 			} else {

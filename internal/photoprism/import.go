@@ -356,9 +356,13 @@ func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 	if !mediaFile.IsSidecar() {
 		if f, err := entity.FirstFileByHash(mediaFile.Hash()); err == nil {
 			existingFilename := FileName(f.FileRoot, f.FileName)
-			if fs.FileExists(existingFilename) || fs.IsSymlink(existingFilename) {
+
+			// The recorded name has three states, not two: the file is there and this is a duplicate,
+			// the name is free and the file can be restored to it, or an entry holds the name without
+			// the file being there, which is neither and takes the search below.
+			if fs.FileExists(existingFilename) {
 				return existingFilename, fmt.Errorf("%s is identical to %s (sha1 %s)", clean.Log(filepath.Base(mediaFile.FileName())), clean.Log(f.FileName), mediaFile.Hash())
-			} else {
+			} else if !fs.IsSymlink(existingFilename) {
 				return existingFilename, nil
 			}
 		}
@@ -372,7 +376,9 @@ func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 	filePath := filepath.Join(pathName, fileName+fileExtension)
 
 	for fs.FileExists(filePath) || fs.IsSymlink(filePath) {
-		if mediaFile.Hash() == fs.Hash(filePath) {
+		// Both sides hash to the empty string when they cannot be read, so a hash is compared only
+		// once there is one.
+		if h := mediaFile.Hash(); h != "" && h == fs.Hash(filePath) {
 			return filePath, fmt.Errorf("%s already exists", clean.Log(fs.RelName(filePath, imp.originalsPath())))
 		}
 
