@@ -25,6 +25,11 @@ import (
 
 // ToAvc converts a single video file to MPEG-4 AVC.
 func (w *Convert) ToAvc(f *MediaFile, encoder encode.Encoder, noMutex, force bool) (file *MediaFile, err error) {
+	return w.toAvc(f, encoder, noMutex, force, true)
+}
+
+// toAvc validates and converts media, optionally coordinating transport-stream requests.
+func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, coordinate bool) (file *MediaFile, err error) {
 	// Abort if the source media file is nil.
 	if f == nil {
 		return nil, fmt.Errorf("convert: no media file provided for processing - you may have found a bug")
@@ -51,6 +56,10 @@ func (w *Convert) ToAvc(f *MediaFile, encoder encode.Encoder, noMutex, force boo
 		format := clean.Log(w.ffmpegExclude.Match(f.MetaData().Codec, f.VideoInfo().VideoCodec, f.FileType().String()))
 		log.Warnf("convert: skipping %s because format %s is on the FFmpeg exclude list", logFileName, format)
 		return nil, fmt.Errorf("convert: format %s is excluded from FFmpeg processing", format)
+	}
+
+	if coordinate && f.IsM2TS() && w.conf.SidecarWritable() && !w.conf.InsufficientStorage() {
+		return w.coordinatedTransport(f, encoder, noMutex, force)
 	}
 
 	// Convert MPEG-2 Transport Stream (M2TS) files to MPEG4 containers. Neither ExifTool nor the
@@ -183,8 +192,8 @@ func (w *Convert) ToAvc(f *MediaFile, encoder encode.Encoder, noMutex, force boo
 			// Do not retry on a full disk; surface the cause so the worker can abort the run.
 			return nil, disk.AsInsufficientStorage(err)
 		case encoder != encode.SoftwareAvc:
-			// Try again using software encoder.
-			return w.ToAvc(f, encode.SoftwareAvc, true, false)
+			// Retry in software within the current destination operation.
+			return w.toAvc(f, encode.SoftwareAvc, true, false, false)
 		default:
 			return nil, err
 		}

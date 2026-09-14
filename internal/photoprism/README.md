@@ -52,6 +52,15 @@
 - `internal/photoprism` tests isolate package-level storage and SQLite DSN in `TestMain` using temporary per-process paths (`PHOTOPRISM_STORAGE_PATH`, `PHOTOPRISM_TEST_DSN`) to avoid flaky cross-process collisions on macOS/Linux when multiple `go test` processes run in parallel.
 - Stateful tests that import/index media files should prefer isolated helpers like `config.NewMinimalTestConfigWithDb("<name>", filepath.Join(t.TempDir(), "storage"))` instead of shared `config.TestConfig()`.
 
+### Transport-Stream Coordination
+
+Transport-stream conversions share compatible in-flight work by output destination across `Convert`
+instances in the same process. Coordination includes remuxing and any fallback transcode. Requests
+with different source versions/configuration/encoder/force settings queue for that destination and recheck the
+output; unrelated destinations retain their existing scheduling. Each caller receives its own media
+object. Completed operations are released, so errors can be retried. Unique staging is unchanged.
+This is not a cross-process lock and does not alter animated-WebP or encoder mutex behavior.
+
 ### Operational Notes
 
 - Sub-second EXIF timestamps are preserved through metadata parsing and visible in `MediaFile.MetaData()`; database columns remain second-precision.
