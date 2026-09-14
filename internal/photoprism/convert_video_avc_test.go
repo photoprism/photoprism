@@ -457,6 +457,7 @@ func TestConvert_ToAvc_TransportStreamKeepsForeignMp4(t *testing.T) {
 
 	assert.FileExistsf(t, mp4Name, "a file the call did not create must not be removed")
 
+	// #nosec G304 -- the path is built by the test from its own temp directory.
 	kept, err := os.ReadFile(mp4Name)
 	require.NoError(t, err)
 	assert.Equal(t, "not this call's file", string(kept))

@@ -59,7 +59,9 @@ func (w *Convert) ToAvc(f *MediaFile, encoder encode.Encoder, noMutex, force boo
 	if f.IsAnimatedImage() {
 		avcName = fs.VideoMp4.FindFirst(f.FileName(), []string{w.conf.SidecarPath(), fs.PPHiddenPathname}, w.conf.OriginalsPath(), false)
 	} else {
-		// Convert MPEG-2 Transport Stream (M2TS) files to MPEG4 containers.
+		// Convert MPEG-2 Transport Stream (M2TS) files to MPEG4 containers. Neither ExifTool nor
+		// the video probe reports a codec for a transport stream, so whether one carries AVC is
+		// only known after the remux and cannot be decided from the source up front.
 		if f.IsM2TS() && w.conf.SidecarWritable() && !w.conf.InsufficientStorage() {
 			mp4Name, mp4Err := fs.FileName(f.FileName(), w.conf.SidecarPath(), w.conf.OriginalsPath(), fs.ExtMp4)
 
