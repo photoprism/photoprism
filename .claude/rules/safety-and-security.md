@@ -5,7 +5,7 @@
 - Do not run destructive commands against production data. Prefer ephemeral volumes and test fixtures for acceptance tests. The destructive CLI commands `photoprism reset`, `users reset`, `auth reset`, and `audit reset` require explicit `--yes`; never invoke them in examples or scripts without a backup warning.
 - Never commit secrets, local configurations, or cache files. Use environment variables or a local `.env`. Ensure `.env`, `.config`, `.local`, `.codex`, and `.gocache` are in `.gitignore` and `.dockerignore`.
 - Prefer existing caches, workers, and batching strategies in code and `Makefile`. Consider memory/CPU impact of changes; only suggest benchmarks or profiling when justified.
-- Regenerate `NOTICE` files with `make notice` when dependencies change (e.g. `go.mod`, `go.sum`, `package-lock.json`). Do not edit `NOTICE` or `frontend/NOTICE` manually.
+- Regenerate `NOTICE` files with `make notice` when dependencies change (e.g. `go.mod`, `go.sum`, `package-lock.json`). Do not edit `NOTICE` or `frontend/NOTICE` manually. Only the Go section lists versions, so a frontend version bump that neither adds nor removes a package leaves the report unchanged apart from its generated date.
 
 > If anything in this file conflicts with the `Makefile` or Sources of Truth, **ask** for clarification before proceeding.
 
