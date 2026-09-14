@@ -25,17 +25,48 @@ func TestClusterSizeCond(t *testing.T) {
 		assert.Contains(t, cond, "m2.thumb_size")
 		assert.Contains(t, cond, "m2.size")
 	})
-	t.Run("NoFloorSelectsEverything", func(t *testing.T) {
-		// Zero asks for no size filter at all, which is what a caller counting every marker wants.
+	t.Run("NoFloorKeepsTheDetailCondition", func(t *testing.T) {
+		// Zero asks for no size *bar*, which is what a caller counting every marker wants. The
+		// detail condition is not a bar an operator sets, so turning the bar off must not turn it
+		// off as well - that is the case it exists for.
 		cond, args := ClusterSizeCond("", 0)
 
-		assert.Equal(t, "1 = 1", cond)
+		assert.Equal(t, EmbedDetailCond(""), cond)
+		assert.NotContains(t, cond, "thumb_size")
 		assert.Nil(t, args)
+	})
+	t.Run("CarriesTheDetailCondition", func(t *testing.T) {
+		cond, _ := ClusterSizeCond("", 112)
+
+		assert.Contains(t, cond, EmbedDetailCond(""))
+		assert.Contains(t, cond, ") AND (", "both terms have to be parenthesized to combine")
 	})
 	t.Run("RejectsAnInjectedAlias", func(t *testing.T) {
 		cond, _ := ClusterSizeCond("m2; DROP TABLE markers", 112)
 
 		assert.NotContains(t, cond, "DROP")
+	})
+}
+
+// TestEmbedDetailCond covers the condition that keeps embeddings drawn from upscaled crops out of
+// clustering whatever the size bar is set to.
+func TestEmbedDetailCond(t *testing.T) {
+	t.Run("NamesNullExplicitly", func(t *testing.T) {
+		// NULL < 1 evaluates to NULL rather than true, so without this branch the condition would
+		// exclude every marker written before the column existed - which today is all of them.
+		assert.Contains(t, EmbedDetailCond(""), "embed_detail IS NULL")
+	})
+	t.Run("AdmitsFullDetailAndTheSentinels", func(t *testing.T) {
+		cond := EmbedDetailCond("")
+
+		assert.Contains(t, cond, "embed_detail < 1")
+		assert.Contains(t, cond, "embed_detail >= 100")
+	})
+	t.Run("Aliased", func(t *testing.T) {
+		assert.Contains(t, EmbedDetailCond("m2"), "m2.embed_detail IS NULL")
+	})
+	t.Run("RejectsAnInjectedAlias", func(t *testing.T) {
+		assert.NotContains(t, EmbedDetailCond("m2; DROP TABLE markers"), "DROP")
 	})
 }
 

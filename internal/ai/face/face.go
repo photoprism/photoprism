@@ -66,17 +66,22 @@ func (f *Face) SetThumbSize(srcWidth int) {
 	f.ThumbSize = max(1, int(math.Round(float64(f.Size())*f.ImageScale(srcWidth))))
 }
 
+// EmbedDetailFull is what EmbedDetail reports where the source supplied the whole crop, and the
+// value it clamps at. Clustering compares against it, so the clamp and the bar are one number.
+const EmbedDetailFull = 100
+
 // EmbedDetail returns how much of a crop of cropWidth pixels a source holding the face at extent
-// px could supply, as a percentage clamped at 100, and zero where that cannot be measured.
+// px could supply, as a percentage clamped at EmbedDetailFull, and zero where that cannot be
+// measured.
 //
 // Clamped, because headroom above the crop is spent on the resample and is not detail the model
-// sees, which keeps 100 a clean predicate for "not upscaled".
+// sees, which keeps full detail a clean predicate for "not upscaled".
 func EmbedDetail(extent, cropWidth int) int {
 	if extent < 1 || cropWidth < 1 {
 		return 0
 	}
 
-	return min(100, max(1, int(math.Round(float64(extent)*100/float64(cropWidth)))))
+	return min(EmbedDetailFull, max(1, int(math.Round(float64(extent)*100/float64(cropWidth)))))
 }
 
 // SetEmbedDetail records how much of the crop the embedder asked for the source could supply.

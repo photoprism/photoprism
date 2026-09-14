@@ -3,6 +3,7 @@ import "../fixtures";
 import Config from "common/config";
 import StorageShim from "node-storage-shim";
 import * as themes from "options/themes";
+import * as options from "options/options";
 
 const defaultConfig = new Config(new StorageShim(), window.__CONFIG__);
 
@@ -75,6 +76,19 @@ describe("common/config", () => {
     expect(result.country).toBe("Germany");
     expect(cfg.values.settings.ui.theme).toBe("lavender");
     expect(cfg.values.settings.ui.language).toBe("en");
+  });
+
+  it("should apply the server-configured default locale", () => {
+    const original = options.DefaultLocale;
+
+    try {
+      const cfg = new Config(new StorageShim(), { siteTitle: "Test" });
+      expect(options.DefaultLocale).toBe(original);
+      cfg.setValues({ defaultLocale: "de" });
+      expect(options.DefaultLocale).toBe("de");
+    } finally {
+      options.SetDefaultLocale(original);
+    }
   });
 
   it("should test constructor with empty values", () => {

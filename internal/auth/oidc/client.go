@@ -98,7 +98,7 @@ func NewClient(issuerUri *url.URL, oidcClient, oidcSecret, oidcScopes, oidcPromp
 			rp.WithNonce(nil),
 		),
 		rp.WithErrorHandler(func(w http.ResponseWriter, r *http.Request, errorType string, errorDesc string, state string) {
-			event.AuditErr([]string{"oidc", "%s", "%s (state %s)"}, errorType, errorDesc, state)
+			event.AuditErr([]string{"oidc", "%s", "%s (state %s)"}, clean.LogQuote(errorType), clean.LogQuote(errorDesc), clean.LogQuote(state))
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Header().Add("oidc_error", fmt.Sprintf("oidc: %s", errorDesc))
 		}),
@@ -124,7 +124,7 @@ func NewClient(issuerUri *url.URL, oidcClient, oidcSecret, oidcScopes, oidcPromp
 		oidcScopes = authn.OidcRequiredScopes
 	}
 
-	event.AuditDebug([]string{"oidc", "provider", "scopes", oidcScopes})
+	event.AuditDebug([]string{"oidc", "provider", "scopes", clean.LogQuote(oidcScopes)})
 
 	// Parse scopes into string slice.
 	scopes := clean.Scopes(oidcScopes)
@@ -231,7 +231,7 @@ func (c *Client) CodeExchangeUserInfo(ctx *gin.Context) (userInfo *oidc.UserInfo
 			err = errors.New(oidcErr)
 		}
 
-		event.SystemError([]string{"oidc", "code exchange", "status %d", "%s"}, sc, err.Error())
+		event.SystemError([]string{"oidc", "code exchange", "status %d", "%s"}, sc, clean.ErrorFull(err))
 
 		return userInfo, tokens, err
 	}
@@ -239,7 +239,7 @@ func (c *Client) CodeExchangeUserInfo(ctx *gin.Context) (userInfo *oidc.UserInfo
 	// Validate the ID token's nonce against the value sent for this request,
 	// tolerating a provider that omits the nonce on a session-resumed token.
 	if err = CheckNonce(expectedNonce, tokens); err != nil {
-		event.SystemError([]string{"oidc", "code exchange", "%s"}, err.Error())
+		event.SystemError([]string{"oidc", "code exchange", "%s"}, clean.ErrorFull(err))
 
 		return nil, nil, err
 	}

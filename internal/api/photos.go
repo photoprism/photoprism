@@ -181,7 +181,7 @@ func UpdatePhoto(router *gin.RouterGroup) {
 //	@Router		/api/v1/photos/{uid}/dl [get]
 func GetPhotoDownload(router *gin.RouterGroup) {
 	router.GET("/photos/:uid/dl", func(c *gin.Context) {
-		sess, valid := AuthDownload(c)
+		sess, valid := AuthDownload(c, acl.Resources{acl.ResourcePhotos})
 		if !valid {
 			c.Data(http.StatusForbidden, "image/svg+xml", brokenIconSvg)
 			return

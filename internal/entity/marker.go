@@ -510,6 +510,10 @@ func (m *Marker) Embeddings() face.Embeddings {
 		return m.embeddings
 	} else if err := json.Unmarshal(m.EmbeddingsJSON, &m.embeddings); err != nil {
 		log.Errorf("markers: %s while parsing embeddings json", err)
+	} else {
+		// Scaled to unit length on read, like the query path does, since every distance these
+		// are compared with is stated for unit vectors and a stored one need not have that shape.
+		m.embeddings.Normalize()
 	}
 
 	return m.embeddings

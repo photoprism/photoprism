@@ -104,7 +104,7 @@ func UpdateUser(router *gin.RouterGroup) {
 
 		// Check if the user account quota has been exceeded.
 		if f.UserRole != "" && m.UserRole != f.UserRole && !conf.UsersQuotaReached(acl.ParseRole(m.UserRole)) && conf.UsersQuotaReached(acl.ParseRole(f.UserRole)) {
-			event.AuditErr([]string{ClientIP(c), "session %s", "users", m.UserName, "update", authn.ErrUsersQuotaExceeded.Error()}, s.RefID)
+			event.AuditErr([]string{ClientIP(c), "session %s", "users", "%s", "update", authn.ErrUsersQuotaExceeded.Error()}, s.RefID, clean.LogQuote(m.UserName))
 			AbortQuotaExceeded(c)
 			return
 		}
@@ -119,15 +119,15 @@ func UpdateUser(router *gin.RouterGroup) {
 		if u != nil && u.UserUID == m.UserUID {
 			switch {
 			case f.UserRole != "" && clean.Role(f.UserRole) != clean.Role(m.UserRole):
-				event.AuditErr([]string{ClientIP(c), "session %s", "users", m.UserName, "update own role", status.Denied}, s.RefID)
+				event.AuditErr([]string{ClientIP(c), "session %s", "users", "%s", "update own role", status.Denied}, s.RefID, clean.LogQuote(m.UserName))
 				AbortForbidden(c)
 				return
 			case m.SuperAdmin && !f.SuperAdmin:
-				event.AuditErr([]string{ClientIP(c), "session %s", "users", m.UserName, "disable own super admin status", status.Denied}, s.RefID)
+				event.AuditErr([]string{ClientIP(c), "session %s", "users", "%s", "disable own super admin status", status.Denied}, s.RefID, clean.LogQuote(m.UserName))
 				AbortForbidden(c)
 				return
 			case m.CanLogin && !f.CanLogin:
-				event.AuditErr([]string{ClientIP(c), "session %s", "users", m.UserName, "disable own web login", status.Denied}, s.RefID)
+				event.AuditErr([]string{ClientIP(c), "session %s", "users", "%s", "disable own web login", status.Denied}, s.RefID, clean.LogQuote(m.UserName))
 				AbortForbidden(c)
 				return
 			}
@@ -139,15 +139,15 @@ func UpdateUser(router *gin.RouterGroup) {
 		if m.SuperAdmin && !isClusterJWT && !u.IsSuperAdmin() {
 			switch {
 			case f.UserRole != "" && clean.Role(f.UserRole) != clean.Role(m.UserRole):
-				event.AuditErr([]string{ClientIP(c), "session %s", "users", m.UserName, "demote super admin role", status.Denied}, s.RefID)
+				event.AuditErr([]string{ClientIP(c), "session %s", "users", "%s", "demote super admin role", status.Denied}, s.RefID, clean.LogQuote(m.UserName))
 				AbortForbidden(c)
 				return
 			case !f.SuperAdmin:
-				event.AuditErr([]string{ClientIP(c), "session %s", "users", m.UserName, "disable super admin status", status.Denied}, s.RefID)
+				event.AuditErr([]string{ClientIP(c), "session %s", "users", "%s", "disable super admin status", status.Denied}, s.RefID, clean.LogQuote(m.UserName))
 				AbortForbidden(c)
 				return
 			case m.CanLogin && !f.CanLogin:
-				event.AuditErr([]string{ClientIP(c), "session %s", "users", m.UserName, "disable super admin web login", status.Denied}, s.RefID)
+				event.AuditErr([]string{ClientIP(c), "session %s", "users", "%s", "disable super admin web login", status.Denied}, s.RefID, clean.LogQuote(m.UserName))
 				AbortForbidden(c)
 				return
 			}
@@ -157,19 +157,19 @@ func UpdateUser(router *gin.RouterGroup) {
 		// u.IsAdmin()/u.IsSuperAdmin() reject, so authorize it explicitly for both admin and
 		// super-admin-level changes (else its role, login, and 2FA edits are silently dropped).
 		if err = m.SaveForm(f, u, u.IsAdmin() || isClusterJWT, isClusterJWT); err != nil {
-			event.AuditErr([]string{ClientIP(c), "session %s", "users", m.UserName, "update", err.Error()}, s.RefID)
+			event.AuditErr([]string{ClientIP(c), "session %s", "users", "%s", "update", status.Error(err)}, s.RefID, clean.LogQuote(m.UserName))
 			AbortSaveFailed(c)
 			return
 		}
 
 		// Log event.
-		event.AuditInfo([]string{ClientIP(c), "session %s", "users", m.UserName, "updated"}, s.RefID)
+		event.AuditInfo([]string{ClientIP(c), "session %s", "users", "%s", "updated"}, s.RefID, clean.LogQuote(m.UserName))
 
 		// Revoke other user sessions after a privilege level change,
 		// except for app passwords and client access tokens.
 		if privilegeLevelChange {
 			revoked := m.RevokeDerivedSessions([]string{s.ID})
-			event.AuditInfo([]string{ClientIP(c), "session %s", "users", m.UserName, "revoked %s"}, s.RefID,
+			event.AuditInfo([]string{ClientIP(c), "session %s", "users", "%s", "revoked %s"}, s.RefID, clean.LogQuote(m.UserName),
 				english.Plural(revoked, "session", "sessions"))
 		}
 

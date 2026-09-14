@@ -36,10 +36,15 @@ func wsReader(ws *websocket.Conn, writeMutex *sync.Mutex, connId string, conf *c
 			// Do nothing.
 		} else {
 			if s := Session(ws.RemoteAddr().String(), info.AuthToken); s != nil {
+				// Resolve both principals before taking the lock, since either may query the database.
+				user := *s.GetUser()
+				client := wsSessionClient(s)
+
 				wsAuth.mutex.Lock()
 				wsAuth.sid[connId] = s.ID
 				wsAuth.rid[connId] = s.RefID
-				wsAuth.user[connId] = *s.GetUser()
+				wsAuth.user[connId] = user
+				wsAuth.client[connId] = client
 				wsAuth.mutex.Unlock()
 
 				wsSendMessage("config.updated", event.Data{"config": conf.ClientSession(s)}, ws, writeMutex)

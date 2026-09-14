@@ -35,8 +35,8 @@ ENV DO_NOT_TRACK=true \
     NPM_CONFIG_FUND=false \
     NPM_CONFIG_UPDATE_NOTIFIER=false \
     PHOTOPRISM_ARCH=$TARGETARCH \
+    PHOTOPRISM_CONTAINER="true" \
     DOCKER_TAG=$BUILD_TAG \
-    DOCKER_ENV="develop" \
     PS1="\u@$BUILD_TAG:\w\$ " \
     PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:/usr/local/go/bin:/go/bin:/opt/photoprism/bin" \
     LD_LIBRARY_PATH="/usr/local/lib:/usr/lib" \
@@ -124,7 +124,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     /scripts/install-chrome.sh && \
     /scripts/install-go.sh && \
     /scripts/install-go-tools.sh && \
-    echo "ALL ALL=(ALL) NOPASSWD:SETENV: ALL" >> /etc/sudoers.d/all && \
+    /scripts/install-sudoers.sh --develop && \
     /scripts/install-bashrc.sh && \
     /scripts/install-dircolors.sh && \
     /scripts/create-users.sh && \

@@ -4,6 +4,8 @@
 - **Packages:** Every Go package must contain a `<package>.go` file in its root (e.g. `internal/auth/jwt/jwt.go`) with the standard license header and a short package description comment.
 - **Format:** Go is formatted by `gofmt` with tabs. Do not hand-format indentation. After edits run `make fmt-go` (gofmt + goimports).
 - **Linting:** Run `make lint-go` (`golangci-lint`) after Go changes; prefer `golangci-lint run ./internal/<pkg>/...` for focused edits.
+  - **`lint-go` passes `--issues-exit-code 0` on purpose, and that is not a temporary state.** The existing findings are not all fixed, and a new golangci-lint release reports more of them without a line of our code changing - so the count grows on its own and a non-zero exit would fail the build on somebody else's schedule. Do not make it blocking, and do not read a larger number than last week as a regression. Compare findings for the files you touched.
+  - A check whose rule set we own is different: its count moves only when our code does, so it can hold a committed baseline and fail on an increase. `make check-audit-events` works that way - it records each known call in `scripts/tools/check-audit-events/baseline.txt` and fails on one that is not there, so fixing a site and adding another does not net out. Fix the sites and run `go run ./scripts/tools/check-audit-events -update` to record the lower numbers; `-list` prints every finding.
 
 ## Package Boundaries
 

@@ -6,11 +6,23 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/http/header"
 )
+
+// stripBroadcastTokens clears the session tokens from a client config before it is broadcast.
+// The config.updated event reaches every connected client, so a value carried on it would overwrite
+// individual session tokens; clients refresh theirs from the X-Preview-Token and X-Download-Token
+// response headers instead.
+func stripBroadcastTokens(cfg *config.ClientConfig) *config.ClientConfig {
+	cfg.PreviewToken = ""
+	cfg.DownloadToken = ""
+
+	return cfg
+}
 
 // UpdateClientConfig publishes updated client configuration values over the websocket connections.
 func UpdateClientConfig() {
@@ -23,14 +35,7 @@ func UpdateClientConfig() {
 		return
 	}
 
-	clientConfig := conf.ClientUser(false)
-
-	// Do not broadcast session-specific tokens via the config.updated event,
-	// as this is a global broadcast to all connected clients and may overwrite
-	// individual session tokens with the wrong values. Session tokens are
-	// updated via the X-Preview-Token and X-Download-Token response headers.
-	clientConfig.PreviewToken = ""
-	clientConfig.DownloadToken = ""
+	clientConfig := stripBroadcastTokens(conf.ClientUser(false))
 
 	go func() {
 		defer func() {

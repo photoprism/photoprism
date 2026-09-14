@@ -784,10 +784,10 @@ func TestMarkerCropArea(t *testing.T) {
 }
 
 func TestValidMigrationEmbeddingsUsage(t *testing.T) {
-	assert.True(t, face.ValidEmbeddings(face.Embeddings{{0.1, 0.2}}, 2))
+	assert.True(t, face.ValidEmbeddings(face.Embeddings{{0.6, 0.8}}, 2))
 	assert.False(t, face.ValidEmbeddings(nil, 2))
-	assert.False(t, face.ValidEmbeddings(face.Embeddings{{0.1}}, 2))
-	assert.False(t, face.ValidEmbeddings(face.Embeddings{{0.1, math.NaN()}}, 2))
+	assert.False(t, face.ValidEmbeddings(face.Embeddings{{1}}, 2))
+	assert.False(t, face.ValidEmbeddings(face.Embeddings{{0.6, math.NaN()}}, 2))
 }
 
 // TestBuildFaceMigrationClustersOneMarker pins that the migration does not mint a cluster a matching

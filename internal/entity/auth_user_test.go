@@ -2495,7 +2495,7 @@ func newRevokeTestUser(t *testing.T) *User {
 
 func TestUser_RevokeSessions(t *testing.T) {
 	t.Run("EmptyUid", func(t *testing.T) {
-		u := &User{ID: 1234567, UserUID: "", UserName: "test", UserRole: "user"}
+		u := &User{ID: 1234567, UserUID: "", UserName: "test", UserRole: "admin"}
 		assert.Equal(t, 0, u.RevokeSessions(nil, authn.RevokeAllSessions))
 	})
 	t.Run("LoginSessions", func(t *testing.T) {
@@ -2885,4 +2885,36 @@ func TestUser_AuthIDSQLite(t *testing.T) {
 	require.NotNil(t, user2)
 
 	assert.Equal(t, expected, user2.AuthID)
+}
+
+func TestUser_LegacyUsername(t *testing.T) {
+	// A name stored before the sanitizer was widened is no longer its own sanitized form, and
+	// the account is unreachable by name, so renaming it is the only repair available.
+	legacy := "le" + string(rune(0x00AD)) + "gacy"
+
+	t.Run("ValidateNormalizes", func(t *testing.T) {
+		m := &User{ID: 12345, UserUID: "us1e3g6gxbeu9ptk", UserName: legacy, DisplayName: "Legacy", UserRole: "admin"}
+
+		require.NoError(t, m.Validate())
+		assert.Equal(t, "legacy", m.UserName)
+	})
+	t.Run("ValidateRefusesANewRecord", func(t *testing.T) {
+		// A record that was never saved is refused, so the caller sees what was rejected.
+		m := &User{UserName: legacy, DisplayName: "Legacy", UserRole: "admin"}
+
+		// Asserted on the message, so a failure on an unrelated field cannot satisfy the case.
+		require.ErrorContains(t, m.Validate(), "username")
+	})
+	t.Run("SetUsernameRenames", func(t *testing.T) {
+		m := &User{ID: 12345, UserUID: "us1e3g6gxbeu9ptk", UserName: legacy, DisplayName: "Legacy", UserRole: "admin"}
+
+		require.NoError(t, m.SetUsername("repaired"))
+		assert.Equal(t, "repaired", m.UserName)
+	})
+	t.Run("SetUsernameStillRefusesAValidName", func(t *testing.T) {
+		m := &User{ID: 12345, UserUID: "us1e3g6gxbeu9ptk", UserName: "settled", DisplayName: "Settled", UserRole: "admin"}
+
+		require.Error(t, m.SetUsername("renamed"))
+		assert.Equal(t, "settled", m.UserName)
+	})
 }

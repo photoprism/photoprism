@@ -96,7 +96,7 @@ func videoTrimAction(ctx *cli.Context) error {
 			}
 
 			if err = videoTrimFile(conf, convert, plan, trimDuration, true); err != nil {
-				log.Errorf("trim: %s", clean.Error(err))
+				log.Errorf("trim: %s", clean.ErrorFull(err))
 				failed++
 				continue
 			}
@@ -298,10 +298,10 @@ func videoTrimFile(conf *config.Config, convert *photoprism.Convert, plan videoT
 
 	if convert != nil {
 		if img, imgErr := convert.ToImage(mediaFile, true); imgErr != nil {
-			log.Warnf("trim: %s", clean.Error(imgErr))
+			log.Warnf("trim: %s", clean.ErrorFull(imgErr))
 		} else if img != nil {
 			if thumbsErr := img.GenerateThumbnails(conf.ThumbCachePath(), true); thumbsErr != nil {
-				log.Warnf("trim: %s", clean.Error(thumbsErr))
+				log.Warnf("trim: %s", clean.ErrorFull(thumbsErr))
 			}
 		}
 	}

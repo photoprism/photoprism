@@ -185,7 +185,7 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 	}
 
 	ignore.Log = func(fileName string) {
-		log.Infof(`index: ignored "%s"`, fs.RelName(fileName, originalsPath))
+		log.Infof(`index: ignored "%s"`, clean.Log(fs.RelName(fileName, originalsPath)))
 	}
 
 	// enqueueRelated queues unprocessed related files as one indexing job.
@@ -292,8 +292,8 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 				if !errors.Is(result, filepath.SkipDir) {
 					folder := entity.NewFolder(entity.RootOriginals, relName, fs.ModTime(fileName))
 
-					if err := folder.Create(); err == nil {
-						log.Infof("index: added folder /%s", folder.Path)
+					if err := folder.Create(); err == nil && folder.Path != "" {
+						log.Infof("index: added folder /%s", clean.Log(folder.Path))
 					}
 				}
 

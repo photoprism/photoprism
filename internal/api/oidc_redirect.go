@@ -135,7 +135,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			// The code exchange failed (e.g. a missing/expired state cookie). Render a
 			// branded page that returns the user to login instead of leaving them on a
 			// raw, dead-end error with no way forward.
-			event.AuditErr([]string{clientIp, "create session", "oidc", claimErr.Error()})
+			event.AuditErr([]string{clientIp, "create session", "oidc", status.Error(claimErr)})
 			event.LoginError(clientIp, "oidc", userName, userAgent, claimErr.Error())
 			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrUnexpected))
 			return
@@ -229,19 +229,19 @@ func OIDCRedirect(router *gin.RouterGroup) {
 		} else if user = entity.FindUser(oidcUser); user != nil {
 			// Ensure user has a username.
 			if user.Username() == "" {
-				event.AuditErr([]string{clientIp, "create session", "oidc", oidcUser.UserName, authn.ErrUsernameRequired.Error()})
+				event.AuditErr([]string{clientIp, "create session", "oidc", clean.LogQuote(oidcUser.UserName), authn.ErrUsernameRequired.Error()})
 				event.LoginError(clientIp, "oidc", oidcUser.UserName, userAgent, authn.ErrUsernameRequired.Error())
 				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 				return
 			}
 
 			userName = user.Username()
-			event.AuditInfo([]string{clientIp, "create session", "oidc", "found user", userName})
+			event.AuditInfo([]string{clientIp, "create session", "oidc", "found user", clean.LogQuote(userName)})
 
 			// Check if the account is enabled and the OIDC Subject ID matches.
 			switch {
 			case !user.CanLogIn():
-				event.AuditErr([]string{clientIp, "create session", "oidc", userName, authn.ErrAccountDisabled.Error()})
+				event.AuditErr([]string{clientIp, "create session", "oidc", clean.LogQuote(userName), authn.ErrAccountDisabled.Error()})
 				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountDisabled.Error())
 				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 				return
@@ -251,12 +251,12 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				// "provider is not oidc"; the user-facing message stays generic to
 				// avoid disclosing the account exists.
 				hint := oidcReconcileHint(userName, user.AuthProvider, oidcUser.AuthID)
-				event.AuditErr([]string{clientIp, "create session", "oidc", userName, authn.ErrAuthProviderIsNotOIDC.Error(), hint})
+				event.AuditErr([]string{clientIp, "create session", "oidc", clean.LogQuote(userName), authn.ErrAuthProviderIsNotOIDC.Error(), hint})
 				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAuthProviderIsNotOIDC.Error()+": "+hint)
 				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 				return
 			case user.AuthID == "" || oidcUser.AuthID == "" || user.AuthID != oidcUser.AuthID:
-				event.AuditErr([]string{clientIp, "create session", "oidc", userName, authn.ErrInvalidAuthID.Error()})
+				event.AuditErr([]string{clientIp, "create session", "oidc", clean.LogQuote(userName), authn.ErrInvalidAuthID.Error()})
 				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrInvalidAuthID.Error())
 				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 				return
@@ -338,7 +338,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 
 			// Update existing user account.
 			if err = user.Save(); err != nil {
-				event.AuditErr([]string{clientIp, "create session", "oidc", userName, authn.ErrAccountUpdateFailed.Error(), err.Error()})
+				event.AuditErr([]string{clientIp, "create session", "oidc", clean.LogQuote(userName), authn.ErrAccountUpdateFailed.Error(), status.Error(err)})
 				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountUpdateFailed.Error()+" ("+err.Error()+")")
 				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 				return
@@ -347,12 +347,12 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			// Set user avatar image?
 			if avatarUrl := userInfo.Picture; avatarUrl != "" && !user.HasAvatar() {
 				if err = avatar.SetUserImageURL(user, avatarUrl, entity.SrcOIDC, conf.ThumbCachePath()); err != nil {
-					event.AuditWarn([]string{clientIp, "create session", "oidc", userName, "failed to set avatar image", err.Error()})
+					event.AuditWarn([]string{clientIp, "create session", "oidc", clean.LogQuote(userName), "failed to set avatar image", status.Error(err)})
 				}
 			}
 		} else if conf.UsersQuotaReached(conf.OIDCRole()) { //nolint:gocritic
 			userName = oidcUser.Username()
-			event.AuditWarn([]string{clientIp, "create session", "oidc", "create user", userName, authn.ErrUsersQuotaExceeded.Error()})
+			event.AuditWarn([]string{clientIp, "create session", "oidc", "create user", clean.LogQuote(userName), authn.ErrUsersQuotaExceeded.Error()})
 			event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrUsersQuotaExceeded.Error())
 			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrQuotaExceeded))
 			return
@@ -367,7 +367,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				userName += rnd.Base10(6)
 			}
 
-			event.AuditInfo([]string{clientIp, "create session", "oidc", "create user", userName})
+			event.AuditInfo([]string{clientIp, "create session", "oidc", "create user", clean.LogQuote(userName)})
 
 			user.UserName = userName
 
@@ -429,12 +429,12 @@ func OIDCRedirect(router *gin.RouterGroup) {
 
 			// Create new user account, and then update the Subject ID to make sure it is unique.
 			if err = user.Create(); err != nil {
-				event.AuditErr([]string{clientIp, "create session", "oidc", userName, authn.ErrAccountCreateFailed.Error(), err.Error()})
+				event.AuditErr([]string{clientIp, "create session", "oidc", clean.LogQuote(userName), authn.ErrAccountCreateFailed.Error(), status.Error(err)})
 				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountCreateFailed.Error()+" ("+err.Error()+")")
 				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 				return
 			} else if err = user.UpdateAuthID(userInfo.Subject, provider.Issuer()); err != nil {
-				event.AuditErr([]string{clientIp, "create session", "oidc", userName, authn.ErrAccountUpdateFailed.Error(), err.Error()})
+				event.AuditErr([]string{clientIp, "create session", "oidc", clean.LogQuote(userName), authn.ErrAccountUpdateFailed.Error(), status.Error(err)})
 				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountUpdateFailed.Error()+" ("+err.Error()+")")
 				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 				return
@@ -442,12 +442,12 @@ func OIDCRedirect(router *gin.RouterGroup) {
 
 			// Set user avatar image.
 			if avatarUrl := userInfo.Picture; avatarUrl == "" {
-				event.AuditDebug([]string{clientIp, "create session", "oidc", userName, "no avatar image provided"})
+				event.AuditDebug([]string{clientIp, "create session", "oidc", clean.LogQuote(userName), "no avatar image provided"})
 			} else if err = avatar.SetUserImageURL(user, avatarUrl, entity.SrcOIDC, conf.ThumbCachePath()); err != nil {
-				event.AuditWarn([]string{clientIp, "create session", "oidc", userName, "failed to set avatar image", err.Error()})
+				event.AuditWarn([]string{clientIp, "create session", "oidc", clean.LogQuote(userName), "failed to set avatar image", status.Error(err)})
 			}
 		} else {
-			event.AuditErr([]string{clientIp, "create session", "oidc", userName, authn.ErrRegistrationDisabled.Error()})
+			event.AuditErr([]string{clientIp, "create session", "oidc", clean.LogQuote(userName), authn.ErrRegistrationDisabled.Error()})
 			event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrRegistrationDisabled.Error())
 			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrRegistrationDisabled))
 			return
@@ -455,7 +455,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 
 		// Check if login is allowed.
 		if !user.CanLogIn() {
-			event.AuditErr([]string{clientIp, "create session", "oidc", userName, authn.ErrAccountDisabled.Error()})
+			event.AuditErr([]string{clientIp, "create session", "oidc", clean.LogQuote(userName), authn.ErrAccountDisabled.Error()})
 			event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountDisabled.Error())
 			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 			return
@@ -481,12 +481,11 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			}
 		}
 
-		// Store the ID token for RP-initiated logout (id_token_hint), clamped to the id_token column
-		// size. Exceeding it truncates the JWT into an unusable hint, so warn when that happens; with
-		// the 4096-byte column this only affects extreme role/group-heavy tokens.
-		var idTokenTruncated bool
-		if sess.IdToken, idTokenTruncated = entity.ClampIdToken(tokens.IDToken); idTokenTruncated {
-			event.AuditWarn([]string{clientIp, "create session", "oidc", userName, "id token exceeds storage limit, silent logout may not work"})
+		// Store the ID token for RP-initiated logout (id_token_hint) when it fits the id_token
+		// column. With the 4096-byte column only extreme role/group-heavy tokens exceed it.
+		var idTokenDropped bool
+		if sess.IdToken, idTokenDropped = entity.UsableIdToken(tokens.IDToken); idTokenDropped {
+			event.AuditWarn([]string{clientIp, "create session", "oidc", clean.LogQuote(userName), "id token exceeds storage limit, single logout ends at the login page"})
 		}
 
 		// Set session expiration and timeout.
@@ -495,11 +494,11 @@ func OIDCRedirect(router *gin.RouterGroup) {
 
 		// Save session after successful authentication.
 		if sess, err = get.Session().Save(sess); err != nil {
-			event.AuditErr([]string{clientIp, "create session", "oidc", userName, status.Error(err)})
+			event.AuditErr([]string{clientIp, "create session", "oidc", clean.LogQuote(userName), status.Error(err)})
 			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 			return
 		} else if sess == nil {
-			event.AuditErr([]string{clientIp, "create session", "oidc", userName, status.Failed})
+			event.AuditErr([]string{clientIp, "create session", "oidc", clean.LogQuote(userName), status.Failed})
 			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrUnexpected))
 			return
 		}
@@ -511,11 +510,11 @@ func OIDCRedirect(router *gin.RouterGroup) {
 		response := CreateSessionResponse(sess.AuthToken(), sess, conf.ClientSession(sess))
 
 		// Log session created event.
-		event.AuditInfo([]string{clientIp, "session %s", "oidc", userName, status.Created}, sess.RefID)
+		event.AuditInfo([]string{clientIp, "session %s", "oidc", "%s", status.Created}, sess.RefID, clean.LogQuote(userName))
 
 		// Log session expiration time.
 		if expires := sess.ExpiresAt(); !expires.IsZero() {
-			event.AuditDebug([]string{clientIp, "session %s", "oidc", userName, "expires at %s"}, sess.RefID, txt.DateTime(&expires))
+			event.AuditDebug([]string{clientIp, "session %s", "oidc", "%s", "expires at %s"}, sess.RefID, clean.LogQuote(userName), txt.DateTime(&expires))
 		}
 
 		// Log successful login.

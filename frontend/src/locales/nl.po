@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-09-01 06:33+0000\n"
+"PO-Revision-Date: 2026-09-10 09:31+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Dutch <https://translate.photoprism.app/projects/photoprism/frontend/nl/>\n"
 "Language: nl\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 2026.8.1\n"
+"X-Generator: Weblate 2026.9.1\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -2599,6 +2599,10 @@ msgstr "Uploaden"
 msgid "Maps"
 msgstr "Kaarten"
 
+#: src/component/map.vue:118 src/page/places.vue:430 src/page/places.vue:435
+msgid "Maps are unavailable. Try another browser or device."
+msgstr "Kaarten zijn niet beschikbaar. Probeer een andere browser of een ander apparaat."
+
 #: src/common/util.js:898 src/model/marker.js:132
 msgid "Marker"
 msgstr "Symbool"
@@ -2836,7 +2840,7 @@ msgstr "Geen mensen gevonden"
 #: src/component/photo/view/cards.vue:9 src/component/photo/view/list.vue:9
 #: src/component/photo/view/mosaic.vue:9 src/page/album/photos.vue:582
 #: src/page/library/browse.vue:31 src/page/photos.vue:720
-#: src/page/places.vue:761 src/page/places.vue:882
+#: src/page/places.vue:758 src/page/places.vue:883
 msgid "No pictures found"
 msgstr "Geen foto's gevonden"
 
@@ -4759,10 +4763,6 @@ msgstr "WebDAV cliënten, zoals Microsoft's Windows Explorer of Apple's Finder, 
 msgid "WebDAV Upload"
 msgstr "Uploaden"
 
-#: src/page/places.vue:441
-msgid "WebGL support is disabled in your browser"
-msgstr "WebGL-ondersteuning is uitgeschakeld in uw browser"
-
 #: src/page/settings/account.vue:335 src/page/settings/account.vue:391
 #: src/page/settings/account.vue:308
 msgid "Website"
@@ -4863,10 +4863,6 @@ msgstr "Uw account kon niet worden aangesloten"
 msgid "Your account has been successfully connected."
 msgstr "Uw account is succesvol verbonden."
 
-#: src/page/places.vue:445
-msgid "Your browser does not support WebGL"
-msgstr "Uw browser ondersteunt WebGL niet"
-
 #: src/page/about/about.vue:48 src/page/about/about.vue:86
 #: src/component/confirm/sponsor.vue:18 src/page/about/about.vue:33
 #: src/page/about/about.vue:67 src/page/connect.vue:96
@@ -4935,6 +4931,12 @@ msgstr "Titel"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Archief"
+
+#~ msgid "WebGL support is disabled in your browser"
+#~ msgstr "WebGL-ondersteuning is uitgeschakeld in uw browser"
+
+#~ msgid "Your browser does not support WebGL"
+#~ msgstr "Uw browser ondersteunt WebGL niet"
 
 #~ msgid "Create"
 #~ msgstr "Aangemaakt"

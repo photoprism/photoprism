@@ -53,6 +53,10 @@ const (
 	// ClusterCoreDefault is the default number of faces required to seed a cluster core. DBSCAN
 	// counts the point itself, so a person with fewer clusterable faces forms no cluster at all.
 	ClusterCoreDefault = 5
+	// ClusterCoreRetryDefault is the core the second clustering pass uses, over what matching left
+	// unclustered. A flat number rather than one derived from the first pass: only 5 to 4 has been
+	// measured, and it is the floor those measurements support at any core above it.
+	ClusterCoreRetryDefault = 4
 	// ClusterPercentileDefault is the default share of a cluster's member distances its radius has
 	// to cover. Taking the maximum instead lets one loose member decide how far a whole cluster
 	// reaches, with only the clamp to stop it; under twenty members the two are the same value.

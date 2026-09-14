@@ -754,7 +754,7 @@ func (m *File) RedactForSession(sess *Session) *File {
 	}
 
 	// Only sessions limited to shared content are redacted.
-	if !sess.GetUser().HasSharedAccessOnly(acl.ResourcePhotos) && !sess.NotRegistered() {
+	if !sess.HasSharedAccessOnly(acl.ResourcePhotos) && !sess.NotRegistered() {
 		return m
 	}
 

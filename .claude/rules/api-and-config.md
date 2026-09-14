@@ -11,13 +11,14 @@
 - Use `pkg/fs.ConfigFilePath` for config filenames so existing `.yml` files stay valid and new installs can adopt `.yaml` transparently.
 - Use the public accessors on `*config.Config` (e.g. `JWKSUrl()`, `SetJWKSUrl()`) instead of mutating `Config.Options()` directly; reserve raw option tweaks for test fixtures.
 - New metadata sources (e.g. `SrcOllama`, `SrcOpenAI`) must be defined in both `internal/entity/src.go` and the frontend lookup tables (`frontend/src/common/util.js`).
-- Config init order: load `options.yml` (`c.initSettings()`), run `EarlyExt().InitEarly(c)`, connect/register the DB, then `Ext().Init(c)`.
+- Config init order: load `settings.yml` (`c.initSettings()`), run `Ext(StageBoot).Boot(c)`, connect/register the DB, then `Ext(StageInit).Init(c)`. Register a boot-stage extension with `config.Register(config.StageBoot, ...)`.
 - Favor explicit CLI flags: check `c.cliCtx.IsSet("<flag>")` before overriding user-supplied values.
 - Database helpers: reuse `conf.Db()` / `conf.Database*()`, avoid GORM `WithContext`, quote MySQL identifiers, and reject unsupported drivers early.
 
 ## Handler Conventions
 
 - Reuse limiter stacks (`limiter.Auth`, `limiter.Login`) and `limiter.AbortJSON` for 429s. Lean on `api.ClientIP`, `header.BearerToken`, and `Abort*` helpers.
+- Bound the request body before anything reads it: `LimitRequestBodyBytes(c, Max<Domain>RequestBytes)` is per-handler, there is no global middleware, and form parsing (`c.PostForm`, `ParseForm`) reads the body just as `ShouldBind` does. Pair it with an `IsRequestBodyTooLarge(err)` branch returning `AbortRequestTooLarge`, and add `413` to the handler's `@Failure` list. On an unauthenticated endpoint, charge the rate limiter before the body is read, so a request that never reaches a credential check is not free to repeat.
 - Compare secrets with constant-time checks; set `Cache-Control: no-store` on sensitive responses.
 - Register routes in `internal/server/routes.go`. New list endpoints default `count=100` (max 1000) and `offset≥0`; document parameters explicitly.
 - Set portal mode via `PHOTOPRISM_NODE_ROLE=portal` plus `PHOTOPRISM_JOIN_TOKEN` when needed.

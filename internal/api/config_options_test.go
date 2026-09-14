@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -13,6 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -200,4 +202,56 @@ func prepareConfigOptionsSuccessTest(t *testing.T, conf *config.Config) {
 	conf.Options().Public = false
 	conf.Options().Demo = false
 	conf.Options().DisableSettings = false
+}
+
+func TestSaveConfigOptionsIgnoredKeys(t *testing.T) {
+	app, router, conf := NewApiTest()
+
+	SaveConfigOptions(router)
+	prepareConfigOptionsSuccessTest(t, conf)
+
+	authToken := AuthenticateAdmin(app, router)
+
+	tempCfg := t.TempDir()
+	originalConfigPath := conf.Options().ConfigPath
+	originalOptionsYaml := conf.Options().OptionsYaml
+
+	t.Cleanup(func() {
+		conf.Options().ConfigPath = originalConfigPath
+		conf.Options().OptionsYaml = originalOptionsYaml
+	})
+
+	conf.Options().ConfigPath = tempCfg
+	conf.Options().OptionsYaml = filepath.Join(tempCfg, "options.yml")
+
+	// Keys the API does not expose are reported back, so the request supplies more than are rendered.
+	const supplied = clean.LogNamesLimit + 5
+
+	values := make([]string, 0, supplied)
+	values = append(values, `"report\nsummary":1`)
+
+	for i := len(values); i < supplied; i++ {
+		values = append(values, fmt.Sprintf(`"Unsupported%02d":1`, i))
+	}
+
+	hook := captureLog(t)
+
+	r := AuthenticatedRequestWithBody(app, "POST", "/api/v1/config/options", "{"+strings.Join(values, ",")+"}", authToken)
+	assert.Equal(t, http.StatusOK, r.Code, r.Body.String())
+
+	var line string
+
+	for _, entry := range hook.AllEntries() {
+		if strings.Contains(entry.Message, "ignored") {
+			line = entry.Message
+			break
+		}
+	}
+
+	if line == "" {
+		t.Fatal("expected a log entry naming the ignored keys")
+	}
+
+	assert.NotContains(t, line, "\n", "a log line must not carry a newline from a supplied key")
+	assert.Contains(t, line, fmt.Sprintf("and %d more", supplied-clean.LogNamesLimit))
 }

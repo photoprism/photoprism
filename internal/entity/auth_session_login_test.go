@@ -518,6 +518,31 @@ func TestSessionLogIn(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
+	t.Run("TokenRedeemedOnceCountsOneView", func(t *testing.T) {
+		link := NewLink("as6sg6bxpogaaba8", false, false)
+
+		if err := link.Save(); err != nil {
+			t.Fatal(err)
+		}
+
+		before := FindLink(link.LinkUID).LinkViews
+
+		m := NewSession(unix.Day, unix.Hour*6)
+		m.SetClientIP(clientIp)
+
+		frm := form.Login{Token: link.LinkToken}
+
+		c, _ := gin.CreateTestContext(rec)
+		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(frm))
+		c.Request.RemoteAddr = "1.2.3.4"
+
+		if err := m.LogIn(frm, c); err != nil {
+			t.Fatal(err)
+		}
+
+		// One login redeems the token once, however often the handler consults it.
+		assert.Equal(t, before+1, FindLink(link.LinkUID).LinkViews)
+	})
 	t.Run("UnknownUserWithInvalidToken", func(t *testing.T) {
 		m := NewSession(unix.Day, unix.Hour*6)
 		m.SetClientIP(clientIp)

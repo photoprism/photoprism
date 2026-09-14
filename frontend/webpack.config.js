@@ -38,6 +38,7 @@ const { VueLoaderPlugin } = require("vue-loader");
 const { VuetifyPlugin } = require("webpack-plugin-vuetify");
 const { DefinePlugin } = require("webpack");
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
+const maplibrePath = `maplibre/${require("maplibre-gl/package.json").version}`;
 const swScopeCleanupFile = "sw-scope-cleanup.js";
 
 const PATHS = {
@@ -122,6 +123,7 @@ const config = {
     }),
     new webpack.ProgressPlugin(),
     new EmitStaticFilePlugin(swScopeCleanupPath, swScopeCleanupFile),
+    new EmitStaticFilePlugin(require.resolve("maplibre-gl/dist/maplibre-gl-shared.mjs"), `${maplibrePath}/maplibre-gl-shared.mjs`),
     new VueLoaderPlugin(),
     !isDev &&
       new WorkboxPlugin.GenerateSW({
@@ -160,6 +162,17 @@ const config = {
   },
   module: {
     rules: [
+      {
+        test: /maplibre-gl\.mjs$/,
+        // The adapter supplies a same-origin worker URL; preserve MapLibre's dynamic URLs.
+        parser: { url: false },
+      },
+      {
+        test: /maplibre-gl-worker\.mjs$/,
+        type: "asset/resource",
+        // Keep the worker beside its relative shared-module import.
+        generator: { filename: `${maplibrePath}/[name][ext]` },
+      },
       {
         test: /\.vue$/,
         loader: "vue-loader",

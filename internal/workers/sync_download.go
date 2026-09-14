@@ -1,6 +1,7 @@
 package workers
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -152,7 +153,12 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 				file.Error = ""
 				file.Errors = 0
 			} else {
-				if err = client.Download(file.RemoteName, localName, false); err != nil {
+				if err = client.Download(file.RemoteName, localName, false); errors.Is(err, os.ErrExist) {
+					log.Infof("sync: skipped download of %s from %s because a local file was created meanwhile", file.RemoteName, clean.Log(a.AccName))
+					file.Status = entity.FileSyncExists
+					file.Error = ""
+					file.Errors = 0
+				} else if err != nil {
 					file.Errors++
 					file.Error = err.Error()
 

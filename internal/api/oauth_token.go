@@ -16,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
@@ -26,9 +27,9 @@ import (
 //	@Tags		Authentication
 //	@Accept		json
 //	@Produce	json
-//	@Param		request			body		form.OAuthCreateToken	true	"token request (supports client_credentials, password, or session grant)"
-//	@Success	200				{object}	gin.H
-//	@Failure	400,401,403,429	{object}	i18n.Response
+//	@Param		request				body		form.OAuthCreateToken	true	"token request (supports client_credentials, password, or session grant)"
+//	@Success	200					{object}	gin.H
+//	@Failure	400,401,403,413,429	{object}	i18n.Response
 //	@Router		/api/v1/oauth/token [post]
 func OAuthToken(router *gin.RouterGroup) {
 	router.POST("/oauth/token", func(c *gin.Context) {
@@ -53,22 +54,37 @@ func OAuthToken(router *gin.RouterGroup) {
 		// Disable caching of responses.
 		c.Header(header.CacheControl, header.CacheControlNoStore)
 
-		// The OIDC authorization_code grant is handled by the Portal OIDC OP, which
-		// parses and validates the request itself. Delegating here keeps a single
-		// OIDC-compliant token_endpoint while the client_credentials, password, and
-		// session grants below stay unchanged and DB-backed. The check runs before
-		// the form binding because form.OAuthCreateToken.Validate rejects this grant
-		// and a client_secret_basic request would otherwise be read as
-		// client_credentials. It is gated on a form content type so that peeking at
-		// the body here does not consume it in a way that masks the missing-body
-		// error the binding below relies on, and because per RFC 6749 the token
-		// endpoint is always form-encoded. Builds without the OP report the grant as
-		// unsupported.
+		// Abort if the client has exhausted its authentication failure budget. Checked
+		// before the body is read, and charged on each path below that rejects a request
+		// before it presents credentials.
+		if limiter.Auth.Reject(clientIp) {
+			limiter.AbortJSON(c)
+			return
+		}
+
+		// The bound precedes the form parse so an over-long body is reported as such; the
+		// peek and the binding below both read the same parsed form.
+		LimitRequestBodyBytes(c, MaxOAuthRequestBytes)
+
+		if c.ContentType() == header.ContentTypeForm {
+			if err := c.Request.ParseForm(); IsRequestBodyTooLarge(err) {
+				limiter.Auth.Reserve(clientIp)
+				event.AuditWarn([]string{clientIp, "oauth2", actor, action, "request too large", status.Error(err)})
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+		}
+
+		// The Portal OIDC OP handles the authorization_code grant and parses the request
+		// itself, so a single token_endpoint serves both. This runs before the binding
+		// because form.OAuthCreateToken.Validate rejects the grant, and it is gated on a
+		// form content type per RFC 6749.
 		if c.ContentType() == header.ContentTypeForm && authn.Grant(c.PostForm("grant_type")) == authn.GrantAuthorizationCode {
 			if OAuthAuthorizationCodeHandler != nil {
 				OAuthAuthorizationCodeHandler(c)
 				return
 			}
+			limiter.Auth.Reserve(clientIp)
 			event.AuditWarn([]string{clientIp, "oauth2", actor, action, authn.ErrInvalidGrantType.Error()})
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 				"error":             "unsupported_grant_type",
@@ -89,6 +105,14 @@ func OAuthToken(router *gin.RouterGroup) {
 			frm.ClientID = clientId
 			frm.ClientSecret = clientSecret
 		} else if err = c.ShouldBind(&frm); err != nil {
+			limiter.Auth.Reserve(clientIp)
+
+			if IsRequestBodyTooLarge(err) {
+				event.AuditWarn([]string{clientIp, "oauth2", actor, action, "request too large", status.Error(err)})
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
+				return
+			}
+
 			event.AuditWarn([]string{clientIp, "oauth2", actor, action, status.Error(err)})
 			AbortBadRequest(c, err)
 			return
@@ -96,15 +120,16 @@ func OAuthToken(router *gin.RouterGroup) {
 
 		// Check the credentials for completeness and the correct format.
 		if err = frm.Validate(); err != nil {
+			limiter.Auth.Reserve(clientIp)
 			event.AuditWarn([]string{clientIp, "oauth2", actor, action, status.Error(err)})
 			AbortInvalidCredentials(c)
 			return
 		}
 
-		// Check request rate limit.
+		// Check the failure rate limit for a request that presents credentials. This budget
+		// is shared with interactive sign-in, so it is charged only once a request gets here.
 		r := limiter.Login.Request(clientIp)
 
-		// Abort if request rate limit is exceeded.
 		if r.Reject() || limiter.Auth.Reject(clientIp) {
 			limiter.AbortJSON(c)
 			return
@@ -230,7 +255,7 @@ func OAuthToken(router *gin.RouterGroup) {
 		// Delete any existing client sessions above the configured limit.
 		if client == nil {
 			// Skip deletion if not created by a client.
-		} else if deleted := client.EnforceAuthTokenLimit(); deleted > 0 {
+		} else if deleted := client.EnforceAuthTokenLimit(sess.ID); deleted > 0 {
 			event.AuditInfo([]string{clientIp, "oauth2", actor, action, "deleted %s to enforce token limit"}, english.Plural(deleted, "session", "sessions"))
 		}
 

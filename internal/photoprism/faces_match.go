@@ -304,6 +304,19 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 		result.Assigned += m
 	}
 
+	w.updateMatchStats(stats)
+
+	// Named because the run otherwise reads as one that simply recognized less.
+	if result.Ambiguous > 0 {
+		log.Infof("faces: left %s unassigned between clusters of two different people, see face-match-margin",
+			english.Plural(int(result.Ambiguous), "marker", "markers"))
+	}
+
+	return result, nil
+}
+
+// updateMatchStats writes back what each cluster a pass touched actually matched.
+func (w *Faces) updateMatchStats(stats map[string]*faceMatchStats) {
 	declined := 0
 
 	for _, stat := range stats {
@@ -337,12 +350,28 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 		log.Infof("faces: left %s unmeasured, see face-recompute-stats",
 			english.Plural(declined, "cluster", "clusters"))
 	}
+}
 
-	// Named because the run otherwise reads as one that simply recognized less.
-	if result.Ambiguous > 0 {
-		log.Infof("faces: left %s unassigned between clusters of two different people, see face-match-margin",
-			english.Plural(int(result.Ambiguous), "marker", "markers"))
+// MatchNewClusters attaches markers to the clusters a pass has just created, and reports what it
+// moved. Without it they hold nothing, and DeleteOrphanFaces removes a cluster no marker points at.
+//
+// Scanned with force, because these clusters have never been compared with anything: the markers
+// they exist for are the ones an earlier pass in the same run examined and left unassigned, which
+// the timestamp filter Match uses would skip. A marker already closer to another cluster keeps it,
+// by the same rule every other pass applies.
+func (w *Faces) MatchNewClusters(added entity.Faces) (result FacesMatchResult, err error) {
+	if len(added) == 0 {
+		return result, nil
 	}
+
+	stats := make(map[string]*faceMatchStats)
+
+	if result, err = w.MatchFaces(added, true, nil, stats); err != nil {
+		return result, err
+	}
+
+	stampMatchedFaces(added)
+	w.updateMatchStats(stats)
 
 	return result, nil
 }

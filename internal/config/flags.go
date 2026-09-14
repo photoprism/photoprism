@@ -1161,6 +1161,18 @@ var Flags = CliFlags{
 			Value:   ffmpeg.DefaultExclude,
 			EnvVars: EnvVars("FFMPEG_EXCLUDE", "FFMPEG_BLACKLIST"),
 		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "convert-timeout",
+			Usage:   "time in `MINUTES` after which converting a still image, document, or RAW file is given up (-1 to disable)",
+			Value:   DefaultConvertTimeout,
+			EnvVars: EnvVars("CONVERT_TIMEOUT"),
+		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "transcode-timeout",
+			Usage:   "time in `MINUTES` after which transcoding a video is given up (disabled by default)",
+			Value:   DefaultTranscodeTimeout,
+			EnvVars: EnvVars("TRANSCODE_TIMEOUT"),
+		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "exiftool-bin",
 			Usage:   "ExifTool `COMMAND` for extracting metadata",
@@ -1453,6 +1465,15 @@ var Flags = CliFlags{
 			Value:   face.ClusterCoreDefault,
 			EnvVars: EnvVars("FACE_CLUSTER_CORE"),
 		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "face-cluster-core-retry",
+			Usage:   "`NUMBER` of faces forming a cluster core in a second pass over what matching left unclustered, -1 to disable",
+			EnvVars: EnvVars("FACE_CLUSTER_CORE_RETRY"),
+		},
+		// No Value, or the option would be non-zero on every start and FaceClusterCoreRetry would
+		// never reach its derivation. Flat rather than one less than the first pass, see there.
+		DocDefault: fmt.Sprintf("%d (off where face-cluster-core is below %d)",
+			face.ClusterCoreRetryDefault, face.ClusterCoreDefault)}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-cluster-split-rounds",
 			Usage:   "`NUMBER` of times a group wider than its own accept distance may be re-clustered, 0 discards such a group and -1 keeps it whole",

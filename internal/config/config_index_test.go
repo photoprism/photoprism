@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/pkg/dsn"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestConfig_IndexWorkers(t *testing.T) {
@@ -244,4 +245,51 @@ func TestConfig_ResolutionLimit(t *testing.T) {
 	assert.Equal(t, -1, c.ResolutionLimit())
 	c.options.Sponsor = true
 	assert.Equal(t, -1, c.ResolutionLimit())
+}
+
+func TestDecodeLimitPixels(t *testing.T) {
+	t.Run("Default", func(t *testing.T) {
+		assert.Equal(t, DefaultResolutionLimit*1000000*DecodeHeadroom, DecodeLimitPixels(DefaultResolutionLimit))
+	})
+	t.Run("Raised", func(t *testing.T) {
+		assert.Equal(t, 900*1000000*DecodeHeadroom, DecodeLimitPixels(900))
+	})
+	t.Run("AboveTheLimitStillDecodes", func(t *testing.T) {
+		// An original above the configured limit is reported and still rendered, so the
+		// decode ceiling has to sit above the limit rather than on it.
+		assert.Greater(t, DecodeLimitPixels(DefaultResolutionLimit), DefaultResolutionLimit*1000000)
+	})
+	t.Run("LoweredKeepsTheDefaultFloor", func(t *testing.T) {
+		// Lowering which originals are supported must not lower what a thumbnail may decode,
+		// or previews of already-indexed files would start failing.
+		assert.Equal(t, DecodeLimitPixels(DefaultResolutionLimit), DecodeLimitPixels(1))
+	})
+	t.Run("Disabled", func(t *testing.T) {
+		assert.Equal(t, 0, DecodeLimitPixels(-1))
+		assert.Equal(t, 0, DecodeLimitPixels(0))
+	})
+}
+
+func TestConfig_Propagate_MaxImagePixels(t *testing.T) {
+	max := fs.MaxImagePixels
+	defer func() { fs.MaxImagePixels = max }()
+	c := NewConfig(CliTestContext())
+	t.Run("Default", func(t *testing.T) {
+		fs.MaxImagePixels = 1
+		c.options.ResolutionLimit = 0
+		c.Propagate()
+		assert.Equal(t, DecodeLimitPixels(DefaultResolutionLimit), fs.MaxImagePixels)
+	})
+	t.Run("Raised", func(t *testing.T) {
+		fs.MaxImagePixels = 1
+		c.options.ResolutionLimit = 900
+		c.Propagate()
+		assert.Equal(t, DecodeLimitPixels(900), fs.MaxImagePixels)
+	})
+	t.Run("Disabled", func(t *testing.T) {
+		fs.MaxImagePixels = 1
+		c.options.ResolutionLimit = -1
+		c.Propagate()
+		assert.Equal(t, 0, fs.MaxImagePixels)
+	})
 }

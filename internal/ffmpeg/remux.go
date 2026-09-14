@@ -14,6 +14,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media/video"
+	"github.com/photoprism/photoprism/pkg/proc"
 )
 
 // RemuxFile changes the file format to the specified container as needed.
@@ -86,11 +87,12 @@ func RemuxFile(videoFilePath, destFilePath string, opt encode.Options) error {
 	// Log exact command for debugging in trace mode.
 	log.Trace(cmd.String())
 
-	// Run the remux command.
+	// Run the remux command within its budget, terminating the whole process tree if it is
+	// exceeded, so a source the muxer cannot finish does not hold the caller indefinitely.
 	start := time.Now()
-	if err = cmd.Run(); err != nil {
-		if stderr.String() != "" {
-			err = errors.New(stderr.String())
+	if err = proc.Run(cmd, opt.Timeout); err != nil {
+		if s := stderr.String(); s != "" {
+			err = fmt.Errorf("%w: %s", err, s)
 		}
 
 		// Log ffmpeg output for debugging.

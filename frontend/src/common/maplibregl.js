@@ -2,9 +2,13 @@
  * https://github.com/klokantech/openmaptiles-language
  * (c) 2018 Klokan Technologies GmbH
  */
-import maplibregl from "maplibre-gl";
+import * as maplibregl from "maplibre-gl";
+
 import { $config } from "app/session";
 
+maplibregl.setWorkerUrl(new URL("maplibre-gl/dist/maplibre-gl-worker.mjs", import.meta.url).toString());
+
+// langFallbackDecorate applies localized labels to matching style layers.
 const langFallbackDecorate = function (style, cfg) {
   let layers = style.layers;
   let lf = cfg["layer-filter"];
@@ -51,8 +55,9 @@ let langEnabled = true;
 
 let setStyleMutex = false;
 let origSetStyle = maplibregl.Map.prototype.setStyle;
+// setStyle reapplies language decoration when the style changes.
 maplibregl.Map.prototype.setStyle = function () {
-  origSetStyle.apply(this, arguments);
+  const result = origSetStyle.apply(this, arguments);
 
   if (langEnabled && !setStyleMutex) {
     if (this.styleUndecorated) {
@@ -67,12 +72,15 @@ maplibregl.Map.prototype.setStyle = function () {
       }.bind(this)
     );
   }
+  return result;
 };
 
+// setLanguageEnabled toggles automatic label localization.
 maplibregl.Map.prototype.setLanguageEnabled = function (enable) {
   langEnabled = enable;
 };
 
+// setLanguage decorates labels with the selected language and optional native names.
 maplibregl.Map.prototype.setLanguage = function (language, noAlt) {
   this.languageOptions = {
     language: language,
@@ -130,14 +138,9 @@ maplibregl.Map.prototype.setLanguage = function (language, noAlt) {
   setStyleMutex = false;
 };
 
+// autodetectLanguage selects the configured UI language for map labels.
 maplibregl.Map.prototype.autodetectLanguage = function (opt_fallback) {
   this.setLanguage($config.values.settings.ui.language.split("-")[0] || opt_fallback || "native");
 };
-
-// Add plugin to support right-to-left languages such as Arabic and Hebrew.
-maplibregl.setRTLTextPlugin(
-  `${$config.staticUri}/plugins/maplibre-gl-rtl-text/v0.2.3/maplibre-gl-rtl-text.js`,
-  true // Lazy load the plugin
-);
 
 export default maplibregl;

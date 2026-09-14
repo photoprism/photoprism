@@ -17,7 +17,9 @@ const PrefixTokenID = "jwt"
 var (
 	// DefaultTokenTTL is the default lifetime for issued tokens.
 	DefaultTokenTTL = 300 * time.Second
-	// MaxTokenTTL clamps configurable lifetimes to a safe upper bound.
+	// MaxTokenTTL clamps configurable lifetimes to a safe upper bound. It also feeds
+	// RotationOverlap, and through it how long a verifier keeps trusting a key set it
+	// cannot refresh, so raising it widens more than the token lifetime.
 	MaxTokenTTL = 900 * time.Second
 )
 
@@ -176,11 +178,9 @@ type UserClaims struct {
 	gojwt.RegisteredClaims
 }
 
-// IssueUser signs a Portal OIDC ID/access token using the manager's active
-// key. The token shape mirrors what an instance OIDC RP would receive from
-// any upstream IdP, with three Portal-specific claims (pp_role, pp_node_uuid,
-// pp_issuer_kind) added so instances can correlate the token with the node
-// they were targeted for.
+// IssueUser signs a Portal OIDC ID/access token using the manager's active key. The shape
+// mirrors what an instance OIDC RP receives from any upstream IdP, plus pp_role,
+// pp_node_uuid and pp_issuer_kind so instances can correlate it with the node they targeted.
 func (i *Issuer) IssueUser(spec UserClaimsSpec) (string, error) {
 	if i == nil || i.manager == nil {
 		return "", errors.New("jwt: issuer not initialized")

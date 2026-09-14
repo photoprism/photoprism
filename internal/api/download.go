@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/api/download"
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/entity/search"
@@ -67,7 +68,9 @@ func GetDownload(router *gin.RouterGroup) {
 
 		// If the file is identified by its hash, the request must be authorized: a valid "?t=" download
 		// token, or a Portal JWT in the request header.
-		sess, valid := AuthDownload(c)
+		// The hash addresses a picture's original file and this is the URL the web client uses, so a scope
+		// naming either resource authorizes the download.
+		sess, valid := AuthDownload(c, acl.Resources{acl.ResourceFiles, acl.ResourcePhotos})
 		if !valid {
 			c.Data(http.StatusForbidden, "image/svg+xml", brokenIconSvg)
 			return

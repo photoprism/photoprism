@@ -26,6 +26,7 @@ func (r Response) String() string {
 }
 
 // LowerString returns the lowercased message string.
+// The result is catalog-rendered, so log text must use Lower instead.
 func (r Response) LowerString() string {
 	return strings.ToLower(r.String())
 }

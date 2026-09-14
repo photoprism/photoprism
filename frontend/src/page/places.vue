@@ -167,22 +167,25 @@ export default {
     this._mapDataHandler = null;
     this.mapStyles = options.MapsStyle(this.featExperimental, this.$config.has("mapKey"));
   },
+  // mounted initializes the map and keeps renderer failures inside the Places view.
   mounted() {
     this.$view.enter(this);
-
-    maps.load().then((m) => {
-      maplibregl = m;
-      this.initMap()
-        .then(() => {
-          this.renderMap();
-          this.openClusterFromUrl();
-        })
-        .catch((err) => {
-          this.mapError = err;
-        });
-    });
+    this._mapUnmounted = false;
+    this.initMap()
+      .then(() => maps.load())
+      .then((m) => {
+        if (this._mapUnmounted) {
+          return;
+        }
+        maplibregl = m;
+        this.renderMap();
+        this.openClusterFromUrl();
+      })
+      .catch(this.showMapError);
   },
+  // beforeUnmount releases map resources and prevents delayed initialization.
   beforeUnmount() {
+    this._mapUnmounted = true;
     // Exit fullscreen mode if enabled, has no effect otherwise.
     $fullscreen.exit();
     this.teardownMap();
@@ -422,28 +425,16 @@ export default {
         this.renderSky();
       }
     },
-    noWebGlSupport() {
-      // see https://maplibre.org/maplibre-gl-js/docs/examples/check-for-support/
-      if (window.WebGLRenderingContext) {
-        const canvas = document.createElement("canvas");
-        try {
-          // Note that { failIfMajorPerformanceCaveat: true } can be passed as a second argument
-          // to canvas.getContext(), causing the check to fail if hardware rendering is not available. See
-          // https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/getContext
-          // for more details.
-          const context = canvas.getContext("webgl2") || canvas.getContext("webgl");
-          if (context && typeof context.getParameter == "function") {
-            return false;
-          }
-        } catch {
-          // WebGL is supported, but disabled.
-        }
-        return this.$gettext("WebGL support is disabled in your browser");
-      }
-
-      // WebGL is not supported.
-      return this.$gettext("Your browser does not support WebGL");
+    // showMapError provides a readable fallback for rendering and loading failures.
+    showMapError() {
+      this.mapError = this.$gettext("Maps are unavailable. Try another browser or device.");
+      this.loading = false;
     },
+    // noWebGlSupport returns a message when the renderer's graphics requirement is unmet.
+    noWebGlSupport() {
+      return maps.supportsWebGL2() ? false : this.$gettext("Maps are unavailable. Try another browser or device.");
+    },
+    // initMap configures a style only when the browser can render it.
     initMap() {
       return this.$config.load().finally(() => {
         const err = this.noWebGlSupport();
@@ -454,6 +445,7 @@ export default {
         return Promise.resolve();
       });
     },
+    // setStyle replaces the map while keeping busy-state and error handling balanced.
     setStyle(style) {
       if (this.loading) {
         return false;
@@ -465,12 +457,17 @@ export default {
       this.initialized = false;
       this.$refs.map.innerHTML = "";
 
-      this.configureMap(style);
-      this.renderMap();
-
-      this.$notify.unblockUI();
-
-      return true;
+      try {
+        this.configureMap(style);
+        this.renderMap();
+        this.mapError = false;
+        return true;
+      } catch {
+        this.showMapError();
+        return false;
+      } finally {
+        this.$notify.unblockUI();
+      }
     },
     configureMap(style) {
       const filter = {
@@ -829,6 +826,7 @@ export default {
 
       this.search(true);
     },
+    // reset clears the GeoJSON source and refreshes markers after the worker update.
     reset() {
       Object.assign(this.result, { features: [] });
       const map = this.map;
@@ -843,10 +841,13 @@ export default {
         return;
       }
 
-      source.setData(this.result);
-
-      this.updateMarkers();
+      return source.setData(this.result).then(() => {
+        if (this.map === map) {
+          this.updateMarkers();
+        }
+      }).catch(() => {});
     },
+    // search loads locations and waits for the active map source before updating markers.
     search(force) {
       if (this.loading) {
         return;
@@ -873,7 +874,7 @@ export default {
       // Fetch results from server.
       return $api
         .get("geo", options)
-        .then((response) => {
+        .then(async (response) => {
           if (!response.data.features || response.data.features.length === 0) {
             this.reset();
             this.initialized = true;
@@ -902,7 +903,12 @@ export default {
             return;
           }
 
-          source.setData(this.result);
+          await source.setData(this.result);
+
+          if (this.map !== map) {
+            this.loading = false;
+            return;
+          }
 
           if (this.filter.q || !this.initialized) {
             if (typeof map.fitBounds === "function") {

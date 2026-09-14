@@ -597,7 +597,7 @@ func (c *Config) initFaceModel() {
 
 			if err := c.SetFaceModel(c.faceModel); err != nil {
 				// The value applies to this process either way, and the next start detects again.
-				log.Warnf("config: %s", err)
+				log.Warnf("config: %s", clean.Error(err))
 			}
 		}
 	}
@@ -628,7 +628,7 @@ func (c *Config) SetFaceModel(name face.ModelName) error {
 	c.PropagateFaceModel()
 
 	if _, err := c.SaveOptionsPatch(Values{"FaceModel": name}); err != nil {
-		return fmt.Errorf("failed saving face model %s (%s)", clean.Log(name), err)
+		return fmt.Errorf("failed saving face model %s: %w", clean.Log(name), err)
 	}
 
 	return nil
@@ -1194,6 +1194,43 @@ func (c *Config) FaceClusterCore() int {
 	}
 
 	return c.options.FaceClusterCore
+}
+
+// FaceClusterCoreRetry returns the core the second clustering pass runs at, over the markers
+// matching left unclustered, or -1 when no second pass runs.
+//
+// The derived default is a flat 4 wherever the first pass needs 5 or more, not one less than the
+// first pass: only 5 to 4 was measured, and a derived N-1 would ship an untested core at every
+// other setting. ⚠ Do not "fix" it into face-cluster-core - 1.
+//
+// A retry core at or above the first pass is refused rather than clamped, because it can cluster
+// nothing the first pass did not. Anything else out of range falls back to the derived default,
+// which is the shape FaceClusterCore uses.
+func (c *Config) FaceClusterCoreRetry() int {
+	if c == nil {
+		return -1
+	}
+
+	core := c.FaceClusterCore()
+
+	derived := -1
+
+	if core >= face.ClusterCoreDefault {
+		derived = face.ClusterCoreRetryDefault
+	}
+
+	switch retry := c.options.FaceClusterCoreRetry; {
+	case retry < 0:
+		return -1
+	case retry >= core:
+		return -1
+	case retry < 2:
+		// Zero is what a configuration that never named the option holds, so it has to mean the
+		// derived default rather than a request to turn the second pass off.
+		return derived
+	default:
+		return retry
+	}
 }
 
 // FaceRecomputeStats reports whether a matching pass should derive a cluster's radius from the

@@ -114,8 +114,8 @@ func TestClientRegistry_ListOnlyUUID(t *testing.T) {
 	assert.Nil(t, listNodeByName(list, "webapp"), "non-node client must be excluded")
 }
 
-// Put should prefer UUID over ClientID when both are provided, avoiding cross-attachment.
-func TestClientRegistry_PutPrefersUUIDOverClientID(t *testing.T) {
+// Put must refuse identifiers that name different records, so neither is attached to the other.
+func TestClientRegistry_PutRejectsMismatchedIdentifiers(t *testing.T) {
 	c := newRegistryTestConfig(t, "cluster-registry-put-prefers-uuid")
 
 	r, _ := NewClientRegistryWithConfig(c)
@@ -125,15 +125,14 @@ func TestClientRegistry_PutPrefersUUIDOverClientID(t *testing.T) {
 	n2 := &Node{Node: cluster.Node{Name: "pp-b", Role: cluster.RoleService}}
 	assert.NoError(t, r.Put(n2))
 
-	// Now attempt to update by UUID of n1 while also passing n2.ClientID:
-	// implementation must use UUID and not attach to n2.
+	// The UUID resolves to n1 and the ClientID to n2, so neither may be written.
 	upd := &Node{Node: cluster.Node{UUID: n1.UUID, ClientID: n2.ClientID, Role: cluster.RoleService}}
-	assert.NoError(t, r.Put(upd))
+	assert.ErrorIs(t, r.Put(upd), ErrIdentifierMismatch)
 
 	got1, err := r.FindByNodeUUID(n1.UUID)
 	assert.NoError(t, err)
 	if assert.NotNil(t, got1) {
-		assert.Equal(t, cluster.RoleService, got1.Role)
+		assert.Equal(t, cluster.RoleInstance, got1.Role)
 		assert.Equal(t, n1.ClientID, got1.ClientID)
 	}
 	// n2 should remain unchanged

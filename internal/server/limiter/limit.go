@@ -7,12 +7,17 @@ import (
 	"golang.org/x/time/rate"
 )
 
+// SweepInterval bounds how often the addresses are scanned for entries to remove, so a limiter
+// holding many of them does not walk them all every time it sees a new one.
+const SweepInterval = time.Minute
+
 // Limit represents an IP-based rate limiter.
 type Limit struct {
 	limiters  map[string]*rate.Limiter
 	mu        *sync.RWMutex
 	rateLimit rate.Limit // rateLimit defines the maximum frequency of the requests.
 	burstSize int        // burstSize is the maximum number of requests that can be performed at once.
+	swept     time.Time  // swept is when the addresses were last scanned.
 }
 
 // NewLimit returns a new Limit with the specified request and burst rate limit per second.
@@ -34,23 +39,8 @@ func NewLimit(limit rate.Limit, burst int) *Limit {
 		mu:        &sync.RWMutex{},
 		rateLimit: limit,
 		burstSize: burst,
+		swept:     time.Now(),
 	}
-}
-
-// AddIP adds a new rate limiter for the specified IP address.
-func (i *Limit) AddIP(ip string) *rate.Limiter {
-	if ip == "" {
-		ip = DefaultIP
-	}
-
-	i.mu.Lock()
-	defer i.mu.Unlock()
-
-	limiter := rate.NewLimiter(i.rateLimit, i.burstSize)
-
-	i.limiters[ip] = limiter
-
-	return limiter
 }
 
 // IP returns the rate limiter for the specified IP address.
@@ -63,15 +53,53 @@ func (i *Limit) IP(ip string) *rate.Limiter {
 
 	i.mu.RLock()
 	limiter, exists := i.limiters[ip]
-
-	if !exists {
-		i.mu.RUnlock()
-		return i.AddIP(ip)
-	}
-
 	i.mu.RUnlock()
 
+	if exists {
+		return limiter
+	}
+
+	return i.add(ip, time.Now())
+}
+
+// add returns the rate limiter for an address, creating one if the address still has none. The
+// read lock is released before it is called, so another request may have created it meanwhile.
+func (i *Limit) add(ip string, now time.Time) *rate.Limiter {
+	i.mu.Lock()
+	defer i.mu.Unlock()
+
+	if limiter, exists := i.limiters[ip]; exists {
+		return limiter
+	}
+
+	i.sweep(now)
+
+	limiter := rate.NewLimiter(i.rateLimit, i.burstSize)
+	i.limiters[ip] = limiter
+
 	return limiter
+}
+
+// sweep removes the addresses whose bucket holds a full burst, which is what a new address is
+// given, so nothing it removes can be told apart from what it keeps. Asking the bucket rather
+// than timing it is what makes that exact: a bucket left in debt by a reservation, or one with
+// a rate that never refills, is not full and stays. The caller holds the write lock.
+func (i *Limit) sweep(now time.Time) {
+	if now.Sub(i.swept) < SweepInterval {
+		return
+	}
+
+	i.swept = now
+
+	// With no limit the buckets hold nothing worth keeping.
+	inert := i.rateLimit == rate.Inf
+	full := float64(i.burstSize)
+
+	for ip, limiter := range i.limiters {
+		if inert || limiter.TokensAt(now) >= full {
+			delete(i.limiters, ip)
+		}
+	}
 }
 
 // Allow checks if a new request is allowed at this time and increments the request counter by 1.

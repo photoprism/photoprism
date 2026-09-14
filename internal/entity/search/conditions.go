@@ -33,6 +33,11 @@ func SqlParam(s, pre, post string) string {
 	return pre + strings.Trim(clean.SqlClean(s), " |&*%") + post
 }
 
+// ClipSearchTerms bounds a search value so one request cannot size the statement.
+func ClipSearchTerms(s string) string {
+	return clean.SearchTerms(s)
+}
+
 // LikeAny builds OR-chained LIKE predicates for a text column. The input string
 // may contain AND / OR separators; keywords trigger stemming and plural
 // normalization while exact mode disables wildcard suffixes.
@@ -42,6 +47,8 @@ func LikeAny(col, s string, keywords, exact bool) (wheres []string, values [][]a
 	if s == "" {
 		return wheres, values
 	}
+
+	s = ClipSearchTerms(s)
 
 	s = txt.StripOr(clean.SearchQuery(s))
 
@@ -121,6 +128,8 @@ func LikeAll(col, s string, keywords, exact bool) (wheres []string, values [][]a
 		return wheres, values
 	}
 
+	s = ClipSearchTerms(s)
+
 	var words []string
 	var wildcardThreshold int
 
@@ -169,16 +178,24 @@ func LikeAllNames(cols Cols, s string) (wheres []string, values [][]any) {
 		return wheres, values
 	}
 
+	s = ClipSearchTerms(s)
+
 	for _, k := range txt.UnTrimmedSplitWithEscape(s, txt.AndRune, txt.EscapeRune) {
 		var orWheres []string
 		var orValues []any
+
+		seen := make(map[string]struct{})
 
 		for _, w := range txt.UnTrimmedSplitWithEscape(k, txt.OrRune, txt.EscapeRune) {
 			w = strings.TrimSpace(w)
 
 			if w == txt.EmptyString {
 				continue
+			} else if _, dup := seen[w]; dup {
+				continue
 			}
+
+			seen[w] = struct{}{}
 
 			for _, c := range cols {
 				if strings.Contains(w, txt.Space) {
@@ -207,6 +224,8 @@ func AnySlug(col, search, sep string) (where string, values []any) {
 	if search == "" {
 		return "", values
 	}
+
+	search = ClipSearchTerms(search)
 
 	if sep == "" {
 		sep = " "
@@ -247,6 +266,8 @@ func AnySlug(col, search, sep string) (where string, values []any) {
 // an OR-chained equality predicate for the values that remain. Named low/high
 // to avoid shadowing the predeclared min/max identifiers added in Go 1.21.
 func AnyInt(col, numbers, sep string, low, high int) (where string, values []any) {
+	numbers = ClipSearchTerms(numbers)
+
 	if numbers == "" {
 		return "", values
 	}
@@ -258,13 +279,18 @@ func AnyInt(col, numbers, sep string, low, high int) (where string, values []any
 	var matches []int
 	var wheres []string
 
+	seen := make(map[int]struct{})
+
 	for n := range strings.SplitSeq(numbers, sep) {
 		i := txt.Int(n)
 
 		if i == 0 || i < low || i > high {
 			continue
+		} else if _, dup := seen[i]; dup {
+			continue
 		}
 
+		seen[i] = struct{}{}
 		matches = append(matches, i)
 	}
 
@@ -288,6 +314,7 @@ func OrLike(col, s string) (where string, values []any) {
 		return "", []any{}
 	}
 
+	s = ClipSearchTerms(s)
 	s = strings.ReplaceAll(s, "*", "%")
 	s = strings.ReplaceAll(s, "%%", "%")
 
@@ -318,6 +345,7 @@ func OrLikeCols(cols []string, s string) (where string, values []any) {
 		return "", []any{}
 	}
 
+	s = ClipSearchTerms(s)
 	s = strings.ReplaceAll(s, "*", "%")
 	s = strings.ReplaceAll(s, "%%", "%")
 
@@ -355,8 +383,19 @@ func SplitOr(s string) (values []string) {
 	return txt.TrimmedSplitWithEscape(s, txt.OrRune, txt.EscapeRune)
 }
 
+// MaxSearchGroups bounds the number of AND-separated groups a search value may produce.
+// Each group adds a separate condition to the statement, and the query builder copies its
+// condition list on every addition, so this count sets the cost.
+const MaxSearchGroups = 32
+
 // SplitAnd splits a search string on AND separators (&) while honoring escape
 // sequences.
 func SplitAnd(s string) (values []string) {
-	return txt.TrimmedSplitWithEscape(s, txt.AndRune, txt.EscapeRune)
+	values = txt.TrimmedSplitWithEscape(ClipSearchTerms(s), txt.AndRune, txt.EscapeRune)
+
+	if len(values) > MaxSearchGroups {
+		values = values[:MaxSearchGroups]
+	}
+
+	return values
 }

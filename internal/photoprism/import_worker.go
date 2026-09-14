@@ -82,7 +82,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 					folder := entity.NewFolder(entity.RootOriginals, destDirRel, fs.ModTime(destDir))
 
 					if createErr := folder.Create(); createErr == nil {
-						log.Infof("import: created folder /%s", folder.Path)
+						log.Infof("import: created folder /%s", clean.Log(folder.Path))
 					}
 				}
 
@@ -93,49 +93,52 @@ func ImportWorker(jobs <-chan ImportJob) {
 					log.Infof("import: moving related %s file %s to %s", f.FileType(), clean.Log(relFileName), clean.Log(fs.RelName(destFileName, imp.originalsPath())))
 				}
 
+				logRelName := clean.Log(fs.RelName(destFileName, imp.originalsPath()))
+
 				if opt.Move {
 					if moveErr := f.Move(destFileName, false); moveErr != nil {
-						logRelName := clean.Log(fs.RelName(destMainFileName, imp.originalsPath()))
-						log.Error(moveErr)
-						log.Warnf("import: could not move file to %s, is another import running?", logRelName)
+						log.Error(clean.Error(moveErr))
+						log.Warnf("import: could not move file to %s", logRelName)
 					}
 				} else {
 					if copyErr := f.Copy(destFileName, false); copyErr != nil {
-						logRelName := clean.Log(fs.RelName(destMainFileName, imp.originalsPath()))
-						log.Error(copyErr)
-						log.Warnf("import: could not copy file to %s, is another import running?", logRelName)
+						log.Error(clean.Error(copyErr))
+						log.Warnf("import: could not copy file to %s", logRelName)
 					}
 				}
 			} else {
 				log.Infof("import: %s", err)
 
-				// Try to add duplicates to selected album(s) as well, see #991.
-				if fileHash := f.Hash(); fileHash == "" {
-					// Do nothing.
-				} else if file, fileErr := entity.FirstFileByHash(fileHash); fileErr != nil {
-					// Do nothing.
-				} else if albumErr := entity.AddPhotoToUserAlbums(file.PhotoUID, opt.Albums, imp.conf.Settings().Albums.Order.Album, opt.UID); albumErr != nil {
-					log.Warn(albumErr)
-				}
+				// What follows is for a file the library already holds. The destination name is not
+				// evidence of that, so it is established once here and every step below reads it.
+				stored := StoredCopyOf(f)
 
-				// Remember the original filename for duplicates so that indexing can still persist
-				// OriginalName even when the file was not copied due to an existing identical file.
-				if fileHash := f.Hash(); fileHash != "" {
-					if existing, findErr := entity.FirstFileByHash(fileHash); findErr == nil {
-						existingPath := FileName(existing.FileRoot, existing.FileName)
-						if existingPath != "" {
-							relatedOriginalNames[existingPath] = relFileName
-						}
+				// Try to add duplicates to selected album(s) as well, see #991.
+				if stored != nil {
+					if albumErr := entity.AddPhotoToUserAlbums(stored.PhotoUID, opt.Albums, imp.conf.Settings().Albums.Order.Album, opt.UID); albumErr != nil {
+						log.Warnf("import: %s (add duplicate to albums)", clean.Error(albumErr))
+					}
+
+					// Remember the original filename for duplicates so that indexing can still persist
+					// OriginalName even when the file was not copied due to an existing identical file.
+					if storedName := FileName(stored.FileRoot, stored.FileName); storedName != "" {
+						relatedOriginalNames[storedName] = relFileName
 					}
 				}
 
-				// Remove duplicates to save storage.
-				if opt.RemoveExistingFiles {
+				// Remove duplicates to save storage, and only where the library demonstrably holds
+				// the same content.
+				if opt.RemoveExistingFiles && stored != nil {
 					if removeErr := f.Remove(); removeErr != nil {
 						log.Errorf("import: failed to delete %s (%s)", clean.Log(f.BaseName()), removeErr.Error())
 					} else {
 						log.Infof("import: deleted %s (already exists)", clean.Log(relFileName))
 					}
+				} else if opt.RemoveExistingFiles {
+					// Saying nothing here reads as a failure to clean up, since the line above
+					// reports a match. The source is kept because the library does not demonstrably
+					// hold the same content, which a stale index is enough to cause.
+					log.Infof("import: kept %s, as no stored file holds its contents", clean.Log(relFileName))
 				}
 			}
 		}
@@ -167,7 +170,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 			// Ensure that a JPEG and the configured default thumbnail sizes exist.
 			if img, imgErr := f.PreviewImage(); imgErr != nil {
-				log.Error(imgErr)
+				log.Errorf("import: %s for %s (create preview image)", clean.Error(imgErr), clean.Log(f.RootRelName()))
 			} else if _, limitErr := img.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
 				log.Errorf("import: %s", limitErr)
 				continue
@@ -240,7 +243,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 					// Add photo to album if a list of albums was provided when importing.
 					if albumErr := entity.AddPhotoToUserAlbums(photoUID, opt.Albums, imp.conf.Settings().Albums.Order.Album, opt.UID); albumErr != nil {
-						log.Warn(albumErr)
+						log.Warnf("import: %s (add picture to albums)", clean.Error(albumErr))
 					}
 				}
 			} else {

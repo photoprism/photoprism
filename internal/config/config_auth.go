@@ -100,7 +100,7 @@ func (c *Config) AdminPassword() string {
 		// No password set, this is not an error.
 		return ""
 	} else if b, err := os.ReadFile(fileName); err != nil || len(b) == 0 { //nolint:gosec // path is derived from config directory
-		event.SystemWarn([]string{"config", "admin password", "read %s", "%s"}, clean.Log(fileName), clean.Error(err))
+		event.SystemWarn([]string{"config", "admin password", "read %s", "%s"}, clean.Log(fileName), clean.ErrorFull(err))
 		return ""
 	} else {
 		return clean.Password(string(b))
@@ -249,7 +249,7 @@ func (c *Config) TokenSigningKey() []byte {
 		// case all-zero — key, which is strictly worse than rejecting every token.
 		key := make([]byte, tokens.KeyLen)
 		if _, err := rand.Read(key); err != nil {
-			event.SystemError([]string{"config", "token signing key", "generate", "%s"}, clean.Error(err))
+			event.SystemError([]string{"config", "token signing key", "generate", "%s"}, clean.ErrorFull(err))
 			return
 		}
 
@@ -258,9 +258,9 @@ func (c *Config) TokenSigningKey() []byte {
 
 		// Best-effort persistence: a write failure must not clear the in-memory key.
 		if err := fs.MkdirAll(c.KeysPath()); err != nil {
-			event.SystemWarn([]string{"config", "token signing key", "create keys directory", "%s"}, clean.Error(err))
+			event.SystemWarn([]string{"config", "token signing key", "create keys directory", "%s"}, clean.ErrorFull(err))
 		} else if err := os.WriteFile(keyPath, key, fs.ModeSecretFile); err != nil {
-			event.SystemWarn([]string{"config", "token signing key", "store", "%s"}, clean.Error(err))
+			event.SystemWarn([]string{"config", "token signing key", "store", "%s"}, clean.ErrorFull(err))
 		}
 	})
 

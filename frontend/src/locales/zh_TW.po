@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-09-01 06:33+0000\n"
+"PO-Revision-Date: 2026-09-10 09:31+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Chinese (Traditional) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hant/>\n"
 "Language: zh_TW\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 2026.8.1\n"
+"X-Generator: Weblate 2026.9.1\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -2599,6 +2599,10 @@ msgstr "手動上傳"
 msgid "Maps"
 msgstr "地圖"
 
+#: src/component/map.vue:118 src/page/places.vue:430 src/page/places.vue:435
+msgid "Maps are unavailable. Try another browser or device."
+msgstr "無法顯示地圖。請嘗試使用其他瀏覽器或裝置。"
+
 #: src/common/util.js:898 src/model/marker.js:132
 msgid "Marker"
 msgstr "標記"
@@ -2836,7 +2840,7 @@ msgstr "找不到人"
 #: src/component/photo/view/cards.vue:9 src/component/photo/view/list.vue:9
 #: src/component/photo/view/mosaic.vue:9 src/page/album/photos.vue:582
 #: src/page/library/browse.vue:31 src/page/photos.vue:720
-#: src/page/places.vue:761 src/page/places.vue:882
+#: src/page/places.vue:758 src/page/places.vue:883
 msgid "No pictures found"
 msgstr "找不到圖片"
 
@@ -4759,10 +4763,6 @@ msgstr "WebDAV客戶端（例如Microsoft的Windows資源管理器或Apple的Fin
 msgid "WebDAV Upload"
 msgstr "WebDAV上傳"
 
-#: src/page/places.vue:441
-msgid "WebGL support is disabled in your browser"
-msgstr "您的瀏覽器中禁用了 WebGL 支持"
-
 #: src/page/settings/account.vue:335 src/page/settings/account.vue:391
 #: src/page/settings/account.vue:308
 msgid "Website"
@@ -4863,10 +4863,6 @@ msgstr "您的賬戶無法連接"
 msgid "Your account has been successfully connected."
 msgstr "您的帳號已成功連結。"
 
-#: src/page/places.vue:445
-msgid "Your browser does not support WebGL"
-msgstr "您的瀏覽器不支援WebGL"
-
 #: src/page/about/about.vue:48 src/page/about/about.vue:86
 #: src/component/confirm/sponsor.vue:18 src/page/about/about.vue:33
 #: src/page/about/about.vue:67 src/page/connect.vue:96
@@ -4935,6 +4931,12 @@ msgstr "標題"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "封存"
+
+#~ msgid "WebGL support is disabled in your browser"
+#~ msgstr "您的瀏覽器中禁用了 WebGL 支持"
+
+#~ msgid "Your browser does not support WebGL"
+#~ msgstr "您的瀏覽器不支援WebGL"
 
 #~ msgid "Create"
 #~ msgstr "已新增"

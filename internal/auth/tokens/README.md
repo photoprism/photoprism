@@ -73,6 +73,10 @@ token: the download token is the higher-value credential, since it authorizes or
 is cross-accepted for previews. Search handlers pass the same value into viewer results so the client can
 refresh it while browsing instead of polling.
 
+`ClientSession` is also the only place a **preview** token is assigned to a client config. The base
+builders (`ClientUser`, `ClientShare`) carry neither token, so a session without a preview token of its
+own receives neither, and public mode assigns `entity.TokenPublic` explicitly.
+
 #### Validation
 
 `internal/api/auth_tokens.go` resolves the request side:
@@ -98,8 +102,10 @@ Scoped consumers: `DownloadAlbum` (`internal/api/download_album.go`), `GetDownlo
 ### Preview Tokens
 
 Not signed yet. `Derive(key, PurposePreview)` folds the signing key into the stable hex token that
-`Config.PreviewToken()` publishes in preview URLs: HMAC-SHA256 keeps the key unrecoverable from the
-published value, and the purpose separates it from other kinds so one cannot be replayed as another.
+`Config.PreviewToken()` returns: HMAC-SHA256 keeps the key unrecoverable from the value, and the
+purpose separates it from other kinds so one cannot be replayed as another. It is registered under
+`entity.TokenConfig` and accepted on the preview endpoints, but no client config delivers it, so an
+operator who pins one with `--preview-token` builds those URLs themselves.
 `Derive` takes the key as a parameter rather than reading `Download.Key`, so deriving the preview token in
 `Propagate` has no ordering dependency on the signer configuration.
 
@@ -117,7 +123,9 @@ go test ./internal/config -run 'TokenSigningKey|ClientSessionConfig|PreviewToken
 Two gotchas when writing tests against token delivery:
 
 - `TestConfig_ClientSessionConfig`-style tests need `c.Propagate()`, or the signer stays unconfigured and
-  the coarse fallback is empty. Most session fixtures have no `PreviewToken` and therefore correctly
-  assert an **empty** download token.
+  the coarse fallback is empty. Most session fixtures carry a `PreviewToken` and therefore assert a
+  **non-empty**, signed download token; the user-less client and cluster fixtures carry none and assert
+  both tokens empty. Check the fixture before writing the assertion — `assert.NotEmpty` on a token
+  proves nothing about *which* token was delivered.
 - `config.NewMinimalTestConfig` runs in public mode, so `PreviewToken` / `DownloadToken` short-circuit to
   the public placeholder. Clear `Public` and `Demo` when exercising authenticated behavior.

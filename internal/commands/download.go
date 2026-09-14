@@ -152,7 +152,7 @@ func downloadAction(ctx *cli.Context) error {
 
 	defer func() {
 		if rmErr := os.RemoveAll(downloadPath); rmErr != nil {
-			log.Debugf("download: %s (remove temporary download path)", clean.Error(rmErr))
+			log.Debugf("download: %s (remove temporary download path)", clean.ErrorFull(rmErr))
 		}
 	}()
 
@@ -295,7 +295,7 @@ func downloadAction(ctx *cli.Context) error {
 					f, ferr := os.Create(downloadFilePath) //nolint:gosec // download target path chosen by user
 					if ferr != nil {
 						if closeErr := downloadResult.Close(); closeErr != nil {
-							log.Debugf("download: %s (close stream after create failure)", clean.Error(closeErr))
+							log.Debugf("download: %s (close stream after create failure)", clean.ErrorFull(closeErr))
 						}
 						log.Errorf("create file failed: %v", ferr)
 						failures++

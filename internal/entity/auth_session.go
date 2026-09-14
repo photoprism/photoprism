@@ -38,13 +38,13 @@ const (
 // callers must not persist a longer value, since a truncated JWT is unusable as a logout hint.
 const IdTokenMaxSize = 4096
 
-// ClampIdToken returns the OIDC ID token limited to IdTokenMaxSize bytes so it fits the id_token
-// column, and reports whether it had to be truncated. VARBINARY lengths are byte counts and a JWT is
-// ASCII, so a byte slice is safe; a truncated token no longer validates as an id_token_hint, so
-// callers should surface the truncated case.
-func ClampIdToken(idToken string) (clamped string, truncated bool) {
+// UsableIdToken returns the OIDC ID token to persist for RP-initiated logout: the token itself
+// when it fits the id_token column, and nothing when it does not, since a provider refuses a
+// truncated JWT as an id_token_hint and an absent hint ends the flow at the login page instead.
+// It reports whether the token was dropped, which callers surface.
+func UsableIdToken(idToken string) (usable string, dropped bool) {
 	if len(idToken) > IdTokenMaxSize {
-		return idToken[:IdTokenMaxSize], true
+		return "", true
 	}
 
 	return idToken, false
@@ -289,7 +289,7 @@ func (m *Session) Save() error {
 		return nil
 	} else if client := m.GetClient(); client.NoName() || client.Tokens() < 1 {
 		return nil
-	} else if deleted := DeleteClientSessions(client, authn.MethodSession, client.Tokens()); deleted > 0 {
+	} else if deleted := DeleteClientSessions(client, authn.MethodSession, client.Tokens(), m.ID); deleted > 0 {
 		event.AuditInfo([]string{m.IP(), "session %s", "deleted %s"}, m.RefID, english.Plural(deleted, "previously created client session", "previously created client sessions"))
 	}
 
@@ -639,6 +639,19 @@ func (m *Session) ValidateScope(resource acl.Resource, perms acl.Permissions) bo
 // InsufficientScope checks if the scope does not include access to specified resource.
 func (m *Session) InsufficientScope(resource acl.Resource, perms acl.Permissions) bool {
 	return !m.ValidateScope(resource, perms)
+}
+
+// ScopePermitsDownload checks if the scope includes download access to pictures or their files, the two
+// resources the download endpoints authorize against. Token delivery consults it; the endpoints apply
+// their own per-resource scope check.
+func (m *Session) ScopePermitsDownload() bool {
+	if m.NoScope() {
+		return true
+	}
+
+	perms := acl.Permissions{acl.ActionDownload}
+
+	return m.ValidateScope(acl.ResourcePhotos, perms) || m.ValidateScope(acl.ResourceFiles, perms)
 }
 
 // SetScope sets a custom authentication scope.

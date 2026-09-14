@@ -9,10 +9,46 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
+
+// findRequestLink returns the share link named in the request path when it belongs to the resource
+// that path addresses, and nil otherwise. The parent UID must be well formed.
+func findRequestLink(c *gin.Context) *entity.Link {
+	uid := clean.UID(c.Param("uid"))
+
+	if uid == "" {
+		return nil
+	}
+
+	link := entity.FindLink(clean.Token(c.Param("link")))
+
+	if link == nil || link.ShareUID != uid {
+		return nil
+	}
+
+	return link
+}
+
+// LinkTokenMinLength is the shortest custom share link token that may be set, as the token is the
+// only credential a share URL carries. Generated tokens are longer.
+const LinkTokenMinLength = 6
+
+// linkToken normalizes a request-supplied share link token and returns an empty string when the
+// value cannot be used as one, given its length and the characters it contains.
+func linkToken(s string) string {
+	s = strings.ToLower(strings.TrimSpace(s))
+
+	if len(s) < LinkTokenMinLength || clean.ShareToken(s) != s {
+		return ""
+	}
+
+	return s
+}
 
 // UpdateLink updates a share link and return it as JSON.
 //
@@ -40,15 +76,29 @@ func UpdateLink(c *gin.Context) {
 		return
 	}
 
-	link := entity.FindLink(clean.Token(c.Param("link")))
+	link := findRequestLink(c)
+
+	if link == nil {
+		event.AuditWarn([]string{ClientIP(c), "session %s", "share link %s", "update", status.NotFound}, s.RefID, clean.Log(c.Param("link")))
+		AbortEntityNotFound(c)
+		return
+	}
+
+	if frm.LinkToken != "" && frm.LinkToken != link.LinkToken {
+		token := linkToken(frm.LinkToken)
+
+		if token == "" {
+			event.AuditWarn([]string{ClientIP(c), "session %s", "share link %s", "invalid token", status.Denied}, s.RefID, clean.Log(link.LinkUID))
+			AbortBadRequest(c)
+			return
+		}
+
+		link.LinkToken = token
+	}
 
 	link.SetSlug(frm.ShareSlug)
 	link.MaxViews = frm.MaxViews
 	link.LinkExpires = frm.LinkExpires
-
-	if frm.LinkToken != "" {
-		link.LinkToken = strings.TrimSpace(strings.ToLower(frm.LinkToken))
-	}
 
 	if frm.Password != "" {
 		if err := link.SetPassword(frm.Password); err != nil {
@@ -61,6 +111,8 @@ func UpdateLink(c *gin.Context) {
 		Abort(c, http.StatusConflict, i18n.ErrSaveFailed)
 		return
 	}
+
+	event.AuditInfo([]string{ClientIP(c), "session %s", "share link %s", "updated", status.Succeeded}, s.RefID, clean.Log(link.LinkUID))
 
 	UpdateClientConfig()
 
@@ -80,12 +132,20 @@ func DeleteLink(c *gin.Context) {
 		return
 	}
 
-	link := entity.FindLink(clean.Token(c.Param("link")))
+	link := findRequestLink(c)
+
+	if link == nil {
+		event.AuditWarn([]string{ClientIP(c), "session %s", "share link %s", "delete", status.NotFound}, s.RefID, clean.Log(c.Param("link")))
+		AbortEntityNotFound(c)
+		return
+	}
 
 	if err := link.Delete(); err != nil {
 		Abort(c, http.StatusConflict, i18n.ErrDeleteFailed)
 		return
 	}
+
+	event.AuditInfo([]string{ClientIP(c), "session %s", "share link %s", "deleted", status.Succeeded}, s.RefID, clean.Log(link.LinkUID))
 
 	UpdateClientConfig()
 
@@ -143,6 +203,8 @@ func CreateLink(c *gin.Context) {
 		Abort(c, http.StatusConflict, i18n.ErrSaveFailed)
 		return
 	}
+
+	event.AuditInfo([]string{ClientIP(c), "session %s", "share link %s", "created", status.Succeeded}, s.RefID, clean.Log(link.LinkUID))
 
 	UpdateClientConfig()
 

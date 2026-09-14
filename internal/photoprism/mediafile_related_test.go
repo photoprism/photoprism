@@ -5,8 +5,10 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestMediaFile_RelatedFiles(t *testing.T) {
@@ -310,5 +312,72 @@ func TestMediaFile_RelatedSidecarFiles(t *testing.T) {
 
 		assert.Len(t, files, len(expected))
 		assert.Equal(t, expected, files)
+	})
+}
+
+// TestMediaFile_RelatedFiles_HighResRawPair verifies that the plain frame an Olympus or OM System
+// camera saves beside a High Res Shot composite does not take the composite's place as the main
+// file, in either discovery order, while a lone .ori is still indexable on its own.
+func TestMediaFile_RelatedFiles_HighResRawPair(t *testing.T) {
+	c := config.TestConfig()
+	source := filepath.Join(c.SamplesPath(), "canon_eos_6d.dng")
+
+	writePair := func(t *testing.T, dir string, names ...string) {
+		t.Helper()
+
+		for _, name := range names {
+			require.NoError(t, fs.Copy(source, filepath.Join(dir, name), false))
+		}
+	}
+
+	t.Run("CompositeWins", func(t *testing.T) {
+		dir := t.TempDir()
+		writePair(t, dir, "P1010101.ORF", "P1010101.ORI")
+
+		mediaFile, err := NewMediaFile(filepath.Join(dir, "P1010101.ORI"))
+		require.NoError(t, err)
+
+		related, err := mediaFile.RelatedFiles(false)
+		require.NoError(t, err)
+		require.NotNil(t, related.Main)
+		assert.Equal(t, "P1010101.ORF", filepath.Base(related.Main.FileName()))
+		assert.Len(t, related.Files, 2)
+	})
+	t.Run("CompositeWinsFromOrf", func(t *testing.T) {
+		dir := t.TempDir()
+		writePair(t, dir, "P1010101.ORF", "P1010101.ORI")
+
+		mediaFile, err := NewMediaFile(filepath.Join(dir, "P1010101.ORF"))
+		require.NoError(t, err)
+
+		related, err := mediaFile.RelatedFiles(false)
+		require.NoError(t, err)
+		require.NotNil(t, related.Main)
+		assert.Equal(t, "P1010101.ORF", filepath.Base(related.Main.FileName()))
+	})
+	t.Run("LoneSecondaryRaw", func(t *testing.T) {
+		dir := t.TempDir()
+		writePair(t, dir, "P1010102.ORI")
+
+		mediaFile, err := NewMediaFile(filepath.Join(dir, "P1010102.ORI"))
+		require.NoError(t, err)
+
+		related, err := mediaFile.RelatedFiles(false)
+		require.NoError(t, err)
+		require.NotNil(t, related.Main)
+		assert.Equal(t, "P1010102.ORI", filepath.Base(related.Main.FileName()))
+	})
+	t.Run("OtherRawPairKeepsLastWins", func(t *testing.T) {
+		// Only a secondary RAW is held back; two unrelated RAW files select on discovery order.
+		dir := t.TempDir()
+		writePair(t, dir, "IMG_0001.CR2", "IMG_0001.DNG")
+
+		mediaFile, err := NewMediaFile(filepath.Join(dir, "IMG_0001.CR2"))
+		require.NoError(t, err)
+
+		related, err := mediaFile.RelatedFiles(false)
+		require.NoError(t, err)
+		require.NotNil(t, related.Main)
+		assert.True(t, related.Main.IsRaw())
 	})
 }

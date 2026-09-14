@@ -84,7 +84,7 @@ func DeleteFile(router *gin.RouterGroup) {
 		}
 
 		// Report file deletion.
-		event.AuditWarn([]string{ClientIP(c), s.UserName, "delete", file.FileName})
+		event.AuditWarn([]string{ClientIP(c), clean.LogQuote(s.UserName), "delete", clean.Log(file.FileName)})
 
 		// Remove file from storage.
 		if err = mediaFile.Remove(); err != nil {

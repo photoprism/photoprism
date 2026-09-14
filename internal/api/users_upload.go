@@ -7,7 +7,6 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/dustin/go-humanize/english"
@@ -88,12 +87,12 @@ func UploadUserFiles(router *gin.RouterGroup) {
 
 		if err != nil {
 			if IsRequestBodyTooLarge(err) {
-				log.Errorf("upload: %s", err)
+				log.Errorf("upload: %s", clean.Error(err))
 				AbortRequestTooLarge(c, i18n.ErrFileTooLarge)
 				return
 			}
 
-			log.Errorf("upload: %s", err)
+			log.Errorf("upload: %s", clean.Error(err))
 			Abort(c, http.StatusBadRequest, i18n.ErrUploadFailed)
 			return
 		}
@@ -109,7 +108,7 @@ func UploadUserFiles(router *gin.RouterGroup) {
 		uploadDir, err := conf.UserUploadPath(s.UserUID, s.RefID+token)
 
 		if err != nil {
-			log.Errorf("upload: failed to create storage folder (%s)", err)
+			log.Errorf("upload: failed to create storage folder (%s)", clean.Error(err))
 			Abort(c, http.StatusBadRequest, i18n.ErrUploadFailed)
 			return
 		}
@@ -159,7 +158,7 @@ func UploadUserFiles(router *gin.RouterGroup) {
 				return
 			} else {
 				log.Debugf("upload: saved %s in user upload path", clean.Log(baseName))
-				event.Publish("upload.saved", event.Data{"uid": s.UserUID, "file": baseName})
+				event.Publish("upload.saved", event.Data{"uid": s.UserUID})
 			}
 
 			// Extract contents if the uploaded file is an archive.
@@ -175,11 +174,11 @@ func UploadUserFiles(router *gin.RouterGroup) {
 				logWarn("upload", os.Remove(destName))
 
 				if zipErr != nil {
-					log.Errorf("upload: failed to extract files from %s (%s)", clean.Log(baseName), zipErr)
+					log.Errorf("upload: failed to extract files from %s (%s)", clean.Log(baseName), clean.Error(zipErr))
 				}
 
 				if len(skippedFiles) > 0 {
-					log.Errorf("upload: could not extract %s from %s due to upload restrictions", strings.Join(skippedFiles, ", "), clean.Log(baseName))
+					log.Errorf("upload: could not extract %d entries from %s due to upload restrictions (%s)", len(skippedFiles), clean.Log(baseName), clean.LogNames(skippedFiles))
 				}
 
 				if len(zipFiles) == 0 {
@@ -203,7 +202,7 @@ func UploadUserFiles(router *gin.RouterGroup) {
 						logWarn("upload", os.Remove(destName))
 						log.Errorf("upload: rejected unzipped file %s because its extension is not allowed", clean.Log(baseName))
 					} else if totalSizeLimit, err = UploadCheckFile(destName, rejectRaw, totalSizeLimit); err != nil {
-						log.Errorf("upload: %s", err)
+						log.Errorf("upload: %s", clean.Error(err))
 					} else {
 						// Add to the list of uploaded files after having verified that
 						// the unzipped file has the correct extension and format.
@@ -211,7 +210,7 @@ func UploadUserFiles(router *gin.RouterGroup) {
 					}
 				}
 			} else if totalSizeLimit, err = UploadCheckFile(destName, rejectRaw, totalSizeLimit); err != nil {
-				log.Errorf("upload: %s", err)
+				log.Errorf("upload: %s", clean.Error(err))
 			} else {
 				// Add to the list of uploaded files after having verified that
 				// the uploaded file has the correct extension and format.
@@ -240,14 +239,12 @@ func UploadUserFiles(router *gin.RouterGroup) {
 			}
 		}
 
-		elapsed := int(time.Since(start).Seconds())
+		elapsed := time.Since(start)
 
 		// Log number of successfully uploaded files.
-		resp := i18n.NewResponse(http.StatusOK, i18n.MsgFilesUploadedIn, len(uploads), elapsed)
+		log.Infof("library: uploaded %s in %s", english.Plural(len(uploads), "file", "files"), elapsed)
 
-		log.Info(resp.LowerString())
-
-		c.JSON(http.StatusOK, resp)
+		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgFilesUploadedIn, len(uploads), int(elapsed.Seconds())))
 	})
 }
 
@@ -257,10 +254,10 @@ func UploadCheckFile(destName string, rejectRaw bool, totalSizeLimit int64) (rem
 
 	if mediaFile, mediaErr := photoprism.NewMediaFile(destName); mediaErr != nil {
 		logWarn("upload", os.Remove(destName))
-		return totalSizeLimit, fmt.Errorf("rejected %s, %s", clean.Error(err), clean.Log(baseName))
+		return totalSizeLimit, fmt.Errorf("rejected %s (%w)", clean.Log(baseName), mediaErr)
 	} else if typeErr := mediaFile.CheckType(); typeErr != nil {
 		logWarn("upload", os.Remove(destName))
-		return totalSizeLimit, fmt.Errorf("rejected %s %s", clean.Log(baseName), typeErr)
+		return totalSizeLimit, fmt.Errorf("rejected %s (%w)", clean.Log(baseName), typeErr)
 	} else if rejectRaw && mediaFile.IsRaw() {
 		logWarn("upload", os.Remove(destName))
 		return totalSizeLimit, fmt.Errorf("rejected %s because raw support is disabled", clean.Log(baseName))
@@ -329,7 +326,7 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 		uploadPath, err := conf.UserUploadPath(s.UserUID, s.RefID+token)
 
 		if err != nil {
-			log.Errorf("upload: failed to create storage folder (%s)", err)
+			log.Errorf("upload: failed to create storage folder (%s)", clean.Error(err))
 			Abort(c, http.StatusBadRequest, i18n.ErrUploadFailed)
 			return
 		}
@@ -364,31 +361,30 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 		// Delete empty import directory.
 		if fs.DirIsEmpty(uploadPath) {
 			if err = os.Remove(uploadPath); err != nil {
-				log.Errorf("upload: failed to delete empty folder %s: %s", clean.Log(uploadPath), err)
+				event.SystemError([]string{"upload", "delete empty folder %s", "%s"}, clean.Log(uploadPath), clean.ErrorFull(err))
 			} else {
-				log.Infof("upload: deleted empty folder %s", clean.Log(uploadPath))
+				event.SystemInfo([]string{"upload", "deleted empty folder %s"}, clean.Log(uploadPath))
 			}
 		}
 
 		// Update moments if files have been imported.
-		if n := imported.Processed(); n == 0 {
-			log.Infof("upload: found no new files to import from %s", clean.Log(uploadPath))
+		if imported.Processed() == 0 {
+			event.SystemInfo([]string{"upload", "found no new files in %s"}, clean.Log(uploadPath))
 		} else {
-			log.Infof("upload: imported %s", english.Plural(n, "file", "files"))
 			if moments := get.Moments(); moments == nil {
 				log.Warnf("upload: moments service not set - you may have found a bug")
 			} else if workerErr := moments.Start(); workerErr != nil {
-				log.Warnf("moments: %s", workerErr)
+				log.Warnf("moments: %s", clean.Error(workerErr))
 			}
 		}
 
-		elapsed := int(time.Since(start).Seconds())
+		elapsed := time.Since(start)
+
+		log.Infof("library: imported %s in %s", english.Plural(imported.Processed(), "file", "files"), elapsed)
 
 		// Show success message.
-		event.SuccessMsg(i18n.MsgUploadProcessed)
-		event.Publish("import.completed", event.Data{"uid": opt.UID, "path": uploadPath, "seconds": elapsed})
-		event.Publish("index.completed", event.Data{"uid": opt.UID, "path": uploadPath, "seconds": elapsed})
-		event.Publish("upload.completed", event.Data{"uid": opt.UID, "path": uploadPath, "seconds": elapsed})
+		event.PublishSuccessMsg(i18n.MsgUploadProcessed)
+		event.PublishCompleted([]string{"import.completed", "index.completed", "upload.completed"}, opt.UID, "", int(elapsed.Seconds()))
 
 		// Update album YAML backups and notify clients of the changes.
 		for _, album := range opt.Albums {
@@ -403,7 +399,7 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 
 		// Update album, label, and subject cover thumbs.
 		if coversErr := query.UpdateCovers(); coversErr != nil {
-			log.Warnf("upload: %s (update covers)", coversErr)
+			log.Warnf("upload: %s (update covers)", clean.Error(coversErr))
 		}
 
 		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgUploadProcessed))
@@ -414,17 +410,17 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 // An explicitly unconfigured detector admits the file as safe.
 func nsfwUploadStatus(fileName string) nsfw.Status {
 	if vision.Config == nil {
-		log.Debugf("nsfw: no detector configured, %s was not screened", clean.Log(fileName))
+		log.Debugf("nsfw: no detector configured, %s was not screened", clean.Log(filepath.Base(fileName)))
 		return nsfw.StatusSafe
 	}
 	configured := vision.Config.Model(vision.ModelTypeNsfw)
 	if configured == nil || configured.Disabled {
-		log.Debugf("nsfw: no detector configured, %s was not screened", clean.Log(fileName))
+		log.Debugf("nsfw: no detector configured, %s was not screened", clean.Log(filepath.Base(fileName)))
 		return nsfw.StatusSafe
 	}
 	previewName, cleanup, previewErr := nsfwUploadPreview(fileName)
 	if previewErr != nil {
-		log.Warnf("nsfw: cannot create preview for %s (%s)", clean.Log(fileName), clean.Error(previewErr))
+		log.Warnf("nsfw: cannot create preview for %s (%s)", clean.Log(filepath.Base(fileName)), clean.Error(previewErr))
 		return nsfw.StatusUnavailable
 	}
 	if previewName == "" {
@@ -435,7 +431,7 @@ func nsfwUploadStatus(fileName string) nsfw.Status {
 	results, err := vision.DetectNSFW([]string{previewName}, media.SrcLocal)
 
 	if errors.Is(err, nsfw.ErrNotConfigured) {
-		log.Debugf("nsfw: no detector configured, %s was not screened", clean.Log(fileName))
+		log.Debugf("nsfw: no detector configured, %s was not screened", clean.Log(filepath.Base(fileName)))
 		return nsfw.StatusSafe
 	}
 
@@ -455,9 +451,9 @@ func nsfwUploadStatus(fileName string) nsfw.Status {
 	}
 
 	if result.IsUnavailable() {
-		log.Warnf("nsfw: cannot screen %s (%s)", clean.Log(fileName), clean.Log(result.Reason))
+		log.Warnf("nsfw: cannot screen %s (%s)", clean.Log(filepath.Base(fileName)), clean.Log(result.Reason))
 	} else {
-		log.Infof("nsfw: %s might be offensive", clean.Log(fileName))
+		log.Infof("nsfw: %s might be offensive", clean.Log(filepath.Base(fileName)))
 	}
 
 	return result.Status
@@ -476,7 +472,7 @@ func nsfwUploadError(screeningStatus nsfw.Status) (int, i18n.Message) {
 func removeScreenedUploads(uploads []string) {
 	for _, filename := range uploads {
 		if err := os.Remove(filename); err != nil {
-			log.Errorf("nsfw: could not delete %s", clean.Log(filename))
+			log.Errorf("nsfw: could not delete %s", clean.Log(filepath.Base(filename)))
 		}
 	}
 }

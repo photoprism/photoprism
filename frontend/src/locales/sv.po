@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-09-01 06:33+0000\n"
+"PO-Revision-Date: 2026-09-10 09:31+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Swedish <https://translate.photoprism.app/projects/photoprism/frontend/sv/>\n"
 "Language: sv\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 2026.8.1\n"
+"X-Generator: Weblate 2026.9.1\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -2599,6 +2599,10 @@ msgstr "Manuell uppladdning"
 msgid "Maps"
 msgstr "Kartor"
 
+#: src/component/map.vue:118 src/page/places.vue:430 src/page/places.vue:435
+msgid "Maps are unavailable. Try another browser or device."
+msgstr "Kartorna är inte tillgängliga. Prova med en annan webbläsare eller enhet."
+
 #: src/common/util.js:898 src/model/marker.js:132
 msgid "Marker"
 msgstr "Markering"
@@ -2836,7 +2840,7 @@ msgstr "Inga personer hittades"
 #: src/component/photo/view/cards.vue:9 src/component/photo/view/list.vue:9
 #: src/component/photo/view/mosaic.vue:9 src/page/album/photos.vue:582
 #: src/page/library/browse.vue:31 src/page/photos.vue:720
-#: src/page/places.vue:761 src/page/places.vue:882
+#: src/page/places.vue:758 src/page/places.vue:883
 msgid "No pictures found"
 msgstr "Inga bilder hittades"
 
@@ -4759,10 +4763,6 @@ msgstr "WebDAV-klienter, som Microsoft Windows Explorer och Apple Finder, kan an
 msgid "WebDAV Upload"
 msgstr "WebDAV-uppladdning"
 
-#: src/page/places.vue:441
-msgid "WebGL support is disabled in your browser"
-msgstr "WebGL-stödet är inaktiverat i din webbläsare"
-
 #: src/page/settings/account.vue:335 src/page/settings/account.vue:391
 #: src/page/settings/account.vue:308
 msgid "Website"
@@ -4863,10 +4863,6 @@ msgstr "Ditt konto kunde inte anslutas"
 msgid "Your account has been successfully connected."
 msgstr "Ditt konto har kopplats upp."
 
-#: src/page/places.vue:445
-msgid "Your browser does not support WebGL"
-msgstr "Din webbläsare har inte stöd för WebGL"
-
 #: src/page/about/about.vue:48 src/page/about/about.vue:86
 #: src/component/confirm/sponsor.vue:18 src/page/about/about.vue:33
 #: src/page/about/about.vue:67 src/page/connect.vue:96
@@ -4935,6 +4931,12 @@ msgstr "Rubrik"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Arkiv"
+
+#~ msgid "WebGL support is disabled in your browser"
+#~ msgstr "WebGL-stödet är inaktiverat i din webbläsare"
+
+#~ msgid "Your browser does not support WebGL"
+#~ msgstr "Din webbläsare har inte stöd för WebGL"
 
 #~ msgid "Create"
 #~ msgstr "Skapad"

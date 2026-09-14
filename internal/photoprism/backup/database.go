@@ -344,7 +344,7 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 	go func() {
 		defer stdin.Close()
 		if _, err = io.Copy(stdin, f); err != nil {
-			log.Errorf(err.Error())
+			log.Errorf("restore: %s", err)
 		}
 	}()
 

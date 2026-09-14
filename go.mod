@@ -28,7 +28,7 @@ require (
 	github.com/mandykoh/prism v0.35.3
 	github.com/manifoldco/promptui v0.9.0
 	github.com/mattn/go-sqlite3 v1.14.48 // indirect
-	github.com/montanaflynn/stats v0.12.5
+	github.com/montanaflynn/stats v0.12.6
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/paulmach/go.geojson v1.5.0
 	github.com/pbnjay/memory v0.0.0-20210728143218-7b4eea64cf58
@@ -38,15 +38,15 @@ require (
 	github.com/tidwall/gjson v1.19.0
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	go4.org v0.0.0-20260112195520-a5071408f32f // indirect
-	golang.org/x/crypto v0.55.0
-	golang.org/x/net v0.58.0
+	golang.org/x/crypto v0.57.0
+	golang.org/x/net v0.59.0
 	gonum.org/v1/gonum v0.17.0
 	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (
 	github.com/go-xmlfmt/xmlfmt v1.1.3 // indirect
-	golang.org/x/image v0.45.0
+	golang.org/x/image v0.46.0
 )
 
 require github.com/olekukonko/tablewriter v1.1.4
@@ -61,20 +61,20 @@ require (
 require github.com/gabriel-vasile/mimetype v1.4.15
 
 require (
-	golang.org/x/sync v0.22.0
-	golang.org/x/time v0.15.0
+	golang.org/x/sync v0.23.0
+	golang.org/x/time v0.16.0
 )
 
 require github.com/go-ldap/ldap/v3 v3.4.14
 
 require (
 	github.com/prometheus/client_golang v1.24.1
-	github.com/prometheus/common v0.70.1
+	github.com/prometheus/common v0.71.0
 )
 
 require github.com/dustinkirkland/golang-petname v0.0.0-20260215035315-f0c533e9ce9b
 
-require golang.org/x/text v0.41.0
+require golang.org/x/text v0.42.0
 
 require (
 	github.com/IGLOU-EU/go-wildcard v1.0.3
@@ -82,21 +82,21 @@ require (
 	github.com/antchfx/xpath v1.3.8
 	github.com/davidbyttow/govips/v2 v2.18.0
 	github.com/go-co-op/gocron/v2 v2.22.0
-	github.com/go-sql-driver/mysql v1.10.0
+	github.com/go-sql-driver/mysql v1.10.1
 	github.com/golang-jwt/jwt/v5 v5.3.1
-	github.com/klauspost/compress v1.19.2
+	github.com/klauspost/compress v1.20.0
 	github.com/pquerna/otp v1.5.0
-	github.com/prometheus/client_model v0.6.2
+	github.com/prometheus/client_model v0.6.3
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/swaggo/files v1.0.1
 	github.com/swaggo/gin-swagger v1.6.1
 	github.com/ugjka/go-tz/v2 v2.2.8
 	github.com/urfave/cli/v2 v2.27.7
 	github.com/wamuir/graft v0.10.0
-	github.com/yalue/onnxruntime_go v1.35.0
-	github.com/zitadel/oidc/v3 v3.49.4
-	golang.org/x/mod v0.40.0
-	golang.org/x/sys v0.47.0
+	github.com/yalue/onnxruntime_go v1.36.0
+	github.com/zitadel/oidc/v3 v3.49.6
+	golang.org/x/mod v0.41.0
+	golang.org/x/sys v0.48.0
 	google.golang.org/protobuf v1.36.12
 )
 
@@ -174,12 +174,12 @@ require (
 	go.opentelemetry.io/otel/metric v1.45.0 // indirect
 	go.opentelemetry.io/otel/trace v1.45.0 // indirect
 	go.yaml.in/yaml/v3 v3.0.5 // indirect
-	golang.org/x/oauth2 v0.36.0
+	golang.org/x/oauth2 v0.37.0
 	golang.org/x/tools v0.49.0 // indirect
 )
 
 require (
-	github.com/abema/go-mp4 v1.7.1
+	github.com/abema/go-mp4 v1.7.3
 	github.com/bytedance/sonic v1.15.2 // indirect
 	github.com/go-errors/errors v1.5.1 // indirect
 	github.com/go-playground/validator/v10 v10.30.3 // indirect
@@ -194,6 +194,6 @@ require (
 	github.com/tidwall/pretty v1.2.1 // indirect
 )
 
-go 1.25.0
+go 1.26.0
 
 toolchain go1.26.6

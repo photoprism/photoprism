@@ -239,6 +239,11 @@
     overflow: hidden;
 }
 
+.p-map-canvas {
+    width: 100%;
+    height: 100%;
+}
+
 /* MapLibre renders the default marker as a <button>, which the browser
    styles with `cursor: pointer` by default — misleading when the marker
    has no click handler attached. Default to the inherited cursor and

@@ -35,23 +35,32 @@ var PhotosColsView = SelectString(Photo{}, SelectCols(GeoResult{}, []string{"*"}
 
 // Photos finds PhotoResults based on the search form without checking rights or permissions.
 func Photos(frm form.SearchPhotos) (results PhotoResults, count int, err error) {
-	return searchPhotos(frm, nil, PhotosColsAll)
+	return searchPhotos(frm, nil, PhotosColsAll, false)
+}
+
+// SharedPhotos finds PhotoResults for a context that renders to anyone holding a link, such as a
+// share preview or an album cover. A smart album's stored filter is parsed as usual, and the
+// public-only constraints are applied after it.
+func SharedPhotos(frm form.SearchPhotos) (results PhotoResults, count int, err error) {
+	return searchPhotos(frm, nil, PhotosColsAll, true)
 }
 
 // UserPhotos finds PhotoResults based on the search form and user session.
 func UserPhotos(frm form.SearchPhotos, sess *entity.Session) (results PhotoResults, count int, err error) {
-	return searchPhotos(frm, sess, PhotosColsAll)
+	return searchPhotos(frm, sess, PhotosColsAll, false)
 }
 
 // PhotoIds finds photo and file ids based on the search form provided and returns them as PhotoResults.
 func PhotoIds(frm form.SearchPhotos) (files PhotoResults, count int, err error) {
 	frm.Merged = false
 	frm.Primary = true
-	return searchPhotos(frm, nil, "photos.id, photos.photo_uid, files.file_uid")
+	return searchPhotos(frm, nil, "photos.id, photos.photo_uid, files.file_uid", false)
 }
 
-// searchPhotos finds photos based on the search form and user session then returns them as PhotoResults.
-func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string) (results PhotoResults, count int, err error) {
+// searchPhotos finds photos based on the search form and user session then returns them as
+// PhotoResults. When shared is set, the selection is bounded to public content after any stored
+// album filter has been parsed.
+func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string, shared bool) (results PhotoResults, count int, err error) {
 	start := time.Now()
 
 	// Parse query string and filter.
@@ -63,6 +72,18 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 	// Find photos near another?
 	if txt.NotEmpty(frm.Near) {
 		photo := Photo{}
+
+		// Require the reference to be visible to the session before its position is used. A reference
+		// the session may not see takes the same path as a missing one. This block must stay above
+		// the scope block: PhotoVisibleToSession re-enters UserPhotos through the shared smart album
+		// fallback, and the inner form carries no reference only because it is built before one is
+		// deserialized from a stored filter.
+		if visible, vErr := PhotoVisibleToSession(frm.Near, sess); vErr != nil {
+			log.Debugf("search: %s (check nearby)", vErr)
+			return PhotoResults{}, 0, ErrNotFound
+		} else if !visible {
+			return PhotoResults{}, 0, ErrNotFound
+		}
 
 		// Find a nearby picture using the UID or return an empty result otherwise.
 		if err = Db().First(&photo, "photo_uid = ?", frm.Near).Error; err != nil {
@@ -135,36 +156,45 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		frm.Scope = ""
 	}
 
-	// Check session permissions and apply as needed.
+	// Applied after the stored filter above, so what a link exposes is decided by the context
+	// the request arrived in. These are the same constraints the session block below applies to
+	// a role without delete or full file access, which every share-link visitor is.
+	if shared {
+		frm.Public = true
+		frm.Private = false
+		frm.Hidden = false
+		frm.Archived = false
+		frm.Review = false
+	}
+
+	// Check session permissions and apply as needed. Each check evaluates the session's effective
+	// role: for a client session, the intersection of the client and user roles.
 	if sess != nil {
 		user := sess.GetUser()
-		aclRole := user.AclRole()
 
 		// Exclude private content.
-		if acl.Rules.Deny(acl.ResourcePhotos, aclRole, acl.AccessPrivate) {
+		if sess.Denies(acl.ResourcePhotos, acl.AccessPrivate) {
 			frm.Public = true
 			frm.Private = false
 		}
 
 		// Exclude archived content.
-		if acl.Rules.Deny(acl.ResourcePhotos, aclRole, acl.ActionDelete) {
+		if sess.Denies(acl.ResourcePhotos, acl.ActionDelete) {
 			frm.Archived = false
 			frm.Review = false
 		}
 
 		// Exclude hidden files.
-		if acl.Rules.Deny(acl.ResourceFiles, aclRole, acl.AccessAll) {
+		if sess.Denies(acl.ResourceFiles, acl.AccessAll) {
 			frm.Hidden = false
 		}
 
 		// Visitors and other restricted users can only access shared content. A non-empty Scope
-		// bypasses the personal ScopePhotosForSession filter below, so it is gated here instead:
-		// a restricted session may scope only to an album it owns or has shared. "Restricted" means
-		// shared-only or unregistered; this assumes any view-capable role lacking library/all access
-		// also holds access_shared (else HasSharedAccessOnly would not flag it).
-		if frm.Scope != "" && album.CreatedBy != user.UserUID && !sess.HasShare(frm.Scope) && (sess.GetUser().HasSharedAccessOnly(acl.ResourcePhotos) || sess.NotRegistered()) ||
-			frm.Scope == "" && acl.Rules.Deny(acl.ResourcePhotos, aclRole, acl.ActionSearch) {
-			event.AuditErr([]string{sess.IP(), "session %s", "%s %s as %s", status.Denied}, sess.RefID, acl.ActionSearch.String(), string(acl.ResourcePhotos), aclRole)
+		// bypasses the personal ScopePhotosForSession filter below, so it is gated here instead: a
+		// session without whole-library reach may scope only to an album it owns or has shared.
+		if frm.Scope != "" && album.CreatedBy != user.UserUID && !sess.HasShare(frm.Scope) && (sess.DeniesAll(acl.ResourcePhotos, libraryAccess) || sess.NotRegistered()) ||
+			frm.Scope == "" && sess.Denies(acl.ResourcePhotos, acl.ActionSearch) {
+			event.AuditErr([]string{sess.IP(), "session %s", "%s %s as %s", status.Denied}, sess.RefID, acl.ActionSearch.String(), string(acl.ResourcePhotos), sessionAuditRole(sess))
 			return PhotoResults{}, 0, ErrForbidden
 		}
 

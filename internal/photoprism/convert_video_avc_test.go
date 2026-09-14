@@ -2,12 +2,14 @@ package photoprism
 
 import (
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
@@ -276,4 +278,187 @@ func TestConvert_TranscodeToAvcCmd(t *testing.T) {
 		}
 		assert.NotContains(t, strings.Join(r.Args, " "), "v360=")
 	})
+}
+
+// writeFFmpegFixture muxes a short test clip into dir and returns its path, so format coverage
+// needs no binary media in the repository. A build that cannot mux the container cannot demux it
+// either, so this fails rather than skips and keeps that result visible.
+func writeFFmpegFixture(t *testing.T, bin, dir, name, format, codec string) string {
+	t.Helper()
+
+	fileName := filepath.Join(dir, name)
+
+	args := []string{
+		"-loglevel", "error", "-y",
+		"-f", "lavfi", "-i", "testsrc=size=128x96:rate=25:duration=1",
+		"-c:v", codec, "-b:v", "1M", "-f", format, fileName,
+	}
+
+	// #nosec G204 -- arguments are test constants.
+	if out, err := exec.Command(bin, args...).CombinedOutput(); err != nil {
+		t.Fatalf("FFmpeg cannot write %s: %s", name, strings.TrimSpace(string(out)))
+	}
+
+	return fileName
+}
+
+// TestConvert_TranscodeToAvcCmd_CamcorderFormats verifies that the camcorder and DVD container
+// extensions are classified as video and transcoded by FFmpeg without a format-specific branch.
+// Each fixture carries the payload its real extension does, down to the container.
+func TestConvert_TranscodeToAvcCmd_CamcorderFormats(t *testing.T) {
+	conf := config.TestConfig()
+
+	if !conf.FFmpegEnabled() {
+		t.Skip("FFmpeg must be available to transcode these formats")
+	}
+
+	convert := NewConvert(conf)
+	bin := conf.FFmpegBin()
+
+	cases := []struct {
+		name     string
+		fileName string
+		format   string
+		codec    string
+		fileType fs.Type
+	}{
+		{"Vob", "VTS_01_1.vob", "vob", "mpeg2video", fs.VideoMpeg},
+		{"Mod", "MOV001.mod", "vob", "mpeg2video", fs.VideoMpeg},
+		{"Tod", "MOV002.tod", "mpegts", "mpeg2video", fs.VideoM2TS},
+		{"DivX", "movie.divx", "avi", "mpeg4", fs.VideoAVI},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			dir := t.TempDir()
+			srcName := writeFFmpegFixture(t, bin, dir, tc.fileName, tc.format, tc.codec)
+
+			mediaFile, err := NewMediaFile(srcName)
+			require.NoError(t, err)
+			require.Equal(t, tc.fileType, mediaFile.FileType())
+			require.True(t, mediaFile.IsVideo())
+			require.False(t, mediaFile.IsImage())
+
+			// Dimensions come from the ExifTool export the indexer writes before conversion.
+			if conf.ExifToolEnabled() {
+				require.NoError(t, mediaFile.CreateExifToolJson(convert))
+				require.NoError(t, mediaFile.ReadExifToolJson())
+				assert.Greater(t, mediaFile.Width(), 0)
+				assert.Greater(t, mediaFile.Height(), 0)
+			}
+
+			avcName := filepath.Join(dir, tc.fileName+".avc")
+			cmd, useMutex, err := convert.TranscodeToAvcCmd(mediaFile, avcName, encode.SoftwareAvc)
+			require.NoError(t, err)
+			require.NotNil(t, cmd)
+			assert.True(t, useMutex)
+			assert.Contains(t, cmd.Path, "ffmpeg")
+
+			out, err := cmd.CombinedOutput()
+			require.NoErrorf(t, err, "%s: %s", cmd.String(), strings.TrimSpace(string(out)))
+			require.True(t, fs.FileExistsNotEmpty(avcName))
+
+			avcFile, err := NewMediaFile(avcName)
+			require.NoError(t, err)
+			assert.True(t, avcFile.IsVideo())
+		})
+	}
+}
+
+// TestConvert_ToAvc_TransportStreamNotAvc verifies that the MP4 produced by the M2TS remux is
+// discarded when it holds no playable AVC, so only the transcoded sidecar remains.
+func TestConvert_ToAvc_TransportStreamNotAvc(t *testing.T) {
+	conf := config.TestConfig()
+
+	if !conf.FFmpegEnabled() {
+		t.Skip("FFmpeg must be available to transcode transport streams")
+	}
+
+	convert := NewConvert(conf)
+	dir := t.TempDir()
+	srcName := writeFFmpegFixture(t, conf.FFmpegBin(), dir, "MOV002.tod", "mpegts", "mpeg2video")
+
+	mediaFile, err := NewMediaFile(srcName)
+	require.NoError(t, err)
+	require.True(t, mediaFile.IsM2TS(), "a .tod must take the M2TS remux path")
+
+	avcFile, err := convert.ToAvc(mediaFile, encode.SoftwareAvc, false, false)
+	require.NoError(t, err)
+	require.NotNil(t, avcFile)
+	assert.Equal(t, fs.ExtAvc, fs.LowerExt(avcFile.FileName()))
+	assert.True(t, fs.FileExistsNotEmpty(avcFile.FileName()))
+
+	t.Cleanup(func() { _ = os.Remove(avcFile.FileName()) })
+
+	mp4Name, err := fs.FileName(srcName, conf.SidecarPath(), conf.OriginalsPath(), fs.ExtMp4)
+	require.NoError(t, err)
+	assert.NoFileExistsf(t, mp4Name, "the remuxed mp4 is never read again and must not be kept")
+}
+
+// TestConvert_ToAvc_TransportStreamAvc is the positive control for the removal above: a transport
+// stream that already carries AVC is remuxed into an MP4 the player can use, so that container is
+// returned and must survive rather than being transcoded again.
+func TestConvert_ToAvc_TransportStreamAvc(t *testing.T) {
+	conf := config.TestConfig()
+
+	if !conf.FFmpegEnabled() || !conf.ExifToolEnabled() {
+		t.Skip("FFmpeg and ExifTool must be available to remux transport streams")
+	}
+
+	convert := NewConvert(conf)
+	dir := t.TempDir()
+	srcName := writeFFmpegFixture(t, conf.FFmpegBin(), dir, "AVCHD001.m2ts", "mpegts", "libx264")
+
+	mediaFile, err := NewMediaFile(srcName)
+	require.NoError(t, err)
+	require.True(t, mediaFile.IsM2TS())
+
+	result, err := convert.ToAvc(mediaFile, encode.SoftwareAvc, false, false)
+	require.NoError(t, err)
+	require.NotNil(t, result)
+
+	mp4Name, err := fs.FileName(srcName, conf.SidecarPath(), conf.OriginalsPath(), fs.ExtMp4)
+	require.NoError(t, err)
+
+	t.Cleanup(func() { _ = os.Remove(result.FileName()) })
+
+	assert.Equal(t, mp4Name, result.FileName(), "the remuxed mp4 is playable and must be returned")
+	assert.FileExistsf(t, mp4Name, "a usable remux must not be removed")
+}
+
+// TestConvert_ToAvc_TransportStreamKeepsForeignMp4 verifies that a container already present under
+// the remux name is left alone. A remux does not overwrite an existing destination, so such a file
+// predates the call, may be an indexed original, and is not this call's to delete.
+func TestConvert_ToAvc_TransportStreamKeepsForeignMp4(t *testing.T) {
+	conf := config.TestConfig()
+
+	if !conf.FFmpegEnabled() {
+		t.Skip("FFmpeg must be available to transcode transport streams")
+	}
+
+	convert := NewConvert(conf)
+	dir := t.TempDir()
+	srcName := writeFFmpegFixture(t, conf.FFmpegBin(), dir, "MOV003.tod", "mpegts", "mpeg2video")
+
+	mp4Name, err := fs.FileName(srcName, conf.SidecarPath(), conf.OriginalsPath(), fs.ExtMp4)
+	require.NoError(t, err)
+	require.NoError(t, os.WriteFile(mp4Name, []byte("not this call's file"), fs.ModeFile))
+
+	t.Cleanup(func() { _ = os.Remove(mp4Name) })
+
+	mediaFile, err := NewMediaFile(srcName)
+	require.NoError(t, err)
+
+	avcFile, err := convert.ToAvc(mediaFile, encode.SoftwareAvc, false, false)
+	require.NoError(t, err)
+	require.NotNil(t, avcFile)
+
+	t.Cleanup(func() { _ = os.Remove(avcFile.FileName()) })
+
+	assert.FileExistsf(t, mp4Name, "a file the call did not create must not be removed")
+
+	// #nosec G304 -- the path is built by the test from its own temp directory.
+	kept, err := os.ReadFile(mp4Name)
+	require.NoError(t, err)
+	assert.Equal(t, "not this call's file", string(kept))
 }

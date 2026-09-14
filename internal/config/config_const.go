@@ -74,6 +74,18 @@ const RecommendedMem = 3 * GigaByte // 3,000,000,000 Bytes
 // DefaultResolutionLimit defines the default resolution limit.
 const DefaultResolutionLimit = 150 // 150 Megapixels
 
+// DefaultConvertTimeout defines the default budget for converting one still image, document,
+// or RAW file, in minutes. It is shared by the converters tried for that file.
+const DefaultConvertTimeout = 10
+
+// DefaultTranscodeTimeout defines the default budget for transcoding one video, in minutes.
+// Video length is not bounded by anything PhotoPrism configures, so there is no limit unless
+// an operator sets one.
+const DefaultTranscodeTimeout = -1
+
+// MaxConvertTimeout defines the largest accepted conversion or transcoding budget, in minutes.
+const MaxConvertTimeout = 1440
+
 // serialName defines the name of the unique storage serial.
 const serialName = "serial"
 

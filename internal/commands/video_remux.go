@@ -87,7 +87,7 @@ func videoRemuxAction(ctx *cli.Context) error {
 			}
 
 			if err = videoRemuxFile(conf, convert, plan, ctx.Bool(videoForceFlag.Name), true); err != nil {
-				log.Errorf("remux: %s", clean.Error(err))
+				log.Errorf("remux: %s", clean.ErrorFull(err))
 				failed++
 				continue
 			}
@@ -285,10 +285,10 @@ func videoRemuxFile(conf *config.Config, convert *photoprism.Convert, plan video
 
 	if convert != nil {
 		if img, imgErr := convert.ToImage(mediaFile, true); imgErr != nil {
-			log.Warnf("remux: %s", clean.Error(imgErr))
+			log.Warnf("remux: %s", clean.ErrorFull(imgErr))
 		} else if img != nil {
 			if thumbsErr := img.GenerateThumbnails(conf.ThumbCachePath(), true); thumbsErr != nil {
-				log.Warnf("remux: %s", clean.Error(thumbsErr))
+				log.Warnf("remux: %s", clean.ErrorFull(thumbsErr))
 			}
 		}
 	}

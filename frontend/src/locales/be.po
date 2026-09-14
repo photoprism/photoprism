@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-09-01 06:33+0000\n"
+"PO-Revision-Date: 2026-09-10 09:31+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: be\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 2026.8.1\n"
+"X-Generator: Weblate 2026.9.1\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -2596,6 +2596,10 @@ msgstr "Ручная запампоўка"
 msgid "Maps"
 msgstr "Карты"
 
+#: src/component/map.vue:118 src/page/places.vue:430 src/page/places.vue:435
+msgid "Maps are unavailable. Try another browser or device."
+msgstr "Карты недаступныя. Паспрабуйце іншы браўзер або прыладу."
+
 #: src/common/util.js:898 src/model/marker.js:132
 msgid "Marker"
 msgstr "Маркер"
@@ -2833,7 +2837,7 @@ msgstr "Людзей не знойдзена"
 #: src/component/photo/view/cards.vue:9 src/component/photo/view/list.vue:9
 #: src/component/photo/view/mosaic.vue:9 src/page/album/photos.vue:582
 #: src/page/library/browse.vue:31 src/page/photos.vue:720
-#: src/page/places.vue:761 src/page/places.vue:882
+#: src/page/places.vue:758 src/page/places.vue:883
 msgid "No pictures found"
 msgstr "Фота не знойдзена"
 
@@ -4756,10 +4760,6 @@ msgstr "Кліенты WebDAV, такія як Microsoft Windows Explorer або
 msgid "WebDAV Upload"
 msgstr "Загрузка WebDAV"
 
-#: src/page/places.vue:441
-msgid "WebGL support is disabled in your browser"
-msgstr "Падтрымка WebGL адключана ў вашым браўзеры"
-
 #: src/page/settings/account.vue:335 src/page/settings/account.vue:391
 #: src/page/settings/account.vue:308
 msgid "Website"
@@ -4860,10 +4860,6 @@ msgstr "Ваша ўліковую запіс не ўдалося падключ�
 msgid "Your account has been successfully connected."
 msgstr "Ваш уліковы запіс быў паспяхова падключаны."
 
-#: src/page/places.vue:445
-msgid "Your browser does not support WebGL"
-msgstr "Ваш браўзер не падтрымлівае WebGL"
-
 #: src/page/about/about.vue:48 src/page/about/about.vue:86
 #: src/component/confirm/sponsor.vue:18 src/page/about/about.vue:33
 #: src/page/about/about.vue:67 src/page/connect.vue:96
@@ -4932,6 +4928,12 @@ msgstr "Назва"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Архіў"
+
+#~ msgid "WebGL support is disabled in your browser"
+#~ msgstr "Падтрымка WebGL адключана ў вашым браўзеры"
+
+#~ msgid "Your browser does not support WebGL"
+#~ msgstr "Ваш браўзер не падтрымлівае WebGL"
 
 #~ msgid "Create"
 #~ msgstr "Створана"

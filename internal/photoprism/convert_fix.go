@@ -2,7 +2,6 @@ package photoprism
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"os/exec"
 	"path/filepath"
@@ -11,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/proc"
 )
 
 // FixJpeg tries to re-encode a broken JPEG and returns the cached image file.
@@ -99,12 +99,13 @@ func (w *Convert) FixJpeg(f *MediaFile, force bool) (*MediaFile, error) {
 	log.Trace(cmd.String())
 
 	// Run convert command.
-	if err = cmd.Run(); err != nil {
-		if stderr.String() != "" {
-			err = errors.New(stderr.String())
+	if err = proc.Run(cmd, w.conf.ConvertTimeout()); err != nil {
+		if s := stderr.String(); s != "" {
+			err = fmt.Errorf("%w: %s", err, s)
 		}
 
-		log.Tracef("convert: %s (%s)", err, filepath.Base(cmd.Path))
+		LogConvertError(err, cmd, clean.Log(filepath.Base(cacheName)))
+		RemoveConvertOutput(cacheName, cmd)
 	} else if fs.FileExistsNotEmpty(cacheName) {
 		log.Infof("convert: %s created in %s (%s)", clean.Log(filepath.Base(cacheName)), time.Since(start), filepath.Base(cmd.Path))
 	}

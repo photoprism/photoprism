@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-09-01 06:33+0000\n"
+"PO-Revision-Date: 2026-09-10 09:31+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: eu\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 2026.8.1\n"
+"X-Generator: Weblate 2026.9.1\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -2596,6 +2596,10 @@ msgstr "Eskuzko igoera"
 msgid "Maps"
 msgstr "Mapak"
 
+#: src/component/map.vue:118 src/page/places.vue:430 src/page/places.vue:435
+msgid "Maps are unavailable. Try another browser or device."
+msgstr "Mapak ez daude eskuragarri. Saiatu beste nabigatzaile edo gailu batekin."
+
 #: src/common/util.js:898 src/model/marker.js:132
 msgid "Marker"
 msgstr "Markagailua"
@@ -2833,7 +2837,7 @@ msgstr "Ez da jenderik aurkitu"
 #: src/component/photo/view/cards.vue:9 src/component/photo/view/list.vue:9
 #: src/component/photo/view/mosaic.vue:9 src/page/album/photos.vue:582
 #: src/page/library/browse.vue:31 src/page/photos.vue:720
-#: src/page/places.vue:761 src/page/places.vue:882
+#: src/page/places.vue:758 src/page/places.vue:883
 msgid "No pictures found"
 msgstr "Ez da argazkirik aurkitu"
 
@@ -4756,10 +4760,6 @@ msgstr "WebDAV bezeroak, Microsoft-en Windows Explorer edo Apple-ren Finder beza
 msgid "WebDAV Upload"
 msgstr "WebDAV igoera"
 
-#: src/page/places.vue:441
-msgid "WebGL support is disabled in your browser"
-msgstr "WebGL laguntza desgaituta dago zure arakatzailean"
-
 #: src/page/settings/account.vue:335 src/page/settings/account.vue:391
 #: src/page/settings/account.vue:308
 msgid "Website"
@@ -4860,10 +4860,6 @@ msgstr "Zure kontua ezin izan da konektatu"
 msgid "Your account has been successfully connected."
 msgstr "Zure kontua behar bezala konektatu da."
 
-#: src/page/places.vue:445
-msgid "Your browser does not support WebGL"
-msgstr "Zure arakatzaileak ez du WebGL onartzen"
-
 #: src/page/about/about.vue:48 src/page/about/about.vue:86
 #: src/component/confirm/sponsor.vue:18 src/page/about/about.vue:33
 #: src/page/about/about.vue:67 src/page/connect.vue:96
@@ -4932,6 +4928,12 @@ msgstr "Izenburua"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Artxiboa"
+
+#~ msgid "WebGL support is disabled in your browser"
+#~ msgstr "WebGL laguntza desgaituta dago zure arakatzailean"
+
+#~ msgid "Your browser does not support WebGL"
+#~ msgstr "Zure arakatzaileak ez du WebGL onartzen"
 
 #~ msgid "Create"
 #~ msgstr "Sortu"

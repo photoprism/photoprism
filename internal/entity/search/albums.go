@@ -47,7 +47,6 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 	// Check session permissions and apply as needed.
 	if sess != nil {
 		user := sess.GetUser()
-		aclRole := user.AclRole()
 
 		// Determine resource to check.
 		var aclResource acl.Resource
@@ -72,20 +71,21 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 			}
 		}
 
-		// Check user permissions.
-		if acl.Rules.DenyAll(aclResource, aclRole, acl.Permissions{acl.AccessAll, acl.AccessLibrary, acl.AccessShared, acl.AccessOwn}) {
+		// Check the session's effective permissions: for a client session, the intersection of the
+		// client and user roles.
+		if sess.DeniesAll(aclResource, acl.Permissions{acl.AccessAll, acl.AccessLibrary, acl.AccessShared, acl.AccessOwn}) {
 			return AlbumResults{}, ErrForbidden
 		}
 
 		// Limit results by UID, owner and path.
 		if sess.IsVisitor() || sess.NotRegistered() {
 			s = s.Where("albums.album_uid IN (?) OR albums.published_at > ?", sess.SharedUIDs(), entity.Now())
-		} else if acl.Rules.DenyAll(aclResource, aclRole, acl.Permissions{acl.AccessAll, acl.AccessLibrary}) {
+		} else if sess.DeniesAll(aclResource, acl.Permissions{acl.AccessAll, acl.AccessLibrary}) {
 			s = s.Where("albums.album_uid IN (?) OR albums.created_by = ? OR albums.published_at > ?", sess.SharedUIDs(), user.UserUID, entity.Now())
 		}
 
 		// Exclude private content?
-		if acl.Rules.Deny(acl.ResourcePhotos, aclRole, acl.AccessPrivate) || acl.Rules.Deny(aclResource, aclRole, acl.AccessPrivate) {
+		if sess.Denies(acl.ResourcePhotos, acl.AccessPrivate) || sess.Denies(aclResource, acl.AccessPrivate) {
 			frm.Public = true
 			frm.Private = false
 		}

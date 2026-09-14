@@ -2243,6 +2243,89 @@ func TestConfig_FaceClusterCore(t *testing.T) {
 	assert.Equal(t, 2, c.FaceClusterCore())
 }
 
+// TestConfig_FaceClusterCoreRetry covers the core of the second clustering pass, which runs over
+// the markers matching left unclustered.
+func TestConfig_FaceClusterCoreRetry(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	t.Cleanup(func() {
+		c.options.FaceClusterCore = 0
+		c.options.FaceClusterCoreRetry = 0
+	})
+
+	t.Run("UnsetDerivesAFlatFour", func(t *testing.T) {
+		// ⚠ Flat, not face-cluster-core - 1. Only 5 to 4 was measured, so a higher first pass
+		// still retries at 4 rather than at one less than itself.
+		c.options.FaceClusterCoreRetry = 0
+		c.options.FaceClusterCore = face.ClusterCoreDefault
+		assert.Equal(t, face.ClusterCoreRetryDefault, c.FaceClusterCoreRetry())
+
+		c.options.FaceClusterCore = 6
+		assert.Equal(t, face.ClusterCoreRetryDefault, c.FaceClusterCoreRetry())
+
+		c.options.FaceClusterCore = 20
+		assert.Equal(t, face.ClusterCoreRetryDefault, c.FaceClusterCoreRetry())
+	})
+	t.Run("OffBelowTheMeasuredCore", func(t *testing.T) {
+		// A first pass already at or below the retry core has nothing to hand it, so the default
+		// is no second pass rather than a core of 3.
+		c.options.FaceClusterCoreRetry = 0
+		c.options.FaceClusterCore = 4
+		assert.Equal(t, -1, c.FaceClusterCoreRetry())
+
+		c.options.FaceClusterCore = 2
+		assert.Equal(t, -1, c.FaceClusterCoreRetry())
+	})
+	t.Run("Disabled", func(t *testing.T) {
+		c.options.FaceClusterCore = face.ClusterCoreDefault
+		c.options.FaceClusterCoreRetry = -1
+		assert.Equal(t, -1, c.FaceClusterCoreRetry())
+
+		c.options.FaceClusterCoreRetry = -50
+		assert.Equal(t, -1, c.FaceClusterCoreRetry())
+	})
+	t.Run("ExplicitValueStands", func(t *testing.T) {
+		c.options.FaceClusterCore = 5
+		c.options.FaceClusterCoreRetry = 2
+		assert.Equal(t, 2, c.FaceClusterCoreRetry())
+
+		c.options.FaceClusterCoreRetry = 3
+		assert.Equal(t, 3, c.FaceClusterCoreRetry())
+	})
+	t.Run("AtOrAboveTheFirstPassIsRefused", func(t *testing.T) {
+		// Not clamped: a retry at or above the first pass can cluster nothing the first pass did
+		// not, so it is meaningless rather than merely odd.
+		c.options.FaceClusterCore = 5
+		c.options.FaceClusterCoreRetry = 5
+		assert.Equal(t, -1, c.FaceClusterCoreRetry())
+
+		c.options.FaceClusterCoreRetry = 9
+		assert.Equal(t, -1, c.FaceClusterCoreRetry())
+	})
+	t.Run("BelowTheMinimumFallsBackToTheDefault", func(t *testing.T) {
+		// One is out of range for a core, and out of range means the default here as it does for
+		// face-cluster-core itself.
+		c.options.FaceClusterCore = 5
+		c.options.FaceClusterCoreRetry = 1
+		assert.Equal(t, face.ClusterCoreRetryDefault, c.FaceClusterCoreRetry())
+	})
+	t.Run("NilConfig", func(t *testing.T) {
+		assert.Equal(t, -1, (*Config)(nil).FaceClusterCoreRetry())
+	})
+}
+
+// TestConfig_FaceClusterCoreRetryThroughTheFlagLayer pins that the derivation is reachable at all:
+// a flag Value would make the option non-zero on every start and the getter would never consult it.
+func TestConfig_FaceClusterCoreRetryThroughTheFlagLayer(t *testing.T) {
+	ctx := cliContextWithFlagDefaults(t)
+	c := &Config{cliCtx: ctx, options: NewOptions(ctx)}
+
+	require.Zero(t, c.options.FaceClusterCoreRetry, "an unset option must stay zero to mean derive it")
+	require.Equal(t, face.ClusterCoreDefault, c.options.FaceClusterCore)
+
+	assert.Equal(t, face.ClusterCoreRetryDefault, c.FaceClusterCoreRetry())
+}
+
 func TestConfig_FaceRecomputeStats(t *testing.T) {
 	c := NewConfig(CliTestContext())
 

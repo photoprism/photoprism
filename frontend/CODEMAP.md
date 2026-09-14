@@ -1,6 +1,6 @@
 PhotoPrism — Frontend CODEMAP
 
-**Last Updated:** August 18, 2026
+**Last Updated:** September 10, 2026
 
 Purpose
 - Help agents and contributors navigate the Vue 3 + Vuetify 3 app quickly and make safe changes.
@@ -18,6 +18,8 @@ Directory Map (src)
 - `src/app.js` — app bootstrap: creates Vue app, installs Vuetify + plugins, configures router, mounts to `#app`
 - `src/app/routes.js` — all route definitions (guards, titles, meta)
 - `src/app/session.js` — `$config` and `$session` singletons wired from server-provided `window.__CONFIG__` and storage
+- `src/common/map.js`, `src/common/maplibregl.js` — shared WebGL2 capability probe, concurrent lazy loading, MapLibre 6 worker URL, and language-label adapter; worker/shared module assets are emitted together by `webpack.config.js`.
+- `src/component/map.vue`, `src/page/places.vue` — mini-maps/location controls and Places; map-unavailable UI is confined to the map surface.
 - `src/common/*` — framework-agnostic helpers: `$api` (Axios), `$notify`, `$view`, `$event` (PubSub), i18n (`gettext`), util, fullscreen, map utils, websocket, `sphere.js` (lazy-loaded 360° viewer wrapper)
 - `src/component/*` — Vue components; `src/component/components.js` registers global components
 - `src/page/*` — route views (Albums, Photos, Places, Settings, Admin, Discover, Help, Login, etc.)
@@ -66,7 +68,7 @@ Auth, Session, and Config
 - Browser storage helper: `src/common/storage.js` — applies the `pp:<storageNamespace>:` prefix, supports legacy key migration, and exposes app-local wrappers for `localStorage` and `sessionStorage`
 - `$config`: `src/common/config.js` — reactive view of server config and user settings; sets theme, language, limits; exposes `deny()` for feature flags
 - Route guards live in `src/app.js` (router `beforeEach`/`afterEach`) and use `$session` + `$config`
-- `$view`: `src/common/view.js` — manages focus/scroll helpers; use `saveWindowScrollPos()` / `restoreWindowScrollPos()` when navigating so infinite-scroll pages land back where users left them; behaviour is covered by `tests/vitest/common/view.test.js`
+- `$view`: `src/common/view.js` — manages focus/scroll helpers; use `saveWindowScrollPos()` / `restoreWindowScrollPos()` when navigating so infinite-scroll pages land back where users left them; behavior is covered by `tests/vitest/common/view.test.js`
 - Login page: `src/page/auth/login.vue` — password + OIDC entrypoint; the `Stay signed in on this device` toggle maps to persistent namespaced `localStorage` when checked and ephemeral namespaced `sessionStorage` when unchecked, initializing from the current session storage mode
 
 Models (REST)

@@ -216,9 +216,8 @@ func whereFaceMigrationSamples(stmt *gorm.DB, model string) *gorm.DB {
 		Where("subj_uid <> ''").
 		Where("LENGTH(embeddings_json) > 0")
 
-	if sizeCond, sizeArgs := entity.ClusterSizeCond("", face.ClusterSizeThreshold); sizeArgs != nil {
-		stmt = stmt.Where(sizeCond, sizeArgs...)
-	}
+	sizeCond, sizeArgs := entity.ClusterSizeCond("", face.ClusterSizeThreshold)
+	stmt = stmt.Where(sizeCond, sizeArgs...)
 
 	stmt = whereClusterScore(stmt, face.ClusterScoreAuto)
 

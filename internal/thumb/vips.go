@@ -65,6 +65,11 @@ func Vips(imageName string, imageBuffer []byte, hash, thumbPath string, width, h
 	}
 	defer img.Close()
 
+	if err = vipsCheckPixels(img, logName); err != nil {
+		log.Debugf("vips: %s (check resolution)", err)
+		return "", nil, err
+	}
+
 	// Set resample options.
 	var method ResampleOption
 	var size vips.Size

@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2026-08-31
+Date generated: 2026-09-12
 
 ================================================================================
 
@@ -267,8 +267,8 @@ limitations under the License.
 --------------------------------------------------------------------------------
 
 Package: github.com/abema/go-mp4
-Version: v1.7.1
-License: MIT (https://github.com/abema/go-mp4/blob/v1.7.1/LICENSE)
+Version: v1.7.3
+License: MIT (https://github.com/abema/go-mp4/blob/v1.7.3/LICENSE)
 
 MIT License
 
@@ -1953,8 +1953,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/go-sql-driver/mysql
-Version: v1.10.0
-License: MPL-2.0 (https://github.com/go-sql-driver/mysql/blob/v1.10.0/LICENSE)
+Version: v1.10.1
+License: MPL-2.0 (https://github.com/go-sql-driver/mysql/blob/v1.10.1/LICENSE)
 
 Mozilla Public License Version 2.0
 ==================================
@@ -4060,8 +4060,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: github.com/klauspost/compress
-Version: v1.19.2
-License: Apache-2.0 (https://github.com/klauspost/compress/blob/v1.19.2/LICENSE)
+Version: v1.20.0
+License: Apache-2.0 (https://github.com/klauspost/compress/blob/v1.20.0/LICENSE)
 
 Copyright (c) 2012 The Go Authors. All rights reserved.
 Copyright (c) 2019 Klaus Post. All rights reserved.
@@ -4371,8 +4371,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 --------------------------------------------------------------------------------
 
 Package: github.com/klauspost/compress/internal/snapref
-Version: v1.19.2
-License: BSD-3-Clause (https://github.com/klauspost/compress/blob/v1.19.2/internal/snapref/LICENSE)
+Version: v1.20.0
+License: BSD-3-Clause (https://github.com/klauspost/compress/blob/v1.20.0/internal/snapref/LICENSE)
 
 Copyright (c) 2011 The Snappy-Go Authors. All rights reserved.
 
@@ -4405,8 +4405,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: github.com/klauspost/compress/zstd/internal/xxhash
-Version: v1.19.2
-License: MIT (https://github.com/klauspost/compress/blob/v1.19.2/zstd/internal/xxhash/LICENSE.txt)
+Version: v1.20.0
+License: MIT (https://github.com/klauspost/compress/blob/v1.20.0/zstd/internal/xxhash/LICENSE.txt)
 
 Copyright (c) 2016 Caleb Spare
 
@@ -5190,8 +5190,8 @@ the full license text.
 --------------------------------------------------------------------------------
 
 Package: github.com/montanaflynn/stats
-Version: v0.12.5
-License: MIT (https://github.com/montanaflynn/stats/blob/v0.12.5/LICENSE)
+Version: v0.12.6
+License: MIT (https://github.com/montanaflynn/stats/blob/v0.12.6/LICENSE)
 
 The MIT License (MIT)
 
@@ -5930,8 +5930,8 @@ License: Apache-2.0 (https://github.com/prometheus/client_golang/blob/v1.24.1/LI
 --------------------------------------------------------------------------------
 
 Package: github.com/prometheus/client_model/go
-Version: v0.6.2
-License: Apache-2.0 (https://github.com/prometheus/client_model/blob/v0.6.2/LICENSE)
+Version: v0.6.3
+License: Apache-2.0 (https://github.com/prometheus/client_model/blob/v0.6.3/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -6138,8 +6138,8 @@ License: Apache-2.0 (https://github.com/prometheus/client_model/blob/v0.6.2/LICE
 --------------------------------------------------------------------------------
 
 Package: github.com/prometheus/common
-Version: v0.70.1
-License: Apache-2.0 (https://github.com/prometheus/common/blob/v0.70.1/LICENSE)
+Version: v0.71.0
+License: Apache-2.0 (https://github.com/prometheus/common/blob/v0.71.0/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -7217,8 +7217,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/yalue/onnxruntime_go
-Version: v1.35.0
-License: MIT (https://github.com/yalue/onnxruntime_go/blob/v1.35.0/LICENSE)
+Version: v1.36.0
+License: MIT (https://github.com/yalue/onnxruntime_go/blob/v1.36.0/LICENSE)
 
 Copyright (c) 2023 Nathan Otterness
 
@@ -7275,8 +7275,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: github.com/zitadel/oidc/v3
-Version: v3.49.4
-License: Apache-2.0 (https://github.com/zitadel/oidc/blob/v3.49.4/LICENSE)
+Version: v3.49.6
+License: Apache-2.0 (https://github.com/zitadel/oidc/blob/v3.49.6/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -8853,8 +8853,8 @@ License: Apache-2.0 (https://github.com/go4org/go4/blob/a5071408f32f/LICENSE)
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/crypto
-Version: v0.55.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/crypto/+/v0.55.0:LICENSE)
+Version: v0.57.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/crypto/+/v0.57.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -8887,8 +8887,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/image
-Version: v0.45.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/image/+/v0.45.0:LICENSE)
+Version: v0.46.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/image/+/v0.46.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -8921,8 +8921,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/mod/semver
-Version: v0.40.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/mod/+/v0.40.0:LICENSE)
+Version: v0.41.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/mod/+/v0.41.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -8955,8 +8955,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/net
-Version: v0.58.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/net/+/v0.58.0:LICENSE)
+Version: v0.59.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/net/+/v0.59.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -8989,8 +8989,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/oauth2
-Version: v0.36.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/oauth2/+/v0.36.0:LICENSE)
+Version: v0.37.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/oauth2/+/v0.37.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -9022,9 +9022,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 --------------------------------------------------------------------------------
 
-Package: golang.org/x/sync/errgroup
-Version: v0.22.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/sync/+/v0.22.0:LICENSE)
+Package: golang.org/x/sync
+Version: v0.23.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/sync/+/v0.23.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -9057,8 +9057,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/sys
-Version: v0.47.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/sys/+/v0.47.0:LICENSE)
+Version: v0.48.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/sys/+/v0.48.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -9091,8 +9091,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/text
-Version: v0.41.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/text/+/v0.41.0:LICENSE)
+Version: v0.42.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/text/+/v0.42.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -9125,8 +9125,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/time/rate
-Version: v0.15.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/time/+/v0.15.0:LICENSE)
+Version: v0.16.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/time/+/v0.16.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
@@ -9480,7 +9480,6 @@ file-loader                                         MIT            Tobias Kopper
 file-saver                                          MIT            Eli Grey <me@eligrey.com>
 globals                                             MIT            Sindre Sorhus sindresorhus@gmail.com https://sindresorhus.com
 hls.js                                              Apache-2.0     n/a
-i                                                   MIT            Pavan Kumar Sunkara <pavan.sss1991@gmail.com> (pksunkara.github.com)
 jsdom                                               MIT            n/a
 luxon                                               MIT            Isaac Cambron
 maplibre-gl                                         BSD-3-Clause   n/a

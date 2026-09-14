@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-09-01 06:33+0000\n"
+"PO-Revision-Date: 2026-09-10 09:31+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Polish <https://translate.photoprism.app/projects/photoprism/frontend/pl/>\n"
 "Language: pl\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Weblate 2026.8.1\n"
+"X-Generator: Weblate 2026.9.1\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -2598,6 +2598,10 @@ msgstr "Ręczne wgrywanie"
 msgid "Maps"
 msgstr "Mapy"
 
+#: src/component/map.vue:118 src/page/places.vue:430 src/page/places.vue:435
+msgid "Maps are unavailable. Try another browser or device."
+msgstr "Mapy są niedostępne. Spróbuj użyć innej przeglądarki lub innego urządzenia."
+
 #: src/common/util.js:898 src/model/marker.js:132
 msgid "Marker"
 msgstr "Znacznik"
@@ -2835,7 +2839,7 @@ msgstr "Nie znaleziono żadnej osoby"
 #: src/component/photo/view/cards.vue:9 src/component/photo/view/list.vue:9
 #: src/component/photo/view/mosaic.vue:9 src/page/album/photos.vue:582
 #: src/page/library/browse.vue:31 src/page/photos.vue:720
-#: src/page/places.vue:761 src/page/places.vue:882
+#: src/page/places.vue:758 src/page/places.vue:883
 msgid "No pictures found"
 msgstr "Nie znaleziono żadnego zdjęcia"
 
@@ -4758,10 +4762,6 @@ msgstr "Klienci WebDAV, jak Microsoft Windows Explorer lub Apple Finder, mogą �
 msgid "WebDAV Upload"
 msgstr "Wyślij na WebDAV"
 
-#: src/page/places.vue:441
-msgid "WebGL support is disabled in your browser"
-msgstr "Obsługa WebGL jest wyłączona w twojej przeglądarce"
-
 #: src/page/settings/account.vue:335 src/page/settings/account.vue:391
 #: src/page/settings/account.vue:308
 msgid "Website"
@@ -4862,10 +4862,6 @@ msgstr "Twoje konto nie może być podłączone"
 msgid "Your account has been successfully connected."
 msgstr "Twoje konto zostało pomyślnie połączone."
 
-#: src/page/places.vue:445
-msgid "Your browser does not support WebGL"
-msgstr "Twoja przeglądarka nie obsługuje WebGL"
-
 #: src/page/about/about.vue:48 src/page/about/about.vue:86
 #: src/component/confirm/sponsor.vue:18 src/page/about/about.vue:33
 #: src/page/about/about.vue:67 src/page/connect.vue:96
@@ -4934,6 +4930,12 @@ msgstr "Tytuł"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Archiwum"
+
+#~ msgid "WebGL support is disabled in your browser"
+#~ msgstr "Obsługa WebGL jest wyłączona w twojej przeglądarce"
+
+#~ msgid "Your browser does not support WebGL"
+#~ msgstr "Twoja przeglądarka nie obsługuje WebGL"
 
 #~ msgid "Create"
 #~ msgstr "Data utworzenia pliku"

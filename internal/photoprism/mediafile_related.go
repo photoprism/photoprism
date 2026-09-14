@@ -109,7 +109,11 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 		case result.Main == nil && f.IsPreviewImage():
 			result.Main = f
 		case f.IsRaw():
-			result.Main = f
+			// A secondary RAW accompanies another RAW of the same name and never displaces it:
+			// an Olympus High Res Shot writes the composite .orf and one plain frame .ori.
+			if result.Main == nil || !result.Main.IsRaw() || !fs.IsSecondaryRaw(f.FileName()) {
+				result.Main = f
+			}
 		case f.IsVector():
 			result.Main = f
 		case f.IsDocument():

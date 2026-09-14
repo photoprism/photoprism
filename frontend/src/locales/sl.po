@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-09-01 06:33+0000\n"
+"PO-Revision-Date: 2026-09-10 09:31+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: sl\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
-"X-Generator: Weblate 2026.8.1\n"
+"X-Generator: Weblate 2026.9.1\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -2596,6 +2596,10 @@ msgstr "Ročno nalaganje"
 msgid "Maps"
 msgstr "Zemljevidi"
 
+#: src/component/map.vue:118 src/page/places.vue:430 src/page/places.vue:435
+msgid "Maps are unavailable. Try another browser or device."
+msgstr "Zemljevidi niso na voljo. Poskusite z drugim brskalnikom ali napravo."
+
 #: src/common/util.js:898 src/model/marker.js:132
 msgid "Marker"
 msgstr "Označevalnik"
@@ -2833,7 +2837,7 @@ msgstr "Ni bilo najdenih oseb"
 #: src/component/photo/view/cards.vue:9 src/component/photo/view/list.vue:9
 #: src/component/photo/view/mosaic.vue:9 src/page/album/photos.vue:582
 #: src/page/library/browse.vue:31 src/page/photos.vue:720
-#: src/page/places.vue:761 src/page/places.vue:882
+#: src/page/places.vue:758 src/page/places.vue:883
 msgid "No pictures found"
 msgstr "Ni bilo najdenih slik"
 
@@ -4756,10 +4760,6 @@ msgstr "Odjemalci WebDAV, kot sta Microsoftov Windows Explorer ali Applov Finder
 msgid "WebDAV Upload"
 msgstr "Nalaganje prek protokola WebDAV"
 
-#: src/page/places.vue:441
-msgid "WebGL support is disabled in your browser"
-msgstr "Podpora WebGL je v vašem brskalniku onemogočena"
-
 #: src/page/settings/account.vue:335 src/page/settings/account.vue:391
 #: src/page/settings/account.vue:308
 msgid "Website"
@@ -4860,10 +4860,6 @@ msgstr "Vašega računa ni bilo mogoče povezati"
 msgid "Your account has been successfully connected."
 msgstr "Vaš račun je bil uspešno povezan."
 
-#: src/page/places.vue:445
-msgid "Your browser does not support WebGL"
-msgstr "Vaš brskalnik ne podpira WebGL"
-
 #: src/page/about/about.vue:48 src/page/about/about.vue:86
 #: src/component/confirm/sponsor.vue:18 src/page/about/about.vue:33
 #: src/page/about/about.vue:67 src/page/connect.vue:96
@@ -4932,6 +4928,12 @@ msgstr "Naslov"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Arhiv"
+
+#~ msgid "WebGL support is disabled in your browser"
+#~ msgstr "Podpora WebGL je v vašem brskalniku onemogočena"
+
+#~ msgid "Your browser does not support WebGL"
+#~ msgstr "Vaš brskalnik ne podpira WebGL"
 
 #~ msgid "Create"
 #~ msgstr "Ustvari"

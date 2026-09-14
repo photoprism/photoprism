@@ -155,7 +155,9 @@ func applyEndpointEmbeddings(faces face.Faces, res *ApiResponse, configured face
 			break
 		}
 
-		values := res.Result.Embeddings[i]
+		// Scaled to unit length before it is judged, because the endpoint is not required to
+		// normalize, and every distance the result is measured against is stated for unit vectors.
+		values := res.Result.Embeddings[i].Normalize()
 
 		if !face.ValidEmbeddings(values, registered.Dims) {
 			log.Warnf("vision: rejected face embedding %d from the configured endpoint", i)

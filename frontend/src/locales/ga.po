@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-09-01 06:33+0000\n"
+"PO-Revision-Date: 2026-09-10 09:31+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: ga\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=5; plural=n==1 ? 0 : n==2 ? 1 : (n>2 && n<7) ? 2 :(n>6 && n<11) ? 3 : 4;\n"
-"X-Generator: Weblate 2026.8.1\n"
+"X-Generator: Weblate 2026.9.1\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -2596,6 +2596,10 @@ msgstr "Uaslódáil Láimhe"
 msgid "Maps"
 msgstr "Léarscáileanna"
 
+#: src/component/map.vue:118 src/page/places.vue:430 src/page/places.vue:435
+msgid "Maps are unavailable. Try another browser or device."
+msgstr "Níl léarscáileanna ar fáil. Bain triail as brabhsálaí nó gléas eile."
+
 #: src/common/util.js:898 src/model/marker.js:132
 msgid "Marker"
 msgstr "Marcóir"
@@ -2833,7 +2837,7 @@ msgstr "Níor aimsíodh daoine"
 #: src/component/photo/view/cards.vue:9 src/component/photo/view/list.vue:9
 #: src/component/photo/view/mosaic.vue:9 src/page/album/photos.vue:582
 #: src/page/library/browse.vue:31 src/page/photos.vue:720
-#: src/page/places.vue:761 src/page/places.vue:882
+#: src/page/places.vue:758 src/page/places.vue:883
 msgid "No pictures found"
 msgstr "Níor aimsíodh aon phictiúir"
 
@@ -4756,10 +4760,6 @@ msgstr "Is féidir le cliaint WebDAV, cosúil le Windows Explorer nó Aimsitheoi
 msgid "WebDAV Upload"
 msgstr "Uaslódáil WebDAV"
 
-#: src/page/places.vue:441
-msgid "WebGL support is disabled in your browser"
-msgstr "Tá tacaíocht WebGL díchumasaithe i do bhrabhsálaí"
-
 #: src/page/settings/account.vue:335 src/page/settings/account.vue:391
 #: src/page/settings/account.vue:308
 msgid "Website"
@@ -4860,10 +4860,6 @@ msgstr "Níorbh fhéidir do chuntas a nascadh"
 msgid "Your account has been successfully connected."
 msgstr "D'éirigh le do chuntas a nascadh."
 
-#: src/page/places.vue:445
-msgid "Your browser does not support WebGL"
-msgstr "Ní thacaíonn do bhrabhsálaí le WebGL"
-
 #: src/page/about/about.vue:48 src/page/about/about.vue:86
 #: src/component/confirm/sponsor.vue:18 src/page/about/about.vue:33
 #: src/page/about/about.vue:67 src/page/connect.vue:96
@@ -4932,6 +4928,12 @@ msgstr "Teideal"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Cartlann"
+
+#~ msgid "WebGL support is disabled in your browser"
+#~ msgstr "Tá tacaíocht WebGL díchumasaithe i do bhrabhsálaí"
+
+#~ msgid "Your browser does not support WebGL"
+#~ msgstr "Ní thacaíonn do bhrabhsálaí le WebGL"
 
 #~ msgid "Create"
 #~ msgstr "Cruthaithe"

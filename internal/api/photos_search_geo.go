@@ -7,7 +7,6 @@ import (
 	"github.com/gin-gonic/gin/binding"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
-	"github.com/photoprism/photoprism/internal/auth/tokens"
 	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
@@ -69,7 +68,7 @@ func SearchGeo(router *gin.RouterGroup) {
 		// Ignore private flag if feature is disabled.
 		if frm.Scope == "" &&
 			settings.Features.Review &&
-			acl.Rules.Deny(acl.ResourcePhotos, s.GetUserRole(), acl.ActionManage) {
+			s.Denies(acl.ResourcePhotos, acl.ActionManage) {
 			frm.Quality = 3
 		}
 
@@ -94,7 +93,7 @@ func SearchGeo(router *gin.RouterGroup) {
 		// Render JSON response.
 		switch clean.Token(c.Param("format")) {
 		case "view":
-			resp, err = photos.ViewerJSON(conf.ContentUri(), conf.ApiUri(), s.PreviewToken, tokens.DownloadToken(s.ID))
+			resp, err = photos.ViewerJSON(conf.ContentUri(), conf.ApiUri(), s.PreviewToken, SessionDownloadToken(s))
 		default:
 			resp, err = photos.GeoJSON()
 		}

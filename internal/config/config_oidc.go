@@ -8,7 +8,6 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
-	"unicode/utf8"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/event"
@@ -56,7 +55,7 @@ func (c *Config) OIDCUri() *url.URL {
 	if uri := c.options.OIDCUri; uri == "" {
 		return &url.URL{}
 	} else if result, err := url.Parse(uri); err != nil {
-		event.SystemWarn([]string{"oidc", "provider uri", "parse", "%s"}, clean.Error(err))
+		event.SystemWarn([]string{"oidc", "provider uri", "parse", "%s"}, clean.ErrorFull(err))
 		return &url.URL{}
 	} else if result.Scheme == "https" {
 		return result
@@ -80,7 +79,7 @@ func (c *Config) OIDCSecret() string {
 		// No secret set, this is not an error.
 		return ""
 	} else if b, err := os.ReadFile(fileName); err != nil || len(b) == 0 { //nolint:gosec // path derived from config directory
-		event.SystemWarn([]string{"oidc", "client secret", "read %s", "%s"}, clean.Log(fileName), clean.Error(err))
+		event.SystemWarn([]string{"oidc", "client secret", "read %s", "%s"}, clean.Log(fileName), clean.ErrorFull(err))
 		return ""
 	} else {
 		return clean.Password(string(b))
@@ -299,7 +298,7 @@ func (c *Config) OIDCReport() (rows [][]string, cols []string) {
 	rows = [][]string{
 		{"oidc-uri", c.OIDCUri().String()},
 		{"oidc-client", c.OIDCClient()},
-		{"oidc-secret", strings.Repeat("*", utf8.RuneCountInString(c.OIDCSecret()))},
+		{"oidc-secret", maskedSecret(c.OIDCSecret())},
 		{"oidc-scopes", c.OIDCScopes()},
 		{"oidc-prompt", c.OIDCPrompt()},
 		{"oidc-provider", c.OIDCProvider()},

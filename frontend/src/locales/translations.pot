@@ -3106,6 +3106,12 @@ msgstr ""
 msgid "Maps"
 msgstr ""
 
+#: src/component/map.vue:118
+#: src/page/places.vue:430
+#: src/page/places.vue:435
+msgid "Maps are unavailable. Try another browser or device."
+msgstr ""
+
 #: src/common/util.js:898
 #: src/model/marker.js:132
 msgid "Marker"
@@ -3388,8 +3394,8 @@ msgstr ""
 #: src/page/album/photos.vue:582
 #: src/page/library/browse.vue:31
 #: src/page/photos.vue:720
-#: src/page/places.vue:761
-#: src/page/places.vue:882
+#: src/page/places.vue:758
+#: src/page/places.vue:883
 msgid "No pictures found"
 msgstr ""
 
@@ -5695,10 +5701,6 @@ msgstr ""
 msgid "WebDAV Upload"
 msgstr ""
 
-#: src/page/places.vue:441
-msgid "WebGL support is disabled in your browser"
-msgstr ""
-
 #: src/page/settings/account.vue:335
 #: src/page/settings/account.vue:391
 #: src/page/settings/account.vue:335
@@ -5818,10 +5820,6 @@ msgstr ""
 #: src/page/connect.vue:63
 #: src/page/connect.vue:45
 msgid "Your account has been successfully connected."
-msgstr ""
-
-#: src/page/places.vue:445
-msgid "Your browser does not support WebGL"
 msgstr ""
 
 #: src/page/about/about.vue:48
