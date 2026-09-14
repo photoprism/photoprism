@@ -60,6 +60,8 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 			return
 		}
 
+		generation := entity.CurrentAuthCacheGeneration()
+
 		// Add a vary response header for authentication, if any.
 		if c.GetHeader(header.XAuthToken) != "" {
 			c.Writer.Header().Add(header.Vary, header.XAuthToken)
@@ -148,7 +150,7 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 			event.LoginInfo(clientIp, "webdav", user.Username(), api.UserAgent(c))
 
 			// Cache authentication to improve performance.
-			entity.CacheWebDAVUser(sid, user)
+			entity.CacheWebDAVUser(sid, user, generation)
 
 			// Add user to request context and return to signal successful authentication.
 			c.Set(gin.AuthUserKey, user)
@@ -218,7 +220,7 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 			event.LoginInfo(clientIp, "webdav", username, api.UserAgent(c))
 
 			// Cache authentication to improve performance.
-			entity.CacheWebDAVUser(cacheKey, user)
+			entity.CacheWebDAVUser(cacheKey, user, generation)
 
 			// Add user to request context and return to signal successful authentication.
 			c.Set(gin.AuthUserKey, user)

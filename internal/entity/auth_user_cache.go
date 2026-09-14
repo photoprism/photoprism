@@ -19,9 +19,12 @@ func CachedWebDAVUser(key string) *User {
 	return nil
 }
 
-// CacheWebDAVUser caches a successful WebDAV credential check for one minute.
-func CacheWebDAVUser(key string, user *User) {
-	if key != "" && user != nil {
+// CacheWebDAVUser caches a successful credential check if its starting generation is current.
+func CacheWebDAVUser(key string, user *User, generation AuthCacheGeneration) {
+	authCacheState.Lock()
+	defer authCacheState.Unlock()
+
+	if key != "" && user != nil && generation.valid(user.UserUID) {
 		webDAVUserCache.SetDefault(key, user)
 	}
 }

@@ -10,7 +10,7 @@
 
 `User.Save` evicts that account's cached sessions and WebDAV authentication entries after a successful database save. `FlushUserSessionCache` matches the user UID and leaves other users' entries and persisted credentials intact. `FlushSessionCache` clears both caches when a global refresh is required.
 
-WebDAV uses `CachedWebDAVUser` and `CacheWebDAVUser` for its one-minute credential cache. Account changes are therefore handled at the same persistence boundary as the general session cache. This is process-local invalidation; writes through another process or directly to the database do not signal a running server.
+WebDAV uses `CachedWebDAVUser` and `CacheWebDAVUser` for its one-minute credential cache. Authentication captures `CurrentAuthCacheGeneration` before loading the user or session, and insertion checks that generation under the same short mutex used by invalidation. A superseded result is not cached, but the request is not canceled. Per-user invalidation leaves other accounts' pending cache writes valid; a global flush invalidates every older snapshot and clears the per-user revision table. Account changes are therefore handled at the same persistence boundary as the general session cache. Sessions created or loaded through the entity helpers retain their generation so an in-flight object cannot repopulate the general cache after eviction. A raw untracked record may be cached only before its user is resolved. This is process-local invalidation; writes through another process or directly to the database do not signal a running server.
 
 ### Timestamps
 

@@ -23,6 +23,7 @@ func FindSessionByAuthToken(token string) (*Session, error) {
 
 // FindSession finds a session based on the id string or returns nil if it does not exist.
 func FindSession(id string) (*Session, error) {
+	generation := CurrentAuthCacheGeneration()
 	found := &Session{}
 
 	if !rnd.IsSessionID(id) {
@@ -45,6 +46,7 @@ func FindSession(id string) (*Session, error) {
 	} else if !rnd.IsSessionID(found.ID) {
 		return found, fmt.Errorf("invalid session id %s", clean.LogQuote(found.ID))
 	} else if !found.Expired() {
+		found.cacheGeneration = &generation
 		// Set session activity timestamp and update the last_active column in the sessions table.
 		found.UpdateLastActive(true)
 		CacheSession(found, SessionCacheDuration)
@@ -58,6 +60,12 @@ func FindSession(id string) (*Session, error) {
 
 // FlushSessionCache resets session and WebDAV authentication caches.
 func FlushSessionCache() {
+	authCacheState.Lock()
+	defer authCacheState.Unlock()
+
+	authCacheState.version++
+	authCacheState.flushed = authCacheState.version
+	clear(authCacheState.users)
 	sessionCache.Flush()
 	webDAVUserCache.Flush()
 }
@@ -68,6 +76,12 @@ func FlushUserSessionCache(userUID string) {
 	if userUID == "" {
 		return
 	}
+
+	authCacheState.Lock()
+	defer authCacheState.Unlock()
+
+	authCacheState.version++
+	authCacheState.users[userUID] = authCacheState.version
 
 	for key, item := range sessionCache.Items() {
 		if sess, ok := item.Object.(*Session); ok && sess != nil && sess.UserUID == userUID {
@@ -87,6 +101,20 @@ func CacheSession(s *Session, d time.Duration) {
 	if s == nil {
 		return
 	} else if !rnd.IsSessionID(s.ID) {
+		return
+	}
+
+	authCacheState.Lock()
+	defer authCacheState.Unlock()
+
+	if s.cacheGeneration == nil {
+		// Unbound database records may be cached before their user is resolved.
+		if s.user != nil {
+			return
+		}
+		s.cacheGeneration = &AuthCacheGeneration{version: authCacheState.version}
+	}
+	if !s.cacheGeneration.valid(s.UserUID) {
 		return
 	}
 

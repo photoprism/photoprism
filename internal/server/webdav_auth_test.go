@@ -204,7 +204,7 @@ func TestWebDAVAuthSession(t *testing.T) {
 		assert.Equal(t, "", c.Writer.Header().Get("WWW-Authenticate"))
 
 		// Cache authentication.
-		entity.CacheWebDAVUser(sid, user)
+		entity.CacheWebDAVUser(sid, user, entity.CurrentAuthCacheGeneration())
 
 		// Get cached user.
 		sess, user, sid, cached = WebDAVAuthSession(c, s.AuthToken())

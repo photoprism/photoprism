@@ -86,6 +86,8 @@ type Session struct {
 	CreatedAt    time.Time       `json:"CreatedAt" yaml:"CreatedAt"`
 	UpdatedAt    time.Time       `json:"UpdatedAt" yaml:"UpdatedAt"`
 	Status       int             `gorm:"-" json:"Status" yaml:"-"`
+
+	cacheGeneration *AuthCacheGeneration `gorm:"-" json:"-" yaml:"-"`
 }
 
 // TableName returns the entity table name.
@@ -95,7 +97,8 @@ func (Session) TableName() string {
 
 // NewSession creates a new session with the expiration and idle time specified in seconds (-1 for infinite).
 func NewSession(expiresIn, timeout int64) (sess *Session) {
-	sess = &Session{}
+	generation := CurrentAuthCacheGeneration()
+	sess = &Session{cacheGeneration: &generation}
 
 	sess.Regenerate()
 
@@ -173,7 +176,8 @@ func FindSessionByRefID(refId string) *Session {
 		return nil
 	}
 
-	m := &Session{}
+	generation := CurrentAuthCacheGeneration()
+	m := &Session{cacheGeneration: &generation}
 
 	// Build query.
 	if err := UnscopedDb().Where("ref_id = ?", refId).First(m).Error; err != nil {

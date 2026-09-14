@@ -56,7 +56,7 @@
   - `IdleTimeout` is configured via `PHOTOPRISM_HTTP_IDLE_TIMEOUT` / `--http-idle-timeout` (default `180s`).
   - Global `ReadTimeout` / `WriteTimeout` remain disabled to avoid breaking large transfers.
 - WebDAV response behavior:
-  - Successful Basic and token authentication uses the entity-owned one-minute user cache. Account saves invalidate that user's WebDAV and general session entries together; other users stay cached. Path edits retain the normal privilege-change and session-revocation policy.
+  - Successful Basic and token authentication uses the entity-owned one-minute user cache. Account saves invalidate that user's WebDAV and general session entries together; other users stay cached. Path edits retain the normal privilege-change and session-revocation policy. Authentication snapshots the cache generation before lookup and skips stale cache writes after an intervening invalidation, without interrupting in-flight requests.
   - Edition COPY/MOVE handlers validate destinations with `WebDAVDestinationStatus` before serving the operation. Collection prefixes and configured account paths apply to URL-decoded, canonical destinations; source-path and role checks remain in the edition handlers.
   - Built-in security middleware skips browser-document headers (`Content-Security-Policy`, `X-Frame-Options`) on `/originals` and `/import` paths.
   - PROPFIND `207 Multi-Status` responses normalize XML media type to `application/xml; charset=utf-8`.
