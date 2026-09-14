@@ -389,7 +389,11 @@ func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 			// the name is free and the file can be restored to it, or an entry holds the name without
 			// the file being there, which is neither and takes the search below.
 			if fs.FileExists(existingFilename) {
-				return existingFilename, fmt.Errorf("%s is identical to %s (sha1 %s)", clean.Log(filepath.Base(mediaFile.FileName())), clean.Log(f.FileName), mediaFile.Hash())
+				// The index records this hash under that name, which is not the same as the file
+				// still holding it, so the message says what was matched rather than claiming the
+				// two files are identical. StoredCopyOf is what establishes that, for the caller
+				// that removes its source.
+				return existingFilename, fmt.Errorf("%s is already indexed as %s (sha1 %s)", clean.Log(filepath.Base(mediaFile.FileName())), clean.Log(f.FileName), mediaFile.Hash())
 			} else if !fs.IsSymlink(existingFilename) {
 				return existingFilename, nil
 			}

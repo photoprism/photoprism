@@ -134,6 +134,11 @@ func ImportWorker(jobs <-chan ImportJob) {
 					} else {
 						log.Infof("import: deleted %s (already exists)", clean.Log(relFileName))
 					}
+				} else if opt.RemoveExistingFiles {
+					// Saying nothing here reads as a failure to clean up, since the line above
+					// reports a match. The source is kept because the library does not demonstrably
+					// hold the same content, which a stale index is enough to cause.
+					log.Infof("import: kept %s, as no stored file holds its contents", clean.Log(relFileName))
 				}
 			}
 		}
