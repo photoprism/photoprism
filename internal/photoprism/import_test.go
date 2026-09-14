@@ -24,6 +24,78 @@ func TestNewImport(t *testing.T) {
 	assert.IsType(t, &Import{}, imp)
 }
 
+func TestStoredCopyOf(t *testing.T) {
+	cfg := config.TestConfig()
+	require.NoError(t, cfg.InitializeTestData())
+
+	mediaFile, err := NewMediaFile(cfg.ImportPath() + "/raw/IMG_2567.CR2")
+	require.NoError(t, err)
+	require.NotEmpty(t, mediaFile.Hash())
+
+	t.Run("Nil", func(t *testing.T) {
+		assert.Nil(t, StoredCopyOf(nil))
+	})
+	t.Run("NoHash", func(t *testing.T) {
+		dir := t.TempDir()
+		name := filepath.Join(dir, "gone.jpg")
+		require.NoError(t, os.WriteFile(name, []byte("x"), fs.ModeFile))
+
+		unreadable, newErr := NewMediaFile(name)
+		require.NoError(t, newErr)
+		require.NoError(t, os.Remove(name))
+		require.Empty(t, unreadable.Hash())
+
+		assert.Nil(t, StoredCopyOf(unreadable))
+	})
+	t.Run("NotIndexed", func(t *testing.T) {
+		assert.Nil(t, StoredCopyOf(mediaFile), "no row records this content")
+	})
+	t.Run("IndexedButNotOnDisk", func(t *testing.T) {
+		// A row on its own is not the content. Answering otherwise lets a caller remove the copy it
+		// is holding.
+		photo := entity.PhotoFixtures.Get("Photo01")
+		file := &entity.File{
+			PhotoID:  photo.ID,
+			PhotoUID: photo.PhotoUID,
+			FileRoot: entity.RootOriginals,
+			FileName: "zz-stored/absent.cr2",
+			FileHash: mediaFile.Hash(),
+		}
+		require.NoError(t, file.Save())
+
+		t.Cleanup(func() { _ = entity.UnscopedDb().Delete(file).Error })
+
+		assert.Nil(t, StoredCopyOf(mediaFile))
+	})
+	t.Run("IndexedAndOnDisk", func(t *testing.T) {
+		photo := entity.PhotoFixtures.Get("Photo01")
+		stored := "zz-stored/present.cr2"
+		storedPath := filepath.Join(cfg.OriginalsPath(), stored)
+
+		require.NoError(t, os.MkdirAll(filepath.Dir(storedPath), fs.ModeDir))
+		require.NoError(t, os.WriteFile(storedPath, []byte("content"), fs.ModeFile))
+
+		file := &entity.File{
+			PhotoID:  photo.ID,
+			PhotoUID: photo.PhotoUID,
+			FileRoot: entity.RootOriginals,
+			FileName: stored,
+			FileHash: mediaFile.Hash(),
+		}
+		require.NoError(t, file.Save())
+
+		t.Cleanup(func() {
+			_ = entity.UnscopedDb().Delete(file).Error
+			_ = os.RemoveAll(filepath.Dir(storedPath))
+		})
+
+		found := StoredCopyOf(mediaFile)
+
+		require.NotNil(t, found)
+		assert.Equal(t, stored, found.FileName)
+	})
+}
+
 func TestImport_DestinationFilename(t *testing.T) {
 	cfg := config.TestConfig()
 

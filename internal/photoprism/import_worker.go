@@ -109,28 +109,26 @@ func ImportWorker(jobs <-chan ImportJob) {
 			} else {
 				log.Infof("import: %s", err)
 
-				// Try to add duplicates to selected album(s) as well, see #991.
-				if fileHash := f.Hash(); fileHash == "" {
-					// Do nothing.
-				} else if file, fileErr := entity.FirstFileByHash(fileHash); fileErr != nil {
-					// Do nothing.
-				} else if albumErr := entity.AddPhotoToUserAlbums(file.PhotoUID, opt.Albums, imp.conf.Settings().Albums.Order.Album, opt.UID); albumErr != nil {
-					log.Warnf("import: %s (add duplicate to albums)", clean.Error(albumErr))
-				}
+				// What follows is for a file the library already holds. The destination name is not
+				// evidence of that, so it is established once here and every step below reads it.
+				stored := StoredCopyOf(f)
 
-				// Remember the original filename for duplicates so that indexing can still persist
-				// OriginalName even when the file was not copied due to an existing identical file.
-				if fileHash := f.Hash(); fileHash != "" {
-					if existing, findErr := entity.FirstFileByHash(fileHash); findErr == nil {
-						existingPath := FileName(existing.FileRoot, existing.FileName)
-						if existingPath != "" {
-							relatedOriginalNames[existingPath] = relFileName
-						}
+				// Try to add duplicates to selected album(s) as well, see #991.
+				if stored != nil {
+					if albumErr := entity.AddPhotoToUserAlbums(stored.PhotoUID, opt.Albums, imp.conf.Settings().Albums.Order.Album, opt.UID); albumErr != nil {
+						log.Warnf("import: %s (add duplicate to albums)", clean.Error(albumErr))
+					}
+
+					// Remember the original filename for duplicates so that indexing can still persist
+					// OriginalName even when the file was not copied due to an existing identical file.
+					if storedName := FileName(stored.FileRoot, stored.FileName); storedName != "" {
+						relatedOriginalNames[storedName] = relFileName
 					}
 				}
 
-				// Remove duplicates to save storage.
-				if opt.RemoveExistingFiles {
+				// Remove duplicates to save storage. The source is removed only when the library
+				// demonstrably holds the same content, never merely because a name was refused.
+				if opt.RemoveExistingFiles && stored != nil {
 					if removeErr := f.Remove(); removeErr != nil {
 						log.Errorf("import: failed to delete %s (%s)", clean.Log(f.BaseName()), removeErr.Error())
 					} else {

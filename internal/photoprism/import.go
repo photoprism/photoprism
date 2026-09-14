@@ -343,6 +343,33 @@ func (imp *Import) Cancel() {
 	mutex.IndexWorker.Cancel()
 }
 
+// StoredCopyOf returns the indexed file that already holds the same content, if there is one. A
+// recorded name that no longer holds the file is not one, so a caller that removes its source on the
+// strength of this cannot remove the only copy.
+func StoredCopyOf(mediaFile *MediaFile) *entity.File {
+	if mediaFile == nil {
+		return nil
+	}
+
+	fileHash := mediaFile.Hash()
+
+	if fileHash == "" {
+		return nil
+	}
+
+	stored, err := entity.FirstFileByHash(fileHash)
+
+	if err != nil {
+		return nil
+	}
+
+	if storedName := FileName(stored.FileRoot, stored.FileName); !fs.FileExists(storedName) {
+		return nil
+	}
+
+	return &stored
+}
+
 // DestinationFilename returns the destination filename of a MediaFile to be imported.
 // Format: 2006/01/20060102_150405_CHECKSUM.ext
 func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile, folder string) (string, error) {
