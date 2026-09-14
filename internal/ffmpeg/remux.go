@@ -18,7 +18,7 @@ import (
 )
 
 // RemuxFile changes the file format to the specified container as needed.
-func RemuxFile(videoFilePath, destFilePath string, opt encode.Options) error {
+func RemuxFile(videoFilePath, destFilePath string, opt encode.Options) (err error) {
 	// Return if destination file already exists and force option is not set.
 	if !opt.Force && fs.FileExistsNotEmpty(destFilePath) {
 		return nil
@@ -49,10 +49,28 @@ func RemuxFile(videoFilePath, destFilePath string, opt encode.Options) error {
 	}
 
 	destFileBase := filepath.Base(destFilePath)
-	destPathName := filepath.Dir(destFilePath)
 
-	tempBaseName := "." + fs.StripKnownExt(clean.FileName(videoBaseName)) + opt.Container.DefaultExt()
-	tempFilePath := filepath.Join(destPathName, tempBaseName)
+	// Write through a sibling reserved by this call, so each conversion owns its working file.
+	tempFilePath, err := fs.CreateStageFile(destFilePath)
+
+	if err != nil {
+		return fmt.Errorf("failed to create temp file for %s (%s)", clean.Log(destFileBase), err)
+	}
+
+	tempBaseName := filepath.Base(tempFilePath)
+	published := false
+
+	// Remove only the file this call created, on every way out including a panic. A converter that
+	// removed its own output leaves nothing to clean up, so that is not a failure.
+	defer func() {
+		if published {
+			return
+		}
+
+		if removeErr := os.Remove(tempFilePath); removeErr != nil && !os.IsNotExist(removeErr) {
+			err = errors.Join(err, fmt.Errorf("failed to remove temp file %s (%s)", clean.Log(tempBaseName), clean.Error(removeErr)))
+		}
+	}()
 
 	cmd, err := RemuxCmd(videoFilePath, tempFilePath, opt)
 
@@ -60,17 +78,6 @@ func RemuxFile(videoFilePath, destFilePath string, opt encode.Options) error {
 	if err != nil {
 		log.Error(err)
 		return err
-	}
-
-	// Check if target file already exists.
-	if fs.FileExists(tempFilePath) {
-		if !opt.Force {
-			return fmt.Errorf("temp file %s already exists", clean.Log(tempBaseName))
-		} else if err = os.Remove(tempFilePath); err != nil {
-			return fmt.Errorf("%s (remove temp file)", err)
-		}
-
-		log.Infof("ffmpeg: replacing temp file %s", clean.Log(tempBaseName))
 	}
 
 	// Fetch command output.
@@ -103,32 +110,20 @@ func RemuxFile(videoFilePath, destFilePath string, opt encode.Options) error {
 		// Log filename and remux time.
 		log.Warnf("ffmpeg: failed to remux %s [%s]", clean.Log(videoBaseName), time.Since(start))
 
-		// Remove broken video file.
-		if !fs.FileExists(tempFilePath) {
-			// Do nothing.
-		} else if err = os.Remove(tempFilePath); err != nil {
-			return fmt.Errorf("failed to remove temp file %s (%s)", clean.Log(tempBaseName), err)
-		}
-
 		return err
 	}
 
-	// Abort if destination file is missing or empty.
+	// Abort if the staged file is missing or empty.
 	if !fs.FileExistsNotEmpty(tempFilePath) {
-		_ = os.Remove(tempFilePath)
 		return fmt.Errorf("failed change container format of %s [%s]", clean.Log(videoBaseName), time.Since(start))
 	}
 
-	if !fs.FileExists(destFilePath) {
-		// Do nothing.
-	} else if err = os.Remove(destFilePath); err != nil {
-		_ = os.Remove(tempFilePath)
-		return fmt.Errorf("failed to remove %s (%s)", clean.Log(destFileBase), err)
-	}
-
+	// Publish by renaming, which replaces a regular destination in a single step.
 	if err = os.Rename(tempFilePath, destFilePath); err != nil {
 		return fmt.Errorf("failed to rename %s to %s (%s)", clean.Log(tempBaseName), clean.Log(destFileBase), err)
 	}
+
+	published = true
 
 	// Log filename and remux time.
 	if videoBaseName != destFileBase {

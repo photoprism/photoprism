@@ -66,6 +66,7 @@ const (
 	ExtPb       = ".pb"
 	ExtProto    = ".proto"
 	ExtZip      = ".zip"
+	ExtTmp      = ".tmp"
 )
 
 // Ext returns all extension of a file name including the dots.

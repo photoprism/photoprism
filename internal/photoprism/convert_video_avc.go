@@ -2,6 +2,7 @@ package photoprism
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"math"
 	"os"
@@ -52,47 +53,25 @@ func (w *Convert) ToAvc(f *MediaFile, encoder encode.Encoder, noMutex, force boo
 		return nil, fmt.Errorf("convert: format %s is excluded from FFmpeg processing", format)
 	}
 
-	// AVC video filename.
+	// Convert MPEG-2 Transport Stream (M2TS) files to MPEG4 containers. Neither ExifTool nor the
+	// video probe reports a codec for a transport stream, so whether one carries AVC is only known
+	// after the conversion and cannot be decided from the source up front.
+	if !f.IsAnimatedImage() && f.IsM2TS() && w.conf.SidecarWritable() && !w.conf.InsufficientStorage() {
+		mp4File, mp4Err := w.avcFromM2TS(f, logFileName)
+
+		if mp4Err != nil {
+			return nil, mp4Err
+		} else if mp4File != nil {
+			return mp4File, nil
+		}
+	}
+
+	// AVC video filename. Animated images are converted into an MPEG-4 container, videos into AVC.
 	var avcName string
 
-	// Use .mp4 file extension for animated images and .avi for videos.
 	if f.IsAnimatedImage() {
 		avcName = fs.VideoMp4.FindFirst(f.FileName(), []string{w.conf.SidecarPath(), fs.PPHiddenPathname}, w.conf.OriginalsPath(), false)
 	} else {
-		// Convert MPEG-2 Transport Stream (M2TS) files to MPEG4 containers. Neither ExifTool nor
-		// the video probe reports a codec for a transport stream, so whether one carries AVC is
-		// only known after the remux and cannot be decided from the source up front.
-		if f.IsM2TS() && w.conf.SidecarWritable() && !w.conf.InsufficientStorage() {
-			mp4Name, mp4Err := fs.FileName(f.FileName(), w.conf.SidecarPath(), w.conf.OriginalsPath(), fs.ExtMp4)
-
-			// A remux leaves an existing destination alone, so only a name that is free now
-			// belongs to this call. Anything already there may be an indexed original.
-			mp4Created := mp4Err == nil && !fs.FileExistsNotEmpty(mp4Name)
-
-			if mp4Err != nil {
-				return nil, fmt.Errorf("convert: %s in %s (remux)", mp4Err, clean.Log(f.RootRelName()))
-			} else if mp4Err = ffmpeg.RemuxFile(f.FileName(), mp4Name, w.RemuxOptions(fs.VideoMp4, false)); mp4Err != nil {
-				return nil, fmt.Errorf("convert: %s in %s (remux)", mp4Err, clean.Log(f.RootRelName()))
-			} else if mp4File, fileErr := NewMediaFile(mp4Name); mp4File == nil || fileErr != nil {
-				log.Warnf("convert: %s could not be converted to mp4", logFileName)
-			} else if jsonErr := mp4File.CreateExifToolJson(w); jsonErr != nil {
-				log.Warnf("convert: %s in %s (create json)", jsonErr, logFileName)
-			} else if jsonErr = mp4File.ReadExifToolJson(); jsonErr != nil {
-				log.Warnf("convert: %s in %s (read json)", jsonErr, logFileName)
-			} else if mp4File.MetaData().CodecAvc() {
-				return mp4File, nil
-			}
-
-			// The container holds no playable AVC, so the source is transcoded instead and
-			// nothing reads it again. A transport stream carrying MPEG-2 rather than AVC
-			// (e.g. a JVC .tod) always takes this path, so the unused container is discarded.
-			if mp4Created {
-				if removeErr := os.Remove(mp4Name); removeErr != nil && !os.IsNotExist(removeErr) {
-					log.Warnf("convert: %s in %s (remove unused mp4)", clean.Error(removeErr), logFileName)
-				}
-			}
-		}
-
 		avcName = fs.VideoAvc.FindFirst(f.FileName(), []string{w.conf.SidecarPath(), fs.PPHiddenPathname}, w.conf.OriginalsPath(), false)
 	}
 
@@ -222,6 +201,90 @@ func (w *Convert) ToAvc(f *MediaFile, encoder encode.Encoder, noMutex, force boo
 	}
 
 	return avcFile, avcErr
+}
+
+// avcFromM2TS returns the MPEG-4 container of a transport stream that carries AVC, and nil when the
+// source has to be transcoded instead. The container is written under a name this call reserved and
+// published only when it is kept, so one already in place is never rewritten or removed.
+func (w *Convert) avcFromM2TS(f *MediaFile, logFileName string) (*MediaFile, error) {
+	mp4Name, err := fs.FileName(f.FileName(), w.conf.SidecarPath(), w.conf.OriginalsPath(), fs.ExtMp4)
+
+	if err != nil {
+		return nil, fmt.Errorf("convert: %s in %s (remux)", err, clean.Log(f.RootRelName()))
+	}
+
+	// Reuse a container that is already in place. One holding no playable AVC belongs to whoever
+	// wrote it and stays where it is.
+	if fs.FileExistsNotEmpty(mp4Name) {
+		return w.avcContainer(mp4Name, logFileName), nil
+	}
+
+	// Skip the conversion once a transcoding result is already in place, so a source that never
+	// yields a playable container is converted once rather than on every request. The search is the
+	// one the caller reuses from, and only a regular file counts, so a name that merely resolves to
+	// one does not stand in for it.
+	avcName := fs.VideoAvc.FindFirst(f.FileName(), []string{w.conf.SidecarPath(), fs.PPHiddenPathname}, w.conf.OriginalsPath(), false)
+
+	if avcName != "" && fs.FileExistsNotEmpty(avcName) && !fs.IsSymlink(avcName) {
+		return nil, nil
+	}
+
+	stagedName, err := fs.CreateStageFile(mp4Name)
+
+	if err != nil {
+		return nil, fmt.Errorf("convert: %s in %s (remux)", err, clean.Log(f.RootRelName()))
+	}
+
+	// Remove only the file this call created, on every way out including a panic.
+	defer func() {
+		if removeErr := os.Remove(stagedName); removeErr != nil && !os.IsNotExist(removeErr) {
+			log.Warnf("convert: %s in %s (remove unused mp4)", clean.Error(removeErr), logFileName)
+		}
+	}()
+
+	if err = ffmpeg.RemuxFile(f.FileName(), stagedName, w.RemuxOptions(fs.VideoMp4, true)); err != nil {
+		return nil, fmt.Errorf("convert: %s in %s (remux)", err, clean.Log(f.RootRelName()))
+	}
+
+	// A container without playable AVC is never published: the source is transcoded instead, and
+	// a transport stream carrying MPEG-2 rather than AVC (e.g. a JVC .tod) always takes this path.
+	if w.avcContainer(stagedName, logFileName) == nil {
+		return nil, nil
+	}
+
+	// A link fails when the name is taken, so a container that appeared while this one was written
+	// is used rather than replaced.
+	if err = fs.PublishFile(stagedName, mp4Name, false); errors.Is(err, os.ErrExist) {
+		return w.avcContainer(mp4Name, logFileName), nil
+	} else if err != nil {
+		return nil, fmt.Errorf("convert: %s in %s (publish mp4)", clean.Error(err), logFileName)
+	}
+
+	mp4File, err := NewMediaFile(mp4Name)
+
+	if err != nil {
+		return nil, fmt.Errorf("convert: %s in %s (published mp4)", clean.Error(err), logFileName)
+	}
+
+	return mp4File, nil
+}
+
+// avcContainer returns the video file when it holds a playable AVC stream, and nil otherwise, since
+// whether a converted transport stream carries AVC is only visible in its metadata.
+func (w *Convert) avcContainer(fileName, logFileName string) *MediaFile {
+	mp4File, err := NewMediaFile(fileName)
+
+	if mp4File == nil || err != nil {
+		log.Warnf("convert: %s could not be converted to mp4", logFileName)
+	} else if jsonErr := mp4File.CreateExifToolJson(w); jsonErr != nil {
+		log.Warnf("convert: %s in %s (create json)", jsonErr, logFileName)
+	} else if jsonErr = mp4File.ReadExifToolJson(); jsonErr != nil {
+		log.Warnf("convert: %s in %s (read json)", jsonErr, logFileName)
+	} else if mp4File.MetaData().CodecAvc() {
+		return mp4File
+	}
+
+	return nil
 }
 
 // TranscodeToAvcCmd returns the command for converting video files to MPEG-4 AVC.
