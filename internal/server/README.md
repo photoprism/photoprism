@@ -1,6 +1,6 @@
 ## PhotoPrism — HTTP Server
 
-**Last Updated:** September 13, 2026
+**Last Updated:** September 14, 2026
 
 ### Overview
 
@@ -34,6 +34,7 @@
 - `security.go` — security headers and trusted proxy/platform handling.
 - `webdav_*.go` & tests — WebDAV handlers and regression tests for overwrite, traversal, and metadata flags.
 - `webdav_path.go` — shared helper to classify built-in and path-proxied WebDAV routes.
+- `webdav_destination.go` — shared collection and account-path validation for edition COPY/MOVE handlers.
 - `process/` — light wrappers for server process metadata.
 
 ### Related Packages
@@ -55,6 +56,7 @@
   - `IdleTimeout` is configured via `PHOTOPRISM_HTTP_IDLE_TIMEOUT` / `--http-idle-timeout` (default `180s`).
   - Global `ReadTimeout` / `WriteTimeout` remain disabled to avoid breaking large transfers.
 - WebDAV response behavior:
+  - Edition COPY/MOVE handlers validate destinations with `WebDAVDestinationStatus` before serving the operation. Collection prefixes and configured account paths apply to URL-decoded, canonical destinations; source-path and role checks remain in the edition handlers.
   - Built-in security middleware skips browser-document headers (`Content-Security-Policy`, `X-Frame-Options`) on `/originals` and `/import` paths.
   - PROPFIND `207 Multi-Status` responses normalize XML media type to `application/xml; charset=utf-8`.
   - Request errors go to the console-only system log (`event.System*`), not the browser log stream, since `x/net/webdav` embeds absolute server paths in its messages. A `MKCOL` on an existing collection is a benign sync-client probe: it returns 405 and is logged at debug rather than as an error.
