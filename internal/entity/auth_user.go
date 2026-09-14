@@ -1403,7 +1403,7 @@ func (m *User) RedeemToken(token string) (n int) {
 		return 0
 	}
 
-	created := false
+	granted := false
 
 	// A share this link issued is counted without a new redemption, as the sharing page redeems on
 	// every load. Every other outcome needs the link to admit it, and a link that admits none leaves
@@ -1429,6 +1429,8 @@ func (m *User) RedeemToken(token string) (n int) {
 				event.AuditErr([]string{"user %s", "share token update failed", status.Error(err)}, m.RefID)
 			} else if readmitted {
 				link.Redeem()
+
+				granted = true
 			}
 
 			n++
@@ -1447,12 +1449,13 @@ func (m *User) RedeemToken(token string) (n int) {
 
 		link.Redeem()
 
-		created = true
+		granted = true
 		n++
 	}
 
-	// Reload the shares, so the caller sees the ones this redemption created.
-	if created {
+	// Reload the shares, so the caller sees what this redemption added. A cached list that already
+	// holds something is not refreshed on read, so a share reinstated beside it would stay hidden.
+	if granted {
 		m.RefreshShares()
 	}
 

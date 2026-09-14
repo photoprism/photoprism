@@ -525,6 +525,41 @@ func TestLinkRedemption(t *testing.T) {
 		assert.Equal(t, http.StatusNotFound, stranger.Status)
 		assert.Equal(t, uint(2), linkViews(t, link))
 	})
+	t.Run("ReinstatedShareIsVisibleWithoutARefresh", func(t *testing.T) {
+		// A cached share list is re-derived on read only when it is empty, so another live share hides
+		// a reinstated one. The caller of a redemption must see what it restored without asking again.
+		held := newTestLink(t, 0)
+		lapsing := newTestLinkWithToken(t, "", 2)
+
+		sess, err := redeemInNewSession(t, held.LinkToken, "alice", "Alice123!")
+		require.NoError(t, err)
+		require.True(t, sess.HasShare(held.ShareUID))
+
+		_, err = redeemInNewSession(t, lapsing.LinkToken, "alice", "Alice123!")
+		require.NoError(t, err)
+
+		user := FindUser(User{UserName: "alice"})
+		require.NotNil(t, user)
+
+		share := FindUserShare(UserShare{UserUID: user.GetUID(), ShareUID: lapsing.ShareUID})
+		require.NotNil(t, share)
+
+		if err = share.Updates(Values{"expires_at": Now().Add(-time.Minute)}); err != nil {
+			t.Fatal(err)
+		}
+
+		// The other share keeps the cache from being empty, which is what makes the read stale.
+		user = FindUser(User{UserName: "alice"})
+		require.NotNil(t, user)
+		require.True(t, user.HasShare(held.ShareUID))
+		require.False(t, user.HasShare(lapsing.ShareUID))
+
+		require.Equal(t, 1, user.RedeemToken(lapsing.LinkToken))
+
+		assert.True(t, user.HasShare(lapsing.ShareUID), "the redemption must leave its own result visible")
+		assert.Contains(t, user.SharedUIDs(), lapsing.ShareUID)
+		assert.True(t, user.HasShare(held.ShareUID), "and must not drop what was already held")
+	})
 	t.Run("AlternatingTwoTokensForOneRecordCountsNoFurtherView", func(t *testing.T) {
 		// Each link records itself on the row it writes, so alternating the two tokens of one record
 		// re-points the row on every presentation. The account holds the record throughout, so only
