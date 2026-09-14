@@ -20,6 +20,14 @@ The `commands` package hosts the CLI implementation for the PhotoPrism binary. C
 - When integrating configuration options, call the accessors on `*config.Config` (for example, `conf.ClusterUUID()`) rather than mutating option structs directly.
 - For HTTP interactions, depend on the safe download helpers in `pkg/http/safe` or the specialized wrappers in `internal/thumb/avatar` to inherit timeout, size, and SSRF protection defaults.
 
+### Video Remux Planning
+
+`photoprism video remux` validates its entire selection before conversion, including in dry-run mode.
+Each output must be unique and may not name another selected input, including inputs skipped by a
+format rule. Intentional same-file remuxing is supported. `--force` controls ordinary replacement,
+not conflicts within the selection. Directory aliases are resolved during planning; other processes
+changing paths after preflight remain outside that check.
+
 ### Positional Arguments & Flag Order
 
 `urfave/cli` v2 delegates flag parsing to the Go stdlib `flag` package, which **stops parsing at the first non-flag token**. For any subcommand that takes a positional argument (for example `photoprism users mod USERNAME --role guest`), flags placed **after** the positional are not parsed — they are returned as additional positionals and `ctx.IsSet(...)` reports `false` for each of them.

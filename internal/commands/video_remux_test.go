@@ -2,6 +2,7 @@ package commands
 
 import (
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -15,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/media/video"
 )
 
+// TestVideoBuildRemuxPlans covers filtered remux selections.
 func TestVideoBuildRemuxPlans(t *testing.T) {
 	t.Run("CountsExcludedFilesAsSkipped", func(t *testing.T) {
 		conf := get.Config()
@@ -25,7 +27,8 @@ func TestVideoBuildRemuxPlans(t *testing.T) {
 		t.Cleanup(func() { ffmpeg.SetExclude(saved) })
 
 		relPath := "testdata/remux-excluded.avi"
-		absPath := fs.Abs(relPath)
+		absPath := filepath.Join(conf.OriginalsPath(), filepath.FromSlash(relPath))
+		require.NoError(t, os.MkdirAll(filepath.Dir(absPath), fs.ModeDir))
 		require.NoError(t, os.WriteFile(absPath, []byte("test"), fs.ModeFile))
 		t.Cleanup(func() {
 			_ = os.Remove(absPath)

@@ -124,6 +124,7 @@ func videoBuildRemuxPlans(conf *config.Config, results []search.Photo, force boo
 	plans := make([]videoRemuxPlan, 0, len(results))
 	preflight := make([]videoOutputPlan, 0, len(results))
 	skipped := 0
+	inputs := make([]string, 0, len(results))
 
 	for _, found := range results {
 		videoFile, ok := videoPrimaryFile(found)
@@ -131,6 +132,13 @@ func videoBuildRemuxPlans(conf *config.Config, results []search.Photo, force boo
 			log.Warnf("remux: missing video file for %s", clean.Log(found.PhotoUID))
 			skipped++
 			continue
+		}
+
+		srcPath := photoprism.ConfigFileName(conf, videoFile.FileRoot, videoFile.FileName)
+		sourceExists := fs.FileExistsNotEmpty(srcPath)
+
+		if sourceExists {
+			inputs = append(inputs, srcPath)
 		}
 
 		if videoFile.FileSidecar {
@@ -145,8 +153,7 @@ func videoBuildRemuxPlans(conf *config.Config, results []search.Photo, force boo
 			continue
 		}
 
-		srcPath := photoprism.FileName(videoFile.FileRoot, videoFile.FileName)
-		if !fs.FileExistsNotEmpty(srcPath) {
+		if !sourceExists {
 			log.Warnf("remux: missing file %s", clean.Log(srcPath))
 			skipped++
 			continue
@@ -199,6 +206,10 @@ func videoBuildRemuxPlans(conf *config.Config, results []search.Photo, force boo
 			Destination: destPath,
 			SizeBytes:   videoFile.FileSize,
 		})
+	}
+
+	if err := videoValidateRemuxPlans(plans, inputs); err != nil {
+		return nil, nil, skipped, err
 	}
 
 	return plans, preflight, skipped, nil
