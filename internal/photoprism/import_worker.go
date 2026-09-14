@@ -97,12 +97,12 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 				if opt.Move {
 					if moveErr := f.Move(destFileName, false); moveErr != nil {
-						log.Errorf("import: %s (move file)", clean.Error(moveErr))
+						log.Error(clean.Error(moveErr))
 						log.Warnf("import: could not move file to %s", logRelName)
 					}
 				} else {
 					if copyErr := f.Copy(destFileName, false); copyErr != nil {
-						log.Errorf("import: %s (copy file)", clean.Error(copyErr))
+						log.Error(clean.Error(copyErr))
 						log.Warnf("import: could not copy file to %s", logRelName)
 					}
 				}
