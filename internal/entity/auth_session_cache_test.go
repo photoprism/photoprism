@@ -12,8 +12,10 @@ import (
 
 func TestFlushSessionCache(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
+		CacheWebDAVUser("flush-test", NewUser())
 		require.NotPanics(t, func() { FlushSessionCache() })
 		assert.Equal(t, 0, sessionCache.ItemCount())
+		assert.Nil(t, CachedWebDAVUser("flush-test"))
 	})
 }
 

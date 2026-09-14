@@ -1,10 +1,16 @@
 ## PhotoPrism — Database Entities
 
-**Last Updated:** August 26, 2026
+**Last Updated:** September 14, 2026
 
 ### Overview
 
 `internal/entity` holds the GORM models (Photo, File, Album, Label, Face, User, Client, Session, Service, Marker, …), their query and create/update helpers, the test fixtures (`*_fixtures.go`), and the migration helpers under `migrate/`. Models map to the database via GORM v1 (`github.com/jinzhu/gorm`) and are shared by the API, workers, and CLI.
+
+### Account & Session Caches
+
+`User.Save` evicts that account's cached sessions and WebDAV authentication entries after a successful database save. `FlushUserSessionCache` matches the user UID and leaves other users' entries and persisted credentials intact. `FlushSessionCache` clears both caches when a global refresh is required.
+
+WebDAV uses `CachedWebDAVUser` and `CacheWebDAVUser` for its one-minute credential cache. Account changes are therefore handled at the same persistence boundary as the general session cache. This is process-local invalidation; writes through another process or directly to the database do not signal a running server.
 
 ### Timestamps
 

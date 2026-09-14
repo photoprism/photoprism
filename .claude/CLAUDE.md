@@ -151,6 +151,8 @@ State management uses reactive singleton modules in `src/common/` and `src/app/`
 
 ### Config & Flags
 
+Account updates through `User.Save` invalidate only that user's session and WebDAV caches via `entity.FlushUserSessionCache`. Use the entity cache helpers for WebDAV authentication; keep cache eviction separate from persisted credential revocation and preserve process-local semantics.
+
 Verify config option names before using them:
 ```bash
 ./photoprism --help

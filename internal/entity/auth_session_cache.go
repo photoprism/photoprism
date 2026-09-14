@@ -56,9 +56,30 @@ func FindSession(id string) (*Session, error) {
 	return found, fmt.Errorf("session expired")
 }
 
-// FlushSessionCache resets the session cache.
+// FlushSessionCache resets session and WebDAV authentication caches.
 func FlushSessionCache() {
 	sessionCache.Flush()
+	webDAVUserCache.Flush()
+}
+
+// FlushUserSessionCache evicts cached sessions and WebDAV credentials for one user.
+// Persisted credentials and other users' cache entries are left unchanged.
+func FlushUserSessionCache(userUID string) {
+	if userUID == "" {
+		return
+	}
+
+	for key, item := range sessionCache.Items() {
+		if sess, ok := item.Object.(*Session); ok && sess != nil && sess.UserUID == userUID {
+			sessionCache.Delete(key)
+		}
+	}
+
+	for key, item := range webDAVUserCache.Items() {
+		if user, ok := item.Object.(*User); ok && user != nil && user.UserUID == userUID {
+			webDAVUserCache.Delete(key)
+		}
+	}
 }
 
 // CacheSession adds a session to the cache if its ID is valid.
