@@ -18,6 +18,7 @@ var Formats = map[fs.Type]Type{
 	fs.ImageTiff:       Image,
 	fs.ImagePsd:        Image,
 	fs.ImageBmp:        Image,
+	fs.ImageCineon:     Image,
 	fs.ImageMPO:        Image,
 	fs.ImageAvif:       Image,
 	fs.ImageAvifS:      Image,

@@ -61,7 +61,13 @@ func (w *Convert) ToAvc(f *MediaFile, encoder encode.Encoder, noMutex, force boo
 	} else {
 		// Convert MPEG-2 Transport Stream (M2TS) files to MPEG4 containers.
 		if f.IsM2TS() && w.conf.SidecarWritable() && !w.conf.InsufficientStorage() {
-			if mp4Name, mp4Err := fs.FileName(f.FileName(), w.conf.SidecarPath(), w.conf.OriginalsPath(), fs.ExtMp4); mp4Err != nil {
+			mp4Name, mp4Err := fs.FileName(f.FileName(), w.conf.SidecarPath(), w.conf.OriginalsPath(), fs.ExtMp4)
+
+			// A remux leaves an existing destination alone, so only a name that is free now
+			// belongs to this call. Anything already there may be an indexed original.
+			mp4Created := mp4Err == nil && !fs.FileExistsNotEmpty(mp4Name)
+
+			if mp4Err != nil {
 				return nil, fmt.Errorf("convert: %s in %s (remux)", mp4Err, clean.Log(f.RootRelName()))
 			} else if mp4Err = ffmpeg.RemuxFile(f.FileName(), mp4Name, w.RemuxOptions(fs.VideoMp4, false)); mp4Err != nil {
 				return nil, fmt.Errorf("convert: %s in %s (remux)", mp4Err, clean.Log(f.RootRelName()))
@@ -73,6 +79,15 @@ func (w *Convert) ToAvc(f *MediaFile, encoder encode.Encoder, noMutex, force boo
 				log.Warnf("convert: %s in %s (read json)", jsonErr, logFileName)
 			} else if mp4File.MetaData().CodecAvc() {
 				return mp4File, nil
+			}
+
+			// The container holds no playable AVC, so the source is transcoded instead and
+			// nothing reads it again. A transport stream carrying MPEG-2 rather than AVC
+			// (e.g. a JVC .tod) always takes this path, so the unused container is discarded.
+			if mp4Created {
+				if removeErr := os.Remove(mp4Name); removeErr != nil && !os.IsNotExist(removeErr) {
+					log.Warnf("convert: %s in %s (remove unused mp4)", clean.Error(removeErr), logFileName)
+				}
 			}
 		}
 

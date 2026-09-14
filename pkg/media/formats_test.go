@@ -25,6 +25,13 @@ func TestFileTypes(t *testing.T) {
 		assert.Contains(t, result, fs.VideoMov)
 		assert.NotContains(t, result, fs.ImageJpeg)
 	})
+	t.Run("Image", func(t *testing.T) {
+		// Cineon is rendered by the generic ImageMagick path, so it must report as an
+		// image for the converter to offer a command for it at all.
+		result := FileTypes(Image)
+		assert.Contains(t, result, fs.ImageCineon)
+		assert.NotContains(t, result, fs.ImageRaw)
+	})
 	t.Run("Unknown", func(t *testing.T) {
 		assert.Empty(t, FileTypes(Type("invalid")))
 	})
