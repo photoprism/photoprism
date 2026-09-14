@@ -196,10 +196,12 @@ func TestFileType(t *testing.T) {
 		assert.Equal(t, VideoInsv, FileType("VID_20220607_102410_00_322.insv"))
 	})
 	t.Run("Jpeg2000", func(t *testing.T) {
-		// JPEG 2000 is not registered yet, and is never classified as ordinary JPEG.
-		assert.Equal(t, TypeUnknown, FileType("scan.jp2"))
-		assert.Equal(t, TypeUnknown, FileType("scan.J2K"))
-		assert.Equal(t, TypeUnknown, FileType("scan.jpx"))
+		// JPEG 2000 is not registered yet, and is never classified as ordinary JPEG. Every
+		// extension of the family is listed, since one coder decodes them all and registering
+		// any single one would reach it.
+		for _, name := range []string{"scan.jp2", "scan.J2K", "scan.j2c", "scan.jpc", "scan.jpf", "scan.JPX", "scan.jpm"} {
+			assert.Equalf(t, TypeUnknown, FileType(name), "%s must stay unregistered", name)
+		}
 	})
 	t.Run("Cineon", func(t *testing.T) {
 		assert.Equal(t, ImageCineon, FileType("frame.cin"))
