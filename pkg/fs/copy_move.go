@@ -104,10 +104,10 @@ func CreateStageFile(dest string) (name string, err error) {
 	return name, nil
 }
 
-// PublishFile puts a staged file in place of the destination, replacing an existing one only with
-// force. It reports os.ErrExist when the destination is taken and may not be replaced. It runs none
-// of the Copy and Move preflight checks, so a forced publish replaces a symbolic link at the
-// destination rather than refusing it.
+// PublishFile publishes a staged file with the shared Copy/Move replacement rules. An empty regular
+// destination may be replaced without force; filesystems without hard links use a checked rename.
+// Preflight checks and metadata preservation belong to callers, so a forced publish replaces a
+// destination symlink rather than refusing it.
 func PublishFile(staged, dest string, force bool) error {
 	return publishFile(staged, dest, force)
 }
