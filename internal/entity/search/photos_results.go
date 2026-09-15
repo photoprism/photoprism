@@ -248,6 +248,16 @@ func (m *Photo) MediaInfo() (mediaHash, mediaCodec, mediaMime string, width, hei
 			}
 		}
 	case entity.MediaRaw:
+		// A fisheye RAW is displayed through its equirectangular derivative, so report that file's
+		// frame: the viewer routes 360° media by the 2:1 aspect ratio, which the original never has.
+		if m.HasFisheyeOriginal() {
+			for _, f := range m.Files {
+				if f.FileWidth > 0 && f.FileHeight > 0 && projection.Type(f.FileProjection).Equal(projection.Equirectangular.String()) {
+					return m.FileHash, f.FileCodec, clean.ContentType(f.FileMime), f.FileWidth, f.FileHeight
+				}
+			}
+		}
+
 		for _, f := range m.Files {
 			if f.MediaType == entity.MediaRaw && f.FileWidth > 0 && f.FileHeight > 0 {
 				return m.FileHash, f.FileCodec, clean.ContentType(f.FileMime), f.FileWidth, f.FileHeight

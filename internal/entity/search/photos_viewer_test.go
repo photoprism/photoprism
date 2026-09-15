@@ -73,6 +73,35 @@ func TestPhoto_ViewerResult(t *testing.T) {
 	assert.Equal(t, "/api/v1/dl/img-hash?t=download-token", result.DownloadUrl)
 }
 
+// TestPhoto_ViewerResult_FisheyeRaw verifies that a dewarped fisheye RAW reports an equirectangular
+// projection and a 2:1 frame together, since the lightbox only opens the sphere viewer when the
+// reported dimensions match the reported projection.
+func TestPhoto_ViewerResult_FisheyeRaw(t *testing.T) {
+	photo := Photo{
+		PhotoUID:      rnd.GenerateUID(entity.PhotoUID),
+		PhotoType:     entity.MediaRaw,
+		PhotoPanorama: true,
+		FileHash:      "primary-jpeg",
+		FileWidth:     5760,
+		FileHeight:    2880,
+		Files: []entity.File{
+			{MediaType: entity.MediaRaw, FileHash: "fisheye-dng", FileMime: "image/x-raw", FileCodec: "raw", FileWidth: 3264, FileHeight: 6528, FileProjection: "dual-fisheye"},
+			{MediaType: entity.MediaImage, FileHash: "sphere-jpeg", FileMime: "image/jpeg", FileCodec: "jpeg", FileWidth: 5760, FileHeight: 2880, FileProjection: "equirectangular"},
+		},
+	}
+
+	result := photo.ViewerResult("/content", "/api/v1", "preview-token", "download-token")
+
+	assert.Equal(t, entity.MediaRaw, result.Type)
+	assert.True(t, result.Panorama)
+	assert.False(t, result.Playable)
+	assert.Equal(t, "equirectangular", result.Projection)
+	assert.Equal(t, 5760, result.Width)
+	assert.Equal(t, 2880, result.Height)
+	assert.Equal(t, float64(2), float64(result.Width)/float64(result.Height))
+	assert.Equal(t, "primary-jpeg", result.Hash)
+}
+
 func TestPhotoResults_ViewerFormatting(t *testing.T) {
 	uid1 := rnd.GenerateUID(entity.PhotoUID)
 	uid2 := rnd.GenerateUID(entity.PhotoUID)
