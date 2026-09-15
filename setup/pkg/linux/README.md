@@ -96,19 +96,21 @@ These packages pull in the full libvips stack (GLib, libjpeg/libtiff/libwebp, ar
 
 #### Installing Newer libvips on Ubuntu 22.04 (Jammy)
 
-Ubuntu 22.04 ships libvips 8.12 by default, which is too old for current package builds. In that case, install a newer backport package first:
+Ubuntu 22.04 ships libvips 8.12 by default, which is older than the 8.14 minimum, so the installer falls back to a backport PPA there and installs a current build instead:
 
 ```bash
 bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-libvips.sh)
-vips --version
+dpkg-query -W -f='${Version}\n' libvips-dev
 ```
 
 If you already have this repository checked out locally, you can run the same installer script directly:
 
 ```bash
 sudo bash scripts/dist/install-libvips.sh
-vips --version
+dpkg-query -W -f='${Version}\n' libvips-dev
 ```
+
+Check the installed version with `dpkg-query` as shown rather than with `vips --version`: the `vips` command-line tool lives in a separate `libvips-tools` package, which `libvips-dev` does not pull in, so `vips` is normally absent on a working installation. Install `libvips-tools` if you want the CLI.
 
 #### Recommended Extras
 
