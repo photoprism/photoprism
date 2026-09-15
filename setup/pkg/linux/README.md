@@ -76,6 +76,12 @@ If you have used a *.deb* package for installation, you may need to remove the c
 
 PhotoPrism packages bundle TensorFlow and ONNX Runtime; the versions are pinned by `scripts/dist/install-tensorflow.sh` and `scripts/dist/install-onnx.sh`. The shared libraries for both frameworks are shipped inside `/opt/photoprism/lib`, so no additional system packages are needed to run the ONNX face detector and embedding models. The binaries still rely on glibc ≥ 2.35 and the standard C/C++ runtime libraries (`libstdc++6`, `libgcc_s1`, `libgomp1`, …) provided by your distribution.
 
+That glibc floor comes from the bundled **TensorFlow** build, which we compile on Ubuntu 22.04: it is the component referencing the newest symbols, so it sets the minimum for the package as a whole. The ONNX Runtime we ship needs considerably less, so raising or lowering the floor follows from changing the TensorFlow build base rather than from anything configured here. Verify it for a given release with:
+
+```bash
+objdump -T /opt/photoprism/lib/libtensorflow.so.2 | grep -oE 'GLIBC_[0-9]+\.[0-9]+' | sort -uV | tail -1
+```
+
 #### Required Runtime Packages
 
 Install the following packages **before** running PhotoPrism so that thumbnailing, metadata extraction, and the SQLite fallback database work out of the box:
@@ -111,9 +117,10 @@ For extended RAW processing, HEIF/HEIC support, and database scalability we reco
 - MariaDB or MariaDB Server (external database)
 - Darktable and/or RawTherapee (RAW converters)
 - ImageMagick (CLI utilities)
-- libvips 8.14+ (required; Ubuntu 22.04 users should install a backport with `scripts/dist/install-libvips.sh` if distro packages are too old)
 - libheif (prefer the up-to-date binaries from [dl.photoprism.app/dist/libheif/](https://dl.photoprism.app/dist/libheif/); install with `bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-libheif.sh)` when distro packages are outdated)
 - librsvg2-bin or librsvg2-tools (SVG conversion helpers)
+
+These match what the *.deb* and *.rpm* packages list as recommendations, so installing with APT recommendations enabled pulls them in for you. libvips is **not** among them: it is a hard dependency and is covered by the [Required Runtime Packages](#required-runtime-packages) table above.
 
 Use `sudo apt install`, `sudo dnf install`, or `sudo zypper install` with the package names above to pull them in as needed.
 
