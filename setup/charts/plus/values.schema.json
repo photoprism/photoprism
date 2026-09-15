@@ -634,9 +634,9 @@
         },
         "PHOTOPRISM_APP_COLOR": {
           "type": "string",
-          "default": "#1d1d1e",
+          "default": "#19191a",
           "title": "App Color",
-          "description": "Hex color used for the PWA splash screen and tint. Example: #1d1d1e."
+          "description": "Hex color used for the PWA splash screen and tint. Example: #19191a."
         },
         "PHOTOPRISM_DEFAULT_THEME": {
           "type": "string",
