@@ -7,7 +7,7 @@ Models:
   ONNX:
     File: efficientformerv2_s2.onnx
     Source: https://huggingface.co/timm/efficientformerv2_s2.snap_dist_in1k/resolve/1c56a76355000c79568559d34ba3fa24416b5107/model.safetensors
-    SHA256: 34b3ff40a9e637cab47bd05baf4f1f10b8544b6d1ea3a152413876fbac988a64
+    SHA256: 7d6288ad89473c2ba11974c9c24a96e07c4e3ee48c531081f108a6380dc8d0ab
     License: Apache-2.0
     Quantization: fp32
     Input:
