@@ -11,7 +11,9 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/ai/onnx"
 	"github.com/photoprism/photoprism/internal/ai/tensorflow"
 	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
 	"github.com/photoprism/photoprism/internal/ai/vision/openai"
@@ -495,6 +497,24 @@ func TestModel_IsDefault(t *testing.T) {
 			}
 		})
 	}
+}
+
+// TestModel_EngineNameONNX verifies local ONNX models report their runtime.
+func TestModel_EngineNameONNX(t *testing.T) {
+	model := &Model{Type: ModelTypeLabels, ONNX: &onnx.ModelInfo{}}
+	assert.Equal(t, EngineONNX, model.EngineName())
+}
+
+// TestModel_ClassifyModelMissingRegisteredDisables verifies named models never fall back.
+func TestModel_ClassifyModelMissingRegisteredDisables(t *testing.T) {
+	previousModelsPath := ModelsPath
+	ModelsPath = t.TempDir()
+	t.Cleanup(func() { ModelsPath = previousModelsPath })
+
+	model := NewLabelModel(classify.ModelRepViTM10)
+	require.NotNil(t, model)
+	assert.Nil(t, model.ClassifyModel())
+	assert.True(t, model.Disabled)
 }
 
 func TestModel_FaceModel(t *testing.T) {
