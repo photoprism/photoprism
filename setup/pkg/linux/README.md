@@ -4,7 +4,7 @@ As an alternative to our [Docker images](https://docs.photoprism.app/getting-sta
 
 These [binary installation packages](https://dl.photoprism.app/pkg/linux/) are intended for **experienced users** and **maintainers of third-party integrations** only, as they [require manual configuration](#configuration) and [do not include tested system dependencies](#dependencies). Since we are unable to [provide support](https://www.photoprism.app/kb/getting-support/) for custom installations, we recommend using [one of our Docker images](https://docs.photoprism.app/getting-started/docker-compose/) to run PhotoPrism on a private server or NAS device.
 
-Also note that the minimum required glibc version is 2.35, so for example Ubuntu 22.04 and Debian Bookworm will work, but older Linux distributions may not be compatible. Current package builds also require **libvips 8.14+** for thumbnail processing.
+Also note that the packages require a minimum glibc version and a minimum libvips version for thumbnail processing. Both are properties of the release you are installing rather than fixed values, so check them for that build as described under [Dependencies](#dependencies). For current builds the glibc floor is 2.35, so for example Ubuntu 22.04 and Debian Bookworm will work, while older Linux distributions may not be compatible.
 
 ### Usage
 
@@ -74,7 +74,7 @@ If you have used a *.deb* package for installation, you may need to remove the c
 
 ### Dependencies
 
-PhotoPrism packages bundle TensorFlow and ONNX Runtime; the versions are pinned by `scripts/dist/install-tensorflow.sh` and `scripts/dist/install-onnx.sh`. The shared libraries for both frameworks are shipped inside `/opt/photoprism/lib`, so no additional system packages are needed to run the ONNX face detector and embedding models. The binaries still rely on glibc ≥ 2.35 and the standard C/C++ runtime libraries (`libstdc++6`, `libgcc_s1`, `libgomp1`, …) provided by your distribution.
+PhotoPrism packages bundle TensorFlow and ONNX Runtime; the versions are pinned by `scripts/dist/install-tensorflow.sh` and `scripts/dist/install-onnx.sh`. The shared libraries for both frameworks are shipped inside `/opt/photoprism/lib`, so no additional system packages are needed to run the ONNX face detector and embedding models. The binaries still rely on glibc — 2.35 or newer for current builds — and on the standard C/C++ runtime libraries (`libstdc++6`, `libgcc_s1`, `libgomp1`, …) provided by your distribution.
 
 That glibc floor comes from the bundled **TensorFlow** build, which we compile on Ubuntu 22.04: it is the component referencing the newest symbols, so it sets the minimum for the package as a whole. The ONNX Runtime we ship needs considerably less, so raising or lowering the floor follows from changing the TensorFlow build base rather than from anything configured here. Verify it for a given release with:
 
@@ -88,7 +88,7 @@ Install the following packages **before** running PhotoPrism so that thumbnailin
 
 | Distribution family          | Command                                                                                                                                                                                |
 |------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Debian / Ubuntu              | `sudo apt install libvips42t64 libimage-exiftool-perl ffmpeg sqlite3 tzdata`<br/>Use `libvips42` on releases without `libvips42t64`, but make sure the installed version is **8.14+**. |
+| Debian / Ubuntu              | `sudo apt install libvips42t64 libimage-exiftool-perl ffmpeg sqlite3 tzdata`<br/>Use `libvips42` on releases without `libvips42t64`, and make sure the installed version meets the minimum for your release (see below). |
 | Fedora / RHEL / Alma / Rocky | `sudo dnf install vips perl-Image-ExifTool ffmpeg sqlite tzdata`                                                                                                                       |
 | openSUSE                     | `sudo zypper install vips perl-Image-ExifTool ffmpeg sqlite3 tzdata`                                                                                                                   |
 
@@ -96,7 +96,7 @@ These packages pull in the full libvips stack (GLib, libjpeg/libtiff/libwebp, ar
 
 #### Installing Newer libvips on Ubuntu 22.04 (Jammy)
 
-Ubuntu 22.04 ships libvips 8.12 by default, which is older than the 8.14 minimum, so the installer falls back to a backport PPA there and installs a current build instead:
+The minimum libvips version is set per release by `LIBVIPS_MIN_VERSION` in [`scripts/dist/install-libvips.sh`](https://github.com/photoprism/photoprism/blob/develop/scripts/dist/install-libvips.sh), and the installer enforces it for you: it keeps the distribution package when that is recent enough and falls back to a backport PPA when it is not. Ubuntu 22.04 ships libvips 8.12 by default, which is below the current minimum, so the fallback applies there:
 
 ```bash
 bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-libvips.sh)
