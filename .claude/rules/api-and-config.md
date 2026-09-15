@@ -32,6 +32,13 @@ When renaming or adding fields:
 - Update tests (search/replace old field names) and examples in `specs/`.
 - Quick grep: `rg -n 'oldField|newField' -S` across code, tests, and specs.
 
+## Session & Auth Caches
+
+- Account updates through `User.Save` invalidate only that user's session and WebDAV caches via `entity.FlushUserSessionCache`.
+- Capture `CurrentAuthCacheGeneration` before authentication lookup and pass it to `CacheWebDAVUser`; never capture it only at insertion or refresh the generation on an older session object.
+- Use the entity cache helpers for WebDAV authentication; keep cache eviction separate from persisted credential revocation and preserve process-local semantics.
+- Where this lives: `internal/entity/auth_session_cache.go`, `auth_user_cache.go`, `auth_cache_generation.go`.
+
 ## Testing Helpers
 
 - Isolate config paths with `t.TempDir()`; reuse `NewConfig`, `CliTestContext`, and `NewApiTest()` harnesses.
