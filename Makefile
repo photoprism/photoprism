@@ -63,10 +63,14 @@ else
     GOTEST=go test
 endif
 
-# Ensure compatibility with "docker-compose" (old) and "docker compose" (new).
+# Ensure compatibility with "docker compose" (new) and "docker-compose" (old),
+# preferring the plugin wherever it is available.
+HAS_DOCKER_COMPOSE_PLUGIN := $(shell docker compose version 2>/dev/null)
 HAS_DOCKER_COMPOSE_WITH_DASH := $(shell which docker-compose)
 
-ifdef HAS_DOCKER_COMPOSE_WITH_DASH
+ifdef HAS_DOCKER_COMPOSE_PLUGIN
+    DOCKER_COMPOSE=docker compose
+else ifdef HAS_DOCKER_COMPOSE_WITH_DASH
     DOCKER_COMPOSE=docker-compose
 else
     DOCKER_COMPOSE=docker compose
