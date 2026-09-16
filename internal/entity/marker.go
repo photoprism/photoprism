@@ -559,6 +559,26 @@ func (m *Marker) Subject() (subj *Subject) {
 	return m.subject
 }
 
+// WithheldFromSession reports whether the marker names a person this session may not see, so a
+// handler can refuse the marker rather than answer with its identity. Classified on the name as
+// well as the link, the way MarshalJSON resolves one.
+func (m *Marker) WithheldFromSession(sess *Session) bool {
+	if m.SubjUID == "" && m.MarkerName == "" {
+		return false
+	} else if sess.SeesPrivatePeople() {
+		return false
+	}
+
+	withheld, err := FindWithheldPeople()
+
+	if err != nil {
+		log.Warnf("markers: %s while resolving people visibility", err)
+		return true
+	}
+
+	return withheld.Withholds(m.SubjUID, m.MarkerName)
+}
+
 // ClearSubject removes an existing subject association, and reports a collision.
 func (m *Marker) ClearSubject(src string) error {
 	// Find the matching face.

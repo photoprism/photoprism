@@ -96,6 +96,14 @@ func findFileMarker(c *gin.Context) (file *entity.File, marker *entity.Marker, e
 		}
 	}
 
+	// A marker naming a person the session may not see is reported as not found, so a write cannot
+	// answer with an identity a read withholds. Not found rather than forbidden, matching how the
+	// subject handlers answer for the same person.
+	if marker.WithheldFromSession(s) {
+		AbortEntityNotFound(c)
+		return file, marker, errors.New("marker withheld")
+	}
+
 	return file, marker, nil
 }
 
@@ -215,6 +223,14 @@ func CreateMarker(router *gin.RouterGroup) {
 
 		// Display success message.
 		event.SuccessMsg(i18n.MsgChangesSaved)
+
+		// The session supplied the name, so nothing here is news to it - but a resolved subject uid
+		// would be, and the response is shaped like every other read of a marker.
+		if marker.WithheldFromSession(s) {
+			marker.MarkerName = ""
+			marker.SubjUID = ""
+			marker.SubjSrc = ""
+		}
 
 		// Return new marker with location header.
 		header.SetLocation(c, c.FullPath(), marker.MarkerUID)

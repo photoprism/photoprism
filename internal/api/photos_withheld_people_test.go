@@ -334,8 +334,9 @@ func pictureOperands(line string) (names []string) {
 }
 
 // unshapedPictureResponses returns what the rule rejects in src: a picture serialized without being
-// shaped for the session, and a shaping placed above a call that persists the same picture - which
-// would write the reduced entity to a sidecar rather than only to the response.
+// shaped for the session, a shaping that comes after the response it was meant to shape, and one
+// placed above a call that persists the same picture - which would write the reduced entity to a
+// sidecar rather than only to the response.
 func unshapedPictureResponses(src string) (findings []pictureFinding) {
 	all := strings.Split(src, "\n")
 
@@ -392,9 +393,12 @@ func unshapedPictureResponses(src string) (findings []pictureFinding) {
 
 				served[name] = true
 
-				if _, shaped := shapedAt[name]; !shaped {
+				if at, shaped := shapedAt[name]; !shaped {
 					findings = append(findings, pictureFinding{offset + i + 1,
 						"serializes a picture without shaping it for the session"})
+				} else if at > i {
+					findings = append(findings, pictureFinding{offset + i + 1,
+						"serializes a picture before shaping it, so the response carries the full entity"})
 				}
 
 				break
@@ -473,7 +477,16 @@ func TestUnshapedPictureResponses(t *testing.T) {
 		c.IndentedJSON(http.StatusOK, p)
 }`))
 	})
-	// Position, not just presence: a reduced picture must not reach the sidecar on disk.
+	// Position, not just presence, in both directions: the shaping has to come after the response
+	// would have been sent, and before anything persists the reduced entity.
+	t.Run("ShapedAfterTheResponse", func(t *testing.T) {
+		assert.Equal(t, []string{"3:serializes a picture before shaping it, so the response carries the full entity"},
+			reasons(`func h() {
+		p, err := query.PhotoPreloadByUID(uid)
+		c.JSON(http.StatusOK, p)
+		p.RedactForSession(s)
+}`))
+	})
 	t.Run("ShapedAboveAWrite", func(t *testing.T) {
 		assert.Equal(t, []string{"3:shapes a picture above a call that persists it, so the reduction reaches storage"},
 			reasons(`func h() {
@@ -559,4 +572,59 @@ func TestPhotoResponses_AllRedact(t *testing.T) {
 	// picture through the loaders above. It does not move for a handler that obtains one some other
 	// way, which the existing loads keep the count above - that boundary is the doc comment's third.
 	assert.GreaterOrEqual(t, checked, 20, "every handler that loads a picture is checked")
+}
+
+// TestMarkerHandlers_RefuseWithheldPeople pins that a marker write cannot answer with an identity a
+// read withholds. The role check alone does not cover it: no role holds files:update without private
+// access to people, but a credential scoped to files is admitted on the handler and is still not
+// permitted to see them.
+func TestMarkerHandlers_RefuseWithheldPeople(t *testing.T) {
+	app, router, conf := NewApiTest()
+	UpdateMarker(router)
+	ClearMarkerSubject(router)
+
+	prevAuthMode := conf.AuthMode()
+	conf.SetAuthMode(config.AuthModePasswd)
+	t.Cleanup(func() { conf.SetAuthMode(prevAuthMode) })
+
+	sess, err := entity.AddClientSession("withheld-marker-probe", conf.SessionMaxAge(), "files",
+		authn.GrantPassword, entity.UserFixtures.Pointer("alice"))
+	require.NoError(t, err)
+	t.Cleanup(func() { entity.UnscopedDb().Unscoped().Delete(sess) })
+
+	require.False(t, sess.InsufficientScope(acl.ResourceFiles, acl.Permissions{acl.ActionUpdate}),
+		"the scope admits it on files")
+	require.False(t, sess.SeesPrivatePeople(), "and people is outside that scope")
+
+	withheld := entity.SubjectFixtures.Pointer("actress-1")
+	marker := entity.MarkerFixtures.Get("actress-a-1")
+	other := entity.MarkerFixtures.Get("actor-a-1")
+
+	t.Run("VisiblePersonStillEditable", func(t *testing.T) {
+		r := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/markers/"+other.MarkerUID,
+			`{"SubjSrc":"manual","Name":"Actor A"}`, sess.AuthToken())
+		assert.Equal(t, http.StatusOK, r.Code, "the positive control: an ordinary person stays editable")
+	})
+
+	markPrivate(t, withheld, false)
+
+	t.Run("UpdateMarker", func(t *testing.T) {
+		r := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/markers/"+marker.MarkerUID,
+			`{"SubjSrc":"manual","Name":"`+withheld.SubjName+`"}`, sess.AuthToken())
+
+		assert.Equal(t, http.StatusNotFound, r.Code)
+		assert.NotContains(t, r.Body.String(), withheld.SubjName)
+		assert.NotContains(t, r.Body.String(), withheld.SubjUID)
+	})
+	t.Run("ClearMarkerSubject", func(t *testing.T) {
+		r := AuthenticatedRequest(app, http.MethodDelete, "/api/v1/markers/"+marker.MarkerUID+"/subject", sess.AuthToken())
+
+		assert.Equal(t, http.StatusNotFound, r.Code)
+		assert.NotContains(t, r.Body.String(), withheld.SubjUID)
+	})
+	t.Run("AdminUnaffected", func(t *testing.T) {
+		r := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/markers/"+marker.MarkerUID,
+			`{"SubjSrc":"manual","Name":"`+withheld.SubjName+`"}`, AuthenticateAdmin(app, router))
+		assert.Equal(t, http.StatusOK, r.Code, "a session that may see them keeps editing them")
+	})
 }
