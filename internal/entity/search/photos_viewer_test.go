@@ -78,15 +78,19 @@ func TestPhoto_ViewerResult(t *testing.T) {
 // reported dimensions match the reported projection.
 func TestPhoto_ViewerResult_FisheyeRaw(t *testing.T) {
 	photo := Photo{
-		PhotoUID:      rnd.GenerateUID(entity.PhotoUID),
-		PhotoType:     entity.MediaRaw,
-		PhotoPanorama: true,
-		FileHash:      "primary-jpeg",
-		FileWidth:     5760,
-		FileHeight:    2880,
+		PhotoUID:       rnd.GenerateUID(entity.PhotoUID),
+		PhotoType:      entity.MediaRaw,
+		PhotoPanorama:  true,
+		FileHash:       "primary-jpeg",
+		FileMime:       "image/jpeg",
+		FileCodec:      "jpeg",
+		FileWidth:      5760,
+		FileHeight:     2880,
+		FileProjection: "equirectangular",
+		FilePrimary:    true,
 		Files: []entity.File{
+			{MediaType: entity.MediaImage, FileHash: "primary-jpeg", FileMime: "image/jpeg", FileCodec: "jpeg", FileWidth: 5760, FileHeight: 2880, FileProjection: "equirectangular", FilePrimary: true},
 			{MediaType: entity.MediaRaw, FileHash: "fisheye-dng", FileMime: "image/x-raw", FileCodec: "raw", FileWidth: 3264, FileHeight: 6528, FileProjection: "dual-fisheye"},
-			{MediaType: entity.MediaImage, FileHash: "sphere-jpeg", FileMime: "image/jpeg", FileCodec: "jpeg", FileWidth: 5760, FileHeight: 2880, FileProjection: "equirectangular"},
 		},
 	}
 
@@ -100,6 +104,8 @@ func TestPhoto_ViewerResult_FisheyeRaw(t *testing.T) {
 	assert.Equal(t, 2880, result.Height)
 	assert.Equal(t, float64(2), float64(result.Width)/float64(result.Height))
 	assert.Equal(t, "primary-jpeg", result.Hash)
+	assert.Equal(t, "jpeg", result.Codec)
+	assert.Equal(t, "image/jpeg", result.Mime)
 }
 
 func TestPhotoResults_ViewerFormatting(t *testing.T) {

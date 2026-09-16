@@ -434,13 +434,17 @@ func TestPhoto_MediaInfo(t *testing.T) {
 		// The dewarp derivative holds the pixels the sphere viewer shows, so its 2:1 frame is
 		// reported instead of the fisheye original's portrait frame.
 		r := Photo{
-			PhotoType:  media.Raw.String(),
-			FileHash:   "primary-jpeg",
-			FileWidth:  5760,
-			FileHeight: 2880,
+			PhotoType:      media.Raw.String(),
+			FileHash:       "primary-jpeg",
+			FileMime:       "image/jpeg",
+			FileCodec:      "jpeg",
+			FileWidth:      5760,
+			FileHeight:     2880,
+			FileProjection: projection.Equirectangular.String(),
+			FilePrimary:    true,
 			Files: []entity.File{
+				{MediaType: media.Image.String(), FileHash: "primary-jpeg", FileMime: "image/jpeg", FileCodec: "jpeg", FileWidth: 5760, FileHeight: 2880, FileProjection: projection.Equirectangular.String(), FilePrimary: true},
 				{MediaType: media.Raw.String(), FileHash: "fisheye-dng", FileMime: "image/x-raw", FileCodec: "raw", FileWidth: 3264, FileHeight: 6528, FileProjection: projection.DualFisheye.String()},
-				{MediaType: media.Image.String(), FileHash: "sphere-jpeg", FileMime: "image/jpeg", FileCodec: "jpeg", FileWidth: 5760, FileHeight: 2880, FileProjection: projection.Equirectangular.String()},
 			},
 		}
 
