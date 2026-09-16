@@ -1159,6 +1159,18 @@ var Flags = CliFlags{
 			Value:   ffmpeg.DefaultExclude,
 			EnvVars: EnvVars("FFMPEG_EXCLUDE", "FFMPEG_BLACKLIST"),
 		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "convert-timeout",
+			Usage:   "time in `MINUTES` after which converting a still image, document, or RAW file is given up (-1 to disable)",
+			Value:   DefaultConvertTimeout,
+			EnvVars: EnvVars("CONVERT_TIMEOUT"),
+		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "transcode-timeout",
+			Usage:   "time in `MINUTES` after which transcoding a video is given up (disabled by default)",
+			Value:   DefaultTranscodeTimeout,
+			EnvVars: EnvVars("TRANSCODE_TIMEOUT"),
+		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "exiftool-bin",
 			Usage:   "ExifTool `COMMAND` for extracting metadata",
@@ -1263,6 +1275,12 @@ var Flags = CliFlags{
 			Usage:   "maximum size of thumbnails generated on demand in `PIXELS` (720-15360)",
 			Value:   thumb.SizeOnDemand,
 			EnvVars: EnvVars("THUMB_SIZE_UNCACHED"),
+		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "thumb-size-face",
+			Usage:   "maximum size in `PIXELS` (720-15360) of the source rendered on demand so face crops are not upscaled, 0 to disable",
+			Value:   thumb.SizeFit4096.Width,
+			EnvVars: EnvVars("THUMB_SIZE_FACE"),
 		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "thumb-uncached",
@@ -1373,9 +1391,13 @@ var Flags = CliFlags{
 		Flag: &cli.IntFlag{
 			Name:    "face-size-retry",
 			Usage:   "minimum size of faces in `PIXELS` when a picture would otherwise have none, -1 to disable",
-			Value:   face.RetrySizeThreshold,
 			EnvVars: EnvVars("FACE_SIZE_RETRY"),
-		}}, {
+		},
+		// No Value, or the option would be non-zero on every start and FaceSizeRetry would never
+		// reach its derivation: the floor follows what the thumbnail settings let a crop reach,
+		// which is the wider of thumb-size and thumb-size-face.
+		DocDefault: fmt.Sprintf("%d (%d where a crop can reach no further than 1920, off at 720)",
+			face.RetrySizeThreshold, face.RetrySizeThresholdLimited)}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-score",
 			Usage:   "minimum face `QUALITY` score (1-100), replacing the detector's own calibrated cutoff, -1 disables the check",
@@ -1429,6 +1451,15 @@ var Flags = CliFlags{
 			Value:   face.ClusterCoreDefault,
 			EnvVars: EnvVars("FACE_CLUSTER_CORE"),
 		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "face-cluster-core-retry",
+			Usage:   "`NUMBER` of faces forming a cluster core in a second pass over what matching left unclustered, -1 to disable",
+			EnvVars: EnvVars("FACE_CLUSTER_CORE_RETRY"),
+		},
+		// No Value, or the option would be non-zero on every start and FaceClusterCoreRetry would
+		// never reach its derivation. Flat rather than one less than the first pass, see there.
+		DocDefault: fmt.Sprintf("%d (off where face-cluster-core is below %d)",
+			face.ClusterCoreRetryDefault, face.ClusterCoreDefault)}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-cluster-split-rounds",
 			Usage:   "`NUMBER` of times a group wider than its own accept distance may be re-clustered, 0 discards such a group and -1 keeps it whole",

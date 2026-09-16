@@ -2,7 +2,6 @@ package photoprism
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -10,6 +9,7 @@ import (
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/proc"
 )
 
 // ToJson uses exiftool to export metadata to a json file.
@@ -58,12 +58,14 @@ func (w *Convert) ToJson(f *MediaFile, force bool) (jsonName string, err error) 
 	log.Trace(cmd.String())
 
 	// Run convert command.
-	if err = cmd.Run(); err != nil {
-		if stderr.String() != "" {
-			return "", errors.New(stderr.String())
-		} else {
-			return "", err
+	if err = proc.Run(cmd, w.conf.ConvertTimeout()); err != nil {
+		if s := stderr.String(); s != "" {
+			err = fmt.Errorf("%w: %s", err, s)
 		}
+
+		LogConvertError(err, cmd, clean.Log(filepath.Base(jsonName)))
+
+		return "", err
 	}
 
 	// Write output to file (make parent dir robustly in case a parallel test cleaned the cache).

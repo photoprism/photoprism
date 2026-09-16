@@ -1,5 +1,7 @@
 # PhotoPrism Frontend
 
+**Last Updated:** September 10, 2026
+
 The Vue 3 + Vuetify 3 web UI for PhotoPrism. Built with webpack, tested with Vitest, and packaged into the Go binary as static assets.
 
 Other frontend documentation lives next to this file:
@@ -62,7 +64,31 @@ Some major upgrades are blocked by config-file module style (the configs referen
 | `vue3-gettext` 4.x            | ESM    | v4 is ESM-only and exports its extraction tooling from the same runtime entry: `dist/index.js` does an unconditional `import PO from "pofile"`, and `pofile` calls `require("fs")`. The `exports` map has no runtime-only subpath and the package sets no `sideEffects: false`, so webpack cannot tree-shake it — `make build-js` fails with `Can't resolve 'fs'` in `pofile/lib/po.js`. The runtime API itself (`createGettext({ translations, silent, defaultLanguage })`, the `$gettext`/`$ngettext`/`$pgettext`/`$npgettext` globals, `%{}` interpolation) is compatible and the removed `<translate>` component / `v-translate` directive are unused here, so the only fix needed is a bundler workaround (e.g. `resolve.fallback: { fs: false }`, which ships dead extraction code), an upstream split of runtime vs. tooling exports, or a [migration to Vite](#migrating-the-production-build-from-webpack-to-vite) (Rollup externalizes `fs` instead of failing). |
 | `vuetify` 4.x                 | —      | See the `vuetify` row in [Currently Pinned Packages](#currently-pinned-packages); also a separate v3 → v4 migration project.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | `vue-router` 5.x              | —      | Major release with breaking changes across `frontend/src/app/routes.js` and dynamic imports. Needs its own evaluation pass with TestCafe verification.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| `maplibre-gl` 6.x             | —      | Deferred on 2026-07-25: 6.0.0 shipped 2026-07-22 with no patch release yet. Requires **WebGL2** (WebGL1 support removed), which fails hard on old GPUs/drivers with no fallback; is ESM-only (UMD dropped) and needs `import * as maplibregl`; turns `styleimagemissing` into a notify-only event replaced by `Map.setMissingStyleImageResolver` (used in `component/map.vue`); and refactors `Map` to compose `Camera` while removing `map.transform`. Highest risk here is `common/maplibregl.js`, which patches `maplibregl.Map.prototype` (`setStyle` plus the language helpers). Revisit once a few 6.0.x patches land, and budget map QA: style switching, language decoration, terrain/globe/geolocate controls, markers and clustering. No security pressure — `5.24.0` has no open advisories, but note it is the last 5.x release.                                                                                                                               |
+
+### Additional Upgrade Constraints (September 2026)
+
+- **Babel 8:** Requires Node.js `^22.18.0 || >=24.11.0` and an ESM/tooling migration; retain Babel 7 with the current Node.js `>=22.15.0` baseline. `babel-plugin-polyfill-corejs3` 1.0.0 advertises Babel 7 compatibility, but its resolved `@babel/helper-plugin-utils` 8 dependency requires `@babel/core` 8 and leaves `npm ls` invalid. Keep 0.14.2 until the Babel toolchain moves together.
+- **ESLint 10:** `eslint-plugin-import` 2.32.0 declares support only through ESLint 9. Keep `eslint` and `@eslint/js` on matching 9.x versions until the plugin stack supports the upgrade.
+- **cssnano 9:** ESM-only and requires Node.js `^22.22.3 || ^24.15.0 || >=26.0`; the current CommonJS PostCSS config and declared Node.js baseline need a coordinated update first.
+- **jsdom 30:** Requires Node.js `^22.22.2 || ^24.15.0 || >=26.0.0`, excluding supported Node.js versions. Keep 29.x until the baseline is deliberately raised.
+
+### Compatible Tooling Upgrades (September 2026)
+
+- `webpack-cli` 7 works with the pinned webpack 5.107.2. Its `--node-env` option was replaced by `--config-node-env` in the production, development, and analyzer scripts; keep this distinction from the webpack runtime pin.
+- `sass-loader` 17 supports CommonJS consumers and the existing Dart Sass implementation. Its default `auto` API selects the modern compiler when available; legacy `node-sass` support was removed.
+- `eslint-webpack-plugin` 6 supports ESLint 9, and this configuration does not use its removed `threads` option. `eslint-formatter-pretty` 7 continues to load through the existing dynamic import.
+- Vitest 5 and its matching V8 coverage provider use the existing `.mjs` configs and `forks` pool. Its default mock-history clearing is compatible with the shared frontend suite.
+- `@testing-library/jest-dom` 7 adds a required `@testing-library/dom` peer, resolved automatically in the workspace lockfile.
+
+## Map Rendering & Browser Compatibility
+
+MapLibre GL JS 6 renders Places, lightbox mini-maps, and the location editor. It requires a working **WebGL2** context; the low-resolution style uses the same renderer and is not a WebGL1 fallback. When maps cannot initialize, a localized map-unavailable message leaves photo browsing, location information, coordinate entry, and location search available.
+
+`src/common/map.js` probes WebGL2 and shares the lazy renderer import between concurrent map mounts. `src/common/maplibregl.js` uses namespace imports, configures the same-origin module worker, and preserves the language-label adapter's fluent `setStyle` contract. Arabic and bidirectional text use MapLibre's built-in shaping rather than a separate RTL plugin.
+
+The webpack build emits `maplibre-gl-worker.mjs` and its sibling `maplibre-gl-shared.mjs` together under `maplibre/<package-version>/`. The version is read from the installed package, so the worker and its relative import stay aligned through upgrades. Both assets appear in the flat manifest and production precache. Keep the worker as a module asset; emitting it without its shared sibling leaves maps unable to load tiles. This setup does not require lifting the webpack 5.107.2 pin.
+
+`component/map.vue` supplies missing style images through `setMissingStyleImageResolver`. Places waits for `GeoJSONSource.setData()` before reconciling markers. Verify style/language changes, clustering, marker clicks and dragging, globe/terrain controls, and the unavailable-WebGL2 path when updating the renderer.
 
 ## Migrating the Production Build From webpack to Vite
 

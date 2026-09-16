@@ -10,6 +10,7 @@ import (
 	"gopkg.in/yaml.v2"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -230,6 +231,8 @@ type Options struct {
 	FFmpegMapVideo            string        `yaml:"FFmpegMapVideo" json:"FFmpegMapVideo" flag:"ffmpeg-map-video"`
 	FFmpegMapAudio            string        `yaml:"FFmpegMapAudio" json:"FFmpegMapAudio" flag:"ffmpeg-map-audio"`
 	FFmpegExclude             string        `yaml:"FFmpegExclude" json:"-" flag:"ffmpeg-exclude"`
+	ConvertTimeout            int           `yaml:"ConvertTimeout" json:"-" flag:"convert-timeout"`
+	TranscodeTimeout          int           `yaml:"TranscodeTimeout" json:"-" flag:"transcode-timeout"`
 	ExifToolBin               string        `yaml:"ExifToolBin" json:"-" flag:"exiftool-bin"`
 	SipsBin                   string        `yaml:"SipsBin" json:"-" flag:"sips-bin"`
 	SipsExclude               string        `yaml:"SipsExclude" json:"-" flag:"sips-exclude"`
@@ -248,6 +251,7 @@ type Options struct {
 	ThumbColor                string        `yaml:"ThumbColor" json:"ThumbColor" flag:"thumb-color"`
 	ThumbSize                 int           `yaml:"ThumbSize" json:"ThumbSize" flag:"thumb-size"`
 	ThumbSizeUncached         int           `yaml:"ThumbSizeUncached" json:"ThumbSizeUncached" flag:"thumb-size-uncached"`
+	ThumbSizeFace             int           `yaml:"ThumbSizeFace" json:"ThumbSizeFace" flag:"thumb-size-face"`
 	ThumbUncached             bool          `yaml:"ThumbUncached" json:"ThumbUncached" flag:"thumb-uncached"`
 	JpegQuality               int           `yaml:"JpegQuality" json:"JpegQuality" flag:"jpeg-quality"`
 	JpegSize                  int           `yaml:"JpegSize" json:"JpegSize" flag:"jpeg-size"`
@@ -276,6 +280,7 @@ type Options struct {
 	FaceClusterSize           int           `yaml:"-" json:"-" flag:"face-cluster-size"`
 	FaceClusterScore          int           `yaml:"-" json:"-" flag:"face-cluster-score"`
 	FaceClusterCore           int           `yaml:"-" json:"-" flag:"face-cluster-core"`
+	FaceClusterCoreRetry      int           `yaml:"-" json:"-" flag:"face-cluster-core-retry"`
 	FaceClusterSplitRounds    int           `yaml:"-" json:"-" flag:"face-cluster-split-rounds"`
 	FaceClusterSplitShrink    float64       `yaml:"-" json:"-" flag:"face-cluster-split-shrink"`
 	FaceClusterDist           float64       `yaml:"-" json:"-" flag:"face-cluster-dist"`
@@ -336,12 +341,12 @@ func NewOptions(ctx *cli.Context) *Options {
 	if c.DefaultsYaml = defaultsYaml(ctx); !fs.FileExistsNotEmpty(c.DefaultsYaml) {
 		log.Tracef("config: defaults file is empty or missing")
 	} else if err := c.Load(c.DefaultsYaml); err != nil {
-		log.Warnf("config: failed loading defaults from %s (%s)", clean.Log(c.DefaultsYaml), err)
+		event.SystemWarn([]string{"config", "defaults", "load %s", "%s"}, clean.Log(c.DefaultsYaml), clean.ErrorFull(err))
 	}
 
 	// Apply options specified with environment variables and command-line flags.
 	if err := c.ApplyCliContext(ctx); err != nil {
-		log.Error(err)
+		log.Errorf("config: %s", clean.Error(err))
 	}
 
 	return c

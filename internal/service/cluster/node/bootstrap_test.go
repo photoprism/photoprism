@@ -14,11 +14,15 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v2"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -833,4 +837,193 @@ func TestThemeInstall_SkipWhenAppJsExists(t *testing.T) {
 	assert.Equal(t, 0, served)
 	_, statErr := os.Stat(filepath.Join(tempTheme, "style.css"))
 	assert.Error(t, statErr)
+}
+
+// captureBootstrapLog redirects the package logger to a buffer for the duration of the test. The
+// previous writer is restored rather than assumed, since the logger is process-wide.
+func captureBootstrapLog(t *testing.T) *bytes.Buffer {
+	t.Helper()
+
+	l, ok := log.(*logrus.Logger)
+
+	if !ok {
+		t.Fatalf("expected a *logrus.Logger, got %T", log)
+	}
+
+	var out bytes.Buffer
+
+	prev := l.Out
+	l.SetOutput(&out)
+	t.Cleanup(func() { l.SetOutput(prev) })
+
+	return &out
+}
+
+func TestBootstrapLogging(t *testing.T) {
+	// Bootstrap runs before the database connection, so its lines reach an operator on the console
+	// and must not be published to the channel the log viewer and the errors table read.
+	t.Run("NotPublishedToTheLogChannel", func(t *testing.T) {
+		const sentinel = "bootstrap logging sentinel"
+
+		c := newBootstrapTestConfig(t, "bootstrap-log-channel")
+		c.Options().PortalUrl = "://nope"
+		c.Options().JoinToken = cluster.ExampleJoinToken
+
+		// event.Hook drops an entry repeating the previous message, which would skip the publish
+		// this asserts against and let the test hold for the wrong reason.
+		require.NoError(t, event.LogBuffer.Set("reset by "+t.Name()))
+
+		s := event.Subscribe("log.*")
+		defer event.Unsubscribe(s)
+
+		out := captureBootstrapLog(t)
+
+		bootstrapClusterNode(c)
+		assert.Contains(t, out.String(), "invalid portal URL")
+
+		// Published last, so the receiver is drained to a known end rather than to a timeout.
+		event.Publish("log.warning", event.Data{"message": sentinel})
+
+		for {
+			select {
+			case msg := <-s.Receiver:
+				text, _ := msg.Fields["message"].(string)
+				if text == sentinel {
+					return
+				}
+				assert.NotContains(t, text, "invalid portal URL")
+			case <-time.After(time.Second):
+				t.Fatal("the sentinel was not received")
+			}
+		}
+	})
+	// A value only reaches that warning because no parser accepted it, so the shapes that reach it
+	// are the ones a parser cannot split. Each of these is a plausible misconfiguration.
+	for _, tc := range []struct{ name, portalURL string }{
+		{"NoHost", "https://node:s3cret@"},
+		{"NoScheme", "node:s3cret@portal.example.com"},
+		{"EmptyScheme", "://node:s3cret@portal.example.com"},
+		{"SpaceInCredential", "https://node:pa ss@portal.example.com"},
+		{"TokenInQuery", "htps:/portal.example.com/?access_token=s3cret"},
+		{"ProtocolRelative", "//node:s3cret@portal.example.com"},
+	} {
+		t.Run("PortalUrlCredentialRemoved"+tc.name, func(t *testing.T) {
+			c := newBootstrapTestConfig(t, "bootstrap-log-credential")
+			c.Options().PortalUrl = tc.portalURL
+			c.Options().JoinToken = cluster.ExampleJoinToken
+
+			out := captureBootstrapLog(t)
+
+			bootstrapClusterNode(c)
+			assert.Contains(t, out.String(), "invalid portal URL")
+			assert.NotContains(t, out.String(), "s3cret", "credential rendered for %q", tc.portalURL)
+			assert.NotContains(t, out.String(), "pa ss", "credential rendered for %q", tc.portalURL)
+		})
+	}
+	t.Run("FailureKeepsItsLocation", func(t *testing.T) {
+		prevAttempts, prevDelay := cluster.BootstrapRegisterMaxAttempts, cluster.BootstrapRegisterRetryDelay
+		prevTheme := cluster.BootstrapAutoThemeEnabled
+		cluster.BootstrapRegisterMaxAttempts, cluster.BootstrapRegisterRetryDelay = 1, 0
+		cluster.BootstrapAutoThemeEnabled = false
+		t.Cleanup(func() {
+			cluster.BootstrapRegisterMaxAttempts, cluster.BootstrapRegisterRetryDelay = prevAttempts, prevDelay
+			cluster.BootstrapAutoThemeEnabled = prevTheme
+		})
+
+		// Closed while its port stays known, so the request is refused rather than answered.
+		srv := httptest.NewServer(http.HandlerFunc(func(_ http.ResponseWriter, _ *http.Request) {}))
+		portalURL := srv.URL
+		srv.Close()
+
+		c := newBootstrapTestConfig(t, "bootstrap-log-location")
+		c.Options().PortalUrl = portalURL
+		c.Options().JoinToken = cluster.ExampleJoinToken
+		c.Options().NodeRole = cluster.RoleInstance
+
+		out := captureBootstrapLog(t)
+
+		bootstrapClusterNode(c)
+
+		// Asserted on one line, so another site rendering the endpoint cannot satisfy this while
+		// the terminal warning has regressed to the renderer that removes it.
+		for _, line := range strings.Split(out.String(), "\n") {
+			if strings.Contains(line, "failed to join the configured cluster") {
+				assert.Contains(t, line, portalURL+"/api/v1/cluster/nodes/register")
+				return
+			}
+		}
+
+		t.Fatalf("the join failure was not reported: %s", out.String())
+	})
+}
+
+func TestRedactedPortalUrl(t *testing.T) {
+	// Well formed, so url.Parse splits it and the shared helpers apply.
+	t.Run("Userinfo", func(t *testing.T) {
+		assert.Equal(t, "https://node:***@portal.example.com/x", redactedPortalUrl("https://node:s3cret@portal.example.com/x"))
+	})
+	t.Run("QueryParameter", func(t *testing.T) {
+		assert.Equal(t, "https://portal.example.com/x?access_token=***", redactedPortalUrl("https://portal.example.com/x?access_token=s3cret"))
+	})
+	// Malformed, which is the only way this is reached, so the textual removal is what applies.
+	t.Run("NoScheme", func(t *testing.T) {
+		assert.Equal(t, "node:***@portal.example.com", redactedPortalUrl("node:s3cret@portal.example.com"))
+	})
+	t.Run("SpaceInCredential", func(t *testing.T) {
+		assert.Equal(t, "https://node:***@portal.example.com", redactedPortalUrl("https://node:pa ss@portal.example.com"))
+	})
+	t.Run("NoCredential", func(t *testing.T) {
+		assert.Equal(t, "://nope", redactedPortalUrl("://nope"))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", redactedPortalUrl(""))
+	})
+}
+
+func TestRedactedUserinfo(t *testing.T) {
+	t.Run("EmptyScheme", func(t *testing.T) {
+		assert.Equal(t, "://***@portal.example.com", redactedUserinfo("://tokenonly@portal.example.com"))
+	})
+	t.Run("AtSignInPath", func(t *testing.T) {
+		// Only the authority is examined, so an at sign further along is not a credential.
+		assert.Equal(t, "https://portal.example.com/a@b", redactedUserinfo("https://portal.example.com/a@b"))
+	})
+	t.Run("SeveralAtSigns", func(t *testing.T) {
+		assert.Equal(t, "https://a:***@portal.example.com", redactedUserinfo("https://a:b@c@portal.example.com"))
+	})
+	t.Run("Idempotent", func(t *testing.T) {
+		once := redactedUserinfo("https://node:s3cret@portal.example.com")
+		assert.Equal(t, once, redactedUserinfo(once))
+	})
+	t.Run("NoAuthority", func(t *testing.T) {
+		assert.Equal(t, "not a url", redactedUserinfo("not a url"))
+	})
+}
+
+func TestRegisterWithPortal_DropsConfiguredQuery(t *testing.T) {
+	// The endpoints take no query, so one configured on the Portal URL stays out of the request.
+	var rawQuery string
+	var hits int
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		hits++
+		rawQuery = r.URL.RawQuery
+		w.WriteHeader(http.StatusCreated)
+		_ = json.NewEncoder(w).Encode(cluster.RegisterResponse{})
+	}))
+	defer srv.Close()
+
+	prevTheme := cluster.BootstrapAutoThemeEnabled
+	cluster.BootstrapAutoThemeEnabled = false
+	t.Cleanup(func() { cluster.BootstrapAutoThemeEnabled = prevTheme })
+
+	c := newBootstrapTestConfig(t, "bootstrap-portal-query")
+	c.Options().PortalUrl = srv.URL + "/?join_token=" + cluster.ExampleJoinToken
+	c.Options().JoinToken = cluster.ExampleJoinToken
+	c.Options().NodeRole = cluster.RoleInstance
+
+	bootstrapClusterNode(c)
+
+	assert.Equal(t, 1, hits)
+	assert.Empty(t, rawQuery, "the configured query reached the endpoint")
 }

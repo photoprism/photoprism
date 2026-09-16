@@ -1,13 +1,33 @@
 #!/usr/bin/env bash
 
+# STARTS THE CONTAINER AND RUNS THE GIVEN COMMAND
+# Shares its startup sequence with cmd.sh, which differs only in process and signal
+# handling, so changes to the environment or the init invocation must be made in both.
+
 # regular expressions
 re='^[0-9]+$'
 
 # set env defaults
 export PHOTOPRISM_ARCH=${PHOTOPRISM_ARCH:-arch}
-export DOCKER_ENV=${DOCKER_ENV:-unknown}
 export DOCKER_TAG=${DOCKER_TAG:-unknown}
+
 export PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts"
+
+# Take the environment and the image name from the file recorded when the image was built,
+# since both are properties of the image rather than something to be chosen per run. Cleared
+# first so an inherited value cannot survive a missing file, and parsed rather than sourced,
+# because this runs as root and a parse cannot execute what it reads.
+IMAGE_ENV_FILE="/scripts/.env"
+DOCKER_ENV=""
+DOCKER_IMG=""
+
+if [[ -r ${IMAGE_ENV_FILE} ]]; then
+  DOCKER_ENV=$(sed -n 's/^DOCKER_ENV=//p' "${IMAGE_ENV_FILE}" | head -1 | tr -d '[:space:]')
+  DOCKER_IMG=$(sed -n 's/^DOCKER_IMG=//p' "${IMAGE_ENV_FILE}" | head -1 | tr -d '[:space:]')
+fi
+
+export DOCKER_ENV=${DOCKER_ENV:-unknown}
+export DOCKER_IMG=${DOCKER_IMG:-unknown}
 
 # detect environment
 case $DOCKER_ENV in
@@ -50,7 +70,8 @@ if [[ ${INIT_SCRIPT} ]] && [[ -f "${INIT_SCRIPT}" ]]; then
     /bin/bash -c "${INIT_SCRIPT}"
   else
     echo "started $DOCKER_TAG as uid $(/usr/bin/id -u) ($PHOTOPRISM_ARCH-$DOCKER_ENV)"
-    /usr/bin/sudo -E "${INIT_SCRIPT}"
+    # The sudoers drop-in passes the init variables through, so the whole environment is not preserved.
+    /usr/bin/sudo "${INIT_SCRIPT}"
   fi
 else
   echo "started $DOCKER_TAG as uid $(/usr/bin/id -u) without init script ($PHOTOPRISM_ARCH-$DOCKER_ENV)"
@@ -92,9 +113,9 @@ echo "originals path: ${PHOTOPRISM_ORIGINALS_PATH:-default}"
 ret=0
 
 # change to another user and group on request
-if [[ ${INIT_SCRIPT} ]] && [[ $(/usr/bin/id -u) == "0" ]] && [[ ${PHOTOPRISM_UID} =~ $re ]] && [[ ${PHOTOPRISM_UID} != "0" ]]; then
+if [[ ${INIT_SCRIPT} ]] && [[ $(/usr/bin/id -u) == "0" ]] && [[ ${PHOTOPRISM_UID} =~ $re ]] && [[ $((10#${PHOTOPRISM_UID})) != "0" ]]; then
   # check uid and gid env variables
-  if [[ ${PHOTOPRISM_GID} =~ $re ]] && [[ ${PHOTOPRISM_GID} != "0" ]]; then
+  if [[ ${PHOTOPRISM_GID} =~ $re ]] && [[ $((10#${PHOTOPRISM_GID})) != "0" ]]; then
     echo "switching to uid ${PHOTOPRISM_UID}:${PHOTOPRISM_GID}"
     echo "${@}"
 

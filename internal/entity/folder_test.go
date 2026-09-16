@@ -5,6 +5,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/sirupsen/logrus"
+	logtest "github.com/sirupsen/logrus/hooks/test"
+	"github.com/stretchr/testify/require"
+
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/entity/sortby"
@@ -719,5 +723,43 @@ func TestFolder_Create(t *testing.T) {
 		assert.Equal(t, folderFish.Title(), fishAlbum.AlbumTitle)
 		assert.Equal(t, pathMirror, mirrorAlbum.AlbumPath)
 		assert.Equal(t, pathFish, fishAlbum.AlbumPath)
+	})
+}
+
+func TestFolder_SyncOriginalsAlbum(t *testing.T) {
+	// The album filter is built from the folder path, so it is sanitized like the title beside it.
+	t.Run("FilterIsSanitized", func(t *testing.T) {
+		logger, ok := log.(*logrus.Logger)
+		require.True(t, ok)
+
+		hook := logtest.NewLocal(logger)
+		t.Cleanup(hook.Reset)
+
+		folder := NewFolder(RootOriginals, "2030/album\u202egpj.exe", Now())
+
+		if err := folder.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		t.Cleanup(func() {
+			if a := FindFolderAlbum(folder.Path); a != nil {
+				_ = UnscopedDb().Delete(a).Error
+				FlushAlbumCache()
+			}
+
+			_ = UnscopedDb().Delete(&folder).Error
+		})
+
+		var added string
+
+		for _, entry := range hook.AllEntries() {
+			if strings.Contains(entry.Message, "added album") {
+				added = entry.Message
+			}
+		}
+
+		require.NotEmpty(t, added, "the album line must be logged")
+		assert.NotContains(t, added, "\u202e", "the filter must not carry a bidi override")
+		assert.Contains(t, added, "album", "the filter must still identify the folder")
 	})
 }

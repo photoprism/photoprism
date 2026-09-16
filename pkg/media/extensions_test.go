@@ -16,6 +16,11 @@ func TestMainExtensions(t *testing.T) {
 		assert.Contains(t, exts, ".jpg")
 		assert.Contains(t, exts, ".png")
 		assert.Contains(t, exts, ".mp4")
+		assert.Contains(t, exts, ".cin")
+		assert.Contains(t, exts, ".ori")
+		assert.Contains(t, exts, ".vob")
+		assert.Contains(t, exts, ".tod")
+		assert.Contains(t, exts, ".divx")
 	})
 	t.Run("CanonicalLowercaseOnly", func(t *testing.T) {
 		assert.NotContains(t, exts, ".JPG")

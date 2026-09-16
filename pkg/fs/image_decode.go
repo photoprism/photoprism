@@ -95,6 +95,18 @@ func decodeImage(reader *io.SectionReader) (image.Image, string, error) {
 		return nil, "", err
 	}
 
+	// The geometry is validated before the pixel data is read, so an image is only decoded at
+	// a resolution the configured limit allows.
+	cfg, name, err := decodeConfig(reader, format)
+
+	if err != nil {
+		return nil, name, err
+	} else if err = ExceedsPixelBudget(cfg.Width, cfg.Height, 1); err != nil {
+		return nil, name, err
+	} else if _, err = reader.Seek(0, io.SeekStart); err != nil {
+		return nil, name, err
+	}
+
 	switch format {
 	case imageFormatJPEG:
 		img, err := jpeg.Decode(reader)
@@ -126,6 +138,11 @@ func decodeImageConfig(reader *io.SectionReader) (image.Config, string, error) {
 		return image.Config{}, "", err
 	}
 
+	return decodeConfig(reader, format)
+}
+
+// decodeConfig decodes the image config for an already detected format.
+func decodeConfig(reader *io.SectionReader, format imageFormat) (image.Config, string, error) {
 	switch format {
 	case imageFormatJPEG:
 		cfg, err := jpeg.DecodeConfig(reader)

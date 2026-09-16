@@ -26,4 +26,8 @@ rm -rf /var/log/*.gz /var/log/*.log /var/log/*.[0-9] /var/log/*-????????
 rm -rf /var/lib/cloud/instances/*
 rm -f /root/.ssh/* /etc/ssh/*key*
 
+# Normalize the mode of the installed scripts. This runs at the end of the build so it is the
+# final writer, and clearing only the write bits leaves the read-only files read-only.
+chmod -R go-w /scripts
+
 echo "Done."

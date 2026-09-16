@@ -2,6 +2,7 @@ package entity
 
 import (
 	"testing"
+	"time"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/form"
@@ -470,23 +471,47 @@ func TestClient_EnforceAuthTokenLimit(t *testing.T) {
 	t.Run("EmptyUID", func(t *testing.T) {
 		var m = Client{ClientName: "No UUID"}
 
-		r := m.EnforceAuthTokenLimit()
+		r := m.EnforceAuthTokenLimit("")
 
 		assert.Equal(t, r, 0)
 	})
 	t.Run("NoToken", func(t *testing.T) {
 		var m = Client{ClientName: "David", ClientUID: "cs5cpu17n6gj2bbb"}
 
-		r := m.EnforceAuthTokenLimit()
+		r := m.EnforceAuthTokenLimit("")
 
 		assert.Equal(t, r, 0)
 	})
 	t.Run("NegativeTokenLimit", func(t *testing.T) {
 		var m = Client{ClientName: "David", ClientUID: "cs5cpu17n6gj2bbb", AuthTokens: -1}
 
-		r := m.EnforceAuthTokenLimit()
+		r := m.EnforceAuthTokenLimit("")
 
 		assert.Equal(t, r, 0)
+	})
+	t.Run("KeepsReservedSession", func(t *testing.T) {
+		client := NewClient()
+		client.ClientUID = "cs5gfen1bgx00010"
+		client.AuthTokens = 2
+
+		// The lowest ID is the one the tiebreak alone would delete first.
+		ids := newClientSessions(t, client, 5, time.Date(2026, 9, 11, 10, 0, 0, 0, time.UTC))
+
+		assert.Equal(t, 3, client.EnforceAuthTokenLimit(ids[0]))
+		assertSessions(t, []string{ids[0], ids[4]}, ids[1:4])
+
+		assert.Equal(t, 0, client.EnforceAuthTokenLimit(ids[0]))
+		assertSessions(t, []string{ids[0], ids[4]}, nil)
+	})
+	t.Run("UnsetTokenLimitKeepsOne", func(t *testing.T) {
+		client := NewClient()
+		client.ClientUID = "cs5gfen1bgx00011"
+		client.AuthTokens = 0
+
+		ids := newClientSessions(t, client, 3, time.Date(2026, 9, 11, 10, 0, 0, 0, time.UTC))
+
+		assert.Equal(t, 2, client.EnforceAuthTokenLimit(ids[0]))
+		assertSessions(t, ids[:1], ids[1:])
 	})
 }
 

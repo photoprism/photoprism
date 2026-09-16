@@ -157,27 +157,51 @@ func TestBackgroundSamplesMidpoint(t *testing.T) {
 
 func TestValidEmbeddings(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		assert.True(t, ValidEmbeddings(Embeddings{{0.1, 0.2}}, 2))
+		assert.True(t, ValidEmbeddings(Embeddings{{0.6, 0.8}}, 2))
 	})
 	t.Run("Empty", func(t *testing.T) {
 		assert.False(t, ValidEmbeddings(nil, 2))
 	})
 	t.Run("NotOne", func(t *testing.T) {
-		assert.False(t, ValidEmbeddings(Embeddings{{0.1, 0.2}, {0.3, 0.4}}, 2))
+		assert.False(t, ValidEmbeddings(Embeddings{{0.6, 0.8}, {0.8, 0.6}}, 2))
 	})
 	t.Run("WrongDims", func(t *testing.T) {
-		assert.False(t, ValidEmbeddings(Embeddings{{0.1}}, 2))
+		assert.False(t, ValidEmbeddings(Embeddings{{1}}, 2))
 	})
 	t.Run("NaN", func(t *testing.T) {
-		assert.False(t, ValidEmbeddings(Embeddings{{0.1, math.NaN()}}, 2))
+		assert.False(t, ValidEmbeddings(Embeddings{{0.6, math.NaN()}}, 2))
 	})
 	t.Run("NoMagnitude", func(t *testing.T) {
 		// A cluster built from a zero vector would sit 1 from every face, so it never enters.
 		assert.False(t, ValidEmbeddings(Embeddings{{0, 0}}, 2))
-		assert.True(t, ValidEmbeddings(Embeddings{{0, 0.1}}, 2))
+		assert.True(t, ValidEmbeddings(Embeddings{{0, 1}}, 2))
 	})
 	t.Run("Inf", func(t *testing.T) {
-		assert.False(t, ValidEmbeddings(Embeddings{{0.1, math.Inf(1)}}, 2))
+		assert.False(t, ValidEmbeddings(Embeddings{{0.6, math.Inf(1)}}, 2))
+	})
+	t.Run("NotUnitLength", func(t *testing.T) {
+		// Every configured distance is stated for unit vectors, so a shorter or longer one
+		// is not measurable against them and has to be normalized first.
+		assert.False(t, ValidEmbeddings(Embeddings{{0.1, 0.2}}, 2))
+		assert.False(t, ValidEmbeddings(Embeddings{{6, 8}}, 2))
+		assert.True(t, ValidEmbeddings(Embeddings{{0.1, 0.2}}.Normalize(), 2))
+		assert.True(t, ValidEmbeddings(Embeddings{{6, 8}}.Normalize(), 2))
+	})
+	t.Run("UnderflowingComponents", func(t *testing.T) {
+		// Squaring these would round to zero, which reports no magnitude for a vector that
+		// has one and points somewhere.
+		tiny := Embeddings{{3e-200, 4e-200}}
+		assert.False(t, ValidEmbeddings(tiny, 2))
+		assert.True(t, ValidEmbeddings(tiny.Normalize(), 2))
+		assert.InDelta(t, 0.6, tiny[0][0], 1e-9)
+	})
+	t.Run("OverflowingComponents", func(t *testing.T) {
+		// Squaring these would reach infinity, and scaling by its inverse would leave a
+		// zero vector that sits 1 from every face.
+		huge := Embeddings{{3e200, 4e200}}
+		assert.False(t, ValidEmbeddings(huge, 2))
+		assert.True(t, ValidEmbeddings(huge.Normalize(), 2))
+		assert.InDelta(t, 0.6, huge[0][0], 1e-9)
 	})
 }
 
@@ -493,5 +517,32 @@ func TestRadiusFrom(t *testing.T) {
 
 		assert.True(t, ok)
 		assert.InDelta(t, ClusterRadius, radius, 1e-9)
+	})
+}
+
+func TestEmbeddings_Normalize(t *testing.T) {
+	t.Run("ScalesEach", func(t *testing.T) {
+		e := Embeddings{{3, 4}, {6, 8}}.Normalize()
+		assert.True(t, e[0].Unit())
+		assert.True(t, e[1].Unit())
+		assert.InDelta(t, 0.6, e[0][0], 1e-9)
+		assert.InDelta(t, 0.6, e[1][0], 1e-9)
+	})
+	t.Run("InPlace", func(t *testing.T) {
+		e := Embeddings{{3, 4}}
+		result := e.Normalize()
+		assert.InDelta(t, 0.6, e[0][0], 1e-9, "the caller's slice is scaled, not a copy")
+		assert.InDelta(t, 0.6, result[0][0], 1e-9)
+	})
+	t.Run("LeavesUnusableVectors", func(t *testing.T) {
+		// Nothing can be scaled out of these, so they are left as supplied for the validation
+		// at the boundary to reject.
+		e := Embeddings{{0, 0}, {math.NaN(), 1}}.Normalize()
+		assert.Equal(t, Embedding{0, 0}, e[0])
+		assert.True(t, math.IsNaN(e[1][0]))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.NotPanics(t, func() { Embeddings{}.Normalize() })
+		assert.NotPanics(t, func() { Embeddings(nil).Normalize() })
 	})
 }

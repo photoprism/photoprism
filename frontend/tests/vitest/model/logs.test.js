@@ -51,14 +51,38 @@ describe("model/logs", () => {
     expect(entry.ipAddress()).toBe("");
   });
 
-  it("derives ip addresses from messages when missing", () => {
+  it("reports the address the server sent", () => {
     const entry = new LogEntry({
       Message: "::1 › session sess123 › granted",
-      IP: "",
+      IP: "::1",
     });
 
     expect(entry.ipAddress()).toBe("::1");
     expect(entry.messageParts()).toEqual(["session sess123", "granted"]);
+  });
+
+  it("keeps every message segment when no address was sent", () => {
+    const entry = new LogEntry({
+      Message: "users › 203.0.113.9 › role normalized to admin › succeeded",
+      IP: "",
+    });
+
+    // The address comes from the field the server sent, so a message segment is never taken out of
+    // the message nor shown as the client address.
+    expect(entry.ipAddress()).toBe("");
+    expect(entry.messageParts()).toEqual([
+      "users",
+      "203.0.113.9",
+      "role normalized to admin",
+      "succeeded",
+    ]);
+  });
+
+  it("does not report an address that is not one", () => {
+    const entry = new LogEntry({ Message: "cli › 999.999.999.999 › x", IP: "" });
+
+    expect(entry.ipAddress()).toBe("");
+    expect(entry.messageParts()).toEqual(["cli", "999.999.999.999", "x"]);
   });
 
   it("exposes the severity catalogue", () => {

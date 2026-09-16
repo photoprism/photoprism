@@ -74,7 +74,7 @@ func AlbumHasThumb(albumUID string) bool {
 }
 
 // AlbumCoverByUID returns an album cover file based on the uid.
-func AlbumCoverByUID(uid string, public bool) (file entity.File, err error) {
+func AlbumCoverByUID(uid string, excludePrivate bool) (file entity.File, err error) {
 	if rnd.InvalidUID(uid, entity.AlbumUID) {
 		return file, fmt.Errorf("invalid album uid")
 	}
@@ -97,12 +97,18 @@ func AlbumCoverByUID(uid string, public bool) (file entity.File, err error) {
 			return file, err
 		}
 
-		// Public private only?
-		if !public {
+		// A cover renders to anyone holding the album's preview token, so it selects through the
+		// share-safe path, which applies its constraints after the stored filter. Private
+		// visibility is not enforced at all when the feature is off, so that case keeps the
+		// unbounded search and matches what an authenticated search returns.
+		searchPhotos := search.SharedPhotos
+
+		if !excludePrivate {
 			f.Public = false
+			searchPhotos = search.Photos
 		}
 
-		if photos, _, err := search.Photos(f); err != nil {
+		if photos, _, err := searchPhotos(f); err != nil {
 			return file, err
 		} else if len(photos) > 0 {
 			for _, photo := range photos {
@@ -135,7 +141,7 @@ func AlbumCoverByUID(uid string, public bool) (file entity.File, err error) {
 		Joins("JOIN photos ON photos.id = files.photo_id AND photos.deleted_at IS NULL")
 
 	// Public pictures only?
-	if public {
+	if excludePrivate {
 		stmt = stmt.Where("photos.photo_private = 0")
 	}
 

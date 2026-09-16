@@ -1,6 +1,6 @@
 ## PhotoPrism — pkg/fs
 
-**Last Updated:** August 20, 2026
+**Last Updated:** September 14, 2026
 
 ### Overview
 
@@ -33,7 +33,8 @@
 ### Usage & Test Guidelines
 
 - Overwrite semantics: pass `force=true` only when the caller explicitly confirmed replacement; empty files may be replaced without `force`.
-- Permissions: use provided mode constants; do not mix with stdlib `io/fs` bits.
+- Permissions: use provided mode constants; do not mix with stdlib `io/fs` bits. `ModeFile` (`0666`) and `ModeDir` (`0777`) are creation defaults filtered by the process umask, not final modes for `Chmod`. Explicit permission changes use the intended final mode.
+- Staging: `OpenStageFile` returns an exclusively created temporary file beside its destination, with `ModeFile` filtered by the process umask. The caller closes the handle and removes or publishes its pathname. `CreateStageFile` closes the reservation and returns its path for subprocess writers. Both preserve the destination extension and require an existing parent directory; neither uses a global temporary directory or copies data across mounts.
 - Zip extraction: always set `fileSizeLimit` / `totalSizeLimit` in `Unzip` for untrusted inputs; ensure tests cover path traversal and size caps (see `zip_test.go`).
 - Image decode helpers: use `DecodeImageFile`, `DecodeImageConfigFile`, `DecodeImageData`, or `DecodeImageConfigData` instead of generic `image.Decode()` / `image.DecodeConfig()` for user media. TIFF headers are validated against the bounded reader size before decode.
 - Focused tests: `go test ./pkg/fs -run 'Copy|Move|Unzip|Write' -count=1` keeps feedback quick; full package: `go test ./pkg/fs -count=1`.

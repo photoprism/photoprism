@@ -166,18 +166,13 @@ func parseOIDCSession(value string) (sessionID string, ok bool) {
 	return id, true
 }
 
-// SetOIDCSessionCookie writes the OP session-signal cookie for sess: a
-// short-lived, HMAC-signed reference to the session id, NOT the bearer token.
-// The OIDC OP /api/v1/oauth/authorize endpoint reads it to resume an
-// authenticated browser on a top-level navigation that carries no Authorization
-// header. Because the value is the session id (a hash of the token) rather than
-// the token, a leaked cookie cannot authenticate any other API endpoint, and
-// the HMAC signature plus short TTL prevent forging or extending it.
+// SetOIDCSessionCookie writes the OP session-signal cookie for sess, which the
+// /api/v1/oauth/authorize endpoint reads to resume a browser on a top-level
+// navigation that carries no Authorization header. The value is an HMAC-signed
+// reference to the session id, not the bearer token, and it expires on its own.
 func SetOIDCSessionCookie(c *gin.Context, sess *entity.Session, cookiePath string, secure bool) {
-	// Only user sessions are eligible: the OP authorize endpoint resumes a user,
-	// and the reader rejects user-less (client/service) sessions via NoUser(), so
-	// setting the cookie for them would only emit a signal that can never resolve.
-	if c == nil || sess == nil || !rnd.IsSessionID(sess.ID) || sess.NoUser() {
+	// Only a session the OP admits gets a cookie, so a cookie cannot widen admission.
+	if c == nil || sess == nil || !rnd.IsSessionID(sess.ID) || !OIDCSessionEligible(sess) {
 		return
 	}
 
@@ -221,13 +216,33 @@ func ClearOIDCSessionCookie(c *gin.Context, cookiePath string, secure bool) {
 	})
 }
 
-// OIDCSessionCookieSession resolves the Portal session referenced by the OP
-// session-signal cookie, or nil when the cookie is absent, invalid, expired, or
-// no longer maps to an active user session. A present-but-unresolvable cookie is
-// cleared so the browser stops sending a stale signal. It is the only reader of
-// the cookie and must be used solely by the OIDC OP authorize handler as a
-// fallback when no Authorization/X-Auth-Token header is present.
+// OIDCSessionCookieSession resolves the Portal session referenced by the OP session
+// cookie, or nil when it is absent, invalid, expired, or no longer maps to a session
+// the OP admits; an unresolvable cookie is cleared. Admission is rechecked here, not
+// only where the cookie is written. Only the OIDC OP authorize handler may call it.
 func OIDCSessionCookieSession(c *gin.Context) *entity.Session {
+	sess := oidcSessionCookieSession(c)
+
+	if sess == nil {
+		return nil
+	} else if !OIDCSessionEligible(sess) {
+		clearOIDCSessionCookieForConfig(c)
+		return nil
+	}
+
+	return sess
+}
+
+// OIDCSessionCookieEndSession resolves the referenced session for the end-session
+// endpoint, without the admission policy. Ending a session must not be narrower than
+// starting one, or the sessions the policy distrusts are the ones logout cannot reach.
+func OIDCSessionCookieEndSession(c *gin.Context) *entity.Session {
+	return oidcSessionCookieSession(c)
+}
+
+// oidcSessionCookieSession verifies the OP session cookie and resolves the session it
+// references, clearing a cookie that resolves to nothing.
+func oidcSessionCookieSession(c *gin.Context) *entity.Session {
 	if c == nil {
 		return nil
 	}
@@ -237,25 +252,31 @@ func OIDCSessionCookieSession(c *gin.Context) *entity.Session {
 		return nil
 	}
 
-	conf := get.Config()
-	cookiePath := config.ApiUri + "/oauth"
-	secure := false
-	if conf != nil {
-		cookiePath = OIDCSessionCookiePath(conf)
-		secure = conf.SiteHttps()
-	}
-
 	sessionID, ok := parseOIDCSession(raw)
 	if !ok {
-		ClearOIDCSessionCookie(c, cookiePath, secure)
+		clearOIDCSessionCookieForConfig(c)
 		return nil
 	}
 
 	sess, err := entity.FindSession(sessionID)
 	if err != nil || sess == nil || sess.Invalid() || sess.NoUser() {
-		ClearOIDCSessionCookie(c, cookiePath, secure)
+		clearOIDCSessionCookieForConfig(c)
 		return nil
 	}
 
 	return sess
+}
+
+// clearOIDCSessionCookieForConfig clears the OP session cookie at the path and security
+// level the current configuration writes it with, so the browser overwrites the same one.
+func clearOIDCSessionCookieForConfig(c *gin.Context) {
+	cookiePath := config.ApiUri + "/oauth"
+	secure := false
+
+	if conf := get.Config(); conf != nil {
+		cookiePath = OIDCSessionCookiePath(conf)
+		secure = conf.SiteHttps()
+	}
+
+	ClearOIDCSessionCookie(c, cookiePath, secure)
 }

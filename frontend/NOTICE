@@ -42,7 +42,6 @@ file-loader                                         MIT            Tobias Kopper
 file-saver                                          MIT            Eli Grey <me@eligrey.com>
 globals                                             MIT            Sindre Sorhus sindresorhus@gmail.com https://sindresorhus.com
 hls.js                                              Apache-2.0     n/a
-i                                                   MIT            Pavan Kumar Sunkara <pavan.sss1991@gmail.com> (pksunkara.github.com)
 jsdom                                               MIT            n/a
 luxon                                               MIT            Isaac Cambron
 maplibre-gl                                         BSD-3-Clause   n/a

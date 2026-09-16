@@ -24,3 +24,29 @@ func TestSanitizeUUID(t *testing.T) {
 	assert.Equal(t, "", SanitizeUUID("4B1FEF2D1CF4A5BE38B263E0637EDEAD"))
 	assert.Equal(t, "", SanitizeUUID(""))
 }
+
+func TestIsCanonicalUUID(t *testing.T) {
+	t.Run("Generated", func(t *testing.T) {
+		assert.True(t, IsCanonicalUUID(UUIDv7()))
+		assert.True(t, IsCanonicalUUID(UUID()))
+	})
+	t.Run("NoSeparators", func(t *testing.T) {
+		assert.True(t, IsUUID("111111111111111111111111111111111111"))
+		assert.False(t, IsCanonicalUUID("111111111111111111111111111111111111"))
+	})
+	t.Run("SeparatorsOnly", func(t *testing.T) {
+		assert.False(t, IsCanonicalUUID("------------------------------------"))
+	})
+	t.Run("MisplacedSeparator", func(t *testing.T) {
+		assert.False(t, IsCanonicalUUID("0198-4c21e8773a2b734b8d0ed31ac0c19984"))
+	})
+	t.Run("Uppercase", func(t *testing.T) {
+		assert.False(t, IsCanonicalUUID("019984c2-1E87-73a2-b734-b8d0ed31ac0c"))
+	})
+	t.Run("TooShort", func(t *testing.T) {
+		assert.False(t, IsCanonicalUUID("019984c2-1e87-73a2-b734-b8d0ed31ac0"))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.False(t, IsCanonicalUUID(""))
+	})
+}

@@ -109,6 +109,69 @@ func TestConfig_ClientShareConfig(t *testing.T) {
 	assert.Equal(t, AuthModePublic, result.AuthMode)
 	assert.Equal(t, true, result.Experimental)
 	assert.Equal(t, false, result.ReadOnly)
+	t.Run("NoBaseTokens", func(t *testing.T) {
+		c := NewMinimalTestConfigWithDb("client-share-tokens", t.TempDir())
+		c.SetAuthMode(AuthModePasswd)
+		assert.Empty(t, c.ClientShare().PreviewToken)
+		assert.Empty(t, c.ClientShare().DownloadToken)
+		assert.Empty(t, c.ClientUser(false).PreviewToken)
+		assert.Empty(t, c.ClientUser(false).DownloadToken)
+	})
+	t.Run("PublicModeTokens", func(t *testing.T) {
+		cfg := TestConfig().ClientPublic()
+		assert.Equal(t, entity.TokenPublic, cfg.PreviewToken)
+		assert.Equal(t, entity.TokenPublic, cfg.DownloadToken)
+	})
+}
+
+func TestClientConfig_ApplyACL(t *testing.T) {
+	usage := Usage{
+		StorageLow:   true,
+		FilesUsed:    120,
+		FilesUsedPct: 60,
+		FilesFree:    80,
+		FilesFreePct: 40,
+		FilesTotal:   200,
+		UsersUsedPct: 50,
+		UsersFreePct: 50,
+	}
+
+	apply := func(role acl.Role) Usage {
+		cfg := &ClientConfig{Usage: usage}
+		return cfg.ApplyACL(acl.Rules, role).Usage
+	}
+
+	t.Run("RoleAdmin", func(t *testing.T) {
+		u := apply(acl.RoleAdmin)
+		assert.Equal(t, 60, u.FilesUsedPct)
+		assert.Equal(t, 200, int(u.FilesTotal))
+		assert.True(t, u.StorageLow)
+		assert.Equal(t, 50, u.UsersUsedPct)
+	})
+	t.Run("RoleGuest", func(t *testing.T) {
+		u := apply(acl.RoleGuest)
+		assert.Equal(t, -1, u.FilesUsedPct)
+		assert.Equal(t, -1, u.FilesFreePct)
+		assert.Equal(t, 0, int(u.FilesUsed))
+		assert.Equal(t, 0, int(u.FilesFree))
+		assert.Equal(t, 0, int(u.FilesTotal))
+		assert.False(t, u.StorageLow)
+		// Guests hold view on their own user record, so the account quota stays visible.
+		assert.Equal(t, 50, u.UsersUsedPct)
+	})
+	t.Run("RoleVisitor", func(t *testing.T) {
+		u := apply(acl.RoleVisitor)
+		assert.Equal(t, -1, u.FilesUsedPct)
+		assert.Equal(t, 0, int(u.FilesTotal))
+		assert.Equal(t, -1, u.UsersUsedPct)
+		assert.Equal(t, -1, u.UsersFreePct)
+	})
+	t.Run("RoleUnknown", func(t *testing.T) {
+		// An unrecognized role holds no grant, so the guard must clear rather than pass through.
+		u := apply(acl.Role("unknown-role"))
+		assert.Equal(t, -1, u.FilesUsedPct)
+		assert.Equal(t, 0, int(u.FilesTotal))
+	})
 }
 
 func TestConfig_ClientUser(t *testing.T) {
@@ -160,7 +223,6 @@ func TestConfig_ClientUser(t *testing.T) {
 		c.Settings().Features = adminFeatures
 		result := c.ClientUser(true)
 		assert.Nil(t, result.AlbumCategories, "AlbumCategories")
-		assert.NotNil(t, result.Albums, "Albums")
 		assert.NotNil(t, result.Cameras, "Cameras")
 		assert.NotNil(t, result.Lenses, "Lenses")
 		assert.NotNil(t, result.Countries, "Countries")
@@ -357,12 +419,13 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 	adminFeatures := c.ClientRole(acl.RoleAdmin).Settings.Features
 
 	t.Run("RoleAdmin", func(t *testing.T) {
-		cfg := c.ClientSession(entity.SessionFixtures.Pointer("alice"))
+		sess := entity.SessionFixtures.Pointer("alice")
+		want := sess.PreviewToken
+		cfg := c.ClientSession(sess)
 		assert.IsType(t, &ClientConfig{}, cfg)
 		assert.Equal(t, false, cfg.Public)
-		assert.NotEmpty(t, cfg.PreviewToken)
-		// No session preview token, so the higher-value download token is withheld.
-		assert.Empty(t, cfg.DownloadToken)
+		assert.Equal(t, want, cfg.PreviewToken)
+		assert.NotEmpty(t, cfg.DownloadToken)
 
 		f := cfg.Settings.Features
 		assert.Equal(t, adminFeatures, f)
@@ -391,13 +454,14 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.True(t, f.Share)
 	})
 	t.Run("RoleAdminToken", func(t *testing.T) {
-		cfg := c.ClientSession(entity.SessionFixtures.Pointer("alice_token"))
+		sess := entity.SessionFixtures.Pointer("alice_token")
+		want := sess.PreviewToken
+		cfg := c.ClientSession(sess)
 
 		assert.IsType(t, &ClientConfig{}, cfg)
 		assert.Equal(t, false, cfg.Public)
-		assert.NotEmpty(t, cfg.PreviewToken)
-		// No session preview token, so the higher-value download token is withheld.
-		assert.Empty(t, cfg.DownloadToken)
+		assert.Equal(t, want, cfg.PreviewToken)
+		assert.NotEmpty(t, cfg.DownloadToken)
 
 		f := cfg.Settings.Features
 		assert.Equal(t, adminFeatures, f)
@@ -426,11 +490,13 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.True(t, f.Share)
 	})
 	t.Run("RoleAdminTokenScope", func(t *testing.T) {
-		cfg := c.ClientSession(entity.SessionFixtures.Pointer("alice_token_scope"))
+		sess := entity.SessionFixtures.Pointer("alice_token_scope")
+		want := sess.PreviewToken
+		cfg := c.ClientSession(sess)
 
 		assert.IsType(t, &ClientConfig{}, cfg)
 		assert.Equal(t, false, cfg.Public)
-		assert.NotEmpty(t, cfg.PreviewToken)
+		assert.Equal(t, want, cfg.PreviewToken)
 		assert.NotEmpty(t, cfg.DownloadToken)
 
 		f := cfg.Settings.Features
@@ -458,14 +524,24 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.True(t, f.Review)
 		assert.False(t, f.Share)
 	})
+	t.Run("ScopeWithoutDownload", func(t *testing.T) {
+		// A scope that covers no downloadable resource still receives its preview token, but no
+		// download token.
+		sess := entity.SessionFixtures.Pointer("alice_app_password_shares")
+		cfg := c.ClientSession(sess)
+
+		assert.Equal(t, sess.PreviewToken, cfg.PreviewToken)
+		assert.Empty(t, cfg.DownloadToken)
+	})
 	t.Run("RoleVisitor", func(t *testing.T) {
-		cfg := c.ClientSession(entity.SessionFixtures.Pointer("visitor"))
+		sess := entity.SessionFixtures.Pointer("visitor")
+		want := sess.PreviewToken
+		cfg := c.ClientSession(sess)
 
 		assert.IsType(t, &ClientConfig{}, cfg)
 		assert.Equal(t, false, cfg.Public)
-		assert.NotEmpty(t, cfg.PreviewToken)
-		// No session preview token, so the higher-value download token is withheld.
-		assert.Empty(t, cfg.DownloadToken)
+		assert.Equal(t, want, cfg.PreviewToken)
+		assert.NotEmpty(t, cfg.DownloadToken)
 
 		f := cfg.Settings.Features
 		assert.NotEqual(t, adminFeatures, f)
@@ -495,12 +571,14 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.False(t, f.Share)
 	})
 	t.Run("RoleVisitorTokenMetrics", func(t *testing.T) {
-		cfg := c.ClientSession(entity.SessionFixtures.Pointer("visitor_token_metrics"))
+		sess := entity.SessionFixtures.Pointer("visitor_token_metrics")
+		want := sess.PreviewToken
+		cfg := c.ClientSession(sess)
 
 		assert.IsType(t, &ClientConfig{}, cfg)
 		assert.Equal(t, false, cfg.Public)
-		assert.NotEmpty(t, cfg.PreviewToken)
-		// No session preview token, so the higher-value download token is withheld.
+		assert.Equal(t, want, cfg.PreviewToken)
+		// The metrics scope covers no downloadable resource.
 		assert.Empty(t, cfg.DownloadToken)
 
 		f := cfg.Settings.Features
@@ -531,14 +609,14 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 	})
 	t.Run("RoleNone", func(t *testing.T) {
 		sess := entity.SessionFixtures.Pointer("unauthorized")
+		want := sess.PreviewToken
 
 		cfg := c.ClientSession(sess)
 
 		assert.IsType(t, &ClientConfig{}, cfg)
 		assert.Equal(t, false, cfg.Public)
-		assert.NotEmpty(t, cfg.PreviewToken)
-		// No session preview token, so the higher-value download token is withheld.
-		assert.Empty(t, cfg.DownloadToken)
+		assert.Equal(t, want, cfg.PreviewToken)
+		assert.NotEmpty(t, cfg.DownloadToken)
 
 		f := cfg.Settings.Features
 		assert.NotEqual(t, adminFeatures, f)
@@ -566,13 +644,14 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.False(t, f.Share)
 	})
 	t.Run("Bob", func(t *testing.T) {
-		cfg := c.ClientSession(entity.SessionFixtures.Pointer("bob"))
+		sess := entity.SessionFixtures.Pointer("bob")
+		want := sess.PreviewToken
+		cfg := c.ClientSession(sess)
 
 		assert.IsType(t, &ClientConfig{}, cfg)
 		assert.Equal(t, false, cfg.Public)
-		assert.NotEmpty(t, cfg.PreviewToken)
-		// No session preview token, so the higher-value download token is withheld.
-		assert.Empty(t, cfg.DownloadToken)
+		assert.Equal(t, want, cfg.PreviewToken)
+		assert.NotEmpty(t, cfg.DownloadToken)
 		f := cfg.Settings.Features
 
 		assert.True(t, f.Search)
@@ -599,12 +678,13 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.True(t, f.Share)
 	})
 	t.Run("TokenMetrics", func(t *testing.T) {
-		cfg := c.ClientSession(entity.SessionFixtures.Pointer("token_metrics"))
+		sess := entity.SessionFixtures.Pointer("token_metrics")
+		cfg := c.ClientSession(sess)
 
 		assert.IsType(t, &ClientConfig{}, cfg)
 		assert.Equal(t, false, cfg.Public)
-		assert.NotEmpty(t, cfg.PreviewToken)
-		assert.NotEmpty(t, cfg.DownloadToken)
+		assert.Empty(t, cfg.PreviewToken)
+		assert.Empty(t, cfg.DownloadToken)
 
 		f := cfg.Settings.Features
 		assert.NotEqual(t, adminFeatures, f)
@@ -632,12 +712,13 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.False(t, f.Share)
 	})
 	t.Run("TokenSettings", func(t *testing.T) {
-		cfg := c.ClientSession(entity.SessionFixtures.Pointer("token_settings"))
+		sess := entity.SessionFixtures.Pointer("token_settings")
+		cfg := c.ClientSession(sess)
 
 		assert.IsType(t, &ClientConfig{}, cfg)
 		assert.Equal(t, false, cfg.Public)
-		assert.NotEmpty(t, cfg.PreviewToken)
-		assert.NotEmpty(t, cfg.DownloadToken)
+		assert.Empty(t, cfg.PreviewToken)
+		assert.Empty(t, cfg.DownloadToken)
 
 		f := cfg.Settings.Features
 		assert.NotEqual(t, adminFeatures, f)

@@ -1,8 +1,8 @@
 # PhotoPrism Demo Environment
 
-Run to install a pre-configured demo instance on Ubuntu 20.04 LTS:
+Run setup.sh in this directory to install a pre-configured demo instance on Ubuntu 26.04 LTS.
 
-  bash <(curl -s https://dl.photoprism.app/docker/demo/setup.sh)
+This is kept for reference only; the configuration we run for our own demo is maintained separately.
 
 Note:
 - demo.yourdomain.com must be replaced with the actual hostname

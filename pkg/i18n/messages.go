@@ -58,6 +58,7 @@ const (
 	ErrQuotaExceeded
 	ErrRegistrationDisabled
 	ErrVerifiedEmailRequired
+	ErrMigrationInProgress
 
 	MsgChangesSaved
 	MsgAlbumCreated
@@ -164,6 +165,7 @@ var Messages = MessageMap{
 	ErrQuotaExceeded:         gettext("Quota exceeded"),
 	ErrRegistrationDisabled:  gettext("Registration disabled"),
 	ErrVerifiedEmailRequired: gettext("Verified email required"),
+	ErrMigrationInProgress:   gettext("A migration is in progress"),
 
 	// Info and confirmation messages:
 	MsgChangesSaved:          gettext("Changes successfully saved"),

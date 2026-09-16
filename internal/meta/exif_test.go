@@ -1,13 +1,69 @@
 package meta
 
 import (
+	"strings"
 	"testing"
+	"time"
 
+	"github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
+
+// TestExifGpsZeroDenominator covers a GPS rational whose denominator is zero, which divides to a
+// non-finite coordinate. The position is reported as unknown and the remaining tags still parse.
+func TestExifGpsZeroDenominator(t *testing.T) {
+	type result struct {
+		data Data
+		err  error
+	}
+
+	done := make(chan result, 1)
+
+	go func() {
+		data, err := Exif("testdata/gps_zero_denominator.jpg", fs.ImageJpeg, false)
+		done <- result{data, err}
+	}()
+
+	select {
+	case r := <-done:
+		assert.NoError(t, r.err)
+		assert.Equal(t, float64(0), r.data.Lat)
+		assert.Equal(t, float64(0), r.data.Lng)
+		// The remaining GPS tags still parse.
+		assert.Equal(t, float64(120), r.data.Altitude)
+	case <-time.After(30 * time.Second):
+		t.Fatal("metadata parsing did not return")
+	}
+}
+
+// TestExifGpsNonFiniteWarns covers that a coordinate which is not a finite number is reported to
+// the operator, rather than being dropped silently by the range normalization further down.
+func TestExifGpsNonFiniteWarns(t *testing.T) {
+	logger, ok := log.(*logrus.Logger)
+	require.True(t, ok)
+
+	hook := test.NewLocal(logger)
+	defer hook.Reset()
+
+	if _, err := Exif("testdata/gps_zero_denominator.jpg", fs.ImageJpeg, false); err != nil {
+		t.Fatal(err)
+	}
+
+	var warned bool
+
+	for _, e := range hook.AllEntries() {
+		if e.Level == logrus.WarnLevel && strings.Contains(e.Message, "invalid exif gps coordinates") {
+			warned = true
+		}
+	}
+
+	assert.True(t, warned, "expected a warning naming the file")
+}
 
 func TestExif(t *testing.T) {
 	t.Run("IptcNum2014Jpg", func(t *testing.T) {

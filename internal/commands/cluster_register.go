@@ -143,14 +143,6 @@ func clusterRegisterAction(ctx *cli.Context) error {
 			payload.RotateDatabase = true
 		}
 
-		// If we already have client credentials for this node (e.g., re-registering the
-		// same instance), include them so the portal can verify UUID/name changes. Avoid
-		// sending the portal's own credentials when registering a different node.
-		if id, secret := strings.TrimSpace(conf.NodeClientID()), strings.TrimSpace(conf.NodeClientSecret()); id != "" && secret != "" && strings.EqualFold(conf.NodeName(), name) {
-			payload.ClientID = id
-			payload.ClientSecret = secret
-		}
-
 		if site != "" {
 			payload.SiteUrl = site
 		}
@@ -206,14 +198,16 @@ func clusterRegisterAction(ctx *cli.Context) error {
 			return cli.Exit(fmt.Errorf("portal URL is required (use --portal-url or set portal-url)"), 2)
 		}
 
-		token := ctx.String("join-token")
+		joinToken := ctx.String("join-token")
 
-		if token == "" {
-			token = conf.JoinToken()
+		if joinToken == "" {
+			joinToken = conf.JoinToken()
 		}
 
-		if token == "" {
-			return cli.Exit(fmt.Errorf("portal token is required (use --join-token or set join-token)"), 2)
+		token, err := clusterRegisterToken(conf, portalURL, joinToken, name)
+
+		if err != nil {
+			return cli.Exit(err, clusterTokenExitCode(err))
 		}
 
 		// POST with bounded backoff on 429
@@ -344,7 +338,7 @@ func postWithBackoff(url, token string, payload []byte, out any) error {
 		retry, err := func() (bool, error) {
 			defer func() {
 				if closeErr := resp.Body.Close(); closeErr != nil {
-					log.Debugf("cluster: %s (close register response body)", clean.Error(closeErr))
+					log.Debugf("cluster: %s (close register response body)", clean.ErrorFull(closeErr))
 				}
 			}()
 

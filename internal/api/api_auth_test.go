@@ -582,8 +582,6 @@ type portalJWTFixture struct {
 	issuer      *clusterjwt.Issuer
 	clusterUUID string
 	nodeUUID    string
-	preview     string
-	download    string
 }
 
 func newPortalJWTFixture(t *testing.T, suffix string) portalJWTFixture {
@@ -628,8 +626,6 @@ func newPortalJWTFixture(t *testing.T, suffix string) portalJWTFixture {
 		issuer:      clusterjwt.NewIssuer(mgr),
 		clusterUUID: clusterUUID,
 		nodeUUID:    nodeUUID,
-		preview:     nodeConf.PreviewToken(),
-		download:    nodeConf.DownloadToken(),
 	}
 }
 

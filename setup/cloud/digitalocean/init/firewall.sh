@@ -9,6 +9,12 @@ ufw default allow outgoing
 ufw allow ssh
 ufw allow http
 ufw allow https
-ufw logging off
+# Discard anything logged while the image was being built, so a droplet starts with a log that
+# only describes itself.
 rm -f /var/log/ufw.log
+
+# Keep a low-volume record of what the firewall blocked from here on, so an operator
+# investigating an incident has something to look at. "low" logs blocked packets only,
+# rate-limited by ufw.
+ufw logging low
 ufw --force enable

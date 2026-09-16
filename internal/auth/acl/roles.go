@@ -4,6 +4,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/photoprism/photoprism/pkg/list"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -37,6 +38,24 @@ var ClientRoles = RoleStrings{
 var AdminRoles = RoleStrings{
 	string(RoleAdmin):        RoleAdmin,
 	string(RoleClusterAdmin): RoleClusterAdmin,
+}
+
+// Attr returns role names and values sorted by name, including aliases but excluding empty names.
+func (m RoleStrings) Attr() (roles list.Attr) {
+	if len(m) == 0 {
+		return list.Attr{}
+	}
+
+	roles = make(list.Attr, 0, len(m))
+
+	for name, role := range m {
+		if name == "" {
+			continue
+		}
+		roles = append(roles, &list.KeyValue{Key: name, Value: role.String()})
+	}
+
+	return roles.Sort()
 }
 
 // Strings returns the roles as string slice for display, e.g. CLI help.

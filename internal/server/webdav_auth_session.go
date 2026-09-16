@@ -34,9 +34,9 @@ func WebDAVAuthSession(c *gin.Context, authToken string) (sess *entity.Session, 
 	sid = rnd.SessionID(authToken)
 
 	// Check if client authorization has been cached to improve performance.
-	if cacheData, found := webdavAuthCache.Get(sid); found && cacheData != nil {
+	if cachedUser := entity.CachedWebDAVUser(sid); cachedUser != nil {
 		// Add cached user information to the request context.
-		user = cacheData.(*entity.User)
+		user = cachedUser
 		return nil, user, sid, true
 	}
 

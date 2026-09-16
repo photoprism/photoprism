@@ -312,7 +312,7 @@ func (c *Config) DatabasePassword() string {
 		// No password set, this is not an error.
 		return ""
 	} else if b, err := os.ReadFile(fileName); err != nil || len(b) == 0 { //nolint:gosec // path derived from environment variable for DB password
-		event.SystemWarn([]string{"config", "database password", "read %s", "%s"}, clean.Log(fileName), clean.Error(err))
+		event.SystemWarn([]string{"config", "database password", "read %s", "%s"}, clean.Log(fileName), clean.ErrorFull(err))
 		return ""
 	} else {
 		return clean.Password(string(b))
@@ -495,7 +495,7 @@ func (c *Config) RegisterDb() {
 	if err := c.connectDb(); err != nil {
 		// Report via the system log, not the database-persisted logger, so a
 		// connection failure cannot trigger a follow-up error writing to the DB.
-		event.SystemError([]string{"config", "database", "register", "%s"}, clean.Error(err))
+		event.SystemError([]string{"config", "database", "register", "%s"}, clean.ErrorFull(err))
 		return
 	}
 
@@ -675,7 +675,7 @@ func (c *Config) connectDb() error {
 		if c.Unsafe() {
 			// Report via the system log so a database problem is not written to
 			// the database-persisted error log.
-			event.SystemError([]string{"config", "database", "check", "%s"}, clean.Error(err))
+			event.SystemError([]string{"config", "database", "check", "%s"}, clean.ErrorFull(err))
 		} else {
 			return err
 		}

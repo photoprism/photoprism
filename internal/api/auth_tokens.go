@@ -11,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/log/status"
 )
@@ -29,13 +30,24 @@ func InvalidPreviewToken(c *gin.Context) bool {
 	return entity.InvalidPreviewToken(token) && !tokens.IsCoarseDownload(token)
 }
 
-// AuthDownload authorizes a file-download request and returns the session it is scoped to together with
-// whether the request is authorized. The session is nil for a coarse capability — a configured static
-// token, or an unauthenticated public-mode request — in which case the handler applies the by-design
-// broad (public, non-private) access. It merges the token gate and the session lookup, so a caller need
-// not call InvalidDownloadToken and DownloadSession separately.
-func AuthDownload(c *gin.Context) (sess *entity.Session, valid bool) {
+// AuthDownload authorizes a download request for any of the specified resources and returns the session
+// it is scoped to together with whether the request is authorized. The session is nil for a coarse
+// capability, a configured static token, in which case the handler applies the by-design broad
+// (public, non-private) access. It merges the token gate and the session lookup, so a caller need not
+// call InvalidDownloadToken and DownloadSession separately.
+func AuthDownload(c *gin.Context, resources acl.Resources) (sess *entity.Session, valid bool) {
 	if sess = DownloadSession(c); sess != nil {
+		if downloadNotAdmitted(c, sess) {
+			event.AuditWarn([]string{ClientIP(c), "session %s", "download %s", status.Denied}, sess.RefID, resources.String())
+			return nil, false
+		}
+
+		if downloadOutOfScope(c, sess, resources) {
+			event.AuditErr([]string{ClientIP(c), "session %s", "download %s with scope %s", status.Error(authn.ErrInsufficientScope)},
+				sess.RefID, resources.String(), clean.Scope(sess.AuthScope))
+			return nil, false
+		}
+
 		return sess, true
 	}
 
@@ -46,21 +58,64 @@ func AuthDownload(c *gin.Context) (sess *entity.Session, valid bool) {
 	}
 
 	// Audit the unauthorized request centrally, mirroring AuthAny, so the endpoints do not each log it.
-	event.AuditWarn([]string{ClientIP(c), string(acl.ResourceFiles), "download", status.Denied})
+	event.AuditWarn([]string{ClientIP(c), resources.First().String(), "download", status.Denied})
 
 	return nil, false
 }
 
-// InvalidDownloadToken checks if the request is not authorized for a file download. It is a thin wrapper
-// around AuthDownload for callers that only need the yes/no gate; prefer AuthDownload when the resolved
-// session is needed to scope the response.
-func InvalidDownloadToken(c *gin.Context) bool {
-	_, valid := AuthDownload(c)
+// downloadOutOfScope reports whether the session's authorization scope excludes downloading every one of
+// the resources. A session pre-authorized by its request header is exempt: resolveDownloadSession admits
+// one only after authAnyJWT has matched the token scope against full file access.
+func downloadOutOfScope(c *gin.Context, sess *entity.Session, resources acl.Resources) bool {
+	if !sess.HasScope() || headerAuthorizedDownload(c) {
+		return false
+	}
+
+	for _, resource := range resources {
+		if sess.ValidateScope(resource, acl.Permissions{acl.ActionDownload}) {
+			return false
+		}
+	}
+
+	return true
+}
+
+// downloadNotAdmitted reports whether the credential or the account behind the session is currently
+// ineligible, applying the checks AuthAny performs. A session carrying no account of its own is
+// admitted unless it is an app password; public mode and a header-authorized session are exempt.
+func downloadNotAdmitted(c *gin.Context, sess *entity.Session) bool {
+	if get.Config().Public() || headerAuthorizedDownload(c) {
+		return false
+	}
+
+	// An app password depends on the feature flag and on its account's Web UI/API access.
+	if sess.IsApplication() && (get.Config().DisableAppPasswords() || sess.GetUser().DenyLogIn()) {
+		return true
+	}
+
+	if sess.NoUser() {
+		return false
+	}
+
+	u := sess.GetUser()
+
+	// A client session additionally requires a regular account, as AuthAny requires of its owner.
+	return u.IsUnknown() || u.IsDisabled() || sess.IsClient() && !u.IsRegistered()
+}
+
+// InvalidDownloadToken checks if the request is not authorized to download any of the resources. It is a
+// thin wrapper around AuthDownload for callers that only need the yes/no gate; prefer AuthDownload when
+// the resolved session is needed to scope the response.
+func InvalidDownloadToken(c *gin.Context, resources acl.Resources) bool {
+	_, valid := AuthDownload(c, resources)
 	return !valid
 }
 
 // downloadSessionKey is the gin context key under which the resolved download session is memoized.
 const downloadSessionKey = "download_session"
+
+// downloadHeaderAuthKey is the gin context key marking a session that a request header authorized.
+const downloadHeaderAuthKey = "download_header_auth"
 
 // DownloadSession returns the session the request is bound to (a signed "?t=" token or a Portal JWT
 // header), the shared public session in public mode, or nil for a coarse/forged/expired token. The
@@ -77,6 +132,15 @@ func DownloadSession(c *gin.Context) *entity.Session {
 	return sess
 }
 
+// headerAuthorizedDownload reports whether resolveDownloadSession authorized this request through its
+// cluster JWT header rather than a "?t=" token.
+func headerAuthorizedDownload(c *gin.Context) bool {
+	v, _ := c.Get(downloadHeaderAuthKey)
+	ok, _ := v.(bool)
+
+	return ok
+}
+
 // resolveDownloadSession does the actual token → session resolution for DownloadSession.
 func resolveDownloadSession(c *gin.Context) *entity.Session {
 	if get.Config().Public() {
@@ -88,6 +152,7 @@ func resolveDownloadSession(c *gin.Context) *entity.Session {
 	// all files, so only a trusted full-access principal qualifies; every other client presents a "?t=".
 	if AuthToken(c) != "" {
 		if s := authAnyJWT(c, ClientIP(c), AuthToken(c), acl.ResourceFiles, acl.Permissions{acl.AccessAll}); s != nil && s.Valid() {
+			c.Set(downloadHeaderAuthKey, true)
 			return s
 		}
 		// Not an all-photos cluster JWT: fall through to the "?t=" token path so a non-JWT header (a

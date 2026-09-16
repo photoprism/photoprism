@@ -52,6 +52,8 @@ func TestArea_Relative(t *testing.T) {
 	assert.InDelta(t, 0.2, rel.H, 0.0001)
 }
 
+// TestArea_RelativeZeroDimensions covers an image with no dimensions to normalize by, which the
+// floor turns into one pixel: the offsets come back as themselves, and only the size is clipped.
 func TestArea_RelativeZeroDimensions(t *testing.T) {
 	t.Parallel()
 
@@ -61,10 +63,25 @@ func TestArea_RelativeZeroDimensions(t *testing.T) {
 	rel := a.Relative(base, 0, 0)
 
 	assert.Equal(t, "child", rel.Name)
-	assert.InDelta(t, 1.0, rel.X, 0.0001)
-	assert.InDelta(t, 1.0, rel.Y, 0.0001)
+	assert.InDelta(t, 10.0, rel.X, 0.0001)
+	assert.InDelta(t, 10.0, rel.Y, 0.0001)
 	assert.InDelta(t, 1.0, rel.W, 0.0001)
 	assert.InDelta(t, 1.0, rel.H, 0.0001)
+}
+
+// TestArea_RelativeKeepsSign covers the landmarks that sit left of or above their reference point.
+// Clipping them to zero collapsed half of a face onto the axes, which no fit can be recomputed from.
+func TestArea_RelativeKeepsSign(t *testing.T) {
+	t.Parallel()
+
+	base := NewArea("base", 100, 100, 20)
+	a := NewArea("child", 50, 60, 40)
+
+	rel := a.Relative(base, 200, 400)
+
+	assert.InDelta(t, -0.1, rel.X, 0.0001, "a landmark left of the reference keeps its sign")
+	assert.InDelta(t, -0.25, rel.Y, 0.0001, "and one above it does too")
+	assert.Positive(t, rel.W, "while the size stays a size")
 }
 
 func TestAreas_Relative(t *testing.T) {

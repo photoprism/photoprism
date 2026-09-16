@@ -83,7 +83,9 @@ func GetVideo(router *gin.RouterGroup) {
 
 		// Return a broken video if the file could not be found.
 		if f.FileError != "" {
-			log.Errorf("video: file has error %s", f.FileError)
+			// Rendered through the sanitizer, so the guard holds for a value stored by any writer,
+			// including rows written before the writers sanitized.
+			log.Errorf("video: file has error %s", clean.Log(f.FileError))
 			AbortVideo(c)
 			return
 		} else if f.FileHash == "" {
@@ -110,7 +112,7 @@ func GetVideo(router *gin.RouterGroup) {
 				AbortVideo(c)
 				return
 			} else if reader, readErr := video.NewReader(videoFileName, info.VideoOffset); readErr != nil {
-				log.Errorf("video: failed to read media embedded in %s (%s)", clean.Log(f.FileName), readErr)
+				log.Errorf("video: failed to read media embedded in %s (%s)", clean.Log(f.FileName), clean.Error(readErr))
 				AbortVideo(c)
 				return
 			} else if c.Request.Header.Get("Range") == "" && info.VideoCodec == format.Codec {

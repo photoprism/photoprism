@@ -73,6 +73,43 @@ func TestConfig_ThumbSizeUncached2(t *testing.T) {
 	assert.Equal(t, int(900), c.ThumbSizeUncached())
 }
 
+// TestConfig_ThumbSizeFace covers the ceiling on the source a face crop may be rendered from. It
+// is a separate limit from the ones the delivery paths obey, so it does not follow thumb-size.
+func TestConfig_ThumbSizeFace(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	t.Run("Unset", func(t *testing.T) {
+		assert.Zero(t, c.ThumbSizeFace())
+	})
+	t.Run("Disabled", func(t *testing.T) {
+		c.options.ThumbSizeFace = -1
+		assert.Zero(t, c.ThumbSizeFace())
+	})
+	t.Run("Configured", func(t *testing.T) {
+		c.options.ThumbSizeFace = 4096
+		assert.Equal(t, 4096, c.ThumbSizeFace())
+	})
+	t.Run("BelowTheSmallestRendition", func(t *testing.T) {
+		c.options.ThumbSizeFace = 8
+		assert.Equal(t, 720, c.ThumbSizeFace())
+	})
+	t.Run("AboveTheLargest", func(t *testing.T) {
+		c.options.ThumbSizeFace = 15361
+		assert.Equal(t, 15360, c.ThumbSizeFace())
+	})
+	t.Run("IndependentOfThumbSize", func(t *testing.T) {
+		c.options.ThumbSizeFace = 2560
+		c.options.ThumbSize = 15360
+		assert.Equal(t, 2560, c.ThumbSizeFace())
+	})
+	t.Run("NilConfig", func(t *testing.T) {
+		assert.Zero(t, (*Config)(nil).ThumbSizeFace())
+	})
+
+	c.options.ThumbSizeFace = 0
+	c.options.ThumbSize = 0
+}
+
 func TestInitThumbs_AdvertisesLargeSizes(t *testing.T) {
 	origCached := thumb.SizeCached
 	origOnDemand := thumb.SizeOnDemand

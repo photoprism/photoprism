@@ -152,9 +152,23 @@ func applyGroupConfig(data *entity.ClientData, n *Node) {
 	}
 }
 
-// Put creates or updates a node record, preferring NodeUUID as the primary key
-// and falling back to ClientID or Name when required. The provided Node pointer
-// is updated with persisted identifiers so API/CLI layers can echo the result.
+// Create adds a node record, and refuses a NodeUUID that already belongs to one.
+// A caller with no client identifier cannot show which record is its own, so it may not
+// reach an existing one through the UUID; use Put to update a resolved record.
+func (r *ClientRegistry) Create(n *Node) error {
+	if n.UUID != "" {
+		if existing := entity.FindClientByNodeUUID(n.UUID); existing != nil && existing.ClientUID != "" {
+			return ErrIdentifierMismatch
+		}
+	}
+
+	return r.Put(n)
+}
+
+// Put creates or updates a node record, resolving it by NodeUUID, then ClientID, then Name,
+// and updates the provided Node pointer with the persisted identifiers.
+// A UUID and a client ID must resolve to the same record; a pair naming two records is
+// rejected, so a write always applies to a single registration.
 func (r *ClientRegistry) Put(n *Node) error {
 	// Upsert client preferring NodeUUID (primary), then ClientID, then Name.
 	var m *entity.Client
@@ -166,10 +180,15 @@ func (r *ClientRegistry) Put(n *Node) error {
 		}
 	}
 
-	// 2) Fall back to ClientID if not found by UUID and ClientID is valid.
-	if m == nil && rnd.IsUID(n.ClientID, entity.ClientUID) {
+	// 2) Resolve the ClientID if it is valid, so a mismatch is caught rather than
+	// silently writing to whichever record the other identifier named.
+	if rnd.IsUID(n.ClientID, entity.ClientUID) {
 		if existing := entity.FindClientByUID(n.ClientID); existing != nil {
-			m = existing
+			if m == nil {
+				m = existing
+			} else if m.ClientUID != existing.ClientUID {
+				return ErrIdentifierMismatch
+			}
 		}
 	}
 
@@ -496,7 +515,19 @@ func (r *ClientRegistry) RotateSecret(uuid string) (*Node, error) {
 		return nil, ErrNotFound
 	}
 
-	c := entity.FindClientByUID(n.ClientID)
+	return r.RotateSecretByClientID(n.ClientID)
+}
+
+// RotateSecretByClientID issues a new secret for the given OAuth client and returns the
+// updated node with the plaintext secret populated for the caller to deliver.
+// Callers that have already resolved a record use this, so the client identifier rather
+// than the UUID selects whose secret is replaced.
+func (r *ClientRegistry) RotateSecretByClientID(clientID string) (*Node, error) {
+	if clientID == "" {
+		return nil, ErrNotFound
+	}
+
+	c := entity.FindClientByUID(clientID)
 
 	if c == nil {
 		return nil, ErrNotFound
@@ -515,7 +546,7 @@ func (r *ClientRegistry) RotateSecret(uuid string) (*Node, error) {
 	if err := c.Save(); err != nil {
 		return nil, err
 	}
-	n = toNode(c)
+	n := toNode(c)
 	n.ClientSecret = secret // plaintext only in-memory for response composition
 
 	return n, nil

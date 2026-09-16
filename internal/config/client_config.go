@@ -9,7 +9,6 @@ import (
 	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
-	"github.com/photoprism/photoprism/pkg/env"
 	"github.com/photoprism/photoprism/pkg/media/colors"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -83,7 +82,6 @@ type ClientConfig struct {
 	Develop          bool                `json:"develop"`
 	Experimental     bool                `json:"experimental"`
 	AlbumCategories  []string            `json:"albumCategories"`
-	Albums           entity.Albums       `json:"albums"`
 	Cameras          entity.Cameras      `json:"cameras"`
 	Lenses           entity.Lenses       `json:"lenses"`
 	Countries        entity.Countries    `json:"countries"`
@@ -96,12 +94,10 @@ type ClientConfig struct {
 	PreviewToken     string              `json:"previewToken,omitempty"`
 	Disable          ClientDisable       `json:"disable"`
 	Count            ClientCounts        `json:"count"`
-	Pos              ClientPosition      `json:"pos"`
 	Years            Years               `json:"years"`
 	Colors           []map[string]string `json:"colors"`
 	Categories       CategoryLabels      `json:"categories"`
 	Clip             int                 `json:"clip"`
-	Server           env.Resources       `json:"server"`
 	Usage            Usage               `json:"usage"`
 	Settings         *customize.Settings `json:"settings,omitempty"`
 	ACL              acl.Grants          `json:"acl,omitempty"`
@@ -119,6 +115,17 @@ func (c *ClientConfig) ApplyACL(a acl.ACL, r acl.Role) *ClientConfig {
 	if !c.ACL[acl.ResourceUsers].Allow(acl.ActionView) {
 		c.Usage.UsersFreePct = -1
 		c.Usage.UsersUsedPct = -1
+	}
+
+	// Storage usage stays with the roles that act on it: managing pictures shows the usage bar, and
+	// uploading needs the quota state so the upload and import actions can be disabled when full.
+	if !c.ACL[acl.ResourcePhotos].Allow(acl.ActionManage) && !c.ACL[acl.ResourcePhotos].Allow(acl.ActionUpload) {
+		c.Usage.StorageLow = false
+		c.Usage.FilesUsed = 0
+		c.Usage.FilesUsedPct = -1
+		c.Usage.FilesFree = 0
+		c.Usage.FilesFreePct = -1
+		c.Usage.FilesTotal = 0
 	}
 
 	return c
@@ -192,18 +199,8 @@ type CategoryLabels []CategoryLabel
 
 // CategoryLabel contains the slug and name for a single label entry surfaced to the client.
 type CategoryLabel struct {
-	LabelUID   string `json:"UID"`
 	CustomSlug string `json:"Slug"`
 	LabelName  string `json:"Name"`
-}
-
-// ClientPosition reports the map position of the currently focused photo in the UI.
-type ClientPosition struct {
-	PhotoUID string    `json:"uid"`
-	CellID   string    `json:"cid"`
-	TakenAt  time.Time `json:"utc"`
-	PhotoLat float64   `json:"lat"`
-	PhotoLng float64   `json:"lng"`
 }
 
 // Flags returns config flags as string slice.
@@ -254,7 +251,13 @@ func (c *Config) Flags() (flags []string) {
 // ClientPublic returns config values for use by the JavaScript UI and other clients.
 func (c *Config) ClientPublic() *ClientConfig {
 	if c.Public() {
-		return c.ClientUser(true).ApplyACL(acl.Rules, acl.RoleAdmin)
+		cfg := c.ClientUser(true).ApplyACL(acl.Rules, acl.RoleAdmin)
+
+		// Tokens are otherwise assigned per session, so public mode sets them here.
+		cfg.PreviewToken = entity.TokenPublic
+		cfg.DownloadToken = entity.TokenPublic
+
+		return cfg
 	}
 
 	a := c.ClientAssets()
@@ -335,7 +338,6 @@ func (c *Config) ClientPublic() *ClientConfig {
 		PasswordResetUri: c.PasswordResetUri(),
 		Develop:          c.Develop(),
 		Experimental:     c.Experimental(),
-		Albums:           entity.Albums{},
 		Cameras:          entity.Cameras{},
 		Lenses:           entity.Lenses{},
 		Countries:        entity.Countries{},
@@ -347,8 +349,6 @@ func (c *Config) ClientPublic() *ClientConfig {
 		Colors:           colors.All.List(),
 		ManifestUri:      c.ClientManifestUri(),
 		Clip:             txt.ClipDefault,
-		PreviewToken:     entity.TokenPublic,
-		DownloadToken:    entity.TokenPublic,
 		Ext:              ClientExt(c, ClientPublic),
 	}
 
@@ -437,7 +437,6 @@ func (c *Config) ClientShare() *ClientConfig {
 		PasswordResetUri: c.PasswordResetUri(),
 		Develop:          c.Develop(),
 		Experimental:     c.Experimental(),
-		Albums:           entity.Albums{},
 		Cameras:          entity.Cameras{},
 		Lenses:           entity.Lenses{},
 		Countries:        entity.Countries{},
@@ -447,8 +446,6 @@ func (c *Config) ClientShare() *ClientConfig {
 		Membership:       c.Hub().Membership(),
 		Customer:         c.Hub().Customer(),
 		MapKey:           c.Hub().MapKey(),
-		DownloadToken:    c.DownloadToken(),
-		PreviewToken:     c.PreviewToken(),
 		ManifestUri:      c.ClientManifestUri(),
 		Clip:             txt.ClipDefault,
 		Ext:              ClientExt(c, ClientShare),
@@ -546,7 +543,6 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 		PasswordResetUri: c.PasswordResetUri(),
 		Develop:          c.Develop(),
 		Experimental:     c.Experimental(),
-		Albums:           entity.Albums{},
 		Cameras:          entity.Cameras{},
 		Lenses:           entity.Lenses{},
 		Countries:        entity.Countries{},
@@ -556,11 +552,8 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 		Membership:       c.Hub().Membership(),
 		Customer:         c.Hub().Customer(),
 		MapKey:           c.Hub().MapKey(),
-		DownloadToken:    c.DownloadToken(),
-		PreviewToken:     c.PreviewToken(),
 		ManifestUri:      c.ClientManifestUri(),
 		Clip:             txt.ClipDefault,
-		Server:           env.Info(),
 		Usage:            c.Usage(),
 		Ext:              ClientExt(c, ClientUser),
 	}
@@ -569,14 +562,6 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 	start := time.Now()
 
 	hidePrivate := c.Settings().Features.Private
-
-	c.Db().
-		Table("photos").
-		Select("photo_uid, cell_id, photo_lat, photo_lng, taken_at").
-		Where("deleted_at IS NULL AND photo_lat <> 0 AND photo_lng <> 0").
-		Order("taken_at DESC").
-		Limit(1).Offset(0).
-		Take(&cfg.Pos)
 
 	c.Db().
 		Table("cameras").
@@ -716,11 +701,6 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 		Find(&cfg.Lenses)
 
 	c.Db().
-		Where("deleted_at IS NULL AND album_favorite = 1").
-		Limit(20).Order("album_title").
-		Find(&cfg.Albums)
-
-	c.Db().
 		Table("photos").
 		Where("photo_year > 0 AND (photos.photo_quality > -1 OR photos.deleted_at IS NULL)").
 		Order("photo_year DESC").
@@ -728,10 +708,10 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 
 	c.Db().
 		Table("categories").
-		Select("l.label_uid, l.custom_slug, l.label_name").
+		Select("l.custom_slug, l.label_name").
 		Joins("JOIN labels l ON categories.category_id = l.id").
 		Where("l.deleted_at IS NULL").
-		Group("l.custom_slug, l.label_uid, l.label_name").
+		Group("l.custom_slug, l.label_name").
 		Order("l.custom_slug").
 		Limit(10000).Offset(0).
 		Scan(&cfg.Categories)
@@ -779,12 +759,16 @@ func (c *Config) ClientSession(sess *entity.Session) (cfg *ClientConfig) {
 		cfg.PreviewToken = sess.PreviewToken
 
 		// The download token is the "?t=" value: a signed, session-bound token so header-less download
-		// endpoints can scope the response to this session.
-		cfg.DownloadToken = tokens.DownloadToken(sess.ID)
+		// endpoints can scope the response to this session. It is delivered only when the session's scope
+		// covers a downloadable resource; the endpoints apply their own scope check.
+		if sess.ScopePermitsDownload() {
+			cfg.DownloadToken = tokens.DownloadToken(sess.ID)
+		}
 	default:
-		// A session without its own preview token gets no download token either, as the download token
-		// is the higher-value credential: it authorizes originals, and a coarse one is also accepted for
-		// previews. Clears the base config value so a configured static token is not handed out here.
+		// A session without its own preview token receives neither token: the instance-wide values stay
+		// registered and accepted, so existing URLs keep working, but they are not handed to a caller
+		// that has no token of its own.
+		cfg.PreviewToken = ""
 		cfg.DownloadToken = ""
 	}
 

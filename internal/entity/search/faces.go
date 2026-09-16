@@ -14,6 +14,11 @@ import (
 // and its arguments. The marker is picked by the bars automatic clustering applies rather than by
 // literals of this query's own, so a cluster the library formed cannot be one this page hides.
 //
+// Which now includes the crop-detail condition ClusterSizeCond carries: the face shown for a
+// cluster is one clustering would have used, so a cluster holding only markers embedded from crops
+// their sources could not fill has no representative and does not appear. Deliberate, and the same
+// rule on both sides is what keeps the page from hiding a cluster the library did form.
+//
 // Ranked like a person's cover and not by `MIN(marker_uid)`: marker ids order only to the second,
 // so a cluster indexed in one pass would otherwise be represented by an arbitrary one of its faces.
 func representativeMarkerJoin(facesTable, unknown string) (string, []any) {

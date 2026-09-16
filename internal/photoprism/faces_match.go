@@ -23,6 +23,16 @@ type FacesMatchResult struct {
 	// Ambiguous counts the markers left unassigned because two clusters were within
 	// face.MatchMargin of each other, which is the number an operator judges the margin by.
 	Ambiguous int64
+	// Assigned counts the markers that took the subject of a cluster that already carries one,
+	// which writes subj_uid without going through Updated. Counted apart from Recognized, which
+	// also covers a marker that merely has a subject after being matched.
+	Assigned int64
+}
+
+// MovedSubjects reports whether this run wrote a marker's person assignment, which is what the
+// subject counts are computed from.
+func (r FacesMatchResult) MovedSubjects() bool {
+	return r.Updated > 0 || r.Assigned > 0
 }
 
 // faceMatchStats accumulates per-face matching metrics within a single run.
@@ -77,6 +87,7 @@ func (r *FacesMatchResult) Add(result FacesMatchResult) {
 	r.Recognized += result.Recognized
 	r.Unknown += result.Unknown
 	r.Ambiguous += result.Ambiguous
+	r.Assigned += result.Assigned
 }
 
 // buildFaceIndex filters the provided faces down to candidates that can be matched, decoding each
@@ -287,9 +298,25 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 	if m, err := query.MatchFaceMarkers(); err != nil {
 		return result, err
 	} else {
+		// Counted twice on purpose: this is the run's recognition work, and it is also the only
+		// path that writes subj_uid without touching a marker through Updated.
 		result.Recognized += m
+		result.Assigned += m
 	}
 
+	w.updateMatchStats(stats)
+
+	// Named because the run otherwise reads as one that simply recognized less.
+	if result.Ambiguous > 0 {
+		log.Infof("faces: left %s unassigned between clusters of two different people, see face-match-margin",
+			english.Plural(int(result.Ambiguous), "marker", "markers"))
+	}
+
+	return result, nil
+}
+
+// updateMatchStats writes back what each cluster a pass touched actually matched.
+func (w *Faces) updateMatchStats(stats map[string]*faceMatchStats) {
 	declined := 0
 
 	for _, stat := range stats {
@@ -323,12 +350,28 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 		log.Infof("faces: left %s unmeasured, see face-recompute-stats",
 			english.Plural(declined, "cluster", "clusters"))
 	}
+}
 
-	// Named because the run otherwise reads as one that simply recognized less.
-	if result.Ambiguous > 0 {
-		log.Infof("faces: left %s unassigned between clusters of two different people, see face-match-margin",
-			english.Plural(int(result.Ambiguous), "marker", "markers"))
+// MatchNewClusters attaches markers to the clusters a pass has just created, and reports what it
+// moved. Without it they hold nothing, and DeleteOrphanFaces removes a cluster no marker points at.
+//
+// Scanned with force, because these clusters have never been compared with anything: the markers
+// they exist for are the ones an earlier pass in the same run examined and left unassigned, which
+// the timestamp filter Match uses would skip. A marker already closer to another cluster keeps it,
+// by the same rule every other pass applies.
+func (w *Faces) MatchNewClusters(added entity.Faces) (result FacesMatchResult, err error) {
+	if len(added) == 0 {
+		return result, nil
 	}
+
+	stats := make(map[string]*faceMatchStats)
+
+	if result, err = w.MatchFaces(added, true, nil, stats); err != nil {
+		return result, err
+	}
+
+	stampMatchedFaces(added)
+	w.updateMatchStats(stats)
 
 	return result, nil
 }

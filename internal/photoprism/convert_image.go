@@ -23,6 +23,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/media/projection"
+	"github.com/photoprism/photoprism/pkg/proc"
 )
 
 // ToImage converts a media file to a directly supported image file format.
@@ -159,6 +160,10 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 		return NewMediaFile(imageName)
 	}
 
+	// One budget for the whole file, shared by the converters tried for it, so that the time a
+	// single file can occupy does not grow with the number of candidates.
+	budget := NewConvertBudget(w.conf.ConvertTimeout())
+
 	// Try compatible converters.
 	for _, c := range cmds {
 		// Fetch command output.
@@ -179,12 +184,14 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 		log.Debug(cmd.String())
 
 		// Run convert command.
-		if err = cmd.Run(); err != nil {
-			if errStr := strings.TrimSpace(stderr.String()); errStr != "" {
-				err = errors.New(errStr)
-			}
+		if err = budget.Run(cmd, stderr.String); err != nil {
+			LogConvertError(err, cmd, clean.Log(filepath.Base(imageName)))
 
-			log.Debugf("convert: %s (%s)", clean.Error(err), filepath.Base(cmd.Path))
+			// A command that was stopped, or that failed after it began writing, can leave an
+			// incomplete file behind. It is removed so the next candidate is judged on its own
+			// output and a later pass does not adopt it as a finished rendition.
+			RemoveConvertOutput(imageName, cmd)
+
 			continue
 		} else if fs.FileExistsNotEmpty(imageName) {
 			// The command wrote the target file directly (e.g. Darktable, RawTherapee).
@@ -306,9 +313,9 @@ func (w *Convert) writeEquirectangularProjection(fileName string) error {
 	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
 
-	if err := cmd.Run(); err != nil {
+	if err := proc.Run(cmd, w.conf.ConvertTimeout()); err != nil {
 		if s := strings.TrimSpace(stderr.String()); s != "" {
-			return errors.New(s)
+			return fmt.Errorf("%w: %s", err, s)
 		}
 		return err
 	}
@@ -345,9 +352,9 @@ func (w *Convert) dewarpFileInPlace(fileName string, inputProjection projection.
 	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
 
-	if err := cmd.Run(); err != nil {
+	if err := proc.Run(cmd, w.conf.ConvertTimeout()); err != nil {
 		if s := strings.TrimSpace(stderr.String()); s != "" {
-			return errors.New(s)
+			return fmt.Errorf("%w: %s", err, s)
 		}
 		return err
 	}

@@ -39,8 +39,8 @@ type HardClusterer interface {
 	// Guesses returns mapping from data point indices to cluster numbers. Clusters' numbering begins at 1.
 	Guesses() []int
 
-	// Predict returns number of cluster to which the observation would be assigned, or -1
-	// when the clusterer is untrained or the observation has a different number of dimensions
+	// Predict returns a cluster number, or -1 if no cluster can be assigned.
+	// Untrained clusterers and observations of a different width return -1.
 	Predict(observation []float64) int
 
 	// IsOnline tells the algorithm supports online learning

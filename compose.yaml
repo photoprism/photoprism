@@ -177,14 +177,9 @@ services:
     stop_grace_period: 15s
     security_opt:
       - no-new-privileges:true
-    command:
-      - --api.dashboard=false
-      - --global.checknewversion=false
-      - --global.sendanonymoususage=false
-      - --providers.docker=true
-      - --providers.docker.exposedbydefault=false
-      - --entrypoints.web.address=:80
-      - --entrypoints.websecure.address=:443
+    ## Entry points, providers and the dashboard come from /etc/traefik/traefik.yaml in the image:
+    ## Traefik reads its install configuration from the first file it finds and then ignores
+    ## command-line flags, so these options must be changed in the image rather than here.
     ## Publish Traefik's HTTP and HTTPS entrypoints on the host (bound to every interface
     ## by default; override TRAEFIK_BIND_HOST, TRAEFIK_HTTP_PORT, or TRAEFIK_HTTPS_PORT):
     ports:
@@ -461,7 +456,7 @@ services:
   ## Docs: https://www.keycloak.org/docs/latest/server_admin/
   ## Login with "user / photoprism" and "admin / photoprism".
   keycloak:
-    image: quay.io/keycloak/keycloak:25.0
+    image: quay.io/keycloak/keycloak:26.7
     ## Only starts if the "all", "auth", or "keycloak" profile is specified:
     ## docker compose --profile keycloak up -d
     profiles: [ "all", "auth", "keycloak" ]
@@ -481,12 +476,12 @@ services:
       - "traefik.http.routers.keycloak.tls.domains[0].sans=*.localssl.dev"
       - "traefik.http.routers.keycloak.tls=true"
     environment: # see https://www.keycloak.org/server/all-config
-      KEYCLOAK_ADMIN: "admin"
-      KEYCLOAK_ADMIN_PASSWORD: "photoprism"
+      KC_BOOTSTRAP_ADMIN_USERNAME: "admin"
+      KC_BOOTSTRAP_ADMIN_PASSWORD: "photoprism"
       KC_METRICS_ENABLED: "false"
       KC_HOSTNAME: "keycloak.localssl.dev"
       KC_HOSTNAME_STRICT: "false"
-      KC_PROXY: "edge"
+      KC_PROXY_HEADERS: "xforwarded"
       KC_DB: "mariadb"
       KC_DB_URL: "jdbc:mariadb://mariadb:${MARIADB_PORT:-4001}/keycloak"
       KC_DB_USERNAME: "keycloak"

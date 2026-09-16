@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/auth/tokens"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -116,7 +117,7 @@ func TestInvalidDownloadToken(t *testing.T) {
 
 	t.Run("PublicModeAcceptsAnyToken", func(t *testing.T) {
 		conf.SetAuthMode(config.AuthModePublic)
-		assert.False(t, InvalidDownloadToken(downloadCtx("t=whatever")))
+		assert.False(t, InvalidDownloadToken(downloadCtx("t=whatever"), acl.Resources{acl.ResourceFiles}))
 	})
 
 	conf.SetAuthMode(config.AuthModePasswd)
@@ -124,20 +125,20 @@ func TestInvalidDownloadToken(t *testing.T) {
 
 	t.Run("SignedTokenAccepted", func(t *testing.T) {
 		v := tokens.SignDownload(entity.SessionFixtures.Get("alice").ID)
-		assert.False(t, InvalidDownloadToken(downloadCtx("t="+v)))
+		assert.False(t, InvalidDownloadToken(downloadCtx("t="+v), acl.Resources{acl.ResourceFiles}))
 	})
 	t.Run("CoarseTokenAccepted", func(t *testing.T) {
 		// The coarse instance token is not session-bound but stays valid, so static-token links keep working.
 		orig := tokens.CoarseDownload
 		tokens.CoarseDownload = "coarse-xyz"
 		defer func() { tokens.CoarseDownload = orig }()
-		assert.False(t, InvalidDownloadToken(downloadCtx("t=coarse-xyz")))
+		assert.False(t, InvalidDownloadToken(downloadCtx("t=coarse-xyz"), acl.Resources{acl.ResourceFiles}))
 	})
 	t.Run("UnknownTokenRejected", func(t *testing.T) {
 		orig := tokens.CoarseDownload
 		tokens.CoarseDownload = "coarse-xyz"
 		defer func() { tokens.CoarseDownload = orig }()
-		assert.True(t, InvalidDownloadToken(downloadCtx("t=totally-unknown")))
+		assert.True(t, InvalidDownloadToken(downloadCtx("t=totally-unknown"), acl.Resources{acl.ResourceFiles}))
 	})
 }
 
@@ -146,7 +147,7 @@ func TestAuthDownload(t *testing.T) {
 
 	t.Run("PublicModeValidWithSession", func(t *testing.T) {
 		conf.SetAuthMode(config.AuthModePublic)
-		sess, valid := AuthDownload(downloadCtx("t=anything"))
+		sess, valid := AuthDownload(downloadCtx("t=anything"), acl.Resources{acl.ResourceFiles})
 		assert.True(t, valid)
 		assert.NotNil(t, sess)
 	})
@@ -156,7 +157,7 @@ func TestAuthDownload(t *testing.T) {
 
 	t.Run("SignedTokenReturnsSession", func(t *testing.T) {
 		s := entity.SessionFixtures.Get("alice")
-		sess, valid := AuthDownload(downloadCtx("t=" + tokens.SignDownload(s.ID)))
+		sess, valid := AuthDownload(downloadCtx("t="+tokens.SignDownload(s.ID)), acl.Resources{acl.ResourceFiles})
 		assert.True(t, valid)
 		if assert.NotNil(t, sess) {
 			assert.Equal(t, s.ID, sess.ID)
@@ -166,12 +167,12 @@ func TestAuthDownload(t *testing.T) {
 		orig := tokens.CoarseDownload
 		tokens.CoarseDownload = "coarse-abc"
 		defer func() { tokens.CoarseDownload = orig }()
-		sess, valid := AuthDownload(downloadCtx("t=coarse-abc"))
+		sess, valid := AuthDownload(downloadCtx("t=coarse-abc"), acl.Resources{acl.ResourceFiles})
 		assert.True(t, valid)
 		assert.Nil(t, sess)
 	})
 	t.Run("UnknownTokenInvalid", func(t *testing.T) {
-		sess, valid := AuthDownload(downloadCtx("t=nope"))
+		sess, valid := AuthDownload(downloadCtx("t=nope"), acl.Resources{acl.ResourceFiles})
 		assert.False(t, valid)
 		assert.Nil(t, sess)
 	})

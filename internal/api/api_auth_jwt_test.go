@@ -87,8 +87,9 @@ func TestAuthAnyJWT(t *testing.T) {
 		assert.Equal(t, http.StatusOK, session.HttpStatus())
 		assert.Empty(t, session.PreviewToken)
 		cfg := fx.nodeConf.ClientSession(session)
-		assert.Equal(t, fx.preview, cfg.PreviewToken)
-		assert.Equal(t, fx.download, cfg.DownloadToken)
+		// A cluster session has no preview token of its own, so it receives neither token.
+		assert.Empty(t, cfg.PreviewToken)
+		assert.Empty(t, cfg.DownloadToken)
 		assert.True(t, session.SessExpires > session.CreatedAt.Unix())
 		assert.True(t, session.LastActive >= session.CreatedAt.Unix())
 	})

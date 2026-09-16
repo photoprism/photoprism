@@ -103,6 +103,10 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 		return nil
 	}
 
+	// Once it has completed, its target is in "options.yml" and not in this process, so embeddings
+	// stay paused rather than being generated in the model the migration moved away from.
+	w.conf.CheckFaceModelSuperseded()
+
 	if err = mutex.VisionWorker.Start(); err != nil {
 		return err
 	}

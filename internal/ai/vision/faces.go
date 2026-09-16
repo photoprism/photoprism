@@ -9,8 +9,14 @@ import (
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
+// CropSource renders the rendition the detected faces are cropped from, so an embedding is not
+// drawn from upscaled pixels. It runs between detection and embedding because the smallest face
+// decides how wide that rendition has to be, and only the caller can reach the original one is
+// rendered from. A nil value leaves the crops to what the cache already holds.
+type CropSource func(faces face.Faces)
+
 // DetectFaces detects faces in the specified image and generates embeddings from them.
-func DetectFaces(fileName string, minSize, retrySize int, cacheCrop bool, expected int) (result face.Faces, err error) {
+func DetectFaces(fileName string, minSize, retrySize int, cacheCrop bool, expected int, cropSource CropSource) (result face.Faces, err error) {
 	if fileName == "" {
 		return result, errors.New("missing image filename")
 	}
@@ -39,10 +45,22 @@ func DetectFaces(fileName string, minSize, retrySize int, cacheCrop bool, expect
 			return result, nil
 		}
 
-		if uri, method := model.Endpoint(); uri != "" && method != "" && face.EmbeddingsDisabled() {
+		uri, method := model.Endpoint()
+		endpoint := uri != "" && method != ""
+
+		// Before either path below, because both select the rendition they crop from by statting
+		// the cache: one that is rendered afterwards is one the embeddings did not use. Only for a
+		// run that can actually embed - an instance whose weights failed to load would otherwise
+		// pay a decode and a write per file for vectors it never produces. FaceModel is asked only
+		// where no endpoint is configured, since that is the sole branch that loads one.
+		if cropSource != nil && !face.EmbeddingsDisabled() && (endpoint || model.FaceModel() != nil) {
+			cropSource(result)
+		}
+
+		if endpoint && face.EmbeddingsDisabled() {
 			// An endpoint does not exempt the instance from the embeddings setting.
 			log.Debugf("vision: skipping face embeddings")
-		} else if uri != "" && method != "" {
+		} else if endpoint {
 			var faceCrops []string
 			var apiRequest *ApiRequest
 			var apiResponse *ApiResponse
@@ -137,7 +155,9 @@ func applyEndpointEmbeddings(faces face.Faces, res *ApiResponse, configured face
 			break
 		}
 
-		values := res.Result.Embeddings[i]
+		// Scaled to unit length before it is judged, because the endpoint is not required to
+		// normalize, and every distance the result is measured against is stated for unit vectors.
+		values := res.Result.Embeddings[i].Normalize()
 
 		if !face.ValidEmbeddings(values, registered.Dims) {
 			log.Warnf("vision: rejected face embedding %d from the configured endpoint", i)

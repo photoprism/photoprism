@@ -34,7 +34,7 @@ Descriptions MUST conclude with a checklist of **Acceptance Criteria**:
 
 > Agents MUST create, edit, close, reopen, relabel, or otherwise modify GitHub issues only when explicitly requested by the user.
 
-The repo's issue templates use the new GitHub `type:` property (`Bug`, `Feature`) instead of `bug`/`idea` labels. `gh issue create` does not yet accept a `--type` flag, so when filing issues programmatically use `--label` only and tell the user to set the issue type via the web UI.
+The repo's issue templates use the GitHub `type:` property instead of `bug`/`idea` labels. The types are configured for the organization, not in this repo, so read them with `gh api orgs/photoprism/issue-types --jq '.[].name'` rather than assuming — as of September 2026 they are `Task`, `Bug`, `Feature`, `Enhancement` and `Epic`, and the templates name only some of them. `gh issue create --type <name>` sets the type when filing, and `gh issue edit --type <name>` changes it afterwards; neither needs the web UI.
 
 ## Specifications & Documentation
 

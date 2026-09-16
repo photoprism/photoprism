@@ -89,21 +89,113 @@ openssl x509 -req -in /opt/photoprism/certs/cert.csr -CA /opt/photoprism/certs/c
 openssl pkcs12 -export -in /opt/photoprism/certs/cert.crt -inkey /opt/photoprism/certs/cert.key \
         -out /opt/photoprism/certs/cert.pfx -passout pass:
 
-# generate random password
-PASSWORD_PLACEHOLDER="_admin_password_"
-ADMIN_PASSWORD=$(gpg --gen-random --armor 2 6)
+# valid_ip_address reports whether its argument is a plain IPv4 address.
+#
+# The value is substituted into a YAML document and into the site URL, so it is restricted to the
+# characters an address is made of. IPv6 is not accepted: both sources below return IPv4, and an
+# IPv6 literal would need bracketing to be a valid URL host, which is a change to make together
+# with a source that can return one.
+valid_ip_address() {
+  local value="$1"
+
+  case "${value}" in
+    *[!0-9.]* | "" ) return 1 ;;
+  esac
+
+  [[ ${value} =~ ^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$ ]] || return 1
+
+  local octet
+  for octet in "${BASH_REMATCH[@]:1:4}"; do
+    ((10#${octet} <= 255)) || return 1
+  done
+
+  return 0
+}
+
+# public_ip_address prints the droplet's public address.
+#
+# The link-local metadata service is authoritative and is reachable only from inside the droplet,
+# so it is asked first; the public lookup is a fallback and uses HTTPS, because the value ends up
+# in the generated configuration and in the URL the operator is told to trust.
+public_ip_address() {
+  local address
+
+  # --noproxy, because a proxy variable in the boot environment would otherwise send this to
+  # whatever the proxy is, and the answer is only authoritative when it comes from the link-local
+  # service itself. --proto and --max-filesize keep the response to the shape of an address.
+  address=$(curl -fsS --max-time 5 --noproxy '*' --proto '=http' --max-filesize 64 \
+    http://169.254.169.254/metadata/v1/interfaces/public/0/ipv4/address 2>/dev/null || true)
+
+  if valid_ip_address "${address}"; then
+    echo "${address}"
+    return 0
+  fi
+
+  address=$(curl -fsS --max-time 10 --proto '=https' --max-filesize 64 https://api.ipify.org 2>/dev/null || true)
+
+  if valid_ip_address "${address}"; then
+    echo "${address}"
+    return 0
+  fi
+
+  return 1
+}
+
+# generate independent random secrets
+#
+# Each account gets its own, so they can be rotated and shared independently. Hex avoids every
+# character that would need quoting in YAML, a shell command or a database connection string.
+ADMIN_PASSWORD=$(openssl rand -hex 12)
+DATABASE_PASSWORD=$(openssl rand -hex 24)
+DATABASE_ROOT_PASSWORD=$(openssl rand -hex 24)
+
+if [[ -z ${ADMIN_PASSWORD} || -z ${DATABASE_PASSWORD} || -z ${DATABASE_ROOT_PASSWORD} ]]; then
+  echo "Failed to generate the initial secrets." 1>&2
+  exit 1
+fi
+
+install -m 600 /dev/null /root/.initial-password.txt
 echo "${ADMIN_PASSWORD}" > /root/.initial-password.txt
-chmod 600 /root/.initial-password.txt
 
 # detect public server ip address
-PUBLIC_IP=$(curl -sfSL ifconfig.me)
+if ! PUBLIC_IP=$(public_ip_address); then
+  echo "Could not determine a valid public IP address for this server." 1>&2
+  exit 1
+fi
 
 echo "Downloading configuration..."
 
 # download service config
 COMPOSE_CONFIG=$(curl -fsSL https://dl.photoprism.app/cloud/digitalocean/compose.yaml)
+
+# Every placeholder must be present before anything is substituted.
+#
+# This script is baked into the image while the configuration is fetched at boot, so the two can
+# be of different vintages. Checking only for leftovers afterwards would not notice a document
+# that never carried a placeholder: its substitution is a no-op, nothing is left over, and the
+# service starts with whichever secret the remaining placeholders happened to receive. The two
+# artifacts are therefore published together, and a mismatch stops the install.
+for placeholder in _public_ip_ _admin_password_ _database_password_ _database_root_password_; do
+  if [[ ${COMPOSE_CONFIG} != *"${placeholder}"* ]]; then
+    echo "The downloaded configuration is missing \"${placeholder}\" and does not match this setup script." 1>&2
+    exit 1
+  fi
+done
+
 COMPOSE_CONFIG=${COMPOSE_CONFIG//_public_ip_/$PUBLIC_IP}
-COMPOSE_CONFIG=${COMPOSE_CONFIG//$PASSWORD_PLACEHOLDER/$ADMIN_PASSWORD}
+COMPOSE_CONFIG=${COMPOSE_CONFIG//_admin_password_/$ADMIN_PASSWORD}
+COMPOSE_CONFIG=${COMPOSE_CONFIG//_database_password_/$DATABASE_PASSWORD}
+COMPOSE_CONFIG=${COMPOSE_CONFIG//_database_root_password_/$DATABASE_ROOT_PASSWORD}
+
+# And none may survive it.
+if [[ ${COMPOSE_CONFIG} == *_admin_password_* || ${COMPOSE_CONFIG} == *_database_password_* ||
+  ${COMPOSE_CONFIG} == *_database_root_password_* || ${COMPOSE_CONFIG} == *_public_ip_* ]]; then
+  echo "The downloaded configuration still holds a placeholder after substitution." 1>&2
+  exit 1
+fi
+
+# The file holds the database and admin secrets, so it is created private and then written.
+install -m 600 /dev/null /opt/photoprism/compose.yaml
 echo "${COMPOSE_CONFIG}" > /opt/photoprism/compose.yaml
 curl -fsSL https://dl.photoprism.app/cloud/digitalocean/traefik.yaml > /opt/photoprism/traefik.yaml
 
@@ -119,6 +211,9 @@ apt-get autoremove
 # start services using docker-compose
 (cd /opt/photoprism && docker compose pull && docker compose stop && docker compose up --remove-orphans -d)
 
-# show public server URL and initial admin password
-printf "\nServer URL:\n\n  https://%s/\n\nInitial admin password:\n\n  %s\n\n" "${PUBLIC_IP}" "${ADMIN_PASSWORD}"
+# show the public server URL and where to find the initial admin password
+#
+# The location rather than the value: this runs under cloud-init, whose captured output is kept
+# in a log file of its own and shown in the provider console.
+printf "\nServer URL:\n\n  https://%s/\n\nInitial admin password:\n\n  see /root/.initial-password.txt\n\n" "${PUBLIC_IP}"
 printf "\nPhotoPrism is now installed and running. For documentation, visit:\n\n  https://docs.photoprism.app/\n\n"

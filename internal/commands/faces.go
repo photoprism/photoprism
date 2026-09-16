@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"math"
 	"path/filepath"
 	"strings"
 	"time"
@@ -205,6 +206,10 @@ func facesMigrateAction(ctx *cli.Context) error {
 		if stale := plan.Markers.Valid - plan.Markers.Ready; stale > 0 {
 			event.SystemWarn([]string{"faces", "migrate", "%d markers must be re-embedded and lose their stored vectors if that fails"}, stale)
 		}
+		// A crop is taken from a thumbnail and never from the original, so what the cache holds
+		// decides how much detail the vectors rest on. The run renders what it is missing; this
+		// says how much of that is coming, and how much of it the originals cannot supply.
+		reportMigrationCropCoverage(plan)
 
 		if ctx.Bool("dry-run") {
 			log.Infof("faces: dry run completed without changes")
@@ -239,6 +244,25 @@ func facesMigrateAction(ctx *cli.Context) error {
 			result.PreservedSubjects, result.PreservedMarkers, result.HiddenClusters,
 			result.RebuiltSubjects, result.AttentionSubjects,
 		)
+		// The cache is what a crop is taken from, so a run that had to render is the difference
+		// between this library's vectors and the ones a pre-generated cache would have produced.
+		if result.RenderedThumbs > 0 {
+			log.Infof("faces: rendered %d thumbnail(s) from originals so their face crops were not upscaled",
+				result.RenderedThumbs)
+		}
+		// The one part of the run whose cost is not visible in the result afterwards: these
+		// markers hold a vector drawn from fewer pixels than their original could supply.
+		if result.FailedThumbs > 0 {
+			event.SystemWarn([]string{"faces", "migrate", "%d file(s) could not be given the wider thumbnail their face crops need, " +
+				"so those markers were embedded from upscaled crops; re-run once the cache volume is writable"},
+				result.FailedThumbs)
+		}
+		// The other cost that leaves no trace in the vectors: an aligned model was trained on
+		// pose-normalized faces, and these reached it as a plain box crop instead.
+		if result.UnalignedCrops > 0 {
+			log.Infof("faces: %d marker(s) could not be aligned and were embedded from a plain box crop",
+				result.UnalignedCrops)
+		}
 		// Reported apart from both, because a retained marker is neither work done nor a loss:
 		// detection did not find it again, most often because a person drew it by hand.
 		if result.Retained > 0 {
@@ -266,6 +290,45 @@ func facesMigrateAction(ctx *cli.Context) error {
 
 		return nil
 	})
+}
+
+// reportMigrationCropCoverage states how much of the crop detail the thumbnail cache already holds,
+// what the run renders for itself, and what no rendition can supply.
+//
+// A forecast rather than a warning: the run renders the renditions its crops need as it reaches
+// each file, so the only number an operator has to decide anything about is the last one.
+func reportMigrationCropCoverage(plan photoprism.FacesMigratePlan) {
+	coverage := plan.CropCoverage
+
+	if coverage.Total < 1 {
+		return
+	}
+
+	// Markers rather than files, because that is the population the buckets count: a file with
+	// several of them is rendered for once, so the number of renditions is lower than this.
+	if coverage.Upscaled > 0 {
+		log.Infof("faces: %d of %d markers (%d%%) need a wider crop than the largest thumbnail this library holds (%dx%d), "+
+			"so their files are rendered again from the original as the run reaches them",
+			coverage.Upscaled, coverage.Total, percentOf(coverage.Upscaled, coverage.Total),
+			plan.ThumbSize.Width, plan.ThumbSize.Height)
+	}
+
+	// Stated apart, because this is the part no rendition recovers: their files are re-rendered
+	// as well, at the resolution the original holds, and the crop is still upscaled onto the
+	// template afterwards.
+	if coverage.SourceTooSmall > 0 {
+		log.Infof("faces: %d of %d markers (%d%%) have originals too small for a full-detail face crop, so theirs stay upscaled",
+			coverage.SourceTooSmall, coverage.Total, percentOf(coverage.SourceTooSmall, coverage.Total))
+	}
+}
+
+// percentOf returns the share of total in whole percent, and 0 when there is nothing to divide by.
+func percentOf(n, total int) int {
+	if total < 1 {
+		return 0
+	}
+
+	return int(math.Round(float64(n) * 100 / float64(total)))
 }
 
 // facesStatsAction shows stats on face embeddings.

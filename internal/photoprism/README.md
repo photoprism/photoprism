@@ -1,6 +1,6 @@
 ## PhotoPrism — Core Package
 
-**Last Updated:** August 20, 2026
+**Last Updated:** September 1, 2026
 
 ### Overview
 
@@ -23,7 +23,7 @@
 - Indexing/import: `index.go`, `index_main.go`, `index_mediafile.go`, `index_related.go`, `import_worker.go`, `files.go`, `photos.go`.
 - Media files & helpers: `mediafile*.go`, `mediafile_thumbs.go`, `mediafile_vision.go`, `convert_*.go`, `colors.go`, `label.go`.
 - 360° originals: `mediafile_insta360.go` and `mediafile_projection.go` detect fisheye/dual-fisheye sources, `convert_image*.go` / `convert_video_avc.go` dewarp them to equirectangular derivatives, and `index_insta360.go` merges separate lens files into one photo on a forced rescan.
-- Faces/people: `faces_*.go` (audit, clustering, matching, optimize, migrate); face-marker persistence and XMP face-tag import in `index_faces.go` / `index_faces_xmp.go` (gated by `PHOTOPRISM_XMP_FACES`).
+- Faces/people: `faces_*.go` (audit, clustering, matching, optimize, migrate, crop source); face-marker persistence and XMP face-tag import in `index_faces.go` / `index_faces_xmp.go` (gated by `PHOTOPRISM_XMP_FACES`).
 - Backups: `backup/` (database and sidecar YAML backup/restore helpers).
 - Downloads: `dl/` (export and download handlers/helpers).
 - Service registry: `get/` (registry lookups and helper commands).
@@ -51,6 +51,16 @@
 - Fixtures live under `storage/testdata`; tests expect initialized config (`config.TestConfig()` / `config.NewMinimalTestConfigWithDb`).
 - `internal/photoprism` tests isolate package-level storage and SQLite DSN in `TestMain` using temporary per-process paths (`PHOTOPRISM_STORAGE_PATH`, `PHOTOPRISM_TEST_DSN`) to avoid flaky cross-process collisions on macOS/Linux when multiple `go test` processes run in parallel.
 - Stateful tests that import/index media files should prefer isolated helpers like `config.NewMinimalTestConfigWithDb("<name>", filepath.Join(t.TempDir(), "storage"))` instead of shared `config.TestConfig()`.
+
+### Transport-Stream Coordination
+
+Transport-stream conversions share compatible in-flight work by output destination across `Convert`
+instances in the same process. Coordination includes remuxing and any fallback transcode. Requests
+with different source versions, configuration objects, FFmpeg exclusion snapshots, encoders or
+force/mutex settings queue for that destination and recheck the output; unrelated destinations retain
+their existing scheduling. Each caller receives its own media object. Completed operations are
+released for later retries; overlapping compatible callers share failures. Unique staging is unchanged.
+This is not a cross-process lock and does not alter animated-WebP or encoder mutex behavior.
 
 ### Operational Notes
 

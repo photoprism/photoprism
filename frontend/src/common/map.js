@@ -1,4 +1,4 @@
-let loading = false;
+let loading = null;
 let maplibregl = null;
 
 // Screen-space distance (in pixels) below which two photo markers are treated as sharing the
@@ -119,23 +119,34 @@ export function groupGeoFeatures(features, project, tolerance = stackTolerancePx
   return groups;
 }
 
-// Loads the maplibregl library.
-export async function load() {
-  if (maplibregl !== null || loading) {
+// supportsWebGL2 reports whether this browser can create a WebGL2 context.
+export function supportsWebGL2() {
+  try {
+    const context = document.createElement("canvas").getContext("webgl2");
+    if (!context || typeof context.getParameter !== "function") {
+      return false;
+    }
+    context.getExtension("WEBGL_lose_context")?.loseContext();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// load shares the pending MapLibre import between concurrent map mounts.
+export function load() {
+  if (maplibregl !== null) {
     return Promise.resolve(maplibregl);
   }
-
-  loading = true;
-
-  try {
-    const module = await import("./maplibregl.js");
-    maplibregl = module.default;
-    loading = false;
-  } catch (e) {
-    loading = false;
-    console.error("maps: failed to load maplibregl", e);
-    return Promise.reject(e);
+  if (!loading) {
+    loading = import("./maplibregl.js")
+      .then((module) => {
+        maplibregl = module.default;
+        return maplibregl;
+      })
+      .finally(() => {
+        loading = null;
+      });
   }
-
-  return Promise.resolve(maplibregl);
+  return loading;
 }

@@ -131,7 +131,7 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 
 		// Save file error.
 		if fileUid, err := res.FileError(); err != nil {
-			query.SetFileError(fileUid, err.Error())
+			query.SetFileError(fileUid, clean.Error(err))
 		}
 
 		// Log index result.

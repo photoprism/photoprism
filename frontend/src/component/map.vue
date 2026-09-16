@@ -1,5 +1,8 @@
 <template>
-  <div ref="map" class="p-map" :class="{ 'is-marker-clickable': markerClickable }"></div>
+  <div class="p-map" :class="{ 'is-marker-clickable': markerClickable }">
+    <div v-if="mapError" class="pa-3" role="status">{{ mapError }}</div>
+    <div v-show="!mapError" ref="map" class="p-map-canvas"></div>
+  </div>
 </template>
 
 <script>
@@ -55,6 +58,7 @@ export default {
     },
   },
   emits: ["update:latlng", "marker-moved", "marker-clicked", "map-clicked"],
+  // data initializes the map state and rendering options.
   data() {
     const settings = this.$config.getSettings();
 
@@ -76,6 +80,7 @@ export default {
         attributionControl: false,
       },
       loaded: false,
+      mapError: "",
     };
   },
   watch: {
@@ -83,18 +88,36 @@ export default {
       this.updatePosition();
     },
   },
+  // mounted loads the renderer only when this browser supports maps.
   mounted() {
+    this._mapUnmounted = false;
+    if (!map.supportsWebGL2()) {
+      this.showMapError();
+      return;
+    }
     map.load().then((m) => {
+      if (this._mapUnmounted) {
+        return;
+      }
       maplibregl = m;
       this.initMap();
-    });
+    }).catch(this.showMapError);
   },
+  // beforeUnmount releases the map and prevents delayed initialization.
   beforeUnmount() {
+    this._mapUnmounted = true;
     if (this.map) {
       this.map.remove();
+      this.map = null;
     }
   },
   methods: {
+    // showMapError displays a map-only fallback without blocking location controls.
+    showMapError() {
+      this.loaded = false;
+      this.mapError = this.$gettext("Maps are unavailable. Try another browser or device.");
+    },
+    // initMap creates the renderer, controls, and coordinate event handlers.
     initMap() {
       if (this.map || !this.$refs.map || !maplibregl) {
         return;
@@ -141,12 +164,8 @@ export default {
           console.error("map:", e);
         });
 
-        // Handle missing style images
-        this.map.on("styleimagemissing", (e) => {
-          const emptyImage = new ImageData(1, 1);
-          if (e && e.id) {
-            this.map.addImage(e.id, emptyImage);
-          }
+        this.map.setMissingStyleImageResolver((id) => {
+          this.map.addImage(id, new ImageData(1, 1));
         });
 
         this.map.on("load", () => {
@@ -166,7 +185,7 @@ export default {
         }
       } catch (error) {
         console.error("map: initialization failed", error);
-        this.loaded = false;
+        this.showMapError();
       }
     },
     updatePosition() {

@@ -15,11 +15,12 @@ type dbscanClusterer struct {
 	logAfter time.Duration
 	logf     func(done, total int)
 
-	// slices holding the cluster mapping and sizes. Access is synchronized to avoid read during computation.
-	mu sync.RWMutex
-	// groups for dateset
-	a []int
-	b []int
+	// Cluster assignments, sizes, and core flags. Access is synchronized to avoid
+	// reads during computation.
+	mu   sync.RWMutex
+	a    []int
+	b    []int
+	core []bool
 
 	// variables used for concurrent computation of nearest neighbors
 	// dataset len
@@ -140,41 +141,38 @@ func (c *dbscanClusterer) Guesses() []int {
 	return c.a
 }
 
+// Predict assigns an observation only when exactly one learned core cluster reaches it.
 func (c *dbscanClusterer) Predict(p []float64) int {
-	// Without training data, or for an observation of a different width, there is no
-	// cluster to assign, which this algorithm already labels as noise.
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+
 	if len(c.d) == 0 || len(p) != len(c.d[0]) {
 		return -1
 	}
 
-	var (
-		l int
-		d float64
-		m float64 = c.distance(p, c.d[0])
-	)
+	cluster := -1
 
-	for i := 1; i < len(c.d); i++ {
-		if d = c.distance(p, c.d[i]); d < m {
-			m = d
-			l = i
+	for i, core := range c.core {
+		if core && c.distance(c.d[i], p) < c.eps {
+			if cluster != -1 && cluster != c.a[i] {
+				return -1
+			}
+			cluster = c.a[i]
 		}
 	}
 
-	return c.a[l]
+	return cluster
 }
 
 func (c *dbscanClusterer) Online(observations chan []float64, done chan struct{}) chan *HCEvent {
 	return nil
 }
 
-// run assigns every point to a cluster or to noise.
-//
-// Clusters are the connected components of the core points, so which points share one depends on the
-// point set rather than on the order it arrives in. Every other point is attached afterwards, and
-// only where the cores around it agree on a single cluster: one that two clusters can both reach
-// stays noise rather than joining whichever was walked first.
+// run forms core components and attaches borders reached by exactly one component.
+// Only cores propagate reachability, so symmetric distances yield an order-independent partition.
 func (c *dbscanClusterer) run() {
 	core := c.coreFlags()
+	c.core = core
 
 	// The cluster a non-core point may join: 0 while none has been seen, -1 once two have.
 	border := make([]int, c.l)

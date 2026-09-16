@@ -11,16 +11,49 @@ entryPoints:
   web:
     address: ":80"
     http:
+      # Drop request headers whose name holds a character other than a letter, digit or dash, as
+      # CGI/WSGI/PHP/NGINX backends read "X_Auth_Token" and "X-Auth-Token" as one variable:
+      aliasHeadersStrategy: delete
+      # Set every option explicitly: Traefik changed these defaults within the v3.6 patch series,
+      # so relying on them means the behavior can change under you. A file name may legitimately
+      # contain a percent, hash, question mark, semicolon or backslash, and WebDAV and the download
+      # routes address files by name, so those are forwarded. An encoded slash is forwarded because
+      # clients send one and the application resolves it inside the library root itself. A null byte
+      # cannot occur in a file name on any supported filesystem, so it is the one refused here.
+      encodedCharacters:
+        allowEncodedSlash: true
+        allowEncodedPercent: true
+        allowEncodedHash: true
+        allowEncodedQuestionMark: true
+        allowEncodedSemicolon: true
+        allowEncodedBackSlash: true
+        allowEncodedNullCharacter: false
       redirections:
         entryPoint:
           to: websecure
           scheme: https
-  websecure:
-    address: ":443"
     transport:
       respondingTimeouts:
         readTimeout: "3h"
         writeTimeout: "0s"
+        idleTimeout: "3m"
+  websecure:
+    address: ":443"
+    http:
+      aliasHeadersStrategy: delete
+      encodedCharacters:
+        allowEncodedSlash: true
+        allowEncodedPercent: true
+        allowEncodedHash: true
+        allowEncodedQuestionMark: true
+        allowEncodedSemicolon: true
+        allowEncodedBackSlash: true
+        allowEncodedNullCharacter: false
+    transport:
+      respondingTimeouts:
+        readTimeout: "3h"
+        writeTimeout: "0s"
+        idleTimeout: "3m"
 
 certificatesResolvers:
   myresolver:

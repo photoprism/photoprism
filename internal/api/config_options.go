@@ -3,7 +3,6 @@ package api
 import (
 	"errors"
 	"net/http"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 
@@ -12,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
@@ -35,7 +35,7 @@ func GetConfigOptions(router *gin.RouterGroup) {
 			return
 		}
 
-		c.JSON(http.StatusOK, conf.Options())
+		c.JSON(http.StatusOK, conf.RedactedOptions())
 	})
 }
 
@@ -76,7 +76,12 @@ func SaveConfigOptions(router *gin.RouterGroup) {
 
 		// Only options the API returns may be set through it.
 		if removed := config.RemoveUnsupportedOptionValues(v); len(removed) > 0 {
-			log.Debugf("config: ignored %s in options update", strings.Join(removed, ", "))
+			log.Debugf("config: ignored %s in options update", clean.LogNames(removed))
+		}
+
+		// A value returned redacted and sent back unchanged sets nothing.
+		if removed := conf.RemoveRedactedOptionValues(v); len(removed) > 0 {
+			log.Debugf("config: ignored unchanged %s in options update", clean.LogNames(removed))
 		}
 
 		if _, err := conf.SaveOptionsPatch(v); err != nil {
@@ -86,8 +91,8 @@ func SaveConfigOptions(router *gin.RouterGroup) {
 				return
 			}
 
-			log.Errorf("config: failed saving options patch (%s)", err)
-			c.AbortWithStatusJSON(http.StatusInternalServerError, err)
+			log.Errorf("config: failed saving options patch (%s)", clean.Error(err))
+			AbortSaveFailed(c)
 			return
 		}
 
@@ -102,6 +107,6 @@ func SaveConfigOptions(router *gin.RouterGroup) {
 		UpdateClientConfig()
 
 		// Return updated config options.
-		c.JSON(http.StatusOK, conf.Options())
+		c.JSON(http.StatusOK, conf.RedactedOptions())
 	})
 }

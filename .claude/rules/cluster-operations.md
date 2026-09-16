@@ -4,7 +4,9 @@
 - Bootstrap refreshes node OAuth credentials on 401/403 (rotate secret + retry, info-level log). If the secret file can't be written, the rotated value stays cached in memory so the current process continues.
 - Portal validation accepts HTTP advertise URLs only for loopback or cluster-internal domains (`*.svc`, `*.cluster.local`, `*.internal`); everything else must use HTTPS.
 - Theme endpoint: `GET /api/v1/cluster/theme` streams a zip from `conf.ThemePath()`; reinstall only when `app.js` is missing and always use the header helpers in `pkg/http/header`.
-- Registration flow: send `rotate=true` only for MySQL/MariaDB nodes without credentials; treat 401/403/404 as terminal; include `ClientID` + `ClientSecret` when renaming an existing node; persist only newly generated secrets or DB settings.
+- Registration flow: send `rotate=true` only for MySQL/MariaDB nodes without credentials; treat 401/403/404 as terminal; persist only newly generated secrets or DB settings.
+- The Bearer token is the only credential a registration carries. A node mutating its own registration exchanges its client credentials for an access token (`clusterRegisterToken`, `node.OAuthAccessToken`); a first join, or a refused exchange in the CLI, uses the join token. Node bootstrap does not retry with the join token - it runs unattended. Identifiers in the body select a record and are checked against the caller, never trusted as proof of ownership.
+- `cluster nodes rotate` runs against the local registry on a Portal and through the register endpoint on an instance, because the endpoint accepts only a node's own access token.
 
 ### Registry & DTOs
 

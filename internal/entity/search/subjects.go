@@ -13,24 +13,10 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// sessionGrantsPeople reports whether the session is granted perm on people, mirroring
-// sessionGrantsPhotos: a client is limited by its own role as well as its user's, and one without a
-// user is evaluated on that role alone - reading the user role there resolves to RoleNone and denies
-// what the request was admitted with. A nil session is internal or CLI use and is not restricted.
+// sessionGrantsPeople reports whether the session is granted perm on people, using the client and
+// user role intersection Session.Grants implements.
 func sessionGrantsPeople(sess *entity.Session, perm acl.Permission) bool {
-	if sess == nil {
-		return true
-	}
-
-	if sess.IsClient() {
-		if !acl.Rules.Allow(acl.ResourcePeople, sess.GetClientRole(), perm) {
-			return false
-		} else if sess.NoUser() {
-			return true
-		}
-	}
-
-	return acl.Rules.Allow(acl.ResourcePeople, sess.GetUserRole(), perm)
+	return sess.Grants(acl.ResourcePeople, perm)
 }
 
 // SubjectSessionSeesPrivate reports whether a session may see people marked private, so the search

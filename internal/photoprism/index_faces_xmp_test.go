@@ -1051,7 +1051,7 @@ func sampleDetectedFace() face.Face {
 		Cols:       720,
 		Score:      45,
 		Area:       face.NewArea("face", 250, 200, 10),
-		Embeddings: face.Embeddings{{0.1, 0.2, 0.3}},
+		Embeddings: face.Embeddings{{0.1, 0.2, 0.3}}.Normalize(),
 	}
 }
 

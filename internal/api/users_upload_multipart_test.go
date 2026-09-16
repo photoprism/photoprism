@@ -16,6 +16,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
@@ -689,4 +690,77 @@ func TestUploadUserFiles_Multipart_ZipAbsolutePathRejected(t *testing.T) {
 	base := filepath.Join(conf.UserStoragePath(adminUid), "upload")
 	files := findUploadedFilesForToken(t, base, "zipabs")
 	assert.Empty(t, files)
+}
+
+func TestUploadUserFiles_Multipart_SkippedEntryNames(t *testing.T) {
+	app, router, conf := NewApiTest()
+	conf.Options().UploadArchives = true
+	conf.Options().UploadAllow = "jpg,png,zip"
+	UploadUserFiles(router)
+	token := AuthenticateAdmin(app, router)
+
+	adminUid := entity.Admin.UserUID
+	uploadBase := filepath.Join(conf.UserStoragePath(adminUid), "upload")
+
+	// uploadSkippedZip uploads an archive whose entries Unzip skips and returns the log line naming them.
+	uploadSkippedZip := func(t *testing.T, uploadToken string, entries map[string][]byte) string {
+		t.Helper()
+
+		body, ctype, err := buildMultipart(map[string][]byte{"skipped.zip": buildZipWithDirsAndFiles(nil, entries)})
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		hook := captureLog(t)
+
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/users/"+adminUid+"/upload/"+uploadToken, body)
+		req.Header.Set("Content-Type", ctype)
+		header.SetAuthorization(req, token)
+		w := httptest.NewRecorder()
+		app.ServeHTTP(w, req)
+
+		if w.Code != http.StatusOK {
+			t.Fatalf("expected 200, got %d: %s", w.Code, w.Body.String())
+		}
+
+		for _, entry := range hook.AllEntries() {
+			if strings.Contains(entry.Message, "could not extract") {
+				return entry.Message
+			}
+		}
+
+		t.Fatal("expected a log entry naming the skipped entries")
+
+		return ""
+	}
+
+	t.Run("ControlCharactersRemoved", func(t *testing.T) {
+		defer removeUploadDirsForToken(t, uploadBase, "skipone")
+
+		// Unzip reports an entry whose name is not a plain relative path, so the name is logged.
+		name := "report\nsummary../x.jpg"
+		line := uploadSkippedZip(t, "skipone", map[string][]byte{name: []byte("x")})
+
+		assert.NotContains(t, line, "\n", "a log line must not carry a newline from an archive entry")
+		assert.NotContains(t, line, "\r")
+		assert.Contains(t, line, "report", "the entry name is still reported")
+		assert.Contains(t, line, "x.jpg")
+	})
+	t.Run("CountIsBounded", func(t *testing.T) {
+		defer removeUploadDirsForToken(t, uploadBase, "skipmany")
+
+		const skipped = clean.LogNamesLimit + 4
+
+		entries := make(map[string][]byte, skipped)
+
+		for i := 0; i < skipped; i++ {
+			entries[fmt.Sprintf("pad%d../y.jpg", i)] = []byte("y")
+		}
+
+		line := uploadSkippedZip(t, "skipmany", entries)
+
+		assert.Contains(t, line, fmt.Sprintf("and %d more", skipped-clean.LogNamesLimit))
+		assert.Equal(t, clean.LogNamesLimit, strings.Count(line, "../y.jpg"))
+	})
 }

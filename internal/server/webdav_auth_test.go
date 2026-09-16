@@ -28,7 +28,7 @@ func TestWebDAVAuth(t *testing.T) {
 			Header: make(http.Header),
 		}
 
-		webdavAuthCache.Flush()
+		entity.FlushSessionCache()
 		webdavHandler(c)
 
 		assert.Equal(t, http.StatusUnauthorized, c.Writer.Status())
@@ -41,7 +41,7 @@ func TestWebDAVAuth(t *testing.T) {
 			Header: make(http.Header),
 		}
 
-		webdavAuthCache.Flush()
+		entity.FlushSessionCache()
 
 		sess := entity.SessionFixtures.Get("alice_token")
 		header.SetAuthorization(c.Request, sess.AuthToken())
@@ -62,7 +62,7 @@ func TestWebDAVAuth(t *testing.T) {
 		basicAuth := fmt.Appendf(nil, "alice:%s", sess.AuthToken())
 		c.Request.Header.Add(header.Auth, fmt.Sprintf("%s %s", header.AuthBasic, base64.StdEncoding.EncodeToString(basicAuth)))
 
-		webdavAuthCache.Flush()
+		entity.FlushSessionCache()
 		webdavHandler(c)
 
 		assert.Equal(t, http.StatusOK, c.Writer.Status())
@@ -79,7 +79,7 @@ func TestWebDAVAuth(t *testing.T) {
 		basicAuth := fmt.Appendf(nil, "bob:%s", sess.AuthToken())
 		c.Request.Header.Add(header.Auth, fmt.Sprintf("%s %s", header.AuthBasic, base64.StdEncoding.EncodeToString(basicAuth)))
 
-		webdavAuthCache.Flush()
+		entity.FlushSessionCache()
 		webdavHandler(c)
 
 		assert.Equal(t, http.StatusUnauthorized, c.Writer.Status())
@@ -96,7 +96,7 @@ func TestWebDAVAuth(t *testing.T) {
 		basicAuth := fmt.Appendf(nil, ":%s", sess.AuthToken())
 		c.Request.Header.Add(header.Auth, fmt.Sprintf("%s %s", header.AuthBasic, base64.StdEncoding.EncodeToString(basicAuth)))
 
-		webdavAuthCache.Flush()
+		entity.FlushSessionCache()
 		webdavHandler(c)
 
 		assert.Equal(t, http.StatusUnauthorized, c.Writer.Status())
@@ -112,7 +112,7 @@ func TestWebDAVAuth(t *testing.T) {
 		sess := entity.SessionFixtures.Get("alice_token_scope")
 		header.SetAuthorization(c.Request, sess.AuthToken())
 
-		webdavAuthCache.Flush()
+		entity.FlushSessionCache()
 		webdavHandler(c)
 
 		assert.Equal(t, http.StatusUnauthorized, c.Writer.Status())
@@ -127,7 +127,7 @@ func TestWebDAVAuth(t *testing.T) {
 
 		header.SetAuthorization(c.Request, rnd.AuthToken())
 
-		webdavAuthCache.Flush()
+		entity.FlushSessionCache()
 		webdavHandler(c)
 
 		assert.Equal(t, http.StatusUnauthorized, c.Writer.Status())
@@ -142,7 +142,7 @@ func TestWebDAVAuth(t *testing.T) {
 
 		header.SetAuthorization(c.Request, rnd.AppPassword())
 
-		webdavAuthCache.Flush()
+		entity.FlushSessionCache()
 		webdavHandler(c)
 
 		assert.Equal(t, http.StatusUnauthorized, c.Writer.Status())
@@ -164,7 +164,7 @@ func TestWebDAVAuth(t *testing.T) {
 		conf.Settings().Features.AppPasswords = false
 		defer func() { conf.Settings().Features.AppPasswords = true }()
 
-		webdavAuthCache.Flush()
+		entity.FlushSessionCache()
 		webdavHandler(c)
 
 		assert.Equal(t, http.StatusUnauthorized, c.Writer.Status())
@@ -183,7 +183,7 @@ func TestWebDAVAuthSession(t *testing.T) {
 		s := entity.SessionFixtures.Get("alice_token_webdav")
 
 		// Get session with authorized user and webdav scope.
-		webdavAuthCache.Flush()
+		entity.FlushSessionCache()
 		sess, user, sid, cached := WebDAVAuthSession(c, s.AuthToken())
 
 		// Check result.
@@ -204,7 +204,7 @@ func TestWebDAVAuthSession(t *testing.T) {
 		assert.Equal(t, "", c.Writer.Header().Get("WWW-Authenticate"))
 
 		// Cache authentication.
-		webdavAuthCache.SetDefault(sid, user)
+		entity.CacheWebDAVUser(sid, user, entity.CurrentAuthCacheGeneration())
 
 		// Get cached user.
 		sess, user, sid, cached = WebDAVAuthSession(c, s.AuthToken())

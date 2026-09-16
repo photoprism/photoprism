@@ -17,7 +17,7 @@ func albumViewableBySession(s *entity.Session, album entity.Album) bool {
 		return false
 	}
 
-	if s.GetUser().HasSharedAccessOnly(acl.ResourceAlbums) && album.CreatedBy != s.UserUID && !s.HasShare(album.AlbumUID) {
+	if s.HasSharedAccessOnly(acl.ResourceAlbums) && album.CreatedBy != s.UserUID && !s.HasShare(album.AlbumUID) {
 		return false
 	}
 
@@ -28,5 +28,5 @@ func albumViewableBySession(s *entity.Session, album entity.Album) bool {
 // restricted users (visitors, unregistered, shared-access-only). Unlike albumViewableBySession there is
 // no self-owned exception — creating an album grants no right to modify it without a share.
 func albumShareRequired(s *entity.Session, uid string) bool {
-	return (s.GetUser().HasSharedAccessOnly(acl.ResourceAlbums) || s.NotRegistered()) && !s.HasShare(uid)
+	return (s.HasSharedAccessOnly(acl.ResourceAlbums) || s.NotRegistered()) && !s.HasShare(uid)
 }

@@ -364,7 +364,7 @@ func (m *Client) DeleteSessions() (deleted int, err error) {
 		return 0, fmt.Errorf("client uid is empty")
 	}
 
-	if deleted = DeleteClientSessions(m, "", 0); deleted > 0 {
+	if deleted = DeleteClientSessions(m, "", 0, ""); deleted > 0 {
 		event.AuditInfo([]string{"client %s", "deleted %s"}, m.String(), english.Plural(deleted, "session", "sessions"))
 	}
 
@@ -521,13 +521,15 @@ func (m *Client) NewSession(c *gin.Context, t authn.GrantType) *Session {
 	return NewSession(m.AuthExpires, 0).SetContext(c).SetClient(m).SetGrantType(t)
 }
 
-// EnforceAuthTokenLimit deletes client sessions above the configured limit and returns the number of deleted sessions.
-func (m *Client) EnforceAuthTokenLimit() (deleted int) {
+// EnforceAuthTokenLimit deletes client sessions above the configured limit and returns the
+// number of deleted sessions. The session with the specified ID ranks first within its
+// creation second, so a newly issued token is among the retained ones.
+func (m *Client) EnforceAuthTokenLimit(keepID string) (deleted int) {
 	if m == nil || !m.HasUID() || m.AuthTokens < 0 {
 		return 0
 	}
 
-	return DeleteClientSessions(m, authn.MethodOAuth2, m.AuthTokens)
+	return DeleteClientSessions(m, authn.MethodOAuth2, m.Tokens(), keepID)
 }
 
 // Expires returns the auth expiration duration.

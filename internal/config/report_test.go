@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/pkg/dsn"
+	"github.com/photoprism/photoprism/pkg/txt"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/vision"
@@ -136,7 +137,8 @@ func TestConfig_ReportDatabaseSection(t *testing.T) {
 		assert.Equal(t, "db.internal", values["database-host"])
 		assert.Equal(t, "3306", values["database-port"])
 		assert.Equal(t, "app", values["database-user"])
-		assert.Equal(t, strings.Repeat("*", len("secret")), values["database-password"])
+		// The marker is fixed rather than one asterisk per character.
+		assert.Equal(t, txt.Masked, values["database-password"])
 		_, hasDSN := values["database-dsn"]
 		assert.False(t, hasDSN)
 	})
@@ -331,6 +333,7 @@ func TestConfig_FaceReportSections(t *testing.T) {
 			"face-cluster-size",
 			"face-cluster-score",
 			"face-cluster-core",
+			"face-cluster-core-retry",
 			"face-cluster-split-rounds",
 			"face-cluster-split-shrink",
 			"face-cluster-dist",
@@ -417,23 +420,40 @@ func TestConfig_ReportURIRedaction(t *testing.T) {
 
 	Features = Pro
 
-	conf := NewConfig(CliTestContext())
-	conf.options.PortalUrl = "https://portal:secret@example.com"
-	conf.options.JWKSUrl = "https://jwks:secret@jwks.example.com/.well-known/jwks.json"
-	conf.options.AdvertiseUrl = "https://cluster:secret@node.example.com"
-	conf.options.HttpsProxy = "https://proxy:secret@proxy.example.com:8443"
-	conf.options.VisionUri = "https://vision:secret@vision.example.com/api/v1/vision"
-	conf.SetThemeUrl("https://theme:secret@cdn.photoprism.app/theme.zip")
+	t.Run("Userinfo", func(t *testing.T) {
+		conf := NewConfig(CliTestContext())
+		conf.options.PortalUrl = "https://portal:secret@example.com"
+		conf.options.JWKSUrl = "https://jwks:secret@jwks.example.com/.well-known/jwks.json"
+		conf.options.AdvertiseUrl = "https://cluster:secret@node.example.com"
+		conf.options.HttpsProxy = "https://proxy:secret@proxy.example.com:8443"
+		conf.options.VisionUri = "https://vision:secret@vision.example.com/api/v1/vision"
+		conf.SetThemeUrl("https://theme:secret@cdn.photoprism.app/theme.zip")
 
-	rows, _ := conf.Report()
-	values := collect(rows)
+		rows, _ := conf.Report()
+		values := collect(rows)
 
-	assert.Equal(t, "https://portal:xxxxx@example.com", values["portal-url"])
-	assert.Equal(t, "https://jwks:xxxxx@jwks.example.com/.well-known/jwks.json", values["jwks-url"])
-	assert.Equal(t, "https://cluster:xxxxx@node.example.com/", values["advertise-url"])
-	assert.Equal(t, "https://proxy:xxxxx@proxy.example.com:8443", values["https-proxy"])
-	assert.Equal(t, "https://vision:xxxxx@vision.example.com/api/v1/vision", values["vision-uri"])
-	assert.Equal(t, "https://theme:xxxxx@cdn.photoprism.app/theme.zip", values["theme-url"])
+		assert.Equal(t, "https://portal:***@example.com", values["portal-url"])
+		assert.Equal(t, "https://jwks:***@jwks.example.com/.well-known/jwks.json", values["jwks-url"])
+		assert.Equal(t, "https://cluster:***@node.example.com/", values["advertise-url"])
+		assert.Equal(t, "https://proxy:***@proxy.example.com:8443", values["https-proxy"])
+		assert.Equal(t, "https://vision:***@vision.example.com/api/v1/vision", values["vision-uri"])
+		assert.Equal(t, "https://theme:***@cdn.photoprism.app/theme.zip", values["theme-url"])
+	})
+	t.Run("QueryParameter", func(t *testing.T) {
+		// A service commonly authenticates through a query parameter rather than the userinfo.
+		conf := NewConfig(CliTestContext())
+		conf.options.HttpsProxy = "https://proxy.example.com:8443/?password=notreal"
+		conf.options.VisionUri = "https://vision.example.com/api/v1/vision?api_key=notreal"
+		conf.SetThemeUrl("https://cdn.photoprism.app/theme.zip?access_token=notreal")
+
+		rows, _ := conf.Report()
+		values := collect(rows)
+
+		for _, name := range []string{"https-proxy", "vision-uri", "theme-url"} {
+			assert.NotContains(t, values[name], "notreal", "%s must not show the credential", name)
+			assert.Contains(t, values[name], "***", "%s must report that one was removed", name)
+		}
+	})
 }
 
 func TestFaceModelStatus(t *testing.T) {
@@ -639,6 +659,7 @@ func TestConfig_faceConfigRows(t *testing.T) {
 			"face-cluster-size",
 			"face-cluster-score",
 			"face-cluster-core",
+			"face-cluster-core-retry",
 			"face-cluster-split-rounds",
 			"face-cluster-split-shrink",
 			"face-cluster-dist",
@@ -848,12 +869,41 @@ func TestFaceClusterStatusFor(t *testing.T) {
 
 	t.Run("Enough", func(t *testing.T) {
 		// A line every healthy instance prints is one nobody reads on the instance that is not.
-		assert.Empty(t, faceClusterStatusFor(query.FaceClusterGates{Unclustered: 20, Recent: 20, SizeOK: 20, ScoreOK: 20, Eligible: 20, Clustered: true}, 8, 60, bar, 4, 0.72))
+		assert.Empty(t, faceClusterStatusFor(query.FaceClusterGates{Unclustered: 20, Recent: 20, SizeOK: 20, DetailOK: 20, ScoreOK: 20, Eligible: 20, Clustered: true}, 8, 60, bar, 4, -1, 0.72))
+	})
+	t.Run("NamesTheCropDetailShortfall", func(t *testing.T) {
+		// The size count carries the crop-detail condition, so without this the shortfall reads as
+		// one face-cluster-size explains - and lowering that bar admits none of them.
+		status := faceClusterStatusFor(query.FaceClusterGates{Unclustered: 40, Recent: 40, SizeOK: 2, DetailOK: 2, ScoreOK: 40, Eligible: 2}, 8, 60, bar, 4, -1, 0.72)
+
+		assert.Contains(t, status, "38 of them were embedded from a crop their source could not fill")
+		assert.Contains(t, status, "thumb-size-face")
+	})
+	t.Run("SaysNothingWhereDetailExcludesNothing", func(t *testing.T) {
+		// Every library that has not re-embedded, which is the common case: the condition is inert
+		// and the line must not name it.
+		status := faceClusterStatusFor(query.FaceClusterGates{Unclustered: 40, Recent: 40, SizeOK: 2, DetailOK: 40, ScoreOK: 40, Eligible: 2}, 8, 60, bar, 4, -1, 0.72)
+
+		assert.NotContains(t, status, "could not fill")
+	})
+	t.Run("NamesTheRetryCore", func(t *testing.T) {
+		// A second pass at a lower core changes what "requires that many faces" means, so an
+		// operator told only about the first would lower a core the run already retries below.
+		status := faceClusterStatusFor(query.FaceClusterGates{Unclustered: 20, Recent: 20, SizeOK: 20, DetailOK: 20, ScoreOK: 20, Eligible: 20}, 8, 60, bar, 5, 4, 0.72)
+
+		assert.Contains(t, status, "face-cluster-core 5")
+		assert.Contains(t, status, "face-cluster-core-retry 4")
+	})
+	t.Run("SaysNothingOfADisabledRetry", func(t *testing.T) {
+		status := faceClusterStatusFor(query.FaceClusterGates{Unclustered: 20, Recent: 20, SizeOK: 20, DetailOK: 20, ScoreOK: 20, Eligible: 20}, 8, 60, bar, 5, -1, 0.72)
+
+		assert.Contains(t, status, "face-cluster-core 5")
+		assert.NotContains(t, status, "face-cluster-core-retry")
 	})
 	t.Run("EnoughButNothingFormed", func(t *testing.T) {
 		// The state the early return above could not express: the pass has what it needs, forms
 		// nothing, and repeats on every wake because no cluster advances the recency cut.
-		status := faceClusterStatusFor(query.FaceClusterGates{Unclustered: 20, Recent: 20, SizeOK: 20, ScoreOK: 20, Eligible: 20}, 8, 60, bar, 4, 0.72)
+		status := faceClusterStatusFor(query.FaceClusterGates{Unclustered: 20, Recent: 20, SizeOK: 20, DetailOK: 20, ScoreOK: 20, Eligible: 20}, 8, 60, bar, 4, -1, 0.72)
 
 		assert.Contains(t, status, "20 eligible markers and has formed no clusters")
 		assert.Contains(t, status, "face-cluster-core 4")
@@ -862,15 +912,15 @@ func TestFaceClusterStatusFor(t *testing.T) {
 	t.Run("NothingFormedButNothingUnclustered", func(t *testing.T) {
 		// A library with no face markers at all has formed no clusters either, and has nothing to
 		// report: the message would name a shortfall that does not exist.
-		assert.Empty(t, faceClusterStatusFor(query.FaceClusterGates{}, 8, 60, bar, 4, 0.72))
+		assert.Empty(t, faceClusterStatusFor(query.FaceClusterGates{}, 8, 60, bar, 4, -1, 0.72))
 	})
 	t.Run("NothingUnclustered", func(t *testing.T) {
-		assert.Empty(t, faceClusterStatusFor(query.FaceClusterGates{}, 8, 60, bar, 4, 0.72))
+		assert.Empty(t, faceClusterStatusFor(query.FaceClusterGates{}, 8, 60, bar, 4, -1, 0.72))
 	})
 	t.Run("StrandedBehindTheLastCluster", func(t *testing.T) {
 		// The shortfall no threshold explains: every marker predates the newest cluster, so none
 		// counts toward the trigger again and the instance sits idle looking healthy.
-		status := faceClusterStatusFor(query.FaceClusterGates{Unclustered: 6, Clusterable: 4}, 8, 60, bar, 4, 0.72)
+		status := faceClusterStatusFor(query.FaceClusterGates{Unclustered: 6, Clusterable: 4}, 8, 60, bar, 4, -1, 0.72)
 
 		assert.Contains(t, status, "6 markers are unclustered")
 		assert.Contains(t, status, "none was added since the last cluster")
@@ -881,14 +931,14 @@ func TestFaceClusterStatusFor(t *testing.T) {
 	t.Run("VolumeOnly", func(t *testing.T) {
 		// Every marker clears every bar, so naming thresholds would send an operator to tune bars
 		// that are excluding nothing.
-		status := faceClusterStatusFor(query.FaceClusterGates{Unclustered: 3, Recent: 3, SizeOK: 3, ScoreOK: 3, Eligible: 3}, 8, 60, bar, 4, 0.72)
+		status := faceClusterStatusFor(query.FaceClusterGates{Unclustered: 3, Recent: 3, SizeOK: 3, DetailOK: 3, ScoreOK: 3, Eligible: 3}, 8, 60, bar, 4, -1, 0.72)
 
 		assert.Contains(t, status, "needs 8 new markers (2 x face-cluster-core 4) and has 3")
 		assert.Contains(t, status, "no threshold is excluding")
 		assert.NotContains(t, status, "face-cluster-size")
 	})
 	t.Run("SizeIsTheGate", func(t *testing.T) {
-		status := faceClusterStatusFor(query.FaceClusterGates{Unclustered: 40, Recent: 40, SizeOK: 2, ScoreOK: 40, Eligible: 2}, 8, 60, bar, 4, 0.72)
+		status := faceClusterStatusFor(query.FaceClusterGates{Unclustered: 40, Recent: 40, SizeOK: 2, DetailOK: 40, ScoreOK: 40, Eligible: 2}, 8, 60, bar, 4, -1, 0.72)
 
 		// The two numbers look contradictory unless the derivation is named, and the size and
 		// score counts overlap, so the eligible one has to read as their intersection.
@@ -899,7 +949,7 @@ func TestFaceClusterStatusFor(t *testing.T) {
 		assert.Contains(t, status, "40 clear "+bar)
 	})
 	t.Run("ScoreIsTheGate", func(t *testing.T) {
-		status := faceClusterStatusFor(query.FaceClusterGates{Unclustered: 40, Recent: 40, SizeOK: 40, ScoreOK: 1, Eligible: 1}, 8, 60, bar, 4, 0.72)
+		status := faceClusterStatusFor(query.FaceClusterGates{Unclustered: 40, Recent: 40, SizeOK: 40, DetailOK: 40, ScoreOK: 1, Eligible: 1}, 8, 60, bar, 4, -1, 0.72)
 
 		assert.Contains(t, status, "40 clear the face-cluster-size of 60 px")
 		assert.Contains(t, status, "1 clear "+bar)
@@ -907,7 +957,7 @@ func TestFaceClusterStatusFor(t *testing.T) {
 	t.Run("OlderMarkersDoNotCountTowardTheTrigger", func(t *testing.T) {
 		// Recent is what the worker sees; Unclustered is the whole pool. Reporting the pool as
 		// though it were the trigger is what hid the stranded case.
-		status := faceClusterStatusFor(query.FaceClusterGates{Unclustered: 90, Recent: 3, SizeOK: 3, ScoreOK: 3, Eligible: 3}, 8, 60, bar, 4, 0.72)
+		status := faceClusterStatusFor(query.FaceClusterGates{Unclustered: 90, Recent: 3, SizeOK: 3, DetailOK: 3, ScoreOK: 3, Eligible: 3}, 8, 60, bar, 4, -1, 0.72)
 
 		assert.Contains(t, status, "has 3")
 		assert.NotContains(t, status, "90")
@@ -959,4 +1009,17 @@ func TestFaceReportValue(t *testing.T) {
 	assert.Equal(t, "sface", faceReportValue("sface"))
 	assert.Equal(t, "sface (default)", faceReportValue("sface", "default"))
 	assert.Equal(t, "sface (default, paused: 12 markers)", faceReportValue("sface", "default", "paused: 12 markers"))
+}
+
+func TestMaskedSecret(t *testing.T) {
+	t.Run("Set", func(t *testing.T) {
+		assert.Equal(t, txt.Masked, maskedSecret("OpenSesame!"))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		// Kept distinguishable, since a report reader needs to see that no value is configured.
+		assert.Equal(t, "", maskedSecret(""))
+	})
+	t.Run("SameForAnyValue", func(t *testing.T) {
+		assert.Equal(t, maskedSecret("short"), maskedSecret("a considerably longer secret value"))
+	})
 }

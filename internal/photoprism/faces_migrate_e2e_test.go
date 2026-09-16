@@ -16,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/internal/thumb/crop"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -135,6 +136,18 @@ func savedFaceModel(t *testing.T, c *config.Config) string {
 	return name
 }
 
+// snapshotFaceCalibration returns a function that restores the package values a change of
+// embedding model moves, which a committed migration propagates for the rest of the process.
+func snapshotFaceCalibration() func() {
+	clusterSize, collisionDist, epsilon := face.ClusterSizeThreshold, face.CollisionDist, face.Epsilon
+	clusterRadius, clusterDist, matchDist := face.ClusterRadius, face.ClusterDist, face.MatchDist
+
+	return func() {
+		face.ClusterSizeThreshold, face.CollisionDist, face.Epsilon = clusterSize, collisionDist, epsilon
+		face.ClusterRadius, face.ClusterDist, face.MatchDist = clusterRadius, clusterDist, matchDist
+	}
+}
+
 func newMigrateTestConfig(t *testing.T, name string) *config.Config {
 	t.Helper()
 	useTestDb(t, name)
@@ -145,9 +158,11 @@ func newMigrateTestConfig(t *testing.T, name string) *config.Config {
 	require.NoError(t, c.CreateDirectories())
 
 	SetConfig(c)
+	restoreCalibration := snapshotFaceCalibration()
 	t.Cleanup(func() {
 		SetConfig(oldConfig)
 		oldConfig.RegisterDb()
+		restoreCalibration()
 
 		// Initializing a config reconfigures the process-wide embedder from its models
 		// path, which is empty here, so the previous one has to be reinstated.
@@ -465,6 +480,15 @@ func TestFaces_migrate(t *testing.T) {
 		assert.Equal(t, 1, result.RebuiltSubjects)
 		assert.Zero(t, result.AttentionSubjects)
 
+		// The re-clustering and the audit at the end of this run read these, and a distance means
+		// nothing outside the model it was measured in: asserted within the migrating process,
+		// because a restart propagates them and would pass without the migration doing so.
+		target := face.FindEmbeddingModel(face.ModelSFace)
+		require.NotNil(t, target)
+		assert.Equal(t, target.ClusterDist, face.ClusterDist)
+		assert.Equal(t, target.ClusterRadius, face.ClusterRadius)
+		assert.Equal(t, target.MatchDist, face.MatchDist)
+
 		// Not one assignment may be dropped: losing them empties the person's page and no
 		// later matching run brings them back.
 		for _, m := range append(entity.Markers{*manual}, automatic...) {
@@ -486,6 +510,35 @@ func TestFaces_migrate(t *testing.T) {
 		// raised is gone by then and each replacement has to classify itself. Left unset, the
 		// person would be missing from the "face:1" search filter that reads this column.
 		assert.Equal(t, int(face.RegularFace), cluster.FaceKind)
+	})
+	t.Run("RendersACropThumbnail", func(t *testing.T) {
+		// A library indexed at a lower thumbnail limit has renditions too narrow for its face
+		// crops, and the detail is in the original: the run renders what it needs rather than
+		// embedding upscaled pixels, which nothing downstream could tell apart afterwards.
+		c := newMigrateTestConfig(t, "migraterenders")
+		w := NewFaces(c)
+
+		cached, onDemand := thumb.SizeCached, thumb.SizeOnDemand
+		t.Cleanup(func() { thumb.SizeCached, thumb.SizeOnDemand = cached, onDemand })
+		thumb.SizeCached, thumb.SizeOnDemand = 720, 720
+
+		f := newRenderTestFile(t, c, "4a4d444444444444444444444444444444444447", 2000, 1500)
+		m := addMigrateTestMarker(t, f.FileUID, entity.SrcManual, "Jane Doe")
+
+		// 160/0.1 asks for 1600 px, which only a wider rendition than the cache holds can supply.
+		require.NoError(t, entity.UnscopedDb().Model(&entity.Marker{}).
+			Where("marker_uid = ?", m.MarkerUID).
+			UpdateColumns(entity.Values{"w": 0.1, "h": 0.1}).Error)
+
+		plan := FacesMigratePlan{Target: face.ModelFaceNet}
+		result, err := w.migrate(context.Background(), plan, &oneHotEmbedder{dims: 4},
+			FacesMigrateOptions{Target: face.ModelFaceNet}, FacesMigrateResult{Target: face.ModelFaceNet})
+
+		require.NoError(t, err)
+		assert.Equal(t, 1, result.Migrated)
+		assert.Equal(t, 1, result.RenderedThumbs)
+		assert.True(t, crop.CachedSizeExists(thumb.Sizes[thumb.Fit1920], f.FileHash, c.ThumbCachePath()),
+			"the rendition the crop needs has to be written under the indexed hash")
 	})
 	t.Run("LegacyBlankModel", func(t *testing.T) {
 		c := newMigrateTestConfig(t, "migratelegacy")

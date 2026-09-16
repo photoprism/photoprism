@@ -130,6 +130,21 @@ func FindUserShares(userUid string) UserShares {
 	return found
 }
 
+// Expired checks if the share has passed its expiration time.
+func (m *UserShare) Expired() bool {
+	if m == nil || m.ExpiresAt == nil {
+		return false
+	}
+
+	return Now().After(*m.ExpiresAt)
+}
+
+// IssuedBy checks if the share was created by the specified link and is still within its expiration
+// time, which is what lets a caller re-present its token without a new redemption.
+func (m *UserShare) IssuedBy(link Link) bool {
+	return m != nil && m.LinkUID != "" && m.LinkUID == link.LinkUID && !m.Expired()
+}
+
 // HasID tests if the entity has a valid uid.
 func (m *UserShare) HasID() bool {
 	return rnd.IsUID(m.UserUID, UserUID) && rnd.IsUID(m.ShareUID, 0)

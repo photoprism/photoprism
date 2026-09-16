@@ -425,6 +425,7 @@ export const BackendMessages = () => {
   $gettext("Quota exceeded");
   $gettext("Registration disabled");
   $gettext("Verified email required");
+  $gettext("A migration is in progress");
   $gettext("Changes successfully saved");
   $gettext("Album created");
   $gettext("Album saved");

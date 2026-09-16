@@ -61,7 +61,7 @@ The API package exposes PhotoPrism’s HTTP endpoints via Gin handlers. Each fil
 
 ### User-Visible Notifications vs Audit Log
 
-`event.AuditInfo` / `AuditWarn` / `AuditErr` write to the audit log and broadcast on `audit.log.<level>` — the toast component on the frontend does NOT subscribe to that channel, so an audit entry alone produces no UI feedback. To raise a red or green toast in the browser, publish on the `notify.*` channel via `event.Error(msg)` / `event.ErrorMsg(id, …)` (red) or `event.Success(msg)` (green).
+`event.AuditInfo` / `AuditWarn` / `AuditErr` write to the audit log and broadcast on `audit.log.<level>` — the toast component on the frontend does NOT subscribe to that channel, so an audit entry alone produces no UI feedback. To raise a red or green toast in the browser, publish on the `notify.*` channel via `event.ErrorMsg(id, …)` (red) or `event.SuccessMsg(id, …)` / `event.PublishSuccessMsg(id, …)` (green); the plain `event.Error(msg)` / `event.Success(msg)` string forms are not translatable and are reserved for already-resolved dynamic text.
 
 The two helpers have distinct subscribers; choose based on who the message is for:
 

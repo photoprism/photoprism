@@ -2,6 +2,7 @@ package webdav
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"net"
@@ -9,6 +10,7 @@ import (
 	"net/url"
 	"os"
 	"path"
+	"path/filepath"
 	"runtime/debug"
 	"strings"
 	"time"
@@ -19,6 +21,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/safe"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // Client represents a webdav client.
@@ -111,7 +114,9 @@ func NewClient(serverUrl, user, pass string, timeout Timeout, servicesCIDR strin
 
 	serverUrl = endpoint.String()
 
-	log.Debugf("webdav: connecting to %s", clean.Log(serverUrl))
+	// The endpoint carries the configured account credentials, which the transport needs and a log
+	// line does not.
+	log.Debugf("webdav: connecting to %s", clean.Log(clean.UriRedacted(serverUrl)))
 
 	client, err := webdav.NewClient(newTransferHTTPClient(allowedCIDRs), serverUrl)
 
@@ -441,7 +446,7 @@ func (c *Client) Download(src, dest string, force bool) (err error) {
 
 	// Skip if file already exists.
 	if fs.Exists(dest) && !force {
-		return fmt.Errorf("webdav: download skipped, %s already exists", clean.Log(dest))
+		return fmt.Errorf("webdav: download skipped, %s already exists: %w", clean.Log(dest), os.ErrExist)
 	}
 
 	dir := path.Dir(dest)
@@ -450,7 +455,7 @@ func (c *Client) Download(src, dest string, force bool) (err error) {
 	if err != nil {
 		// Create local storage path.
 		if err = fs.MkdirAll(dir); err != nil {
-			return fmt.Errorf("webdav: cannot create folder %s (%s)", clean.Log(dir), err)
+			return fmt.Errorf("webdav: cannot create folder %s (%s)", clean.Log(dir), clean.Error(err))
 		}
 	} else if !dirInfo.IsDir() {
 		return fmt.Errorf("webdav: %s is not a folder", clean.Log(dir))
@@ -472,11 +477,33 @@ func (c *Client) Download(src, dest string, force bool) (err error) {
 		}
 	}()
 
-	f, err := os.OpenFile(dest, os.O_TRUNC|os.O_RDWR|os.O_CREATE, fs.ModeFile) //nolint:gosec // dest provided by caller
+	// The bytes go to a temporary sibling this call creates exclusively, and only the publish step
+	// below touches the destination.
+	sink := tempSink(dest)
+
+	f, err := os.OpenFile(sink, os.O_WRONLY|os.O_CREATE|os.O_EXCL, fs.ModeFile) //nolint:gosec // dest provided by caller
 
 	if err != nil {
 		log.Errorf("webdav: %s", clean.Error(err))
 		return fmt.Errorf("webdav: failed to create %s", clean.Log(path.Base(dest)))
+	}
+
+	// Remove the file this call created unless it completes, so every way out - including a panic -
+	// leaves the destination as it was found.
+	committed := false
+
+	defer func() {
+		if committed {
+			return
+		}
+
+		_ = f.Close()
+		_ = os.Remove(sink)
+	}()
+
+	// Keep the mode a replaced destination already had, so it is not widened by the staging file.
+	if info, statErr := os.Stat(dest); statErr == nil {
+		_ = f.Chmod(info.Mode().Perm())
 	}
 
 	if c.downloadLimit > 0 {
@@ -485,8 +512,6 @@ func (c *Client) Download(src, dest string, force bool) (err error) {
 		if n, copyErr := io.Copy(f, io.LimitReader(reader, c.downloadLimit+1)); copyErr != nil {
 			err = copyErr
 		} else if n > c.downloadLimit {
-			_ = f.Close()
-			_ = os.Remove(dest)
 			return fmt.Errorf("webdav: %s exceeds the maximum size of %d bytes", clean.Log(path.Base(dest)), c.downloadLimit)
 		}
 	} else {
@@ -494,7 +519,6 @@ func (c *Client) Download(src, dest string, force bool) (err error) {
 	}
 
 	if err != nil {
-		_ = f.Close()
 		log.Errorf("webdav: %s", clean.Error(err))
 		return fmt.Errorf("webdav: failed writing to %s", clean.Log(path.Base(dest)))
 	}
@@ -504,7 +528,50 @@ func (c *Client) Download(src, dest string, force bool) (err error) {
 		return fmt.Errorf("webdav: failed to finalize %s", clean.Log(path.Base(dest)))
 	}
 
+	if err = publishSink(sink, dest, force); err != nil {
+		log.Errorf("webdav: %s", clean.Error(err))
+
+		if errors.Is(err, os.ErrExist) {
+			return fmt.Errorf("webdav: %s already exists: %w", clean.Log(path.Base(dest)), os.ErrExist)
+		}
+
+		return fmt.Errorf("webdav: failed to finalize %s", clean.Log(path.Base(dest)))
+	}
+
+	committed = true
+
 	return nil
+}
+
+// linkFile creates a hard link. A test replaces it to take the path of a filesystem that has none.
+var linkFile = os.Link
+
+// publishSink moves a staged download to its destination, and reports os.ErrExist when the name is
+// already taken and force is false.
+func publishSink(sink, dest string, force bool) error {
+	if force {
+		return os.Rename(sink, dest)
+	}
+
+	// The hard link is the check itself: it fails when the name is taken.
+	if err := linkFile(sink, dest); err == nil {
+		if rmErr := os.Remove(sink); rmErr != nil {
+			log.Debugf("webdav: %s (remove staging file)", clean.Error(rmErr))
+		}
+
+		return nil
+	} else if errors.Is(err, os.ErrExist) {
+		return err
+	}
+
+	// A filesystem that has no hard links is checked with a stat instead.
+	if _, err := os.Lstat(dest); err == nil {
+		return os.ErrExist
+	} else if !errors.Is(err, os.ErrNotExist) {
+		return err
+	}
+
+	return os.Rename(sink, dest)
 }
 
 // DownloadDir downloads all files from a remote to a local directory.
@@ -539,7 +606,6 @@ func (c *Client) DownloadDir(src, dest string, recursive, force bool) (errs []er
 		// Download file from remote server.
 		if err = c.Download(file.Abs, fileName, force); err != nil {
 			errs = append(errs, err)
-			log.Error(err)
 			continue
 		}
 	}
@@ -553,4 +619,19 @@ func (c *Client) Delete(dir string) error {
 	client, ctx, cancel := c.timeoutRequest(0)
 	defer cancel()
 	return client.RemoveAll(ctx, dir)
+}
+
+// tempSink returns a unique sibling path for staging a replacement, shortened when the added suffix
+// would push the name past the length a file name may have.
+func tempSink(dest string) string {
+	const maxNameLen = 255
+
+	dir, base := filepath.Split(dest)
+	suffix := "." + rnd.Base36(8) + ".tmp"
+
+	if len(base)+len(suffix) > maxNameLen {
+		base = base[:maxNameLen-len(suffix)]
+	}
+
+	return dir + base + suffix
 }

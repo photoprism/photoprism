@@ -961,3 +961,27 @@ func TestMarker_NamesFace(t *testing.T) {
 		}
 	})
 }
+
+func TestMarker_Embeddings_Normalized(t *testing.T) {
+	t.Run("ScalesToUnitLength", func(t *testing.T) {
+		// Distances are stated for unit vectors, so a stored vector of another length has to
+		// be scaled on read rather than compared as it is.
+		m := &Marker{EmbeddingsJSON: []byte(`[[0.1,0.2,0.3,0.4]]`)}
+		result := m.Embeddings()
+		assert.Len(t, result, 1)
+		assert.True(t, result[0].Unit())
+		assert.InDelta(t, 0.1/0.5477225575, result[0][0], 1e-9)
+	})
+	t.Run("KeepsUnitVector", func(t *testing.T) {
+		m := &Marker{EmbeddingsJSON: []byte(`[[0.6,0.8]]`)}
+		assert.Equal(t, face.Embedding{0.6, 0.8}, m.Embeddings()[0])
+	})
+	t.Run("Empty", func(t *testing.T) {
+		m := &Marker{}
+		assert.Empty(t, m.Embeddings())
+	})
+	t.Run("InvalidJSON", func(t *testing.T) {
+		m := &Marker{EmbeddingsJSON: []byte(`{`)}
+		assert.Empty(t, m.Embeddings())
+	})
+}

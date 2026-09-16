@@ -163,6 +163,31 @@ func TestFacesRepresentativeMarker(t *testing.T) {
 
 		assert.Nil(t, faceResult(t, f.ID), "the size bar still applies, at the clustering value")
 	})
+	t.Run("HidesAClusterWhoseMarkersWereAllUpscaled", func(t *testing.T) {
+		// The face shown for a cluster is one clustering would have used, so the crop-detail
+		// condition applies here too: a cluster holding only interpolated crops has no
+		// representative. Deliberate - the same rule on both sides is what keeps this page from
+		// hiding a cluster the library did form.
+		f := newSearchFace(t)
+		newSearchMarker(t, f.ID, entity.Marker{Size: 400, Score: 95, FaceDist: 0.2, EmbedDetail: 50})
+
+		assert.Nil(t, faceResult(t, f.ID))
+	})
+	t.Run("ShowsAClusterWhoseMarkersFilledTheCrop", func(t *testing.T) {
+		// The control for the case above, and the state of every marker written before the column:
+		// full detail and the sentinels are both admitted.
+		f := newSearchFace(t)
+		want := newSearchMarker(t, f.ID, entity.Marker{Size: 400, Score: 95, FaceDist: 0.2, EmbedDetail: face.EmbedDetailFull})
+
+		got := faceResult(t, f.ID)
+		require.NotNil(t, got)
+		assert.Equal(t, want.MarkerUID, got.MarkerUID)
+
+		unsampled := newSearchFace(t)
+		newSearchMarker(t, unsampled.ID, entity.Marker{Size: 400, Score: 95, FaceDist: 0.2, EmbedDetail: -1})
+
+		assert.NotNil(t, faceResult(t, unsampled.ID), "a marker nothing has sampled still represents its cluster")
+	})
 	t.Run("IgnoresInvalidAndUnmeasuredMarkers", func(t *testing.T) {
 		// Size defaults to -1 for a marker whose file dimensions are unknown, so it fails the bar
 		// rather than passing an unset value through.

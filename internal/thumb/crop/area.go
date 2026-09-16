@@ -143,6 +143,19 @@ func NewArea(name string, x, y, w, h float32) Area {
 	}
 }
 
+// NewOffsetArea returns an area whose position is measured from a reference point rather than from
+// the image origin, so it keeps the sign. Only the size is clipped: a landmark left of or above its
+// reference has negative coordinates, and clipping them to zero collapses the geometry onto the axes.
+func NewOffsetArea(name string, x, y, w, h float32) Area {
+	return Area{
+		Name: name,
+		X:    x,
+		Y:    y,
+		W:    clipVal(w),
+		H:    clipVal(h),
+	}
+}
+
 // AreaFromString returns an image area.
 func AreaFromString(s string) Area {
 	if len(s) != 12 || !rnd.IsHex(s) {

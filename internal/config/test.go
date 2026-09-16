@@ -406,6 +406,7 @@ func NewTestConfig(dbName string) *Config {
 
 	thumb.SizeCached = c.ThumbSizePrecached()
 	thumb.SizeOnDemand = c.ThumbSizeUncached()
+	thumb.SizeFace = c.ThumbSizeFace()
 	thumb.Filter = c.ThumbFilter()
 	thumb.JpegQualityDefault = c.JpegQuality()
 
@@ -684,7 +685,7 @@ func (c *Config) CleanupTestFolder() {
 
 	if filepath.Base(td) == fs.TestdataDir && strings.HasPrefix(filepath.Base(parent), "test-photoprism") {
 		if err := os.RemoveAll(parent); err != nil {
-			event.SystemWarn([]string{"config", "test", "cleanup %s", "%s"}, parent, clean.Error(err))
+			event.SystemWarn([]string{"config", "test", "cleanup %s", "%s"}, parent, clean.ErrorFull(err))
 			return
 		}
 		event.SystemDebug([]string{"config", "test", "cleanup %s", status.Succeeded}, parent)

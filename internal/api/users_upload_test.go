@@ -1,6 +1,8 @@
 package api
 
 import (
+	"bytes"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -12,6 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
@@ -106,6 +109,13 @@ func TestUploadCheckFile_UnsupportedTypeDeletes(t *testing.T) {
 	assert.NoError(t, os.WriteFile(dst, []byte("not-an-image"), 0o600))
 	_, err := UploadCheckFile(dst, false, 1<<20)
 	assert.Error(t, err)
+	// The message names the rejected file and reports the cause it was given.
+	assert.Contains(t, err.Error(), "rejected")
+	assert.Contains(t, err.Error(), "unknown.xyz")
+	assert.NotContains(t, err.Error(), "no error")
+	assert.NotNil(t, errors.Unwrap(err), "the cause stays reachable for a renderer")
+	// The path the cause carries is removed when the error is rendered for the log.
+	assert.NotContains(t, clean.Error(err), dir)
 	_, statErr := os.Stat(dst)
 	assert.True(t, os.IsNotExist(statErr), "unsupported file should be removed")
 }
@@ -125,4 +135,61 @@ func TestUploadCheckFile_SizeAccounting(t *testing.T) {
 	rem, err := UploadCheckFile(f, false, size+1)
 	assert.NoError(t, err)
 	assert.Equal(t, int64(1), rem)
+}
+
+func TestUploadUserFilesStorageFolderError(t *testing.T) {
+	app, router, _ := NewApiTest()
+	UploadUserFiles(router)
+	ProcessUserUpload(router)
+	token := AuthenticateAdmin(app, router)
+
+	adminUid := entity.Admin.UserUID
+
+	// A token longer than a path component makes the upload folder unusable, so both
+	// handlers take the branch that reports the failure.
+	longToken := strings.Repeat("t", 300)
+
+	// storageFolderLogLine returns the line the handler logged for a failed upload folder.
+	storageFolderLogLine := func(t *testing.T, method string, body *bytes.Buffer, contentType string) string {
+		t.Helper()
+
+		hook := captureLog(t)
+
+		req := httptest.NewRequest(method, "/api/v1/users/"+adminUid+"/upload/"+longToken, body)
+		req.Header.Set("Content-Type", contentType)
+		header.SetAuthorization(req, token)
+		w := httptest.NewRecorder()
+		app.ServeHTTP(w, req)
+
+		for _, entry := range hook.AllEntries() {
+			if strings.Contains(entry.Message, "storage folder") {
+				return entry.Message
+			}
+		}
+
+		t.Fatalf("expected a log entry for the storage folder, got %d entries (status %d)", len(hook.AllEntries()), w.Code)
+
+		return ""
+	}
+
+	t.Run("Upload", func(t *testing.T) {
+		body, ctype, err := buildMultipart(map[string][]byte{"a.jpg": []byte("x")})
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		line := storageFolderLogLine(t, http.MethodPost, body, ctype)
+
+		assert.Contains(t, line, "***")
+		assert.NotContains(t, line, adminUid)
+		assert.NotContains(t, line, longToken)
+	})
+	t.Run("Process", func(t *testing.T) {
+		line := storageFolderLogLine(t, http.MethodPut, bytes.NewBufferString(`{"albums":[]}`), "application/json")
+
+		assert.Contains(t, line, "***")
+		assert.NotContains(t, line, adminUid)
+		assert.NotContains(t, line, longToken)
+	})
 }
