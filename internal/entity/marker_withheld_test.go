@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/authn"
@@ -530,4 +531,34 @@ func sharedOnlySession() *Session {
 	s.SetUser(UserFixtures.Pointer("guest"))
 
 	return s
+}
+
+// TestPhoto_GenerateCaptionIgnoresTitleSource pins that an automatic caption is refreshed even when
+// the title is not automatic. The caption has its own source to answer for, so a title somebody
+// typed must not leave a generated caption naming a withheld person behind.
+func TestPhoto_GenerateCaptionIgnoresTitleSource(t *testing.T) {
+	withheld := createWithheldSubject(t, "Caption Carla", false)
+	nameOnlyMarker(t, withheld.SubjName)
+
+	markers, err := FindMarkers(withheldTestFileUID)
+	require.NoError(t, err)
+	require.Len(t, markers, 1)
+	require.Empty(t, markers.SubjectNames(), "the withheld name is out of the list captions derive from")
+
+	t.Run("ManualTitleAutoCaption", func(t *testing.T) {
+		p := &Photo{PhotoUID: "ps6sg6be2lvl0zz1", TitleSrc: SrcManual, PhotoTitle: "My Own Title",
+			CaptionSrc: SrcAuto, PhotoCaption: withheld.SubjName + ", A, B & C"}
+
+		// Refused for the title, which is the point: the caption still has to be refreshed.
+		require.Error(t, p.GenerateTitle(classify.Labels{}))
+		assert.Equal(t, "My Own Title", p.PhotoTitle, "a title somebody typed is left alone")
+		assert.NotContains(t, p.PhotoCaption, withheld.SubjName)
+	})
+	t.Run("ManualCaptionKept", func(t *testing.T) {
+		p := &Photo{PhotoUID: "ps6sg6be2lvl0zz2", TitleSrc: SrcManual, PhotoTitle: "My Own Title",
+			CaptionSrc: SrcManual, PhotoCaption: "a caption somebody wrote"}
+
+		require.Error(t, p.GenerateTitle(classify.Labels{}))
+		assert.Equal(t, "a caption somebody wrote", p.PhotoCaption, "a caption somebody wrote is left alone")
+	})
 }

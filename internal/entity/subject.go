@@ -703,7 +703,9 @@ func (m *Subject) UpdateMarkerNames() error {
 	return m.RefreshPhotos()
 }
 
-// RefreshPhotos flags related photos for metadata maintenance.
+// RefreshPhotos flags related photos for metadata maintenance. It joins on markers.subj_uid, so a
+// picture linked to this person only through markers.marker_name is not requeued here and waits for
+// the ordinary age-based pass instead.
 func (m *Subject) RefreshPhotos() error {
 	if m.SubjUID == "" {
 		return fmt.Errorf("empty subject uid")
