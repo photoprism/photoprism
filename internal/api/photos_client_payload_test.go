@@ -16,10 +16,17 @@ import (
 	"github.com/photoprism/photoprism/pkg/time/unix"
 )
 
-// clientCredentialToken registers an OAuth client with the given role and scope and returns the
-// token of a client-credentials session for it. The account is optional: without one the session
-// carries no user at all, which is what a machine client authenticates as.
+// clientCredentialToken returns the auth token of a clientCredentialSession.
 func clientCredentialToken(t *testing.T, conf *config.Config, role, scope string, user *entity.User) string {
+	t.Helper()
+
+	return clientCredentialSession(t, conf, role, scope, user).AuthToken()
+}
+
+// clientCredentialSession registers an OAuth client with the given role and scope and returns a
+// client-credentials session for it. The account is optional: without one the session carries no
+// user at all, which is what a machine client authenticates as.
+func clientCredentialSession(t *testing.T, conf *config.Config, role, scope string, user *entity.User) *entity.Session {
 	t.Helper()
 
 	client := &entity.Client{
@@ -53,7 +60,7 @@ func clientCredentialToken(t *testing.T, conf *config.Config, role, scope string
 	require.True(t, sess.IsClient())
 	require.Equal(t, user != nil, sess.IsRegistered(), "the account decides what this session is")
 
-	return sess.AuthToken()
+	return sess
 }
 
 // markerCount returns the number of markers a picture response carries across all of its files.
@@ -219,6 +226,60 @@ func TestClientCredential_AlbumAndFileResponses(t *testing.T) {
 	conf.SetAuthMode(config.AuthModePasswd)
 	t.Cleanup(func() { conf.SetAuthMode(prevAuthMode) })
 
+	// An account-attached credential reaching an album it owns, which is the one path the row
+	// policy admits without whole-library reach.
+	t.Run("OwnedAlbumNeedsAlbumScope", func(t *testing.T) {
+		const photoUID = "ps6sg6be2lvl0yh7"
+
+		GetPhoto(router)
+		UpdatePhoto(router)
+
+		user := entity.UserFixtures.Pointer("alice")
+		owned := entity.Album{AlbumUID: rnd.GenerateUID(entity.AlbumUID), AlbumSlug: "client-owned-probe",
+			AlbumTitle: "Client Owned Probe", AlbumType: entity.AlbumManual, CreatedBy: user.UserUID}
+
+		require.NoError(t, entity.UnscopedDb().Create(&owned).Error)
+		require.NoError(t, entity.NewPhotoAlbum(photoUID, owned.AlbumUID).Create())
+
+		t.Cleanup(func() {
+			entity.UnscopedDb().Unscoped().Delete(&entity.PhotoAlbum{}, "album_uid = ?", owned.AlbumUID)
+			entity.UnscopedDb().Unscoped().Delete(&entity.Album{}, "album_uid = ?", owned.AlbumUID)
+			entity.FlushAlbumCache()
+		})
+
+		albums := func(t *testing.T, scope string) string {
+			r := AuthenticatedRequest(app, http.MethodGet, "/api/v1/photos/"+photoUID,
+				clientCredentialToken(t, conf, acl.RoleClient.String(), scope, user))
+			require.Equal(t, http.StatusOK, r.Code)
+
+			return gjson.Get(r.Body.String(), "Albums").Raw
+		}
+
+		require.Contains(t, albums(t, "photos albums"), owned.AlbumUID,
+			"the control: with albums in scope the record arrives")
+		assert.NotContains(t, albums(t, "photos"), owned.AlbumUID,
+			"and a credential issued for pictures alone receives no album record")
+
+		r := AuthenticatedRequest(app, http.MethodGet, "/api/v1/albums/"+owned.AlbumUID,
+			clientCredentialToken(t, conf, acl.RoleClient.String(), "photos", user))
+		assert.Equal(t, http.StatusForbidden, r.Code, "as a read of the album itself answers")
+
+		// And the mutation response answers the same, so a write cannot hand back the record.
+		photo := entity.Photo{}
+		require.NoError(t, entity.UnscopedDb().First(&photo, "photo_uid = ?", photoUID).Error)
+
+		wasFavorite := photo.PhotoFavorite
+
+		t.Cleanup(func() {
+			entity.UnscopedDb().Model(&entity.Photo{}).Where("photo_uid = ?", photoUID).
+				UpdateColumn("photo_favorite", wasFavorite)
+		})
+
+		w := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/photos/"+photoUID,
+			`{"Favorite": true}`, clientCredentialToken(t, conf, acl.RoleClient.String(), "photos", user))
+		require.Equal(t, http.StatusOK, w.Code)
+		assert.NotContains(t, gjson.Get(w.Body.String(), "Albums").Raw, owned.AlbumUID)
+	})
 	t.Run("AlbumByUID", func(t *testing.T) {
 		r := AuthenticatedRequest(app, http.MethodGet, "/api/v1/albums/"+albumUID,
 			clientCredentialToken(t, conf, acl.RoleClient.String(), "*", nil))

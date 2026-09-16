@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/auth/tokens"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/config/customize"
@@ -107,6 +108,44 @@ func TestDownloadAlbum(t *testing.T) {
 		// The visitor has no share for as6sg6bxpogaaba9, so the album is reported as not found.
 		q := tokens.SignDownload(entity.SessionFixtures.Get("visitor").ID)
 		r := PerformRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba9/dl?t="+q)
+		assert.Equal(t, http.StatusNotFound, r.Code)
+	})
+	// A credential is admitted on the album row by its client role, not by holding a share, while
+	// the token still answers for pictures - the resource this transport is authorized on.
+	t.Run("SignedClientToken", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+
+		DownloadAlbum(router)
+
+		sess := clientCredentialSession(t, conf, acl.RoleClient.String(), "*", nil)
+		r := PerformRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba8/dl?t="+tokens.SignDownload(sess.ID))
+		assert.Equal(t, http.StatusOK, r.Code)
+		assert.NotEmpty(t, r.Body.Bytes(), "the archive carries its files")
+	})
+	t.Run("SignedClientTokenOutOfScope", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+
+		DownloadAlbum(router)
+
+		sess := clientCredentialSession(t, conf, acl.RoleClient.String(), "metrics", nil)
+		r := PerformRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba8/dl?t="+tokens.SignDownload(sess.ID))
+		assert.Equal(t, http.StatusForbidden, r.Code)
+	})
+	t.Run("SignedClientTokenForARestrictedAccount", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+
+		DownloadAlbum(router)
+
+		// The attached account holds no share for this album, and a client role does not lift it.
+		sess := clientCredentialSession(t, conf, acl.RoleClient.String(), "*",
+			entity.UserFixtures.Pointer("guest"))
+		r := PerformRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba8/dl?t="+tokens.SignDownload(sess.ID))
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
 	t.Run("NonJwtHeaderCannotDownloadWithoutToken", func(t *testing.T) {

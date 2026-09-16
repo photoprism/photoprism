@@ -159,6 +159,47 @@ func fullAccessClientSession() *Session {
 	return s
 }
 
+func TestSession_SeesAnyDetail(t *testing.T) {
+	t.Run("NilUnrestricted", func(t *testing.T) {
+		var s *Session
+		assert.True(t, s.SeesAnyDetail(acl.ResourceAlbums))
+	})
+	t.Run("Admin", func(t *testing.T) {
+		s := &Session{}
+		s.SetUser(UserFixtures.Pointer("alice"))
+		assert.True(t, s.SeesAnyDetail(acl.ResourceAlbums))
+	})
+	// A share reaches a record, so a session holding one still views the resource - what it may not
+	// do is reach a resource its credential was never issued for.
+	t.Run("ShareLinkVisitor", func(t *testing.T) {
+		assert.True(t, SessionFixtures.Pointer("visitor").SeesAnyDetail(acl.ResourceAlbums))
+	})
+	t.Run("Guest", func(t *testing.T) {
+		s := &Session{}
+		s.SetUser(UserFixtures.Pointer("guest"))
+		assert.True(t, s.SeesAnyDetail(acl.ResourceAlbums))
+		assert.False(t, s.SeesFullDetail(acl.ResourceAlbums), "without reaching every record")
+	})
+	t.Run("ScopeWithoutTheResource", func(t *testing.T) {
+		s := fullAccessClientSession()
+		s.SetScope("photos")
+		assert.False(t, s.SeesAnyDetail(acl.ResourceAlbums))
+		assert.True(t, s.SeesAnyDetail(acl.ResourcePhotos))
+	})
+	t.Run("WriteOnlyScope", func(t *testing.T) {
+		s := fullAccessClientSession()
+		s.SetScope("write photos")
+		assert.False(t, s.SeesAnyDetail(acl.ResourcePhotos))
+	})
+	t.Run("RoleWithoutView", func(t *testing.T) {
+		s := &Session{}
+		s.SetClient(&Client{ClientRole: acl.RoleInstance.String(), AuthScope: "*",
+			AuthProvider: authn.ProviderClient.String()})
+		require.True(t, s.Grants(acl.ResourcePlaces, acl.AccessOwn), "it holds something on places")
+		assert.False(t, s.SeesAnyDetail(acl.ResourcePlaces), "but not view")
+	})
+}
+
 func TestSession_SeesFullDetail(t *testing.T) {
 	t.Run("NilUnrestricted", func(t *testing.T) {
 		var s *Session

@@ -821,10 +821,15 @@ func (m *Photo) RedactForSession(sess *Session) *Photo {
 		m.Files[i].RedactForSession(sess, acl.ResourcePhotos)
 	}
 
-	// Album records carry their own notes and filters, so a session admitted on pictures alone
-	// keeps only the albums it reaches through a share or its own ownership.
-	if len(m.Albums) > 0 && !sess.SeesFullDetail(acl.ResourceAlbums) {
-		m.Albums = SharedAlbums(m.Albums, sess)
+	// Album records carry their own notes and filters, so they are answered on albums: a session
+	// not permitted to view them keeps none, and one without whole-library reach keeps the ones it
+	// reaches through a share or its own ownership.
+	if len(m.Albums) > 0 {
+		if !sess.SeesAnyDetail(acl.ResourceAlbums) {
+			m.Albums = nil
+		} else if !sess.SeesFullDetail(acl.ResourceAlbums) {
+			m.Albums = SharedAlbums(m.Albums, sess)
+		}
 	}
 
 	if sess.SeesFullDetail(acl.ResourcePhotos) {
