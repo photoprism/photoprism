@@ -1,11 +1,16 @@
 package api
 
 import (
+	"archive/zip"
+	"bytes"
+	"io"
 	"net/http"
+	"path/filepath"
 	"testing"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/auth/tokens"
@@ -47,6 +52,7 @@ func TestAlbumDownloadName(t *testing.T) {
 	})
 }
 
+// TestDownloadAlbum covers album download admission and archive contents.
 func TestDownloadAlbum(t *testing.T) {
 	t.Run("DownloadNotExistingAlbum", func(t *testing.T) {
 		app, router, conf := NewApiTest()
@@ -114,15 +120,59 @@ func TestDownloadAlbum(t *testing.T) {
 	// the token still answers for pictures - the resource this transport is authorized on.
 	t.Run("SignedClientToken", func(t *testing.T) {
 		app, router, conf := NewApiTest()
+		options := *conf.Options()
+		t.Cleanup(func() {
+			*conf.Options() = options
+			conf.Propagate()
+		})
 		conf.SetAuthMode(config.AuthModePasswd)
-		defer conf.SetAuthMode(config.AuthModePublic)
+		conf.Options().OriginalsPath = t.TempDir()
+		conf.Propagate()
 
 		DownloadAlbum(router)
 
-		sess := clientCredentialSession(t, conf, acl.RoleClient.String(), "*", nil)
-		r := PerformRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba8/dl?t="+tokens.SignDownload(sess.ID))
-		assert.Equal(t, http.StatusOK, r.Code)
-		assert.NotEmpty(t, r.Body.Bytes(), "the archive carries its files")
+		photo := entity.NewPhoto(false)
+		require.NoError(t, photo.Save())
+		t.Cleanup(func() {
+			entity.UnscopedDb().Unscoped().Delete(&entity.Details{}, "photo_id = ?", photo.ID)
+			entity.UnscopedDb().Unscoped().Delete(&photo)
+		})
+
+		file := &entity.File{
+			PhotoID: photo.ID, PhotoUID: photo.PhotoUID,
+			FileRoot: entity.RootOriginals, FileName: "client-download.jpg",
+			FileHash: "aed71fbf713047751c3166ac8bd718c2fdbb909f",
+			FileType: "jpg", MediaType: entity.MediaImage, FilePrimary: true,
+		}
+		require.NoError(t, file.Create())
+		t.Cleanup(func() { entity.UnscopedDb().Unscoped().Delete(file) })
+		original := CreateTestOriginal(t, file)
+
+		album := entity.NewAlbum("Signed Client Download", entity.AlbumManual)
+		require.NoError(t, album.Create())
+		t.Cleanup(func() {
+			entity.UnscopedDb().Unscoped().Delete(&entity.PhotoAlbum{}, "album_uid = ?", album.AlbumUID)
+			entity.UnscopedDb().Unscoped().Delete(album)
+			entity.FlushAlbumCache()
+		})
+		require.NoError(t, entity.NewPhotoAlbum(file.PhotoUID, album.AlbumUID).Create())
+
+		sess := clientCredentialSession(t, conf, acl.RoleClient.String(), "photos", nil)
+		r := PerformRequest(app, http.MethodGet,
+			"/api/v1/albums/"+album.AlbumUID+"/dl?name=file&t="+tokens.SignDownload(sess.ID))
+		require.Equal(t, http.StatusOK, r.Code)
+
+		archive, err := zip.NewReader(bytes.NewReader(r.Body.Bytes()), int64(r.Body.Len()))
+		require.NoError(t, err)
+		require.Len(t, archive.File, 1)
+		assert.Equal(t, filepath.Base(file.FileName), archive.File[0].Name)
+
+		entry, err := archive.File[0].Open()
+		require.NoError(t, err)
+		contents, err := io.ReadAll(entry)
+		require.NoError(t, entry.Close())
+		require.NoError(t, err)
+		assert.Equal(t, original, contents)
 	})
 	t.Run("SignedClientTokenOutOfScope", func(t *testing.T) {
 		app, router, conf := NewApiTest()
@@ -143,7 +193,7 @@ func TestDownloadAlbum(t *testing.T) {
 		DownloadAlbum(router)
 
 		// The attached account holds no share for this album, and a client role does not lift it.
-		sess := clientCredentialSession(t, conf, acl.RoleClient.String(), "*",
+		sess := clientCredentialSession(t, conf, acl.RoleClient.String(), "photos",
 			entity.UserFixtures.Pointer("guest"))
 		r := PerformRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba8/dl?t="+tokens.SignDownload(sess.ID))
 		assert.Equal(t, http.StatusNotFound, r.Code)
