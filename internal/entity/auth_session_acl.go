@@ -44,6 +44,21 @@ func (m *Session) DeniesAll(resource acl.Resource, perms acl.Permissions) bool {
 	return !m.GrantsAny(resource, perms)
 }
 
+// SeesPrivatePeople reports whether the session may see the people Subject.NameWithheld covers,
+// so every surface that resolves a person's name answers the same question about the same session.
+//
+// The scope is read alongside the role, because these names travel on other resources: a
+// credential admitted on photos or files reaches them without people ever being authorized.
+func (m *Session) SeesPrivatePeople() bool {
+	if m == nil {
+		return true
+	} else if !m.Grants(acl.ResourcePeople, acl.AccessPrivate) {
+		return false
+	}
+
+	return m.NoScope() || m.ValidateScope(acl.ResourcePeople, acl.Permissions{acl.AccessPrivate})
+}
+
 // HasSharedAccessOnly reports whether the session's effective access to the resource is limited to
 // shared content, evaluating the client role alongside the user role. A nil session is unrestricted.
 func (m *Session) HasSharedAccessOnly(resource acl.Resource) bool {

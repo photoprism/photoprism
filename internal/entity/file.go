@@ -101,7 +101,9 @@ type File struct {
 	Share              []FileShare   `json:"-" yaml:"-"`
 	Sync               []FileSync    `json:"-" yaml:"-"`
 	OmitMarkers        bool          `gorm:"-" sql:"-" json:"-" yaml:"-"`
+	OmitWithheldPeople bool          `gorm:"-" sql:"-" json:"-" yaml:"-"`
 	markers            *Markers
+	visibleMarkers     *Markers
 }
 
 // TableName returns the entity table name.
@@ -746,11 +748,17 @@ func (m *File) SetInstanceID(id string) {
 }
 
 // RedactForSession removes identifying per-file metadata a shared-only session must not see: the
-// XMP InstanceID is cleared and markers are omitted. Full-library, admin and nil sessions are
-// unchanged. Counterpart of Photo.RedactForSession, so GetFile and GetPhoto strip the same fields.
+// XMP InstanceID is cleared and markers are omitted. Counterpart of Photo.RedactForSession, so
+// GetFile and GetPhoto strip the same fields. Withheld people are flagged first, since that
+// applies to a full-library session too.
 func (m *File) RedactForSession(sess *Session) *File {
 	if m == nil || sess == nil {
 		return m
+	}
+
+	if omit := !sess.SeesPrivatePeople(); omit != m.OmitWithheldPeople {
+		m.OmitWithheldPeople = omit
+		m.visibleMarkers = nil
 	}
 
 	// Only sessions limited to shared content are redacted.
@@ -983,6 +991,28 @@ func (m *File) Markers() *Markers {
 	}
 
 	return m.markers
+}
+
+// MarkersForJSON returns the markers to serialize, leaving out the people whose name is withheld
+// from the session reading the file. It caches its own query result, so the list Markers hands to
+// SaveMarkers and AddFace stays complete. A failed query yields no markers.
+func (m *File) MarkersForJSON() *Markers {
+	if !m.OmitWithheldPeople {
+		return m.Markers()
+	}
+
+	if m.visibleMarkers != nil {
+		return m.visibleMarkers
+	} else if m.FileUID == "" || m.OmitMarkers {
+		m.visibleMarkers = &Markers{}
+	} else if res, err := FindVisibleMarkers(m.FileUID, true); err != nil {
+		log.Warnf("file %s: %s while loading markers", clean.Log(m.FileUID), err)
+		m.visibleMarkers = &Markers{}
+	} else {
+		m.visibleMarkers = &res
+	}
+
+	return m.visibleMarkers
 }
 
 // UnsavedMarkers tests if any marker hasn't been saved yet.

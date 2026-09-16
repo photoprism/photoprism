@@ -165,6 +165,7 @@ func UpdatePhoto(router *gin.RouterGroup) {
 
 		UpdateClientConfig()
 
+		p.RedactForSession(s)
 		c.JSON(http.StatusOK, p)
 	})
 }
@@ -316,6 +317,10 @@ func ApprovePhoto(router *gin.RouterGroup) {
 
 		PublishPhotoEvent(StatusUpdated, id)
 
+		// Shaped like every other picture response. This loader preloads no files, so there is no
+		// marker to withhold here yet - the reduction it applies is the shared-only one.
+		m.RedactForSession(s)
+
 		c.JSON(http.StatusOK, gin.H{"photo": m})
 	})
 }
@@ -370,6 +375,7 @@ func PhotoPrimary(router *gin.RouterGroup) {
 			return
 		}
 
+		p.RedactForSession(s)
 		c.JSON(http.StatusOK, p)
 	})
 }

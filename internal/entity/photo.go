@@ -808,16 +808,17 @@ func (m *Photo) PreloadMany() *Photo {
 	return m
 }
 
-// RedactForSession trims fields a shared-only session should not see when it accesses a picture
-// through sharing: the album list is limited to the albums shared with the session, and people,
-// labels, the owner, private notes, and identifying metadata (camera serial, the XMP DocumentID,
-// and per-file InstanceID) are removed. Sessions with full library or admin access (and nil
-// sessions) are returned unchanged.
-//
-// It trims only fields the search results omit, so both read paths disclose the same set.
+// RedactForSession trims what a shared-only session should not see when it reaches a picture
+// through sharing: albums outside its shares, labels, the owner, notes, and identifying metadata.
+// It trims only what the search results omit, so both read paths answer alike. The files always
+// pass through File.RedactForSession, since markers are answered on people rather than on photos.
 func (m *Photo) RedactForSession(sess *Session) *Photo {
 	if m == nil || sess == nil {
 		return m
+	}
+
+	for i := range m.Files {
+		m.Files[i].RedactForSession(sess)
 	}
 
 	// Only sessions limited to shared content are redacted.
@@ -848,12 +849,8 @@ func (m *Photo) RedactForSession(sess *Session) *Photo {
 		}
 	}
 
-	// Remove labels and people, plus the per-file XMP InstanceID (marker identity is omitted
-	// defensively in case markers are loaded).
+	// Remove labels; the files were redacted above.
 	m.Labels = nil
-	for i := range m.Files {
-		m.Files[i].RedactForSession(sess)
-	}
 
 	// Remove the owner, private notes, and identifying metadata. PhotoPath and OriginalName stay:
 	// search discloses both to every in-scope session, so withholding them here protects nothing.

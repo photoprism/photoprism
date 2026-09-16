@@ -62,7 +62,10 @@ func SearchFoldersImport(router *gin.RouterGroup) {
 // SearchFolders is a reusable request handler for directory listings (GET /api/v1/folders/*).
 func SearchFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) {
 	handler := func(c *gin.Context) {
-		s := Auth(c, acl.ResourceFiles, acl.AccessLibrary)
+		// A directory listing names every file in the library, private pictures included, so it
+		// asks for whole-library access rather than library reach alone - no less than the File
+		// Browser, Index and Import pages require before they render it.
+		s := Auth(c, acl.ResourceFiles, acl.AccessAll)
 
 		// Abort if permission is not granted.
 		if s.Abort(c) {

@@ -52,8 +52,8 @@ func GetFile(router *gin.RouterGroup) {
 			return
 		}
 
-		// Redact identifying per-file metadata (XMP InstanceID) for shared-only sessions, matching
-		// the reduction GetPhoto applies, since guests and visitors may now resolve shared files.
+		// Limit the response to what the session is entitled to see, matching the reduction GetPhoto
+		// applies: per-file metadata for shared-only sessions, and the markers of withheld people.
 		c.JSON(http.StatusOK, f.RedactForSession(s))
 	})
 }
