@@ -62,12 +62,9 @@ func (m *Subject) NameWithheld() bool {
 }
 
 // VisiblePeopleFilter returns the joins and the condition that together keep only the rows of the
-// given table whose people are visible. Both joins resolve a unique key - the subject uid is the
-// primary one and subj_name carries a unique index - so each adds one index lookup per row rather
-// than a subquery the driver re-runs.
-//
-// withNames also resolves the person a row's own marker_name points at, for a marker that carries
-// a name before it is linked; pass false for a table without that column, such as faces.
+// given table whose people are visible. Both joins resolve a unique key, so each adds one index
+// lookup per row rather than a subquery the driver re-runs. withNames also resolves the person a
+// row's own marker_name points at; pass false for a table without that column, such as faces.
 func VisiblePeopleFilter(table string, withNames bool) (joins []string, cond string) {
 	subjTable := Subject{}.TableName()
 	linked := table + "_subj"
@@ -93,9 +90,8 @@ type WithheldPeople struct {
 	names map[string]struct{}
 }
 
-// Withholds reports whether a marker discloses a withheld person, through its subject link or
-// through the name it carries. Either is enough, so a marker whose two disagree is withheld on
-// both counts.
+// Withholds reports whether a marker names a withheld person, through its subject link or through
+// the name it carries. Either is enough, so a marker whose two disagree is withheld on both counts.
 func (w WithheldPeople) Withholds(subjUID, markerName string) bool {
 	if subjUID != "" {
 		if _, found := w.uids[subjUID]; found {

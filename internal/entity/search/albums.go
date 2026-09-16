@@ -78,8 +78,7 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 		}
 
 		// Limit results by UID, owner and path. The unlimited branch asks albums as well as the
-		// type's own resource, so it cannot admit a row entity.Album.VisibleToSession refuses one
-		// at a time.
+		// type's own resource, so it cannot admit a row a read by uid refuses.
 		reach := acl.Permissions{acl.AccessAll, acl.AccessLibrary}
 
 		if sess.GrantsAny(aclResource, reach) && sess.GrantsAny(acl.ResourceAlbums, reach) {

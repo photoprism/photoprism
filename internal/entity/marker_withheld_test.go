@@ -217,8 +217,8 @@ func nameOnlyMarker(t *testing.T, name string) {
 }
 
 // TestFile_MarkersForJSONOmitsUnlinkedNames pins that identity is classified on the name as well as
-// the link. A marker names a person in its own column, and that column is what a response
-// discloses, so a marker with a name and no link is withheld on the name.
+// the link. A marker names a person in its own column, and that column is what a response carries,
+// so a marker with a name and no link is withheld on the name.
 func TestFile_MarkersForJSONOmitsUnlinkedNames(t *testing.T) {
 	withheld := createWithheldSubject(t, "Unlinked Ulla", false)
 	nameOnlyMarker(t, withheld.SubjName)

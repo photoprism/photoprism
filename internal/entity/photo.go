@@ -811,7 +811,7 @@ func (m *Photo) PreloadMany() *Photo {
 // RedactForSession trims what a session without whole-library reach on pictures should not see:
 // labels, the owner, notes, and identifying metadata. It trims only what the search results omit,
 // so both read paths answer alike. The files and the albums are answered separately, since each is
-// addressable on its own resource; a file inside a picture is judged on pictures.
+// addressable on its own resource.
 func (m *Photo) RedactForSession(sess *Session) *Photo {
 	if m == nil || sess == nil {
 		return m
@@ -821,9 +821,8 @@ func (m *Photo) RedactForSession(sess *Session) *Photo {
 		m.Files[i].RedactForSession(sess, acl.ResourcePhotos)
 	}
 
-	// Album records carry their own notes and filters, so they are answered on albums: a session
-	// not permitted to view them keeps none, and one without whole-library reach keeps the ones it
-	// reaches through a share or its own ownership.
+	// Album records carry their own notes and filters, so they are answered on albums rather than
+	// on the picture that names them.
 	if len(m.Albums) > 0 {
 		if !sess.SeesAnyDetail(acl.ResourceAlbums) {
 			m.Albums = nil

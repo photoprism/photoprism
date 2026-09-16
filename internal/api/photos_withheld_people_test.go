@@ -151,12 +151,10 @@ func TestSearchFolders_RequiresWholeLibraryAccess(t *testing.T) {
 	})
 }
 
-// TestWriteHandlers_OmitWithheldPeople pins that a write response is shaped like the by-uid read.
-// Six handlers answer with the edited picture, and a credential can be admitted on photos while
-// people is outside its scope, so the session that may not see a person can still reach them.
-//
-// It creates its own markers on a picture no other test in this package reads, and restores what it
-// writes: a fixture picture mutated here is a later test's failure.
+// TestWriteHandlers_OmitWithheldPeople pins that a write response is shaped like the by-uid read: a
+// credential can be admitted on photos while people is outside its scope. It creates its own markers
+// on a picture no other test in this package reads, and restores what it writes, since a fixture
+// picture mutated here is a later test's failure.
 func TestWriteHandlers_OmitWithheldPeople(t *testing.T) {
 	const (
 		photoUID = "ps6sg6be2lvl0y14" // Photo07, unreferenced elsewhere in this package
@@ -245,11 +243,9 @@ func TestWriteHandlers_OmitWithheldPeople(t *testing.T) {
 
 	markPrivate(t, withheld, false)
 
-	// Run in order: the label handlers need the label the first one adds, and each asserts the same
-	// thing about its own response. Left out and covered structurally instead, by
-	// TestPhotoResponses_AllRedact: three that rewrite a file header, unstack a picture or delete a
-	// file, and the handlers loading through query.PhotoByUID, whose response carries no files and
-	// so no marker to withhold.
+	// Run in order: the label handlers need the label the first one adds. The handlers left out are
+	// covered structurally by TestPhotoResponses_AllRedact - three a behavioral test cannot drive,
+	// and those loading through query.PhotoByUID, whose response carries no marker to withhold.
 	steps := []struct {
 		name, method, path, body string
 	}{
@@ -282,18 +278,8 @@ func TestWriteHandlers_OmitWithheldPeople(t *testing.T) {
 
 // Recognizing a picture response by provenance rather than by shape: a handler that loads a picture
 // and then serializes anything mentioning it has to shape it first, whatever the variable is called
-// and whether the payload is the entity or a map wrapping it.
-//
-// Three boundaries of this approach, stated so they are not discovered later:
-//
-//   - The scope is the top-level function. Every registrar today registers one route, so
-//     per-function and per-handler coincide; one registering two picture routes would let one
-//     handler's call vouch for the other's response.
-//   - The operand scan reads string literals too, so a handler loading into a variable named after
-//     a map key in the same payload is flagged by the key alone. That fails loudly rather than
-//     hiding anything.
-//   - It recognizes a picture by the loaders below. One obtained another way - entity.FindPhoto, a
-//     helper, a search result - is invisible to both the pattern and the floor.
+// and whether the payload is the entity or a map wrapping it. The scope is the top-level function,
+// and a picture obtained other than through the loaders below is invisible to it.
 var (
 	// pictureLoader matches the assignment that gives a handler its picture.
 	pictureLoader = regexp.MustCompile(`(\w+)\s*,?\s*(?:\w+\s*)?:?=\s*query\.Photo(?:PreloadBy)?(?:By)?UID\(`)
@@ -539,14 +525,9 @@ func b() {
 }
 
 // TestPhotoResponses_AllRedact pins the rule rather than each handler: a handler that loads a
-// picture shapes it for the session before serializing it. It is what covers ChangeFileOrientation,
-// PhotoUnstack and DeleteFile, which a behavioral test cannot drive without rewriting a file header,
-// unstacking a picture or deleting a file - and what fails when a handler is added later without the
-// call.
-//
-// It recognizes a response by where the picture came from, so a wrapped payload or a differently
-// named variable is still checked. It reads source text, so it proves the call is present rather
-// than that it works; the subtests of TestWriteHandlers_OmitWithheldPeople prove the latter.
+// picture shapes it for the session before serializing it. That is what covers the three no
+// behavioral test can drive, and what fails when a handler is added later without the call. It reads
+// source text, so it proves the call is present rather than that it works.
 func TestPhotoResponses_AllRedact(t *testing.T) {
 	files, err := filepath.Glob("*.go")
 	require.NoError(t, err)

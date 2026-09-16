@@ -45,10 +45,9 @@ func (m *Session) DeniesAll(resource acl.Resource, perms acl.Permissions) bool {
 }
 
 // SeesPrivatePeople reports whether the session may see the people Subject.NameWithheld covers,
-// so every surface that resolves a person's name answers the same question about the same session.
-//
-// The scope is read alongside the role, because these names travel on other resources: a
-// credential admitted on photos or files reaches them without people ever being authorized.
+// so every surface that resolves a person's name answers alike. The scope is read alongside the
+// role, because these names travel on other resources: a credential admitted on photos or files
+// reaches them without people ever being authorized.
 func (m *Session) SeesPrivatePeople() bool {
 	if m == nil {
 		return true

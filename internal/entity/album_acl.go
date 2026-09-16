@@ -19,9 +19,9 @@ func (m *Album) SharedWithSession(sess *Session) bool {
 }
 
 // VisibleToSession reports whether the session may read this album as a record, from its role and
-// the row alone. Callers MUST have been scope-checked on albums, or be authorizing an action on
-// another resource that includes the album - an album download is admitted on pictures, and a
-// scope requirement added here would refuse it.
+// the row alone. Callers MUST already be scope-checked on albums, or be authorizing an action on
+// another resource that includes the album: an album download is admitted on pictures, which a
+// scope arm here would refuse.
 func (m *Album) VisibleToSession(sess *Session) bool {
 	if m == nil || sess == nil {
 		return false

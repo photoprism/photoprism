@@ -5,10 +5,8 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
-// albumViewableBySession reports whether the session may view or download the given album. Sessions
-// without whole-library reach on albums need a share unless they created the album; a nil session is
-// never permitted. The row policy lives on the entity, so the picture that names its albums answers
-// the same question about the same session.
+// albumViewableBySession reports whether the session may view or download the given album. The row
+// policy lives on the entity, so a picture that names its albums answers the same question.
 func albumViewableBySession(s *entity.Session, album entity.Album) bool {
 	return album.VisibleToSession(s)
 }
