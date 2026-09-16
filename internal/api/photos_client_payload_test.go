@@ -79,7 +79,7 @@ func markerCount(res gjson.Result) int {
 // fixture cannot pass for a full payload.
 func TestClientCredential_PictureResponses(t *testing.T) {
 	const (
-		photoUID = "ps6sg6be2lvl0yh7" // names two people and carries markers
+		photoUID = "ps6sg6be2lvl0yh7" // shared photo for general payload checks
 		labelUID = "ps6sg6be2lvl0y14" // Photo07, mutated by the round trip below
 		label    = "Client Payload Probe"
 	)
@@ -104,7 +104,8 @@ func TestClientCredential_PictureResponses(t *testing.T) {
 		return gjson.Parse(r.Body.String())
 	}
 
-	admin := picture(t, photoUID, AuthenticateAdmin(app, router))
+	adminToken := AuthenticateAdmin(app, router)
+	admin := picture(t, photoUID, adminToken)
 
 	require.NotZero(t, markerCount(admin), "the fixture has to carry markers for the case to mean anything")
 	require.NotEmpty(t, admin.Get("Details").Raw, "and details, which the reduced payload drops")
@@ -198,14 +199,63 @@ func TestClientCredential_PictureResponses(t *testing.T) {
 	// The markers this credential now receives are still filtered on people, which its scope does
 	// not name - so the two predicates answer separately about the same response.
 	t.Run("WithheldPeopleStillOmitted", func(t *testing.T) {
-		withheld := entity.SubjectFixtures.Pointer("actress-1")
-		markPrivate(t, withheld, false)
+		// Own rows keep these assertions independent of other tests' face-cluster edits.
+		updateFaces := entity.UpdateFaces.Load()
+		t.Cleanup(func() { entity.UpdateFaces.Store(updateFaces) })
 
-		client := picture(t, photoUID, token(t, "photos"))
+		photo := entity.NewPhoto(false)
+		require.NoError(t, photo.Save())
+		t.Cleanup(func() {
+			entity.UnscopedDb().Unscoped().Delete(&entity.Details{}, "photo_id = ?", photo.ID)
+			entity.UnscopedDb().Unscoped().Delete(&photo)
+		})
 
-		assert.NotZero(t, markerCount(client), "everyone else is kept, so an empty list is a failure")
-		assert.Less(t, markerCount(client), markerCount(admin))
-		assert.NotContains(t, client.Raw, withheld.SubjUID)
+		file := &entity.File{
+			PhotoID: photo.ID, PhotoUID: photo.PhotoUID,
+			FileRoot: entity.RootOriginals, FileName: "client-marker-visibility.jpg",
+			FileHash: "fc695bf4a33937c7436ad93f7ba0e1a28fd95710",
+			FileType: "jpg", MediaType: entity.MediaImage, FilePrimary: true,
+		}
+		require.NoError(t, file.Create())
+		t.Cleanup(func() { entity.UnscopedDb().Unscoped().Delete(file) })
+
+		markers := make([]*entity.Marker, 0, 2)
+
+		for i, name := range []string{"Client Private Person", "Client Public Person"} {
+			subj := entity.NewSubject(name, entity.SubjPerson, entity.SrcManual)
+			require.NotNil(t, subj)
+			subj.SubjPrivate = i == 0
+			require.NoError(t, subj.Create())
+			t.Cleanup(func() {
+				entity.UnscopedDb().Unscoped().Delete(subj)
+				entity.SubjNames.Unset(subj.SubjUID)
+			})
+
+			marker := &entity.Marker{
+				FileUID: file.FileUID, MarkerType: entity.MarkerFace, MarkerSrc: entity.SrcImage,
+				SubjUID: subj.SubjUID, SubjSrc: entity.SrcManual, MarkerName: subj.SubjName,
+				X: float32(i+1) / 3, Y: 0.4, W: 0.1, H: 0.1, Size: 200, Score: 80,
+			}
+			require.NoError(t, marker.Create())
+			t.Cleanup(func() { entity.UnscopedDb().Unscoped().Delete(marker) })
+			markers = append(markers, marker)
+		}
+
+		control := picture(t, photo.PhotoUID, adminToken)
+		require.Equal(t, 2, markerCount(control))
+		require.Contains(t, control.Raw, markers[0].MarkerUID)
+		require.Contains(t, control.Raw, markers[0].SubjUID)
+		require.Contains(t, control.Raw, markers[1].MarkerUID)
+
+		client := picture(t, photo.PhotoUID, token(t, "photos"))
+
+		require.Equal(t, 1, markerCount(client), "the visible person's marker stays")
+		assert.Equal(t, markers[1].MarkerUID, client.Get("Files.0.Markers.0.UID").String())
+		assert.Equal(t, markers[1].SubjUID, client.Get("Files.0.Markers.0.SubjUID").String())
+		assert.Equal(t, markers[1].MarkerName, client.Get("Files.0.Markers.0.Name").String())
+		assert.NotContains(t, client.Raw, markers[0].MarkerUID)
+		assert.NotContains(t, client.Raw, markers[0].SubjUID)
+		assert.NotContains(t, client.Raw, markers[0].MarkerName)
 	})
 }
 
