@@ -90,7 +90,7 @@ func TestPeopleVisibilityRoles(t *testing.T) {
 			assert.False(t, holdsFace(results, privateFace.ID))
 
 			f := &entity.File{FileUID: fileUID}
-			f.RedactForSession(sess)
+			f.RedactForSession(sess, acl.ResourcePhotos)
 
 			markers := *f.MarkersForJSON()
 

@@ -77,10 +77,16 @@ func UserAlbums(frm form.SearchAlbums, sess *entity.Session) (results AlbumResul
 			return AlbumResults{}, ErrForbidden
 		}
 
-		// Limit results by UID, owner and path.
-		if sess.IsVisitor() || sess.NotRegistered() {
+		// Limit results by UID, owner and path. The unlimited branch asks albums as well as the
+		// type's own resource, so it cannot admit a row entity.Album.VisibleToSession refuses one
+		// at a time.
+		reach := acl.Permissions{acl.AccessAll, acl.AccessLibrary}
+
+		if sess.GrantsAny(aclResource, reach) && sess.GrantsAny(acl.ResourceAlbums, reach) {
+			// Whole-library reach needs no limitation.
+		} else if sess.IsVisitor() || sess.NotRegistered() {
 			s = s.Where("albums.album_uid IN (?) OR albums.published_at > ?", sess.SharedUIDs(), entity.Now())
-		} else if sess.DeniesAll(aclResource, acl.Permissions{acl.AccessAll, acl.AccessLibrary}) {
+		} else {
 			s = s.Where("albums.album_uid IN (?) OR albums.created_by = ? OR albums.published_at > ?", sess.SharedUIDs(), user.UserUID, entity.Now())
 		}
 

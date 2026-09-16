@@ -52,9 +52,9 @@ func GetFile(router *gin.RouterGroup) {
 			return
 		}
 
-		// Limit the response to what the session is entitled to see, matching the reduction GetPhoto
-		// applies: per-file metadata for shared-only sessions, and the markers of withheld people.
-		c.JSON(http.StatusOK, f.RedactForSession(s))
+		// Limit the response to what the session is entitled to see. The file is answered on its own
+		// here, so the reduction reads files for the scope and pictures for the library reach.
+		c.JSON(http.StatusOK, f.RedactForSession(s, acl.ResourceFiles))
 	})
 }
 

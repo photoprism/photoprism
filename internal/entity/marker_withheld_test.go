@@ -143,17 +143,17 @@ func TestFile_MarkersForJSON(t *testing.T) {
 func TestFile_MarshalJSONOmitsWithheldPeople(t *testing.T) {
 	t.Run("FullAccess", func(t *testing.T) {
 		f, withheld, _ := withheldMarkerFile(t, false)
-		f.RedactForSession(adminSession())
+		f.RedactForSession(adminSession(), acl.ResourcePhotos)
 		assert.Contains(t, markerIdentities(t, f), withheld.SubjName+"/"+withheld.SubjUID)
 	})
 	t.Run("NilSession", func(t *testing.T) {
 		f, withheld, _ := withheldMarkerFile(t, false)
-		f.RedactForSession(nil)
+		f.RedactForSession(nil, acl.ResourcePhotos)
 		assert.Contains(t, markerIdentities(t, f), withheld.SubjName+"/"+withheld.SubjUID)
 	})
 	t.Run("LibraryAccessWithoutWithheldPeople", func(t *testing.T) {
 		f, withheld, public := withheldMarkerFile(t, false)
-		f.RedactForSession(libraryNoWithheldPeopleSession())
+		f.RedactForSession(libraryNoWithheldPeopleSession(), acl.ResourcePhotos)
 
 		names := markerIdentities(t, f)
 
@@ -163,7 +163,7 @@ func TestFile_MarshalJSONOmitsWithheldPeople(t *testing.T) {
 	})
 	t.Run("SharedOnly", func(t *testing.T) {
 		f, _, _ := withheldMarkerFile(t, false)
-		f.RedactForSession(sharedOnlySession())
+		f.RedactForSession(sharedOnlySession(), acl.ResourcePhotos)
 		assert.Empty(t, markerIdentities(t, f), "a shared-only session loses every marker")
 	})
 }
@@ -172,7 +172,7 @@ func TestFile_MarshalJSONOmitsWithheldPeople(t *testing.T) {
 // serialized for a session that may not see a withheld person still holds and saves that marker.
 func TestFile_MarkersForJSONDoesNotPersist(t *testing.T) {
 	f, withheld, _ := withheldMarkerFile(t, false)
-	f.RedactForSession(libraryNoWithheldPeopleSession())
+	f.RedactForSession(libraryNoWithheldPeopleSession(), acl.ResourcePhotos)
 
 	require.Len(t, *f.MarkersForJSON(), 1, "the withheld marker is left out of the response")
 	require.Len(t, *f.Markers(), 2, "the loaded markers stay complete")
@@ -233,7 +233,7 @@ func TestFile_MarkersForJSONOmitsUnlinkedNames(t *testing.T) {
 	})
 	t.Run("Serialized", func(t *testing.T) {
 		f := &File{FileUID: withheldTestFileUID}
-		f.RedactForSession(libraryNoWithheldPeopleSession())
+		f.RedactForSession(libraryNoWithheldPeopleSession(), acl.ResourcePhotos)
 
 		for _, id := range markerIdentities(t, f) {
 			assert.NotContains(t, id, withheld.SubjName)

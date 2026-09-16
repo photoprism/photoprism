@@ -59,6 +59,35 @@ func (m *Session) SeesPrivatePeople() bool {
 	return m.NoScope() || m.ValidateScope(acl.ResourcePeople, acl.Permissions{acl.AccessPrivate})
 }
 
+// SeesFullDetail reports whether the session may receive the full detail of a resource it has
+// already been admitted to, rather than the reduced projection: the role must grant view and
+// whole-library reach, and the credential's scope must permit viewing that resource. It reads the
+// role and scope AuthAny reads, and nothing else, so the caller owes it the admission checks.
+// A nil session is internal or CLI use and is unrestricted.
+func (m *Session) SeesFullDetail(resource acl.Resource) bool {
+	if m == nil {
+		return true
+	}
+
+	// A principal with neither an account nor a credential is a share-link visitor at most.
+	if !m.IsRegistered() && !m.IsClient() {
+		return false
+	}
+
+	if !m.Grants(resource, acl.ActionView) ||
+		!m.GrantsAny(resource, acl.Permissions{acl.AccessAll, acl.AccessLibrary}) {
+		return false
+	}
+
+	// An empty scope is unrestricted for an account session and insufficient for a credential,
+	// as it is on the handler.
+	if m.IsClient() {
+		return m.ValidateScope(resource, acl.Permissions{acl.ActionView})
+	}
+
+	return !m.HasScope() || m.ValidateScope(resource, acl.Permissions{acl.ActionView})
+}
+
 // HasSharedAccessOnly reports whether the session's effective access to the resource is limited to
 // shared content, evaluating the client role alongside the user role. A nil session is unrestricted.
 func (m *Session) HasSharedAccessOnly(resource acl.Resource) bool {

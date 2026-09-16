@@ -747,11 +747,11 @@ func (m *File) SetInstanceID(id string) {
 	}
 }
 
-// RedactForSession removes identifying per-file metadata a shared-only session must not see: the
-// XMP InstanceID is cleared and markers are omitted. Counterpart of Photo.RedactForSession, so
-// GetFile and GetPhoto strip the same fields. Withheld people are flagged first, since that
-// applies to a full-library session too.
-func (m *File) RedactForSession(sess *Session) *File {
+// RedactForSession removes identifying per-file metadata a session without whole-library reach must
+// not see: the XMP InstanceID is cleared and markers are omitted. The resource names the context
+// the file is answered in - the picture that carries it, or the file itself. Withheld people are
+// flagged first, as that applies to every session.
+func (m *File) RedactForSession(sess *Session, resource acl.Resource) *File {
 	if m == nil || sess == nil {
 		return m
 	}
@@ -761,8 +761,10 @@ func (m *File) RedactForSession(sess *Session) *File {
 		m.visibleMarkers = nil
 	}
 
-	// Only sessions limited to shared content are redacted.
-	if !sess.HasSharedAccessOnly(acl.ResourcePhotos) && !sess.NotRegistered() {
+	// Markers and the XMP identifier are picture data, so the role must reach the whole library of
+	// pictures as well, whichever resource this file was answered on.
+	if sess.SeesFullDetail(resource) &&
+		sess.GrantsAny(acl.ResourcePhotos, acl.Permissions{acl.AccessAll, acl.AccessLibrary}) {
 		return m
 	}
 

@@ -808,45 +808,27 @@ func (m *Photo) PreloadMany() *Photo {
 	return m
 }
 
-// RedactForSession trims what a shared-only session should not see when it reaches a picture
-// through sharing: albums outside its shares, labels, the owner, notes, and identifying metadata.
-// It trims only what the search results omit, so both read paths answer alike. The files always
-// pass through File.RedactForSession, since markers are answered on people rather than on photos.
+// RedactForSession trims what a session without whole-library reach on pictures should not see:
+// labels, the owner, notes, and identifying metadata. It trims only what the search results omit,
+// so both read paths answer alike. The files and the albums are answered separately, since each is
+// addressable on its own resource; a file inside a picture is judged on pictures.
 func (m *Photo) RedactForSession(sess *Session) *Photo {
 	if m == nil || sess == nil {
 		return m
 	}
 
 	for i := range m.Files {
-		m.Files[i].RedactForSession(sess)
+		m.Files[i].RedactForSession(sess, acl.ResourcePhotos)
 	}
 
-	// Only sessions limited to shared content are redacted.
-	if !sess.HasSharedAccessOnly(acl.ResourcePhotos) && !sess.NotRegistered() {
+	// Album records carry their own notes and filters, so a session admitted on pictures alone
+	// keeps only the albums it reaches through a share or its own ownership.
+	if len(m.Albums) > 0 && !sess.SeesFullDetail(acl.ResourceAlbums) {
+		m.Albums = SharedAlbums(m.Albums, sess)
+	}
+
+	if sess.SeesFullDetail(acl.ResourcePhotos) {
 		return m
-	}
-
-	// Limit album membership to the albums shared with the session.
-	if len(m.Albums) > 0 {
-		shared := sess.SharedUIDs()
-
-		if len(shared) == 0 {
-			m.Albums = nil
-		} else {
-			allowed := make(map[string]struct{}, len(shared))
-			for _, uid := range shared {
-				allowed[uid] = struct{}{}
-			}
-
-			kept := m.Albums[:0]
-			for _, a := range m.Albums {
-				if _, ok := allowed[a.AlbumUID]; ok {
-					kept = append(kept, a)
-				}
-			}
-
-			m.Albums = kept
-		}
 	}
 
 	// Remove labels; the files were redacted above.

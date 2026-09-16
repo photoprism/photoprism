@@ -5,23 +5,12 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
-// albumViewableBySession reports whether the session may view or download the given album. Unregistered
-// visitors and shared-access-only users need a share unless they created the album; a nil session is
-// never permitted.
+// albumViewableBySession reports whether the session may view or download the given album. Sessions
+// without whole-library reach on albums need a share unless they created the album; a nil session is
+// never permitted. The row policy lives on the entity, so the picture that names its albums answers
+// the same question about the same session.
 func albumViewableBySession(s *entity.Session, album entity.Album) bool {
-	if s == nil {
-		return false
-	}
-
-	if s.NotRegistered() && !s.HasShare(album.AlbumUID) {
-		return false
-	}
-
-	if s.HasSharedAccessOnly(acl.ResourceAlbums) && album.CreatedBy != s.UserUID && !s.HasShare(album.AlbumUID) {
-		return false
-	}
-
-	return true
+	return album.VisibleToSession(s)
 }
 
 // albumShareRequired reports whether the session lacks a share required to mutate the album, refusing
