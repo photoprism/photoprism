@@ -506,6 +506,43 @@ func TestSession_SeesPrivatePeople(t *testing.T) {
 	})
 }
 
+// TestMarker_RedactForSession pins the shape a marker write answers with, which a read of the same
+// marker has to match.
+func TestMarker_RedactForSession(t *testing.T) {
+	withheld := createWithheldSubject(t, "Redacted Rita", false)
+	visible := SubjectFixtures.Pointer("john-doe")
+
+	marker := func(subj *Subject) *Marker {
+		return &Marker{MarkerUID: "mrs6sg6bwbjkbeez", MarkerType: MarkerFace,
+			SubjUID: subj.SubjUID, SubjSrc: SrcManual, MarkerName: subj.SubjName}
+	}
+
+	t.Run("Withheld", func(t *testing.T) {
+		m := marker(withheld).RedactForSession(libraryNoWithheldPeopleSession())
+		assert.Empty(t, m.SubjUID)
+		assert.Empty(t, m.MarkerName)
+		assert.Empty(t, m.SubjSrc)
+		assert.Equal(t, "mrs6sg6bwbjkbeez", m.MarkerUID, "only the identity is cleared")
+	})
+	t.Run("VisiblePerson", func(t *testing.T) {
+		m := marker(visible).RedactForSession(libraryNoWithheldPeopleSession())
+		assert.Equal(t, visible.SubjUID, m.SubjUID)
+		assert.Equal(t, visible.SubjName, m.MarkerName)
+	})
+	t.Run("SessionSeesThem", func(t *testing.T) {
+		m := marker(withheld).RedactForSession(adminSession())
+		assert.Equal(t, withheld.SubjUID, m.SubjUID)
+	})
+	t.Run("NilSession", func(t *testing.T) {
+		m := marker(withheld).RedactForSession(nil)
+		assert.Equal(t, withheld.SubjUID, m.SubjUID)
+	})
+	t.Run("NilMarker", func(t *testing.T) {
+		var m *Marker
+		assert.Nil(t, m.RedactForSession(adminSession()))
+	})
+}
+
 // adminSession returns a session holding full access to people.
 func adminSession() *Session {
 	s := &Session{}

@@ -477,8 +477,8 @@ func TestUnshapedPictureResponses(t *testing.T) {
 		c.IndentedJSON(http.StatusOK, p)
 }`))
 	})
-	// Position, not just presence, in both directions: the shaping has to come after the response
-	// would have been sent, and before anything persists the reduced entity.
+	// Position, not just presence, in both directions: the shaping has to come before the response
+	// is sent, and after anything that persists the entity.
 	t.Run("ShapedAfterTheResponse", func(t *testing.T) {
 		assert.Equal(t, []string{"3:serializes a picture before shaping it, so the response carries the full entity"},
 			reasons(`func h() {
@@ -621,6 +621,48 @@ func TestMarkerHandlers_RefuseWithheldPeople(t *testing.T) {
 
 		assert.Equal(t, http.StatusNotFound, r.Code)
 		assert.NotContains(t, r.Body.String(), withheld.SubjUID)
+	})
+	t.Run("EditResolvingToWithheldPerson", func(t *testing.T) {
+		// A marker with no person passes the guard before the edit, so the submitted name is the
+		// only place the withheld person can enter, and the response is the only place it can leave.
+		const (
+			photoUID = "ps6sg6be2lvl0y14" // Photo07, whose title the edit regenerates
+			fileUID  = "fs6sg6bqhhinlplr" // its primary file
+		)
+
+		photo := entity.Photo{}
+		require.NoError(t, entity.UnscopedDb().First(&photo, "photo_uid = ?", photoUID).Error)
+
+		title, caption := photo.PhotoTitle, photo.PhotoCaption
+
+		t.Cleanup(func() {
+			entity.UnscopedDb().Model(&entity.Photo{}).Where("photo_uid = ?", photoUID).
+				UpdateColumns(entity.Values{"photo_title": title, "photo_caption": caption})
+		})
+
+		probe, createErr := entity.CreateMarkerIfNotExists(&entity.Marker{
+			FileUID: fileUID, MarkerType: entity.MarkerFace, MarkerSrc: entity.SrcImage,
+			Thumb: "withheldtransition", X: 0.6, Y: 0.4, W: 0.1, H: 0.1, Size: 200, Score: 80,
+		})
+		require.NoError(t, createErr)
+		require.Empty(t, probe.SubjUID, "the marker has to start without a person")
+
+		t.Cleanup(func() {
+			entity.UnscopedDb().Unscoped().Delete(&entity.Marker{}, "marker_uid = ?", probe.MarkerUID)
+		})
+
+		r := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/markers/"+probe.MarkerUID,
+			`{"SubjSrc":"manual","Name":"`+withheld.SubjName+`"}`, sess.AuthToken())
+
+		require.Equal(t, http.StatusOK, r.Code, "the edit itself is allowed, as it is on creation")
+		assert.NotContains(t, r.Body.String(), withheld.SubjUID)
+		assert.NotContains(t, r.Body.String(), withheld.SubjName)
+
+		// The link is written whatever the response carries, so an empty column would pass the
+		// assertions above for the wrong reason.
+		stored := entity.Marker{}
+		require.NoError(t, entity.UnscopedDb().First(&stored, "marker_uid = ?", probe.MarkerUID).Error)
+		assert.Equal(t, withheld.SubjUID, stored.SubjUID)
 	})
 	t.Run("AdminUnaffected", func(t *testing.T) {
 		r := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/markers/"+marker.MarkerUID,

@@ -579,6 +579,21 @@ func (m *Marker) WithheldFromSession(sess *Session) bool {
 	return withheld.Withholds(m.SubjUID, m.MarkerName)
 }
 
+// RedactForSession clears the identity of a marker the session may not see, so a write answers
+// with no more than a read of the same marker would. The write itself is left alone: the session
+// supplied the name, and only the resolved link would be news to it.
+func (m *Marker) RedactForSession(sess *Session) *Marker {
+	if m == nil || !m.WithheldFromSession(sess) {
+		return m
+	}
+
+	m.MarkerName = ""
+	m.SubjUID = ""
+	m.SubjSrc = ""
+
+	return m
+}
+
 // ClearSubject removes an existing subject association, and reports a collision.
 func (m *Marker) ClearSubject(src string) error {
 	// Find the matching face.

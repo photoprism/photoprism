@@ -53,38 +53,38 @@ func faceMigrationRunning(c *gin.Context) bool {
 	return true
 }
 
-// findFileMarker returns a file and marker entity matching the api request.
-func findFileMarker(c *gin.Context) (file *entity.File, marker *entity.Marker, err error) {
+// findFileMarker returns the session, file and marker entity matching the api request.
+func findFileMarker(c *gin.Context) (s *entity.Session, file *entity.File, marker *entity.Marker, err error) {
 	// Check authorization.
-	s := Auth(c, acl.ResourceFiles, acl.ActionUpdate)
+	s = Auth(c, acl.ResourceFiles, acl.ActionUpdate)
 
 	if s.Abort(c) {
-		return nil, nil, errors.New("unauthorized")
+		return s, nil, nil, errors.New("unauthorized")
 	}
 
 	// Check feature flags.
 	conf := get.Config()
 	if !conf.Settings().Features.People {
 		AbortFeatureDisabled(c)
-		return nil, nil, errors.New("feature disabled")
+		return s, nil, nil, errors.New("feature disabled")
 	}
 
 	// Find marker.
 	if uid := c.Param("marker_uid"); uid == "" {
 		AbortBadRequest(c)
-		return nil, nil, errors.New("bad request")
+		return s, nil, nil, errors.New("bad request")
 	} else if marker, err = query.MarkerByUID(uid); err != nil {
 		AbortEntityNotFound(c)
-		return nil, nil, fmt.Errorf("uid %s %s", uid, err)
+		return s, nil, nil, fmt.Errorf("uid %s %s", uid, err)
 	} else if marker.FileUID == "" {
 		AbortEntityNotFound(c)
-		return nil, marker, errors.New("marker file missing")
+		return s, nil, marker, errors.New("marker file missing")
 	}
 
 	// Find file.
 	if file, err = query.FileByUID(marker.FileUID); err != nil {
 		AbortEntityNotFound(c)
-		return file, marker, fmt.Errorf("file %s %s", marker.FileUID, err)
+		return s, file, marker, fmt.Errorf("file %s %s", marker.FileUID, err)
 	}
 
 	// Limit the edit to the file's photo within the session's shared scope. PhotoSessionSeesEverything
@@ -92,7 +92,7 @@ func findFileMarker(c *gin.Context) (file *entity.File, marker *entity.Marker, e
 	if !search.PhotoSessionSeesEverything(s) {
 		if visible, vErr := search.PhotoVisibleToSession(file.PhotoUID, s); vErr != nil || !visible {
 			AbortForbidden(c)
-			return file, marker, errors.New("forbidden")
+			return s, file, marker, errors.New("forbidden")
 		}
 	}
 
@@ -101,10 +101,10 @@ func findFileMarker(c *gin.Context) (file *entity.File, marker *entity.Marker, e
 	// subject handlers answer for the same person.
 	if marker.WithheldFromSession(s) {
 		AbortEntityNotFound(c)
-		return file, marker, errors.New("marker withheld")
+		return s, file, marker, errors.New("marker withheld")
 	}
 
-	return file, marker, nil
+	return s, file, marker, nil
 }
 
 // CreateMarker adds a new file area marker to assign faces or other subjects.
@@ -224,17 +224,9 @@ func CreateMarker(router *gin.RouterGroup) {
 		// Display success message.
 		event.SuccessMsg(i18n.MsgChangesSaved)
 
-		// The session supplied the name, so nothing here is news to it - but a resolved subject uid
-		// would be, and the response is shaped like every other read of a marker.
-		if marker.WithheldFromSession(s) {
-			marker.MarkerName = ""
-			marker.SubjUID = ""
-			marker.SubjSrc = ""
-		}
-
 		// Return new marker with location header.
 		header.SetLocation(c, c.FullPath(), marker.MarkerUID)
-		c.JSON(http.StatusCreated, marker)
+		c.JSON(http.StatusCreated, marker.RedactForSession(s))
 	})
 }
 
@@ -265,7 +257,7 @@ func UpdateMarker(router *gin.RouterGroup) {
 
 		defer mutex.UpdatePeople.Stop()
 
-		file, marker, err := findFileMarker(c)
+		s, file, marker, err := findFileMarker(c)
 
 		if err != nil {
 			log.Debugf("faces: %s (find marker to update)", err)
@@ -344,8 +336,9 @@ func UpdateMarker(router *gin.RouterGroup) {
 		// Display success message.
 		event.SuccessMsg(i18n.MsgChangesSaved)
 
-		// Return updated marker.
-		c.JSON(http.StatusOK, marker)
+		// Return updated marker, shaped like a read: the name submitted here may resolve to a
+		// person the session may not see.
+		c.JSON(http.StatusOK, marker.RedactForSession(s))
 	})
 }
 
@@ -374,7 +367,7 @@ func ClearMarkerSubject(router *gin.RouterGroup) {
 
 		defer mutex.UpdatePeople.Stop()
 
-		file, marker, err := findFileMarker(c)
+		s, file, marker, err := findFileMarker(c)
 
 		if err != nil {
 			log.Debugf("faces: %s (find marker to clear subject)", err)
@@ -410,6 +403,6 @@ func ClearMarkerSubject(router *gin.RouterGroup) {
 
 		event.SuccessMsg(i18n.MsgChangesSaved)
 
-		c.JSON(http.StatusOK, marker)
+		c.JSON(http.StatusOK, marker.RedactForSession(s))
 	})
 }
