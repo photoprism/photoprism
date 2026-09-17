@@ -64,7 +64,7 @@ func (a *shareAliases) Keep(alias string) {
 //	@Produce	json
 //	@Param		id						path		string	true	"service id"
 //	@Success	200						{object}	entity.Files
-//	@Failure	401,403,404,429	{object}	i18n.Response
+//	@Failure	400,401,403,404,413,429	{object}	i18n.Response
 //	@Router		/api/v1/services/{id}/upload [post]
 func UploadToService(router *gin.RouterGroup) {
 	router.POST("/services/:id/upload", func(c *gin.Context) {
@@ -100,8 +100,8 @@ func UploadToService(router *gin.RouterGroup) {
 
 		folder := frm.Folder
 
-		if webdav.SkipSyncPath(folder) {
-			log.Tracef("services: excluded upload folder %s", clean.Log(folder))
+		if webdav.SkipSyncPath(folder) || webdav.UnsafeSyncPath(folder) {
+			log.Tracef("services: rejected upload folder %s", clean.Log(folder))
 			AbortBadRequest(c, errors.New("destination folder is not allowed"))
 			return
 		}
@@ -127,8 +127,8 @@ func UploadToService(router *gin.RouterGroup) {
 
 			alias := aliases.Resolve(&file, folder)
 
-			if webdav.SkipSyncPath(alias) {
-				log.Debugf("services: skipping excluded destination %s", clean.Log(alias))
+			if webdav.SkipSyncPath(alias) || webdav.UnsafeSyncPath(alias) {
+				log.Debugf("services: skipping rejected destination %s", clean.Log(alias))
 				continue
 			}
 

@@ -160,6 +160,24 @@ func TestUploadToServiceAliases(t *testing.T) {
 			assert.Equal(t, "Uploads/Trip", path.Dir(name))
 		}
 	})
+	// A destination with a parent-directory segment is rejected before any file is queued.
+	t.Run("UnsafeFolder", func(t *testing.T) {
+		account := entity.Service{AccName: "Alias Control Unsafe", AccURL: "http://127.0.0.1/", AccType: "webdav", AccShare: true}
+		require.NoError(t, entity.Db().Create(&account).Error)
+		t.Cleanup(func() {
+			entity.UnscopedDb().Unscoped().Delete(&entity.FileShare{}, "service_id = ?", account.ID)
+			entity.UnscopedDb().Unscoped().Delete(&account)
+		})
+		uri := fmt.Sprintf("/api/v1/services/%d/upload", account.ID)
+		for _, folder := range []string{"../outside", "Uploads/../../outside", `..\outside`} {
+			body := fmt.Sprintf(`{"selection":{"photos":[%q]},"folder":%q}`, photo.PhotoUID, folder)
+			result := PerformRequestWithBody(app, http.MethodPost, uri, body)
+			require.Equal(t, http.StatusBadRequest, result.Code, folder)
+		}
+		var count int
+		require.NoError(t, entity.Db().Model(&entity.FileShare{}).Where("service_id = ?", account.ID).Count(&count).Error)
+		assert.Equal(t, 0, count)
+	})
 	t.Run("RootFolder", func(t *testing.T) {
 		names := uploadAliases(t, "Alias Control Root", "")
 		require.Len(t, names, 4)

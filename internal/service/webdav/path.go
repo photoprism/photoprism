@@ -19,10 +19,8 @@ func isHiddenPath(dir string) bool {
 }
 
 // isUnsafePath reports whether a remote WebDAV path contains a parent-directory
-// ("..") segment. The raw path is inspected before normalization because
-// path.Clean collapses a rooted interior ".." into a dotless path that would
-// otherwise pass the hidden-path filter and later escape the local sync base
-// directory once composed with a destination.
+// ("..") segment. The raw path is inspected before normalization, since
+// path.Clean collapses a rooted interior ".." into a dotless path.
 func isUnsafePath(dir string) bool {
 	for segment := range strings.SplitSeq(strings.Trim(strings.ReplaceAll(dir, "\\", "/"), "/"), "/") {
 		if segment == ".." {
@@ -43,6 +41,11 @@ func trimPath(dir string) string {
 
 func splitPath(dir string) []string {
 	return strings.Split(trimPath(dir), "/")
+}
+
+// UnsafeSyncPath reports whether a logical transfer path contains a parent-directory segment.
+func UnsafeSyncPath(name string) bool {
+	return isUnsafePath(name)
 }
 
 // SkipSyncPath reports whether a logical transfer path is excluded from WebDAV sync.

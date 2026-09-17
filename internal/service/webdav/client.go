@@ -27,6 +27,23 @@ import (
 // ErrSkipPath identifies a path excluded by the transfer policy without a remote failure.
 var ErrSkipPath = errors.New("webdav: transfer path skipped")
 
+// ErrUnsafePath identifies a path with a parent-directory segment. It is reported as a failure
+// rather than a skip, so a queued transfer is not recorded as benignly ignored.
+var ErrUnsafePath = errors.New("webdav: transfer path contains a parent directory")
+
+// checkTransferPath returns ErrSkipPath for an excluded path and ErrUnsafePath for one with a
+// parent-directory segment. The exclusion is checked first, so a reserved name that also contains
+// one keeps reporting a skip.
+func checkTransferPath(name string) error {
+	if SkipSyncPath(name) {
+		return ErrSkipPath
+	} else if isUnsafePath(name) {
+		return ErrUnsafePath
+	}
+
+	return nil
+}
+
 // Client represents a webdav client.
 type Client struct {
 	client        *webdav.Client
@@ -273,6 +290,8 @@ func (c *Client) readDirFallback(ctx context.Context, dir string, timeout time.D
 func (c *Client) Files(dir string, recursive bool) (result fs.FileInfos, err error) {
 	if SkipSyncPath(dir) {
 		return nil, nil
+	} else if isUnsafePath(dir) {
+		return nil, ErrUnsafePath
 	}
 
 	defer func() {
@@ -313,6 +332,8 @@ func (c *Client) Files(dir string, recursive bool) (result fs.FileInfos, err err
 func (c *Client) Directories(dir string, recursive bool, timeout time.Duration) (result fs.FileInfos, err error) {
 	if SkipSyncPath(dir) {
 		return nil, nil
+	} else if isUnsafePath(dir) {
+		return nil, ErrUnsafePath
 	}
 
 	dir = trimPath(dir)
@@ -359,8 +380,8 @@ func (c *Client) Directories(dir string, recursive bool, timeout time.Duration) 
 
 // MkdirAll recursively creates remote directories.
 func (c *Client) MkdirAll(dir string) (err error) {
-	if SkipSyncPath(dir) {
-		return ErrSkipPath
+	if err = checkTransferPath(dir); err != nil {
+		return err
 	}
 
 	folders := splitPath(dir)
@@ -381,8 +402,8 @@ func (c *Client) MkdirAll(dir string) (err error) {
 
 // Mkdir creates a single remote directory.
 func (c *Client) Mkdir(dir string) error {
-	if SkipSyncPath(dir) {
-		return ErrSkipPath
+	if err := checkTransferPath(dir); err != nil {
+		return err
 	}
 
 	dir = trimPath(dir)
@@ -412,8 +433,8 @@ func (c *Client) Mkdir(dir string) error {
 
 // Upload uploads a single file to the remote server.
 func (c *Client) Upload(src, dest string) (err error) {
-	if SkipSyncPath(dest) {
-		return ErrSkipPath
+	if err = checkTransferPath(dest); err != nil {
+		return err
 	}
 
 	defer func() {
@@ -465,8 +486,8 @@ func (c *Client) Upload(src, dest string) (err error) {
 
 // Download downloads a single file to the given location.
 func (c *Client) Download(src, dest string, force bool) (err error) {
-	if SkipSyncPath(src) {
-		return ErrSkipPath
+	if err = checkTransferPath(src); err != nil {
+		return err
 	}
 
 	defer func() {
@@ -649,8 +670,8 @@ func (c *Client) DownloadDir(src, dest string, recursive, force bool) (errs []er
 
 // Delete deletes a single file or directory on a remote server.
 func (c *Client) Delete(dir string) error {
-	if SkipSyncPath(dir) {
-		return ErrSkipPath
+	if err := checkTransferPath(dir); err != nil {
+		return err
 	}
 
 	dir = trimPath(dir)

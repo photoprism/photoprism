@@ -17,6 +17,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	dav "github.com/photoprism/photoprism/internal/service/webdav"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -32,10 +33,12 @@ func TestSyncPathPolicy(t *testing.T) {
 
 	var transfers atomic.Int64
 	var deletes atomic.Int64
+	var requests atomic.Int64
 
 	handler := &webdav.Handler{FileSystem: webdav.Dir(remote), LockSystem: webdav.NewMemLS()}
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		requests.Add(1)
 		if r.Method == "DELETE" {
 			deletes.Add(1)
 		}
@@ -169,6 +172,16 @@ func TestSyncPathPolicy(t *testing.T) {
 	require.NoError(t, err)
 	assert.True(t, complete)
 
+	beforeUnsafe := requests.Load()
+	a.SyncPath = "../.."
+	complete, err = worker.refresh(a)
+
+	assert.ErrorIs(t, err, dav.ErrUnsafePath)
+	assert.False(t, complete)
+	assert.Equal(t, beforeUnsafe, requests.Load())
+
+	a.SyncPath = ".config"
+
 	complete, err = worker.upload(a)
 
 	require.NoError(t, err)
@@ -216,6 +229,7 @@ func TestSyncPathPolicy(t *testing.T) {
 	require.NoError(t, entity.NewFileShare(owned[0].ID, a.ID, "ordinary-alias.jpg").Create())
 	require.NoError(t, entity.NewFileShare(owned[len(owned)-1].ID, a.ID, ".ssh/ordinary.jpg").Create())
 	require.NoError(t, entity.NewFileShare(owned[len(owned)-1].ID, a.ID, "shared.jpg").Create())
+	require.NoError(t, entity.NewFileShare(owned[len(owned)-1].ID, a.ID, "../outside.jpg").Create())
 	broken := &entity.File{PhotoID: photo.ID, PhotoUID: photo.PhotoUID, FileRoot: entity.RootOriginals, FileName: "broken.jpg", FileType: "jpg", MediaType: entity.MediaImage, FileHash: "920de6c3667435aab021245438a879e53374c43d"}
 	require.NoError(t, broken.Create())
 	require.NoError(t, os.Symlink(filepath.Join(conf.OriginalsPath(), "absent.jpg"), filepath.Join(conf.OriginalsPath(), broken.FileName)))
@@ -227,6 +241,14 @@ func TestSyncPathPolicy(t *testing.T) {
 	require.NoError(t, entity.Db().Where("service_id = ? AND file_id = ?", a.ID, broken.ID).First(&storedBroken).Error)
 	assert.Equal(t, entity.FileShareError, storedBroken.Status)
 	assert.Equal(t, a.RetryLimit+1, storedBroken.Errors)
+
+	// A destination with a parent-directory segment is a transfer failure, not a benign skip.
+	var outsideShare entity.FileShare
+	require.NoError(t, entity.Db().Where("service_id = ? AND remote_name = ?", a.ID, "../outside.jpg").First(&outsideShare).Error)
+	assert.NotEqual(t, entity.FileShareIgnore, outsideShare.Status)
+	assert.Contains(t, outsideShare.Error, "parent directory")
+	assert.Equal(t, 1, outsideShare.Errors)
+	assert.NoFileExists(t, filepath.Join(filepath.Dir(remote), "outside.jpg"))
 
 	assert.NoFileExists(t, filepath.Join(remote, "ordinary-alias.jpg"))
 	assert.NoFileExists(t, filepath.Join(remote, ".ssh/ordinary.jpg"))
@@ -262,6 +284,14 @@ func TestSyncPathPolicy(t *testing.T) {
 	assert.Equal(t, entity.FileShareError, retained.Status)
 	assert.Contains(t, retained.Error, "remote copy retained")
 	assert.Equal(t, 1, retained.Errors)
+	expiredOutside := entity.NewFileShare(owned[len(owned)-1].ID, a.ID, "../expired.jpg")
+	expiredOutside.Status = entity.FileShareShared
+	require.NoError(t, expiredOutside.Create())
+	require.NoError(t, entity.Db().Model(expiredOutside).UpdateColumn("updated_at", time.Now().UTC().Add(-48*time.Hour)).Error)
 	require.NoError(t, NewShare(conf).Start())
 	assert.EqualValues(t, 1, deletes.Load())
+	var retainedOutside entity.FileShare
+	require.NoError(t, entity.Db().Where("service_id = ? AND remote_name = ?", a.ID, "../expired.jpg").First(&retainedOutside).Error)
+	assert.Equal(t, entity.FileShareError, retainedOutside.Status)
+	assert.Contains(t, retainedOutside.Error, "remote copy retained")
 }

@@ -148,7 +148,7 @@ func (w *Share) Start() (err error) {
 				file.Errors++
 				file.Error = err.Error()
 			} else {
-				log.Infof("share: uploaded %s to %s", file.RemoteName, a.AccName)
+				log.Infof("share: uploaded %s to %s", clean.Log(file.RemoteName), clean.Log(a.AccName))
 				file.Errors = 0
 				file.Error = ""
 				file.Status = entity.FileShareShared
@@ -206,7 +206,7 @@ func (w *Share) Start() (err error) {
 				return nil
 			}
 
-			if webdav.SkipSyncPath(file.RemoteName) {
+			if webdav.SkipSyncPath(file.RemoteName) || webdav.UnsafeSyncPath(file.RemoteName) {
 				file.Status = entity.FileShareError
 				file.Error = "remote copy retained: removal blocked by path policy"
 				file.Errors++
@@ -219,7 +219,7 @@ func (w *Share) Start() (err error) {
 				file.Errors++
 				file.Error = err.Error()
 			} else {
-				log.Infof("share: removed %s from %s", file.RemoteName, a.AccName)
+				log.Infof("share: removed %s from %s", clean.Log(file.RemoteName), clean.Log(a.AccName))
 				file.Errors = 0
 				file.Error = ""
 				file.Status = entity.FileShareRemoved

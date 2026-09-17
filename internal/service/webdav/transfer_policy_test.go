@@ -89,7 +89,57 @@ func TestClient_TransferPolicy(t *testing.T) {
 		assert.Equal(t, before, requests.Load(), name)
 	}
 
+	// Paths with a parent-directory segment are refused before a request is sent.
+	for _, name := range []string{"../outside.txt", "nested/../../outside.txt", `..\outside.txt`, "/../outside.txt"} {
+		before := requests.Load()
+		assert.ErrorIs(t, client.Upload(src, name), ErrUnsafePath)
+		assert.ErrorIs(t, client.Download(name, filepath.Join(local, "outside.txt"), false), ErrUnsafePath)
+		assert.ErrorIs(t, client.MkdirAll(name), ErrUnsafePath)
+		assert.ErrorIs(t, client.Mkdir(name), ErrUnsafePath)
+		assert.ErrorIs(t, client.Delete(name), ErrUnsafePath)
+
+		files, filesErr := client.Files(name, true)
+
+		assert.ErrorIs(t, filesErr, ErrUnsafePath)
+		assert.Empty(t, files)
+
+		dirs, dirsErr := client.Directories(name, true, 0)
+
+		assert.ErrorIs(t, dirsErr, ErrUnsafePath)
+		assert.Empty(t, dirs)
+		assert.Equal(t, before, requests.Load(), name)
+	}
+
+	assert.NoFileExists(t, filepath.Join(local, "outside.txt"))
+
+	// An absolute destination stays below the configured endpoint.
+	require.NoError(t, client.Upload(src, "/absolute.txt"))
+	assert.FileExists(t, filepath.Join(remote, "absolute.txt"))
+	assert.NoFileExists(t, filepath.Join(filepath.Dir(remote), "absolute.txt"))
+
 	assert.NoFileExists(t, filepath.Join(local, "blocked.txt"))
+}
+
+// TestUnsafeSyncPath checks parent-directory segments in either separator form.
+func TestUnsafeSyncPath(t *testing.T) {
+	for _, name := range []string{"..", "../photo.jpg", "a/../../photo.jpg", `a\..\photo.jpg`, "/../photo.jpg", "a/.."} {
+		assert.True(t, UnsafeSyncPath(name), name)
+	}
+
+	for _, name := range []string{"", "/", "photo.jpg", "a/b/photo.jpg", "a/..b/photo.jpg", "...", "photo..jpg", "a/b../c"} {
+		assert.False(t, UnsafeSyncPath(name), name)
+	}
+}
+
+// TestCheckTransferPath checks excluded names apart from parent-directory segments.
+func TestCheckTransferPath(t *testing.T) {
+	require.NoError(t, checkTransferPath("photos/photo.jpg"))
+	require.NoError(t, checkTransferPath(""))
+	assert.ErrorIs(t, checkTransferPath(".ssh/key"), ErrSkipPath)
+	assert.ErrorIs(t, checkTransferPath(".hidden/photo.jpg"), ErrSkipPath)
+	assert.ErrorIs(t, checkTransferPath(".ssh/../photo.jpg"), ErrSkipPath)
+	assert.ErrorIs(t, checkTransferPath("../photo.jpg"), ErrUnsafePath)
+	assert.ErrorIs(t, checkTransferPath("photos/../../photo.jpg"), ErrUnsafePath)
 }
 
 // TestClient_DownloadDirTargets preserves operator-managed destination mappings.
