@@ -17,10 +17,10 @@ import (
 
 // TestSkipSyncPath retains traversal handling while excluding hidden transfer paths.
 func TestSkipSyncPath(t *testing.T) {
-	for _, name := range append(fs.ReservedPathNames(), ".git/photo.jpg", ".config/photo.jpg", "folder/.photoprism/photo.jpg", ".ssh/../photo.jpg", "a/../.env.txt", ".hidden/photo.jpg", `a\.HG\photo.jpg`) {
+	for _, name := range append(fs.ReservedPathNames(), ".git/photo.jpg", ".config/photo.jpg", "folder/.photoprism/photo.jpg", ".ssh/../photo.jpg", "a/../.env.txt", ".hidden/photo.jpg", "photo.jpg.rclonelink", "nested/LINK.RCLONELINK/photo.jpg", `a\.HG\photo.jpg`) {
 		assert.True(t, SkipSyncPath(name), name)
 	}
-	for _, name := range []string{"", "/", "photo.jpg", "photos/photo.jpg", "../outside.jpg", "/sub/../../outside.jpg", "%2egit/photo.jpg"} {
+	for _, name := range []string{"", "/", "photo.jpg", "photos/photo.jpg", "photo.rclonelink.jpg", "../outside.jpg", "/sub/../../outside.jpg", "%2egit/photo.jpg"} {
 		assert.False(t, SkipSyncPath(name), name)
 	}
 }

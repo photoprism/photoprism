@@ -95,7 +95,8 @@ Ordinary Basic passwords retain their account authentication and cache behavior.
 ### WebDAV Path Policy
 
 Every mount uses the reserved administrative names defined by `pkg/fs.ReservedPathNames`,
-and `pkg/fs.ReservedPathPatterns`, including `.env.*`, `.*ignore`, `.*_history`, `.bash_history-*.tmp`, and `.*.cnf` variants.
+and `pkg/fs.ReservedPathPatterns`, including `.env.*`, `.*ignore`, `.*_history`, `.bash_history-*.tmp`, and `.*.cnf` variants,
+plus the component suffixes in `pkg/fs.ReservedPathSuffixes`.
 Ignore-file names matching `.*ignore` remain visible under `ReservedPathPolicy{AllowIgnoreNames: true}`
 and use the managed-file write policy below. Independent reserved-name/pattern and
 logical ancestor restrictions still apply. Matching is case-insensitive and applies at every path component.

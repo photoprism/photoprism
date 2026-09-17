@@ -68,6 +68,9 @@ var reservedPathNames = map[string]struct{}{
 // reservedPathPatterns contains dot-prefixed component patterns excluded at transfer boundaries.
 var reservedPathPatterns = []string{EnvFileName + ".*", IgnoreFilePattern, ".*_history", ".bash_history-*.tmp", ".*.cnf"}
 
+// reservedPathSuffixes contains component suffixes excluded at transfer boundaries.
+var reservedPathSuffixes = []string{ExtRcloneLink}
+
 // ReservedPathNames returns a sorted copy of the reserved administrative names.
 func ReservedPathNames() []string {
 	return slices.Sorted(maps.Keys(reservedPathNames))
@@ -76,6 +79,11 @@ func ReservedPathNames() []string {
 // ReservedPathPatterns returns a copy of the reserved component patterns.
 func ReservedPathPatterns() []string {
 	return slices.Clone(reservedPathPatterns)
+}
+
+// ReservedPathSuffixes returns a copy of the reserved component suffixes.
+func ReservedPathSuffixes() []string {
+	return slices.Clone(reservedPathSuffixes)
 }
 
 // ReservedPathPolicy controls admission of managed ignore names at a filesystem boundary.
@@ -90,7 +98,7 @@ func IsIgnoreFileName(name string) bool {
 	return matched
 }
 
-// HasReservedComponent reports whether a relative path contains a reserved administrative name.
+// HasReservedComponent reports whether a relative path contains a reserved component.
 func HasReservedComponent(name string) bool {
 	return (ReservedPathPolicy{}).HasReservedComponent(name)
 }
@@ -102,6 +110,12 @@ func (p ReservedPathPolicy) HasReservedComponent(name string) bool {
 
 		if _, reserved := reservedPathNames[component]; reserved {
 			return true
+		}
+
+		for _, suffix := range reservedPathSuffixes {
+			if strings.HasSuffix(component, suffix) {
+				return true
+			}
 		}
 
 		if !strings.HasPrefix(component, ".") {

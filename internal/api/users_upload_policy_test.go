@@ -21,7 +21,7 @@ func TestUploadSidecarAllowed(t *testing.T) {
 		assert.False(t, uploadSidecarAllowed("nested/"+name+"/photo.jpg"), name)
 	}
 
-	for _, name := range []string{"a.yml", "a.YAML", "a.JSON", "a.aae", "a.xml", "a.nfo", "a.unknown", ".ppignore", ".env.jpg", ".ENV.example.txt", ".git/photo.jpg"} {
+	for _, name := range []string{"a.yml", "a.YAML", "a.JSON", "a.aae", "a.xml", "a.nfo", "a.unknown", "a.rclonelink", "nested/link.RCLONELINK/photo.jpg", ".ppignore", ".env.jpg", ".ENV.example.txt", ".git/photo.jpg"} {
 		assert.False(t, uploadSidecarAllowed(name), name)
 	}
 }
@@ -131,6 +131,9 @@ func TestUploadArchiveEntryAllowed(t *testing.T) {
 	assert.False(t, uploadArchiveEntryAllowed(".ssh", true))
 	assert.False(t, uploadArchiveEntryAllowed(".ssh/photo.jpg", false))
 	assert.False(t, uploadArchiveEntryAllowed("photo.json", false))
+	assert.False(t, uploadArchiveEntryAllowed("photo.rclonelink", true))
+	assert.False(t, uploadArchiveEntryAllowed("nested/photo.RCLONELINK/photo.jpg", false))
+	assert.True(t, uploadArchiveEntryAllowed("nested/photo.rclonelink.jpg", false))
 	assert.True(t, uploadArchiveEntryAllowed(".ordinary", true))
 	assert.True(t, uploadArchiveEntryAllowed("ordinary/photo.md", false))
 }

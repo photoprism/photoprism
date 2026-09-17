@@ -18,11 +18,11 @@ func TestHasReservedComponent(t *testing.T) {
 		assert.True(t, HasReservedComponent("nested/"+strings.ToUpper(name)+"/photo.jpg"), name)
 	}
 
-	for _, name := range []string{".Xauthority", ".my.cnf", ".mylogin.cnf", "nested/.CUSTOM.CNF", `nested\.MYSQL.CNF`, ".ppignore", "nested/.PPIGNORE", ".gitignore", ".rsyncignore", ".dockerignore", ".ignore", ".python_history", ".node_repl_history", ".bash_history", ".mysql_history", ".zsh_history", "nested/.CUSTOMIGNORE/photo.jpg", `nested\.CUSTOM_HISTORY\file`, ".ppignore/.git/config", ".FORGEJO/workflows/build.yml", `nested\.Forgejo\photo.jpg`, ".bash_history-04218.tmp", "nested/.BASH_HISTORY-86113.TMP", ".env.", ".git", ".config/photo.jpg", "nested/.photoprism/photo.jpg", ".git/photo.jpg", "a/.svn/photo.jpg", ".HG/photo.jpg", "a/.ssh/._photo.jpg", "a/.GnUpG/photo.jpg", ".env", "a/.env.production", "a/.ENV.example/p.jpg", `a\.SSH\photo.jpg`} {
+	for _, name := range []string{".Xauthority", ".my.cnf", ".mylogin.cnf", "nested/.CUSTOM.CNF", `nested\.MYSQL.CNF`, ".ppignore", "nested/.PPIGNORE", ".gitignore", ".rsyncignore", ".dockerignore", ".ignore", ".python_history", ".node_repl_history", ".bash_history", ".mysql_history", ".zsh_history", "nested/.CUSTOMIGNORE/photo.jpg", `nested\.CUSTOM_HISTORY\file`, ".ppignore/.git/config", ".FORGEJO/workflows/build.yml", `nested\.Forgejo\photo.jpg`, "photo.rclonelink", "nested/PHOTO.JPG.RCLONELINK", `nested\link.RcloneLink\photo.jpg`, ".rclonelink", ".bash_history-04218.tmp", "nested/.BASH_HISTORY-86113.TMP", ".env.", ".git", ".config/photo.jpg", "nested/.photoprism/photo.jpg", ".git/photo.jpg", "a/.svn/photo.jpg", ".HG/photo.jpg", "a/.ssh/._photo.jpg", "a/.GnUpG/photo.jpg", ".env", "a/.env.production", "a/.ENV.example/p.jpg", `a\.SSH\photo.jpg`} {
 		assert.True(t, HasReservedComponent(name), name)
 	}
 
-	for _, name := range []string{"", ".", ".cache-photos/photo.jpg", ".profile.jpg", ".cargo-images/photo.jpg", "my.cnf", "settings.cnf", "folder/photo.cnf", "plainignore", "plain_history", ".custom_history.jpg", ".dockerignore.txt", ".bash_history_notes.txt", ".bash_history-04218.tmp.jpg", ".bash_history-04218", ".env-keys-photo.jpg", ".htaccess.jpg", ".my.cnf.jpg", ".gitkeep", "serial", "keys/photo.jpg", "config/photo.jpg", "signing.key.jpg", "signing.key-backup", "client_secret.txt", ".gitignore.txt", ".github-backup/photo.jpg", "forgejo/photo.jpg", ".forgejo-backup/photo.jpg", ".forgejo.jpg", ".locality/photo.jpg", ".claude-example/photo.jpg", "_netrc.txt", "a/git/photo.jpg", ".environment.jpeg", "._photo.jpg", ".DS_Store", ".hidden/photo.jpg", "%2egit/photo.jpg", "photo.git.jpg"} {
+	for _, name := range []string{"", ".", ".cache-photos/photo.jpg", ".profile.jpg", ".cargo-images/photo.jpg", "my.cnf", "settings.cnf", "folder/photo.cnf", "plainignore", "plain_history", ".custom_history.jpg", ".dockerignore.txt", ".bash_history_notes.txt", ".bash_history-04218.tmp.jpg", ".bash_history-04218", ".env-keys-photo.jpg", ".htaccess.jpg", ".my.cnf.jpg", ".gitkeep", "serial", "keys/photo.jpg", "config/photo.jpg", "signing.key.jpg", "signing.key-backup", "client_secret.txt", ".gitignore.txt", ".github-backup/photo.jpg", "forgejo/photo.jpg", ".forgejo-backup/photo.jpg", ".forgejo.jpg", "photo.rclonelink.jpg", "rclonelink", "photo.rclonelinks", "photo.rclone", "rclonelink/photo.jpg", ".locality/photo.jpg", ".claude-example/photo.jpg", "_netrc.txt", "a/git/photo.jpg", ".environment.jpeg", "._photo.jpg", ".DS_Store", ".hidden/photo.jpg", "%2egit/photo.jpg", "photo.git.jpg"} {
 		assert.False(t, HasReservedComponent(name), name)
 	}
 }
@@ -34,6 +34,22 @@ func TestReservedPathNames(t *testing.T) {
 	names[0] = "changed"
 	assert.True(t, HasReservedComponent(".config/photo.jpg"))
 	assert.Equal(t, ".aws", ReservedPathNames()[0])
+}
+
+// TestReservedPathSuffixes checks the reusable set and protects it from caller changes.
+func TestReservedPathSuffixes(t *testing.T) {
+	suffixes := ReservedPathSuffixes()
+	assert.Equal(t, []string{".rclonelink"}, suffixes)
+
+	for _, suffix := range suffixes {
+		assert.NotEmpty(t, suffix)
+		assert.Equal(t, strings.ToLower(suffix), suffix)
+		assert.True(t, HasReservedComponent("photo"+suffix))
+	}
+
+	suffixes[0] = "changed"
+	assert.Equal(t, ".rclonelink", ReservedPathSuffixes()[0])
+	assert.False(t, HasReservedComponent("photo.changed"))
 }
 
 // TestReservedPathPatterns checks pattern validity and isolation from caller changes.

@@ -30,7 +30,7 @@ func TestWebDAVReservedPaths(t *testing.T) {
 		require.NoError(t, fs.MkdirAll(filepath.Dir(filename)))
 		require.NoError(t, os.WriteFile(filename, []byte(content), fs.ModeFile))
 	}
-	names := append(fs.ReservedPathNames(), ".ENV.production", ".GiT", ".bash_history-04218.tmp", ".python_history", ".mylogin.cnf", ".custom.CNF")
+	names := append(fs.ReservedPathNames(), ".ENV.production", ".GiT", ".bash_history-04218.tmp", ".python_history", ".mylogin.cnf", ".custom.CNF", "link.RcloneLink")
 	for _, name := range names {
 		put(name+"/photo.jpg", "reserved-control")
 	}

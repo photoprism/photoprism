@@ -474,7 +474,7 @@ func TestUnzip_Filters(t *testing.T) {
 func TestUnzipReservedNames(t *testing.T) {
 	dir := t.TempDir()
 	archive := filepath.Join(dir, "reserved.zip")
-	blocked := []string{".ppignore", ".dockerignore", ".python_history", ".bash_history-04218.tmp", ".my.cnf", ".mylogin.cnf", ".rsyncignore", ".rsync-filter", ".gitignore", "_netrc", PPStorageFilename, SigningKeyFile, JoinTokenFile, ClientSecretFile, ".git/config", ".svn/photo.jpg", ".hg/photo.jpg", ".ssh/key", ".gnupg/key", ".env", "nested/.env.production", ".config/photo.jpg", ".photoprism/photo.jpg", "nested/.GiT/photo.jpg", ".config/"}
+	blocked := []string{".ppignore", ".dockerignore", ".python_history", ".bash_history-04218.tmp", ".my.cnf", ".mylogin.cnf", ".rsyncignore", ".rsync-filter", ".gitignore", "_netrc", PPStorageFilename, SigningKeyFile, JoinTokenFile, ClientSecretFile, ".git/config", ".svn/photo.jpg", ".hg/photo.jpg", ".ssh/key", ".gnupg/key", ".env", "nested/.env.production", ".config/photo.jpg", ".photoprism/photo.jpg", "nested/.GiT/photo.jpg", "photo.rclonelink", "nested/LINK.RcloneLink/photo.jpg", ".config/"}
 
 	for _, name := range ReservedPathNames() {
 		blocked = append(blocked, "nested/"+name+"/photo.jpg")
