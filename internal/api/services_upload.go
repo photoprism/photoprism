@@ -19,6 +19,42 @@ import (
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
+// shareAliases assigns the remote destinations of one upload request.
+type shareAliases struct {
+	taken map[string]bool
+	next  map[string]int
+}
+
+// newShareAliases returns an empty destination assignment.
+func newShareAliases() *shareAliases {
+	return &shareAliases{taken: make(map[string]bool), next: make(map[string]int)}
+}
+
+// Resolve returns the destination of a file below folder, adding a sequence number while the
+// preferred name is already taken. It resumes at the number that name last reached, and resolves
+// the related photo once, since ShareBase reads it on every call.
+func (a *shareAliases) Resolve(file *entity.File, folder string) string {
+	if file.Photo == nil {
+		file.Photo = file.RelatedPhoto()
+	}
+
+	alias := path.Join(folder, file.ShareBase(0))
+	key := strings.ToLower(alias)
+
+	// Each name already assigned can claim one candidate, so one more than their number is free.
+	for tries := 0; tries <= len(a.taken) && a.taken[strings.ToLower(alias)]; tries++ {
+		a.next[key]++
+		alias = path.Join(folder, file.ShareBase(a.next[key]))
+	}
+
+	return alias
+}
+
+// Keep records a destination as assigned.
+func (a *shareAliases) Keep(alias string) {
+	a.taken[strings.ToLower(alias)] = true
+}
+
 // UploadToService uploads files to the selected service account.
 //
 //	@Summary	uploads files to the selected service account
@@ -26,8 +62,8 @@ import (
 //	@Tags		Services
 //	@Accept		json
 //	@Produce	json
-//	@Param		id				path		string	true	"service id"
-//	@Success	200				{object}	entity.Files
+//	@Param		id						path		string	true	"service id"
+//	@Success	200						{object}	entity.Files
 //	@Failure	401,403,404,429	{object}	i18n.Response
 //	@Router		/api/v1/services/{id}/upload [post]
 func UploadToService(router *gin.RouterGroup) {
@@ -79,7 +115,7 @@ func UploadToService(router *gin.RouterGroup) {
 			return
 		}
 
-		var aliases = make(map[string]int)
+		aliases := newShareAliases()
 
 		selected := files[:0]
 
@@ -89,20 +125,14 @@ func UploadToService(router *gin.RouterGroup) {
 				continue
 			}
 
-			alias := path.Join(folder, file.ShareBase(0))
+			alias := aliases.Resolve(&file, folder)
 
 			if webdav.SkipSyncPath(alias) {
 				log.Debugf("services: skipping excluded destination %s", clean.Log(alias))
 				continue
 			}
 
-			key := strings.ToLower(alias)
-
-			if seq := aliases[key]; seq > 0 {
-				alias = file.ShareBase(seq)
-			}
-
-			aliases[key]++
+			aliases.Keep(alias)
 
 			entity.FirstOrCreateFileShare(entity.NewFileShare(file.ID, m.ID, alias))
 
