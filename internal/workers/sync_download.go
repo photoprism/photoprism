@@ -54,8 +54,12 @@ func (w *Sync) relatedDownloads(a entity.Service) (result Downloads, err error) 
 	return result, nil
 }
 
-// Downloads remote files in batches and imports / indexes them
+// download transfers eligible remote files in batches for import and indexing.
 func (w *Sync) download(a entity.Service) (complete bool, err error) {
+	if webdav.SkipSyncPath(a.SyncPath) {
+		log.Tracef("sync: skipping excluded path %s for service %s (download)", clean.Log(a.SyncPath), clean.Log(a.AccName))
+		return true, nil
+	}
 	// Set up index worker
 	indexJobs := make(chan photoprism.IndexJob)
 
@@ -120,6 +124,14 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 		for i, file := range files {
 			if mutex.SyncWorker.Canceled() {
 				return false, nil
+			}
+
+			if webdav.SkipSyncPath(file.RemoteName) {
+				log.Debugf("sync: skipping excluded path %s", clean.Log(file.RemoteName))
+				file.Status, file.Error, file.Errors = entity.FileSyncIgnore, "", 0
+				w.logErr(entity.Db().Save(&file).Error)
+				files[i] = file
+				continue
 			}
 
 			// Failed too often?

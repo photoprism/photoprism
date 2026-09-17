@@ -3,6 +3,8 @@ package webdav
 import (
 	"path"
 	"strings"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // isHiddenPath reports whether any segment of a WebDAV path starts with a dot.
@@ -41,4 +43,18 @@ func trimPath(dir string) string {
 
 func splitPath(dir string) []string {
 	return strings.Split(trimPath(dir), "/")
+}
+
+// SkipSyncPath reports whether a logical transfer path is excluded from WebDAV sync.
+// Unsafe paths remain subject to traversal validation instead of being skipped as benign.
+func SkipSyncPath(name string) bool {
+	if fs.HasReservedComponent(name) {
+		return true
+	}
+
+	if isUnsafePath(name) {
+		return false
+	}
+
+	return isHiddenPath(strings.ReplaceAll(name, "\\", "/"))
 }

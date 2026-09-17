@@ -200,7 +200,7 @@ func GetPhotoDownload(router *gin.RouterGroup) {
 
 		f, err := query.FileByPhotoUID(uid)
 
-		if err != nil {
+		if err != nil || !f.Exportable(sess) {
 			c.Data(http.StatusNotFound, "image/svg+xml", photoIconSvg)
 			return
 		}
@@ -236,6 +236,11 @@ func GetPhotoYaml(router *gin.RouterGroup) {
 		s := Auth(c, acl.ResourcePhotos, acl.AccessAll)
 
 		if s.Abort(c) {
+			return
+		}
+
+		if !s.SeesAnyDetail(acl.ResourcePhotos) {
+			AbortForbidden(c)
 			return
 		}
 

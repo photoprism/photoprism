@@ -1,6 +1,6 @@
 ## PhotoPrism — Database Entities
 
-**Last Updated:** September 14, 2026
+**Last Updated:** September 17, 2026
 
 ### Overview
 
@@ -87,3 +87,21 @@ An `ORDER BY` in such a statement needs a total order. A prefix that leaves ties
 ### VARBINARY Index Prefix Limit
 
 InnoDB caps an index key prefix at **767 bytes** on the `COMPACT`/`REDUNDANT` row formats, and only allows up to 3072 bytes on `DYNAMIC`/`COMPRESSED`. On a `VARBINARY` column the prefix is counted in **bytes** (on `utf8mb4` it is counted in characters, i.e. up to 4 bytes each), so converting a long text column to `VARBINARY` can push an existing prefix index over the limit on older or non-`DYNAMIC` installs. Keep prefix indexes on long `VARBINARY` path/filter columns at **≤ 767 bytes**; the project convention is **512** (`albums.album_filter(512)`, `albums.album_path(512)`). A prefix index only narrows candidate rows — the full-column comparison stays exact — so a shorter prefix costs nothing for correctness.
+
+### File Export Eligibility
+
+`File.Exportable` applies the YAML export policy after download admission and row visibility.
+YAML is recognized by its filename or recorded file type, including `.yml` and `.yaml`.
+An identified registered reader or client must have effective read permission on photos or
+files. Share-link visitors and unidentified downloads do not export YAML. Registered guests,
+Contributors, and files-only readers keep their existing eligible downloads. Other file
+formats are unchanged. `SelectedFilesForSession` uses the same decision for download selections as direct downloads;
+`SelectedFiles` remains unrestricted for internal workflows.
+
+### Ignored Transfers
+
+Excluded queued service shares use `FileShareIgnore`, with no retry error. Automatic sync
+uses `FileSyncIgnore`; upload dispositions have a per-FileID internal key under the reserved
+`.photoprism/sync` namespace so matching filenames in different roots cannot collide. These
+keys are state identifiers, never remote transfer destinations. Existing deduplication rules
+and retry handling for genuine transfer failures remain unchanged.

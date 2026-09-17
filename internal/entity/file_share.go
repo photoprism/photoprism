@@ -7,6 +7,7 @@ import (
 // Status values a file share moves through.
 const (
 	FileShareNew     = "new"
+	FileShareIgnore  = "ignore"
 	FileShareError   = "error"
 	FileShareShared  = "shared"
 	FileShareRemoved = "removed"

@@ -1,6 +1,6 @@
 ## PhotoPrism — WebDAV Service Client
 
-**Last Updated:** March 7, 2026
+**Last Updated:** September 17, 2026
 
 ### Overview
 
@@ -26,6 +26,20 @@ This behavior exists because some providers and appliances accept `Depth: 1` but
 
 - service folder browsing via `entity.Service.Directories()`,
 - sync refresh in `internal/workers/sync_refresh.go`.
+
+### Transfer Path Policy
+
+Directory discovery retains its existing hidden-name and traversal exclusions. Logical
+transfer paths are also checked by `SkipSyncPath` before listing, upload, download, directory
+creation, or deletion. Reserved names use the shared `pkg/fs` set; other hidden components
+are omitted from sync as well. Endpoint prefixes and absolute local storage roots are not
+passed as logical transfer paths.
+
+Excluded entries are normal skips, not remote failures. Sync and share workers check original
+relative source names before aliases or thumbnails can replace them, recheck queued paths,
+and store an `ignore` disposition with empty error fields. Ignored leading batches therefore
+allow later eligible work to progress. Existing traversal checks, safe joins, download-size
+limits, overwrite protection, timeouts, and service network restrictions remain in force.
 
 ### Timeout Behavior
 

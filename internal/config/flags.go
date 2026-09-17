@@ -273,7 +273,7 @@ var Flags = CliFlags{
 			Usage:   "loads default config values from `FILENAME` if it exists, does not override CLI flags or environment variables",
 			// fs.ConfigFilePath lets existing installations keep a defaults.yml file
 			// while new deployments may drop in defaults.yaml without updating the flag.
-			Value:     fs.ConfigFilePath("/etc/photoprism", "defaults", fs.ExtYml),
+			Value:     fs.ConfigFilePath("/etc/photoprism", fs.ConfigDefaultsName, fs.ExtYml),
 			EnvVars:   EnvVars("DEFAULTS_YAML"),
 			TakesFile: true,
 		}}, {
@@ -330,7 +330,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "upload-allow",
-			Usage:   "restricts uploads to these file types (comma-separated list of `EXTENSIONS`; leave blank to allow all)",
+			Usage:   "further restricts web uploads to these file types (comma-separated list of `EXTENSIONS`)",
 			EnvVars: EnvVars("UPLOAD_ALLOW"),
 		}}, {
 		Flag: &cli.BoolFlag{

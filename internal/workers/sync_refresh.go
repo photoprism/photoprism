@@ -9,10 +9,15 @@ import (
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
-// Updates the local list of remote files so that they can be downloaded in batches
+// refresh updates the local queue of eligible remote files.
 func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 	if a.AccType != service.WebDAV {
 		return false, nil
+	}
+
+	if webdav.SkipSyncPath(a.SyncPath) {
+		log.Tracef("sync: skipping excluded path %s for service %s (refresh)", clean.Log(a.SyncPath), clean.Log(a.AccName))
+		return true, nil
 	}
 
 	client, err := webdav.NewClient(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout), w.conf.ServicesCIDR())
@@ -36,6 +41,10 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 	dirs := append(subDirs.Abs(), a.SyncPath)
 
 	for _, dir := range dirs {
+		if webdav.SkipSyncPath(dir) {
+			log.Debugf("sync: skipping excluded path %s", clean.Log(dir))
+			continue
+		}
 		if mutex.SyncWorker.Canceled() {
 			return false, nil
 		}
@@ -48,6 +57,10 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 		}
 
 		for _, file := range files {
+			if webdav.SkipSyncPath(file.Abs) {
+				log.Debugf("sync: skipping excluded path %s", clean.Log(file.Abs))
+				continue
+			}
 			if mutex.SyncWorker.Canceled() {
 				return false, nil
 			}

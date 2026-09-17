@@ -754,8 +754,8 @@ func (c *Config) serialFiles() []struct {
 		Name string
 		Mode os.FileMode
 	}{
-		{filepath.Join(c.StoragePath(), serialName), fs.ModeFile},
-		{c.BackupPath(serialName), fs.ModeFile},
+		{filepath.Join(c.StoragePath(), fs.SerialFile), fs.ModeFile},
+		{c.BackupPath(fs.SerialFile), fs.ModeFile},
 	}
 }
 
@@ -827,7 +827,7 @@ func (c *Config) InitSerial() error {
 
 	if serial == "" {
 		serial = rnd.GenerateUID(serialPrefix)
-		storageName := filepath.Join(c.StoragePath(), serialName)
+		storageName := filepath.Join(c.StoragePath(), fs.SerialFile)
 
 		if err := os.WriteFile(storageName, []byte(serial), fs.ModeFile); err != nil {
 			return fmt.Errorf("could not create %s: %w", clean.Log(storageName), err)

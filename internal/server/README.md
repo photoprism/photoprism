@@ -1,6 +1,6 @@
 ## PhotoPrism — HTTP Server
 
-**Last Updated:** September 14, 2026
+**Last Updated:** September 17, 2026
 
 ### Overview
 
@@ -76,3 +76,45 @@
 - Prefer `Start` with context cancellation so graceful shutdown is triggered (`server.Close()`).
 - When adding routes, register them in `registerRoutes` and reuse `MethodsGetHead` for safe verbs.
 - Keep middleware light; log or enforce security at the edge (Traefik) when possible, but maintain server-side defaults for defense in depth.
+
+### WebDAV Credential Actions
+
+Token and app-password requests resolve the session even when the authenticated account
+is cached. Every request applies the credential scope and both account/client WebDAV grants.
+GET, HEAD, and POST require download; PROPFIND requires view, or upload for an explicit
+Depth 0 probe of the target within the upload path (including its root). If neither an
+account base nor upload path is configured, only the mount root may be probed. Broader or omitted
+depths still require view; target-only probes expose properties, not file contents or children. PUT, MKCOL, and MOVE require
+upload; DELETE requires delete; PROPPATCH, LOCK, and UNLOCK require update. COPY requires
+both download and update. OPTIONS requires WebDAV admission without a read/write action.
+Core and edition handlers share `WebDAVMethodPermissions`; request-level probe admission
+is handled by `WebDAVRequestPermits`. Existing account eligibility, edition filesystem
+permissions, and path checks remain mandatory.
+Ordinary Basic passwords retain their account authentication and cache behavior.
+
+### WebDAV Path Policy
+
+Every mount uses the reserved administrative names defined by `pkg/fs.ReservedPathNames`,
+and `pkg/fs.ReservedPathPatterns`, including `.env.*`, `.*ignore`, `.*_history`, `.bash_history-*.tmp`, and `.*.cnf` variants.
+Ignore-file names matching `.*ignore` remain visible under `ReservedPathPolicy{AllowIgnoreNames: true}`
+and use the managed-file write policy below. Independent reserved-name/pattern and
+logical ancestor restrictions still apply. Matching is case-insensitive and applies at every path component.
+Entries with reserved logical components are hidden from reads and directory listings,
+and cannot be written. Ordinary dot files and eligible linked originals remain supported;
+the configured mount root's own ancestry is not part of its served namespace.
+
+Directory MOVE/DELETE and overwrite destinations are inspected before mutation, with a
+100,000-entry and 128-level preflight limit. Protected entries, inspection errors, cancellation,
+or limit exhaustion refuse the operation. COPY uses the visible source view and does not
+copy reserved children. Filesystem operations enforce the same policy after HTTP preflight.
+
+YAML writes, `.*ignore` mutations, and the `X-Favorite` upload header require effective
+photo `FullAccess` authority from both client and account. They retain the existing WebDAV action scope. Without full photo authority, an otherwise
+permitted upload succeeds but its favorite flag does not create a YAML sidecar. This covers direct
+writes, renames, and affected logical descendants. YAML/ignore-file reads and ordinary JSON transfers
+retain their prior admission. An explicit COPY Depth 0 can create an empty collection
+without copying its managed-file descendants.
+
+Name checks do not resolve operator-managed symlinks. Existing filesystem mappings are trusted;
+WebDAV provides no operation for creating filesystem symlinks. Normal filesystem errors and
+permissions still apply when following an operator-configured path.

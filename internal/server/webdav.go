@@ -30,16 +30,6 @@ var WebDAVHandler = func(c *gin.Context, router *gin.RouterGroup, srv *webdav.Ha
 	ServeWebDAV(c.Writer, c.Request, srv)
 }
 
-// WebDAVWriteMethod returns true for methods that modify WebDAV state.
-func WebDAVWriteMethod(method string) bool {
-	switch method {
-	case header.MethodPut, header.MethodMkcol, header.MethodDelete, header.MethodMove, header.MethodCopy, header.MethodProppatch, header.MethodLock, header.MethodUnlock:
-		return true
-	default:
-		return false
-	}
-}
-
 // WebDAV handles requests to the "/originals" and "/import" endpoints.
 func WebDAV(dir string, router *gin.RouterGroup, conf *config.Config) {
 	if router == nil {
@@ -53,7 +43,7 @@ func WebDAV(dir string, router *gin.RouterGroup, conf *config.Config) {
 	}
 
 	// Native file system restricted to a specific directory.
-	fileSystem := webdav.Dir(dir)
+	fileSystem := newWebDAVFileSystem(dir)
 	lockSystem := mutex.WebDAV(dir)
 
 	// Request logger function.
@@ -75,7 +65,7 @@ func WebDAV(dir string, router *gin.RouterGroup, conf *config.Config) {
 			// Determine the filename if it is an uploaded file and process custom request headers, if any.
 			if fileName := WebDAVFileName(request, router, conf); fileName != "" {
 				// Flag the uploaded file as favorite if the "X-Favorite" header is set to "1".
-				if request.Header.Get(header.XFavorite) == "1" {
+				if request.Header.Get(header.XFavorite) == "1" && canWriteManagedFiles(request.Context()) {
 					WebDAVSetFavoriteFlag(fileName)
 				}
 

@@ -1,6 +1,6 @@
 ## PhotoPrism — pkg/fs
 
-**Last Updated:** September 14, 2026
+**Last Updated:** September 17, 2026
 
 ### Overview
 
@@ -21,6 +21,7 @@
 
 ### Package Layout (Code Map)
 
+- Standard file/directory names: `const.go`; transfer reservations: `reserved.go`. `ConfigOptionsName`, `ConfigDefaultsName`, `ConfigSettingsName`, and `ConfigHubName` are extension-free basenames for `ConfigFilePath`. Constants can be reused without implying a transfer restriction.
 - Permissions & paths: `mode.go`, `filepath.go`, `canonical.go`, `case.go`.
 - Copy/Move & write helpers: `copy_move.go`, `write.go`, `cache.go`, `purge.go`.
 - Archive extraction: `zip.go` (size limits, safe join), tests in `zip_test.go`.
@@ -35,6 +36,9 @@
 - Overwrite semantics: pass `force=true` only when the caller explicitly confirmed replacement; empty files may be replaced without `force`.
 - Permissions: use provided mode constants; do not mix with stdlib `io/fs` bits. `ModeFile` (`0666`) and `ModeDir` (`0777`) are creation defaults filtered by the process umask, not final modes for `Chmod`. Explicit permission changes use the intended final mode.
 - Staging: `OpenStageFile` returns an exclusively created temporary file beside its destination, with `ModeFile` filtered by the process umask. The caller closes the handle and removes or publishes its pathname. `CreateStageFile` closes the reservation and returns its path for subprocess writers. Both preserve the destination extension and require an existing parent directory; neither uses a global temporary directory or copies data across mounts.
+- Reserved names: `ReservedPathNames` returns a sorted copy of the exact administrative-name set, including PhotoPrism storage markers/credential files and `.gitconfig`. `ReservedPathPatterns` returns the additional component patterns: `.env.*`, `.*ignore`, `.*_history`, `.bash_history-*.tmp`, and `.*.cnf`. The default transfer policy excludes every matching ignore name. Local DAV uses `ReservedPathPolicy{AllowIgnoreNames: true}` for visibility and separately requires managed-file write authority. Use `HasReservedComponent` for policy decisions, not the catalogs alone.
+- Reserved path components: `HasReservedComponent` matches the application's narrow administrative-name set case-insensitively, using slash or backslash separators. Callers supply paths relative to their own root; the component helper neither resolves links nor decodes URLs. `HasReservedTarget` is a standalone resolved-target inspection utility, not used by upload, archive, WebDAV, or sync name-policy enforcement. Operator-created filesystem links are trusted configuration.
+- ZIP entry filters: optional `Unzip` name/directory predicates are combined as requirements and run before extracting entries. A rejected entry is reported in `skipped` without writing or replacing its destination. Reserved components and symbolic-link entries are always skipped. Direct `UnzipFile` refuses symbolic-link entries before any destination write. Predicates receive the directory flag even when its entry name has no trailing slash; nil or omitted filters add no constraints beyond the built-in extraction policy.
 - Zip extraction: always set `fileSizeLimit` / `totalSizeLimit` in `Unzip` for untrusted inputs; ensure tests cover path traversal and size caps (see `zip_test.go`).
 - Image decode helpers: use `DecodeImageFile`, `DecodeImageConfigFile`, `DecodeImageData`, or `DecodeImageConfigData` instead of generic `image.Decode()` / `image.DecodeConfig()` for user media. TIFF headers are validated against the bounded reader size before decode.
 - Focused tests: `go test ./pkg/fs -run 'Copy|Move|Unzip|Write' -count=1` keeps feedback quick; full package: `go test ./pkg/fs -count=1`.

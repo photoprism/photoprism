@@ -24,6 +24,8 @@ The API package exposes PhotoPrism’s HTTP endpoints via Gin handlers. Each fil
 
 ### Security & Middleware
 
+- Stored YAML exports use `File.Exportable` after download and row admission, consistently for by-hash, primary-photo, selection ZIP, and album ZIP downloads. Registered readers and files-only read credentials retain access; visitors and write-only credentials do not. Archive sidecar settings do not override this eligibility.
+- Generated photo YAML requires both `AccessAll` and effective photo-view permission, including credential scope. Row visibility is checked before complete metadata is serialized; export checks do not change stored sidecars.
 - Authenticate requests using the standard middleware (`AuthRequired`) and check roles via helpers in `internal/auth/acl` (`acl.ParseRole`, `acl.ScopePermits`, `acl.ScopeAttrPermits`).
 - Bound request bodies before parsing JSON or multipart payloads. Use `LimitRequestBodyBytes(...)` with a route-appropriate cap before `BindJSON(...)` / `ShouldBindJSON(...)`, detect `IsRequestBodyTooLarge(err)`, and return `413 Request Entity Too Large` via `AbortRequestTooLarge(...)`.
 - Keep new JSON binding sites on the shared request-limit path by running `make check-api-request-limits` (also included in `make lint`) after adding or refactoring API handlers in the root repo or private overlays.
@@ -32,6 +34,21 @@ The API package exposes PhotoPrism’s HTTP endpoints via Gin handlers. Each fil
 - Derive client IPs through `api.ClientIP` and extract bearer tokens with `header.BearerToken` or the helper setters. Use constant-time comparison for tokens and secrets.
 - For downloads or proxy endpoints, validate URLs against allowed schemes (`http`, `https`) and reject private or loopback addresses unless explicitly required.
 - **Upload-time NSFW screening (`users_upload.go`)** — when `PHOTOPRISM_UPLOAD_NSFW=false`, the upload handler runs `vision.DetectNSFW` against every accepted file and deletes any file flagged above the NSFW threshold before it reaches `originals/`. The check is skipped entirely when `UPLOAD_NSFW=true` (default). See [`internal/ai/nsfw/README.md`](../ai/nsfw/README.md) for the full NSFW call-graph and flag matrix.
+
+### Web Upload Formats
+
+Web uploads accept supported media and enabled ZIP archives. The permitted sidecar types
+are XMP, plain text (`.txt`), and Markdown (`.md`, `.markdown`). Text and Markdown can be
+indexed as associated files, but their contents do not supply photo metadata. YAML, JSON,
+XML, AAE, and NFO sidecars are not accepted through this endpoint, including for admins.
+`UploadAllow` may narrow this policy but cannot enable other sidecars.
+
+The same policy applies before direct writes, before archive extraction, during saved-file
+validation, and before importing a staged batch. Processing removes disallowed staged
+sidecars; traversal or removal errors return 400 before import starts. Staged symbolic
+links are not supported. Upload paths exclude the administrative names documented in [pkg/fs](../../pkg/fs/README.md),
+including `.github`, `.local`, and `_netrc`, at any depth, matched case-insensitively. ZIP entry checks
+apply to files and directories before extraction; other hidden-directory handling is unchanged. Other import sources and WebDAV retain their format policies.
 
 ### Audit Logging
 
