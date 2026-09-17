@@ -30,6 +30,7 @@ var reservedPathNames = map[string]struct{}{
 	".emulator_console_auth_token": {},
 	EnvFileName:                    {},
 	".env-keys":                    {},
+	".forgejo":                     {},
 	".git":                         {},
 	".git-credentials":             {},
 	".gitconfig":                   {},
