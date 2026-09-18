@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -107,6 +108,15 @@ func WebDAV(dir string, router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
+		// Refuse a separator in the name before anything is created, renamed, or copied.
+		if WebDAVSeparatorInName(c.Request) {
+			// Console-only: the refusal returns before the handler's own logger.
+			event.SystemWarn([]string{"webdav", "%s %s contains a path separator"}, clean.Log(c.Request.Method), clean.Log(c.Request.URL.String()))
+			c.AbortWithStatus(http.StatusBadRequest)
+
+			return
+		}
+
 		// Abort PUT and COPY requests if there
 		// is not enough free storage to upload new files.
 		switch c.Request.Method {
@@ -200,6 +210,22 @@ func WebDAV(dir string, router *gin.RouterGroup, conf *config.Config) {
 			handleWrite(route, handlerFunc)
 		}
 	}
+}
+
+// WebDAVSeparatorInName reports whether a request would create, rename, or copy a name holding
+// a backslash. Refuse it rather than normalizing it: the upstream handler treats the character
+// as ordinary, so any rewrite here would name a different file than the one it opens.
+func WebDAVSeparatorInName(request *http.Request) bool {
+	switch request.Method {
+	case header.MethodPut, header.MethodMkcol:
+		return strings.Contains(request.URL.Path, "\\")
+	case header.MethodMove, header.MethodCopy:
+		// The destination is a URL, so compare the decoded path the handler will resolve.
+		u, err := url.Parse(request.Header.Get("Destination"))
+		return err == nil && strings.Contains(u.Path, "\\")
+	}
+
+	return false
 }
 
 // WebDAVClampLockTimeout rewrites the LOCK "Timeout" request header so the lock the

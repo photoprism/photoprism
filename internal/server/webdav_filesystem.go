@@ -75,6 +75,11 @@ func (d *webDAVFileSystem) OpenFile(ctx context.Context, name string, flag int, 
 	if !d.allowed(name) {
 		return nil, os.ErrNotExist
 	}
+	if flag&os.O_CREATE != 0 && strings.Contains(name, "\\") {
+		// LOCK creates a placeholder for a name that does not exist yet, which is the one
+		// create the method gate ahead of the handler does not see.
+		return nil, os.ErrPermission
+	}
 	if flag&(os.O_WRONLY|os.O_RDWR|os.O_CREATE|os.O_TRUNC|os.O_APPEND) != 0 && !canWriteManagedFiles(ctx) && d.managedFile(ctx, name) {
 		return nil, os.ErrPermission
 	}

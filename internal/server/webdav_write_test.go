@@ -6,8 +6,10 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -17,6 +19,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
@@ -117,6 +120,163 @@ func TestWebDAVWrite_MKCOL_Exists(t *testing.T) {
 		assert.NotEqual(t, logrus.ErrorLevel, e.Level, "MKCOL on existing collection must not log an error")
 	}
 	assert.True(t, found, "expected a debug entry for the existing collection")
+}
+
+// webDAVTestBody returns a body of the given size filled with a position-dependent pattern, so
+// a copy that is short or padded differs in content as well as in length.
+func webDAVTestBody(size int) []byte {
+	body := make([]byte, size)
+
+	for i := range body {
+		body[i] = byte(i % 251)
+	}
+
+	return body
+}
+
+func TestWebDAVWrite_SeparatorRefused(t *testing.T) {
+	conf := newWebDAVTestConfig(t)
+	if err := conf.CreateDirectories(); err != nil {
+		t.Fatalf("failed to create test directories: %v", err)
+	}
+	r := setupWebDAVRouter(conf)
+
+	base := conf.BaseUri(WebDAVOriginals)
+	stored := func(elem ...string) string {
+		return filepath.Join(append([]string{conf.OriginalsPath()}, elem...)...)
+	}
+	send := func(method, target string, body []byte, destination string) *httptest.ResponseRecorder {
+		var req *http.Request
+		if body == nil {
+			req = httptest.NewRequest(method, target, nil)
+		} else {
+			req = httptest.NewRequest(method, target, bytes.NewReader(body))
+		}
+		if destination != "" {
+			req.Header.Set("Destination", destination)
+		}
+		w := httptest.NewRecorder()
+		authBearer(req)
+		r.ServeHTTP(w, req)
+		return w
+	}
+
+	// Give every resolution of "dir\name" a writable target: the literal name resolves beside
+	// the mount root, the normalized one inside an existing directory holding a file of known
+	// bytes. Without this the normalized assertions cannot fail, because a sanitizing write
+	// would stop at the missing parent rather than at the refusal.
+	if err := os.MkdirAll(stored("dir"), fs.ModeDir); err != nil {
+		t.Fatal(err)
+	}
+	occupied := webDAVTestBody(24)
+	if err := os.WriteFile(stored("dir", "file.bin"), occupied, fs.ModeFile); err != nil {
+		t.Fatal(err)
+	}
+
+	t.Run("PutRefused", func(t *testing.T) {
+		hook := &logCapture{}
+		event.SystemLog.ReplaceHooks(logrus.LevelHooks{})
+		event.SystemLog.AddHook(hook)
+		defer event.SystemLog.ReplaceHooks(logrus.LevelHooks{})
+
+		assert.Equal(t, http.StatusBadRequest, send(header.MethodPut, base+"/dir%5Cfile.bin", webDAVTestBody(8), "").Code)
+		assert.NoFileExists(t, stored(`dir\file.bin`))
+		// #nosec G304 -- test reads file created under controlled temp directory.
+		b, err := os.ReadFile(stored("dir", "file.bin"))
+		assert.NoError(t, err)
+		assert.Equal(t, occupied, b, "the normalized resolution must be untouched")
+
+		var reported bool
+		for _, e := range hook.entries {
+			if e.Level == logrus.WarnLevel && strings.Contains(e.Message, "contains a path separator") {
+				reported = true
+				assert.NotContains(t, e.Message, conf.OriginalsPath())
+			}
+		}
+		assert.True(t, reported, "expected a warning for the refused name")
+	})
+	t.Run("MkcolRefused", func(t *testing.T) {
+		// A collection is a create too, and one that could never receive an upload.
+		assert.Equal(t, http.StatusBadRequest, send(header.MethodMkcol, base+"/made%5Cup", nil, "").Code)
+		assert.NoDirExists(t, stored(`made\up`))
+		assert.NoDirExists(t, stored("made", "up"))
+	})
+	t.Run("LockCreatesNothing", func(t *testing.T) {
+		// A LOCK carrying lockinfo asks for a placeholder when the name does not exist, which
+		// is the one create that happens past the method gate.
+		w := send(header.MethodLock, base+"/locked%5Cname.bin", []byte(lockInfoBody(4)), "")
+		assert.NotEqual(t, http.StatusCreated, w.Code)
+		assert.NoFileExists(t, stored(`locked\name.bin`))
+		assert.NoFileExists(t, stored("locked", "name.bin"))
+	})
+	t.Run("MoveDestinationRefused", func(t *testing.T) {
+		body := webDAVTestBody(8)
+		assert.Equal(t, http.StatusCreated, send(header.MethodPut, base+"/movable.bin", body, "").Code)
+
+		assert.Equal(t, http.StatusBadRequest, send(header.MethodMove, base+"/movable.bin", nil, base+"/dir%5Cfile.bin").Code)
+		assert.FileExists(t, stored("movable.bin"), "the source must survive a refused move")
+		assert.NoFileExists(t, stored(`dir\file.bin`))
+		// #nosec G304 -- test reads file created under controlled temp directory.
+		b, err := os.ReadFile(stored("dir", "file.bin"))
+		assert.NoError(t, err)
+		assert.Equal(t, occupied, b)
+	})
+	t.Run("CopyDestinationRefused", func(t *testing.T) {
+		body := webDAVTestBody(8)
+		assert.Equal(t, http.StatusCreated, send(header.MethodPut, base+"/copyable.bin", body, "").Code)
+
+		assert.Equal(t, http.StatusBadRequest, send(header.MethodCopy, base+"/copyable.bin", nil, base+"/dir%5Cfile.bin").Code)
+		assert.FileExists(t, stored("copyable.bin"))
+		assert.NoFileExists(t, stored(`dir\file.bin`))
+	})
+	t.Run("RawSeparatorInDestinationRefused", func(t *testing.T) {
+		// A client may send the character unencoded; it survives url.Parse either way.
+		body := webDAVTestBody(8)
+		assert.Equal(t, http.StatusCreated, send(header.MethodPut, base+"/rawmove.bin", body, "").Code)
+
+		assert.Equal(t, http.StatusBadRequest, send(header.MethodMove, base+"/rawmove.bin", nil, base+`/dir\raw.bin`).Code)
+		assert.FileExists(t, stored("rawmove.bin"))
+		assert.NoFileExists(t, stored(`dir\raw.bin`))
+		assert.NoFileExists(t, stored("dir", "raw.bin"))
+	})
+	t.Run("OrdinaryNamesAccepted", func(t *testing.T) {
+		// Positive control, and the record of what stays accepted on purpose: characters that
+		// are legal on POSIX and that both resolvers agree on. "%255C" decodes to the literal
+		// text "%5C", which holds no separator, so widening the refusal to it would be wrong.
+		for _, name := range []string{"a file.bin", "Fotos Größe.bin", "naïve+name.bin", "%5C literal.bin"} {
+			body := webDAVTestBody(16)
+			w := send(header.MethodPut, base+"/"+url.PathEscape(name), body, "")
+			assert.Equal(t, http.StatusCreated, w.Code, name)
+			// #nosec G304 -- test reads file created under controlled temp directory.
+			b, err := os.ReadFile(stored(name))
+			assert.NoError(t, err, name)
+			assert.Equal(t, body, b, name)
+		}
+	})
+}
+
+func TestWebDAVSeparatorInName(t *testing.T) {
+	t.Run("PutWithSeparator", func(t *testing.T) {
+		assert.True(t, WebDAVSeparatorInName(httptest.NewRequest(header.MethodPut, "/originals/a%5Cb.bin", nil)))
+	})
+	t.Run("PutWithoutSeparator", func(t *testing.T) {
+		assert.False(t, WebDAVSeparatorInName(httptest.NewRequest(header.MethodPut, "/originals/a/b.bin", nil)))
+	})
+	t.Run("MoveDestinationWithSeparator", func(t *testing.T) {
+		req := httptest.NewRequest(header.MethodMove, "/originals/a.bin", nil)
+		req.Header.Set("Destination", "/originals/c%5Cd.bin")
+		assert.True(t, WebDAVSeparatorInName(req))
+	})
+	t.Run("CopyDestinationWithoutSeparator", func(t *testing.T) {
+		req := httptest.NewRequest(header.MethodCopy, "/originals/a.bin", nil)
+		req.Header.Set("Destination", "/originals/c/d.bin")
+		assert.False(t, WebDAVSeparatorInName(req))
+	})
+	t.Run("ReadMethodIgnored", func(t *testing.T) {
+		// A name that already holds one stays readable and removable.
+		assert.False(t, WebDAVSeparatorInName(httptest.NewRequest(header.MethodGet, "/originals/a%5Cb.bin", nil)))
+		assert.False(t, WebDAVSeparatorInName(httptest.NewRequest(header.MethodDelete, "/originals/a%5Cb.bin", nil)))
+	})
 }
 
 func TestWebDAVWrite_PUT_OriginalsLimit(t *testing.T) {
