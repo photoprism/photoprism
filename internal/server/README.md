@@ -62,6 +62,9 @@
   - PROPFIND `207 Multi-Status` responses normalize XML media type to `application/xml; charset=utf-8`.
   - Request errors go to the console-only system log (`event.System*`), not the browser log stream, since `x/net/webdav` embeds absolute server paths in its messages. A `MKCOL` on an existing collection is a benign sync-client probe: it returns 405 and is logged at debug rather than as an error.
   - `LOCK` lifetimes are capped at `mutex.WebDAVMaxLockLifetime` (default one hour) so a client cannot mint locks that never expire: `WebDAVClampLockTimeout` clamps the requested `Timeout` header and the `webdavLockSystem` wrapper enforces the same bound on the stored lock.
+  - A request path component containing a backslash is refused before anything is created, renamed, or copied: `400` for `PUT`, `MKCOL`, and `MOVE`/`COPY` destinations (`WebDAVSeparatorInName`). `LOCK` is declined in `webDAVFileSystem.OpenFile`, which is where it would create its placeholder, and upstream reports that as `500`. Names that already contain one stay readable and removable.
+  - A `PUT` declaring a length above `conf.OriginalsLimitBytes()` returns `413` before the destination is opened. A body of unknown length stays legal and is bounded as it is read, carrying the upstream handler's own status; any partial file it leaves is removed by `WebDAVRemovePartialUpload`.
+  - `LOCK`, `PROPFIND` and `PROPPATCH` bodies are bounded at `api.MaxWebDAVMetadataRequestBytes` (128 KiB), since those are the methods the handler parses into memory. A declared length above the bound returns `413`; any other body is bounded as it is read.
 - AutoTLS: uses `autocert` and spins up a redirect listener; ensure ports 80/443 are reachable.
 - Unix sockets: optional `force` query removes stale sockets; permissions can be set via `mode` query.
 - Health endpoints (`/livez`, `/health`, `/healthz`, `/readyz`) return `Cache-Control: no-store` and `Access-Control-Allow-Origin: *`.
@@ -100,6 +103,8 @@ plus the component suffixes in `pkg/fs.ReservedPathSuffixes`.
 Ignore-file names matching `.*ignore` remain visible under `ReservedPathPolicy{AllowIgnoreNames: true}`
 and use the managed-file write policy below. Independent reserved-name/pattern and
 logical ancestor restrictions still apply. Matching is case-insensitive and applies at every path component.
+A backslash in any component is refused outright rather than cleaned, so a name is never rewritten
+into one that differs from the name the handler opens.
 Entries with reserved logical components are hidden from reads and directory listings,
 and cannot be written. Ordinary dot files and eligible linked originals remain supported;
 the configured mount root's own ancestry is not part of its served namespace.
