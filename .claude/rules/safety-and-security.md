@@ -27,7 +27,7 @@
 - Validate ZIP entry names with a safe join; reject absolute paths (e.g. `/etc/passwd`), Windows drive/volume paths (`C:\\…` or `C:/…`), and any entry that escapes the target directory after cleaning (`..` traversal).
 - ZIP entry names use slash semantics, not host OS semantics: validate in ZIP-name space with `path.Clean` / `path.IsAbs`, reject backslashes (`\`), and use `path.Base` for hidden-name checks. Convert to OS paths only at write time via `filepath.FromSlash(...)`. Enforce destination containment with `filepath.Rel(...)` — not string-prefix checks.
 - Enforce per-file and total size budgets to prevent resource exhaustion. Skip OS metadata directories (e.g. `__MACOSX`) and reject suspicious names.
-- Where this lives: `pkg/fs/zip.go` (`Unzip`, `UnzipFile`, `safeJoin`).
+- Where this lives: `pkg/fs/zip.go` (`Unzip`, `UnzipFile`); containment via `pkg/fs/join.go` (`fs.SafeJoin`).
 
 ## HTTP Download — Security Checklist
 
