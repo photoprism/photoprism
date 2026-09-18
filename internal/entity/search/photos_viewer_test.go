@@ -73,9 +73,7 @@ func TestPhoto_ViewerResult(t *testing.T) {
 	assert.Equal(t, "/api/v1/dl/img-hash?t=download-token", result.DownloadUrl)
 }
 
-// TestPhoto_ViewerResult_FisheyeRaw verifies that a dewarped fisheye RAW reports an equirectangular
-// projection and a 2:1 frame together, since the lightbox only opens the sphere viewer when the
-// reported dimensions match the reported projection.
+// TestPhoto_ViewerResult_FisheyeRaw checks that the frame, projection, and thumbnails agree.
 func TestPhoto_ViewerResult_FisheyeRaw(t *testing.T) {
 	photo := Photo{
 		PhotoUID:       rnd.GenerateUID(entity.PhotoUID),
@@ -106,6 +104,12 @@ func TestPhoto_ViewerResult_FisheyeRaw(t *testing.T) {
 	assert.Equal(t, "primary-jpeg", result.Hash)
 	assert.Equal(t, "jpeg", result.Codec)
 	assert.Equal(t, "image/jpeg", result.Mime)
+	if assert.NotNil(t, result.Thumbs) && assert.NotNil(t, result.Thumbs.Fit720) {
+		assert.Equal(t, 720, result.Thumbs.Fit720.W)
+		assert.Equal(t, 360, result.Thumbs.Fit720.H)
+		assert.Equal(t, "/content/t/primary-jpeg/preview-token/fit_720", result.Thumbs.Fit720.Src)
+	}
+	assert.Equal(t, "/api/v1/dl/primary-jpeg?t=download-token", result.DownloadUrl)
 }
 
 func TestPhotoResults_ViewerFormatting(t *testing.T) {
