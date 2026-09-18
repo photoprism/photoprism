@@ -6,23 +6,17 @@ import (
 
 	"github.com/jinzhu/gorm"
 
-	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// sessionGrantsPeople reports whether the session is granted perm on people, using the client and
-// user role intersection Session.Grants implements.
-func sessionGrantsPeople(sess *entity.Session, perm acl.Permission) bool {
-	return sess.Grants(acl.ResourcePeople, perm)
-}
-
-// SubjectSessionSeesPrivate reports whether a session may see people marked private, so the search
-// and the handlers that read a single subject answer the same question about the same session.
+// SubjectSessionSeesPrivate reports whether a session may see people whose name is withheld, so
+// the search and the handlers that read a single subject answer the same question about the same
+// session. Marking someone private or hidden both withhold the name.
 func SubjectSessionSeesPrivate(sess *entity.Session) bool {
-	return sessionGrantsPeople(sess, acl.AccessPrivate)
+	return sess.SeesPrivatePeople()
 }
 
 // Subjects searches subjects and returns them without checking rights or permissions.
@@ -36,7 +30,8 @@ func UserSubjects(frm form.SearchSubjects, sess *entity.Session) (results Subjec
 }
 
 // searchSubjects searches subjects and returns them, applying the session's own limits when one is
-// given: a role without AccessPrivate must not reach a private person through any filter.
+// given: a role without AccessPrivate must not reach a person marked private or hidden through any
+// filter. Hidden is off by default for everyone, so only asking for it is refused here.
 func searchSubjects(frm form.SearchSubjects, sess *entity.Session) (results SubjectResults, err error) {
 	if err = frm.ParseQueryString(); err != nil {
 		return results, err
@@ -46,6 +41,7 @@ func searchSubjects(frm form.SearchSubjects, sess *entity.Session) (results Subj
 	if !SubjectSessionSeesPrivate(sess) {
 		// Cleared as well as forced, since "all" skips the visibility filters wholesale.
 		frm.Private = "no"
+		frm.Hidden = "no"
 		frm.All = false
 	}
 

@@ -206,13 +206,13 @@ func TestFacesRepresentativeMarker(t *testing.T) {
 // which had already drifted between the copies.
 func TestRepresentativeMarkerJoin(t *testing.T) {
 	t.Run("Unknown", func(t *testing.T) {
-		join, args := representativeMarkerJoin("faces", "yes")
+		join, args := representativeMarkerJoin("faces", "yes", false)
 		assert.Contains(t, join, "m2.subj_uid = ''")
 		assert.NotContains(t, join, "m2.subj_uid <> ''")
 		assert.Equal(t, strings.Count(join, "?"), len(args))
 	})
 	t.Run("Known", func(t *testing.T) {
-		join, args := representativeMarkerJoin("faces", "no")
+		join, args := representativeMarkerJoin("faces", "no", false)
 		assert.Contains(t, join, "m2.subj_uid <> ''")
 		// Dropped with the predicate that required it: automatic assignment never writes a name,
 		// so a person named once had no marker that could represent their cluster here.
@@ -220,13 +220,22 @@ func TestRepresentativeMarkerJoin(t *testing.T) {
 		assert.Equal(t, strings.Count(join, "?"), len(args))
 	})
 	t.Run("Any", func(t *testing.T) {
-		join, args := representativeMarkerJoin("faces", "")
+		join, args := representativeMarkerJoin("faces", "", false)
 		assert.NotContains(t, join, "m2.subj_uid")
 		assert.Equal(t, strings.Count(join, "?"), len(args))
 	})
+	t.Run("OmitWithheld", func(t *testing.T) {
+		join, args := representativeMarkerJoin("faces", "", true)
+		assert.Contains(t, join, "LEFT JOIN subjects m2_subj ON m2_subj.subj_uid = m2.subj_uid")
+		assert.Contains(t, join, "LEFT JOIN subjects m2_named ON m2_named.subj_name = m2.marker_name")
+		assert.Equal(t, strings.Count(join, "?"), len(args))
+
+		unfiltered, _ := representativeMarkerJoin("faces", "", false)
+		assert.NotContains(t, unfiltered, "m2_subj")
+	})
 	// Every literal this query used to carry is gone; the bars come from the face configuration.
 	t.Run("CarriesNoThresholdLiterals", func(t *testing.T) {
-		join, _ := representativeMarkerJoin("faces", "")
+		join, _ := representativeMarkerJoin("faces", "", false)
 		for _, literal := range []string{"0.64", "80", "15", "MIN(", "GROUP BY"} {
 			assert.NotContains(t, join, literal)
 		}

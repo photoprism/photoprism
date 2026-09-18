@@ -112,6 +112,7 @@ func DeleteFile(router *gin.RouterGroup) {
 			AbortEntityNotFound(c)
 			return
 		} else {
+			p.RedactForSession(s)
 			c.JSON(http.StatusOK, p)
 		}
 	})

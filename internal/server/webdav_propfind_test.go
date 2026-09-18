@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"encoding/xml"
 	"net/http"
 	"net/http/httptest"
@@ -12,7 +13,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"golang.org/x/net/webdav"
 
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
@@ -92,6 +95,46 @@ func TestWebDAVPropfind_MultistatusHeadersAndHrefs(t *testing.T) {
 
 			for _, href := range tc.wantHrefs {
 				assert.Contains(t, gotHrefs, href)
+			}
+		})
+	}
+}
+
+// TestServeWebDAVUploadProbe confines path-unrestricted upload probes to the mount root.
+func TestServeWebDAVUploadProbe(t *testing.T) {
+	root := t.TempDir()
+	require.NoError(t, os.WriteFile(filepath.Join(root, "control.txt"), []byte("content-control"), fs.ModeFile))
+	srv := &webdav.Handler{Prefix: "/originals", FileSystem: newWebDAVFileSystem(root), LockSystem: webdav.NewMemLS()}
+	for _, tc := range []struct {
+		name, target string
+		probe        bool
+		status       int
+	}{
+		{"ProbeRoot", "/originals", true, http.StatusMultiStatus},
+		{"ProbeRootSlash", "/originals/", true, http.StatusMultiStatus},
+		{"ProbeFile", "/originals/control.txt", true, http.StatusForbidden},
+		{"ProbeAbsent", "/originals/absent.txt", true, http.StatusForbidden},
+		{"ReaderFile", "/originals/control.txt", false, http.StatusMultiStatus},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			out := httptest.NewRecorder()
+			c, _ := gin.CreateTestContext(out)
+			req := httptest.NewRequest("PROPFIND", tc.target, nil)
+			req.Header.Set("Depth", "0")
+			if tc.probe {
+				req = req.WithContext(context.WithValue(req.Context(), webDAVUploadProbeKey{}, ""))
+			}
+			ServeWebDAV(c.Writer, req, srv)
+			c.Writer.WriteHeaderNow()
+			require.Equal(t, tc.status, out.Code, out.Body.String())
+			if tc.probe {
+				assert.NotContains(t, out.Body.String(), "control.txt")
+			}
+			assert.NotContains(t, out.Body.String(), "content-control")
+			if tc.status == http.StatusMultiStatus {
+				var result webDAVMultistatus
+				require.NoError(t, xml.Unmarshal(out.Body.Bytes(), &result))
+				require.Len(t, result.Responses, 1)
 			}
 		})
 	}

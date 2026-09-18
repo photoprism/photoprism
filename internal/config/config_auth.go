@@ -237,7 +237,7 @@ func (c *Config) DownloadToken() string {
 // persisted to config/keys/signing.key, and regenerated when missing, so it is not backed up.
 func (c *Config) TokenSigningKey() []byte {
 	c.tokenKeyOnce.Do(func() {
-		keyPath := filepath.Join(c.KeysPath(), signingKeyName)
+		keyPath := filepath.Join(c.KeysPath(), fs.SigningKeyFile)
 
 		// Reuse the persisted key so tokens stay valid across restarts and replicas.
 		if data, err := os.ReadFile(keyPath); err == nil && len(data) >= tokens.KeyLen { //nolint:gosec // path is computed from the config directory

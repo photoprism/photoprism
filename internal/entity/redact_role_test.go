@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/auth/acl"
 )
 
 func TestPhoto_RedactForSessionEffectiveRole(t *testing.T) {
@@ -25,12 +27,12 @@ func TestFile_RedactForSessionEffectiveRole(t *testing.T) {
 		s := &Session{}
 		s.SetUser(UserFixtures.Pointer("alice"))
 		f := &File{InstanceID: "b2f8b0b1-d0a6-4f2c-9b1a-5c3d9e0f1a2b"}
-		assert.False(t, f.RedactForSession(s).OmitMarkers)
+		assert.False(t, f.RedactForSession(s, acl.ResourcePhotos).OmitMarkers)
 		assert.NotEmpty(t, f.InstanceID)
 	})
 	t.Run("MixedPrincipalRedacted", func(t *testing.T) {
 		f := &File{InstanceID: "b2f8b0b1-d0a6-4f2c-9b1a-5c3d9e0f1a2b"}
-		assert.True(t, f.RedactForSession(mixedPrincipalSession()).OmitMarkers)
+		assert.True(t, f.RedactForSession(mixedPrincipalSession(), acl.ResourcePhotos).OmitMarkers)
 		assert.Empty(t, f.InstanceID)
 	})
 }

@@ -219,6 +219,12 @@ func TestConfig_OriginalsLimit(t *testing.T) {
 	assert.Equal(t, -1, c.OriginalsLimit())
 	c.options.OriginalsLimit = 800
 	assert.Equal(t, 800, c.OriginalsLimit())
+	// A value above the accepted range selects the disabled sentinel rather than clamping,
+	// so an operator who sets one too high gets no limit instead of a high one.
+	c.options.OriginalsLimit = 100001
+	assert.Equal(t, -1, c.OriginalsLimit())
+	c.options.OriginalsLimit = 100000
+	assert.Equal(t, 100000, c.OriginalsLimit())
 }
 
 func TestConfig_OriginalsLimitBytes(t *testing.T) {

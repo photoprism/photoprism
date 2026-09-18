@@ -101,7 +101,9 @@ type File struct {
 	Share              []FileShare   `json:"-" yaml:"-"`
 	Sync               []FileSync    `json:"-" yaml:"-"`
 	OmitMarkers        bool          `gorm:"-" sql:"-" json:"-" yaml:"-"`
+	OmitWithheldPeople bool          `gorm:"-" sql:"-" json:"-" yaml:"-"`
 	markers            *Markers
+	visibleMarkers     *Markers
 }
 
 // TableName returns the entity table name.
@@ -745,16 +747,24 @@ func (m *File) SetInstanceID(id string) {
 	}
 }
 
-// RedactForSession removes identifying per-file metadata a shared-only session must not see: the
-// XMP InstanceID is cleared and markers are omitted. Full-library, admin and nil sessions are
-// unchanged. Counterpart of Photo.RedactForSession, so GetFile and GetPhoto strip the same fields.
-func (m *File) RedactForSession(sess *Session) *File {
+// RedactForSession removes identifying per-file metadata a session without whole-library reach must
+// not see: the XMP InstanceID is cleared and markers are omitted. The resource names the context
+// the file is answered in - the picture that carries it, or the file itself. Withheld people are
+// flagged first, as that applies to every session.
+func (m *File) RedactForSession(sess *Session, resource acl.Resource) *File {
 	if m == nil || sess == nil {
 		return m
 	}
 
-	// Only sessions limited to shared content are redacted.
-	if !sess.HasSharedAccessOnly(acl.ResourcePhotos) && !sess.NotRegistered() {
+	if omit := !sess.SeesPrivatePeople(); omit != m.OmitWithheldPeople {
+		m.OmitWithheldPeople = omit
+		m.visibleMarkers = nil
+	}
+
+	// Markers and the XMP identifier are picture data, so the role must reach the whole library of
+	// pictures as well, whichever resource this file was answered on.
+	if sess.SeesFullDetail(resource) &&
+		sess.GrantsAny(acl.ResourcePhotos, acl.Permissions{acl.AccessAll, acl.AccessLibrary}) {
 		return m
 	}
 
@@ -983,6 +993,28 @@ func (m *File) Markers() *Markers {
 	}
 
 	return m.markers
+}
+
+// MarkersForJSON returns the markers to serialize, leaving out the people whose name is withheld
+// from the session reading the file. It caches its own query result, so the list Markers hands to
+// SaveMarkers and AddFace stays complete. A failed query yields no markers.
+func (m *File) MarkersForJSON() *Markers {
+	if !m.OmitWithheldPeople {
+		return m.Markers()
+	}
+
+	if m.visibleMarkers != nil {
+		return m.visibleMarkers
+	} else if m.FileUID == "" || m.OmitMarkers {
+		m.visibleMarkers = &Markers{}
+	} else if res, err := FindVisibleMarkers(m.FileUID, true); err != nil {
+		log.Warnf("file %s: %s while loading markers", clean.Log(m.FileUID), err)
+		m.visibleMarkers = &Markers{}
+	} else {
+		m.visibleMarkers = &res
+	}
+
+	return m.visibleMarkers
 }
 
 // UnsavedMarkers tests if any marker hasn't been saved yet.

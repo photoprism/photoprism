@@ -24,6 +24,26 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
+// ErrSkipPath identifies a path excluded by the transfer policy without a remote failure.
+var ErrSkipPath = errors.New("webdav: transfer path skipped")
+
+// ErrUnsafePath identifies a path with a parent-directory segment. It is reported as a failure
+// rather than a skip, so a queued transfer is not recorded as benignly ignored.
+var ErrUnsafePath = errors.New("webdav: transfer path contains a parent directory")
+
+// checkTransferPath returns ErrSkipPath for an excluded path and ErrUnsafePath for one with a
+// parent-directory segment. The exclusion is checked first, so a reserved name that also contains
+// one keeps reporting a skip.
+func checkTransferPath(name string) error {
+	if SkipSyncPath(name) {
+		return ErrSkipPath
+	} else if isUnsafePath(name) {
+		return ErrUnsafePath
+	}
+
+	return nil
+}
+
 // Client represents a webdav client.
 type Client struct {
 	client        *webdav.Client
@@ -268,6 +288,12 @@ func (c *Client) readDirFallback(ctx context.Context, dir string, timeout time.D
 
 // Files returns information about files in a directory, optionally recursively.
 func (c *Client) Files(dir string, recursive bool) (result fs.FileInfos, err error) {
+	if SkipSyncPath(dir) {
+		return nil, nil
+	} else if isUnsafePath(dir) {
+		return nil, ErrUnsafePath
+	}
+
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("webdav: %s (panic while listing files)\nstack: %s", r, debug.Stack())
@@ -292,6 +318,9 @@ func (c *Client) Files(dir string, recursive bool) (result fs.FileInfos, err err
 		}
 
 		info := fs.WebFileInfo(f, c.endpoint.Path)
+		if SkipSyncPath(info.Abs) {
+			continue
+		}
 
 		result = append(result, info)
 	}
@@ -301,6 +330,12 @@ func (c *Client) Files(dir string, recursive bool) (result fs.FileInfos, err err
 
 // Directories returns all subdirectories in a path and falls back to iterative Depth: 1 traversal when needed.
 func (c *Client) Directories(dir string, recursive bool, timeout time.Duration) (result fs.FileInfos, err error) {
+	if SkipSyncPath(dir) {
+		return nil, nil
+	} else if isUnsafePath(dir) {
+		return nil, ErrUnsafePath
+	}
+
 	dir = trimPath(dir)
 	ctx, cancel := c.timeoutContext(timeout)
 	defer cancel()
@@ -333,6 +368,10 @@ func (c *Client) Directories(dir string, recursive bool, timeout time.Duration) 
 
 		info := fs.WebFileInfo(f, c.endpoint.Path)
 
+		if SkipSyncPath(info.Abs) {
+			continue
+		}
+
 		result = append(result, info)
 	}
 
@@ -341,6 +380,10 @@ func (c *Client) Directories(dir string, recursive bool, timeout time.Duration) 
 
 // MkdirAll recursively creates remote directories.
 func (c *Client) MkdirAll(dir string) (err error) {
+	if err = checkTransferPath(dir); err != nil {
+		return err
+	}
+
 	folders := splitPath(dir)
 
 	if len(folders) == 0 {
@@ -359,6 +402,10 @@ func (c *Client) MkdirAll(dir string) (err error) {
 
 // Mkdir creates a single remote directory.
 func (c *Client) Mkdir(dir string) error {
+	if err := checkTransferPath(dir); err != nil {
+		return err
+	}
+
 	dir = trimPath(dir)
 
 	if dir == "" || dir == "." || dir == ".." {
@@ -386,6 +433,10 @@ func (c *Client) Mkdir(dir string) error {
 
 // Upload uploads a single file to the remote server.
 func (c *Client) Upload(src, dest string) (err error) {
+	if err = checkTransferPath(dest); err != nil {
+		return err
+	}
+
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("webdav: %s (panic while uploading)\nstack: %s", r, debug.Stack())
@@ -435,6 +486,10 @@ func (c *Client) Upload(src, dest string) (err error) {
 
 // Download downloads a single file to the given location.
 func (c *Client) Download(src, dest string, force bool) (err error) {
+	if err = checkTransferPath(src); err != nil {
+		return err
+	}
+
 	defer func() {
 		if r := recover(); r != nil {
 			log.Errorf("webdav: %s (panic)\nstack: %s", r, clean.Log(src))
@@ -615,9 +670,15 @@ func (c *Client) DownloadDir(src, dest string, recursive, force bool) (errs []er
 
 // Delete deletes a single file or directory on a remote server.
 func (c *Client) Delete(dir string) error {
+	if err := checkTransferPath(dir); err != nil {
+		return err
+	}
+
 	dir = trimPath(dir)
 	client, ctx, cancel := c.timeoutRequest(0)
+
 	defer cancel()
+
 	return client.RemoveAll(ctx, dir)
 }
 

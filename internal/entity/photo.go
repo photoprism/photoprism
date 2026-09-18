@@ -808,52 +808,35 @@ func (m *Photo) PreloadMany() *Photo {
 	return m
 }
 
-// RedactForSession trims fields a shared-only session should not see when it accesses a picture
-// through sharing: the album list is limited to the albums shared with the session, and people,
-// labels, the owner, private notes, and identifying metadata (camera serial, the XMP DocumentID,
-// and per-file InstanceID) are removed. Sessions with full library or admin access (and nil
-// sessions) are returned unchanged.
-//
-// It trims only fields the search results omit, so both read paths disclose the same set.
+// RedactForSession trims what a session without whole-library reach on pictures should not see:
+// labels, the owner, notes, and identifying metadata. It trims only what the search results omit,
+// so both read paths answer alike. The files and the albums are answered separately, since each is
+// addressable on its own resource.
 func (m *Photo) RedactForSession(sess *Session) *Photo {
 	if m == nil || sess == nil {
 		return m
 	}
 
-	// Only sessions limited to shared content are redacted.
-	if !sess.HasSharedAccessOnly(acl.ResourcePhotos) && !sess.NotRegistered() {
-		return m
+	for i := range m.Files {
+		m.Files[i].RedactForSession(sess, acl.ResourcePhotos)
 	}
 
-	// Limit album membership to the albums shared with the session.
+	// Album records carry their own notes and filters, so they are answered on albums rather than
+	// on the picture that names them.
 	if len(m.Albums) > 0 {
-		shared := sess.SharedUIDs()
-
-		if len(shared) == 0 {
+		if !sess.SeesAnyDetail(acl.ResourceAlbums) {
 			m.Albums = nil
-		} else {
-			allowed := make(map[string]struct{}, len(shared))
-			for _, uid := range shared {
-				allowed[uid] = struct{}{}
-			}
-
-			kept := m.Albums[:0]
-			for _, a := range m.Albums {
-				if _, ok := allowed[a.AlbumUID]; ok {
-					kept = append(kept, a)
-				}
-			}
-
-			m.Albums = kept
+		} else if !sess.SeesFullDetail(acl.ResourceAlbums) {
+			m.Albums = SharedAlbums(m.Albums, sess)
 		}
 	}
 
-	// Remove labels and people, plus the per-file XMP InstanceID (marker identity is omitted
-	// defensively in case markers are loaded).
-	m.Labels = nil
-	for i := range m.Files {
-		m.Files[i].RedactForSession(sess)
+	if sess.SeesFullDetail(acl.ResourcePhotos) {
+		return m
 	}
+
+	// Remove labels; the files were redacted above.
+	m.Labels = nil
 
 	// Remove the owner, private notes, and identifying metadata. PhotoPath and OriginalName stay:
 	// search discloses both to every in-scope session, so withholding them here protects nothing.

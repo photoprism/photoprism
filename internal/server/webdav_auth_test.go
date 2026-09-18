@@ -172,6 +172,7 @@ func TestWebDAVAuth(t *testing.T) {
 	})
 }
 
+// TestWebDAVAuthSession checks credential resolution with cold and warm account caches.
 func TestWebDAVAuthSession(t *testing.T) {
 	t.Run("AliceTokenWebdav", func(t *testing.T) {
 		w := httptest.NewRecorder()
@@ -210,7 +211,7 @@ func TestWebDAVAuthSession(t *testing.T) {
 		sess, user, sid, cached = WebDAVAuthSession(c, s.AuthToken())
 
 		// Check result.
-		assert.Nil(t, sess)
+		assert.NotNil(t, sess)
 		assert.NotNil(t, user)
 		assert.True(t, cached)
 
@@ -273,4 +274,64 @@ func TestWebDAVAuthSession(t *testing.T) {
 		assert.Equal(t, http.StatusOK, c.Writer.Status())
 		assert.Equal(t, "", c.Writer.Header().Get("WWW-Authenticate"))
 	})
+}
+
+// TestSetWebDAVUser checks the effective account/client ceiling carried into file operations.
+func TestSetWebDAVUser(t *testing.T) {
+	for _, tc := range []struct {
+		name, role, user string
+		allowed          bool
+	}{
+		{"BasicAdmin", "", "alice", true}, {"BasicGuest", "", "guest", false},
+		{"ClientCeiling", "instance", "alice", false}, {"AccountCeiling", "client", "guest", false}, {"FullClient", "client", "alice", true},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			c, _ := gin.CreateTestContext(httptest.NewRecorder())
+			c.Request = httptest.NewRequest(http.MethodGet, "/", nil)
+			user := entity.UserFixtures.Pointer(tc.user)
+
+			var sess *entity.Session
+
+			if tc.role != "" {
+				sess = entity.NewSession(3600, 0).SetClient(&entity.Client{ClientRole: tc.role, AuthProvider: "client", AuthScope: "webdav"})
+				sess.SetUser(user)
+			}
+
+			setWebDAVUser(c, user, sess)
+
+			assert.Equal(t, tc.allowed, canWriteManagedFiles(c.Request.Context()))
+			stored, ok := c.Get(gin.AuthUserKey)
+			assert.True(t, ok)
+			assert.Same(t, user, stored)
+		})
+	}
+}
+
+// TestSetWebDAVUserFullAccess requires full authority even when whole-library reactions are granted.
+func TestSetWebDAVUserFullAccess(t *testing.T) {
+	for _, role := range []acl.Role{acl.RoleAdmin, acl.RoleClient} {
+		t.Run(role.String(), func(t *testing.T) {
+			previous := acl.Rules[acl.ResourcePhotos]
+			grants := make(acl.Roles, len(previous))
+			for key, grant := range previous {
+				grants[key] = grant
+			}
+			grants[role] = acl.Grant{acl.AccessAll: true, acl.ActionReact: true}
+			acl.Rules[acl.ResourcePhotos] = grants
+			t.Cleanup(func() { acl.Rules[acl.ResourcePhotos] = previous })
+			user := entity.UserFixtures.Pointer("alice")
+			sess := entity.NewSession(3600, 0).SetClient(&entity.Client{ClientRole: "client", AuthProvider: "client", AuthScope: "webdav"}).SetUser(user)
+			assert.True(t, sess.Grants(acl.ResourcePhotos, acl.AccessAll))
+			assert.True(t, sess.Grants(acl.ResourcePhotos, acl.ActionReact))
+			assert.False(t, sess.Grants(acl.ResourcePhotos, acl.FullAccess))
+			c, _ := gin.CreateTestContext(httptest.NewRecorder())
+			c.Request = httptest.NewRequest(http.MethodPut, "/originals/photo.jpg", nil)
+			setWebDAVUser(c, user, sess)
+			assert.False(t, canWriteManagedFiles(c.Request.Context()))
+			if role == acl.RoleAdmin {
+				setWebDAVUser(c, user, nil)
+				assert.False(t, canWriteManagedFiles(c.Request.Context()))
+			}
+		})
+	}
 }

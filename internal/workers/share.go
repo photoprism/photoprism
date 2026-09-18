@@ -117,6 +117,13 @@ func (w *Share) Start() (err error) {
 				continue
 			}
 
+			if webdav.SkipSyncPath(file.File.FileName) || webdav.SkipSyncPath(file.RemoteName) {
+				log.Debugf("share: skipping excluded transfer %s to %s", clean.Log(file.File.FileName), clean.Log(file.RemoteName))
+				file.Status, file.Error, file.Errors = entity.FileShareIgnore, "", 0
+				w.logErr(entity.Db().Save(&file).Error)
+				continue
+			}
+
 			dir := path.Dir(file.RemoteName)
 
 			// Ensure remote folder exists.
@@ -141,7 +148,7 @@ func (w *Share) Start() (err error) {
 				file.Errors++
 				file.Error = err.Error()
 			} else {
-				log.Infof("share: uploaded %s to %s", file.RemoteName, a.AccName)
+				log.Infof("share: uploaded %s to %s", clean.Log(file.RemoteName), clean.Log(a.AccName))
 				file.Errors = 0
 				file.Error = ""
 				file.Status = entity.FileShareShared
@@ -199,11 +206,20 @@ func (w *Share) Start() (err error) {
 				return nil
 			}
 
+			if webdav.SkipSyncPath(file.RemoteName) || webdav.UnsafeSyncPath(file.RemoteName) {
+				file.Status = entity.FileShareError
+				file.Error = "remote copy retained: removal blocked by path policy"
+				file.Errors++
+				log.Warnf("share: expired remote copy %s on service %s retained by path policy; manual removal required", clean.Log(file.RemoteName), clean.Log(a.AccName))
+				w.logErr(entity.Db().Save(&file).Error)
+				continue
+			}
+
 			if err := client.Delete(file.RemoteName); err != nil {
 				file.Errors++
 				file.Error = err.Error()
 			} else {
-				log.Infof("share: removed %s from %s", file.RemoteName, a.AccName)
+				log.Infof("share: removed %s from %s", clean.Log(file.RemoteName), clean.Log(a.AccName))
 				file.Errors = 0
 				file.Error = ""
 				file.Status = entity.FileShareRemoved

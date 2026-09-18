@@ -10,7 +10,9 @@ import (
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
-// FilesByPath returns a slice of files in a given originals folder.
+// FilesByPath returns a slice of files in a given originals folder. The files carry no markers:
+// a folder listing names files rather than people, and its response is cached across sessions, so
+// a marker list resolved for whoever asked first must not be what the next session reads.
 func FilesByPath(limit, offset int, root, dir string, public bool) (files entity.Files, err error) {
 	dir = strings.TrimPrefix(dir, "/")
 
@@ -24,9 +26,15 @@ func FilesByPath(limit, offset int, root, dir string, public bool) (files entity
 		stmt = stmt.Where("photos.photo_private = 0")
 	}
 
-	err = stmt.Order("files.file_name").
+	if err = stmt.Order("files.file_name").
 		Limit(limit).Offset(offset).
-		Find(&files).Error
+		Find(&files).Error; err != nil {
+		return files, err
+	}
+
+	for i := range files {
+		files[i].OmitMarkers = true
+	}
 
 	return files, err
 }

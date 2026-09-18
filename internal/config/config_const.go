@@ -86,9 +86,6 @@ const DefaultTranscodeTimeout = -1
 // MaxConvertTimeout defines the largest accepted conversion or transcoding budget, in minutes.
 const MaxConvertTimeout = 1440
 
-// serialName defines the name of the unique storage serial.
-const serialName = "serial"
-
 // serialPrefix is the UID prefix of the storage serial, used to validate the value read from disk so
 // a truncated or corrupted file is rejected instead of silently becoming the serial.
 const serialPrefix = 'z'
@@ -96,11 +93,6 @@ const serialPrefix = 'z'
 // PreviewTokenPlaceholder is reported in place of the preview token when none could be derived. It is
 // never registered as a valid token, so previews fail closed rather than accepting a guessable value.
 const PreviewTokenPlaceholder = "********"
-
-// signingKeyName defines the name of the secret file (under KeysPath) holding the HMAC key that signs
-// the app's URL tokens (downloads today, previews next); one shared key signs every token kind. It is
-// regenerated automatically when missing, so it is not backed up.
-const signingKeyName = "signing.key"
 
 // DefaultSessionMaxAge defines the standard session expiration time in seconds.
 const DefaultSessionMaxAge = unix.Week * 2

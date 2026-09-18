@@ -44,6 +44,58 @@ func (m *Session) DeniesAll(resource acl.Resource, perms acl.Permissions) bool {
 	return !m.GrantsAny(resource, perms)
 }
 
+// SeesPrivatePeople reports whether the session may see the people Subject.NameWithheld covers,
+// so every surface that resolves a person's name answers alike. The scope is read alongside the
+// role, because these names travel on other resources: a credential admitted on photos or files
+// reaches them without people ever being authorized.
+func (m *Session) SeesPrivatePeople() bool {
+	if m == nil {
+		return true
+	} else if !m.Grants(acl.ResourcePeople, acl.AccessPrivate) {
+		return false
+	}
+
+	return m.NoScope() || m.ValidateScope(acl.ResourcePeople, acl.Permissions{acl.AccessPrivate})
+}
+
+// SeesAnyDetail reports whether the session may view records of the resource at all: the role must
+// grant view, and the credential's scope must permit viewing it. It answers yes for a share-link
+// visitor, whose share reaches a record - so it decides whether to return nothing, never whether to
+// return everything. A nil session is internal or CLI use and is unrestricted.
+func (m *Session) SeesAnyDetail(resource acl.Resource) bool {
+	if m == nil {
+		return true
+	} else if !m.Grants(resource, acl.ActionView) {
+		return false
+	}
+
+	// An empty scope is unrestricted for an account session and insufficient for a credential,
+	// as it is on the handler.
+	if m.IsClient() {
+		return m.ValidateScope(resource, acl.Permissions{acl.ActionView})
+	}
+
+	return !m.HasScope() || m.ValidateScope(resource, acl.Permissions{acl.ActionView})
+}
+
+// SeesFullDetail reports whether the session may receive the full detail of a resource it has
+// already been admitted to, rather than the reduced projection: it must be permitted to view the
+// resource and hold whole-library reach on it. It reads the role and scope AuthAny reads, and
+// nothing else, so the caller owes it the admission checks.
+func (m *Session) SeesFullDetail(resource acl.Resource) bool {
+	if m == nil {
+		return true
+	}
+
+	// A principal with neither an account nor a credential is a share-link visitor at most.
+	if !m.IsRegistered() && !m.IsClient() {
+		return false
+	}
+
+	return m.GrantsAny(resource, acl.Permissions{acl.AccessAll, acl.AccessLibrary}) &&
+		m.SeesAnyDetail(resource)
+}
+
 // HasSharedAccessOnly reports whether the session's effective access to the resource is limited to
 // shared content, evaluating the client role alongside the user role. A nil session is unrestricted.
 func (m *Session) HasSharedAccessOnly(resource acl.Resource) bool {

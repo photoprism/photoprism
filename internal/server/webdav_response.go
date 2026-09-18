@@ -2,6 +2,7 @@ package server
 
 import (
 	"net/http"
+	"path"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -15,6 +16,21 @@ import (
 func ServeWebDAV(w gin.ResponseWriter, r *http.Request, srv *webdav.Handler) {
 	if w == nil || r == nil || srv == nil {
 		return
+	}
+
+	if upload, probe := r.Context().Value(webDAVUploadProbeKey{}).(string); probe {
+		name := path.Clean("/" + strings.TrimPrefix(r.URL.Path, srv.Prefix))
+		if upload == "" && name != "/" || upload != "" && !hasCollectionPath(name, "/"+upload) {
+			w.WriteHeader(http.StatusForbidden)
+			return
+		}
+	}
+
+	if fileSystem, ok := srv.FileSystem.(*webDAVFileSystem); ok {
+		if code := fileSystem.preflight(r, srv.Prefix); code != http.StatusOK {
+			w.WriteHeader(code)
+			return
+		}
 	}
 
 	srv.ServeHTTP(&webDAVResponseWriter{

@@ -1,12 +1,22 @@
 ## PhotoPrism — Config Package
 
-**Last Updated:** March 8, 2026
+**Last Updated:** September 17, 2026
 
 ### Overview
 
 PhotoPrism’s [runtime configuration](https://docs.photoprism.app/developer-guide/configuration/) is managed by this package. Fields are defined in [`options.go`](options.go) and then initialized with values from command-line flags, [environment variables](https://docs.photoprism.app/getting-started/config-options/), and [optional YAML files](https://docs.photoprism.app/getting-started/config-files/) (`storage/config/*.yml`).
 
 Client config values are derived from the runtime configuration and exposed to the frontend via `GET /api/v1/config`. This includes a `storageNamespace` value (SHA-256 hash of `SiteUrl`) used by the browser to scope namespaced browser-storage keys on shared domains.
+
+### Standard Files & Directories
+
+Shared storage/configuration names are defined in `pkg/fs/const.go`, including the storage
+serial, signing-key file, key directory, cluster credential files, storage markers, and
+the `options`, `defaults`, `settings`, and `hub` configuration basenames. `fs.ConfigFilePath`
+retains `.yml`/`.yaml` selection for these basenames.
+Configuration helpers retain ownership of path resolution, generation, permissions, and
+persistence. Transfer reservations are a separate policy in `pkg/fs/reserved.go`; they do
+not prevent trusted internal configuration helpers from managing their own files.
 
 ### Storage Namespace & Legacy Session Compatibility
 

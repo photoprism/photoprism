@@ -335,11 +335,13 @@ func TestConfig_Serial(t *testing.T) {
 	assert.NotEmpty(t, result)
 }
 
+// TestReadSerialFile checks stored serial validation.
 func TestReadSerialFile(t *testing.T) {
 	valid := rnd.GenerateUID(serialPrefix)
+	// write creates a serial fixture and returns its path.
 	write := func(t *testing.T, data string) string {
 		t.Helper()
-		fileName := filepath.Join(t.TempDir(), serialName)
+		fileName := filepath.Join(t.TempDir(), fs.SerialFile)
 		require.NoError(t, os.WriteFile(fileName, []byte(data), fs.ModeSecretFile))
 		return fileName
 	}
@@ -351,7 +353,7 @@ func TestReadSerialFile(t *testing.T) {
 		assert.Equal(t, valid, readSerialFile(write(t, valid+"\n")))
 	})
 	t.Run("Missing", func(t *testing.T) {
-		assert.Empty(t, readSerialFile(filepath.Join(t.TempDir(), serialName)))
+		assert.Empty(t, readSerialFile(filepath.Join(t.TempDir(), fs.SerialFile)))
 	})
 	t.Run("Truncated", func(t *testing.T) {
 		assert.Empty(t, readSerialFile(write(t, valid[:8])))
@@ -367,6 +369,7 @@ func TestReadSerialFile(t *testing.T) {
 	})
 }
 
+// TestConfig_InitSerial checks serial creation and backup recovery.
 func TestConfig_InitSerial(t *testing.T) {
 	t.Run("GeneratesAndPersists", func(t *testing.T) {
 		c := NewMinimalTestConfig(t.TempDir())
@@ -375,8 +378,8 @@ func TestConfig_InitSerial(t *testing.T) {
 		serial := c.Serial()
 		assert.True(t, rnd.IsUID(serial, serialPrefix))
 		// Written to the storage path and mirrored to the backup path, both readable back.
-		assert.Equal(t, serial, readSerialFile(filepath.Join(c.StoragePath(), serialName)))
-		assert.Equal(t, serial, readSerialFile(c.BackupPath(serialName)))
+		assert.Equal(t, serial, readSerialFile(filepath.Join(c.StoragePath(), "serial")))
+		assert.Equal(t, serial, readSerialFile(c.BackupPath(fs.SerialFile)))
 		// Stable across calls: an existing serial is never regenerated.
 		require.NoError(t, c.InitSerial())
 		assert.Equal(t, serial, c.Serial())
@@ -387,7 +390,7 @@ func TestConfig_InitSerial(t *testing.T) {
 		require.NoError(t, c.InitSerial())
 		serial := c.Serial()
 		// Losing the storage copy must not change the serial, or every preview URL would break.
-		require.NoError(t, os.Remove(filepath.Join(c.StoragePath(), serialName)))
+		require.NoError(t, os.Remove(filepath.Join(c.StoragePath(), fs.SerialFile)))
 		c.serial = ""
 		assert.Equal(t, serial, c.Serial())
 	})
@@ -396,7 +399,7 @@ func TestConfig_InitSerial(t *testing.T) {
 		require.NoError(t, c.CreateDirectories())
 		// Block the backup copy by putting a directory where the file belongs; startup must continue,
 		// since the backup only adds redundancy.
-		require.NoError(t, os.MkdirAll(c.BackupPath(serialName), fs.ModeDir))
+		require.NoError(t, os.MkdirAll(c.BackupPath(fs.SerialFile), fs.ModeDir))
 		assert.NoError(t, c.InitSerial())
 		assert.True(t, rnd.IsUID(c.Serial(), serialPrefix))
 	})

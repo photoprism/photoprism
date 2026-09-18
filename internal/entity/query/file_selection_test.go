@@ -267,3 +267,38 @@ func TestShareSelection_OmitTypes(t *testing.T) {
 		assert.Empty(t, ShareSelection(true).OmitTypes)
 	})
 }
+
+// TestSelectedFilesForSessionYaml checks export eligibility without changing internal selections.
+func TestSelectedFilesForSessionYaml(t *testing.T) {
+	photo := entity.NewPhoto(false)
+	if err := photo.Save(); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() {
+		entity.UnscopedDb().Unscoped().Delete(&entity.File{}, "photo_id = ?", photo.ID)
+		entity.UnscopedDb().Unscoped().Delete(&entity.Details{}, "photo_id = ?", photo.ID)
+		entity.UnscopedDb().Unscoped().Delete(photo)
+	})
+	file := entity.File{PhotoID: photo.ID, PhotoUID: photo.PhotoUID, FileName: "selection-control.yml", FileType: "yml", FileRoot: entity.RootOriginals, FileHash: "ce1a3d09c704ab1c7519c0edee4a835f661c3aa1"}
+	if err := file.Create(); err != nil {
+		t.Fatal(err)
+	}
+	selection := form.Selection{Photos: []string{photo.PhotoUID}}
+	options := DownloadSelection(true, true, true)
+	internal, err := SelectedFiles(selection, options)
+	assert.NoError(t, err)
+	assert.Len(t, internal, 1)
+	nonDownload := options
+	nonDownload.Download = false
+	unchanged, err := SelectedFilesForSession(selection, nonDownload, nil)
+	assert.NoError(t, err)
+	assert.Len(t, unchanged, 1)
+	anonymous, err := SelectedFilesForSession(selection, options, nil)
+	assert.NoError(t, err)
+	assert.Empty(t, anonymous)
+	reader, err := SelectedFilesForSession(selection, options, aclSession("alice"))
+	assert.NoError(t, err)
+	assert.Len(t, reader, 1)
+	_, err = SelectedFilesForSession(form.Selection{}, options, aclSession("alice"))
+	assert.Error(t, err)
+}
