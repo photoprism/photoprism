@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -132,6 +133,27 @@ func webDAVTestBody(size int) []byte {
 	}
 
 	return body
+}
+
+// webDAVPut uploads body to name and returns the recorder. Passing declareLength=false hands
+// httptest a reader type it does not measure, leaving ContentLength at -1: the shape a chunked
+// client sends, and the only one the declared-length precheck cannot see.
+func webDAVPut(r *gin.Engine, conf *config.Config, name string, body []byte, declareLength bool) *httptest.ResponseRecorder {
+	var req *http.Request
+
+	target := conf.BaseUri(WebDAVOriginals) + "/" + name
+
+	if declareLength {
+		req = httptest.NewRequest(header.MethodPut, target, bytes.NewReader(body))
+	} else {
+		req = httptest.NewRequest(header.MethodPut, target, io.NopCloser(bytes.NewReader(body)))
+	}
+
+	w := httptest.NewRecorder()
+	authBearer(req)
+	r.ServeHTTP(w, req)
+
+	return w
 }
 
 func TestWebDAVWrite_SeparatorRefused(t *testing.T) {
@@ -287,26 +309,196 @@ func TestWebDAVWrite_PUT_OriginalsLimit(t *testing.T) {
 	}
 	r := setupWebDAVRouter(conf)
 
+	limit := int(conf.OriginalsLimitBytes())
+	stored := func(name string) string { return filepath.Join(conf.OriginalsPath(), name) }
+
 	t.Run("UnderLimitAccepted", func(t *testing.T) {
-		w := httptest.NewRecorder()
-		req := httptest.NewRequest(header.MethodPut, conf.BaseUri(WebDAVOriginals)+"/small.bin", bytes.NewReader(make([]byte, 512*1024)))
-		authBearer(req)
-		r.ServeHTTP(w, req)
-		assert.InDelta(t, 201, w.Code, 1)
-	})
-	t.Run("OverLimitRejected", func(t *testing.T) {
-		w := httptest.NewRecorder()
-		req := httptest.NewRequest(header.MethodPut, conf.BaseUri(WebDAVOriginals)+"/big.bin", bytes.NewReader(make([]byte, 2*1024*1024)))
-		authBearer(req)
-		r.ServeHTTP(w, req)
-		// The oversized PUT must not be accepted, and the bytes written to disk must not
-		// exceed the configured originals limit (the body cap stops io.Copy mid-stream).
-		assert.NotEqual(t, http.StatusCreated, w.Code)
-		path := filepath.Join(conf.OriginalsPath(), "big.bin")
+		body := webDAVTestBody(limit / 2)
+		assert.Equal(t, http.StatusCreated, webDAVPut(r, conf, "small.bin", body, true).Code)
 		// #nosec G304 -- test reads file created under controlled temp directory.
-		if info, err := os.Stat(path); err == nil {
-			assert.LessOrEqual(t, info.Size(), conf.OriginalsLimitBytes())
+		b, err := os.ReadFile(stored("small.bin"))
+		assert.NoError(t, err)
+		assert.Equal(t, body, b)
+	})
+	t.Run("AtLimitAccepted", func(t *testing.T) {
+		body := webDAVTestBody(limit)
+		assert.Equal(t, http.StatusCreated, webDAVPut(r, conf, "exact.bin", body, true).Code)
+		// #nosec G304 -- test reads file created under controlled temp directory.
+		b, err := os.ReadFile(stored("exact.bin"))
+		assert.NoError(t, err)
+		assert.Equal(t, body, b)
+	})
+	t.Run("UnderLimitUnknownLengthAccepted", func(t *testing.T) {
+		body := webDAVTestBody(limit / 2)
+		assert.Equal(t, http.StatusCreated, webDAVPut(r, conf, "chunked.bin", body, false).Code)
+		// #nosec G304 -- test reads file created under controlled temp directory.
+		b, err := os.ReadFile(stored("chunked.bin"))
+		assert.NoError(t, err)
+		assert.Equal(t, body, b)
+	})
+	t.Run("OverLimitDeclaredLengthRefused", func(t *testing.T) {
+		hook := &logCapture{}
+		event.SystemLog.ReplaceHooks(logrus.LevelHooks{})
+		event.SystemLog.AddHook(hook)
+		defer event.SystemLog.ReplaceHooks(logrus.LevelHooks{})
+
+		w := webDAVPut(r, conf, "big.bin", webDAVTestBody(limit+1), true)
+		assert.Equal(t, http.StatusRequestEntityTooLarge, w.Code)
+		_, err := os.Stat(stored("big.bin"))
+		assert.True(t, os.IsNotExist(err), "the destination must not be created")
+
+		// The refusal returns before the handler's own logger, so it reports itself, at the
+		// level that logger gives a write method and without the server path.
+		var reported bool
+		for _, e := range hook.entries {
+			if e.Level == logrus.WarnLevel && strings.Contains(e.Message, "exceeds the originals limit") {
+				reported = true
+				assert.NotContains(t, e.Message, conf.OriginalsPath())
+			}
 		}
+		assert.True(t, reported, "expected a warning for the refused upload")
+	})
+	t.Run("UnrelatedFailureKeepsFile", func(t *testing.T) {
+		// The cleanup is keyed on the size bound, so a PUT failing for any other reason leaves
+		// the destination alone. A lock token matching nothing fails confirmLocks without
+		// opening the file, and the stored body is the size the cleanup would otherwise accept.
+		body := webDAVTestBody(limit)
+		assert.Equal(t, http.StatusCreated, webDAVPut(r, conf, "locked.bin", body, true).Code)
+
+		w := httptest.NewRecorder()
+		req := httptest.NewRequest(header.MethodPut, conf.BaseUri(WebDAVOriginals)+"/locked.bin", bytes.NewReader(webDAVTestBody(16)))
+		req.Header.Set("If", "(<opaquelocktoken:nonexistent>)")
+		authBearer(req)
+		r.ServeHTTP(w, req)
+		assert.NotEqual(t, http.StatusCreated, w.Code)
+
+		// #nosec G304 -- test reads file created under controlled temp directory.
+		b, err := os.ReadFile(stored("locked.bin"))
+		assert.NoError(t, err)
+		assert.Equal(t, body, b)
+	})
+	t.Run("OverLimitUnknownLengthLeavesNoFile", func(t *testing.T) {
+		// The handler answers with its own status, so the refusal shows as a non-2xx, not 413.
+		// The two assertions carry the contract together: the log line shows the bound error
+		// reached the matching branch, the absent destination shows it acted. Keep both.
+		hook := &logCapture{}
+		event.SystemLog.ReplaceHooks(logrus.LevelHooks{})
+		event.SystemLog.AddHook(hook)
+		defer event.SystemLog.ReplaceHooks(logrus.LevelHooks{})
+
+		w := webDAVPut(r, conf, "bigchunked.bin", webDAVTestBody(limit+1), false)
+		assert.NotEqual(t, http.StatusCreated, w.Code)
+		_, err := os.Stat(stored("bigchunked.bin"))
+		assert.True(t, os.IsNotExist(err), "the partial upload must be removed")
+
+		// The logged error is the one the cleanup matched, so it names the exceeded bound.
+		var reported bool
+		for _, e := range hook.entries {
+			if strings.Contains(e.Message, "request body too large") {
+				reported = true
+			}
+		}
+		assert.True(t, reported, "expected the size bound to be reported to the operator")
+	})
+	t.Run("OverLimitDeclaredLengthKeepsExistingFile", func(t *testing.T) {
+		// The declared-length refusal returns before the handler opens the destination, which
+		// is what leaves an existing file untouched.
+		body := webDAVTestBody(limit / 2)
+		assert.Equal(t, http.StatusCreated, webDAVPut(r, conf, "keep.bin", body, true).Code)
+
+		assert.Equal(t, http.StatusRequestEntityTooLarge, webDAVPut(r, conf, "keep.bin", webDAVTestBody(limit+1), true).Code)
+		// #nosec G304 -- test reads file created under controlled temp directory.
+		b, err := os.ReadFile(stored("keep.bin"))
+		assert.NoError(t, err)
+		assert.Equal(t, body, b)
+	})
+	t.Run("OverLimitUnknownLengthLeavesNoFileAtUsedName", func(t *testing.T) {
+		// The guarantee holds for a name already in use: an upload over the bound leaves no
+		// file at the destination, whether or not the name was free when it started.
+		assert.Equal(t, http.StatusCreated, webDAVPut(r, conf, "reused.bin", webDAVTestBody(limit/2), true).Code)
+
+		assert.NotEqual(t, http.StatusCreated, webDAVPut(r, conf, "reused.bin", webDAVTestBody(limit+1), false).Code)
+		_, err := os.Stat(stored("reused.bin"))
+		assert.True(t, os.IsNotExist(err), "the destination must be left empty")
+	})
+}
+
+func TestWebDAVWrite_PUT_OriginalsLimitDisabled(t *testing.T) {
+	conf := newWebDAVTestConfig(t)
+	conf.Options().OriginalsLimit = -1
+	if err := conf.CreateDirectories(); err != nil {
+		t.Fatalf("failed to create test directories: %v", err)
+	}
+	r := setupWebDAVRouter(conf)
+
+	body := webDAVTestBody(2 * 1024 * 1024)
+	assert.Equal(t, http.StatusCreated, webDAVPut(r, conf, "unbounded.bin", body, true).Code)
+	// #nosec G304 -- test reads file created under controlled temp directory.
+	b, err := os.ReadFile(filepath.Join(conf.OriginalsPath(), "unbounded.bin"))
+	assert.NoError(t, err)
+	assert.Equal(t, body, b)
+}
+
+func TestWebDAVRemovePartialUpload(t *testing.T) {
+	// write creates a file of the given size and returns its name.
+	write := func(t *testing.T, dir, name string, size int) string {
+		t.Helper()
+		fileName := filepath.Join(dir, name)
+		if err := os.WriteFile(fileName, webDAVTestBody(size), fs.ModeFile); err != nil {
+			t.Fatal(err)
+		}
+		return fileName
+	}
+
+	t.Run("Removed", func(t *testing.T) {
+		fileName := write(t, t.TempDir(), "partial.bin", 64)
+		WebDAVRemovePartialUpload(fileName, 64)
+		_, err := os.Stat(fileName)
+		assert.True(t, os.IsNotExist(err))
+	})
+	t.Run("OtherSizeKept", func(t *testing.T) {
+		// A name that no longer holds a file of exactly the bound is a different file.
+		fileName := write(t, t.TempDir(), "complete.bin", 32)
+		WebDAVRemovePartialUpload(fileName, 64)
+		_, err := os.Stat(fileName)
+		assert.NoError(t, err)
+	})
+	t.Run("SymlinkKept", func(t *testing.T) {
+		dir := t.TempDir()
+		target := write(t, dir, "target.bin", 64)
+		linkName := filepath.Join(dir, "link.bin")
+		if err := os.Symlink(target, linkName); err != nil {
+			t.Skipf("symlinks unsupported: %v", err)
+		}
+		// Lstat reports a link's size as the length of its target path, so passing that length
+		// is what makes the regular-file check the only thing declining here.
+		WebDAVRemovePartialUpload(linkName, int64(len(target)))
+		_, err := os.Lstat(linkName)
+		assert.NoError(t, err, "a link must keep its own name")
+		_, err = os.Stat(target)
+		assert.NoError(t, err, "a link target must not be removed")
+	})
+	t.Run("Missing", func(t *testing.T) {
+		hook := &logCapture{}
+		event.SystemLog.ReplaceHooks(logrus.LevelHooks{})
+		event.SystemLog.AddHook(hook)
+		defer event.SystemLog.ReplaceHooks(logrus.LevelHooks{})
+
+		WebDAVRemovePartialUpload(filepath.Join(t.TempDir(), "absent.bin"), 64)
+		// An absent destination declines at the Lstat and is never an operator-visible failure.
+		for _, e := range hook.entries {
+			assert.NotEqual(t, logrus.ErrorLevel, e.Level)
+		}
+	})
+	t.Run("Directory", func(t *testing.T) {
+		dirName := filepath.Join(t.TempDir(), "dir")
+		if err := os.Mkdir(dirName, fs.ModeDir); err != nil {
+			t.Fatal(err)
+		}
+		write(t, dirName, "child.bin", 64)
+		WebDAVRemovePartialUpload(dirName, 64)
+		_, err := os.Stat(dirName)
+		assert.NoError(t, err)
 	})
 }
 
