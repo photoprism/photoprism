@@ -1150,7 +1150,10 @@ func TestFacesMigrateRerunError_Error(t *testing.T) {
 		assert.Contains(t, err.Error(), "a person assignment changed")
 		assert.Contains(t, err.Error(), "nothing was lost")
 		assert.Contains(t, err.Error(), "12 regenerated marker(s) stay unmatched")
-		assert.Contains(t, err.Error(), "run again with the server stopped")
+		assert.Contains(t, err.Error(), "stay unmatched until the migration is run again")
+		// The invariant the wording carries: a rolled-back run is resolved by repeating it, and
+		// the lock rather than the operator is what keeps the instance off those rows.
+		assert.NotContains(t, err.Error(), "server")
 	})
 	t.Run("Unwraps", func(t *testing.T) {
 		// The identity case is the one a caller may want to tell apart from a storage error.

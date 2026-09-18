@@ -113,8 +113,9 @@ var FacesMigrateCommand = &cli.Command{
 	Usage: "Migrates face embeddings to a supported model",
 	Description: "This is how the face embedding model is changed: every marker is re-embedded and " +
 		"the target is recorded as the configured model. It defaults to " + face.DefaultModelName() +
-		", the model this release supports, so an ordinary migration needs no target. Stop the server " +
-		"before running it, as the migration replaces every face cluster in one transaction.",
+		", the model this release supports, so an ordinary migration needs no target. A running " +
+		"instance does not have to be stopped, but start this when no indexing or import is under " +
+		"way, and restart the instance afterwards to load the model it recorded.",
 	Flags: []cli.Flag{
 		&cli.StringFlag{
 			Name:  "to",
@@ -216,15 +217,16 @@ func facesMigrateAction(ctx *cli.Context) error {
 			return nil
 		}
 
-		// The worker guards in Migrate are process-local, so they cannot see a server that
-		// is indexing or matching the same rows. Stopping it is the operator's job, and the
-		// prompt is the last point at which saying so still helps.
-		event.SystemWarn([]string{"faces", "migrate", "this replaces every face cluster; indexing and vision hold off " +
-			"while it runs, but changes made in the app are not covered, so stopping the server is still the safe way"})
+		// A running instance reads the lock file this run takes, so it starts no new indexing and
+		// refuses people edits. A pass already under way is not interrupted, and what it writes can
+		// roll the finalize back, which is why the warning names that as well as the restart.
+		event.SystemWarn([]string{"faces", "migrate", "this replaces every face cluster; a running instance " +
+			"starts no new indexing and refuses people edits while it runs, but a pass already under way can " +
+			"still force a re-run; restart the instance afterwards to load %s"}, clean.Log(plan.Target))
 
 		if !RunNonInteractively(ctx.Bool("yes")) {
 			prompt := promptui.Prompt{
-				Label:     fmt.Sprintf("Migrate all face embeddings to %s, with the server stopped?", plan.Target),
+				Label:     fmt.Sprintf("Migrate all face embeddings to %s?", plan.Target),
 				IsConfirm: true,
 			}
 			if _, promptErr := prompt.Run(); promptErr != nil {

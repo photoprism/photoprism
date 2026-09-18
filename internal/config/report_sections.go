@@ -9,7 +9,7 @@ type ReportSection struct {
 
 // see https://docs.photoprism.app/getting-started/config-options/#face-recognition
 var faceFlagsInfo = `!!! info ""
-    The distance thresholds default to values calibrated for the configured face model, so leaving them unset is recommended: a range that suits one embedding model does not transfer to another. Higher values cluster more aggressively and produce more false positives. To cluster a smaller number of faces, reduce the core to 3 or 2 similar faces. After changing any of the clustering parameters, run "photoprism faces update --force" so existing clusters are recalculated; changing the face model instead requires "photoprism faces migrate".
+    The distance thresholds default to values calibrated for the configured face model, so leaving them unset is recommended: a range that suits one embedding model does not transfer to another. Higher values cluster more aggressively and produce more false positives. To cluster a smaller number of faces, reduce the core to 3 or 2 similar faces. After changing any of the clustering parameters, run "photoprism faces update --force" so a pass runs at the new values instead of waiting for enough new faces; it clusters what is unassigned and matches every face against the clusters again, while faces already in one keep it. Changing the face model instead requires "photoprism faces migrate".
 
 We recommend that only advanced users change these parameters:`
 
