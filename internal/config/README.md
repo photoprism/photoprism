@@ -1,6 +1,6 @@
 ## PhotoPrism — Config Package
 
-**Last Updated:** September 17, 2026
+**Last Updated:** September 18, 2026
 
 ### Overview
 
@@ -67,6 +67,15 @@ Example output:
 | site-domain | app.localssl.dev          |
 | site-author | @photoprism_app           |
 | site-title  | PhotoPrism                |
+
+### Test Database Setup
+
+Tests that install connection-local GORM callbacks can create a `NewIsolatedTestConfig` and call
+`OpenTestDb` before `Init` or `RegisterDb`. This opens the connection without replacing the global
+entity database provider or loading fixtures, so callbacks can be configured before background
+writers use it. Normal initialization reuses the prepared connection. If setup is abandoned before
+registration, close the returned handle directly and discard the config rather than clearing
+another config's provider or reusing the closed connection.
 
 ### CLI Reference
 
