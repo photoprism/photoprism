@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	clusterjwt "github.com/photoprism/photoprism/internal/auth/jwt"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -23,6 +24,7 @@ import (
 )
 
 func TestAuthAnyJWT(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("ClusterScope", func(t *testing.T) {
 		fx := newPortalJWTFixture(t, "cluster-jwt-success")
 		spec := fx.defaultClaimsSpec()
@@ -353,6 +355,7 @@ func TestAuthAnyJWT(t *testing.T) {
 }
 
 func TestJwtIssuerCandidates(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("IncludesAllSources", func(t *testing.T) {
 		conf := config.NewConfig(config.CliTestContext())
 		conf.Options().ClusterUUID = "11111111-1111-4111-8111-111111111111"
@@ -381,6 +384,7 @@ func TestJwtIssuerCandidates(t *testing.T) {
 }
 
 func TestShouldAttemptJWT(t *testing.T) {
+	entity.ValidateFixtures(t)
 	gin.SetMode(gin.TestMode)
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
@@ -394,6 +398,7 @@ func TestShouldAttemptJWT(t *testing.T) {
 }
 
 func TestInstanceAllowsJWT(t *testing.T) {
+	entity.ValidateFixtures(t)
 	fx := newPortalJWTFixture(t, "node-allows")
 	conf := fx.nodeConf
 
@@ -414,6 +419,7 @@ func TestInstanceAllowsJWT(t *testing.T) {
 }
 
 func TestExpectedClaimsFor(t *testing.T) {
+	entity.ValidateFixtures(t)
 	fx := newPortalJWTFixture(t, "expected-claims")
 
 	claims := expectedClaimsFor(fx.nodeConf, "cluster")
@@ -426,6 +432,7 @@ func TestExpectedClaimsFor(t *testing.T) {
 }
 
 func TestVerifyTokenFromPortal(t *testing.T) {
+	entity.ValidateFixtures(t)
 	fx := newPortalJWTFixture(t, "verify-token")
 	spec := fx.defaultClaimsSpec()
 	token := fx.issue(t, spec)
@@ -441,6 +448,7 @@ func TestVerifyTokenFromPortal(t *testing.T) {
 }
 
 func TestAuthAnyJWT_UsersManageScope(t *testing.T) {
+	entity.ValidateFixtures(t)
 	// A Portal cluster JWT scoped for user management authenticates as a service
 	// principal with no end-user identity. UpdateUser authorizes exactly this
 	// condition (GrantJwtBearer + users-manage scope) so the Portal can sync
@@ -478,6 +486,7 @@ func TestAuthAnyJWT_UsersManageScope(t *testing.T) {
 }
 
 func TestDownloadSessionPortalJWT(t *testing.T) {
+	entity.ValidateFixtures(t)
 	fx := newPortalJWTFixture(t, "download")
 	origScope := fx.nodeConf.Options().JWTScope
 	fx.nodeConf.Options().JWTScope = "cluster vision files"

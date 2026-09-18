@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -19,6 +20,12 @@ import (
 )
 
 func TestBatchPhotosEdit(t *testing.T) {
+	entity.ValidateFixtures(t)
+	t.Cleanup(func() {
+		require.NoError(t, entity.UnscopedDb().Delete(&entity.Details{}, "photo_id = ?", 1000056).Error)
+		require.NoError(t, entity.UnscopedDb().Delete(&entity.PhotoLabel{}, "photo_id = ? AND label_id > ?", 1000058, 1000014).Error)
+		require.NoError(t, entity.UnscopedDb().Delete(&entity.PhotoLabel{}, "photo_id = ? AND label_id > ?", 1000059, 1000015).Error)
+	})
 	t.Run("FeatureDisabled", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 
@@ -231,7 +238,6 @@ func TestBatchPhotosEdit(t *testing.T) {
 			"POST", "/api/v1/batch/photos/edit",
 			fmt.Sprintf(`{"photos": %s}`, photoUIDs),
 		)
-
 		// Check the edit response status code.
 		assert.Equal(t, http.StatusOK, editResponse.Code)
 
@@ -810,7 +816,7 @@ func TestBatchPhotosEdit(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
-		authToken := AuthenticateUser(app, router, "alice", "Alice123!")
+		authToken := AuthenticateUser(t, app, router, "alice", "Alice123!")
 
 		// Attach POST /api/v1/batch/photos/edit request handler.
 		BatchPhotosEdit(router)
@@ -861,7 +867,7 @@ func TestBatchPhotosEdit(t *testing.T) {
 		// Attach POST /api/v1/batch/photos/edit request handler.
 		BatchPhotosEdit(router)
 
-		sessId := AuthenticateUser(app, router, "alice", "Alice123!")
+		sessId := AuthenticateUser(t, app, router, "alice", "Alice123!")
 
 		response := AuthenticatedRequestWithBody(app,
 			"POST", "/api/v1/batch/photos/edit",
@@ -885,7 +891,7 @@ func TestBatchPhotosEdit(t *testing.T) {
 		// Attach POST /api/v1/batch/photos/edit request handler.
 		BatchPhotosEdit(router)
 
-		sessId := AuthenticateUser(app, router, "gandalf", "Gandalf123!")
+		sessId := AuthenticateUser(t, app, router, "gandalf", "Gandalf123!")
 
 		response := AuthenticatedRequestWithBody(app,
 			"POST", "/api/v1/batch/photos/edit",
@@ -910,7 +916,7 @@ func TestBatchPhotosEdit(t *testing.T) {
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
 
-		authToken := AuthenticateUser(app, router, "alice", "Alice123!")
+		authToken := AuthenticateUser(t, app, router, "alice", "Alice123!")
 
 		BatchPhotosEdit(router)
 
@@ -1022,5 +1028,34 @@ func TestBatchPhotosEdit(t *testing.T) {
 		case <-time.After(200 * time.Millisecond):
 			// expected: nothing saved, nothing published.
 		}
+	})
+	t.Cleanup(func() {
+		entity.ResetTestUpdateCounts(t)
+		entity.ResetTestUpdateCovers(t)
+		require.NoError(t, entity.UnscopedDb().Delete(&entity.Country{ID: "bd"}).Error)
+		require.NoError(t, entity.UnscopedDb().Delete(&entity.Country{ID: "gb"}).Error)
+		require.NoError(t, entity.UnscopedDb().Delete(&entity.Country{ID: "us"}).Error)
+		require.NoError(t, entity.UnscopedDb().Delete(&entity.Cell{ID: "s2:30aa62847cf4"}).Error)
+		require.NoError(t, entity.UnscopedDb().Delete(&entity.Place{ID: "bd:aUxRN0YWY6C3"}).Error)
+		require.NoError(t, entity.UnscopedDb().Delete(&entity.PhotoAlbum{}, "album_uid = (select album_uid from albums where album_slug = ?)", "batchalbum").Error)
+		require.NoError(t, entity.UnscopedDb().Delete(&entity.PhotoAlbum{AlbumUID: "as6sg6bxpogaaba7", PhotoUID: "pqkm36fjqvset9uy"}).Error)
+		require.NoError(t, entity.UnscopedDb().Delete(&entity.Album{}, "album_slug = ?", "batchalbum").Error)
+		require.NoError(t, entity.UnscopedDb().Delete(&entity.PhotoLabel{PhotoID: 1000059, LabelID: 1000001}).Error)
+		require.NoError(t, entity.UnscopedDb().Delete(&entity.PhotoLabel{PhotoID: 1000058, LabelID: 1000033}).Error)
+		require.NoError(t, entity.UnscopedDb().Delete(&entity.PhotoLabel{PhotoID: 1000059, LabelID: 1000033}).Error)
+		require.NoError(t, entity.UnscopedDb().Delete(&entity.Label{}, "label_slug = ?", "batchlabel").Error)
+		require.NoError(t, entity.UnscopedDb().Delete(&entity.Label{}, "label_slug = ?", "batcheditedlabel").Error)
+		require.NoError(t, entity.UnscopedDb().Delete(&entity.Details{PhotoID: 1000056}).Error)
+		require.NoError(t, entity.UnscopedDb().Save(entity.PhotoAlbumFixtures.Pointer("32", "pqkm36fjqvset9uy", "as6sg6bipotaab19")).Error)
+		require.NoError(t, entity.UnscopedDb().Save(entity.PhotoAlbumFixtures.Pointer("33", "pqkm36fjqvset9uz", "as6sg6bipotaab19")).Error)
+		require.NoError(t, entity.UnscopedDb().Save(entity.PhotoFixtures.Pointer("Photo56")).Error)
+		require.NoError(t, entity.UnscopedDb().Save(entity.PhotoFixtures.Pointer("Photo57")).Error)
+		require.NoError(t, entity.UnscopedDb().Save(entity.PhotoFixtures.Pointer("Photo58")).Error)
+		require.NoError(t, entity.UnscopedDb().Save(entity.DetailsFixtures.Pointer("1000056", 1000056)).Error)
+		require.NoError(t, entity.UnscopedDb().Save(entity.DetailsFixtures.Pointer("1000057", 1000057)).Error)
+		require.NoError(t, entity.UnscopedDb().Save(entity.DetailsFixtures.Pointer("1000058", 1000058)).Error)
+		require.NoError(t, entity.UnscopedDb().Save(entity.DetailsFixtures.Pointer("1000059", 1000059)).Error)
+		require.NoError(t, entity.UnscopedDb().Save(entity.UserFixtures.Pointer("alice")).Error)
+		require.NoError(t, entity.UnscopedDb().Save(entity.UserFixtures.Pointer("gandalf")).Error)
 	})
 }

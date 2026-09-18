@@ -6,10 +6,12 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 )
 
 func TestEventString(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		assert.Equal(t, "updated", StatusUpdated.String())
 		assert.Equal(t, "created", StatusCreated.String())
@@ -17,6 +19,7 @@ func TestEventString(t *testing.T) {
 }
 
 func TestPublishEntityEvent(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		sub := event.Subscribe("photos.updated")
 		t.Cleanup(func() { event.Unsubscribe(sub) })
@@ -49,6 +52,7 @@ func TestPublishEntityEvent(t *testing.T) {
 }
 
 func TestPublishPhotoEvent(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		sub := event.Subscribe("photos.updated")
 		t.Cleanup(func() { event.Unsubscribe(sub) })
@@ -81,6 +85,7 @@ func TestPublishPhotoEvent(t *testing.T) {
 }
 
 func TestPublishAlbumEvent(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		sub := event.Subscribe("albums.updated")
 		t.Cleanup(func() { event.Unsubscribe(sub) })
@@ -113,6 +118,7 @@ func TestPublishAlbumEvent(t *testing.T) {
 }
 
 func TestPublishLabelEvent(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		sub := event.Subscribe("labels.updated")
 		t.Cleanup(func() { event.Unsubscribe(sub) })
@@ -145,6 +151,7 @@ func TestPublishLabelEvent(t *testing.T) {
 }
 
 func TestPublishSubjectEvent(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		sub := event.Subscribe("subjects.updated")
 		t.Cleanup(func() { event.Unsubscribe(sub) })

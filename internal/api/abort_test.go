@@ -9,11 +9,13 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
 func TestAbortInvalidCredentials(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Response", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)

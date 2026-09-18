@@ -14,6 +14,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -28,6 +29,14 @@ import (
 )
 
 func TestClusterNodesRegister(t *testing.T) {
+	entity.ValidateFixtures(t)
+	t.Cleanup(func() {
+		clients := []string{"pp-auth", "pp-node-01", "pp-node-cidr-allowed", "pp-node-cidr-blocked", "pp-node-rotate", "pp-lock", "pp-node-02", "pp-node-03", "pp-node-04", "pp-node-04b", "pp-node-06", "my-node-name-prod", "pp-victim", "pp-attacker", "pp-scope-check", "pp-node-db-rotate", "pp-node-no-provision", "pp-node-uuid", "pp-node-theme"}
+		require.NoError(t, entity.UnscopedDb().Delete(entity.Password{}, "uid in (select client_uid from auth_clients where client_name in (?))", clients).Error)
+		require.NoError(t, entity.UnscopedDb().Delete(entity.Client{}, "client_name in (?)", clients).Error)
+		require.NoError(t, entity.UnscopedDb().Delete(entity.Session{}, "client_name in (?)", clients).Error)
+	})
+
 	t.Run("FeatureDisabled", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.Options().NodeRole = cluster.RoleInstance
@@ -566,6 +575,7 @@ func oauthNodeAccessTokenWithScope(t testing.TB, app http.Handler, router *gin.R
 // to nodes at registration: SiteUrl origin + login route, with an absolute
 // custom LoginUri returned as-is.
 func TestBuildPortalLoginURL(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		_, _, conf := NewApiTest()
 		prevSite, prevLogin := conf.Options().SiteUrl, conf.Options().LoginUri
@@ -595,6 +605,7 @@ func TestBuildPortalLoginURL(t *testing.T) {
 // TestSanitizeAllowGroupRoles validates the lenient registration-time mapping
 // sanitizer: malformed keys and non-federatable roles are dropped, not errors.
 func TestSanitizeAllowGroupRoles(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("AcceptsAllInstanceRoles", func(t *testing.T) {
 		out := sanitizeAllowGroupRoles(map[string]string{
 			"g-admin": "admin", "g-manager": "manager", "g-user": "user",
@@ -619,6 +630,7 @@ func TestSanitizeAllowGroupRoles(t *testing.T) {
 // re-registration, and clearing the admin override lets the declared config
 // repopulate on the next registration.
 func TestClusterNodesRegister_GroupConfig(t *testing.T) {
+	entity.ValidateFixtures(t)
 	app, router, conf := NewApiTest()
 	enablePortalAPIs(t, conf)
 	conf.Options().JoinToken = cluster.ExampleJoinToken
@@ -643,6 +655,12 @@ func TestClusterNodesRegister_GroupConfig(t *testing.T) {
 	assert.NoError(t, err)
 	n, err := regy.FindByName("pp-groups")
 	assert.NoError(t, err)
+	t.Cleanup(func() {
+		clients := []string{"pp-groups"}
+		require.NoError(t, entity.UnscopedDb().Delete(entity.Password{}, "uid in (select client_uid from auth_clients where client_name in (?))", clients).Error)
+		require.NoError(t, entity.UnscopedDb().Delete(entity.Client{}, "client_name in (?)", clients).Error)
+		require.NoError(t, entity.UnscopedDb().Delete(entity.Session{}, "client_name in (?)", clients).Error)
+	})
 
 	t.Run("DeclaredAtJoin", func(t *testing.T) {
 		data := groupData(n.UUID)
@@ -658,7 +676,7 @@ func TestClusterNodesRegister_GroupConfig(t *testing.T) {
 	nr, err := regy.RotateSecret(n.UUID)
 	assert.NoError(t, err)
 	token := oauthNodeAccessToken(t, app, router, conf, nr.ClientID, nr.ClientSecret)
-	adminToken := AuthenticateAdmin(app, router)
+	adminToken := AuthenticateAdmin(t, app, router)
 
 	t.Run("RedeclaredOnReRegister", func(t *testing.T) {
 		body := `{"NodeName":"pp-groups","AllowGroups":["Media-Acme-User"]}`
@@ -716,6 +734,7 @@ func TestClusterNodesRegister_GroupConfig(t *testing.T) {
 
 // TestValidateAdvertiseURL ensures the validator accepts HTTP and HTTPS for advertise URLs.
 func TestValidateAdvertiseURL(t *testing.T) {
+	entity.ValidateFixtures(t)
 	cases := []struct {
 		u  string
 		ok bool
@@ -740,6 +759,7 @@ func TestValidateAdvertiseURL(t *testing.T) {
 
 // TestValidateSiteURL enforces HTTPS for non-local site URLs.
 func TestValidateSiteURL(t *testing.T) {
+	entity.ValidateFixtures(t)
 	cases := []struct {
 		u  string
 		ok bool

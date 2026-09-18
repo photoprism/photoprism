@@ -5,12 +5,14 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/tidwall/gjson"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestSearchCameras(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		SearchCameras(router)

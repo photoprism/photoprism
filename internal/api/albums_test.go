@@ -4,17 +4,21 @@ import (
 	"net/http"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
 
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
 func TestGetAlbum(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		GetAlbum(router)
@@ -37,7 +41,8 @@ func TestGetAlbum(t *testing.T) {
 		defer conf.SetAuthMode(config.AuthModePublic)
 
 		GetAlbum(router)
-		sessId := AuthenticateUser(app, router, "gandalf", "Gandalf123!")
+		sessId := AuthenticateUser(t, app, router, "gandalf", "Gandalf123!")
+		t.Cleanup(func() { require.NoError(t, entity.UnscopedDb().Save(entity.UserFixtures.Pointer("gandalf")).Error) })
 		// An album outside the guest's shared scope is reported as not found.
 		r := AuthenticatedRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba8", sessId)
 		assert.Equal(t, http.StatusNotFound, r.Code)
@@ -45,6 +50,7 @@ func TestGetAlbum(t *testing.T) {
 }
 
 func TestCreateAlbum(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		CreateAlbum(router)
@@ -55,6 +61,7 @@ func TestCreateAlbum(t *testing.T) {
 		assert.Equal(t, "true", val2.String())
 		uid := gjson.Get(r.Body.String(), "UID").String()
 		assert.NotEmpty(t, uid)
+		t.Cleanup(func() { require.NoError(t, entity.UnscopedDb().Delete(&entity.Album{}, "album_uid = ?", uid).Error) })
 		assert.Equal(t, "/api/v1/albums/"+uid, r.Header().Get("Location"))
 		assert.Equal(t, http.StatusCreated, r.Code)
 	})
@@ -73,12 +80,14 @@ func TestCreateAlbum(t *testing.T) {
 	})
 }
 func TestUpdateAlbum(t *testing.T) {
+	entity.ValidateFixtures(t)
 	app, router, _ := NewApiTest()
 	CreateAlbum(router)
 	r := PerformRequestWithBody(app, "POST", "/api/v1/albums", `{"Title": "Update", "Description": "To be updated", "Notes": "", "Favorite": true}`)
 	assert.Equal(t, http.StatusCreated, r.Code)
 	uid := gjson.Get(r.Body.String(), "UID").String()
 	assert.NotEmpty(t, uid)
+	t.Cleanup(func() { require.NoError(t, entity.UnscopedDb().Delete(&entity.Album{}, "album_uid = ?", uid).Error) })
 	assert.Equal(t, "/api/v1/albums/"+uid, r.Header().Get("Location"))
 
 	t.Run("Successful", func(t *testing.T) {
@@ -114,12 +123,16 @@ func TestUpdateAlbum(t *testing.T) {
 	})
 }
 func TestDeleteAlbum(t *testing.T) {
+	entity.ValidateFixtures(t)
 	createApp, createRouter, _ := NewApiTest()
 	CreateAlbum(createRouter)
 	createResp := PerformRequestWithBody(createApp, "POST", "/api/v1/albums", `{"Title": "Delete", "Description": "To be deleted", "Notes": "", "Favorite": true}`)
 	assert.Equal(t, http.StatusCreated, createResp.Code)
 	albumUid := gjson.Get(createResp.Body.String(), "UID").String()
 	assert.NotEmpty(t, albumUid)
+	t.Cleanup(func() {
+		require.NoError(t, entity.UnscopedDb().Delete(&entity.Album{}, "album_uid = ?", albumUid).Error)
+	})
 	assert.Equal(t, "/api/v1/albums/"+albumUid, createResp.Header().Get("Location"))
 
 	t.Run("ExistingAlbum", func(t *testing.T) {
@@ -146,6 +159,10 @@ func TestDeleteAlbum(t *testing.T) {
 		DeleteAlbum(router)
 		r := PerformRequest(app, "DELETE", "/api/v1/albums/as6sg6bipotaaj10")
 		assert.Equal(t, http.StatusOK, r.Code)
+		t.Cleanup(func() {
+			require.NoError(t, entity.UnscopedDb().Create(entity.AlbumFixtures.Pointer("mexico")).Error)
+		})
+
 		val := gjson.Get(r.Body.String(), "Slug")
 		assert.Equal(t, "mexico", val.String())
 		SearchAlbums(router)
@@ -170,6 +187,9 @@ func TestDeleteAlbum(t *testing.T) {
 		newUID := gjson.Get(recreateResp.Body.String(), "UID").String()
 		newSlug := gjson.Get(recreateResp.Body.String(), "Slug").String()
 		assert.NotEmpty(t, newUID)
+		t.Cleanup(func() {
+			require.NoError(t, entity.UnscopedDb().Delete(&entity.Album{}, "album_uid = ?", newUID).Error)
+		})
 		assert.Equal(t, "/api/v1/albums/"+newUID, recreateResp.Header().Get("Location"))
 
 		assert.NotEmpty(t, uid)
@@ -180,6 +200,7 @@ func TestDeleteAlbum(t *testing.T) {
 }
 
 func TestLikeAlbum(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("NotExistingAlbum", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
@@ -193,6 +214,9 @@ func TestLikeAlbum(t *testing.T) {
 
 		LikeAlbum(router)
 		r := PerformRequest(app, "POST", "/api/v1/albums/as6sg6bxpogaaba7/like")
+		t.Cleanup(func() {
+			require.NoError(t, entity.UnscopedDb().Model(entity.Album{}).Where("album_uid = 'as6sg6bxpogaaba7'").UpdateColumn("album_favorite", false).Error)
+		})
 		assert.Equal(t, http.StatusOK, r.Code)
 		GetAlbum(router)
 		r2 := PerformRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba7")
@@ -202,6 +226,7 @@ func TestLikeAlbum(t *testing.T) {
 }
 
 func TestDislikeAlbum(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("NotExistingAlbum", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
@@ -216,6 +241,9 @@ func TestDislikeAlbum(t *testing.T) {
 		DislikeAlbum(router)
 
 		r := PerformRequest(app, "DELETE", "/api/v1/albums/as6sg6bxpogaaba8/like")
+		t.Cleanup(func() {
+			require.NoError(t, entity.UnscopedDb().Model(entity.Album{}).Where("album_uid = 'as6sg6bxpogaaba8'").UpdateColumn("album_favorite", true).Error)
+		})
 		assert.Equal(t, http.StatusOK, r.Code)
 		GetAlbum(router)
 		r2 := PerformRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba8")
@@ -225,18 +253,36 @@ func TestDislikeAlbum(t *testing.T) {
 }
 
 func TestAddPhotosToAlbum(t *testing.T) {
+	entity.ValidateFixtures(t)
 	app, router, _ := NewApiTest()
 	CreateAlbum(router)
 	r := PerformRequestWithBody(app, "POST", "/api/v1/albums", `{"Title": "Add photos", "Description": "", "Notes": "", "Favorite": true}`)
 	assert.Equal(t, http.StatusCreated, r.Code)
 	uid := gjson.Get(r.Body.String(), "UID").String()
 	assert.NotEmpty(t, uid)
+	t.Cleanup(func() {
+		require.NoError(t, entity.UnscopedDb().Delete(&entity.Album{}, "album_uid = ?", uid).Error)
+		entity.WaitForAsyncJobsTimeout(15 * time.Second)
+		for _, fl := range entity.LabelFixtures {
+			require.NoError(t, entity.UnscopedDb().Model(&entity.Label{}).Where("id = ?", fl.ID).Updates(entity.Values{"photo_count": fl.PhotoCount}).Error)
+		}
+		for _, fp := range entity.PlaceFixtures {
+			require.NoError(t, entity.UnscopedDb().Model(&entity.Place{}).Where("id = ?", fp.ID).Updates(entity.Values{"photo_count": fp.PhotoCount}).Error)
+		}
+		for _, fs := range entity.SubjectFixtures {
+			require.NoError(t, entity.UnscopedDb().Model(&entity.Subject{}).Where("subj_uid = ?", fs.SubjUID).Updates(entity.Values{"photo_count": fs.PhotoCount, "file_count": fs.FileCount}).Error)
+		}
+
+	})
 	assert.Equal(t, "/api/v1/albums/"+uid, r.Header().Get("Location"))
 
 	t.Run("AddMultiplePhotos", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		AddPhotosToAlbum(router)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/albums/"+uid+"/photos", `{"photos": ["ps6sg6be2lvl0y12", "ps6sg6be2lvl0y11"]}`)
+		t.Cleanup(func() {
+			require.NoError(t, entity.UnscopedDb().Delete(&entity.PhotoAlbum{}, "album_uid = ?", uid).Error)
+		})
 		val := gjson.Get(r.Body.String(), "message")
 		assert.Equal(t, i18n.Msg(i18n.MsgChangesSaved), val.String())
 		assert.Equal(t, http.StatusOK, r.Code)
@@ -245,6 +291,9 @@ func TestAddPhotosToAlbum(t *testing.T) {
 		app, router, _ := NewApiTest()
 		AddPhotosToAlbum(router)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/albums/"+uid+"/photos", `{"photos": ["ps6sg6be2lvl0y12"]}`)
+		t.Cleanup(func() {
+			require.NoError(t, entity.UnscopedDb().Delete(&entity.PhotoAlbum{}, "album_uid = ?", uid).Error)
+		})
 		val := gjson.Get(r.Body.String(), "message")
 		assert.Equal(t, i18n.Msg(i18n.MsgChangesSaved), val.String())
 		assert.Equal(t, http.StatusOK, r.Code)
@@ -261,6 +310,11 @@ func TestAddPhotosToAlbum(t *testing.T) {
 		app, router, _ := NewApiTest()
 		AddPhotosToAlbum(router)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/albums/"+uid+"/photos", `{"photos": ["ps6sg6byk7wrbk44"]}`)
+		t.Cleanup(func() {
+			require.NoError(t, entity.UnscopedDb().Delete(&entity.PhotoAlbum{}, "album_uid = ?", uid).Error)
+			require.NoError(t, entity.UnscopedDb().Delete(&entity.Details{}, "photo_id = ?", 1000052).Error)
+			require.NoError(t, entity.UnscopedDb().Model(&entity.Photo{}).Where("id = ?", 1000052).UpdateColumns(entity.Values{"photo_quality": 1, "edited_at": nil}).Error)
+		})
 		val := gjson.Get(r.Body.String(), "message")
 		assert.Equal(t, i18n.Msg(i18n.MsgChangesSaved), val.String())
 		assert.Equal(t, http.StatusOK, r.Code)
@@ -294,6 +348,7 @@ func TestAddPhotosToAlbum(t *testing.T) {
 }
 
 func TestRemovePhotosFromAlbum(t *testing.T) {
+	entity.ValidateFixtures(t)
 	app, router, _ := NewApiTest()
 
 	// Register routes.
@@ -304,10 +359,16 @@ func TestRemovePhotosFromAlbum(t *testing.T) {
 	assert.Equal(t, http.StatusCreated, r.Code)
 	uid := gjson.Get(r.Body.String(), "UID").String()
 	assert.NotEmpty(t, uid)
+	t.Cleanup(func() {
+		require.NoError(t, entity.UnscopedDb().Delete(&entity.Album{}, "album_uid = ?", uid).Error)
+	})
 	assert.Equal(t, "/api/v1/albums/"+uid, r.Header().Get("Location"))
 
 	r2 := PerformRequestWithBody(app, "POST", "/api/v1/albums/"+uid+"/photos", `{"photos": ["ps6sg6be2lvl0y12", "ps6sg6be2lvl0y11"]}`)
 	assert.Equal(t, http.StatusOK, r2.Code)
+	t.Cleanup(func() {
+		require.NoError(t, entity.UnscopedDb().Delete(&entity.PhotoAlbum{}, "album_uid = ?", uid).Error)
+	})
 
 	t.Run("RemoveMultiplePhotos", func(t *testing.T) {
 		app, router, _ := NewApiTest()
@@ -348,11 +409,15 @@ func TestRemovePhotosFromAlbum(t *testing.T) {
 }
 
 func TestCloneAlbums(t *testing.T) {
+	entity.ValidateFixtures(t)
 	app, router, _ := NewApiTest()
 	CreateAlbum(router)
 	r := PerformRequestWithBody(app, "POST", "/api/v1/albums", `{"Title": "Update", "Description": "To be updated", "Notes": "", "Favorite": true}`)
 	assert.Equal(t, http.StatusCreated, r.Code)
 	uid := gjson.Get(r.Body.String(), "UID").String()
+	t.Cleanup(func() {
+		require.NoError(t, entity.UnscopedDb().Delete(&entity.Album{}, "album_uid = ?", uid).Error)
+	})
 
 	t.Run("CloneEmptyAlbum", func(t *testing.T) {
 		app, router, _ := NewApiTest()
@@ -361,6 +426,10 @@ func TestCloneAlbums(t *testing.T) {
 		val := gjson.Get(r.Body.String(), "message")
 		assert.Equal(t, "Album contents cloned", val.String())
 		assert.Equal(t, http.StatusOK, r.Code)
+		t.Cleanup(func() {
+			require.NoError(t, entity.UnscopedDb().Delete(&entity.PhotoAlbum{}, "album_uid = ?", gjson.Get(r.Body.String(), "added.0.AlbumUID").String()).Error)
+			require.NoError(t, entity.UnscopedDb().Delete(&entity.Album{}, "album_uid = ?", gjson.Get(r.Body.String(), "added.0.AlbumUID").String()).Error)
+		})
 	})
 	t.Run("CloneAlbum", func(t *testing.T) {
 		app, router, _ := NewApiTest()
@@ -377,6 +446,9 @@ func TestCloneAlbums(t *testing.T) {
 		val := gjson.Get(r.Body.String(), "message")
 		assert.Equal(t, "Album contents cloned", val.String())
 		assert.Equal(t, http.StatusOK, r.Code)
+		t.Cleanup(func() {
+			require.NoError(t, entity.UnscopedDb().Delete(&entity.PhotoAlbum{}, "album_uid = ?", gjson.Get(r.Body.String(), "added.0.AlbumUID").String()).Error)
+		})
 	})
 	t.Run("NotFound", func(t *testing.T) {
 		app, router, _ := NewApiTest()

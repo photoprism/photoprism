@@ -12,6 +12,7 @@ import (
 )
 
 func TestUpdateCamera(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		defer func() {
 			entity.FlushCameraCache()

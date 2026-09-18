@@ -17,6 +17,7 @@ import (
 )
 
 func TestAddTokenHeaders(t *testing.T) {
+	entity.ValidateFixtures(t)
 	sess := &entity.Session{
 		ID:           rnd.SessionID("add-token-headers-test"),
 		PreviewToken: "prev123",

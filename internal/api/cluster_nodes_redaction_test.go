@@ -17,11 +17,13 @@ import (
 
 // Verifies redaction differences between admin and non-admin on list endpoint.
 func TestClusterListNodes_Redaction(t *testing.T) {
+	entity.ValidateFixtures(t)
 	// Remove the fixture record
 	require.NoError(t, entity.UnscopedDb().Delete(entity.Client{}, "client_uid = ?", entity.ClientFixtures.Get("node").ClientUID).Error)
-	defer func() {
+	t.Cleanup(func() {
 		require.NoError(t, entity.Db().Create(entity.ClientFixtures.Pointer("node")).Error)
-	}()
+		require.NoError(t, entity.UnscopedDb().Delete(entity.Client{}, "client_name = ?", "pp-node-redact").Error)
+	})
 
 	app, router, conf := NewApiTest()
 	enablePortalAPIs(t, conf)
@@ -38,7 +40,7 @@ func TestClusterListNodes_Redaction(t *testing.T) {
 	assert.NoError(t, regy.Put(n))
 
 	// Admin session shows internal fields
-	tokenAdmin := AuthenticateAdmin(app, router)
+	tokenAdmin := AuthenticateAdmin(t, app, router)
 	r := AuthenticatedRequest(app, http.MethodGet, "/api/v1/cluster/nodes", tokenAdmin)
 	assert.Equal(t, http.StatusOK, r.Code)
 	// First item should include AdvertiseUrl and Database for admins
@@ -48,6 +50,7 @@ func TestClusterListNodes_Redaction(t *testing.T) {
 
 // Verifies redaction for client-scoped sessions (no user attached).
 func TestClusterListNodes_Redaction_ClientScope(t *testing.T) {
+	entity.ValidateFixtures(t)
 	// TODO: This test expects client-scoped sessions to receive redacted
 	// fields (no AdvertiseUrl/Database). In practice, AdvertiseUrl appears
 	// in the response, likely due to session/ACL interactions in the test

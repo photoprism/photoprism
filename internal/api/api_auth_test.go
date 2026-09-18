@@ -25,6 +25,7 @@ import (
 )
 
 func TestAuth(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Public", func(t *testing.T) {
 		gin.SetMode(gin.TestMode)
 		w := httptest.NewRecorder()
@@ -59,6 +60,7 @@ func TestAuth(t *testing.T) {
 }
 
 func TestAuthAny(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Public", func(t *testing.T) {
 		gin.SetMode(gin.TestMode)
 		w := httptest.NewRecorder()
@@ -101,6 +103,7 @@ func TestAuthAny(t *testing.T) {
 }
 
 func TestAuthAny_AppPasswordsDisabled(t *testing.T) {
+	entity.ValidateFixtures(t)
 	conf := config.TestConfig()
 	conf.SetAuthMode(config.AuthModePasswd)
 	defer conf.SetAuthMode(config.AuthModePublic)
@@ -115,6 +118,7 @@ func TestAuthAny_AppPasswordsDisabled(t *testing.T) {
 		t.Run(grant.String(), func(t *testing.T) {
 			sess, err := entity.AddClientSession("alice-app-"+grant.String(), conf.SessionMaxAge(), "*", grant, user)
 			require.NoError(t, err)
+			t.Cleanup(func() { require.NoError(t, entity.UnscopedDb().Delete(sess).Error) })
 			require.True(t, sess.IsApplication())
 			token := sess.AuthToken()
 
@@ -149,6 +153,7 @@ func TestAuthAny_AppPasswordsDisabled(t *testing.T) {
 	t.Run("NonApplicationSessionUnaffected", func(t *testing.T) {
 		sess, err := entity.AddClientSession("alice-client-cred", conf.SessionMaxAge(), "*", authn.GrantClientCredentials, nil)
 		require.NoError(t, err)
+		t.Cleanup(func() { require.NoError(t, entity.UnscopedDb().Delete(sess).Error) })
 		require.False(t, sess.IsApplication())
 		token := sess.AuthToken()
 
@@ -176,6 +181,7 @@ func TestAuthAny_AppPasswordsDisabled(t *testing.T) {
 }
 
 func TestAuthAny_AppPasswordWebLoginDisabled(t *testing.T) {
+	entity.ValidateFixtures(t)
 	conf := config.TestConfig()
 	conf.SetAuthMode(config.AuthModePasswd)
 	defer conf.SetAuthMode(config.AuthModePublic)
@@ -187,6 +193,7 @@ func TestAuthAny_AppPasswordWebLoginDisabled(t *testing.T) {
 
 	sess, err := entity.AddClientSession("bob-app-pw", conf.SessionMaxAge(), "*", authn.GrantPassword, user)
 	require.NoError(t, err)
+	t.Cleanup(func() { require.NoError(t, entity.UnscopedDb().Delete(sess).Error) })
 	require.True(t, sess.IsApplication())
 	token := sess.AuthToken()
 
@@ -229,6 +236,7 @@ func TestAuthAny_AppPasswordWebLoginDisabled(t *testing.T) {
 }
 
 func TestAuthAny_AppPasswordDeactivated(t *testing.T) {
+	entity.ValidateFixtures(t)
 	conf := config.TestConfig()
 	conf.SetAuthMode(config.AuthModePasswd)
 	defer conf.SetAuthMode(config.AuthModePublic)
@@ -238,6 +246,7 @@ func TestAuthAny_AppPasswordDeactivated(t *testing.T) {
 
 	sess, err := entity.AddClientSession("bob-app-deact", conf.SessionMaxAge(), "*", authn.GrantPassword, user)
 	require.NoError(t, err)
+	t.Cleanup(func() { require.NoError(t, entity.UnscopedDb().Delete(sess).Error) })
 	require.True(t, sess.IsApplication())
 	token := sess.AuthToken()
 
@@ -290,6 +299,7 @@ func TestAuthAny_AppPasswordDeactivated(t *testing.T) {
 }
 
 func TestAuthAny_AppPasswordOidcUserDisabled(t *testing.T) {
+	entity.ValidateFixtures(t)
 	conf := config.TestConfig()
 	conf.SetAuthMode(config.AuthModePasswd)
 	defer conf.SetAuthMode(config.AuthModePublic)
@@ -304,6 +314,7 @@ func TestAuthAny_AppPasswordOidcUserDisabled(t *testing.T) {
 	// involved. The DenyLogIn gate keys on the account's login state, not the grant type.
 	sess, err := entity.AddClientSession("bob-app-oidc-disabled", conf.SessionMaxAge(), "*", authn.GrantSession, user)
 	require.NoError(t, err)
+	t.Cleanup(func() { require.NoError(t, entity.UnscopedDb().Delete(sess).Error) })
 	require.True(t, sess.IsApplication())
 	token := sess.AuthToken()
 
@@ -350,6 +361,7 @@ func TestAuthAny_AppPasswordOidcUserDisabled(t *testing.T) {
 }
 
 func TestAuthToken(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("None", func(t *testing.T) {
 		gin.SetMode(gin.TestMode)
 		w := httptest.NewRecorder()
@@ -399,6 +411,7 @@ func TestAuthToken(t *testing.T) {
 }
 
 func TestSessionRefID(t *testing.T) {
+	entity.ValidateFixtures(t)
 	origConf := get.Config()
 	t.Cleanup(func() { get.SetConfig(origConf) })
 
@@ -441,6 +454,7 @@ func TestSessionRefID(t *testing.T) {
 }
 
 func TestAuthAnyVisionServiceKey(t *testing.T) {
+	entity.ValidateFixtures(t)
 	origAPI := vision.ServiceApi
 	origKey := vision.ServiceKey
 	defer func() {
@@ -479,6 +493,7 @@ func TestAuthAnyVisionServiceKey(t *testing.T) {
 }
 
 func TestAuthAnyPortalJWT(t *testing.T) {
+	entity.ValidateFixtures(t)
 	fx := newPortalJWTFixture(t, "ok")
 
 	spec := fx.defaultClaimsSpec()
@@ -516,6 +531,7 @@ func TestAuthAnyPortalJWT(t *testing.T) {
 }
 
 func TestAuthAnyPortalJWT_MissingScope(t *testing.T) {
+	entity.ValidateFixtures(t)
 	fx := newPortalJWTFixture(t, "missing-scope")
 	spec := fx.defaultClaimsSpec()
 	spec.Scope = []string{"vision"}
@@ -536,6 +552,7 @@ func TestAuthAnyPortalJWT_MissingScope(t *testing.T) {
 }
 
 func TestAuthAnyPortalJWT_InvalidIssuer(t *testing.T) {
+	entity.ValidateFixtures(t)
 	fx := newPortalJWTFixture(t, "invalid-issuer")
 	spec := fx.defaultClaimsSpec()
 	spec.Issuer = "https://portal.invalid.test"
@@ -556,6 +573,7 @@ func TestAuthAnyPortalJWT_InvalidIssuer(t *testing.T) {
 }
 
 func TestAuthAnyPortalJWT_NoJWKSConfigured(t *testing.T) {
+	entity.ValidateFixtures(t)
 	fx := newPortalJWTFixture(t, "no-jwks")
 	fx.nodeConf.SetJWKSUrl("")
 	get.SetConfig(fx.nodeConf)
@@ -650,6 +668,7 @@ func (fx portalJWTFixture) issue(t *testing.T, spec clusterjwt.ClaimsSpec) strin
 }
 
 func TestAuthorizeSuperAdmin(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("SuperAdminSession", func(t *testing.T) {
 		s := entity.SessionFixtures.Pointer("alice")
 		require.True(t, s.GetUser().IsSuperAdmin(), "alice fixture must be a super admin")

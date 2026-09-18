@@ -12,6 +12,7 @@ import (
 )
 
 func TestClusterMetrics_EmptyCounts(t *testing.T) {
+	entity.ValidateFixtures(t)
 	// Remove the fixture record
 	require.NoError(t, entity.UnscopedDb().Delete(entity.Client{}, "client_uid = ?", entity.ClientFixtures.Get("node").ClientUID).Error)
 	defer func() {
@@ -23,7 +24,7 @@ func TestClusterMetrics_EmptyCounts(t *testing.T) {
 	conf.Options().ClusterCIDR = "192.0.2.0/24"
 
 	ClusterMetrics(router)
-	token := AuthenticateAdmin(app, router)
+	token := AuthenticateAdmin(t, app, router)
 
 	resp := AuthenticatedRequest(app, http.MethodGet, "/api/v1/cluster/metrics", token)
 	assert.Equal(t, http.StatusOK, resp.Code)

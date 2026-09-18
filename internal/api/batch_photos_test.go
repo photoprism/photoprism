@@ -8,17 +8,26 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
 func TestBatchPhotosArchive(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		GetPhoto(router)
 		r := PerformRequest(app, "GET", "/api/v1/photos/ps6sg6be2lvl0yh7")
 		assert.Equal(t, http.StatusOK, r.Code)
+		t.Cleanup(func() {
+			entity.ResetTestUpdateCounts(t)
+			entity.ResetTestUpdateCovers(t)
+			require.NoError(t, entity.UnscopedDb().Model(&entity.PhotoAlbum{PhotoUID: "ps6sg6be2lvl0yh7", AlbumUID: "as6sg6bxpogaaba8"}).UpdateColumn("hidden", false).Error)
+			require.NoError(t, entity.UnscopedDb().Model(&entity.Photo{ID: 1000000}).UpdateColumn("deleted_at", nil).Error)
+		})
 		val := gjson.Get(r.Body.String(), "DeletedAt")
 		assert.Empty(t, val.String())
 
@@ -59,6 +68,7 @@ func TestBatchPhotosArchive(t *testing.T) {
 }
 
 func TestBatchPhotosRestore(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
@@ -66,6 +76,11 @@ func TestBatchPhotosRestore(t *testing.T) {
 		BatchPhotosArchive(router)
 		GetPhoto(router)
 		BatchPhotosRestore(router)
+		t.Cleanup(func() {
+			entity.ResetTestUpdateCounts(t)
+			entity.ResetTestUpdateCovers(t)
+			require.NoError(t, entity.UnscopedDb().Model(&entity.PhotoAlbum{PhotoUID: "ps6sg6be2lvl0yh8", AlbumUID: "as6sg6bxpogaaba9"}).UpdateColumn("hidden", false).Error)
+		})
 
 		r2 := PerformRequestWithBody(app, "POST", "/api/v1/batch/photos/archive", `{"photos": ["ps6sg6be2lvl0yh8", "ps6sg6be2lvl0ycc"]}`)
 		val2 := gjson.Get(r2.Body.String(), "message")
@@ -104,11 +119,15 @@ func TestBatchPhotosRestore(t *testing.T) {
 }
 
 func TestBatchAlbumsDelete(t *testing.T) {
+	entity.ValidateFixtures(t)
 	app, router, _ := NewApiTest()
 	CreateAlbum(router)
 	r := PerformRequestWithBody(app, "POST", "/api/v1/albums", `{"Title": "BatchDelete", "Description": "To be deleted", "Notes": "", "Favorite": true}`)
 	assert.Equal(t, http.StatusCreated, r.Code)
 	uid := gjson.Get(r.Body.String(), "UID").String()
+	t.Cleanup(func() {
+		require.NoError(t, entity.UnscopedDb().Delete(&entity.Album{}, "album_uid = ?", uid).Error)
+	})
 
 	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
@@ -157,12 +176,19 @@ func TestBatchAlbumsDelete(t *testing.T) {
 }
 
 func TestBatchPhotosPrivate(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		// Register routes.
 		GetPhoto(router)
 		BatchPhotosPrivate(router)
+
+		t.Cleanup(func() {
+			entity.ResetTestUpdateCounts(t)
+			entity.ResetTestUpdateCovers(t)
+			require.NoError(t, entity.UnscopedDb().Model(&entity.Photo{ID: 1000001}).UpdateColumn("photo_private", false).Error)
+		})
 
 		r := PerformRequest(app, "GET", "/api/v1/photos/ps6sg6be2lvl0yh8")
 		assert.Equal(t, http.StatusOK, r.Code)
@@ -196,12 +222,18 @@ func TestBatchPhotosPrivate(t *testing.T) {
 }
 
 func TestBatchLabelsDelete(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		// Register routes.
 		SearchLabels(router)
 		BatchLabelsDelete(router)
+
+		t.Cleanup(func() {
+			require.NoError(t, entity.UnscopedDb().Model(&entity.Label{ID: 1000004}).UpdateColumn("deleted_at", nil).Error)
+			require.NoError(t, entity.UnscopedDb().Create(&entity.PhotoLabel{PhotoID: 1000004, LabelID: 1000004, LabelSrc: "image", Uncertainty: 20, Topicality: 0, NSFW: 0}).Error)
+		})
 
 		r := PerformRequest(app, "GET", "/api/v1/labels?count=15")
 		val := gjson.Get(r.Body.String(), `#(Name=="Batch Delete").Slug`)
@@ -251,12 +283,20 @@ func TestBatchLabelsDelete(t *testing.T) {
 }
 
 func TestBatchPhotosApprove(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		// Register routes.
 		GetPhoto(router)
 		BatchPhotosApprove(router)
+		t.Cleanup(func() {
+			entity.ResetTestUpdateCounts(t)
+			require.NoError(t, entity.UnscopedDb().Delete(&entity.Details{PhotoID: 1000026}).Error)
+			require.NoError(t, entity.UnscopedDb().Delete(&entity.Details{PhotoID: 1000027}).Error)
+			require.NoError(t, entity.UnscopedDb().Model(&entity.Photo{ID: 1000026}).UpdateColumns(entity.Values{"photo_quality": 1, "edited_at": nil}).Error)
+			require.NoError(t, entity.UnscopedDb().Model(&entity.Photo{ID: 1000027}).UpdateColumns(entity.Values{"photo_quality": 1, "edited_at": nil}).Error)
+		})
 
 		r := PerformRequest(app, "GET", "/api/v1/photos/ps6sg6be2lvl0y50")
 		assert.Equal(t, http.StatusOK, r.Code)
@@ -294,6 +334,7 @@ func TestBatchPhotosApprove(t *testing.T) {
 }
 
 func TestBatchPhotosDelete(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("ErrNoItemsSelected", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		BatchPhotosDelete(router)

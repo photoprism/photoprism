@@ -7,11 +7,14 @@ import (
 	"github.com/tidwall/gjson"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 )
 
 func TestSearchAlbums(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		SearchAlbums(router)
@@ -48,7 +51,7 @@ func TestSearchAlbums(t *testing.T) {
 		defer conf.SetAuthMode(config.AuthModePublic)
 
 		SearchAlbums(router)
-		sessId := AuthenticateAdmin(app, router)
+		sessId := AuthenticateAdmin(t, app, router)
 		// An admin has full access, so a type-less listing is permitted.
 		r := AuthenticatedRequest(app, "GET", "/api/v1/albums?count=10", sessId)
 		assert.Equal(t, http.StatusOK, r.Code)
@@ -59,7 +62,7 @@ func TestSearchAlbums(t *testing.T) {
 		defer conf.SetAuthMode(config.AuthModePublic)
 
 		SearchAlbums(router)
-		sessId := AuthenticateUser(app, router, "gandalf", "Gandalf123!")
+		sessId := AuthenticateUser(t, app, router, "gandalf", "Gandalf123!")
 		// Without a type or UID filter, a non-admin role is denied (admin-only default resource).
 		r := AuthenticatedRequest(app, "GET", "/api/v1/albums?count=10", sessId)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
@@ -71,7 +74,10 @@ func TestSearchAlbums(t *testing.T) {
 		defer conf.SetAuthMode(config.AuthModePublic)
 
 		SearchAlbums(router)
-		sessId := AuthenticateUser(app, router, "gandalf", "Gandalf123!")
+		sessId := AuthenticateUser(t, app, router, "gandalf", "Gandalf123!")
+		t.Cleanup(func() {
+			require.NoError(t, entity.UnscopedDb().Save(entity.UserFixtures.Pointer("gandalf")).Error)
+		})
 		// A lookup by album UID is authorized via the albums resource (the share-link dialog
 		// case), so it must not return "Permission denied".
 		r := AuthenticatedRequest(app, "GET", "/api/v1/albums?count=1&uid=as6sg6bxpogaaba8", sessId)
@@ -84,7 +90,8 @@ func TestSearchAlbums(t *testing.T) {
 		defer conf.SetAuthMode(config.AuthModePublic)
 
 		SearchAlbums(router)
-		sessId := AuthenticateUser(app, router, "gandalf", "Gandalf123!")
+		sessId := AuthenticateUser(t, app, router, "gandalf", "Gandalf123!")
+		t.Cleanup(func() { require.NoError(t, entity.UnscopedDb().Save(entity.UserFixtures.Pointer("gandalf")).Error) })
 		// A typed album search is authorized via the albums resource and scoped to shared albums.
 		r := AuthenticatedRequest(app, "GET", "/api/v1/albums?count=10&type=album", sessId)
 		assert.Equal(t, http.StatusOK, r.Code)

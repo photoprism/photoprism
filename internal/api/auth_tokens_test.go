@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/auth/tokens"
 	"github.com/photoprism/photoprism/internal/config"
@@ -23,7 +24,11 @@ func downloadCtx(query string) *gin.Context {
 }
 
 func TestDownloadSession(t *testing.T) {
+	entity.ValidateFixtures(t)
 	conf := get.Config()
+	t.Cleanup(func() {
+		require.NoError(t, entity.UnscopedDb().Model(&entity.Session{}).Where("id = ?", entity.SessionFixtures.Get("alice").ID).UpdateColumns(entity.Values{"last_active": 0}).Error)
+	})
 
 	t.Run("PublicModeReturnsPublicSession", func(t *testing.T) {
 		conf.SetAuthMode(config.AuthModePublic)
@@ -91,6 +96,7 @@ func TestDownloadSession(t *testing.T) {
 }
 
 func TestVerifyDownloadParams(t *testing.T) {
+	entity.ValidateFixtures(t)
 	sess := entity.SessionFixtures.Get("alice")
 	parts := strings.SplitN(tokens.SignDownload(sess.ID), ".", 3)
 
@@ -112,6 +118,7 @@ func TestVerifyDownloadParams(t *testing.T) {
 }
 
 func TestInvalidDownloadToken(t *testing.T) {
+	entity.ValidateFixtures(t)
 	conf := get.Config()
 
 	t.Run("PublicModeAcceptsAnyToken", func(t *testing.T) {
@@ -142,6 +149,7 @@ func TestInvalidDownloadToken(t *testing.T) {
 }
 
 func TestAuthDownload(t *testing.T) {
+	entity.ValidateFixtures(t)
 	conf := get.Config()
 
 	t.Run("PublicModeValidWithSession", func(t *testing.T) {

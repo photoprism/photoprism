@@ -7,11 +7,13 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
 func TestClusterHealth(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Success", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		enablePortalAPIs(t, conf)

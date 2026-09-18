@@ -12,11 +12,13 @@ import (
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
 func TestGetClientConfig(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Public", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		GetClientConfig(router)
@@ -92,6 +94,7 @@ func TestGetClientConfig(t *testing.T) {
 // see internal/config/client_config.go and the docs/comments on
 // UpdateClientConfig.
 func TestUpdateClientConfig(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("OmitsTokensFromBroadcast", func(t *testing.T) {
 		_, _, conf := NewApiTest()
 

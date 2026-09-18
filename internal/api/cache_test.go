@@ -21,6 +21,7 @@ import (
 )
 
 func TestAddVideoCacheHeader(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Public", func(t *testing.T) {
 		r := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(r)
@@ -40,6 +41,7 @@ func TestAddVideoCacheHeader(t *testing.T) {
 }
 
 func TestCachedCoverHasThumb(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Cached", func(t *testing.T) {
 		cache := get.CoverCache()
 		cache.Flush()
@@ -71,6 +73,7 @@ func TestCachedCoverHasThumb(t *testing.T) {
 }
 
 func TestRemoveFromFolderCache(t *testing.T) {
+	entity.ValidateFixtures(t)
 	cache := get.FolderCache()
 	cache.Flush()
 
@@ -80,12 +83,15 @@ func TestRemoveFromFolderCache(t *testing.T) {
 	cache.SetDefault(key, FoldersResponse{Root: root})
 
 	RemoveFromFolderCache(root)
-
+	t.Cleanup(func() {
+		require.NoError(t, entity.UnscopedDb().Model(&entity.Album{ID: 1000003}).UpdateColumn("thumb", "").Error)
+	})
 	_, ok := cache.Get(key)
 	assert.False(t, ok)
 }
 
 func TestRemoveFromAlbumCoverCache(t *testing.T) {
+	entity.ValidateFixtures(t)
 	cache := get.CoverCache()
 	cache.Flush()
 
@@ -142,6 +148,7 @@ func TestRemoveFromAlbumCoverCache(t *testing.T) {
 }
 
 func TestRemoveFromAlbumCoverCacheInvalidUID(t *testing.T) {
+	entity.ValidateFixtures(t)
 	cache := get.CoverCache()
 	cache.Flush()
 
@@ -156,6 +163,7 @@ func TestRemoveFromAlbumCoverCacheInvalidUID(t *testing.T) {
 }
 
 func TestRemoveFromLabelCoverCache(t *testing.T) {
+	entity.ValidateFixtures(t)
 	cache := get.CoverCache()
 	cache.Flush()
 
@@ -176,6 +184,7 @@ func TestRemoveFromLabelCoverCache(t *testing.T) {
 }
 
 func TestRemoveFromLabelCoverCacheInvalidUID(t *testing.T) {
+	entity.ValidateFixtures(t)
 	cache := get.CoverCache()
 	cache.Flush()
 

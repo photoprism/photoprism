@@ -11,9 +11,11 @@ import (
 	"github.com/photoprism/photoprism/internal/thumb"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestCoverSize(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("Fit", func(t *testing.T) {
 		assert.Equal(t, thumb.Fit720, coverSize(thumb.Sizes[thumb.Fit15360]).Name)
 		assert.Equal(t, thumb.Fit720, coverSize(thumb.Sizes[thumb.Fit1920]).Name)
@@ -39,6 +41,7 @@ func TestCoverSize(t *testing.T) {
 }
 
 func TestAlbumCover(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("InvalidType", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		AlbumCover(router)
@@ -57,6 +60,7 @@ func TestAlbumCover(t *testing.T) {
 		AlbumCover(router)
 		r := PerformRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba9/t/"+conf.PreviewToken()+"/tile_500")
 		assert.Equal(t, http.StatusOK, r.Code)
+		t.Cleanup(func() { require.NoError(t, entity.UnscopedDb().Save(entity.FileFixtures.Pointer("bridge2.jpg")).Error) })
 	})
 	t.Run("InvalidToken", func(t *testing.T) {
 		app, router, conf := NewApiTest()

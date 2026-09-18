@@ -117,13 +117,13 @@ func PerformRequestWithStream(r http.Handler, method, path string) *CloseableRes
 
 // AuthenticateAdmin Register session routes and returns valid SessionId.
 // Call this func after registering other routes and before performing other requests.
-func AuthenticateAdmin(app *gin.Engine, router *gin.RouterGroup) (authToken string) {
-	return AuthenticateUser(app, router, "admin", "photoprism")
+func AuthenticateAdmin(t *testing.T, app *gin.Engine, router *gin.RouterGroup) (authToken string) {
+	return AuthenticateUser(t, app, router, "admin", "photoprism")
 }
 
 // AuthenticateUser Register session routes and returns valid SessionId.
 // Call this func after registering other routes and before performing other requests.
-func AuthenticateUser(app *gin.Engine, router *gin.RouterGroup, username string, password string) (authToken string) {
+func AuthenticateUser(t *testing.T, app *gin.Engine, router *gin.RouterGroup, username string, password string) (authToken string) {
 	CreateSession(router)
 
 	r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", form.AsJson(form.Login{
@@ -131,6 +131,10 @@ func AuthenticateUser(app *gin.Engine, router *gin.RouterGroup, username string,
 		Password: password,
 	}))
 
+	t.Cleanup(
+		func() {
+			entity.UnscopedDb().Delete(&entity.Session{}, "id = ?", gjson.Get(r.Body.String(), "session_id").String())
+		})
 	authToken = gjson.Get(r.Body.String(), "access_token").String()
 
 	return

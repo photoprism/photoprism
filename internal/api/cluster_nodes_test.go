@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/service/cluster"
@@ -14,6 +15,13 @@ import (
 )
 
 func TestClusterEndpoints(t *testing.T) {
+	entity.ValidateFixtures(t)
+	t.Cleanup(func() {
+		clients := []string{"pp-node-02"}
+		require.NoError(t, entity.UnscopedDb().Delete(entity.Password{}, "uid in (select client_uid from auth_clients where client_name in (?))", clients).Error)
+		require.NoError(t, entity.UnscopedDb().Delete(entity.Client{}, "client_name in (?)", clients).Error)
+		require.NoError(t, entity.UnscopedDb().Delete(entity.Session{}, "client_name in (?)", clients).Error)
+	})
 	app, router, conf := NewApiTest()
 	enablePortalAPIs(t, conf)
 
@@ -83,6 +91,13 @@ func TestClusterEndpoints(t *testing.T) {
 
 // Test that ClusterGetNode validates the :uuid path parameter and rejects unsafe values.
 func TestClusterGetNode_UUIDValidation(t *testing.T) {
+	entity.ValidateFixtures(t)
+	t.Cleanup(func() {
+		clients := []string{"pp-node-99"}
+		require.NoError(t, entity.UnscopedDb().Delete(entity.Password{}, "uid in (select client_uid from auth_clients where client_name in (?))", clients).Error)
+		require.NoError(t, entity.UnscopedDb().Delete(entity.Client{}, "client_name in (?)", clients).Error)
+		require.NoError(t, entity.UnscopedDb().Delete(entity.Session{}, "client_name in (?)", clients).Error)
+	})
 	app, router, conf := NewApiTest()
 	enablePortalAPIs(t, conf)
 
@@ -131,6 +146,7 @@ func TestClusterGetNode_UUIDValidation(t *testing.T) {
 }
 
 func TestClusterUpdateNode_UUIDValidation(t *testing.T) {
+	entity.ValidateFixtures(t)
 	app, router, conf := NewApiTest()
 	enablePortalAPIs(t, conf)
 
@@ -148,6 +164,13 @@ func TestClusterUpdateNode_UUIDValidation(t *testing.T) {
 // the PATCH lands, GET must echo the persisted set so the OIDC OP authorize
 // handler can find them via client.GetData().RedirectURIs.
 func TestClusterUpdateNode_RedirectURIs_Apply(t *testing.T) {
+	entity.ValidateFixtures(t)
+	t.Cleanup(func() {
+		clients := []string{"pp-node-redirects"}
+		require.NoError(t, entity.UnscopedDb().Delete(entity.Password{}, "uid in (select client_uid from auth_clients where client_name in (?))", clients).Error)
+		require.NoError(t, entity.UnscopedDb().Delete(entity.Client{}, "client_name in (?)", clients).Error)
+		require.NoError(t, entity.UnscopedDb().Delete(entity.Session{}, "client_name in (?)", clients).Error)
+	})
 	app, router, conf := NewApiTest()
 	enablePortalAPIs(t, conf)
 
@@ -176,6 +199,13 @@ func TestClusterUpdateNode_RedirectURIs_Apply(t *testing.T) {
 // non-nil slice replaces the persisted set (including the cleared case
 // where the slice is empty).
 func TestClusterUpdateNode_RedirectURIs_Replace_And_Clear(t *testing.T) {
+	entity.ValidateFixtures(t)
+	t.Cleanup(func() {
+		clients := []string{"pp-node-replace"}
+		require.NoError(t, entity.UnscopedDb().Delete(entity.Password{}, "uid in (select client_uid from auth_clients where client_name in (?))", clients).Error)
+		require.NoError(t, entity.UnscopedDb().Delete(entity.Client{}, "client_name in (?)", clients).Error)
+		require.NoError(t, entity.UnscopedDb().Delete(entity.Session{}, "client_name in (?)", clients).Error)
+	})
 	app, router, conf := NewApiTest()
 	enablePortalAPIs(t, conf)
 
@@ -220,6 +250,13 @@ func TestClusterUpdateNode_RedirectURIs_Replace_And_Clear(t *testing.T) {
 // helper: keys are normalized, empty keys dropped, and role values must be
 // federatable instance roles.
 func TestNormalizeAllowGroupRoles(t *testing.T) {
+	entity.ValidateFixtures(t)
+	t.Cleanup(func() {
+		clients := []string{"pp-node-groups"}
+		require.NoError(t, entity.UnscopedDb().Delete(entity.Password{}, "uid in (select client_uid from auth_clients where client_name in (?))", clients).Error)
+		require.NoError(t, entity.UnscopedDb().Delete(entity.Client{}, "client_name in (?)", clients).Error)
+		require.NoError(t, entity.UnscopedDb().Delete(entity.Session{}, "client_name in (?)", clients).Error)
+	})
 	t.Run("AcceptsAllInstanceRoles", func(t *testing.T) {
 		out, err := normalizeAllowGroupRoles(map[string]string{
 			"Media-Acme-Admin": "admin", "Media-Acme-Manager": "manager", "Media-Acme-User": "user",
@@ -244,6 +281,13 @@ func TestNormalizeAllowGroupRoles(t *testing.T) {
 // PATCH: AllowGroups apply/replace/clear with normalization, AllowGroupRoles
 // role validation, and the GroupsFullView opt-in round-trip.
 func TestClusterUpdateNode_GroupRules(t *testing.T) {
+	entity.ValidateFixtures(t)
+	t.Cleanup(func() {
+		clients := []string{"pp-node-groups"}
+		require.NoError(t, entity.UnscopedDb().Delete(entity.Password{}, "uid in (select client_uid from auth_clients where client_name in (?))", clients).Error)
+		require.NoError(t, entity.UnscopedDb().Delete(entity.Client{}, "client_name in (?)", clients).Error)
+		require.NoError(t, entity.UnscopedDb().Delete(entity.Session{}, "client_name in (?)", clients).Error)
+	})
 	app, router, conf := NewApiTest()
 	enablePortalAPIs(t, conf)
 
@@ -315,6 +359,13 @@ func TestClusterUpdateNode_GroupRules(t *testing.T) {
 // 400. Validation policy mirrors validateSiteURL: HTTPS always, HTTP only
 // on loopback / cluster-internal hosts, no fragment.
 func TestClusterUpdateNode_RedirectURIs_Invalid(t *testing.T) {
+	entity.ValidateFixtures(t)
+	t.Cleanup(func() {
+		clients := []string{"pp-node-invalid"}
+		require.NoError(t, entity.UnscopedDb().Delete(entity.Password{}, "uid in (select client_uid from auth_clients where client_name in (?))", clients).Error)
+		require.NoError(t, entity.UnscopedDb().Delete(entity.Client{}, "client_name in (?)", clients).Error)
+		require.NoError(t, entity.UnscopedDb().Delete(entity.Session{}, "client_name in (?)", clients).Error)
+	})
 	app, router, conf := NewApiTest()
 	enablePortalAPIs(t, conf)
 
@@ -345,6 +396,7 @@ func TestClusterUpdateNode_RedirectURIs_Invalid(t *testing.T) {
 }
 
 func TestNormalizeRedirectURIs(t *testing.T) {
+	entity.ValidateFixtures(t)
 	t.Run("NilInputNoChange", func(t *testing.T) {
 		out, err := normalizeRedirectURIs(nil)
 		assert.NoError(t, err)
@@ -382,6 +434,7 @@ func TestNormalizeRedirectURIs(t *testing.T) {
 }
 
 func TestValidateRedirectURI(t *testing.T) {
+	entity.ValidateFixtures(t)
 	cases := []struct {
 		uri string
 		ok  bool
@@ -402,6 +455,13 @@ func TestValidateRedirectURI(t *testing.T) {
 }
 
 func TestClusterUpdateNode_RequestTooLarge(t *testing.T) {
+	entity.ValidateFixtures(t)
+	t.Cleanup(func() {
+		clients := []string{"pp-node-request-limit"}
+		require.NoError(t, entity.UnscopedDb().Delete(entity.Password{}, "uid in (select client_uid from auth_clients where client_name in (?))", clients).Error)
+		require.NoError(t, entity.UnscopedDb().Delete(entity.Client{}, "client_name in (?)", clients).Error)
+		require.NoError(t, entity.UnscopedDb().Delete(entity.Session{}, "client_name in (?)", clients).Error)
+	})
 	app, router, conf := NewApiTest()
 	enablePortalAPIs(t, conf)
 
