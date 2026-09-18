@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2026-09-14
+Date generated: 2026-09-18
 
 ================================================================================
 
@@ -1210,8 +1210,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 --------------------------------------------------------------------------------
 
 Package: github.com/go-jose/go-jose/v4
-Version: v4.1.4
-License: Apache-2.0 (https://github.com/go-jose/go-jose/blob/v4.1.4/LICENSE)
+Version: v4.1.5
+License: Apache-2.0 (https://github.com/go-jose/go-jose/blob/v4.1.5/LICENSE)
 
 
                                  Apache License
@@ -1419,8 +1419,8 @@ License: Apache-2.0 (https://github.com/go-jose/go-jose/blob/v4.1.4/LICENSE)
 --------------------------------------------------------------------------------
 
 Package: github.com/go-jose/go-jose/v4/json
-Version: v4.1.4
-License: BSD-3-Clause (https://github.com/go-jose/go-jose/blob/v4.1.4/json/LICENSE)
+Version: v4.1.5
+License: BSD-3-Clause (https://github.com/go-jose/go-jose/blob/v4.1.5/json/LICENSE)
 
 Copyright (c) 2012 The Go Authors. All rights reserved.
 
@@ -4939,8 +4939,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/mattn/go-sqlite3
-Version: v1.14.48
-License: MIT (https://github.com/mattn/go-sqlite3/blob/v1.14.48/LICENSE)
+Version: v1.14.52
+License: MIT (https://github.com/mattn/go-sqlite3/blob/v1.14.52/LICENSE)
 
 The MIT License (MIT)
 
