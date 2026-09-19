@@ -9,7 +9,7 @@ require (
 	github.com/dsoprea/go-photoshop-info-format v0.0.0-20200610045659-121dd752914d // indirect
 	github.com/dsoprea/go-png-image-structure/v2 v2.0.0-20210512210324-29b889a6093d
 	github.com/dsoprea/go-tiff-image-structure/v2 v2.0.0-20221003165014-8ecc4f52edca
-	github.com/dustin/go-humanize v1.0.1
+	github.com/dustin/go-humanize v1.1.0
 	github.com/gin-contrib/gzip v1.2.6 // indirect
 	github.com/gin-gonic/gin v1.12.0
 	github.com/golang/geo v0.0.0-20260818125358-b200a1149890
@@ -49,7 +49,7 @@ require (
 	golang.org/x/image v0.46.0
 )
 
-require github.com/olekukonko/tablewriter v1.1.4
+require github.com/olekukonko/tablewriter v1.1.5
 
 require github.com/google/uuid v1.6.0
 
@@ -90,11 +90,11 @@ require (
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/swaggo/files v1.0.1
 	github.com/swaggo/gin-swagger v1.6.1
-	github.com/ugjka/go-tz/v2 v2.2.8
+	github.com/ugjka/go-tz/v2 v2.2.9
 	github.com/urfave/cli/v2 v2.27.7
 	github.com/wamuir/graft v0.10.0
 	github.com/yalue/onnxruntime_go v1.36.0
-	github.com/zitadel/oidc/v3 v3.51.0
+	github.com/zitadel/oidc/v3 v3.51.3
 	golang.org/x/mod v0.41.0
 	golang.org/x/sys v0.48.0
 	google.golang.org/protobuf v1.36.12
