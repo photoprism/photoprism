@@ -36,13 +36,16 @@ Descriptions MUST conclude with a checklist of **Acceptance Criteria**:
 
 The repo's issue templates use the GitHub `type:` property instead of `bug`/`idea` labels. The types are configured for the organization, not in this repo, so read them with `gh api orgs/photoprism/issue-types --jq '.[].name'` rather than assuming — as of September 2026 they are `Task`, `Bug`, `Feature`, `Enhancement` and `Epic`, and the templates name only some of them. `gh issue create --type <name>` sets the type when filing, and `gh issue edit --type <name>` changes it afterwards; neither needs the web UI.
 
-**Choosing between `Bug`, `Enhancement` and `Task`** (Michael, 2026-09-19). The three are distinguished by what the code was already supposed to do, not by how much work is involved:
+### Which issue type to choose?
 
-- **`Bug`** — it was supposed to work already and does not.
-- **`Enhancement`** — new capability on top of functionality that already works.
-- **`Task`** — something that should work, but was never built out. Neither a regression nor an addition to working behavior.
+The types `Bug`, `Enhancement`, `Feature`, and `Task` are distinguished by what the code was already supposed to do, not by how much work is involved:
 
-`Task` is the one that gets mis-picked, because a half-wired mechanism looks like a defect: helpers exist, the intent is legible in the code, and nothing calls them. That is not a `Bug` — nothing regressed, it was never finished — so reach for `Task` rather than arguing the intent into a defect. `Epic` is a tracking issue that stays open until every sub-issue is closed. The line between `Feature` and `Enhancement` is not recorded here; ask rather than guess.
+- **`Bug`** — Broken functionality that is implemented but does not work as documented.
+- **`Enhancement`** — A new capability on top of functionality that already works.
+- **`Feature`** — Entirely new functionality that does not yet exist.
+- **`Task`** — Something that should work, but was never fully developed, needs refinement, or requires an update (e.g., a dependency upgrade). It is neither a regression nor an addition to working behavior.
+
+A half-wired mechanism may look like a defect: helpers exist, the intent is legible in the code, and nothing calls them. This is not a `Bug` because nothing regressed; it was never finished. In this case, choose `Task` rather than arguing the intent into a defect. An `Epic` is a tracking issue that remains open until all sub-issues are closed.
 
 ## Specifications & Documentation
 
