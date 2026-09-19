@@ -721,10 +721,8 @@ export default {
       return latData?.mixed || lngData?.mixed;
     },
     isCountryReadOnly() {
-      if (!this.formData || !this.formData.Lat || !this.formData.Lng) {
-        return false;
-      }
-      return !!(this.formData.Lat.value || this.formData.Lng.value);
+      // Country corrections should not require clearing existing coordinates.
+      return false;
     },
     // canViewLabels gates the Labels section on the deployment's
     // `labels` feature flag and the session's `labels:search` grant —

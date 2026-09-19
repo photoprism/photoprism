@@ -81,4 +81,86 @@ func TestSavePhoto(t *testing.T) {
 		require.NoError(t, err)
 		require.False(t, saved)
 	})
+	t.Run("UpdatesCountryWithoutResolvingCoordinates", func(t *testing.T) {
+		countryPhoto := entity.FindPhoto(entity.Photo{PhotoUID: fixture.PhotoUID})
+		require.NotNil(t, countryPhoto)
+
+		originalCountry := countryPhoto.PhotoCountry
+		originalLat := countryPhoto.PhotoLat
+		originalLng := countryPhoto.PhotoLng
+		originalCellID := countryPhoto.CellID
+		originalPlaceID := countryPhoto.PlaceID
+		originalPlaceSrc := countryPhoto.PlaceSrc
+
+		defer restorePhoto(t, fixture.PhotoUID, entity.Values{
+			"photo_country": originalCountry,
+			"photo_lat":     originalLat,
+			"photo_lng":     originalLng,
+			"cell_id":       originalCellID,
+			"place_id":      originalPlaceID,
+			"place_src":     originalPlaceSrc,
+		})
+
+		values := &PhotosForm{
+			PhotoCountry: String{Value: "ua", Action: ActionUpdate},
+		}
+
+		req, err := NewPhotoSaveRequest(countryPhoto, values)
+		require.NoError(t, err)
+
+		saved, err := savePhoto(req)
+		require.NoError(t, err)
+		require.True(t, saved)
+
+		updated := entity.FindPhoto(entity.Photo{PhotoUID: fixture.PhotoUID})
+		require.NotNil(t, updated)
+		require.Equal(t, "ua", updated.PhotoCountry)
+		require.Equal(t, originalLat, updated.PhotoLat)
+		require.Equal(t, originalLng, updated.PhotoLng)
+		require.Equal(t, originalCellID, updated.CellID)
+		require.Equal(t, originalPlaceID, updated.PlaceID)
+		require.Equal(t, entity.SrcBatch, updated.PlaceSrc)
+	})
+	t.Run("UpdatesCountryWithCoordinatesKeepsManualCountry", func(t *testing.T) {
+		countryPhoto := entity.FindPhoto(entity.Photo{PhotoUID: fixture.PhotoUID})
+		require.NotNil(t, countryPhoto)
+
+		originalCountry := countryPhoto.PhotoCountry
+		originalLat := countryPhoto.PhotoLat
+		originalLng := countryPhoto.PhotoLng
+		originalCellID := countryPhoto.CellID
+		originalPlaceID := countryPhoto.PlaceID
+		originalPlaceSrc := countryPhoto.PlaceSrc
+		originalTimeZone := countryPhoto.TimeZone
+
+		defer restorePhoto(t, fixture.PhotoUID, entity.Values{
+			"photo_country": originalCountry,
+			"photo_lat":     originalLat,
+			"photo_lng":     originalLng,
+			"cell_id":       originalCellID,
+			"place_id":      originalPlaceID,
+			"place_src":     originalPlaceSrc,
+			"time_zone":     originalTimeZone,
+		})
+
+		values := &PhotosForm{
+			PhotoLat:     Float{Value: originalLat + 0.01, Action: ActionUpdate},
+			PhotoLng:     Float{Value: originalLng + 0.01, Action: ActionUpdate},
+			PhotoCountry: String{Value: "ua", Action: ActionUpdate},
+		}
+
+		req, err := NewPhotoSaveRequest(countryPhoto, values)
+		require.NoError(t, err)
+
+		saved, err := savePhoto(req)
+		require.NoError(t, err)
+		require.True(t, saved)
+
+		updated := entity.FindPhoto(entity.Photo{PhotoUID: fixture.PhotoUID})
+		require.NotNil(t, updated)
+		require.Equal(t, "ua", updated.PhotoCountry)
+		require.Equal(t, values.PhotoLat.Value, updated.PhotoLat)
+		require.Equal(t, values.PhotoLng.Value, updated.PhotoLng)
+		require.Equal(t, entity.SrcBatch, updated.PlaceSrc)
+	})
 }
