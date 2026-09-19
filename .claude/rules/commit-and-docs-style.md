@@ -36,6 +36,14 @@ Descriptions MUST conclude with a checklist of **Acceptance Criteria**:
 
 The repo's issue templates use the GitHub `type:` property instead of `bug`/`idea` labels. The types are configured for the organization, not in this repo, so read them with `gh api orgs/photoprism/issue-types --jq '.[].name'` rather than assuming — as of September 2026 they are `Task`, `Bug`, `Feature`, `Enhancement` and `Epic`, and the templates name only some of them. `gh issue create --type <name>` sets the type when filing, and `gh issue edit --type <name>` changes it afterwards; neither needs the web UI.
 
+**Choosing between `Bug`, `Enhancement` and `Task`** (Michael, 2026-09-19). The three are distinguished by what the code was already supposed to do, not by how much work is involved:
+
+- **`Bug`** — it was supposed to work already and does not.
+- **`Enhancement`** — new capability on top of functionality that already works.
+- **`Task`** — something that should work, but was never built out. Neither a regression nor an addition to working behavior.
+
+`Task` is the one that gets mis-picked, because a half-wired mechanism looks like a defect: helpers exist, the intent is legible in the code, and nothing calls them. That is not a `Bug` — nothing regressed, it was never finished — so reach for `Task` rather than arguing the intent into a defect. `Epic` is a tracking issue that stays open until every sub-issue is closed. The line between `Feature` and `Enhancement` is not recorded here; ask rather than guess.
+
 ## Specifications & Documentation
 
 - Document headings use a **Chicago-style title case**, with additional code- and path-aware normalization rules (see below). Always spell the product name as `PhotoPrism`.
