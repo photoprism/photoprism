@@ -72,7 +72,7 @@ type ConfigValues struct {
 // NewConfig returns a new computer vision config with defaults.
 func NewConfig() *ConfigValues {
 	cfg := &ConfigValues{
-		Models:     DefaultModels,
+		Models:     DefaultModels.Clone(),
 		Thresholds: DefaultThresholds,
 	}
 
@@ -97,8 +97,21 @@ func (c *ConfigValues) Load(fileName string) error {
 		return err
 	}
 
+	// Seed the sentinel so an omitted field remains distinguishable from an explicit zero.
+	c.Thresholds.NSFW = NSFWThresholdAuto
 	if err = yaml.Unmarshal(yamlConfig, c); err != nil {
 		return err
+	}
+
+	legacyDefaultTensorFlow := false
+	for _, model := range c.Models {
+		if model != nil && model.Type == ModelTypeNsfw && model.TensorFlow != nil && (model.Default || model.Name == "nsfw") {
+			legacyDefaultTensorFlow = true
+			break
+		}
+	}
+	if legacyDefaultTensorFlow && c.Thresholds.NSFW == DefaultNSFWThreshold {
+		c.Thresholds.NSFW = NSFWThresholdAuto
 	}
 
 	// Replace default placeholders with canonical defaults while respecting
@@ -110,6 +123,16 @@ func (c *ConfigValues) Load(fileName string) error {
 	c.ensureDefaultModels()
 
 	for _, model := range c.Models {
+		if model.TensorFlow != nil && model.ONNX != nil {
+			return fmt.Errorf("vision model %s declares both TensorFlow and ONNX runtimes", clean.Log(model.Name))
+		}
+
+		// Disable unsupported TensorFlow models instead of interpreting their paths as ONNX.
+		if (model.Type == ModelTypeLabels || model.Type == ModelTypeNsfw) && model.TensorFlow != nil {
+			model.Disabled = true
+			log.Warnf("vision: TensorFlow %s model %s is unsupported, migrate it to ONNX (disable model)", model.Type, clean.Log(model.Name))
+		}
+
 		model.ApplyEngineDefaults()
 
 		// Report a misspelled mode once instead of silently normalizing names the other way.
@@ -128,11 +151,29 @@ func (c *ConfigValues) Load(fileName string) error {
 		c.Thresholds.Topicality = DefaultThresholds.Topicality
 	}
 
-	if c.Thresholds.NSFW <= 0 || c.Thresholds.NSFW > 100 {
-		c.Thresholds.NSFW = DefaultThresholds.NSFW
+	if c.Thresholds.NSFW < NSFWThresholdAuto {
+		c.Thresholds.NSFW = NSFWThresholdAuto
+	} else if c.Thresholds.NSFW > 100 {
+		c.Thresholds.NSFW = 100
 	}
 
 	return nil
+}
+
+// SetModel replaces the configured model of the same type or appends it when missing.
+func (c *ConfigValues) SetModel(model *Model) {
+	if c == nil || model == nil {
+		return
+	}
+
+	for i := len(c.Models) - 1; i >= 0; i-- {
+		if c.Models[i] != nil && c.Models[i].Type == model.Type {
+			c.Models[i] = model
+			return
+		}
+	}
+
+	c.Models = append(c.Models, model)
 }
 
 // applyDefaultModels swaps entries marked as Default with the built-in

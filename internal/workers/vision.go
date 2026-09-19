@@ -10,6 +10,7 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 
+	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -255,10 +256,14 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 
 		// Detect NSFW content.
 		if detectNsfw {
-			if isNsfw := file.DetectNSFW(); m.PhotoPrivate != isNsfw {
-				m.PhotoPrivate = isNsfw
+			result := file.DetectNSFW()
+
+			if private, write := nsfwPrivateFlag(m.PhotoPrivate, result); write {
+				m.PhotoPrivate = private
 				changed = true
 				log.Infof("vision: changed private flag of %s to %t", logName, m.PhotoPrivate)
+			} else if result.IsUnavailable() {
+				log.Warnf("vision: nsfw detection unavailable for %s (%s)", logName, clean.Log(result.Reason))
 			}
 		}
 
@@ -344,4 +349,14 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 	}
 
 	return nil
+}
+
+// nsfwPrivateFlag returns the private flag an NSFW decision implies and whether to write it.
+// An unavailable result preserves the existing flag.
+func nsfwPrivateFlag(private bool, result nsfw.Result) (flag, write bool) {
+	if result.IsUnavailable() {
+		return private, false
+	}
+
+	return result.IsUnsafe(), private != result.IsUnsafe()
 }

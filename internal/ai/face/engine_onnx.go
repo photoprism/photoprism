@@ -463,9 +463,9 @@ func (o *onnxEngine) buildBlob(img image.Image) ([]float32, float32, error) {
 
 			// The padded area is normalized like every other pixel, so the value the model
 			// sees there stays the one it was trained to treat as empty.
-			blob[idx+planeSize*rIndex] = (r - o.mean[0]) * o.scales[0]
-			blob[idx+planeSize*gIndex] = (g - o.mean[1]) * o.scales[1]
-			blob[idx+planeSize*bIndex] = (b - o.mean[2]) * o.scales[2]
+			blob[idx+planeSize*rIndex] = (r - o.mean[rIndex]) * o.scales[rIndex]
+			blob[idx+planeSize*gIndex] = (g - o.mean[gIndex]) * o.scales[gIndex]
+			blob[idx+planeSize*bIndex] = (b - o.mean[bIndex]) * o.scales[bIndex]
 		}
 	}
 

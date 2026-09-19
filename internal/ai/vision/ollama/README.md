@@ -1,10 +1,10 @@
 ## PhotoPrism — Ollama Engine Integration
 
-**Last Updated:** August 9, 2026
+**Last Updated:** September 5, 2026
 
 ### Overview
 
-This package provides PhotoPrism’s native adapter for Ollama-compatible multimodal models. It lets Caption, Labels, and future Generate workflows call locally hosted models without changing worker logic, reusing the shared API client (`internal/ai/vision/api_client.go`) and result types (`LabelResult`, `CaptionResult`). Requests stay inside your infrastructure, rely on base64 thumbnails, and honor the same ACL, timeout, and logging hooks as the default TensorFlow engines. The adapter resolves `${OLLAMA_BASE_URL}/api/generate`, trimming trailing slashes and defaulting to `http://ollama:11434`; set `OLLAMA_BASE_URL=https://ollama.com` to opt into cloud defaults.
+This package provides PhotoPrism’s native adapter for Ollama-compatible multimodal models. It lets Caption, Labels, and future Generate workflows call locally hosted models without changing worker logic, reusing the shared API client (`internal/ai/vision/api_client.go`) and result types (`LabelResult`, `CaptionResult`). Requests stay inside your infrastructure, rely on base64 thumbnails, and honor the same ACL, timeout, and logging hooks as the default local engines. The adapter resolves `${OLLAMA_BASE_URL}/api/generate`, trimming trailing slashes and defaulting to `http://ollama:11434`; set `OLLAMA_BASE_URL=https://ollama.com` to opt into cloud defaults.
 
 #### Constraints
 
@@ -12,7 +12,7 @@ This package provides PhotoPrism’s native adapter for Ollama-compatible multim
 - Reasoning is disabled by default (`DefaultThink = "false"`, applied to `Service.Think` when empty) so thinking-capable models do not leak their reasoning into captions or invalidate label JSON. Re-enable it explicitly with `Service.Think: "true"`.
 - Responses may arrive as newline-delimited JSON chunks. `decodeOllamaResponse` keeps the most recent chunk, while the parser supports both `response` and `thinking` fallbacks for captions and labels and strips a leading, well-delimited `<think>...</think>` block from the response body as a defensive fallback.
 - Structured JSON is optional for captions but enforced for labels when `Format: json` (default for label models targeting the Ollama engine).
-- The adapter never overwrites TensorFlow defaults. If an Ollama call fails, downstream code still has Nasnet, NSFW, and Face models available.
+- The adapter never overwrites local defaults. If an Ollama call fails, downstream code still has label, NSFW, and face models available.
 - Workers assume a single-image payload per request. Run `photoprism vision run` to validate multi-image prompts before changing that invariant.
 
 #### Goals
@@ -161,7 +161,7 @@ Models:
 
 Guidelines:
 
-- Place new entries after the default TensorFlow models so they take precedence while Nasnet/NSFW remain as fallbacks.
+- Place new entries after the default local models so they take precedence while local label and NSFW models remain as fallbacks.
 - Always specify the exact Ollama tag (`model:version`) so upgrades are deliberate.
 - `Service.Think` defaults to `"false"` for the Ollama engine (reasoning off) and is sent whenever non-empty. Keep it quoted (for example `"false"`, `"true"`, or `"low"`) so YAML preserves it as a string; PhotoPrism serializes `"true"` / `"false"` as JSON booleans for Ollama compatibility. Set `Service.Think: "true"` to re-enable reasoning for a model that benefits from it.
 - Model support is not universal: `think:true` may fail on models that do not implement reasoning, and `think:false` can still yield empty `response` fields on some reasoning-capable models (which then stream their JSON via the `thinking` field — the parser handles this).
