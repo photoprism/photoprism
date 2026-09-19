@@ -67,6 +67,18 @@
           @click.stop="edit"
         ></v-btn>
         <v-btn
+          v-if="canEdit && context !== contexts.Archive && context !== contexts.Hidden"
+          key="action-stack"
+          :title="$gettext('Stack Pictures')"
+          icon="mdi-image-multiple"
+          color="edit"
+          variant="elevated"
+          density="comfortable"
+          :disabled="selection.length < 2 || busy"
+          class="action-stack"
+          @click.stop="batchStack"
+        ></v-btn>
+        <v-btn
           v-if="canTogglePrivate && context !== contexts.Archive && context !== contexts.Hidden"
           key="action-private"
           :title="$gettext('Change private flag')"
@@ -251,6 +263,28 @@ export default {
       $notify.success(this.$gettext("Selection approved"));
       this.selection.forEach((uid) => Photo.evictCache(uid));
       this.clearClipboard();
+    },
+    // batchStack submits the current selection for non-destructive stacking.
+    batchStack() {
+      if (this.busy || !this.canEdit || this.selection.length < 2) {
+        return;
+      }
+
+      this.busy = true;
+
+      $api
+        .post("batch/photos/stack", { photos: this.selection })
+        .then(() => this.onStacked())
+        .finally(() => {
+          this.busy = false;
+        });
+    },
+    // onStacked clears stale client state after the stack was persisted.
+    onStacked() {
+      $notify.success(this.$gettext("Pictures stacked"));
+      this.selection.forEach((uid) => Photo.evictCache(uid));
+      this.clearClipboard();
+      this.refresh();
     },
     archivePhotos() {
       if (!this.canArchive) {
