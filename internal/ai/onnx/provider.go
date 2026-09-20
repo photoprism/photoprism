@@ -142,6 +142,10 @@ func newBaseSessionOptions(settings SessionSettings) (*onnxruntime.SessionOption
 // The binding offers no discovery call, so availability is established by building the provider
 // options and treating any error as unavailable. Updating them is the step that loads the
 // provider library, so a missing library and an invisible device both surface here.
+//
+// TF32 is switched off because the runtime enables it by default on Ampere and later, which
+// rounds the mantissa and moves an embedding far more than kernel order does. Embeddings are
+// persisted and compared by distance, so both providers must compute the same graph in FP32.
 func appendCUDAProvider(opts *onnxruntime.SessionOptions) error {
 	cudaOpts, err := onnxruntime.NewCUDAProviderOptions()
 
@@ -155,7 +159,7 @@ func appendCUDAProvider(opts *onnxruntime.SessionOptions) error {
 		}
 	}()
 
-	if err = cudaOpts.Update(map[string]string{"device_id": "0"}); err != nil {
+	if err = cudaOpts.Update(map[string]string{"device_id": "0", "use_tf32": "0"}); err != nil {
 		return err
 	}
 

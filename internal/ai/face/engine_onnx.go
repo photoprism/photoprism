@@ -27,6 +27,7 @@ type ONNXOptions struct {
 	Threads        int
 	ScoreThreshold float32
 	NMSThreshold   float32
+	Provider       onnx.Provider
 }
 
 const (
@@ -146,34 +147,22 @@ func NewONNXEngine(opts ONNXOptions) (DetectionEngine, error) {
 		return nil, fmt.Errorf("faces: %w", err)
 	}
 
-	sessionOpts, err := onnxruntime.NewSessionOptions()
-	if err != nil {
-		return nil, fmt.Errorf("faces: %w", err)
-	}
-	defer func() {
-		if destroyErr := sessionOpts.Destroy(); destroyErr != nil {
-			log.Debugf("faces: %s (destroy session options)", destroyErr)
-		}
-	}()
-
 	threads := opts.Threads
 	if threads == 0 {
 		threads = max(runtime.NumCPU()/2, 1)
 	}
 
-	if err := sessionOpts.SetIntraOpNumThreads(threads); err != nil {
-		return nil, fmt.Errorf("faces: configure intra-op threads: %w", err)
+	sessionConf, err := onnx.NewSessionConfig(onnx.SessionSettings{
+		Provider:       opts.Provider,
+		IntraOpThreads: threads,
+		InterOpThreads: InterOpThreads,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("faces: %w", err)
 	}
+	defer sessionConf.Destroy()
 
-	if err := sessionOpts.SetInterOpNumThreads(InterOpThreads); err != nil {
-		return nil, fmt.Errorf("faces: configure inter-op threads: %w", err)
-	}
-
-	if err := sessionOpts.SetGraphOptimizationLevel(onnxruntime.GraphOptimizationLevelEnableAll); err != nil {
-		return nil, fmt.Errorf("faces: optimize session graph: %w", err)
-	}
-
-	inputInfos, outputInfos, err := onnxruntime.GetInputOutputInfoWithOptions(opts.ModelPath, sessionOpts)
+	inputInfos, outputInfos, err := onnxruntime.GetInputOutputInfoWithOptions(opts.ModelPath, sessionConf.Options)
 	if err != nil {
 		return nil, fmt.Errorf("faces: load ONNX metadata: %w", err)
 	}
@@ -206,10 +195,13 @@ func NewONNXEngine(opts ONNXOptions) (DetectionEngine, error) {
 
 	featStrides := stridesForFeatureMaps(fmc)
 
-	session, err := onnxruntime.NewDynamicAdvancedSession(opts.ModelPath, []string{inputName}, outputNames, sessionOpts)
+	session, err := sessionConf.NewSession(opts.ModelPath, []string{inputName}, outputNames,
+		[]int64{1, onnx.Channels, int64(height), int64(width)})
 	if err != nil {
 		return nil, fmt.Errorf("faces: initialize ONNX session: %w", err)
 	}
+
+	log.Infof("faces: loading %s on the %s", clean.Log(detector.Name), sessionConf.Provider)
 
 	engine := &onnxEngine{
 		session:        session,

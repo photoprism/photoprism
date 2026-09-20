@@ -60,37 +60,25 @@ func NewONNXEmbedder(settings EmbedderSettings) (Embedder, error) {
 		return nil, fmt.Errorf("faces: %w", err)
 	}
 
-	sessionOpts, err := onnxruntime.NewSessionOptions()
-
-	if err != nil {
-		return nil, fmt.Errorf("faces: %w", err)
-	}
-
-	defer func() {
-		if destroyErr := sessionOpts.Destroy(); destroyErr != nil {
-			log.Debugf("faces: %s (destroy session options)", destroyErr)
-		}
-	}()
-
 	threads := settings.Threads
 
 	if threads <= 0 {
 		threads = max(runtime.NumCPU()/2, 1)
 	}
 
-	if err = sessionOpts.SetIntraOpNumThreads(threads); err != nil {
-		return nil, fmt.Errorf("faces: configure intra-op threads: %w", err)
+	sessionConf, err := onnx.NewSessionConfig(onnx.SessionSettings{
+		Provider:       settings.Provider,
+		IntraOpThreads: threads,
+		InterOpThreads: InterOpThreads,
+	})
+
+	if err != nil {
+		return nil, fmt.Errorf("faces: %w", err)
 	}
 
-	if err = sessionOpts.SetInterOpNumThreads(InterOpThreads); err != nil {
-		return nil, fmt.Errorf("faces: configure inter-op threads: %w", err)
-	}
+	defer sessionConf.Destroy()
 
-	if err = sessionOpts.SetGraphOptimizationLevel(onnxruntime.GraphOptimizationLevelEnableAll); err != nil {
-		return nil, fmt.Errorf("faces: optimize session graph: %w", err)
-	}
-
-	graph, err := onnx.Inspect(settings.ModelPath, sessionOpts)
+	graph, err := onnx.Inspect(settings.ModelPath, sessionConf.Options)
 
 	if err != nil {
 		return nil, fmt.Errorf("faces: %w", err)
@@ -109,18 +97,18 @@ func NewONNXEmbedder(settings EmbedderSettings) (Embedder, error) {
 		return nil, fmt.Errorf("faces: %s returns %d dimensions, expected %d", clean.Log(m.Name), dims, m.Dims)
 	}
 
-	session, err := onnxruntime.NewDynamicAdvancedSession(
+	session, err := sessionConf.NewSession(
 		settings.ModelPath,
 		[]string{graph.Input.Name},
 		[]string{graph.Output.Name},
-		sessionOpts,
+		[]int64{1, onnx.Channels, int64(height), int64(width)},
 	)
 
 	if err != nil {
 		return nil, fmt.Errorf("faces: initialize ONNX embedding session: %w", err)
 	}
 
-	log.Infof("faces: loading %s", clean.Log(m.Name))
+	log.Infof("faces: loading %s on the %s", clean.Log(m.Name), sessionConf.Provider)
 
 	return &onnxEmbedder{
 		session:    session,

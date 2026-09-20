@@ -296,6 +296,7 @@ func (c *Config) ConfigureFaceDetector(minScore float64) error {
 			ModelPath:      c.FaceEngineModelPath(),
 			Threads:        c.FaceDetectorThreads(),
 			ScoreThreshold: detectorScoreThreshold(minScore),
+			Provider:       c.OnnxProvider(),
 		},
 	})
 }
@@ -1008,6 +1009,7 @@ func (c *Config) ConfigureFaceEmbedder(name face.ModelName) error {
 		Model:     model,
 		ModelPath: model.FilePath(c.ModelsPath()),
 		Threads:   c.FaceModelThreads(),
+		Provider:  c.OnnxProvider(),
 	})
 }
 
