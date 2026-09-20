@@ -140,7 +140,30 @@ func TestSessionConfig_NewSession(t *testing.T) {
 		require.NotNil(t, entry)
 		assert.Equal(t, logrus.WarnLevel, entry.Level)
 		assert.Contains(t, entry.Message, "cuda")
-		assert.Contains(t, entry.Message, "loading it on the cpu")
+		assert.Contains(t, entry.Message, "using the cpu instead")
+	})
+	t.Run("UnverifiableGeometryKeepsProvider", func(t *testing.T) {
+		// A graph whose geometry the caller cannot resolve is not evidence against the GPU, so
+		// verification is skipped rather than charged to the provider as a failure.
+		requireRuntime(t, embeddingModelPath)
+		hook := captureProviderLog(t)
+		forceProvider(t)
+		inputName, outputName := embeddingGraph(t)
+
+		cfg, err := NewSessionConfig(SessionSettings{Provider: ProviderCUDA, IntraOpThreads: 2})
+		require.NoError(t, err)
+		t.Cleanup(cfg.Destroy)
+
+		session, err := cfg.NewSession(embeddingModelPath, []string{inputName}, []string{outputName}, nil)
+		require.NoError(t, err)
+		require.NotNil(t, session)
+		t.Cleanup(func() { DestroySession(session) })
+
+		assert.Equal(t, ProviderCUDA, cfg.Provider)
+
+		for _, entry := range hook.AllEntries() {
+			assert.NotEqual(t, logrus.WarnLevel, entry.Level, entry.Message)
+		}
 	})
 	t.Run("MissingModel", func(t *testing.T) {
 		requireRuntime(t, embeddingModelPath)
@@ -192,21 +215,16 @@ func TestWarmUpSession(t *testing.T) {
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "no session")
 	})
-	t.Run("NoGeometry", func(t *testing.T) {
-		err := warmUpSession(nil, nil, 1)
-		require.Error(t, err)
-		assert.Contains(t, err.Error(), "no session")
-	})
 	t.Run("DynamicGeometry", func(t *testing.T) {
 		// A graph that leaves an axis dynamic cannot be verified until the caller resolves it,
-		// so an unset dimension is reported rather than guessed.
+		// so an unset dimension is reported as unverifiable rather than as a provider failure.
 		requireRuntime(t, embeddingModelPath)
 		session, cleanup := newSession(t)
 		t.Cleanup(cleanup)
 
 		err := warmUpSession(session, []int64{1, 3, 0, 112}, 1)
 		require.Error(t, err)
-		assert.Contains(t, err.Error(), "not fixed")
+		assert.ErrorIs(t, err, ErrGeometryUnknown)
 	})
 	t.Run("EmptyGeometry", func(t *testing.T) {
 		requireRuntime(t, embeddingModelPath)
@@ -215,7 +233,7 @@ func TestWarmUpSession(t *testing.T) {
 
 		err := warmUpSession(session, nil, 1)
 		require.Error(t, err)
-		assert.Contains(t, err.Error(), "no input geometry")
+		assert.ErrorIs(t, err, ErrGeometryUnknown)
 	})
 }
 
@@ -253,5 +271,91 @@ func TestDestroyValue(t *testing.T) {
 
 		DestroyValue(tensor)
 		assert.Empty(t, hook.AllEntries())
+	})
+}
+
+func TestSessionConfig_WithFallback(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		requireSessionRuntime(t)
+		hook := captureProviderLog(t)
+
+		cfg, err := NewSessionConfig(SessionSettings{IntraOpThreads: 1})
+		require.NoError(t, err)
+		t.Cleanup(cfg.Destroy)
+
+		calls := 0
+		require.NoError(t, cfg.WithFallback("model.onnx", func(*onnxruntime.SessionOptions) error {
+			calls++
+			return nil
+		}))
+		assert.Equal(t, 1, calls)
+		assert.Empty(t, hook.AllEntries())
+	})
+	t.Run("CPUFailureIsNotRetried", func(t *testing.T) {
+		// Without a provider to lose there is nothing to fall back to, so the error stands.
+		requireSessionRuntime(t)
+		hook := captureProviderLog(t)
+
+		cfg, err := NewSessionConfig(SessionSettings{Provider: ProviderCPU, IntraOpThreads: 1})
+		require.NoError(t, err)
+		t.Cleanup(cfg.Destroy)
+
+		calls := 0
+		err = cfg.WithFallback("model.onnx", func(*onnxruntime.SessionOptions) error {
+			calls++
+			return errors.New("out of memory")
+		})
+		require.Error(t, err)
+		assert.Equal(t, 1, calls)
+		assert.Empty(t, hook.AllEntries())
+	})
+	t.Run("GPUFailureRetriesOnCPU", func(t *testing.T) {
+		// A step that opens a session can fail for the provider's reasons, so the load is
+		// retried CPU-only rather than failing the model outright.
+		requireSessionRuntime(t)
+		hook := captureProviderLog(t)
+		forceProvider(t)
+
+		cfg, err := NewSessionConfig(SessionSettings{Provider: ProviderCUDA, IntraOpThreads: 1})
+		require.NoError(t, err)
+		t.Cleanup(cfg.Destroy)
+		require.Equal(t, ProviderCUDA, cfg.Provider)
+
+		calls := 0
+		require.NoError(t, cfg.WithFallback("model.onnx", func(*onnxruntime.SessionOptions) error {
+			calls++
+			if calls == 1 {
+				return errors.New("CUDA failure 2: out of memory")
+			}
+			return nil
+		}))
+
+		assert.Equal(t, 2, calls)
+		assert.Equal(t, ProviderCPU, cfg.Provider)
+
+		entry := hook.LastEntry()
+		require.NotNil(t, entry)
+		assert.Equal(t, logrus.WarnLevel, entry.Level)
+		assert.Contains(t, entry.Message, "model.onnx")
+		assert.Contains(t, entry.Message, "out of memory")
+		assert.Len(t, hook.AllEntries(), 1)
+	})
+	t.Run("RetryFailureReturnsError", func(t *testing.T) {
+		requireSessionRuntime(t)
+		captureProviderLog(t)
+		forceProvider(t)
+
+		cfg, err := NewSessionConfig(SessionSettings{Provider: ProviderCUDA, IntraOpThreads: 1})
+		require.NoError(t, err)
+		t.Cleanup(cfg.Destroy)
+
+		calls := 0
+		err = cfg.WithFallback("model.onnx", func(*onnxruntime.SessionOptions) error {
+			calls++
+			return errors.New("model is corrupt")
+		})
+		require.Error(t, err)
+		assert.Equal(t, 2, calls)
+		assert.Equal(t, ProviderCPU, cfg.Provider)
 	})
 }

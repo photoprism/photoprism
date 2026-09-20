@@ -2,6 +2,7 @@ package onnx
 
 import (
 	"errors"
+	"strings"
 	"testing"
 
 	"github.com/sirupsen/logrus"
@@ -141,6 +142,34 @@ func TestNewSessionOptions(t *testing.T) {
 		assert.Contains(t, entry.Message, "running inference on the cpu")
 		assert.Len(t, hook.AllEntries(), 1)
 	})
+	t.Run("UnimplementedProviderWarns", func(t *testing.T) {
+		// Adding a value to Providers without an implementation must not look like success.
+		requireSessionRuntime(t)
+		hook := captureProviderLog(t)
+
+		opts, applied, err := NewSessionOptions(SessionSettings{Provider: Provider("coreml"), IntraOpThreads: 1})
+		require.NoError(t, err)
+		require.NotNil(t, opts)
+		t.Cleanup(func() { DestroySessionOptions(opts) })
+		assert.Equal(t, ProviderCPU, applied)
+
+		entry := hook.LastEntry()
+		require.NotNil(t, entry)
+		assert.Equal(t, logrus.WarnLevel, entry.Level)
+		assert.Contains(t, entry.Message, "coreml")
+		assert.Contains(t, entry.Message, "not implemented")
+	})
+	t.Run("UnsetProviderIsDefault", func(t *testing.T) {
+		// The zero value is an unset option, not an unimplemented provider.
+		requireSessionRuntime(t)
+		hook := captureProviderLog(t)
+
+		opts, applied, err := NewSessionOptions(SessionSettings{IntraOpThreads: 1})
+		require.NoError(t, err)
+		t.Cleanup(func() { DestroySessionOptions(opts) })
+		assert.Equal(t, ProviderCPU, applied)
+		assert.Empty(t, hook.AllEntries())
+	})
 	t.Run("CUDAApplied", func(t *testing.T) {
 		requireSessionRuntime(t)
 
@@ -177,10 +206,23 @@ func TestNewBaseSessionOptions(t *testing.T) {
 	})
 }
 
+func TestCUDAProviderOptions(t *testing.T) {
+	t.Run("DisablesTF32", func(t *testing.T) {
+		// The runtime enables TF32 by default on Ampere and later, which moves a persisted
+		// embedding three orders of magnitude further than kernel order does. Asserted on the
+		// map rather than through a session, so the guard is pinned on a machine with no GPU.
+		assert.Equal(t, "0", cudaProviderOptions()["use_tf32"])
+	})
+	t.Run("SelectsFirstDevice", func(t *testing.T) {
+		assert.Equal(t, "0", cudaProviderOptions()["device_id"])
+	})
+}
+
 func TestAppendCUDAProvider(t *testing.T) {
 	t.Run("ReportsAvailability", func(t *testing.T) {
-		// Both outcomes are valid: a CPU-only build reports the provider as unavailable, and a
-		// GPU build with a visible device appends it. Neither may panic or leak the options.
+		// Both outcomes are valid: a CPU-only build or an invisible device reports the provider
+		// as unavailable, and a GPU build with a device appends it. Each branch is asserted, so
+		// the test carries weight on either kind of machine.
 		requireSessionRuntime(t)
 
 		opts, err := newBaseSessionOptions(SessionSettings{IntraOpThreads: 1})
@@ -188,9 +230,41 @@ func TestAppendCUDAProvider(t *testing.T) {
 		t.Cleanup(func() { DestroySessionOptions(opts) })
 
 		if err = appendCUDAProvider(opts); err != nil {
+			// The reason has to name the provider, or the fall-back warning is unreadable.
 			t.Logf("cuda provider unavailable: %s", err)
-			assert.NotEmpty(t, err.Error())
+			assert.Contains(t, strings.ToLower(err.Error()), "cuda")
+
+			return
 		}
+
+		// The options took the provider, so they must still build a usable session.
+		inputName, outputName := embeddingGraph(t)
+		session, err := onnxruntime.NewDynamicAdvancedSession(embeddingModelPath,
+			[]string{inputName}, []string{outputName}, opts)
+		require.NoError(t, err)
+		require.NotNil(t, session)
+		DestroySession(session)
+	})
+}
+
+func TestProviderError(t *testing.T) {
+	t.Run("Nil", func(t *testing.T) {
+		assert.Equal(t, "no error", providerError(nil))
+	})
+	t.Run("DropsDiagnosticTail", func(t *testing.T) {
+		// The runtime appends its build paths and the host name, which must not reach a log.
+		err := errors.New("CUDA failure 100: no CUDA-capable device is detected ; GPU=-1 ; hostname=abc123 ; file=/onnxruntime_src/x.cc")
+		out := providerError(err)
+		assert.Contains(t, out, "no CUDA-capable device is detected")
+		assert.NotContains(t, out, "hostname")
+		assert.NotContains(t, out, "onnxruntime_src")
+	})
+	t.Run("Bounded", func(t *testing.T) {
+		out := providerError(errors.New(strings.Repeat("x", 4000)))
+		assert.LessOrEqual(t, len([]rune(out)), providerErrorLen)
+	})
+	t.Run("CollapsesWhitespace", func(t *testing.T) {
+		assert.Equal(t, "a b c", providerError(errors.New("a\n  b\tc")))
 	})
 }
 

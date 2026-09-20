@@ -26,6 +26,7 @@ type onnxEmbedder struct {
 	width      int
 	height     int
 	dims       int
+	provider   onnx.Provider
 	mutex      sync.Mutex
 }
 
@@ -78,7 +79,16 @@ func NewONNXEmbedder(settings EmbedderSettings) (Embedder, error) {
 
 	defer sessionConf.Destroy()
 
-	graph, err := onnx.Inspect(settings.ModelPath, sessionConf.Options)
+	// Reading the graph opens a session of its own, so it goes through the fall back as well:
+	// a provider that cannot open one here would otherwise fail the load outright.
+	var graph *onnx.ModelInfo
+
+	err = sessionConf.WithFallback(settings.ModelPath, func(sessionOpts *onnxruntime.SessionOptions) error {
+		var inspectErr error
+		graph, inspectErr = onnx.Inspect(settings.ModelPath, sessionOpts)
+
+		return inspectErr
+	})
 
 	if err != nil {
 		return nil, fmt.Errorf("faces: %w", err)
@@ -119,6 +129,7 @@ func NewONNXEmbedder(settings EmbedderSettings) (Embedder, error) {
 		width:      width,
 		height:     height,
 		dims:       dims,
+		provider:   sessionConf.Provider,
 	}, nil
 }
 

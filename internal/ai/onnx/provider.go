@@ -5,6 +5,8 @@ import (
 	"strings"
 
 	onnxruntime "github.com/yalue/onnxruntime_go"
+
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Provider identifies the ONNX Runtime execution provider that runs a session's graph.
@@ -19,6 +21,9 @@ const (
 
 // DefaultProvider is the execution provider used when none is configured.
 const DefaultProvider = ProviderCPU
+
+// providerErrorLen bounds a runtime error in a log line.
+const providerErrorLen = 200
 
 // Providers lists the execution providers that may be configured.
 var Providers = []Provider{ProviderCPU, ProviderCUDA}
@@ -82,17 +87,27 @@ func NewSessionOptions(settings SessionSettings) (*onnxruntime.SessionOptions, P
 		return nil, DefaultProvider, err
 	}
 
-	if settings.Provider != ProviderCUDA {
+	switch settings.Provider {
+	case "", ProviderCPU:
+		// An unset provider is the default, not an unimplemented one.
+		return opts, ProviderCPU, nil
+	case ProviderCUDA:
+		if err = appendProviderVar(opts); err == nil {
+			return opts, ProviderCUDA, nil
+		}
+
+		// The runtime prints its own error line for a missing device before returning this
+		// error, so the warning has to say plainly that the fall back is not fatal.
+		log.Warnf("onnx: %s execution provider is unavailable (%s), running inference on the %s",
+			ProviderCUDA, providerError(err), ProviderCPU)
+	default:
+		// A provider that parses but has no implementation here would otherwise run on the CPU
+		// with a log line that reads as though it had been honored.
+		log.Warnf("onnx: %s execution provider is not implemented, running inference on the %s",
+			settings.Provider, ProviderCPU)
+
 		return opts, ProviderCPU, nil
 	}
-
-	if err = appendProviderVar(opts); err == nil {
-		return opts, ProviderCUDA, nil
-	}
-
-	// The runtime prints its own error line for a missing device before returning this error,
-	// so the warning has to say plainly that the fall back is not fatal.
-	log.Warnf("onnx: %s execution provider is unavailable (%s), running inference on the %s", ProviderCUDA, err, ProviderCPU)
 
 	// Options that failed to take a provider are discarded rather than reused, so what the
 	// caller receives was built for the CPU from the start.
@@ -159,11 +174,40 @@ func appendCUDAProvider(opts *onnxruntime.SessionOptions) error {
 		}
 	}()
 
-	if err = cudaOpts.Update(map[string]string{"device_id": "0", "use_tf32": "0"}); err != nil {
+	if err = cudaOpts.Update(cudaProviderOptions()); err != nil {
 		return err
 	}
 
 	return opts.AppendExecutionProviderCUDA(cudaOpts)
+}
+
+// cudaProviderOptions returns the options the CUDA provider is configured with. It is separate
+// so that the values guarding persisted embeddings can be asserted without a device.
+func cudaProviderOptions() map[string]string {
+	return map[string]string{
+		"device_id": "0",
+		// Off because the runtime enables it by default on Ampere and later; see above.
+		"use_tf32": "0",
+	}
+}
+
+// providerError renders a runtime error for a log line. The ONNX Runtime appends its build
+// paths, the host name and mangled C++ signatures to the reason, which buries the one sentence
+// an operator acts on, so the diagnostic tail is dropped and the remainder is bounded.
+func providerError(err error) string {
+	if err == nil {
+		return "no error"
+	}
+
+	s := err.Error()
+
+	for _, tail := range []string{" ; GPU=", " ; hostname=", " ; file="} {
+		if i := strings.Index(s, tail); i > 0 {
+			s = s[:i]
+		}
+	}
+
+	return txt.Shorten(strings.Join(strings.Fields(s), " "), providerErrorLen, txt.Ellipsis)
 }
 
 // DestroySessionOptions releases session options, reporting a failure at debug level only,

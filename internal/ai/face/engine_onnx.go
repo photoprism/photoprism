@@ -89,6 +89,7 @@ type onnxEngine struct {
 	detector       DetectorName
 	scoreThreshold float32
 	nmsThreshold   float32
+	provider       onnx.Provider
 	sessionMu      sync.Mutex
 	centerMu       sync.Mutex
 	centerCache    map[anchorCacheKey][]float32
@@ -162,7 +163,16 @@ func NewONNXEngine(opts ONNXOptions) (DetectionEngine, error) {
 	}
 	defer sessionConf.Destroy()
 
-	inputInfos, outputInfos, err := onnxruntime.GetInputOutputInfoWithOptions(opts.ModelPath, sessionConf.Options)
+	// Reading the graph opens a session of its own, so it goes through the fall back as well:
+	// a provider that cannot open one here would otherwise fail the load outright.
+	var inputInfos, outputInfos []onnxruntime.InputOutputInfo
+
+	err = sessionConf.WithFallback(opts.ModelPath, func(sessionOpts *onnxruntime.SessionOptions) error {
+		var infoErr error
+		inputInfos, outputInfos, infoErr = onnxruntime.GetInputOutputInfoWithOptions(opts.ModelPath, sessionOpts)
+
+		return infoErr
+	})
 	if err != nil {
 		return nil, fmt.Errorf("faces: load ONNX metadata: %w", err)
 	}
@@ -220,6 +230,7 @@ func NewONNXEngine(opts ONNXOptions) (DetectionEngine, error) {
 		useKps:         useKps,
 		scoreThreshold: opts.ScoreThreshold,
 		nmsThreshold:   opts.NMSThreshold,
+		provider:       sessionConf.Provider,
 		centerCache:    make(map[anchorCacheKey][]float32),
 	}
 
