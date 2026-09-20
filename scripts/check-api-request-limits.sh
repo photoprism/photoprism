@@ -63,6 +63,13 @@ check_file() {
           printf "%d:%s\n", NR, $0
         }
       }
+      # A helper that binds for a handler reaches the body just as a direct
+      # bind does, so it is a sink under the same rule.
+      /Bind[A-Z][A-Za-z]*Request[[:space:]]*\(/ {
+        if (last_limit == 0 && reads_body) {
+          printf "%d:%s\n", NR, $0
+        }
+      }
       /(c\.(PostForm|PostFormArray|PostFormMap|FormFile|MultipartForm|SaveUploadedFile)\(|c\.Request\.(ParseForm|ParseMultipartForm)\()/ {
         if (last_limit == 0 && reads_body) {
           printf "%d:%s\n", NR, $0
@@ -106,6 +113,7 @@ if [ "${#violations[@]}" -gt 0 ]; then
   echo
   echo "Add LimitRequestBodyBytes(...) before one of:"
   echo "  * c.BindJSON(...) / c.ShouldBindJSON(...)"
+  echo "  * Bind<Domain>Request(c, ...) helpers that bind on a handler's behalf"
   echo "  * <handler>.ServeHTTP(<writer>, c.Request)"
   echo "  * io.ReadAll(c.Request.Body) / json.NewDecoder(c.Request.Body) / ..."
   echo
