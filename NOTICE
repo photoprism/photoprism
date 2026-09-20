@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2026-09-19
+Date generated: 2026-09-20
 
 ================================================================================
 
@@ -538,8 +538,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/davidbyttow/govips/v2/vips
-Version: v2.18.0
-License: MIT (https://github.com/davidbyttow/govips/blob/v2.18.0/LICENSE)
+Version: v2.19.0
+License: MIT (https://github.com/davidbyttow/govips/blob/v2.19.0/LICENSE)
 
 The MIT License
 
@@ -5190,8 +5190,8 @@ the full license text.
 --------------------------------------------------------------------------------
 
 Package: github.com/montanaflynn/stats
-Version: v0.12.6
-License: MIT (https://github.com/montanaflynn/stats/blob/v0.12.6/LICENSE)
+Version: v0.12.7
+License: MIT (https://github.com/montanaflynn/stats/blob/v0.12.7/LICENSE)
 
 The MIT License (MIT)
 
