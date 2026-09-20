@@ -349,6 +349,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"vision-key", maskedSecret(c.VisionKey())},
 		{"vision-schedule", c.VisionSchedule()},
 		{"vision-filter", c.VisionFilter()},
+		{"onnx-provider", c.OnnxProvider().String()},
 		{"nasnet-model-path", c.NasnetModelPath()},
 		{"facenet-model-path", c.FacenetModelPath()},
 		{"nsfw-model-path", c.NsfwModelPath()},

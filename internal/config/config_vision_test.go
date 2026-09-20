@@ -8,6 +8,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/ai/onnx"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -157,4 +158,57 @@ func TestConfig_VisionFilter(t *testing.T) {
 
 	c.options.VisionFilter = ""
 	assert.Equal(t, "", c.VisionFilter())
+}
+
+func TestConfig_OnnxProvider(t *testing.T) {
+	t.Run("Default", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		assert.Equal(t, onnx.ProviderCPU, c.OnnxProvider())
+	})
+	t.Run("CUDA", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.OnnxProvider = "cuda"
+		assert.Equal(t, onnx.ProviderCUDA, c.OnnxProvider())
+	})
+	t.Run("Empty", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.OnnxProvider = ""
+		assert.Equal(t, onnx.ProviderCPU, c.OnnxProvider())
+	})
+	t.Run("Unsupported", func(t *testing.T) {
+		// An unusable value must not stop inference, so it resolves to the default.
+		c := NewConfig(CliTestContext())
+		c.options.OnnxProvider = "rocm"
+		assert.Equal(t, onnx.ProviderCPU, c.OnnxProvider())
+	})
+	t.Run("Nil", func(t *testing.T) {
+		var c *Config
+		assert.Equal(t, onnx.DefaultProvider, c.OnnxProvider())
+	})
+}
+
+func TestConfig_WarnVisionConfig(t *testing.T) {
+	t.Run("Once", func(t *testing.T) {
+		// The getters run per loaded model and from the config report, so a repeated call
+		// must not repeat the warning.
+		c := NewConfig(CliTestContext())
+
+		c.warnVisionConfig("test-vision-warning", "config: %s", "first")
+		_, warned := c.warnedOnce.Load("test-vision-warning")
+		assert.True(t, warned)
+
+		c.warnVisionConfig("test-vision-warning", "config: %s", "second")
+		assert.True(t, warned)
+	})
+	t.Run("DistinctKeys", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+
+		c.warnVisionConfig("test-vision-a", "config: a")
+		c.warnVisionConfig("test-vision-b", "config: b")
+
+		_, warnedA := c.warnedOnce.Load("test-vision-a")
+		_, warnedB := c.warnedOnce.Load("test-vision-b")
+		assert.True(t, warnedA)
+		assert.True(t, warnedB)
+	})
 }

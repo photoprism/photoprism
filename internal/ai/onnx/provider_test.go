@@ -49,6 +49,21 @@ func TestProvider_String(t *testing.T) {
 	})
 }
 
+func TestProviderUsageString(t *testing.T) {
+	t.Run("ListsEveryProvider", func(t *testing.T) {
+		usage := ProviderUsageString()
+		assert.Equal(t, "cpu, cuda", usage)
+
+		// Built from the registered list, so help text cannot drift from what parses.
+		for _, p := range Providers {
+			assert.Contains(t, usage, p.String())
+
+			_, ok := ParseProvider(p.String())
+			assert.True(t, ok)
+		}
+	})
+}
+
 func TestParseProvider(t *testing.T) {
 	t.Run("CPU", func(t *testing.T) {
 		provider, ok := ParseProvider("cpu")

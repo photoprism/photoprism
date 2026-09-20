@@ -32,6 +32,18 @@ func (p Provider) String() string {
 	return string(p)
 }
 
+// ProviderUsageString lists the configurable execution providers for CLI help, built from the
+// registered list so a new provider cannot be offered in one place and missing from the other.
+func ProviderUsageString() string {
+	names := make([]string, 0, len(Providers))
+
+	for _, p := range Providers {
+		names = append(names, p.String())
+	}
+
+	return strings.Join(names, ", ")
+}
+
 // ParseProvider resolves a configured value to a supported provider and reports whether the
 // value was recognized. An empty value is recognized, since that is the default rather than a
 // mistake; anything else unknown resolves to the default so an unusable setting cannot stop

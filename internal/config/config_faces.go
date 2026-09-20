@@ -826,7 +826,7 @@ func (c *Config) CheckFaceModelSuperseded() bool {
 	// an administrator to act, and the ordinary log is not where they are looking. Keyed by the
 	// model, so a second migration in the same process is reported again while a worker that
 	// wakes every few minutes does not repeat the first.
-	if _, warned := c.faceWarned.LoadOrStore("face-model-superseded-"+superseded, true); !warned {
+	if _, warned := c.warnedOnce.LoadOrStore("face-model-superseded-"+superseded, true); !warned {
 		event.SystemWarn([]string{"faces", "face model %s is recorded in %s but not loaded here, " +
 			"so face embeddings are paused until this instance is restarted"}, clean.Log(superseded), optionsFile)
 	}
@@ -1329,7 +1329,7 @@ func (c *Config) faceAcceptThresholds() (radius, matchDist float64) {
 		return radius, matchDist
 	}
 
-	if _, warned := c.faceWarned.LoadOrStore("face-accept-dist", true); !warned {
+	if _, warned := c.warnedOnce.LoadOrStore("face-accept-dist", true); !warned {
 		log.Warnf("config: face-cluster-radius %g and face-match-dist %g accept faces up to %g, more than the maximum of %g, using %g and %g instead",
 			radius, matchDist, radius+matchDist, face.ConfigDistMax, calibratedRadius, calibratedMatchDist)
 	}
@@ -1385,7 +1385,7 @@ func (c *Config) faceThreadsSetting(threads int) int {
 // warnFaceConfig reports a face configuration problem once, because the getters are called from
 // Propagate and from the config report rather than a single time per start.
 func (c *Config) warnFaceConfig(key, format string, args ...any) {
-	if _, warned := c.faceWarned.LoadOrStore(key, true); !warned {
+	if _, warned := c.warnedOnce.LoadOrStore(key, true); !warned {
 		log.Warnf(format, args...)
 	}
 }
@@ -1393,7 +1393,7 @@ func (c *Config) warnFaceConfig(key, format string, args ...any) {
 // infoFaceConfig reports a face setting that has no effect once. It is not a fault, so it is
 // reported at info level, but an instruction that is ignored must still not be silent.
 func (c *Config) infoFaceConfig(key, format string, args ...any) {
-	if _, warned := c.faceWarned.LoadOrStore(key, true); !warned {
+	if _, warned := c.warnedOnce.LoadOrStore(key, true); !warned {
 		log.Infof(format, args...)
 	}
 }
@@ -1406,7 +1406,7 @@ func (c *Config) warnFaceThreshold(configured bool, flagName string, value, minV
 		return
 	}
 
-	if _, warned := c.faceWarned.LoadOrStore(flagName, true); !warned {
+	if _, warned := c.warnedOnce.LoadOrStore(flagName, true); !warned {
 		log.Warnf("config: %s %g is out of range (%g-%g), using %g instead", flagName, value, minValue, maxValue, resolved)
 	}
 }

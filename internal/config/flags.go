@@ -7,6 +7,7 @@ import (
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/ai/onnx"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config/ttl"
@@ -1341,6 +1342,12 @@ var Flags = CliFlags{
 			Usage:   "vision worker search `FILTER` applied to scheduled runs (same syntax as photoprism vision run)",
 			Value:   "public:true",
 			EnvVars: EnvVars("VISION_FILTER"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "onnx-provider",
+			Usage:   "execution `PROVIDER` for ONNX inference (" + onnx.ProviderUsageString() + "), falls back to the CPU when unavailable",
+			Value:   onnx.DefaultProvider.String(),
+			EnvVars: EnvVars("ONNX_PROVIDER"),
 		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "detect-nsfw",
