@@ -288,3 +288,46 @@ func TestOAuthToken_QueryCredentials(t *testing.T) {
 	assert.Equal(t, http.StatusUnauthorized, w.Code)
 	assert.NotContains(t, w.Body.String(), "access_token")
 }
+
+// TestIsOAuthFormRequest covers the predicate the token handler shares with
+// BindOAuthRequest, so the encoding a route gates on and the one it decodes
+// cannot answer differently for the same request.
+func TestIsOAuthFormRequest(t *testing.T) {
+	isForm := func(contentType string) bool {
+		c, _ := gin.CreateTestContext(httptest.NewRecorder())
+		c.Request, _ = http.NewRequest(http.MethodPost, "/api/v1/oauth/token", strings.NewReader(""))
+
+		if contentType != "" {
+			c.Request.Header.Set(header.ContentType, contentType)
+		}
+
+		return IsOAuthFormRequest(c)
+	}
+
+	t.Run("Form", func(t *testing.T) {
+		assert.True(t, isForm(header.ContentTypeForm))
+	})
+	t.Run("WithCharset", func(t *testing.T) {
+		assert.True(t, isForm(header.ContentTypeForm+"; charset=utf-8"))
+	})
+	t.Run("Uppercase", func(t *testing.T) {
+		// Media types are case-insensitive, so a differently cased form request
+		// reaches the same decoder and the same grant delegation.
+		assert.True(t, isForm("Application/X-WWW-Form-Urlencoded"))
+		assert.True(t, isForm("APPLICATION/X-WWW-FORM-URLENCODED"))
+	})
+	t.Run("Json", func(t *testing.T) {
+		assert.False(t, isForm(header.ContentTypeJson))
+	})
+	t.Run("Multipart", func(t *testing.T) {
+		assert.False(t, isForm("multipart/form-data; boundary=x"))
+	})
+	t.Run("Absent", func(t *testing.T) {
+		assert.False(t, isForm(""))
+	})
+	t.Run("MalformedParameter", func(t *testing.T) {
+		// An unparsable media type is not a form request, and BindOAuthRequest
+		// reads it the same way, so neither acts on a body it cannot decode.
+		assert.False(t, isForm(header.ContentTypeForm+"; charset"))
+	})
+}
