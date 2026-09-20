@@ -135,9 +135,13 @@ services:
       PHOTOPRISM_UPLOAD_ARCHIVES: "true"             # allows upload of zip archives (will be extracted before import)
       PHOTOPRISM_THUMB_LIBRARY: "auto"               # image processing library to be used for generating thumbnails (auto, vips)
       PHOTOPRISM_THUMB_UNCACHED: "true"              # enables on-demand thumbnail rendering (high memory and cpu usage)
-      ## Run/install on first startup (options: update tensorflow https intel gpu davfs yt-dlp):
-      PHOTOPRISM_INIT: "https tensorflow-gpu"
+      ## Run/install on first startup (options: update tensorflow https intel gpu davfs yt-dlp
+      ## onnxruntime-gpu cuda); "onnxruntime-gpu" installs the GPU build of the ONNX Runtime
+      ## together with the CUDA libraries and cuDNN it needs, which the NVIDIA Container Toolkit
+      ## does not provide because it injects the driver alone (~850 MB download, ~1.7 GB on disk):
+      PHOTOPRISM_INIT: "https tensorflow-gpu onnxruntime-gpu"
       ## Computer Vision (https://docs.photoprism.app/getting-started/config-options/#computer-vision):
+      PHOTOPRISM_ONNX_PROVIDER: "cuda"               # execution provider for ONNX inference (cpu, cuda); falls back to cpu when unavailable
       PHOTOPRISM_VISION_API: "true"                  # server: enables service API endpoints under /api/v1/vision (requires access token)
       PHOTOPRISM_VISION_URI: ""                      # client: service URI, e.g. http://hostname/api/v1/vision (leave blank to disable)
       PHOTOPRISM_VISION_KEY: ""                      # client: service access token (for authentication)
