@@ -32,6 +32,8 @@ Machine Learning:
   tensorflow       Install the TensorFlow library for CPUs
   tensorflow-gpu   Install the TensorFlow library with GPU support
   onnxruntime      Install the ONNX Runtime library
+  onnxruntime-gpu  Install the ONNX Runtime library with CUDA support, and the cuda target
+  cuda             Install the NVIDIA CUDA runtime libraries on their own
 
 Other:
   mariadb-client   Install the MariaDB command-line client
@@ -92,6 +94,12 @@ install-tensorflow:
 onnxruntime: install-onnx
 install-onnx:
 	/scripts/install-onnx.sh
+onnxruntime-gpu: install-cuda install-onnx-gpu
+install-onnx-gpu:
+	/scripts/install-onnx.sh --gpu
+cuda: install-cuda
+install-cuda:
+	/scripts/install-cuda.sh
 tensorflow-gpu: install-tensorflow-gpu
 install-tensorflow-gpu:
 	/scripts/install-tensorflow.sh gpu
