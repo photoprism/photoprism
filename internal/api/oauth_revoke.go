@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -24,7 +25,7 @@ import (
 //	@Summary	revoke an OAuth2 access token or session
 //	@Id			OAuthRevoke
 //	@Tags		Authentication
-//	@Accept		json
+//	@Accept		json,x-www-form-urlencoded,mpfd
 //	@Produce	json
 //	@Param		request					body		form.OAuthRevokeToken	true	"revoke request"
 //	@Success	200						{object}	gin.H
@@ -83,15 +84,24 @@ func OAuthRevoke(router *gin.RouterGroup) {
 		LimitRequestBodyBytes(c, MaxOAuthRequestBytes)
 
 		// Get the auth token to be revoked from the submitted form values or the request header.
-		if err = c.ShouldBind(&frm); IsRequestBodyTooLarge(err) {
+		err = BindOAuthRequest(c, &frm)
+
+		switch {
+		case IsRequestBodyTooLarge(err):
 			event.AuditWarn([]string{clientIp, "oauth2", "%s", action, "request too large", status.Error(err)}, actor)
 			AbortRequestTooLarge(c, i18n.ErrBadRequest)
 			return
-		} else if err != nil && authToken == "" {
+		case errors.Is(err, ErrUnsupportedContentType):
+			// A body that cannot be decoded is an error, not an absent body: the
+			// fallback below applies to a request that carries no body at all.
 			event.AuditWarn([]string{clientIp, "oauth2", "%s", action, status.Error(err)}, actor)
 			AbortBadRequest(c, err)
 			return
-		} else if frm.Empty() {
+		case err != nil && authToken == "":
+			event.AuditWarn([]string{clientIp, "oauth2", "%s", action, status.Error(err)}, actor)
+			AbortBadRequest(c, err)
+			return
+		case frm.Empty():
 			frm.Token = authToken
 			frm.TokenTypeHint = form.AccessToken
 		}

@@ -9612,7 +9612,9 @@
         "/api/v1/oauth/revoke": {
             "post": {
                 "consumes": [
-                    "application/json"
+                    "application/json",
+                    "application/x-www-form-urlencoded",
+                    "multipart/form-data"
                 ],
                 "operationId": "OAuthRevoke",
                 "parameters": [
@@ -9682,7 +9684,9 @@
         "/api/v1/oauth/token": {
             "post": {
                 "consumes": [
-                    "application/json"
+                    "application/json",
+                    "application/x-www-form-urlencoded",
+                    "multipart/form-data"
                 ],
                 "operationId": "OAuthToken",
                 "parameters": [
