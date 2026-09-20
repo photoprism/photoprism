@@ -18,8 +18,8 @@ When adding struct fields with uppercase abbreviations (e.g. `LabelNSFW`, `UserI
 ## Filesystem Permissions & io/fs Aliasing
 
 - Always use shared permission variables from `pkg/fs` when creating files/directories:
-  - Directories: `fs.ModeDir` (0o755 with umask)
-  - Regular files: `fs.ModeFile` (0o644 with umask)
+  - Directories: `fs.ModeDir` (0o777 creation default, filtered by umask)
+  - Regular files: `fs.ModeFile` (0o666 creation default, filtered by umask)
   - Config files: `fs.ModeConfigFile` (default 0o664)
   - Secrets/tokens: `fs.ModeSecretFile` (default 0o600)
   - Backups: `fs.ModeBackupFile` (default 0o600)

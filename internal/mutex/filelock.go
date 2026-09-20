@@ -241,13 +241,9 @@ func (l *FileLock) write() error {
 	return l.replace(b)
 }
 
-// replace writes the lock file through a temporary file in the same directory, so that a reader
-// sees either the previous contents or the new ones.
-//
-// Writing in place leaves the file empty between truncating and writing, and an unreadable lock
-// reads as free - which over an hour of renewals is a window every worker polls into.
+// replace publishes a staged lock record so readers always see complete contents.
 func (l *FileLock) replace(b []byte) error {
-	f, err := os.CreateTemp(filepath.Dir(l.fileName), filepath.Base(l.fileName)+".*")
+	f, err := fs.OpenStageFile(l.fileName)
 
 	if err != nil {
 		return err
@@ -267,10 +263,6 @@ func (l *FileLock) replace(b []byte) error {
 	}
 
 	if err = f.Close(); err != nil {
-		return err
-	}
-
-	if err = os.Chmod(tempName, fs.ModeFile); err != nil {
 		return err
 	}
 

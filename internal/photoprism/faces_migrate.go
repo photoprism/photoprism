@@ -235,7 +235,7 @@ type FacesMigrateRerunError struct {
 // run reconciles them.
 func (e *FacesMigrateRerunError) Error() string {
 	return fmt.Sprintf("faces: %s, so replacing the clusters was rolled back and nothing was lost; "+
-		"%d regenerated marker(s) stay unmatched until the migration is run again with the server stopped",
+		"%d regenerated marker(s) stay unmatched until the migration is run again",
 		e.Cause, e.Migrated)
 }
 

@@ -196,6 +196,9 @@ func prepareConfigOptionsSuccessTest(t *testing.T, conf *config.Config) {
 	originalOptions := *conf.Options()
 	t.Cleanup(func() {
 		*conf.Options() = originalOptions
+		// The handler propagates saved options into package vars such as thumb.CachePublic,
+		// which restoring the struct alone leaves at whatever a request set.
+		conf.Propagate()
 	})
 
 	conf.Options().AuthMode = config.AuthModePasswd

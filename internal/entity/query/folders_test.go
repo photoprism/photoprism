@@ -53,8 +53,13 @@ func TestFoldersByPath(t *testing.T) {
 			}
 			if !found {
 				require.NoError(t, entity.UnscopedDb().Delete(&afterFolder).Error)
+				// A new folder also gets a folder album, which other tests count.
+				require.NoError(t, entity.UnscopedDb().Unscoped().
+					Delete(&entity.Album{}, "album_type = ? AND album_path = ?", entity.AlbumFolder, afterFolder.Path).Error)
 			}
 		}
+
+		entity.FlushAlbumCache()
 	}()
 	t.Run("Root", func(t *testing.T) {
 		folders, err := FoldersByPath(entity.RootOriginals, "testdata", "", false)

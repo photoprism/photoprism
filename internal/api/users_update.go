@@ -173,15 +173,10 @@ func UpdateUser(router *gin.RouterGroup) {
 				english.Plural(revoked, "session", "sessions"))
 		}
 
-		// Flush session cache.
-		if isAdmin {
-			entity.FlushSessionCache()
-			if f.UserRole != "" {
-				config.FlushUsageCache()
-				UpdateClientConfig()
-			}
-		} else {
-			s.ClearCache()
+		// Refresh role-dependent usage and client configuration after an admin update.
+		if isAdmin && f.UserRole != "" {
+			config.FlushUsageCache()
+			UpdateClientConfig()
 		}
 
 		// Find and return the updated user record.

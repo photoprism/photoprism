@@ -352,6 +352,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"label-model", string(c.EffectiveLabelModel())},
 		{"label-model-path", c.LabelModelPath()},
 		{"label-model-runtime", c.LabelModelRuntime()},
+		{"onnx-provider", c.OnnxProvider().String()},
 		{"nasnet-model-path", c.NasnetModelPath()},
 		{"facenet-model-path", c.FacenetModelPath()},
 		{"nsfw-model", string(c.EffectiveNSFWModel())},

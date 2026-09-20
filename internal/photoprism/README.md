@@ -1,6 +1,6 @@
 ## PhotoPrism — Core Package
 
-**Last Updated:** September 1, 2026
+**Last Updated:** September 17, 2026
 
 ### Overview
 
@@ -52,6 +52,16 @@
 - `internal/photoprism` tests isolate package-level storage and SQLite DSN in `TestMain` using temporary per-process paths (`PHOTOPRISM_STORAGE_PATH`, `PHOTOPRISM_TEST_DSN`) to avoid flaky cross-process collisions on macOS/Linux when multiple `go test` processes run in parallel.
 - Stateful tests that import/index media files should prefer isolated helpers like `config.NewMinimalTestConfigWithDb("<name>", filepath.Join(t.TempDir(), "storage"))` instead of shared `config.TestConfig()`.
 
+### Transport-Stream Coordination
+
+Transport-stream conversions share compatible in-flight work by output destination across `Convert`
+instances in the same process. Coordination includes remuxing and any fallback transcode. Requests
+with different source versions, configuration objects, FFmpeg exclusion snapshots, encoders or
+force/mutex settings queue for that destination and recheck the output; unrelated destinations retain
+their existing scheduling. Each caller receives its own media object. Completed operations are
+released for later retries; overlapping compatible callers share failures. Unique staging is unchanged.
+This is not a cross-process lock and does not alter animated-WebP or encoder mutex behavior.
+
 ### Operational Notes
 
 - Sub-second EXIF timestamps are preserved through metadata parsing and visible in `MediaFile.MetaData()`; database columns remain second-precision.
@@ -61,3 +71,16 @@
 - Forced rescans (`IndexOptions.Rescan=true`) run folder album reconciliation at the end of indexing via `entity.ReconcileOriginalsFolderAlbums(...)`; normal incremental runs skip this pass.
 - Updated or newly added XMP sidecars next to originals are re-read on normal incremental passes. The filesystem walk compares each sidecar's modification time with `files.mod_time`, resolves its main media file from the Files cache, and queues deduplicated main-file jobs only after a successful walk; on forced rescans this detection is skipped because every main file is reindexed and re-reads its sidecar anyway. External XMP edits merge with `SrcXmp` priority, while `SrcManual` values are preserved. A sidecar that fails to parse records the error and advances its `mod_time`, so it is retried only after another edit instead of on every pass. Incremental sidecar deletion is not supported, and automatic removal of stale XMP-derived metadata is not guaranteed by a forced rescan: fields such as `UUID`, `CameraSerial`, and primary `InstanceID` do not retain enough source information for complete reconciliation.
 - Folder create/index conflict lookup uses unscoped folder reads in `internal/entity/folder.go` so soft-deleted rows are detectable for troubleshooting instead of causing repeated create/find mismatches.
+
+### JSON Metadata Output
+
+ExifTool JSON output is captured with the shared `meta.JSONFileLimit()` limit (1 MiB by default).
+Output beyond that limit returns `meta.ErrJSONFileTooLarge` without publishing a partial
+cache file. Diagnostic output is retained up to 64 KiB, with a truncation marker on errors;
+normal conversion timeouts and process cleanup remain in effect. Cached/external sidecars
+are independently bounded by the [metadata JSON reader](../meta/README.md#json-sidecar-reader).
+
+Operators can override the shared JSON byte limit with `PHOTOPRISM_JSON_LIMIT` (positive
+decimal bytes, for example `4194304` for 4 MiB). Empty, invalid, zero, negative, or
+out-of-range values retain the 1 MiB default; there is no unlimited setting. The override
+applies to both sidecar reads and ExifTool stdout capture, not the 64 KiB stderr bound.

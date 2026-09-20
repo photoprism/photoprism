@@ -21,7 +21,7 @@ import (
 //
 // Ranked like a person's cover and not by `MIN(marker_uid)`: marker ids order only to the second,
 // so a cluster indexed in one pass would otherwise be represented by an arbitrary one of its faces.
-func representativeMarkerJoin(facesTable, unknown string) (string, []any) {
+func representativeMarkerJoin(facesTable, unknown string, omitWithheld bool) (string, []any) {
 	scoreCond, scoreArgs := entity.ClusterScoreCond("m2", face.ClusterScoreAuto)
 	sizeCond, sizeArgs := entity.ClusterSizeCond("m2", face.ClusterSizeThreshold)
 
@@ -46,22 +46,45 @@ func representativeMarkerJoin(facesTable, unknown string) (string, []any) {
 		conds = append(conds, "m2.subj_uid <> ''")
 	}
 
+	// A marker may name a person its cluster is not named after, so the representative is checked
+	// on its own subject rather than left to the condition the cluster carries.
+	var peopleJoins []string
+
+	if omitWithheld {
+		joins, cond := entity.VisiblePeopleFilter("m2", true)
+		peopleJoins = joins
+		conds = append(conds, cond)
+	}
+
 	// Filtered on the sampled extent but ranked on the detection size, which is deliberate: the two
 	// answer different questions. thumb_size is available detail, which decides whether a vector can
 	// be trusted; size is the face's extent in a fixed-size thumbnail, so it tracks how much of the
 	// frame the face fills, which is what picks a picture to represent a person.
 	return fmt.Sprintf(`JOIN markers m ON m.marker_uid = (
-		SELECT m2.marker_uid FROM markers m2
+		SELECT m2.marker_uid FROM markers m2 %s
 		WHERE %s
 		ORDER BY m2.size DESC, m2.score DESC, m2.marker_uid
-		LIMIT 1)`, strings.Join(conds, " AND ")), args
+		LIMIT 1)`, strings.Join(peopleJoins, " "), strings.Join(conds, " AND ")), args
 }
 
-// Faces searches faces and returns them.
+// Faces searches faces and returns them without checking rights or permissions.
 func Faces(frm form.SearchFaces) (results FaceResults, err error) {
+	return searchFaces(frm, nil)
+}
+
+// UserFaces searches faces within what the given session is allowed to see.
+func UserFaces(frm form.SearchFaces, sess *entity.Session) (results FaceResults, err error) {
+	return searchFaces(frm, sess)
+}
+
+// searchFaces searches faces and returns them, leaving out the clusters of people whose name is
+// withheld from the given session.
+func searchFaces(frm form.SearchFaces, sess *entity.Session) (results FaceResults, err error) {
 	if err = frm.ParseQueryString(); err != nil {
 		return results, err
 	}
+
+	omitWithheld := !sess.SeesPrivatePeople()
 
 	facesTable := entity.Face{}.TableName()
 
@@ -69,14 +92,25 @@ func Faces(frm form.SearchFaces) (results FaceResults, err error) {
 	s := UnscopedDb().Table(facesTable)
 
 	if frm.Markers {
-		s = s.Select(fmt.Sprintf(`%s.*, m.marker_uid, m.file_uid, m.marker_name, m.subj_src, m.marker_src, 
+		s = s.Select(fmt.Sprintf(`%s.*, m.marker_uid, m.file_uid, m.marker_name, m.subj_src, m.marker_src,
 			m.marker_type, m.marker_review, m.marker_invalid, m.size, m.score, m.thumb, m.face_dist`, facesTable))
 
-		join, args := representativeMarkerJoin(facesTable, frm.Unknown)
+		join, args := representativeMarkerJoin(facesTable, frm.Unknown, omitWithheld)
 
 		s = s.Joins(join, args...)
 	} else {
 		s = s.Select(fmt.Sprintf(`%s.*`, facesTable))
+	}
+
+	// Applied above the id shortcut, so every branch answers within what the caller may see.
+	if omitWithheld {
+		joins, cond := entity.VisiblePeopleFilter(facesTable, false)
+
+		for _, join := range joins {
+			s = s.Joins(join)
+		}
+
+		s = s.Where(cond)
 	}
 
 	// Limit result count.

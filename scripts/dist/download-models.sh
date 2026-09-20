@@ -20,6 +20,9 @@ STAMP=$(date -u +%Y%m%d-%H%M%S)
 
 MIRROR_URL="https://dl.photoprism.app"
 ONNX_URL="${MIRROR_URL}/onnx/models"
+# Comparators kept for benchmarking only; not installed by any build target and not
+# intended for production use.
+ONNX_TESTING_URL="${ONNX_URL}/testing"
 TENSORFLOW_URL="${MIRROR_URL}/tensorflow"
 OPENCV_ZOO_URL="https://media.githubusercontent.com/media/opencv/opencv_zoo/main/models"
 
@@ -50,9 +53,9 @@ yahoo_open_nsfw|${ONNX_URL}/yahoo_open_nsfw.onnx||743ddec0b8d6a6ee912f52b4737d81
 sface|${ONNX_URL}/face_recognition_sface_2021dec.onnx|${OPENCV_ZOO_URL}/face_recognition_sface/face_recognition_sface_2021dec.onnx|0ba9fbfa01b5270c96627c4ef784da859931e02f04419c829e83484087c34e79|file|sface|face_recognition_sface_2021dec.onnx
 auraface|${ONNX_URL}/auraface_v1_glintr100.onnx|https://huggingface.co/fal/AuraFace-v1/resolve/main/glintr100.onnx?download=true|a7933ea5330113b01c9b60351d8f4c33003f145d8470ac5f0e52ee2effe25c60|file|auraface|auraface_v1_glintr100.onnx
 yunet|${ONNX_URL}/face_detection_yunet_2026may.onnx|${OPENCV_ZOO_URL}/face_detection_yunet/face_detection_yunet_2026may.onnx|ebafce4e3c118d6554634be5c27ab333b4c047a9a8c3faf1d7cf93101c22f0f0|file|yunet|face_detection_yunet_2026may.onnx
-yunet-2023mar|${ONNX_URL}/face_detection_yunet_2023mar.onnx|${OPENCV_ZOO_URL}/face_detection_yunet/face_detection_yunet_2023mar.onnx|8f2383e4dd3cfbb4553ea8718107fc0423210dc964f9f4280604804ed2552fa4|file|yunet|face_detection_yunet_2023mar.onnx
-centerface|${ONNX_URL}/centerface.onnx|https://raw.githubusercontent.com/Star-Clouds/CenterFace/master/models/onnx/centerface.onnx|77e394b51108381b4c4f7b4baf1c64ca9f4aba73e5e803b2636419578913b5fe|file|centerface|centerface.onnx
-centerface-bnmerged|${ONNX_URL}/centerface_bnmerged.onnx|https://raw.githubusercontent.com/Star-Clouds/CenterFace/master/models/onnx/centerface_bnmerged.onnx|09189deaaf8646c5c51a68447e3c744ea1e211798155d4728c20507b9f5aefbc|file|centerface|centerface_bnmerged.onnx"
+yunet-2023mar|${ONNX_TESTING_URL}/face_detection_yunet_2023mar.onnx|${OPENCV_ZOO_URL}/face_detection_yunet/face_detection_yunet_2023mar.onnx|8f2383e4dd3cfbb4553ea8718107fc0423210dc964f9f4280604804ed2552fa4|file|yunet|face_detection_yunet_2023mar.onnx
+centerface|${ONNX_TESTING_URL}/centerface.onnx|https://raw.githubusercontent.com/Star-Clouds/CenterFace/master/models/onnx/centerface.onnx|77e394b51108381b4c4f7b4baf1c64ca9f4aba73e5e803b2636419578913b5fe|file|centerface|centerface.onnx
+centerface-bnmerged|${ONNX_TESTING_URL}/centerface_bnmerged.onnx|https://raw.githubusercontent.com/Star-Clouds/CenterFace/master/models/onnx/centerface_bnmerged.onnx|09189deaaf8646c5c51a68447e3c744ea1e211798155d4728c20507b9f5aefbc|file|centerface|centerface_bnmerged.onnx"
 
 FORCE=false
 OVERRIDE_URL=""

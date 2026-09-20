@@ -46,17 +46,36 @@ func TestFileTypeStrings(t *testing.T) {
 	})
 }
 
+// pinnedImageTypes lists the image formats a caller that delivers JPEG must be able to rely on
+// finding in ImageTypesExceptJpeg, whatever the format table says.
+var pinnedImageTypes = []fs.Type{
+	fs.ImagePng,
+	fs.ImageWebp,
+	fs.ImageTiff,
+	fs.ImageAvif,
+	fs.ImageHeic,
+	fs.ImageBmp,
+	fs.ImageGif,
+	fs.ImagePsd,
+	fs.ImageJpegXL,
+	fs.ImageCineon,
+}
+
 func TestImageTypesExceptJpeg(t *testing.T) {
 	t.Run("Contents", func(t *testing.T) {
 		result := ImageTypesExceptJpeg()
 
 		assert.NotEmpty(t, result)
 		assert.NotContains(t, result, fs.ImageJpeg.String())
-		assert.Contains(t, result, fs.ImagePng.String())
-		assert.Contains(t, result, fs.ImagePsd.String())
-		assert.Contains(t, result, fs.ImageCineon.String())
 		assert.NotContains(t, result, fs.VideoMp4.String())
 		assert.NotContains(t, result, fs.ImageRaw.String())
+	})
+	t.Run("PinnedFormats", func(t *testing.T) {
+		// Named one by one rather than read back from the format table, so a format that stops
+		// being an image is caught here instead of quietly leaving the set.
+		for _, fileType := range pinnedImageTypes {
+			assert.Containsf(t, ImageTypesExceptJpeg(), fileType.String(), "%s is missing", fileType)
+		}
 	})
 	t.Run("CoversEveryImageType", func(t *testing.T) {
 		for _, fileType := range FileTypes(Image) {

@@ -54,9 +54,16 @@ func TestAlbumCover(t *testing.T) {
 	})
 	t.Run("AlbumCouldNotFindOriginal", func(t *testing.T) {
 		app, router, conf := NewApiTest()
+		// Cleared so that the request reaches the cover query, since a cover file assigned by
+		// another test would answer with the generic icon before it gets there.
+		SetTestCoverFile(t, entity.Album{}, "album_uid = ?", "as6sg6bxpogaaba9", "")
 		AlbumCover(router)
 		r := PerformRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba9/t/"+conf.PreviewToken()+"/tile_500")
 		assert.Equal(t, http.StatusOK, r.Code)
+		assert.Equal(t, "image/svg+xml", r.Header().Get("Content-Type"))
+		// An icon returned because something was missing must not be cached, unlike the one an
+		// assigned cover file returns.
+		assert.Empty(t, r.Header().Get("Cache-Control"))
 	})
 	t.Run("InvalidToken", func(t *testing.T) {
 		app, router, conf := NewApiTest()
@@ -68,8 +75,7 @@ func TestAlbumCover(t *testing.T) {
 	})
 	t.Run("SizeExceedsLimit", func(t *testing.T) {
 		app, router, conf := NewApiTest()
-		conf.Options().ThumbUncached = true
-		defer func() { conf.Options().ThumbUncached = false }()
+		SetTestThumbUncached(t, true)
 		SetTestCoverFile(t, entity.Album{}, "album_uid = ?", "as6sg6bxpogaaba8", "")
 		original := CreateTestAlbumCover(t, "as6sg6bxpogaaba8", "2023/11/IMG_57.jpg")
 		AlbumCover(router)
@@ -97,8 +103,7 @@ func TestAlbumCover(t *testing.T) {
 	})
 	t.Run("LimitsSize", func(t *testing.T) {
 		app, router, conf := NewApiTest()
-		conf.Options().ThumbUncached = true
-		defer func() { conf.Options().ThumbUncached = false }()
+		SetTestThumbUncached(t, true)
 		SetTestCoverFile(t, entity.Album{}, "album_uid = ?", "as6sg6bxpogaaba8", "")
 		CreateTestAlbumCover(t, "as6sg6bxpogaaba8", "2023/11/IMG_57.jpg")
 		AlbumCover(router)
@@ -111,13 +116,12 @@ func TestAlbumCover(t *testing.T) {
 	t.Run("ServedInline", func(t *testing.T) {
 		// Cover responses are always inline.
 		app, router, conf := NewApiTest()
-		conf.Options().ThumbUncached = true
-		defer func() { conf.Options().ThumbUncached = false }()
+		SetTestThumbUncached(t, true)
 		SetTestCoverFile(t, entity.Album{}, "album_uid = ?", "as6sg6bxpogaaba8", "")
 		CreateTestAlbumCover(t, "as6sg6bxpogaaba8", "2023/11/IMG_57.jpg")
 		AlbumCover(router)
 		// Repeated so that the cache hit is covered as well as the render path.
-		for i := 0; i < 2; i++ {
+		for range 2 {
 			r := PerformRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba8/t/"+conf.PreviewToken()+"/tile_500?download=1&name=original")
 			assert.Equal(t, http.StatusOK, r.Code)
 			assert.Equal(t, "image/jpeg", r.Header().Get("Content-Type"))
@@ -126,14 +130,19 @@ func TestAlbumCover(t *testing.T) {
 	})
 	t.Run("HasCoverFile", func(t *testing.T) {
 		app, router, conf := NewApiTest()
-		conf.Options().ThumbUncached = true
-		defer func() { conf.Options().ThumbUncached = false }()
+		SetTestThumbUncached(t, true)
 		original := CreateTestAlbumCover(t, "as6sg6bxpogaaba8", "2023/11/IMG_57.jpg")
+		// The flag requires the cover file to still resolve, and another test may have flagged
+		// that fixture as missing on its way out.
+		CreateTestFileOriginal(t, "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818")
 		SetTestCoverFile(t, entity.Album{}, "album_uid = ?", "as6sg6bxpogaaba8", "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818")
 		AlbumCover(router)
 		r := PerformRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba8/t/"+conf.PreviewToken()+"/tile_500")
 		assert.Equal(t, http.StatusOK, r.Code)
 		assert.Equal(t, "image/svg+xml", r.Header().Get("Content-Type"))
+		// The one icon response clients may cache, since it is chosen from the index rather than
+		// returned because something was missing.
+		assert.Equal(t, "private, max-age=3600", r.Header().Get("Cache-Control"))
 		assert.NotEqual(t, original, r.Body.Bytes())
 	})
 }

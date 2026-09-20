@@ -37,7 +37,7 @@ const library = new Library();
 const notifies = new Notifies();
 
 test.meta("testID", "photos-upload-delete-001").meta({ type: "short", mode: "public" })(
-  "Core: Upload + Delete jpg/json",
+  "Core: Upload + Delete jpg/xmp",
   async (t) => {
     if (t.browser.platform === "mobile") {
       console.log("Skipped on mobile");
@@ -54,7 +54,7 @@ test.meta("testID", "photos-upload-delete-001").meta({ type: "short", mode: "pub
       await t
         .setFilesToUpload(Selector('input[type="file"]'), [
           "../../upload-files/digikam.jpg",
-          "../../upload-files/digikam.json",
+          "../../upload-files/digikam.xmp",
         ]);
       await t.click(Selector("button.action-upload"));
       await notifies.waitForUpload();
@@ -83,7 +83,7 @@ test.meta("testID", "photos-upload-delete-001").meta({ type: "short", mode: "pub
       await t.click(photoedit.filesTab);
 
       await t
-        .expect(Selector("div.text-caption").withText(".json").visible)
+        .expect(Selector("div.text-caption").withText(".xmp").visible)
         .ok()
         .expect(Selector("div.text-caption").withText(".jpg").visible)
         .ok();
@@ -319,6 +319,32 @@ test.meta("testID", "photos-upload-delete-006").meta({ type: "short", mode: "pub
 
       await toolbar.triggerToolbarAction("upload");
       await t.setFilesToUpload(Selector('input[type="file"]'), ["../../upload-files/foo.txt"]);
+      await t.click(Selector("button.action-upload"));
+      await notifies.waitForUpload();
+      await menu.openNav();
+      const OriginalsCountAfterUpload = await Selector("a.nav-originals span.nav-count-item", {
+        timeout: 10000,
+      }).innerText;
+
+      await t.expect(parseInt(InitialOriginalsCount)).eql(parseInt(OriginalsCountAfterUpload));
+    }
+  }
+);
+
+test.meta("testID", "photos-upload-delete-007").meta({ type: "short", mode: "public" })(
+  "Core: Try uploading json file",
+  async (t) => {
+    if (t.browser.platform === "mobile") {
+      console.log("Skipped on mobile");
+    } else {
+      await menu.openNav();
+      const InitialOriginalsCount = await Selector("a.nav-originals span.nav-count-item", {
+        timeout: 10000,
+      }).innerText;
+      await menu.openPage("browse");
+
+      await toolbar.triggerToolbarAction("upload");
+      await t.setFilesToUpload(Selector('input[type="file"]'), ["../../upload-files/digikam.json"]);
       await t.click(Selector("button.action-upload"));
       await notifies.waitForUpload();
       await menu.openNav();

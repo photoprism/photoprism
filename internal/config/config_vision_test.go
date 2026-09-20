@@ -6,11 +6,14 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/ai/nsfw"
+	"github.com/photoprism/photoprism/internal/ai/onnx"
 	"github.com/photoprism/photoprism/internal/ai/tensorflow"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -407,4 +410,83 @@ func TestConfig_VisionFilter(t *testing.T) {
 
 	c.options.VisionFilter = ""
 	assert.Equal(t, "", c.VisionFilter())
+}
+
+func TestConfig_OnnxProvider(t *testing.T) {
+	t.Run("Default", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		assert.Equal(t, onnx.ProviderCPU, c.OnnxProvider())
+	})
+	t.Run("CUDA", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.OnnxProvider = "cuda"
+		assert.Equal(t, onnx.ProviderCUDA, c.OnnxProvider())
+	})
+	t.Run("Empty", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.OnnxProvider = ""
+		assert.Equal(t, onnx.ProviderCPU, c.OnnxProvider())
+	})
+	t.Run("Unsupported", func(t *testing.T) {
+		// An unusable value must not stop inference, so it resolves to the default - and must
+		// say so, or an operator reads the default as their setting having been applied.
+		c := NewConfig(CliTestContext())
+		hook := captureConfigLog(t)
+		c.options.OnnxProvider = "rocm"
+
+		assert.Equal(t, onnx.ProviderCPU, c.OnnxProvider())
+
+		require.Len(t, hook.AllEntries(), 1)
+		assert.Equal(t, logrus.WarnLevel, hook.LastEntry().Level)
+		assert.Contains(t, hook.LastEntry().Message, "rocm")
+
+		// Reported once, not once per loaded model.
+		c.OnnxProvider()
+		assert.Len(t, hook.AllEntries(), 1)
+	})
+	t.Run("Nil", func(t *testing.T) {
+		var c *Config
+		assert.Equal(t, onnx.DefaultProvider, c.OnnxProvider())
+	})
+}
+
+// captureConfigLog redirects the package logger for the duration of the test and returns its
+// entries, so a "report it once" contract can be asserted on what was actually logged.
+func captureConfigLog(t *testing.T) *test.Hook {
+	t.Helper()
+
+	orig := log
+	logger, hook := test.NewNullLogger()
+	logger.SetLevel(logrus.TraceLevel)
+	log = logger
+
+	t.Cleanup(func() { log = orig })
+
+	return hook
+}
+
+func TestConfig_WarnVisionConfig(t *testing.T) {
+	t.Run("Once", func(t *testing.T) {
+		// The getters run per loaded model and from the config report, so a repeated call
+		// must not repeat the warning. Asserted on the log, not on the map: storing the key
+		// and still logging every time would satisfy the map.
+		c := NewConfig(CliTestContext())
+		hook := captureConfigLog(t)
+
+		c.warnVisionConfig("test-vision-warning", "config: %s", "first")
+		c.warnVisionConfig("test-vision-warning", "config: %s", "second")
+
+		require.Len(t, hook.AllEntries(), 1)
+		assert.Equal(t, "config: first", hook.LastEntry().Message)
+		assert.Equal(t, logrus.WarnLevel, hook.LastEntry().Level)
+	})
+	t.Run("DistinctKeys", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		hook := captureConfigLog(t)
+
+		c.warnVisionConfig("test-vision-a", "config: a")
+		c.warnVisionConfig("test-vision-b", "config: b")
+
+		assert.Len(t, hook.AllEntries(), 2)
+	})
 }

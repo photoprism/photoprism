@@ -1,5 +1,7 @@
 ## Commands Package Guide
 
+**Last Updated:** September 14, 2026
+
 ### Overview
 
 The `commands` package hosts the CLI implementation for the PhotoPrism binary. Command wiring begins in `commands.go`, where each `*cli.Command` is registered on the shared slice consumed by `cmd/photoprism/photoprism.go`. Supporting utilities such as flag builders, shared error handling, and helper structs are colocated with their related command files. Keep commands cohesive: each file should focus on a single functional area (for example, `download.go` for the downloader entry point and `download_impl.go` for reusable logic). Whenever you introduce new commands, align naming with existing patterns and expose `--json` or `--yes` options when automation benefits from them.
@@ -19,6 +21,22 @@ The `commands` package hosts the CLI implementation for the PhotoPrism binary. C
 - Use shared logging through `event.Log` rather than direct `fmt` printing. Sensitive information such as secrets or tokens must never be logged.
 - When integrating configuration options, call the accessors on `*config.Config` (for example, `conf.ClusterUUID()`) rather than mutating option structs directly.
 - For HTTP interactions, depend on the safe download helpers in `pkg/http/safe` or the specialized wrappers in `internal/thumb/avatar` to inherit timeout, size, and SSRF protection defaults.
+
+### Video Remux Planning
+
+`photoprism video remux` validates its entire selection before conversion, including in dry-run mode.
+Each output must be unique and may not name another selected input, including inputs skipped by a
+format rule. A conflict stops the batch and names the participating inputs and output.
+Intentional same-file remuxing is supported; publication writes the planned output without a backup
+destination. `--force` controls ordinary replacement, not conflicts within the selection. Directory
+aliases are resolved during planning; other processes changing paths after preflight remain outside
+that check.
+
+### Video Output Permissions
+
+New remux, trim, and transcode outputs use umask-filtered creation permissions. Remux and trim preserve an existing regular destination's permission bits before replacement, including trim with a backup; backups use `fs.ModeBackupFile`. A reused transcode keeps its permissions. The process umask is inherited by FFmpeg; container launch wrappers apply `PHOTOPRISM_UMASK` before starting PhotoPrism.
+
+Remux and trim reserve temporary siblings with `fs.CreateStageFile` until publication and clean them up on failure. Working files stay beside their destinations, so publication requires no extra copying of large media across volume mounts. Permission preservation does not copy ownership, extended attributes, or ACLs.
 
 ### Positional Arguments & Flag Order
 

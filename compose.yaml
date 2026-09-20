@@ -120,7 +120,7 @@ services:
       PHOTOPRISM_ASSETS_PATH: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/assets"
       PHOTOPRISM_STORAGE_PATH: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/storage"
       PHOTOPRISM_ORIGINALS_PATH: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/storage/originals"
-      PHOTOPRISM_ORIGINALS_LIMIT: 128000             # sets originals file size limit to 128 GB
+      PHOTOPRISM_ORIGINALS_LIMIT: 100000             # sets originals file size limit to 100 GB (the maximum accepted value)
       PHOTOPRISM_IMPORT_PATH: "${WORKING_DIR:-/go/src/github.com/photoprism/photoprism}/storage/import"
       PHOTOPRISM_DISABLE_CHOWN: "false"              # disables updating storage permissions via chmod and chown on startup
       PHOTOPRISM_DISABLE_BACKUPS: "false"            # disables backing up albums and photo metadata to YAML files
@@ -144,9 +144,11 @@ services:
       # LIBVA_DRIVER_NAME: "i965"                    # For Intel architectures Haswell and older which do not support QSV yet but use VAAPI instead
       PHOTOPRISM_FFMPEG_SIZE: "1920"                 # video size limit in pixels (720-15360) (default: 3840)
       # PHOTOPRISM_FFMPEG_BITRATE: "64"              # video bitrate limit in Mbps (default: 60)
-      ## Run/install on first startup (options: update tensorflow https intel gpu davfs yt-dlp):
+      ## Run/install on first startup (options: update tensorflow https intel gpu davfs yt-dlp
+      ## onnxruntime-gpu cuda; the last two add ~1.7 GB of NVIDIA libraries for GPU inference):
       PHOTOPRISM_INIT: "https"
       ## Computer Vision (https://docs.photoprism.app/getting-started/config-options/#computer-vision):
+      PHOTOPRISM_ONNX_PROVIDER: "cpu"                            # execution provider for ONNX inference (cpu, cuda)
       PHOTOPRISM_VISION_API: "true"                              # server: enables service API endpoints under /api/v1/vision (requires access token)
       PHOTOPRISM_VISION_URI: "${PHOTOPRISM_VISION_URI:-}"        # client: service URI, e.g. http://hostname/api/v1/vision (leave blank to disable)
       PHOTOPRISM_VISION_KEY: "${PHOTOPRISM_VISION_KEY:-}"        # client: service access token (for authentication)
@@ -456,7 +458,7 @@ services:
   ## Docs: https://www.keycloak.org/docs/latest/server_admin/
   ## Login with "user / photoprism" and "admin / photoprism".
   keycloak:
-    image: quay.io/keycloak/keycloak:25.0
+    image: quay.io/keycloak/keycloak:26.7
     ## Only starts if the "all", "auth", or "keycloak" profile is specified:
     ## docker compose --profile keycloak up -d
     profiles: [ "all", "auth", "keycloak" ]
@@ -476,12 +478,12 @@ services:
       - "traefik.http.routers.keycloak.tls.domains[0].sans=*.localssl.dev"
       - "traefik.http.routers.keycloak.tls=true"
     environment: # see https://www.keycloak.org/server/all-config
-      KEYCLOAK_ADMIN: "admin"
-      KEYCLOAK_ADMIN_PASSWORD: "photoprism"
+      KC_BOOTSTRAP_ADMIN_USERNAME: "admin"
+      KC_BOOTSTRAP_ADMIN_PASSWORD: "photoprism"
       KC_METRICS_ENABLED: "false"
       KC_HOSTNAME: "keycloak.localssl.dev"
       KC_HOSTNAME_STRICT: "false"
-      KC_PROXY: "edge"
+      KC_PROXY_HEADERS: "xforwarded"
       KC_DB: "mariadb"
       KC_DB_URL: "jdbc:mariadb://mariadb:${MARIADB_PORT:-4001}/keycloak"
       KC_DB_USERNAME: "keycloak"

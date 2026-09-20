@@ -347,7 +347,7 @@ func (m *User) Create() (err error) {
 	return err
 }
 
-// Save updates the record in the database or inserts a new record if it does not already exist.
+// Save persists the user and invalidates their cached authentication on success.
 func (m *User) Save() (err error) {
 	m.GenerateTokens(false)
 
@@ -355,6 +355,7 @@ func (m *User) Save() (err error) {
 
 	if err == nil {
 		m.SaveRelated()
+		FlushUserSessionCache(m.UserUID)
 	}
 
 	return err

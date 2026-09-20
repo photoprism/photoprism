@@ -2,7 +2,6 @@ package commands
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli/v2"
@@ -82,17 +81,11 @@ func videoTranscodeAction(ctx *cli.Context) error {
 				continue
 			}
 
-			file, err := videoTranscodeFile(conf, convert, plan, ctx.Bool(videoForceFlag.Name))
+			_, err := videoTranscodeFile(conf, convert, plan, ctx.Bool(videoForceFlag.Name))
 			if err != nil {
 				log.Errorf("transcode: %s", clean.ErrorFull(err))
 				failed++
 				continue
-			}
-
-			if file != nil {
-				if chmodErr := os.Chmod(file.FileName(), fs.ModeFile); chmodErr != nil {
-					log.Warnf("transcode: %s", clean.ErrorFull(chmodErr))
-				}
 			}
 
 			if err = videoReindexRelated(conf, plan.IndexPath); err != nil {

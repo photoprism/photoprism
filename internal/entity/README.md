@@ -1,10 +1,16 @@
 ## PhotoPrism — Database Entities
 
-**Last Updated:** August 26, 2026
+**Last Updated:** September 17, 2026
 
 ### Overview
 
 `internal/entity` holds the GORM models (Photo, File, Album, Label, Face, User, Client, Session, Service, Marker, …), their query and create/update helpers, the test fixtures (`*_fixtures.go`), and the migration helpers under `migrate/`. Models map to the database via GORM v1 (`github.com/jinzhu/gorm`) and are shared by the API, workers, and CLI.
+
+### Account & Session Caches
+
+`User.Save` evicts that account's cached sessions and WebDAV authentication entries after a successful database save. `FlushUserSessionCache` matches the user UID and leaves other users' entries and persisted credentials intact. `FlushSessionCache` clears both caches when a global refresh is required.
+
+WebDAV uses `CachedWebDAVUser` and `CacheWebDAVUser` for its one-minute credential cache. Authentication captures `CurrentAuthCacheGeneration` before loading the user or session, and insertion checks that generation under the same short mutex used by invalidation. A superseded result is not cached, but the request is not canceled. Per-user invalidation leaves other accounts' pending cache writes valid; a global flush invalidates every older snapshot and clears the per-user revision table. Account changes are therefore handled at the same persistence boundary as the general session cache. Sessions created or loaded through the entity helpers retain their generation so an in-flight object cannot repopulate the general cache after eviction. A raw untracked record may be cached only before its user is resolved. This is process-local invalidation; writes through another process or directly to the database do not signal a running server.
 
 ### Timestamps
 
@@ -81,3 +87,21 @@ An `ORDER BY` in such a statement needs a total order. A prefix that leaves ties
 ### VARBINARY Index Prefix Limit
 
 InnoDB caps an index key prefix at **767 bytes** on the `COMPACT`/`REDUNDANT` row formats, and only allows up to 3072 bytes on `DYNAMIC`/`COMPRESSED`. On a `VARBINARY` column the prefix is counted in **bytes** (on `utf8mb4` it is counted in characters, i.e. up to 4 bytes each), so converting a long text column to `VARBINARY` can push an existing prefix index over the limit on older or non-`DYNAMIC` installs. Keep prefix indexes on long `VARBINARY` path/filter columns at **≤ 767 bytes**; the project convention is **512** (`albums.album_filter(512)`, `albums.album_path(512)`). A prefix index only narrows candidate rows — the full-column comparison stays exact — so a shorter prefix costs nothing for correctness.
+
+### File Export Eligibility
+
+`File.Exportable` applies the YAML export policy after download admission and row visibility.
+YAML is recognized by its filename or recorded file type, including `.yml` and `.yaml`.
+An identified registered reader or client must have effective read permission on photos or
+files. Share-link visitors and unidentified downloads do not export YAML. Registered guests,
+Contributors, and files-only readers keep their existing eligible downloads. Other file
+formats are unchanged. `SelectedFilesForSession` uses the same decision for download selections as direct downloads;
+`SelectedFiles` remains unrestricted for internal workflows.
+
+### Ignored Transfers
+
+Excluded queued service shares use `FileShareIgnore`, with no retry error. Automatic sync
+uses `FileSyncIgnore`; upload dispositions have a per-FileID internal key under the reserved
+`.photoprism/sync` namespace so matching filenames in different roots cannot collide. These
+keys are state identifiers, never remote transfer destinations. Existing deduplication rules
+and retry handling for genuine transfer failures remain unchanged.

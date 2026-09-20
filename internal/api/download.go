@@ -88,7 +88,7 @@ func GetDownload(router *gin.RouterGroup) {
 
 		// Every negative path returns the identical SVG 404 so an unknown hash is indistinguishable
 		// from one hidden or missing (no existence disclosure to a valid token holder).
-		if err != nil {
+		if err != nil || !f.Exportable(sess) {
 			c.Data(http.StatusNotFound, "image/svg+xml", brokenIconSvg)
 			return
 		}

@@ -113,8 +113,7 @@ func UploadUserFiles(router *gin.RouterGroup) {
 			return
 		}
 
-		// If the file extension list is empty, all file types may
-		// be uploaded except raw files if raw support is disabled.
+		// Operator extension settings can further restrict the supported upload formats.
 		allowedExt := conf.UploadAllow()
 		rejectArchives := !conf.UploadArchives()
 		rejectRaw := conf.DisableRaw()
@@ -132,6 +131,9 @@ func UploadUserFiles(router *gin.RouterGroup) {
 			switch {
 			case fileType == fs.TypeUnknown:
 				log.Errorf("upload: rejected %s because it has an unsupported file extension", clean.Log(baseName))
+				continue
+			case !uploadSidecarAllowed(baseName):
+				log.Errorf("upload: rejected %s because its sidecar format is not supported", clean.Log(baseName))
 				continue
 			case allowedExt.Excludes(fileType.DefaultExt()):
 				log.Errorf("upload: rejected %s because its extension is not allowed", clean.Log(baseName))
@@ -169,7 +171,7 @@ func UploadUserFiles(router *gin.RouterGroup) {
 					continue
 				}
 
-				zipFiles, skippedFiles, zipErr := fs.Unzip(destName, uploadDir, fileSizeLimit, totalSizeLimit)
+				zipFiles, skippedFiles, zipErr := fs.Unzip(destName, uploadDir, fileSizeLimit, totalSizeLimit, uploadArchiveEntryAllowed)
 
 				logWarn("upload", os.Remove(destName))
 
@@ -252,6 +254,11 @@ func UploadUserFiles(router *gin.RouterGroup) {
 func UploadCheckFile(destName string, rejectRaw bool, totalSizeLimit int64) (remainingSizeLimit int64, err error) {
 	baseName := filepath.Base(destName)
 
+	if fs.FileType(baseName) != fs.TypeUnknown && !uploadSidecarAllowed(baseName) {
+		logWarn("upload", os.Remove(destName))
+		return totalSizeLimit, fmt.Errorf("rejected %s because its sidecar format is not supported", clean.Log(baseName))
+	}
+
 	if mediaFile, mediaErr := photoprism.NewMediaFile(destName); mediaErr != nil {
 		logWarn("upload", os.Remove(destName))
 		return totalSizeLimit, fmt.Errorf("rejected %s (%w)", clean.Log(baseName), mediaErr)
@@ -327,6 +334,12 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 
 		if err != nil {
 			log.Errorf("upload: failed to create storage folder (%s)", clean.Error(err))
+			Abort(c, http.StatusBadRequest, i18n.ErrUploadFailed)
+			return
+		}
+
+		if err = pruneUploadSidecars(uploadPath); err != nil {
+			log.Errorf("upload: could not prepare staged files (%s)", clean.Error(err))
 			Abort(c, http.StatusBadRequest, i18n.ErrUploadFailed)
 			return
 		}

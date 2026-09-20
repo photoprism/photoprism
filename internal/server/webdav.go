@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -30,16 +31,6 @@ var WebDAVHandler = func(c *gin.Context, router *gin.RouterGroup, srv *webdav.Ha
 	ServeWebDAV(c.Writer, c.Request, srv)
 }
 
-// WebDAVWriteMethod returns true for methods that modify WebDAV state.
-func WebDAVWriteMethod(method string) bool {
-	switch method {
-	case header.MethodPut, header.MethodMkcol, header.MethodDelete, header.MethodMove, header.MethodCopy, header.MethodProppatch, header.MethodLock, header.MethodUnlock:
-		return true
-	default:
-		return false
-	}
-}
-
 // WebDAV handles requests to the "/originals" and "/import" endpoints.
 func WebDAV(dir string, router *gin.RouterGroup, conf *config.Config) {
 	if router == nil {
@@ -53,12 +44,20 @@ func WebDAV(dir string, router *gin.RouterGroup, conf *config.Config) {
 	}
 
 	// Native file system restricted to a specific directory.
-	fileSystem := webdav.Dir(dir)
+	fileSystem := newWebDAVFileSystem(dir)
 	lockSystem := mutex.WebDAV(dir)
 
 	// Request logger function.
 	loggerFunc := func(request *http.Request, err error) {
 		if err != nil {
+			// An upload bounded as it was read leaves a partial file behind, since the
+			// handler copies before the bound trips and does not clean up after itself.
+			if request.Method == header.MethodPut && api.IsRequestBodyTooLarge(err) {
+				if fileName := WebDAVFileName(request, router, conf); fileName != "" {
+					WebDAVRemovePartialUpload(fileName, conf.OriginalsLimitBytes())
+				}
+			}
+
 			// Reported on the console-only system log, which is the operator's channel:
 			// x/net/webdav renders absolute local paths into these messages.
 			switch {
@@ -75,7 +74,7 @@ func WebDAV(dir string, router *gin.RouterGroup, conf *config.Config) {
 			// Determine the filename if it is an uploaded file and process custom request headers, if any.
 			if fileName := WebDAVFileName(request, router, conf); fileName != "" {
 				// Flag the uploaded file as favorite if the "X-Favorite" header is set to "1".
-				if request.Header.Get(header.XFavorite) == "1" {
+				if request.Header.Get(header.XFavorite) == "1" && canWriteManagedFiles(request.Context()) {
 					WebDAVSetFavoriteFlag(fileName)
 				}
 
@@ -117,6 +116,15 @@ func WebDAV(dir string, router *gin.RouterGroup, conf *config.Config) {
 			return
 		}
 
+		// Refuse a separator in the name before anything is created, renamed, or copied.
+		if WebDAVSeparatorInName(c.Request) {
+			// Console-only: the refusal returns before the handler's own logger.
+			event.SystemWarn([]string{"webdav", "%s %s contains a path separator"}, clean.Log(c.Request.Method), clean.Log(c.Request.URL.String()))
+			c.AbortWithStatus(http.StatusBadRequest)
+
+			return
+		}
+
 		// Abort PUT and COPY requests if there
 		// is not enough free storage to upload new files.
 		switch c.Request.Method {
@@ -127,11 +135,19 @@ func WebDAV(dir string, router *gin.RouterGroup, conf *config.Config) {
 			}
 		}
 
-		// Bound an uploaded file to the configured originals size limit (when set) so a single
-		// PUT cannot stream an unbounded body to disk; the free-storage check above only catches
-		// the next request. No-op when no originals limit is configured.
+		// Bound an uploaded file to the configured originals size limit, when set. A declared
+		// length over the limit is refused before the handler runs, since it opens the
+		// destination with O_TRUNC; any other body is bounded as it is read.
 		if c.Request.Method == header.MethodPut {
 			if limit := conf.OriginalsLimitBytes(); limit > 0 {
+				if c.Request.ContentLength > limit {
+					// Console-only: the refusal returns before the handler's own logger.
+					event.SystemWarn([]string{"webdav", "%s %s exceeds the originals limit"}, clean.Log(c.Request.Method), clean.Log(c.Request.URL.String()))
+					c.AbortWithStatus(http.StatusRequestEntityTooLarge)
+
+					return
+				}
+
 				api.LimitRequestBodyBytes(c, limit)
 			}
 		}
@@ -210,6 +226,22 @@ func WebDAV(dir string, router *gin.RouterGroup, conf *config.Config) {
 			handleWrite(route, handlerFunc)
 		}
 	}
+}
+
+// WebDAVSeparatorInName reports whether a request would create, rename, or copy a name holding
+// a backslash. Refuse it rather than normalizing it: the upstream handler treats the character
+// as ordinary, so any rewrite here would name a different file than the one it opens.
+func WebDAVSeparatorInName(request *http.Request) bool {
+	switch request.Method {
+	case header.MethodPut, header.MethodMkcol:
+		return strings.Contains(request.URL.Path, "\\")
+	case header.MethodMove, header.MethodCopy:
+		// The destination is a URL, so compare the decoded path the handler will resolve.
+		u, err := url.Parse(request.Header.Get("Destination"))
+		return err == nil && strings.Contains(u.Path, "\\")
+	}
+
+	return false
 }
 
 // WebDAVClampLockTimeout rewrites the LOCK "Timeout" request header so the lock the
@@ -299,6 +331,26 @@ func WebDAVFileName(request *http.Request, router *gin.RouterGroup, conf *config
 // filepath.Rel rather than a string prefix.
 func joinUnderBase(baseDir, rel string) (string, error) {
 	return fs.SafeJoin(baseDir, rel)
+}
+
+// WebDAVRemovePartialUpload deletes an upload that the configured size limit cut short.
+// A body stopped by that bound is exactly size bytes, so any other size, or a name that is not
+// a regular file, belongs to something this request did not write and is left alone.
+func WebDAVRemovePartialUpload(fileName string, size int64) {
+	// #nosec G703 fileName is resolved under the mount root by WebDAVFileName via joinUnderBase.
+	if info, err := os.Lstat(fileName); err != nil || !info.Mode().IsRegular() || info.Size() != size {
+		log.Tracef("webdav: kept %s, not an incomplete upload", clean.Log(filepath.Base(fileName)))
+		return
+	}
+
+	// #nosec G703 the check above establishes that this name holds this request's partial upload.
+	switch err := os.Remove(fileName); {
+	case err == nil:
+		log.Infof("webdav: removed incomplete upload %s", clean.Log(filepath.Base(fileName)))
+	case !errors.Is(err, os.ErrNotExist):
+		// Reported on the console: the error renders the absolute file path.
+		event.SystemError([]string{"webdav", "%s"}, clean.ErrorFull(err))
+	}
 }
 
 // WebDAVSetFavoriteFlag adds the favorite flag to files uploaded via WebDAV.

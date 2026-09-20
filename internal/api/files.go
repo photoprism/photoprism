@@ -52,9 +52,9 @@ func GetFile(router *gin.RouterGroup) {
 			return
 		}
 
-		// Redact identifying per-file metadata (XMP InstanceID) for shared-only sessions, matching
-		// the reduction GetPhoto applies, since guests and visitors may now resolve shared files.
-		c.JSON(http.StatusOK, f.RedactForSession(s))
+		// The file is answered on its own here, so the reduction reads files for the scope and
+		// pictures for the library reach.
+		c.JSON(http.StatusOK, f.RedactForSession(s, acl.ResourceFiles))
 	})
 }
 

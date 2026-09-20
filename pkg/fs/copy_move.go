@@ -50,12 +50,20 @@ func checkDest(dest string, force bool) error {
 }
 
 // stageName returns a hidden, uniquely named sibling of the destination that an indexing pass
-// ignores. The base is clamped so the staged name still fits a directory entry.
+// ignores. It keeps the destination's extension, which the media tools that read a staged file
+// detect its type from, and clamps the base so the name still fits a directory entry.
 func stageName(dest string) string {
 	const maxNameLen = 255
 
 	dir, base := filepath.Split(dest)
-	prefix, suffix := ".", "."+rnd.Base36(8)+".tmp"
+	ext := filepath.Ext(base)
+
+	// A name whose extension alone would fill the entry is staged without it.
+	if len(ext) > maxNameLen/2 {
+		ext = ""
+	}
+
+	prefix, suffix := ".", "."+rnd.Base36(8)+ExtTmp+ext
 
 	// Clamped on a rune boundary, since a file system that validates names refuses a split character.
 	if limit := maxNameLen - len(prefix) - len(suffix); len(base) > limit {
@@ -69,9 +77,40 @@ func stageName(dest string) string {
 	return dir + prefix + base + suffix
 }
 
-// stageFile creates the file a copy writes before it is published.
-func stageFile(dest string) (*os.File, error) {
+// OpenStageFile creates an exclusive temporary sibling with the default file creation mode.
+// The caller owns the handle and must remove or publish its pathname.
+func OpenStageFile(dest string) (*os.File, error) {
 	return os.OpenFile(stageName(dest), os.O_WRONLY|os.O_CREATE|os.O_EXCL, ModeFile) //nolint:gosec // the name is derived from a validated destination
+}
+
+// CreateStageFile creates an empty, uniquely named sibling of the destination and returns its name.
+// A caller writing through a subprocess needs the name reserved before it starts, so the create is
+// what makes it theirs; it publishes with PublishFile and removes the file on every other way out.
+// The directory must already exist, and the staged file gets ModeFile rather than the destination's.
+func CreateStageFile(dest string) (name string, err error) {
+	f, err := OpenStageFile(dest)
+
+	if err != nil {
+		return "", err
+	}
+
+	name = f.Name()
+
+	if err = f.Close(); err != nil {
+		_ = os.Remove(name)
+
+		return "", err
+	}
+
+	return name, nil
+}
+
+// PublishFile publishes a staged file with the shared Copy/Move replacement rules. An empty regular
+// destination may be replaced without force; filesystems without hard links use a checked rename.
+// Preflight checks and metadata preservation belong to callers, so a forced publish replaces a
+// destination symlink rather than refusing it.
+func PublishFile(staged, dest string, force bool) error {
+	return publishFile(staged, dest, force)
 }
 
 // publishFile puts a staged file in place of the destination. A call that may replace the destination
@@ -167,7 +206,7 @@ func Copy(src, dest string, force bool) (err error) {
 	}()
 
 	// Write through a staged sibling, so the destination is never opened by name.
-	destFile, err := stageFile(dest)
+	destFile, err := OpenStageFile(dest)
 
 	if err != nil {
 		return err

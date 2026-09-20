@@ -86,7 +86,7 @@ func videoRemuxAction(ctx *cli.Context) error {
 				continue
 			}
 
-			if err = videoRemuxFile(conf, convert, plan, ctx.Bool(videoForceFlag.Name), true); err != nil {
+			if err = videoRemuxFile(conf, convert, plan, ctx.Bool(videoForceFlag.Name)); err != nil {
 				log.Errorf("remux: %s", clean.ErrorFull(err))
 				failed++
 				continue
@@ -124,6 +124,7 @@ func videoBuildRemuxPlans(conf *config.Config, results []search.Photo, force boo
 	plans := make([]videoRemuxPlan, 0, len(results))
 	preflight := make([]videoOutputPlan, 0, len(results))
 	skipped := 0
+	inputs := make([]string, 0, len(results))
 
 	for _, found := range results {
 		videoFile, ok := videoPrimaryFile(found)
@@ -131,6 +132,13 @@ func videoBuildRemuxPlans(conf *config.Config, results []search.Photo, force boo
 			log.Warnf("remux: missing video file for %s", clean.Log(found.PhotoUID))
 			skipped++
 			continue
+		}
+
+		srcPath := photoprism.ConfigFileName(conf, videoFile.FileRoot, videoFile.FileName)
+		sourceExists := fs.FileExistsNotEmpty(srcPath)
+
+		if sourceExists {
+			inputs = append(inputs, srcPath)
 		}
 
 		if videoFile.FileSidecar {
@@ -145,8 +153,7 @@ func videoBuildRemuxPlans(conf *config.Config, results []search.Photo, force boo
 			continue
 		}
 
-		srcPath := photoprism.FileName(videoFile.FileRoot, videoFile.FileName)
-		if !fs.FileExistsNotEmpty(srcPath) {
+		if !sourceExists {
 			log.Warnf("remux: missing file %s", clean.Log(srcPath))
 			skipped++
 			continue
@@ -201,16 +208,26 @@ func videoBuildRemuxPlans(conf *config.Config, results []search.Photo, force boo
 		})
 	}
 
+	if err := videoValidateRemuxPlans(plans, inputs); err != nil {
+		return nil, nil, skipped, err
+	}
+
 	return plans, preflight, skipped, nil
 }
 
 // videoRemuxFile runs ffmpeg remuxing and refreshes previews/thumbnails before reindexing.
-func videoRemuxFile(conf *config.Config, convert *photoprism.Convert, plan videoRemuxPlan, force, noBackup bool) error {
-	tempDir := filepath.Dir(plan.DestPath)
-	tempPath, err := videoTempPath(tempDir, ".remux-*.mp4")
+func videoRemuxFile(conf *config.Config, convert *photoprism.Convert, plan videoRemuxPlan, force bool) error {
+	tempPath, err := fs.CreateStageFile(plan.DestPath)
 	if err != nil {
 		return err
 	}
+
+	published := false
+	defer func() {
+		if !published {
+			_ = os.Remove(tempPath)
+		}
+	}()
 
 	opt := encode.NewRemuxOptions(conf.FFmpegBin(), fs.VideoMp4, true)
 	opt.Force = true
@@ -224,17 +241,15 @@ func videoRemuxFile(conf *config.Config, convert *photoprism.Convert, plan video
 	}
 
 	if !fs.FileExistsNotEmpty(tempPath) {
-		_ = os.Remove(tempPath)
 		return fmt.Errorf("remux output missing for %s", clean.Log(plan.SrcPath))
 	}
 
-	if err = os.Chmod(tempPath, fs.ModeFile); err != nil {
+	if err = videoPreserveMode(tempPath, plan.DestPath); err != nil {
 		return err
 	}
 
 	if plan.Sidecar {
 		if fs.FileExists(plan.DestPath) && !force {
-			_ = os.Remove(tempPath)
 			return fmt.Errorf("output already exists %s", clean.Log(plan.DestPath))
 		}
 
@@ -243,29 +258,11 @@ func videoRemuxFile(conf *config.Config, convert *photoprism.Convert, plan video
 		}
 
 		if err = os.Rename(tempPath, plan.DestPath); err != nil {
-			_ = os.Remove(tempPath)
 			return err
 		}
 	} else {
 		if plan.DestPath != plan.SrcPath && fs.FileExists(plan.DestPath) && !force {
-			_ = os.Remove(tempPath)
 			return fmt.Errorf("output already exists %s", clean.Log(plan.DestPath))
-		}
-
-		if noBackup {
-			if plan.DestPath != plan.SrcPath {
-				_ = os.Remove(plan.DestPath)
-			}
-		} else {
-			backupPath := plan.SrcPath + ".backup"
-			if fs.FileExists(backupPath) {
-				_ = os.Remove(backupPath)
-			}
-			if err = os.Rename(plan.SrcPath, backupPath); err != nil {
-				_ = os.Remove(tempPath)
-				return err
-			}
-			_ = os.Chmod(backupPath, fs.ModeBackupFile)
 		}
 
 		if plan.DestPath != plan.SrcPath && fs.FileExists(plan.DestPath) {
@@ -273,10 +270,11 @@ func videoRemuxFile(conf *config.Config, convert *photoprism.Convert, plan video
 		}
 
 		if err = os.Rename(tempPath, plan.DestPath); err != nil {
-			_ = os.Remove(tempPath)
 			return err
 		}
 	}
+
+	published = true
 
 	mediaFile, err := photoprism.NewMediaFile(plan.DestPath)
 	if err != nil {

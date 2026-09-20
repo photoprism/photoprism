@@ -1,12 +1,12 @@
 package photoprism
 
 import (
-	"bytes"
 	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
 
+	"github.com/photoprism/photoprism/internal/meta"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/proc"
@@ -46,8 +46,8 @@ func (w *Convert) ToJson(f *MediaFile, force bool) (jsonName string, err error) 
 	cmd := exec.Command(w.conf.ExifToolBin(), args...)
 
 	// Command environment, output and errors.
-	var out bytes.Buffer
-	var stderr bytes.Buffer
+	out := jsonOutputBuffer{limit: int(meta.JSONFileLimit()), failOnLimit: true}
+	stderr := jsonOutputBuffer{limit: 64 << 10}
 	cmd.Stdout = &out
 	cmd.Stderr = &stderr
 	cmd.Env = append(cmd.Env, []string{
@@ -58,8 +58,17 @@ func (w *Convert) ToJson(f *MediaFile, force bool) (jsonName string, err error) 
 	log.Trace(cmd.String())
 
 	// Run convert command.
-	if err = proc.Run(cmd, w.conf.ConvertTimeout()); err != nil {
-		if s := stderr.String(); s != "" {
+	err = proc.Run(cmd, w.conf.ConvertTimeout())
+
+	if out.exceeded {
+		err = meta.ErrJSONFileTooLarge
+	}
+
+	if err != nil {
+		if s := string(stderr.data); s != "" {
+			if stderr.exceeded {
+				s += " [truncated]"
+			}
 			err = fmt.Errorf("%w: %s", err, s)
 		}
 
@@ -69,13 +78,13 @@ func (w *Convert) ToJson(f *MediaFile, force bool) (jsonName string, err error) 
 	}
 
 	// Write output to file (make parent dir robustly in case a parallel test cleaned the cache).
-	if err = os.WriteFile(jsonName, out.Bytes(), fs.ModeFile); err != nil {
+	if err = os.WriteFile(jsonName, out.data, fs.ModeFile); err != nil {
 		// If the parent directory vanished due to concurrent cleanup, recreate and retry once.
 		if !os.IsNotExist(err) {
 			return "", err
 		} else if err = fs.MkdirAll(filepath.Dir(jsonName)); err != nil {
 			return "", err
-		} else if err = os.WriteFile(jsonName, out.Bytes(), fs.ModeFile); err != nil {
+		} else if err = os.WriteFile(jsonName, out.data, fs.ModeFile); err != nil {
 			return "", err
 		}
 	}

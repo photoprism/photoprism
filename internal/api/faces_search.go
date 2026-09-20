@@ -47,7 +47,7 @@ func SearchFaces(router *gin.RouterGroup) {
 			return
 		}
 
-		result, err := search.Faces(frm)
+		result, err := search.UserFaces(frm, s)
 
 		if err != nil {
 			c.AbortWithStatusJSON(400, gin.H{"error": txt.UpperFirst(err.Error())})

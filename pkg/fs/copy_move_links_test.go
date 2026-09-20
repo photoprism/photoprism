@@ -22,7 +22,7 @@ func stagedNames(t *testing.T, dir string) []string {
 	var found []string
 
 	for _, entry := range entries {
-		if strings.HasSuffix(entry.Name(), ".tmp") {
+		if strings.HasPrefix(entry.Name(), ".") && strings.Contains(entry.Name(), ExtTmp) {
 			found = append(found, entry.Name())
 		}
 	}
@@ -81,12 +81,13 @@ func TestDestExists(t *testing.T) {
 	assert.NotContains(t, err.Error(), "/originals", "the message names the file rather than its path")
 }
 
-func TestStageFile(t *testing.T) {
+// TestOpenStageFile checks exclusive sibling creation and ordinary creation permissions.
+func TestOpenStageFile(t *testing.T) {
 	dir := t.TempDir()
 	dest := filepath.Join(dir, "photo.jpg")
 
 	t.Run("Success", func(t *testing.T) {
-		f, err := stageFile(dest)
+		f, err := OpenStageFile(dest)
 		require.NoError(t, err)
 
 		defer func() {
@@ -96,28 +97,37 @@ func TestStageFile(t *testing.T) {
 
 		base := filepath.Base(f.Name())
 		assert.True(t, strings.HasPrefix(base, ".photo.jpg."), "the staged name must be hidden: %s", base)
-		assert.True(t, strings.HasSuffix(base, ".tmp"), "the staged name must carry the temporary extension: %s", base)
+		assert.True(t, strings.HasSuffix(base, ".tmp.jpg"), "the staged name must carry the temporary extension: %s", base)
 		assert.Equal(t, dir, filepath.Dir(f.Name()), "the staged file must be a sibling of the destination")
 		assert.NoFileExists(t, dest, "staging must not create the destination")
+		control := filepath.Join(dir, "mode-control")
+		require.NoError(t, os.WriteFile(control, nil, ModeFile))
+		want, err := os.Stat(control)
+		require.NoError(t, err)
+		got, err := f.Stat()
+		require.NoError(t, err)
+		assert.Equal(t, want.Mode().Perm(), got.Mode().Perm())
+		t.Logf("staged file mode: %04o", got.Mode().Perm())
 
 		// A second call must not collide with the first.
-		second, err := stageFile(dest)
+		second, err := OpenStageFile(dest)
 		require.NoError(t, err)
 		assert.NotEqual(t, f.Name(), second.Name())
 		_ = second.Close()
 		_ = os.Remove(second.Name())
 	})
 	t.Run("MissingDirectory", func(t *testing.T) {
-		_, err := stageFile(filepath.Join(dir, "absent", "photo.jpg"))
+		_, err := OpenStageFile(filepath.Join(dir, "absent", "photo.jpg"))
 		assert.Error(t, err)
 	})
 }
 
+// TestPublishFile checks staged publication and replacement rules.
 func TestPublishFile(t *testing.T) {
 	staged := func(t *testing.T, dir, content string) string {
 		t.Helper()
 
-		f, err := stageFile(filepath.Join(dir, "photo.jpg"))
+		f, err := OpenStageFile(filepath.Join(dir, "photo.jpg"))
 		require.NoError(t, err)
 		_, err = f.WriteString(content)
 		require.NoError(t, err)
@@ -171,6 +181,30 @@ func TestPublishFile(t *testing.T) {
 		b, err := os.ReadFile(dest) //nolint:gosec // test helper reads temp file
 		require.NoError(t, err)
 		assert.Equal(t, "new", string(b))
+	})
+	t.Run("ExportedFreeName", func(t *testing.T) {
+		dir := t.TempDir()
+		dest := filepath.Join(dir, "photo.jpg")
+
+		require.NoError(t, PublishFile(staged(t, dir, "new"), dest, false))
+
+		b, err := os.ReadFile(dest) //nolint:gosec // test helper reads temp file
+		require.NoError(t, err)
+		assert.Equal(t, "new", string(b))
+	})
+	t.Run("ExportedTakenName", func(t *testing.T) {
+		dir := t.TempDir()
+		dest := filepath.Join(dir, "photo.jpg")
+		require.NoError(t, os.WriteFile(dest, []byte("old"), ModeFile))
+
+		err := PublishFile(staged(t, dir, "new"), dest, false)
+
+		// The sentinel is what lets a caller tell a taken name from a failure.
+		assert.ErrorIs(t, err, os.ErrExist)
+
+		b, readErr := os.ReadFile(dest) //nolint:gosec // test helper reads temp file
+		require.NoError(t, readErr)
+		assert.Equal(t, "old", string(b))
 	})
 }
 
@@ -582,7 +616,7 @@ func TestStageName(t *testing.T) {
 
 		assert.Equal(t, "/originals/2030", filepath.Dir(name))
 		assert.True(t, strings.HasPrefix(filepath.Base(name), ".photo.jpg."), "name: %s", name)
-		assert.True(t, strings.HasSuffix(name, ".tmp"), "name: %s", name)
+		assert.True(t, strings.HasSuffix(name, ".tmp.jpg"), "name: %s", name)
 	})
 	t.Run("LongName", func(t *testing.T) {
 		// A directory entry is bounded, so a destination at the limit must still be stageable.
@@ -591,7 +625,7 @@ func TestStageName(t *testing.T) {
 		name := stageName(filepath.Join("/originals", base))
 
 		assert.LessOrEqual(t, len(filepath.Base(name)), 255, "the staged name must fit a directory entry")
-		assert.True(t, strings.HasSuffix(name, ".tmp"))
+		assert.True(t, strings.HasSuffix(name, ".tmp.jpg"))
 	})
 	t.Run("LongNameOnARuneBoundary", func(t *testing.T) {
 		// A file system that validates names refuses a split character, so the clamp must not cut
@@ -605,6 +639,50 @@ func TestStageName(t *testing.T) {
 	})
 	t.Run("Unique", func(t *testing.T) {
 		assert.NotEqual(t, stageName("/originals/photo.jpg"), stageName("/originals/photo.jpg"))
+	})
+	t.Run("LongExtension", func(t *testing.T) {
+		// An extension long enough to fill the entry on its own is dropped rather than clamped,
+		// so the staged name still fits.
+		base := "photo." + strings.Repeat("a", 250)
+
+		name := stageName(filepath.Join("/originals", base))
+
+		assert.LessOrEqual(t, len(filepath.Base(name)), 255)
+		assert.True(t, strings.HasSuffix(name, ExtTmp), "name: %s", name)
+	})
+	t.Run("KeepsDestinationExtension", func(t *testing.T) {
+		// Media tools detect a staged file's type from its name, so the destination's extension
+		// has to survive staging.
+		name := stageName("/sidecar/2030/video.m2ts.mp4")
+
+		assert.True(t, strings.HasPrefix(filepath.Base(name), ".video.m2ts.mp4."), "name: %s", name)
+		assert.True(t, strings.HasSuffix(name, ExtTmp+ExtMp4), "name: %s", name)
+	})
+}
+
+func TestCreateStageFile(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		dir := t.TempDir()
+		dest := filepath.Join(dir, "video.mp4")
+
+		name, err := CreateStageFile(dest)
+		require.NoError(t, err)
+
+		assert.FileExists(t, name)
+		assert.NotEqual(t, dest, name, "the staged file must not take the destination name")
+		assert.True(t, strings.HasSuffix(name, ExtMp4), "name: %s", name)
+		assert.NoFileExists(t, dest, "staging must not create the destination")
+
+		// A second call must reserve a different name, so concurrent callers cannot share one.
+		other, err := CreateStageFile(dest)
+		require.NoError(t, err)
+		assert.NotEqual(t, name, other)
+	})
+	t.Run("UnwritableDir", func(t *testing.T) {
+		name, err := CreateStageFile(filepath.Join(t.TempDir(), "missing", "video.mp4"))
+
+		assert.Error(t, err)
+		assert.Empty(t, name)
 	})
 }
 
@@ -636,7 +714,7 @@ func TestPublishFile_WithoutLinks(t *testing.T) {
 	staged := func(t *testing.T, dir, content string) string {
 		t.Helper()
 
-		f, err := stageFile(filepath.Join(dir, "photo.jpg"))
+		f, err := OpenStageFile(filepath.Join(dir, "photo.jpg"))
 		require.NoError(t, err)
 		_, err = f.WriteString(content)
 		require.NoError(t, err)

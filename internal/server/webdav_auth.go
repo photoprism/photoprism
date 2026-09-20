@@ -1,14 +1,13 @@
 package server
 
 import (
+	"context"
 	"net/http"
 	"path/filepath"
 	"strings"
 	"sync"
-	"time"
 
 	"github.com/gin-gonic/gin"
-	gc "github.com/patrickmn/go-cache"
 
 	"github.com/photoprism/photoprism/internal/api"
 	"github.com/photoprism/photoprism/internal/auth/acl"
@@ -25,17 +24,34 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-// Use auth cache to improve WebDAV performance. The short expiration time bounds how long
-// a credential keeps working after the account is changed or its WebDAV access is revoked.
-var webdavAuthExpiration = 1 * time.Minute
-var webdavAuthCache = gc.New(webdavAuthExpiration, webdavAuthExpiration)
+// webDAVManagedWriteKey carries the authenticated principal's managed-file write authority.
+type webDAVManagedWriteKey struct{}
+
+// webDAVUploadProbeKey carries the path boundary for upload-only property probes.
+type webDAVUploadProbeKey struct{}
+
 var webdavAuthMutex = sync.Mutex{}
 
 // BasicAuthRealm is the challenge string returned for WebDAV Basic auth prompts.
 var BasicAuthRealm = "Basic realm=\"WebDAV Authorization Required\""
 
-// WebDAVAuth checks authentication and authentication
-// before WebDAV requests are processed.
+// setWebDAVUser installs the authenticated user and effective managed-file write permission.
+func setWebDAVUser(c *gin.Context, user *entity.User, sess *entity.Session) {
+	allowed := acl.Rules.Allow(acl.ResourcePhotos, user.AclRole(), acl.FullAccess)
+
+	if sess != nil {
+		allowed = sess.Grants(acl.ResourcePhotos, acl.FullAccess)
+	}
+
+	if sess != nil && c.Request.Method == header.MethodPropfind && !WebDAVSessionPermits(sess, c.Request.Method) {
+		c.Request = c.Request.WithContext(context.WithValue(c.Request.Context(), webDAVUploadProbeKey{}, user.GetUploadPath()))
+	}
+
+	c.Set(gin.AuthUserKey, user)
+	c.Request = c.Request.WithContext(context.WithValue(c.Request.Context(), webDAVManagedWriteKey{}, allowed))
+}
+
+// WebDAVAuth authenticates users and checks WebDAV admission.
 func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 	// Helper function that extracts the login information from the request headers.
 	var basicAuth = func(c *gin.Context) (username, password, cacheKey string, authorized bool) {
@@ -49,11 +65,10 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 		}
 
 		// To improve performance, check the cache for already authorized users.
-		if user, found := webdavAuthCache.Get(cacheKey); found && user != nil {
+		if user := entity.CachedWebDAVUser(cacheKey); user != nil {
 			// Add user to request context and return to signal successful authentication.
-			c.Set(gin.AuthUserKey, user.(*entity.User))
-			// Credentials have already been authorized within the configured
-			// expiration time of the basic auth cache (about 5 minutes).
+			setWebDAVUser(c, user, nil)
+			// Credentials have already been authorized within the one-minute cache lifetime.
 			return username, password, cacheKey, true
 		} else {
 			// Credentials found, but not pre-authorized. If successful, the
@@ -67,6 +82,8 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 		if c == nil {
 			return
 		}
+
+		generation := entity.CurrentAuthCacheGeneration()
 
 		// Add a vary response header for authentication, if any.
 		if c.GetHeader(header.XAuthToken) != "" {
@@ -97,10 +114,14 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 		}
 
 		// Check webdav access authorization using an auth token or app password, if provided.
-		if sess, user, sid, cached := WebDAVAuthSession(c, authToken); user != nil && cached {
+		if sess, user, sid, cached := WebDAVAuthSession(c, authToken); sess != nil && !WebDAVRequestPermits(sess, c.Request) {
+			event.AuditWarn([]string{clientIp, "webdav", "session %s", "%s", status.Denied}, sess.RefID, clean.Log(c.Request.Method))
+			WebDAVAbortUnauthorized(c)
+			return
+		} else if user != nil && cached {
 			// Add user to request context to signal successful authentication if username is empty or matches.
 			if username == "" || strings.EqualFold(clean.Username(username), user.Username()) {
-				c.Set(gin.AuthUserKey, user)
+				setWebDAVUser(c, user, sess)
 				return
 			}
 
@@ -116,17 +137,14 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 			WebDAVAbortUnauthorized(c)
 			return
 		} else if sess.IsApplication() && conf.DisableAppPasswords() {
-			// Reject app passwords when the feature is disabled, so tokens minted before
-			// the flag was turned off stop working. Identified by the session's auth
-			// provider (IsApplication). A previously-authorized app password may persist
-			// until its WebDAV auth-cache entry expires (~5 min). The 401 (vs the REST
-			// path's 403) is the standard WebDAV re-auth response.
+			// Disabled app passwords receive the WebDAV re-auth response. Cached credentials
+			// remain subject to explicit invalidation and the one-minute lifetime.
 			limiter.Auth.Reserve(clientIp)
 			event.AuditWarn([]string{clientIp, "webdav", "access with app passwords disabled", status.Denied})
 			WebDAVAbortUnauthorized(c)
 			return
 		} else if sess.IsClient() && sess.InsufficientScope(acl.ResourceWebDAV, nil) {
-			// Log error if the client is allowed to access webdav based on its scope.
+			// Deny access if the client scope does not include the WebDAV resource.
 			message := authn.ErrInsufficientScope.Error()
 			event.AuditWarn([]string{clientIp, "webdav", "client %s", "session %s", "access as %s", message}, clean.Log(sess.GetClientInfo()), sess.RefID, clean.LogQuote(user.Username()))
 			WebDAVAbortUnauthorized(c)
@@ -159,10 +177,10 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 			event.LoginInfo(clientIp, "webdav", user.Username(), api.UserAgent(c))
 
 			// Cache authentication to improve performance.
-			webdavAuthCache.SetDefault(sid, user)
+			entity.CacheWebDAVUser(sid, user, generation)
 
 			// Add user to request context and return to signal successful authentication.
-			c.Set(gin.AuthUserKey, user)
+			setWebDAVUser(c, user, sess)
 			return
 		}
 
@@ -229,10 +247,10 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 			event.LoginInfo(clientIp, "webdav", username, api.UserAgent(c))
 
 			// Cache authentication to improve performance.
-			webdavAuthCache.SetDefault(cacheKey, user)
+			entity.CacheWebDAVUser(cacheKey, user, generation)
 
 			// Add user to request context and return to signal successful authentication.
-			c.Set(gin.AuthUserKey, user)
+			setWebDAVUser(c, user, nil)
 			return
 		}
 

@@ -326,6 +326,7 @@ func TestSphereProjection(t *testing.T) {
 	assert.Equal(t, "", sphereProjection(""))
 }
 
+// TestPhoto_MediaInfo checks media selection and dimensions for viewer results.
 func TestPhoto_MediaInfo(t *testing.T) {
 	t.Run("EquirectangularDerivativePreferred", func(t *testing.T) {
 		r := Photo{
@@ -429,6 +430,129 @@ func TestPhoto_MediaInfo(t *testing.T) {
 		assert.Equal(t, "image/x-raw", mediaMime)
 		assert.Equal(t, 1920, width)
 		assert.Equal(t, 1080, height)
+	})
+	t.Run("RawFisheyeEquirectangularDerivativePreferred", func(t *testing.T) {
+		// The dewarp derivative holds the pixels the sphere viewer shows, so its 2:1 frame is
+		// reported instead of the fisheye original's portrait frame.
+		r := Photo{
+			PhotoType:      media.Raw.String(),
+			FileHash:       "primary-jpeg",
+			FileMime:       "image/jpeg",
+			FileCodec:      "jpeg",
+			FileWidth:      5760,
+			FileHeight:     2880,
+			FileProjection: projection.Equirectangular.String(),
+			FilePrimary:    true,
+			Files: []entity.File{
+				{MediaType: media.Image.String(), FileHash: "primary-jpeg", FileMime: "image/jpeg", FileCodec: "jpeg", FileWidth: 5760, FileHeight: 2880, FileProjection: projection.Equirectangular.String(), FilePrimary: true},
+				{MediaType: media.Raw.String(), FileHash: "fisheye-dng", FileMime: "image/x-raw", FileCodec: "raw", FileWidth: 3264, FileHeight: 6528, FileProjection: projection.DualFisheye.String()},
+			},
+		}
+
+		assert.Equal(t, projection.Equirectangular.String(), r.MediaProjection())
+
+		mediaHash, mediaCodec, mediaMime, width, height := r.MediaInfo()
+		assert.Equal(t, "primary-jpeg", mediaHash)
+		assert.Equal(t, "jpeg", mediaCodec)
+		assert.Equal(t, "image/jpeg", mediaMime)
+		assert.Equal(t, 5760, width)
+		assert.Equal(t, 2880, height)
+	})
+	t.Run("RawStackedEquirectangularNotPreferred", func(t *testing.T) {
+		// An equirectangular primary alone must not replace a normal RAW's dimensions.
+		r := Photo{
+			PhotoType:      media.Raw.String(),
+			FileHash:       "primary-jpeg",
+			FileMime:       "image/jpeg",
+			FileCodec:      "jpeg",
+			FileWidth:      5760,
+			FileHeight:     2880,
+			FileProjection: projection.Equirectangular.String(),
+			FilePrimary:    true,
+			Files: []entity.File{
+				{MediaType: media.Image.String(), FileHash: "primary-jpeg", FileMime: "image/jpeg", FileCodec: "jpeg", FileWidth: 5760, FileHeight: 2880, FileProjection: projection.Equirectangular.String(), FilePrimary: true},
+				{MediaType: media.Raw.String(), FileHash: "flat-dng", FileMime: "image/x-raw", FileCodec: "raw", FileWidth: 6000, FileHeight: 4000},
+			},
+		}
+
+		mediaHash, mediaCodec, mediaMime, width, height := r.MediaInfo()
+		assert.Equal(t, "primary-jpeg", mediaHash)
+		assert.Equal(t, "raw", mediaCodec)
+		assert.Equal(t, "image/x-raw", mediaMime)
+		assert.Equal(t, 6000, width)
+		assert.Equal(t, 4000, height)
+	})
+	t.Run("RawFisheyePrimarySelection", func(t *testing.T) {
+		for _, test := range []struct {
+			name       string
+			projection string
+			width      int
+			height     int
+			primary    bool
+		}{
+			{"Equirectangular", projection.Equirectangular.String(), 5760, 2880, true},
+			{"FlatPrimary", "", 3264, 6528, false},
+			{"OtherProjection", "cubestrip", 5760, 2880, false},
+			{"MissingWidth", projection.Equirectangular.String(), 0, 2880, false},
+			{"MissingHeight", projection.Equirectangular.String(), 5760, 0, false},
+		} {
+			t.Run(test.name, func(t *testing.T) {
+				r := Photo{
+					PhotoType:      media.Raw.String(),
+					FileHash:       "primary-jpeg",
+					FileMime:       "image/jpeg",
+					FileCodec:      "jpeg",
+					FileWidth:      test.width,
+					FileHeight:     test.height,
+					FileProjection: test.projection,
+					FilePrimary:    true,
+					Files: []entity.File{
+						{MediaType: media.Image.String(), FileHash: "primary-jpeg", FileMime: "image/jpeg", FileCodec: "jpeg", FileWidth: test.width, FileHeight: test.height, FileProjection: test.projection, FilePrimary: true},
+						{MediaType: media.Raw.String(), FileHash: "fisheye-dng", FileMime: "image/x-raw", FileCodec: "raw", FileWidth: 3264, FileHeight: 6528, FileProjection: projection.DualFisheye.String()},
+						{MediaType: media.Video.String(), FileVideo: true, FileHash: "sphere-video", FileMime: "video/mp4", FileCodec: video.CodecAvc1, FileWidth: 3840, FileHeight: 1920, FileProjection: projection.Equirectangular.String()},
+						{MediaType: media.Image.String(), FileHash: "sphere-jpeg", FileMime: "image/jpeg", FileCodec: "jpeg", FileWidth: 7680, FileHeight: 3840, FileProjection: projection.Equirectangular.String()},
+					},
+				}
+
+				mediaHash, mediaCodec, mediaMime, width, height := r.MediaInfo()
+				assert.Equal(t, "primary-jpeg", mediaHash)
+
+				if test.primary {
+					assert.Equal(t, "jpeg", mediaCodec)
+					assert.Equal(t, "image/jpeg", mediaMime)
+					assert.Equal(t, test.width, width)
+					assert.Equal(t, test.height, height)
+				} else {
+					assert.Equal(t, "raw", mediaCodec)
+					assert.Equal(t, "image/x-raw", mediaMime)
+					assert.Equal(t, 3264, width)
+					assert.Equal(t, 6528, height)
+				}
+			})
+		}
+	})
+	t.Run("RawFisheyeWithoutDerivative", func(t *testing.T) {
+		// A failed or disabled dewarp leaves no derivative, so the original's frame is reported.
+		r := Photo{
+			PhotoType:   media.Raw.String(),
+			FileHash:    "primary-jpeg",
+			FileMime:    "image/jpeg",
+			FileCodec:   "jpeg",
+			FileWidth:   3264,
+			FileHeight:  6528,
+			FilePrimary: true,
+			Files: []entity.File{
+				{MediaType: media.Image.String(), FileHash: "primary-jpeg", FileMime: "image/jpeg", FileCodec: "jpeg", FileWidth: 3264, FileHeight: 6528, FilePrimary: true},
+				{MediaType: media.Raw.String(), FileHash: "fisheye-dng", FileMime: "image/x-raw", FileCodec: "raw", FileWidth: 3264, FileHeight: 6528, FileProjection: projection.DualFisheye.String()},
+			},
+		}
+
+		mediaHash, mediaCodec, mediaMime, width, height := r.MediaInfo()
+		assert.Equal(t, "primary-jpeg", mediaHash)
+		assert.Equal(t, "raw", mediaCodec)
+		assert.Equal(t, "image/x-raw", mediaMime)
+		assert.Equal(t, 3264, width)
+		assert.Equal(t, 6528, height)
 	})
 	t.Run("Animated", func(t *testing.T) {
 		r := Photo{

@@ -2,6 +2,48 @@
 ## Setup: https://docs.photoprism.app/developer-guide/setup/ ##
 
 services:
+  ## MariaDB 12.3 Database Server
+  ## Docs: https://mariadb.com/docs/reference/
+  ## Release Notes: https://mariadb.com/kb/en/release-notes-mariadb-12-3-series/
+  mariadb-12-3:
+    image: mariadb:12.3
+    security_opt: # see https://github.com/MariaDB/mariadb-docker/issues/434#issuecomment-1136151239
+      - seccomp:unconfined
+      - apparmor:unconfined
+    command: --port=${MARIADB_PORT:-4001} --innodb-strict-mode=1 --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    expose:
+      - "${MARIADB_PORT:-4001}"
+    volumes:
+      - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
+    environment:
+      MARIADB_AUTO_UPGRADE: "1"
+      MARIADB_INITDB_SKIP_TZINFO: "1"
+      MARIADB_DATABASE: "photoprism"
+      MARIADB_USER: "photoprism"
+      MARIADB_PASSWORD: "photoprism"
+      MARIADB_ROOT_PASSWORD: "photoprism"
+
+  ## MariaDB 11.8 Database Server
+  ## Docs: https://mariadb.com/docs/reference/
+  ## Release Notes: https://mariadb.com/kb/en/release-notes-mariadb-11-8-series/
+  mariadb-11-8:
+    image: mariadb:11.8
+    security_opt: # see https://github.com/MariaDB/mariadb-docker/issues/434#issuecomment-1136151239
+      - seccomp:unconfined
+      - apparmor:unconfined
+    command: --port=${MARIADB_PORT:-4001} --innodb-strict-mode=1 --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    expose:
+      - "${MARIADB_PORT:-4001}"
+    volumes:
+      - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
+    environment:
+      MARIADB_AUTO_UPGRADE: "1"
+      MARIADB_INITDB_SKIP_TZINFO: "1"
+      MARIADB_DATABASE: "photoprism"
+      MARIADB_USER: "photoprism"
+      MARIADB_PASSWORD: "photoprism"
+      MARIADB_ROOT_PASSWORD: "photoprism"
+
   ## MariaDB 11.4 Database Server
   ## Docs: https://mariadb.com/docs/reference/
   ## Release Notes: https://mariadb.com/kb/en/release-notes-mariadb-11-4-series/

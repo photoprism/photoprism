@@ -65,6 +65,7 @@ A test that passes alone and in the full package but fails under `-run` subsets 
 
 - Assert only on state the test itself created, and delete anything it derives from a shared cache first. The ExifTool export cache (`ExifToolJsonName`) is keyed by file hash, so any test importing the same sample poisons a later `NeedsExifToolJson` assertion until an unrelated indexing test happens to remove it.
 - When a test fails only in a subset, bisect with `-run 'A|B'` rather than reordering: the pair that reproduces it names both the polluter and the victim.
+- A test that overrides a package-level var **captures the old value and restores it in `t.Cleanup`**, rather than reassigning a literal at the end of the body. A trailing reassignment is skipped by every way out except the last line - a failed `require`, a `t.Fatal`, a panic - and a hard-coded literal silently stops being the default it was copied from. `restoreSizeLimits` in `internal/thumb/sizes_test.go` is the pattern for a group of related vars.
 
 ### Fixtures
 

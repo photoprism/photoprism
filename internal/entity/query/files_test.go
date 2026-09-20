@@ -1,10 +1,12 @@
 package query
 
 import (
+	"encoding/json"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
 )
@@ -316,4 +318,33 @@ func TestOrphanFiles(t *testing.T) {
 	}
 
 	assert.IsType(t, entity.Files{}, files)
+}
+
+// TestFilesByPath_OmitsMarkers pins that the folder listing carries no markers. Its response is
+// cached across sessions under a key that names none of them, so a marker list resolved for
+// whoever asked first must not be what the next session reads.
+func TestFilesByPath_OmitsMarkers(t *testing.T) {
+	files, err := FilesByPath(100, 0, entity.RootOriginals, "1990/04", false)
+	require.NoError(t, err)
+	require.NotEmpty(t, files, "the fixture has to hold files for this to mean anything")
+
+	for i := range files {
+		assert.True(t, files[i].OmitMarkers, files[i].FileUID)
+		assert.Empty(t, *files[i].Markers())
+	}
+
+	// The key stays, carrying an empty list: a non-nil pointer is never omitted, and an absent
+	// field would be a wider response change than this needs to be.
+	b, err := json.Marshal(files)
+	require.NoError(t, err)
+
+	var res []struct {
+		Markers []map[string]any
+	}
+
+	require.NoError(t, json.Unmarshal(b, &res))
+
+	for i := range res {
+		assert.Empty(t, res[i].Markers)
+	}
 }

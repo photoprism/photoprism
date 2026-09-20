@@ -73,11 +73,12 @@ func TestFacesMigrateAction(t *testing.T) {
 }
 
 func TestFacesMigrateCommand(t *testing.T) {
-	t.Run("DescribesTheServerConstraint", func(t *testing.T) {
-		// The worker guards are process-local, so the operator is the only thing that can
-		// keep a running instance away from the rows being replaced. "photoprism help" has
-		// to say so, because nothing in the code can enforce it.
-		assert.Contains(t, FacesMigrateCommand.Description, "Stop the server")
+	t.Run("DescribesTheRestart", func(t *testing.T) {
+		// The lock keeps a running instance off the rows being replaced, so the operator does
+		// not have to stop it. Nothing reloads the model the run records, though, so
+		// "photoprism help" has to name the restart, which no guard can perform.
+		assert.Contains(t, FacesMigrateCommand.Description, "restart the instance afterwards")
+		assert.NotContains(t, FacesMigrateCommand.Description, "Stop the server")
 		assert.NotEmpty(t, FacesMigrateCommand.Usage)
 	})
 }
