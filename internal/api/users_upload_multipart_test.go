@@ -160,6 +160,69 @@ func TestUploadUserFiles_Multipart_SingleJPEG(t *testing.T) {
 	assert.True(t, found, "uploaded JPEG not found")
 }
 
+// TestUploadUserFiles_Multipart_SidecarAllowlist pins that the upload allowlist covers metadata
+// sidecars as well, so a media-only list rejects an .xmp while the default accepts it.
+func TestUploadUserFiles_Multipart_SidecarAllowlist(t *testing.T) {
+	jpg, err := os.ReadFile(filepath.Clean("../../pkg/fs/testdata/directory/example.jpg"))
+
+	if err != nil {
+		t.Skipf("missing example.jpg: %v", err)
+	}
+
+	xmp := []byte(`<?xpacket begin="" id="W5M0MpCehiHzreSzNTczkc9d"?>` +
+		`<x:xmpmeta xmlns:x="adobe:ns:meta/"></x:xmpmeta><?xpacket end="w"?>`)
+
+	upload := func(t *testing.T, allow, token string) []string {
+		app, router, conf := NewApiTest()
+		SetTestUploadAllow(t, allow)
+		UploadUserFiles(router)
+		authToken := AuthenticateAdmin(app, router)
+
+		adminUid := entity.Admin.UserUID
+		uploadBase := filepath.Join(conf.UserStoragePath(adminUid), "upload")
+
+		t.Cleanup(func() { removeUploadDirsForToken(t, uploadBase, token) })
+
+		body, ctype, buildErr := buildMultipartTwo("example.jpg", jpg, "example.jpg.xmp", xmp)
+
+		if buildErr != nil {
+			t.Fatal(buildErr)
+		}
+
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/users/"+adminUid+"/upload/"+token, body)
+		req.Header.Set("Content-Type", ctype)
+		header.SetAuthorization(req, authToken)
+		w := httptest.NewRecorder()
+		app.ServeHTTP(w, req)
+
+		// A rejected file is skipped rather than failing the request.
+		assert.Equal(t, http.StatusOK, w.Code, w.Body.String())
+
+		return findUploadedFilesForToken(t, uploadBase, token)
+	}
+
+	uploaded := func(files []string, suffix string) bool {
+		for _, f := range files {
+			if strings.HasSuffix(f, suffix) {
+				return true
+			}
+		}
+
+		return false
+	}
+
+	t.Run("MediaOnlyRejectsSidecar", func(t *testing.T) {
+		files := upload(t, "jpg", "sidecarjpg")
+		assert.True(t, uploaded(files, "example.jpg"), "the allowed JPEG must be saved")
+		assert.False(t, uploaded(files, ".xmp"), "an extension the allowlist omits must be rejected")
+	})
+	t.Run("BlankAllowlistAcceptsSidecar", func(t *testing.T) {
+		files := upload(t, "", "sidecarall")
+		assert.True(t, uploaded(files, "example.jpg"), "the JPEG must be saved")
+		assert.True(t, uploaded(files, ".xmp"), "the default accepts every supported format")
+	})
+}
+
 func TestUploadUserFiles_Multipart_ZipExtract(t *testing.T) {
 	app, router, conf := NewApiTest()
 	// Allow archives and restrict allowed extensions to images
