@@ -2,7 +2,9 @@ package entity
 
 import (
 	"encoding/json"
+	"fmt"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -11,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/authn"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // withheldTestFileUID is a file uid no fixture uses, so the rows these tests add cannot change
@@ -598,4 +601,89 @@ func TestPhoto_GenerateCaptionIgnoresTitleSource(t *testing.T) {
 		require.Error(t, p.GenerateTitle(classify.Labels{}))
 		assert.Equal(t, "a caption somebody wrote", p.PhotoCaption, "a caption somebody wrote is left alone")
 	})
+}
+
+// generatedMetadataPhoto stores a photo with its own primary file and one marker per person, so the
+// stored-text paths resolve people through the database as the maintenance worker does. Reusing a
+// fixture is not an option: indexing keywords deletes the rows it did not just write.
+func generatedMetadataPhoto(t *testing.T, people ...*Subject) *Photo {
+	takenAt := time.Date(2020, 1, 2, 3, 4, 5, 0, time.UTC)
+
+	photo := Photo{PhotoUID: rnd.GenerateUID(PhotoUID), PhotoName: "withheld-generated", PhotoPath: "2020/01",
+		TakenAt: takenAt, TakenAtLocal: takenAt, TakenSrc: SrcMeta}
+	require.NoError(t, photo.Create())
+
+	file := File{PhotoID: photo.ID, PhotoUID: photo.PhotoUID, FileUID: rnd.GenerateUID(FileUID),
+		FileName: "2020/01/withheld-generated.jpg", FileHash: rnd.Base36(40), FileType: "jpg",
+		FileWidth: 720, FileHeight: 480, FilePrimary: true}
+	require.NoError(t, file.Create())
+
+	t.Cleanup(func() {
+		UnscopedDb().Unscoped().Delete(&Marker{}, "file_uid = ?", file.FileUID)
+		UnscopedDb().Unscoped().Delete(&File{}, "file_uid = ?", file.FileUID)
+		UnscopedDb().Unscoped().Delete(&PhotoKeyword{}, "photo_id = ?", photo.ID)
+		UnscopedDb().Unscoped().Delete(&Details{}, "photo_id = ?", photo.ID)
+		UnscopedDb().Unscoped().Delete(&Photo{}, "id = ?", photo.ID)
+	})
+
+	for i, subj := range people {
+		marker := Marker{FileUID: file.FileUID, MarkerType: MarkerFace, MarkerSrc: SrcImage,
+			Thumb: fmt.Sprintf("generated%dthumb", i), SubjUID: subj.SubjUID, SubjSrc: SrcManual,
+			MarkerName: subj.SubjName, X: 0.1 * float32(i+1), Y: 0.1, W: 0.1, H: 0.1, Size: 160, Score: 80}
+		require.NoError(t, marker.Create())
+	}
+
+	return &photo
+}
+
+// photoKeywords returns the keywords the photo is indexed under.
+func photoKeywords(t *testing.T, photo *Photo) []string {
+	t.Helper()
+
+	photo.Keywords = nil
+	photo.PreloadKeywords()
+
+	out := make([]string, 0, len(photo.Keywords))
+
+	for _, kw := range photo.Keywords {
+		out = append(out, kw.Keyword)
+	}
+
+	return out
+}
+
+// TestPhoto_GenerateTitleOmitsWithheldPeople covers the title branch itself, which the caption test
+// above cannot reach, since that one sets a manual title on purpose.
+func TestPhoto_GenerateTitleOmitsWithheldPeople(t *testing.T) {
+	withheld := createWithheldSubject(t, "Titled Tessa", false)
+	public := SubjectFixtures.Pointer("john-doe")
+	photo := generatedMetadataPhoto(t, public, withheld)
+
+	photo.TitleSrc = SrcAuto
+	photo.PhotoTitle = withheld.SubjName + " / 2020"
+
+	require.NoError(t, photo.GenerateTitle(classify.Labels{}))
+	assert.NotContains(t, photo.PhotoTitle, withheld.SubjName)
+	assert.Contains(t, photo.PhotoTitle, public.SubjName, "the other person is the positive control")
+}
+
+// TestPhoto_IndexKeywordsOmitsWithheldPeople pins the search side of the same list: a keyword is a
+// stored row every session reads, so a withheld name must not reach it.
+func TestPhoto_IndexKeywordsOmitsWithheldPeople(t *testing.T) {
+	withheld := createWithheldSubject(t, "Keyworded Kira", false)
+	public := SubjectFixtures.Pointer("john-doe")
+	photo := generatedMetadataPhoto(t, public, withheld)
+
+	// The maintenance pass regenerates the title before indexing keywords, so the stored text a
+	// keyword may derive from is refreshed first.
+	photo.TitleSrc = SrcAuto
+	photo.PhotoTitle = withheld.SubjName + " / 2020"
+	require.NoError(t, photo.GenerateTitle(classify.Labels{}))
+	require.NoError(t, photo.IndexKeywords())
+
+	keywords := photoKeywords(t, photo)
+	require.NotEmpty(t, keywords)
+	assert.NotContains(t, keywords, "keyworded")
+	assert.NotContains(t, keywords, "kira")
+	assert.Contains(t, keywords, "john", "the other person is the positive control")
 }
