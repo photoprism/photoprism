@@ -2,6 +2,7 @@ package onnx
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 
 	onnxruntime "github.com/yalue/onnxruntime_go"
@@ -24,6 +25,13 @@ const DefaultProvider = ProviderCPU
 
 // providerErrorLen bounds a runtime error in a log line.
 const providerErrorLen = 200
+
+var (
+	// sourceLocation matches a C/C++ source reference such as "/src/foo/bar.cc:62".
+	sourceLocation = regexp.MustCompile(`\S*\.(?:cc|h|cpp|hpp):\d+\s*`)
+	// errorMarker matches the runtime's own status marker, e.g. "[ONNXRuntimeError] : 1 : FAIL : ".
+	errorMarker = regexp.MustCompile(`\[ONNXRuntimeError\]\s*:\s*\d+\s*:\s*[A-Z_]+\s*:\s*`)
+)
 
 // Providers lists the execution providers that may be configured.
 var Providers = []Provider{ProviderCPU, ProviderCUDA}
@@ -191,9 +199,12 @@ func cudaProviderOptions() map[string]string {
 	}
 }
 
-// providerError renders a runtime error for a log line. The ONNX Runtime appends its build
-// paths, the host name and mangled C++ signatures to the reason, which buries the one sentence
-// an operator acts on, so the diagnostic tail is dropped and the remainder is bounded.
+// providerError renders a runtime error for a log line.
+//
+// An ONNX Runtime error wraps the one sentence an operator acts on in a build path, a mangled
+// C++ signature, and a tail naming the host - so simply shortening it keeps the noise and drops
+// the reason. The span from the first source location through the error marker is removed, the
+// tail with it, and only then is the remainder bounded.
 func providerError(err error) string {
 	if err == nil {
 		return "no error"
@@ -206,6 +217,14 @@ func providerError(err error) string {
 			s = s[:i]
 		}
 	}
+
+	if loc := sourceLocation.FindStringIndex(s); loc != nil {
+		if marker := errorMarker.FindStringIndex(s[loc[0]:]); marker != nil {
+			s = s[:loc[0]] + s[loc[0]+marker[1]:]
+		}
+	}
+
+	s = sourceLocation.ReplaceAllString(s, "")
 
 	return txt.Shorten(strings.Join(strings.Fields(s), " "), providerErrorLen, txt.Ellipsis)
 }

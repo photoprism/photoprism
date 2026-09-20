@@ -259,6 +259,36 @@ func TestProviderError(t *testing.T) {
 		assert.NotContains(t, out, "hostname")
 		assert.NotContains(t, out, "onnxruntime_src")
 	})
+	t.Run("KeepsTheReasonNotThePrefix", func(t *testing.T) {
+		// Verbatim from the runtime when no device is visible. The reason sits at the far end,
+		// so shortening from the front would keep only the build path and the C++ signature.
+		err := errors.New(`/onnxruntime_src/onnxruntime/core/providers/cuda/cuda_execution_provider_info.cc:62 ` +
+			`static onnxruntime::CUDAExecutionProviderInfo onnxruntime::CUDAExecutionProviderInfo::FromProviderOptions` +
+			`(const onnxruntime::ProviderOptions&) [ONNXRuntimeError] : 1 : FAIL : provider_options_utils.h:187 Parse ` +
+			`Failed to parse provider option "device_id": CUDA failure 100: no CUDA-capable device is detected ; ` +
+			`GPU=-1 ; hostname=65a6e914d819 ; file=/onnxruntime_src/x.cc ; line=69 ; expr=cudaGetDeviceCount(&num);`)
+
+		out := providerError(err)
+		assert.Contains(t, out, "CUDA failure 100: no CUDA-capable device is detected")
+		assert.NotContains(t, out, "onnxruntime_src")
+		assert.NotContains(t, out, "ONNXRuntimeError")
+		assert.NotContains(t, out, "hostname")
+		assert.LessOrEqual(t, len([]rune(out)), providerErrorLen)
+	})
+	t.Run("KeepsThePrefixWhenItCarriesTheReason", func(t *testing.T) {
+		// Verbatim from the runtime when cuDNN is absent. Here the useful text is in front of
+		// the source location, so the removal must not swallow it.
+		err := errors.New(`Error running network: Non-zero status code returned while running Conv node. ` +
+			`Name:'conv_1_conv2d' Status Message: /onnxruntime_src/onnxruntime/core/providers/cuda/cuda_kernel.h:272 ` +
+			`static cudnnContext* onnxruntime::cuda::CudaKernel::RequireCudnnHandle(cudnnHandle_t) ` +
+			`[ONNXRuntimeError] : 9 : NOT_IMPLEMENTED : cuDNN is unavailable or disabled for CUDA Execution Provider`)
+
+		out := providerError(err)
+		assert.Contains(t, out, "running Conv node")
+		assert.Contains(t, out, "cuDNN is unavailable or disabled")
+		assert.NotContains(t, out, "onnxruntime_src")
+		assert.NotContains(t, out, "cudnnContext")
+	})
 	t.Run("Bounded", func(t *testing.T) {
 		out := providerError(errors.New(strings.Repeat("x", 4000)))
 		assert.LessOrEqual(t, len([]rune(out)), providerErrorLen)
