@@ -1,6 +1,7 @@
 package query
 
 import (
+	"database/sql"
 	"testing"
 	"time"
 
@@ -36,6 +37,35 @@ func TestAlbumHasThumb(t *testing.T) {
 		})
 	}
 
+	// setFileError sets the error column of a file fixture and restores it afterwards. Writing a
+	// NULL takes a map update, since a typed zero value is skipped as unset.
+	setFileError := func(t *testing.T, fileHash string, value any) {
+		var current []sql.NullString
+
+		if err := Db().Model(entity.File{}).Where("file_hash = ?", fileHash).Limit(1).Pluck("file_error", &current).Error; err != nil {
+			t.Fatal(err)
+		}
+
+		require.Len(t, current, 1)
+
+		setValue := func(v any) error {
+			return Db().Model(entity.File{}).Where("file_hash = ?", fileHash).
+				Updates(entity.Values{"file_error": v}).Error
+		}
+
+		if err := setValue(value); err != nil {
+			t.Fatal(err)
+		}
+
+		t.Cleanup(func() {
+			if current[0].Valid {
+				_ = setValue(current[0].String)
+			} else {
+				_ = setValue(nil)
+			}
+		})
+	}
+
 	t.Run("NoThumb", func(t *testing.T) {
 		setAlbumThumb(t, "as6sg6bxpogaaba7", "")
 		assert.False(t, AlbumHasThumb("as6sg6bxpogaaba7"))
@@ -47,6 +77,20 @@ func TestAlbumHasThumb(t *testing.T) {
 	t.Run("StaleThumb", func(t *testing.T) {
 		// A hash no client can resolve must not gate the cover query.
 		setAlbumThumb(t, "as6sg6bxpogaaba7", "0000000000000000000000000000000000000000")
+		assert.False(t, AlbumHasThumb("as6sg6bxpogaaba7"))
+	})
+	t.Run("NullFileError", func(t *testing.T) {
+		// The join compares the column to an empty string, which a NULL does not satisfy, so the
+		// fail-safe direction is a cover query rather than a placeholder clients cannot resolve.
+		setFileError(t, "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818", nil)
+
+		var stored []sql.NullString
+		require.NoError(t, Db().Model(entity.File{}).Where("file_hash = ?", "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818").
+			Limit(1).Pluck("file_error", &stored).Error)
+		require.Len(t, stored, 1)
+		require.False(t, stored[0].Valid, "the column must be NULL for this case to mean anything")
+
+		setAlbumThumb(t, "as6sg6bxpogaaba7", "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818")
 		assert.False(t, AlbumHasThumb("as6sg6bxpogaaba7"))
 	})
 	t.Run("NotFound", func(t *testing.T) {
