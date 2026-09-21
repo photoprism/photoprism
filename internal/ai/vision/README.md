@@ -1,6 +1,6 @@
 ## PhotoPrism — Vision Package
 
-**Last Updated:** September 14, 2026
+**Last Updated:** September 21, 2026
 
 ### Overview
 
@@ -48,6 +48,7 @@ Custom label and NSFW classifiers are ONNX-only. An entry of either type that st
 | `DefaultThreshold`      | model-specific                         | Custom NSFW fallback as a probability from 0 to 1.                                 |
 | `Options`               | nil                                    | Sampling/settings merged with engine defaults.                                     |
 | `Service`               | nil                                    | Remote endpoint config (see below).                                                |
+| `Path`                  | derived from model name                | Local artifact directory or ONNX file, relative to the configured models path.     |
 
 #### Label Name Normalization
 
@@ -268,7 +269,7 @@ There is also a fast-path: when `Type: labels` is served by an LLM, PhotoPrism c
 
 The runtime guards in `internal/photoprism/index_mediafile.go` and `internal/workers/vision.go` additionally short-circuit any NSFW promotion on `conf.DetectNSFW()`. The dedicated `Type: nsfw` model is filtered out of scheduled runs by `VisionModelShouldRun` whenever `DetectNSFW()` is false.
 
-`DetectNSFW` returns one `nsfw.Result` per image, and a result that no detector decided is `unavailable` rather than safe — including when the batch never ran, when a remote service returns fewer results than images, and when a single local file could not be read. Callers must act on `Status`, never on the class scores alone. `Thresholds.NSFW` is the operating point for both the dedicated model and the labels fast-path: `-1` selects the detector's calibrated default, while `0` through `100` are explicit operator values. See [`internal/ai/nsfw/README.md`](../nsfw/README.md) for the result contract, the full call-graph, and the user-facing matrix at [docs.photoprism.app/user-guide/ai/nsfw/](https://docs.photoprism.app/user-guide/ai/nsfw/).
+`DetectNSFW` returns one `nsfw.Result` per image, and a result that no detector decided is `unavailable` rather than safe — including when the batch never ran, when a remote service returns fewer results than images, and when a single local file could not be read. Callers must act on `Status`, never on the class scores alone. `Thresholds.NSFW` is the operating point for both the dedicated model and the labels fast-path: `-1` selects the calibrated default for a local dedicated detector, while labels and remote results use the shared default of `75`; `0` through `100` are explicit operator values. A custom dedicated detector without `DefaultThreshold` uses the package fallback of `0.98`. See [`internal/ai/nsfw/README.md`](../nsfw/README.md) for the result contract, the full call-graph, and the user-facing matrix at [docs.photoprism.app/user-guide/ai/nsfw/](https://docs.photoprism.app/user-guide/ai/nsfw/).
 
 ### Model Unload on Idle
 

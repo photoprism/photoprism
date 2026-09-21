@@ -1,6 +1,6 @@
 ## PhotoPrism — Classification Package
 
-**Last Updated:** September 14, 2026
+**Last Updated:** September 21, 2026
 
 ### Overview
 
@@ -73,6 +73,8 @@ go test ./internal/ai/classify -run TestExternalLabelBenchmark -count=1
 
 The report includes top-5 overlap, visible-label agreement, rule-activation drift, threshold crossings and calibration points, p50/p95 latency, model load time, Linux peak RSS, artifact size, and optional correct/false-positive counts when the manifest contains human annotations. The harness runs each candidate in a separate process so peak RSS is model-specific. Repeat the comparison on x86-64 and ARM64 with a representative photo corpus.
 
+EfficientFormerV2 S2 is the default because the reviewed 402-image Wikimedia corpus reached 81.8% visible-label coverage, compared with 73.4% for S1, leaving 73 rather than 107 images unlabeled. Its higher ARM64 latency (80 ms p50 and 121 ms p95, versus 52 ms and 75 ms) and peak RSS (350 MB versus 319 MB) are accepted for the materially better indexing coverage and mean top-1 quality.
+
 ### Troubleshooting
 
 - **The named model is disabled:** Check the reported model path, file SHA-256, ONNX Runtime installation, and warning log. A named selection never falls back to different weights.
@@ -84,4 +86,3 @@ The report includes top-5 overlap, visible-label agreement, rule-activation drif
 
 - [`internal/ai/onnx/README.md`](../onnx/README.md) — shared ONNX model descriptions and runtime setup
 - [`internal/ai/vision/README.md`](../vision/README.md) — `vision.yml` model configuration
-- [`specs/intelligence/onnx-label-generation.md`](../../../specs/intelligence/onnx-label-generation.md) — selection gates and candidate research

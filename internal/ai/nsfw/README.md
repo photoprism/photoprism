@@ -1,6 +1,6 @@
 ## PhotoPrism — NSFW Package
 
-**Last Updated:** September 14, 2026
+**Last Updated:** September 21, 2026
 
 ### Overview
 
@@ -24,7 +24,7 @@ That inversion is the point of the type. A safety signal whose zero value means 
 
 Two upstream callers wire the package into the runtime, and they answer an undecided result differently on purpose:
 
-1. **Upload handler — [`internal/api/users_upload.go`](../../api/users_upload.go).** When `PHOTOPRISM_UPLOAD_NSFW=false` (the default, since the flag has no value of its own), supported visual uploads are screened before indexing. Files that are flagged are deleted on the spot and return `403`; an enabled detector that cannot decide deletes the temporary batch and returns `503`. A detector explicitly disabled or not configured leaves screening off and admits the upload.
+1. **Upload handler — [`internal/api/users_upload.go`](../../api/users_upload.go).** When `PHOTOPRISM_UPLOAD_NSFW=false` (the default, since the flag has no value of its own), supported visual uploads are screened before indexing. If any file is flagged, the entire temporary batch is deleted and the request returns `403`; an enabled detector that cannot decide also deletes the batch and returns `503`. A detector explicitly disabled or not configured leaves screening off and admits the upload.
 
 2. **Index + vision-worker pipelines — [`internal/photoprism/index_mediafile.go`](../../photoprism/index_mediafile.go), [`internal/workers/vision.go`](../../workers/vision.go), [`internal/workers/meta.go`](../../workers/meta.go).** When `PHOTOPRISM_DETECT_NSFW=true` (default `false`), the indexer marks new photos as `PhotoPrivate = true` if the model flags them. **Indexing fails neutral:** an undecided result logs a warning and writes nothing, because marking a whole library private on a missing model file would be the worse outcome and an operator could not tell those photos apart afterwards. **The vision worker fails closed:** an undecided result never changes the flag, so `vision run --force`, which re-examines photos that are already private, cannot un-private them when the detector is broken.
 
@@ -56,9 +56,9 @@ Thresholds:
   NSFW: -1
 ```
 
-With `-1` or an omitted field, local ONNX indexing and upload screening use the selected model's calibrated fallback threshold: AdamCodd FP32 uses `96`, AdamCodd INT8 uses `95`, Falconsai uses `99`, Freepik uses `99.9`, and Yahoo OpenNSFW uses `80`. An explicit `Thresholds.NSFW` value overrides both paths. Automatic selection is a distinct state because a threshold tuned for one model's output distribution does not transfer to another model.
+With `-1` or an omitted field, the local dedicated ONNX detector uses the selected model's calibrated fallback threshold: AdamCodd FP32 uses `96`, AdamCodd INT8 uses `95`, Falconsai uses `99`, Freepik uses `99.9`, and Yahoo OpenNSFW uses `80`. The labels shortcut and remote detector results use the shared default of `75` because they do not expose the local detector's calibration. An explicit `Thresholds.NSFW` value overrides every path. Automatic selection is a distinct state because a threshold tuned for one model's output distribution does not transfer to another model.
 
-Custom detectors must declare `Reduction`. `softmax-unsafe` additionally requires `UnsafeClassIndex`, while `neutral-complement` requires `NeutralClassIndex`; zero is accepted only when it is explicitly present. `sigmoid-unsafe` reduces its single output without a class index. `DefaultThreshold` is the custom detector's automatic fallback probability from 0 to 1.
+Custom detectors must declare `Reduction`. `softmax-unsafe` additionally requires `UnsafeClassIndex`, while `neutral-complement` requires `NeutralClassIndex`; zero is accepted only when it is explicitly present. `sigmoid-unsafe` reduces its single output without a class index. `DefaultThreshold` is the custom detector's automatic fallback probability from 0 to 1; when omitted, it falls back to `0.98`.
 
 ### Calibration & Benchmarking
 
