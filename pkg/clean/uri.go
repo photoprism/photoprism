@@ -117,6 +117,36 @@ func UriRedacted(s string) string {
 	return UriCredentials(strings.ReplaceAll(uri.String(), uriRedactedEncoded, UriRedactedValue))
 }
 
+// uriText matches a URI wherever it appears in a longer text, ending at the first character a URI
+// cannot hold, so the words and quotes around it stay outside the match.
+var uriText = regexp.MustCompile(`[a-zA-Z][a-zA-Z0-9+.\-]*://[^\s"'<>\\{}|^` + "`" + `]*`)
+
+// UriRedactedText replaces every URI a text contains with its redacted form, and masks the whole
+// query of one the parser refuses, which includes a URI over LengthLimit. Text holding no URI is
+// returned as it is, so an ordinary message is neither re-encoded nor truncated.
+func UriRedactedText(s string) string {
+	if !strings.Contains(s, "://") {
+		return s
+	}
+
+	return uriText.ReplaceAllStringFunc(s, func(uri string) string {
+		if redacted := UriRedacted(uri); redacted != "" {
+			return redacted
+		} else if i := strings.IndexByte(uri, '?'); i > 0 {
+			return UriCredentials(uri[:i]) + "?" + UriRedactedValue
+		}
+
+		return UriCredentials(uri)
+	})
+}
+
+// LogUri returns text sanitized for a log line, with the credentials in the userinfo and query of
+// every URI it holds removed. Two shapes are out of reach: a credential in a fragment, and one in a
+// reference with no scheme, which is text as far as the URI match is concerned.
+func LogUri(s string) string {
+	return Log(UriRedactedText(s))
+}
+
 // UriCredentialParam reports whether a query parameter name is one whose value must not be shown.
 func UriCredentialParam(name string) bool {
 	name = strings.ToLower(name)
