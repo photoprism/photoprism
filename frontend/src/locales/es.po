@@ -79,15 +79,15 @@ msgstr "%{s} es demasiado largo"
 msgid "%{s} is too short"
 msgstr "%{s} es demasiado corto"
 
-#: src/locales.js:438
+#: src/locales.js:439
 msgid "%d entries added to %s"
 msgstr "%d entradas añadidas a %s"
 
-#: src/locales.js:440
+#: src/locales.js:441
 msgid "%d entries removed from %s"
 msgstr "%d entradas eliminadas de %s"
 
-#: src/locales.js:462
+#: src/locales.js:463
 msgid "%d files uploaded in %d s"
 msgstr "%d archivos subidos en %d"
 
@@ -95,7 +95,7 @@ msgstr "%d archivos subidos en %d"
 msgid "%s already exists"
 msgstr "%s ya existe"
 
-#: src/locales.js:472
+#: src/locales.js:473
 msgid "%s has been restored"
 msgstr "%s ha sido restaurado"
 
@@ -126,11 +126,11 @@ msgstr "2FA"
 msgid "4 hours"
 msgstr "4 horas"
 
-#: src/component/share/dialog.vue:116
+#: src/component/share/dialog.vue:117
 msgid "A click will copy it to your clipboard."
 msgstr "Un clic lo copiará al portapapeles."
 
-#: src/locales.js:428
+#: src/locales.js:429
 msgid "A migration is in progress"
 msgstr "Se está llevando a cabo una migración"
 
@@ -180,12 +180,12 @@ msgid "Account"
 msgstr "Cuenta"
 
 #: src/component/user/add/dialog.vue:261 src/component/user/add/dialog.vue:277
-#: src/component/service/add.vue:131 src/locales.js:441
+#: src/component/service/add.vue:131 src/locales.js:442
 msgid "Account created"
 msgstr "Cuenta creada"
 
 #: src/component/user/remove/dialog.vue:63 src/component/service/remove.vue:74
-#: src/locales.js:443
+#: src/locales.js:444
 msgid "Account deleted"
 msgstr "Cuenta borrada"
 
@@ -201,7 +201,7 @@ msgstr "Cuenta no encontrada"
 msgid "Account restored"
 msgstr "Cuenta restablecida"
 
-#: src/locales.js:442
+#: src/locales.js:443
 msgid "Account saved"
 msgstr "Cuenta guardada"
 
@@ -346,7 +346,7 @@ msgid "Adjust Location"
 msgstr "Ajustar la ubicación"
 
 #: src/model/cluster-instance.js:28 src/options/admin.js:35
-#: src/common/util.js:922 src/options/auth.js:6
+#: src/common/util.js:963 src/options/auth.js:6
 msgid "Admin"
 msgstr "Admin"
 
@@ -398,7 +398,7 @@ msgstr "Después de dos semanas"
 msgid "Album"
 msgstr "Álbum"
 
-#: src/locales.js:432
+#: src/locales.js:433
 msgid "Album %s deleted"
 msgstr "Álbum %s borrado"
 
@@ -406,11 +406,11 @@ msgstr "Álbum %s borrado"
 msgid "Album Backups"
 msgstr "Copias de seguridad de álbumes"
 
-#: src/locales.js:433
+#: src/locales.js:434
 msgid "Album contents cloned"
 msgstr "Contenidos del álbum clonados"
 
-#: src/locales.js:430 src/page/albums.vue:1194
+#: src/locales.js:431 src/page/albums.vue:1194
 msgid "Album created"
 msgstr "Álbum creado"
 
@@ -422,7 +422,7 @@ msgstr "Álbum borrado"
 msgid "Album not found"
 msgstr "Álbum no encontrado"
 
-#: src/locales.js:431
+#: src/locales.js:432
 msgid "Album saved"
 msgstr "Álbum guardado"
 
@@ -435,7 +435,7 @@ msgstr "Álbum guardado"
 msgid "Albums"
 msgstr "Álbumes"
 
-#: src/component/album/clipboard.vue:194 src/locales.js:469
+#: src/component/album/clipboard.vue:194 src/locales.js:470
 msgid "Albums deleted"
 msgstr "Álbumes borrados"
 
@@ -532,7 +532,7 @@ msgstr "Permite a los usuarios subir nuevas fotos y vídeos a través de la inte
 msgid "Allow zooming with pinch gestures on mobile devices."
 msgstr "Permite hacer zoom con gestos de pellizco en los dispositivos móviles."
 
-#: src/component/share/dialog.vue:118
+#: src/component/share/dialog.vue:119
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
 msgstr "Alternativamente, puedes subir los archivos directamente a servidores WebDAV como Nextcloud."
 
@@ -549,7 +549,7 @@ msgstr "Altitud (m)"
 msgid "AM"
 msgstr "AM"
 
-#: src/app/routes.js:423 src/common/util.js:864
+#: src/app/routes.js:423 src/common/util.js:905
 #: src/component/photo/batch-edit.vue:127 src/component/photo/batch-edit.vue:68
 #: src/component/photo/edit/files.vue:132
 #: src/component/photo/edit/files.vue:133
@@ -571,7 +571,7 @@ msgstr "Animación"
 msgid "Animations"
 msgstr "Animaciones"
 
-#: src/component/share/dialog.vue:117
+#: src/component/share/dialog.vue:118
 msgid "Any private photos and videos remain private and won't be shared."
 msgstr "Todas las fotos y videos privados siguen privados y no serán compartidos."
 
@@ -661,14 +661,14 @@ msgstr "Relación de aspecto"
 msgid "Attributes"
 msgstr "Atributos"
 
-#: src/app/routes.js:416 src/common/util.js:862
+#: src/app/routes.js:416 src/common/util.js:903
 #: src/component/navigation.vue:204 src/component/navigation.vue:205
 #: src/component/navigation.vue:217 src/component/navigation.vue:226
 #: src/component/navigation.vue:254 src/options/options.js:360
 msgid "Audio"
 msgstr "Audio"
 
-#: src/model/logs.js:184
+#: src/model/logs.js:137
 msgid "Audit Log"
 msgstr "Audio"
 
@@ -683,7 +683,7 @@ msgstr "Audio"
 msgid "Authentication"
 msgstr "Autenticación"
 
-#: src/common/util.js:884
+#: src/common/util.js:925
 msgid "Auto"
 msgstr "Auto"
 
@@ -713,7 +713,7 @@ msgstr "Placa"
 msgid "Base Path"
 msgstr "Ruta base"
 
-#: src/common/util.js:916
+#: src/common/util.js:957
 msgid "Batch"
 msgstr "Lote"
 
@@ -775,7 +775,7 @@ msgstr "Ver fotos"
 msgid "Bug Report"
 msgstr "Informe de errores"
 
-#: src/locales.js:420
+#: src/locales.js:421
 msgid "Busy, please try again later"
 msgstr "Ocupado, por favor vuelva a intentarlo más tarde"
 
@@ -853,17 +853,17 @@ msgstr "No puedes seleccionar más elementos"
 #: src/component/service/upload.vue:57 src/component/settings/apps.vue:151
 #: src/component/settings/passcode.vue:101
 #: src/component/settings/passcode.vue:142
-#: src/component/settings/password.vue:83 src/component/share/dialog.vue:161
+#: src/component/settings/password.vue:83 src/component/share/dialog.vue:164
 #: src/locales.js:214 src/page/auth/login.vue:120 src/page/connect.vue:36
 #: src/page/library/import.vue:61 src/page/library/index.vue:61
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: src/common/util.js:1100 src/common/util.js:1107
+#: src/common/util.js:1141 src/common/util.js:1148
 msgid "Cannot copy to clipboard"
 msgstr "No se puede copiar al portapapeles"
 
-#: src/common/util.js:904 src/component/lightbox/sidebar.vue:807
+#: src/common/util.js:945 src/component/lightbox/sidebar.vue:807
 #: src/component/photo/batch-edit.vue:173
 #: src/component/photo/batch-edit.vue:176
 #: src/component/photo/edit/details.vue:28
@@ -936,8 +936,8 @@ msgstr "No se pudieron guardar los cambios"
 #: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3219
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
-#: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
-#: src/locales.js:429 src/page/albums.vue:1197 src/page/people/new.vue:814
+#: src/component/share/dialog.vue:235 src/component/share/dialog.vue:254
+#: src/locales.js:430 src/page/albums.vue:1197 src/page/people/new.vue:814
 #: src/page/people/recognized.vue:320 src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
 #: src/page/settings/general.vue:646
@@ -1014,7 +1014,7 @@ msgstr "Cliente"
 #: src/component/settings/passcode.vue:192
 #: src/component/settings/passcode.vue:207
 #: src/component/settings/passcode.vue:61 src/component/settings/webdav.vue:74
-#: src/component/share/dialog.vue:126 src/component/share/dialog.vue:70
+#: src/component/share/dialog.vue:127 src/component/share/dialog.vue:70
 #: src/component/share/dialog.vue:71 src/component/share/dialog.vue:80
 #: src/component/update.vue:25 src/component/upload/dialog.vue:119
 #: src/component/upload/dialog.vue:20 src/locales.js:210
@@ -1139,6 +1139,10 @@ msgstr "Contiene una imagen."
 msgid "Content"
 msgstr "Contenido"
 
+#: src/locales.js:403
+msgid "Content screening is temporarily unavailable"
+msgstr ""
+
 #: src/component/settings/apps.vue:37 src/component/settings/apps.vue:53
 msgid "Continue"
 msgstr "Continúa en"
@@ -1155,7 +1159,7 @@ msgstr "Colaborador"
 msgid "Converting"
 msgstr "Conversión"
 
-#: src/common/util.js:1093
+#: src/common/util.js:1134
 msgid "Copied to clipboard"
 msgstr "Copiado al portapapeles"
 
@@ -1169,7 +1173,7 @@ msgstr "Copiado al portapapeles"
 msgid "Copy"
 msgstr "Copiar"
 
-#: src/locales.js:454
+#: src/locales.js:455
 msgid "Copying files from %s"
 msgstr "Copiando archivos desde %s"
 
@@ -1185,7 +1189,7 @@ msgstr "Copyright"
 msgid "Could not be deleted"
 msgstr "No se pudo borrar"
 
-#: src/locales.js:408
+#: src/locales.js:409
 msgid "Could not connect, please try again"
 msgstr "No se pudo conectar, por favor vuelva a intentarlo"
 
@@ -1286,7 +1290,7 @@ msgstr "Registros de depuración"
 #: src/page/admin/sessions.vue:256 src/page/admin/users.vue:233
 #: src/page/admin/groups.vue:35 src/page/admin/sessions.vue:371
 #: src/page/admin/users.vue:430 src/page/admin/sessions.vue:369
-#: src/page/admin/users.vue:374 src/common/util.js:886 src/model/session.js:42
+#: src/page/admin/users.vue:374 src/common/util.js:927 src/model/session.js:42
 #: src/model/user.js:343 src/options/auth.js:40 src/options/auth.js:41
 #: src/options/auth.js:69 src/options/auth.js:70 src/options/options.js:252
 #: src/options/options.js:255 src/options/options.js:295
@@ -1306,7 +1310,7 @@ msgstr "Carpeta por Defecto"
 #: src/component/label/delete/dialog.vue:22
 #: src/component/photo/clipboard.vue:132 src/component/photo/edit/files.vue:63
 #: src/component/photo/edit/files.vue:71 src/component/photo/edit/files.vue:95
-#: src/component/service/remove.vue:22 src/component/share/dialog.vue:98
+#: src/component/service/remove.vue:22 src/component/share/dialog.vue:99
 #: src/locales.js:321 src/page/settings/general.vue:335
 msgid "Delete"
 msgstr "Borrar"
@@ -1475,7 +1479,7 @@ msgstr "Mostrar pies de foto en los resultados de búsqueda."
 msgid "Display picture titles in search results."
 msgstr "Mostrar los títulos de las imágenes en los resultados de búsqueda."
 
-#: src/common/util.js:868 src/component/photo/view/cards.vue:115
+#: src/common/util.js:909 src/component/photo/view/cards.vue:115
 #: src/component/photo/view/cards.vue:239
 #: src/component/photo/view/mosaic.vue:70 src/model/thumb.js:247
 #: src/options/options.js:372
@@ -1504,7 +1508,7 @@ msgstr "No utilices RawTherapee para convertir imágenes RAW."
 #: src/component/lightbox/sidebar.vue:195 src/component/settings/apps.vue:51
 #: src/component/settings/apps.vue:52 src/component/settings/apps.vue:61
 #: src/component/settings/apps.vue:77 src/component/settings/apps.vue:88
-#: src/component/share/dialog.vue:162
+#: src/component/share/dialog.vue:165
 msgid "Done"
 msgstr "Hecho"
 
@@ -1657,7 +1661,7 @@ msgstr "Introduce el nombre del elemento..."
 msgid "Enter the code generated by your authenticator app:"
 msgstr "Introduce el código generado por tu aplicación de autenticación:"
 
-#: src/common/api.js:126 src/locales.js:409
+#: src/common/api.js:126 src/locales.js:410
 msgid "Enter verification code"
 msgstr "Ingrese el código de verificación"
 
@@ -1680,7 +1684,7 @@ msgstr "Error"
 msgid "Errors"
 msgstr "Errores"
 
-#: src/common/util.js:888
+#: src/common/util.js:929
 msgid "Estimate"
 msgstr "Estimación"
 
@@ -1712,7 +1716,7 @@ msgstr "Características experimentales"
 #: src/page/admin/sessions.vue:203 src/page/admin/sessions.vue:299
 #: src/page/admin/sessions.vue:297 src/component/service/edit.vue:69
 #: src/component/settings/apps.vue:138 src/component/settings/apps.vue:295
-#: src/component/share/dialog.vue:195
+#: src/component/share/dialog.vue:198
 msgid "Expires"
 msgstr "Expira"
 
@@ -1744,15 +1748,15 @@ msgstr "Cara no encontrada"
 msgid "Faces"
 msgstr "Caras"
 
-#: src/locales.js:406
+#: src/locales.js:407
 msgid "Failed creating file, please check permissions"
 msgstr "Fallo al crear el archivo, por favor, compruebe los permisos"
 
-#: src/locales.js:407
+#: src/locales.js:408
 msgid "Failed creating folder, please check permissions"
 msgstr "Fallo al crear la carpeta, por favor, compruebe los permisos"
 
-#: src/component/share/dialog.vue:235
+#: src/component/share/dialog.vue:245
 msgid "Failed removing link"
 msgstr "Falló al eliminar el enlace"
 
@@ -1760,7 +1764,7 @@ msgstr "Falló al eliminar el enlace"
 msgid "Failed to connect account."
 msgstr "No se ha podido conectar la cuenta."
 
-#: src/locales.js:416
+#: src/locales.js:417
 msgid "Failed to create zip file"
 msgstr "Fallo al crear el archivo zip"
 
@@ -1804,7 +1808,7 @@ msgstr "Fracasó en el intento de salvar el marcador"
 msgid "Failed to save name"
 msgstr "Error al guardar el nombre"
 
-#: src/component/share/dialog.vue:216
+#: src/component/share/dialog.vue:219
 msgid "Failed updating link"
 msgstr "Falló la actualización el enlace"
 
@@ -1835,7 +1839,7 @@ msgstr "Favorito"
 msgid "Favorites"
 msgstr "Favoritos"
 
-#: src/locales.js:412
+#: src/locales.js:413
 msgid "Feature disabled"
 msgstr "Característica desactivada"
 
@@ -1851,7 +1855,7 @@ msgstr "Características"
 msgid "Female"
 msgstr "Mujer"
 
-#: src/common/util.js:890 src/component/lightbox/sidebar.vue:1101
+#: src/common/util.js:931 src/component/lightbox/sidebar.vue:1101
 #: src/component/photo/edit/info.vue:94 src/model/file.js:271
 msgid "File"
 msgstr "Archivo"
@@ -1864,7 +1868,7 @@ msgstr "Explorador de Archivos"
 msgid "File Conversion"
 msgstr "Conversión de archivos"
 
-#: src/locales.js:435
+#: src/locales.js:436
 msgid "File deleted"
 msgstr "Archivo eliminado"
 
@@ -1878,7 +1882,7 @@ msgstr "Nombre del archivo"
 msgid "File not found"
 msgstr "No se encuentra el archivo"
 
-#: src/locales.js:434
+#: src/locales.js:435
 msgid "File removed from stack"
 msgstr "Archivo eliminado de la pila"
 
@@ -1890,7 +1894,7 @@ msgstr "Tamaño del archivo"
 msgid "File too large"
 msgstr "Archivo demasiado grande"
 
-#: src/locales.js:461
+#: src/locales.js:462
 msgid "File uploaded"
 msgstr "Archivo cargado"
 
@@ -2111,7 +2115,7 @@ msgstr "Híbrido"
 msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
 msgstr "Si pierdes el acceso a tu aplicación o dispositivo autenticador, puedes utilizar tu código de recuperación para recuperar el acceso a tu cuenta."
 
-#: src/common/util.js:854 src/common/util.js:894
+#: src/common/util.js:895 src/common/util.js:935
 #: src/component/photo/view/cards.vue:246 src/model/file.js:199
 #: src/options/options.js:344
 msgid "Image"
@@ -2127,11 +2131,11 @@ msgstr "Calidad de imagen"
 msgid "Import"
 msgstr "Importar"
 
-#: src/locales.js:447
+#: src/locales.js:448
 msgid "Import canceled"
 msgstr "Importación cancelada"
 
-#: src/locales.js:446
+#: src/locales.js:447
 msgid "Import completed in %d s"
 msgstr "Importación completada en %d"
 
@@ -2193,11 +2197,11 @@ msgstr "Indexar"
 msgid "Indexing"
 msgstr "Indexando"
 
-#: src/locales.js:451
+#: src/locales.js:452
 msgid "Indexing canceled"
 msgstr "Indexación cancelada"
 
-#: src/locales.js:448
+#: src/locales.js:449
 msgid "Indexing completed in %d s"
 msgstr "Indexación completada en %d"
 
@@ -2205,7 +2209,7 @@ msgstr "Indexación completada en %d"
 msgid "Indexing failed"
 msgstr "Indexación ha fallado"
 
-#: src/locales.js:450
+#: src/locales.js:451
 msgid "Indexing files in %s"
 msgstr "Indexando archivos en %s"
 
@@ -2213,7 +2217,7 @@ msgstr "Indexando archivos en %s"
 msgid "Indexing media and sidecar files…"
 msgstr "Indexando los archivos multimedia y sidecar…"
 
-#: src/locales.js:449
+#: src/locales.js:450
 msgid "Indexing originals..."
 msgstr "Indexando originales..."
 
@@ -2245,7 +2249,7 @@ msgstr "No se puede acceder a la instancia. Inténtalo de nuevo cuando vuelva a 
 msgid "Instances"
 msgstr "Instancias"
 
-#: src/locales.js:424
+#: src/locales.js:425
 msgid "Insufficient storage"
 msgstr "Almacenamiento insuficiente"
 
@@ -2261,7 +2265,7 @@ msgstr "Intervalo"
 #: src/common/form.js:245 src/common/form.js:319 src/common/form.js:322
 #: src/common/form.js:333 src/common/form.js:336 src/common/form.js:362
 #: src/common/form.js:364 src/common/form.js:371 src/common/form.js:373
-#: src/common/form.js:388 src/common/form.js:390
+#: src/common/form.js:388 src/common/form.js:390 src/model/link.js:41
 msgid "Invalid"
 msgstr "Inválido"
 
@@ -2273,7 +2277,7 @@ msgstr "Dirección no válida"
 msgid "Invalid country"
 msgstr "País no válido"
 
-#: src/locales.js:417
+#: src/locales.js:418
 msgid "Invalid credentials"
 msgstr "Credenciales no válidas"
 
@@ -2281,11 +2285,11 @@ msgstr "Credenciales no válidas"
 msgid "Invalid date"
 msgstr "Fecha inválida"
 
-#: src/locales.js:418
+#: src/component/share/dialog.vue:226 src/locales.js:419
 msgid "Invalid link"
 msgstr "Enlace inválido"
 
-#: src/locales.js:419
+#: src/locales.js:420
 msgid "Invalid name"
 msgstr "Nombre inválido"
 
@@ -2294,7 +2298,7 @@ msgstr "Nombre inválido"
 msgid "Invalid parameters"
 msgstr "Parámetros no válidos"
 
-#: src/locales.js:411
+#: src/locales.js:412
 msgid "Invalid password, please try again"
 msgstr "Contraseña inválida, por favor vuelva a intentarlo"
 
@@ -2310,7 +2314,7 @@ msgstr "Hora no válida"
 msgid "Invalid URL"
 msgstr "URL no válida"
 
-#: src/locales.js:410
+#: src/locales.js:411
 msgid "Invalid verification code, please try again"
 msgstr "Código de verificación no válido, inténtalo de nuevo"
 
@@ -2344,7 +2348,7 @@ msgstr "Límite de tamaño del JPEG: %{n}px"
 msgid "JPEGs and thumbnails are automatically rendered as needed."
 msgstr "Los JPEG y las miniaturas se renderizan automáticamente según sea necesario."
 
-#: src/common/util.js:906
+#: src/common/util.js:947
 msgid "Keyword"
 msgstr "Palabra clave"
 
@@ -2363,7 +2367,7 @@ msgstr "Etiqueta"
 msgid "Label not found"
 msgstr "Etiqueta no encontrada"
 
-#: src/locales.js:456
+#: src/locales.js:457
 msgid "Label saved"
 msgstr "Etiqueta guardada"
 
@@ -2379,7 +2383,7 @@ msgstr "Etiqueta guardada"
 msgid "Labels"
 msgstr "Etiquetas"
 
-#: src/component/label/clipboard.vue:131 src/locales.js:455
+#: src/component/label/clipboard.vue:131 src/locales.js:456
 msgid "Labels deleted"
 msgstr "Etiquetas borradas"
 
@@ -2475,7 +2479,7 @@ msgstr "Lima"
 msgid "Limit reached, showing first %{n} files"
 msgstr "Límite alcanzado, mostrando los primeros %{n} archivos"
 
-#: src/model/link.js:93 src/options/auth.js:50 src/options/auth.js:51
+#: src/model/link.js:106 src/options/auth.js:50 src/options/auth.js:51
 msgid "Link"
 msgstr "Enlace"
 
@@ -2487,7 +2491,7 @@ msgstr "Lista"
 msgid "List View"
 msgstr "Ver lista"
 
-#: src/common/util.js:858 src/component/photo/batch-edit.vue:124
+#: src/common/util.js:899 src/component/photo/batch-edit.vue:124
 #: src/component/photo/batch-edit.vue:65 src/component/photo/view/cards.vue:112
 #: src/component/photo/view/cards.vue:224 src/component/photo/view/list.vue:81
 #: src/component/photo/view/mosaic.vue:67 src/options/options.js:352
@@ -2523,7 +2527,7 @@ msgid "Local Time"
 msgstr "Hora local"
 
 #: src/page/settings/account.vue:359 src/page/settings/account.vue:361
-#: src/common/util.js:896 src/component/album/edit/dialog.vue:38
+#: src/common/util.js:937 src/component/album/edit/dialog.vue:38
 #: src/component/lightbox/sidebar.vue:150
 #: src/component/photo/batch-edit.vue:263
 #: src/component/photo/batch-edit.vue:581
@@ -2588,7 +2592,7 @@ msgstr "Gestionar cuenta"
 msgid "Manager"
 msgstr "Director"
 
-#: src/common/util.js:918
+#: src/common/util.js:959
 msgid "Manual"
 msgstr "Manual"
 
@@ -2604,7 +2608,7 @@ msgstr "Mapas"
 msgid "Maps are unavailable. Try another browser or device."
 msgstr "Los mapas no están disponibles. Prueba con otro navegador o dispositivo."
 
-#: src/common/util.js:898 src/model/marker.js:132
+#: src/common/util.js:939 src/model/marker.js:132
 msgid "Marker"
 msgstr "Marcador"
 
@@ -2634,7 +2638,7 @@ msgstr "¿Fusionar %{a} con %{b}?"
 msgid "Message"
 msgstr "Mensaje"
 
-#: src/common/util.js:908
+#: src/common/util.js:949
 msgid "Metadata"
 msgstr "Metadatos"
 
@@ -2696,7 +2700,7 @@ msgstr "Lo más relevante"
 msgid "Move Files"
 msgstr "Mover archivos"
 
-#: src/locales.js:453
+#: src/locales.js:454
 msgid "Moving files from %s"
 msgstr "Moviendo achivos desde %s"
 
@@ -2712,7 +2716,7 @@ msgstr "Silenciar"
 #: src/component/cluster/node/overview.vue:25
 #: src/component/cluster/node/overview.vue:4
 #: src/component/cluster/node/overview.vue:75 src/page/cluster/nodes.vue:155
-#: src/common/util.js:892 src/component/album/edit/dialog.vue:30
+#: src/common/util.js:933 src/component/album/edit/dialog.vue:30
 #: src/component/album/edit/dialog.vue:31
 #: src/component/input/chip-selector.vue:277
 #: src/component/label/edit/dialog.vue:30
@@ -2796,7 +2800,7 @@ msgstr "No hay álbumes asignados"
 msgid "No albums found"
 msgstr "No se encontraron álbumes"
 
-#: src/locales.js:414
+#: src/locales.js:415
 msgid "No albums selected"
 msgstr "Ningún álbum seleccionado"
 
@@ -2804,11 +2808,11 @@ msgstr "Ningún álbum seleccionado"
 msgid "No data available"
 msgstr "No hay datos disponibles"
 
-#: src/locales.js:415
+#: src/locales.js:416
 msgid "No files available for download"
 msgstr "Ningún archivo disponible para descargar"
 
-#: src/locales.js:405
+#: src/locales.js:406
 msgid "No items selected"
 msgstr "Ningún elemento seleccionado"
 
@@ -2820,7 +2824,7 @@ msgstr "No hay etiquetas asignadas"
 msgid "No labels found"
 msgstr "No se encontraron etiquetas"
 
-#: src/locales.js:413
+#: src/locales.js:414
 msgid "No labels selected"
 msgstr "Ninguna etiqueta seleccionada"
 
@@ -2984,11 +2988,11 @@ msgstr "Una vez a la semana"
 msgid "One album found"
 msgstr "Un álbum encontrado"
 
-#: src/locales.js:437
+#: src/locales.js:438
 msgid "One entry added to %s"
 msgstr "Una entrada añadida a %s"
 
-#: src/locales.js:439
+#: src/locales.js:440
 msgid "One entry removed from %s"
 msgstr "Una entrada eliminada de %s"
 
@@ -3128,12 +3132,12 @@ msgstr "Parte de algunas fotos seleccionadas"
 #: src/component/user/add/dialog.vue:57 src/component/user/add/dialog.vue:58
 #: src/component/service/add.vue:52 src/component/service/edit.vue:168
 #: src/component/settings/apps.vue:33 src/component/settings/passcode.vue:171
-#: src/component/settings/passcode.vue:36 src/component/share/dialog.vue:160
+#: src/component/settings/passcode.vue:36 src/component/share/dialog.vue:163
 #: src/options/auth.js:121 src/page/auth/login.vue:101
 msgid "Password"
 msgstr "Contraseña"
 
-#: src/component/settings/password.vue:162 src/locales.js:445
+#: src/component/settings/password.vue:162 src/locales.js:446
 msgid "Password changed"
 msgstr "Contraseña cambiada"
 
@@ -3156,12 +3160,12 @@ msgstr "Se requiere pago"
 msgid "People"
 msgstr "Gente"
 
-#: src/component/share/dialog.vue:115
+#: src/component/share/dialog.vue:116
 msgid "People you share a link with will be able to view public contents."
 msgstr "La gente con la que compartas un enlace podrá ver los contenidos públicos."
 
 #: src/component/photo/clipboard.vue:303 src/component/photo/toolbar.vue:522
-#: src/locales.js:471
+#: src/locales.js:472
 msgid "Permanently deleted"
 msgstr "Eliminado permanentemente"
 
@@ -3177,7 +3181,7 @@ msgstr "Persona"
 msgid "Person cover updated"
 msgstr "Portada de persona actualizada"
 
-#: src/locales.js:460
+#: src/locales.js:461
 msgid "Person deleted"
 msgstr "Persona eliminada"
 
@@ -3186,7 +3190,7 @@ msgstr "Persona eliminada"
 msgid "Person not found"
 msgstr "Persona no encontrada"
 
-#: src/locales.js:459
+#: src/locales.js:460
 msgid "Person saved"
 msgstr "Persona salvada"
 
@@ -3372,7 +3376,7 @@ msgstr "Primario"
 msgid "Private"
 msgstr "Privado"
 
-#: src/locales.js:463
+#: src/locales.js:464
 msgid "Processing upload..."
 msgstr "Procesando la carga..."
 
@@ -3399,7 +3403,7 @@ msgstr "Filtro de calidad"
 msgid "Quality Score"
 msgstr "Puntuación de calidad"
 
-#: src/locales.js:425
+#: src/locales.js:426
 msgid "Quota exceeded"
 msgstr "Cuota superada"
 
@@ -3411,7 +3415,7 @@ msgstr "Aleatorio"
 msgid "Rating {0} of {1}"
 msgstr "Clasificación {0} de {1}"
 
-#: src/common/util.js:856 src/options/options.js:348
+#: src/common/util.js:897 src/options/options.js:348
 msgid "Raw"
 msgstr "Raw"
 
@@ -3498,7 +3502,7 @@ msgstr "Regiones"
 msgid "Register"
 msgstr "Regístrese en"
 
-#: src/locales.js:426
+#: src/locales.js:427
 msgid "Registration disabled"
 msgstr "Registro deshabilitado"
 
@@ -3558,7 +3562,7 @@ msgstr "Eliminado"
 msgid "Removed %{name}"
 msgstr "Se ha eliminado %{name}"
 
-#: src/locales.js:452
+#: src/locales.js:453
 msgid "Removed %d files and %d photos"
 msgstr "Eliminados %d archivos y %d fotos"
 
@@ -3697,9 +3701,9 @@ msgstr "Satélite"
 #: src/component/service/edit.vue:94 src/component/settings/password.vue:31
 #: src/component/settings/password.vue:32
 #: src/component/settings/password.vue:41
-#: src/component/settings/password.vue:86 src/component/share/dialog.vue:104
+#: src/component/settings/password.vue:86 src/component/share/dialog.vue:105
 #: src/component/share/dialog.vue:58 src/component/share/dialog.vue:59
-#: src/component/share/dialog.vue:96
+#: src/component/share/dialog.vue:97
 msgid "Save"
 msgstr "Guardar"
 
@@ -3751,7 +3755,7 @@ msgstr "Buscar"
 msgid "Season"
 msgstr "Temporada"
 
-#: src/component/share/dialog.vue:74
+#: src/component/share/dialog.vue:75
 msgid "Secret"
 msgstr "Secreto"
 
@@ -3806,19 +3810,19 @@ msgstr "Selecciona Hora"
 msgid "Selection"
 msgstr "Selección"
 
-#: src/locales.js:436
+#: src/locales.js:437
 msgid "Selection added to %s"
 msgstr "Selección añadida a %s"
 
-#: src/component/photo/clipboard.vue:251 src/locales.js:465
+#: src/component/photo/clipboard.vue:251 src/locales.js:466
 msgid "Selection approved"
 msgstr "Selección aprobada"
 
-#: src/component/photo/clipboard.vue:282 src/locales.js:466
+#: src/component/photo/clipboard.vue:282 src/locales.js:467
 msgid "Selection archived"
 msgstr "Selección archivada"
 
-#: src/locales.js:468
+#: src/locales.js:469
 msgid "Selection marked as private"
 msgstr "Selección marcada como privada"
 
@@ -3826,7 +3830,7 @@ msgstr "Selección marcada como privada"
 msgid "Selection not found"
 msgstr "Selección no encontrada"
 
-#: src/component/photo/clipboard.vue:318 src/locales.js:467
+#: src/component/photo/clipboard.vue:318 src/locales.js:468
 msgid "Selection restored"
 msgstr "Selección restaurada"
 
@@ -3839,7 +3843,7 @@ msgid "Service"
 msgstr "Servicio"
 
 #: src/component/service/add.vue:27 src/component/service/edit.vue:158
-#: src/component/share/dialog.vue:158
+#: src/component/share/dialog.vue:161
 msgid "Service URL"
 msgstr "URL del servicio"
 
@@ -3885,7 +3889,7 @@ msgid "Settings"
 msgstr "Ajustes"
 
 #: src/page/settings/account.vue:533 src/page/settings/account.vue:562
-#: src/component/settings/passcode.vue:366 src/locales.js:444
+#: src/component/settings/passcode.vue:366 src/locales.js:445
 #: src/page/settings/account.vue:441 src/page/settings/account.vue:470
 msgid "Settings saved"
 msgstr "Ajustes guardados"
@@ -3996,7 +4000,7 @@ msgstr "Muestra la vista Lugares con mapas interactivos para que puedas examinar
 msgid "Show Titles"
 msgstr "Mostrar títulos"
 
-#: src/common/util.js:870 src/model/file.js:195
+#: src/common/util.js:911 src/model/file.js:195
 #: src/page/settings/collections.vue:72 src/page/settings/content.vue:215
 msgid "Sidecar"
 msgstr "Adicional"
@@ -4160,7 +4164,7 @@ msgstr "Almacenes"
 msgid "Streets"
 msgstr "Calles"
 
-#: src/common/util.js:910 src/component/lightbox/sidebar.vue:820
+#: src/common/util.js:951 src/component/lightbox/sidebar.vue:820
 #: src/component/photo/batch-edit.vue:331
 #: src/component/photo/batch-edit.vue:334
 #: src/component/photo/edit/details.vue:291
@@ -4168,7 +4172,7 @@ msgstr "Calles"
 msgid "Subject"
 msgstr "Sujeto"
 
-#: src/locales.js:458
+#: src/locales.js:459
 msgid "Subject deleted"
 msgstr "Sujeto eliminado"
 
@@ -4176,11 +4180,11 @@ msgstr "Sujeto eliminado"
 msgid "Subject not found"
 msgstr "Asunto no encontrado"
 
-#: src/locales.js:457
+#: src/locales.js:458
 msgid "Subject saved"
 msgstr "Asunto guardado"
 
-#: src/component/settings/passcode.vue:351 src/locales.js:474
+#: src/component/settings/passcode.vue:351 src/locales.js:475
 msgid "Successfully activated"
 msgstr "Activado exitosamente"
 
@@ -4193,7 +4197,7 @@ msgstr "Conectado con éxito"
 msgid "Successfully deleted"
 msgstr "Eliminado con éxito"
 
-#: src/component/settings/passcode.vue:323 src/locales.js:473
+#: src/component/settings/passcode.vue:323 src/locales.js:474
 msgid "Successfully verified"
 msgstr "Verificado con éxito"
 
@@ -4258,7 +4262,7 @@ msgstr "La instancia rechazó las credenciales del clúster."
 msgid "The instance returned an unexpected redirect."
 msgstr "La instancia devolvió una redirección inesperada."
 
-#: src/locales.js:421
+#: src/locales.js:422
 msgid "The wakeup interval is %s, but must be 1h or less"
 msgstr "El intervalo de activación es %s, pero debe ser 1h o menos"
 
@@ -4310,7 +4314,7 @@ msgstr "Zona horaria"
 msgid "Timeout"
 msgstr "Tiempo de espera"
 
-#: src/common/util.js:912 src/component/photo/view/list.vue:34
+#: src/common/util.js:953 src/component/photo/view/list.vue:34
 msgid "Title"
 msgstr "Título"
 
@@ -4350,7 +4354,7 @@ msgstr "Mostrar o ocultar miniaturas"
 msgid "Toggle View"
 msgstr "Cambiar Vista"
 
-#: src/component/share/dialog.vue:75
+#: src/component/share/dialog.vue:76
 msgid "Token"
 msgstr "Simbólico"
 
@@ -4358,7 +4362,7 @@ msgstr "Simbólico"
 msgid "Too many files selected"
 msgstr "Demasiados archivos seleccionados"
 
-#: src/common/api.js:128 src/locales.js:423
+#: src/common/api.js:128 src/locales.js:424
 msgid "Too many requests"
 msgstr "Demasiadas peticiones"
 
@@ -4416,7 +4420,7 @@ msgstr "ID Única"
 
 #: src/model/cluster-node.js:47 src/page/settings/account.vue:221
 #: src/page/settings/account.vue:241 src/page/settings/account.vue:261
-#: src/common/util.js:627 src/component/lightbox/sidebar.vue:120
+#: src/common/util.js:668 src/component/lightbox/sidebar.vue:120
 #: src/component/lightbox/sidebar.vue:1742
 #: src/component/lightbox/sidebar.vue:279
 #: src/component/lightbox/sidebar.vue:701
@@ -4545,11 +4549,11 @@ msgid "Upload complete. Indexing…"
 msgstr "Subida completa. Indexando…"
 
 #: src/component/upload/dialog.vue:27 src/component/upload/dialog.vue:465
-#: src/component/upload/dialog.vue:484 src/locales.js:403
+#: src/component/upload/dialog.vue:484 src/locales.js:404
 msgid "Upload failed"
 msgstr "Carga fallida"
 
-#: src/locales.js:464
+#: src/locales.js:465
 msgid "Upload has been processed"
 msgstr "La carga ha sido procesada"
 
@@ -4576,7 +4580,7 @@ msgstr "Cargar ruta"
 msgid "Upload started"
 msgstr "La carga ha comenzado."
 
-#: src/locales.js:404
+#: src/locales.js:405
 msgid "Upload to %s failed"
 msgstr "Falló la carga a %s"
 
@@ -4641,7 +4645,7 @@ msgstr "Usuario no encontrado"
 #: src/component/user/add/dialog.vue:38 src/component/user/add/dialog.vue:39
 #: src/page/admin/sessions.vue:131 src/page/admin/users.vue:282
 #: src/page/admin/users.vue:269 src/component/service/add.vue:38
-#: src/component/service/edit.vue:161 src/component/share/dialog.vue:159
+#: src/component/service/edit.vue:161 src/component/share/dialog.vue:162
 #: src/locales.js:324
 msgid "Username"
 msgstr "Nombre de usuario"
@@ -4657,7 +4661,7 @@ msgstr "Usuarios"
 msgid "UUID"
 msgstr "UUID"
 
-#: src/common/util.js:866 src/component/photo/view/cards.vue:114
+#: src/common/util.js:907 src/component/photo/view/cards.vue:114
 #: src/component/photo/view/cards.vue:239
 #: src/component/photo/view/mosaic.vue:69 src/options/options.js:368
 msgid "Vector"
@@ -4678,7 +4682,7 @@ msgstr "Código de verificación"
 msgid "Verified"
 msgstr "Verificado"
 
-#: src/locales.js:427
+#: src/locales.js:428
 msgid "Verified email required"
 msgstr "Se requiere correo electrónico verificado"
 
@@ -4686,7 +4690,7 @@ msgstr "Se requiere correo electrónico verificado"
 msgid "Version"
 msgstr "Versión"
 
-#: src/common/util.js:860 src/component/photo/batch-edit.vue:128
+#: src/common/util.js:901 src/component/photo/batch-edit.vue:128
 #: src/component/photo/batch-edit.vue:69 src/component/photo/view/cards.vue:122
 #: src/component/photo/view/cards.vue:220 src/component/photo/view/list.vue:83
 #: src/component/photo/view/mosaic.vue:77 src/model/file.js:202
@@ -4718,7 +4722,7 @@ msgstr "Ver los resultados de la búsqueda como una lista."
 msgid "Viewer"
 msgstr "Visor"
 
-#: src/common/util.js:920
+#: src/common/util.js:961
 msgid "Vision"
 msgstr "Visión"
 
@@ -4760,7 +4764,7 @@ msgstr "Los clientes de WebDAV pueden conectarse a PhotoPrism usando la siguient
 msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism."
 msgstr "Los clientes de WebDAV, como Microsoft Windows Explorer o Finder de Apple, pueden conectarse directamente a PhotoPrism."
 
-#: src/component/service/upload.vue:16 src/component/share/dialog.vue:123
+#: src/component/service/upload.vue:16 src/component/share/dialog.vue:124
 msgid "WebDAV Upload"
 msgstr "Subida WebDAV"
 
@@ -4856,7 +4860,7 @@ msgstr "Sólo puedes selecionar un elemento"
 msgid "You may rescan your library to find additional faces."
 msgstr "Puede volver a escanear su biblioteca para encontrar más caras."
 
-#: src/locales.js:422
+#: src/locales.js:423
 msgid "Your account could not be connected"
 msgstr "Su cuenta no pudo ser conectada"
 
@@ -4874,7 +4878,7 @@ msgstr "Su apoyo continuo nos ayuda a proporcionar actualizaciones periódicas y
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "Tu biblioteca se analiza continuamente para crear automáticamente álbumes de momentos, viajes y lugares especiales."
 
-#: src/locales.js:470
+#: src/locales.js:471
 msgid "Zip created in %d s"
 msgstr "Zip creado en %d"
 

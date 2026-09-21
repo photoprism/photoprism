@@ -79,15 +79,15 @@ msgstr "%{s} je příliš dlouhé"
 msgid "%{s} is too short"
 msgstr "%{s} je příliš krátké"
 
-#: src/locales.js:438
+#: src/locales.js:439
 msgid "%d entries added to %s"
 msgstr "%d záznamů přidáno do %s"
 
-#: src/locales.js:440
+#: src/locales.js:441
 msgid "%d entries removed from %s"
 msgstr "%d záznamů odstraněno z %s"
 
-#: src/locales.js:462
+#: src/locales.js:463
 msgid "%d files uploaded in %d s"
 msgstr "%d souborů nahráno za %d s"
 
@@ -95,7 +95,7 @@ msgstr "%d souborů nahráno za %d s"
 msgid "%s already exists"
 msgstr "%s již existuje"
 
-#: src/locales.js:472
+#: src/locales.js:473
 msgid "%s has been restored"
 msgstr "%s bylo obnoveno"
 
@@ -126,11 +126,11 @@ msgstr "2FA"
 msgid "4 hours"
 msgstr "4 hodiny"
 
-#: src/component/share/dialog.vue:116
+#: src/component/share/dialog.vue:117
 msgid "A click will copy it to your clipboard."
 msgstr "Kliknutím zkopírujete do schránky."
 
-#: src/locales.js:428
+#: src/locales.js:429
 msgid "A migration is in progress"
 msgstr "Probíhá migrace"
 
@@ -180,12 +180,12 @@ msgid "Account"
 msgstr "Účet"
 
 #: src/component/user/add/dialog.vue:261 src/component/user/add/dialog.vue:277
-#: src/component/service/add.vue:131 src/locales.js:441
+#: src/component/service/add.vue:131 src/locales.js:442
 msgid "Account created"
 msgstr "Účet vytvořen"
 
 #: src/component/user/remove/dialog.vue:63 src/component/service/remove.vue:74
-#: src/locales.js:443
+#: src/locales.js:444
 msgid "Account deleted"
 msgstr "Účet vymazán"
 
@@ -201,7 +201,7 @@ msgstr "Účet nenalezen"
 msgid "Account restored"
 msgstr "Obnovení účtu"
 
-#: src/locales.js:442
+#: src/locales.js:443
 msgid "Account saved"
 msgstr "Účet uložen"
 
@@ -346,7 +346,7 @@ msgid "Adjust Location"
 msgstr "Upravit umístění"
 
 #: src/model/cluster-instance.js:28 src/options/admin.js:35
-#: src/common/util.js:922 src/options/auth.js:6
+#: src/common/util.js:963 src/options/auth.js:6
 msgid "Admin"
 msgstr "Admin"
 
@@ -398,7 +398,7 @@ msgstr "Po dvou týdnech"
 msgid "Album"
 msgstr "Album"
 
-#: src/locales.js:432
+#: src/locales.js:433
 msgid "Album %s deleted"
 msgstr "Album %s vymazáno"
 
@@ -406,11 +406,11 @@ msgstr "Album %s vymazáno"
 msgid "Album Backups"
 msgstr "Zálohy alb"
 
-#: src/locales.js:433
+#: src/locales.js:434
 msgid "Album contents cloned"
 msgstr "Obsah alba naklonován"
 
-#: src/locales.js:430 src/page/albums.vue:1194
+#: src/locales.js:431 src/page/albums.vue:1194
 msgid "Album created"
 msgstr "Album vytvořeno"
 
@@ -422,7 +422,7 @@ msgstr "Album smazáno"
 msgid "Album not found"
 msgstr "Album nenalezeno"
 
-#: src/locales.js:431
+#: src/locales.js:432
 msgid "Album saved"
 msgstr "Album uloženo"
 
@@ -435,7 +435,7 @@ msgstr "Album uloženo"
 msgid "Albums"
 msgstr "Alba"
 
-#: src/component/album/clipboard.vue:194 src/locales.js:469
+#: src/component/album/clipboard.vue:194 src/locales.js:470
 msgid "Albums deleted"
 msgstr "Alba vymazána"
 
@@ -532,7 +532,7 @@ msgstr "Umožnit uživatelům nahrávat nové fotografie a videa prostřednictv�
 msgid "Allow zooming with pinch gestures on mobile devices."
 msgstr "Povolit přibližování a oddalování pomocí gest přiblížení a oddálení na mobilních zařízeních."
 
-#: src/component/share/dialog.vue:118
+#: src/component/share/dialog.vue:119
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
 msgstr "Alternativně lze nahrát soubory přímo do WebDAV serverů jako je Nextcloud."
 
@@ -549,7 +549,7 @@ msgstr "Nadmořská výška (m)"
 msgid "AM"
 msgstr "AM"
 
-#: src/app/routes.js:423 src/common/util.js:864
+#: src/app/routes.js:423 src/common/util.js:905
 #: src/component/photo/batch-edit.vue:127 src/component/photo/batch-edit.vue:68
 #: src/component/photo/edit/files.vue:132
 #: src/component/photo/edit/files.vue:133
@@ -571,7 +571,7 @@ msgstr "Animace"
 msgid "Animations"
 msgstr "Animace"
 
-#: src/component/share/dialog.vue:117
+#: src/component/share/dialog.vue:118
 msgid "Any private photos and videos remain private and won't be shared."
 msgstr "Jakékoliv soukromé fotografie nebo videa zůstanou soukromé a nebudou sdílena."
 
@@ -661,14 +661,14 @@ msgstr "Poměr stran"
 msgid "Attributes"
 msgstr "Atributy"
 
-#: src/app/routes.js:416 src/common/util.js:862
+#: src/app/routes.js:416 src/common/util.js:903
 #: src/component/navigation.vue:204 src/component/navigation.vue:205
 #: src/component/navigation.vue:217 src/component/navigation.vue:226
 #: src/component/navigation.vue:254 src/options/options.js:360
 msgid "Audio"
 msgstr "Audio"
 
-#: src/model/logs.js:184
+#: src/model/logs.js:137
 msgid "Audit Log"
 msgstr "Audio"
 
@@ -683,7 +683,7 @@ msgstr "Audio"
 msgid "Authentication"
 msgstr "Ověřování"
 
-#: src/common/util.js:884
+#: src/common/util.js:925
 msgid "Auto"
 msgstr "Auto"
 
@@ -713,7 +713,7 @@ msgstr "Odznak"
 msgid "Base Path"
 msgstr "Základní cesta"
 
-#: src/common/util.js:916
+#: src/common/util.js:957
 msgid "Batch"
 msgstr "Dávka"
 
@@ -775,7 +775,7 @@ msgstr "Procházet obrázky"
 msgid "Bug Report"
 msgstr "Nahlásit chybu"
 
-#: src/locales.js:420
+#: src/locales.js:421
 msgid "Busy, please try again later"
 msgstr "Zaneprázdněn, zkuste to prosím později"
 
@@ -853,17 +853,17 @@ msgstr "Není možné vybrat více položek"
 #: src/component/service/upload.vue:57 src/component/settings/apps.vue:151
 #: src/component/settings/passcode.vue:101
 #: src/component/settings/passcode.vue:142
-#: src/component/settings/password.vue:83 src/component/share/dialog.vue:161
+#: src/component/settings/password.vue:83 src/component/share/dialog.vue:164
 #: src/locales.js:214 src/page/auth/login.vue:120 src/page/connect.vue:36
 #: src/page/library/import.vue:61 src/page/library/index.vue:61
 msgid "Cancel"
 msgstr "Zrušit"
 
-#: src/common/util.js:1100 src/common/util.js:1107
+#: src/common/util.js:1141 src/common/util.js:1148
 msgid "Cannot copy to clipboard"
 msgstr "Nelze zkopírovat do schránky"
 
-#: src/common/util.js:904 src/component/lightbox/sidebar.vue:807
+#: src/common/util.js:945 src/component/lightbox/sidebar.vue:807
 #: src/component/photo/batch-edit.vue:173
 #: src/component/photo/batch-edit.vue:176
 #: src/component/photo/edit/details.vue:28
@@ -936,8 +936,8 @@ msgstr "Změny nemohly být uloženy"
 #: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3219
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
-#: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
-#: src/locales.js:429 src/page/albums.vue:1197 src/page/people/new.vue:814
+#: src/component/share/dialog.vue:235 src/component/share/dialog.vue:254
+#: src/locales.js:430 src/page/albums.vue:1197 src/page/people/new.vue:814
 #: src/page/people/recognized.vue:320 src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
 #: src/page/settings/general.vue:646
@@ -1014,7 +1014,7 @@ msgstr "Klient"
 #: src/component/settings/passcode.vue:192
 #: src/component/settings/passcode.vue:207
 #: src/component/settings/passcode.vue:61 src/component/settings/webdav.vue:74
-#: src/component/share/dialog.vue:126 src/component/share/dialog.vue:70
+#: src/component/share/dialog.vue:127 src/component/share/dialog.vue:70
 #: src/component/share/dialog.vue:71 src/component/share/dialog.vue:80
 #: src/component/update.vue:25 src/component/upload/dialog.vue:119
 #: src/component/upload/dialog.vue:20 src/locales.js:210
@@ -1139,6 +1139,10 @@ msgstr "Obsahuje jeden obrázek."
 msgid "Content"
 msgstr "Obsah"
 
+#: src/locales.js:403
+msgid "Content screening is temporarily unavailable"
+msgstr ""
+
 #: src/component/settings/apps.vue:37 src/component/settings/apps.vue:53
 msgid "Continue"
 msgstr "Pokračovat"
@@ -1155,7 +1159,7 @@ msgstr "Přispěvatel"
 msgid "Converting"
 msgstr "Převádí se"
 
-#: src/common/util.js:1093
+#: src/common/util.js:1134
 msgid "Copied to clipboard"
 msgstr "Zkopírováno do schránky"
 
@@ -1169,7 +1173,7 @@ msgstr "Zkopírováno do schránky"
 msgid "Copy"
 msgstr "Kopie"
 
-#: src/locales.js:454
+#: src/locales.js:455
 msgid "Copying files from %s"
 msgstr "Kopírování souborů z %s"
 
@@ -1185,7 +1189,7 @@ msgstr "Autorská práva"
 msgid "Could not be deleted"
 msgstr "Nemohlo být vymazáno"
 
-#: src/locales.js:408
+#: src/locales.js:409
 msgid "Could not connect, please try again"
 msgstr "Nemohlo být připojeno, zkuste to prosím znovu"
 
@@ -1286,7 +1290,7 @@ msgstr "Protokoly ladění"
 #: src/page/admin/sessions.vue:256 src/page/admin/users.vue:233
 #: src/page/admin/groups.vue:35 src/page/admin/sessions.vue:371
 #: src/page/admin/users.vue:430 src/page/admin/sessions.vue:369
-#: src/page/admin/users.vue:374 src/common/util.js:886 src/model/session.js:42
+#: src/page/admin/users.vue:374 src/common/util.js:927 src/model/session.js:42
 #: src/model/user.js:343 src/options/auth.js:40 src/options/auth.js:41
 #: src/options/auth.js:69 src/options/auth.js:70 src/options/options.js:252
 #: src/options/options.js:255 src/options/options.js:295
@@ -1306,7 +1310,7 @@ msgstr "Výchozí složka"
 #: src/component/label/delete/dialog.vue:22
 #: src/component/photo/clipboard.vue:132 src/component/photo/edit/files.vue:63
 #: src/component/photo/edit/files.vue:71 src/component/photo/edit/files.vue:95
-#: src/component/service/remove.vue:22 src/component/share/dialog.vue:98
+#: src/component/service/remove.vue:22 src/component/share/dialog.vue:99
 #: src/locales.js:321 src/page/settings/general.vue:335
 msgid "Delete"
 msgstr "Vymazat"
@@ -1475,7 +1479,7 @@ msgstr "Zobrazení popisků obrázků ve výsledcích vyhledávání."
 msgid "Display picture titles in search results."
 msgstr "Zobrazení názvů obrázků ve výsledcích vyhledávání."
 
-#: src/common/util.js:868 src/component/photo/view/cards.vue:115
+#: src/common/util.js:909 src/component/photo/view/cards.vue:115
 #: src/component/photo/view/cards.vue:239
 #: src/component/photo/view/mosaic.vue:70 src/model/thumb.js:247
 #: src/options/options.js:372
@@ -1504,7 +1508,7 @@ msgstr "Nepoužívat RawTherapee ke konverzi souborů RAW."
 #: src/component/lightbox/sidebar.vue:195 src/component/settings/apps.vue:51
 #: src/component/settings/apps.vue:52 src/component/settings/apps.vue:61
 #: src/component/settings/apps.vue:77 src/component/settings/apps.vue:88
-#: src/component/share/dialog.vue:162
+#: src/component/share/dialog.vue:165
 msgid "Done"
 msgstr "Hotovo"
 
@@ -1657,7 +1661,7 @@ msgstr "Zadejte název položky..."
 msgid "Enter the code generated by your authenticator app:"
 msgstr "Zadejte kód vygenerovaný aplikací autentizátoru:"
 
-#: src/common/api.js:126 src/locales.js:409
+#: src/common/api.js:126 src/locales.js:410
 msgid "Enter verification code"
 msgstr "Vložte ověřovací kód"
 
@@ -1680,7 +1684,7 @@ msgstr "Chyba"
 msgid "Errors"
 msgstr "Chyby"
 
-#: src/common/util.js:888
+#: src/common/util.js:929
 msgid "Estimate"
 msgstr "Odhad"
 
@@ -1712,7 +1716,7 @@ msgstr "Experimentální funkce"
 #: src/page/admin/sessions.vue:203 src/page/admin/sessions.vue:299
 #: src/page/admin/sessions.vue:297 src/component/service/edit.vue:69
 #: src/component/settings/apps.vue:138 src/component/settings/apps.vue:295
-#: src/component/share/dialog.vue:195
+#: src/component/share/dialog.vue:198
 msgid "Expires"
 msgstr "Vyprší"
 
@@ -1744,15 +1748,15 @@ msgstr "Obličej nebyl nalezen"
 msgid "Faces"
 msgstr "Tváře"
 
-#: src/locales.js:406
+#: src/locales.js:407
 msgid "Failed creating file, please check permissions"
 msgstr "Vytváření souboru selhalo, zkontrolujte prosím oprávnění"
 
-#: src/locales.js:407
+#: src/locales.js:408
 msgid "Failed creating folder, please check permissions"
 msgstr "Vytváření složky selhalo, zkontrolujte prosím oprávnění"
 
-#: src/component/share/dialog.vue:235
+#: src/component/share/dialog.vue:245
 msgid "Failed removing link"
 msgstr "Odstraňování odkazu selhalo"
 
@@ -1760,7 +1764,7 @@ msgstr "Odstraňování odkazu selhalo"
 msgid "Failed to connect account."
 msgstr "Nepodařilo se připojit účet."
 
-#: src/locales.js:416
+#: src/locales.js:417
 msgid "Failed to create zip file"
 msgstr "Nebylo možné vytvořit soubor ZIP"
 
@@ -1804,7 +1808,7 @@ msgstr "Nepovedlo se zachovat značku tváře"
 msgid "Failed to save name"
 msgstr "Nepodařilo se uložit název"
 
-#: src/component/share/dialog.vue:216
+#: src/component/share/dialog.vue:219
 msgid "Failed updating link"
 msgstr "Aktualizace odkazu selhalo"
 
@@ -1835,7 +1839,7 @@ msgstr "Oblíbené"
 msgid "Favorites"
 msgstr "Oblíbené"
 
-#: src/locales.js:412
+#: src/locales.js:413
 msgid "Feature disabled"
 msgstr "Funkce deaktivovaná"
 
@@ -1851,7 +1855,7 @@ msgstr "Funkce"
 msgid "Female"
 msgstr "Žena"
 
-#: src/common/util.js:890 src/component/lightbox/sidebar.vue:1101
+#: src/common/util.js:931 src/component/lightbox/sidebar.vue:1101
 #: src/component/photo/edit/info.vue:94 src/model/file.js:271
 msgid "File"
 msgstr "Soubor"
@@ -1864,7 +1868,7 @@ msgstr "Prohlížeč souborů"
 msgid "File Conversion"
 msgstr "Převod souborů"
 
-#: src/locales.js:435
+#: src/locales.js:436
 msgid "File deleted"
 msgstr "Soubor vymazán"
 
@@ -1878,7 +1882,7 @@ msgstr "Název souboru"
 msgid "File not found"
 msgstr "Soubor nenalezen"
 
-#: src/locales.js:434
+#: src/locales.js:435
 msgid "File removed from stack"
 msgstr "Soubor odstraněn ze stohu"
 
@@ -1890,7 +1894,7 @@ msgstr "Velikost souboru"
 msgid "File too large"
 msgstr "Příliš velký soubor"
 
-#: src/locales.js:461
+#: src/locales.js:462
 msgid "File uploaded"
 msgstr "Soubor odeslán"
 
@@ -2111,7 +2115,7 @@ msgstr "Smíšeně"
 msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
 msgstr "Pokud ztratíte přístup ke své ověřovací aplikaci nebo zařízení, můžete pomocí kódu pro obnovení znovu získat přístup ke svému účtu."
 
-#: src/common/util.js:854 src/common/util.js:894
+#: src/common/util.js:895 src/common/util.js:935
 #: src/component/photo/view/cards.vue:246 src/model/file.js:199
 #: src/options/options.js:344
 msgid "Image"
@@ -2127,11 +2131,11 @@ msgstr "Kvalita obrazu"
 msgid "Import"
 msgstr "Importovat"
 
-#: src/locales.js:447
+#: src/locales.js:448
 msgid "Import canceled"
 msgstr "Import zrušen"
 
-#: src/locales.js:446
+#: src/locales.js:447
 msgid "Import completed in %d s"
 msgstr "Import dokončen za %d s"
 
@@ -2193,11 +2197,11 @@ msgstr "Indexovat"
 msgid "Indexing"
 msgstr "Indexování"
 
-#: src/locales.js:451
+#: src/locales.js:452
 msgid "Indexing canceled"
 msgstr "Indexování zrušeno"
 
-#: src/locales.js:448
+#: src/locales.js:449
 msgid "Indexing completed in %d s"
 msgstr "Indexování dokončeno za %d s"
 
@@ -2205,7 +2209,7 @@ msgstr "Indexování dokončeno za %d s"
 msgid "Indexing failed"
 msgstr "Indexování selhalo"
 
-#: src/locales.js:450
+#: src/locales.js:451
 msgid "Indexing files in %s"
 msgstr "Indexování souborů v %s"
 
@@ -2213,7 +2217,7 @@ msgstr "Indexování souborů v %s"
 msgid "Indexing media and sidecar files…"
 msgstr "Indexování media a přidružených souborů…"
 
-#: src/locales.js:449
+#: src/locales.js:450
 msgid "Indexing originals..."
 msgstr "Indexování originálů..."
 
@@ -2245,7 +2249,7 @@ msgstr "Instance je nedostupná. Zkuste to znovu, až bude opět online."
 msgid "Instances"
 msgstr "Instance"
 
-#: src/locales.js:424
+#: src/locales.js:425
 msgid "Insufficient storage"
 msgstr "Nedostatečné skladování"
 
@@ -2261,7 +2265,7 @@ msgstr "Interval"
 #: src/common/form.js:245 src/common/form.js:319 src/common/form.js:322
 #: src/common/form.js:333 src/common/form.js:336 src/common/form.js:362
 #: src/common/form.js:364 src/common/form.js:371 src/common/form.js:373
-#: src/common/form.js:388 src/common/form.js:390
+#: src/common/form.js:388 src/common/form.js:390 src/model/link.js:41
 msgid "Invalid"
 msgstr "Neplatné"
 
@@ -2273,7 +2277,7 @@ msgstr "Neplatná adresa"
 msgid "Invalid country"
 msgstr "Neplatná země"
 
-#: src/locales.js:417
+#: src/locales.js:418
 msgid "Invalid credentials"
 msgstr "Neplatné údaje"
 
@@ -2281,11 +2285,11 @@ msgstr "Neplatné údaje"
 msgid "Invalid date"
 msgstr "Neplatné datum"
 
-#: src/locales.js:418
+#: src/component/share/dialog.vue:226 src/locales.js:419
 msgid "Invalid link"
 msgstr "Neplatný odkaz"
 
-#: src/locales.js:419
+#: src/locales.js:420
 msgid "Invalid name"
 msgstr "Neplatný jméno"
 
@@ -2294,7 +2298,7 @@ msgstr "Neplatný jméno"
 msgid "Invalid parameters"
 msgstr "Neplatné parametry"
 
-#: src/locales.js:411
+#: src/locales.js:412
 msgid "Invalid password, please try again"
 msgstr "Neplatné heslo, zkuste to prosím znovu"
 
@@ -2310,7 +2314,7 @@ msgstr "Neplatný čas"
 msgid "Invalid URL"
 msgstr "Neplatná adresa URL"
 
-#: src/locales.js:410
+#: src/locales.js:411
 msgid "Invalid verification code, please try again"
 msgstr "Neplatný ověřovací kód, zkuste to prosím znovu"
 
@@ -2344,7 +2348,7 @@ msgstr "JPEG limit velikosti: %{n}px"
 msgid "JPEGs and thumbnails are automatically rendered as needed."
 msgstr "JPEG a miniatury se vykreslují automaticky dle potřeby."
 
-#: src/common/util.js:906
+#: src/common/util.js:947
 msgid "Keyword"
 msgstr "Klíčové slovo"
 
@@ -2363,7 +2367,7 @@ msgstr "Štítek"
 msgid "Label not found"
 msgstr "Štítek nenalezen"
 
-#: src/locales.js:456
+#: src/locales.js:457
 msgid "Label saved"
 msgstr "Štítek uložen"
 
@@ -2379,7 +2383,7 @@ msgstr "Štítek uložen"
 msgid "Labels"
 msgstr "Štítky"
 
-#: src/component/label/clipboard.vue:131 src/locales.js:455
+#: src/component/label/clipboard.vue:131 src/locales.js:456
 msgid "Labels deleted"
 msgstr "Štítky vymazány"
 
@@ -2474,7 +2478,7 @@ msgstr "Limetková"
 msgid "Limit reached, showing first %{n} files"
 msgstr "Dosaženo limitu, zobrazeno prvních %{n} souborů"
 
-#: src/model/link.js:93 src/options/auth.js:50 src/options/auth.js:51
+#: src/model/link.js:106 src/options/auth.js:50 src/options/auth.js:51
 msgid "Link"
 msgstr "Odkaz"
 
@@ -2486,7 +2490,7 @@ msgstr "Seznam"
 msgid "List View"
 msgstr "Zobrazení seznamu"
 
-#: src/common/util.js:858 src/component/photo/batch-edit.vue:124
+#: src/common/util.js:899 src/component/photo/batch-edit.vue:124
 #: src/component/photo/batch-edit.vue:65 src/component/photo/view/cards.vue:112
 #: src/component/photo/view/cards.vue:224 src/component/photo/view/list.vue:81
 #: src/component/photo/view/mosaic.vue:67 src/options/options.js:352
@@ -2522,7 +2526,7 @@ msgid "Local Time"
 msgstr "Místní čas"
 
 #: src/page/settings/account.vue:359 src/page/settings/account.vue:361
-#: src/common/util.js:896 src/component/album/edit/dialog.vue:38
+#: src/common/util.js:937 src/component/album/edit/dialog.vue:38
 #: src/component/lightbox/sidebar.vue:150
 #: src/component/photo/batch-edit.vue:263
 #: src/component/photo/batch-edit.vue:581
@@ -2587,7 +2591,7 @@ msgstr "Správa účtu"
 msgid "Manager"
 msgstr "Manažer"
 
-#: src/common/util.js:918
+#: src/common/util.js:959
 msgid "Manual"
 msgstr "Manuální"
 
@@ -2603,7 +2607,7 @@ msgstr "Mapy"
 msgid "Maps are unavailable. Try another browser or device."
 msgstr "Mapy nejsou k dispozici. Zkuste jiný prohlížeč nebo zařízení."
 
-#: src/common/util.js:898 src/model/marker.js:132
+#: src/common/util.js:939 src/model/marker.js:132
 msgid "Marker"
 msgstr "Značka"
 
@@ -2633,7 +2637,7 @@ msgstr "Sloučit %{a} s %{b}?"
 msgid "Message"
 msgstr "Zpráva"
 
-#: src/common/util.js:908
+#: src/common/util.js:949
 msgid "Metadata"
 msgstr "Metadata"
 
@@ -2695,7 +2699,7 @@ msgstr "Nejrelevantnější"
 msgid "Move Files"
 msgstr "Přesunout soubory"
 
-#: src/locales.js:453
+#: src/locales.js:454
 msgid "Moving files from %s"
 msgstr "Přesouvání souborů z %s"
 
@@ -2711,7 +2715,7 @@ msgstr "Ztlumit"
 #: src/component/cluster/node/overview.vue:25
 #: src/component/cluster/node/overview.vue:4
 #: src/component/cluster/node/overview.vue:75 src/page/cluster/nodes.vue:155
-#: src/common/util.js:892 src/component/album/edit/dialog.vue:30
+#: src/common/util.js:933 src/component/album/edit/dialog.vue:30
 #: src/component/album/edit/dialog.vue:31
 #: src/component/input/chip-selector.vue:277
 #: src/component/label/edit/dialog.vue:30
@@ -2795,7 +2799,7 @@ msgstr "Žádná přidělená alba"
 msgid "No albums found"
 msgstr "Nenalezena žádná alba"
 
-#: src/locales.js:414
+#: src/locales.js:415
 msgid "No albums selected"
 msgstr "Nebyla vybrána žádná alba"
 
@@ -2803,11 +2807,11 @@ msgstr "Nebyla vybrána žádná alba"
 msgid "No data available"
 msgstr "Nejsou k dispozici žádné údaje"
 
-#: src/locales.js:415
+#: src/locales.js:416
 msgid "No files available for download"
 msgstr "Žádné soubory ke stažení k dispozici"
 
-#: src/locales.js:405
+#: src/locales.js:406
 msgid "No items selected"
 msgstr "Nebyly vybrány žádné položky"
 
@@ -2819,7 +2823,7 @@ msgstr "Žádné přiřazené štítky"
 msgid "No labels found"
 msgstr "Nenalezeny žádné štítky"
 
-#: src/locales.js:413
+#: src/locales.js:414
 msgid "No labels selected"
 msgstr "Nebyly vybrány žádné štítky"
 
@@ -2983,11 +2987,11 @@ msgstr "Jednou týdně"
 msgid "One album found"
 msgstr "Nalezeno jedno album"
 
-#: src/locales.js:437
+#: src/locales.js:438
 msgid "One entry added to %s"
 msgstr "Jeden záznam přidán do %s"
 
-#: src/locales.js:439
+#: src/locales.js:440
 msgid "One entry removed from %s"
 msgstr "Jeden záznam odstraněn z %s"
 
@@ -3127,12 +3131,12 @@ msgstr "Část vybraných fotografií"
 #: src/component/user/add/dialog.vue:57 src/component/user/add/dialog.vue:58
 #: src/component/service/add.vue:52 src/component/service/edit.vue:168
 #: src/component/settings/apps.vue:33 src/component/settings/passcode.vue:171
-#: src/component/settings/passcode.vue:36 src/component/share/dialog.vue:160
+#: src/component/settings/passcode.vue:36 src/component/share/dialog.vue:163
 #: src/options/auth.js:121 src/page/auth/login.vue:101
 msgid "Password"
 msgstr "Heslo"
 
-#: src/component/settings/password.vue:162 src/locales.js:445
+#: src/component/settings/password.vue:162 src/locales.js:446
 msgid "Password changed"
 msgstr "Heslo změněno"
 
@@ -3155,12 +3159,12 @@ msgstr "Je nutná platba"
 msgid "People"
 msgstr "Lidé"
 
-#: src/component/share/dialog.vue:115
+#: src/component/share/dialog.vue:116
 msgid "People you share a link with will be able to view public contents."
 msgstr "Lidé, se kterými sdílíte odkaz, budou moci zobrazit veřejný obsah."
 
 #: src/component/photo/clipboard.vue:303 src/component/photo/toolbar.vue:522
-#: src/locales.js:471
+#: src/locales.js:472
 msgid "Permanently deleted"
 msgstr "Trvale smazáno"
 
@@ -3176,7 +3180,7 @@ msgstr "Osoba"
 msgid "Person cover updated"
 msgstr "Aktualizace obálky osoby"
 
-#: src/locales.js:460
+#: src/locales.js:461
 msgid "Person deleted"
 msgstr "Vymazaná osoba"
 
@@ -3185,7 +3189,7 @@ msgstr "Vymazaná osoba"
 msgid "Person not found"
 msgstr "Osoba nebyla nalezena"
 
-#: src/locales.js:459
+#: src/locales.js:460
 msgid "Person saved"
 msgstr "Uložená osoba"
 
@@ -3371,7 +3375,7 @@ msgstr "Primární"
 msgid "Private"
 msgstr "Soukromé"
 
-#: src/locales.js:463
+#: src/locales.js:464
 msgid "Processing upload..."
 msgstr "Zpracování nahrávání..."
 
@@ -3398,7 +3402,7 @@ msgstr "Filtr kvality"
 msgid "Quality Score"
 msgstr "Hodnocení kvality"
 
-#: src/locales.js:425
+#: src/locales.js:426
 msgid "Quota exceeded"
 msgstr "Překročení kvóty"
 
@@ -3410,7 +3414,7 @@ msgstr "Náhodně"
 msgid "Rating {0} of {1}"
 msgstr "Hodnocení {0} z {1}"
 
-#: src/common/util.js:856 src/options/options.js:348
+#: src/common/util.js:897 src/options/options.js:348
 msgid "Raw"
 msgstr "Raw"
 
@@ -3497,7 +3501,7 @@ msgstr "Regiony"
 msgid "Register"
 msgstr "Registrace"
 
-#: src/locales.js:426
+#: src/locales.js:427
 msgid "Registration disabled"
 msgstr "Registrace zakázána"
 
@@ -3557,7 +3561,7 @@ msgstr "Odstraněno"
 msgid "Removed %{name}"
 msgstr "Odstraněno %{name}"
 
-#: src/locales.js:452
+#: src/locales.js:453
 msgid "Removed %d files and %d photos"
 msgstr "Odstraněno %d souborů a %d fotografií"
 
@@ -3696,9 +3700,9 @@ msgstr "Satelitní"
 #: src/component/service/edit.vue:94 src/component/settings/password.vue:31
 #: src/component/settings/password.vue:32
 #: src/component/settings/password.vue:41
-#: src/component/settings/password.vue:86 src/component/share/dialog.vue:104
+#: src/component/settings/password.vue:86 src/component/share/dialog.vue:105
 #: src/component/share/dialog.vue:58 src/component/share/dialog.vue:59
-#: src/component/share/dialog.vue:96
+#: src/component/share/dialog.vue:97
 msgid "Save"
 msgstr "Uložit"
 
@@ -3750,7 +3754,7 @@ msgstr "Vyhledat"
 msgid "Season"
 msgstr "Období"
 
-#: src/component/share/dialog.vue:74
+#: src/component/share/dialog.vue:75
 msgid "Secret"
 msgstr "Tajemství"
 
@@ -3805,19 +3809,19 @@ msgstr "Zvolte čas"
 msgid "Selection"
 msgstr "Výběr"
 
-#: src/locales.js:436
+#: src/locales.js:437
 msgid "Selection added to %s"
 msgstr "Výběr přidán do %s"
 
-#: src/component/photo/clipboard.vue:251 src/locales.js:465
+#: src/component/photo/clipboard.vue:251 src/locales.js:466
 msgid "Selection approved"
 msgstr "Výběr potvrzen"
 
-#: src/component/photo/clipboard.vue:282 src/locales.js:466
+#: src/component/photo/clipboard.vue:282 src/locales.js:467
 msgid "Selection archived"
 msgstr "Výběr archivován"
 
-#: src/locales.js:468
+#: src/locales.js:469
 msgid "Selection marked as private"
 msgstr "Výběr označen jako Soukromý"
 
@@ -3825,7 +3829,7 @@ msgstr "Výběr označen jako Soukromý"
 msgid "Selection not found"
 msgstr "Výběr nenalezen"
 
-#: src/component/photo/clipboard.vue:318 src/locales.js:467
+#: src/component/photo/clipboard.vue:318 src/locales.js:468
 msgid "Selection restored"
 msgstr "Výběr obnoven"
 
@@ -3838,7 +3842,7 @@ msgid "Service"
 msgstr "Služba"
 
 #: src/component/service/add.vue:27 src/component/service/edit.vue:158
-#: src/component/share/dialog.vue:158
+#: src/component/share/dialog.vue:161
 msgid "Service URL"
 msgstr "URL služby"
 
@@ -3884,7 +3888,7 @@ msgid "Settings"
 msgstr "Nastavení"
 
 #: src/page/settings/account.vue:533 src/page/settings/account.vue:562
-#: src/component/settings/passcode.vue:366 src/locales.js:444
+#: src/component/settings/passcode.vue:366 src/locales.js:445
 #: src/page/settings/account.vue:441 src/page/settings/account.vue:470
 msgid "Settings saved"
 msgstr "Nastavení uloženo"
@@ -3995,7 +3999,7 @@ msgstr "Zobrazit zobrazení Místa s interaktivními mapami, abyste mohli proch�
 msgid "Show Titles"
 msgstr "Zobrazit názvy"
 
-#: src/common/util.js:870 src/model/file.js:195
+#: src/common/util.js:911 src/model/file.js:195
 #: src/page/settings/collections.vue:72 src/page/settings/content.vue:215
 msgid "Sidecar"
 msgstr "Přidružený soubor"
@@ -4159,7 +4163,7 @@ msgstr "Úložiště"
 msgid "Streets"
 msgstr "Ulice"
 
-#: src/common/util.js:910 src/component/lightbox/sidebar.vue:820
+#: src/common/util.js:951 src/component/lightbox/sidebar.vue:820
 #: src/component/photo/batch-edit.vue:331
 #: src/component/photo/batch-edit.vue:334
 #: src/component/photo/edit/details.vue:291
@@ -4167,7 +4171,7 @@ msgstr "Ulice"
 msgid "Subject"
 msgstr "Předmět"
 
-#: src/locales.js:458
+#: src/locales.js:459
 msgid "Subject deleted"
 msgstr "Předmět smazán"
 
@@ -4175,11 +4179,11 @@ msgstr "Předmět smazán"
 msgid "Subject not found"
 msgstr "Předmět nebyl nalezen"
 
-#: src/locales.js:457
+#: src/locales.js:458
 msgid "Subject saved"
 msgstr "Předmět uložen"
 
-#: src/component/settings/passcode.vue:351 src/locales.js:474
+#: src/component/settings/passcode.vue:351 src/locales.js:475
 msgid "Successfully activated"
 msgstr "Úspěšně aktivováno"
 
@@ -4192,7 +4196,7 @@ msgstr "Úspěšně připojeno"
 msgid "Successfully deleted"
 msgstr "Úspěšně odstraněno"
 
-#: src/component/settings/passcode.vue:323 src/locales.js:473
+#: src/component/settings/passcode.vue:323 src/locales.js:474
 msgid "Successfully verified"
 msgstr "Úspěšně ověřeno"
 
@@ -4257,7 +4261,7 @@ msgstr "Instance odmítla přihlašovací údaje clusteru."
 msgid "The instance returned an unexpected redirect."
 msgstr "Instance vrátila neočekávané přesměrování."
 
-#: src/locales.js:421
+#: src/locales.js:422
 msgid "The wakeup interval is %s, but must be 1h or less"
 msgstr "Interval buzení je %s, ale musí být 1h nebo kratší"
 
@@ -4309,7 +4313,7 @@ msgstr "Časová zóna"
 msgid "Timeout"
 msgstr "Časový limit"
 
-#: src/common/util.js:912 src/component/photo/view/list.vue:34
+#: src/common/util.js:953 src/component/photo/view/list.vue:34
 msgid "Title"
 msgstr "Titulek"
 
@@ -4349,7 +4353,7 @@ msgstr "Přepnout náhledy"
 msgid "Toggle View"
 msgstr "Přepnout zobrazení"
 
-#: src/component/share/dialog.vue:75
+#: src/component/share/dialog.vue:76
 msgid "Token"
 msgstr "Token"
 
@@ -4357,7 +4361,7 @@ msgstr "Token"
 msgid "Too many files selected"
 msgstr "Příliš mnoho vybraných souborů"
 
-#: src/common/api.js:128 src/locales.js:423
+#: src/common/api.js:128 src/locales.js:424
 msgid "Too many requests"
 msgstr "Příliš mnoho požadavků"
 
@@ -4415,7 +4419,7 @@ msgstr "Jedinečné ID"
 
 #: src/model/cluster-node.js:47 src/page/settings/account.vue:221
 #: src/page/settings/account.vue:241 src/page/settings/account.vue:261
-#: src/common/util.js:627 src/component/lightbox/sidebar.vue:120
+#: src/common/util.js:668 src/component/lightbox/sidebar.vue:120
 #: src/component/lightbox/sidebar.vue:1742
 #: src/component/lightbox/sidebar.vue:279
 #: src/component/lightbox/sidebar.vue:701
@@ -4544,11 +4548,11 @@ msgid "Upload complete. Indexing…"
 msgstr "Nahrávání dokončeno. Indexování…"
 
 #: src/component/upload/dialog.vue:27 src/component/upload/dialog.vue:465
-#: src/component/upload/dialog.vue:484 src/locales.js:403
+#: src/component/upload/dialog.vue:484 src/locales.js:404
 msgid "Upload failed"
 msgstr "Nahrávání selhalo"
 
-#: src/locales.js:464
+#: src/locales.js:465
 msgid "Upload has been processed"
 msgstr "Nahrávání bylo zpracováno"
 
@@ -4575,7 +4579,7 @@ msgstr "Cesta k nahrávání"
 msgid "Upload started"
 msgstr "Nahrávání zahájeno"
 
-#: src/locales.js:404
+#: src/locales.js:405
 msgid "Upload to %s failed"
 msgstr "Nahrávání do %s se nezdařilo"
 
@@ -4640,7 +4644,7 @@ msgstr "Uživatel nenalezen"
 #: src/component/user/add/dialog.vue:38 src/component/user/add/dialog.vue:39
 #: src/page/admin/sessions.vue:131 src/page/admin/users.vue:282
 #: src/page/admin/users.vue:269 src/component/service/add.vue:38
-#: src/component/service/edit.vue:161 src/component/share/dialog.vue:159
+#: src/component/service/edit.vue:161 src/component/share/dialog.vue:162
 #: src/locales.js:324
 msgid "Username"
 msgstr "Uživatelské jméno"
@@ -4656,7 +4660,7 @@ msgstr "Uživatelé"
 msgid "UUID"
 msgstr "UUID"
 
-#: src/common/util.js:866 src/component/photo/view/cards.vue:114
+#: src/common/util.js:907 src/component/photo/view/cards.vue:114
 #: src/component/photo/view/cards.vue:239
 #: src/component/photo/view/mosaic.vue:69 src/options/options.js:368
 msgid "Vector"
@@ -4677,7 +4681,7 @@ msgstr "Ověřovací kód"
 msgid "Verified"
 msgstr "Ověřeno"
 
-#: src/locales.js:427
+#: src/locales.js:428
 msgid "Verified email required"
 msgstr "Vyžadován ověřený e-mail"
 
@@ -4685,7 +4689,7 @@ msgstr "Vyžadován ověřený e-mail"
 msgid "Version"
 msgstr "Verze"
 
-#: src/common/util.js:860 src/component/photo/batch-edit.vue:128
+#: src/common/util.js:901 src/component/photo/batch-edit.vue:128
 #: src/component/photo/batch-edit.vue:69 src/component/photo/view/cards.vue:122
 #: src/component/photo/view/cards.vue:220 src/component/photo/view/list.vue:83
 #: src/component/photo/view/mosaic.vue:77 src/model/file.js:202
@@ -4717,7 +4721,7 @@ msgstr "Zobrazení výsledků vyhledávání jako seznamu."
 msgid "Viewer"
 msgstr "Prohlížeč"
 
-#: src/common/util.js:920
+#: src/common/util.js:961
 msgid "Vision"
 msgstr "Vize"
 
@@ -4759,7 +4763,7 @@ msgstr "WebDAV klienti se mohou k PhotoPrism připojit pomocí následující UR
 msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism."
 msgstr "WebDAC klienti, jako Microsoftí Windows Exporer nebo Applovský Finder, se mohou k PhotoPrism připojit přímo."
 
-#: src/component/service/upload.vue:16 src/component/share/dialog.vue:123
+#: src/component/service/upload.vue:16 src/component/share/dialog.vue:124
 msgid "WebDAV Upload"
 msgstr "Nahrát přes WebDAV"
 
@@ -4855,7 +4859,7 @@ msgstr "Vybrat lze pouze jednu položku"
 msgid "You may rescan your library to find additional faces."
 msgstr "Můžete znovu prohledat knihovnu a najít další tváře."
 
-#: src/locales.js:422
+#: src/locales.js:423
 msgid "Your account could not be connected"
 msgstr "Váš účet se nepodařilo připojit"
 
@@ -4873,7 +4877,7 @@ msgstr "Vaše trvalá podpora nám pomáhá poskytovat pravidelné aktualizace a
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "Vaše knihovna je průběžně analyzována a automaticky vytváří alba zvláštních okamžiků, výletů a míst."
 
-#: src/locales.js:470
+#: src/locales.js:471
 msgid "Zip created in %d s"
 msgstr "ZIP vytvořen za %d s"
 
