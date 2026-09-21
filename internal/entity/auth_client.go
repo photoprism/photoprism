@@ -430,29 +430,51 @@ func (m *Client) Restore() error {
 // RestoreConflict reports the identifier that keeps this client from being restored, or an
 // empty string when none does. Lookups resolve the most recently updated record, so a second
 // live holder would not merely duplicate an identifier but could take it over.
+//
+// The stored record decides, not the receiver: an object read before the deletion does not carry
+// the mark, and that is the case a restore exists to handle.
 func (m *Client) RestoreConflict() string {
-	if m == nil || m.ClientUID == "" || !m.Deleted() {
+	stored := m.Stored()
+
+	if stored == nil || !stored.Deleted() {
 		return ""
 	}
 
-	if m.ClientName != "" && m.currentClientWith("client_name = ?", m.ClientName) != nil {
+	if stored.ClientName != "" && stored.currentClientWith("client_name = ?", stored.ClientName) != nil {
 		return "client name"
 	}
 
-	if m.NodeUUID != "" && m.currentClientWith("node_uuid = ?", m.NodeUUID) != nil {
+	if stored.NodeUUID != "" && stored.currentClientWith("node_uuid = ?", stored.NodeUUID) != nil {
 		return "node uuid"
 	}
 
 	return ""
 }
 
+// Stored returns the record as it is saved, or nil when there is none. A receiver read before a
+// change does not reflect it, so a decision about the record's state is made on this rather than
+// on the copy in hand.
+func (m *Client) Stored() *Client {
+	if m == nil || m.ClientUID == "" {
+		return nil
+	}
+
+	return FindClientByUID(m.ClientUID)
+}
+
 // conflictingClient names the current record that holds the given identifier, for reporting.
 func (m *Client) conflictingClient(conflict string) string {
+	stored := m.Stored()
+
+	if stored == nil {
+		return report.NotAssigned
+	}
+
 	switch conflict {
 	case "client name":
-		return m.currentClientWith("client_name = ?", m.ClientName).String()
+		return stored.currentClientWith("client_name = ?", stored.ClientName).String()
 	case "node uuid":
-		return m.currentClientWith("node_uuid = ?", m.NodeUUID).String()
+		return stored.currentClientWith("node_uuid = ?", stored.NodeUUID).String()
 	}
 
 	return report.NotAssigned

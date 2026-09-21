@@ -1277,4 +1277,36 @@ func TestClient_RestoreConflict(t *testing.T) {
 		var m *Client
 		assert.Empty(t, m.RestoreConflict())
 	})
+	t.Run("StaleReceiver", func(t *testing.T) {
+		// A record read before the deletion carries no mark. The check reads the stored
+		// record, so it still sees the conflict a second holder created since.
+		original := NewClient().SetName("pp-conflict-stale").SetScope("metrics")
+
+		if err := original.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		stale := FindClientByUID(original.ClientUID)
+
+		if err := original.Delete(); err != nil {
+			t.Fatal(err)
+		}
+
+		replacement := NewClient().SetName("pp-conflict-stale").SetScope("metrics")
+
+		if err := replacement.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		if assert.NotNil(t, stale) {
+			assert.False(t, stale.Deleted(), "the copy in hand does not carry the mark")
+			assert.Equal(t, "client name", stale.RestoreConflict())
+			assert.Error(t, stale.Restore())
+		}
+
+		// The stored record stays retired, so the name keeps one holder.
+		if retired := FindClientByUID(original.ClientUID); assert.NotNil(t, retired) {
+			assert.True(t, retired.Deleted())
+		}
+	})
 }
