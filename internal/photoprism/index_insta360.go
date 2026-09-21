@@ -55,7 +55,8 @@ func reconcileInsta360Photos(related RelatedFiles) error {
 	}
 
 	canonical := photos[0]
-	favorite, private, panorama, allArchived := false, false, false, true
+	favorite, private, panorama := false, false, false
+	archivedAt := canonical.DeletedAt
 	title, titleSrc := canonical.PhotoTitle, canonical.TitleSrc
 	caption, captionSrc := canonical.PhotoCaption, canonical.CaptionSrc
 
@@ -63,7 +64,12 @@ func reconcileInsta360Photos(related RelatedFiles) error {
 		favorite = favorite || photo.PhotoFavorite
 		private = private || photo.PhotoPrivate
 		panorama = panorama || photo.PhotoPanorama
-		allArchived = allArchived && photo.DeletedAt != nil
+
+		// Preserve archival if any member is archived so a forced rescan cannot
+		// undo the user's archive decision with a newly created active row.
+		if archivedAt == nil && photo.DeletedAt != nil {
+			archivedAt = photo.DeletedAt
+		}
 
 		if photo.PhotoTitle != "" && (title == "" || entity.SrcPriority[photo.TitleSrc] > entity.SrcPriority[titleSrc]) {
 			title, titleSrc = photo.PhotoTitle, photo.TitleSrc
@@ -73,6 +79,14 @@ func reconcileInsta360Photos(related RelatedFiles) error {
 		}
 	}
 
+	canonical.PhotoFavorite = favorite
+	canonical.PhotoPrivate = private
+	canonical.PhotoPanorama = panorama
+	canonical.PhotoTitle, canonical.TitleSrc = title, titleSrc
+	canonical.PhotoCaption, canonical.CaptionSrc = caption, captionSrc
+	canonical.DeletedAt = archivedAt
+	canonical.PhotoQuality = canonical.QualityScore()
+
 	values := entity.Values{
 		"photo_favorite": favorite,
 		"photo_private":  private,
@@ -81,11 +95,8 @@ func reconcileInsta360Photos(related RelatedFiles) error {
 		"title_src":      titleSrc,
 		"photo_caption":  caption,
 		"caption_src":    captionSrc,
-	}
-	if allArchived {
-		values["deleted_at"] = canonical.DeletedAt
-	} else {
-		values["deleted_at"] = nil
+		"photo_quality":  canonical.PhotoQuality,
+		"deleted_at":     archivedAt,
 	}
 
 	tx := entity.UnscopedDb().Begin()

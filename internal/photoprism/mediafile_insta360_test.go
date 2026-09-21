@@ -13,7 +13,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
-// writeInsta360CaptureFile copies a square image fixture to an INSV capture filename for geometry tests.
+// writeInsta360CaptureFile copies a controlled media fixture to an INSV capture filename.
 func writeInsta360CaptureFile(t *testing.T, dir, name, fixture string) string {
 	t.Helper()
 	require.NoError(t, fs.MkdirAll(dir))
