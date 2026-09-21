@@ -57,7 +57,12 @@ def stop():
     sys.exit(0)
 
 if command == "curl":
-    check_path(args[args.index("-o") + 1]).write_text("synthetic package")
+    destination = check_path(args[args.index("-o") + 1])
+    with (base / "downloads.jsonl").open("a") as log:
+        log.write(json.dumps({"url": args[-1], "file": destination.name}) + "\n")
+    if count("download") == 2 and mode == "download":
+        sys.exit(1)
+    destination.write_text("synthetic package")
 elif command == "sha256sum":
     sys.stdin.read()
 elif command == "dpkg-deb":
@@ -215,10 +220,24 @@ class CudaInstallTest(unittest.TestCase):
         self.assertTrue((self.base / "ldconfig.called").exists())
 
     def test_first_install_success(self):
-        """A first installation publishes the complete set without a prior installation."""
+        """A first installation fetches only from NVIDIA and publishes the complete set."""
         result = self.run_installer()
         self.assertEqual(0, result.returncode, result.stdout + result.stderr)
         self.assert_installed()
+        downloads = [json.loads(line) for line in (self.base / "downloads.jsonl").read_text().splitlines()]
+        self.assertEqual(4, len(downloads))
+        for item in downloads:
+            self.assertEqual("https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2604/x86_64/"
+                             + item["file"], item["url"])
+
+    def test_download_failure(self):
+        """An unsuccessful download leaves the installed libraries unchanged."""
+        self.populate()
+        before = self.snapshot()
+        result = self.run_installer("download")
+        self.assert_restored(before, result)
+        self.assertIn("Failed to download", result.stderr)
+        self.assertEqual(2, len((self.base / "downloads.jsonl").read_text().splitlines()))
 
     def test_private_prefix_ldconfig_failure(self):
         """A private-prefix cache refresh failure preserves the committed installation."""

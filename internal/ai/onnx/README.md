@@ -50,6 +50,8 @@ The `github.com/yalue/onnxruntime_go` binding requests the exact C API version o
 
 Run `make cuda` (alias: `make install-cuda`) from the repository root to install the NVIDIA CUDA runtime libraries and cuDNN through `sudo`. This installs the CUDA dependencies only; selecting the GPU ONNX Runtime build and enabling the CUDA provider are separate steps.
 
+The installer downloads pinned packages directly from NVIDIA and verifies their SHA256 checksums before extraction. It does not use a PhotoPrism package mirror or add an apt repository.
+
 `scripts/dist/install-cuda.sh` stages the complete library set on the destination filesystem before publishing it. Existing files and symlinks are preserved with hardlink snapshots, and each replacement uses an atomic rename. A failed publication or a catchable stop signal restores the prior entries and removes newly introduced ones. If recovery itself fails, the installer reports and retains its private recovery directory. Once the complete set is published, it remains installed while the loader cache is refreshed.
 
 Run `make check-cuda-install` to verify installation and recovery using synthetic packages in a private prefix. The check needs Python 3 and standard Linux tools, but no GPU, downloads, root privileges, or system-library changes. Real CUDA compatibility and inference still require validation in a GPU-enabled environment.

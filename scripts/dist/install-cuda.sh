@@ -9,10 +9,9 @@ set -euo pipefail
 # only, so they have to be installed separately. Pair this with "install-onnx.sh --gpu", which
 # installs the runtime build that carries libonnxruntime_providers_cuda.so.
 #
-# The packages are the vendor's own, downloaded from our mirror with the NVIDIA repository as a
-# fallback, and verified against the checksums pinned below. Selecting another CUDA release means
-# updating that table, because a version is a set of packages rather than a single number: their
-# point versions move independently, so nothing can derive a file name or a checksum from it.
+# Packages are downloaded directly from NVIDIA and verified against the pinned checksums.
+# Package versions move independently, so selecting another CUDA release requires updating
+# the filenames and checksums as a set.
 #
 # One pinned set serves every base image we ship. The packages are built for one distribution
 # release, but they are extracted rather than installed, and the vendor builds them against an
@@ -23,7 +22,6 @@ set -euo pipefail
 # CUDA 13 needs driver 580 or later; an older one loads the libraries and then reports no usable
 # device, which PhotoPrism treats as "no GPU" and falls back to the CPU.
 
-TODAY=$(date -u +%Y%m%d)
 TMPDIR=${TMPDIR:-/tmp}
 SYSTEM=$(uname -s)
 ARCH=${PHOTOPRISM_ARCH:-$(uname -m)}
@@ -201,18 +199,14 @@ while read -r package sha; do
   [[ -z "${package}" ]] && continue
 
   package_path="${work_dir}/${package}"
-  primary_url="https://dl.photoprism.app/cuda/${CUDA_REPO}/${package}?${TODAY}"
-  fallback_url="https://developer.download.nvidia.com/compute/cuda/repos/${CUDA_REPO}/x86_64/${package}"
+  package_url="https://developer.download.nvidia.com/compute/cuda/repos/${CUDA_REPO}/x86_64/${package}"
 
   echo "Downloading ${package}..."
 
   # Each package is fetched whole, never resumed, and admitted only on an exact digest match.
-  if ! curl -fsSL --retry 3 --retry-delay 2 -o "${package_path}" "${primary_url}"; then
-    echo "Primary download failed, trying the NVIDIA repository..."
-    if ! curl -fsSL --retry 3 --retry-delay 2 --retry-all-errors -o "${package_path}" "${fallback_url}"; then
-      echo "Failed to download ${package}." >&2
-      exit 1
-    fi
+  if ! curl -fsSL --retry 3 --retry-delay 2 --retry-all-errors -o "${package_path}" "${package_url}"; then
+    echo "Failed to download ${package}." >&2
+    exit 1
   fi
 
   echo "Verifying checksum..."
