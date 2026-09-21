@@ -53,11 +53,11 @@ type Description struct {
 }
 
 const (
-	adamCoddFP32DefaultThreshold float32 = 0.96
-	adamCoddINT8DefaultThreshold float32 = 0.95
-	falconsaiDefaultThreshold    float32 = 0.99
-	freepikDefaultThreshold      float32 = 0.999
-	yahooDefaultThreshold        float32 = 0.80
+	adamCoddFP32DefaultThreshold float32 = 0.718
+	adamCoddINT8DefaultThreshold float32 = 0.760
+	falconsaiDefaultThreshold    float32 = 0.529
+	freepikDefaultThreshold      float32 = 0.992
+	yahooDefaultThreshold        float32 = 0.327
 )
 
 // Models contains the supported NSFW model descriptions.

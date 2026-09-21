@@ -56,7 +56,7 @@ Thresholds:
   NSFW: -1
 ```
 
-With `-1` or an omitted field, the local dedicated ONNX detector uses the selected model's calibrated fallback threshold: AdamCodd FP32 uses `96`, AdamCodd INT8 uses `95`, Falconsai uses `99`, Freepik uses `99.9`, and Yahoo OpenNSFW uses `80`. The labels shortcut and remote detector results use the shared default of `75` because they do not expose the local detector's calibration. An explicit `Thresholds.NSFW` value overrides every path. Automatic selection is a distinct state because a threshold tuned for one model's output distribution does not transfer to another model.
+With `-1` or an omitted field, the local dedicated ONNX detector uses the selected model's calibrated fallback threshold: AdamCodd FP32 uses `71.8`, AdamCodd INT8 uses `76.0`, Falconsai uses `52.9`, Freepik uses `99.2`, and Yahoo OpenNSFW uses `32.7`. The labels shortcut and remote detector results use the shared default of `75` because they do not expose the local detector's calibration. An explicit `Thresholds.NSFW` value overrides every path. Automatic selection is a distinct state because a threshold tuned for one model's output distribution does not transfer to another model.
 
 Custom detectors must declare `Reduction`. `softmax-unsafe` additionally requires `UnsafeClassIndex`, while `neutral-complement` requires `NeutralClassIndex`; zero is accepted only when it is explicitly present. `sigmoid-unsafe` reduces its single output without a class index. `DefaultThreshold` is the custom detector's automatic fallback probability from 0 to 1; when omitted, it falls back to `0.98`.
 
@@ -79,17 +79,17 @@ go test ./internal/ai/nsfw -run '^TestExternalNSFWBenchmark$' -count=1 -v
 
 Run it on both x86-64 and ARM64. The report includes load time, p50/p95 latency, peak RSS, artifact size, unsafe recall, benign false-positive rate, average precision, AUROC, Brier score, expected calibration error, operating points, and newly-safe/newly-unsafe identities when incumbent scores are present. Threshold selection minimizes false positives among points that meet the requested recall; if none meet it, the highest-accuracy point is returned instead. `Example_nsfwBenchmarkCorpus` in `benchmark_external_test.go` documents the manifest shape. The checked-in unit corpus is only a smoke test; selecting the default threshold requires the representative reviewed corpus described in the intelligence specification.
 
-The registered fallbacks were calibrated on the manually reviewed [SIMAS sexual-content subset](https://zenodo.org/records/15423637): 500 unsafe and 500 matched safe images, with each label decided by agreement of at least two of three annotators. The selected rounded points stay within 0.3 percentage points of maximum accuracy on the balanced corpus while preferring recall when accuracy ties. Five-fold stratified validation checks that the operating points are not artifacts of a single split.
+The registered fallbacks were calibrated on 2,500 images: the manually reviewed [SIMAS sexual-content subset](https://zenodo.org/records/15423637) contributes 500 unsafe and 500 matched-safe photographs, while source-labeled adult illustration, hentai, and neutral sets contribute 500 images each. Because the expanded corpus contains 1,500 unsafe and 1,000 safe images, selection maximizes balanced accuracy instead of raw accuracy. The selected millesimal points stay within 0.3 percentage points of maximum balanced accuracy while preferring recall. Five-fold group-stratified validation checks that the operating points are not artifacts of a single split.
 
-| Model | Threshold | Recall | False-Positive Rate | Accuracy | ARM64 p50 |
-|:------|----------:|-------:|--------------------:|---------:|----------:|
-| AdamCodd FP32 | 0.96 | 82.4% | 18.8% | 81.8% | 663 ms |
-| AdamCodd INT8 | 0.95 | 84.0% | 20.8% | 81.6% | 294 ms |
-| Falconsai | 0.99 | 83.6% | 1.8% | 90.9% | 209 ms |
-| Freepik | 0.999 | 87.2% | 1.4% | 92.9% | 1,378 ms |
-| Yahoo OpenNSFW | 0.80 | 88.0% | 2.0% | 93.0% | 22 ms |
+| Model | Threshold | Recall | False-Positive Rate | Balanced Accuracy | ARM64 p50 |
+|:------|----------:|-------:|--------------------:|------------------:|----------:|
+| AdamCodd FP32 | 0.718 | 93.4% | 15.7% | 88.9% | 465 ms |
+| AdamCodd INT8 | 0.760 | 93.0% | 15.4% | 88.8% | 260 ms |
+| Falconsai | 0.529 | 91.8% | **4.4%** | **93.7%** | 156 ms |
+| Freepik | 0.992 | 88.7% | 5.4% | 91.7% | 979 ms |
+| Yahoo OpenNSFW | 0.327 | **93.2%** | 6.8% | 93.2% | **20 ms** |
 
-The latency figures describe the four-core ARM64 calibration host and are comparative rather than universal. At its historical `0.98` threshold, the previous TensorFlow detector reached 25.9% recall and a 1.7% false-positive rate on the 838 JPEG images in the same corpus. Yahoo therefore remains the default: it has the highest rounded operating-point accuracy, stays near the incumbent false-positive rate, and is substantially faster and smaller than the alternatives on the measured host.
+The latency figures describe the four-core ARM64 calibration host and are comparative rather than universal. At its historical `0.98` threshold, the previous TensorFlow detector reached 26.4% recall and a 1.6% false-positive rate. At its recalibrated comparison point of `0.468`, it reaches 94.2% recall with a 34.4% false-positive rate. Yahoo remains the default because it stays within 0.5 percentage points of Falconsai's balanced accuracy while running nearly eight times faster and using a much smaller artifact.
 
 Generate the incumbent TensorFlow scores before running the ONNX comparison:
 

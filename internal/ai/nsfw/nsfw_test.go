@@ -15,17 +15,17 @@ func TestDefaultModel(t *testing.T) {
 
 	require.NotNil(t, description)
 	assert.Equal(t, ModelYahoo, description.Name)
-	assert.InDelta(t, 0.80, description.DefaultThreshold, 1e-6)
+	assert.InDelta(t, 0.327, description.DefaultThreshold, 1e-6)
 }
 
 // TestRegisteredModelThresholds verifies the corpus-calibrated detector thresholds.
 func TestRegisteredModelThresholds(t *testing.T) {
 	expected := map[ModelName]float32{
-		ModelAdamCoddFP32: 0.96,
-		ModelAdamCoddINT8: 0.95,
-		ModelFalconsai:    0.99,
-		ModelFreepik:      0.999,
-		ModelYahoo:        0.80,
+		ModelAdamCoddFP32: 0.718,
+		ModelAdamCoddINT8: 0.760,
+		ModelFalconsai:    0.529,
+		ModelFreepik:      0.992,
+		ModelYahoo:        0.327,
 	}
 
 	for name, threshold := range expected {
