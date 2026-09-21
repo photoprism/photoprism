@@ -101,6 +101,7 @@ var FacesCommands = &cli.Command{
 					Usage:  "regenerate markers using detection engine `NAME` *deprecated*, use --detector",
 					Hidden: true,
 				},
+				YesFlag(),
 			},
 			Action: facesResetAction,
 		},
@@ -421,12 +422,10 @@ func facesResetAction(ctx *cli.Context) error {
 		label = "Remove all faces and matches, including names, keeping the markers?"
 	}
 
-	actionPrompt := promptui.Prompt{
-		Label:     label,
-		IsConfirm: true,
-	}
-
-	if _, err := actionPrompt.Run(); err != nil {
+	if proceed, err := ConfirmAction(ctx.Bool("yes"), label); err != nil {
+		return err
+	} else if !proceed {
+		log.Infof("faces: no faces were removed")
 		return nil
 	}
 
@@ -481,12 +480,10 @@ func facesResetAction(ctx *cli.Context) error {
 
 // facesResetAllAction removes all people, faces, and face markers.
 func facesResetAllAction(ctx *cli.Context) error {
-	actionPrompt := promptui.Prompt{
-		Label:     "Permanently remove all people and faces?",
-		IsConfirm: true,
-	}
-
-	if _, err := actionPrompt.Run(); err != nil {
+	if proceed, err := ConfirmAction(ctx.Bool("yes"), "Permanently remove all people and faces?"); err != nil {
+		return err
+	} else if !proceed {
+		log.Infof("faces: no people or faces were removed")
 		return nil
 	}
 

@@ -1,6 +1,6 @@
 ## Face Detection & Embedding Guidelines
 
-**Last Updated:** September 6, 2026
+**Last Updated:** September 21, 2026
 
 ### Overview
 
@@ -398,7 +398,7 @@ Four read-only commands describe what a library currently holds, so two tuning r
 
 ### Resetting Face Recognition
 
-`photoprism faces reset` has three scopes, and what separates them is how much has to be recomputed afterwards. All three prompt for confirmation.
+`photoprism faces reset` has three scopes, and what separates them is how much has to be recomputed afterwards. All three ask for confirmation, and all three accept `--yes` to answer it from a script.
 
 | Command               | `markers`                                                      | `faces`                 | `subjects`                                 | To recover                         |
 |:----------------------|:---------------------------------------------------------------|:------------------------|:-------------------------------------------|:-----------------------------------|

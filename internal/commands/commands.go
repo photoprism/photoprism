@@ -26,10 +26,13 @@ package commands
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"os"
 	"strings"
 	"syscall"
 
+	"github.com/manifoldco/promptui"
 	"github.com/sevlyar/go-daemon"
 	"github.com/urfave/cli/v2"
 
@@ -46,6 +49,28 @@ var log = event.Log
 // RunNonInteractively checks if command should run non-interactively.
 func RunNonInteractively(confirmed bool) bool {
 	return confirmed || strings.ToLower(os.Getenv(config.EnvVar("cli"))) == NONINTERACTIVE
+}
+
+// ConfirmAction asks the operator to confirm a destructive action and reports whether it may
+// proceed. It returns false with no error when the answer is no, and an error when no answer
+// could be obtained at all - without a terminal there is nothing to report as a decision, and
+// treating that as a refusal would tell a caller the action had been considered and declined.
+func ConfirmAction(confirmed bool, label string) (proceed bool, err error) {
+	if RunNonInteractively(confirmed) {
+		return true, nil
+	}
+
+	prompt := promptui.Prompt{Label: label, IsConfirm: true}
+
+	if _, err = prompt.Run(); err == nil {
+		return true, nil
+	} else if errors.Is(err, promptui.ErrAbort) || errors.Is(err, promptui.ErrInterrupt) {
+		return false, nil
+	}
+
+	// Exit code 2 is the usage error: the command was reached in an environment that cannot
+	// answer it, and the caller fixes that by passing --yes.
+	return false, cli.Exit(fmt.Errorf("could not ask for confirmation (%w), pass --yes to run non-interactively", err), 2)
 }
 
 // PhotoPrism contains the photoprism CLI (sub-)commands.

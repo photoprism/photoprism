@@ -71,3 +71,83 @@ func TestFacesResetFlags(t *testing.T) {
 		assert.Equal(t, 1, exit.ExitCode())
 	})
 }
+
+// TestConfirmAction covers the confirmation helper, and in particular that a prompt which cannot
+// be shown is reported as an error rather than as a declined action.
+func TestConfirmAction(t *testing.T) {
+	// Cleared explicitly: with it set in the environment every case below would take the
+	// non-interactive path, and the subtests that expect a prompt would assert nothing.
+	t.Setenv("PHOTOPRISM_CLI", "")
+
+	t.Run("ConfirmedSkipsThePrompt", func(t *testing.T) {
+		proceed, err := ConfirmAction(true, "Remove everything?")
+
+		assert.NoError(t, err)
+		assert.True(t, proceed)
+	})
+	t.Run("NoTerminalIsAnError", func(t *testing.T) {
+		// The test process has no terminal on stdin, so the prompt cannot run; the helper
+		// reports that as an error rather than as a decision.
+		proceed, err := ConfirmAction(false, "Remove everything?")
+
+		require.Error(t, err)
+		assert.False(t, proceed)
+		assert.Contains(t, err.Error(), "--yes")
+
+		// Usage error: the caller fixes it by passing --yes.
+		var exit cli.ExitCoder
+		require.ErrorAs(t, err, &exit)
+		assert.Equal(t, 2, exit.ExitCode())
+	})
+	t.Run("NonInteractiveEnvSkipsThePrompt", func(t *testing.T) {
+		t.Setenv("PHOTOPRISM_CLI", NONINTERACTIVE)
+
+		proceed, err := ConfirmAction(false, "Remove everything?")
+
+		assert.NoError(t, err)
+		assert.True(t, proceed)
+	})
+}
+
+// TestFacesResetRequiresConfirmation pins that a reset without a confirmation reports a failure
+// rather than exiting successfully without touching anything.
+func TestFacesResetRequiresConfirmation(t *testing.T) {
+	// Cleared explicitly: with it set, these would confirm and run the reset for real
+	// against the shared package test database.
+	t.Setenv("PHOTOPRISM_CLI", "")
+
+	t.Run("Scoped", func(t *testing.T) {
+		err := facesResetAction(newFacesResetContext(t))
+
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "--yes")
+	})
+	t.Run("All", func(t *testing.T) {
+		err := facesResetAction(newFacesResetContext(t, "--all"))
+
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "--yes")
+	})
+	t.Run("Force", func(t *testing.T) {
+		err := facesResetAction(newFacesResetContext(t, "--force"))
+
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "--yes")
+	})
+	t.Run("YesIsRegistered", func(t *testing.T) {
+		ctx := newFacesResetContext(t, "--yes")
+
+		assert.True(t, ctx.Bool("yes"))
+		assert.True(t, newFacesResetContext(t, "-y").Bool("yes"))
+	})
+	t.Run("YesReachesTheConfirmation", func(t *testing.T) {
+		// Parsing the flag is not the same as the action reading it. With --yes the
+		// confirmation is satisfied, so the run proceeds past it and fails later at the
+		// config instead of returning the confirmation error.
+		err := facesResetAction(newFacesResetContext(t, "--yes"))
+
+		if err != nil {
+			assert.NotContains(t, err.Error(), "could not ask for confirmation")
+		}
+	})
+}
