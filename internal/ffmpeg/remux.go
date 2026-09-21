@@ -92,7 +92,7 @@ func RemuxFile(videoFilePath, destFilePath string, opt encode.Options) (err erro
 	log.Infof("ffmpeg: changing container format of %s to %s", clean.Log(videoBaseName), opt.Container)
 
 	// Log exact command for debugging in trace mode.
-	log.Trace(cmd.String())
+	log.Trace(clean.Cmd(cmd))
 
 	// Run the remux command within its budget, terminating the whole process tree if it is
 	// exceeded, so a source the muxer cannot finish does not hold the caller indefinitely.
