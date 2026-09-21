@@ -258,7 +258,7 @@ func (m *MediaFile) ChangeOrientation(val int) (err error) {
 	}...)
 
 	// Log exact command for debugging in trace mode.
-	log.Trace(cmd.String())
+	log.Trace(clean.Cmd(cmd))
 
 	// Run exiftool command.
 	if err = proc.Run(cmd, cnf.ConvertTimeout()); err != nil {
