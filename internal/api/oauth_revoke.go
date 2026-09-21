@@ -21,6 +21,24 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
+// revokeSession resolves the session a revoke request carries in its header, without charging
+// the authentication failure budget. The handler owns that accounting, because a header that does
+// not resolve is not a failed authentication on its own: the request may still prove possession
+// with the token it submits, and then it is not charged at all.
+func revokeSession(authToken string) *entity.Session {
+	if !rnd.IsAuthAny(authToken) {
+		return nil
+	}
+
+	sess, err := entity.FindSession(rnd.SessionID(authToken))
+
+	if err != nil {
+		return nil
+	}
+
+	return sess
+}
+
 // OAuthRevoke revokes an access token or session. A client may only revoke its own tokens.
 //
 //	@Summary	revoke an OAuth2 access token or session
@@ -76,7 +94,7 @@ func OAuthRevoke(router *gin.RouterGroup) {
 		// Get token and session from request header.
 		if authToken = AuthToken(c); authToken == "" {
 			role = acl.RoleNone
-		} else if s = Session(clientIp, authToken); s != nil {
+		} else if s = revokeSession(authToken); s != nil {
 			// Set log role and actor based on the session referenced in request header.
 			sUserUID = s.UserUID
 			if s.IsClient() {
@@ -92,11 +110,10 @@ func OAuthRevoke(router *gin.RouterGroup) {
 		}
 
 		// Count this request against the authentication failure budget at most once, and only
-		// while it has proved possession of nothing. Session() charges the budget itself when a
-		// well-formed header token does not resolve, which is not visible here, so that case
-		// starts out counted; and once a session resolves, a refusal below is an authorization
-		// outcome, which this budget does not meter.
-		charged := authToken != "" && rnd.IsAuthAny(authToken) && s == nil
+		// while it has proved possession of nothing. The header lookup above does not charge,
+		// so every charge on this route is made here; and once a session resolves, a refusal
+		// below is an authorization outcome, which this budget does not meter.
+		charged := false
 		proven := s != nil
 
 		charge := func() {

@@ -453,3 +453,45 @@ func TestOAuthRevoke_ChargesOnlyUnprovenRequests(t *testing.T) {
 		assert.Equal(t, 0, cost)
 	})
 }
+
+// TestOAuthRevoke_StaleHeaderWithValidToken covers the combination where a request carries a
+// header that no longer resolves together with a token it does hold. The token proves
+// possession, so the request is not an authentication failure and costs nothing - a client that
+// attaches a default auth header to every call must not throttle its own revocations.
+func TestOAuthRevoke_StaleHeaderWithValidToken(t *testing.T) {
+	app, router, conf := NewApiTest()
+	conf.SetAuthMode(config.AuthModePasswd)
+	defer conf.SetAuthMode(config.AuthModePublic)
+	dropIsolatedClientSessions(t)
+
+	OAuthToken(router)
+	OAuthRevoke(router)
+	installAuthBudget(t, 3)
+
+	// One more session than the budget has tokens, so a charge per success would throttle.
+	for i := range 4 {
+		sess, err := entity.AddClientSession(isolatedClientID, conf.SessionMaxAge(), "metrics", authn.GrantClientCredentials, nil)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		before := limiter.Auth.IP(header.UnknownIP).Tokens()
+
+		req, _ := http.NewRequest(http.MethodPost, "/api/v1/oauth/revoke", strings.NewReader(url.Values{
+			"token":           {sess.AuthToken()},
+			"token_type_hint": {"access_token"},
+		}.Encode()))
+		req.Header.Set(header.ContentType, header.ContentTypeForm)
+		req.Header.Set(header.XAuthToken, rnd.AuthToken())
+
+		w := httptest.NewRecorder()
+		app.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusOK, w.Code, "revoke %d: %s", i+1, w.Body.String())
+		assert.Equal(t, 0, int(before-limiter.Auth.IP(header.UnknownIP).Tokens()+0.5), "revoke %d must cost nothing", i+1)
+	}
+
+	// The shared budget is untouched, so the routes that enforce it still answer normally.
+	assert.False(t, limiter.Auth.Reject(header.UnknownIP))
+}
