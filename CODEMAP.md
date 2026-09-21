@@ -228,7 +228,7 @@ Conventions & Rules of Thumb
 
 Filesystem Permissions & io/fs Aliasing
 - Use `github.com/photoprism/photoprism/pkg/fs` permission variables when creating files/dirs:
-  - `fs.ModeDir` (0o755 with umask), `fs.ModeFile` (0o644 with umask), `fs.ModeConfigFile` (0o664), `fs.ModeSecretFile` (0o600), `fs.ModeBackupFile` (0o600).
+  - `fs.ModeDir` (0o777 before umask), `fs.ModeFile` (0o666 before umask), `fs.ModeConfigFile` (0o664), `fs.ModeSecretFile` (0o600), `fs.ModeBackupFile` (0o600). These are the modes passed to the create call, which the process umask then filters; do not read them as the resulting permissions.
 - Do not use stdlib `io/fs` mode bits as permission arguments. When importing stdlib `io/fs`, alias it (`iofs`/`gofs`) to avoid `fs.*` collisions with our package.
 - Prefer `filepath.Join` for filesystem paths across platforms; use `path.Join` for URLs only.
 
