@@ -887,7 +887,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	if file.FilePrimary {
 		primaryFile = file
 
-		// Classify images with TensorFlow if the run enables automatic labels.
+		// Classify images if the run enables automatic labels.
 		if o.GenerateLabels {
 			labels = m.GenerateLabels(entity.SrcAuto)
 

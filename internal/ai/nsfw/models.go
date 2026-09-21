@@ -25,7 +25,7 @@ const (
 	ModelFalconsai ModelName = "falconsai_nsfw_image_detection_224"
 	// ModelFreepik selects the exported Freepik detector.
 	ModelFreepik ModelName = "freepik_nsfw_image_detector"
-	// ModelYahoo selects the converted Yahoo OpenNSFW control model.
+	// ModelYahoo selects the converted Yahoo OpenNSFW default model.
 	ModelYahoo ModelName = "yahoo_open_nsfw"
 )
 
@@ -195,7 +195,7 @@ func (m *Description) Installed(modelsPath string) bool {
 		return false
 	}
 
-	return fs.FileExists(m.ONNX.FilePath(filepath.Join(modelsPath, string(m.Name))))
+	return fs.FileExistsNotEmpty(m.ONNX.FilePath(filepath.Join(modelsPath, string(m.Name))))
 }
 
 // NormalizeModelName normalizes a configured model name.

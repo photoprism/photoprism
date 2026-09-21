@@ -138,7 +138,7 @@ func (m *ModelDescription) Installed(modelsPath string) bool {
 		return false
 	}
 
-	return fs.FileExists(m.ONNX.FilePath(filepath.Join(modelsPath, string(m.Name))))
+	return fs.FileExistsNotEmpty(m.ONNX.FilePath(filepath.Join(modelsPath, string(m.Name))))
 }
 
 // imageNetNormalization returns the default ImageNet normalization over 0-255 values.

@@ -52,6 +52,17 @@ func TestOptions(t *testing.T) {
 	})
 }
 
+// TestSetOnnxProvider verifies empty values reset the shared inference provider.
+func TestSetOnnxProvider(t *testing.T) {
+	previous := OnnxProvider
+	t.Cleanup(func() { OnnxProvider = previous })
+
+	SetOnnxProvider(onnx.ProviderCUDA)
+	assert.Equal(t, onnx.ProviderCUDA, OnnxProvider)
+	SetOnnxProvider("")
+	assert.Equal(t, onnx.DefaultProvider, OnnxProvider)
+}
+
 // TestNewConfigClonesModels verifies per-config runtime state is independent.
 func TestNewConfigClonesModels(t *testing.T) {
 	first := NewConfig()
@@ -138,6 +149,15 @@ func TestConfigValues_Load(t *testing.T) {
 	t.Run("MigratesLegacyNSFWThreshold", func(t *testing.T) {
 		configFile := filepath.Join(t.TempDir(), "vision.yml")
 		err := os.WriteFile(configFile, []byte("Models:\n- Type: nsfw\n  Name: nsfw\n  TensorFlow: {}\nThresholds:\n  NSFW: 75\n"), fs.ModeConfigFile)
+		require.NoError(t, err)
+
+		cfg := NewConfig()
+		require.NoError(t, cfg.Load(configFile))
+		assert.Equal(t, NSFWThresholdAuto, cfg.Thresholds.NSFW)
+	})
+	t.Run("MigratesLegacyZeroNSFWThreshold", func(t *testing.T) {
+		configFile := filepath.Join(t.TempDir(), "vision.yml")
+		err := os.WriteFile(configFile, []byte("Models:\n- Type: nsfw\n  Name: nsfw\n  TensorFlow: {}\nThresholds:\n  NSFW: 0\n"), fs.ModeConfigFile)
 		require.NoError(t, err)
 
 		cfg := NewConfig()

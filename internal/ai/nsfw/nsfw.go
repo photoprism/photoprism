@@ -116,6 +116,28 @@ type Result struct {
 	Neutral float32 `yaml:"Neutral,omitempty" json:"Neutral"`
 	Porn    float32 `yaml:"Porn,omitempty" json:"Porn"`
 	Sexy    float32 `yaml:"Sexy,omitempty" json:"Sexy"`
+
+	scoreSet bool
+}
+
+// UnmarshalJSON reads a result and records whether the remote response included a numeric score.
+func (r *Result) UnmarshalJSON(data []byte) error {
+	type resultAlias Result
+
+	var decoded resultAlias
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+
+	var fields map[string]json.RawMessage
+	if err := json.Unmarshal(data, &fields); err != nil {
+		return err
+	}
+
+	*r = Result(decoded)
+	_, r.scoreSet = fields["score"]
+
+	return nil
 }
 
 // Unavailable returns a Result recording that no decision could be made, and why.
@@ -129,7 +151,7 @@ func NewResult(score, threshold float32) Result {
 		return Unavailable(err.Error())
 	}
 
-	result := Result{Score: score, Threshold: threshold}
+	result := Result{Score: score, Threshold: threshold, scoreSet: true}
 
 	if score >= threshold {
 		result.Status = StatusUnsafe
@@ -141,14 +163,16 @@ func NewResult(score, threshold float32) Result {
 }
 
 // Decide returns a copy of r decided against threshold.
-// Current results use Score, while legacy results derive it from class probabilities.
+// Numeric scores take precedence, while legacy results derive them from class probabilities.
 func (r Result) Decide(threshold float32) Result {
 	var score float32
 
-	if !r.IsUnavailable() {
+	if r.scoreSet || r.Score != 0 || r.Threshold != 0 {
 		score = r.Score
 	} else if r.HasScores() {
 		score = r.UnsafeScore()
+	} else if r.IsSafe() || r.IsUnsafe() {
+		return r
 	} else {
 		if r.Status == StatusUnavailable && r.Reason == "" {
 			r.Reason = "no scores"

@@ -15,6 +15,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/ai/onnx"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -200,7 +201,7 @@ func loadLabelBenchmarkCorpus(t *testing.T, fileName string) *labelBenchmarkCorp
 func runLabelBenchmark(t *testing.T, corpus *labelBenchmarkCorpus, name ModelName) (labelBenchmarkModelResult, bool) {
 	t.Helper()
 
-	model := NewRegisteredModel(modelsPath, name, false)
+	model := NewRegisteredModel(modelsPath, name, onnx.DefaultProvider, false)
 	if model == nil {
 		t.Errorf("model %s is not registered", name)
 		return labelBenchmarkModelResult{}, false

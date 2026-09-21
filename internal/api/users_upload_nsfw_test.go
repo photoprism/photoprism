@@ -110,6 +110,26 @@ func TestRemoveScreenedUploads(t *testing.T) {
 	assert.NoFileExists(t, second)
 }
 
+// TestAggregateNSFWStatus verifies unsafe results outrank unavailable results in any order.
+func TestAggregateNSFWStatus(t *testing.T) {
+	t.Run("UnsafeThenUnavailable", func(t *testing.T) {
+		result := aggregateNSFWStatus(nsfw.StatusUnsafe, nsfw.StatusUnavailable)
+		assert.Equal(t, nsfw.StatusUnsafe, result)
+	})
+	t.Run("UnavailableThenUnsafe", func(t *testing.T) {
+		result := aggregateNSFWStatus(nsfw.StatusUnavailable, nsfw.StatusUnsafe)
+		assert.Equal(t, nsfw.StatusUnsafe, result)
+	})
+	t.Run("SafeThenUnavailable", func(t *testing.T) {
+		result := aggregateNSFWStatus(nsfw.StatusSafe, nsfw.StatusUnavailable)
+		assert.Equal(t, nsfw.StatusUnavailable, result)
+	})
+	t.Run("SafeThenSafe", func(t *testing.T) {
+		result := aggregateNSFWStatus(nsfw.StatusSafe, nsfw.StatusSafe)
+		assert.Equal(t, nsfw.StatusSafe, result)
+	})
+}
+
 // TestNsfwUploadError verifies unsafe content and detector failure use distinct responses.
 func TestNsfwUploadError(t *testing.T) {
 	code, message := nsfwUploadError(nsfw.StatusUnsafe)

@@ -9,6 +9,7 @@ import (
 
 	"gopkg.in/yaml.v2"
 
+	"github.com/photoprism/photoprism/internal/ai/onnx"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -20,6 +21,8 @@ var (
 	CachePath = ""
 	// ModelsPath stores the directory containing downloaded vision models.
 	ModelsPath = ""
+	// OnnxProvider selects the execution provider for label and NSFW models.
+	OnnxProvider = onnx.DefaultProvider
 	// DownloadUrl overrides the default model download endpoint when set.
 	DownloadUrl = ""
 	// ServiceApi enables exposing vision APIs via the service layer when true.
@@ -69,6 +72,15 @@ type ConfigValues struct {
 	Thresholds Thresholds `yaml:"Thresholds,omitempty" json:"thresholds"`
 }
 
+// SetOnnxProvider updates the execution provider used by label and NSFW models.
+func SetOnnxProvider(provider onnx.Provider) {
+	if provider == "" {
+		provider = onnx.DefaultProvider
+	}
+
+	OnnxProvider = provider
+}
+
 // NewConfig returns a new computer vision config with defaults.
 func NewConfig() *ConfigValues {
 	cfg := &ConfigValues{
@@ -110,8 +122,10 @@ func (c *ConfigValues) Load(fileName string) error {
 			break
 		}
 	}
-	if legacyDefaultTensorFlow && c.Thresholds.NSFW == DefaultNSFWThreshold {
+	if legacyDefaultTensorFlow && (c.Thresholds.NSFW == 0 || c.Thresholds.NSFW == DefaultNSFWThreshold) {
+		legacyThreshold := c.Thresholds.NSFW
 		c.Thresholds.NSFW = NSFWThresholdAuto
+		log.Warnf("vision: migrated legacy NSFW threshold %d to auto", legacyThreshold)
 	}
 
 	// Replace default placeholders with canonical defaults while respecting

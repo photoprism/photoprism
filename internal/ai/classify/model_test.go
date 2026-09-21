@@ -377,9 +377,16 @@ func TestModelDisabledAndErrors(t *testing.T) {
 	assert.Empty(t, result)
 }
 
+// TestNewRegisteredModelProvider verifies registered classifiers retain their requested provider.
+func TestNewRegisteredModelProvider(t *testing.T) {
+	model := NewRegisteredModel("/models", DefaultModelName(), onnx.ProviderCUDA, false)
+	require.NotNil(t, model)
+	assert.Equal(t, onnx.ProviderCUDA, model.provider)
+}
+
 // BenchmarkModelRun measures inference on the selected bundled classifier.
 func BenchmarkModelRun(b *testing.B) {
-	model := NewRegisteredModel(modelsPath, DefaultModelName(), false)
+	model := NewRegisteredModel(modelsPath, DefaultModelName(), onnx.DefaultProvider, false)
 	if model == nil || model.Init() != nil {
 		b.Skip("bundled ONNX model is unavailable")
 	}
@@ -401,7 +408,7 @@ func BenchmarkModelRun(b *testing.B) {
 func requireRegisteredModel(t *testing.T, name ModelName) *Model {
 	t.Helper()
 
-	model := NewRegisteredModel(modelsPath, name, false)
+	model := NewRegisteredModel(modelsPath, name, onnx.DefaultProvider, false)
 	if model == nil {
 		t.Skipf("classify: model %s is not registered", name)
 	}

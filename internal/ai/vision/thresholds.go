@@ -4,7 +4,7 @@ package vision
 const NSFWThresholdAuto = -1
 
 // Thresholds are expressed as percentages (0-100) and gate label acceptance,
-// topicality, and NSFW handling for the configured vision models.
+// topicality, and NSFW handling, with -1 selecting automatic NSFW calibration.
 type Thresholds struct {
 	Confidence int `yaml:"Confidence,omitempty" json:"confidence,omitempty"`
 	Topicality int `yaml:"Topicality,omitempty" json:"topicality,omitempty"`

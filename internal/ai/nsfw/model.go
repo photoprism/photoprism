@@ -32,6 +32,7 @@ type Model struct {
 	unsafeClassIndex  int
 	neutralClassIndex int
 	defaultThreshold  float32
+	provider          onnx.Provider
 	disabled          bool
 	mean              [onnx.Channels]float32
 	scales            [onnx.Channels]float32
@@ -47,6 +48,7 @@ type Settings struct {
 	UnsafeClassIndex  int
 	NeutralClassIndex int
 	DefaultThreshold  float32
+	Provider          onnx.Provider
 	Disabled          bool
 }
 
@@ -62,11 +64,12 @@ func NewModel(settings Settings) *Model {
 	}
 	return &Model{name: NormalizeModelName(settings.Name), modelPath: settings.ModelPath, meta: info,
 		reduction: settings.Reduction, unsafeClassIndex: settings.UnsafeClassIndex,
-		neutralClassIndex: settings.NeutralClassIndex, defaultThreshold: threshold, disabled: settings.Disabled}
+		neutralClassIndex: settings.NeutralClassIndex, defaultThreshold: threshold,
+		provider: settings.Provider, disabled: settings.Disabled}
 }
 
 // NewRegisteredModel returns a registered detector rooted at modelsPath.
-func NewRegisteredModel(modelsPath string, name ModelName, disabled bool) *Model {
+func NewRegisteredModel(modelsPath string, name ModelName, provider onnx.Provider, disabled bool) *Model {
 	description := FindModel(name)
 	if description == nil {
 		return nil
@@ -74,7 +77,8 @@ func NewRegisteredModel(modelsPath string, name ModelName, disabled bool) *Model
 	modelDir := filepath.Join(modelsPath, string(description.Name))
 	return NewModel(Settings{Name: description.Name, ModelPath: description.ONNX.FilePath(modelDir),
 		Info: description.ONNX, Reduction: description.Reduction, UnsafeClassIndex: description.UnsafeClassIndex,
-		NeutralClassIndex: description.NeutralClassIndex, DefaultThreshold: description.DefaultThreshold, Disabled: disabled})
+		NeutralClassIndex: description.NeutralClassIndex, DefaultThreshold: description.DefaultThreshold,
+		Provider: provider, Disabled: disabled})
 }
 
 // Init initializes the detector unless it is disabled.
@@ -286,24 +290,15 @@ func (m *Model) loadModel() error {
 	if err := onnx.EnsureRuntime(""); err != nil {
 		return fmt.Errorf("nsfw: %w", err)
 	}
-	options, err := onnxruntime.NewSessionOptions()
+	sessionConfig, err := onnx.NewSessionConfig(onnx.SessionSettings{
+		Provider:       m.provider,
+		IntraOpThreads: max(runtime.NumCPU()/2, 1),
+		InterOpThreads: 1,
+	})
 	if err != nil {
 		return fmt.Errorf("nsfw: %w", err)
 	}
-	defer func() {
-		if destroyErr := options.Destroy(); destroyErr != nil {
-			log.Debugf("nsfw: %s (destroy session options)", destroyErr)
-		}
-	}()
-	if err = options.SetIntraOpNumThreads(max(runtime.NumCPU()/2, 1)); err != nil {
-		return fmt.Errorf("nsfw: configure intra-op threads: %w", err)
-	}
-	if err = options.SetInterOpNumThreads(1); err != nil {
-		return fmt.Errorf("nsfw: configure inter-op threads: %w", err)
-	}
-	if err = options.SetGraphOptimizationLevel(onnxruntime.GraphOptimizationLevelEnableAll); err != nil {
-		return fmt.Errorf("nsfw: optimize session graph: %w", err)
-	}
+	defer sessionConfig.Destroy()
 	metadata, err := onnx.Metadata(m.modelPath)
 	if err != nil {
 		return fmt.Errorf("nsfw: %w", err)
@@ -313,7 +308,13 @@ func (m *Model) loadModel() error {
 		return fmt.Errorf("nsfw: %w", err)
 	}
 	m.meta.Merge(metadataInfo)
-	graph, err := onnx.Inspect(m.modelPath, options)
+	var graph *onnx.ModelInfo
+	err = sessionConfig.WithFallback(m.modelPath, func(options *onnxruntime.SessionOptions) error {
+		var inspectErr error
+		graph, inspectErr = onnx.Inspect(m.modelPath, options)
+
+		return inspectErr
+	})
 	if err != nil {
 		return fmt.Errorf("nsfw: %w", err)
 	}
@@ -331,14 +332,14 @@ func (m *Model) loadModel() error {
 	if err = m.validateDescription(); err != nil {
 		return err
 	}
-	session, err := onnxruntime.NewDynamicAdvancedSession(m.modelPath, []string{m.meta.Input.Name}, []string{m.meta.Output.Name}, options)
+	session, err := sessionConfig.NewSession(m.modelPath, []string{m.meta.Input.Name}, []string{m.meta.Output.Name}, m.inputShape())
 	if err != nil {
 		return fmt.Errorf("nsfw: initialize ONNX session: %w", err)
 	}
 	m.mean = m.meta.Input.Normalization.Mean
 	m.scales = m.meta.Input.Normalization.Scales()
 	m.session = session
-	log.Infof("nsfw: loading %s with ONNX Runtime", clean.Log(string(m.name)))
+	log.Infof("nsfw: loading %s on the %s with ONNX Runtime", clean.Log(string(m.name)), sessionConfig.Provider)
 	return nil
 }
 

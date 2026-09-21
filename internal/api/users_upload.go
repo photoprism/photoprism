@@ -225,12 +225,7 @@ func UploadUserFiles(router *gin.RouterGroup) {
 			screeningStatus := nsfw.StatusSafe
 
 			for _, filename := range uploads {
-				status := nsfwUploadStatus(filename)
-				if status == nsfw.StatusUnavailable {
-					screeningStatus = nsfw.StatusUnavailable
-				} else if status == nsfw.StatusUnsafe && screeningStatus == nsfw.StatusSafe {
-					screeningStatus = nsfw.StatusUnsafe
-				}
+				screeningStatus = aggregateNSFWStatus(screeningStatus, nsfwUploadStatus(filename))
 			}
 
 			if screeningStatus != nsfw.StatusSafe {
@@ -417,6 +412,19 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 
 		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgUploadProcessed))
 	})
+}
+
+// aggregateNSFWStatus combines screening decisions with unsafe taking highest priority.
+func aggregateNSFWStatus(current, next nsfw.Status) nsfw.Status {
+	if current == nsfw.StatusUnsafe || next == nsfw.StatusUnsafe {
+		return nsfw.StatusUnsafe
+	}
+
+	if current == nsfw.StatusUnavailable || next == nsfw.StatusUnavailable {
+		return nsfw.StatusUnavailable
+	}
+
+	return nsfw.StatusSafe
 }
 
 // nsfwUploadStatus reports the screening decision for an uploaded file.

@@ -76,8 +76,16 @@ func TestModelArtifacts(t *testing.T) {
 func TestModelDescriptionInstalled(t *testing.T) {
 	description := DefaultModel()
 	require.NotNil(t, description)
-	assert.False(t, description.Installed(t.TempDir()))
-	assert.Equal(t, fs.FileExists(description.ONNX.FilePath(filepath.Join(modelsPath, string(description.Name)))), description.Installed(modelsPath))
+	modelsDir := t.TempDir()
+	modelDir := filepath.Join(modelsDir, string(description.Name))
+	modelPath := description.ONNX.FilePath(modelDir)
+
+	assert.False(t, description.Installed(modelsDir))
+	require.NoError(t, os.MkdirAll(modelDir, fs.ModeDir))
+	require.NoError(t, os.WriteFile(modelPath, nil, fs.ModeFile))
+	assert.False(t, description.Installed(modelsDir))
+	require.NoError(t, os.WriteFile(modelPath, []byte("model"), fs.ModeFile))
+	assert.True(t, description.Installed(modelsDir))
 }
 
 // TestModelDownloadRegistry verifies every selectable candidate has a checksum-pinned installer entry.

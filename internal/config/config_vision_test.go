@@ -129,6 +129,13 @@ func TestConfig_LabelModel(t *testing.T) {
 		require.NotNil(t, hook.LastEntry())
 		assert.Contains(t, hook.LastEntry().Message, "scripts/dist/download-models.sh repvit_m1_0")
 	})
+	t.Run("NamedDisabledCustom", func(t *testing.T) {
+		custom := &vision.Model{Type: vision.ModelTypeLabels, Name: "custom_21k", Path: "custom_21k", Disabled: true}
+		withVisionConfig(t, &vision.ConfigValues{Models: vision.Models{custom}})
+		c := NewConfig(CliTestContext())
+		c.options.LabelModel = "custom_21k"
+		assert.Equal(t, classify.ModelNone, c.EffectiveLabelModel())
+	})
 	t.Run("Cli", func(t *testing.T) {
 		withVisionConfig(t, vision.NewConfig())
 		ctx := CliTestContext()
@@ -214,14 +221,19 @@ func TestConfig_NSFWModel(t *testing.T) {
 		assert.True(t, vision.Config.Models[1].Disabled)
 		assert.Equal(t, nsfw.ModelNone, c.EffectiveNSFWModel())
 	})
-	t.Run("AutoMissingDisables", func(t *testing.T) {
+	t.Run("AutoMissingRemainsEnabled", func(t *testing.T) {
 		withVisionConfig(t, vision.NewConfig())
 		c := NewConfig(CliTestContext())
 		c.options.ModelsPath = t.TempDir()
 		c.options.NsfwModel = "auto"
 		c.applyNSFWModel()
 		assert.Equal(t, nsfw.ModelNone, c.EffectiveNSFWModel())
-		require.True(t, vision.Config.Models[1].Disabled)
+		require.False(t, vision.Config.Models[1].Disabled)
+
+		installVisionTestArtifact(t, c.ModelsPath(), string(nsfw.ModelYahoo), nsfw.FindModel(nsfw.ModelYahoo).ONNX.File)
+		c.applyNSFWModel()
+		assert.Equal(t, nsfw.ModelYahoo, c.EffectiveNSFWModel())
+		require.False(t, vision.Config.Models[1].Disabled)
 	})
 	t.Run("Named", func(t *testing.T) {
 		withVisionConfig(t, vision.NewConfig())
@@ -234,6 +246,13 @@ func TestConfig_NSFWModel(t *testing.T) {
 		assert.Contains(t, c.NsfwModelPath(), string(nsfw.ModelYahoo))
 		require.NotNil(t, hook.LastEntry())
 		assert.Contains(t, hook.LastEntry().Message, "scripts/dist/download-models.sh yahoo_open_nsfw")
+	})
+	t.Run("NamedDisabledCustom", func(t *testing.T) {
+		custom := &vision.Model{Type: vision.ModelTypeNsfw, Name: "custom_nsfw", Path: "custom/model.onnx", Disabled: true}
+		withVisionConfig(t, &vision.ConfigValues{Models: vision.Models{custom}})
+		c := NewConfig(CliTestContext())
+		c.options.NsfwModel = "custom_nsfw"
+		assert.Equal(t, nsfw.ModelNone, c.EffectiveNSFWModel())
 	})
 	t.Run("None", func(t *testing.T) {
 		withVisionConfig(t, vision.NewConfig())
@@ -285,12 +304,12 @@ func TestConfig_installedVisionModels(t *testing.T) {
 	})
 }
 
-// installVisionTestArtifact creates an empty file for installed-model selection tests.
+// installVisionTestArtifact creates a non-empty file for installed-model selection tests.
 func installVisionTestArtifact(t *testing.T, modelsPath, name, fileName string) {
 	t.Helper()
 	dir := filepath.Join(modelsPath, name)
 	require.NoError(t, os.MkdirAll(dir, fs.ModeDir))
-	require.NoError(t, os.WriteFile(filepath.Join(dir, fileName), nil, fs.ModeFile))
+	require.NoError(t, os.WriteFile(filepath.Join(dir, fileName), []byte("model"), fs.ModeFile))
 }
 
 // TestConfig_reportUnscreenedUploads verifies the missing-detector warning conditions.
@@ -448,6 +467,17 @@ func TestConfig_OnnxProvider(t *testing.T) {
 		var c *Config
 		assert.Equal(t, onnx.DefaultProvider, c.OnnxProvider())
 	})
+}
+
+// TestConfig_PropagateOnnxProvider verifies label and NSFW factories receive the configured provider.
+func TestConfig_PropagateOnnxProvider(t *testing.T) {
+	previous := vision.OnnxProvider
+	t.Cleanup(func() { vision.OnnxProvider = previous })
+
+	c := NewConfig(CliTestContext())
+	c.options.OnnxProvider = string(onnx.ProviderCUDA)
+	c.Propagate()
+	assert.Equal(t, onnx.ProviderCUDA, vision.OnnxProvider)
 }
 
 // captureConfigLog redirects the package logger for the duration of the test and returns its

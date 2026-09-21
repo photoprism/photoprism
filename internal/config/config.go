@@ -437,6 +437,7 @@ func (c *Config) Propagate() {
 	// Configure computer vision package.
 	vision.SetCachePath(c.CachePath())
 	vision.SetModelsPath(c.ModelsPath())
+	vision.SetOnnxProvider(c.OnnxProvider())
 	vision.ServiceApi = c.VisionApi()
 	vision.ServiceUri = c.VisionUri()
 	vision.ServiceKey = c.VisionKey()

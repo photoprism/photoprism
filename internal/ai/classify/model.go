@@ -34,6 +34,7 @@ type Model struct {
 	labels         []string
 	disabled       bool
 	canonicalOrder bool
+	provider       onnx.Provider
 	meta           *onnx.ModelInfo
 	mean           [onnx.Channels]float32
 	scales         [onnx.Channels]float32
@@ -48,6 +49,7 @@ type Settings struct {
 	Labels         []string
 	Info           *onnx.ModelInfo
 	CanonicalOrder bool
+	Provider       onnx.Provider
 	Disabled       bool
 }
 
@@ -66,12 +68,13 @@ func NewModel(settings Settings) *Model {
 		labels:         append([]string(nil), settings.Labels...),
 		meta:           info,
 		canonicalOrder: settings.CanonicalOrder,
+		provider:       settings.Provider,
 		disabled:       settings.Disabled,
 	}
 }
 
 // NewRegisteredModel returns the registered classifier with the specified name.
-func NewRegisteredModel(modelsPath string, name ModelName, disabled bool) *Model {
+func NewRegisteredModel(modelsPath string, name ModelName, provider onnx.Provider, disabled bool) *Model {
 	description := FindModel(name)
 
 	if description == nil {
@@ -86,6 +89,7 @@ func NewRegisteredModel(modelsPath string, name ModelName, disabled bool) *Model
 		Labels:         imageNetLabelNames,
 		Info:           description.ONNX,
 		CanonicalOrder: description.CanonicalOrder,
+		Provider:       provider,
 		Disabled:       disabled,
 	})
 }
@@ -289,29 +293,15 @@ func (m *Model) loadModel() error {
 		return fmt.Errorf("classify: %w", err)
 	}
 
-	sessionOptions, err := onnxruntime.NewSessionOptions()
+	sessionConfig, err := onnx.NewSessionConfig(onnx.SessionSettings{
+		Provider:       m.provider,
+		IntraOpThreads: max(runtime.NumCPU()/2, 1),
+		InterOpThreads: 1,
+	})
 	if err != nil {
 		return fmt.Errorf("classify: %w", err)
 	}
-
-	defer func() {
-		if destroyErr := sessionOptions.Destroy(); destroyErr != nil {
-			log.Debugf("classify: %s (destroy session options)", destroyErr)
-		}
-	}()
-
-	threads := max(runtime.NumCPU()/2, 1)
-	if err = sessionOptions.SetIntraOpNumThreads(threads); err != nil {
-		return fmt.Errorf("classify: configure intra-op threads: %w", err)
-	}
-
-	if err = sessionOptions.SetInterOpNumThreads(1); err != nil {
-		return fmt.Errorf("classify: configure inter-op threads: %w", err)
-	}
-
-	if err = sessionOptions.SetGraphOptimizationLevel(onnxruntime.GraphOptimizationLevelEnableAll); err != nil {
-		return fmt.Errorf("classify: optimize session graph: %w", err)
-	}
+	defer sessionConfig.Destroy()
 
 	metadata, err := onnx.Metadata(m.modelPath)
 	if err != nil {
@@ -325,7 +315,13 @@ func (m *Model) loadModel() error {
 
 	m.meta.Merge(metadataInfo)
 
-	graph, err := onnx.Inspect(m.modelPath, sessionOptions)
+	var graph *onnx.ModelInfo
+	err = sessionConfig.WithFallback(m.modelPath, func(options *onnxruntime.SessionOptions) error {
+		var inspectErr error
+		graph, inspectErr = onnx.Inspect(m.modelPath, options)
+
+		return inspectErr
+	})
 	if err != nil {
 		return fmt.Errorf("classify: %w", err)
 	}
@@ -354,11 +350,11 @@ func (m *Model) loadModel() error {
 		return err
 	}
 
-	session, err := onnxruntime.NewDynamicAdvancedSession(
+	session, err := sessionConfig.NewSession(
 		m.modelPath,
 		[]string{m.meta.Input.Name},
 		[]string{m.meta.Output.Name},
-		sessionOptions,
+		m.inputShape(),
 	)
 	if err != nil {
 		return fmt.Errorf("classify: initialize ONNX session: %w", err)
@@ -368,7 +364,8 @@ func (m *Model) loadModel() error {
 	m.scales = m.meta.Input.Normalization.Scales()
 	m.session = session
 
-	log.Infof("classify: loading %s with ONNX Runtime from %s", clean.Log(string(m.name)), clean.Log(onnx.RuntimeLibraryPath()))
+	log.Infof("classify: loading %s on the %s with ONNX Runtime from %s",
+		clean.Log(string(m.name)), sessionConfig.Provider, clean.Log(onnx.RuntimeLibraryPath()))
 
 	return nil
 }

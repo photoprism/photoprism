@@ -167,9 +167,10 @@ func TestRegisteredModels(t *testing.T) {
 			assert.Len(t, description.ONNX.SHA256, 64)
 			assert.NotEmpty(t, description.ONNX.Source)
 			assert.NotEmpty(t, description.ONNX.License)
-			model := NewRegisteredModel("/models", name, false)
+			model := NewRegisteredModel("/models", name, onnx.ProviderCUDA, false)
 			require.NotNil(t, model)
 			assert.Equal(t, filepath.Join("/models", string(name), description.ONNX.File), model.modelPath)
+			assert.Equal(t, onnx.ProviderCUDA, model.provider)
 			require.NoError(t, model.validateDescription())
 		})
 	}
@@ -179,13 +180,21 @@ func TestRegisteredModels(t *testing.T) {
 func TestDescriptionInstalled(t *testing.T) {
 	description := FindModel(DefaultModelName())
 	require.NotNil(t, description)
-	assert.False(t, description.Installed(t.TempDir()))
-	assert.Equal(t, fs.FileExists(description.ONNX.FilePath(filepath.Join(testModelsPath, string(description.Name)))), description.Installed(testModelsPath))
+	modelsDir := t.TempDir()
+	modelDir := filepath.Join(modelsDir, string(description.Name))
+	modelPath := description.ONNX.FilePath(modelDir)
+
+	assert.False(t, description.Installed(modelsDir))
+	require.NoError(t, os.MkdirAll(modelDir, fs.ModeDir))
+	require.NoError(t, os.WriteFile(modelPath, nil, fs.ModeFile))
+	assert.False(t, description.Installed(modelsDir))
+	require.NoError(t, os.WriteFile(modelPath, []byte("model"), fs.ModeFile))
+	assert.True(t, description.Installed(modelsDir))
 }
 
 // TestRegisteredModelInference verifies the bundled graph accepts JPEG and PNG input.
 func TestRegisteredModelInference(t *testing.T) {
-	model := NewRegisteredModel(testModelsPath, DefaultModelName(), false)
+	model := NewRegisteredModel(testModelsPath, DefaultModelName(), onnx.DefaultProvider, false)
 	if model == nil || !fs.FileExists(model.modelPath) {
 		t.Skip("nsfw: default ONNX model is not installed")
 	}
@@ -207,7 +216,7 @@ func TestRegisteredModelInference(t *testing.T) {
 
 // TestRegisteredModelConcurrentInference verifies shared-session results stay deterministic.
 func TestRegisteredModelConcurrentInference(t *testing.T) {
-	model := NewRegisteredModel(testModelsPath, DefaultModelName(), false)
+	model := NewRegisteredModel(testModelsPath, DefaultModelName(), onnx.DefaultProvider, false)
 	if model == nil || !fs.FileExists(model.modelPath) {
 		t.Skip("nsfw: default ONNX model is not installed")
 	}

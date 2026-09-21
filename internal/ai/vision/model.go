@@ -689,7 +689,7 @@ func (m *Model) ClassifyModel() *classify.Model {
 		return nil
 	case classify.FindModel(classify.ModelName(m.Name)) != nil:
 		// Load and initialize a registered ONNX image classification model.
-		if model := classify.NewRegisteredModel(GetModelsPath(), classify.ModelName(m.Name), m.Disabled); model == nil {
+		if model := classify.NewRegisteredModel(GetModelsPath(), classify.ModelName(m.Name), OnnxProvider, m.Disabled); model == nil {
 			return nil
 		} else if err := model.Init(); err != nil {
 			m.Disabled = true
@@ -746,6 +746,7 @@ func (m *Model) ClassifyModel() *classify.Model {
 			LabelPath:      labelFile,
 			Info:           m.ONNX,
 			CanonicalOrder: m.CanonicalOrder,
+			Provider:       OnnxProvider,
 			Disabled:       m.Disabled,
 		}); model == nil {
 			return nil
@@ -892,7 +893,7 @@ func (m *Model) NsfwModel() *nsfw.Model {
 		return nil
 	case nsfw.FindModel(nsfw.ModelName(m.Name)) != nil:
 		// Load and initialize a registered ONNX detector.
-		model := nsfw.NewRegisteredModel(GetModelsPath(), nsfw.ModelName(m.Name), m.Disabled)
+		model := nsfw.NewRegisteredModel(GetModelsPath(), nsfw.ModelName(m.Name), OnnxProvider, m.Disabled)
 
 		if err := model.Init(); err != nil {
 			m.nsfwErr = err
@@ -942,7 +943,8 @@ func (m *Model) NsfwModel() *nsfw.Model {
 		// Try to load a custom ONNX model based on the configuration values.
 		model := nsfw.NewModel(nsfw.Settings{Name: nsfw.ModelName(m.Name), ModelPath: modelPath,
 			Info: m.ONNX, Reduction: m.Reduction, UnsafeClassIndex: unsafeClassIndex,
-			NeutralClassIndex: neutralClassIndex, DefaultThreshold: m.DefaultThreshold, Disabled: m.Disabled})
+			NeutralClassIndex: neutralClassIndex, DefaultThreshold: m.DefaultThreshold,
+			Provider: OnnxProvider, Disabled: m.Disabled})
 
 		if err := model.Init(); err != nil {
 			m.nsfwErr = err

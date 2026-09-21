@@ -123,6 +123,23 @@ func TestResultDecide(t *testing.T) {
 		assert.False(t, result.IsSafe())
 		assert.NotEmpty(t, result.Reason)
 	})
+	t.Run("ExplicitUnsafeWithoutScore", func(t *testing.T) {
+		var result Result
+		require.NoError(t, json.Unmarshal([]byte(`{"status":"unsafe"}`), &result))
+		assert.True(t, result.Decide(0.75).IsUnsafe())
+	})
+	t.Run("ExplicitUnsafeUsesClassScores", func(t *testing.T) {
+		var result Result
+		require.NoError(t, json.Unmarshal([]byte(`{"status":"unsafe","Porn":0.99}`), &result))
+		decided := result.Decide(0.75)
+		assert.True(t, decided.IsUnsafe())
+		assert.InDelta(t, 0.99, decided.Score, 1e-6)
+	})
+	t.Run("ExplicitZeroScoreIsReevaluated", func(t *testing.T) {
+		var result Result
+		require.NoError(t, json.Unmarshal([]byte(`{"status":"unsafe","score":0}`), &result))
+		assert.True(t, result.Decide(0.75).IsSafe())
+	})
 }
 
 // TestResultUnsafeScore verifies that only unsafe classes contribute to the reduced score.
@@ -221,6 +238,19 @@ func TestUnmarshalLegacyResponse(t *testing.T) {
 	assert.True(t, result.IsUnavailable())
 	assert.True(t, result.HasScores())
 	assert.True(t, result.Decide(0.75).IsUnsafe())
+}
+
+// TestResult_UnmarshalJSON verifies score presence remains distinct from an omitted score.
+func TestResult_UnmarshalJSON(t *testing.T) {
+	var withScore Result
+	require.NoError(t, json.Unmarshal([]byte(`{"status":"unsafe","score":0}`), &withScore))
+	assert.True(t, withScore.scoreSet)
+	assert.True(t, withScore.Decide(0.75).IsSafe())
+
+	var withoutScore Result
+	require.NoError(t, json.Unmarshal([]byte(`{"status":"unsafe"}`), &withoutScore))
+	assert.False(t, withoutScore.scoreSet)
+	assert.True(t, withoutScore.Decide(0.75).IsUnsafe())
 }
 
 // TestValidateScore verifies that only finite probabilities from 0 to 1 are accepted.

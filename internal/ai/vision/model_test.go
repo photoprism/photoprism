@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"os"
 	"path/filepath"
+	"reflect"
 	"sync"
 	"testing"
 
@@ -13,6 +14,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/ai/onnx"
 	"github.com/photoprism/photoprism/internal/ai/tensorflow"
 	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
@@ -20,6 +22,42 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/http/scheme"
 )
+
+// TestModelCloneExportedFields verifies every exported configuration field is copied.
+func TestModelCloneExportedFields(t *testing.T) {
+	unsafeIndex, neutralIndex := 1, 2
+	source := &Model{
+		Type: ModelTypeNsfw, Default: true, Model: "model", Name: "name", Version: "version",
+		Engine: EngineONNX, Run: RunAlways, System: "system", Prompt: "prompt", Format: "json",
+		Normalize: NormalizePhrase, Schema: "schema", SchemaFile: "schema.json", Resolution: 224,
+		TensorFlow: &tensorflow.ModelInfo{TFVersion: "2"}, ONNX: &onnx.ModelInfo{File: "model.onnx"},
+		LabelFile: "labels.txt", CanonicalOrder: true, Reduction: nsfw.ReductionSoftmaxUnsafe,
+		UnsafeClassIndex: &unsafeIndex, NeutralClassIndex: &neutralIndex, DefaultThreshold: 0.9,
+		Options: &ModelOptions{Temperature: 0.1}, Service: Service{Uri: "https://example.com"},
+		Path: "models/name", Disabled: true,
+	}
+	clone := source.Clone()
+	require.NotNil(t, clone)
+
+	sourceValue := reflect.ValueOf(source).Elem()
+	cloneValue := reflect.ValueOf(clone).Elem()
+	modelType := sourceValue.Type()
+	for i := range modelType.NumField() {
+		field := modelType.Field(i)
+		if !field.IsExported() {
+			continue
+		}
+
+		assert.False(t, sourceValue.Field(i).IsZero(), "fixture must populate Model.%s", field.Name)
+		assert.Equal(t, sourceValue.Field(i).Interface(), cloneValue.Field(i).Interface(), field.Name)
+	}
+
+	require.NotSame(t, source.UnsafeClassIndex, clone.UnsafeClassIndex)
+	require.NotSame(t, source.NeutralClassIndex, clone.NeutralClassIndex)
+	require.NotSame(t, source.TensorFlow, clone.TensorFlow)
+	require.NotSame(t, source.ONNX, clone.ONNX)
+	require.NotSame(t, source.Options, clone.Options)
+}
 
 func TestReadSchemaFile(t *testing.T) {
 	t.Run("ReadsRegularFile", func(t *testing.T) {

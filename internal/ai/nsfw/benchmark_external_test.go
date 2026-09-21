@@ -15,6 +15,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/ai/onnx"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -169,7 +170,7 @@ func runNSFWBenchmark(t *testing.T, corpusPath string, corpus nsfwBenchmarkCorpu
 	t.Helper()
 	description := FindModel(name)
 	require.NotNil(t, description)
-	model := NewRegisteredModel(testModelsPath, name, false)
+	model := NewRegisteredModel(testModelsPath, name, onnx.DefaultProvider, false)
 	require.NotNil(t, model)
 	started := time.Now()
 	require.NoError(t, model.Init())

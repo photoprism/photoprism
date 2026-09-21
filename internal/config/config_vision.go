@@ -64,15 +64,19 @@ func (c *Config) NSFWModelSetting() nsfw.ModelName {
 // EffectiveNSFWModel returns the local detector selected for this instance.
 func (c *Config) EffectiveNSFWModel() nsfw.ModelName {
 	setting := c.NSFWModelSetting()
+	if vision.Config != nil {
+		if model := configuredVisionModel(vision.Config, vision.ModelTypeNsfw); model != nil && model.Disabled {
+			return nsfw.ModelNone
+		}
+	}
+
 	if setting != nsfw.ModelAuto {
 		return setting
 	}
 
 	if vision.Config != nil {
 		if model := configuredVisionModel(vision.Config, vision.ModelTypeNsfw); model != nil {
-			if model.Disabled {
-				return nsfw.ModelNone
-			} else if !model.Default {
+			if !model.Default {
 				return nsfw.NormalizeModelName(nsfw.ModelName(model.Name))
 			}
 		}
@@ -115,6 +119,14 @@ func (c *Config) applyNSFWModel() {
 	}
 
 	if selected == nsfw.ModelNone {
+		if setting == nsfw.ModelAuto {
+			if current == nil {
+				vision.Config.SetModel(vision.NewNsfwModel(nsfw.DefaultModelName()))
+			}
+
+			return
+		}
+
 		if current == nil {
 			current = vision.NewNsfwModel(nsfw.DefaultModelName())
 		} else {
@@ -169,15 +181,19 @@ func (c *Config) LabelModelSetting() classify.ModelName {
 // EffectiveLabelModel returns the local classifier selected for this instance.
 func (c *Config) EffectiveLabelModel() classify.ModelName {
 	setting := c.LabelModelSetting()
+	if vision.Config != nil {
+		if model := configuredVisionModel(vision.Config, vision.ModelTypeLabels); model != nil && model.Disabled {
+			return classify.ModelNone
+		}
+	}
+
 	if setting != classify.ModelAuto {
 		return setting
 	}
 
 	if vision.Config != nil {
 		if model := configuredVisionModel(vision.Config, vision.ModelTypeLabels); model != nil {
-			if model.Disabled {
-				return classify.ModelNone
-			} else if !model.Default {
+			if !model.Default {
 				return classify.NormalizeModelName(classify.ModelName(model.Name))
 			}
 		}
