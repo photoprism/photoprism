@@ -200,6 +200,11 @@ class CudaInstallTest(unittest.TestCase):
             result = self.run_installer()
             self.assertEqual(0, result.returncode, result.stdout + result.stderr)
             self.assertEqual("original libcudart", original.read())
+        self.assert_installed()
+        self.assertEqual("retained old version", (self.output / "libcudart.so.0").read_text())
+
+    def assert_installed(self):
+        """Require complete libraries, normalized modes, and preserved unrelated files."""
         for name in LIBRARIES:
             path = self.output / (name + ".so.1")
             self.assertEqual("new " + name, path.read_text())
@@ -207,8 +212,21 @@ class CudaInstallTest(unittest.TestCase):
             self.assertEqual(path.name, os.readlink(self.output / (name + ".so")))
         self.assertEqual([], list(self.output.glob(".cuda-*")))
         self.assertEqual("leave this alone", self.note.read_text())
-        self.assertEqual("retained old version", (self.output / "libcudart.so.0").read_text())
         self.assertTrue((self.base / "ldconfig.called").exists())
+
+    def test_first_install_success(self):
+        """A first installation publishes the complete set without a prior installation."""
+        result = self.run_installer()
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+        self.assert_installed()
+
+    def test_private_prefix_ldconfig_failure(self):
+        """A private-prefix cache refresh failure preserves the committed installation."""
+        self.populate()
+        result = self.run_installer("ldconfig")
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+        self.assert_installed()
+        self.assertEqual("retained old version", (self.output / "libcudart.so.0").read_text())
 
     def test_preparation_failures(self):
         """Copy, snapshot, and mode-setting failures leave a prior installation untouched."""
