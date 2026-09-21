@@ -122,11 +122,18 @@ Test:
 
 Format, Lint & Docs:
   fmt                      Format the JS, Go, and Swagger sources
-  lint                     Lint the JS and Go sources
+  lint                     Run JS, Go, shell, and repository checks
   swag                     Regenerate the Swagger API documentation
   format-tables            Format the Markdown tables in README and CODEMAP files
   notice                   Regenerate the NOTICE files for all dependencies
   audit                    Check the dependencies for known vulnerabilities
+
+Checks (also run by lint):
+  check-api-request-limits  Check request-body limit coverage in API handlers
+  check-audit-events        Check audit-event formatting against its baseline
+  check-libheif-install     Check libheif installer selection and version handling
+  check-make-help           Check that advertised Makefile targets exist
+  check-scripts-copy-mode   Check container script ownership and modes
 
 Translations:
   gettext-extract          Extract the translation strings into the catalogs
@@ -1282,19 +1289,19 @@ lint-sh:
 	shellcheck scripts/dist/*.sh
 check-api-request-limits:
 	$(info Checking API request-body limits...)
-	bash ./scripts/check-api-request-limits.sh
+	bash ./scripts/lint/check-api-request-limits.sh
 check-audit-events:
 	$(info Checking how event calls build their messages...)
 	go run ./scripts/tools/check-audit-events
 check-libheif-install:
 	$(info Checking how the libheif installer selects a packaging path...)
-	bash ./scripts/check-libheif-install.sh
+	bash ./scripts/lint/check-libheif-install.sh
 check-make-help:
 	$(info Checking that "make help" only advertises existing targets...)
-	bash ./scripts/check-make-help.sh
+	bash ./scripts/lint/check-make-help.sh
 check-scripts-copy-mode:
 	$(info Checking that the dist scripts are copied with an explicit owner and mode...)
-	bash ./scripts/check-scripts-copy-mode.sh
+	bash ./scripts/lint/check-scripts-copy-mode.sh
 fmt-js:
 	(cd frontend &&	npm run fmt)
 fmt-go:

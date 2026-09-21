@@ -6,7 +6,7 @@
 # case therefore asserts the artifact the script requested and the decision it announced, never
 # the branch it took.
 #
-# Usage: scripts/check-libheif-install.sh
+# Usage: scripts/lint/check-libheif-install.sh
 #
 # Each case runs the real script as root in a user namespace, with the network stubbed, the
 # distribution codename pinned, the target architecture fixed and a private /usr/local, so
@@ -14,7 +14,7 @@
 
 set -euo pipefail
 
-cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.."
+cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.."
 
 # Every run_case call below, so that deleting one is a failure rather than a smaller report.
 EXPECTED_CASES=42
