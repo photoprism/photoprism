@@ -50,6 +50,19 @@ func TestNewConvertCmd(t *testing.T) {
 	})
 }
 
+func TestConvertCmd_String(t *testing.T) {
+	t.Run("Nil", func(t *testing.T) {
+		assert.Equal(t, "", (&ConvertCmd{}).String())
+	})
+	t.Run("Uri", func(t *testing.T) {
+		// Rendering goes through the shared helper, so a URI argument comes back in its log form.
+		result := NewConvertCmd(
+			exec.Command("/usr/bin/exiftool", "-Comment=https://user:pass@example.com/source.jpg", "file.jpg"),
+		)
+		assert.Equal(t, "/usr/bin/exiftool -Comment=https://user:***@example.com/source.jpg file.jpg", result.String())
+	})
+}
+
 func TestConvertCmd_StderrRejected(t *testing.T) {
 	cmd := NewConvertCmd(exec.Command("rawtherapee-cli", "-c", "file.cr3")).WithStderrRejection("Cannot use camera white balance")
 	t.Run("Match", func(t *testing.T) {

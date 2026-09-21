@@ -19,7 +19,8 @@ type ConvertCmd struct {
 	Projection   projection.Type
 }
 
-// String returns the conversion command as string e.g. for logging.
+// String returns the conversion command as string e.g. for logging, so a caller needs no
+// rendering of its own.
 func (c *ConvertCmd) String() string {
 	return clean.Cmd(c.Cmd)
 }
