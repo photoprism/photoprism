@@ -26,6 +26,7 @@ var ClusterNodesRemoveCommand = &cli.Command{
 		DryRunFlag("preview deletion without modifying the registry or database"),
 		&cli.BoolFlag{Name: "drop-db", Aliases: []string{"d"}, Usage: "drop the node’s provisioned database and user after registry deletion"},
 		&cli.BoolFlag{Name: "all-ids", Usage: "delete all records that share the same UUID (admin cleanup)"},
+		&cli.BoolFlag{Name: "purge", Usage: "remove the records permanently and release the node’s UUID for reuse"},
 		YesFlag(),
 	},
 	Hidden: true, // Required for cluster-management only.
@@ -54,12 +55,22 @@ func clusterNodesRemoveAction(ctx *cli.Context) error {
 		// Resolve UUID to delete: accept uuid → clientId → name.
 		var node *reg.Node
 
+		purge := ctx.Bool("purge")
+
 		if n, findErr := r.FindByNodeUUID(key); findErr == nil && n != nil {
 			node = n
 		} else if n, findErr = r.FindByClientID(key); findErr == nil && n != nil {
 			node = n
 		} else if name := clean.DNSLabel(key); name != "" {
 			if n, findErr = r.FindByName(name); findErr == nil && n != nil {
+				node = n
+			}
+		}
+
+		// A node that was already deleted keeps its UUID reserved and resolves nowhere else,
+		// so a purge is the one operation that still has to reach it.
+		if node == nil && purge {
+			if n, findErr := r.FindRetiredByNodeUUID(key); findErr == nil && n != nil {
 				node = n
 			}
 		}
@@ -78,10 +89,18 @@ func clusterNodesRemoveAction(ctx *cli.Context) error {
 			dbUser = node.Database.User
 		}
 
+		// Database and user names are derived from the UUID, so a release requires that the
+		// schema go with it.
+		if purge && !dropDB && node.Database != nil && (node.Database.Name != "" || node.Database.User != "") {
+			return cli.Exit(fmt.Errorf("node %s has a provisioned database, so --purge requires --drop-db to release its uuid", clean.Log(uuid)), 2)
+		}
+
 		if ctx.Bool("dry-run") {
 			log.Infof("dry-run: would delete node %s (uuid=%s, clientId=%s)", clean.LogQuote(node.Name), clean.Log(uuid), clean.Log(node.ClientID))
 
-			if ctx.Bool("all-ids") {
+			if purge {
+				log.Infof("dry-run: would permanently remove every entry for uuid %s and release it for reuse", clean.Log(uuid))
+			} else if ctx.Bool("all-ids") {
 				log.Infof("dry-run: would remove all registry entries that share uuid %s", clean.Log(uuid))
 			}
 
@@ -97,14 +116,26 @@ func clusterNodesRemoveAction(ctx *cli.Context) error {
 		}
 
 		if !RunNonInteractively(ctx.Bool("yes")) {
-			prompt := promptui.Prompt{Label: fmt.Sprintf("Delete node %s?", clean.Log(uuid)), IsConfirm: true}
+			action := "Delete"
+
+			if purge {
+				action = "Permanently delete"
+			}
+
+			prompt := promptui.Prompt{Label: fmt.Sprintf("%s node %s?", action, clean.Log(uuid)), IsConfirm: true}
 			if _, err = prompt.Run(); err != nil {
 				log.Infof("node %s was not deleted", clean.Log(uuid))
 				return nil
 			}
 		}
 
-		if ctx.Bool("all-ids") {
+		// A purge always covers every record for the UUID, because leaving one behind would
+		// keep the identifier reserved and defeat the point of releasing it.
+		if purge {
+			if err = r.PurgeAllByUUID(uuid); err != nil {
+				return cli.Exit(err, 1)
+			}
+		} else if ctx.Bool("all-ids") {
 			if err = r.DeleteAllByUUID(uuid); err != nil {
 				return cli.Exit(err, 1)
 			}
@@ -119,11 +150,17 @@ func clusterNodesRemoveAction(ctx *cli.Context) error {
 			status.Deleted,
 		), clean.Log(uuid))
 
+		deletion := "deleted"
+
+		if purge {
+			deletion = "permanently deleted"
+		}
+
 		loggedDeletion := false
 
 		if dropDB {
 			if dbName == "" && dbUser == "" {
-				log.Infof("node %s has been deleted (no database credentials recorded)", clean.Log(uuid))
+				log.Infof("node %s has been %s (no database credentials recorded)", clean.Log(uuid), deletion)
 				loggedDeletion = true
 			} else {
 				dropCtx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
@@ -141,7 +178,11 @@ func clusterNodesRemoveAction(ctx *cli.Context) error {
 		}
 
 		if !loggedDeletion {
-			log.Infof("node %s has been deleted", clean.Log(uuid))
+			log.Infof("node %s has been %s", clean.Log(uuid), deletion)
+		}
+
+		if purge {
+			log.Infof("uuid %s is available for reuse; drop its database and cluster grants first if it had any", clean.Log(uuid))
 		}
 
 		return nil

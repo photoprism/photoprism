@@ -7,10 +7,15 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-// Clients finds clients and returns them.
-func Clients(limit, offset int, sortOrder, search string) (result entity.Clients, err error) {
+// Clients finds clients and returns them. When deleted is true it reports the retired
+// records instead of the current ones, so an operator can see what a deletion left behind.
+func Clients(limit, offset int, sortOrder, search string, deleted bool) (result entity.Clients, err error) {
 	result = entity.Clients{}
 	stmt := Db()
+
+	if deleted {
+		stmt = UnscopedDb().Where("deleted_at IS NOT NULL")
+	}
 
 	search = strings.TrimSpace(search)
 

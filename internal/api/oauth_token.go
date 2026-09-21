@@ -155,7 +155,7 @@ func OAuthToken(router *gin.RouterGroup) {
 				event.AuditWarn([]string{clientIp, "oauth2", actor, action, authn.ErrInvalidClientID.Error()})
 				AbortInvalidCredentials(c)
 				return
-			} else if !client.AuthEnabled {
+			} else if client.Disabled() {
 				event.AuditWarn([]string{clientIp, "oauth2", actor, action, authn.ErrAuthenticationDisabled.Error()})
 				AbortInvalidCredentials(c)
 				return

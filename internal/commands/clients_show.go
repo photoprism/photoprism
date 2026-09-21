@@ -15,7 +15,7 @@ import (
 var ClientsShowCommand = &cli.Command{
 	Name:      "show",
 	Usage:     "Shows client configuration details",
-	ArgsUsage: "[client id]",
+	ArgsUsage: "[client id | node uuid]",
 	Flags:     report.CliFlags,
 	Action:    clientsShowAction,
 }
@@ -31,10 +31,16 @@ func clientsShowAction(ctx *cli.Context) error {
 		}
 
 		// Find client record.
-		m := entity.FindClientByUID(id)
+		m := entity.FindClient(id)
 
 		if m == nil {
 			return fmt.Errorf("client %s not found", clean.Log(id))
+		}
+
+		// A retired record is reported rather than hidden, because an operator reaching it by
+		// identifier is inspecting what a deletion left behind. Its DeletedAt row says so.
+		if m.Deleted() {
+			log.Warnf("client %s has been deleted", m.GetUID())
 		}
 
 		// Get client information.
