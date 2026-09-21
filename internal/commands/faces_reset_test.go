@@ -1,12 +1,15 @@
 package commands
 
 import (
+	"errors"
 	"flag"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v2"
+
+	"github.com/photoprism/photoprism/internal/config"
 )
 
 // newFacesResetContext parses args against the flags the "faces reset" subcommand registers, which
@@ -141,13 +144,17 @@ func TestFacesResetRequiresConfirmation(t *testing.T) {
 		assert.True(t, newFacesResetContext(t, "-y").Bool("yes"))
 	})
 	t.Run("YesReachesTheConfirmation", func(t *testing.T) {
-		// Parsing the flag is not the same as the action reading it. With --yes the
-		// confirmation is satisfied, so the run proceeds past it and fails later at the
-		// config instead of returning the confirmation error.
-		err := facesResetAction(newFacesResetContext(t, "--yes"))
+		// Parsing the flag is not the same as the action reading it. The config is stubbed to
+		// fail, so the run stops right after the confirmation: the sentinel proves --yes
+		// satisfied it, and nothing reaches the database.
+		sentinel := errors.New("config unavailable")
 
-		if err != nil {
-			assert.NotContains(t, err.Error(), "could not ask for confirmation")
-		}
+		restore := InitConfig
+		InitConfig = func(*cli.Context) (*config.Config, error) { return nil, sentinel }
+		t.Cleanup(func() { InitConfig = restore })
+
+		assert.ErrorIs(t, facesResetAction(newFacesResetContext(t, "--yes")), sentinel)
+		assert.ErrorIs(t, facesResetAction(newFacesResetContext(t, "--yes", "--all")), sentinel)
+		assert.ErrorIs(t, facesResetAction(newFacesResetContext(t, "--yes", "--force")), sentinel)
 	})
 }
