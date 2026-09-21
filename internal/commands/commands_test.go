@@ -241,8 +241,21 @@ func resetConfigAndOpenDB() *config.Config {
 	return c
 }
 
-// reopenConnection gets the current configured connection and opens it if it is closed.
-// It returns the current config to allow queries in tests if needed.
+// requireTestDb reopens the shared database for direct registry or entity access.
+// A preceding command may have closed it through conf.Shutdown().
+func requireTestDb(t *testing.T) *config.Config {
+	t.Helper()
+
+	c := reopenConnection()
+
+	if c == nil {
+		t.Fatal("test config is not available")
+	}
+
+	return c
+}
+
+// reopenConnection returns the current config and opens its database if needed.
 func reopenConnection() *config.Config {
 	if c := get.Config(); c != nil {
 		if !c.IsDbOpen() {

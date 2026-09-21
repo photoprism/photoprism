@@ -6,8 +6,10 @@ import (
 	"github.com/dustin/go-humanize/english"
 	"github.com/urfave/cli/v2"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt/report"
 )
 
@@ -16,17 +18,26 @@ var ClientsListCommand = &cli.Command{
 	Name:      "ls",
 	Usage:     "Lists registered client applications",
 	ArgsUsage: "[search]",
-	Flags:     append(report.CliFlags, CountFlag),
-	Action:    clientsListAction,
+	Flags: append(report.CliFlags, CountFlag, &cli.BoolFlag{
+		Name:  "deleted",
+		Usage: ClientDeleted,
+	}),
+	Action: clientsListAction,
 }
 
 // clientsListAction lists registered client applications
 func clientsListAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
+		deleted := ctx.Bool("deleted")
+
 		cols := []string{"Client ID", "Name", "Authentication Method", "User", "Role", "Scope", "Enabled", "Access Token Lifetime", "Created At"}
 
+		if deleted {
+			cols = append(cols, "Deleted At")
+		}
+
 		// Fetch clients from database.
-		clients, err := query.Clients(ctx.Int("count"), 0, "", ctx.Args().First())
+		clients, err := query.Clients(ctx.Int("count"), 0, "", ctx.Args().First(), deleted)
 
 		if err != nil {
 			return err
@@ -35,7 +46,12 @@ func clientsListAction(ctx *cli.Context) error {
 		rows := make([][]string, len(clients))
 
 		if len(clients) == 0 {
-			log.Warnf("no clients registered")
+			if deleted {
+				log.Warnf("no deleted clients found")
+			} else {
+				log.Warnf("no clients registered")
+			}
+
 			return nil
 		}
 
@@ -58,16 +74,34 @@ func clientsListAction(ctx *cli.Context) error {
 				}
 			}
 
+			// A deleted client resolves as role none for access checks, so the listing
+			// reports the role it was configured with rather than that outcome.
+			role := client.AclRole().String()
+
+			if deleted {
+				role = acl.ClientRoles[clean.Role(client.ClientRole)].String()
+			}
+
 			rows[i] = []string{
 				client.GetUID(),
 				client.Name(),
 				client.AuthInfo(),
 				client.UserInfo(),
-				client.AclRole().String(),
+				role,
 				client.Scope(),
 				report.Bool(client.AuthEnabled, report.Yes, report.No),
 				authExpires,
 				client.CreatedAt.Format("2006-01-02 15:04:05"),
+			}
+
+			if deleted {
+				deletedAt := ""
+
+				if client.DeletedAt != nil {
+					deletedAt = client.DeletedAt.Format("2006-01-02 15:04:05")
+				}
+
+				rows[i] = append(rows[i], deletedAt)
 			}
 		}
 

@@ -2,7 +2,7 @@
 # Regenerate with: go run ./scripts/tools/check-audit-events -update
 7	internal/api/oauth_revoke.go	event.AuditErr	action
 2	internal/api/oauth_revoke.go	event.AuditInfo	action
-3	internal/api/oauth_revoke.go	event.AuditWarn	action
+8	internal/api/oauth_revoke.go	event.AuditWarn	action
 1	internal/api/oauth_token.go	event.AuditInfo	action
 1	internal/api/oauth_token.go	event.AuditInfo	actor
 1	internal/api/oauth_token.go	event.AuditWarn	action

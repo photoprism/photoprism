@@ -6,6 +6,8 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
+	"io"
 	"net"
 	"net/http"
 	"net/http/httptest"
@@ -1026,4 +1028,40 @@ func TestRegisterWithPortal_DropsConfiguredQuery(t *testing.T) {
 
 	assert.Equal(t, 1, hits)
 	assert.Empty(t, rawQuery, "the configured query reached the endpoint")
+}
+
+func TestRegisterError(t *testing.T) {
+	newResp := func(status int, body string) *http.Response {
+		return &http.Response{
+			StatusCode: status,
+			Status:     fmt.Sprintf("%d %s", status, http.StatusText(status)),
+			Body:       io.NopCloser(strings.NewReader(body)),
+		}
+	}
+
+	t.Run("ReasonFromBody", func(t *testing.T) {
+		err := registerError(newResp(http.StatusConflict, `{"error":"node uuid is already registered"}`))
+
+		if assert.Error(t, err) {
+			assert.Contains(t, err.Error(), "node uuid is already registered")
+			assert.Contains(t, err.Error(), "409")
+		}
+	})
+	t.Run("EmptyBody", func(t *testing.T) {
+		err := registerError(newResp(http.StatusBadRequest, ""))
+
+		if assert.Error(t, err) {
+			assert.Equal(t, "400 Bad Request", err.Error())
+		}
+	})
+	t.Run("BodyWithoutError", func(t *testing.T) {
+		err := registerError(newResp(http.StatusConflict, `{"status":"failed"}`))
+
+		if assert.Error(t, err) {
+			assert.Equal(t, "409 Conflict", err.Error())
+		}
+	})
+	t.Run("Nil", func(t *testing.T) {
+		assert.Error(t, registerError(nil))
+	})
 }

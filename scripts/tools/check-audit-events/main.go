@@ -8,11 +8,13 @@ segments are structure and values are arguments. go vet cannot check it, because
 is assembled inside event.Format rather than passed at the call site.
 
 A local variable holding a constant reads the same here as one that does not, so the remaining call
-sites are a worklist rather than a verdict. They are held in baseline.txt, one line per
-call, and the check fails on any call that is not recorded there - so fixing one site and adding
-another does not net out. The rule set is
-ours, so unlike a third-party linter the count moves only when this repository does. Run with
--update after fixing sites to record the lower numbers, and -list to print every finding.
+sites are a worklist rather than a verdict. They are held in baseline.txt as a count per file,
+helper and segment, and the check fails when a group holds more calls than it records, so a new
+call in a file that already has some still shows up. The baseline carries no line numbers, which
+keeps it from churning as code moves, so read the group a change touches rather than the count
+alone. The rule set is ours, so unlike a third-party linter the
+count moves only when this repository does. Run with -update after fixing sites to record the lower
+numbers, and -list to print every finding.
 
 Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 */
@@ -107,15 +109,32 @@ func main() {
 	}
 
 	if added := exceeded(keys, baseline); len(added) > 0 {
-		for _, f := range findings {
-			if added[f.key()] {
-				fmt.Println(f.String())
-			}
+		extra := 0
+
+		// The baseline counts calls per file, helper and segment, and carries no
+		// line, so every call in a group that grew is listed: the reader is being
+		// told which group to look at and how many of its calls are new, not which
+		// line is the new one.
+		for key := range added {
+			extra += keys[key] - baseline[key]
 		}
 
-		fmt.Fprintf(os.Stderr, "\ncheck-audit-events: %d call(s) are not recorded in %s.\n"+
+		for _, f := range findings {
+			if !added[f.key()] {
+				continue
+			}
+
+			if f.first(findings) {
+				fmt.Printf("%s: %s carries %s in its segment list, recorded %d, found %d\n",
+					f.File, f.Call, f.Segment, baseline[f.key()], keys[f.key()])
+			}
+
+			fmt.Printf("\t%s\n", f.Position)
+		}
+
+		fmt.Fprintf(os.Stderr, "\ncheck-audit-events: %d call(s) more than %s records, in %d group(s).\n"+
 			"Pass the value as an argument behind a \"%%s\" segment, or run with -update if it is meant to stay.\n",
-			len(added), baselineFile)
+			extra, baselineFile, len(added))
 		os.Exit(1)
 	}
 
@@ -129,6 +148,7 @@ const baselineFile = "scripts/tools/check-audit-events/baseline.txt"
 type finding struct {
 	File     string
 	Position string
+	Line     int
 	Call     string
 	Segment  string
 }
@@ -138,7 +158,19 @@ func (f finding) String() string {
 	return fmt.Sprintf("%s: %s carries %s in its segment list", f.Position, f.Call, f.Segment)
 }
 
-// check walks every root that exists and returns the findings, sorted by position.
+// first reports whether f is the earliest listed finding of its key, so a group that grew
+// prints one heading above its call sites.
+func (f finding) first(findings []finding) bool {
+	for _, other := range findings {
+		if other.key() == f.key() {
+			return other == f
+		}
+	}
+
+	return false
+}
+
+// check walks every root that exists and returns the findings, sorted by location.
 func check(roots []string) (findings []finding, err error) {
 	for _, root := range roots {
 		if _, statErr := os.Stat(root); statErr != nil {
@@ -154,7 +186,15 @@ func check(roots []string) (findings []finding, err error) {
 		findings = append(findings, found...)
 	}
 
-	sort.Slice(findings, func(i, j int) bool { return findings[i].Position < findings[j].Position })
+	// Sorted by file and then numerically by line: comparing the rendered position
+	// as a string orders line 101 ahead of line 91.
+	sort.Slice(findings, func(i, j int) bool {
+		if findings[i].File != findings[j].File {
+			return findings[i].File < findings[j].File
+		}
+
+		return findings[i].Line < findings[j].Line
+	})
 
 	return findings, nil
 }
@@ -299,6 +339,7 @@ func checkRoot(root string) (findings []finding, err error) {
 				findings = append(findings, finding{
 					File:     filepath.ToSlash(path),
 					Position: fset.Position(elt.Pos()).String(),
+					Line:     fset.Position(elt.Pos()).Line,
 					Call:     expr(fset, call.Fun),
 					Segment:  expr(fset, elt),
 				})

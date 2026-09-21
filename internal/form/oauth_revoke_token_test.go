@@ -1,6 +1,7 @@
 package form
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -139,4 +140,18 @@ func TestOAuthRevokeToken_Validate(t *testing.T) {
 		}
 		assert.Error(t, m.Validate())
 	})
+}
+
+// TestOAuthRevokeToken_JSON pins every field to the JSON name the endpoint
+// documents.
+func TestOAuthRevokeToken_JSON(t *testing.T) {
+	var m OAuthRevokeToken
+
+	if err := json.Unmarshal([]byte(`{"token":"sess","token_type_hint":"session_id"}`), &m); err != nil {
+		t.Fatal(err)
+	}
+
+	assert.Equal(t, "sess", m.Token)
+	assert.Equal(t, SessionID, m.TokenTypeHint)
+	assert.False(t, m.Empty())
 }

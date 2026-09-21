@@ -181,7 +181,7 @@ func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err erro
 		log.Infof("convert: converting %s to %s (%s)", clean.Log(filepath.Base(fileName)), clean.Log(filepath.Base(imageName)), filepath.Base(cmd.Path))
 
 		// Log exact command in debug mode.
-		log.Debug(cmd.String())
+		log.Debug(clean.Cmd(cmd))
 
 		// Run convert command.
 		if err = budget.Run(cmd, stderr.String); err != nil {

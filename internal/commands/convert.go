@@ -12,11 +12,20 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
+const convertDescription = `Missing preview images and AVC videos are created for the originals in the specified
+subfolder, or for all originals if none is given. A preview is a JPEG, or a PNG when the original is a
+vector graphic.
+
+The --force flag replaces an existing preview image, and only one that is in the sidecar folder. Videos
+that already have an AVC sidecar are skipped either way, since transcoding them costs far more than
+rendering a still image again. Use "photoprism videos transcode" to transcode those.`
+
 // ConvertCommand configures the command name, flags, and action.
 var ConvertCommand = &cli.Command{
-	Name:      "convert",
-	Usage:     "Converts files in other formats to JPEG and AVC as needed",
-	ArgsUsage: "[subfolder]",
+	Name:        "convert",
+	Description: convertDescription,
+	Usage:       "Creates missing preview images and AVC sidecar files as needed",
+	ArgsUsage:   "[subfolder]",
 	Flags: []cli.Flag{
 		&cli.StringSliceFlag{
 			Name:    "ext",
@@ -26,7 +35,7 @@ var ConvertCommand = &cli.Command{
 		&cli.BoolFlag{
 			Name:    "force",
 			Aliases: []string{"f"},
-			Usage:   "replace existing JPEG files in the sidecar folder",
+			Usage:   "replace existing preview images in the sidecar folder",
 		},
 	},
 	Action: convertAction,

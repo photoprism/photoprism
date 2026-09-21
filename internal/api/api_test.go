@@ -320,6 +320,19 @@ func WriteTestThumb(t *testing.T, fileHash string, size thumb.Size) []byte {
 	return data
 }
 
+// SetTestUploadAllow restricts the upload extensions and restores the previous value afterwards.
+// Pass an empty string for the default, which accepts every supported format.
+func SetTestUploadAllow(t *testing.T, allow string) {
+	opt := get.Config().Options()
+	orig := opt.UploadAllow
+
+	t.Cleanup(func() {
+		opt.UploadAllow = orig
+	})
+
+	opt.UploadAllow = allow
+}
+
 // SetTestThumbUncached toggles on-demand rendering and restores the previous value afterwards.
 // The config is process-wide, so a subtest that leaves it enabled decides for the rest of the run.
 func SetTestThumbUncached(t *testing.T, enabled bool) {

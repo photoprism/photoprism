@@ -311,6 +311,60 @@ func TestClusterNodesRegister(t *testing.T) {
 			assert.Equal(t, n.ClientID, got.ClientID)
 		}
 	})
+	t.Run("JoinWithRetiredNodeUUID", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		enablePortalAPIs(t, conf)
+		conf.Options().JoinToken = cluster.ExampleJoinToken
+		ClusterNodesRegister(router)
+
+		regy, err := reg.NewClientRegistryWithConfig(conf)
+		assert.NoError(t, err)
+		n := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-uuid-retired", Role: cluster.RoleInstance}}
+		assert.NoError(t, regy.Put(n))
+		assert.NoError(t, regy.DeleteAllByUUID(n.UUID))
+
+		// A removed registration retires its UUID rather than releasing it, so a later
+		// join may not claim that identifier.
+		body := `{"NodeName":"pp-uuid-successor","NodeUUID":"` + n.UUID + `"}`
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", body, cluster.ExampleJoinToken)
+		assert.Equal(t, http.StatusConflict, r.Code, "body=%s", r.Body.String())
+		assert.Contains(t, r.Body.String(), "already registered")
+
+		// The retired node is not resurrected by the refused request.
+		_, err = regy.FindByNodeUUID(n.UUID)
+		assert.Error(t, err)
+	})
+	t.Run("NodeUUIDRetiredByAnotherNode", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		enablePortalAPIs(t, conf)
+		conf.Options().JoinToken = cluster.ExampleJoinToken
+		ClusterNodesRegister(router)
+
+		regy, err := reg.NewClientRegistryWithConfig(conf)
+		assert.NoError(t, err)
+
+		other := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-retired-other", Role: cluster.RoleInstance}}
+		assert.NoError(t, regy.Put(other))
+		assert.NoError(t, regy.DeleteAllByUUID(other.UUID))
+
+		own := &reg.Node{Node: cluster.Node{UUID: rnd.UUIDv7(), Name: "pp-retired-own", Role: cluster.RoleInstance}}
+		assert.NoError(t, regy.Put(own))
+		nr, err := regy.RotateSecret(own.UUID)
+		assert.NoError(t, err)
+
+		// A live node may not move onto a retired UUID either.
+		token := oauthNodeAccessToken(t, app, router, conf, nr.ClientID, nr.ClientSecret)
+		body := `{"NodeName":"pp-retired-own","NodeUUID":"` + other.UUID + `","RotateSecret":true}`
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", body, token)
+		assert.Equal(t, http.StatusForbidden, r.Code, "body=%s", r.Body.String())
+
+		// Its own registration keeps the UUID it already held.
+		got, err := regy.FindByNodeUUID(own.UUID)
+		assert.NoError(t, err)
+		if assert.NotNil(t, got) {
+			assert.Equal(t, own.ClientID, got.ClientID)
+		}
+	})
 	t.Run("OwnNodeUUIDAccepted", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		enablePortalAPIs(t, conf)
@@ -817,6 +871,19 @@ func TestNodeUUIDClaimedBy(t *testing.T) {
 	})
 	t.Run("Empty", func(t *testing.T) {
 		assert.False(t, nodeUUIDClaimedBy("", ""))
+	})
+	t.Run("RetiredRecord", func(t *testing.T) {
+		// A deleted registration keeps its UUID, so the identifier is still reported as
+		// claimed by the record that holds it.
+		retired := entity.NewClient()
+		retired.ClientName = "pp-claimed-retired"
+		retired.NodeUUID = rnd.UUIDv7()
+		assert.NoError(t, retired.Create())
+		assert.NoError(t, retired.Delete())
+
+		assert.True(t, nodeUUIDClaimedBy(retired.NodeUUID, ""))
+		assert.True(t, nodeUUIDClaimedBy(retired.NodeUUID, rnd.GenerateUID(entity.ClientUID)))
+		assert.False(t, nodeUUIDClaimedBy(retired.NodeUUID, retired.ClientUID))
 	})
 	t.Run("DuplicateRecords", func(t *testing.T) {
 		// The column is not unique, so a second record sharing the UUID must still be seen

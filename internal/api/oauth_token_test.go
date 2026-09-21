@@ -9,8 +9,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"github.com/tidwall/gjson"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/http/header"
 )
@@ -475,5 +478,80 @@ func TestOAuthToken(t *testing.T) {
 		t.Logf("Header: %s", w.Header())
 		t.Logf("BODY: %s", w.Body.String())
 		assert.Equal(t, http.StatusUnauthorized, w.Code)
+	})
+}
+
+// TestOAuthToken_DeletedClient covers the client lifecycle gate on the token endpoint.
+// The same credentials are presented before and after the client is deleted, so the
+// refusal is attributable to the deletion rather than to the request or the secret.
+func TestOAuthToken_DeletedClient(t *testing.T) {
+	app, router, conf := NewApiTest()
+	conf.SetAuthMode(config.AuthModePasswd)
+	defer conf.SetAuthMode(config.AuthModePublic)
+
+	OAuthToken(router)
+
+	client := entity.NewClient().SetName("Token Lifecycle").SetRole(acl.RoleClient.String())
+	client.AuthScope = "metrics"
+
+	if err := client.Create(); err != nil {
+		t.Fatal(err)
+	}
+
+	secret, err := client.NewSecret()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	tokenRequest := func() *httptest.ResponseRecorder {
+		data := url.Values{
+			"grant_type":    {authn.GrantClientCredentials.String()},
+			"client_id":     {client.ClientUID},
+			"client_secret": {secret},
+			"scope":         {"metrics"},
+		}
+
+		req, _ := http.NewRequest(http.MethodPost, "/api/v1/oauth/token", strings.NewReader(data.Encode()))
+		req.Header.Add(header.ContentType, header.ContentTypeForm)
+
+		w := httptest.NewRecorder()
+		app.ServeHTTP(w, req)
+
+		return w
+	}
+
+	var sessId string
+
+	t.Run("LiveClient", func(t *testing.T) {
+		w := tokenRequest()
+
+		if !assert.Equal(t, http.StatusOK, w.Code, "body=%s", w.Body.String()) {
+			return
+		}
+
+		sessId = gjson.Get(w.Body.String(), "session_id").String()
+		assert.NotEmpty(t, sessId)
+	})
+	t.Run("DeletedClient", func(t *testing.T) {
+		if err = client.Delete(); err != nil {
+			t.Fatal(err)
+		}
+
+		if deleted := entity.FindClientByUID(client.ClientUID); assert.NotNil(t, deleted) {
+			assert.True(t, deleted.Deleted())
+		}
+
+		w := tokenRequest()
+		assert.Equal(t, http.StatusUnauthorized, w.Code, "body=%s", w.Body.String())
+	})
+	t.Run("SessionRevoked", func(t *testing.T) {
+		// Without a session id from the live request there is nothing to prove here.
+		if !assert.NotEmpty(t, sessId) {
+			return
+		}
+
+		_, findErr := entity.FindSession(sessId)
+		assert.Error(t, findErr)
 	})
 }

@@ -96,7 +96,7 @@ func (w *Convert) FixJpeg(f *MediaFile, force bool) (*MediaFile, error) {
 	log.Infof("convert: re-encoding %s to %s (%s)", logName, clean.Log(filepath.Base(cacheName)), filepath.Base(cmd.Path))
 
 	// Log exact command for debugging in trace mode.
-	log.Trace(cmd.String())
+	log.Trace(clean.Cmd(cmd))
 
 	// Run convert command.
 	if err = proc.Run(cmd, w.conf.ConvertTimeout()); err != nil {

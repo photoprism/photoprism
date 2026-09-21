@@ -94,6 +94,7 @@ Dependencies (run in the development container):
   dep                      Install the TensorFlow, ONNX, and NPM dependencies
   dep-models               Install the TensorFlow and ONNX models only
   dep-js                   Install the NPM dependencies only
+  cuda                     Install NVIDIA CUDA runtime libraries and cuDNN
   upgrade                  Upgrade the Go and NPM dependencies
   tidy                     Add missing and remove unused Go modules
 
@@ -122,11 +123,19 @@ Test:
 
 Format, Lint & Docs:
   fmt                      Format the JS, Go, and Swagger sources
-  lint                     Lint the JS and Go sources
+  lint                     Run JS, Go, shell, and repository checks
   swag                     Regenerate the Swagger API documentation
   format-tables            Format the Markdown tables in README and CODEMAP files
   notice                   Regenerate the NOTICE files for all dependencies
   audit                    Check the dependencies for known vulnerabilities
+
+Checks (also run by lint):
+  check-api-request-limits  Check request-body limit coverage in API handlers
+  check-audit-events        Check audit-event formatting against its baseline
+  check-libheif-install     Check libheif installer selection and version handling
+  check-cuda-install        Check CUDA installation recovery without a GPU
+  check-make-help           Check that advertised Makefile targets exist
+  check-scripts-copy-mode   Check container script ownership and modes
 
 Translations:
   gettext-extract          Extract the translation strings into the catalogs
@@ -296,6 +305,9 @@ install-tensorflow:
 	sudo scripts/dist/install-tensorflow.sh
 install-onnx:
 	sudo scripts/dist/install-onnx.sh
+cuda: install-cuda
+install-cuda:
+	sudo scripts/dist/install-cuda.sh
 install-darktable:
 	sudo scripts/dist/install-darktable.sh
 acceptance-sqlite-restart-%: acceptance-sqlite-stop-%
@@ -1270,7 +1282,7 @@ docker-dummy-oidc:
 packer-digitalocean:
 	$(info Building DigitalOcean marketplace image...)
 	(cd ./setup/cloud/digitalocean && packer init digitalocean.pkr.hcl && packer build digitalocean.pkr.hcl)
-lint: lint-js lint-go lint-sh check-api-request-limits check-audit-events check-libheif-install check-make-help check-scripts-copy-mode
+lint: lint-js lint-go lint-sh check-api-request-limits check-audit-events check-libheif-install check-cuda-install check-make-help check-scripts-copy-mode
 lint-js:
 	$(info Linting JS code...)
 	$(MAKE) -C frontend lint
@@ -1282,19 +1294,22 @@ lint-sh:
 	shellcheck scripts/dist/*.sh
 check-api-request-limits:
 	$(info Checking API request-body limits...)
-	bash ./scripts/check-api-request-limits.sh
+	bash ./scripts/lint/check-api-request-limits.sh
 check-audit-events:
 	$(info Checking how event calls build their messages...)
 	go run ./scripts/tools/check-audit-events
 check-libheif-install:
 	$(info Checking how the libheif installer selects a packaging path...)
-	bash ./scripts/check-libheif-install.sh
+	bash ./scripts/lint/check-libheif-install.sh
+check-cuda-install:
+	$(info Checking CUDA installation and recovery...)
+	python3 ./scripts/lint/check-cuda-install.py
 check-make-help:
 	$(info Checking that "make help" only advertises existing targets...)
-	bash ./scripts/check-make-help.sh
+	bash ./scripts/lint/check-make-help.sh
 check-scripts-copy-mode:
 	$(info Checking that the dist scripts are copied with an explicit owner and mode...)
-	bash ./scripts/check-scripts-copy-mode.sh
+	bash ./scripts/lint/check-scripts-copy-mode.sh
 fmt-js:
 	(cd frontend &&	npm run fmt)
 fmt-go:

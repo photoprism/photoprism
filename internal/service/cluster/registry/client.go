@@ -173,29 +173,39 @@ func (r *ClientRegistry) Put(n *Node) error {
 	// Upsert client preferring NodeUUID (primary), then ClientID, then Name.
 	var m *entity.Client
 
-	// 1) Try NodeUUID first, if provided.
+	// 1) Try NodeUUID first, if provided. A UUID that resolves to no current record but
+	// still has rows is retired rather than free, so it is refused instead of re-assigned.
 	if n.UUID != "" {
 		if existing := entity.FindClientByNodeUUID(n.UUID); existing != nil && existing.ClientUID != "" {
 			m = existing
+		} else if len(entity.FindClientsByNodeUUID(n.UUID)) > 0 {
+			return ErrIdentifierMismatch
 		}
 	}
 
 	// 2) Resolve the ClientID if it is valid, so a mismatch is caught rather than
-	// silently writing to whichever record the other identifier named.
+	// silently writing to whichever record the other identifier named. The lookup reads
+	// deleted records too, because the mismatch below must see them; a retired one is
+	// refused rather than written to, since its identifiers are reserved, not available.
 	if rnd.IsUID(n.ClientID, entity.ClientUID) {
 		if existing := entity.FindClientByUID(n.ClientID); existing != nil {
-			if m == nil {
-				m = existing
-			} else if m.ClientUID != existing.ClientUID {
+			switch {
+			case m != nil && m.ClientUID != existing.ClientUID:
 				return ErrIdentifierMismatch
+			case existing.Deleted():
+				return ErrIdentifierMismatch
+			case m == nil:
+				m = existing
 			}
 		}
 	}
 
-	// 3) Finally, try by Name (latest by UpdatedAt). Avoid mismatching when a UUID is provided but name belongs to another node.
+	// 3) Finally, try by Name (latest by UpdatedAt). Avoid mismatching when a UUID is provided but
+	// name belongs to another node. Deleted records are skipped: a name is released by deletion,
+	// so a request carrying one creates a record rather than writing into the retired one.
 	if m == nil && n.Name != "" {
 		var list []entity.Client
-		if err := entity.UnscopedDb().Where("client_name = ?", n.Name).Find(&list).Error; err == nil && len(list) > 0 {
+		if err := entity.Db().Where("client_name = ?", n.Name).Find(&list).Error; err == nil && len(list) > 0 {
 			// pick latest
 			latest := &list[0]
 			for i := 1; i < len(list); i++ {
@@ -381,7 +391,7 @@ func (r *ClientRegistry) FindByName(name string) (*Node, error) {
 	}
 
 	m := &entity.Client{}
-	if err := entity.UnscopedDb().
+	if err := entity.Db().
 		Where("client_name = ?", name).
 		Order("updated_at DESC").
 		First(m).Error; err != nil {
@@ -394,22 +404,41 @@ func (r *ClientRegistry) FindByName(name string) (*Node, error) {
 	return toNode(m), nil
 }
 
-// FindByNodeUUID looks up a node by its NodeUUID and returns the latest record.
+// FindByNodeUUID looks up a node by its NodeUUID and returns the latest current record.
 func (r *ClientRegistry) FindByNodeUUID(nodeUUID string) (*Node, error) {
 	if nodeUUID == "" {
 		return nil, ErrNotFound
 	}
 
-	list := entity.FindClientsByNodeUUID(nodeUUID)
+	c := entity.FindClientByNodeUUID(nodeUUID)
 
-	if len(list) == 0 {
+	if c == nil {
 		return nil, ErrNotFound
 	}
 
-	return toNode(&list[0]), nil
+	return toNode(c), nil
 }
 
-// FindByClientID looks up a node by its OAuth client identifier.
+// FindRetiredByNodeUUID looks up a node that has been deleted but whose NodeUUID is still
+// reserved, returning the most recently updated record. Operator tooling uses it to report or
+// release a registration that no ordinary lookup resolves anymore.
+func (r *ClientRegistry) FindRetiredByNodeUUID(nodeUUID string) (*Node, error) {
+	if nodeUUID == "" {
+		return nil, ErrNotFound
+	}
+
+	for _, c := range entity.FindClientsByNodeUUID(nodeUUID) {
+		if c.Deleted() {
+			return toNode(&c), nil
+		}
+	}
+
+	return nil, ErrNotFound
+}
+
+// FindByClientID looks up a current node by its OAuth client identifier. The underlying
+// lookup reports deleted records too, because ownership checks need them, so this resolves
+// only the ones a caller may still act on.
 func (r *ClientRegistry) FindByClientID(id string) (*Node, error) {
 	if !rnd.IsUID(id, entity.ClientUID) {
 		return nil, ErrNotFound
@@ -417,7 +446,7 @@ func (r *ClientRegistry) FindByClientID(id string) (*Node, error) {
 
 	c := entity.FindClientByUID(id)
 
-	if c == nil {
+	if c.Deleted() {
 		return nil, ErrNotFound
 	}
 
@@ -442,7 +471,7 @@ func (r *ClientRegistry) List() ([]Node, error) {
 	var list []entity.Client
 
 	// Identify cluster nodes primarily by presence of NodeUUID.
-	if err := entity.UnscopedDb().Where("node_uuid <> ''").Find(&list).Error; err != nil {
+	if err := entity.Db().Where("node_uuid <> ''").Find(&list).Error; err != nil {
 		return nil, err
 	}
 
@@ -473,7 +502,7 @@ func (r *ClientRegistry) Delete(uuid string) error {
 
 	c := entity.FindClientByUID(n.ClientID)
 
-	if c == nil {
+	if c.Deleted() {
 		return ErrNotFound
 	}
 
@@ -494,6 +523,52 @@ func (r *ClientRegistry) DeleteAllByUUID(uuid string) error {
 
 	for i := range list {
 		if err := list[i].Delete(); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// NodeDatabases returns the databases recorded by every record that holds the given NodeUUID,
+// including retired ones, in the order the records are read. A caller that releases the identifier
+// removes all of those records, so it has to see all of their databases rather than one record's.
+func (r *ClientRegistry) NodeDatabases(uuid string) []string {
+	if uuid == "" {
+		return nil
+	}
+
+	var names []string
+
+	for _, c := range entity.FindClientsByNodeUUID(uuid) {
+		if n := toNode(&c); n != nil && n.Database != nil {
+			if name := n.Database.Name; name != "" {
+				names = append(names, name)
+			} else if user := n.Database.User; user != "" {
+				names = append(names, user)
+			}
+		}
+	}
+
+	return names
+}
+
+// PurgeAllByUUID permanently removes every client row that matches the given NodeUUID,
+// including retired ones, which releases the UUID so a later node may claim it. Callers are
+// responsible for the database and the grants that the UUID names; this removes neither.
+func (r *ClientRegistry) PurgeAllByUUID(uuid string) error {
+	if uuid == "" {
+		return ErrNotFound
+	}
+
+	list := entity.FindClientsByNodeUUID(uuid)
+
+	if len(list) == 0 {
+		return ErrNotFound
+	}
+
+	for i := range list {
+		if err := list[i].Purge(); err != nil {
 			return err
 		}
 	}
@@ -529,7 +604,9 @@ func (r *ClientRegistry) RotateSecretByClientID(clientID string) (*Node, error) 
 
 	c := entity.FindClientByUID(clientID)
 
-	if c == nil {
+	// The lookup reports deleted records too, and rotating writes the new hash before the
+	// record is saved, so a retired one is refused before anything is replaced.
+	if c.Deleted() {
 		return nil, ErrNotFound
 	}
 

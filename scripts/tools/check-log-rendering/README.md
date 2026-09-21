@@ -1,6 +1,6 @@
 # Log Rendering Review Tool
 
-**Last Updated:** September 14, 2026
+**Last Updated:** September 21, 2026
 
 ## Purpose & Scope
 
@@ -40,10 +40,12 @@ candidate, not a demonstrated defect or an instruction to scrub away useful diag
 
 ## Recognized Renderers
 
-Whole-value `clean.Log`, `LogQuote`, `LogLower`, `LogNames`, `Error` and `status.Error` calls are
-recognized by import path. `clean.UriRedacted` and `clean.FileNameRedacted` are redactors, not text
-renderers: bare calls remain rendering candidates. `clean.Log(clean.UriRedacted(uri))` is a composed
-control for both decisions, subject to the input-shape limitation below.
+Whole-value `clean.Log`, `LogQuote`, `LogLower`, `LogNames`, `LogUri`, `Error` and `status.Error`
+calls are recognized by import path. `clean.LogUri` is the composed form for a URL, and counts for
+both decisions. `clean.UriRedacted`, `clean.UriRedactedText` and `clean.FileNameRedacted` are
+redactors rather than text renderers: a bare call remains a rendering candidate, while satisfying
+the credential decision. `clean.Log(clean.UriRedacted(uri))` composes the two explicitly, subject to
+the input-shape limitation below.
 Parentheses, composition of recognized values, `strings.ToLower`/`ToUpper`/`TrimSpace`, and
 `fmt.Sprintf`/`Sprint` over entirely recognized arguments retain recognition. An arbitrary wrapper or
 an expression with an additional unrendered operand does not.

@@ -9,10 +9,9 @@ set -euo pipefail
 # only, so they have to be installed separately. Pair this with "install-onnx.sh --gpu", which
 # installs the runtime build that carries libonnxruntime_providers_cuda.so.
 #
-# The packages are the vendor's own, downloaded from our mirror with the NVIDIA repository as a
-# fallback, and verified against the checksums pinned below. Selecting another CUDA release means
-# updating that table, because a version is a set of packages rather than a single number: their
-# point versions move independently, so nothing can derive a file name or a checksum from it.
+# Packages are downloaded directly from NVIDIA and verified against the pinned checksums.
+# Package versions move independently, so selecting another CUDA release requires updating
+# the filenames and checksums as a set.
 #
 # One pinned set serves every base image we ship. The packages are built for one distribution
 # release, but they are extracted rather than installed, and the vendor builds them against an
@@ -23,7 +22,6 @@ set -euo pipefail
 # CUDA 13 needs driver 580 or later; an older one loads the libraries and then reports no usable
 # device, which PhotoPrism treats as "no GPU" and falls back to the CPU.
 
-TODAY=$(date -u +%Y%m%d)
 TMPDIR=${TMPDIR:-/tmp}
 SYSTEM=$(uname -s)
 ARCH=${PHOTOPRISM_ARCH:-$(uname -m)}
@@ -141,35 +139,74 @@ verify_sha() {
 # or swap the file between its verification and its use. The cost is that a repeated run fetches
 # the packages again rather than reusing them.
 work_dir=$(mktemp -d "${TMPDIR}/cuda-XXXXXX")
-chmod 0700 "${work_dir}"
+transaction_dir=""
+install_complete=0
+published=()
 
-extract_dir="${work_dir}/extracted"
-mkdir -p "${extract_dir}"
-
-# Remove the whole working directory on every way out, including a failure: it holds the
-# downloaded packages as well as the extracted tree, and neither is wanted afterwards.
+# cleanup restores an incomplete publication and removes temporary files.
+# Failed recovery keeps the snapshots available for an operator to restore.
 cleanup() {
-  rm -rf "${work_dir}"
+  local result="$1" rollback_failed=0 name i
+
+  trap - EXIT
+  trap '' HUP INT TERM
+
+  if [[ -n "${transaction_dir}" ]] && [[ "${install_complete}" == 0 ]]; then
+    for ((i=${#published[@]}-1; i>=0; i--)); do
+      name="${published[i]}"
+
+      # A source still in staging means its atomic rename did not happen.
+      if [[ -e "${transaction_dir}/new/${name}" || -L "${transaction_dir}/new/${name}" ]]; then
+        continue
+      fi
+
+      if [[ -e "${transaction_dir}/previous/${name}" || -L "${transaction_dir}/previous/${name}" ]]; then
+        if ! mv -fT -- "${transaction_dir}/previous/${name}" "${output_lib_dir}/${name}"; then
+          rollback_failed=1
+        fi
+      elif ! rm -f -- "${output_lib_dir}/${name}"; then
+        rollback_failed=1
+      fi
+    done
+  fi
+
+  if [[ "${rollback_failed}" != 0 ]]; then
+    echo "Error: CUDA library recovery is incomplete; preserved files are in '${transaction_dir}'." >&2
+    [[ "${result}" != 0 ]] || result=1
+  elif [[ -n "${transaction_dir}" ]] && ! rm -rf -- "${transaction_dir}"; then
+    echo "Error: failed to remove CUDA installation staging '${transaction_dir}'." >&2
+    [[ "${result}" != 0 ]] || result=1
+  fi
+
+  if ! rm -rf -- "${work_dir}"; then
+    echo "Error: failed to remove CUDA download staging '${work_dir}'." >&2
+    [[ "${result}" != 0 ]] || result=1
+  fi
+
+  exit "${result}"
 }
 
-trap cleanup EXIT
+trap 'cleanup "$?"' EXIT
+trap 'exit 129' HUP
+trap 'exit 130' INT
+trap 'exit 143' TERM
+
+chmod 0700 "${work_dir}"
+extract_dir="${work_dir}/extracted"
+mkdir -p "${extract_dir}"
 
 while read -r package sha; do
   [[ -z "${package}" ]] && continue
 
   package_path="${work_dir}/${package}"
-  primary_url="https://dl.photoprism.app/cuda/${CUDA_REPO}/${package}?${TODAY}"
-  fallback_url="https://developer.download.nvidia.com/compute/cuda/repos/${CUDA_REPO}/x86_64/${package}"
+  package_url="https://developer.download.nvidia.com/compute/cuda/repos/${CUDA_REPO}/x86_64/${package}"
 
   echo "Downloading ${package}..."
 
   # Each package is fetched whole, never resumed, and admitted only on an exact digest match.
-  if ! curl -fsSL --retry 3 --retry-delay 2 -o "${package_path}" "${primary_url}"; then
-    echo "Primary download failed, trying the NVIDIA repository..."
-    if ! curl -fsSL --retry 3 --retry-delay 2 --retry-all-errors -o "${package_path}" "${fallback_url}"; then
-      echo "Failed to download ${package}." >&2
-      exit 1
-    fi
+  if ! curl -fsSL --retry 3 --retry-delay 2 --retry-all-errors -o "${package_path}" "${package_url}"; then
+    echo "Failed to download ${package}." >&2
+    exit 1
   fi
 
   echo "Verifying checksum..."
@@ -209,44 +246,67 @@ for library in "${CUDA_LIBRARIES[@]}"; do
   fi
 done
 
-copied=()
+transaction_dir=$(mktemp -d "${output_lib_dir}/.cuda-XXXXXX")
+mkdir -p "${transaction_dir}/new" "${transaction_dir}/previous"
+install_names=()
 
-# install_libraries copies the collected set, recording each destination before writing it so
-# that a partial file counts as this run's work.
-install_libraries() {
-  local file target
+# prepare_libraries stages the full set and preserves existing files and symlinks.
+# Snapshots share old inodes; only staged replacements receive permission changes.
+prepare_libraries() {
+  local file name target staged
 
   for file in "${install_files[@]}"; do
-    target="${output_lib_dir}/$(basename "${file}")"
-    copied+=("${target}")
+    name=$(basename "${file}")
+    target="${output_lib_dir}/${name}"
+    staged="${transaction_dir}/new/${name}"
 
-    cp -af "${file}" "${output_lib_dir}/" || return 1
-
-    # Set the mode rather than preserve it. A shared object needs neither the execute bit nor
-    # any of the special bits, and preserving what a package carried would put a setuid file on
-    # the default library path if one ever appeared there.
-    if [[ -f ${target} ]] && [[ ! -L ${target} ]]; then
-      chmod 0644 "${target}" || return 1
+    if [[ -e "${staged}" || -L "${staged}" ]]; then
+      echo "Error: the CUDA packages contain duplicate library '${name}'." >&2
+      return 1
     fi
+
+    if [[ -e "${target}" && ! -f "${target}" && ! -L "${target}" ]]; then
+      echo "Error: CUDA library destination '${target}' is not a file or symlink." >&2
+      return 1
+    fi
+
+    cp -a -- "${file}" "${staged}" || return 1
+
+    if [[ -f "${staged}" && ! -L "${staged}" ]]; then
+      chmod 0644 "${staged}" || return 1
+    fi
+
+    if [[ -e "${target}" || -L "${target}" ]]; then
+      cp -a --link -- "${target}" "${transaction_dir}/previous/${name}" || return 1
+    fi
+
+    install_names+=("${name}")
   done
 }
 
-# A set that is short loads and then fails at the first inference, so an interrupted install
-# removes what it wrote rather than leaving one behind. Absent libraries are the better
-# outcome: the execution provider then reports itself unavailable before a session exists.
-if ! install_libraries; then
-  echo "Error: failed to install the CUDA libraries, removing what this run wrote." >&2
-
-  for target in "${copied[@]}"; do
-    if [[ -f ${target} ]] || [[ -L ${target} ]]; then
-      rm -f "${target}"
-    fi
-  done
-
+if ! prepare_libraries; then
+  echo "Error: failed to prepare the CUDA libraries; the installed files are unchanged." >&2
   exit 1
 fi
 
-installed=${#copied[@]}
+# publish_libraries replaces each entry atomically without changing old library inodes.
+publish_libraries() {
+  local name
+
+  for name in "${install_names[@]}"; do
+    published+=("${name}")
+    mv -fT -- "${transaction_dir}/new/${name}" "${output_lib_dir}/${name}" || return 1
+  done
+}
+
+if ! publish_libraries; then
+  echo "Error: failed to publish the CUDA libraries; restoring the installed files." >&2
+  exit 1
+fi
+
+# The complete set is committed before refreshing the loader cache.
+install_complete=1
+installed=${#install_names[@]}
 
 if [[ "${DESTDIR}" == "/usr" || "${DESTDIR}" == "/usr/local" ]]; then
   ldconfig

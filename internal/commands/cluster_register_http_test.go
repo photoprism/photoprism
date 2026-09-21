@@ -328,6 +328,21 @@ func TestClusterNodesRotate_HTTPJson(t *testing.T) {
 	assert.Equal(t, "pp_db", parsed.Name)
 }
 
+// setClusterOptionsForTest points the shared config at a portal for one test and restores what
+// was there afterwards.
+func setClusterOptionsForTest(t *testing.T, portalUrl, clusterDomain string) {
+	t.Helper()
+
+	o := get.Config().Options()
+	prevUrl, prevDomain := o.PortalUrl, o.ClusterDomain
+
+	t.Cleanup(func() {
+		o.PortalUrl, o.ClusterDomain = prevUrl, prevDomain
+	})
+
+	o.PortalUrl, o.ClusterDomain = portalUrl, clusterDomain
+}
+
 func TestClusterNodesRotate_DBOnly_JSON(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/api/v1/cluster/nodes/register" {
@@ -483,9 +498,10 @@ func TestClusterRegister_HTTPConflict(t *testing.T) {
 }
 
 func TestClusterRegister_DryRun_JSON(t *testing.T) {
-	// No server needed; dry-run avoids HTTP
-	get.Config().Options().PortalUrl = cfg.DefaultPortalUrl
-	get.Config().Options().ClusterDomain = "cluster.dev"
+	// No server needed; dry-run avoids HTTP. The config is shared by the package, so the
+	// values are captured and put back: a portal URL left behind outranks the environment a
+	// later test sets, and that test then reaches this one's portal instead of its own server.
+	setClusterOptionsForTest(t, cfg.DefaultPortalUrl, "cluster.dev")
 	out, err := RunWithTestContext(ClusterRegisterCommand, []string{
 		"register", "--dry-run", "--json",
 	})

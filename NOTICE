@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2026-09-19
+Date generated: 2026-09-20
 
 ================================================================================
 
@@ -538,8 +538,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/davidbyttow/govips/v2/vips
-Version: v2.18.0
-License: MIT (https://github.com/davidbyttow/govips/blob/v2.18.0/LICENSE)
+Version: v2.19.0
+License: MIT (https://github.com/davidbyttow/govips/blob/v2.19.0/LICENSE)
 
 The MIT License
 
@@ -1112,8 +1112,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/gin-contrib/sse
-Version: v1.1.1
-License: MIT (https://github.com/gin-contrib/sse/blob/v1.1.1/LICENSE)
+Version: v1.1.2
+License: MIT (https://github.com/gin-contrib/sse/blob/v1.1.2/LICENSE)
 
 The MIT License (MIT)
 
@@ -1896,8 +1896,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/go-playground/universal-translator
-Version: v0.18.1
-License: MIT (https://github.com/go-playground/universal-translator/blob/v0.18.1/LICENSE)
+Version: v0.18.2
+License: MIT (https://github.com/go-playground/universal-translator/blob/v0.18.2/LICENSE)
 
 The MIT License (MIT)
 
@@ -1924,8 +1924,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/go-playground/validator/v10
-Version: v10.30.3
-License: MIT (https://github.com/go-playground/validator/blob/v10.30.3/LICENSE)
+Version: v10.30.5
+License: MIT (https://github.com/go-playground/validator/blob/v10.30.5/LICENSE)
 
 The MIT License (MIT)
 
@@ -4671,8 +4671,8 @@ License: Apache-2.0 (https://github.com/leandro-lugaresi/hub/blob/v1.1.2/LICENSE
 --------------------------------------------------------------------------------
 
 Package: github.com/leodido/go-urn
-Version: v1.4.0
-License: MIT (https://github.com/leodido/go-urn/blob/v1.4.0/LICENSE)
+Version: v1.5.0
+License: MIT (https://github.com/leodido/go-urn/blob/v1.5.0/LICENSE)
 
 MIT License
 
@@ -4895,8 +4895,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/mattn/go-isatty
-Version: v0.0.23
-License: MIT (https://github.com/mattn/go-isatty/blob/v0.0.23/LICENSE)
+Version: v0.0.24
+License: MIT (https://github.com/mattn/go-isatty/blob/v0.0.24/LICENSE)
 
 Copyright (c) Yasuhiro MATSUMOTO <mattn.jp@gmail.com>
 
@@ -4911,8 +4911,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 --------------------------------------------------------------------------------
 
 Package: github.com/mattn/go-runewidth
-Version: v0.0.24
-License: MIT (https://github.com/mattn/go-runewidth/blob/v0.0.24/LICENSE)
+Version: v0.0.30
+License: MIT (https://github.com/mattn/go-runewidth/blob/v0.0.30/LICENSE)
 
 The MIT License (MIT)
 
@@ -5190,8 +5190,8 @@ the full license text.
 --------------------------------------------------------------------------------
 
 Package: github.com/montanaflynn/stats
-Version: v0.12.6
-License: MIT (https://github.com/montanaflynn/stats/blob/v0.12.6/LICENSE)
+Version: v0.12.7
+License: MIT (https://github.com/montanaflynn/stats/blob/v0.12.7/LICENSE)
 
 The MIT License (MIT)
 
@@ -5484,8 +5484,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: github.com/pelletier/go-toml/v2
-Version: v2.3.1
-License: MIT (https://github.com/pelletier/go-toml/blob/v2.3.1/LICENSE)
+Version: v2.4.3
+License: MIT (https://github.com/pelletier/go-toml/blob/v2.4.3/LICENSE)
 
 The MIT License (MIT)
 
@@ -6346,8 +6346,8 @@ License: Apache-2.0 (https://github.com/prometheus/common/blob/v0.71.0/LICENSE)
 --------------------------------------------------------------------------------
 
 Package: github.com/prometheus/procfs
-Version: v0.21.1
-License: Apache-2.0 (https://github.com/prometheus/procfs/blob/v0.21.1/LICENSE)
+Version: v0.22.0
+License: Apache-2.0 (https://github.com/prometheus/procfs/blob/v0.22.0/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -6568,8 +6568,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 --------------------------------------------------------------------------------
 
 Package: github.com/quic-go/quic-go
-Version: v0.59.1
-License: MIT (https://github.com/quic-go/quic-go/blob/v0.59.1/LICENSE)
+Version: v0.62.0
+License: MIT (https://github.com/quic-go/quic-go/blob/v0.62.0/LICENSE)
 
 MIT License
 
@@ -6659,31 +6659,66 @@ Blackfriday is distributed under the Simplified BSD License:
 
 --------------------------------------------------------------------------------
 
-Package: github.com/segmentio/asm
-Version: v1.1.5
-License: MIT (https://github.com/segmentio/asm/blob/v1.1.5/LICENSE)
+Package: github.com/segmentio/asm/ascii
+Version: v1.2.1
+License: Unknown (Unknown)
 
-MIT License
 
-Copyright (c) 2021 Segment
+--------------------------------------------------------------------------------
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Package: github.com/segmentio/asm/base64
+Version: v1.2.1
+License: Unknown (Unknown)
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+--------------------------------------------------------------------------------
+
+Package: github.com/segmentio/asm/cpu
+Version: v1.2.1
+License: Unknown (Unknown)
+
+
+--------------------------------------------------------------------------------
+
+Package: github.com/segmentio/asm/cpu/arm
+Version: v1.2.1
+License: Unknown (Unknown)
+
+
+--------------------------------------------------------------------------------
+
+Package: github.com/segmentio/asm/cpu/arm64
+Version: v1.2.1
+License: Unknown (Unknown)
+
+
+--------------------------------------------------------------------------------
+
+Package: github.com/segmentio/asm/cpu/cpuid
+Version: v1.2.1
+License: Unknown (Unknown)
+
+
+--------------------------------------------------------------------------------
+
+Package: github.com/segmentio/asm/cpu/x86
+Version: v1.2.1
+License: Unknown (Unknown)
+
+
+--------------------------------------------------------------------------------
+
+Package: github.com/segmentio/asm/internal/unsafebytes
+Version: v1.2.1
+License: Unknown (Unknown)
+
+
+--------------------------------------------------------------------------------
+
+Package: github.com/segmentio/asm/keyset
+Version: v1.2.1
+License: Unknown (Unknown)
+
 
 --------------------------------------------------------------------------------
 
@@ -6895,8 +6930,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/ugorji/go/codec
-Version: v1.3.1
-License: MIT (https://github.com/ugorji/go/blob/codec/v1.3.1/codec/LICENSE)
+Version: v1.3.2
+License: MIT (https://github.com/ugorji/go/blob/codec/v1.3.2/codec/LICENSE)
 
 The MIT License (MIT)
 
@@ -7517,8 +7552,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: go.mongodb.org/mongo-driver/v2
-Version: v2.6.2
-License: Apache-2.0 (https://github.com/mongodb/mongo-go-driver/blob/v2.6.2/LICENSE)
+Version: v2.9.1
+License: Apache-2.0 (https://github.com/mongodb/mongo-go-driver/blob/v2.9.1/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -7933,8 +7968,8 @@ License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go-instrume
 --------------------------------------------------------------------------------
 
 Package: go.opentelemetry.io/otel
-Version: v1.45.0
-License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/v1.45.0/LICENSE)
+Version: v1.46.0
+License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/v1.46.0/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -8170,8 +8205,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: go.opentelemetry.io/otel/metric
-Version: v1.45.0
-License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/metric/v1.45.0/metric/LICENSE)
+Version: v1.46.0
+License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/metric/v1.46.0/metric/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -8407,8 +8442,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: go.opentelemetry.io/otel/trace
-Version: v1.45.0
-License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/trace/v1.45.0/trace/LICENSE)
+Version: v1.46.0
+License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/trace/v1.46.0/trace/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004

@@ -4,14 +4,14 @@
 # and mode, and that a later step in the same stage normalizes the result. The copy states the
 # intent and this check guards it; "cleanup.sh" is what every image build ends with.
 #
-# Usage: scripts/check-scripts-copy-mode.sh [dockerfile ...]
+# Usage: scripts/lint/check-scripts-copy-mode.sh [dockerfile ...]
 #
 # Without arguments, all Dockerfiles in this working copy are checked, including the ones in
 # optional private subdirectories when they are present.
 
 set -euo pipefail
 
-cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.."
+cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.."
 
 # A copy instruction, ignoring comments, and allowing tabs and either instruction keyword.
 COPY_PATTERN='^[[:space:]]*(COPY|ADD)[[:space:]].*scripts/dist'

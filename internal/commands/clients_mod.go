@@ -3,6 +3,7 @@ package commands
 import (
 	"fmt"
 
+	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -16,7 +17,7 @@ import (
 var ClientsModCommand = &cli.Command{
 	Name:      "mod",
 	Usage:     "Updates client application settings",
-	ArgsUsage: "[client id]",
+	ArgsUsage: "[client id | node uuid]",
 	Flags:     ClientModFlags,
 	Action:    clientsModAction,
 }
@@ -28,8 +29,10 @@ func clientsModAction(ctx *cli.Context) error {
 
 		frm := form.ModClientFromCli(ctx)
 
-		// Name or UID provided?
-		if frm.ID() == "" {
+		// Client UID or node UUID provided?
+		id := clean.UID(ctx.Args().First())
+
+		if id == "" {
 			log.Infof("no valid client id specified")
 			return cli.ShowSubcommandHelp(ctx)
 		}
@@ -41,10 +44,32 @@ func clientsModAction(ctx *cli.Context) error {
 		}
 
 		// Find client record.
-		client := entity.FindClientByUID(frm.ID())
+		client := entity.FindClient(id)
 
 		if client == nil {
-			return fmt.Errorf("client %s not found", clean.Log(frm.ID()))
+			return fmt.Errorf("client %s not found", clean.Log(id))
+		}
+
+		// Check if the client exists but has been deleted.
+		if client.Deleted() {
+			if !ctx.Bool("restore") && !RunNonInteractively(false) {
+				prompt := promptui.Prompt{
+					Label:     fmt.Sprintf("Restore client %s?", client.String()),
+					IsConfirm: true,
+				}
+
+				if _, err := prompt.Run(); err != nil {
+					return fmt.Errorf("client %s has been deleted", clean.Log(id))
+				}
+			} else if !ctx.Bool("restore") {
+				return fmt.Errorf("client %s has been deleted, pass --restore to bring it back", clean.Log(id))
+			}
+
+			if err := client.Restore(); err != nil {
+				return err
+			}
+
+			log.Infof("client %s has been restored", client.String())
 		}
 
 		// Update client from form values.

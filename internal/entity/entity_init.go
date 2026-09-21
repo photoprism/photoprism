@@ -74,7 +74,7 @@ func InitTestDb(driver, dbDsn string) *DbConn {
 	// Give the package a database of its own, so that tests can run in parallel.
 	dbDsn = TestDbDSN(driver, dbDsn)
 
-	log.Infof("initializing %s test db in %s", driver, dbDsn)
+	log.Infof("initializing %s test db in %s", driver, dsn.Mask(dbDsn))
 
 	// Create gorm.DB connection provider.
 	db := &DbConn{

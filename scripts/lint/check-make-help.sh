@@ -3,7 +3,7 @@
 # Verifies that every target named in a Makefile "HELP_TEXT" block exists in that Makefile,
 # so that renaming or removing a target does not silently leave "make help" advertising it.
 #
-# Usage: scripts/check-make-help.sh [makefile ...]
+# Usage: scripts/lint/check-make-help.sh [makefile ...]
 #
 # Without arguments, all Makefiles that define a HELP_TEXT block are checked, including the
 # ones in optional private subdirectories when they are present in this working copy.

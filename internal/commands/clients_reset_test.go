@@ -67,10 +67,13 @@ func TestClientsResetCommand(t *testing.T) {
 		assert.NotContains(t, output1, "alice")
 		assert.NotContains(t, output1, "metrics")
 
-		// Put the clients back
+		// Put the clients back, and the sessions with them: removing a client removes the
+		// sessions it issued, so restoring only the clients leaves later tests without the
+		// session fixtures they read.
 		c := reopenConnection()
 		entity.SetDbProvider(c)
 		entity.CreateClientFixtures()
+		entity.CreateSessionFixtures()
 
 		// Run command with test context.
 		output2, err := RunWithTestContext(ClientsListCommand, []string{"ls"})

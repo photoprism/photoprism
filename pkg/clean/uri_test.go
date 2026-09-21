@@ -1,6 +1,7 @@
 package clean
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -211,5 +212,96 @@ func TestUriRedactedName(t *testing.T) {
 		// not happen, so the component is dropped instead.
 		assert.Equal(t, "https://@proxy.example.com", UriRedacted("https://@proxy.example.com"))
 		assert.Equal(t, "https://:@proxy.example.com", UriRedacted("https://:@proxy.example.com"))
+	})
+}
+
+func TestLogUri(t *testing.T) {
+	t.Run("Userinfo", func(t *testing.T) {
+		assert.Equal(t, "https://user:***@example.com/path?q=1", LogUri("https://user:secret@example.com/path?q=1"))
+	})
+	t.Run("QueryParam", func(t *testing.T) {
+		assert.Equal(t, "https://api.example.com/v1?token=***", LogUri("https://api.example.com/v1?token=t0ken"))
+	})
+	t.Run("Plain", func(t *testing.T) {
+		assert.Equal(t, "https://www.photoprism.app/", LogUri("https://www.photoprism.app/"))
+	})
+	t.Run("Malformed", func(t *testing.T) {
+		result := LogUri("https://user:secret@exa mple.com/\tpath")
+		assert.NotContains(t, result, "secret")
+		assert.Contains(t, result, "user:***@")
+	})
+	t.Run("TwoUris", func(t *testing.T) {
+		result := LogUri("https://a:pw@h1/x?token=T1 then https://b:pw@h2/y?token=T2")
+		assert.Equal(t, "'https://a:***@h1/x?token=*** then https://b:***@h2/y?token=***'", result)
+	})
+	t.Run("TrailingText", func(t *testing.T) {
+		assert.Equal(t, "'failed: https://h1/x?token=*** (timeout)'", LogUri("failed: https://h1/x?token=T (timeout)"))
+	})
+	t.Run("OverLengthLimit", func(t *testing.T) {
+		// A URI the parser refuses by length keeps no query, which is where a token sits.
+		long := "https://videos.example.com/v/1?token=capabilityT0ken&pad=" + strings.Repeat("a", LengthLimit)
+		result := LogUri(long)
+		assert.NotContains(t, result, "capabilityT0ken")
+		assert.Contains(t, result, "https://videos.example.com/v/1?"+UriRedactedValue)
+	})
+	t.Run("MessageWithUri", func(t *testing.T) {
+		result := LogUri(`Get "https://user:secret@example.com/a": i/o timeout`)
+		assert.NotContains(t, result, "secret")
+	})
+	t.Run("NotAUri", func(t *testing.T) {
+		// Text without a scheme is left to the text scrub, which does not re-encode it.
+		assert.Equal(t, "'no scheme here'", LogUri("no scheme here"))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "''", LogUri(""))
+	})
+	t.Run("InvalidPort", func(t *testing.T) {
+		// The parser refuses the value, so the whole query goes rather than none of it.
+		assert.Equal(t, "https://host:notaport/x?***", LogUri("https://host:notaport/x?token=T"))
+	})
+}
+
+func TestUriRedactedText(t *testing.T) {
+	t.Run("NoUri", func(t *testing.T) {
+		assert.Equal(t, "no scheme here", UriRedactedText("no scheme here"))
+	})
+	t.Run("Userinfo", func(t *testing.T) {
+		assert.Equal(t, "https://alice:***@host/v/1", UriRedactedText("https://alice:hunter2@host/v/1"))
+	})
+	t.Run("QueryParam", func(t *testing.T) {
+		assert.Equal(t, "https://host/v/1?a=b&token=***", UriRedactedText("https://host/v/1?a=b&token=T"))
+	})
+	t.Run("InMessage", func(t *testing.T) {
+		assert.Equal(t, `Get "https://host/v?token=***": i/o timeout`, UriRedactedText(`Get "https://host/v?token=T": i/o timeout`))
+	})
+	t.Run("EveryUri", func(t *testing.T) {
+		assert.Equal(t, "a https://h1/?key=*** b https://h2/?key=***", UriRedactedText("a https://h1/?key=K b https://h2/?key=K"))
+	})
+	t.Run("Unparsable", func(t *testing.T) {
+		result := UriRedactedText("https://user:pw@h\x7f/x?token=T")
+		assert.NotContains(t, result, "token=T")
+		assert.NotContains(t, result, "pw@")
+	})
+	t.Run("PlainText", func(t *testing.T) {
+		assert.Equal(t, "token=T is not a uri", UriRedactedText("token=T is not a uri"))
+	})
+}
+
+func TestUriRedactedTextApostrophe(t *testing.T) {
+	t.Run("InQueryValue", func(t *testing.T) {
+		// An apostrophe is a valid sub-delimiter, so a parameter after one is still examined.
+		s := UriRedactedText("https://example.com/video?filter='sample'&token=secret-value")
+
+		assert.NotContains(t, s, "secret-value")
+		assert.Contains(t, s, "filter=")
+	})
+	t.Run("QuotedByTheMessage", func(t *testing.T) {
+		s := UriRedactedText("downloading 'https://example.com/v?token=secret-value' now")
+
+		assert.NotContains(t, s, "secret-value")
+		assert.Contains(t, s, "' now")
+	})
+	t.Run("LogUri", func(t *testing.T) {
+		assert.NotContains(t, LogUri("https://example.com/v?a='b'&key=secret-value"), "secret-value")
 	})
 }

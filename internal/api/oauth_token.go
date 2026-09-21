@@ -25,7 +25,7 @@ import (
 //	@Summary	create an OAuth2 access token
 //	@Id			OAuthToken
 //	@Tags		Authentication
-//	@Accept		json
+//	@Accept		json,x-www-form-urlencoded,mpfd
 //	@Produce	json
 //	@Param		request				body		form.OAuthCreateToken	true	"token request (supports client_credentials, password, or session grant)"
 //	@Success	200					{object}	gin.H
@@ -66,7 +66,7 @@ func OAuthToken(router *gin.RouterGroup) {
 		// peek and the binding below both read the same parsed form.
 		LimitRequestBodyBytes(c, MaxOAuthRequestBytes)
 
-		if c.ContentType() == header.ContentTypeForm {
+		if IsOAuthFormRequest(c) {
 			if err := c.Request.ParseForm(); IsRequestBodyTooLarge(err) {
 				limiter.Auth.Reserve(clientIp)
 				event.AuditWarn([]string{clientIp, "oauth2", actor, action, "request too large", status.Error(err)})
@@ -79,7 +79,7 @@ func OAuthToken(router *gin.RouterGroup) {
 		// itself, so a single token_endpoint serves both. This runs before the binding
 		// because form.OAuthCreateToken.Validate rejects the grant, and it is gated on a
 		// form content type per RFC 6749.
-		if c.ContentType() == header.ContentTypeForm && authn.Grant(c.PostForm("grant_type")) == authn.GrantAuthorizationCode {
+		if IsOAuthFormRequest(c) && authn.Grant(c.PostForm("grant_type")) == authn.GrantAuthorizationCode {
 			if OAuthAuthorizationCodeHandler != nil {
 				OAuthAuthorizationCodeHandler(c)
 				return
@@ -104,7 +104,7 @@ func OAuthToken(router *gin.RouterGroup) {
 			frm.GrantType = authn.GrantClientCredentials
 			frm.ClientID = clientId
 			frm.ClientSecret = clientSecret
-		} else if err = c.ShouldBind(&frm); err != nil {
+		} else if err = BindOAuthRequest(c, &frm); err != nil {
 			limiter.Auth.Reserve(clientIp)
 
 			if IsRequestBodyTooLarge(err) {
@@ -155,7 +155,7 @@ func OAuthToken(router *gin.RouterGroup) {
 				event.AuditWarn([]string{clientIp, "oauth2", actor, action, authn.ErrInvalidClientID.Error()})
 				AbortInvalidCredentials(c)
 				return
-			} else if !client.AuthEnabled {
+			} else if client.Disabled() {
 				event.AuditWarn([]string{clientIp, "oauth2", actor, action, authn.ErrAuthenticationDisabled.Error()})
 				AbortInvalidCredentials(c)
 				return

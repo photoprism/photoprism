@@ -55,7 +55,7 @@ func (w *Convert) ToJson(f *MediaFile, force bool) (jsonName string, err error) 
 	}...)
 
 	// Log exact command for debugging in trace mode.
-	log.Trace(cmd.String())
+	log.Trace(clean.Cmd(cmd))
 
 	// Run convert command.
 	err = proc.Run(cmd, w.conf.ConvertTimeout())
