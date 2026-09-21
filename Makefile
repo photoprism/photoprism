@@ -94,6 +94,7 @@ Dependencies (run in the development container):
   dep                      Install the TensorFlow, ONNX, and NPM dependencies
   dep-models               Install the TensorFlow and ONNX models only
   dep-js                   Install the NPM dependencies only
+  cuda                     Install NVIDIA CUDA runtime libraries and cuDNN
   upgrade                  Upgrade the Go and NPM dependencies
   tidy                     Add missing and remove unused Go modules
 
@@ -132,6 +133,7 @@ Checks (also run by lint):
   check-api-request-limits  Check request-body limit coverage in API handlers
   check-audit-events        Check audit-event formatting against its baseline
   check-libheif-install     Check libheif installer selection and version handling
+  check-cuda-install        Check CUDA installation recovery without a GPU
   check-make-help           Check that advertised Makefile targets exist
   check-scripts-copy-mode   Check container script ownership and modes
 
@@ -303,6 +305,9 @@ install-tensorflow:
 	sudo scripts/dist/install-tensorflow.sh
 install-onnx:
 	sudo scripts/dist/install-onnx.sh
+cuda: install-cuda
+install-cuda:
+	sudo scripts/dist/install-cuda.sh
 install-darktable:
 	sudo scripts/dist/install-darktable.sh
 acceptance-sqlite-restart-%: acceptance-sqlite-stop-%
@@ -1277,7 +1282,7 @@ docker-dummy-oidc:
 packer-digitalocean:
 	$(info Building DigitalOcean marketplace image...)
 	(cd ./setup/cloud/digitalocean && packer init digitalocean.pkr.hcl && packer build digitalocean.pkr.hcl)
-lint: lint-js lint-go lint-sh check-api-request-limits check-audit-events check-libheif-install check-make-help check-scripts-copy-mode
+lint: lint-js lint-go lint-sh check-api-request-limits check-audit-events check-libheif-install check-cuda-install check-make-help check-scripts-copy-mode
 lint-js:
 	$(info Linting JS code...)
 	$(MAKE) -C frontend lint
@@ -1296,6 +1301,9 @@ check-audit-events:
 check-libheif-install:
 	$(info Checking how the libheif installer selects a packaging path...)
 	bash ./scripts/lint/check-libheif-install.sh
+check-cuda-install:
+	$(info Checking CUDA installation and recovery...)
+	python3 ./scripts/lint/check-cuda-install.py
 check-make-help:
 	$(info Checking that "make help" only advertises existing targets...)
 	bash ./scripts/lint/check-make-help.sh

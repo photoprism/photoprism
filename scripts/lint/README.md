@@ -6,6 +6,7 @@ Standalone repository checks live here. Run them through the root Makefile so ca
 
 - `make check-api-request-limits` checks request-body limit coverage.
 - `make check-libheif-install` exercises installer selection in an isolated user namespace.
+- `make check-cuda-install` exercises installation and recovery with synthetic packages and no GPU.
 - `make check-make-help` checks that advertised Makefile targets exist.
 - `make check-scripts-copy-mode` checks container script ownership and modes.
 
