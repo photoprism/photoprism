@@ -7,8 +7,10 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // TestEnsureCredentials_MariaDB exercises the direct mysql driver path using the
@@ -106,28 +108,25 @@ func TestEnsureCredentials_DriverNormalization(t *testing.T) {
 	assert.Equal(t, "TiDB", DatabaseDriver)
 }
 
-// TestDropCredentials_Repeated covers the documented contract that cleanup is safe to call when
-// the user or schema no longer exist, which is the ordinary state of a second run: a retirement
-// that dropped them, followed later by a release that has to drop them again before it proceeds.
+// TestDropCredentials_Repeated checks repeated cleanup of absent database credentials.
 func TestDropCredentials_Repeated(t *testing.T) {
-	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	defer cancel()
 
-	if db, err := sql.Open("mysql", ProvisionDSN); err != nil {
-		t.Skipf("admin DSN not openable: %v", err)
-	} else {
-		c, cancel := context.WithTimeout(ctx, 3*time.Second)
-		defer cancel()
-		if err := db.PingContext(c); err != nil {
-			_ = db.Close()
-			t.Skipf("admin DSN not reachable: %v", err)
-		}
-		_ = db.Close()
+	db, err := GetDB(ctx)
+	if err != nil {
+		t.Skip("provisioning database is unavailable")
 	}
 
-	// Names that were never provisioned stand in for ones already dropped, so the test needs
-	// no schema of its own and can never remove one that exists.
-	dbName := "cluster_dtestrepeat1"
-	dbUser := "cluster_utestrepeat1"
+	dbName := "test_d" + rnd.GenerateUID('c')
+	dbUser := "test_u" + rnd.GenerateUID('c')
+
+	// Check absence on the same provisioning connection used by cleanup.
+	var count int
+	require.NoError(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM information_schema.schemata WHERE schema_name = ?", dbName).Scan(&count))
+	require.Zero(t, count, "test database name must be unused")
+	require.NoError(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM mysql.user WHERE User = ?", dbUser).Scan(&count))
+	require.Zero(t, count, "test account name must be unused")
 
 	assert.NoError(t, DropCredentials(ctx, dbName, dbUser), "absent credentials must drop cleanly")
 	assert.NoError(t, DropCredentials(ctx, dbName, dbUser), "a repeated drop must stay clean")

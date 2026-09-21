@@ -403,10 +403,8 @@ func (m *Client) Delete() (err error) {
 }
 
 // Restore removes the deletion mark, so the client can be used again. A deletion releases the
-// client name, so this refuses when another current record has taken an identifier in the
-// meantime rather than creating a second live holder of it. The mark is cleared in the database
-// rather than tested in memory first, because a record loaded before the deletion does not
-// carry it.
+// client name, so this refuses when a current record has taken an identifier since, rather than
+// leaving two live holders of it.
 func (m *Client) Restore() error {
 	if m == nil {
 		return fmt.Errorf("client is nil")
@@ -427,12 +425,10 @@ func (m *Client) Restore() error {
 	return nil
 }
 
-// RestoreConflict reports the identifier that keeps this client from being restored, or an
-// empty string when none does. Lookups resolve the most recently updated record, so a second
-// live holder would not merely duplicate an identifier but could take it over.
-//
-// The stored record decides, not the receiver: an object read before the deletion does not carry
-// the mark, and that is the case a restore exists to handle.
+// RestoreConflict reports the identifier that keeps this client from being restored, or an empty
+// string when none does. Lookups resolve the most recently updated record, so a second live holder
+// could take an identifier over rather than merely duplicate it. The stored record decides, since
+// an object read before the deletion does not carry the mark.
 func (m *Client) RestoreConflict() string {
 	stored := m.Stored()
 
