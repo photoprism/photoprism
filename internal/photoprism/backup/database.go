@@ -83,6 +83,9 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 
 	var cmd *exec.Cmd
 
+	// Read the password once, so the argument and its rendering use the same value.
+	password := c.DatabasePassword()
+
 	switch c.DatabaseDriver() {
 	case dsn.DriverMySQL, dsn.DriverMariaDB:
 		// Connect via Unix Domain Socket?
@@ -92,7 +95,7 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 				"--protocol", "socket",
 				"-S", socketName,
 				"-u", c.DatabaseUser(),
-				"-p"+c.DatabasePassword(),
+				"-p"+password,
 				c.DatabaseName(),
 			)
 		} else if c.DatabaseSsl() {
@@ -105,7 +108,7 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 				"-h", c.DatabaseHost(),
 				"-P", c.DatabasePortString(),
 				"-u", c.DatabaseUser(),
-				"-p"+c.DatabasePassword(),
+				"-p"+password,
 				c.DatabaseName(),
 			)
 		} else {
@@ -119,7 +122,7 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 				"-h", c.DatabaseHost(),
 				"-P", c.DatabasePortString(),
 				"-u", c.DatabaseUser(),
-				"-p"+c.DatabasePassword(),
+				"-p"+password,
 				c.DatabaseName(),
 			)
 		}
@@ -154,13 +157,13 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 	cmd.Stderr = &stderr
 	cmd.Stdout = f
 
-	// Log exact command for debugging in trace mode.
-	log.Trace(cmd.String())
+	// Log the command for debugging in trace mode.
+	log.Trace(clean.Cmd(cmd, password))
 
 	// Run backup command.
 	if cmdErr := cmd.Run(); cmdErr != nil {
 		if errStr := strings.TrimSpace(stderr.String()); errStr != "" {
-			return errors.New(errStr)
+			return errors.New(clean.Secrets(errStr, password))
 		}
 
 		return cmdErr
@@ -264,6 +267,9 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 
 	var cmd *exec.Cmd
 
+	// Read the password once, so the argument and its rendering use the same value.
+	password := c.DatabasePassword()
+
 	switch c.DatabaseDriver() {
 	case dsn.DriverMySQL, dsn.DriverMariaDB:
 		// Connect via Unix Domain Socket?
@@ -273,7 +279,7 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 				"--protocol", "socket",
 				"-S", socketName,
 				"-u", c.DatabaseUser(),
-				"-p"+c.DatabasePassword(),
+				"-p"+password,
 				"-f",
 				c.DatabaseName(),
 			)
@@ -287,7 +293,7 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 				"-h", c.DatabaseHost(),
 				"-P", c.DatabasePortString(),
 				"-u", c.DatabaseUser(),
-				"-p"+c.DatabasePassword(),
+				"-p"+password,
 				"-f",
 				c.DatabaseName(),
 			)
@@ -302,7 +308,7 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 				"-h", c.DatabaseHost(),
 				"-P", c.DatabasePortString(),
 				"-u", c.DatabaseUser(),
-				"-p"+c.DatabasePassword(),
+				"-p"+password,
 				"-f",
 				c.DatabaseName(),
 			)
@@ -348,15 +354,15 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 		}
 	}()
 
-	// Log exact command for debugging in trace mode.
-	log.Trace(cmd.String())
+	// Log the command for debugging in trace mode.
+	log.Trace(clean.Cmd(cmd, password))
 
 	// Run restore command.
 	if cmdErr := cmd.Run(); cmdErr != nil {
 		log.Errorf("restore: failed to restore index database")
 
 		if errStr := strings.TrimSpace(stderr.String()); errStr != "" {
-			return errors.New(errStr)
+			return errors.New(clean.Secrets(errStr, password))
 		}
 
 		return cmdErr
