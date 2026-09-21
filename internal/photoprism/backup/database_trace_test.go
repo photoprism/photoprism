@@ -62,5 +62,8 @@ func TestDatabase_CommandTrace(t *testing.T) {
 	}
 
 	require.NotEmpty(t, traced, "expected the dump command to be traced")
-	assert.Contains(t, traced, "-p"+txt.Masked)
+
+	// The client reads the password from the environment, so the trace has none to mask.
+	assert.NotContains(t, traced, "-p"+txt.Masked)
+	assert.Contains(t, traced, "--no-defaults")
 }

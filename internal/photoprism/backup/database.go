@@ -83,49 +83,14 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 
 	var cmd *exec.Cmd
 
-	// Read the password once, so the argument and its rendering use the same value.
-	password := c.DatabasePassword()
+	// The password the command was built with, which its rendering must mask.
+	var password string
 
 	switch c.DatabaseDriver() {
 	case dsn.DriverMySQL, dsn.DriverMariaDB:
-		// Connect via Unix Domain Socket?
-		if socketName := c.DatabaseServer(); strings.HasPrefix(socketName, "/") {
-			cmd = exec.Command( // #nosec G204 database connection parameters from trusted config
-				c.MariadbDumpBin(),
-				"--protocol", "socket",
-				"-S", socketName,
-				"-u", c.DatabaseUser(),
-				"-p"+password,
-				c.DatabaseName(),
-			)
-		} else if c.DatabaseSsl() {
-			// see https://mariadb.org/mission-impossible-zero-configuration-ssl/
-			log.Infof("backup: server supports zero-configuration ssl")
-
-			cmd = exec.Command( // #nosec G204 database connection parameters from trusted config
-				c.MariadbDumpBin(),
-				"--protocol", "tcp",
-				"-h", c.DatabaseHost(),
-				"-P", c.DatabasePortString(),
-				"-u", c.DatabaseUser(),
-				"-p"+password,
-				c.DatabaseName(),
-			)
-		} else {
-			// see https://mariadb.org/mission-impossible-zero-configuration-ssl/
-			log.Infof("backup: zero-configuration ssl not supported by the server")
-
-			cmd = exec.Command( // #nosec G204 database connection parameters from trusted config
-				c.MariadbDumpBin(),
-				"--protocol", "tcp",
-				"--skip-ssl",
-				"-h", c.DatabaseHost(),
-				"-P", c.DatabasePortString(),
-				"-u", c.DatabaseUser(),
-				"-p"+password,
-				c.DatabaseName(),
-			)
-		}
+		conn := newMariadbConn(c, c.MariadbDumpBin())
+		logDatabaseSsl(conn, "backup")
+		password, cmd = conn.Password, conn.Cmd()
 	case dsn.DriverSQLite3:
 		if !fs.FileExistsNotEmpty(c.DatabaseFile()) {
 			return fmt.Errorf("sqlite database file %s not found", clean.LogQuote(c.DatabaseFile()))
@@ -267,52 +232,14 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 
 	var cmd *exec.Cmd
 
-	// Read the password once, so the argument and its rendering use the same value.
-	password := c.DatabasePassword()
+	// The password the command was built with, which its rendering must mask.
+	var password string
 
 	switch c.DatabaseDriver() {
 	case dsn.DriverMySQL, dsn.DriverMariaDB:
-		// Connect via Unix Domain Socket?
-		if socketName := c.DatabaseServer(); strings.HasPrefix(socketName, "/") {
-			cmd = exec.Command( // #nosec G204 database connection parameters from config
-				c.MariadbBin(),
-				"--protocol", "socket",
-				"-S", socketName,
-				"-u", c.DatabaseUser(),
-				"-p"+password,
-				"-f",
-				c.DatabaseName(),
-			)
-		} else if c.DatabaseSsl() {
-			// see https://mariadb.org/mission-impossible-zero-configuration-ssl/
-			log.Infof("restore: server supports zero-configuration ssl")
-
-			cmd = exec.Command( // #nosec G204 database connection parameters from config
-				c.MariadbBin(),
-				"--protocol", "tcp",
-				"-h", c.DatabaseHost(),
-				"-P", c.DatabasePortString(),
-				"-u", c.DatabaseUser(),
-				"-p"+password,
-				"-f",
-				c.DatabaseName(),
-			)
-		} else {
-			// see https://mariadb.org/mission-impossible-zero-configuration-ssl/
-			log.Infof("restore: zero-configuration ssl not supported by the server")
-
-			cmd = exec.Command( // #nosec G204 database connection parameters from config
-				c.MariadbBin(),
-				"--protocol", "tcp",
-				"--skip-ssl",
-				"-h", c.DatabaseHost(),
-				"-P", c.DatabasePortString(),
-				"-u", c.DatabaseUser(),
-				"-p"+password,
-				"-f",
-				c.DatabaseName(),
-			)
-		}
+		conn := newMariadbConn(c, c.MariadbBin())
+		logDatabaseSsl(conn, "restore")
+		password, cmd = conn.Password, conn.Cmd("-f")
 	case dsn.DriverSQLite3:
 		log.Infoln("restore: dropping existing sqlite database tables")
 		tables.Drop(c.Db())
