@@ -47,6 +47,20 @@ func nodeDatabase(node *reg.Node) string {
 	return node.Database.User
 }
 
+// releaseBlockedBy reports the database that keeps a node UUID from being released, or an empty
+// string when none does. A release removes every record holding the identifier, so it is checked
+// against the databases all of them name; cleaning is the one the same run deletes, which is
+// therefore not an obstacle to it.
+func releaseBlockedBy(databases []string, cleaning string) string {
+	for _, name := range databases {
+		if name != "" && name != cleaning {
+			return name
+		}
+	}
+
+	return ""
+}
+
 // dropNodeDatabase deletes a node's provisioned database and user and records the outcome.
 // A failure names what is left behind, because the registry record that named it may already
 // be gone and nothing else would say which database survived.
@@ -133,13 +147,22 @@ func clusterNodesRemoveAction(ctx *cli.Context) error {
 
 		dropsDatabase := dropDB && (dbName != "" || dbUser != "")
 
-		// Releasing an identifier is refused while the database named after it still exists.
-		// A blocked purge is still previewed, because a dry run is how an operator checks
+		// Releasing an identifier is refused while a database named after it still exists.
+		// A release removes every record that holds the uuid, not only the one resolved here,
+		// so every database those records name has to be accounted for - the resolved one can
+		// go with --drop-db, and any other has to be dealt with before the release.
+		// A blocked release is still previewed, because a dry run is how an operator checks
 		// what a destructive command would reach.
 		blockedBy := ""
 
-		if purge && !dropDB {
-			blockedBy = nodeDatabase(node)
+		if purge {
+			cleaning := ""
+
+			if dropsDatabase {
+				cleaning = nodeDatabase(node)
+			}
+
+			blockedBy = releaseBlockedBy(r.NodeDatabases(uuid), cleaning)
 		}
 
 		if ctx.Bool("dry-run") {

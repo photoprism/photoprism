@@ -33,3 +33,23 @@ func TestNodeDatabase(t *testing.T) {
 		assert.Empty(t, nodeDatabase(nil))
 	})
 }
+
+// TestReleaseBlockedBy covers the decision a release makes. The record an ordinary lookup
+// resolves is not the only one a release removes, so a database named by any of them counts.
+func TestReleaseBlockedBy(t *testing.T) {
+	t.Run("SiblingRecordBlocks", func(t *testing.T) {
+		// The resolved record names no database and is not deleting one, so the sibling's
+		// database is what the release would leave behind.
+		assert.Equal(t, "cluster_dsibling01", releaseBlockedBy([]string{"cluster_dsibling01"}, ""))
+	})
+	t.Run("SiblingBlocksEvenWhileCleaningAnother", func(t *testing.T) {
+		assert.Equal(t, "cluster_dsibling01", releaseBlockedBy([]string{"cluster_dresolved1", "cluster_dsibling01"}, "cluster_dresolved1"))
+	})
+	t.Run("TheOneBeingDeletedDoesNotBlock", func(t *testing.T) {
+		assert.Empty(t, releaseBlockedBy([]string{"cluster_dresolved1"}, "cluster_dresolved1"))
+	})
+	t.Run("NoneRecorded", func(t *testing.T) {
+		assert.Empty(t, releaseBlockedBy(nil, ""))
+		assert.Empty(t, releaseBlockedBy([]string{""}, ""))
+	})
+}

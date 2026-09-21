@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
@@ -160,8 +161,11 @@ func DropCredentials(ctx context.Context, dbName, user string) error {
 		if accErr != nil {
 			errs = append(errs, fmt.Sprintf("quote account: %v", accErr))
 		} else {
+			// A revoke names the account, so it fails when there is none - which is the
+			// ordinary state on a repeat run. Dropping the user removes its privileges
+			// anyway, so that is the step whose failure is reported.
 			if err := execTimeout(ctx, db, 10*time.Second, "REVOKE ALL PRIVILEGES, GRANT OPTION FROM "+acc); err != nil {
-				errs = append(errs, fmt.Sprintf("revoke privileges: %v", err))
+				log.Debugf("cluster: %s (revoke privileges of %s)", clean.Error(err), clean.Log(user))
 			}
 			if err := execTimeout(ctx, db, 10*time.Second, "DROP USER IF EXISTS "+acc); err != nil {
 				errs = append(errs, fmt.Sprintf("drop user: %v", err))

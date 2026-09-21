@@ -320,3 +320,56 @@ func TestClientRegistry_PutRejectsRetiredClientID(t *testing.T) {
 		assert.Equal(t, "pp-retired-id", retired.ClientName)
 	}
 }
+
+// NodeDatabases reports what every record holding a UUID has recorded, because releasing the
+// identifier removes all of them and not only the one an ordinary lookup resolves.
+func TestClientRegistry_NodeDatabases(t *testing.T) {
+	c := newRegistryTestConfig(t, "cluster-registry-node-databases")
+
+	r, _ := NewClientRegistryWithConfig(c)
+
+	t.Run("RetiredSiblingIsReported", func(t *testing.T) {
+		uuid := rnd.UUIDv7()
+
+		retired := entity.NewClient().SetName("pp-db-retired").SetRole(cluster.RoleInstance)
+		retired.NodeUUID = uuid
+		retired.SetData(&entity.ClientData{Database: &entity.ClientDatabase{Name: "cluster_dretired01"}})
+		assert.NoError(t, retired.Create())
+		assert.NoError(t, retired.Delete())
+
+		// The current record records no database, so a lookup that reads only the resolved
+		// record would report none at all.
+		live := entity.NewClient().SetName("pp-db-live").SetRole(cluster.RoleInstance)
+		live.NodeUUID = uuid
+		assert.NoError(t, live.Create())
+
+		assert.Nil(t, nodeDatabaseOf(t, r, uuid))
+		assert.Equal(t, []string{"cluster_dretired01"}, r.NodeDatabases(uuid))
+	})
+	t.Run("NoneRecorded", func(t *testing.T) {
+		uuid := rnd.UUIDv7()
+
+		m := entity.NewClient().SetName("pp-db-none").SetRole(cluster.RoleInstance)
+		m.NodeUUID = uuid
+		assert.NoError(t, m.Create())
+
+		assert.Empty(t, r.NodeDatabases(uuid))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Empty(t, r.NodeDatabases(""))
+	})
+}
+
+// nodeDatabaseOf returns the database of the record an ordinary lookup resolves, which is the
+// narrower view the release guard must not rely on.
+func nodeDatabaseOf(t *testing.T, r *ClientRegistry, uuid string) *cluster.NodeDatabase {
+	t.Helper()
+
+	n, err := r.FindByNodeUUID(uuid)
+
+	if err != nil || n == nil {
+		return nil
+	}
+
+	return n.Database
+}

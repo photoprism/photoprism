@@ -189,11 +189,12 @@ func (r *ClientRegistry) Put(n *Node) error {
 	// refused rather than written to, since its identifiers are reserved, not available.
 	if rnd.IsUID(n.ClientID, entity.ClientUID) {
 		if existing := entity.FindClientByUID(n.ClientID); existing != nil {
-			if m != nil && m.ClientUID != existing.ClientUID {
+			switch {
+			case m != nil && m.ClientUID != existing.ClientUID:
 				return ErrIdentifierMismatch
-			} else if existing.Deleted() {
+			case existing.Deleted():
 				return ErrIdentifierMismatch
-			} else if m == nil {
+			case m == nil:
 				m = existing
 			}
 		}
@@ -527,6 +528,29 @@ func (r *ClientRegistry) DeleteAllByUUID(uuid string) error {
 	}
 
 	return nil
+}
+
+// NodeDatabases returns the databases recorded by every record that holds the given NodeUUID,
+// including retired ones, in the order the records are read. A caller that releases the identifier
+// removes all of those records, so it has to see all of their databases rather than one record's.
+func (r *ClientRegistry) NodeDatabases(uuid string) []string {
+	if uuid == "" {
+		return nil
+	}
+
+	var names []string
+
+	for _, c := range entity.FindClientsByNodeUUID(uuid) {
+		if n := toNode(&c); n != nil && n.Database != nil {
+			if name := n.Database.Name; name != "" {
+				names = append(names, name)
+			} else if user := n.Database.User; user != "" {
+				names = append(names, user)
+			}
+		}
+	}
+
+	return names
 }
 
 // PurgeAllByUUID permanently removes every client row that matches the given NodeUUID,
