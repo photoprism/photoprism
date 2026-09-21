@@ -142,3 +142,19 @@ func TestFlagValueIndex(t *testing.T) {
 		})
 	}
 }
+
+func TestCmdAttachedShortValue(t *testing.T) {
+	t.Run("ValueHoldsEquals", func(t *testing.T) {
+		// "-pname=value" reads as a short option with an attached value as well as a long
+		// one with an equals sign, so both are tried and the value decides.
+		s := Cmd(exec.Command("/usr/bin/client", "-preview=sentinel"), "review=sentinel")
+
+		assert.NotContains(t, s, "review=sentinel")
+	})
+	t.Run("LongOptionKeepsItsName", func(t *testing.T) {
+		s := Cmd(exec.Command("/usr/bin/client", "--password=sentinel"), "sentinel")
+
+		assert.Contains(t, s, "--password=")
+		assert.NotContains(t, s, "sentinel")
+	})
+}

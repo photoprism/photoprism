@@ -286,3 +286,22 @@ func TestUriRedactedText(t *testing.T) {
 		assert.Equal(t, "token=T is not a uri", UriRedactedText("token=T is not a uri"))
 	})
 }
+
+func TestUriRedactedTextApostrophe(t *testing.T) {
+	t.Run("InQueryValue", func(t *testing.T) {
+		// An apostrophe is a valid sub-delimiter, so a parameter after one is still examined.
+		s := UriRedactedText("https://example.com/video?filter='sample'&token=secret-value")
+
+		assert.NotContains(t, s, "secret-value")
+		assert.Contains(t, s, "filter=")
+	})
+	t.Run("QuotedByTheMessage", func(t *testing.T) {
+		s := UriRedactedText("downloading 'https://example.com/v?token=secret-value' now")
+
+		assert.NotContains(t, s, "secret-value")
+		assert.Contains(t, s, "' now")
+	})
+	t.Run("LogUri", func(t *testing.T) {
+		assert.NotContains(t, LogUri("https://example.com/v?a='b'&key=secret-value"), "secret-value")
+	})
+}

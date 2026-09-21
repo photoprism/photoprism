@@ -2,6 +2,7 @@ package clean
 
 import (
 	"os/exec"
+	"slices"
 	"strings"
 
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -51,20 +52,43 @@ func Secrets(s string, secrets ...string) string {
 // flag name is part of that name, so the name stays readable. An argument naming none of the
 // values is still rendered through UriRedactedText, which reaches a credential a URI carries.
 func maskedArg(arg string, secrets []string) string {
-	value := flagValueIndex(arg)
+	attached := flagValueIndexes(arg)
 
 	for _, secret := range secrets {
-		switch {
-		case secret == Empty:
+		if secret == Empty {
 			continue
-		case arg == secret:
+		} else if arg == secret {
 			return txt.Masked
-		case value > 0 && strings.Contains(arg[value:], secret):
-			return arg[:value] + txt.Masked
+		}
+
+		for _, value := range attached {
+			if strings.Contains(arg[value:], secret) {
+				return arg[:value] + txt.Masked
+			}
 		}
 	}
 
 	return UriRedactedText(arg)
+}
+
+// flagValueIndexes returns every index at which a flag argument may attach its value: after an
+// equals sign, and after a short option name. Both are reported because "-pname=value" reads as
+// either, and only the value being looked for says which it was. The equals sign comes first, so
+// a long option keeps its name readable when both would match.
+func flagValueIndexes(arg string) []int {
+	var at []int
+
+	if i := flagValueIndex(arg); i > 0 {
+		at = append(at, i)
+	}
+
+	if len(arg) > 2 && arg[0] == '-' && arg[1] != '-' && arg[1] != '=' {
+		if i := 2; !slices.Contains(at, i) {
+			at = append(at, i)
+		}
+	}
+
+	return at
 }
 
 // flagValueIndex returns the index at which a flag argument attaches its value, either after an

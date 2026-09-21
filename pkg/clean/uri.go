@@ -118,8 +118,10 @@ func UriRedacted(s string) string {
 }
 
 // uriText matches a URI wherever it appears in a longer text, ending at the first character a URI
-// cannot hold, so the words and quotes around it stay outside the match.
-var uriText = regexp.MustCompile(`[a-zA-Z][a-zA-Z0-9+.\-]*://[^\s"'<>\\{}|^` + "`" + `]*`)
+// cannot hold, so the words and quotes around it stay outside the match. An apostrophe is a valid
+// sub-delimiter and is matched, because stopping at one would leave the rest of the query
+// unexamined; a trailing one is given back below, as that is the message quoting the URI.
+var uriText = regexp.MustCompile(`[a-zA-Z][a-zA-Z0-9+.\-]*://[^\s"<>\\{}|^` + "`" + `]*`)
 
 // UriRedactedText replaces every URI a text contains with its redacted form, and masks the whole
 // query of one the parser refuses, which includes a URI over LengthLimit. Text holding no URI is
@@ -130,13 +132,21 @@ func UriRedactedText(s string) string {
 	}
 
 	return uriText.ReplaceAllStringFunc(s, func(uri string) string {
-		if redacted := UriRedacted(uri); redacted != "" {
-			return redacted
-		} else if i := strings.IndexByte(uri, '?'); i > 0 {
-			return UriCredentials(uri[:i]) + "?" + UriRedactedValue
+		// A trailing apostrophe closes a quote in the message around the URI rather than
+		// belonging to it, so it is set aside and restored afterwards.
+		quoted := ""
+
+		for strings.HasSuffix(uri, "'") {
+			uri, quoted = uri[:len(uri)-1], quoted+"'"
 		}
 
-		return UriCredentials(uri)
+		if redacted := UriRedacted(uri); redacted != "" {
+			return redacted + quoted
+		} else if i := strings.IndexByte(uri, '?'); i > 0 {
+			return UriCredentials(uri[:i]) + "?" + UriRedactedValue + quoted
+		}
+
+		return UriCredentials(uri) + quoted
 	})
 }
 
