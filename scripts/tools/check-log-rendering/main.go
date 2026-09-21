@@ -350,7 +350,7 @@ func rendered(expr ast.Expr, imports map[string]string) bool {
 				}
 			}
 			return true
-		case modulePath + "pkg/clean.Log", modulePath + "pkg/clean.LogQuote", modulePath + "pkg/clean.LogLower", modulePath + "pkg/clean.LogNames", modulePath + "pkg/clean.Error", modulePath + "pkg/log/status.Error":
+		case modulePath + "pkg/clean.Log", modulePath + "pkg/clean.LogQuote", modulePath + "pkg/clean.LogLower", modulePath + "pkg/clean.LogNames", modulePath + "pkg/clean.LogUri", modulePath + "pkg/clean.Error", modulePath + "pkg/log/status.Error":
 			return !credential(expr, imports)
 		}
 	}
@@ -363,7 +363,7 @@ func credential(expr ast.Expr, imports map[string]string) bool {
 	ast.Inspect(expr, func(node ast.Node) bool {
 		if call, ok := node.(*ast.CallExpr); ok {
 			switch qualified(call.Fun, imports) {
-			case modulePath + "pkg/clean.UriRedacted", modulePath + "pkg/clean.FileNameRedacted":
+			case modulePath + "pkg/clean.UriRedacted", modulePath + "pkg/clean.UriRedactedText", modulePath + "pkg/clean.LogUri", modulePath + "pkg/clean.FileNameRedacted":
 				return false
 			}
 		}
