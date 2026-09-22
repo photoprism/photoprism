@@ -901,7 +901,8 @@ func (m *Model) NsfwModel() *nsfw.Model {
 			return nil
 		}
 
-		log.Infof("vision: initialized %s nsfw model at threshold %.4f", clean.Log(m.Name), resolvedNSFWThreshold(model))
+		log.Infof("vision: initialized %s nsfw model at index threshold %.4f and upload threshold %.4f",
+			clean.Log(m.Name), resolvedNSFWThreshold(model), resolvedNSFWUploadThreshold(model))
 		m.nsfwModel = model
 	default:
 		// Set model path from model name if no path is configured.
@@ -952,18 +953,30 @@ func (m *Model) NsfwModel() *nsfw.Model {
 			return nil
 		}
 
-		log.Infof("vision: initialized %s nsfw model at threshold %.4f", clean.Log(m.Name), resolvedNSFWThreshold(model))
+		log.Infof("vision: initialized %s nsfw model at index threshold %.4f and upload threshold %.4f",
+			clean.Log(m.Name), resolvedNSFWThreshold(model), resolvedNSFWUploadThreshold(model))
 		m.nsfwModel = model
 	}
 
 	return m.nsfwModel
 }
 
-// resolvedNSFWThreshold returns the explicit operating point or the model fallback.
+// resolvedNSFWThreshold returns the indexing operating point or the model fallback.
 func resolvedNSFWThreshold(model *nsfw.Model) float32 {
-	if Config != nil && Config.Thresholds.NSFWIsSet() {
-		return Config.Thresholds.GetNSFWFloat32()
+	return resolvedNSFWThresholdFor(model, nsfwThresholdIndex)
+}
+
+// resolvedNSFWUploadThreshold returns the upload operating point or the model fallback.
+func resolvedNSFWUploadThreshold(model *nsfw.Model) float32 {
+	return resolvedNSFWThresholdFor(model, nsfwThresholdUpload)
+}
+
+// resolvedNSFWThresholdFor resolves a caller-specific override or the model fallback.
+func resolvedNSFWThresholdFor(model *nsfw.Model, context nsfwThresholdContext) float32 {
+	if threshold, configured := nsfwThreshold(context); configured {
+		return threshold
 	}
+
 	return model.DefaultThreshold()
 }
 

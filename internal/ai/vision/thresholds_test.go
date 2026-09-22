@@ -139,3 +139,45 @@ func TestDefaultThresholdsNSFWIsUnset(t *testing.T) {
 		t.Fatalf("expected %d, got %d", DefaultNSFWThreshold, got)
 	}
 }
+
+// TestThresholds_NSFWContexts verifies caller-specific values override the shared legacy setting.
+func TestThresholds_NSFWContexts(t *testing.T) {
+	upload, index, labels := 60, 90, 40
+	thresholds := Thresholds{NSFW: 80, NSFWUpload: &upload, NSFWIndex: &index, NSFWLabels: &labels}
+
+	if got := thresholds.GetNSFWUpload(); got != upload {
+		t.Fatalf("expected upload threshold %d, got %d", upload, got)
+	}
+	if got := thresholds.GetNSFWIndex(); got != index {
+		t.Fatalf("expected index threshold %d, got %d", index, got)
+	}
+	if got := thresholds.GetNSFWLabels(); got != labels {
+		t.Fatalf("expected labels threshold %d, got %d", labels, got)
+	}
+	if !thresholds.NSFWUploadIsSet() || !thresholds.NSFWIndexIsSet() {
+		t.Fatal("expected context thresholds to be configured")
+	}
+
+	thresholds = Thresholds{NSFW: 80}
+	if got := thresholds.GetNSFWUpload(); got != 80 {
+		t.Fatalf("expected shared upload threshold 80, got %d", got)
+	}
+	if got := thresholds.GetNSFWIndex(); got != 80 {
+		t.Fatalf("expected shared index threshold 80, got %d", got)
+	}
+	if got := thresholds.GetNSFWLabels(); got != 80 {
+		t.Fatalf("expected shared labels threshold 80, got %d", got)
+	}
+
+	auto := NSFWThresholdAuto
+	thresholds = Thresholds{NSFW: 80, NSFWUpload: &auto, NSFWIndex: &auto, NSFWLabels: &auto}
+	if thresholds.NSFWUploadIsSet() || thresholds.NSFWIndexIsSet() {
+		t.Fatal("expected automatic context thresholds to override the shared value")
+	}
+	if got := thresholds.GetNSFWUpload(); got != DefaultNSFWThreshold {
+		t.Fatalf("expected automatic upload fallback %d, got %d", DefaultNSFWThreshold, got)
+	}
+	if got := thresholds.GetNSFWLabels(); got != DefaultNSFWThreshold {
+		t.Fatalf("expected automatic labels fallback %d, got %d", DefaultNSFWThreshold, got)
+	}
+}

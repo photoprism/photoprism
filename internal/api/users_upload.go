@@ -449,7 +449,7 @@ func nsfwUploadStatus(fileName string) nsfw.Status {
 	}
 	defer cleanup()
 
-	results, err := vision.DetectNSFW([]string{previewName}, media.SrcLocal)
+	results, err := vision.DetectNSFWUpload([]string{previewName}, media.SrcLocal)
 
 	if errors.Is(err, nsfw.ErrNotConfigured) {
 		log.Debugf("nsfw: no detector configured, %s was not screened", clean.Log(filepath.Base(fileName)))

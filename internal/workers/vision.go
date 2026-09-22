@@ -244,7 +244,7 @@ func (w *Vision) Start(filter string, count int, models []string, customSrc stri
 		if generateLabels {
 			if labels := file.GenerateLabels(customSrc); len(labels) > 0 {
 				if w.conf.DetectNSFW() && !m.PhotoPrivate {
-					if labels.IsNSFW(vision.Config.Thresholds.GetNSFW()) {
+					if labels.IsNSFW(vision.Config.Thresholds.GetNSFWLabels()) {
 						m.PhotoPrivate = true
 						log.Infof("vision: changed private flag of %s to %t (labels)", logName, m.PhotoPrivate)
 					}

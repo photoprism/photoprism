@@ -192,6 +192,23 @@ func TestConfigValues_Load(t *testing.T) {
 		assert.Equal(t, 0, cfg.Thresholds.NSFW)
 		assert.True(t, cfg.Thresholds.NSFWIsSet())
 	})
+	t.Run("LoadsContextNSFWThresholds", func(t *testing.T) {
+		configFile := filepath.Join(t.TempDir(), "vision.yml")
+		err := os.WriteFile(configFile, []byte("Thresholds:\n  NSFW: 80\n  NSFWUpload: 60\n  NSFWIndex: 110\n  NSFWLabels: -5\n"), fs.ModeConfigFile)
+		require.NoError(t, err)
+
+		cfg := NewConfig()
+		require.NoError(t, cfg.Load(configFile))
+		require.NotNil(t, cfg.Thresholds.NSFWUpload)
+		require.NotNil(t, cfg.Thresholds.NSFWIndex)
+		require.NotNil(t, cfg.Thresholds.NSFWLabels)
+		assert.Equal(t, 60, *cfg.Thresholds.NSFWUpload)
+		assert.Equal(t, 100, *cfg.Thresholds.NSFWIndex)
+		assert.Equal(t, NSFWThresholdAuto, *cfg.Thresholds.NSFWLabels)
+		assert.Equal(t, 60, cfg.Thresholds.GetNSFWUpload())
+		assert.Equal(t, 100, cfg.Thresholds.GetNSFWIndex())
+		assert.Equal(t, DefaultNSFWThreshold, cfg.Thresholds.GetNSFWLabels())
+	})
 	t.Run("PreservesExplicitClassIndexZero", func(t *testing.T) {
 		configFile := filepath.Join(t.TempDir(), "vision.yml")
 		err := os.WriteFile(configFile, []byte("Models:\n- Type: nsfw\n  Name: custom\n  Reduction: softmax-unsafe\n  UnsafeClassIndex: 0\n  ONNX: {}\n"), fs.ModeConfigFile)

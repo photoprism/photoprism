@@ -72,7 +72,7 @@ Models:
       Logits: false
   Reduction: softmax-unsafe
   UnsafeClassIndex: 1
-  DefaultThreshold: 0.8
+  DefaultThreshold: 0.327
 - Type: face
   Default: true
   Name: facenet

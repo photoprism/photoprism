@@ -170,6 +170,16 @@ func (c *ConfigValues) Load(fileName string) error {
 	} else if c.Thresholds.NSFW > 100 {
 		c.Thresholds.NSFW = 100
 	}
+	for _, threshold := range []*int{c.Thresholds.NSFWUpload, c.Thresholds.NSFWIndex, c.Thresholds.NSFWLabels} {
+		switch {
+		case threshold == nil:
+			continue
+		case *threshold < NSFWThresholdAuto:
+			*threshold = NSFWThresholdAuto
+		case *threshold > 100:
+			*threshold = 100
+		}
+	}
 
 	return nil
 }

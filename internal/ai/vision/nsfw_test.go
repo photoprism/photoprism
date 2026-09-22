@@ -29,6 +29,13 @@ func TestNsfwThreshold(t *testing.T) {
 	t.Run("OperatorValueWins", func(t *testing.T) {
 		withConfig(t, &ConfigValues{Thresholds: Thresholds{NSFW: 90}})
 		assert.InDelta(t, 0.9, NsfwThreshold(), 1e-6)
+		assert.InDelta(t, 0.9, NsfwUploadThreshold(), 1e-6)
+	})
+	t.Run("ContextOverrides", func(t *testing.T) {
+		upload, index := 62, 91
+		withConfig(t, &ConfigValues{Thresholds: Thresholds{NSFW: 80, NSFWUpload: &upload, NSFWIndex: &index}})
+		assert.InDelta(t, 0.91, NsfwThreshold(), 1e-6)
+		assert.InDelta(t, 0.62, NsfwUploadThreshold(), 1e-6)
 	})
 	t.Run("UnsetFallsBackToDefault", func(t *testing.T) {
 		withConfig(t, &ConfigValues{Thresholds: Thresholds{NSFW: NSFWThresholdAuto}})
@@ -54,6 +61,12 @@ func TestResolvedNSFWThreshold(t *testing.T) {
 	t.Run("OperatorOverride", func(t *testing.T) {
 		withConfig(t, &ConfigValues{Thresholds: Thresholds{NSFW: 91}})
 		assert.InDelta(t, 0.91, resolvedNSFWThreshold(model), 1e-6)
+	})
+	t.Run("SeparateOverrides", func(t *testing.T) {
+		upload, index := 62, 91
+		withConfig(t, &ConfigValues{Thresholds: Thresholds{NSFWUpload: &upload, NSFWIndex: &index}})
+		assert.InDelta(t, 0.91, resolvedNSFWThreshold(model), 1e-6)
+		assert.InDelta(t, 0.62, resolvedNSFWUploadThreshold(model), 1e-6)
 	})
 }
 
@@ -130,6 +143,32 @@ func TestDetectNSFWPartialBatch(t *testing.T) {
 	assert.True(t, result[1].IsUnavailable())
 	assert.False(t, result[1].IsSafe())
 	assert.NotEmpty(t, result[1].Reason)
+}
+
+// TestDetectNSFWThresholdContexts verifies index and upload calls use independent thresholds.
+func TestDetectNSFWThresholdContexts(t *testing.T) {
+	modelPath := filepath.Join(assetsPath, "models", string(nsfw.DefaultModelName()))
+	modelInfo := nsfw.FindModel(nsfw.DefaultModelName())
+	if modelInfo == nil || !fs.FileExists(modelInfo.ONNX.FilePath(modelPath)) {
+		t.Skip("nsfw: model is not installed")
+	}
+
+	upload, index := 62, 91
+	config := NewConfig()
+	config.Thresholds.NSFWUpload = &upload
+	config.Thresholds.NSFWIndex = &index
+	withConfig(t, config)
+
+	image := Files{filepath.Join("..", "nsfw", "testdata", "hentai_2.jpg")}
+	indexed, err := DetectNSFW(image, media.SrcLocal)
+	require.NoError(t, err)
+	require.Len(t, indexed, 1)
+	assert.InDelta(t, 0.91, indexed[0].Threshold, 1e-6)
+
+	uploaded, err := DetectNSFWUpload(image, media.SrcLocal)
+	require.NoError(t, err)
+	require.Len(t, uploaded, 1)
+	assert.InDelta(t, 0.62, uploaded[0].Threshold, 1e-6)
 }
 
 // TestNormalizeNsfwResults verifies that a remote response is aligned with the images it was
@@ -215,6 +254,11 @@ func TestSetNSFWFunc(t *testing.T) {
 	t.Cleanup(func() { SetNSFWFunc(nil) })
 
 	result, err := DetectNSFW(Files{"any.jpg"}, media.SrcLocal)
+	require.NoError(t, err)
+	require.Len(t, result, 1)
+	assert.True(t, result[0].IsUnsafe())
+
+	result, err = DetectNSFWUpload(Files{"any.jpg"}, media.SrcLocal)
 	require.NoError(t, err)
 	require.Len(t, result, 1)
 	assert.True(t, result[0].IsUnsafe())

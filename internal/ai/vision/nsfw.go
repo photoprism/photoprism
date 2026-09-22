@@ -9,30 +9,61 @@ import (
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
-var nsfwFunc = nsfwInternal
+type nsfwThresholdContext uint8
+
+const (
+	nsfwThresholdIndex nsfwThresholdContext = iota
+	nsfwThresholdUpload
+)
+
+var nsfwFunc = nsfwInternalContext
 
 // SetNSFWFunc overrides the Vision NSFW detector. Intended for tests.
 func SetNSFWFunc(fn func(Files, media.Src) ([]nsfw.Result, error)) {
 	if fn == nil {
-		nsfwFunc = nsfwInternal
+		nsfwFunc = nsfwInternalContext
 		return
 	}
 
-	nsfwFunc = fn
+	nsfwFunc = func(images Files, mediaSrc media.Src, _ nsfwThresholdContext) ([]nsfw.Result, error) {
+		return fn(images, mediaSrc)
+	}
 }
 
 // DetectNSFW checks images for inappropriate content and generates probability scores grouped by category.
 func DetectNSFW(images Files, mediaSrc media.Src) (result []nsfw.Result, err error) {
-	return nsfwFunc(images, mediaSrc)
+	return nsfwFunc(images, mediaSrc, nsfwThresholdIndex)
 }
 
-// NsfwThreshold returns the configured unsafe probability or the package default.
+// DetectNSFWUpload checks uploaded images with the upload-specific operating threshold.
+func DetectNSFWUpload(images Files, mediaSrc media.Src) (result []nsfw.Result, err error) {
+	return nsfwFunc(images, mediaSrc, nsfwThresholdUpload)
+}
+
+// NsfwThreshold returns the indexing probability threshold or the package default.
 func NsfwThreshold() float32 {
-	if Config != nil && Config.Thresholds.NSFWIsSet() {
-		return Config.Thresholds.GetNSFWFloat32()
+	threshold, _ := nsfwThreshold(nsfwThresholdIndex)
+	return threshold
+}
+
+// NsfwUploadThreshold returns the upload probability threshold or the package default.
+func NsfwUploadThreshold() float32 {
+	threshold, _ := nsfwThreshold(nsfwThresholdUpload)
+	return threshold
+}
+
+// nsfwThreshold resolves the configured threshold and reports whether it overrides model calibration.
+func nsfwThreshold(context nsfwThresholdContext) (float32, bool) {
+	if Config == nil {
+		return float32(DefaultNSFWThreshold) / 100, false
 	}
 
-	return float32(DefaultNSFWThreshold) / 100
+	switch context {
+	case nsfwThresholdUpload:
+		return Config.Thresholds.GetNSFWUploadFloat32(), Config.Thresholds.NSFWUploadIsSet()
+	default:
+		return Config.Thresholds.GetNSFWIndexFloat32(), Config.Thresholds.NSFWIndexIsSet()
+	}
 }
 
 // undecidedResults returns count undecided results, so a caller that ignores the error still
@@ -49,13 +80,18 @@ func undecidedResults(count int, reason string) []nsfw.Result {
 
 // nsfwInternal evaluates local or remote detectors with the resolved operating threshold.
 func nsfwInternal(images Files, mediaSrc media.Src) (result []nsfw.Result, err error) {
+	return nsfwInternalContext(images, mediaSrc, nsfwThresholdIndex)
+}
+
+// nsfwInternalContext evaluates a detector with the operating threshold for its caller.
+func nsfwInternalContext(images Files, mediaSrc media.Src, context nsfwThresholdContext) (result []nsfw.Result, err error) {
 	// Return if no thumbnail filenames were given.
 	if len(images) == 0 {
 		return result, errors.New("at least one image required")
 	}
 
 	result = undecidedResults(len(images), "not evaluated")
-	threshold := NsfwThreshold()
+	threshold, thresholdIsSet := nsfwThreshold(context)
 
 	// Return if there is no configuration or no image classification models are configured.
 	if Config == nil {
@@ -93,7 +129,7 @@ func nsfwInternal(images Files, mediaSrc media.Src) (result []nsfw.Result, err e
 
 			result = normalizeNsfwResults(apiResponse.Result.Nsfw, len(images), threshold)
 		} else if detector := model.NsfwModel(); detector != nil {
-			if !Config.Thresholds.NSFWIsSet() {
+			if !thresholdIsSet {
 				threshold = detector.DefaultThreshold()
 			}
 			// Detect with the local model.
