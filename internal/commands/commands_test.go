@@ -2,11 +2,13 @@ package commands
 
 import (
 	"bytes"
+	"errors"
 	"flag"
 	"os"
 	"testing"
 
 	"github.com/sirupsen/logrus"
+	"github.com/stretchr/testify/assert"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -271,4 +273,33 @@ func reopenConnection() *config.Config {
 		log.Warn("reopenConnection: config is nil")
 		return nil
 	}
+}
+
+// TestCallWithDependencies covers the exit code reported when the configuration cannot be loaded.
+func TestCallWithDependencies(t *testing.T) {
+	initConfig := InitConfig
+	t.Cleanup(func() { InitConfig = initConfig })
+
+	action := func(conf *config.Config) error {
+		t.Fatal("the action must not run without a configuration")
+		return nil
+	}
+
+	t.Run("InitErrorExitsOne", func(t *testing.T) {
+		InitConfig = func(ctx *cli.Context) (*config.Config, error) {
+			return nil, errors.New("config not readable")
+		}
+
+		err := CallWithDependencies(NewTestContext(nil), action)
+
+		assertExitCode(t, err, 1)
+		assert.Contains(t, err.Error(), "config not readable")
+	})
+	t.Run("InitExitCodeIsKept", func(t *testing.T) {
+		InitConfig = func(ctx *cli.Context) (*config.Config, error) {
+			return nil, cli.Exit("invalid flag", 2)
+		}
+
+		assertExitCode(t, CallWithDependencies(NewTestContext(nil), action), 2)
+	})
 }

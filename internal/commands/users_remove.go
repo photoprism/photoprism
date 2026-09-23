@@ -3,7 +3,6 @@ package commands
 import (
 	"fmt"
 
-	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -18,11 +17,8 @@ var UsersRemoveCommand = &cli.Command{
 	Usage:     "Deletes a registered user account",
 	ArgsUsage: "[username]",
 	Flags: []cli.Flag{
-		&cli.BoolFlag{
-			Name:    "force",
-			Aliases: []string{"f"},
-			Usage:   "skips asking for confirmation",
-		},
+		YesFlag(),
+		DeprecatedForceFlag(),
 	},
 	Action: usersRemoveAction,
 }
@@ -49,25 +45,20 @@ func usersRemoveAction(ctx *cli.Context) error {
 		}
 
 		if m == nil {
-			return fmt.Errorf("user %s not found", clean.LogQuote(id))
+			return cli.Exit(fmt.Errorf("user %s not found", clean.LogQuote(id)), 3)
 		} else if m.IsDeleted() {
-			return fmt.Errorf("user %s has already been deleted", clean.LogQuote(id))
+			return cli.Exit(fmt.Errorf("user %s has already been deleted", clean.LogQuote(id)), 3)
 		}
 
-		if !ctx.Bool("force") && !RunNonInteractively(false) {
-			actionPrompt := promptui.Prompt{
-				Label:     fmt.Sprintf("Delete user %s?", m.String()),
-				IsConfirm: true,
-			}
-
-			if _, err := actionPrompt.Run(); err != nil {
-				log.Infof("user %s was not deleted", m.String())
-				return nil
-			}
+		if proceed, err := ConfirmAction(ctx.Bool("yes") || ctx.Bool("force"), fmt.Sprintf("Delete user %s?", m.String())); err != nil {
+			return err
+		} else if !proceed {
+			log.Infof("user %s was not deleted", m.String())
+			return nil
 		}
 
 		if err := m.Delete(); err != nil {
-			return err
+			return cli.Exit(err, 1)
 		}
 
 		log.Infof("user %s has been deleted", m.String())

@@ -112,6 +112,25 @@ func TestConfirmAction(t *testing.T) {
 	})
 }
 
+// TestConfirmLabel covers the label cleanup, since the prompt appends its own question mark.
+func TestConfirmLabel(t *testing.T) {
+	t.Run("TrailingQuestionMark", func(t *testing.T) {
+		assert.Equal(t, "Delete user alice", confirmLabel("Delete user alice?"))
+	})
+	t.Run("SeveralQuestionMarks", func(t *testing.T) {
+		assert.Equal(t, "Delete user alice", confirmLabel("Delete user alice??"))
+	})
+	t.Run("SpaceBeforeQuestionMark", func(t *testing.T) {
+		assert.Equal(t, "Delete user alice", confirmLabel("Delete user alice ?"))
+	})
+	t.Run("NoQuestionMark", func(t *testing.T) {
+		assert.Equal(t, "Delete user alice", confirmLabel(" Delete user alice "))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", confirmLabel(""))
+	})
+}
+
 // TestFacesResetRequiresConfirmation pins that a reset without a confirmation reports a failure
 // rather than exiting successfully without touching anything.
 func TestFacesResetRequiresConfirmation(t *testing.T) {
