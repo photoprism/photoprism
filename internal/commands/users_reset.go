@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"github.com/manifoldco/promptui"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 
@@ -23,30 +22,19 @@ var UsersResetCommand = &cli.Command{
 			Aliases: []string{"t"},
 			Usage:   "shows trace logs for debugging",
 		},
-		&cli.BoolFlag{
-			Name:    "yes",
-			Aliases: []string{"y"},
-			Usage:   "runs the command non-interactively",
-		},
+		YesFlag(),
 	},
 	Action: usersResetAction,
 }
 
-// usersResetAction deletes recreates the user management database tables.
+// usersResetAction drops and recreates the user management database tables.
 func usersResetAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
-		confirmed := RunNonInteractively(ctx.Bool("yes"))
-
-		// Show prompt?
-		if !confirmed {
-			actionPrompt := promptui.Prompt{
-				Label:     "Reset the user database to a clean state?",
-				IsConfirm: true,
-			}
-
-			if _, err := actionPrompt.Run(); err != nil {
-				return nil
-			}
+		if proceed, err := ConfirmAction(ctx.Bool("yes"), "Remove all user accounts, sessions, access tokens, app passwords, 2FA passcodes, and user shares?"); err != nil {
+			return err
+		} else if !proceed {
+			log.Infof("no user accounts were removed")
+			return nil
 		}
 
 		if ctx.Bool("trace") {
@@ -58,37 +46,37 @@ func usersResetAction(ctx *cli.Context) error {
 
 		// Drop existing user management tables.
 		if err := db.DropTableIfExists(entity.User{}, entity.UserDetails{}, entity.UserSettings{}, entity.UserShare{}, entity.Passcode{}, entity.Session{}).Error; err != nil {
-			return err
+			return cli.Exit(err, 1)
 		}
 
 		// Re-create auth_users.
 		if err := db.CreateTable(entity.User{}).Error; err != nil {
-			return err
+			return cli.Exit(err, 1)
 		}
 
 		// Re-create auth_users_details.
 		if err := db.CreateTable(entity.UserDetails{}).Error; err != nil {
-			return err
+			return cli.Exit(err, 1)
 		}
 
 		// Re-create auth_users_settings.
 		if err := db.CreateTable(entity.UserSettings{}).Error; err != nil {
-			return err
+			return cli.Exit(err, 1)
 		}
 
 		// Re-create auth_users_shares.
 		if err := db.CreateTable(entity.UserShare{}).Error; err != nil {
-			return err
+			return cli.Exit(err, 1)
 		}
 
 		// Re-create passcodes.
 		if err := db.CreateTable(entity.Passcode{}).Error; err != nil {
-			return err
+			return cli.Exit(err, 1)
 		}
 
 		// Re-create auth_sessions.
 		if err := db.CreateTable(entity.Session{}).Error; err != nil {
-			return err
+			return cli.Exit(err, 1)
 		}
 
 		log.Infof("the user database has been recreated and is now in a clean state")

@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"github.com/manifoldco/promptui"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 
@@ -19,11 +18,7 @@ var ClientsResetCommand = &cli.Command{
 			Aliases: []string{"t"},
 			Usage:   "shows trace logs for debugging",
 		},
-		&cli.BoolFlag{
-			Name:    "yes",
-			Aliases: []string{"y"},
-			Usage:   "runs the command non-interactively",
-		},
+		YesFlag(),
 	},
 	Action: clientsResetAction,
 }
@@ -31,18 +26,11 @@ var ClientsResetCommand = &cli.Command{
 // clientsResetAction removes all registered client applications.
 func clientsResetAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
-		confirmed := RunNonInteractively(ctx.Bool("yes"))
-
-		// Show prompt?
-		if !confirmed {
-			actionPrompt := promptui.Prompt{
-				Label:     "Reset the client database to a clean state?",
-				IsConfirm: true,
-			}
-
-			if _, err := actionPrompt.Run(); err != nil {
-				return nil
-			}
+		if proceed, err := ConfirmAction(ctx.Bool("yes"), "Remove all registered client applications?"); err != nil {
+			return err
+		} else if !proceed {
+			log.Infof("no client applications were removed")
+			return nil
 		}
 
 		if ctx.Bool("trace") {
@@ -54,12 +42,12 @@ func clientsResetAction(ctx *cli.Context) error {
 
 		// Drop existing auth_clients table.
 		if err := db.DropTableIfExists(entity.Client{}).Error; err != nil {
-			return err
+			return cli.Exit(err, 1)
 		}
 
 		// Re-create auth_clients.
 		if err := db.CreateTable(entity.Client{}).Error; err != nil {
-			return err
+			return cli.Exit(err, 1)
 		}
 
 		log.Infof("the client database has been recreated and is now in a clean state")

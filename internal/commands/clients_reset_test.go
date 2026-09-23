@@ -12,6 +12,8 @@ import (
 
 func TestClientsResetCommand(t *testing.T) {
 	t.Run("NotConfirmed", func(t *testing.T) {
+		t.Setenv("PHOTOPRISM_CLI", "")
+
 		// Run command with test context.
 		output0, err := RunWithTestContext(ClientsListCommand, []string{"ls"})
 
@@ -21,13 +23,10 @@ func TestClientsResetCommand(t *testing.T) {
 		assert.Contains(t, output0, "alice")
 		assert.Contains(t, output0, "metrics")
 
-		// Run command with test context.
-		output, err := RunWithTestContext(ClientsResetCommand, []string{"reset"})
-
-		// Check command output for plausibility.
-		// t.Logf(output)
-		assert.NoError(t, err)
-		assert.Empty(t, output)
+		// Without a terminal the prompt cannot run, which is a usage error rather than a refusal.
+		_, err = RunWithTestContext(ClientsResetCommand, []string{"reset"})
+		assertExitCode(t, err, 2)
+		assert.Contains(t, err.Error(), "--yes")
 
 		// Run command with test context.
 		output1, err := RunWithTestContext(ClientsListCommand, []string{"ls"})
@@ -67,9 +66,7 @@ func TestClientsResetCommand(t *testing.T) {
 		assert.NotContains(t, output1, "alice")
 		assert.NotContains(t, output1, "metrics")
 
-		// Put the clients back, and the sessions with them: removing a client removes the
-		// sessions it issued, so restoring only the clients leaves later tests without the
-		// session fixtures they read.
+		// Put the client and session fixtures back for the tests that follow.
 		c := reopenConnection()
 		entity.SetDbProvider(c)
 		entity.CreateClientFixtures()

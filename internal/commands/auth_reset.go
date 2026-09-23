@@ -3,7 +3,6 @@ package commands
 import (
 	"github.com/sirupsen/logrus"
 
-	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -24,11 +23,7 @@ var AuthResetCommand = &cli.Command{
 			Aliases: []string{"t"},
 			Usage:   "shows trace logs for debugging",
 		},
-		&cli.BoolFlag{
-			Name:    "yes",
-			Aliases: []string{"y"},
-			Usage:   "runs the command non-interactively",
-		},
+		YesFlag(),
 	},
 	Action: authResetAction,
 }
@@ -36,18 +31,11 @@ var AuthResetCommand = &cli.Command{
 // authResetAction removes all sessions and resets the related database table to a clean state.
 func authResetAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
-		confirmed := RunNonInteractively(ctx.Bool("yes"))
-
-		// Show prompt?
-		if !confirmed {
-			actionPrompt := promptui.Prompt{
-				Label:     "Remove all sessions and reset the database table to a clean state?",
-				IsConfirm: true,
-			}
-
-			if _, err := actionPrompt.Run(); err != nil {
-				return nil
-			}
+		if proceed, err := ConfirmAction(ctx.Bool("yes"), "Remove all sessions, access tokens, and app passwords?"); err != nil {
+			return err
+		} else if !proceed {
+			log.Infof("no sessions were removed")
+			return nil
 		}
 
 		if ctx.Bool("trace") {
@@ -59,12 +47,12 @@ func authResetAction(ctx *cli.Context) error {
 
 		// Drop existing sessions table.
 		if err := db.DropTableIfExists(entity.Session{}).Error; err != nil {
-			return err
+			return cli.Exit(err, 1)
 		}
 
 		// Re-create auth_sessions.
 		if err := db.CreateTable(entity.Session{}).Error; err != nil {
-			return err
+			return cli.Exit(err, 1)
 		}
 
 		log.Infof("all sessions have been removed")
