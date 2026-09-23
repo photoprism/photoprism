@@ -167,6 +167,10 @@ func OAuthToken(router *gin.RouterGroup) {
 				event.AuditWarn([]string{clientIp, "oauth2", actor, action, authn.ErrInvalidClientSecret.Error()})
 				AbortInvalidCredentials(c)
 				return
+			} else if client.HasInactiveUser() {
+				event.AuditWarn([]string{clientIp, "oauth2", actor, action, authn.ErrAccountDisabled.Error()})
+				AbortInvalidCredentials(c)
+				return
 			}
 
 			// Update time of last activity.

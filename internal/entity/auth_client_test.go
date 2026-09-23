@@ -1310,3 +1310,41 @@ func TestClient_RestoreConflict(t *testing.T) {
 		}
 	})
 }
+
+func TestClient_HasInactiveUser(t *testing.T) {
+	t.Run("Nil", func(t *testing.T) {
+		var m *Client
+		assert.False(t, m.HasInactiveUser())
+	})
+	t.Run("NoUser", func(t *testing.T) {
+		assert.False(t, ClientFixtures.Pointer("metrics").HasInactiveUser())
+	})
+	t.Run("ActiveUser", func(t *testing.T) {
+		assert.False(t, ClientFixtures.Pointer("alice").HasInactiveUser())
+	})
+	t.Run("MissingUser", func(t *testing.T) {
+		m := NewClient()
+		m.UserUID = rnd.GenerateUID(UserUID)
+		assert.True(t, m.HasInactiveUser())
+	})
+	t.Run("InvalidUserUID", func(t *testing.T) {
+		m := NewClient()
+		m.UserUID = "invalid"
+		assert.True(t, m.HasInactiveUser())
+	})
+	t.Run("DeletedUser", func(t *testing.T) {
+		deletedAt := time.Now().Add(-time.Minute)
+		m := NewClient().SetUser(&User{UserUID: rnd.GenerateUID(UserUID), DeletedAt: &deletedAt})
+		assert.True(t, m.HasInactiveUser())
+	})
+	t.Run("ExpiredUser", func(t *testing.T) {
+		expiresAt := time.Now().Add(-time.Minute)
+		m := NewClient().SetUser(&User{UserUID: rnd.GenerateUID(UserUID), ExpiresAt: &expiresAt})
+		assert.True(t, m.HasInactiveUser())
+	})
+	t.Run("ExpiredSuperAdmin", func(t *testing.T) {
+		expiresAt := time.Now().Add(-time.Minute)
+		m := NewClient().SetUser(&User{UserUID: rnd.GenerateUID(UserUID), ExpiresAt: &expiresAt, SuperAdmin: true})
+		assert.False(t, m.HasInactiveUser())
+	})
+}
