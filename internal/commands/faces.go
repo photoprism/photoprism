@@ -402,13 +402,13 @@ func facesResetAction(ctx *cli.Context) error {
 		// half alone. Refused rather than reordered, because which of the two they meant is not
 		// knowable from the command.
 		if ctx.IsSet("detector") || ctx.IsSet("engine") {
-			return cli.Exit("faces: --force removes all people and faces, so it cannot be combined with --detector", 1)
+			return cli.Exit("faces: --force removes all people, faces, and markers, so it cannot be combined with --detector", 2)
 		}
 
 		// Refused rather than treated as the wider of the two: the flags name different outcomes
 		// for the markers table, and which one a caller meant is not knowable from the command.
 		if ctx.Bool("all") {
-			return cli.Exit("faces: --force also removes the markers, so it cannot be combined with --all", 1)
+			return cli.Exit("faces: --force also removes the markers, so it cannot be combined with --all", 2)
 		}
 
 		return facesResetAllAction(ctx)

@@ -100,9 +100,13 @@ func camerasUpdateAction(ctx *cli.Context) error {
 		cameraMake := ctx.String("make")
 		cameraModel := ctx.String("model")
 
+		if strings.TrimSpace(cameraMake) == "" || strings.TrimSpace(cameraModel) == "" {
+			return cli.Exit("make and model must not be empty", 2)
+		}
+
 		camera := query.FindCameraByID(cameraId)
 		if camera == nil {
-			return cli.Exit("camera not found", 1)
+			return cli.Exit("camera not found", 3)
 		}
 		if err := camera.UpdateMakeModel(cameraMake, cameraModel); err != nil {
 			return cli.Exit(err, 1)

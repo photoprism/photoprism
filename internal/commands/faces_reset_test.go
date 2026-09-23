@@ -61,7 +61,7 @@ func TestFacesResetFlags(t *testing.T) {
 
 		var exit cli.ExitCoder
 		require.ErrorAs(t, err, &exit)
-		assert.Equal(t, 1, exit.ExitCode())
+		assert.Equal(t, 2, exit.ExitCode())
 	})
 	t.Run("ForceWithDetector", func(t *testing.T) {
 		err := facesResetAction(newFacesResetContext(t, "--force", "--detector=yunet"))
@@ -71,7 +71,7 @@ func TestFacesResetFlags(t *testing.T) {
 
 		var exit cli.ExitCoder
 		require.ErrorAs(t, err, &exit)
-		assert.Equal(t, 1, exit.ExitCode())
+		assert.Equal(t, 2, exit.ExitCode())
 	})
 }
 

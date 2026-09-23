@@ -106,9 +106,13 @@ func lensesUpdateAction(ctx *cli.Context) error {
 		lensMake := ctx.String("make")
 		lensModel := ctx.String("model")
 
+		if strings.TrimSpace(lensMake) == "" || strings.TrimSpace(lensModel) == "" {
+			return cli.Exit("make and model must not be empty", 2)
+		}
+
 		lens := query.FindLensByID(lensId)
 		if lens == nil {
-			return cli.Exit("lens not found", 1)
+			return cli.Exit("lens not found", 3)
 		}
 		if err := lens.UpdateMakeModel(lensMake, lensModel); err != nil {
 			return cli.Exit(err, 1)

@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/entity"
 )
@@ -85,10 +84,11 @@ func TestLensesCommand(t *testing.T) {
 		assert.Error(t, err)
 		assert.Len(t, output, 0)
 		assert.Contains(t, err.Error(), "make and model must not be empty")
-		var exitErr cli.ExitCoder
-		if assert.ErrorAs(t, err, &exitErr) {
-			assert.Equal(t, 1, exitErr.ExitCode())
-		}
+		assertExitCode(t, err, 2)
+	})
+	t.Run("UpdateNotFound", func(t *testing.T) {
+		_, err := RunWithTestContext(LensesCommand, []string{"lenses", "update", "--id=999999999", "--make=Example", "--model=Example"})
+		assertExitCode(t, err, 3)
 	})
 	t.Run("UpdateValid", func(t *testing.T) {
 		defer assert.NoError(t, entity.Db().Save(entity.LensFixtures.Pointer("4-37")).Error)
