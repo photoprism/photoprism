@@ -210,11 +210,15 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 		}
 
 		// Check credentials and authorization.
-		if user, _, _, err := entity.Auth(f, nil, c); err != nil {
+		if user, provider, _, err := entity.Auth(f, nil, c); err != nil {
 			// Abort if authentication has failed.
 			message := authn.ErrInvalidCredentials.Error()
 			event.AuditErr([]string{clientIp, "webdav", "login as %s", message}, clean.LogQuote(username))
 			event.LoginError(clientIp, "webdav", username, api.UserAgent(c), message)
+		} else if provider.IsApplication() {
+			// App passwords are authenticated as auth tokens above.
+			event.AuditWarn([]string{clientIp, "webdav", "login as %s", "app password", status.Denied}, clean.LogQuote(username))
+			event.LoginError(clientIp, "webdav", username, api.UserAgent(c), authn.ErrInvalidCredentials.Error())
 		} else if user == nil {
 			// Abort if account was not found.
 			message := authn.ErrAccountNotFound.Error()

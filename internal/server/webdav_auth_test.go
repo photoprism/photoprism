@@ -9,10 +9,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -169,6 +171,63 @@ func TestWebDAVAuth(t *testing.T) {
 
 		assert.Equal(t, http.StatusUnauthorized, c.Writer.Status())
 		assert.Equal(t, BasicAuthRealm, c.Writer.Header().Get("WWW-Authenticate"))
+	})
+	t.Run("AppPasswordAuthToken", func(t *testing.T) {
+		appSess, err := entity.AddClientSession("webdav-app-password", 3600, "*", authn.GrantPassword, entity.UserFixtures.Pointer("alice"))
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = appSess.Delete() })
+		require.True(t, appSess.IsApplication())
+
+		request := func(extraToken string) int {
+			w := httptest.NewRecorder()
+			c, _ := gin.CreateTestContext(w)
+			c.Request = &http.Request{Header: make(http.Header)}
+
+			basicAuth := fmt.Appendf(nil, "alice:%s", appSess.AuthToken())
+			c.Request.Header.Add(header.Auth, fmt.Sprintf("%s %s", header.AuthBasic, base64.StdEncoding.EncodeToString(basicAuth)))
+
+			if extraToken != "" {
+				c.Request.Header.Set(header.XAuthToken, extraToken)
+			}
+
+			entity.FlushSessionCache()
+			webdavHandler(c)
+
+			return c.Writer.Status()
+		}
+
+		// App passwords authenticate through the auth token check only.
+		assert.Equal(t, http.StatusOK, request(""))
+		assert.Equal(t, http.StatusUnauthorized, request("x"))
+
+		conf.Settings().Features.AppPasswords = false
+		defer func() { conf.Settings().Features.AppPasswords = true }()
+
+		assert.Equal(t, http.StatusUnauthorized, request(""))
+		assert.Equal(t, http.StatusUnauthorized, request("x"))
+	})
+	t.Run("AppPasswordWithoutWebDAVScope", func(t *testing.T) {
+		appSess, err := entity.AddClientSession("webdav-app-password-scope", 3600, "sessions", authn.GrantPassword, entity.UserFixtures.Pointer("alice"))
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = appSess.Delete() })
+
+		for _, extraToken := range []string{"", "x"} {
+			w := httptest.NewRecorder()
+			c, _ := gin.CreateTestContext(w)
+			c.Request = &http.Request{Header: make(http.Header)}
+
+			basicAuth := fmt.Appendf(nil, "alice:%s", appSess.AuthToken())
+			c.Request.Header.Add(header.Auth, fmt.Sprintf("%s %s", header.AuthBasic, base64.StdEncoding.EncodeToString(basicAuth)))
+
+			if extraToken != "" {
+				c.Request.Header.Set(header.XAuthToken, extraToken)
+			}
+
+			entity.FlushSessionCache()
+			webdavHandler(c)
+
+			assert.Equal(t, http.StatusUnauthorized, c.Writer.Status())
+		}
 	})
 }
 

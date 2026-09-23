@@ -123,6 +123,13 @@ func CreateSession(router *gin.RouterGroup) {
 			return
 		}
 
+		// App passwords can only be used while they are enabled.
+		if sess.IsApplication() && conf.DisableAppPasswords() {
+			event.AuditWarn([]string{clientIp, "session %s", "sign in with app password", status.Disabled}, sess.RefID)
+			AbortFeatureDisabled(c)
+			return
+		}
+
 		// Extend session lifetime if 2-Factor Authentication (2FA) is enabled for the account.
 		if sess.Is2FA() && !sess.IsClient() {
 			sess.SetExpiresIn(conf.SessionMaxAge() * 2)
