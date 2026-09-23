@@ -156,6 +156,67 @@ func TestFaces_ResetAll(t *testing.T) {
 	assert.Positive(t, markers, "the markers themselves must survive, or this costs a reindex")
 }
 
+// TestFaces_ResetAll_OrphanPeople pins that the people whose names the reset clears are removed
+// whatever their source, while a verified person keeps their row.
+func TestFaces_ResetAll_OrphanPeople(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	t.Cleanup(entity.ResetTestFixtures)
+
+	c := config.TestConfig()
+	m := NewFaces(c)
+
+	// A person named in the UI is stored with the manual source, which the subject cleanup skips.
+	manual := entity.SubjectFixtures.Get("actress-1")
+	require.False(t, manual.Verified)
+	require.NoError(t, entity.Db().Model(&entity.Subject{}).
+		Where("subj_uid = ?", manual.SubjUID).UpdateColumn("subj_src", entity.SrcManual).Error)
+
+	verified := entity.SubjectFixtures.Get("actor-1")
+	require.NoError(t, entity.Db().Model(&entity.Subject{}).
+		Where("subj_uid = ?", verified.SubjUID).UpdateColumn("verified", true).Error)
+
+	require.NoError(t, m.ResetAll())
+
+	var removed entity.Subject
+	require.NoError(t, entity.UnscopedDb().Where("subj_uid = ?", manual.SubjUID).First(&removed).Error)
+	assert.True(t, removed.Deleted(), "an unverified person left without a name must not survive")
+
+	var kept entity.Subject
+	require.NoError(t, entity.UnscopedDb().Where("subj_uid = ?", verified.SubjUID).First(&kept).Error)
+	assert.False(t, kept.Deleted(), "a verified person keeps their row")
+
+	restored := entity.FindSubjectByName(manual.SubjName, true)
+	require.NotNil(t, restored, "naming the person again must restore the row")
+	assert.Equal(t, manual.SubjUID, restored.SubjUID)
+	assert.False(t, restored.Deleted())
+}
+
+// TestFaces_Reset_KeepsManualPeople pins that the default reset leaves a hand-named person alone,
+// even one no marker references, since it never clears a hand-assigned name.
+func TestFaces_Reset_KeepsManualPeople(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	t.Cleanup(entity.ResetTestFixtures)
+
+	c := config.TestConfig()
+	m := NewFaces(c)
+
+	orphan := entity.NewSubject("Reset Keeps Me", entity.SubjPerson, entity.SrcManual)
+	require.NotNil(t, orphan)
+	require.NoError(t, orphan.Create())
+
+	require.NoError(t, m.Reset())
+
+	var kept entity.Subject
+	require.NoError(t, entity.UnscopedDb().Where("subj_uid = ?", orphan.SubjUID).First(&kept).Error)
+	assert.False(t, kept.Deleted(), "the default reset must not collect people")
+}
+
 // TestFaces_Reset_ClearsDanglingFaces pins that a reset leaves no marker pointing at a cluster it
 // just deleted.
 //

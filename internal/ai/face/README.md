@@ -1,6 +1,6 @@
 ## Face Detection & Embedding Guidelines
 
-**Last Updated:** September 21, 2026
+**Last Updated:** September 23, 2026
 
 ### Overview
 
@@ -400,15 +400,15 @@ Four read-only commands describe what a library currently holds, so two tuning r
 
 `photoprism faces reset` has three scopes, and what separates them is how much has to be recomputed afterwards. All three ask for confirmation, and all three accept `--yes` to answer it from a script.
 
-| Command               | `markers`                                                      | `faces`                 | `subjects`                                 | To recover                         |
-|:----------------------|:---------------------------------------------------------------|:------------------------|:-------------------------------------------|:-----------------------------------|
-| `faces reset`         | clears the references of markers whose `subj_src` is automatic | deletes `face_src = ''` | deletes unreferenced `subj_src = 'marker'` | `faces update`                     |
-| `faces reset --all`   | clears the references of **every** face marker                 | deletes all clusters    | same                                       | `faces update`                     |
-| `faces reset --force` | **deletes** every face marker                                  | deletes all clusters    | deletes every person                       | `faces index`, then `faces update` |
+| Command               | `markers`                                                      | `faces`                 | `subjects`                                                           | To recover                         |
+|:----------------------|:---------------------------------------------------------------|:------------------------|:---------------------------------------------------------------------|:-----------------------------------|
+| `faces reset`         | clears the references of markers whose `subj_src` is automatic | deletes `face_src = ''` | deletes unreferenced `subj_src = 'marker'`                           | `faces update`                     |
+| `faces reset --all`   | clears the references of **every** face marker                 | deletes all clusters    | same, and soft-deletes every unverified person left without a marker | `faces update`                     |
+| `faces reset --force` | **deletes** every face marker                                  | deletes all clusters    | deletes every person                                                 | `faces index`, then `faces update` |
 
 The references cleared are `marker_name`, `subj_uid`, `subj_src`, `face_id`, `face_dist` and `matched_at`. The default scope reaches only markers whose subject was assigned automatically, so it finishes with `query.RemoveNonExistentMarkerFaces`: a hand-named marker keeps its person but not a `face_id` pointing at a cluster the same command deleted. Geometry, `size`, `score`, `thumb` and `embeddings_json` are left alone by the first two, which is what lets clustering run again without decoding a single file - the reason `--all` exists is that repeated A/B runs otherwise inherit whatever the previous round asserted.
 
-A person flagged `verified` is kept by both scopes: the row survives as a name so re-clustering rounds are comparable, while their markers lose the assignment along with the clusters. The flag is set from the Edit Person dialog and by nothing automatic.
+A person flagged `verified` is kept by both scopes: the row survives as a name so re-clustering rounds are comparable, while their markers lose the assignment along with the clusters. The flag is set from the Edit Person dialog and by nothing automatic. Under `--all`, every other person left without a marker is soft-deleted, and restored when the name is assigned again.
 
 ⚠ **`--all` destroys hand-verified ground truth.** A name a person assigned is recorded in the marker columns and nowhere else, so cluster-purity measurements that count hand-named identities must export them first. `--force` additionally discards detection, so it costs a full re-index. The two cannot be combined, because they name different outcomes for the markers table.
 

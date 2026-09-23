@@ -90,7 +90,7 @@ var FacesCommands = &cli.Command{
 				&cli.BoolFlag{
 					Name:    "all",
 					Aliases: []string{"a"},
-					Usage:   "also removes manually created faces and names, keeping the markers",
+					Usage:   "also removes manually created faces, names, and unverified people, keeping the markers",
 				},
 				&cli.StringFlag{
 					Name:  "detector",
@@ -419,7 +419,7 @@ func facesResetAction(ctx *cli.Context) error {
 	label := "Remove automatically recognized faces, matches, and dangling subjects?"
 
 	if all {
-		label = "Remove all faces and matches, including names, keeping the markers?"
+		label = "Remove all faces and matches, including names and unverified people, keeping the markers?"
 	}
 
 	if proceed, err := ConfirmAction(ctx.Bool("yes"), label); err != nil {
@@ -480,7 +480,7 @@ func facesResetAction(ctx *cli.Context) error {
 
 // facesResetAllAction removes all people, faces, and face markers.
 func facesResetAllAction(ctx *cli.Context) error {
-	if proceed, err := ConfirmAction(ctx.Bool("yes"), "Permanently remove all people and faces?"); err != nil {
+	if proceed, err := ConfirmAction(ctx.Bool("yes"), "Permanently remove all people, faces, and markers?"); err != nil {
 		return err
 	} else if !proceed {
 		log.Infof("faces: no people or faces were removed")

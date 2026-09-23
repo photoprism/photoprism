@@ -7,6 +7,7 @@ import (
 	"github.com/dustin/go-humanize/english"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -82,6 +83,16 @@ func (w *Faces) reset(all bool) (err error) {
 		return fmt.Errorf("faces: %s (reset subjects)", subjErr)
 	} else {
 		log.Infof("faces: removed %d dangling subjects", removed)
+	}
+
+	// Remove the unverified people whose names were just cleared, whatever their source; a
+	// soft-deleted person is restored when the same name is assigned again.
+	if all {
+		if removed, peopleErr := entity.DeleteOrphanPeople(); peopleErr != nil {
+			return fmt.Errorf("faces: %s (reset people)", peopleErr)
+		} else if removed > 0 {
+			log.Infof("faces: removed %s", english.Plural(removed, "orphan person", "orphan people"))
+		}
 	}
 
 	return nil
