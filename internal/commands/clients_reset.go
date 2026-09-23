@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"github.com/dustin/go-humanize/english"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 
@@ -26,7 +27,7 @@ var ClientsResetCommand = &cli.Command{
 // clientsResetAction removes all registered client applications.
 func clientsResetAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
-		if proceed, err := ConfirmAction(ctx.Bool("yes"), "Remove all registered client applications?"); err != nil {
+		if proceed, err := ConfirmAction(ctx.Bool("yes"), "Remove all registered client applications and the access tokens issued to them?"); err != nil {
 			return err
 		} else if !proceed {
 			log.Infof("no client applications were removed")
@@ -48,6 +49,17 @@ func clientsResetAction(ctx *cli.Context) error {
 		// Re-create auth_clients.
 		if err := db.CreateTable(entity.Client{}).Error; err != nil {
 			return cli.Exit(err, 1)
+		}
+
+		// Delete the sessions of the removed clients once the table has been recreated.
+		if db.HasTable(entity.Session{}) {
+			res := db.Where("client_uid <> ''").Delete(&entity.Session{})
+
+			if res.Error != nil {
+				return cli.Exit(res.Error, 1)
+			}
+
+			log.Infof("deleted %s", english.Plural(int(res.RowsAffected), "client session", "client sessions"))
 		}
 
 		log.Infof("the client database has been recreated and is now in a clean state")
