@@ -259,7 +259,7 @@ func oidcSessionCookieSession(c *gin.Context) *entity.Session {
 	}
 
 	sess, err := entity.FindSession(sessionID)
-	if err != nil || sess == nil || sess.Invalid() || sess.NoUser() {
+	if err != nil || sess == nil || sess.Invalid() || sess.NoUser() || sess.VerifyStored() != nil {
 		clearOIDCSessionCookieForConfig(c)
 		return nil
 	}

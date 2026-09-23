@@ -192,7 +192,7 @@ func OAuthToken(router *gin.RouterGroup) {
 			// Generate an app password for a user account and check the password for confirmation.
 			s := Session(clientIp, AuthToken(c))
 
-			if s == nil {
+			if s == nil || s.VerifyStored() != nil {
 				AbortInvalidCredentials(c)
 				return
 			} else if s.GetUserName() == "" || s.IsClient() || !s.IsRegistered() {

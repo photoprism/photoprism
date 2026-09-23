@@ -335,3 +335,35 @@ func TestSetWebDAVUserFullAccess(t *testing.T) {
 		})
 	}
 }
+
+// TestWebDAVAuthSession_RemovedRow checks that a session whose row was removed is refused and stays removed.
+func TestWebDAVAuthSession_RemovedRow(t *testing.T) {
+	alice := entity.UserFixtures.Pointer("alice")
+
+	s := entity.NewSession(3600, 0).SetUser(alice).SetScope("webdav")
+	s.SetClientName("webdav-removed")
+	s.SetClientIP("10.1.1.1")
+	s.SetUserAgent("agent-a")
+	assert.NoError(t, s.Save())
+
+	token := s.AuthToken()
+
+	// Load the session into the cache, then remove the row directly.
+	_, err := entity.FindSession(s.ID)
+	assert.NoError(t, err)
+	assert.NoError(t, entity.UnscopedDb().Exec("DELETE FROM auth_sessions WHERE id = ?", s.ID).Error)
+
+	c, _ := gin.CreateTestContext(httptest.NewRecorder())
+	c.Request, _ = http.NewRequest(http.MethodGet, "/originals/", nil)
+	c.Request.Header.Set("User-Agent", "agent-b")
+	c.Request.RemoteAddr = "10.2.2.2:1234"
+
+	sess, user, _, _ := WebDAVAuthSession(c, token)
+
+	assert.Nil(t, sess)
+	assert.Nil(t, user)
+
+	var n int
+	assert.NoError(t, entity.UnscopedDb().Model(&entity.Session{}).Where("id = ?", s.ID).Count(&n).Error)
+	assert.Equal(t, 0, n, "the session row must stay deleted")
+}

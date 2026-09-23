@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/form"
@@ -74,6 +75,48 @@ func TestAuthSession(t *testing.T) {
 		assert.Nil(t, authSess)
 		assert.Nil(t, authUser)
 		assert.Error(t, authErr)
+	})
+	t.Run("RemovedRow", func(t *testing.T) {
+		token := rnd.AppPassword()
+		s := NewSession(3600, 0).SetUser(UserFixtures.Pointer("alice")).SetAuthToken(token)
+		s.SetClientIP("10.1.1.1")
+		require.NoError(t, s.Save())
+
+		_, err := FindSession(s.ID)
+		require.NoError(t, err)
+		removeSessionRow(t, s.ID)
+
+		f := form.Login{Username: "alice", Password: token}
+		c, _ := gin.CreateTestContext(httptest.NewRecorder())
+		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(f))
+		c.Request.RemoteAddr = "10.2.2.2:1234"
+
+		authSess, authUser, authErr := AuthSession(f, c)
+
+		assert.Nil(t, authSess)
+		assert.Nil(t, authUser)
+		assert.ErrorIs(t, authErr, authn.ErrInvalidPassword)
+		assert.Equal(t, 0, countSessions(t, s.ID), "the session row must stay deleted")
+	})
+	t.Run("RemovedRowSameContext", func(t *testing.T) {
+		token := rnd.AppPassword()
+		s := NewSession(3600, 0).SetUser(UserFixtures.Pointer("alice")).SetAuthToken(token)
+		s.SetClientIP("10.3.3.3")
+		require.NoError(t, s.Save())
+
+		_, err := FindSession(s.ID)
+		require.NoError(t, err)
+		removeSessionRow(t, s.ID)
+
+		f := form.Login{Username: "alice", Password: token}
+		c, _ := gin.CreateTestContext(httptest.NewRecorder())
+		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(f))
+		c.Request.RemoteAddr = "10.3.3.3:1234"
+
+		authSess, _, authErr := AuthSession(f, c)
+
+		assert.Nil(t, authSess)
+		assert.ErrorIs(t, authErr, authn.ErrInvalidPassword)
 	})
 	t.Run("AliceTokenPersonal", func(t *testing.T) {
 		s := SessionFixtures.Get("alice_token_personal")

@@ -1,6 +1,6 @@
 ## PhotoPrism — Database Entities
 
-**Last Updated:** September 17, 2026
+**Last Updated:** September 23, 2026
 
 ### Overview
 
@@ -11,6 +11,18 @@
 `User.Save` evicts that account's cached sessions and WebDAV authentication entries after a successful database save. `FlushUserSessionCache` matches the user UID and leaves other users' entries and persisted credentials intact. `FlushSessionCache` clears both caches when a global refresh is required.
 
 WebDAV uses `CachedWebDAVUser` and `CacheWebDAVUser` for its one-minute credential cache. Authentication captures `CurrentAuthCacheGeneration` before loading the user or session, and insertion checks that generation under the same short mutex used by invalidation. A superseded result is not cached, but the request is not canceled. Per-user invalidation leaves other accounts' pending cache writes valid; a global flush invalidates every older snapshot and clears the per-user revision table. Account changes are therefore handled at the same persistence boundary as the general session cache. Sessions created or loaded through the entity helpers retain their generation so an in-flight object cannot repopulate the general cache after eviction. A raw untracked record may be cached only before its user is resolved. This is process-local invalidation; writes through another process or directly to the database do not signal a running server.
+
+A session read from or written to the database is only ever updated afterwards: `Session.Save` writes it through `Update`, and inserts only a session that was never stored. `Session.VerifyStored` confirms that a session's row still exists; app-password sign-in, the OAuth password and session grants, and `OIDCSessionEligible` call it before deriving a credential from a session, and a missing row evicts the session from the session and preview token caches.
+
+### Update & Save Helpers
+
+Prefer these helpers over hand-written GORM calls when a model is written as a whole:
+
+- `ModelValues(m, omit...)` returns the exported column values of a model as `Values`, keyed by field name and including zero values. It skips `CreatedAt`/`UpdatedAt`, relations, maps and other non-byte slices, but keeps byte slices such as `json.RawMessage` columns. Omitted fields are returned separately, which is how the key values reach `Update`.
+- `Update(m, keys...)` updates an existing row with every value from `ModelValues`, zero values included, and never inserts; GORM sets `updated_at`. When the update changes no row, it counts the rows matching the keys and returns an error unless exactly one exists, since MariaDB reports changed rather than matched rows.
+- `Save(m, keys...)` tries `Update` first and falls back to GORM's `Save`, which inserts a missing row.
+
+GORM's `Updates` with a struct skips zero values, so a field reset to its zero value is not written that way; pass a `Values` map or use `Update`. `Report()` output for users, clients, and sessions is built from `ModelValues`.
 
 ### Timestamps
 

@@ -753,7 +753,7 @@ func (m *Client) Report(skipEmpty bool) (rows [][]string, cols []string) {
 	rows = make([][]string, 0, len(values))
 
 	for k, v := range values {
-		s := fmt.Sprintf("%#v", v)
+		s := reportValue(v)
 
 		// Skip empty values?
 		if !skipEmpty || s != "" {

@@ -97,7 +97,7 @@ func CreateSession(router *gin.RouterGroup) {
 		var err error
 
 		// Find existing session, if any.
-		if s := Session(clientIp, AuthToken(c)); s != nil {
+		if s := Session(clientIp, AuthToken(c)); s != nil && s.VerifyStored() == nil {
 			// Update existing session.
 			sess = s
 		} else {

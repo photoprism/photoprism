@@ -59,11 +59,15 @@ func AuthSession(frm form.Login, c *gin.Context) (sess *Session, user *User, err
 	// Log error and return nil if no matching session was found.
 	if sess == nil || err != nil {
 		return nil, nil, authn.ErrInvalidPassword
+	} else if sess.VerifyStored() != nil {
+		return nil, nil, authn.ErrInvalidPassword
 	}
 
 	// Update the client IP and the user agent from
 	// the request context if they have changed.
-	sess.UpdateContext(c)
+	if sess.UpdateContext(c) != nil {
+		return nil, nil, authn.ErrInvalidPassword
+	}
 
 	// Returns session and user if all checks have passed.
 	return sess, sess.GetUser(), nil
