@@ -28,6 +28,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"strings"
 	"syscall"
@@ -51,6 +52,9 @@ func RunNonInteractively(confirmed bool) bool {
 	return confirmed || strings.ToLower(os.Getenv(config.EnvVar("cli"))) == NONINTERACTIVE
 }
 
+// confirmStdin is where ConfirmAction reads answers from, or nil for the terminal.
+var confirmStdin io.ReadCloser
+
 // ConfirmAction asks the operator to confirm a destructive action and reports whether it may
 // proceed. It returns false with no error when the answer is no, and an error when no answer
 // could be obtained at all - without a terminal there is nothing to report as a decision, and
@@ -60,7 +64,7 @@ func ConfirmAction(confirmed bool, label string) (proceed bool, err error) {
 		return true, nil
 	}
 
-	prompt := promptui.Prompt{Label: confirmLabel(label), IsConfirm: true}
+	prompt := promptui.Prompt{Label: confirmLabel(label), IsConfirm: true, Stdin: confirmStdin}
 
 	if _, err = prompt.Run(); err == nil {
 		return true, nil

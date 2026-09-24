@@ -20,6 +20,80 @@ func TestResetCommand(t *testing.T) {
 	// make sure that database is in a good state for later tests as this test empties it
 	defer resetConfigAndDB()
 
+	// resetTestArgs returns the app arguments that point the command at the test database.
+	resetTestArgs := func(c *config.Config) []string {
+		if dbDrv := os.Getenv("PHOTOPRISM_TEST_DRIVER"); dbDrv != "sqlite" {
+			return []string{"photoprism", "--database-driver", dbDrv, "--database-dsn", os.Getenv("PHOTOPRISM_TEST_DSN")}
+		}
+
+		return []string{"photoprism", "--database-driver", "sqlite", "--database-dsn", c.DatabaseDSN()}
+	}
+
+	t.Run("NoTerminal", func(t *testing.T) {
+		t.Setenv("PHOTOPRISM_CLI", "")
+
+		c := resetConfigAndOpenDB()
+		before := int64(0)
+		require.NoError(t, c.Db().Model(&entity.Photo{}).Count(&before).Error)
+		require.Greater(t, before, int64(0))
+
+		cmdArgs := []string{"reset"}
+		_, err := RunWithProvidedTestContext(NewTestContextWithParse(resetTestArgs(c), cmdArgs), ResetCommand, cmdArgs)
+
+		// Without a terminal the prompt cannot run, which is a usage error rather than a refusal.
+		assertExitCode(t, err, 2)
+		assert.Contains(t, err.Error(), "--yes")
+
+		c = reopenConnection()
+		after := int64(0)
+		require.NoError(t, c.Db().Model(&entity.Photo{}).Count(&after).Error)
+		assert.Equal(t, before, after, "nothing may be reset without a confirmation")
+	})
+	// keepsFiles runs a reset that must reset only the index database, and keep every file, while
+	// stdin answers every question with yes.
+	keepsFiles := func(t *testing.T, args ...string) {
+		c := resetConfigAndOpenDB()
+		pipeResetAnswers(t, "y\ny\ny\ny\ny\n")
+
+		sidecar := filepath.Join(c.SidecarPath(), "reset-yes-test", "a.json")
+		require.NoError(t, fs.WriteString(sidecar, "{}"))
+		t.Cleanup(func() { _ = os.RemoveAll(filepath.Dir(sidecar)) })
+
+		cache := filepath.Join(c.CachePath(), "reset-yes-test.txt")
+		require.NoError(t, fs.WriteString(cache, "test"))
+		t.Cleanup(func() { _ = os.Remove(cache) })
+
+		cmdArgs := append([]string{"reset"}, args...)
+		_, err := RunWithProvidedTestContext(NewTestContextWithParse(resetTestArgs(c), cmdArgs), ResetCommand, cmdArgs)
+
+		require.NoError(t, err)
+		assert.FileExists(t, sidecar)
+		assert.FileExists(t, cache)
+
+		c = reopenConnection()
+		photos := int64(1)
+		require.NoError(t, c.Db().Model(&entity.Photo{}).Count(&photos).Error)
+		assert.Zero(t, photos, "the index database must have been reset")
+	}
+
+	t.Run("YesKeepsFiles", func(t *testing.T) {
+		keepsFiles(t, "--yes")
+	})
+	t.Run("NonInteractiveKeepsFiles", func(t *testing.T) {
+		t.Setenv("PHOTOPRISM_CLI", NONINTERACTIVE)
+		keepsFiles(t)
+	})
+	t.Run("PipedAnswerKeepsFiles", func(t *testing.T) {
+		// Only the index question can be answered from the pipe, so the files are kept, and the
+		// run succeeds because it did what it was asked.
+		t.Setenv("PHOTOPRISM_CLI", "")
+		keepsFiles(t)
+	})
+	t.Run("Description", func(t *testing.T) {
+		for _, s := range []string{"--yes", "--index", "PHOTOPRISM_CLI=noninteractive", "no answer can be read"} {
+			assert.Contains(t, ResetCommand.Description, s)
+		}
+	})
 	t.Run("ResetIndex", func(t *testing.T) {
 		c := resetConfigAndOpenDB()
 		count := int64(0)
@@ -65,6 +139,26 @@ func TestResetCommand(t *testing.T) {
 			return
 		}
 		assert.Equal(t, int64(0), count)
+	})
+}
+
+// pipeResetAnswers makes ConfirmAction read the answers from a pipe until the test ends.
+func pipeResetAnswers(t *testing.T, answers string) {
+	t.Helper()
+
+	r, w, err := os.Pipe()
+	require.NoError(t, err)
+
+	_, err = w.WriteString(answers)
+	require.NoError(t, err)
+	require.NoError(t, w.Close())
+
+	prev := confirmStdin
+	confirmStdin = r
+
+	t.Cleanup(func() {
+		confirmStdin = prev
+		_ = r.Close()
 	})
 }
 

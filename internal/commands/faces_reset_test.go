@@ -164,6 +164,22 @@ func TestConfirmAction(t *testing.T) {
 		require.ErrorAs(t, err, &exit)
 		assert.Equal(t, 2, exit.ExitCode())
 	})
+	t.Run("AnsweredYes", func(t *testing.T) {
+		pipeResetAnswers(t, "y\n")
+
+		proceed, err := ConfirmAction(false, "Remove everything?")
+
+		assert.NoError(t, err)
+		assert.True(t, proceed)
+	})
+	t.Run("AnsweredNo", func(t *testing.T) {
+		pipeResetAnswers(t, "n\n")
+
+		proceed, err := ConfirmAction(false, "Remove everything?")
+
+		assert.NoError(t, err)
+		assert.False(t, proceed)
+	})
 	t.Run("NonInteractiveEnvSkipsThePrompt", func(t *testing.T) {
 		t.Setenv("PHOTOPRISM_CLI", NONINTERACTIVE)
 
