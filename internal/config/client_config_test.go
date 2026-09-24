@@ -202,6 +202,27 @@ func TestConfig_ClientUser(t *testing.T) {
 		assert.Equal(t, result.Settings.Features.Private, false)
 		assert.Equal(t, result.Settings.Features, guestFeatures)
 	})
+	t.Run("ManualCameras", func(t *testing.T) {
+		added, created, err := entity.AddCamera("Minolta", "X-700")
+		assert.NoError(t, err)
+		assert.True(t, created)
+		orphan := entity.FirstOrCreateCamera(entity.NewCamera("Minolta", "XD-7"))
+		t.Cleanup(func() {
+			entity.FlushCameraCache()
+			assert.NoError(t, entity.UnscopedDb().Delete(&entity.Camera{}, "id IN (?)", []uint{added.ID, orphan.ID}).Error)
+		})
+
+		c.Settings().Features = c.ClientRole(acl.RoleAdmin).Settings.Features
+		result := c.ClientUser(true)
+
+		// Cameras added manually are listed even though no picture references them, other orphans are not.
+		slugs := make([]string, 0, len(result.Cameras))
+		for _, camera := range result.Cameras {
+			slugs = append(slugs, camera.CameraSlug)
+		}
+		assert.Contains(t, slugs, added.CameraSlug)
+		assert.NotContains(t, slugs, orphan.CameraSlug)
+	})
 	t.Run("NilTesting", func(t *testing.T) {
 		if testing.Short() {
 			t.Skip("skipping test in short mode.")

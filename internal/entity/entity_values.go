@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"slices"
@@ -14,6 +15,7 @@ type Values = map[string]any
 type Map = Values
 
 // ModelValues extracts exported struct fields into a Values map, optionally omitting selected names.
+// Byte slices such as json.RawMessage columns are included; other slices, maps, and relations are not.
 func ModelValues(m any, omit ...string) (result Values, omitted []any, err error) {
 	mustOmit := func(name string) bool {
 		return slices.Contains(omit, name)
@@ -56,7 +58,11 @@ func ModelValues(m any, omit ...string) (result Values, omitted []any, err error
 		v := values.Field(i)
 
 		switch v.Kind() {
-		case reflect.Slice, reflect.Chan, reflect.Func, reflect.Map, reflect.UnsafePointer:
+		case reflect.Slice:
+			if v.Type().Elem().Kind() != reflect.Uint8 {
+				continue
+			}
+		case reflect.Chan, reflect.Func, reflect.Map, reflect.UnsafePointer:
 			continue
 		case reflect.Struct:
 			if v.IsZero() {
@@ -86,4 +92,15 @@ func ModelValues(m any, omit ...string) (result Values, omitted []any, err error
 	}
 
 	return result, omitted, nil
+}
+
+// reportValue formats a model value for a report, showing byte slices such as JSON columns as text.
+func reportValue(v any) string {
+	if b, ok := v.([]byte); ok {
+		return string(b)
+	} else if b, ok := v.(json.RawMessage); ok {
+		return string(b)
+	}
+
+	return fmt.Sprintf("%#v", v)
 }

@@ -24,6 +24,9 @@ type Credentials struct {
 	RotatedAt string
 }
 
+// ErrUnsupportedDriver is wrapped by the error EnsureCredentials returns for a driver it cannot provision.
+var ErrUnsupportedDriver = errors.New("unsupported auto-provisioning database driver")
+
 // EnsureCredentials ensures a per-node database and user exist with minimal grants.
 // - Requires a MySQL/MariaDB admin connection (this package maintains it).
 // - Returns created=true if the database schema did not exist before.
@@ -39,10 +42,10 @@ func EnsureCredentials(ctx context.Context, conf *config.Config, nodeUUID, nodeN
 	case dsn.DriverMySQL, dsn.DriverMariaDB:
 		// ok
 	case dsn.DriverSQLite3, dsn.DriverPostgres:
-		return out, false, errors.New("database must be MySQL/MariaDB for auto-provisioning")
+		return out, false, fmt.Errorf("%w: %s, database must be MySQL/MariaDB", ErrUnsupportedDriver, driver)
 	default:
 		// Driver is configured externally for the provisioner (decoupled from app config).
-		return out, false, fmt.Errorf("unsupported auto-provisioning database driver: %s", driver)
+		return out, false, fmt.Errorf("%w: %s", ErrUnsupportedDriver, driver)
 	}
 
 	// Compute deterministic names and a candidate password.

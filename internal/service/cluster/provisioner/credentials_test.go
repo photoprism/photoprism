@@ -96,7 +96,7 @@ func TestEnsureCredentials_DriverNormalization(t *testing.T) {
 	// Postgres in weird case should hit the explicit rejection path.
 	DatabaseDriver = "PostGreS"
 	_, _, err := EnsureCredentials(ctx, c, "11111111-1111-4111-8111-111111111111", "pp-node", false)
-	assert.Error(t, err)
+	assert.ErrorIs(t, err, ErrUnsupportedDriver)
 	assert.Equal(t, "PostGreS", DatabaseDriver)
 
 	// Unknown driver should return the unsupported error including normalized name.
@@ -104,6 +104,7 @@ func TestEnsureCredentials_DriverNormalization(t *testing.T) {
 	_, _, err = EnsureCredentials(ctx, c, "11111111-1111-4111-8111-111111111111", "pp-node", false)
 	if assert.Error(t, err) {
 		assert.Contains(t, err.Error(), "unsupported auto-provisioning database driver: tidb")
+		assert.ErrorIs(t, err, ErrUnsupportedDriver)
 	}
 	assert.Equal(t, "TiDB", DatabaseDriver)
 }

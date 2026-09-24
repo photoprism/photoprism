@@ -172,6 +172,11 @@ func (m *Marker) SameEmbeddingModel() bool {
 	return face.ModelsComparable(m.EmbedModel, face.EmbeddingModelName())
 }
 
+// CropArea returns the normalized crop geometry stored on the marker.
+func (m *Marker) CropArea() crop.Area {
+	return crop.Area{Name: "face", X: m.X, Y: m.Y, W: m.W, H: m.H}
+}
+
 // UpdateFile sets the file uid and thumb and updates the index if the marker already exists.
 func (m *Marker) UpdateFile(file *File) (updated bool) {
 	if file.FileUID != "" && m.FileUID != file.FileUID {

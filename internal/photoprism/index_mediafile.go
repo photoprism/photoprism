@@ -44,8 +44,8 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		// Skip known file.
 		result.Status = IndexSkipped
 		return result
-	} else if o.FacesOnly && !m.IsJpeg() {
-		// Skip non-jpeg file when indexing faces only.
+	} else if o.FacesOnly && !m.IsJpeg() && (!o.RegenerateFaces || !m.IsPreviewImage()) {
+		// Skip non-jpeg file when indexing faces only, unless its markers are regenerated.
 		result.Status = IndexSkipped
 		return result
 	}
@@ -166,10 +166,10 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		} else if photoQuery = entity.UnscopedDb().First(&photo, "photo_path = ? AND photo_name = ? AND photo_stack > -1", filePath, fileBase); photoQuery.Error == nil {
 			// Found.
 			fileStacked = true
-		} else if photoQuery = entity.UnscopedDb().First(&photo, "id IN (SELECT photo_id FROM files WHERE file_name = LIKE ? AND file_root = ? AND file_sidecar = 0 AND file_missing = 0) AND photo_path = ? AND photo_stack > -1", fs.StripKnownExt(fileName)+".%", entity.RootOriginals, filePath); photoQuery.Error == nil {
-			// Found.
-			fileStacked = true
 		}
+
+		// A new file is not matched against the file names an existing photo owns, so if neither
+		// photo name matches, only the unique ID and metadata strategies below can stack it.
 
 		// Find existing photo by unique id or time and location?
 		if o.Stack {
@@ -363,7 +363,18 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		// when face detection is disabled or deferred to a background worker.
 		if markers := file.Markers(); markers != nil {
 			// Run the expensive AI face detection only when it is enabled.
-			if o.DetectFaces {
+			regenerated, regenFailed := false, false
+
+			if o.DetectFaces && o.RegenerateFaces {
+				if changes, regenErr := ind.regenerateFaces(m, &file, o.ImportFaceTags); regenErr != nil {
+					log.Warnf("index: %s while regenerating faces in %s", clean.Error(regenErr), logName)
+					o.FaceRegeneration.addError(file.FileUID)
+					regenFailed = true
+				} else {
+					regenerated = changes.Changed()
+					o.FaceRegeneration.add(file.FileUID, changes)
+				}
+			} else if o.DetectFaces {
 				if faces := ind.Faces(m, markers.DetectedFaceCount()); len(faces) > 0 {
 					file.AddFaces(faces)
 				}
@@ -371,7 +382,8 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 
 			// Import face regions and names from XMP metadata onto the markers.
 			xmpChanged := false
-			if o.ImportFaceTags && file.FileHash != "" {
+			// Not after a failed regeneration, whose markers may not have been loaded.
+			if o.ImportFaceTags && file.FileHash != "" && !regenFailed {
 				regions, collectErr := collectXmpFaces(m)
 				if collectErr != nil {
 					log.Warnf("index: %s while reading xmp face regions for %s", clean.Error(collectErr), logName)
@@ -384,9 +396,9 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			}
 
 			// Skip when indexing faces only and nothing changed. A delete-only
-			// reconcile persists no unsaved marker, so xmpChanged is tracked
-			// separately to keep the recomputed face count from going stale.
-			if !file.UnsavedMarkers() && !xmpChanged && o.FacesOnly {
+			// reconcile or regeneration persists no unsaved marker, so both are
+			// tracked separately to keep the recomputed face count from going stale.
+			if !file.UnsavedMarkers() && !xmpChanged && !regenerated && o.FacesOnly {
 				result.Status = IndexSkipped
 				return result
 			}

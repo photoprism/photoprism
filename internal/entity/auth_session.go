@@ -2,6 +2,7 @@ package entity
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net"
 	"net/http"
@@ -57,6 +58,7 @@ type Sessions []Session
 type Session struct {
 	ID           string          `gorm:"type:VARBINARY(2048);primary_key;auto_increment:false;" json:"-" yaml:"ID"`
 	authToken    string          `gorm:"-" yaml:"-"`
+	stored       bool            `gorm:"-" yaml:"-"`
 	UserUID      string          `gorm:"type:VARBINARY(42);index;default:'';" json:"UserUID" yaml:"UserUID,omitempty"`
 	UserName     string          `gorm:"size:200;index;" json:"UserName" yaml:"UserName,omitempty"`
 	user         *User           `gorm:"-" yaml:"-"`
@@ -184,6 +186,8 @@ func FindSessionByRefID(refId string) *Session {
 		return nil
 	}
 
+	m.stored = true
+
 	return m
 }
 
@@ -203,6 +207,7 @@ func (m *Session) SetAuthToken(authToken string) *Session {
 
 	m.authToken = authToken
 	m.ID = rnd.SessionID(authToken)
+	m.stored = false
 
 	// Migrate any preview token registration from the previous ID so it is not orphaned in the lookup
 	// cache. Callers like NewClientSession assign the user's token (via SetUser) before finalizing the
@@ -272,17 +277,29 @@ func (m *Session) ClearCache() {
 // Create new entity in the database.
 func (m *Session) Create() (err error) {
 	if err = Db().Create(m).Error; err == nil && rnd.IsSessionID(m.ID) {
+		m.stored = true
 		m.Cache()
 	}
 
 	return err
 }
 
-// Save updates the record in the database or inserts a new record if it does not already exist.
+// Save inserts a new session, or updates the row of a session that is already stored.
 func (m *Session) Save() error {
-	if err := Db().Save(m).Error; err != nil {
+	if m.stored {
+		if err := Update(m, "ID"); err != nil {
+			if verifyErr := m.VerifyStored(); verifyErr != nil {
+				return verifyErr
+			}
+
+			return err
+		}
+	} else if err := Db().Save(m).Error; err != nil {
 		return err
-	} else if rnd.IsSessionID(m.ID) {
+	}
+
+	if rnd.IsSessionID(m.ID) {
+		m.stored = true
 		m.Cache()
 	}
 
@@ -784,9 +801,12 @@ func (m *Session) SetContext(c *gin.Context) *Session {
 }
 
 // UpdateContext sets the session request context and updates the session entry in the database if it has changed.
-func (m *Session) UpdateContext(c *gin.Context) *Session {
-	if c == nil || m == nil {
-		return &Session{}
+// It returns ErrSessionNotFound if the session no longer exists, which callers must refuse.
+func (m *Session) UpdateContext(c *gin.Context) error {
+	if m == nil {
+		return ErrSessionNotFound
+	} else if c == nil {
+		return nil
 	}
 
 	changed := false
@@ -808,12 +828,64 @@ func (m *Session) UpdateContext(c *gin.Context) *Session {
 	}
 
 	if !changed {
-		return m
-	} else if err := m.Save(); err != nil {
+		return nil
+	} else if err := m.saveContext(); errors.Is(err, ErrSessionNotFound) {
+		return err
+	} else if err != nil {
 		log.Debugf("auth:  %s while updating session context", err)
 	}
 
-	return m
+	return nil
+}
+
+// saveContext stores the client address, login address, and user agent with an update-only write
+// and evicts the session from the cache if its row no longer exists.
+func (m *Session) saveContext() error {
+	if !rnd.IsSessionID(m.ID) {
+		return nil
+	}
+
+	res := UnscopedDb().Model(&Session{}).Where("id = ?", m.ID).UpdateColumns(Values{
+		"client_ip":  m.ClientIP,
+		"login_ip":   m.LoginIP,
+		"login_at":   m.LoginAt,
+		"user_agent": m.UserAgent,
+	})
+
+	if res.Error != nil {
+		return res.Error
+	} else if res.RowsAffected > 0 {
+		return nil
+	}
+
+	// MariaDB counts changed rather than matched rows, so zero alone does not prove the row is gone.
+	return m.VerifyStored()
+}
+
+// VerifyStored returns ErrSessionNotFound if the session no longer exists in the database, after
+// removing it from the session and preview token caches.
+func (m *Session) VerifyStored() error {
+	if m == nil {
+		return ErrSessionNotFound
+	} else if !rnd.IsSessionID(m.ID) {
+		return nil
+	}
+
+	var found int
+
+	if err := UnscopedDb().Model(&Session{}).Where("id = ?", m.ID).Count(&found).Error; err != nil {
+		return err
+	} else if found > 0 {
+		return nil
+	}
+
+	clientIp := m.IP()
+
+	m.ClearCache()
+	PreviewToken.Unset(m.ID)
+	event.AuditWarn([]string{clientIp, "session %s", "not found", status.Denied}, m.RefID)
+
+	return ErrSessionNotFound
 }
 
 // IsVisitor checks if the session belongs to a sharing link visitor.

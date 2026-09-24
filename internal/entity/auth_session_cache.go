@@ -47,6 +47,7 @@ func FindSession(id string) (*Session, error) {
 		return found, fmt.Errorf("invalid session id %s", clean.LogQuote(found.ID))
 	} else if !found.Expired() {
 		found.cacheGeneration = &generation
+		found.stored = true
 		// Set session activity timestamp and update the last_active column in the sessions table.
 		found.UpdateLastActive(true)
 		CacheSession(found, SessionCacheDuration)

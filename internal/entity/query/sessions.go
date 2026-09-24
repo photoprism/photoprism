@@ -9,11 +9,14 @@ import (
 	"github.com/photoprism/photoprism/pkg/time/unix"
 )
 
+// ErrInvalidSessionID is returned by Session for an identifier that cannot name a session.
+var ErrInvalidSessionID = errors.New("invalid session id")
+
 // Session finds an existing session by its id.
 func Session(id string) (result entity.Session, err error) {
 	switch l := len(id); {
 	case l < 6 || l > 2048:
-		return result, errors.New("invalid session id")
+		return result, ErrInvalidSessionID
 	case rnd.IsRefID(id):
 		err = Db().Where("ref_id = ?", id).First(&result).Error
 	case rnd.IsSessionID(id):

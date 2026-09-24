@@ -28,6 +28,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"strings"
 	"syscall"
@@ -51,6 +52,9 @@ func RunNonInteractively(confirmed bool) bool {
 	return confirmed || strings.ToLower(os.Getenv(config.EnvVar("cli"))) == NONINTERACTIVE
 }
 
+// confirmStdin is where ConfirmAction reads answers from, or nil for the terminal.
+var confirmStdin io.ReadCloser
+
 // ConfirmAction asks the operator to confirm a destructive action and reports whether it may
 // proceed. It returns false with no error when the answer is no, and an error when no answer
 // could be obtained at all - without a terminal there is nothing to report as a decision, and
@@ -60,7 +64,7 @@ func ConfirmAction(confirmed bool, label string) (proceed bool, err error) {
 		return true, nil
 	}
 
-	prompt := promptui.Prompt{Label: label, IsConfirm: true}
+	prompt := promptui.Prompt{Label: confirmLabel(label), IsConfirm: true, Stdin: confirmStdin}
 
 	if _, err = prompt.Run(); err == nil {
 		return true, nil
@@ -71,6 +75,11 @@ func ConfirmAction(confirmed bool, label string) (proceed bool, err error) {
 	// Exit code 2 is the usage error: the command was reached in an environment that cannot
 	// answer it, and the caller fixes that by passing --yes.
 	return false, cli.Exit(fmt.Errorf("could not ask for confirmation (%w), pass --yes to run non-interactively", err), 2)
+}
+
+// confirmLabel removes a trailing question mark, since the prompt appends its own.
+func confirmLabel(label string) string {
+	return strings.TrimSpace(strings.TrimRight(strings.TrimSpace(label), "?"))
 }
 
 // PhotoPrism contains the photoprism CLI (sub-)commands.
@@ -160,7 +169,13 @@ func CallWithDependencies(ctx *cli.Context, action func(conf *config.Config) err
 	defer cancel()
 
 	if err != nil {
-		return err
+		var exit cli.ExitCoder
+
+		if errors.As(err, &exit) {
+			return err
+		}
+
+		return cli.Exit(err, 1)
 	}
 
 	defer conf.Shutdown()

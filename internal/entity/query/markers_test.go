@@ -560,3 +560,68 @@ func TestResetAllFaceMarkerMatches(t *testing.T) {
 		assert.NotEmpty(t, m.Thumb)
 	})
 }
+
+func TestFaceMarkerFiles(t *testing.T) {
+	const fileUID = "fs6sg6bw45bn0004" // Germany/bridge.jpg
+
+	t.Run("All", func(t *testing.T) {
+		result, err := FaceMarkerFiles("")
+
+		require.NoError(t, err)
+		assert.Greater(t, result[fileUID].Markers, 0)
+		assert.Greater(t, result["fs6sg6bq45bnlqd0"].Markers, 0) // London/bridge1.jpg
+
+		dot, err := FaceMarkerFiles(".")
+		require.NoError(t, err)
+		assert.Equal(t, result, dot)
+	})
+	t.Run("PrimaryOnly", func(t *testing.T) {
+		// London/bridge3.jpg holds a marker but is not the primary file, which the index does not reach.
+		result, err := FaceMarkerFiles("")
+
+		require.NoError(t, err)
+		assert.NotContains(t, result, "fs6sg6bwhhbnlqdn")
+	})
+	t.Run("Folder", func(t *testing.T) {
+		result, err := FaceMarkerFiles("/Germany/")
+
+		require.NoError(t, err)
+		assert.Greater(t, result[fileUID].Markers, 0)
+		assert.NotContains(t, result, "fs6sg6bq45bnlqd0", "files in other folders are left out")
+	})
+	t.Run("FileName", func(t *testing.T) {
+		result, err := FaceMarkerFiles("Germany")
+
+		require.NoError(t, err)
+		assert.Equal(t, entity.RootOriginals, result[fileUID].FileRoot)
+		assert.Equal(t, "Germany/bridge.jpg", result[fileUID].FileName)
+		assert.NotZero(t, result[fileUID].PhotoID)
+	})
+	t.Run("SidecarFolder", func(t *testing.T) {
+		// A folder run covers the matching sidecar folder, which mirrors the originals folder.
+		result, err := FaceMarkerFiles("Holiday")
+
+		require.NoError(t, err)
+		require.Contains(t, result, "fs6sg6bw45bn0008")
+		assert.Equal(t, entity.RootSidecar, result["fs6sg6bw45bn0008"].FileRoot)
+
+		result, err = FaceMarkerFiles("2000")
+
+		require.NoError(t, err)
+		assert.Contains(t, result, "fs6sg6bqhhinlple")
+	})
+	t.Run("Wildcards", func(t *testing.T) {
+		for _, dir := range []string{"Lond_n", "Lon%", "German_"} {
+			result, err := FaceMarkerFiles(dir)
+
+			require.NoError(t, err)
+			assert.Empty(t, result, dir)
+		}
+	})
+	t.Run("MissingFolder", func(t *testing.T) {
+		result, err := FaceMarkerFiles("missing-folder")
+
+		require.NoError(t, err)
+		assert.Empty(t, result)
+	})
+}

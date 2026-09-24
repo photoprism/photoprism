@@ -864,6 +864,23 @@ func (m *File) AddFaces(faces face.Faces) {
 	}
 }
 
+// validFaceEmbeddings reports whether the face holds one finite embedding of the width its model
+// produces. A remote service can return either defect, and a vector that records no model is
+// checked against no expected width.
+func validFaceEmbeddings(f face.Face) bool {
+	if !f.Embeddings.One() {
+		return false
+	}
+
+	dims := f.Embeddings.Dims()
+
+	if producer := face.FindEmbeddingModel(f.EmbedModel); producer != nil {
+		dims = producer.Dims
+	}
+
+	return face.ValidEmbeddings(f.Embeddings, dims)
+}
+
 // AddFace adds a face marker to the file.
 func (m *File) AddFace(f face.Face, subjUid string) {
 	// Only add faces with exactly one embedding so that they can be compared and clustered.
@@ -871,17 +888,7 @@ func (m *File) AddFace(f face.Face, subjUid string) {
 		return
 	}
 
-	// A vector with non-finite values poisons every later distance, and one whose width
-	// disagrees with its own model belongs to no embedding space at all; a remote service
-	// can return either, so both are rejected here. The width is only checked against a
-	// known producer, because a vector that records no model implies no expected width.
-	dims := f.Embeddings.Dims()
-
-	if producer := face.FindEmbeddingModel(f.EmbedModel); producer != nil {
-		dims = producer.Dims
-	}
-
-	if !face.ValidEmbeddings(f.Embeddings, dims) {
+	if !validFaceEmbeddings(f) {
 		log.Warnf("faces: skipped invalid %d-value embedding for file %s", f.Embeddings.Dims(), clean.Log(m.FileUID))
 		return
 	}

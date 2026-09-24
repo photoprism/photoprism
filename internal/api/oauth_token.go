@@ -167,6 +167,10 @@ func OAuthToken(router *gin.RouterGroup) {
 				event.AuditWarn([]string{clientIp, "oauth2", actor, action, authn.ErrInvalidClientSecret.Error()})
 				AbortInvalidCredentials(c)
 				return
+			} else if client.HasInactiveUser() {
+				event.AuditWarn([]string{clientIp, "oauth2", actor, action, authn.ErrAccountDisabled.Error()})
+				AbortInvalidCredentials(c)
+				return
 			}
 
 			// Update time of last activity.
@@ -188,7 +192,7 @@ func OAuthToken(router *gin.RouterGroup) {
 			// Generate an app password for a user account and check the password for confirmation.
 			s := Session(clientIp, AuthToken(c))
 
-			if s == nil {
+			if s == nil || s.VerifyStored() != nil {
 				AbortInvalidCredentials(c)
 				return
 			} else if s.GetUserName() == "" || s.IsClient() || !s.IsRegistered() {

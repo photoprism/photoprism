@@ -23,6 +23,8 @@ func TestOIDCSessionEligible(t *testing.T) {
 		sess.SetMethod(authn.MethodDefault)
 		sess.SetScope(scope)
 		sess.SetUser(user)
+		require.NoError(t, sess.Save())
+		t.Cleanup(func() { _ = sess.Delete() })
 		return sess
 	}
 
@@ -87,6 +89,8 @@ func TestOIDCSessionEligible(t *testing.T) {
 		sess.SetProvider(authn.ProviderLocal)
 		sess.SetMethod(authn.MethodDefault)
 		sess.SetUser(&u)
+		require.NoError(t, sess.Save())
+		t.Cleanup(func() { _ = sess.Delete() })
 
 		return sess
 	}
@@ -96,6 +100,11 @@ func TestOIDCSessionEligible(t *testing.T) {
 	t.Run("SuperAdminKeepsLogin", func(t *testing.T) {
 		require.True(t, entity.FindLocalUser("alice").SuperAdmin)
 		assert.True(t, OIDCSessionEligible(withLogin("alice", false)))
+	})
+	t.Run("RemovedRow", func(t *testing.T) {
+		sess := interactive("*")
+		require.NoError(t, entity.UnscopedDb().Exec("DELETE FROM auth_sessions WHERE id = ?", sess.ID).Error)
+		assert.False(t, OIDCSessionEligible(sess))
 	})
 	t.Run("DeletedAccount", func(t *testing.T) {
 		deleted := entity.FindLocalUser("deleted")

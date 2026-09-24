@@ -86,11 +86,11 @@ objdump -T /opt/photoprism/lib/libtensorflow.so.2 | grep -oE 'GLIBC_[0-9]+\.[0-9
 
 Install the following packages **before** running PhotoPrism so that thumbnailing, metadata extraction, and the SQLite fallback database work out of the box:
 
-| Distribution family          | Command                                                                                                                                                                                |
-|------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Distribution family          | Command                                                                                                                                                                                                                  |
+|------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Debian / Ubuntu              | `sudo apt install libvips42t64 libimage-exiftool-perl ffmpeg sqlite3 tzdata`<br/>Use `libvips42` on releases without `libvips42t64`, and make sure the installed version meets the minimum for your release (see below). |
-| Fedora / RHEL / Alma / Rocky | `sudo dnf install vips perl-Image-ExifTool ffmpeg sqlite tzdata`                                                                                                                       |
-| openSUSE                     | `sudo zypper install vips perl-Image-ExifTool ffmpeg sqlite3 tzdata`                                                                                                                   |
+| Fedora / RHEL / Alma / Rocky | `sudo dnf install vips perl-Image-ExifTool ffmpeg sqlite tzdata`                                                                                                                                                         |
+| openSUSE                     | `sudo zypper install vips perl-Image-ExifTool ffmpeg sqlite3 tzdata`                                                                                                                                                     |
 
 These packages pull in the full libvips stack (GLib, libjpeg/libtiff/libwebp, archive/zstd, etc.) that the PhotoPrism binary links against. Run `ldd /opt/photoprism/bin/photoprism` if you need to diagnose missing libraries on custom distributions.
 

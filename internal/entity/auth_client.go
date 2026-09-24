@@ -308,6 +308,20 @@ func (m *Client) HasUser() bool {
 	return rnd.IsUID(m.UserUID, UserUID)
 }
 
+// HasInactiveUser checks if the client belongs to a user account that no longer exists or whose
+// bound clients must be refused, see User.DenyClientAccess.
+func (m *Client) HasInactiveUser() bool {
+	if m == nil || m.UserUID == "" {
+		return false
+	} else if !m.HasUser() {
+		return true
+	}
+
+	u := m.User()
+
+	return !u.HasUID() || u.DenyClientAccess()
+}
+
 // SetUser sets the user to which the client belongs.
 func (m *Client) SetUser(u *User) *Client {
 	if u == nil {
@@ -739,7 +753,7 @@ func (m *Client) Report(skipEmpty bool) (rows [][]string, cols []string) {
 	rows = make([][]string, 0, len(values))
 
 	for k, v := range values {
-		s := fmt.Sprintf("%#v", v)
+		s := reportValue(v)
 
 		// Skip empty values?
 		if !skipEmpty || s != "" {

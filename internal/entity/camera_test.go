@@ -1,9 +1,11 @@
 package entity
 
 import (
+	"strings"
 	"testing"
 	"time"
 
+	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/event"
@@ -70,6 +72,30 @@ func TestNewCamera(t *testing.T) {
 		}
 
 		assert.Equal(t, expected, camera)
+	})
+	t.Run("MakeAsPartOfModel", func(t *testing.T) {
+		// The make is only removed from the model as a whole word, also after normalizing it.
+		for _, c := range [][3]string{
+			{"Nikon", "Nikonos V", "NIKON Nikonos V"},
+			{"Canon", "Canonet QL17 GIII", "Canon Canonet QL17 GIII"},
+			{"Rollei", "Rolleiflex 2.8F", "Rollei Rolleiflex 2.8F"},
+			{"Leica", "Leicaflex SL", "Leica Leicaflex SL"},
+		} {
+			camera := NewCamera(c[0], c[1])
+			assert.Equal(t, c[1], camera.CameraModel)
+			assert.Equal(t, c[2], camera.CameraName)
+		}
+	})
+	t.Run("MakeBeforeHyphen", func(t *testing.T) {
+		// A hyphen after the make is a word boundary, which keeps the slugs of existing devices.
+		camera := NewCamera("Yashica", "Yashica-Mat 124G")
+		assert.Equal(t, "yashica-mat-124g", camera.CameraSlug)
+		assert.Equal(t, "Yashica Mat 124G", camera.CameraName)
+		assert.Equal(t, "Mat 124G", camera.CameraModel)
+
+		camera = NewCamera("LGE", "LG-H815")
+		assert.Equal(t, "lg-h815", camera.CameraSlug)
+		assert.Equal(t, "LG H815", camera.CameraName)
 	})
 	t.Run("PanasonicLumix", func(t *testing.T) {
 		camera := NewCamera("Panasonic", "Panasonic Lumix")
@@ -395,4 +421,595 @@ func TestCamera_SaveForm(t *testing.T) {
 		camera := &Camera{ID: CameraFixtures.Get("canon-eos-7d").ID}
 		assert.Error(t, camera.SaveForm(&form.Camera{CameraMake: "", CameraModel: "K-1"}))
 	})
+}
+
+func TestAddCamera(t *testing.T) {
+	// removeCamera deletes a test camera so that each case starts from a clean state.
+	removeCamera := func(slug string) {
+		cameraCache.Delete(slug)
+		assert.NoError(t, UnscopedDb().Delete(&Camera{}, "camera_slug = ?", slug).Error)
+	}
+
+	t.Run("Created", func(t *testing.T) {
+		slug := NewCamera("Minolta", "X-700").CameraSlug
+		removeCamera(slug)
+		t.Cleanup(func() { removeCamera(slug) })
+
+		result, created, err := AddCamera("  Minolta ", " X-700  ")
+
+		assert.NoError(t, err)
+		assert.True(t, created)
+
+		if result == nil {
+			t.Fatal("result must not be nil")
+		}
+
+		assert.NotZero(t, result.ID)
+		assert.Equal(t, slug, result.CameraSlug)
+		assert.Equal(t, "Minolta X-700", result.CameraName)
+		assert.Equal(t, SrcManual, result.CameraSrc)
+
+		// The source must be persisted, not only set on the returned struct.
+		found := Camera{}
+		assert.NoError(t, Db().First(&found, "id = ?", result.ID).Error)
+		assert.Equal(t, SrcManual, found.CameraSrc)
+
+		// Adding the same camera again reports the existing record instead of a duplicate.
+		again, created, err := AddCamera("Minolta", "X-700")
+		assert.NoError(t, err)
+		assert.False(t, created)
+		assert.Equal(t, result.ID, again.ID)
+	})
+	t.Run("ExistingBySlug", func(t *testing.T) {
+		fixture := CameraFixtures.Get("canon-eos-7d")
+		t.Cleanup(func() {
+			FlushCameraCache()
+			assert.NoError(t, UnscopedDb().Save(CameraFixtures.Pointer("canon-eos-7d")).Error)
+		})
+
+		result, created, err := AddCamera(fixture.CameraMake, fixture.CameraModel)
+
+		assert.NoError(t, err)
+		assert.False(t, created)
+		assert.Equal(t, fixture.ID, result.ID)
+		assert.Equal(t, SrcManual, result.CameraSrc)
+
+		found := Camera{}
+		assert.NoError(t, Db().First(&found, "id = ?", fixture.ID).Error)
+		assert.Equal(t, SrcManual, found.CameraSrc)
+	})
+	t.Run("ExistingRenamed", func(t *testing.T) {
+		fixture := CameraFixtures.Get("canon-eos-7d")
+		t.Cleanup(func() {
+			FlushCameraCache()
+			assert.NoError(t, UnscopedDb().Save(CameraFixtures.Pointer("canon-eos-7d")).Error)
+		})
+
+		// A renamed record keeps its slug, so it can only be found by make and model.
+		renamed := Camera{}
+		assert.NoError(t, Db().First(&renamed, "id = ?", fixture.ID).Error)
+		assert.NoError(t, renamed.UpdateMakeModel("Minolta", "XD-7"))
+		assert.Equal(t, fixture.CameraSlug, renamed.CameraSlug)
+		assert.NotEqual(t, NewCamera("Minolta", "XD-7").CameraSlug, renamed.CameraSlug)
+
+		result, created, err := AddCamera("Minolta", "XD-7")
+
+		assert.NoError(t, err)
+		assert.False(t, created)
+		assert.Equal(t, fixture.ID, result.ID)
+	})
+	t.Run("EmptyMake", func(t *testing.T) {
+		result, created, err := AddCamera("  ", "X-700")
+		assert.ErrorIs(t, err, ErrInvalidValue)
+		assert.ErrorContains(t, err, "make and model must not be empty")
+		assert.False(t, created)
+		assert.Nil(t, result)
+	})
+	t.Run("EmptyModel", func(t *testing.T) {
+		result, created, err := AddCamera("Minolta", "")
+		assert.ErrorIs(t, err, ErrInvalidValue)
+		assert.ErrorContains(t, err, "make and model must not be empty")
+		assert.False(t, created)
+		assert.Nil(t, result)
+	})
+	t.Run("ModelSameAsMake", func(t *testing.T) {
+		result, created, err := AddCamera("Zenit", "Zenit")
+		assert.ErrorIs(t, err, ErrInvalidValue)
+		assert.ErrorContains(t, err, "model must not be empty after removing the make")
+		assert.False(t, created)
+		assert.Nil(t, result)
+	})
+	t.Run("UnknownSlug", func(t *testing.T) {
+		unknown := Camera{}
+		assert.NoError(t, Db().First(&unknown, "id = ?", UnknownCamera.ID).Error)
+
+		// These inputs normalize to the slug of the shared placeholder, which must stay untouched.
+		for _, input := range [][2]string{{"ZZ", "."}, {"!", "zz"}, {"-", "zz"}} {
+			result, created, err := AddCamera(input[0], input[1])
+			assert.ErrorIs(t, err, ErrInvalidValue, "%q", input)
+			assert.False(t, created)
+			assert.Nil(t, result)
+		}
+
+		found := Camera{}
+		assert.NoError(t, Db().First(&found, "id = ?", UnknownCamera.ID).Error)
+		assert.Equal(t, unknown.CameraSrc, found.CameraSrc)
+	})
+	t.Run("ExistingPurged", func(t *testing.T) {
+		slug := NewCamera("Zenit", "TTL").CameraSlug
+		removeCamera(slug)
+		t.Cleanup(func() { removeCamera(slug) })
+
+		// Find a discovered orphan, then purge it before it can be marked as added manually.
+		stale := *FirstOrCreateCamera(NewCamera("Zenit", "TTL"))
+		assert.NotZero(t, stale.ID)
+		removeCamera(slug)
+		assert.ErrorIs(t, (&stale).markManual(), gorm.ErrRecordNotFound)
+
+		prev := lookupExistingCamera
+		t.Cleanup(func() { lookupExistingCamera = prev })
+		lookupExistingCamera = func(*Camera) *Camera {
+			found := stale
+			return &found
+		}
+
+		// The camera must be created again instead of reporting the purged record or failing.
+		result, created, err := AddCamera("Zenit", "TTL")
+		assert.NoError(t, err)
+		assert.True(t, created)
+
+		if result == nil {
+			t.Fatal("result must not be nil")
+		}
+
+		assert.NotEqual(t, stale.ID, result.ID)
+		assert.Equal(t, SrcManual, result.CameraSrc)
+	})
+}
+
+func TestCamera_markManual(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		fixture := CameraFixtures.Get("canon-eos-5d")
+		t.Cleanup(func() {
+			FlushCameraCache()
+			assert.NoError(t, UnscopedDb().Save(CameraFixtures.Pointer("canon-eos-5d")).Error)
+		})
+
+		m := Camera{}
+		assert.NoError(t, Db().First(&m, "id = ?", fixture.ID).Error)
+		assert.Empty(t, m.CameraSrc)
+		assert.NoError(t, m.markManual())
+		assert.Equal(t, SrcManual, m.CameraSrc)
+
+		found := Camera{}
+		assert.NoError(t, Db().First(&found, "id = ?", fixture.ID).Error)
+		assert.Equal(t, SrcManual, found.CameraSrc)
+
+		// Marking it again is a no-op.
+		assert.NoError(t, m.markManual())
+	})
+	t.Run("NoPrimaryKey", func(t *testing.T) {
+		m := Camera{CameraSlug: "no-primary-key"}
+		assert.Error(t, m.markManual())
+		assert.Empty(t, m.CameraSrc)
+	})
+}
+
+func TestCamera_UpdateMakeModelUnknown(t *testing.T) {
+	m := UnknownCamera
+	assert.NotZero(t, m.ID)
+	assert.EqualError(t, m.UpdateMakeModel("Minolta", "X-700"), "unknown camera cannot be changed")
+	assert.Equal(t, UnknownCamera.CameraName, m.CameraName)
+}
+
+// useCamera temporarily assigns the first photo to the camera and returns the photo ID.
+func useCamera(t *testing.T, m *Camera) uint {
+	t.Helper()
+
+	photo := Photo{}
+	assert.NoError(t, UnscopedDb().Order("id").First(&photo).Error)
+	t.Cleanup(func() {
+		assert.NoError(t, UnscopedDb().Model(&Photo{}).Where("id = ?", photo.ID).UpdateColumn("camera_id", photo.CameraID).Error)
+	})
+	assert.NoError(t, UnscopedDb().Model(&Photo{}).Where("id = ?", photo.ID).UpdateColumn("camera_id", m.ID).Error)
+
+	return photo.ID
+}
+
+// addCamera adds a camera for testing and removes it again when the test is done.
+func addCamera(t *testing.T, makeName, modelName string) *Camera {
+	t.Helper()
+
+	slug := NewCamera(makeName, modelName).CameraSlug
+	remove := func() {
+		cameraCache.Delete(slug)
+		assert.NoError(t, UnscopedDb().Delete(&Camera{}, "camera_slug = ?", slug).Error)
+	}
+	remove()
+	t.Cleanup(remove)
+
+	m, created, err := AddCamera(makeName, modelName)
+	assert.NoError(t, err)
+	assert.True(t, created)
+
+	if m == nil {
+		t.Fatal("camera must not be nil")
+	}
+
+	return m
+}
+
+func TestCamera_PhotoCount(t *testing.T) {
+	t.Run("Unused", func(t *testing.T) {
+		m := addCamera(t, "Zenit", "E")
+		count, err := m.PhotoCount()
+		assert.NoError(t, err)
+		assert.Equal(t, 0, count)
+	})
+	t.Run("Used", func(t *testing.T) {
+		m := addCamera(t, "Zenit", "12XP")
+		useCamera(t, m)
+		count, err := m.PhotoCount()
+		assert.NoError(t, err)
+		assert.Equal(t, 1, count)
+	})
+	t.Run("EmptyID", func(t *testing.T) {
+		_, err := (&Camera{}).PhotoCount()
+		assert.Error(t, err)
+	})
+}
+
+func TestCamera_Delete(t *testing.T) {
+	exists := func(t *testing.T, id uint) bool {
+		var count int
+		assert.NoError(t, UnscopedDb().Model(&Camera{}).Where("id = ?", id).Count(&count).Error)
+		return count > 0
+	}
+
+	t.Run("Unused", func(t *testing.T) {
+		m := addCamera(t, "Zenit", "E")
+
+		deleted := event.Subscribe("cameras.deleted")
+		t.Cleanup(func() { event.Unsubscribe(deleted) })
+
+		reassigned, err := m.Delete(false)
+		assert.NoError(t, err)
+		assert.Equal(t, int64(0), reassigned)
+		assert.False(t, exists(t, m.ID))
+
+		_, cached := cameraCache.Get(m.CameraSlug)
+		assert.False(t, cached)
+
+		select {
+		case msg := <-deleted.Receiver:
+			assert.Equal(t, []string{m.CameraSlug}, msg.Fields["entities"])
+		case <-time.After(2 * time.Second):
+			t.Fatal("expected one cameras.deleted event")
+		}
+	})
+	t.Run("InUse", func(t *testing.T) {
+		m := addCamera(t, "Zenit", "12XP")
+		photoID := useCamera(t, m)
+
+		reassigned, err := m.Delete(false)
+		assert.ErrorIs(t, err, ErrInUse)
+		assert.Equal(t, int64(0), reassigned)
+		assert.True(t, exists(t, m.ID))
+
+		photo := Photo{}
+		assert.NoError(t, UnscopedDb().First(&photo, "id = ?", photoID).Error)
+		assert.Equal(t, m.ID, photo.CameraID)
+	})
+	t.Run("Reassign", func(t *testing.T) {
+		m := addCamera(t, "Zenit", "122")
+		photoID := useCamera(t, m)
+
+		reassigned, err := m.Delete(true)
+		assert.NoError(t, err)
+		assert.Equal(t, int64(1), reassigned)
+		assert.False(t, exists(t, m.ID))
+
+		photo := Photo{}
+		assert.NoError(t, UnscopedDb().First(&photo, "id = ?", photoID).Error)
+		assert.Equal(t, UnknownCamera.ID, photo.CameraID)
+	})
+	t.Run("Unknown", func(t *testing.T) {
+		m := UnknownCamera
+		_, err := m.Delete(true)
+		assert.ErrorIs(t, err, ErrInvalidValue)
+		assert.True(t, exists(t, UnknownCamera.ID))
+	})
+	t.Run("NotFound", func(t *testing.T) {
+		m := Camera{ID: 999999999, CameraSlug: "not-found"}
+		_, err := m.Delete(false)
+		assert.ErrorIs(t, err, gorm.ErrRecordNotFound)
+	})
+	t.Run("EmptyID", func(t *testing.T) {
+		_, err := (&Camera{CameraSlug: "empty-id"}).Delete(false)
+		assert.Error(t, err)
+	})
+}
+
+func TestFindCamerasByMakeModel(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		m := addCamera(t, "Zenit", "TTL")
+		found := FindCamerasByMakeModel("  Zenit ", "Zenit TTL")
+
+		if assert.Len(t, found, 1) {
+			assert.Equal(t, m.ID, found[0].ID)
+		}
+	})
+	t.Run("Renamed", func(t *testing.T) {
+		fixture := CameraFixtures.Get("canon-eos-7d")
+		t.Cleanup(func() {
+			FlushCameraCache()
+			assert.NoError(t, UnscopedDb().Save(CameraFixtures.Pointer("canon-eos-7d")).Error)
+		})
+
+		renamed := Camera{}
+		assert.NoError(t, Db().First(&renamed, "id = ?", fixture.ID).Error)
+		assert.NoError(t, renamed.UpdateMakeModel("Minolta", "XD-7"))
+
+		// The old name still matches the slug, but must no longer find the renamed record.
+		assert.Empty(t, FindCamerasByMakeModel(fixture.CameraMake, fixture.CameraModel))
+
+		if found := FindCamerasByMakeModel("Minolta", "XD-7"); assert.Len(t, found, 1) {
+			assert.Equal(t, fixture.ID, found[0].ID)
+		}
+	})
+	t.Run("AsStored", func(t *testing.T) {
+		// A record saved without normalizing its make is selected as stored, not its normalized twin.
+		normalized := addCamera(t, "Pentax", "11")
+		assert.Equal(t, "PENTAX", normalized.CameraMake)
+
+		stored := Camera{CameraSlug: "as-stored-camera-test", CameraName: "Pentax 11", CameraMake: "Pentax", CameraModel: "11"}
+		assert.NoError(t, UnscopedDb().Create(&stored).Error)
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(&Camera{}, "id = ?", stored.ID).Error) })
+
+		if found := FindCamerasByMakeModel("Pentax", "11"); assert.Len(t, found, 1) {
+			assert.Equal(t, stored.ID, found[0].ID)
+		}
+
+		if found := FindCamerasByMakeModel("PENTAX", "11"); assert.Len(t, found, 1) {
+			assert.Equal(t, normalized.ID, found[0].ID)
+		}
+	})
+	t.Run("Duplicates", func(t *testing.T) {
+		first := addCamera(t, "Zenit", "19")
+
+		second := Camera{CameraSlug: "duplicate-camera-test", CameraName: first.CameraName, CameraMake: first.CameraMake, CameraModel: first.CameraModel}
+		assert.NoError(t, UnscopedDb().Create(&second).Error)
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(&Camera{}, "id = ?", second.ID).Error) })
+
+		if found := FindCamerasByMakeModel("Zenit", "19"); assert.Len(t, found, 2) {
+			assert.Equal(t, first.ID, found[0].ID)
+			assert.Equal(t, second.ID, found[1].ID)
+		}
+	})
+	t.Run("NotFound", func(t *testing.T) {
+		assert.Empty(t, FindCamerasByMakeModel("Zenit", "Does Not Exist"))
+	})
+	t.Run("Unknown", func(t *testing.T) {
+		assert.Empty(t, FindCamerasByMakeModel("", ""))
+		assert.Empty(t, FindCamerasByMakeModel("ZZ", "."))
+		assert.Empty(t, FindCamerasByMakeModel("", "Unknown"))
+	})
+	t.Run("ModelSameAsMake", func(t *testing.T) {
+		assert.Empty(t, FindCamerasByMakeModel("Zenit", "Zenit"))
+	})
+}
+
+func TestFindCamerasByMakeModelExact(t *testing.T) {
+	t.Run("Exact", func(t *testing.T) {
+		m := addCamera(t, "Zenit", "TTL")
+
+		if found := findCamerasByMakeModel(m.CameraMake, m.CameraModel); assert.Len(t, found, 1) {
+			assert.Equal(t, m.ID, found[0].ID)
+		}
+	})
+	t.Run("CaseDiffers", func(t *testing.T) {
+		m := addCamera(t, "Zenit", "TTL")
+
+		// MariaDB collations match this in SQL, so the result must be filtered in Go.
+		assert.Empty(t, findCamerasByMakeModel(strings.ToUpper(m.CameraMake), m.CameraModel))
+	})
+	t.Run("Placeholder", func(t *testing.T) {
+		assert.Empty(t, findCamerasByMakeModel(UnknownCamera.CameraMake, UnknownCamera.CameraModel))
+	})
+}
+
+func TestUnknownCameraID(t *testing.T) {
+	placeholder := Camera{}
+	assert.NoError(t, UnscopedDb().First(&placeholder, "camera_slug = ?", UnknownID).Error)
+
+	t.Run("Initialized", func(t *testing.T) {
+		id, err := unknownCameraID()
+		assert.NoError(t, err)
+		assert.Equal(t, placeholder.ID, id)
+	})
+	t.Run("Uninitialized", func(t *testing.T) {
+		// The CLI does not initialize the placeholder on startup, so its ID must be read from the database.
+		prev := UnknownCamera
+		t.Cleanup(func() { UnknownCamera = prev })
+		UnknownCamera.ID = 0
+		FlushCameraCache()
+
+		id, err := unknownCameraID()
+		assert.NoError(t, err)
+		assert.Equal(t, placeholder.ID, id)
+	})
+}
+
+func TestFindExistingCamera(t *testing.T) {
+	t.Run("BySlug", func(t *testing.T) {
+		fixture := CameraFixtures.Get("canon-eos-7d")
+		found := findExistingCamera(NewCamera(fixture.CameraMake, fixture.CameraModel))
+
+		if found == nil {
+			t.Fatal("camera must be found")
+		}
+
+		assert.Equal(t, fixture.ID, found.ID)
+	})
+	t.Run("ByMakeModel", func(t *testing.T) {
+		fixture := CameraFixtures.Get("canon-eos-7d")
+		t.Cleanup(func() {
+			FlushCameraCache()
+			assert.NoError(t, UnscopedDb().Save(CameraFixtures.Pointer("canon-eos-7d")).Error)
+		})
+
+		renamed := Camera{}
+		assert.NoError(t, Db().First(&renamed, "id = ?", fixture.ID).Error)
+		assert.NoError(t, renamed.UpdateMakeModel("Minolta", "XD-7"))
+
+		found := findExistingCamera(NewCamera("Minolta", "XD-7"))
+
+		if found == nil {
+			t.Fatal("camera must be found")
+		}
+
+		assert.Equal(t, fixture.ID, found.ID)
+	})
+	t.Run("None", func(t *testing.T) {
+		assert.Nil(t, findExistingCamera(NewCamera("Zenit", "Does Not Exist")))
+	})
+}
+
+func TestCamera_DeleteEdgeCases(t *testing.T) {
+	exists := func(t *testing.T, id uint) bool {
+		var count int
+		assert.NoError(t, UnscopedDb().Model(&Camera{}).Where("id = ?", id).Count(&count).Error)
+		return count > 0
+	}
+
+	placeholder := Camera{}
+	assert.NoError(t, UnscopedDb().First(&placeholder, "camera_slug = ?", UnknownID).Error)
+
+	t.Run("OnlyTheRecord", func(t *testing.T) {
+		m := addCamera(t, "Zenit", "TTL")
+		other := addCamera(t, "Zenit", "11")
+
+		_, err := m.Delete(false)
+		assert.NoError(t, err)
+		assert.False(t, exists(t, m.ID))
+		assert.True(t, exists(t, other.ID))
+	})
+	t.Run("SoftDeletedPhoto", func(t *testing.T) {
+		m := addCamera(t, "Zenit", "19")
+		photoID := useCamera(t, m)
+
+		// Archived and deleted pictures still reference the camera and must be counted and reassigned.
+		deletedAt := time.Now().UTC()
+		assert.NoError(t, UnscopedDb().Model(&Photo{}).Where("id = ?", photoID).UpdateColumn("deleted_at", &deletedAt).Error)
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Model(&Photo{}).Where("id = ?", photoID).UpdateColumn("deleted_at", nil).Error)
+		})
+
+		count, err := m.PhotoCount()
+		assert.NoError(t, err)
+		assert.Equal(t, 1, count)
+
+		_, err = m.Delete(false)
+		assert.ErrorIs(t, err, ErrInUse)
+
+		reassigned, err := m.Delete(true)
+		assert.NoError(t, err)
+		assert.Equal(t, int64(1), reassigned)
+
+		photo := Photo{}
+		assert.NoError(t, UnscopedDb().First(&photo, "id = ?", photoID).Error)
+		assert.Equal(t, placeholder.ID, photo.CameraID)
+	})
+	t.Run("UninitializedPlaceholder", func(t *testing.T) {
+		m := addCamera(t, "Zenit", "Photosniper")
+		photoID := useCamera(t, m)
+
+		// The CLI does not initialize the placeholder, so reassigning must not write ID 0.
+		prev := UnknownCamera
+		t.Cleanup(func() { UnknownCamera = prev })
+		UnknownCamera.ID = 0
+		FlushCameraCache()
+
+		reassigned, err := m.Delete(true)
+		assert.NoError(t, err)
+		assert.Equal(t, int64(1), reassigned)
+
+		photo := Photo{}
+		assert.NoError(t, UnscopedDb().First(&photo, "id = ?", photoID).Error)
+		assert.Equal(t, placeholder.ID, photo.CameraID)
+	})
+	t.Run("PlaceholderID", func(t *testing.T) {
+		m := Camera{ID: placeholder.ID, CameraSlug: "not-the-placeholder-slug"}
+		_, err := m.Delete(true)
+		assert.ErrorIs(t, err, ErrInvalidValue)
+		assert.True(t, exists(t, placeholder.ID))
+	})
+	t.Run("PlaceholderSlug", func(t *testing.T) {
+		m := addCamera(t, "Zenit", "EM")
+		m.CameraSlug = UnknownID
+		_, err := m.Delete(true)
+		assert.ErrorIs(t, err, ErrInvalidValue)
+		assert.True(t, exists(t, m.ID))
+	})
+}
+
+// TestCameraSlugRegression pins the slugs of real make and model pairs, since a changed slug creates
+// a second record for the same device when existing files are indexed again.
+func TestCameraSlugRegression(t *testing.T) {
+	for _, c := range [][3]string{
+		{"Apple", "iPad mini", "apple-ipad-mini"},
+		{"Apple", "iPhone 12 mini", "apple-iphone-12-mini"},
+		{"Apple", "iPhone 13", "apple-iphone-13"},
+		{"Apple", "iPhone 14 Pro Max", "apple-iphone-14-pro-max"},
+		{"Apple", "iPhone 15 Pro", "apple-iphone-15-pro"},
+		{"Apple", "iPhone 4S", "apple-iphone-4s"},
+		{"Apple", "iPhone 5s", "apple-iphone-5s"},
+		{"Apple", "iPhone 6 Plus", "apple-iphone-6-plus"},
+		{"Apple", "iPhone 6s", "apple-iphone-6s"},
+		{"Apple", "iPhone 7", "apple-iphone-7"},
+		{"Apple", "iPhone 8", "apple-iphone-8"},
+		{"Apple", "iPhone SE", "apple-iphone-se"},
+		{"Apple", "iPhone X", "apple-iphone-x"},
+		{"Apple", "iPhone XR", "apple-iphone-xr"},
+		{"Canon", "Canon EOS 50D", "canon-eos-50d"},
+		{"Canon", "Canon EOS 5D", "canon-eos-5d"},
+		{"Canon", "Canon EOS 6D", "canon-eos-6d"},
+		{"Canon", "Canon EOS 7D", "canon-eos-7d"},
+		{"Canon", "Canon EOS-1DS", "canon-eos-1ds"},
+		{"Canon", "Canon PowerShot A70", "canon-powershot-a70"},
+		{"Canon", "Canon PowerShot G15", "canon-powershot-g15"},
+		{"GCMC", "RODFS50", "kodak-slide-n-scan"},
+		{"GoPro", "HD2", "gopro-hd2"},
+		{"Google", "Pixel 2", "google-pixel-2"},
+		{"Google", "Pixel 4a", "google-pixel-4a"},
+		{"Google", "Pixel 6", "google-pixel-6"},
+		{"Google", "Pixel 7 Pro", "google-pixel-7-pro"},
+		{"HMD Global", "Nokia X71", "hmd-global-nokia-x71"},
+		{"HUAWEI", "ELE-L29", "huawei-p30"},
+		{"NIKON CORPORATION", "NIKON D800E", "nikon-d800e"},
+		{"OLYMPUS DIGITAL CAMERA", "E-M10MarkII", "olympus-e-m10markii"},
+		{"OLYMPUS DIGITAL CAMERA", "E-PL7", "olympus-e-pl7"},
+		{"OLYMPUS IMAGING CORP.", "TG-830", "olympus-tg-830"},
+		{"RICOH", "RICOH THETA S", "ricoh-theta-s"},
+		{"SAMSUNG", "GT-I9000", "samsung-gt-i9000"},
+		{"SAMSUNG", "SM-C200", "samsung-sm-c200"},
+		{"Samsung", "Galaxy A71", "samsung-galaxy-a71"},
+		{"TCT", "TCL S950", "tct-tcl-s950"},
+		{"Xiaomi", "Mi A1", "xiaomi-mi-a1"},
+		{"Xiaomi", "Mi MIX 2", "xiaomi-mi-mix-2"},
+		{"samsung", "Galaxy S26", "samsung-galaxy-s26"},
+		{"samsung", "SM-G780F", "samsung-galaxy-s20"},
+		{"samsung", "SM-G781B", "samsung-galaxy-s20-fe"},
+		{"samsung", "SM-G900F", "samsung-sm-g900f"},
+		{"samsung", "SM-G973F", "samsung-sm-g973f"},
+		{"samsung", "SM-G998B", "samsung-galaxy-s21-ultra"},
+		{"LGE", "LG-H815", "lg-h815"},
+		{"SAMSUNG", "SAMSUNG-SM-G900A", "samsung-sm-g900a"},
+		{"ASUS", "ASUS_AI2302", "asus-zenfone-10"},
+		{"HTC", "HTC_One", "htc-_one"},
+		{"Yashica", "Yashica-Mat 124G", "yashica-mat-124g"},
+		{"Canon", "Canon EOS-1DS", "canon-eos-1ds"},
+	} {
+		assert.Equal(t, c[2], NewCamera(c[0], c[1]).CameraSlug, "%q / %q", c[0], c[1])
+	}
 }

@@ -54,7 +54,11 @@ func WebDAVAuthSession(c *gin.Context, authToken string) (sess *entity.Session, 
 	}
 
 	// Update client IP and user agent of the session from the HTTP request context.
-	sess.UpdateContext(c)
+	if sess.UpdateContext(c) != nil {
+		limiter.Auth.Reserve(clientIp)
+		event.AuditErr([]string{header.ClientIP(c), "webdav", "access with invalid auth token", status.Denied})
+		return nil, nil, sid, false
+	}
 
 	// Return session and user.
 	return sess, sess.GetUser(), sid, false

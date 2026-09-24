@@ -113,11 +113,22 @@ func TestSignParseOIDCSession(t *testing.T) {
 	})
 }
 
+// storedCookieSession returns a stored session for the cookie tests, since only a stored session is eligible.
+func storedCookieSession(t *testing.T) *entity.Session {
+	t.Helper()
+
+	sess := &entity.Session{ID: rnd.SessionID(rnd.AuthToken()), UserUID: "uqxetse3cy5eo9z2"}
+	require.NoError(t, sess.Save())
+	t.Cleanup(func() { _ = sess.Delete() })
+
+	return sess
+}
+
 func TestSetOIDCSessionCookie(t *testing.T) {
 	t.Run("SignsSessionReferenceNotToken", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
-		sess := &entity.Session{ID: rnd.SessionID(rnd.AuthToken()), UserUID: "uqxetse3cy5eo9z2"}
+		sess := storedCookieSession(t)
 		SetOIDCSessionCookie(c, sess, "/api/v1/oauth", true)
 		ck := findCookie(w, OIDCSessionCookie)
 		if assert.NotNil(t, ck) {
@@ -135,7 +146,7 @@ func TestSetOIDCSessionCookie(t *testing.T) {
 	t.Run("EmptyPathFallsBackToBareApiUri", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
-		SetOIDCSessionCookie(c, &entity.Session{ID: rnd.SessionID(rnd.AuthToken()), UserUID: "uqxetse3cy5eo9z2"}, "", true)
+		SetOIDCSessionCookie(c, storedCookieSession(t), "", true)
 		ck := findCookie(w, OIDCSessionCookie)
 		if assert.NotNil(t, ck) {
 			assert.Equal(t, config.ApiUri+"/oauth", ck.Path)
@@ -144,7 +155,7 @@ func TestSetOIDCSessionCookie(t *testing.T) {
 	t.Run("InsecureOmitsSecureFlag", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
-		SetOIDCSessionCookie(c, &entity.Session{ID: rnd.SessionID(rnd.AuthToken()), UserUID: "uqxetse3cy5eo9z2"}, "/api/v1/oauth", false)
+		SetOIDCSessionCookie(c, storedCookieSession(t), "/api/v1/oauth", false)
 		ck := findCookie(w, OIDCSessionCookie)
 		if assert.NotNil(t, ck) {
 			assert.False(t, ck.Secure)
@@ -221,6 +232,31 @@ func TestOIDCSessionCookieSession(t *testing.T) {
 	})
 	t.Run("NilContext", func(t *testing.T) {
 		assert.Nil(t, OIDCSessionCookieSession(nil))
+	})
+	t.Run("StoredSession", func(t *testing.T) {
+		sess := entity.NewSession(3600, 0).SetUser(entity.UserFixtures.Pointer("alice"))
+		require.NoError(t, sess.Save())
+		t.Cleanup(func() { _ = sess.Delete() })
+
+		v := signOIDCSession(sess.ID, time.Now().Add(time.Minute))
+		c := newCtx(&http.Cookie{Name: OIDCSessionCookie, Value: v}) //nolint:gosec // test builds a request cookie; transport attributes are irrelevant
+
+		found := OIDCSessionCookieSession(c)
+		require.NotNil(t, found)
+		assert.Equal(t, sess.ID, found.ID)
+	})
+	t.Run("RemovedSessionReturnsNil", func(t *testing.T) {
+		sess := entity.NewSession(3600, 0).SetUser(entity.UserFixtures.Pointer("alice"))
+		require.NoError(t, sess.Save())
+
+		// Load the session into the cache, then remove the row directly.
+		_, err := entity.FindSession(sess.ID)
+		require.NoError(t, err)
+		require.NoError(t, entity.UnscopedDb().Exec("DELETE FROM auth_sessions WHERE id = ?", sess.ID).Error)
+
+		v := signOIDCSession(sess.ID, time.Now().Add(time.Minute))
+		c := newCtx(&http.Cookie{Name: OIDCSessionCookie, Value: v}) //nolint:gosec // test builds a request cookie; transport attributes are irrelevant
+		assert.Nil(t, OIDCSessionCookieSession(c))
 	})
 }
 

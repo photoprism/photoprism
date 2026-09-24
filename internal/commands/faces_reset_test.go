@@ -9,7 +9,9 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v2"
 
+	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/photoprism/get"
 )
 
 // newFacesResetContext parses args against the flags the "faces reset" subcommand registers, which
@@ -53,6 +55,19 @@ func TestFacesResetFlags(t *testing.T) {
 	t.Run("AllHasShortAlias", func(t *testing.T) {
 		assert.True(t, newFacesResetContext(t, "-a").Bool("all"))
 	})
+	t.Run("TraceIsRegistered", func(t *testing.T) {
+		assert.True(t, newFacesResetContext(t, "-t").Bool("trace"))
+	})
+	t.Run("UnknownDetector", func(t *testing.T) {
+		err := facesResetAction(newFacesResetContext(t, "--detector=unknown"))
+
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "unsupported face detector")
+
+		var exit cli.ExitCoder
+		require.ErrorAs(t, err, &exit)
+		assert.Equal(t, 2, exit.ExitCode())
+	})
 	t.Run("ForceWithAll", func(t *testing.T) {
 		err := facesResetAction(newFacesResetContext(t, "--force", "--all"))
 
@@ -61,7 +76,7 @@ func TestFacesResetFlags(t *testing.T) {
 
 		var exit cli.ExitCoder
 		require.ErrorAs(t, err, &exit)
-		assert.Equal(t, 1, exit.ExitCode())
+		assert.Equal(t, 2, exit.ExitCode())
 	})
 	t.Run("ForceWithDetector", func(t *testing.T) {
 		err := facesResetAction(newFacesResetContext(t, "--force", "--detector=yunet"))
@@ -71,8 +86,81 @@ func TestFacesResetFlags(t *testing.T) {
 
 		var exit cli.ExitCoder
 		require.ErrorAs(t, err, &exit)
-		assert.Equal(t, 1, exit.ExitCode())
+		assert.Equal(t, 2, exit.ExitCode())
 	})
+}
+
+func TestFacesResetDetector(t *testing.T) {
+	t.Run("None", func(t *testing.T) {
+		assert.Equal(t, "", facesResetDetector(newFacesResetContext(t)))
+	})
+	t.Run("Detector", func(t *testing.T) {
+		assert.Equal(t, "yunet", facesResetDetector(newFacesResetContext(t, "--detector= yunet ")))
+	})
+	t.Run("DeprecatedEngine", func(t *testing.T) {
+		assert.Equal(t, "auto", facesResetDetector(newFacesResetContext(t, "--engine=onnx")))
+	})
+	t.Run("DeprecatedEngineNone", func(t *testing.T) {
+		assert.Equal(t, "", facesResetDetector(newFacesResetContext(t, "--engine=none")))
+	})
+	t.Run("DetectorWinsOverEngine", func(t *testing.T) {
+		assert.Equal(t, "none", facesResetDetector(newFacesResetContext(t, "--detector=none", "--engine=onnx")))
+	})
+}
+
+func TestFacesResetDetectorName(t *testing.T) {
+	// The package's config, since a second one would replace the database the other tests share.
+	c := get.Config()
+	require.NotNil(t, c)
+
+	detector := c.Options().FaceDetector
+	t.Cleanup(func() { c.Options().FaceDetector = detector })
+	c.Options().FaceDetector = face.DetectorYuNet
+
+	t.Run("Auto", func(t *testing.T) {
+		assert.Equal(t, "yunet", facesResetDetectorName(c, "auto"))
+	})
+	t.Run("Named", func(t *testing.T) {
+		assert.Equal(t, "scrfd", facesResetDetectorName(c, "scrfd"))
+	})
+	t.Run("None", func(t *testing.T) {
+		assert.Equal(t, "", facesResetDetectorName(c, ""))
+		assert.Equal(t, "none", facesResetDetectorName(c, "none"))
+	})
+	t.Run("NoConfig", func(t *testing.T) {
+		assert.Equal(t, "auto", facesResetDetectorName(nil, "auto"))
+	})
+}
+
+func TestFacesResetLabel(t *testing.T) {
+	t.Run("Default", func(t *testing.T) {
+		assert.Equal(t, "Remove automatically recognized faces, matches, and people left without faces?", facesResetLabel(false, ""))
+	})
+	t.Run("All", func(t *testing.T) {
+		assert.Equal(t, "Remove all faces and matches, including names and unverified people, keeping the markers?", facesResetLabel(true, ""))
+	})
+	t.Run("Detector", func(t *testing.T) {
+		assert.Equal(t, "Remove all faces and automatic matches, then detect faces in all pictures with yunet "+
+			"and remove the unnamed markers it does not find again?", facesResetLabel(false, "yunet"))
+	})
+	t.Run("AllWithDetector", func(t *testing.T) {
+		assert.Equal(t, "Remove all faces, matches, names, and unverified people, then detect faces in all pictures with yunet "+
+			"and remove the unnamed markers it does not find again?", facesResetLabel(true, "yunet"))
+	})
+	t.Run("DetectorNone", func(t *testing.T) {
+		assert.Equal(t, facesResetLabel(true, ""), facesResetLabel(true, "none"))
+		assert.Equal(t, facesResetLabel(false, ""), facesResetLabel(false, "NONE"))
+	})
+	t.Run("DetectorAuto", func(t *testing.T) {
+		assert.Equal(t, "Remove all faces and automatic matches, then detect faces in all pictures with the configured detector "+
+			"and remove the unnamed markers it does not find again?", facesResetLabel(false, "auto"))
+	})
+}
+
+func TestFacesResetDescription(t *testing.T) {
+	for _, flag := range []string{"--all", "--force", "--detector", "faces update", "faces index"} {
+		assert.Contains(t, FacesResetDescription, flag)
+	}
 }
 
 // TestConfirmAction covers the confirmation helper, and in particular that a prompt which cannot
@@ -102,6 +190,22 @@ func TestConfirmAction(t *testing.T) {
 		require.ErrorAs(t, err, &exit)
 		assert.Equal(t, 2, exit.ExitCode())
 	})
+	t.Run("AnsweredYes", func(t *testing.T) {
+		pipeResetAnswers(t, "y\n")
+
+		proceed, err := ConfirmAction(false, "Remove everything?")
+
+		assert.NoError(t, err)
+		assert.True(t, proceed)
+	})
+	t.Run("AnsweredNo", func(t *testing.T) {
+		pipeResetAnswers(t, "n\n")
+
+		proceed, err := ConfirmAction(false, "Remove everything?")
+
+		assert.NoError(t, err)
+		assert.False(t, proceed)
+	})
 	t.Run("NonInteractiveEnvSkipsThePrompt", func(t *testing.T) {
 		t.Setenv("PHOTOPRISM_CLI", NONINTERACTIVE)
 
@@ -109,6 +213,25 @@ func TestConfirmAction(t *testing.T) {
 
 		assert.NoError(t, err)
 		assert.True(t, proceed)
+	})
+}
+
+// TestConfirmLabel covers the label cleanup, since the prompt appends its own question mark.
+func TestConfirmLabel(t *testing.T) {
+	t.Run("TrailingQuestionMark", func(t *testing.T) {
+		assert.Equal(t, "Delete user alice", confirmLabel("Delete user alice?"))
+	})
+	t.Run("SeveralQuestionMarks", func(t *testing.T) {
+		assert.Equal(t, "Delete user alice", confirmLabel("Delete user alice??"))
+	})
+	t.Run("SpaceBeforeQuestionMark", func(t *testing.T) {
+		assert.Equal(t, "Delete user alice", confirmLabel("Delete user alice ?"))
+	})
+	t.Run("NoQuestionMark", func(t *testing.T) {
+		assert.Equal(t, "Delete user alice", confirmLabel(" Delete user alice "))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", confirmLabel(""))
 	})
 }
 
@@ -156,5 +279,40 @@ func TestFacesResetRequiresConfirmation(t *testing.T) {
 		assert.ErrorIs(t, facesResetAction(newFacesResetContext(t, "--yes")), sentinel)
 		assert.ErrorIs(t, facesResetAction(newFacesResetContext(t, "--yes", "--all")), sentinel)
 		assert.ErrorIs(t, facesResetAction(newFacesResetContext(t, "--yes", "--force")), sentinel)
+		assert.ErrorIs(t, facesResetAction(newFacesResetContext(t, "--yes", "--detector=auto")), sentinel)
+	})
+	t.Run("NoTerminalBeforeConfig", func(t *testing.T) {
+		// The prompt comes first, so a run that cannot be confirmed never loads the config.
+		restore := InitConfig
+		InitConfig = func(*cli.Context) (*config.Config, error) {
+			t.Fatal("the config must not be loaded before the confirmation")
+			return nil, nil
+		}
+		t.Cleanup(func() { InitConfig = restore })
+
+		err := facesResetAction(newFacesResetContext(t, "--detector=auto"))
+
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "--yes")
+	})
+	t.Run("AutoWithoutDetector", func(t *testing.T) {
+		c := get.Config()
+		detector := c.Options().FaceDetector
+		c.Options().FaceDetector = face.DetectorNone
+
+		restore := InitCoreConfig
+		InitCoreConfig = func(*cli.Context, bool) (*config.Config, error) { return c, nil }
+
+		t.Cleanup(func() {
+			InitCoreConfig = restore
+			c.Options().FaceDetector = detector
+		})
+
+		err := facesResetAction(newFacesResetContext(t, "--yes", "--detector=auto"))
+
+		var exit cli.ExitCoder
+		require.ErrorAs(t, err, &exit)
+		assert.Equal(t, 2, exit.ExitCode())
+		assert.Contains(t, err.Error(), "no face detector can be used")
 	})
 }

@@ -2,6 +2,8 @@ package query
 
 import (
 	"fmt"
+	"path"
+	"strings"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -315,4 +317,47 @@ func RemoveOrphanMarkers() (removed int64, err error) {
 	}
 
 	return removed, nil
+}
+
+// FaceMarkerFile describes the face markers of one file, and where the file is stored.
+type FaceMarkerFile struct {
+	PhotoID  uint
+	FileRoot string
+	FileName string
+	Markers  int
+}
+
+// FaceMarkerFiles returns the face markers each primary file in the specified originals folder, or the
+// matching sidecar folder, holds, keyed by file uid, leaving out deleted and missing files and those of
+// removed pictures. An empty dir, "." or "/" covers all files.
+func FaceMarkerFiles(dir string) (result map[string]FaceMarkerFile, err error) {
+	var rows []struct {
+		FileUID  string
+		PhotoID  uint
+		FileRoot string
+		FileName string
+		Count    int
+	}
+
+	stmt := Db().Table(entity.Marker{}.TableName()+" m").
+		Select("m.file_uid AS file_uid, f.photo_id AS photo_id, f.file_root AS file_root, f.file_name AS file_name, COUNT(*) AS count").
+		Joins(fmt.Sprintf("JOIN %s f ON f.file_uid = m.file_uid", entity.File{}.TableName())).
+		Joins(fmt.Sprintf("JOIN %s p ON p.id = f.photo_id", entity.Photo{}.TableName())).
+		Where("m.marker_type = ? AND f.file_primary = 1 AND f.deleted_at IS NULL AND f.file_missing = 0", entity.MarkerFace)
+
+	if dir = strings.Trim(path.Clean("/"+dir), "/"); dir != "" {
+		stmt = stmt.Where("f.file_root IN (?)", []string{entity.RootOriginals, entity.RootSidecar}).Where(LikeCond("f.file_name"), likeEscaper.Replace(dir)+"/%")
+	}
+
+	if err = stmt.Group("m.file_uid, f.photo_id, f.file_root, f.file_name").Scan(&rows).Error; err != nil {
+		return nil, err
+	}
+
+	result = make(map[string]FaceMarkerFile, len(rows))
+
+	for _, row := range rows {
+		result[row.FileUID] = FaceMarkerFile{PhotoID: row.PhotoID, FileRoot: row.FileRoot, FileName: row.FileName, Markers: row.Count}
+	}
+
+	return result, nil
 }

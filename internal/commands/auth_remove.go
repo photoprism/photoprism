@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/manifoldco/promptui"
+	"github.com/jinzhu/gorm"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -17,6 +17,7 @@ var AuthRemoveCommand = &cli.Command{
 	Name:      "rm",
 	Usage:     "Deletes a session by id or access token",
 	ArgsUsage: "[identifier]",
+	Flags:     []cli.Flag{YesFlag()},
 	Action:    authRemoveAction,
 }
 
@@ -30,29 +31,29 @@ func authRemoveAction(ctx *cli.Context) error {
 			return cli.ShowSubcommandHelp(ctx)
 		}
 
-		if RunNonInteractively(false) {
-			// proceed without prompt
-			if m, err := query.Session(id); err != nil {
-				return errors.New("session not found")
-			} else if err := m.Delete(); err != nil {
-				return err
-			} else {
-				log.Infof("session %s has been removed", clean.LogQuote(id))
-			}
-		} else {
-			actionPrompt := promptui.Prompt{Label: fmt.Sprintf("Remove session %s?", clean.LogQuote(id)), IsConfirm: true}
-			if _, err := actionPrompt.Run(); err == nil {
-				if m, err := query.Session(id); err != nil {
-					return errors.New("session not found")
-				} else if err := m.Delete(); err != nil {
-					return err
-				} else {
-					log.Infof("session %s has been removed", clean.LogQuote(id))
-				}
-			} else {
-				log.Infof("session %s was not removed", clean.LogQuote(id))
-			}
+		m, err := query.Session(id)
+
+		switch {
+		case errors.Is(err, query.ErrInvalidSessionID):
+			return cli.Exit(err, 2)
+		case gorm.IsRecordNotFoundError(err):
+			return cli.Exit(errors.New("session not found"), 3)
+		case err != nil:
+			return cli.Exit(err, 1)
 		}
+
+		if proceed, confirmErr := ConfirmAction(ctx.Bool("yes"), fmt.Sprintf("Remove session %s?", clean.LogQuote(id))); confirmErr != nil {
+			return confirmErr
+		} else if !proceed {
+			log.Infof("session %s was not removed", clean.LogQuote(id))
+			return nil
+		}
+
+		if err = m.Delete(); err != nil {
+			return cli.Exit(err, 1)
+		}
+
+		log.Infof("session %s has been removed", clean.LogQuote(id))
 
 		return nil
 	})
