@@ -348,3 +348,36 @@ func TestFilesByPath_OmitsMarkers(t *testing.T) {
 		assert.Empty(t, res[i].Markers)
 	}
 }
+
+func TestFilesByPhotoIDs(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		photo := entity.PhotoFixtures.Get("19800101_000002_D640C559")
+
+		files, err := FilesByPhotoIDs([]uint{photo.ID})
+
+		require.NoError(t, err)
+		require.NotEmpty(t, files)
+
+		for _, f := range files {
+			assert.Equal(t, photo.ID, f.PhotoID)
+		}
+	})
+	t.Run("Duplicates", func(t *testing.T) {
+		photo := entity.PhotoFixtures.Get("19800101_000002_D640C559")
+
+		once, err := FilesByPhotoIDs([]uint{photo.ID})
+		require.NoError(t, err)
+
+		twice, err := FilesByPhotoIDs([]uint{photo.ID, 0, photo.ID})
+		require.NoError(t, err)
+
+		assert.Len(t, twice, len(once))
+		assert.NotEmpty(t, twice[0].FileName)
+	})
+	t.Run("None", func(t *testing.T) {
+		files, err := FilesByPhotoIDs(nil)
+
+		require.NoError(t, err)
+		assert.Empty(t, files)
+	})
+}

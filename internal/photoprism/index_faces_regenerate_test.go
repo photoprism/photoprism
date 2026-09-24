@@ -92,6 +92,52 @@ func TestFaceRegeneration(t *testing.T) {
 	})
 }
 
+func TestFaceRegeneration_Skipped(t *testing.T) {
+	t.Run("File", func(t *testing.T) {
+		stats := &FaceRegeneration{}
+		stats.addSkipped("/originals/a/raw.cr2")
+
+		assert.True(t, stats.Skipped("/originals/a/raw.cr2"))
+		assert.False(t, stats.Skipped("/originals/a/raw.jpg"))
+	})
+	t.Run("Folder", func(t *testing.T) {
+		stats := &FaceRegeneration{}
+		stats.addSkippedDir("/originals/a/.hidden/")
+
+		assert.True(t, stats.Skipped("/originals/a/.hidden/b.jpg"))
+		assert.True(t, stats.Skipped("/originals/a/.hidden/c/d.jpg"))
+		assert.False(t, stats.Skipped("/originals/a/.hiddenx/b.jpg"), "a similar prefix is not the folder")
+		assert.False(t, stats.Skipped("/originals/a/b.jpg"))
+	})
+	t.Run("Nil", func(t *testing.T) {
+		var stats *FaceRegeneration
+
+		stats.addSkipped("/originals/a.jpg")
+		stats.addSkippedDir("/originals")
+
+		assert.False(t, stats.Skipped("/originals/a.jpg"))
+		assert.False(t, stats.HasSkipped())
+	})
+}
+
+func TestFaceRegeneration_HasSkipped(t *testing.T) {
+	t.Run("None", func(t *testing.T) {
+		assert.False(t, (&FaceRegeneration{}).HasSkipped())
+	})
+	t.Run("File", func(t *testing.T) {
+		stats := &FaceRegeneration{}
+		stats.addSkipped("/originals/a.jpg")
+
+		assert.True(t, stats.HasSkipped())
+	})
+	t.Run("Folder", func(t *testing.T) {
+		stats := &FaceRegeneration{}
+		stats.addSkippedDir("/originals/a")
+
+		assert.True(t, stats.HasSkipped())
+	})
+}
+
 func TestMatchRegeneratedFaces(t *testing.T) {
 	detected := face.Faces{
 		{Rows: 100, Cols: 100, Score: 90, Area: face.NewArea("face", 30, 30, 20)},
@@ -136,6 +182,53 @@ func TestMatchRegeneratedFaces(t *testing.T) {
 		assert.Empty(t, assignments)
 		assert.Empty(t, claimed)
 	})
+}
+
+// touchRegenerateTestFile creates the file unless it exists, and removes it when the test ends if it
+// was created.
+func touchRegenerateTestFile(t *testing.T, fileName string) {
+	t.Helper()
+
+	if fs.FileExists(fileName) {
+		return
+	}
+
+	// The topmost folder this creates, so the cleanup leaves no empty folders behind.
+	created := ""
+
+	for dir := filepath.Dir(fileName); !fs.PathExists(dir); dir = filepath.Dir(dir) {
+		created = dir
+	}
+
+	require.NoError(t, os.MkdirAll(filepath.Dir(fileName), fs.ModeDir))
+	require.NoError(t, os.WriteFile(fileName, []byte("test"), fs.ModeFile)) //nolint:gosec // test path
+
+	t.Cleanup(func() {
+		_ = os.Remove(fileName)
+
+		if created != "" {
+			_ = os.RemoveAll(created)
+		}
+	})
+}
+
+// newRegenerateTestFile adds a file row to the picture and removes it when the test ends, with a face
+// marker if it is primary.
+func newRegenerateTestFile(t *testing.T, photoID uint, root, name string, primary bool) entity.File {
+	t.Helper()
+
+	f := entity.File{FileUID: rnd.GenerateUID(entity.FileUID), PhotoID: photoID, FileName: name, FileRoot: root,
+		FileHash: rnd.GenerateUID('h'), FileType: fs.FileType(name).String(), FilePrimary: primary}
+	require.NoError(t, entity.Db().Create(&f).Error)
+	t.Cleanup(func() { _ = entity.UnscopedDb().Delete(&f).Error })
+
+	if primary {
+		marker := entity.NewMarker(f, crop.NewArea("face", 0.4, 0.4, 0.1, 0.1), "", entity.SrcImage, entity.MarkerFace, 40, 90)
+		require.NoError(t, marker.Create())
+		t.Cleanup(func() { _ = entity.UnscopedDb().Delete(marker).Error })
+	}
+
+	return f
 }
 
 func TestUnregeneratedMarkers(t *testing.T) {
@@ -215,6 +308,93 @@ func TestUnregeneratedMarkers(t *testing.T) {
 		require.NoError(t, countErr)
 		assert.Equal(t, unregeneratedFaceMarkers{FailedMarkers: 1, FailedFiles: 1}, result)
 	})
+	t.Run("Skipped", func(t *testing.T) {
+		// An existing file the index was set to skip, by name or by folder, and a sidecar primary of a
+		// picture whose file in the originals folder was skipped, are reported as skipped; an original
+		// that was not reached stays unreached although another file of its picture was skipped.
+		var originals []string
+
+		for _, fileUID := range uids {
+			if all[fileUID].FileRoot == entity.RootOriginals {
+				originals = append(originals, fileUID)
+			}
+		}
+
+		require.GreaterOrEqual(t, len(originals), 3)
+
+		byName, byFolder, sibling := originals[0], originals[1], originals[2]
+		stats := &FaceRegeneration{}
+
+		for _, fileUID := range uids {
+			if fileUID != byName && fileUID != byFolder && fileUID != sibling {
+				stats.add(fileUID, faceRegenerationResult{})
+			}
+		}
+
+		nameFile := ConfigFileName(c, all[byName].FileRoot, all[byName].FileName)
+		folderFile := ConfigFileName(c, all[byFolder].FileRoot, all[byFolder].FileName)
+		touchRegenerateTestFile(t, nameFile)
+		touchRegenerateTestFile(t, folderFile)
+		stats.addSkipped(nameFile)
+		stats.addSkippedDir(filepath.Dir(folderFile))
+
+		// The original of this picture was not reached, but its RAW was skipped.
+		raw := newRegenerateTestFile(t, all[sibling].PhotoID, entity.RootOriginals, "skipped-sibling.cr2", false)
+		stats.addSkipped(ConfigFileName(c, raw.FileRoot, raw.FileName))
+
+		// A picture whose RAW was skipped, with its primary JPEG in the sidecar folder.
+		var photo entity.Photo
+		require.NoError(t, entity.Db().Where("id <> ?", all[sibling].PhotoID).First(&photo).Error)
+
+		sidecarRaw := newRegenerateTestFile(t, photo.ID, entity.RootOriginals, "2790/07/sidecar-raw.cr2", false)
+		sidecarJpeg := newRegenerateTestFile(t, photo.ID, entity.RootSidecar, "2790/07/sidecar-raw.cr2.jpg", true)
+		touchRegenerateTestFile(t, ConfigFileName(c, sidecarJpeg.FileRoot, sidecarJpeg.FileName))
+		stats.addSkipped(ConfigFileName(c, sidecarRaw.FileRoot, sidecarRaw.FileName))
+
+		// A live photo whose video was skipped, with the JPEG its HEIC was converted to: the video is
+		// not what the JPEG was created from, so it does not make the JPEG skipped.
+		var livePhoto entity.Photo
+		require.NoError(t, entity.Db().Where("id NOT IN (?)", []uint{all[sibling].PhotoID, photo.ID}).First(&livePhoto).Error)
+
+		liveVideo := newRegenerateTestFile(t, livePhoto.ID, entity.RootOriginals, "2790/07/live.mov", false)
+		liveJpeg := newRegenerateTestFile(t, livePhoto.ID, entity.RootSidecar, "2790/07/live.heic.jpg", true)
+		touchRegenerateTestFile(t, ConfigFileName(c, liveJpeg.FileRoot, liveJpeg.FileName))
+		stats.addSkipped(ConfigFileName(c, liveVideo.FileRoot, liveVideo.FileName))
+
+		result, countErr := unregeneratedMarkers(c, "", nil, stats)
+
+		require.NoError(t, countErr)
+		assert.Equal(t, unregeneratedFaceMarkers{
+			Markers:        all[sibling].Markers + 1,
+			Files:          2,
+			SkippedMarkers: all[byName].Markers + all[byFolder].Markers + 1,
+			SkippedFiles:   3,
+		}, result)
+	})
+	t.Run("SkippedButMissing", func(t *testing.T) {
+		// A file under a skipped folder that no longer exists was moved or removed, so purging it is
+		// what the operator needs to be told.
+		stats := &FaceRegeneration{}
+		target := ""
+
+		for _, fileUID := range uids {
+			if target == "" && all[fileUID].FileRoot == entity.RootOriginals {
+				target = fileUID
+			} else {
+				stats.add(fileUID, faceRegenerationResult{})
+			}
+		}
+
+		missing := ConfigFileName(c, all[target].FileRoot, all[target].FileName)
+		require.False(t, fs.FileExists(missing))
+		stats.addSkippedDir(filepath.Dir(missing))
+
+		result, countErr := unregeneratedMarkers(c, "", nil, stats)
+
+		require.NoError(t, countErr)
+		assert.Equal(t, 1, result.Files)
+		assert.Zero(t, result.SkippedFiles)
+	})
 	t.Run("AllProcessed", func(t *testing.T) {
 		stats := &FaceRegeneration{}
 
@@ -226,6 +406,56 @@ func TestUnregeneratedMarkers(t *testing.T) {
 
 		require.NoError(t, countErr)
 		assert.Equal(t, unregeneratedFaceMarkers{}, result)
+	})
+}
+
+func TestSkippedPhotoFiles(t *testing.T) {
+	c := Config()
+
+	var photo entity.Photo
+	require.NoError(t, entity.Db().First(&photo).Error)
+
+	raw := newRegenerateTestFile(t, photo.ID, entity.RootOriginals, "2790/07/skipped-photo.cr2", false)
+	sidecar := query.FaceMarkerFile{PhotoID: photo.ID, FileRoot: entity.RootSidecar, FileName: "2790/07/skipped-photo.cr2.jpg", Markers: 1}
+	original := query.FaceMarkerFile{PhotoID: photo.ID, FileRoot: entity.RootOriginals, FileName: "2790/07/skipped-photo.jpg", Markers: 1}
+
+	stats := &FaceRegeneration{}
+	stats.addSkipped(ConfigFileName(c, raw.FileRoot, raw.FileName))
+
+	t.Run("SidecarFile", func(t *testing.T) {
+		result, err := skippedPhotoFiles(c, map[string]query.FaceMarkerFile{"sidecar": sidecar}, stats)
+
+		require.NoError(t, err)
+		assert.Equal(t, map[uint][]string{photo.ID: {raw.FileName}}, result)
+	})
+	t.Run("OriginalFile", func(t *testing.T) {
+		// Only a sidecar file is reached through another file of its picture.
+		result, err := skippedPhotoFiles(c, map[string]query.FaceMarkerFile{"original": original}, stats)
+
+		require.NoError(t, err)
+		assert.Empty(t, result)
+	})
+	t.Run("NothingSkipped", func(t *testing.T) {
+		result, err := skippedPhotoFiles(c, map[string]query.FaceMarkerFile{"sidecar": sidecar}, &FaceRegeneration{})
+
+		require.NoError(t, err)
+		assert.Empty(t, result)
+	})
+}
+
+func TestConvertedFromAny(t *testing.T) {
+	t.Run("Raw", func(t *testing.T) {
+		assert.True(t, convertedFromAny("2790/07/IMG_1.CR2.jpg", []string{"2790/07/IMG_1.CR2"}))
+	})
+	t.Run("OtherFileOfThePicture", func(t *testing.T) {
+		// A live photo's video is not what its HEIC was converted from.
+		assert.False(t, convertedFromAny("2790/07/IMG_1.HEIC.jpg", []string{"2790/07/IMG_1.MOV"}))
+	})
+	t.Run("SimilarName", func(t *testing.T) {
+		assert.False(t, convertedFromAny("2790/07/IMG_10.CR2.jpg", []string{"2790/07/IMG_1"}))
+	})
+	t.Run("None", func(t *testing.T) {
+		assert.False(t, convertedFromAny("2790/07/IMG_1.CR2.jpg", nil))
 	})
 }
 
@@ -679,7 +909,11 @@ func TestFaces_ResetAndReindex_Regenerate(t *testing.T) {
 			t.Cleanup(func() { _ = os.Remove(fileName) })
 		}
 
-		f := entity.File{FileUID: rnd.GenerateUID(entity.FileUID), PhotoID: addedFile.PhotoID, PhotoUID: addedFile.PhotoUID,
+		// A picture of its own, so a file of another picture cannot decide how this one is reported.
+		photo := entity.NewPhoto(false)
+		require.NoError(t, photo.Create())
+
+		f := entity.File{FileUID: rnd.GenerateUID(entity.FileUID), PhotoID: photo.ID, PhotoUID: photo.PhotoUID,
 			FileName: "regenerate/" + name, FileRoot: entity.RootOriginals, FileHash: rnd.GenerateUID('h'), FileType: "jpg",
 			FilePrimary: true}
 		require.NoError(t, entity.Db().Create(&f).Error)
@@ -690,6 +924,7 @@ func TestFaces_ResetAndReindex_Regenerate(t *testing.T) {
 		t.Cleanup(func() {
 			_ = entity.UnscopedDb().Delete(marker).Error
 			_ = entity.UnscopedDb().Delete(&f).Error
+			_ = entity.UnscopedDb().Delete(&photo).Error
 		})
 
 		return marker
@@ -703,6 +938,55 @@ func TestFaces_ResetAndReindex_Regenerate(t *testing.T) {
 
 		require.Error(t, unreachedErr)
 		assert.True(t, strings.HasPrefix(unreachedErr.Error(), "faces: could not regenerate 1 marker in 1 file the index did not reach"))
+	})
+	t.Run("IgnoredFilesAreSkipped", func(t *testing.T) {
+		// Files the index is set to skip are reported rather than failing the run with advice that
+		// cannot change them: one matched by a .ppignore pattern, and one in a hidden folder.
+		dir := filepath.Join(cfg.OriginalsPath(), "regenerate")
+		require.NoError(t, os.MkdirAll(filepath.Join(dir, ".hidden"), fs.ModeDir))
+		require.NoError(t, fs.WriteString(filepath.Join(dir, fs.PPIgnoreFilename), "ignored-*\n"))
+		t.Cleanup(func() {
+			_ = os.Remove(filepath.Join(dir, fs.PPIgnoreFilename))
+			_ = os.RemoveAll(filepath.Join(dir, ".hidden"))
+		})
+
+		ignored := newMarkedFile(t, "ignored-face.jpg", []byte("ignored"))
+		hidden := newMarkedFile(t, ".hidden/face.jpg", []byte("hidden"))
+
+		buffer := captureRegenerateLog(t)
+
+		_, skippedErr := w.resetAndReindex(string(face.DetectorYuNet), ind, false, "regenerate")
+
+		require.NoError(t, skippedErr)
+		assert.Contains(t, buffer.String(), "skipped 2 markers in 2 files the index is set to skip")
+		assert.NotNil(t, entity.FindMarker(ignored.MarkerUID))
+		assert.NotNil(t, entity.FindMarker(hidden.MarkerUID))
+	})
+	t.Run("DisabledRawIsSkipped", func(t *testing.T) {
+		// While RAW files are disabled, the walk skips the RAW, which is the only way it reaches the
+		// primary JPEG in the sidecar folder.
+		disableRaw := cfg.Options().DisableRaw
+		cfg.Options().DisableRaw = true
+		t.Cleanup(func() { cfg.Options().DisableRaw = disableRaw })
+
+		photo := entity.NewPhoto(false)
+		require.NoError(t, photo.Create())
+		t.Cleanup(func() { _ = entity.UnscopedDb().Delete(&photo).Error })
+
+		rawName := filepath.Join(cfg.OriginalsPath(), "regenerate", "disabled.cr2")
+		require.NoError(t, os.WriteFile(rawName, []byte("raw"), fs.ModeFile)) //nolint:gosec // isolated test path
+		t.Cleanup(func() { _ = os.Remove(rawName) })
+
+		newRegenerateTestFile(t, photo.ID, entity.RootOriginals, "regenerate/disabled.cr2", false)
+		jpeg := newRegenerateTestFile(t, photo.ID, entity.RootSidecar, "regenerate/disabled.cr2.jpg", true)
+		touchRegenerateTestFile(t, ConfigFileName(cfg, jpeg.FileRoot, jpeg.FileName))
+
+		buffer := captureRegenerateLog(t)
+
+		_, skippedErr := w.resetAndReindex(string(face.DetectorYuNet), ind, false, "regenerate")
+
+		require.NoError(t, skippedErr)
+		assert.Contains(t, buffer.String(), "skipped 1 marker in 1 file the index is set to skip")
 	})
 	t.Run("FailedFilesAreSkipped", func(t *testing.T) {
 		// The index finds the file but cannot read it, so running again would not change the

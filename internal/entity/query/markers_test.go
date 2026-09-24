@@ -595,6 +595,20 @@ func TestFaceMarkerFiles(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, entity.RootOriginals, result[fileUID].FileRoot)
 		assert.Equal(t, "Germany/bridge.jpg", result[fileUID].FileName)
+		assert.NotZero(t, result[fileUID].PhotoID)
+	})
+	t.Run("SidecarFolder", func(t *testing.T) {
+		// A folder run covers the matching sidecar folder, which mirrors the originals folder.
+		result, err := FaceMarkerFiles("Holiday")
+
+		require.NoError(t, err)
+		require.Contains(t, result, "fs6sg6bw45bn0008")
+		assert.Equal(t, entity.RootSidecar, result["fs6sg6bw45bn0008"].FileRoot)
+
+		result, err = FaceMarkerFiles("2000")
+
+		require.NoError(t, err)
+		assert.Contains(t, result, "fs6sg6bqhhinlple")
 	})
 	t.Run("Wildcards", func(t *testing.T) {
 		for _, dir := range []string{"Lond_n", "Lon%", "German_"} {

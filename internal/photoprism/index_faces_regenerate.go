@@ -2,6 +2,7 @@ package photoprism
 
 import (
 	"fmt"
+	"path/filepath"
 	"sync"
 	"sync/atomic"
 
@@ -20,6 +21,8 @@ import (
 type FaceRegeneration struct {
 	processed   sync.Map
 	failed      sync.Map
+	skipped     sync.Map
+	skippedDirs sync.Map
 	Files       atomic.Int64
 	FailedFiles atomic.Int64
 	Updated     atomic.Int64
@@ -54,6 +57,54 @@ func (s *FaceRegeneration) Processed(fileUID string) bool {
 	_, ok := s.processed.Load(fileUID)
 
 	return ok
+}
+
+// addSkipped records a file the index was set to skip, such as an ignored file or a disabled RAW.
+func (s *FaceRegeneration) addSkipped(fileName string) {
+	if s != nil {
+		s.skipped.Store(fileName, true)
+	}
+}
+
+// addSkippedDir records a folder the index was set to skip, such as an ignored or hidden folder.
+func (s *FaceRegeneration) addSkippedDir(dir string) {
+	if s != nil {
+		s.skippedDirs.Store(filepath.Clean(dir), true)
+	}
+}
+
+// Skipped reports whether the index was set to skip the file, or a folder that holds it. The parent
+// folders are looked up one by one, since a library can hold a skipped folder in every folder.
+func (s *FaceRegeneration) Skipped(fileName string) bool {
+	if s == nil {
+		return false
+	} else if _, ok := s.skipped.Load(fileName); ok {
+		return true
+	}
+
+	for dir := filepath.Dir(fileName); ; dir = filepath.Dir(dir) {
+		if _, ok := s.skippedDirs.Load(dir); ok {
+			return true
+		} else if parent := filepath.Dir(dir); parent == dir {
+			return false
+		}
+	}
+}
+
+// HasSkipped reports whether the index was set to skip any file or folder.
+func (s *FaceRegeneration) HasSkipped() (found bool) {
+	if s == nil {
+		return false
+	}
+
+	for _, m := range []*sync.Map{&s.skipped, &s.skippedDirs} {
+		m.Range(func(_, _ any) bool {
+			found = true
+			return false
+		})
+	}
+
+	return found
 }
 
 // addError counts a file whose markers could not be regenerated and were left unchanged.

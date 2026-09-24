@@ -185,6 +185,11 @@ func (w *Faces) resetAndReindex(detector string, index *Index, all bool, path st
 		return opt.FaceRegeneration, err
 	}
 
+	if unreached.SkippedFiles > 0 {
+		log.Warnf("faces: skipped %s in %s the index is set to skip, such as ignored or hidden files and disabled RAW files",
+			english.Plural(unreached.SkippedMarkers, "marker", "markers"), english.Plural(unreached.SkippedFiles, "file", "files"))
+	}
+
 	if unreached.FailedFiles > 0 {
 		log.Warnf("faces: skipped %s in %s because of errors, see the warnings above",
 			english.Plural(unreached.FailedMarkers, "marker", "markers"), english.Plural(unreached.FailedFiles, "file", "files"))
@@ -237,16 +242,19 @@ func (w *Faces) regenerateRefused(index *Index, opt IndexOptions) error {
 }
 
 // unregeneratedFaceMarkers counts the face markers, and the files holding them, a regeneration did not
-// reach, and those in files it found but failed on.
+// reach, those in files the index was set to skip, and those in files it found but failed on.
 type unregeneratedFaceMarkers struct {
-	Markers       int
-	Files         int
-	FailedMarkers int
-	FailedFiles   int
+	Markers        int
+	Files          int
+	SkippedMarkers int
+	SkippedFiles   int
+	FailedMarkers  int
+	FailedFiles    int
 }
 
-// unregeneratedMarkers returns the face markers a regeneration of the folder did not regenerate: in a
-// file the walk found, indexing or regeneration failed, and the log names it; any other was not reached.
+// unregeneratedMarkers returns the face markers a regeneration of the folder did not regenerate: a
+// file that failed or that the walk found was tried and the log names it, an existing file the index
+// was set to skip is skipped, and any other was not reached.
 func unregeneratedMarkers(conf *config.Config, dir string, found fs.Done, stats *FaceRegeneration) (result unregeneratedFaceMarkers, err error) {
 	files, err := query.FaceMarkerFiles(dir)
 
@@ -254,19 +262,90 @@ func unregeneratedMarkers(conf *config.Config, dir string, found fs.Done, stats 
 		return result, err
 	}
 
+	unreached := make(map[string]query.FaceMarkerFile)
+
 	for fileUID, f := range files {
-		_, walked := found[ConfigFileName(conf, f.FileRoot, f.FileName)]
+		fileName := ConfigFileName(conf, f.FileRoot, f.FileName)
+		_, walked := found[fileName]
 
 		switch {
 		case stats.Processed(fileUID):
-		case walked || stats.FileFailed(fileUID):
+		case stats.FileFailed(fileUID):
+			result.FailedMarkers += f.Markers
+			result.FailedFiles++
+		case f.FileRoot == entity.RootOriginals && stats.Skipped(fileName) && fs.FileExists(fileName):
+			result.SkippedMarkers += f.Markers
+			result.SkippedFiles++
+		case walked:
 			result.FailedMarkers += f.Markers
 			result.FailedFiles++
 		default:
+			unreached[fileUID] = f
+		}
+	}
+
+	// A primary JPEG in the sidecar folder is reached only through the file it was created from, so
+	// it counts as skipped when that file was, such as a RAW while RAW files are disabled.
+	skippedFiles, err := skippedPhotoFiles(conf, unreached, stats)
+
+	if err != nil {
+		return result, err
+	}
+
+	for _, f := range unreached {
+		if f.FileRoot == entity.RootSidecar && convertedFromAny(f.FileName, skippedFiles[f.PhotoID]) &&
+			fs.FileExists(ConfigFileName(conf, f.FileRoot, f.FileName)) {
+			result.SkippedMarkers += f.Markers
+			result.SkippedFiles++
+		} else {
 			result.Markers += f.Markers
 			result.Files++
 		}
 	}
 
 	return result, nil
+}
+
+// skippedPhotoFiles returns, by picture, the names of the files in the originals folder the index was
+// set to skip, for the pictures of the sidecar files among the files.
+func skippedPhotoFiles(conf *config.Config, files map[string]query.FaceMarkerFile, stats *FaceRegeneration) (map[uint][]string, error) {
+	result := make(map[uint][]string)
+
+	if !stats.HasSkipped() {
+		return result, nil
+	}
+
+	ids := make([]uint, 0, len(files))
+
+	for _, f := range files {
+		if f.FileRoot == entity.RootSidecar {
+			ids = append(ids, f.PhotoID)
+		}
+	}
+
+	siblings, err := query.FilesByPhotoIDs(ids)
+
+	if err != nil {
+		return nil, err
+	}
+
+	for _, f := range siblings {
+		if f.FileRoot == entity.RootOriginals && stats.Skipped(ConfigFileName(conf, f.FileRoot, f.FileName)) {
+			result[f.PhotoID] = append(result[f.PhotoID], f.FileName)
+		}
+	}
+
+	return result, nil
+}
+
+// convertedFromAny reports whether the sidecar file was created from one of the original files, which
+// its name then starts with, as in "IMG_1.CR2.jpg" for "IMG_1.CR2".
+func convertedFromAny(sidecarName string, originals []string) bool {
+	for _, name := range originals {
+		if strings.HasPrefix(sidecarName, name+".") {
+			return true
+		}
+	}
+
+	return false
 }

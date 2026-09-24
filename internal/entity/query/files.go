@@ -73,6 +73,36 @@ func FilesByUID(u []string, limit int, offset int) (files entity.Files, err erro
 	return files, nil
 }
 
+// FilesByPhotoIDs finds the files of the pictures with the given ids, in batches the database accepts,
+// and returns their picture id, root, and name.
+func FilesByPhotoIDs(ids []uint) (files entity.Files, err error) {
+	unique := make([]uint, 0, len(ids))
+	seen := make(map[uint]bool, len(ids))
+
+	for _, id := range ids {
+		if id > 0 && !seen[id] {
+			seen[id] = true
+			unique = append(unique, id)
+		}
+	}
+
+	batchSize := BatchSize()
+
+	for i := 0; i < len(unique); i += batchSize {
+		var batch entity.Files
+
+		if err = Db().Select("photo_id, file_root, file_name").
+			Where("photo_id IN (?)", unique[i:min(i+batchSize, len(unique))]).
+			Find(&batch).Error; err != nil {
+			return files, err
+		}
+
+		files = append(files, batch...)
+	}
+
+	return files, nil
+}
+
 // FileByPhotoUID finds a file for the given photo UID.
 func FileByPhotoUID(photoUID string) (*entity.File, error) {
 	f := entity.File{}
