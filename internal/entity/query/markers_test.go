@@ -568,8 +568,8 @@ func TestFaceMarkerFiles(t *testing.T) {
 		result, err := FaceMarkerFiles("")
 
 		require.NoError(t, err)
-		assert.Greater(t, result[fileUID], 0)
-		assert.Greater(t, result["fs6sg6bq45bnlqd0"], 0) // London/bridge1.jpg
+		assert.Greater(t, result[fileUID].Markers, 0)
+		assert.Greater(t, result["fs6sg6bq45bnlqd0"].Markers, 0) // London/bridge1.jpg
 
 		dot, err := FaceMarkerFiles(".")
 		require.NoError(t, err)
@@ -586,8 +586,15 @@ func TestFaceMarkerFiles(t *testing.T) {
 		result, err := FaceMarkerFiles("/Germany/")
 
 		require.NoError(t, err)
-		assert.Greater(t, result[fileUID], 0)
+		assert.Greater(t, result[fileUID].Markers, 0)
 		assert.NotContains(t, result, "fs6sg6bq45bnlqd0", "files in other folders are left out")
+	})
+	t.Run("FileName", func(t *testing.T) {
+		result, err := FaceMarkerFiles("Germany")
+
+		require.NoError(t, err)
+		assert.Equal(t, entity.RootOriginals, result[fileUID].FileRoot)
+		assert.Equal(t, "Germany/bridge.jpg", result[fileUID].FileName)
 	})
 	t.Run("Wildcards", func(t *testing.T) {
 		for _, dir := range []string{"Lond_n", "Lon%", "German_"} {

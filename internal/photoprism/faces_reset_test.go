@@ -67,9 +67,9 @@ func TestFaces_ResetAndReindex_Detect(t *testing.T) {
 		received = opt
 
 		// Every file is reported as processed, as the index would after a complete run.
-		counts, err := query.FaceMarkerFiles(opt.Path)
+		files, err := query.FaceMarkerFiles(opt.Path)
 
-		for fileUID := range counts {
+		for fileUID := range files {
 			opt.FaceRegeneration.add(fileUID, faceRegenerationResult{})
 		}
 

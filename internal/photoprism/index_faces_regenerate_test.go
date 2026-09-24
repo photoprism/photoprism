@@ -1,11 +1,15 @@
 package photoprism
 
 import (
+	"bytes"
 	"fmt"
+	"io"
+	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -70,18 +74,21 @@ func TestFaceRegeneration(t *testing.T) {
 		assert.False(t, stats.Processed("fs6sg6bw45bn0005"))
 		assert.Equal(t, "3 updated, 1 added, 1 removed, 3 kept unmatched, 1 failed", stats.String())
 
-		stats.addError()
+		stats.addError("fs6sg6bw45bn0005")
 
 		assert.Equal(t, "3 updated, 1 added, 1 removed, 3 kept unmatched, 1 failed, 1 file could not be processed", stats.String())
+		assert.True(t, stats.FileFailed("fs6sg6bw45bn0005"))
+		assert.False(t, stats.FileFailed("fs6sg6bw45bn0004"))
 	})
 	t.Run("Nil", func(t *testing.T) {
 		var stats *FaceRegeneration
 
 		stats.add("fs6sg6bw45bn0004", faceRegenerationResult{Updated: 1})
-		stats.addError()
+		stats.addError("fs6sg6bw45bn0004")
 
 		assert.Equal(t, "", stats.String())
 		assert.False(t, stats.Processed("fs6sg6bw45bn0004"))
+		assert.False(t, stats.FileFailed("fs6sg6bw45bn0004"))
 	})
 }
 
@@ -132,54 +139,93 @@ func TestMatchRegeneratedFaces(t *testing.T) {
 }
 
 func TestUnregeneratedMarkers(t *testing.T) {
+	c := Config()
+
 	all, err := query.FaceMarkerFiles("")
 	require.NoError(t, err)
-	require.Greater(t, len(all), 1)
 
+	uids := make([]string, 0, len(all))
 	total := 0
 
-	for _, n := range all {
-		total += n
+	for fileUID, f := range all {
+		uids = append(uids, fileUID)
+		total += f.Markers
 	}
 
-	t.Run("NoneProcessed", func(t *testing.T) {
-		markers, files, countErr := unregeneratedMarkers("", &FaceRegeneration{})
+	require.Greater(t, len(uids), 3)
+
+	t.Run("NoneReached", func(t *testing.T) {
+		result, countErr := unregeneratedMarkers(c, "", nil, &FaceRegeneration{})
 
 		require.NoError(t, countErr)
-		assert.Equal(t, len(all), files)
-		assert.Equal(t, total, markers)
+		assert.Equal(t, unregeneratedFaceMarkers{Markers: total, Files: len(all)}, result)
 	})
-	t.Run("PartlyProcessed", func(t *testing.T) {
+	t.Run("FoundOrFailed", func(t *testing.T) {
+		// A file the walk found, or whose regeneration failed, was tried, so the log names it; only
+		// the file nothing tried is advised to be indexed or purged.
 		stats := &FaceRegeneration{}
-		skipped := ""
+		walked, failed, unreached := uids[0], uids[1], uids[2]
+		found := fs.Done{ConfigFileName(c, all[walked].FileRoot, all[walked].FileName): fs.Found}
 
-		for fileUID := range all {
-			if skipped == "" {
-				skipped = fileUID
-				continue
-			}
+		stats.addError(failed)
 
+		for _, fileUID := range uids[3:] {
 			stats.add(fileUID, faceRegenerationResult{})
 		}
 
-		markers, files, countErr := unregeneratedMarkers("", stats)
+		result, countErr := unregeneratedMarkers(c, "", found, stats)
 
 		require.NoError(t, countErr)
-		assert.Equal(t, 1, files)
-		assert.Equal(t, all[skipped], markers)
+		assert.Equal(t, unregeneratedFaceMarkers{
+			Markers:       all[unreached].Markers,
+			Files:         1,
+			FailedMarkers: all[walked].Markers + all[failed].Markers,
+			FailedFiles:   2,
+		}, result)
+	})
+	t.Run("SidecarPrimary", func(t *testing.T) {
+		// A primary JPEG in the sidecar folder is found through the file it belongs to, under its
+		// sidecar path.
+		var photo entity.Photo
+		require.NoError(t, entity.Db().First(&photo).Error)
+
+		f := entity.File{FileUID: rnd.GenerateUID(entity.FileUID), PhotoID: photo.ID, PhotoUID: photo.PhotoUID,
+			FileName: "2790/07/sidecar-primary.jpg", FileRoot: entity.RootSidecar, FileHash: rnd.GenerateUID('h'),
+			FileType: "jpg", FilePrimary: true}
+		require.NoError(t, entity.Db().Create(&f).Error)
+
+		marker := entity.NewMarker(f, crop.NewArea("face", 0.4, 0.4, 0.1, 0.1), "", entity.SrcImage, entity.MarkerFace, 40, 90)
+		require.NoError(t, marker.Create())
+
+		t.Cleanup(func() {
+			_ = entity.UnscopedDb().Delete(marker).Error
+			_ = entity.UnscopedDb().Delete(&f).Error
+		})
+
+		stats := &FaceRegeneration{}
+
+		for _, fileUID := range uids {
+			stats.add(fileUID, faceRegenerationResult{})
+		}
+
+		found := fs.Done{filepath.Join(c.SidecarPath(), "2790/07/sidecar-primary.jpg"): fs.Found}
+
+		result, countErr := unregeneratedMarkers(c, "", found, stats)
+
+		require.NoError(t, countErr)
+		assert.Equal(t, unregeneratedFaceMarkers{FailedMarkers: 1, FailedFiles: 1}, result)
 	})
 	t.Run("AllProcessed", func(t *testing.T) {
 		stats := &FaceRegeneration{}
 
-		for fileUID := range all {
+		for _, fileUID := range uids {
 			stats.add(fileUID, faceRegenerationResult{})
 		}
 
-		markers, files, countErr := unregeneratedMarkers("", stats)
+		result, countErr := unregeneratedMarkers(c, "", nil, stats)
 
 		require.NoError(t, countErr)
-		assert.Zero(t, markers)
-		assert.Zero(t, files)
+		assert.Equal(t, unregeneratedFaceMarkers{}, result)
 	})
 }
 
@@ -220,6 +266,23 @@ func TestIndex_RegenerateFaces(t *testing.T) {
 		_, err = ind.regenerateFaces(&MediaFile{}, nil, false)
 		require.Error(t, err)
 	})
+}
+
+// captureRegenerateLog redirects the log output to a buffer until the test ends.
+func captureRegenerateLog(t *testing.T) *bytes.Buffer {
+	t.Helper()
+
+	var out io.Writer = os.Stderr
+
+	if l, ok := log.(*logrus.Logger); ok {
+		out = l.Out
+	}
+
+	buffer := &bytes.Buffer{}
+	log.SetOutput(buffer)
+	t.Cleanup(func() { log.SetOutput(out) })
+
+	return buffer
 }
 
 // regenerateTestMarker is what a regeneration may change on a marker, and what it must keep.
@@ -605,23 +668,53 @@ func TestFaces_ResetAndReindex_Regenerate(t *testing.T) {
 		require.True(t, ok, "an unmatched marker a sidecar region names must be kept")
 		assert.Equal(t, "Dana", u.Name)
 	})
-	t.Run("UnreachedFilesAreReported", func(t *testing.T) {
-		// A file the index does not reach, because its original is gone, keeps its marker.
-		unreached := entity.File{FileUID: rnd.GenerateUID(entity.FileUID), PhotoID: addedFile.PhotoID, PhotoUID: addedFile.PhotoUID,
-			FileName: "regenerate/unreached.jpg", FileRoot: entity.RootOriginals, FileHash: rnd.GenerateUID('h'), FileType: "jpg", FilePrimary: true}
-		require.NoError(t, entity.Db().Create(&unreached).Error)
+	// newMarkedFile adds a primary file in the folder with a face marker, and removes both when the
+	// test ends. The original is written only if content is passed.
+	newMarkedFile := func(t *testing.T, name string, content []byte) *entity.Marker {
+		t.Helper()
 
-		marker := entity.NewMarker(unreached, crop.NewArea("face", 0.4, 0.4, 0.1, 0.1), "", entity.SrcImage, entity.MarkerFace, 40, 90)
+		if content != nil {
+			fileName := filepath.Join(cfg.OriginalsPath(), "regenerate", name)
+			require.NoError(t, os.WriteFile(fileName, content, fs.ModeFile)) //nolint:gosec // isolated test path
+			t.Cleanup(func() { _ = os.Remove(fileName) })
+		}
+
+		f := entity.File{FileUID: rnd.GenerateUID(entity.FileUID), PhotoID: addedFile.PhotoID, PhotoUID: addedFile.PhotoUID,
+			FileName: "regenerate/" + name, FileRoot: entity.RootOriginals, FileHash: rnd.GenerateUID('h'), FileType: "jpg",
+			FilePrimary: true}
+		require.NoError(t, entity.Db().Create(&f).Error)
+
+		marker := entity.NewMarker(f, crop.NewArea("face", 0.4, 0.4, 0.1, 0.1), "", entity.SrcImage, entity.MarkerFace, 40, 90)
 		require.NoError(t, marker.Create())
 
 		t.Cleanup(func() {
 			_ = entity.UnscopedDb().Delete(marker).Error
-			_ = entity.UnscopedDb().Delete(&unreached).Error
+			_ = entity.UnscopedDb().Delete(&f).Error
 		})
+
+		return marker
+	}
+
+	t.Run("UnreachedFilesAreReported", func(t *testing.T) {
+		// The original is gone, so the index does not reach the file.
+		newMarkedFile(t, "unreached.jpg", nil)
 
 		_, unreachedErr := w.resetAndReindex(string(face.DetectorYuNet), ind, false, "regenerate")
 
 		require.Error(t, unreachedErr)
 		assert.True(t, strings.HasPrefix(unreachedErr.Error(), "faces: could not regenerate 1 marker in 1 file the index did not reach"))
+	})
+	t.Run("FailedFilesAreSkipped", func(t *testing.T) {
+		// The index finds the file but cannot read it, so running again would not change the
+		// outcome, and the run reports it rather than failing.
+		marker := newMarkedFile(t, "broken.jpg", []byte("not a jpeg"))
+
+		buffer := captureRegenerateLog(t)
+
+		_, skippedErr := w.resetAndReindex(string(face.DetectorYuNet), ind, false, "regenerate")
+
+		require.NoError(t, skippedErr)
+		assert.Contains(t, buffer.String(), "skipped 1 marker in 1 file because of errors")
+		assert.NotNil(t, entity.FindMarker(marker.MarkerUID), "the marker is left as it was")
 	})
 }

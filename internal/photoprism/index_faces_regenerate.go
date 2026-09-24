@@ -19,6 +19,7 @@ import (
 // index workers update it concurrently.
 type FaceRegeneration struct {
 	processed   sync.Map
+	failed      sync.Map
 	Files       atomic.Int64
 	FailedFiles atomic.Int64
 	Updated     atomic.Int64
@@ -56,10 +57,22 @@ func (s *FaceRegeneration) Processed(fileUID string) bool {
 }
 
 // addError counts a file whose markers could not be regenerated and were left unchanged.
-func (s *FaceRegeneration) addError() {
+func (s *FaceRegeneration) addError(fileUID string) {
 	if s != nil {
+		s.failed.Store(fileUID, true)
 		s.FailedFiles.Add(1)
 	}
+}
+
+// FileFailed reports whether regenerating the markers of the file failed.
+func (s *FaceRegeneration) FileFailed(fileUID string) bool {
+	if s == nil {
+		return false
+	}
+
+	_, ok := s.failed.Load(fileUID)
+
+	return ok
 }
 
 // String returns a summary of the changes for logging.

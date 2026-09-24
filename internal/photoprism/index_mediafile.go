@@ -368,7 +368,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			if o.DetectFaces && o.RegenerateFaces {
 				if changes, regenErr := ind.regenerateFaces(m, &file, o.ImportFaceTags); regenErr != nil {
 					log.Warnf("index: %s while regenerating faces in %s", clean.Error(regenErr), logName)
-					o.FaceRegeneration.addError()
+					o.FaceRegeneration.addError(file.FileUID)
 					regenFailed = true
 				} else {
 					regenerated = changes.Changed()

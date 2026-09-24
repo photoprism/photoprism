@@ -7,6 +7,7 @@ import (
 	"github.com/dustin/go-humanize/english"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/mutex"
@@ -177,13 +178,22 @@ func (w *Faces) resetAndReindex(detector string, index *Index, all bool, path st
 	}
 
 	// The index skips files it cannot process without an error, and may stop early, so what it did
-	// not reach is counted from the markers table rather than inferred from the walk.
-	if markers, files, countErr := unregeneratedMarkers(path, opt.FaceRegeneration); countErr != nil {
-		return opt.FaceRegeneration, countErr
-	} else if markers > 0 {
+	// not regenerate is counted from the markers table, and split by whether the walk found the file.
+	unreached, err := unregeneratedMarkers(w.conf, path, found, opt.FaceRegeneration)
+
+	if err != nil {
+		return opt.FaceRegeneration, err
+	}
+
+	if unreached.FailedFiles > 0 {
+		log.Warnf("faces: skipped %s in %s because of errors, see the warnings above",
+			english.Plural(unreached.FailedMarkers, "marker", "markers"), english.Plural(unreached.FailedFiles, "file", "files"))
+	}
+
+	if unreached.Files > 0 {
 		return opt.FaceRegeneration, fmt.Errorf("faces: could not regenerate %s in %s the index did not reach, "+
 			"so index or purge the library if originals were moved or removed, and run it again",
-			english.Plural(markers, "marker", "markers"), english.Plural(files, "file", "files"))
+			english.Plural(unreached.Markers, "marker", "markers"), english.Plural(unreached.Files, "file", "files"))
 	}
 
 	return opt.FaceRegeneration, nil
@@ -226,21 +236,37 @@ func (w *Faces) regenerateRefused(index *Index, opt IndexOptions) error {
 	return nil
 }
 
-// unregeneratedMarkers returns how many face markers, and in how many files, a regeneration of the
-// folder did not reach.
-func unregeneratedMarkers(dir string, stats *FaceRegeneration) (markers, files int, err error) {
-	counts, err := query.FaceMarkerFiles(dir)
+// unregeneratedFaceMarkers counts the face markers, and the files holding them, a regeneration did not
+// reach, and those in files it found but failed on.
+type unregeneratedFaceMarkers struct {
+	Markers       int
+	Files         int
+	FailedMarkers int
+	FailedFiles   int
+}
+
+// unregeneratedMarkers returns the face markers a regeneration of the folder did not regenerate: in a
+// file the walk found, indexing or regeneration failed, and the log names it; any other was not reached.
+func unregeneratedMarkers(conf *config.Config, dir string, found fs.Done, stats *FaceRegeneration) (result unregeneratedFaceMarkers, err error) {
+	files, err := query.FaceMarkerFiles(dir)
 
 	if err != nil {
-		return 0, 0, err
+		return result, err
 	}
 
-	for fileUID, n := range counts {
-		if !stats.Processed(fileUID) {
-			markers += n
-			files++
+	for fileUID, f := range files {
+		_, walked := found[ConfigFileName(conf, f.FileRoot, f.FileName)]
+
+		switch {
+		case stats.Processed(fileUID):
+		case walked || stats.FileFailed(fileUID):
+			result.FailedMarkers += f.Markers
+			result.FailedFiles++
+		default:
+			result.Markers += f.Markers
+			result.Files++
 		}
 	}
 
-	return markers, files, nil
+	return result, nil
 }
