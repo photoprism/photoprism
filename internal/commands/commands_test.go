@@ -4,11 +4,16 @@ import (
 	"bytes"
 	"errors"
 	"flag"
+	"fmt"
+	"io"
 	"os"
+	"os/exec"
 	"testing"
 
+	"github.com/manifoldco/promptui"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -17,6 +22,7 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
 var savedPath string
@@ -273,6 +279,53 @@ func reopenConnection() *config.Config {
 		log.Warn("reopenConnection: config is nil")
 		return nil
 	}
+}
+
+// TestExitCode covers the status main exits with for an error that app.Run returns.
+func TestExitCode(t *testing.T) {
+	// runApp returns the error urfave/cli reports for a command with a required flag.
+	runApp := func(args ...string) error {
+		app := cli.NewApp()
+		app.Writer, app.ErrWriter = io.Discard, io.Discard
+		app.Commands = []*cli.Command{{
+			Name:   "add",
+			Flags:  []cli.Flag{&cli.StringFlag{Name: "make", Required: true}},
+			Action: func(ctx *cli.Context) error { return errors.New("database unreachable") },
+		}}
+		return app.Run(append([]string{"photoprism"}, args...))
+	}
+
+	t.Run("Success", func(t *testing.T) {
+		assert.Equal(t, 0, ExitCode(nil))
+	})
+	t.Run("PlainError", func(t *testing.T) {
+		assert.Equal(t, 1, ExitCode(runApp("add", "--make", "Canon")))
+	})
+	t.Run("MissingRequiredFlag", func(t *testing.T) {
+		err := runApp("add")
+		assert.ErrorContains(t, err, "Required flag")
+		assert.Equal(t, 2, ExitCode(err))
+	})
+	t.Run("ExitCoder", func(t *testing.T) {
+		assert.Equal(t, 3, ExitCode(cli.Exit("not found", 3)))
+	})
+	t.Run("WrappedExitCoder", func(t *testing.T) {
+		assert.Equal(t, 3, ExitCode(fmt.Errorf("users: %w", cli.Exit("not found", 3))))
+	})
+	t.Run("OutOfRangeExitCoder", func(t *testing.T) {
+		assert.Equal(t, 1, ExitCode(fmt.Errorf("users: %w", cli.Exit("failed", 300))))
+	})
+	t.Run("ExternalToolStatus", func(t *testing.T) {
+		execErr := exec.Command("sh", "-c", "exit 3").Run()
+		require.Error(t, execErr)
+		assert.Equal(t, 1, ExitCode(fmt.Errorf("convert: %w", execErr)))
+	})
+	t.Run("Canceled", func(t *testing.T) {
+		assert.Equal(t, 0, ExitCode(fmt.Errorf("index: %w", status.ErrCanceled)))
+	})
+	t.Run("InterruptedPrompt", func(t *testing.T) {
+		assert.Equal(t, 0, ExitCode(promptui.ErrInterrupt))
+	})
 }
 
 // TestCallWithDependencies covers the exit code reported when the configuration cannot be loaded.

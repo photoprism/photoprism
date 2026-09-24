@@ -30,6 +30,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"os/exec"
 	"strings"
 	"syscall"
 
@@ -40,6 +41,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
 // NONINTERACTIVE is the CLI environment flag to disable prompts.
@@ -159,6 +161,32 @@ func childAlreadyRunning(filePath string) (pid int, running bool) {
 	}
 
 	return pid, process.Signal(syscall.Signal(0)) == nil
+}
+
+// ExitCode returns the process exit status for an error that app.Run returned without exiting.
+// A canceled operation or interrupted prompt exits 0; the status of an external tool is not passed on.
+// urfave/cli reports a missing required flag with an unexported type, so its name is compared.
+func ExitCode(err error) int {
+	var exit cli.ExitCoder
+	var execErr *exec.ExitError
+
+	switch {
+	case err == nil:
+		return 0
+	case errors.As(err, &execErr):
+		return 1
+	case errors.As(err, &exit):
+		if code := exit.ExitCode(); code >= 0 && code <= 125 {
+			return code
+		}
+		return 1
+	case errors.Is(err, status.ErrCanceled), errors.Is(err, promptui.ErrInterrupt):
+		return 0
+	case fmt.Sprintf("%T", err) == "*cli.errRequiredFlags":
+		return 2
+	default:
+		return 1
+	}
 }
 
 // CallWithDependencies calls a command action with initialized dependencies.

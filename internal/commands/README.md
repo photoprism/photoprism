@@ -1,6 +1,6 @@
 ## Commands Package Guide
 
-**Last Updated:** September 23, 2026
+**Last Updated:** September 24, 2026
 
 ### Overview
 
@@ -58,21 +58,27 @@ The underlying parser limitation is tracked as a known issue for a broader fix; 
 
 ### Exit Codes
 
-Wrap errors in `cli.Exit(err, <code>)` so the binary terminates with a non-zero status. A plain `return err` is logged but exits `0`, which hides failures from CI and shell scripts. Pick the code from the table below; cluster, JWT, and Portal commands set the precedent.
+Wrap errors in `cli.Exit(err, <code>)` whenever the table below assigns a specific code. A plain `return err` exits `1`, since every binary's `main()` passes it to `commands.ExitCode`. Pick the code from the table below; cluster, JWT, and Portal commands set the precedent.
 
-| Code | Meaning                                                  | Typical Use                                                                                                                                                                                 |
-|------|----------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `0`  | Success, declined confirmation, or user-initiated cancel | normal completion; "no" at a confirmation prompt; `ErrCanceled` from a long-running operation                                                                                               |
-| `1`  | Runtime/execution failure                                | DB or I/O error, backup/restore failure, indexing failure, configuration or database initialization failure                                                                                 |
-| `2`  | Usage error or unmet precondition                        | invalid, conflicting or trailing flags, missing argument, malformed identifier, read-only mode, a command the node role does not offer, a confirmation that cannot be shown without `--yes` |
-| `3`  | Resource not found                                       | user, client, session, node, theme, camera, lens, or other named entity does not exist or was already deleted                                                                               |
-| `4`  | Authentication or authorization failure                  | Portal returned `401` or `403` to the CLI                                                                                                                                                   |
-| `5`  | Conflict                                                 | Portal returned `409` to the CLI                                                                                                                                                            |
-| `6`  | Rate limited                                             | Portal returned `429` to the CLI                                                                                                                                                            |
+| Code | Meaning                                                  | Typical Use                                                                                                                                                                                                                                |
+|------|----------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `0`  | Success, declined confirmation, or user-initiated cancel | normal completion; "no" at a confirmation prompt; `ErrCanceled` from a long-running operation                                                                                                                                              |
+| `1`  | Runtime/execution failure                                | DB or I/O error, backup/restore failure, indexing failure, configuration or database initialization failure                                                                                                                                |
+| `2`  | Usage error or unmet precondition                        | invalid, conflicting or trailing flags a command validates, a missing `Required` flag, missing argument, malformed identifier, read-only mode, a command the node role does not offer, a confirmation that cannot be shown without `--yes` |
+| `3`  | Resource not found                                       | user, client, session, node, theme, camera, lens, or other named entity does not exist or was already deleted                                                                                                                              |
+| `4`  | Authentication or authorization failure                  | Portal returned `401` or `403` to the CLI                                                                                                                                                                                                  |
+| `5`  | Conflict                                                 | Portal returned `409` to the CLI                                                                                                                                                                                                           |
+| `6`  | Rate limited                                             | Portal returned `429` to the CLI                                                                                                                                                                                                           |
 
 Commands that print their help for a missing argument, instead of returning an error, still exit `0`.
 
-`urfave/cli`'s default `ExitErrHandler` calls `os.Exit(c.ExitCode())` only for values that implement `cli.ExitCoder`. A bare `error` flows up to `main()`, which logs it and returns normally — that is, exits `0`. Use `cli.Exit(...)` whenever a non-zero status matters; reserve plain `return err` for helpers that propagate to a caller which itself wraps the result.
+`urfave/cli`'s default `ExitErrHandler` calls `os.Exit(c.ExitCode())` only for values that implement `cli.ExitCoder`. A bare `error` flows up to `main()`, which prints it to stderr and exits with `commands.ExitCode(err)`:
+
+- `2` for a flag declared `Required: true` that was not set;
+- `0` for `status.ErrCanceled` and an input prompt interrupted with Ctrl+C (`promptui.ErrInterrupt`);
+- `1` for anything else, including an unknown or malformed flag, which the standard `flag` package reports as a plain error, and an error wrapping `*exec.ExitError`, whose status belongs to the external tool.
+
+Use `cli.Exit(...)` whenever a code other than `1` applies.
 
 For long-running operations (indexing, importing, backup) that may be canceled by the user, return the underlying `status.ErrCanceled` (or a wrapper) without `cli.Exit` so the CLI exits `0`, and use `cli.Exit(err, 1)` for `status.ErrInsufficientStorage` and other runtime failures so scripts and CI can detect them.
 
