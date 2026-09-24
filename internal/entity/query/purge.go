@@ -139,8 +139,17 @@ func ResetMissingCameras() (int64, error) {
 	mutex.Index.Lock()
 	defer mutex.Index.Unlock()
 
-	res := UnscopedDb().Exec(`UPDATE photos SET camera_id = ? WHERE camera_id IS NOT NULL AND NOT EXISTS (SELECT 1 FROM cameras WHERE cameras.id = photos.camera_id)`,
-		entity.UnknownCamera.ID)
+	// Find missing IDs first, so that no rows are locked for writing unless there is something to repair.
+	var missing []uint
+
+	if err := UnscopedDb().Raw(`SELECT DISTINCT camera_id FROM photos WHERE camera_id IS NOT NULL AND NOT EXISTS (SELECT 1 FROM cameras WHERE cameras.id = photos.camera_id)`).
+		Pluck("camera_id", &missing).Error; err != nil {
+		return 0, err
+	} else if len(missing) == 0 {
+		return 0, nil
+	}
+
+	res := UnscopedDb().Model(&entity.Photo{}).Where("camera_id IN (?)", missing).UpdateColumn("camera_id", entity.UnknownCamera.ID)
 
 	return res.RowsAffected, res.Error
 }
@@ -155,8 +164,17 @@ func ResetMissingLenses() (int64, error) {
 	mutex.Index.Lock()
 	defer mutex.Index.Unlock()
 
-	res := UnscopedDb().Exec(`UPDATE photos SET lens_id = ? WHERE lens_id IS NOT NULL AND NOT EXISTS (SELECT 1 FROM lenses WHERE lenses.id = photos.lens_id)`,
-		entity.UnknownLens.ID)
+	// Find missing IDs first, so that no rows are locked for writing unless there is something to repair.
+	var missing []uint
+
+	if err := UnscopedDb().Raw(`SELECT DISTINCT lens_id FROM photos WHERE lens_id IS NOT NULL AND NOT EXISTS (SELECT 1 FROM lenses WHERE lenses.id = photos.lens_id)`).
+		Pluck("lens_id", &missing).Error; err != nil {
+		return 0, err
+	} else if len(missing) == 0 {
+		return 0, nil
+	}
+
+	res := UnscopedDb().Model(&entity.Photo{}).Where("lens_id IN (?)", missing).UpdateColumn("lens_id", entity.UnknownLens.ID)
 
 	return res.RowsAffected, res.Error
 }

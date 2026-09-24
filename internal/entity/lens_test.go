@@ -29,13 +29,19 @@ func TestNewLens(t *testing.T) {
 		assert.Equal(t, "F500-99", lens.LensModel)
 		assert.Equal(t, "Canon", lens.LensMake)
 	})
-	t.Run("MakeAsPartOfModel", func(t *testing.T) {
-		// The make is only removed from the model as a whole word.
+	t.Run("MakeBeforeHyphen", func(t *testing.T) {
+		// A hyphen after the make is a word boundary, which keeps the slugs of existing lenses.
 		lens := NewLens("Helios", "Helios-44-2 58mm f/2")
-		assert.Equal(t, "helios-helios-44-2-58mm-f-2", lens.LensSlug)
-		assert.Equal(t, "Helios Helios-44-2 58mm f/2", lens.LensName)
-		assert.Equal(t, "Helios-44-2 58mm f/2", lens.LensModel)
+		assert.Equal(t, "helios-44-2-58mm-f-2", lens.LensSlug)
+		assert.Equal(t, "Helios 44-2 58mm f/2", lens.LensName)
+		assert.Equal(t, "44-2 58mm f/2", lens.LensModel)
 		assert.Equal(t, "Helios", lens.LensMake)
+	})
+	t.Run("MakeAsPartOfModel", func(t *testing.T) {
+		// The make is not removed if a letter follows it.
+		lens := NewLens("Jupiter", "Jupiters 9")
+		assert.Equal(t, "jupiter-jupiters-9", lens.LensSlug)
+		assert.Equal(t, "Jupiter Jupiters 9", lens.LensName)
 	})
 	t.Run("MakeAsFirstWordOfModel", func(t *testing.T) {
 		lens := NewLens("Helios", "Helios 44-2 58mm f/2")
@@ -387,15 +393,29 @@ func TestAddLens(t *testing.T) {
 		removeLens(slug)
 		t.Cleanup(func() { removeLens(slug) })
 
-		// A discovered orphan that is purged between the lookup and marking it is created again.
-		orphan := FirstOrCreateLens(NewLens("Zenit", "TTL"))
-		assert.NotZero(t, orphan.ID)
+		// Find a discovered orphan, then purge it before it can be marked as added manually.
+		stale := *FirstOrCreateLens(NewLens("Zenit", "TTL"))
+		assert.NotZero(t, stale.ID)
 		removeLens(slug)
-		assert.ErrorIs(t, orphan.markManual(), gorm.ErrRecordNotFound)
+		assert.ErrorIs(t, (&stale).markManual(), gorm.ErrRecordNotFound)
 
+		prev := lookupExistingLens
+		t.Cleanup(func() { lookupExistingLens = prev })
+		lookupExistingLens = func(*Lens) *Lens {
+			found := stale
+			return &found
+		}
+
+		// The lens must be created again instead of reporting the purged record or failing.
 		result, created, err := AddLens("Zenit", "TTL")
 		assert.NoError(t, err)
 		assert.True(t, created)
+
+		if result == nil {
+			t.Fatal("result must not be nil")
+		}
+
+		assert.NotEqual(t, stale.ID, result.ID)
 		assert.Equal(t, SrcManual, result.LensSrc)
 	})
 }
@@ -784,4 +804,37 @@ func TestLens_DeleteEdgeCases(t *testing.T) {
 		assert.ErrorIs(t, err, ErrInvalidValue)
 		assert.True(t, exists(t, m.ID))
 	})
+}
+
+// TestLensSlugRegression pins the slugs of real make and model pairs, since a changed slug creates
+// a second record for the same device when existing files are indexed again.
+func TestLensSlugRegression(t *testing.T) {
+	for _, c := range [][3]string{
+		{"", "135", "135"},
+		{"", "EF100mm f/2.8 Macro USM", "ef100mm-f-2-8-macro-usm"},
+		{"", "EF100mm f/2.8L Macro IS USM", "ef100mm-f-2-8l-macro-is-usm"},
+		{"", "EF16-35mm f/2.8L II USM", "ef16-35mm-f-2-8l-ii-usm"},
+		{"", "EF24-105mm f/4L IS USM", "ef24-105mm-f-4l-is-usm"},
+		{"", "EF35mm f/2 IS USM", "ef35mm-f-2-is-usm"},
+		{"", "EF70-200mm f/4L IS USM", "ef70-200mm-f-4l-is-usm"},
+		{"", "HUAWEI P30 Rear Main Camera", "huawei-p30-rear-main-camera"},
+		{"", "iPhone 15 Pro back camera 6.765mm f/1.78", "iphone-15-pro-6-765mm-f-1-78"},
+		{"", "iPhone SE back camera 4.15mm f/2.2", "iphone-se-4-15mm-f-2-2"},
+		{"Apple", "F380", "apple-f380"},
+		{"Apple", "iPhone 13 back dual wide camera 5.1mm f/1.6", "apple-iphone-13-5-1mm-f-1-6"},
+		{"Apple", "iPhone 14 Pro Max back triple camera 9mm f/2.8", "apple-iphone-14-pro-max-9mm-f-2-8"},
+		{"Apple", "iPhone 15 Pro back triple camera 2.22mm f/2.2", "apple-iphone-15-pro-2-22mm-f-2-2"},
+		{"Apple", "iPhone 5s back camera 4.15mm f/2.2", "apple-iphone-5s-4-15mm-f-2-2"},
+		{"Apple", "iPhone 6s back camera 4.15mm f/2.2", "apple-iphone-6s-4-15mm-f-2-2"},
+		{"Apple", "iPhone 7 back camera 3.99mm f/1.8", "apple-iphone-7-3-99mm-f-1-8"},
+		{"Apple", "iPhone SE back camera 4.15mm f/2.2", "apple-iphone-se-4-15mm-f-2-2"},
+		{"Apple", "iPhone XR back camera 4.25mm f/1.8", "apple-iphone-xr-4-25mm-f-1-8"},
+		{"Google", "Pixel 6 back camera 6.81mm f/1.85", "google-pixel-6-6-81mm-f-1-85"},
+		{"Google", "Pixel 7 Pro back camera 19.0mm f/3.5", "google-pixel-7-pro-19-0mm-f-3-5"},
+		{"Helios", "Helios-44-2 58mm f/2", "helios-44-2-58mm-f-2"},
+		{"SAMSUNG", "SAMSUNG-12mm", "samsung-12mm"},
+		{"Canon", "Canon EF 50mm f/1.8", "canon-ef-50mm-f-1-8"},
+	} {
+		assert.Equal(t, c[2], NewLens(c[0], c[1]).LensSlug, "%q / %q", c[0], c[1])
+	}
 }

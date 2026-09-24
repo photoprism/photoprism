@@ -160,13 +160,25 @@ func TestResetMissingCameras(t *testing.T) {
 		assert.Equal(t, int64(0), count)
 	})
 	t.Run("Uninitialized", func(t *testing.T) {
+		photo := entity.Photo{}
+		assert.NoError(t, UnscopedDb().Order("id").First(&photo).Error)
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Model(&entity.Photo{}).Where("id = ?", photo.ID).UpdateColumn("camera_id", photo.CameraID).Error)
+		})
+		assert.NoError(t, UnscopedDb().Model(&entity.Photo{}).Where("id = ?", photo.ID).UpdateColumn("camera_id", 999999999).Error)
+
 		prev := entity.UnknownCamera
 		t.Cleanup(func() { entity.UnknownCamera = prev })
 		entity.UnknownCamera.ID = 0
 
+		// Without the placeholder ID, the missing reference must be left as is rather than set to 0.
 		count, err := ResetMissingCameras()
 		assert.NoError(t, err)
 		assert.Equal(t, int64(0), count)
+
+		found := entity.Photo{}
+		assert.NoError(t, UnscopedDb().First(&found, "id = ?", photo.ID).Error)
+		assert.Equal(t, uint(999999999), found.CameraID)
 	})
 }
 
@@ -195,12 +207,24 @@ func TestResetMissingLenses(t *testing.T) {
 		assert.Equal(t, int64(0), count)
 	})
 	t.Run("Uninitialized", func(t *testing.T) {
+		photo := entity.Photo{}
+		assert.NoError(t, UnscopedDb().Order("id").First(&photo).Error)
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Model(&entity.Photo{}).Where("id = ?", photo.ID).UpdateColumn("lens_id", photo.LensID).Error)
+		})
+		assert.NoError(t, UnscopedDb().Model(&entity.Photo{}).Where("id = ?", photo.ID).UpdateColumn("lens_id", 999999999).Error)
+
 		prev := entity.UnknownLens
 		t.Cleanup(func() { entity.UnknownLens = prev })
 		entity.UnknownLens.ID = 0
 
+		// Without the placeholder ID, the missing reference must be left as is rather than set to 0.
 		count, err := ResetMissingLenses()
 		assert.NoError(t, err)
 		assert.Equal(t, int64(0), count)
+
+		found := entity.Photo{}
+		assert.NoError(t, UnscopedDb().First(&found, "id = ?", photo.ID).Error)
+		assert.Equal(t, uint(999999999), found.LensID)
 	})
 }

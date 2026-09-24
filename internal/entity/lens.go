@@ -166,7 +166,7 @@ func AddLens(makeName, modelName string) (result *Lens, created bool, err error)
 	}
 
 	// Report an existing lens instead of creating a duplicate, unless it has been purged in the meantime.
-	if existing := findExistingLens(m); existing != nil && !existing.Unknown() {
+	if existing := lookupExistingLens(m); existing != nil && !existing.Unknown() {
 		if err = existing.markManual(); err == nil {
 			return existing, false, nil
 		} else if !errors.Is(err, gorm.ErrRecordNotFound) {
@@ -186,6 +186,9 @@ func AddLens(makeName, modelName string) (result *Lens, created bool, err error)
 
 	return result, false, nil
 }
+
+// lookupExistingLens finds an existing lens when adding one, and can be replaced in tests to simulate a concurrent purge.
+var lookupExistingLens = findExistingLens
 
 // findExistingLens returns the lens with the same slug, or else with the same make and model, if any.
 // The make and model lookup covers renamed records, whose slug no longer matches their name.

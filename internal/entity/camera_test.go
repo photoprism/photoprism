@@ -80,12 +80,22 @@ func TestNewCamera(t *testing.T) {
 			{"Canon", "Canonet QL17 GIII", "Canon Canonet QL17 GIII"},
 			{"Rollei", "Rolleiflex 2.8F", "Rollei Rolleiflex 2.8F"},
 			{"Leica", "Leicaflex SL", "Leica Leicaflex SL"},
-			{"Yashica", "Yashica-Mat 124G", "Yashica Yashica-Mat 124G"},
 		} {
 			camera := NewCamera(c[0], c[1])
 			assert.Equal(t, c[1], camera.CameraModel)
 			assert.Equal(t, c[2], camera.CameraName)
 		}
+	})
+	t.Run("MakeBeforeHyphen", func(t *testing.T) {
+		// A hyphen after the make is a word boundary, which keeps the slugs of existing devices.
+		camera := NewCamera("Yashica", "Yashica-Mat 124G")
+		assert.Equal(t, "yashica-mat-124g", camera.CameraSlug)
+		assert.Equal(t, "Yashica Mat 124G", camera.CameraName)
+		assert.Equal(t, "Mat 124G", camera.CameraModel)
+
+		camera = NewCamera("LGE", "LG-H815")
+		assert.Equal(t, "lg-h815", camera.CameraSlug)
+		assert.Equal(t, "LG H815", camera.CameraName)
 	})
 	t.Run("PanasonicLumix", func(t *testing.T) {
 		camera := NewCamera("Panasonic", "Panasonic Lumix")
@@ -530,15 +540,29 @@ func TestAddCamera(t *testing.T) {
 		removeCamera(slug)
 		t.Cleanup(func() { removeCamera(slug) })
 
-		// A discovered orphan that is purged between the lookup and marking it is created again.
-		orphan := FirstOrCreateCamera(NewCamera("Zenit", "TTL"))
-		assert.NotZero(t, orphan.ID)
+		// Find a discovered orphan, then purge it before it can be marked as added manually.
+		stale := *FirstOrCreateCamera(NewCamera("Zenit", "TTL"))
+		assert.NotZero(t, stale.ID)
 		removeCamera(slug)
-		assert.ErrorIs(t, orphan.markManual(), gorm.ErrRecordNotFound)
+		assert.ErrorIs(t, (&stale).markManual(), gorm.ErrRecordNotFound)
 
+		prev := lookupExistingCamera
+		t.Cleanup(func() { lookupExistingCamera = prev })
+		lookupExistingCamera = func(*Camera) *Camera {
+			found := stale
+			return &found
+		}
+
+		// The camera must be created again instead of reporting the purged record or failing.
 		result, created, err := AddCamera("Zenit", "TTL")
 		assert.NoError(t, err)
 		assert.True(t, created)
+
+		if result == nil {
+			t.Fatal("result must not be nil")
+		}
+
+		assert.NotEqual(t, stale.ID, result.ID)
 		assert.Equal(t, SrcManual, result.CameraSrc)
 	})
 }
@@ -927,4 +951,65 @@ func TestCamera_DeleteEdgeCases(t *testing.T) {
 		assert.ErrorIs(t, err, ErrInvalidValue)
 		assert.True(t, exists(t, m.ID))
 	})
+}
+
+// TestCameraSlugRegression pins the slugs of real make and model pairs, since a changed slug creates
+// a second record for the same device when existing files are indexed again.
+func TestCameraSlugRegression(t *testing.T) {
+	for _, c := range [][3]string{
+		{"Apple", "iPad mini", "apple-ipad-mini"},
+		{"Apple", "iPhone 12 mini", "apple-iphone-12-mini"},
+		{"Apple", "iPhone 13", "apple-iphone-13"},
+		{"Apple", "iPhone 14 Pro Max", "apple-iphone-14-pro-max"},
+		{"Apple", "iPhone 15 Pro", "apple-iphone-15-pro"},
+		{"Apple", "iPhone 4S", "apple-iphone-4s"},
+		{"Apple", "iPhone 5s", "apple-iphone-5s"},
+		{"Apple", "iPhone 6 Plus", "apple-iphone-6-plus"},
+		{"Apple", "iPhone 6s", "apple-iphone-6s"},
+		{"Apple", "iPhone 7", "apple-iphone-7"},
+		{"Apple", "iPhone 8", "apple-iphone-8"},
+		{"Apple", "iPhone SE", "apple-iphone-se"},
+		{"Apple", "iPhone X", "apple-iphone-x"},
+		{"Apple", "iPhone XR", "apple-iphone-xr"},
+		{"Canon", "Canon EOS 50D", "canon-eos-50d"},
+		{"Canon", "Canon EOS 5D", "canon-eos-5d"},
+		{"Canon", "Canon EOS 6D", "canon-eos-6d"},
+		{"Canon", "Canon EOS 7D", "canon-eos-7d"},
+		{"Canon", "Canon EOS-1DS", "canon-eos-1ds"},
+		{"Canon", "Canon PowerShot A70", "canon-powershot-a70"},
+		{"Canon", "Canon PowerShot G15", "canon-powershot-g15"},
+		{"GCMC", "RODFS50", "kodak-slide-n-scan"},
+		{"GoPro", "HD2", "gopro-hd2"},
+		{"Google", "Pixel 2", "google-pixel-2"},
+		{"Google", "Pixel 4a", "google-pixel-4a"},
+		{"Google", "Pixel 6", "google-pixel-6"},
+		{"Google", "Pixel 7 Pro", "google-pixel-7-pro"},
+		{"HMD Global", "Nokia X71", "hmd-global-nokia-x71"},
+		{"HUAWEI", "ELE-L29", "huawei-p30"},
+		{"NIKON CORPORATION", "NIKON D800E", "nikon-d800e"},
+		{"OLYMPUS DIGITAL CAMERA", "E-M10MarkII", "olympus-e-m10markii"},
+		{"OLYMPUS DIGITAL CAMERA", "E-PL7", "olympus-e-pl7"},
+		{"OLYMPUS IMAGING CORP.", "TG-830", "olympus-tg-830"},
+		{"RICOH", "RICOH THETA S", "ricoh-theta-s"},
+		{"SAMSUNG", "GT-I9000", "samsung-gt-i9000"},
+		{"SAMSUNG", "SM-C200", "samsung-sm-c200"},
+		{"Samsung", "Galaxy A71", "samsung-galaxy-a71"},
+		{"TCT", "TCL S950", "tct-tcl-s950"},
+		{"Xiaomi", "Mi A1", "xiaomi-mi-a1"},
+		{"Xiaomi", "Mi MIX 2", "xiaomi-mi-mix-2"},
+		{"samsung", "Galaxy S26", "samsung-galaxy-s26"},
+		{"samsung", "SM-G780F", "samsung-galaxy-s20"},
+		{"samsung", "SM-G781B", "samsung-galaxy-s20-fe"},
+		{"samsung", "SM-G900F", "samsung-sm-g900f"},
+		{"samsung", "SM-G973F", "samsung-sm-g973f"},
+		{"samsung", "SM-G998B", "samsung-galaxy-s21-ultra"},
+		{"LGE", "LG-H815", "lg-h815"},
+		{"SAMSUNG", "SAMSUNG-SM-G900A", "samsung-sm-g900a"},
+		{"ASUS", "ASUS_AI2302", "asus-zenfone-10"},
+		{"HTC", "HTC_One", "htc-_one"},
+		{"Yashica", "Yashica-Mat 124G", "yashica-mat-124g"},
+		{"Canon", "Canon EOS-1DS", "canon-eos-1ds"},
+	} {
+		assert.Equal(t, c[2], NewCamera(c[0], c[1]).CameraSlug, "%q / %q", c[0], c[1])
+	}
 }

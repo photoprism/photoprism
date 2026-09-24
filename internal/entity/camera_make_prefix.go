@@ -6,8 +6,9 @@ import (
 	"unicode/utf8"
 )
 
-// trimMakePrefix removes a leading make name from a camera or lens model name.
-// The make is removed only as a whole word, so that e.g. "Nikonos V" or "Helios-44-2" stay intact.
+// trimMakePrefix removes a leading make name from a camera or lens model name, e.g. "LG" from "LG-H815".
+// The make is kept if a letter follows it, as in "Nikonos V", so that it is not cut off from a longer word.
+// Only spaces and hyphens are trimmed after it, since slugs keep underscores and must not change for known devices.
 func trimMakePrefix(modelName, makeName string) string {
 	if makeName == "" || !strings.HasPrefix(modelName, makeName) {
 		return modelName
@@ -15,11 +16,11 @@ func trimMakePrefix(modelName, makeName string) string {
 
 	rest := modelName[len(makeName):]
 
-	if rest == "" {
-		return ""
-	} else if r, _ := utf8.DecodeRuneInString(rest); !unicode.IsSpace(r) {
+	if r, _ := utf8.DecodeRuneInString(rest); rest != "" && unicode.IsLetter(r) {
 		return modelName
 	}
 
-	return strings.TrimSpace(rest)
+	return strings.TrimRightFunc(strings.TrimLeftFunc(rest, func(r rune) bool {
+		return unicode.IsSpace(r) || r == '-'
+	}), unicode.IsSpace)
 }

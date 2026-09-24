@@ -171,7 +171,7 @@ func AddCamera(makeName, modelName string) (result *Camera, created bool, err er
 	}
 
 	// Report an existing camera instead of creating a duplicate, unless it has been purged in the meantime.
-	if existing := findExistingCamera(m); existing != nil && !existing.Unknown() {
+	if existing := lookupExistingCamera(m); existing != nil && !existing.Unknown() {
 		if err = existing.markManual(); err == nil {
 			return existing, false, nil
 		} else if !errors.Is(err, gorm.ErrRecordNotFound) {
@@ -191,6 +191,9 @@ func AddCamera(makeName, modelName string) (result *Camera, created bool, err er
 
 	return result, false, nil
 }
+
+// lookupExistingCamera finds an existing camera when adding one, and can be replaced in tests to simulate a concurrent purge.
+var lookupExistingCamera = findExistingCamera
 
 // findExistingCamera returns the camera with the same slug, or else with the same make and model, if any.
 // The make and model lookup covers renamed records, whose slug no longer matches their name.
