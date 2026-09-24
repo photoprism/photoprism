@@ -86,12 +86,12 @@ var FacesCommands = &cli.Command{
 			Name:  "reset",
 			Usage: "Removes people and faces after confirmation",
 			Flags: []cli.Flag{
-				ForceFlag("removes all people, faces, and markers, so faces must be detected again"),
 				&cli.BoolFlag{
 					Name:    "all",
 					Aliases: []string{"a"},
-					Usage:   "also removes manually created faces, names, and unverified people, keeping the markers",
+					Usage:   "removes all faces, names, and unverified people, keeping the markers",
 				},
+				ForceFlag("removes all faces, people, and markers, so faces must be detected again"),
 				&cli.StringFlag{
 					Name:  "detector",
 					Usage: "regenerate markers with the detection model `NAME` (" + face.DetectorUsageString() + ")",
@@ -402,7 +402,7 @@ func facesResetAction(ctx *cli.Context) error {
 		// half alone. Refused rather than reordered, because which of the two they meant is not
 		// knowable from the command.
 		if ctx.IsSet("detector") || ctx.IsSet("engine") {
-			return cli.Exit("faces: --force removes all people, faces, and markers, so it cannot be combined with --detector", 2)
+			return cli.Exit("faces: --force removes all faces, people, and markers, so it cannot be combined with --detector", 2)
 		}
 
 		// Refused rather than treated as the wider of the two: the flags name different outcomes
@@ -480,7 +480,7 @@ func facesResetAction(ctx *cli.Context) error {
 
 // facesResetAllAction removes all people, faces, and face markers.
 func facesResetAllAction(ctx *cli.Context) error {
-	if proceed, err := ConfirmAction(ctx.Bool("yes"), "Permanently remove all people, faces, and markers?"); err != nil {
+	if proceed, err := ConfirmAction(ctx.Bool("yes"), "Permanently remove all faces, people, and markers?"); err != nil {
 		return err
 	} else if !proceed {
 		log.Infof("faces: no people or faces were removed")
