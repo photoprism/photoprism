@@ -40,6 +40,13 @@ func TestCientsRemoveCommand(t *testing.T) {
 		assert.Contains(t, output2, "client")
 	})
 	t.Run("RemoveClient", func(t *testing.T) {
+		restoreAnalyticsSession(t)
+		t.Cleanup(func() {
+			reopenConnection()
+			m := entity.ClientFixtures.Get("analytics")
+			assert.NoError(t, m.Restore(), "restore client fixture")
+		})
+
 		// Run command with test context.
 		output0, err := RunWithTestContext(ClientsShowCommand, []string{"show", "cs7pvt5h8rw9aaqj"})
 
@@ -163,6 +170,11 @@ func TestClientsModCommand_Restore(t *testing.T) {
 			t.Fatal(err)
 		}
 
+		t.Cleanup(func() {
+			reopenConnection()
+			assert.NoError(t, m.Purge(), "purge test client")
+		})
+
 		uid := m.ClientUID
 
 		if err := m.Delete(); err != nil {
@@ -188,6 +200,11 @@ func TestClientsModCommand_Restore(t *testing.T) {
 		if err := m.Create(); err != nil {
 			t.Fatal(err)
 		}
+
+		t.Cleanup(func() {
+			reopenConnection()
+			assert.NoError(t, m.Purge(), "purge test client")
+		})
 
 		uid := m.ClientUID
 

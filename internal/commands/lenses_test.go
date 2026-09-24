@@ -94,7 +94,10 @@ func TestLensesCommand(t *testing.T) {
 		assertExitCode(t, err, 3)
 	})
 	t.Run("UpdateValid", func(t *testing.T) {
-		defer assert.NoError(t, entity.Db().Save(entity.LensFixtures.Pointer("4-37")).Error)
+		defer func() {
+			entity.FlushLensCache()
+			assert.NoError(t, entity.Db().Save(entity.LensFixtures.Pointer("4-37")).Error)
+		}()
 		// Run command with test context.
 		output, err := RunWithTestContext(LensesCommand, []string{"lenses", "update", "--id=1000002", "--make=Tamron", `--model="Tamron SP AF 24-135mm F3.5-5.6 AD AL (190D)"`})
 		assert.NoError(t, err)

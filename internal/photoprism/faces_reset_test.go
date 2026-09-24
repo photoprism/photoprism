@@ -17,6 +17,8 @@ import (
 )
 
 func TestFaces_Reset(t *testing.T) {
+	t.Cleanup(entity.ResetTestFixtures)
+
 	c := config.TestConfig()
 
 	m := NewFaces(c)
@@ -56,6 +58,8 @@ func faceAndMarkerCount(t *testing.T) [2]int {
 }
 
 func TestFaces_ResetAndReindex_Detect(t *testing.T) {
+	t.Cleanup(entity.ResetTestFixtures)
+
 	defer func(prev func(*Index, IndexOptions) (fs.Done, int, error)) {
 		runFacesReindex = prev
 	}(runFacesReindex)
@@ -208,6 +212,8 @@ func TestFaces_RegenerateRefused(t *testing.T) {
 // TestFaces_ResetAndReindex_ResetOnly pins that naming no detector, or naming "none", resets
 // without regenerating rather than being rejected.
 func TestFaces_ResetAndReindex_ResetOnly(t *testing.T) {
+	t.Cleanup(entity.ResetTestFixtures)
+
 	defer func(prev func(*Index, IndexOptions) (fs.Done, int, error)) {
 		runFacesReindex = prev
 	}(runFacesReindex)
