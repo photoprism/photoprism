@@ -53,6 +53,7 @@ func TestResetCommand(t *testing.T) {
 	// stdin answers every question with yes.
 	keepsFiles := func(t *testing.T, args ...string) {
 		c := resetConfigAndOpenDB()
+		t.Cleanup(func() { resetConfigAndDB() })
 		pipeResetAnswers(t, "y\ny\ny\ny\ny\n")
 
 		sidecar := filepath.Join(c.SidecarPath(), "reset-yes-test", "a.json")
