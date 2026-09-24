@@ -1,11 +1,13 @@
 package entity
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 	"sync"
 	"time"
 
+	"github.com/jinzhu/gorm"
 	"github.com/ulule/deepcopier"
 
 	"github.com/photoprism/photoprism/internal/event"
@@ -29,6 +31,7 @@ type Lens struct {
 	LensType        string     `gorm:"type:VARCHAR(100);" json:"Type" yaml:"Type,omitempty"`
 	LensDescription string     `gorm:"type:VARCHAR(2048);" json:"Description,omitempty" yaml:"Description,omitempty"`
 	LensNotes       string     `gorm:"type:VARCHAR(1024);" json:"Notes,omitempty" yaml:"Notes,omitempty"`
+	LensSrc         string     `gorm:"type:VARBINARY(8);default:'';" json:"-" yaml:"-"`
 	CreatedAt       time.Time  `json:"-" yaml:"-"`
 	UpdatedAt       time.Time  `json:"-" yaml:"-"`
 	DeletedAt       *time.Time `sql:"index" json:"-" yaml:"-"`
@@ -59,9 +62,9 @@ func NewLens(makeName string, modelName string) *Lens {
 
 	if modelName == "" && makeName == "" {
 		return &UnknownLens
-	} else if strings.HasPrefix(modelName, makeName) {
-		modelName = strings.TrimSpace(modelName[len(makeName):])
 	}
+
+	modelName = trimMakePrefix(modelName, makeName)
 
 	// Normalize make name.
 	if n, ok := CameraMakes[makeName]; ok {
@@ -69,9 +72,7 @@ func NewLens(makeName string, modelName string) *Lens {
 	}
 
 	// Remove duplicate make from model name.
-	if strings.HasPrefix(modelName, makeName) {
-		modelName = strings.TrimSpace(modelName[len(makeName):])
-	}
+	modelName = trimMakePrefix(modelName, makeName)
 
 	// Remove ignored substrings from model name.
 	modelName = LensModelIgnore.ReplaceAllString(modelName, " ")
@@ -146,6 +147,101 @@ func FirstOrCreateLens(m *Lens) *Lens {
 	return &UnknownLens
 }
 
+// AddLens returns the lens with the specified make and model, and creates it if it does not exist yet.
+// The lens is marked as added manually, so that purging orphans keeps it while no picture references it.
+func AddLens(makeName, modelName string) (result *Lens, created bool, err error) {
+	makeName = strings.TrimSpace(makeName)
+	modelName = strings.TrimSpace(modelName)
+
+	if makeName == "" || modelName == "" {
+		return nil, false, fmt.Errorf("%w: make and model must not be empty", ErrInvalidValue)
+	}
+
+	m := NewLens(makeName, modelName)
+
+	if strings.TrimSpace(m.LensModel) == "" {
+		return nil, false, fmt.Errorf("%w: model must not be empty after removing the make", ErrInvalidValue)
+	} else if m.Unknown() {
+		return nil, false, fmt.Errorf("%w: make and model must not match the unknown lens", ErrInvalidValue)
+	}
+
+	// Report an existing lens instead of creating a duplicate, unless it has been purged in the meantime.
+	if existing := findLensByMakeModel(m); existing != nil && !existing.Unknown() {
+		if err = existing.markManual(); err == nil {
+			return existing, false, nil
+		} else if !errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, false, err
+		}
+	}
+
+	m.LensSrc = SrcManual
+
+	if result = FirstOrCreateLens(m); result == m {
+		return result, true, nil
+	} else if result.Unknown() {
+		return nil, false, fmt.Errorf("failed to create lens %s", m.String())
+	} else if err = result.markManual(); err != nil {
+		return nil, false, err
+	}
+
+	return result, false, nil
+}
+
+// findLensByMakeModel returns the lens with the same slug, or else with the same make and model, if any.
+// The make and model lookup covers renamed records, whose slug no longer matches their name.
+func findLensByMakeModel(m *Lens) *Lens {
+	existing := Lens{}
+
+	if Db().Where("lens_slug = ?", m.LensSlug).First(&existing).Error == nil {
+		return &existing
+	}
+
+	var candidates Lenses
+
+	if Db().Where("lens_make = ? AND lens_model = ?", m.LensMake, m.LensModel).Find(&candidates).Error != nil {
+		return nil
+	}
+
+	// Compare in Go, since MariaDB collations also match values that differ in case, accents, or emoji.
+	for i := range candidates {
+		if candidates[i].LensMake == m.LensMake && candidates[i].LensModel == m.LensModel {
+			return &candidates[i]
+		}
+	}
+
+	return nil
+}
+
+// markManual marks an existing lens as added manually, so that purging orphans keeps it.
+// It returns gorm.ErrRecordNotFound if the lens no longer exists, e.g. because it has been purged.
+func (m *Lens) markManual() error {
+	if m.ID == 0 {
+		// Without a primary key, the update would apply to all rows.
+		return fmt.Errorf("empty id")
+	}
+
+	lensMutex.Lock()
+	defer lensMutex.Unlock()
+
+	if res := UnscopedDb().Model(m).UpdateColumn("lens_src", SrcManual); res.Error != nil {
+		return res.Error
+	} else if res.RowsAffected == 0 {
+		// MariaDB counts only changed rows, so check whether the lens still exists.
+		var count int
+
+		if err := UnscopedDb().Model(&Lens{}).Where("id = ?", m.ID).Count(&count).Error; err != nil {
+			return err
+		} else if count == 0 {
+			return gorm.ErrRecordNotFound
+		}
+	}
+
+	m.LensSrc = SrcManual
+	lensCache.SetDefault(m.LensSlug, m)
+
+	return nil
+}
+
 // String returns an identifier that can be used in logs.
 func (m *Lens) String() string {
 	if m == nil {
@@ -167,6 +263,9 @@ func (m *Lens) Unknown() bool {
 func (m *Lens) UpdateMakeModel(makeName, modelName string) error {
 	if m.ID == 0 {
 		return fmt.Errorf("empty id")
+	} else if m.Unknown() {
+		// Renaming the shared placeholder would relabel every picture without lens information.
+		return fmt.Errorf("unknown lens cannot be changed")
 	}
 
 	makeName = strings.TrimSpace(makeName)

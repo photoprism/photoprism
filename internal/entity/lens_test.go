@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/event"
@@ -26,6 +27,20 @@ func TestNewLens(t *testing.T) {
 		assert.Equal(t, "Canon F500-99", lens.LensName)
 		assert.Equal(t, "F500-99", lens.LensModel)
 		assert.Equal(t, "Canon", lens.LensMake)
+	})
+	t.Run("MakeAsPartOfModel", func(t *testing.T) {
+		// The make is only removed from the model as a whole word.
+		lens := NewLens("Helios", "Helios-44-2 58mm f/2")
+		assert.Equal(t, "helios-helios-44-2-58mm-f-2", lens.LensSlug)
+		assert.Equal(t, "Helios Helios-44-2 58mm f/2", lens.LensName)
+		assert.Equal(t, "Helios-44-2 58mm f/2", lens.LensModel)
+		assert.Equal(t, "Helios", lens.LensMake)
+	})
+	t.Run("MakeAsFirstWordOfModel", func(t *testing.T) {
+		lens := NewLens("Helios", "Helios 44-2 58mm f/2")
+		assert.Equal(t, "helios-44-2-58mm-f-2", lens.LensSlug)
+		assert.Equal(t, "Helios 44-2 58mm f/2", lens.LensName)
+		assert.Equal(t, "44-2 58mm f/2", lens.LensModel)
 	})
 	t.Run("IPhoneXs", func(t *testing.T) {
 		lens := NewLens("Apple", "iPhone XS back camera 4.25mm f/1.8")
@@ -252,4 +267,169 @@ func TestLens_SaveForm(t *testing.T) {
 		lens := &Lens{ID: LensFixtures.Get("lens-f-380").ID}
 		assert.Error(t, lens.SaveForm(&form.Lens{LensMake: "", LensModel: "85mm F1.4"}))
 	})
+}
+
+func TestAddLens(t *testing.T) {
+	// removeLens deletes a test lens so that each case starts from a clean state.
+	removeLens := func(slug string) {
+		lensCache.Delete(slug)
+		assert.NoError(t, UnscopedDb().Delete(&Lens{}, "lens_slug = ?", slug).Error)
+	}
+
+	t.Run("Created", func(t *testing.T) {
+		slug := NewLens("Helios", "44-2 58mm f/2").LensSlug
+		removeLens(slug)
+		t.Cleanup(func() { removeLens(slug) })
+
+		result, created, err := AddLens("  Helios ", " 44-2 58mm f/2  ")
+
+		assert.NoError(t, err)
+		assert.True(t, created)
+
+		if result == nil {
+			t.Fatal("result must not be nil")
+		}
+
+		assert.NotZero(t, result.ID)
+		assert.Equal(t, slug, result.LensSlug)
+		assert.Equal(t, "Helios 44-2 58mm f/2", result.LensName)
+		assert.Equal(t, SrcManual, result.LensSrc)
+
+		// The source must be persisted, not only set on the returned struct.
+		found := Lens{}
+		assert.NoError(t, Db().First(&found, "id = ?", result.ID).Error)
+		assert.Equal(t, SrcManual, found.LensSrc)
+
+		// Adding the same lens again reports the existing record instead of a duplicate.
+		again, created, err := AddLens("Helios", "44-2 58mm f/2")
+		assert.NoError(t, err)
+		assert.False(t, created)
+		assert.Equal(t, result.ID, again.ID)
+	})
+	t.Run("ExistingBySlug", func(t *testing.T) {
+		fixture := LensFixtures.Get("4.15mm-f/2.2")
+		t.Cleanup(func() {
+			FlushLensCache()
+			assert.NoError(t, UnscopedDb().Save(LensFixtures.Pointer("4.15mm-f/2.2")).Error)
+		})
+
+		result, created, err := AddLens(fixture.LensMake, fixture.LensModel)
+
+		assert.NoError(t, err)
+		assert.False(t, created)
+		assert.Equal(t, fixture.ID, result.ID)
+		assert.Equal(t, SrcManual, result.LensSrc)
+
+		found := Lens{}
+		assert.NoError(t, Db().First(&found, "id = ?", fixture.ID).Error)
+		assert.Equal(t, SrcManual, found.LensSrc)
+	})
+	t.Run("ExistingRenamed", func(t *testing.T) {
+		fixture := LensFixtures.Get("4.15mm-f/2.2")
+		t.Cleanup(func() {
+			FlushLensCache()
+			assert.NoError(t, UnscopedDb().Save(LensFixtures.Pointer("4.15mm-f/2.2")).Error)
+		})
+
+		// A renamed record keeps its slug, so it can only be found by make and model.
+		renamed := Lens{}
+		assert.NoError(t, Db().First(&renamed, "id = ?", fixture.ID).Error)
+		assert.NoError(t, renamed.UpdateMakeModel("Zeiss", "Planar 50mm f/1.4"))
+		assert.Equal(t, fixture.LensSlug, renamed.LensSlug)
+		assert.NotEqual(t, NewLens("Zeiss", "Planar 50mm f/1.4").LensSlug, renamed.LensSlug)
+
+		result, created, err := AddLens("Zeiss", "Planar 50mm f/1.4")
+
+		assert.NoError(t, err)
+		assert.False(t, created)
+		assert.Equal(t, fixture.ID, result.ID)
+	})
+	t.Run("EmptyMake", func(t *testing.T) {
+		result, created, err := AddLens("  ", "44-2 58mm f/2")
+		assert.ErrorIs(t, err, ErrInvalidValue)
+		assert.ErrorContains(t, err, "make and model must not be empty")
+		assert.False(t, created)
+		assert.Nil(t, result)
+	})
+	t.Run("EmptyModel", func(t *testing.T) {
+		result, created, err := AddLens("Helios", "")
+		assert.ErrorIs(t, err, ErrInvalidValue)
+		assert.ErrorContains(t, err, "make and model must not be empty")
+		assert.False(t, created)
+		assert.Nil(t, result)
+	})
+	t.Run("ModelSameAsMake", func(t *testing.T) {
+		result, created, err := AddLens("Zenit", "Zenit")
+		assert.ErrorIs(t, err, ErrInvalidValue)
+		assert.ErrorContains(t, err, "model must not be empty after removing the make")
+		assert.False(t, created)
+		assert.Nil(t, result)
+	})
+	t.Run("UnknownSlug", func(t *testing.T) {
+		unknown := Lens{}
+		assert.NoError(t, Db().First(&unknown, "id = ?", UnknownLens.ID).Error)
+
+		// These inputs normalize to the slug of the shared placeholder, which must stay untouched.
+		for _, input := range [][2]string{{"ZZ", "."}, {"!", "zz"}, {"-", "zz"}} {
+			result, created, err := AddLens(input[0], input[1])
+			assert.ErrorIs(t, err, ErrInvalidValue, "%q", input)
+			assert.False(t, created)
+			assert.Nil(t, result)
+		}
+
+		found := Lens{}
+		assert.NoError(t, Db().First(&found, "id = ?", UnknownLens.ID).Error)
+		assert.Equal(t, unknown.LensSrc, found.LensSrc)
+	})
+	t.Run("ExistingPurged", func(t *testing.T) {
+		slug := NewLens("Zenit", "TTL").LensSlug
+		removeLens(slug)
+		t.Cleanup(func() { removeLens(slug) })
+
+		// A discovered orphan that is purged between the lookup and marking it is created again.
+		orphan := FirstOrCreateLens(NewLens("Zenit", "TTL"))
+		assert.NotZero(t, orphan.ID)
+		removeLens(slug)
+		assert.ErrorIs(t, orphan.markManual(), gorm.ErrRecordNotFound)
+
+		result, created, err := AddLens("Zenit", "TTL")
+		assert.NoError(t, err)
+		assert.True(t, created)
+		assert.Equal(t, SrcManual, result.LensSrc)
+	})
+}
+
+func TestLens_markManual(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		fixture := LensFixtures.Get("lens-f-380")
+		t.Cleanup(func() {
+			FlushLensCache()
+			assert.NoError(t, UnscopedDb().Save(LensFixtures.Pointer("lens-f-380")).Error)
+		})
+
+		m := Lens{}
+		assert.NoError(t, Db().First(&m, "id = ?", fixture.ID).Error)
+		assert.Empty(t, m.LensSrc)
+		assert.NoError(t, m.markManual())
+		assert.Equal(t, SrcManual, m.LensSrc)
+
+		found := Lens{}
+		assert.NoError(t, Db().First(&found, "id = ?", fixture.ID).Error)
+		assert.Equal(t, SrcManual, found.LensSrc)
+
+		// Marking it again is a no-op.
+		assert.NoError(t, m.markManual())
+	})
+	t.Run("NoPrimaryKey", func(t *testing.T) {
+		m := Lens{LensSlug: "no-primary-key"}
+		assert.Error(t, m.markManual())
+		assert.Empty(t, m.LensSrc)
+	})
+}
+
+func TestLens_UpdateMakeModelUnknown(t *testing.T) {
+	m := UnknownLens
+	assert.NotZero(t, m.ID)
+	assert.EqualError(t, m.UpdateMakeModel("Helios", "44-2 58mm f/2"), "unknown lens cannot be changed")
+	assert.Equal(t, UnknownLens.LensName, m.LensName)
 }

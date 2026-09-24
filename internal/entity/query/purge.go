@@ -86,7 +86,7 @@ func PurgeOrphanCountries() error {
 	return result.Error
 }
 
-// PurgeOrphanCameras removes cameras without any photos.
+// PurgeOrphanCameras removes cameras without any photos, except those that have been added manually.
 func PurgeOrphanCameras() error {
 	mutex.Index.Lock()
 	defer mutex.Index.Unlock()
@@ -94,13 +94,13 @@ func PurgeOrphanCameras() error {
 	entity.FlushCameraCache()
 
 	result := UnscopedDb().
-		Exec(`DELETE FROM cameras WHERE camera_slug <> ? AND id NOT IN (SELECT camera_id FROM photos)`,
-			entity.UnknownCamera.CameraSlug)
+		Exec(`DELETE FROM cameras WHERE camera_slug <> ? AND (camera_src IS NULL OR camera_src <> ?) AND id NOT IN (SELECT camera_id FROM photos)`,
+			entity.UnknownCamera.CameraSlug, entity.SrcManual)
 
 	return result.Error
 }
 
-// PurgeOrphanLenses removes cameras without any photos.
+// PurgeOrphanLenses removes lenses without any photos, except those that have been added manually.
 func PurgeOrphanLenses() error {
 	mutex.Index.Lock()
 	defer mutex.Index.Unlock()
@@ -108,8 +108,8 @@ func PurgeOrphanLenses() error {
 	entity.FlushLensCache()
 
 	result := UnscopedDb().
-		Exec(`DELETE FROM lenses WHERE lens_slug <> ? AND id NOT IN (SELECT lens_id FROM photos)`,
-			entity.UnknownLens.LensSlug)
+		Exec(`DELETE FROM lenses WHERE lens_slug <> ? AND (lens_src IS NULL OR lens_src <> ?) AND id NOT IN (SELECT lens_id FROM photos)`,
+			entity.UnknownLens.LensSlug, entity.SrcManual)
 
 	return result.Error
 }

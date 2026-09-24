@@ -1,11 +1,13 @@
 package entity
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 	"sync"
 	"time"
 
+	"github.com/jinzhu/gorm"
 	"github.com/ulule/deepcopier"
 
 	"github.com/photoprism/photoprism/internal/event"
@@ -29,6 +31,7 @@ type Camera struct {
 	CameraType        string     `gorm:"type:VARCHAR(100);" json:"Type,omitempty" yaml:"Type,omitempty"`
 	CameraDescription string     `gorm:"type:VARCHAR(2048);" json:"Description,omitempty" yaml:"Description,omitempty"`
 	CameraNotes       string     `gorm:"type:VARCHAR(1024);" json:"Notes,omitempty" yaml:"Notes,omitempty"`
+	CameraSrc         string     `gorm:"type:VARBINARY(8);default:'';" json:"-" yaml:"-"`
 	CreatedAt         time.Time  `json:"-" yaml:"-"`
 	UpdatedAt         time.Time  `json:"-" yaml:"-"`
 	DeletedAt         *time.Time `sql:"index" json:"-" yaml:"-"`
@@ -59,9 +62,9 @@ func NewCamera(makeName string, modelName string) *Camera {
 
 	if modelName == "" && makeName == "" {
 		return &UnknownCamera
-	} else if strings.HasPrefix(modelName, makeName) {
-		modelName = strings.TrimSpace(modelName[len(makeName):])
 	}
+
+	modelName = trimMakePrefix(modelName, makeName)
 
 	// Normalize make name.
 	if n, ok := CameraMakes[makeName]; ok {
@@ -73,9 +76,7 @@ func NewCamera(makeName string, modelName string) *Camera {
 		modelName = n
 	}
 
-	if strings.HasPrefix(modelName, makeName) {
-		modelName = strings.TrimSpace(modelName[len(makeName):])
-	}
+	modelName = trimMakePrefix(modelName, makeName)
 
 	// Determine device type based on make and model.
 	cameraType := GetCameraType(makeName, modelName)
@@ -151,6 +152,101 @@ func FirstOrCreateCamera(m *Camera) *Camera {
 	return &UnknownCamera
 }
 
+// AddCamera returns the camera with the specified make and model, and creates it if it does not exist yet.
+// The camera is marked as added manually, so that purging orphans keeps it while no picture references it.
+func AddCamera(makeName, modelName string) (result *Camera, created bool, err error) {
+	makeName = strings.TrimSpace(makeName)
+	modelName = strings.TrimSpace(modelName)
+
+	if makeName == "" || modelName == "" {
+		return nil, false, fmt.Errorf("%w: make and model must not be empty", ErrInvalidValue)
+	}
+
+	m := NewCamera(makeName, modelName)
+
+	if strings.TrimSpace(m.CameraModel) == "" {
+		return nil, false, fmt.Errorf("%w: model must not be empty after removing the make", ErrInvalidValue)
+	} else if m.Unknown() {
+		return nil, false, fmt.Errorf("%w: make and model must not match the unknown camera", ErrInvalidValue)
+	}
+
+	// Report an existing camera instead of creating a duplicate, unless it has been purged in the meantime.
+	if existing := findCameraByMakeModel(m); existing != nil && !existing.Unknown() {
+		if err = existing.markManual(); err == nil {
+			return existing, false, nil
+		} else if !errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, false, err
+		}
+	}
+
+	m.CameraSrc = SrcManual
+
+	if result = FirstOrCreateCamera(m); result == m {
+		return result, true, nil
+	} else if result.Unknown() {
+		return nil, false, fmt.Errorf("failed to create camera %s", m.String())
+	} else if err = result.markManual(); err != nil {
+		return nil, false, err
+	}
+
+	return result, false, nil
+}
+
+// findCameraByMakeModel returns the camera with the same slug, or else with the same make and model, if any.
+// The make and model lookup covers renamed records, whose slug no longer matches their name.
+func findCameraByMakeModel(m *Camera) *Camera {
+	existing := Camera{}
+
+	if Db().Where("camera_slug = ?", m.CameraSlug).First(&existing).Error == nil {
+		return &existing
+	}
+
+	var candidates Cameras
+
+	if Db().Where("camera_make = ? AND camera_model = ?", m.CameraMake, m.CameraModel).Find(&candidates).Error != nil {
+		return nil
+	}
+
+	// Compare in Go, since MariaDB collations also match values that differ in case, accents, or emoji.
+	for i := range candidates {
+		if candidates[i].CameraMake == m.CameraMake && candidates[i].CameraModel == m.CameraModel {
+			return &candidates[i]
+		}
+	}
+
+	return nil
+}
+
+// markManual marks an existing camera as added manually, so that purging orphans keeps it.
+// It returns gorm.ErrRecordNotFound if the camera no longer exists, e.g. because it has been purged.
+func (m *Camera) markManual() error {
+	if m.ID == 0 {
+		// Without a primary key, the update would apply to all rows.
+		return fmt.Errorf("empty id")
+	}
+
+	cameraMutex.Lock()
+	defer cameraMutex.Unlock()
+
+	if res := UnscopedDb().Model(m).UpdateColumn("camera_src", SrcManual); res.Error != nil {
+		return res.Error
+	} else if res.RowsAffected == 0 {
+		// MariaDB counts only changed rows, so check whether the camera still exists.
+		var count int
+
+		if err := UnscopedDb().Model(&Camera{}).Where("id = ?", m.ID).Count(&count).Error; err != nil {
+			return err
+		} else if count == 0 {
+			return gorm.ErrRecordNotFound
+		}
+	}
+
+	m.CameraSrc = SrcManual
+	cameraCache.SetDefault(m.CameraSlug, m)
+
+	return nil
+}
+
 // String returns an identifier that can be used in logs.
 func (m *Camera) String() string {
 	if m == nil {
@@ -196,6 +292,9 @@ func (m *Camera) Unknown() bool {
 func (m *Camera) UpdateMakeModel(makeName, modelName string) error {
 	if m.ID == 0 {
 		return fmt.Errorf("empty id")
+	} else if m.Unknown() {
+		// Renaming the shared placeholder would relabel every picture without camera information.
+		return fmt.Errorf("unknown camera cannot be changed")
 	}
 
 	makeName = strings.TrimSpace(makeName)

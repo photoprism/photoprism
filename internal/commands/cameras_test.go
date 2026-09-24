@@ -1,10 +1,12 @@
 package commands
 
 import (
+	"fmt"
 	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/entity"
 )
@@ -82,5 +84,98 @@ func TestCamerasCommand(t *testing.T) {
 		assert.Contains(t, output, "Updated At")
 		assert.Contains(t, output, "PENTAX K-1")
 		assert.Contains(t, output, "1000002")
+	})
+	t.Run("AddValid", func(t *testing.T) {
+		slug := entity.NewCamera("Minolta", "X-700").CameraSlug
+		remove := func() {
+			entity.FlushCameraCache()
+			assert.NoError(t, entity.UnscopedDb().Delete(&entity.Camera{}, "camera_slug = ?", slug).Error)
+		}
+		remove()
+		t.Cleanup(remove)
+
+		output, err := RunWithTestContext(CamerasCommand, []string{"cameras", "add", "--make=Minolta", "--model=X-700"})
+		assert.NoError(t, err)
+		assert.Contains(t, output, "Updated At")
+		assert.Contains(t, output, slug)
+		assert.Contains(t, output, "Minolta X-700")
+
+		// Adding it a second time reports the existing camera instead of creating a duplicate.
+		output, err = RunWithTestContext(CamerasCommand, []string{"cameras", "add", "--make=Minolta", "--model=X-700"})
+		assert.NoError(t, err)
+		assert.Contains(t, output, slug)
+
+		var count int
+		assert.NoError(t, entity.Db().Model(&entity.Camera{}).Where("camera_slug = ?", slug).Count(&count).Error)
+		assert.Equal(t, 1, count)
+	})
+	t.Run("AddExisting", func(t *testing.T) {
+		t.Cleanup(func() {
+			entity.FlushCameraCache()
+			assert.NoError(t, entity.UnscopedDb().Save(entity.CameraFixtures.Pointer("canon-eos-7d")).Error)
+		})
+
+		// A renamed camera keeps its slug, so only the make and model lookup can find it.
+		renamed := entity.Camera{}
+		assert.NoError(t, entity.Db().First(&renamed, "id = ?", 1000002).Error)
+		assert.NoError(t, renamed.UpdateMakeModel("Minolta", "XD-7"))
+
+		var before int
+		assert.NoError(t, entity.Db().Model(&entity.Camera{}).Count(&before).Error)
+
+		output, err := RunWithTestContext(CamerasCommand, []string{"cameras", "add", "--make=Minolta", "--model=XD-7"})
+		assert.NoError(t, err)
+		assert.Contains(t, output, "1000002")
+		assert.Contains(t, output, "Minolta XD-7")
+
+		var after int
+		assert.NoError(t, entity.Db().Model(&entity.Camera{}).Count(&after).Error)
+		assert.Equal(t, before, after)
+	})
+	t.Run("AddWithNoModel", func(t *testing.T) {
+		output, err := RunWithTestContext(CamerasCommand, []string{"cameras", "add", "--make=Minolta"})
+		assert.Error(t, err)
+		assert.Contains(t, output, "add - Adds a camera")
+		assert.Contains(t, err.Error(), `Required flag "model" not set`)
+	})
+	t.Run("AddWithEmptyMakeAndModel", func(t *testing.T) {
+		output, err := RunWithTestContext(CamerasCommand, []string{"cameras", "add", "--make= ", "--model="})
+		assert.Error(t, err)
+		assert.Len(t, output, 0)
+		assert.Contains(t, err.Error(), "make and model must not be empty")
+		assertExitCode(t, err, 2)
+	})
+	t.Run("AddWithModelSameAsMake", func(t *testing.T) {
+		output, err := RunWithTestContext(CamerasCommand, []string{"cameras", "add", "--make=Minolta", "--model=Minolta"})
+		assert.Error(t, err)
+		assert.Len(t, output, 0)
+		assert.Contains(t, err.Error(), "model must not be empty after removing the make")
+		assertExitCode(t, err, 2)
+	})
+	t.Run("UpdateUnknown", func(t *testing.T) {
+		_, err := RunWithTestContext(CamerasCommand, []string{"cameras", "update", fmt.Sprintf("--id=%d", entity.UnknownCamera.ID), "--make=Example", "--model=Example"})
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "unknown camera cannot be changed")
+		assertExitCode(t, err, 2)
+	})
+}
+
+func TestPrintCamera(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		output, err := RunWithTestContext(&cli.Command{
+			Name:   "print",
+			Action: func(ctx *cli.Context) error { return printCamera(ctx, 1000002) },
+		}, []string{"print"})
+		assert.NoError(t, err)
+		assert.Contains(t, output, "1000002")
+		assert.Contains(t, output, "EOS 7D")
+	})
+	t.Run("NotFound", func(t *testing.T) {
+		output, err := RunWithTestContext(&cli.Command{
+			Name:   "print",
+			Action: func(ctx *cli.Context) error { return printCamera(ctx, 999999999) },
+		}, []string{"print"})
+		assert.NoError(t, err)
+		assert.NotContains(t, output, "999999999")
 	})
 }

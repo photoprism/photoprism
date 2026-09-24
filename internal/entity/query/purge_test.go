@@ -90,13 +90,47 @@ func TestPurgeUnusedCountries(t *testing.T) {
 }
 
 func TestPurgeUnusedCameras(t *testing.T) {
-	if err := PurgeOrphanCameras(); err != nil {
+	added, created, err := entity.AddCamera("Minolta", "X-700")
+	assert.NoError(t, err)
+	assert.True(t, created)
+	orphan := entity.FirstOrCreateCamera(entity.NewCamera("Minolta", "XD-7"))
+	assert.NotZero(t, orphan.ID)
+	t.Cleanup(func() {
+		entity.FlushCameraCache()
+		assert.NoError(t, UnscopedDb().Delete(&entity.Camera{}, "id IN (?)", []uint{added.ID, orphan.ID}).Error)
+	})
+
+	if err = PurgeOrphanCameras(); err != nil {
 		t.Fatal(err)
 	}
+
+	// Orphans are removed unless they have been added manually.
+	var count int
+	assert.NoError(t, UnscopedDb().Model(&entity.Camera{}).Where("id = ?", added.ID).Count(&count).Error)
+	assert.Equal(t, 1, count)
+	assert.NoError(t, UnscopedDb().Model(&entity.Camera{}).Where("id = ?", orphan.ID).Count(&count).Error)
+	assert.Equal(t, 0, count)
 }
 
 func TestPurgeUnusedLenses(t *testing.T) {
-	if err := PurgeOrphanLenses(); err != nil {
+	added, created, err := entity.AddLens("Helios", "44-2 58mm f/2")
+	assert.NoError(t, err)
+	assert.True(t, created)
+	orphan := entity.FirstOrCreateLens(entity.NewLens("Helios", "44M-4 58mm f/2"))
+	assert.NotZero(t, orphan.ID)
+	t.Cleanup(func() {
+		entity.FlushLensCache()
+		assert.NoError(t, UnscopedDb().Delete(&entity.Lens{}, "id IN (?)", []uint{added.ID, orphan.ID}).Error)
+	})
+
+	if err = PurgeOrphanLenses(); err != nil {
 		t.Fatal(err)
 	}
+
+	// Orphans are removed unless they have been added manually.
+	var count int
+	assert.NoError(t, UnscopedDb().Model(&entity.Lens{}).Where("id = ?", added.ID).Count(&count).Error)
+	assert.Equal(t, 1, count)
+	assert.NoError(t, UnscopedDb().Model(&entity.Lens{}).Where("id = ?", orphan.ID).Count(&count).Error)
+	assert.Equal(t, 0, count)
 }
