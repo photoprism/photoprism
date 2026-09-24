@@ -650,4 +650,25 @@ func TestOAuthToken_InactiveUser(t *testing.T) {
 		w := tokenRequest(client, secret)
 		assert.Equal(t, http.StatusOK, w.Code, "body=%s", w.Body.String())
 	})
+	t.Run("ProviderNone", func(t *testing.T) {
+		user, client, secret := newUserClient(t)
+		require.NoError(t, entity.Db().Model(user).UpdateColumn("auth_provider", authn.ProviderNone.String()).Error)
+
+		w := tokenRequest(client, secret)
+		assert.Equal(t, http.StatusUnauthorized, w.Code, "body=%s", w.Body.String())
+	})
+	t.Run("RoleNone", func(t *testing.T) {
+		user, client, secret := newUserClient(t)
+		require.NoError(t, entity.Db().Model(user).UpdateColumn("user_role", acl.RoleNone.String()).Error)
+
+		w := tokenRequest(client, secret)
+		assert.Equal(t, http.StatusUnauthorized, w.Code, "body=%s", w.Body.String())
+	})
+	t.Run("WebLoginDisabled", func(t *testing.T) {
+		user, client, secret := newUserClient(t)
+		require.NoError(t, entity.Db().Model(user).UpdateColumn("can_login", false).Error)
+
+		w := tokenRequest(client, secret)
+		assert.Equal(t, http.StatusOK, w.Code, "body=%s", w.Body.String())
+	})
 }

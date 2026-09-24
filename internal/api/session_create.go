@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
@@ -97,7 +98,7 @@ func CreateSession(router *gin.RouterGroup) {
 		var err error
 
 		// Find existing session, if any.
-		if s := Session(clientIp, AuthToken(c)); s != nil && s.VerifyStored() == nil {
+		if s := Session(clientIp, AuthToken(c)); sessionReusable(s) {
 			// Update existing session.
 			sess = s
 		} else {
@@ -172,4 +173,23 @@ func CreateSession(router *gin.RouterGroup) {
 
 	router.POST("/session", createSessionHandler)
 	router.POST("/sessions", createSessionHandler)
+}
+
+// sessionReusable reports whether sign-in may continue an existing session: its row must still exist, and a
+// client session needs a scope that includes creating sessions and an owner account that admits it.
+func sessionReusable(s *entity.Session) bool {
+	switch {
+	case s == nil || s.VerifyStored() != nil:
+		return false
+	case !s.IsClient():
+		return true
+	case !s.ValidateScope(acl.ResourceSessions, acl.Permissions{acl.ActionCreate}):
+		return false
+	case s.IsApplication():
+		return !s.GetUser().DenyLogIn()
+	case s.NoUser():
+		return true
+	default:
+		return !s.GetUser().DenyClientAccess()
+	}
 }

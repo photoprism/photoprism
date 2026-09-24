@@ -113,6 +113,18 @@ func TestDownloadNotAdmitted(t *testing.T) {
 		sess := entity.Session{AuthProvider: authn.ProviderClient.String()}
 		assert.True(t, downloadNotAdmitted(downloadCtx(""), sess.SetUser(&entity.Visitor)))
 	})
+	t.Run("ClientOfDeactivatedOwnerRefused", func(t *testing.T) {
+		sess := entity.Session{AuthProvider: authn.ProviderClient.String()}
+		owner := entity.UserFixtures.Get("bob")
+		owner.AuthProvider = authn.ProviderNone.String()
+		assert.True(t, downloadNotAdmitted(downloadCtx(""), sess.SetUser(&owner)))
+	})
+	t.Run("ClientOfOwnerWithoutWebLoginAdmitted", func(t *testing.T) {
+		sess := entity.Session{AuthProvider: authn.ProviderClient.String()}
+		owner := entity.UserFixtures.Get("bob")
+		owner.CanLogin = false
+		assert.False(t, downloadNotAdmitted(downloadCtx(""), sess.SetUser(&owner)))
+	})
 	t.Run("HeaderAuthorizedSessionExempt", func(t *testing.T) {
 		// The cluster JWT path is admitted by authAnyJWT, which resolves no account to check.
 		sess := entity.Session{}

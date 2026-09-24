@@ -308,8 +308,8 @@ func (m *Client) HasUser() bool {
 	return rnd.IsUID(m.UserUID, UserUID)
 }
 
-// HasInactiveUser checks if the client belongs to a user account that no longer exists, has been
-// deleted, or has expired.
+// HasInactiveUser checks if the client belongs to a user account that no longer exists or whose
+// bound clients must be refused, see User.DenyClientAccess.
 func (m *Client) HasInactiveUser() bool {
 	if m == nil || m.UserUID == "" {
 		return false
@@ -319,7 +319,7 @@ func (m *Client) HasInactiveUser() bool {
 
 	u := m.User()
 
-	return !u.HasUID() || u.IsDisabled()
+	return !u.HasUID() || u.DenyClientAccess()
 }
 
 // SetUser sets the user to which the client belongs.

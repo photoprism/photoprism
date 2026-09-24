@@ -1334,17 +1334,36 @@ func TestClient_HasInactiveUser(t *testing.T) {
 	})
 	t.Run("DeletedUser", func(t *testing.T) {
 		deletedAt := time.Now().Add(-time.Minute)
-		m := NewClient().SetUser(&User{UserUID: rnd.GenerateUID(UserUID), DeletedAt: &deletedAt})
+		u := *UserFixtures.Pointer("bob")
+		u.DeletedAt = &deletedAt
+		m := NewClient().SetUser(&u)
 		assert.True(t, m.HasInactiveUser())
 	})
 	t.Run("ExpiredUser", func(t *testing.T) {
 		expiresAt := time.Now().Add(-time.Minute)
-		m := NewClient().SetUser(&User{UserUID: rnd.GenerateUID(UserUID), ExpiresAt: &expiresAt})
+		u := *UserFixtures.Pointer("bob")
+		u.ExpiresAt = &expiresAt
+		m := NewClient().SetUser(&u)
 		assert.True(t, m.HasInactiveUser())
+	})
+	t.Run("ProviderNone", func(t *testing.T) {
+		u := *UserFixtures.Pointer("bob")
+		u.AuthProvider = authn.ProviderNone.String()
+		m := NewClient().SetUser(&u)
+		assert.True(t, m.HasInactiveUser())
+	})
+	t.Run("WebLoginDisabled", func(t *testing.T) {
+		u := *UserFixtures.Pointer("bob")
+		u.CanLogin = false
+		m := NewClient().SetUser(&u)
+		assert.False(t, m.HasInactiveUser())
 	})
 	t.Run("ExpiredSuperAdmin", func(t *testing.T) {
 		expiresAt := time.Now().Add(-time.Minute)
-		m := NewClient().SetUser(&User{UserUID: rnd.GenerateUID(UserUID), ExpiresAt: &expiresAt, SuperAdmin: true})
+		u := *UserFixtures.Pointer("alice")
+		u.ExpiresAt = &expiresAt
+		u.SuperAdmin = true
+		m := NewClient().SetUser(&u)
 		assert.False(t, m.HasInactiveUser())
 	})
 }
