@@ -11,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -64,11 +65,23 @@ func TestFaces_ResetAndReindex_Detect(t *testing.T) {
 	runFacesReindex = func(idx *Index, opt IndexOptions) (fs.Done, int, error) {
 		called = true
 		received = opt
-		return fs.Done{}, 0, nil
+
+		// Every file is reported as processed, as the index would after a complete run.
+		counts, err := query.FaceMarkerFiles(opt.Path)
+
+		for fileUID := range counts {
+			opt.FaceRegeneration.add(fileUID, faceRegenerationResult{})
+		}
+
+		return fs.Done{}, 0, err
 	}
 
 	c := config.TestConfig()
 	m := NewFaces(c)
+
+	detector := c.Options().FaceDetector
+	t.Cleanup(func() { c.Options().FaceDetector = detector })
+	c.Options().FaceDetector = face.DetectorYuNet
 	writeOriginalsTestFile(t, c)
 
 	err := m.ResetAndReindex(face.DetectorAuto, NewIndex(c, NewConvert(c), NewFiles(), NewPhotos()), false)
@@ -77,6 +90,7 @@ func TestFaces_ResetAndReindex_Detect(t *testing.T) {
 	require.True(t, received.FacesOnly)
 	require.True(t, received.RegenerateFaces)
 	require.NotNil(t, received.FaceRegeneration)
+	assert.Equal(t, face.DetectorYuNet, c.Options().FaceDetector, "auto keeps the configured detector")
 	require.Equal(t, face.EngineONNX, c.FaceEngine())
 }
 

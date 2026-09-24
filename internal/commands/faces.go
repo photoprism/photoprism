@@ -438,13 +438,28 @@ func facesResetAction(ctx *cli.Context) error {
 		return cli.Exit(fmt.Sprintf("faces: unsupported face detector %s", clean.Log(detector)), 2)
 	}
 
+	regenerate := detector != "" && face.ParseDetectorName(detector) != face.DetectorNone
+	detectorName := detector
+
+	// Auto names the configured detector, which only the config knows. It is loaded without the
+	// database, so a declined or refused prompt changes nothing.
+	if regenerate && face.ParseDetectorName(detector) == face.DetectorAuto {
+		coreConf, coreErr := InitCoreConfig(ctx, false)
+
+		if coreErr != nil {
+			return coreErr
+		} else if detectorName = facesResetDetectorName(coreConf, detector); face.ParseDetectorName(detectorName) == face.DetectorNone {
+			return cli.Exit("faces: no face detector can be used, so markers cannot be regenerated", 2)
+		}
+	}
+
 	// The run cannot see a running instance, so the operator is asked to rule out a concurrent pass.
-	if detector != "" && face.ParseDetectorName(detector) != face.DetectorNone && !RunNonInteractively(ctx.Bool("yes")) {
+	if regenerate && !RunNonInteractively(ctx.Bool("yes")) {
 		log.Warnf("faces: make sure the instance is stopped or idle before you continue")
 	}
 
-	if proceed, err := ConfirmAction(ctx.Bool("yes"), facesResetLabel(all, detector)); err != nil {
-		return err
+	if proceed, confirmErr := ConfirmAction(ctx.Bool("yes"), facesResetLabel(all, detectorName)); confirmErr != nil {
+		return confirmErr
 	} else if !proceed {
 		log.Infof("faces: no faces were removed")
 		return nil
@@ -454,8 +469,6 @@ func facesResetAction(ctx *cli.Context) error {
 		log.SetLevel(logrus.TraceLevel)
 		log.Infoln("reset: enabled trace mode")
 	}
-
-	start := time.Now()
 
 	conf, err := InitConfig(ctx)
 
@@ -469,6 +482,7 @@ func facesResetAction(ctx *cli.Context) error {
 	conf.InitDb()
 	defer conf.Shutdown()
 
+	start := time.Now()
 	w := get.Faces()
 
 	var resetErr error
@@ -505,6 +519,16 @@ func facesResetDetector(ctx *cli.Context) string {
 	}
 
 	return ""
+}
+
+// facesResetDetectorName returns the name of the detector a reset regenerates the markers with, which
+// is the configured one when auto is requested.
+func facesResetDetectorName(conf *config.Config, detector string) string {
+	if conf != nil && detector != "" && face.ParseDetectorName(detector) == face.DetectorAuto {
+		return string(conf.FaceDetector())
+	}
+
+	return detector
 }
 
 // facesResetLabel returns the confirmation prompt for the scope and detector a reset was given.

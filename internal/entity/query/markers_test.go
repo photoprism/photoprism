@@ -560,3 +560,47 @@ func TestResetAllFaceMarkerMatches(t *testing.T) {
 		assert.NotEmpty(t, m.Thumb)
 	})
 }
+
+func TestFaceMarkerFiles(t *testing.T) {
+	const fileUID = "fs6sg6bw45bn0004" // Germany/bridge.jpg
+
+	t.Run("All", func(t *testing.T) {
+		result, err := FaceMarkerFiles("")
+
+		require.NoError(t, err)
+		assert.Greater(t, result[fileUID], 0)
+		assert.Greater(t, result["fs6sg6bq45bnlqd0"], 0) // London/bridge1.jpg
+
+		dot, err := FaceMarkerFiles(".")
+		require.NoError(t, err)
+		assert.Equal(t, result, dot)
+	})
+	t.Run("PrimaryOnly", func(t *testing.T) {
+		// London/bridge3.jpg holds a marker but is not the primary file, which the index does not reach.
+		result, err := FaceMarkerFiles("")
+
+		require.NoError(t, err)
+		assert.NotContains(t, result, "fs6sg6bwhhbnlqdn")
+	})
+	t.Run("Folder", func(t *testing.T) {
+		result, err := FaceMarkerFiles("/Germany/")
+
+		require.NoError(t, err)
+		assert.Greater(t, result[fileUID], 0)
+		assert.NotContains(t, result, "fs6sg6bq45bnlqd0", "files in other folders are left out")
+	})
+	t.Run("Wildcards", func(t *testing.T) {
+		for _, dir := range []string{"Lond_n", "Lon%", "German_"} {
+			result, err := FaceMarkerFiles(dir)
+
+			require.NoError(t, err)
+			assert.Empty(t, result, dir)
+		}
+	})
+	t.Run("MissingFolder", func(t *testing.T) {
+		result, err := FaceMarkerFiles("missing-folder")
+
+		require.NoError(t, err)
+		assert.Empty(t, result)
+	})
+}

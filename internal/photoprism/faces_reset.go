@@ -130,7 +130,11 @@ func (w *Faces) resetAndReindex(detector string, index *Index, all bool, path st
 	}
 
 	configured := w.conf.FaceDetector()
-	w.conf.Options().FaceDetector = face.ParseDetectorName(name)
+
+	// Auto keeps the configured detector rather than the one a blank setting would derive.
+	if parsed := face.ParseDetectorName(name); parsed != face.DetectorAuto {
+		w.conf.Options().FaceDetector = parsed
+	}
 
 	opt := IndexOptionsFacesOnly(w.conf)
 	opt.Path = path
@@ -172,6 +176,16 @@ func (w *Faces) resetAndReindex(detector string, index *Index, all bool, path st
 			clean.Log(w.conf.FaceDetector()))
 	}
 
+	// The index skips files it cannot process without an error, and may stop early, so what it did
+	// not reach is counted from the markers table rather than inferred from the walk.
+	if markers, files, countErr := unregeneratedMarkers(path, opt.FaceRegeneration); countErr != nil {
+		return opt.FaceRegeneration, countErr
+	} else if markers > 0 {
+		return opt.FaceRegeneration, fmt.Errorf("faces: could not regenerate %s in %s the index did not reach, "+
+			"so index or purge the library if originals were moved or removed, and run it again",
+			english.Plural(markers, "marker", "markers"), english.Plural(files, "file", "files"))
+	}
+
 	return opt.FaceRegeneration, nil
 }
 
@@ -210,4 +224,23 @@ func (w *Faces) regenerateRefused(index *Index, opt IndexOptions) error {
 	}
 
 	return nil
+}
+
+// unregeneratedMarkers returns how many face markers, and in how many files, a regeneration of the
+// folder did not reach.
+func unregeneratedMarkers(dir string, stats *FaceRegeneration) (markers, files int, err error) {
+	counts, err := query.FaceMarkerFiles(dir)
+
+	if err != nil {
+		return 0, 0, err
+	}
+
+	for fileUID, n := range counts {
+		if !stats.Processed(fileUID) {
+			markers += n
+			files++
+		}
+	}
+
+	return markers, files, nil
 }

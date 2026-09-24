@@ -2,7 +2,7 @@ package photoprism
 
 import (
 	"fmt"
-	"math"
+	"sync"
 	"sync/atomic"
 
 	"github.com/dustin/go-humanize/english"
@@ -18,6 +18,7 @@ import (
 // FaceRegeneration counts what regenerating the face markers changed in the files of a run. The
 // index workers update it concurrently.
 type FaceRegeneration struct {
+	processed   sync.Map
 	Files       atomic.Int64
 	FailedFiles atomic.Int64
 	Updated     atomic.Int64
@@ -28,10 +29,12 @@ type FaceRegeneration struct {
 }
 
 // add adds the changes made to one file.
-func (s *FaceRegeneration) add(r faceRegenerationResult) {
+func (s *FaceRegeneration) add(fileUID string, r faceRegenerationResult) {
 	if s == nil {
 		return
 	}
+
+	s.processed.Store(fileUID, true)
 
 	s.Files.Add(1)
 	s.Updated.Add(int64(r.Updated))
@@ -39,6 +42,17 @@ func (s *FaceRegeneration) add(r faceRegenerationResult) {
 	s.Removed.Add(int64(r.Removed))
 	s.Kept.Add(int64(r.Kept))
 	s.Failed.Add(int64(r.Failed))
+}
+
+// Processed reports whether the markers of the file were regenerated.
+func (s *FaceRegeneration) Processed(fileUID string) bool {
+	if s == nil {
+		return false
+	}
+
+	_, ok := s.processed.Load(fileUID)
+
+	return ok
 }
 
 // addError counts a file whose markers could not be regenerated and were left unchanged.
@@ -103,7 +117,16 @@ func (ind *Index) regenerateFaces(jpeg *MediaFile, file *entity.File, importFace
 		return result, err
 	}
 
+	// Loaded again rather than taken from the file, which reads a failed lookup as no markers and
+	// would add every face a second time.
+	stored, err := entity.FindMarkers(file.FileUID)
+
+	if err != nil {
+		return result, fmt.Errorf("faces: %s (load markers)", err)
+	}
+
 	markers := file.Markers()
+	*markers = stored
 
 	var valid, rejected entity.Markers
 
@@ -117,26 +140,7 @@ func (ind *Index) regenerateFaces(jpeg *MediaFile, file *entity.File, importFace
 		}
 	}
 
-	// Valid markers claim their detections first, so a rejected marker cannot take one from a face
-	// that is still in use. A named marker whose own face is not detected may claim a neighboring
-	// face without a marker, within the overlap and size bounds; that limit is accepted.
-	claimed := make(map[int]bool, len(valid)+len(rejected))
-	assignments := valid.MatchFacesBestFit(detected, claimed)
-
-	for _, i := range assignments {
-		claimed[i] = true
-	}
-
-	// A rejected marker only claims what an ordinary index would refuse to add next to it, so it
-	// cannot keep a face from being added that it merely touches.
-	for markerUID, i := range rejected.MatchFacesBestFit(detected, claimed) {
-		for j := range rejected {
-			if rejected[j].MarkerUID == markerUID && rejected[j].CropArea().OverlapPercent(detected[i].CropArea()) > face.OverlapThreshold {
-				assignments[markerUID] = i
-				claimed[i] = true
-			}
-		}
-	}
+	assignments, claimed := matchRegeneratedFaces(valid, rejected, detected)
 
 	anchored := xmpAnchoredMarkers(jpeg, valid, importFaceTags)
 
@@ -185,7 +189,7 @@ func (ind *Index) regenerateFaces(jpeg *MediaFile, file *entity.File, importFace
 			}
 
 			kept = append(kept, *marker)
-		} else if marker.MarkerInvalid || !marker.DetectedFace() || marker.SubjUID != "" || marker.MarkerName != "" {
+		} else if marker.MarkerInvalid || !marker.DetectedFace() || marker.SubjUID != "" || marker.MarkerName != "" || anchored[marker.MarkerUID] {
 			result.Kept++
 			kept = append(kept, *marker)
 		} else if deleteErr := marker.Delete(); deleteErr != nil {
@@ -208,6 +212,54 @@ func (ind *Index) regenerateFaces(jpeg *MediaFile, file *entity.File, importFace
 	result.Added = len(*markers) - before
 
 	return result, nil
+}
+
+// matchRegeneratedFaces pairs detections with face markers, and returns the detection each marker got
+// and those no new marker may be created for. Valid markers claim first, by best fit, but not what a
+// rejected marker would keep an ordinary index from adding; a named marker whose own face is not
+// detected may claim a neighboring face without a marker, which is accepted.
+func matchRegeneratedFaces(valid, rejected entity.Markers, detected face.Faces) (assignments map[string]int, claimed map[int]bool) {
+	blocked := make(map[int]bool)
+
+	for i := range detected {
+		for j := range rejected {
+			if rejected[j].CropArea().OverlapPercent(detected[i].CropArea()) > face.OverlapThreshold {
+				blocked[i] = true
+			}
+		}
+	}
+
+	claimed = make(map[int]bool, len(detected))
+
+	for i := range blocked {
+		claimed[i] = true
+	}
+
+	assignments = valid.MatchFacesBestFit(detected, claimed)
+
+	for _, i := range assignments {
+		claimed[i] = true
+	}
+
+	// Rejected markers only take the detections they block, so they cannot keep a face from being
+	// added that they merely touch.
+	skip := make(map[int]bool, len(detected))
+
+	for i := range detected {
+		if !blocked[i] {
+			skip[i] = true
+		}
+	}
+
+	for markerUID, i := range rejected.MatchFacesBestFit(detected, skip) {
+		for j := range rejected {
+			if rejected[j].MarkerUID == markerUID && rejected[j].CropArea().OverlapPercent(detected[i].CropArea()) > face.OverlapThreshold {
+				assignments[markerUID] = i
+			}
+		}
+	}
+
+	return assignments, claimed
 }
 
 // xmpAnchoredMarkers returns the uids of the markers a sidecar region is matched to when face tags
@@ -240,13 +292,11 @@ func xmpAnchoredMarkers(jpeg *MediaFile, markers entity.Markers, importFaceTags 
 }
 
 // newRegeneratedFaces returns the unclaimed detections that clear the thresholds an ordinary index
-// applies, including its retry at retrySize for a picture in which none clears minSize. A detection
-// only carries its rounded score, so the cutoff is rounded as well and holds within half a point.
+// applies, including its retry at retrySize for a picture in which none clears minSize. The score is
+// compared with the cutoff as face.Detect compares it.
 func newRegeneratedFaces(detected face.Faces, claimed map[int]bool, minScore float64, minSize, retrySize int) (result []int) {
-	cutoff := math.Round(minScore)
-
 	qualifies := func(f face.Face, size int) bool {
-		return (minScore < 0 || float64(f.Score) >= cutoff) && f.Size() >= size
+		return (minScore < 0 || float64(f.Score) >= minScore) && f.Size() >= size
 	}
 
 	found := false

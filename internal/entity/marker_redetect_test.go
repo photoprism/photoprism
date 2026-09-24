@@ -52,7 +52,9 @@ func TestMarker_Redetect(t *testing.T) {
 
 		area := f.CropArea()
 		assert.Equal(t, area.X, found.X)
+		assert.Equal(t, area.Y, found.Y)
 		assert.Equal(t, area.W, found.W)
+		assert.Equal(t, area.H, found.H)
 		assert.Equal(t, area.Thumb(file.FileHash), found.Thumb)
 		assert.Equal(t, f.Size(), found.Size)
 		assert.Equal(t, face.DetectorYuNet, found.DetectModel)
@@ -76,9 +78,12 @@ func TestMarker_Redetect(t *testing.T) {
 		require.NoError(t, err)
 		require.True(t, changed)
 
-		updatedAt := FindMarker(m.MarkerUID).UpdatedAt
+		// Read back, so every compared column has made the round trip through the database.
+		stored := FindMarker(m.MarkerUID)
+		require.NotNil(t, stored)
+		updatedAt := stored.UpdatedAt
 
-		changed, err = m.Redetect(f, file, false)
+		changed, err = stored.Redetect(f, file, false)
 
 		require.NoError(t, err)
 		assert.False(t, changed)

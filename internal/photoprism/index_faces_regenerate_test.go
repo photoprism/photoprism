@@ -3,6 +3,7 @@ package photoprism
 import (
 	"fmt"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -12,8 +13,10 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/thumb/crop"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestNewRegeneratedFaces(t *testing.T) {
@@ -48,21 +51,23 @@ func TestNewRegeneratedFaces(t *testing.T) {
 		assert.Empty(t, newRegeneratedFaces(nil, nil, 65, 25, 10))
 	})
 	t.Run("FractionalScore", func(t *testing.T) {
-		// A score of 65 may stand for up to 65.49, so a cutoff of 65.3 admits it.
+		// Compared as face.Detect compares it: the recorded score against the cutoff as configured.
 		faces := face.Faces{{Rows: 100, Cols: 100, Score: 65, Area: face.NewArea("face", 20, 20, 30)}}
 
-		assert.Equal(t, []int{0}, newRegeneratedFaces(faces, nil, 65.3, 25, 10))
-		assert.Empty(t, newRegeneratedFaces(faces, nil, 65.5, 25, 10))
+		assert.Equal(t, []int{0}, newRegeneratedFaces(faces, nil, 65, 25, 10))
+		assert.Empty(t, newRegeneratedFaces(faces, nil, 65.3, 25, 10))
 	})
 }
 
 func TestFaceRegeneration(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		stats := &FaceRegeneration{}
-		stats.add(faceRegenerationResult{Updated: 2, Added: 1, Removed: 1, Kept: 3, Failed: 1})
-		stats.add(faceRegenerationResult{Updated: 1})
+		stats.add("fs6sg6bw45bn0004", faceRegenerationResult{Updated: 2, Added: 1, Removed: 1, Kept: 3, Failed: 1})
+		stats.add("fs6sg6bq45bnlqd0", faceRegenerationResult{Updated: 1})
 
 		assert.Equal(t, int64(2), stats.Files.Load())
+		assert.True(t, stats.Processed("fs6sg6bw45bn0004"))
+		assert.False(t, stats.Processed("fs6sg6bw45bn0005"))
 		assert.Equal(t, "3 updated, 1 added, 1 removed, 3 kept unmatched, 1 failed", stats.String())
 
 		stats.addError()
@@ -72,10 +77,109 @@ func TestFaceRegeneration(t *testing.T) {
 	t.Run("Nil", func(t *testing.T) {
 		var stats *FaceRegeneration
 
-		stats.add(faceRegenerationResult{Updated: 1})
+		stats.add("fs6sg6bw45bn0004", faceRegenerationResult{Updated: 1})
 		stats.addError()
 
 		assert.Equal(t, "", stats.String())
+		assert.False(t, stats.Processed("fs6sg6bw45bn0004"))
+	})
+}
+
+func TestMatchRegeneratedFaces(t *testing.T) {
+	detected := face.Faces{
+		{Rows: 100, Cols: 100, Score: 90, Area: face.NewArea("face", 30, 30, 20)},
+		{Rows: 100, Cols: 100, Score: 90, Area: face.NewArea("face", 70, 70, 20)},
+	}
+
+	t.Run("ValidBeforeRejected", func(t *testing.T) {
+		// The rejected box lies inside the face and fits the detection better than the shifted valid
+		// marker, but covers too little of it to block it, so the valid marker keeps its face.
+		valid := entity.Markers{{MarkerUID: "valid", X: 0.22, Y: 0.20, W: 0.2, H: 0.2}}
+		rejected := entity.Markers{{MarkerUID: "rejected", MarkerInvalid: true, X: 0.24, Y: 0.24, W: 0.12, H: 0.12}}
+
+		assignments, claimed := matchRegeneratedFaces(valid, rejected, detected)
+
+		assert.Equal(t, map[string]int{"valid": 0}, assignments)
+		assert.Equal(t, map[int]bool{0: true}, claimed)
+	})
+	t.Run("RejectedBlocksValid", func(t *testing.T) {
+		// A rejected marker covering the detection keeps it from a valid marker, as an ordinary
+		// index would not add it next to the rejected one.
+		valid := entity.Markers{{MarkerUID: "valid", X: 0.21, Y: 0.21, W: 0.2, H: 0.2}}
+		rejected := entity.Markers{{MarkerUID: "rejected", MarkerInvalid: true, X: 0.20, Y: 0.20, W: 0.2, H: 0.2}}
+
+		assignments, claimed := matchRegeneratedFaces(valid, rejected, detected)
+
+		assert.Equal(t, map[string]int{"rejected": 0}, assignments)
+		assert.True(t, claimed[0])
+		assert.False(t, claimed[1])
+	})
+	t.Run("RejectedOnlyTakesWhatItBlocks", func(t *testing.T) {
+		// A small rejected box inside an unmarked face does not keep it from being added.
+		rejected := entity.Markers{{MarkerUID: "rejected", MarkerInvalid: true, X: 0.64, Y: 0.64, W: 0.1, H: 0.1}}
+
+		assignments, claimed := matchRegeneratedFaces(nil, rejected, detected)
+
+		assert.Empty(t, assignments)
+		assert.Empty(t, claimed)
+	})
+	t.Run("NoMarkers", func(t *testing.T) {
+		assignments, claimed := matchRegeneratedFaces(nil, nil, detected)
+
+		assert.Empty(t, assignments)
+		assert.Empty(t, claimed)
+	})
+}
+
+func TestUnregeneratedMarkers(t *testing.T) {
+	all, err := query.FaceMarkerFiles("")
+	require.NoError(t, err)
+	require.Greater(t, len(all), 1)
+
+	total := 0
+
+	for _, n := range all {
+		total += n
+	}
+
+	t.Run("NoneProcessed", func(t *testing.T) {
+		markers, files, countErr := unregeneratedMarkers("", &FaceRegeneration{})
+
+		require.NoError(t, countErr)
+		assert.Equal(t, len(all), files)
+		assert.Equal(t, total, markers)
+	})
+	t.Run("PartlyProcessed", func(t *testing.T) {
+		stats := &FaceRegeneration{}
+		skipped := ""
+
+		for fileUID := range all {
+			if skipped == "" {
+				skipped = fileUID
+				continue
+			}
+
+			stats.add(fileUID, faceRegenerationResult{})
+		}
+
+		markers, files, countErr := unregeneratedMarkers("", stats)
+
+		require.NoError(t, countErr)
+		assert.Equal(t, 1, files)
+		assert.Equal(t, all[skipped], markers)
+	})
+	t.Run("AllProcessed", func(t *testing.T) {
+		stats := &FaceRegeneration{}
+
+		for fileUID := range all {
+			stats.add(fileUID, faceRegenerationResult{})
+		}
+
+		markers, files, countErr := unregeneratedMarkers("", stats)
+
+		require.NoError(t, countErr)
+		assert.Zero(t, markers)
+		assert.Zero(t, files)
 	})
 }
 
@@ -156,8 +260,18 @@ func regenerateTestMarkers(t *testing.T, fileUIDs ...string) map[string]regenera
 	return result
 }
 
-// regenerateTestXmp returns a sidecar that names one face region, in the Microsoft Photo format.
-func regenerateTestXmp(name string, m entity.Marker) string {
+// regenerateTestXmp returns a sidecar that names face regions, in the Microsoft Photo format.
+func regenerateTestXmp(names []string, markers ...entity.Marker) string {
+	regions := ""
+
+	for i, m := range markers {
+		regions += fmt.Sprintf(`
+     <rdf:li rdf:parseType='Resource'>
+      <MPReg:PersonDisplayName>%s</MPReg:PersonDisplayName>
+      <MPReg:Rectangle>%f, %f, %f, %f</MPReg:Rectangle>
+     </rdf:li>`, names[i], m.X, m.Y, m.W, m.H)
+	}
+
 	return fmt.Sprintf(`<?xpacket begin='' id='W5M0MpCehiHzreSzNTczkc9d'?>
 <x:xmpmeta xmlns:x='adobe:ns:meta/'>
 <rdf:RDF xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns#'>
@@ -167,27 +281,19 @@ func regenerateTestXmp(name string, m entity.Marker) string {
   xmlns:MPReg='http://ns.microsoft.com/photo/1.2/t/Region#'>
   <MP:RegionInfo rdf:parseType='Resource'>
    <MPRI:Regions>
-    <rdf:Bag>
-     <rdf:li rdf:parseType='Resource'>
-      <MPReg:PersonDisplayName>%s</MPReg:PersonDisplayName>
-      <MPReg:Rectangle>%f, %f, %f, %f</MPReg:Rectangle>
-     </rdf:li>
+    <rdf:Bag>%s
     </rdf:Bag>
    </MPRI:Regions>
   </MP:RegionInfo>
  </rdf:Description>
 </rdf:RDF>
 </x:xmpmeta>
-<?xpacket end='w'?>`, name, m.X, m.Y, m.W, m.H)
+<?xpacket end='w'?>`, regions)
 }
 
 // TestFaces_ResetAndReindex_Regenerate runs "faces reset --detector" through the real faces-only
 // index, on markers left in the state an earlier detector would leave them in.
 func TestFaces_ResetAndReindex_Regenerate(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping test in short mode.")
-	}
-
 	useTestDb(t, "faces-regenerate")
 	cfg := config.NewMinimalTestConfigWithDb("faces-regenerate", filepath.Join(t.TempDir(), "storage"))
 	oldCfg := Config()
@@ -241,9 +347,10 @@ func TestFaces_ResetAndReindex_Regenerate(t *testing.T) {
 	xmpMarkers, err := entity.FindMarkers(xmpFileUID)
 	require.NoError(t, err)
 
-	if len(named) < 2 || len(added) < 2 || len(xmpMarkers) < 1 {
-		t.Skip("faces: skipping, the detector or the embedder is not available here")
-	}
+	// Fails rather than skips, so a missing model cannot turn this into a test that asserts nothing.
+	require.GreaterOrEqual(t, len(named), 2, "the face detector and embedder must be installed, see make dep")
+	require.GreaterOrEqual(t, len(added), 2, "the face detector and embedder must be installed, see make dep")
+	require.NotEmpty(t, xmpMarkers, "the face detector and embedder must be installed, see make dep")
 
 	// A sidecar names the first face in 16.jpg with a region wider than the detected face. The
 	// earlier detector's box lies in between, so the region names it, while a box moved onto the
@@ -256,14 +363,25 @@ func TestFaces_ResetAndReindex_Regenerate(t *testing.T) {
 	xmpBox := scaled(xmpMarkers[0], 1.4142)
 	require.NoError(t, entity.Db().Model(&entity.Marker{}).Where("marker_uid = ?", xmpMarkers[0].MarkerUID).
 		Updates(entity.Values{"detect_model": "centerface", "x": xmpBox.X, "y": xmpBox.Y, "w": xmpBox.W, "h": xmpBox.H}).Error)
-	require.NoError(t, fs.WriteString(filepath.Join(cfg.OriginalsPath(), "regenerate", "16.jpg.xmp"), regenerateTestXmp("Cara", scaled(xmpMarkers[0], 1.6))))
+	// A second region names a detector marker where there is no face, which no detection matches.
+	var xmpFile entity.File
+	require.NoError(t, entity.Db().Where("file_uid = ?", xmpFileUID).First(&xmpFile).Error)
+
+	sidecarUnmatched := entity.NewMarker(xmpFile, crop.NewArea("face", 0.01, 0.9, 0.06, 0.06), "", entity.SrcImage, entity.MarkerFace, 40, 90)
+	require.NoError(t, sidecarUnmatched.Create())
+
+	require.NoError(t, fs.WriteString(filepath.Join(cfg.OriginalsPath(), "regenerate", "16.jpg.xmp"),
+		regenerateTestXmp([]string{"Cara", "Dana"}, scaled(xmpMarkers[0], 1.6), *sidecarUnmatched)))
 	index(t, "16.jpg", true)
 	cfg.Options().XMPFaces = true
+
+	xmpMarkerCount := len(xmpMarkers) + 1
 
 	sidecarNamed := entity.FindMarker(xmpMarkers[0].MarkerUID)
 	require.NotNil(t, sidecarNamed)
 	require.Equal(t, "Cara", sidecarNamed.MarkerName, "the region must name the detected marker")
 	require.Equal(t, entity.SrcXmp, sidecarNamed.SubjSrc)
+	require.Equal(t, "Dana", entity.FindMarker(sidecarUnmatched.MarkerUID).MarkerName, "the region must name the marker")
 
 	var file, addedFile entity.File
 	require.NoError(t, entity.Db().Where("file_uid = ?", namedFileUID).First(&file).Error)
@@ -318,7 +436,7 @@ func TestFaces_ResetAndReindex_Regenerate(t *testing.T) {
 	keptSubject := newMarker(0.8, 0.01, entity.SrcImage)
 	keptSubject.SubjUID, keptSubject.SubjSrc = subj.SubjUID, entity.SrcManual
 
-	kept := []*entity.Marker{keptNamed, keptRejected, keptManual, keptSidecar, keptSubject, rejectedInside, rejectedSmall}
+	kept := []*entity.Marker{keptNamed, keptRejected, keptManual, keptSidecar, keptSubject, rejectedInside, rejectedSmall, sidecarUnmatched}
 
 	for _, m := range kept[:5] {
 		require.NoError(t, m.Create())
@@ -452,7 +570,7 @@ func TestFaces_ResetAndReindex_Regenerate(t *testing.T) {
 		assert.Equal(t, "Cara", m.Name, "the sidecar name must stay on the marker it named")
 		assert.Equal(t, string(face.DetectorYuNet), m.DetectModel)
 		assert.Equal(t, xmpBox.X, m.X, "the marker a sidecar named must not move")
-		assert.Len(t, regenerateTestMarkers(t, xmpFileUID), len(xmpMarkers), "no marker may be added for the region")
+		assert.Len(t, regenerateTestMarkers(t, xmpFileUID), xmpMarkerCount, "no marker may be added for the region")
 	})
 	t.Run("ClustersAreRemoved", func(t *testing.T) {
 		assert.Nil(t, entity.FindFace(cluster.ID))
@@ -481,6 +599,29 @@ func TestFaces_ResetAndReindex_Regenerate(t *testing.T) {
 
 		assert.Equal(t, "Cara", m.Name)
 		assert.Equal(t, xmpBox.X, m.X, "the marker a sidecar region matches must not move")
-		assert.Len(t, markers, len(xmpMarkers), "no marker may be added for the region")
+		assert.Len(t, markers, xmpMarkerCount, "no marker may be added for the region")
+
+		u, ok := markers[sidecarUnmatched.MarkerUID]
+		require.True(t, ok, "an unmatched marker a sidecar region names must be kept")
+		assert.Equal(t, "Dana", u.Name)
+	})
+	t.Run("UnreachedFilesAreReported", func(t *testing.T) {
+		// A file the index does not reach, because its original is gone, keeps its marker.
+		unreached := entity.File{FileUID: rnd.GenerateUID(entity.FileUID), PhotoID: addedFile.PhotoID, PhotoUID: addedFile.PhotoUID,
+			FileName: "regenerate/unreached.jpg", FileRoot: entity.RootOriginals, FileHash: rnd.GenerateUID('h'), FileType: "jpg", FilePrimary: true}
+		require.NoError(t, entity.Db().Create(&unreached).Error)
+
+		marker := entity.NewMarker(unreached, crop.NewArea("face", 0.4, 0.4, 0.1, 0.1), "", entity.SrcImage, entity.MarkerFace, 40, 90)
+		require.NoError(t, marker.Create())
+
+		t.Cleanup(func() {
+			_ = entity.UnscopedDb().Delete(marker).Error
+			_ = entity.UnscopedDb().Delete(&unreached).Error
+		})
+
+		_, unreachedErr := w.resetAndReindex(string(face.DetectorYuNet), ind, false, "regenerate")
+
+		require.Error(t, unreachedErr)
+		assert.True(t, strings.HasPrefix(unreachedErr.Error(), "faces: could not regenerate 1 marker in 1 file the index did not reach"))
 	})
 }

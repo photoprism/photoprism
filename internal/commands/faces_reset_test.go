@@ -9,7 +9,9 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v2"
 
+	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/photoprism/get"
 )
 
 // newFacesResetContext parses args against the flags the "faces reset" subcommand registers, which
@@ -103,6 +105,30 @@ func TestFacesResetDetector(t *testing.T) {
 	})
 	t.Run("DetectorWinsOverEngine", func(t *testing.T) {
 		assert.Equal(t, "none", facesResetDetector(newFacesResetContext(t, "--detector=none", "--engine=onnx")))
+	})
+}
+
+func TestFacesResetDetectorName(t *testing.T) {
+	// The package's config, since a second one would replace the database the other tests share.
+	c := get.Config()
+	require.NotNil(t, c)
+
+	detector := c.Options().FaceDetector
+	t.Cleanup(func() { c.Options().FaceDetector = detector })
+	c.Options().FaceDetector = face.DetectorYuNet
+
+	t.Run("Auto", func(t *testing.T) {
+		assert.Equal(t, "yunet", facesResetDetectorName(c, "auto"))
+	})
+	t.Run("Named", func(t *testing.T) {
+		assert.Equal(t, "scrfd", facesResetDetectorName(c, "scrfd"))
+	})
+	t.Run("None", func(t *testing.T) {
+		assert.Equal(t, "", facesResetDetectorName(c, ""))
+		assert.Equal(t, "none", facesResetDetectorName(c, "none"))
+	})
+	t.Run("NoConfig", func(t *testing.T) {
+		assert.Equal(t, "auto", facesResetDetectorName(nil, "auto"))
 	})
 }
 
@@ -253,5 +279,40 @@ func TestFacesResetRequiresConfirmation(t *testing.T) {
 		assert.ErrorIs(t, facesResetAction(newFacesResetContext(t, "--yes")), sentinel)
 		assert.ErrorIs(t, facesResetAction(newFacesResetContext(t, "--yes", "--all")), sentinel)
 		assert.ErrorIs(t, facesResetAction(newFacesResetContext(t, "--yes", "--force")), sentinel)
+		assert.ErrorIs(t, facesResetAction(newFacesResetContext(t, "--yes", "--detector=auto")), sentinel)
+	})
+	t.Run("NoTerminalBeforeConfig", func(t *testing.T) {
+		// The prompt comes first, so a run that cannot be confirmed never loads the config.
+		restore := InitConfig
+		InitConfig = func(*cli.Context) (*config.Config, error) {
+			t.Fatal("the config must not be loaded before the confirmation")
+			return nil, nil
+		}
+		t.Cleanup(func() { InitConfig = restore })
+
+		err := facesResetAction(newFacesResetContext(t, "--detector=auto"))
+
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "--yes")
+	})
+	t.Run("AutoWithoutDetector", func(t *testing.T) {
+		c := get.Config()
+		detector := c.Options().FaceDetector
+		c.Options().FaceDetector = face.DetectorNone
+
+		restore := InitCoreConfig
+		InitCoreConfig = func(*cli.Context, bool) (*config.Config, error) { return c, nil }
+
+		t.Cleanup(func() {
+			InitCoreConfig = restore
+			c.Options().FaceDetector = detector
+		})
+
+		err := facesResetAction(newFacesResetContext(t, "--yes", "--detector=auto"))
+
+		var exit cli.ExitCoder
+		require.ErrorAs(t, err, &exit)
+		assert.Equal(t, 2, exit.ExitCode())
+		assert.Contains(t, err.Error(), "no face detector can be used")
 	})
 }
