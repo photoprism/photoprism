@@ -9,6 +9,7 @@ import (
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/query"
 )
 
 func TestCamerasCommand(t *testing.T) {
@@ -177,5 +178,170 @@ func TestPrintCamera(t *testing.T) {
 		}, []string{"print"})
 		assert.NoError(t, err)
 		assert.NotContains(t, output, "999999999")
+	})
+}
+
+func TestCamerasRemoveCommand(t *testing.T) {
+	// add adds a camera for testing and removes it again when the test is done.
+	add := func(t *testing.T, modelName string) *entity.Camera {
+		slug := entity.NewCamera("Zenit", modelName).CameraSlug
+		remove := func() {
+			entity.FlushCameraCache()
+			assert.NoError(t, entity.UnscopedDb().Delete(&entity.Camera{}, "camera_slug = ?", slug).Error)
+		}
+		remove()
+		t.Cleanup(remove)
+
+		m, _, err := entity.AddCamera("Zenit", modelName)
+		assert.NoError(t, err)
+
+		if m == nil {
+			t.Fatal("camera must not be nil")
+		}
+
+		return m
+	}
+
+	// use temporarily assigns the first photo to the camera and returns the photo ID.
+	use := func(t *testing.T, m *entity.Camera) uint {
+		photo := entity.Photo{}
+		assert.NoError(t, entity.UnscopedDb().Order("id").First(&photo).Error)
+		t.Cleanup(func() {
+			assert.NoError(t, entity.UnscopedDb().Model(&entity.Photo{}).Where("id = ?", photo.ID).UpdateColumn("camera_id", photo.CameraID).Error)
+		})
+		assert.NoError(t, entity.UnscopedDb().Model(&entity.Photo{}).Where("id = ?", photo.ID).UpdateColumn("camera_id", m.ID).Error)
+
+		return photo.ID
+	}
+
+	exists := func(t *testing.T, id uint) bool {
+		var count int
+		assert.NoError(t, entity.UnscopedDb().Model(&entity.Camera{}).Where("id = ?", id).Count(&count).Error)
+		return count > 0
+	}
+
+	t.Run("Unused", func(t *testing.T) {
+		m := add(t, "E")
+		_, err := RunWithTestContext(CamerasCommand, []string{"cameras", "rm", fmt.Sprintf("--id=%d", m.ID), "--yes"})
+		assert.NoError(t, err)
+		assert.False(t, exists(t, m.ID))
+	})
+	t.Run("InUse", func(t *testing.T) {
+		m := add(t, "12XP")
+		use(t, m)
+		_, err := RunWithTestContext(CamerasCommand, []string{"cameras", "rm", fmt.Sprintf("--id=%d", m.ID), "--yes"})
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "is used by 1 picture, pass --reassign")
+		assertExitCode(t, err, 2)
+		assert.True(t, exists(t, m.ID))
+	})
+	t.Run("Reassign", func(t *testing.T) {
+		m := add(t, "122")
+		photoID := use(t, m)
+		_, err := RunWithTestContext(CamerasCommand, []string{"cameras", "rm", fmt.Sprintf("--id=%d", m.ID), "--reassign", "--yes"})
+		assert.NoError(t, err)
+		assert.False(t, exists(t, m.ID))
+
+		photo := entity.Photo{}
+		assert.NoError(t, entity.UnscopedDb().First(&photo, "id = ?", photoID).Error)
+		assert.Equal(t, entity.UnknownCamera.ID, photo.CameraID)
+	})
+	t.Run("Unknown", func(t *testing.T) {
+		_, err := RunWithTestContext(CamerasCommand, []string{"cameras", "rm", fmt.Sprintf("--id=%d", entity.UnknownCamera.ID), "--reassign", "--yes"})
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "unknown camera cannot be deleted")
+		assertExitCode(t, err, 2)
+		assert.True(t, exists(t, entity.UnknownCamera.ID))
+	})
+	t.Run("NotFound", func(t *testing.T) {
+		_, err := RunWithTestContext(CamerasCommand, []string{"cameras", "rm", "--id=999999999", "--yes"})
+		assertExitCode(t, err, 3)
+	})
+	t.Run("NoID", func(t *testing.T) {
+		_, err := RunWithTestContext(CamerasCommand, []string{"cameras", "rm", "--yes"})
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "pass either --id or --make and --model")
+		assertExitCode(t, err, 2)
+	})
+}
+
+func TestCamerasRemoveCommandByMakeModel(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		slug := entity.NewCamera("Zenit", "TTL").CameraSlug
+		t.Cleanup(func() {
+			entity.FlushCameraCache()
+			assert.NoError(t, entity.UnscopedDb().Delete(&entity.Camera{}, "camera_slug = ?", slug).Error)
+		})
+
+		m, _, err := entity.AddCamera("Zenit", "TTL")
+		assert.NoError(t, err)
+
+		_, err = RunWithTestContext(CamerasCommand, []string{"cameras", "rm", "--make=Zenit", "--model=TTL", "--yes"})
+		assert.NoError(t, err)
+		assert.Empty(t, entity.FindCamerasByMakeModel("Zenit", "TTL"))
+		assert.Nil(t, query.FindCameraByID(m.ID))
+	})
+	t.Run("NotFound", func(t *testing.T) {
+		_, err := RunWithTestContext(CamerasCommand, []string{"cameras", "rm", "--make=Zenit", "--model=Does Not Exist", "--yes"})
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "camera not found")
+		assertExitCode(t, err, 3)
+	})
+	t.Run("MakeWithoutModel", func(t *testing.T) {
+		_, err := RunWithTestContext(CamerasCommand, []string{"cameras", "rm", "--make=Zenit", "--yes"})
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "pass either --id or --make and --model")
+		assertExitCode(t, err, 2)
+	})
+	t.Run("IdAndMakeModel", func(t *testing.T) {
+		_, err := RunWithTestContext(CamerasCommand, []string{"cameras", "rm", "--id=1000002", "--make=Zenit", "--model=TTL", "--yes"})
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "not both")
+		assertExitCode(t, err, 2)
+		assert.NotNil(t, query.FindCameraByID(1000002))
+	})
+}
+
+func TestCamerasRemoveCommandSelection(t *testing.T) {
+	exists := func(t *testing.T, id uint) bool {
+		var count int
+		assert.NoError(t, entity.UnscopedDb().Model(&entity.Camera{}).Where("id = ?", id).Count(&count).Error)
+		return count > 0
+	}
+
+	t.Run("Ambiguous", func(t *testing.T) {
+		slug := entity.NewCamera("Zenit", "11").CameraSlug
+		first, _, err := entity.AddCamera("Zenit", "11")
+		assert.NoError(t, err)
+
+		second := entity.Camera{CameraSlug: "duplicate-camera-cli-test", CameraName: first.CameraName, CameraMake: first.CameraMake, CameraModel: first.CameraModel}
+		assert.NoError(t, entity.UnscopedDb().Create(&second).Error)
+		t.Cleanup(func() {
+			entity.FlushCameraCache()
+			assert.NoError(t, entity.UnscopedDb().Delete(&entity.Camera{}, "camera_slug IN (?)", []string{slug, second.CameraSlug}).Error)
+		})
+
+		// Two records with the same make and model must not be deleted by name.
+		_, err = RunWithTestContext(CamerasCommand, []string{"cameras", "rm", "--make=Zenit", "--model=11", "--yes"})
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), fmt.Sprintf("found 2 cameras with this make and model (IDs %d, %d), pass --id", first.ID, second.ID))
+		assertExitCode(t, err, 2)
+		assert.True(t, exists(t, first.ID))
+		assert.True(t, exists(t, second.ID))
+	})
+	t.Run("Declined", func(t *testing.T) {
+		slug := entity.NewCamera("Zenit", "19").CameraSlug
+		m, _, err := entity.AddCamera("Zenit", "19")
+		assert.NoError(t, err)
+		t.Cleanup(func() {
+			entity.FlushCameraCache()
+			assert.NoError(t, entity.UnscopedDb().Delete(&entity.Camera{}, "camera_slug = ?", slug).Error)
+		})
+
+		pipeResetAnswers(t, "n\n")
+
+		_, err = RunWithTestContext(CamerasCommand, []string{"cameras", "rm", fmt.Sprintf("--id=%d", m.ID)})
+		assert.NoError(t, err)
+		assert.True(t, exists(t, m.ID))
 	})
 }

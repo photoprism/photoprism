@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"strings"
 	"testing"
 	"time"
 
@@ -432,4 +433,355 @@ func TestLens_UpdateMakeModelUnknown(t *testing.T) {
 	assert.NotZero(t, m.ID)
 	assert.EqualError(t, m.UpdateMakeModel("Helios", "44-2 58mm f/2"), "unknown lens cannot be changed")
 	assert.Equal(t, UnknownLens.LensName, m.LensName)
+}
+
+// useLens temporarily assigns the first photo to the lens and returns the photo ID.
+func useLens(t *testing.T, m *Lens) uint {
+	t.Helper()
+
+	photo := Photo{}
+	assert.NoError(t, UnscopedDb().Order("id").First(&photo).Error)
+	t.Cleanup(func() {
+		assert.NoError(t, UnscopedDb().Model(&Photo{}).Where("id = ?", photo.ID).UpdateColumn("lens_id", photo.LensID).Error)
+	})
+	assert.NoError(t, UnscopedDb().Model(&Photo{}).Where("id = ?", photo.ID).UpdateColumn("lens_id", m.ID).Error)
+
+	return photo.ID
+}
+
+// addLens adds a lens for testing and removes it again when the test is done.
+func addLens(t *testing.T, makeName, modelName string) *Lens {
+	t.Helper()
+
+	slug := NewLens(makeName, modelName).LensSlug
+	remove := func() {
+		lensCache.Delete(slug)
+		assert.NoError(t, UnscopedDb().Delete(&Lens{}, "lens_slug = ?", slug).Error)
+	}
+	remove()
+	t.Cleanup(remove)
+
+	m, created, err := AddLens(makeName, modelName)
+	assert.NoError(t, err)
+	assert.True(t, created)
+
+	if m == nil {
+		t.Fatal("lens must not be nil")
+	}
+
+	return m
+}
+
+func TestLens_PhotoCount(t *testing.T) {
+	t.Run("Unused", func(t *testing.T) {
+		m := addLens(t, "Jupiter", "9 85mm f/2")
+		count, err := m.PhotoCount()
+		assert.NoError(t, err)
+		assert.Equal(t, 0, count)
+	})
+	t.Run("Used", func(t *testing.T) {
+		m := addLens(t, "Jupiter", "8 50mm f/2")
+		useLens(t, m)
+		count, err := m.PhotoCount()
+		assert.NoError(t, err)
+		assert.Equal(t, 1, count)
+	})
+	t.Run("EmptyID", func(t *testing.T) {
+		_, err := (&Lens{}).PhotoCount()
+		assert.Error(t, err)
+	})
+}
+
+func TestLens_Delete(t *testing.T) {
+	exists := func(t *testing.T, id uint) bool {
+		var count int
+		assert.NoError(t, UnscopedDb().Model(&Lens{}).Where("id = ?", id).Count(&count).Error)
+		return count > 0
+	}
+
+	t.Run("Unused", func(t *testing.T) {
+		m := addLens(t, "Jupiter", "9 85mm f/2")
+
+		deleted := event.Subscribe("lenses.deleted")
+		t.Cleanup(func() { event.Unsubscribe(deleted) })
+
+		reassigned, err := m.Delete(false)
+		assert.NoError(t, err)
+		assert.Equal(t, int64(0), reassigned)
+		assert.False(t, exists(t, m.ID))
+
+		_, cached := lensCache.Get(m.LensSlug)
+		assert.False(t, cached)
+
+		select {
+		case msg := <-deleted.Receiver:
+			assert.Equal(t, []string{m.LensSlug}, msg.Fields["entities"])
+		case <-time.After(2 * time.Second):
+			t.Fatal("expected one lenses.deleted event")
+		}
+	})
+	t.Run("InUse", func(t *testing.T) {
+		m := addLens(t, "Jupiter", "8 50mm f/2")
+		photoID := useLens(t, m)
+
+		reassigned, err := m.Delete(false)
+		assert.ErrorIs(t, err, ErrInUse)
+		assert.Equal(t, int64(0), reassigned)
+		assert.True(t, exists(t, m.ID))
+
+		photo := Photo{}
+		assert.NoError(t, UnscopedDb().First(&photo, "id = ?", photoID).Error)
+		assert.Equal(t, m.ID, photo.LensID)
+	})
+	t.Run("Reassign", func(t *testing.T) {
+		m := addLens(t, "Jupiter", "11 135mm f/4")
+		photoID := useLens(t, m)
+
+		reassigned, err := m.Delete(true)
+		assert.NoError(t, err)
+		assert.Equal(t, int64(1), reassigned)
+		assert.False(t, exists(t, m.ID))
+
+		photo := Photo{}
+		assert.NoError(t, UnscopedDb().First(&photo, "id = ?", photoID).Error)
+		assert.Equal(t, UnknownLens.ID, photo.LensID)
+	})
+	t.Run("Unknown", func(t *testing.T) {
+		m := UnknownLens
+		_, err := m.Delete(true)
+		assert.ErrorIs(t, err, ErrInvalidValue)
+		assert.True(t, exists(t, UnknownLens.ID))
+	})
+	t.Run("NotFound", func(t *testing.T) {
+		m := Lens{ID: 999999999, LensSlug: "not-found"}
+		_, err := m.Delete(false)
+		assert.ErrorIs(t, err, gorm.ErrRecordNotFound)
+	})
+	t.Run("EmptyID", func(t *testing.T) {
+		_, err := (&Lens{LensSlug: "empty-id"}).Delete(false)
+		assert.Error(t, err)
+	})
+}
+
+func TestFindLensesByMakeModel(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		m := addLens(t, "Jupiter", "3 50mm f/1.5")
+		found := FindLensesByMakeModel("  Jupiter ", "Jupiter 3 50mm f/1.5")
+
+		if assert.Len(t, found, 1) {
+			assert.Equal(t, m.ID, found[0].ID)
+		}
+	})
+	t.Run("Renamed", func(t *testing.T) {
+		fixture := LensFixtures.Get("4.15mm-f/2.2")
+		t.Cleanup(func() {
+			FlushLensCache()
+			assert.NoError(t, UnscopedDb().Save(LensFixtures.Pointer("4.15mm-f/2.2")).Error)
+		})
+
+		renamed := Lens{}
+		assert.NoError(t, Db().First(&renamed, "id = ?", fixture.ID).Error)
+		assert.NoError(t, renamed.UpdateMakeModel("Zeiss", "Planar 50mm f/1.4"))
+
+		// The old name still matches the slug, but must no longer find the renamed record.
+		assert.Empty(t, FindLensesByMakeModel(fixture.LensMake, fixture.LensModel))
+
+		if found := FindLensesByMakeModel("Zeiss", "Planar 50mm f/1.4"); assert.Len(t, found, 1) {
+			assert.Equal(t, fixture.ID, found[0].ID)
+		}
+	})
+	t.Run("AsStored", func(t *testing.T) {
+		// A record saved without normalizing its make is selected as stored, not its normalized twin.
+		normalized := addLens(t, "Pentax", "37A 135mm f/3.5")
+		assert.Equal(t, "PENTAX", normalized.LensMake)
+
+		stored := Lens{LensSlug: "as-stored-lens-test", LensName: "Pentax 37A 135mm f/3.5", LensMake: "Pentax", LensModel: "37A 135mm f/3.5"}
+		assert.NoError(t, UnscopedDb().Create(&stored).Error)
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(&Lens{}, "id = ?", stored.ID).Error) })
+
+		if found := FindLensesByMakeModel("Pentax", "37A 135mm f/3.5"); assert.Len(t, found, 1) {
+			assert.Equal(t, stored.ID, found[0].ID)
+		}
+
+		if found := FindLensesByMakeModel("PENTAX", "37A 135mm f/3.5"); assert.Len(t, found, 1) {
+			assert.Equal(t, normalized.ID, found[0].ID)
+		}
+	})
+	t.Run("Duplicates", func(t *testing.T) {
+		first := addLens(t, "Jupiter", "12 35mm f/2.8")
+
+		second := Lens{LensSlug: "duplicate-lens-test", LensName: first.LensName, LensMake: first.LensMake, LensModel: first.LensModel}
+		assert.NoError(t, UnscopedDb().Create(&second).Error)
+		t.Cleanup(func() { assert.NoError(t, UnscopedDb().Delete(&Lens{}, "id = ?", second.ID).Error) })
+
+		if found := FindLensesByMakeModel("Jupiter", "12 35mm f/2.8"); assert.Len(t, found, 2) {
+			assert.Equal(t, first.ID, found[0].ID)
+			assert.Equal(t, second.ID, found[1].ID)
+		}
+	})
+	t.Run("NotFound", func(t *testing.T) {
+		assert.Empty(t, FindLensesByMakeModel("Jupiter", "Does Not Exist"))
+	})
+	t.Run("Unknown", func(t *testing.T) {
+		assert.Empty(t, FindLensesByMakeModel("", ""))
+		assert.Empty(t, FindLensesByMakeModel("ZZ", "."))
+		assert.Empty(t, FindLensesByMakeModel("", "Unknown"))
+	})
+	t.Run("ModelSameAsMake", func(t *testing.T) {
+		assert.Empty(t, FindLensesByMakeModel("Jupiter", "Jupiter"))
+	})
+}
+
+func TestFindLensesByMakeModelExact(t *testing.T) {
+	t.Run("Exact", func(t *testing.T) {
+		m := addLens(t, "Jupiter", "3 50mm f/1.5")
+
+		if found := findLensesByMakeModel(m.LensMake, m.LensModel); assert.Len(t, found, 1) {
+			assert.Equal(t, m.ID, found[0].ID)
+		}
+	})
+	t.Run("CaseDiffers", func(t *testing.T) {
+		m := addLens(t, "Jupiter", "3 50mm f/1.5")
+
+		// MariaDB collations match this in SQL, so the result must be filtered in Go.
+		assert.Empty(t, findLensesByMakeModel(strings.ToUpper(m.LensMake), m.LensModel))
+	})
+	t.Run("Placeholder", func(t *testing.T) {
+		assert.Empty(t, findLensesByMakeModel(UnknownLens.LensMake, UnknownLens.LensModel))
+	})
+}
+
+func TestUnknownLensID(t *testing.T) {
+	placeholder := Lens{}
+	assert.NoError(t, UnscopedDb().First(&placeholder, "lens_slug = ?", UnknownID).Error)
+
+	t.Run("Initialized", func(t *testing.T) {
+		id, err := unknownLensID()
+		assert.NoError(t, err)
+		assert.Equal(t, placeholder.ID, id)
+	})
+	t.Run("Uninitialized", func(t *testing.T) {
+		// The CLI does not initialize the placeholder on startup, so its ID must be read from the database.
+		prev := UnknownLens
+		t.Cleanup(func() { UnknownLens = prev })
+		UnknownLens.ID = 0
+		FlushLensCache()
+
+		id, err := unknownLensID()
+		assert.NoError(t, err)
+		assert.Equal(t, placeholder.ID, id)
+	})
+}
+
+func TestFindExistingLens(t *testing.T) {
+	t.Run("BySlug", func(t *testing.T) {
+		fixture := LensFixtures.Get("4.15mm-f/2.2")
+		found := findExistingLens(NewLens(fixture.LensMake, fixture.LensModel))
+
+		if found == nil {
+			t.Fatal("lens must be found")
+		}
+
+		assert.Equal(t, fixture.ID, found.ID)
+	})
+	t.Run("ByMakeModel", func(t *testing.T) {
+		fixture := LensFixtures.Get("4.15mm-f/2.2")
+		t.Cleanup(func() {
+			FlushLensCache()
+			assert.NoError(t, UnscopedDb().Save(LensFixtures.Pointer("4.15mm-f/2.2")).Error)
+		})
+
+		renamed := Lens{}
+		assert.NoError(t, Db().First(&renamed, "id = ?", fixture.ID).Error)
+		assert.NoError(t, renamed.UpdateMakeModel("Zeiss", "Planar 50mm f/1.4"))
+
+		found := findExistingLens(NewLens("Zeiss", "Planar 50mm f/1.4"))
+
+		if found == nil {
+			t.Fatal("lens must be found")
+		}
+
+		assert.Equal(t, fixture.ID, found.ID)
+	})
+	t.Run("None", func(t *testing.T) {
+		assert.Nil(t, findExistingLens(NewLens("Jupiter", "Does Not Exist")))
+	})
+}
+
+func TestLens_DeleteEdgeCases(t *testing.T) {
+	exists := func(t *testing.T, id uint) bool {
+		var count int
+		assert.NoError(t, UnscopedDb().Model(&Lens{}).Where("id = ?", id).Count(&count).Error)
+		return count > 0
+	}
+
+	placeholder := Lens{}
+	assert.NoError(t, UnscopedDb().First(&placeholder, "lens_slug = ?", UnknownID).Error)
+
+	t.Run("OnlyTheRecord", func(t *testing.T) {
+		m := addLens(t, "Jupiter", "3 50mm f/1.5")
+		other := addLens(t, "Jupiter", "37A 135mm f/3.5")
+
+		_, err := m.Delete(false)
+		assert.NoError(t, err)
+		assert.False(t, exists(t, m.ID))
+		assert.True(t, exists(t, other.ID))
+	})
+	t.Run("SoftDeletedPhoto", func(t *testing.T) {
+		m := addLens(t, "Jupiter", "12 35mm f/2.8")
+		photoID := useLens(t, m)
+
+		// Archived and deleted pictures still reference the lens and must be counted and reassigned.
+		deletedAt := time.Now().UTC()
+		assert.NoError(t, UnscopedDb().Model(&Photo{}).Where("id = ?", photoID).UpdateColumn("deleted_at", &deletedAt).Error)
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Model(&Photo{}).Where("id = ?", photoID).UpdateColumn("deleted_at", nil).Error)
+		})
+
+		count, err := m.PhotoCount()
+		assert.NoError(t, err)
+		assert.Equal(t, 1, count)
+
+		_, err = m.Delete(false)
+		assert.ErrorIs(t, err, ErrInUse)
+
+		reassigned, err := m.Delete(true)
+		assert.NoError(t, err)
+		assert.Equal(t, int64(1), reassigned)
+
+		photo := Photo{}
+		assert.NoError(t, UnscopedDb().First(&photo, "id = ?", photoID).Error)
+		assert.Equal(t, placeholder.ID, photo.LensID)
+	})
+	t.Run("UninitializedPlaceholder", func(t *testing.T) {
+		m := addLens(t, "Jupiter", "21M 200mm f/4")
+		photoID := useLens(t, m)
+
+		// The CLI does not initialize the placeholder, so reassigning must not write ID 0.
+		prev := UnknownLens
+		t.Cleanup(func() { UnknownLens = prev })
+		UnknownLens.ID = 0
+		FlushLensCache()
+
+		reassigned, err := m.Delete(true)
+		assert.NoError(t, err)
+		assert.Equal(t, int64(1), reassigned)
+
+		photo := Photo{}
+		assert.NoError(t, UnscopedDb().First(&photo, "id = ?", photoID).Error)
+		assert.Equal(t, placeholder.ID, photo.LensID)
+	})
+	t.Run("PlaceholderID", func(t *testing.T) {
+		m := Lens{ID: placeholder.ID, LensSlug: "not-the-placeholder-slug"}
+		_, err := m.Delete(true)
+		assert.ErrorIs(t, err, ErrInvalidValue)
+		assert.True(t, exists(t, placeholder.ID))
+	})
+	t.Run("PlaceholderSlug", func(t *testing.T) {
+		m := addLens(t, "Jupiter", "6 180mm f/2.8")
+		m.LensSlug = UnknownID
+		_, err := m.Delete(true)
+		assert.ErrorIs(t, err, ErrInvalidValue)
+		assert.True(t, exists(t, m.ID))
+	})
 }

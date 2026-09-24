@@ -171,7 +171,7 @@ func AddCamera(makeName, modelName string) (result *Camera, created bool, err er
 	}
 
 	// Report an existing camera instead of creating a duplicate, unless it has been purged in the meantime.
-	if existing := findCameraByMakeModel(m); existing != nil && !existing.Unknown() {
+	if existing := findExistingCamera(m); existing != nil && !existing.Unknown() {
 		if err = existing.markManual(); err == nil {
 			return existing, false, nil
 		} else if !errors.Is(err, gorm.ErrRecordNotFound) {
@@ -192,29 +192,60 @@ func AddCamera(makeName, modelName string) (result *Camera, created bool, err er
 	return result, false, nil
 }
 
-// findCameraByMakeModel returns the camera with the same slug, or else with the same make and model, if any.
+// findExistingCamera returns the camera with the same slug, or else with the same make and model, if any.
 // The make and model lookup covers renamed records, whose slug no longer matches their name.
-func findCameraByMakeModel(m *Camera) *Camera {
+func findExistingCamera(m *Camera) *Camera {
 	existing := Camera{}
 
 	if Db().Where("camera_slug = ?", m.CameraSlug).First(&existing).Error == nil {
 		return &existing
 	}
 
+	if found := findCamerasByMakeModel(m.CameraMake, m.CameraModel); len(found) > 0 {
+		return &found[0]
+	}
+
+	return nil
+}
+
+// FindCamerasByMakeModel returns the cameras that match the make and model as stored, or else after normalizing them.
+// It ignores the slug, which a renamed record keeps and may therefore belong to another name.
+func FindCamerasByMakeModel(makeName, modelName string) Cameras {
+	makeName = strings.TrimSpace(makeName)
+	modelName = strings.TrimSpace(modelName)
+
+	if makeName == "" || modelName == "" {
+		return nil
+	} else if found := findCamerasByMakeModel(makeName, modelName); len(found) > 0 {
+		// Records saved with a different normalization, e.g. by an older version, match as stored.
+		return found
+	}
+
+	m := NewCamera(makeName, modelName)
+
+	if m.Unknown() || strings.TrimSpace(m.CameraModel) == "" {
+		return nil
+	}
+
+	return findCamerasByMakeModel(m.CameraMake, m.CameraModel)
+}
+
+// findCamerasByMakeModel returns the cameras with exactly the specified make and model, ordered by ID.
+func findCamerasByMakeModel(makeName, modelName string) (result Cameras) {
 	var candidates Cameras
 
-	if Db().Where("camera_make = ? AND camera_model = ?", m.CameraMake, m.CameraModel).Find(&candidates).Error != nil {
+	if Db().Where("camera_make = ? AND camera_model = ?", makeName, modelName).Order("id").Find(&candidates).Error != nil {
 		return nil
 	}
 
 	// Compare in Go, since MariaDB collations also match values that differ in case, accents, or emoji.
 	for i := range candidates {
-		if candidates[i].CameraMake == m.CameraMake && candidates[i].CameraModel == m.CameraModel {
-			return &candidates[i]
+		if candidates[i].CameraMake == makeName && candidates[i].CameraModel == modelName && !candidates[i].Unknown() {
+			result = append(result, candidates[i])
 		}
 	}
 
-	return nil
+	return result
 }
 
 // markManual marks an existing camera as added manually, so that purging orphans keeps it.
@@ -245,6 +276,88 @@ func (m *Camera) markManual() error {
 	cameraCache.SetDefault(m.CameraSlug, m)
 
 	return nil
+}
+
+// unknownCameraID returns the ID of the unknown camera placeholder, and initializes the placeholder if needed.
+func unknownCameraID() (uint, error) {
+	if UnknownCamera.ID == 0 {
+		CreateUnknownCamera()
+	}
+
+	if UnknownCamera.ID == 0 {
+		return 0, fmt.Errorf("unknown camera not found")
+	}
+
+	return UnknownCamera.ID, nil
+}
+
+// PhotoCount returns the number of pictures that reference the camera, including archived and deleted pictures.
+func (m *Camera) PhotoCount() (count int, err error) {
+	if m.ID == 0 {
+		return 0, fmt.Errorf("empty id")
+	}
+
+	err = UnscopedDb().Model(&Photo{}).Where("camera_id = ?", m.ID).Count(&count).Error
+
+	return count, err
+}
+
+// Delete permanently removes the camera, and first assigns the pictures that reference it to the unknown camera if requested.
+// It returns ErrInUse if pictures still reference the camera, so that none of them is left with a dangling reference.
+func (m *Camera) Delete(reassign bool) (reassigned int64, err error) {
+	if m.ID == 0 {
+		return 0, fmt.Errorf("empty id")
+	}
+
+	// Resolve the placeholder from the database, since the CLI does not initialize it on startup.
+	unknownID, err := unknownCameraID()
+
+	if err != nil {
+		return 0, err
+	} else if m.Unknown() || m.ID == unknownID {
+		return 0, fmt.Errorf("%w: unknown camera cannot be deleted", ErrInvalidValue)
+	}
+
+	cameraMutex.Lock()
+	defer cameraMutex.Unlock()
+
+	if reassign {
+		res := UnscopedDb().Model(&Photo{}).Where("camera_id = ?", m.ID).UpdateColumn("camera_id", unknownID)
+
+		if res.Error != nil {
+			return 0, res.Error
+		}
+
+		reassigned = res.RowsAffected
+	}
+
+	// Delete the camera only if no picture references it, e.g. after being assigned to it by a concurrent index run.
+	res := UnscopedDb().Exec(`DELETE FROM cameras WHERE id = ? AND NOT EXISTS (SELECT 1 FROM photos WHERE photos.camera_id = cameras.id)`, m.ID)
+
+	if res.Error != nil {
+		return reassigned, res.Error
+	} else if res.RowsAffected == 0 {
+		var count int
+
+		if err = UnscopedDb().Model(&Camera{}).Where("id = ?", m.ID).Count(&count).Error; err != nil {
+			return reassigned, err
+		} else if count == 0 {
+			return reassigned, gorm.ErrRecordNotFound
+		}
+
+		return reassigned, fmt.Errorf("%w: camera is used by pictures", ErrInUse)
+	}
+
+	cameraCache.Delete(m.CameraSlug)
+
+	// Content channels carry only stable identities, never entity fields; publish the slug.
+	event.EntitiesDeleted("cameras", []string{m.CameraSlug})
+
+	event.Publish("count.cameras", event.Data{
+		"count": -1,
+	})
+
+	return reassigned, nil
 }
 
 // String returns an identifier that can be used in logs.

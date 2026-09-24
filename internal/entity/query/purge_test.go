@@ -134,3 +134,73 @@ func TestPurgeUnusedLenses(t *testing.T) {
 	assert.NoError(t, UnscopedDb().Model(&entity.Lens{}).Where("id = ?", orphan.ID).Count(&count).Error)
 	assert.Equal(t, 0, count)
 }
+
+func TestResetMissingCameras(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		photo := entity.Photo{}
+		assert.NoError(t, UnscopedDb().Order("id").First(&photo).Error)
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Model(&entity.Photo{}).Where("id = ?", photo.ID).UpdateColumn("camera_id", photo.CameraID).Error)
+		})
+
+		// Point the picture at a camera that does not exist, as a deletion by another process may leave it.
+		assert.NoError(t, UnscopedDb().Model(&entity.Photo{}).Where("id = ?", photo.ID).UpdateColumn("camera_id", 999999999).Error)
+
+		count, err := ResetMissingCameras()
+		assert.NoError(t, err)
+		assert.Equal(t, int64(1), count)
+
+		found := entity.Photo{}
+		assert.NoError(t, UnscopedDb().First(&found, "id = ?", photo.ID).Error)
+		assert.Equal(t, entity.UnknownCamera.ID, found.CameraID)
+
+		// Existing references are left unchanged.
+		count, err = ResetMissingCameras()
+		assert.NoError(t, err)
+		assert.Equal(t, int64(0), count)
+	})
+	t.Run("Uninitialized", func(t *testing.T) {
+		prev := entity.UnknownCamera
+		t.Cleanup(func() { entity.UnknownCamera = prev })
+		entity.UnknownCamera.ID = 0
+
+		count, err := ResetMissingCameras()
+		assert.NoError(t, err)
+		assert.Equal(t, int64(0), count)
+	})
+}
+
+func TestResetMissingLenses(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		photo := entity.Photo{}
+		assert.NoError(t, UnscopedDb().Order("id").First(&photo).Error)
+		t.Cleanup(func() {
+			assert.NoError(t, UnscopedDb().Model(&entity.Photo{}).Where("id = ?", photo.ID).UpdateColumn("lens_id", photo.LensID).Error)
+		})
+
+		// Point the picture at a lens that does not exist, as a deletion by another process may leave it.
+		assert.NoError(t, UnscopedDb().Model(&entity.Photo{}).Where("id = ?", photo.ID).UpdateColumn("lens_id", 999999999).Error)
+
+		count, err := ResetMissingLenses()
+		assert.NoError(t, err)
+		assert.Equal(t, int64(1), count)
+
+		found := entity.Photo{}
+		assert.NoError(t, UnscopedDb().First(&found, "id = ?", photo.ID).Error)
+		assert.Equal(t, entity.UnknownLens.ID, found.LensID)
+
+		// Existing references are left unchanged.
+		count, err = ResetMissingLenses()
+		assert.NoError(t, err)
+		assert.Equal(t, int64(0), count)
+	})
+	t.Run("Uninitialized", func(t *testing.T) {
+		prev := entity.UnknownLens
+		t.Cleanup(func() { entity.UnknownLens = prev })
+		entity.UnknownLens.ID = 0
+
+		count, err := ResetMissingLenses()
+		assert.NoError(t, err)
+		assert.Equal(t, int64(0), count)
+	})
+}

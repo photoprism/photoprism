@@ -166,7 +166,7 @@ func AddLens(makeName, modelName string) (result *Lens, created bool, err error)
 	}
 
 	// Report an existing lens instead of creating a duplicate, unless it has been purged in the meantime.
-	if existing := findLensByMakeModel(m); existing != nil && !existing.Unknown() {
+	if existing := findExistingLens(m); existing != nil && !existing.Unknown() {
 		if err = existing.markManual(); err == nil {
 			return existing, false, nil
 		} else if !errors.Is(err, gorm.ErrRecordNotFound) {
@@ -187,29 +187,60 @@ func AddLens(makeName, modelName string) (result *Lens, created bool, err error)
 	return result, false, nil
 }
 
-// findLensByMakeModel returns the lens with the same slug, or else with the same make and model, if any.
+// findExistingLens returns the lens with the same slug, or else with the same make and model, if any.
 // The make and model lookup covers renamed records, whose slug no longer matches their name.
-func findLensByMakeModel(m *Lens) *Lens {
+func findExistingLens(m *Lens) *Lens {
 	existing := Lens{}
 
 	if Db().Where("lens_slug = ?", m.LensSlug).First(&existing).Error == nil {
 		return &existing
 	}
 
+	if found := findLensesByMakeModel(m.LensMake, m.LensModel); len(found) > 0 {
+		return &found[0]
+	}
+
+	return nil
+}
+
+// FindLensesByMakeModel returns the lenses that match the make and model as stored, or else after normalizing them.
+// It ignores the slug, which a renamed record keeps and may therefore belong to another name.
+func FindLensesByMakeModel(makeName, modelName string) Lenses {
+	makeName = strings.TrimSpace(makeName)
+	modelName = strings.TrimSpace(modelName)
+
+	if makeName == "" || modelName == "" {
+		return nil
+	} else if found := findLensesByMakeModel(makeName, modelName); len(found) > 0 {
+		// Records saved with a different normalization, e.g. by an older version, match as stored.
+		return found
+	}
+
+	m := NewLens(makeName, modelName)
+
+	if m.Unknown() || strings.TrimSpace(m.LensModel) == "" {
+		return nil
+	}
+
+	return findLensesByMakeModel(m.LensMake, m.LensModel)
+}
+
+// findLensesByMakeModel returns the lenses with exactly the specified make and model, ordered by ID.
+func findLensesByMakeModel(makeName, modelName string) (result Lenses) {
 	var candidates Lenses
 
-	if Db().Where("lens_make = ? AND lens_model = ?", m.LensMake, m.LensModel).Find(&candidates).Error != nil {
+	if Db().Where("lens_make = ? AND lens_model = ?", makeName, modelName).Order("id").Find(&candidates).Error != nil {
 		return nil
 	}
 
 	// Compare in Go, since MariaDB collations also match values that differ in case, accents, or emoji.
 	for i := range candidates {
-		if candidates[i].LensMake == m.LensMake && candidates[i].LensModel == m.LensModel {
-			return &candidates[i]
+		if candidates[i].LensMake == makeName && candidates[i].LensModel == modelName && !candidates[i].Unknown() {
+			result = append(result, candidates[i])
 		}
 	}
 
-	return nil
+	return result
 }
 
 // markManual marks an existing lens as added manually, so that purging orphans keeps it.
@@ -240,6 +271,88 @@ func (m *Lens) markManual() error {
 	lensCache.SetDefault(m.LensSlug, m)
 
 	return nil
+}
+
+// unknownLensID returns the ID of the unknown lens placeholder, and initializes the placeholder if needed.
+func unknownLensID() (uint, error) {
+	if UnknownLens.ID == 0 {
+		CreateUnknownLens()
+	}
+
+	if UnknownLens.ID == 0 {
+		return 0, fmt.Errorf("unknown lens not found")
+	}
+
+	return UnknownLens.ID, nil
+}
+
+// PhotoCount returns the number of pictures that reference the lens, including archived and deleted pictures.
+func (m *Lens) PhotoCount() (count int, err error) {
+	if m.ID == 0 {
+		return 0, fmt.Errorf("empty id")
+	}
+
+	err = UnscopedDb().Model(&Photo{}).Where("lens_id = ?", m.ID).Count(&count).Error
+
+	return count, err
+}
+
+// Delete permanently removes the lens, and first assigns the pictures that reference it to the unknown lens if requested.
+// It returns ErrInUse if pictures still reference the lens, so that none of them is left with a dangling reference.
+func (m *Lens) Delete(reassign bool) (reassigned int64, err error) {
+	if m.ID == 0 {
+		return 0, fmt.Errorf("empty id")
+	}
+
+	// Resolve the placeholder from the database, since the CLI does not initialize it on startup.
+	unknownID, err := unknownLensID()
+
+	if err != nil {
+		return 0, err
+	} else if m.Unknown() || m.ID == unknownID {
+		return 0, fmt.Errorf("%w: unknown lens cannot be deleted", ErrInvalidValue)
+	}
+
+	lensMutex.Lock()
+	defer lensMutex.Unlock()
+
+	if reassign {
+		res := UnscopedDb().Model(&Photo{}).Where("lens_id = ?", m.ID).UpdateColumn("lens_id", unknownID)
+
+		if res.Error != nil {
+			return 0, res.Error
+		}
+
+		reassigned = res.RowsAffected
+	}
+
+	// Delete the lens only if no picture references it, e.g. after being assigned to it by a concurrent index run.
+	res := UnscopedDb().Exec(`DELETE FROM lenses WHERE id = ? AND NOT EXISTS (SELECT 1 FROM photos WHERE photos.lens_id = lenses.id)`, m.ID)
+
+	if res.Error != nil {
+		return reassigned, res.Error
+	} else if res.RowsAffected == 0 {
+		var count int
+
+		if err = UnscopedDb().Model(&Lens{}).Where("id = ?", m.ID).Count(&count).Error; err != nil {
+			return reassigned, err
+		} else if count == 0 {
+			return reassigned, gorm.ErrRecordNotFound
+		}
+
+		return reassigned, fmt.Errorf("%w: lens is used by pictures", ErrInUse)
+	}
+
+	lensCache.Delete(m.LensSlug)
+
+	// Content channels carry only stable identities, never entity fields; publish the slug.
+	event.EntitiesDeleted("lenses", []string{m.LensSlug})
+
+	event.Publish("count.lenses", event.Data{
+		"count": -1,
+	})
+
+	return reassigned, nil
 }
 
 // String returns an identifier that can be used in logs.

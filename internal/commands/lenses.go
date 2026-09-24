@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/dustin/go-humanize/english"
+	"github.com/jinzhu/gorm"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -30,6 +32,7 @@ var LensesCommand = &cli.Command{
 		LensesListCommand,
 		LensesAddCommand,
 		LensesUpdateCommand,
+		LensesRemoveCommand,
 	},
 }
 
@@ -51,6 +54,20 @@ var LensesAddCommand = &cli.Command{
 		&cli.StringFlag{Name: "model", Usage: "the model of the lens", Required: true},
 	},
 	Action: lensesAddAction,
+}
+
+// LensesRemoveCommand registers the rm sub command.
+var LensesRemoveCommand = &cli.Command{
+	Name:  "rm",
+	Usage: "Deletes a lens that is no longer needed",
+	Flags: []cli.Flag{
+		&cli.UintFlag{Name: "id", Usage: "lens id, alternatively pass --make and --model"},
+		&cli.StringFlag{Name: "make", Usage: "the make of the lens"},
+		&cli.StringFlag{Name: "model", Usage: "the model of the lens"},
+		&cli.BoolFlag{Name: "reassign", Usage: "assigns pictures that use the lens to the unknown lens first"},
+		YesFlag(),
+	},
+	Action: lensesRemoveAction,
 }
 
 // LensesUpdateCommand registers the update sub command
@@ -198,4 +215,90 @@ func printLens(ctx *cli.Context, id uint) error {
 	fmt.Println(result)
 
 	return nil
+}
+
+// lensesRemoveAction deletes a lens, provided no picture uses it or the pictures may be reassigned.
+func lensesRemoveAction(ctx *cli.Context) error {
+	return CallWithDependencies(ctx, func(conf *config.Config) error {
+		reassign := ctx.Bool("reassign")
+
+		id := ctx.Uint("id")
+		lensMake := strings.TrimSpace(ctx.String("make"))
+		lensModel := strings.TrimSpace(ctx.String("model"))
+
+		// Find the lens either by ID or by make and model, since the ID is not shown anywhere else.
+		var lens *entity.Lens
+
+		switch {
+		case id > 0 && (lensMake != "" || lensModel != ""):
+			return cli.Exit("pass either --id or --make and --model, not both", 2)
+		case id > 0:
+			lens = query.FindLensByID(id)
+		case lensMake != "" && lensModel != "":
+			found := entity.FindLensesByMakeModel(lensMake, lensModel)
+
+			if len(found) > 1 {
+				ids := make([]string, len(found))
+
+				for i := range found {
+					ids[i] = strconv.FormatUint(uint64(found[i].ID), 10)
+				}
+
+				return cli.Exit(fmt.Errorf("found %d lenses with this make and model (IDs %s), pass --id to select one",
+					len(found), strings.Join(ids, ", ")), 2)
+			} else if len(found) == 1 {
+				lens = &found[0]
+			}
+		default:
+			return cli.Exit("pass either --id or --make and --model", 2)
+		}
+
+		if lens == nil {
+			return cli.Exit("lens not found", 3)
+		} else if lens.Unknown() {
+			return cli.Exit("unknown lens cannot be deleted", 2)
+		}
+
+		count, err := lens.PhotoCount()
+
+		if err != nil {
+			return cli.Exit(err, 1)
+		} else if count > 0 && !reassign {
+			return cli.Exit(fmt.Errorf("lens %s is used by %s, pass --reassign to assign them to the unknown lens",
+				lens.String(), english.Plural(count, "picture", "pictures")), 2)
+		}
+
+		label := fmt.Sprintf("Delete lens %s with ID %d?", lens.String(), lens.ID)
+
+		if count > 0 {
+			label = fmt.Sprintf("Assign %s to the unknown lens and delete lens %s with ID %d?", english.Plural(count, "picture", "pictures"), lens.String(), lens.ID)
+		}
+
+		if proceed, confirmErr := ConfirmAction(ctx.Bool("yes"), label); confirmErr != nil {
+			return confirmErr
+		} else if !proceed {
+			log.Infof("lens %s with ID %d was not deleted", lens.String(), lens.ID)
+			return nil
+		}
+
+		reassigned, err := lens.Delete(reassign)
+
+		if reassigned > 0 {
+			log.Infof("assigned %s to the unknown lens", english.Plural(int(reassigned), "picture", "pictures"))
+		}
+
+		switch {
+		case errors.Is(err, entity.ErrInUse):
+			// Pictures may have been assigned to the lens concurrently, e.g. by an index run.
+			return cli.Exit(fmt.Errorf("lens %s is still used by pictures, please try again", lens.String()), 2)
+		case errors.Is(err, gorm.ErrRecordNotFound):
+			return cli.Exit("lens not found", 3)
+		case err != nil:
+			return cli.Exit(err, 1)
+		}
+
+		log.Infof("lens %s with ID %d has been deleted", lens.String(), lens.ID)
+
+		return nil
+	})
 }
