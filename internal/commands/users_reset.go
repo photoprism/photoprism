@@ -13,7 +13,7 @@ import (
 )
 
 // UsersResetDescription explains the effect of the users reset command.
-const UsersResetDescription = "This command recreates the session and user management database tables so that they are compatible with the current version. Should you experience login problems, for example after an upgrade from an earlier version or a development preview, we recommend that you first try the \"photoprism auth reset --yes\" command to see if it solves the issue. Note that all sessions, access tokens, app passwords, 2FA passcodes, and user shares are deleted as well, and so are the client applications registered to users."
+const UsersResetDescription = "This command recreates the session and user management database tables so that they are compatible with the current version. Should you experience login problems, for example after an upgrade from an earlier version or a development preview, we recommend that you first try the \"photoprism auth reset --yes\" command to see if it solves the issue. Note that all account passwords, sessions, access tokens, app passwords, 2FA passcodes, and user shares are deleted as well, and so are the client applications registered to users."
 
 // UsersResetCommand configures the command name, flags, and action.
 var UsersResetCommand = &cli.Command{
@@ -47,6 +47,11 @@ func usersResetAction(ctx *cli.Context) error {
 		}
 
 		db := conf.Db()
+
+		// Before the account tables are dropped, since it looks the accounts up there.
+		if err := LogDeleteUserPasswords(db); err != nil {
+			return cli.Exit(err, 1)
+		}
 
 		// Drop existing user management tables.
 		if err := db.DropTableIfExists(entity.User{}, entity.UserDetails{}, entity.UserSettings{}, entity.UserShare{}, entity.Passcode{}, entity.Session{}).Error; err != nil {
@@ -91,6 +96,34 @@ func usersResetAction(ctx *cli.Context) error {
 
 		return nil
 	})
+}
+
+// DeleteUserPasswords deletes the passwords of all user accounts, including soft-deleted ones, and
+// keeps the client secrets stored in the same table.
+func DeleteUserPasswords(db *gorm.DB) (int64, error) {
+	if db == nil {
+		return 0, fmt.Errorf("database not connected")
+	} else if !db.HasTable(entity.User{}) || !db.HasTable(entity.Password{}) {
+		return 0, nil
+	}
+
+	res := db.Exec(fmt.Sprintf("DELETE FROM %s WHERE uid IN (SELECT user_uid FROM %s)",
+		entity.Password{}.TableName(), entity.User{}.TableName()))
+
+	return res.RowsAffected, res.Error
+}
+
+// LogDeleteUserPasswords deletes the passwords of all user accounts and logs how many were deleted.
+func LogDeleteUserPasswords(db *gorm.DB) error {
+	deleted, err := DeleteUserPasswords(db)
+
+	if err != nil {
+		return err
+	}
+
+	log.Infof("deleted %s", english.Plural(int(deleted), "account password", "account passwords"))
+
+	return nil
 }
 
 // DeleteUserClients deletes the client applications registered to a user account, including
