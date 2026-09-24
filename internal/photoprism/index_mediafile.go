@@ -44,8 +44,8 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		// Skip known file.
 		result.Status = IndexSkipped
 		return result
-	} else if o.FacesOnly && !m.IsJpeg() {
-		// Skip non-jpeg file when indexing faces only.
+	} else if o.FacesOnly && !m.IsJpeg() && (!o.RegenerateFaces || !m.IsPreviewImage()) {
+		// Skip non-jpeg file when indexing faces only, unless its markers are regenerated.
 		result.Status = IndexSkipped
 		return result
 	}
@@ -355,6 +355,10 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	// Detect faces in images?
 	if o.FacesOnly && (!photoExists || !fileExists || !file.FilePrimary || file.FileError != "") {
 		// New and non-primary files can be skipped when updating faces only.
+		if o.RegenerateFaces && fileExists && file.FilePrimary && file.FileError != "" {
+			o.FaceRegeneration.addError()
+		}
+
 		result.Status = IndexSkipped
 		return result
 	} else if (o.DetectFaces || o.ImportFaceTags) && file.FilePrimary {
@@ -363,7 +367,17 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		// when face detection is disabled or deferred to a background worker.
 		if markers := file.Markers(); markers != nil {
 			// Run the expensive AI face detection only when it is enabled.
-			if o.DetectFaces {
+			regenerated := false
+
+			if o.DetectFaces && o.RegenerateFaces {
+				if changes, regenErr := ind.regenerateFaces(m, &file, o.ImportFaceTags); regenErr != nil {
+					log.Warnf("index: %s while regenerating faces in %s", clean.Error(regenErr), logName)
+					o.FaceRegeneration.addError()
+				} else {
+					regenerated = changes.Changed()
+					o.FaceRegeneration.add(changes)
+				}
+			} else if o.DetectFaces {
 				if faces := ind.Faces(m, markers.DetectedFaceCount()); len(faces) > 0 {
 					file.AddFaces(faces)
 				}
@@ -384,9 +398,9 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			}
 
 			// Skip when indexing faces only and nothing changed. A delete-only
-			// reconcile persists no unsaved marker, so xmpChanged is tracked
-			// separately to keep the recomputed face count from going stale.
-			if !file.UnsavedMarkers() && !xmpChanged && o.FacesOnly {
+			// reconcile or regeneration persists no unsaved marker, so both are
+			// tracked separately to keep the recomputed face count from going stale.
+			if !file.UnsavedMarkers() && !xmpChanged && !regenerated && o.FacesOnly {
 				result.Status = IndexSkipped
 				return result
 			}

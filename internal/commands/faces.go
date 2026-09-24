@@ -28,6 +28,9 @@ import (
 const FacesResetDescription = "Without flags, this command removes the automatically recognized faces and matches, as well as people who were created from faces and are left without any, and keeps the names you assigned. " +
 	"With --all, it also removes the names you assigned and unverified people, keeping the markers. " +
 	"With --force, it removes all faces, people, and markers, so faces must be detected again with \"photoprism faces index\". " +
+	"With --detector, it removes all faces instead of only the automatically recognized ones, and detects faces in all pictures again, " +
+	"which updates the markers the detector finds, adds new ones, and removes the unnamed markers it does not find. " +
+	"Run it while the instance is stopped or idle, and set the face detector in the configuration to the same value. " +
 	"Afterwards, run \"photoprism faces update\" to recognize faces again."
 
 // FacesCommands configures the command name, flags, and action.
@@ -102,7 +105,7 @@ var FacesCommands = &cli.Command{
 				ForceFlag("removes all faces, people, and markers, so faces must be detected again"),
 				&cli.StringFlag{
 					Name:  "detector",
-					Usage: "regenerates markers with the detection model `NAME` (" + face.DetectorUsageString() + ")",
+					Usage: "regenerates all markers with the detection model `NAME` (" + face.DetectorUsageString() + ")",
 				},
 				&cli.StringFlag{
 					Name:   "engine",
@@ -435,6 +438,11 @@ func facesResetAction(ctx *cli.Context) error {
 		return cli.Exit(fmt.Sprintf("faces: unsupported face detector %s", clean.Log(detector)), 2)
 	}
 
+	// The run cannot see a running instance, so the operator is asked to rule out a concurrent pass.
+	if detector != "" && face.ParseDetectorName(detector) != face.DetectorNone && !RunNonInteractively(ctx.Bool("yes")) {
+		log.Warnf("faces: make sure the instance is stopped or idle before you continue")
+	}
+
 	if proceed, err := ConfirmAction(ctx.Bool("yes"), facesResetLabel(all, detector)); err != nil {
 		return err
 	} else if !proceed {
@@ -501,23 +509,30 @@ func facesResetDetector(ctx *cli.Context) string {
 
 // facesResetLabel returns the confirmation prompt for the scope and detector a reset was given.
 func facesResetLabel(all bool, detector string) string {
-	label := "Remove automatically recognized faces, matches, and people left without faces"
-
-	if all {
-		label = "Remove all faces and matches, including names and unverified people, keeping the markers"
-	}
+	var with string
 
 	switch face.ParseDetectorName(detector) {
 	case face.DetectorNone:
 	case face.DetectorAuto:
 		if strings.TrimSpace(detector) != "" {
-			return label + ", then detect faces in all pictures with the configured detector?"
+			with = "the configured detector"
 		}
 	default:
-		return fmt.Sprintf("%s, then detect faces in all pictures with %s?", label, clean.Log(detector))
+		with = clean.Log(detector)
 	}
 
-	return label + "?"
+	switch {
+	case with != "" && all:
+		return fmt.Sprintf("Remove all faces, matches, names, and unverified people, then detect faces in all pictures with %s "+
+			"and remove the unnamed markers it does not find again?", with)
+	case with != "":
+		return fmt.Sprintf("Remove all faces and automatic matches, then detect faces in all pictures with %s "+
+			"and remove the unnamed markers it does not find again?", with)
+	case all:
+		return "Remove all faces and matches, including names and unverified people, keeping the markers?"
+	default:
+		return "Remove automatically recognized faces, matches, and people left without faces?"
+	}
 }
 
 // facesResetAllAction removes all people, faces, and face markers.

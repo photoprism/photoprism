@@ -1,6 +1,8 @@
 package photoprism
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -9,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -66,12 +69,126 @@ func TestFaces_ResetAndReindex_Detect(t *testing.T) {
 
 	c := config.TestConfig()
 	m := NewFaces(c)
+	writeOriginalsTestFile(t, c)
 
-	err := m.ResetAndReindex(face.DetectorAuto, nil, false)
+	err := m.ResetAndReindex(face.DetectorAuto, NewIndex(c, NewConvert(c), NewFiles(), NewPhotos()), false)
 	require.NoError(t, err)
 	require.True(t, called)
 	require.True(t, received.FacesOnly)
+	require.True(t, received.RegenerateFaces)
+	require.NotNil(t, received.FaceRegeneration)
 	require.Equal(t, face.EngineONNX, c.FaceEngine())
+}
+
+// writeOriginalsTestFile adds a file to the originals folder until the test ends, since a
+// regeneration refuses to start on an empty one.
+func writeOriginalsTestFile(t *testing.T, c *config.Config) {
+	t.Helper()
+
+	name := filepath.Join(c.OriginalsPath(), "regenerate-test.txt")
+	require.NoError(t, fs.WriteString(name, "test"))
+	t.Cleanup(func() { _ = os.Remove(name) })
+}
+
+func TestFaces_RegenerateRefused(t *testing.T) {
+	c := config.TestConfig()
+	w := NewFaces(c)
+	ind := NewIndex(c, NewConvert(c), NewFiles(), NewPhotos())
+
+	newOpt := func() IndexOptions {
+		opt := IndexOptionsFacesOnly(c)
+		opt.RegenerateFaces = true
+		return opt
+	}
+
+	t.Run("EmptyOriginals", func(t *testing.T) {
+		err := w.regenerateRefused(ind, newOpt())
+
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "is empty")
+	})
+
+	writeOriginalsTestFile(t, c)
+
+	t.Run("Success", func(t *testing.T) {
+		if c.FaceDetector() == face.DetectorNone || face.EmbeddingsDisabled() {
+			t.Skip("faces: skipping, the detector or the embedder is not available here")
+		}
+
+		assert.NoError(t, w.regenerateRefused(ind, newOpt()))
+	})
+	t.Run("NoDetector", func(t *testing.T) {
+		detector := c.Options().FaceDetector
+		t.Cleanup(func() { c.Options().FaceDetector = detector })
+		c.Options().FaceDetector = face.DetectorNone
+
+		err := w.regenerateRefused(ind, newOpt())
+
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "cannot be used")
+	})
+	t.Run("EmbeddingsDisabled", func(t *testing.T) {
+		prev := face.ConfiguredModel()
+		require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: face.ModelNone}))
+		t.Cleanup(func() { require.NoError(t, face.ConfigureEmbedder(face.EmbedderSettings{Name: prev})) })
+
+		err := w.regenerateRefused(ind, newOpt())
+
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "embeddings are disabled")
+	})
+	t.Run("MissingFolder", func(t *testing.T) {
+		opt := newOpt()
+		opt.Path = "missing-regenerate-folder"
+
+		err := w.regenerateRefused(ind, opt)
+
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "not found")
+	})
+	t.Run("DetectionDisabled", func(t *testing.T) {
+		opt := newOpt()
+		opt.DetectFaces = false
+
+		err := w.regenerateRefused(ind, opt)
+
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "detection is disabled")
+	})
+	t.Run("EmbeddingsBlocked", func(t *testing.T) {
+		t.Cleanup(face.UnblockEmbeddings)
+		face.BlockEmbeddings("12 marker(s) use facenet, but this instance is configured for sface")
+
+		err := w.regenerateRefused(ind, newOpt())
+
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "until the library is migrated")
+	})
+	t.Run("IndexRunning", func(t *testing.T) {
+		require.NoError(t, mutex.IndexWorker.Start())
+		t.Cleanup(mutex.IndexWorker.Stop)
+
+		err := w.regenerateRefused(ind, newOpt())
+
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "already running")
+	})
+	t.Run("FacesLocked", func(t *testing.T) {
+		lock, lockErr := mutex.AcquireFileLock(c.FacesLockFile(), "faces migration")
+		require.NoError(t, lockErr)
+		t.Cleanup(lock.Release)
+
+		err := w.regenerateRefused(ind, newOpt())
+
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "faces migration")
+	})
+	t.Run("NoIndex", func(t *testing.T) {
+		err := w.regenerateRefused(nil, newOpt())
+
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "index service unavailable")
+	})
 }
 
 // TestFaces_ResetAndReindex_ResetOnly pins that naming no detector, or naming "none", resets

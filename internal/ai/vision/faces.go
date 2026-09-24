@@ -24,100 +24,116 @@ func DetectFaces(fileName string, minSize, retrySize int, cacheCrop bool, expect
 	// Return if there is no configuration or no image classification models are configured.
 	if Config == nil {
 		return result, errors.New("vision service is not configured")
-	} else if model := Config.Model(ModelTypeFace); model != nil {
-		result, err = face.DetectWithRetry(fileName, minSize, retrySize)
-
-		if err != nil {
-			return result, err
-		}
-
-		// Skip embeddings?
-		if c := len(result); c == 0 || expected > 0 && c == expected {
-			return result, nil
-		}
-
-		// A library the configured model cannot read is migrated rather than added to, so the
-		// faces are still recorded and their vectors are filled in afterwards. Returning an
-		// error instead would drop the detections, and an endpoint is no exemption: its
-		// vectors are stamped with the configured model and land in the same second space.
-		if face.EmbeddingsBlocked() {
-			log.Debugf("vision: skipping face embeddings while they are paused")
-			return result, nil
-		}
-
-		uri, method := model.Endpoint()
-		endpoint := uri != "" && method != ""
-
-		// Before either path below, because both select the rendition they crop from by statting
-		// the cache: one that is rendered afterwards is one the embeddings did not use. Only for a
-		// run that can actually embed - an instance whose weights failed to load would otherwise
-		// pay a decode and a write per file for vectors it never produces. FaceModel is asked only
-		// where no endpoint is configured, since that is the sole branch that loads one.
-		if cropSource != nil && !face.EmbeddingsDisabled() && (endpoint || model.FaceModel() != nil) {
-			cropSource(result)
-		}
-
-		if endpoint && face.EmbeddingsDisabled() {
-			// An endpoint does not exempt the instance from the embeddings setting.
-			log.Debugf("vision: skipping face embeddings")
-		} else if endpoint {
-			var faceCrops []string
-			var apiRequest *ApiRequest
-			var apiResponse *ApiResponse
-
-			faceCrops = make([]string, len(result))
-
-			for i, f := range result {
-				if f.Area.Col == 0 && f.Area.Row == 0 {
-					faceCrops[i] = ""
-					continue
-				}
-
-				if _, faceCrop, _, imgErr := crop.ImageFromThumb(fileName, f.CropArea(), face.CropSize, cacheCrop); imgErr != nil {
-					log.Errorf("vision: failed to create face crop (%s)", imgErr)
-					faceCrops[i] = ""
-				} else if faceCrop != "" {
-					faceCrops[i] = faceCrop
-				}
-			}
-
-			if apiRequest, err = NewApiRequest(model.EndpointRequestFormat(), faceCrops, model.EndpointFileScheme(), media.SrcLocal); err != nil {
-				return result, err
-			}
-
-			_, apiRequest.Model, apiRequest.Version = model.GetModel()
-			model.ApplyService(apiRequest)
-
-			if model.System != "" {
-				apiRequest.System = model.System
-			}
-
-			if model.Prompt != "" {
-				apiRequest.Prompt = model.Prompt
-			}
-
-			// Log JSON request data in trace mode.
-			apiRequest.WriteLog()
-
-			if apiResponse, err = PerformApiRequest(apiRequest, uri, method, model.EndpointKey()); err != nil {
-				return result, err
-			}
-
-			if applied := applyEndpointEmbeddings(result, apiResponse, face.EmbeddingModelName()); applied < len(result) {
-				log.Debugf("vision: %d of %d endpoint embeddings applied", applied, len(result))
-			}
-		} else if embedder := model.FaceModel(); embedder != nil {
-			GenerateEmbeddings(embedder, fileName, result, cacheCrop)
-		} else if face.EmbeddingsDisabled() {
-			log.Debugf("vision: skipping face embeddings")
-		} else {
-			return result, errors.New("invalid face model configuration")
-		}
-	} else {
+	} else if model := Config.Model(ModelTypeFace); model == nil {
 		return result, errors.New("missing face model")
+	} else if result, err = face.DetectWithRetry(fileName, minSize, retrySize); err != nil {
+		return result, err
 	}
 
-	return result, nil
+	// Skip embeddings?
+	if c := len(result); c == 0 || expected > 0 && c == expected {
+		return result, nil
+	}
+
+	return result, EmbedFaces(fileName, result, cacheCrop, cropSource)
+}
+
+// EmbedFaces generates embeddings for the passed faces detected in the specified image, with the
+// configured local model or service endpoint.
+func EmbedFaces(fileName string, result face.Faces, cacheCrop bool, cropSource CropSource) (err error) {
+	if fileName == "" {
+		return errors.New("missing image filename")
+	} else if Config == nil {
+		return errors.New("vision service is not configured")
+	} else if len(result) == 0 {
+		return nil
+	}
+
+	model := Config.Model(ModelTypeFace)
+
+	if model == nil {
+		return errors.New("missing face model")
+	}
+
+	// A library the configured model cannot read is migrated rather than added to, so the
+	// faces are still recorded and their vectors are filled in afterwards. Returning an
+	// error instead would drop the detections, and an endpoint is no exemption: its
+	// vectors are stamped with the configured model and land in the same second space.
+	if face.EmbeddingsBlocked() {
+		log.Debugf("vision: skipping face embeddings while they are paused")
+		return nil
+	}
+
+	uri, method := model.Endpoint()
+	endpoint := uri != "" && method != ""
+
+	// Before either path below, because both select the rendition they crop from by statting
+	// the cache: one that is rendered afterwards is one the embeddings did not use. Only for a
+	// run that can actually embed - an instance whose weights failed to load would otherwise
+	// pay a decode and a write per file for vectors it never produces. FaceModel is asked only
+	// where no endpoint is configured, since that is the sole branch that loads one.
+	if cropSource != nil && !face.EmbeddingsDisabled() && (endpoint || model.FaceModel() != nil) {
+		cropSource(result)
+	}
+
+	if endpoint && face.EmbeddingsDisabled() {
+		// An endpoint does not exempt the instance from the embeddings setting.
+		log.Debugf("vision: skipping face embeddings")
+	} else if endpoint {
+		var faceCrops []string
+		var apiRequest *ApiRequest
+		var apiResponse *ApiResponse
+
+		faceCrops = make([]string, len(result))
+
+		for i, f := range result {
+			if f.Area.Col == 0 && f.Area.Row == 0 {
+				faceCrops[i] = ""
+				continue
+			}
+
+			if _, faceCrop, _, imgErr := crop.ImageFromThumb(fileName, f.CropArea(), face.CropSize, cacheCrop); imgErr != nil {
+				log.Errorf("vision: failed to create face crop (%s)", imgErr)
+				faceCrops[i] = ""
+			} else if faceCrop != "" {
+				faceCrops[i] = faceCrop
+			}
+		}
+
+		if apiRequest, err = NewApiRequest(model.EndpointRequestFormat(), faceCrops, model.EndpointFileScheme(), media.SrcLocal); err != nil {
+			return err
+		}
+
+		_, apiRequest.Model, apiRequest.Version = model.GetModel()
+		model.ApplyService(apiRequest)
+
+		if model.System != "" {
+			apiRequest.System = model.System
+		}
+
+		if model.Prompt != "" {
+			apiRequest.Prompt = model.Prompt
+		}
+
+		// Log JSON request data in trace mode.
+		apiRequest.WriteLog()
+
+		if apiResponse, err = PerformApiRequest(apiRequest, uri, method, model.EndpointKey()); err != nil {
+			return err
+		}
+
+		if applied := applyEndpointEmbeddings(result, apiResponse, face.EmbeddingModelName()); applied < len(result) {
+			log.Debugf("vision: %d of %d endpoint embeddings applied", applied, len(result))
+		}
+	} else if embedder := model.FaceModel(); embedder != nil {
+		GenerateEmbeddings(embedder, fileName, result, cacheCrop)
+	} else if face.EmbeddingsDisabled() {
+		log.Debugf("vision: skipping face embeddings")
+	} else {
+		return errors.New("invalid face model configuration")
+	}
+
+	return nil
 }
 
 // applyEndpointEmbeddings assigns validated embeddings from a service response to the

@@ -3,7 +3,6 @@ package commands
 import (
 	"errors"
 	"flag"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -115,23 +114,25 @@ func TestFacesResetLabel(t *testing.T) {
 		assert.Equal(t, "Remove all faces and matches, including names and unverified people, keeping the markers?", facesResetLabel(true, ""))
 	})
 	t.Run("Detector", func(t *testing.T) {
-		label := facesResetLabel(false, "yunet")
-
-		assert.True(t, strings.HasPrefix(label, "Remove automatically recognized faces"))
-		assert.Contains(t, label, "then detect faces in all pictures with yunet")
+		assert.Equal(t, "Remove all faces and automatic matches, then detect faces in all pictures with yunet "+
+			"and remove the unnamed markers it does not find again?", facesResetLabel(false, "yunet"))
+	})
+	t.Run("AllWithDetector", func(t *testing.T) {
+		assert.Equal(t, "Remove all faces, matches, names, and unverified people, then detect faces in all pictures with yunet "+
+			"and remove the unnamed markers it does not find again?", facesResetLabel(true, "yunet"))
 	})
 	t.Run("DetectorNone", func(t *testing.T) {
 		assert.Equal(t, facesResetLabel(true, ""), facesResetLabel(true, "none"))
 		assert.Equal(t, facesResetLabel(false, ""), facesResetLabel(false, "NONE"))
 	})
 	t.Run("DetectorAuto", func(t *testing.T) {
-		assert.Equal(t, "Remove automatically recognized faces, matches, and people left without faces, "+
-			"then detect faces in all pictures with the configured detector?", facesResetLabel(false, "auto"))
+		assert.Equal(t, "Remove all faces and automatic matches, then detect faces in all pictures with the configured detector "+
+			"and remove the unnamed markers it does not find again?", facesResetLabel(false, "auto"))
 	})
 }
 
 func TestFacesResetDescription(t *testing.T) {
-	for _, flag := range []string{"--all", "--force", "faces update", "faces index"} {
+	for _, flag := range []string{"--all", "--force", "--detector", "faces update", "faces index"} {
 		assert.Contains(t, FacesResetDescription, flag)
 	}
 }

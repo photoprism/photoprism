@@ -632,23 +632,6 @@ func TestMigrationDetectionThumb(t *testing.T) {
 	require.Error(t, err)
 }
 
-func TestMatchMigrationDetections(t *testing.T) {
-	markers := entity.Markers{
-		{MarkerUID: "m1", X: 0.1, Y: 0.1, W: 0.2, H: 0.2},
-		{MarkerUID: "m2", X: 0.6, Y: 0.6, W: 0.2, H: 0.2},
-	}
-	detected := face.Faces{
-		{Rows: 100, Cols: 100, Area: face.NewArea("face", 20, 20, 20)},
-		{Rows: 100, Cols: 100, Area: face.NewArea("face", 70, 70, 20)},
-	}
-
-	result := matchMigrationDetections(markers, detected)
-	require.Len(t, result, 2)
-	assert.Equal(t, 0, result["m1"])
-	assert.Equal(t, 1, result["m2"])
-	assert.Empty(t, matchMigrationDetections(nil, detected))
-}
-
 // TestAssignedMigrationDetections pins that only the detections a stale marker claims are handed
 // on to be embedded. Migration detects at the smallest size the detectors are trained for, so a
 // file yields detections no marker accounts for, and inferring those would cost the run their
@@ -684,7 +667,7 @@ func TestAssignedMigrationDetections(t *testing.T) {
 		}
 		one := face.Faces{{Rows: 100, Cols: 100, Score: 80, Area: face.NewArea("face", 45, 45, 10)}}
 
-		require.Equal(t, map[string]int{"m1": 0}, matchMigrationDetections(contested, one),
+		require.Equal(t, map[string]int{"m1": 0}, contested.MatchFaces(one),
 			"the detection must belong to m1")
 
 		assigned, order := assignedMigrationDetections(contested, entity.Markers{contested[1]}, one)
@@ -707,44 +690,6 @@ func TestAssignedMigrationDetections(t *testing.T) {
 	})
 }
 
-// TestOversizedMigrationDetection pins the bound that keeps a containing box from claiming a
-// marker. OverlapPercent divides by the marker's own surface, so a detection that merely
-// contains it scores a perfect 100 while the correctly fitting one scores less.
-func TestOversizedMigrationDetection(t *testing.T) {
-	marker := crop.Area{Name: "face", X: 0.4, Y: 0.4, W: 0.1, H: 0.1}
-
-	t.Run("SameSize", func(t *testing.T) {
-		assert.False(t, oversizedMigrationDetection(crop.Area{X: 0.4, Y: 0.4, W: 0.1, H: 0.1}, marker))
-	})
-	t.Run("SlightlyLarger", func(t *testing.T) {
-		// Ordinary detector-to-detector drift must still match.
-		assert.False(t, oversizedMigrationDetection(crop.Area{X: 0.38, Y: 0.38, W: 0.14, H: 0.14}, marker))
-	})
-	t.Run("HeadAndShoulders", func(t *testing.T) {
-		assert.True(t, oversizedMigrationDetection(crop.Area{X: 0.3, Y: 0.3, W: 0.3, H: 0.3}, marker))
-	})
-	t.Run("EmptyMarker", func(t *testing.T) {
-		// Nothing to compare against, so nothing is rejected on size.
-		assert.False(t, oversizedMigrationDetection(crop.Area{X: 0.3, Y: 0.3, W: 0.3, H: 0.3}, crop.Area{}))
-	})
-}
-
-// TestMatchMigrationDetectionsPrefersConfidence pins that a tie on overlap is broken by detection
-// score rather than by the order the detector emitted them. Containment scores 100, so the
-// migration's lower floors put several candidates at the top of the list.
-func TestMatchMigrationDetectionsPrefersConfidence(t *testing.T) {
-	markers := entity.Markers{{MarkerUID: "m1", X: 0.4, Y: 0.4, W: 0.1, H: 0.1}}
-	detected := face.Faces{
-		{Rows: 100, Cols: 100, Score: 12, Area: face.NewArea("face", 45, 45, 10)},
-		{Rows: 100, Cols: 100, Score: 92, Area: face.NewArea("face", 45, 45, 10)},
-	}
-
-	result := matchMigrationDetections(markers, detected)
-
-	require.Contains(t, result, "m1")
-	assert.Equal(t, 1, result["m1"], "the more confident detection must claim the marker")
-}
-
 func TestClusterableMarkers(t *testing.T) {
 	markers := entity.Markers{
 		{MarkerUID: "big", Size: face.ClusterSizeThreshold, Score: 100},
@@ -760,13 +705,6 @@ func TestRetainedMigrationMarkers(t *testing.T) {
 
 	assert.Len(t, retainedMigrationMarkers(markers, map[string]bool{"m2": true}), 1)
 	assert.Empty(t, retainedMigrationMarkers(markers, nil))
-}
-
-func TestMarkerCropArea(t *testing.T) {
-	result := markerCropArea(entity.Marker{X: 0.1, Y: 0.2, W: 0.3, H: 0.4})
-	assert.Equal(t, float32(0.1), result.X)
-	assert.Equal(t, float32(0.4), result.H)
-	assert.Zero(t, markerCropArea(entity.Marker{}).W)
 }
 
 func TestValidMigrationEmbeddingsUsage(t *testing.T) {
