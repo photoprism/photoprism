@@ -689,8 +689,9 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 	// People are subjects with type person.
 	cfg.Count.People, _ = query.PeopleCount()
 
+	// Cameras added manually are included even if no picture references them yet.
 	c.Db().
-		Where("id IN (SELECT photos.camera_id FROM photos WHERE photos.photo_quality > -1 OR photos.deleted_at IS NULL)").
+		Where("id IN (SELECT photos.camera_id FROM photos WHERE photos.photo_quality > -1 OR photos.deleted_at IS NULL) OR camera_src = ?", entity.SrcManual).
 		Where("deleted_at IS NULL").
 		Limit(10000).Order("camera_slug").
 		Find(&cfg.Cameras)

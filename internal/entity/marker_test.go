@@ -985,3 +985,19 @@ func TestMarker_Embeddings_Normalized(t *testing.T) {
 		assert.Empty(t, m.Embeddings())
 	})
 }
+
+func TestMarker_CropArea(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		m := Marker{X: 0.1, Y: 0.2, W: 0.3, H: 0.4}
+		result := m.CropArea()
+
+		assert.Equal(t, "face", result.Name)
+		assert.Equal(t, float32(0.1), result.X)
+		assert.Equal(t, float32(0.4), result.H)
+	})
+	t.Run("Empty", func(t *testing.T) {
+		m := Marker{}
+
+		assert.Zero(t, m.CropArea().W)
+	})
+}

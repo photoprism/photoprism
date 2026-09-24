@@ -2918,3 +2918,37 @@ func TestUser_LegacyUsername(t *testing.T) {
 		assert.Equal(t, "settled", m.UserName)
 	})
 }
+
+func TestUser_DenyClientAccess(t *testing.T) {
+	t.Run("Nil", func(t *testing.T) {
+		var m *User
+		assert.True(t, m.DenyClientAccess())
+	})
+	t.Run("Active", func(t *testing.T) {
+		m := *UserFixtures.Pointer("alice")
+		assert.False(t, m.DenyClientAccess())
+	})
+	t.Run("WebLoginDisabled", func(t *testing.T) {
+		m := *UserFixtures.Pointer("alice")
+		m.CanLogin = false
+		m.SuperAdmin = false
+		assert.True(t, m.DenyLogIn())
+		assert.False(t, m.DenyClientAccess())
+	})
+	t.Run("ProviderNone", func(t *testing.T) {
+		m := *UserFixtures.Pointer("alice")
+		m.AuthProvider = authn.ProviderNone.String()
+		assert.True(t, m.DenyClientAccess())
+	})
+	t.Run("RoleNone", func(t *testing.T) {
+		m := *UserFixtures.Pointer("bob")
+		m.UserRole = acl.RoleNone.String()
+		assert.True(t, m.DenyClientAccess())
+	})
+	t.Run("Deleted", func(t *testing.T) {
+		assert.True(t, UserFixtures.Pointer("deleted").DenyClientAccess())
+	})
+	t.Run("Visitor", func(t *testing.T) {
+		assert.True(t, Visitor.DenyClientAccess())
+	})
+}

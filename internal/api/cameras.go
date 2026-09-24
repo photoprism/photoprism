@@ -43,6 +43,10 @@ func UpdateCamera(router *gin.RouterGroup) {
 		if m == nil {
 			Abort(c, http.StatusNotFound, i18n.ErrCameraNotFound)
 			return
+		} else if m.Unknown() {
+			// The placeholder for unknown cameras is shared by all pictures without camera information.
+			Abort(c, http.StatusForbidden, i18n.ErrReadOnly)
+			return
 		}
 
 		// Create new camera form.

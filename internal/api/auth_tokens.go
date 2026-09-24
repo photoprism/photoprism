@@ -99,8 +99,8 @@ func downloadNotAdmitted(c *gin.Context, sess *entity.Session) bool {
 
 	u := sess.GetUser()
 
-	// A client session additionally requires a regular account, as AuthAny requires of its owner.
-	return u.IsUnknown() || u.IsDisabled() || sess.IsClient() && !u.IsRegistered()
+	// A client session additionally requires an owner that permits client access, as AuthAny requires.
+	return u.IsUnknown() || u.IsDisabled() || sess.IsClient() && u.DenyClientAccess()
 }
 
 // InvalidDownloadToken checks if the request is not authorized to download any of the resources. It is a

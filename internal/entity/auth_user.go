@@ -508,6 +508,16 @@ func (m *User) DenyLogIn() bool {
 	return !m.CanLogIn()
 }
 
+// DenyClientAccess checks if client applications bound to the user must be refused. Unlike DenyLogIn,
+// it does not consult CanLogin, so they keep working within their own scope while web login is disabled.
+func (m *User) DenyClientAccess() bool {
+	if m == nil {
+		return true
+	}
+
+	return m.IsDisabled() || m.IsUnknown() || !m.IsRegistered() || m.HasProvider(authn.ProviderNone)
+}
+
 // CanUseWebDAV checks whether the user is allowed to use WebDAV to synchronize files.
 func (m *User) CanUseWebDAV() bool {
 	if m == nil {

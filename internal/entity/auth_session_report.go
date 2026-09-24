@@ -1,9 +1,5 @@
 package entity
 
-import (
-	"fmt"
-)
-
 // Report returns the entity values as rows.
 func (m *Session) Report(skipEmpty bool) (rows [][]string, cols []string) {
 	cols = []string{"Name", "Value"}
@@ -16,10 +12,13 @@ func (m *Session) Report(skipEmpty bool) (rows [][]string, cols []string) {
 		return rows, cols
 	}
 
+	// Session data is not part of the report.
+	delete(values, "DataJSON")
+
 	rows = make([][]string, 0, len(values))
 
 	for k, v := range values {
-		s := fmt.Sprintf("%#v", v)
+		s := reportValue(v)
 
 		// Skip empty values?
 		if !skipEmpty || s != "" {

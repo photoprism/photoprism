@@ -1,6 +1,6 @@
 ## Face Detection & Embedding Guidelines
 
-**Last Updated:** September 21, 2026
+**Last Updated:** September 24, 2026
 
 ### Overview
 
@@ -297,7 +297,7 @@ faces: optimize: retained manual clusters after merge: subject <uid>, iteration 
 
 This is informational—the optimizer skips that merge and progresses. To reduce noise, consider:
 
-- Running `photoprism faces reset --detector=<auto|none|yunet>` to regenerate markers with consistent embeddings.
+- Running `photoprism faces reset --detector=<auto|none|yunet>` to regenerate every marker with the same detector.
 - Reviewing the subject’s manual clusters in the UI and trimming outliers or reassigning photos to other people.
 - Confirming that the remaining clusters genuinely represent different appearances (lighting, age); in that case it is safe to ignore the warning.
 
@@ -398,17 +398,20 @@ Four read-only commands describe what a library currently holds, so two tuning r
 
 ### Resetting Face Recognition
 
-`photoprism faces reset` has three scopes, and what separates them is how much has to be recomputed afterwards. All three ask for confirmation, and all three accept `--yes` to answer it from a script.
+`photoprism faces reset` has three scopes, and what separates them is how much has to be recomputed afterwards. `--detector` regenerates the markers after either of the first two. All of them ask for confirmation, and all of them accept `--yes` to answer it from a script.
 
-| Command               | `markers`                                                      | `faces`                 | `subjects`                                 | To recover                         |
-|:----------------------|:---------------------------------------------------------------|:------------------------|:-------------------------------------------|:-----------------------------------|
-| `faces reset`         | clears the references of markers whose `subj_src` is automatic | deletes `face_src = ''` | deletes unreferenced `subj_src = 'marker'` | `faces update`                     |
-| `faces reset --all`   | clears the references of **every** face marker                 | deletes all clusters    | same                                       | `faces update`                     |
-| `faces reset --force` | **deletes** every face marker                                  | deletes all clusters    | deletes every person                       | `faces index`, then `faces update` |
+| Command                         | `markers`                                                          | `faces`                 | `subjects`                                                           | To recover                         |
+|:--------------------------------|:-------------------------------------------------------------------|:------------------------|:---------------------------------------------------------------------|:-----------------------------------|
+| `faces reset`                   | clears the references of markers whose `subj_src` is automatic     | deletes `face_src = ''` | deletes unreferenced `subj_src = 'marker'`                           | `faces update`                     |
+| `faces reset --all`             | clears the references of **every** face marker                     | deletes all clusters    | same, and soft-deletes every unverified person left without a marker | `faces update`                     |
+| `faces reset --force`           | **deletes** every face marker                                      | deletes all clusters    | deletes every person                                                 | `faces index`, then `faces update` |
+| `faces reset --detector=<name>` | same as the scope it is combined with, then regenerated: see below | deletes all clusters    | same as the scope it is combined with                                | `faces update`                     |
 
 The references cleared are `marker_name`, `subj_uid`, `subj_src`, `face_id`, `face_dist` and `matched_at`. The default scope reaches only markers whose subject was assigned automatically, so it finishes with `query.RemoveNonExistentMarkerFaces`: a hand-named marker keeps its person but not a `face_id` pointing at a cluster the same command deleted. Geometry, `size`, `score`, `thumb` and `embeddings_json` are left alone by the first two, which is what lets clustering run again without decoding a single file - the reason `--all` exists is that repeated A/B runs otherwise inherit whatever the previous round asserted.
 
-A person flagged `verified` is kept by both scopes: the row survives as a name so re-clustering rounds are comparable, while their markers lose the assignment along with the clusters. The flag is set from the Edit Person dialog and by nothing automatic.
+A person flagged `verified` is kept by both scopes: the row survives as a name so re-clustering rounds are comparable, while their markers lose the assignment along with the clusters. The flag is set from the Edit Person dialog and by nothing automatic. Under `--all`, every other person left without a marker is soft-deleted, and restored when the name is assigned again.
+
+`--detector` combines with the default scope or with `--all`, and then runs `Index.regenerateFaces` over every primary file in a faces-only index that includes archived pictures, and then counts the face markers in primary files the index did not reach. A file the index found but could not index or regenerate is reported as skipped because of errors, beside the warnings that name it, and does not fail the run; run it again if those warnings name a transient cause. A file the index is set to skip - one matched by `.ppignore` or in a hidden folder, or the sidecar JPEG converted from such a file or from a RAW that is skipped because RAW files are disabled - is reported as skipped as well, as long as it still exists. Any other file - one whose original was moved or removed, or one the index never got to - fails the run with the advice to index or purge the library and run it again. Everything that could make that index skip the run - a blocked or disabled embedder, the faces lock, a running index, a missing or empty folder, low storage, a detector that fails to load - is checked before anything is removed. It detects at the migration floors (`FACE_MIGRATE_SIZE`, `FACE_MIGRATE_SCORE`) so the markers an earlier detector placed are found again, and pairs detections with markers through `Markers.MatchFacesBestFit`, which ranks by intersection over union and lets valid markers claim first, so neither a loose box nor a rejected marker takes a face from the marker that fits it; a rejected marker only claims a detection an ordinary index would refuse to add next to it. `Marker.Redetect` then gives a matched marker the detection's embedding, landmarks, `detect_model` and sampling, and a detector-placed one also its score; the box moves only for a valid detector-placed marker whose name did not come from a sidecar and that no sidecar region matches while face tags are imported, so a rejected marker cannot move onto another face and a sidecar region keeps matching the marker it names, also under `--all`. The name, person, and review and rejected state always stay. A detection no marker claims becomes a new marker only if it clears `FACE_SIZE` and `FACE_SCORE`, with the retry an ordinary index applies; the score a detection records is compared with the cutoff as `face.Detect` compares it. A marker no detection matches is removed unless it carries a name or person, is rejected, was placed by a person or a sidecar, or is matched by a sidecar region while face tags are imported; those are kept with their previous vector and reported as kept unmatched. A marker is written only when a value changes, so running it again, or after an interruption, changes nothing that is already done. The detector is not saved: set `FACE_DETECTOR` to the same value, or new pictures and `faces migrate` use the configured one, which the command warns about. It takes no lock a running instance reads, so run it while the instance is stopped or idle - its indexing, faces, vision and metadata workers and marker edits all write markers or clusters; a run that overlapped one converges when it is repeated. A named marker whose own face is not detected may claim a neighboring face without a marker, within the overlap and size bounds.
 
 ⚠ **`--all` destroys hand-verified ground truth.** A name a person assigned is recorded in the marker columns and nowhere else, so cluster-purity measurements that count hand-named identities must export them first. `--force` additionally discards detection, so it costs a full re-index. The two cannot be combined, because they name different outcomes for the markers table.
 

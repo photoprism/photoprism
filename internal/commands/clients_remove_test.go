@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -19,13 +21,15 @@ func TestCientsRemoveCommand(t *testing.T) {
 		assert.NotContains(t, output0, "not found")
 		assert.Contains(t, output0, "client")
 
-		// Run command with test context.
-		output, err := RunWithTestContext(ClientsRemoveCommand, []string{"rm", "cs7pvt5h8rw9aaqj"})
+		t.Setenv("PHOTOPRISM_CLI", "")
 
-		// Check command output for plausibility.
-		// t.Logf(output)
-		assert.NoError(t, err)
-		assert.Empty(t, output)
+		// Without a terminal the prompt cannot run, which is a usage error rather than a refusal.
+		_, err = RunWithTestContext(ClientsRemoveCommand, []string{"rm", "cs7pvt5h8rw9aaqj"})
+
+		var exit cli.ExitCoder
+		require.ErrorAs(t, err, &exit)
+		assert.Equal(t, 2, exit.ExitCode())
+		assert.Contains(t, err.Error(), "--yes")
 
 		// Run command with test context.
 		output2, err := RunWithTestContext(ClientsShowCommand, []string{"show", "cs7pvt5h8rw9aaqj"})
@@ -45,7 +49,7 @@ func TestCientsRemoveCommand(t *testing.T) {
 		assert.Contains(t, output0, "client")
 
 		// Run command with test context.
-		output, err := RunWithTestContext(ClientsRemoveCommand, []string{"rm", "--force", "cs7pvt5h8rw9aaqj"})
+		output, err := RunWithTestContext(ClientsRemoveCommand, []string{"rm", "--yes", "cs7pvt5h8rw9aaqj"})
 
 		// Check command output for plausibility.
 		assert.NoError(t, err)
@@ -72,12 +76,27 @@ func TestCientsRemoveCommand(t *testing.T) {
 	})
 	t.Run("NotFound", func(t *testing.T) {
 		// Run command with test context.
-		output, err := RunWithTestContext(ClientsRemoveCommand, []string{"rm", "--force", "cs7pvt5h8rw9a000"})
+		output, err := RunWithTestContext(ClientsRemoveCommand, []string{"rm", "--yes", "cs7pvt5h8rw9a000"})
 
 		// Check command output for plausibility.
-		assert.Error(t, err)
+		assertExitCode(t, err, 3)
 		assert.Empty(t, output)
 	})
+}
+
+// TestClientsRemoveCommand_ForceAlias pins that the deprecated --force flag still confirms the removal.
+func TestClientsRemoveCommand_ForceAlias(t *testing.T) {
+	t.Setenv("PHOTOPRISM_CLI", "")
+
+	m := entity.NewClient().SetName("ForceAlias").SetScope("metrics")
+	require.NoError(t, m.Create())
+
+	_, err := RunWithTestContext(ClientsRemoveCommand, []string{"rm", "-f", m.ClientUID})
+	require.NoError(t, err)
+
+	found := entity.FindClient(m.ClientUID)
+	require.NotNil(t, found)
+	assert.True(t, found.Deleted())
 }
 
 func TestClientsRemoveCommand_Purge(t *testing.T) {
@@ -90,7 +109,7 @@ func TestClientsRemoveCommand_Purge(t *testing.T) {
 
 		uid := m.ClientUID
 
-		output, err := RunWithTestContext(ClientsRemoveCommand, []string{"rm", "--force", "--purge", uid})
+		output, err := RunWithTestContext(ClientsRemoveCommand, []string{"rm", "--yes", "--purge", uid})
 
 		assert.NoError(t, err)
 		assert.Empty(t, output)
@@ -110,10 +129,10 @@ func TestClientsRemoveCommand_Purge(t *testing.T) {
 		}
 
 		// An ordinary remove refuses a record that is already retired.
-		_, err := RunWithTestContext(ClientsRemoveCommand, []string{"rm", "--force", uid})
-		assert.Error(t, err)
+		_, err := RunWithTestContext(ClientsRemoveCommand, []string{"rm", "--yes", uid})
+		assertExitCode(t, err, 3)
 
-		_, err = RunWithTestContext(ClientsRemoveCommand, []string{"rm", "--force", "--purge", uid})
+		_, err = RunWithTestContext(ClientsRemoveCommand, []string{"rm", "--yes", "--purge", uid})
 		assert.NoError(t, err)
 		assert.Nil(t, entity.FindClientByUID(uid))
 	})
@@ -127,11 +146,10 @@ func TestClientsRemoveCommand_Purge(t *testing.T) {
 
 		// Releasing a node UUID also means releasing its database and grants, so that
 		// goes through the cluster command instead.
-		_, err := RunWithTestContext(ClientsRemoveCommand, []string{"rm", "--force", "--purge", m.ClientUID})
+		_, err := RunWithTestContext(ClientsRemoveCommand, []string{"rm", "--yes", "--purge", m.ClientUID})
 
-		if assert.Error(t, err) {
-			assert.Contains(t, err.Error(), "cluster nodes rm --purge")
-		}
+		assertExitCode(t, err, 2)
+		assert.Contains(t, err.Error(), "cluster nodes rm --purge")
 
 		assert.NotNil(t, entity.FindClientByUID(m.ClientUID))
 	})

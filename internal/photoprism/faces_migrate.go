@@ -7,7 +7,6 @@ import (
 	"image"
 	"os"
 	"path/filepath"
-	"sort"
 	"strings"
 
 	"github.com/dustin/go-humanize/english"
@@ -1278,7 +1277,7 @@ func (w *Faces) cropMigrationEmbeddings(embedder face.Embedder, file *entity.Fil
 	source := ConfigFileName(w.conf, file.FileRoot, file.FileName)
 
 	for _, marker := range markers {
-		area := markerCropArea(marker)
+		area := marker.CropArea()
 		thumbName, thumbErr := crop.ThumbFileName(file.FileHash, area, size, w.conf.ThumbCachePath())
 		if thumbErr != nil {
 			thumbName = source
@@ -1362,7 +1361,7 @@ func (w *Faces) detectMigrationEmbeddings(embedder face.Embedder, file *entity.F
 // marker's own detection sits in that slice. Matching considers every marker the file holds, so
 // a detection a marker needing no work accounts for is not handed to a second marker as well.
 func assignedMigrationDetections(markers, stale entity.Markers, detected face.Faces) (assigned face.Faces, order map[string]int) {
-	assignments := matchMigrationDetections(markers, detected)
+	assignments := markers.MatchFaces(detected)
 	assigned = make(face.Faces, 0, len(stale))
 	order = make(map[string]int, len(stale))
 
@@ -1393,85 +1392,6 @@ func migrationDetectionThumb(conf *config.Config, thumbPath string, file *entity
 	}
 
 	return mediaFile.Thumbnail(thumbPath, thumb.Fit720)
-}
-
-type migrationDetectionPair struct {
-	markerUID string
-	detected  int
-	overlap   int
-	score     int
-}
-
-// migrationOverlapMax bounds how much larger than the marker a detection claiming it may be.
-//
-// OverlapPercent divides by the marker's own surface, so a box that merely contains the marker
-// scores a perfect 100 while the correctly fitting detection scores less. At the floors a
-// migration detects at, a low-confidence head-and-shoulders box is exactly that shape.
-const migrationOverlapMax = 4
-
-// matchMigrationDetections assigns each detected face to at most one stored marker, and returns
-// the index of the detection each marker was given.
-func matchMigrationDetections(markers entity.Markers, detected face.Faces) map[string]int {
-	pairs := make([]migrationDetectionPair, 0)
-	for _, marker := range markers {
-		area := markerCropArea(marker)
-		for i := range detected {
-			candidate := detected[i].CropArea()
-
-			if overlap := candidate.OverlapPercent(area); overlap > face.OverlapThresholdFloor &&
-				!oversizedMigrationDetection(candidate, area) {
-				pairs = append(pairs, migrationDetectionPair{
-					markerUID: marker.MarkerUID,
-					detected:  i,
-					overlap:   overlap,
-					score:     detected[i].Score,
-				})
-			}
-		}
-	}
-
-	// Confidence breaks a tie before detector output order does. Containment scores 100, so
-	// several candidates reach the top and the order they were decoded in decided which one
-	// claimed the marker.
-	sort.Slice(pairs, func(i, j int) bool {
-		switch {
-		case pairs[i].overlap != pairs[j].overlap:
-			return pairs[i].overlap > pairs[j].overlap
-		case pairs[i].score != pairs[j].score:
-			return pairs[i].score > pairs[j].score
-		case pairs[i].markerUID != pairs[j].markerUID:
-			return pairs[i].markerUID < pairs[j].markerUID
-		default:
-			return pairs[i].detected < pairs[j].detected
-		}
-	})
-
-	result := make(map[string]int)
-	used := make(map[int]bool)
-	for _, pair := range pairs {
-		if _, ok := result[pair.markerUID]; ok || used[pair.detected] {
-			continue
-		}
-		result[pair.markerUID] = pair.detected
-		used[pair.detected] = true
-	}
-
-	return result
-}
-
-// oversizedMigrationDetection reports whether a detection is too much larger than the marker it
-// overlaps to be the same face. Without it a box containing the marker outranks every other
-// candidate, because the overlap is measured against the marker's surface alone.
-func oversizedMigrationDetection(candidate, area crop.Area) bool {
-	markerSurface := float64(area.W) * float64(area.H)
-	candidateSurface := float64(candidate.W) * float64(candidate.H)
-
-	return markerSurface > 0 && candidateSurface > markerSurface*migrationOverlapMax
-}
-
-// markerCropArea returns the normalized crop geometry stored on a marker.
-func markerCropArea(marker entity.Marker) crop.Area {
-	return crop.Area{Name: "face", X: marker.X, Y: marker.Y, W: marker.W, H: marker.H}
 }
 
 // buildFaceMigrationClusters creates one replacement cluster per identified subject, seeded from
