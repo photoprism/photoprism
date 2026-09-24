@@ -9,10 +9,14 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
+// ClientsResetDescription explains the effect of the clients reset command.
+const ClientsResetDescription = "This command recreates the auth_clients database table so that it is compatible with the current version. As a result, all registered client applications are removed, including those registered to users, and the access tokens issued to them are deleted. App passwords are not affected."
+
 // ClientsResetCommand configures the command name, flags, and action.
 var ClientsResetCommand = &cli.Command{
-	Name:  "reset",
-	Usage: "Removes all registered client applications",
+	Name:        "reset",
+	Usage:       "Removes all registered client applications",
+	Description: ClientsResetDescription,
 	Flags: []cli.Flag{
 		&cli.BoolFlag{
 			Name:    "trace",

@@ -37,6 +37,8 @@ var VisionResetCommand = &cli.Command{
 	Action: visionResetAction,
 }
 
+// visionResetAction removes the captions and labels the selected models generated for the pictures
+// that match the search filters.
 func visionResetAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
 		models := vision.ParseModelTypes(ctx.String("models"))

@@ -3,6 +3,7 @@ package commands
 import (
 	"errors"
 	"flag"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -53,6 +54,19 @@ func TestFacesResetFlags(t *testing.T) {
 	t.Run("AllHasShortAlias", func(t *testing.T) {
 		assert.True(t, newFacesResetContext(t, "-a").Bool("all"))
 	})
+	t.Run("TraceIsRegistered", func(t *testing.T) {
+		assert.True(t, newFacesResetContext(t, "-t").Bool("trace"))
+	})
+	t.Run("UnknownDetector", func(t *testing.T) {
+		err := facesResetAction(newFacesResetContext(t, "--detector=unknown"))
+
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "unsupported face detector")
+
+		var exit cli.ExitCoder
+		require.ErrorAs(t, err, &exit)
+		assert.Equal(t, 2, exit.ExitCode())
+	})
 	t.Run("ForceWithAll", func(t *testing.T) {
 		err := facesResetAction(newFacesResetContext(t, "--force", "--all"))
 
@@ -73,6 +87,53 @@ func TestFacesResetFlags(t *testing.T) {
 		require.ErrorAs(t, err, &exit)
 		assert.Equal(t, 2, exit.ExitCode())
 	})
+}
+
+func TestFacesResetDetector(t *testing.T) {
+	t.Run("None", func(t *testing.T) {
+		assert.Equal(t, "", facesResetDetector(newFacesResetContext(t)))
+	})
+	t.Run("Detector", func(t *testing.T) {
+		assert.Equal(t, "yunet", facesResetDetector(newFacesResetContext(t, "--detector= yunet ")))
+	})
+	t.Run("DeprecatedEngine", func(t *testing.T) {
+		assert.Equal(t, "auto", facesResetDetector(newFacesResetContext(t, "--engine=onnx")))
+	})
+	t.Run("DeprecatedEngineNone", func(t *testing.T) {
+		assert.Equal(t, "", facesResetDetector(newFacesResetContext(t, "--engine=none")))
+	})
+	t.Run("DetectorWinsOverEngine", func(t *testing.T) {
+		assert.Equal(t, "none", facesResetDetector(newFacesResetContext(t, "--detector=none", "--engine=onnx")))
+	})
+}
+
+func TestFacesResetLabel(t *testing.T) {
+	t.Run("Default", func(t *testing.T) {
+		assert.Equal(t, "Remove automatically recognized faces, matches, and people left without faces?", facesResetLabel(false, ""))
+	})
+	t.Run("All", func(t *testing.T) {
+		assert.Equal(t, "Remove all faces and matches, including names and unverified people, keeping the markers?", facesResetLabel(true, ""))
+	})
+	t.Run("Detector", func(t *testing.T) {
+		label := facesResetLabel(false, "yunet")
+
+		assert.True(t, strings.HasPrefix(label, "Remove automatically recognized faces"))
+		assert.Contains(t, label, "then detect faces in all pictures with yunet")
+	})
+	t.Run("DetectorNone", func(t *testing.T) {
+		assert.Equal(t, facesResetLabel(true, ""), facesResetLabel(true, "none"))
+		assert.Equal(t, facesResetLabel(false, ""), facesResetLabel(false, "NONE"))
+	})
+	t.Run("DetectorAuto", func(t *testing.T) {
+		assert.Equal(t, "Remove automatically recognized faces, matches, and people left without faces, "+
+			"then detect faces in all pictures with the configured detector?", facesResetLabel(false, "auto"))
+	})
+}
+
+func TestFacesResetDescription(t *testing.T) {
+	for _, flag := range []string{"--all", "--force", "faces update", "faces index"} {
+		assert.Contains(t, FacesResetDescription, flag)
+	}
 }
 
 // TestConfirmAction covers the confirmation helper, and in particular that a prompt which cannot

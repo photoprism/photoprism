@@ -31,7 +31,7 @@ var ResetCommand = &cli.Command{
 		&cli.BoolFlag{
 			Name:    "index",
 			Aliases: []string{"i"},
-			Usage:   "resets only the index database ",
+			Usage:   "resets only the index database",
 		},
 		&cli.BoolFlag{
 			Name:    "trace",

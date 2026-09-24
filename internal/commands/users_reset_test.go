@@ -2,10 +2,12 @@ package commands
 
 import (
 	"bytes"
+	"fmt"
 	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
 )
@@ -50,6 +52,10 @@ func TestUsersResetCommand(t *testing.T) {
 		}
 		assert.Greater(t, count, int64(3)) // Make sure we have a populated database
 
+		userClients := int64(0)
+		require.NoError(t, c.Db().Unscoped().Model(&entity.Client{}).Where("user_uid <> ''").Count(&userClients).Error)
+		require.Greater(t, userClients, int64(0))
+
 		dbDrv := os.Getenv("PHOTOPRISM_TEST_DRIVER")
 		dbDSN := os.Getenv("PHOTOPRISM_TEST_DSN")
 		// Run command with test context.
@@ -82,5 +88,66 @@ func TestUsersResetCommand(t *testing.T) {
 			return
 		}
 		assert.Equal(t, int64(0), count)
+
+		// The client applications registered to users are deleted with the accounts.
+		remaining, otherClients := int64(1), int64(0)
+		require.NoError(t, c.Db().Unscoped().Model(&entity.Client{}).Where("user_uid <> ''").Count(&remaining).Error)
+		require.NoError(t, c.Db().Model(&entity.Client{}).Where("user_uid = ''").Count(&otherClients).Error)
+		assert.Equal(t, int64(0), remaining)
+		assert.Greater(t, otherClients, int64(0))
+		assert.Contains(t, buffer.String(), fmt.Sprintf("deleted %d client applications", userClients))
+	})
+}
+
+func TestLogDeleteUserClients(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		c := resetConfigAndOpenDB()
+		t.Cleanup(func() { resetConfigAndDB() })
+
+		tx := c.Db().Begin()
+		require.NoError(t, tx.Error)
+		defer tx.Rollback()
+
+		buffer := bytes.Buffer{}
+		log.SetOutput(&buffer)
+		defer log.SetOutput(os.Stdout)
+
+		require.NoError(t, LogDeleteUserClients(tx))
+		assert.Contains(t, buffer.String(), "deleted 2 client applications")
+	})
+	t.Run("NoDatabase", func(t *testing.T) {
+		assert.Error(t, LogDeleteUserClients(nil))
+	})
+}
+
+func TestDeleteUserClients(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		c := resetConfigAndOpenDB()
+		t.Cleanup(func() { resetConfigAndDB() })
+
+		// Rolled back, so the client fixtures stay in place for the tests that follow.
+		tx := c.Db().Begin()
+		require.NoError(t, tx.Error)
+		defer tx.Rollback()
+
+		// A soft-deleted client registered to a user is deleted as well.
+		require.NoError(t, tx.Where("client_uid = ?", entity.ClientFixtures.Get("alice").ClientUID).Delete(&entity.Client{}).Error)
+
+		deleted, err := DeleteUserClients(tx)
+
+		require.NoError(t, err)
+		assert.Equal(t, int64(2), deleted)
+
+		remaining, others := int64(1), int64(0)
+		require.NoError(t, tx.Unscoped().Model(&entity.Client{}).Where("user_uid <> ''").Count(&remaining).Error)
+		require.NoError(t, tx.Model(&entity.Client{}).Where("user_uid = ''").Count(&others).Error)
+		assert.Equal(t, int64(0), remaining)
+		assert.Greater(t, others, int64(0))
+	})
+	t.Run("NoDatabase", func(t *testing.T) {
+		deleted, err := DeleteUserClients(nil)
+
+		assert.Error(t, err)
+		assert.Equal(t, int64(0), deleted)
 	})
 }

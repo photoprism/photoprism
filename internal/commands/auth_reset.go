@@ -40,7 +40,7 @@ func authResetAction(ctx *cli.Context) error {
 
 		if ctx.Bool("trace") {
 			log.SetLevel(logrus.TraceLevel)
-			log.Infoln("clear: enabled trace mode")
+			log.Infoln("reset: enabled trace mode")
 		}
 
 		db := conf.Db()
