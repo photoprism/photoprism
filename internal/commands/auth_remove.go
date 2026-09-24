@@ -28,7 +28,7 @@ func authRemoveAction(ctx *cli.Context) error {
 
 		// ID provided?
 		if id == "" {
-			return cli.ShowSubcommandHelp(ctx)
+			return ShowUsageError(ctx)
 		}
 
 		m, err := query.Session(id)

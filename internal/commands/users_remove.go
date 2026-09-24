@@ -32,7 +32,7 @@ func usersRemoveAction(ctx *cli.Context) error {
 
 		// Name or UID provided?
 		if id == "" {
-			return cli.ShowSubcommandHelp(ctx)
+			return ShowUsageError(ctx)
 		}
 
 		// Find user record.

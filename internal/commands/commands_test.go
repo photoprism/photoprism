@@ -328,6 +328,31 @@ func TestExitCode(t *testing.T) {
 	})
 }
 
+// TestShowUsageError covers commands that print their help and exit 2 when the argument is missing.
+func TestShowUsageError(t *testing.T) {
+	for _, c := range []struct {
+		name string
+		cmd  *cli.Command
+	}{
+		{"users show", UsersShowCommand},
+		{"users rm", UsersRemoveCommand},
+		{"users mod", UsersModCommand},
+		{"clients show", ClientsShowCommand},
+		{"clients rm", ClientsRemoveCommand},
+		{"clients mod", ClientsModCommand},
+		{"auth show", AuthShowCommand},
+		{"auth rm", AuthRemoveCommand},
+		{"passwd", PasswdCommand},
+		{"connect", ConnectCommand},
+	} {
+		t.Run(c.name, func(t *testing.T) {
+			output, err := RunWithTestContext(c.cmd, []string{c.cmd.Name})
+			assertExitCode(t, err, 2)
+			assert.Contains(t, output, "USAGE:")
+		})
+	}
+}
+
 // TestCallWithDependencies covers the exit code reported when the configuration cannot be loaded.
 func TestCallWithDependencies(t *testing.T) {
 	initConfig := InitConfig

@@ -34,7 +34,7 @@ func clientsModAction(ctx *cli.Context) error {
 
 		if id == "" {
 			log.Infof("no valid client id specified")
-			return cli.ShowSubcommandHelp(ctx)
+			return ShowUsageError(ctx)
 		}
 
 		// Reject flags placed after the client id; the stdlib flag parser

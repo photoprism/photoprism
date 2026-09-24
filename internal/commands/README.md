@@ -70,7 +70,7 @@ Wrap errors in `cli.Exit(err, <code>)` whenever the table below assigns a specif
 | `5`  | Conflict                                                 | Portal returned `409` to the CLI                                                                                                                                                                                                           |
 | `6`  | Rate limited                                             | Portal returned `429` to the CLI                                                                                                                                                                                                           |
 
-Commands that print their help for a missing argument, instead of returning an error, still exit `0`.
+Commands that print their help because a required argument is missing return `ShowUsageError(ctx)` and exit `2`. Printing the help for an invocation that selects nothing to do, such as `backup` or `restore` without `--database` or `--albums`, still exits `0`.
 
 `urfave/cli`'s default `ExitErrHandler` calls `os.Exit(c.ExitCode())` only for values that implement `cli.ExitCoder`. A bare `error` flows up to `main()`, which prints it to stderr and exits with `commands.ExitCode(err)`:
 

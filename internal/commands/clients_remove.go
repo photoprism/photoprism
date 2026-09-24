@@ -36,7 +36,7 @@ func clientsRemoveAction(ctx *cli.Context) error {
 		// Name or UID provided?
 		if id == "" {
 			log.Infof("no valid client id specified")
-			return cli.ShowSubcommandHelp(ctx)
+			return ShowUsageError(ctx)
 		}
 
 		// Find client record.

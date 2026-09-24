@@ -189,6 +189,15 @@ func ExitCode(err error) int {
 	}
 }
 
+// ShowUsageError prints the command help and returns a usage error, e.g. for a missing argument.
+func ShowUsageError(ctx *cli.Context) error {
+	if err := cli.ShowSubcommandHelp(ctx); err != nil {
+		return err
+	}
+
+	return cli.Exit("", 2)
+}
+
 // CallWithDependencies calls a command action with initialized dependencies.
 func CallWithDependencies(ctx *cli.Context, action func(conf *config.Config) error) (err error) {
 	conf, err := InitConfig(ctx)

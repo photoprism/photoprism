@@ -33,7 +33,7 @@ func usersModAction(ctx *cli.Context) error {
 
 		// Name or UID provided?
 		if id == "" {
-			return cli.ShowSubcommandHelp(ctx)
+			return ShowUsageError(ctx)
 		}
 
 		// Reject flags placed after the username; the stdlib flag parser
