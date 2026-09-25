@@ -3,7 +3,6 @@ package backup
 import (
 	"fmt"
 	"path/filepath"
-	"regexp"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -113,13 +112,20 @@ func RestoreAlbums(backupPath string, force bool) (count int, result error) {
 		return count, nil
 	}
 
+	// The path is resolved once, so the existence check and the file search refer to the same directory.
+	if backupPath != "" {
+		if absPath, absErr := filepath.Abs(backupPath); absErr == nil {
+			backupPath = absPath
+		}
+	}
+
 	if !fs.PathExists(backupPath) {
 		backupPath = c.BackupAlbumsPath()
 	}
 
-	albums, err := filepath.Glob(regexp.QuoteMeta(backupPath) + "/**/*.yml")
+	albums, err := globIn(backupPath, "**/*.yml")
 
-	if oAlbums, oErr := filepath.Glob(regexp.QuoteMeta(c.OriginalsAlbumsPath()) + "/**/*.yml"); oErr == nil {
+	if oAlbums, oErr := globIn(c.OriginalsAlbumsPath(), "**/*.yml"); oErr == nil {
 		err = nil
 		albums = append(albums, oAlbums...)
 	}

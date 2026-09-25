@@ -58,10 +58,10 @@ var restoreFlags = []cli.Flag{
 func restoreAction(ctx *cli.Context) error {
 	// Use command argument as backup file name.
 	databaseFile := ctx.Args().First()
-	databasePath := ctx.String("database-path")
+	databasePath := absPathArg(ctx.String("database-path"))
 	restoreDatabase := ctx.Bool("database") || databaseFile != "" || databasePath != ""
 	force := ctx.Bool("force")
-	albumsPath := ctx.String("albums-path")
+	albumsPath := absPathArg(ctx.String("albums-path"))
 	restoreAlbums := ctx.Bool("albums") || albumsPath != ""
 
 	if !restoreDatabase && !restoreAlbums {

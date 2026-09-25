@@ -82,9 +82,9 @@ func backupRetain(ctx *cli.Context, configured int) int {
 func backupAction(ctx *cli.Context) error {
 	// Use command argument as backup file name.
 	fileName := ctx.Args().First()
-	databasePath := ctx.String("database-path")
+	databasePath := absPathArg(ctx.String("database-path"))
 	backupDatabase := ctx.Bool("database") || fileName != "" || databasePath != ""
-	albumsPath := ctx.String("albums-path")
+	albumsPath := absPathArg(ctx.String("albums-path"))
 	backupAlbums := ctx.Bool("albums") || albumsPath != ""
 	force := ctx.Bool("force")
 

@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"path/filepath"
 	"strings"
 
 	"github.com/urfave/cli/v2"
@@ -32,4 +33,18 @@ func sanitizeDestinationArg(raw string) (string, error) {
 	}
 
 	return dest, nil
+}
+
+// absPathArg returns the absolute form of a path flag value, or the value as given if it is empty or
+// cannot be resolved, so the command checks the same directory the backup package later uses.
+func absPathArg(raw string) string {
+	if raw == "" {
+		return ""
+	}
+
+	if abs, err := filepath.Abs(raw); err == nil {
+		return abs
+	}
+
+	return raw
 }

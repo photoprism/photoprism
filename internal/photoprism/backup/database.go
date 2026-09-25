@@ -8,7 +8,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"regexp"
 	"sort"
 	"strings"
 	"syscall"
@@ -44,6 +43,15 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 	if !toStdOut {
 		if backupPath == "" {
 			backupPath = c.BackupDatabasePath()
+		}
+
+		// The same absolute paths are used for writing, rotation, and the cleanup of staged files.
+		if backupPath, err = filepath.Abs(backupPath); err != nil {
+			return err
+		} else if fileName != "" {
+			if fileName, err = filepath.Abs(fileName); err != nil {
+				return err
+			}
 		}
 
 		// Create the backup path if it does not already exist.
@@ -250,14 +258,7 @@ func isDumpName(baseName string) bool {
 // removeStaleStages removes staged dumps in dir that were last written more than maxAge ago.
 // A younger stage may belong to a run in another process, so it is kept.
 func removeStaleStages(dir string, maxAge time.Duration) {
-	// An escaped relative dir such as "." would not match, so the pattern is built from an absolute one.
-	dir, err := filepath.Abs(dir)
-
-	if err != nil {
-		return
-	}
-
-	files, err := filepath.Glob(filepath.Join(regexp.QuoteMeta(dir), "."+SqlBackupFileNamePattern+".*"+fs.ExtTmp+".sql"))
+	files, err := globIn(dir, "."+SqlBackupFileNamePattern+".*"+fs.ExtTmp+".sql")
 
 	if err != nil {
 		return
@@ -317,7 +318,7 @@ func rotateDumps(backupPath string, retain int) error {
 		return nil
 	}
 
-	files, err := filepath.Glob(filepath.Join(regexp.QuoteMeta(backupPath), SqlBackupFileNamePattern))
+	files, err := globIn(backupPath, SqlBackupFileNamePattern)
 
 	if err != nil {
 		return err
@@ -359,7 +360,7 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 				backupPath = c.BackupDatabasePath()
 			}
 
-			files, globErr := filepath.Glob(filepath.Join(regexp.QuoteMeta(backupPath), SqlBackupFileNamePattern))
+			files, globErr := globIn(backupPath, SqlBackupFileNamePattern)
 
 			if globErr != nil {
 				return globErr

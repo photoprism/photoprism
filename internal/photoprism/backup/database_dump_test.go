@@ -514,6 +514,13 @@ func TestRotateDumps(t *testing.T) {
 		require.NoError(t, rotateDumps(dir, 1))
 		assert.Equal(t, []string{".2026-09-22.sql.abcd1234.tmp.sql", "2026-09-25.sql", "manual.sql"}, dirNames(t, dir))
 	})
+	t.Run("RelativeDir", func(t *testing.T) {
+		dir := seedDumps(t, "2026-09-23.sql", "2026-09-24.sql", "2026-09-25.sql")
+		t.Chdir(dir)
+
+		require.NoError(t, rotateDumps(".", 1))
+		assert.Equal(t, []string{"2026-09-25.sql"}, dirNames(t, dir))
+	})
 	t.Run("Disabled", func(t *testing.T) {
 		dir := seedDumps(t, "2026-09-24.sql", "2026-09-25.sql")
 
@@ -545,6 +552,17 @@ func TestRestoreDatabase_StageFiles(t *testing.T) {
 		require.NoError(t, os.WriteFile(filepath.Join(dir, "2026-09-24.sql"), nil, fs.ModeBackupFile))
 
 		err := RestoreDatabase(dir, "", false, false)
+
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "failed to open 2026-09-24.sql")
+	})
+	t.Run("RelativeDir", func(t *testing.T) {
+		dir := seedDumps(t, ".2026-09-25.sql.abcd1234.tmp.sql")
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "2026-09-24.sql"), nil, fs.ModeBackupFile))
+		t.Chdir(dir)
+
+		// The empty dump is selected and refused before anything is restored.
+		err := RestoreDatabase(".", "", false, false)
 
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "failed to open 2026-09-24.sql")

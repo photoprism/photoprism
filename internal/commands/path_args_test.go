@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -78,4 +79,21 @@ func TestImportCopyCommandRejectsOriginalsAsSourcePath(t *testing.T) {
 			assert.NotContains(t, output, "media files from")
 		})
 	}
+}
+
+func TestAbsPathArg(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", absPathArg(""))
+	})
+	t.Run("Absolute", func(t *testing.T) {
+		assert.Equal(t, "/srv/backup", absPathArg("/srv/backup/"))
+	})
+	t.Run("Relative", func(t *testing.T) {
+		dir := t.TempDir()
+		t.Chdir(dir)
+
+		assert.Equal(t, dir, absPathArg("."))
+		assert.Equal(t, filepath.Join(dir, "sub"), absPathArg("./sub"))
+		assert.Equal(t, filepath.Dir(dir), absPathArg(".."))
+	})
 }
