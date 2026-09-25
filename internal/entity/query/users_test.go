@@ -3,7 +3,11 @@ package query
 import (
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestRegisteredUsers(t *testing.T) {
@@ -150,4 +154,29 @@ func TestUsers(t *testing.T) {
 			assert.Equal(t, 0, len(results))
 		}
 	})
+}
+
+// likeTestUsers creates two users named base+"_a" and base+"Xa" and removes them when the test ends.
+func likeTestUsers(t *testing.T, base string) {
+	t.Helper()
+
+	for _, name := range []string{base + "_a", base + "Xa"} {
+		u := entity.NewUser()
+		u.UserName = name
+		u.UserRole = acl.RoleUser.String()
+		require.NoError(t, u.Create())
+		t.Cleanup(func() { _ = entity.UnscopedDb().Delete(u).Error })
+	}
+}
+
+func TestUsers_Literal(t *testing.T) {
+	base := "zzl" + rnd.Base36(5)
+	likeTestUsers(t, base)
+
+	result, err := Users(100, 0, "", base+"_a", false)
+	require.NoError(t, err)
+
+	if assert.Len(t, result, 1) {
+		assert.Equal(t, base+"_a", result[0].UserName)
+	}
 }

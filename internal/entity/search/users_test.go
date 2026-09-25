@@ -4,10 +4,13 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/sortby"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestUsers(t *testing.T) {
@@ -211,4 +214,23 @@ func TestUsers(t *testing.T) {
 			}
 		}
 	})
+}
+
+func TestUsers_Literal(t *testing.T) {
+	base := "zzl" + rnd.Base36(5)
+
+	for _, name := range []string{base + "_a", base + "Xa"} {
+		u := entity.NewUser()
+		u.UserName = name
+		u.UserRole = acl.RoleUser.String()
+		require.NoError(t, u.Create())
+		t.Cleanup(func() { _ = entity.UnscopedDb().Delete(u).Error })
+	}
+
+	result, err := Users(form.SearchUsers{Query: base + "_a", Count: 100})
+	require.NoError(t, err)
+
+	if assert.Len(t, result, 1) {
+		assert.Equal(t, base+"_a", result[0].UserName)
+	}
 }

@@ -19,22 +19,49 @@ func SqlLike(s string) string {
 	return sqlLikeEscaper.Replace(s)
 }
 
-// SqlLikeCond returns "col LIKE ? ESCAPE '!'", or an empty string if col is not a plain column name.
-// The drivers disagree on the default escape character, so a SqlLike value needs this ESCAPE clause.
+// sqlNoMatch returns a condition that is never true and has n placeholders, so the arguments a caller
+// passes still bind when a column is rejected.
+func sqlNoMatch(n int) string {
+	return "(1 = 0" + strings.Repeat(" AND ? IS NULL", n) + ")"
+}
+
+// SqlLikeCond returns "col LIKE ? ESCAPE '!'", or a condition that matches nothing if col is not a
+// plain column name. The drivers disagree on the default escape character, so a SqlLike value needs
+// this ESCAPE clause.
 func SqlLikeCond(col string) string {
 	if SqlColumn(col) == "" {
-		return ""
+		return sqlNoMatch(1)
 	}
 
 	return fmt.Sprintf("%s LIKE ? ESCAPE '%s'", col, SqlLikeEscape)
 }
 
+// SqlLikeAny returns a condition that matches if any of the columns is LIKE the bound value, with one
+// placeholder per column, or a condition that matches nothing if a column is not a plain column name.
+func SqlLikeAny(cols ...string) string {
+	conds := make([]string, len(cols))
+
+	for i, col := range cols {
+		if SqlColumn(col) == "" {
+			return sqlNoMatch(len(cols))
+		}
+
+		conds[i] = SqlLikeCond(col)
+	}
+
+	if len(conds) == 0 {
+		return sqlNoMatch(0)
+	}
+
+	return "(" + strings.Join(conds, " OR ") + ")"
+}
+
 // SqlLikeExpr returns an SQL expression that escapes the LIKE wildcards in the value of col, like
-// SqlLike does for a bound value, or an empty string if col is not a plain column name. The escape
-// character is replaced innermost, so the ones the outer calls add are not escaped again.
+// SqlLike does for a bound value, or NULL, which matches nothing, if col is not a plain column name.
+// The escape character is replaced innermost, so the ones the outer calls add are not escaped again.
 func SqlLikeExpr(col string) string {
 	if SqlColumn(col) == "" {
-		return ""
+		return "NULL"
 	}
 
 	e := SqlLikeEscape
@@ -43,16 +70,14 @@ func SqlLikeExpr(col string) string {
 }
 
 // SqlPrefixCond returns a condition matching the values of col that start with a prefix, compared
-// case-sensitively on every driver, or an empty string if col is not a plain column name. Bind the
-// arguments SqlPrefixArgs returns; the LIKE clause keeps an index usable for the lookup.
+// case-sensitively on every driver, or a condition that matches nothing if col is not a plain column
+// name. Bind the arguments SqlPrefixArgs returns; the LIKE clause keeps an index usable for the lookup.
 func SqlPrefixCond(col string) string {
-	like := SqlLikeCond(col)
-
-	if like == "" {
-		return ""
+	if SqlColumn(col) == "" {
+		return sqlNoMatch(3)
 	}
 
-	return fmt.Sprintf("(%s AND SUBSTR(%s, 1, LENGTH(?)) = ?)", like, col)
+	return fmt.Sprintf("(%s AND SUBSTR(%s, 1, LENGTH(?)) = ?)", SqlLikeCond(col), col)
 }
 
 // SqlPrefixArgs returns the arguments of a SqlPrefixCond condition for the given prefix.

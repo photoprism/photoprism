@@ -4,7 +4,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/sortby"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -134,4 +136,22 @@ func TestSessions(t *testing.T) {
 		assert.Error(t, err)
 		assert.Empty(t, results)
 	})
+}
+
+func TestSessions_Literal(t *testing.T) {
+	base := "zzl" + rnd.Base36(5)
+
+	for _, name := range []string{base + "_a", base + "Xa"} {
+		s := entity.NewSession(3600, 0)
+		s.UserName = name
+		require.NoError(t, s.Create())
+		t.Cleanup(func() { _ = entity.UnscopedDb().Delete(s).Error })
+	}
+
+	result, err := Sessions(form.SearchSessions{Query: base + "_a", Count: 100})
+	require.NoError(t, err)
+
+	if assert.Len(t, result, 1) {
+		assert.Equal(t, base+"_a", result[0].UserName)
+	}
 }

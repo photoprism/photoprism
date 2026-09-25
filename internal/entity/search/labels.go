@@ -61,12 +61,12 @@ func Labels(frm form.SearchLabels) (results []Label, err error) {
 	}
 
 	if frm.Query != "" {
-		likeString := "%" + frm.Query + "%"
+		likeString := "%" + clean.SqlLike(frm.Query) + "%"
 
 		if labelIds, findErr := entity.FindLabelIDs(frm.Query, " ", true); findErr != nil || len(labelIds) == 0 {
 			log.Infof("search: label %s not found", clean.Log(frm.Query))
 
-			s = s.Where("labels.label_name LIKE ?", likeString)
+			s = s.Where(clean.SqlLikeCond("labels.label_name"), likeString)
 		} else {
 			log.Infof("search: label %s resolves to %d labels", clean.Log(frm.Query), len(labelIds))
 

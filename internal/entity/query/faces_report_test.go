@@ -5,11 +5,13 @@ import (
 	"testing"
 	"time"
 
+	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -574,4 +576,20 @@ func TestLikeCond_InvalidColumn(t *testing.T) {
 		assert.Contains(t, cond, "1 = 0")
 		assert.NotContains(t, cond, "OR (1=1")
 	})
+}
+
+func TestSqlLikeHelpers_InvalidColumn(t *testing.T) {
+	// A rejected column yields a condition that binds the caller's arguments and matches no rows.
+	stmt := func() *gorm.DB { return UnscopedDb().Model(&entity.User{}) }
+
+	var count int
+
+	require.NoError(t, stmt().Where(clean.SqlLikeCond("user_name) OR (1=1"), "%").Count(&count).Error)
+	assert.Equal(t, 0, count)
+	require.NoError(t, stmt().Where(clean.SqlLikeAny("user_name", "x) OR (1=1"), "%", "%").Count(&count).Error)
+	assert.Equal(t, 0, count)
+	require.NoError(t, stmt().Where(clean.SqlPrefixCond("x) OR (1=1"), clean.SqlPrefixArgs("a/")...).Count(&count).Error)
+	assert.Equal(t, 0, count)
+	require.NoError(t, stmt().Where(clean.SqlLikeCond("user_name"), "%").Count(&count).Error)
+	assert.Positive(t, count)
 }

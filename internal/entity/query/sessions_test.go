@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -127,4 +128,22 @@ func TestSession_ExactID(t *testing.T) {
 
 	_, err = Session(strings.ToUpper(id))
 	assert.Error(t, err)
+}
+
+func TestSessions_Literal(t *testing.T) {
+	base := "zzl" + rnd.Base36(5)
+
+	for _, name := range []string{base + "_a", base + "Xa"} {
+		s := entity.NewSession(3600, 0)
+		s.UserName = name
+		require.NoError(t, s.Create())
+		t.Cleanup(func() { _ = entity.UnscopedDb().Delete(s).Error })
+	}
+
+	result, err := Sessions(100, 0, "", base+"_a")
+	require.NoError(t, err)
+
+	if assert.Len(t, result, 1) {
+		assert.Equal(t, base+"_a", result[0].UserName)
+	}
 }

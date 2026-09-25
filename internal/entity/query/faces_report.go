@@ -41,13 +41,11 @@ func PersonFilter(s string) (subjUID, nameLike string) {
 // A column that is not a plain identifier yields a condition that binds the argument and matches
 // nothing, so the placeholder count stays right and the mistake shows in the log.
 func LikeCond(col string) string {
-	if cond := clean.SqlLikeCond(col); cond != "" {
-		return cond
+	if clean.SqlColumn(col) == "" {
+		log.Errorf("query: invalid column %s in like condition", clean.Log(col))
 	}
 
-	log.Errorf("query: invalid column %s in like condition", clean.Log(col))
-
-	return fmt.Sprintf("1 = 0 AND '' LIKE ? ESCAPE '%s'", LikeEscape)
+	return clean.SqlLikeCond(col)
 }
 
 // SubjectReport describes one person, with the clusters, files and photos their markers support.
