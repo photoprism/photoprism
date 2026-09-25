@@ -357,9 +357,9 @@ func BatchPhotosPrivate(router *gin.RouterGroup) {
 //	@Tags		Photos
 //	@Accept		json
 //	@Produce	json
-//	@Success	200				{object}	i18n.Response
-//	@Failure	400,401,403,429	{object}	i18n.Response
-//	@Param		photos			body		form.Selection	true	"All or Photo Selection"
+//	@Success	200					{object}	i18n.Response
+//	@Failure	400,401,403,404,429	{object}	i18n.Response
+//	@Param		photos				body		form.Selection	true	"All or Photo Selection"
 //	@Router		/api/v1/batch/photos/delete [post]
 func BatchPhotosDelete(router *gin.RouterGroup) {
 	router.POST("/batch/photos/delete", func(c *gin.Context) {
