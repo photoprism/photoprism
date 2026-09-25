@@ -1042,9 +1042,8 @@ func (m *MediaFile) FisheyeDngProjection() projection.Type {
 }
 
 // DualFisheyeLayout reports whether the frame is compatible with the side-by-side dual-fisheye
-// input that "v360=input=dfisheye" expects, i.e. a ~2:1 aspect ratio. An .insv without known
-// dimensions uses the size of its first video track; any other unknown aspect counts as compatible,
-// so the extension-authoritative .insp/.insv path still dewarps.
+// input that "v360=input=dfisheye" expects, i.e. a ~2:1 aspect ratio (exactly 2:1 for .insp). An .insv
+// without known dimensions uses its first video track size; any other unknown aspect counts as compatible.
 func (m *MediaFile) DualFisheyeLayout() bool {
 	r := float64(m.AspectRatio())
 
@@ -1054,7 +1053,13 @@ func (m *MediaFile) DualFisheyeLayout() bool {
 		}
 	}
 
-	return r <= 0 || math.Abs(r-2.0) <= 0.2
+	// Photos are exactly 2:1 when they hold both lenses, while single-lens modes use 16:9 and similar.
+	tolerance := 0.2
+	if m.IsInsp() {
+		tolerance = 0.02
+	}
+
+	return r <= 0 || math.Abs(r-2.0) <= tolerance
 }
 
 // Insta360DualStream reports whether the file is an .insv that stores each lens as a separate,

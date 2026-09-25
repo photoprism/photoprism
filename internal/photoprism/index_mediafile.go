@@ -744,10 +744,13 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			}
 		}
 
-		// Insta360 .insp originals store dual-fisheye 360° content; record the projection regardless
-		// of metadata errors (these files often lack EXIF) so the dewarped derivative routes correctly.
-		if m.DualFisheye() {
+		// Insta360 .insp originals with a ~2:1 frame store dual-fisheye 360° content; record the projection
+		// regardless of metadata errors (these files often lack EXIF) so the dewarped derivative routes
+		// correctly. Single-lens shots have other dimensions and are not labeled.
+		if m.DualFisheye() && m.DualFisheyeLayout() {
 			file.SetProjection(projection.DualFisheye.String())
+		} else if m.DualFisheye() && file.FileProjection == projection.DualFisheye.String() {
+			file.FileProjection = ""
 		}
 	case m.IsVector():
 		if data := m.MetaData(); data.Error == nil {

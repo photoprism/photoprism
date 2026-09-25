@@ -1199,3 +1199,83 @@ func TestIndex_Insta360DualStream(t *testing.T) {
 		assert.Len(t, insta360DewarpWarnings(hook), 1)
 	})
 }
+
+// writeInsta360Photo writes a JPEG of the specified size under an .insp name, with bytes that differ per name.
+func writeInsta360Photo(t *testing.T, cfg *config.Config, fileName, size string) {
+	t.Helper()
+	require.NoError(t, fs.MkdirAll(filepath.Dir(fileName)))
+
+	// #nosec G204 -- arguments are test constants.
+	out, err := exec.Command(cfg.FFmpegBin(), "-y", "-loglevel", "error", "-f", "lavfi", "-i", "testsrc=size="+size,
+		"-frames:v", "1", "-f", "image2", "-c:v", "mjpeg", "-metadata", "comment="+filepath.Base(fileName), fileName).CombinedOutput()
+	require.NoError(t, err, strings.TrimSpace(string(out)))
+}
+
+// TestIndex_Insta360SingleLensPhoto verifies that an .insp with a single lens is neither dewarped nor
+// labeled as dual-fisheye, while an .insp with both lenses side by side, which is exactly 2:1, still is.
+func TestIndex_Insta360SingleLensPhoto(t *testing.T) {
+	const name = "IMG_20201026_154628_00_070.insp"
+
+	original := func(t *testing.T, folder string) (result entity.File) {
+		t.Helper()
+		require.NoError(t, entity.UnscopedDb().First(&result, "file_root = ? AND file_name = ?", entity.RootOriginals, folder+"/"+name).Error)
+		return result
+	}
+
+	// Single-lens photo modes use these shapes; 2.1:1 is close to 2:1 but still not a dual-lens frame.
+	for _, tc := range []struct {
+		name, size string
+		width      int
+		height     int
+	}{
+		{"Wide", "320x180", 320, 180},
+		{"Tall", "180x320", 180, 320},
+		{"Square", "320x320", 320, 320},
+		{"Panorama", "480x160", 480, 160},
+		{"NearlyDual", "336x160", 336, 160},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			folder := strings.ToLower("insta360singlelens" + tc.name)
+			cfg := newInsta360StackConfig(t, folder, false)
+			writeInsta360Photo(t, cfg, filepath.Join(cfg.OriginalsPath(), folder, name), tc.size)
+
+			hook := newInsta360LogHook(t)
+			indexInsta360StackFolder(cfg, folder, false, true)
+			assert.Empty(t, insta360DewarpWarnings(hook))
+			assert.Equal(t, "", original(t, folder).FileProjection)
+
+			previews := insta360StackPreviews(t, folder)
+			require.Contains(t, previews, name+".jpg")
+			assert.Equal(t, "", previews[name+".jpg"].FileProjection)
+			assert.Equal(t, tc.width, previews[name+".jpg"].FileWidth)
+			assert.Equal(t, tc.height, previews[name+".jpg"].FileHeight)
+
+			// A label stored by an earlier index run is cleared.
+			require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("id = ?", original(t, folder).ID).
+				UpdateColumn("file_projection", "dual-fisheye").Error)
+			indexInsta360StackFolder(cfg, folder, true, false)
+			assert.Equal(t, "", original(t, folder).FileProjection)
+			assert.Equal(t, "", insta360StackPreviews(t, folder)[name+".jpg"].FileProjection)
+		})
+	}
+	t.Run("DualLens", func(t *testing.T) {
+		folder := "insta360duallensphoto"
+		cfg := newInsta360StackConfig(t, folder, false)
+		writeInsta360Photo(t, cfg, filepath.Join(cfg.OriginalsPath(), folder, name), "320x160")
+		indexInsta360StackFolder(cfg, folder, false, true)
+
+		assert.Equal(t, "dual-fisheye", original(t, folder).FileProjection)
+		assert.Equal(t, "equirectangular", insta360StackPreviews(t, folder)[name+".jpg"].FileProjection)
+	})
+	t.Run("SideBySideFixture", func(t *testing.T) {
+		folder := "insta360sidebysidephoto"
+		cfg := newInsta360StackConfig(t, folder, false)
+		dir := filepath.Join(cfg.OriginalsPath(), folder)
+		require.NoError(t, fs.MkdirAll(dir))
+		require.NoError(t, fs.Copy("testdata/insta360.insp", filepath.Join(dir, name), false))
+		indexInsta360StackFolder(cfg, folder, false, true)
+
+		assert.Equal(t, "dual-fisheye", original(t, folder).FileProjection)
+		assert.Equal(t, "equirectangular", insta360StackPreviews(t, folder)[name+".jpg"].FileProjection)
+	})
+}
