@@ -29,6 +29,7 @@ type Service struct {
 	SyncDownload  bool   `json:"SyncDownload"`
 	SyncFilenames bool   `json:"SyncFilenames"`
 	SyncRaw       bool   `json:"SyncRaw"`
+	SyncYaml      bool   `json:"SyncYaml"`
 }
 
 // NewService creates a new service form.

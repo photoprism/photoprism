@@ -32,6 +32,7 @@ export class Service extends RestModel {
       SyncUpload: false,
       SyncDownload: !$config.get("readonly"),
       SyncRaw: true,
+      SyncYaml: true,
       CreatedAt: "",
       UpdatedAt: "",
       DeletedAt: null,

@@ -134,6 +134,13 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 				continue
 			}
 
+			if !a.SyncYaml && fs.FileType(file.RemoteName) == fs.SidecarYaml {
+				file.Status, file.Error, file.Errors = entity.FileSyncIgnore, "", 0
+				w.logErr(entity.Db().Save(&file).Error)
+				files[i] = file
+				continue
+			}
+
 			// Failed too often?
 			if a.RetryLimit > 0 && file.Errors > a.RetryLimit {
 				log.Debugf("sync: downloading %s from %s failed more than %d times", clean.Log(file.RemoteName), clean.Log(a.AccName), a.RetryLimit)

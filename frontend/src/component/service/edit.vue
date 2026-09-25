@@ -73,6 +73,15 @@
                 :items="options.Expires()"
               ></v-select>
             </v-col>
+            <v-col cols="12">
+              <v-checkbox
+                v-model="model.SyncYaml"
+                density="comfortable"
+                :disabled="!model.AccShare || model.ShareSize !== ''"
+                :label="$gettext('Upload YAML sidecar files')"
+                hide-details
+              ></v-checkbox>
+            </v-col>
           </v-row>
           <v-row v-else-if="scope === 'sync'" dense>
             <v-col cols="12" sm="6">
@@ -146,6 +155,15 @@
                 density="comfortable"
                 :disabled="!model.AccSync"
                 :label="$gettext('Sync raw and video files')"
+                hide-details
+              ></v-checkbox>
+            </v-col>
+            <v-col cols="12" sm="6">
+              <v-checkbox
+                v-model="model.SyncYaml"
+                density="comfortable"
+                :disabled="!model.AccSync"
+                :label="$gettext('Sync YAML sidecar files')"
                 hide-details
               ></v-checkbox>
             </v-col>

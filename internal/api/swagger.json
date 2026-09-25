@@ -2214,6 +2214,9 @@
                 "SyncUpload": {
                     "type": "boolean"
                 },
+                "SyncYaml": {
+                    "type": "boolean"
+                },
                 "UpdatedAt": {
                     "type": "string"
                 }
@@ -3251,6 +3254,9 @@
                     "type": "boolean"
                 },
                 "SyncUpload": {
+                    "type": "boolean"
+                },
+                "SyncYaml": {
                     "type": "boolean"
                 }
             },

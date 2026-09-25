@@ -6,6 +6,7 @@ import (
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
+	"github.com/photoprism/photoprism/pkg/fs"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/search"
@@ -66,8 +67,8 @@ func AlbumDownloadSelection(mediaRaw, mediaSidecar, originals, allowPrivate bool
 	return sel
 }
 
-// ShareSelection selects files to share, for example for upload via WebDAV.
-func ShareSelection(originals bool) FileSelection {
+// ShareSelection selects files to share, for example for upload via WebDAV, omitting YAML sidecar files unless yaml is true.
+func ShareSelection(originals, yaml bool) FileSelection {
 	var omitMedia []string
 	var omitTypes []string
 
@@ -81,6 +82,8 @@ func ShareSelection(originals bool) FileSelection {
 		// A share size is configured, and workers.Share resizes JPEG only, so any other image
 		// format would upload at its original size. Share the generated JPEG for those instead.
 		omitTypes = media.ImageTypesExceptJpeg()
+	} else if !yaml {
+		omitTypes = []string{fs.SidecarYaml.String()}
 	}
 
 	return FileSelection{

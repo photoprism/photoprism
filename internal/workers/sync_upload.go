@@ -1,6 +1,7 @@
 package workers
 
 import (
+	"errors"
 	"path"
 	"strconv"
 	"time"
@@ -43,6 +44,9 @@ func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 		return false, err
 	}
 
+	// A YAML file refused with 403 disables YAML sync unless the remote also refused another file.
+	var yamlRefused, otherRefused bool
+
 	for _, file := range files {
 		if mutex.SyncWorker.Canceled() {
 			return false, nil
@@ -56,6 +60,12 @@ func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 			continue
 		}
 
+		yamlFile := fs.Type(file.FileType) == fs.SidecarYaml
+
+		if yamlFile && (!a.SyncYaml || yamlRefused) {
+			continue
+		}
+
 		fileName := photoprism.FileName(file.FileRoot, file.FileName)
 		remoteName := path.Join(a.SyncPath, file.FileName)
 		remoteDir := path.Dir(remoteName)
@@ -65,7 +75,11 @@ func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 			log.Debugf("sync: %s", err)
 		}
 
-		if err = client.Upload(fileName, remoteName); err != nil {
+		if err = client.Upload(fileName, remoteName); errors.Is(err, webdav.ErrForbidden) {
+			yamlRefused, otherRefused = yamlRefused || yamlFile, otherRefused || !yamlFile
+			w.logErr(err)
+			continue
+		} else if err != nil {
 			w.logErr(err)
 			continue // try again next time
 		}
@@ -85,6 +99,11 @@ func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 		}
 
 		w.logErr(entity.Db().Save(&fileSync).Error)
+	}
+
+	if yamlRefused && !otherRefused {
+		log.Warnf("sync: disabled YAML sidecar files for %s because the remote server refused to store them", clean.Log(a.AccName))
+		w.logErr(a.Update("SyncYaml", false))
 	}
 
 	return false, nil

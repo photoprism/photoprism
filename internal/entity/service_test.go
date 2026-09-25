@@ -100,6 +100,37 @@ func TestService_SaveForm(t *testing.T) {
 		assert.Equal(t, "NewOwner", model.AccOwner)
 		assert.Equal(t, "new.com", model.AccURL)
 	})
+	t.Run("SyncYaml", func(t *testing.T) {
+		stored := func(t *testing.T, id uint) bool {
+			var m Service
+			if err := Db().First(&m, id).Error; err != nil {
+				t.Fatal(err)
+			}
+			return m.SyncYaml
+		}
+		for _, enabled := range []bool{false, true} {
+			model, err := AddService(form.Service{AccName: "Sync YAML", AccURL: "test.com", AccType: "webdav", SyncYaml: enabled})
+			if err != nil {
+				t.Fatal(err)
+			}
+			t.Cleanup(func() { UnscopedDb().Unscoped().Delete(model) })
+			assert.Equal(t, enabled, model.SyncYaml)
+			assert.Equal(t, enabled, stored(t, model.ID))
+			if err = model.SaveForm(form.Service{AccName: "Sync YAML", AccURL: "test.com", AccType: "webdav", SyncYaml: !enabled}); err != nil {
+				t.Fatal(err)
+			}
+			assert.Equal(t, !enabled, model.SyncYaml)
+			assert.Equal(t, !enabled, stored(t, model.ID))
+		}
+	})
+	t.Run("SyncYamlColumnDefault", func(t *testing.T) {
+		model := &Service{AccName: "Sync YAML Default", AccType: "webdav"}
+		if err := model.Create(); err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() { UnscopedDb().Unscoped().Delete(model) })
+		assert.True(t, model.SyncYaml)
+	})
 }
 
 func TestService_Delete(t *testing.T) {

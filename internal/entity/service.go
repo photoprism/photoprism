@@ -36,6 +36,7 @@ type Services []Service
 // - AccShare enables manual upload, see SharePath, ShareSize, and ShareExpires.
 // - AccSync enables automatic file synchronization, see SyncDownload and SyncUpload.
 // - RetryLimit specifies the number of retry attempts, a negative value disables the limit.
+// - SyncYaml enables transferring YAML sidecar files and is disabled when the remote server refuses them.
 type Service struct {
 	ID            uint         `gorm:"primary_key" json:"ID"`
 	AccName       string       `gorm:"type:VARCHAR(160);" json:"AccName"`
@@ -62,6 +63,7 @@ type Service struct {
 	SyncDownload  bool         `json:"SyncDownload"`
 	SyncFilenames bool         `json:"SyncFilenames"`
 	SyncRaw       bool         `json:"SyncRaw"`
+	SyncYaml      bool         `gorm:"default:true" json:"SyncYaml"`
 	CreatedAt     time.Time    `deepcopier:"skip" json:"CreatedAt"`
 	UpdatedAt     time.Time    `deepcopier:"skip" json:"UpdatedAt"`
 	DeletedAt     *time.Time   `deepcopier:"skip" sql:"index" json:"DeletedAt"`
@@ -195,8 +197,21 @@ func (m *Service) SaveForm(form form.Service) error {
 	m.AccName = txt.Clip(m.AccName, txt.ClipName)
 	m.AccOwner = txt.Clip(m.AccOwner, txt.ClipName)
 
+	// GORM v1 inserts the column default in place of false, so a new record is corrected after the insert.
+	newRecord, syncYaml := db.NewRecord(m), m.SyncYaml
+
 	// Save changes.
-	return db.Save(m).Error
+	if err := db.Save(m).Error; err != nil {
+		return err
+	} else if newRecord && !syncYaml && m.SyncYaml {
+		if err = m.Update("SyncYaml", false); err != nil {
+			return err
+		}
+
+		m.SyncYaml = false
+	}
+
+	return nil
 }
 
 // Delete deletes the entity from the database.

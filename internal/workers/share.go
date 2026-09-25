@@ -1,6 +1,7 @@
 package workers
 
 import (
+	"errors"
 	"fmt"
 	"path"
 	"runtime/debug"
@@ -70,7 +71,7 @@ func (w *Share) Start() (err error) {
 			continue
 		}
 
-		files, err := query.FileShares(a.ID, entity.FileShareNew)
+		files, err := query.QueuedFileShares(a)
 
 		if err != nil {
 			w.logErr(err)
@@ -102,6 +103,10 @@ func (w *Share) Start() (err error) {
 		// since the manual upload request returns before the worker runs (#5738).
 		var uploadErrors int
 
+		// A YAML file refused with 403 disables YAML sync unless the remote also refused another file.
+		var refusedYaml []entity.FileShare
+		var otherRefused bool
+
 		for _, file := range files {
 			if mutex.ShareWorker.Canceled() {
 				return nil
@@ -124,6 +129,13 @@ func (w *Share) Start() (err error) {
 				continue
 			}
 
+			yamlFile := fs.SidecarYaml.Equal(file.File.FileType)
+
+			// Further YAML files stay queued once the remote server refused one.
+			if yamlFile && len(refusedYaml) > 0 {
+				continue
+			}
+
 			dir := path.Dir(file.RemoteName)
 
 			// Ensure remote folder exists.
@@ -142,8 +154,14 @@ func (w *Share) Start() (err error) {
 				}
 			}
 
-			if err := client.Upload(srcFileName, file.RemoteName); err != nil {
+			if err = client.Upload(srcFileName, file.RemoteName); yamlFile && errors.Is(err, webdav.ErrForbidden) {
 				w.logErr(err)
+				file.Error = err.Error()
+				refusedYaml = append(refusedYaml, file)
+				continue
+			} else if err != nil {
+				w.logErr(err)
+				otherRefused = otherRefused || errors.Is(err, webdav.ErrForbidden)
 				uploadErrors++
 				file.Errors++
 				file.Error = err.Error()
@@ -164,6 +182,22 @@ func (w *Share) Start() (err error) {
 			}
 
 			w.logErr(entity.Db().Save(&file).Error)
+		}
+
+		if len(refusedYaml) > 0 && !otherRefused {
+			log.Warnf("share: disabled YAML sidecar files for %s because the remote server refused to store them", clean.Log(a.AccName))
+			w.logErr(a.Update("SyncYaml", false))
+		} else {
+			for _, file := range refusedYaml {
+				uploadErrors++
+				file.Errors++
+
+				if a.RetryLimit > 0 && file.Errors > a.RetryLimit {
+					file.Status = entity.FileShareError
+				}
+
+				w.logErr(entity.Db().Save(&file).Error)
+			}
 		}
 
 		// Notify the user if any transfer to this service failed, since the manual upload

@@ -240,3 +240,59 @@ func TestUploadToServiceReservedPaths(t *testing.T) {
 	require.NoError(t, entity.Db().Model(&entity.FileShare{}).Where("service_id = ?", account.ID).Count(&count).Error)
 	assert.Equal(t, 2, count)
 }
+
+func TestUploadToServiceYaml(t *testing.T) {
+	app, router, conf := NewApiTest()
+	previous := conf.Options().OriginalsPath
+	conf.Options().OriginalsPath = t.TempDir()
+	t.Cleanup(func() { conf.Options().OriginalsPath = previous })
+	UploadToService(router)
+	require.NoError(t, mutex.ShareWorker.Start())
+	t.Cleanup(mutex.ShareWorker.Stop)
+	account := entity.Service{AccName: "YAML Control", AccURL: "http://127.0.0.1/", AccType: "webdav", AccShare: true}
+	require.NoError(t, entity.Db().Create(&account).Error)
+	t.Cleanup(func() {
+		entity.UnscopedDb().Unscoped().Delete(&entity.FileShare{}, "service_id = ?", account.ID)
+		entity.UnscopedDb().Unscoped().Delete(&account)
+	})
+	photo := entity.NewPhoto(false)
+	photo.PhotoQuality = 3
+	require.NoError(t, photo.Save())
+	t.Cleanup(func() {
+		entity.UnscopedDb().Unscoped().Delete(&entity.File{}, "photo_id = ?", photo.ID)
+		entity.UnscopedDb().Unscoped().Delete(&entity.Details{}, "photo_id = ?", photo.ID)
+		entity.UnscopedDb().Unscoped().Delete(photo)
+	})
+	jpeg := &entity.File{PhotoID: photo.ID, PhotoUID: photo.PhotoUID, FileRoot: entity.RootOriginals, FileName: "yaml-control.jpg", FileType: "jpg", MediaType: entity.MediaImage, FileHash: fmt.Sprintf("%040d", 960), FilePrimary: true}
+	require.NoError(t, jpeg.Create())
+	yaml := &entity.File{PhotoID: photo.ID, PhotoUID: photo.PhotoUID, FileRoot: entity.RootOriginals, FileName: "yaml-control.yml", FileType: "yml", MediaType: "sidecar", FileSidecar: true, FileHash: fmt.Sprintf("%040d", 961)}
+	require.NoError(t, yaml.Create())
+	uri := fmt.Sprintf("/api/v1/services/%d/upload", account.ID)
+	body := `{"selection":{"photos":["` + photo.PhotoUID + `"]},"folder":"/"}`
+	shared := func(t *testing.T) (result []uint) {
+		var shares []entity.FileShare
+		require.NoError(t, entity.Db().Where("service_id = ?", account.ID).Find(&shares).Error)
+		seen := make(map[uint]bool)
+		for _, s := range shares {
+			if !seen[s.FileID] {
+				seen[s.FileID] = true
+				result = append(result, s.FileID)
+			}
+		}
+		return result
+	}
+	t.Run("Disabled", func(t *testing.T) {
+		require.NoError(t, account.Update("SyncYaml", false))
+		result := PerformRequestWithBody(app, http.MethodPost, uri, body)
+		require.Equal(t, http.StatusOK, result.Code, result.Body.String())
+		assert.Equal(t, int64(1), gjson.GetBytes(result.Body.Bytes(), "#").Int())
+		assert.ElementsMatch(t, []uint{jpeg.ID}, shared(t))
+	})
+	t.Run("Enabled", func(t *testing.T) {
+		require.NoError(t, account.Update("SyncYaml", true))
+		result := PerformRequestWithBody(app, http.MethodPost, uri, body)
+		require.Equal(t, http.StatusOK, result.Code, result.Body.String())
+		assert.Equal(t, int64(2), gjson.GetBytes(result.Body.Bytes(), "#").Int())
+		assert.ElementsMatch(t, []uint{jpeg.ID, yaml.ID}, shared(t))
+	})
+}

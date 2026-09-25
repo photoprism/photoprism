@@ -6,6 +6,7 @@ import (
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/service/webdav"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
@@ -73,9 +74,12 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 
 			// Select supported types for download.
 			content := media.FromName(file.Name)
+			yamlFile := fs.FileType(file.Name) == fs.SidecarYaml
 			switch content {
 			case media.Image, media.Sidecar, media.Vector, media.Document, media.Live, media.Animated:
-				f.Status = entity.FileSyncNew
+				if a.SyncYaml || !yamlFile {
+					f.Status = entity.FileSyncNew
+				}
 			case media.Raw, media.Video:
 				if a.SyncRaw {
 					f.Status = entity.FileSyncNew
@@ -89,7 +93,7 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 				continue
 			}
 
-			if f.Status == entity.FileSyncIgnore && a.SyncRaw && (content == media.Raw || content == media.Video) {
+			if f.Status == entity.FileSyncIgnore && (a.SyncRaw && (content == media.Raw || content == media.Video) || a.SyncYaml && yamlFile) {
 				w.logErr(f.Update("Status", entity.FileSyncNew))
 			}
 
