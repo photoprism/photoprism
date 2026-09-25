@@ -318,6 +318,13 @@ describe("common/util", () => {
       expect($util.fileType("mxf")).toBe("Material Exchange Format (MXF)");
       expect($util.fileType("3g2")).toBe("Mobile Multimedia Container (CDMA2000)");
     });
+
+    it("should return the label of a metadata source", () => {
+      expect($util.sourceName("modified")).toBe("Modified");
+      expect($util.sourceName("meta")).toBe("Metadata");
+      expect($util.sourceName("name")).toBe("Name");
+      expect($util.sourceName("", "File")).toBe("File");
+    });
     it("distinguishes the AV1 image format from the AV1 codec", () => {
       expect($util.fileType("avif")).toBe("AV1 Image File Format (AVIF)");
       expect($util.fileType("av1")).toBe("AOMedia Video 1 (AV1)");

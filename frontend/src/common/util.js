@@ -931,6 +931,8 @@ export default class $util {
         return $gettext("Estimate");
       case "file":
         return $gettext("File");
+      case "modified":
+        return $gettext("Modified");
       case "name":
         return $gettext("Name");
       case "image":
