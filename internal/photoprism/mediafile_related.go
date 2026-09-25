@@ -59,9 +59,9 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 		matches = list.Join(matches, files)
 	}
 
-	// Insta360 cameras may store one capture as two full-resolution lens videos plus an optional
-	// low-resolution proxy whose filename has a different prefix. Include the complete capture and
-	// all of its sidecars so the indexer creates one photo instead of three unrelated records.
+	// Insta360 cameras may store one capture as two full-resolution lens files, plus an optional
+	// low-resolution proxy for videos, with different filenames. Include the complete capture and
+	// all of its sidecars so the indexer creates one photo instead of unrelated records.
 	var captureMain string
 	if capture := FindInsta360Capture(m); capture != nil && capture.ValidPair() {
 		captureMain = capture.Left.FileName()

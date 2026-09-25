@@ -44,9 +44,9 @@ func ConvertWorker(jobs <-chan ConvertJob) {
 		// f is the media file to be converted.
 		f := job.file
 
-		// A complete Insta360 capture has one canonical _00 owner. Its _10 lens and LRV proxy are
-		// preserved and indexed as related originals, but must not create duplicate sidecars.
-		if capture := FindInsta360Capture(f); capture != nil && capture.ValidPair() && capture.Left.FileName() != f.FileName() {
+		// A complete Insta360 video capture has one canonical _00 owner. Its _10 lens and LRV proxy
+		// are preserved and indexed as related originals, but must not create duplicate sidecars.
+		if insta360SkipConvert(f) {
 			continue
 		}
 

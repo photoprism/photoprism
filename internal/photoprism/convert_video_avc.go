@@ -35,9 +35,9 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 		return nil, fmt.Errorf("convert: no media file provided for processing - you may have found a bug")
 	}
 
-	// Normalize every member of a complete Insta360 capture to its canonical left lens so manual
+	// Normalize every member of a complete Insta360 video capture to its canonical left lens so manual
 	// conversion, background conversion, and playback all reuse one equirectangular AVC sidecar.
-	if capture := FindInsta360Capture(f); capture != nil && capture.ValidPair() {
+	if capture := FindInsta360Capture(f); capture.ValidVideoPair() {
 		f = capture.Left
 	}
 
@@ -317,7 +317,7 @@ func (w *Convert) TranscodeToAvcCmd(f *MediaFile, avcName string, encoder encode
 	// Complete separate-lens captures are combined before dewarping. Single-file INSV originals are
 	// dewarped only when their decoded frame is already a side-by-side ~2:1 dual-fisheye layout.
 	capture := FindInsta360Capture(f)
-	dewarpPair := capture != nil && capture.ValidPair() && capture.Left.FileName() == f.FileName()
+	dewarpPair := capture.ValidVideoPair() && capture.Left.FileName() == f.FileName()
 	dewarp := dewarpPair || f.IsInsv() && f.DualFisheyeLayout()
 
 	if dewarp {
@@ -365,7 +365,7 @@ func (w *Convert) fisheyeRoll(f *MediaFile) int {
 		return 0
 	}
 
-	if capture := FindInsta360Capture(f); capture != nil && capture.ValidPair() {
+	if capture := FindInsta360Capture(f); capture.ValidVideoPair() {
 		f = capture.Left
 	} else if f.DualFisheye() && !f.DualFisheyeLayout() {
 		return 0

@@ -402,6 +402,31 @@ func TestConvert_JpegConvertCmds_Insta360Pair(t *testing.T) {
 	assert.True(t, cmds[0].Projection.Equal(projection.Equirectangular.String()))
 }
 
+// TestConvert_JpegConvertCmds_Insta360PhotoPair verifies that photo pairs are not combined.
+func TestConvert_JpegConvertCmds_Insta360PhotoPair(t *testing.T) {
+	cnf := config.TestConfig()
+	dir := t.TempDir()
+	leftName := writeInsta360CaptureFile(t, dir, "IMG_20220625_140410_00_008.insp", "testdata/flash.jpg")
+	rightName := writeInsta360CaptureFile(t, dir, "IMG_20220625_140410_10_008.insp", "testdata/flash.jpg")
+	left, err := NewMediaFile(leftName)
+	require.NoError(t, err)
+	require.True(t, FindInsta360Capture(left).ValidPair())
+
+	// The left lens is converted exactly as it would be without the right lens.
+	paired, _, err := NewConvert(cnf).JpegConvertCmds(left, filepath.Join(dir, "preview.jpg"), "")
+	require.NoError(t, err)
+	require.NoError(t, os.Remove(rightName))
+	single, _, err := NewConvert(cnf).JpegConvertCmds(left, filepath.Join(dir, "preview.jpg"), "")
+	require.NoError(t, err)
+
+	require.Equal(t, len(single), len(paired))
+
+	for i := range paired {
+		assert.NotContains(t, paired[i].String(), rightName)
+		assert.Equal(t, single[i].String(), paired[i].String())
+	}
+}
+
 // TestConvert_writeEquirectangularProjection verifies that the GPano equirectangular tag is
 // written so a dewarped derivative is self-describing to external tools.
 func TestConvert_writeEquirectangularProjection(t *testing.T) {
@@ -535,6 +560,19 @@ func TestConvert_fisheyeRoll(t *testing.T) {
 		f, err := NewMediaFile(oneRSInsvFixture(t, t.TempDir(), "camera.insv"))
 		require.NoError(t, err)
 		assert.Equal(t, 180, convert.fisheyeRoll(f))
+	})
+	t.Run("PhotoPairRightLens", func(t *testing.T) {
+		dir := t.TempDir()
+		// Only the left lens identifies the camera, so a roll could only come from the pair.
+		payload, err := os.ReadFile("testdata/flash.jpg")
+		require.NoError(t, err)
+		payload = append(payload, append([]byte{0x12, 0x0e}, []byte("Insta360 OneRS")...)...)
+		// #nosec G703 -- the destination directory and filename are controlled by the test.
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "IMG_20220625_140410_00_008.insp"), payload, fs.ModeFile))
+		right, err := NewMediaFile(writeInsta360CaptureFile(t, dir, "IMG_20220625_140410_10_008.insp", "testdata/flash.jpg"))
+		require.NoError(t, err)
+		require.True(t, FindInsta360Capture(right).ValidPair())
+		assert.Equal(t, 0, convert.fisheyeRoll(right))
 	})
 	t.Run("OneRSSquareInsv", func(t *testing.T) {
 		f, err := NewMediaFile(oneRSInsvFixture(t, t.TempDir(), "camera.insv"))

@@ -168,6 +168,20 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 			"LRV_20220625_140410_11_008.insv",
 		}, []string{related.Files[0].BaseName(), related.Files[1].BaseName(), related.Files[2].BaseName()})
 	})
+	t.Run("Insta360PhotoCapture", func(t *testing.T) {
+		dir := t.TempDir()
+		writeInsta360CaptureFile(t, dir, "IMG_20220625_140410_00_008.insp", "testdata/flash.jpg")
+		rightName := writeInsta360CaptureFile(t, dir, "IMG_20220625_140410_10_008.insp", "testdata/flash.jpg")
+
+		right, err := NewMediaFile(rightName)
+		require.NoError(t, err)
+
+		related, err := right.RelatedFiles(false)
+		require.NoError(t, err)
+
+		assert.Len(t, related.Files, 2)
+		assert.Equal(t, "IMG_20220625_140410_00_008.insp", related.Main.BaseName())
+	})
 	t.Run("Num2015Num02Num04Jpg", func(t *testing.T) {
 		mediaFile, err := NewMediaFile("testdata/2015-02-04.jpg")
 

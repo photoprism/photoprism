@@ -14,7 +14,7 @@ const (
 	insta360PairDurationTolerance = time.Second
 )
 
-// Insta360Capture contains the original lens files and optional low-resolution proxy for one capture.
+// Insta360Capture contains the lens files and, for videos, the optional low-resolution proxy of one capture.
 type Insta360Capture struct {
 	Name  media.Insta360VideoName
 	Left  *MediaFile
@@ -22,14 +22,22 @@ type Insta360Capture struct {
 	Proxy *MediaFile
 }
 
-// FindInsta360Capture resolves the files belonging to the same directory-scoped capture as f.
+// FindInsta360Capture resolves the files of the separate-lens video or photo capture that f belongs to.
 func FindInsta360Capture(f *MediaFile) *Insta360Capture {
-	if f == nil || !f.IsInsv() {
+	var name media.Insta360VideoName
+	var ok bool
+
+	switch {
+	case f == nil:
 		return nil
+	case f.IsInsv():
+		name, ok = media.ParseInsta360VideoName(f.FileName())
+	case f.IsInsp():
+		name, ok = media.ParseInsta360PhotoName(f.FileName())
 	}
 
-	name, ok := media.ParseInsta360VideoName(f.FileName())
-	if !ok {
+	// The capture files are looked up under their canonical names, which must include f itself.
+	if !ok || name.FileName(name.Role) != f.FileName() {
 		return nil
 	}
 
@@ -40,7 +48,7 @@ func FindInsta360Capture(f *MediaFile) *Insta360Capture {
 		media.Insta360VideoRight: name.FileName(media.Insta360VideoRight),
 		media.Insta360VideoProxy: name.FileName(media.Insta360VideoProxy),
 	} {
-		if !fs.FileExistsNotEmpty(fileName) {
+		if fileName == "" || !fs.FileExistsNotEmpty(fileName) {
 			continue
 		}
 
@@ -62,9 +70,32 @@ func FindInsta360Capture(f *MediaFile) *Insta360Capture {
 	return result
 }
 
-// ValidPair reports whether the two full-resolution lens files can safely be combined.
+// Video reports whether the capture is a separate-lens video rather than a photo.
+func (m *Insta360Capture) Video() bool {
+	return m != nil && !m.Name.Photo
+}
+
+// ValidVideoPair reports whether the capture is a separate-lens video with matching lens files.
+func (m *Insta360Capture) ValidVideoPair() bool {
+	return m.Video() && m.ValidPair()
+}
+
+// insta360SkipConvert reports whether f is the right lens or proxy of a video capture, whose
+// sidecars are created from the left lens.
+func insta360SkipConvert(f *MediaFile) bool {
+	capture := FindInsta360Capture(f)
+	return capture.ValidVideoPair() && capture.Left.FileName() != f.FileName()
+}
+
+// ValidPair reports whether both lens files are present and match; frame rate and duration are
+// compared for videos only.
 func (m *Insta360Capture) ValidPair() bool {
-	if m == nil || m.Left == nil || m.Right == nil || !m.Left.IsInsv() || !m.Right.IsInsv() {
+	switch {
+	case m == nil || m.Left == nil || m.Right == nil:
+		return false
+	case m.Video() && (!m.Left.IsInsv() || !m.Right.IsInsv()):
+		return false
+	case !m.Video() && (!m.Left.IsInsp() || !m.Right.IsInsp()):
 		return false
 	}
 
@@ -81,6 +112,10 @@ func (m *Insta360Capture) ValidPair() bool {
 
 	if leftWidth > 0 && rightWidth > 0 && (leftWidth != rightWidth || leftHeight != rightHeight) {
 		return false
+	}
+
+	if !m.Video() {
+		return true
 	}
 
 	leftInfo, rightInfo := m.Left.VideoInfo(), m.Right.VideoInfo()

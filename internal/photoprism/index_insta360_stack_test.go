@@ -52,20 +52,31 @@ func writeInsta360StackMedia(t *testing.T, cfg *config.Config, dir, name string)
 
 	require.NoError(t, fs.MkdirAll(dir))
 
-	var args []string
+	fileName := filepath.Join(dir, name)
+	fileType := fs.FileType(name)
+	image := fileType == fs.ImageJpeg || fileType == fs.ImageInsp
 
-	if fileType := fs.FileType(name); fileType == fs.ImageJpeg || fileType == fs.ImageInsp {
+	args := []string{"-y", "-loglevel", "error", "-f", "lavfi", "-i", "testsrc=size=320x320:rate=30",
+		"-t", "1", "-c:v", "libx264", "-pix_fmt", "yuv420p", "-metadata", "title=" + name, "-f", "mp4", fileName}
+
+	if image {
 		args = []string{"-y", "-loglevel", "error", "-f", "lavfi", "-i", "testsrc=size=320x320",
-			"-frames:v", "1", "-metadata", "comment=" + name, "-f", "image2", "-c:v", "mjpeg", filepath.Join(dir, name)}
-	} else {
-		args = []string{"-y", "-loglevel", "error", "-f", "lavfi", "-i", "testsrc=size=320x320:rate=30",
-			"-t", "1", "-c:v", "libx264", "-pix_fmt", "yuv420p", "-metadata", "title=" + name, "-f", "mp4",
-			filepath.Join(dir, name)}
+			"-frames:v", "1", "-f", "image2", "-c:v", "mjpeg", fileName}
 	}
 
 	// #nosec G204 -- arguments are test constants.
 	out, err := exec.Command(cfg.FFmpegBin(), args...).CombinedOutput()
 	require.NoError(t, err, strings.TrimSpace(string(out)))
+
+	// Images get the name appended after the end marker, so files with different names never share a hash.
+	if image {
+		// #nosec G304 -- the destination directory and filename are controlled by the test.
+		f, openErr := os.OpenFile(fileName, os.O_APPEND|os.O_WRONLY, 0)
+		require.NoError(t, openErr)
+		_, writeErr := f.WriteString(name)
+		require.NoError(t, writeErr)
+		require.NoError(t, f.Close())
+	}
 }
 
 // indexInsta360StackFolder indexes a folder below the originals path.
@@ -473,4 +484,51 @@ func TestIndex_Insta360StackOptions(t *testing.T) {
 		assert.Len(t, owners, 2)
 		assert.Equal(t, photoIDs, insta360StackPhotoIDs(owners))
 	})
+}
+
+// TestIndex_Insta360PhotoPair verifies that the lens files of a separate-lens photo, whose naming
+// is assumed, are stacked in one photo in the same run and in either arrival order.
+func TestIndex_Insta360PhotoPair(t *testing.T) {
+	const (
+		left  = "IMG_20220625_140410_00_008.insp"
+		right = "IMG_20220625_140410_10_008.insp"
+	)
+
+	cases := []struct {
+		name  string
+		first []string
+		late  []string
+	}{
+		{"SameRun", []string{left, right}, nil},
+		{"LateRight", []string{left}, []string{right}},
+		{"Reverse", []string{right}, []string{left}},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			folder := strings.ToLower("insta360photo" + tc.name)
+			cfg := newInsta360StackConfig(t, folder, false)
+			dir := filepath.Join(cfg.OriginalsPath(), folder)
+
+			for _, name := range tc.first {
+				writeInsta360StackMedia(t, cfg, dir, name)
+			}
+
+			indexInsta360StackFolder(cfg, folder, false, true)
+
+			for _, name := range tc.late {
+				writeInsta360StackMedia(t, cfg, dir, name)
+			}
+
+			if len(tc.late) > 0 {
+				indexInsta360StackFolder(cfg, folder, false, true)
+			}
+
+			owners := insta360StackOwners(t, folder)
+			assert.Len(t, owners, 2)
+			assert.Len(t, insta360StackPhotoIDs(owners), 1)
+			assert.Equal(t, "IMG_20220625_140410_00_008", owners[left].PhotoName)
+			assert.Equal(t, 1, insta360StackPhotoCount(t, folder))
+		})
+	}
 }
