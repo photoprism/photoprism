@@ -7,6 +7,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/list"
@@ -79,6 +80,27 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 		}
 	}
 
+	// Cameras that store both lenses in one file write an LRV proxy with a different name, which is
+	// grouped with the left lens in originals, so the left lens is the main file.
+	inOriginals := m.Root() == entity.RootOriginals
+
+	if partner := insta360ProxyPartner(m); partner != "" && inOriginals {
+		left, proxy := m.FileName(), partner
+		if m.HasFileType(fs.VideoLrv) {
+			left, proxy = partner, m.FileName()
+		}
+
+		for _, fileName := range []string{left, proxy} {
+			if partnerMatches, partnerErr := filepath.Glob(regexp.QuoteMeta(strings.TrimSuffix(fileName, filepath.Ext(fileName))+".") + "*"); partnerErr == nil {
+				matches = list.Join(matches, partnerMatches)
+			}
+		}
+
+		if captureMain == "" {
+			captureMain = left
+		}
+	}
+
 	isHeic := false
 
 	processedMatches := make(map[string]bool, len(matches))
@@ -93,6 +115,11 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 		f, fileErr := NewMediaFile(fileName)
 
 		if fileErr != nil || f.Empty() || f.IsArchive() {
+			continue
+		}
+
+		// An LRV proxy in originals only belongs to the group of the video it was recorded with.
+		if inOriginals && f.HasFileType(fs.VideoLrv) && insta360ProxyPartner(f) == "" {
 			continue
 		}
 

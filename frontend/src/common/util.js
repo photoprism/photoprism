@@ -580,6 +580,8 @@ export default class $util {
         return "Apple iTunes Multimedia Container";
       case "insv":
         return "Insta360 Video";
+      case "lrv":
+        return "Insta360 Proxy Video";
       case "mkv":
         return "Matroska Multimedia Container";
       case "mts":

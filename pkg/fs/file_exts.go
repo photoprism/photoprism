@@ -116,6 +116,7 @@ var Extensions = FileExtensions{
 	".mqv":      VideoMov,  //  .mqv (Sony)
 	ExtMp4:      VideoMp4,  // MPEG-4 Part 14 Multimedia Container
 	ExtInsv:     VideoInsv, // .insv (Insta360 dual-fisheye video)
+	ExtLrv:      VideoLrv,  // .lrv (Insta360 low-resolution proxy video)
 	ExtH264:     VideoAvc,  // ↓ H.264 MPEG-4 Advanced Video Coding (AVC)
 	ExtAvc:      VideoAvc,  //  .avc
 	ExtAvc1:     VideoAvc,  //  .avc1

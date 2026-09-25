@@ -4,6 +4,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 	"time"
@@ -923,4 +924,151 @@ func TestIndex_Insta360Cover(t *testing.T) {
 		assert.True(t, previews[rightPreview].FilePrimary)
 		assert.Equal(t, "", previews[rightPreview].FileProjection)
 	})
+}
+
+// TestIndex_Insta360Proxy verifies that the LRV proxy of a video that stores both lenses in one file
+// is only indexed with that video, in any order, is not converted, and must stay stacked.
+func TestIndex_Insta360Proxy(t *testing.T) {
+	const (
+		left  = "VID_20240415_213145_00_035.insv"
+		proxy = "LRV_20240415_213145_01_035.lrv"
+		name  = "VID_20240415_213145_00_035"
+	)
+
+	cases := []struct {
+		name  string
+		first []string
+		late  []string
+	}{
+		{"SameRun", []string{left, proxy}, nil},
+		{"LateProxy", []string{left}, []string{proxy}},
+		{"ProxyFirst", []string{proxy}, []string{left}},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			folder := strings.ToLower("insta360proxy" + tc.name)
+			cfg := newInsta360StackConfig(t, folder, false)
+			dir := filepath.Join(cfg.OriginalsPath(), folder)
+
+			for _, fileName := range tc.first {
+				writeInsta360StackMedia(t, cfg, dir, fileName)
+			}
+
+			indexInsta360StackFolder(cfg, folder, false, true)
+
+			if len(tc.late) > 0 {
+				// A proxy without its video is not indexed.
+				indexed := insta360StackOwners(t, folder)
+				assert.Equal(t, tc.first[0] == left, len(indexed) == 1)
+				assert.NotContains(t, indexed, proxy)
+
+				for _, fileName := range tc.late {
+					writeInsta360StackMedia(t, cfg, dir, fileName)
+				}
+
+				indexInsta360StackFolder(cfg, folder, false, true)
+			}
+
+			owners := insta360StackOwners(t, folder)
+			require.Len(t, owners, 2)
+			assert.Len(t, insta360StackPhotoIDs(owners), 1)
+			assert.Equal(t, name, owners[left].PhotoName)
+
+			var file entity.File
+			require.NoError(t, entity.UnscopedDb().First(&file, "file_name = ?", folder+"/"+proxy).Error)
+			assert.Equal(t, fs.VideoLrv.String(), file.FileType)
+			assert.False(t, file.FilePrimary)
+			assert.True(t, file.KeepStacked())
+			assert.Equal(t, name, file.StackGroup())
+
+			assert.NoFileExists(t, filepath.Join(cfg.SidecarPath(), folder, proxy+".jpg"))
+			assert.True(t, insta360StackPreviews(t, folder)[left+".jpg"].FilePrimary)
+			assertInsta360SinglePrimary(t, folder)
+		})
+	}
+	t.Run("IgnoredVideo", func(t *testing.T) {
+		folder := "insta360proxyignored"
+		cfg := newInsta360StackConfig(t, folder, false)
+		dir := filepath.Join(cfg.OriginalsPath(), folder)
+
+		writeInsta360StackMedia(t, cfg, dir, left)
+		writeInsta360StackMedia(t, cfg, dir, proxy)
+		require.NoError(t, os.WriteFile(filepath.Join(dir, fs.PPIgnoreFilename), []byte(left+"\n"), fs.ModeFile))
+		indexInsta360StackFolder(cfg, folder, false, true)
+
+		assert.Empty(t, insta360StackOwners(t, folder))
+	})
+	t.Run("OtherProxies", func(t *testing.T) {
+		folder := "insta360proxyother"
+		cfg := newInsta360StackConfig(t, folder, false)
+		dir := filepath.Join(cfg.OriginalsPath(), folder)
+
+		// Proxies of other cameras, and an Insta360 proxy without its video, are not indexed.
+		for _, fileName := range []string{"GX010123.MP4", "GL010123.LRV", "GOPR0124.MP4", "GOPR0124.LRV", "LRV_20240415_213145_01_036.lrv"} {
+			writeInsta360StackMedia(t, cfg, dir, fileName)
+		}
+
+		indexInsta360StackFolder(cfg, folder, false, true)
+		indexInsta360StackFolder(cfg, folder, true, false)
+
+		owners := insta360StackOwners(t, folder)
+		assert.Len(t, owners, 2)
+		assert.Contains(t, owners, "GX010123.MP4")
+		assert.Contains(t, owners, "GOPR0124.MP4")
+
+		for _, fileName := range []string{"GL010123.LRV", "GOPR0124.LRV", "LRV_20240415_213145_01_036.lrv"} {
+			matches, err := filepath.Glob(filepath.Join(cfg.SidecarPath(), folder, fileName+".*"))
+			require.NoError(t, err)
+			assert.Empty(t, matches, fileName)
+		}
+	})
+}
+
+// TestMediaFile_RelatedFiles_Insta360Proxy verifies that LRV proxies are grouped by partner only in
+// originals, while files to be imported are grouped by name as before.
+func TestMediaFile_RelatedFiles_Insta360Proxy(t *testing.T) {
+	const (
+		left  = "VID_20240415_213145_00_035.insv"
+		proxy = "LRV_20240415_213145_01_035.lrv"
+	)
+
+	cfg := newInsta360StackConfig(t, "insta360proxyrelated", false)
+
+	names := func(related RelatedFiles) (result []string) {
+		for _, f := range related.Files {
+			result = append(result, f.BaseName())
+		}
+		return result
+	}
+
+	for _, root := range []struct {
+		name       string
+		dir        string
+		proxyInSet bool
+		goProInSet bool
+	}{
+		{"Originals", filepath.Join(cfg.OriginalsPath(), "insta360proxyrelated"), true, false},
+		{"Import", filepath.Join(cfg.ImportPath(), "insta360proxyrelated"), false, true},
+	} {
+		t.Run(root.name, func(t *testing.T) {
+			for _, name := range []string{left, proxy, "GOPR0124.MP4", "GOPR0124.LRV"} {
+				writeInsta360StackMedia(t, cfg, root.dir, name)
+			}
+
+			main, err := NewMediaFile(filepath.Join(root.dir, left))
+			require.NoError(t, err)
+			related, err := main.RelatedFiles(false)
+			require.NoError(t, err)
+			assert.Equal(t, root.proxyInSet, slices.Contains(names(related), proxy))
+			assert.Equal(t, left, related.Main.BaseName())
+
+			goPro, err := NewMediaFile(filepath.Join(root.dir, "GOPR0124.MP4"))
+			require.NoError(t, err)
+			related, err = goPro.RelatedFiles(false)
+			require.NoError(t, err)
+			assert.Equal(t, root.goProInSet, slices.Contains(names(related), "GOPR0124.LRV"))
+			assert.Equal(t, "GOPR0124.MP4", related.Main.BaseName())
+		})
+	}
 }

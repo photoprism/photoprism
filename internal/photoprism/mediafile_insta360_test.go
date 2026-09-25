@@ -127,6 +127,52 @@ func TestInsta360SkipConvert(t *testing.T) {
 	require.NoError(t, err)
 	assert.False(t, insta360SkipConvert(single))
 	assert.False(t, insta360SkipConvert(nil))
+
+	t.Run("Proxy", func(t *testing.T) {
+		proxyDir := t.TempDir()
+		proxy, proxyErr := NewMediaFile(writeInsta360CaptureFile(t, proxyDir, "LRV_20240415_213145_01_035.lrv", "testdata/flash.jpg"))
+		require.NoError(t, proxyErr)
+		assert.True(t, insta360SkipConvert(proxy))
+
+		left, leftErr := NewMediaFile(writeInsta360CaptureFile(t, proxyDir, "VID_20240415_213145_00_035.insv", "testdata/flash.jpg"))
+		require.NoError(t, leftErr)
+		assert.True(t, insta360SkipConvert(proxy))
+		assert.False(t, insta360SkipConvert(left))
+
+		other, otherErr := NewMediaFile(writeInsta360CaptureFile(t, proxyDir, "GL010123.LRV", "testdata/flash.jpg"))
+		require.NoError(t, otherErr)
+		assert.True(t, insta360SkipConvert(other))
+	})
+}
+
+// TestInsta360ProxyPartner verifies that a left lens and its LRV proxy find each other by name.
+func TestInsta360ProxyPartner(t *testing.T) {
+	dir := t.TempDir()
+	leftName := writeInsta360CaptureFile(t, dir, "VID_20240415_213145_00_035.insv", "testdata/flash.jpg")
+	proxyName := writeInsta360CaptureFile(t, dir, "LRV_20240415_213145_01_035.lrv", "testdata/flash.jpg")
+
+	left, err := NewMediaFile(leftName)
+	require.NoError(t, err)
+	proxy, err := NewMediaFile(proxyName)
+	require.NoError(t, err)
+
+	assert.Equal(t, proxyName, insta360ProxyPartner(left))
+	assert.Equal(t, leftName, insta360ProxyPartner(proxy))
+
+	for _, name := range []string{
+		"VID_20240415_213145_10_035.insv",
+		"LRV_20240415_213145_11_035.insv",
+		"lrv_20240415_213145_01_036.lrv",
+		"LRV_20240415_213145_01_037.LRV",
+		"LRV_20240415_213145_01_038.lrv",
+		"vid_20240415_213145_00_039.insv",
+	} {
+		f, fileErr := NewMediaFile(writeInsta360CaptureFile(t, dir, name, "testdata/flash.jpg"))
+		require.NoError(t, fileErr)
+		assert.Equal(t, "", insta360ProxyPartner(f), name)
+	}
+
+	assert.Equal(t, "", insta360ProxyPartner(nil))
 }
 
 // TestForceDewarpPreview verifies that only forced runs replace recognized 360° previews.

@@ -70,6 +70,7 @@ var Formats = map[fs.Type]Type{
 	fs.VideoWMV:        Video,
 	fs.VideoDV:         Video,
 	fs.VideoInsv:       Video,
+	fs.VideoLrv:        Video,
 	fs.TypeUnknown:     Sidecar,
 }
 

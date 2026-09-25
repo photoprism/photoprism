@@ -1,6 +1,7 @@
 package photoprism
 
 import (
+	"fmt"
 	"math"
 	"path/filepath"
 	"strings"
@@ -67,10 +68,39 @@ func FindInsta360Capture(f *MediaFile) *Insta360Capture {
 }
 
 // insta360SkipConvert reports whether f is the right lens or proxy of a video capture, whose
-// sidecars are created from the left lens.
+// sidecars are created from the left lens, or an LRV proxy, which is never converted.
 func insta360SkipConvert(f *MediaFile) bool {
+	if f != nil && f.HasFileType(fs.VideoLrv) {
+		return true
+	}
+
 	capture := FindInsta360Capture(f)
 	return capture.ValidPair() && capture.Left.FileName() != f.FileName()
+}
+
+// insta360ProxyPartner returns the existing partner of a left lens video or its LRV proxy, as written by
+// cameras that store both lenses in one file: the proxy for the left lens, and the left lens for the proxy.
+func insta360ProxyPartner(f *MediaFile) string {
+	if f == nil {
+		return ""
+	}
+
+	dir, baseName := filepath.Split(f.FileName())
+	var partner string
+
+	if match := fs.Insta360ProxyPattern.FindStringSubmatch(baseName); match != nil && match[1] == "LRV" && strings.HasSuffix(baseName, fs.ExtLrv) {
+		partner = fmt.Sprintf("VID_%s_%s_00_%s%s", match[2], match[3], match[5], fs.ExtInsv)
+	} else if match = fs.Insta360VideoPattern.FindStringSubmatch(baseName); match != nil && match[1] == "VID" && match[4] == "00" && strings.HasSuffix(baseName, fs.ExtInsv) {
+		partner = fmt.Sprintf("LRV_%s_%s_01_%s%s", match[2], match[3], match[5], fs.ExtLrv)
+	} else {
+		return ""
+	}
+
+	if partner = filepath.Join(dir, partner); fs.FileExistsNotEmpty(partner) {
+		return partner
+	}
+
+	return ""
 }
 
 // insta360PairPreview returns the complete capture whose left lens m is the generated preview of.

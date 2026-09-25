@@ -329,6 +329,21 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 				return nil
 			}
 
+			// A new LRV proxy queues the video it belongs to, since it is only indexed with that video.
+			if fs.FileType(fileName) == fs.VideoLrv {
+				if !ind.files.Indexed(relName, entity.RootOriginals, fs.ModTime(fileName), o.Rescan) {
+					if proxy, proxyErr := NewMediaFile(fileName); proxyErr == nil {
+						if partnerName := insta360ProxyPartner(proxy); partnerName != "" && !ignore.Ignore(partnerName) {
+							if partner, partnerErr := NewMediaFile(partnerName); partnerErr == nil {
+								enqueueRelated(partner)
+							}
+						}
+					}
+				}
+
+				return nil
+			}
+
 			if !media.MainFile(fileName) {
 				return nil
 			}
