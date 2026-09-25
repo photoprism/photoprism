@@ -61,7 +61,7 @@ func TestSyncYaml(t *testing.T) {
 
 	t.Cleanup(server.Close)
 
-	a := entity.Service{AccName: "Sync YAML", AccURL: server.URL + "/", AccType: "webdav", AccSync: true, SyncPath: "/", SyncFilenames: true, SyncYaml: true, AccTimeout: "low", RetryLimit: 3}
+	a := entity.Service{AccName: "Sync YAML", AccURL: server.URL + "/", AccType: "webdav", AccSync: true, SyncPath: "/", SyncFilenames: true, AccTimeout: "low", RetryLimit: 3}
 	require.NoError(t, entity.Db().Create(&a).Error)
 
 	t.Cleanup(func() {
@@ -120,7 +120,7 @@ func TestSyncYaml(t *testing.T) {
 		require.NoError(t, err)
 		assert.EqualValues(t, 1, yamlPuts.Load(), "a YAML file must not be sent after one was refused")
 		assert.NoFileExists(t, filepath.Join(remote, "a.jpg"))
-		assert.True(t, stored(t).SyncYaml, "YAML sync must stay on when other files are refused as well")
+		assert.NotEqual(t, -1, stored(t).SyncYaml, "YAML sync must stay on when other files are refused as well")
 	})
 	t.Run("UploadDisablesYaml", func(t *testing.T) {
 		yamlPuts.Store(0)
@@ -131,7 +131,7 @@ func TestSyncYaml(t *testing.T) {
 		assert.FileExists(t, filepath.Join(remote, "a.jpg"))
 		assert.FileExists(t, filepath.Join(remote, "c.jpg"))
 		a = stored(t)
-		assert.False(t, a.SyncYaml)
+		assert.Equal(t, -1, a.SyncYaml)
 	})
 	t.Run("UploadCompletes", func(t *testing.T) {
 		pending, err := query.AccountUploads(a, 250)
@@ -145,17 +145,17 @@ func TestSyncYaml(t *testing.T) {
 	t.Run("RemoteFailsYaml", func(t *testing.T) {
 		failYaml.Store(true)
 		defer failYaml.Store(false)
-		require.NoError(t, a.Update("SyncYaml", true))
-		a.SyncYaml = true
+		require.NoError(t, a.Update("SyncYaml", 1))
+		a.SyncYaml = 1
 		defer func() {
-			a.SyncYaml = false
-			require.NoError(t, a.Update("SyncYaml", false))
+			a.SyncYaml = -1
+			require.NoError(t, a.Update("SyncYaml", -1))
 		}()
 		yamlPuts.Store(0)
 		_, err := worker.upload(a)
 		require.NoError(t, err)
 		assert.EqualValues(t, 2, yamlPuts.Load(), "YAML files must be retried after other errors")
-		assert.True(t, stored(t).SyncYaml)
+		assert.NotEqual(t, -1, stored(t).SyncYaml)
 	})
 
 	require.NoError(t, os.WriteFile(filepath.Join(remote, "remote.yml"), []byte("remote-yaml"), fs.ModeFile))
@@ -175,14 +175,14 @@ func TestSyncYaml(t *testing.T) {
 		assert.Equal(t, entity.FileSyncNew, status(t, "/remote.txt"))
 	})
 	t.Run("RefreshRequeuesYaml", func(t *testing.T) {
-		a.SyncYaml = true
+		a.SyncYaml = 1
 		complete, err := worker.refresh(a)
 		require.NoError(t, err)
 		assert.True(t, complete)
 		assert.Equal(t, entity.FileSyncNew, status(t, "/remote.yml"))
 	})
 	t.Run("DownloadSkipsYaml", func(t *testing.T) {
-		a.SyncYaml = false
+		a.SyncYaml = -1
 		_, err := worker.download(a)
 		require.NoError(t, err)
 		assert.Equal(t, entity.FileSyncIgnore, status(t, "/remote.yml"))
@@ -190,6 +190,22 @@ func TestSyncYaml(t *testing.T) {
 		assert.Zero(t, yamlGets.Load())
 		assert.NoFileExists(t, filepath.Join(conf.OriginalsPath(), "remote.yml"))
 		assert.FileExists(t, filepath.Join(conf.OriginalsPath(), "remote.txt"))
+	})
+	t.Run("DefaultDownloadsYaml", func(t *testing.T) {
+		a.SyncYaml = 0
+		require.NoError(t, os.WriteFile(filepath.Join(remote, "added.yml"), []byte("added-yaml"), fs.ModeFile))
+		complete, err := worker.refresh(a)
+		require.NoError(t, err)
+		assert.True(t, complete)
+		assert.Equal(t, entity.FileSyncNew, status(t, "/remote.yml"))
+		assert.Equal(t, entity.FileSyncNew, status(t, "/added.yml"))
+		_, err = worker.download(a)
+		require.NoError(t, err)
+		assert.Equal(t, entity.FileSyncDownloaded, status(t, "/remote.yml"))
+		assert.Equal(t, entity.FileSyncDownloaded, status(t, "/added.yml"))
+		assert.EqualValues(t, 2, yamlGets.Load())
+		assert.FileExists(t, filepath.Join(conf.OriginalsPath(), "remote.yml"))
+		assert.FileExists(t, filepath.Join(conf.OriginalsPath(), "added.yml"))
 	})
 }
 
@@ -222,7 +238,7 @@ func TestShareYaml(t *testing.T) {
 
 	t.Cleanup(server.Close)
 
-	a := entity.Service{AccName: "Share YAML", AccURL: server.URL + "/", AccType: "webdav", AccShare: true, SharePath: "/", SyncYaml: true, AccTimeout: "low", RetryLimit: 3}
+	a := entity.Service{AccName: "Share YAML", AccURL: server.URL + "/", AccType: "webdav", AccShare: true, SharePath: "/", AccTimeout: "low", RetryLimit: 3}
 	require.NoError(t, entity.Db().Create(&a).Error)
 
 	t.Cleanup(func() {
@@ -269,7 +285,7 @@ func TestShareYaml(t *testing.T) {
 	syncYaml := func(t *testing.T) bool {
 		var m entity.Service
 		require.NoError(t, entity.Db().First(&m, a.ID).Error)
-		return m.SyncYaml
+		return m.SyncYamlEnabled()
 	}
 
 	worker := NewShare(conf)
@@ -308,7 +324,7 @@ func TestShareYaml(t *testing.T) {
 	})
 	t.Run("ReenabledYamlUploads", func(t *testing.T) {
 		acceptYaml.Store(true)
-		require.NoError(t, a.Update("SyncYaml", true))
+		require.NoError(t, a.Update("SyncYaml", 1))
 		require.NoError(t, worker.Start())
 		assert.Equal(t, entity.FileShareShared, share(t, "a.yml").Status)
 		assert.Equal(t, entity.FileShareShared, share(t, "b.yml").Status)

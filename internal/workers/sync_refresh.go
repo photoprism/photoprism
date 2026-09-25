@@ -77,7 +77,7 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 			yamlFile := fs.FileType(file.Name) == fs.SidecarYaml
 			switch content {
 			case media.Image, media.Sidecar, media.Vector, media.Document, media.Live, media.Animated:
-				if a.SyncYaml || !yamlFile {
+				if a.SyncYamlEnabled() || !yamlFile {
 					f.Status = entity.FileSyncNew
 				}
 			case media.Raw, media.Video:
@@ -93,7 +93,7 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 				continue
 			}
 
-			if f.Status == entity.FileSyncIgnore && (a.SyncRaw && (content == media.Raw || content == media.Video) || a.SyncYaml && yamlFile) {
+			if f.Status == entity.FileSyncIgnore && (a.SyncRaw && (content == media.Raw || content == media.Video) || a.SyncYamlEnabled() && yamlFile) {
 				w.logErr(f.Update("Status", entity.FileSyncNew))
 			}
 

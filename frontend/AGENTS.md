@@ -1,6 +1,6 @@
 # Frontend Guidelines
 
-**Last Updated:** August 18, 2026
+**Last Updated:** September 25, 2026
 
 ## Dependencies & Pins
 
@@ -55,6 +55,13 @@
 - Prefer waits over sleeps, click only visible and enabled elements, and use role, label, or text selectors instead of brittle XPath selectors.
 - Keep screenshots small and reproducible: prefer JPEG, visible viewport, deterministic `.local/screenshots/<case>/<step>__<viewport>.jpg` names, and no large inline screenshots.
 - If `npx` fetches an MCP server at runtime, add `--yes` or preinstall it to avoid prompts.
+
+## Models
+
+- Classes in `src/model/` extend `Model`, which snapshots every loaded or saved value in `__originalValues`; `getValues(true)` diffs against it, so `update()` sends only changed fields, and `rollback()` restores it.
+- Read a saved value through `model.originalValue(key)` rather than `__originalValues` or extra component state.
+- For a `-1`/`0`/`1` option, use `flagEnabled(key, defaultEnabled)` and `setFlag(key, enabled, defaultEnabled)`; switching back restores the saved value, so an untouched default stays `0` (see `syncYaml` in `component/service/edit.vue`).
+- `getDefaults()` sets each field's type for `getValues()` coercion, so a numeric `-1`/`0`/`1` option needs the number `0` as its default, never `true`.
 
 ## Frontend Test Gotchas
 

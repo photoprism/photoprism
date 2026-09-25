@@ -1,6 +1,6 @@
 # Internal Go Guidelines
 
-**Last Updated:** April 9, 2026
+**Last Updated:** September 25, 2026
 
 This file applies to `internal/` and defers subtree-specific rules to the narrower guides under `internal/api/`, `internal/config/`, `internal/commands/`, `internal/photoprism/`, and `internal/service/cluster/`.
 
@@ -11,6 +11,7 @@ This file applies to `internal/` and defers subtree-specific rules to the narrow
 ## Logging, Naming & Status
 
 - When adding GORM struct fields with uppercase abbreviations such as `LabelNSFW`, `UserID`, or `URLHash`, set an explicit `gorm:"column:<name>"` tag so column names stay stable.
+- For a persisted option that is on by default, or whose "not set" must stay distinguishable from an explicit choice, use an `int` with `gorm:"type:SMALLINT;default:0;"` and `-1` disabled / `0` default / `1` enabled instead of a `bool` (see `entity.Service.SyncYaml` and `SyncYamlEnabled()`). Never tag a `bool` with `gorm:"default:true"`, since GORM v1 then stores `true` when inserting `false`.
 - Use the shared logger via the package-level `log` variable backed by `event.Log`; avoid `fmt.Print*` and ad-hoc loggers.
 - In human-readable log text, prefer `instance` and `service`; reserve `node` for contract-bound names such as `/cluster/nodes`, `Node*`, and `PHOTOPRISM_NODE_*`.
 - End every `event.Audit*` slice with exactly one status token from `pkg/log/status`, such as `status.Succeeded`, `status.Failed`, or `status.Denied`.

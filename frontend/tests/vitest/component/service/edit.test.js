@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import "../../fixtures";
 import { shallowMount } from "@vue/test-utils";
 import PServiceEdit from "component/service/edit.vue";
+import Service from "model/service";
 
 // Builds a stand-in for a Service model. The dialog mutates fields via
 // v-model bindings (template) and via this.model.X = … (script) on a
@@ -80,6 +81,69 @@ describe("component/service/edit", () => {
       wrapper.vm.model.AccShare = true;
       expect(second.AccShare).toBe(true);
       expect(first.AccShare).toBe(false);
+    });
+  });
+
+  describe("syncYaml computed", () => {
+    it("reads and writes the option through the Service model", () => {
+      const service = new Service({ ID: 1, AccName: "Sync YAML", SyncYaml: 0 });
+      const wrapper = mountEdit({ service });
+
+      expect(wrapper.vm.syncYaml).toBe(true);
+      wrapper.vm.syncYaml = false;
+      expect(service.SyncYaml).toBe(-1);
+      expect(wrapper.vm.syncYaml).toBe(false);
+      wrapper.vm.syncYaml = true;
+      expect(service.SyncYaml).toBe(0);
+    });
+
+    it("stores 1 when checking an option that was saved as disabled", () => {
+      const service = new Service({ ID: 1, AccName: "Sync YAML", SyncYaml: -1 });
+      const wrapper = mountEdit({ service });
+
+      expect(wrapper.vm.syncYaml).toBe(false);
+      wrapper.vm.syncYaml = true;
+      expect(service.SyncYaml).toBe(1);
+    });
+
+    it("treats a plain object as the default", () => {
+      expect(mountEdit({ service: {} }).vm.syncYaml).toBe(true);
+    });
+
+    // yamlCheckbox renders the dialog content of a scope and returns the YAML sidecar checkbox stub.
+    const yamlCheckbox = (scope, service) => {
+      const wrapper = shallowMount(PServiceEdit, {
+        props: { visible: true, scope, service },
+        global: {
+          renderStubDefaultSlot: true,
+          mocks: {
+            $config: { get: () => false, values: {} },
+            $view: { enter: vi.fn(), leave: vi.fn() },
+            $notify: { success: vi.fn(), error: vi.fn(), busy: vi.fn() },
+          },
+        },
+      });
+
+      return wrapper.findAllComponents({ name: "VCheckbox" }).find((c) => String(c.props("label")).includes("YAML"));
+    };
+
+    it("binds both checkboxes to the option", () => {
+      for (const scope of ["sharing", "sync"]) {
+        const service = new Service({ ID: 1, AccName: "Sync YAML", AccShare: true, AccSync: true, ShareSize: "", SyncYaml: 0 });
+        const checkbox = yamlCheckbox(scope, service);
+
+        expect(checkbox.props("modelValue")).toBe(true);
+        checkbox.vm.$emit("update:modelValue", false);
+        expect(service.SyncYaml).toBe(-1);
+      }
+    });
+
+    it("disables the upload checkbox while a share size is set", () => {
+      const originals = new Service({ ID: 1, AccName: "Sync YAML", AccShare: true, ShareSize: "" });
+      const resized = new Service({ ID: 1, AccName: "Sync YAML", AccShare: true, ShareSize: "fit_2048" });
+
+      expect(yamlCheckbox("sharing", originals).props("disabled")).toBe(false);
+      expect(yamlCheckbox("sharing", resized).props("disabled")).toBe(true);
     });
   });
 

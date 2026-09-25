@@ -186,7 +186,7 @@ func (w *Share) Start() (err error) {
 
 		if len(refusedYaml) > 0 && !otherRefused {
 			log.Warnf("share: disabled YAML sidecar files for %s because the remote server refused to store them", clean.Log(a.AccName))
-			w.logErr(a.Update("SyncYaml", false))
+			w.logErr(a.Update("SyncYaml", -1))
 		} else {
 			for _, file := range refusedYaml {
 				uploadErrors++

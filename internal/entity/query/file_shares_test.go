@@ -57,7 +57,7 @@ func TestQueuedFileShares(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Run("YamlDisabled", func(t *testing.T) {
-		account.SyncYaml = false
+		account.SyncYaml = -1
 		r, err := QueuedFileShares(account)
 		if err != nil {
 			t.Fatal(err)
@@ -67,8 +67,16 @@ func TestQueuedFileShares(t *testing.T) {
 			assert.NotNil(t, r[0].File)
 		}
 	})
+	t.Run("YamlDefault", func(t *testing.T) {
+		account.SyncYaml = 0
+		r, err := QueuedFileShares(account)
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Len(t, r, 100)
+	})
 	t.Run("YamlEnabled", func(t *testing.T) {
-		account.SyncYaml = true
+		account.SyncYaml = 1
 		r, err := QueuedFileShares(account)
 		if err != nil {
 			t.Fatal(err)

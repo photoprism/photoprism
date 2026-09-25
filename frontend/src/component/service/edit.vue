@@ -75,7 +75,7 @@
             </v-col>
             <v-col cols="12">
               <v-checkbox
-                v-model="model.SyncYaml"
+                v-model="syncYaml"
                 density="comfortable"
                 :disabled="!model.AccShare || model.ShareSize !== ''"
                 :label="$gettext('Upload YAML sidecar files')"
@@ -160,7 +160,7 @@
             </v-col>
             <v-col cols="12" sm="6">
               <v-checkbox
-                v-model="model.SyncYaml"
+                v-model="syncYaml"
                 density="comfortable"
                 :disabled="!model.AccSync"
                 :label="$gettext('Sync YAML sidecar files')"
@@ -302,6 +302,16 @@ export default {
     // silent because `model` is no longer a declared prop.
     model() {
       return this.service;
+    },
+    // syncYaml maps the YAML sidecar option (-1 disabled, 0 default, 1 enabled) to a checkbox state.
+    // The getter tolerates the plain object the page assigns while the dialog closes.
+    syncYaml: {
+      get() {
+        return this.model.flagEnabled?.("SyncYaml") ?? true;
+      },
+      set(enabled) {
+        this.model.setFlag("SyncYaml", enabled);
+      },
     },
   },
   watch: {

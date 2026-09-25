@@ -282,14 +282,21 @@ func TestUploadToServiceYaml(t *testing.T) {
 		return result
 	}
 	t.Run("Disabled", func(t *testing.T) {
-		require.NoError(t, account.Update("SyncYaml", false))
+		require.NoError(t, account.Update("SyncYaml", -1))
 		result := PerformRequestWithBody(app, http.MethodPost, uri, body)
 		require.Equal(t, http.StatusOK, result.Code, result.Body.String())
 		assert.Equal(t, int64(1), gjson.GetBytes(result.Body.Bytes(), "#").Int())
 		assert.ElementsMatch(t, []uint{jpeg.ID}, shared(t))
 	})
+	t.Run("Default", func(t *testing.T) {
+		require.NoError(t, account.Update("SyncYaml", 0))
+		result := PerformRequestWithBody(app, http.MethodPost, uri, body)
+		require.Equal(t, http.StatusOK, result.Code, result.Body.String())
+		assert.Equal(t, int64(2), gjson.GetBytes(result.Body.Bytes(), "#").Int())
+		assert.ElementsMatch(t, []uint{jpeg.ID, yaml.ID}, shared(t))
+	})
 	t.Run("Enabled", func(t *testing.T) {
-		require.NoError(t, account.Update("SyncYaml", true))
+		require.NoError(t, account.Update("SyncYaml", 1))
 		result := PerformRequestWithBody(app, http.MethodPost, uri, body)
 		require.Equal(t, http.StatusOK, result.Code, result.Body.String())
 		assert.Equal(t, int64(2), gjson.GetBytes(result.Body.Bytes(), "#").Int())

@@ -83,7 +83,7 @@ func TestAccountUploads(t *testing.T) {
 			t.Fatal(err)
 		}
 		t.Cleanup(func() { entity.UnscopedDb().Unscoped().Delete(yaml) })
-		found := func(t *testing.T, syncYaml bool) bool {
+		found := func(t *testing.T, syncYaml int) bool {
 			results, err := AccountUploads(entity.Service{ID: 1, SyncRaw: true, SyncYaml: syncYaml}, 0)
 			if err != nil {
 				t.Fatal(err)
@@ -95,7 +95,8 @@ func TestAccountUploads(t *testing.T) {
 			}
 			return false
 		}
-		assert.True(t, found(t, true), "yaml file must be uploaded when SyncYaml is on")
-		assert.False(t, found(t, false), "yaml file must be held back when SyncYaml is off")
+		assert.True(t, found(t, 0), "yaml file must be uploaded by default")
+		assert.True(t, found(t, 1), "yaml file must be uploaded when SyncYaml is on")
+		assert.False(t, found(t, -1), "yaml file must be held back when SyncYaml is off")
 	})
 }

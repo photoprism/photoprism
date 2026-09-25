@@ -101,35 +101,44 @@ func TestService_SaveForm(t *testing.T) {
 		assert.Equal(t, "new.com", model.AccURL)
 	})
 	t.Run("SyncYaml", func(t *testing.T) {
-		stored := func(t *testing.T, id uint) bool {
+		stored := func(t *testing.T, id uint) int {
 			var m Service
 			if err := Db().First(&m, id).Error; err != nil {
 				t.Fatal(err)
 			}
 			return m.SyncYaml
 		}
-		for _, enabled := range []bool{false, true} {
-			model, err := AddService(form.Service{AccName: "Sync YAML", AccURL: "test.com", AccType: "webdav", SyncYaml: enabled})
+		for _, c := range []struct{ value, want, update, updated int }{
+			{-1, -1, 1, 1},
+			{0, 0, -1, -1},
+			{1, 1, 0, 0},
+			{-5, -1, 5, 1},
+		} {
+			model, err := AddService(form.Service{AccName: "Sync YAML", AccURL: "test.com", AccType: "webdav", SyncYaml: c.value})
 			if err != nil {
 				t.Fatal(err)
 			}
 			t.Cleanup(func() { UnscopedDb().Unscoped().Delete(model) })
-			assert.Equal(t, enabled, model.SyncYaml)
-			assert.Equal(t, enabled, stored(t, model.ID))
-			if err = model.SaveForm(form.Service{AccName: "Sync YAML", AccURL: "test.com", AccType: "webdav", SyncYaml: !enabled}); err != nil {
+			assert.Equal(t, c.want, model.SyncYaml)
+			assert.Equal(t, c.want, stored(t, model.ID))
+			if err = model.SaveForm(form.Service{AccName: "Sync YAML", AccURL: "test.com", AccType: "webdav", SyncYaml: c.update}); err != nil {
 				t.Fatal(err)
 			}
-			assert.Equal(t, !enabled, model.SyncYaml)
-			assert.Equal(t, !enabled, stored(t, model.ID))
+			assert.Equal(t, c.updated, model.SyncYaml)
+			assert.Equal(t, c.updated, stored(t, model.ID))
 		}
 	})
-	t.Run("SyncYamlColumnDefault", func(t *testing.T) {
-		model := &Service{AccName: "Sync YAML Default", AccType: "webdav"}
-		if err := model.Create(); err != nil {
-			t.Fatal(err)
-		}
-		t.Cleanup(func() { UnscopedDb().Unscoped().Delete(model) })
-		assert.True(t, model.SyncYaml)
+}
+
+func TestService_SyncYamlEnabled(t *testing.T) {
+	t.Run("Default", func(t *testing.T) {
+		assert.True(t, (&Service{}).SyncYamlEnabled())
+	})
+	t.Run("Enabled", func(t *testing.T) {
+		assert.True(t, (&Service{SyncYaml: 1}).SyncYamlEnabled())
+	})
+	t.Run("Disabled", func(t *testing.T) {
+		assert.False(t, (&Service{SyncYaml: -1}).SyncYamlEnabled())
 	})
 }
 

@@ -2215,7 +2215,7 @@
                     "type": "boolean"
                 },
                 "SyncYaml": {
-                    "type": "boolean"
+                    "type": "integer"
                 },
                 "UpdatedAt": {
                     "type": "string"
@@ -3257,7 +3257,8 @@
                     "type": "boolean"
                 },
                 "SyncYaml": {
-                    "type": "boolean"
+                    "description": "YAML sidecar files: -1 disabled, 0 default (enabled), 1 enabled.",
+                    "type": "integer"
                 }
             },
             "type": "object"
