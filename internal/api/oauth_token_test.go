@@ -6,13 +6,19 @@ import (
 	"net/url"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"github.com/tidwall/gjson"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // TestOAuthToken_AuthorizationCode covers the authorization_code grant branch
@@ -475,5 +481,194 @@ func TestOAuthToken(t *testing.T) {
 		t.Logf("Header: %s", w.Header())
 		t.Logf("BODY: %s", w.Body.String())
 		assert.Equal(t, http.StatusUnauthorized, w.Code)
+	})
+}
+
+// TestOAuthToken_DeletedClient covers the client lifecycle gate on the token endpoint.
+// The same credentials are presented before and after the client is deleted, so the
+// refusal is attributable to the deletion rather than to the request or the secret.
+func TestOAuthToken_DeletedClient(t *testing.T) {
+	app, router, conf := NewApiTest()
+	conf.SetAuthMode(config.AuthModePasswd)
+	defer conf.SetAuthMode(config.AuthModePublic)
+
+	OAuthToken(router)
+
+	client := entity.NewClient().SetName("Token Lifecycle").SetRole(acl.RoleClient.String())
+	client.AuthScope = "metrics"
+
+	if err := client.Create(); err != nil {
+		t.Fatal(err)
+	}
+
+	secret, err := client.NewSecret()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	tokenRequest := func() *httptest.ResponseRecorder {
+		data := url.Values{
+			"grant_type":    {authn.GrantClientCredentials.String()},
+			"client_id":     {client.ClientUID},
+			"client_secret": {secret},
+			"scope":         {"metrics"},
+		}
+
+		req, _ := http.NewRequest(http.MethodPost, "/api/v1/oauth/token", strings.NewReader(data.Encode()))
+		req.Header.Add(header.ContentType, header.ContentTypeForm)
+
+		w := httptest.NewRecorder()
+		app.ServeHTTP(w, req)
+
+		return w
+	}
+
+	var sessId string
+
+	t.Run("LiveClient", func(t *testing.T) {
+		w := tokenRequest()
+
+		if !assert.Equal(t, http.StatusOK, w.Code, "body=%s", w.Body.String()) {
+			return
+		}
+
+		sessId = gjson.Get(w.Body.String(), "session_id").String()
+		assert.NotEmpty(t, sessId)
+	})
+	t.Run("DeletedClient", func(t *testing.T) {
+		if err = client.Delete(); err != nil {
+			t.Fatal(err)
+		}
+
+		if deleted := entity.FindClientByUID(client.ClientUID); assert.NotNil(t, deleted) {
+			assert.True(t, deleted.Deleted())
+		}
+
+		w := tokenRequest()
+		assert.Equal(t, http.StatusUnauthorized, w.Code, "body=%s", w.Body.String())
+	})
+	t.Run("SessionRevoked", func(t *testing.T) {
+		// Without a session id from the live request there is nothing to prove here.
+		if !assert.NotEmpty(t, sessId) {
+			return
+		}
+
+		_, findErr := entity.FindSession(sessId)
+		assert.Error(t, findErr)
+	})
+}
+
+// TestOAuthToken_InactiveUser covers clients that belong to a user account: the account must still be
+// active for the client credentials grant to issue a token.
+func TestOAuthToken_InactiveUser(t *testing.T) {
+	app, router, conf := NewApiTest()
+	conf.SetAuthMode(config.AuthModePasswd)
+	defer conf.SetAuthMode(config.AuthModePublic)
+
+	OAuthToken(router)
+
+	// newUserClient creates a user and a client that belongs to it, and returns both with the secret.
+	newUserClient := func(t *testing.T) (*entity.User, *entity.Client, string) {
+		t.Helper()
+
+		user := entity.NewUser()
+		user.UserName = "client-owner-" + rnd.Base36(6)
+		user.UserRole = acl.RoleAdmin.String()
+		user.CanLogin = true
+		require.NoError(t, user.Create())
+
+		client := entity.NewClient().SetName("Owned Client").SetRole(acl.RoleClient.String()).SetUser(user)
+		client.AuthScope = "metrics"
+		require.NoError(t, client.Create())
+
+		secret, err := client.NewSecret()
+		require.NoError(t, err)
+
+		t.Cleanup(func() {
+			entity.UnscopedDb().Unscoped().Delete(&entity.Session{}, "client_uid = ?", client.ClientUID)
+			entity.UnscopedDb().Unscoped().Delete(client)
+			entity.UnscopedDb().Unscoped().Delete(&entity.Password{}, "uid = ?", client.ClientUID)
+			entity.UnscopedDb().Unscoped().Delete(&entity.UserDetails{}, "user_uid = ?", user.UserUID)
+			entity.UnscopedDb().Unscoped().Delete(&entity.UserSettings{}, "user_uid = ?", user.UserUID)
+			entity.UnscopedDb().Unscoped().Delete(user)
+		})
+
+		return user, client, secret
+	}
+
+	tokenRequest := func(client *entity.Client, secret string) *httptest.ResponseRecorder {
+		data := url.Values{
+			"grant_type":    {authn.GrantClientCredentials.String()},
+			"client_id":     {client.ClientUID},
+			"client_secret": {secret},
+			"scope":         {"metrics"},
+		}
+
+		req, _ := http.NewRequest(http.MethodPost, "/api/v1/oauth/token", strings.NewReader(data.Encode()))
+		req.Header.Add(header.ContentType, header.ContentTypeForm)
+
+		w := httptest.NewRecorder()
+		app.ServeHTTP(w, req)
+
+		return w
+	}
+
+	t.Run("ActiveUser", func(t *testing.T) {
+		_, client, secret := newUserClient(t)
+
+		w := tokenRequest(client, secret)
+		assert.Equal(t, http.StatusOK, w.Code, "body=%s", w.Body.String())
+	})
+	t.Run("DeletedUser", func(t *testing.T) {
+		user, client, secret := newUserClient(t)
+		require.NoError(t, user.Delete())
+
+		w := tokenRequest(client, secret)
+		assert.Equal(t, http.StatusUnauthorized, w.Code, "body=%s", w.Body.String())
+	})
+	t.Run("MissingUser", func(t *testing.T) {
+		user, client, secret := newUserClient(t)
+		require.NoError(t, entity.UnscopedDb().Unscoped().Delete(user).Error)
+
+		w := tokenRequest(client, secret)
+		assert.Equal(t, http.StatusUnauthorized, w.Code, "body=%s", w.Body.String())
+	})
+	t.Run("ExpiredUser", func(t *testing.T) {
+		user, client, secret := newUserClient(t)
+		expired := time.Now().Add(-time.Hour)
+		require.NoError(t, entity.Db().Model(user).UpdateColumn("expires_at", &expired).Error)
+
+		w := tokenRequest(client, secret)
+		assert.Equal(t, http.StatusUnauthorized, w.Code, "body=%s", w.Body.String())
+	})
+	t.Run("ExpiredSuperAdmin", func(t *testing.T) {
+		user, client, secret := newUserClient(t)
+		expired := time.Now().Add(-time.Hour)
+		require.NoError(t, entity.Db().Model(user).UpdateColumns(entity.Values{"expires_at": &expired, "super_admin": true}).Error)
+
+		w := tokenRequest(client, secret)
+		assert.Equal(t, http.StatusOK, w.Code, "body=%s", w.Body.String())
+	})
+	t.Run("ProviderNone", func(t *testing.T) {
+		user, client, secret := newUserClient(t)
+		require.NoError(t, entity.Db().Model(user).UpdateColumn("auth_provider", authn.ProviderNone.String()).Error)
+
+		w := tokenRequest(client, secret)
+		assert.Equal(t, http.StatusUnauthorized, w.Code, "body=%s", w.Body.String())
+	})
+	t.Run("RoleNone", func(t *testing.T) {
+		user, client, secret := newUserClient(t)
+		require.NoError(t, entity.Db().Model(user).UpdateColumn("user_role", acl.RoleNone.String()).Error)
+
+		w := tokenRequest(client, secret)
+		assert.Equal(t, http.StatusUnauthorized, w.Code, "body=%s", w.Body.String())
+	})
+	t.Run("WebLoginDisabled", func(t *testing.T) {
+		user, client, secret := newUserClient(t)
+		require.NoError(t, entity.Db().Model(user).UpdateColumn("can_login", false).Error)
+
+		w := tokenRequest(client, secret)
+		assert.Equal(t, http.StatusOK, w.Code, "body=%s", w.Body.String())
 	})
 }

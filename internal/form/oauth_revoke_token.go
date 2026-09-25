@@ -17,7 +17,7 @@ const (
 // OAuthRevokeToken represents a token revocation form.
 type OAuthRevokeToken struct {
 	Token         string `form:"token" binding:"required" json:"token,omitempty"`
-	TokenTypeHint string `form:"token_type_hint" json:" token_type_hint,omitempty"`
+	TokenTypeHint string `form:"token_type_hint" json:"token_type_hint,omitempty"`
 }
 
 // Empty checks if all form values are unset.

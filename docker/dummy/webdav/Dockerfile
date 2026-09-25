@@ -5,7 +5,10 @@ LABEL maintainer="PhotoPrism UG <hello@photoprism.app>"
 # Set up project directory
 WORKDIR "/webdav"
 
-RUN go install github.com/hacdias/webdav@latest
+# Pinned so that rebuilding this fixture produces the server the acceptance tests were written
+# against. This is the version the unversioned module path resolves to; the maintained line is
+# the /v5 module, whose configuration format differs and needs its own compatibility pass.
+RUN go install github.com/hacdias/webdav@v1.4.1
 
 ENV DO_NOT_TRACK=true \
     WEBDAV_USERNAME="admin" \

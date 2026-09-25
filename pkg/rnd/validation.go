@@ -56,6 +56,30 @@ func IsUUID(s string) bool {
 	return len(s) == 36 && IsHex(s)
 }
 
+// IsCanonicalUUID tests if the string is a lowercase UUID in the canonical 8-4-4-4-12 layout.
+// Use it for a value that identifies a record, so the separator positions are fixed and storage
+// cannot reinterpret the value. IsUUID is the lenient variant, for UUIDs read from XMP or Exif.
+func IsCanonicalUUID(s string) bool {
+	if len(s) != 36 {
+		return false
+	}
+
+	for i, r := range s {
+		switch i {
+		case 8, 13, 18, 23:
+			if r != '-' {
+				return false
+			}
+		default:
+			if (r < '0' || r > '9') && (r < 'a' || r > 'f') {
+				return false
+			}
+		}
+	}
+
+	return true
+}
+
 // SanitizeUUID normalizes UUIDs found in XMP or Exif metadata.
 func SanitizeUUID(s string) string {
 	if s == "" {

@@ -12,6 +12,8 @@ describe("model/service", () => {
     expect(result.ID).toBe(0);
     expect(result.AccShare).toBe(true);
     expect(result.AccName).toBe("");
+    expect(result.SyncRaw).toBe(true);
+    expect(result.SyncYaml).toBe(0);
   });
 
   it("should get service entity name", () => {

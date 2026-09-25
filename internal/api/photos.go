@@ -165,6 +165,7 @@ func UpdatePhoto(router *gin.RouterGroup) {
 
 		UpdateClientConfig()
 
+		p.RedactForSession(s)
 		c.JSON(http.StatusOK, p)
 	})
 }
@@ -181,7 +182,7 @@ func UpdatePhoto(router *gin.RouterGroup) {
 //	@Router		/api/v1/photos/{uid}/dl [get]
 func GetPhotoDownload(router *gin.RouterGroup) {
 	router.GET("/photos/:uid/dl", func(c *gin.Context) {
-		sess, valid := AuthDownload(c)
+		sess, valid := AuthDownload(c, acl.Resources{acl.ResourcePhotos})
 		if !valid {
 			c.Data(http.StatusForbidden, "image/svg+xml", brokenIconSvg)
 			return
@@ -199,7 +200,7 @@ func GetPhotoDownload(router *gin.RouterGroup) {
 
 		f, err := query.FileByPhotoUID(uid)
 
-		if err != nil {
+		if err != nil || !f.Exportable(sess) {
 			c.Data(http.StatusNotFound, "image/svg+xml", photoIconSvg)
 			return
 		}
@@ -235,6 +236,11 @@ func GetPhotoYaml(router *gin.RouterGroup) {
 		s := Auth(c, acl.ResourcePhotos, acl.AccessAll)
 
 		if s.Abort(c) {
+			return
+		}
+
+		if !s.SeesAnyDetail(acl.ResourcePhotos) {
+			AbortForbidden(c)
 			return
 		}
 
@@ -316,6 +322,10 @@ func ApprovePhoto(router *gin.RouterGroup) {
 
 		PublishPhotoEvent(StatusUpdated, id)
 
+		// Shaped like every other picture response. This loader preloads no files, so there is no
+		// marker to withhold here yet - the reduction it applies is the shared-only one.
+		m.RedactForSession(s)
+
 		c.JSON(http.StatusOK, gin.H{"photo": m})
 	})
 }
@@ -370,6 +380,7 @@ func PhotoPrimary(router *gin.RouterGroup) {
 			return
 		}
 
+		p.RedactForSession(s)
 		c.JSON(http.StatusOK, p)
 	})
 }

@@ -27,7 +27,7 @@ func authShowAction(ctx *cli.Context) error {
 
 		// ID provided?
 		if id == "" {
-			return cli.ShowSubcommandHelp(ctx)
+			return ShowUsageError(ctx)
 		}
 
 		// Find session by name.

@@ -18,8 +18,6 @@ type RegisterRequest struct {
 	AllowGroups     []string          `json:"AllowGroups,omitempty"`
 	AllowGroupRoles map[string]string `json:"AllowGroupRoles,omitempty"`
 	GroupsFullView  bool              `json:"GroupsFullView,omitempty"`
-	ClientID        string            `json:"ClientID,omitempty"`
-	ClientSecret    string            `json:"ClientSecret,omitempty"` //nolint:gosec // G117: Rotated OAuth client secret payload.
 	RotateDatabase  bool              `json:"RotateDatabase,omitempty"`
 	RotateSecret    bool              `json:"RotateSecret,omitempty"`
 }

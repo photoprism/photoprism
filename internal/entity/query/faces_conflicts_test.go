@@ -348,6 +348,13 @@ func TestFaceConflictReportNotes(t *testing.T) {
 	t.Run("CountsARadiusInsideItsOwnSpread", func(t *testing.T) {
 		s := conflictTestSubject(t, "Notes Spread Person")
 		f := conflictTestFace(t, s.SubjUID, 1, 0.05)
+
+		// A measured spread, since the one embedding this fixture holds has none: the case needs a
+		// collision radius that is active and still inside it, which Epsilon leaves no room for.
+		f.SampleRadius = face.CollisionDist * 4
+		require.NoError(t, UnscopedDb().Model(&entity.Face{}).
+			Where("id = ?", f.ID).UpdateColumn("sample_radius", f.SampleRadius).Error)
+
 		before, err := FaceConflictReportNotes()
 		require.NoError(t, err)
 		require.Positive(t, f.SampleRadius)

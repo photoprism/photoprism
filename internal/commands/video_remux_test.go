@@ -2,6 +2,7 @@ package commands
 
 import (
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -15,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/media/video"
 )
 
+// TestVideoBuildRemuxPlans covers filtered remux selections.
 func TestVideoBuildRemuxPlans(t *testing.T) {
 	t.Run("CountsExcludedFilesAsSkipped", func(t *testing.T) {
 		conf := get.Config()
@@ -25,7 +27,8 @@ func TestVideoBuildRemuxPlans(t *testing.T) {
 		t.Cleanup(func() { ffmpeg.SetExclude(saved) })
 
 		relPath := "testdata/remux-excluded.avi"
-		absPath := fs.Abs(relPath)
+		absPath := filepath.Join(conf.OriginalsPath(), filepath.FromSlash(relPath))
+		require.NoError(t, os.MkdirAll(filepath.Dir(absPath), fs.ModeDir))
 		require.NoError(t, os.WriteFile(absPath, []byte("test"), fs.ModeFile))
 		t.Cleanup(func() {
 			_ = os.Remove(absPath)
@@ -49,4 +52,51 @@ func TestVideoBuildRemuxPlans(t *testing.T) {
 		assert.Empty(t, preflight)
 		assert.Equal(t, 1, skipped)
 	})
+}
+
+// TestVideoRemuxFile_PublishesPlan checks publication without an implicit backup destination.
+func TestVideoRemuxFile_PublishesPlan(t *testing.T) {
+	for _, sameFile := range []bool{false, true} {
+		name := "SeparateOutput"
+		if sameFile {
+			name = "SameFile"
+		}
+		t.Run(name, func(t *testing.T) {
+			conf, _ := remuxPlanFixture(t, "clip.mts")
+			src := filepath.Join(conf.OriginalsPath(), "clip.mts")
+			dest := filepath.Join(conf.OriginalsPath(), "clip.mp4")
+			if sameFile {
+				dest = src
+			}
+			backup := src + ".backup"
+			require.NoError(t, os.WriteFile(backup, []byte("existing backup"), fs.ModeFile))
+			stub := filepath.Join(t.TempDir(), "ffmpeg")
+			require.NoError(t, os.WriteFile(stub, []byte(`#!/bin/sh
+for output do :; done
+printf 'remuxed' > "$output"
+`), fs.ModeDir))
+			conf.Options().FFmpegBin = stub
+
+			// Empty IndexPath stops at the reindex boundary after publication.
+			err := videoRemuxFile(conf, nil, videoRemuxPlan{SrcPath: src, DestPath: dest}, true)
+			require.ErrorContains(t, err, "missing filename")
+			data, err := os.ReadFile(dest) // #nosec G304 -- the fixture owns this temporary path.
+			require.NoError(t, err)
+			assert.Equal(t, "remuxed", string(data))
+			want, err := os.Stat(backup)
+			require.NoError(t, err)
+			got, err := os.Stat(dest)
+			require.NoError(t, err)
+			assert.Equal(t, want.Mode().Perm(), got.Mode().Perm())
+			t.Logf("remux mode: %04o", got.Mode().Perm())
+			data, err = os.ReadFile(backup) // #nosec G304 -- the fixture owns this temporary path.
+			require.NoError(t, err)
+			assert.Equal(t, "existing backup", string(data))
+			if !sameFile {
+				data, err = os.ReadFile(src) // #nosec G304 -- the fixture owns this temporary path.
+				require.NoError(t, err)
+				assert.Equal(t, "original clip.mts", string(data))
+			}
+		})
+	}
 }

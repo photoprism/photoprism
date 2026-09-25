@@ -204,3 +204,60 @@ func TestReconcileInsta360Photos(t *testing.T) {
 		}
 	})
 }
+
+// TestReconcileInsta360Photos_LensCodedPhotos verifies that photos with lens codes are never merged.
+func TestReconcileInsta360Photos_LensCodedPhotos(t *testing.T) {
+	name := "insta360reconcilephoto"
+	cfg := config.NewMinimalTestConfigWithDb(name, filepath.Join(t.TempDir(), "storage"))
+	oldCfg := Config()
+	SetConfig(cfg)
+	t.Cleanup(func() {
+		SetConfig(oldCfg)
+		oldCfg.RegisterDb()
+	})
+
+	dir := filepath.Join(cfg.OriginalsPath(), name)
+	fileNames := []string{
+		writeInsta360CaptureFile(t, dir, "IMG_20220625_140410_00_008.insp", "testdata/flash.jpg"),
+		writeInsta360CaptureFile(t, dir, "IMG_20220625_140410_10_008.insp", "testdata/flash.jpg"),
+	}
+
+	photos := make([]entity.Photo, len(fileNames))
+
+	for i, fileName := range fileNames {
+		photos[i] = entity.NewPhoto(true)
+		require.NoError(t, photos[i].Create())
+		mediaFile, err := NewMediaFile(fileName)
+		require.NoError(t, err)
+		file := entity.File{
+			PhotoID:   photos[i].ID,
+			PhotoUID:  photos[i].PhotoUID,
+			FileName:  mediaFile.RootRelName(),
+			FileRoot:  entity.RootOriginals,
+			FileHash:  mediaFile.Hash(),
+			FileType:  mediaFile.FileType().String(),
+			MediaType: media.Image.String(),
+		}
+		require.NoError(t, file.Create())
+	}
+
+	left, err := NewMediaFile(fileNames[0])
+	require.NoError(t, err)
+	related, err := left.RelatedFiles(false)
+	require.NoError(t, err)
+	require.Len(t, related.Files, 1)
+
+	require.NoError(t, reconcileInsta360Photos(related))
+
+	var files []entity.File
+	require.NoError(t, entity.UnscopedDb().Where("file_name LIKE ?", name+"/%").Order("file_name").Find(&files).Error)
+	require.Len(t, files, 2)
+
+	for i, file := range files {
+		assert.Equal(t, photos[i].ID, file.PhotoID, file.FileName)
+	}
+
+	var other entity.Photo
+	require.NoError(t, entity.UnscopedDb().First(&other, "id = ?", photos[1].ID).Error)
+	assert.Nil(t, other.DeletedAt)
+}

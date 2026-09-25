@@ -17,6 +17,12 @@ import (
 
 // decodeImage opens an image and decodes its color metadata.
 func decodeImage(reader io.ReadSeeker, logName string) (metaData *meta.Data, img image.Image, err error) {
+	// The geometry is validated before the pixel data is read, so an image is only decoded at
+	// a resolution the configured limit allows.
+	if err = checkJpegPixels(reader, logName); err != nil {
+		return nil, nil, err
+	}
+
 	// Read color metadata.
 	metaData, imgReader, err := autometa.Load(reader)
 
@@ -66,7 +72,7 @@ func OpenJpeg(fileName string, orientation int) (image.Image, error) {
 
 	// Ok?
 	if err != nil {
-		return nil, fmt.Errorf("%s while decoding", err)
+		return nil, fmt.Errorf("%w while decoding", err)
 	}
 
 	// Read ICC profile and convert colors if possible.

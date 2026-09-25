@@ -28,6 +28,19 @@ export default class Link extends Model {
     return this.Token.toLowerCase().trim();
   }
 
+  // validateToken checks a custom share token and returns true or an error message.
+  // It mirrors the character set and length limits the server applies when resolving a share link,
+  // so the field reports a value the server would reject.
+  static validateToken(value) {
+    const token = value ? String(value).toLowerCase().trim() : "";
+
+    if (!token) {
+      return true;
+    }
+
+    return token.length >= 6 && token.length <= 160 && /^[0-9a-z\-_:]+$/.test(token) ? true : $gettext("Invalid");
+  }
+
   siteUrl() {
     let siteUrl = c.siteUrl ? c.siteUrl : window.location.origin;
 

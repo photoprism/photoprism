@@ -1,6 +1,7 @@
 package workers
 
 import (
+	"errors"
 	"fmt"
 	"path"
 	"runtime/debug"
@@ -70,7 +71,7 @@ func (w *Share) Start() (err error) {
 			continue
 		}
 
-		files, err := query.FileShares(a.ID, entity.FileShareNew)
+		files, err := query.QueuedFileShares(a)
 
 		if err != nil {
 			w.logErr(err)
@@ -102,6 +103,10 @@ func (w *Share) Start() (err error) {
 		// since the manual upload request returns before the worker runs (#5738).
 		var uploadErrors int
 
+		// A YAML file refused with 403 disables YAML sync unless the remote also refused another file.
+		var refusedYaml []entity.FileShare
+		var otherRefused bool
+
 		for _, file := range files {
 			if mutex.ShareWorker.Canceled() {
 				return nil
@@ -114,6 +119,20 @@ func (w *Share) Start() (err error) {
 				file.Error = "file not found"
 				file.Errors++
 				w.logErr(entity.Db().Save(&file).Error)
+				continue
+			}
+
+			if webdav.SkipSyncPath(file.File.FileName) || webdav.SkipSyncPath(file.RemoteName) {
+				log.Debugf("share: skipping excluded transfer %s to %s", clean.Log(file.File.FileName), clean.Log(file.RemoteName))
+				file.Status, file.Error, file.Errors = entity.FileShareIgnore, "", 0
+				w.logErr(entity.Db().Save(&file).Error)
+				continue
+			}
+
+			yamlFile := fs.SidecarYaml.Equal(file.File.FileType)
+
+			// Further YAML files stay queued once the remote server refused one.
+			if yamlFile && len(refusedYaml) > 0 {
 				continue
 			}
 
@@ -135,13 +154,19 @@ func (w *Share) Start() (err error) {
 				}
 			}
 
-			if err := client.Upload(srcFileName, file.RemoteName); err != nil {
+			if err = client.Upload(srcFileName, file.RemoteName); yamlFile && errors.Is(err, webdav.ErrForbidden) {
 				w.logErr(err)
+				file.Error = err.Error()
+				refusedYaml = append(refusedYaml, file)
+				continue
+			} else if err != nil {
+				w.logErr(err)
+				otherRefused = otherRefused || errors.Is(err, webdav.ErrForbidden)
 				uploadErrors++
 				file.Errors++
 				file.Error = err.Error()
 			} else {
-				log.Infof("share: uploaded %s to %s", file.RemoteName, a.AccName)
+				log.Infof("share: uploaded %s to %s", clean.Log(file.RemoteName), clean.Log(a.AccName))
 				file.Errors = 0
 				file.Error = ""
 				file.Status = entity.FileShareShared
@@ -157,6 +182,22 @@ func (w *Share) Start() (err error) {
 			}
 
 			w.logErr(entity.Db().Save(&file).Error)
+		}
+
+		if len(refusedYaml) > 0 && !otherRefused {
+			log.Warnf("share: disabled YAML sidecar files for %s because the remote server refused to store them", clean.Log(a.AccName))
+			w.logErr(a.Update("SyncYaml", -1))
+		} else {
+			for _, file := range refusedYaml {
+				uploadErrors++
+				file.Errors++
+
+				if a.RetryLimit > 0 && file.Errors > a.RetryLimit {
+					file.Status = entity.FileShareError
+				}
+
+				w.logErr(entity.Db().Save(&file).Error)
+			}
 		}
 
 		// Notify the user if any transfer to this service failed, since the manual upload
@@ -199,11 +240,20 @@ func (w *Share) Start() (err error) {
 				return nil
 			}
 
+			if webdav.SkipSyncPath(file.RemoteName) || webdav.UnsafeSyncPath(file.RemoteName) {
+				file.Status = entity.FileShareError
+				file.Error = "remote copy retained: removal blocked by path policy"
+				file.Errors++
+				log.Warnf("share: expired remote copy %s on service %s retained by path policy; manual removal required", clean.Log(file.RemoteName), clean.Log(a.AccName))
+				w.logErr(entity.Db().Save(&file).Error)
+				continue
+			}
+
 			if err := client.Delete(file.RemoteName); err != nil {
 				file.Errors++
 				file.Error = err.Error()
 			} else {
-				log.Infof("share: removed %s from %s", file.RemoteName, a.AccName)
+				log.Infof("share: removed %s from %s", clean.Log(file.RemoteName), clean.Log(a.AccName))
 				file.Errors = 0
 				file.Error = ""
 				file.Status = entity.FileShareRemoved

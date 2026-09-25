@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"testing"
 
@@ -51,5 +52,16 @@ func TestUpdateCamera(t *testing.T) {
 		val := gjson.Get(r.Body.String(), "error")
 		assert.Equal(t, "Camera not found", val.String())
 		assert.Equal(t, http.StatusNotFound, r.Code)
+	})
+	t.Run("UnknownCamera", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		UpdateCamera(router)
+		r := PerformRequestWithBody(app, "PUT", fmt.Sprintf("/api/v1/cameras/%d", entity.UnknownCamera.ID), `{"Make": "Example", "Model": "Example"}`)
+		assert.Equal(t, http.StatusForbidden, r.Code)
+
+		// The shared placeholder must keep its name.
+		found := entity.Camera{}
+		assert.NoError(t, entity.Db().First(&found, "id = ?", entity.UnknownCamera.ID).Error)
+		assert.Equal(t, entity.UnknownCamera.CameraName, found.CameraName)
 	})
 }

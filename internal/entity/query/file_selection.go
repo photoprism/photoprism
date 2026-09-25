@@ -19,6 +19,7 @@ const MiB = 1024 * 1024
 
 // FileSelection represents a selection filter to include/exclude certain files.
 type FileSelection struct {
+	Download  bool
 	MaxSize   int
 	Media     []string
 	OmitMedia []string
@@ -44,6 +45,7 @@ func DownloadSelection(mediaRaw, mediaSidecar, originals bool) FileSelection {
 	}
 
 	return FileSelection{
+		Download:  true,
 		OmitMedia: omitMedia,
 		Originals: originals,
 		Private:   true,
@@ -65,8 +67,8 @@ func AlbumDownloadSelection(mediaRaw, mediaSidecar, originals, allowPrivate bool
 	return sel
 }
 
-// ShareSelection selects files to share, for example for upload via WebDAV.
-func ShareSelection(originals bool) FileSelection {
+// ShareSelection selects files to share, for example for upload via WebDAV, omitting YAML sidecar files unless yaml is true.
+func ShareSelection(originals, yaml bool) FileSelection {
 	var omitMedia []string
 	var omitTypes []string
 
@@ -77,15 +79,11 @@ func ShareSelection(originals bool) FileSelection {
 			media.Sidecar.String(),
 		}
 
-		omitTypes = []string{
-			fs.ImagePng.String(),
-			fs.ImageWebp.String(),
-			fs.ImageTiff.String(),
-			fs.ImageAvif.String(),
-			fs.ImageHeic.String(),
-			fs.ImageBmp.String(),
-			fs.ImageGif.String(),
-		}
+		// A share size is configured, and workers.Share resizes JPEG only, so any other image
+		// format would upload at its original size. Share the generated JPEG for those instead.
+		omitTypes = media.ImageTypesExceptJpeg()
+	} else if !yaml {
+		omitTypes = []string{fs.SidecarYaml.String()}
 	}
 
 	return FileSelection{
@@ -105,10 +103,28 @@ func SelectedFiles(frm form.Selection, o FileSelection) (results entity.Files, e
 	return selectedFiles(frm, o, nil)
 }
 
-// SelectedFilesForSession works like SelectedFiles but limits the result to the session's shared
-// scope. Full library and admin sessions are not limited, so this adds no overhead for them.
+// SelectedFilesForSession applies row scope and download eligibility to the selection.
+// A nil download session is unidentified; non-download selections keep their file policy.
 func SelectedFilesForSession(frm form.Selection, o FileSelection, sess *entity.Session) (results entity.Files, err error) {
-	return selectedFiles(frm, o, sess)
+	files, err := selectedFiles(frm, o, sess)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if !o.Download {
+		return files, nil
+	}
+
+	results = make(entity.Files, 0, len(files))
+
+	for _, file := range files {
+		if file.Exportable(sess) {
+			results = append(results, file)
+		}
+	}
+
+	return results, nil
 }
 
 // selectedFiles finds files based on the given selection form, optionally limited to the content

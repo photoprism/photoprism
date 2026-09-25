@@ -2,11 +2,18 @@ package commands
 
 import (
 	"bytes"
+	"errors"
 	"flag"
+	"fmt"
+	"io"
 	"os"
+	"os/exec"
 	"testing"
 
+	"github.com/manifoldco/promptui"
 	"github.com/sirupsen/logrus"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -15,6 +22,7 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
 var savedPath string
@@ -241,8 +249,21 @@ func resetConfigAndOpenDB() *config.Config {
 	return c
 }
 
-// reopenConnection gets the current configured connection and opens it if it is closed.
-// It returns the current config to allow queries in tests if needed.
+// requireTestDb reopens the shared database for direct registry or entity access.
+// A preceding command may have closed it through conf.Shutdown().
+func requireTestDb(t *testing.T) *config.Config {
+	t.Helper()
+
+	c := reopenConnection()
+
+	if c == nil {
+		t.Fatal("test config is not available")
+	}
+
+	return c
+}
+
+// reopenConnection returns the current config and opens its database if needed.
 func reopenConnection() *config.Config {
 	if c := get.Config(); c != nil {
 		if !c.IsDbOpen() {
@@ -258,4 +279,105 @@ func reopenConnection() *config.Config {
 		log.Warn("reopenConnection: config is nil")
 		return nil
 	}
+}
+
+// TestExitCode covers the status main exits with for an error that app.Run returns.
+func TestExitCode(t *testing.T) {
+	// runApp returns the error urfave/cli reports for a command with a required flag.
+	runApp := func(args ...string) error {
+		app := cli.NewApp()
+		app.Writer, app.ErrWriter = io.Discard, io.Discard
+		app.Commands = []*cli.Command{{
+			Name:   "add",
+			Flags:  []cli.Flag{&cli.StringFlag{Name: "make", Required: true}},
+			Action: func(ctx *cli.Context) error { return errors.New("database unreachable") },
+		}}
+		return app.Run(append([]string{"photoprism"}, args...))
+	}
+
+	t.Run("Success", func(t *testing.T) {
+		assert.Equal(t, 0, ExitCode(nil))
+	})
+	t.Run("PlainError", func(t *testing.T) {
+		assert.Equal(t, 1, ExitCode(runApp("add", "--make", "Canon")))
+	})
+	t.Run("MissingRequiredFlag", func(t *testing.T) {
+		err := runApp("add")
+		assert.ErrorContains(t, err, "Required flag")
+		assert.Equal(t, 2, ExitCode(err))
+	})
+	t.Run("ExitCoder", func(t *testing.T) {
+		assert.Equal(t, 3, ExitCode(cli.Exit("not found", 3)))
+	})
+	t.Run("WrappedExitCoder", func(t *testing.T) {
+		assert.Equal(t, 3, ExitCode(fmt.Errorf("users: %w", cli.Exit("not found", 3))))
+	})
+	t.Run("OutOfRangeExitCoder", func(t *testing.T) {
+		assert.Equal(t, 1, ExitCode(fmt.Errorf("users: %w", cli.Exit("failed", 300))))
+	})
+	t.Run("ExternalToolStatus", func(t *testing.T) {
+		execErr := exec.Command("sh", "-c", "exit 3").Run()
+		require.Error(t, execErr)
+		assert.Equal(t, 1, ExitCode(fmt.Errorf("convert: %w", execErr)))
+	})
+	t.Run("Canceled", func(t *testing.T) {
+		assert.Equal(t, 0, ExitCode(fmt.Errorf("index: %w", status.ErrCanceled)))
+	})
+	t.Run("InterruptedPrompt", func(t *testing.T) {
+		assert.Equal(t, 0, ExitCode(promptui.ErrInterrupt))
+	})
+}
+
+// TestShowUsageError covers commands that print their help and exit 2 when the argument is missing.
+func TestShowUsageError(t *testing.T) {
+	for _, c := range []struct {
+		name string
+		cmd  *cli.Command
+	}{
+		{"users show", UsersShowCommand},
+		{"users rm", UsersRemoveCommand},
+		{"users mod", UsersModCommand},
+		{"clients show", ClientsShowCommand},
+		{"clients rm", ClientsRemoveCommand},
+		{"clients mod", ClientsModCommand},
+		{"auth show", AuthShowCommand},
+		{"auth rm", AuthRemoveCommand},
+		{"passwd", PasswdCommand},
+		{"connect", ConnectCommand},
+	} {
+		t.Run(c.name, func(t *testing.T) {
+			output, err := RunWithTestContext(c.cmd, []string{c.cmd.Name})
+			assertExitCode(t, err, 2)
+			assert.Contains(t, output, "USAGE:")
+		})
+	}
+}
+
+// TestCallWithDependencies covers the exit code reported when the configuration cannot be loaded.
+func TestCallWithDependencies(t *testing.T) {
+	initConfig := InitConfig
+	t.Cleanup(func() { InitConfig = initConfig })
+
+	action := func(conf *config.Config) error {
+		t.Fatal("the action must not run without a configuration")
+		return nil
+	}
+
+	t.Run("InitErrorExitsOne", func(t *testing.T) {
+		InitConfig = func(ctx *cli.Context) (*config.Config, error) {
+			return nil, errors.New("config not readable")
+		}
+
+		err := CallWithDependencies(NewTestContext(nil), action)
+
+		assertExitCode(t, err, 1)
+		assert.Contains(t, err.Error(), "config not readable")
+	})
+	t.Run("InitExitCodeIsKept", func(t *testing.T) {
+		InitConfig = func(ctx *cli.Context) (*config.Config, error) {
+			return nil, cli.Exit("invalid flag", 2)
+		}
+
+		assertExitCode(t, CallWithDependencies(NewTestContext(nil), action), 2)
+	})
 }

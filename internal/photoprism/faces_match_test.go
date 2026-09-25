@@ -46,15 +46,35 @@ func TestFaces_Match(t *testing.T) {
 // is the one an operator reads to judge the match margin, so a pass that dropped it would report
 // a run that merely recognized less.
 func TestFacesMatchResult_Add(t *testing.T) {
-	r := FacesMatchResult{Updated: 1, Recognized: 2, Unknown: 3, Ambiguous: 4}
+	r := FacesMatchResult{Updated: 1, Recognized: 2, Unknown: 3, Ambiguous: 4, Assigned: 5}
 
-	r.Add(FacesMatchResult{Updated: 10, Recognized: 20, Unknown: 30, Ambiguous: 40})
+	r.Add(FacesMatchResult{Updated: 10, Recognized: 20, Unknown: 30, Ambiguous: 40, Assigned: 50})
 
-	assert.Equal(t, FacesMatchResult{Updated: 11, Recognized: 22, Unknown: 33, Ambiguous: 44}, r)
+	assert.Equal(t, FacesMatchResult{Updated: 11, Recognized: 22, Unknown: 33, Ambiguous: 44, Assigned: 55}, r)
 
 	r.Add(FacesMatchResult{})
 
-	assert.Equal(t, FacesMatchResult{Updated: 11, Recognized: 22, Unknown: 33, Ambiguous: 44}, r)
+	assert.Equal(t, FacesMatchResult{Updated: 11, Recognized: 22, Unknown: 33, Ambiguous: 44, Assigned: 55}, r)
+}
+
+// TestFacesMatchResult_MovedSubjects covers the gate the subject counts are refreshed on. A run
+// over a library with named clusters recognizes without updating a single marker through the
+// matcher, so reading Updated alone left the counts stale while subj_uid had moved.
+func TestFacesMatchResult_MovedSubjects(t *testing.T) {
+	t.Run("Updated", func(t *testing.T) {
+		assert.True(t, FacesMatchResult{Updated: 1}.MovedSubjects())
+	})
+	t.Run("Assigned", func(t *testing.T) {
+		assert.True(t, FacesMatchResult{Assigned: 1}.MovedSubjects())
+	})
+	t.Run("RecognizedOnly", func(t *testing.T) {
+		// Recognized also counts a marker that merely has a subject after being matched, so it is
+		// not a signal that anything moved.
+		assert.False(t, FacesMatchResult{Recognized: 9, Unknown: 3, Ambiguous: 2}.MovedSubjects())
+	})
+	t.Run("Idle", func(t *testing.T) {
+		assert.False(t, FacesMatchResult{}.MovedSubjects())
+	})
 }
 
 // TestRecordFaceMatch covers the per-run statistics a match pass accumulates for each cluster.
@@ -339,6 +359,11 @@ func TestSelectBestFaceMargin(t *testing.T) {
 	near := &entity.Face{ID: "near", EmbedModel: face.EmbeddingModelName()}
 	far := &entity.Face{ID: "far", EmbedModel: face.EmbeddingModelName()}
 
+	// The runner-up distance that ties with nearDist, expressed against the margin so that the
+	// cases stay about the rule rather than about the value the default happens to hold.
+	const nearDist = 0.70
+	tiedDist := nearDist + face.MatchMarginDefault/2
+
 	selectAt := func(t *testing.T, nearDist, farDist float64) (*entity.Face, float64, bool) {
 		t.Helper()
 
@@ -357,7 +382,7 @@ func TestSelectBestFaceMargin(t *testing.T) {
 
 		t.Cleanup(func() { near.SubjUID, far.SubjUID = "", "" })
 
-		best, dist, ambiguous := selectAt(t, 0.70, 0.72)
+		best, dist, ambiguous := selectAt(t, nearDist, tiedDist)
 		assert.Nil(t, best, "a marker equidistant between two people must not be assigned to either")
 		assert.InDelta(t, -1.0, dist, 1e-9)
 		assert.True(t, ambiguous, "the caller has to tell this apart from a marker nothing accepted")
@@ -366,10 +391,10 @@ func TestSelectBestFaceMargin(t *testing.T) {
 		// Neither carries a name, so the nearer one wins rather than the marker being withheld.
 		// On a freshly reset library every cluster is anonymous, which made this the common case:
 		// deferring here left the run reporting thousands unassigned and nobody recognized.
-		best, dist, ambiguous := selectAt(t, 0.70, 0.72)
+		best, dist, ambiguous := selectAt(t, nearDist, tiedDist)
 		require.NotNil(t, best)
 		assert.Equal(t, "near", best.ID)
-		assert.InDelta(t, 0.70, dist, 0.01)
+		assert.InDelta(t, nearDist, dist, 0.01)
 		assert.False(t, ambiguous)
 	})
 	t.Run("ClearlyNearerClusterStillWins", func(t *testing.T) {
@@ -384,8 +409,8 @@ func TestSelectBestFaceMargin(t *testing.T) {
 		// A cluster that would refuse the marker anyway is no competitor for it.
 		marker := face.Embeddings{base}
 		idx := faceIndex{candidates: []faceCandidate{
-			{ref: near, emb: face.FixtureEmbeddingAt(base, 0.70, 4002), acceptDist: face.AcceptDistMax},
-			{ref: far, emb: face.FixtureEmbeddingAt(base, 0.72, 4003), acceptDist: 0.5},
+			{ref: near, emb: face.FixtureEmbeddingAt(base, nearDist, 4002), acceptDist: face.AcceptDistMax},
+			{ref: far, emb: face.FixtureEmbeddingAt(base, tiedDist, 4003), acceptDist: 0.5},
 		}}
 
 		best, _, _ := selectBestFace(marker, idx, false)
@@ -400,7 +425,7 @@ func TestSelectBestFaceMargin(t *testing.T) {
 
 		t.Cleanup(func() { near.SubjUID, far.SubjUID = "", "" })
 
-		best, _, _ := selectAt(t, 0.70, 0.72)
+		best, _, _ := selectAt(t, nearDist, tiedDist)
 		require.NotNil(t, best)
 		assert.Equal(t, "near", best.ID)
 	})
@@ -410,13 +435,13 @@ func TestSelectBestFaceMargin(t *testing.T) {
 
 		t.Cleanup(func() { near.SubjUID, far.SubjUID = "", "" })
 
-		best, _, _ := selectAt(t, 0.70, 0.72)
+		best, _, _ := selectAt(t, nearDist, tiedDist)
 		assert.Nil(t, best)
 	})
 	t.Run("Disabled", func(t *testing.T) {
 		setMatchMargin(t, 0)
 
-		best, _, _ := selectAt(t, 0.70, 0.72)
+		best, _, _ := selectAt(t, nearDist, tiedDist)
 		require.NotNil(t, best)
 		assert.Equal(t, "near", best.ID)
 	})
@@ -440,9 +465,9 @@ func TestSelectBestFaceMargin(t *testing.T) {
 		third := &entity.Face{ID: "bob", SubjUID: bob, EmbedModel: face.EmbeddingModelName()}
 
 		idx := faceIndex{candidates: []faceCandidate{
-			{ref: first, emb: face.FixtureEmbeddingAt(base, 0.70, 4011), acceptDist: face.AcceptDistMax},
-			{ref: second, emb: face.FixtureEmbeddingAt(base, 0.71, 4012), acceptDist: face.AcceptDistMax},
-			{ref: third, emb: face.FixtureEmbeddingAt(base, 0.72, 4013), acceptDist: face.AcceptDistMax},
+			{ref: first, emb: face.FixtureEmbeddingAt(base, nearDist, 4011), acceptDist: face.AcceptDistMax},
+			{ref: second, emb: face.FixtureEmbeddingAt(base, nearDist+face.MatchMarginDefault/3, 4012), acceptDist: face.AcceptDistMax},
+			{ref: third, emb: face.FixtureEmbeddingAt(base, tiedDist, 4013), acceptDist: face.AcceptDistMax},
 		}}
 
 		best, _, ambiguous := selectBestFace(face.Embeddings{base}, idx, false)
@@ -472,7 +497,9 @@ func TestAmbiguousBestFace(t *testing.T) {
 	same := &entity.Face{ID: "same", SubjUID: "ps6sg6be2lvl0y11"}
 	other := &entity.Face{ID: "other", SubjUID: "ps6sg6be2lvl0y12"}
 
-	near := func(f *entity.Face) faceContender { return faceContender{ref: f, dist: 0.72} }
+	near := func(f *entity.Face) faceContender {
+		return faceContender{ref: f, dist: 0.70 + face.MatchMarginDefault/2}
+	}
 	far := func(f *entity.Face) faceContender { return faceContender{ref: f, dist: 0.90} }
 
 	t.Run("NoContender", func(t *testing.T) {
@@ -504,10 +531,17 @@ func TestAmbiguousBestFace(t *testing.T) {
 		assert.False(t, ambiguousBestFace(anon, 0.7, []faceContender{near(otherAnon)}, false))
 	})
 	t.Run("AnonymousContenderAgainstANamedBest", func(t *testing.T) {
-		// The converse still defers: one of the two would give the marker a name, so a coin toss
-		// between them can be wrong in a way two anonymous clusters cannot.
-		assert.True(t, ambiguousBestFace(named, 0.7, []faceContender{near(anon)}, false))
-		assert.True(t, ambiguousBestFace(anon, 0.7, []faceContender{near(named)}, false))
+		// The pairing a fragmented library is mostly made of: a nameless cluster that close is the
+		// same person in another group, so both directions are assigned. Counting it would let each
+		// cluster a person names raise a boundary against every unnamed one.
+		assert.False(t, ambiguousBestFace(named, 0.7, []faceContender{near(anon)}, false))
+		assert.False(t, ambiguousBestFace(anon, 0.7, []faceContender{near(named)}, false))
+	})
+	t.Run("AnchoredMarkerBetweenANamedAndAnAnonymousCluster", func(t *testing.T) {
+		// The anchored clause still applies to whichever direction would let the toss mint a name:
+		// an anonymous winner adopts the marker's subject, a named one already carries its own.
+		assert.True(t, ambiguousBestFace(anon, 0.7, []faceContender{near(named)}, true))
+		assert.False(t, ambiguousBestFace(named, 0.7, []faceContender{near(anon)}, true))
 	})
 	t.Run("SameSubjectDoesNotHideAnother", func(t *testing.T) {
 		// The reason every contender is weighed rather than the runner-up alone: a subject owns
@@ -523,9 +557,8 @@ func TestAmbiguousBestFace(t *testing.T) {
 
 // TestFacesMatchClearsAmbiguousMarker covers what happens to the marker itself.
 //
-// A bridge marker an earlier run assigned is the point: HasFace reports any marker holding a face
-// as already having the best one, so deciding after that check would leave exactly those markers
-// on the cluster the coin toss gave them.
+// A bridge marker an earlier run assigned is the point: HasFace reports any marker holding a face as
+// already having the best one, so deciding after it would leave those on whichever cluster won.
 func TestFacesMatchClearsAmbiguousMarker(t *testing.T) {
 	c := config.TestConfig()
 	w := NewFaces(c)
@@ -538,7 +571,8 @@ func TestFacesMatchClearsAmbiguousMarker(t *testing.T) {
 	markerEmb := face.Embeddings{face.FixtureEmbedding(5001)}
 	near := entity.NewFace(entity.SubjectFixtures.Get("john-doe").SubjUID, entity.SrcManual, markerEmb, face.EmbeddingModelName())
 	require.NotNil(t, near)
-	far := entity.NewFace(entity.SubjectFixtures.Get("jane-doe").SubjUID, entity.SrcManual, face.Embeddings{face.FixtureEmbeddingAt(markerEmb.First(), 0.02, 5002)}, face.EmbeddingModelName())
+	tied := face.MatchMarginDefault / 2
+	far := entity.NewFace(entity.SubjectFixtures.Get("jane-doe").SubjUID, entity.SrcManual, face.Embeddings{face.FixtureEmbeddingAt(markerEmb.First(), tied, 5002)}, face.EmbeddingModelName())
 	require.NotNil(t, far)
 
 	for _, f := range []*entity.Face{near, far} {
@@ -596,7 +630,7 @@ func TestFacesMatchClearsAmbiguousMarker(t *testing.T) {
 		// would collide with the cluster built from it above.
 		anonA := entity.NewFace("", entity.SrcAuto, face.Embeddings{face.FixtureEmbeddingAt(markerEmb.First(), 0.10, 5003)}, face.EmbeddingModelName())
 		require.NotNil(t, anonA)
-		anonB := entity.NewFace("", entity.SrcAuto, face.Embeddings{face.FixtureEmbeddingAt(markerEmb.First(), 0.12, 5004)}, face.EmbeddingModelName())
+		anonB := entity.NewFace("", entity.SrcAuto, face.Embeddings{face.FixtureEmbeddingAt(markerEmb.First(), 0.10+tied, 5004)}, face.EmbeddingModelName())
 		require.NotNil(t, anonB)
 
 		for _, f := range []*entity.Face{anonA, anonB} {
@@ -612,6 +646,38 @@ func TestFacesMatchClearsAmbiguousMarker(t *testing.T) {
 
 		assert.Zero(t, r.Ambiguous, "an anonymous pair is not a coin toss worth withholding")
 		assert.NotEmpty(t, reload(t, m.MarkerUID).FaceID, "the nearer cluster takes the marker")
+	})
+	t.Run("NamingOneClusterKeepsTheOtherAssignment", func(t *testing.T) {
+		// The regression this rule exists for: every named cluster used to raise a boundary against
+		// every unnamed one, so naming a person removed pictures from the next. The same pair is
+		// matched twice, named in between, and the marker has to survive it.
+		first := entity.NewFace("", entity.SrcAuto, face.Embeddings{face.FixtureEmbeddingAt(markerEmb.First(), 0.10, 5005)}, face.EmbeddingModelName())
+		require.NotNil(t, first)
+		second := entity.NewFace("", entity.SrcAuto, face.Embeddings{face.FixtureEmbeddingAt(markerEmb.First(), 0.10+tied, 5006)}, face.EmbeddingModelName())
+		require.NotNil(t, second)
+
+		for _, f := range []*entity.Face{first, second} {
+			require.NoError(t, f.Create())
+			t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Face{}, "id = ?", f.ID) })
+		}
+
+		m := newMarker(t, "", entity.SrcAuto)
+		require.NoError(t, m.Updates(entity.Values{"face_id": "", "matched_at": nil}))
+
+		_, err := w.MatchFaces(entity.Faces{*first, *second}, true, nil, nil)
+		require.NoError(t, err)
+		require.NotEmpty(t, reload(t, m.MarkerUID).FaceID, "the baseline the naming is measured against")
+
+		// Written directly: SetSubjectUID would propagate the name onto the marker itself, and it
+		// is the unnamed rival rather than the marker's own subject that used to veto the match.
+		require.NoError(t, second.Updates(entity.Values{"subj_uid": entity.SubjectFixtures.Get("jane-doe").SubjUID}))
+		require.NoError(t, m.Updates(entity.Values{"face_id": "", "matched_at": nil}))
+
+		r, err := w.MatchFaces(entity.Faces{*first, *second}, true, nil, nil)
+		require.NoError(t, err)
+
+		assert.Zero(t, r.Ambiguous, "naming one of two clusters must not turn the other into a coin toss")
+		assert.NotEmpty(t, reload(t, m.MarkerUID).FaceID, "naming a cluster must not cost another one its markers")
 	})
 	t.Run("KeepsAnAssignmentAPersonMade", func(t *testing.T) {
 		// There is no guess of ours to withdraw, so the marker keeps the cluster its name

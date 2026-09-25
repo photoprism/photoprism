@@ -17,6 +17,23 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
+// Client fixture reserved for tests that mint a token and then use it, so that token creation
+// elsewhere in the package cannot consume its token budget.
+const isolatedClientID = "cs5cpu17n6gj2rvk"
+const isolatedClientSecret = "aQw7tPz2LkNv9XrBeCdH4FsMgJyU1Two" // #nosec G101 test fixture secret
+
+// dropIsolatedClientSessions removes the sessions these tests create, so each subtest starts
+// from the same state regardless of how many ran before it.
+func dropIsolatedClientSessions(t *testing.T) {
+	t.Cleanup(func() {
+		if client := entity.FindClientByUID(isolatedClientID); client != nil {
+			if _, err := client.DeleteSessions(); err != nil {
+				t.Error(err)
+			}
+		}
+	})
+}
+
 func TestOAuthRevoke(t *testing.T) {
 	const tokenPath = "/api/v1/oauth/token" // #nosec G101 test constant, not a credential
 	const revokePath = "/api/v1/oauth/revoke"
@@ -25,14 +42,15 @@ func TestOAuthRevoke(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
+		dropIsolatedClientSessions(t)
 
 		OAuthToken(router)
 		OAuthRevoke(router)
 
 		data := url.Values{
 			"grant_type":    {"client_credentials"},
-			"client_id":     {"cs5cpu17n6gj2qo5"},
-			"client_secret": {"xcCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e"},
+			"client_id":     {isolatedClientID},
+			"client_secret": {isolatedClientSecret},
 			"scope":         {"metrics"},
 		}
 
@@ -61,14 +79,15 @@ func TestOAuthRevoke(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
+		dropIsolatedClientSessions(t)
 
 		OAuthToken(router)
 		OAuthRevoke(router)
 
 		createData := url.Values{
 			"grant_type":    {"client_credentials"},
-			"client_id":     {"cs5cpu17n6gj2qo5"},
-			"client_secret": {"xcCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e"},
+			"client_id":     {isolatedClientID},
+			"client_secret": {isolatedClientSecret},
 			"scope":         {"metrics"},
 		}
 
@@ -102,14 +121,15 @@ func TestOAuthRevoke(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
+		dropIsolatedClientSessions(t)
 
 		OAuthToken(router)
 		OAuthRevoke(router)
 
 		createData := url.Values{
 			"grant_type":    {"client_credentials"},
-			"client_id":     {"cs5cpu17n6gj2qo5"},
-			"client_secret": {"xcCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e"},
+			"client_id":     {isolatedClientID},
+			"client_secret": {isolatedClientSecret},
 			"scope":         {"metrics"},
 		}
 
@@ -143,14 +163,15 @@ func TestOAuthRevoke(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
+		dropIsolatedClientSessions(t)
 
 		OAuthToken(router)
 		OAuthRevoke(router)
 
 		createData := url.Values{
 			"grant_type":    {"client_credentials"},
-			"client_id":     {"cs5cpu17n6gj2qo5"},
-			"client_secret": {"xcCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e"},
+			"client_id":     {isolatedClientID},
+			"client_secret": {isolatedClientSecret},
 			"scope":         {"metrics"},
 		}
 
@@ -184,14 +205,15 @@ func TestOAuthRevoke(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
+		dropIsolatedClientSessions(t)
 
 		OAuthToken(router)
 		OAuthRevoke(router)
 
 		createData := url.Values{
 			"grant_type":    {"client_credentials"},
-			"client_id":     {"cs5cpu17n6gj2qo5"},
-			"client_secret": {"xcCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e"},
+			"client_id":     {isolatedClientID},
+			"client_secret": {isolatedClientSecret},
 			"scope":         {"metrics"},
 		}
 

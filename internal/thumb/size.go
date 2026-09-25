@@ -48,7 +48,8 @@ func (s Size) Uncached() bool {
 	return s.Width > SizeCached || s.Height > SizeCached
 }
 
-// ExceedsLimit tests if thumbnail type is too large, and can not be rendered at all.
+// ExceedsLimit tests if thumbnail type is too large to be delivered, which is a lower bound than
+// what may be rendered: MaxRenderSize also covers the source a face crop is rendered from.
 func (s Size) ExceedsLimit() bool {
 	return s.Width > MaxSize() || s.Height > MaxSize()
 }

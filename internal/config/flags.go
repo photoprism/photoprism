@@ -7,6 +7,7 @@ import (
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/ai/onnx"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config/ttl"
@@ -273,7 +274,7 @@ var Flags = CliFlags{
 			Usage:   "loads default config values from `FILENAME` if it exists, does not override CLI flags or environment variables",
 			// fs.ConfigFilePath lets existing installations keep a defaults.yml file
 			// while new deployments may drop in defaults.yaml without updating the flag.
-			Value:     fs.ConfigFilePath("/etc/photoprism", "defaults", fs.ExtYml),
+			Value:     fs.ConfigFilePath("/etc/photoprism", fs.ConfigDefaultsName, fs.ExtYml),
 			EnvVars:   EnvVars("DEFAULTS_YAML"),
 			TakesFile: true,
 		}}, {
@@ -287,8 +288,8 @@ var Flags = CliFlags{
 		Flag: &cli.IntFlag{
 			Name:    "originals-limit",
 			Aliases: []string{"mb"},
-			Value:   1000,
-			Usage:   "maximum size of media files in `MB` (1-100000; -1 to disable)",
+			Value:   5000,
+			Usage:   "maximum size of a single media file in `MB` (1-100000; -1 to disable)",
 			EnvVars: EnvVars("ORIGINALS_LIMIT"),
 		}}, {
 		Flag: &cli.IntFlag{
@@ -330,7 +331,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "upload-allow",
-			Usage:   "restricts uploads to these file types (comma-separated list of `EXTENSIONS`; leave blank to allow all)",
+			Usage:   "further restricts web uploads to these file types (comma-separated list of `EXTENSIONS`)",
 			EnvVars: EnvVars("UPLOAD_ALLOW"),
 		}}, {
 		Flag: &cli.BoolFlag{
@@ -340,8 +341,8 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "upload-limit",
-			Value:   1000,
-			Usage:   "maximum total size of uploaded files in `MB` (1-100000; -1 to disable)",
+			Value:   5000,
+			Usage:   "maximum total size of web uploads in `MB` (1-100000; -1 to disable)",
 			EnvVars: EnvVars("UPLOAD_LIMIT"),
 		}}, {
 		Flag: &cli.PathFlag{
@@ -1159,6 +1160,18 @@ var Flags = CliFlags{
 			Value:   ffmpeg.DefaultExclude,
 			EnvVars: EnvVars("FFMPEG_EXCLUDE", "FFMPEG_BLACKLIST"),
 		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "convert-timeout",
+			Usage:   "time in `MINUTES` after which converting a still image, document, or RAW file is given up (-1 to disable)",
+			Value:   DefaultConvertTimeout,
+			EnvVars: EnvVars("CONVERT_TIMEOUT"),
+		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "transcode-timeout",
+			Usage:   "time in `MINUTES` after which transcoding a video is given up (disabled by default)",
+			Value:   DefaultTranscodeTimeout,
+			EnvVars: EnvVars("TRANSCODE_TIMEOUT"),
+		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "exiftool-bin",
 			Usage:   "ExifTool `COMMAND` for extracting metadata",
@@ -1264,6 +1277,12 @@ var Flags = CliFlags{
 			Value:   thumb.SizeOnDemand,
 			EnvVars: EnvVars("THUMB_SIZE_UNCACHED"),
 		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "thumb-size-face",
+			Usage:   "maximum size in `PIXELS` (720-15360) of the source rendered on demand so face crops are not upscaled, 0 to disable",
+			Value:   thumb.SizeFit4096.Width,
+			EnvVars: EnvVars("THUMB_SIZE_FACE"),
+		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "thumb-uncached",
 			Aliases: []string{"u"},
@@ -1324,6 +1343,12 @@ var Flags = CliFlags{
 			Value:   "public:true",
 			EnvVars: EnvVars("VISION_FILTER"),
 		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "onnx-provider",
+			Usage:   "execution `PROVIDER` for ONNX inference (" + onnx.ProviderUsageString() + "), falls back to the CPU when unavailable",
+			Value:   onnx.DefaultProvider.String(),
+			EnvVars: EnvVars("ONNX_PROVIDER"),
+		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "detect-nsfw",
 			Usage:   "flags newly added pictures as private if they might be offensive (uses the configured NSFW model; built-in TensorFlow by default)",
@@ -1373,9 +1398,13 @@ var Flags = CliFlags{
 		Flag: &cli.IntFlag{
 			Name:    "face-size-retry",
 			Usage:   "minimum size of faces in `PIXELS` when a picture would otherwise have none, -1 to disable",
-			Value:   face.RetrySizeThreshold,
 			EnvVars: EnvVars("FACE_SIZE_RETRY"),
-		}}, {
+		},
+		// No Value, or the option would be non-zero on every start and FaceSizeRetry would never
+		// reach its derivation: the floor follows what the thumbnail settings let a crop reach,
+		// which is the wider of thumb-size and thumb-size-face.
+		DocDefault: fmt.Sprintf("%d (%d where a crop can reach no further than 1920, off at 720)",
+			face.RetrySizeThreshold, face.RetrySizeThresholdLimited)}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-score",
 			Usage:   "minimum face `QUALITY` score (1-100), replacing the detector's own calibrated cutoff, -1 disables the check",
@@ -1425,9 +1454,32 @@ var Flags = CliFlags{
 		DocDefault: faceDocDefault(float64(face.DefaultDetectorClusterScore()))}, {
 		Flag: &cli.IntFlag{
 			Name:    "face-cluster-core",
-			Usage:   "`NUMBER` of faces forming a cluster core (1-100)",
+			Usage:   "`NUMBER` of faces forming a cluster core (2-100)",
 			Value:   face.ClusterCoreDefault,
 			EnvVars: EnvVars("FACE_CLUSTER_CORE"),
+		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "face-cluster-core-retry",
+			Usage:   "`NUMBER` of faces forming a cluster core in a second pass over what matching left unclustered, -1 to disable",
+			EnvVars: EnvVars("FACE_CLUSTER_CORE_RETRY"),
+		},
+		// No Value, or the option would be non-zero on every start and FaceClusterCoreRetry would
+		// never reach its derivation. Flat rather than one less than the first pass, see there.
+		DocDefault: fmt.Sprintf("%d (off where face-cluster-core is below %d)",
+			face.ClusterCoreRetryDefault, face.ClusterCoreDefault)}, {
+		Flag: &cli.IntFlag{
+			Name:    "face-cluster-split-rounds",
+			Usage:   "`NUMBER` of times a group wider than its own accept distance may be re-clustered, 0 discards such a group and -1 keeps it whole",
+			Value:   face.ClusterSplitRoundsDefault,
+			EnvVars: EnvVars("FACE_CLUSTER_SPLIT_ROUNDS"),
+			Hidden:  true,
+		}}, {
+		Flag: &cli.Float64Flag{
+			Name:    "face-cluster-split-shrink",
+			Usage:   "`FACTOR` each split round shortens the link distance by, greater than 0 and below 1",
+			Value:   face.ClusterSplitShrinkDefault,
+			EnvVars: EnvVars("FACE_CLUSTER_SPLIT_SHRINK"),
+			Hidden:  true,
 		}}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-cluster-dist",
@@ -1439,6 +1491,11 @@ var Flags = CliFlags{
 			Usage:   fmt.Sprintf("maximum cluster `RADIUS` accepted for automatic matches, calibrated per face model when unset; radius plus match distance may not exceed %g", face.ConfigDistMax),
 			EnvVars: EnvVars("FACE_CLUSTER_RADIUS"),
 		}, DocDefault: faceModelDocDefault(func(m *face.EmbeddingModel) float64 { return m.ClusterRadius })}, {
+		Flag: &cli.IntFlag{
+			Name:    "face-cluster-percentile",
+			Usage:   "`PERCENTILE` of the member distances a cluster's radius is derived from (1-100), where 100 uses the maximum and lets one loose face decide how far the cluster reaches",
+			EnvVars: EnvVars("FACE_CLUSTER_PERCENTILE"),
+		}, DocDefault: strconv.Itoa(face.ClusterPercentileDefault)}, {
 		Flag: &cli.Float64Flag{
 			Name:    "face-match-dist",
 			Usage:   fmt.Sprintf("similarity `OFFSET` for matching faces with existing clusters, calibrated per face model when unset; radius plus match distance may not exceed %g", face.ConfigDistMax),
@@ -1459,6 +1516,12 @@ var Flags = CliFlags{
 			Usage:   fmt.Sprintf("collision tolerance `DELTA` appended to max match distances (up to %g), the same for every face model; twice it is the distance at which a colliding cluster is retired for good", face.EpsilonDistMax),
 			EnvVars: EnvVars("FACE_EPSILON_DIST"),
 		}, DocDefault: faceDocDefault(face.EpsilonDefault)}, {
+		Flag: &cli.BoolFlag{
+			Name:    "face-recompute-stats",
+			Usage:   "derive a cluster's radius from the markers it holds, rather than from the widest distance one matching pass accepted",
+			EnvVars: EnvVars("FACE_RECOMPUTE_STATS"),
+			Hidden:  true,
+		}}, {
 		Flag: &cli.StringFlag{
 			Name:      "pid-filename",
 			Usage:     "process id `FILENAME` *daemon-mode only*",

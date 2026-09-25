@@ -49,9 +49,11 @@ fi
 
 TMPDIR=${TMPDIR:-/tmp}
 
-# Abort if not executed as root.
-if [[ $(id -u) != "0" ]] && [[ $DESTDIR == "/usr" || $DESTDIR == "/usr/local" ]]; then
-  echo "Error: Run ${0##*/} as root to install in a system directory!" 1>&2
+# Abort when the destination cannot be written. Testing the directory rather than comparing it
+# against a list of system directories also covers a root-owned prefix such as the package
+# layout, which would otherwise fail later in the extract.
+if [[ $(id -u) != "0" ]] && [[ -d $DESTDIR ]] && [[ ! -w $DESTDIR ]]; then
+  echo "Error: Run ${0##*/} as root to install in \"$DESTDIR\"!" 1>&2
   exit 1
 fi
 

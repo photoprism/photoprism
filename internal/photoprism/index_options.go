@@ -12,20 +12,22 @@ import (
 
 // IndexOptions represents file indexing options.
 type IndexOptions struct {
-	UID             string
-	Action          string
-	Path            string
-	Rescan          bool
-	Convert         bool
-	Stack           bool
-	FacesOnly       bool
-	DetectFaces     bool // Detect primary-file faces during indexing.
-	DetectNsfw      bool // Flag sensitive content while importing/updating photos.
-	GenerateLabels  bool // Generate automatic vision labels for newly indexed files.
-	ImportFaceTags  bool // Import face regions and names from XMP metadata.
-	SkipArchived    bool
-	ByteLimit       int64
-	ResolutionLimit int
+	UID              string
+	Action           string
+	Path             string
+	Rescan           bool
+	Convert          bool
+	Stack            bool
+	FacesOnly        bool
+	DetectFaces      bool              // Detect primary-file faces during indexing.
+	DetectNsfw       bool              // Flag sensitive content while importing/updating photos.
+	GenerateLabels   bool              // Generate automatic vision labels for newly indexed files.
+	ImportFaceTags   bool              // Import face regions and names from XMP metadata.
+	RegenerateFaces  bool              // Replace the detection of existing face markers, see Index.regenerateFaces.
+	FaceRegeneration *FaceRegeneration // Counts the changes RegenerateFaces makes, if set.
+	SkipArchived     bool
+	ByteLimit        int64
+	ResolutionLimit  int
 }
 
 // NewIndexOptions returns new index options instance.

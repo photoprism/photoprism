@@ -233,6 +233,22 @@ export default {
     }
   },
   methods: {
+    // notifyResultCount announces how many rows the last search returned, and says nothing for the
+    // tab the user is not looking at. Both tabs are mounted eagerly and search when they are created,
+    // so the hidden one would otherwise report "No people found" over the list that is on screen.
+    notifyResultCount() {
+      if (!this.active) {
+        return;
+      }
+
+      if (!this.results.length) {
+        this.$notify.warn(this.$gettext("No people found"));
+      } else if (this.results.length === 1) {
+        this.$notify.info(this.$gettext("One person found"));
+      } else {
+        this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} people found"), { n: this.results.length }));
+      }
+    },
     // loadPeople populates the name suggestions from the shared people cache;
     // a denied or failed fetch leaves the list empty rather than throwing.
     loadPeople() {
@@ -486,13 +502,7 @@ export default {
 
           this.setFaceCount(this.results.length);
 
-          if (!this.results.length) {
-            this.$notify.warn(this.$gettext("No people found"));
-          } else if (this.results.length === 1) {
-            this.$notify.info(this.$gettext("One person found"));
-          } else {
-            this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} people found"), { n: this.results.length }));
-          }
+          this.notifyResultCount();
         })
         .catch(() => {
           this.scrollDisabled = false;
@@ -592,13 +602,7 @@ export default {
 
           this.setFaceCount(this.results.length);
 
-          if (!this.results.length) {
-            this.$notify.warn(this.$gettext("No people found"));
-          } else if (this.results.length === 1) {
-            this.$notify.info(this.$gettext("One person found"));
-          } else {
-            this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} people found"), { n: this.results.length }));
-          }
+          this.notifyResultCount();
         })
         .catch(() => {
           this.reset();

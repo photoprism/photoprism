@@ -8,6 +8,7 @@ import (
 	_ "image/jpeg" // register JPEG decoder
 	_ "image/png"  // register PNG decoder
 	"io"
+	iofs "io/fs"
 	"math"
 	"os"
 	"path"
@@ -125,7 +126,7 @@ func NewMediaFileSkipResolve(fileName string, fileNameResolved string) (*MediaFi
 	// Check if the file exists and is not empty.
 	if size, _, err := m.Stat(); err != nil {
 		// Return error if os.Stat() failed.
-		return m, fmt.Errorf("%s not found", clean.Log(m.RootRelName()))
+		return m, &iofs.PathError{Op: "stat", Path: m.fileName, Err: err}
 	} else if size == 0 {
 		// Notify the user that the file is empty.
 		log.Infof("media: %s is empty", clean.Log(m.RootRelName()))
@@ -370,7 +371,7 @@ func (m *MediaFile) Checksum() string {
 }
 
 // PathNameInfo resolves the file root (originals/import/sidecar/etc) and returns
-// the root identifier, file base prefix, relative directory and relative name
+// the root identifier, stack prefix, relative directory and relative name
 // for indexing / metadata persistence.
 func (m *MediaFile) PathNameInfo(stripSequence bool) (fileRoot, fileBase, relativePath, relativeName string) {
 	fileRoot = m.Root()
@@ -390,7 +391,7 @@ func (m *MediaFile) PathNameInfo(stripSequence bool) (fileRoot, fileBase, relati
 		rootPath = Config().OriginalsPath()
 	}
 
-	fileBase = m.BasePrefix(stripSequence)
+	fileBase = m.StackPrefix(stripSequence)
 	relativePath = m.RelPath(rootPath)
 	relativeName = m.RelName(rootPath)
 
@@ -511,9 +512,14 @@ func (m *MediaFile) AbsPrefix(stripSequence bool) string {
 }
 
 // BasePrefix returns the filename (without directory) stripped of all
-// extensions; stripSequence removes trailing sequence tokens such as "_01".
+// extensions; stripSequence removes sequence suffixes such as ".00001", " (2)", or " copy 2".
 func (m *MediaFile) BasePrefix(stripSequence bool) string {
 	return fs.BasePrefix(m.FileName(), stripSequence)
+}
+
+// StackPrefix returns the name under which the file is stacked with the other files of a photo.
+func (m *MediaFile) StackPrefix(stripSequence bool) string {
+	return fs.StackPrefix(m.FileName(), stripSequence)
 }
 
 // EditedName returns the alternate filename used by Apple Photos for edited
@@ -649,7 +655,7 @@ func (m *MediaFile) openFile() (handle *os.File, err error) {
 	handle, err = os.Open(fileName)
 
 	if err != nil {
-		log.Error(err.Error())
+		log.Errorf("media: %s (open file)", clean.Error(err))
 		return nil, err
 	}
 
@@ -694,7 +700,7 @@ func (m *MediaFile) Move(filePath string, force bool) (err error) {
 	// Resolve absolute destination file path
 	// and return an error if unsuccessful.
 	if filePath, err = filepath.Abs(filePath); err != nil {
-		return fmt.Errorf("move: could not resolve destination file path (%s)", err)
+		return fmt.Errorf("move: could not resolve destination file path (%w)", err)
 	}
 
 	destName := filepath.Base(filePath)
@@ -704,6 +710,12 @@ func (m *MediaFile) Move(filePath string, force bool) (err error) {
 	// Error if source and destination file path are the same.
 	if filePath == m.FileName() {
 		return fmt.Errorf("move: cannot overwrite file %s with itself", logName)
+	}
+
+	// A symbolic link is left to whoever created it: links to files and directories inside the
+	// library are a supported layout, so the file it names is neither written nor replaced.
+	if fs.IsSymlink(filePath) {
+		return fmt.Errorf("move: destination name %s is a symbolic link", logName)
 	}
 
 	// Error if destination exists (and is not empty) without the force flag being used.
@@ -720,7 +732,7 @@ func (m *MediaFile) Move(filePath string, force bool) (err error) {
 
 	// Make sure the target directory exists.
 	if err = fs.MkdirAll(destDir); err != nil {
-		return fmt.Errorf("move: could not create target directory (%s)", err)
+		return fmt.Errorf("move: could not create target directory (%w)", err)
 	}
 
 	// Remember file modification time.
@@ -740,11 +752,11 @@ func (m *MediaFile) Move(filePath string, force bool) (err error) {
 	// If renaming the file is not possible, copy its
 	// contents and then delete the original file.
 	if copyErr := m.Copy(filePath, force); copyErr != nil {
-		return fmt.Errorf("%s (move fallback)", copyErr)
+		return fmt.Errorf("%w (move fallback)", copyErr)
 	}
 
 	if rmErr := os.Remove(m.fileName); rmErr != nil {
-		return fmt.Errorf("move: %s", rmErr)
+		return fmt.Errorf("move: %w", rmErr)
 	}
 
 	m.SetFileName(filePath)
@@ -769,7 +781,7 @@ func (m *MediaFile) Copy(filePath string, force bool) (err error) {
 
 	// Resolve absolute destination file path and return an error if unsuccessful.
 	if filePath, err = filepath.Abs(filePath); err != nil {
-		return fmt.Errorf("copy: could not resolve destination file path (%s)", err)
+		return fmt.Errorf("copy: could not resolve destination file path (%w)", err)
 	}
 
 	destName := filepath.Base(filePath)
@@ -779,6 +791,11 @@ func (m *MediaFile) Copy(filePath string, force bool) (err error) {
 	// Error if source and destination file path are the same.
 	if filePath == m.FileName() {
 		return fmt.Errorf("copy: cannot overwrite file %s with itself", logName)
+	}
+
+	// A symbolic link is left to whoever created it, as it is by Move.
+	if fs.IsSymlink(filePath) {
+		return fmt.Errorf("copy: destination name %s is a symbolic link", logName)
 	}
 
 	// Error if destination exists (and is not empty) without the force flag being used.
@@ -795,7 +812,7 @@ func (m *MediaFile) Copy(filePath string, force bool) (err error) {
 
 	// Make sure the target directory exists.
 	if err = fs.MkdirAll(destDir); err != nil {
-		return fmt.Errorf("copy: could not create target directory (%s)", err)
+		return fmt.Errorf("copy: could not create target directory (%w)", err)
 	}
 
 	m.fileMutex.Lock()
@@ -804,26 +821,33 @@ func (m *MediaFile) Copy(filePath string, force bool) (err error) {
 	thisFile, err := m.openFile()
 
 	if err != nil {
-		return fmt.Errorf("copy: source file %s cannot be opened (%s)", m.BaseName(), err)
+		return fmt.Errorf("copy: source file %s cannot be opened (%w)", m.BaseName(), err)
 	}
 
 	defer thisFile.Close()
 
-	// Open the target file path for writing, discarding any trailing bytes.
+	// Open the target file path for writing, discarding any trailing bytes. The no-follow flag puts
+	// the symbolic link rule in the call itself rather than only in the check above it.
 	// #nosec G304 -- destination path is validated and absolute.
-	destFile, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, fs.ModeFile)
+	destFile, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC|fs.OpenNoFollow, fs.ModeFile)
 
 	if err != nil {
-		log.Error(err.Error())
-		return fmt.Errorf("copy: destination file %s cannot be opened (%s)", logName, err)
+		return fmt.Errorf("copy: destination file %s cannot be opened (%w)", logName, err)
 	}
 
 	defer func() {
-		// Update the file timestamp after the file has been copied and closed.
-		if err = destFile.Close(); err != nil {
-			log.Debugf("copy: could not close destination file %s (%s)", logName, clean.Error(err))
-		} else if err = os.Chtimes(filePath, time.Time{}, m.ModTime()); err != nil {
-			log.Debugf("copy: could not set Mtime for destination file %s (%s)", logName, clean.Error(err))
+		// Update the file timestamp after the file has been copied and closed. A failure here is
+		// reported only when the copy itself succeeded, so it never replaces the copy's own error.
+		deferErr := destFile.Close()
+
+		if deferErr != nil {
+			log.Debugf("copy: could not close destination file %s (%s)", logName, clean.Error(deferErr))
+		} else if deferErr = os.Chtimes(filePath, time.Time{}, m.ModTime()); deferErr != nil {
+			log.Debugf("copy: could not set Mtime for destination file %s (%s)", logName, clean.Error(deferErr))
+		}
+
+		if err == nil {
+			err = deferErr
 		}
 	}()
 
@@ -831,7 +855,7 @@ func (m *MediaFile) Copy(filePath string, force bool) (err error) {
 	_, err = io.Copy(destFile, thisFile)
 
 	if err != nil {
-		return fmt.Errorf("copy: %s", err)
+		return fmt.Errorf("copy: %w", err)
 	}
 
 	return nil

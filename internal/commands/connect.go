@@ -21,7 +21,7 @@ func connectAction(ctx *cli.Context) error {
 
 		// Fail if no code was provided.
 		if token == "" {
-			return cli.ShowSubcommandHelp(ctx)
+			return ShowUsageError(ctx)
 		}
 
 		// Renew API keys with token.

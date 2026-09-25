@@ -10,10 +10,9 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-// When both a conflicting UUID and an existing ClientID are provided, the UUID-first
-// rule prevents hijacking: the update applies to the UUID's row and does not move
-// the ClientID from its original node.
-func TestClientRegistry_ClientIDReuse_CannotHijackExistingUUID(t *testing.T) {
+// When a UUID and a ClientID name different records, the write is refused and neither
+// record is modified.
+func TestClientRegistry_ClientIDReuse_RefusesForeignUUID(t *testing.T) {
 	c := newRegistryTestConfig(t, "cluster-registry-cid-hijack")
 
 	r, _ := NewClientRegistryWithConfig(c)
@@ -24,13 +23,15 @@ func TestClientRegistry_ClientIDReuse_CannotHijackExistingUUID(t *testing.T) {
 	assert.NoError(t, r.Put(b))
 
 	// Attempt to update UUID=b while passing ClientID of a
-	assert.NoError(t, r.Put(&Node{Node: cluster.Node{UUID: b.UUID, ClientID: a.ClientID, Role: "service"}}))
+	err := r.Put(&Node{Node: cluster.Node{UUID: b.UUID, ClientID: a.ClientID, Name: "pp-taken", Role: "service"}})
+	assert.ErrorIs(t, err, ErrIdentifierMismatch)
 
-	// a stays attached to its original UUID and ClientID
+	// a stays attached to its original UUID, ClientID, and name
 	gotA, err := r.FindByNodeUUID(a.UUID)
 	assert.NoError(t, err)
 	if assert.NotNil(t, gotA) {
 		assert.Equal(t, a.ClientID, gotA.ClientID)
+		assert.Equal(t, "pp-a", gotA.Name)
 		assert.True(t, rnd.IsUUID(gotA.UUID))
 		assert.True(t, rnd.IsUID(gotA.ClientID, entity.ClientUID))
 	}
@@ -39,6 +40,7 @@ func TestClientRegistry_ClientIDReuse_CannotHijackExistingUUID(t *testing.T) {
 	assert.NoError(t, err)
 	if assert.NotNil(t, gotB) {
 		assert.Equal(t, b.ClientID, gotB.ClientID)
+		assert.Equal(t, "pp-b", gotB.Name)
 		assert.True(t, rnd.IsUUID(gotB.UUID))
 		assert.True(t, rnd.IsUID(gotB.ClientID, entity.ClientUID))
 	}

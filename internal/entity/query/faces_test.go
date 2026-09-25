@@ -135,6 +135,34 @@ func TestMatchFaceMarkers(t *testing.T) {
 	}
 }
 
+// TestMatchableFacesClusterCore pins that a centroid built from fewer embeddings than the core is
+// not offered for matching. It is the whole point of the count: a labeled example or a pair would
+// otherwise cast a cluster-sized accept distance over the library on that evidence.
+func TestMatchableFacesClusterCore(t *testing.T) {
+	subj := rnd.GenerateUID('j')
+
+	newFace := func(t *testing.T, id string, samples int) {
+		t.Helper()
+		require.NoError(t, entity.UnscopedDb().Create(&entity.Face{
+			ID: id, FaceSrc: entity.SrcManual, FaceKind: int(face.RegularFace),
+			SubjUID: subj, Samples: samples, EmbedModel: string(face.EmbeddingModelName()),
+		}).Error)
+		t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Face{}, "id = ?", id) })
+	}
+
+	newFace(t, "MATCHABLECORE1ONE", 1)
+	newFace(t, "MATCHABLECORE2PAIR", 2)
+	newFace(t, "MATCHABLECORE3FULL", face.ManualClusterCore)
+
+	result, err := MatchableFaces(true, false, false, false)
+	require.NoError(t, err)
+
+	ids := result.IDs()
+	assert.NotContains(t, ids, "MATCHABLECORE1ONE", "one embedding is not a centroid")
+	assert.Contains(t, ids, "MATCHABLECORE2PAIR", "two are already an average, so a pair still matches")
+	assert.Contains(t, ids, "MATCHABLECORE3FULL")
+}
+
 func TestMatchFaceMarkers_ReturnsUpdateError(t *testing.T) {
 	originalDb := entity.Db()
 	require.NotNil(t, originalDb)
@@ -153,7 +181,8 @@ func TestMatchFaceMarkers_ReturnsUpdateError(t *testing.T) {
 		FaceKind:   int(face.RegularFace),
 		FaceHidden: false,
 		SubjUID:    rnd.GenerateUID('j'),
-		Samples:    1,
+		// A real cluster, or MatchableFaces excludes it and the error path is never reached.
+		Samples: face.ManualClusterCore,
 	}).Error)
 
 	entity.SetDbProvider(tempConn)

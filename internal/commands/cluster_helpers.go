@@ -3,6 +3,7 @@ package commands
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -12,6 +13,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/service/cluster"
+	"github.com/photoprism/photoprism/internal/service/cluster/node"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/http/header"
 )
@@ -43,7 +45,7 @@ func obtainClientCredentialsViaRegister(portalURL, joinToken, nodeName string) (
 	}
 	defer func() {
 		if closeErr := resp.Body.Close(); closeErr != nil {
-			log.Debugf("cluster: %s (close register response body)", clean.Error(closeErr))
+			log.Debugf("cluster: %s (close register response body)", clean.ErrorFull(closeErr))
 		}
 	}()
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated && resp.StatusCode != http.StatusConflict {
@@ -63,10 +65,57 @@ func obtainClientCredentialsViaRegister(portalURL, joinToken, nodeName string) (
 	return id, secret, nil
 }
 
+// ErrMissingPortalToken reports that a register request has no credential to send.
+var ErrMissingPortalToken = errors.New("portal token is required (use --join-token or set join-token)")
+
+// clusterTokenExitCode maps a clusterRegisterToken failure to a CLI exit code, so a missing
+// flag reads as a usage error and a rejected credential reads as an authentication error.
+func clusterTokenExitCode(err error) int {
+	if errors.Is(err, ErrMissingPortalToken) {
+		return 2
+	}
+
+	return 4
+}
+
+// clusterRegisterToken returns the bearer token for a register request against the Portal.
+// A node mutating its own registration uses an access token minted from its client credentials.
+// A first join, or credentials the Portal no longer honors, uses the join token; the Portal
+// still refuses that for a name it holds, so the fallback widens nothing.
+func clusterRegisterToken(conf *config.Config, portalURL, joinToken, nodeName string) (string, error) {
+	id, secret := strings.TrimSpace(conf.NodeClientID()), strings.TrimSpace(conf.NodeClientSecret())
+
+	if id == "" || secret == "" || !strings.EqualFold(conf.NodeName(), nodeName) {
+		if joinToken == "" {
+			return "", ErrMissingPortalToken
+		}
+
+		return joinToken, nil
+	}
+
+	u, err := url.Parse(strings.TrimRight(portalURL, "/"))
+
+	if err != nil || u.Scheme == "" || u.Host == "" {
+		return "", fmt.Errorf("invalid portal-url: %s", clean.Log(portalURL))
+	}
+
+	token, err := node.OAuthAccessToken(u, id, secret, node.OAuthScope)
+
+	if err == nil {
+		return token, nil
+	}
+
+	if joinToken == "" {
+		return "", fmt.Errorf("portal access token request failed: %w", err)
+	}
+
+	log.Warnf("cluster: %s, retrying with the join token", clean.ErrorFull(err))
+
+	return joinToken, nil
+}
+
 // marshalRegisterRequest JSON-encodes a cluster register payload for portal requests.
 func marshalRegisterRequest(payload cluster.RegisterRequest) []byte {
-	// Register requests may intentionally include client credentials when
-	// re-registering a node or rotating its secret.
 	b, _ := json.Marshal(payload) //nolint:gosec
 
 	return b

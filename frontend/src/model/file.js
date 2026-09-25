@@ -29,6 +29,8 @@ export class File extends RestModel {
       Mime: "",
       Primary: false,
       Sidecar: false,
+      KeepStacked: false,
+      StackGroup: "",
       Missing: false,
       Portrait: false,
       Video: false,

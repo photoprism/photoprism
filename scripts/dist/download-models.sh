@@ -10,6 +10,9 @@
 set -euo pipefail
 
 MODELS_PATH=${MODELS_PATH:-"${PHOTOPRISM_ASSETS_PATH:-assets}/models"}
+# Recorded before the default is applied, so the script can tell a configured directory from one
+# it has to create for itself.
+TMP_PATH_SET=${TMP_PATH:-}
 TMP_PATH=${TMP_PATH:-"/tmp/photoprism"}
 BACKUP_PATH=${BACKUP_PATH:-${PHOTOPRISM_BACKUP_PATH:-"${PHOTOPRISM_STORAGE_PATH:-storage}/backup"}}
 TODAY=$(date -u +%Y%m%d)
@@ -17,6 +20,9 @@ STAMP=$(date -u +%Y%m%d-%H%M%S)
 
 MIRROR_URL="https://dl.photoprism.app"
 ONNX_URL="${MIRROR_URL}/onnx/models"
+# Comparators kept for benchmarking only; not installed by any build target and not
+# intended for production use.
+ONNX_TESTING_URL="${ONNX_URL}/testing"
 TENSORFLOW_URL="${MIRROR_URL}/tensorflow"
 OPENCV_ZOO_URL="https://media.githubusercontent.com/media/opencv/opencv_zoo/main/models"
 
@@ -38,9 +44,9 @@ nsfw|${TENSORFLOW_URL}/nsfw.zip||eb5e5d22e37961c3192a4757efff883f77bc989c0efceab
 sface|${ONNX_URL}/face_recognition_sface_2021dec.onnx|${OPENCV_ZOO_URL}/face_recognition_sface/face_recognition_sface_2021dec.onnx|0ba9fbfa01b5270c96627c4ef784da859931e02f04419c829e83484087c34e79|file|sface|face_recognition_sface_2021dec.onnx
 auraface|${ONNX_URL}/auraface_v1_glintr100.onnx|https://huggingface.co/fal/AuraFace-v1/resolve/main/glintr100.onnx?download=true|a7933ea5330113b01c9b60351d8f4c33003f145d8470ac5f0e52ee2effe25c60|file|auraface|auraface_v1_glintr100.onnx
 yunet|${ONNX_URL}/face_detection_yunet_2026may.onnx|${OPENCV_ZOO_URL}/face_detection_yunet/face_detection_yunet_2026may.onnx|ebafce4e3c118d6554634be5c27ab333b4c047a9a8c3faf1d7cf93101c22f0f0|file|yunet|face_detection_yunet_2026may.onnx
-yunet-2023mar|${ONNX_URL}/face_detection_yunet_2023mar.onnx|${OPENCV_ZOO_URL}/face_detection_yunet/face_detection_yunet_2023mar.onnx|8f2383e4dd3cfbb4553ea8718107fc0423210dc964f9f4280604804ed2552fa4|file|yunet|face_detection_yunet_2023mar.onnx
-centerface|${ONNX_URL}/centerface.onnx|https://raw.githubusercontent.com/Star-Clouds/CenterFace/master/models/onnx/centerface.onnx|77e394b51108381b4c4f7b4baf1c64ca9f4aba73e5e803b2636419578913b5fe|file|centerface|centerface.onnx
-centerface-bnmerged|${ONNX_URL}/centerface_bnmerged.onnx|https://raw.githubusercontent.com/Star-Clouds/CenterFace/master/models/onnx/centerface_bnmerged.onnx|09189deaaf8646c5c51a68447e3c744ea1e211798155d4728c20507b9f5aefbc|file|centerface|centerface_bnmerged.onnx"
+yunet-2023mar|${ONNX_TESTING_URL}/face_detection_yunet_2023mar.onnx|${OPENCV_ZOO_URL}/face_detection_yunet/face_detection_yunet_2023mar.onnx|8f2383e4dd3cfbb4553ea8718107fc0423210dc964f9f4280604804ed2552fa4|file|yunet|face_detection_yunet_2023mar.onnx
+centerface|${ONNX_TESTING_URL}/centerface.onnx|https://raw.githubusercontent.com/Star-Clouds/CenterFace/master/models/onnx/centerface.onnx|77e394b51108381b4c4f7b4baf1c64ca9f4aba73e5e803b2636419578913b5fe|file|centerface|centerface.onnx
+centerface-bnmerged|${ONNX_TESTING_URL}/centerface_bnmerged.onnx|https://raw.githubusercontent.com/Star-Clouds/CenterFace/master/models/onnx/centerface_bnmerged.onnx|09189deaaf8646c5c51a68447e3c744ea1e211798155d4728c20507b9f5aefbc|file|centerface|centerface_bnmerged.onnx"
 
 FORCE=false
 OVERRIDE_URL=""
@@ -71,7 +77,7 @@ Options:
 
 Environment:
   MODELS_PATH       Install prefix (default "\$PHOTOPRISM_ASSETS_PATH/models").
-  TMP_PATH          Download directory (default "/tmp/photoprism").
+  TMP_PATH          Download directory (default: a private temporary directory).
   BACKUP_PATH       Backup directory. Falls back to \$PHOTOPRISM_BACKUP_PATH, then
                     to "\$PHOTOPRISM_STORAGE_PATH/backup".
   DOCKER_ENV        Backups default to off when set to "prod".
@@ -117,6 +123,23 @@ hash_file() {
   fi
 }
 
+# valid_digest reports whether its argument is a full SHA-256 checksum.
+valid_digest() {
+  [[ $1 =~ ^[0-9a-fA-F]{64}$ ]]
+}
+
+# digest_matches compares a file against an expected checksum. Both values have to be present:
+# a comparison is only meaningful with a file to hash and a checksum to hash it against.
+digest_matches() {
+  local file="$1" expected="$2" actual
+
+  valid_digest "${expected}" || return 1
+
+  actual="$(hash_file "${file}")"
+
+  [[ -n "${actual}" ]] && [[ "${actual}" == "${expected}" ]]
+}
+
 # fetch downloads a URL to a destination path.
 fetch() {
   local url="$1" dest="$2"
@@ -142,7 +165,12 @@ fetch() {
 download_verified() {
   local url="$1" fallback="$2" sha256="$3" tmp="$4" actual
 
-  if [[ "$(hash_file "${tmp}")" == "${sha256}" ]]; then
+  if ! valid_digest "${sha256}"; then
+    echo "Error: no valid checksum is recorded for this model." >&2
+    return 1
+  fi
+
+  if digest_matches "${tmp}" "${sha256}"; then
     return 0
   fi
 
@@ -283,7 +311,7 @@ install_file() {
 
   # Moving onto another filesystem copies rather than renames, which a full disk can
   # truncate, so what matters is the checksum of the staged copy rather than the source.
-  if [[ "$(hash_file "${staged}")" != "${sha256}" ]]; then
+  if ! digest_matches "${staged}" "${sha256}"; then
     echo "Error: ${file} did not survive the move to ${target}." >&2
     rm -f "${staged}"
     return 1
@@ -314,6 +342,11 @@ install_model() {
 
   IFS='|' read -r name url fallback sha256 type dir file <<<"${entry}"
 
+  if ! valid_digest "${sha256}"; then
+    echo "Error: registry entry \"${name}\" has no valid checksum." >&2
+    return 1
+  fi
+
   if [[ -n "${OVERRIDE_URL}" ]]; then
     url="${OVERRIDE_URL}"
     fallback=""
@@ -343,11 +376,17 @@ install_model() {
 }
 
 # up_to_date reports whether the installed model already matches the registry checksum.
+#
+# A checksum that is missing or malformed reports "not up to date", so an entry that cannot be
+# verified is downloaded and verified rather than assumed current. Checked here as well as in the
+# caller, because the archive branch compares by substring.
 up_to_date() {
   local sha256="$1" type="$2" dir="$3" file="$4" version
 
+  valid_digest "${sha256}" || return 1
+
   if [[ "${type}" == "file" ]]; then
-    [[ "$(hash_file "${MODELS_PATH}/${dir}/${file}")" == "${sha256}" ]]
+    digest_matches "${MODELS_PATH}/${dir}/${file}" "${sha256}"
     return
   fi
 
@@ -419,7 +458,17 @@ if ! command -v sha256sum >/dev/null 2>&1 && ! command -v shasum >/dev/null 2>&1
   exit 1
 fi
 
-mkdir -p "${TMP_PATH}" "${MODELS_PATH}"
+mkdir -p "${MODELS_PATH}"
+
+# A private staging directory this script owns, when the caller did not name one. An explicitly
+# configured TMP_PATH is used as given, since the operator chose it.
+if [[ -z ${TMP_PATH_SET} ]]; then
+  TMP_PATH="$(mktemp -d "${TMPDIR:-/tmp}/photoprism-models.XXXXXXXX")"
+  # shellcheck disable=SC2064  # expand the directory now so the trap removes this run's copy
+  trap "rm -rf \"${TMP_PATH}\"" EXIT
+else
+  mkdir -p "${TMP_PATH}"
+fi
 
 FAILED=()
 

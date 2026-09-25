@@ -15,11 +15,12 @@ type dbscanClusterer struct {
 	logAfter time.Duration
 	logf     func(done, total int)
 
-	// slices holding the cluster mapping and sizes. Access is synchronized to avoid read during computation.
-	mu sync.RWMutex
-	// groups for dateset
-	a []int
-	b []int
+	// Cluster assignments, sizes, and core flags. Access is synchronized to avoid
+	// reads during computation.
+	mu   sync.RWMutex
+	a    []int
+	b    []int
+	core []bool
 
 	// variables used for concurrent computation of nearest neighbors
 	// dataset len
@@ -35,9 +36,6 @@ type dbscanClusterer struct {
 	r *[]int
 	// current point
 	p []float64
-
-	// visited points
-	v []bool
 
 	// dataset
 	d [][]float64
@@ -111,8 +109,6 @@ func (c *dbscanClusterer) Learn(data [][]float64) error {
 
 	c.d = data
 
-	c.v = make([]bool, c.l)
-
 	c.a = make([]int, c.l)
 	c.b = make([]int, 0)
 	c.loggedAt = time.Time{}
@@ -123,7 +119,6 @@ func (c *dbscanClusterer) Learn(data [][]float64) error {
 
 	c.endNearestWorkers()
 
-	c.v = nil
 	c.p = nil
 	c.r = nil
 
@@ -146,81 +141,132 @@ func (c *dbscanClusterer) Guesses() []int {
 	return c.a
 }
 
+// Predict assigns an observation only when exactly one learned core cluster reaches it.
 func (c *dbscanClusterer) Predict(p []float64) int {
-	// Without training data, or for an observation of a different width, there is no
-	// cluster to assign, which this algorithm already labels as noise.
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+
 	if len(c.d) == 0 || len(p) != len(c.d[0]) {
 		return -1
 	}
 
-	var (
-		l int
-		d float64
-		m float64 = c.distance(p, c.d[0])
-	)
+	cluster := -1
 
-	for i := 1; i < len(c.d); i++ {
-		if d = c.distance(p, c.d[i]); d < m {
-			m = d
-			l = i
+	for i, core := range c.core {
+		if core && c.distance(c.d[i], p) < c.eps {
+			if cluster != -1 && cluster != c.a[i] {
+				return -1
+			}
+			cluster = c.a[i]
 		}
 	}
 
-	return c.a[l]
+	return cluster
 }
 
 func (c *dbscanClusterer) Online(observations chan []float64, done chan struct{}) chan *HCEvent {
 	return nil
 }
 
-// private
+// run forms core components and attaches borders reached by exactly one component.
+// Only cores propagate reachability, so symmetric distances yield an order-independent partition.
 func (c *dbscanClusterer) run() {
+	core := c.coreFlags()
+	c.core = core
+
+	// The cluster a non-core point may join: 0 while none has been seen, -1 once two have.
+	border := make([]int, c.l)
+
 	var (
-		n, m, l, k = 1, 0, 0, 0
-		ns, nss    = make([]int, 0), make([]int, 0)
+		n     = 1
+		l     int
+		ns    = make([]int, 0)
+		queue = make([]int, 0)
 	)
 
 	for i := 0; i < c.l; i++ {
-		c.logProgress(i)
+		// The second half of one scale shared with coreFlags, so the two passes report a progress
+		// that only ever rises. Reporting each pass against c.l would restart the count midway.
+		c.logProgress((c.l + i) / 2)
 
-		if c.v[i] {
+		if !core[i] || c.a[i] != 0 {
 			continue
 		}
 
-		c.v[i] = true
+		c.a[i] = n
+		c.b = append(c.b, 1)
 
-		c.nearest(i, &l, &ns)
+		queue = append(queue[:0], i)
 
-		if l < c.minpts {
-			c.a[i] = -1
-		} else {
-			c.a[i] = n
+		for len(queue) > 0 {
+			p := queue[len(queue)-1]
+			queue = queue[:len(queue)-1]
 
-			c.b = append(c.b, 0)
-			c.b[m]++
+			c.nearest(p, &l, &ns)
 
 			for j := 0; j < l; j++ {
-				if !c.v[ns[j]] {
-					c.v[ns[j]] = true
+				q := ns[j]
 
-					c.nearest(ns[j], &k, &nss)
-
-					if k >= c.minpts {
-						l += k
-						ns = append(ns, nss...)
+				// Only a core extends a cluster, so a point attached below never widens the reach.
+				if core[q] {
+					if c.a[q] == 0 {
+						c.a[q] = n
+						c.b[n-1]++
+						queue = append(queue, q)
 					}
+
+					continue
 				}
 
-				if c.a[ns[j]] == 0 {
-					c.a[ns[j]] = n
-					c.b[m]++
+				// Recorded from the core's side, which is the same set of pairs a symmetric distance
+				// would report from the other. An asymmetric DistFunc would make the two differ.
+				switch border[q] {
+				case 0:
+					border[q] = n
+				case n, -1:
+				default:
+					border[q] = -1
 				}
 			}
+		}
 
-			n++
-			m++
+		n++
+	}
+
+	for i := 0; i < c.l; i++ {
+		if core[i] {
+			continue
+		}
+
+		if b := border[i]; b > 0 {
+			c.a[i] = b
+			c.b[b-1]++
+		} else {
+			c.a[i] = -1
 		}
 	}
+}
+
+// coreFlags reports which points hold at least minpts neighbors within eps, the only ones that may
+// form a cluster or extend one.
+//
+// This is a full neighbor scan, so it costs about as much as the pass that follows it.
+func (c *dbscanClusterer) coreFlags() []bool {
+	var (
+		l  int
+		ns = make([]int, 0)
+	)
+
+	core := make([]bool, c.l)
+
+	for i := 0; i < c.l; i++ {
+		c.logProgress(i / 2)
+		c.nearest(i, &l, &ns)
+
+		core[i] = l >= c.minpts
+	}
+
+	return core
 }
 
 // logProgress emits an optional progress update when the reporting interval has elapsed.

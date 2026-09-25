@@ -145,9 +145,12 @@ func (o *Ordering) Plot() []float64 {
 	return plot
 }
 
-// ExtractDBSCAN returns the clustering DBSCAN would produce at the given link distance, which one
-// ordering already contains for every eps up to MaxEps. Reported for comparison and as a control,
-// since an extraction at eps has to agree with a DBSCAN run at the same value.
+// ExtractDBSCAN returns the textbook DBSCAN clustering at the given link distance, which one
+// ordering already contains for every eps up to MaxEps. Reported for comparison and as a control.
+//
+// It agrees with this package's DBSCAN on the core points. The two differ on border points, which
+// this extraction takes in the order the ordering reached them and DBSCAN attaches only where the
+// cores around them agree.
 func (o *Ordering) ExtractDBSCAN(eps float64) Labels {
 	labels := o.noiseLabels()
 	current := 0

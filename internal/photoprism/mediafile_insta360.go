@@ -29,7 +29,9 @@ func FindInsta360Capture(f *MediaFile) *Insta360Capture {
 	}
 
 	name, ok := media.ParseInsta360VideoName(f.FileName())
-	if !ok {
+
+	// The capture files are looked up under their canonical names, which must include f itself.
+	if !ok || name.FileName(name.Role) != f.FileName() {
 		return nil
 	}
 
@@ -60,6 +62,13 @@ func FindInsta360Capture(f *MediaFile) *Insta360Capture {
 	}
 
 	return result
+}
+
+// insta360SkipConvert reports whether f is the right lens or proxy of a video capture, whose
+// sidecars are created from the left lens.
+func insta360SkipConvert(f *MediaFile) bool {
+	capture := FindInsta360Capture(f)
+	return capture.ValidPair() && capture.Left.FileName() != f.FileName()
 }
 
 // ValidPair reports whether the two full-resolution lens files can safely be combined.

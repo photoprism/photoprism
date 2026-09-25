@@ -94,9 +94,16 @@ Thumbs.db
 .glide
 /tmp/
 /internal/tmp/
+/internal/zz*
 *.override.md
 /AGENTS_*
 /REPOS.md
 join_token
 client_secret
 zz_*.go
+
+# Artifacts written by scripts/dist/install-sudoers.sh when run from a checkout.
+# Listed by full path: .dockerignore anchors patterns at the context root, so the .env* rule
+# above does not reach a nested file the way the .gitignore rule does.
+scripts/dist/.env
+scripts/dist/.init-lock

@@ -5,7 +5,6 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/ai/vision"
@@ -28,15 +27,13 @@ var VisionResetCommand = &cli.Command{
 		},
 		PicturesCountFlag(),
 		VisionSourceFlag(vision.DefaultSrc),
-		&cli.BoolFlag{
-			Name:    "yes",
-			Aliases: []string{"y"},
-			Usage:   "runs the command non-interactively",
-		},
+		YesFlag(),
 	},
 	Action: visionResetAction,
 }
 
+// visionResetAction removes the captions and labels the selected models generated for the pictures
+// that match the search filters.
 func visionResetAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
 		models := vision.ParseModelTypes(ctx.String("models"))
@@ -57,23 +54,23 @@ func visionResetAction(ctx *cli.Context) error {
 			selectedModels = append(selectedModels, vision.ModelTypeLabels)
 		}
 
-		confirmed := RunNonInteractively(ctx.Bool("yes"))
-
-		if !confirmed && len(selectedModels) > 0 {
-			label := fmt.Sprintf("Reset generated %s for matching pictures?", txt.JoinAnd(selectedModels))
-			prompt := promptui.Prompt{Label: label, IsConfirm: true}
-			if _, err := prompt.Run(); err != nil {
-				return nil
-			}
-		}
-
-		worker := workers.NewVision(conf)
-		filter := strings.TrimSpace(strings.Join(ctx.Args().Slice(), " "))
 		source, err := sanitizeVisionSource(ctx.String("source"))
 
 		if err != nil {
 			return cli.Exit(err.Error(), 1)
 		}
+
+		label := fmt.Sprintf("Reset generated %s for matching pictures?", txt.JoinAnd(selectedModels))
+
+		if proceed, confirmErr := ConfirmAction(ctx.Bool("yes"), label); confirmErr != nil {
+			return confirmErr
+		} else if !proceed {
+			log.Infof("vision: kept the generated %s", txt.JoinAnd(selectedModels))
+			return nil
+		}
+
+		worker := workers.NewVision(conf)
+		filter := strings.TrimSpace(strings.Join(ctx.Args().Slice(), " "))
 
 		return worker.Reset(
 			filter,

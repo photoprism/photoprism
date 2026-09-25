@@ -1,12 +1,15 @@
 package query
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/media"
 )
 
 // aclSession builds an in-memory session for the named user fixture.
@@ -156,7 +159,7 @@ func TestFileSelection(t *testing.T) {
 		}
 	})
 	t.Run("ShareSelectionOriginals", func(t *testing.T) {
-		sel := ShareSelection(false)
+		sel := ShareSelection(false, true)
 		if results, err := SelectedFiles(many, sel); err != nil {
 			t.Fatal(err)
 		} else {
@@ -164,7 +167,7 @@ func TestFileSelection(t *testing.T) {
 		}
 	})
 	t.Run("ShareSelectionPrimary", func(t *testing.T) {
-		sel := ShareSelection(true)
+		sel := ShareSelection(true, true)
 		if results, err := SelectedFiles(many, sel); err != nil {
 			t.Fatal(err)
 		} else {
@@ -172,7 +175,7 @@ func TestFileSelection(t *testing.T) {
 		}
 	})
 	t.Run("ShareAlbums", func(t *testing.T) {
-		sel := ShareSelection(true)
+		sel := ShareSelection(true, true)
 		if results, err := SelectedFiles(albums, sel); err != nil {
 			t.Fatal(err)
 		} else {
@@ -180,7 +183,7 @@ func TestFileSelection(t *testing.T) {
 		}
 	})
 	t.Run("ShareMonths", func(t *testing.T) {
-		sel := ShareSelection(true)
+		sel := ShareSelection(true, true)
 		if results, err := SelectedFiles(months, sel); err != nil {
 			t.Fatal(err)
 		} else {
@@ -188,7 +191,7 @@ func TestFileSelection(t *testing.T) {
 		}
 	})
 	t.Run("ShareFoldersOriginals", func(t *testing.T) {
-		sel := ShareSelection(true)
+		sel := ShareSelection(true, true)
 		if results, err := SelectedFiles(folders, sel); err != nil {
 			t.Fatal(err)
 		} else {
@@ -196,7 +199,7 @@ func TestFileSelection(t *testing.T) {
 		}
 	})
 	t.Run("ShareFolders", func(t *testing.T) {
-		sel := ShareSelection(false)
+		sel := ShareSelection(false, true)
 		if results, err := SelectedFiles(folders, sel); err != nil {
 			t.Fatal(err)
 		} else {
@@ -205,7 +208,7 @@ func TestFileSelection(t *testing.T) {
 		}
 	})
 	t.Run("ShareStatesOriginals", func(t *testing.T) {
-		sel := ShareSelection(true)
+		sel := ShareSelection(true, true)
 		if results, err := SelectedFiles(states, sel); err != nil {
 			t.Fatal(err)
 		} else {
@@ -213,7 +216,7 @@ func TestFileSelection(t *testing.T) {
 		}
 	})
 	t.Run("ShareStates", func(t *testing.T) {
-		sel := ShareSelection(false)
+		sel := ShareSelection(false, true)
 		if results, err := SelectedFiles(states, sel); err != nil {
 			t.Fatal(err)
 		} else {
@@ -221,4 +224,127 @@ func TestFileSelection(t *testing.T) {
 			assert.Len(t, results, 5)
 		}
 	})
+}
+
+// TestShareSelection_OmitTypes verifies that sharing converted files omits every image format
+// except JPEG, so a newly supported type does not reach a share as its original by default.
+func TestShareSelection_OmitTypes(t *testing.T) {
+	// Named one by one rather than read back from the format table the selection is built from, so
+	// a format that stops being an image is caught here instead of quietly leaving the omit list.
+	pinned := []fs.Type{
+		fs.ImagePng,
+		fs.ImageWebp,
+		fs.ImageTiff,
+		fs.ImageAvif,
+		fs.ImageHeic,
+		fs.ImageBmp,
+		fs.ImageGif,
+		fs.ImagePsd,
+		fs.ImageJpegXL,
+		fs.ImageCineon,
+	}
+
+	t.Run("Converted", func(t *testing.T) {
+		omit := ShareSelection(false, true).OmitTypes
+
+		for _, fileType := range pinned {
+			assert.Containsf(t, omit, fileType.String(), "%s must not be shared as the original", fileType)
+		}
+
+		assert.NotContains(t, omit, fs.ImageJpeg.String(), "jpeg is the format that is shared")
+	})
+	t.Run("CoversEveryImageType", func(t *testing.T) {
+		omit := ShareSelection(false, true).OmitTypes
+
+		for _, fileType := range media.FileTypes(media.Image) {
+			if fileType == fs.ImageJpeg {
+				continue
+			}
+
+			assert.Containsf(t, omit, fileType.String(), "%s must not be shared as the original", fileType)
+		}
+	})
+	t.Run("Originals", func(t *testing.T) {
+		assert.Empty(t, ShareSelection(true, true).OmitTypes)
+	})
+	t.Run("OriginalsWithoutYaml", func(t *testing.T) {
+		assert.Equal(t, []string{fs.SidecarYaml.String()}, ShareSelection(true, false).OmitTypes)
+	})
+	t.Run("ConvertedWithoutYaml", func(t *testing.T) {
+		sel := ShareSelection(false, false)
+		assert.Contains(t, sel.OmitMedia, media.Sidecar.String())
+		assert.Equal(t, ShareSelection(false, true).OmitTypes, sel.OmitTypes)
+	})
+}
+
+// TestShareSelection_Yaml checks that sharing originals includes YAML sidecar files only when enabled.
+func TestShareSelection_Yaml(t *testing.T) {
+	photo := entity.NewPhoto(false)
+	if err := photo.Save(); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() {
+		entity.UnscopedDb().Unscoped().Delete(&entity.File{}, "photo_id = ?", photo.ID)
+		entity.UnscopedDb().Unscoped().Delete(&entity.Details{}, "photo_id = ?", photo.ID)
+		entity.UnscopedDb().Unscoped().Delete(photo)
+	})
+	for i, name := range []string{"share-control.jpg", "share-control.yml"} {
+		fileType, mediaType := fs.ImageJpeg, media.Image
+		if fs.FileType(name) == fs.SidecarYaml {
+			fileType, mediaType = fs.SidecarYaml, media.Sidecar
+		}
+		file := entity.File{PhotoID: photo.ID, PhotoUID: photo.PhotoUID, FileName: name, FileType: fileType.String(), MediaType: mediaType.String(),
+			FileRoot: entity.RootOriginals, FileHash: fmt.Sprintf("%040d", i+4200)}
+		if err := file.Create(); err != nil {
+			t.Fatal(err)
+		}
+	}
+	selection := form.Selection{Photos: []string{photo.PhotoUID}}
+	names := func(t *testing.T, yaml bool) (result []string) {
+		files, err := SelectedFiles(selection, ShareSelection(true, yaml))
+		if err != nil {
+			t.Fatal(err)
+		}
+		for _, f := range files {
+			result = append(result, f.FileName)
+		}
+		return result
+	}
+	assert.ElementsMatch(t, []string{"share-control.jpg", "share-control.yml"}, names(t, true))
+	assert.ElementsMatch(t, []string{"share-control.jpg"}, names(t, false))
+}
+
+// TestSelectedFilesForSessionYaml checks export eligibility without changing internal selections.
+func TestSelectedFilesForSessionYaml(t *testing.T) {
+	photo := entity.NewPhoto(false)
+	if err := photo.Save(); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() {
+		entity.UnscopedDb().Unscoped().Delete(&entity.File{}, "photo_id = ?", photo.ID)
+		entity.UnscopedDb().Unscoped().Delete(&entity.Details{}, "photo_id = ?", photo.ID)
+		entity.UnscopedDb().Unscoped().Delete(photo)
+	})
+	file := entity.File{PhotoID: photo.ID, PhotoUID: photo.PhotoUID, FileName: "selection-control.yml", FileType: "yml", FileRoot: entity.RootOriginals, FileHash: "ce1a3d09c704ab1c7519c0edee4a835f661c3aa1"}
+	if err := file.Create(); err != nil {
+		t.Fatal(err)
+	}
+	selection := form.Selection{Photos: []string{photo.PhotoUID}}
+	options := DownloadSelection(true, true, true)
+	internal, err := SelectedFiles(selection, options)
+	assert.NoError(t, err)
+	assert.Len(t, internal, 1)
+	nonDownload := options
+	nonDownload.Download = false
+	unchanged, err := SelectedFilesForSession(selection, nonDownload, nil)
+	assert.NoError(t, err)
+	assert.Len(t, unchanged, 1)
+	anonymous, err := SelectedFilesForSession(selection, options, nil)
+	assert.NoError(t, err)
+	assert.Empty(t, anonymous)
+	reader, err := SelectedFilesForSession(selection, options, aclSession("alice"))
+	assert.NoError(t, err)
+	assert.Len(t, reader, 1)
+	_, err = SelectedFilesForSession(form.Selection{}, options, aclSession("alice"))
+	assert.Error(t, err)
 }

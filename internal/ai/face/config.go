@@ -17,9 +17,9 @@ const (
 	// CollisionDistDefault is the default floor below which a recorded collision radius is discarded.
 	CollisionDistDefault = 0.05
 	// MatchMarginDefault is the default distance by which the nearest cluster has to beat the
-	// runner-up for the marker to be given to it. It shares CollisionDistDefault's value without
-	// being derived from it, the two measuring different quantities.
-	MatchMarginDefault = 0.05
+	// runner-up for the marker to be given to it. Defense in depth rather than a recall lever: it
+	// decides two markers on a labeled library, so it is kept below what the ambiguity rule earns.
+	MatchMarginDefault = 0.01
 	// NoMatchMargin assigns a marker to its nearest cluster however narrowly that one wins,
 	// following the convention the score bars use for "switched off".
 	NoMatchMargin = -1.0
@@ -53,6 +53,14 @@ const (
 	// ClusterCoreDefault is the default number of faces required to seed a cluster core. DBSCAN
 	// counts the point itself, so a person with fewer clusterable faces forms no cluster at all.
 	ClusterCoreDefault = 5
+	// ClusterCoreRetryDefault is the core the second clustering pass uses, over what matching left
+	// unclustered. A flat number rather than one derived from the first pass: only 5 to 4 has been
+	// measured, and it is the floor those measurements support at any core above it.
+	ClusterCoreRetryDefault = 4
+	// ClusterPercentileDefault is the default share of a cluster's member distances its radius has
+	// to cover. Taking the maximum instead lets one loose member decide how far a whole cluster
+	// reaches, with only the clamp to stop it; under twenty members the two are the same value.
+	ClusterPercentileDefault = 95
 )
 
 // InterOpThreads is how many threads an ONNX session may use to run graph nodes in
@@ -103,6 +111,10 @@ var (
 	// only when the first finds nothing. Crowd photographs reduce every face below SizeThreshold,
 	// so without it a frame full of people is indexed as containing none.
 	RetrySizeThreshold = 10
+	// RetrySizeThresholdLimited is the second-pass floor where the thumbnail cache cannot supply a
+	// crop much wider than the detection thumbnail, so a smaller face has no rendition to be
+	// embedded from and is detected only to stay unrecognizable.
+	RetrySizeThresholdLimited = 20
 	// MinSizeThreshold is the smallest configurable face size. It is where the detectors stop
 	// being trained rather than a policy choice: YuNet states a lower bound of about ten pixels,
 	// so a smaller setting would ask for faces no model in the registry can find.
@@ -125,6 +137,14 @@ var (
 	MatchMargin = MatchMarginDefault
 	// ClusterCore is the minimum number of faces required to seed a cluster core.
 	ClusterCore = ClusterCoreDefault
+	// ManualClusterCore is the number of manually assigned faces required to form a cluster, and so
+	// also the fewest that can be merged. Lower than ClusterCore because each already asserts an
+	// identity: one is a labeled example and two are a pair, neither of which is a grouping.
+	ManualClusterCore = 3
+	// ClusterPercentile is the share of a cluster's member distances its stored radius covers, so
+	// that no single outlier decides how far the cluster reaches. Configurable for calibration:
+	// 100 restores the maximum, and the two disagree from well below the usual link distances.
+	ClusterPercentile = ClusterPercentileDefault
 	// SampleThreshold is the number of faces required before automatic clustering begins.
 	SampleThreshold = 2 * ClusterCore
 	// Epsilon is the numeric tolerance used during cluster comparisons.

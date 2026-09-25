@@ -7,8 +7,10 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // TestEnsureCredentials_MariaDB exercises the direct mysql driver path using the
@@ -94,7 +96,7 @@ func TestEnsureCredentials_DriverNormalization(t *testing.T) {
 	// Postgres in weird case should hit the explicit rejection path.
 	DatabaseDriver = "PostGreS"
 	_, _, err := EnsureCredentials(ctx, c, "11111111-1111-4111-8111-111111111111", "pp-node", false)
-	assert.Error(t, err)
+	assert.ErrorIs(t, err, ErrUnsupportedDriver)
 	assert.Equal(t, "PostGreS", DatabaseDriver)
 
 	// Unknown driver should return the unsupported error including normalized name.
@@ -102,6 +104,33 @@ func TestEnsureCredentials_DriverNormalization(t *testing.T) {
 	_, _, err = EnsureCredentials(ctx, c, "11111111-1111-4111-8111-111111111111", "pp-node", false)
 	if assert.Error(t, err) {
 		assert.Contains(t, err.Error(), "unsupported auto-provisioning database driver: tidb")
+		assert.ErrorIs(t, err, ErrUnsupportedDriver)
 	}
 	assert.Equal(t, "TiDB", DatabaseDriver)
+}
+
+// TestDropCredentials_Repeated checks repeated cleanup of absent database credentials.
+func TestDropCredentials_Repeated(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	defer cancel()
+
+	db, err := GetDB(ctx)
+	if err != nil {
+		t.Skip("provisioning database is unavailable")
+	}
+
+	dbName := "test_d" + rnd.GenerateUID('c')
+	dbUser := "test_u" + rnd.GenerateUID('c')
+
+	// Check absence on the same provisioning connection used by cleanup.
+	var count int
+	require.NoError(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM information_schema.schemata WHERE schema_name = ?", dbName).Scan(&count))
+	require.Zero(t, count, "test database name must be unused")
+	require.NoError(t, db.QueryRowContext(ctx, "SELECT COUNT(*) FROM mysql.user WHERE User = ?", dbUser).Scan(&count))
+	require.Zero(t, count, "test account name must be unused")
+
+	assert.NoError(t, DropCredentials(ctx, dbName, dbUser), "absent credentials must drop cleanly")
+	assert.NoError(t, DropCredentials(ctx, dbName, dbUser), "a repeated drop must stay clean")
+	assert.NoError(t, DropCredentials(ctx, "", dbUser), "an absent user alone must drop cleanly")
+	assert.NoError(t, DropCredentials(ctx, dbName, ""), "an absent database alone must drop cleanly")
 }

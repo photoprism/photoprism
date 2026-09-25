@@ -1,6 +1,7 @@
 package query
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"strings"
@@ -8,6 +9,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -44,22 +46,34 @@ func PersonFilter(s string) (subjUID, nameLike string) {
 // LikeCond returns a LIKE condition for the given column that honors the escaping PersonFilter
 // applies. SQLite has no default escape character, so a pattern built without this matches nothing
 // there while matching correctly on MariaDB - the same command answering differently per driver.
+//
+// The column is part of the statement rather than a bound parameter, so it is limited to a plain
+// identifier with an optional table alias. Anything else yields a condition that binds the
+// argument and matches nothing, which keeps the caller's placeholder count right while making
+// the mistake visible in the log rather than in the statement.
 func LikeCond(col string) string {
+	if clean.SqlColumn(col) == "" {
+		log.Errorf("query: invalid column %s in like condition", clean.Log(col))
+		return fmt.Sprintf("1 = 0 AND '' LIKE ? ESCAPE '%s'", LikeEscape)
+	}
+
 	return fmt.Sprintf("%s LIKE ? ESCAPE '%s'", col, LikeEscape)
 }
 
 // SubjectReport describes one person, with the clusters, files and photos their markers support.
 //
-// Counted rather than read from the row: Faces.Start does not call UpdateSubjectCounts, so after a
-// CLI-only reset the stored numbers sit at zero while the markers are assigned. Clusters is stored
-// nowhere and is the fragmentation a sweep reads - a person holds several by design.
+// Counted rather than read from the row: the stored numbers are refreshed by whatever last moved a
+// marker, so a report has to state what the markers say now rather than when they were counted.
+// Clusters is stored nowhere and is the fragmentation a sweep reads - a person holds several by design.
 type SubjectReport struct {
 	SubjUID      string
 	SubjName     string
 	SubjSrc      string
+	SubjBirthday *time.Time
 	SubjFavorite bool
 	Verified     bool
 	SubjHidden   bool
+	SubjPrivate  bool
 	FileCount    int
 	PhotoCount   int
 	Markers      int
@@ -100,7 +114,8 @@ func SubjectReports(person string, count, offset int, live bool) (result []Subje
 			entity.File{}.TableName(), entity.Photo{}.TableName(), entity.Marker{}.TableName())
 	}
 
-	stmt := fmt.Sprintf(`SELECT s.subj_uid, s.subj_name, s.subj_src, s.subj_favorite, s.verified, s.subj_hidden, s.created_at, %s,
+	stmt := fmt.Sprintf(`SELECT s.subj_uid, s.subj_name, s.subj_src, s.subj_birthday, s.subj_favorite,
+		s.verified, s.subj_hidden, s.subj_private, s.created_at, %s,
 		COALESCE(n.markers, 0) AS markers, COALESCE(fc.clusters, 0) AS clusters
 		FROM %s s
 		%s
@@ -142,13 +157,32 @@ type FaceReport struct {
 	CollisionRadius float64
 	Markers         int
 	MatchedAt       *time.Time
+
+	// EmbedDetail is the mean share of the crop their sources supplied, over the members that
+	// recorded one, and -1 where none did. Measured members only: the column is three-state, so an
+	// average taken over the sentinels as well produces a plausible number that means nothing.
+	EmbedDetail float64
+
+	// EmbedModel names the space the centroid lives in and EmbeddingDims its width, 0 where the row
+	// holds no vector and InvalidJSON where what is stored cannot be parsed.
+	EmbedModel    string
+	EmbeddingDims int
+}
+
+// faceReportRow carries the stored vector, which is read for its width and then dropped, and the
+// mean detail as the database returns it - NULL where the cluster holds no measured member.
+type faceReportRow struct {
+	FaceReport
+	EmbeddingJSON  json.RawMessage
+	EmbedDetailAvg sql.NullFloat64
 }
 
 // FaceReports returns clusters ordered by the number of samples they were built from.
 func FaceReports(person string, count, offset int) (result []FaceReport, err error) {
 	where := ""
 
-	args := []any{entity.MarkerFace}
+	// Seeded by the member predicate below rather than here, so the marker type is bound once.
+	var args []any
 
 	if subjUID, nameLike := PersonFilter(person); subjUID != "" {
 		where = "WHERE f.subj_uid = ?"
@@ -158,47 +192,108 @@ func FaceReports(person string, count, offset int) (result []FaceReport, err err
 		args = append(args, nameLike)
 	}
 
+	// The set a cluster's radius is measured over, so the reported count and the stored radius answer
+	// for the same markers.
+	memberCond, memberArgs := entity.FaceMemberCond()
+	args = append(memberArgs, args...)
+
 	stmt := fmt.Sprintf(`SELECT f.id, f.subj_uid, COALESCE(s.subj_name, '') AS subj_name, f.face_src, f.face_kind,
 		f.samples, f.sample_radius, f.collisions, f.collision_radius, f.matched_at,
-		COALESCE(n.markers, 0) AS markers
+		f.embed_model, f.embedding_json,
+		COALESCE(n.markers, 0) AS markers, n.embed_detail_avg
 		FROM %s f
 		LEFT JOIN %s s ON s.subj_uid = f.subj_uid
 		LEFT JOIN (
-			SELECT face_id, COUNT(*) AS markers FROM %s
-			WHERE marker_type = ? AND marker_invalid = 0 AND face_id <> ''
+			SELECT face_id, COUNT(*) AS markers,
+				AVG(CASE WHEN embed_detail >= 1 THEN embed_detail END) AS embed_detail_avg FROM %s
+			WHERE %s
 			GROUP BY face_id
 		) n ON n.face_id = f.id
 		%s
 		ORDER BY f.samples DESC, f.id
 		LIMIT ? OFFSET ?`,
-		entity.Face{}.TableName(), entity.Subject{}.TableName(), entity.Marker{}.TableName(), where)
+		entity.Face{}.TableName(), entity.Subject{}.TableName(), entity.Marker{}.TableName(), memberCond, where)
 
-	err = UnscopedDb().Raw(stmt, append(args, count, offset)...).Scan(&result).Error
+	var rows []faceReportRow
 
-	return result, err
+	if err = UnscopedDb().Raw(stmt, append(args, count, offset)...).Scan(&rows).Error; err != nil {
+		return result, err
+	}
+
+	result = make([]FaceReport, 0, len(rows))
+
+	for i := range rows {
+		row := rows[i].FaceReport
+		row.EmbeddingDims = faceEmbeddingDims(rows[i].EmbeddingJSON)
+		row.EmbedDetail = -1
+
+		if rows[i].EmbedDetailAvg.Valid {
+			row.EmbedDetail = rows[i].EmbedDetailAvg.Float64
+		}
+		result = append(result, row)
+	}
+
+	return result, nil
+}
+
+// faceEmbeddingDims returns the width of a cluster's stored centroid.
+//
+// Separate from embeddingDims because a face holds one vector where a marker holds a slice of them,
+// so the two decode differently and reading a face with the marker helper reports a width of one.
+func faceEmbeddingDims(b json.RawMessage) int {
+	if len(b) == 0 {
+		return 0
+	}
+
+	var embedding face.Embedding
+
+	if err := json.Unmarshal(b, &embedding); err != nil {
+		return InvalidJSON
+	}
+
+	return len(embedding)
 }
 
 // MarkerReport describes one face marker. The vectors themselves are never reported - they are most
 // of the row and none of what a diagnosis reads - but their width is, because a marker without
 // embeddings cannot cluster and a marker without landmarks cannot be re-cropped.
 type MarkerReport struct {
-	MarkerUID     string
-	FileUID       string
-	FaceID        string
-	SubjUID       string
+	MarkerUID string
+	FileUID   string
+	FaceID    string
+	SubjUID   string
+	// SubjSrc is how the name was assigned and MarkerSrc where the marker itself came from. They are
+	// independent: an XMP region a person then renamed is SrcXmp with a manual subject.
 	SubjSrc       string
+	MarkerSrc     string
 	MarkerName    string
-	Size          int
 	Score         int
 	FaceDist      float64
 	MarkerInvalid bool
 	MatchedAt     *time.Time
+
+	// W is the marker area's width as a fraction of the frame, so how prominent the face is can be
+	// read without naming a rendition. The stored size names one, Fit720 pixels, and reads as source
+	// pixels to everyone; it is left out for that reason.
+	W float32
+	// ThumbSize is the extent in pixels of the image the embedding was sampled from, which says
+	// how much detail the vector rests on. Below 1 where it was never recorded.
+	ThumbSize int
+	// EmbedDetail is the share of the crop that extent supplied, which is what tells a vector drawn
+	// from real pixels from one interpolated up to the same size. Three-state, see the column.
+	EmbedDetail int
 
 	// EmbeddingDims is the vector width the marker holds, 0 when it holds none, and
 	// InvalidJSON when what is stored cannot be parsed.
 	EmbeddingDims int
 	// Landmarks is the number of landmark areas, with the same two conventions.
 	Landmarks int
+
+	// EmbedModel and DetectModel name the models the vector and the crop came from, since a distance
+	// only means something within one embedding space and a library holds more than one. Empty for
+	// rows written before the columns existed.
+	EmbedModel  string
+	DetectModel string
 }
 
 // InvalidJSON marks a stored vector that could not be parsed, which is not the same as an absent
@@ -222,7 +317,7 @@ type MarkerReportFilter struct {
 func MarkerReports(f MarkerReportFilter) (result []MarkerReport, err error) {
 	stmt := UnscopedDb().
 		Table(entity.Marker{}.TableName()).
-		Select("marker_uid, file_uid, face_id, subj_uid, subj_src, marker_name, size, score, face_dist, marker_invalid, matched_at, embeddings_json, landmarks_json").
+		Select("marker_uid, file_uid, face_id, subj_uid, subj_src, marker_src, marker_name, w, thumb_size, embed_detail, score, face_dist, marker_invalid, matched_at, embed_model, detect_model, embeddings_json, landmarks_json").
 		Where("marker_type = ?", entity.MarkerFace)
 
 	if subjUID, nameLike := PersonFilter(f.Person); subjUID != "" {

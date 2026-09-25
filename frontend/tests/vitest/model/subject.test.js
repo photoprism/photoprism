@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import "../fixtures";
-import { Subject, BatchSize, MaxLength } from "model/subject";
+import { Subject, BatchSize, MaxLength, BirthYearMin } from "model/subject";
 
 describe("model/subject", () => {
   let originalBatchSize;
@@ -273,5 +273,100 @@ describe("model/subject", () => {
   it("should get model name", () => {
     const result = Subject.getModelName();
     expect(result).toBe("Person");
+  });
+
+  describe("birthday", () => {
+    const withTimezone = (tz, fn) => {
+      const before = process.env.TZ;
+      process.env.TZ = tz;
+      try {
+        fn();
+      } finally {
+        // Deleted rather than reassigned: an unset TZ reads back as undefined, and writing that
+        // stringifies to "undefined" and leaks a bogus zone into every later test in the worker.
+        if (before === undefined) {
+          delete process.env.TZ;
+        } else {
+          process.env.TZ = before;
+        }
+      }
+    };
+
+    it("getBirthday() reads the stored day, not the stored instant", () => {
+      // Run west of Greenwich, where parsing "1990-08-01T00:00:00Z" as an instant lands on July 31.
+      withTimezone("America/New_York", () => {
+        expect(new Date("1990-08-01T00:00:00Z").getDate()).toBe(31);
+
+        const subject = new Subject({ UID: "sbj1", Birthday: "1990-08-01T00:00:00Z" });
+        const born = subject.getBirthday();
+
+        expect(born.getFullYear()).toBe(1990);
+        expect(born.getMonth()).toBe(7);
+        expect(born.getDate()).toBe(1);
+      });
+    });
+
+    it("BirthYearMin mirrors the backend bound", () => {
+      // The picker's lower bound and the API's rejection have to name the same year, or the dialog
+      // offers a date that saving refuses.
+      expect(BirthYearMin).toBe(1800);
+    });
+
+    it("getBirthday() reads the day the instant stores, whatever offset it arrives in", () => {
+      // A driver configured with a non-UTC loc renders the same instant with an offset. The stored
+      // day is what the check reading it compares, so the rendering must not be able to move it.
+      withTimezone("America/New_York", () => {
+        const utc = new Subject({ UID: "sbj1", Birthday: "1990-08-01T00:00:00Z" });
+        const offset = new Subject({ UID: "sbj2", Birthday: "1990-07-31T20:00:00-04:00" });
+
+        expect(offset.getBirthday()).toEqual(utc.getBirthday());
+        expect(offset.getBirthday().getDate()).toBe(1);
+      });
+    });
+
+    it("getBirthday() returns null when the field is unset or unusable", () => {
+      expect(new Subject({ UID: "sbj1" }).getBirthday()).toBeNull();
+      expect(new Subject({ UID: "sbj1", Birthday: null }).getBirthday()).toBeNull();
+      expect(new Subject({ UID: "sbj1", Birthday: "" }).getBirthday()).toBeNull();
+      expect(new Subject({ UID: "sbj1", Birthday: "not a date" }).getBirthday()).toBeNull();
+    });
+
+    it("setBirthday() stores the picked day at UTC midnight", () => {
+      // East of Greenwich, where toISOString() of a local midnight would send the day before.
+      withTimezone("Europe/Berlin", () => {
+        const subject = new Subject({ UID: "sbj1" });
+        const picked = new Date(1990, 7, 1);
+
+        expect(picked.toISOString().slice(0, 10)).toBe("1990-07-31");
+
+        subject.setBirthday(picked);
+        expect(subject.Birthday).toBe("1990-08-01T00:00:00Z");
+      });
+    });
+
+    it("setBirthday() clears the field for anything that is not a date", () => {
+      const subject = new Subject({ UID: "sbj1", Birthday: "1990-08-01T00:00:00Z" });
+
+      subject.setBirthday(null);
+      expect(subject.Birthday).toBeNull();
+
+      subject.setBirthday("1990-08-01");
+      expect(subject.Birthday).toBeNull();
+
+      subject.setBirthday(new Date("nope"));
+      expect(subject.Birthday).toBeNull();
+    });
+
+    it("only ships the birthday when it changed", () => {
+      const subject = new Subject({ UID: "sbj1", Name: "Alice", Birthday: "1990-08-01T00:00:00Z" });
+
+      expect(subject.getValues(true)).toEqual({});
+
+      subject.setBirthday(new Date(1991, 8, 2));
+      expect(subject.getValues(true)).toEqual({ Birthday: "1991-09-02T00:00:00Z" });
+
+      subject.setBirthday(null);
+      expect(subject.getValues(true)).toEqual({ Birthday: null });
+    });
   });
 });

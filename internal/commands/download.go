@@ -152,7 +152,7 @@ func downloadAction(ctx *cli.Context) error {
 
 	defer func() {
 		if rmErr := os.RemoveAll(downloadPath); rmErr != nil {
-			log.Debugf("download: %s (remove temporary download path)", clean.Error(rmErr))
+			log.Debugf("download: %s (remove temporary download path)", clean.ErrorFull(rmErr))
 		}
 	}()
 
@@ -207,12 +207,12 @@ func downloadAction(ctx *cli.Context) error {
 	for _, raw := range inputURLs {
 		u, perr := url.Parse(strings.TrimSpace(raw))
 		if perr != nil {
-			log.Errorf("invalid URL: %s", clean.Log(raw))
+			log.Errorf("invalid URL: %s", clean.LogUri(raw))
 			failures++
 			continue
 		}
 		if u.Scheme != scheme.Http && u.Scheme != scheme.Https {
-			log.Errorf("invalid URL scheme %s: %s", clean.Log(u.Scheme), clean.Log(raw))
+			log.Errorf("invalid URL scheme %s: %s", clean.Log(u.Scheme), clean.LogUri(raw))
 			failures++
 			continue
 		}
@@ -222,7 +222,7 @@ func downloadAction(ctx *cli.Context) error {
 
 		switch mt {
 		case media.Image, media.Vector, media.Raw, media.Document, media.Audio:
-			log.Infof("downloading %s from %s", mt, clean.Log(u.String()))
+			log.Infof("downloading %s from %s", mt, clean.LogUri(u.String()))
 			if dlName := clean.DlName(fs.BasePrefix(u.Path, true)); dlName != "" {
 				downloadFile = dlName + ext
 			} else {
@@ -230,13 +230,13 @@ func downloadAction(ctx *cli.Context) error {
 			}
 			downloadFilePath := filepath.Join(downloadPath, downloadFile)
 			if downloadErr := fs.Download(downloadFilePath, u.String()); downloadErr != nil {
-				log.Errorf("download failed: %v", downloadErr)
+				log.Errorf("download failed: %s", clean.ErrorFull(downloadErr))
 				failures++
 				continue
 			}
 		default:
 			mt = media.Video
-			log.Infof("downloading %s from %s", mt, clean.Log(u.String()))
+			log.Infof("downloading %s from %s", mt, clean.LogUri(u.String()))
 
 			opt := dl.Options{
 				SortingFormat: sortingFormat,
@@ -253,7 +253,7 @@ func downloadAction(ctx *cli.Context) error {
 			result, metaErr := dl.NewMetadata(context.Background(), u.String(), opt)
 
 			if metaErr != nil {
-				log.Errorf("metadata failed: %v", metaErr)
+				log.Errorf("metadata failed: %s", clean.ErrorFull(metaErr))
 				if hint, ok := missingFormatsHint(metaErr); ok {
 					log.Info(hint)
 				}
@@ -262,7 +262,7 @@ func downloadAction(ctx *cli.Context) error {
 			}
 
 			if matched := ffmpeg.Exclude().Match(result.Info.VCodec, result.Info.Ext, result.Info.Container); matched != "" {
-				log.Warnf("skipping %s because format %s is on the FFmpeg exclude list", clean.Log(u.String()), clean.Log(matched))
+				log.Warnf("skipping %s because format %s is on the FFmpeg exclude list", clean.LogUri(u.String()), clean.Log(matched))
 				failures++
 				continue
 			}
@@ -287,7 +287,7 @@ func downloadAction(ctx *cli.Context) error {
 				// Stream to stdout
 				downloadResult, dlErr := dl.Download(context.Background(), u.String(), opt, "best")
 				if dlErr != nil {
-					log.Errorf("download failed: %v", dlErr)
+					log.Errorf("download failed: %s", clean.ErrorFull(dlErr))
 					failures++
 					continue
 				}
@@ -295,9 +295,9 @@ func downloadAction(ctx *cli.Context) error {
 					f, ferr := os.Create(downloadFilePath) //nolint:gosec // download target path chosen by user
 					if ferr != nil {
 						if closeErr := downloadResult.Close(); closeErr != nil {
-							log.Debugf("download: %s (close stream after create failure)", clean.Error(closeErr))
+							log.Debugf("download: %s (close stream after create failure)", clean.ErrorFull(closeErr))
 						}
-						log.Errorf("create file failed: %v", ferr)
+						log.Errorf("create file failed: %s", clean.ErrorFull(ferr))
 						failures++
 						return
 					}
@@ -305,17 +305,17 @@ func downloadAction(ctx *cli.Context) error {
 					closeFileErr := f.Close()
 					closeDownloadErr := downloadResult.Close()
 					if copyErr != nil {
-						log.Errorf("write file failed: %v", copyErr)
+						log.Errorf("write file failed: %s", clean.ErrorFull(copyErr))
 						failures++
 						return
 					}
 					if closeFileErr != nil {
-						log.Errorf("close file failed: %v", closeFileErr)
+						log.Errorf("close file failed: %s", clean.ErrorFull(closeFileErr))
 						failures++
 						return
 					}
 					if closeDownloadErr != nil {
-						log.Errorf("close download stream failed: %v", closeDownloadErr)
+						log.Errorf("close download stream failed: %s", clean.ErrorFull(closeDownloadErr))
 						failures++
 						return
 					}
@@ -324,7 +324,7 @@ func downloadAction(ctx *cli.Context) error {
 				// Remux and embed metadata (pipe policy: always)
 				remuxOpt := dl.RemuxOptionsFromInfo(conf.FFmpegBin(), fs.VideoMp4, result.Info, u.String())
 				if remuxErr := ffmpeg.RemuxFile(downloadFilePath, "", remuxOpt); remuxErr != nil {
-					log.Errorf("remux failed: %v", remuxErr)
+					log.Errorf("remux failed: %s", clean.ErrorFull(remuxErr))
 					failures++
 					continue
 				}
@@ -344,7 +344,7 @@ func downloadAction(ctx *cli.Context) error {
 				})
 
 				if dlErr != nil {
-					log.Errorf("download failed: %v", dlErr)
+					log.Errorf("download failed: %s", clean.ErrorFull(dlErr))
 					// even on error, any completed files returned will be imported
 					if len(files) == 0 {
 						failures++
@@ -361,7 +361,7 @@ func downloadAction(ctx *cli.Context) error {
 						}
 						remuxOpt := dl.RemuxOptionsFromInfo(conf.FFmpegBin(), fs.VideoMp4, result.Info, u.String())
 						if remuxErr := ffmpeg.RemuxFile(fp, "", remuxOpt); remuxErr != nil {
-							log.Errorf("remux failed: %v", remuxErr)
+							log.Errorf("remux failed: %s", clean.ErrorFull(remuxErr))
 							failures++
 							continue
 						}

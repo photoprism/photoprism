@@ -283,11 +283,84 @@ func CreateTestFolderCover(t *testing.T, uid, fileName string) []byte {
 }
 
 // CreateTestThumb renders a thumbnail into the cache, as indexing would, so tests can reach
-// the paths that serve pre-cached sizes without on-demand rendering.
+// the paths that serve pre-cached sizes without on-demand rendering. The rendition is removed
+// afterwards, since its name depends on the hash and size alone and a later test would be
+// served this one instead of rendering its own.
 func CreateTestThumb(t *testing.T, fileName, fileHash string, size thumb.Size) {
-	if _, err := size.FromFile(fileName, fileHash, get.Config().ThumbCachePath(), 0); err != nil {
+	thumbName, err := size.FromFile(fileName, fileHash, get.Config().ThumbCachePath(), 0)
+
+	if err != nil {
 		t.Fatal(err)
 	}
+
+	t.Cleanup(func() {
+		_ = os.Remove(thumbName)
+	})
+}
+
+// WriteTestThumb puts recognizable content in the cache under the thumbnail name of a size, so a
+// test can tell which cached size a response was served from rather than only that it got a JPEG.
+func WriteTestThumb(t *testing.T, fileHash string, size thumb.Size) []byte {
+	thumbName, err := size.FileName(fileHash, get.Config().ThumbCachePath())
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	data := NewTestJpeg(t, 64, 48)
+
+	if err = os.WriteFile(thumbName, data, fs.ModeFile); err != nil {
+		t.Fatal(err)
+	}
+
+	t.Cleanup(func() {
+		_ = os.Remove(thumbName)
+	})
+
+	return data
+}
+
+// SetTestUploadAllow restricts the upload extensions and restores the previous value afterwards.
+// Pass an empty string for the default, which accepts every supported format.
+func SetTestUploadAllow(t *testing.T, allow string) {
+	opt := get.Config().Options()
+	orig := opt.UploadAllow
+
+	t.Cleanup(func() {
+		opt.UploadAllow = orig
+	})
+
+	opt.UploadAllow = allow
+}
+
+// SetTestThumbUncached toggles on-demand rendering and restores the previous value afterwards.
+// The config is process-wide, so a subtest that leaves it enabled decides for the rest of the run.
+func SetTestThumbUncached(t *testing.T, enabled bool) {
+	opt := get.Config().Options()
+	orig := opt.ThumbUncached
+
+	t.Cleanup(func() {
+		opt.ThumbUncached = orig
+	})
+
+	opt.ThumbUncached = enabled
+}
+
+// SetTestThumbSizes applies the size limits of a stock install and restores them afterwards. The
+// test config leaves both at the minimum, where the pre-generated and the on-demand limit coincide
+// and a request cannot tell which of the two resolved it.
+func SetTestThumbSizes(t *testing.T, precached, onDemand int) {
+	opt := get.Config().Options()
+	origSize, origUncached := opt.ThumbSize, opt.ThumbSizeUncached
+	origCached, origOnDemand := thumb.SizeCached, thumb.SizeOnDemand
+
+	t.Cleanup(func() {
+		opt.ThumbSize, opt.ThumbSizeUncached = origSize, origUncached
+		thumb.SizeCached, thumb.SizeOnDemand = origCached, origOnDemand
+	})
+
+	opt.ThumbSize, opt.ThumbSizeUncached = precached, onDemand
+	thumb.SizeCached, thumb.SizeOnDemand = precached, onDemand
 }
 
 // SetTestFileBounds sets the indexed dimensions of a file fixture and restores them afterwards.

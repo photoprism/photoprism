@@ -5,7 +5,7 @@ set -euo pipefail
 # ONNX_DEFAULT_VERSION must match the C API headers vendored by the
 # "github.com/yalue/onnxruntime_go" module, as the binding requests that exact
 # API version and fails to initialize against an older shared library.
-ONNX_DEFAULT_VERSION=1.29.0
+ONNX_DEFAULT_VERSION=1.29.1
 ONNX_VERSION=${ONNX_VERSION:-${ONNX_DEFAULT_VERSION}}
 TODAY=$(date -u +%Y%m%d)
 TMPDIR=${TMPDIR:-/tmp}
@@ -49,7 +49,10 @@ fi
 
 DESTDIR=$(realpath "${DESTDIR_ARG}")
 
-if [[ $(id -u) != 0 ]] && { [[ "${DESTDIR}" == "/usr" ]] || [[ "${DESTDIR}" == "/usr/local" ]]; }; then
+# Test the destination rather than compare it against a list of system directories, so that an
+# install into a root-owned prefix such as the package layout reports the reason it cannot write
+# instead of failing later in the extract.
+if [[ $(id -u) != 0 ]] && [[ ! -w "${DESTDIR}" ]]; then
   echo "Error: Run ${0##*/} as root to install in '${DESTDIR}'." >&2
   exit 1
 fi
@@ -75,23 +78,25 @@ case "${SYSTEM}" in
           else
             archive="onnxruntime-linux-x64-gpu_${gpu_variant}-${ONNX_VERSION}.tgz"
             if [[ "${gpu_variant}" == "cuda13" ]]; then
-              sha="844c64acfc43ab9423215c26493055ea229268e28283146cc644ecef0bdae048"
+              sha="0e948660440e1e53ce555f2be3d03fd097d006fd7d52255eda59280e059ad0df"
             else
-              sha="4ca594a0da83927befbd73fe020d7f569be151d70bb4fe9741ad405f4882e2ad"
+              sha="b404524d9e9f0b4f6f309cf5e5fa407ee9bfafd193e433ce6f2be05fddec7692"
             fi
           fi
         else
           archive="onnxruntime-linux-x64-${ONNX_VERSION}.tgz"
-          sha="c3fddc4f139a045b0c4902c57410f0694f1c2fdf9b6939fbe38b1aeae7cd14ba"
+          sha="a28d7d65acafc06fb0f416cb409998773f5314c7eebf77caf907812831cdfc67"
         fi
         ;;
       arm64|ARM64|aarch64)
         if [[ -n "${gpu_variant}" ]]; then
-          echo "Error: ONNX Runtime GPU/CUDA builds are only available for Linux x64." >&2
-          exit 1
+          # Install the CPU build rather than nothing: GPU builds exist for Linux x64 only, and
+          # a host that asked for one still needs a runtime.
+          echo "Warning: ONNX Runtime GPU/CUDA builds are only available for Linux x64; installing the CPU build." >&2
+          gpu_variant=""
         fi
         archive="onnxruntime-linux-aarch64-${ONNX_VERSION}.tgz"
-        sha="e1799098ebc054b370f6176a450f158720f297818c613e5dc99b92e2ec82346f"
+        sha="e53fc0cfb72e505031e06e13c651c1cb78424f39f15d304f47a3d5b907bcf9f2"
         ;;
       *)
         echo "Warning: ONNX Runtime is not provided for Linux/${ARCH}; skipping install." >&2
@@ -101,13 +106,13 @@ case "${SYSTEM}" in
     ;;
   Darwin)
     if [[ -n "${gpu_variant}" ]]; then
-      echo "Error: ONNX Runtime GPU/CUDA builds are only available for Linux x64." >&2
-      exit 1
+      echo "Warning: ONNX Runtime GPU/CUDA builds are only available for Linux x64; installing the CPU build." >&2
+      gpu_variant=""
     fi
     case "${ARCH}" in
       arm64|ARM64|aarch64)
         archive="onnxruntime-osx-arm64-${ONNX_VERSION}.tgz"
-        sha="d0706fc34f315d8c88639d0a8c81f2e09e815f282cabed3493c06a054352cf92"
+        sha="c845ad2f4340669dc454c0ae092ccef7270d5bf858281890aef3c9bbf7da41e9"
         ;;
       x86_64|x86-64)
         echo "Warning: ONNX Runtime is not provided for macOS/${ARCH} in v${ONNX_VERSION}; skipping install." >&2
@@ -131,8 +136,8 @@ if [[ "${ONNX_VERSION}" != "${ONNX_DEFAULT_VERSION}" ]]; then
   sha=""
 fi
 
-# Allow an explicit checksum override (e.g. when installing a non-default version
-# or a GPU variant whose checksum is not pinned in this script).
+# Allow an explicit checksum override, which is what installing a version other than
+# the default needs, since the pins above describe that version alone.
 sha="${ONNX_SHA256:-${sha}}"
 
 verify_sha() {

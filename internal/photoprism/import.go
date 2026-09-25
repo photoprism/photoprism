@@ -8,6 +8,7 @@ import (
 	"runtime"
 	"runtime/debug"
 	"sort"
+	"strings"
 	"sync"
 
 	"github.com/karrick/godirwalk"
@@ -87,7 +88,21 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 		return done
 	}
 
+	// The same applies once it has completed: its target is recorded rather than loaded here.
+	imp.conf.CheckFaceModelSuperseded()
+
 	importPath := opt.Path
+
+	// Folder records name the configured import namespace, so a walk of that path or of a
+	// subfolder is recorded relative to it. A walk rooted elsewhere, such as a per-session upload
+	// directory, has no place in that namespace and records none.
+	folderBase := ""
+
+	if base := imp.conf.ImportPath(); base != "" {
+		if rel, relErr := filepath.Rel(base, importPath); relErr == nil && rel != ".." && !strings.HasPrefix(rel, ".."+string(filepath.Separator)) {
+			folderBase = base
+		}
+	}
 
 	// Check if the import folder exists.
 	if !fs.PathExists(importPath) {
@@ -140,7 +155,7 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 	}
 
 	ignore.Log = func(fileName string) {
-		log.Infof(`import: ignored "%s"`, fs.RelName(fileName, importPath))
+		log.Infof(`import: ignored "%s"`, clean.Log(fs.RelName(fileName, importPath)))
 	}
 
 	err := godirwalk.Walk(importPath, &godirwalk.Options{
@@ -176,10 +191,12 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 					directories = append(directories, fileName)
 				}
 
-				folder := entity.NewFolder(entity.RootImport, fs.RelName(fileName, imp.conf.ImportPath()), fs.ModTime(fileName))
+				if folderBase != "" {
+					folder := entity.NewFolder(entity.RootImport, fs.RelName(fileName, folderBase), fs.ModTime(fileName))
 
-				if err := folder.Create(); err == nil {
-					log.Infof("import: added folder /%s", folder.Path)
+					if err := folder.Create(); err == nil && folder.Path != "" {
+						log.Infof("import: added folder /%s", clean.Log(folder.Path))
+					}
 				}
 
 				return result
@@ -326,6 +343,34 @@ func (imp *Import) Cancel() {
 	mutex.IndexWorker.Cancel()
 }
 
+// StoredCopyOf returns the indexed file that already holds the same content, if there is one. The
+// answer comes from the file rather than from the row, since a caller removes its source on the
+// strength of it.
+func StoredCopyOf(mediaFile *MediaFile) *entity.File {
+	if mediaFile == nil {
+		return nil
+	}
+
+	fileHash := mediaFile.Hash()
+
+	if fileHash == "" {
+		return nil
+	}
+
+	stored, err := entity.FirstFileByHash(fileHash)
+
+	if err != nil {
+		return nil
+	}
+
+	// A name that holds nothing hashes to the empty string, so this covers an absent file too.
+	if storedName := FileName(stored.FileRoot, stored.FileName); fs.Hash(storedName) != fileHash {
+		return nil
+	}
+
+	return &stored
+}
+
 // DestinationFilename returns the destination filename of a MediaFile to be imported.
 // Format: 2006/01/20060102_150405_CHECKSUM.ext
 func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile, folder string) (string, error) {
@@ -339,21 +384,32 @@ func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 	if !mediaFile.IsSidecar() {
 		if f, err := entity.FirstFileByHash(mediaFile.Hash()); err == nil {
 			existingFilename := FileName(f.FileRoot, f.FileName)
+
+			// The recorded name has three states, not two: the file is there and this is a duplicate,
+			// the name is free and the file can be restored to it, or an entry holds the name without
+			// the file being there, which is neither and takes the search below.
 			if fs.FileExists(existingFilename) {
-				return existingFilename, fmt.Errorf("%s is identical to %s (sha1 %s)", clean.Log(filepath.Base(mediaFile.FileName())), clean.Log(f.FileName), mediaFile.Hash())
-			} else {
+				// The index records this hash under that name, which is not the same as the file
+				// still holding it, so the message says what was matched rather than claiming the
+				// two files are identical. StoredCopyOf is what establishes that, for the caller
+				// that removes its source.
+				return existingFilename, fmt.Errorf("%s is already indexed as %s (sha1 %s)", clean.Log(filepath.Base(mediaFile.FileName())), clean.Log(f.FileName), mediaFile.Hash())
+			} else if !fs.IsSymlink(existingFilename) {
 				return existingFilename, nil
 			}
 		}
 	}
 
-	// Find and return the next available file name if the default name is already being used by another file.
+	// Find and return the next available file name if the default name is already being used by another
+	// file. A symbolic link holds the name whether or not it resolves, so the search steps over one.
 	i := 0
 	pathName := filepath.Join(imp.originalsPath(), folder, dateCreated.Format(pathPattern))
 	filePath := filepath.Join(pathName, fileName+fileExtension)
 
-	for fs.FileExists(filePath) {
-		if mediaFile.Hash() == fs.Hash(filePath) {
+	for fs.FileExists(filePath) || fs.IsSymlink(filePath) {
+		// Both sides hash to the empty string when they cannot be read, so a hash is compared only
+		// once there is one.
+		if h := mediaFile.Hash(); h != "" && h == fs.Hash(filePath) {
 			return filePath, fmt.Errorf("%s already exists", clean.Log(fs.RelName(filePath, imp.originalsPath())))
 		}
 

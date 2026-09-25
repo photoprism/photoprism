@@ -66,7 +66,11 @@ const (
 	ExtPb       = ".pb"
 	ExtProto    = ".proto"
 	ExtZip      = ".zip"
+	ExtTmp      = ".tmp"
 )
+
+// ExtRcloneLink is the storage-driver link representation reserved at transfer boundaries.
+const ExtRcloneLink = ".rclonelink"
 
 // Ext returns all extension of a file name including the dots.
 func Ext(name string) string {

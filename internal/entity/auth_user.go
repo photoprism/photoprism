@@ -347,7 +347,7 @@ func (m *User) Create() (err error) {
 	return err
 }
 
-// Save updates the record in the database or inserts a new record if it does not already exist.
+// Save persists the user and invalidates their cached authentication on success.
 func (m *User) Save() (err error) {
 	m.GenerateTokens(false)
 
@@ -355,6 +355,7 @@ func (m *User) Save() (err error) {
 
 	if err == nil {
 		m.SaveRelated()
+		FlushUserSessionCache(m.UserUID)
 	}
 
 	return err
@@ -505,6 +506,16 @@ func (m *User) CanLogIn() bool {
 // DenyLogIn checks if the user should be denied access to the web UI/API
 func (m *User) DenyLogIn() bool {
 	return !m.CanLogIn()
+}
+
+// DenyClientAccess checks if client applications bound to the user must be refused. Unlike DenyLogIn,
+// it does not consult CanLogin, so they keep working within their own scope while web login is disabled.
+func (m *User) DenyClientAccess() bool {
+	if m == nil {
+		return true
+	}
+
+	return m.IsDisabled() || m.IsUnknown() || !m.IsRegistered() || m.HasProvider(authn.ProviderNone)
 }
 
 // CanUseWebDAV checks whether the user is allowed to use WebDAV to synchronize files.
@@ -749,7 +760,11 @@ func (m *User) SetUsername(login string) (err error) {
 	} else if m.UserName == login {
 		return nil
 	} else if m.UserName != "" && m.ID != 1 {
-		return fmt.Errorf("username cannot be changed")
+		// An account whose stored name the sanitizer no longer accepts may be renamed, since
+		// that is the only way to repair it.
+		if _, nameErr := authn.Username(m.UserName); nameErr == nil {
+			return fmt.Errorf("username cannot be changed")
+		}
 	}
 
 	// Update username and slug.
@@ -1221,12 +1236,20 @@ func (m *User) DeactivatePasscode() (passcode *Passcode, err error) {
 
 // Validate checks if username, email and role are valid and returns an error otherwise.
 func (m *User) Validate() (err error) {
-	// Validate username.
-	if userName, nameErr := authn.Username(m.UserName); nameErr != nil {
-		return fmt.Errorf("username is %s", nameErr.Error())
-	} else {
-		m.UserName = userName
+	// Validate username. A stored name the sanitizer no longer accepts as written is normalized
+	// rather than refused, so an account provisioned earlier stays editable; a new one is refused,
+	// so the caller sees what was rejected.
+	userName, nameErr := authn.Username(m.UserName)
+
+	if nameErr != nil && m.ID > 0 && userName != "" {
+		userName, nameErr = authn.Username(userName)
 	}
+
+	if nameErr != nil {
+		return fmt.Errorf("username is %s", nameErr.Error())
+	}
+
+	m.UserName = userName
 
 	// Check if username also meets the length requirements.
 	if len(m.Username()) < UsernameLength {
@@ -1391,29 +1414,60 @@ func (m *User) RedeemToken(token string) (n int) {
 		return 0
 	}
 
-	// Find links.
-	links := FindValidLinks(token, "")
+	granted := false
 
-	// Found?
-	if n = len(links); n == 0 {
-		return n
+	// A share this link issued is counted without a new redemption, as the sharing page redeems on
+	// every load. Every other outcome needs the link to admit it, and a link that admits none leaves
+	// the share as it stands.
+	for _, link := range FindRedeemedLinksByToken(token, "") {
+		found := FindUserShare(UserShare{UserUID: m.GetUID(), ShareUID: link.ShareUID})
+
+		if !link.Redeemable() {
+			if found.IssuedBy(link) {
+				n++
+			}
+
+			continue
+		}
+
+		if found != nil {
+			// A lapsed row grants nothing, so reinstating it admits the account and counts a view as a
+			// first share does. Taking over a row that still grants the record counts none, since the
+			// account holds it either way.
+			readmitted := found.Expired()
+
+			if err := found.UpdateLink(link); err != nil {
+				event.AuditErr([]string{"user %s", "share token update failed", status.Error(err)}, m.RefID)
+			} else if readmitted {
+				link.Redeem()
+
+				granted = true
+			}
+
+			n++
+
+			continue
+		}
+
+		share := NewUserShare(m.GetUID(), link.ShareUID, link.Perm, link.ExpiresAt())
+		share.LinkUID = link.LinkUID
+		share.Comment = link.Comment
+
+		if err := share.Save(); err != nil {
+			event.AuditErr([]string{"user %s", "share token redeem failed", status.Error(err)}, m.RefID)
+			continue
+		}
+
+		link.Redeem()
+
+		granted = true
+		n++
 	}
 
-	// Find shares.
-	for _, link := range links {
-		if found := FindUserShare(UserShare{UserUID: m.GetUID(), ShareUID: link.ShareUID}); found == nil {
-			share := NewUserShare(m.GetUID(), link.ShareUID, link.Perm, link.ExpiresAt())
-			share.LinkUID = link.LinkUID
-			share.Comment = link.Comment
-
-			if err := share.Save(); err != nil {
-				event.AuditErr([]string{"user %s", "share token redeem failed", status.Error(err)}, m.RefID)
-			} else {
-				link.Redeem()
-			}
-		} else if err := found.UpdateLink(link); err != nil {
-			event.AuditErr([]string{"user %s", "share token update failed", status.Error(err)}, m.RefID)
-		}
+	// Reload the shares, so the caller sees what this redemption added. A cached list is re-derived
+	// on read only while it is empty.
+	if granted {
+		m.RefreshShares()
 	}
 
 	return n

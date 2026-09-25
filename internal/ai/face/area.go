@@ -9,7 +9,9 @@ import (
 // Areas is a list of face landmark areas.
 type Areas []Area
 
-// Relative returns all areas with relative coordinates.
+// Relative returns all areas as offsets from the reference point r, as a fraction of the image.
+// The offsets keep their sign, since half the landmarks of a face sit left of or above the eyes
+// midpoint that RelativeLandmarks measures them from.
 func (pts Areas) Relative(r Area, rows, cols float32) crop.Areas {
 	if len(pts) == 0 {
 		return nil
@@ -29,7 +31,7 @@ func (pts Areas) Relative(r Area, rows, cols float32) crop.Areas {
 	result := make(crop.Areas, 0, len(pts))
 
 	for _, p := range pts {
-		result = append(result, crop.NewArea(
+		result = append(result, crop.NewOffsetArea(
 			p.Name,
 			float32(p.Col-r.Col)*invCols,
 			float32(p.Row-r.Row)*invRows,
@@ -64,7 +66,7 @@ func NewArea(name string, row, col, scale int) Area {
 	}
 }
 
-// Relative returns the area with relative coordinates.
+// Relative returns the area as an offset from the reference point r, as a fraction of the image.
 func (a Area) Relative(r Area, rows, cols float32) crop.Area {
 	if rows < 1 {
 		rows = 1
@@ -74,7 +76,7 @@ func (a Area) Relative(r Area, rows, cols float32) crop.Area {
 		cols = 1
 	}
 
-	return crop.NewArea(
+	return crop.NewOffsetArea(
 		a.Name,
 		float32(a.Col-r.Col)/cols,
 		float32(a.Row-r.Row)/rows,

@@ -62,7 +62,10 @@ func SearchFoldersImport(router *gin.RouterGroup) {
 // SearchFolders is a reusable request handler for directory listings (GET /api/v1/folders/*).
 func SearchFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) {
 	handler := func(c *gin.Context) {
-		s := Auth(c, acl.ResourceFiles, acl.AccessLibrary)
+		// A directory listing names every file in the library, private pictures included, so it
+		// asks for whole-library access rather than library reach alone - no less than the File
+		// Browser, Index and Import pages require before they render it.
+		s := Auth(c, acl.ResourceFiles, acl.AccessAll)
 
 		// Abort if permission is not granted.
 		if s.Abort(c) {
@@ -79,13 +82,11 @@ func SearchFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) 
 			return
 		}
 
-		user := s.GetUser()
-		aclRole := user.AclRole()
-
-		// Exclude private content?
+		// Exclude private content? Evaluated on the session's effective role: for a client session,
+		// the intersection of the client and user roles.
 		if !get.Config().Settings().Features.Private {
 			frm.Public = false
-		} else if acl.Rules.Deny(acl.ResourcePhotos, aclRole, acl.AccessPrivate) {
+		} else if s.Denies(acl.ResourcePhotos, acl.AccessPrivate) {
 			frm.Public = true
 		}
 

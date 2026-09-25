@@ -53,9 +53,18 @@ func AddTokenHeaders(c *gin.Context, s *entity.Session) {
 
 	c.Header("X-Preview-Token", s.PreviewToken)
 
-	// The download token is the "?t=" value the client appends to a download URL: a signed,
-	// session-bound token so header-less endpoints resolve back to this session.
-	if v := tokens.DownloadToken(s.ID); v != "" {
+	if v := SessionDownloadToken(s); v != "" {
 		c.Header("X-Download-Token", v)
 	}
+}
+
+// SessionDownloadToken returns the "?t=" value a client appends to a download URL: a signed,
+// session-bound token so header-less endpoints resolve back to this session. It is empty when the
+// session's scope covers no downloadable resource; the endpoints apply their own scope check.
+func SessionDownloadToken(s *entity.Session) string {
+	if s == nil || !s.ScopePermitsDownload() {
+		return ""
+	}
+
+	return tokens.DownloadToken(s.ID)
 }

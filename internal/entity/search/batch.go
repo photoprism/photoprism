@@ -101,5 +101,5 @@ func BatchPhotos(uids []string, sess *entity.Session) (results PhotoResults, cou
 		Offset:  0,
 	}
 
-	return searchPhotos(frm, sess, BatchCols)
+	return searchPhotos(frm, sess, BatchCols, false)
 }

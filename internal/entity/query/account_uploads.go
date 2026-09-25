@@ -2,6 +2,7 @@ package query
 
 import (
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
@@ -17,6 +18,10 @@ func AccountUploads(a entity.Service, limit int) (results entity.Files, err erro
 		// media_type is not backfilled on rows indexed before it existed.
 		s = s.Where("(files.file_type NOT IN (?) OR files.file_type IS NULL) AND (files.media_type NOT IN (?) OR files.media_type IS NULL)",
 			media.FileTypeStrings(media.Raw), []string{media.Raw.String(), media.Video.String()})
+	}
+
+	if !a.SyncYamlEnabled() {
+		s = s.Where("(files.file_type <> ? OR files.file_type IS NULL)", fs.SidecarYaml.String())
 	}
 
 	s = s.Order("files.file_name ASC")

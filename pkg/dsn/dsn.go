@@ -31,6 +31,8 @@ import (
 	"strconv"
 	"strings"
 	"unicode"
+
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // dsnPattern is a regular expression matching a database DSN string.
@@ -71,7 +73,7 @@ func (d *DSN) MaskPassword() (s string) {
 	// Mask password in regular DSN.
 	needle := ":" + d.Password + "@"
 	if strings.Contains(s, needle) {
-		return strings.Replace(s, needle, ":***@", 1)
+		return strings.Replace(s, needle, ":"+txt.Masked+"@", 1)
 	}
 
 	// Mask password in PostgreSQL-style DSN.
@@ -92,11 +94,11 @@ func (d *DSN) MaskPassword() (s string) {
 
 			switch {
 			case strings.HasPrefix(value, `"`) && strings.HasSuffix(value, `"`):
-				return prefix + `"` + "***" + `"`
+				return prefix + `"` + txt.Masked + `"`
 			case strings.HasPrefix(value, `'`) && strings.HasSuffix(value, `'`):
-				return prefix + `'` + "***" + `'`
+				return prefix + `'` + txt.Masked + `'`
 			default:
-				return prefix + "***"
+				return prefix + txt.Masked
 			}
 		})
 	}

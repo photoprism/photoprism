@@ -290,7 +290,7 @@ func (m *Folder) syncOriginalsAlbum() {
 		if a.DeletedAt != nil {
 			// Ignore.
 		} else if err := a.UpdateFolder(m.Path, f.Serialize(), m.Title()); err != nil {
-			log.Errorf("folder: %s (update album)", err.Error())
+			log.Errorf("folder: %s (update album)", clean.Error(err))
 		}
 	} else if a := NewFolderAlbum(m.Title(), m.Path, f.Serialize()); a != nil {
 		a.AlbumYear = m.FolderYear
@@ -299,9 +299,9 @@ func (m *Folder) syncOriginalsAlbum() {
 		a.AlbumCountry = m.FolderCountry
 
 		if err := a.Create(); err != nil {
-			log.Errorf("folder: %s (add album)", err)
+			log.Errorf("folder: %s (add album)", clean.Error(err))
 		} else {
-			log.Infof("folder: added album %s (%s)", clean.Log(a.AlbumTitle), a.AlbumFilter)
+			log.Infof("folder: added album %s (%s)", clean.Log(a.AlbumTitle), clean.Log(a.AlbumFilter))
 		}
 	}
 }
@@ -337,7 +337,7 @@ func FirstOrCreateFolder(m *Folder) *Folder {
 	} else if result = FindFolder(m.Root, m.Path); result != nil {
 		return result
 	} else {
-		log.Errorf("folder: %s (find or create %s)", createErr, m.Path)
+		log.Errorf("folder: %s (find or create %s)", clean.Error(createErr), clean.Log(m.Path))
 	}
 
 	return nil

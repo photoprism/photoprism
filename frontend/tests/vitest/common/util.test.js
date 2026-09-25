@@ -182,8 +182,8 @@ describe("common/util", () => {
     expect(result).toBe("tesng");
   });
   it("should encode html", () => {
-    const result = $util.encodeHTML("Micha & Theresa > < 'Lilly'");
-    expect(result).toBe("Micha &amp; Theresa &gt; &lt; &apos;Lilly&apos;");
+    const result = $util.encodeHTML("Alice & Bob > < 'Carol'");
+    expect(result).toBe("Alice &amp; Bob &gt; &lt; &apos;Carol&apos;");
   });
   it("should encode link", () => {
     const result = $util.encodeHTML("Try this: https://photoswipe.com/options/?foo=bar&bar=baz. It's a link!");
@@ -304,6 +304,30 @@ describe("common/util", () => {
     });
     it("returns empty for undefined", () => {
       expect($util.normalizeTitle(undefined)).toBe("");
+    });
+  });
+
+  describe("fileType", () => {
+    it("returns the label for known file types", () => {
+      expect($util.fileType("jpg")).toBe("JPEG");
+      expect($util.fileType("cin")).toBe("Kodak Cineon");
+      expect($util.fileType("insp")).toBe("Insta360 Panoramic Image");
+      expect($util.fileType("insv")).toBe("Insta360 Video");
+      expect($util.fileType("mpo")).toBe("Stereoscopic JPEG (3D)");
+      expect($util.fileType("mxf")).toBe("Material Exchange Format (MXF)");
+      expect($util.fileType("3g2")).toBe("Mobile Multimedia Container (CDMA2000)");
+    });
+    it("distinguishes the AV1 image format from the AV1 codec", () => {
+      expect($util.fileType("avif")).toBe("AV1 Image File Format (AVIF)");
+      expect($util.fileType("av1")).toBe("AOMedia Video 1 (AV1)");
+    });
+    it("falls back to the uppercase type", () => {
+      expect($util.fileType("json")).toBe("JSON");
+    });
+    it("returns empty for missing or non-string input", () => {
+      expect($util.fileType("")).toBe("");
+      expect($util.fileType(null)).toBe("");
+      expect($util.fileType(42)).toBe("");
     });
   });
 

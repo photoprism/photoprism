@@ -59,11 +59,15 @@ func AuthSession(frm form.Login, c *gin.Context) (sess *Session, user *User, err
 	// Log error and return nil if no matching session was found.
 	if sess == nil || err != nil {
 		return nil, nil, authn.ErrInvalidPassword
+	} else if sess.VerifyStored() != nil {
+		return nil, nil, authn.ErrInvalidPassword
 	}
 
 	// Update the client IP and the user agent from
 	// the request context if they have changed.
-	sess.UpdateContext(c)
+	if sess.UpdateContext(c) != nil {
+		return nil, nil, authn.ErrInvalidPassword
+	}
 
 	// Returns session and user if all checks have passed.
 	return sess, sess.GetUser(), nil
@@ -198,14 +202,14 @@ func AuthLocal(user *User, frm form.Login, s *Session, c *gin.Context) (provider
 			err = authn.ErrPasscodeRequired
 
 			if s != nil {
-				event.AuditInfo([]string{clientIp, "session %s", "login as %s", err.Error()}, s.RefID, clean.LogQuote(username))
+				event.AuditInfo([]string{clientIp, "session %s", "login as %s", status.Error(err)}, s.RefID, clean.LogQuote(username))
 				s.Status = http.StatusUnauthorized
 			}
 
 			return provider, method, err
 		} else if valid, _, codeErr := user.VerifyPasscode(code); codeErr != nil {
 			if s != nil {
-				event.AuditWarn([]string{clientIp, "session %s", "login as %s", codeErr.Error()}, s.RefID, clean.LogQuote(username))
+				event.AuditWarn([]string{clientIp, "session %s", "login as %s", status.Error(codeErr)}, s.RefID, clean.LogQuote(username))
 				event.LoginError(clientIp, "api", username, s.UserAgent, codeErr.Error())
 				s.Status = http.StatusUnauthorized
 			}
@@ -215,7 +219,7 @@ func AuthLocal(user *User, frm form.Login, s *Session, c *gin.Context) (provider
 			err = authn.ErrInvalidPasscode
 
 			if s != nil {
-				event.AuditErr([]string{clientIp, "session %s", "login as %s", err.Error()}, s.RefID, clean.LogQuote(username))
+				event.AuditErr([]string{clientIp, "session %s", "login as %s", status.Error(err)}, s.RefID, clean.LogQuote(username))
 				event.LoginError(clientIp, "api", username, s.UserAgent, err.Error())
 				s.Status = http.StatusUnauthorized
 			}
@@ -272,14 +276,16 @@ func (m *Session) LogIn(frm form.Login, c *gin.Context) (err error) {
 
 		// Redeem token.
 		if user.IsRegistered() {
-			if shares := user.RedeemToken(frm.Token); shares == 0 {
+			shares := user.RedeemToken(frm.Token)
+
+			if shares == 0 {
 				message := authn.ErrInvalidShareToken.Error()
 				event.AuditWarn([]string{m.IP(), "session %s", message}, m.RefID)
 				m.Status = http.StatusNotFound
 				return i18n.Error(i18n.ErrInvalidLink)
-			} else {
-				event.AuditInfo([]string{m.IP(), "session %s", "token redeemed for %d shares"}, m.RefID, user.RedeemToken(frm.Token))
 			}
+
+			event.AuditInfo([]string{m.IP(), "session %s", "token redeemed for %d shares"}, m.RefID, shares)
 		} else if data := m.GetData(); data == nil {
 			m.Status = http.StatusInternalServerError
 			return i18n.Error(i18n.ErrUnexpected)
@@ -293,7 +299,7 @@ func (m *Session) LogIn(frm form.Login, c *gin.Context) (err error) {
 			m.SetData(data)
 			m.SetProvider(authn.ProviderLink)
 			m.SetGrantType(authn.GrantShareToken)
-			event.AuditInfo([]string{m.IP(), "session %s", "token redeemed for %d shares"}, m.RefID, shares, data)
+			event.AuditInfo([]string{m.IP(), "session %s", "token redeemed for %d shares"}, m.RefID, shares)
 		}
 
 		// Upgrade the session user role to visitor if a valid share token has been provided.

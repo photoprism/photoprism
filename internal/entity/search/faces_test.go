@@ -163,6 +163,31 @@ func TestFacesRepresentativeMarker(t *testing.T) {
 
 		assert.Nil(t, faceResult(t, f.ID), "the size bar still applies, at the clustering value")
 	})
+	t.Run("HidesAClusterWhoseMarkersWereAllUpscaled", func(t *testing.T) {
+		// The face shown for a cluster is one clustering would have used, so the crop-detail
+		// condition applies here too: a cluster holding only interpolated crops has no
+		// representative. Deliberate - the same rule on both sides is what keeps this page from
+		// hiding a cluster the library did form.
+		f := newSearchFace(t)
+		newSearchMarker(t, f.ID, entity.Marker{Size: 400, Score: 95, FaceDist: 0.2, EmbedDetail: 50})
+
+		assert.Nil(t, faceResult(t, f.ID))
+	})
+	t.Run("ShowsAClusterWhoseMarkersFilledTheCrop", func(t *testing.T) {
+		// The control for the case above, and the state of every marker written before the column:
+		// full detail and the sentinels are both admitted.
+		f := newSearchFace(t)
+		want := newSearchMarker(t, f.ID, entity.Marker{Size: 400, Score: 95, FaceDist: 0.2, EmbedDetail: face.EmbedDetailFull})
+
+		got := faceResult(t, f.ID)
+		require.NotNil(t, got)
+		assert.Equal(t, want.MarkerUID, got.MarkerUID)
+
+		unsampled := newSearchFace(t)
+		newSearchMarker(t, unsampled.ID, entity.Marker{Size: 400, Score: 95, FaceDist: 0.2, EmbedDetail: -1})
+
+		assert.NotNil(t, faceResult(t, unsampled.ID), "a marker nothing has sampled still represents its cluster")
+	})
 	t.Run("IgnoresInvalidAndUnmeasuredMarkers", func(t *testing.T) {
 		// Size defaults to -1 for a marker whose file dimensions are unknown, so it fails the bar
 		// rather than passing an unset value through.
@@ -181,13 +206,13 @@ func TestFacesRepresentativeMarker(t *testing.T) {
 // which had already drifted between the copies.
 func TestRepresentativeMarkerJoin(t *testing.T) {
 	t.Run("Unknown", func(t *testing.T) {
-		join, args := representativeMarkerJoin("faces", "yes")
+		join, args := representativeMarkerJoin("faces", "yes", false)
 		assert.Contains(t, join, "m2.subj_uid = ''")
 		assert.NotContains(t, join, "m2.subj_uid <> ''")
 		assert.Equal(t, strings.Count(join, "?"), len(args))
 	})
 	t.Run("Known", func(t *testing.T) {
-		join, args := representativeMarkerJoin("faces", "no")
+		join, args := representativeMarkerJoin("faces", "no", false)
 		assert.Contains(t, join, "m2.subj_uid <> ''")
 		// Dropped with the predicate that required it: automatic assignment never writes a name,
 		// so a person named once had no marker that could represent their cluster here.
@@ -195,15 +220,59 @@ func TestRepresentativeMarkerJoin(t *testing.T) {
 		assert.Equal(t, strings.Count(join, "?"), len(args))
 	})
 	t.Run("Any", func(t *testing.T) {
-		join, args := representativeMarkerJoin("faces", "")
+		join, args := representativeMarkerJoin("faces", "", false)
 		assert.NotContains(t, join, "m2.subj_uid")
 		assert.Equal(t, strings.Count(join, "?"), len(args))
 	})
+	t.Run("OmitWithheld", func(t *testing.T) {
+		join, args := representativeMarkerJoin("faces", "", true)
+		assert.Contains(t, join, "LEFT JOIN subjects m2_subj ON m2_subj.subj_uid = m2.subj_uid")
+		assert.Contains(t, join, "LEFT JOIN subjects m2_named ON m2_named.subj_name = m2.marker_name")
+		assert.Equal(t, strings.Count(join, "?"), len(args))
+
+		unfiltered, _ := representativeMarkerJoin("faces", "", false)
+		assert.NotContains(t, unfiltered, "m2_subj")
+	})
 	// Every literal this query used to carry is gone; the bars come from the face configuration.
 	t.Run("CarriesNoThresholdLiterals", func(t *testing.T) {
-		join, _ := representativeMarkerJoin("faces", "")
+		join, _ := representativeMarkerJoin("faces", "", false)
 		for _, literal := range []string{"0.64", "80", "15", "MIN(", "GROUP BY"} {
 			assert.NotContains(t, join, literal)
+		}
+	})
+}
+
+// TestFacesSampleOrder pins the ranking People > New reads: clusters largest first by the number of
+// embeddings their centroid was built from, which is the size each had when it was formed.
+func TestFacesSampleOrder(t *testing.T) {
+	t.Run("DescendingBySamples", func(t *testing.T) {
+		results, err := Faces(form.SearchFaces{Order: "samples"})
+		require.NoError(t, err)
+		require.Greater(t, len(results), 1, "ordering needs at least two clusters")
+
+		ranked := false
+
+		for i := 1; i < len(results); i++ {
+			assert.GreaterOrEqual(t, results[i-1].Samples, results[i].Samples)
+
+			if results[i-1].Samples != results[i].Samples {
+				ranked = true
+			}
+		}
+
+		// Equal counts throughout would satisfy the loop above without ordering anything.
+		assert.True(t, ranked, "fixtures must differ in samples for the order to be tested")
+	})
+	t.Run("DefaultIsTheSameOrder", func(t *testing.T) {
+		bySamples, err := Faces(form.SearchFaces{Order: "samples"})
+		require.NoError(t, err)
+
+		byDefault, err := Faces(form.SearchFaces{})
+		require.NoError(t, err)
+		require.Equal(t, len(bySamples), len(byDefault))
+
+		for i := range bySamples {
+			assert.Equal(t, bySamples[i].ID, byDefault[i].ID)
 		}
 	})
 }

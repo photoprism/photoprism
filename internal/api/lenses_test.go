@@ -1,12 +1,15 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"testing"
 
 	"github.com/tidwall/gjson"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/entity"
 )
 
 func TestUpdateLens(t *testing.T) {
@@ -43,5 +46,16 @@ func TestUpdateLens(t *testing.T) {
 		val := gjson.Get(r.Body.String(), "error")
 		assert.Equal(t, "Lens not found", val.String())
 		assert.Equal(t, http.StatusNotFound, r.Code)
+	})
+	t.Run("UnknownLens", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		UpdateLens(router)
+		r := PerformRequestWithBody(app, "PUT", fmt.Sprintf("/api/v1/lenses/%d", entity.UnknownLens.ID), `{"Make": "Example", "Model": "Example"}`)
+		assert.Equal(t, http.StatusForbidden, r.Code)
+
+		// The shared placeholder must keep its name.
+		found := entity.Lens{}
+		assert.NoError(t, entity.Db().First(&found, "id = ?", entity.UnknownLens.ID).Error)
+		assert.Equal(t, entity.UnknownLens.LensName, found.LensName)
 	})
 }

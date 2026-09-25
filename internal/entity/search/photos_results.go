@@ -248,6 +248,12 @@ func (m *Photo) MediaInfo() (mediaHash, mediaCodec, mediaMime string, width, hei
 			}
 		}
 	case entity.MediaRaw:
+		// A dewarped fisheye original is displayed through its equirectangular primary file.
+		if m.HasFisheyeOriginal() && m.FileWidth > 0 && m.FileHeight > 0 &&
+			projection.Type(m.FileProjection).Equal(projection.Equirectangular.String()) {
+			return m.FileHash, m.FileCodec, clean.ContentType(m.FileMime), m.FileWidth, m.FileHeight
+		}
+
 		for _, f := range m.Files {
 			if f.MediaType == entity.MediaRaw && f.FileWidth > 0 && f.FileHeight > 0 {
 				return m.FileHash, f.FileCodec, clean.ContentType(f.FileMime), f.FileWidth, f.FileHeight

@@ -57,7 +57,7 @@ func clusterNodesShowAction(ctx *cli.Context) error {
 			return cli.Exit(fmt.Errorf("node not found"), 3)
 		}
 
-		opts := reg.NodeOpts{IncludeAdvertiseUrl: true, IncludeDatabase: true}
+		opts := reg.NodeOptsForOperator()
 		dto := reg.BuildClusterNode(*n, opts)
 
 		who := clusterAuditWho(ctx, conf)

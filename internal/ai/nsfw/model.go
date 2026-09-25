@@ -138,7 +138,7 @@ func (m *Model) loadModel() error {
 
 		switch {
 		case err != nil:
-			log.Errorf("nsfw: could not get the model info at %s: %v", clean.Log(m.modelPath))
+			log.Errorf("nsfw: could not get the model info at %s: %v", clean.Log(m.modelPath), err)
 		case len(infos) == 1:
 			log.Debugf("nsfw: model info: %+v", infos[0])
 			m.meta.Merge(&infos[0])

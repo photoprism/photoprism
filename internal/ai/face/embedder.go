@@ -3,6 +3,8 @@ package face
 import (
 	"image"
 	"sync"
+
+	"github.com/photoprism/photoprism/internal/ai/onnx"
 )
 
 // Embedder generates face embeddings from prepared face crops.
@@ -28,6 +30,7 @@ type EmbedderSettings struct {
 	ModelPath   string
 	Threads     int
 	LibraryPath string
+	Provider    onnx.Provider
 }
 
 var (

@@ -91,8 +91,9 @@ func TestOPTICS(t *testing.T) {
 	})
 }
 
-// TestOrderingExtractDBSCAN is the correctness anchor for the ordering: an extraction at eps has
-// to reproduce a DBSCAN run at the same eps, since OPTICS contains DBSCAN as a special case.
+// TestOrderingExtractDBSCAN is the correctness anchor for the ordering: an extraction at eps has to
+// reproduce a DBSCAN run at the same eps on the core points, since OPTICS contains DBSCAN as a
+// special case.
 func TestOrderingExtractDBSCAN(t *testing.T) {
 	data := blobs(t)
 
@@ -100,9 +101,9 @@ func TestOrderingExtractDBSCAN(t *testing.T) {
 	assert.NoError(t, err)
 
 	t.Run("AgreesWithDBSCAN", func(t *testing.T) {
-		// Core points only. Both this extraction and the DBSCAN in this package decide a border
-		// point by the order it was reached in, and they reach them in different orders, so only
-		// the points that carry a cluster are comparable.
+		// Core points only. This extraction takes a border point in the order the ordering reached
+		// it, while this package's DBSCAN attaches one only where the cores around it agree, so the
+		// two are comparable on the points a core distance already places.
 		for _, eps := range []float64{0.5, 0.8, 1.2, 2.0} {
 			extracted, direct := o.ExtractDBSCAN(eps), dbscanLabels(t, data, 5, eps)
 

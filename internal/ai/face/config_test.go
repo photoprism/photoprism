@@ -117,7 +117,7 @@ func TestAmbiguousMatch(t *testing.T) {
 	MatchMargin = MatchMarginDefault
 
 	t.Run("RunnerUpTooClose", func(t *testing.T) {
-		assert.True(t, AmbiguousMatch(0.70, 0.72))
+		assert.True(t, AmbiguousMatch(0.70, 0.70+MatchMarginDefault/2))
 	})
 	t.Run("ClearWinner", func(t *testing.T) {
 		assert.False(t, AmbiguousMatch(0.40, 0.90))

@@ -20,11 +20,9 @@ import (
 	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
-// McpSessionTimeout configures the idle lifetime of MCP Streamable HTTP
-// sessions. It is shorter than a typical IDE editing window so that sessions
-// abandoned without a DELETE tear-down do not accumulate SDK-side bookkeeping
-// for long periods; active clients renew the idle timer on every request, so
-// interactive use is unaffected.
+// McpSessionTimeout configures the idle lifetime of MCP Streamable HTTP sessions.
+// Sessions abandoned without a DELETE tear-down free their SDK-side bookkeeping
+// promptly; active clients renew the timer on every request.
 var McpSessionTimeout = 5 * time.Minute
 
 // ServeMCP registers the Model Context Protocol (MCP) Streamable HTTP
@@ -67,11 +65,10 @@ func ServeMCP(router *gin.RouterGroup) {
 		Version: conf.Version(),
 	}, conf.Edition())
 
-	// Streamable HTTP handler with warn-level logging and an explicit
-	// CrossOriginProtection (go-sdk no longer enables it implicitly).
-	//
-	// The option is deprecated in favor of wrapping the handler, and is still honored as of
-	// go-sdk v1.7.0 - so an upgrade has to confirm the check still runs rather than assume it.
+	// Streamable HTTP handler with warn-level logging and an explicit CrossOriginProtection,
+	// which go-sdk does not enable implicitly. The option is deprecated in favor of wrapping
+	// the handler and is still honored as of go-sdk v1.8.0, so an upgrade has to confirm the
+	// check still runs rather than assume it.
 	handler := sdkmcp.NewStreamableHTTPHandler(
 		func(r *http.Request) *sdkmcp.Server { return mcpServer },
 		&sdkmcp.StreamableHTTPOptions{
@@ -151,11 +148,9 @@ func (r *mcpLimitReader) Read(p []byte) (int, error) {
 	return n, err
 }
 
-// mcpLimitWriter wraps the outgoing response so the SDK's 400 "failed to
-// read body" is rewritten to 413 when the body cap was exceeded. Body
-// writes that arrive after the rewrite are suppressed so the SDK's
-// internal error phrasing does not replace PhotoPrism's standard 413
-// payload.
+// mcpLimitWriter rewrites the SDK's 400 "failed to read body" to 413 when the body cap
+// was exceeded. Writes arriving after the rewrite are suppressed so the SDK's phrasing
+// does not replace the standard 413 payload.
 type mcpLimitWriter struct {
 	gin.ResponseWriter
 	tripped  *atomic.Bool

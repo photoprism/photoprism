@@ -59,6 +59,74 @@ func TestFindInsta360Capture(t *testing.T) {
 		require.NoError(t, err)
 		assert.Nil(t, FindInsta360Capture(file))
 	})
+	t.Run("Photo", func(t *testing.T) {
+		// Photos are never split by lens, so photo files with lens codes are not captures.
+		dir := t.TempDir()
+		left, err := NewMediaFile(writeInsta360CaptureFile(t, dir, "IMG_20220625_140410_00_008.insp", "testdata/flash.jpg"))
+		require.NoError(t, err)
+		right, err := NewMediaFile(writeInsta360CaptureFile(t, dir, "IMG_20220625_140410_10_008.insp", "testdata/flash.jpg"))
+		require.NoError(t, err)
+
+		assert.Nil(t, FindInsta360Capture(left))
+		assert.Nil(t, FindInsta360Capture(right))
+	})
+	t.Run("PhotoSingleFileCaptureName", func(t *testing.T) {
+		dir := t.TempDir()
+		fileName := writeInsta360CaptureFile(t, dir, "IMG_20231015_101112_00_123.insp", "testdata/insta360.insp")
+		file, err := NewMediaFile(fileName)
+		require.NoError(t, err)
+
+		assert.Nil(t, FindInsta360Capture(file))
+
+		related, err := file.RelatedFiles(false)
+		require.NoError(t, err)
+		assert.Len(t, related.Files, 1)
+		assert.Equal(t, fileName, related.Main.FileName())
+	})
+	t.Run("CaseVariant", func(t *testing.T) {
+		dir := t.TempDir()
+		writeInsta360CaptureFile(t, dir, "VID_20220625_140410_00_008.insv", "testdata/flash.jpg")
+		writeInsta360CaptureFile(t, dir, "VID_20220625_140410_10_008.insv", "testdata/flash.jpg")
+		variant, err := NewMediaFile(writeInsta360CaptureFile(t, dir, "vid_20220625_140410_00_008.insv", "testdata/flash.jpg"))
+		require.NoError(t, err)
+		upperExt, err := NewMediaFile(writeInsta360CaptureFile(t, dir, "VID_20220625_140410_10_008.INSV", "testdata/flash.jpg"))
+		require.NoError(t, err)
+
+		assert.Nil(t, FindInsta360Capture(variant))
+		assert.Nil(t, FindInsta360Capture(upperExt))
+	})
+	t.Run("PhotoSingleFile", func(t *testing.T) {
+		file, err := NewMediaFile("testdata/insta360.insp")
+		require.NoError(t, err)
+		assert.Nil(t, FindInsta360Capture(file))
+	})
+}
+
+// TestInsta360SkipConvert verifies that only the right lens and proxy of a video capture are skipped.
+func TestInsta360SkipConvert(t *testing.T) {
+	dir := t.TempDir()
+	names := map[string]bool{
+		"VID_20220625_140410_00_008.insv": false,
+		"VID_20220625_140410_10_008.insv": true,
+		"LRV_20220625_140410_11_008.insv": true,
+		"IMG_20220625_140410_00_008.insp": false,
+		"IMG_20220625_140410_10_008.insp": false,
+	}
+
+	for name := range names {
+		writeInsta360CaptureFile(t, dir, name, "testdata/flash.jpg")
+	}
+
+	for name, skip := range names {
+		f, err := NewMediaFile(filepath.Join(dir, name))
+		require.NoError(t, err)
+		assert.Equal(t, skip, insta360SkipConvert(f), name)
+	}
+
+	single, err := NewMediaFile("testdata/insta360.insp")
+	require.NoError(t, err)
+	assert.False(t, insta360SkipConvert(single))
+	assert.False(t, insta360SkipConvert(nil))
 }
 
 func TestForceDewarpPreview(t *testing.T) {
@@ -137,6 +205,12 @@ func TestInsta360Capture_ValidPair(t *testing.T) {
 	invalidRight.width, invalidRight.height = 1920, 1080
 	assert.False(t, (&Insta360Capture{Left: left, Right: invalidRight}).ValidPair())
 	assert.False(t, (*Insta360Capture)(nil).ValidPair())
+
+	// Only video lens files can form a pair.
+	photo, err := NewMediaFile(writeInsta360CaptureFile(t, dir, "IMG_20220625_140410_10_008.insp", "testdata/flash.jpg"))
+	require.NoError(t, err)
+	photo.width, photo.height = 3072, 3072
+	assert.False(t, (&Insta360Capture{Left: left, Right: photo}).ValidPair())
 }
 
 // TestAbsDuration verifies duration normalization.

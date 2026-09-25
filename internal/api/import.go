@@ -141,38 +141,32 @@ func StartImport(router *gin.RouterGroup) {
 		// Delete empty import directory.
 		if srcFolder != "" && importPath != conf.ImportPath() && fs.DirIsEmpty(importPath) {
 			if err := os.Remove(importPath); err != nil {
-				log.Errorf("import: failed to delete empty folder %s: %s", clean.Log(importPath), err)
+				log.Errorf("import: failed to delete empty folder %s (%s)", clean.Log(srcFolder), clean.Error(err))
 			} else {
-				log.Infof("import: deleted empty folder %s", clean.Log(importPath))
+				log.Infof("import: deleted empty folder %s", clean.Log(srcFolder))
 			}
 		}
 
 		// Update moments if files have been imported.
-		if n := len(imported); n == 0 {
-			log.Infof("import: found no new files to import from %s", clean.Log(importPath))
+		if imported.Processed() == 0 {
+			log.Infof("import: found no new files to import from %s", clean.Log(srcFolder))
 		} else {
-			log.Infof("import: imported %s", english.Plural(n, "file", "files"))
 			if moments := get.Moments(); moments == nil {
 				log.Warnf("import: moments service not set - you may have found a bug")
 			} else if err := moments.Start(); err != nil {
-				log.Warnf("moments: %s", err)
+				log.Warnf("moments: %s", clean.Error(err))
 			}
 		}
 
-		elapsed := int(time.Since(start).Seconds())
+		elapsed := time.Since(start)
+		seconds := int(elapsed.Seconds())
+
+		log.Infof("library: imported %s in %s", english.Plural(imported.Processed(), "file", "files"), elapsed)
 
 		// Show success message.
-		event.SuccessMsg(i18n.MsgImportCompletedIn, elapsed)
+		event.PublishSuccessMsg(i18n.MsgImportCompletedIn, seconds)
 
-		eventData := event.Data{
-			"uid":     opt.UID,
-			"action":  opt.Action,
-			"path":    importPath,
-			"seconds": elapsed,
-		}
-
-		event.Publish("import.completed", eventData)
-		event.Publish("index.completed", eventData)
+		event.PublishCompleted([]string{"import.completed", "index.completed"}, opt.UID, opt.Action, seconds)
 
 		for _, uid := range frm.Albums {
 			PublishAlbumEvent(StatusUpdated, uid)
@@ -183,10 +177,10 @@ func StartImport(router *gin.RouterGroup) {
 
 		// Update album, label, and subject cover thumbs.
 		if err := query.UpdateCovers(); err != nil {
-			log.Warnf("index: %s (update covers)", err)
+			log.Warnf("index: %s (update covers)", clean.Error(err))
 		}
 
-		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgImportCompletedIn, elapsed))
+		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgImportCompletedIn, seconds))
 	})
 }
 

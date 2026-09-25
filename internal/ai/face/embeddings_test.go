@@ -157,27 +157,51 @@ func TestBackgroundSamplesMidpoint(t *testing.T) {
 
 func TestValidEmbeddings(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		assert.True(t, ValidEmbeddings(Embeddings{{0.1, 0.2}}, 2))
+		assert.True(t, ValidEmbeddings(Embeddings{{0.6, 0.8}}, 2))
 	})
 	t.Run("Empty", func(t *testing.T) {
 		assert.False(t, ValidEmbeddings(nil, 2))
 	})
 	t.Run("NotOne", func(t *testing.T) {
-		assert.False(t, ValidEmbeddings(Embeddings{{0.1, 0.2}, {0.3, 0.4}}, 2))
+		assert.False(t, ValidEmbeddings(Embeddings{{0.6, 0.8}, {0.8, 0.6}}, 2))
 	})
 	t.Run("WrongDims", func(t *testing.T) {
-		assert.False(t, ValidEmbeddings(Embeddings{{0.1}}, 2))
+		assert.False(t, ValidEmbeddings(Embeddings{{1}}, 2))
 	})
 	t.Run("NaN", func(t *testing.T) {
-		assert.False(t, ValidEmbeddings(Embeddings{{0.1, math.NaN()}}, 2))
+		assert.False(t, ValidEmbeddings(Embeddings{{0.6, math.NaN()}}, 2))
 	})
 	t.Run("NoMagnitude", func(t *testing.T) {
 		// A cluster built from a zero vector would sit 1 from every face, so it never enters.
 		assert.False(t, ValidEmbeddings(Embeddings{{0, 0}}, 2))
-		assert.True(t, ValidEmbeddings(Embeddings{{0, 0.1}}, 2))
+		assert.True(t, ValidEmbeddings(Embeddings{{0, 1}}, 2))
 	})
 	t.Run("Inf", func(t *testing.T) {
-		assert.False(t, ValidEmbeddings(Embeddings{{0.1, math.Inf(1)}}, 2))
+		assert.False(t, ValidEmbeddings(Embeddings{{0.6, math.Inf(1)}}, 2))
+	})
+	t.Run("NotUnitLength", func(t *testing.T) {
+		// Every configured distance is stated for unit vectors, so a shorter or longer one
+		// is not measurable against them and has to be normalized first.
+		assert.False(t, ValidEmbeddings(Embeddings{{0.1, 0.2}}, 2))
+		assert.False(t, ValidEmbeddings(Embeddings{{6, 8}}, 2))
+		assert.True(t, ValidEmbeddings(Embeddings{{0.1, 0.2}}.Normalize(), 2))
+		assert.True(t, ValidEmbeddings(Embeddings{{6, 8}}.Normalize(), 2))
+	})
+	t.Run("UnderflowingComponents", func(t *testing.T) {
+		// Squaring these would round to zero, which reports no magnitude for a vector that
+		// has one and points somewhere.
+		tiny := Embeddings{{3e-200, 4e-200}}
+		assert.False(t, ValidEmbeddings(tiny, 2))
+		assert.True(t, ValidEmbeddings(tiny.Normalize(), 2))
+		assert.InDelta(t, 0.6, tiny[0][0], 1e-9)
+	})
+	t.Run("OverflowingComponents", func(t *testing.T) {
+		// Squaring these would reach infinity, and scaling by its inverse would leave a
+		// zero vector that sits 1 from every face.
+		huge := Embeddings{{3e200, 4e200}}
+		assert.False(t, ValidEmbeddings(huge, 2))
+		assert.True(t, ValidEmbeddings(huge.Normalize(), 2))
+		assert.InDelta(t, 0.6, huge[0][0], 1e-9)
 	})
 }
 
@@ -329,6 +353,66 @@ func TestEmbeddings_Radius(t *testing.T) {
 		wide := Embeddings{base, FixtureEmbeddingAt(base, 1.2, 103)}
 		assert.Greater(t, wide.Radius(), near.Radius())
 	})
+	t.Run("OneLooseMemberDoesNotSetTheReach", func(t *testing.T) {
+		// What the percentile is for: taking the maximum instead would put a group of twenty at
+		// the distance of the one member that does not belong to it.
+		tight := make(Embeddings, 0, 21)
+
+		for i := range 20 {
+			tight = append(tight, FixtureEmbeddingAt(base, 0.2, uint64(200+i)))
+		}
+
+		outlier := FixtureEmbeddingAt(base, 1.2, 999)
+		wide := append(tight[:len(tight):len(tight)], outlier)
+
+		mid, radius, count := EmbeddingsMidpoint(wide)
+		require.Equal(t, 21, count)
+
+		assert.InDelta(t, tight.Radius(), radius, 0.1, "the loose member must not move the radius")
+		assert.Greater(t, mid.Dist(outlier), 2*radius, "and it must sit well outside the result")
+	})
+	t.Run("Duplicates", func(t *testing.T) {
+		// Zero has to survive as "unmeasurable", which Face.SetEmbeddings answers with the full
+		// cluster radius. Flooring the percentile unconditionally would store Epsilon instead and
+		// leave a cluster of duplicate crops narrower than any real pair of one person's faces.
+		assert.Zero(t, Embeddings{{1, 0}, {1, 0}}.Radius())
+	})
+}
+
+// TestPercentileOf covers the nearest-rank statistic a cluster's radius is taken from.
+func TestPercentileOf(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		assert.Zero(t, percentileOf(nil, ClusterPercentile))
+	})
+	t.Run("One", func(t *testing.T) {
+		assert.InDelta(t, 0.4, percentileOf([]float64{0.4}, ClusterPercentile), 1e-9)
+	})
+	t.Run("Unsorted", func(t *testing.T) {
+		assert.InDelta(t, 0.9, percentileOf([]float64{0.9, 0.1, 0.5}, 100), 1e-9)
+	})
+	t.Run("LeavesOutTheTopOfALargeSet", func(t *testing.T) {
+		dists := make([]float64, 20)
+
+		for i := range dists {
+			dists[i] = 0.1
+		}
+
+		dists[7] = 9.0
+
+		assert.InDelta(t, 0.1, percentileOf(dists, ClusterPercentile), 1e-9)
+	})
+	t.Run("KeepsEverythingInASmallSet", func(t *testing.T) {
+		// A percentile and a maximum agree below twenty members, which is why the radius narrows
+		// where a group is wide rather than everywhere.
+		assert.InDelta(t, 0.8, percentileOf([]float64{0.1, 0.8}, ClusterPercentile), 1e-9)
+	})
+	t.Run("BelowTheFirstRank", func(t *testing.T) {
+		// Zero reads as unmeasurable rather than as the smallest distance. Selecting the minimum
+		// would give a cluster almost no reach, and ClusterPercentile is an exported variable that
+		// a calibration run could set directly - config refuses it, nothing else does.
+		assert.Zero(t, percentileOf([]float64{0.1, 0.8}, 0))
+		assert.Zero(t, percentileOf([]float64{0.1, 0.8}, -1))
+	})
 }
 
 // TestClusterFits pins the width a cluster may reach and still accept the members it was built
@@ -357,5 +441,108 @@ func TestClusterFits(t *testing.T) {
 		setThresholds(t, 0.2, 0.1)
 		assert.False(t, ClusterFits(0.4))
 		assert.True(t, ClusterFits(0.3))
+	})
+}
+
+func TestRadiusFrom(t *testing.T) {
+	base := FixtureEmbedding(9601)
+
+	t.Run("CoversThePercentile", func(t *testing.T) {
+		members := Embeddings{base}
+		for i, d := range []float64{0.05, 0.09, 0.14} {
+			members = append(members, FixtureEmbeddingAt(base, d, uint64(9602+i)))
+		}
+
+		radius, ok := RadiusFrom(base, members)
+
+		assert.True(t, ok)
+		assert.GreaterOrEqual(t, radius, 0.14, "the furthest member is inside it at this count")
+		assert.Less(t, radius, ClusterRadius)
+	})
+	t.Run("CenterIsNotRecomputed", func(t *testing.T) {
+		// Measured from the center given, not from the members' own midpoint - which is what keeps
+		// a cluster's identity, since its id is the hash of the centroid it already stores.
+		offset := FixtureEmbeddingAt(base, 0.30, 9611)
+		members := Embeddings{base, FixtureEmbeddingAt(base, 0.05, 9612)}
+
+		fromOffset, _ := RadiusFrom(offset, members)
+		fromCenter, _ := RadiusFrom(base, members)
+
+		assert.Greater(t, fromOffset, fromCenter)
+	})
+	t.Run("UnmeasurableIsTheFloor", func(t *testing.T) {
+		// One sample has no spread to measure, which SetEmbeddings answers the same way. A cluster's
+		// width here would be an extent none of these embeddings showed.
+		radius, ok := RadiusFrom(base, Embeddings{base})
+
+		assert.True(t, ok, "a spread that measured zero is still a measurement")
+		assert.InDelta(t, Epsilon, radius, 1e-9)
+	})
+	t.Run("Empty", func(t *testing.T) {
+		radius, ok := RadiusFrom(base, Embeddings{})
+		assert.False(t, ok)
+		assert.Zero(t, radius)
+
+		radius, ok = RadiusFrom(Embedding{}, Embeddings{base})
+		assert.False(t, ok)
+		assert.Zero(t, radius)
+	})
+	t.Run("NothingComparable", func(t *testing.T) {
+		// A vector of another width is not a distance, and answering it with the widest radius in
+		// the schema is the runaway this measurement replaces rather than a fallback for it.
+		radius, ok := RadiusFrom(base, Embeddings{{0.1, 0.2}})
+
+		assert.False(t, ok)
+		assert.Zero(t, radius)
+	})
+	t.Run("ZeroMember", func(t *testing.T) {
+		// One unit from every unit vector, so it would clamp the whole cluster to the maximum.
+		radius, ok := RadiusFrom(base, Embeddings{base, make(Embedding, len(base))})
+
+		assert.False(t, ok)
+		assert.Zero(t, radius)
+	})
+	t.Run("OneUnusableMemberDeclinesTheSet", func(t *testing.T) {
+		// Declined whole rather than measured over what is left, so the count and the distances
+		// keep describing the same markers.
+		near := FixtureEmbeddingAt(base, 0.05, 9631)
+		radius, ok := RadiusFrom(base, Embeddings{base, near, {0.1, 0.2}})
+
+		assert.False(t, ok)
+		assert.Zero(t, radius)
+	})
+	t.Run("ClampedAtTheMaximum", func(t *testing.T) {
+		far := Embeddings{base, FixtureEmbeddingAt(base, 1.2, 9621), FixtureEmbeddingAt(base, 1.3, 9622)}
+		radius, ok := RadiusFrom(base, far)
+
+		assert.True(t, ok)
+		assert.InDelta(t, ClusterRadius, radius, 1e-9)
+	})
+}
+
+func TestEmbeddings_Normalize(t *testing.T) {
+	t.Run("ScalesEach", func(t *testing.T) {
+		e := Embeddings{{3, 4}, {6, 8}}.Normalize()
+		assert.True(t, e[0].Unit())
+		assert.True(t, e[1].Unit())
+		assert.InDelta(t, 0.6, e[0][0], 1e-9)
+		assert.InDelta(t, 0.6, e[1][0], 1e-9)
+	})
+	t.Run("InPlace", func(t *testing.T) {
+		e := Embeddings{{3, 4}}
+		result := e.Normalize()
+		assert.InDelta(t, 0.6, e[0][0], 1e-9, "the caller's slice is scaled, not a copy")
+		assert.InDelta(t, 0.6, result[0][0], 1e-9)
+	})
+	t.Run("LeavesUnusableVectors", func(t *testing.T) {
+		// Nothing can be scaled out of these, so they are left as supplied for the validation
+		// at the boundary to reject.
+		e := Embeddings{{0, 0}, {math.NaN(), 1}}.Normalize()
+		assert.Equal(t, Embedding{0, 0}, e[0])
+		assert.True(t, math.IsNaN(e[1][0]))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.NotPanics(t, func() { Embeddings{}.Normalize() })
+		assert.NotPanics(t, func() { Embeddings(nil).Normalize() })
 	})
 }

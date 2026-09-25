@@ -3,6 +3,8 @@ package authn
 import (
 	"testing"
 
+	"github.com/photoprism/photoprism/pkg/clean"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -65,4 +67,13 @@ func TestUsername(t *testing.T) {
 			assert.Equal(t, name, s)
 		}
 	})
+}
+
+func TestUsernameRejectsFieldSeparator(t *testing.T) {
+	// clean.Username removes it, and this gate refuses any name it had to alter. The rule is
+	// this function's, not the package's: clean.Handle folds the character instead.
+	s, err := Username("ok" + string(clean.FieldSep) + "granted")
+
+	assert.Equal(t, ErrInvalid, err)
+	assert.NotContains(t, s, string(clean.FieldSep))
 }

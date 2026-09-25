@@ -142,6 +142,25 @@ export class Model {
     return null;
   }
 
+  // flagEnabled reports whether a -1/0/1 option is on, where 0 (or a missing value) follows defaultEnabled.
+  flagEnabled(key, defaultEnabled = true) {
+    const value = Number(this[key]) || 0;
+    return value > 0 || (value === 0 && defaultEnabled);
+  }
+
+  // setFlag switches a -1/0/1 option, keeping the saved value while it already has the requested state,
+  // so turning an option off and on again leaves an untouched default at 0.
+  setFlag(key, enabled, defaultEnabled = true) {
+    const saved = Number(this.originalValue(key)) || 0;
+    const savedEnabled = saved > 0 || (saved === 0 && defaultEnabled);
+
+    if (savedEnabled === !!enabled) {
+      this[key] = saved;
+    } else {
+      this[key] = enabled ? 1 : -1;
+    }
+  }
+
   // Returns true when any tracked field has been modified since the last
   // load or save, i.e. when getValues(true) yields a non-empty diff.
   // rollback() is the natural inverse: after rollback() runs, wasChanged()

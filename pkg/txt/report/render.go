@@ -9,17 +9,25 @@ import (
 // RenderFormat returns a text-formatted table, optionally as valid Markdown,
 // so the output can be pasted into the docs.
 func RenderFormat(rows [][]string, cols []string, format Format) (string, error) {
+	return RenderFormatOptions(rows, cols, format, Options{})
+}
+
+// RenderFormatOptions is RenderFormat with render options the caller supplies, so a report can ask
+// for per-column alignment without restating which formats are valid Markdown.
+func RenderFormatOptions(rows [][]string, cols []string, format Format, opt Options) (string, error) {
+	opt.Format = format
+
 	switch format {
 	case JSON:
-		return JSONExport(rows, cols)
-	case CSV:
-		return Render(rows, cols, Options{Format: CSV})
-	case TSV:
-		return Render(rows, cols, Options{Format: TSV})
+		return JSONExportKeys(rows, cols, opt.Keys)
+	case CSV, TSV:
+		return Render(rows, cols, opt)
 	case Markdown:
-		return Render(rows, cols, Options{Format: Markdown, Valid: true})
+		opt.Valid = true
+		return Render(rows, cols, opt)
 	case Default:
-		return Render(rows, cols, Options{Format: Default, Valid: false})
+		opt.Valid = false
+		return Render(rows, cols, opt)
 	default:
 		return "", fmt.Errorf("invalid format %s", clean.Log(string(format)))
 	}

@@ -35,10 +35,24 @@ func (data *Data) JSON(jsonName, originalName string) (err error) {
 		return fmt.Errorf("metadata: %s not found", quotedName)
 	}
 
-	jsonData, err := os.ReadFile(jsonName) //nolint:gosec // jsonName is resolved path from trusted sidecar discovery
+	f, err := os.Open(jsonName) //nolint:gosec // JSON sidecars are read from resolved discovery paths.
 
 	if err != nil {
 		return fmt.Errorf("cannot read json file %s", quotedName)
+	}
+
+	defer f.Close()
+
+	info, err := f.Stat()
+
+	if err != nil {
+		return fmt.Errorf("cannot read json file %s: %w", quotedName, err)
+	}
+
+	jsonData, err := readJSONSidecar(f, info.Size())
+
+	if err != nil {
+		return fmt.Errorf("cannot read json file %s: %w", quotedName, err)
 	}
 
 	switch {

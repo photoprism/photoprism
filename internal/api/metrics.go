@@ -94,13 +94,13 @@ func GetMetrics(router *gin.RouterGroup) {
 			metrics, err = registry.Gather()
 
 			if err != nil {
-				logErr("metrics", err)
+				systemErr("metrics", err)
 				return false
 			}
 
 			for _, metric := range metrics {
 				if _, err = expfmt.MetricFamilyToText(w, metric); err != nil {
-					logErr("metrics", err)
+					systemErr("metrics", err)
 					return false
 				}
 			}
@@ -242,7 +242,7 @@ func registerClusterMetrics(factory promauto.Factory, conf *config.Config) {
 
 	counts, err := clusterNodeCounts(conf)
 	if err != nil {
-		logErr("metrics", err)
+		systemErr("metrics", err)
 		return
 	}
 

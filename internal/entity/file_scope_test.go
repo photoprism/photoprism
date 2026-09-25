@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/auth/acl"
 )
 
 func TestFile_RedactForSession(t *testing.T) {
@@ -19,19 +21,31 @@ func TestFile_RedactForSession(t *testing.T) {
 
 	t.Run("AdminUnchanged", func(t *testing.T) {
 		f := newFile()
-		f.RedactForSession(session("alice"))
+		f.RedactForSession(session("alice"), acl.ResourcePhotos)
 		assert.Equal(t, "xmp-instance-id", f.InstanceID)
 		assert.False(t, f.OmitMarkers)
 	})
 	t.Run("NilSession", func(t *testing.T) {
 		f := newFile()
-		f.RedactForSession(nil)
+		f.RedactForSession(nil, acl.ResourcePhotos)
 		assert.Equal(t, "xmp-instance-id", f.InstanceID)
 		assert.False(t, f.OmitMarkers)
 	})
+	t.Run("FullAccessClientUnchanged", func(t *testing.T) {
+		f := newFile()
+		f.RedactForSession(fullAccessClientSession(), acl.ResourcePhotos)
+		assert.Equal(t, "xmp-instance-id", f.InstanceID)
+		assert.False(t, f.OmitMarkers)
+	})
+	t.Run("NarrowlyScopedClientRedacted", func(t *testing.T) {
+		f := newFile()
+		f.RedactForSession(SessionFixtures.Pointer("client_metrics"), acl.ResourcePhotos)
+		assert.Equal(t, "", f.InstanceID)
+		assert.True(t, f.OmitMarkers)
+	})
 	t.Run("GuestRedacted", func(t *testing.T) {
 		f := newFile()
-		f.RedactForSession(session("guest"))
+		f.RedactForSession(session("guest"), acl.ResourcePhotos)
 		assert.Equal(t, "", f.InstanceID)
 		assert.True(t, f.OmitMarkers)
 		// The filename stays — the sidebar surfaces it, and it is not identifying metadata.

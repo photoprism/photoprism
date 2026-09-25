@@ -29,6 +29,7 @@ type Service struct {
 	SyncDownload  bool   `json:"SyncDownload"`
 	SyncFilenames bool   `json:"SyncFilenames"`
 	SyncRaw       bool   `json:"SyncRaw"`
+	SyncYaml      int    `json:"SyncYaml"` // YAML sidecar files: -1 disabled, 0 default (enabled), 1 enabled.
 }
 
 // NewService creates a new service form.

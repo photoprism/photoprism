@@ -6,17 +6,46 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// restoreSizeLimits captures the size limits and restores them when the test ends, so a failed
+// assertion cannot leave a narrowed limit behind for the rest of the package.
+func restoreSizeLimits(t *testing.T) {
+	cached, onDemand, faceSize := SizeCached, SizeOnDemand, SizeFace
+	t.Cleanup(func() { SizeCached, SizeOnDemand, SizeFace = cached, onDemand, faceSize })
+}
+
 func TestMaxSize(t *testing.T) {
+	restoreSizeLimits(t)
+
 	SizeCached = 7680
 	SizeOnDemand = 1024
 
 	assert.Equal(t, MaxSize(), 7680)
+}
 
-	SizeCached = 2048
-	SizeOnDemand = 7680
+// TestMaxRenderSize covers the bound rendering obeys, which the face crop source may raise above
+// the delivered sizes: it is rendered once per indexed file rather than per request.
+func TestMaxRenderSize(t *testing.T) {
+	restoreSizeLimits(t)
+
+	t.Run("AboveWhatIsDelivered", func(t *testing.T) {
+		SizeCached, SizeOnDemand, SizeFace = 720, 720, 4096
+
+		assert.Equal(t, 720, MaxSize(), "what is delivered must not follow it")
+		assert.Equal(t, 4096, MaxRenderSize())
+		assert.False(t, InvalidSize(4096))
+		assert.True(t, InvalidSize(4097))
+		assert.True(t, Sizes[Fit4096].ExceedsLimit(), "a request must still be clamped to 720")
+	})
+	t.Run("BelowWhatIsDelivered", func(t *testing.T) {
+		SizeCached, SizeOnDemand, SizeFace = 720, 7680, 0
+
+		assert.Equal(t, 7680, MaxRenderSize())
+	})
 }
 
 func TestSize_ExceedsLimit(t *testing.T) {
+	restoreSizeLimits(t)
+
 	SizeCached = 1024
 	SizeOnDemand = 2048
 
@@ -28,9 +57,6 @@ func TestSize_ExceedsLimit(t *testing.T) {
 
 	tile500 := Sizes[Tile500]
 	assert.False(t, tile500.ExceedsLimit())
-
-	SizeCached = 2048
-	SizeOnDemand = 7680
 }
 
 func TestSize_Limit(t *testing.T) {
@@ -48,10 +74,7 @@ func TestSize_Limit(t *testing.T) {
 }
 
 func TestSize_Clamp(t *testing.T) {
-	t.Cleanup(func() {
-		SizeCached = 2048
-		SizeOnDemand = 7680
-	})
+	restoreSizeLimits(t)
 
 	setLimits := func(cached, onDemand int) {
 		SizeCached, SizeOnDemand = cached, onDemand
@@ -91,6 +114,8 @@ func TestSize_Clamp(t *testing.T) {
 }
 
 func TestSize_Uncached(t *testing.T) {
+	restoreSizeLimits(t)
+
 	SizeCached = 1024
 	SizeOnDemand = 2048
 
@@ -102,7 +127,4 @@ func TestSize_Uncached(t *testing.T) {
 
 	tile500 := Sizes[Tile500]
 	assert.False(t, tile500.Uncached())
-
-	SizeCached = 2048
-	SizeOnDemand = 7680
 }

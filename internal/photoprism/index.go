@@ -117,6 +117,10 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 		return found, updated
 	}
 
+	// Indexing continues after it completed, but its target is recorded in "options.yml" and not
+	// loaded here, so the markers this run adds wait for a restart to receive their vectors.
+	ind.conf.CheckFaceModelSuperseded()
+
 	originalsPath := ind.originalsPath()
 	optionsPath, resolveErr := ResolveIndexPath(originalsPath, o.Path)
 
@@ -181,7 +185,7 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 	}
 
 	ignore.Log = func(fileName string) {
-		log.Infof(`index: ignored "%s"`, fs.RelName(fileName, originalsPath))
+		log.Infof(`index: ignored "%s"`, clean.Log(fs.RelName(fileName, originalsPath)))
 	}
 
 	// enqueueRelated queues unprocessed related files as one indexing job.
@@ -279,8 +283,17 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 			isSymlink := info.IsSymlink()
 			relName := fs.RelName(fileName, originalsPath)
 
+			wasFound := found[fileName].Exists()
+
 			// Skip directories and known files.
 			if skip, result := fs.SkipWalk(fileName, isDir, isSymlink, found, ignore); skip {
+				// A regeneration reports what the index was set to skip rather than failing on it.
+				if !wasFound && !isDir && media.MainFile(fileName) {
+					o.FaceRegeneration.addSkipped(fileName)
+				} else if !wasFound && errors.Is(result, filepath.SkipDir) {
+					o.FaceRegeneration.addSkippedDir(fileName)
+				}
+
 				if !isDir {
 					return result
 				}
@@ -288,8 +301,8 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 				if !errors.Is(result, filepath.SkipDir) {
 					folder := entity.NewFolder(entity.RootOriginals, relName, fs.ModTime(fileName))
 
-					if err := folder.Create(); err == nil {
-						log.Infof("index: added folder /%s", folder.Path)
+					if err := folder.Create(); err == nil && folder.Path != "" {
+						log.Infof("index: added folder /%s", clean.Log(folder.Path))
 					}
 				}
 
@@ -346,6 +359,7 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 			// Skip RAW image?
 			if mf.IsRaw() && skipRaw {
 				log.Infof("index: skipped raw %s", clean.Log(mf.RootRelName()))
+				o.FaceRegeneration.addSkipped(fileName)
 				return nil
 			}
 

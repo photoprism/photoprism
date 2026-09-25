@@ -815,6 +815,9 @@
                 "ThumbSize": {
                     "type": "integer"
                 },
+                "ThumbSizeFace": {
+                    "type": "integer"
+                },
                 "ThumbSizeUncached": {
                     "type": "integer"
                 },
@@ -2211,6 +2214,9 @@
                 "SyncUpload": {
                     "type": "boolean"
                 },
+                "SyncYaml": {
+                    "type": "integer"
+                },
                 "UpdatedAt": {
                     "type": "string"
                 }
@@ -2297,6 +2303,9 @@
                     "type": "string"
                 },
                 "Bio": {
+                    "type": "string"
+                },
+                "Birthday": {
                     "type": "string"
                 },
                 "CreatedAt": {
@@ -3246,6 +3255,10 @@
                 },
                 "SyncUpload": {
                     "type": "boolean"
+                },
+                "SyncYaml": {
+                    "description": "YAML sidecar files: -1 disabled, 0 default (enabled), 1 enabled.",
+                    "type": "integer"
                 }
             },
             "type": "object"
@@ -3259,6 +3272,9 @@
                     "type": "string"
                 },
                 "Bio": {
+                    "type": "string"
+                },
+                "Birthday": {
                     "type": "string"
                 },
                 "Excluded": {
@@ -4473,6 +4489,9 @@
         "search.Subject": {
             "properties": {
                 "Alias": {
+                    "type": "string"
+                },
+                "Birthday": {
                     "type": "string"
                 },
                 "Excluded": {
@@ -8084,6 +8103,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
@@ -9183,6 +9208,36 @@
                         "schema": {
                             "$ref": "#/definitions/entity.Marker"
                         }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
                     }
                 },
                 "tags": [
@@ -9248,6 +9303,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
@@ -9303,6 +9364,12 @@
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
@@ -9552,7 +9619,9 @@
         "/api/v1/oauth/revoke": {
             "post": {
                 "consumes": [
-                    "application/json"
+                    "application/json",
+                    "application/x-www-form-urlencoded",
+                    "multipart/form-data"
                 ],
                 "operationId": "OAuthRevoke",
                 "parameters": [
@@ -9600,6 +9669,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "413": {
+                        "description": "Request Entity Too Large",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
@@ -9616,7 +9691,9 @@
         "/api/v1/oauth/token": {
             "post": {
                 "consumes": [
-                    "application/json"
+                    "application/json",
+                    "application/x-www-form-urlencoded",
+                    "multipart/form-data"
                 ],
                 "operationId": "OAuthToken",
                 "parameters": [
@@ -9654,6 +9731,12 @@
                     },
                     "403": {
                         "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "413": {
+                        "description": "Request Entity Too Large",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
@@ -11618,6 +11701,12 @@
                             "type": "array"
                         }
                     },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
@@ -11632,6 +11721,12 @@
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "413": {
+                        "description": "Request Entity Too Large",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
@@ -12372,6 +12467,12 @@
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }

@@ -14,6 +14,7 @@ ENV DO_NOT_TRACK=true \
     PHOTOPRISM_EXPERIMENTAL="true" \
     PHOTOPRISM_UPLOAD_NSFW="false" \
     PHOTOPRISM_DETECT_NSFW="false" \
+    PHOTOPRISM_FACE_CLUSTER_CORE=4 \
     PHOTOPRISM_THUMB_LIBRARY="auto" \
     PHOTOPRISM_THUMB_COLOR="auto" \
     PHOTOPRISM_THUMB_SIZE=4096 \
@@ -29,7 +30,7 @@ ENV DO_NOT_TRACK=true \
     PHOTOPRISM_SITE_DESCRIPTION="AI-Powered Photos App for the Decentralized Web"
 
 # Copy assets
-COPY /docker/demo/index.gohtml /opt/photoprism/assets/templates
+COPY --chown=root:root --chmod=644 /docker/demo/index.gohtml /opt/photoprism/assets/templates
 
 # Download example photos
 RUN wget -qO- https://dl.photoprism.app/qa/demo.tar.gz | tar xvz -C /photoprism/originals

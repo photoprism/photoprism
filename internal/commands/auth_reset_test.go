@@ -8,6 +8,8 @@ import (
 
 func TestAuthResetCommand(t *testing.T) {
 	t.Run("NotConfirmed", func(t *testing.T) {
+		t.Setenv("PHOTOPRISM_CLI", "")
+
 		// Run command with test context.
 		output0, err := RunWithTestContext(AuthListCommand, []string{"ls"})
 
@@ -17,13 +19,10 @@ func TestAuthResetCommand(t *testing.T) {
 		assert.Contains(t, output0, "alice")
 		assert.Contains(t, output0, "visitor")
 
-		// Run command with test context.
-		output, err := RunWithTestContext(AuthResetCommand, []string{"reset"})
-
-		// Check command output for plausibility.
-		// t.Logf(output)
-		assert.NoError(t, err)
-		assert.Empty(t, output)
+		// Without a terminal the prompt cannot run, which is a usage error rather than a refusal.
+		_, err = RunWithTestContext(AuthResetCommand, []string{"reset"})
+		assertExitCode(t, err, 2)
+		assert.Contains(t, err.Error(), "--yes")
 
 		// Run command with test context.
 		output1, err := RunWithTestContext(AuthListCommand, []string{"ls"})

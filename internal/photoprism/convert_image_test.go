@@ -402,6 +402,31 @@ func TestConvert_JpegConvertCmds_Insta360Pair(t *testing.T) {
 	assert.True(t, cmds[0].Projection.Equal(projection.Equirectangular.String()))
 }
 
+// TestConvert_JpegConvertCmds_Insta360LensCodedPhotos verifies that photos with lens codes are not combined.
+func TestConvert_JpegConvertCmds_Insta360LensCodedPhotos(t *testing.T) {
+	cnf := config.TestConfig()
+	dir := t.TempDir()
+	leftName := writeInsta360CaptureFile(t, dir, "IMG_20220625_140410_00_008.insp", "testdata/flash.jpg")
+	rightName := writeInsta360CaptureFile(t, dir, "IMG_20220625_140410_10_008.insp", "testdata/flash.jpg")
+	left, err := NewMediaFile(leftName)
+	require.NoError(t, err)
+	require.Nil(t, FindInsta360Capture(left))
+
+	// The photo is converted exactly as it would be without the other file.
+	paired, _, err := NewConvert(cnf).JpegConvertCmds(left, filepath.Join(dir, "preview.jpg"), "")
+	require.NoError(t, err)
+	require.NoError(t, os.Remove(rightName))
+	single, _, err := NewConvert(cnf).JpegConvertCmds(left, filepath.Join(dir, "preview.jpg"), "")
+	require.NoError(t, err)
+
+	require.Equal(t, len(single), len(paired))
+
+	for i := range paired {
+		assert.NotContains(t, paired[i].String(), rightName)
+		assert.Equal(t, single[i].String(), paired[i].String())
+	}
+}
+
 // TestConvert_writeEquirectangularProjection verifies that the GPano equirectangular tag is
 // written so a dewarped derivative is self-describing to external tools.
 func TestConvert_writeEquirectangularProjection(t *testing.T) {
@@ -535,6 +560,19 @@ func TestConvert_fisheyeRoll(t *testing.T) {
 		f, err := NewMediaFile(oneRSInsvFixture(t, t.TempDir(), "camera.insv"))
 		require.NoError(t, err)
 		assert.Equal(t, 180, convert.fisheyeRoll(f))
+	})
+	t.Run("LensCodedPhotos", func(t *testing.T) {
+		dir := t.TempDir()
+		// Only the other photo identifies the camera, so a roll could only come from pairing them.
+		payload, err := os.ReadFile("testdata/flash.jpg")
+		require.NoError(t, err)
+		payload = append(payload, append([]byte{0x12, 0x0e}, []byte("Insta360 OneRS")...)...)
+		// #nosec G703 -- the destination directory and filename are controlled by the test.
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "IMG_20220625_140410_00_008.insp"), payload, fs.ModeFile))
+		right, err := NewMediaFile(writeInsta360CaptureFile(t, dir, "IMG_20220625_140410_10_008.insp", "testdata/flash.jpg"))
+		require.NoError(t, err)
+		require.Nil(t, FindInsta360Capture(right))
+		assert.Equal(t, 0, convert.fisheyeRoll(right))
 	})
 	t.Run("OneRSSquareInsv", func(t *testing.T) {
 		f, err := NewMediaFile(oneRSInsvFixture(t, t.TempDir(), "camera.insv"))
@@ -862,4 +900,70 @@ func TestConvert_PngConvertCmds(t *testing.T) {
 		assert.Error(t, err)
 		assert.Empty(t, cmds)
 	})
+}
+
+// writeImageMagickFixture renders a small test image into dir and returns its path, so format
+// coverage needs no binary media in the repository. A build that cannot write the format cannot
+// read it either, so this fails rather than skips and keeps that result visible.
+func writeImageMagickFixture(t *testing.T, bin, dir, name string) string {
+	t.Helper()
+
+	fileName := filepath.Join(dir, name)
+
+	// #nosec G204 -- arguments are test constants.
+	if out, err := exec.Command(bin, "-size", "64x48", "gradient:red-blue", "-depth", "8", fileName).CombinedOutput(); err != nil {
+		t.Fatalf("ImageMagick cannot write %s: %s", name, strings.TrimSpace(string(out)))
+	}
+
+	return fileName
+}
+
+// TestConvert_JpegConvertCmds_ImageMagickFormats verifies that image formats without a dedicated
+// converter reach the generic ImageMagick branch, and that the command it builds renders them.
+func TestConvert_JpegConvertCmds_ImageMagickFormats(t *testing.T) {
+	cnf := config.TestConfig()
+
+	if !cnf.ImageMagickEnabled() {
+		t.Skip("ImageMagick must be available to render these formats")
+	}
+
+	convert := NewConvert(cnf)
+	bin := cnf.ImageMagickBin()
+
+	cases := []struct {
+		name     string
+		fileName string
+		fileType fs.Type
+	}{
+		{"Cineon", "sample.cin", fs.ImageCineon},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			dir := t.TempDir()
+			srcName := writeImageMagickFixture(t, bin, dir, tc.fileName)
+
+			mediaFile, err := NewMediaFile(srcName)
+			require.NoError(t, err)
+			require.Equal(t, tc.fileType, mediaFile.FileType())
+			require.True(t, mediaFile.IsImage())
+			require.False(t, mediaFile.IsRaw())
+			require.False(t, mediaFile.IsVideo())
+
+			jpegName := filepath.Join(dir, tc.fileName+".jpg")
+			cmds, useMutex, err := convert.JpegConvertCmds(mediaFile, jpegName, "")
+			require.NoError(t, err)
+			require.NotEmpty(t, cmds)
+			assert.False(t, useMutex)
+			assert.Contains(t, cmds[0].String(), bin)
+
+			out, err := cmds[0].Cmd.CombinedOutput()
+			require.NoErrorf(t, err, "%s: %s", cmds[0].String(), strings.TrimSpace(string(out)))
+			require.True(t, fs.FileExistsNotEmpty(jpegName))
+
+			jpegFile, err := NewMediaFile(jpegName)
+			require.NoError(t, err)
+			assert.True(t, jpegFile.IsJpeg())
+		})
+	}
 }

@@ -58,6 +58,7 @@ type Client struct {
 	LastActive   int64           `json:"LastActive" yaml:"LastActive,omitempty"`
 	CreatedAt    time.Time       `json:"CreatedAt" yaml:"-"`
 	UpdatedAt    time.Time       `json:"UpdatedAt" yaml:"-"`
+	DeletedAt    *time.Time      `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
 }
 
 // TableName returns the entity table name.
@@ -95,7 +96,9 @@ func (m *Client) BeforeCreate(scope *gorm.Scope) error {
 	return scope.SetColumn("ClientUID", m.ClientUID)
 }
 
-// FindClientByUID returns the matching client or nil if it was not found.
+// FindClientByUID returns the matching client or nil if it was not found. The lookup reads
+// deleted records too, and MUST keep doing so: an ownership check needs to see that a retired
+// record still holds an identifier, and a caller that resolves a client gates on Deleted().
 func FindClientByUID(uid string) *Client {
 	if uid == "" {
 		return nil
@@ -113,7 +116,36 @@ func FindClientByUID(uid string) *Client {
 	return m
 }
 
-// FindClientByNodeUUID returns the client with the given NodeUUID or nil if not found.
+// FindClient returns the client with the given client UID or node UUID, including a deleted
+// one, or nil if neither matches. Operator tooling resolves its argument through this, so a
+// cluster node can be named by the UUID its operator sees rather than by its client UID.
+// When several records share a node UUID the most recently updated one is returned.
+func FindClient(id string) *Client {
+	if id == "" {
+		return nil
+	}
+
+	if m := FindClientByUID(id); m != nil {
+		return m
+	}
+
+	// A node UUID must carry the canonical layout, so an arbitrary argument is never
+	// used as one: auth_clients.node_uuid is VARBINARY and storage may reinterpret a
+	// value without separators.
+	if !rnd.IsCanonicalUUID(id) {
+		return nil
+	}
+
+	if list := FindClientsByNodeUUID(id); len(list) > 0 {
+		return &list[0]
+	}
+
+	return nil
+}
+
+// FindClientByNodeUUID returns the current client with the given NodeUUID or nil if not found.
+// Callers resolve a node through this to act on it, so it skips deleted records rather than
+// returning whichever row sorts first; use FindClientsByNodeUUID to test whether a UUID is taken.
 func FindClientByNodeUUID(nodeUUID string) *Client {
 	if nodeUUID == "" {
 		return nil
@@ -121,14 +153,15 @@ func FindClientByNodeUUID(nodeUUID string) *Client {
 
 	m := &Client{}
 
-	if err := UnscopedDb().Where("node_uuid = ?", nodeUUID).Order("updated_at DESC").First(m).Error; err != nil {
+	if err := Db().Where("node_uuid = ?", nodeUUID).Order("updated_at DESC").First(m).Error; err != nil {
 		return nil
 	}
 
 	return m
 }
 
-// FindClientsByNodeUUID returns all client rows matching the given NodeUUID ordered by UpdatedAt descending.
+// FindClientsByNodeUUID returns all client rows matching the given NodeUUID ordered by UpdatedAt
+// descending, including deleted ones, so that a retired identifier still counts as taken.
 func FindClientsByNodeUUID(nodeUUID string) []Client {
 	if nodeUUID == "" {
 		return nil
@@ -240,9 +273,10 @@ func (m *Client) HasRole(role acl.Role) bool {
 	return m.AclRole() == role
 }
 
-// AclRole returns the client role for ACL permission checks.
+// AclRole returns the client role for ACL permission checks. A deleted client holds
+// no permissions, so its role is resolved as none wherever a session still names it.
 func (m *Client) AclRole() acl.Role {
-	if m == nil {
+	if m.Deleted() {
 		return acl.RoleNone
 	}
 
@@ -272,6 +306,20 @@ func (m *Client) User() *User {
 // HasUser checks the client belongs to a user.
 func (m *Client) HasUser() bool {
 	return rnd.IsUID(m.UserUID, UserUID)
+}
+
+// HasInactiveUser checks if the client belongs to a user account that no longer exists or whose
+// bound clients must be refused, see User.DenyClientAccess.
+func (m *Client) HasInactiveUser() bool {
+	if m == nil || m.UserUID == "" {
+		return false
+	} else if !m.HasUser() {
+		return true
+	}
+
+	u := m.User()
+
+	return !u.HasUID() || u.DenyClientAccess()
 }
 
 // SetUser sets the user to which the client belongs.
@@ -343,7 +391,8 @@ func (m *Client) Save() error {
 	return nil
 }
 
-// Delete marks the entity as deleted.
+// Delete marks the entity as deleted. The record is retained, so the identifiers it holds stay
+// reserved and remain unavailable to any other record. Use Purge to release them.
 func (m *Client) Delete() (err error) {
 	if m.ClientUID == "" {
 		return fmt.Errorf("client uid is empty")
@@ -353,9 +402,127 @@ func (m *Client) Delete() (err error) {
 		return err
 	}
 
-	err = Db().Delete(m).Error
+	if err = Db().Delete(m).Error; err != nil {
+		return err
+	}
 
-	return err
+	// Carry the mark onto the in-memory record, which the driver does not do, so a caller
+	// that keeps using it sees the same state as one that reads the row again.
+	if m.DeletedAt == nil {
+		deletedAt := UTC()
+		m.DeletedAt = &deletedAt
+	}
+
+	return nil
+}
+
+// Restore removes the deletion mark, so the client can be used again. A deletion releases the
+// client name, so this refuses when a current record has taken an identifier since, rather than
+// leaving two live holders of it.
+func (m *Client) Restore() error {
+	if m == nil {
+		return fmt.Errorf("client is nil")
+	} else if m.ClientUID == "" {
+		return fmt.Errorf("client uid is empty")
+	}
+
+	if conflict := m.RestoreConflict(); conflict != "" {
+		return fmt.Errorf("%s is already in use by client %s", conflict, m.conflictingClient(conflict))
+	}
+
+	if err := UnscopedDb().Model(m).Update("DeletedAt", nil).Error; err != nil {
+		return err
+	}
+
+	m.DeletedAt = nil
+
+	return nil
+}
+
+// RestoreConflict reports the identifier that keeps this client from being restored, or an empty
+// string when none does. Lookups resolve the most recently updated record, so a second live holder
+// could take an identifier over rather than merely duplicate it. The stored record decides, since
+// an object read before the deletion does not carry the mark.
+func (m *Client) RestoreConflict() string {
+	stored := m.Stored()
+
+	if stored == nil || !stored.Deleted() {
+		return ""
+	}
+
+	if stored.ClientName != "" && stored.currentClientWith("client_name = ?", stored.ClientName) != nil {
+		return "client name"
+	}
+
+	if stored.NodeUUID != "" && stored.currentClientWith("node_uuid = ?", stored.NodeUUID) != nil {
+		return "node uuid"
+	}
+
+	return ""
+}
+
+// Stored returns the record as it is saved, or nil when there is none. A receiver read before a
+// change does not reflect it, so a decision about the record's state is made on this rather than
+// on the copy in hand.
+func (m *Client) Stored() *Client {
+	if m == nil || m.ClientUID == "" {
+		return nil
+	}
+
+	return FindClientByUID(m.ClientUID)
+}
+
+// conflictingClient names the current record that holds the given identifier, for reporting.
+func (m *Client) conflictingClient(conflict string) string {
+	stored := m.Stored()
+
+	if stored == nil {
+		return report.NotAssigned
+	}
+
+	switch conflict {
+	case "client name":
+		return stored.currentClientWith("client_name = ?", stored.ClientName).String()
+	case "node uuid":
+		return stored.currentClientWith("node_uuid = ?", stored.NodeUUID).String()
+	}
+
+	return report.NotAssigned
+}
+
+// currentClientWith returns another client that is not deleted and matches the given condition.
+func (m *Client) currentClientWith(query string, args ...any) *Client {
+	other := &Client{}
+
+	if err := Db().Where(query, args...).Where("client_uid <> ?", m.ClientUID).First(other).Error; err != nil {
+		return nil
+	}
+
+	return other
+}
+
+// Purge permanently removes the client, so that the identifiers it holds become available
+// again. For a cluster node that includes its node UUID, which the provisioned database and the
+// access grants are named after, so a caller releases those to the next holder along with it.
+func (m *Client) Purge() (err error) {
+	if m == nil {
+		return fmt.Errorf("client is nil")
+	} else if m.ClientUID == "" {
+		return fmt.Errorf("client uid is empty")
+	}
+
+	if _, err = m.DeleteSessions(); err != nil {
+		return err
+	}
+
+	// The client UID becomes available again, so its stored secret does not outlive it.
+	if pw := FindPassword(m.ClientUID); pw != nil {
+		if err = pw.Delete(); err != nil {
+			return err
+		}
+	}
+
+	return UnscopedDb().Delete(m).Error
 }
 
 // DeleteSessions deletes all sessions that belong to this client.
@@ -364,25 +531,32 @@ func (m *Client) DeleteSessions() (deleted int, err error) {
 		return 0, fmt.Errorf("client uid is empty")
 	}
 
-	if deleted = DeleteClientSessions(m, "", 0); deleted > 0 {
+	if deleted = DeleteClientSessions(m, "", 0, ""); deleted > 0 {
 		event.AuditInfo([]string{"client %s", "deleted %s"}, m.String(), english.Plural(deleted, "session", "sessions"))
 	}
 
 	return deleted, nil
 }
 
-// Deleted checks if the client has been deleted.
+// Deleted checks if the client has been deleted. A missing client reads as deleted,
+// so a failed lookup and a retired record reach the same decision.
 func (m *Client) Deleted() bool {
-	return m == nil
+	if m == nil {
+		return true
+	} else if m.DeletedAt == nil {
+		return false
+	}
+
+	return !m.DeletedAt.IsZero()
 }
 
-// Disabled checks if the client authentication has been disabled.
+// Disabled checks if the client has been deleted or its authentication is turned off.
 func (m *Client) Disabled() bool {
 	if m == nil {
 		return true
 	}
 
-	return !m.AuthEnabled
+	return m.Deleted() || !m.AuthEnabled
 }
 
 // Updates multiple properties in the database.
@@ -521,13 +695,15 @@ func (m *Client) NewSession(c *gin.Context, t authn.GrantType) *Session {
 	return NewSession(m.AuthExpires, 0).SetContext(c).SetClient(m).SetGrantType(t)
 }
 
-// EnforceAuthTokenLimit deletes client sessions above the configured limit and returns the number of deleted sessions.
-func (m *Client) EnforceAuthTokenLimit() (deleted int) {
+// EnforceAuthTokenLimit deletes client sessions above the configured limit and returns the
+// number of deleted sessions. The session with the specified ID ranks first within its
+// creation second, so a newly issued token is among the retained ones.
+func (m *Client) EnforceAuthTokenLimit(keepID string) (deleted int) {
 	if m == nil || !m.HasUID() || m.AuthTokens < 0 {
 		return 0
 	}
 
-	return DeleteClientSessions(m, authn.MethodOAuth2, m.AuthTokens)
+	return DeleteClientSessions(m, authn.MethodOAuth2, m.Tokens(), keepID)
 }
 
 // Expires returns the auth expiration duration.
@@ -577,7 +753,7 @@ func (m *Client) Report(skipEmpty bool) (rows [][]string, cols []string) {
 	rows = make([][]string, 0, len(values))
 
 	for k, v := range values {
-		s := fmt.Sprintf("%#v", v)
+		s := reportValue(v)
 
 		// Skip empty values?
 		if !skipEmpty || s != "" {
@@ -641,6 +817,11 @@ func (m *Client) SetFormValues(frm form.Client) *Client {
 
 // Validate checks the client application properties before saving them.
 func (m *Client) Validate() (err error) {
+	// Deleted client?
+	if m.Deleted() {
+		return errors.New("client has been deleted")
+	}
+
 	// Empty client name?
 	if m.ClientName == "" {
 		return errors.New("client name must not be empty")

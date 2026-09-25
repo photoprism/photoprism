@@ -5,14 +5,24 @@ import (
 	"sort"
 	"strings"
 	"time"
-	"unicode/utf8"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
+
+// maskedSecret returns a fixed placeholder for a secret that is set, and an empty string for one
+// that is not, so a report distinguishes the two.
+func maskedSecret(s string) string {
+	if s == "" {
+		return ""
+	}
+
+	return txt.Masked
+}
 
 // Report returns global config values as a table for reporting.
 func (c *Config) Report() (rows [][]string, cols []string) {
@@ -24,7 +34,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		// Authentication.
 		{"auth-mode", c.AuthMode()},
 		{"admin-user", c.AdminUser()},
-		{"admin-password", strings.Repeat("*", utf8.RuneCountInString(c.AdminPassword()))},
+		{"admin-password", maskedSecret(c.AdminPassword())},
 		{"admin-scope", c.AdminScope()},
 		{"password-length", fmt.Sprintf("%d", c.PasswordLength())},
 		{"password-reset-uri", c.PasswordResetUri()},
@@ -216,12 +226,12 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 	}
 
 	rows = append(rows, [][]string{
-		{"join-token", strings.Repeat("*", utf8.RuneCountInString(c.JoinToken()))},
+		{"join-token", maskedSecret(c.JoinToken())},
 		{"node-name", c.NodeName()},
 		{"node-role", c.NodeRole()},
 		{"node-uuid", c.NodeUUID()},
 		{"node-client-id", c.NodeClientID()},
-		{"node-client-secret", strings.Repeat("*", utf8.RuneCountInString(c.NodeClientSecret()))},
+		{"node-client-secret", maskedSecret(c.NodeClientSecret())},
 		{"jwks-url", clean.UriRedacted(c.JWKSUrl())},
 		{"jwks-cache-ttl", fmt.Sprintf("%d", c.JWKSCacheTTL())},
 		{"jwt-scope", c.JWTAllowedScopes().String()},
@@ -271,7 +281,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 			{"database-host", c.DatabaseHost()},
 			{"database-port", c.DatabasePortString()},
 			{"database-user", c.DatabaseUser()},
-			{"database-password", strings.Repeat("*", utf8.RuneCountInString(c.DatabasePassword()))},
+			{"database-password", maskedSecret(c.DatabasePassword())},
 		}...)
 	}
 
@@ -303,6 +313,8 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"ffmpeg-map-video", c.FFmpegMapVideo()},
 		{"ffmpeg-map-audio", c.FFmpegMapAudio()},
 		{"ffmpeg-exclude", c.FFmpegExclude().String()},
+		{"convert-timeout", fmt.Sprintf("%d", c.options.ConvertTimeout)},
+		{"transcode-timeout", fmt.Sprintf("%d", c.options.TranscodeTimeout)},
 		{"exiftool-bin", c.ExifToolBin()},
 		{"sips-bin", c.SipsBin()},
 		{"sips-exclude", c.SipsExclude()},
@@ -324,6 +336,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"thumb-color", c.ThumbColor()},
 		{"thumb-size", fmt.Sprintf("%d", c.ThumbSizePrecached())},
 		{"thumb-size-uncached", fmt.Sprintf("%d", c.ThumbSizeUncached())},
+		{"thumb-size-face", fmt.Sprintf("%d", c.ThumbSizeFace())},
 		{"thumb-uncached", fmt.Sprintf("%t", c.ThumbUncached())},
 		{"jpeg-quality", fmt.Sprintf("%d", c.JpegQuality())},
 		{"jpeg-size", fmt.Sprintf("%d", c.JpegSize())},
@@ -333,9 +346,10 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"vision-yaml", c.VisionYaml()},
 		{"vision-api", fmt.Sprintf("%t", c.VisionApi())},
 		{"vision-uri", clean.UriRedacted(c.VisionUri())},
-		{"vision-key", strings.Repeat("*", utf8.RuneCountInString(c.VisionKey()))},
+		{"vision-key", maskedSecret(c.VisionKey())},
 		{"vision-schedule", c.VisionSchedule()},
 		{"vision-filter", c.VisionFilter()},
+		{"onnx-provider", c.OnnxProvider().String()},
 		{"nasnet-model-path", c.NasnetModelPath()},
 		{"facenet-model-path", c.FacenetModelPath()},
 		{"nsfw-model-path", c.NsfwModelPath()},
@@ -414,12 +428,17 @@ func (c *Config) faceConfigRows() []faceConfigRow {
 		{faceSectionRecognition, "face-cluster-size", fmt.Sprintf("%d", c.FaceClusterSize())},
 		{faceSectionRecognition, "face-cluster-score", fmt.Sprintf("%d", c.FaceClusterScoreEffective())},
 		{faceSectionRecognition, "face-cluster-core", fmt.Sprintf("%d", c.FaceClusterCore())},
+		{faceSectionRecognition, "face-cluster-core-retry", fmt.Sprintf("%d", c.FaceClusterCoreRetry())},
+		{faceSectionRecognition, "face-cluster-split-rounds", fmt.Sprintf("%d", c.FaceClusterSplitRounds())},
+		{faceSectionRecognition, "face-cluster-split-shrink", fmt.Sprintf("%g", c.FaceClusterSplitShrink())},
 		{faceSectionRecognition, "face-cluster-dist", c.faceDistReport(c.FaceClusterDist)},
 		{faceSectionRecognition, "face-cluster-radius", c.faceDistReport(c.FaceClusterRadius)},
+		{faceSectionRecognition, "face-cluster-percentile", fmt.Sprintf("%d", c.FaceClusterPercentile())},
 		{faceSectionRecognition, "face-match-dist", c.faceDistReport(c.FaceMatchDist)},
 		{faceSectionRecognition, "face-match-margin", c.faceDistReport(c.FaceMatchMargin)},
 		{faceSectionRecognition, "face-collision-dist", c.faceDistReport(c.FaceCollisionDist)},
 		{faceSectionRecognition, "face-epsilon-dist", c.faceDistReport(c.FaceEpsilonDist)},
+		{faceSectionRecognition, "face-recompute-stats", fmt.Sprintf("%t", c.FaceRecomputeStats())},
 	}...)
 }
 
@@ -478,6 +497,17 @@ func (c *Config) faceRecognitionNote() string {
 				detector, c.FaceClusterScoreEffective(), face.ClusterScoreThresholdDefault))
 		}
 	}
+
+	// Zero reads as the loosest of the three and is the strictest, so it is spelled out rather
+	// than left to a number in the table.
+	switch c.FaceClusterSplitRounds() {
+	case face.ClusterSplitOff:
+		notes = append(notes, "The cluster width guard is off, so a group holding several people is kept whole.")
+	case 0:
+		notes = append(notes, "A group wider than its own accept distance is discarded rather than split.")
+	}
+
+	notes = append(notes, fmt.Sprintf("A cluster's radius is the %dth percentile of the distances to its members.", c.FaceClusterPercentile()))
 
 	return strings.Join(notes, " ")
 }
@@ -665,7 +695,8 @@ func (c *Config) faceClusterStatus() string {
 	// The same getter Propagate assigns to face.SampleThreshold, not the global: this command runs
 	// on InitCore, which never propagates, so the global would still hold the shipped default and
 	// the report would name a shortfall that is not the one holding.
-	return faceClusterStatusFor(gates, c.FaceSampleThreshold(), size, c.faceClusterScorePhrase(floor), c.FaceClusterCore(), c.FaceClusterDist())
+	return faceClusterStatusFor(gates, c.FaceSampleThreshold(), size, c.faceClusterScorePhrase(floor),
+		c.FaceClusterCore(), c.FaceClusterCoreRetry(), c.FaceClusterDist())
 }
 
 // faceClusterScorePhrase names the score bar the gate counts were taken at. Unset it is per marker,
@@ -686,13 +717,21 @@ func (c *Config) faceClusterScorePhrase(floor int) string {
 // faceClusterStatusFor renders the clustering status for a set of gate counts, or "" when nothing
 // is holding. Separate from the queries so every branch is reachable without a library shaped to
 // produce it.
-func faceClusterStatusFor(gates query.FaceClusterGates, required, size int, scorePhrase string, core int, dist float64) string {
+func faceClusterStatusFor(gates query.FaceClusterGates, required, size int, scorePhrase string, core, retry int, dist float64) string {
 	// Enough to run and nothing formed: no cluster advances the recency cut, so the pass repeats on
-	// every wake. No threshold explains it, so name what decides whether a group forms.
+	// every wake. No threshold explains it, so name what decides whether a group forms - including
+	// the second pass, or an operator lowers a core the run is already retrying below.
 	if gates.Eligible >= required && !gates.Clustered && gates.Unclustered > 0 {
+		cores := fmt.Sprintf("face-cluster-core %d requires", core)
+
+		if retry > 0 {
+			cores = fmt.Sprintf("face-cluster-core %d, and face-cluster-core-retry %d over what matching leaves, require",
+				core, retry)
+		}
+
 		return fmt.Sprintf("Automatic clustering has %d eligible markers and has formed no clusters: "+
-			"face-cluster-core %d requires that many faces of one person within a face-cluster-dist of %g, "+
-			"counting the face itself.", gates.Eligible, core, dist)
+			"%s that many faces of one person within a face-cluster-dist of %g, "+
+			"counting the face itself.", gates.Eligible, cores, dist)
 	}
 
 	// Enough to run: not a state an operator has to act on, and a line every healthy instance
@@ -726,8 +765,21 @@ func faceClusterStatusFor(gates query.FaceClusterGates, required, size int, scor
 	// eligible count is named as the intersection: the size and score counts overlap, so reporting
 	// them alone reads as two independent facts rather than as the arithmetic that produced it.
 	return fmt.Sprintf("Automatic clustering needs %d new markers (2 x face-cluster-core %d) and has %d clearing both: "+
-		"of the %d added since the last cluster, %d clear the face-cluster-size of %d px and %d clear %s.",
-		required, core, gates.Eligible, gates.Recent, gates.SizeOK, size, gates.ScoreOK, scorePhrase)
+		"of the %d added since the last cluster, %d clear the face-cluster-size of %d px and %d clear %s.%s",
+		required, core, gates.Eligible, gates.Recent, gates.SizeOK, size, gates.ScoreOK, scorePhrase,
+		faceDetailShortfall(gates))
+}
+
+// faceDetailShortfall names the markers the crop-detail condition excludes, or "" when it excludes
+// none. The size count carries that condition, so a shortfall it caused otherwise reads as one
+// face-cluster-size explains - and lowering that bar cannot admit a single one of them.
+func faceDetailShortfall(gates query.FaceClusterGates) string {
+	if excluded := gates.Recent - gates.DetailOK; excluded > 0 {
+		return fmt.Sprintf(" %d of them were embedded from a crop their source could not fill, "+
+			"which no threshold admits and re-indexing at a larger thumb-size-face is what changes.", excluded)
+	}
+
+	return ""
 }
 
 // faceClusterScoreFloor maps FACE_CLUSTER_SCORE onto the convention the marker queries use, where

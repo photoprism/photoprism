@@ -6,6 +6,7 @@ import (
 
 	"github.com/jinzhu/inflection"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -272,6 +273,14 @@ func unescapeLabelTerm(s string) string {
 	return b.String()
 }
 
+const (
+	// MaxLabelFilterGroups bounds the AND-separated groups a label filter may contain.
+	MaxLabelFilterGroups = 32
+	// MaxLabelFilterAlternatives bounds the OR alternatives per group. Each alternative is
+	// resolved with its own queries, so this count sets how many a filter can issue.
+	MaxLabelFilterAlternatives = 32
+)
+
 // resolveLabelGroup unions the category-expanded label IDs for every '|'
 // alternative in a single AND group, respecting escape sequences.
 func resolveLabelGroup(group string) (ids []uint) {
@@ -279,6 +288,8 @@ func resolveLabelGroup(group string) (ids []uint) {
 
 	if len(alts) == 0 {
 		return nil
+	} else if len(alts) > MaxLabelFilterAlternatives {
+		alts = alts[:MaxLabelFilterAlternatives]
 	}
 
 	seen := make(map[uint]struct{}, len(alts))
@@ -327,13 +338,17 @@ func resolveLabelGroup(group string) (ids []uint) {
 // ErrLabelNotFound return means a positive group resolved to zero labels and
 // the caller should short-circuit to an empty result set.
 func ParseLabelFilter(s string) (include, exclude [][]uint, sawPositive bool, err error) {
-	s = strings.TrimSpace(s)
+	s = strings.TrimSpace(clean.SearchTerms(s))
 
 	if s == "" {
 		return nil, nil, false, nil
 	}
 
 	groups := txt.TrimmedSplitWithEscape(s, txt.AndRune, txt.EscapeRune)
+
+	if len(groups) > MaxLabelFilterGroups {
+		groups = groups[:MaxLabelFilterGroups]
+	}
 
 	for _, group := range groups {
 		group = strings.TrimSpace(group)

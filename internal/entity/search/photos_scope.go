@@ -11,38 +11,32 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
-// sessionGrantsPhotos reports whether the session is granted perm on photos. For a client session
-// the permission must be granted to both the client role and (when a user is present) the user
-// role, since a client acting on behalf of a user is limited by both; an ordinary session is
-// evaluated against its user role. A nil session means internal or CLI use, which is not restricted.
+// libraryAccess is the permission set that distinguishes whole-library reach from shared access, used
+// by the scope gates that admit only an album a session owns or has a share for.
+var libraryAccess = acl.Permissions{acl.AccessAll, acl.AccessLibrary}
+
+// sessionAuditRole returns the role names an audit line should carry. A client session is decided by
+// the client role together with the user role, so both are named.
+func sessionAuditRole(sess *entity.Session) string {
+	if sess.IsClient() && !sess.NoUser() {
+		return sess.GetClientRole().String() + "/" + sess.GetUserRole().String()
+	} else if sess.IsClient() {
+		return sess.GetClientRole().String()
+	}
+
+	return sess.GetUserRole().String()
+}
+
+// sessionGrantsPhotos reports whether the session is granted perm on photos, using the client and
+// user role intersection Session.Grants implements.
 func sessionGrantsPhotos(sess *entity.Session, perm acl.Permission) bool {
-	if sess == nil {
-		return true
-	}
-
-	// For client sessions the client role must permit the action as well, so a restricted client
-	// cannot inherit a privileged user's access.
-	if sess.IsClient() {
-		if !acl.Rules.Allow(acl.ResourcePhotos, sess.GetClientRole(), perm) {
-			return false
-		} else if sess.NoUser() {
-			return true
-		}
-	}
-
-	return acl.Rules.Allow(acl.ResourcePhotos, sess.GetUserRole(), perm)
+	return sess.Grants(acl.ResourcePhotos, perm)
 }
 
 // sessionGrantsAnyPhotos reports whether the session is granted at least one of the perms on photos,
 // using the same client and user role intersection as sessionGrantsPhotos.
 func sessionGrantsAnyPhotos(sess *entity.Session, perms acl.Permissions) bool {
-	for i := range perms {
-		if sessionGrantsPhotos(sess, perms[i]) {
-			return true
-		}
-	}
-
-	return false
+	return sess.GrantsAny(acl.ResourcePhotos, perms)
 }
 
 // PhotoSessionSeesPrivate reports whether the session may view private pictures (the AccessPrivate

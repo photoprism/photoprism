@@ -1,12 +1,16 @@
 package query
 
 import (
+	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // TestSubjectReports covers the people report, whose point is the two count columns.
@@ -117,6 +121,87 @@ func TestFaceReports(t *testing.T) {
 	})
 }
 
+// TestFaceReportsEmbedDetail covers the per-cluster mean, which answers whether a cluster was
+// built from real pixels - the question an operator asks of a small cluster that looks wrong.
+//
+// ⚠ The sentinels are the whole test. AVG over a mix of them produces a plausible number that
+// means nothing, and a cluster of good crops with two unsampled members would read in the eighties
+// for arithmetic reasons alone.
+func TestFaceReportsEmbedDetail(t *testing.T) {
+	model := face.EmbeddingModelName()
+
+	newCluster := func(t *testing.T, details ...int) string {
+		t.Helper()
+
+		f := entity.NewFace("", entity.SrcAuto, face.RandomEmbeddings(3, face.RegularFace), model)
+		require.NotNil(t, f)
+		require.NoError(t, f.Create())
+		t.Cleanup(func() { entity.UnscopedDb().Delete(f) })
+
+		for _, detail := range details {
+			m := &entity.Marker{
+				MarkerUID:      rnd.GenerateUID('m'),
+				FileUID:        "fs6sg6bw45bnlqdw",
+				MarkerType:     entity.MarkerFace,
+				MarkerSrc:      entity.SrcImage,
+				FaceID:         f.ID,
+				EmbedDetail:    detail,
+				EmbedModel:     model,
+				EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
+				W:              0.1,
+				H:              0.1,
+			}
+
+			require.NoError(t, entity.Db().Create(m).Error)
+			t.Cleanup(func() { entity.UnscopedDb().Delete(m) })
+		}
+
+		return f.ID
+	}
+
+	reported := func(t *testing.T, id string) FaceReport {
+		t.Helper()
+
+		faces, err := FaceReports("", 10000, 0)
+		require.NoError(t, err)
+
+		for _, f := range faces {
+			if f.ID == id {
+				return f
+			}
+		}
+
+		t.Fatalf("cluster %s is missing from the report", id)
+
+		return FaceReport{}
+	}
+
+	t.Run("MeanOverMeasuredMembers", func(t *testing.T) {
+		id := newCluster(t, 100, 60)
+
+		assert.InDelta(t, 80, reported(t, id).EmbedDetail, 0.001)
+	})
+	t.Run("SentinelsAreExcluded", func(t *testing.T) {
+		// The same two measured members, with an unsampled and an unmeasurable one beside them.
+		// Averaging all four would report 39 and read as a cluster built from poor crops.
+		id := newCluster(t, 100, 60, -1, entity.EmbedDetailUnknown)
+
+		assert.InDelta(t, 80, reported(t, id).EmbedDetail, 0.001)
+	})
+	t.Run("NoMeasuredMembers", func(t *testing.T) {
+		// Every cluster in a library that has not re-embedded, so it is the common case: it has to
+		// read as "nothing measured" rather than as a low share.
+		id := newCluster(t, -1, entity.EmbedDetailUnknown)
+
+		assert.Equal(t, float64(-1), reported(t, id).EmbedDetail)
+	})
+	t.Run("NoMembers", func(t *testing.T) {
+		id := newCluster(t)
+
+		assert.Equal(t, float64(-1), reported(t, id).EmbedDetail)
+	})
+}
+
 // TestMarkerReports covers the marker report and each filter it offers.
 func TestMarkerReports(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
@@ -168,6 +253,31 @@ func TestMarkerReports(t *testing.T) {
 			require.NotEmpty(t, m.FaceID)
 			assert.Nil(t, entity.FindFace(m.FaceID), "a dangling marker names a cluster that no longer exists")
 		}
+	})
+	t.Run("SizeColumns", func(t *testing.T) {
+		// Two different questions, so both are carried: how prominent the face is in the frame,
+		// and how much detail its vector rests on. Neither is derivable from the other.
+		faceID := "report-size-columns"
+		m := &entity.Marker{
+			MarkerUID:  rnd.GenerateUID('m'),
+			FileUID:    "fs6sg6bw45bnlqdw",
+			MarkerType: entity.MarkerFace,
+			MarkerSrc:  entity.SrcImage,
+			FaceID:     faceID,
+			W:          0.25,
+			H:          0.4,
+			ThumbSize:  312,
+		}
+
+		require.NoError(t, entity.Db().Create(m).Error)
+		t.Cleanup(func() { entity.UnscopedDb().Delete(m) })
+
+		markers, err := MarkerReports(MarkerReportFilter{FaceID: faceID, Count: 10})
+		require.NoError(t, err)
+		require.Len(t, markers, 1)
+
+		assert.InDelta(t, 0.25, markers[0].W, 1e-6)
+		assert.Equal(t, 312, markers[0].ThumbSize)
 	})
 	t.Run("ExcludesNonFaceMarkers", func(t *testing.T) {
 		markers, err := MarkerReports(MarkerReportFilter{Count: 1000})
@@ -279,6 +389,7 @@ func TestPersonFilter(t *testing.T) {
 	})
 	t.Run("LikeCond", func(t *testing.T) {
 		assert.Equal(t, "subj_name LIKE ? ESCAPE '"+LikeEscape+"'", LikeCond("subj_name"))
+		assert.Equal(t, "s.subj_name LIKE ? ESCAPE '"+LikeEscape+"'", LikeCond("s.subj_name"))
 	})
 	t.Run("UIDOfAnotherType", func(t *testing.T) {
 		// Only a subject uid selects by id; a marker uid is a name nobody has.
@@ -410,5 +521,57 @@ func TestSubjectReports_NameWithWildcard(t *testing.T) {
 		markers, err := MarkerReports(MarkerReportFilter{Person: "ZZ Ann_Marie Wildcard", Count: 100})
 		require.NoError(t, err)
 		assert.Empty(t, markers)
+	})
+}
+
+func TestFaceEmbeddingDims(t *testing.T) {
+	t.Run("SingleVector", func(t *testing.T) {
+		// A face stores one vector where a marker stores a slice of them, which is why this exists
+		// beside embeddingDims: reading a face with that one reports a width of 1.
+		assert.Equal(t, 3, faceEmbeddingDims([]byte("[0.1,0.2,0.3]")))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, 0, faceEmbeddingDims(nil))
+		assert.Equal(t, 0, faceEmbeddingDims([]byte{}))
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		assert.Equal(t, InvalidJSON, faceEmbeddingDims([]byte("not json")))
+	})
+	t.Run("NotTheMarkerShape", func(t *testing.T) {
+		// The nested form a marker holds does not decode as a single vector, and reporting it as
+		// invalid is right: a face row storing one would be a defect rather than an absent vector.
+		assert.Equal(t, InvalidJSON, faceEmbeddingDims([]byte("[[0.1,0.2]]")))
+	})
+}
+
+// TestSubjectReports_BirthdayAndPrivate covers the two columns the Edit Person dialog writes, which
+// are read straight off the row rather than derived - so nothing else would notice if the select
+// stopped returning them and every report simply showed them empty.
+func TestSubjectReports_BirthdayAndPrivate(t *testing.T) {
+	born := time.Date(1981, 1, 22, 0, 0, 0, 0, time.UTC)
+
+	subj := entity.NewSubject("Report Birthday Person", entity.SubjPerson, entity.SrcManual)
+	require.NotNil(t, subj)
+	require.NoError(t, subj.Create())
+
+	require.NoError(t, subj.Updates(entity.Values{"subj_birthday": born, "subj_private": true}))
+
+	people, err := SubjectReports(subj.SubjUID, 100, 0, false)
+	require.NoError(t, err)
+	require.Len(t, people, 1)
+
+	require.NotNil(t, people[0].SubjBirthday, "a stored birth date has to survive the select")
+	assert.Equal(t, born.Format("2006-01-02"), people[0].SubjBirthday.Format("2006-01-02"))
+	assert.True(t, people[0].SubjPrivate)
+}
+
+func TestLikeCond_InvalidColumn(t *testing.T) {
+	t.Run("BindsTheArgumentAndMatchesNothing", func(t *testing.T) {
+		// The caller still passes one argument, so the condition has to keep exactly one
+		// placeholder while never being true.
+		cond := LikeCond("subj_name) OR (1=1")
+		assert.Equal(t, 1, strings.Count(cond, "?"))
+		assert.Contains(t, cond, "1 = 0")
+		assert.NotContains(t, cond, "OR (1=1")
 	})
 }

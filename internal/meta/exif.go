@@ -72,6 +72,13 @@ func (data *Data) Exif(fileName string, fileFormat fs.Type, bruteForce bool) (er
 	opt := exif.ScanOptions{}
 	entries, _, err := exif.GetFlatExifData(rawExif, &opt)
 
+	// Retain at most ExifMaxTags values from one file, so that the map and the per-tag work
+	// below stay bounded. Entries are in IFD order, so the ones kept are the primary image's.
+	if len(entries) > ExifMaxTags {
+		log.Warnf("metadata: %s declares more than %d tags, reading the first %d", logName, ExifMaxTags, ExifMaxTags)
+		entries = entries[:ExifMaxTags]
+	}
+
 	// Create large enough map for values.
 	if data.exif == nil {
 		data.exif = make(map[string]string, len(entries))
@@ -106,7 +113,7 @@ func (data *Data) Exif(fileName string, fileFormat fs.Type, bruteForce bool) (er
 			if gi, err = ifd.GpsInfo(); err != nil {
 				log.Debugf("metadata: %s in %s (exif gps-info)", err, logName)
 			} else {
-				if !math.IsNaN(gi.Latitude.Decimal()) && !math.IsNaN(gi.Longitude.Decimal()) {
+				if isFinite(gi.Latitude.Decimal()) && isFinite(gi.Longitude.Decimal()) {
 					data.Lat, data.Lng = NormalizeGPS(gi.Latitude.Decimal(), gi.Longitude.Decimal())
 				} else if gi.Altitude != 0 || !gi.Timestamp.IsZero() {
 					log.Warnf("metadata: invalid exif gps coordinates in %s (%s)", logName, clean.Log(gi.String()))

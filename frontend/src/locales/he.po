@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-08-28 02:08+0000\n"
+"PO-Revision-Date: 2026-09-10 09:31+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Hebrew <https://translate.photoprism.app/projects/photoprism/frontend/he/>\n"
 "Language: he\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && n % 10 == 0) ? 2 : 3));\n"
-"X-Generator: Weblate 2026.8\n"
+"X-Generator: Weblate 2026.9.1\n"
 "Generated-By: easygettext\n"
 
 #: src/locales.js:272
@@ -58,8 +58,7 @@ msgstr "%{n} GB מתוך %{q} GB בשימוש"
 msgid "%{n} labels found"
 msgstr "%{n} תוויות נמצאו"
 
-#: src/page/people/new.vue:494 src/page/people/new.vue:600
-#: src/page/people/recognized.vue:729
+#: src/page/people/new.vue:249 src/page/people/recognized.vue:279
 msgid "%{n} people found"
 msgstr "%{n} אנשים נמצאו"
 
@@ -80,15 +79,15 @@ msgstr "%{s} ארוך מדי"
 msgid "%{s} is too short"
 msgstr "%{s} קצר מדי"
 
-#: src/locales.js:437
+#: src/locales.js:438
 msgid "%d entries added to %s"
 msgstr "%d רשומות נוספו ל-%s"
 
-#: src/locales.js:439
+#: src/locales.js:440
 msgid "%d entries removed from %s"
 msgstr "%d רשומות הוסרו מ-%s"
 
-#: src/locales.js:461
+#: src/locales.js:462
 msgid "%d files uploaded in %d s"
 msgstr "%d קבצים הועלו תוך %d שניות"
 
@@ -96,7 +95,7 @@ msgstr "%d קבצים הועלו תוך %d שניות"
 msgid "%s already exists"
 msgstr "%s כבר קיים"
 
-#: src/locales.js:471
+#: src/locales.js:472
 msgid "%s has been restored"
 msgstr "%s שוחזר"
 
@@ -130,6 +129,10 @@ msgstr "4 שעות"
 #: src/component/share/dialog.vue:116
 msgid "A click will copy it to your clipboard."
 msgstr "להקיש כדי להעתיק ללוח־הגזירים."
+
+#: src/locales.js:428
+msgid "A migration is in progress"
+msgstr "מתבצעת כעת הגירה"
 
 #: src/component/update.vue:53
 msgid "A new version of %{s} is available:"
@@ -177,12 +180,12 @@ msgid "Account"
 msgstr "חשבון"
 
 #: src/component/user/add/dialog.vue:261 src/component/user/add/dialog.vue:277
-#: src/component/service/add.vue:131 src/locales.js:440
+#: src/component/service/add.vue:131 src/locales.js:441
 msgid "Account created"
 msgstr "חשבון נוצר"
 
 #: src/component/user/remove/dialog.vue:63 src/component/service/remove.vue:74
-#: src/locales.js:442
+#: src/locales.js:443
 msgid "Account deleted"
 msgstr "חשבון נמחק"
 
@@ -198,7 +201,7 @@ msgstr "החשבון לא נמצא"
 msgid "Account restored"
 msgstr "חשבון שוחזר"
 
-#: src/locales.js:441
+#: src/locales.js:442
 msgid "Account saved"
 msgstr "החשבון נשמר"
 
@@ -395,7 +398,7 @@ msgstr "לאחר שבועיים"
 msgid "Album"
 msgstr "אלבום"
 
-#: src/locales.js:431
+#: src/locales.js:432
 msgid "Album %s deleted"
 msgstr "האלבום %s נמחק"
 
@@ -403,11 +406,11 @@ msgstr "האלבום %s נמחק"
 msgid "Album Backups"
 msgstr "גיבויי אלבומים"
 
-#: src/locales.js:432
+#: src/locales.js:433
 msgid "Album contents cloned"
 msgstr "תוכן האלבום שוכפל"
 
-#: src/locales.js:429 src/page/albums.vue:1194
+#: src/locales.js:430 src/page/albums.vue:1194
 msgid "Album created"
 msgstr "אלבום נוצר"
 
@@ -419,7 +422,7 @@ msgstr "אלבום נמחק"
 msgid "Album not found"
 msgstr "האלבום לא נמצא"
 
-#: src/locales.js:430
+#: src/locales.js:431
 msgid "Album saved"
 msgstr "האלבום נשמר"
 
@@ -432,7 +435,7 @@ msgstr "האלבום נשמר"
 msgid "Albums"
 msgstr "אלבומים"
 
-#: src/component/album/clipboard.vue:194 src/locales.js:468
+#: src/component/album/clipboard.vue:194 src/locales.js:469
 msgid "Albums deleted"
 msgstr "אלבומים נמחקו"
 
@@ -448,7 +451,7 @@ msgstr "כל %{n} האלבומים נטענו"
 msgid "All %{n} labels loaded"
 msgstr "כל %{n} התוויות נטענו"
 
-#: src/page/people/recognized.vue:561
+#: src/page/people/recognized.vue:577
 msgid "All %{n} people loaded"
 msgstr "כל %{n} האנשים נטענו"
 
@@ -737,7 +740,8 @@ msgstr "אנו 100% עצמאיים וממומנים במימון עצמאי, א�
 msgid "Bio"
 msgstr "פרטי חיים"
 
-#: src/page/settings/account.vue:212 src/page/settings/account.vue:196
+#: src/page/settings/account.vue:212 src/component/people/edit/dialog.vue:39
+#: src/page/settings/account.vue:196
 msgid "Birth Date"
 msgstr "תאריך לידה"
 
@@ -817,9 +821,9 @@ msgstr "לא ניתן לטעון יותר, הגעת למגבלה"
 #: src/common/clipboard.js:103 src/common/clipboard.js:139
 #: src/page/albums.vue:1204 src/page/albums.vue:1220 src/page/labels.vue:642
 #: src/page/labels.vue:662 src/page/library/browse.vue:325
-#: src/page/library/browse.vue:341 src/page/people/new.vue:422
-#: src/page/people/new.vue:438 src/page/people/recognized.vue:494
-#: src/page/people/recognized.vue:510
+#: src/page/library/browse.vue:341 src/page/people/new.vue:438
+#: src/page/people/new.vue:454 src/page/people/recognized.vue:510
+#: src/page/people/recognized.vue:526
 msgid "Can't select more items"
 msgstr "לא ניתן לבחור עוד פרטים"
 
@@ -843,7 +847,7 @@ msgstr "לא ניתן לבחור עוד פרטים"
 #: src/component/meta/face/markers.vue:54
 #: src/component/meta/face/markers.vue:73
 #: src/component/meta/location/dialog.vue:115
-#: src/component/people/edit/dialog.vue:57
+#: src/component/people/edit/dialog.vue:72
 #: src/component/photo/album/dialog.vue:64 src/component/service/add.vue:97
 #: src/component/service/edit.vue:232 src/component/service/remove.vue:19
 #: src/component/service/upload.vue:57 src/component/settings/apps.vue:151
@@ -914,7 +918,7 @@ msgstr "שינוי דגל הפרטיות"
 #: src/component/album/edit/dialog.vue:171
 #: src/component/label/edit/dialog.vue:109
 #: src/component/meta/camera/dialog.vue:214
-#: src/component/people/edit/dialog.vue:123
+#: src/component/people/edit/dialog.vue:143
 #: src/component/photo/batch-edit.vue:1440
 #: src/component/photo/edit/details.vue:636 src/locales.js:376
 #: src/page/settings/account.vue:447 src/page/settings/account.vue:452
@@ -933,8 +937,8 @@ msgstr "לא ניתן לשמור שינויים"
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
 #: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
-#: src/locales.js:428 src/page/albums.vue:1197 src/page/people/new.vue:810
-#: src/page/people/recognized.vue:304 src/page/settings/advanced.vue:507
+#: src/locales.js:429 src/page/albums.vue:1197 src/page/people/new.vue:814
+#: src/page/people/recognized.vue:320 src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
 #: src/page/settings/general.vue:646
 msgid "Changes successfully saved"
@@ -1165,7 +1169,7 @@ msgstr "הועתק ללוח"
 msgid "Copy"
 msgstr "עותק"
 
-#: src/locales.js:453
+#: src/locales.js:454
 msgid "Copying files from %s"
 msgstr "מעתיק קבצים מ-%s"
 
@@ -1819,7 +1823,7 @@ msgstr "מהיר"
 
 #: src/component/album/edit/dialog.vue:77
 #: src/component/label/edit/dialog.vue:37
-#: src/component/people/edit/dialog.vue:37
+#: src/component/people/edit/dialog.vue:50
 #: src/component/photo/batch-edit.vue:1536
 #: src/component/photo/edit/info.vue:121 src/component/photo/edit/info.vue:122
 msgid "Favorite"
@@ -1860,7 +1864,7 @@ msgstr "סייר קבצים"
 msgid "File Conversion"
 msgstr "המרת קבצים"
 
-#: src/locales.js:434
+#: src/locales.js:435
 msgid "File deleted"
 msgstr "הקובץ נמחק"
 
@@ -1874,7 +1878,7 @@ msgstr "שם קובץ"
 msgid "File not found"
 msgstr "קובץ לא נמצא"
 
-#: src/locales.js:433
+#: src/locales.js:434
 msgid "File removed from stack"
 msgstr "הקובץ הוסר מהאיחוד"
 
@@ -1886,7 +1890,7 @@ msgstr "גודל הקובץ"
 msgid "File too large"
 msgstr "קובץ גדול מדי"
 
-#: src/locales.js:460
+#: src/locales.js:461
 msgid "File uploaded"
 msgstr "הקובץ הועלה"
 
@@ -2056,7 +2060,7 @@ msgstr "עזרה ותמיכה"
 
 #: src/component/navigation.vue:369 src/component/navigation.vue:370
 #: src/component/navigation.vue:382 src/component/navigation.vue:391
-#: src/component/navigation.vue:504 src/component/people/edit/dialog.vue:51
+#: src/component/navigation.vue:504 src/component/people/edit/dialog.vue:63
 msgid "Hidden"
 msgstr "מוסתר"
 
@@ -2123,11 +2127,11 @@ msgstr "איכות תמונה"
 msgid "Import"
 msgstr "ייבוא"
 
-#: src/locales.js:446
+#: src/locales.js:447
 msgid "Import canceled"
 msgstr "הייבוא בוטל"
 
-#: src/locales.js:445
+#: src/locales.js:446
 msgid "Import completed in %d s"
 msgstr "הייבוא הושלם ב-%d שניות"
 
@@ -2189,11 +2193,11 @@ msgstr "אינדקס"
 msgid "Indexing"
 msgstr "מאנדקס"
 
-#: src/locales.js:450
+#: src/locales.js:451
 msgid "Indexing canceled"
 msgstr "יצירת האינדקס בוטלה"
 
-#: src/locales.js:447
+#: src/locales.js:448
 msgid "Indexing completed in %d s"
 msgstr "האינדוקס הושלם ב-%d שניות"
 
@@ -2201,7 +2205,7 @@ msgstr "האינדוקס הושלם ב-%d שניות"
 msgid "Indexing failed"
 msgstr "אינדוקס נכשל"
 
-#: src/locales.js:449
+#: src/locales.js:450
 msgid "Indexing files in %s"
 msgstr "מאנדקס קבצים תוך %s"
 
@@ -2209,7 +2213,7 @@ msgstr "מאנדקס קבצים תוך %s"
 msgid "Indexing media and sidecar files…"
 msgstr "יצירת אינדקס של קבצי מדיה וקבצי עזר…"
 
-#: src/locales.js:448
+#: src/locales.js:449
 msgid "Indexing originals..."
 msgstr "מאנדקס קבצי מקור..."
 
@@ -2340,10 +2344,6 @@ msgstr "מגבלת גודל קבצי ה-JPEG %{n} פיקסלים"
 msgid "JPEGs and thumbnails are automatically rendered as needed."
 msgstr "קבצי JPEG וקבצי תצוגה מקדימה נוצרים אוטומטית לפי הצורך."
 
-#: src/component/people/edit/dialog.vue:44
-msgid "Keeps this person when face clusters are reset"
-msgstr ""
-
 #: src/common/util.js:906
 msgid "Keyword"
 msgstr "מילת מפתח"
@@ -2363,7 +2363,7 @@ msgstr "תווית"
 msgid "Label not found"
 msgstr "התווית לא נמצאה"
 
-#: src/locales.js:455
+#: src/locales.js:456
 msgid "Label saved"
 msgstr "התווית נשמרה"
 
@@ -2379,7 +2379,7 @@ msgstr "התווית נשמרה"
 msgid "Labels"
 msgstr "תוויות"
 
-#: src/component/label/clipboard.vue:131 src/locales.js:454
+#: src/component/label/clipboard.vue:131 src/locales.js:455
 msgid "Labels deleted"
 msgstr "תוויות נמחקו"
 
@@ -2599,6 +2599,10 @@ msgstr "העלאה ידנית"
 msgid "Maps"
 msgstr "מפות"
 
+#: src/component/map.vue:118 src/page/places.vue:430 src/page/places.vue:435
+msgid "Maps are unavailable. Try another browser or device."
+msgstr "המפות אינן זמינות. נסה דפדפן או מכשיר אחר."
+
 #: src/common/util.js:898 src/model/marker.js:132
 msgid "Marker"
 msgstr "סמן"
@@ -2691,7 +2695,7 @@ msgstr "הכי רלוונטי"
 msgid "Move Files"
 msgstr "העבר קבצים"
 
-#: src/locales.js:452
+#: src/locales.js:453
 msgid "Moving files from %s"
 msgstr "מעביר קבצים מ-%s"
 
@@ -2828,15 +2832,15 @@ msgid "No more"
 msgstr "לא יותר"
 
 #: src/component/photo/edit/people.vue:6 src/page/people/new.vue:23
-#: src/page/people/new.vue:490 src/page/people/new.vue:596
-#: src/page/people/recognized.vue:55 src/page/people/recognized.vue:725
+#: src/page/people/new.vue:245 src/page/people/recognized.vue:275
+#: src/page/people/recognized.vue:55
 msgid "No people found"
 msgstr "לא נמצאו אנשים"
 
 #: src/component/photo/view/cards.vue:9 src/component/photo/view/list.vue:9
 #: src/component/photo/view/mosaic.vue:9 src/page/album/photos.vue:582
 #: src/page/library/browse.vue:31 src/page/photos.vue:720
-#: src/page/places.vue:761 src/page/places.vue:882
+#: src/page/places.vue:758 src/page/places.vue:883
 msgid "No pictures found"
 msgstr "לא נמצאו תמונות"
 
@@ -2979,11 +2983,11 @@ msgstr "פעם בשבוע"
 msgid "One album found"
 msgstr "אלבום אחד נמצא"
 
-#: src/locales.js:436
+#: src/locales.js:437
 msgid "One entry added to %s"
 msgstr "רשומה אחת נוספה ל-%s"
 
-#: src/locales.js:438
+#: src/locales.js:439
 msgid "One entry removed from %s"
 msgstr "רשומה אחת הוסרה מ-%s"
 
@@ -2999,8 +3003,7 @@ msgstr "תיקייה אחת נמצאה"
 msgid "One label found"
 msgstr "נמצאה תווית אחת"
 
-#: src/page/people/new.vue:492 src/page/people/new.vue:598
-#: src/page/people/recognized.vue:727
+#: src/page/people/new.vue:247 src/page/people/recognized.vue:277
 msgid "One person found"
 msgstr "אדם אחד נמצא"
 
@@ -3129,7 +3132,7 @@ msgstr "חלק מתמונות נבחרות"
 msgid "Password"
 msgstr "סיסמה"
 
-#: src/component/settings/password.vue:162 src/locales.js:444
+#: src/component/settings/password.vue:162 src/locales.js:445
 msgid "Password changed"
 msgstr "סיסמא שונתה"
 
@@ -3157,7 +3160,7 @@ msgid "People you share a link with will be able to view public contents."
 msgstr "אנשים שעימם אתה חולק קישור יוכלו להציג תכנים ציבוריים."
 
 #: src/component/photo/clipboard.vue:303 src/component/photo/toolbar.vue:522
-#: src/locales.js:470
+#: src/locales.js:471
 msgid "Permanently deleted"
 msgstr "נמחק לצמיתות"
 
@@ -3165,7 +3168,7 @@ msgstr "נמחק לצמיתות"
 msgid "Permission denied"
 msgstr "גישה נדחתה"
 
-#: src/model/subject.js:159
+#: src/model/subject.js:192
 msgid "Person"
 msgstr "אָדָם"
 
@@ -3173,7 +3176,7 @@ msgstr "אָדָם"
 msgid "Person cover updated"
 msgstr "כיסוי אדם עודכן"
 
-#: src/locales.js:459
+#: src/locales.js:460
 msgid "Person deleted"
 msgstr "אדם נמחק"
 
@@ -3182,7 +3185,7 @@ msgstr "אדם נמחק"
 msgid "Person not found"
 msgstr "אדם לא נמצא"
 
-#: src/locales.js:458
+#: src/locales.js:459
 msgid "Person saved"
 msgstr "אדם נשמר"
 
@@ -3361,13 +3364,14 @@ msgstr "ראשי"
 #: src/component/navigation.vue:126 src/component/navigation.vue:127
 #: src/component/navigation.vue:139 src/component/navigation.vue:148
 #: src/component/navigation.vue:156 src/component/navigation.vue:176
+#: src/component/people/edit/dialog.vue:66
 #: src/component/photo/batch-edit.vue:1537
 #: src/component/photo/edit/info.vue:129 src/component/photo/edit/info.vue:130
 #: src/page/settings/general.vue:200
 msgid "Private"
 msgstr "פרטי"
 
-#: src/locales.js:462
+#: src/locales.js:463
 msgid "Processing upload..."
 msgstr "מעבד העלאה..."
 
@@ -3553,7 +3557,7 @@ msgstr "הוסר"
 msgid "Removed %{name}"
 msgstr "%{name} הוסר"
 
-#: src/locales.js:451
+#: src/locales.js:452
 msgid "Removed %d files and %d photos"
 msgstr "הוסרו %d קבצים ו-%d תמונות"
 
@@ -3682,10 +3686,10 @@ msgstr "לוויין"
 #: src/component/meta/datetime/dialog.vue:38
 #: src/component/meta/datetime/dialog.vue:39
 #: src/component/meta/datetime/dialog.vue:51
-#: src/component/people/edit/dialog.vue:34
-#: src/component/people/edit/dialog.vue:35
-#: src/component/people/edit/dialog.vue:46
-#: src/component/people/edit/dialog.vue:60
+#: src/component/people/edit/dialog.vue:40
+#: src/component/people/edit/dialog.vue:41
+#: src/component/people/edit/dialog.vue:52
+#: src/component/people/edit/dialog.vue:75
 #: src/component/photo/batch-edit.vue:483
 #: src/component/photo/edit/details.vue:396 src/component/service/edit.vue:103
 #: src/component/service/edit.vue:235 src/component/service/edit.vue:93
@@ -3801,19 +3805,19 @@ msgstr "בחר זמן"
 msgid "Selection"
 msgstr "בחירה"
 
-#: src/locales.js:435
+#: src/locales.js:436
 msgid "Selection added to %s"
 msgstr "הבחירה נוספה ל-%s"
 
-#: src/component/photo/clipboard.vue:251 src/locales.js:464
+#: src/component/photo/clipboard.vue:251 src/locales.js:465
 msgid "Selection approved"
 msgstr "הבחירה אושרה"
 
-#: src/component/photo/clipboard.vue:282 src/locales.js:465
+#: src/component/photo/clipboard.vue:282 src/locales.js:466
 msgid "Selection archived"
 msgstr "הבחירה הועברה לארכיון"
 
-#: src/locales.js:467
+#: src/locales.js:468
 msgid "Selection marked as private"
 msgstr "הבחירה סומנה כפרטית"
 
@@ -3821,7 +3825,7 @@ msgstr "הבחירה סומנה כפרטית"
 msgid "Selection not found"
 msgstr "הבחירה לא נמצאה"
 
-#: src/component/photo/clipboard.vue:318 src/locales.js:466
+#: src/component/photo/clipboard.vue:318 src/locales.js:467
 msgid "Selection restored"
 msgstr "הבחירה שוחזרה"
 
@@ -3880,7 +3884,7 @@ msgid "Settings"
 msgstr "הגדרות"
 
 #: src/page/settings/account.vue:533 src/page/settings/account.vue:562
-#: src/component/settings/passcode.vue:366 src/locales.js:443
+#: src/component/settings/passcode.vue:366 src/locales.js:444
 #: src/page/settings/account.vue:441 src/page/settings/account.vue:470
 msgid "Settings saved"
 msgstr "ההגדרות נשמרו"
@@ -4163,7 +4167,7 @@ msgstr "רחובות"
 msgid "Subject"
 msgstr "נושא"
 
-#: src/locales.js:457
+#: src/locales.js:458
 msgid "Subject deleted"
 msgstr "הנושא נמחק"
 
@@ -4171,11 +4175,11 @@ msgstr "הנושא נמחק"
 msgid "Subject not found"
 msgstr "הנושא לא נמצא"
 
-#: src/locales.js:456
+#: src/locales.js:457
 msgid "Subject saved"
 msgstr "הנושא נשמר"
 
-#: src/component/settings/passcode.vue:351 src/locales.js:473
+#: src/component/settings/passcode.vue:351 src/locales.js:474
 msgid "Successfully activated"
 msgstr "הופעל בהצלחה"
 
@@ -4188,7 +4192,7 @@ msgstr "מחובר בהצלחה"
 msgid "Successfully deleted"
 msgstr "נמחק בהצלחה"
 
-#: src/component/settings/passcode.vue:323 src/locales.js:472
+#: src/component/settings/passcode.vue:323 src/locales.js:473
 msgid "Successfully verified"
 msgstr "אומת בהצלחה"
 
@@ -4544,7 +4548,7 @@ msgstr "העלאה הושלמה, מאנדקס…"
 msgid "Upload failed"
 msgstr "העלאה כשלה"
 
-#: src/locales.js:463
+#: src/locales.js:464
 msgid "Upload has been processed"
 msgstr "ההעלאה עובדה"
 
@@ -4669,7 +4673,7 @@ msgstr "וקטורים"
 msgid "Verification Code"
 msgstr "קוד אימות"
 
-#: src/component/people/edit/dialog.vue:43
+#: src/component/people/edit/dialog.vue:56
 msgid "Verified"
 msgstr "מאומת"
 
@@ -4758,10 +4762,6 @@ msgstr "שירותי WebDAV, כמו סייר וינדוס של מיקרוסופ�
 #: src/component/service/upload.vue:16 src/component/share/dialog.vue:123
 msgid "WebDAV Upload"
 msgstr "העלאת WebDAV"
-
-#: src/page/places.vue:441
-msgid "WebGL support is disabled in your browser"
-msgstr "תמיכת WebGL מושבתת בדפדפן שלך"
 
 #: src/page/settings/account.vue:335 src/page/settings/account.vue:391
 #: src/page/settings/account.vue:308
@@ -4863,10 +4863,6 @@ msgstr "לא ניתן היה לחבר את החשבון שלך"
 msgid "Your account has been successfully connected."
 msgstr "החשבון שלך חובר בהצלחה."
 
-#: src/page/places.vue:445
-msgid "Your browser does not support WebGL"
-msgstr "הדפדפן שלך אינו תומך ב-WebGL"
-
 #: src/page/about/about.vue:48 src/page/about/about.vue:86
 #: src/component/confirm/sponsor.vue:18 src/page/about/about.vue:33
 #: src/page/about/about.vue:67 src/page/connect.vue:96
@@ -4877,7 +4873,7 @@ msgstr "התמיכה המתמשכת שלך עוזרת לנו לספק עדכונ
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "הספרייה שלך מנותחת באופן רציף ליצירת אלבומים של רגעים מיוחדים, טיולים ומקומות באופן אוטומטי."
 
-#: src/locales.js:469
+#: src/locales.js:470
 msgid "Zip created in %d s"
 msgstr "קובץ Zip נוצר תוך %d שניות"
 
@@ -4935,6 +4931,12 @@ msgstr "כותרת"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "ארכיון"
+
+#~ msgid "WebGL support is disabled in your browser"
+#~ msgstr "תמיכת WebGL מושבתת בדפדפן שלך"
+
+#~ msgid "Your browser does not support WebGL"
+#~ msgstr "הדפדפן שלך אינו תומך ב-WebGL"
 
 #~ msgid "Create"
 #~ msgstr "נוצר"

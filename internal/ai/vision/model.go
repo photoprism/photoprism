@@ -785,7 +785,7 @@ func (m *Model) faceEmbedder() face.Embedder {
 		// nothing useful to configure per installation here. Loading it anyway keeps an
 		// existing vision.yml working, but its vectors are recorded under the configured
 		// model's name rather than this one.
-		log.Warnf("vision: custom face model %s in vision.yml is deprecated, select a model with FACE_MODEL instead",
+		log.Warnf("vision: custom face model %s in vision.yml is deprecated, select a model with PHOTOPRISM_FACE_MODEL instead",
 			clean.Log(m.Name))
 
 		// Set model path from model name if no path is configured.

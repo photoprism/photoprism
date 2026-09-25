@@ -117,6 +117,7 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 
 		PublishPhotoEvent(StatusUpdated, clean.UID(c.Param("uid")))
 
+		p.RedactForSession(s)
 		c.JSON(http.StatusOK, p)
 	})
 }
@@ -206,6 +207,7 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 
 		PublishPhotoEvent(StatusUpdated, clean.UID(c.Param("uid")))
 
+		p.RedactForSession(s)
 		c.JSON(http.StatusOK, p)
 	})
 }
@@ -307,6 +309,7 @@ func UpdatePhotoLabel(router *gin.RouterGroup) {
 
 		PublishPhotoEvent(StatusUpdated, clean.UID(c.Param("uid")))
 
+		p.RedactForSession(s)
 		c.JSON(http.StatusOK, p)
 	})
 }

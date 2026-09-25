@@ -80,10 +80,11 @@ func facesStmt(knownOnly, unmatchedOnly, hidden, ignored bool) *gorm.DB {
 		stmt = stmt.Where("face_kind <= 1")
 	}
 
-	// Largest clusters first, because selection bounds each comparison by the best distance
-	// found so far: meeting a likely winner early makes every later candidate cheaper to
-	// reject. Ordering by subject instead puts every unnamed cluster ahead of every named one,
-	// which is the opposite. The id breaks ties so the order does not vary between drivers.
+	// Largest clusters first, because selection bounds each comparison by the best distance found so
+	// far: meeting a likely winner early makes every later candidate cheaper to reject. Ordered by
+	// samples, a weak proxy now that it counts the centroid's inputs rather than membership - but
+	// counting members here costs a full scan of the markers table on the hottest face query, and
+	// this ordering only decides cost. The id breaks ties so the order does not vary between drivers.
 	return stmt.Order("samples DESC, id")
 }
 
@@ -97,8 +98,13 @@ func Faces(knownOnly, unmatchedOnly, hidden, ignored bool) (result entity.Faces,
 
 // MatchableFaces returns the faces that may be compared with the configured model.
 func MatchableFaces(knownOnly, unmatchedOnly, hidden, ignored bool) (result entity.Faces, err error) {
-	err = whereEmbeddingModel(facesStmt(knownOnly, unmatchedOnly, hidden, ignored), face.EmbeddingModelName()).
-		Find(&result).Error
+	// One embedding is not a centroid, it is the embedding - so matching against it casts an accept
+	// distance over the whole library on the evidence of one photograph. Two are already an average,
+	// and a pair that exists is worth using even though ManualClusterCore refuses to make one.
+	stmt := facesStmt(knownOnly, unmatchedOnly, hidden, ignored).
+		Where("samples > ?", 1)
+
+	err = whereEmbeddingModel(stmt, face.EmbeddingModelName()).Find(&result).Error
 
 	return result, err
 }
@@ -197,7 +203,11 @@ type FaceClusterGates struct {
 	Recent      int
 	SizeOK      int
 	ScoreOK     int
-	Eligible    int
+	// DetailOK counts the markers clearing the crop-detail condition alone, which the size bar
+	// carries but no option relaxes - so a shortfall there sends an operator to a knob that
+	// cannot move it unless the report names it separately.
+	DetailOK int
+	Eligible int
 	// Clusterable counts the markers clearing both bars whatever their age, which is what a forced
 	// run would take. Eligible answers what the automatic pass sees; this answers what --force buys.
 	Clusterable int
@@ -211,8 +221,8 @@ type FaceClusterGates struct {
 // It takes the model, size and score rather than reading them from the loaded engine, because the
 // command that reports them never loads one and would otherwise count against the shipped defaults.
 func CountFaceClusterGates(model string, size, score int) (result FaceClusterGates) {
-	recent, sized, scored := "1 = 1", "1 = 1", ""
-	var recentArgs, sizeArgs []any
+	recent, scored := "1 = 1", ""
+	var recentArgs []any
 
 	newest := newestAutoFaceTime(model)
 
@@ -220,28 +230,34 @@ func CountFaceClusterGates(model string, size, score int) (result FaceClusterGat
 		recent, recentArgs = "created_at > ?", []any{newest}
 	}
 
-	if size > 0 {
-		sized, sizeArgs = entity.ClusterSizeCond("", size)
-	}
+	// Read whatever the bar is: below 1 it carries the detail gate alone, which is not a bar an
+	// operator sets and must count here too.
+	sized, sizeArgs := entity.ClusterSizeCond("", size)
 
 	scored, scoreArgs := clusterScoreCond(score)
 
 	// One pass rather than one query per bar: LENGTH() on the embedding blob defeats every index,
 	// so each bar would otherwise cost a full scan of a table that grows with the library - in the
 	// command an operator runs when something is already wrong. SUM returns NULL over no rows.
+	// The detail condition carries no placeholder, so it can be counted on its own without
+	// disturbing the argument sequence below.
+	detailed := entity.EmbedDetailCond("")
+
 	sel := "COUNT(*) AS unclustered" +
 		", COALESCE(SUM(CASE WHEN " + recent + " THEN 1 ELSE 0 END), 0) AS recent" +
 		", COALESCE(SUM(CASE WHEN " + recent + " AND " + sized + " THEN 1 ELSE 0 END), 0) AS size_ok" +
 		", COALESCE(SUM(CASE WHEN " + recent + " AND " + scored + " THEN 1 ELSE 0 END), 0) AS score_ok" +
+		", COALESCE(SUM(CASE WHEN " + recent + " AND " + detailed + " THEN 1 ELSE 0 END), 0) AS detail_ok" +
 		", COALESCE(SUM(CASE WHEN " + recent + " AND " + sized + " AND " + scored + " THEN 1 ELSE 0 END), 0) AS eligible" +
 		", COALESCE(SUM(CASE WHEN " + sized + " AND " + scored + " THEN 1 ELSE 0 END), 0) AS clusterable"
 
-	args := make([]any, 0, 4*len(recentArgs)+2*len(sizeArgs)+2*len(scoreArgs))
+	args := make([]any, 0, 5*len(recentArgs)+2*len(sizeArgs)+2*len(scoreArgs))
 	args = append(args, recentArgs...)
 	args = append(args, recentArgs...)
 	args = append(args, sizeArgs...)
 	args = append(args, recentArgs...)
 	args = append(args, scoreArgs...)
+	args = append(args, recentArgs...)
 	args = append(args, recentArgs...)
 	args = append(args, sizeArgs...)
 	args = append(args, scoreArgs...)
@@ -291,9 +307,10 @@ func countNewFaceMarkers(current string, size, score int, recent bool) (n int) {
 	newest := newestAutoFaceTime(current)
 	q := unclusteredFaceMarkers(current)
 
-	if sizeCond, sizeArgs := entity.ClusterSizeCond("", size); sizeArgs != nil {
-		q = q.Where(sizeCond, sizeArgs...)
-	}
+	// Applied whatever the bar is, since the condition also carries the detail gate, which no
+	// size setting turns off.
+	sizeCond, sizeArgs := entity.ClusterSizeCond("", size)
+	q = q.Where(sizeCond, sizeArgs...)
 
 	q = whereClusterScore(q, score)
 
@@ -390,6 +407,10 @@ func MergeFaces(merge entity.Faces, ignored bool) (merged *entity.Face, err erro
 		return merged, fmt.Errorf("faces: failed to create new cluster for subject %s", clean.Log(subjUID))
 	} else if err := merged.MatchMarkers(append(merge.IDs(), "")); err != nil {
 		return merged, err
+	} else if err := merged.InheritCollision(merge); err != nil {
+		// After the markers, never before: a bound narrower than they reach would refuse the ones
+		// this merge exists to move, retaining the source cluster and spending its merge retry.
+		return merged, err
 	}
 
 	// PurgeOrphanFaces removes unused faces from the index.
@@ -415,12 +436,21 @@ func MergeFaces(merge entity.Faces, ignored bool) (merged *entity.Face, err erro
 	note := fmt.Sprintf("retained markers after merge attempt on %s", time.Now().UTC().Format(time.RFC3339))
 	retainedIDs := make([]string, 0, len(retained))
 
+	// A group of three or more can retain a cluster because the midpoint of the whole group reaches
+	// none of them, which is not that cluster's own doing - and the counter takes it out of the
+	// rotation for good. Charged only for a pair, where the refusal is between those two alone.
+	charge := len(merge) == 2
+
 	for i := range merge {
 		if !retained[merge[i].ID] {
 			continue
 		}
 
 		retainedIDs = append(retainedIDs, merge[i].ID)
+
+		if !charge {
+			continue
+		}
 
 		updates := entity.Values{
 			"MergeRetry": gorm.Expr("merge_retry + 1"),
@@ -535,7 +565,10 @@ func ResolveFaceCollisions() (conflicts, resolved int, err error) {
 
 				r := f1.AcceptDist()
 
-				log.Infof("faces: face %s has ambiguous subject at dist %f, Ø %f from %d samples, collision Ø %f", f1.ID, dist, r, f1.Samples, f1.CollisionRadius)
+				// At debug level with the two below it: the caller reports how many pairs were
+				// found and how many it resolved, and a pass right after a migration meets
+				// hundreds of them. photoprism faces conflicts lists them on demand.
+				log.Debugf("faces: face %s has ambiguous subject at dist %f, Ø %f from %d samples, collision Ø %f", f1.ID, dist, r, f1.Samples, f1.CollisionRadius)
 
 				if f1.SubjUID != "" {
 					log.Debugf("faces: face %s has %s subject %s (%s)", f1.ID, entity.SrcString(f1.FaceSrc), entity.SubjNames.Log(f1.SubjUID), f1.SubjUID)

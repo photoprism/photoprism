@@ -95,7 +95,7 @@ func IndexMain(related *RelatedFiles, ind *Index, o IndexOptions) (result IndexR
 			result.Status = IndexFailed
 			return result
 		} else if avcErr != nil {
-			log.Warnf("index: could not create equirectangular video for %s (%s)", clean.Log(f.RootRelName()), avcErr)
+			log.Warnf("index: could not create equirectangular video for %s (%s)", clean.Log(f.RootRelName()), clean.Error(avcErr))
 		} else if avc != nil {
 			related.Files = append(related.Files, avc)
 		}
@@ -108,7 +108,7 @@ func IndexMain(related *RelatedFiles, ind *Index, o IndexOptions) (result IndexR
 
 	// Save file error.
 	if fileUid, err := result.FileError(); err != nil {
-		query.SetFileError(fileUid, err.Error())
+		query.SetFileError(fileUid, clean.Error(err))
 	}
 
 	// Log index result.

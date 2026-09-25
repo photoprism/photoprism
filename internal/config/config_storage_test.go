@@ -260,6 +260,7 @@ func TestConfig_OriginalsAlbumsPath(t *testing.T) {
 	assert.Equal(t, ProjectRoot+"/storage/testdata/originals/albums", c.OriginalsAlbumsPath())
 }
 
+// TestConfig_CreateDirectories checks storage setup and marker placement.
 func TestConfig_CreateDirectories(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		testConfigMutex.Lock()
@@ -287,6 +288,14 @@ func TestConfig_CreateDirectories(t *testing.T) {
 		c.options.OriginalsPath = "./testdata"
 
 		assert.Error(t, c.CreateDirectories())
+	})
+	t.Run("StorageMarker", func(t *testing.T) {
+		c := NewMinimalTestConfig(t.TempDir())
+
+		require.NoError(t, c.CreateDirectories())
+		assert.True(t, fs.FileExistsNotEmpty(filepath.Join(c.StoragePath(), ".ppstorage")))
+		assert.NoFileExists(t, filepath.Join(c.OriginalsPath(), ".ppstorage"))
+		assert.NoFileExists(t, filepath.Join(c.ImportPath(), ".ppstorage"))
 	})
 }
 

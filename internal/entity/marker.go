@@ -52,11 +52,17 @@ type Marker struct {
 	H              float32         `gorm:"type:FLOAT;" json:"H" yaml:"H,omitempty"`
 	Size           int             `gorm:"default:-1;" json:"Size" yaml:"Size,omitempty"`
 	ThumbSize      int             `gorm:"column:thumb_size;default:-1;" json:"ThumbSize" yaml:"ThumbSize,omitempty"`
-	Score          int             `gorm:"type:SMALLINT;" json:"Score" yaml:"Score,omitempty"`
-	Thumb          string          `gorm:"type:VARBINARY(128);index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
-	MatchedAt      *time.Time      `sql:"index" json:"MatchedAt" yaml:"MatchedAt,omitempty"`
-	CreatedAt      time.Time
-	UpdatedAt      time.Time
+	// EmbedDetail is the percentage of the crop its source supplied, 100 where it supplied all
+	// of it, EmbedDetailUnknown where a migration sampled the marker without measuring one, and
+	// -1 where nothing has. It describes the embedding, which is why it sits beside embed_model
+	// rather than under the thumb_ prefix its partner thumb_size carries, and it is written under
+	// the same condition as that partner so the two cannot disagree about what was sampled.
+	EmbedDetail int        `gorm:"column:embed_detail;type:SMALLINT;default:-1;" json:"-" yaml:"EmbedDetail,omitempty"`
+	Score       int        `gorm:"type:SMALLINT;" json:"Score" yaml:"Score,omitempty"`
+	Thumb       string     `gorm:"type:VARBINARY(128);index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
+	MatchedAt   *time.Time `sql:"index" json:"MatchedAt" yaml:"MatchedAt,omitempty"`
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
 
 // TableName returns the entity table name.
@@ -94,6 +100,7 @@ func NewMarker(file File, area crop.Area, subjUID, markerSrc, markerType string,
 		H:             area.H,
 		Size:          size,
 		ThumbSize:     -1,
+		EmbedDetail:   -1,
 		Score:         score,
 		Thumb:         area.Thumb(file.FileHash),
 		MatchedAt:     nil,
@@ -128,9 +135,15 @@ func NewFaceMarker(f face.Face, file File, subjUid string) *Marker {
 	m.LandmarksJSON = f.RelativeLandmarksJSON()
 
 	// Only when an embedding was actually sampled: a zero would read as a measurement of nothing,
-	// where -1 says the marker never had a crop taken.
+	// where -1 says the marker never had a crop taken. The pair is written under one condition,
+	// or a marker whose vector came from an endpoint records a crop on one column and none on the
+	// other - a migration settles both together and has to find them in the same state.
 	if f.ThumbSize > 0 {
 		m.ThumbSize = f.ThumbSize
+
+		if f.EmbedDetail > 0 {
+			m.EmbedDetail = f.EmbedDetail
+		}
 	}
 
 	return m
@@ -157,6 +170,11 @@ func (m *Marker) SetEmbeddings(e face.Embeddings, embedModel, detectModel face.M
 // SameEmbeddingModel reports whether the marker embedding belongs to the configured model.
 func (m *Marker) SameEmbeddingModel() bool {
 	return face.ModelsComparable(m.EmbedModel, face.EmbeddingModelName())
+}
+
+// CropArea returns the normalized crop geometry stored on the marker.
+func (m *Marker) CropArea() crop.Area {
+	return crop.Area{Name: "face", X: m.X, Y: m.Y, W: m.W, H: m.H}
 }
 
 // UpdateFile sets the file uid and thumb and updates the index if the marker already exists.
@@ -497,6 +515,10 @@ func (m *Marker) Embeddings() face.Embeddings {
 		return m.embeddings
 	} else if err := json.Unmarshal(m.EmbeddingsJSON, &m.embeddings); err != nil {
 		log.Errorf("markers: %s while parsing embeddings json", err)
+	} else {
+		// Scaled to unit length on read, like the query path does, since every distance these
+		// are compared with is stated for unit vectors and a stored one need not have that shape.
+		m.embeddings.Normalize()
 	}
 
 	return m.embeddings
@@ -540,6 +562,41 @@ func (m *Marker) Subject() (subj *Subject) {
 	m.subject = FindSubject(m.SubjUID)
 
 	return m.subject
+}
+
+// WithheldFromSession reports whether the marker names a person this session may not see, so a
+// handler can refuse the marker rather than answer with its identity. Classified on the name as
+// well as the link, the way MarshalJSON resolves one.
+func (m *Marker) WithheldFromSession(sess *Session) bool {
+	if m.SubjUID == "" && m.MarkerName == "" {
+		return false
+	} else if sess.SeesPrivatePeople() {
+		return false
+	}
+
+	withheld, err := FindWithheldPeople()
+
+	if err != nil {
+		log.Warnf("markers: %s while resolving people visibility", err)
+		return true
+	}
+
+	return withheld.Withholds(m.SubjUID, m.MarkerName)
+}
+
+// RedactForSession clears the identity of a marker the session may not see, so a write answers
+// with no more than a read of the same marker would. The write itself is left alone: the session
+// supplied the name, and only the resolved link would be news to it.
+func (m *Marker) RedactForSession(sess *Session) *Marker {
+	if m == nil || !m.WithheldFromSession(sess) {
+		return m
+	}
+
+	m.MarkerName = ""
+	m.SubjUID = ""
+	m.SubjSrc = ""
+
+	return m
 }
 
 // ClearSubject removes an existing subject association, and reports a collision.

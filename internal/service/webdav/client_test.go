@@ -692,3 +692,81 @@ func TestClient_DownloadLimit(t *testing.T) {
 		assert.Equal(t, int64(bodySize), info.Size())
 	})
 }
+
+func TestClient_Upload(t *testing.T) {
+	var gotPath, gotUser, gotPass string
+	var gotLength int64
+	var gotBody []byte
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch path.Base(r.URL.Path) {
+		case "forbidden.yml":
+			w.WriteHeader(http.StatusForbidden)
+		case "failed.jpg":
+			w.WriteHeader(http.StatusInternalServerError)
+		case "redirect.jpg":
+			http.Redirect(w, r, "/dav/elsewhere.jpg", http.StatusFound)
+		case "elsewhere.jpg":
+			w.WriteHeader(http.StatusOK)
+		default:
+			gotPath, gotLength = r.URL.Path, r.ContentLength
+			gotUser, gotPass, _ = r.BasicAuth()
+			gotBody, _ = io.ReadAll(r.Body)
+			w.WriteHeader(http.StatusCreated)
+		}
+	}))
+	t.Cleanup(server.Close)
+
+	client, err := NewClient(server.URL+"/dav/", testUser, testPass, TimeoutLow, "")
+	require.NoError(t, err)
+
+	src := fs.Abs("testdata/example.jpg")
+	data, err := os.ReadFile(src) //nolint:gosec // Test reads a controlled fixture.
+	require.NoError(t, err)
+
+	t.Run("Success", func(t *testing.T) {
+		require.NoError(t, client.Upload(src, "/folder/example.jpg"))
+		assert.Equal(t, "/dav/folder/example.jpg", gotPath)
+		assert.Equal(t, int64(len(data)), gotLength)
+		assert.Equal(t, data, gotBody)
+		assert.Equal(t, testUser, gotUser)
+		assert.Equal(t, testPass, gotPass)
+	})
+	t.Run("Forbidden", func(t *testing.T) {
+		err := client.Upload(src, "folder/forbidden.yml")
+		require.Error(t, err)
+		assert.ErrorIs(t, err, ErrForbidden)
+	})
+	t.Run("ServerError", func(t *testing.T) {
+		err := client.Upload(src, "folder/failed.jpg")
+		require.Error(t, err)
+		assert.NotErrorIs(t, err, ErrForbidden)
+		assert.Contains(t, err.Error(), "500 Internal Server Error")
+	})
+	t.Run("Redirect", func(t *testing.T) {
+		err := client.Upload(src, "folder/redirect.jpg")
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "redirected")
+	})
+	t.Run("MissingSource", func(t *testing.T) {
+		err := client.Upload(filepath.Join(t.TempDir(), "missing.jpg"), "folder/missing.jpg")
+		require.Error(t, err)
+		assert.NotErrorIs(t, err, ErrForbidden)
+	})
+}
+
+func TestClient_resolveHref(t *testing.T) {
+	t.Run("EndpointPath", func(t *testing.T) {
+		client, err := NewClient("http://127.0.0.1:1/dav/", testUser, testPass, TimeoutLow, "")
+		require.NoError(t, err)
+		href := client.resolveHref("folder/example.jpg")
+		assert.Equal(t, "/dav/folder/example.jpg", href.Path)
+		assert.Equal(t, testUser, href.User.Username())
+	})
+	t.Run("EmptyPath", func(t *testing.T) {
+		client, err := NewClient("http://127.0.0.1:1", "", "", TimeoutLow, "")
+		require.NoError(t, err)
+		href := client.resolveHref("example.jpg")
+		assert.Equal(t, "http://127.0.0.1:1/example.jpg", href.String())
+	})
+}

@@ -304,9 +304,10 @@ func TestEmbeddingModelCollisionDist(t *testing.T) {
 		assert.Equal(t, CollisionDistDefault, m.CollisionDist, name)
 	}
 
-	// The match margin shares the number without being derived from it: it measures the gap
-	// between two distances rather than one distance, so the two are free to move apart.
-	assert.Equal(t, CollisionDistDefault, float64(MatchMarginDefault))
+	// The match margin measures a gap between two distances, so the collision floor does not bound
+	// it. It has to stay positive: FaceMatchMargin reads zero as unset and answers with this value.
+	assert.Positive(t, float64(MatchMarginDefault))
+	assert.Less(t, float64(MatchMarginDefault), CollisionDistDefault)
 }
 
 func TestEmbeddingModelThresholds(t *testing.T) {

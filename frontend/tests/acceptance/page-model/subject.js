@@ -11,6 +11,9 @@ export default class Page {
 
   async addNameToFace(id, name) {
     await t.typeText(Selector("div[data-id=" + id + "] div.input-name input"), name).pressKey("enter");
+    if (await Selector("div.p-confirm-dialog").visible) {
+      await t.click(Selector("div.p-confirm-dialog button.action-confirm"))
+    }
   }
 
   async renameSubject(uid, name) {

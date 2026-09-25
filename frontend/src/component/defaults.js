@@ -51,6 +51,16 @@ export default {
     validateOn: "invalid-input",
     hideDetails: "auto",
   },
+  VDateInput: {
+    flat: true,
+    variant: "solo-filled",
+    color: "surface-variant",
+    validateOn: "invalid-input",
+    hideDetails: "auto",
+    // The default hangs a calendar icon outside the field, where nothing else in the app puts one.
+    prependIcon: "",
+    prependInnerIcon: "mdi-calendar",
+  },
   VOtpInput: {
     variant: "outlined",
     baseColor: "on-surface-variant",

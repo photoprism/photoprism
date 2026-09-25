@@ -7,14 +7,18 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
 func TestUpdateUser(t *testing.T) {
@@ -354,4 +358,40 @@ func TestUpdateUser_ClusterJWT(t *testing.T) {
 		require.NotNil(t, unchanged)
 		assert.False(t, unchanged.CanLogin, "a denied request must not enable login")
 	})
+}
+
+func TestUpdateUserAuditFields(t *testing.T) {
+	// The segment list carries no value, so nothing but the argument order decides which field a
+	// value lands in, and a transposition compiles and renders a plausible line.
+	orig := event.AuditLog
+	logger, hook := test.NewNullLogger()
+	logger.SetLevel(logrus.TraceLevel)
+	event.AuditLog = logger
+
+	t.Cleanup(func() { event.AuditLog = orig })
+
+	app, router, conf := NewApiTest()
+	conf.SetAuthMode(config.AuthModePasswd)
+	defer conf.SetAuthMode(config.AuthModePublic)
+	UpdateUser(router)
+	sessId := AuthenticateUser(app, router, "alice", "Alice123!")
+	body, _ := json.Marshal(form.User{UserName: "alice", UserRole: "user"}) //nolint:gosec // test marshals a form with a password field to build the request body
+
+	hook.Reset()
+
+	r := AuthenticatedRequestWithBody(app, "PUT", "/api/v1/users/uqxetse3cy5eo9z2", string(body), sessId)
+	require.Equal(t, http.StatusForbidden, r.Code)
+
+	var fields []string
+
+	for _, entry := range hook.AllEntries() {
+		if strings.Contains(entry.Message, "update own role") {
+			fields = strings.Split(entry.Message, event.MessageSep)
+		}
+	}
+
+	require.Len(t, fields, 6)
+	assert.True(t, strings.HasPrefix(fields[1], "session sess"), fields[1])
+	assert.Equal(t, "'alice'", fields[3])
+	assert.Equal(t, status.Denied, fields[5])
 }

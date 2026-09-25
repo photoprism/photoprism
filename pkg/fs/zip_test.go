@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func writeZip(t *testing.T, path string, entries map[string][]byte) {
@@ -398,4 +399,206 @@ func TestZip(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
+}
+
+// TestUnzip_Filters checks file selection before extraction without changing unfiltered callers.
+func TestUnzip_Filters(t *testing.T) {
+	dir := t.TempDir()
+	archive := filepath.Join(dir, "batch.zip")
+	writeZip(t, archive, map[string][]byte{"keep.jpg": []byte("image-control"), "nested/omit.yml": []byte("metadata-control")})
+	// images selects a file type without reading entry contents.
+	images := func(name string, isDir bool) bool { return isDir || FileType(name) == ImageJpeg }
+	t.Run("SelectedBeforeWrite", func(t *testing.T) {
+		dest := t.TempDir()
+		existing := filepath.Join(dest, "nested/omit.yml")
+
+		assert.NoError(t, MkdirAll(filepath.Dir(existing)))
+		assert.NoError(t, os.WriteFile(existing, []byte("existing-control"), ModeFile))
+
+		files, skipped, err := Unzip(archive, dest, 1024, 1024, images)
+		assert.NoError(t, err)
+		assert.Equal(t, []string{filepath.Join(dest, "keep.jpg")}, files)
+		assert.Equal(t, []string{"nested/omit.yml"}, skipped)
+
+		data, err := os.ReadFile(existing) //nolint:gosec // Test reads its temporary control file.
+
+		assert.NoError(t, err)
+		assert.Equal(t, "existing-control", string(data))
+	})
+	t.Run("DirectoryFlag", func(t *testing.T) {
+		zipPath := filepath.Join(t.TempDir(), "directories.zip")
+		archive, err := os.Create(zipPath) //nolint:gosec // Test creates its temporary archive.
+
+		assert.NoError(t, err)
+
+		writer := zip.NewWriter(archive)
+
+		for _, name := range []string{"keep", "omit"} {
+			hdr := &zip.FileHeader{Name: name}
+			hdr.SetMode(os.ModeDir | ModeDir)
+			_, err = writer.CreateHeader(hdr)
+			assert.NoError(t, err)
+		}
+
+		assert.NoError(t, writer.Close())
+		assert.NoError(t, archive.Close())
+
+		dest := t.TempDir()
+
+		files, skipped, err := Unzip(zipPath, dest, 1024, 1024, func(name string, isDir bool) bool {
+			assert.True(t, isDir)
+			return name == "keep"
+		})
+
+		assert.NoError(t, err)
+		assert.Equal(t, []string{filepath.Join(dest, "keep")}, files)
+		assert.Equal(t, []string{"omit"}, skipped)
+		assert.DirExists(t, filepath.Join(dest, "keep"))
+		assert.NoDirExists(t, filepath.Join(dest, "omit"))
+	})
+	t.Run("NilFilter", func(t *testing.T) {
+		files, skipped, err := Unzip(archive, t.TempDir(), 1024, 1024, nil)
+		assert.NoError(t, err)
+		assert.Len(t, files, 2)
+		assert.Empty(t, skipped)
+	})
+	t.Run("AllFiltersRequired", func(t *testing.T) {
+		files, skipped, err := Unzip(archive, t.TempDir(), 1024, 1024, images, func(string, bool) bool { return false })
+		assert.NoError(t, err)
+		assert.Empty(t, files)
+		assert.Len(t, skipped, 2)
+	})
+}
+
+// TestUnzipReservedNames checks the baseline path policy without caller-supplied filters.
+func TestUnzipReservedNames(t *testing.T) {
+	dir := t.TempDir()
+	archive := filepath.Join(dir, "reserved.zip")
+	blocked := []string{".ppignore", ".dockerignore", ".python_history", ".bash_history-04218.tmp", ".my.cnf", ".mylogin.cnf", ".rsyncignore", ".rsync-filter", ".gitignore", "_netrc", PPStorageFilename, SigningKeyFile, JoinTokenFile, ClientSecretFile, ".git/config", ".svn/photo.jpg", ".hg/photo.jpg", ".ssh/key", ".gnupg/key", ".env", "nested/.env.production", ".config/photo.jpg", ".photoprism/photo.jpg", "nested/.GiT/photo.jpg", "photo.rclonelink", "nested/LINK.RcloneLink/photo.jpg", ".config/"}
+
+	for _, name := range ReservedPathNames() {
+		blocked = append(blocked, "nested/"+name+"/photo.jpg")
+	}
+
+	entries := map[string][]byte{"allowed.json": []byte("metadata-control"), ".hidden/photo.txt": []byte("ordinary-control"), ".github-backup/photo.txt": []byte("ordinary-control")}
+
+	for _, name := range blocked {
+		entries[name] = []byte("excluded-control")
+		if name == ".config/" {
+			entries[name] = nil
+		}
+	}
+
+	writeZip(t, archive, entries)
+
+	dest := filepath.Join(dir, "output")
+
+	require.NoError(t, MkdirAll(dest))
+	preserved := []string{".my.cnf", ".mylogin.cnf", ".rsyncignore", ".rsync-filter", ".bash_history-04218.tmp", ".gitignore", PPStorageFilename, SigningKeyFile, JoinTokenFile, ClientSecretFile}
+	for _, name := range preserved {
+		require.NoError(t, os.WriteFile(filepath.Join(dest, name), []byte("existing-control"), ModeFile))
+	}
+
+	files, skipped, err := Unzip(archive, dest, 1024, 100000)
+
+	assert.NoError(t, err)
+	assert.Len(t, files, 3)
+	assert.ElementsMatch(t, blocked, skipped)
+
+	for _, name := range preserved {
+		data, readErr := os.ReadFile(filepath.Join(dest, name)) //nolint:gosec // Test reads its temporary filesystem control.
+
+		require.NoError(t, readErr)
+		assert.Equal(t, "existing-control", string(data), name)
+	}
+
+	assert.FileExists(t, filepath.Join(dest, "allowed.json"))
+	assert.NoFileExists(t, filepath.Join(dest, ".ppignore"))
+	assert.FileExists(t, filepath.Join(dest, ".hidden/photo.txt"))
+	assert.NoDirExists(t, filepath.Join(dest, ".git"))
+	assert.NoDirExists(t, filepath.Join(dest, ".config"))
+
+	reader := openZipReader(t, archive)
+
+	for _, entry := range reader.File {
+		if entry.Name == ".git/config" {
+			_, err = UnzipFile(entry, filepath.Join(dir, "single"))
+			assert.ErrorIs(t, err, ErrReservedPath)
+		}
+	}
+
+	assert.NoDirExists(t, filepath.Join(dir, "single"))
+}
+
+// TestUnzipOperatorLinks preserves operator-managed directory mappings.
+func TestUnzipOperatorLinks(t *testing.T) {
+	dir := t.TempDir()
+	dest := filepath.Join(dir, "out")
+	require.NoError(t, MkdirAll(filepath.Join(dest, ".config")))
+	normal := filepath.Join(dir, "normal")
+	require.NoError(t, MkdirAll(normal))
+	require.NoError(t, os.Symlink(filepath.Join(dest, ".config"), filepath.Join(dest, "reserved-alias")))
+	require.NoError(t, os.Symlink(normal, filepath.Join(dest, "ordinary-alias")))
+	archive := filepath.Join(dir, "alias.zip")
+	writeZip(t, archive, map[string][]byte{"reserved-alias/new.txt": []byte("excluded"), "ordinary-alias/new.txt": []byte("allowed")})
+	files, skipped, err := Unzip(archive, dest, 1024, 10000)
+	require.NoError(t, err)
+	assert.Len(t, files, 2)
+	assert.Empty(t, skipped)
+	assert.FileExists(t, filepath.Join(dest, ".config/new.txt"))
+	data, err := os.ReadFile(filepath.Join(normal, "new.txt")) //nolint:gosec // Test reads its temporary transfer output.
+	require.NoError(t, err)
+	assert.Equal(t, "allowed", string(data))
+}
+
+// TestUnzipSymlinkEntries checks omission of archive links before any destination write.
+func TestUnzipSymlinkEntries(t *testing.T) {
+	dir := t.TempDir()
+	archive := filepath.Join(dir, "links.zip")
+	f, err := os.Create(archive) //nolint:gosec // Test creates an archive in its temporary directory.
+	require.NoError(t, err)
+	w := zip.NewWriter(f)
+
+	for _, name := range []string{"link.jpg", "folder-link"} {
+		header := &zip.FileHeader{Name: name}
+		header.SetMode(os.ModeSymlink | ModeFile)
+		entry, createErr := w.CreateHeader(header)
+		require.NoError(t, createErr)
+		_, err = entry.Write([]byte("../outside"))
+		require.NoError(t, err)
+	}
+
+	entry, err := w.Create("folder-link/ordinary.txt")
+	require.NoError(t, err)
+	_, err = entry.Write([]byte("ordinary-control"))
+	require.NoError(t, err)
+	require.NoError(t, w.Close())
+	require.NoError(t, f.Close())
+
+	dest := filepath.Join(dir, "out")
+	require.NoError(t, MkdirAll(dest))
+	require.NoError(t, os.WriteFile(filepath.Join(dest, "link.jpg"), []byte("existing-control"), ModeFile))
+	files, skipped, err := Unzip(archive, dest, 1024, 10000)
+	require.NoError(t, err)
+	assert.Equal(t, []string{filepath.Join(dest, "folder-link/ordinary.txt")}, files)
+	assert.ElementsMatch(t, []string{"link.jpg", "folder-link"}, skipped)
+	assert.DirExists(t, filepath.Join(dest, "folder-link"))
+	assert.NoFileExists(t, filepath.Join(dir, "outside"))
+
+	info, err := os.Lstat(filepath.Join(dest, "folder-link"))
+	require.NoError(t, err)
+	assert.Zero(t, info.Mode()&os.ModeSymlink)
+	data, err := os.ReadFile(filepath.Join(dest, "link.jpg")) //nolint:gosec // Test reads its temporary filesystem control.
+	require.NoError(t, err)
+	assert.Equal(t, "existing-control", string(data))
+
+	reader := openZipReader(t, archive)
+	for _, file := range reader.File {
+		if file.Name == "link.jpg" {
+			require.NotZero(t, file.Mode()&os.ModeSymlink)
+			_, err = UnzipFile(file, filepath.Join(dir, "single"))
+			assert.ErrorIs(t, err, ErrArchiveSymlink)
+		}
+	}
+	assert.NoDirExists(t, filepath.Join(dir, "single"))
 }

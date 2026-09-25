@@ -3,6 +3,7 @@ package clean
 import (
 	"strings"
 	"testing"
+	"unicode/utf8"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -68,4 +69,32 @@ func BenchmarkSearchQuery_LongNoOps(b *testing.B) {
 	for b.Loop() {
 		_ = SearchQuery(s)
 	}
+}
+
+func TestSearchTerms(t *testing.T) {
+	t.Run("WithinLimit", func(t *testing.T) {
+		// Returned byte-identical, whitespace included.
+		for _, s := range []string{
+			strings.Repeat("a", LengthLimit),
+			" " + strings.Repeat("a", 1400) + " ",
+			" " + strings.Repeat("日", 1300) + " ",
+		} {
+			assert.Equal(t, s, SearchTerms(s))
+		}
+	})
+	t.Run("AboveLimit", func(t *testing.T) {
+		assert.Len(t, SearchTerms(strings.Repeat("a", LengthLimit*4)), LengthLimit)
+	})
+	t.Run("MultiByteRunes", func(t *testing.T) {
+		// A term must stay valid UTF-8 to bind, so clipping cannot split a rune.
+		for _, r := range []string{"é", "€", "日", "😀"} {
+			s := SearchTerms(strings.Repeat(r, LengthLimit))
+			assert.True(t, utf8.ValidString(s), "clipping %s produced invalid UTF-8", r)
+			assert.LessOrEqual(t, len(s), LengthLimit)
+			assert.Greater(t, len(s), LengthLimit-utf8.UTFMax)
+		}
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", SearchTerms(""))
+	})
 }

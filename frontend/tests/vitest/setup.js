@@ -9,6 +9,7 @@ import { config } from "@vue/test-utils";
 import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
+import { VDateInput } from "vuetify/labs/VDateInput";
 import { VFileUpload } from "vuetify/labs/VFileUpload";
 import "vuetify/styles";
 
@@ -23,7 +24,7 @@ window.__CONFIG__ = clientConfig;
 
 // Create a proper Vuetify instance with all components and styles
 const vuetify = createVuetify({
-  components: { ...components, VFileUpload },
+  components: { ...components, VDateInput, VFileUpload },
   directives,
   theme: {
     defaultTheme: "light",

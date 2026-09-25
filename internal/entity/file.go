@@ -101,7 +101,9 @@ type File struct {
 	Share              []FileShare   `json:"-" yaml:"-"`
 	Sync               []FileSync    `json:"-" yaml:"-"`
 	OmitMarkers        bool          `gorm:"-" sql:"-" json:"-" yaml:"-"`
+	OmitWithheldPeople bool          `gorm:"-" sql:"-" json:"-" yaml:"-"`
 	markers            *Markers
+	visibleMarkers     *Markers
 }
 
 // TableName returns the entity table name.
@@ -590,6 +592,56 @@ func (m *File) Rename(fileName, rootName, filePath, fileBase string) error {
 	return nil
 }
 
+// captureName returns the file name that identifies a capture original: its current name, or its
+// original name as long as the file type has not changed since import.
+func (m *File) captureName() string {
+	switch {
+	case m == nil:
+		return ""
+	case fs.StackGroup(m.FileName) != "":
+		return m.FileName
+	case m.OriginalName != "" && fs.FileType(m.FileName) == fs.FileType(m.OriginalName):
+		return m.OriginalName
+	}
+
+	return m.FileName
+}
+
+// StackGroup returns the shared stack name of a lens or proxy original of a multi-file capture.
+func (m *File) StackGroup() string {
+	return fs.StackGroup(m.captureName())
+}
+
+// KeepStacked reports whether the file is stacked under the name of another file of its capture,
+// such as a right lens or proxy, so it must not be separated from it.
+func (m *File) KeepStacked() bool {
+	return fs.KeepStacked(m.captureName())
+}
+
+// KeepStackedWith reports whether the file must stay with the given files of its photo: it is
+// stacked under another file's name, or another original of its capture is stacked under its name.
+func (m *File) KeepStackedWith(files Files) bool {
+	if m == nil {
+		return false
+	} else if m.KeepStacked() {
+		return true
+	}
+
+	group := m.StackGroup()
+
+	if group == "" {
+		return false
+	}
+
+	for i := range files {
+		if f := &files[i]; f.FileUID != m.FileUID && f.FileRoot == RootOriginals && !f.FileSidecar && !f.FileMissing && f.KeepStacked() && f.StackGroup() == group {
+			return true
+		}
+	}
+
+	return false
+}
+
 // Undelete removes the missing flag from this file.
 func (m *File) Undelete() error {
 	if !m.Missing() {
@@ -745,16 +797,24 @@ func (m *File) SetInstanceID(id string) {
 	}
 }
 
-// RedactForSession removes identifying per-file metadata a shared-only session must not see: the
-// XMP InstanceID is cleared and markers are omitted. Full-library, admin and nil sessions are
-// unchanged. Counterpart of Photo.RedactForSession, so GetFile and GetPhoto strip the same fields.
-func (m *File) RedactForSession(sess *Session) *File {
+// RedactForSession removes identifying per-file metadata a session without whole-library reach must
+// not see: the XMP InstanceID is cleared and markers are omitted. The resource names the context
+// the file is answered in - the picture that carries it, or the file itself. Withheld people are
+// flagged first, as that applies to every session.
+func (m *File) RedactForSession(sess *Session, resource acl.Resource) *File {
 	if m == nil || sess == nil {
 		return m
 	}
 
-	// Only sessions limited to shared content are redacted.
-	if !sess.GetUser().HasSharedAccessOnly(acl.ResourcePhotos) && !sess.NotRegistered() {
+	if omit := !sess.SeesPrivatePeople(); omit != m.OmitWithheldPeople {
+		m.OmitWithheldPeople = omit
+		m.visibleMarkers = nil
+	}
+
+	// Markers and the XMP identifier are picture data, so the role must reach the whole library of
+	// pictures as well, whichever resource this file was answered on.
+	if sess.SeesFullDetail(resource) &&
+		sess.GrantsAny(acl.ResourcePhotos, acl.Permissions{acl.AccessAll, acl.AccessLibrary}) {
 		return m
 	}
 
@@ -854,6 +914,23 @@ func (m *File) AddFaces(faces face.Faces) {
 	}
 }
 
+// validFaceEmbeddings reports whether the face holds one finite embedding of the width its model
+// produces. A remote service can return either defect, and a vector that records no model is
+// checked against no expected width.
+func validFaceEmbeddings(f face.Face) bool {
+	if !f.Embeddings.One() {
+		return false
+	}
+
+	dims := f.Embeddings.Dims()
+
+	if producer := face.FindEmbeddingModel(f.EmbedModel); producer != nil {
+		dims = producer.Dims
+	}
+
+	return face.ValidEmbeddings(f.Embeddings, dims)
+}
+
 // AddFace adds a face marker to the file.
 func (m *File) AddFace(f face.Face, subjUid string) {
 	// Only add faces with exactly one embedding so that they can be compared and clustered.
@@ -861,17 +938,7 @@ func (m *File) AddFace(f face.Face, subjUid string) {
 		return
 	}
 
-	// A vector with non-finite values poisons every later distance, and one whose width
-	// disagrees with its own model belongs to no embedding space at all; a remote service
-	// can return either, so both are rejected here. The width is only checked against a
-	// known producer, because a vector that records no model implies no expected width.
-	dims := f.Embeddings.Dims()
-
-	if producer := face.FindEmbeddingModel(f.EmbedModel); producer != nil {
-		dims = producer.Dims
-	}
-
-	if !face.ValidEmbeddings(f.Embeddings, dims) {
+	if !validFaceEmbeddings(f) {
 		log.Warnf("faces: skipped invalid %d-value embedding for file %s", f.Embeddings.Dims(), clean.Log(m.FileUID))
 		return
 	}
@@ -894,12 +961,10 @@ func (m *File) AddFace(f face.Face, subjUid string) {
 		if existing.Embeddings().Empty() {
 			landmarks := f.RelativeLandmarksJSON()
 
-			// Unmeasured stays -1 rather than keeping a value recorded for another sampling.
-			thumbSize := -1
-
-			if f.ThumbSize > 0 {
-				thumbSize = f.ThumbSize
-			}
+			// From the marker this detection would have created, so an upgrade records the
+			// sampling exactly as a new marker does. Unmeasured stays at the sentinel rather
+			// than keeping a value recorded for another sampling.
+			thumbSize, embedDetail := marker.ThumbSize, marker.EmbedDetail
 
 			// For an already-saved marker, persist first and mutate in-memory
 			// only on success: a failed write must not leave an unpersisted
@@ -915,6 +980,7 @@ func (m *File) AddFace(f face.Face, subjUid string) {
 					"detect_model":    f.DetectModel,
 					"landmarks_json":  landmarks,
 					"thumb_size":      thumbSize,
+					"embed_detail":    embedDetail,
 					"score":           f.Score,
 				}
 
@@ -927,6 +993,7 @@ func (m *File) AddFace(f face.Face, subjUid string) {
 			existing.SetEmbeddings(f.Embeddings, f.EmbedModel, f.DetectModel)
 			existing.LandmarksJSON = landmarks
 			existing.ThumbSize = thumbSize
+			existing.EmbedDetail = embedDetail
 			existing.Score = f.Score
 		}
 
@@ -983,6 +1050,28 @@ func (m *File) Markers() *Markers {
 	}
 
 	return m.markers
+}
+
+// MarkersForJSON returns the markers to serialize, leaving out the people whose name is withheld
+// from the session reading the file. It caches its own query result, so the list Markers hands to
+// SaveMarkers and AddFace stays complete. A failed query yields no markers.
+func (m *File) MarkersForJSON() *Markers {
+	if !m.OmitWithheldPeople {
+		return m.Markers()
+	}
+
+	if m.visibleMarkers != nil {
+		return m.visibleMarkers
+	} else if m.FileUID == "" || m.OmitMarkers {
+		m.visibleMarkers = &Markers{}
+	} else if res, err := FindVisibleMarkers(m.FileUID, true); err != nil {
+		log.Warnf("file %s: %s while loading markers", clean.Log(m.FileUID), err)
+		m.visibleMarkers = &Markers{}
+	} else {
+		m.visibleMarkers = &res
+	}
+
+	return m.visibleMarkers
 }
 
 // UnsavedMarkers tests if any marker hasn't been saved yet.

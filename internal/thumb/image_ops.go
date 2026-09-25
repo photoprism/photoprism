@@ -8,7 +8,6 @@ import (
 	"image/png"
 	"math"
 	"os"
-	"path/filepath"
 
 	xdraw "golang.org/x/image/draw"
 
@@ -21,15 +20,13 @@ func Save(img image.Image, fileName string, quality ...Quality) error {
 		return fmt.Errorf("thumb: image is nil")
 	}
 
-	dirName := filepath.Dir(fileName)
-	baseName := filepath.Base(fileName)
 	fileQuality := JpegQualityDefault
 
 	if len(quality) > 0 && quality[0] > 0 {
 		fileQuality = quality[0]
 	}
 
-	tmpFile, err := os.CreateTemp(dirName, "."+baseName+".tmp-*")
+	tmpFile, err := fs.OpenStageFile(fileName)
 	if err != nil {
 		return err
 	}
@@ -44,10 +41,6 @@ func Save(img image.Image, fileName string, quality ...Quality) error {
 			_ = os.Remove(tmpName)
 		}
 	}()
-
-	if err = tmpFile.Chmod(fs.ModeFile); err != nil {
-		return err
-	}
 
 	if err = encodeImageFile(tmpFile, img, fileName, fileQuality); err != nil {
 		return err

@@ -71,7 +71,7 @@ func clusterNodesListAction(ctx *cli.Context) error {
 		page := items[offset:end]
 
 		// Build admin view (include internal URL and DB meta).
-		opts := reg.NodeOpts{IncludeAdvertiseUrl: true, IncludeDatabase: true}
+		opts := reg.NodeOptsForOperator()
 		out := reg.BuildClusterNodes(page, opts)
 
 		who := clusterAuditWho(ctx, conf)
