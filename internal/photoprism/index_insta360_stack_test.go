@@ -376,6 +376,8 @@ func TestIndex_Insta360StackOptions(t *testing.T) {
 		cfg := newInsta360StackConfig(t, folder, false)
 		cfg.Options().SidecarYaml = true
 		cfg.Options().DisableBackups = false
+		// The split files restore different photos, so the result depends on the order they are indexed in.
+		cfg.Options().IndexWorkers = "1"
 		dir := filepath.Join(cfg.OriginalsPath(), folder)
 		sidecarDir := filepath.Join(cfg.SidecarPath(), folder)
 
