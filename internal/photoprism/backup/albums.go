@@ -58,6 +58,12 @@ func Albums(backupPath string, force bool) (count int, err error) {
 			latest = changed
 		}
 
+		// An album whose backup file name cannot be built, e.g. of an unknown type, is skipped.
+		if _, _, nameErr := a.YamlFileName(backupPath); nameErr != nil {
+			log.Warnf("backup: skipped album %s (%s)", clean.Log(a.AlbumUID), clean.Error(nameErr))
+			continue
+		}
+
 		// Stop writing new backups if storage is over quota or critically low on free disk space.
 		// The disk-free cache rate-limits this to one actual probe per CacheTTL.
 		if c.InsufficientStorage() {
@@ -146,7 +152,9 @@ func RestoreAlbums(backupPath string, force bool) (count int, result error) {
 		if err = a.LoadFromYaml(fileName); err != nil {
 			log.Errorf("albums: %s in %s (restore)", err, clean.Log(filepath.Base(fileName)))
 			result = err
-		} else if a.AlbumType == "" || len(a.Photos) == 0 && a.AlbumFilter == "" {
+		} else if !entity.IsAlbumType(a.AlbumType) {
+			log.Warnf("albums: skipped %s with unknown type (restore)", clean.Log(filepath.Base(fileName)))
+		} else if len(a.Photos) == 0 && a.AlbumFilter == "" {
 			log.Debugf("albums: skipped %s (restore)", clean.Log(filepath.Base(fileName)))
 		} else if found := a.Find(); found != nil {
 			log.Infof("%s: %s already exists (restore)", found.AlbumType, clean.Log(found.AlbumTitle))

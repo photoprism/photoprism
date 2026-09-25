@@ -2695,9 +2695,6 @@
                 },
                 "Title": {
                     "type": "string"
-                },
-                "Type": {
-                    "type": "string"
                 }
             },
             "type": "object"

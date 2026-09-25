@@ -31,6 +31,16 @@ const (
 	AlbumState  = "state"
 )
 
+// IsAlbumType reports whether s is one of the album types above.
+func IsAlbumType(s string) bool {
+	switch s {
+	case AlbumManual, AlbumFolder, AlbumMoment, AlbumMonth, AlbumState:
+		return true
+	default:
+		return false
+	}
+}
+
 // Default sort orders, one per album type.
 var (
 	DefaultOrderAlbum  = sortby.Oldest

@@ -6,9 +6,11 @@ import (
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
 
 	"github.com/photoprism/photoprism/pkg/i18n"
@@ -90,6 +92,21 @@ func TestUpdateAlbum(t *testing.T) {
 		val2 := gjson.Get(r.Body.String(), "Favorite")
 		assert.Equal(t, "false", val2.String())
 		assert.Equal(t, http.StatusOK, r.Code)
+	})
+	t.Run("TypeIgnored", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+		UpdateAlbum(router)
+
+		for _, albumType := range []string{"moment", "calendar"} {
+			r := PerformRequestWithBody(app, "PUT", "/api/v1/albums/"+uid, `{"Title": "Updated02", "Type": "`+albumType+`"}`)
+			assert.Equal(t, http.StatusOK, r.Code)
+			assert.Equal(t, "album", gjson.Get(r.Body.String(), "Type").String(), albumType)
+			assert.Equal(t, "Updated02", gjson.Get(r.Body.String(), "Title").String())
+
+			found := entity.FindAlbum(entity.Album{AlbumUID: uid})
+			require.NotNil(t, found)
+			assert.Equal(t, "album", found.AlbumType, albumType)
+		}
 	})
 	t.Run("Invalid", func(t *testing.T) {
 		app, router, _ := NewApiTest()

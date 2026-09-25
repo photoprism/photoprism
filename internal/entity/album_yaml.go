@@ -11,6 +11,7 @@ import (
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 var albumYamlMutex = sync.Mutex{}
@@ -59,10 +60,15 @@ func (m *Album) SaveAsYaml(fileName string) error {
 
 // YamlFileName returns the absolute file path for the YAML backup file.
 func (m *Album) YamlFileName(backupPath string) (absolute, relative string, err error) {
-	if m == nil {
+	switch {
+	case m == nil:
 		return "", "", fmt.Errorf("album entity is nil - you may have found a bug")
-	} else if m.AlbumUID == "" {
+	case m.AlbumUID == "":
 		return "", "", fmt.Errorf("album uid is empty")
+	case len(m.AlbumUID) != 16 || m.AlbumUID[0] != AlbumUID || !rnd.IsAlnum(m.AlbumUID):
+		return "", "", fmt.Errorf("album uid %s is invalid", clean.Log(m.AlbumUID))
+	case !IsAlbumType(m.AlbumType):
+		return "", "", fmt.Errorf("album %s has an unknown type", clean.Log(m.AlbumUID))
 	}
 
 	relative = filepath.Join(m.AlbumType, m.AlbumUID+fs.ExtYml)

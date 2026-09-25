@@ -152,6 +152,53 @@ func TestAlbum_YamlFileName(t *testing.T) {
 		assert.Equal(t, "", fileName)
 		assert.Equal(t, "album/as6sg6bxpogaaba9.yml", relName)
 	})
+	t.Run("UnknownType", func(t *testing.T) {
+		for _, albumType := range []string{"", "x", "Album", " album", "calendar", "album\x00"} {
+			m := Album{AlbumUID: "as6sg6bxpogaaba9", AlbumType: albumType}
+
+			fileName, relName, err := m.YamlFileName("/foo/bar")
+
+			assert.Error(t, err, albumType)
+			assert.Equal(t, "", fileName, albumType)
+			assert.Equal(t, "", relName, albumType)
+		}
+	})
+	t.Run("InvalidUID", func(t *testing.T) {
+		m := Album{AlbumUID: "album-1", AlbumType: AlbumManual}
+
+		fileName, relName, err := m.YamlFileName("/foo/bar")
+
+		assert.Error(t, err)
+		assert.Equal(t, "", fileName)
+		assert.Equal(t, "", relName)
+	})
+	t.Run("UIDShape", func(t *testing.T) {
+		// A UID of the right shape is accepted whatever the time it encodes.
+		m := Album{AlbumUID: "azzzzzz000000000", AlbumType: AlbumManual}
+
+		fileName, relName, err := m.YamlFileName("/foo/bar")
+
+		assert.NoError(t, err)
+		assert.Equal(t, "/foo/bar/album/azzzzzz000000000.yml", fileName)
+		assert.Equal(t, "album/azzzzzz000000000.yml", relName)
+
+		for _, uid := range []string{"b000000000000000", "a00000000000000", "a0000000000000000", "a00000000000000."} {
+			m = Album{AlbumUID: uid, AlbumType: AlbumManual}
+			_, _, err = m.YamlFileName("/foo/bar")
+			assert.Error(t, err, uid)
+		}
+	})
+	t.Run("KnownTypes", func(t *testing.T) {
+		for _, albumType := range []string{AlbumManual, AlbumFolder, AlbumMoment, AlbumMonth, AlbumState} {
+			m := Album{AlbumUID: "as6sg6bxpogaaba9", AlbumType: albumType}
+
+			fileName, relName, err := m.YamlFileName("/foo/bar")
+
+			assert.NoError(t, err, albumType)
+			assert.Equal(t, "/foo/bar/"+albumType+"/as6sg6bxpogaaba9.yml", fileName)
+			assert.Equal(t, albumType+"/as6sg6bxpogaaba9.yml", relName)
+		}
+	})
 }
 
 func TestAlbum_SaveBackupYaml(t *testing.T) {
