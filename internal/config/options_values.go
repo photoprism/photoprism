@@ -3,10 +3,14 @@ package config
 import (
 	"fmt"
 	"math"
+	"net/url"
 	"reflect"
 	"sort"
 	"strings"
 	"sync"
+
+	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // optionField describes an option in Options as the values map sees it.
@@ -194,3 +198,95 @@ func roundOptionFloat(name string, f float64) (float64, error) {
 
 	return math.Round(f), nil
 }
+
+// RedactedOptionNames are the exposed options whose value can carry a credential, so the API
+// returns them the way Report does rather than as they are stored.
+var RedactedOptionNames = []string{"HttpsProxy"}
+
+// RedactedOptionMarker stands in for a configured value that cannot be rendered safely, so a
+// reader can still tell it apart from one that is not set at all.
+const RedactedOptionMarker = txt.Masked
+
+// RedactedOptions returns a copy of the options with those values replaced, so the API response
+// and the CLI report agree about which of them is a secret. The copy shares the reference-typed
+// fields with the live options, which are all json:"-" - read it, do not sort or append to it.
+func (c *Config) RedactedOptions() *Options {
+	o := *c.Options()
+	o.HttpsProxy = redactOptionValue(o.HttpsProxy)
+
+	return &o
+}
+
+// redactOptionValue renders a URL without its credentials, and returns the marker rather than
+// nothing when it cannot be parsed, so an unreadable value never reports as an absent one.
+func redactOptionValue(s string) string {
+	if s == "" {
+		return ""
+	} else if redacted := clean.UriRedacted(s); redacted != "" {
+		return redacted
+	}
+
+	return RedactedOptionMarker
+}
+
+// RemoveRedactedOptionValues drops a value a client sent back as it was handed out, so reading the
+// options and posting them again cannot store a placeholder in place of the secret. The test does
+// not compare against the stored value, so a response cached across a change is dropped too.
+func (c *Config) RemoveRedactedOptionValues(values Values) (removed []string) {
+	for _, name := range RedactedOptionNames {
+		v, found := values[name]
+
+		if !found {
+			continue
+		}
+
+		if s, isString := v.(string); !isString || !isRedactedOptionValue(s) {
+			continue
+		}
+
+		delete(values, name)
+		removed = append(removed, name)
+	}
+
+	sort.Strings(removed)
+
+	return removed
+}
+
+// isRedactedOptionValue reports whether a value is one this package renders rather than stores:
+// the marker, a URL whose query was rendered with it, or a URL whose password is the one
+// url.URL.Redacted substitutes.
+func isRedactedOptionValue(s string) bool {
+	if s == "" {
+		return false
+	} else if s == RedactedOptionMarker {
+		return true
+	}
+
+	u, err := url.Parse(s)
+
+	if err != nil {
+		return false
+	}
+
+	if strings.Contains(u.RawQuery, clean.UriRedactedValue) {
+		return true
+	}
+
+	if u.User == nil {
+		return false
+	}
+
+	pw, set := u.User.Password()
+
+	if !set {
+		// A name with no password beside it is rendered as the marker in full.
+		return u.User.Username() == clean.UriRedactedValue
+	}
+
+	return pw == clean.UriRedactedValue || pw == redactedUrlPassword
+}
+
+// redactedUrlPassword is what url.URL.Redacted substitutes, which a value redacted by another
+// component may still carry.
+const redactedUrlPassword = "xxxxx"

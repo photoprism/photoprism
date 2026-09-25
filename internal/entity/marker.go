@@ -174,6 +174,11 @@ func (m *Marker) SameEmbeddingModel() bool {
 	return face.ModelsComparable(m.EmbedModel, face.EmbeddingModelName())
 }
 
+// CropArea returns the normalized crop geometry stored on the marker.
+func (m *Marker) CropArea() crop.Area {
+	return crop.Area{Name: "face", X: m.X, Y: m.Y, W: m.W, H: m.H}
+}
+
 // UpdateFile sets the file uid and thumb and updates the index if the marker already exists.
 func (m *Marker) UpdateFile(file *File) (updated bool) {
 	if file.FileUID != "" && m.FileUID != file.FileUID {
@@ -512,6 +517,10 @@ func (m *Marker) Embeddings() face.Embeddings {
 		return m.embeddings
 	} else if err := json.Unmarshal(m.EmbeddingsJSON, &m.embeddings); err != nil {
 		log.Errorf("markers: %s while parsing embeddings json", err)
+	} else {
+		// Scaled to unit length on read, like the query path does, since every distance these
+		// are compared with is stated for unit vectors and a stored one need not have that shape.
+		m.embeddings.Normalize()
 	}
 
 	return m.embeddings
@@ -555,6 +564,41 @@ func (m *Marker) Subject() (subj *Subject) {
 	m.subject = FindSubject(m.SubjUID)
 
 	return m.subject
+}
+
+// WithheldFromSession reports whether the marker names a person this session may not see, so a
+// handler can refuse the marker rather than answer with its identity. Classified on the name as
+// well as the link, the way MarshalJSON resolves one.
+func (m *Marker) WithheldFromSession(sess *Session) bool {
+	if m.SubjUID == "" && m.MarkerName == "" {
+		return false
+	} else if sess.SeesPrivatePeople() {
+		return false
+	}
+
+	withheld, err := FindWithheldPeople()
+
+	if err != nil {
+		log.Warnf("markers: %s while resolving people visibility", err)
+		return true
+	}
+
+	return withheld.Withholds(m.SubjUID, m.MarkerName)
+}
+
+// RedactForSession clears the identity of a marker the session may not see, so a write answers
+// with no more than a read of the same marker would. The write itself is left alone: the session
+// supplied the name, and only the resolved link would be news to it.
+func (m *Marker) RedactForSession(sess *Session) *Marker {
+	if m == nil || !m.WithheldFromSession(sess) {
+		return m
+	}
+
+	m.MarkerName = ""
+	m.SubjUID = ""
+	m.SubjSrc = ""
+
+	return m
 }
 
 // ClearSubject removes an existing subject association, and reports a collision.

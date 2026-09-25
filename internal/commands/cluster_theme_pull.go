@@ -89,7 +89,7 @@ func clusterThemePullAction(ctx *cli.Context) error {
 			// OAuth client_credentials
 			t, err := obtainOAuthToken(portalURL, clientID, clientSecret)
 			if err != nil {
-				log.Warnf("cluster: oauth token failed, falling back to join token (%s)", clean.Error(err))
+				log.Warnf("cluster: oauth token failed, falling back to join token (%s)", clean.ErrorFull(err))
 			} else {
 				token = t
 			}
@@ -179,7 +179,7 @@ func clusterThemePullAction(ctx *cli.Context) error {
 		}
 		defer func() {
 			if closeErr := resp.Body.Close(); closeErr != nil {
-				log.Debugf("cluster: %s (close theme response body)", clean.Error(closeErr))
+				log.Debugf("cluster: %s (close theme response body)", clean.ErrorFull(closeErr))
 			}
 		}()
 		if resp.StatusCode != http.StatusOK {
@@ -246,7 +246,7 @@ func obtainOAuthToken(portalURL, clientID, clientSecret string) (string, error) 
 
 	defer func() {
 		if closeErr := resp.Body.Close(); closeErr != nil {
-			log.Debugf("cluster: %s (close oauth response body)", clean.Error(closeErr))
+			log.Debugf("cluster: %s (close oauth response body)", clean.ErrorFull(closeErr))
 		}
 	}()
 
@@ -310,7 +310,7 @@ func unzipSafe(zipPath, dest string) error {
 
 	defer func() {
 		if closeErr := r.Close(); closeErr != nil {
-			log.Debugf("cluster: %s (close theme archive)", clean.Error(closeErr))
+			log.Debugf("cluster: %s (close theme archive)", clean.ErrorFull(closeErr))
 		}
 	}()
 

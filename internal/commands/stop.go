@@ -9,6 +9,7 @@ import (
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // StopCommand configures the command name, flags, and action.
@@ -34,7 +35,7 @@ func stopAction(ctx *cli.Context) error {
 	child, err := dcxt.Search()
 
 	if err != nil {
-		if errors.Is(err, os.ErrNotExist) {
+		if daemonNotRunning(err, dcxt.PidFileName) {
 			log.Info("daemon is not running")
 			return nil
 		}
@@ -62,4 +63,10 @@ func stopAction(ctx *cli.Context) error {
 	log.Infof("daemon[%v] exited[%v]? successfully[%v]?\n", st.Pid(), st.Exited(), st.Success())
 
 	return nil
+}
+
+// daemonNotRunning reports whether a failed pid file search means that no daemon is running.
+// Search removes a pid file whose process has exited, which tells it apart from a read error.
+func daemonNotRunning(err error, pidFile string) bool {
+	return errors.Is(err, os.ErrNotExist) || !fs.FileExists(pidFile)
 }

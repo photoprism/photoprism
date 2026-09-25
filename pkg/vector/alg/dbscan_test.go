@@ -1,8 +1,11 @@
 package alg
 
 import (
+	"math"
 	"math/rand"
 	"reflect"
+	"slices"
+	"sync"
 	"testing"
 	"time"
 )
@@ -127,29 +130,151 @@ func TestDBSCANRaggedData(t *testing.T) {
 	}
 }
 
+// TestDBSCANPredict covers assignment against fixed training cores without changing learned state.
 func TestDBSCANPredict(t *testing.T) {
-	c, err := DBSCAN(1, 1, 0, EuclideanDist)
+	left, right, middle := borderTestData()
+	border := append(slices.Clone(left), middle)
+	both := append(slices.Clone(left), right...)
+	ambiguous := append(slices.Clone(both), middle)
+
+	tests := []struct {
+		name   string
+		minpts int
+		data   [][]float64
+		point  []float64
+		want   int
+	}{
+		{"Untrained", 5, nil, middle, -1},
+		{"WrongDimensions", 5, left, []float64{0}, -1},
+		{"Core", 5, left, left[0], 1},
+		{"UniqueBorder", 5, left, middle, 1},
+		{"FarOutsideEpsilon", 5, left, []float64{0, 100}, -1},
+		{"BorderCannotExtend", 5, border, []float64{0, 1.9}, -1},
+		{"AmbiguousCoreReach", 5, both, middle, -1},
+		{"AmbiguousCoreReachReversed", 5, append(slices.Clone(right), left...), middle, -1},
+		{"NearestNoiseButUniqueCoreReach", 5, ambiguous, []float64{0, 1.04}, 1},
+		{"AllNoise", 5, [][]float64{{0, 0}}, []float64{0, 0}, -1},
+		{"DoesNotPromoteTrainingPoints", 5, [][]float64{{0}, {0}, {0}, {0}}, []float64{0}, -1},
+		{"ExactEpsilon", 1, [][]float64{{0}}, []float64{1}, -1},
+		{"InsideEpsilon", 1, [][]float64{{0}}, []float64{math.Nextafter(1, 0)}, 1},
+		{"OutsideEpsilon", 1, [][]float64{{0}}, []float64{math.Nextafter(1, 2)}, -1},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			c, err := DBSCAN(test.minpts, 1, 1, EuclideanDist)
+			if err != nil {
+				t.Fatalf("unexpected constructor error: %s", err)
+			}
+			if test.data != nil {
+				if err = c.Learn(test.data); err != nil {
+					t.Fatalf("unexpected learn error: %s", err)
+				}
+			}
+
+			guesses, sizes := slices.Clone(c.Guesses()), slices.Clone(c.Sizes())
+
+			if got := c.Predict(test.point); got != test.want {
+				t.Errorf("expected %d, got %d", test.want, got)
+			}
+			if !reflect.DeepEqual(guesses, c.Guesses()) || !reflect.DeepEqual(sizes, c.Sizes()) {
+				t.Error("prediction changed the learned assignments or sizes")
+			}
+		})
+	}
+}
+
+// TestDBSCANPredictTrainingPoints checks that prediction reproduces every learned assignment.
+func TestDBSCANPredictTrainingPoints(t *testing.T) {
+	left, right, middle := borderTestData()
+	data := append(slices.Clone(left), middle)
+	data = append(data, right...)
+	data = append(data, []float64{0, -0.95}, []float64{0, 10})
+
+	c, err := DBSCAN(5, 1, 1, EuclideanDist)
 	if err != nil {
 		t.Fatalf("unexpected constructor error: %s", err)
 	}
-	t.Run("Untrained", func(t *testing.T) {
-		if n := c.Predict([]float64{1}); n != -1 {
-			t.Errorf("expected -1, got %d", n)
+	if err = c.Learn(data); err != nil {
+		t.Fatalf("unexpected learn error: %s", err)
+	}
+
+	// The fixture includes both core clusters, ambiguous noise, a unique border, and isolated noise.
+	guesses := c.Guesses()
+	expected := []int{1, 1, 1, 1, 1, -1, 2, 2, 2, 2, 2, 1, -1}
+	if !reflect.DeepEqual(guesses, expected) {
+		t.Fatalf("expected assignments %v, got %v", expected, guesses)
+	}
+
+	for i, point := range data {
+		if got := c.Predict(point); got != guesses[i] {
+			t.Errorf("point %d: expected learned cluster %d, got %d", i, guesses[i], got)
 		}
-	})
-	t.Run("Success", func(t *testing.T) {
-		if err = c.Learn([][]float64{{1}, {1.5}, {5}}); err != nil {
-			t.Fatalf("unexpected learn error: %s", err)
+	}
+}
+
+// TestDBSCANPredictRelearn covers replacement of cores and dimensions on subsequent training runs.
+func TestDBSCANPredictRelearn(t *testing.T) {
+	left, _, middle := borderTestData()
+	c, err := DBSCAN(5, 1, 1, EuclideanDist)
+	if err != nil {
+		t.Fatalf("unexpected constructor error: %s", err)
+	}
+
+	tests := []struct {
+		name  string
+		data  [][]float64
+		point []float64
+		want  int
+	}{
+		{"AllCore", [][]float64{{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}}, []float64{0, 0}, 1},
+		{"CoreBecomesBorder", append(slices.Clone(left), middle), []float64{0, 1.9}, -1},
+		{"LargerDatasetAndNewDimensions", [][]float64{{10}, {10}, {10}, {10}, {10}, {10}, {10}}, []float64{10}, 1},
+		{"SmallerAllNoiseDataset", [][]float64{{10}}, []float64{10}, -1},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			if err = c.Learn(test.data); err != nil {
+				t.Fatalf("unexpected learn error: %s", err)
+			}
+			if got := c.Predict(test.point); got != test.want {
+				t.Errorf("expected %d, got %d", test.want, got)
+			}
+		})
+	}
+}
+
+// TestDBSCANPredictConcurrentLearn covers prediction while training replaces the learned state.
+func TestDBSCANPredictConcurrentLearn(t *testing.T) {
+	c, err := DBSCAN(1, 1, 1, EuclideanDist)
+	if err != nil {
+		t.Fatalf("unexpected constructor error: %s", err)
+	}
+	if err = c.Learn([][]float64{{0}}); err != nil {
+		t.Fatalf("unexpected learn error: %s", err)
+	}
+
+	var wg sync.WaitGroup
+	start := make(chan struct{})
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		<-start
+		for i := 0; i < 100; i++ {
+			if got := c.Predict([]float64{0}); got != 1 {
+				t.Errorf("expected cluster 1, got %d", got)
+			}
 		}
-		if n := c.Predict([]float64{1.2}); n != 1 {
-			t.Errorf("expected cluster 1, got %d", n)
+	}()
+	close(start)
+	for i := 0; i < 25; i++ {
+		data := [][]float64{{0}, {0}, {0}}
+		if err = c.Learn(data[:1+i%len(data)]); err != nil {
+			t.Errorf("unexpected learn error: %s", err)
 		}
-	})
-	t.Run("WrongDimensions", func(t *testing.T) {
-		if n := c.Predict([]float64{1, 2}); n != -1 {
-			t.Errorf("expected -1, got %d", n)
-		}
-	})
+	}
+	wg.Wait()
 }
 
 func TestDBSCANWithProgress(t *testing.T) {

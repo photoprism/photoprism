@@ -1,5 +1,3 @@
-version: '3.5'
-
 # Example Podman Compose config file for PhotoPrism (RedHat, CentOS, Fedora, and AlmaLinux)
 #
 # Note:

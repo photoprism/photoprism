@@ -515,6 +515,8 @@ export default class $util {
         return "JPEG";
       case media.FormatJpegXL:
         return "JPEG XL";
+      case "cin":
+        return "Kodak Cineon";
       case "raw":
         return "Unprocessed Sensor Data (RAW)";
       case "mov":
@@ -531,6 +533,12 @@ export default class $util {
         return "TIFF";
       case "psd":
         return "Adobe Photoshop";
+      case "mpo":
+        return "Stereoscopic JPEG (3D)";
+      case "insp":
+        return "Insta360 Panoramic Image";
+      case "thm":
+        return "Thumbnail Image";
       case "gif":
         return "GIF";
       case "dng":
@@ -540,10 +548,18 @@ export default class $util {
         return "Advanced Video Coding (AVC) / H.264";
       case media.CodecAvc3:
         return "Advanced Video Coding (AVC) Bitstream";
-      case "avif":
+      case media.FormatAv1:
         return "AOMedia Video 1 (AV1)";
+      case "avif":
+        return "AV1 Image File Format (AVIF)";
       case "avifs":
         return "AVIF Image Sequence";
+      case "heic":
+      case "heif":
+        return "High Efficiency Image Container (HEIC)";
+      case "heics":
+      case "heifs":
+        return "HEIC Image Sequence";
       case "hev":
       case "hvc":
       case media.CodecHvc1:
@@ -555,8 +571,15 @@ export default class $util {
       case media.FormatEvc:
       case media.CodecEvc1:
         return "Essential Video Coding (MPEG-5 Part 1)";
+      case media.FormatVvc:
+      case media.CodecVvc1:
+        return "Versatile Video Coding (VVC) / H.266";
+      case media.FormatMp4:
+        return "MPEG-4 Multimedia Container";
       case "m4v":
         return "Apple iTunes Multimedia Container";
+      case "insv":
+        return "Insta360 Video";
       case "mkv":
         return "Matroska Multimedia Container";
       case "mts":
@@ -578,6 +601,8 @@ export default class $util {
         return "Flash";
       case "mpg":
         return "MPEG";
+      case "mp2":
+        return "MPEG-2 (H.262)";
       case "mjpg":
         return "Motion JPEG";
       case "ogg":
@@ -585,6 +610,18 @@ export default class $util {
         return "Ogg Media";
       case "wmv":
         return "Windows Media";
+      case "asf":
+        return "Advanced Systems Format (ASF)";
+      case "avi":
+        return "Microsoft Audio Video Interleave (AVI)";
+      case "dv":
+        return "DV Video";
+      case "mxf":
+        return "Material Exchange Format (MXF)";
+      case "3gp":
+        return "Mobile Multimedia Container (3G)";
+      case "3g2":
+        return "Mobile Multimedia Container (CDMA2000)";
       case "svg":
         return "SVG";
       case "ai":
@@ -593,6 +630,10 @@ export default class $util {
         return "Adobe PostScript";
       case "eps":
         return "EPS";
+      case "xmp":
+        return "Adobe XMP";
+      case "aae":
+        return "Apple Image Edits";
       default:
         return value.toUpperCase();
     }

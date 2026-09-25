@@ -1,6 +1,6 @@
 # Cluster Guidelines
 
-**Last Updated:** April 9, 2026
+**Last Updated:** September 12, 2026
 
 ## Bootstrap & Registration
 
@@ -8,7 +8,7 @@
 - On `401` or `403`, bootstrap refreshes node OAuth credentials by rotating the secret and retrying; log that at info level. If the secret file cannot be written, keep the rotated value in memory.
 - Portal validation may accept HTTP advertise URLs only for loopback or cluster-internal domains such as `*.svc`, `*.cluster.local`, and `*.internal`; all other advertise URLs must use HTTPS.
 - Registration flow: send `rotate=true` only for MySQL or MariaDB nodes without credentials, treat `401`, `403`, and `404` as terminal, include `ClientID` plus `ClientSecret` when renaming an existing node, and persist only newly generated secrets or DB settings.
-- Config init order for cluster-aware startup is: load `options.yml` with `c.initSettings()`, run `EarlyExt().InitEarly(c)`, connect or register the DB, then invoke `Ext().Init(c)`.
+- Config init order for cluster-aware startup is: load `settings.yml` with `c.initSettings()`, run `Ext(StageBoot).Boot(c)`, connect or register the DB, then invoke `Ext(StageInit).Init(c)`. Register a boot-stage extension with `config.Register(config.StageBoot, ...)`.
 
 ## Registry, DTOs & Provisioning
 

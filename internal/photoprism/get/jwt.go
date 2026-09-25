@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/auth/jwt"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -28,13 +29,17 @@ func initJWTManager() {
 
 	manager, err := jwt.NewManager(conf)
 
+	// The console carries the failing path; the ordinary log carries the fact, so that the
+	// state is visible to an administrator who only has the web UI.
 	if err != nil {
-		log.Warnf("jwt: manager init failed (%s)", clean.Error(err))
+		event.SystemWarn([]string{"jwt", "manager init failed", "%s"}, clean.ErrorFull(err))
+		log.Warnf("jwt: signing key manager unavailable")
 		return
 	}
 
 	if _, err = manager.EnsureActiveKey(); err != nil {
-		log.Warnf("jwt: ensure signing key failed (%s)", clean.Error(err))
+		event.SystemWarn([]string{"jwt", "ensure signing key failed", "%s"}, clean.ErrorFull(err))
+		log.Warnf("jwt: signing key unavailable")
 	}
 
 	services.JWTManager = manager

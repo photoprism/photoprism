@@ -58,7 +58,7 @@ func TestConfig_ThemeUrl(t *testing.T) {
 	assert.Equal(t, "", c.SetThemeUrl("ftp://cdn.photoprism.app/theme.zip").ThemeUrl())
 	assert.Equal(t, "", c.SetThemeUrl("https://cdn.photoprism.app/theme.tar").ThemeUrl())
 	assert.Equal(t, "https://user:pass@cdn.photoprism.app/theme.zip", c.SetThemeUrl("https://user:pass@cdn.photoprism.app/theme.zip").ThemeUrl())
-	assert.Equal(t, "https://user:xxxxx@cdn.photoprism.app/theme.zip", c.ThemeUrlRedacted())
+	assert.Equal(t, "https://user:***@cdn.photoprism.app/theme.zip", c.ThemeUrlRedacted())
 	assert.Equal(t, "https://cdn.photoprism.app/theme.zip", c.SetThemeUrl(" https://cdn.photoprism.app/theme.zip ").ThemeUrl())
 	assert.Equal(t, "https://cdn.photoprism.app/theme.zip", c.ThemeUrlRedacted())
 

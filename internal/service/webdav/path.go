@@ -3,6 +3,8 @@ package webdav
 import (
 	"path"
 	"strings"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // isHiddenPath reports whether any segment of a WebDAV path starts with a dot.
@@ -17,10 +19,8 @@ func isHiddenPath(dir string) bool {
 }
 
 // isUnsafePath reports whether a remote WebDAV path contains a parent-directory
-// ("..") segment. The raw path is inspected before normalization because
-// path.Clean collapses a rooted interior ".." into a dotless path that would
-// otherwise pass the hidden-path filter and later escape the local sync base
-// directory once composed with a destination.
+// ("..") segment. The raw path is inspected before normalization, since
+// path.Clean collapses a rooted interior ".." into a dotless path.
 func isUnsafePath(dir string) bool {
 	for segment := range strings.SplitSeq(strings.Trim(strings.ReplaceAll(dir, "\\", "/"), "/"), "/") {
 		if segment == ".." {
@@ -41,4 +41,23 @@ func trimPath(dir string) string {
 
 func splitPath(dir string) []string {
 	return strings.Split(trimPath(dir), "/")
+}
+
+// UnsafeSyncPath reports whether a logical transfer path contains a parent-directory segment.
+func UnsafeSyncPath(name string) bool {
+	return isUnsafePath(name)
+}
+
+// SkipSyncPath reports whether a logical transfer path is excluded from WebDAV sync.
+// Unsafe paths remain subject to traversal validation instead of being skipped as benign.
+func SkipSyncPath(name string) bool {
+	if fs.HasReservedComponent(name) {
+		return true
+	}
+
+	if isUnsafePath(name) {
+		return false
+	}
+
+	return isHiddenPath(strings.ReplaceAll(name, "\\", "/"))
 }

@@ -6,8 +6,8 @@ import (
 )
 
 // OIDCSessionEligible reports whether a session may authorize a login at the provider endpoints.
-// Only an interactive user session qualifies, and only while its account and its own scope still
-// permit the cluster access the provider would delegate.
+// Only a stored interactive user session qualifies, and only while its account and its own scope
+// still permit the cluster access the provider would delegate.
 func OIDCSessionEligible(sess *entity.Session) bool {
 	switch {
 	case sess == nil || sess.Invalid() || sess.Expired() || sess.NoUser():
@@ -19,5 +19,5 @@ func OIDCSessionEligible(sess *entity.Session) bool {
 		return false
 	}
 
-	return sess.GetUser().CanLogIn()
+	return sess.GetUser().CanLogIn() && sess.VerifyStored() == nil
 }

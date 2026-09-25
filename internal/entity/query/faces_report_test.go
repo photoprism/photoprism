@@ -1,6 +1,7 @@
 package query
 
 import (
+	"strings"
 	"testing"
 	"time"
 
@@ -388,6 +389,7 @@ func TestPersonFilter(t *testing.T) {
 	})
 	t.Run("LikeCond", func(t *testing.T) {
 		assert.Equal(t, "subj_name LIKE ? ESCAPE '"+LikeEscape+"'", LikeCond("subj_name"))
+		assert.Equal(t, "s.subj_name LIKE ? ESCAPE '"+LikeEscape+"'", LikeCond("s.subj_name"))
 	})
 	t.Run("UIDOfAnotherType", func(t *testing.T) {
 		// Only a subject uid selects by id; a marker uid is a name nobody has.
@@ -561,4 +563,15 @@ func TestSubjectReports_BirthdayAndPrivate(t *testing.T) {
 	require.NotNil(t, people[0].SubjBirthday, "a stored birth date has to survive the select")
 	assert.Equal(t, born.Format("2006-01-02"), people[0].SubjBirthday.Format("2006-01-02"))
 	assert.True(t, people[0].SubjPrivate)
+}
+
+func TestLikeCond_InvalidColumn(t *testing.T) {
+	t.Run("BindsTheArgumentAndMatchesNothing", func(t *testing.T) {
+		// The caller still passes one argument, so the condition has to keep exactly one
+		// placeholder while never being true.
+		cond := LikeCond("subj_name) OR (1=1")
+		assert.Equal(t, 1, strings.Count(cond, "?"))
+		assert.Contains(t, cond, "1 = 0")
+		assert.NotContains(t, cond, "OR (1=1")
+	})
 }

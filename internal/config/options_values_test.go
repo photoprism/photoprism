@@ -3,6 +3,7 @@ package config
 import (
 	"math"
 	"reflect"
+	"sort"
 	"testing"
 	"time"
 
@@ -251,5 +252,151 @@ func TestRoundOptionFloat(t *testing.T) {
 	t.Run("Inf", func(t *testing.T) {
 		_, err := roundOptionFloat("Test", math.Inf(1))
 		assert.ErrorIs(t, err, ErrInvalidOptionValue)
+	})
+}
+
+func TestRedactedOptions(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	t.Run("CredentialIsReplaced", func(t *testing.T) {
+		orig := c.Options().HttpsProxy
+		t.Cleanup(func() { c.Options().HttpsProxy = orig })
+
+		const configured = "https://proxy-user:proxy-pass@proxy.example.com:3128"
+
+		c.Options().HttpsProxy = configured
+		out := c.RedactedOptions()
+
+		assert.NotContains(t, out.HttpsProxy, "proxy-pass")
+		assert.Contains(t, out.HttpsProxy, "proxy.example.com")
+		// The stored value is untouched, so the copy cannot become the configuration.
+		assert.Equal(t, configured, c.Options().HttpsProxy)
+	})
+	t.Run("Unset", func(t *testing.T) {
+		orig := c.Options().HttpsProxy
+		t.Cleanup(func() { c.Options().HttpsProxy = orig })
+
+		c.Options().HttpsProxy = ""
+		assert.Empty(t, c.RedactedOptions().HttpsProxy)
+	})
+	t.Run("UnreadableValueIsNotReportedAsUnset", func(t *testing.T) {
+		// A bare percent sign is enough for url.Parse to refuse the value. Reporting "" for it
+		// would tell a reader the proxy is not configured, and a full-object write would then
+		// store that answer.
+		orig := c.Options().HttpsProxy
+		t.Cleanup(func() { c.Options().HttpsProxy = orig })
+
+		c.Options().HttpsProxy = "https://proxy-user:pa%ss@proxy.example.com:3128"
+		out := c.RedactedOptions().HttpsProxy
+
+		assert.Equal(t, RedactedOptionMarker, out)
+		assert.NotEmpty(t, out)
+	})
+}
+
+func TestRemoveRedactedOptionValues(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	orig := c.Options().HttpsProxy
+	t.Cleanup(func() { c.Options().HttpsProxy = orig })
+
+	c.Options().HttpsProxy = "https://proxy-user:proxy-pass@proxy.example.com:3128"
+	redacted := c.RedactedOptions().HttpsProxy
+
+	t.Run("UnchangedValueIsDropped", func(t *testing.T) {
+		v := Values{"HttpsProxy": redacted, "SiteTitle": "Example"}
+		assert.Equal(t, []string{"HttpsProxy"}, c.RemoveRedactedOptionValues(v))
+		assert.NotContains(t, v, "HttpsProxy")
+		assert.Contains(t, v, "SiteTitle")
+	})
+	t.Run("NewValueIsKept", func(t *testing.T) {
+		v := Values{"HttpsProxy": "https://other:pass@proxy.example.net:3128"}
+		assert.Empty(t, c.RemoveRedactedOptionValues(v))
+		assert.Contains(t, v, "HttpsProxy")
+	})
+	t.Run("ClearingIsKept", func(t *testing.T) {
+		// An operator removing the proxy sends an empty string, which is not a rendered form.
+		v := Values{"HttpsProxy": ""}
+		assert.Empty(t, c.RemoveRedactedOptionValues(v))
+		assert.Contains(t, v, "HttpsProxy")
+	})
+	t.Run("StaleRedactedValueIsDropped", func(t *testing.T) {
+		// Read before the proxy changed, posted after. The test is on the value's own shape, not
+		// on what is stored now, so it is dropped rather than written back as the password.
+		v := Values{"HttpsProxy": "https://someone:***@proxy.example.net:3128"}
+		assert.Equal(t, []string{"HttpsProxy"}, c.RemoveRedactedOptionValues(v))
+		assert.NotContains(t, v, "HttpsProxy")
+	})
+	t.Run("MarkerIsDropped", func(t *testing.T) {
+		v := Values{"HttpsProxy": RedactedOptionMarker}
+		assert.Equal(t, []string{"HttpsProxy"}, c.RemoveRedactedOptionValues(v))
+		assert.NotContains(t, v, "HttpsProxy")
+	})
+}
+
+func TestExposedOptionNames(t *testing.T) {
+	// ExposedOptionCount pins how many options the API returns. Adding a field without json:"-"
+	// changes this number, so the author is asked once whether it can carry a credential and
+	// therefore belongs in RedactedOptionNames.
+	const ExposedOptionCount = 96
+
+	fields := optionFields()
+
+	var exposed []string
+
+	for name, field := range fields {
+		if field.Exposed {
+			exposed = append(exposed, name)
+		}
+	}
+
+	sort.Strings(exposed)
+
+	assert.Len(t, exposed, ExposedOptionCount,
+		"the set of options the API returns changed; if the new one can carry a credential, add it to RedactedOptionNames")
+	assert.Contains(t, exposed, "HttpsProxy")
+	assert.NotContains(t, exposed, "StoragePath", `a field tagged json:"-" is not returned`)
+
+	for _, name := range RedactedOptionNames {
+		assert.Contains(t, exposed, name, "redacting an option the API never returns would do nothing")
+	}
+}
+
+func TestRedactOptionValue(t *testing.T) {
+	t.Run("Unset", func(t *testing.T) {
+		assert.Empty(t, redactOptionValue(""))
+	})
+	t.Run("Credentials", func(t *testing.T) {
+		out := redactOptionValue("https://proxy-user:proxy-pass@proxy.example.com:3128")
+		assert.NotContains(t, out, "proxy-pass")
+		assert.Contains(t, out, "proxy.example.com")
+	})
+	t.Run("Unreadable", func(t *testing.T) {
+		assert.Equal(t, RedactedOptionMarker, redactOptionValue("https://u:pa%ss@proxy.example.com"))
+	})
+}
+
+func TestIsRedactedOptionValue(t *testing.T) {
+	t.Run("Marker", func(t *testing.T) {
+		assert.True(t, isRedactedOptionValue(RedactedOptionMarker))
+	})
+	t.Run("RenderedPassword", func(t *testing.T) {
+		assert.True(t, isRedactedOptionValue("https://u:***@proxy.example.com:3128"))
+	})
+	t.Run("RealValue", func(t *testing.T) {
+		assert.False(t, isRedactedOptionValue("https://proxy-user:proxy-pass@proxy.example.com:3128"))
+	})
+	t.Run("NoCredentials", func(t *testing.T) {
+		assert.False(t, isRedactedOptionValue("https://proxy.example.com:3128"))
+	})
+	t.Run("RenderedQuery", func(t *testing.T) {
+		// A credential can sit in the query, which is rendered as the marker when it does not parse.
+		assert.True(t, isRedactedOptionValue("https://proxy.example.com:3128/?token=***"))
+		assert.True(t, isRedactedOptionValue("https://proxy.example.com:3128/?***"))
+	})
+	t.Run("RealQuery", func(t *testing.T) {
+		assert.False(t, isRedactedOptionValue("https://proxy.example.com:3128/?tier=fast"))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.False(t, isRedactedOptionValue(""))
 	})
 }

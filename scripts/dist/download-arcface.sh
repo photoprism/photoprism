@@ -18,6 +18,10 @@ MODEL_VERSION="$MODEL_DIR/version.txt"
 
 # Checksums of the release assets, so a replaced upstream file is rejected instead of
 # silently installed.
+# The largest an ArcFace recognition model is expected to be. Extraction stops at this many
+# bytes, so a member is bounded by what it writes rather than by what it declares.
+MAX_MODEL_BYTES=$((512 * 1024 * 1024))
+
 R50_SHA256="4c06341c33c2ca1f86781dab0e829f88ad5b64be9fba56e56bc9ebdefc619e43"
 MBF_SHA256="9cc6e4a75f0e2bf0b1aed94578f144d15175f357bdc05e815e5c4a02b319eb4f"
 
@@ -51,11 +55,22 @@ trap cleanup EXIT
 mkdir -p "${MODEL_DIR}"
 
 hash_file() {
+  [[ -f "$1" ]] || return 1
+
   if command -v sha256sum >/dev/null 2>&1; then
     sha256sum "$1" | awk '{print $1}'
   else
     shasum -a 256 "$1" | awk '{print $1}'
   fi
+}
+
+# digest_matches compares a file against an expected checksum, requiring the expected value to be
+# a real checksum so that a missing file does not compare equal to a missing one.
+digest_matches() {
+  local actual
+  actual="$(hash_file "$1")"
+
+  [[ $2 =~ ^[0-9a-fA-F]{64}$ ]] && [[ -n "${actual}" ]] && [[ "${actual}" == "$2" ]]
 }
 
 # install_model <pack> <entry> <target> <sha256>
@@ -67,9 +82,13 @@ install_model() {
   local url="https://github.com/deepinsight/insightface/releases/download/v0.7/${pack}.zip"
   local archive="${TMP_DIR}/${pack}.zip"
 
-  if [[ -f "${MODEL_DIR}/${target}" ]]; then
+  # Freshness is decided by the checksum rather than by the file being present, so a copy that
+  # was truncated or replaced is installed again instead of being kept.
+  if digest_matches "${MODEL_DIR}/${target}" "${sha256}"; then
     echo "${target} already installed."
     return 0
+  elif [[ -f "${MODEL_DIR}/${target}" ]]; then
+    echo "${target} does not match the expected checksum, reinstalling."
   fi
 
   echo "Downloading ${pack} from ${url}..."
@@ -79,19 +98,39 @@ install_model() {
     return 1
   fi
 
-  echo "Extracting ${entry}..."
-
-  if ! unzip -j -o "${archive}" "${entry}" -d "${TMP_DIR}" >/dev/null; then
-    echo "Failed to extract ${entry} from ${pack}." >&2
+  # The member has to be listed before it is worth extracting.
+  if ! unzip -l "${archive}" "${entry}" > /dev/null 2>&1; then
+    echo "${entry} is not present in ${pack}." >&2
     return 1
   fi
+
+  echo "Extracting ${entry}..."
 
   local extracted
   extracted="${TMP_DIR}/$(basename "${entry}")"
 
+  # Written through a pipe with a hard byte ceiling rather than unpacked in place, and to a name
+  # derived from the member's own base name so nothing the archive records decides the path. The
+  # size an archive declares is not what unzip writes, so the ceiling applies to the bytes as
+  # they arrive; one byte over the limit is what distinguishes a truncation from a file that fits.
+  if ! unzip -p "${archive}" "${entry}" 2> /dev/null | head -c $((MAX_MODEL_BYTES + 1)) > "${extracted}"; then
+    echo "Failed to extract ${entry} from ${pack}." >&2
+    rm -f "${extracted}"
+    return 1
+  fi
+
+  local written
+  written=$(wc -c < "${extracted}")
+
+  if [[ ${written} -gt ${MAX_MODEL_BYTES} ]]; then
+    echo "${entry} expands beyond the ${MAX_MODEL_BYTES} byte limit." >&2
+    rm -f "${extracted}"
+    return 1
+  fi
+
   echo "Verifying checksum..."
 
-  if [[ "$(hash_file "${extracted}")" != "${sha256}" ]]; then
+  if ! digest_matches "${extracted}" "${sha256}"; then
     echo "Checksum mismatch, refusing to install ${target}." >&2
     rm -f "${extracted}"
     return 1

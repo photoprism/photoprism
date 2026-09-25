@@ -3,7 +3,6 @@ package api
 import (
 	_ "embed" // required for go:embed video placeholder
 	"net/http"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 
@@ -23,9 +22,9 @@ func Abort(c *gin.Context, code int, id i18n.Message, params ...any) {
 	resp := i18n.NewResponse(code, id, params...)
 
 	if code >= 400 {
-		log.Debugf("api: aborting request with error code %d (%s)", code, strings.ToLower(resp.String()))
+		log.Debugf("api: aborting request with error code %d (%s)", code, i18n.Lower(id, params...))
 	} else {
-		log.Debugf("api: aborting request with response code %d (%s)", code, strings.ToLower(resp.String()))
+		log.Debugf("api: aborting request with response code %d (%s)", code, i18n.Lower(id, params...))
 	}
 
 	c.AbortWithStatusJSON(code, resp)
@@ -39,9 +38,9 @@ func Error(c *gin.Context, code int, err error, id i18n.Message, params ...any) 
 		resp.Details = err.Error()
 
 		if reqPath := c.FullPath(); reqPath == "" {
-			log.Errorf("api: error %d %s (%s)", code, clean.Error(err), strings.ToLower(resp.String()))
+			log.Errorf("api: error %d %s (%s)", code, clean.Error(err), i18n.Lower(id, params...))
 		} else {
-			log.Errorf("api: error %d %s in %s (%s)", code, clean.Error(err), clean.Log(reqPath), strings.ToLower(resp.String()))
+			log.Errorf("api: error %d %s in %s (%s)", code, clean.Error(err), clean.Log(reqPath), i18n.Lower(id, params...))
 		}
 	}
 

@@ -23,6 +23,8 @@ func TestClusterNodesMod_LegacyAliasAppToInstance(t *testing.T) {
 		c.Options().NodeRole = prevRole
 	})
 
+	requireTestDb(t)
+
 	r, err := reg.NewClientRegistryWithConfig(c)
 	assert.NoError(t, err)
 
@@ -49,6 +51,8 @@ func TestClusterNodesMod_DisplayNameOverride(t *testing.T) {
 		c.Options().Edition = prevEdition
 		c.Options().NodeRole = prevRole
 	})
+
+	requireTestDb(t)
 
 	r, err := reg.NewClientRegistryWithConfig(c)
 	assert.NoError(t, err)
@@ -88,6 +92,8 @@ func TestClusterNodesMod_InvalidRole(t *testing.T) {
 		c.Options().Edition = prevEdition
 		c.Options().NodeRole = prevRole
 	})
+
+	requireTestDb(t)
 
 	r, err := reg.NewClientRegistryWithConfig(c)
 	assert.NoError(t, err)

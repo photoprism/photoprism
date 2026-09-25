@@ -21,10 +21,12 @@ var Extensions = FileExtensions{
 	".jfif":     ImageJpeg,
 	".jfi":      ImageJpeg,
 	".jxl":      ImageJpegXL,
+	".cin":      ImageCineon,
 	ExtThm:      ImageThumb,
 	".tif":      ImageTiff,
 	".tiff":     ImageTiff,
 	".psd":      ImagePsd,
+	".psb":      ImagePsd, // Photoshop Large Document, same format with 64-bit offsets
 	ExtPng:      ImagePng, // .png
 	".apng":     ImagePng,
 	".pnga":     ImagePng,
@@ -72,6 +74,7 @@ var Extensions = FileExtensions{
 	".nrw":      ImageRaw,
 	".obm":      ImageRaw,
 	".orf":      ImageRaw,
+	".ori":      ImageRaw, // Olympus/OM System single frame saved alongside a High Res Shot .orf
 	".pef":      ImageRaw,
 	".ptx":      ImageRaw,
 	".pxn":      ImageRaw,
@@ -97,6 +100,7 @@ var Extensions = FileExtensions{
 	".markdown": SidecarMarkdown,
 	".svg":      VectorSVG,
 	".ai":       VectorAI,
+	".ait":      VectorAI, // Adobe Illustrator Template
 	".ps":       VectorPS,
 	".ps2":      VectorPS,
 	".ps3":      VectorPS,
@@ -109,6 +113,7 @@ var Extensions = FileExtensions{
 	".epsi":     VectorEPS,
 	ExtMov:      VideoMov,  // Apple QuickTime Video Container
 	ExtQT:       VideoMov,  //  .qt
+	".mqv":      VideoMov,  //  .mqv (Sony)
 	ExtMp4:      VideoMp4,  // MPEG-4 Part 14 Multimedia Container
 	ExtInsv:     VideoInsv, // .insv (Insta360 dual-fisheye video)
 	ExtH264:     VideoAvc,  // ↓ H.264 MPEG-4 Advanced Video Coding (AVC)
@@ -147,15 +152,21 @@ var Extensions = FileExtensions{
 	".av01":     VideoAv1,
 	".mpg":      VideoMpeg,
 	".mpeg":     VideoMpeg,
+	".mpe":      VideoMpeg,
+	".vob":      VideoMpeg, // DVD-Video object, an MPEG-2 program stream
+	".mod":      VideoMpeg, // JVC/Panasonic/Canon SD camcorder MPEG-2 program stream
 	".mjpg":     VideoMjpeg,
 	".mjpeg":    VideoMjpeg,
 	".mp2":      VideoMp2,
 	".mpv":      VideoMp2,
+	".m2v":      VideoMp2,
 	".mp":       VideoMp4,
 	".m4v":      VideoM4v,
 	".mxf":      VideoMXF,
 	".3gp":      Video3GP,
+	".3gpp":     Video3GP,
 	".3g2":      Video3G2,
+	".3gp2":     Video3G2,
 	".flv":      VideoFlash,
 	".f4v":      VideoFlash,
 	".mkv":      VideoMkv,
@@ -163,6 +174,7 @@ var Extensions = FileExtensions{
 	".m2t":      VideoM2TS,
 	".m2ts":     VideoM2TS,
 	".mp2t":     VideoM2TS,
+	".tod":      VideoM2TS, // JVC HD camcorder MPEG-2 transport stream
 	".mts":      VideoAVCHD,
 	".ogv":      VideoTheora,
 	".ogg":      VideoTheora,
@@ -170,8 +182,25 @@ var Extensions = FileExtensions{
 	".webm":     VideoWebm,
 	".asf":      VideoASF,
 	".avi":      VideoAVI,
+	".divx":     VideoAVI, // DivX Media Format, an AVI container with MPEG-4 ASP video
 	".wmv":      VideoWMV,
 	".dv":       VideoDV,
+}
+
+// secondaryRawExt lists the RAW extensions a camera writes beside another RAW of the same name,
+// which must therefore not take its place as the main file of a photo.
+var secondaryRawExt = map[string]bool{
+	".ori": true, // Olympus/OM System single frame, saved beside the High Res Shot composite .orf.
+}
+
+// IsSecondaryRaw reports whether the filename belongs to a RAW image that accompanies another RAW
+// of the same name rather than replacing it, so the camera's own result stays the main file.
+func IsSecondaryRaw(fileName string) bool {
+	if fileName == "" {
+		return false
+	}
+
+	return secondaryRawExt[LowerExt(fileName)]
 }
 
 // Known tests if the file extension is known (supported).

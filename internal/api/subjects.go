@@ -25,7 +25,7 @@ func FindSubjectForSession(uid string, s *entity.Session) *entity.Subject {
 
 	if subj == nil || subj.Deleted() {
 		return nil
-	} else if subj.SubjPrivate && !search.SubjectSessionSeesPrivate(s) {
+	} else if subj.NameWithheld() && !search.SubjectSessionSeesPrivate(s) {
 		return nil
 	}
 

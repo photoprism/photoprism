@@ -1,6 +1,6 @@
 ## PhotoPrism — Metadata Pipeline
 
-**Last Updated:** June 30, 2026
+**Last Updated:** September 17, 2026
 
 ### Overview
 
@@ -28,6 +28,25 @@ The `internal/meta` package extracts, normalizes, and reports metadata from imag
 - Exif → XMP → JSON (ExifTool/GPhotos/motion) → filename → filesystem mtime. Each stage logs source and errors but continues when safe.
 - Brute-force Exif search is used when native parsers fail; errors are logged with context.
 - GPS parsing supports decimal, DMS (`51 deg 15' 17.47" N`), and the 2-component Adobe XMP form (`52,30.4567N`); regexes are kept simple and precompiled.
+
+### JSON Sidecar Reader
+
+JSON metadata sidecars have an inclusive 1 MiB default encoded-size limit (`JSONMaxFileBytes`).
+`Data.JSON` checks the opened file's size and reads through a limit of one extra byte,
+so a growing file or an inaccurate size hint still stays within the read bound. Oversized
+input returns `ErrJSONFileTooLarge` before ExifTool/Google Photos format dispatch and leaves
+already collected metadata unchanged. The limit applies to sidecars from every source,
+including WebDAV, filesystem import, and generated ExifTool cache files.
+
+ExifTool JSON capture uses the same limit before publishing a cache file; oversized output
+is refused rather than truncated into a partial JSON file. This bounds JSON input/capture,
+not the total memory of the process or an external metadata tool. Transfer size limits are
+separate, and the web-upload sidecar policy does not admit JSON files.
+
+Operators can override the shared JSON byte limit with `PHOTOPRISM_JSON_LIMIT` (positive
+decimal bytes, for example `4194304` for 4 MiB). Empty, invalid, zero, negative, or
+out-of-range values retain the 1 MiB default; there is no unlimited setting. The override
+applies to both sidecar reads and ExifTool stdout capture, not the 64 KiB stderr bound.
 
 ### XMP Sidecar Reader
 

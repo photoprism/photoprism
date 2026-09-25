@@ -55,8 +55,16 @@ func (m *Photo) SetTitle(title, source string) {
 }
 
 // GenerateTitle derives an automatic title using location, labels, and subject metadata
-// when the current title source allows auto-generation.
+// when the current title source allows auto-generation. It also refreshes an automatic caption,
+// which is resolved from the same people and so is kept current even for a picture whose title
+// somebody typed - GenerateCaption applies its own source guard.
 func (m *Photo) GenerateTitle(labels classify.Labels) error {
+	// Resolved once, above the title guard: the caption derives from the same list and has its own
+	// source to answer for, so a manual title must not leave a generated caption behind.
+	people := m.SubjectNames()
+
+	m.GenerateCaption(people)
+
 	if m.TitleSrc != SrcAuto {
 		return fmt.Errorf("photo: %s keeps existing %s title", m.String(), SrcString(m.TitleSrc))
 	}
@@ -67,11 +75,6 @@ func (m *Photo) GenerateTitle(labels classify.Labels) error {
 	start := time.Now()
 	oldTitle := m.PhotoTitle
 	fileTitle := m.FileTitle()
-
-	// Find people in the picture.
-	people := m.SubjectNames()
-
-	m.GenerateCaption(people)
 
 	if n := len(people); n > 0 && n < 4 {
 		names = txt.JoinNames(people, false)

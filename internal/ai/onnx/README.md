@@ -1,6 +1,6 @@
 ## ONNX Model Description
 
-**Last Updated:** August 21, 2026
+**Last Updated:** September 21, 2026
 
 ### Overview
 
@@ -45,6 +45,28 @@ Metadata inside the artifact survives mirroring, renaming, and being copied into
 `EnsureRuntime` loads the ONNX Runtime shared library and initializes the global environment; it must succeed before any model is inspected or loaded. `SharedLibraryCandidates` lists the paths it tries, starting with an explicitly configured one.
 
 The `github.com/yalue/onnxruntime_go` binding requests the exact C API version of the headers it vendors, so it fails to initialize against an older shared library. Bumping that module therefore requires a matching `ONNX_DEFAULT_VERSION` and checksum update in `scripts/dist/install-onnx.sh`, plus a rebuild of the base images that ship `libonnxruntime.so`.
+
+#### CUDA Library Installation
+
+Run `make cuda` (alias: `make install-cuda`) from the repository root to install the NVIDIA CUDA runtime libraries and cuDNN through `sudo`. This installs the CUDA dependencies only; selecting the GPU ONNX Runtime build and enabling the CUDA provider are separate steps.
+
+The installer downloads pinned packages directly from NVIDIA and verifies their SHA256 checksums before extraction. It does not use a PhotoPrism package mirror or add an apt repository.
+
+`scripts/dist/install-cuda.sh` stages the complete library set on the destination filesystem before publishing it. Existing files and symlinks are preserved with hardlink snapshots, and each replacement uses an atomic rename. A failed publication or a catchable stop signal restores the prior entries and removes newly introduced ones. If recovery itself fails, the installer reports and retains its private recovery directory. Once the complete set is published, it remains installed while the loader cache is refreshed.
+
+Run `make check-cuda-install` to verify installation and recovery using synthetic packages in a private prefix. The check needs Python 3 and standard Linux tools, but no GPU, downloads, root privileges, or system-library changes. Real CUDA compatibility and inference still require validation in a GPU-enabled environment.
+
+### Execution Provider
+
+`Provider` names the execution provider a session runs on: `cpu`, the default, or `cuda`. It is selected once from `PHOTOPRISM_ONNX_PROVIDER` / `--onnx-provider`, read through `Config.OnnxProvider`, and passed to each model loader. `ParseProvider` resolves an empty value as the default and reports an unknown one rather than failing, so an unusable setting cannot stop inference.
+
+Build a session through `NewSessionConfig`, whose `Options` also serve the metadata call a loader makes first, and create the session with `SessionConfig.NewSession`. A provider that cannot be applied falls back to the CPU with one warning, and `SessionConfig.Provider` reports what is actually in force so a loader can log it.
+
+Three properties are worth knowing before changing this:
+
+- **Every step that opens a session goes through `SessionConfig.WithFallback`,** not just the inference session. Reading the graph opens one too, and it is where the provider's cost is paid first, so a GPU that is momentarily too busy would otherwise fail the whole model load — and a caller that drops the model it already had is worse off than one that keeps running on the CPU.
+- **A CUDA session is verified with one warm-up inference** on a zero tensor of the model's input geometry, because provider options and the session itself are built successfully by an installation that only fails once a node runs. A failed warm-up reloads the model CPU-only, which costs one inference per model rather than one per image. Geometry the caller could not resolve reports `ErrGeometryUnknown`, which skips verification and keeps the session: an unverifiable model is not evidence against the GPU.
+- **TF32 is switched off** in the CUDA provider options. The runtime enables it by default on Ampere and later, and the reduced mantissa moves an embedding by roughly `3e-4` per dimension, against `5e-7` for ordinary kernel-order differences. Embeddings are persisted and compared by distance, so both providers must compute the same graph in FP32; the measured cost of disabling it is a few percent of GPU inference time. `cudaProviderOptions` is separate from the code that applies it so the guard can be asserted without a device.
 
 ### Consumers
 

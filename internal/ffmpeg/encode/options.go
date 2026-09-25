@@ -30,6 +30,7 @@ type Options struct {
 	Comment     string
 	Author      string
 	Created     time.Time
+	Timeout     time.Duration // Wall-clock budget for the command, 0 for no limit.
 	Force       bool
 }
 

@@ -28,6 +28,7 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
+	iofs "io/fs"
 	"math/rand/v2"
 	"net/http"
 	"os"
@@ -84,7 +85,7 @@ type Config struct {
 	hub           *hub.Config
 	hubCancel     context.CancelFunc
 	hubLock       sync.Mutex
-	faceWarned    sync.Map
+	warnedOnce    sync.Map
 	faceModel     string
 	faceModelFlag string
 	token         string
@@ -187,7 +188,7 @@ func NewConfig(ctx *cli.Context) *Config {
 	// Override options with values from the "options.yml" file, if it exists.
 	if optionsYaml := c.OptionsYaml(); fs.FileExists(optionsYaml) {
 		if err := c.options.Load(optionsYaml); err != nil {
-			log.Warnf("config: failed loading values from %s (%s)", clean.Log(optionsYaml), err)
+			event.SystemWarn([]string{"config", "options", "load %s", "%s"}, clean.Log(optionsYaml), clean.ErrorFull(err))
 		} else if c.env == EnvDevelop {
 			// Reduce the log level to minimize noise in the test logs.
 			log.Tracef("config: overriding config with values from %s", clean.Log(optionsYaml))
@@ -404,7 +405,13 @@ func (c *Config) IsReady() bool {
 // mutex.Restart, as a restart is required for every change to take effect.
 func (c *Config) Propagate() {
 	FlushCache()
-	log.SetLevel(c.LogLevel())
+
+	// Applied to both loggers, so a configured level also bounds what the console-only channel writes.
+	SetAppLogLevel(c.LogLevel())
+
+	// Give the decoders a ceiling derived from the configured resolution limit, with headroom,
+	// so that raising the limit raises it and disabling it disables the check.
+	fs.MaxImagePixels = DecodeLimitPixels(c.ResolutionLimit())
 
 	// Configure thumbnail package.
 	thumb.Library = c.ThumbLibrary()
@@ -652,7 +659,9 @@ func (c *Config) loadOptionsYAML() (string, Values, error) {
 	}
 
 	if err = yaml.Unmarshal(b, &values); err != nil {
-		return fileName, nil, fmt.Errorf("failed parsing %s: %w", fileName, err)
+		// The file name is carried as the error's path rather than as message text, so
+		// that a renderer can find it.
+		return fileName, nil, &iofs.PathError{Op: "parse", Path: fileName, Err: err}
 	}
 
 	if values == nil {
@@ -745,8 +754,8 @@ func (c *Config) serialFiles() []struct {
 		Name string
 		Mode os.FileMode
 	}{
-		{filepath.Join(c.StoragePath(), serialName), fs.ModeFile},
-		{c.BackupPath(serialName), fs.ModeFile},
+		{filepath.Join(c.StoragePath(), fs.SerialFile), fs.ModeFile},
+		{c.BackupPath(fs.SerialFile), fs.ModeFile},
 	}
 }
 
@@ -773,7 +782,7 @@ func readSerialFile(fileName string) string {
 	case os.IsNotExist(err):
 		return ""
 	case err != nil:
-		event.SystemWarn([]string{"config", "serial", "read %s", "%s"}, clean.Log(fileName), clean.Error(err))
+		event.SystemWarn([]string{"config", "serial", "read %s", "%s"}, clean.Log(fileName), clean.ErrorFull(err))
 		return ""
 	}
 
@@ -802,7 +811,7 @@ func (c *Config) restoreSerial(serial string) {
 		}
 
 		if err := os.WriteFile(f.Name, []byte(serial), f.Mode); err != nil {
-			event.SystemWarn([]string{"config", "serial", "restore %s", "%s"}, clean.Log(f.Name), clean.Error(err))
+			event.SystemWarn([]string{"config", "serial", "restore %s", "%s"}, clean.Log(f.Name), clean.ErrorFull(err))
 		} else {
 			event.SystemInfo([]string{"config", "serial", "restore %s", status.Succeeded}, clean.Log(f.Name))
 		}
@@ -818,7 +827,7 @@ func (c *Config) InitSerial() error {
 
 	if serial == "" {
 		serial = rnd.GenerateUID(serialPrefix)
-		storageName := filepath.Join(c.StoragePath(), serialName)
+		storageName := filepath.Join(c.StoragePath(), fs.SerialFile)
 
 		if err := os.WriteFile(storageName, []byte(serial), fs.ModeFile); err != nil {
 			return fmt.Errorf("could not create %s: %w", clean.Log(storageName), err)
@@ -1008,7 +1017,7 @@ func (c *Config) Shutdown() {
 
 	// Reported on the console-only system log, as the database backing the error log is going away.
 	if err := c.CloseDb(); err != nil {
-		event.SystemError([]string{"config", "database", "close", "%s"}, clean.Error(err))
+		event.SystemError([]string{"config", "database", "close", "%s"}, clean.ErrorFull(err))
 	} else {
 		event.SystemDebug([]string{"config", "database", "close", status.Succeeded})
 	}
@@ -1039,7 +1048,7 @@ func (c *Config) RenewApiKeysWithToken(token string) error {
 			return i18n.Error(i18n.ErrAccountConnect)
 		}
 	} else if err = c.hub.Save(); err != nil {
-		log.Warnf("config: failed to save API keys for maps and places (%s)", err)
+		log.Warnf("config: failed to save API keys for maps and places (%s)", clean.Error(err))
 		return i18n.Error(i18n.ErrSaveFailed)
 	} else {
 		c.hub.Propagate()

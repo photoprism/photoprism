@@ -1,12 +1,11 @@
 package vision
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
-	"image/jpeg"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // GenerateFaceEmbeddings returns the embeddings for the specified face crop image.
@@ -18,7 +17,7 @@ func GenerateFaceEmbeddings(imgData []byte) (embeddings face.Embeddings, err err
 	if Config == nil {
 		return embeddings, errors.New("vision service is not configured")
 	} else if model := Config.Model(ModelTypeFace); model != nil {
-		img, imgErr := jpeg.Decode(bytes.NewReader(imgData))
+		img, _, imgErr := fs.DecodeImageData(imgData)
 
 		if imgErr != nil {
 			return embeddings, imgErr

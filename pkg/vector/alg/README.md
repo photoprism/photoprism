@@ -1,5 +1,7 @@
 ## Package Clusters
 
+**Last Updated:** September 16, 2026
+
 Implements the following clustering algorithms:
 
 - k-means++
@@ -100,6 +102,15 @@ afterwards.** A non-core point inside `eps` of exactly one cluster's cores joins
 clusters can both reach stays noise rather than going to whichever was walked first. Textbook DBSCAN
 assigns such a point by traversal order, so this is deliberately stricter, and it is what makes the
 result a function of the point set: the same points in a different order produce the same clusters.
+
+**`Predict` assigns observations against the fixed training cores.** It returns the cluster ID when
+cores from exactly one cluster are within reach, or `-1` when no core or multiple core clusters can
+reach the observation. Border and noise points do not influence prediction. Both training and
+prediction use the strict `distance < eps` boundary. Prediction does not insert observations, promote
+points to cores, or merge clusters, so it is not equivalent to adding a point and running `Learn`
+again. An untrained clusterer or an observation of a different width also returns `-1`.
+There is no nearest-cluster fallback: an observation outside every core's reach stays `-1`.
+Widening `eps` to avoid that repartitions the training data as well.
 
 Two consequences are worth knowing:
 

@@ -207,6 +207,7 @@ func TestConfig_KeysPath(t *testing.T) {
 	assert.Equal(t, filepath.Join(c.ConfigPath(), "keys"), c.KeysPath())
 }
 
+// TestConfig_TokenSigningKey checks signing-key persistence and failure handling.
 func TestConfig_TokenSigningKey(t *testing.T) {
 	t.Run("GeneratesStableKeyAtKeysPath", func(t *testing.T) {
 		c := NewMinimalTestConfig(t.TempDir())
@@ -215,8 +216,8 @@ func TestConfig_TokenSigningKey(t *testing.T) {
 		// Stable across calls so tokens stay valid.
 		assert.Equal(t, key, c.TokenSigningKey())
 		// Persisted at config/keys/signing.key, with no backup copy.
-		assert.FileExists(t, filepath.Join(c.KeysPath(), signingKeyName))
-		assert.NoFileExists(t, c.BackupPath(signingKeyName))
+		assert.FileExists(t, filepath.Join(c.ConfigPath(), "keys", "signing.key"))
+		assert.NoFileExists(t, c.BackupPath(fs.SigningKeyFile))
 	})
 	t.Run("NonEmptyEvenWhenNotPersisted", func(t *testing.T) {
 		c := NewMinimalTestConfig(t.TempDir())
@@ -226,7 +227,7 @@ func TestConfig_TokenSigningKey(t *testing.T) {
 		require.NoError(t, os.WriteFile(c.KeysPath(), []byte("x"), fs.ModeSecretFile))
 		key := c.TokenSigningKey()
 		assert.GreaterOrEqual(t, len(key), tokens.KeyLen)
-		assert.NoFileExists(t, filepath.Join(c.KeysPath(), signingKeyName))
+		assert.NoFileExists(t, filepath.Join(c.KeysPath(), fs.SigningKeyFile))
 	})
 	t.Run("NeverZeroFilled", func(t *testing.T) {
 		c := NewMinimalTestConfig(t.TempDir())

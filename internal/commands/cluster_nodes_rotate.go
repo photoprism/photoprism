@@ -94,8 +94,10 @@ func rotateNodeInRegistry(conf *config.Config, name string, rotateDatabase, rota
 
 		creds, _, credsErr := provisioner.EnsureCredentials(ctx, conf, n.UUID, n.Name, true)
 
-		if credsErr != nil {
-			return resp, cli.Exit(credsErr, 5)
+		if errors.Is(credsErr, provisioner.ErrUnsupportedDriver) {
+			return resp, cli.Exit(credsErr, 2)
+		} else if credsErr != nil {
+			return resp, cli.Exit(credsErr, 1)
 		}
 
 		if n.Database == nil {

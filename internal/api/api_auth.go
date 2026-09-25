@@ -62,6 +62,12 @@ func AuthAny(c *gin.Context, resource acl.Resource, perms acl.Permissions) (s *e
 	// Set client IP.
 	s.SetClientIP(clientIp)
 
+	return authorizeSession(clientIp, s, resource, perms)
+}
+
+// authorizeSession applies the credential, scope, owner, and ACL checks to a resolved session, and returns
+// it, or a session carrying the HTTP status of the refusal.
+func authorizeSession(clientIp string, s *entity.Session, resource acl.Resource, perms acl.Permissions) *entity.Session {
 	// Enforce restrictions for app password sessions, identified by the "application" auth provider.
 	if s.IsApplication() {
 		// Reject app passwords when the feature is disabled.
@@ -97,7 +103,7 @@ func AuthAny(c *gin.Context, resource acl.Resource, perms acl.Permissions) (s *e
 		if s.NoUser() {
 			// Allow access based on the ACL defaults for client applications.
 			event.AuditInfo([]string{clientIp, "client %s", "session %s", "%s %s", status.Granted}, clean.Log(s.GetClientInfo()), s.RefID, perms.String(), string(resource))
-		} else if u := s.GetUser(); !u.IsDisabled() && !u.IsUnknown() && u.IsRegistered() {
+		} else if u := s.GetUser(); !u.DenyClientAccess() {
 			if acl.Rules.DenyAll(resource, u.AclRole(), perms) {
 				event.AuditErr([]string{clientIp, "client %s", "session %s", "%s %s as %s", status.Denied}, clean.Log(s.GetClientInfo()), s.RefID, perms.String(), string(resource), u.String())
 				return entity.SessionStatusForbidden()

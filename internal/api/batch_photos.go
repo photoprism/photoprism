@@ -437,7 +437,7 @@ func BatchPhotosDelete(router *gin.RouterGroup) {
 		// Delete photos.
 		for _, p := range photos {
 			// Report file deletion.
-			event.AuditWarn([]string{ClientIP(c), s.UserName, "delete", path.Join(p.PhotoPath, p.PhotoName+"*")})
+			event.AuditWarn([]string{ClientIP(c), clean.LogQuote(s.UserName), "delete", clean.Log(path.Join(p.PhotoPath, p.PhotoName+"*"))})
 
 			// Remove all related files from storage.
 			n, deleteErr := photoprism.DeletePhoto(p, true, true)

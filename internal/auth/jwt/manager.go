@@ -19,6 +19,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 const (
@@ -151,7 +152,7 @@ func (m *Manager) NeedsRotation(maxAge time.Duration) bool {
 		return false
 	}
 
-	age := m.now().UTC().Sub(time.Unix(k.CreatedAt, 0).UTC())
+	age := m.nowUTC().Sub(time.Unix(k.CreatedAt, 0).UTC())
 
 	return age > maxAge || age < 0
 }
@@ -175,7 +176,7 @@ func (m *Manager) supersededKids(keepKid string) []string {
 // retireExcept stamps every key other than keepKid with an expiry and writes it back.
 // Disk is updated before memory, so a failed write leaves the key visible to RetireSuperseded.
 func (m *Manager) retireExcept(keepKid string) error {
-	notAfter := m.now().UTC().Add(RotationOverlap()).Unix()
+	notAfter := m.nowUTC().Add(RotationOverlap()).Unix()
 
 	var errs []error
 
@@ -205,6 +206,16 @@ func (m *Manager) retireExcept(keepKid string) error {
 	}
 
 	return errors.Join(errs...)
+}
+
+// nowUTC reads the manager's clock under the lock that replaces it, then calls it outside, so a
+// caller swapping the clock cannot race a reader and a reader cannot deadlock on the swap.
+func (m *Manager) nowUTC() time.Time {
+	m.mu.RLock()
+	now := m.now
+	m.mu.RUnlock()
+
+	return now().UTC()
 }
 
 // SetNow replaces the clock the manager reads, so tests outside this package can age a key.
@@ -302,13 +313,13 @@ func (m *Manager) loadKeys() error {
 		keyPath := filepath.Join(dir, name)
 		b, err := os.ReadFile(keyPath) // #nosec G304 path is derived from trusted directory entries
 		if err != nil {
-			log.Warnf("jwt: %s (read signing key %s)", err, clean.Log(name))
+			log.Warnf("jwt: %s (read signing key %s)", clean.Error(err), clean.Log(name))
 			continue
 		}
 
 		var rec keyRecord
 		if err = json.Unmarshal(b, &rec); err != nil {
-			log.Warnf("jwt: %s (parse signing key %s)", err, clean.Log(name))
+			log.Warnf("jwt: %s (parse signing key %s)", clean.Error(err), clean.Log(name))
 			continue
 		}
 		if rec.Kty != keyTypeOKP || rec.Crv != curveEd25519 || rec.Kid == "" {
@@ -317,7 +328,7 @@ func (m *Manager) loadKeys() error {
 
 		privBytes, err := base64.RawURLEncoding.DecodeString(rec.D)
 		if err != nil {
-			log.Warnf("jwt: %s (decode signing key %s)", err, clean.Log(name))
+			log.Warnf("jwt: %s (decode signing key %s)", clean.Error(err), clean.Log(name))
 			continue
 		}
 		if len(privBytes) != ed25519.SeedSize {
@@ -370,7 +381,7 @@ func (m *Manager) generateKey() (*Key, error) {
 	priv := ed25519.NewKeyFromSeed(seed)
 	pub := priv[ed25519.SeedSize:]
 
-	now := m.now().UTC()
+	now := m.nowUTC()
 	fingerprint := sha256.Sum256(pub)
 	kid := fmt.Sprintf("%s-%s", now.Format("20060102T1504Z"), hex.EncodeToString(fingerprint[:4]))
 
@@ -432,16 +443,34 @@ func (m *Manager) persistKey(k *Key) error {
 	return writeKeyFile(pubPath, pubJSON, fs.ModeFile)
 }
 
-// writeKeyFile writes a key record through a temporary file and renames it into place.
-// Retiring a key rewrites the file of a key that is still in use.
+// writeKeyFile writes a key record through a uniquely named temporary file and renames it into
+// place. The temporary is created exclusively, so its mode and its contents are always the ones
+// requested here. Retiring a key rewrites the file of a key that is still in use.
 func writeKeyFile(name string, data []byte, perm os.FileMode) error {
-	tmp := name + ".tmp"
+	tmp := name + "." + rnd.Base36(8) + ".tmp"
 
-	if err := os.WriteFile(tmp, data, perm); err != nil {
+	// #nosec G304 name is derived from the operator-owned key directory and a key id
+	f, err := os.OpenFile(tmp, os.O_WRONLY|os.O_CREATE|os.O_EXCL, perm)
+
+	if err != nil {
 		return err
 	}
 
-	if err := os.Rename(tmp, name); err != nil {
+	if _, err = f.Write(data); err == nil {
+		// Flushed where the filesystem supports it, but not required: a mount that does not
+		// implement fsync must not cost the Portal its ability to write a signing key.
+		_ = f.Sync()
+	}
+
+	if closeErr := f.Close(); err == nil {
+		err = closeErr
+	}
+
+	if err == nil {
+		err = os.Rename(tmp, name)
+	}
+
+	if err != nil {
 		_ = os.Remove(tmp)
 		return err
 	}

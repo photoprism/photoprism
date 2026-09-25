@@ -24,6 +24,26 @@ func writeFileLock(t *testing.T, fileName string, state FileLockState) {
 	require.NoError(t, os.WriteFile(fileName, b, fs.ModeFile))
 }
 
+// TestFileLockCreationMode checks permissions across initial publication and renewal.
+func TestFileLockCreationMode(t *testing.T) {
+	dir := t.TempDir()
+	control := filepath.Join(dir, "mode-control")
+	require.NoError(t, os.WriteFile(control, nil, fs.ModeFile))
+	want, err := os.Stat(control)
+	require.NoError(t, err)
+	lock := &FileLock{fileName: filepath.Join(dir, "test.lock"), action: "test"}
+	for _, body := range []string{"first", "renewed"} {
+		require.NoError(t, lock.replace([]byte(body)))
+		got, err := os.Stat(lock.fileName)
+		require.NoError(t, err)
+		assert.Equal(t, want.Mode().Perm(), got.Mode().Perm())
+		t.Logf("lock mode: %04o", got.Mode().Perm())
+	}
+	entries, err := os.ReadDir(dir)
+	require.NoError(t, err)
+	assert.Len(t, entries, 2, "only the lock and control file remain")
+}
+
 func TestFileLockState_Expired(t *testing.T) {
 	t.Run("Live", func(t *testing.T) {
 		assert.False(t, FileLockState{ExpiresAt: time.Now().Add(time.Minute)}.Expired())

@@ -1,10 +1,10 @@
 # PhotoPrism Repository Guidelines
 
-**Last Updated:** August 18, 2026
+**Last Updated:** September 20, 2026
 
 ## Purpose
 
-Entry point for agents and humans.
+Entry point for agents. Humans read [`README.md`](README.md).
 
 ## Sources of Truth
 

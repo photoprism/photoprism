@@ -39,6 +39,14 @@ func TestAddVideoCacheHeader(t *testing.T) {
 	})
 }
 
+// TestCoverThumbName pins the name the cover-file flag is keyed under. The flag and the cached
+// cover files share one key space per namespace and uid, so a size of this name would have the two
+// resolve to the same entry.
+func TestCoverThumbName(t *testing.T) {
+	_, ok := thumb.Sizes[thumb.Name(coverThumbName)]
+	assert.False(t, ok, "no thumbnail size may be named %s", coverThumbName)
+}
+
 func TestCachedCoverHasThumb(t *testing.T) {
 	t.Run("Cached", func(t *testing.T) {
 		cache := get.CoverCache()

@@ -3,7 +3,9 @@ package api
 import (
 	"net/http"
 	"path"
+	"time"
 
+	"github.com/dustin/go-humanize/english"
 	"github.com/gabriel-vasile/mimetype"
 	"github.com/gin-gonic/gin"
 
@@ -34,6 +36,7 @@ import (
 //	@Router			/api/v1/users/{uid}/avatar [post]
 func UploadUserAvatar(router *gin.RouterGroup) {
 	router.POST("/users/:uid/avatar", func(c *gin.Context) {
+		start := time.Now()
 		conf := get.Config()
 
 		if conf.Demo() || conf.DisableSettings() {
@@ -166,7 +169,7 @@ func UploadUserAvatar(router *gin.RouterGroup) {
 		s.ClearCache()
 
 		// Show success message.
-		log.Info(i18n.Msg(i18n.MsgFileUploaded))
+		log.Infof("avatar: uploaded %s in %s", english.Plural(len(files), "file", "files"), time.Since(start))
 
 		// Return updated user profile.
 		c.JSON(http.StatusOK, entity.FindUserByUID(uid))

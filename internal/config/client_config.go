@@ -690,8 +690,9 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 	// People are subjects with type person.
 	cfg.Count.People, _ = query.PeopleCount()
 
+	// Cameras added manually are included even if no picture references them yet.
 	c.Db().
-		Where("id IN (SELECT photos.camera_id FROM photos WHERE photos.photo_quality > -1 OR photos.deleted_at IS NULL)").
+		Where("id IN (SELECT photos.camera_id FROM photos WHERE photos.photo_quality > -1 OR photos.deleted_at IS NULL) OR camera_src = ?", entity.SrcManual).
 		Where("deleted_at IS NULL").
 		Limit(10000).Order("camera_slug").
 		Find(&cfg.Cameras)
@@ -768,8 +769,11 @@ func (c *Config) ClientSession(sess *entity.Session) (cfg *ClientConfig) {
 		cfg.PreviewToken = sess.PreviewToken
 
 		// The download token is the "?t=" value: a signed, session-bound token so header-less download
-		// endpoints can scope the response to this session.
-		cfg.DownloadToken = tokens.DownloadToken(sess.ID)
+		// endpoints can scope the response to this session. It is delivered only when the session's scope
+		// covers a downloadable resource; the endpoints apply their own scope check.
+		if sess.ScopePermitsDownload() {
+			cfg.DownloadToken = tokens.DownloadToken(sess.ID)
+		}
 	default:
 		// A session without its own preview token receives neither token: the instance-wide values stay
 		// registered and accepted, so existing URLs keep working, but they are not handed to a caller

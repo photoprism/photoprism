@@ -34,7 +34,18 @@ Descriptions MUST conclude with a checklist of **Acceptance Criteria**:
 
 > Agents MUST create, edit, close, reopen, relabel, or otherwise modify GitHub issues only when explicitly requested by the user.
 
-The repo's issue templates use the new GitHub `type:` property (`Bug`, `Feature`) instead of `bug`/`idea` labels. `gh issue create` does not yet accept a `--type` flag, so when filing issues programmatically use `--label` only and tell the user to set the issue type via the web UI.
+The repo's issue templates use the GitHub `type:` property instead of `bug`/`idea` labels. The types are configured for the organization, not in this repo, so read them with `gh api orgs/photoprism/issue-types --jq '.[].name'` rather than assuming — as of September 2026 they are `Task`, `Bug`, `Feature`, `Enhancement` and `Epic`, and the templates name only some of them. `gh issue create --type <name>` sets the type when filing, and `gh issue edit --type <name>` changes it afterwards; neither needs the web UI.
+
+### Which issue type to choose?
+
+The types `Bug`, `Enhancement`, `Feature`, and `Task` are distinguished by what the code was already supposed to do, not by how much work is involved:
+
+- **`Bug`** — Broken functionality that is implemented but does not work as documented.
+- **`Enhancement`** — A new capability on top of functionality that already works.
+- **`Feature`** — Entirely new functionality that does not yet exist.
+- **`Task`** — Something that should work, but was never fully developed, needs refinement, or requires an update (e.g., a dependency upgrade). It is neither a regression nor an addition to working behavior.
+
+A half-wired mechanism may look like a defect: helpers exist, the intent is legible in the code, and nothing calls them. This is not a `Bug` because nothing regressed; it was never finished. In this case, choose `Task` rather than arguing the intent into a defect. An `Epic` is a tracking issue that remains open until all sub-issues are closed.
 
 ## Specifications & Documentation
 

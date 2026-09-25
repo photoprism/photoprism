@@ -203,6 +203,27 @@ func TestConfig_ClientUser(t *testing.T) {
 		assert.Equal(t, result.Settings.Features.Private, false)
 		assert.Equal(t, result.Settings.Features, guestFeatures)
 	})
+	t.Run("ManualCameras", func(t *testing.T) {
+		added, created, err := entity.AddCamera("Minolta", "X-700")
+		assert.NoError(t, err)
+		assert.True(t, created)
+		orphan := entity.FirstOrCreateCamera(entity.NewCamera("Minolta", "XD-7"))
+		t.Cleanup(func() {
+			entity.FlushCameraCache()
+			assert.NoError(t, entity.UnscopedDb().Delete(&entity.Camera{}, "id IN (?)", []uint{added.ID, orphan.ID}).Error)
+		})
+
+		c.Settings().Features = c.ClientRole(acl.RoleAdmin).Settings.Features
+		result := c.ClientUser(true)
+
+		// Cameras added manually are listed even though no picture references them, other orphans are not.
+		slugs := make([]string, 0, len(result.Cameras))
+		for _, camera := range result.Cameras {
+			slugs = append(slugs, camera.CameraSlug)
+		}
+		assert.Contains(t, slugs, added.CameraSlug)
+		assert.NotContains(t, slugs, orphan.CameraSlug)
+	})
 	t.Run("NilTesting", func(t *testing.T) {
 		if testing.Short() {
 			t.Skip("skipping test in short mode.")
@@ -526,6 +547,15 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.True(t, f.Review)
 		assert.False(t, f.Share)
 	})
+	t.Run("ScopeWithoutDownload", func(t *testing.T) {
+		// A scope that covers no downloadable resource still receives its preview token, but no
+		// download token.
+		sess := entity.SessionFixtures.Pointer("alice_app_password_shares")
+		cfg := c.ClientSession(sess)
+
+		assert.Equal(t, sess.PreviewToken, cfg.PreviewToken)
+		assert.Empty(t, cfg.DownloadToken)
+	})
 	t.Run("RoleVisitor", func(t *testing.T) {
 		sess := entity.SessionFixtures.Pointer("visitor")
 		want := sess.PreviewToken
@@ -571,7 +601,8 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.IsType(t, &ClientConfig{}, cfg)
 		assert.Equal(t, false, cfg.Public)
 		assert.Equal(t, want, cfg.PreviewToken)
-		assert.NotEmpty(t, cfg.DownloadToken)
+		// The metrics scope covers no downloadable resource.
+		assert.Empty(t, cfg.DownloadToken)
 
 		f := cfg.Settings.Features
 		assert.NotEqual(t, adminFeatures, f)

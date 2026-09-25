@@ -397,6 +397,42 @@ func TestWriteKeyFile(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, "new", string(b))
 	})
+	t.Run("SecretMode", func(t *testing.T) {
+		name := filepath.Join(t.TempDir(), "key.jwk")
+		require.NoError(t, writeKeyFile(name, []byte("payload"), fs.ModeSecretFile))
+
+		info, err := os.Stat(name)
+		require.NoError(t, err)
+		require.Equal(t, fs.ModeSecretFile, info.Mode().Perm())
+	})
+	t.Run("UnrelatedTemporaryPresent", func(t *testing.T) {
+		dir := t.TempDir()
+		name := filepath.Join(dir, "key.jwk")
+
+		// An unrelated file at the obvious temporary name has no bearing on the result.
+		require.NoError(t, os.WriteFile(name+".tmp", []byte("unrelated"), 0o666)) // #nosec G306 mode is the subject of the case
+
+		require.NoError(t, writeKeyFile(name, []byte("written"), fs.ModeSecretFile))
+
+		b, err := os.ReadFile(name) // #nosec G304 path is built by the test
+		require.NoError(t, err)
+		require.Equal(t, "written", string(b))
+
+		info, err := os.Stat(name)
+		require.NoError(t, err)
+		require.Equal(t, fs.ModeSecretFile, info.Mode().Perm())
+	})
+	t.Run("LeavesNoTemporaryBehind", func(t *testing.T) {
+		dir := t.TempDir()
+		require.NoError(t, writeKeyFile(filepath.Join(dir, "key.jwk"), []byte("x"), fs.ModeSecretFile))
+
+		entries, err := os.ReadDir(dir)
+		require.NoError(t, err)
+
+		for _, e := range entries {
+			require.False(t, strings.HasSuffix(e.Name(), ".tmp"), "temporary %s must be renamed or removed", e.Name())
+		}
+	})
 	t.Run("UnwritableDir", func(t *testing.T) {
 		dir := t.TempDir()
 		// Directory modes need the exec bit, so the file-oriented lint rule does not apply.

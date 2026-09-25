@@ -12,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/service"
 	"github.com/photoprism/photoprism/internal/service/webdav"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/photoprism/photoprism/pkg/txt/clip"
@@ -36,6 +37,7 @@ type Services []Service
 // - AccShare enables manual upload, see SharePath, ShareSize, and ShareExpires.
 // - AccSync enables automatic file synchronization, see SyncDownload and SyncUpload.
 // - RetryLimit specifies the number of retry attempts, a negative value disables the limit.
+// - SyncYaml enables transferring YAML sidecar files and is disabled when the remote server refuses them.
 type Service struct {
 	ID            uint           `gorm:"primaryKey;" json:"ID"`
 	AccName       string         `gorm:"size:160;" json:"AccName"`
@@ -62,6 +64,7 @@ type Service struct {
 	SyncDownload  bool           `json:"SyncDownload"`
 	SyncFilenames bool           `json:"SyncFilenames"`
 	SyncRaw       bool           `json:"SyncRaw"`
+	SyncYaml      bool           `gorm:"default:true" json:"SyncYaml"`
 	CreatedAt     time.Time      `deepcopier:"skip" json:"CreatedAt"`
 	UpdatedAt     time.Time      `deepcopier:"skip" json:"UpdatedAt"`
 	DeletedAt     gorm.DeletedAt `deepcopier:"skip" gorm:"index" json:"DeletedAt"`
@@ -92,6 +95,16 @@ func (m *Service) IsNew() bool {
 	return m.CreatedAt.IsZero()
 }
 
+// ServiceError renders an error for the AccError column. The value is sanitized and clipped well
+// inside the column, so what remains is the status an operator acts on.
+func ServiceError(err error) string {
+	if err == nil {
+		return ""
+	}
+
+	return clip.Bytes(clean.Error(err), txt.ClipError)
+}
+
 // LogErr updates the service error count and message.
 func (m *Service) LogErr(err error) error {
 	if err == nil {
@@ -99,7 +112,7 @@ func (m *Service) LogErr(err error) error {
 	}
 
 	// Update error message and increase count.
-	m.AccError = clip.Bytes(err.Error(), txt.ClipError)
+	m.AccError = ServiceError(err)
 	m.AccErrors++
 
 	// Disable sharing when retry limit is reached.
@@ -198,8 +211,21 @@ func (m *Service) SaveForm(form form.Service) error {
 	m.AccName = txt.Clip(m.AccName, txt.ClipName)
 	m.AccOwner = txt.Clip(m.AccOwner, txt.ClipName)
 
+	// GORM v1 inserts the column default in place of false, so a new record is corrected after the insert.
+	newRecord, syncYaml := db.NewRecord(m), m.SyncYaml
+
 	// Save changes.
-	return db.Save(m).Error
+	if err := db.Save(m).Error; err != nil {
+		return err
+	} else if newRecord && !syncYaml && m.SyncYaml {
+		if err = m.Update("SyncYaml", false); err != nil {
+			return err
+		}
+
+		m.SyncYaml = false
+	}
+
+	return nil
 }
 
 // Delete deletes the entity from the database.

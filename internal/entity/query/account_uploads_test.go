@@ -76,4 +76,26 @@ func TestAccountUploads(t *testing.T) {
 		}
 		assert.GreaterOrEqual(t, videos, 1, "videos must be uploaded when SyncRaw is on")
 	})
+	t.Run("SyncYaml", func(t *testing.T) {
+		yaml := &entity.File{PhotoID: 1000000, PhotoUID: "ps6sg6be2lvl0yh7", FileRoot: entity.RootOriginals, FileName: "2790/07/27900704_070228_D6D51B6C.yml",
+			FileType: fs.SidecarYaml.String(), MediaType: media.Sidecar.String(), FileSidecar: true, FileHash: "a2ac5c6a1bfc1c1ccc9bbb6a4e9d1e1f6c9f7a01"}
+		if err := yaml.Create(); err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() { entity.UnscopedDb().Unscoped().Delete(yaml) })
+		found := func(t *testing.T, syncYaml bool) bool {
+			results, err := AccountUploads(entity.Service{ID: 1, SyncRaw: true, SyncYaml: syncYaml}, 0)
+			if err != nil {
+				t.Fatal(err)
+			}
+			for _, f := range results {
+				if f.ID == yaml.ID {
+					return true
+				}
+			}
+			return false
+		}
+		assert.True(t, found(t, true), "yaml file must be uploaded when SyncYaml is on")
+		assert.False(t, found(t, false), "yaml file must be held back when SyncYaml is off")
+	})
 }

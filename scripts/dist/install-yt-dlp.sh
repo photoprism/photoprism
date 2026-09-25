@@ -14,8 +14,8 @@ fi
 
 # Show usage information if first argument is --help.
 if [[ ${1:-} == "--help" ]]; then
-  echo "Usage: ${0##*/} [--nightly|--master|--stable] [destdir] [version]" 1>&2
-  echo "       ${0##*/} [--channel nightly|master|stable] [destdir] [version]" 1>&2
+  echo "Usage: ${0##*/} [--nightly|--master|--stable] [--allow-unverified] [destdir] [version]" 1>&2
+  echo "       ${0##*/} [--channel nightly|master|stable] [--allow-unverified] [destdir] [version]" 1>&2
   echo "" 1>&2
   echo "Environment:" 1>&2
   echo "  PHOTOPRISM_YTDLP_CHANNEL=nightly|master|stable" 1>&2
@@ -23,6 +23,7 @@ if [[ ${1:-} == "--help" ]]; then
 fi
 
 CHANNEL=${PHOTOPRISM_YTDLP_CHANNEL:-stable}
+ALLOW_UNVERIFIED=false
 
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -38,6 +39,10 @@ while [[ $# -gt 0 ]]; do
       CHANNEL=stable
       shift
       ;;
+    --allow-unverified)
+      ALLOW_UNVERIFIED=true
+      shift
+      ;;
     --channel)
       CHANNEL=${2:-}
       if [[ -z $CHANNEL ]]; then
@@ -47,8 +52,8 @@ while [[ $# -gt 0 ]]; do
       shift 2
       ;;
     --help)
-      echo "Usage: ${0##*/} [--nightly|--master|--stable] [destdir] [version]" 1>&2
-      echo "       ${0##*/} [--channel nightly|master|stable] [destdir] [version]" 1>&2
+      echo "Usage: ${0##*/} [--nightly|--master|--stable] [--allow-unverified] [destdir] [version]" 1>&2
+      echo "       ${0##*/} [--channel nightly|master|stable] [--allow-unverified] [destdir] [version]" 1>&2
       echo "" 1>&2
       echo "Environment:" 1>&2
       echo "  PHOTOPRISM_YTDLP_CHANNEL=nightly|master|stable" 1>&2
@@ -214,12 +219,23 @@ trap 'rm -f "${tmp_bin}" "${tmp_bin}.sums"' EXIT
 curl --fail --silent --show-error --location --retry 3 --retry-delay 2 --retry-all-errors "${GITHUB_URL}" -o "${tmp_bin}"
 
 # Verify the binary against the release SHA2-256SUMS manifest before installing.
-# Soft-fail when no manifest is published so older pinned tags still install.
-if [[ -n ${CHECKSUM_URL} && ${CHECKSUM_URL} != "null" ]] &&
-  curl --fail --silent --show-error --location "${CHECKSUM_URL}" -o "${tmp_bin}.sums" 2>/dev/null; then
+#
+# The manifest is required. Use --allow-unverified for a release that publishes none.
+if [[ -z ${CHECKSUM_URL} || ${CHECKSUM_URL} == "null" ]]; then
+  if [[ ${ALLOW_UNVERIFIED} == "true" ]]; then
+    echo "Warning: ${TAG_NAME} publishes no checksum manifest; installing unverified as requested." 1>&2
+  else
+    echo "Error: ${TAG_NAME} publishes no checksum manifest; refusing to install." 1>&2
+    echo "  Re-run with --allow-unverified to install it anyway." 1>&2
+    exit 1
+  fi
+elif ! curl --fail --silent --show-error --location --retry 3 --retry-delay 2 --retry-all-errors "${CHECKSUM_URL}" -o "${tmp_bin}.sums"; then
+  echo "Error: could not download the checksum manifest; refusing to install." 1>&2
+  exit 1
+else
   expected=$(awk -v n="${ASSET_NAME}" '$2 == n {print $1}' "${tmp_bin}.sums")
-  if [[ -z ${expected} ]]; then
-    echo "Error: ${ASSET_NAME} not listed in SHA2-256SUMS; refusing to install." 1>&2
+  if [[ ! ${expected} =~ ^[0-9a-fA-F]{64}$ ]]; then
+    echo "Error: ${ASSET_NAME} has no valid entry in SHA2-256SUMS; refusing to install." 1>&2
     exit 1
   fi
   if command -v sha256sum >/dev/null 2>&1; then
@@ -234,8 +250,6 @@ if [[ -n ${CHECKSUM_URL} && ${CHECKSUM_URL} != "null" ]] &&
     exit 1
   fi
   echo "Checksum OK (${actual})."
-else
-  echo "Warning: no published checksum for ${ASSET_NAME}; skipping verification." 1>&2
 fi
 
 echo "Installing yt-dlp to \"${DESTBIN}\" with permissions 755..."

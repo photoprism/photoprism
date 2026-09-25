@@ -31,7 +31,7 @@ func StopServer(router *gin.RouterGroup) {
 			return
 		}
 
-		options := conf.Options()
+		options := conf.RedactedOptions()
 
 		// Trigger restart.
 		//

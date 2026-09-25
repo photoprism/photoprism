@@ -12,8 +12,6 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/service"
-	"github.com/photoprism/photoprism/pkg/txt"
-	"github.com/photoprism/photoprism/pkg/txt/clip"
 )
 
 // Sync represents a sync worker.
@@ -92,7 +90,7 @@ func (w *Sync) Start() (err error) {
 		case entity.SyncStatusRefresh:
 			if complete, err := w.refresh(a); err != nil {
 				accErrors++
-				accError = err.Error()
+				accError = entity.ServiceError(err)
 			} else if complete {
 				accErrors = 0
 				accError = ""
@@ -111,7 +109,7 @@ func (w *Sync) Start() (err error) {
 		case entity.SyncStatusDownload:
 			if complete, downloadErr := w.download(a); downloadErr != nil {
 				accErrors++
-				accError = downloadErr.Error()
+				accError = entity.ServiceError(downloadErr)
 				syncStatus = entity.SyncStatusRefresh
 			} else if complete {
 				if a.SyncUpload {
@@ -126,7 +124,7 @@ func (w *Sync) Start() (err error) {
 		case entity.SyncStatusUpload:
 			if complete, uploadErr := w.upload(a); uploadErr != nil {
 				accErrors++
-				accError = clip.Bytes(uploadErr.Error(), txt.ClipError)
+				accError = entity.ServiceError(uploadErr)
 				syncStatus = entity.SyncStatusRefresh
 			} else if complete {
 				synced = true

@@ -68,6 +68,18 @@ func TestFindSubjectForSession(t *testing.T) {
 	t.Run("PrivateAllowed", func(t *testing.T) {
 		assert.NotNil(t, FindSubjectForSession(m.SubjUID, entity.SessionFixtures.Pointer("alice")))
 	})
+	// Hidden withholds the name for the same roles private does, so the guard reads both flags.
+	t.Run("HiddenDenied", func(t *testing.T) {
+		h := entity.NewSubject("Hidden Handler Subject", entity.SubjPerson, entity.SrcManual)
+		require.NotNil(t, h)
+		h.SubjHidden = true
+		require.NoError(t, h.Create())
+
+		t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Subject{}, "subj_uid = ?", h.SubjUID) })
+
+		assert.Nil(t, FindSubjectForSession(h.SubjUID, entity.SessionFixtures.Pointer("visitor")))
+		assert.NotNil(t, FindSubjectForSession(h.SubjUID, entity.SessionFixtures.Pointer("alice")))
+	})
 	t.Run("Deleted", func(t *testing.T) {
 		// Refused for everyone, including the role that may see a private person.
 		require.NoError(t, m.Delete())

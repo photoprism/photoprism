@@ -5,14 +5,24 @@ import (
 	"sort"
 	"strings"
 	"time"
-	"unicode/utf8"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
+
+// maskedSecret returns a fixed placeholder for a secret that is set, and an empty string for one
+// that is not, so a report distinguishes the two.
+func maskedSecret(s string) string {
+	if s == "" {
+		return ""
+	}
+
+	return txt.Masked
+}
 
 // Report returns global config values as a table for reporting.
 func (c *Config) Report() (rows [][]string, cols []string) {
@@ -24,7 +34,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		// Authentication.
 		{"auth-mode", c.AuthMode()},
 		{"admin-user", c.AdminUser()},
-		{"admin-password", strings.Repeat("*", utf8.RuneCountInString(c.AdminPassword()))},
+		{"admin-password", maskedSecret(c.AdminPassword())},
 		{"admin-scope", c.AdminScope()},
 		{"password-length", fmt.Sprintf("%d", c.PasswordLength())},
 		{"password-reset-uri", c.PasswordResetUri()},
@@ -216,12 +226,12 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 	}
 
 	rows = append(rows, [][]string{
-		{"join-token", strings.Repeat("*", utf8.RuneCountInString(c.JoinToken()))},
+		{"join-token", maskedSecret(c.JoinToken())},
 		{"node-name", c.NodeName()},
 		{"node-role", c.NodeRole()},
 		{"node-uuid", c.NodeUUID()},
 		{"node-client-id", c.NodeClientID()},
-		{"node-client-secret", strings.Repeat("*", utf8.RuneCountInString(c.NodeClientSecret()))},
+		{"node-client-secret", maskedSecret(c.NodeClientSecret())},
 		{"jwks-url", clean.UriRedacted(c.JWKSUrl())},
 		{"jwks-cache-ttl", fmt.Sprintf("%d", c.JWKSCacheTTL())},
 		{"jwt-scope", c.JWTAllowedScopes().String()},
@@ -271,7 +281,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 			{"database-host", c.DatabaseHost()},
 			{"database-port", c.DatabasePortString()},
 			{"database-user", c.DatabaseUser()},
-			{"database-password", strings.Repeat("*", utf8.RuneCountInString(c.DatabasePassword()))},
+			{"database-password", maskedSecret(c.DatabasePassword())},
 		}...)
 	}
 
@@ -303,6 +313,8 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"ffmpeg-map-video", c.FFmpegMapVideo()},
 		{"ffmpeg-map-audio", c.FFmpegMapAudio()},
 		{"ffmpeg-exclude", c.FFmpegExclude().String()},
+		{"convert-timeout", fmt.Sprintf("%d", c.options.ConvertTimeout)},
+		{"transcode-timeout", fmt.Sprintf("%d", c.options.TranscodeTimeout)},
 		{"exiftool-bin", c.ExifToolBin()},
 		{"sips-bin", c.SipsBin()},
 		{"sips-exclude", c.SipsExclude()},
@@ -334,9 +346,10 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"vision-yaml", c.VisionYaml()},
 		{"vision-api", fmt.Sprintf("%t", c.VisionApi())},
 		{"vision-uri", clean.UriRedacted(c.VisionUri())},
-		{"vision-key", strings.Repeat("*", utf8.RuneCountInString(c.VisionKey()))},
+		{"vision-key", maskedSecret(c.VisionKey())},
 		{"vision-schedule", c.VisionSchedule()},
 		{"vision-filter", c.VisionFilter()},
+		{"onnx-provider", c.OnnxProvider().String()},
 		{"nasnet-model-path", c.NasnetModelPath()},
 		{"facenet-model-path", c.FacenetModelPath()},
 		{"nsfw-model-path", c.NsfwModelPath()},

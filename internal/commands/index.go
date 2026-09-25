@@ -127,7 +127,7 @@ func indexAction(ctx *cli.Context) error {
 
 	elapsed := time.Since(start)
 
-	log.Infof("indexed %s in %s", english.Plural(len(found), "file", "files"), elapsed)
+	log.Infof("library: indexed %s in %s", english.Plural(len(found), "file", "files"), elapsed)
 
 	return nil
 }

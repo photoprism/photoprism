@@ -317,7 +317,7 @@ func (c *Config) ConfigPath() string {
 // signing key (config/keys). Portal-role keys (cluster JWT, OIDC session cookie) live under
 // PortalConfigPath instead.
 func (c *Config) KeysPath() string {
-	return filepath.Join(c.ConfigPath(), "keys")
+	return filepath.Join(c.ConfigPath(), fs.KeysDir)
 }
 
 // OptionsYaml returns the absolute path to the options configuration file.
@@ -325,7 +325,7 @@ func (c *Config) KeysPath() string {
 // newly created instances may use `.yaml` without additional wiring.
 func (c *Config) OptionsYaml() string {
 	if c.options.OptionsYaml == "" {
-		return fs.ConfigFilePath(c.ConfigPath(), "options", fs.ExtYml)
+		return fs.ConfigFilePath(c.ConfigPath(), fs.ConfigOptionsName, fs.ExtYml)
 	}
 
 	return fs.Abs(c.options.OptionsYaml)
@@ -362,7 +362,7 @@ func defaultsYaml(ctx *cli.Context) string {
 		return fs.Abs(fileName)
 	}
 
-	fileName = fs.ConfigFilePath(resolveConfigPath(ctx), "defaults", fs.ExtYml)
+	fileName = fs.ConfigFilePath(resolveConfigPath(ctx), fs.ConfigDefaultsName, fs.ExtYml)
 
 	if fs.FileExistsNotEmpty(fileName) {
 		return fs.Abs(fileName)
@@ -383,14 +383,14 @@ func (c *Config) DefaultsYaml() string {
 // traditional `.yml` suffix or an existing `.yaml` variant in the config
 // directory.
 func (c *Config) HubConfigFile() string {
-	return fs.ConfigFilePath(c.ConfigPath(), "hub", fs.ExtYml)
+	return fs.ConfigFilePath(c.ConfigPath(), fs.ConfigHubName, fs.ExtYml)
 }
 
 // SettingsYaml returns the path to the UI settings file. Like other helpers it
 // defers to fs.ConfigFilePath so administrators can store the file as
 // `settings.yml` or `settings.yaml`.
 func (c *Config) SettingsYaml() string {
-	return fs.ConfigFilePath(c.ConfigPath(), "settings", fs.ExtYml)
+	return fs.ConfigFilePath(c.ConfigPath(), fs.ConfigSettingsName, fs.ExtYml)
 }
 
 // SettingsYamlDefaults returns the defaults file that should seed new settings
@@ -403,7 +403,7 @@ func (c *Config) SettingsYamlDefaults(settingsYml string) string {
 		// Use regular settings YAML file.
 	} else if dir := filepath.Dir(defaultsYml); dir == "" || dir == "." {
 		// Use regular settings YAML file.
-	} else if fileName := fs.ConfigFilePath(dir, "settings", fs.ExtYml); settingsYml == "" || fs.FileExistsNotEmpty(fileName) {
+	} else if fileName := fs.ConfigFilePath(dir, fs.ConfigSettingsName, fs.ExtYml); settingsYml == "" || fs.FileExistsNotEmpty(fileName) {
 		// Use default settings YAML file.
 		return fileName
 	}

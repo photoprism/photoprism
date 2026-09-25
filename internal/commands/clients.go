@@ -23,6 +23,9 @@ const (
 	ClientRegenerateSecret = "set a new randomly generated client secret"
 	ClientEnable           = "enable client authentication if disabled"
 	ClientDisable          = "disable client authentication"
+	ClientRestore          = "bring back a deleted client without asking for confirmation"
+	ClientPurge            = "remove the record permanently and release the identifiers it reserves"
+	ClientDeleted          = "list deleted clients instead of current ones"
 	ClientSecretInfo       = "\nPLEASE WRITE DOWN THE %s CLIENT SECRET, AS YOU WILL NOT BE ABLE TO SEE IT AGAIN:" //nolint:gosec // informational message only
 )
 
@@ -154,5 +157,9 @@ var ClientModFlags = []cli.Flag{
 	&cli.BoolFlag{
 		Name:  "disable",
 		Usage: ClientDisable,
+	},
+	&cli.BoolFlag{
+		Name:  "restore",
+		Usage: ClientRestore,
 	},
 }

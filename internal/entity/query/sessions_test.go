@@ -22,6 +22,7 @@ func TestSession(t *testing.T) {
 		result, err := Session("1234")
 		assert.Error(t, err)
 		assert.Equal(t, "invalid session id", err.Error())
+		assert.ErrorIs(t, err, ErrInvalidSessionID)
 		assert.NotNil(t, result)
 		assert.Equal(t, "", result.ID)
 		assert.Equal(t, "", result.UserUID)

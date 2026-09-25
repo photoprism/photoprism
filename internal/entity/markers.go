@@ -106,12 +106,67 @@ func (m Markers) ValidFaceCount() (count int) {
 	return count
 }
 
-// SubjectNames returns known subject names.
+// SubjectUIDs returns the distinct uids of the people the face markers point at.
+func (m Markers) SubjectUIDs() (uids []string) {
+	return m.distinct(func(i int) string { return m[i].SubjUID })
+}
+
+// MarkerNames returns the distinct names the face markers carry, which need not be linked to a
+// subject.
+func (m Markers) MarkerNames() (names []string) {
+	return m.distinct(func(i int) string { return m[i].MarkerName })
+}
+
+// distinct collects the non-empty values of a face-marker field without repeats, so a heavily
+// marked file does not send one bind argument per marker.
+func (m Markers) distinct(value func(i int) string) (result []string) {
+	seen := make(map[string]struct{}, len(m))
+
+	for i := range m {
+		if m[i].MarkerType != MarkerFace {
+			continue
+		}
+
+		if v := value(i); v != "" {
+			if _, dup := seen[v]; !dup {
+				seen[v] = struct{}{}
+				result = append(result, v)
+			}
+		}
+	}
+
+	return result
+}
+
+// SubjectNames returns known subject names, leaving out people whose name is withheld. Generated
+// titles, captions and keywords derive from it and are stored for every session to read, so a
+// failure to resolve the flags returns no names rather than risking one: the caller writes that,
+// and only a later maintenance pass restores the names it dropped.
 func (m Markers) SubjectNames() (names []string) {
+	// Nothing to classify, and nothing SubjectName could return either.
+	if len(m.SubjectUIDs()) == 0 && len(m.MarkerNames()) == 0 {
+		return nil
+	}
+
+	withheld, err := FindWithheldPeople()
+
+	if err != nil {
+		log.Warnf("markers: %s while resolving people visibility, omitting all names from generated metadata", err)
+		return nil
+	}
+
 	for i := range m {
 		if m[i].MarkerInvalid || m[i].MarkerType != MarkerFace {
 			continue
-		} else if n := m[i].SubjectName(); n != "" {
+		}
+
+		// Checked on the name as well as the link, since SubjectName prefers the name column and
+		// a marker may carry one before it is linked.
+		if withheld.Withholds(m[i].SubjUID, m[i].MarkerName) {
+			continue
+		}
+
+		if n := m[i].SubjectName(); n != "" {
 			names = append(names, n)
 		}
 	}
@@ -177,15 +232,39 @@ func (m *Markers) AppendWithEmbedding(marker Marker) {
 	m.Append(marker)
 }
 
-// FindMarkers returns up to 1000 markers for a given file uid.
+// FindMarkers returns up to 1000 markers for a given file uid. Indexing and face clustering read
+// through it, so it is never scoped to a session.
 func FindMarkers(fileUid string) (Markers, error) {
+	return FindVisibleMarkers(fileUid, false)
+}
+
+// FindVisibleMarkers returns up to 1000 markers for a given file uid, excluding those that point
+// at a person whose name is withheld when omitWithheld is set.
+func FindVisibleMarkers(fileUid string, omitWithheld bool) (Markers, error) {
 	m := Markers{}
 
-	err := Db().
-		Where("file_uid = ?", fileUid).
-		Order("x").
-		Offset(0).Limit(1000).
-		Find(&m).Error
+	markerTable := Marker{}.TableName()
+
+	stmt := Db().
+		Table(markerTable).
+		Where(fmt.Sprintf("%s.file_uid = ?", markerTable), fileUid).
+		Order(markerTable + ".x").
+		Offset(0).Limit(1000)
+
+	if omitWithheld {
+		joins, cond := VisiblePeopleFilter(markerTable, true)
+
+		// Selected explicitly, or the joined subject columns scan into the marker fields.
+		stmt = stmt.Select(markerTable + ".*")
+
+		for _, join := range joins {
+			stmt = stmt.Joins(join)
+		}
+
+		stmt = stmt.Where(cond)
+	}
+
+	err := stmt.Find(&m).Error
 
 	return m, err
 }

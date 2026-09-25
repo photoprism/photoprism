@@ -40,12 +40,18 @@ func Warn(msg string) {
 	Publish("notify.warning", Data{"message": msg})
 }
 
-// publishMsg logs and publishes a localized notification, carrying the rendered message plus the
-// untranslated source id and params so the frontend can render it in the user's current UI language.
+// notifyMsg publishes a localized notification without logging it. The payload carries the
+// rendered message plus the untranslated source id and params, so the frontend can render it
+// in the user's current UI language.
+func notifyMsg(topic string, id i18n.Message, params ...any) {
+	Publish(topic, Data{"message": i18n.Msg(id, params...), "messageId": i18n.Source(id), "messageParams": params})
+}
+
+// publishMsg logs and publishes a localized notification.
+// The log line stays English through i18n.Lower, so server logs do not follow the instance locale.
 func publishMsg(level logrus.Level, topic string, id i18n.Message, params ...any) {
-	msg := i18n.Msg(id, params...)
-	Log.Log(level, strings.ToLower(msg))
-	Publish(topic, Data{"message": msg, "messageId": i18n.Source(id), "messageParams": params})
+	Log.Log(level, i18n.Lower(id, params...))
+	notifyMsg(topic, id, params...)
 }
 
 // ErrorMsg publishes a localized error notification.
@@ -58,6 +64,12 @@ func SuccessMsg(id i18n.Message, params ...any) {
 	publishMsg(logrus.InfoLevel, "notify.success", id, params...)
 }
 
+// PublishSuccessMsg publishes a localized success notification without logging it,
+// for callers that write a more specific log line themselves.
+func PublishSuccessMsg(id i18n.Message, params ...any) {
+	notifyMsg("notify.success", id, params...)
+}
+
 // InfoMsg publishes a localized informational notification.
 func InfoMsg(id i18n.Message, params ...any) {
 	publishMsg(logrus.InfoLevel, "notify.info", id, params...)
@@ -66,4 +78,19 @@ func InfoMsg(id i18n.Message, params ...any) {
 // WarnMsg publishes a localized warning notification.
 func WarnMsg(id i18n.Message, params ...any) {
 	publishMsg(logrus.WarnLevel, "notify.warning", id, params...)
+}
+
+// PublishCompleted notifies subscribed clients that an index, import or upload run has finished.
+// It carries no path: every consumer treats these as "something changed, refresh", and topic
+// routing delivers them to every session allowed to subscribe rather than to the one that acted.
+func PublishCompleted(topics []string, uid, action string, elapsed int) {
+	data := Data{"uid": uid, "seconds": elapsed}
+
+	if action != "" {
+		data["action"] = action
+	}
+
+	for _, topic := range topics {
+		Publish(topic, data)
+	}
 }

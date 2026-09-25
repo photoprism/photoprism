@@ -338,7 +338,7 @@ func postWithBackoff(url, token string, payload []byte, out any) error {
 		retry, err := func() (bool, error) {
 			defer func() {
 				if closeErr := resp.Body.Close(); closeErr != nil {
-					log.Debugf("cluster: %s (close register response body)", clean.Error(closeErr))
+					log.Debugf("cluster: %s (close register response body)", clean.ErrorFull(closeErr))
 				}
 			}()
 

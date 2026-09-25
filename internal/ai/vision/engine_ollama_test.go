@@ -400,14 +400,15 @@ func TestRegisterOllamaEngineDefaultsNormalize(t *testing.T) {
 	})
 
 	// A model that inherits the engine URI is classified by the endpoint it resolves to,
-	// so the same configuration follows the base URL without an engine-wide default.
+	// so the same configuration follows the base URL without an engine-wide default. The name
+	// carries no cloud tag, which is what makes the endpoint the deciding factor.
 	cases := []struct {
 		name    string
 		baseUrl string
 		want    NormalizeType
 	}{
-		{name: "SelfHosted", baseUrl: ollama.DefaultBaseUrl, want: NormalizeWord},
-		{name: "Cloud", baseUrl: ollama.CloudBaseUrl, want: NormalizePhrase},
+		{name: "SelfHostedNameSelfHostedEndpoint", baseUrl: ollama.DefaultBaseUrl, want: NormalizeWord},
+		{name: "SelfHostedNameCloudEndpoint", baseUrl: ollama.CloudBaseUrl, want: NormalizePhrase},
 	}
 
 	for _, tc := range cases {
@@ -416,7 +417,7 @@ func TestRegisterOllamaEngineDefaultsNormalize(t *testing.T) {
 			ensureEnvOnce = sync.Once{}
 			registerOllamaEngineDefaults()
 
-			model := &Model{Type: ModelTypeLabels, Engine: ollama.EngineName}
+			model := &Model{Type: ModelTypeLabels, Engine: ollama.EngineName, Model: "gemma4:latest"}
 			model.ApplyEngineDefaults()
 
 			if got := model.GetNormalize(); got != tc.want {

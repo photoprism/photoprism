@@ -15,6 +15,7 @@ import (
 	gc "github.com/patrickmn/go-cache"
 	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v2"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -254,8 +255,17 @@ func NewMinimalTestConfig(dataPath string) *Config {
 var testDbCache []byte
 var testDbMutex sync.Mutex
 
+// OpenTestDb opens a test connection without publishing it as the entity provider.
+// Configure callbacks before Init or RegisterDb makes the connection available to workers.
+func (c *Config) OpenTestDb() (*gorm.DB, error) {
+	if err := c.connectDb(); err != nil {
+		return nil, err
+	}
+
+	return c.db, nil
+}
+
 // NewMinimalTestConfigWithDbTTest creates a lightweight test Config (minimal filesystem).
-//
 // For SQLite a cached isolated DB is created by first run without seeding media fixtures.
 func NewMinimalTestConfigWithDbTTest(dbName, dataPath string, t *testing.T) *Config {
 	c := NewMinimalTestConfigWithDbTMain(dbName, dataPath)
@@ -681,7 +691,7 @@ func (c *Config) CleanupTestFolder() {
 
 	if filepath.Base(td) == fs.TestdataDir && strings.HasPrefix(filepath.Base(parent), "test-photoprism") {
 		if err := os.RemoveAll(parent); err != nil {
-			event.SystemWarn([]string{"config", "test", "cleanup %s", "%s"}, parent, clean.Error(err))
+			event.SystemWarn([]string{"config", "test", "cleanup %s", "%s"}, parent, clean.ErrorFull(err))
 			return
 		}
 		event.SystemDebug([]string{"config", "test", "cleanup %s", status.Succeeded}, parent)

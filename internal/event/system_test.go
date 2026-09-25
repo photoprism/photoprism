@@ -9,6 +9,8 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 type systemTestLogger struct {
@@ -119,6 +121,8 @@ func TestSystemLogPrefix(t *testing.T) {
 		{name: "SingleSegment", events: []string{"something happened"}, expected: SystemPrefix + "something happened"},
 		{name: "MultipleSegments", events: []string{"config", "database", "connect"}, expected: "config: database › connect"},
 		{name: "MultipleSegmentsWithArgs", events: []string{"config", "database", "register", "%s"}, args: []any{"boom"}, expected: "config: database › register › boom"},
+		// The leading segment is rendered outside Format, so it is folded on this path too.
+		{name: "LeadingSegmentSeparator", events: []string{"config" + string(clean.FieldSep), "connect"}, expected: "config?: connect"},
 	}
 
 	for _, tt := range tests {

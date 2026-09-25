@@ -45,7 +45,7 @@ func obtainClientCredentialsViaRegister(portalURL, joinToken, nodeName string) (
 	}
 	defer func() {
 		if closeErr := resp.Body.Close(); closeErr != nil {
-			log.Debugf("cluster: %s (close register response body)", clean.Error(closeErr))
+			log.Debugf("cluster: %s (close register response body)", clean.ErrorFull(closeErr))
 		}
 	}()
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated && resp.StatusCode != http.StatusConflict {
@@ -109,7 +109,7 @@ func clusterRegisterToken(conf *config.Config, portalURL, joinToken, nodeName st
 		return "", fmt.Errorf("portal access token request failed: %w", err)
 	}
 
-	log.Warnf("cluster: %s, retrying with the join token", clean.Error(err))
+	log.Warnf("cluster: %s, retrying with the join token", clean.ErrorFull(err))
 
 	return joinToken, nil
 }

@@ -17,16 +17,27 @@ var wsTimeout = 90 * time.Second
 // wsSubPerm specifies the permissions required to subscribe to a channel.
 var wsSubscribePerms = acl.Permissions{acl.ActionSubscribe}
 
-// wsAuth maps connection IDs to specific users and session IDs.
+// wsClientRole is the role of the API client a session authenticates. Present distinguishes a session
+// that authenticates none from one whose role is acl.RoleNone, which Client.AclRole also returns for a
+// role the running edition does not list.
+type wsClientRole struct {
+	Role    acl.Role
+	Present bool
+}
+
+// wsAuth maps connection IDs to the principals of a session and its session IDs. Roles are stored as
+// resolved values, so the delivery loop holds no entity another request may be mutating.
 var wsAuth = struct {
-	sid   map[string]string
-	rid   map[string]string
-	user  map[string]entity.User
-	mutex sync.RWMutex
+	sid    map[string]string
+	rid    map[string]string
+	user   map[string]entity.User
+	client map[string]wsClientRole
+	mutex  sync.RWMutex
 }{
-	sid:  make(map[string]string),
-	rid:  make(map[string]string),
-	user: make(map[string]entity.User),
+	sid:    make(map[string]string),
+	rid:    make(map[string]string),
+	user:   make(map[string]entity.User),
+	client: make(map[string]wsClientRole),
 }
 
 // wsConnection upgrades the HTTP server connection to the WebSocket protocol.

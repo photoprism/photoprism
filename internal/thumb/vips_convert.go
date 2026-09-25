@@ -38,6 +38,10 @@ func vipsConvert(srcFile, dstFile string, orientation int) (_ image.Image, err e
 	}
 	defer img.Close()
 
+	if err = vipsCheckPixels(img, logName); err != nil {
+		return nil, err
+	}
+
 	// Skip EXIF orientation for HEIF/AVIF — libheif already applied irot/imir during decode.
 	if orientation > OrientationNormal && !vipsLoadedViaHeif(img) {
 		if err = VipsRotate(img, orientation); err != nil {

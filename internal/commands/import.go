@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/dustin/go-humanize/english"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -85,11 +86,11 @@ func importAction(ctx *cli.Context) error {
 	w := get.Import()
 	opt := photoprism.ImportOptionsMove(sourcePath, destFolder)
 
-	w.Start(opt)
+	imported := w.Start(opt)
 
 	elapsed := time.Since(start)
 
-	log.Infof("completed in %s", elapsed)
+	log.Infof("library: imported %s in %s", english.Plural(imported.Processed(), "file", "files"), elapsed)
 
 	return nil
 }

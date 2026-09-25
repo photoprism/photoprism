@@ -195,6 +195,59 @@ func TestFileType(t *testing.T) {
 	t.Run("Insv", func(t *testing.T) {
 		assert.Equal(t, VideoInsv, FileType("VID_20220607_102410_00_322.insv"))
 	})
+	t.Run("Jpeg2000", func(t *testing.T) {
+		// JPEG 2000 is not registered yet, and is never classified as ordinary JPEG. Every
+		// extension of the family is listed, since one coder decodes them all and registering
+		// any single one would reach it.
+		for _, name := range []string{"scan.jp2", "scan.J2K", "scan.j2c", "scan.jpc", "scan.jpf", "scan.JPX", "scan.jpm"} {
+			assert.Equalf(t, TypeUnknown, FileType(name), "%s must stay unregistered", name)
+		}
+	})
+	t.Run("Cineon", func(t *testing.T) {
+		assert.Equal(t, ImageCineon, FileType("frame.cin"))
+		assert.Equal(t, ImageCineon, FileType("frame.CIN"))
+	})
+	t.Run("PhotoshopLargeDocument", func(t *testing.T) {
+		assert.Equal(t, ImagePsd, FileType("artwork.psb"))
+		assert.Equal(t, ImagePsd, FileType("artwork.PSB"))
+	})
+	t.Run("RawOlympusOri", func(t *testing.T) {
+		assert.Equal(t, ImageRaw, FileType("P1010101.ori"))
+		assert.Equal(t, ImageRaw, FileType("P1010101.ORI"))
+	})
+	t.Run("IllustratorTemplate", func(t *testing.T) {
+		assert.Equal(t, VectorAI, FileType("logo.ait"))
+		assert.Equal(t, VectorAI, FileType("logo.AIT"))
+	})
+	t.Run("MpegProgramStream", func(t *testing.T) {
+		// DVD and SD camcorder recordings are MPEG program streams, like .mpg.
+		assert.Equal(t, VideoMpeg, FileType("VTS_01_1.VOB"))
+		assert.Equal(t, VideoMpeg, FileType("MOV001.mod"))
+		assert.Equal(t, VideoMpeg, FileType("clip.mpe"))
+	})
+	t.Run("MpegVideoStream", func(t *testing.T) {
+		assert.Equal(t, VideoMp2, FileType("clip.m2v"))
+	})
+	t.Run("MpegTransportStream", func(t *testing.T) {
+		// JVC HD camcorder recordings are MPEG-2 transport streams, like .m2t.
+		assert.Equal(t, VideoM2TS, FileType("MOV002.TOD"))
+		assert.Equal(t, VideoM2TS, FileType("MOV002.tod"))
+	})
+	t.Run("DivX", func(t *testing.T) {
+		assert.Equal(t, VideoAVI, FileType("movie.divx"))
+		assert.Equal(t, VideoAVI, FileType("movie.DIVX"))
+	})
+	t.Run("Mobile", func(t *testing.T) {
+		assert.Equal(t, Video3GP, FileType("clip.3gpp"))
+		assert.Equal(t, Video3G2, FileType("clip.3gp2"))
+	})
+	t.Run("QuickTime", func(t *testing.T) {
+		assert.Equal(t, VideoMov, FileType("clip.mqv"))
+	})
+	t.Run("MicroMV", func(t *testing.T) {
+		// Sony MicroMV wraps MPEG-2 in a proprietary container that FFmpeg cannot demux.
+		assert.Equal(t, TypeUnknown, FileType("clip.mmv"))
+	})
 }
 
 func TestIsAnimatedImage(t *testing.T) {

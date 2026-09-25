@@ -49,7 +49,10 @@ fi
 
 DESTDIR=$(realpath "${DESTDIR_ARG}")
 
-if [[ $(id -u) != 0 ]] && { [[ "${DESTDIR}" == "/usr" ]] || [[ "${DESTDIR}" == "/usr/local" ]]; }; then
+# Test the destination rather than compare it against a list of system directories, so that an
+# install into a root-owned prefix such as the package layout reports the reason it cannot write
+# instead of failing later in the extract.
+if [[ $(id -u) != 0 ]] && [[ ! -w "${DESTDIR}" ]]; then
   echo "Error: Run ${0##*/} as root to install in '${DESTDIR}'." >&2
   exit 1
 fi
@@ -87,8 +90,10 @@ case "${SYSTEM}" in
         ;;
       arm64|ARM64|aarch64)
         if [[ -n "${gpu_variant}" ]]; then
-          echo "Error: ONNX Runtime GPU/CUDA builds are only available for Linux x64." >&2
-          exit 1
+          # Install the CPU build rather than nothing: GPU builds exist for Linux x64 only, and
+          # a host that asked for one still needs a runtime.
+          echo "Warning: ONNX Runtime GPU/CUDA builds are only available for Linux x64; installing the CPU build." >&2
+          gpu_variant=""
         fi
         archive="onnxruntime-linux-aarch64-${ONNX_VERSION}.tgz"
         sha="e53fc0cfb72e505031e06e13c651c1cb78424f39f15d304f47a3d5b907bcf9f2"
@@ -101,8 +106,8 @@ case "${SYSTEM}" in
     ;;
   Darwin)
     if [[ -n "${gpu_variant}" ]]; then
-      echo "Error: ONNX Runtime GPU/CUDA builds are only available for Linux x64." >&2
-      exit 1
+      echo "Warning: ONNX Runtime GPU/CUDA builds are only available for Linux x64; installing the CPU build." >&2
+      gpu_variant=""
     fi
     case "${ARCH}" in
       arm64|ARM64|aarch64)
@@ -131,8 +136,8 @@ if [[ "${ONNX_VERSION}" != "${ONNX_DEFAULT_VERSION}" ]]; then
   sha=""
 fi
 
-# Allow an explicit checksum override (e.g. when installing a non-default version
-# or a GPU variant whose checksum is not pinned in this script).
+# Allow an explicit checksum override, which is what installing a version other than
+# the default needs, since the pins above describe that version alone.
 sha="${ONNX_SHA256:-${sha}}"
 
 verify_sha() {

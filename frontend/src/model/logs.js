@@ -2,30 +2,6 @@ import RestModel from "model/rest";
 import { $gettext } from "common/gettext";
 
 const SEGMENT_SPLIT = /\s*[›>]\s*/;
-const IPV4_PATTERN = /^(?:\d{1,3}\.){3}\d{1,3}$/;
-const IPV6_PATTERN = /^[0-9a-f:]+$/i;
-
-function looksLikeIp(value) {
-  if (typeof value !== "string") {
-    return false;
-  }
-
-  const trimmed = value.trim();
-
-  if (!trimmed) {
-    return false;
-  }
-
-  if (IPV4_PATTERN.test(trimmed)) {
-    return true;
-  }
-
-  if (trimmed.includes(":") && IPV6_PATTERN.test(trimmed)) {
-    return true;
-  }
-
-  return false;
-}
 
 function splitSegments(message) {
   if (!message) {
@@ -112,26 +88,12 @@ export class LogEntry extends RestModel {
     return Number(this.Repeated) > 0;
   }
 
-  // messageParts splits the log message into segments while removing IPs.
+  // messageParts splits the log message into segments, less the one holding the client address.
   messageParts() {
     const segments = splitSegments(this.Message);
-    const explicitIp = (this.IP || "").trim();
+    const explicitIp = this.ipAddress();
 
-    return segments.filter((segment) => {
-      if (!segment) {
-        return false;
-      }
-
-      if (explicitIp && segment === explicitIp) {
-        return false;
-      }
-
-      if (!explicitIp && looksLikeIp(segment)) {
-        return false;
-      }
-
-      return true;
-    });
+    return segments.filter((segment) => segment && segment !== explicitIp);
   }
 
   // summary returns the first message part or the entire message if no separator is present.
@@ -162,18 +124,9 @@ export class LogEntry extends RestModel {
     return this.summary();
   }
 
-  // ipAddress returns the explicit IP or derives one from the message segments.
+  // ipAddress returns the client address the server reported for the entry.
   ipAddress() {
-    const explicitIp = (this.IP || "").trim();
-
-    if (explicitIp) {
-      return explicitIp;
-    }
-
-    const segments = splitSegments(this.Message);
-    const detected = segments.find((segment) => looksLikeIp(segment));
-
-    return detected || "";
+    return (this.IP || "").trim();
   }
 
   static getCollectionResource() {

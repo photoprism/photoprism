@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // TestMain executes runTestMain returning it's results.  It is done this way so that defer can be used to cleanup.
@@ -58,6 +59,29 @@ func TestExists(t *testing.T) {
 	assert.True(t, Exists("./testdata/empty.jpg"))
 	assert.False(t, Exists("./foo.jpg"))
 	assert.False(t, Exists(""))
+}
+
+func TestIsSymlink(t *testing.T) {
+	dir := t.TempDir()
+
+	target := filepath.Join(dir, "target.jpg")
+	require.NoError(t, os.WriteFile(target, []byte("x"), ModeFile))
+
+	live := filepath.Join(dir, "live.jpg")
+	require.NoError(t, os.Symlink(target, live))
+
+	dangling := filepath.Join(dir, "dangling.jpg")
+	require.NoError(t, os.Symlink(filepath.Join(dir, "absent.jpg"), dangling))
+
+	assert.True(t, IsSymlink(live))
+	assert.True(t, IsSymlink(dangling), "a link with no target is still a link")
+	assert.False(t, IsSymlink(target))
+	assert.False(t, IsSymlink(dir))
+	assert.False(t, IsSymlink(filepath.Join(dir, "absent.jpg")))
+	assert.False(t, IsSymlink(""))
+
+	// The distinction the name exists for: a resolving check cannot see a dropped target.
+	assert.False(t, Exists(dangling), "Exists resolves the name and so misses it")
 }
 
 func TestFileExists(t *testing.T) {

@@ -11,7 +11,7 @@
 - Use `pkg/fs.ConfigFilePath` for config filenames so existing `.yml` files stay valid and new installs can adopt `.yaml` transparently.
 - Use the public accessors on `*config.Config` (e.g. `JWKSUrl()`, `SetJWKSUrl()`) instead of mutating `Config.Options()` directly; reserve raw option tweaks for test fixtures.
 - New metadata sources (e.g. `SrcOllama`, `SrcOpenAI`) must be defined in both `internal/entity/src.go` and the frontend lookup tables (`frontend/src/common/util.js`).
-- Config init order: load `options.yml` (`c.initSettings()`), run `EarlyExt().InitEarly(c)`, connect/register the DB, then `Ext().Init(c)`.
+- Config init order: load `settings.yml` (`c.initSettings()`), run `Ext(StageBoot).Boot(c)`, connect/register the DB, then `Ext(StageInit).Init(c)`. Register a boot-stage extension with `config.Register(config.StageBoot, ...)`.
 - Favor explicit CLI flags: check `c.cliCtx.IsSet("<flag>")` before overriding user-supplied values.
 - Database helpers: reuse `conf.Db()` / `conf.Database*()`, avoid GORM `WithContext`, quote MySQL identifiers, and reject unsupported drivers early.
 
@@ -31,6 +31,13 @@ When renaming or adding fields:
 - Update handlers and regenerate Swagger: `make fmt-go swag-fmt swag`.
 - Update tests (search/replace old field names) and examples in `specs/`.
 - Quick grep: `rg -n 'oldField|newField' -S` across code, tests, and specs.
+
+## Session & Auth Caches
+
+- Account updates through `User.Save` invalidate only that user's session and WebDAV caches via `entity.FlushUserSessionCache`.
+- Capture `CurrentAuthCacheGeneration` before authentication lookup and pass it to `CacheWebDAVUser`; never capture it only at insertion or refresh the generation on an older session object.
+- Use the entity cache helpers for WebDAV authentication; keep cache eviction separate from persisted credential revocation and preserve process-local semantics.
+- Where this lives: `internal/entity/auth_session_cache.go`, `auth_user_cache.go`, `auth_cache_generation.go`.
 
 ## Testing Helpers
 

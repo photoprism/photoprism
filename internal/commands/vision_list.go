@@ -29,7 +29,7 @@ func visionEndpoint(uri, method string) string {
 		return ""
 	}
 
-	if redacted := clean.UriRedacted(uri); redacted != "" {
+	if redacted := clean.UriRedacted(clean.Uri(uri)); redacted != "" {
 		uri = redacted
 	} else {
 		// An unparsable URI is shown as a placeholder: it may still carry credentials.

@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/pkg/dsn"
+	"github.com/photoprism/photoprism/pkg/txt"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/vision"
@@ -136,7 +137,8 @@ func TestConfig_ReportDatabaseSection(t *testing.T) {
 		assert.Equal(t, "db.internal", values["database-host"])
 		assert.Equal(t, "3306", values["database-port"])
 		assert.Equal(t, "app", values["database-user"])
-		assert.Equal(t, strings.Repeat("*", len("secret")), values["database-password"])
+		// The marker is fixed rather than one asterisk per character.
+		assert.Equal(t, txt.Masked, values["database-password"])
 		_, hasDSN := values["database-dsn"]
 		assert.False(t, hasDSN)
 	})
@@ -458,23 +460,40 @@ func TestConfig_ReportURIRedaction(t *testing.T) {
 
 	Features = Pro
 
-	conf := NewConfig(CliTestContext())
-	conf.options.PortalUrl = "https://portal:secret@example.com"
-	conf.options.JWKSUrl = "https://jwks:secret@jwks.example.com/.well-known/jwks.json"
-	conf.options.AdvertiseUrl = "https://cluster:secret@node.example.com"
-	conf.options.HttpsProxy = "https://proxy:secret@proxy.example.com:8443"
-	conf.options.VisionUri = "https://vision:secret@vision.example.com/api/v1/vision"
-	conf.SetThemeUrl("https://theme:secret@cdn.photoprism.app/theme.zip")
+	t.Run("Userinfo", func(t *testing.T) {
+		conf := NewConfig(CliTestContext())
+		conf.options.PortalUrl = "https://portal:secret@example.com"
+		conf.options.JWKSUrl = "https://jwks:secret@jwks.example.com/.well-known/jwks.json"
+		conf.options.AdvertiseUrl = "https://cluster:secret@node.example.com"
+		conf.options.HttpsProxy = "https://proxy:secret@proxy.example.com:8443"
+		conf.options.VisionUri = "https://vision:secret@vision.example.com/api/v1/vision"
+		conf.SetThemeUrl("https://theme:secret@cdn.photoprism.app/theme.zip")
 
-	rows, _ := conf.Report()
-	values := collect(rows)
+		rows, _ := conf.Report()
+		values := collect(rows)
 
-	assert.Equal(t, "https://portal:xxxxx@example.com", values["portal-url"])
-	assert.Equal(t, "https://jwks:xxxxx@jwks.example.com/.well-known/jwks.json", values["jwks-url"])
-	assert.Equal(t, "https://cluster:xxxxx@node.example.com/", values["advertise-url"])
-	assert.Equal(t, "https://proxy:xxxxx@proxy.example.com:8443", values["https-proxy"])
-	assert.Equal(t, "https://vision:xxxxx@vision.example.com/api/v1/vision", values["vision-uri"])
-	assert.Equal(t, "https://theme:xxxxx@cdn.photoprism.app/theme.zip", values["theme-url"])
+		assert.Equal(t, "https://portal:***@example.com", values["portal-url"])
+		assert.Equal(t, "https://jwks:***@jwks.example.com/.well-known/jwks.json", values["jwks-url"])
+		assert.Equal(t, "https://cluster:***@node.example.com/", values["advertise-url"])
+		assert.Equal(t, "https://proxy:***@proxy.example.com:8443", values["https-proxy"])
+		assert.Equal(t, "https://vision:***@vision.example.com/api/v1/vision", values["vision-uri"])
+		assert.Equal(t, "https://theme:***@cdn.photoprism.app/theme.zip", values["theme-url"])
+	})
+	t.Run("QueryParameter", func(t *testing.T) {
+		// A service commonly authenticates through a query parameter rather than the userinfo.
+		conf := NewConfig(CliTestContext())
+		conf.options.HttpsProxy = "https://proxy.example.com:8443/?password=notreal"
+		conf.options.VisionUri = "https://vision.example.com/api/v1/vision?api_key=notreal"
+		conf.SetThemeUrl("https://cdn.photoprism.app/theme.zip?access_token=notreal")
+
+		rows, _ := conf.Report()
+		values := collect(rows)
+
+		for _, name := range []string{"https-proxy", "vision-uri", "theme-url"} {
+			assert.NotContains(t, values[name], "notreal", "%s must not show the credential", name)
+			assert.Contains(t, values[name], "***", "%s must report that one was removed", name)
+		}
+	})
 }
 
 func TestFaceModelStatus(t *testing.T) {
@@ -1030,4 +1049,17 @@ func TestFaceReportValue(t *testing.T) {
 	assert.Equal(t, "sface", faceReportValue("sface"))
 	assert.Equal(t, "sface (default)", faceReportValue("sface", "default"))
 	assert.Equal(t, "sface (default, paused: 12 markers)", faceReportValue("sface", "default", "paused: 12 markers"))
+}
+
+func TestMaskedSecret(t *testing.T) {
+	t.Run("Set", func(t *testing.T) {
+		assert.Equal(t, txt.Masked, maskedSecret("OpenSesame!"))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		// Kept distinguishable, since a report reader needs to see that no value is configured.
+		assert.Equal(t, "", maskedSecret(""))
+	})
+	t.Run("SameForAnyValue", func(t *testing.T) {
+		assert.Equal(t, maskedSecret("short"), maskedSecret("a considerably longer secret value"))
+	})
 }

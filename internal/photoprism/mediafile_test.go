@@ -1,7 +1,9 @@
 package photoprism
 
 import (
+	"errors"
 	"image"
+	iofs "io/fs"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -13,6 +15,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/media"
@@ -3094,5 +3097,30 @@ func TestMediaFile_SetRelatedMain(t *testing.T) {
 		var m *MediaFile
 		m.SetRelatedMain(nil)
 		assert.Nil(t, m.RelatedMain())
+	})
+}
+
+func TestNewMediaFileSkipResolve(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		c := config.TestConfig()
+		fileName := c.SamplesPath() + "/telegram_2020-01-30_09-57-18.jpg"
+		mediaFile, err := NewMediaFileSkipResolve(fileName, fileName)
+
+		assert.NoError(t, err)
+		assert.Equal(t, fileName, mediaFile.FileName())
+	})
+	t.Run("MissingFile", func(t *testing.T) {
+		// The name is carried as the error's path, so that a renderer can remove it.
+		fileName := filepath.Join(t.TempDir(), "missing.jpg")
+		_, err := NewMediaFileSkipResolve(fileName, fileName)
+
+		assert.Error(t, err)
+
+		var pathErr *iofs.PathError
+
+		assert.True(t, errors.As(err, &pathErr), "the error must carry the name as a path")
+		assert.Equal(t, fileName, pathErr.Path)
+		assert.NotContains(t, clean.Error(err), fileName)
+		assert.Contains(t, clean.Error(err), "***")
 	})
 }

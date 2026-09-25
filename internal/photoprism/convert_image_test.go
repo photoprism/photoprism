@@ -863,3 +863,69 @@ func TestConvert_PngConvertCmds(t *testing.T) {
 		assert.Empty(t, cmds)
 	})
 }
+
+// writeImageMagickFixture renders a small test image into dir and returns its path, so format
+// coverage needs no binary media in the repository. A build that cannot write the format cannot
+// read it either, so this fails rather than skips and keeps that result visible.
+func writeImageMagickFixture(t *testing.T, bin, dir, name string) string {
+	t.Helper()
+
+	fileName := filepath.Join(dir, name)
+
+	// #nosec G204 -- arguments are test constants.
+	if out, err := exec.Command(bin, "-size", "64x48", "gradient:red-blue", "-depth", "8", fileName).CombinedOutput(); err != nil {
+		t.Fatalf("ImageMagick cannot write %s: %s", name, strings.TrimSpace(string(out)))
+	}
+
+	return fileName
+}
+
+// TestConvert_JpegConvertCmds_ImageMagickFormats verifies that image formats without a dedicated
+// converter reach the generic ImageMagick branch, and that the command it builds renders them.
+func TestConvert_JpegConvertCmds_ImageMagickFormats(t *testing.T) {
+	cnf := config.TestConfig()
+
+	if !cnf.ImageMagickEnabled() {
+		t.Skip("ImageMagick must be available to render these formats")
+	}
+
+	convert := NewConvert(cnf)
+	bin := cnf.ImageMagickBin()
+
+	cases := []struct {
+		name     string
+		fileName string
+		fileType fs.Type
+	}{
+		{"Cineon", "sample.cin", fs.ImageCineon},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			dir := t.TempDir()
+			srcName := writeImageMagickFixture(t, bin, dir, tc.fileName)
+
+			mediaFile, err := NewMediaFile(srcName)
+			require.NoError(t, err)
+			require.Equal(t, tc.fileType, mediaFile.FileType())
+			require.True(t, mediaFile.IsImage())
+			require.False(t, mediaFile.IsRaw())
+			require.False(t, mediaFile.IsVideo())
+
+			jpegName := filepath.Join(dir, tc.fileName+".jpg")
+			cmds, useMutex, err := convert.JpegConvertCmds(mediaFile, jpegName, "")
+			require.NoError(t, err)
+			require.NotEmpty(t, cmds)
+			assert.False(t, useMutex)
+			assert.Contains(t, cmds[0].String(), bin)
+
+			out, err := cmds[0].Cmd.CombinedOutput()
+			require.NoErrorf(t, err, "%s: %s", cmds[0].String(), strings.TrimSpace(string(out)))
+			require.True(t, fs.FileExistsNotEmpty(jpegName))
+
+			jpegFile, err := NewMediaFile(jpegName)
+			require.NoError(t, err)
+			assert.True(t, jpegFile.IsJpeg())
+		})
+	}
+}

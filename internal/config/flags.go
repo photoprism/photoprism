@@ -7,6 +7,7 @@ import (
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/ai/onnx"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config/ttl"
@@ -273,7 +274,7 @@ var Flags = CliFlags{
 			Usage:   "loads default config values from `FILENAME` if it exists, does not override CLI flags or environment variables",
 			// fs.ConfigFilePath lets existing installations keep a defaults.yml file
 			// while new deployments may drop in defaults.yaml without updating the flag.
-			Value:     fs.ConfigFilePath("/etc/photoprism", "defaults", fs.ExtYml),
+			Value:     fs.ConfigFilePath("/etc/photoprism", fs.ConfigDefaultsName, fs.ExtYml),
 			EnvVars:   EnvVars("DEFAULTS_YAML"),
 			TakesFile: true,
 		}}, {
@@ -287,8 +288,8 @@ var Flags = CliFlags{
 		Flag: &cli.IntFlag{
 			Name:    "originals-limit",
 			Aliases: []string{"mb"},
-			Value:   1000,
-			Usage:   "maximum size of media files in `MB` (1-100000; -1 to disable)",
+			Value:   5000,
+			Usage:   "maximum size of a single media file in `MB` (1-100000; -1 to disable)",
 			EnvVars: EnvVars("ORIGINALS_LIMIT"),
 		}}, {
 		Flag: &cli.IntFlag{
@@ -330,7 +331,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "upload-allow",
-			Usage:   "restricts uploads to these file types (comma-separated list of `EXTENSIONS`; leave blank to allow all)",
+			Usage:   "further restricts web uploads to these file types (comma-separated list of `EXTENSIONS`)",
 			EnvVars: EnvVars("UPLOAD_ALLOW"),
 		}}, {
 		Flag: &cli.BoolFlag{
@@ -340,8 +341,8 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "upload-limit",
-			Value:   1000,
-			Usage:   "maximum total size of uploaded files in `MB` (1-100000; -1 to disable)",
+			Value:   5000,
+			Usage:   "maximum total size of web uploads in `MB` (1-100000; -1 to disable)",
 			EnvVars: EnvVars("UPLOAD_LIMIT"),
 		}}, {
 		Flag: &cli.PathFlag{
@@ -1159,6 +1160,18 @@ var Flags = CliFlags{
 			Value:   ffmpeg.DefaultExclude,
 			EnvVars: EnvVars("FFMPEG_EXCLUDE", "FFMPEG_BLACKLIST"),
 		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "convert-timeout",
+			Usage:   "time in `MINUTES` after which converting a still image, document, or RAW file is given up (-1 to disable)",
+			Value:   DefaultConvertTimeout,
+			EnvVars: EnvVars("CONVERT_TIMEOUT"),
+		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "transcode-timeout",
+			Usage:   "time in `MINUTES` after which transcoding a video is given up (disabled by default)",
+			Value:   DefaultTranscodeTimeout,
+			EnvVars: EnvVars("TRANSCODE_TIMEOUT"),
+		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "exiftool-bin",
 			Usage:   "ExifTool `COMMAND` for extracting metadata",
@@ -1329,6 +1342,12 @@ var Flags = CliFlags{
 			Usage:   "vision worker search `FILTER` applied to scheduled runs (same syntax as photoprism vision run)",
 			Value:   "public:true",
 			EnvVars: EnvVars("VISION_FILTER"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "onnx-provider",
+			Usage:   "execution `PROVIDER` for ONNX inference (" + onnx.ProviderUsageString() + "), falls back to the CPU when unavailable",
+			Value:   onnx.DefaultProvider.String(),
+			EnvVars: EnvVars("ONNX_PROVIDER"),
 		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "detect-nsfw",

@@ -49,20 +49,19 @@ apt upgrade 2>/dev/null
 
 # install dependencies
 apt-get -qq install --no-install-recommends apt-transport-https ca-certificates \
-        curl wget make software-properties-common net-tools openssl ufw
+        curl wget make software-properties-common net-tools openssl gnupg lsb-release ufw
 
-# install docker if needed
+# install docker incl compose plugin if needed
 if ! command -v docker &> /dev/null; then
-  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/trusted.gpg.d/download.docker.com.gpg
-  add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
-  apt-get update
-  apt-get -qq install docker-ce
-fi
+  mkdir -p /etc/apt/keyrings
+  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+  chmod a+r /etc/apt/keyrings/docker.gpg
 
-# install docker-compose if needed
-if ! command -v docker-compose &> /dev/null; then
+  echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+    $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+
   apt-get update
-  apt-get -qq install docker-compose
+  apt-get -qq install docker-ce docker-ce-cli containerd.io docker-compose-plugin
 fi
 
 # Basic ufw firewall setup allowing ssh, http, and https
@@ -97,5 +96,5 @@ chown -Rf photoprism:photoprism /opt/photoprism
 apt-get -y autoclean
 apt-get -y autoremove
 
-# start services using docker-compose
+# start services using docker compose
 (cd /opt/photoprism && make install)

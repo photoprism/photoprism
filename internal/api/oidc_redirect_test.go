@@ -2,6 +2,8 @@ package api
 
 import (
 	"net/http"
+	"os"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -90,6 +92,58 @@ func TestOIDCRedirect(t *testing.T) {
 		assert.NotContains(t, sessionDataKeys, `"session"`)
 		assert.Contains(t, body, `localStorage.getItem(namespacedKey("session")) === "true"`)
 	})
+	t.Run("ClearsEveryKeyTheAppAdopts", func(t *testing.T) {
+		app := gin.New()
+		conf := config.TestConfig()
+		app.LoadHTMLFiles(conf.TemplateFiles()...)
+		app.GET("/oidc-auth-template", func(c *gin.Context) {
+			c.HTML(http.StatusOK, "auth.gohtml", gin.H{
+				"status":       StatusSuccess,
+				"session_id":   "sess1example",
+				"access_token": "token1example",
+				"config":       conf.ClientPublic(),
+			})
+		})
+
+		r := PerformRequest(app, http.MethodGet, "/oidc-auth-template")
+		require.Equal(t, http.StatusOK, r.Code)
+
+		cleared := extractTemplateList(t, r.Body.String(), "const sessionDataKeys = [", "];")
+
+		// Read the names the frontend still adopts from storage, so the two cannot drift apart.
+		for _, key := range adoptedStorageKeys(t) {
+			assert.Contains(t, cleared, `"`+key+`"`, "the callback must clear every key the app adopts")
+		}
+	})
+}
+
+// adoptedStorageKeys returns the unprefixed storage keys session.js migrates onto the namespaced
+// ones, read from the source so this test fails when a key is added there and not to the template.
+// Adoption is a read, so the reads are what it derives from.
+func adoptedStorageKeys(t *testing.T) []string {
+	t.Helper()
+
+	src, err := os.ReadFile("../../frontend/src/common/session.js")
+	require.NoError(t, err)
+
+	matches := regexp.MustCompile(`storage\.getItem\("([A-Za-z0-9_.]+)"\)`).FindAllStringSubmatch(string(src), -1)
+	require.NotEmpty(t, matches, "no adopted storage keys found")
+
+	seen := make(map[string]bool, len(matches))
+	keys := make([]string, 0, len(matches))
+
+	for _, m := range matches {
+		// The namespaced names are built from storageKey at run time, so a literal starting with
+		// "session." is the modern spelling and not one the migration adopts.
+		if strings.HasPrefix(m[1], "session.") || seen[m[1]] {
+			continue
+		}
+
+		seen[m[1]] = true
+		keys = append(keys, m[1])
+	}
+
+	return keys
 }
 
 func TestOIDCRedirectErrorMessage(t *testing.T) {

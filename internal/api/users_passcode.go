@@ -56,7 +56,7 @@ func CreateUserPasscode(router *gin.RouterGroup) {
 
 		// Check user password and abort if invalid.
 		if code, msg, err := checkUserPasscodePassword(c, user, frm.Password); err != nil {
-			event.AuditErr([]string{clientIp, "session %s", authn.Users, user.UserName, authn.ErrPasscodeGenerateFailed.Error(), strings.ToLower(clean.Error(err))}, s.RefID)
+			event.AuditErr([]string{clientIp, "session %s", authn.Users, "%s", authn.ErrPasscodeGenerateFailed.Error(), strings.ToLower(clean.Error(err))}, s.RefID, clean.LogQuote(user.UserName))
 			Abort(c, code, msg)
 			return
 		}
@@ -70,20 +70,20 @@ func CreateUserPasscode(router *gin.RouterGroup) {
 		// Generate and save new passcode key.
 		var passcode *entity.Passcode
 		if key, err := rnd.AuthKey(conf.AppName(), user.UserName); err != nil {
-			event.AuditErr([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.ErrPasscodeGenerateFailed.Error(), clean.Error(err)}, s.RefID)
+			event.AuditErr([]string{ClientIP(c), "session %s", authn.Users, "%s", authn.ErrPasscodeGenerateFailed.Error(), clean.Error(err)}, s.RefID, clean.LogQuote(user.UserName))
 			Abort(c, http.StatusInternalServerError, i18n.ErrUnexpected)
 			return
 		} else if passcode, err = entity.NewPasscode(user.GetUID(), key.String(), rnd.RecoveryCode()); err != nil {
-			event.AuditErr([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.ErrPasscodeCreateFailed.Error(), clean.Error(err)}, s.RefID)
+			event.AuditErr([]string{ClientIP(c), "session %s", authn.Users, "%s", authn.ErrPasscodeCreateFailed.Error(), clean.Error(err)}, s.RefID, clean.LogQuote(user.UserName))
 			Abort(c, http.StatusInternalServerError, i18n.ErrUnexpected)
 			return
 		} else if err = passcode.Save(); err != nil {
-			event.AuditErr([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.ErrPasscodeSaveFailed.Error(), clean.Error(err)}, s.RefID)
+			event.AuditErr([]string{ClientIP(c), "session %s", authn.Users, "%s", authn.ErrPasscodeSaveFailed.Error(), clean.Error(err)}, s.RefID, clean.LogQuote(user.UserName))
 			Abort(c, http.StatusConflict, i18n.ErrSaveFailed)
 			return
 		}
 
-		event.AuditInfo([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.Passcode, status.Created}, s.RefID)
+		event.AuditInfo([]string{ClientIP(c), "session %s", authn.Users, "%s", authn.Passcode, status.Created}, s.RefID, clean.LogQuote(user.UserName))
 
 		header.SetLocation(c)
 		c.JSON(http.StatusCreated, passcode)
@@ -123,11 +123,11 @@ func ConfirmUserPasscode(router *gin.RouterGroup) {
 		valid, passcode, err := user.VerifyPasscode(frm.Passcode())
 
 		if err != nil {
-			event.AuditErr([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.ErrPasscodeVerificationFailed.Error(), clean.Error(err)}, s.RefID)
+			event.AuditErr([]string{ClientIP(c), "session %s", authn.Users, "%s", authn.ErrPasscodeVerificationFailed.Error(), clean.Error(err)}, s.RefID, clean.LogQuote(user.UserName))
 			Abort(c, http.StatusForbidden, i18n.ErrInvalidPasscode)
 			return
 		} else if !valid {
-			event.AuditWarn([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.ErrInvalidPasscode.Error()}, s.RefID)
+			event.AuditWarn([]string{ClientIP(c), "session %s", authn.Users, "%s", authn.ErrInvalidPasscode.Error()}, s.RefID, clean.LogQuote(user.UserName))
 			Abort(c, http.StatusForbidden, i18n.ErrInvalidPasscode)
 			return
 		}
@@ -135,7 +135,7 @@ func ConfirmUserPasscode(router *gin.RouterGroup) {
 		// Return the reserved request rate limit tokens after successful authentication.
 		r.Success()
 
-		event.AuditInfo([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.Passcode, status.Verified}, s.RefID)
+		event.AuditInfo([]string{ClientIP(c), "session %s", authn.Users, "%s", authn.Passcode, status.Verified}, s.RefID, clean.LogQuote(user.UserName))
 
 		// Clear session cache.
 		s.ClearCache()
@@ -167,17 +167,17 @@ func ActivateUserPasscode(router *gin.RouterGroup) {
 		passcode, err := user.ActivatePasscode()
 
 		if err != nil {
-			event.AuditErr([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.ErrPasscodeActivationFailed.Error(), clean.Error(err)}, s.RefID)
+			event.AuditErr([]string{ClientIP(c), "session %s", authn.Users, "%s", authn.ErrPasscodeActivationFailed.Error(), clean.Error(err)}, s.RefID, clean.LogQuote(user.UserName))
 			Abort(c, http.StatusForbidden, i18n.ErrSaveFailed)
 			return
 		}
 
 		// Log event.
-		event.AuditInfo([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.Passcode, status.Activated}, s.RefID)
+		event.AuditInfo([]string{ClientIP(c), "session %s", authn.Users, "%s", authn.Passcode, status.Activated}, s.RefID, clean.LogQuote(user.UserName))
 
 		// Revoke other user sessions after a privilege level change,
 		// except for app passwords and client access tokens.
-		event.AuditInfo([]string{ClientIP(c), "session %s", authn.Users, user.UserName, "revoked %s"}, s.RefID,
+		event.AuditInfo([]string{ClientIP(c), "session %s", authn.Users, "%s", "revoked %s"}, s.RefID, clean.LogQuote(user.UserName),
 			english.Plural(user.RevokeDerivedSessions([]string{s.ID}), authn.Session, authn.Sessions))
 
 		// Clear session cache.
@@ -221,7 +221,7 @@ func DeactivateUserPasscode(router *gin.RouterGroup) {
 
 		// Check user password and abort if invalid.
 		if code, msg, err := checkUserPasscodePassword(c, user, frm.Password); err != nil {
-			event.AuditErr([]string{clientIp, "session %s", authn.Users, user.UserName, authn.ErrPasscodeDeactivationFailed.Error(), strings.ToLower(clean.Error(err))}, s.RefID)
+			event.AuditErr([]string{clientIp, "session %s", authn.Users, "%s", authn.ErrPasscodeDeactivationFailed.Error(), strings.ToLower(clean.Error(err))}, s.RefID, clean.LogQuote(user.UserName))
 			Abort(c, code, msg)
 			return
 		}
@@ -231,12 +231,12 @@ func DeactivateUserPasscode(router *gin.RouterGroup) {
 
 		// Delete passcode.
 		if _, err := user.DeactivatePasscode(); err != nil {
-			event.AuditErr([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.ErrPasscodeDeactivationFailed.Error(), clean.Error(err)}, s.RefID)
+			event.AuditErr([]string{ClientIP(c), "session %s", authn.Users, "%s", authn.ErrPasscodeDeactivationFailed.Error(), clean.Error(err)}, s.RefID, clean.LogQuote(user.UserName))
 			Abort(c, http.StatusNotFound, i18n.ErrNotFound)
 			return
 		}
 
-		event.AuditInfo([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.Passcode, status.Deactivated}, s.RefID)
+		event.AuditInfo([]string{ClientIP(c), "session %s", authn.Users, "%s", authn.Passcode, status.Deactivated}, s.RefID, clean.LogQuote(user.UserName))
 
 		// Clear session cache.
 		s.ClearCache()

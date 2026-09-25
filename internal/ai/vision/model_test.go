@@ -559,7 +559,7 @@ func TestModel_FaceModel(t *testing.T) {
 
 		assert.Contains(t, buffer.String(), "custom-face-net")
 		assert.Contains(t, buffer.String(), "deprecated")
-		assert.Contains(t, buffer.String(), "FACE_MODEL")
+		assert.Contains(t, buffer.String(), "PHOTOPRISM_FACE_MODEL")
 	})
 	t.Run("NilModel", func(t *testing.T) {
 		assert.Nil(t, (*Model)(nil).FaceModel())

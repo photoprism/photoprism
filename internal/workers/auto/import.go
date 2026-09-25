@@ -5,6 +5,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/dustin/go-humanize/english"
+
 	"github.com/photoprism/photoprism/internal/api"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
@@ -79,7 +81,7 @@ func Import() error {
 
 	imported := imp.Start(opt)
 
-	if len(imported) == 0 {
+	if imported.Processed() == 0 {
 		return nil
 	}
 
@@ -89,19 +91,14 @@ func Import() error {
 		log.Warnf("moments: %s", err)
 	}
 
-	elapsed := int(time.Since(start).Seconds())
+	elapsed := time.Since(start)
+	seconds := int(elapsed.Seconds())
 
-	event.SuccessMsg(i18n.MsgImportCompletedIn, elapsed)
+	log.Infof("library: imported %s in %s", english.Plural(imported.Processed(), "file", "files"), elapsed)
 
-	eventData := event.Data{
-		"uid":     opt.UID,
-		"action":  opt.Action,
-		"path":    path,
-		"seconds": elapsed,
-	}
+	event.PublishSuccessMsg(i18n.MsgImportCompletedIn, seconds)
 
-	event.Publish("import.completed", eventData)
-	event.Publish("index.completed", eventData)
+	event.PublishCompleted([]string{"import.completed", "index.completed"}, opt.UID, opt.Action, seconds)
 
 	api.UpdateClientConfig()
 

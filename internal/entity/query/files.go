@@ -10,7 +10,9 @@ import (
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
-// FilesByPath returns a slice of files in a given originals folder.
+// FilesByPath returns a slice of files in a given originals folder. The files carry no markers:
+// a folder listing names files rather than people, and its response is cached across sessions, so
+// a marker list resolved for whoever asked first must not be what the next session reads.
 func FilesByPath(limit, offset int, root, dir string, public bool) (files entity.Files, err error) {
 	dir = strings.TrimPrefix(dir, "/")
 
@@ -24,9 +26,15 @@ func FilesByPath(limit, offset int, root, dir string, public bool) (files entity
 		stmt = stmt.Where("photos.photo_private = FALSE")
 	}
 
-	err = stmt.Order("files.file_name").
+	if err = stmt.Order("files.file_name").
 		Limit(limit).Offset(offset).
-		Find(&files).Error
+		Find(&files).Error; err != nil {
+		return files, err
+	}
+
+	for i := range files {
+		files[i].OmitMarkers = true
+	}
 
 	return files, err
 }
@@ -60,6 +68,36 @@ func FilesByUID(u []string, limit int, offset int) (files entity.Files, err erro
 
 	if err = Db().Where("(photo_uid IN (?) AND file_primary = TRUE) OR file_uid IN (?)", u, u).Preload("Photo").Limit(limit).Offset(offset).Find(&files).Error; err != nil {
 		return files, err
+	}
+
+	return files, nil
+}
+
+// FilesByPhotoIDs finds the files of the pictures with the given ids, in batches the database accepts,
+// and returns their picture id, root, and name.
+func FilesByPhotoIDs(ids []uint) (files entity.Files, err error) {
+	unique := make([]uint, 0, len(ids))
+	seen := make(map[uint]bool, len(ids))
+
+	for _, id := range ids {
+		if id > 0 && !seen[id] {
+			seen[id] = true
+			unique = append(unique, id)
+		}
+	}
+
+	batchSize := BatchSize()
+
+	for i := 0; i < len(unique); i += batchSize {
+		var batch entity.Files
+
+		if err = Db().Select("photo_id, file_root, file_name").
+			Where("photo_id IN (?)", unique[i:min(i+batchSize, len(unique))]).
+			Find(&batch).Error; err != nil {
+			return files, err
+		}
+
+		files = append(files, batch...)
 	}
 
 	return files, nil

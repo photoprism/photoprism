@@ -157,7 +157,7 @@ services:
       PHOTOPRISM_DATABASE_SERVER: "mariadb:3306"       # MariaDB database server (hostname:port)
       PHOTOPRISM_DATABASE_NAME: "photoprism"           # MariaDB database schema name
       PHOTOPRISM_DATABASE_USER: "photoprism"           # MariaDB database user name
-      PHOTOPRISM_DATABASE_PASSWORD: "_admin_password_" # MariaDB database user password
+      PHOTOPRISM_DATABASE_PASSWORD: "_database_password_" # MariaDB database user password
       ## Run/install on first startup, see https://github.com/photoprism/photoprism/blob/develop/scripts/dist/Makefile:
       PHOTOPRISM_INIT: "https tensorflow"              # common options: update https tensorflow tensorflow-gpu intel gpu davfs yt-dlp
       ## Video Transcoding (https://docs.photoprism.app/getting-started/advanced/transcoding/):
@@ -209,8 +209,8 @@ services:
       MARIADB_INITDB_SKIP_TZINFO: "1"
       MARIADB_DATABASE: "photoprism"
       MARIADB_USER: "photoprism"
-      MARIADB_PASSWORD: "_admin_password_"
-      MARIADB_ROOT_PASSWORD: "_admin_password_"
+      MARIADB_PASSWORD: "_database_password_"
+      MARIADB_ROOT_PASSWORD: "_database_root_password_"
 
   ## Watchtower upgrades services automatically (optional)
   ## see https://docs.photoprism.app/getting-started/updates/#watchtower

@@ -31,6 +31,12 @@ func RawExif(fileName string, fileFormat fs.Type, bruteForce bool) (rawExif []by
 	// Sanitized and shortened file name for logs.
 	logName := clean.Log(filepath.Base(fileName))
 
+	// The parsers below load the whole file before they look for the Exif block, so the size
+	// must be within the supported range before any of them is given the name.
+	if _, err = ExifFileSize(fileName); err != nil {
+		return rawExif, fmt.Errorf("%w in %s", err, logName)
+	}
+
 	// Try Exif parser for specific media file format first.
 	switch fileFormat {
 	case fs.ImageJpeg:

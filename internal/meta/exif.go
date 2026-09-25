@@ -72,6 +72,13 @@ func (data *Data) Exif(fileName string, fileFormat fs.Type, bruteForce bool) (er
 	opt := exif.ScanOptions{}
 	entries, _, err := exif.GetFlatExifData(rawExif, &opt)
 
+	// Retain at most ExifMaxTags values from one file, so that the map and the per-tag work
+	// below stay bounded. Entries are in IFD order, so the ones kept are the primary image's.
+	if len(entries) > ExifMaxTags {
+		log.Warnf("metadata: %s declares more than %d tags, reading the first %d", logName, ExifMaxTags, ExifMaxTags)
+		entries = entries[:ExifMaxTags]
+	}
+
 	// Create large enough map for values.
 	if data.exif == nil {
 		data.exif = make(map[string]string, len(entries))

@@ -1,6 +1,9 @@
 package event
 
 import (
+	"net"
+	"strings"
+
 	"github.com/sirupsen/logrus"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
@@ -34,10 +37,26 @@ func Audit(level logrus.Level, ev []string, args ...any) {
 			Data{
 				"time":    TimeStamp(),
 				"level":   level.String(),
+				"ip":      AuditIP(ev),
 				"message": message,
 			},
 		)
 	}
+}
+
+// AuditIP returns the client address of an audit event, which the Who-What-Outcome convention puts
+// in its first segment. A segment that is not an address yields an empty string, so an event with no
+// peer of its own reports none.
+func AuditIP(ev []string) string {
+	if len(ev) == 0 {
+		return ""
+	}
+
+	if ip := net.ParseIP(strings.TrimSpace(ev[0])); ip != nil {
+		return ip.String()
+	}
+
+	return ""
 }
 
 // AuditTrace records an audit entry at trace level.

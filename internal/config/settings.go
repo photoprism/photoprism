@@ -4,6 +4,8 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
@@ -24,14 +26,14 @@ func (c *Config) initSettings() {
 
 	// Make sure that the config path exists.
 	if err := fs.MkdirAll(configPath); err != nil {
-		log.Errorf("settings: %s", createError(configPath, err))
+		event.SystemError([]string{"settings", "%s"}, clean.ErrorFull(createError(configPath, err)))
 	}
 
 	// Load values from an existing YAML file or create it otherwise.
 	if err := c.settings.Load(defaultsFile); err == nil {
 		log.Debugf("settings: loaded from %s", defaultsFile)
 	} else if err = c.settings.Save(settingsFile); err != nil {
-		log.Errorf("settings: could not create %s (%s)", settingsFile, err)
+		event.SystemError([]string{"settings", "create %s", "%s"}, clean.Log(settingsFile), clean.ErrorFull(err))
 	} else {
 		log.Debugf("settings: saved to %s ", settingsFile)
 	}

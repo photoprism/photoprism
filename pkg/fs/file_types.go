@@ -29,6 +29,7 @@ const (
 	ImageTiff   Type = "tiff"  // TIFF Image
 	ImagePsd    Type = "psd"   // Adobe Photoshop
 	ImageBmp    Type = "bmp"   // BMP Image
+	ImageCineon Type = "cin"   // Kodak Cineon Image, the log-encoded predecessor of SMPTE DPX
 	ImageMPO    Type = "mpo"   // Stereoscopic Image that consists of two JPG images that are combined into one 3D image
 	ImageAvif   Type = "avif"  // AV1 Image File (AVIF)
 	ImageAvifS  Type = "avifs" // AV1 Image Sequence (Animated AVIF)

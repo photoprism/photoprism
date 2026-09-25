@@ -125,6 +125,7 @@ func ChangeFileOrientation(router *gin.RouterGroup) {
 
 		PublishPhotoEvent(StatusUpdated, m.PhotoUID)
 
+		p.RedactForSession(s)
 		c.JSON(http.StatusOK, p)
 	})
 }

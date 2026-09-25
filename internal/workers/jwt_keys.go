@@ -1,9 +1,6 @@
 package workers
 
 import (
-	"errors"
-	"fmt"
-	iofs "io/fs"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/auth/jwt"
@@ -46,7 +43,7 @@ func rotateJWTKeys(manager *jwt.Manager, days int) {
 	if !manager.NeedsRotation(time.Duration(days) * 24 * time.Hour) {
 		// Pick up a key whose retirement did not reach disk on an earlier run.
 		if n, err := manager.RetireSuperseded(); err != nil {
-			event.SystemError([]string{"jwt", "retire superseded signing key", "%s"}, keyErrorText(err))
+			event.SystemError([]string{"jwt", "retire superseded signing key", "%s"}, clean.ErrorFull(err))
 		} else if n > 0 {
 			event.SystemInfo([]string{"jwt", "retired %d superseded signing keys"}, n)
 		}
@@ -60,22 +57,10 @@ func rotateJWTKeys(manager *jwt.Manager, days int) {
 	// replacement succeeded and only the retirement is outstanding.
 	switch {
 	case err != nil && key == nil:
-		event.SystemError([]string{"jwt", "rotate signing key", "%s"}, keyErrorText(err))
+		event.SystemError([]string{"jwt", "rotate signing key", "%s"}, clean.ErrorFull(err))
 	case err != nil:
-		event.SystemWarn([]string{"jwt", "rotated signing key, retirement pending", "%s"}, keyErrorText(err))
+		event.SystemWarn([]string{"jwt", "rotated signing key, retirement pending", "%s"}, clean.ErrorFull(err))
 	default:
 		event.SystemInfo([]string{"jwt", "rotated signing key after %d days", "new key id %s"}, days, clean.Log(key.Kid))
 	}
-}
-
-// keyErrorText renders a key I/O error without the file path it names, since the system
-// channel is delivered to the web UI.
-func keyErrorText(err error) string {
-	var pathErr *iofs.PathError
-
-	if errors.As(err, &pathErr) {
-		return clean.Error(fmt.Errorf("%s: %w", pathErr.Op, pathErr.Err))
-	}
-
-	return clean.Error(err)
 }

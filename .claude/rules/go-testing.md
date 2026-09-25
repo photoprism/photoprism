@@ -19,6 +19,23 @@
 - Thumbnails (libvips, moderate): `go test ./internal/thumb/... -count=1`
 - FFmpeg builders (moderate): `go test ./internal/ffmpeg -run 'Remux|Transcode|Extract' -count=1`
 
+### LDAP Runs (Pro & Portal Only)
+
+The development environment ships a directory: `compose.yaml` defines a `dummy-ldap` service
+(glauth) seeded from `.ldap.cfg` in the repo root, reachable at `dummy-ldap:389` inside the
+compose network and `127.0.0.1:389` from the host. Every account in it has the password
+`photoprism`, and group membership maps to a role via `PHOTOPRISM_LDAP_ROLE_DN` - `sven`,
+`laura` and `max` are admins, `mona` is a manager, `jan` is a viewer, and none of the names
+collides with `internal/entity/auth_user_fixtures.go`. Extend `.ldap.cfg` when a case needs a
+shape it does not cover.
+
+LDAP exists only in Pro and Portal, so these tests belong in `pro/internal/auth`,
+`portal/internal/auth` and their `ldap` subpackages. Gate on dialing the service and skip when
+it is absent rather than on an env var - `ldapTestUri` in `pro/internal/auth/auth_test.go` is
+the pattern, and its skip message names the service so the next reader starts it. `Auth`
+resolves its config through `get.Config()` behind a `sync.Once`, so a test needs
+`get.SetConfig(c)` in `TestMain` and must restore `conf` and `opt` if it overrides them.
+
 ### MariaDB Runs
 
 `make test-mariadb` runs the backend suite against MariaDB instead of SQLite, and each edition has the same target (`make -C pro test-mariadb`, likewise `plus` and `portal`). Each package gets its own `acceptance_<pkg>_<hash>` database via `entity.TestDbDSN`, mirroring the file-per-package isolation SQLite provides; `make reset-acceptance` drops them. Driver-dependent expectations (sort order, `LIKE` case sensitivity on `VARBINARY`, generated IDs, `RowsAffected`) are documented in `internal/entity/README.md`.
@@ -48,6 +65,7 @@ A test that passes alone and in the full package but fails under `-run` subsets 
 
 - Assert only on state the test itself created, and delete anything it derives from a shared cache first. The ExifTool export cache (`ExifToolJsonName`) is keyed by file hash, so any test importing the same sample poisons a later `NeedsExifToolJson` assertion until an unrelated indexing test happens to remove it.
 - When a test fails only in a subset, bisect with `-run 'A|B'` rather than reordering: the pair that reproduces it names both the polluter and the victim.
+- A test that overrides a package-level var **captures the old value and restores it in `t.Cleanup`**, rather than reassigning a literal at the end of the body. A trailing reassignment is skipped by every way out except the last line - a failed `require`, a `t.Fatal`, a panic - and a hard-coded literal silently stops being the default it was copied from. `restoreSizeLimits` in `internal/thumb/sizes_test.go` is the pattern for a group of related vars.
 
 ### Fixtures
 

@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestUIDs_String(t *testing.T) {
@@ -125,4 +126,40 @@ func TestSessionData_SharedUIDs(t *testing.T) {
 		Tokens: []string{"5jxf3jfn2k"}}
 	assert.Equal(t, "fs6sg6bw45bn0004", data2.SharedUIDs()[0])
 
+}
+
+func TestSessionData_RedeemedLinks(t *testing.T) {
+	t.Run("Redeemable", func(t *testing.T) {
+		link := newTestLink(t, 0)
+		data := &SessionData{Tokens: []string{link.LinkToken}}
+
+		require.Len(t, data.RedeemedLinks(link.LinkToken), 1)
+	})
+	t.Run("ReachedViewLimitWithoutTheLink", func(t *testing.T) {
+		link := newTestLink(t, 1)
+		link.Redeem()
+
+		data := &SessionData{Tokens: []string{link.LinkToken}}
+
+		assert.Empty(t, data.RedeemedLinks(link.LinkToken))
+	})
+	t.Run("ReachedViewLimitWithTheLink", func(t *testing.T) {
+		link := newTestLink(t, 1)
+		link.Redeem()
+
+		data := &SessionData{Tokens: []string{link.LinkToken}, Links: UIDs{link.LinkUID}}
+
+		require.Len(t, data.RedeemedLinks(link.LinkToken), 1)
+	})
+	t.Run("Expired", func(t *testing.T) {
+		link := newTestLink(t, 0)
+		expireTestLink(t, link)
+
+		data := &SessionData{Tokens: []string{link.LinkToken}, Links: UIDs{link.LinkUID}}
+
+		assert.Empty(t, data.RedeemedLinks(link.LinkToken))
+	})
+	t.Run("UnknownToken", func(t *testing.T) {
+		assert.Empty(t, (&SessionData{}).RedeemedLinks("neverissued"))
+	})
 }

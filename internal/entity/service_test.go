@@ -100,6 +100,37 @@ func TestService_SaveForm(t *testing.T) {
 		assert.Equal(t, "NewOwner", model.AccOwner)
 		assert.Equal(t, "new.com", model.AccURL)
 	})
+	t.Run("SyncYaml", func(t *testing.T) {
+		stored := func(t *testing.T, id uint) bool {
+			var m Service
+			if err := Db().First(&m, id).Error; err != nil {
+				t.Fatal(err)
+			}
+			return m.SyncYaml
+		}
+		for _, enabled := range []bool{false, true} {
+			model, err := AddService(form.Service{AccName: "Sync YAML", AccURL: "test.com", AccType: "webdav", SyncYaml: enabled})
+			if err != nil {
+				t.Fatal(err)
+			}
+			t.Cleanup(func() { UnscopedDb().Unscoped().Delete(model) })
+			assert.Equal(t, enabled, model.SyncYaml)
+			assert.Equal(t, enabled, stored(t, model.ID))
+			if err = model.SaveForm(form.Service{AccName: "Sync YAML", AccURL: "test.com", AccType: "webdav", SyncYaml: !enabled}); err != nil {
+				t.Fatal(err)
+			}
+			assert.Equal(t, !enabled, model.SyncYaml)
+			assert.Equal(t, !enabled, stored(t, model.ID))
+		}
+	})
+	t.Run("SyncYamlColumnDefault", func(t *testing.T) {
+		model := &Service{AccName: "Sync YAML Default", AccType: "webdav"}
+		if err := model.Create(); err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() { UnscopedDb().Unscoped().Delete(model) })
+		assert.True(t, model.SyncYaml)
+	})
 }
 
 func TestService_Delete(t *testing.T) {
@@ -343,5 +374,41 @@ func TestService_Create(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+	})
+}
+
+func TestServiceError(t *testing.T) {
+	t.Run("Nil", func(t *testing.T) {
+		assert.Equal(t, "", ServiceError(nil))
+	})
+	t.Run("KeepsTheStatus", func(t *testing.T) {
+		// The status and reason are what an operator acts on, so they must survive.
+		s := ServiceError(errors.New("507 Insufficient Storage: quota exceeded"))
+		assert.Contains(t, s, "507")
+		assert.Contains(t, s, "Insufficient Storage")
+		assert.Contains(t, s, "quota exceeded")
+	})
+	t.Run("RemoteBodyBytesDoNotSurvive", func(t *testing.T) {
+		// The stored value must stay one line, in one field, whatever the cause contains.
+		body := "500 Internal Server Error: \x00\x01\x02\x7f\x1b[31m\nsync: › admin › granted‮\a"
+		s := ServiceError(errors.New(body))
+		assert.NotContains(t, s, "\x00")
+		assert.NotContains(t, s, "\x1b")
+		assert.NotContains(t, s, "\a")
+		assert.NotContains(t, s, "\n", "a remote body must not add a line")
+		assert.NotContains(t, s, "‮", "a remote body must not carry a bidi override")
+		assert.NotContains(t, s, "›", "a remote body must not add a field separator")
+		assert.True(t, utf8.ValidString(s), "the stored value must be valid UTF-8")
+	})
+	t.Run("CredentialsDoNotSurvive", func(t *testing.T) {
+		//nolint:gosec // G101: Example credential in a fixture URL, which is the subject of the test.
+		err := errors.New("PROPFIND https://sync-user:notreal@dav.example.com/photos: timeout")
+		assert.NotContains(t, ServiceError(err), "notreal")
+	})
+	t.Run("ClipsWellInsideTheColumn", func(t *testing.T) {
+		// AccError is VARBINARY(512), and the status must not be crowded out of it.
+		s := ServiceError(errors.New("503 Service Unavailable: " + strings.Repeat("a", 4096)))
+		assert.LessOrEqual(t, len(s), txt.ClipError)
+		assert.Contains(t, s, "503")
 	})
 }

@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestEmbedding_Dist(t *testing.T) {
@@ -152,6 +153,25 @@ func TestNormalizeEmbedding(t *testing.T) {
 		normalizeEmbedding(e)
 		assert.Equal(t, Embedding{0.6, 0.8}, e)
 	})
+	t.Run("Idempotent", func(t *testing.T) {
+		// A vector whose normalized magnitude is not exactly 1, so that a second pass would
+		// change the bits unless the tolerance check returns before the write loop. Compared
+		// as raw bits, since the values differ by far less than any delta would catch.
+		e := Embedding{0.1, 0.2, 0.3, 0.4}
+		normalizeEmbedding(e)
+		require.NotEqual(t, 1.0, e.Magnitude(), "this case needs a vector that is not exactly unit")
+
+		first := make([]uint64, len(e))
+		for i, v := range e {
+			first[i] = math.Float64bits(v)
+		}
+
+		normalizeEmbedding(e)
+
+		for i, v := range e {
+			assert.Equalf(t, first[i], math.Float64bits(v), "component %d changed on the second pass", i)
+		}
+	})
 	t.Run("Zero", func(t *testing.T) {
 		e := Embedding{0, 0}
 		normalizeEmbedding(e)
@@ -159,6 +179,75 @@ func TestNormalizeEmbedding(t *testing.T) {
 	})
 	t.Run("Empty", func(t *testing.T) {
 		assert.NotPanics(t, func() { normalizeEmbedding(Embedding{}) })
+	})
+	t.Run("TinyComponents", func(t *testing.T) {
+		// Squaring these rounds to zero, which would report no magnitude and leave the vector
+		// at a length no configured distance is stated for.
+		e := Embedding{3e-200, 4e-200}
+		normalizeEmbedding(e)
+		assert.InDelta(t, 0.6, e[0], 1e-9)
+		assert.InDelta(t, 0.8, e[1], 1e-9)
+		assert.True(t, e.Unit())
+	})
+	t.Run("HugeComponents", func(t *testing.T) {
+		// Squaring these reaches infinity, and scaling by its inverse would zero the vector.
+		e := Embedding{3e200, 4e200}
+		normalizeEmbedding(e)
+		assert.InDelta(t, 0.6, e[0], 1e-9)
+		assert.InDelta(t, 0.8, e[1], 1e-9)
+		assert.False(t, e.Zero())
+		assert.True(t, e.Unit())
+	})
+	t.Run("NonFinite", func(t *testing.T) {
+		e := Embedding{math.Inf(1), 1}
+		normalizeEmbedding(e)
+		assert.True(t, math.IsInf(e[0], 1))
+		assert.False(t, e.Unit())
+	})
+}
+
+func TestEmbedding_Magnitude(t *testing.T) {
+	t.Run("Unit", func(t *testing.T) {
+		assert.InDelta(t, 1.0, Embedding{0.6, 0.8}.Magnitude(), 1e-12)
+	})
+	t.Run("Plain", func(t *testing.T) {
+		assert.InDelta(t, 5.0, Embedding{3, 4}.Magnitude(), 1e-12)
+	})
+	t.Run("Tiny", func(t *testing.T) {
+		assert.InDelta(t, 5e-200, Embedding{3e-200, 4e-200}.Magnitude(), 1e-210)
+	})
+	t.Run("Huge", func(t *testing.T) {
+		assert.InDelta(t, 5e200, Embedding{3e200, 4e200}.Magnitude(), 1e190)
+	})
+	t.Run("Zero", func(t *testing.T) {
+		assert.Equal(t, 0.0, Embedding{0, 0}.Magnitude())
+	})
+	t.Run("NaN", func(t *testing.T) {
+		assert.True(t, math.IsNaN(Embedding{math.NaN(), 1}.Magnitude()))
+	})
+	t.Run("Inf", func(t *testing.T) {
+		assert.True(t, math.IsInf(Embedding{math.Inf(1), 1}.Magnitude(), 1))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, 0.0, Embedding{}.Magnitude())
+	})
+}
+
+func TestEmbedding_Unit(t *testing.T) {
+	t.Run("Unit", func(t *testing.T) {
+		assert.True(t, Embedding{0.6, 0.8}.Unit())
+	})
+	t.Run("TooShort", func(t *testing.T) {
+		assert.False(t, Embedding{0.06, 0.08}.Unit())
+	})
+	t.Run("TooLong", func(t *testing.T) {
+		assert.False(t, Embedding{6, 8}.Unit())
+	})
+	t.Run("Zero", func(t *testing.T) {
+		assert.False(t, Embedding{0, 0}.Unit())
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.False(t, Embedding{}.Unit())
 	})
 }
 
