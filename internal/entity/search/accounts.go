@@ -10,7 +10,7 @@ func Accounts(frm form.SearchServices) (result entity.Services, err error) {
 	s := Db().Where(&entity.Service{})
 
 	if frm.Query != "" {
-		s = s.Where("acc_name LIKE ?", SqlParam(frm.Query, "%", "%"))
+		s = s.Where(likeCond("acc_name"), SqlParam(frm.Query, "%", "%"))
 	}
 
 	if frm.Share {

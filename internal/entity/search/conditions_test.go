@@ -18,19 +18,23 @@ import (
 func TestPathLike(t *testing.T) {
 	t.Run("MySQLCaseInsensitiveCollation", func(t *testing.T) {
 		// MySQL compares VARBINARY byte-exact, so the path is converted to a case-insensitive collation.
-		assert.Equal(t, "CONVERT(albums.album_path USING utf8mb4) COLLATE utf8mb4_general_ci LIKE ?", PathLike(dsn.DriverMySQL, "albums.album_path"))
+		assert.Equal(t, "CONVERT(albums.album_path USING utf8mb4) COLLATE utf8mb4_general_ci LIKE ? ESCAPE '!'", PathLike(dsn.DriverMySQL, "albums.album_path"))
 	})
 	t.Run("SQLitePlainLike", func(t *testing.T) {
 		// SQLite LIKE is already ASCII case-insensitive, so a plain LIKE suffices.
-		assert.Equal(t, "albums.album_path LIKE ?", PathLike(dsn.DriverSQLite3, "albums.album_path"))
+		assert.Equal(t, "albums.album_path LIKE ? ESCAPE '!'", PathLike(dsn.DriverSQLite3, "albums.album_path"))
 	})
 	t.Run("UnknownDialectFallsBackToPlainLike", func(t *testing.T) {
 		// A future or unknown dialect must not error; it falls back to a plain LIKE.
-		assert.Equal(t, "albums.album_path LIKE ?", PathLike(dsn.DriverPostgres, "albums.album_path"))
+		assert.Equal(t, "albums.album_path LIKE ? ESCAPE '!'", PathLike(dsn.DriverPostgres, "albums.album_path"))
 	})
 }
 
 func TestSqlParam(t *testing.T) {
+	t.Run("Literal", func(t *testing.T) {
+		assert.Equal(t, "a!_b%", SqlParam(" a_b%", "", "%"))
+		assert.Equal(t, "%a!!b%", SqlParam("a!b", "%", "%"))
+	})
 	t.Run("Empty", func(t *testing.T) {
 		assert.Equal(t, "", SqlParam("", "", ""))
 	})
@@ -56,37 +60,37 @@ func TestSqlParam(t *testing.T) {
 func TestLikeAny(t *testing.T) {
 	t.Run("AndOrSearch", func(t *testing.T) {
 		w, v := LikeAny("k.keyword", "table spoon & usa | img json", true, false)
-		assert.Equal(t, []string{"k.keyword LIKE ? OR k.keyword LIKE ?", "k.keyword LIKE ? OR k.keyword LIKE ?"}, w)
+		assert.Equal(t, []string{"k.keyword LIKE ? ESCAPE '!' OR k.keyword LIKE ? ESCAPE '!'", "k.keyword LIKE ? ESCAPE '!' OR k.keyword LIKE ? ESCAPE '!'"}, w)
 		assert.Equal(t, [][]any{{"spoon%", "table%"}, {"json%", "usa"}}, v)
 	})
 	t.Run("ExactAndOrSearch", func(t *testing.T) {
 		w, v := LikeAny("k.keyword", "table spoon & usa | img json", true, true)
-		assert.Equal(t, []string{"k.keyword LIKE ? OR k.keyword LIKE ?", "k.keyword LIKE ? OR k.keyword LIKE ?"}, w)
+		assert.Equal(t, []string{"k.keyword LIKE ? ESCAPE '!' OR k.keyword LIKE ? ESCAPE '!'", "k.keyword LIKE ? ESCAPE '!' OR k.keyword LIKE ? ESCAPE '!'"}, w)
 		assert.Equal(t, [][]any{{"spoon", "table"}, {"json", "usa"}}, v)
 	})
 	t.Run("AndOrSearchEn", func(t *testing.T) {
 		w, v := LikeAny("k.keyword", "table spoon and usa or img json", true, false)
-		assert.Equal(t, []string{"k.keyword LIKE ? OR k.keyword LIKE ?", "k.keyword LIKE ? OR k.keyword LIKE ?"}, w)
+		assert.Equal(t, []string{"k.keyword LIKE ? ESCAPE '!' OR k.keyword LIKE ? ESCAPE '!'", "k.keyword LIKE ? ESCAPE '!' OR k.keyword LIKE ? ESCAPE '!'"}, w)
 		assert.Equal(t, [][]any{{"spoon%", "table%"}, {"json%", "usa"}}, v)
 	})
 	t.Run("TableSpoonUsaImgJson", func(t *testing.T) {
 		w, v := LikeAny("k.keyword", "table spoon usa img json", true, false)
-		assert.Equal(t, []string{"k.keyword LIKE ? OR k.keyword LIKE ? OR k.keyword LIKE ? OR k.keyword LIKE ?"}, w)
+		assert.Equal(t, []string{"k.keyword LIKE ? ESCAPE '!' OR k.keyword LIKE ? ESCAPE '!' OR k.keyword LIKE ? ESCAPE '!' OR k.keyword LIKE ? ESCAPE '!'"}, w)
 		assert.Equal(t, [][]any{{"json%", "spoon%", "table%", "usa"}}, v)
 	})
 	t.Run("CatDog", func(t *testing.T) {
 		w, v := LikeAny("k.keyword", "cat dog", true, false)
-		assert.Equal(t, []string{"k.keyword LIKE ? OR k.keyword LIKE ?"}, w)
+		assert.Equal(t, []string{"k.keyword LIKE ? ESCAPE '!' OR k.keyword LIKE ? ESCAPE '!'"}, w)
 		assert.Equal(t, [][]any{{"cat", "dog"}}, v)
 	})
 	t.Run("CatsDogs", func(t *testing.T) {
 		w, v := LikeAny("k.keyword", "cats dogs", true, false)
-		assert.Equal(t, []string{"k.keyword LIKE ? OR k.keyword LIKE ? OR k.keyword LIKE ? OR k.keyword LIKE ?"}, w)
+		assert.Equal(t, []string{"k.keyword LIKE ? ESCAPE '!' OR k.keyword LIKE ? ESCAPE '!' OR k.keyword LIKE ? ESCAPE '!' OR k.keyword LIKE ? ESCAPE '!'"}, w)
 		assert.Equal(t, [][]any{{"cats%", "cat", "dogs%", "dog"}}, v)
 	})
 	t.Run("Spoon", func(t *testing.T) {
 		w, v := LikeAny("k.keyword", "spoon", true, false)
-		assert.Equal(t, []string{"k.keyword LIKE ?"}, w)
+		assert.Equal(t, []string{"k.keyword LIKE ? ESCAPE '!'"}, w)
 		assert.Equal(t, [][]any{{"spoon%"}}, v)
 	})
 	t.Run("Img", func(t *testing.T) {
@@ -109,12 +113,12 @@ func TestLikeAny(t *testing.T) {
 func TestLikeAnyKeyword(t *testing.T) {
 	t.Run("AndOrSearch", func(t *testing.T) {
 		w, v := LikeAnyKeyword("k.keyword", "table spoon & usa | img json")
-		assert.Equal(t, []string{"k.keyword LIKE ? OR k.keyword LIKE ?", "k.keyword LIKE ? OR k.keyword LIKE ?"}, w)
+		assert.Equal(t, []string{"k.keyword LIKE ? ESCAPE '!' OR k.keyword LIKE ? ESCAPE '!'", "k.keyword LIKE ? ESCAPE '!' OR k.keyword LIKE ? ESCAPE '!'"}, w)
 		assert.Equal(t, [][]any{{"spoon%", "table%"}, {"json%", "usa"}}, v)
 	})
 	t.Run("AndOrSearchEn", func(t *testing.T) {
 		w, v := LikeAnyKeyword("k.keyword", "table spoon and usa or img json")
-		assert.Equal(t, []string{"k.keyword LIKE ? OR k.keyword LIKE ?", "k.keyword LIKE ? OR k.keyword LIKE ?"}, w)
+		assert.Equal(t, []string{"k.keyword LIKE ? ESCAPE '!' OR k.keyword LIKE ? ESCAPE '!'", "k.keyword LIKE ? ESCAPE '!' OR k.keyword LIKE ? ESCAPE '!'"}, w)
 		assert.Equal(t, [][]any{{"spoon%", "table%"}, {"json%", "usa"}}, v)
 	})
 }
@@ -122,19 +126,19 @@ func TestLikeAnyKeyword(t *testing.T) {
 func TestLikeAnyWord(t *testing.T) {
 	t.Run("SearchAndOr", func(t *testing.T) {
 		w, v := LikeAnyWord("k.keyword", "table spoon & usa | img json")
-		assert.Equal(t, []string{"k.keyword LIKE ? OR k.keyword LIKE ?", "k.keyword LIKE ? OR k.keyword LIKE ? OR k.keyword LIKE ?"}, w)
+		assert.Equal(t, []string{"k.keyword LIKE ? ESCAPE '!' OR k.keyword LIKE ? ESCAPE '!'", "k.keyword LIKE ? ESCAPE '!' OR k.keyword LIKE ? ESCAPE '!' OR k.keyword LIKE ? ESCAPE '!'"}, w)
 		assert.Equal(t, [][]any{{"spoon%", "table%"}, {"img%", "json%", "usa%"}}, v)
 	})
 	t.Run("SearchAndOrEnglish", func(t *testing.T) {
 		w, v := LikeAnyWord("k.keyword", "table spoon and usa or img json")
-		assert.Equal(t, []string{"k.keyword LIKE ? OR k.keyword LIKE ?", "k.keyword LIKE ? OR k.keyword LIKE ? OR k.keyword LIKE ?"}, w)
+		assert.Equal(t, []string{"k.keyword LIKE ? ESCAPE '!' OR k.keyword LIKE ? ESCAPE '!'", "k.keyword LIKE ? ESCAPE '!' OR k.keyword LIKE ? ESCAPE '!' OR k.keyword LIKE ? ESCAPE '!'"}, w)
 		assert.Equal(t, [][]any{{"spoon%", "table%"}, {"img%", "json%", "usa%"}}, v)
 	})
 	t.Run("EscapeSql", func(t *testing.T) {
 		// Quote characters survive in the bound value — the parameter binder, not the
 		// query builder, is responsible for escaping them.
 		w, v := LikeAnyWord("k.keyword", "table% | 'spoon' & \"us'a")
-		assert.Equal(t, []string{"k.keyword LIKE ? OR k.keyword LIKE ?", "k.keyword LIKE ?"}, w)
+		assert.Equal(t, []string{"k.keyword LIKE ? ESCAPE '!' OR k.keyword LIKE ? ESCAPE '!'", "k.keyword LIKE ? ESCAPE '!'"}, w)
 		assert.Equal(t, [][]any{{"spoon%", "table%"}, {"\"us'a%"}}, v)
 	})
 }
@@ -142,12 +146,12 @@ func TestLikeAnyWord(t *testing.T) {
 func TestLikeAll(t *testing.T) {
 	t.Run("Keywords", func(t *testing.T) {
 		w, v := LikeAll("k.keyword", "Jo Mander 李", true, false)
-		assert.Equal(t, []string{"k.keyword LIKE ?", "k.keyword LIKE ?"}, w)
+		assert.Equal(t, []string{"k.keyword LIKE ? ESCAPE '!'", "k.keyword LIKE ? ESCAPE '!'"}, w)
 		assert.Equal(t, [][]any{{"mander%"}, {"李"}}, v)
 	})
 	t.Run("Exact", func(t *testing.T) {
 		w, v := LikeAll("k.keyword", "Jo Mander 李", true, true)
-		assert.Equal(t, []string{"k.keyword LIKE ?", "k.keyword LIKE ?"}, w)
+		assert.Equal(t, []string{"k.keyword LIKE ? ESCAPE '!'", "k.keyword LIKE ? ESCAPE '!'"}, w)
 		assert.Equal(t, [][]any{{"mander"}, {"李"}}, v)
 	})
 	t.Run("StringEmpty", func(t *testing.T) {
@@ -169,7 +173,7 @@ func TestLikeAll(t *testing.T) {
 func TestLikeAllKeywords(t *testing.T) {
 	t.Run("Keywords", func(t *testing.T) {
 		w, v := LikeAllKeywords("k.keyword", "Jo Mander 李")
-		assert.Equal(t, []string{"k.keyword LIKE ?", "k.keyword LIKE ?"}, w)
+		assert.Equal(t, []string{"k.keyword LIKE ? ESCAPE '!'", "k.keyword LIKE ? ESCAPE '!'"}, w)
 		assert.Equal(t, [][]any{{"mander%"}, {"李"}}, v)
 	})
 }
@@ -177,7 +181,7 @@ func TestLikeAllKeywords(t *testing.T) {
 func TestLikeAllWords(t *testing.T) {
 	t.Run("Keywords", func(t *testing.T) {
 		w, v := LikeAllWords("k.name", "Jo Mander 王")
-		assert.Equal(t, []string{"k.name LIKE ?", "k.name LIKE ?", "k.name LIKE ?"}, w)
+		assert.Equal(t, []string{"k.name LIKE ? ESCAPE '!'", "k.name LIKE ? ESCAPE '!'", "k.name LIKE ? ESCAPE '!'"}, w)
 		assert.Equal(t, [][]any{{"jo%"}, {"mander%"}, {"王%"}}, v)
 	})
 }
@@ -185,12 +189,12 @@ func TestLikeAllWords(t *testing.T) {
 func TestLikeAllNames(t *testing.T) {
 	t.Run("MultipleNames", func(t *testing.T) {
 		w, v := LikeAllNames(Cols{"k.name"}, "j Mander 王")
-		assert.Equal(t, []string{"k.name LIKE ?"}, w)
+		assert.Equal(t, []string{"k.name LIKE ? ESCAPE '!'"}, w)
 		assert.Equal(t, [][]any{{"j Mander 王%"}}, v)
 	})
 	t.Run("MultipleColumns", func(t *testing.T) {
 		w, v := LikeAllNames(Cols{"a.col1", "b.col2"}, "Mo Mander")
-		assert.Equal(t, []string{"a.col1 LIKE ? OR b.col2 LIKE ?"}, w)
+		assert.Equal(t, []string{"a.col1 LIKE ? ESCAPE '!' OR b.col2 LIKE ? ESCAPE '!'"}, w)
 		assert.Equal(t, [][]any{{"Mo Mander%", "Mo Mander%"}}, v)
 	})
 	t.Run("EmptyName", func(t *testing.T) {
@@ -205,27 +209,27 @@ func TestLikeAllNames(t *testing.T) {
 	})
 	t.Run("SingleCharacter", func(t *testing.T) {
 		w, v := LikeAllNames(Cols{"k.name"}, "a")
-		assert.Equal(t, []string{"k.name LIKE ?"}, w)
+		assert.Equal(t, []string{"k.name LIKE ? ESCAPE '!'"}, w)
 		assert.Equal(t, [][]any{{"%a%"}}, v)
 	})
 	t.Run("FullNames", func(t *testing.T) {
 		w, v := LikeAllNames(Cols{"j.name", "j.alias"}, "Bill & Melinda Gates")
-		assert.Equal(t, []string{"j.name LIKE ? OR j.alias LIKE ?", "j.name LIKE ? OR j.alias LIKE ?"}, w)
+		assert.Equal(t, []string{"j.name LIKE ? ESCAPE '!' OR j.alias LIKE ? ESCAPE '!'", "j.name LIKE ? ESCAPE '!' OR j.alias LIKE ? ESCAPE '!'"}, w)
 		assert.Equal(t, [][]any{{"%Bill%", "%Bill%"}, {"Melinda Gates%", "Melinda Gates%"}}, v)
 	})
 	t.Run("Plus", func(t *testing.T) {
 		w, v := LikeAllNames(Cols{"name"}, clean.SearchQuery("Paul + Paula"))
-		assert.Equal(t, []string{"name LIKE ?", "name LIKE ?"}, w)
+		assert.Equal(t, []string{"name LIKE ? ESCAPE '!'", "name LIKE ? ESCAPE '!'"}, w)
 		assert.Equal(t, [][]any{{"%Paul%"}, {"%Paula%"}}, v)
 	})
 	t.Run("And", func(t *testing.T) {
 		w, v := LikeAllNames(Cols{"name"}, clean.SearchQuery("P and Paula"))
-		assert.Equal(t, []string{"name LIKE ?", "name LIKE ?"}, w)
+		assert.Equal(t, []string{"name LIKE ? ESCAPE '!'", "name LIKE ? ESCAPE '!'"}, w)
 		assert.Equal(t, [][]any{{"%P%"}, {"%Paula%"}}, v)
 	})
 	t.Run("Or", func(t *testing.T) {
 		w, v := LikeAllNames(Cols{"name"}, clean.SearchQuery("Paul or Paula"))
-		assert.Equal(t, []string{"name LIKE ? OR name LIKE ?"}, w)
+		assert.Equal(t, []string{"name LIKE ? ESCAPE '!' OR name LIKE ? ESCAPE '!'"}, w)
 		assert.Equal(t, [][]any{{"%Paul%", "%Paula%"}}, v)
 	})
 	t.Run("LengthAlignment", func(t *testing.T) {
@@ -344,26 +348,26 @@ func TestOrLike(t *testing.T) {
 	t.Run("OneTerm", func(t *testing.T) {
 		where, values := OrLike("k.keyword", "bar")
 
-		assert.Equal(t, "k.keyword LIKE ?", where)
+		assert.Equal(t, "k.keyword LIKE ? ESCAPE '!'", where)
 		assert.Equal(t, []any{"bar"}, values)
 	})
 	t.Run("TwoTerms", func(t *testing.T) {
 		where, values := OrLike("k.keyword", "foo*%|bar")
 
-		assert.Equal(t, "k.keyword LIKE ? OR k.keyword LIKE ?", where)
+		assert.Equal(t, "k.keyword LIKE ? ESCAPE '!' OR k.keyword LIKE ? ESCAPE '!'", where)
 		assert.Equal(t, []any{"foo%", "bar"}, values)
 	})
 	t.Run("OneFilename", func(t *testing.T) {
 		where, values := OrLike("files.file_name", " 2790/07/27900704_070228_D6D51B6C.jpg")
 
-		assert.Equal(t, "files.file_name LIKE ?", where)
-		assert.Equal(t, []any{" 2790/07/27900704_070228_D6D51B6C.jpg"}, values)
+		assert.Equal(t, "files.file_name LIKE ? ESCAPE '!'", where)
+		assert.Equal(t, []any{" 2790/07/27900704!_070228!_D6D51B6C.jpg"}, values)
 	})
 	t.Run("TwoFilenames", func(t *testing.T) {
 		where, values := OrLike("files.file_name", "1990*|2790/07/27900704_070228_D6D51B6C.jpg")
 
-		assert.Equal(t, "files.file_name LIKE ? OR files.file_name LIKE ?", where)
-		assert.Equal(t, []any{"1990%", "2790/07/27900704_070228_D6D51B6C.jpg"}, values)
+		assert.Equal(t, "files.file_name LIKE ? ESCAPE '!' OR files.file_name LIKE ? ESCAPE '!'", where)
+		assert.Equal(t, []any{"1990%", "2790/07/27900704!_070228!_D6D51B6C.jpg"}, values)
 	})
 }
 
@@ -377,50 +381,50 @@ func TestOrLikeCols(t *testing.T) {
 	t.Run("OneTerm", func(t *testing.T) {
 		where, values := OrLikeCols([]string{"k.keyword", "p.photo_caption"}, "bar")
 
-		assert.Equal(t, "k.keyword LIKE ? OR p.photo_caption LIKE ?", where)
+		assert.Equal(t, "k.keyword LIKE ? ESCAPE '!' OR p.photo_caption LIKE ? ESCAPE '!'", where)
 		assert.Equal(t, []any{"bar", "bar"}, values)
 	})
 	t.Run("TwoTerms", func(t *testing.T) {
 		where, values := OrLikeCols([]string{"k.keyword", "p.photo_caption"}, "foo*%|bar")
 
-		assert.Equal(t, "k.keyword LIKE ? OR k.keyword LIKE ? OR p.photo_caption LIKE ? OR p.photo_caption LIKE ?", where)
+		assert.Equal(t, "k.keyword LIKE ? ESCAPE '!' OR k.keyword LIKE ? ESCAPE '!' OR p.photo_caption LIKE ? ESCAPE '!' OR p.photo_caption LIKE ? ESCAPE '!'", where)
 		assert.Equal(t, []any{"foo%", "bar", "foo%", "bar"}, values)
 	})
 	t.Run("OneTermEscaped", func(t *testing.T) {
 		where, values := OrLikeCols([]string{"k.keyword", "p.photo_caption"}, "\\|bar")
 
-		assert.Equal(t, "k.keyword LIKE ? OR p.photo_caption LIKE ?", where)
+		assert.Equal(t, "k.keyword LIKE ? ESCAPE '!' OR p.photo_caption LIKE ? ESCAPE '!'", where)
 		assert.Equal(t, []any{"|bar", "|bar"}, values)
 	})
 	t.Run("TwoTermsEscaped", func(t *testing.T) {
 		where, values := OrLikeCols([]string{"k.keyword", "p.photo_caption"}, "foo*%|\\|bar")
 
-		assert.Equal(t, "k.keyword LIKE ? OR k.keyword LIKE ? OR p.photo_caption LIKE ? OR p.photo_caption LIKE ?", where)
+		assert.Equal(t, "k.keyword LIKE ? ESCAPE '!' OR k.keyword LIKE ? ESCAPE '!' OR p.photo_caption LIKE ? ESCAPE '!' OR p.photo_caption LIKE ? ESCAPE '!'", where)
 		assert.Equal(t, []any{"foo%", "|bar", "foo%", "|bar"}, values)
 	})
 	t.Run("OneFilename", func(t *testing.T) {
 		where, values := OrLikeCols([]string{"files.file_name"}, " 2790/07/27900704_070228_D6D51B6C.jpg")
 
-		assert.Equal(t, "files.file_name LIKE ?", where)
-		assert.Equal(t, []any{" 2790/07/27900704_070228_D6D51B6C.jpg"}, values)
+		assert.Equal(t, "files.file_name LIKE ? ESCAPE '!'", where)
+		assert.Equal(t, []any{" 2790/07/27900704!_070228!_D6D51B6C.jpg"}, values)
 	})
 	t.Run("TwoFilenames", func(t *testing.T) {
 		where, values := OrLikeCols([]string{"files.file_name", "photos.photo_name"}, "1990*|2790/07/27900704_070228_D6D51B6C.jpg")
 
-		assert.Equal(t, "files.file_name LIKE ? OR files.file_name LIKE ? OR photos.photo_name LIKE ? OR photos.photo_name LIKE ?", where)
-		assert.Equal(t, []any{"1990%", "2790/07/27900704_070228_D6D51B6C.jpg", "1990%", "2790/07/27900704_070228_D6D51B6C.jpg"}, values)
+		assert.Equal(t, "files.file_name LIKE ? ESCAPE '!' OR files.file_name LIKE ? ESCAPE '!' OR photos.photo_name LIKE ? ESCAPE '!' OR photos.photo_name LIKE ? ESCAPE '!'", where)
+		assert.Equal(t, []any{"1990%", "2790/07/27900704!_070228!_D6D51B6C.jpg", "1990%", "2790/07/27900704!_070228!_D6D51B6C.jpg"}, values)
 	})
 	t.Run("OneFilenameEscaped", func(t *testing.T) {
 		where, values := OrLikeCols([]string{"files.file_name"}, " 2790/07/27900704_070228_D6D\\|51B6C.jpg")
 
-		assert.Equal(t, "files.file_name LIKE ?", where)
-		assert.Equal(t, []any{" 2790/07/27900704_070228_D6D|51B6C.jpg"}, values)
+		assert.Equal(t, "files.file_name LIKE ? ESCAPE '!'", where)
+		assert.Equal(t, []any{" 2790/07/27900704!_070228!_D6D|51B6C.jpg"}, values)
 	})
 	t.Run("TwoFilenamesEscaped", func(t *testing.T) {
 		where, values := OrLikeCols([]string{"files.file_name", "photos.photo_name"}, "1990*|2790/07/27900704_070228_D6D\\|51B6C.jpg")
 
-		assert.Equal(t, "files.file_name LIKE ? OR files.file_name LIKE ? OR photos.photo_name LIKE ? OR photos.photo_name LIKE ?", where)
-		assert.Equal(t, []any{"1990%", "2790/07/27900704_070228_D6D|51B6C.jpg", "1990%", "2790/07/27900704_070228_D6D|51B6C.jpg"}, values)
+		assert.Equal(t, "files.file_name LIKE ? ESCAPE '!' OR files.file_name LIKE ? ESCAPE '!' OR photos.photo_name LIKE ? ESCAPE '!' OR photos.photo_name LIKE ? ESCAPE '!'", where)
+		assert.Equal(t, []any{"1990%", "2790/07/27900704!_070228!_D6D|51B6C.jpg", "1990%", "2790/07/27900704!_070228!_D6D|51B6C.jpg"}, values)
 	})
 }
 
@@ -525,7 +529,7 @@ func TestConditionsBoundExpansion(t *testing.T) {
 		// Repeats collapse, as they do in the sibling builders.
 		wheres, values := LikeAllNames(Cols{"subj_name"}, "jane|jane|jane")
 		if assert.Len(t, wheres, 1) {
-			assert.Equal(t, "subj_name LIKE ?", wheres[0])
+			assert.Equal(t, "subj_name LIKE ? ESCAPE '!'", wheres[0])
 			assert.Len(t, values[0], 1)
 		}
 	})
@@ -541,7 +545,7 @@ func TestConditionsBoundExpansion(t *testing.T) {
 	t.Run("LikeAllNamesKeepsDistinctTerms", func(t *testing.T) {
 		wheres, values := LikeAllNames(Cols{"subj_name"}, "jane|john")
 		if assert.Len(t, wheres, 1) {
-			assert.Equal(t, "subj_name LIKE ? OR subj_name LIKE ?", wheres[0])
+			assert.Equal(t, "subj_name LIKE ? ESCAPE '!' OR subj_name LIKE ? ESCAPE '!'", wheres[0])
 			assert.Equal(t, []any{"%jane%", "%john%"}, values[0])
 		}
 	})
@@ -573,4 +577,28 @@ func TestConditionsBoundExpansion(t *testing.T) {
 		assert.Equal(t, b, a)
 		assert.Equal(t, bv, av)
 	})
+}
+
+func TestLikeCond(t *testing.T) {
+	assert.Equal(t, "photos.photo_name LIKE ? ESCAPE '!'", likeCond("photos.photo_name"))
+}
+
+func TestLikePattern(t *testing.T) {
+	t.Run("Wildcards", func(t *testing.T) {
+		assert.Equal(t, "IMG%", likePattern("IMG*"))
+		assert.Equal(t, "IMG%", likePattern("IMG%"))
+		assert.Equal(t, "IMG%", likePattern("IMG**"))
+		assert.Equal(t, "a%b", likePattern("a***%%*b"))
+		assert.Equal(t, "a%b", likePattern("a*b"))
+	})
+	t.Run("Literal", func(t *testing.T) {
+		assert.Equal(t, "IMG!_1234", likePattern("IMG_1234"))
+		assert.Equal(t, "Hi!!", likePattern("Hi!"))
+	})
+}
+
+func TestSqlValue(t *testing.T) {
+	assert.Equal(t, "cat", sqlValue(" *cat%| "))
+	assert.Equal(t, "a_b", sqlValue("a_b"))
+	assert.Equal(t, "", sqlValue("*%"))
 }

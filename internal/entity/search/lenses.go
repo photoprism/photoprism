@@ -47,7 +47,7 @@ func Lenses(frm form.SearchLenses) (results []Lens, err error) {
 
 	if frm.Query != "" {
 		likeString := SqlParam(frm.Query, "%", "%")
-		s = s.Where("lenses.lens_name LIKE ? OR lenses.lens_make LIKE ? OR lenses.lens_model LIKE ?", likeString, likeString, likeString)
+		s = s.Where(likeCond("lenses.lens_name")+" OR "+likeCond("lenses.lens_make")+" OR "+likeCond("lenses.lens_model"), likeString, likeString, likeString)
 	}
 
 	if result := s.Scan(&results); result.Error != nil {

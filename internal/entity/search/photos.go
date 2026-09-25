@@ -541,16 +541,16 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 	if txt.IsPosInt(frm.Camera) {
 		s = s.Where("photos.camera_id = ?", txt.UInt(frm.Camera))
 	} else if txt.NotEmpty(frm.Camera) {
-		v := strings.Trim(frm.Camera, "*%") + "%"
-		s = s.Where("cameras.camera_name LIKE ? OR cameras.camera_model LIKE ? OR cameras.camera_slug LIKE ?", v, v, v)
+		v := clean.SqlLike(strings.Trim(frm.Camera, "*%")) + "%"
+		s = s.Where(likeCond("cameras.camera_name")+" OR "+likeCond("cameras.camera_model")+" OR "+likeCond("cameras.camera_slug"), v, v, v)
 	}
 
 	// Filter by lens id or name.
 	if txt.IsPosInt(frm.Lens) {
 		s = s.Where("photos.lens_id = ?", txt.UInt(frm.Lens))
 	} else if txt.NotEmpty(frm.Lens) {
-		v := strings.Trim(frm.Lens, "*%") + "%"
-		s = s.Where("lenses.lens_name LIKE ? OR lenses.lens_model LIKE ? OR lenses.lens_slug LIKE ?", v, v, v)
+		v := clean.SqlLike(strings.Trim(frm.Lens, "*%")) + "%"
+		s = s.Where(likeCond("lenses.lens_name")+" OR "+likeCond("lenses.lens_model")+" OR "+likeCond("lenses.lens_slug"), v, v, v)
 	}
 
 	// Filter by ISO Number (light sensitivity) range.
@@ -851,10 +851,10 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 		if frm.Unsorted {
 			s = s.Where("photos.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid WHERE pa.hidden = 0 AND a.deleted_at IS NULL)")
 		} else if txt.NotEmpty(frm.Album) {
-			v := strings.Trim(frm.Album, "*%") + "%"
+			v := clean.SqlLike(strings.Trim(frm.Album, "*%")) + "%"
 			// Slugs are stored as lowercase binary strings, so the value must be
 			// folded to match on MySQL/MariaDB as well.
-			s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = 0 WHERE (a.album_title LIKE ? OR a.album_slug LIKE ?))", v, strings.ToLower(v))
+			s = s.Where("photos.photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa JOIN albums a ON a.album_uid = pa.album_uid AND pa.hidden = 0 WHERE ("+likeCond("a.album_title")+" OR "+likeCond("a.album_slug")+"))", v, strings.ToLower(v))
 		} else if txt.NotEmpty(frm.Albums) {
 			wheres, values := LikeAnyWord("a.album_title", frm.Albums)
 			for i, where := range wheres {
