@@ -13550,12 +13550,6 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
-                    "503": {
-                        "description": "Service Unavailable",
-                        "schema": {
-                            "$ref": "#/definitions/i18n.Response"
-                        }
-                    },
                     "507": {
                         "description": "Insufficient Storage",
                         "schema": {

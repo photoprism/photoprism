@@ -251,6 +251,16 @@ func TestResult_UnmarshalJSON(t *testing.T) {
 	require.NoError(t, json.Unmarshal([]byte(`{"status":"unsafe"}`), &withoutScore))
 	assert.False(t, withoutScore.scoreSet)
 	assert.True(t, withoutScore.Decide(0.75).IsUnsafe())
+
+	var nullScore Result
+	require.NoError(t, json.Unmarshal([]byte(`{"status":"unsafe","score":null,"threshold":0.5}`), &nullScore))
+	assert.False(t, nullScore.scoreSet)
+	assert.True(t, nullScore.Decide(0.75).IsUnsafe())
+
+	var nullScoreWithClasses Result
+	require.NoError(t, json.Unmarshal([]byte(`{"status":"safe","score":null,"threshold":0.5,"Porn":0.9}`), &nullScoreWithClasses))
+	assert.False(t, nullScoreWithClasses.scoreSet)
+	assert.True(t, nullScoreWithClasses.Decide(0.75).IsUnsafe())
 }
 
 // TestValidateScore verifies that only finite probabilities from 0 to 1 are accepted.

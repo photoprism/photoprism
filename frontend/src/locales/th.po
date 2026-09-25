@@ -1139,10 +1139,6 @@ msgstr "ประกอบด้วยหนึ่งภาพ"
 msgid "Content"
 msgstr "เนื้อหา"
 
-#: src/locales.js:403
-msgid "Content screening is temporarily unavailable"
-msgstr ""
-
 #: src/component/settings/apps.vue:37 src/component/settings/apps.vue:53
 msgid "Continue"
 msgstr "ดำเนินการต่อ"

@@ -16,40 +16,46 @@ const (
 	nsfwThresholdUpload
 )
 
-var nsfwFunc = nsfwInternalContext
+var nsfwFunc = func(images Files, mediaSrc media.Src) ([]nsfw.Result, error) {
+	return nsfwInternalContext(images, mediaSrc, nsfwThresholdIndex)
+}
+
+var nsfwUploadFunc = func(images Files, mediaSrc media.Src) ([]nsfw.Result, error) {
+	return nsfwInternalContext(images, mediaSrc, nsfwThresholdUpload)
+}
 
 // SetNSFWFunc overrides the Vision NSFW detector. Intended for tests.
 func SetNSFWFunc(fn func(Files, media.Src) ([]nsfw.Result, error)) {
 	if fn == nil {
-		nsfwFunc = nsfwInternalContext
+		nsfwFunc = func(images Files, mediaSrc media.Src) ([]nsfw.Result, error) {
+			return nsfwInternalContext(images, mediaSrc, nsfwThresholdIndex)
+		}
 		return
 	}
 
-	nsfwFunc = func(images Files, mediaSrc media.Src, _ nsfwThresholdContext) ([]nsfw.Result, error) {
-		return fn(images, mediaSrc)
+	nsfwFunc = fn
+}
+
+// SetNSFWUploadFunc overrides the upload-specific Vision NSFW detector. Intended for tests.
+func SetNSFWUploadFunc(fn func(Files, media.Src) ([]nsfw.Result, error)) {
+	if fn == nil {
+		nsfwUploadFunc = func(images Files, mediaSrc media.Src) ([]nsfw.Result, error) {
+			return nsfwInternalContext(images, mediaSrc, nsfwThresholdUpload)
+		}
+		return
 	}
+
+	nsfwUploadFunc = fn
 }
 
 // DetectNSFW checks images for inappropriate content and generates probability scores grouped by category.
 func DetectNSFW(images Files, mediaSrc media.Src) (result []nsfw.Result, err error) {
-	return nsfwFunc(images, mediaSrc, nsfwThresholdIndex)
+	return nsfwFunc(images, mediaSrc)
 }
 
 // DetectNSFWUpload checks uploaded images with the upload-specific operating threshold.
 func DetectNSFWUpload(images Files, mediaSrc media.Src) (result []nsfw.Result, err error) {
-	return nsfwFunc(images, mediaSrc, nsfwThresholdUpload)
-}
-
-// NsfwThreshold returns the indexing probability threshold or the package default.
-func NsfwThreshold() float32 {
-	threshold, _ := nsfwThreshold(nsfwThresholdIndex)
-	return threshold
-}
-
-// NsfwUploadThreshold returns the upload probability threshold or the package default.
-func NsfwUploadThreshold() float32 {
-	threshold, _ := nsfwThreshold(nsfwThresholdUpload)
-	return threshold
+	return nsfwUploadFunc(images, mediaSrc)
 }
 
 // nsfwThreshold resolves the configured threshold and reports whether it overrides model calibration.
@@ -76,11 +82,6 @@ func undecidedResults(count int, reason string) []nsfw.Result {
 	}
 
 	return result
-}
-
-// nsfwInternal evaluates local or remote detectors with the resolved operating threshold.
-func nsfwInternal(images Files, mediaSrc media.Src) (result []nsfw.Result, err error) {
-	return nsfwInternalContext(images, mediaSrc, nsfwThresholdIndex)
 }
 
 // nsfwInternalContext evaluates a detector with the operating threshold for its caller.

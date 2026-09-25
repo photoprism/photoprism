@@ -41,7 +41,7 @@ import (
 //	@Param		token					path		string	true	"upload token"
 //	@Param		files					formData	file	true	"one or more files to upload (repeat the field for multiple files)"
 //	@Success	200						{object}	i18n.Response
-//	@Failure	400,401,403,413,429,503,507	{object}	i18n.Response
+//	@Failure	400,401,403,413,429,507	{object}	i18n.Response
 //	@Router		/api/v1/users/{uid}/upload/{token} [post]
 func UploadUserFiles(router *gin.RouterGroup) {
 	router.POST("/users/:uid/upload/:token", func(c *gin.Context) {
@@ -228,11 +228,12 @@ func UploadUserFiles(router *gin.RouterGroup) {
 				screeningStatus = aggregateNSFWStatus(screeningStatus, nsfwUploadStatus(filename))
 			}
 
-			if screeningStatus != nsfw.StatusSafe {
+			if rejectNSFWUpload(screeningStatus) {
 				removeScreenedUploads(uploads)
-				code, message := nsfwUploadError(screeningStatus)
-				Abort(c, code, message)
+				Abort(c, http.StatusForbidden, i18n.ErrOffensiveUpload)
 				return
+			} else if screeningStatus == nsfw.StatusUnavailable {
+				log.Warnf("nsfw: upload batch was admitted without a screening decision")
 			}
 		}
 
@@ -414,6 +415,11 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 	})
 }
 
+// rejectNSFWUpload reports whether a screening decision must reject the batch.
+func rejectNSFWUpload(status nsfw.Status) bool {
+	return status == nsfw.StatusUnsafe
+}
+
 // aggregateNSFWStatus combines screening decisions with unsafe taking highest priority.
 func aggregateNSFWStatus(current, next nsfw.Status) nsfw.Status {
 	if current == nsfw.StatusUnsafe || next == nsfw.StatusUnsafe {
@@ -478,15 +484,6 @@ func nsfwUploadStatus(fileName string) nsfw.Status {
 	}
 
 	return result.Status
-}
-
-// nsfwUploadError returns the HTTP response for a failed upload screening decision.
-func nsfwUploadError(screeningStatus nsfw.Status) (int, i18n.Message) {
-	if screeningStatus == nsfw.StatusUnavailable {
-		return http.StatusServiceUnavailable, i18n.ErrContentScreeningUnavailable
-	}
-
-	return http.StatusForbidden, i18n.ErrOffensiveUpload
 }
 
 // removeScreenedUploads deletes a temporary upload batch rejected by content screening.

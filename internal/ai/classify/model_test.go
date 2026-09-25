@@ -381,7 +381,9 @@ func TestModelDisabledAndErrors(t *testing.T) {
 func TestNewRegisteredModelProvider(t *testing.T) {
 	model := NewRegisteredModel("/models", DefaultModelName(), onnx.ProviderCUDA, false)
 	require.NotNil(t, model)
-	assert.Equal(t, onnx.ProviderCUDA, model.provider)
+	assert.Equal(t, onnx.ProviderCUDA, model.Provider())
+	var empty *Model
+	assert.Empty(t, empty.Provider())
 }
 
 // BenchmarkModelRun measures inference on the selected bundled classifier.

@@ -1138,10 +1138,6 @@ msgstr "Egy képet tartalmaz."
 msgid "Content"
 msgstr "Tartalom"
 
-#: src/locales.js:403
-msgid "Content screening is temporarily unavailable"
-msgstr ""
-
 #: src/component/settings/apps.vue:37 src/component/settings/apps.vue:53
 msgid "Continue"
 msgstr "Folytatni"

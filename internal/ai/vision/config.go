@@ -115,17 +115,18 @@ func (c *ConfigValues) Load(fileName string) error {
 		return err
 	}
 
-	legacyDefaultTensorFlow := false
-	for _, model := range c.Models {
-		if model != nil && model.Type == ModelTypeNsfw && model.TensorFlow != nil && (model.Default || model.Name == "nsfw") {
-			legacyDefaultTensorFlow = true
-			break
-		}
-	}
-	if legacyDefaultTensorFlow && (c.Thresholds.NSFW == 0 || c.Thresholds.NSFW == DefaultNSFWThreshold) {
+	sharedNSFWIsSet := c.Thresholds.NSFW >= 0
+	contextNSFWIsSet := c.Thresholds.NSFWUpload != nil || c.Thresholds.NSFWIndex != nil || c.Thresholds.NSFWLabels != nil
+	if sharedNSFWIsSet && !contextNSFWIsSet {
 		legacyThreshold := c.Thresholds.NSFW
+		if legacyThreshold <= 0 {
+			legacyThreshold = NSFWThresholdAuto
+		} else if legacyThreshold > 100 {
+			legacyThreshold = 100
+		}
+		c.Thresholds.NSFWLabels = &legacyThreshold
 		c.Thresholds.NSFW = NSFWThresholdAuto
-		log.Warnf("vision: migrated legacy NSFW threshold %d to auto", legacyThreshold)
+		log.Warnf("vision: migrated shared NSFW threshold to the labels context")
 	}
 
 	// Replace default placeholders with canonical defaults while respecting
@@ -165,7 +166,7 @@ func (c *ConfigValues) Load(fileName string) error {
 		c.Thresholds.Topicality = DefaultThresholds.Topicality
 	}
 
-	if c.Thresholds.NSFW < NSFWThresholdAuto {
+	if c.Thresholds.NSFW <= 0 {
 		c.Thresholds.NSFW = NSFWThresholdAuto
 	} else if c.Thresholds.NSFW > 100 {
 		c.Thresholds.NSFW = 100
@@ -174,7 +175,7 @@ func (c *ConfigValues) Load(fileName string) error {
 		switch {
 		case threshold == nil:
 			continue
-		case *threshold < NSFWThresholdAuto:
+		case *threshold <= 0:
 			*threshold = NSFWThresholdAuto
 		case *threshold > 100:
 			*threshold = 100

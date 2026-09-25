@@ -1139,10 +1139,6 @@ msgstr "1 枚の写真が含まれています。"
 msgid "Content"
 msgstr "内容"
 
-#: src/locales.js:403
-msgid "Content screening is temporarily unavailable"
-msgstr ""
-
 #: src/component/settings/apps.vue:37 src/component/settings/apps.vue:53
 msgid "Continue"
 msgstr "続行"

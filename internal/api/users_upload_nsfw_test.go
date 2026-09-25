@@ -3,6 +3,8 @@ package api
 import (
 	"errors"
 	"fmt"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"testing"
@@ -12,8 +14,9 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/ai/vision"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
@@ -21,7 +24,7 @@ import (
 func stubNSFW(t *testing.T, results []nsfw.Result, err error) {
 	t.Helper()
 
-	vision.SetNSFWFunc(func(vision.Files, media.Src) ([]nsfw.Result, error) {
+	vision.SetNSFWUploadFunc(func(vision.Files, media.Src) ([]nsfw.Result, error) {
 		return results, err
 	})
 	previousPreview := nsfwUploadPreview
@@ -30,7 +33,7 @@ func stubNSFW(t *testing.T, results []nsfw.Result, err error) {
 	}
 
 	t.Cleanup(func() {
-		vision.SetNSFWFunc(nil)
+		vision.SetNSFWUploadFunc(nil)
 		nsfwUploadPreview = previousPreview
 	})
 }
@@ -62,24 +65,24 @@ func TestNsfwUploadStatus(t *testing.T) {
 		stubNSFW(t, []nsfw.Result{nsfw.NewResult(0.99, nsfw.DefaultThreshold)}, nil)
 		assert.Equal(t, nsfw.StatusUnsafe, nsfwUploadStatus("offensive.jpg"))
 	})
-	t.Run("DetectorErrorIsRejected", func(t *testing.T) {
+	t.Run("DetectorErrorIsUnavailable", func(t *testing.T) {
 		stubNSFW(t, nil, errors.New("inference failed"))
 		assert.Equal(t, nsfw.StatusUnavailable, nsfwUploadStatus("unreadable.jpg"))
 	})
-	t.Run("DetectorUnavailableIsRejected", func(t *testing.T) {
+	t.Run("DetectorFailureIsUnavailable", func(t *testing.T) {
 		stubNSFW(t, nil, fmt.Errorf("%w: model is missing", nsfw.ErrDetectorUnavailable))
 		assert.Equal(t, nsfw.StatusUnavailable, nsfwUploadStatus("unscreened.jpg"))
 	})
-	t.Run("NoResultIsRejected", func(t *testing.T) {
+	t.Run("NoResultIsUnavailable", func(t *testing.T) {
 		stubNSFW(t, []nsfw.Result{}, nil)
 		assert.Equal(t, nsfw.StatusUnavailable, nsfwUploadStatus("empty.jpg"))
 	})
-	t.Run("UndecidedResultIsRejected", func(t *testing.T) {
+	t.Run("UndecidedResultIsUnavailable", func(t *testing.T) {
 		stubNSFW(t, []nsfw.Result{nsfw.Unavailable("thumbnail is missing")}, nil)
 		assert.Equal(t, nsfw.StatusUnavailable, nsfwUploadStatus("undecided.jpg"))
 	})
 	// The zero value must behave like any other undecided result.
-	t.Run("ZeroResultIsRejected", func(t *testing.T) {
+	t.Run("ZeroResultIsUnavailable", func(t *testing.T) {
 		stubNSFW(t, []nsfw.Result{{}}, nil)
 		assert.Equal(t, nsfw.StatusUnavailable, nsfwUploadStatus("zero.jpg"))
 	})
@@ -89,13 +92,51 @@ func TestNsfwUploadStatus(t *testing.T) {
 		stubNSFW(t, nil, fmt.Errorf("%w: missing nsfw model", nsfw.ErrNotConfigured))
 		assert.Equal(t, nsfw.StatusSafe, nsfwUploadStatus("unscreened.jpg"))
 	})
-	t.Run("PreviewFailureIsRejected", func(t *testing.T) {
+	t.Run("PreviewFailureIsUnavailable", func(t *testing.T) {
 		stubNSFW(t, []nsfw.Result{nsfw.NewResult(0.01, nsfw.DefaultThreshold)}, nil)
 		nsfwUploadPreview = func(string) (string, func(), error) {
 			return "", nil, errors.New("preview failed")
 		}
 		assert.Equal(t, nsfw.StatusUnavailable, nsfwUploadStatus("camera.raw"))
 	})
+}
+
+// TestNsfwUploadStatusUsesUploadDetector verifies upload screening uses its own detector path.
+func TestNsfwUploadStatusUsesUploadDetector(t *testing.T) {
+	stubNSFW(t, []nsfw.Result{nsfw.NewResult(0.9, 0.5)}, nil)
+	vision.SetNSFWFunc(func(vision.Files, media.Src) ([]nsfw.Result, error) {
+		return []nsfw.Result{nsfw.NewResult(0.1, 0.5)}, nil
+	})
+	t.Cleanup(func() { vision.SetNSFWFunc(nil) })
+
+	assert.Equal(t, nsfw.StatusUnsafe, nsfwUploadStatus("upload.jpg"))
+}
+
+// TestUploadUserFilesAdmitsUnavailableScreening verifies undecided uploads remain staged.
+func TestUploadUserFilesAdmitsUnavailableScreening(t *testing.T) {
+	app, router, conf := NewApiTest()
+	conf.Options().StoragePath = t.TempDir()
+	conf.Options().UploadAllow = "jpg"
+	conf.Options().UploadNSFW = false
+	UploadUserFiles(router)
+	authToken := AuthenticateAdmin(app, router)
+	stubNSFW(t, []nsfw.Result{nsfw.Unavailable("model is missing")}, nil)
+
+	data, err := os.ReadFile(filepath.Clean("../../pkg/fs/testdata/directory/example.jpg"))
+	require.NoError(t, err)
+	body, contentType, err := buildMultipart(map[string][]byte{"example.jpg": data})
+	require.NoError(t, err)
+
+	const uploadToken = "nsfw-unavailable"
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/users/"+entity.Admin.UserUID+"/upload/"+uploadToken, body)
+	req.Header.Set("Content-Type", contentType)
+	header.SetAuthorization(req, authToken)
+	out := httptest.NewRecorder()
+	app.ServeHTTP(out, req)
+
+	require.Equal(t, http.StatusOK, out.Code, out.Body.String())
+	uploadBase := filepath.Join(conf.UserStoragePath(entity.Admin.UserUID), "upload")
+	assert.NotEmpty(t, findUploadedFilesForToken(t, uploadBase, uploadToken))
 }
 
 // TestRemoveScreenedUploads verifies rejected batches are removed before returning an error.
@@ -130,13 +171,9 @@ func TestAggregateNSFWStatus(t *testing.T) {
 	})
 }
 
-// TestNsfwUploadError verifies unsafe content and detector failure use distinct responses.
-func TestNsfwUploadError(t *testing.T) {
-	code, message := nsfwUploadError(nsfw.StatusUnsafe)
-	assert.Equal(t, 403, code)
-	assert.Equal(t, i18n.ErrOffensiveUpload, message)
-
-	code, message = nsfwUploadError(nsfw.StatusUnavailable)
-	assert.Equal(t, 503, code)
-	assert.Equal(t, i18n.ErrContentScreeningUnavailable, message)
+// TestRejectNSFWUpload verifies only an unsafe decision rejects the upload batch.
+func TestRejectNSFWUpload(t *testing.T) {
+	assert.True(t, rejectNSFWUpload(nsfw.StatusUnsafe))
+	assert.False(t, rejectNSFWUpload(nsfw.StatusUnavailable))
+	assert.False(t, rejectNSFWUpload(nsfw.StatusSafe))
 }

@@ -33,7 +33,7 @@ The API package exposes PhotoPrism’s HTTP endpoints via Gin handlers. Each fil
 - Enforce rate limiting with the shared limiters (`limiter.Auth`, `limiter.Login`) and respond with `limiter.AbortJSON` to maintain consistent 429 JSON payloads.
 - Derive client IPs through `api.ClientIP` and extract bearer tokens with `header.BearerToken` or the helper setters. Use constant-time comparison for tokens and secrets.
 - For downloads or proxy endpoints, validate URLs against allowed schemes (`http`, `https`) and reject private or loopback addresses unless explicitly required.
-- **Upload-time NSFW screening (`users_upload.go`)** — when `PHOTOPRISM_UPLOAD_NSFW=false` (the default), the upload handler runs `vision.DetectNSFW` against every accepted file and deletes the temporary batch before it reaches `originals/` when a file is unsafe (`403`) or an enabled detector cannot decide (`503`). The check is skipped entirely when `UPLOAD_NSFW=true` or no detector is configured. See [`internal/ai/nsfw/README.md`](../ai/nsfw/README.md) for the full NSFW call-graph and flag matrix.
+- **Upload-time NSFW screening (`users_upload.go`)** — when `PHOTOPRISM_UPLOAD_NSFW=false` (the default), the upload handler runs `vision.DetectNSFWUpload` against every accepted file and deletes the temporary batch before it reaches `originals/` only when a file is unsafe (`403`). If an enabled detector cannot decide, the handler logs a warning and admits the upload. The check is skipped entirely when `UPLOAD_NSFW=true` or no detector is configured. See [`internal/ai/nsfw/README.md`](../ai/nsfw/README.md) for the full NSFW call graph and flag matrix.
 
 ### Web Upload Formats
 

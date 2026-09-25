@@ -162,7 +162,16 @@ func (c *Config) applyNSFWModel() {
 
 // reportUnscreenedUploads warns when upload screening has no configured detector.
 func (c *Config) reportUnscreenedUploads() {
-	if c.UploadNSFW() || vision.Config.Model(vision.ModelTypeNsfw) != nil {
+	if c.UploadNSFW() {
+		return
+	}
+
+	if c.NSFWModelSetting() == nsfw.ModelAuto && c.installedNSFWModel() == nsfw.ModelNone {
+		log.Warnf("config: uploads cannot be screened because no nsfw model is installed; run scripts/dist/download-models.sh %s and restart PhotoPrism", nsfw.DefaultModelName())
+		return
+	}
+
+	if vision.Config.Model(vision.ModelTypeNsfw) != nil {
 		return
 	}
 
@@ -236,6 +245,14 @@ func (c *Config) applyLabelModel() {
 	}
 
 	if selected == classify.ModelNone {
+		if setting == classify.ModelAuto {
+			if current == nil {
+				vision.Config.SetModel(vision.NewLabelModel(classify.DefaultModelName()))
+			}
+
+			return
+		}
+
 		if current == nil {
 			current = vision.NewLabelModel(classify.DefaultModelName())
 		} else {

@@ -908,7 +908,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 				labels = append(labels, extraLabels...)
 			}
 
-			isNSFW = labels.IsNSFW(vision.Config.Thresholds.GetNSFWLabels())
+			isNSFW = labelsMarkNSFW(labels, o.DetectNsfw, vision.Config.Thresholds.GetNSFWLabels())
 		}
 
 		// Decouple NSFW detection from label generation.
@@ -1187,4 +1187,9 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	}
 
 	return result
+}
+
+// labelsMarkNSFW reports label-derived unsafe content when detection is enabled.
+func labelsMarkNSFW(labels classify.Labels, enabled bool, threshold int) bool {
+	return enabled && labels.IsNSFW(threshold)
 }

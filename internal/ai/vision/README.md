@@ -1,6 +1,6 @@
 ## PhotoPrism — Vision Package
 
-**Last Updated:** September 22, 2026
+**Last Updated:** September 25, 2026
 
 ### Overview
 
@@ -269,7 +269,7 @@ There is also a fast-path: when `Type: labels` is served by an LLM, PhotoPrism c
 
 The runtime guards in `internal/photoprism/index_mediafile.go` and `internal/workers/vision.go` additionally short-circuit any NSFW promotion on `conf.DetectNSFW()`. The dedicated `Type: nsfw` model is filtered out of scheduled runs by `VisionModelShouldRun` whenever `DetectNSFW()` is false.
 
-`DetectNSFW` returns one `nsfw.Result` per image, and a result that no detector decided is `unavailable` rather than safe — including when the batch never ran, when a remote service returns fewer results than images, and when a single local file could not be read. Callers must act on `Status`, never on the class scores alone. `Thresholds.NSFWUpload` and `Thresholds.NSFWIndex` independently control the dedicated detector for uploads and indexing, while `Thresholds.NSFWLabels` controls the Ollama/OpenAI labels fast-path. The existing `Thresholds.NSFW` remains a backward-compatible shared fallback. `-1` selects the calibrated default for a local dedicated detector, while labels and remote results use the shared fallback of `75`; `0` through `100` are explicit operator values. A custom dedicated detector without `DefaultThreshold` uses the package fallback of `0.98`. See [`internal/ai/nsfw/README.md`](../nsfw/README.md) for the result contract, the full call-graph, and the user-facing matrix at [docs.photoprism.app/user-guide/ai/nsfw/](https://docs.photoprism.app/user-guide/ai/nsfw/).
+`DetectNSFW` returns one `nsfw.Result` per image, and a result that no detector decided is `unavailable` rather than safe — including when the batch never ran, when a remote service returns fewer results than images, and when a single local file could not be read. Callers must act on `Status`, never on the class scores alone. `Thresholds.NSFWUpload` and `Thresholds.NSFWIndex` independently control the dedicated detector for uploads and indexing, while `Thresholds.NSFWLabels` controls the Ollama/OpenAI labels fast path. `Thresholds.NSFW` remains a shared fallback for omitted path-specific fields. Both `0` and `-1` select automatic behavior; explicit thresholds range from `1` through `100`. A legacy configuration containing only `NSFW` is migrated to `NSFWLabels`, so the dedicated local detectors use their calibrated model defaults. Labels and remote results without local calibration use the package fallback of `75`. A custom dedicated detector without `DefaultThreshold` uses the package fallback of `0.98`. See [`internal/ai/nsfw/README.md`](../nsfw/README.md) for the result contract, the full call graph, and the user-facing matrix at [docs.photoprism.app/user-guide/ai/nsfw/](https://docs.photoprism.app/user-guide/ai/nsfw/).
 
 ### Model Unload on Idle
 

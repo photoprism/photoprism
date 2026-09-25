@@ -154,6 +154,8 @@ func TestConfigValues_Load(t *testing.T) {
 		cfg := NewConfig()
 		require.NoError(t, cfg.Load(configFile))
 		assert.Equal(t, NSFWThresholdAuto, cfg.Thresholds.NSFW)
+		require.NotNil(t, cfg.Thresholds.NSFWLabels)
+		assert.Equal(t, 75, *cfg.Thresholds.NSFWLabels)
 	})
 	t.Run("MigratesLegacyZeroNSFWThreshold", func(t *testing.T) {
 		configFile := filepath.Join(t.TempDir(), "vision.yml")
@@ -163,34 +165,41 @@ func TestConfigValues_Load(t *testing.T) {
 		cfg := NewConfig()
 		require.NoError(t, cfg.Load(configFile))
 		assert.Equal(t, NSFWThresholdAuto, cfg.Thresholds.NSFW)
+		require.NotNil(t, cfg.Thresholds.NSFWLabels)
+		assert.Equal(t, NSFWThresholdAuto, *cfg.Thresholds.NSFWLabels)
 	})
-	t.Run("PreservesExplicitNSFWThreshold", func(t *testing.T) {
+	t.Run("MigratesSharedNSFWThreshold", func(t *testing.T) {
 		configFile := filepath.Join(t.TempDir(), "vision.yml")
 		err := os.WriteFile(configFile, []byte("Models:\n- Type: nsfw\n  Name: custom\n  ONNX: {}\nThresholds:\n  NSFW: 75\n"), fs.ModeConfigFile)
 		require.NoError(t, err)
 
 		cfg := NewConfig()
 		require.NoError(t, cfg.Load(configFile))
-		assert.Equal(t, 75, cfg.Thresholds.NSFW)
+		assert.Equal(t, NSFWThresholdAuto, cfg.Thresholds.NSFW)
+		require.NotNil(t, cfg.Thresholds.NSFWLabels)
+		assert.Equal(t, 75, *cfg.Thresholds.NSFWLabels)
 	})
-	t.Run("PreservesExplicitNSFWThresholdWithLegacyLabels", func(t *testing.T) {
+	t.Run("MigratesSharedNSFWThresholdWithLegacyLabels", func(t *testing.T) {
 		configFile := filepath.Join(t.TempDir(), "vision.yml")
 		err := os.WriteFile(configFile, []byte("Models:\n- Type: labels\n  Name: nasnet\n  TensorFlow: {}\n- Type: nsfw\n  Name: custom\n  ONNX: {}\nThresholds:\n  NSFW: 75\n"), fs.ModeConfigFile)
 		require.NoError(t, err)
 
 		cfg := NewConfig()
 		require.NoError(t, cfg.Load(configFile))
-		assert.Equal(t, 75, cfg.Thresholds.NSFW)
+		assert.Equal(t, NSFWThresholdAuto, cfg.Thresholds.NSFW)
+		require.NotNil(t, cfg.Thresholds.NSFWLabels)
+		assert.Equal(t, 75, *cfg.Thresholds.NSFWLabels)
 	})
-	t.Run("PreservesExplicitZeroNSFWThreshold", func(t *testing.T) {
+	t.Run("MigratesExplicitZeroNSFWThreshold", func(t *testing.T) {
 		configFile := filepath.Join(t.TempDir(), "vision.yml")
 		err := os.WriteFile(configFile, []byte("Thresholds:\n  NSFW: 0\n"), fs.ModeConfigFile)
 		require.NoError(t, err)
 
 		cfg := NewConfig()
 		require.NoError(t, cfg.Load(configFile))
-		assert.Equal(t, 0, cfg.Thresholds.NSFW)
-		assert.True(t, cfg.Thresholds.NSFWIsSet())
+		assert.Equal(t, NSFWThresholdAuto, cfg.Thresholds.NSFW)
+		require.NotNil(t, cfg.Thresholds.NSFWLabels)
+		assert.Equal(t, NSFWThresholdAuto, *cfg.Thresholds.NSFWLabels)
 	})
 	t.Run("LoadsContextNSFWThresholds", func(t *testing.T) {
 		configFile := filepath.Join(t.TempDir(), "vision.yml")
@@ -205,9 +214,26 @@ func TestConfigValues_Load(t *testing.T) {
 		assert.Equal(t, 60, *cfg.Thresholds.NSFWUpload)
 		assert.Equal(t, 100, *cfg.Thresholds.NSFWIndex)
 		assert.Equal(t, NSFWThresholdAuto, *cfg.Thresholds.NSFWLabels)
+		assert.Equal(t, 80, cfg.Thresholds.NSFW)
 		assert.Equal(t, 60, cfg.Thresholds.GetNSFWUpload())
 		assert.Equal(t, 100, cfg.Thresholds.GetNSFWIndex())
 		assert.Equal(t, DefaultNSFWThreshold, cfg.Thresholds.GetNSFWLabels())
+	})
+	t.Run("NormalizesZeroContextNSFWThresholds", func(t *testing.T) {
+		configFile := filepath.Join(t.TempDir(), "vision.yml")
+		err := os.WriteFile(configFile, []byte("Thresholds:\n  NSFW: 80\n  NSFWUpload: 0\n  NSFWIndex: 0\n  NSFWLabels: 0\n"), fs.ModeConfigFile)
+		require.NoError(t, err)
+
+		cfg := NewConfig()
+		require.NoError(t, cfg.Load(configFile))
+		require.NotNil(t, cfg.Thresholds.NSFWUpload)
+		require.NotNil(t, cfg.Thresholds.NSFWIndex)
+		require.NotNil(t, cfg.Thresholds.NSFWLabels)
+		assert.Equal(t, NSFWThresholdAuto, *cfg.Thresholds.NSFWUpload)
+		assert.Equal(t, NSFWThresholdAuto, *cfg.Thresholds.NSFWIndex)
+		assert.Equal(t, NSFWThresholdAuto, *cfg.Thresholds.NSFWLabels)
+		assert.False(t, cfg.Thresholds.NSFWUploadIsSet())
+		assert.False(t, cfg.Thresholds.NSFWIndexIsSet())
 	})
 	t.Run("PreservesExplicitClassIndexZero", func(t *testing.T) {
 		configFile := filepath.Join(t.TempDir(), "vision.yml")

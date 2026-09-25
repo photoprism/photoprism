@@ -897,7 +897,7 @@ func (m *Model) NsfwModel() *nsfw.Model {
 
 		if err := model.Init(); err != nil {
 			m.nsfwErr = err
-			log.Warnf("vision: %s (init %s model)", clean.Error(err), clean.Log(m.Name))
+			log.Warnf("vision: %s (init %s model; fix or install it, then restart PhotoPrism)", clean.Error(err), clean.Log(m.Name))
 			return nil
 		}
 
@@ -949,7 +949,7 @@ func (m *Model) NsfwModel() *nsfw.Model {
 
 		if err := model.Init(); err != nil {
 			m.nsfwErr = err
-			log.Warnf("vision: %s (init %s)", clean.Error(err), clean.Log(m.Path))
+			log.Warnf("vision: %s (init %s; fix or install it, then restart PhotoPrism)", clean.Error(err), clean.Log(m.Path))
 			return nil
 		}
 

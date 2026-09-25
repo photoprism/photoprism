@@ -81,6 +81,15 @@ func NewRegisteredModel(modelsPath string, name ModelName, provider onnx.Provide
 		Provider: provider, Disabled: disabled})
 }
 
+// Provider returns the configured ONNX execution provider.
+func (m *Model) Provider() onnx.Provider {
+	if m == nil {
+		return ""
+	}
+
+	return m.provider
+}
+
 // Init initializes the detector unless it is disabled.
 func (m *Model) Init() error {
 	if m == nil || m.disabled {

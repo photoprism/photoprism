@@ -97,14 +97,25 @@ func TestConfig_LabelModel(t *testing.T) {
 		assert.Empty(t, c.LabelModelPath())
 		assert.Equal(t, "none", c.LabelModelRuntime())
 	})
-	t.Run("AutoMissingDisables", func(t *testing.T) {
+	t.Run("AutoMissingRemainsEnabled", func(t *testing.T) {
 		withVisionConfig(t, vision.NewConfig())
 		c := NewConfig(CliTestContext())
 		c.options.ModelsPath = t.TempDir()
 		c.options.LabelModel = "auto"
 		c.applyLabelModel()
 		assert.Equal(t, classify.ModelNone, c.EffectiveLabelModel())
-		require.True(t, vision.Config.Models[0].Disabled)
+		require.False(t, vision.Config.Models[0].Disabled)
+		visionFile := filepath.Join(t.TempDir(), "vision.yml")
+		require.NoError(t, vision.Config.Save(visionFile))
+		reloaded := vision.NewConfig()
+		require.NoError(t, reloaded.Load(visionFile))
+		require.NotNil(t, configuredVisionModel(reloaded, vision.ModelTypeLabels))
+		assert.False(t, configuredVisionModel(reloaded, vision.ModelTypeLabels).Disabled)
+
+		installVisionTestArtifact(t, c.ModelsPath(), string(classify.DefaultModelName()), classify.FindModel(classify.DefaultModelName()).ONNX.File)
+		c.applyLabelModel()
+		assert.Equal(t, classify.DefaultModelName(), c.EffectiveLabelModel())
+		require.False(t, vision.Config.Models[0].Disabled)
 	})
 	t.Run("AutoDisablesCustomTensorFlow", func(t *testing.T) {
 		custom := &vision.Model{Type: vision.ModelTypeLabels, Name: "custom", TensorFlow: &tensorflow.ModelInfo{}, Disabled: true}
@@ -317,6 +328,7 @@ func TestConfig_reportUnscreenedUploads(t *testing.T) {
 	t.Run("MissingDetector", func(t *testing.T) {
 		withVisionConfig(t, &vision.ConfigValues{})
 		c := NewConfig(CliTestContext())
+		c.options.NsfwModel = "none"
 		c.options.UploadNSFW = false
 		hook := captureLog(t)
 
@@ -325,6 +337,21 @@ func TestConfig_reportUnscreenedUploads(t *testing.T) {
 		entry := hook.LastEntry()
 		require.NotNil(t, entry)
 		assert.Contains(t, entry.Message, "no nsfw model is configured")
+	})
+	t.Run("AutoMissingArtifact", func(t *testing.T) {
+		withVisionConfig(t, vision.NewConfig())
+		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = t.TempDir()
+		c.options.NsfwModel = "auto"
+		c.options.UploadNSFW = false
+		hook := captureLog(t)
+
+		c.reportUnscreenedUploads()
+
+		entry := hook.LastEntry()
+		require.NotNil(t, entry)
+		assert.Contains(t, entry.Message, "scripts/dist/download-models.sh yahoo_open_nsfw")
+		assert.Contains(t, entry.Message, "restart PhotoPrism")
 	})
 	t.Run("UploadsAllowed", func(t *testing.T) {
 		withVisionConfig(t, &vision.ConfigValues{})
@@ -339,6 +366,8 @@ func TestConfig_reportUnscreenedUploads(t *testing.T) {
 	t.Run("DetectorConfigured", func(t *testing.T) {
 		withVisionConfig(t, vision.NewConfig())
 		c := NewConfig(CliTestContext())
+		c.options.ModelsPath = t.TempDir()
+		installVisionTestArtifact(t, c.ModelsPath(), string(nsfw.DefaultModelName()), nsfw.FindModel(nsfw.DefaultModelName()).ONNX.File)
 		c.options.UploadNSFW = false
 		hook := captureLog(t)
 

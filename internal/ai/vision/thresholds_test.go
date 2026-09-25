@@ -58,88 +58,6 @@ func TestThresholds_GetTopicality(t *testing.T) {
 	})
 }
 
-func TestThresholds_GetNSFW(t *testing.T) {
-	t.Run("Default", func(t *testing.T) {
-		th := Thresholds{NSFW: NSFWThresholdAuto}
-		if got := th.GetNSFW(); got != DefaultNSFWThreshold {
-			t.Fatalf("expected default %d, got %d", DefaultNSFWThreshold, got)
-		}
-	})
-	t.Run("Zero", func(t *testing.T) {
-		th := Thresholds{NSFW: 0}
-		if got := th.GetNSFW(); got != 0 {
-			t.Fatalf("expected 0, got %d", got)
-		}
-	})
-	t.Run("AboveMax", func(t *testing.T) {
-		th := Thresholds{NSFW: 200}
-		if got := th.GetNSFW(); got != 100 {
-			t.Fatalf("expected 100, got %d", got)
-		}
-	})
-	t.Run("Float", func(t *testing.T) {
-		th := Thresholds{NSFW: 80}
-		if got := th.GetNSFWFloat32(); got != 0.8 {
-			t.Fatalf("expected 0.8, got %f", got)
-		}
-	})
-	t.Run("NilReceiver", func(t *testing.T) {
-		var th *Thresholds
-		if got := th.GetNSFW(); got != DefaultNSFWThreshold {
-			t.Fatalf("expected default %d, got %d", DefaultNSFWThreshold, got)
-		}
-	})
-}
-
-// TestThresholds_NSFWIsSet verifies that an operator who chose a value is distinguishable from
-// one who chose nothing, which is what lets a model's own default apply.
-func TestThresholds_NSFWIsSet(t *testing.T) {
-	t.Run("Unset", func(t *testing.T) {
-		th := Thresholds{NSFW: NSFWThresholdAuto}
-		if th.NSFWIsSet() {
-			t.Fatal("expected an unset threshold")
-		}
-	})
-	t.Run("ZeroCountsAsSet", func(t *testing.T) {
-		th := Thresholds{NSFW: 0}
-		if !th.NSFWIsSet() {
-			t.Fatal("expected zero to be configured")
-		}
-	})
-	t.Run("Set", func(t *testing.T) {
-		th := Thresholds{NSFW: 90}
-		if !th.NSFWIsSet() {
-			t.Fatal("expected a configured threshold")
-		}
-	})
-	// The default value is indistinguishable from a deliberate choice of the same number, and
-	// that is intended: both mean "use 75".
-	t.Run("DefaultValueCountsAsSet", func(t *testing.T) {
-		th := Thresholds{NSFW: DefaultNSFWThreshold}
-		if !th.NSFWIsSet() {
-			t.Fatal("expected a configured threshold")
-		}
-	})
-	t.Run("NilReceiver", func(t *testing.T) {
-		var th *Thresholds
-		if th.NSFWIsSet() {
-			t.Fatal("expected an unset threshold")
-		}
-	})
-}
-
-// TestDefaultThresholdsNSFWIsUnset verifies that the shipped defaults leave the NSFW threshold
-// unset, so that a model's own calibrated value can apply.
-func TestDefaultThresholdsNSFWIsUnset(t *testing.T) {
-	if DefaultThresholds.NSFWIsSet() {
-		t.Fatalf("expected an unset default, got %d", DefaultThresholds.NSFW)
-	}
-
-	if got := DefaultThresholds.GetNSFW(); got != DefaultNSFWThreshold {
-		t.Fatalf("expected %d, got %d", DefaultNSFWThreshold, got)
-	}
-}
-
 // TestThresholds_NSFWContexts verifies caller-specific values override the shared legacy setting.
 func TestThresholds_NSFWContexts(t *testing.T) {
 	upload, index, labels := 60, 90, 40
@@ -179,5 +97,83 @@ func TestThresholds_NSFWContexts(t *testing.T) {
 	}
 	if got := thresholds.GetNSFWLabels(); got != DefaultNSFWThreshold {
 		t.Fatalf("expected automatic labels fallback %d, got %d", DefaultNSFWThreshold, got)
+	}
+
+	zero := 0
+	thresholds = Thresholds{NSFW: 0, NSFWUpload: &zero, NSFWIndex: &zero, NSFWLabels: &zero}
+	if thresholds.NSFWUploadIsSet() || thresholds.NSFWIndexIsSet() {
+		t.Fatal("expected zero context thresholds to select automatic calibration")
+	}
+	if got := thresholds.GetNSFWLabels(); got != DefaultNSFWThreshold {
+		t.Fatalf("expected zero labels fallback %d, got %d", DefaultNSFWThreshold, got)
+	}
+}
+
+// TestThresholds_GetNSFWUpload verifies upload overrides, fallbacks, and percentages.
+func TestThresholds_GetNSFWUpload(t *testing.T) {
+	explicit := 62
+	thresholds := Thresholds{NSFW: 80, NSFWUpload: &explicit}
+	if got := thresholds.GetNSFWUpload(); got != explicit {
+		t.Fatalf("expected %d, got %d", explicit, got)
+	}
+	if got := thresholds.GetNSFWUploadFloat32(); got != 0.62 {
+		t.Fatalf("expected 0.62, got %f", got)
+	}
+	if !thresholds.NSFWUploadIsSet() {
+		t.Fatal("expected upload threshold to be configured")
+	}
+
+	zero := 0
+	thresholds.NSFWUpload = &zero
+	if thresholds.NSFWUploadIsSet() {
+		t.Fatal("expected zero to select automatic upload calibration")
+	}
+}
+
+// TestThresholds_GetNSFWIndex verifies index overrides, fallbacks, and percentages.
+func TestThresholds_GetNSFWIndex(t *testing.T) {
+	explicit := 91
+	thresholds := Thresholds{NSFW: 80, NSFWIndex: &explicit}
+	if got := thresholds.GetNSFWIndex(); got != explicit {
+		t.Fatalf("expected %d, got %d", explicit, got)
+	}
+	if got := thresholds.GetNSFWIndexFloat32(); got != 0.91 {
+		t.Fatalf("expected 0.91, got %f", got)
+	}
+	if !thresholds.NSFWIndexIsSet() {
+		t.Fatal("expected index threshold to be configured")
+	}
+
+	auto := NSFWThresholdAuto
+	thresholds.NSFWIndex = &auto
+	if thresholds.NSFWIndexIsSet() {
+		t.Fatal("expected -1 to select automatic index calibration")
+	}
+}
+
+// TestThresholds_GetNSFWLabels verifies label overrides and shared fallbacks.
+func TestThresholds_GetNSFWLabels(t *testing.T) {
+	explicit := 40
+	thresholds := Thresholds{NSFW: 80, NSFWLabels: &explicit}
+	if got := thresholds.GetNSFWLabels(); got != explicit {
+		t.Fatalf("expected %d, got %d", explicit, got)
+	}
+
+	thresholds.NSFWLabels = nil
+	if got := thresholds.GetNSFWLabels(); got != 80 {
+		t.Fatalf("expected shared threshold 80, got %d", got)
+	}
+}
+
+// TestThresholds_nsfwValue verifies automatic values and upper-bound clamping.
+func TestThresholds_nsfwValue(t *testing.T) {
+	thresholds := Thresholds{NSFW: 0}
+	if value, configured := thresholds.nsfwValue(nil); value != DefaultNSFWThreshold || configured {
+		t.Fatalf("expected automatic fallback %d, got %d configured=%t", DefaultNSFWThreshold, value, configured)
+	}
+
+	aboveMax := 150
+	if value, configured := thresholds.nsfwValue(&aboveMax); value != 100 || !configured {
+		t.Fatalf("expected configured maximum 100, got %d configured=%t", value, configured)
 	}
 }

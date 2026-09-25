@@ -170,10 +170,18 @@ func TestRegisteredModels(t *testing.T) {
 			model := NewRegisteredModel("/models", name, onnx.ProviderCUDA, false)
 			require.NotNil(t, model)
 			assert.Equal(t, filepath.Join("/models", string(name), description.ONNX.File), model.modelPath)
-			assert.Equal(t, onnx.ProviderCUDA, model.provider)
+			assert.Equal(t, onnx.ProviderCUDA, model.Provider())
 			require.NoError(t, model.validateDescription())
 		})
 	}
+}
+
+// TestModelProvider verifies detector providers are observable without exposing mutable state.
+func TestModelProvider(t *testing.T) {
+	model := NewModel(Settings{Provider: onnx.ProviderCUDA, Disabled: true})
+	assert.Equal(t, onnx.ProviderCUDA, model.Provider())
+	var empty *Model
+	assert.Empty(t, empty.Provider())
 }
 
 // TestDescriptionInstalled verifies registered detector artifact discovery.

@@ -25,6 +25,7 @@ Additional information can be found in our Developer Guide:
 package nsfw
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -135,7 +136,9 @@ func (r *Result) UnmarshalJSON(data []byte) error {
 	}
 
 	*r = Result(decoded)
-	_, r.scoreSet = fields["score"]
+	if score, ok := fields["score"]; ok {
+		r.scoreSet = !bytes.Equal(bytes.TrimSpace(score), []byte("null"))
+	}
 
 	return nil
 }
@@ -167,7 +170,7 @@ func NewResult(score, threshold float32) Result {
 func (r Result) Decide(threshold float32) Result {
 	var score float32
 
-	if r.scoreSet || r.Score != 0 || r.Threshold != 0 {
+	if r.scoreSet || r.Score != 0 {
 		score = r.Score
 	} else if r.HasScores() {
 		score = r.UnsafeScore()

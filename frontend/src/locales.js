@@ -400,7 +400,7 @@ export const BackendMessages = () => {
   $gettext("Permission denied");
   $gettext("Payment required");
   $gettext("Upload might be offensive");
-  $gettext("Content screening is temporarily unavailable");
+
   $gettext("Upload failed");
   $gettext("Upload to %s failed");
   $gettext("No items selected");

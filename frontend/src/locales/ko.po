@@ -1139,10 +1139,6 @@ msgstr "한 장의 사진이 포함되어 있습니다."
 msgid "Content"
 msgstr "콘텐츠"
 
-#: src/locales.js:403
-msgid "Content screening is temporarily unavailable"
-msgstr ""
-
 #: src/component/settings/apps.vue:37 src/component/settings/apps.vue:53
 msgid "Continue"
 msgstr "계속하다"

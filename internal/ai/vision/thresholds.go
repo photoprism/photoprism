@@ -3,8 +3,8 @@ package vision
 // NSFWThresholdAuto selects the calibrated threshold of the active detector.
 const NSFWThresholdAuto = -1
 
-// Thresholds are expressed as percentages (0-100) and gate label acceptance,
-// topicality, and NSFW handling, with -1 selecting automatic NSFW calibration.
+// Thresholds are expressed as percentages and gate label acceptance, topicality,
+// and NSFW handling, with zero or -1 selecting automatic NSFW calibration.
 type Thresholds struct {
 	Confidence int  `yaml:"Confidence,omitempty" json:"confidence,omitempty"`
 	Topicality int  `yaml:"Topicality,omitempty" json:"topicality,omitempty"`
@@ -44,28 +44,6 @@ func (t *Thresholds) GetTopicality() int {
 // GetTopicalityFloat32 returns the Topicality threshold as float32 for comparison.
 func (t *Thresholds) GetTopicalityFloat32() float32 {
 	return float32(t.GetTopicality()) / 100
-}
-
-// GetNSFW returns the effective NSFW threshold in percent from 0 to 100.
-func (t *Thresholds) GetNSFW() int {
-	if t == nil || t.NSFW < 0 {
-		return DefaultNSFWThreshold
-	} else if t.NSFW > 100 {
-		return 100
-	}
-
-	return t.NSFW
-}
-
-// NSFWIsSet reports whether the operator configured an NSFW threshold.
-// An unset value allows the selected model's calibrated default to apply.
-func (t *Thresholds) NSFWIsSet() bool {
-	return t != nil && t.NSFW >= 0
-}
-
-// GetNSFWFloat32 returns the NSFW threshold as float32 for comparison.
-func (t *Thresholds) GetNSFWFloat32() float32 {
-	return float32(t.GetNSFW()) / 100
 }
 
 // GetNSFWUpload returns the upload-screening threshold in percent.
@@ -131,14 +109,14 @@ func (t *Thresholds) GetNSFWLabels() int {
 // nsfwValue resolves a context override, the shared legacy value, or the fallback.
 func (t *Thresholds) nsfwValue(override *int) (int, bool) {
 	if override != nil {
-		if *override < 0 {
+		if *override <= 0 {
 			return DefaultNSFWThreshold, false
 		}
 
 		return min(*override, 100), true
 	}
 
-	if t != nil && t.NSFW >= 0 {
+	if t != nil && t.NSFW > 0 {
 		return min(t.NSFW, 100), true
 	}
 

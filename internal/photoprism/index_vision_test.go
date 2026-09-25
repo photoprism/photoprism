@@ -59,6 +59,13 @@ func TestIndexCaptionSource(t *testing.T) {
 	})
 }
 
+// TestLabelsMarkNSFW verifies label signals cannot bypass the NSFW detection option.
+func TestLabelsMarkNSFW(t *testing.T) {
+	labels := classify.Labels{{Name: "test", NSFW: true}}
+	assert.False(t, labelsMarkNSFW(labels, false, 75))
+	assert.True(t, labelsMarkNSFW(labels, true, 75))
+}
+
 func TestIndexLabelsSource(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping vision-dependent test in short mode")

@@ -28,27 +28,63 @@ func withConfig(t *testing.T, cfg *ConfigValues) {
 func TestNsfwThreshold(t *testing.T) {
 	t.Run("OperatorValueWins", func(t *testing.T) {
 		withConfig(t, &ConfigValues{Thresholds: Thresholds{NSFW: 90}})
-		assert.InDelta(t, 0.9, NsfwThreshold(), 1e-6)
-		assert.InDelta(t, 0.9, NsfwUploadThreshold(), 1e-6)
+		index, indexIsSet := nsfwThreshold(nsfwThresholdIndex)
+		upload, uploadIsSet := nsfwThreshold(nsfwThresholdUpload)
+		assert.InDelta(t, 0.9, index, 1e-6)
+		assert.InDelta(t, 0.9, upload, 1e-6)
+		assert.True(t, indexIsSet)
+		assert.True(t, uploadIsSet)
 	})
 	t.Run("ContextOverrides", func(t *testing.T) {
 		upload, index := 62, 91
 		withConfig(t, &ConfigValues{Thresholds: Thresholds{NSFW: 80, NSFWUpload: &upload, NSFWIndex: &index}})
-		assert.InDelta(t, 0.91, NsfwThreshold(), 1e-6)
-		assert.InDelta(t, 0.62, NsfwUploadThreshold(), 1e-6)
+		indexThreshold, _ := nsfwThreshold(nsfwThresholdIndex)
+		uploadThreshold, _ := nsfwThreshold(nsfwThresholdUpload)
+		assert.InDelta(t, 0.91, indexThreshold, 1e-6)
+		assert.InDelta(t, 0.62, uploadThreshold, 1e-6)
 	})
 	t.Run("UnsetFallsBackToDefault", func(t *testing.T) {
 		withConfig(t, &ConfigValues{Thresholds: Thresholds{NSFW: NSFWThresholdAuto}})
-		assert.InDelta(t, 0.75, NsfwThreshold(), 1e-6)
+		threshold, configured := nsfwThreshold(nsfwThresholdIndex)
+		assert.InDelta(t, 0.75, threshold, 1e-6)
+		assert.False(t, configured)
 	})
 	t.Run("NoConfig", func(t *testing.T) {
 		withConfig(t, nil)
-		assert.InDelta(t, 0.75, NsfwThreshold(), 1e-6)
+		threshold, configured := nsfwThreshold(nsfwThresholdIndex)
+		assert.InDelta(t, 0.75, threshold, 1e-6)
+		assert.False(t, configured)
 	})
 	t.Run("AboveMaxClamps", func(t *testing.T) {
 		withConfig(t, &ConfigValues{Thresholds: Thresholds{NSFW: 500}})
-		assert.InDelta(t, 1.0, NsfwThreshold(), 1e-6)
+		threshold, configured := nsfwThreshold(nsfwThresholdIndex)
+		assert.InDelta(t, 1.0, threshold, 1e-6)
+		assert.True(t, configured)
 	})
+}
+
+// TestSetNSFWFuncs verifies index and upload detector overrides are independent.
+func TestSetNSFWFuncs(t *testing.T) {
+	SetNSFWFunc(func(Files, media.Src) ([]nsfw.Result, error) {
+		return []nsfw.Result{nsfw.NewResult(0.1, 0.5)}, nil
+	})
+	SetNSFWUploadFunc(func(Files, media.Src) ([]nsfw.Result, error) {
+		return []nsfw.Result{nsfw.NewResult(0.9, 0.5)}, nil
+	})
+	t.Cleanup(func() {
+		SetNSFWFunc(nil)
+		SetNSFWUploadFunc(nil)
+	})
+
+	index, err := DetectNSFW(Files{"index.jpg"}, media.SrcLocal)
+	require.NoError(t, err)
+	require.Len(t, index, 1)
+	assert.True(t, index[0].IsSafe())
+
+	upload, err := DetectNSFWUpload(Files{"upload.jpg"}, media.SrcLocal)
+	require.NoError(t, err)
+	require.Len(t, upload, 1)
+	assert.True(t, upload[0].IsUnsafe())
 }
 
 // TestResolvedNSFWThreshold verifies explicit settings override model defaults.
@@ -68,6 +104,16 @@ func TestResolvedNSFWThreshold(t *testing.T) {
 		assert.InDelta(t, 0.91, resolvedNSFWThreshold(model), 1e-6)
 		assert.InDelta(t, 0.62, resolvedNSFWUploadThreshold(model), 1e-6)
 	})
+}
+
+// TestResolvedNSFWThresholdFor verifies each context resolves independently.
+func TestResolvedNSFWThresholdFor(t *testing.T) {
+	upload, index := 62, 91
+	withConfig(t, &ConfigValues{Thresholds: Thresholds{NSFWUpload: &upload, NSFWIndex: &index}})
+	model := nsfw.NewModel(nsfw.Settings{DefaultThreshold: 0.63, Disabled: true})
+
+	assert.InDelta(t, 0.62, resolvedNSFWThresholdFor(model, nsfwThresholdUpload), 1e-6)
+	assert.InDelta(t, 0.91, resolvedNSFWThresholdFor(model, nsfwThresholdIndex), 1e-6)
 }
 
 // TestCustomNSFWClassIndexRequired verifies zero is valid only when explicitly configured.
@@ -92,7 +138,7 @@ func TestDetectNSFWNoModel(t *testing.T) {
 	t.Run("NoModelConfigured", func(t *testing.T) {
 		withConfig(t, &ConfigValues{})
 
-		result, err := nsfwInternal(Files{"a.jpg", "b.jpg"}, media.SrcLocal)
+		result, err := nsfwInternalContext(Files{"a.jpg", "b.jpg"}, media.SrcLocal, nsfwThresholdIndex)
 		require.Error(t, err)
 		require.ErrorIs(t, err, nsfw.ErrNotConfigured)
 		require.Len(t, result, 2)
@@ -105,7 +151,7 @@ func TestDetectNSFWNoModel(t *testing.T) {
 	t.Run("NoConfig", func(t *testing.T) {
 		withConfig(t, nil)
 
-		result, err := nsfwInternal(Files{"a.jpg"}, media.SrcLocal)
+		result, err := nsfwInternalContext(Files{"a.jpg"}, media.SrcLocal, nsfwThresholdIndex)
 		require.ErrorIs(t, err, nsfw.ErrNotConfigured)
 		require.Len(t, result, 1)
 		assert.False(t, result[0].IsSafe())
@@ -113,7 +159,7 @@ func TestDetectNSFWNoModel(t *testing.T) {
 	t.Run("NoImages", func(t *testing.T) {
 		withConfig(t, &ConfigValues{})
 
-		_, err := nsfwInternal(Files{}, media.SrcLocal)
+		_, err := nsfwInternalContext(Files{}, media.SrcLocal, nsfwThresholdIndex)
 		require.Error(t, err)
 	})
 }
@@ -133,7 +179,7 @@ func TestDetectNSFWPartialBatch(t *testing.T) {
 	good := filepath.Join("..", "nsfw", "testdata", "cat_brown.jpg")
 	bad := filepath.Join("..", "nsfw", "testdata", "does-not-exist.jpg")
 
-	result, err := nsfwInternal(Files{good, bad}, media.SrcLocal)
+	result, err := nsfwInternalContext(Files{good, bad}, media.SrcLocal, nsfwThresholdIndex)
 
 	// Local batches stay tolerant, so one unreadable file does not abort the run.
 	require.NoError(t, err)
@@ -153,22 +199,41 @@ func TestDetectNSFWThresholdContexts(t *testing.T) {
 		t.Skip("nsfw: model is not installed")
 	}
 
-	upload, index := 62, 91
-	config := NewConfig()
-	config.Thresholds.NSFWUpload = &upload
-	config.Thresholds.NSFWIndex = &index
-	withConfig(t, config)
-
 	image := Files{filepath.Join("..", "nsfw", "testdata", "hentai_2.jpg")}
-	indexed, err := DetectNSFW(image, media.SrcLocal)
-	require.NoError(t, err)
-	require.Len(t, indexed, 1)
-	assert.InDelta(t, 0.91, indexed[0].Threshold, 1e-6)
+	t.Run("Explicit", func(t *testing.T) {
+		upload, index := 62, 91
+		config := NewConfig()
+		config.Thresholds.NSFWUpload = &upload
+		config.Thresholds.NSFWIndex = &index
+		withConfig(t, config)
 
-	uploaded, err := DetectNSFWUpload(image, media.SrcLocal)
-	require.NoError(t, err)
-	require.Len(t, uploaded, 1)
-	assert.InDelta(t, 0.62, uploaded[0].Threshold, 1e-6)
+		indexed, err := DetectNSFW(image, media.SrcLocal)
+		require.NoError(t, err)
+		require.Len(t, indexed, 1)
+		assert.InDelta(t, 0.91, indexed[0].Threshold, 1e-6)
+
+		uploaded, err := DetectNSFWUpload(image, media.SrcLocal)
+		require.NoError(t, err)
+		require.Len(t, uploaded, 1)
+		assert.InDelta(t, 0.62, uploaded[0].Threshold, 1e-6)
+	})
+	t.Run("AutomaticUsesModelDefault", func(t *testing.T) {
+		config := NewConfig()
+		auto := NSFWThresholdAuto
+		config.Thresholds.NSFWUpload = &auto
+		config.Thresholds.NSFWIndex = &auto
+		withConfig(t, config)
+
+		indexed, err := DetectNSFW(image, media.SrcLocal)
+		require.NoError(t, err)
+		require.Len(t, indexed, 1)
+		assert.InDelta(t, modelInfo.DefaultThreshold, indexed[0].Threshold, 1e-6)
+
+		uploaded, err := DetectNSFWUpload(image, media.SrcLocal)
+		require.NoError(t, err)
+		require.Len(t, uploaded, 1)
+		assert.InDelta(t, modelInfo.DefaultThreshold, uploaded[0].Threshold, 1e-6)
+	})
 }
 
 // TestNormalizeNsfwResults verifies that a remote response is aligned with the images it was
@@ -254,11 +319,6 @@ func TestSetNSFWFunc(t *testing.T) {
 	t.Cleanup(func() { SetNSFWFunc(nil) })
 
 	result, err := DetectNSFW(Files{"any.jpg"}, media.SrcLocal)
-	require.NoError(t, err)
-	require.Len(t, result, 1)
-	assert.True(t, result[0].IsUnsafe())
-
-	result, err = DetectNSFWUpload(Files{"any.jpg"}, media.SrcLocal)
 	require.NoError(t, err)
 	require.Len(t, result, 1)
 	assert.True(t, result[0].IsUnsafe())
