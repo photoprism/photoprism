@@ -1,9 +1,11 @@
 package query
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -114,4 +116,15 @@ func TestSessions(t *testing.T) {
 			// t.Logf("sessions: %#v", results)
 		}
 	})
+}
+
+func TestSession_ExactID(t *testing.T) {
+	id := rnd.SessionID("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0")
+
+	result, err := Session(id)
+	require.NoError(t, err)
+	assert.Equal(t, id, result.ID)
+
+	_, err = Session(strings.ToUpper(id))
+	assert.Error(t, err)
 }

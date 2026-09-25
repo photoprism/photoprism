@@ -13,6 +13,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity/sortby"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -1745,5 +1746,25 @@ func TestAlbum_Links(t *testing.T) {
 		album := AlbumFixtures.Get("christmas2030")
 		links := album.Links()
 		assert.Equal(t, "4jxf3jfn2k", links[0].LinkToken)
+	})
+}
+
+func TestFindAlbum_TitleLiteral(t *testing.T) {
+	suffix := rnd.Base36(6)
+	album := NewAlbum("Like TripX"+suffix, AlbumManual)
+	require.NoError(t, album.Create())
+	t.Cleanup(func() {
+		_ = UnscopedDb().Delete(album).Error
+		FlushAlbumCache()
+	})
+
+	t.Run("Wildcard", func(t *testing.T) {
+		assert.Nil(t, FindAlbum(Album{AlbumType: AlbumManual, AlbumSlug: UnknownSlug, AlbumTitle: "Like Trip_" + suffix}))
+		assert.Nil(t, FindAlbum(Album{AlbumType: AlbumManual, AlbumSlug: UnknownSlug, AlbumTitle: "Like Trip%"}))
+	})
+	t.Run("Exact", func(t *testing.T) {
+		if found := FindAlbum(Album{AlbumType: AlbumManual, AlbumSlug: UnknownSlug, AlbumTitle: "like tripx" + suffix}); assert.NotNil(t, found) {
+			assert.Equal(t, album.AlbumUID, found.AlbumUID)
+		}
 	})
 }

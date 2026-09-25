@@ -523,11 +523,11 @@ func FindAlbum(find Album) *Album {
 	} else {
 		switch {
 		case find.AlbumTitle != "" && namedSlug:
-			stmt = stmt.Where("album_slug = ? OR album_title LIKE ?", find.AlbumSlug, find.AlbumTitle)
+			stmt = stmt.Where("album_slug = ? OR "+clean.SqlLikeCond("album_title"), find.AlbumSlug, clean.SqlLike(find.AlbumTitle))
 		case namedSlug:
 			stmt = stmt.Where("album_slug = ?", find.AlbumSlug)
 		case find.AlbumTitle != "":
-			stmt = stmt.Where("album_title LIKE ?", find.AlbumTitle)
+			stmt = stmt.Where(clean.SqlLikeCond("album_title"), clean.SqlLike(find.AlbumTitle))
 		default:
 			return nil
 		}

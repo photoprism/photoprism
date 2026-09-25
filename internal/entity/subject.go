@@ -358,7 +358,7 @@ func FindSubjectByName(name string, restore bool) *Subject {
 
 	// Search existing record by name, otherwise.
 	if result.SubjUID != "" {
-	} else if err := UnscopedDb().Where("subj_name LIKE ?", name).First(&result).Error; err != nil {
+	} else if err := UnscopedDb().Where(clean.SqlLikeCond("subj_name"), clean.SqlLike(name)).First(&result).Error; err != nil {
 		log.Debugf("subject: %s does not exist yet", clean.Log(name))
 		return nil
 	}

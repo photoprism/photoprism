@@ -20,9 +20,9 @@ func Session(id string) (result entity.Session, err error) {
 	case rnd.IsRefID(id):
 		err = Db().Where("ref_id = ?", id).First(&result).Error
 	case rnd.IsSessionID(id):
-		err = Db().Where("id LIKE ?", id).First(&result).Error
+		err = Db().Where("id = ?", id).First(&result).Error
 	default:
-		err = Db().Where("id LIKE ?", rnd.SessionID(id)).First(&result).Error
+		err = Db().Where("id = ?", rnd.SessionID(id)).First(&result).Error
 	}
 
 	return result, err
