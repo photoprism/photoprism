@@ -231,6 +231,7 @@ func TestIndex_Insta360StackControls(t *testing.T) {
 		var result entity.Photo
 		require.NoError(t, entity.UnscopedDb().First(&result, "id = ?", photo.ID).Error)
 		assert.Equal(t, "IMG_1234", result.PhotoName)
+		assert.Equal(t, entity.IsStackable, result.PhotoStack)
 		assert.NotNil(t, result.DeletedAt)
 	})
 	t.Run("PartialYaml", func(t *testing.T) {
@@ -259,6 +260,7 @@ func TestIndex_Insta360StackControls(t *testing.T) {
 		require.Len(t, owners, 2)
 		assert.Len(t, insta360StackPhotoIDs(owners), 2)
 		assert.Equal(t, "VID_20220625_140410_00_008", owners["VID_20220625_140410_00_008.mp4"].PhotoName)
+		assert.Equal(t, entity.IsStackable, owners["VID_20220625_140410_00_008.mp4"].PhotoStack)
 		assert.Equal(t, "VID_20220625_140410_10_008", owners["VID_20220625_140410_10_008.mp4"].PhotoName)
 	})
 	t.Run("MovedLens", func(t *testing.T) {
@@ -342,6 +344,10 @@ func TestIndex_Insta360StackOptions(t *testing.T) {
 		assert.Len(t, owners, 2)
 		assert.Equal(t, map[uint]bool{photo.ID: true}, insta360StackPhotoIDs(owners))
 		assert.Equal(t, 1, insta360StackPhotoCount(t, folder))
+
+		// An explicit unstacked flag is kept.
+		require.NoError(t, entity.UnscopedDb().First(&photo, "id = ?", photo.ID).Error)
+		assert.Equal(t, entity.IsUnstacked, photo.PhotoStack)
 	})
 	t.Run("YamlRestore", func(t *testing.T) {
 		folder := "insta360optionsyamlrestore"
@@ -531,4 +537,27 @@ func TestIndex_Insta360PhotoPair(t *testing.T) {
 			assert.Equal(t, 1, insta360StackPhotoCount(t, folder))
 		})
 	}
+}
+
+// TestIndex_Insta360ImportedName verifies that a capture file renamed on import keeps its original
+// name, so it is still identified as a file that must stay stacked.
+func TestIndex_Insta360ImportedName(t *testing.T) {
+	folder := "insta360importedname"
+	cfg := newInsta360StackConfig(t, folder, false)
+	dir := filepath.Join(cfg.OriginalsPath(), folder)
+
+	writeInsta360StackMedia(t, cfg, dir, "20260925_135937_07784009.insv")
+	mediaFile, err := NewMediaFile(filepath.Join(dir, "20260925_135937_07784009.insv"))
+	require.NoError(t, err)
+
+	ind := NewIndex(cfg, NewConvert(cfg), NewFiles(), NewPhotos())
+	result := ind.UserMediaFile(mediaFile, NewIndexOptions(folder, false, true, true, false, true, cfg), insta360StackRight, "", entity.OwnerUnknown)
+	require.True(t, result.Success(), result.Err)
+
+	var file entity.File
+	require.NoError(t, entity.UnscopedDb().First(&file, "file_name = ?", folder+"/20260925_135937_07784009.insv").Error)
+	assert.Equal(t, insta360StackRight, file.OriginalName)
+	assert.True(t, file.KeepStacked())
+	assert.Equal(t, insta360StackName, file.StackGroup())
+	assert.Equal(t, entity.IsStackable, insta360StackOwners(t, folder)["20260925_135937_07784009.insv"].PhotoStack)
 }

@@ -381,3 +381,29 @@ func TestFilesByPhotoIDs(t *testing.T) {
 		assert.Empty(t, files)
 	})
 }
+
+// TestOriginalsByPhotoID verifies that only the originals of a picture are returned, with all columns.
+func TestOriginalsByPhotoID(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		photo := entity.PhotoFixtures.Get("19800101_000002_D640C559")
+
+		files, err := OriginalsByPhotoID(photo.ID)
+
+		require.NoError(t, err)
+		require.NotEmpty(t, files)
+
+		for _, f := range files {
+			assert.Equal(t, photo.ID, f.PhotoID)
+			assert.Equal(t, entity.RootOriginals, f.FileRoot)
+			assert.False(t, f.FileSidecar)
+			assert.False(t, f.FileMissing)
+			assert.NotEmpty(t, f.FileUID)
+		}
+	})
+	t.Run("NotFound", func(t *testing.T) {
+		files, err := OriginalsByPhotoID(0)
+
+		require.NoError(t, err)
+		assert.Empty(t, files)
+	})
+}

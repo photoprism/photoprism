@@ -1148,3 +1148,62 @@ func TestFile_MissingPhotoID(t *testing.T) {
 		assert.ErrorContains(t, err, "file: cannot create file with empty photo id")
 	})
 }
+
+// TestFile_KeepStacked verifies that files stacked under another capture file's name are identified by
+// their current or original name.
+func TestFile_KeepStacked(t *testing.T) {
+	t.Run("FileName", func(t *testing.T) {
+		assert.True(t, (&File{FileName: "2022/VID_20220625_140410_10_008.insv"}).KeepStacked())
+		assert.True(t, (&File{FileName: "2022/IMG_20220625_140410_10_008.insp"}).KeepStacked())
+		assert.False(t, (&File{FileName: "2022/VID_20220625_140410_00_008.insv"}).KeepStacked())
+	})
+	t.Run("OriginalName", func(t *testing.T) {
+		assert.True(t, (&File{FileName: "2026/09/20260925_135937_07784009.00001.insv", OriginalName: "VID_20220625_140410_10_008.insv"}).KeepStacked())
+		assert.True(t, (&File{FileName: "2026/09/20260925_135941_024C6289.insv", OriginalName: "upload/LRV_20220625_140410_11_008.insv"}).KeepStacked())
+	})
+	t.Run("OriginalNameOtherType", func(t *testing.T) {
+		assert.False(t, (&File{FileName: "2026/09/20260925_135937_07784009.mp4", OriginalName: "VID_20220625_140410_10_008.insv"}).KeepStacked())
+	})
+	t.Run("Other", func(t *testing.T) {
+		assert.False(t, (&File{FileName: "2022/VID_20220625_140410_10_008.insv.jpg"}).KeepStacked())
+		assert.False(t, (&File{FileName: "2026/09/20260925_135937_07784009.insv", OriginalName: "insta360.insv"}).KeepStacked())
+		assert.False(t, (&File{FileName: "2022/IMG_1234.jpg"}).KeepStacked())
+		assert.False(t, (*File)(nil).KeepStacked())
+	})
+}
+
+// TestFile_StackGroup verifies the shared stack name of capture originals.
+func TestFile_StackGroup(t *testing.T) {
+	assert.Equal(t, "VID_20220625_140410_00_008", (&File{FileName: "2022/VID_20220625_140410_00_008.insv"}).StackGroup())
+	assert.Equal(t, "VID_20220625_140410_00_008", (&File{FileName: "2026/09/20260925_135937_07784009.insv", OriginalName: "VID_20220625_140410_00_008.insv"}).StackGroup())
+	assert.Equal(t, "", (&File{FileName: "2026/09/20260925_135937_07784009.mp4", OriginalName: "VID_20220625_140410_00_008.insv"}).StackGroup())
+	assert.Equal(t, "", (&File{FileName: "2022/IMG_1234.jpg"}).StackGroup())
+	assert.Equal(t, "", (*File)(nil).StackGroup())
+}
+
+// TestFile_KeepStackedWith verifies that a left lens stays with the other originals of its capture.
+func TestFile_KeepStackedWith(t *testing.T) {
+	left := File{FileUID: "fs6sg6bw45bnlq00", FileName: "2022/VID_20220625_140410_00_008.insv", FileRoot: RootOriginals}
+	right := File{FileUID: "fs6sg6bw45bnlq10", FileName: "2022/VID_20220625_140410_10_008.insv", FileRoot: RootOriginals}
+	other := File{FileUID: "fs6sg6bw45bnlq11", FileName: "2022/VID_20220625_140410_10_008.mp4", FileRoot: RootOriginals}
+	preview := File{FileUID: "fs6sg6bw45bnlq12", FileName: "2022/VID_20220625_140410_10_008.insv.jpg", FileRoot: RootSidecar, FileSidecar: true}
+	unrelated := File{FileUID: "fs6sg6bw45bnlq13", FileName: "2022/VID_20220625_140411_10_008.insv", FileRoot: RootOriginals}
+
+	t.Run("Capture", func(t *testing.T) {
+		files := Files{left, right, other, preview}
+		assert.True(t, left.KeepStackedWith(files))
+		assert.True(t, right.KeepStackedWith(files))
+		assert.False(t, other.KeepStackedWith(files))
+	})
+	t.Run("SingleFile", func(t *testing.T) {
+		assert.False(t, left.KeepStackedWith(Files{left, other, preview}))
+		assert.False(t, left.KeepStackedWith(Files{left, unrelated}))
+		assert.False(t, left.KeepStackedWith(nil))
+		missing := right
+		missing.FileMissing = true
+		assert.False(t, left.KeepStackedWith(Files{left, missing}))
+	})
+	t.Run("Nil", func(t *testing.T) {
+		assert.False(t, (*File)(nil).KeepStackedWith(Files{right}))
+	})
+}

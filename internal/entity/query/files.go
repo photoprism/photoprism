@@ -103,6 +103,18 @@ func FilesByPhotoIDs(ids []uint) (files entity.Files, err error) {
 	return files, nil
 }
 
+// OriginalsByPhotoID finds the original files of a picture that are not sidecars or missing.
+func OriginalsByPhotoID(photoID uint) (files entity.Files, err error) {
+	if photoID == 0 {
+		return files, nil
+	}
+
+	err = Db().Where("photo_id = ? AND file_root = ? AND file_sidecar = 0 AND file_missing = 0", photoID, entity.RootOriginals).
+		Find(&files).Error
+
+	return files, err
+}
+
 // FileByPhotoUID finds a file for the given photo UID.
 func FileByPhotoUID(photoUID string) (*entity.File, error) {
 	f := entity.File{}

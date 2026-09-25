@@ -42,6 +42,27 @@ func StackPrefix(fileName string, stripSequence bool) string {
 	return StripSequence(prefix)
 }
 
+// StackGroup returns the shared stack name of a lens or proxy original of a multi-file capture,
+// including the file the others are stacked under, or an empty string for any other file.
+func StackGroup(fileName string) string {
+	baseName := filepath.Base(fileName)
+
+	for _, rule := range stackRules {
+		if match := rule.pattern.FindStringSubmatch(baseName); match != nil {
+			return rule.name(match)
+		}
+	}
+
+	return ""
+}
+
+// KeepStacked reports whether a file is an original stacked under the name of another file of its
+// capture, such as a right lens or proxy, so it must not be separated from it. Sidecars are not.
+func KeepStacked(fileName string) bool {
+	name := StackGroup(fileName)
+	return name != "" && name != BasePrefix(fileName, false)
+}
+
 // stackRuleName returns the shared stack name if the base name, cut after the extension that
 // follows the prefix, matches a stack rule, or an empty string otherwise.
 func stackRuleName(baseName, prefix string) string {

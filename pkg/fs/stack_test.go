@@ -188,3 +188,64 @@ func TestInsta360Patterns(t *testing.T) {
 		assert.False(t, Insta360PhotoPattern.MatchString("IMG_20220625_140410_10_008.in\u017fp"))
 	})
 }
+
+// TestKeepStacked verifies that only the lens and proxy originals of a capture must stay stacked.
+func TestKeepStacked(t *testing.T) {
+	t.Run("Capture", func(t *testing.T) {
+		for _, fileName := range []string{
+			"VID_20220625_140410_10_008.insv",
+			"LRV_20220625_140410_11_008.insv",
+			"/originals/2022/VID_20220625_140410_10_008.INSV",
+			"vid_20220625_140410_10_008.insv",
+			"IMG_20220625_140410_10_008.insp",
+		} {
+			assert.True(t, KeepStacked(fileName), fileName)
+		}
+	})
+	t.Run("Other", func(t *testing.T) {
+		// Left lens files are named like single-file captures, so they are not flagged by name.
+		for _, fileName := range []string{
+			"",
+			"VID_20220625_140410_00_008.insv",
+			"IMG_20220625_140410_00_008.insp",
+			"IMG_20231015_101112_00_123.insp",
+			"VID_20220625_140410_10_008.insv.jpg",
+			"VID_20220625_140410_10_008.mp4",
+			"VID_20220625_140410_11_008.insv",
+			"LRV_20220625_140410_00_008.insv",
+			"IMG_20220625_140410_11_008.insp",
+			"IMG_20220625_140410_10_008.jpg",
+			"VID_20220625_140410_10_008 (2).insv",
+			"insta360.insv",
+			"IMG_1234.jpg",
+		} {
+			assert.False(t, KeepStacked(fileName), fileName)
+		}
+	})
+}
+
+// TestStackGroup verifies the shared stack name of capture originals.
+func TestStackGroup(t *testing.T) {
+	t.Run("Capture", func(t *testing.T) {
+		for _, fileName := range []string{
+			"VID_20220625_140410_00_008.insv",
+			"VID_20220625_140410_10_008.insv",
+			"/originals/LRV_20220625_140410_11_008.insv",
+		} {
+			assert.Equal(t, "VID_20220625_140410_00_008", StackGroup(fileName), fileName)
+		}
+
+		assert.Equal(t, "IMG_20231015_101112_00_123", StackGroup("IMG_20231015_101112_00_123.insp"))
+	})
+	t.Run("Other", func(t *testing.T) {
+		for _, fileName := range []string{
+			"",
+			"VID_20220625_140410_10_008.insv.jpg",
+			"VID_20220625_140410_10_008.mp4",
+			"VID_20220625_140410_11_008.insv",
+			"IMG_1234.jpg",
+		} {
+			assert.Equal(t, "", StackGroup(fileName), fileName)
+		}
+	})
+}
