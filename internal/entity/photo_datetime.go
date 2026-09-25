@@ -9,7 +9,7 @@ import (
 
 // TrustedTime tests if the photo has a known date and time from a trusted source.
 func (m *Photo) TrustedTime() bool {
-	if SrcPriority[m.TakenSrc] <= SrcPriority[SrcEstimate] {
+	if SrcPriority[m.TakenSrc] <= SrcPriority[SrcEstimate] || m.TakenSrc == SrcModified {
 		return false
 	} else if m.TakenAt.IsZero() || m.TakenAtLocal.IsZero() {
 		return false
@@ -61,11 +61,6 @@ func (m *Photo) SetTakenAt(utc, local time.Time, zone, source string) {
 		}
 	}
 
-	// Don't update older date.
-	if SrcPriority[source] <= SrcPriority[SrcAuto] && !m.TakenAt.IsZero() && utc.After(m.TakenAt) {
-		return
-	}
-
 	// Use location time zone if it has a higher priority.
 	if SrcPriority[source] < SrcPriority[m.PlaceSrc] && m.HasLatLng() {
 		if locZone := m.LocationTimeZone(); locZone != "" {
@@ -75,6 +70,11 @@ func (m *Photo) SetTakenAt(utc, local time.Time, zone, source string) {
 			zone = locZone
 		}
 	}
+
+	// Keep an older date from the same low-priority source, as well as the earliest modify time, since it changes
+	// when a file is saved again; the times are compared after the time zone has been applied.
+	keepOlder := !m.TakenAt.IsZero() && (SrcPriority[source] <= SrcPriority[SrcAuto] || source == SrcModified && m.TakenSrc == SrcModified)
+	prevTakenAt, prevTakenAtLocal, prevTakenSrc, prevTimeZone := m.TakenAt, m.TakenAtLocal, m.TakenSrc, m.TimeZone
 
 	// Set UTC time and date source.
 	m.TakenAt = utc
@@ -99,6 +99,11 @@ func (m *Photo) SetTakenAt(utc, local time.Time, zone, source string) {
 	} else if !m.TimeZoneLocal() {
 		// Keep existing time zone.
 		m.TakenAt = m.GetTakenAt()
+	}
+
+	if keepOlder && m.TakenAt.After(prevTakenAt) {
+		m.TakenAt, m.TakenAtLocal, m.TakenSrc, m.TimeZone = prevTakenAt, prevTakenAtLocal, prevTakenSrc, prevTimeZone
+		return
 	}
 
 	m.UpdateDateFields()

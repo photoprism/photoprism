@@ -26,6 +26,7 @@ const (
 	SrcDefault  Src = "default"            // Prio 1
 	SrcEstimate Src = "estimate"           // Prio 2
 	SrcFile     Src = "file"               // Prio 2
+	SrcModified Src = "modified"           // Prio 3
 	SrcName     Src = "name"               // Prio 4
 	SrcYaml     Src = "yaml"               // Prio 8
 	SrcOIDC     Src = "oidc"               // Prio 8
@@ -64,6 +65,7 @@ var SrcPriority = Priorities{
 	SrcDefault:  1,
 	SrcEstimate: 2,
 	SrcFile:     2,
+	SrcModified: 3,
 	SrcName:     4,
 	SrcYaml:     8,
 	SrcOIDC:     8,
@@ -117,6 +119,7 @@ var SrcDesc = map[Src]string{
 	SrcEstimate: "Estimated",
 	SrcFile:     "File System",
 	SrcName:     "File Name",
+	SrcModified: "Modify Time",
 	SrcYaml:     "YAML Sidecar",
 	SrcOIDC:     "OpenID Connect (OIDC)",
 	SrcLDAP:     "LDAP / Active Directory",

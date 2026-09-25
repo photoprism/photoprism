@@ -289,7 +289,7 @@ func photoPathMaxDates() (photoPathDates map[string]time.Time, err error) {
 	var pathDates []pathMaxDate
 	// Get all the paths and dates.
 	if err = entity.Db().Raw(`SELECT photo_path, MAX(DATE(taken_at_local)) AS taken_max
-	 			FROM photos WHERE taken_src = 'meta' AND photos.photo_quality >= 3 AND photos.deleted_at IS NULL
+	 			FROM photos WHERE taken_src IN ('meta', 'modified') AND photos.photo_quality >= 3 AND photos.deleted_at IS NULL
 	 			GROUP BY photo_path`).Scan(&pathDates).Error; err != nil {
 		log.Errorf("photo: get photo dates (%v)", err)
 		return photoPathDates, err

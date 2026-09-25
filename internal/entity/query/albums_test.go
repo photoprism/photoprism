@@ -213,6 +213,45 @@ func TestUpdateAlbumDates(t *testing.T) {
 		assert.Equal(t, 3, actual.AlbumMonth)
 		assert.Equal(t, 31, actual.AlbumDay)
 	})
+	t.Run("ModifiedSource", func(t *testing.T) {
+		// A modify time dates the album, a date parsed from the file name does not.
+		album := entity.Album{
+			AlbumUID: "as6sg6bxpogaabz7", AlbumType: entity.AlbumFolder,
+			AlbumTitle: "Modified Source", AlbumSlug: "modified-source-album", AlbumPath: "1990/02",
+		}
+		require.NoError(t, entity.UnscopedDb().Create(&album).Error)
+		modified := entity.Photo{
+			PhotoUID:     "ps6sg6bxpogaabz5",
+			PhotoName:    "modifiedsourcealbum",
+			PhotoPath:    "1990/02",
+			TakenAt:      time.Date(1990, 2, 14, 9, 0, 0, 0, time.UTC),
+			TakenAtLocal: time.Date(1990, 2, 14, 9, 0, 0, 0, time.UTC),
+			TakenSrc:     entity.SrcModified,
+			PhotoQuality: 3,
+		}
+		require.NoError(t, entity.UnscopedDb().Create(&modified).Error)
+		name := entity.Photo{
+			PhotoUID:     "ps6sg6bxpogaabz6",
+			PhotoName:    "namesourcealbum",
+			PhotoPath:    "1990/02",
+			TakenAt:      time.Date(1990, 2, 27, 9, 0, 0, 0, time.UTC),
+			TakenAtLocal: time.Date(1990, 2, 27, 9, 0, 0, 0, time.UTC),
+			TakenSrc:     entity.SrcName,
+			PhotoQuality: 3,
+		}
+		require.NoError(t, entity.UnscopedDb().Create(&name).Error)
+		defer func() {
+			require.NoError(t, entity.UnscopedDb().Exec("DELETE FROM albums WHERE album_uid = ?", "as6sg6bxpogaabz7").Error)
+			require.NoError(t, entity.UnscopedDb().Exec("DELETE FROM photos WHERE photo_uid IN (?, ?)", "ps6sg6bxpogaabz5", "ps6sg6bxpogaabz6").Error)
+			require.NoError(t, entity.UnscopedDb().Save(entity.AlbumFixtures.Pointer("april-1990")).Error)
+		}()
+		_, err := UpdateAlbumDates()
+		require.NoError(t, err)
+		actual := entity.FindAlbum(entity.Album{AlbumUID: "as6sg6bxpogaabz7"})
+		assert.Equal(t, 1990, actual.AlbumYear)
+		assert.Equal(t, 2, actual.AlbumMonth)
+		assert.Equal(t, 14, actual.AlbumDay)
+	})
 	t.Run("MaxWithTimeOffset", func(t *testing.T) {
 		album := entity.FindAlbum(entity.Album{AlbumUID: entity.AlbumFixtures.Get("april-1990").AlbumUID})
 		assert.Equal(t, 11, album.AlbumDay)

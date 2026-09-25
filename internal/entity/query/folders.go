@@ -98,7 +98,7 @@ func UpdateFolderDates() (updated int, err error) {
 		result := UnscopedDb().Exec(`UPDATE folders
 		INNER JOIN
 			(SELECT photo_path, MAX(taken_at_local) AS taken_max
-			FROM photos WHERE taken_src = 'meta' AND photos.photo_quality >= 3 AND photos.deleted_at IS NULL
+			FROM photos WHERE taken_src IN ('meta', 'modified') AND photos.photo_quality >= 3 AND photos.deleted_at IS NULL
 			GROUP BY photo_path) AS p ON folders.path = p.photo_path
 		SET folders.folder_year = YEAR(taken_max), folders.folder_month = MONTH(taken_max), folders.folder_day = DAY(taken_max)
 		WHERE p.taken_max IS NOT NULL AND root = ?
