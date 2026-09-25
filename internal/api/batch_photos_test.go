@@ -4,13 +4,20 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
 
+	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestBatchPhotosArchive(t *testing.T) {
@@ -293,6 +300,90 @@ func TestBatchPhotosApprove(t *testing.T) {
 	})
 }
 
+// batchDeleteTestFolder returns a new originals folder for batch delete tests and removes it,
+// along with the rows of the photos created in it, when the test ends.
+func batchDeleteTestFolder(t *testing.T, conf *config.Config) string {
+	t.Helper()
+
+	folder := "zz-batch-delete-" + rnd.Base36(8)
+	dir := filepath.Join(conf.OriginalsPath(), folder)
+	require.NoError(t, fs.MkdirAll(dir))
+
+	t.Cleanup(func() {
+		_ = os.RemoveAll(dir)
+		db := entity.UnscopedDb()
+		ids := db.Table(entity.Photo{}.TableName()).Select("id").Where("photo_path = ?", folder).QueryExpr()
+		_ = db.Where("photo_id IN (?)", ids).Delete(&entity.PhotoLabel{}).Error
+		_ = db.Where("photo_id IN (?)", ids).Delete(&entity.Details{}).Error
+		_ = db.Where("file_name LIKE ?", folder+"/%").Delete(&entity.File{}).Error
+		_ = db.Where("photo_path = ?", folder).Delete(&entity.Photo{}).Error
+	})
+
+	return folder
+}
+
+// batchDeleteTestPhoto creates a photo with an original file in folder and returns it with the file's
+// absolute path, so batch delete tests do not permanently remove shared fixtures.
+func batchDeleteTestPhoto(t *testing.T, conf *config.Config, folder, name string) (*entity.Photo, string) {
+	t.Helper()
+
+	photo := &entity.Photo{
+		PhotoPath:    folder,
+		PhotoName:    name,
+		PhotoType:    entity.MediaImage,
+		PhotoQuality: 3,
+	}
+
+	require.NoError(t, photo.Create())
+
+	fileName := filepath.Join(conf.OriginalsPath(), folder, name+".jpg")
+	require.NoError(t, fs.Copy("./testdata/london_160x160.jpg", fileName, true))
+
+	file := &entity.File{
+		PhotoID:     photo.ID,
+		PhotoUID:    photo.PhotoUID,
+		FileName:    folder + "/" + name + ".jpg",
+		FileRoot:    entity.RootOriginals,
+		FileHash:    rnd.GenerateUID(entity.FileUID),
+		FileType:    fs.ImageJpeg.String(),
+		FileMime:    "image/jpeg",
+		FilePrimary: true,
+	}
+
+	require.NoError(t, file.Create())
+
+	return photo, fileName
+}
+
+// batchDeleteTestPhotoExists reports whether the photo is still indexed.
+func batchDeleteTestPhotoExists(t *testing.T, photo *entity.Photo) bool {
+	t.Helper()
+
+	var count int
+	require.NoError(t, entity.UnscopedDb().Model(&entity.Photo{}).Where("photo_uid = ?", photo.PhotoUID).Count(&count).Error)
+
+	return count > 0
+}
+
+// assertBatchDeleteTestPhotoKept asserts that the photo, its file, and its original were left unchanged.
+func assertBatchDeleteTestPhotoKept(t *testing.T, photo *entity.Photo, fileName string) {
+	t.Helper()
+
+	var result entity.Photo
+
+	if !assert.NoError(t, entity.UnscopedDb().First(&result, "photo_uid = ?", photo.PhotoUID).Error, photo.PhotoName) {
+		return
+	}
+
+	assert.Equal(t, photo.DeletedAt == nil, result.DeletedAt == nil, photo.PhotoName)
+	assert.Equal(t, photo.PhotoQuality, result.PhotoQuality, photo.PhotoName)
+
+	var files int
+	require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("photo_id = ? AND deleted_at IS NULL", result.ID).Count(&files).Error)
+	assert.Equal(t, 1, files, photo.PhotoName)
+	assert.FileExists(t, fileName)
+}
+
 func TestBatchPhotosDelete(t *testing.T) {
 	t.Run("ErrNoItemsSelected", func(t *testing.T) {
 		app, router, _ := NewApiTest()
@@ -301,5 +392,115 @@ func TestBatchPhotosDelete(t *testing.T) {
 		val := gjson.Get(r.Body.String(), "error")
 		assert.Equal(t, i18n.Msg(i18n.ErrNoItemsSelected), val.String())
 		assert.Equal(t, http.StatusBadRequest, r.Code)
+	})
+	t.Run("NoneArchived", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		BatchPhotosDelete(router)
+		folder := batchDeleteTestFolder(t, conf)
+		photo1, file1 := batchDeleteTestPhoto(t, conf, folder, "visible1")
+		photo2, file2 := batchDeleteTestPhoto(t, conf, folder, "visible2")
+
+		r := PerformRequestWithBody(app, "POST", "/api/v1/batch/photos/delete", fmt.Sprintf(`{"photos": [%q, %q]}`, photo1.PhotoUID, photo2.PhotoUID))
+		assert.Equal(t, http.StatusBadRequest, r.Code)
+		assert.Equal(t, i18n.Msg(i18n.ErrNoItemsSelected), gjson.Get(r.Body.String(), "error").String())
+
+		assertBatchDeleteTestPhotoKept(t, photo1, file1)
+		assertBatchDeleteTestPhotoKept(t, photo2, file2)
+	})
+	t.Run("Mixed", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		BatchPhotosDelete(router)
+		folder := batchDeleteTestFolder(t, conf)
+		archived, archivedFile := batchDeleteTestPhoto(t, conf, folder, "archived")
+		visible, visibleFile := batchDeleteTestPhoto(t, conf, folder, "visible")
+		require.NoError(t, archived.Archive())
+
+		r := PerformRequestWithBody(app, "POST", "/api/v1/batch/photos/delete", fmt.Sprintf(`{"photos": [%q, %q]}`, visible.PhotoUID, archived.PhotoUID))
+		assert.Equal(t, http.StatusOK, r.Code)
+		assert.Equal(t, i18n.Msg(i18n.MsgPermanentlyDeleted), gjson.Get(r.Body.String(), "message").String())
+
+		assert.False(t, batchDeleteTestPhotoExists(t, archived))
+		assert.NoFileExists(t, archivedFile)
+		assertBatchDeleteTestPhotoKept(t, visible, visibleFile)
+	})
+	t.Run("AllArchived", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		BatchPhotosDelete(router)
+		folder := batchDeleteTestFolder(t, conf)
+		photo1, file1 := batchDeleteTestPhoto(t, conf, folder, "archived1")
+		photo2, file2 := batchDeleteTestPhoto(t, conf, folder, "archived2")
+		require.NoError(t, photo1.Archive())
+		require.NoError(t, photo2.Archive())
+
+		// The archive also lists pictures with the lowest quality score.
+		require.NoError(t, photo2.Update("photo_quality", 0))
+
+		r := PerformRequestWithBody(app, "POST", "/api/v1/batch/photos/delete", fmt.Sprintf(`{"photos": [%q, %q]}`, photo1.PhotoUID, photo2.PhotoUID))
+		assert.Equal(t, http.StatusOK, r.Code)
+		assert.Equal(t, i18n.Msg(i18n.MsgPermanentlyDeleted), gjson.Get(r.Body.String(), "message").String())
+
+		assert.False(t, batchDeleteTestPhotoExists(t, photo1))
+		assert.False(t, batchDeleteTestPhotoExists(t, photo2))
+		assert.NoFileExists(t, file1)
+		assert.NoFileExists(t, file2)
+	})
+	t.Run("OtherSelectionFields", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		BatchPhotosDelete(router)
+		folder := batchDeleteTestFolder(t, conf)
+		selected, selectedFile := batchDeleteTestPhoto(t, conf, folder, "selected")
+		labelArchived, labelArchivedFile := batchDeleteTestPhoto(t, conf, folder, "label-archived")
+		labelVisible, labelVisibleFile := batchDeleteTestPhoto(t, conf, folder, "label-visible")
+		albumVisible, albumVisibleFile := batchDeleteTestPhoto(t, conf, folder, "album-visible")
+
+		label := entity.NewLabel("Batch Delete "+rnd.Base36(8), 0)
+		require.NoError(t, label.Create())
+		t.Cleanup(func() { _ = entity.UnscopedDb().Delete(label).Error })
+
+		for _, p := range []*entity.Photo{labelArchived, labelVisible} {
+			require.NoError(t, entity.NewPhotoLabel(p.ID, label.ID, 0, entity.SrcManual).Create())
+		}
+
+		album := entity.NewAlbum("Batch Delete "+rnd.Base36(8), entity.AlbumManual)
+		require.NoError(t, album.Create())
+		t.Cleanup(func() {
+			_ = entity.UnscopedDb().Where("album_uid = ?", album.AlbumUID).Delete(&entity.PhotoAlbum{}).Error
+			_ = entity.UnscopedDb().Delete(album).Error
+		})
+		require.NoError(t, entity.NewPhotoAlbum(albumVisible.PhotoUID, album.AlbumUID).Create())
+
+		require.NoError(t, labelArchived.Archive())
+
+		r := PerformRequestWithBody(app, "POST", "/api/v1/batch/photos/delete",
+			fmt.Sprintf(`{"photos": [%q], "labels": [%q], "albums": [%q]}`, selected.PhotoUID, label.LabelUID, album.AlbumUID))
+		assert.Equal(t, http.StatusOK, r.Code)
+		assert.Equal(t, i18n.Msg(i18n.MsgPermanentlyDeleted), gjson.Get(r.Body.String(), "message").String())
+
+		assert.False(t, batchDeleteTestPhotoExists(t, labelArchived))
+		assert.NoFileExists(t, labelArchivedFile)
+
+		for p, fileName := range map[*entity.Photo]string{selected: selectedFile, labelVisible: labelVisibleFile, albumVisible: albumVisibleFile} {
+			assertBatchDeleteTestPhotoKept(t, p, fileName)
+		}
+
+		var labels, albums int
+		require.NoError(t, entity.UnscopedDb().Model(&entity.PhotoLabel{}).Where("photo_id = ? AND label_id = ?", labelVisible.ID, label.ID).Count(&labels).Error)
+		require.NoError(t, entity.UnscopedDb().Model(&entity.PhotoAlbum{}).Where("photo_uid = ? AND album_uid = ? AND hidden = 0", albumVisible.PhotoUID, album.AlbumUID).Count(&albums).Error)
+		assert.Equal(t, 1, labels)
+		assert.Equal(t, 1, albums)
+	})
+	t.Run("Removed", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		BatchPhotosDelete(router)
+		folder := batchDeleteTestFolder(t, conf)
+		removed, removedFile := batchDeleteTestPhoto(t, conf, folder, "removed")
+		require.NoError(t, removed.Archive())
+		require.NoError(t, removed.Update("photo_quality", -1))
+
+		r := PerformRequestWithBody(app, "POST", "/api/v1/batch/photos/delete", fmt.Sprintf(`{"photos": [%q]}`, removed.PhotoUID))
+		assert.Equal(t, http.StatusBadRequest, r.Code)
+		assert.Equal(t, i18n.Msg(i18n.ErrNoItemsSelected), gjson.Get(r.Body.String(), "error").String())
+
+		assertBatchDeleteTestPhotoKept(t, removed, removedFile)
 	})
 }

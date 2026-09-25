@@ -25,6 +25,19 @@ func (m Photos) UIDs() []string {
 	return result
 }
 
+// Archived returns the photos that are archived and not removed.
+func (m Photos) Archived() Photos {
+	result := make(Photos, 0, len(m))
+
+	for _, photo := range m {
+		if photo.IsArchived() {
+			result = append(result, photo)
+		}
+	}
+
+	return result
+}
+
 // PhotoSet holds photos by UID while preserving the order they were added in.
 type PhotoSet struct {
 	order []string

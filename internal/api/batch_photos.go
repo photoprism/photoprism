@@ -417,18 +417,25 @@ func BatchPhotosDelete(router *gin.RouterGroup) {
 			photos, err = query.SelectedPhotos(frm)
 		}
 
-		// Abort if the query failed or no photos were found.
-		switch {
-		case err != nil:
+		if err != nil {
 			log.Errorf("archive: %s", err)
 			Abort(c, http.StatusBadRequest, i18n.ErrNoItemsSelected)
 			return
-		case len(photos) == 0:
+		}
+
+		// Permanently delete only the selected photos that are archived and not removed.
+		if archived := photos.Archived(); len(archived) < len(photos) {
+			log.Infof("archive: skipped %s not in archive", english.Plural(len(photos)-len(archived), "selected photo", "selected photos"))
+			photos = archived
+		}
+
+		// Abort if no photos were found.
+		if len(photos) == 0 {
 			Abort(c, http.StatusBadRequest, i18n.ErrNoItemsSelected)
 			return
-		default:
-			log.Infof("archive: deleting %s", english.Plural(len(photos), "photo", "photos"))
 		}
+
+		log.Infof("archive: deleting %s", english.Plural(len(photos), "photo", "photos"))
 
 		var deleted entity.Photos
 

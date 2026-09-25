@@ -1648,6 +1648,27 @@ func TestPhoto_ArchiveRestore(t *testing.T) {
 	})
 }
 
+func TestPhoto_IsArchived(t *testing.T) {
+	deletedAt := time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
+
+	t.Run("Archived", func(t *testing.T) {
+		assert.True(t, (&Photo{DeletedAt: &deletedAt}).IsArchived())
+		assert.True(t, (&Photo{DeletedAt: &deletedAt, PhotoQuality: 3}).IsArchived())
+	})
+	t.Run("NotArchived", func(t *testing.T) {
+		assert.False(t, (&Photo{}).IsArchived())
+		assert.False(t, (&Photo{PhotoQuality: 3}).IsArchived())
+	})
+	t.Run("Removed", func(t *testing.T) {
+		assert.False(t, (&Photo{DeletedAt: &deletedAt, PhotoQuality: -1}).IsArchived())
+		assert.False(t, (&Photo{PhotoQuality: -1}).IsArchived())
+	})
+	t.Run("Nil", func(t *testing.T) {
+		var m *Photo
+		assert.False(t, m.IsArchived())
+	})
+}
+
 func TestPhoto_SetCameraSerial(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		m := &Photo{}
