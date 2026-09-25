@@ -210,6 +210,184 @@ func TestPhoto_Merge(t *testing.T) {
 	})
 }
 
+func TestStackPhotos(t *testing.T) {
+	primary := NewPhoto(true)
+	primary.PhotoUID = rnd.GenerateUID(PhotoUID)
+	primary.PhotoPath = "manual-stack"
+	primary.PhotoName = "Primary"
+	primary.PhotoType = MediaImage
+	primary.TypeSrc = SrcAuto
+	primary.PhotoQuality = 5
+
+	if err := primary.Create(); err != nil {
+		t.Fatal(err)
+	}
+
+	secondary := NewPhoto(true)
+	secondary.PhotoUID = rnd.GenerateUID(PhotoUID)
+	secondary.PhotoPath = "manual-stack"
+	secondary.PhotoName = "Secondary"
+	secondary.PhotoType = MediaImage
+	secondary.TypeSrc = SrcAuto
+	secondary.PhotoQuality = 4
+
+	if err := secondary.Create(); err != nil {
+		t.Fatal(err)
+	}
+
+	primaryFile := File{
+		PhotoID:     primary.ID,
+		PhotoUID:    primary.PhotoUID,
+		FileUID:     rnd.GenerateUID(FileUID),
+		FileName:    "manual-stack/" + primary.PhotoUID + ".jpg",
+		FileRoot:    RootOriginals,
+		FileHash:    "manual-stack-primary-" + primary.PhotoUID,
+		FileType:    "jpg",
+		MediaType:   media.Image.String(),
+		FilePrimary: true,
+	}
+
+	if err := primaryFile.Create(); err != nil {
+		t.Fatal(err)
+	}
+
+	secondaryFile := File{
+		PhotoID:     secondary.ID,
+		PhotoUID:    secondary.PhotoUID,
+		FileUID:     rnd.GenerateUID(FileUID),
+		FileName:    "manual-stack/" + secondary.PhotoUID + ".jpg",
+		FileRoot:    RootOriginals,
+		FileHash:    "manual-stack-secondary-" + secondary.PhotoUID,
+		FileType:    "jpg",
+		MediaType:   media.Image.String(),
+		FilePrimary: true,
+	}
+
+	if err := secondaryFile.Create(); err != nil {
+		t.Fatal(err)
+	}
+
+	var keywords []Keyword
+	if err := Db().Limit(2).Find(&keywords).Error; err != nil {
+		t.Fatal(err)
+	}
+	if len(keywords) < 2 {
+		t.Fatal("stack test requires two keyword fixtures")
+	}
+
+	var labels []Label
+	if err := Db().Limit(2).Find(&labels).Error; err != nil {
+		t.Fatal(err)
+	}
+	if len(labels) < 2 {
+		t.Fatal("stack test requires two label fixtures")
+	}
+
+	var albums []Album
+	if err := Db().Limit(2).Find(&albums).Error; err != nil {
+		t.Fatal(err)
+	}
+	if len(albums) < 2 {
+		t.Fatal("stack test requires two album fixtures")
+	}
+
+	relations := []interface{}{
+		NewPhotoKeyword(primary.ID, keywords[0].ID),
+		NewPhotoKeyword(secondary.ID, keywords[0].ID),
+		NewPhotoKeyword(secondary.ID, keywords[1].ID),
+		NewPhotoLabel(primary.ID, labels[0].ID, 0, SrcManual),
+		NewPhotoLabel(secondary.ID, labels[0].ID, 5, SrcAuto),
+		NewPhotoLabel(secondary.ID, labels[1].ID, 10, SrcAuto),
+		NewPhotoAlbum(primary.PhotoUID, albums[0].AlbumUID),
+		NewPhotoAlbum(secondary.PhotoUID, albums[0].AlbumUID),
+		NewPhotoAlbum(secondary.PhotoUID, albums[1].AlbumUID),
+	}
+
+	for _, relation := range relations {
+		if err := Db().Create(relation).Error; err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	t.Cleanup(func() {
+		fileUIDs := []string{primaryFile.FileUID, secondaryFile.FileUID}
+		photoIDs := []uint{primary.ID, secondary.ID}
+		photoUIDs := []string{primary.PhotoUID, secondary.PhotoUID}
+
+		_ = UnscopedDb().Where("file_uid IN (?)", fileUIDs).Delete(File{}).Error
+		_ = UnscopedDb().Where("photo_id IN (?)", photoIDs).Delete(PhotoKeyword{}).Error
+		_ = UnscopedDb().Where("photo_id IN (?)", photoIDs).Delete(PhotoLabel{}).Error
+		_ = UnscopedDb().Where("photo_uid IN (?)", photoUIDs).Delete(PhotoAlbum{}).Error
+		_ = UnscopedDb().Where("photo_id IN (?)", photoIDs).Delete(Details{}).Error
+		_ = UnscopedDb().Where("id IN (?)", photoIDs).Delete(Photo{}).Error
+	})
+
+	t.Run("RequiresCompleteSelection", func(t *testing.T) {
+		_, _, err := StackPhotos([]string{primary.PhotoUID, rnd.GenerateUID(PhotoUID)})
+
+		assert.Error(t, err)
+
+		var count int
+		assert.NoError(t, UnscopedDb().Model(File{}).Where("photo_id = ?", primary.ID).Count(&count).Error)
+		assert.Equal(t, 1, count)
+	})
+
+	t.Run("Success", func(t *testing.T) {
+		original, stacked, err := StackPhotos([]string{primary.PhotoUID, secondary.PhotoUID})
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, primary.PhotoUID, original.PhotoUID)
+		assert.Equal(t, []string{secondary.PhotoUID}, stacked.UIDs())
+
+		var files Files
+		assert.NoError(t, UnscopedDb().Where("file_uid IN (?)", []string{primaryFile.FileUID, secondaryFile.FileUID}).Find(&files).Error)
+		assert.Len(t, files, 2)
+
+		primaryCount := 0
+		for _, file := range files {
+			assert.Equal(t, primary.ID, file.PhotoID)
+			assert.Equal(t, primary.PhotoUID, file.PhotoUID)
+			if file.FilePrimary {
+				primaryCount++
+			}
+		}
+		assert.Equal(t, 1, primaryCount)
+
+		var refreshedPrimary Photo
+		assert.NoError(t, UnscopedDb().First(&refreshedPrimary, "id = ?", primary.ID).Error)
+		assert.Equal(t, IsStacked, refreshedPrimary.PhotoStack)
+
+		var refreshedSecondary Photo
+		assert.NoError(t, UnscopedDb().First(&refreshedSecondary, "id = ?", secondary.ID).Error)
+		assert.Equal(t, -1, refreshedSecondary.PhotoQuality)
+		assert.NotNil(t, refreshedSecondary.DeletedAt)
+
+		var keywordRelations []PhotoKeyword
+		assert.NoError(t, UnscopedDb().Where("photo_id IN (?)", []uint{primary.ID, secondary.ID}).Find(&keywordRelations).Error)
+		assert.Len(t, keywordRelations, 2)
+		for _, relation := range keywordRelations {
+			assert.Equal(t, primary.ID, relation.PhotoID)
+		}
+
+		var labelRelations []PhotoLabel
+		assert.NoError(t, UnscopedDb().Where("photo_id IN (?)", []uint{primary.ID, secondary.ID}).Find(&labelRelations).Error)
+		assert.Len(t, labelRelations, 2)
+		for _, relation := range labelRelations {
+			assert.Equal(t, primary.ID, relation.PhotoID)
+		}
+
+		var albumRelations []PhotoAlbum
+		assert.NoError(t, UnscopedDb().Where("photo_uid IN (?)", []string{primary.PhotoUID, secondary.PhotoUID}).Find(&albumRelations).Error)
+		assert.Len(t, albumRelations, 2)
+		for _, relation := range albumRelations {
+			assert.Equal(t, primary.PhotoUID, relation.PhotoUID)
+		}
+	})
+}
+
 func TestPhoto_SyncMediaTypeFromFiles(t *testing.T) {
 	t.Run("NoMainFiles", func(t *testing.T) {
 		photo := NewPhoto(true)
