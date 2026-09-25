@@ -113,39 +113,3 @@ func TestParseInsta360VideoName(t *testing.T) {
 		})
 	}
 }
-
-// TestParseInsta360PhotoName verifies the assumed separate-lens photo naming and role parsing.
-func TestParseInsta360PhotoName(t *testing.T) {
-	t.Run("Left", func(t *testing.T) {
-		name, ok := ParseInsta360PhotoName("photos/IMG_20220625_140410_00_008.insp")
-		require.True(t, ok)
-		assert.True(t, name.Photo)
-		assert.Equal(t, Insta360VideoLeft, name.Role)
-		assert.Equal(t, filepath.Join("photos", "20220625_140410_008"), name.CaptureKey())
-		assert.Equal(t, filepath.Join("photos", "IMG_20220625_140410_00_008.insp"), name.FileName(Insta360VideoLeft))
-		assert.Equal(t, filepath.Join("photos", "IMG_20220625_140410_10_008.insp"), name.FileName(Insta360VideoRight))
-		assert.Equal(t, "", name.FileName(Insta360VideoProxy))
-	})
-	t.Run("RightUppercaseExtension", func(t *testing.T) {
-		name, ok := ParseInsta360PhotoName("IMG_20220625_140410_10_008.INSP")
-		require.True(t, ok)
-		assert.Equal(t, Insta360VideoRight, name.Role)
-	})
-
-	invalid := []string{
-		"IMG_20220625_140410_11_008.insp",
-		"IMG_20220625_140410_01_008.insp",
-		"IMG_20220625_140410_00_08.insp",
-		"IMG_20220625_140410_00_008.jpg",
-		"IMG_20220625_140410_00_008.insp.jpg",
-		"VID_20220625_140410_00_008.insv",
-		"copy-IMG_20220625_140410_00_008.insp",
-	}
-
-	for _, fileName := range invalid {
-		t.Run(fileName, func(t *testing.T) {
-			_, ok := ParseInsta360PhotoName(fileName)
-			assert.False(t, ok)
-		})
-	}
-}

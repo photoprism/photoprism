@@ -205,8 +205,8 @@ func TestReconcileInsta360Photos(t *testing.T) {
 	})
 }
 
-// TestReconcileInsta360Photos_PhotoPair verifies that split rows of a separate-lens photo are merged.
-func TestReconcileInsta360Photos_PhotoPair(t *testing.T) {
+// TestReconcileInsta360Photos_LensCodedPhotos verifies that photos with lens codes are never merged.
+func TestReconcileInsta360Photos_LensCodedPhotos(t *testing.T) {
 	name := "insta360reconcilephoto"
 	cfg := config.NewMinimalTestConfigWithDb(name, filepath.Join(t.TempDir(), "storage"))
 	oldCfg := Config()
@@ -245,20 +245,19 @@ func TestReconcileInsta360Photos_PhotoPair(t *testing.T) {
 	require.NoError(t, err)
 	related, err := left.RelatedFiles(false)
 	require.NoError(t, err)
-	require.Len(t, related.Files, 2)
+	require.Len(t, related.Files, 1)
 
 	require.NoError(t, reconcileInsta360Photos(related))
 
 	var files []entity.File
-	require.NoError(t, entity.UnscopedDb().Where("file_name LIKE ?", name+"/%").Find(&files).Error)
+	require.NoError(t, entity.UnscopedDb().Where("file_name LIKE ?", name+"/%").Order("file_name").Find(&files).Error)
 	require.Len(t, files, 2)
 
-	for _, file := range files {
-		assert.Equal(t, photos[0].ID, file.PhotoID, file.FileName)
+	for i, file := range files {
+		assert.Equal(t, photos[i].ID, file.PhotoID, file.FileName)
 	}
 
-	var merged entity.Photo
-	require.NoError(t, entity.UnscopedDb().First(&merged, "id = ?", photos[1].ID).Error)
-	assert.NotNil(t, merged.DeletedAt)
-	assert.Equal(t, -1, merged.PhotoQuality)
+	var other entity.Photo
+	require.NoError(t, entity.UnscopedDb().First(&other, "id = ?", photos[1].ID).Error)
+	assert.Nil(t, other.DeletedAt)
 }

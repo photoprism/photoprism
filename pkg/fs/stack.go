@@ -9,9 +9,6 @@ import (
 // Insta360VideoPattern matches the lens and proxy files of an Insta360 separate-lens video capture.
 var Insta360VideoPattern = regexp.MustCompile(`^((?i:VID|LRV))_(\d{8})_(\d{6})_(00|10|11)_(\d{3})\.[Ii][Nn][Ss][Vv]$`)
 
-// Insta360PhotoPattern matches the lens files of an Insta360 separate-lens photo capture.
-var Insta360PhotoPattern = regexp.MustCompile(`^((?i:IMG))_(\d{8})_(\d{6})_(00|10)_(\d{3})\.[Ii][Nn][Ss][Pp]$`)
-
 // stackRule maps the files of a capture that is only viewable when stacked to one shared name.
 type stackRule struct {
 	pattern *regexp.Regexp
@@ -22,7 +19,6 @@ type stackRule struct {
 // stackRules lists the name mappings applied by StackPrefix.
 var stackRules = []stackRule{
 	{pattern: Insta360VideoPattern, ext: ExtInsv, name: insta360StackName},
-	{pattern: Insta360PhotoPattern, ext: ExtInsp, name: insta360StackName},
 }
 
 // StackPrefix returns the name under which a file is stacked with the other files of a photo.
@@ -91,7 +87,7 @@ func insta360StackName(match []string) string {
 	prefix, lens := match[1], match[4]
 
 	switch strings.ToUpper(prefix) + "_" + lens {
-	case "VID_00", "VID_10", "IMG_00", "IMG_10":
+	case "VID_00", "VID_10":
 	case "LRV_11":
 		prefix = matchCase("VID", prefix)
 	default:

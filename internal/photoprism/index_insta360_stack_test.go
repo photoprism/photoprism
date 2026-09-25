@@ -492,9 +492,9 @@ func TestIndex_Insta360StackOptions(t *testing.T) {
 	})
 }
 
-// TestIndex_Insta360PhotoPair verifies that the lens files of a separate-lens photo, whose naming
-// is assumed, are stacked in one photo in the same run and in either arrival order.
-func TestIndex_Insta360PhotoPair(t *testing.T) {
+// TestIndex_Insta360LensCodedPhotos verifies that photos with lens codes are indexed as separate photos,
+// since Insta360 cameras never split a photo by lens.
+func TestIndex_Insta360LensCodedPhotos(t *testing.T) {
 	const (
 		left  = "IMG_20220625_140410_00_008.insp"
 		right = "IMG_20220625_140410_10_008.insp"
@@ -532,11 +532,36 @@ func TestIndex_Insta360PhotoPair(t *testing.T) {
 
 			owners := insta360StackOwners(t, folder)
 			assert.Len(t, owners, 2)
-			assert.Len(t, insta360StackPhotoIDs(owners), 1)
+			assert.Len(t, insta360StackPhotoIDs(owners), 2)
 			assert.Equal(t, "IMG_20220625_140410_00_008", owners[left].PhotoName)
-			assert.Equal(t, 1, insta360StackPhotoCount(t, folder))
+			assert.Equal(t, "IMG_20220625_140410_10_008", owners[right].PhotoName)
 		})
 	}
+}
+
+// TestIndex_Insta360StandaloneLensPhoto verifies that a single-lens photo named with the _10 lens
+// code is indexed as an ordinary photo.
+func TestIndex_Insta360StandaloneLensPhoto(t *testing.T) {
+	folder := "insta360standalonelens"
+	cfg := newInsta360StackConfig(t, folder, false)
+	dir := filepath.Join(cfg.OriginalsPath(), folder)
+	name := "IMG_20231015_101112_10_124.insp"
+
+	require.NoError(t, fs.MkdirAll(dir))
+	require.NoError(t, fs.Copy("testdata/insta360.insp", filepath.Join(dir, name), false))
+	indexInsta360StackFolder(cfg, folder, false, true)
+
+	owners := insta360StackOwners(t, folder)
+	require.Len(t, owners, 1)
+	photo := owners[name]
+	assert.Equal(t, "IMG_20231015_101112_10_124", photo.PhotoName)
+	assert.Equal(t, entity.IsStackable, photo.PhotoStack)
+	assert.GreaterOrEqual(t, photo.PhotoQuality, 0)
+
+	var file entity.File
+	require.NoError(t, entity.UnscopedDb().First(&file, "file_name = ?", folder+"/"+name).Error)
+	assert.False(t, file.KeepStacked())
+	assert.Equal(t, "", file.StackGroup())
 }
 
 // TestIndex_Insta360ImportedName verifies that a capture file renamed on import keeps its original

@@ -27,7 +27,7 @@ func (w *Convert) JpegConvertCmds(f *MediaFile, jpegName string, xmpName string)
 
 	// Separate square lens videos are combined in canonical _00/_10 order before v360 dewarping.
 	// Only the _00 file owns generated sidecars; the _10 lens and LRV proxy remain related originals.
-	if capture := FindInsta360Capture(f); capture.ValidVideoPair() && capture.Left.FileName() == f.FileName() && w.conf.FFmpegEnabled() && w.FFmpegAllowed(f) {
+	if capture := FindInsta360Capture(f); capture.ValidPair() && capture.Left.FileName() == f.FileName() && w.conf.FFmpegEnabled() && w.FFmpegAllowed(f) {
 		result = append(result, NewConvertCmd(
 			ffmpeg.DewarpDualFisheyePairToJpegCmd(capture.Left.FileName(), capture.Right.FileName(), jpegName, w.fisheyeFov(f), w.fisheyeRoll(f), &encode.Options{Bin: w.conf.FFmpegBin(), SizeLimit: min(w.conf.JpegSize(), 15360)})).
 			WithImageVerification().

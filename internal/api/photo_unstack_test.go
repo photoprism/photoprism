@@ -40,7 +40,7 @@ func TestPhotoUnstack(t *testing.T) {
 
 		for fileName, originalName := range map[string]string{
 			"2022/insta360/VID_20220625_140410_10_008.insv": "",
-			"2022/insta360/IMG_20220625_140410_10_008.insp": "",
+			"2022/insta360/LRV_20220625_140410_11_008.insv": "",
 			"2026/09/20260925_135937_07784009.00001.insv":   "VID_20220625_140410_10_008.insv",
 		} {
 			file := entity.File{
@@ -241,21 +241,28 @@ func TestPhotoUnstack(t *testing.T) {
 		app, router, _ := NewApiTest()
 		PhotoUnstack(router)
 
-		// A left lens name without other capture files is a single-file capture and passes the check.
+		// Photos with lens codes are single-file captures and pass the check.
 		photo := entity.PhotoFixtures.Get("Photo04")
-		file := entity.File{
-			FileUID:  rnd.GenerateUID(entity.FileUID),
-			PhotoID:  photo.ID,
-			PhotoUID: photo.PhotoUID,
-			FileName: "2023/insta360/IMG_20231015_101112_00_123.insp",
-			FileRoot: entity.RootOriginals,
-			FileHash: rnd.GenerateUID(entity.FileUID),
-		}
-		require.NoError(t, file.Create())
-		t.Cleanup(func() { _ = entity.UnscopedDb().Delete(&entity.File{}, "file_uid = ?", file.FileUID).Error })
 
-		r := PerformRequest(app, "POST", "/api/v1/photos/"+photo.PhotoUID+"/files/"+file.FileUID+"/unstack")
-		assert.Equal(t, http.StatusNotFound, r.Code)
+		for _, fileName := range []string{
+			"2023/insta360/IMG_20231015_101112_00_123.insp",
+			"2023/insta360/IMG_20231015_101112_10_124.insp",
+		} {
+			file := entity.File{
+				FileUID:  rnd.GenerateUID(entity.FileUID),
+				PhotoID:  photo.ID,
+				PhotoUID: photo.PhotoUID,
+				FileName: fileName,
+				FileRoot: entity.RootOriginals,
+				FileHash: rnd.GenerateUID(entity.FileUID),
+			}
+			require.NoError(t, file.Create())
+			uid := file.FileUID
+			t.Cleanup(func() { _ = entity.UnscopedDb().Delete(&entity.File{}, "file_uid = ?", uid).Error })
+
+			r := PerformRequest(app, "POST", "/api/v1/photos/"+photo.PhotoUID+"/files/"+file.FileUID+"/unstack")
+			assert.Equal(t, http.StatusNotFound, r.Code, fileName)
+		}
 	})
 	t.Run("NotExistingFile", func(t *testing.T) {
 		app, router, _ := NewApiTest()

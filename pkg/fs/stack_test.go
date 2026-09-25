@@ -45,22 +45,6 @@ func TestStackPrefix(t *testing.T) {
 		assert.Equal(t, "Vid_20220625_140410_00_008", StackPrefix("Lrv_20220625_140410_11_008.insv", false))
 		assert.Equal(t, "vID_20220625_140410_00_008", StackPrefix("lRV_20220625_140410_11_008.insv", false))
 	})
-	t.Run("Insta360Photo", func(t *testing.T) {
-		left := "IMG_20220625_140410_00_008"
-
-		for _, fileName := range []string{
-			"IMG_20220625_140410_00_008.insp",
-			"IMG_20220625_140410_10_008.insp",
-			"IMG_20220625_140410_10_008.INSP",
-			"IMG_20220625_140410_10_008.insp.jpg",
-			"IMG_20220625_140410_10_008.insp.xmp",
-		} {
-			assert.Equal(t, left, StackPrefix(fileName, false), fileName)
-			assert.Equal(t, left, StackPrefix(fileName, true), fileName)
-		}
-
-		assert.Equal(t, "img_20220625_140410_00_008", StackPrefix("img_20220625_140410_10_008.insp", false))
-	})
 
 	// Names that no rule matches must return the same as BasePrefix.
 	for _, fileName := range []string{
@@ -73,6 +57,9 @@ func TestStackPrefix(t *testing.T) {
 		"VID_20220625_140410_10_008.insvx",
 		"VID_20220625_140410_10_008.mp4.insv",
 		"VID_20220625_140410_10_008.insp",
+		"IMG_20220625_140410_00_008.insp",
+		"IMG_20220625_140410_10_008.insp",
+		"IMG_20220625_140410_10_008.insp.jpg",
 		"IMG_20220625_140410_10_008.insv",
 		"IMG_20220625_140410_10_008.jpg",
 		"IMG_20220625_140410_11_008.insp",
@@ -127,7 +114,7 @@ func TestInsta360StackName(t *testing.T) {
 	t.Run("InvalidRole", func(t *testing.T) {
 		assert.Equal(t, "", insta360StackName([]string{"", "VID", "20220625", "140410", "11", "008"}))
 		assert.Equal(t, "", insta360StackName([]string{"", "LRV", "20220625", "140410", "00", "008"}))
-		assert.Equal(t, "", insta360StackName([]string{"", "IMG", "20220625", "140410", "11", "008"}))
+		assert.Equal(t, "", insta360StackName([]string{"", "IMG", "20220625", "140410", "10", "008"}))
 		assert.Equal(t, "", insta360StackName([]string{"", "DSC", "20220625", "140410", "00", "008"}))
 		assert.Equal(t, "", insta360StackName([]string{"", "VID", "20220625", "140410", "01", "008"}))
 		assert.Equal(t, "", insta360StackName([]string{"", "IMG", "20220625", "140410", "01", "008"}))
@@ -176,17 +163,6 @@ func TestInsta360Patterns(t *testing.T) {
 		assert.False(t, Insta360VideoPattern.MatchString("VID_20220625_140410_10_008.insp"))
 		assert.False(t, Insta360VideoPattern.MatchString("VID_20220625_140410_10_008.in\u017fv"))
 	})
-	t.Run("Photo", func(t *testing.T) {
-		assert.True(t, Insta360PhotoPattern.MatchString("IMG_20220625_140410_00_008.insp"))
-		assert.True(t, Insta360PhotoPattern.MatchString("img_20220625_140410_10_008.INSP"))
-		assert.False(t, Insta360PhotoPattern.MatchString("IMG_20220625_140410_10_008.insp.jpg"))
-		assert.False(t, Insta360PhotoPattern.MatchString("copy-IMG_20220625_140410_10_008.insp"))
-		assert.False(t, Insta360PhotoPattern.MatchString("IMG_20220625_140410_01_008.insp"))
-		assert.False(t, Insta360PhotoPattern.MatchString("IMG_20220625_140410_11_008.insp"))
-		assert.False(t, Insta360PhotoPattern.MatchString("IMG_2022_1404_10_8.insp"))
-		assert.False(t, Insta360PhotoPattern.MatchString("IMG_20220625_140410_10_008.insv"))
-		assert.False(t, Insta360PhotoPattern.MatchString("IMG_20220625_140410_10_008.in\u017fp"))
-	})
 }
 
 // TestKeepStacked verifies that only the lens and proxy originals of a capture must stay stacked.
@@ -197,7 +173,6 @@ func TestKeepStacked(t *testing.T) {
 			"LRV_20220625_140410_11_008.insv",
 			"/originals/2022/VID_20220625_140410_10_008.INSV",
 			"vid_20220625_140410_10_008.insv",
-			"IMG_20220625_140410_10_008.insp",
 		} {
 			assert.True(t, KeepStacked(fileName), fileName)
 		}
@@ -208,6 +183,7 @@ func TestKeepStacked(t *testing.T) {
 			"",
 			"VID_20220625_140410_00_008.insv",
 			"IMG_20220625_140410_00_008.insp",
+			"IMG_20220625_140410_10_008.insp",
 			"IMG_20231015_101112_00_123.insp",
 			"VID_20220625_140410_10_008.insv.jpg",
 			"VID_20220625_140410_10_008.mp4",
@@ -235,7 +211,6 @@ func TestStackGroup(t *testing.T) {
 			assert.Equal(t, "VID_20220625_140410_00_008", StackGroup(fileName), fileName)
 		}
 
-		assert.Equal(t, "IMG_20231015_101112_00_123", StackGroup("IMG_20231015_101112_00_123.insp"))
 	})
 	t.Run("Other", func(t *testing.T) {
 		for _, fileName := range []string{
@@ -243,6 +218,8 @@ func TestStackGroup(t *testing.T) {
 			"VID_20220625_140410_10_008.insv.jpg",
 			"VID_20220625_140410_10_008.mp4",
 			"VID_20220625_140410_11_008.insv",
+			"IMG_20231015_101112_00_123.insp",
+			"IMG_20231015_101112_10_124.insp",
 			"IMG_1234.jpg",
 		} {
 			assert.Equal(t, "", StackGroup(fileName), fileName)

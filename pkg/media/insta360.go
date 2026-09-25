@@ -35,15 +35,13 @@ const (
 	Insta360VideoProxy Insta360VideoRole = "proxy"
 )
 
-// Insta360VideoName contains the normalized identity of an Insta360 capture file. Photo is set for
-// separate-lens photos, whose naming is assumed since no sample contains such a pair.
+// Insta360VideoName contains the normalized identity of an Insta360 video capture file.
 type Insta360VideoName struct {
 	Directory string
 	Date      string
 	Time      string
 	Sequence  string
 	Role      Insta360VideoRole
-	Photo     bool
 }
 
 // ParseInsta360VideoName parses a supported Insta360 multi-file video filename.
@@ -77,32 +75,6 @@ func ParseInsta360VideoName(fileName string) (result Insta360VideoName, ok bool)
 	return result, true
 }
 
-// ParseInsta360PhotoName parses the lens file name of an Insta360 separate-lens photo.
-func ParseInsta360PhotoName(fileName string) (result Insta360VideoName, ok bool) {
-	matches := fs.Insta360PhotoPattern.FindStringSubmatch(filepath.Base(fileName))
-
-	if len(matches) != 6 {
-		return result, false
-	}
-
-	switch matches[4] {
-	case "00":
-		result.Role = Insta360VideoLeft
-	case "10":
-		result.Role = Insta360VideoRight
-	default:
-		return Insta360VideoName{}, false
-	}
-
-	result.Directory = filepath.Dir(fileName)
-	result.Date = matches[2]
-	result.Time = matches[3]
-	result.Sequence = matches[5]
-	result.Photo = true
-
-	return result, true
-}
-
 // CaptureKey returns a directory-scoped identity shared by all files in the capture.
 func (m Insta360VideoName) CaptureKey() string {
 	if m.Date == "" || m.Time == "" || m.Sequence == "" {
@@ -114,19 +86,14 @@ func (m Insta360VideoName) CaptureKey() string {
 
 // FileName returns the expected filename for the specified capture role.
 func (m Insta360VideoName) FileName(role Insta360VideoRole) string {
-	prefix, ext := "VID", fs.ExtInsv
-	var lens string
+	var prefix, lens string
 
-	if m.Photo {
-		prefix, ext = "IMG", fs.ExtInsp
-	}
-
-	switch {
-	case role == Insta360VideoLeft:
-		lens = "00"
-	case role == Insta360VideoRight:
-		lens = "10"
-	case role == Insta360VideoProxy && !m.Photo:
+	switch role {
+	case Insta360VideoLeft:
+		prefix, lens = "VID", "00"
+	case Insta360VideoRight:
+		prefix, lens = "VID", "10"
+	case Insta360VideoProxy:
 		prefix, lens = "LRV", "11"
 	default:
 		return ""
@@ -136,7 +103,7 @@ func (m Insta360VideoName) FileName(role Insta360VideoRole) string {
 		return ""
 	}
 
-	baseName := fmt.Sprintf("%s_%s_%s_%s_%s%s", prefix, m.Date, m.Time, lens, m.Sequence, ext)
+	baseName := fmt.Sprintf("%s_%s_%s_%s_%s%s", prefix, m.Date, m.Time, lens, m.Sequence, fs.ExtInsv)
 
 	return filepath.Join(m.Directory, baseName)
 }

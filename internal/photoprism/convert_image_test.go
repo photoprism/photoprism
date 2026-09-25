@@ -402,17 +402,17 @@ func TestConvert_JpegConvertCmds_Insta360Pair(t *testing.T) {
 	assert.True(t, cmds[0].Projection.Equal(projection.Equirectangular.String()))
 }
 
-// TestConvert_JpegConvertCmds_Insta360PhotoPair verifies that photo pairs are not combined.
-func TestConvert_JpegConvertCmds_Insta360PhotoPair(t *testing.T) {
+// TestConvert_JpegConvertCmds_Insta360LensCodedPhotos verifies that photos with lens codes are not combined.
+func TestConvert_JpegConvertCmds_Insta360LensCodedPhotos(t *testing.T) {
 	cnf := config.TestConfig()
 	dir := t.TempDir()
 	leftName := writeInsta360CaptureFile(t, dir, "IMG_20220625_140410_00_008.insp", "testdata/flash.jpg")
 	rightName := writeInsta360CaptureFile(t, dir, "IMG_20220625_140410_10_008.insp", "testdata/flash.jpg")
 	left, err := NewMediaFile(leftName)
 	require.NoError(t, err)
-	require.True(t, FindInsta360Capture(left).ValidPair())
+	require.Nil(t, FindInsta360Capture(left))
 
-	// The left lens is converted exactly as it would be without the right lens.
+	// The photo is converted exactly as it would be without the other file.
 	paired, _, err := NewConvert(cnf).JpegConvertCmds(left, filepath.Join(dir, "preview.jpg"), "")
 	require.NoError(t, err)
 	require.NoError(t, os.Remove(rightName))
@@ -561,9 +561,9 @@ func TestConvert_fisheyeRoll(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, 180, convert.fisheyeRoll(f))
 	})
-	t.Run("PhotoPairRightLens", func(t *testing.T) {
+	t.Run("LensCodedPhotos", func(t *testing.T) {
 		dir := t.TempDir()
-		// Only the left lens identifies the camera, so a roll could only come from the pair.
+		// Only the other photo identifies the camera, so a roll could only come from pairing them.
 		payload, err := os.ReadFile("testdata/flash.jpg")
 		require.NoError(t, err)
 		payload = append(payload, append([]byte{0x12, 0x0e}, []byte("Insta360 OneRS")...)...)
@@ -571,7 +571,7 @@ func TestConvert_fisheyeRoll(t *testing.T) {
 		require.NoError(t, os.WriteFile(filepath.Join(dir, "IMG_20220625_140410_00_008.insp"), payload, fs.ModeFile))
 		right, err := NewMediaFile(writeInsta360CaptureFile(t, dir, "IMG_20220625_140410_10_008.insp", "testdata/flash.jpg"))
 		require.NoError(t, err)
-		require.True(t, FindInsta360Capture(right).ValidPair())
+		require.Nil(t, FindInsta360Capture(right))
 		assert.Equal(t, 0, convert.fisheyeRoll(right))
 	})
 	t.Run("OneRSSquareInsv", func(t *testing.T) {

@@ -1154,7 +1154,7 @@ func TestFile_MissingPhotoID(t *testing.T) {
 func TestFile_KeepStacked(t *testing.T) {
 	t.Run("FileName", func(t *testing.T) {
 		assert.True(t, (&File{FileName: "2022/VID_20220625_140410_10_008.insv"}).KeepStacked())
-		assert.True(t, (&File{FileName: "2022/IMG_20220625_140410_10_008.insp"}).KeepStacked())
+		assert.False(t, (&File{FileName: "2022/IMG_20220625_140410_10_008.insp"}).KeepStacked())
 		assert.False(t, (&File{FileName: "2022/VID_20220625_140410_00_008.insv"}).KeepStacked())
 	})
 	t.Run("OriginalName", func(t *testing.T) {
