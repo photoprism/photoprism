@@ -18,7 +18,9 @@ The --database flag can be omitted in this case. When using Docker, please run t
 to prevent log messages from being sent to stdout. If nothing else is specified, the database and album backup paths
 will be automatically determined based on the current configuration.
 
-Backups to stdout (-), bypass the insufficient storage check, so dumps can be streamed even when the local storage is full.`
+Backups to stdout (-) bypass the insufficient storage check, so dumps can be streamed even when the local storage is full.
+A backup file is replaced only once the new dump is complete. The filename must not be a symbolic link, even with --force,
+so use - rather than /dev/stdout to send the backup to stdout.`
 
 // BackupCommand configures the command name, flags, and action.
 var BackupCommand = &cli.Command{
