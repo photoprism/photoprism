@@ -2,11 +2,14 @@ package meta
 
 import (
 	"math"
+	"path/filepath"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/geo/s2"
 	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/time/tz"
 )
 
 // Extended image type constants extracted from vendor-specific metadata.
@@ -30,8 +33,9 @@ type Data struct {
 	DocumentID       string        `meta:"ContentIdentifier,MediaGroupUUID,BurstUUID,OriginalDocumentID,DocumentID,ImageUniqueID,DigitalImageGUID" xmp:"xmpMM:OriginalDocumentID,xmpMM:DocumentID,dc:identifier" dc:"identifier"` // see https://exiftool.org/forum/index.php?topic=14874.0
 	InstanceID       string        `meta:"InstanceID,DocumentID" xmp:"xmpMM:InstanceID"`
 	CreatedAt        time.Time     `meta:"SubSecCreateDate,CreationTime,CreationDate,CreateDate,MediaCreateDate,ContentCreateDate,TrackCreateDate" xmp:"xmp:CreateDate,xmpDM:CreationDate"`
-	TakenAt          time.Time     `meta:"SubSecDateTimeOriginal,SubSecDateTimeCreated,DateTimeOriginal,CreationTime,CreationDate,DateTimeCreated,DateTime,DateTimeDigitized" xmp:"photoshop:DateCreated,exif:DateTimeOriginal,xmp:CreateDate"`
-	TakenAtLocal     time.Time     `meta:"SubSecDateTimeOriginal,SubSecDateTimeCreated,DateTimeOriginal,CreationDate,DateTimeCreated,DateTime,DateTimeDigitized" xmp:"photoshop:DateCreated,exif:DateTimeOriginal,xmp:CreateDate"`
+	ModifiedAt       time.Time     `meta:"ModifyDate,DateTime"`
+	TakenAt          time.Time     `meta:"SubSecDateTimeOriginal,SubSecDateTimeCreated,DateTimeOriginal,CreationTime,CreationDate,DateTimeCreated,DateTimeDigitized" xmp:"photoshop:DateCreated,exif:DateTimeOriginal,xmp:CreateDate"`
+	TakenAtLocal     time.Time     `meta:"SubSecDateTimeOriginal,SubSecDateTimeCreated,DateTimeOriginal,CreationDate,DateTimeCreated,DateTimeDigitized" xmp:"photoshop:DateCreated,exif:DateTimeOriginal,xmp:CreateDate"`
 	TakenGps         time.Time     `meta:"GPSDateTime,GPSDateStamp" xmp:"exif:GPSTimeStamp,exif:GPSDateStamp"`
 	TakenNs          int           `meta:"-"`
 	TimeZone         string        `meta:"-"`
@@ -133,7 +137,7 @@ func (data Data) HasInstanceID() bool {
 	return rnd.IsUUID(data.InstanceID)
 }
 
-// HasTimeAndPlace if data contains a time and GPS position.
+// HasTimeAndPlace if data contains the time the picture was taken and a GPS position.
 func (data Data) HasTimeAndPlace() bool {
 	return !data.TakenAt.IsZero() && data.Lat != 0 && data.Lng != 0
 }
@@ -159,4 +163,25 @@ func (data Data) ActualHeight() int {
 // CellID returns the S2 cell ID.
 func (data Data) CellID() string {
 	return s2.PrefixedToken(float64(data.Lat), float64(data.Lng))
+}
+
+// TakenOrModified returns the time the picture was taken, or else the time the file was last modified, resolved to
+// UTC, local time, and time zone like TakenAt; modified reports whether the time the file was modified was used.
+func (data Data) TakenOrModified() (utc, local time.Time, zone string, modified bool) {
+	if !data.TakenAt.IsZero() || data.ModifiedAt.IsZero() {
+		return data.TakenAt, data.TakenAtLocal, data.TimeZone, false
+	}
+
+	fallback := data
+	fallback.TakenAt = data.ModifiedAt.UTC()
+	fallback.TakenNs = 0
+
+	// QuickTime stores times in UTC, which ResolveTimeZone assumes for videos without a local time.
+	if data.MimeType != MimeVideoMp4 && data.MimeType != MimeQuicktime {
+		fallback.TakenAtLocal = tz.Strip(data.ModifiedAt)
+	}
+
+	fallback.ResolveTimeZone(clean.Log(filepath.Base(data.FileName)))
+
+	return fallback.TakenAt, fallback.TakenAtLocal, fallback.TimeZone, true
 }

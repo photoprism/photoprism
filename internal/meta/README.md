@@ -1,6 +1,6 @@
 ## PhotoPrism — Metadata Pipeline
 
-**Last Updated:** September 17, 2026
+**Last Updated:** September 25, 2026
 
 ### Overview
 
@@ -25,7 +25,7 @@ The `internal/meta` package extracts, normalizes, and reports metadata from imag
 
 ### Parsing Order & Fallbacks
 
-- Exif → XMP → JSON (ExifTool/GPhotos/motion) → filename → filesystem mtime. Each stage logs source and errors but continues when safe.
+- Capture time: Exif → XMP → JSON (ExifTool/GPhotos/motion) → filename → metadata modify time (`ModifiedAt`: Exif `DateTime`, ExifTool `ModifyDate`, via `Data.TakenOrModified`, source `modified`) → filesystem mtime. `TakenAt` holds capture times only. Each stage logs source and errors but continues when safe.
 - Brute-force Exif search is used when native parsers fail; errors are logged with context.
 - GPS parsing supports decimal, DMS (`51 deg 15' 17.47" N`), and the 2-component Adobe XMP form (`52,30.4567N`); regexes are kept simple and precompiled.
 

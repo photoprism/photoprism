@@ -292,8 +292,13 @@ func TestExif(t *testing.T) {
 
 		t.Logf("TakenGps: %s", data.TakenGps)
 
-		assert.Equal(t, "2020-05-15T10:25:45Z", data.TakenAt.Format("2006-01-02T15:04:05Z"))      // TODO
-		assert.Equal(t, "2020-05-15T10:25:45Z", data.TakenAtLocal.Format("2006-01-02T15:04:05Z")) // TODO
+		// The file has no capture time in Exif, only the time it was modified.
+		assert.True(t, data.TakenAt.IsZero())
+		assert.Equal(t, "2020-05-15 10:25:45", data.ModifiedAt.Format(time.DateTime))
+		utc, local, _, modified := data.TakenOrModified()
+		assert.True(t, modified)
+		assert.Equal(t, "2020-05-15T10:25:45Z", utc.Format("2006-01-02T15:04:05Z"))
+		assert.Equal(t, "2020-05-15T10:25:45Z", local.Format("2006-01-02T15:04:05Z"))
 		assert.Equal(t, 0.0, data.Lat)
 		assert.Equal(t, 0.0, data.Lng)
 		assert.Equal(t, 0.0, data.Altitude)
@@ -676,8 +681,11 @@ func TestExif(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "2021-10-29 13:42:00 +0000 UTC", data.TakenAtLocal.String())
-		assert.Equal(t, "2021-10-29 13:42:00 +0000 UTC", data.TakenAt.String())
+		assert.True(t, data.TakenAt.IsZero())
+		assert.Equal(t, "2021-10-29 13:42:00", data.ModifiedAt.Format(time.DateTime))
+		utc, local, _, _ := data.TakenOrModified()
+		assert.Equal(t, "2021-10-29 13:42:00 +0000 UTC", local.String())
+		assert.Equal(t, "2021-10-29 13:42:00 +0000 UTC", utc.String())
 		assert.Equal(t, "Local", data.TimeZone) // Local Time
 		assert.Equal(t, 1, data.Orientation)
 		assert.Equal(t, 0.0, data.Lat)
@@ -709,5 +717,55 @@ func TestExif(t *testing.T) {
 		assert.InEpsilon(t, 33.221977, data.Lng, 0.00001)
 		assert.InEpsilon(t, 4294967284, data.Altitude, 1000)
 		assert.Equal(t, 0, clean.Altitude(data.Altitude))
+	})
+}
+
+// TestExif_ModifiedAt verifies that the Exif modify time is kept apart from the time a picture was taken.
+func TestExif_ModifiedAt(t *testing.T) {
+	t.Run("ModifiedOnly", func(t *testing.T) {
+		data, err := Exif("testdata/write-time-only.jpg", fs.ImageJpeg, false)
+		require.NoError(t, err)
+		assert.True(t, data.TakenAt.IsZero())
+		assert.Equal(t, "2020-10-26 15:46:31", data.ModifiedAt.Format(time.DateTime))
+
+		utc, local, _, modified := data.TakenOrModified()
+		assert.True(t, modified)
+		assert.Equal(t, "2020-10-26T15:46:31Z", utc.Format(time.RFC3339))
+		assert.Equal(t, "2020-10-26 15:46:31", local.Format(time.DateTime))
+	})
+	t.Run("CaptureTime", func(t *testing.T) {
+		data, err := Exif("testdata/photoshop.jpg", fs.ImageJpeg, false)
+		require.NoError(t, err)
+		require.False(t, data.TakenAt.IsZero())
+		assert.Equal(t, "2020-01-07 10:56:29", data.ModifiedAt.Format(time.DateTime))
+
+		utc, _, _, modified := data.TakenOrModified()
+		assert.False(t, modified)
+		assert.Equal(t, data.TakenAt, utc)
+	})
+	t.Run("GpsTime", func(t *testing.T) {
+		// The GPS time is a capture time in UTC, so the local time follows the time zone of the position.
+		data, err := Exif("testdata/write-time-gps.jpg", fs.ImageJpeg, false)
+		require.NoError(t, err)
+		assert.Equal(t, "Europe/Berlin", data.TimeZone)
+		assert.Equal(t, "2020-10-26T14:46:31Z", data.TakenAt.Format(time.RFC3339))
+		assert.Equal(t, "2020-10-26 15:46:31", data.TakenAtLocal.Format(time.DateTime))
+		assert.Equal(t, "2020-10-26 15:46:31", data.ModifiedAt.Format(time.DateTime))
+
+		_, _, _, modified := data.TakenOrModified()
+		assert.False(t, modified)
+	})
+	t.Run("GpsTimeWithoutPosition", func(t *testing.T) {
+		// Without a position or time zone, the local time is derived from UTC once a position is known.
+		data, err := Exif("testdata/write-time-gps-only.jpg", fs.ImageJpeg, false)
+		require.NoError(t, err)
+		assert.Equal(t, "2020-10-26T14:46:31Z", data.TakenAt.Format(time.RFC3339))
+		assert.True(t, data.TakenAtLocal.IsZero())
+
+		data.Lat, data.Lng = 52.52, 13.405
+		data.ResolveTimeZone("write-time-gps-only.jpg")
+		assert.Equal(t, "Europe/Berlin", data.TimeZone)
+		assert.Equal(t, "2020-10-26T14:46:31Z", data.TakenAt.Format(time.RFC3339))
+		assert.Equal(t, "2020-10-26 15:46:31", data.TakenAtLocal.Format(time.DateTime))
 	})
 }
