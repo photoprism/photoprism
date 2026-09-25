@@ -2,6 +2,7 @@ package entity
 
 import (
 	"flag"
+	"path"
 	"testing"
 	"time"
 
@@ -14,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/authn"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/list"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/time/unix"
@@ -966,6 +968,12 @@ func TestUser_Validate(t *testing.T) {
 		}
 
 		assert.NoError(t, u.Validate())
+	})
+	t.Run("NameWithoutHandle", func(t *testing.T) {
+		for _, name := range []string{"..", "...", ".gitignore", "..@example.com", "@example.com"} {
+			u := &User{UserName: name, DisplayName: "Validate", UserRole: acl.RoleAdmin.String()}
+			assert.Error(t, u.Validate(), name)
+		}
 	})
 	t.Run("NameEmpty", func(t *testing.T) {
 		u := &User{
@@ -2204,6 +2212,113 @@ func TestUser_GetBasePath(t *testing.T) {
 	t.Run("Admin", func(t *testing.T) {
 		assert.Equal(t, "", Admin.GetBasePath())
 	})
+}
+
+func TestUser_DefaultBasePath(t *testing.T) {
+	t.Run("Handle", func(t *testing.T) {
+		assert.Equal(t, "users/jane_doe", (&User{UserName: "Jane_Doe"}).DefaultBasePath())
+		assert.Equal(t, "users/john.doe", (&User{UserName: "john doe"}).DefaultBasePath())
+		assert.Equal(t, "", (&User{UserName: "..."}).DefaultBasePath())
+		assert.Equal(t, "", (&User{UserName: ".gitignore"}).DefaultBasePath())
+	})
+	t.Run("UserUID", func(t *testing.T) {
+		for _, name := range []string{"", ".", "..", "...", "/", "./", ".gitignore", "@example.com", "..@example.com"} {
+			u := &User{UserUID: "urqdrfb72479n047", UserName: name}
+			assert.Equal(t, "users/+urqdrfb72479n047", u.DefaultBasePath(), name)
+		}
+
+		u := &User{UserUID: "urqdrfb72479n047", UserName: "."}
+		assert.False(t, fs.FileNameHidden(path.Base(u.DefaultBasePath())))
+		assert.Equal(t, "users/+urqdrfb72479n047", u.SetBasePath("~").GetBasePath())
+		assert.Equal(t, "users/+urqdrfb72479n047", u.SetUploadPath("~").GetUploadPath())
+	})
+	t.Run("NoUserUID", func(t *testing.T) {
+		assert.Equal(t, "", (&User{UserName: "."}).DefaultBasePath())
+	})
+}
+
+func TestUser_ValidHandle(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		for _, name := range []string{"jane", "Jane Doe", "jane@example.com", "corp\\jane", "u123", "uqxc08w3d0ej2283", "utuesdayteam1234"} {
+			assert.True(t, (&User{UserName: name}).ValidHandle(), name)
+		}
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		for _, name := range []string{"", ".", "..", "...", "/", "./", ".gitignore", ".bob@example.com", "@example.com"} {
+			assert.False(t, (&User{UserName: name}).ValidHandle(), name)
+		}
+	})
+}
+
+func TestUser_GetBasePath_ResolvedDefault(t *testing.T) {
+	t.Run("WithoutValidHandle", func(t *testing.T) {
+		for _, basePath := range []string{UsersPath, "."} {
+			u := &User{UserUID: "urqdrfb72479n047", UserName: ".", BasePath: basePath}
+			assert.Equal(t, "users/+urqdrfb72479n047", u.GetBasePath(), basePath)
+		}
+	})
+	t.Run("WithValidHandle", func(t *testing.T) {
+		u := &User{UserUID: "urqdrfb72479n047", UserName: "jane", BasePath: UsersPath}
+		assert.Equal(t, UsersPath, u.GetBasePath())
+	})
+	t.Run("UIDShapedHandle", func(t *testing.T) {
+		u := &User{UserUID: "urqdrfb72479n047", UserName: "uqxc08w3d0ej2283", BasePath: "users/uqxc08w3d0ej2283"}
+		assert.Equal(t, "users/uqxc08w3d0ej2283", u.GetBasePath())
+		assert.Equal(t, "users/uqxc08w3d0ej2283", (&User{UserUID: "urqdrfb72479n047", UserName: "uqxc08w3d0ej2283"}).DefaultBasePath())
+	})
+	t.Run("OtherPath", func(t *testing.T) {
+		u := &User{UserUID: "urqdrfb72479n047", UserName: ".", BasePath: "users/.bob"}
+		assert.Equal(t, "users/.bob", u.GetBasePath())
+	})
+}
+
+func TestUser_Create_ValidHandle(t *testing.T) {
+	t.Run("Refused", func(t *testing.T) {
+		for _, name := range []string{".", "...", ".bob", ".bob@example.com"} {
+			u := NewUser()
+			u.UserName = name
+			u.UserRole = acl.RoleAdmin.String()
+			assert.Error(t, u.Create(), name)
+			t.Cleanup(func() { _ = UnscopedDb().Where("user_uid = ?", u.UserUID).Delete(&User{}).Error })
+			assert.Nil(t, FindUserByName(name), name)
+		}
+	})
+	t.Run("InitialAdmin", func(t *testing.T) {
+		u := &User{ID: 1, UserName: ".admin", UserRole: acl.RoleAdmin.String()}
+		err := u.Create()
+		if err != nil {
+			assert.NotContains(t, err.Error(), "not supported")
+		}
+	})
+	t.Run("Created", func(t *testing.T) {
+		u := NewUser()
+		u.UserName = "valid-handle-" + rnd.Base36(6)
+		u.UserRole = acl.RoleAdmin.String()
+		require.NoError(t, u.Create())
+		t.Cleanup(func() { _ = UnscopedDb().Delete(u).Error })
+	})
+}
+
+func TestUser_Validate_ExistingWithoutValidHandle(t *testing.T) {
+	u := &User{ID: 987654, UserUID: "urqdrfb72479n048", UserName: ".bob", UserRole: acl.RoleAdmin.String()}
+	assert.NoError(t, u.Validate())
+}
+
+func TestFindUser_OidcWithoutUsername(t *testing.T) {
+	u := NewUser()
+	u.UserName = "oidc-" + rnd.Base36(6)
+	u.UserRole = acl.RoleAdmin.String()
+	u.AuthProvider = authn.ProviderOIDC.String()
+	u.AuthIssuer = "https://idp.example.com"
+	u.AuthID = rnd.UUID()
+	require.NoError(t, u.Create())
+	t.Cleanup(func() { _ = UnscopedDb().Delete(u).Error })
+
+	found := FindUser(User{AuthProvider: u.AuthProvider, AuthIssuer: u.AuthIssuer, AuthID: u.AuthID})
+
+	if assert.NotNil(t, found) {
+		assert.Equal(t, u.UserUID, found.UserUID)
+	}
 }
 
 func TestUser_SetBasePath(t *testing.T) {

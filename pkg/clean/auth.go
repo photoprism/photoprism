@@ -50,7 +50,7 @@ func Auth(s string) string {
 
 // Handle returns the sanitized username with trimmed whitespace and in lowercase. It folds the
 // characters that render as a space and removes those that render as nothing, so a handle cannot
-// carry a character a reader will not see.
+// carry a character a reader will not see. A handle that would start with a dot is empty.
 func Handle(s string) string {
 	s, _, _ = strings.Cut(s, "@")
 
@@ -79,8 +79,8 @@ func Handle(s string) string {
 		return r
 	}, s)
 
-	// Empty or too long?
-	if s == "" || reject(s, txt.ClipUsername) {
+	// Empty, too long, or starting with a dot?
+	if s == "" || strings.HasPrefix(s, ".") || reject(s, txt.ClipUsername) {
 		return ""
 	}
 

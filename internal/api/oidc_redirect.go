@@ -221,7 +221,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			event.LoginError(clientIp, "oidc", oidcUser.UserName, userAgent, authn.ErrAuthProviderIsNotOIDC.Error())
 			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))
 			return
-		} else if oidcUser.UserName == "" {
+		} else if oidcUser.UserName == "" && entity.FindUser(oidcUser) == nil {
 			event.AuditErr([]string{clientIp, "create session", "oidc", authn.ErrUsernameRequiredToRegister.Error()})
 			event.LoginError(clientIp, "oidc", oidcUser.UserName, userAgent, authn.ErrUsernameRequiredToRegister.Error())
 			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.ErrInvalidCredentials))

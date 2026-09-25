@@ -17,7 +17,7 @@ func Username(userInfo *oidc.UserInfo, preferredClaim string) (userName string) 
 			userName = name
 		} else if name = clean.Handle(userInfo.Nickname); len(name) > 0 {
 			userName = name
-		} else if name = clean.Email(userInfo.Email); userInfo.EmailVerified && len(name) > 4 {
+		} else if name = clean.Email(userInfo.Email); userInfo.EmailVerified && len(name) > 4 && clean.Handle(name) != "" {
 			userName = name
 		}
 	case authn.OidcClaimNickname:
@@ -27,11 +27,11 @@ func Username(userInfo *oidc.UserInfo, preferredClaim string) (userName string) 
 			userName = name
 		} else if name = clean.Handle(userInfo.Name); len(name) > 0 {
 			userName = name
-		} else if name = clean.Email(userInfo.Email); userInfo.EmailVerified && len(name) > 4 {
+		} else if name = clean.Email(userInfo.Email); userInfo.EmailVerified && len(name) > 4 && clean.Handle(name) != "" {
 			userName = name
 		}
 	case authn.OidcClaimEmail:
-		if name := clean.Email(userInfo.Email); userInfo.EmailVerified && len(name) > 4 {
+		if name := clean.Email(userInfo.Email); userInfo.EmailVerified && len(name) > 4 && clean.Handle(name) != "" {
 			userName = name
 		} else if name = clean.Handle(userInfo.PreferredUsername); len(name) > 0 {
 			userName = name
@@ -47,7 +47,7 @@ func Username(userInfo *oidc.UserInfo, preferredClaim string) (userName string) 
 			userName = name
 		} else if name = clean.Handle(userInfo.Nickname); len(name) > 0 {
 			userName = name
-		} else if name = clean.Email(userInfo.Email); userInfo.EmailVerified && len(name) > 4 {
+		} else if name = clean.Email(userInfo.Email); userInfo.EmailVerified && len(name) > 4 && clean.Handle(name) != "" {
 			userName = name
 		}
 	}
