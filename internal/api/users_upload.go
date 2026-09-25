@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -11,6 +12,7 @@ import (
 	"github.com/dustin/go-humanize/english"
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -220,36 +222,18 @@ func UploadUserFiles(router *gin.RouterGroup) {
 
 		// Check if the uploaded file may contain inappropriate content.
 		if len(uploads) > 0 && !conf.UploadNSFW() {
-			containsNSFW := false
+			screeningStatus := nsfw.StatusSafe
 
 			for _, filename := range uploads {
-				labels, nsfwErr := vision.DetectNSFW([]string{filename}, media.SrcLocal)
-
-				switch {
-				case nsfwErr != nil:
-					log.Debugf("nsfw: %s", clean.Error(nsfwErr))
-					continue
-				case len(labels) < 1:
-					log.Errorf("nsfw: model returned no result")
-					continue
-				case labels[0].IsSafe():
-					continue
-				}
-
-				log.Infof("nsfw: %s might be offensive", clean.Log(filepath.Base(filename)))
-
-				containsNSFW = true
+				screeningStatus = aggregateNSFWStatus(screeningStatus, nsfwUploadStatus(filename))
 			}
 
-			if containsNSFW {
-				for _, filename := range uploads {
-					if err := os.Remove(filename); err != nil {
-						log.Errorf("nsfw: could not delete %s", clean.Log(filepath.Base(filename)))
-					}
-				}
-
+			if rejectNSFWUpload(screeningStatus) {
+				removeScreenedUploads(uploads)
 				Abort(c, http.StatusForbidden, i18n.ErrOffensiveUpload)
 				return
+			} else if screeningStatus == nsfw.StatusUnavailable {
+				log.Warnf("nsfw: upload batch was admitted without a screening decision")
 			}
 		}
 
@@ -429,4 +413,101 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 
 		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgUploadProcessed))
 	})
+}
+
+// rejectNSFWUpload reports whether a screening decision must reject the batch.
+func rejectNSFWUpload(status nsfw.Status) bool {
+	return status == nsfw.StatusUnsafe
+}
+
+// aggregateNSFWStatus combines screening decisions with unsafe taking highest priority.
+func aggregateNSFWStatus(current, next nsfw.Status) nsfw.Status {
+	if current == nsfw.StatusUnsafe || next == nsfw.StatusUnsafe {
+		return nsfw.StatusUnsafe
+	}
+
+	if current == nsfw.StatusUnavailable || next == nsfw.StatusUnavailable {
+		return nsfw.StatusUnavailable
+	}
+
+	return nsfw.StatusSafe
+}
+
+// nsfwUploadStatus reports the screening decision for an uploaded file.
+// An explicitly unconfigured detector admits the file as safe.
+func nsfwUploadStatus(fileName string) nsfw.Status {
+	if vision.Config == nil {
+		log.Debugf("nsfw: no detector configured, %s was not screened", clean.Log(filepath.Base(fileName)))
+		return nsfw.StatusSafe
+	}
+	configured := vision.Config.Model(vision.ModelTypeNsfw)
+	if configured == nil || configured.Disabled {
+		log.Debugf("nsfw: no detector configured, %s was not screened", clean.Log(filepath.Base(fileName)))
+		return nsfw.StatusSafe
+	}
+	previewName, cleanup, previewErr := nsfwUploadPreview(fileName)
+	if previewErr != nil {
+		log.Warnf("nsfw: cannot create preview for %s (%s)", clean.Log(filepath.Base(fileName)), clean.Error(previewErr))
+		return nsfw.StatusUnavailable
+	}
+	if previewName == "" {
+		return nsfw.StatusSafe
+	}
+	defer cleanup()
+
+	results, err := vision.DetectNSFWUpload([]string{previewName}, media.SrcLocal)
+
+	if errors.Is(err, nsfw.ErrNotConfigured) {
+		log.Debugf("nsfw: no detector configured, %s was not screened", clean.Log(filepath.Base(fileName)))
+		return nsfw.StatusSafe
+	}
+
+	var result nsfw.Result
+
+	switch {
+	case err != nil:
+		result = nsfw.Unavailable(clean.Error(err))
+	case len(results) < 1:
+		result = nsfw.Unavailable("no result")
+	default:
+		result = results[0]
+	}
+
+	if result.IsSafe() {
+		return nsfw.StatusSafe
+	}
+
+	if result.IsUnavailable() {
+		log.Warnf("nsfw: cannot screen %s (%s)", clean.Log(filepath.Base(fileName)), clean.Log(result.Reason))
+	} else {
+		log.Infof("nsfw: %s might be offensive", clean.Log(filepath.Base(fileName)))
+	}
+
+	return result.Status
+}
+
+// removeScreenedUploads deletes a temporary upload batch rejected by content screening.
+func removeScreenedUploads(uploads []string) {
+	for _, filename := range uploads {
+		if err := os.Remove(filename); err != nil {
+			log.Errorf("nsfw: could not delete %s", clean.Log(filepath.Base(filename)))
+		}
+	}
+}
+
+var nsfwUploadPreview = uploadScreeningPreview
+
+// uploadScreeningPreview returns a directly decodable image or a temporary JPEG derivative.
+func uploadScreeningPreview(fileName string) (string, func(), error) {
+	if _, _, err := fs.DecodeImageFile(fileName); err == nil {
+		return fileName, func() {}, nil
+	}
+	mediaFile, err := photoprism.NewMediaFile(fileName)
+	if err != nil {
+		return "", nil, err
+	}
+	if !mediaFile.IsMedia() {
+		return "", func() {}, nil
+	}
+	return get.Convert().TempPreview(mediaFile)
 }

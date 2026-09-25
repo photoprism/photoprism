@@ -69,11 +69,19 @@ func PostVisionNsfw(router *gin.RouterGroup) {
 			return
 		}
 
+		// Name the detector that produced the scores, since a client cannot otherwise tell
+		// which taxonomy the class probabilities belong to, or whether they exist at all.
+		model := vision.Config.Model(vision.ModelTypeNsfw)
+
+		if model == nil {
+			model = vision.NsfwModel
+		}
+
 		// Generate Vision API service response.
 		response := vision.ApiResponse{
 			Id:     request.GetId(),
 			Code:   http.StatusOK,
-			Model:  &vision.Model{Type: vision.ModelTypeNsfw},
+			Model:  &vision.Model{Type: vision.ModelTypeNsfw, Name: model.Name, Version: model.Version},
 			Result: vision.ApiResult{Nsfw: results},
 		}
 

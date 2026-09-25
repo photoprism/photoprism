@@ -349,10 +349,15 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"vision-key", maskedSecret(c.VisionKey())},
 		{"vision-schedule", c.VisionSchedule()},
 		{"vision-filter", c.VisionFilter()},
+		{"label-model", string(c.EffectiveLabelModel())},
+		{"label-model-path", c.LabelModelPath()},
+		{"label-model-runtime", c.LabelModelRuntime()},
 		{"onnx-provider", c.OnnxProvider().String()},
 		{"nasnet-model-path", c.NasnetModelPath()},
 		{"facenet-model-path", c.FacenetModelPath()},
+		{"nsfw-model", string(c.EffectiveNSFWModel())},
 		{"nsfw-model-path", c.NsfwModelPath()},
+		{"nsfw-model-runtime", c.NsfwModelRuntime()},
 		{"detect-nsfw", fmt.Sprintf("%t", c.DetectNSFW())},
 	}...)
 

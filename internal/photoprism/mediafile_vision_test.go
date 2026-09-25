@@ -1,6 +1,7 @@
 package photoprism
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -118,18 +119,55 @@ func TestMediaFile_DetectNSFW(t *testing.T) {
 
 	t.Run("FlagsHighConfidence", func(t *testing.T) {
 		vision.SetNSFWFunc(func(files vision.Files, mediaSrc media.Src) ([]nsfw.Result, error) {
-			return []nsfw.Result{{Porn: nsfw.ThresholdHigh + 0.01}}, nil
+			return []nsfw.Result{nsfw.NewResult(0.99, nsfw.DefaultThreshold)}, nil
 		})
 		t.Cleanup(func() { vision.SetNSFWFunc(nil) })
 
-		assert.True(t, mediaFile.DetectNSFW())
+		result := mediaFile.DetectNSFW()
+		assert.True(t, result.IsUnsafe())
+		assert.False(t, result.IsSafe())
 	})
 	t.Run("SafeContent", func(t *testing.T) {
 		vision.SetNSFWFunc(func(files vision.Files, mediaSrc media.Src) ([]nsfw.Result, error) {
-			return []nsfw.Result{{Neutral: 0.9}}, nil
+			return []nsfw.Result{nsfw.NewResult(0.02, nsfw.DefaultThreshold)}, nil
 		})
 		t.Cleanup(func() { vision.SetNSFWFunc(nil) })
 
-		assert.False(t, mediaFile.DetectNSFW())
+		result := mediaFile.DetectNSFW()
+		assert.True(t, result.IsSafe())
+		assert.False(t, result.IsUnsafe())
+	})
+	// A detector that could not answer must not report a clearance, because every caller of
+	// this method treats "not unsafe" as permission to leave a photo public.
+	t.Run("DetectorError", func(t *testing.T) {
+		vision.SetNSFWFunc(func(files vision.Files, mediaSrc media.Src) ([]nsfw.Result, error) {
+			return nil, errors.New("model is unavailable")
+		})
+		t.Cleanup(func() { vision.SetNSFWFunc(nil) })
+
+		result := mediaFile.DetectNSFW()
+		assert.True(t, result.IsUnavailable())
+		assert.False(t, result.IsSafe())
+		assert.False(t, result.IsUnsafe())
+	})
+	t.Run("NoResult", func(t *testing.T) {
+		vision.SetNSFWFunc(func(files vision.Files, mediaSrc media.Src) ([]nsfw.Result, error) {
+			return []nsfw.Result{}, nil
+		})
+		t.Cleanup(func() { vision.SetNSFWFunc(nil) })
+
+		result := mediaFile.DetectNSFW()
+		assert.True(t, result.IsUnavailable())
+		assert.False(t, result.IsSafe())
+	})
+	t.Run("UndecidedResult", func(t *testing.T) {
+		vision.SetNSFWFunc(func(files vision.Files, mediaSrc media.Src) ([]nsfw.Result, error) {
+			return []nsfw.Result{nsfw.Unavailable("thumbnail is missing")}, nil
+		})
+		t.Cleanup(func() { vision.SetNSFWFunc(nil) })
+
+		result := mediaFile.DetectNSFW()
+		assert.True(t, result.IsUnavailable())
+		assert.False(t, result.IsSafe())
 	})
 }

@@ -166,6 +166,12 @@ func TestLabels_IsNSFW(t *testing.T) {
 			expected:  false,
 		},
 		{
+			name:      "ZeroConfidence",
+			threshold: 0,
+			labels:    Labels{{Name: "cat"}},
+			expected:  false,
+		},
+		{
 			name:      "NegativeThreshold",
 			threshold: -10,
 			labels:    Labels{{Name: "cat", NSFWConfidence: 100}},

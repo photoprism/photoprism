@@ -167,7 +167,7 @@ func (w *Meta) Start(delay, interval time.Duration, force bool) (err error) {
 						if generateLabels {
 							if labels := mediaFile.GenerateLabels(entity.SrcAuto); len(labels) > 0 {
 								if w.conf.DetectNSFW() && !photo.PhotoPrivate {
-									if labels.IsNSFW(vision.Config.Thresholds.GetNSFW()) {
+									if labels.IsNSFW(vision.Config.Thresholds.GetNSFWLabels()) {
 										photo.PhotoPrivate = true
 										log.Infof("vision: changed private flag of %s to %t (labels)", logName, photo.PhotoPrivate)
 									}

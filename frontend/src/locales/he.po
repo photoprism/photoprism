@@ -79,15 +79,15 @@ msgstr "%{s} ארוך מדי"
 msgid "%{s} is too short"
 msgstr "%{s} קצר מדי"
 
-#: src/locales.js:438
+#: src/locales.js:439
 msgid "%d entries added to %s"
 msgstr "%d רשומות נוספו ל-%s"
 
-#: src/locales.js:440
+#: src/locales.js:441
 msgid "%d entries removed from %s"
 msgstr "%d רשומות הוסרו מ-%s"
 
-#: src/locales.js:462
+#: src/locales.js:463
 msgid "%d files uploaded in %d s"
 msgstr "%d קבצים הועלו תוך %d שניות"
 
@@ -95,7 +95,7 @@ msgstr "%d קבצים הועלו תוך %d שניות"
 msgid "%s already exists"
 msgstr "%s כבר קיים"
 
-#: src/locales.js:472
+#: src/locales.js:473
 msgid "%s has been restored"
 msgstr "%s שוחזר"
 
@@ -126,11 +126,11 @@ msgstr "2FA"
 msgid "4 hours"
 msgstr "4 שעות"
 
-#: src/component/share/dialog.vue:116
+#: src/component/share/dialog.vue:117
 msgid "A click will copy it to your clipboard."
 msgstr "להקיש כדי להעתיק ללוח־הגזירים."
 
-#: src/locales.js:428
+#: src/locales.js:429
 msgid "A migration is in progress"
 msgstr "מתבצעת כעת הגירה"
 
@@ -180,12 +180,12 @@ msgid "Account"
 msgstr "חשבון"
 
 #: src/component/user/add/dialog.vue:261 src/component/user/add/dialog.vue:277
-#: src/component/service/add.vue:131 src/locales.js:441
+#: src/component/service/add.vue:131 src/locales.js:442
 msgid "Account created"
 msgstr "חשבון נוצר"
 
 #: src/component/user/remove/dialog.vue:63 src/component/service/remove.vue:74
-#: src/locales.js:443
+#: src/locales.js:444
 msgid "Account deleted"
 msgstr "חשבון נמחק"
 
@@ -201,7 +201,7 @@ msgstr "החשבון לא נמצא"
 msgid "Account restored"
 msgstr "חשבון שוחזר"
 
-#: src/locales.js:442
+#: src/locales.js:443
 msgid "Account saved"
 msgstr "החשבון נשמר"
 
@@ -346,7 +346,7 @@ msgid "Adjust Location"
 msgstr "התאמת מיקום"
 
 #: src/model/cluster-instance.js:28 src/options/admin.js:35
-#: src/common/util.js:922 src/options/auth.js:6
+#: src/common/util.js:963 src/options/auth.js:6
 msgid "Admin"
 msgstr "מנהל מערכת"
 
@@ -398,7 +398,7 @@ msgstr "לאחר שבועיים"
 msgid "Album"
 msgstr "אלבום"
 
-#: src/locales.js:432
+#: src/locales.js:433
 msgid "Album %s deleted"
 msgstr "האלבום %s נמחק"
 
@@ -406,11 +406,11 @@ msgstr "האלבום %s נמחק"
 msgid "Album Backups"
 msgstr "גיבויי אלבומים"
 
-#: src/locales.js:433
+#: src/locales.js:434
 msgid "Album contents cloned"
 msgstr "תוכן האלבום שוכפל"
 
-#: src/locales.js:430 src/page/albums.vue:1194
+#: src/locales.js:431 src/page/albums.vue:1194
 msgid "Album created"
 msgstr "אלבום נוצר"
 
@@ -422,7 +422,7 @@ msgstr "אלבום נמחק"
 msgid "Album not found"
 msgstr "האלבום לא נמצא"
 
-#: src/locales.js:431
+#: src/locales.js:432
 msgid "Album saved"
 msgstr "האלבום נשמר"
 
@@ -435,7 +435,7 @@ msgstr "האלבום נשמר"
 msgid "Albums"
 msgstr "אלבומים"
 
-#: src/component/album/clipboard.vue:194 src/locales.js:469
+#: src/component/album/clipboard.vue:194 src/locales.js:470
 msgid "Albums deleted"
 msgstr "אלבומים נמחקו"
 
@@ -532,7 +532,7 @@ msgstr "לאפשר למשתמשים להעלות תמונות וסרטונים �
 msgid "Allow zooming with pinch gestures on mobile devices."
 msgstr "אפשר זום באמצעות מחוות צביטה במכשירים ניידים."
 
-#: src/component/share/dialog.vue:118
+#: src/component/share/dialog.vue:119
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
 msgstr "לחלופין, ניתן להעלות קבצים ישירות דרך שרתי WebDAV כמו Nextcloud."
 
@@ -549,7 +549,7 @@ msgstr "רום (מ')"
 msgid "AM"
 msgstr "AM"
 
-#: src/app/routes.js:423 src/common/util.js:864
+#: src/app/routes.js:423 src/common/util.js:905
 #: src/component/photo/batch-edit.vue:127 src/component/photo/batch-edit.vue:68
 #: src/component/photo/edit/files.vue:132
 #: src/component/photo/edit/files.vue:133
@@ -571,7 +571,7 @@ msgstr "הנפשה"
 msgid "Animations"
 msgstr "הנפשות"
 
-#: src/component/share/dialog.vue:117
+#: src/component/share/dialog.vue:118
 msgid "Any private photos and videos remain private and won't be shared."
 msgstr "תמונות וסרטונים פרטיים יישארו פרטיים ולא ישותפו."
 
@@ -661,14 +661,14 @@ msgstr "יחס גובה-רוחב"
 msgid "Attributes"
 msgstr "תכונות"
 
-#: src/app/routes.js:416 src/common/util.js:862
+#: src/app/routes.js:416 src/common/util.js:903
 #: src/component/navigation.vue:204 src/component/navigation.vue:205
 #: src/component/navigation.vue:217 src/component/navigation.vue:226
 #: src/component/navigation.vue:254 src/options/options.js:360
 msgid "Audio"
 msgstr "שמע"
 
-#: src/model/logs.js:184
+#: src/model/logs.js:137
 msgid "Audit Log"
 msgstr "יומן שמע"
 
@@ -683,7 +683,7 @@ msgstr "יומן שמע"
 msgid "Authentication"
 msgstr "אימות"
 
-#: src/common/util.js:884
+#: src/common/util.js:925
 msgid "Auto"
 msgstr "אוטומטי"
 
@@ -713,7 +713,7 @@ msgstr "טוטפת"
 msgid "Base Path"
 msgstr "נתיב בסיס"
 
-#: src/common/util.js:916
+#: src/common/util.js:957
 msgid "Batch"
 msgstr "אצווה"
 
@@ -775,7 +775,7 @@ msgstr "דפדוף בתמונות"
 msgid "Bug Report"
 msgstr "דוח תקל"
 
-#: src/locales.js:420
+#: src/locales.js:421
 msgid "Busy, please try again later"
 msgstr "עסוק, אנא נסה שוב מאוחר יותר"
 
@@ -853,17 +853,17 @@ msgstr "לא ניתן לבחור עוד פרטים"
 #: src/component/service/upload.vue:57 src/component/settings/apps.vue:151
 #: src/component/settings/passcode.vue:101
 #: src/component/settings/passcode.vue:142
-#: src/component/settings/password.vue:83 src/component/share/dialog.vue:161
+#: src/component/settings/password.vue:83 src/component/share/dialog.vue:164
 #: src/locales.js:214 src/page/auth/login.vue:120 src/page/connect.vue:36
 #: src/page/library/import.vue:61 src/page/library/index.vue:61
 msgid "Cancel"
 msgstr "ביטול"
 
-#: src/common/util.js:1100 src/common/util.js:1107
+#: src/common/util.js:1141 src/common/util.js:1148
 msgid "Cannot copy to clipboard"
 msgstr "לא ניתן להעתיק ללוח"
 
-#: src/common/util.js:904 src/component/lightbox/sidebar.vue:807
+#: src/common/util.js:945 src/component/lightbox/sidebar.vue:807
 #: src/component/photo/batch-edit.vue:173
 #: src/component/photo/batch-edit.vue:176
 #: src/component/photo/edit/details.vue:28
@@ -936,8 +936,8 @@ msgstr "לא ניתן לשמור שינויים"
 #: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3219
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
-#: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
-#: src/locales.js:429 src/page/albums.vue:1197 src/page/people/new.vue:814
+#: src/component/share/dialog.vue:235 src/component/share/dialog.vue:254
+#: src/locales.js:430 src/page/albums.vue:1197 src/page/people/new.vue:814
 #: src/page/people/recognized.vue:320 src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
 #: src/page/settings/general.vue:646
@@ -1014,7 +1014,7 @@ msgstr "לָקוּחַ"
 #: src/component/settings/passcode.vue:192
 #: src/component/settings/passcode.vue:207
 #: src/component/settings/passcode.vue:61 src/component/settings/webdav.vue:74
-#: src/component/share/dialog.vue:126 src/component/share/dialog.vue:70
+#: src/component/share/dialog.vue:127 src/component/share/dialog.vue:70
 #: src/component/share/dialog.vue:71 src/component/share/dialog.vue:80
 #: src/component/update.vue:25 src/component/upload/dialog.vue:119
 #: src/component/upload/dialog.vue:20 src/locales.js:210
@@ -1155,7 +1155,7 @@ msgstr "תוֹרֵם"
 msgid "Converting"
 msgstr "ממיר"
 
-#: src/common/util.js:1093
+#: src/common/util.js:1134
 msgid "Copied to clipboard"
 msgstr "הועתק ללוח"
 
@@ -1169,7 +1169,7 @@ msgstr "הועתק ללוח"
 msgid "Copy"
 msgstr "עותק"
 
-#: src/locales.js:454
+#: src/locales.js:455
 msgid "Copying files from %s"
 msgstr "מעתיק קבצים מ-%s"
 
@@ -1185,7 +1185,7 @@ msgstr "זכויות יוצרים"
 msgid "Could not be deleted"
 msgstr "לא ניתן למחיקה"
 
-#: src/locales.js:408
+#: src/locales.js:409
 msgid "Could not connect, please try again"
 msgstr "לא ניתן היה להתחבר, נסה שוב"
 
@@ -1286,7 +1286,7 @@ msgstr "יומן ניפוי־תקלים"
 #: src/page/admin/sessions.vue:256 src/page/admin/users.vue:233
 #: src/page/admin/groups.vue:35 src/page/admin/sessions.vue:371
 #: src/page/admin/users.vue:430 src/page/admin/sessions.vue:369
-#: src/page/admin/users.vue:374 src/common/util.js:886 src/model/session.js:42
+#: src/page/admin/users.vue:374 src/common/util.js:927 src/model/session.js:42
 #: src/model/user.js:343 src/options/auth.js:40 src/options/auth.js:41
 #: src/options/auth.js:69 src/options/auth.js:70 src/options/options.js:252
 #: src/options/options.js:255 src/options/options.js:295
@@ -1306,7 +1306,7 @@ msgstr "תיקיית ברירת מחדל"
 #: src/component/label/delete/dialog.vue:22
 #: src/component/photo/clipboard.vue:132 src/component/photo/edit/files.vue:63
 #: src/component/photo/edit/files.vue:71 src/component/photo/edit/files.vue:95
-#: src/component/service/remove.vue:22 src/component/share/dialog.vue:98
+#: src/component/service/remove.vue:22 src/component/share/dialog.vue:99
 #: src/locales.js:321 src/page/settings/general.vue:335
 msgid "Delete"
 msgstr "מחק"
@@ -1475,7 +1475,7 @@ msgstr "הצג כתוביות תמונה בתוצאות החיפוש."
 msgid "Display picture titles in search results."
 msgstr "הצג כותרות של תמונות בתוצאות החיפוש."
 
-#: src/common/util.js:868 src/component/photo/view/cards.vue:115
+#: src/common/util.js:909 src/component/photo/view/cards.vue:115
 #: src/component/photo/view/cards.vue:239
 #: src/component/photo/view/mosaic.vue:70 src/model/thumb.js:247
 #: src/options/options.js:372
@@ -1504,7 +1504,7 @@ msgstr "אל תשתמש ב- RawTherapee להמרת קבצי RAW."
 #: src/component/lightbox/sidebar.vue:195 src/component/settings/apps.vue:51
 #: src/component/settings/apps.vue:52 src/component/settings/apps.vue:61
 #: src/component/settings/apps.vue:77 src/component/settings/apps.vue:88
-#: src/component/share/dialog.vue:162
+#: src/component/share/dialog.vue:165
 msgid "Done"
 msgstr "בוצע"
 
@@ -1657,7 +1657,7 @@ msgstr "הזן שם פריט..."
 msgid "Enter the code generated by your authenticator app:"
 msgstr "הזן את הקוד שנוצר על ידי אפליקציית המאמת שלך:"
 
-#: src/common/api.js:126 src/locales.js:409
+#: src/common/api.js:126 src/locales.js:410
 msgid "Enter verification code"
 msgstr "הכנס קוד אימות"
 
@@ -1680,7 +1680,7 @@ msgstr "שגיאה"
 msgid "Errors"
 msgstr "שגיאות"
 
-#: src/common/util.js:888
+#: src/common/util.js:929
 msgid "Estimate"
 msgstr "לְהַעֲרִיך"
 
@@ -1712,7 +1712,7 @@ msgstr "תכונות ניסיוניות"
 #: src/page/admin/sessions.vue:203 src/page/admin/sessions.vue:299
 #: src/page/admin/sessions.vue:297 src/component/service/edit.vue:69
 #: src/component/settings/apps.vue:138 src/component/settings/apps.vue:295
-#: src/component/share/dialog.vue:195
+#: src/component/share/dialog.vue:198
 msgid "Expires"
 msgstr "תפוגה"
 
@@ -1744,15 +1744,15 @@ msgstr "הפנים לא נמצאו"
 msgid "Faces"
 msgstr "פנים"
 
-#: src/locales.js:406
+#: src/locales.js:407
 msgid "Failed creating file, please check permissions"
 msgstr "יצירת הקובץ נכשלה, אנא בדוק את ההרשאות"
 
-#: src/locales.js:407
+#: src/locales.js:408
 msgid "Failed creating folder, please check permissions"
 msgstr "יצירת התיקיה נכשלה, אנא בדוק את ההרשאות"
 
-#: src/component/share/dialog.vue:235
+#: src/component/share/dialog.vue:245
 msgid "Failed removing link"
 msgstr "הסרת קישור כשלה"
 
@@ -1760,7 +1760,7 @@ msgstr "הסרת קישור כשלה"
 msgid "Failed to connect account."
 msgstr "חיבור חשבון כשל."
 
-#: src/locales.js:416
+#: src/locales.js:417
 msgid "Failed to create zip file"
 msgstr "יצירת קובץ ה-zip נכשלה"
 
@@ -1804,7 +1804,7 @@ msgstr "שמירת סימן פנים כשלה"
 msgid "Failed to save name"
 msgstr "שמירת שם כשלה"
 
-#: src/component/share/dialog.vue:216
+#: src/component/share/dialog.vue:219
 msgid "Failed updating link"
 msgstr "העלאת קישור כשלה"
 
@@ -1835,7 +1835,7 @@ msgstr "מועדף"
 msgid "Favorites"
 msgstr "מועדפים"
 
-#: src/locales.js:412
+#: src/locales.js:413
 msgid "Feature disabled"
 msgstr "התכונה מושבתת"
 
@@ -1851,7 +1851,7 @@ msgstr "תכונות"
 msgid "Female"
 msgstr "נקבה"
 
-#: src/common/util.js:890 src/component/lightbox/sidebar.vue:1101
+#: src/common/util.js:931 src/component/lightbox/sidebar.vue:1101
 #: src/component/photo/edit/info.vue:94 src/model/file.js:271
 msgid "File"
 msgstr "קובץ"
@@ -1864,7 +1864,7 @@ msgstr "סייר קבצים"
 msgid "File Conversion"
 msgstr "המרת קבצים"
 
-#: src/locales.js:435
+#: src/locales.js:436
 msgid "File deleted"
 msgstr "הקובץ נמחק"
 
@@ -1878,7 +1878,7 @@ msgstr "שם קובץ"
 msgid "File not found"
 msgstr "קובץ לא נמצא"
 
-#: src/locales.js:434
+#: src/locales.js:435
 msgid "File removed from stack"
 msgstr "הקובץ הוסר מהאיחוד"
 
@@ -1890,7 +1890,7 @@ msgstr "גודל הקובץ"
 msgid "File too large"
 msgstr "קובץ גדול מדי"
 
-#: src/locales.js:461
+#: src/locales.js:462
 msgid "File uploaded"
 msgstr "הקובץ הועלה"
 
@@ -2111,7 +2111,7 @@ msgstr "משולב"
 msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
 msgstr "אם תאבד את הגישה לאפליקציית המאמת או למכשיר שלך, תוכל להשתמש בקוד השחזור שלך כדי לקבל חזרה גישה לחשבון שלך."
 
-#: src/common/util.js:854 src/common/util.js:894
+#: src/common/util.js:895 src/common/util.js:935
 #: src/component/photo/view/cards.vue:246 src/model/file.js:199
 #: src/options/options.js:344
 msgid "Image"
@@ -2127,11 +2127,11 @@ msgstr "איכות תמונה"
 msgid "Import"
 msgstr "ייבוא"
 
-#: src/locales.js:447
+#: src/locales.js:448
 msgid "Import canceled"
 msgstr "הייבוא בוטל"
 
-#: src/locales.js:446
+#: src/locales.js:447
 msgid "Import completed in %d s"
 msgstr "הייבוא הושלם ב-%d שניות"
 
@@ -2193,11 +2193,11 @@ msgstr "אינדקס"
 msgid "Indexing"
 msgstr "מאנדקס"
 
-#: src/locales.js:451
+#: src/locales.js:452
 msgid "Indexing canceled"
 msgstr "יצירת האינדקס בוטלה"
 
-#: src/locales.js:448
+#: src/locales.js:449
 msgid "Indexing completed in %d s"
 msgstr "האינדוקס הושלם ב-%d שניות"
 
@@ -2205,7 +2205,7 @@ msgstr "האינדוקס הושלם ב-%d שניות"
 msgid "Indexing failed"
 msgstr "אינדוקס נכשל"
 
-#: src/locales.js:450
+#: src/locales.js:451
 msgid "Indexing files in %s"
 msgstr "מאנדקס קבצים תוך %s"
 
@@ -2213,7 +2213,7 @@ msgstr "מאנדקס קבצים תוך %s"
 msgid "Indexing media and sidecar files…"
 msgstr "יצירת אינדקס של קבצי מדיה וקבצי עזר…"
 
-#: src/locales.js:449
+#: src/locales.js:450
 msgid "Indexing originals..."
 msgstr "מאנדקס קבצי מקור..."
 
@@ -2245,7 +2245,7 @@ msgstr "לא ניתן ליצור קשר עם השרת. נסה שוב כאשר ה
 msgid "Instances"
 msgstr "מופעים"
 
-#: src/locales.js:424
+#: src/locales.js:425
 msgid "Insufficient storage"
 msgstr "אחסון לא מספיק"
 
@@ -2261,7 +2261,7 @@ msgstr "הפוגה"
 #: src/common/form.js:245 src/common/form.js:319 src/common/form.js:322
 #: src/common/form.js:333 src/common/form.js:336 src/common/form.js:362
 #: src/common/form.js:364 src/common/form.js:371 src/common/form.js:373
-#: src/common/form.js:388 src/common/form.js:390
+#: src/common/form.js:388 src/common/form.js:390 src/model/link.js:41
 msgid "Invalid"
 msgstr "לא תקין"
 
@@ -2273,7 +2273,7 @@ msgstr "כתובת לא תקינה"
 msgid "Invalid country"
 msgstr "שם מדינה לא תקיי"
 
-#: src/locales.js:417
+#: src/locales.js:418
 msgid "Invalid credentials"
 msgstr "אישורים לא תקינים"
 
@@ -2281,11 +2281,11 @@ msgstr "אישורים לא תקינים"
 msgid "Invalid date"
 msgstr "תאריך לא תקין"
 
-#: src/locales.js:418
+#: src/component/share/dialog.vue:226 src/locales.js:419
 msgid "Invalid link"
 msgstr "קישור לא תקין"
 
-#: src/locales.js:419
+#: src/locales.js:420
 msgid "Invalid name"
 msgstr "מספר לא תקף"
 
@@ -2294,7 +2294,7 @@ msgstr "מספר לא תקף"
 msgid "Invalid parameters"
 msgstr "פרמטרים לא תקינים"
 
-#: src/locales.js:411
+#: src/locales.js:412
 msgid "Invalid password, please try again"
 msgstr "סיסמה לא תקינה, נסה שוב"
 
@@ -2310,7 +2310,7 @@ msgstr "זמן לא תקין"
 msgid "Invalid URL"
 msgstr "כתובת אתר לא תקינה"
 
-#: src/locales.js:410
+#: src/locales.js:411
 msgid "Invalid verification code, please try again"
 msgstr "קוד אימות לא חוקי, אנא נסה שוב"
 
@@ -2344,7 +2344,7 @@ msgstr "מגבלת גודל קבצי ה-JPEG %{n} פיקסלים"
 msgid "JPEGs and thumbnails are automatically rendered as needed."
 msgstr "קבצי JPEG וקבצי תצוגה מקדימה נוצרים אוטומטית לפי הצורך."
 
-#: src/common/util.js:906
+#: src/common/util.js:947
 msgid "Keyword"
 msgstr "מילת מפתח"
 
@@ -2363,7 +2363,7 @@ msgstr "תווית"
 msgid "Label not found"
 msgstr "התווית לא נמצאה"
 
-#: src/locales.js:456
+#: src/locales.js:457
 msgid "Label saved"
 msgstr "התווית נשמרה"
 
@@ -2379,7 +2379,7 @@ msgstr "התווית נשמרה"
 msgid "Labels"
 msgstr "תוויות"
 
-#: src/component/label/clipboard.vue:131 src/locales.js:455
+#: src/component/label/clipboard.vue:131 src/locales.js:456
 msgid "Labels deleted"
 msgstr "תוויות נמחקו"
 
@@ -2474,7 +2474,7 @@ msgstr "ליים"
 msgid "Limit reached, showing first %{n} files"
 msgstr "לא ניתן להציג יותר, מציג את ה-%{n} קבצים הראשונים"
 
-#: src/model/link.js:93 src/options/auth.js:50 src/options/auth.js:51
+#: src/model/link.js:106 src/options/auth.js:50 src/options/auth.js:51
 msgid "Link"
 msgstr "קישור"
 
@@ -2486,7 +2486,7 @@ msgstr "רשימה"
 msgid "List View"
 msgstr "תצוגת רשימה"
 
-#: src/common/util.js:858 src/component/photo/batch-edit.vue:124
+#: src/common/util.js:899 src/component/photo/batch-edit.vue:124
 #: src/component/photo/batch-edit.vue:65 src/component/photo/view/cards.vue:112
 #: src/component/photo/view/cards.vue:224 src/component/photo/view/list.vue:81
 #: src/component/photo/view/mosaic.vue:67 src/options/options.js:352
@@ -2522,7 +2522,7 @@ msgid "Local Time"
 msgstr "זמן מוקמי"
 
 #: src/page/settings/account.vue:359 src/page/settings/account.vue:361
-#: src/common/util.js:896 src/component/album/edit/dialog.vue:38
+#: src/common/util.js:937 src/component/album/edit/dialog.vue:38
 #: src/component/lightbox/sidebar.vue:150
 #: src/component/photo/batch-edit.vue:263
 #: src/component/photo/batch-edit.vue:581
@@ -2587,7 +2587,7 @@ msgstr "נהל חשבון"
 msgid "Manager"
 msgstr "מְנַהֵל"
 
-#: src/common/util.js:918
+#: src/common/util.js:959
 msgid "Manual"
 msgstr "יָדָנִי"
 
@@ -2603,7 +2603,7 @@ msgstr "מפות"
 msgid "Maps are unavailable. Try another browser or device."
 msgstr "המפות אינן זמינות. נסה דפדפן או מכשיר אחר."
 
-#: src/common/util.js:898 src/model/marker.js:132
+#: src/common/util.js:939 src/model/marker.js:132
 msgid "Marker"
 msgstr "סמן"
 
@@ -2633,7 +2633,7 @@ msgstr "למזג %{a} עם %{b}?"
 msgid "Message"
 msgstr "הוֹדָעָה"
 
-#: src/common/util.js:908
+#: src/common/util.js:949
 msgid "Metadata"
 msgstr "מטא נתונים"
 
@@ -2695,7 +2695,7 @@ msgstr "הכי רלוונטי"
 msgid "Move Files"
 msgstr "העבר קבצים"
 
-#: src/locales.js:453
+#: src/locales.js:454
 msgid "Moving files from %s"
 msgstr "מעביר קבצים מ-%s"
 
@@ -2711,7 +2711,7 @@ msgstr "לְהַשְׁתִיק"
 #: src/component/cluster/node/overview.vue:25
 #: src/component/cluster/node/overview.vue:4
 #: src/component/cluster/node/overview.vue:75 src/page/cluster/nodes.vue:155
-#: src/common/util.js:892 src/component/album/edit/dialog.vue:30
+#: src/common/util.js:933 src/component/album/edit/dialog.vue:30
 #: src/component/album/edit/dialog.vue:31
 #: src/component/input/chip-selector.vue:277
 #: src/component/label/edit/dialog.vue:30
@@ -2795,7 +2795,7 @@ msgstr "אין אלבומים שהוקצו"
 msgid "No albums found"
 msgstr "לא נמצאו אלבומים"
 
-#: src/locales.js:414
+#: src/locales.js:415
 msgid "No albums selected"
 msgstr "לא נבחרו אלבומים"
 
@@ -2803,11 +2803,11 @@ msgstr "לא נבחרו אלבומים"
 msgid "No data available"
 msgstr "אין נתונים זמינים"
 
-#: src/locales.js:415
+#: src/locales.js:416
 msgid "No files available for download"
 msgstr "אין קבצים זמינים להורדה"
 
-#: src/locales.js:405
+#: src/locales.js:406
 msgid "No items selected"
 msgstr "לא נבחרו פריטים"
 
@@ -2819,7 +2819,7 @@ msgstr "אין תוויות שהוקצו"
 msgid "No labels found"
 msgstr "לא נמצאו תוויות"
 
-#: src/locales.js:413
+#: src/locales.js:414
 msgid "No labels selected"
 msgstr "לא נבחרו תוויות"
 
@@ -2983,11 +2983,11 @@ msgstr "פעם בשבוע"
 msgid "One album found"
 msgstr "אלבום אחד נמצא"
 
-#: src/locales.js:437
+#: src/locales.js:438
 msgid "One entry added to %s"
 msgstr "רשומה אחת נוספה ל-%s"
 
-#: src/locales.js:439
+#: src/locales.js:440
 msgid "One entry removed from %s"
 msgstr "רשומה אחת הוסרה מ-%s"
 
@@ -3127,12 +3127,12 @@ msgstr "חלק מתמונות נבחרות"
 #: src/component/user/add/dialog.vue:57 src/component/user/add/dialog.vue:58
 #: src/component/service/add.vue:52 src/component/service/edit.vue:168
 #: src/component/settings/apps.vue:33 src/component/settings/passcode.vue:171
-#: src/component/settings/passcode.vue:36 src/component/share/dialog.vue:160
+#: src/component/settings/passcode.vue:36 src/component/share/dialog.vue:163
 #: src/options/auth.js:121 src/page/auth/login.vue:101
 msgid "Password"
 msgstr "סיסמה"
 
-#: src/component/settings/password.vue:162 src/locales.js:445
+#: src/component/settings/password.vue:162 src/locales.js:446
 msgid "Password changed"
 msgstr "סיסמא שונתה"
 
@@ -3155,12 +3155,12 @@ msgstr "נדרש תשלום"
 msgid "People"
 msgstr "אנשים"
 
-#: src/component/share/dialog.vue:115
+#: src/component/share/dialog.vue:116
 msgid "People you share a link with will be able to view public contents."
 msgstr "אנשים שעימם אתה חולק קישור יוכלו להציג תכנים ציבוריים."
 
 #: src/component/photo/clipboard.vue:303 src/component/photo/toolbar.vue:522
-#: src/locales.js:471
+#: src/locales.js:472
 msgid "Permanently deleted"
 msgstr "נמחק לצמיתות"
 
@@ -3176,7 +3176,7 @@ msgstr "אָדָם"
 msgid "Person cover updated"
 msgstr "כיסוי אדם עודכן"
 
-#: src/locales.js:460
+#: src/locales.js:461
 msgid "Person deleted"
 msgstr "אדם נמחק"
 
@@ -3185,7 +3185,7 @@ msgstr "אדם נמחק"
 msgid "Person not found"
 msgstr "אדם לא נמצא"
 
-#: src/locales.js:459
+#: src/locales.js:460
 msgid "Person saved"
 msgstr "אדם נשמר"
 
@@ -3371,7 +3371,7 @@ msgstr "ראשי"
 msgid "Private"
 msgstr "פרטי"
 
-#: src/locales.js:463
+#: src/locales.js:464
 msgid "Processing upload..."
 msgstr "מעבד העלאה..."
 
@@ -3398,7 +3398,7 @@ msgstr "מסנן איכות"
 msgid "Quality Score"
 msgstr "ציון איכות"
 
-#: src/locales.js:425
+#: src/locales.js:426
 msgid "Quota exceeded"
 msgstr "חריגה מהמכסה"
 
@@ -3410,7 +3410,7 @@ msgstr "אקראי"
 msgid "Rating {0} of {1}"
 msgstr "דירוג {0} מתוך {1}"
 
-#: src/common/util.js:856 src/options/options.js:348
+#: src/common/util.js:897 src/options/options.js:348
 msgid "Raw"
 msgstr "גלמי"
 
@@ -3497,7 +3497,7 @@ msgstr "אזורים"
 msgid "Register"
 msgstr "הירשם"
 
-#: src/locales.js:426
+#: src/locales.js:427
 msgid "Registration disabled"
 msgstr "הרישום מושבת"
 
@@ -3557,7 +3557,7 @@ msgstr "הוסר"
 msgid "Removed %{name}"
 msgstr "%{name} הוסר"
 
-#: src/locales.js:452
+#: src/locales.js:453
 msgid "Removed %d files and %d photos"
 msgstr "הוסרו %d קבצים ו-%d תמונות"
 
@@ -3696,9 +3696,9 @@ msgstr "לוויין"
 #: src/component/service/edit.vue:94 src/component/settings/password.vue:31
 #: src/component/settings/password.vue:32
 #: src/component/settings/password.vue:41
-#: src/component/settings/password.vue:86 src/component/share/dialog.vue:104
+#: src/component/settings/password.vue:86 src/component/share/dialog.vue:105
 #: src/component/share/dialog.vue:58 src/component/share/dialog.vue:59
-#: src/component/share/dialog.vue:96
+#: src/component/share/dialog.vue:97
 msgid "Save"
 msgstr "שמירה"
 
@@ -3750,7 +3750,7 @@ msgstr "חיפוש"
 msgid "Season"
 msgstr "עונה"
 
-#: src/component/share/dialog.vue:74
+#: src/component/share/dialog.vue:75
 msgid "Secret"
 msgstr "קוד סודי"
 
@@ -3805,19 +3805,19 @@ msgstr "בחר זמן"
 msgid "Selection"
 msgstr "בחירה"
 
-#: src/locales.js:436
+#: src/locales.js:437
 msgid "Selection added to %s"
 msgstr "הבחירה נוספה ל-%s"
 
-#: src/component/photo/clipboard.vue:251 src/locales.js:465
+#: src/component/photo/clipboard.vue:251 src/locales.js:466
 msgid "Selection approved"
 msgstr "הבחירה אושרה"
 
-#: src/component/photo/clipboard.vue:282 src/locales.js:466
+#: src/component/photo/clipboard.vue:282 src/locales.js:467
 msgid "Selection archived"
 msgstr "הבחירה הועברה לארכיון"
 
-#: src/locales.js:468
+#: src/locales.js:469
 msgid "Selection marked as private"
 msgstr "הבחירה סומנה כפרטית"
 
@@ -3825,7 +3825,7 @@ msgstr "הבחירה סומנה כפרטית"
 msgid "Selection not found"
 msgstr "הבחירה לא נמצאה"
 
-#: src/component/photo/clipboard.vue:318 src/locales.js:467
+#: src/component/photo/clipboard.vue:318 src/locales.js:468
 msgid "Selection restored"
 msgstr "הבחירה שוחזרה"
 
@@ -3838,7 +3838,7 @@ msgid "Service"
 msgstr "שֵׁרוּת"
 
 #: src/component/service/add.vue:27 src/component/service/edit.vue:158
-#: src/component/share/dialog.vue:158
+#: src/component/share/dialog.vue:161
 msgid "Service URL"
 msgstr "נתיב השרות"
 
@@ -3884,7 +3884,7 @@ msgid "Settings"
 msgstr "הגדרות"
 
 #: src/page/settings/account.vue:533 src/page/settings/account.vue:562
-#: src/component/settings/passcode.vue:366 src/locales.js:444
+#: src/component/settings/passcode.vue:366 src/locales.js:445
 #: src/page/settings/account.vue:441 src/page/settings/account.vue:470
 msgid "Settings saved"
 msgstr "ההגדרות נשמרו"
@@ -3995,7 +3995,7 @@ msgstr "הצג את תצוגת המקומות עם מפות אינטראקטיב
 msgid "Show Titles"
 msgstr "הצג כותרות"
 
-#: src/common/util.js:870 src/model/file.js:195
+#: src/common/util.js:911 src/model/file.js:195
 #: src/page/settings/collections.vue:72 src/page/settings/content.vue:215
 msgid "Sidecar"
 msgstr "חזית רכב"
@@ -4159,7 +4159,7 @@ msgstr "אחסון"
 msgid "Streets"
 msgstr "רחובות"
 
-#: src/common/util.js:910 src/component/lightbox/sidebar.vue:820
+#: src/common/util.js:951 src/component/lightbox/sidebar.vue:820
 #: src/component/photo/batch-edit.vue:331
 #: src/component/photo/batch-edit.vue:334
 #: src/component/photo/edit/details.vue:291
@@ -4167,7 +4167,7 @@ msgstr "רחובות"
 msgid "Subject"
 msgstr "נושא"
 
-#: src/locales.js:458
+#: src/locales.js:459
 msgid "Subject deleted"
 msgstr "הנושא נמחק"
 
@@ -4175,11 +4175,11 @@ msgstr "הנושא נמחק"
 msgid "Subject not found"
 msgstr "הנושא לא נמצא"
 
-#: src/locales.js:457
+#: src/locales.js:458
 msgid "Subject saved"
 msgstr "הנושא נשמר"
 
-#: src/component/settings/passcode.vue:351 src/locales.js:474
+#: src/component/settings/passcode.vue:351 src/locales.js:475
 msgid "Successfully activated"
 msgstr "הופעל בהצלחה"
 
@@ -4192,7 +4192,7 @@ msgstr "מחובר בהצלחה"
 msgid "Successfully deleted"
 msgstr "נמחק בהצלחה"
 
-#: src/component/settings/passcode.vue:323 src/locales.js:473
+#: src/component/settings/passcode.vue:323 src/locales.js:474
 msgid "Successfully verified"
 msgstr "אומת בהצלחה"
 
@@ -4257,7 +4257,7 @@ msgstr "המערכת דחתה את פרטי ההזדהות של האשכול."
 msgid "The instance returned an unexpected redirect."
 msgstr "האינסטנס החזיר הפניה בלתי צפויה."
 
-#: src/locales.js:421
+#: src/locales.js:422
 msgid "The wakeup interval is %s, but must be 1h or less"
 msgstr "מרווח ההשכמה הוא %s, אך חייב להיות שעה אחת או פחות"
 
@@ -4309,7 +4309,7 @@ msgstr "אזור זמן"
 msgid "Timeout"
 msgstr "פסק זמן"
 
-#: src/common/util.js:912 src/component/photo/view/list.vue:34
+#: src/common/util.js:953 src/component/photo/view/list.vue:34
 msgid "Title"
 msgstr "כותרת"
 
@@ -4349,7 +4349,7 @@ msgstr "הצג/הסתר תמונות ממוזערות"
 msgid "Toggle View"
 msgstr "החלף תצוגה"
 
-#: src/component/share/dialog.vue:75
+#: src/component/share/dialog.vue:76
 msgid "Token"
 msgstr "טוקן"
 
@@ -4357,7 +4357,7 @@ msgstr "טוקן"
 msgid "Too many files selected"
 msgstr "נבחרו יותר מדי קבצים"
 
-#: src/common/api.js:128 src/locales.js:423
+#: src/common/api.js:128 src/locales.js:424
 msgid "Too many requests"
 msgstr "יותר מדי בקשות"
 
@@ -4415,7 +4415,7 @@ msgstr "מזהה ייחודי"
 
 #: src/model/cluster-node.js:47 src/page/settings/account.vue:221
 #: src/page/settings/account.vue:241 src/page/settings/account.vue:261
-#: src/common/util.js:627 src/component/lightbox/sidebar.vue:120
+#: src/common/util.js:668 src/component/lightbox/sidebar.vue:120
 #: src/component/lightbox/sidebar.vue:1742
 #: src/component/lightbox/sidebar.vue:279
 #: src/component/lightbox/sidebar.vue:701
@@ -4544,11 +4544,11 @@ msgid "Upload complete. Indexing…"
 msgstr "העלאה הושלמה, מאנדקס…"
 
 #: src/component/upload/dialog.vue:27 src/component/upload/dialog.vue:465
-#: src/component/upload/dialog.vue:484 src/locales.js:403
+#: src/component/upload/dialog.vue:484 src/locales.js:404
 msgid "Upload failed"
 msgstr "העלאה כשלה"
 
-#: src/locales.js:464
+#: src/locales.js:465
 msgid "Upload has been processed"
 msgstr "ההעלאה עובדה"
 
@@ -4575,7 +4575,7 @@ msgstr "נתיב העלאה"
 msgid "Upload started"
 msgstr "ההעלאה החלה"
 
-#: src/locales.js:404
+#: src/locales.js:405
 msgid "Upload to %s failed"
 msgstr "העלאה ל-%s נכשלה"
 
@@ -4640,7 +4640,7 @@ msgstr "המשתמש לא נמצא"
 #: src/component/user/add/dialog.vue:38 src/component/user/add/dialog.vue:39
 #: src/page/admin/sessions.vue:131 src/page/admin/users.vue:282
 #: src/page/admin/users.vue:269 src/component/service/add.vue:38
-#: src/component/service/edit.vue:161 src/component/share/dialog.vue:159
+#: src/component/service/edit.vue:161 src/component/share/dialog.vue:162
 #: src/locales.js:324
 msgid "Username"
 msgstr "שם משתמש"
@@ -4656,7 +4656,7 @@ msgstr "משתמשים"
 msgid "UUID"
 msgstr "UUID"
 
-#: src/common/util.js:866 src/component/photo/view/cards.vue:114
+#: src/common/util.js:907 src/component/photo/view/cards.vue:114
 #: src/component/photo/view/cards.vue:239
 #: src/component/photo/view/mosaic.vue:69 src/options/options.js:368
 msgid "Vector"
@@ -4677,7 +4677,7 @@ msgstr "קוד אימות"
 msgid "Verified"
 msgstr "מאומת"
 
-#: src/locales.js:427
+#: src/locales.js:428
 msgid "Verified email required"
 msgstr "נדרשת כתובת דוא\"ל מאומתת"
 
@@ -4685,7 +4685,7 @@ msgstr "נדרשת כתובת דוא\"ל מאומתת"
 msgid "Version"
 msgstr "גִרְסָה"
 
-#: src/common/util.js:860 src/component/photo/batch-edit.vue:128
+#: src/common/util.js:901 src/component/photo/batch-edit.vue:128
 #: src/component/photo/batch-edit.vue:69 src/component/photo/view/cards.vue:122
 #: src/component/photo/view/cards.vue:220 src/component/photo/view/list.vue:83
 #: src/component/photo/view/mosaic.vue:77 src/model/file.js:202
@@ -4717,7 +4717,7 @@ msgstr "הצג את תוצאות החיפוש כרשימה."
 msgid "Viewer"
 msgstr "צוֹפֶה"
 
-#: src/common/util.js:920
+#: src/common/util.js:961
 msgid "Vision"
 msgstr "חָזוֹן"
 
@@ -4759,7 +4759,7 @@ msgstr "שירותי WebDAV יכולים להתחבר ל-PhotoPrism באמצעו
 msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism."
 msgstr "שירותי WebDAV, כמו סייר וינדוס של מיקרוסופט או Finder של אפל, יכולים להתחבר ישירות ל־PhotoPrism."
 
-#: src/component/service/upload.vue:16 src/component/share/dialog.vue:123
+#: src/component/service/upload.vue:16 src/component/share/dialog.vue:124
 msgid "WebDAV Upload"
 msgstr "העלאת WebDAV"
 
@@ -4855,7 +4855,7 @@ msgstr "ניתן לבחור רק פריט אחד"
 msgid "You may rescan your library to find additional faces."
 msgstr "תוכל לסרוק מחדש את הספרייה שלך כדי למצוא פנים נוספות."
 
-#: src/locales.js:422
+#: src/locales.js:423
 msgid "Your account could not be connected"
 msgstr "לא ניתן היה לחבר את החשבון שלך"
 
@@ -4873,7 +4873,7 @@ msgstr "התמיכה המתמשכת שלך עוזרת לנו לספק עדכונ
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "הספרייה שלך מנותחת באופן רציף ליצירת אלבומים של רגעים מיוחדים, טיולים ומקומות באופן אוטומטי."
 
-#: src/locales.js:470
+#: src/locales.js:471
 msgid "Zip created in %d s"
 msgstr "קובץ Zip נוצר תוך %d שניות"
 

@@ -1,49 +1,78 @@
 Models:
 - Type: labels
   Default: true
-  Name: nasnet
-  Version: mobile
-  Resolution: 224
-  TensorFlow:
-    Tags:
-    - photoprism
-    Input:
-      Name: input_1
-      Intervals:
-      - Start: -1
-        End: 1
-      ResizeOperation: CenterCrop
-      ColorChannelOrder: RGB
-      Height: 224
-      Width: 224
-      Shape:
-      - Batch
-      - Height
-      - Width
-      - Color
-    Output:
-      Name: predictions/Softmax
-      Outputs: 1000
-- Type: nsfw
-  Default: true
-  Name: nsfw
+  Name: efficientformerv2_s2
   Version: latest
   Resolution: 224
-  TensorFlow:
-    Tags:
-    - serve
+  ONNX:
+    File: efficientformerv2_s2.onnx
+    Source: https://huggingface.co/timm/efficientformerv2_s2.snap_dist_in1k/resolve/1c56a76355000c79568559d34ba3fa24416b5107/model.safetensors
+    SHA256: 7d6288ad89473c2ba11974c9c24a96e07c4e3ee48c531081f108a6380dc8d0ab
+    License: Apache-2.0
+    Quantization: fp32
     Input:
-      Name: input_tensor
-      Height: 224
+      Name: input
       Width: 224
-      Shape:
-      - Batch
-      - Height
-      - Width
-      - Color
+      Height: 224
+      Layout: NCHW
+      ColorOrder: RGB
+      Normalization:
+        Mean:
+        - 123.675
+        - 116.28
+        - 103.53
+        StdDev:
+        - 58.395
+        - 57.12
+        - 57.375
+      Resize:
+        Mode: center-crop
+        ShortEdge: 236
+        CropRatio: 0.95
+        Interpolation: bicubic
     Output:
-      Name: nsfw_cls_model/final_prediction
-      Outputs: 5
+      Name: logits
+      Width: 1000
+      Count: 1
+      Logits: true
+  CanonicalOrder: true
+- Type: nsfw
+  Default: true
+  Name: yahoo_open_nsfw
+  Version: latest
+  Resolution: 224
+  ONNX:
+    File: yahoo_open_nsfw.onnx
+    Source: https://raw.githubusercontent.com/yahoo/open_nsfw/a4e13931465f4380742545932657eeea0a10aa48/nsfw_model/resnet_50_1by2_nsfw.caffemodel
+    SHA256: 743ddec0b8d6a6ee912f52b4737d81f4d1e51e5cad01f2384f67df0a4d384b97
+    License: BSD-2-Clause
+    Quantization: fp32
+    Input:
+      Width: 224
+      Height: 224
+      Layout: NCHW
+      ColorOrder: BGR
+      Normalization:
+        Mean:
+        - 104
+        - 117
+        - 123
+        StdDev:
+        - 1
+        - 1
+        - 1
+      Resize:
+        Mode: center-crop
+        ShortEdge: 256
+        Interpolation: linear
+    Output:
+      Name: prob
+      Width: 2
+      Count: 1
+      Logits: false
+  Reduction: softmax-unsafe
+  UnsafeClassIndex: 1
+  DefaultThreshold: 0.327
 - Type: face
   Default: true
   Name: facenet
@@ -78,4 +107,4 @@ Models:
     ResponseFormat: ollama
 Thresholds:
   Confidence: 10
-  NSFW: 75
+  NSFW: -1

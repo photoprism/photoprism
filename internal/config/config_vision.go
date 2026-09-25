@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/photoprism/photoprism/internal/ai/classify"
+	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/ai/onnx"
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/event"
@@ -37,15 +39,271 @@ func (c *Config) LoadVisionConfig() {
 
 	visionYaml := c.VisionYaml()
 
-	if !fs.FileExistsNotEmpty(visionYaml) {
+	if fs.FileExistsNotEmpty(visionYaml) {
+		if err := vision.Config.Load(visionYaml); err != nil {
+			log.Warnf("vision: %s", clean.Error(err))
+		}
+
+		c.reportIgnoredFaceRun(visionYaml)
+	}
+
+	c.applyLabelModel()
+	c.applyNSFWModel()
+	c.reportUnscreenedUploads()
+}
+
+// NSFWModelSetting returns the configured NSFW model without resolving auto.
+func (c *Config) NSFWModelSetting() nsfw.ModelName {
+	if c == nil {
+		return nsfw.ModelNone
+	}
+
+	return nsfw.ParseModelName(c.options.NsfwModel)
+}
+
+// EffectiveNSFWModel returns the local detector selected for this instance.
+func (c *Config) EffectiveNSFWModel() nsfw.ModelName {
+	setting := c.NSFWModelSetting()
+	if vision.Config != nil {
+		if model := configuredVisionModel(vision.Config, vision.ModelTypeNsfw); model != nil && model.Disabled {
+			return nsfw.ModelNone
+		}
+	}
+
+	if setting != nsfw.ModelAuto {
+		return setting
+	}
+
+	if vision.Config != nil {
+		if model := configuredVisionModel(vision.Config, vision.ModelTypeNsfw); model != nil {
+			if !model.Default {
+				return nsfw.NormalizeModelName(nsfw.ModelName(model.Name))
+			}
+		}
+	}
+
+	return c.installedNSFWModel()
+}
+
+// installedNSFWModel returns the first installed detector in automatic preference order.
+func (c *Config) installedNSFWModel() nsfw.ModelName {
+	if c == nil {
+		return nsfw.ModelNone
+	}
+
+	modelsPath := c.ModelsPath()
+	for _, candidate := range nsfw.AutoModelPreference {
+		if nsfw.FindModel(candidate).Installed(modelsPath) {
+			return candidate
+		}
+	}
+
+	return nsfw.ModelNone
+}
+
+// applyNSFWModel applies NSFW_MODEL to the local detector entry in vision.Config.
+func (c *Config) applyNSFWModel() {
+	if c == nil || vision.Config == nil {
 		return
 	}
 
-	if err := vision.Config.Load(visionYaml); err != nil {
-		log.Warnf("vision: %s", clean.Error(err))
+	current := configuredVisionModel(vision.Config, vision.ModelTypeNsfw)
+	setting := c.NSFWModelSetting()
+	if setting == nsfw.ModelAuto && current != nil && !current.Default {
+		return
 	}
 
-	c.reportIgnoredFaceRun(visionYaml)
+	selected := setting
+	if setting == nsfw.ModelAuto {
+		selected = c.installedNSFWModel()
+	}
+
+	if selected == nsfw.ModelNone {
+		if setting == nsfw.ModelAuto {
+			if current == nil {
+				vision.Config.SetModel(vision.NewNsfwModel(nsfw.DefaultModelName()))
+			}
+
+			return
+		}
+
+		if current == nil {
+			current = vision.NewNsfwModel(nsfw.DefaultModelName())
+		} else {
+			current = current.Clone()
+		}
+		if current != nil {
+			current.Disabled = true
+			vision.Config.SetModel(current)
+		}
+		return
+	}
+
+	if registered := vision.NewNsfwModel(selected); registered != nil {
+		if description := nsfw.FindModel(selected); description != nil && !description.Installed(c.ModelsPath()) {
+			log.Warnf("config: nsfw model %s is not installed; run scripts/dist/download-models.sh %s", clean.Log(string(selected)), clean.Log(string(selected)))
+		}
+		if current != nil {
+			registered.Run = current.Run
+			if setting == nsfw.ModelAuto {
+				registered.Disabled = current.Disabled
+			}
+		}
+		vision.Config.SetModel(registered)
+		return
+	}
+
+	if current != nil && nsfw.NormalizeModelName(nsfw.ModelName(current.Name)) == selected {
+		return
+	}
+
+	vision.Config.SetModel(&vision.Model{Type: vision.ModelTypeNsfw, Name: string(selected), Path: string(selected)})
+}
+
+// reportUnscreenedUploads warns when upload screening has no configured detector.
+func (c *Config) reportUnscreenedUploads() {
+	if c.UploadNSFW() {
+		return
+	}
+
+	if c.NSFWModelSetting() == nsfw.ModelAuto && c.installedNSFWModel() == nsfw.ModelNone {
+		log.Warnf("config: uploads cannot be screened because no nsfw model is installed; run scripts/dist/download-models.sh %s and restart PhotoPrism", nsfw.DefaultModelName())
+		return
+	}
+
+	if vision.Config.Model(vision.ModelTypeNsfw) != nil {
+		return
+	}
+
+	log.Warnf("config: uploads are screened for offensive content, but no nsfw model is configured")
+}
+
+// LabelModelSetting returns the configured label model without resolving auto.
+func (c *Config) LabelModelSetting() classify.ModelName {
+	if c == nil {
+		return classify.ModelNone
+	}
+
+	return classify.ParseModelName(c.options.LabelModel)
+}
+
+// EffectiveLabelModel returns the local classifier selected for this instance.
+func (c *Config) EffectiveLabelModel() classify.ModelName {
+	setting := c.LabelModelSetting()
+	if vision.Config != nil {
+		if model := configuredVisionModel(vision.Config, vision.ModelTypeLabels); model != nil && model.Disabled {
+			return classify.ModelNone
+		}
+	}
+
+	if setting != classify.ModelAuto {
+		return setting
+	}
+
+	if vision.Config != nil {
+		if model := configuredVisionModel(vision.Config, vision.ModelTypeLabels); model != nil {
+			if !model.Default {
+				return classify.NormalizeModelName(classify.ModelName(model.Name))
+			}
+		}
+	}
+
+	return c.installedLabelModel()
+}
+
+// installedLabelModel returns the first installed classifier in automatic preference order.
+func (c *Config) installedLabelModel() classify.ModelName {
+	if c == nil {
+		return classify.ModelNone
+	}
+
+	modelsPath := c.ModelsPath()
+	for _, candidate := range classify.AutoModelPreference {
+		if classify.FindModel(candidate).Installed(modelsPath) {
+			return candidate
+		}
+	}
+
+	return classify.ModelNone
+}
+
+// applyLabelModel applies LABEL_MODEL to the local labels entry in vision.Config.
+func (c *Config) applyLabelModel() {
+	if c == nil || vision.Config == nil {
+		return
+	}
+
+	current := configuredVisionModel(vision.Config, vision.ModelTypeLabels)
+	setting := c.LabelModelSetting()
+	if setting == classify.ModelAuto && current != nil && !current.Default {
+		return
+	}
+
+	selected := setting
+	if setting == classify.ModelAuto {
+		selected = c.installedLabelModel()
+	}
+
+	if selected == classify.ModelNone {
+		if setting == classify.ModelAuto {
+			if current == nil {
+				vision.Config.SetModel(vision.NewLabelModel(classify.DefaultModelName()))
+			}
+
+			return
+		}
+
+		if current == nil {
+			current = vision.NewLabelModel(classify.DefaultModelName())
+		} else {
+			current = current.Clone()
+		}
+		if current != nil {
+			current.Disabled = true
+			vision.Config.SetModel(current)
+		}
+		return
+	}
+
+	if registered := vision.NewLabelModel(selected); registered != nil {
+		if description := classify.FindModel(selected); description != nil && !description.Installed(c.ModelsPath()) {
+			log.Warnf("config: label model %s is not installed; run scripts/dist/download-models.sh %s", clean.Log(string(selected)), clean.Log(string(selected)))
+		}
+		if current != nil {
+			registered.Run = current.Run
+			if setting == classify.ModelAuto {
+				registered.Disabled = current.Disabled
+			}
+		}
+		vision.Config.SetModel(registered)
+		return
+	}
+
+	if current != nil && classify.NormalizeModelName(classify.ModelName(current.Name)) == selected {
+		return
+	}
+
+	vision.Config.SetModel(&vision.Model{
+		Type: vision.ModelTypeLabels,
+		Name: string(selected),
+		Path: string(selected),
+	})
+}
+
+// configuredVisionModel returns the latest configured model of a type, including disabled models.
+func configuredVisionModel(config *vision.ConfigValues, modelType vision.ModelType) *vision.Model {
+	if config == nil {
+		return nil
+	}
+
+	for i := len(config.Models) - 1; i >= 0; i-- {
+		model := config.Models[i]
+		if model != nil && model.Type == modelType {
+			return model
+		}
+	}
+
+	return nil
 }
 
 // reportIgnoredFaceRun reports a face schedule left in "vision.yml", which no longer decides
@@ -176,13 +434,73 @@ func (c *Config) ModelsPath() string {
 	return c.options.ModelsPath
 }
 
-// NasnetModelPath returns the TensorFlow model path.
+// NasnetModelPath returns the legacy NASNet model path.
 func (c *Config) NasnetModelPath() string {
 	if c == nil {
 		return ""
 	}
 
 	return filepath.Join(c.ModelsPath(), "nasnet")
+}
+
+// LabelModelPath returns the selected ONNX classifier path.
+func (c *Config) LabelModelPath() string {
+	if c == nil {
+		return ""
+	}
+
+	name := c.EffectiveLabelModel()
+	if name == classify.ModelNone {
+		return ""
+	}
+
+	if model := classify.FindModel(name); model != nil {
+		return model.ONNX.FilePath(filepath.Join(c.ModelsPath(), string(model.Name)))
+	}
+
+	if vision.Config == nil {
+		return ""
+	}
+
+	model := vision.Config.Model(vision.ModelTypeLabels)
+	if model == nil {
+		return ""
+	}
+
+	path := model.Path
+	if path == "" {
+		path = clean.TypeLowerUnderscore(model.Name)
+	}
+	path = filepath.Join(c.ModelsPath(), clean.Path(path))
+	if strings.EqualFold(filepath.Ext(path), ".onnx") {
+		return path
+	}
+
+	fileName := filepath.Base(path) + ".onnx"
+	if model.ONNX != nil && model.ONNX.File != "" {
+		fileName = model.ONNX.File
+	}
+
+	return filepath.Join(path, fileName)
+}
+
+// LabelModelRuntime returns the engine used by the configured labels model.
+func (c *Config) LabelModelRuntime() string {
+	if c == nil || c.EffectiveLabelModel() == classify.ModelNone {
+		return "none"
+	}
+
+	if vision.Config != nil {
+		if model := vision.Config.Model(vision.ModelTypeLabels); model != nil {
+			if runtime := model.EngineName(); runtime != vision.EngineLocal {
+				return runtime
+			}
+
+			return vision.EngineONNX
+		}
+	}
+
+	return vision.EngineONNX
 }
 
 // FacenetModelPath returns the FaceNet model path.
@@ -194,13 +512,55 @@ func (c *Config) FacenetModelPath() string {
 	return filepath.Join(c.ModelsPath(), "facenet")
 }
 
-// NsfwModelPath returns the "not safe for work" TensorFlow model path.
+// NsfwModelPath returns the selected ONNX detector path.
 func (c *Config) NsfwModelPath() string {
 	if c == nil {
 		return ""
 	}
 
-	return filepath.Join(c.ModelsPath(), "nsfw")
+	name := c.EffectiveNSFWModel()
+	if name == nsfw.ModelNone {
+		return ""
+	}
+	if model := nsfw.FindModel(name); model != nil {
+		return model.ONNX.FilePath(filepath.Join(c.ModelsPath(), string(model.Name)))
+	}
+	if vision.Config == nil {
+		return ""
+	}
+	model := vision.Config.Model(vision.ModelTypeNsfw)
+	if model == nil {
+		return ""
+	}
+	path := model.Path
+	if path == "" {
+		path = clean.TypeLowerUnderscore(model.Name)
+	}
+	path = filepath.Join(c.ModelsPath(), clean.Path(path))
+	if strings.EqualFold(filepath.Ext(path), ".onnx") {
+		return path
+	}
+	fileName := filepath.Base(path) + ".onnx"
+	if model.ONNX != nil && model.ONNX.File != "" {
+		fileName = model.ONNX.File
+	}
+	return filepath.Join(path, fileName)
+}
+
+// NsfwModelRuntime returns the engine used by the configured NSFW model.
+func (c *Config) NsfwModelRuntime() string {
+	if c == nil || c.EffectiveNSFWModel() == nsfw.ModelNone {
+		return "none"
+	}
+	if vision.Config != nil {
+		if model := vision.Config.Model(vision.ModelTypeNsfw); model != nil {
+			if runtime := model.EngineName(); runtime != vision.EngineLocal {
+				return runtime
+			}
+			return vision.EngineONNX
+		}
+	}
+	return vision.EngineONNX
 }
 
 // OnnxProvider returns the execution provider that ONNX inference sessions should use.

@@ -79,15 +79,15 @@ msgstr "%{s} er for lang"
 msgid "%{s} is too short"
 msgstr "%{s} er for kort"
 
-#: src/locales.js:438
+#: src/locales.js:439
 msgid "%d entries added to %s"
 msgstr "%d oppføringer lagt til %s"
 
-#: src/locales.js:440
+#: src/locales.js:441
 msgid "%d entries removed from %s"
 msgstr "%d oppføringer fjernet fra %s"
 
-#: src/locales.js:462
+#: src/locales.js:463
 msgid "%d files uploaded in %d s"
 msgstr "%d filer lastet opp på %d s"
 
@@ -95,7 +95,7 @@ msgstr "%d filer lastet opp på %d s"
 msgid "%s already exists"
 msgstr "%s eksisterer allerede"
 
-#: src/locales.js:472
+#: src/locales.js:473
 msgid "%s has been restored"
 msgstr "%s har blitt gjenopprettet"
 
@@ -126,11 +126,11 @@ msgstr "2FA"
 msgid "4 hours"
 msgstr "4 timer"
 
-#: src/component/share/dialog.vue:116
+#: src/component/share/dialog.vue:117
 msgid "A click will copy it to your clipboard."
 msgstr "Et klikk vil kopiere det til utklippstavlen."
 
-#: src/locales.js:428
+#: src/locales.js:429
 msgid "A migration is in progress"
 msgstr "En migrering pågår"
 
@@ -180,12 +180,12 @@ msgid "Account"
 msgstr "Konto"
 
 #: src/component/user/add/dialog.vue:261 src/component/user/add/dialog.vue:277
-#: src/component/service/add.vue:131 src/locales.js:441
+#: src/component/service/add.vue:131 src/locales.js:442
 msgid "Account created"
 msgstr "Konto opprettet"
 
 #: src/component/user/remove/dialog.vue:63 src/component/service/remove.vue:74
-#: src/locales.js:443
+#: src/locales.js:444
 msgid "Account deleted"
 msgstr "Konto slettet"
 
@@ -201,7 +201,7 @@ msgstr "Konto ikke funnet"
 msgid "Account restored"
 msgstr "Konto gjenopprettet"
 
-#: src/locales.js:442
+#: src/locales.js:443
 msgid "Account saved"
 msgstr "Konto lagret"
 
@@ -346,7 +346,7 @@ msgid "Adjust Location"
 msgstr "Juster plassering"
 
 #: src/model/cluster-instance.js:28 src/options/admin.js:35
-#: src/common/util.js:922 src/options/auth.js:6
+#: src/common/util.js:963 src/options/auth.js:6
 msgid "Admin"
 msgstr "Administrasjon"
 
@@ -398,7 +398,7 @@ msgstr "Etter to uker"
 msgid "Album"
 msgstr "Album"
 
-#: src/locales.js:432
+#: src/locales.js:433
 msgid "Album %s deleted"
 msgstr "Album %s slettet"
 
@@ -406,11 +406,11 @@ msgstr "Album %s slettet"
 msgid "Album Backups"
 msgstr "Sikkerhetskopiering av album"
 
-#: src/locales.js:433
+#: src/locales.js:434
 msgid "Album contents cloned"
 msgstr "Albuminnhold duplisert"
 
-#: src/locales.js:430 src/page/albums.vue:1194
+#: src/locales.js:431 src/page/albums.vue:1194
 msgid "Album created"
 msgstr "Album opprettet"
 
@@ -422,7 +422,7 @@ msgstr "Album slettet"
 msgid "Album not found"
 msgstr "Album ikke funnet"
 
-#: src/locales.js:431
+#: src/locales.js:432
 msgid "Album saved"
 msgstr "Album lagret"
 
@@ -435,7 +435,7 @@ msgstr "Album lagret"
 msgid "Albums"
 msgstr "Album"
 
-#: src/component/album/clipboard.vue:194 src/locales.js:469
+#: src/component/album/clipboard.vue:194 src/locales.js:470
 msgid "Albums deleted"
 msgstr "Album slettet"
 
@@ -532,7 +532,7 @@ msgstr "Tillat brukere å laste opp nye bilder og videoer via nettgrensesnittet.
 msgid "Allow zooming with pinch gestures on mobile devices."
 msgstr "Tillat zooming ved hjelp av knipebevegelser på mobile enheter."
 
-#: src/component/share/dialog.vue:118
+#: src/component/share/dialog.vue:119
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
 msgstr "Alternativt kan du laste opp filene direkte til WebDAV-servere som Nextcloud."
 
@@ -549,7 +549,7 @@ msgstr "Høyde (m)"
 msgid "AM"
 msgstr "AM"
 
-#: src/app/routes.js:423 src/common/util.js:864
+#: src/app/routes.js:423 src/common/util.js:905
 #: src/component/photo/batch-edit.vue:127 src/component/photo/batch-edit.vue:68
 #: src/component/photo/edit/files.vue:132
 #: src/component/photo/edit/files.vue:133
@@ -571,7 +571,7 @@ msgstr "Animasjon"
 msgid "Animations"
 msgstr "Animasjoner"
 
-#: src/component/share/dialog.vue:117
+#: src/component/share/dialog.vue:118
 msgid "Any private photos and videos remain private and won't be shared."
 msgstr "Eventuelle private bilder og videoer forblir private og vil ikke bli delt."
 
@@ -661,14 +661,14 @@ msgstr "Sideforhold"
 msgid "Attributes"
 msgstr "Egenskaper"
 
-#: src/app/routes.js:416 src/common/util.js:862
+#: src/app/routes.js:416 src/common/util.js:903
 #: src/component/navigation.vue:204 src/component/navigation.vue:205
 #: src/component/navigation.vue:217 src/component/navigation.vue:226
 #: src/component/navigation.vue:254 src/options/options.js:360
 msgid "Audio"
 msgstr "Lyd"
 
-#: src/model/logs.js:184
+#: src/model/logs.js:137
 msgid "Audit Log"
 msgstr "Lyd"
 
@@ -683,7 +683,7 @@ msgstr "Lyd"
 msgid "Authentication"
 msgstr "Autentisering"
 
-#: src/common/util.js:884
+#: src/common/util.js:925
 msgid "Auto"
 msgstr "Auto"
 
@@ -713,7 +713,7 @@ msgstr "Merke"
 msgid "Base Path"
 msgstr "Basebane"
 
-#: src/common/util.js:916
+#: src/common/util.js:957
 msgid "Batch"
 msgstr "Batch"
 
@@ -775,7 +775,7 @@ msgstr "Bla gjennom bilder"
 msgid "Bug Report"
 msgstr "Feilmelding"
 
-#: src/locales.js:420
+#: src/locales.js:421
 msgid "Busy, please try again later"
 msgstr "Opptatt. Prøv igjen senere"
 
@@ -853,17 +853,17 @@ msgstr "Kan ikke velge flere elementer"
 #: src/component/service/upload.vue:57 src/component/settings/apps.vue:151
 #: src/component/settings/passcode.vue:101
 #: src/component/settings/passcode.vue:142
-#: src/component/settings/password.vue:83 src/component/share/dialog.vue:161
+#: src/component/settings/password.vue:83 src/component/share/dialog.vue:164
 #: src/locales.js:214 src/page/auth/login.vue:120 src/page/connect.vue:36
 #: src/page/library/import.vue:61 src/page/library/index.vue:61
 msgid "Cancel"
 msgstr "Avbryt"
 
-#: src/common/util.js:1100 src/common/util.js:1107
+#: src/common/util.js:1141 src/common/util.js:1148
 msgid "Cannot copy to clipboard"
 msgstr "Kan ikke kopiere til utklippstavlen"
 
-#: src/common/util.js:904 src/component/lightbox/sidebar.vue:807
+#: src/common/util.js:945 src/component/lightbox/sidebar.vue:807
 #: src/component/photo/batch-edit.vue:173
 #: src/component/photo/batch-edit.vue:176
 #: src/component/photo/edit/details.vue:28
@@ -936,8 +936,8 @@ msgstr "Kan ikke lagre endringer"
 #: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3219
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
-#: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
-#: src/locales.js:429 src/page/albums.vue:1197 src/page/people/new.vue:814
+#: src/component/share/dialog.vue:235 src/component/share/dialog.vue:254
+#: src/locales.js:430 src/page/albums.vue:1197 src/page/people/new.vue:814
 #: src/page/people/recognized.vue:320 src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
 #: src/page/settings/general.vue:646
@@ -1014,7 +1014,7 @@ msgstr "Kunde"
 #: src/component/settings/passcode.vue:192
 #: src/component/settings/passcode.vue:207
 #: src/component/settings/passcode.vue:61 src/component/settings/webdav.vue:74
-#: src/component/share/dialog.vue:126 src/component/share/dialog.vue:70
+#: src/component/share/dialog.vue:127 src/component/share/dialog.vue:70
 #: src/component/share/dialog.vue:71 src/component/share/dialog.vue:80
 #: src/component/update.vue:25 src/component/upload/dialog.vue:119
 #: src/component/upload/dialog.vue:20 src/locales.js:210
@@ -1155,7 +1155,7 @@ msgstr "Bidragsyter"
 msgid "Converting"
 msgstr "Konverterer"
 
-#: src/common/util.js:1093
+#: src/common/util.js:1134
 msgid "Copied to clipboard"
 msgstr "Kopiert til utklippstavlen"
 
@@ -1169,7 +1169,7 @@ msgstr "Kopiert til utklippstavlen"
 msgid "Copy"
 msgstr "Kopiere"
 
-#: src/locales.js:454
+#: src/locales.js:455
 msgid "Copying files from %s"
 msgstr "Kopierer filer fra %s"
 
@@ -1185,7 +1185,7 @@ msgstr "Opphavsrett"
 msgid "Could not be deleted"
 msgstr "Kan ikke slettes"
 
-#: src/locales.js:408
+#: src/locales.js:409
 msgid "Could not connect, please try again"
 msgstr "Kunne ikke koble til, vennligst prøv igjen"
 
@@ -1286,7 +1286,7 @@ msgstr "Feilsøkingslogger"
 #: src/page/admin/sessions.vue:256 src/page/admin/users.vue:233
 #: src/page/admin/groups.vue:35 src/page/admin/sessions.vue:371
 #: src/page/admin/users.vue:430 src/page/admin/sessions.vue:369
-#: src/page/admin/users.vue:374 src/common/util.js:886 src/model/session.js:42
+#: src/page/admin/users.vue:374 src/common/util.js:927 src/model/session.js:42
 #: src/model/user.js:343 src/options/auth.js:40 src/options/auth.js:41
 #: src/options/auth.js:69 src/options/auth.js:70 src/options/options.js:252
 #: src/options/options.js:255 src/options/options.js:295
@@ -1306,7 +1306,7 @@ msgstr "Standardmappe"
 #: src/component/label/delete/dialog.vue:22
 #: src/component/photo/clipboard.vue:132 src/component/photo/edit/files.vue:63
 #: src/component/photo/edit/files.vue:71 src/component/photo/edit/files.vue:95
-#: src/component/service/remove.vue:22 src/component/share/dialog.vue:98
+#: src/component/service/remove.vue:22 src/component/share/dialog.vue:99
 #: src/locales.js:321 src/page/settings/general.vue:335
 msgid "Delete"
 msgstr "Slett"
@@ -1475,7 +1475,7 @@ msgstr "Vis bildetekster i søkeresultatene."
 msgid "Display picture titles in search results."
 msgstr "Vis bildetitler i søkeresultatene."
 
-#: src/common/util.js:868 src/component/photo/view/cards.vue:115
+#: src/common/util.js:909 src/component/photo/view/cards.vue:115
 #: src/component/photo/view/cards.vue:239
 #: src/component/photo/view/mosaic.vue:70 src/model/thumb.js:247
 #: src/options/options.js:372
@@ -1504,7 +1504,7 @@ msgstr "Ikke bruk RawTherapee til å konvertere RAW-bilder."
 #: src/component/lightbox/sidebar.vue:195 src/component/settings/apps.vue:51
 #: src/component/settings/apps.vue:52 src/component/settings/apps.vue:61
 #: src/component/settings/apps.vue:77 src/component/settings/apps.vue:88
-#: src/component/share/dialog.vue:162
+#: src/component/share/dialog.vue:165
 msgid "Done"
 msgstr "Ferdig"
 
@@ -1657,7 +1657,7 @@ msgstr "Skriv inn varenavnet..."
 msgid "Enter the code generated by your authenticator app:"
 msgstr "Skriv inn koden som genereres av autentiseringsappen din:"
 
-#: src/common/api.js:126 src/locales.js:409
+#: src/common/api.js:126 src/locales.js:410
 msgid "Enter verification code"
 msgstr "Angi verifikasjonskode"
 
@@ -1680,7 +1680,7 @@ msgstr "Feil"
 msgid "Errors"
 msgstr "Feil"
 
-#: src/common/util.js:888
+#: src/common/util.js:929
 msgid "Estimate"
 msgstr "Anslå"
 
@@ -1712,7 +1712,7 @@ msgstr "Eksperimentelle Funksjoner"
 #: src/page/admin/sessions.vue:203 src/page/admin/sessions.vue:299
 #: src/page/admin/sessions.vue:297 src/component/service/edit.vue:69
 #: src/component/settings/apps.vue:138 src/component/settings/apps.vue:295
-#: src/component/share/dialog.vue:195
+#: src/component/share/dialog.vue:198
 msgid "Expires"
 msgstr "Utgår"
 
@@ -1744,15 +1744,15 @@ msgstr "Ansikt ikke funnet"
 msgid "Faces"
 msgstr "Ansikter"
 
-#: src/locales.js:406
+#: src/locales.js:407
 msgid "Failed creating file, please check permissions"
 msgstr "Kunne ikke opprette fil, vennligst sjekk tillatelser"
 
-#: src/locales.js:407
+#: src/locales.js:408
 msgid "Failed creating folder, please check permissions"
 msgstr "Kunne ikke opprette mappe, vennligst sjekk tillatelser"
 
-#: src/component/share/dialog.vue:235
+#: src/component/share/dialog.vue:245
 msgid "Failed removing link"
 msgstr "Fikk ikke til å fjerne lenke"
 
@@ -1760,7 +1760,7 @@ msgstr "Fikk ikke til å fjerne lenke"
 msgid "Failed to connect account."
 msgstr "Kunne ikke koble til konto."
 
-#: src/locales.js:416
+#: src/locales.js:417
 msgid "Failed to create zip file"
 msgstr "Kunne ikke opprette zip-arkiv"
 
@@ -1804,7 +1804,7 @@ msgstr "Mislyktes med å redde ansiktsmarkør"
 msgid "Failed to save name"
 msgstr "Kunne ikke lagre navn"
 
-#: src/component/share/dialog.vue:216
+#: src/component/share/dialog.vue:219
 msgid "Failed updating link"
 msgstr "Fikk ikke til å oppdatere lenke"
 
@@ -1835,7 +1835,7 @@ msgstr "Favoritt"
 msgid "Favorites"
 msgstr "Favoritter"
 
-#: src/locales.js:412
+#: src/locales.js:413
 msgid "Feature disabled"
 msgstr "Tjeneste deaktivert"
 
@@ -1851,7 +1851,7 @@ msgstr "Funksjoner"
 msgid "Female"
 msgstr "Hunn"
 
-#: src/common/util.js:890 src/component/lightbox/sidebar.vue:1101
+#: src/common/util.js:931 src/component/lightbox/sidebar.vue:1101
 #: src/component/photo/edit/info.vue:94 src/model/file.js:271
 msgid "File"
 msgstr "Fil"
@@ -1864,7 +1864,7 @@ msgstr "Filutforsker"
 msgid "File Conversion"
 msgstr "Filkonvertering"
 
-#: src/locales.js:435
+#: src/locales.js:436
 msgid "File deleted"
 msgstr "Fil slettet"
 
@@ -1878,7 +1878,7 @@ msgstr "Filnavn"
 msgid "File not found"
 msgstr "Fil ikke funnet"
 
-#: src/locales.js:434
+#: src/locales.js:435
 msgid "File removed from stack"
 msgstr "Fil fjernet fra samling"
 
@@ -1890,7 +1890,7 @@ msgstr "Filstørrelse"
 msgid "File too large"
 msgstr "Filen er for stor"
 
-#: src/locales.js:461
+#: src/locales.js:462
 msgid "File uploaded"
 msgstr "Fil lastet opp"
 
@@ -2111,7 +2111,7 @@ msgstr "Hybrid"
 msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
 msgstr "Hvis du mister tilgangen til autentiseringsappen eller enheten din, kan du bruke gjenopprettingskoden for å få tilbake tilgang til kontoen din."
 
-#: src/common/util.js:854 src/common/util.js:894
+#: src/common/util.js:895 src/common/util.js:935
 #: src/component/photo/view/cards.vue:246 src/model/file.js:199
 #: src/options/options.js:344
 msgid "Image"
@@ -2127,11 +2127,11 @@ msgstr "Bildekvalitet"
 msgid "Import"
 msgstr "Importér"
 
-#: src/locales.js:447
+#: src/locales.js:448
 msgid "Import canceled"
 msgstr "Import avbrutt"
 
-#: src/locales.js:446
+#: src/locales.js:447
 msgid "Import completed in %d s"
 msgstr "Import fullført på %d s"
 
@@ -2193,11 +2193,11 @@ msgstr "Indeks"
 msgid "Indexing"
 msgstr "Indekserer"
 
-#: src/locales.js:451
+#: src/locales.js:452
 msgid "Indexing canceled"
 msgstr "Indeksering avbrutt"
 
-#: src/locales.js:448
+#: src/locales.js:449
 msgid "Indexing completed in %d s"
 msgstr "Indeksering fullført på %d s"
 
@@ -2205,7 +2205,7 @@ msgstr "Indeksering fullført på %d s"
 msgid "Indexing failed"
 msgstr "Indeksering feilet"
 
-#: src/locales.js:450
+#: src/locales.js:451
 msgid "Indexing files in %s"
 msgstr "Indekserer filer i %s"
 
@@ -2213,7 +2213,7 @@ msgstr "Indekserer filer i %s"
 msgid "Indexing media and sidecar files…"
 msgstr "Indekserer media- og sidevognfiler…"
 
-#: src/locales.js:449
+#: src/locales.js:450
 msgid "Indexing originals..."
 msgstr "Indekserer originaler…"
 
@@ -2245,7 +2245,7 @@ msgstr "Tjenesten er utilgjengelig. Prøv igjen når den er tilbake på nettet."
 msgid "Instances"
 msgstr "Forekomster"
 
-#: src/locales.js:424
+#: src/locales.js:425
 msgid "Insufficient storage"
 msgstr "Utilstrekkelig lagringsplass"
 
@@ -2261,7 +2261,7 @@ msgstr "Intervall"
 #: src/common/form.js:245 src/common/form.js:319 src/common/form.js:322
 #: src/common/form.js:333 src/common/form.js:336 src/common/form.js:362
 #: src/common/form.js:364 src/common/form.js:371 src/common/form.js:373
-#: src/common/form.js:388 src/common/form.js:390
+#: src/common/form.js:388 src/common/form.js:390 src/model/link.js:41
 msgid "Invalid"
 msgstr "Ugyldig"
 
@@ -2273,7 +2273,7 @@ msgstr "Ugyldig adresse"
 msgid "Invalid country"
 msgstr "Ugyldig land"
 
-#: src/locales.js:417
+#: src/locales.js:418
 msgid "Invalid credentials"
 msgstr "Ugyldige innloggingsdetaljer"
 
@@ -2281,11 +2281,11 @@ msgstr "Ugyldige innloggingsdetaljer"
 msgid "Invalid date"
 msgstr "Ugyldig dato"
 
-#: src/locales.js:418
+#: src/component/share/dialog.vue:226 src/locales.js:419
 msgid "Invalid link"
 msgstr "Ugyldig lenke"
 
-#: src/locales.js:419
+#: src/locales.js:420
 msgid "Invalid name"
 msgstr "Ugyldig navn"
 
@@ -2294,7 +2294,7 @@ msgstr "Ugyldig navn"
 msgid "Invalid parameters"
 msgstr "Ugyldige verdier"
 
-#: src/locales.js:411
+#: src/locales.js:412
 msgid "Invalid password, please try again"
 msgstr "Ugyldig passord, vennligst prøv igjen"
 
@@ -2310,7 +2310,7 @@ msgstr "Ugyldig klokkeslett"
 msgid "Invalid URL"
 msgstr "Ugyldig URL"
 
-#: src/locales.js:410
+#: src/locales.js:411
 msgid "Invalid verification code, please try again"
 msgstr "Ugyldig bekreftelseskode. Prøv igjen"
 
@@ -2344,7 +2344,7 @@ msgstr "JPEG størrelsesgrense: %{n}px"
 msgid "JPEGs and thumbnails are automatically rendered as needed."
 msgstr "JPEGer og miniatyrbilder er automatisk generert ved behov."
 
-#: src/common/util.js:906
+#: src/common/util.js:947
 msgid "Keyword"
 msgstr "Nøkkelord"
 
@@ -2363,7 +2363,7 @@ msgstr "Merkelapp"
 msgid "Label not found"
 msgstr "Merkelapp ikke funnet"
 
-#: src/locales.js:456
+#: src/locales.js:457
 msgid "Label saved"
 msgstr "Merkelapper lagret"
 
@@ -2379,7 +2379,7 @@ msgstr "Merkelapper lagret"
 msgid "Labels"
 msgstr "Merkelapper"
 
-#: src/component/label/clipboard.vue:131 src/locales.js:455
+#: src/component/label/clipboard.vue:131 src/locales.js:456
 msgid "Labels deleted"
 msgstr "Merkelapper slettet"
 
@@ -2474,7 +2474,7 @@ msgstr "Lime"
 msgid "Limit reached, showing first %{n} files"
 msgstr "Grensen nådd, viser de første %{n} filene"
 
-#: src/model/link.js:93 src/options/auth.js:50 src/options/auth.js:51
+#: src/model/link.js:106 src/options/auth.js:50 src/options/auth.js:51
 msgid "Link"
 msgstr "Lenke"
 
@@ -2486,7 +2486,7 @@ msgstr "Liste"
 msgid "List View"
 msgstr "Listevisning"
 
-#: src/common/util.js:858 src/component/photo/batch-edit.vue:124
+#: src/common/util.js:899 src/component/photo/batch-edit.vue:124
 #: src/component/photo/batch-edit.vue:65 src/component/photo/view/cards.vue:112
 #: src/component/photo/view/cards.vue:224 src/component/photo/view/list.vue:81
 #: src/component/photo/view/mosaic.vue:67 src/options/options.js:352
@@ -2522,7 +2522,7 @@ msgid "Local Time"
 msgstr "Lokaltid"
 
 #: src/page/settings/account.vue:359 src/page/settings/account.vue:361
-#: src/common/util.js:896 src/component/album/edit/dialog.vue:38
+#: src/common/util.js:937 src/component/album/edit/dialog.vue:38
 #: src/component/lightbox/sidebar.vue:150
 #: src/component/photo/batch-edit.vue:263
 #: src/component/photo/batch-edit.vue:581
@@ -2587,7 +2587,7 @@ msgstr "Administrer konto"
 msgid "Manager"
 msgstr "Leder"
 
-#: src/common/util.js:918
+#: src/common/util.js:959
 msgid "Manual"
 msgstr "Manuell"
 
@@ -2603,7 +2603,7 @@ msgstr "Kart"
 msgid "Maps are unavailable. Try another browser or device."
 msgstr "Kartene er ikke tilgjengelige. Prøv en annen nettleser eller en annen enhet."
 
-#: src/common/util.js:898 src/model/marker.js:132
+#: src/common/util.js:939 src/model/marker.js:132
 msgid "Marker"
 msgstr "Markør"
 
@@ -2633,7 +2633,7 @@ msgstr "Vil du slå sammen %{a} med %{b}?"
 msgid "Message"
 msgstr "Melding"
 
-#: src/common/util.js:908
+#: src/common/util.js:949
 msgid "Metadata"
 msgstr "Metadata"
 
@@ -2695,7 +2695,7 @@ msgstr "Mest relevant"
 msgid "Move Files"
 msgstr "Flytt Filer"
 
-#: src/locales.js:453
+#: src/locales.js:454
 msgid "Moving files from %s"
 msgstr "Flytter filer fra %s"
 
@@ -2711,7 +2711,7 @@ msgstr "Mute"
 #: src/component/cluster/node/overview.vue:25
 #: src/component/cluster/node/overview.vue:4
 #: src/component/cluster/node/overview.vue:75 src/page/cluster/nodes.vue:155
-#: src/common/util.js:892 src/component/album/edit/dialog.vue:30
+#: src/common/util.js:933 src/component/album/edit/dialog.vue:30
 #: src/component/album/edit/dialog.vue:31
 #: src/component/input/chip-selector.vue:277
 #: src/component/label/edit/dialog.vue:30
@@ -2795,7 +2795,7 @@ msgstr "Ingen album tildelt"
 msgid "No albums found"
 msgstr "Ingen album funnet"
 
-#: src/locales.js:414
+#: src/locales.js:415
 msgid "No albums selected"
 msgstr "Ingen albumer valgt"
 
@@ -2803,11 +2803,11 @@ msgstr "Ingen albumer valgt"
 msgid "No data available"
 msgstr "Ingen data tilgjengelig"
 
-#: src/locales.js:415
+#: src/locales.js:416
 msgid "No files available for download"
 msgstr "Ingen filer tilgjengelig for nedlasting"
 
-#: src/locales.js:405
+#: src/locales.js:406
 msgid "No items selected"
 msgstr "Ingen elementer valgt"
 
@@ -2819,7 +2819,7 @@ msgstr "Ingen etiketter tildelt"
 msgid "No labels found"
 msgstr "Ingen merkelapper funnet"
 
-#: src/locales.js:413
+#: src/locales.js:414
 msgid "No labels selected"
 msgstr "Ingen merkelapper valgt"
 
@@ -2983,11 +2983,11 @@ msgstr "Én gang i uken"
 msgid "One album found"
 msgstr "Ett album funnet"
 
-#: src/locales.js:437
+#: src/locales.js:438
 msgid "One entry added to %s"
 msgstr "En oppføring lagt til %s"
 
-#: src/locales.js:439
+#: src/locales.js:440
 msgid "One entry removed from %s"
 msgstr "En oppføring fjernet fra %s"
 
@@ -3127,12 +3127,12 @@ msgstr "En del av noen utvalgte bilder"
 #: src/component/user/add/dialog.vue:57 src/component/user/add/dialog.vue:58
 #: src/component/service/add.vue:52 src/component/service/edit.vue:168
 #: src/component/settings/apps.vue:33 src/component/settings/passcode.vue:171
-#: src/component/settings/passcode.vue:36 src/component/share/dialog.vue:160
+#: src/component/settings/passcode.vue:36 src/component/share/dialog.vue:163
 #: src/options/auth.js:121 src/page/auth/login.vue:101
 msgid "Password"
 msgstr "Passord"
 
-#: src/component/settings/password.vue:162 src/locales.js:445
+#: src/component/settings/password.vue:162 src/locales.js:446
 msgid "Password changed"
 msgstr "Passord endret"
 
@@ -3155,12 +3155,12 @@ msgstr "Betaling kreves"
 msgid "People"
 msgstr "Personer"
 
-#: src/component/share/dialog.vue:115
+#: src/component/share/dialog.vue:116
 msgid "People you share a link with will be able to view public contents."
 msgstr "Personer du deler en lenke med vil kunne se offentlig innhold."
 
 #: src/component/photo/clipboard.vue:303 src/component/photo/toolbar.vue:522
-#: src/locales.js:471
+#: src/locales.js:472
 msgid "Permanently deleted"
 msgstr "Permanent slettet"
 
@@ -3176,7 +3176,7 @@ msgstr "Person"
 msgid "Person cover updated"
 msgstr "Persondekning oppdatert"
 
-#: src/locales.js:460
+#: src/locales.js:461
 msgid "Person deleted"
 msgstr "Person slettet"
 
@@ -3185,7 +3185,7 @@ msgstr "Person slettet"
 msgid "Person not found"
 msgstr "Person ikke funnet"
 
-#: src/locales.js:459
+#: src/locales.js:460
 msgid "Person saved"
 msgstr "Person reddet"
 
@@ -3371,7 +3371,7 @@ msgstr "Primær"
 msgid "Private"
 msgstr "Privat"
 
-#: src/locales.js:463
+#: src/locales.js:464
 msgid "Processing upload..."
 msgstr "Behandler opplasting..."
 
@@ -3398,7 +3398,7 @@ msgstr "Kvalitetsfilter"
 msgid "Quality Score"
 msgstr "Kvalitetspoeng"
 
-#: src/locales.js:425
+#: src/locales.js:426
 msgid "Quota exceeded"
 msgstr "Kvote overskredet"
 
@@ -3410,7 +3410,7 @@ msgstr "Tilfeldig"
 msgid "Rating {0} of {1}"
 msgstr "Vurdering {0} av {1}"
 
-#: src/common/util.js:856 src/options/options.js:348
+#: src/common/util.js:897 src/options/options.js:348
 msgid "Raw"
 msgstr "Raw"
 
@@ -3497,7 +3497,7 @@ msgstr "Regioner"
 msgid "Register"
 msgstr "Registrere"
 
-#: src/locales.js:426
+#: src/locales.js:427
 msgid "Registration disabled"
 msgstr "Registrering deaktivert"
 
@@ -3557,7 +3557,7 @@ msgstr "Fjernet"
 msgid "Removed %{name}"
 msgstr "%{name} er fjernet"
 
-#: src/locales.js:452
+#: src/locales.js:453
 msgid "Removed %d files and %d photos"
 msgstr "Fjernet %d filer og %d foto"
 
@@ -3696,9 +3696,9 @@ msgstr "Satellitt"
 #: src/component/service/edit.vue:94 src/component/settings/password.vue:31
 #: src/component/settings/password.vue:32
 #: src/component/settings/password.vue:41
-#: src/component/settings/password.vue:86 src/component/share/dialog.vue:104
+#: src/component/settings/password.vue:86 src/component/share/dialog.vue:105
 #: src/component/share/dialog.vue:58 src/component/share/dialog.vue:59
-#: src/component/share/dialog.vue:96
+#: src/component/share/dialog.vue:97
 msgid "Save"
 msgstr "Lagre"
 
@@ -3750,7 +3750,7 @@ msgstr "Søk"
 msgid "Season"
 msgstr "Sesong"
 
-#: src/component/share/dialog.vue:74
+#: src/component/share/dialog.vue:75
 msgid "Secret"
 msgstr "Hemmelig"
 
@@ -3805,19 +3805,19 @@ msgstr "Velg tid"
 msgid "Selection"
 msgstr "Utvalg"
 
-#: src/locales.js:436
+#: src/locales.js:437
 msgid "Selection added to %s"
 msgstr "Utvalg lagt til %s"
 
-#: src/component/photo/clipboard.vue:251 src/locales.js:465
+#: src/component/photo/clipboard.vue:251 src/locales.js:466
 msgid "Selection approved"
 msgstr "Utvalg godkjent"
 
-#: src/component/photo/clipboard.vue:282 src/locales.js:466
+#: src/component/photo/clipboard.vue:282 src/locales.js:467
 msgid "Selection archived"
 msgstr "Utvalg arkivert"
 
-#: src/locales.js:468
+#: src/locales.js:469
 msgid "Selection marked as private"
 msgstr "Utvalg markert som privat"
 
@@ -3825,7 +3825,7 @@ msgstr "Utvalg markert som privat"
 msgid "Selection not found"
 msgstr "Finner ikke utvalg"
 
-#: src/component/photo/clipboard.vue:318 src/locales.js:467
+#: src/component/photo/clipboard.vue:318 src/locales.js:468
 msgid "Selection restored"
 msgstr "Utvalg gjenopprettet"
 
@@ -3838,7 +3838,7 @@ msgid "Service"
 msgstr "Service"
 
 #: src/component/service/add.vue:27 src/component/service/edit.vue:158
-#: src/component/share/dialog.vue:158
+#: src/component/share/dialog.vue:161
 msgid "Service URL"
 msgstr "Tjeneste-URL"
 
@@ -3884,7 +3884,7 @@ msgid "Settings"
 msgstr "Innstillinger"
 
 #: src/page/settings/account.vue:533 src/page/settings/account.vue:562
-#: src/component/settings/passcode.vue:366 src/locales.js:444
+#: src/component/settings/passcode.vue:366 src/locales.js:445
 #: src/page/settings/account.vue:441 src/page/settings/account.vue:470
 msgid "Settings saved"
 msgstr "Innstillinger lagret"
@@ -3995,7 +3995,7 @@ msgstr "Vis Places-visningen med interaktive kart, slik at du kan bla gjennom bi
 msgid "Show Titles"
 msgstr "Vis titler"
 
-#: src/common/util.js:870 src/model/file.js:195
+#: src/common/util.js:911 src/model/file.js:195
 #: src/page/settings/collections.vue:72 src/page/settings/content.vue:215
 msgid "Sidecar"
 msgstr "Sidevogn"
@@ -4159,7 +4159,7 @@ msgstr "Lagring"
 msgid "Streets"
 msgstr "Gater"
 
-#: src/common/util.js:910 src/component/lightbox/sidebar.vue:820
+#: src/common/util.js:951 src/component/lightbox/sidebar.vue:820
 #: src/component/photo/batch-edit.vue:331
 #: src/component/photo/batch-edit.vue:334
 #: src/component/photo/edit/details.vue:291
@@ -4167,7 +4167,7 @@ msgstr "Gater"
 msgid "Subject"
 msgstr "Emne"
 
-#: src/locales.js:458
+#: src/locales.js:459
 msgid "Subject deleted"
 msgstr "Emnet er slettet"
 
@@ -4175,11 +4175,11 @@ msgstr "Emnet er slettet"
 msgid "Subject not found"
 msgstr "Emnet ble ikke funnet"
 
-#: src/locales.js:457
+#: src/locales.js:458
 msgid "Subject saved"
 msgstr "Emnet er lagret"
 
-#: src/component/settings/passcode.vue:351 src/locales.js:474
+#: src/component/settings/passcode.vue:351 src/locales.js:475
 msgid "Successfully activated"
 msgstr "Vellykket aktivert"
 
@@ -4192,7 +4192,7 @@ msgstr "Tilkobing vellykket"
 msgid "Successfully deleted"
 msgstr "Vellykket slettet"
 
-#: src/component/settings/passcode.vue:323 src/locales.js:473
+#: src/component/settings/passcode.vue:323 src/locales.js:474
 msgid "Successfully verified"
 msgstr "Vellykket verifisert"
 
@@ -4257,7 +4257,7 @@ msgstr "Instansen avviste påloggingsopplysningene for klyngen."
 msgid "The instance returned an unexpected redirect."
 msgstr "Instansen returnerte en uventet omdirigering."
 
-#: src/locales.js:421
+#: src/locales.js:422
 msgid "The wakeup interval is %s, but must be 1h or less"
 msgstr "Oppvåkningsintervallet er %s, men må være 1 time eller mindre"
 
@@ -4309,7 +4309,7 @@ msgstr "Tidssone"
 msgid "Timeout"
 msgstr "Tidsavbrudd"
 
-#: src/common/util.js:912 src/component/photo/view/list.vue:34
+#: src/common/util.js:953 src/component/photo/view/list.vue:34
 msgid "Title"
 msgstr "Tittel"
 
@@ -4349,7 +4349,7 @@ msgstr "Vis/skjul miniatyrbilder"
 msgid "Toggle View"
 msgstr "Veksle Visning"
 
-#: src/component/share/dialog.vue:75
+#: src/component/share/dialog.vue:76
 msgid "Token"
 msgstr "Token"
 
@@ -4357,7 +4357,7 @@ msgstr "Token"
 msgid "Too many files selected"
 msgstr "For mange filer valgt"
 
-#: src/common/api.js:128 src/locales.js:423
+#: src/common/api.js:128 src/locales.js:424
 msgid "Too many requests"
 msgstr "For mange forespørsler"
 
@@ -4415,7 +4415,7 @@ msgstr "Unik ID"
 
 #: src/model/cluster-node.js:47 src/page/settings/account.vue:221
 #: src/page/settings/account.vue:241 src/page/settings/account.vue:261
-#: src/common/util.js:627 src/component/lightbox/sidebar.vue:120
+#: src/common/util.js:668 src/component/lightbox/sidebar.vue:120
 #: src/component/lightbox/sidebar.vue:1742
 #: src/component/lightbox/sidebar.vue:279
 #: src/component/lightbox/sidebar.vue:701
@@ -4544,11 +4544,11 @@ msgid "Upload complete. Indexing…"
 msgstr "Opplasting fullført. Indekserer…"
 
 #: src/component/upload/dialog.vue:27 src/component/upload/dialog.vue:465
-#: src/component/upload/dialog.vue:484 src/locales.js:403
+#: src/component/upload/dialog.vue:484 src/locales.js:404
 msgid "Upload failed"
 msgstr "Opplasting mislyktes"
 
-#: src/locales.js:464
+#: src/locales.js:465
 msgid "Upload has been processed"
 msgstr "Opplastingen er behandlet"
 
@@ -4575,7 +4575,7 @@ msgstr "Last opp bane"
 msgid "Upload started"
 msgstr "Opplastingen startet"
 
-#: src/locales.js:404
+#: src/locales.js:405
 msgid "Upload to %s failed"
 msgstr "Opplasting til %s mislyktes"
 
@@ -4640,7 +4640,7 @@ msgstr "Bruker ikke funnet"
 #: src/component/user/add/dialog.vue:38 src/component/user/add/dialog.vue:39
 #: src/page/admin/sessions.vue:131 src/page/admin/users.vue:282
 #: src/page/admin/users.vue:269 src/component/service/add.vue:38
-#: src/component/service/edit.vue:161 src/component/share/dialog.vue:159
+#: src/component/service/edit.vue:161 src/component/share/dialog.vue:162
 #: src/locales.js:324
 msgid "Username"
 msgstr "Brukernavn"
@@ -4656,7 +4656,7 @@ msgstr "Brukere"
 msgid "UUID"
 msgstr "UUID"
 
-#: src/common/util.js:866 src/component/photo/view/cards.vue:114
+#: src/common/util.js:907 src/component/photo/view/cards.vue:114
 #: src/component/photo/view/cards.vue:239
 #: src/component/photo/view/mosaic.vue:69 src/options/options.js:368
 msgid "Vector"
@@ -4677,7 +4677,7 @@ msgstr "Bekreftelseskode"
 msgid "Verified"
 msgstr "Verifisert"
 
-#: src/locales.js:427
+#: src/locales.js:428
 msgid "Verified email required"
 msgstr "Bekreftet e-post kreves"
 
@@ -4685,7 +4685,7 @@ msgstr "Bekreftet e-post kreves"
 msgid "Version"
 msgstr "Versjon"
 
-#: src/common/util.js:860 src/component/photo/batch-edit.vue:128
+#: src/common/util.js:901 src/component/photo/batch-edit.vue:128
 #: src/component/photo/batch-edit.vue:69 src/component/photo/view/cards.vue:122
 #: src/component/photo/view/cards.vue:220 src/component/photo/view/list.vue:83
 #: src/component/photo/view/mosaic.vue:77 src/model/file.js:202
@@ -4717,7 +4717,7 @@ msgstr "Vis søkeresultatene som en liste."
 msgid "Viewer"
 msgstr "Seer"
 
-#: src/common/util.js:920
+#: src/common/util.js:961
 msgid "Vision"
 msgstr "Visjon"
 
@@ -4759,7 +4759,7 @@ msgstr "WebDAV-klienter kan koble seg til PhotoPrism ved å bruke følgende URL:
 msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism."
 msgstr "WebDAV-klienter, som Microsoft Windows Explorer eller Apple Finder, kan koble seg direkte til PhotoPrism."
 
-#: src/component/service/upload.vue:16 src/component/share/dialog.vue:123
+#: src/component/service/upload.vue:16 src/component/share/dialog.vue:124
 msgid "WebDAV Upload"
 msgstr "WebDAV-opplasting"
 
@@ -4855,7 +4855,7 @@ msgstr "Du kan bare velge ett element"
 msgid "You may rescan your library to find additional faces."
 msgstr "Du kan skanne biblioteket ditt på nytt for å finne flere ansikter."
 
-#: src/locales.js:422
+#: src/locales.js:423
 msgid "Your account could not be connected"
 msgstr "Kontoen din kunne ikke kobles til"
 
@@ -4873,7 +4873,7 @@ msgstr "Din fortsatte støtte hjelper oss med å gi regelmessige oppdateringer o
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "Biblioteket ditt blir kontinuerlig analysert for automatisk å lage album med spesielle øyeblikk, turer og steder."
 
-#: src/locales.js:470
+#: src/locales.js:471
 msgid "Zip created in %d s"
 msgstr "Zip opprettet på %d s"
 

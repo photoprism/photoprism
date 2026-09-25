@@ -1,10 +1,10 @@
 ## PhotoPrism — TensorFlow Package
 
-**Last Updated:** March 3, 2026
+**Last Updated:** September 25, 2026
 
 ### Overview
 
-`internal/ai/tensorflow` provides the shared TensorFlow helpers used by PhotoPrism’s built-in AI features (labels, NSFW, and FaceNet embeddings). It wraps SavedModel loading, input/output discovery, image tensor preparation, and label handling so higher-level packages can focus on domain logic.
+`internal/ai/tensorflow` provides the shared TensorFlow helpers used by PhotoPrism’s FaceNet embeddings. Built-in label and NSFW inference now uses ONNX Runtime; TensorFlow support remains in their benchmark-only baseline tests for migration comparisons. This package wraps SavedModel loading, input/output discovery, image tensor preparation, and label handling.
 
 ### Key Components
 
@@ -15,7 +15,7 @@
 
 ### Model Loading Notes
 
-- Built-in models live under `assets/models/` and are accessed via helpers in `internal/ai/vision` and `internal/ai/classify`.
+- FaceNet models live under `assets/models/` and are accessed through `internal/ai/face` and `internal/ai/vision`.
 - When a model lacks explicit tags or signatures, the helpers attempt to infer input/output operations. Logs will show when inference kicks in.
 - Classification models may emit logits; if `ModelInfo.Output.Logits` is true, a softmax op is injected at load time.
 
@@ -42,5 +42,5 @@ TensorFlow tensors are allocated in C memory and freed by Go GC finalizers in th
 
 - [`internal/ai/vision/README.md`](../vision/README.md) — model registry, `vision.yml` configuration, and run scheduling
 - [`internal/ai/face/README.md`](../face/README.md) — FaceNet embeddings and face-specific tuning
-- [`internal/ai/classify/README.md`](../classify/README.md) — classification workflow using TensorFlow helpers
-- [`internal/ai/nsfw/README.md`](../nsfw/README.md) — NSFW model usage and result mapping
+- [`internal/ai/classify/README.md`](../classify/README.md) — ONNX classification workflow
+- [`internal/ai/nsfw/README.md`](../nsfw/README.md) — ONNX NSFW model usage and result mapping

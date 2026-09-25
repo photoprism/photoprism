@@ -163,7 +163,7 @@ func (l Labels) IsNSFW(threshold int) bool {
 	}
 
 	for _, label := range l {
-		if label.NSFW || label.NSFWConfidence >= threshold {
+		if label.NSFW || label.NSFWConfidence > 0 && label.NSFWConfidence >= threshold {
 			return true
 		}
 	}

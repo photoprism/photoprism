@@ -954,7 +954,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	if file.FilePrimary {
 		primaryFile = file
 
-		// Classify images with TensorFlow if the run enables automatic labels.
+		// Classify images if the run enables automatic labels.
 		if o.GenerateLabels {
 			labels = m.GenerateLabels(entity.SrcAuto)
 
@@ -963,7 +963,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 				labels = append(labels, extraLabels...)
 			}
 
-			isNSFW = labels.IsNSFW(vision.Config.Thresholds.GetNSFW())
+			isNSFW = labelsMarkNSFW(labels, o.DetectNsfw, vision.Config.Thresholds.GetNSFWLabels())
 		}
 
 		// Decouple NSFW detection from label generation.
@@ -971,7 +971,12 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			if isNSFW {
 				photo.PhotoPrivate = true
 			} else if o.DetectNsfw {
-				photo.PhotoPrivate = m.DetectNSFW()
+				if result := m.DetectNSFW(); result.IsUnsafe() {
+					photo.PhotoPrivate = true
+				} else if result.IsUnavailable() {
+					// Preserve the existing flag when the detector cannot decide.
+					log.Warnf("index: nsfw detection unavailable for %s (%s)", clean.Log(m.RootRelName()), clean.Log(result.Reason))
+				}
 			}
 		}
 
@@ -1237,4 +1242,9 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	}
 
 	return result
+}
+
+// labelsMarkNSFW reports label-derived unsafe content when detection is enabled.
+func labelsMarkNSFW(labels classify.Labels, enabled bool, threshold int) bool {
+	return enabled && labels.IsNSFW(threshold)
 }

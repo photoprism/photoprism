@@ -292,9 +292,9 @@ func (e *onnxEmbedder) buildBlob(img image.Image) ([]float32, error) {
 			cr, cg, cb, _ := img.At(bounds.Min.X+x, bounds.Min.Y+y).RGBA()
 
 			channels := [onnx.Channels]float32{
-				(float32(cr>>8) - e.mean[0]) * e.scales[0],
-				(float32(cg>>8) - e.mean[1]) * e.scales[1],
-				(float32(cb>>8) - e.mean[2]) * e.scales[2],
+				(float32(cr>>8) - e.mean[rIndex]) * e.scales[rIndex],
+				(float32(cg>>8) - e.mean[gIndex]) * e.scales[gIndex],
+				(float32(cb>>8) - e.mean[bIndex]) * e.scales[bIndex],
 			}
 
 			idx := y*e.width + x

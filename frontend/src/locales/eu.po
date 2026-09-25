@@ -76,15 +76,15 @@ msgstr "%{s} luzeegia da"
 msgid "%{s} is too short"
 msgstr "%{s} laburregia da"
 
-#: src/locales.js:438
+#: src/locales.js:439
 msgid "%d entries added to %s"
 msgstr "%d sarrera gehitu zaio %s-i"
 
-#: src/locales.js:440
+#: src/locales.js:441
 msgid "%d entries removed from %s"
 msgstr "%d sarrera kendu dira %s-etik"
 
-#: src/locales.js:462
+#: src/locales.js:463
 msgid "%d files uploaded in %d s"
 msgstr "%d fitxategi igo dira %d s-tan"
 
@@ -92,7 +92,7 @@ msgstr "%d fitxategi igo dira %d s-tan"
 msgid "%s already exists"
 msgstr "%s dagoeneko existitzen da"
 
-#: src/locales.js:472
+#: src/locales.js:473
 msgid "%s has been restored"
 msgstr "%s berreskuratu da"
 
@@ -123,11 +123,11 @@ msgstr "2FA"
 msgid "4 hours"
 msgstr "4 ordu"
 
-#: src/component/share/dialog.vue:116
+#: src/component/share/dialog.vue:117
 msgid "A click will copy it to your clipboard."
 msgstr "Klik eginez gero, arbelean kopiatuko da."
 
-#: src/locales.js:428
+#: src/locales.js:429
 msgid "A migration is in progress"
 msgstr "Migrazioa martxan dago"
 
@@ -177,12 +177,12 @@ msgid "Account"
 msgstr "Kontua"
 
 #: src/component/user/add/dialog.vue:261 src/component/user/add/dialog.vue:277
-#: src/component/service/add.vue:131 src/locales.js:441
+#: src/component/service/add.vue:131 src/locales.js:442
 msgid "Account created"
 msgstr "Kontua sortu da"
 
 #: src/component/user/remove/dialog.vue:63 src/component/service/remove.vue:74
-#: src/locales.js:443
+#: src/locales.js:444
 msgid "Account deleted"
 msgstr "Kontua ezabatu da"
 
@@ -198,7 +198,7 @@ msgstr "Kontua ez da aurkitu"
 msgid "Account restored"
 msgstr "Kontua leheneratu da"
 
-#: src/locales.js:442
+#: src/locales.js:443
 msgid "Account saved"
 msgstr "Kontua gorde da"
 
@@ -343,7 +343,7 @@ msgid "Adjust Location"
 msgstr "Kokapena egokitu"
 
 #: src/model/cluster-instance.js:28 src/options/admin.js:35
-#: src/common/util.js:922 src/options/auth.js:6
+#: src/common/util.js:963 src/options/auth.js:6
 msgid "Admin"
 msgstr "Admin"
 
@@ -395,7 +395,7 @@ msgstr "Bi asteren ondoren"
 msgid "Album"
 msgstr "Albuma"
 
-#: src/locales.js:432
+#: src/locales.js:433
 msgid "Album %s deleted"
 msgstr "Albuma %s ezabatu da"
 
@@ -403,11 +403,11 @@ msgstr "Albuma %s ezabatu da"
 msgid "Album Backups"
 msgstr "Albumen babeskopiak"
 
-#: src/locales.js:433
+#: src/locales.js:434
 msgid "Album contents cloned"
 msgstr "Albumean dagoen edukia klonatu da"
 
-#: src/locales.js:430 src/page/albums.vue:1194
+#: src/locales.js:431 src/page/albums.vue:1194
 msgid "Album created"
 msgstr "Sortu da albuma"
 
@@ -419,7 +419,7 @@ msgstr "Albuma ezabatuta"
 msgid "Album not found"
 msgstr "Albuma ez da aurkitu"
 
-#: src/locales.js:431
+#: src/locales.js:432
 msgid "Album saved"
 msgstr "Albuma gorde da"
 
@@ -432,7 +432,7 @@ msgstr "Albuma gorde da"
 msgid "Albums"
 msgstr "Albumak"
 
-#: src/component/album/clipboard.vue:194 src/locales.js:469
+#: src/component/album/clipboard.vue:194 src/locales.js:470
 msgid "Albums deleted"
 msgstr "Albumak ezabatu dira"
 
@@ -529,7 +529,7 @@ msgstr "Erabiltzaileei argazki eta bideo berriak web interfazearen bidez igotzek
 msgid "Allow zooming with pinch gestures on mobile devices."
 msgstr "Gailu mugikorretan hatz-punta-keinuarekin zoom egitea ahalbidetu."
 
-#: src/component/share/dialog.vue:118
+#: src/component/share/dialog.vue:119
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
 msgstr "Bestela, fitxategiak zuzenean igo ditzakezu Nextcloud bezalako WebDAV zerbitzarietara."
 
@@ -546,7 +546,7 @@ msgstr "Altuera (m)"
 msgid "AM"
 msgstr "AM"
 
-#: src/app/routes.js:423 src/common/util.js:864
+#: src/app/routes.js:423 src/common/util.js:905
 #: src/component/photo/batch-edit.vue:127 src/component/photo/batch-edit.vue:68
 #: src/component/photo/edit/files.vue:132
 #: src/component/photo/edit/files.vue:133
@@ -568,7 +568,7 @@ msgstr "Animazioa"
 msgid "Animations"
 msgstr "Animazioak"
 
-#: src/component/share/dialog.vue:117
+#: src/component/share/dialog.vue:118
 msgid "Any private photos and videos remain private and won't be shared."
 msgstr "Argazki eta bideo pribatu guztiak pribatuak izaten jarraitzen dute eta ez dira partekatuko."
 
@@ -658,14 +658,14 @@ msgstr "Aspektu-erlazioa"
 msgid "Attributes"
 msgstr "Atributuak"
 
-#: src/app/routes.js:416 src/common/util.js:862
+#: src/app/routes.js:416 src/common/util.js:903
 #: src/component/navigation.vue:204 src/component/navigation.vue:205
 #: src/component/navigation.vue:217 src/component/navigation.vue:226
 #: src/component/navigation.vue:254 src/options/options.js:360
 msgid "Audio"
 msgstr "Audioa"
 
-#: src/model/logs.js:184
+#: src/model/logs.js:137
 msgid "Audit Log"
 msgstr "Audioa"
 
@@ -680,7 +680,7 @@ msgstr "Audioa"
 msgid "Authentication"
 msgstr "Autentifikazioa"
 
-#: src/common/util.js:884
+#: src/common/util.js:925
 msgid "Auto"
 msgstr "Autoa"
 
@@ -710,7 +710,7 @@ msgstr "Txapa"
 msgid "Base Path"
 msgstr "Oinarrizko bidea"
 
-#: src/common/util.js:916
+#: src/common/util.js:957
 msgid "Batch"
 msgstr "Multzoa"
 
@@ -772,7 +772,7 @@ msgstr "Arakatu argazkiak"
 msgid "Bug Report"
 msgstr "Akatsen txostena"
 
-#: src/locales.js:420
+#: src/locales.js:421
 msgid "Busy, please try again later"
 msgstr "Zaratatsua, mesedez saiatu berriro geroago"
 
@@ -850,17 +850,17 @@ msgstr "Ezin dira elementu gehiago hautatu"
 #: src/component/service/upload.vue:57 src/component/settings/apps.vue:151
 #: src/component/settings/passcode.vue:101
 #: src/component/settings/passcode.vue:142
-#: src/component/settings/password.vue:83 src/component/share/dialog.vue:161
+#: src/component/settings/password.vue:83 src/component/share/dialog.vue:164
 #: src/locales.js:214 src/page/auth/login.vue:120 src/page/connect.vue:36
 #: src/page/library/import.vue:61 src/page/library/index.vue:61
 msgid "Cancel"
 msgstr "Utzi"
 
-#: src/common/util.js:1100 src/common/util.js:1107
+#: src/common/util.js:1141 src/common/util.js:1148
 msgid "Cannot copy to clipboard"
 msgstr "Ezin da kopiatu arbelean"
 
-#: src/common/util.js:904 src/component/lightbox/sidebar.vue:807
+#: src/common/util.js:945 src/component/lightbox/sidebar.vue:807
 #: src/component/photo/batch-edit.vue:173
 #: src/component/photo/batch-edit.vue:176
 #: src/component/photo/edit/details.vue:28
@@ -933,8 +933,8 @@ msgstr "Ezin izan dira aldaketak gorde"
 #: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3219
 #: src/component/photo/batch-edit.vue:1472
 #: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
-#: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
-#: src/locales.js:429 src/page/albums.vue:1197 src/page/people/new.vue:814
+#: src/component/share/dialog.vue:235 src/component/share/dialog.vue:254
+#: src/locales.js:430 src/page/albums.vue:1197 src/page/people/new.vue:814
 #: src/page/people/recognized.vue:320 src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
 #: src/page/settings/general.vue:646
@@ -1011,7 +1011,7 @@ msgstr "Bezeroa"
 #: src/component/settings/passcode.vue:192
 #: src/component/settings/passcode.vue:207
 #: src/component/settings/passcode.vue:61 src/component/settings/webdav.vue:74
-#: src/component/share/dialog.vue:126 src/component/share/dialog.vue:70
+#: src/component/share/dialog.vue:127 src/component/share/dialog.vue:70
 #: src/component/share/dialog.vue:71 src/component/share/dialog.vue:80
 #: src/component/update.vue:25 src/component/upload/dialog.vue:119
 #: src/component/upload/dialog.vue:20 src/locales.js:210
@@ -1152,7 +1152,7 @@ msgstr "Laguntzailea"
 msgid "Converting"
 msgstr "Bihurtzea"
 
-#: src/common/util.js:1093
+#: src/common/util.js:1134
 msgid "Copied to clipboard"
 msgstr "Arbelean kopiatu da"
 
@@ -1166,7 +1166,7 @@ msgstr "Arbelean kopiatu da"
 msgid "Copy"
 msgstr "Kopiatu"
 
-#: src/locales.js:454
+#: src/locales.js:455
 msgid "Copying files from %s"
 msgstr "%s-etik fitxategiak kopiatzen"
 
@@ -1182,7 +1182,7 @@ msgstr "Copyright"
 msgid "Could not be deleted"
 msgstr "Ezabatu ezin izan zen"
 
-#: src/locales.js:408
+#: src/locales.js:409
 msgid "Could not connect, please try again"
 msgstr "Ezin izan da konektatu, mesedez saiatu berriro"
 
@@ -1283,7 +1283,7 @@ msgstr "Arazte-erregistroak"
 #: src/page/admin/sessions.vue:256 src/page/admin/users.vue:233
 #: src/page/admin/groups.vue:35 src/page/admin/sessions.vue:371
 #: src/page/admin/users.vue:430 src/page/admin/sessions.vue:369
-#: src/page/admin/users.vue:374 src/common/util.js:886 src/model/session.js:42
+#: src/page/admin/users.vue:374 src/common/util.js:927 src/model/session.js:42
 #: src/model/user.js:343 src/options/auth.js:40 src/options/auth.js:41
 #: src/options/auth.js:69 src/options/auth.js:70 src/options/options.js:252
 #: src/options/options.js:255 src/options/options.js:295
@@ -1303,7 +1303,7 @@ msgstr "Karpeta lehenetsia"
 #: src/component/label/delete/dialog.vue:22
 #: src/component/photo/clipboard.vue:132 src/component/photo/edit/files.vue:63
 #: src/component/photo/edit/files.vue:71 src/component/photo/edit/files.vue:95
-#: src/component/service/remove.vue:22 src/component/share/dialog.vue:98
+#: src/component/service/remove.vue:22 src/component/share/dialog.vue:99
 #: src/locales.js:321 src/page/settings/general.vue:335
 msgid "Delete"
 msgstr "Ezabatu"
@@ -1472,7 +1472,7 @@ msgstr "Bistaratu irudi-oinak bilaketa-emaitzetan."
 msgid "Display picture titles in search results."
 msgstr "Bistaratu irudien izenburuak bilaketa-emaitzetan."
 
-#: src/common/util.js:868 src/component/photo/view/cards.vue:115
+#: src/common/util.js:909 src/component/photo/view/cards.vue:115
 #: src/component/photo/view/cards.vue:239
 #: src/component/photo/view/mosaic.vue:70 src/model/thumb.js:247
 #: src/options/options.js:372
@@ -1501,7 +1501,7 @@ msgstr "Ez erabili RawTherapee RAW irudiak bihurtzeko."
 #: src/component/lightbox/sidebar.vue:195 src/component/settings/apps.vue:51
 #: src/component/settings/apps.vue:52 src/component/settings/apps.vue:61
 #: src/component/settings/apps.vue:77 src/component/settings/apps.vue:88
-#: src/component/share/dialog.vue:162
+#: src/component/share/dialog.vue:165
 msgid "Done"
 msgstr "Eginda"
 
@@ -1654,7 +1654,7 @@ msgstr "Sartu elementuaren izena..."
 msgid "Enter the code generated by your authenticator app:"
 msgstr "Sartu zure autentifikazio-aplikazioak sortutako kodea:"
 
-#: src/common/api.js:126 src/locales.js:409
+#: src/common/api.js:126 src/locales.js:410
 msgid "Enter verification code"
 msgstr "Sartu egiaztapen-kodea"
 
@@ -1677,7 +1677,7 @@ msgstr "Errorea"
 msgid "Errors"
 msgstr "Akatsak"
 
-#: src/common/util.js:888
+#: src/common/util.js:929
 msgid "Estimate"
 msgstr "Estimazioa"
 
@@ -1709,7 +1709,7 @@ msgstr "Ezaugarri esperimentalak"
 #: src/page/admin/sessions.vue:203 src/page/admin/sessions.vue:299
 #: src/page/admin/sessions.vue:297 src/component/service/edit.vue:69
 #: src/component/settings/apps.vue:138 src/component/settings/apps.vue:295
-#: src/component/share/dialog.vue:195
+#: src/component/share/dialog.vue:198
 msgid "Expires"
 msgstr "Iraungitzen da"
 
@@ -1741,15 +1741,15 @@ msgstr "Aurpegia ez da aurkitu"
 msgid "Faces"
 msgstr "Aurpegiak"
 
-#: src/locales.js:406
+#: src/locales.js:407
 msgid "Failed creating file, please check permissions"
 msgstr "Fitxategia sortzean huts egin da, mesedez egiaztatu baimenak"
 
-#: src/locales.js:407
+#: src/locales.js:408
 msgid "Failed creating folder, please check permissions"
 msgstr "Karpetaren sortzea huts egin du, mesedez egiaztatu baimenak."
 
-#: src/component/share/dialog.vue:235
+#: src/component/share/dialog.vue:245
 msgid "Failed removing link"
 msgstr "Ezin izan da esteka kendu"
 
@@ -1757,7 +1757,7 @@ msgstr "Ezin izan da esteka kendu"
 msgid "Failed to connect account."
 msgstr "Ezin izan da konektatu kontua."
 
-#: src/locales.js:416
+#: src/locales.js:417
 msgid "Failed to create zip file"
 msgstr "Zip fitxategia sortzea huts egin du"
 
@@ -1801,7 +1801,7 @@ msgstr "Aurpegiko markatzailea gordetzeko huts egin da"
 msgid "Failed to save name"
 msgstr "Izena gordetzeko huts egin da"
 
-#: src/component/share/dialog.vue:216
+#: src/component/share/dialog.vue:219
 msgid "Failed updating link"
 msgstr "Ezin izan da eguneratu esteka"
 
@@ -1832,7 +1832,7 @@ msgstr "Gogokoena"
 msgid "Favorites"
 msgstr "Gogokoak"
 
-#: src/locales.js:412
+#: src/locales.js:413
 msgid "Feature disabled"
 msgstr "Ezaugarri desgaituta"
 
@@ -1848,7 +1848,7 @@ msgstr "Ezaugarriak"
 msgid "Female"
 msgstr "Emakumezkoa"
 
-#: src/common/util.js:890 src/component/lightbox/sidebar.vue:1101
+#: src/common/util.js:931 src/component/lightbox/sidebar.vue:1101
 #: src/component/photo/edit/info.vue:94 src/model/file.js:271
 msgid "File"
 msgstr "Fitxategia"
@@ -1861,7 +1861,7 @@ msgstr "Fitxategien arakatzailea"
 msgid "File Conversion"
 msgstr "Fitxategien Bihurketa"
 
-#: src/locales.js:435
+#: src/locales.js:436
 msgid "File deleted"
 msgstr "Fitxategia ezabatu da"
 
@@ -1875,7 +1875,7 @@ msgstr "Fitxategi izena"
 msgid "File not found"
 msgstr "Fitxategia ez da aurkitu"
 
-#: src/locales.js:434
+#: src/locales.js:435
 msgid "File removed from stack"
 msgstr "Pila-tik fitxategia kendu da"
 
@@ -1887,7 +1887,7 @@ msgstr "Fitxategiaren Tamaina"
 msgid "File too large"
 msgstr "Fitxategia handiegia"
 
-#: src/locales.js:461
+#: src/locales.js:462
 msgid "File uploaded"
 msgstr "Fitxategia igo da"
 
@@ -2108,7 +2108,7 @@ msgstr "Hibridoa"
 msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
 msgstr "Zure autentifikazio-aplikaziorako edo gailurako sarbidea galtzen baduzu, berreskuratzeko kodea erabil dezakezu zure konturako sarbidea berreskuratzeko."
 
-#: src/common/util.js:854 src/common/util.js:894
+#: src/common/util.js:895 src/common/util.js:935
 #: src/component/photo/view/cards.vue:246 src/model/file.js:199
 #: src/options/options.js:344
 msgid "Image"
@@ -2124,11 +2124,11 @@ msgstr "Irudiaren Kalitatea"
 msgid "Import"
 msgstr "Inportatu"
 
-#: src/locales.js:447
+#: src/locales.js:448
 msgid "Import canceled"
 msgstr "Inportazioa bertan behera utzi da"
 
-#: src/locales.js:446
+#: src/locales.js:447
 msgid "Import completed in %d s"
 msgstr "Inportazioa %d s-tan osatu da"
 
@@ -2190,11 +2190,11 @@ msgstr "Aurkibidea"
 msgid "Indexing"
 msgstr "Indexatzea"
 
-#: src/locales.js:451
+#: src/locales.js:452
 msgid "Indexing canceled"
 msgstr "Indizeketa bertan behera utzi da"
 
-#: src/locales.js:448
+#: src/locales.js:449
 msgid "Indexing completed in %d s"
 msgstr "Indizeketa %d s-tan amaitu da"
 
@@ -2202,7 +2202,7 @@ msgstr "Indizeketa %d s-tan amaitu da"
 msgid "Indexing failed"
 msgstr "Ezin izan da indexatu"
 
-#: src/locales.js:450
+#: src/locales.js:451
 msgid "Indexing files in %s"
 msgstr "%s-en fitxategiak indizeatzea"
 
@@ -2210,7 +2210,7 @@ msgstr "%s-en fitxategiak indizeatzea"
 msgid "Indexing media and sidecar files…"
 msgstr "Multimedia eta sidecar fitxategiak indexatzen…"
 
-#: src/locales.js:449
+#: src/locales.js:450
 msgid "Indexing originals..."
 msgstr "Jatorrizkoak indizatzen..."
 
@@ -2242,7 +2242,7 @@ msgstr "Instancea ezin da iritsi. Saiatu berriro linean dagoenean."
 msgid "Instances"
 msgstr "Instantziak"
 
-#: src/locales.js:424
+#: src/locales.js:425
 msgid "Insufficient storage"
 msgstr "Biltegiratze nahikoa ez"
 
@@ -2258,7 +2258,7 @@ msgstr "Tartea"
 #: src/common/form.js:245 src/common/form.js:319 src/common/form.js:322
 #: src/common/form.js:333 src/common/form.js:336 src/common/form.js:362
 #: src/common/form.js:364 src/common/form.js:371 src/common/form.js:373
-#: src/common/form.js:388 src/common/form.js:390
+#: src/common/form.js:388 src/common/form.js:390 src/model/link.js:41
 msgid "Invalid"
 msgstr "Baliogabea"
 
@@ -2270,7 +2270,7 @@ msgstr "Helbide baliogabea"
 msgid "Invalid country"
 msgstr "Herrialde baliogabea"
 
-#: src/locales.js:417
+#: src/locales.js:418
 msgid "Invalid credentials"
 msgstr "Ziurtagiri baliogabeak"
 
@@ -2278,11 +2278,11 @@ msgstr "Ziurtagiri baliogabeak"
 msgid "Invalid date"
 msgstr "Data baliogabea"
 
-#: src/locales.js:418
+#: src/component/share/dialog.vue:226 src/locales.js:419
 msgid "Invalid link"
 msgstr "Esteka baliogabea"
 
-#: src/locales.js:419
+#: src/locales.js:420
 msgid "Invalid name"
 msgstr "Izena baliogabea"
 
@@ -2291,7 +2291,7 @@ msgstr "Izena baliogabea"
 msgid "Invalid parameters"
 msgstr "Parametro baliogabeak"
 
-#: src/locales.js:411
+#: src/locales.js:412
 msgid "Invalid password, please try again"
 msgstr "Pasahitz baliogabea, mesedez saiatu berriro"
 
@@ -2307,7 +2307,7 @@ msgstr "Ordua baliogabea"
 msgid "Invalid URL"
 msgstr "URL baliogabea"
 
-#: src/locales.js:410
+#: src/locales.js:411
 msgid "Invalid verification code, please try again"
 msgstr "Egiaztapen-kode baliogabea. Saiatu berriro"
 
@@ -2341,7 +2341,7 @@ msgstr "JPEG tamaina muga: %{n}px"
 msgid "JPEGs and thumbnails are automatically rendered as needed."
 msgstr "JPEG eta miniaturak automatikoki errendatzen dira behar bezala."
 
-#: src/common/util.js:906
+#: src/common/util.js:947
 msgid "Keyword"
 msgstr "Gako-hitza"
 
@@ -2360,7 +2360,7 @@ msgstr "Etiketa"
 msgid "Label not found"
 msgstr "Etiketa aurkitu ez da"
 
-#: src/locales.js:456
+#: src/locales.js:457
 msgid "Label saved"
 msgstr "Etiketa gorde da"
 
@@ -2376,7 +2376,7 @@ msgstr "Etiketa gorde da"
 msgid "Labels"
 msgstr "Etiketak"
 
-#: src/component/label/clipboard.vue:131 src/locales.js:455
+#: src/component/label/clipboard.vue:131 src/locales.js:456
 msgid "Labels deleted"
 msgstr "Etiketak ezabatu dira"
 
@@ -2471,7 +2471,7 @@ msgstr "Karea"
 msgid "Limit reached, showing first %{n} files"
 msgstr "Muga iritsi da, lehen %{n} fitxategi erakusten"
 
-#: src/model/link.js:93 src/options/auth.js:50 src/options/auth.js:51
+#: src/model/link.js:106 src/options/auth.js:50 src/options/auth.js:51
 msgid "Link"
 msgstr "Esteka"
 
@@ -2483,7 +2483,7 @@ msgstr "Zerrenda"
 msgid "List View"
 msgstr "Zerrenda Ikuspegia"
 
-#: src/common/util.js:858 src/component/photo/batch-edit.vue:124
+#: src/common/util.js:899 src/component/photo/batch-edit.vue:124
 #: src/component/photo/batch-edit.vue:65 src/component/photo/view/cards.vue:112
 #: src/component/photo/view/cards.vue:224 src/component/photo/view/list.vue:81
 #: src/component/photo/view/mosaic.vue:67 src/options/options.js:352
@@ -2519,7 +2519,7 @@ msgid "Local Time"
 msgstr "Tokiko Ordua"
 
 #: src/page/settings/account.vue:359 src/page/settings/account.vue:361
-#: src/common/util.js:896 src/component/album/edit/dialog.vue:38
+#: src/common/util.js:937 src/component/album/edit/dialog.vue:38
 #: src/component/lightbox/sidebar.vue:150
 #: src/component/photo/batch-edit.vue:263
 #: src/component/photo/batch-edit.vue:581
@@ -2584,7 +2584,7 @@ msgstr "Kudeatu kontua"
 msgid "Manager"
 msgstr "Kudeatzailea"
 
-#: src/common/util.js:918
+#: src/common/util.js:959
 msgid "Manual"
 msgstr "Eskuliburua"
 
@@ -2600,7 +2600,7 @@ msgstr "Mapak"
 msgid "Maps are unavailable. Try another browser or device."
 msgstr "Mapak ez daude eskuragarri. Saiatu beste nabigatzaile edo gailu batekin."
 
-#: src/common/util.js:898 src/model/marker.js:132
+#: src/common/util.js:939 src/model/marker.js:132
 msgid "Marker"
 msgstr "Markagailua"
 
@@ -2630,7 +2630,7 @@ msgstr "%{a} %{b}rekin bateratu?"
 msgid "Message"
 msgstr "Mezua"
 
-#: src/common/util.js:908
+#: src/common/util.js:949
 msgid "Metadata"
 msgstr "Metadatuak"
 
@@ -2692,7 +2692,7 @@ msgstr "Garrantzitsuena"
 msgid "Move Files"
 msgstr "Mugitu fitxategiak"
 
-#: src/locales.js:453
+#: src/locales.js:454
 msgid "Moving files from %s"
 msgstr "%s-etik fitxategiak mugitzea"
 
@@ -2708,7 +2708,7 @@ msgstr "Isildu"
 #: src/component/cluster/node/overview.vue:25
 #: src/component/cluster/node/overview.vue:4
 #: src/component/cluster/node/overview.vue:75 src/page/cluster/nodes.vue:155
-#: src/common/util.js:892 src/component/album/edit/dialog.vue:30
+#: src/common/util.js:933 src/component/album/edit/dialog.vue:30
 #: src/component/album/edit/dialog.vue:31
 #: src/component/input/chip-selector.vue:277
 #: src/component/label/edit/dialog.vue:30
@@ -2792,7 +2792,7 @@ msgstr "Ez dago albumik esleituta"
 msgid "No albums found"
 msgstr "Ez da albumik aurkitu"
 
-#: src/locales.js:414
+#: src/locales.js:415
 msgid "No albums selected"
 msgstr "Ez dago aukeratutako albumik"
 
@@ -2800,11 +2800,11 @@ msgstr "Ez dago aukeratutako albumik"
 msgid "No data available"
 msgstr "Ez dago daturik eskuragarri"
 
-#: src/locales.js:415
+#: src/locales.js:416
 msgid "No files available for download"
 msgstr "Deskargatzeko fitxategiik ez dago eskuragarri"
 
-#: src/locales.js:405
+#: src/locales.js:406
 msgid "No items selected"
 msgstr "Ez dago hautatutako elementurik"
 
@@ -2816,7 +2816,7 @@ msgstr "Ez dago etiketarik esleituta"
 msgid "No labels found"
 msgstr "Ez da etiketarik aurkitu"
 
-#: src/locales.js:413
+#: src/locales.js:414
 msgid "No labels selected"
 msgstr "Ez dago aukeratutako etiketarik"
 
@@ -2980,11 +2980,11 @@ msgstr "Astean behin"
 msgid "One album found"
 msgstr "Album bat aurkitu da"
 
-#: src/locales.js:437
+#: src/locales.js:438
 msgid "One entry added to %s"
 msgstr "Sarrera bat %s-era gehitu da."
 
-#: src/locales.js:439
+#: src/locales.js:440
 msgid "One entry removed from %s"
 msgstr "%s-etik kendutako sarrera bat"
 
@@ -3124,12 +3124,12 @@ msgstr "Hautatutako argazki batzuen zati bat"
 #: src/component/user/add/dialog.vue:57 src/component/user/add/dialog.vue:58
 #: src/component/service/add.vue:52 src/component/service/edit.vue:168
 #: src/component/settings/apps.vue:33 src/component/settings/passcode.vue:171
-#: src/component/settings/passcode.vue:36 src/component/share/dialog.vue:160
+#: src/component/settings/passcode.vue:36 src/component/share/dialog.vue:163
 #: src/options/auth.js:121 src/page/auth/login.vue:101
 msgid "Password"
 msgstr "Pasahitza"
 
-#: src/component/settings/password.vue:162 src/locales.js:445
+#: src/component/settings/password.vue:162 src/locales.js:446
 msgid "Password changed"
 msgstr "Pasahitza aldatu da"
 
@@ -3152,12 +3152,12 @@ msgstr "Ordainketa beharrezkoa da"
 msgid "People"
 msgstr "Jendea"
 
-#: src/component/share/dialog.vue:115
+#: src/component/share/dialog.vue:116
 msgid "People you share a link with will be able to view public contents."
 msgstr "Esteka partekatzen duzun pertsonek eduki publikoak ikusi ahal izango dituzte."
 
 #: src/component/photo/clipboard.vue:303 src/component/photo/toolbar.vue:522
-#: src/locales.js:471
+#: src/locales.js:472
 msgid "Permanently deleted"
 msgstr "Betiko ezabatu da"
 
@@ -3173,7 +3173,7 @@ msgstr "Pertsona"
 msgid "Person cover updated"
 msgstr "Pertsonaren azala eguneratua"
 
-#: src/locales.js:460
+#: src/locales.js:461
 msgid "Person deleted"
 msgstr "Pertsona ezabatu da"
 
@@ -3182,7 +3182,7 @@ msgstr "Pertsona ezabatu da"
 msgid "Person not found"
 msgstr "Pertsona ez da aurkitu"
 
-#: src/locales.js:459
+#: src/locales.js:460
 msgid "Person saved"
 msgstr "Pertsona salbatu da"
 
@@ -3368,7 +3368,7 @@ msgstr "Lehen mailakoa"
 msgid "Private"
 msgstr "Pribatua"
 
-#: src/locales.js:463
+#: src/locales.js:464
 msgid "Processing upload..."
 msgstr "Igoera prozesatzen ari da..."
 
@@ -3395,7 +3395,7 @@ msgstr "Kalitate-iragazkia"
 msgid "Quality Score"
 msgstr "Kalitate-maila"
 
-#: src/locales.js:425
+#: src/locales.js:426
 msgid "Quota exceeded"
 msgstr "Kuota gainditu da"
 
@@ -3407,7 +3407,7 @@ msgstr "Ausazko"
 msgid "Rating {0} of {1}"
 msgstr "{0}/{1} balorazioa"
 
-#: src/common/util.js:856 src/options/options.js:348
+#: src/common/util.js:897 src/options/options.js:348
 msgid "Raw"
 msgstr "Gordinik"
 
@@ -3494,7 +3494,7 @@ msgstr "Eskualdeak"
 msgid "Register"
 msgstr "Izena eman"
 
-#: src/locales.js:426
+#: src/locales.js:427
 msgid "Registration disabled"
 msgstr "Erregistroa desgaituta"
 
@@ -3554,7 +3554,7 @@ msgstr "Kendu da"
 msgid "Removed %{name}"
 msgstr "%{name} kendu da"
 
-#: src/locales.js:452
+#: src/locales.js:453
 msgid "Removed %d files and %d photos"
 msgstr "%d fitxategi eta %d argazki kendu dira"
 
@@ -3693,9 +3693,9 @@ msgstr "Satelitea"
 #: src/component/service/edit.vue:94 src/component/settings/password.vue:31
 #: src/component/settings/password.vue:32
 #: src/component/settings/password.vue:41
-#: src/component/settings/password.vue:86 src/component/share/dialog.vue:104
+#: src/component/settings/password.vue:86 src/component/share/dialog.vue:105
 #: src/component/share/dialog.vue:58 src/component/share/dialog.vue:59
-#: src/component/share/dialog.vue:96
+#: src/component/share/dialog.vue:97
 msgid "Save"
 msgstr "Gorde"
 
@@ -3747,7 +3747,7 @@ msgstr "Bilatu"
 msgid "Season"
 msgstr "Denboraldia"
 
-#: src/component/share/dialog.vue:74
+#: src/component/share/dialog.vue:75
 msgid "Secret"
 msgstr "Sekretua"
 
@@ -3802,19 +3802,19 @@ msgstr "Hautatu Ordua"
 msgid "Selection"
 msgstr "Hautaketa"
 
-#: src/locales.js:436
+#: src/locales.js:437
 msgid "Selection added to %s"
 msgstr "Hautaketa %s-era gehitu da"
 
-#: src/component/photo/clipboard.vue:251 src/locales.js:465
+#: src/component/photo/clipboard.vue:251 src/locales.js:466
 msgid "Selection approved"
 msgstr "Hautaketa onartu da"
 
-#: src/component/photo/clipboard.vue:282 src/locales.js:466
+#: src/component/photo/clipboard.vue:282 src/locales.js:467
 msgid "Selection archived"
 msgstr "Hautaketa artxibatuta dago"
 
-#: src/locales.js:468
+#: src/locales.js:469
 msgid "Selection marked as private"
 msgstr "Hautaketa pribatutzat markatuta"
 
@@ -3822,7 +3822,7 @@ msgstr "Hautaketa pribatutzat markatuta"
 msgid "Selection not found"
 msgstr "Hautaketa ez da aurkitu"
 
-#: src/component/photo/clipboard.vue:318 src/locales.js:467
+#: src/component/photo/clipboard.vue:318 src/locales.js:468
 msgid "Selection restored"
 msgstr "Hautaketa leheneratu da"
 
@@ -3835,7 +3835,7 @@ msgid "Service"
 msgstr "Zerbitzua"
 
 #: src/component/service/add.vue:27 src/component/service/edit.vue:158
-#: src/component/share/dialog.vue:158
+#: src/component/share/dialog.vue:161
 msgid "Service URL"
 msgstr "Zerbitzuaren URLa"
 
@@ -3881,7 +3881,7 @@ msgid "Settings"
 msgstr "Ezarpenak"
 
 #: src/page/settings/account.vue:533 src/page/settings/account.vue:562
-#: src/component/settings/passcode.vue:366 src/locales.js:444
+#: src/component/settings/passcode.vue:366 src/locales.js:445
 #: src/page/settings/account.vue:441 src/page/settings/account.vue:470
 msgid "Settings saved"
 msgstr "Ezarpenak gorde dira"
@@ -3992,7 +3992,7 @@ msgstr "Erakutsi Lekuen ikuspegia mapa interaktiboekin, argazkiak kokapenaren ar
 msgid "Show Titles"
 msgstr "Erakutsi Izenburuak"
 
-#: src/common/util.js:870 src/model/file.js:195
+#: src/common/util.js:911 src/model/file.js:195
 #: src/page/settings/collections.vue:72 src/page/settings/content.vue:215
 msgid "Sidecar"
 msgstr "Sidecar"
@@ -4156,7 +4156,7 @@ msgstr "Biltegiratzea"
 msgid "Streets"
 msgstr "Kaleak"
 
-#: src/common/util.js:910 src/component/lightbox/sidebar.vue:820
+#: src/common/util.js:951 src/component/lightbox/sidebar.vue:820
 #: src/component/photo/batch-edit.vue:331
 #: src/component/photo/batch-edit.vue:334
 #: src/component/photo/edit/details.vue:291
@@ -4164,7 +4164,7 @@ msgstr "Kaleak"
 msgid "Subject"
 msgstr "Gaia"
 
-#: src/locales.js:458
+#: src/locales.js:459
 msgid "Subject deleted"
 msgstr "Gaia ezabatu da"
 
@@ -4172,11 +4172,11 @@ msgstr "Gaia ezabatu da"
 msgid "Subject not found"
 msgstr "Gaia ez da aurkitu"
 
-#: src/locales.js:457
+#: src/locales.js:458
 msgid "Subject saved"
 msgstr "Gaia gorde da"
 
-#: src/component/settings/passcode.vue:351 src/locales.js:474
+#: src/component/settings/passcode.vue:351 src/locales.js:475
 msgid "Successfully activated"
 msgstr "Behar bezala aktibatu da"
 
@@ -4189,7 +4189,7 @@ msgstr "Behar bezala konektatuta"
 msgid "Successfully deleted"
 msgstr "Behar bezala ezabatu da"
 
-#: src/component/settings/passcode.vue:323 src/locales.js:473
+#: src/component/settings/passcode.vue:323 src/locales.js:474
 msgid "Successfully verified"
 msgstr "Behar bezala egiaztatu da"
 
@@ -4254,7 +4254,7 @@ msgstr "Instantziak klaster-kredentzialak baztertu zituen."
 msgid "The instance returned an unexpected redirect."
 msgstr "Instantziak espero gabeko birbideratze bat itzuli zuen."
 
-#: src/locales.js:421
+#: src/locales.js:422
 msgid "The wakeup interval is %s, but must be 1h or less"
 msgstr "Esnatzeko tartea %s da, baina 1h edo gutxiago izan behar du."
 
@@ -4306,7 +4306,7 @@ msgstr "Ordu eremu"
 msgid "Timeout"
 msgstr "Denboraz kanpo"
 
-#: src/common/util.js:912 src/component/photo/view/list.vue:34
+#: src/common/util.js:953 src/component/photo/view/list.vue:34
 msgid "Title"
 msgstr "Izenburua"
 
@@ -4346,7 +4346,7 @@ msgstr "Miniaturak piztu/itzal"
 msgid "Toggle View"
 msgstr "Aldatu ikuspegia"
 
-#: src/component/share/dialog.vue:75
+#: src/component/share/dialog.vue:76
 msgid "Token"
 msgstr "Tokena"
 
@@ -4354,7 +4354,7 @@ msgstr "Tokena"
 msgid "Too many files selected"
 msgstr "Fitxategi gehiegi hautatu dira"
 
-#: src/common/api.js:128 src/locales.js:423
+#: src/common/api.js:128 src/locales.js:424
 msgid "Too many requests"
 msgstr "Eskaera gehiegi"
 
@@ -4412,7 +4412,7 @@ msgstr "ID bakarra"
 
 #: src/model/cluster-node.js:47 src/page/settings/account.vue:221
 #: src/page/settings/account.vue:241 src/page/settings/account.vue:261
-#: src/common/util.js:627 src/component/lightbox/sidebar.vue:120
+#: src/common/util.js:668 src/component/lightbox/sidebar.vue:120
 #: src/component/lightbox/sidebar.vue:1742
 #: src/component/lightbox/sidebar.vue:279
 #: src/component/lightbox/sidebar.vue:701
@@ -4541,11 +4541,11 @@ msgid "Upload complete. Indexing…"
 msgstr "Kargatzea osatuta. Indexatzen…"
 
 #: src/component/upload/dialog.vue:27 src/component/upload/dialog.vue:465
-#: src/component/upload/dialog.vue:484 src/locales.js:403
+#: src/component/upload/dialog.vue:484 src/locales.js:404
 msgid "Upload failed"
 msgstr "Ezin izan da kargatu"
 
-#: src/locales.js:464
+#: src/locales.js:465
 msgid "Upload has been processed"
 msgstr "Igoera prozesatu da"
 
@@ -4572,7 +4572,7 @@ msgstr "Kargatu bidea"
 msgid "Upload started"
 msgstr "Kargatzen hasi da"
 
-#: src/locales.js:404
+#: src/locales.js:405
 msgid "Upload to %s failed"
 msgstr "%s-ra igotzeak huts egin du"
 
@@ -4637,7 +4637,7 @@ msgstr "Erabiltzailea ez da aurkitu"
 #: src/component/user/add/dialog.vue:38 src/component/user/add/dialog.vue:39
 #: src/page/admin/sessions.vue:131 src/page/admin/users.vue:282
 #: src/page/admin/users.vue:269 src/component/service/add.vue:38
-#: src/component/service/edit.vue:161 src/component/share/dialog.vue:159
+#: src/component/service/edit.vue:161 src/component/share/dialog.vue:162
 #: src/locales.js:324
 msgid "Username"
 msgstr "Erabiltzaile izena"
@@ -4653,7 +4653,7 @@ msgstr "Erabiltzaileak"
 msgid "UUID"
 msgstr "UUID"
 
-#: src/common/util.js:866 src/component/photo/view/cards.vue:114
+#: src/common/util.js:907 src/component/photo/view/cards.vue:114
 #: src/component/photo/view/cards.vue:239
 #: src/component/photo/view/mosaic.vue:69 src/options/options.js:368
 msgid "Vector"
@@ -4674,7 +4674,7 @@ msgstr "Egiaztapen Kodea"
 msgid "Verified"
 msgstr "Egiaztatuta"
 
-#: src/locales.js:427
+#: src/locales.js:428
 msgid "Verified email required"
 msgstr "Egiaztatutako helbide elektronikoa beharrezkoa da"
 
@@ -4682,7 +4682,7 @@ msgstr "Egiaztatutako helbide elektronikoa beharrezkoa da"
 msgid "Version"
 msgstr "Bertsioa"
 
-#: src/common/util.js:860 src/component/photo/batch-edit.vue:128
+#: src/common/util.js:901 src/component/photo/batch-edit.vue:128
 #: src/component/photo/batch-edit.vue:69 src/component/photo/view/cards.vue:122
 #: src/component/photo/view/cards.vue:220 src/component/photo/view/list.vue:83
 #: src/component/photo/view/mosaic.vue:77 src/model/file.js:202
@@ -4714,7 +4714,7 @@ msgstr "Ikusi bilaketa-emaitzak zerrenda gisa."
 msgid "Viewer"
 msgstr "Ikusle"
 
-#: src/common/util.js:920
+#: src/common/util.js:961
 msgid "Vision"
 msgstr "Ikusmena"
 
@@ -4756,7 +4756,7 @@ msgstr "WebDAV bezeroak PhotoPrism-era konekta daitezke URL hau erabiliz:"
 msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism."
 msgstr "WebDAV bezeroak, Microsoft-en Windows Explorer edo Apple-ren Finder bezalakoak, zuzenean konekta daitezke PhotoPrism-era."
 
-#: src/component/service/upload.vue:16 src/component/share/dialog.vue:123
+#: src/component/service/upload.vue:16 src/component/share/dialog.vue:124
 msgid "WebDAV Upload"
 msgstr "WebDAV igoera"
 
@@ -4852,7 +4852,7 @@ msgstr "Elementu bakarra hauta dezakezu"
 msgid "You may rescan your library to find additional faces."
 msgstr "Zure liburutegia berriro eskaneatu dezakezu aurpegi gehigarriak aurkitzeko."
 
-#: src/locales.js:422
+#: src/locales.js:423
 msgid "Your account could not be connected"
 msgstr "Zure kontua ezin izan da konektatu"
 
@@ -4870,7 +4870,7 @@ msgstr "Zure etengabeko laguntzak aldizkako eguneraketak eskaintzen eta independ
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "Zure liburutegia etengabe aztertzen da momentu, bidai eta leku berezien albumak automatikoki sortzeko."
 
-#: src/locales.js:470
+#: src/locales.js:471
 msgid "Zip created in %d s"
 msgstr "Zip sortu da %d s-tan"
 
