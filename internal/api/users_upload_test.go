@@ -11,12 +11,18 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestUploadUserFiles(t *testing.T) {
@@ -215,4 +221,143 @@ func TestUploadPathDenied(t *testing.T) {
 	t.Run("Admin", func(t *testing.T) {
 		assert.False(t, uploadPathDenied(&entity.User{UserName: "admin", UserRole: acl.RoleAdmin.String()}))
 	})
+}
+
+func TestUploadAlbumsAllowed(t *testing.T) {
+	t.Run("Admin", func(t *testing.T) {
+		s := &entity.Session{}
+		s.SetUser(entity.UserFixtures.Pointer("alice"))
+		assert.True(t, uploadAlbumsAllowed(s))
+	})
+	t.Run("AlbumsScope", func(t *testing.T) {
+		s := &entity.Session{AuthScope: "files albums"}
+		s.SetUser(entity.UserFixtures.Pointer("alice"))
+		assert.True(t, uploadAlbumsAllowed(s))
+	})
+	t.Run("FilesScope", func(t *testing.T) {
+		s := &entity.Session{AuthScope: "files"}
+		s.SetUser(entity.UserFixtures.Pointer("alice"))
+		assert.False(t, uploadAlbumsAllowed(s))
+	})
+	t.Run("RestrictedClientForAdmin", func(t *testing.T) {
+		assert.False(t, uploadAlbumsAllowed(mixedPrincipalSession()))
+	})
+	t.Run("ClientWithoutUser", func(t *testing.T) {
+		s := &entity.Session{}
+		s.SetClient(&entity.Client{ClientRole: acl.RoleClient.String(), AuthProvider: authn.ProviderClient.String()})
+		require.True(t, s.GrantsAny(acl.ResourceAlbums, acl.Permissions{acl.ActionCreate, acl.ActionUpload}))
+		assert.False(t, uploadAlbumsAllowed(s))
+	})
+	t.Run("Nil", func(t *testing.T) {
+		assert.False(t, uploadAlbumsAllowed(nil))
+	})
+}
+
+func TestUploadAlbums(t *testing.T) {
+	// An album alice owns, one she holds a share for, and one she neither owns nor holds a share for.
+	owned := entity.NewUserAlbum("Upload Albums "+rnd.Base36(6), entity.AlbumManual, "", entity.UserFixtures.Pointer("alice").UserUID)
+	require.NoError(t, owned.Create())
+	t.Cleanup(func() { _ = entity.UnscopedDb().Delete(owned).Error })
+	other := entity.AlbumFixtures.Get("holiday-2030").AlbumUID
+	missing := rnd.GenerateUID(entity.AlbumUID)
+	deleted := entity.NewUserAlbum("Upload Albums "+rnd.Base36(6), entity.AlbumManual, "", entity.UserFixtures.Pointer("alice").UserUID)
+	require.NoError(t, deleted.Create())
+	t.Cleanup(func() { _ = entity.UnscopedDb().Unscoped().Delete(deleted).Error })
+	require.NoError(t, deleted.Delete())
+
+	// Look up the deleted album, which caches it, so the check must not depend on the cache.
+	require.NotNil(t, entity.FindAlbum(entity.Album{AlbumUID: deleted.AlbumUID}))
+
+	albums := []string{owned.AlbumUID, sharedAlbumUID, other, missing, deleted.AlbumUID, "New Album", owned.AlbumUID, "New Album"}
+
+	c, _ := gin.CreateTestContext(httptest.NewRecorder())
+	c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/users/uqxetse3cy5eo9z2/upload/abc", nil)
+
+	t.Run("FullAccess", func(t *testing.T) {
+		s := &entity.Session{}
+		s.SetUser(entity.UserFixtures.Pointer("alice"))
+		assert.Equal(t, []string{owned.AlbumUID, sharedAlbumUID, other, "New Album"}, uploadAlbums(c, s, albums))
+	})
+	t.Run("SharedAccessOnly", func(t *testing.T) {
+		s := mixedPrincipalSession()
+		require.True(t, s.HasSharedAccessOnly(acl.ResourceAlbums))
+		assert.Equal(t, []string{owned.AlbumUID, sharedAlbumUID, "New Album"}, uploadAlbums(c, s, albums))
+	})
+	t.Run("None", func(t *testing.T) {
+		s := mixedPrincipalSession()
+		assert.Empty(t, uploadAlbums(c, s, nil))
+	})
+}
+
+func TestProcessUserUploadAlbums(t *testing.T) {
+	app, router, conf := NewApiTest()
+	ProcessUserUpload(router)
+	options := *conf.Options()
+	mode := conf.AuthMode()
+	t.Cleanup(func() { *conf.Options() = options; conf.SetAuthMode(mode) })
+	conf.SetAuthMode(config.AuthModePasswd)
+	conf.Options().StoragePath = t.TempDir()
+	conf.Options().OriginalsPath = t.TempDir()
+	conf.Options().SidecarPath = t.TempDir()
+	conf.Options().ImportAllow = ""
+	conf.Options().BackupAlbums = true
+	user := entity.UserFixtures.Pointer("alice")
+	sess := clientCredentialSession(t, conf, "client", "*", user)
+
+	// Only the album that exists receives the uploaded picture.
+	album := entity.NewUserAlbum("Upload Target "+rnd.Base36(6), entity.AlbumManual, "", user.UserUID)
+	require.NoError(t, album.Create())
+	t.Cleanup(func() { _ = entity.UnscopedDb().Unscoped().Delete(album).Error })
+	missing := rnd.GenerateUID(entity.AlbumUID)
+
+	// A title resolves among the user's own albums, so another user's album with the same title is not used.
+	title := "Upload Title " + rnd.Base36(6)
+	foreign := entity.NewUserAlbum(title, entity.AlbumManual, "", rnd.GenerateUID(entity.UserUID))
+	require.NoError(t, foreign.Create())
+	t.Cleanup(func() {
+		_ = entity.UnscopedDb().Unscoped().Delete(&entity.PhotoAlbum{}, "album_uid IN (SELECT album_uid FROM albums WHERE album_title = ?)", title).Error
+		_ = entity.UnscopedDb().Unscoped().Delete(&entity.Album{}, "album_title = ?", title).Error
+	})
+
+	token := rnd.Base36(10)
+	dir, err := conf.UserUploadPath(user.UserUID, sess.RefID+token)
+	require.NoError(t, err)
+	filename := filepath.Join(dir, "upload.jpg")
+	require.NoError(t, os.WriteFile(filename, NewTestJpeg(t, 153, 103), fs.ModeFile))
+	hash := fs.Hash(filename)
+	t.Cleanup(func() {
+		file, err := entity.FirstFileByHash(hash)
+		if err != nil {
+			return
+		}
+		entity.UnscopedDb().Unscoped().Delete(&entity.PhotoAlbum{}, "photo_uid = ?", file.PhotoUID)
+		entity.UnscopedDb().Unscoped().Delete(&entity.File{}, "photo_id = ?", file.PhotoID)
+		entity.UnscopedDb().Unscoped().Delete(&entity.Details{}, "photo_id = ?", file.PhotoID)
+		entity.UnscopedDb().Unscoped().Delete(&entity.Photo{}, "id = ?", file.PhotoID)
+	})
+
+	body := fmt.Sprintf(`{"albums":[%q, %q, %q]}`, missing, album.AlbumUID, title)
+	result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, body, sess.AuthToken())
+	require.Equal(t, http.StatusOK, result.Code, result.Body.String())
+
+	file, err := entity.FirstFileByHash(hash)
+	require.NoError(t, err)
+
+	var count int
+	require.NoError(t, entity.UnscopedDb().Model(&entity.PhotoAlbum{}).Where("photo_uid = ? AND album_uid = ?", file.PhotoUID, album.AlbumUID).Count(&count).Error)
+	assert.Equal(t, 1, count)
+	require.NoError(t, entity.UnscopedDb().Model(&entity.PhotoAlbum{}).Where("album_uid = ?", missing).Count(&count).Error)
+	assert.Equal(t, 0, count)
+
+	// The picture is added to a new album of the user, and only that album's backup file is written.
+	var created entity.Album
+	require.NoError(t, entity.UnscopedDb().Where("album_title = ? AND created_by = ?", title, user.UserUID).First(&created).Error)
+	require.NoError(t, entity.UnscopedDb().Model(&entity.PhotoAlbum{}).Where("photo_uid = ? AND album_uid = ?", file.PhotoUID, created.AlbumUID).Count(&count).Error)
+	assert.Equal(t, 1, count)
+	createdYaml, _, err := created.YamlFileName(conf.BackupAlbumsPath())
+	require.NoError(t, err)
+	assert.FileExists(t, createdYaml)
+	foreignYaml, _, err := foreign.YamlFileName(conf.BackupAlbumsPath())
+	require.NoError(t, err)
+	assert.NoFileExists(t, foreignYaml)
 }

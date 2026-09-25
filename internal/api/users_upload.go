@@ -25,6 +25,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/media"
+	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -275,6 +276,45 @@ func uploadPathDenied(u *entity.User) bool {
 	return u.RequiresBasePath() && u.GetUploadPath() == ""
 }
 
+// uploadAlbumsAllowed reports whether the session may add the files it uploads or imports to albums, which
+// requires a user account, and permission and scope to create or upload to albums.
+func uploadAlbumsAllowed(s *entity.Session) bool {
+	perms := acl.Permissions{acl.ActionCreate, acl.ActionUpload}
+
+	return s != nil && s.GetUser().IsRegistered() && s.GrantsAny(acl.ResourceAlbums, perms) && s.ValidateScope(acl.ResourceAlbums, perms)
+}
+
+// uploadAlbums returns the albums that files the session uploads or imports may be added to, without
+// duplicates: titles, which resolve among the user's own albums or create a new one, and the UIDs of
+// albums the session can see.
+func uploadAlbums(c *gin.Context, s *entity.Session, albums []string) []string {
+	result := make([]string, 0, len(albums))
+	seen := make(map[string]struct{}, len(albums))
+	denied := 0
+
+	for _, album := range albums {
+		if _, ok := seen[album]; ok {
+			continue
+		}
+
+		seen[album] = struct{}{}
+
+		if !rnd.IsUID(album, entity.AlbumUID) {
+			result = append(result, album)
+		} else if found, err := query.AlbumByUID(album); err == nil && found.HasID() && !found.Deleted() && found.VisibleToSession(s) {
+			result = append(result, album)
+		} else {
+			denied++
+		}
+	}
+
+	if denied > 0 {
+		event.AuditWarn([]string{ClientIP(c), "session %s", "add files to %s", status.Denied}, s.RefID, english.Plural(denied, "album", "albums"))
+	}
+
+	return result
+}
+
 // UploadCheckFile checks if the file is supported and has the correct extension.
 func UploadCheckFile(destName string, rejectRaw bool, totalSizeLimit int64) (remainingSizeLimit int64, err error) {
 	baseName := filepath.Base(destName)
@@ -389,10 +429,9 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 		opt := photoprism.ImportOptionsUpload(uploadPath, destFolder)
 
 		// Add imported files to albums if allowed.
-		if len(frm.Albums) > 0 &&
-			acl.Rules.AllowAny(acl.ResourceAlbums, s.GetUserRole(), acl.Permissions{acl.ActionCreate, acl.ActionUpload}) {
-			log.Debugf("upload: adding files to album %s", clean.Log(txt.JoinAnd(frm.Albums)))
-			opt.Albums = frm.Albums
+		if len(frm.Albums) > 0 && uploadAlbumsAllowed(s) {
+			opt.Albums = uploadAlbums(c, s, frm.Albums)
+			log.Debugf("upload: adding files to album %s", clean.Log(txt.JoinAnd(opt.Albums)))
 		}
 
 		// Set user UID if known.
@@ -433,7 +472,10 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 
 		// Update album YAML backups and notify clients of the changes.
 		for _, album := range opt.Albums {
-			if a := entity.FindAlbum(entity.AlbumSearch(album, album, entity.AlbumManual)); a != nil {
+			find := entity.AlbumSearch(album, album, entity.AlbumManual)
+			find.CreatedBy = opt.UID
+
+			if a := entity.FindAlbum(find); a != nil {
 				SaveAlbumYaml(a)
 				PublishAlbumEvent(StatusUpdated, a.AlbumUID)
 			}

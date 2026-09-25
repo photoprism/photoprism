@@ -131,10 +131,9 @@ func StartImport(router *gin.RouterGroup) {
 		}
 
 		// Add imported files to albums if allowed.
-		if len(frm.Albums) > 0 &&
-			acl.Rules.AllowAny(acl.ResourceAlbums, s.GetUserRole(), acl.Permissions{acl.ActionCreate, acl.ActionUpload}) {
-			log.Debugf("import: adding files to album %s", clean.Log(txt.JoinAnd(frm.Albums)))
-			opt.Albums = frm.Albums
+		if len(frm.Albums) > 0 && uploadAlbumsAllowed(s) {
+			opt.Albums = uploadAlbums(c, s, frm.Albums)
+			log.Debugf("import: adding files to album %s", clean.Log(txt.JoinAnd(opt.Albums)))
 		}
 
 		// Set user UID if known.
@@ -175,7 +174,7 @@ func StartImport(router *gin.RouterGroup) {
 
 		event.PublishCompleted([]string{"import.completed", "index.completed"}, opt.UID, opt.Action, seconds)
 
-		for _, uid := range frm.Albums {
+		for _, uid := range opt.Albums {
 			PublishAlbumEvent(StatusUpdated, uid)
 		}
 
