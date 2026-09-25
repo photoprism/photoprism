@@ -2,6 +2,7 @@ package photoprism
 
 import (
 	"errors"
+	"strings"
 	"sync"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -54,8 +55,11 @@ func reconcileInsta360Photos(related RelatedFiles) error {
 		return nil
 	}
 
+	// Flags are combined, while the archive state and quality are kept, see insta360CaptureState.
 	canonical := photos[0]
-	favorite, private, panorama, allArchived := false, false, false, true
+	state := insta360CaptureState(photos)
+
+	favorite, private, panorama := false, false, false
 	title, titleSrc := canonical.PhotoTitle, canonical.TitleSrc
 	caption, captionSrc := canonical.PhotoCaption, canonical.CaptionSrc
 
@@ -63,7 +67,6 @@ func reconcileInsta360Photos(related RelatedFiles) error {
 		favorite = favorite || photo.PhotoFavorite
 		private = private || photo.PhotoPrivate
 		panorama = panorama || photo.PhotoPanorama
-		allArchived = allArchived && photo.DeletedAt != nil
 
 		if photo.PhotoTitle != "" && (title == "" || entity.SrcPriority[photo.TitleSrc] > entity.SrcPriority[titleSrc]) {
 			title, titleSrc = photo.PhotoTitle, photo.TitleSrc
@@ -82,10 +85,9 @@ func reconcileInsta360Photos(related RelatedFiles) error {
 		"photo_caption":  caption,
 		"caption_src":    captionSrc,
 	}
-	if allArchived {
-		values["deleted_at"] = canonical.DeletedAt
-	} else {
-		values["deleted_at"] = nil
+	if state.ID != canonical.ID {
+		values["deleted_at"] = state.DeletedAt
+		values["photo_quality"] = state.PhotoQuality
 	}
 
 	tx := entity.UnscopedDb().Begin()
@@ -159,6 +161,60 @@ func reconcileInsta360Photos(related RelatedFiles) error {
 		return err
 	}
 
+	mergedUIDs := make([]string, 0, len(photos)-1)
+	for _, duplicate := range photos[1:] {
+		mergedUIDs = append(mergedUIDs, duplicate.PhotoUID)
+	}
+
+	log.Infof("index: merged %s into %s for Insta360 capture %s", strings.Join(mergedUIDs, ", "), canonical.PhotoUID, related.MainLogName())
+
 	entity.File{PhotoID: canonical.ID, PhotoUID: canonical.PhotoUID}.RegenerateIndex()
 	return nil
+}
+
+// insta360CaptureState returns the photo whose archive state and quality a merged capture keeps.
+// That is the lowest-ID photo unless it was removed automatically: then a visible member that existed
+// when another was archived after the removal decides, else that archived one, else the lowest ID.
+func insta360CaptureState(photos entity.Photos) *entity.Photo {
+	if len(photos) == 0 || photos[0] == nil {
+		return nil
+	}
+
+	canonical := photos[0]
+	if !insta360PhotoRemoved(canonical) {
+		return canonical
+	}
+
+	var archived *entity.Photo
+	visible := make(entity.Photos, 0, len(photos)-1)
+
+	for _, photo := range photos[1:] {
+		switch {
+		case photo == nil, insta360PhotoRemoved(photo):
+			continue
+		case photo.DeletedAt == nil:
+			if photo.PhotoQuality >= 0 {
+				visible = append(visible, photo)
+			}
+		case archived == nil && !photo.DeletedAt.Before(*canonical.DeletedAt):
+			archived = photo
+		}
+	}
+
+	for _, photo := range visible {
+		if archived == nil || photo.CreatedAt.Before(*archived.DeletedAt) {
+			return photo
+		}
+	}
+
+	if archived != nil {
+		return archived
+	}
+
+	return canonical
+}
+
+// insta360PhotoRemoved reports whether a photo was removed automatically rather than archived.
+func insta360PhotoRemoved(photo *entity.Photo) bool {
+	return photo != nil && photo.DeletedAt != nil && photo.PhotoQuality < 0
 }

@@ -586,3 +586,114 @@ func TestIndex_Insta360ImportedName(t *testing.T) {
 	assert.Equal(t, insta360StackName, file.StackGroup())
 	assert.Equal(t, entity.IsStackable, insta360StackOwners(t, folder)["20260925_135937_07784009.insv"].PhotoStack)
 }
+
+// splitInsta360Capture moves a capture file and its previews to a new photo, and names both photos
+// after their own files, which is how split captures are stored.
+func splitInsta360Capture(t *testing.T, existing entity.Photo, folder, first, late string) entity.Photo {
+	t.Helper()
+
+	require.NoError(t, entity.UnscopedDb().Model(&entity.Photo{}).Where("id = ?", existing.ID).
+		UpdateColumn("photo_name", fs.StripKnownExt(first)).Error)
+
+	photo := entity.NewPhoto(true)
+	photo.PhotoPath = folder
+	photo.PhotoName = fs.StripKnownExt(late)
+	photo.PhotoType = entity.MediaVideo
+	photo.PhotoQuality = 3
+	require.NoError(t, photo.Create())
+
+	var files []entity.File
+	require.NoError(t, entity.UnscopedDb().
+		Where("photo_id = ? AND file_name LIKE ?", existing.ID, folder+"/"+late+"%").
+		Find(&files).Error)
+	require.NotEmpty(t, files)
+
+	for _, f := range files {
+		require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("id = ?", f.ID).UpdateColumns(entity.Values{
+			"photo_id":     photo.ID,
+			"photo_uid":    photo.PhotoUID,
+			"file_primary": f.FileType == fs.ImageJpeg.String(),
+		}).Error)
+	}
+
+	return photo
+}
+
+// TestIndex_Insta360ReconcileSplit verifies that a forced rescan merges a split capture into the
+// existing photo, whose archive state is kept unless it was removed automatically.
+func TestIndex_Insta360ReconcileSplit(t *testing.T) {
+	const (
+		active = iota
+		archived
+		removed
+	)
+
+	cases := []struct {
+		name     string
+		first    string
+		late     string
+		existing int
+		extra    int
+		archived bool
+	}{
+		{"Archived", insta360StackLeft, insta360StackRight, archived, active, true},
+		{"ArchivedReverse", insta360StackRight, insta360StackLeft, archived, active, true},
+		{"MemberArchived", insta360StackLeft, insta360StackRight, active, archived, false},
+		{"Removed", insta360StackLeft, insta360StackRight, removed, removed, false},
+		{"RemovedReverse", insta360StackRight, insta360StackLeft, removed, removed, false},
+		{"RemovedMemberArchived", insta360StackLeft, insta360StackRight, removed, archived, true},
+	}
+
+	setState := func(t *testing.T, p entity.Photo, state int) {
+		switch state {
+		case archived:
+			require.NoError(t, p.Archive())
+		case removed:
+			_, err := p.Delete(false)
+			require.NoError(t, err)
+		}
+	}
+
+	for _, tc := range cases {
+		for _, skipArchived := range []bool{false, true} {
+			stage := "Archived"
+			if skipArchived {
+				stage = "SkipArchived"
+			}
+
+			t.Run(tc.name+"/"+stage, func(t *testing.T) {
+				folder := strings.ToLower("insta360split" + tc.name + stage)
+				cfg := newInsta360StackConfig(t, folder, false)
+				dir := filepath.Join(cfg.OriginalsPath(), folder)
+
+				writeInsta360StackMedia(t, cfg, dir, tc.first)
+				indexInsta360StackFolder(cfg, folder, false, true)
+				writeInsta360StackMedia(t, cfg, dir, tc.late)
+				indexInsta360StackFolder(cfg, folder, false, true)
+
+				owners := insta360StackOwners(t, folder)
+				require.Len(t, insta360StackPhotoIDs(owners), 1)
+				existing := owners[tc.first]
+				extra := splitInsta360Capture(t, existing, folder, tc.first, tc.late)
+				require.Len(t, insta360StackPhotoIDs(insta360StackOwners(t, folder)), 2)
+
+				setState(t, existing, tc.existing)
+				setState(t, extra, tc.extra)
+
+				indexInsta360StackFolder(cfg, folder, true, skipArchived)
+
+				var photoIDs []uint
+				require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).
+					Where("file_name LIKE ?", folder+"/%").Pluck("DISTINCT photo_id", &photoIDs).Error)
+				assert.Equal(t, []uint{existing.ID}, photoIDs)
+
+				owners = insta360StackOwners(t, folder)
+				assert.Len(t, owners, 2)
+
+				result := owners[tc.first]
+				assert.Equal(t, tc.archived, result.DeletedAt != nil)
+				assert.GreaterOrEqual(t, result.PhotoQuality, 0)
+			})
+		}
+	}
+}
