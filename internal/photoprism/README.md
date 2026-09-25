@@ -40,7 +40,7 @@
 ### Usage & Test Guidelines
 
 - Indexing: use `IndexMain` / `IndexRelated` via `IndexMediaFile` helpers; prefer `IndexOptions` factories.
-- Import: run via `ImportWorker` with `ImportOptions`; stacked handling is driven by metadata and document IDs.
+- Import: run via `ImportWorker` with `ImportOptions`; files imported together are stacked as one related set, files from separate batches only through a shared document ID or matching capture metadata.
 - Converters: use `Convert.ToImage` / `Convert.ToVideo` / `Convert.ToJson`; options come from `config.Config`.
 - Vision: thumbnails for vision models are selected in `mediafile_vision.go`; ensure models exist in `internal/ai/vision`.
 - NSFW: `index_mediafile.go` flags new photos as `PhotoPrivate` when the labels-path NSFW shortcut (LLM with `DETECT_NSFW=true && EXPERIMENTAL=true`) hits or, as a fallback, when `m.DetectNSFW()` returns true and `PHOTOPRISM_DETECT_NSFW=true`. Both promotions short-circuit when `DetectNSFW()` is false. Full call-graph + flag matrix in [`internal/ai/nsfw/README.md`](../ai/nsfw/README.md).
@@ -59,7 +59,7 @@ instances in the same process. Coordination includes remuxing and any fallback t
 with different source versions, configuration objects, FFmpeg exclusion snapshots, encoders or
 force/mutex settings queue for that destination and recheck the output; unrelated destinations retain
 their existing scheduling. Each caller receives its own media object. Completed operations are
-released for later retries; overlapping compatible callers share failures. Unique staging is unchanged.
+released for later retries; overlapping compatible callers share failures.
 This is not a cross-process lock and does not alter animated-WebP or encoder mutex behavior.
 
 ### Operational Notes
@@ -67,7 +67,7 @@ This is not a cross-process lock and does not alter animated-WebP or encoder mut
 - Sub-second EXIF timestamps are preserved through metadata parsing and visible in `MediaFile.MetaData()`; database columns remain second-precision.
 - File I/O permissions must use `pkg/fs` modes; overwrite requires explicit `force` flags.
 - Exec calls to external tools are parameterized by config paths/binaries (`config.Config`).
-- Stacking rules honor document IDs, time/place proximity, and configuration (`StackUUID`, `StackMeta`).
+- Stacking: a new file joins the photo in its folder named after its stack name (`fs.StackPrefix`); `StackSequences`, `StackUUID`, and `StackMeta` add matching by sequence-stripped name, shared document ID, and exact capture time, place, and camera serial.
 - Forced rescans (`IndexOptions.Rescan=true`) run folder album reconciliation at the end of indexing via `entity.ReconcileOriginalsFolderAlbums(...)`; normal incremental runs skip this pass.
 - Updated or newly added XMP sidecars next to originals are re-read on normal incremental passes. The filesystem walk compares each sidecar's modification time with `files.mod_time`, resolves its main media file from the Files cache, and queues deduplicated main-file jobs only after a successful walk; on forced rescans this detection is skipped because every main file is reindexed and re-reads its sidecar anyway. External XMP edits merge with `SrcXmp` priority, while `SrcManual` values are preserved. A sidecar that fails to parse records the error and advances its `mod_time`, so it is retried only after another edit instead of on every pass. Incremental sidecar deletion is not supported, and automatic removal of stale XMP-derived metadata is not guaranteed by a forced rescan: fields such as `UUID`, `CameraSerial`, and primary `InstanceID` do not retain enough source information for complete reconciliation.
 - Folder create/index conflict lookup uses unscoped folder reads in `internal/entity/folder.go` so soft-deleted rows are detectable for troubleshooting instead of causing repeated create/find mismatches.

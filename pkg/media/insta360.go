@@ -36,7 +36,7 @@ const (
 )
 
 // Insta360VideoName contains the normalized identity of an Insta360 capture file. Photo is set for
-// separate-lens photos, whose naming is assumed since no samples were available.
+// separate-lens photos, whose naming is assumed since no sample contains such a pair.
 type Insta360VideoName struct {
 	Directory string
 	Date      string
