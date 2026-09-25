@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2026-09-01 06:26+0000\n"
-"PO-Revision-Date: 2026-07-23 13:17+0000\n"
+"PO-Revision-Date: 2026-09-25 23:16+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-"
 "translate@weblate.org>\n"
 "Language-Team: Polish <https://translate.photoprism.app/projects/photoprism/"
@@ -14,7 +14,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 2026.7.1\n"
+"X-Generator: Weblate 2026.9.1\n"
 
 #: messages.go:114
 msgid "Something went wrong, try again"
@@ -239,7 +239,7 @@ msgstr "Wymagany zweryfikowany adres e-mail"
 
 #: messages.go:168
 msgid "A migration is in progress"
-msgstr ""
+msgstr "Migracja jest w toku"
 
 #: messages.go:171
 msgid "Changes successfully saved"
