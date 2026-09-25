@@ -143,6 +143,11 @@ func searchPhotos(frm form.SearchPhotos, sess *entity.Session, resultCols string
 			return PhotoResults{}, 0, ErrBadFilter
 		} else {
 			frm.Filter = album.AlbumFilter
+
+			// Folder albums show the pictures in their folder, compared by exact path.
+			if p := folderAlbumPath(album); p != "" {
+				frm.Path = p
+			}
 			s = s.Where("files.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = 1 AND pa.album_uid = ?)", album.AlbumUID)
 		}
 
