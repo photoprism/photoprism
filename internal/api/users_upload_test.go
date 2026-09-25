@@ -2,6 +2,7 @@ package api
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -18,6 +19,7 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -360,4 +362,85 @@ func TestProcessUserUploadAlbums(t *testing.T) {
 	foreignYaml, _, err := foreign.YamlFileName(conf.BackupAlbumsPath())
 	require.NoError(t, err)
 	assert.NoFileExists(t, foreignYaml)
+}
+
+func TestTooManyUploadAlbums(t *testing.T) {
+	albums := func(n int, prefix string) []string {
+		result := make([]string, n)
+		for i := range result {
+			result[i] = fmt.Sprintf("%s %d", prefix, i)
+		}
+		return result
+	}
+
+	t.Run("None", func(t *testing.T) {
+		assert.False(t, tooManyUploadAlbums(nil))
+	})
+	t.Run("Limit", func(t *testing.T) {
+		assert.False(t, tooManyUploadAlbums(albums(MaxUploadAlbums, "Album")))
+	})
+	t.Run("AboveLimit", func(t *testing.T) {
+		assert.True(t, tooManyUploadAlbums(albums(MaxUploadAlbums+1, "Album")))
+	})
+	t.Run("Duplicates", func(t *testing.T) {
+		list := append(albums(MaxUploadAlbums, "Album"), albums(MaxUploadAlbums, "Album")...)
+		assert.False(t, tooManyUploadAlbums(list))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		list := append(albums(MaxUploadAlbums, "Album"), "", "", "")
+		assert.False(t, tooManyUploadAlbums(list))
+	})
+}
+
+func TestProcessUserUploadTooManyAlbums(t *testing.T) {
+	app, router, conf := NewApiTest()
+	ProcessUserUpload(router)
+	options := *conf.Options()
+	mode := conf.AuthMode()
+	t.Cleanup(func() { *conf.Options() = options; conf.SetAuthMode(mode) })
+	conf.SetAuthMode(config.AuthModePasswd)
+	conf.Options().StoragePath = t.TempDir()
+	conf.Options().OriginalsPath = t.TempDir()
+	conf.Options().SidecarPath = t.TempDir()
+	conf.Options().ImportAllow = ""
+	user := entity.UserFixtures.Pointer("alice")
+	sess := clientCredentialSession(t, conf, "client", "*", user)
+	prefix := "Too Many " + rnd.Base36(6)
+	titles := make([]string, MaxUploadAlbums+1)
+
+	for i := range titles {
+		titles[i] = fmt.Sprintf("%s %d", prefix, i)
+	}
+
+	// Stage a picture, so that the request would import it and create the albums if it were accepted.
+	token := rnd.Base36(10)
+	dir, err := conf.UserUploadPath(user.UserUID, sess.RefID+token)
+	require.NoError(t, err)
+	filename := filepath.Join(dir, "upload.jpg")
+	require.NoError(t, os.WriteFile(filename, NewTestJpeg(t, 157, 107), fs.ModeFile))
+	hash := fs.Hash(filename)
+	t.Cleanup(func() {
+		_ = entity.UnscopedDb().Unscoped().Delete(&entity.Album{}, "album_title LIKE ?", prefix+"%").Error
+		file, err := entity.FirstFileByHash(hash)
+		if err != nil {
+			return
+		}
+		entity.UnscopedDb().Unscoped().Delete(&entity.PhotoAlbum{}, "photo_uid = ?", file.PhotoUID)
+		entity.UnscopedDb().Unscoped().Delete(&entity.File{}, "photo_id = ?", file.PhotoID)
+		entity.UnscopedDb().Unscoped().Delete(&entity.Details{}, "photo_id = ?", file.PhotoID)
+		entity.UnscopedDb().Unscoped().Delete(&entity.Photo{}, "id = ?", file.PhotoID)
+	})
+
+	body, err := json.Marshal(form.UploadOptions{Albums: titles})
+	require.NoError(t, err)
+
+	result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, string(body), sess.AuthToken())
+	assert.Equal(t, http.StatusBadRequest, result.Code)
+
+	_, err = entity.FirstFileByHash(hash)
+	assert.Error(t, err)
+
+	var count int
+	require.NoError(t, entity.UnscopedDb().Model(&entity.Album{}).Where("album_title LIKE ?", prefix+"%").Count(&count).Error)
+	assert.Equal(t, 0, count)
 }

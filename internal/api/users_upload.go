@@ -276,6 +276,32 @@ func uploadPathDenied(u *entity.User) bool {
 	return u.RequiresBasePath() && u.GetUploadPath() == ""
 }
 
+// MaxUploadAlbums is the number of distinct albums an upload or import may add its files to.
+const MaxUploadAlbums = 100
+
+// tooManyUploadAlbums reports whether the list names more distinct albums than MaxUploadAlbums.
+func tooManyUploadAlbums(albums []string) bool {
+	if len(albums) <= MaxUploadAlbums {
+		return false
+	}
+
+	seen := make(map[string]struct{}, MaxUploadAlbums+1)
+
+	for _, album := range albums {
+		if album == "" {
+			continue
+		}
+
+		seen[album] = struct{}{}
+
+		if len(seen) > MaxUploadAlbums {
+			return true
+		}
+	}
+
+	return false
+}
+
 // uploadAlbumsAllowed reports whether the session may add the files it uploads or imports to albums, which
 // requires a user account, and permission and scope to create or upload to albums.
 func uploadAlbumsAllowed(s *entity.Session) bool {
@@ -398,6 +424,13 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 			}
 
 			AbortBadRequest(c, err)
+			return
+		}
+
+		// Refuse to add the files to more albums than an upload may name.
+		if tooManyUploadAlbums(frm.Albums) {
+			event.AuditWarn([]string{ClientIP(c), "session %s", "add files to more than %d albums", status.Denied}, s.RefID, MaxUploadAlbums)
+			Abort(c, http.StatusBadRequest, i18n.ErrBadRequest)
 			return
 		}
 
