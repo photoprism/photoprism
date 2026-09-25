@@ -1279,3 +1279,57 @@ func TestIndex_Insta360SingleLensPhoto(t *testing.T) {
 		assert.Equal(t, "equirectangular", insta360StackPreviews(t, folder)[name+".jpg"].FileProjection)
 	})
 }
+
+// TestImport_Insta360Capture verifies that a capture whose files are renamed on import gets the combined
+// preview, and that a forced rescan replaces a single-lens preview of an earlier import.
+func TestImport_Insta360Capture(t *testing.T) {
+	folder := "insta360import"
+	cfg := newInsta360StackConfig(t, folder, false)
+	importDir := filepath.Join(cfg.ImportPath(), folder)
+
+	for _, name := range []string{insta360StackLeft, insta360StackRight, insta360StackProxy} {
+		writeInsta360StackMedia(t, cfg, importDir, name)
+	}
+
+	convert := NewConvert(cfg)
+	NewImport(cfg, NewIndex(cfg, convert, NewFiles(), NewPhotos()), convert).Start(ImportOptionsMove(importDir, folder))
+
+	stored := func(originalName string) (result entity.File) {
+		t.Helper()
+		require.NoError(t, entity.UnscopedDb().First(&result, "file_root = ? AND original_name = ?", entity.RootOriginals, originalName).Error)
+		return result
+	}
+
+	left, right, proxy := stored(insta360StackLeft), stored(insta360StackRight), stored(insta360StackProxy)
+	require.NotEqual(t, insta360StackLeft, filepath.Base(left.FileName))
+	assert.Equal(t, left.PhotoID, right.PhotoID)
+	assert.Equal(t, left.PhotoID, proxy.PhotoID)
+
+	// The right lens and proxy get no preview of their own.
+	for _, member := range []entity.File{right, proxy} {
+		assert.NoFileExists(t, filepath.Join(cfg.SidecarPath(), member.FileName+".jpg"))
+	}
+
+	preview := func() (result entity.File) {
+		t.Helper()
+		require.NoError(t, entity.UnscopedDb().First(&result, "file_root = ? AND file_name = ?", entity.RootSidecar, left.FileName+".jpg").Error)
+		return result
+	}
+
+	assert.True(t, preview().FilePrimary)
+	assert.Equal(t, "equirectangular", preview().FileProjection)
+	assert.Equal(t, 640, preview().FileWidth)
+	assertInsta360SinglePrimary(t, filepath.Dir(left.FileName))
+
+	// An earlier import left a preview made from the left lens only.
+	previewName := filepath.Join(cfg.SidecarPath(), left.FileName+".jpg")
+	writeInsta360Photo(t, cfg, previewName, "320x320")
+	require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("id = ?", preview().ID).
+		UpdateColumn("file_projection", "").Error)
+
+	indexInsta360StackFolder(cfg, filepath.Dir(left.FileName), true, false)
+
+	assert.True(t, preview().FilePrimary)
+	assert.Equal(t, "equirectangular", preview().FileProjection)
+	assert.Equal(t, 640, preview().FileWidth)
+}

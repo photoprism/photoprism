@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/media/video"
@@ -474,4 +475,130 @@ func TestInsta360ExpectsDewarp(t *testing.T) {
 	require.NoError(t, err)
 	assert.False(t, insta360ExpectsDewarp(ordinary))
 	assert.False(t, insta360ExpectsDewarp(nil))
+}
+
+// TestInsta360OriginalName verifies that only canonical capture names of .insv files are parsed.
+func TestInsta360OriginalName(t *testing.T) {
+	for original, ok := range map[string]bool{
+		"VID_20220625_140410_10_008.insv":        true,
+		"upload/VID_20220625_140410_00_008.insv": true,
+		"LRV_20220625_140410_11_008.insv":        true,
+		"vid_20220625_140410_10_008.insv":        false,
+		"VID_20220625_140410_10_008.mp4":         false,
+		"IMG_20220625_140410_10_008.insp":        false,
+		"":                                       false,
+	} {
+		_, parsed := insta360OriginalName(entity.File{FileName: "2022/06/20220625_140410_ABCD1234.insv", OriginalName: original})
+		assert.Equal(t, ok, parsed, original)
+	}
+
+	_, parsed := insta360OriginalName(entity.File{FileName: "2022/06/20220625_140410_ABCD1234.mp4", OriginalName: "VID_20220625_140410_10_008.insv"})
+	assert.False(t, parsed)
+}
+
+// TestFindImportedInsta360Capture verifies that renamed capture files are found by their original names
+// among the files of the same photo in the same folder.
+func TestFindImportedInsta360Capture(t *testing.T) {
+	folder := "insta360importedcapture"
+	cfg := config.NewMinimalTestConfigWithDb(folder, filepath.Join(t.TempDir(), "storage"))
+	oldCfg := Config()
+	SetConfig(cfg)
+	t.Cleanup(func() {
+		SetConfig(oldCfg)
+		oldCfg.RegisterDb()
+	})
+
+	photo := entity.NewPhoto(true)
+	require.NoError(t, photo.Create())
+	other := entity.NewPhoto(true)
+	require.NoError(t, other.Create())
+
+	add := func(photo entity.Photo, fileName, originalName string) *MediaFile {
+		t.Helper()
+		m, err := NewMediaFile(writeInsta360CaptureFile(t, filepath.Join(cfg.OriginalsPath(), filepath.Dir(fileName)), filepath.Base(fileName), "testdata/flash.jpg"))
+		require.NoError(t, err)
+		require.NoError(t, (&entity.File{PhotoID: photo.ID, PhotoUID: photo.PhotoUID, FileRoot: entity.RootOriginals,
+			FileName: fileName, FileHash: m.Hash(), FileType: fs.VideoInsv.String(), OriginalName: originalName}).Create())
+		return m
+	}
+
+	left := add(photo, folder+"/20220625_140410_AAAA0001.insv", "VID_20220625_140410_00_008.insv")
+	add(photo, folder+"/20220625_140410_AAAA0001.00002.insv", "VID_20220625_140410_10_009.insv")
+	add(photo, folder+"/20220625_140410_BBBB0009.insv", "VID_20220625_140410_10_008.insv")
+	right := add(photo, folder+"/20220625_140410_AAAA0001.00001.insv", "VID_20220625_140410_10_008.insv")
+	add(photo, folder+"/other/20220625_140410_AAAA0001.00003.insv", "LRV_20220625_140410_11_008.insv")
+	add(other, folder+"/20220625_140410_AAAA0001.00004.insv", "LRV_20220625_140410_11_008.insv")
+	add(photo, folder+"/20220625_140410_AAAA0001.00005.insv", "upload/LRV_20220625_140410_11_008.insv")
+
+	for _, f := range []*MediaFile{left, right} {
+		capture := FindInsta360Capture(f)
+		require.NotNil(t, capture)
+		require.NotNil(t, capture.Left)
+		require.NotNil(t, capture.Right)
+		assert.Equal(t, left.FileName(), capture.Left.FileName())
+		assert.Equal(t, right.FileName(), capture.Right.FileName())
+		assert.Nil(t, capture.Proxy)
+	}
+
+	unindexed, err := NewMediaFile(writeInsta360CaptureFile(t, filepath.Join(cfg.OriginalsPath(), folder), "unindexed.insv", "testdata/flash.jpg"))
+	require.NoError(t, err)
+	assert.Nil(t, FindInsta360Capture(unindexed))
+
+	outside, err := NewMediaFile(writeInsta360CaptureFile(t, t.TempDir(), "20220625_140410_AAAA0001.insv", "testdata/flash.jpg"))
+	require.NoError(t, err)
+	assert.Nil(t, FindInsta360Capture(outside))
+}
+
+// TestParseInsta360OriginalName verifies that only canonical capture names are accepted.
+func TestParseInsta360OriginalName(t *testing.T) {
+	for original, ok := range map[string]bool{
+		"VID_20220625_140410_00_008.insv":        true,
+		"upload/LRV_20220625_140410_11_008.insv": true,
+		"VID_20220625_140410_00_008.INSV":        false,
+		"VID_20220625_140410_00_008.jpg":         false,
+		"":                                       false,
+	} {
+		_, parsed := parseInsta360OriginalName(original)
+		assert.Equal(t, ok, parsed, original)
+	}
+}
+
+// TestInsta360ImportedMember verifies that only the right lens and proxy of the main file's capture match.
+func TestInsta360ImportedMember(t *testing.T) {
+	main := "upload/VID_20220625_140410_00_008.insv"
+
+	assert.True(t, insta360ImportedMember(main, "upload/VID_20220625_140410_10_008.insv"))
+	assert.True(t, insta360ImportedMember(main, "upload/LRV_20220625_140410_11_008.insv"))
+	assert.False(t, insta360ImportedMember(main, main))
+	assert.False(t, insta360ImportedMember(main, "upload/VID_20220625_140410_10_009.insv"))
+	assert.False(t, insta360ImportedMember(main, "other/VID_20220625_140410_10_008.insv"))
+	assert.False(t, insta360ImportedMember(main, "upload/VID_20220625_140411_10_008.insv"))
+	assert.False(t, insta360ImportedMember(main, "upload/IMG_1234.jpg"))
+	assert.False(t, insta360ImportedMember(main, ""))
+	assert.False(t, insta360ImportedMember("upload/VID_20220625_140410_10_008.insv", "upload/LRV_20220625_140410_11_008.insv"))
+	assert.False(t, insta360ImportedMember("IMG_1234.jpg", "upload/VID_20220625_140410_10_008.insv"))
+}
+
+// TestInsta360ImportOrder verifies that only the left lens of a complete capture is moved to the front.
+func TestInsta360ImportOrder(t *testing.T) {
+	dir := t.TempDir()
+	left, err := NewMediaFile(writeInsta360CaptureFile(t, dir, "VID_20220625_140410_00_008.insv", "testdata/flash.jpg"))
+	require.NoError(t, err)
+	right, err := NewMediaFile(writeInsta360CaptureFile(t, dir, "VID_20220625_140410_10_008.insv", "testdata/flash.jpg"))
+	require.NoError(t, err)
+	proxy, err := NewMediaFile(writeInsta360CaptureFile(t, dir, "LRV_20220625_140410_11_008.insv", "testdata/flash.jpg"))
+	require.NoError(t, err)
+
+	ordered := insta360ImportOrder(RelatedFiles{Main: left, Files: MediaFiles{proxy, left, right}})
+	require.Len(t, ordered, 3)
+	assert.Equal(t, left.FileName(), ordered[0].FileName())
+	assert.Equal(t, proxy.FileName(), ordered[1].FileName())
+	assert.Equal(t, right.FileName(), ordered[2].FileName())
+
+	// Other groups keep their order.
+	ordinary, err := NewMediaFile("testdata/flash.jpg")
+	require.NoError(t, err)
+	files := MediaFiles{proxy, ordinary}
+	assert.Equal(t, files, insta360ImportOrder(RelatedFiles{Main: ordinary, Files: files}))
+	assert.Equal(t, MediaFiles{proxy, right}, insta360ImportOrder(RelatedFiles{Main: right, Files: MediaFiles{proxy, right}}))
 }

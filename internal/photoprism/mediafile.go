@@ -67,6 +67,8 @@ type MediaFile struct {
 	videoOnce        sync.Once
 	insta360Model    string
 	insta360Once     sync.Once
+	importedCapture  *Insta360Capture
+	importedOnce     sync.Once
 	visualProjection projection.Type
 	fileMutex        sync.Mutex
 	location         *entity.Cell

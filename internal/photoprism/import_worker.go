@@ -63,7 +63,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 			log.Warnf("import: %s", clean.Error(jsonErr))
 		}
 
-		for _, f := range related.Files {
+		for _, f := range insta360ImportOrder(related) {
 			relFileName := f.RelName(src)
 
 			if destFileName, err := imp.DestinationFilename(related.Main, f, opt.DestFolder); err == nil {
@@ -196,6 +196,9 @@ func ImportWorker(jobs <-chan ImportJob) {
 				for _, rf := range related.Files {
 					if rf == nil || !rf.IsMedia() || rf.HasPreviewImage() {
 						continue
+					} else if insta360ImportedMember(originalName, relatedOriginalNames[rf.FileName()]) {
+						// The combined preview of an imported capture is made from its left lens.
+						continue
 					}
 
 					if img, imgErr := imp.convert.ToImage(rf, false); imgErr != nil {
@@ -290,6 +293,34 @@ func ImportWorker(jobs <-chan ImportJob) {
 				// Log result.
 				log.Infof("import: %s related %s file %s", res, file.FileType(), clean.Log(file.RootRelName()))
 			}
+
+			// Renamed capture files are only recognized by their original names once they are indexed, so the
+			// preview of the left lens is then made again from both lenses.
+			if o.Convert && photoUID != "" && related.Main != nil {
+				imp.updateInsta360Preview(related.Main, o, photoUID, opt.UID)
+			}
 		}
 	}
+}
+
+// updateInsta360Preview replaces the preview of an imported capture's left lens with one made from both lenses.
+func (imp *Import) updateInsta360Preview(main *MediaFile, o IndexOptions, photoUID, userUID string) {
+	if capture := FindInsta360Capture(main); !capture.ValidPair() || capture.Left.FileName() != main.FileName() {
+		return
+	} else if !imp.conf.FFmpegEnabled() || !imp.convert.FFmpegAllowed(main) {
+		return
+	}
+
+	img, err := imp.convert.ToImage(main, true)
+
+	if err != nil || img == nil {
+		log.Warnf("import: could not create equirectangular preview for %s (%s)", clean.Log(main.RootRelName()), clean.Error(err))
+		return
+	} else if thumbsErr := img.GenerateThumbnails(imp.thumbPath(), false); thumbsErr != nil {
+		log.Warnf("import: failed to generate thumbnails for %s (%s)", clean.Log(img.RootRelName()), thumbsErr.Error())
+	}
+
+	img.SetRelatedMain(main)
+	res := imp.index.UserMediaFile(img, o, "", photoUID, userUID)
+	log.Infof("import: %s related %s file %s", res, img.FileType(), clean.Log(img.RootRelName()))
 }

@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
 )
@@ -35,7 +36,7 @@ func FindInsta360Capture(f *MediaFile) *Insta360Capture {
 
 	// The capture files are looked up under their canonical names, which must include f itself.
 	if !ok || name.FileName(name.Role) != f.FileName() {
-		return nil
+		return findImportedInsta360Capture(f)
 	}
 
 	result := &Insta360Capture{Name: name}
@@ -65,6 +66,125 @@ func FindInsta360Capture(f *MediaFile) *Insta360Capture {
 	}
 
 	return result
+}
+
+// findImportedInsta360Capture resolves a capture whose files were renamed when imported together, using
+// the original names stored for the files of the same photo that share the imported set's stored name.
+func findImportedInsta360Capture(f *MediaFile) *Insta360Capture {
+	if f.Root() != entity.RootOriginals || entity.Db() == nil {
+		return nil
+	}
+
+	f.importedOnce.Do(func() {
+		f.importedCapture = queryImportedInsta360Capture(f)
+	})
+
+	return f.importedCapture
+}
+
+// queryImportedInsta360Capture looks up the files of an imported capture in the index.
+func queryImportedInsta360Capture(f *MediaFile) *Insta360Capture {
+	columns := "id, photo_id, file_name, original_name"
+
+	var own entity.File
+	if err := entity.UnscopedDb().Select(columns).Where("file_root = ? AND file_name = ? AND deleted_at IS NULL", entity.RootOriginals, f.RootRelName()).
+		First(&own).Error; err != nil || own.PhotoID == 0 {
+		return nil
+	}
+
+	name, ok := insta360OriginalName(own)
+	if !ok {
+		return nil
+	}
+
+	var files []entity.File
+	if err := entity.UnscopedDb().Select(columns).Where("photo_id = ? AND file_root = ? AND file_missing = 0 AND deleted_at IS NULL", own.PhotoID, entity.RootOriginals).
+		Order("id").Find(&files).Error; err != nil {
+		return nil
+	}
+
+	// Files imported together are named after the same main file, with a numeric suffix for the others.
+	setName := fs.BasePrefix(own.FileName, true)
+	result := &Insta360Capture{Name: name}
+
+	for _, file := range files {
+		member, memberOk := insta360OriginalName(file)
+		if !memberOk || member.Directory != name.Directory || member.Date != name.Date || member.Time != name.Time ||
+			member.Sequence != name.Sequence || filepath.Dir(file.FileName) != filepath.Dir(own.FileName) ||
+			fs.BasePrefix(file.FileName, true) != setName {
+			continue
+		}
+
+		fileName := filepath.Join(Config().OriginalsPath(), file.FileName)
+		if !fs.FileExistsNotEmpty(fileName) {
+			continue
+		}
+
+		captureFile, err := NewMediaFile(fileName)
+		if err != nil {
+			continue
+		}
+
+		switch {
+		case member.Role == media.Insta360VideoLeft && result.Left == nil:
+			result.Left = captureFile
+		case member.Role == media.Insta360VideoRight && result.Right == nil:
+			result.Right = captureFile
+		case member.Role == media.Insta360VideoProxy && result.Proxy == nil:
+			result.Proxy = captureFile
+		}
+	}
+
+	return result
+}
+
+// insta360ImportOrder returns the related files in the order they are imported, with the left lens of a
+// complete capture first, so it keeps the unsuffixed name that the other files of its set are named after.
+func insta360ImportOrder(related RelatedFiles) MediaFiles {
+	if capture := FindInsta360Capture(related.Main); !capture.ValidPair() || capture.Left.FileName() != related.Main.FileName() {
+		return related.Files
+	}
+
+	result := make(MediaFiles, 0, len(related.Files))
+	result = append(result, related.Main)
+
+	for _, f := range related.Files {
+		if f != nil && f.FileName() != related.Main.FileName() {
+			result = append(result, f)
+		}
+	}
+
+	return result
+}
+
+// insta360ImportedMember reports whether a file with the specified original name is the right lens or proxy
+// of the capture whose left lens has the original main name, so it needs no preview of its own.
+func insta360ImportedMember(mainOriginal, fileOriginal string) bool {
+	main, mainOk := parseInsta360OriginalName(mainOriginal)
+	member, memberOk := parseInsta360OriginalName(fileOriginal)
+
+	return mainOk && memberOk && main.Role == media.Insta360VideoLeft && member.Role != media.Insta360VideoLeft &&
+		member.Directory == main.Directory && member.Date == main.Date && member.Time == main.Time && member.Sequence == main.Sequence
+}
+
+// insta360OriginalName parses the original name of an .insv file that was renamed on import.
+func insta360OriginalName(file entity.File) (media.Insta360VideoName, bool) {
+	if fs.FileType(file.FileName) != fs.VideoInsv {
+		return media.Insta360VideoName{}, false
+	}
+
+	return parseInsta360OriginalName(file.OriginalName)
+}
+
+// parseInsta360OriginalName parses an original file name that must be a canonical capture name.
+func parseInsta360OriginalName(originalName string) (media.Insta360VideoName, bool) {
+	if originalName == "" {
+		return media.Insta360VideoName{}, false
+	}
+
+	name, ok := media.ParseInsta360VideoName(originalName)
+
+	return name, ok && name.FileName(name.Role) == filepath.Clean(originalName)
 }
 
 // insta360SkipConvert reports whether f is the right lens or proxy of a video capture, whose
