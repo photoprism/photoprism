@@ -48,6 +48,13 @@ func StartImport(router *gin.RouterGroup) {
 			return
 		}
 
+		// Users whose access is limited to their base path need an upload path.
+		if uploadPathDenied(s.GetUser()) {
+			event.AuditErr([]string{ClientIP(c), "session %s", "import files", "no upload path", status.Denied}, s.RefID)
+			AbortForbidden(c)
+			return
+		}
+
 		conf := get.Config()
 
 		// Abort in read-only mode and/or when the import feature is disabled.

@@ -3067,3 +3067,44 @@ func TestUser_DenyClientAccess(t *testing.T) {
 		assert.True(t, Visitor.DenyClientAccess())
 	})
 }
+
+// registerContributorRole registers the contributor role, which only some editions provide, until
+// the test ends.
+func registerContributorRole(t *testing.T) {
+	t.Helper()
+
+	key := acl.RoleContributor.String()
+
+	if _, had := acl.UserRoles[key]; !had {
+		acl.UserRoles[key] = acl.RoleContributor
+		t.Cleanup(func() { delete(acl.UserRoles, key) })
+	}
+}
+
+func TestUser_RequiresBasePath(t *testing.T) {
+	registerContributorRole(t)
+
+	t.Run("Contributor", func(t *testing.T) {
+		assert.True(t, (&User{UserName: "jane", UserRole: acl.RoleContributor.String()}).RequiresBasePath())
+	})
+	t.Run("OtherRoles", func(t *testing.T) {
+		for _, role := range []acl.Role{acl.RoleAdmin, acl.RoleUser, acl.RoleGuest, acl.RoleNone} {
+			assert.False(t, (&User{UserName: "jane", UserRole: role.String()}).RequiresBasePath(), role.String())
+		}
+	})
+	t.Run("UploaderAlias", func(t *testing.T) {
+		if _, had := acl.UserRoles["uploader"]; !had {
+			acl.UserRoles["uploader"] = acl.RoleContributor
+			t.Cleanup(func() { delete(acl.UserRoles, "uploader") })
+		}
+
+		assert.True(t, (&User{UserName: "jane", UserRole: "uploader"}).RequiresBasePath())
+	})
+	t.Run("SuperAdmin", func(t *testing.T) {
+		assert.False(t, (&User{UserName: "jane", UserRole: acl.RoleContributor.String(), SuperAdmin: true}).RequiresBasePath())
+	})
+	t.Run("DefaultBasePath", func(t *testing.T) {
+		u := &User{UserUID: "urqdrfb72479n047", UserName: "jane", UserRole: acl.RoleContributor.String()}
+		assert.Equal(t, "users/jane", u.GetBasePath())
+	})
+}

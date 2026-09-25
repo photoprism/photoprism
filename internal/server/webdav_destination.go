@@ -38,7 +38,9 @@ func WebDAVDestinationStatus(r *http.Request, prefix string, user *entity.User) 
 
 	// Match webdav.Dir's rooted slash normalization after decoding the destination URL once.
 	name := path.Clean("/" + rel)
-	if base := user.GetBasePath(); base != "" && !hasCollectionPath(name, "/"+base) {
+	if base := user.GetBasePath(); base == "" && user.RequiresBasePath() {
+		return http.StatusForbidden
+	} else if base != "" && !hasCollectionPath(name, "/"+base) {
 		return http.StatusForbidden
 	}
 

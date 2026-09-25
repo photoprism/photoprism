@@ -13,6 +13,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/http/header"
@@ -191,5 +192,27 @@ func TestUploadUserFilesStorageFolderError(t *testing.T) {
 		assert.Contains(t, line, "***")
 		assert.NotContains(t, line, adminUid)
 		assert.NotContains(t, line, longToken)
+	})
+}
+
+func TestUploadPathDenied(t *testing.T) {
+	key := acl.RoleContributor.String()
+
+	if _, had := acl.UserRoles[key]; !had {
+		acl.UserRoles[key] = acl.RoleContributor
+		t.Cleanup(func() { delete(acl.UserRoles, key) })
+	}
+
+	t.Run("ContributorWithoutPaths", func(t *testing.T) {
+		assert.True(t, uploadPathDenied(&entity.User{UserName: ".", UserRole: key}))
+	})
+	t.Run("ContributorWithBasePath", func(t *testing.T) {
+		assert.False(t, uploadPathDenied(&entity.User{UserName: "jane", UserRole: key}))
+	})
+	t.Run("ContributorWithUploadPath", func(t *testing.T) {
+		assert.False(t, uploadPathDenied(&entity.User{UserName: ".", UserRole: key, UploadPath: "inbox"}))
+	})
+	t.Run("Admin", func(t *testing.T) {
+		assert.False(t, uploadPathDenied(&entity.User{UserName: "admin", UserRole: acl.RoleAdmin.String()}))
 	})
 }

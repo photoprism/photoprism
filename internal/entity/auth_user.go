@@ -570,10 +570,16 @@ func (m *User) ValidHandle() bool {
 	return m.Handle() != ""
 }
 
+// RequiresBasePath reports whether the user may only access files in their own base path, so that
+// access requires one.
+func (m *User) RequiresBasePath() bool {
+	return m.HasRole(acl.RoleContributor)
+}
+
 // GetBasePath returns the user's relative base path. A default resolved from a username without a
 // valid handle is replaced by the default based on the user UID.
 func (m *User) GetBasePath() string {
-	if m.BasePath == "" && m.HasRole("contributor") {
+	if m.BasePath == "" && m.RequiresBasePath() {
 		m.BasePath = m.DefaultBasePath()
 	} else if !m.ValidHandle() && (m.BasePath == UsersPath || m.BasePath == ".") {
 		m.BasePath = m.DefaultBasePath()

@@ -67,6 +67,13 @@ func UploadUserFiles(router *gin.RouterGroup) {
 			return
 		}
 
+		// Users whose access is limited to their base path need an upload path.
+		if uploadPathDenied(s.GetUser()) {
+			event.AuditErr([]string{ClientIP(c), "session %s", "upload files", "no upload path", status.Denied}, s.RefID)
+			AbortForbidden(c)
+			return
+		}
+
 		// Abort if there is not enough free storage to upload new files.
 		if conf.InsufficientStorage() {
 			event.AuditErr([]string{ClientIP(c), "session %s", "upload files", status.InsufficientStorage}, s.RefID)
@@ -262,6 +269,12 @@ func UploadUserFiles(router *gin.RouterGroup) {
 	})
 }
 
+// uploadPathDenied reports whether the user may not upload files because their access is limited to
+// their base path and they have no upload path.
+func uploadPathDenied(u *entity.User) bool {
+	return u.RequiresBasePath() && u.GetUploadPath() == ""
+}
+
 // UploadCheckFile checks if the file is supported and has the correct extension.
 func UploadCheckFile(destName string, rejectRaw bool, totalSizeLimit int64) (remainingSizeLimit int64, err error) {
 	baseName := filepath.Base(destName)
@@ -313,6 +326,13 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 
 		// Users may only upload their own files.
 		if s.GetUser().UserUID != clean.UID(c.Param("uid")) {
+			AbortForbidden(c)
+			return
+		}
+
+		// Users whose access is limited to their base path need an upload path.
+		if uploadPathDenied(s.GetUser()) {
+			event.AuditErr([]string{ClientIP(c), "session %s", "import uploads", "no upload path", status.Denied}, s.RefID)
 			AbortForbidden(c)
 			return
 		}
