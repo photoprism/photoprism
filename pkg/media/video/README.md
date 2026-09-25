@@ -1,6 +1,6 @@
 ## PhotoPrism — Video Package
 
-**Last Updated:** July 21, 2026
+**Last Updated:** September 25, 2026
 
 ### Codecs & Containers
 
@@ -33,6 +33,8 @@ HEVC / H.265 and [MagicYUV](https://en.wikipedia.org/wiki/MagicYUV) sample entri
 - The scan looks for the four-byte ISO BMFF sample-entry codes that identify these codecs — `hvc1`, `hev1`, `dvh1`, … for HEVC and `M8RG`, `M8Y2`, … for MagicYUV — in a single buffered pass (see `Chunks.SampleEntryOffset` in `chunks.go`).
 - Each candidate is validated as a genuine visual sample entry rather than a raw byte match: the four bytes that precede it must be a plausible big-endian box size, and the bytes that follow must be the six reserved zero bytes and the nonzero `data_reference_index` mandated by ISO/IEC 14496-12 (`isVisualSampleEntry`). This rejects four-byte codes that merely collide with payload bytes, which is common in raw elementary streams such as the DV data inside some QuickTime files.
 - The scan reads at most `HeadScanLimit` (16 MiB) and stops as soon as a valid entry is found. Buffered reads carry a small overlap so a code straddling a block boundary, and its validation window, stay visible.
+
+`Info.TrackSizes` lists the frame size of every visual track, read from its track header (`tkhd`), so it is available for HEVC and other codecs whose sample entries the parser does not decode. Callers use it where metadata has no dimensions, e.g. to recognize Insta360 videos that store each lens as a separate stream.
 
 The detected codec, together with the codec and container reported by ExifTool, drives the FFmpeg exclude list (default `magy`, `vfw`) that keeps known-problematic formats out of transcoding and thumbnail extraction.
 

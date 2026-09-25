@@ -78,7 +78,7 @@ func (m *MediaFile) derivedVisualProjection(sourceName string) projection.Type {
 	case source.IsInsp() && source.DualFisheyeLayout():
 		return projection.Equirectangular
 	case source.IsInsv():
-		if capture := FindInsta360Capture(source); capture.ValidPair() {
+		if capture := FindInsta360Capture(source); capture.ValidPair() || source.Insta360DualStream() {
 			return projection.Equirectangular
 		}
 		if source.DualFisheyeLayout() {

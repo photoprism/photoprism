@@ -103,6 +103,11 @@ func insta360ProxyPartner(f *MediaFile) string {
 	return ""
 }
 
+// insta360ExpectsDewarp reports whether the preview of an Insta360 original is expected to be dewarped.
+func insta360ExpectsDewarp(f *MediaFile) bool {
+	return f != nil && (f.DewarpableInsv() || f.IsInsp() && f.DualFisheyeLayout())
+}
+
 // insta360PairPreview returns the complete capture whose left lens m is the generated preview of.
 func insta360PairPreview(m *MediaFile) *Insta360Capture {
 	if m == nil || !m.IsPreviewImage() {
@@ -249,7 +254,7 @@ func (m *MediaFile) DewarpableInsv() bool {
 		return true
 	}
 
-	return m.DualFisheyeLayout()
+	return m.Insta360DualStream() || m.DualFisheyeLayout()
 }
 
 // DewarpedVideoFile returns an existing equirectangular AVC for an Insta360 video.

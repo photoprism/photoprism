@@ -1,6 +1,7 @@
 package photoprism
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -9,6 +10,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -1071,4 +1074,128 @@ func TestMediaFile_RelatedFiles_Insta360Proxy(t *testing.T) {
 			assert.Equal(t, "GOPR0124.MP4", related.Main.BaseName())
 		})
 	}
+}
+
+// writeInsta360Streams writes a one-second video with one stream per size, encoded with codec.
+func writeInsta360Streams(t *testing.T, cfg *config.Config, fileName, codec string, sizes ...string) {
+	t.Helper()
+	require.NoError(t, fs.MkdirAll(filepath.Dir(fileName)))
+
+	args := []string{"-y", "-loglevel", "error"}
+	for i, size := range sizes {
+		args = append(args, "-f", "lavfi", "-i", fmt.Sprintf("testsrc=size=%s:rate=10,hue=h=%d", size, i*90))
+	}
+
+	for i := range sizes {
+		args = append(args, "-map", fmt.Sprintf("%d:v", i))
+	}
+
+	args = append(args, "-t", "1", "-c:v", codec, "-pix_fmt", "yuv420p", "-metadata", "title="+filepath.Base(fileName), "-f", "mp4", fileName)
+
+	// #nosec G204 -- arguments are test constants.
+	out, err := exec.Command(cfg.FFmpegBin(), args...).CombinedOutput()
+	require.NoError(t, err, strings.TrimSpace(string(out)))
+}
+
+// newInsta360LogHook captures log entries until the test ends, restoring the previous hooks afterwards.
+func newInsta360LogHook(t *testing.T) *test.Hook {
+	t.Helper()
+	logger := logrus.StandardLogger()
+	oldHooks := make(logrus.LevelHooks, len(logger.Hooks))
+	for level, hooks := range logger.Hooks {
+		oldHooks[level] = append([]logrus.Hook(nil), hooks...)
+	}
+	t.Cleanup(func() { logger.ReplaceHooks(oldHooks) })
+	return test.NewGlobal()
+}
+
+// insta360DewarpWarnings returns the warnings about 360° originals that could not be dewarped.
+func insta360DewarpWarnings(hook *test.Hook) (result []string) {
+	for _, entry := range hook.AllEntries() {
+		if entry.Level == logrus.WarnLevel && strings.Contains(entry.Message, "could not be dewarped") {
+			result = append(result, entry.Message)
+		}
+	}
+	return result
+}
+
+// TestIndex_Insta360DualStream verifies that an .insv with one stream per lens gets an equirectangular
+// preview and video made from both streams, while other videos are processed as before.
+func TestIndex_Insta360DualStream(t *testing.T) {
+	const name = "VID_20240415_213145_00_035.insv"
+
+	t.Run("TwoStreams", func(t *testing.T) {
+		folder := "insta360dualstream"
+		cfg := newInsta360StackConfig(t, folder, false)
+		writeInsta360Streams(t, cfg, filepath.Join(cfg.OriginalsPath(), folder, name), "libx264", "320x320", "320x320")
+		hook := newInsta360LogHook(t)
+		indexInsta360StackFolder(cfg, folder, false, true)
+		assert.Empty(t, insta360DewarpWarnings(hook))
+
+		previews := insta360StackPreviews(t, folder)
+		require.Contains(t, previews, name+".jpg")
+		assert.True(t, previews[name+".jpg"].FilePrimary)
+		assert.Equal(t, "equirectangular", previews[name+".jpg"].FileProjection)
+		assert.Equal(t, 640, previews[name+".jpg"].FileWidth)
+		assert.Equal(t, 320, previews[name+".jpg"].FileHeight)
+
+		var avc entity.File
+		require.NoError(t, entity.UnscopedDb().First(&avc, "file_name = ?", folder+"/"+name+".avc").Error)
+		assert.Equal(t, "equirectangular", avc.FileProjection)
+		assert.Equal(t, 2, avc.FileWidth/avc.FileHeight)
+	})
+	t.Run("OrdinaryTwoTrackVideo", func(t *testing.T) {
+		folder := "insta360dualstreammp4"
+		cfg := newInsta360StackConfig(t, folder, false)
+		writeInsta360Streams(t, cfg, filepath.Join(cfg.OriginalsPath(), folder, "clip.mp4"), "libx264", "320x320", "320x320")
+		indexInsta360StackFolder(cfg, folder, false, true)
+
+		previews := insta360StackPreviews(t, folder)
+		require.Contains(t, previews, "clip.mp4.jpg")
+		assert.Equal(t, "", previews["clip.mp4.jpg"].FileProjection)
+		assert.Equal(t, 320, previews["clip.mp4.jpg"].FileWidth)
+	})
+	t.Run("SingleLensHevc", func(t *testing.T) {
+		folder := "insta360dualstreamsingle"
+		cfg := newInsta360StackConfig(t, folder, false)
+		writeInsta360Streams(t, cfg, filepath.Join(cfg.OriginalsPath(), folder, name), "libx265", "320x320")
+		indexInsta360StackFolder(cfg, folder, false, true)
+
+		// One square lens is not dewarped as both lenses, even if its dimensions come from the track header.
+		previews := insta360StackPreviews(t, folder)
+		require.Contains(t, previews, name+".jpg")
+		assert.Equal(t, "", previews[name+".jpg"].FileProjection)
+		assert.Equal(t, 320, previews[name+".jpg"].FileWidth)
+	})
+	t.Run("ExistingPreview", func(t *testing.T) {
+		folder := "insta360dualstreamexisting"
+		cfg := newInsta360StackConfig(t, folder, false)
+		dir := filepath.Join(cfg.OriginalsPath(), folder)
+		writeInsta360Streams(t, cfg, filepath.Join(dir, name), "libx264", "320x320", "320x320")
+		require.NoError(t, fs.Copy("testdata/flash.jpg", filepath.Join(dir, name+".jpg"), false))
+
+		// A preview the user added is kept, and is not reported as a failed dewarp.
+		hook := newInsta360LogHook(t)
+		indexInsta360StackFolder(cfg, folder, true, false)
+		assert.Empty(t, insta360DewarpWarnings(hook))
+		assert.FileExists(t, filepath.Join(dir, name+".jpg"))
+	})
+	t.Run("DewarpFailed", func(t *testing.T) {
+		folder := "insta360dualstreamfailed"
+		cfg := newInsta360StackConfig(t, folder, false)
+		writeInsta360Streams(t, cfg, filepath.Join(cfg.OriginalsPath(), folder, name), "libx264", "320x320", "320x320")
+
+		// A wrapper that fails every dewarp, so the preview falls back to a still frame.
+		wrapper := filepath.Join(t.TempDir(), "ffmpeg")
+		require.NoError(t, os.WriteFile(wrapper, []byte("#!/bin/sh\ncase \"$*\" in *v360*) exit 1;; esac\nexec "+cfg.FFmpegBin()+" \"$@\"\n"), 0o700))
+		cfg.Options().FFmpegBin = wrapper
+
+		hook := newInsta360LogHook(t)
+		indexInsta360StackFolder(cfg, folder, false, true)
+
+		previews := insta360StackPreviews(t, folder)
+		require.Contains(t, previews, name+".jpg")
+		assert.Equal(t, "", previews[name+".jpg"].FileProjection)
+		assert.Len(t, insta360DewarpWarnings(hook), 1)
+	})
 }

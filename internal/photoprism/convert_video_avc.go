@@ -318,7 +318,8 @@ func (w *Convert) TranscodeToAvcCmd(f *MediaFile, avcName string, encoder encode
 	// dewarped only when their decoded frame is already a side-by-side ~2:1 dual-fisheye layout.
 	capture := FindInsta360Capture(f)
 	dewarpPair := capture.ValidPair() && capture.Left.FileName() == f.FileName()
-	dewarp := dewarpPair || f.IsInsv() && f.DualFisheyeLayout()
+	dewarpStreams := !dewarpPair && f.Insta360DualStream()
+	dewarp := dewarpPair || dewarpStreams || f.IsInsv() && f.DualFisheyeLayout()
 
 	if dewarp {
 		encoder = encode.SoftwareAvc
@@ -336,6 +337,8 @@ func (w *Convert) TranscodeToAvcCmd(f *MediaFile, avcName string, encoder encode
 
 	if dewarpPair {
 		return ffmpeg.DewarpDualFisheyePairToAvcCmd(capture.Left.FileName(), capture.Right.FileName(), avcName, opt), true, nil
+	} else if dewarpStreams {
+		return ffmpeg.DewarpDualStreamToAvcCmd(fileName, avcName, opt), true, nil
 	}
 
 	return ffmpeg.TranscodeCmd(fileName, avcName, opt)

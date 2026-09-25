@@ -84,3 +84,29 @@ func TestDewarpDualFisheyePairToAvcCmd(t *testing.T) {
 	assert.Contains(t, cmdStr, "-c:v libx264")
 	assert.Contains(t, cmdStr, "-map_metadata 0 -shortest DEST")
 }
+
+// TestDewarpDualStreamToJpegCmd verifies that both lens streams of one input are stacked before dewarping.
+func TestDewarpDualStreamToJpegCmd(t *testing.T) {
+	opt := &encode.Options{Bin: "/usr/bin/ffmpeg", SizeLimit: 15360}
+	cmd := DewarpDualStreamToJpegCmd("SOURCE", "DEST", 204, 0, opt)
+	cmdStr := cmd.String()
+
+	assert.Contains(t, cmdStr, "-y -i SOURCE -filter_complex")
+	assert.NotContains(t, cmdStr, "-i SOURCE -i")
+	assert.Contains(t, cmdStr, "[0:v:0][0:v:1]hstack=inputs=2:shortest=1,v360=input=dfisheye:output=e")
+	assert.Contains(t, cmdStr, "min(15360, iw)")
+	assert.Contains(t, cmdStr, "-map [v] -frames:v 1 DEST")
+}
+
+// TestDewarpDualStreamToAvcCmd verifies video, audio, and metadata mapping for two streams in one input.
+func TestDewarpDualStreamToAvcCmd(t *testing.T) {
+	opt := encode.NewVideoOptions("/usr/bin/ffmpeg", encode.SoftwareAvc, 1920, 23, "fast", "", "", "")
+	opt.V360 = V360DualFisheyeToEquirect(204, 0)
+	cmd := DewarpDualStreamToAvcCmd("SOURCE", "DEST", opt)
+	cmdStr := cmd.String()
+
+	assert.Contains(t, cmdStr, "-strict -2 -i SOURCE -filter_complex")
+	assert.Contains(t, cmdStr, "[0:v:0][0:v:1]hstack=inputs=2:shortest=1,v360=input=dfisheye:output=e")
+	assert.Contains(t, cmdStr, "-map [v] -map 0:a:0?")
+	assert.Contains(t, cmdStr, "-map_metadata 0 -shortest DEST")
+}

@@ -161,6 +161,17 @@ func Probe(file io.ReadSeeker) (info Info, err error) {
 		}
 	}
 
+	// Track headers store the frame size of every visual track, whatever its codec.
+	if _, seekErr := videoFile.Seek(0, io.SeekStart); seekErr == nil {
+		if boxes, boxErr := mp4.ExtractBoxWithPayload(videoFile, nil, mp4.BoxPath{mp4.BoxTypeMoov(), mp4.BoxTypeTrak(), mp4.BoxTypeTkhd()}); boxErr == nil {
+			for _, box := range boxes {
+				if tkhd, ok := box.Payload.(*mp4.Tkhd); ok && tkhd.GetWidthInt() > 0 && tkhd.GetHeightInt() > 0 {
+					info.TrackSizes = append(info.TrackSizes, TrackSize{Width: int(tkhd.GetWidthInt()), Height: int(tkhd.GetHeightInt())})
+				}
+			}
+		}
+	}
+
 	// If no AVC video was found, search the file head for other recognizable sample-entry
 	// codes (HEVC, see https://stackoverflow.com/questions/63468587, and MagicYUV) in a single
 	// pass. Each hit is validated as a real visual sample entry so a four-byte code colliding

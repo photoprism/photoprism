@@ -69,6 +69,11 @@ func IndexMain(related *RelatedFiles, ind *Index, o IndexOptions) (result IndexR
 		} else {
 			log.Debugf("index: created %s", clean.Log(img.BaseName()))
 
+			// Report 360° originals whose new preview shows the raw lens frames.
+			if img.InSidecar() && insta360ExpectsDewarp(f) && img.visualProjection.Unknown() {
+				log.Warnf("index: %s could not be dewarped to an equirectangular preview", clean.Log(f.RootRelName()))
+			}
+
 			if imgErr = img.GenerateThumbnails(ind.thumbPath(), false); imgErr != nil {
 				// Stop the run instead of masking a full disk as a generic thumbnail error.
 				if errors.Is(imgErr, status.ErrInsufficientStorage) {

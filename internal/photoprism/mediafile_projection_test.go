@@ -66,6 +66,19 @@ func TestMediaFile_VisualProjection(t *testing.T) {
 			assert.Equal(t, expected, generated.VisualProjection(projection.Equirectangular.String()), name)
 		}
 	})
+	t.Run("DualStreamSidecar", func(t *testing.T) {
+		conf := config.TestConfig()
+		dir := "projection-dual-stream"
+		t.Cleanup(func() {
+			_ = os.RemoveAll(filepath.Join(conf.OriginalsPath(), dir))
+			_ = os.RemoveAll(filepath.Join(conf.SidecarPath(), dir))
+		})
+
+		newInsta360StreamFile(t, filepath.Join(conf.OriginalsPath(), dir), "clip.insv")
+		preview, err := NewMediaFile(writeInsta360CaptureFile(t, filepath.Join(conf.SidecarPath(), dir), "clip.insv.jpg", "testdata/insta360.insp.jpg"))
+		require.NoError(t, err)
+		assert.Equal(t, projection.Equirectangular, preview.VisualProjection(""))
+	})
 	t.Run("OrdinarySidecar", func(t *testing.T) {
 		conf := config.TestConfig()
 		preview, err := NewMediaFile("testdata/flash.jpg")

@@ -402,6 +402,33 @@ func TestConvert_JpegConvertCmds_Insta360Pair(t *testing.T) {
 	assert.True(t, cmds[0].Projection.Equal(projection.Equirectangular.String()))
 }
 
+// TestConvert_JpegConvertCmds_Insta360DualStream verifies that both streams are stacked before
+// dewarping, and that the file is never dewarped as a single side-by-side frame.
+func TestConvert_JpegConvertCmds_Insta360DualStream(t *testing.T) {
+	cnf := config.TestConfig()
+	if !cnf.FFmpegEnabled() {
+		t.Skip("FFmpeg must be available to dewarp two-stream INSV files")
+	}
+
+	dir := t.TempDir()
+	f := newInsta360StreamFile(t, dir, "VID_20240415_213145_00_035.insv")
+
+	// Metadata may report the size of both lenses side by side.
+	f.width, f.height = 128, 64
+	require.True(t, f.DualFisheyeLayout())
+
+	cmds, _, err := NewConvert(cnf).JpegConvertCmds(f, filepath.Join(dir, "poster.jpg"), "")
+	require.NoError(t, err)
+	require.NotEmpty(t, cmds)
+
+	assert.Contains(t, cmds[0].String(), "[0:v:0][0:v:1]hstack=inputs=2:shortest=1,v360=input=dfisheye:output=e")
+	assert.True(t, cmds[0].Projection.Equal(projection.Equirectangular.String()))
+
+	for _, cmd := range cmds[1:] {
+		assert.NotContains(t, cmd.String(), "v360")
+	}
+}
+
 // TestConvert_JpegConvertCmds_Insta360LensCodedPhotos verifies that photos with lens codes are not combined.
 func TestConvert_JpegConvertCmds_Insta360LensCodedPhotos(t *testing.T) {
 	cnf := config.TestConfig()

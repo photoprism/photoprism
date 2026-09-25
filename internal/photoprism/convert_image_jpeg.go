@@ -35,10 +35,19 @@ func (w *Convert) JpegConvertCmds(f *MediaFile, jpegName string, xmpName string)
 		)
 	}
 
+	// Videos that store each lens as a separate stream are combined in stream order before dewarping.
+	if f.Insta360DualStream() && w.conf.FFmpegEnabled() && w.FFmpegAllowed(f) {
+		result = append(result, NewConvertCmd(
+			ffmpeg.DewarpDualStreamToJpegCmd(f.FileName(), jpegName, w.fisheyeFov(f), w.fisheyeRoll(f), &encode.Options{Bin: w.conf.FFmpegBin(), SizeLimit: min(w.conf.JpegSize(), 15360)})).
+			WithImageVerification().
+			WithProjection(projection.Equirectangular),
+		)
+	}
+
 	// Dewarp Insta360 dual-fisheye originals (.insp photos and .insv cover frames) to an
 	// equirectangular JPEG, so thumbnails and the sphere viewer show corrected pixels.
 	// Unsupported layouts and failed dewarps fall through to a normal render later in the loop.
-	if f.DualFisheye() && f.DualFisheyeLayout() && !insta360SkipConvert(f) && w.conf.FFmpegEnabled() && w.FFmpegAllowed(f) {
+	if f.DualFisheye() && f.DualFisheyeLayout() && !f.Insta360DualStream() && !insta360SkipConvert(f) && w.conf.FFmpegEnabled() && w.FFmpegAllowed(f) {
 		result = append(result, NewConvertCmd(
 			ffmpeg.DewarpDualFisheyeToJpegCmd(f.FileName(), jpegName, w.fisheyeFov(f), w.fisheyeRoll(f), &encode.Options{Bin: w.conf.FFmpegBin(), SizeLimit: min(w.conf.JpegSize(), 15360)})).
 			WithImageVerification().

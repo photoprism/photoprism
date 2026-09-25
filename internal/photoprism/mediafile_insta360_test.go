@@ -11,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
+	"github.com/photoprism/photoprism/pkg/media/video"
 )
 
 // writeInsta360CaptureFile copies a square image fixture to an INSV capture filename for geometry tests.
@@ -395,4 +396,82 @@ func TestInsta360Capture_ValidPair(t *testing.T) {
 // TestAbsDuration verifies duration normalization.
 func TestAbsDuration(t *testing.T) {
 	assert.Equal(t, absDuration(-5), absDuration(5))
+}
+
+// newInsta360StreamFile copies the two-stream video fixture to name below dir and returns it with
+// unknown dimensions, as an .insv without readable metadata.
+func newInsta360StreamFile(t *testing.T, dir, name string) *MediaFile {
+	t.Helper()
+	require.NoError(t, fs.MkdirAll(dir))
+	fileName := filepath.Join(dir, name)
+	require.NoError(t, fs.Copy("../../pkg/media/video/testdata/two-stream.mp4", fileName, false))
+
+	m, err := NewMediaFile(fileName)
+	require.NoError(t, err)
+	m.width, m.height = 0, 0
+
+	return m
+}
+
+// TestMediaFile_Insta360DualStream verifies that only an .insv with two equal square streams matches.
+func TestMediaFile_Insta360DualStream(t *testing.T) {
+	dir := t.TempDir()
+
+	assert.True(t, newInsta360StreamFile(t, dir, "dual.insv").Insta360DualStream())
+	assert.False(t, newInsta360StreamFile(t, dir, "dual.mp4").Insta360DualStream())
+
+	single := newInsta360StreamFile(t, dir, "single.insv")
+	single.videoOnce.Do(func() {})
+	single.videoInfo.TrackSizes = []video.TrackSize{{Width: 64, Height: 64}}
+	assert.False(t, single.Insta360DualStream())
+
+	unequal := newInsta360StreamFile(t, dir, "unequal.insv")
+	unequal.videoOnce.Do(func() {})
+	unequal.videoInfo.TrackSizes = []video.TrackSize{{Width: 64, Height: 64}, {Width: 32, Height: 32}}
+	assert.False(t, unequal.Insta360DualStream())
+
+	wide := newInsta360StreamFile(t, dir, "wide.insv")
+	wide.videoOnce.Do(func() {})
+	wide.videoInfo.TrackSizes = []video.TrackSize{{Width: 128, Height: 64}, {Width: 128, Height: 64}}
+	assert.False(t, wide.Insta360DualStream())
+
+	assert.False(t, (*MediaFile)(nil).Insta360DualStream())
+}
+
+// TestMediaFile_DualFisheyeLayoutTrackSize verifies that an .insv without known dimensions uses the
+// size of its first video track.
+func TestMediaFile_DualFisheyeLayoutTrackSize(t *testing.T) {
+	dir := t.TempDir()
+
+	assert.False(t, newInsta360StreamFile(t, dir, "square.insv").DualFisheyeLayout())
+
+	wide := newInsta360StreamFile(t, dir, "wide.insv")
+	wide.videoOnce.Do(func() {})
+	wide.videoInfo.TrackSizes = []video.TrackSize{{Width: 768, Height: 384}}
+	assert.True(t, wide.DualFisheyeLayout())
+
+	unknown := newInsta360StreamFile(t, dir, "unknown.insv")
+	unknown.videoOnce.Do(func() {})
+	assert.True(t, unknown.DualFisheyeLayout())
+}
+
+// TestInsta360ExpectsDewarp verifies which Insta360 originals are expected to get a dewarped preview.
+func TestInsta360ExpectsDewarp(t *testing.T) {
+	dir := t.TempDir()
+
+	assert.True(t, insta360ExpectsDewarp(newInsta360StreamFile(t, dir, "dual.insv")))
+
+	single := newInsta360StreamFile(t, dir, "single.insv")
+	single.videoOnce.Do(func() {})
+	single.videoInfo.TrackSizes = []video.TrackSize{{Width: 64, Height: 64}}
+	assert.False(t, insta360ExpectsDewarp(single))
+
+	insp, err := NewMediaFile("testdata/insta360.insp")
+	require.NoError(t, err)
+	assert.True(t, insta360ExpectsDewarp(insp))
+
+	ordinary, err := NewMediaFile("testdata/flash.jpg")
+	require.NoError(t, err)
+	assert.False(t, insta360ExpectsDewarp(ordinary))
+	assert.False(t, insta360ExpectsDewarp(nil))
 }
