@@ -64,7 +64,9 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	stripSequence := Config().Settings().StackSequences() && o.Stack
 
 	fileRoot, fileBase, filePath, fileName := m.PathNameInfo(stripSequence)
-	fullBase := m.BasePrefix(false)
+	fullBase := m.StackPrefix(false)
+	stackNamed := fullBase != m.BasePrefix(false)
+	ownBackup := false
 	logName := clean.Log(fileName)
 	fileSize, modTime, err := m.Stat()
 
@@ -142,6 +144,13 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 
 			fileRenamed = true
 		}
+	}
+
+	// Hold a per-name lock until indexing is complete, so concurrent workers cannot both miss
+	// the name lookup below and create two photos for files stacked under the same name.
+	if !fileExists {
+		unlockName := lockStackName(filePath, fullBase)
+		defer unlockName()
 	}
 
 	// Find existing photo if a photo uid was provided or file has not been indexed yet...
@@ -275,13 +284,43 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			photo.PhotoStack = entity.IsStackable
 		}
 
-		if yamlName := fs.SidecarYaml.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), stripSequence); yamlName != "" {
-			if err = photo.LoadFromYaml(yamlName); err != nil {
-				log.Errorf("index: %s in %s (restore from yaml)", err.Error(), logName)
-			} else if photo.HasUID() {
-				photoExists = true
-				log.Infof("index: metadata of photo uid %s restored from %s", photo.PhotoUID, clean.Log(filepath.Base(yamlName)))
+		yamlDirs := []string{Config().SidecarPath(), fs.PPHiddenPathname}
+		yamlNames := []string{fs.SidecarYaml.FindFirst(m.FileName(), yamlDirs, Config().OriginalsPath(), stripSequence)}
+
+		// Backups are named after the photo, so files stacked under another name also try that name.
+		if stackNamed {
+			yamlNames = append(yamlNames, fs.SidecarYaml.FindFirst(filepath.Join(m.Dir(), fullBase), yamlDirs, Config().OriginalsPath(), false))
+		}
+
+		// Each backup is loaded into a copy, so only one applies: the first that restores a photo
+		// UID, or else the file's own backup as a partial update.
+		var restored *entity.Photo
+
+		for i, yamlName := range yamlNames {
+			if yamlName == "" {
+				continue
 			}
+
+			candidate, candidateDetails := photo, *details
+			candidate.Details = &candidateDetails
+
+			if err = candidate.LoadFromYaml(yamlName); err != nil {
+				log.Errorf("index: %s in %s (restore from yaml)", err.Error(), logName)
+			} else if candidate.HasUID() {
+				photoExists = true
+				ownBackup = stackNamed && i == 0
+				restored = &candidate
+				log.Infof("index: metadata of photo uid %s restored from %s", candidate.PhotoUID, clean.Log(filepath.Base(yamlName)))
+				break
+			} else if i == 0 {
+				restored = &candidate
+			}
+		}
+
+		if restored != nil {
+			*details = *restored.Details
+			restored.Details = details
+			photo = *restored
 		}
 	}
 
@@ -317,10 +356,18 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		// with album_path for folder-album matching.
 		photo.PhotoPath = entity.ClipPath(filePath)
 
+		stackName, baseName := fileBase, m.BasePrefix(stripSequence)
+
 		if !o.Stack || !stripSequence || photo.PhotoStack == entity.IsUnstacked {
-			photo.PhotoName = fullBase
+			stackName, baseName = fullBase, m.BasePrefix(false)
+		}
+
+		// Photos restored from the file's own backup, and existing photos named after the file,
+		// keep its base name when its stack name differs.
+		if ownBackup || photoExists && photo.PhotoName == baseName {
+			photo.PhotoName = baseName
 		} else {
-			photo.PhotoName = fileBase
+			photo.PhotoName = stackName
 		}
 	}
 

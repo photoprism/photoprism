@@ -1,6 +1,6 @@
 ## PhotoPrism — Core Package
 
-**Last Updated:** September 17, 2026
+**Last Updated:** September 25, 2026
 
 ### Overview
 
@@ -22,7 +22,7 @@
 
 - Indexing/import: `index.go`, `index_main.go`, `index_mediafile.go`, `index_related.go`, `import_worker.go`, `files.go`, `photos.go`.
 - Media files & helpers: `mediafile*.go`, `mediafile_thumbs.go`, `mediafile_vision.go`, `convert_*.go`, `colors.go`, `label.go`.
-- 360° originals: `mediafile_insta360.go` and `mediafile_projection.go` detect fisheye/dual-fisheye sources, `convert_image*.go` / `convert_video_avc.go` dewarp them to equirectangular derivatives, and `index_insta360.go` merges separate lens files into one photo on a forced rescan.
+- 360° originals: `mediafile_insta360.go` and `mediafile_projection.go` detect fisheye/dual-fisheye sources, `convert_image*.go` / `convert_video_avc.go` dewarp them to equirectangular derivatives, `index_mediafile.go` stacks late lens and proxy files by their stack name (`fs.StackPrefix`), and `index_insta360.go` merges photos that older versions created for separate lens files on a forced rescan.
 - Faces/people: `faces_*.go` (audit, clustering, matching, optimize, migrate, crop source); face-marker persistence and XMP face-tag import in `index_faces.go` / `index_faces_xmp.go` (gated by `PHOTOPRISM_XMP_FACES`).
 - Backups: `backup/` (database and sidecar YAML backup/restore helpers).
 - Downloads: `dl/` (export and download handlers/helpers).
