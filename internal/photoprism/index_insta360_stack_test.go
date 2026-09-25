@@ -13,7 +13,9 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/ffmpeg"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/media/video"
 )
 
 const (
@@ -270,11 +272,12 @@ func TestIndex_Insta360StackControls(t *testing.T) {
 		dir := filepath.Join(cfg.OriginalsPath(), folder)
 		movedDir := filepath.Join(cfg.OriginalsPath(), movedFolder)
 
-		for _, name := range []string{insta360StackLeft, insta360StackRight} {
+		// The right lens gets sidecars of its own only while it is indexed without its partner.
+		for _, name := range []string{insta360StackRight, insta360StackLeft} {
 			writeInsta360StackMedia(t, cfg, dir, name)
+			indexInsta360StackFolder(cfg, folder, false, true)
 		}
 
-		indexInsta360StackFolder(cfg, folder, false, true)
 		photoIDs := insta360StackPhotoIDs(insta360StackOwners(t, folder))
 		require.Len(t, photoIDs, 1)
 
@@ -294,6 +297,37 @@ func TestIndex_Insta360StackControls(t *testing.T) {
 			assert.NoFileExists(t, fileName)
 			assert.FileExists(t, filepath.Join(cfg.SidecarPath(), movedFolder, filepath.Base(fileName)))
 		}
+
+		for _, fileName := range leftSidecars {
+			assert.FileExists(t, fileName)
+		}
+
+		moved := insta360StackOwners(t, movedFolder)
+		assert.Len(t, moved, 1)
+		assert.Equal(t, photoIDs, insta360StackPhotoIDs(moved))
+	})
+	t.Run("MovedLensOfPair", func(t *testing.T) {
+		folder := "insta360controlmovedpair"
+		movedFolder := "insta360controlmovedpairto"
+		cfg := newInsta360StackConfig(t, folder, false)
+		dir := filepath.Join(cfg.OriginalsPath(), folder)
+		movedDir := filepath.Join(cfg.OriginalsPath(), movedFolder)
+
+		for _, name := range []string{insta360StackLeft, insta360StackRight} {
+			writeInsta360StackMedia(t, cfg, dir, name)
+		}
+
+		indexInsta360StackFolder(cfg, folder, false, true)
+		photoIDs := insta360StackPhotoIDs(insta360StackOwners(t, folder))
+		require.Len(t, photoIDs, 1)
+
+		leftSidecars, err := filepath.Glob(filepath.Join(cfg.SidecarPath(), folder, "VID_20220625_140410_00_008.*"))
+		require.NoError(t, err)
+		require.NotEmpty(t, leftSidecars)
+
+		require.NoError(t, fs.MkdirAll(movedDir))
+		require.NoError(t, fs.Move(filepath.Join(dir, insta360StackRight), filepath.Join(movedDir, insta360StackRight), false))
+		indexInsta360StackFolder(cfg, movedFolder, false, true)
 
 		for _, fileName := range leftSidecars {
 			assert.FileExists(t, fileName)
@@ -698,4 +732,195 @@ func TestIndex_Insta360ReconcileSplit(t *testing.T) {
 			})
 		}
 	}
+}
+
+// insta360StackPreviews returns the preview file rows in folder, keyed by file name.
+func insta360StackPreviews(t *testing.T, folder string) map[string]entity.File {
+	t.Helper()
+
+	var files []entity.File
+	require.NoError(t, entity.UnscopedDb().
+		Where("file_name LIKE ? AND file_type = ?", folder+"/%", fs.ImageJpeg.String()).
+		Find(&files).Error)
+
+	result := make(map[string]entity.File, len(files))
+
+	for _, f := range files {
+		result[filepath.Base(f.FileName)] = f
+	}
+
+	return result
+}
+
+// assertInsta360SinglePrimary checks that all files in folder belong to one photo with one primary file.
+func assertInsta360SinglePrimary(t *testing.T, folder string) {
+	t.Helper()
+
+	var photoIDs []uint
+	require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).
+		Where("file_name LIKE ?", folder+"/%").Pluck("DISTINCT photo_id", &photoIDs).Error)
+	require.Len(t, photoIDs, 1)
+
+	var primaries int
+	require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).
+		Where("photo_id = ? AND file_primary = 1", photoIDs[0]).Count(&primaries).Error)
+	assert.Equal(t, 1, primaries)
+}
+
+// TestIndex_Insta360Cover verifies that the combined preview becomes the cover of a capture whose
+// lens files were indexed in separate runs, and that no preview is made from the right lens then.
+func TestIndex_Insta360Cover(t *testing.T) {
+	const (
+		leftPreview  = insta360StackLeft + ".jpg"
+		rightPreview = insta360StackRight + ".jpg"
+	)
+
+	cases := []struct {
+		name         string
+		first        string
+		late         string
+		archive      bool
+		rightPreview bool
+	}{
+		{"LateLens", insta360StackLeft, insta360StackRight, false, false},
+		{"LateLensArchived", insta360StackLeft, insta360StackRight, true, false},
+		{"Reverse", insta360StackRight, insta360StackLeft, false, true},
+		{"ReverseArchived", insta360StackRight, insta360StackLeft, true, true},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			folder := strings.ToLower("insta360cover" + tc.name)
+			cfg := newInsta360StackConfig(t, folder, false)
+			dir := filepath.Join(cfg.OriginalsPath(), folder)
+
+			writeInsta360StackMedia(t, cfg, dir, tc.first)
+			indexInsta360StackFolder(cfg, folder, false, true)
+
+			if tc.archive {
+				photo := insta360StackOwners(t, folder)[tc.first]
+				require.NoError(t, photo.Archive())
+			}
+
+			writeInsta360StackMedia(t, cfg, dir, tc.late)
+			indexInsta360StackFolder(cfg, folder, false, true)
+
+			if tc.archive {
+				indexInsta360StackFolder(cfg, folder, false, false)
+			}
+
+			previews := insta360StackPreviews(t, folder)
+			require.Contains(t, previews, leftPreview)
+			assert.True(t, previews[leftPreview].FilePrimary)
+			assert.Equal(t, "equirectangular", previews[leftPreview].FileProjection)
+
+			if tc.rightPreview {
+				require.Contains(t, previews, rightPreview)
+				assert.False(t, previews[rightPreview].FilePrimary)
+				assert.Equal(t, "", previews[rightPreview].FileProjection)
+			} else {
+				assert.NotContains(t, previews, rightPreview)
+				assert.NoFileExists(t, filepath.Join(cfg.SidecarPath(), folder, rightPreview))
+			}
+
+			assertInsta360SinglePrimary(t, folder)
+
+			// A forced rescan keeps the cover.
+			indexInsta360StackFolder(cfg, folder, true, false)
+			previews = insta360StackPreviews(t, folder)
+			assert.True(t, previews[leftPreview].FilePrimary)
+			assert.Equal(t, "equirectangular", previews[leftPreview].FileProjection)
+		})
+	}
+	t.Run("LabeledRightPreview", func(t *testing.T) {
+		folder := "insta360coverlabeled"
+		cfg := newInsta360StackConfig(t, folder, false)
+		dir := filepath.Join(cfg.OriginalsPath(), folder)
+
+		writeInsta360StackMedia(t, cfg, dir, insta360StackRight)
+		indexInsta360StackFolder(cfg, folder, false, true)
+		require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("file_name = ?", folder+"/"+rightPreview).
+			UpdateColumn("file_projection", "equirectangular").Error)
+
+		writeInsta360StackMedia(t, cfg, dir, insta360StackLeft)
+		indexInsta360StackFolder(cfg, folder, false, true)
+		indexInsta360StackFolder(cfg, folder, true, false)
+
+		previews := insta360StackPreviews(t, folder)
+		assert.Equal(t, "", previews[rightPreview].FileProjection)
+		assert.False(t, previews[rightPreview].FilePrimary)
+		assert.Equal(t, "equirectangular", previews[leftPreview].FileProjection)
+	})
+	for _, ffmpegCase := range []struct {
+		name    string
+		disable func(t *testing.T, cfg *config.Config)
+	}{
+		{"FFmpegDisabled", func(t *testing.T, cfg *config.Config) { cfg.Options().DisableFFmpeg = true }},
+		{"FFmpegExcluded", func(t *testing.T, cfg *config.Config) {
+			exclude := ffmpeg.Exclude()
+			ffmpeg.SetExclude(video.NewFormats(fs.VideoInsv.String()))
+			t.Cleanup(func() { ffmpeg.SetExclude(exclude) })
+		}},
+	} {
+		t.Run(ffmpegCase.name, func(t *testing.T) {
+			folder := strings.ToLower("insta360cover" + ffmpegCase.name)
+			cfg := newInsta360StackConfig(t, folder, false)
+			dir := filepath.Join(cfg.OriginalsPath(), folder)
+
+			writeInsta360StackMedia(t, cfg, dir, insta360StackLeft)
+			indexInsta360StackFolder(cfg, folder, false, true)
+			ffmpegCase.disable(t, cfg)
+			writeInsta360StackMedia(t, cfg, dir, insta360StackRight)
+			indexInsta360StackFolder(cfg, folder, false, true)
+
+			// The existing preview is kept, and the right lens is indexed.
+			previews := insta360StackPreviews(t, folder)
+			require.Contains(t, previews, leftPreview)
+			assert.True(t, previews[leftPreview].FilePrimary)
+			assert.FileExists(t, filepath.Join(cfg.SidecarPath(), folder, leftPreview))
+			assert.Len(t, insta360StackOwners(t, folder), 2)
+			assertInsta360SinglePrimary(t, folder)
+		})
+	}
+	t.Run("OtherPrimary", func(t *testing.T) {
+		folder := "insta360coverotherprimary"
+		cfg := newInsta360StackConfig(t, folder, false)
+		dir := filepath.Join(cfg.OriginalsPath(), folder)
+
+		writeInsta360StackMedia(t, cfg, dir, insta360StackRight)
+		indexInsta360StackFolder(cfg, folder, false, true)
+		photo := insta360StackOwners(t, folder)[insta360StackRight]
+
+		// A picture the user stacked with the capture and chose as its cover.
+		writeInsta360StackMedia(t, cfg, dir, "cover.jpg")
+		indexInsta360StackFolder(cfg, folder, false, true)
+		var cover entity.File
+		require.NoError(t, entity.UnscopedDb().First(&cover, "file_name = ?", folder+"/cover.jpg").Error)
+		require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("id = ?", cover.ID).
+			UpdateColumns(entity.Values{"photo_id": photo.ID, "photo_uid": photo.PhotoUID}).Error)
+		require.NoError(t, photo.SetPrimary(cover.FileUID))
+
+		writeInsta360StackMedia(t, cfg, dir, insta360StackLeft)
+		indexInsta360StackFolder(cfg, folder, false, true)
+		indexInsta360StackFolder(cfg, folder, true, false)
+
+		require.NoError(t, entity.UnscopedDb().First(&cover, "id = ?", cover.ID).Error)
+		assert.True(t, cover.FilePrimary)
+		assert.False(t, insta360StackPreviews(t, folder)[leftPreview].FilePrimary)
+		assertInsta360SinglePrimary(t, folder)
+	})
+	t.Run("SingleLens", func(t *testing.T) {
+		folder := "insta360coversinglelens"
+		cfg := newInsta360StackConfig(t, folder, false)
+		dir := filepath.Join(cfg.OriginalsPath(), folder)
+
+		writeInsta360StackMedia(t, cfg, dir, insta360StackRight)
+		indexInsta360StackFolder(cfg, folder, false, true)
+		indexInsta360StackFolder(cfg, folder, true, false)
+
+		previews := insta360StackPreviews(t, folder)
+		require.Len(t, previews, 1)
+		assert.True(t, previews[rightPreview].FilePrimary)
+		assert.Equal(t, "", previews[rightPreview].FileProjection)
+	})
 }

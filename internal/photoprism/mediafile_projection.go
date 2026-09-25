@@ -27,17 +27,22 @@ func (m *MediaFile) VisualProjection(metadataValue string) projection.Type {
 		return m.visualProjection
 	}
 
+	// Sidecars of an Insta360 right lens show one lens, whatever their metadata says.
+	if insta360RightLensSidecar(m) {
+		return projection.Unknown
+	}
+
 	if value := projection.New(metadataValue); !value.Unknown() {
 		return value
 	}
 
-	return m.derivedVisualProjection()
+	return m.derivedVisualProjection(m.generatedSourceName())
 }
 
-// derivedVisualProjection recognizes generated 2:1 sidecars whose original source requires dewarping.
-func (m *MediaFile) derivedVisualProjection() projection.Type {
-	if m == nil || !m.InSidecar() || !m.DualFisheyeLayout() {
-		return projection.Unknown
+// generatedSourceName returns the original that a generated JPEG or AVC sidecar was made from, if any.
+func (m *MediaFile) generatedSourceName() string {
+	if m == nil || !m.InSidecar() {
+		return ""
 	}
 
 	var generatedExt string
@@ -47,16 +52,24 @@ func (m *MediaFile) derivedVisualProjection() projection.Type {
 	case fs.VideoAvc:
 		generatedExt = fs.ExtAvc
 	default:
-		return projection.Unknown
+		return ""
 	}
 
 	relName := m.RelName(Config().SidecarPath())
 	if !strings.EqualFold(filepath.Ext(relName), generatedExt) {
+		return ""
+	}
+
+	return filepath.Join(Config().OriginalsPath(), strings.TrimSuffix(relName, filepath.Ext(relName)))
+}
+
+// derivedVisualProjection recognizes generated 2:1 sidecars whose original source requires dewarping.
+func (m *MediaFile) derivedVisualProjection(sourceName string) projection.Type {
+	if sourceName == "" || !m.DualFisheyeLayout() {
 		return projection.Unknown
 	}
 
-	sourceRelName := strings.TrimSuffix(relName, filepath.Ext(relName))
-	source, err := NewMediaFile(filepath.Join(Config().OriginalsPath(), sourceRelName))
+	source, err := NewMediaFile(sourceName)
 	if err != nil || source == nil {
 		return projection.Unknown
 	}
@@ -65,7 +78,7 @@ func (m *MediaFile) derivedVisualProjection() projection.Type {
 	case source.IsInsp() && source.DualFisheyeLayout():
 		return projection.Equirectangular
 	case source.IsInsv():
-		if capture := FindInsta360Capture(source); capture != nil && capture.ValidPair() {
+		if capture := FindInsta360Capture(source); capture.ValidPair() {
 			return projection.Equirectangular
 		}
 		if source.DualFisheyeLayout() {

@@ -129,6 +129,7 @@ func TestInsta360SkipConvert(t *testing.T) {
 	assert.False(t, insta360SkipConvert(nil))
 }
 
+// TestForceDewarpPreview verifies that only forced runs replace recognized 360° previews.
 func TestForceDewarpPreview(t *testing.T) {
 	dir := t.TempDir()
 	leftName := writeInsta360CaptureFile(t, dir, "VID_20220625_140410_00_008.insv", "testdata/flash.jpg")
@@ -148,6 +149,138 @@ func TestForceDewarpPreview(t *testing.T) {
 	assert.False(t, forceDewarpPreview(left, false))
 	assert.False(t, forceDewarpPreview(ordinary, true))
 	assert.False(t, forceDewarpPreview(nil, true))
+}
+
+// newInsta360PreviewFixture writes a complete capture below the originals path and returns its left
+// lens and the sidecar directory for its previews.
+func newInsta360PreviewFixture(t *testing.T, dir string) (*MediaFile, string) {
+	t.Helper()
+	conf := config.TestConfig()
+	originals := filepath.Join(conf.OriginalsPath(), dir)
+	sidecars := filepath.Join(conf.SidecarPath(), dir)
+	t.Cleanup(func() {
+		_ = os.RemoveAll(originals)
+		_ = os.RemoveAll(sidecars)
+	})
+
+	left, err := NewMediaFile(writeInsta360CaptureFile(t, originals, "VID_20220625_140410_00_008.insv", "testdata/flash.jpg"))
+	require.NoError(t, err)
+	writeInsta360CaptureFile(t, originals, "VID_20220625_140410_10_008.insv", "testdata/flash.jpg")
+	writeInsta360CaptureFile(t, originals, "LRV_20220625_140410_11_008.insv", "testdata/flash.jpg")
+
+	return left, sidecars
+}
+
+// TestInsta360PairPreview verifies that only the preview of a complete capture's left lens is recognized.
+func TestInsta360PairPreview(t *testing.T) {
+	left, sidecars := newInsta360PreviewFixture(t, "pair-preview")
+
+	for name, expected := range map[string]bool{
+		"VID_20220625_140410_00_008.insv.jpg": true,
+		"VID_20220625_140410_10_008.insv.jpg": false,
+		"LRV_20220625_140410_11_008.insv.jpg": false,
+		"VID_20220625_140410_00_008.insv.avc": false,
+	} {
+		preview, err := NewMediaFile(writeInsta360CaptureFile(t, sidecars, name, "testdata/insta360.insp.jpg"))
+		require.NoError(t, err)
+		capture := insta360PairPreview(preview)
+		assert.Equal(t, expected, capture != nil, name)
+		if capture != nil {
+			assert.Equal(t, left.FileName(), capture.Left.FileName())
+		}
+	}
+
+	t.Run("IncompleteCapture", func(t *testing.T) {
+		_, sidecars := newInsta360PreviewFixture(t, "pair-preview-incomplete")
+		require.NoError(t, os.Remove(filepath.Join(Config().OriginalsPath(), "pair-preview-incomplete", "VID_20220625_140410_10_008.insv")))
+		preview, err := NewMediaFile(writeInsta360CaptureFile(t, sidecars, "VID_20220625_140410_00_008.insv.jpg", "testdata/insta360.insp.jpg"))
+		require.NoError(t, err)
+		assert.Nil(t, insta360PairPreview(preview))
+	})
+	t.Run("Ordinary", func(t *testing.T) {
+		ordinary, err := NewMediaFile("testdata/flash.jpg")
+		require.NoError(t, err)
+		assert.Nil(t, insta360PairPreview(ordinary))
+		assert.Nil(t, insta360PairPreview(nil))
+	})
+}
+
+// TestInsta360RightLensSidecar verifies that only sidecars of a complete capture's right lens are recognized.
+func TestInsta360RightLensSidecar(t *testing.T) {
+	_, sidecars := newInsta360PreviewFixture(t, "right-lens-sidecar")
+
+	for name, expected := range map[string]bool{
+		"VID_20220625_140410_00_008.insv.jpg": false,
+		"VID_20220625_140410_10_008.insv.jpg": true,
+		"VID_20220625_140410_10_008.insv.avc": true,
+		"LRV_20220625_140410_11_008.insv.jpg": false,
+	} {
+		sidecar, err := NewMediaFile(writeInsta360CaptureFile(t, sidecars, name, "testdata/flash.jpg"))
+		require.NoError(t, err)
+		assert.Equal(t, expected, insta360RightLensSidecar(sidecar), name)
+	}
+
+	ordinary, err := NewMediaFile("testdata/flash.jpg")
+	require.NoError(t, err)
+	assert.False(t, insta360RightLensSidecar(ordinary))
+	assert.False(t, insta360RightLensSidecar(nil))
+}
+
+// TestInsta360StalePreview verifies that a left lens preview is stale while the right lens is pending,
+// unless the preview has a 2:1 aspect ratio.
+func TestInsta360StalePreview(t *testing.T) {
+	rightLens := func(t *testing.T, dir string) MediaFiles {
+		right, err := NewMediaFile(filepath.Join(Config().OriginalsPath(), dir, "VID_20220625_140410_10_008.insv"))
+		require.NoError(t, err)
+		return MediaFiles{right}
+	}
+
+	t.Run("Square", func(t *testing.T) {
+		left, sidecars := newInsta360PreviewFixture(t, "stale-preview-square")
+		writeInsta360CaptureFile(t, sidecars, "VID_20220625_140410_00_008.insv.jpg", "testdata/flash.jpg")
+		assert.True(t, insta360StalePreview(left, rightLens(t, "stale-preview-square")))
+	})
+	t.Run("RightLensIndexed", func(t *testing.T) {
+		left, sidecars := newInsta360PreviewFixture(t, "stale-preview-indexed")
+		writeInsta360CaptureFile(t, sidecars, "VID_20220625_140410_00_008.insv.jpg", "testdata/flash.jpg")
+		assert.False(t, insta360StalePreview(left, MediaFiles{left}))
+		assert.False(t, insta360StalePreview(left, nil))
+	})
+	t.Run("Combined", func(t *testing.T) {
+		left, sidecars := newInsta360PreviewFixture(t, "stale-preview-combined")
+		writeInsta360CaptureFile(t, sidecars, "VID_20220625_140410_00_008.insv.jpg", "testdata/insta360.insp.jpg")
+		assert.False(t, insta360StalePreview(left, rightLens(t, "stale-preview-combined")))
+	})
+	t.Run("NoPreview", func(t *testing.T) {
+		left, _ := newInsta360PreviewFixture(t, "stale-preview-none")
+		assert.False(t, insta360StalePreview(left, rightLens(t, "stale-preview-none")))
+	})
+	t.Run("RightLens", func(t *testing.T) {
+		_, sidecars := newInsta360PreviewFixture(t, "stale-preview-right")
+		writeInsta360CaptureFile(t, sidecars, "VID_20220625_140410_10_008.insv.jpg", "testdata/flash.jpg")
+		pending := rightLens(t, "stale-preview-right")
+		assert.False(t, insta360StalePreview(pending[0], pending))
+	})
+	t.Run("Ordinary", func(t *testing.T) {
+		ordinary, err := NewMediaFile("testdata/flash.jpg")
+		require.NoError(t, err)
+		assert.False(t, insta360StalePreview(ordinary, MediaFiles{ordinary}))
+		assert.False(t, insta360StalePreview(nil, nil))
+	})
+}
+
+// TestInsta360Capture_MemberPreview verifies that only previews of the right lens and proxy match.
+func TestInsta360Capture_MemberPreview(t *testing.T) {
+	left, _ := newInsta360PreviewFixture(t, "member-preview")
+	capture := FindInsta360Capture(left)
+	require.NotNil(t, capture)
+
+	assert.True(t, capture.MemberPreview("member-preview/VID_20220625_140410_10_008.insv.jpg"))
+	assert.True(t, capture.MemberPreview("member-preview/LRV_20220625_140410_11_008.insv.jpg"))
+	assert.False(t, capture.MemberPreview("member-preview/VID_20220625_140410_00_008.insv.jpg"))
+	assert.False(t, capture.MemberPreview("other/VID_20220625_140410_10_008.insv.jpg"))
+	assert.False(t, capture.MemberPreview(""))
+	assert.False(t, (*Insta360Capture)(nil).MemberPreview("member-preview/VID_20220625_140410_10_008.insv.jpg"))
 }
 
 // TestDewarpedVideoFile verifies direct AVC selection, LRV fallback, and fail-closed behavior.

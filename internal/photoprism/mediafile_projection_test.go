@@ -1,6 +1,7 @@
 package photoprism
 
 import (
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -39,6 +40,32 @@ func TestMediaFile_VisualProjection(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, projection.Equirectangular, generated.VisualProjection(""))
 	})
+	t.Run("CaptureSidecars", func(t *testing.T) {
+		conf := config.TestConfig()
+		dir := "projection-capture"
+		t.Cleanup(func() {
+			_ = os.RemoveAll(filepath.Join(conf.OriginalsPath(), dir))
+			_ = os.RemoveAll(filepath.Join(conf.SidecarPath(), dir))
+		})
+
+		originals := filepath.Join(conf.OriginalsPath(), dir)
+		sidecars := filepath.Join(conf.SidecarPath(), dir)
+		writeInsta360CaptureFile(t, originals, "VID_20220625_140410_00_008.insv", "testdata/flash.jpg")
+		writeInsta360CaptureFile(t, originals, "VID_20220625_140410_10_008.insv", "testdata/flash.jpg")
+		writeInsta360CaptureFile(t, originals, "LRV_20220625_140410_11_008.insv", "testdata/flash.jpg")
+
+		// Every preview carries equirectangular metadata, as a single lens dewarped as both lenses does;
+		// the proxy holds both lenses, so its dewarped preview keeps it.
+		for name, expected := range map[string]projection.Type{
+			"VID_20220625_140410_00_008.insv.jpg": projection.Equirectangular,
+			"VID_20220625_140410_10_008.insv.jpg": projection.Unknown,
+			"LRV_20220625_140410_11_008.insv.jpg": projection.Equirectangular,
+		} {
+			generated, err := NewMediaFile(writeInsta360CaptureFile(t, sidecars, name, "testdata/flash.jpg"))
+			require.NoError(t, err)
+			assert.Equal(t, expected, generated.VisualProjection(projection.Equirectangular.String()), name)
+		}
+	})
 	t.Run("OrdinarySidecar", func(t *testing.T) {
 		conf := config.TestConfig()
 		preview, err := NewMediaFile("testdata/flash.jpg")
@@ -50,4 +77,26 @@ func TestMediaFile_VisualProjection(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, projection.Unknown, generated.VisualProjection(""))
 	})
+}
+
+// TestMediaFile_GeneratedSourceName verifies that only generated JPEG and AVC sidecars map to an original.
+func TestMediaFile_GeneratedSourceName(t *testing.T) {
+	conf := config.TestConfig()
+	dir := "generated-source"
+	t.Cleanup(func() { _ = os.RemoveAll(filepath.Join(conf.SidecarPath(), dir)) })
+
+	for name, expected := range map[string]string{
+		"camera.insp.jpg": filepath.Join(conf.OriginalsPath(), dir, "camera.insp"),
+		"clip.insv.avc":   filepath.Join(conf.OriginalsPath(), dir, "clip.insv"),
+		"camera.insp.png": "",
+	} {
+		sidecar, err := NewMediaFile(writeInsta360CaptureFile(t, filepath.Join(conf.SidecarPath(), dir), name, "testdata/flash.jpg"))
+		require.NoError(t, err)
+		assert.Equal(t, expected, sidecar.generatedSourceName(), name)
+	}
+
+	original, err := NewMediaFile("testdata/flash.jpg")
+	require.NoError(t, err)
+	assert.Equal(t, "", original.generatedSourceName())
+	assert.Equal(t, "", (*MediaFile)(nil).generatedSourceName())
 }

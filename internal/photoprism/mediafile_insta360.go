@@ -2,6 +2,8 @@ package photoprism
 
 import (
 	"math"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -69,6 +71,92 @@ func FindInsta360Capture(f *MediaFile) *Insta360Capture {
 func insta360SkipConvert(f *MediaFile) bool {
 	capture := FindInsta360Capture(f)
 	return capture.ValidPair() && capture.Left.FileName() != f.FileName()
+}
+
+// insta360PairPreview returns the complete capture whose left lens m is the generated preview of.
+func insta360PairPreview(m *MediaFile) *Insta360Capture {
+	if m == nil || !m.IsPreviewImage() {
+		return nil
+	}
+
+	sourceName := m.generatedSourceName()
+	if fs.FileType(sourceName) != fs.VideoInsv {
+		return nil
+	}
+
+	source, err := NewMediaFile(sourceName)
+	if err != nil {
+		return nil
+	}
+
+	if capture := FindInsta360Capture(source); capture.ValidPair() && capture.Left.FileName() == source.FileName() {
+		return capture
+	}
+
+	return nil
+}
+
+// insta360RightLensSidecar reports whether m was generated from the right lens of a complete capture.
+func insta360RightLensSidecar(m *MediaFile) bool {
+	sourceName := m.generatedSourceName()
+	if fs.FileType(sourceName) != fs.VideoInsv {
+		return false
+	}
+
+	source, err := NewMediaFile(sourceName)
+	if err != nil {
+		return false
+	}
+
+	capture := FindInsta360Capture(source)
+
+	return capture.ValidPair() && capture.Right.FileName() == source.FileName()
+}
+
+// insta360StalePreview reports whether the sidecar preview of a complete capture's left lens is not
+// 2:1 while its right lens is among the pending files, i.e. was made before both lenses were present.
+func insta360StalePreview(f *MediaFile, pending MediaFiles) bool {
+	capture := FindInsta360Capture(f)
+	if !capture.ValidPair() || capture.Left.FileName() != f.FileName() {
+		return false
+	}
+
+	rightPending := false
+	for _, file := range pending {
+		if file != nil && file.FileName() == capture.Right.FileName() {
+			rightPending = true
+			break
+		}
+	}
+
+	if !rightPending {
+		return false
+	}
+
+	previewName := fs.ImageJpeg.FindFirst(f.FileName(), []string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false)
+	if previewName == "" {
+		return false
+	}
+
+	preview, err := NewMediaFile(previewName)
+
+	return err == nil && preview.InSidecar() && preview.Width() > 0 && !preview.DualFisheyeLayout()
+}
+
+// MemberPreview reports whether the specified file name is a preview of the right lens or proxy.
+func (m *Insta360Capture) MemberPreview(rootRelName string) bool {
+	if m == nil || rootRelName == "" {
+		return false
+	}
+
+	sourceName := strings.TrimSuffix(rootRelName, filepath.Ext(rootRelName))
+	for _, file := range (MediaFiles{m.Right, m.Proxy}) {
+		if file != nil && file.RootRelName() == sourceName {
+			return true
+		}
+	}
+
+	return false
 }
 
 // ValidPair reports whether the two full-resolution lens files can safely be combined.

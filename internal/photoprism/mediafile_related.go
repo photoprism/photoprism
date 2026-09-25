@@ -71,6 +71,11 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 			if captureMatches, captureErr := filepath.Glob(capturePattern); captureErr == nil {
 				matches = list.Join(matches, captureMatches)
 			}
+
+			// Existing previews of each member are reindexed with the capture, e.g. on a forced rescan.
+			if jpegName := fs.ImageJpeg.FindFirst(captureFile.FileName(), []string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false); jpegName != "" {
+				matches = list.Join(matches, []string{jpegName})
+			}
 		}
 	}
 
@@ -144,6 +149,17 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 		return result, fmt.Errorf("%s is unsupported (%s)", clean.Log(m.BaseName()), mediaType)
 	}
 
+	// The left (_00) lens is the main original of a complete Insta360 capture, so the hidden preview
+	// below is looked up for it, and its combined preview becomes the primary file during indexing.
+	if captureMain != "" {
+		for _, file := range result.Files {
+			if file.FileName() == captureMain {
+				result.Main = file
+				break
+			}
+		}
+	}
+
 	// Add hidden preview image if needed.
 	if !result.HasPreview() {
 		if jpegName := fs.ImageJpeg.FindFirst(result.Main.FileName(), []string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), stripSequence); jpegName != "" {
@@ -158,17 +174,6 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 	}
 
 	sort.Sort(result.Files)
-
-	// The left (_00) lens is the canonical main original for a complete Insta360 capture. The
-	// generated equirectangular preview becomes the primary display file later during indexing.
-	if captureMain != "" {
-		for _, file := range result.Files {
-			if file.FileName() == captureMain {
-				result.Main = file
-				break
-			}
-		}
-	}
 
 	return result, nil
 }
