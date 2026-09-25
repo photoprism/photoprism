@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2026-09-10 09:31+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2026-09-25 23:16+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: none\n"
 "Language: lv\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2658,7 +2658,7 @@ msgstr "jaukts"
 
 #: src/common/util.js:935
 msgid "Modified"
-msgstr ""
+msgstr "Modificēts"
 
 #: src/app/routes.js:329 src/component/navigation.vue:423
 #: src/options/options.js:264 src/page/settings/collections.vue:143
@@ -4220,7 +4220,7 @@ msgstr "Sinhronizēt neapstrādātus un video failus"
 
 #: src/component/service/edit.vue:166
 msgid "Sync YAML sidecar files"
-msgstr ""
+msgstr "Sinhronizēt YAML blakusfailus"
 
 #: src/component/lightbox/sidebar.vue:98 src/component/photo/edit/info.vue:91
 #: src/component/photo/view/cards.vue:199 src/component/photo/view/cards.vue:36
@@ -4585,7 +4585,7 @@ msgstr "Augšupielāde uz %s neizdevās"
 
 #: src/component/service/edit.vue:81
 msgid "Upload YAML sidecar files"
-msgstr ""
+msgstr "Augšupielādējiet YAML blakusfailus"
 
 #: src/component/upload/dialog.vue:29
 msgid "Uploading %{n} of %{t}…"

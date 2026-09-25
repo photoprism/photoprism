@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-09-14 19:08+0000\n"
-"Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
+"PO-Revision-Date: 2026-09-25 23:16+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -2666,7 +2666,7 @@ msgstr "mélangé"
 
 #: src/common/util.js:935
 msgid "Modified"
-msgstr ""
+msgstr "Modifié"
 
 #: src/app/routes.js:329 src/component/navigation.vue:423
 #: src/options/options.js:264 src/page/settings/collections.vue:143
@@ -4229,7 +4229,7 @@ msgstr "Synchroniser les fichiers raw et les vidéos"
 
 #: src/component/service/edit.vue:166
 msgid "Sync YAML sidecar files"
-msgstr ""
+msgstr "Fichiers sidecar YAML de synchronisation"
 
 #: src/component/lightbox/sidebar.vue:98 src/component/photo/edit/info.vue:91
 #: src/component/photo/view/cards.vue:199 src/component/photo/view/cards.vue:36
@@ -4594,7 +4594,7 @@ msgstr "Échec du chargement sur %s"
 
 #: src/component/service/edit.vue:81
 msgid "Upload YAML sidecar files"
-msgstr ""
+msgstr "Téléversez les fichiers YAML associés."
 
 #: src/component/upload/dialog.vue:29
 msgid "Uploading %{n} of %{t}…"
