@@ -1,6 +1,7 @@
 package query
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -149,6 +150,22 @@ func ArchivedPhotos(limit int, offset int) (entities entity.Photos, err error) {
 		Limit(limit).Offset(offset).Find(&entities).Error
 
 	return entities, err
+}
+
+// ArchivedPhoto returns the current row of the photo with the given ID if it is archived and not removed,
+// using the same condition as ArchivedPhotos, or nil if it is not.
+func ArchivedPhoto(id uint) (*entity.Photo, error) {
+	result := &entity.Photo{}
+
+	if err := UnscopedDb().
+		Where("id = ? AND photo_quality > -1 AND deleted_at IS NOT NULL", id).
+		First(result).Error; errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, nil
+	} else if err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }
 
 // PhotosMetadataUpdate returns photos selected for metadata maintenance.

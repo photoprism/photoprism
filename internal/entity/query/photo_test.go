@@ -413,3 +413,34 @@ func TestPhotoPathMaxDates(t *testing.T) {
 		}
 	})
 }
+
+func TestArchivedPhoto(t *testing.T) {
+	photo := likeTestPhoto(t, "zz-archived-"+rnd.Base36(6), "photo")
+
+	result, err := ArchivedPhoto(photo.ID)
+	require.NoError(t, err)
+	assert.Nil(t, result)
+
+	require.NoError(t, photo.Archive())
+	result, err = ArchivedPhoto(photo.ID)
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Equal(t, photo.PhotoUID, result.PhotoUID)
+
+	// The row is read again, so later changes are returned.
+	require.NoError(t, photo.Update("photo_name", "renamed"))
+	require.NoError(t, photo.Update("photo_quality", 0))
+	result, err = ArchivedPhoto(photo.ID)
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Equal(t, "renamed", result.PhotoName)
+
+	require.NoError(t, photo.Update("photo_quality", -1))
+	result, err = ArchivedPhoto(photo.ID)
+	require.NoError(t, err)
+	assert.Nil(t, result)
+
+	result, err = ArchivedPhoto(0)
+	require.NoError(t, err)
+	assert.Nil(t, result)
+}
