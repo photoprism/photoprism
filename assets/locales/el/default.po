@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2026-09-01 06:26+0000\n"
-"PO-Revision-Date: 2026-07-23 13:17+0000\n"
+"PO-Revision-Date: 2026-09-25 23:16+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: none\n"
 "Language: el\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 2026.7.1\n"
+"X-Generator: Weblate 2026.9.1\n"
 
 #: messages.go:114
 msgid "Something went wrong, try again"
@@ -234,7 +234,7 @@ msgstr "Απαιτείται επαληθευμένη διεύθυνση ηλε�
 
 #: messages.go:168
 msgid "A migration is in progress"
-msgstr ""
+msgstr "Είναι σε εξέλιξη μια μεταφορά δεδομένων"
 
 #: messages.go:171
 msgid "Changes successfully saved"
