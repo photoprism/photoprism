@@ -1,6 +1,6 @@
 ## PhotoPrism — FFmpeg Integration
 
-**Last Updated:** August 7, 2026
+**Last Updated:** September 25, 2026
 
 ### Overview
 
