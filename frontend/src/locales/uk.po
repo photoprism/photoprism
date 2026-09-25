@@ -126,7 +126,7 @@ msgstr "2FA"
 msgid "4 hours"
 msgstr "4 години"
 
-#: src/component/share/dialog.vue:116
+#: src/component/share/dialog.vue:117
 msgid "A click will copy it to your clipboard."
 msgstr "Копіювання до буферу обміну по кліку."
 
@@ -174,7 +174,7 @@ msgstr "Доступність"
 #: src/component/navigation.vue:578 src/component/user/edit/dialog.vue:26
 #: src/component/auth/menu.vue:14 src/component/navigation.vue:698
 #: src/component/navigation.vue:887 src/component/service/upload.vue:25
-#: src/locales.js:335 src/model/service.js:80 src/model/user.js:151
+#: src/locales.js:335 src/model/service.js:81 src/model/user.js:151
 #: src/page/settings.vue:112 src/page/settings/general.vue:394
 msgid "Account"
 msgstr "Обліковий запис"
@@ -213,7 +213,7 @@ msgstr "Обліковий запис збережено"
 msgid "Accounts"
 msgstr "Рахунки"
 
-#: src/component/photo/edit/info.vue:188 src/component/photo/edit/info.vue:189
+#: src/component/photo/edit/info.vue:189 src/component/photo/edit/info.vue:190
 msgid "Accuracy"
 msgstr "Точність"
 
@@ -346,7 +346,7 @@ msgid "Adjust Location"
 msgstr "Налаштувати місце розташування"
 
 #: src/model/cluster-instance.js:28 src/options/admin.js:35
-#: src/common/util.js:922 src/options/auth.js:6
+#: src/common/util.js:967 src/options/auth.js:6
 msgid "Admin"
 msgstr "Адміністратор"
 
@@ -429,7 +429,7 @@ msgstr "Альбом збережено"
 #: src/app/routes.js:342 src/component/album/toolbar.vue:118
 #: src/component/lightbox/sidebar.vue:286 src/component/navigation.vue:197
 #: src/component/navigation.vue:734 src/component/photo/batch-edit.vue:414
-#: src/component/photo/edit/info.vue:79 src/component/photo/edit/info.vue:80
+#: src/component/photo/edit/info.vue:80 src/component/photo/edit/info.vue:81
 #: src/options/options.js:257 src/page/settings/collections.vue:113
 #: src/page/settings/general.vue:81
 msgid "Albums"
@@ -532,11 +532,11 @@ msgstr "Дозвольте користувачам завантажувати �
 msgid "Allow zooming with pinch gestures on mobile devices."
 msgstr "Увімкнути масштабування за допомогою жестів «розведення пальців» на мобільних пристроях."
 
-#: src/component/share/dialog.vue:118
+#: src/component/share/dialog.vue:119
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
 msgstr "Крім того, ви можете завантажувати файли безпосередньо на сервери WebDAV, такі як Nextcloud."
 
-#: src/component/photo/edit/info.vue:182 src/component/photo/edit/info.vue:183
+#: src/component/photo/edit/info.vue:183 src/component/photo/edit/info.vue:184
 msgid "Altitude"
 msgstr "Висота"
 
@@ -549,7 +549,7 @@ msgstr "Висота (м)"
 msgid "AM"
 msgstr "AM"
 
-#: src/app/routes.js:423 src/common/util.js:864
+#: src/app/routes.js:423 src/common/util.js:907
 #: src/component/photo/batch-edit.vue:127 src/component/photo/batch-edit.vue:68
 #: src/component/photo/edit/files.vue:132
 #: src/component/photo/edit/files.vue:133
@@ -571,11 +571,11 @@ msgstr "Анімація"
 msgid "Animations"
 msgstr "Анімація"
 
-#: src/component/share/dialog.vue:117
+#: src/component/share/dialog.vue:118
 msgid "Any private photos and videos remain private and won't be shared."
 msgstr "Будь-які приватні фотографії та відео залишаються приватними та не будуть доступні іншим користувачам."
 
-#: src/component/service/edit.vue:181
+#: src/component/service/edit.vue:199
 msgid "API Key"
 msgstr "Ключ API"
 
@@ -603,8 +603,8 @@ msgstr "Затвердити та зберегти зміни"
 msgid "Apps and Devices"
 msgstr "Програми та пристрої"
 
-#: src/component/lightbox.vue:3267 src/component/photo/edit/info.vue:228
-#: src/component/photo/edit/info.vue:229
+#: src/component/lightbox.vue:3267 src/component/photo/edit/info.vue:229
+#: src/component/photo/edit/info.vue:230
 msgid "Archived"
 msgstr "Заархівовано"
 
@@ -661,14 +661,14 @@ msgstr "Співвідношення сторін"
 msgid "Attributes"
 msgstr "Атрибути"
 
-#: src/app/routes.js:416 src/common/util.js:862
+#: src/app/routes.js:416 src/common/util.js:905
 #: src/component/navigation.vue:204 src/component/navigation.vue:205
 #: src/component/navigation.vue:217 src/component/navigation.vue:226
 #: src/component/navigation.vue:254 src/options/options.js:360
 msgid "Audio"
 msgstr "Аудіо"
 
-#: src/model/logs.js:184
+#: src/model/logs.js:137
 msgid "Audit Log"
 msgstr "Аудіо"
 
@@ -683,7 +683,7 @@ msgstr "Аудіо"
 msgid "Authentication"
 msgstr "Аутентифікація"
 
-#: src/common/util.js:884
+#: src/common/util.js:927
 msgid "Auto"
 msgstr "Авто"
 
@@ -713,7 +713,7 @@ msgstr "Значок"
 msgid "Base Path"
 msgstr "Базовий шлях"
 
-#: src/common/util.js:916
+#: src/common/util.js:961
 msgid "Batch"
 msgstr "Партія"
 
@@ -804,7 +804,7 @@ msgstr "Камера"
 msgid "Camera not found"
 msgstr "Камеру не знайдено"
 
-#: src/component/photo/edit/info.vue:107 src/component/photo/edit/info.vue:108
+#: src/component/photo/edit/info.vue:108 src/component/photo/edit/info.vue:109
 msgid "Camera Serial"
 msgstr "Серійний номер камери"
 
@@ -849,21 +849,21 @@ msgstr "Не можливо виділити більше елементів"
 #: src/component/meta/location/dialog.vue:115
 #: src/component/people/edit/dialog.vue:72
 #: src/component/photo/album/dialog.vue:64 src/component/service/add.vue:97
-#: src/component/service/edit.vue:232 src/component/service/remove.vue:19
+#: src/component/service/edit.vue:250 src/component/service/remove.vue:19
 #: src/component/service/upload.vue:57 src/component/settings/apps.vue:151
 #: src/component/settings/passcode.vue:101
 #: src/component/settings/passcode.vue:142
-#: src/component/settings/password.vue:83 src/component/share/dialog.vue:161
+#: src/component/settings/password.vue:83 src/component/share/dialog.vue:164
 #: src/locales.js:214 src/page/auth/login.vue:120 src/page/connect.vue:36
 #: src/page/library/import.vue:61 src/page/library/index.vue:61
 msgid "Cancel"
 msgstr "Відмінити"
 
-#: src/common/util.js:1100 src/common/util.js:1107
+#: src/common/util.js:1145 src/common/util.js:1152
 msgid "Cannot copy to clipboard"
 msgstr "Неможливо скопіювати до буфера обміну"
 
-#: src/common/util.js:904 src/component/lightbox/sidebar.vue:807
+#: src/common/util.js:949 src/component/lightbox/sidebar.vue:807
 #: src/component/photo/batch-edit.vue:173
 #: src/component/photo/batch-edit.vue:176
 #: src/component/photo/edit/details.vue:28
@@ -935,8 +935,8 @@ msgstr "Зміни не можливо зберегти"
 #: src/component/album/edit/dialog.vue:177
 #: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3219
 #: src/component/photo/batch-edit.vue:1472
-#: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
-#: src/component/share/dialog.vue:225 src/component/share/dialog.vue:244
+#: src/component/photo/edit/files.vue:566 src/component/service/edit.vue:376
+#: src/component/share/dialog.vue:235 src/component/share/dialog.vue:254
 #: src/locales.js:429 src/page/albums.vue:1197 src/page/people/new.vue:814
 #: src/page/people/recognized.vue:320 src/page/settings/advanced.vue:507
 #: src/page/settings/collections.vue:247 src/page/settings/content.vue:313
@@ -948,7 +948,7 @@ msgstr "Зміни успішно збережено"
 msgid "Changes to the advanced settings require a restart to take effect."
 msgstr "Зміни в розширених налаштуваннях потребують перезапуску, щоб набути чинності."
 
-#: src/component/photo/edit/info.vue:220 src/component/photo/edit/info.vue:221
+#: src/component/photo/edit/info.vue:221 src/component/photo/edit/info.vue:222
 msgid "Checked"
 msgstr "Перевірено"
 
@@ -1014,7 +1014,7 @@ msgstr "Клієнт"
 #: src/component/settings/passcode.vue:192
 #: src/component/settings/passcode.vue:207
 #: src/component/settings/passcode.vue:61 src/component/settings/webdav.vue:74
-#: src/component/share/dialog.vue:126 src/component/share/dialog.vue:70
+#: src/component/share/dialog.vue:127 src/component/share/dialog.vue:70
 #: src/component/share/dialog.vue:71 src/component/share/dialog.vue:80
 #: src/component/update.vue:25 src/component/upload/dialog.vue:119
 #: src/component/upload/dialog.vue:20 src/locales.js:210
@@ -1155,7 +1155,7 @@ msgstr "Дописувач"
 msgid "Converting"
 msgstr "Конвертація"
 
-#: src/common/util.js:1093
+#: src/common/util.js:1138
 msgid "Copied to clipboard"
 msgstr "Скопійовано у буфер обміну"
 
@@ -1225,7 +1225,7 @@ msgstr "Створіть YAML-файли для резервного копію�
 
 #: src/page/admin/sessions.vue:151 src/component/cluster/node/overview.vue:55
 #: src/page/admin/sessions.vue:191 src/page/cluster/nodes.vue:168
-#: src/component/photo/edit/info.vue:196 src/component/photo/edit/info.vue:197
+#: src/component/photo/edit/info.vue:197 src/component/photo/edit/info.vue:198
 msgid "Created"
 msgstr "Створено"
 
@@ -1286,7 +1286,7 @@ msgstr "Журнали налагодження"
 #: src/page/admin/sessions.vue:256 src/page/admin/users.vue:233
 #: src/page/admin/groups.vue:35 src/page/admin/sessions.vue:371
 #: src/page/admin/users.vue:430 src/page/admin/sessions.vue:369
-#: src/page/admin/users.vue:374 src/common/util.js:886 src/model/session.js:42
+#: src/page/admin/users.vue:374 src/common/util.js:929 src/model/session.js:42
 #: src/model/user.js:343 src/options/auth.js:40 src/options/auth.js:41
 #: src/options/auth.js:69 src/options/auth.js:70 src/options/options.js:252
 #: src/options/options.js:255 src/options/options.js:295
@@ -1306,7 +1306,7 @@ msgstr "Папка за замовчуванням"
 #: src/component/label/delete/dialog.vue:22
 #: src/component/photo/clipboard.vue:132 src/component/photo/edit/files.vue:63
 #: src/component/photo/edit/files.vue:71 src/component/photo/edit/files.vue:95
-#: src/component/service/remove.vue:22 src/component/share/dialog.vue:98
+#: src/component/service/remove.vue:22 src/component/share/dialog.vue:99
 #: src/locales.js:321 src/page/settings/general.vue:335
 msgid "Delete"
 msgstr "Видалити"
@@ -1475,7 +1475,7 @@ msgstr "Відображати підписи до зображень у рез�
 msgid "Display picture titles in search results."
 msgstr "Відображати назви зображень у результатах пошуку."
 
-#: src/common/util.js:868 src/component/photo/view/cards.vue:115
+#: src/common/util.js:911 src/component/photo/view/cards.vue:115
 #: src/component/photo/view/cards.vue:239
 #: src/component/photo/view/mosaic.vue:70 src/model/thumb.js:247
 #: src/options/options.js:372
@@ -1504,7 +1504,7 @@ msgstr "Не використовуйте RawTherapee для перетворе�
 #: src/component/lightbox/sidebar.vue:195 src/component/settings/apps.vue:51
 #: src/component/settings/apps.vue:52 src/component/settings/apps.vue:61
 #: src/component/settings/apps.vue:77 src/component/settings/apps.vue:88
-#: src/component/share/dialog.vue:162
+#: src/component/share/dialog.vue:165
 msgid "Done"
 msgstr "Готово"
 
@@ -1525,14 +1525,14 @@ msgstr "Завантажити"
 msgid "Download only original media files, without any automatically generated files."
 msgstr "Завантажуйте лише оригінальні медіафайли, без жодних автоматично згенерованих файлів."
 
-#: src/component/service/edit.vue:118
+#: src/component/service/edit.vue:127
 msgid "Download remote files"
 msgstr "Завантаження віддалених файлів"
 
 #: src/component/album/clipboard.vue:203 src/component/album/toolbar.vue:234
 #: src/component/file/clipboard.vue:138 src/component/label/clipboard.vue:149
 #: src/component/lightbox.vue:3307 src/component/people/clipboard.vue:125
-#: src/component/photo/clipboard.vue:414 src/component/photo/edit/files.vue:509
+#: src/component/photo/clipboard.vue:414 src/component/photo/edit/files.vue:523
 #: src/component/photo/view/cards.vue:449 src/component/photo/view/list.vue:284
 #: src/page/library/browse.vue:231
 msgid "Downloading…"
@@ -1597,7 +1597,7 @@ msgstr "Редагувати фото"
 msgid "Edit Photos (%{n})"
 msgstr "Редагувати фотографії (%{n})"
 
-#: src/component/photo/edit/info.vue:212 src/component/photo/edit/info.vue:213
+#: src/component/photo/edit/info.vue:213 src/component/photo/edit/info.vue:214
 msgid "Edited"
 msgstr "Відредаговано"
 
@@ -1680,7 +1680,7 @@ msgstr "Помилка"
 msgid "Errors"
 msgstr "Помилки"
 
-#: src/common/util.js:888
+#: src/common/util.js:931
 msgid "Estimate"
 msgstr "Оцінка"
 
@@ -1712,7 +1712,7 @@ msgstr "Експериментальні можливості"
 #: src/page/admin/sessions.vue:203 src/page/admin/sessions.vue:299
 #: src/page/admin/sessions.vue:297 src/component/service/edit.vue:69
 #: src/component/settings/apps.vue:138 src/component/settings/apps.vue:295
-#: src/component/share/dialog.vue:195
+#: src/component/share/dialog.vue:198
 msgid "Expires"
 msgstr "Закінчується"
 
@@ -1740,7 +1740,7 @@ msgstr "Обличчя"
 msgid "Face not found"
 msgstr "Обличчя не знайдено"
 
-#: src/component/photo/edit/info.vue:101 src/component/photo/edit/info.vue:102
+#: src/component/photo/edit/info.vue:102 src/component/photo/edit/info.vue:103
 msgid "Faces"
 msgstr "Обличчя"
 
@@ -1752,7 +1752,7 @@ msgstr "Помилка створення файла, перевірте доз�
 msgid "Failed creating folder, please check permissions"
 msgstr "Не вдалося створити папку, перевірте права доступу"
 
-#: src/component/share/dialog.vue:235
+#: src/component/share/dialog.vue:245
 msgid "Failed removing link"
 msgstr "Не вдалось видалити посилання"
 
@@ -1804,7 +1804,7 @@ msgstr "Не вдалося зберегти маркер обличчя"
 msgid "Failed to save name"
 msgstr "Не вдалося зберегти ім'я"
 
-#: src/component/share/dialog.vue:216
+#: src/component/share/dialog.vue:219
 msgid "Failed updating link"
 msgstr "Не вдалось оновити посилання"
 
@@ -1825,7 +1825,7 @@ msgstr "Швидко"
 #: src/component/label/edit/dialog.vue:37
 #: src/component/people/edit/dialog.vue:50
 #: src/component/photo/batch-edit.vue:1536
-#: src/component/photo/edit/info.vue:121 src/component/photo/edit/info.vue:122
+#: src/component/photo/edit/info.vue:122 src/component/photo/edit/info.vue:123
 msgid "Favorite"
 msgstr "Вибрані"
 
@@ -1851,8 +1851,8 @@ msgstr "Особливості"
 msgid "Female"
 msgstr "Жінка"
 
-#: src/common/util.js:890 src/component/lightbox/sidebar.vue:1101
-#: src/component/photo/edit/info.vue:94 src/model/file.js:271
+#: src/common/util.js:933 src/component/lightbox/sidebar.vue:1101
+#: src/component/photo/edit/info.vue:94 src/model/file.js:273
 msgid "File"
 msgstr "Файл"
 
@@ -1928,8 +1928,8 @@ msgid "Focal Length"
 msgstr "Фокусна відстань"
 
 #: src/component/photo/edit/info.vue:28 src/component/photo/edit/info.vue:29
-#: src/component/service/edit.vue:44 src/component/service/edit.vue:86
-#: src/component/service/edit.vue:91 src/component/service/upload.vue:42
+#: src/component/service/edit.vue:100 src/component/service/edit.vue:44
+#: src/component/service/edit.vue:95 src/component/service/upload.vue:42
 #: src/component/service/upload.vue:48 src/model/folder.js:181
 #: src/page/library/browse.vue:77
 msgid "Folder"
@@ -2111,8 +2111,8 @@ msgstr "Гібридний"
 msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
 msgstr "Якщо ви втратите доступ до програми або пристрою автентифікатора, ви можете скористатися кодом відновлення, щоб відновити доступ до свого облікового запису."
 
-#: src/common/util.js:854 src/common/util.js:894
-#: src/component/photo/view/cards.vue:246 src/model/file.js:199
+#: src/common/util.js:897 src/common/util.js:939
+#: src/component/photo/view/cards.vue:246 src/model/file.js:201
 #: src/options/options.js:344
 msgid "Image"
 msgstr "Зображення"
@@ -2253,7 +2253,7 @@ msgstr "Недостатнє зберігання"
 msgid "Insufficient storage."
 msgstr "Недостатнє зберігання."
 
-#: src/component/service/edit.vue:100
+#: src/component/service/edit.vue:109
 msgid "Interval"
 msgstr "Інтервал"
 
@@ -2261,7 +2261,7 @@ msgstr "Інтервал"
 #: src/common/form.js:245 src/common/form.js:319 src/common/form.js:322
 #: src/common/form.js:333 src/common/form.js:336 src/common/form.js:362
 #: src/common/form.js:364 src/common/form.js:371 src/common/form.js:373
-#: src/common/form.js:388 src/common/form.js:390
+#: src/common/form.js:388 src/common/form.js:390 src/model/link.js:41
 msgid "Invalid"
 msgstr "Недійсний"
 
@@ -2281,7 +2281,7 @@ msgstr "Недійсні облікові дані"
 msgid "Invalid date"
 msgstr "Невірна дата"
 
-#: src/locales.js:418
+#: src/component/share/dialog.vue:226 src/locales.js:418
 msgid "Invalid link"
 msgstr "Невірне посилання"
 
@@ -2344,7 +2344,7 @@ msgstr "Обмеження розміру JPEG: %{n}px"
 msgid "JPEGs and thumbnails are automatically rendered as needed."
 msgstr "JPEG та мініатюри автоматично відтворюються за потреби."
 
-#: src/common/util.js:906
+#: src/common/util.js:951
 msgid "Keyword"
 msgstr "Ключове слово"
 
@@ -2410,7 +2410,7 @@ msgstr "Остання синхронізація"
 msgid "Last Used"
 msgstr "Останнє використання"
 
-#: src/component/photo/edit/info.vue:166 src/component/photo/edit/info.vue:167
+#: src/component/photo/edit/info.vue:167 src/component/photo/edit/info.vue:168
 msgid "Latitude"
 msgstr "Широта"
 
@@ -2474,7 +2474,7 @@ msgstr "Лаймовий"
 msgid "Limit reached, showing first %{n} files"
 msgstr "Ліміт досягнуто, показано перші %{n} файлів"
 
-#: src/model/link.js:93 src/options/auth.js:50 src/options/auth.js:51
+#: src/model/link.js:106 src/options/auth.js:50 src/options/auth.js:51
 msgid "Link"
 msgstr "Посилання"
 
@@ -2486,7 +2486,7 @@ msgstr "Список"
 msgid "List View"
 msgstr "Перегляд списку"
 
-#: src/common/util.js:858 src/component/photo/batch-edit.vue:124
+#: src/common/util.js:901 src/component/photo/batch-edit.vue:124
 #: src/component/photo/batch-edit.vue:65 src/component/photo/view/cards.vue:112
 #: src/component/photo/view/cards.vue:224 src/component/photo/view/list.vue:81
 #: src/component/photo/view/mosaic.vue:67 src/options/options.js:352
@@ -2522,7 +2522,7 @@ msgid "Local Time"
 msgstr "Місцевий час"
 
 #: src/page/settings/account.vue:359 src/page/settings/account.vue:361
-#: src/common/util.js:896 src/component/album/edit/dialog.vue:38
+#: src/common/util.js:941 src/component/album/edit/dialog.vue:38
 #: src/component/lightbox/sidebar.vue:150
 #: src/component/photo/batch-edit.vue:263
 #: src/component/photo/batch-edit.vue:581
@@ -2549,7 +2549,7 @@ msgstr "Увійти в систему"
 msgid "Logs"
 msgstr "Журнали"
 
-#: src/component/photo/edit/info.vue:174 src/component/photo/edit/info.vue:175
+#: src/component/photo/edit/info.vue:175 src/component/photo/edit/info.vue:176
 msgid "Longitude"
 msgstr "Довгота"
 
@@ -2587,7 +2587,7 @@ msgstr "Керувати обліковим записом"
 msgid "Manager"
 msgstr "Менеджер"
 
-#: src/common/util.js:918
+#: src/common/util.js:963
 msgid "Manual"
 msgstr "Посібник"
 
@@ -2603,7 +2603,7 @@ msgstr "Карти"
 msgid "Maps are unavailable. Try another browser or device."
 msgstr "Карти недоступні. Спробуйте використати інший браузер або пристрій."
 
-#: src/common/util.js:898 src/model/marker.js:132
+#: src/common/util.js:943 src/model/marker.js:132
 msgid "Marker"
 msgstr "Маркер"
 
@@ -2633,7 +2633,7 @@ msgstr "Об'єднати %{a} із %{b}?"
 msgid "Message"
 msgstr "Повідомлення"
 
-#: src/common/util.js:908
+#: src/common/util.js:953
 msgid "Metadata"
 msgstr "Метадані"
 
@@ -2648,7 +2648,7 @@ msgstr "Мінімізувати"
 #: src/component/photo/edit/files.vue:251
 #: src/component/photo/edit/files.vue:252
 #: src/component/photo/edit/files.vue:258
-#: src/component/photo/edit/files.vue:266 src/component/photo/edit/info.vue:217
+#: src/component/photo/edit/files.vue:266 src/component/photo/edit/info.vue:218
 msgid "Missing"
 msgstr "Відсутнє"
 
@@ -2659,6 +2659,10 @@ msgstr "Відсутня або невірна конфігурація"
 #: src/options/options.js:24 src/options/options.js:27
 msgid "mixed"
 msgstr "змішаний"
+
+#: src/common/util.js:935
+msgid "Modified"
+msgstr ""
 
 #: src/app/routes.js:329 src/component/navigation.vue:423
 #: src/options/options.js:264 src/page/settings/collections.vue:143
@@ -2711,7 +2715,7 @@ msgstr "Вимкнути звук."
 #: src/component/cluster/node/overview.vue:25
 #: src/component/cluster/node/overview.vue:4
 #: src/component/cluster/node/overview.vue:75 src/page/cluster/nodes.vue:155
-#: src/common/util.js:892 src/component/album/edit/dialog.vue:30
+#: src/common/util.js:937 src/component/album/edit/dialog.vue:30
 #: src/component/album/edit/dialog.vue:31
 #: src/component/input/chip-selector.vue:277
 #: src/component/label/edit/dialog.vue:30
@@ -2725,7 +2729,7 @@ msgstr "Вимкнути звук."
 #: src/component/photo/edit/info.vue:37 src/component/photo/edit/labels.vue:135
 #: src/component/photo/edit/labels.vue:299
 #: src/component/photo/edit/people.vue:51 src/component/photo/view/list.vue:43
-#: src/component/service/edit.vue:155 src/component/settings/apps.vue:112
+#: src/component/service/edit.vue:173 src/component/settings/apps.vue:112
 #: src/component/settings/apps.vue:275 src/locales.js:323
 #: src/page/albums.vue:393 src/page/auth/login.vue:80
 #: src/page/people/new.vue:51 src/page/services.vue:177
@@ -2777,9 +2781,9 @@ msgstr "Наступна візуалізація"
 #: src/component/people/merge/dialog.vue:19
 #: src/component/photo/archive/dialog.vue:19
 #: src/component/photo/batch-edit.vue:1120
-#: src/component/photo/edit/info.vue:151 src/component/photo/edit/info.vue:165
-#: src/component/photo/edit/info.vue:179 src/component/photo/edit/info.vue:193
-#: src/component/photo/edit/info.vue:207
+#: src/component/photo/edit/info.vue:152 src/component/photo/edit/info.vue:166
+#: src/component/photo/edit/info.vue:180 src/component/photo/edit/info.vue:194
+#: src/component/photo/edit/info.vue:208
 msgid "No"
 msgstr "Немає"
 
@@ -3065,7 +3069,7 @@ msgstr "Оригінальна назва"
 
 #: src/component/navigation.vue:362 src/component/navigation.vue:363
 #: src/component/navigation.vue:375 src/component/navigation.vue:384
-#: src/component/navigation.vue:497 src/model/file.js:180
+#: src/component/navigation.vue:497 src/model/file.js:182
 #: src/options/options.js:476 src/page/library/browse.vue:7
 #: src/page/settings/collections.vue:42 src/page/settings/content.vue:185
 #: src/page/settings/general.vue:364
@@ -3105,7 +3109,7 @@ msgid "Pagination Navigation"
 msgstr "Навігація по сторінках"
 
 #: src/component/photo/batch-edit.vue:1538
-#: src/component/photo/edit/info.vue:145 src/component/photo/edit/info.vue:146
+#: src/component/photo/edit/info.vue:146 src/component/photo/edit/info.vue:147
 msgid "Panorama"
 msgstr "Панорама"
 
@@ -3125,9 +3129,9 @@ msgstr "Частина вибраних фотографій"
 
 #: src/component/user/add/dialog.vue:51 src/component/user/add/dialog.vue:52
 #: src/component/user/add/dialog.vue:57 src/component/user/add/dialog.vue:58
-#: src/component/service/add.vue:52 src/component/service/edit.vue:168
+#: src/component/service/add.vue:52 src/component/service/edit.vue:186
 #: src/component/settings/apps.vue:33 src/component/settings/passcode.vue:171
-#: src/component/settings/passcode.vue:36 src/component/share/dialog.vue:160
+#: src/component/settings/passcode.vue:36 src/component/share/dialog.vue:163
 #: src/options/auth.js:121 src/page/auth/login.vue:101
 msgid "Password"
 msgstr "Пароль"
@@ -3155,7 +3159,7 @@ msgstr "Необхідно здійснити оплату"
 msgid "People"
 msgstr "Люди"
 
-#: src/component/share/dialog.vue:115
+#: src/component/share/dialog.vue:116
 msgid "People you share a link with will be able to view public contents."
 msgstr "Люди, з котрими ви поділилися посиланням, зможуть переглядати загальнодоступний вміст."
 
@@ -3226,7 +3230,7 @@ msgstr "Рожевий"
 msgid "Pinned"
 msgstr "Прикріплено"
 
-#: src/component/photo/edit/info.vue:153 src/component/photo/edit/info.vue:154
+#: src/component/photo/edit/info.vue:154 src/component/photo/edit/info.vue:155
 msgid "Place"
 msgstr "Місце"
 
@@ -3302,7 +3306,7 @@ msgstr "Портал"
 msgid "Portrait"
 msgstr "Портрет"
 
-#: src/component/service/edit.vue:139
+#: src/component/service/edit.vue:148
 msgid "Preserve filenames"
 msgstr "Зберігати імена файлів"
 
@@ -3366,7 +3370,7 @@ msgstr "Первинний"
 #: src/component/navigation.vue:156 src/component/navigation.vue:176
 #: src/component/people/edit/dialog.vue:66
 #: src/component/photo/batch-edit.vue:1537
-#: src/component/photo/edit/info.vue:129 src/component/photo/edit/info.vue:130
+#: src/component/photo/edit/info.vue:130 src/component/photo/edit/info.vue:131
 #: src/page/settings/general.vue:200
 msgid "Private"
 msgstr "Приватний"
@@ -3394,7 +3398,7 @@ msgstr "Пурпурний"
 msgid "Quality Filter"
 msgstr "Фільтр якості"
 
-#: src/component/photo/edit/info.vue:87 src/component/photo/edit/info.vue:88
+#: src/component/photo/edit/info.vue:88 src/component/photo/edit/info.vue:89
 msgid "Quality Score"
 msgstr "Показник якості"
 
@@ -3410,7 +3414,7 @@ msgstr "Випадковий"
 msgid "Rating {0} of {1}"
 msgstr "Рейтинг {0} з {1}"
 
-#: src/common/util.js:856 src/options/options.js:348
+#: src/common/util.js:899 src/options/options.js:348
 msgid "Raw"
 msgstr "Raw файли"
 
@@ -3578,7 +3582,7 @@ msgstr "Запит не виконано – недійсна відповідь
 msgid "Require non-photographic and low-quality images to be reviewed before they appear in search results."
 msgstr "Вимагайте, щоб нефотографічні та неякісні зображення проходили перевірку перед тим, як вони з'являться в результатах пошуку."
 
-#: src/component/photo/edit/info.vue:95 src/component/photo/edit/info.vue:96
+#: src/component/photo/edit/info.vue:96 src/component/photo/edit/info.vue:97
 msgid "Resolution"
 msgstr "Роздільна здатність"
 
@@ -3606,7 +3610,7 @@ msgstr "Відновити"
 msgid "Restored"
 msgstr "Відновлено"
 
-#: src/component/service/edit.vue:217
+#: src/component/service/edit.vue:235
 msgid "Retry Limit"
 msgstr "Ліміт повторних спроб"
 
@@ -3691,14 +3695,14 @@ msgstr "Супутник"
 #: src/component/people/edit/dialog.vue:52
 #: src/component/people/edit/dialog.vue:75
 #: src/component/photo/batch-edit.vue:483
-#: src/component/photo/edit/details.vue:396 src/component/service/edit.vue:103
-#: src/component/service/edit.vue:235 src/component/service/edit.vue:93
-#: src/component/service/edit.vue:94 src/component/settings/password.vue:31
+#: src/component/photo/edit/details.vue:396 src/component/service/edit.vue:100
+#: src/component/service/edit.vue:109 src/component/service/edit.vue:253
+#: src/component/service/edit.vue:99 src/component/settings/password.vue:31
 #: src/component/settings/password.vue:32
 #: src/component/settings/password.vue:41
-#: src/component/settings/password.vue:86 src/component/share/dialog.vue:104
+#: src/component/settings/password.vue:86 src/component/share/dialog.vue:105
 #: src/component/share/dialog.vue:58 src/component/share/dialog.vue:59
-#: src/component/share/dialog.vue:96
+#: src/component/share/dialog.vue:97
 msgid "Save"
 msgstr "Зберегти"
 
@@ -3709,7 +3713,7 @@ msgid "Save changes"
 msgstr "Зберегти зміни"
 
 #: src/component/photo/batch-edit.vue:1535
-#: src/component/photo/edit/info.vue:137 src/component/photo/edit/info.vue:138
+#: src/component/photo/edit/info.vue:138 src/component/photo/edit/info.vue:139
 msgid "Scan"
 msgstr "Сканувати"
 
@@ -3750,7 +3754,7 @@ msgstr "Пошук"
 msgid "Season"
 msgstr "Сезон"
 
-#: src/component/share/dialog.vue:74
+#: src/component/share/dialog.vue:75
 msgid "Secret"
 msgstr "Таємний"
 
@@ -3837,8 +3841,8 @@ msgstr "Послідовне ім'я"
 msgid "Service"
 msgstr "Сервіс"
 
-#: src/component/service/add.vue:27 src/component/service/edit.vue:158
-#: src/component/share/dialog.vue:158
+#: src/component/service/add.vue:27 src/component/service/edit.vue:176
+#: src/component/share/dialog.vue:161
 msgid "Service URL"
 msgstr "URL служби"
 
@@ -3995,7 +3999,7 @@ msgstr "Увімкніть подання \"Місця\" з інтерактив
 msgid "Show Titles"
 msgstr "Показати заголовки"
 
-#: src/common/util.js:870 src/model/file.js:195
+#: src/common/util.js:913 src/model/file.js:197
 #: src/page/settings/collections.vue:72 src/page/settings/content.vue:215
 msgid "Sidecar"
 msgstr "Додатковий вміст"
@@ -4115,7 +4119,7 @@ msgstr "Згрупувати файли, що мають однакове уні
 msgid "Stack pictures taken at the exact same time and location based on their metadata."
 msgstr "Згрупувати зображення, зроблені в той самий час і в одному місці, на основі їхніх метаданих."
 
-#: src/component/photo/edit/info.vue:113 src/component/photo/edit/info.vue:114
+#: src/component/photo/edit/info.vue:114 src/component/photo/edit/info.vue:115
 msgid "Stackable"
 msgstr "Згруповуємі"
 
@@ -4159,7 +4163,7 @@ msgstr "Сховище"
 msgid "Streets"
 msgstr "Вулиці"
 
-#: src/common/util.js:910 src/component/lightbox/sidebar.vue:820
+#: src/common/util.js:955 src/component/lightbox/sidebar.vue:820
 #: src/component/photo/batch-edit.vue:331
 #: src/component/photo/batch-edit.vue:334
 #: src/component/photo/edit/details.vue:291
@@ -4214,9 +4218,13 @@ msgstr "Підтримайте нашу місію"
 msgid "Sync"
 msgstr "Синхронізація"
 
-#: src/component/service/edit.vue:148
+#: src/component/service/edit.vue:157
 msgid "Sync raw and video files"
 msgstr "Синхронізація файлів у форматі raw і відео"
+
+#: src/component/service/edit.vue:166
+msgid "Sync YAML sidecar files"
+msgstr ""
 
 #: src/component/lightbox/sidebar.vue:98 src/component/photo/edit/info.vue:91
 #: src/component/photo/view/cards.vue:199 src/component/photo/view/cards.vue:36
@@ -4305,11 +4313,11 @@ msgstr "Час за UTC"
 msgid "Time Zone"
 msgstr "Часовий пояс"
 
-#: src/component/service/edit.vue:203
+#: src/component/service/edit.vue:221
 msgid "Timeout"
 msgstr "Час вийшов"
 
-#: src/common/util.js:912 src/component/photo/view/list.vue:34
+#: src/common/util.js:957 src/component/photo/view/list.vue:34
 msgid "Title"
 msgstr "Заголовок"
 
@@ -4349,7 +4357,7 @@ msgstr "Увімкнути/вимкнути мініатюри"
 msgid "Toggle View"
 msgstr "Перемкнути перегляд"
 
-#: src/component/share/dialog.vue:75
+#: src/component/share/dialog.vue:76
 msgid "Token"
 msgstr "Токен"
 
@@ -4382,7 +4390,7 @@ msgstr "Для вашого облікового запису ввімкнено
 #: src/component/photo/edit/files.vue:111
 #: src/component/photo/edit/files.vue:119
 #: src/component/photo/edit/files.vue:439 src/component/photo/edit/info.vue:21
-#: src/component/service/edit.vue:189
+#: src/component/service/edit.vue:207
 msgid "Type"
 msgstr "Тип"
 
@@ -4415,7 +4423,7 @@ msgstr "Унікальний ідентифікатор"
 
 #: src/model/cluster-node.js:47 src/page/settings/account.vue:221
 #: src/page/settings/account.vue:241 src/page/settings/account.vue:261
-#: src/common/util.js:627 src/component/lightbox/sidebar.vue:120
+#: src/common/util.js:670 src/component/lightbox/sidebar.vue:120
 #: src/component/lightbox/sidebar.vue:1742
 #: src/component/lightbox/sidebar.vue:279
 #: src/component/lightbox/sidebar.vue:701
@@ -4475,8 +4483,8 @@ msgstr "Непідтримуваний тип"
 #: src/component/photo/edit/files.vue:269
 #: src/component/photo/edit/files.vue:270
 #: src/component/photo/edit/files.vue:276
-#: src/component/photo/edit/files.vue:284 src/component/photo/edit/info.vue:204
-#: src/component/photo/edit/info.vue:205
+#: src/component/photo/edit/files.vue:284 src/component/photo/edit/info.vue:205
+#: src/component/photo/edit/info.vue:206
 msgid "Updated"
 msgstr "Оновлено"
 
@@ -4552,7 +4560,7 @@ msgstr "Помилка вивантаження"
 msgid "Upload has been processed"
 msgstr "Завантаження оброблено"
 
-#: src/component/service/edit.vue:129
+#: src/component/service/edit.vue:138
 msgid "Upload local files"
 msgstr "Вивантажити локальні файли"
 
@@ -4578,6 +4586,10 @@ msgstr "Завантаження розпочато"
 #: src/locales.js:404
 msgid "Upload to %s failed"
 msgstr "Не вдалося завантажити на %s"
+
+#: src/component/service/edit.vue:81
+msgid "Upload YAML sidecar files"
+msgstr ""
 
 #: src/component/upload/dialog.vue:29
 msgid "Uploading %{n} of %{t}…"
@@ -4640,7 +4652,7 @@ msgstr "Користувача не знайдено"
 #: src/component/user/add/dialog.vue:38 src/component/user/add/dialog.vue:39
 #: src/page/admin/sessions.vue:131 src/page/admin/users.vue:282
 #: src/page/admin/users.vue:269 src/component/service/add.vue:38
-#: src/component/service/edit.vue:161 src/component/share/dialog.vue:159
+#: src/component/service/edit.vue:179 src/component/share/dialog.vue:162
 #: src/locales.js:324
 msgid "Username"
 msgstr "Ім'я користувача"
@@ -4656,7 +4668,7 @@ msgstr "Користувачі"
 msgid "UUID"
 msgstr "UUID"
 
-#: src/common/util.js:866 src/component/photo/view/cards.vue:114
+#: src/common/util.js:909 src/component/photo/view/cards.vue:114
 #: src/component/photo/view/cards.vue:239
 #: src/component/photo/view/mosaic.vue:69 src/options/options.js:368
 msgid "Vector"
@@ -4685,10 +4697,10 @@ msgstr "Потрібна підтверджена електронна адре�
 msgid "Version"
 msgstr "Версія"
 
-#: src/common/util.js:860 src/component/photo/batch-edit.vue:128
+#: src/common/util.js:903 src/component/photo/batch-edit.vue:128
 #: src/component/photo/batch-edit.vue:69 src/component/photo/view/cards.vue:122
 #: src/component/photo/view/cards.vue:220 src/component/photo/view/list.vue:83
-#: src/component/photo/view/mosaic.vue:77 src/model/file.js:202
+#: src/component/photo/view/mosaic.vue:77 src/model/file.js:204
 #: src/model/photo.js:1015 src/model/photo.js:997 src/options/options.js:356
 msgid "Video"
 msgstr "Відео"
@@ -4717,7 +4729,7 @@ msgstr "Переглянути результати пошуку у вигляд
 msgid "Viewer"
 msgstr "Глядач"
 
-#: src/common/util.js:920
+#: src/common/util.js:965
 msgid "Vision"
 msgstr "Бачення"
 
@@ -4759,7 +4771,7 @@ msgstr "Клієнти WebDAV можуть підключатися до PhotoPr
 msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism."
 msgstr "Клієнти WebDAV, такі як Windows Explorer від Microsoft або Finder від Apple, можуть підключатися безпосередньо до PhotoPrism."
 
-#: src/component/service/upload.vue:16 src/component/share/dialog.vue:123
+#: src/component/service/upload.vue:16 src/component/share/dialog.vue:124
 msgid "WebDAV Upload"
 msgstr "Вивантаження WebDAV"
 
@@ -4808,9 +4820,9 @@ msgstr "Жовтий"
 #: src/component/photo/edit/files.vue:254
 #: src/component/photo/edit/files.vue:255
 #: src/component/photo/edit/files.vue:261
-#: src/component/photo/edit/files.vue:269 src/component/photo/edit/info.vue:151
-#: src/component/photo/edit/info.vue:165 src/component/photo/edit/info.vue:179
-#: src/component/photo/edit/info.vue:193 src/component/photo/edit/info.vue:207
+#: src/component/photo/edit/files.vue:269 src/component/photo/edit/info.vue:152
+#: src/component/photo/edit/info.vue:166 src/component/photo/edit/info.vue:180
+#: src/component/photo/edit/info.vue:194 src/component/photo/edit/info.vue:208
 #: src/component/photo/toolbar.vue:277
 msgid "Yes"
 msgstr "Так"
