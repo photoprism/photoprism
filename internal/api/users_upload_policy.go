@@ -17,6 +17,9 @@ func uploadSidecarAllowed(name string) bool {
 	switch fs.FileType(name) {
 	case fs.SidecarXMP, fs.SidecarText, fs.SidecarMarkdown:
 		return true
+	case fs.VideoLrv:
+		// Proxy videos are only indexed next to their video in originals.
+		return false
 	default:
 		return !media.FromName(name).IsSidecar()
 	}

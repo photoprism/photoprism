@@ -13,7 +13,7 @@ import (
 
 // TestUploadSidecarAllowed checks the built-in policy independently of operator extension settings.
 func TestUploadSidecarAllowed(t *testing.T) {
-	for _, name := range []string{"a.jpg", "a.dng", "a.png", "a.mp4", "a.pdf", "a.zip", "a.XMP", "a.TXT", "a.md", "a.markdown", "LRV_20240415_213145_01_035.lrv"} {
+	for _, name := range []string{"a.jpg", "a.dng", "a.png", "a.mp4", "a.pdf", "a.zip", "a.XMP", "a.TXT", "a.md", "a.markdown"} {
 		assert.True(t, uploadSidecarAllowed(name), name)
 	}
 
@@ -21,7 +21,7 @@ func TestUploadSidecarAllowed(t *testing.T) {
 		assert.False(t, uploadSidecarAllowed("nested/"+name+"/photo.jpg"), name)
 	}
 
-	for _, name := range []string{"a.yml", "a.YAML", "a.JSON", "a.aae", "a.xml", "a.nfo", "a.unknown", "GL010123.LRV", "a.lrv", "a.rclonelink", "nested/link.RCLONELINK/photo.jpg", ".ppignore", ".env.jpg", ".ENV.example.txt", ".git/photo.jpg"} {
+	for _, name := range []string{"a.yml", "a.YAML", "a.JSON", "a.aae", "a.xml", "a.nfo", "a.unknown", "GL010123.LRV", "a.lrv", "LRV_20240415_213145_01_035.lrv", "a.rclonelink", "nested/link.RCLONELINK/photo.jpg", ".ppignore", ".env.jpg", ".ENV.example.txt", ".git/photo.jpg"} {
 		assert.False(t, uploadSidecarAllowed(name), name)
 	}
 }
