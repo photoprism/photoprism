@@ -5,11 +5,13 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/authn"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestSessionGrantsPhotos(t *testing.T) {
@@ -512,4 +514,80 @@ func TestPhotoSessionSeesPrivate(t *testing.T) {
 	t.Run("AdminAllowed", func(t *testing.T) {
 		assert.True(t, PhotoSessionSeesPrivate(entity.SessionFixtures.Pointer("alice")))
 	})
+}
+
+// scopeBasePathPhoto creates a photo with a primary file and a location in dir, and removes it when
+// the test ends.
+func scopeBasePathPhoto(t *testing.T, dir, name string) *entity.Photo {
+	t.Helper()
+
+	photo := &entity.Photo{PhotoPath: dir, PhotoName: name, PhotoType: entity.MediaImage, PhotoQuality: 3, PhotoLat: 52.5, PhotoLng: 13.4}
+	require.NoError(t, photo.Create())
+
+	file := &entity.File{
+		PhotoID:     photo.ID,
+		PhotoUID:    photo.PhotoUID,
+		FileName:    dir + "/" + name + ".jpg",
+		FileRoot:    entity.RootOriginals,
+		FileHash:    rnd.GenerateUID(entity.FileUID),
+		FileType:    "jpg",
+		FilePrimary: true,
+	}
+	require.NoError(t, file.Create())
+
+	t.Cleanup(func() {
+		_ = entity.UnscopedDb().Where("photo_id = ?", photo.ID).Delete(&entity.Details{}).Error
+		_ = entity.UnscopedDb().Where("photo_id = ?", photo.ID).Delete(&entity.File{}).Error
+		_ = entity.UnscopedDb().Where("id = ?", photo.ID).Delete(&entity.Photo{}).Error
+	})
+
+	return photo
+}
+
+// scopeBasePathSession returns a session for a copy of the guest fixture with the given base path.
+func scopeBasePathSession(basePath string) *entity.Session {
+	user := entity.UserFixtures.Get("guest")
+	user.BasePath = basePath
+	s := &entity.Session{}
+	s.SetUser(&user)
+	return s
+}
+
+func TestScopePhotosForSession_BasePath(t *testing.T) {
+	base := "zz-scope-" + rnd.Base36(6)
+	inPath := scopeBasePathPhoto(t, base+"_a!%", "in-path")
+	inSubfolder := scopeBasePathPhoto(t, base+"_a!%/sub", "in-subfolder")
+	sibling := scopeBasePathPhoto(t, base+"Xa!Y/sub", "sibling")
+	siblingZ := scopeBasePathPhoto(t, base+"_a!Z/sub", "sibling-z")
+	siblingCase := scopeBasePathPhoto(t, base+"_A!%/sub", "sibling-case")
+	uids := []string{inPath.PhotoUID, inSubfolder.PhotoUID, sibling.PhotoUID, siblingZ.PhotoUID, siblingCase.PhotoUID}
+
+	var visible []string
+
+	stmt := ScopePhotosForSession(UnscopedDb().Table("photos").Where("photos.photo_uid IN (?)", uids), scopeBasePathSession(base+"_a!%"))
+	require.NoError(t, stmt.Pluck("photos.photo_uid", &visible).Error)
+	assert.ElementsMatch(t, []string{inPath.PhotoUID, inSubfolder.PhotoUID}, visible)
+}
+
+func TestUserPhotosGeo_BasePath(t *testing.T) {
+	base := "zz-scope-" + rnd.Base36(6)
+	inPath := scopeBasePathPhoto(t, base+"_a!%", "in-path")
+	inSubfolder := scopeBasePathPhoto(t, base+"_a!%/sub", "in-subfolder")
+	sibling := scopeBasePathPhoto(t, base+"Xa!Y/sub", "sibling")
+	siblingZ := scopeBasePathPhoto(t, base+"_a!Z/sub", "sibling-z")
+	siblingCase := scopeBasePathPhoto(t, base+"_A!%/sub", "sibling-case")
+	created := map[string]bool{inPath.PhotoUID: true, inSubfolder.PhotoUID: true, sibling.PhotoUID: true, siblingZ.PhotoUID: true, siblingCase.PhotoUID: true}
+
+	results, err := UserPhotosGeo(form.SearchPhotosGeo{Count: 1000}, scopeBasePathSession(base+"_a!%"))
+	require.NoError(t, err)
+
+	var visible []string
+
+	for _, r := range results {
+		if created[r.PhotoUID] {
+			visible = append(visible, r.PhotoUID)
+		}
+	}
+
+	assert.ElementsMatch(t, []string{inPath.PhotoUID, inSubfolder.PhotoUID}, visible)
 }

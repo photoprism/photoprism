@@ -170,8 +170,8 @@ func UserPhotosGeo(frm form.SearchPhotosGeo, sess *entity.Session) (results GeoR
 			} else if basePath := user.GetBasePath(); basePath == "" {
 				s = s.Where(sharedAlbums+"photos.created_by = ? OR photos.published_at > ?", sess.SharedUIDs(), user.UserUID, entity.Now())
 			} else {
-				s = s.Where(sharedAlbums+"photos.created_by = ? OR photos.published_at > ? OR photos.photo_path = ? OR photos.photo_path LIKE ?",
-					sess.SharedUIDs(), user.UserUID, entity.Now(), basePath, basePath+"/%")
+				args := append([]any{sess.SharedUIDs(), user.UserUID, entity.Now(), basePath}, clean.SqlPrefixArgs(basePath+"/")...)
+				s = s.Where(sharedAlbums+"photos.created_by = ? OR photos.published_at > ? OR photos.photo_path = ? OR "+clean.SqlPrefixCond("photos.photo_path"), args...)
 			}
 		}
 	}

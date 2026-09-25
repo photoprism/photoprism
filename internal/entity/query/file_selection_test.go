@@ -10,6 +10,8 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
+	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/stretchr/testify/require"
 )
 
 // aclSession builds an in-memory session for the named user fixture.
@@ -347,4 +349,30 @@ func TestSelectedFilesForSessionYaml(t *testing.T) {
 	assert.Len(t, reader, 1)
 	_, err = SelectedFilesForSession(form.Selection{}, options, aclSession("alice"))
 	assert.Error(t, err)
+}
+
+func TestSelectedFiles_SubfolderContainment(t *testing.T) {
+	base := "zz-like-" + rnd.Base36(6)
+	folder := likeTestFolder(t, base+"_a!b!%")
+	likeTestFolder(t, base+"_a!b!%/sub")
+	likeTestFolder(t, base+"Xa!b!Y/sub")
+	likeTestFolder(t, base+"_a!b!Z/sub")
+	likeTestFolder(t, base+"_A!b!%/sub")
+	inFolder := likeTestPhoto(t, base+"_a!b!%", "in-folder")
+	inSubfolder := likeTestPhoto(t, base+"_a!b!%/sub", "in-subfolder")
+	sibling := likeTestPhoto(t, base+"Xa!b!Y/sub", "sibling")
+	likeTestPhoto(t, base+"_a!b!Z/sub", "sibling-z")
+	likeTestPhoto(t, base+"_A!b!%/sub", "sibling-case")
+
+	files, err := SelectedFiles(form.Selection{Files: []string{folder.FolderUID}}, DownloadSelection(true, true, true))
+	require.NoError(t, err)
+
+	var uids []string
+
+	for _, f := range files {
+		uids = append(uids, f.PhotoUID)
+	}
+
+	assert.ElementsMatch(t, []string{inFolder.PhotoUID, inSubfolder.PhotoUID}, uids)
+	assert.NotContains(t, uids, sibling.PhotoUID)
 }

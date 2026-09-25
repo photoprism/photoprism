@@ -10,6 +10,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // MarkerByUID returns a Marker based on the UID.
@@ -346,7 +347,7 @@ func FaceMarkerFiles(dir string) (result map[string]FaceMarkerFile, err error) {
 		Where("m.marker_type = ? AND f.file_primary = 1 AND f.deleted_at IS NULL AND f.file_missing = 0", entity.MarkerFace)
 
 	if dir = strings.Trim(path.Clean("/"+dir), "/"); dir != "" {
-		stmt = stmt.Where("f.file_root IN (?)", []string{entity.RootOriginals, entity.RootSidecar}).Where(LikeCond("f.file_name"), likeEscaper.Replace(dir)+"/%")
+		stmt = stmt.Where("f.file_root IN (?)", []string{entity.RootOriginals, entity.RootSidecar}).Where(LikeCond("f.file_name"), clean.SqlLike(dir)+"/%")
 	}
 
 	if err = stmt.Group("m.file_uid, f.photo_id, f.file_root, f.file_name").Scan(&rows).Error; err != nil {
