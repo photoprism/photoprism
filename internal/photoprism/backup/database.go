@@ -409,27 +409,16 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 		log.Warnf("restore: existing index with %d pictures will be replaced", counts.Photos)
 	}
 
-	tables := entity.Entities
+	// The command is prepared before any table is dropped.
+	cmd, password, err := restoreCmd(c)
 
-	var cmd *exec.Cmd
+	if err != nil {
+		return err
+	}
 
-	// The password the command was built with, which its rendering must mask.
-	var password string
-
-	switch c.DatabaseDriver() {
-	case dsn.DriverMySQL, dsn.DriverMariaDB:
-		conn := newMariadbConn(c, c.MariadbBin())
-		logDatabaseSsl(conn, "restore")
-		password, cmd = conn.Password, conn.Cmd("-f")
-	case dsn.DriverSQLite3:
+	if c.DatabaseDriver() == dsn.DriverSQLite3 {
 		log.Infoln("restore: dropping existing sqlite database tables")
-		tables.Drop(c.Db())
-		cmd = exec.Command( // #nosec G204 sqlite restore uses configured binary and db path
-			c.SqliteBin(),
-			c.DatabaseFile(),
-		)
-	default:
-		return fmt.Errorf("unsupported database type: %s", c.DatabaseDriver())
+		entity.Entities.Drop(c.Db())
 	}
 
 	// Read from stdin or file.
