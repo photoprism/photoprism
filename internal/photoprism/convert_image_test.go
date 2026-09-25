@@ -421,7 +421,7 @@ func TestConvert_JpegConvertCmds_Insta360DualStream(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, cmds)
 
-	assert.Contains(t, cmds[0].String(), "[0:v:0][0:v:1]hstack=inputs=2:shortest=1,v360=input=dfisheye:output=e")
+	assert.Contains(t, cmds[0].String(), "[0:v:1][0:v:0]hstack=inputs=2:shortest=1,v360=input=dfisheye:output=e")
 	assert.True(t, cmds[0].Projection.Equal(projection.Equirectangular.String()))
 
 	for _, cmd := range cmds[1:] {

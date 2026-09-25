@@ -93,7 +93,7 @@ func TestDewarpDualStreamToJpegCmd(t *testing.T) {
 
 	assert.Contains(t, cmdStr, "-y -i SOURCE -filter_complex")
 	assert.NotContains(t, cmdStr, "-i SOURCE -i")
-	assert.Contains(t, cmdStr, "[0:v:0][0:v:1]hstack=inputs=2:shortest=1,v360=input=dfisheye:output=e")
+	assert.Contains(t, cmdStr, "[0:v:1][0:v:0]hstack=inputs=2:shortest=1,v360=input=dfisheye:output=e")
 	assert.Contains(t, cmdStr, "min(15360, iw)")
 	assert.Contains(t, cmdStr, "-map [v] -frames:v 1 DEST")
 }
@@ -106,7 +106,7 @@ func TestDewarpDualStreamToAvcCmd(t *testing.T) {
 	cmdStr := cmd.String()
 
 	assert.Contains(t, cmdStr, "-strict -2 -i SOURCE -filter_complex")
-	assert.Contains(t, cmdStr, "[0:v:0][0:v:1]hstack=inputs=2:shortest=1,v360=input=dfisheye:output=e")
+	assert.Contains(t, cmdStr, "[0:v:1][0:v:0]hstack=inputs=2:shortest=1,v360=input=dfisheye:output=e")
 	assert.Contains(t, cmdStr, "-map [v] -map 0:a:0?")
 	assert.Contains(t, cmdStr, "-map_metadata 0 -shortest DEST")
 }

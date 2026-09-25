@@ -63,9 +63,10 @@ func DewarpDualFisheyePairToJpegCmd(leftName, rightName, jpegName string, fov, r
 	return dewarpLensesToJpegCmd([]string{leftName, rightName}, "[0:v:0][1:v:0]", jpegName, fov, roll, opt)
 }
 
-// DewarpDualStreamToJpegCmd combines the two lens streams of one video file before dewarping.
+// DewarpDualStreamToJpegCmd combines the two lens streams of one video file before dewarping. The second
+// stream goes on the left, as in the side-by-side proxy the camera writes.
 func DewarpDualStreamToJpegCmd(inputName, jpegName string, fov, roll int, opt *encode.Options) *exec.Cmd {
-	return dewarpLensesToJpegCmd([]string{inputName}, "[0:v:0][0:v:1]", jpegName, fov, roll, opt)
+	return dewarpLensesToJpegCmd([]string{inputName}, "[0:v:1][0:v:0]", jpegName, fov, roll, opt)
 }
 
 // dewarpLensesToJpegCmd stacks the specified lens streams side by side and dewarps one frame.
@@ -124,7 +125,7 @@ func DewarpDualFisheyePairToAvcCmd(leftName, rightName, avcName string, opt enco
 
 // DewarpDualStreamToAvcCmd encodes an equirectangular AVC from the two lens streams of one video file.
 func DewarpDualStreamToAvcCmd(inputName, avcName string, opt encode.Options) *exec.Cmd {
-	return dewarpLensesToAvcCmd([]string{inputName}, "[0:v:0][0:v:1]", avcName, opt)
+	return dewarpLensesToAvcCmd([]string{inputName}, "[0:v:1][0:v:0]", avcName, opt)
 }
 
 // dewarpLensesToAvcCmd stacks the specified lens streams side by side and encodes the dewarped video.
