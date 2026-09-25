@@ -1,6 +1,6 @@
 ## PhotoPrism — Media Package
 
-**Last Updated:** August 7, 2026
+**Last Updated:** September 25, 2026
 
 ### Apple iPhone & iPad
 
@@ -20,7 +20,7 @@ How PhotoPrism locates the embedded video offset and detects its codec is descri
 
 Insta360 cameras record 360° originals in two proprietary extensions: `.insp` is a JPEG carrying side-by-side dual-fisheye image data, and `.insv` is an MP4-style container carrying dual-fisheye video plus a gyro/metadata track. Neither is stitched, so both need a dewarp to equirectangular before a sphere viewer can show them.
 
-One capture is not always one file. Higher-resolution models write each lens to its own original (`VID_<date>_<time>_00_<seq>.insv` and `..._10_...`) alongside an optional low-resolution proxy (`LRV_..._11_...`). `ParseInsta360VideoName` recognizes this layout so the indexer can treat the set as a single panorama instead of three unrelated videos.
+One capture is not always one file. Higher-resolution models write each lens to its own original (`VID_<date>_<time>_00_<seq>.insv` and `..._10_...`) alongside an optional low-resolution proxy (`LRV_..._11_...`). `ParseInsta360VideoName` recognizes this layout so the indexer can treat the set as a single panorama instead of three unrelated videos. It matches names against `fs.Insta360VideoPattern`, which `fs.StackPrefix` also uses to stack the files of one capture under the name of the `_00` file.
 
 These files frequently carry no readable EXIF. `Insta360CameraModelFile` therefore scans a bounded window at the start and end of the file for the vendor's embedded model field, which is the only reliable way to identify the camera when the metadata pipeline comes up empty.
 

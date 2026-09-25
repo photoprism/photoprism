@@ -7,8 +7,9 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // Supported Insta360 video roles identify the original lens and proxy files in a capture.
@@ -19,8 +20,6 @@ const (
 )
 
 var insta360OneRSVideoField = append([]byte{0x12, byte(len(insta360OneRSModel))}, []byte(insta360OneRSModel)...)
-
-var insta360VideoName = regexp.MustCompile(`(?i)^(VID|LRV)_(\d{8})_(\d{6})_(00|10|11)_(\d{3})\.insv$`)
 
 // Insta360VideoRole identifies a file's purpose within a multi-file Insta360 capture.
 type Insta360VideoRole string
@@ -48,7 +47,7 @@ type Insta360VideoName struct {
 // ParseInsta360VideoName parses a supported Insta360 multi-file video filename.
 func ParseInsta360VideoName(fileName string) (result Insta360VideoName, ok bool) {
 	baseName := filepath.Base(fileName)
-	matches := insta360VideoName.FindStringSubmatch(baseName)
+	matches := fs.Insta360VideoPattern.FindStringSubmatch(baseName)
 
 	if len(matches) != 6 {
 		return result, false
