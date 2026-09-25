@@ -378,6 +378,25 @@ func TestReconcileInsta360Photos(t *testing.T) {
 		assert.NotNil(t, canonical.DeletedAt)
 		assert.Equal(t, -1, canonical.PhotoQuality)
 	})
+	t.Run("AllRemovedRestored", func(t *testing.T) {
+		_, photos, relNames := newInsta360ReconcileFixture(t, "insta360allremovedrestored")
+		removedAt := entity.Now()
+		for _, photo := range photos {
+			setInsta360PhotoState(t, photo, &removedAt, -1)
+		}
+
+		// Indexing the capture again merges its rows and restores the photo.
+		indexInsta360StackFolder(Config(), "insta360allremovedrestored", true, true)
+
+		owners := insta360StackOwners(t, "insta360allremovedrestored")
+		require.Len(t, owners, len(relNames))
+		for _, relName := range relNames {
+			owner := owners[filepath.Base(relName)]
+			assert.Equal(t, photos[0].ID, owner.ID, relName)
+			assert.Nil(t, owner.DeletedAt, relName)
+			assert.GreaterOrEqual(t, owner.PhotoQuality, 0, relName)
+		}
+	})
 	t.Run("Mixed", func(t *testing.T) {
 		related, photos, _ := newInsta360ReconcileFixture(t, "insta360mixed")
 		archivedAt := entity.Now()
