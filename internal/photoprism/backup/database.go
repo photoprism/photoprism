@@ -11,6 +11,7 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/dustin/go-humanize/english"
@@ -105,27 +106,200 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 		return fmt.Errorf("unsupported database type: %s", c.DatabaseDriver())
 	}
 
-	// Write to stdout or file.
-	var f *os.File
 	if toStdOut {
 		log.Infof("backup: sending database backup to stdout")
-		f = os.Stdout
-		// #nosec G304 backup path validated by configuration
-	} else if f, err = os.OpenFile(fileName, os.O_TRUNC|os.O_RDWR|os.O_CREATE, fs.ModeBackupFile); err != nil {
-		return fmt.Errorf("failed to create %s (%s)", clean.Log(fileName), err)
-	} else {
-		log.Infof("backup: %s database backup file %s", backupAction, clean.Log(filepath.Base(fileName)))
-		defer f.Close()
+		return runDump(cmd, os.Stdout, password)
 	}
 
+	log.Infof("backup: %s database backup file %s", backupAction, clean.Log(filepath.Base(fileName)))
+
+	return writeDump(cmd, backupPath, fileName, password, force, retain)
+}
+
+// staleStageAge is the age after which a staged dump left by an interrupted run is removed.
+const staleStageAge = 24 * time.Hour
+
+// writeDump runs the dump command into a staged sibling of fileName and publishes it only once it
+// completed, so a failed run leaves an existing file under that name untouched. Older dumps in
+// backupPath are then rotated to retain.
+func writeDump(cmd *exec.Cmd, backupPath, fileName, password string, force bool, retain int) (err error) {
+	baseName := filepath.Base(fileName)
+
+	if info, statErr := os.Lstat(fileName); statErr == nil {
+		switch {
+		case info.Mode()&os.ModeSymlink != 0:
+			return fmt.Errorf("%s is a symbolic link", clean.Log(baseName))
+		case info.Mode().IsRegular():
+		case isDumpName(baseName):
+			return fmt.Errorf("%s is not a regular file", clean.Log(baseName))
+		default:
+			// A pipe or device named explicitly cannot be replaced by a rename, and holds no dump to keep.
+			return writeDumpTo(cmd, fileName, password, os.Geteuid())
+		}
+	}
+
+	removeStaleStages(filepath.Dir(fileName), staleStageAge)
+
+	f, err := fs.OpenStageFileMode(fileName, fs.ModeBackupFile)
+
+	if err != nil {
+		return fmt.Errorf("failed to create %s (%s)", clean.Log(fileName), err)
+	}
+
+	stageName := f.Name()
+	published := false
+
+	defer func() {
+		_ = f.Close()
+
+		if !published {
+			_ = os.Remove(stageName)
+		}
+	}()
+
+	// Copying through a pipe returns write errors that some dump clients ignore.
+	w := &dumpWriter{w: f}
+
+	if err = runDump(cmd, w, password); w.err != nil {
+		return w.err
+	} else if err != nil {
+		return err
+	}
+
+	if err = f.Sync(); err != nil {
+		return err
+	}
+
+	info, err := f.Stat()
+
+	if err != nil {
+		return err
+	} else if info.Size() == 0 {
+		return fmt.Errorf("database dump for %s is empty", clean.Log(baseName))
+	}
+
+	if err = f.Close(); err != nil {
+		return err
+	}
+
+	if err = fs.PublishFile(stageName, fileName, force); err != nil {
+		return err
+	}
+
+	published = true
+
+	return rotateDumps(backupPath, retain)
+}
+
+// writeDumpTo runs the dump command into an existing pipe or device owned by uid, without following
+// a symlink.
+func writeDumpTo(cmd *exec.Cmd, fileName, password string, uid int) error {
+	// Checked before the open as well, since opening a pipe without a reader blocks.
+	if info, err := os.Lstat(fileName); err == nil && !info.Mode().IsRegular() && !dumpTargetOwned(info, uid) {
+		return fmt.Errorf("%s is not owned by the current user", clean.Log(filepath.Base(fileName)))
+	}
+
+	// #nosec G304 the name is an explicit destination checked by the caller
+	f, err := os.OpenFile(fileName, os.O_WRONLY|fs.OpenNoFollow, 0)
+
+	if err != nil {
+		return fmt.Errorf("failed to open %s (%s)", clean.Log(fileName), err)
+	}
+
+	defer f.Close()
+
+	// A regular file is written only through a staged sibling.
+	if info, statErr := f.Stat(); statErr != nil {
+		return statErr
+	} else if info.Mode().IsRegular() {
+		return fmt.Errorf("%s is a regular file", clean.Log(filepath.Base(fileName)))
+	} else if !dumpTargetOwned(info, uid) {
+		return fmt.Errorf("%s is not owned by the current user", clean.Log(filepath.Base(fileName)))
+	}
+
+	if err = runDump(cmd, f, password); err != nil {
+		return err
+	}
+
+	return f.Close()
+}
+
+// dumpTargetOwned reports whether a pipe is owned by uid, or a device by uid or root.
+func dumpTargetOwned(info os.FileInfo, uid int) bool {
+	st, ok := info.Sys().(*syscall.Stat_t)
+
+	if !ok {
+		return false
+	}
+
+	owner := int(st.Uid)
+
+	if info.Mode()&os.ModeNamedPipe != 0 {
+		return owner == uid
+	}
+
+	return owner == uid || owner == 0
+}
+
+// isDumpName reports whether a base name matches the dated names of rotated database dumps.
+func isDumpName(baseName string) bool {
+	matched, _ := filepath.Match(SqlBackupFileNamePattern, baseName)
+	return matched
+}
+
+// removeStaleStages removes staged dumps in dir that were last written more than maxAge ago.
+// A younger stage may belong to a run in another process, so it is kept.
+func removeStaleStages(dir string, maxAge time.Duration) {
+	// An escaped relative dir such as "." would not match, so the pattern is built from an absolute one.
+	dir, err := filepath.Abs(dir)
+
+	if err != nil {
+		return
+	}
+
+	files, err := filepath.Glob(filepath.Join(regexp.QuoteMeta(dir), "."+SqlBackupFileNamePattern+".*"+fs.ExtTmp+".sql"))
+
+	if err != nil {
+		return
+	}
+
+	for _, name := range files {
+		if info, statErr := os.Lstat(name); statErr != nil || !info.Mode().IsRegular() || time.Since(info.ModTime()) <= maxAge {
+			continue
+		} else if err = os.Remove(name); err != nil {
+			log.Warnf("backup: failed to remove stale database backup file %s (%s)", clean.Log(filepath.Base(name)), err)
+		} else {
+			log.Infof("backup: removed stale database backup file %s", clean.Log(filepath.Base(name)))
+		}
+	}
+}
+
+// dumpWriter passes writes to w and records the first write error.
+type dumpWriter struct {
+	w   io.Writer
+	err error
+}
+
+// Write writes p to the underlying writer and records the first error.
+func (d *dumpWriter) Write(p []byte) (int, error) {
+	n, err := d.w.Write(p)
+
+	if err != nil && d.err == nil {
+		d.err = err
+	}
+
+	return n, err
+}
+
+// runDump runs the dump command with its output sent to w, returning stderr as the error if it fails.
+func runDump(cmd *exec.Cmd, w io.Writer, password string) error {
 	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
-	cmd.Stdout = f
+	cmd.Stdout = w
 
 	// Log the command for debugging in trace mode.
 	log.Trace(clean.Cmd(cmd, password))
 
-	// Run backup command.
 	if cmdErr := cmd.Run(); cmdErr != nil {
 		if errStr := strings.TrimSpace(stderr.String()); errStr != "" {
 			return errors.New(clean.Secrets(errStr, password))
@@ -134,31 +308,37 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 		return cmdErr
 	}
 
-	// Delete old backups if the number of backup files to keep has been specified.
-	if !toStdOut && backupPath != "" && retain > 0 {
-		files, globErr := filepath.Glob(filepath.Join(regexp.QuoteMeta(backupPath), SqlBackupFileNamePattern))
+	return nil
+}
 
-		if globErr != nil {
-			return globErr
+// rotateDumps removes the oldest dumps in backupPath until only retain remain, if retain is set.
+func rotateDumps(backupPath string, retain int) error {
+	if backupPath == "" || retain <= 0 {
+		return nil
+	}
+
+	files, err := filepath.Glob(filepath.Join(regexp.QuoteMeta(backupPath), SqlBackupFileNamePattern))
+
+	if err != nil {
+		return err
+	}
+
+	if len(files) == 0 {
+		return fmt.Errorf("found no database backup files in %s", backupPath)
+	} else if len(files) <= retain {
+		return nil
+	}
+
+	sort.Strings(files)
+
+	log.Infof("backup: retaining %s", english.Plural(retain, "database backup", "database backups"))
+
+	for i := 0; i < len(files)-retain; i++ {
+		if err = os.Remove(files[i]); err != nil {
+			return err
 		}
 
-		if len(files) == 0 {
-			return fmt.Errorf("found no database backup files in %s", backupPath)
-		} else if len(files) <= retain {
-			return nil
-		}
-
-		sort.Strings(files)
-
-		log.Infof("backup: retaining %s", english.Plural(retain, "database backup", "database backups"))
-
-		for i := 0; i < len(files)-retain; i++ {
-			if err = os.Remove(files[i]); err != nil {
-				return err
-			} else {
-				log.Infof("backup: removed database backup file %s", clean.Log(filepath.Base(files[i])))
-			}
-		}
+		log.Infof("backup: removed database backup file %s", clean.Log(filepath.Base(files[i])))
 	}
 
 	return nil

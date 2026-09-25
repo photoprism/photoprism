@@ -122,6 +122,34 @@ func TestOpenStageFile(t *testing.T) {
 	})
 }
 
+// TestOpenStageFileMode checks that a staged file is created with the requested mode.
+func TestOpenStageFileMode(t *testing.T) {
+	dir := t.TempDir()
+	dest := filepath.Join(dir, "2026-09-25.sql")
+
+	t.Run("Success", func(t *testing.T) {
+		f, err := OpenStageFileMode(dest, ModeBackupFile)
+		require.NoError(t, err)
+
+		defer func() {
+			_ = f.Close()
+			_ = os.Remove(f.Name())
+		}()
+
+		base := filepath.Base(f.Name())
+		assert.True(t, strings.HasPrefix(base, ".2026-09-25.sql."), base)
+		assert.True(t, strings.HasSuffix(base, ".tmp.sql"), base)
+		info, err := f.Stat()
+		require.NoError(t, err)
+		assert.Equal(t, ModeBackupFile, info.Mode().Perm())
+		assert.NoFileExists(t, dest)
+	})
+	t.Run("MissingDirectory", func(t *testing.T) {
+		_, err := OpenStageFileMode(filepath.Join(dir, "absent", "2026-09-25.sql"), ModeBackupFile)
+		assert.Error(t, err)
+	})
+}
+
 // TestPublishFile checks staged publication and replacement rules.
 func TestPublishFile(t *testing.T) {
 	staged := func(t *testing.T, dir, content string) string {
