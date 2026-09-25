@@ -516,7 +516,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		// Update file metadata.
 		if data := m.MetaData(); data.Error == nil {
 			file.FileCodec = data.Codec
-			file.SetMediaUTC(data.TakenAt)
+			file.SetMediaUTC(mediaTimeUTC(data))
 			file.SetProjection(m.VisualProjection(data.Projection).String())
 			file.SetHDR(data.IsHDR())
 			file.SetColorProfile(data.ColorProfile)
@@ -650,7 +650,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			// Update basic metadata.
 			photo.SetTitle(data.Title, entity.SrcMeta)
 			photo.SetCaption(data.Caption, entity.SrcMeta)
-			photo.SetTakenAt(data.TakenAt, data.TakenAtLocal, data.TimeZone, entity.SrcMeta)
+			setTakenAtMeta(&photo, data)
 			photo.SetCoordinates(data.Lat, data.Lng, data.Altitude, entity.SrcMeta)
 			photo.SetCameraSerial(data.CameraSerial)
 
@@ -680,7 +680,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			file.FileHeight = m.Height()
 			file.FileAspectRatio = m.AspectRatio()
 			file.FilePortrait = m.Portrait()
-			file.SetMediaUTC(data.TakenAt)
+			file.SetMediaUTC(mediaTimeUTC(data))
 			file.SetPages(data.Pages)
 			file.SetProjection(m.VisualProjection(data.Projection).String())
 			file.SetHDR(data.IsHDR())
@@ -757,7 +757,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			// Update basic metadata.
 			photo.SetTitle(data.Title, entity.SrcMeta)
 			photo.SetCaption(data.Caption, entity.SrcMeta)
-			photo.SetTakenAt(data.TakenAt, data.TakenAtLocal, data.TimeZone, entity.SrcMeta)
+			setTakenAtMeta(&photo, data)
 
 			// Update metadata details.
 			details.SetKeywords(data.Keywords.String(), entity.SrcMeta)
@@ -785,7 +785,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			file.FileHeight = m.Height()
 			file.FileAspectRatio = m.AspectRatio()
 			file.FilePortrait = m.Portrait()
-			file.SetMediaUTC(data.TakenAt)
+			file.SetMediaUTC(mediaTimeUTC(data))
 			file.SetPages(data.Pages)
 			file.SetProjection(m.VisualProjection(data.Projection).String())
 			file.SetHDR(data.IsHDR())
@@ -804,7 +804,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		if data := m.MetaData(); data.Error == nil {
 			photo.SetTitle(data.Title, entity.SrcMeta)
 			photo.SetCaption(data.Caption, entity.SrcMeta)
-			photo.SetTakenAt(data.TakenAt, data.TakenAtLocal, data.TimeZone, entity.SrcMeta)
+			setTakenAtMeta(&photo, data)
 
 			// Update metadata details.
 			details.SetKeywords(data.Keywords.String(), entity.SrcMeta)
@@ -832,7 +832,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			file.FileHeight = m.Height()
 			file.FileAspectRatio = m.AspectRatio()
 			file.FilePortrait = m.Portrait()
-			file.SetMediaUTC(data.TakenAt)
+			file.SetMediaUTC(mediaTimeUTC(data))
 			file.SetPages(data.Pages)
 			file.SetColorProfile(data.ColorProfile)
 			file.SetSoftware(data.Software)
@@ -849,7 +849,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		if data := m.MetaData(); data.Error == nil {
 			photo.SetTitle(data.Title, entity.SrcMeta)
 			photo.SetCaption(data.Caption, entity.SrcMeta)
-			photo.SetTakenAt(data.TakenAt, data.TakenAtLocal, data.TimeZone, entity.SrcMeta)
+			setTakenAtMeta(&photo, data)
 			photo.SetCoordinates(data.Lat, data.Lng, data.Altitude, entity.SrcMeta)
 			photo.SetCameraSerial(data.CameraSerial)
 
@@ -879,7 +879,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			file.FileHeight = m.Height()
 			file.FileAspectRatio = m.AspectRatio()
 			file.FilePortrait = m.Portrait()
-			file.SetMediaUTC(data.TakenAt)
+			file.SetMediaUTC(mediaTimeUTC(data))
 			file.SetDuration(data.Duration)
 			file.SetFPS(data.FPS)
 			file.SetFrames(data.Frames)
@@ -939,12 +939,16 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 
 	// Set taken date based on file mod time or name if other metadata is missing.
 	if m.IsMedia() && entity.SrcPriority[photo.TakenSrc] <= entity.SrcPriority[entity.SrcName] {
-		// Try to extract time from original file name first.
-		if taken := txt.DateFromFilePath(photo.OriginalName); !taken.IsZero() {
+		if data := m.MetaData(); data.Error == nil && data.TakenAt.Year() > 1000 {
+			// Use the capture time of any file in the stack, including files that are not primary.
+			photo.SetTakenAt(data.TakenAt, data.TakenAtLocal, data.TimeZone, entity.SrcMeta)
+		} else if taken := txt.DateFromFilePath(photo.OriginalName); !taken.IsZero() {
+			// Try to extract time from original file name first.
 			photo.SetTakenAt(taken, taken, tz.Local, entity.SrcName)
 		} else if takenAt, takenAtLocal, takenSrc := m.TakenAt(); takenSrc == entity.SrcName {
 			photo.SetTakenAt(takenAt, takenAtLocal, tz.Local, entity.SrcName)
-		} else if !takenAt.IsZero() && !takenAtLocal.IsZero() {
+		} else if takenSrc != entity.SrcModified && !takenAt.IsZero() && !takenAtLocal.IsZero() {
+			// A modify time is only set with its time zone by setTakenAtMeta, never from a JPEG or PNG that is not primary.
 			photo.SetTakenAt(takenAt, takenAtLocal, tz.Local, takenSrc)
 		}
 	}
@@ -983,7 +987,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			// Update basic metadata.
 			photo.SetTitle(data.Title, entity.SrcMeta)
 			photo.SetCaption(data.Caption, entity.SrcMeta)
-			photo.SetTakenAt(data.TakenAt, data.TakenAtLocal, data.TimeZone, entity.SrcMeta)
+			setTakenAtMeta(&photo, data)
 			photo.SetCoordinates(data.Lat, data.Lng, data.Altitude, entity.SrcMeta)
 			photo.SetCameraSerial(data.CameraSerial)
 

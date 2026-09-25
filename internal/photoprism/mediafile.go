@@ -208,11 +208,9 @@ func (m *MediaFile) DateCreated() time.Time {
 	return takenAt
 }
 
-// TakenAt returns the UTC creation timestamp, the local timestamp and the source
-// used to derive it. The value is cached so repeated calls avoid re-reading
-// metadata. Extraction order: EXIF metadata, filename parsing, file modification
-// time; if none of those succeed the timestamps remain set to the current time
-// captured when the method first ran.
+// TakenAt returns the UTC and local time the file was taken, and their source, and caches them. It tries the capture
+// time from the metadata, a date in the file name, the modify time from the metadata, and the file modification time;
+// otherwise, it returns the time of the first call.
 func (m *MediaFile) TakenAt() (utc time.Time, local time.Time, source string) {
 	// Check if creation time has been cached.
 	if !m.takenAt.IsZero() {
@@ -240,6 +238,15 @@ func (m *MediaFile) TakenAt() (utc time.Time, local time.Time, source string) {
 		m.takenAtLocal = nameTime.Truncate(time.Second).Local()
 		m.takenAt = nameTime.Truncate(time.Second).UTC()
 		m.takenAtSrc = entity.SrcName
+		log.Infof("media: %s was taken at %s (%s)", clean.Log(filepath.Base(m.fileName)), m.takenAt.String(), m.takenAtSrc)
+		return m.takenAt, m.takenAtLocal, m.takenAtSrc
+	}
+
+	// Then fall back to the time the file was last modified according to its metadata.
+	if modifiedAt, _, _, modified := data.TakenOrModified(); data.Error == nil && modified && modifiedAt.Year() > 1000 {
+		m.takenAtLocal = modifiedAt.Truncate(time.Second).Local()
+		m.takenAt = m.takenAtLocal.UTC()
+		m.takenAtSrc = entity.SrcModified
 		log.Infof("media: %s was taken at %s (%s)", clean.Log(filepath.Base(m.fileName)), m.takenAt.String(), m.takenAtSrc)
 		return m.takenAt, m.takenAtLocal, m.takenAtSrc
 	}
