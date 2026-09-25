@@ -73,9 +73,11 @@ func Albums(backupPath string, force bool) (count int, err error) {
 		}
 	}
 
-	// Set backupAlbumsTime to latest modification timestamp,
-	// so that already saved albums can be skipped next time.
-	backupAlbumsTime = latest
+	// Set backupAlbumsTime to latest modification timestamp, so that already saved albums
+	// can be skipped next time; after an error, the next run retries them.
+	if err == nil {
+		backupAlbumsTime = latest
+	}
 
 	return count, err
 }
