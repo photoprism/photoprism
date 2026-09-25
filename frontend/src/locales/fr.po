@@ -4229,7 +4229,7 @@ msgstr "Synchroniser les fichiers raw et les vidéos"
 
 #: src/component/service/edit.vue:166
 msgid "Sync YAML sidecar files"
-msgstr "Fichiers sidecar YAML de synchronisation"
+msgstr "Synchroniser les fichiers side-car YAML"
 
 #: src/component/lightbox/sidebar.vue:98 src/component/photo/edit/info.vue:91
 #: src/component/photo/view/cards.vue:199 src/component/photo/view/cards.vue:36
@@ -4594,7 +4594,7 @@ msgstr "Échec du chargement sur %s"
 
 #: src/component/service/edit.vue:81
 msgid "Upload YAML sidecar files"
-msgstr "Téléversez les fichiers YAML associés."
+msgstr "Envoyer les fichiers side-car YAML"
 
 #: src/component/upload/dialog.vue:29
 msgid "Uploading %{n} of %{t}…"

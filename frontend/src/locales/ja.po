@@ -2662,7 +2662,7 @@ msgstr "ミックス"
 
 #: src/common/util.js:935
 msgid "Modified"
-msgstr "修正済み"
+msgstr "変更日時"
 
 #: src/app/routes.js:329 src/component/navigation.vue:423
 #: src/options/options.js:264 src/page/settings/collections.vue:143
