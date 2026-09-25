@@ -88,7 +88,7 @@ func BatchPhotosArchive(router *gin.RouterGroup) {
 
 		if get.Config().SidecarYaml() {
 			// Fetch selection from index.
-			photos, err := query.SelectedPhotos(frm)
+			photos, err := query.SelectedPhotosForSession(frm, s)
 
 			if err != nil {
 				AbortEntityNotFound(c)
@@ -171,7 +171,7 @@ func BatchPhotosRestore(router *gin.RouterGroup) {
 
 		if get.Config().SidecarYaml() {
 			// Fetch selection from index.
-			photos, err := query.SelectedPhotos(frm)
+			photos, err := query.SelectedPhotosForSession(frm, s)
 
 			if err != nil {
 				AbortEntityNotFound(c)
@@ -252,7 +252,7 @@ func BatchPhotosApprove(router *gin.RouterGroup) {
 		log.Infof("photos: approving %s", clean.Log(frm.String()))
 
 		// Fetch selection from index.
-		photos, err := query.SelectedPhotos(frm)
+		photos, err := query.SelectedPhotosForSession(frm, s)
 
 		if err != nil {
 			AbortEntityNotFound(c)
@@ -334,7 +334,7 @@ func BatchPhotosPrivate(router *gin.RouterGroup) {
 		entity.UpdateCountsAsync()
 
 		// Fetch selection from index.
-		if photos, err := query.SelectedPhotos(frm); err == nil {
+		if photos, err := query.SelectedPhotosForSession(frm, s); err == nil {
 			for _, p := range photos {
 				SaveSidecarYaml(p)
 			}
@@ -414,7 +414,7 @@ func BatchPhotosDelete(router *gin.RouterGroup) {
 		case frm.All:
 			photos, err = query.ArchivedPhotos(1000000, 0)
 		default:
-			photos, err = query.SelectedPhotos(frm)
+			photos, err = query.SelectedPhotosForSession(frm, s)
 		}
 
 		if err != nil {

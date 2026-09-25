@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -210,4 +211,61 @@ func TestSelectedPhotos_SubfolderContainment(t *testing.T) {
 	uids := results.UIDs()
 	assert.ElementsMatch(t, []string{inFolder.PhotoUID, inSubfolder.PhotoUID}, uids)
 	assert.NotContains(t, uids, sibling.PhotoUID)
+}
+
+func TestSelectedPhotosForSession(t *testing.T) {
+	guest := aclSession("guest")
+
+	// Create a picture the guest may see as its own, and reach it through a new label along with
+	// the fixtures, which the guest may not see.
+	shared := likeTestPhoto(t, "zz-scope-"+rnd.Base36(6), "own")
+	require.NoError(t, shared.Update("created_by", guest.GetUser().UserUID))
+
+	ok, err := search.PhotoVisibleToSession(shared.PhotoUID, guest)
+	require.NoError(t, err)
+	require.True(t, ok)
+
+	label := entity.NewLabel("Selection Scope "+rnd.Base36(6), 0)
+	require.NoError(t, label.Create())
+	require.NoError(t, entity.NewPhotoLabel(shared.ID, label.ID, 0, entity.SrcManual).Create())
+	t.Cleanup(func() {
+		_ = entity.UnscopedDb().Where("label_id = ?", label.ID).Delete(&entity.PhotoLabel{}).Error
+		_ = entity.UnscopedDb().Delete(label).Error
+	})
+
+	labels := []string{label.LabelUID}
+
+	for _, l := range entity.LabelFixtures {
+		labels = append(labels, l.LabelUID)
+	}
+
+	frm := form.Selection{Labels: labels}
+
+	unscoped, err := SelectedPhotos(frm)
+	require.NoError(t, err)
+	require.Contains(t, unscoped.UIDs(), shared.PhotoUID)
+
+	t.Run("AdminUnchanged", func(t *testing.T) {
+		result, err := SelectedPhotosForSession(frm, aclSession("alice"))
+		require.NoError(t, err)
+		assert.ElementsMatch(t, unscoped.UIDs(), result.UIDs())
+	})
+	t.Run("GuestScoped", func(t *testing.T) {
+		result, err := SelectedPhotosForSession(frm, guest)
+		require.NoError(t, err)
+		assert.Contains(t, result.UIDs(), shared.PhotoUID)
+		assert.Less(t, len(result), len(unscoped))
+		assert.Subset(t, unscoped.UIDs(), result.UIDs())
+
+		for _, uid := range result.UIDs() {
+			ok, err := search.PhotoVisibleToSession(uid, guest)
+			require.NoError(t, err)
+			assert.True(t, ok, uid)
+		}
+	})
+	t.Run("NilSessionUnchanged", func(t *testing.T) {
+		result, err := SelectedPhotosForSession(frm, nil)
+		require.NoError(t, err)
+		assert.ElementsMatch(t, unscoped.UIDs(), result.UIDs())
+	})
 }

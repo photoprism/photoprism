@@ -48,8 +48,21 @@ func subfolderCond(dialect string) (string, error) {
 	}
 }
 
-// SelectedPhotos finds photos based on the given selection form, e.g. for adding them to an album.
+// SelectedPhotos finds photos based on the given selection form, e.g. for adding them to an album,
+// without applying a session's scope. Handlers serving a request use SelectedPhotosForSession instead.
 func SelectedPhotos(frm form.Selection) (results entity.Photos, err error) {
+	return selectedPhotos(frm, nil)
+}
+
+// SelectedPhotosForSession finds the photos of a selection form that the session may access, applying
+// its scope to the photos reached through every selection field.
+func SelectedPhotosForSession(frm form.Selection, sess *entity.Session) (results entity.Photos, err error) {
+	return selectedPhotos(frm, sess)
+}
+
+// selectedPhotos finds photos based on the given selection form, optionally limited to the content
+// the session may access when sess is not nil.
+func selectedPhotos(frm form.Selection, sess *entity.Session) (results entity.Photos, err error) {
 	if frm.Empty() {
 		return results, errors.New("no items selected")
 	}
@@ -82,6 +95,11 @@ func SelectedPhotos(frm form.Selection) (results entity.Photos, err error) {
 	s := UnscopedDb().Table("photos").
 		Select("photos.*").
 		Where(where, frm.Photos, frm.Places, frm.Files, frm.Files, frm.Files, frm.Albums, frm.Subjects, frm.Labels, frm.Labels)
+
+	// Limit the selection to the session's shared scope (no-op for full-access sessions).
+	if sess != nil {
+		s = search.ScopeVisibleSelection(s, sess, frm.Photos)
+	}
 
 	if result := s.Scan(&results); result.Error != nil {
 		return results, result.Error

@@ -600,7 +600,7 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 		}
 
 		// Fetch selection from index.
-		photos, err := query.SelectedPhotos(frm)
+		photos, err := query.SelectedPhotosForSession(frm, s)
 
 		if err != nil {
 			AbortBadRequest(c, err)
