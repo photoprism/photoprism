@@ -208,6 +208,15 @@ func TestConfirmAction(t *testing.T) {
 		assert.NoError(t, err)
 		assert.False(t, proceed)
 	})
+	t.Run("AnsweredEnter", func(t *testing.T) {
+		// Pressing Enter without an answer declines, as the default is no.
+		pipeResetAnswers(t, "\n")
+
+		proceed, err := ConfirmAction(false, "Remove everything?")
+
+		assert.NoError(t, err)
+		assert.False(t, proceed)
+	})
 	t.Run("EndOfInputOnTerminalDeclines", func(t *testing.T) {
 		// Ctrl-D on a terminal ends the input, which declines like "n".
 		pipeResetAnswers(t, "")
