@@ -361,15 +361,17 @@ describe("model/file", () => {
     expect(file5.typeInfo()).toBe("SVG");
   });
 
-  it("should append the media type to the format in type info", () => {
-    const values = { UID: "ABC123", Hash: "54ghtfd", Name: "1/2/VID_20201031_094049_00_188.insv", MediaType: "video" };
-    expect(new File({ ...values, FileType: "insv" }).typeInfo()).toBe("Insta360 Video");
-    expect(new File({ ...values, FileType: "lrv" }).typeInfo()).toBe("Insta360 Proxy Video");
-    expect(new File({ ...values, FileType: "insp", MediaType: "image" }).typeInfo()).toBe("Insta360 Panoramic Image");
-    expect(new File({ ...values, FileType: "thm", MediaType: "image" }).typeInfo()).toBe("Thumbnail Image");
-    expect(new File({ ...values, FileType: "dv" }).typeInfo()).toBe("DV Video");
-    expect(new File({ ...values, FileType: "mp4" }).typeInfo()).toBe("MPEG-4 Multimedia Container Video");
-    expect(new File({ ...values, FileType: "avc" }).typeInfo()).toBe("Advanced Video Coding (AVC) / H.264 Video");
+  it.each([
+    ["insv", "video", "Insta360 Video"],
+    ["lrv", "video", "Insta360 Proxy Video"],
+    ["insp", "image", "Insta360 Panoramic Image"],
+    ["thm", "image", "Thumbnail Image"],
+    ["dv", "video", "DV Video"],
+    ["mp4", "video", "MPEG-4 Multimedia Container Video"],
+    ["avc", "video", "Advanced Video Coding (AVC) / H.264 Video"],
+  ])("should append the media type to the %s format in type info", (fileType, mediaType, expected) => {
+    const file = new File({ UID: "ABC123", Hash: "54ghtfd", Name: `1/2/IMG123.${fileType}`, FileType: fileType, MediaType: mediaType });
+    expect(file.typeInfo()).toBe(expected);
   });
 
   it("should get size info", () => {
