@@ -235,7 +235,8 @@ func TestProcessUserUploadSidecarPolicy(t *testing.T) {
 	assert.NotContains(t, types, "yml")
 }
 
-// TestProcessUserUploadPruneError checks that staged-file validation completes before import.
+// TestProcessUserUploadPruneError checks that staged-file validation completes before import and that
+// the refused batch is discarded.
 func TestProcessUserUploadPruneError(t *testing.T) {
 	app, router, conf := NewApiTest()
 	ProcessUserUpload(router)
@@ -255,7 +256,9 @@ func TestProcessUserUploadPruneError(t *testing.T) {
 	data := NewTestJpeg(t, 153, 103)
 	require.NoError(t, os.WriteFile(filename, data, fs.ModeFile))
 	hash := fs.Hash(filename)
-	require.NoError(t, os.Symlink(t.TempDir(), filepath.Join(dir, "linked")))
+	target := t.TempDir()
+	require.NoError(t, os.WriteFile(filepath.Join(target, "kept.jpg"), data, fs.ModeFile))
+	require.NoError(t, os.Symlink(target, filepath.Join(dir, "linked")))
 	t.Cleanup(func() {
 		file, err := entity.FirstFileByHash(hash)
 		if err != nil {
@@ -268,9 +271,10 @@ func TestProcessUserUploadPruneError(t *testing.T) {
 	})
 	result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
 	assert.Equal(t, http.StatusBadRequest, result.Code)
-	remaining, err := os.ReadFile(filename) //nolint:gosec // Test reads a controlled fixture or generated output.
-	require.NoError(t, err)
-	assert.Equal(t, data, remaining)
 	_, err = entity.FirstFileByHash(hash)
 	assert.Error(t, err)
+
+	// The refused batch is discarded without following the staged link.
+	assert.NoDirExists(t, dir)
+	assert.FileExists(t, filepath.Join(target, "kept.jpg"))
 }

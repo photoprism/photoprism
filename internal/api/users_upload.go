@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -84,6 +85,12 @@ func UploadUserFiles(router *gin.RouterGroup) {
 
 		start := time.Now()
 		token := clean.Token(c.Param("token"))
+		batch := uploadBatchName(s, token)
+
+		if batch == "" {
+			Abort(c, http.StatusBadRequest, i18n.ErrUploadFailed)
+			return
+		}
 
 		if totalSizeLimit := conf.UploadLimitBytes(); totalSizeLimit > 0 {
 			LimitRequestBodyBytes(c, totalSizeLimit+MaxMultipartOverheadBytes)
@@ -111,7 +118,7 @@ func UploadUserFiles(router *gin.RouterGroup) {
 		var uploads []string
 
 		// Compose upload path.
-		uploadDir, err := conf.UserUploadPath(s.UserUID, s.RefID+token)
+		uploadDir, err := conf.UserUploadPath(s.UserUID, batch)
 
 		if err != nil {
 			log.Errorf("upload: failed to create storage folder (%s)", clean.Error(err))
@@ -276,6 +283,35 @@ func uploadPathDenied(u *entity.User) bool {
 	return u.RequiresBasePath() && u.GetUploadPath() == ""
 }
 
+// uploadBatchName returns the name of the folder in which the session stages the files it uploads with
+// the token, or an empty string if they do not name one.
+func uploadBatchName(s *entity.Session, token string) string {
+	if s == nil || s.RefID == "" || token == "" {
+		return ""
+	}
+
+	return clean.Token(s.RefID + token)
+}
+
+// discardUpload removes the folder in which the session staged the files uploaded with the token.
+func discardUpload(s *entity.Session, token string) {
+	batch := uploadBatchName(s, token)
+
+	if batch == "" {
+		return
+	}
+
+	dir, err := get.Config().UserUploadPath(s.UserUID, batch)
+
+	if err != nil {
+		return
+	} else if err = os.RemoveAll(dir); err != nil {
+		log.Warnf("upload: failed to remove staged files (%s)", clean.Error(err))
+	} else {
+		log.Infof("upload: removed rejected files of upload %s", clean.Log(batch))
+	}
+}
+
 // MaxUploadAlbums is the number of distinct albums an upload or import may add its files to.
 const MaxUploadAlbums = 100
 
@@ -411,7 +447,14 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 		}
 
 		token := clean.Token(c.Param("token"))
-		uploadPath, err := conf.UserUploadPath(s.UserUID, s.RefID+token)
+		batch := uploadBatchName(s, token)
+
+		if batch == "" {
+			Abort(c, http.StatusBadRequest, i18n.ErrUploadFailed)
+			return
+		}
+
+		uploadPath, err := conf.UserUploadPath(s.UserUID, batch)
 
 		if err != nil {
 			log.Errorf("upload: failed to create storage folder (%s)", clean.Error(err))
@@ -419,8 +462,14 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 			return
 		}
 
+		// Discard the staged files if they are rejected, since they can never be imported.
 		if err = pruneUploadSidecars(uploadPath); err != nil {
 			log.Errorf("upload: could not prepare staged files (%s)", clean.Error(err))
+
+			if errors.Is(err, errUploadSymlink) {
+				discardUpload(s, token)
+			}
+
 			Abort(c, http.StatusBadRequest, i18n.ErrUploadFailed)
 			return
 		}

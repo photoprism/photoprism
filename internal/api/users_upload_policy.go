@@ -1,7 +1,7 @@
 package api
 
 import (
-	"fmt"
+	"errors"
 	iofs "io/fs"
 	"os"
 
@@ -30,6 +30,9 @@ func uploadArchiveEntryAllowed(name string, isDir bool) bool {
 	return !fs.HasReservedComponent(name) && (isDir || uploadSidecarAllowed(name))
 }
 
+// errUploadSymlink rejects staged files that contain a symbolic link.
+var errUploadSymlink = errors.New("symbolic links are not supported in web uploads")
+
 // pruneUploadSidecars removes disallowed paths and sidecars before a web batch is imported.
 func pruneUploadSidecars(dir string) error {
 	info, err := os.Lstat(dir)
@@ -39,7 +42,7 @@ func pruneUploadSidecars(dir string) error {
 	}
 
 	if info.Mode()&os.ModeSymlink != 0 {
-		return fmt.Errorf("symbolic links are not supported in web uploads")
+		return errUploadSymlink
 	}
 
 	root, err := os.OpenRoot(dir)
@@ -56,7 +59,7 @@ func pruneUploadSidecars(dir string) error {
 		}
 
 		if entry.Type()&os.ModeSymlink != 0 {
-			return fmt.Errorf("symbolic links are not supported in web uploads")
+			return errUploadSymlink
 		}
 
 		if entry.IsDir() && fs.HasReservedComponent(name) {

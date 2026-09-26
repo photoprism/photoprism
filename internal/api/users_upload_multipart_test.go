@@ -14,6 +14,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -826,4 +827,28 @@ func TestUploadUserFiles_Multipart_SkippedEntryNames(t *testing.T) {
 		assert.Contains(t, line, fmt.Sprintf("and %d more", skipped-clean.LogNamesLimit))
 		assert.Equal(t, clean.LogNamesLimit, strings.Count(line, "../y.jpg"))
 	})
+}
+
+func TestUploadUserFiles_Multipart_TokenTooLong(t *testing.T) {
+	app, router, conf := NewApiTest()
+	options := *conf.Options()
+	t.Cleanup(func() { *conf.Options() = options })
+	conf.Options().StoragePath = t.TempDir()
+	conf.Options().UploadAllow = "jpg"
+	UploadUserFiles(router)
+	token := AuthenticateAdmin(app, router)
+	adminUid := entity.Admin.UserUID
+
+	body, ctype, err := buildMultipart(map[string][]byte{"small.jpg": NewTestJpeg(t, 161, 111)})
+	require.NoError(t, err)
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/users/"+adminUid+"/upload/"+strings.Repeat("a", clean.LengthLimit-4), body)
+	req.Header.Set("Content-Type", ctype)
+	header.SetAuthorization(req, token)
+	w := httptest.NewRecorder()
+	app.ServeHTTP(w, req)
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+
+	// Nothing is written to the user's upload folder.
+	entries, _ := os.ReadDir(filepath.Join(conf.UserStoragePath(adminUid), "upload"))
+	assert.Empty(t, entries)
 }

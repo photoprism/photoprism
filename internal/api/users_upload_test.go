@@ -20,6 +20,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -435,4 +436,144 @@ func TestProcessUserUploadAlbumLimit(t *testing.T) {
 	assert.Equal(t, MaxUploadAlbums, count)
 	require.NoError(t, entity.UnscopedDb().Model(&entity.Album{}).Where("album_title = ?", titles[MaxUploadAlbums]).Count(&count).Error)
 	assert.Equal(t, 0, count)
+}
+
+func TestUploadBatchName(t *testing.T) {
+	s := &entity.Session{RefID: "sessabcdefgh"}
+
+	t.Run("Success", func(t *testing.T) {
+		assert.Equal(t, "sessabcdefghx1y2z3a", uploadBatchName(s, "x1y2z3a"))
+	})
+	t.Run("EmptyToken", func(t *testing.T) {
+		assert.Equal(t, "", uploadBatchName(s, ""))
+	})
+	t.Run("NoRefID", func(t *testing.T) {
+		assert.Equal(t, "", uploadBatchName(&entity.Session{}, "x1y2z3a"))
+		assert.Equal(t, "", uploadBatchName(nil, "x1y2z3a"))
+	})
+	t.Run("TooLong", func(t *testing.T) {
+		token := strings.Repeat("a", clean.LengthLimit-4)
+		require.Equal(t, token, clean.Token(token))
+		assert.Equal(t, "", uploadBatchName(s, token))
+	})
+}
+
+func TestDiscardUpload(t *testing.T) {
+	conf := get.Config()
+	options := *conf.Options()
+	t.Cleanup(func() { *conf.Options() = options })
+	conf.Options().StoragePath = t.TempDir()
+	user := entity.UserFixtures.Pointer("alice")
+	s := &entity.Session{RefID: "sess" + rnd.Base36(8), UserUID: user.UserUID}
+
+	t.Run("Success", func(t *testing.T) {
+		token := rnd.Base36(10)
+		dir, err := conf.UserUploadPath(user.UserUID, s.RefID+token)
+		require.NoError(t, err)
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "upload.jpg"), []byte("staged"), fs.ModeFile))
+		other, err := conf.UserUploadPath(user.UserUID, s.RefID+rnd.Base36(10))
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = os.RemoveAll(other) })
+
+		discardUpload(s, token)
+
+		assert.NoDirExists(t, dir)
+		assert.DirExists(t, other)
+	})
+	t.Run("EmptyToken", func(t *testing.T) {
+		other, err := conf.UserUploadPath(user.UserUID, s.RefID+rnd.Base36(10))
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = os.RemoveAll(other) })
+
+		discardUpload(s, "")
+		discardUpload(s, strings.Repeat("a", clean.LengthLimit-4))
+		discardUpload(&entity.Session{UserUID: user.UserUID}, "")
+		discardUpload(&entity.Session{UserUID: user.UserUID}, rnd.Base36(10))
+		discardUpload(nil, rnd.Base36(10))
+
+		assert.DirExists(t, other)
+	})
+}
+
+func TestProcessUserUploadStagedFiles(t *testing.T) {
+	app, router, conf := NewApiTest()
+	ProcessUserUpload(router)
+	options := *conf.Options()
+	mode := conf.AuthMode()
+	t.Cleanup(func() { *conf.Options() = options; conf.SetAuthMode(mode) })
+	conf.SetAuthMode(config.AuthModePasswd)
+	conf.Options().StoragePath = t.TempDir()
+	user := entity.UserFixtures.Pointer("alice")
+	sess := clientCredentialSession(t, conf, "client", "*", user)
+
+	// stage returns a new upload token and the folder with the file staged for it.
+	stage := func(t *testing.T) (token, dir string) {
+		token = rnd.Base36(10)
+		dir, err := conf.UserUploadPath(user.UserUID, sess.RefID+token)
+		require.NoError(t, err)
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "upload.jpg"), NewTestJpeg(t, 159, 109), fs.ModeFile))
+		return token, dir
+	}
+
+	t.Run("InvalidRequest", func(t *testing.T) {
+		token, dir := stage(t)
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{"albums":`, sess.AuthToken())
+		assert.Equal(t, http.StatusBadRequest, result.Code)
+		assert.FileExists(t, filepath.Join(dir, "upload.jpg"))
+	})
+	t.Run("Processed", func(t *testing.T) {
+		conf.Options().OriginalsPath = t.TempDir()
+		conf.Options().SidecarPath = t.TempDir()
+		conf.Options().ImportAllow = ""
+		token, dir := stage(t)
+		hash := fs.Hash(filepath.Join(dir, "upload.jpg"))
+		t.Cleanup(func() {
+			file, err := entity.FirstFileByHash(hash)
+			if err != nil {
+				return
+			}
+			entity.UnscopedDb().Unscoped().Delete(&entity.File{}, "photo_id = ?", file.PhotoID)
+			entity.UnscopedDb().Unscoped().Delete(&entity.Details{}, "photo_id = ?", file.PhotoID)
+			entity.UnscopedDb().Unscoped().Delete(&entity.Photo{}, "id = ?", file.PhotoID)
+		})
+
+		// A file the import leaves behind keeps the folder, which is only removed when it is empty.
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "other.txt"), []byte("kept"), fs.ModeFile))
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusOK, result.Code)
+		_, err := entity.FirstFileByHash(hash)
+		assert.NoError(t, err)
+		assert.FileExists(t, filepath.Join(dir, "other.txt"))
+	})
+	t.Run("TokenTooLong", func(t *testing.T) {
+		_, dir := stage(t)
+		token := strings.Repeat("a", clean.LengthLimit-4)
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusBadRequest, result.Code)
+		assert.FileExists(t, filepath.Join(dir, "upload.jpg"))
+	})
+	t.Run("PruneError", func(t *testing.T) {
+		if os.Geteuid() == 0 {
+			t.Skip("permissions are not enforced for root")
+		}
+
+		// A sidecar that cannot be removed fails the preparation without rejecting the batch.
+		token, dir := stage(t)
+		locked := filepath.Join(dir, "locked")
+		require.NoError(t, fs.MkdirAll(locked))
+		require.NoError(t, os.WriteFile(filepath.Join(locked, "meta.json"), []byte("{}"), fs.ModeFile))
+		require.NoError(t, os.Chmod(locked, 0o555))       //nolint:gosec // Test makes a folder read-only.
+		t.Cleanup(func() { _ = os.Chmod(locked, 0o755) }) //nolint:gosec // Test restores write access for cleanup.
+
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusBadRequest, result.Code)
+		assert.FileExists(t, filepath.Join(dir, "upload.jpg"))
+	})
+	t.Run("OtherUser", func(t *testing.T) {
+		token, dir := stage(t)
+		other := entity.UserFixtures.Pointer("bob")
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+other.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusForbidden, result.Code)
+		assert.FileExists(t, filepath.Join(dir, "upload.jpg"))
+	})
 }
