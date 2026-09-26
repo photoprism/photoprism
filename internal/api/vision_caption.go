@@ -18,9 +18,11 @@ import (
 //	@Id			PostVisionCaption
 //	@Tags		Vision
 //	@Produce	json
-//	@Success	200						{object}	vision.ApiResponse
-//	@Failure	401,403,404,413,429,501	{object}	i18n.Response
-//	@Param		images					body		vision.ApiRequest	true	"list of image file urls"
+//	@Success	200			{object}	vision.ApiResponse
+//	@Failure	400,413,500	{object}	vision.ApiResponse
+//	@Failure	403			{object}	vision.ApiResponse	"Vision API disabled; permission errors return i18n.Response"
+//	@Failure	401,429		{object}	i18n.Response
+//	@Param		images		body		vision.ApiRequest	true	"list of image file urls"
 //	@Router		/api/v1/vision/caption [post]
 func PostVisionCaption(router *gin.RouterGroup) {
 	router.POST("/vision/caption", func(c *gin.Context) {
@@ -54,8 +56,7 @@ func PostVisionCaption(router *gin.RouterGroup) {
 
 		// Check if the Computer Vision API is enabled, otherwise abort with an error.
 		if !get.Config().VisionApi() {
-			AbortFeatureDisabled(c)
-			c.JSON(http.StatusForbidden, vision.NewApiError(request.GetId(), http.StatusForbidden))
+			c.AbortWithStatusJSON(http.StatusForbidden, vision.NewApiError(request.GetId(), http.StatusForbidden))
 			return
 		}
 

@@ -13788,6 +13788,12 @@
                             "$ref": "#/definitions/vision.ApiResponse"
                         }
                     },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/vision.ApiResponse"
+                        }
+                    },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
@@ -13795,21 +13801,15 @@
                         }
                     },
                     "403": {
-                        "description": "Forbidden",
+                        "description": "Vision API disabled; permission errors return i18n.Response",
                         "schema": {
-                            "$ref": "#/definitions/i18n.Response"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/i18n.Response"
+                            "$ref": "#/definitions/vision.ApiResponse"
                         }
                     },
                     "413": {
                         "description": "Request Entity Too Large",
                         "schema": {
-                            "$ref": "#/definitions/i18n.Response"
+                            "$ref": "#/definitions/vision.ApiResponse"
                         }
                     },
                     "429": {
@@ -13818,10 +13818,10 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
-                    "501": {
-                        "description": "Not Implemented",
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/i18n.Response"
+                            "$ref": "#/definitions/vision.ApiResponse"
                         }
                     }
                 },
@@ -13858,7 +13858,7 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/i18n.Response"
+                            "$ref": "#/definitions/vision.ApiResponse"
                         }
                     },
                     "401": {
@@ -13868,15 +13868,15 @@
                         }
                     },
                     "403": {
-                        "description": "Forbidden",
+                        "description": "Vision API disabled; permission errors return i18n.Response",
                         "schema": {
-                            "$ref": "#/definitions/i18n.Response"
+                            "$ref": "#/definitions/vision.ApiResponse"
                         }
                     },
                     "413": {
                         "description": "Request Entity Too Large",
                         "schema": {
-                            "$ref": "#/definitions/i18n.Response"
+                            "$ref": "#/definitions/vision.ApiResponse"
                         }
                     },
                     "429": {
@@ -13922,7 +13922,7 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/i18n.Response"
+                            "$ref": "#/definitions/vision.ApiResponse"
                         }
                     },
                     "401": {
@@ -13932,15 +13932,15 @@
                         }
                     },
                     "403": {
-                        "description": "Forbidden",
+                        "description": "Vision API disabled; permission errors return i18n.Response",
                         "schema": {
-                            "$ref": "#/definitions/i18n.Response"
+                            "$ref": "#/definitions/vision.ApiResponse"
                         }
                     },
                     "413": {
                         "description": "Request Entity Too Large",
                         "schema": {
-                            "$ref": "#/definitions/i18n.Response"
+                            "$ref": "#/definitions/vision.ApiResponse"
                         }
                     },
                     "429": {
@@ -13986,7 +13986,7 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/i18n.Response"
+                            "$ref": "#/definitions/vision.ApiResponse"
                         }
                     },
                     "401": {
@@ -13996,15 +13996,15 @@
                         }
                     },
                     "403": {
-                        "description": "Forbidden",
+                        "description": "Vision API disabled; permission errors return i18n.Response",
                         "schema": {
-                            "$ref": "#/definitions/i18n.Response"
+                            "$ref": "#/definitions/vision.ApiResponse"
                         }
                     },
                     "413": {
                         "description": "Request Entity Too Large",
                         "schema": {
-                            "$ref": "#/definitions/i18n.Response"
+                            "$ref": "#/definitions/vision.ApiResponse"
                         }
                     },
                     "429": {

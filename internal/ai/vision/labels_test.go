@@ -281,3 +281,23 @@ func TestGenerateLabelsNormalizeMode(t *testing.T) {
 		})
 	}
 }
+
+func TestGenerateLabelsRefused(t *testing.T) {
+	prevConfig := Config
+	t.Cleanup(func() { Config = prevConfig })
+
+	// A service that refuses the request returns an error rather than an empty result.
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusForbidden)
+		_, _ = w.Write([]byte(`{"code":403,"error":"Forbidden","result":{}}`))
+	}))
+	defer server.Close()
+
+	Config = &ConfigValues{Models: Models{{Type: ModelTypeLabels, Name: "nasnet", Service: Service{
+		Uri: server.URL, Method: http.MethodPost, RequestFormat: ApiFormatVision, ResponseFormat: ApiFormatVision, FileScheme: scheme.Data,
+	}}}, Thresholds: DefaultThresholds}
+
+	labels, err := GenerateLabels(Files{samplesPath + "/cat_224.jpeg"}, media.SrcLocal, entity.SrcAuto)
+	assert.EqualError(t, err, "Forbidden (status code 403)")
+	assert.Empty(t, labels)
+}
