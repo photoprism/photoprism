@@ -13,6 +13,10 @@ import (
 )
 
 func TestImportWorker_OriginalFileNames(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	// Use the package-level config set in TestMain to avoid diverging
 	// settings/paths from the code under test.
 	cfg := Config()

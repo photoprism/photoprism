@@ -379,6 +379,10 @@ func TestReconcileInsta360Photos(t *testing.T) {
 		assert.Equal(t, -1, canonical.PhotoQuality)
 	})
 	t.Run("AllRemovedRestored", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		}
+
 		_, photos, relNames := newInsta360ReconcileFixture(t, "insta360allremovedrestored")
 		removedAt := entity.Now()
 		for _, photo := range photos {

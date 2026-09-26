@@ -835,6 +835,10 @@ func hasFaceName(faces []meta.Face, name string) bool {
 
 // TestIndexRelated_XmpFacesFromLogicalSource verifies source-to-primary reconciliation.
 func TestIndexRelated_XmpFacesFromLogicalSource(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	t.Run("HeicEmbedded", func(t *testing.T) {
 		c := newXmpIndexConfig(t, "index-related-heic-xmp")
 		if c.ExifToolBin() == "" {

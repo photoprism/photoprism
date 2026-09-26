@@ -137,6 +137,10 @@ func insta360StackPhotoCount(t *testing.T, folder string) (count int) {
 // TestIndex_Insta360LateCapture verifies that capture files indexed in a later run are stacked
 // with the existing photo, which keeps its name and stays in the archive.
 func TestIndex_Insta360LateCapture(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	cases := []struct {
 		name  string
 		first []string
@@ -211,6 +215,10 @@ func TestIndex_Insta360LateCapture(t *testing.T) {
 // TestIndexMain_ReplacedPreview verifies that a preview replaced with a forced conversion leaves the file
 // cache, so that it is indexed again whatever its modification time.
 func TestIndexMain_ReplacedPreview(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	folder := "insta360replacedpreview"
 	cfg := newInsta360StackConfig(t, folder, false)
 	dir := filepath.Join(cfg.OriginalsPath(), folder)
@@ -248,6 +256,10 @@ func TestIndexMain_ReplacedPreview(t *testing.T) {
 // TestIndex_Insta360StackControls verifies that stacking of other files and sidecar renaming
 // follow the actual file names.
 func TestIndex_Insta360StackControls(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	t.Run("SameBase", func(t *testing.T) {
 		folder := "insta360controlsamebase"
 		cfg := newInsta360StackConfig(t, folder, false)
@@ -383,6 +395,10 @@ func TestIndex_Insta360StackControls(t *testing.T) {
 // TestIndex_Insta360StackOptions verifies stacking of late capture files with other index options
 // and photo states, and the recovery of backups written under the stack name.
 func TestIndex_Insta360StackOptions(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	t.Run("StackDisabled", func(t *testing.T) {
 		folder := "insta360optionsstackdisabled"
 		cfg := newInsta360StackConfig(t, folder, false)
@@ -572,6 +588,10 @@ func TestIndex_Insta360StackOptions(t *testing.T) {
 // TestIndex_Insta360LensCodedPhotos verifies that photos with lens codes are indexed as separate photos,
 // since Insta360 cameras never split a photo by lens.
 func TestIndex_Insta360LensCodedPhotos(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	const (
 		left  = "IMG_20220625_140410_00_008.insp"
 		right = "IMG_20220625_140410_10_008.insp"
@@ -619,6 +639,10 @@ func TestIndex_Insta360LensCodedPhotos(t *testing.T) {
 // TestIndex_Insta360StandaloneLensPhoto verifies that a single-lens photo named with the _10 lens
 // code is indexed as an ordinary photo.
 func TestIndex_Insta360StandaloneLensPhoto(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	folder := "insta360standalonelens"
 	cfg := newInsta360StackConfig(t, folder, false)
 	dir := filepath.Join(cfg.OriginalsPath(), folder)
@@ -644,6 +668,10 @@ func TestIndex_Insta360StandaloneLensPhoto(t *testing.T) {
 // TestIndex_Insta360ImportedName verifies that a capture file renamed on import keeps its original
 // name, so it is still identified as a file that must stay stacked.
 func TestIndex_Insta360ImportedName(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	folder := "insta360importedname"
 	cfg := newInsta360StackConfig(t, folder, false)
 	dir := filepath.Join(cfg.OriginalsPath(), folder)
@@ -699,6 +727,10 @@ func splitInsta360Capture(t *testing.T, existing entity.Photo, folder, first, la
 // TestIndex_Insta360ReconcileSplit verifies that a forced rescan merges a split capture into the
 // existing photo, whose archive state is kept unless it was removed automatically.
 func TestIndex_Insta360ReconcileSplit(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	const (
 		active = iota
 		archived
@@ -811,6 +843,10 @@ func assertInsta360SinglePrimary(t *testing.T, folder string) {
 // TestIndex_Insta360Cover verifies that the combined preview becomes the cover of a capture whose
 // lens files were indexed in separate runs, and that no preview is made from the right lens then.
 func TestIndex_Insta360Cover(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	const (
 		leftPreview  = insta360StackLeft + ".jpg"
 		rightPreview = insta360StackRight + ".jpg"
@@ -986,6 +1022,10 @@ func TestIndex_Insta360Cover(t *testing.T) {
 // TestIndex_Insta360Proxy verifies that the LRV proxy of a video that stores both lenses in one file
 // is only indexed with that video, in any order, is not converted, and must stay stacked.
 func TestIndex_Insta360Proxy(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	const (
 		left  = "VID_20240415_213145_00_035.insv"
 		proxy = "LRV_20240415_213145_01_035.lrv"
@@ -1176,6 +1216,10 @@ func insta360DewarpWarnings(hook *test.Hook) (result []string) {
 // TestIndex_Insta360DualStream verifies that an .insv with one stream per lens gets an equirectangular
 // preview and video made from both streams, while other videos are processed as before.
 func TestIndex_Insta360DualStream(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	const name = "VID_20240415_213145_00_035.insv"
 
 	t.Run("TwoStreams", func(t *testing.T) {
@@ -1268,6 +1312,10 @@ func writeInsta360Photo(t *testing.T, cfg *config.Config, fileName, size string)
 // TestIndex_Insta360SingleLensPhoto verifies that an .insp with a single lens is neither dewarped nor
 // labeled as dual-fisheye, while an .insp with both lenses side by side, which is exactly 2:1, still is.
 func TestIndex_Insta360SingleLensPhoto(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	const name = "IMG_20201026_154628_00_070.insp"
 
 	original := func(t *testing.T, folder string) (result entity.File) {
@@ -1337,6 +1385,10 @@ func TestIndex_Insta360SingleLensPhoto(t *testing.T) {
 // TestImport_Insta360Capture verifies that a capture whose files are renamed on import gets the combined
 // preview, and that a forced rescan replaces a single-lens preview of an earlier import.
 func TestImport_Insta360Capture(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	folder := "insta360import"
 	cfg := newInsta360StackConfig(t, folder, false)
 	importDir := filepath.Join(cfg.ImportPath(), folder)
@@ -1402,6 +1454,10 @@ func writeInsta360Video(t *testing.T, cfg *config.Config, fileName, size, second
 // TestIndex_Insta360FirstIndexMetadata verifies that a capture and its proxy video get their own dimensions,
 // duration and codec when they are indexed for the first time.
 func TestIndex_Insta360FirstIndexMetadata(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	const (
 		capture = "VID_20240415_213145_00_035.insv"
 		proxy   = "LRV_20240415_213145_01_035.lrv"

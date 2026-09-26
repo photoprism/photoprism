@@ -53,6 +53,10 @@ func takenAtOf(t *testing.T, relName string) entity.Photo {
 // TestIndex_TakenAtModifyTime verifies that a modify time never replaces the capture time of another file of the
 // same stack, whatever order the files are indexed in, and ranks below a date from the file name.
 func TestIndex_TakenAtModifyTime(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	// The R0010070 names contain no date, so the photo starts with the modify time when the capture is indexed
 	// last. The Insta360 bracket names contain one, so the photo starts with the name time instead.
 	const (
@@ -182,6 +186,10 @@ func TestIndex_TakenAtModifyTime(t *testing.T) {
 // TestIndex_TakenAtCameraName verifies that the date and time in a camera file name are used without a
 // capture time in the metadata, and rank below one.
 func TestIndex_TakenAtCameraName(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	nameTime := time.Date(2018, 3, 18, 20, 58, 51, 0, time.UTC)
 
 	t.Run("NameOnly", func(t *testing.T) {
@@ -303,6 +311,10 @@ func TestMediaTimeUTC(t *testing.T) {
 
 // TestIndex_StackMetaModifyTime verifies that pictures are stacked by capture time and place, never by modify time.
 func TestIndex_StackMetaModifyTime(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
 	gps := []string{"-GPSLatitude=52.52", "-GPSLatitudeRef=N", "-GPSLongitude=13.405", "-GPSLongitudeRef=E"}
 
 	for _, tc := range []struct {
