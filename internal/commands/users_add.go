@@ -66,7 +66,7 @@ func usersAddAction(ctx *cli.Context) error {
 			}
 
 			prompt := promptui.Prompt{
-				Label:     fmt.Sprintf("Restore user %s?", m.String()),
+				Label:     fmt.Sprintf("Restore user %s", m.String()),
 				IsConfirm: true,
 			}
 

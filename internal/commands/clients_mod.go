@@ -54,7 +54,7 @@ func clientsModAction(ctx *cli.Context) error {
 		if client.Deleted() {
 			if !ctx.Bool("restore") && !RunNonInteractively(false) {
 				prompt := promptui.Prompt{
-					Label:     fmt.Sprintf("Restore client %s?", client.String()),
+					Label:     fmt.Sprintf("Restore client %s", client.String()),
 					IsConfirm: true,
 				}
 
