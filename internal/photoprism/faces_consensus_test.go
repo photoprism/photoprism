@@ -4,6 +4,7 @@ import (
 	"math"
 	"testing"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -385,4 +386,99 @@ func TestFaces_NameByConsensusError(t *testing.T) {
 	t.Run("nameByConsensus", func(t *testing.T) {
 		assert.Zero(t, w.nameByConsensus(true))
 	})
+}
+
+func TestFaces_auditConsensus(t *testing.T) {
+	w := isolatedTestFaces(t, "facesconsensusaudit")
+	core := w.conf.FaceClusterCore()
+
+	alice := consensusTestSubject(t, "Consensus Audit Alice")
+	bob := consensusTestSubject(t, "Consensus Audit Bob")
+	f := consensusTestFace(t, 1)
+	consensusTestMarkers(t, f, core, alice.SubjUID, entity.SrcAuto, false)
+	unnamed := consensusTestMarkers(t, f, 1, "", entity.SrcAuto, false)
+	split := consensusTestFace(t, 2)
+	consensusTestMarkers(t, split, core, alice.SubjUID, entity.SrcAuto, false)
+	consensusTestMarkers(t, split, 1, bob.SubjUID, entity.SrcAuto, false)
+	belowCore := consensusTestFace(t, 3)
+	consensusTestMarkers(t, belowCore, core-1, alice.SubjUID, entity.SrcAuto, false)
+	gone := consensusTestSubject(t, "Consensus Audit Gone")
+	consensusTestMarkers(t, consensusTestFace(t, 4), core, gone.SubjUID, entity.SrcAuto, false)
+	require.NoError(t, entity.UnscopedDb().Model(gone).UpdateColumn("deleted_at", entity.Now()).Error)
+
+	t.Run("Success", func(t *testing.T) {
+		hook := captureLog(t)
+
+		n, err := w.auditConsensus("")
+		require.NoError(t, err)
+		assert.Equal(t, 1, n)
+		assert.Contains(t, loggedMessages(hook, logrus.InfoLevel),
+			"faces: found 1 unnamed cluster whose matched markers agree on one person, which a completed recognition run names")
+	})
+	t.Run("Subject", func(t *testing.T) {
+		n, err := w.auditConsensus(alice.SubjUID)
+		require.NoError(t, err)
+		assert.Equal(t, 1, n)
+	})
+	t.Run("OtherSubject", func(t *testing.T) {
+		hook := captureLog(t)
+
+		n, err := w.auditConsensus(bob.SubjUID)
+		require.NoError(t, err)
+		assert.Zero(t, n)
+		assert.Contains(t, loggedMessages(hook, logrus.InfoLevel), "faces: found no unnamed clusters whose matched markers agree on "+entity.SubjNames.Log(bob.SubjUID))
+	})
+	t.Run("AuditFixDoesNotName", func(t *testing.T) {
+		hook := captureLog(t)
+
+		require.NoError(t, w.Audit(true, ""))
+		assert.Contains(t, loggedMessages(hook, logrus.InfoLevel),
+			"faces: found 1 unnamed cluster whose matched markers agree on one person, which a completed recognition run names")
+		assert.Empty(t, entity.FindFace(f.ID).SubjUID)
+		assert.Equal(t, []string{""}, consensusTestSubjects(t, unnamed))
+	})
+}
+
+func TestFaces_auditConsensusError(t *testing.T) {
+	w := isolatedTestFaces(t, "facesconsensusauditerror")
+
+	require.NoError(t, entity.Db().Exec("ALTER TABLE faces RENAME TO faces_consensus_error").Error)
+	t.Cleanup(func() {
+		require.NoError(t, entity.Db().Exec("ALTER TABLE faces_consensus_error RENAME TO faces").Error)
+	})
+
+	n, err := w.auditConsensus("")
+	assert.Error(t, err)
+	assert.Zero(t, n)
+}
+
+// TestFaces_ResetClearsConsensusName pins that a default reset removes what the pass named, since
+// the name keeps the automatic source.
+func TestFaces_ResetClearsConsensusName(t *testing.T) {
+	w := isolatedTestFaces(t, "facesconsensusreset")
+	core := w.conf.FaceClusterCore()
+
+	alice := consensusTestSubject(t, "Consensus Reset Alice")
+	f := consensusTestFace(t, 1)
+	named := consensusTestMarkers(t, f, core, alice.SubjUID, entity.SrcAuto, false)
+	unnamed := consensusTestMarkers(t, f, 1, "", entity.SrcAuto, false)
+	manual := consensusTestMarkers(t, consensusTestFace(t, 2), 1, alice.SubjUID, entity.SrcManual, false)
+
+	result, err := w.NameByConsensus()
+	require.NoError(t, err)
+	require.Equal(t, 1, result.Named)
+	require.Equal(t, []string{alice.SubjUID}, consensusTestSubjects(t, unnamed))
+
+	require.NoError(t, w.Reset())
+
+	assert.Nil(t, entity.FindFace(f.ID), "the cluster is removed")
+	assert.Equal(t, consensusTestRepeat("", core+1), consensusTestSubjects(t, append(named, unnamed...)))
+
+	for _, uid := range append(named, unnamed...) {
+		m := entity.FindMarker(uid)
+		require.NotNil(t, m)
+		assert.Empty(t, m.FaceID)
+	}
+
+	assert.Equal(t, []string{alice.SubjUID}, consensusTestSubjects(t, manual), "a name a person gave is kept")
 }

@@ -379,6 +379,11 @@ func (w *Faces) Audit(fix bool, subjUID string) (err error) {
 		}
 	}
 
+	// Reported rather than fixed: naming them is what a completed recognition run does.
+	if _, err := w.auditConsensus(subjUID); err != nil {
+		logErr("faces", "find clusters to name", err)
+	}
+
 	// Find and fix orphan face clusters.
 	if orphans, err := entity.OrphanFaces(); err != nil {
 		log.Errorf("faces: %s while finding orphan face clusters", err)
@@ -406,6 +411,40 @@ func (w *Faces) Audit(fix bool, subjUID string) (err error) {
 	}
 
 	return nil
+}
+
+// auditConsensus reports the unnamed clusters a completed recognition run names after the person
+// their matched markers agree on, optionally only those of one subject, and returns how many there are.
+func (w *Faces) auditConsensus(subjUID string) (int, error) {
+	candidates, err := query.ConsensusFaces(w.conf.FaceClusterCore())
+
+	if err != nil {
+		return 0, err
+	}
+
+	n := 0
+
+	for _, c := range candidates {
+		if subjUID != "" && c.SubjUID != subjUID {
+			continue
+		}
+
+		n++
+
+		log.Debugf("faces: cluster %s qualifies to be named after %s, %d of %d markers agree", clean.Log(c.FaceID), entity.SubjNames.Log(c.SubjUID), c.Auto, c.Valid)
+	}
+
+	switch {
+	case n > 0:
+		log.Infof("faces: found %s whose matched markers agree on one person, which a completed recognition run names",
+			english.Plural(n, "unnamed cluster", "unnamed clusters"))
+	case subjUID != "":
+		log.Infof("faces: found no unnamed clusters whose matched markers agree on %s", entity.SubjNames.Log(subjUID))
+	default:
+		log.Infof("faces: found no unnamed clusters whose matched markers agree on one person")
+	}
+
+	return n, nil
 }
 
 // ambiguousPairMessage describes two clusters that accept each other while naming different people.
