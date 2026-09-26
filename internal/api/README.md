@@ -46,10 +46,14 @@ XML, AAE, and NFO sidecars are not accepted through this endpoint, including for
 The same policy applies before direct writes, before archive extraction, during saved-file
 validation, and before importing a staged batch. Processing removes disallowed staged
 sidecars; traversal or removal errors return 400 before import starts. Staged symbolic
-links are not supported. Upload paths exclude the administrative names documented in [pkg/fs](../../pkg/fs/README.md),
+links are not supported: a batch that contains one is rejected and its staging folder removed,
+while other preparation errors keep the batch so that processing can be retried. Upload paths exclude the administrative names documented in [pkg/fs](../../pkg/fs/README.md),
 including `.github`, `.forgejo`, `.local`, and `_netrc`, at any depth, matched case-insensitively, along with
 the suffixes in `pkg/fs.ReservedPathSuffixes`. ZIP entry checks
 apply to files and directories before extraction; other hidden-directory handling is unchanged. Other import sources and WebDAV retain their format policies.
+
+Processing a batch adds its files to at most 100 requested albums: titles resolve among the user's
+own albums or create a new one, and album UIDs must name regular albums the session can see.
 
 ### Audit Logging
 

@@ -8613,6 +8613,18 @@
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
+                    },
+                    "413": {
+                        "description": "Request Entity Too Large",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "507": {
+                        "description": "Insufficient Storage",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
                     }
                 },
                 "summary": "start import",

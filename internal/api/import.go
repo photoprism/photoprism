@@ -31,9 +31,9 @@ import (
 //	@Tags		Library
 //	@Accept		json
 //	@Produce	json
-//	@Success	200			{object}	i18n.Response
-//	@Failure	400,401,403	{object}	i18n.Response
-//	@Param		options		body		form.ImportOptions	true	"import options"
+//	@Success	200					{object}	i18n.Response
+//	@Failure	400,401,403,413,507	{object}	i18n.Response
+//	@Param		options				body		form.ImportOptions	true	"import options"
 //	@Router		/api/v1/import/ [post]
 func StartImport(router *gin.RouterGroup) {
 	router.POST("/import/*path", func(c *gin.Context) {

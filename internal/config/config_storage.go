@@ -524,7 +524,8 @@ func (c *Config) UserStoragePath(userUid string) string {
 	return dir
 }
 
-// UserUploadPath returns the upload path for the specified user.
+// UserUploadPath returns the upload path for the specified user, or an error if the user's storage folder
+// is not available.
 func (c *Config) UserUploadPath(userUid, token string) (string, error) {
 	if !rnd.IsUID(userUid, 0) {
 		return "", fmt.Errorf("invalid uid")
