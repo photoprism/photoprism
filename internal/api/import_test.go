@@ -13,7 +13,6 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -110,29 +109,4 @@ func TestStartImportAlbums(t *testing.T) {
 	assert.Equal(t, 1, count)
 	require.NoError(t, entity.UnscopedDb().Model(&entity.PhotoAlbum{}).Where("album_uid = ?", missing).Count(&count).Error)
 	assert.Equal(t, 0, count)
-}
-
-func TestStartImportTooManyAlbums(t *testing.T) {
-	app, router, conf := NewApiTest()
-	StartImport(router)
-	options := *conf.Options()
-	mode := conf.AuthMode()
-	t.Cleanup(func() { *conf.Options() = options; conf.SetAuthMode(mode) })
-	conf.SetAuthMode(config.AuthModePasswd)
-	conf.Options().StoragePath = t.TempDir()
-	conf.Options().OriginalsPath = t.TempDir()
-	conf.Options().SidecarPath = t.TempDir()
-	conf.Options().ImportPath = t.TempDir()
-	sess := clientCredentialSession(t, conf, "client", "*", entity.UserFixtures.Pointer("alice"))
-	titles := make([]string, MaxUploadAlbums+1)
-
-	for i := range titles {
-		titles[i] = fmt.Sprintf("Too Many %d", i)
-	}
-
-	body, err := json.Marshal(form.ImportOptions{Albums: titles})
-	require.NoError(t, err)
-
-	result := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/import/zz-import-"+rnd.Base36(8), string(body), sess.AuthToken())
-	assert.Equal(t, http.StatusBadRequest, result.Code)
 }

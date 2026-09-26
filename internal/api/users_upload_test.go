@@ -289,6 +289,22 @@ func TestUploadAlbums(t *testing.T) {
 		s := mixedPrincipalSession()
 		assert.Empty(t, uploadAlbums(c, s, nil))
 	})
+	t.Run("Limit", func(t *testing.T) {
+		s := &entity.Session{}
+		s.SetUser(entity.UserFixtures.Pointer("alice"))
+		titles := make([]string, 0, MaxUploadAlbums+4)
+		titles = append(titles, other, missing, "", "")
+		for i := 0; i < MaxUploadAlbums+1; i++ {
+			titles = append(titles, fmt.Sprintf("Limit %d", i))
+		}
+		titles = append(titles, "Limit 0")
+
+		// Refused, empty and repeated entries take no place; the album after the limit is skipped.
+		result := uploadAlbums(c, s, titles)
+		require.Len(t, result, MaxUploadAlbums)
+		assert.Equal(t, other, result[0])
+		assert.Equal(t, fmt.Sprintf("Limit %d", MaxUploadAlbums-2), result[MaxUploadAlbums-1])
+	})
 }
 
 func TestProcessUserUploadAlbums(t *testing.T) {
@@ -364,35 +380,7 @@ func TestProcessUserUploadAlbums(t *testing.T) {
 	assert.NoFileExists(t, foreignYaml)
 }
 
-func TestTooManyUploadAlbums(t *testing.T) {
-	albums := func(n int, prefix string) []string {
-		result := make([]string, n)
-		for i := range result {
-			result[i] = fmt.Sprintf("%s %d", prefix, i)
-		}
-		return result
-	}
-
-	t.Run("None", func(t *testing.T) {
-		assert.False(t, tooManyUploadAlbums(nil))
-	})
-	t.Run("Limit", func(t *testing.T) {
-		assert.False(t, tooManyUploadAlbums(albums(MaxUploadAlbums, "Album")))
-	})
-	t.Run("AboveLimit", func(t *testing.T) {
-		assert.True(t, tooManyUploadAlbums(albums(MaxUploadAlbums+1, "Album")))
-	})
-	t.Run("Duplicates", func(t *testing.T) {
-		list := append(albums(MaxUploadAlbums, "Album"), albums(MaxUploadAlbums, "Album")...)
-		assert.False(t, tooManyUploadAlbums(list))
-	})
-	t.Run("Empty", func(t *testing.T) {
-		list := append(albums(MaxUploadAlbums, "Album"), "", "", "")
-		assert.False(t, tooManyUploadAlbums(list))
-	})
-}
-
-func TestProcessUserUploadTooManyAlbums(t *testing.T) {
+func TestProcessUserUploadAlbumLimit(t *testing.T) {
 	app, router, conf := NewApiTest()
 	ProcessUserUpload(router)
 	options := *conf.Options()
@@ -412,7 +400,7 @@ func TestProcessUserUploadTooManyAlbums(t *testing.T) {
 		titles[i] = fmt.Sprintf("%s %d", prefix, i)
 	}
 
-	// Stage a picture, so that the request would import it and create the albums if it were accepted.
+	// The picture is imported and added to the first MaxUploadAlbums albums only.
 	token := rnd.Base36(10)
 	dir, err := conf.UserUploadPath(user.UserUID, sess.RefID+token)
 	require.NoError(t, err)
@@ -435,12 +423,16 @@ func TestProcessUserUploadTooManyAlbums(t *testing.T) {
 	require.NoError(t, err)
 
 	result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, string(body), sess.AuthToken())
-	assert.Equal(t, http.StatusBadRequest, result.Code)
+	require.Equal(t, http.StatusOK, result.Code, result.Body.String())
 
-	_, err = entity.FirstFileByHash(hash)
-	assert.Error(t, err)
+	file, err := entity.FirstFileByHash(hash)
+	require.NoError(t, err)
 
 	var count int
 	require.NoError(t, entity.UnscopedDb().Model(&entity.Album{}).Where("album_title LIKE ?", prefix+"%").Count(&count).Error)
+	assert.Equal(t, MaxUploadAlbums, count)
+	require.NoError(t, entity.UnscopedDb().Model(&entity.PhotoAlbum{}).Where("photo_uid = ?", file.PhotoUID).Count(&count).Error)
+	assert.Equal(t, MaxUploadAlbums, count)
+	require.NoError(t, entity.UnscopedDb().Model(&entity.Album{}).Where("album_title = ?", titles[MaxUploadAlbums]).Count(&count).Error)
 	assert.Equal(t, 0, count)
 }

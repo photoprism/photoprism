@@ -87,13 +87,6 @@ func StartImport(router *gin.RouterGroup) {
 			return
 		}
 
-		// Refuse to add the files to more albums than an upload may name.
-		if tooManyUploadAlbums(frm.Albums) {
-			event.AuditWarn([]string{ClientIP(c), "session %s", "add files to more than %d albums", status.Denied}, s.RefID, MaxUploadAlbums)
-			Abort(c, http.StatusBadRequest, i18n.ErrBadRequest)
-			return
-		}
-
 		srcFolder := ""
 		importPath := conf.ImportPath()
 

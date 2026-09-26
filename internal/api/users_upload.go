@@ -279,29 +279,6 @@ func uploadPathDenied(u *entity.User) bool {
 // MaxUploadAlbums is the number of distinct albums an upload or import may add its files to.
 const MaxUploadAlbums = 100
 
-// tooManyUploadAlbums reports whether the list names more distinct albums than MaxUploadAlbums.
-func tooManyUploadAlbums(albums []string) bool {
-	if len(albums) <= MaxUploadAlbums {
-		return false
-	}
-
-	seen := make(map[string]struct{}, MaxUploadAlbums+1)
-
-	for _, album := range albums {
-		if album == "" {
-			continue
-		}
-
-		seen[album] = struct{}{}
-
-		if len(seen) > MaxUploadAlbums {
-			return true
-		}
-	}
-
-	return false
-}
-
 // uploadAlbumsAllowed reports whether the session may add the files it uploads or imports to albums, which
 // requires a user account, and permission and scope to create or upload to albums.
 func uploadAlbumsAllowed(s *entity.Session) bool {
@@ -311,21 +288,23 @@ func uploadAlbumsAllowed(s *entity.Session) bool {
 }
 
 // uploadAlbums returns the albums that files the session uploads or imports may be added to, without
-// duplicates: titles, which resolve among the user's own albums or create a new one, and the UIDs of
-// albums the session can see.
+// duplicates and at most MaxUploadAlbums: titles, which resolve among the user's own albums or create a
+// new one, and the UIDs of albums the session can see.
 func uploadAlbums(c *gin.Context, s *entity.Session, albums []string) []string {
-	result := make([]string, 0, len(albums))
+	result := make([]string, 0, min(len(albums), MaxUploadAlbums))
 	seen := make(map[string]struct{}, len(albums))
-	denied := 0
+	denied, skipped := 0, 0
 
 	for _, album := range albums {
-		if _, ok := seen[album]; ok {
+		if _, ok := seen[album]; ok || album == "" {
 			continue
 		}
 
 		seen[album] = struct{}{}
 
-		if !rnd.IsUID(album, entity.AlbumUID) {
+		if len(result) >= MaxUploadAlbums {
+			skipped++
+		} else if !rnd.IsUID(album, entity.AlbumUID) {
 			result = append(result, album)
 		} else if found, err := query.AlbumByUID(album); err == nil && found.HasID() && !found.Deleted() && found.VisibleToSession(s) {
 			result = append(result, album)
@@ -336,6 +315,10 @@ func uploadAlbums(c *gin.Context, s *entity.Session, albums []string) []string {
 
 	if denied > 0 {
 		event.AuditWarn([]string{ClientIP(c), "session %s", "add files to %s", status.Denied}, s.RefID, english.Plural(denied, "album", "albums"))
+	}
+
+	if skipped > 0 {
+		event.AuditWarn([]string{ClientIP(c), "session %s", "add files to %s above the limit of %d", status.Skipped}, s.RefID, english.Plural(skipped, "album", "albums"), MaxUploadAlbums)
 	}
 
 	return result
@@ -424,13 +407,6 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 			}
 
 			AbortBadRequest(c, err)
-			return
-		}
-
-		// Refuse to add the files to more albums than an upload may name.
-		if tooManyUploadAlbums(frm.Albums) {
-			event.AuditWarn([]string{ClientIP(c), "session %s", "add files to more than %d albums", status.Denied}, s.RefID, MaxUploadAlbums)
-			Abort(c, http.StatusBadRequest, i18n.ErrBadRequest)
 			return
 		}
 
