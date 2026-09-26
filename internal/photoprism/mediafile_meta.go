@@ -61,7 +61,8 @@ func (m *MediaFile) NeedsExifToolJson() bool {
 
 // CreateExifToolJson runs ExifTool via the provided Convert helper and merges
 // its JSON output into the cached metadata. When nothing needs to be generated
-// the call is a no-op.
+// the call is a no-op. A successful merge clears an error cached by an earlier
+// read, as MetaData does when it finds the JSON.
 func (m *MediaFile) CreateExifToolJson(convert *Convert) error {
 	if !m.NeedsExifToolJson() {
 		return nil
@@ -70,6 +71,8 @@ func (m *MediaFile) CreateExifToolJson(convert *Convert) error {
 		log.Debugf("exiftool: failed parsing %s", clean.Log(m.RootRelName()))
 	} else if err = m.metaData.JSON(jsonName, ""); err != nil {
 		return fmt.Errorf("%s in %s (read json sidecar)", clean.Error(err), clean.Log(m.BaseName()))
+	} else {
+		m.metaData.Error = nil
 	}
 
 	return nil

@@ -261,6 +261,65 @@ func TestMediaFile_CreateExifToolJson(t *testing.T) {
 			t.Error(err)
 		}
 	})
+	t.Run("MetaDataReadFirst", func(t *testing.T) {
+		// Checking the type reads the metadata of a video before its JSON exists, which the JSON then completes.
+		mediaFile, err := NewMediaFile(c.SamplesPath() + "/gopher-video.mp4")
+		require.NoError(t, err)
+
+		jsonName, err := mediaFile.ExifToolJsonName()
+		require.NoError(t, err)
+		_ = os.Remove(jsonName)
+		t.Cleanup(func() { _ = os.Remove(jsonName) })
+
+		require.NoError(t, mediaFile.CheckType())
+		require.Error(t, mediaFile.MetaData().Error)
+		require.NoError(t, mediaFile.CreateExifToolJson(NewConvert(c)))
+
+		data := mediaFile.MetaData()
+		assert.NoError(t, data.Error)
+		assert.Equal(t, time.Duration(2410000000), data.Duration)
+		assert.Equal(t, video.CodecAvc1, data.Codec)
+		assert.Equal(t, 270, data.Width)
+	})
+	t.Run("InvalidExportKeepsError", func(t *testing.T) {
+		// A cached error stays when the ExifTool output cannot be read.
+		bin := filepath.Join(t.TempDir(), "exiftool")
+		require.NoError(t, os.WriteFile(bin, []byte("#!/bin/sh\necho '[1]'\n"), 0o700))
+
+		prevBin := c.Options().ExifToolBin
+		c.Options().ExifToolBin = bin
+		t.Cleanup(func() { c.Options().ExifToolBin = prevBin })
+
+		mediaFile, err := NewMediaFile(c.SamplesPath() + "/gopher-video.mp4")
+		require.NoError(t, err)
+
+		jsonName, err := mediaFile.ExifToolJsonName()
+		require.NoError(t, err)
+		_ = os.Remove(jsonName)
+		t.Cleanup(func() { _ = os.Remove(jsonName) })
+
+		require.NoError(t, mediaFile.CheckType())
+		assert.Error(t, mediaFile.CreateExifToolJson(NewConvert(c)))
+		assert.Error(t, mediaFile.MetaData().Error)
+	})
+	t.Run("FailedExportKeepsError", func(t *testing.T) {
+		// A cached error stays when the ExifTool export fails.
+		prevBin := c.Options().ExifToolBin
+		c.Options().ExifToolBin = "/bin/false"
+		t.Cleanup(func() { c.Options().ExifToolBin = prevBin })
+
+		mediaFile, err := NewMediaFile(c.SamplesPath() + "/gopher-video.mp4")
+		require.NoError(t, err)
+
+		jsonName, err := mediaFile.ExifToolJsonName()
+		require.NoError(t, err)
+		_ = os.Remove(jsonName)
+		t.Cleanup(func() { _ = os.Remove(jsonName) })
+
+		require.NoError(t, mediaFile.CheckType())
+		require.NoError(t, mediaFile.CreateExifToolJson(NewConvert(c)))
+		assert.Error(t, mediaFile.MetaData().Error)
+	})
 }
 
 func TestMediaFile_Exif_Jpeg(t *testing.T) {
