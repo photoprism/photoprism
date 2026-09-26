@@ -11,6 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/fs/disk"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -102,6 +103,47 @@ func TestConfig_UserUploadPath(t *testing.T) {
 	} else {
 		assert.Contains(t, dir, "users/urjult03ceelhw6k/upload/foo")
 	}
+}
+
+func TestConfig_UserUploadBatchPath(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	c.Options().StoragePath = t.TempDir()
+
+	t.Run("Success", func(t *testing.T) {
+		dir, err := c.UserUploadBatchPath("urjult03ceelhw6k", "sessabcdefgh1234567")
+		require.NoError(t, err)
+		assert.Equal(t, filepath.Join(c.UserStoragePath("urjult03ceelhw6k"), "upload", "sessabcdefgh1234567"), dir)
+		assert.DirExists(t, dir)
+	})
+	t.Run("CleanedName", func(t *testing.T) {
+		dir, err := c.UserUploadBatchPath("urjult03ceelhw6k", "sess/abc")
+		require.NoError(t, err)
+		assert.Equal(t, filepath.Join(c.UserStoragePath("urjult03ceelhw6k"), "upload", "sessabc"), dir)
+	})
+	t.Run("StorageUnavailable", func(t *testing.T) {
+		// A file in place of the users folder makes the user's storage folder unavailable.
+		s := NewConfig(CliTestContext())
+		s.Options().StoragePath = t.TempDir()
+		require.NoError(t, os.WriteFile(s.UsersStoragePath(), []byte("file"), fs.ModeFile))
+		dir, err := s.UserUploadBatchPath("urjult03ceelhw6k", "sessabcdefgh1234567")
+		assert.Error(t, err)
+		assert.Equal(t, "", dir)
+		dir, err = s.UserUploadPath("urjult03ceelhw6k", "")
+		assert.Error(t, err)
+		assert.Equal(t, "", dir)
+	})
+	t.Run("EmptyName", func(t *testing.T) {
+		for _, batch := range []string{"", "../", "/.", strings.Repeat("a", clean.LengthLimit+1)} {
+			dir, err := c.UserUploadBatchPath("urjult03ceelhw6k", batch)
+			assert.Error(t, err, batch)
+			assert.Equal(t, "", dir)
+		}
+	})
+	t.Run("InvalidUser", func(t *testing.T) {
+		dir, err := c.UserUploadBatchPath("etaetyget", "sessabcdefgh1234567")
+		assert.Error(t, err)
+		assert.Equal(t, "", dir)
+	})
 }
 
 func TestConfig_WebStoragePath(t *testing.T) {

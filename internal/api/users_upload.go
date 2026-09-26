@@ -118,7 +118,7 @@ func UploadUserFiles(router *gin.RouterGroup) {
 		var uploads []string
 
 		// Compose upload path.
-		uploadDir, err := conf.UserUploadPath(s.UserUID, batch)
+		uploadDir, err := conf.UserUploadBatchPath(s.UserUID, batch)
 
 		if err != nil {
 			log.Errorf("upload: failed to create storage folder (%s)", clean.Error(err))
@@ -301,7 +301,7 @@ func discardUpload(s *entity.Session, token string) {
 		return
 	}
 
-	dir, err := get.Config().UserUploadPath(s.UserUID, batch)
+	dir, err := get.Config().UserUploadBatchPath(s.UserUID, batch)
 
 	if err != nil {
 		return
@@ -454,7 +454,7 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 			return
 		}
 
-		uploadPath, err := conf.UserUploadPath(s.UserUID, batch)
+		uploadPath, err := conf.UserUploadBatchPath(s.UserUID, batch)
 
 		if err != nil {
 			log.Errorf("upload: failed to create storage folder (%s)", clean.Error(err))

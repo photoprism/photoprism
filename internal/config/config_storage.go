@@ -530,13 +530,30 @@ func (c *Config) UserUploadPath(userUid, token string) (string, error) {
 		return "", fmt.Errorf("invalid uid")
 	}
 
-	dir := filepath.Join(c.UserStoragePath(userUid), fs.UploadDir, clean.Token(token))
+	userDir := c.UserStoragePath(userUid)
+
+	if userDir == "" {
+		return "", fmt.Errorf("user storage folder is not available")
+	}
+
+	dir := filepath.Join(userDir, fs.UploadDir, clean.Token(token))
 
 	if err := fs.MkdirAll(dir); err != nil {
 		return "", err
 	}
 
 	return dir, nil
+}
+
+// UserUploadBatchPath returns the folder in which the files a user uploads under the batch name are
+// staged, creating it if needed. It refuses a name that is empty after cleaning, so a batch never
+// resolves to the upload folder itself.
+func (c *Config) UserUploadBatchPath(userUid, batch string) (string, error) {
+	if name := clean.Token(batch); name == "" {
+		return "", fmt.Errorf("invalid upload batch")
+	} else {
+		return c.UserUploadPath(userUid, name)
+	}
 }
 
 // WebStoragePath returns the path used for serving web content.
