@@ -2,15 +2,17 @@ package entity
 
 import (
 	"encoding/json"
+	"strings"
 	"time"
+
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // MarshalJSON returns the JSON encoding.
 func (m *Marker) MarshalJSON() ([]byte, error) {
-	var subj *Subject
 	var name string
 
-	if subj = m.Subject(); subj == nil {
+	if subj := m.displaySubject(); subj == nil {
 		name = m.MarkerName
 	} else {
 		name = subj.SubjName
@@ -57,4 +59,22 @@ func (m *Marker) MarshalJSON() ([]byte, error) {
 		Thumb:     m.Thumb,
 		CreatedAt: m.CreatedAt,
 	})
+}
+
+// displaySubject returns the person the marker shows without creating, restoring or linking one, so
+// reading a marker never changes who exists. An unlinked name resolves only to a visible person who
+// currently carries that name.
+func (m *Marker) displaySubject() *Subject {
+	if m.SubjUID != "" {
+		if m.subject == nil || m.subject.SubjUID != m.SubjUID {
+			m.subject = FindSubject(m.SubjUID)
+		}
+
+		return m.subject
+	} else if s := FindSubjectByName(m.MarkerName, false); s != nil && !s.Deleted() && !s.NameWithheld() &&
+		strings.EqualFold(s.SubjName, clean.Name(m.MarkerName)) {
+		return s
+	}
+
+	return nil
 }

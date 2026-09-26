@@ -224,8 +224,9 @@ func (m *Marker) SetName(name, src string) (changed bool, err error) {
 		return false, nil
 	}
 
-	if m.MarkerName == name {
-		// Name didn't change.
+	// An unchanged name needs no update, unless a source that may name a person confirms it for a
+	// valid marker that is not linked yet.
+	if m.MarkerName == name && (m.SubjUID != "" || !subjSrcSharesFace(src) || m.MarkerInvalid) {
 		return false, nil
 	}
 
@@ -289,7 +290,13 @@ func subjSrcSharesFace(src string) bool {
 // after its subject. SetFace does exactly that, and SetSubjectUID then spreads the name across the
 // cluster, so a caller choosing between clusters needs to know.
 func (m *Marker) NamesFace() bool {
-	return m != nil && m.SubjUID != "" && subjSrcSharesFace(m.SubjSrc)
+	return m != nil && m.SubjUID != "" && m.SourceNamesFace()
+}
+
+// SourceNamesFace reports whether the source of the marker's name may create or rename its person
+// and name its cluster, which an automatic or XMP name may not.
+func (m *Marker) SourceNamesFace() bool {
+	return m != nil && subjSrcSharesFace(m.SubjSrc)
 }
 
 // RejectedMatch reports whether a person removed the name of this face marker, which leaves it with a

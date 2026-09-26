@@ -77,14 +77,17 @@ func RemoveOrphanSubjects() (removed int64, err error) {
 	return res.RowsAffected, res.Error
 }
 
-// CreateMarkerSubjects adds and references known marker subjects.
+// CreateMarkerSubjects adds and references known marker subjects. A name from a source that may not
+// name its person, such as XMP, is linked only to an existing person and never names the cluster.
 func CreateMarkerSubjects() (affected int64, err error) {
 	var markers entity.Markers
 
 	if err = Db().
 		Where("subj_uid = '' AND marker_name <> '' AND subj_src <> ?", entity.SrcAuto).
 		Where("marker_invalid = 0 AND marker_type = ?", entity.MarkerFace).
-		Order("marker_name").
+		// Sorted by source within a name, so a person another source creates exists before an XMP
+		// marker of the same name looks for it.
+		Order("marker_name, subj_src").
 		Find(&markers).Error; err != nil {
 		return affected, err
 	} else if len(markers) == 0 {
@@ -95,6 +98,19 @@ func CreateMarkerSubjects() (affected int64, err error) {
 	var subj *entity.Subject
 
 	for _, m := range markers {
+		// A name from a source that may not name its person, such as XMP, is linked only to a person
+		// who already exists, and never names the cluster.
+		if !m.SourceNamesFace() {
+			if found := entity.FindSubjectByName(m.MarkerName, false); found == nil || found.Deleted() || !found.IsPerson() {
+				continue
+			} else if err = m.Updates(entity.Values{"subj_uid": found.SubjUID, "marker_name": found.SubjName, "marker_review": false}); err != nil {
+				return affected, err
+			}
+
+			affected++
+			continue
+		}
+
 		if name == m.MarkerName && subj != nil {
 			// Do nothing.
 		} else if subj = entity.NewSubject(m.MarkerName, entity.SubjPerson, entity.SrcMarker); subj == nil {

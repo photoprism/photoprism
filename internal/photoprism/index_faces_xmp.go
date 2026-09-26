@@ -205,7 +205,7 @@ func applyXmpName(m *entity.Marker, rawName string) (bool, error) {
 
 	// Remember the prior link so a stale or empty SubjUID is repaired and
 	// persisted even when the marker name string stays the same: SetName
-	// short-circuits on an identical name and reports no change.
+	// short-circuits on an identical name from an XMP source.
 	prevSubjUID := m.SubjUID
 	prevSubjSrc := m.SubjSrc
 
@@ -221,8 +221,8 @@ func applyXmpName(m *entity.Marker, rawName string) (bool, error) {
 		return false, fmt.Errorf("faces: cannot import xmp name %s: %w", clean.Log(name), err)
 	}
 
-	// SetName's identical-name short-circuit skips SyncSubject, which would leave
-	// an empty SubjUID or persist a detached link, so resolve the Person here.
+	// Resolve the Person here if SetName left the marker unlinked, so an empty
+	// SubjUID or a detached link is not persisted.
 	// Claiming SubjSrc for XMP first satisfies Subject's non-auto guard; the
 	// priority check above already ran, so this never downgrades.
 	if m.SubjUID == "" && m.MarkerName != "" {

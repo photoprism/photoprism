@@ -963,6 +963,72 @@ func TestMarker_NamesFace(t *testing.T) {
 	})
 }
 
+// TestMarker_SetName_Unlinked pins that entering the same name again links a marker without a person,
+// while a linked marker with that name is left alone.
+func TestMarker_SetName_Unlinked(t *testing.T) {
+	t.Cleanup(func() {
+		UnscopedDb().Delete(&Subject{}, "subj_name IN (?)", []string{"SetName Unlinked Carl", "SetName Unlinked Xmp", "SetName Unlinked Invalid"})
+	})
+
+	t.Run("Unlinked", func(t *testing.T) {
+		m := &Marker{MarkerUID: rnd.GenerateUID('m'), MarkerType: MarkerFace, SubjSrc: SrcXmp, MarkerName: "SetName Unlinked Carl"}
+
+		changed, err := m.SetName("SetName Unlinked Carl", SrcManual)
+		require.NoError(t, err)
+		assert.True(t, changed)
+		assert.NotEmpty(t, m.SubjUID)
+		assert.Equal(t, SrcManual, m.SubjSrc)
+	})
+	t.Run("XmpResent", func(t *testing.T) {
+		// What any update of an unlinked XMP marker sends back, such as rejecting it.
+		m := &Marker{MarkerUID: rnd.GenerateUID('m'), MarkerType: MarkerFace, SubjSrc: SrcXmp, MarkerName: "SetName Unlinked Xmp"}
+
+		changed, err := m.SetName("SetName Unlinked Xmp", SrcXmp)
+		require.NoError(t, err)
+		assert.False(t, changed)
+		assert.Empty(t, m.SubjUID)
+		assert.Nil(t, FindSubjectByName("SetName Unlinked Xmp", false), "no person is created")
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		m := &Marker{MarkerUID: rnd.GenerateUID('m'), MarkerType: MarkerFace, SubjSrc: SrcManual, MarkerName: "SetName Unlinked Invalid", MarkerInvalid: true}
+
+		changed, err := m.SetName("SetName Unlinked Invalid", SrcManual)
+		require.NoError(t, err)
+		assert.False(t, changed)
+		assert.Nil(t, FindSubjectByName("SetName Unlinked Invalid", false), "a rejected face names no person")
+	})
+	t.Run("Linked", func(t *testing.T) {
+		subj := FindSubjectByName("SetName Unlinked Carl", false)
+		require.NotNil(t, subj)
+		m := &Marker{MarkerUID: rnd.GenerateUID('m'), MarkerType: MarkerFace, SubjSrc: SrcAuto, SubjUID: subj.SubjUID, MarkerName: subj.SubjName}
+
+		changed, err := m.SetName(subj.SubjName, SrcManual)
+		require.NoError(t, err)
+		assert.False(t, changed)
+		assert.Equal(t, SrcAuto, m.SubjSrc, "confirming a linked name does not make it manual")
+	})
+}
+
+func TestMarker_SourceNamesFace(t *testing.T) {
+	t.Run("Manual", func(t *testing.T) {
+		assert.True(t, (&Marker{SubjSrc: SrcManual}).SourceNamesFace())
+	})
+	t.Run("Automatic", func(t *testing.T) {
+		assert.False(t, (&Marker{SubjSrc: SrcAuto}).SourceNamesFace())
+	})
+	t.Run("Xmp", func(t *testing.T) {
+		assert.False(t, (&Marker{SubjSrc: SrcXmp, MarkerName: "Jane Doe"}).SourceNamesFace())
+	})
+	t.Run("NilMarker", func(t *testing.T) {
+		assert.False(t, (*Marker)(nil).SourceNamesFace())
+	})
+	t.Run("MatchesThePolicy", func(t *testing.T) {
+		for _, src := range []string{SrcAuto, SrcXmp, SrcManual, SrcImage, SrcMeta, SrcMarker} {
+			assert.Equal(t, subjSrcSharesFace(src), (&Marker{SubjSrc: src}).SourceNamesFace(), "source %q", src)
+		}
+	})
+}
+
 func TestMarker_RejectedMatch(t *testing.T) {
 	t.Run("Rejected", func(t *testing.T) {
 		assert.True(t, (&Marker{MarkerType: MarkerFace, SubjSrc: SrcManual}).RejectedMatch())
