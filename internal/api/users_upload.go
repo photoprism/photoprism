@@ -325,7 +325,7 @@ func uploadAlbumsAllowed(s *entity.Session) bool {
 
 // uploadAlbums returns the albums that files the session uploads or imports may be added to, without
 // duplicates and at most MaxUploadAlbums: titles, which resolve among the user's own albums or create a
-// new one, and the UIDs of albums the session can see.
+// new one, and the UIDs of regular albums the session can see.
 func uploadAlbums(c *gin.Context, s *entity.Session, albums []string) []string {
 	result := make([]string, 0, min(len(albums), MaxUploadAlbums))
 	seen := make(map[string]struct{}, len(albums))
@@ -342,7 +342,7 @@ func uploadAlbums(c *gin.Context, s *entity.Session, albums []string) []string {
 			skipped++
 		} else if !rnd.IsUID(album, entity.AlbumUID) {
 			result = append(result, album)
-		} else if found, err := query.AlbumByUID(album); err == nil && found.HasID() && !found.Deleted() && found.VisibleToSession(s) {
+		} else if found, err := query.AlbumByUID(album); err == nil && found.HasID() && found.IsDefault() && !found.Deleted() && found.VisibleToSession(s) {
 			result = append(result, album)
 		} else {
 			denied++

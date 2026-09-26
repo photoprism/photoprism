@@ -263,6 +263,10 @@ func TestUploadAlbums(t *testing.T) {
 	t.Cleanup(func() { _ = entity.UnscopedDb().Delete(owned).Error })
 	other := entity.AlbumFixtures.Get("holiday-2030").AlbumUID
 	missing := rnd.GenerateUID(entity.AlbumUID)
+
+	// Only regular albums take added pictures.
+	folder := entity.AlbumFixtures.Get("april-1990").AlbumUID
+	moment := entity.AlbumFixtures.Get("emptyMoment").AlbumUID
 	deleted := entity.NewUserAlbum("Upload Albums "+rnd.Base36(6), entity.AlbumManual, "", entity.UserFixtures.Pointer("alice").UserUID)
 	require.NoError(t, deleted.Create())
 	t.Cleanup(func() { _ = entity.UnscopedDb().Unscoped().Delete(deleted).Error })
@@ -271,7 +275,7 @@ func TestUploadAlbums(t *testing.T) {
 	// Look up the deleted album, which caches it, so the check must not depend on the cache.
 	require.NotNil(t, entity.FindAlbum(entity.Album{AlbumUID: deleted.AlbumUID}))
 
-	albums := []string{owned.AlbumUID, sharedAlbumUID, other, missing, deleted.AlbumUID, "New Album", owned.AlbumUID, "New Album"}
+	albums := []string{owned.AlbumUID, sharedAlbumUID, other, missing, deleted.AlbumUID, folder, moment, "New Album", owned.AlbumUID, "New Album"}
 
 	c, _ := gin.CreateTestContext(httptest.NewRecorder())
 	c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/users/uqxetse3cy5eo9z2/upload/abc", nil)
