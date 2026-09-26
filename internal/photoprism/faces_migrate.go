@@ -123,6 +123,10 @@ type FacesMigrateResult struct {
 	FailedNamed  int
 	FailedManual int
 
+	// LiftedRejections counts the markers whose name a person had removed under the previous model,
+	// which the new one may recognize again.
+	LiftedRejections int
+
 	// RenderedThumbs counts the renditions the run had to render because the cache held none wide
 	// enough for a file's crops, which is what it does instead of embedding from upscaled pixels.
 	// FailedThumbs counts the files it could not write one for, whose crops were upscaled after
@@ -708,7 +712,7 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 	// from failures: counting them would make every retry look partially failed.
 	result.Unlinked = plan.Markers.Unlinked
 
-	var failedMarkerUIDs []string
+	var failedMarkerUIDs, rejectedMarkerUIDs []string
 	batchSize := opt.BatchSize
 	if batchSize < 1 {
 		batchSize = facesMigrateBatchSize
@@ -746,6 +750,7 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 			result.FailedNamed += fileResult.Named
 			result.FailedManual += fileResult.Manual
 			failedMarkerUIDs = append(failedMarkerUIDs, fileResult.Failed...)
+			rejectedMarkerUIDs = append(rejectedMarkerUIDs, fileResult.Rejected...)
 			if fileResult.Detected {
 				result.DetectedFiles++
 			}
@@ -797,7 +802,7 @@ func (w *Faces) migrate(ctx context.Context, plan FacesMigratePlan, embedder fac
 	// Any failure here rolls the whole finalize back, so the clusters are still the old
 	// model's while the markers this run regenerated are the target's. That is recoverable
 	// only by running again, which the operator has to be told rather than left to infer.
-	if err = query.FinalizeFaceMigration(plan.Target, identities, clusters, failedMarkerUIDs); err != nil {
+	if result.LiftedRejections, err = query.FinalizeFaceMigration(plan.Target, identities, clusters, failedMarkerUIDs, rejectedMarkerUIDs); err != nil {
 		return result, &FacesMigrateRerunError{Migrated: result.Migrated, Cause: err}
 	}
 
@@ -1016,6 +1021,9 @@ type faceMigrationFile struct {
 	Skipped  int
 	Retained int
 	Failed   []string
+	// Rejected lists the rejected matches this file re-embedded from a model the target cannot
+	// compare with, whose rejection the finalize lifts.
+	Rejected []string
 	// Unreadable counts the failed markers this file lost because it could not be read at all,
 	// as distinct from the ones a successful detection did not find again.
 	Unreadable int
@@ -1139,6 +1147,11 @@ func (w *Faces) migrateFaceFile(embedder face.Embedder, target, fileUID string) 
 	for _, marker := range stale {
 		if values, ok := generated[marker.MarkerUID]; ok && face.ValidEmbeddings(values, embedder.Dims()) {
 			result.Migrated++
+
+			if liftsRejection(marker, target) {
+				result.Rejected = append(result.Rejected, marker.MarkerUID)
+			}
+
 			continue
 		}
 
@@ -1184,6 +1197,12 @@ func markerUIDsOf(markers entity.Markers) []string {
 	}
 
 	return uids
+}
+
+// liftsRejection reports whether re-embedding a marker for the target lifts its rejection, which is
+// when it is a rejected match holding a vector from a model the target cannot compare with.
+func liftsRejection(m entity.Marker, target string) bool {
+	return m.RejectedMatch() && len(m.EmbeddingsJSON) > 0 && !face.ModelsComparable(m.EmbedModel, target)
 }
 
 // staleMigrationMarkers returns the markers a migration to target has to re-embed, and the subset of

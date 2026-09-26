@@ -298,6 +298,12 @@ func (m *Marker) RejectedMatch() bool {
 	return m != nil && m.MarkerType == MarkerFace && m.SubjSrc == SrcManual && m.SubjUID == "" && m.MarkerName == ""
 }
 
+// RejectedMatchCond returns the SQL condition selecting the markers RejectedMatch reports, reading a
+// missing subject or name as empty as the struct does.
+func RejectedMatchCond() (string, []any) {
+	return "marker_type = ? AND subj_src = ? AND COALESCE(subj_uid, '') = '' AND COALESCE(marker_name, '') = ''", []any{MarkerFace, SrcManual}
+}
+
 // SetSubjectLink links the marker to an already-resolved subject without renaming it, so
 // reassigning a marker never renames the person globally. Passing nil detaches the cached subject
 // and clears SubjUID, so a later SyncSubject resolves or creates a fresh one.

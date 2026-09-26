@@ -282,6 +282,11 @@ func facesMigrateAction(ctx *cli.Context) error {
 		if result.Retained > 0 {
 			log.Infof("faces: %d markers kept the vector another detector's crop produced", result.Retained)
 		}
+		// A person removed these names under the previous model, which the new one may recognize.
+		if result.LiftedRejections > 0 {
+			log.Infof("faces: %d re-embedded marker(s) whose name a person had removed can be recognized again",
+				result.LiftedRejections)
+		}
 		// Excluded assignments keep their person but seed no cluster, so the count is what
 		// tells an operator how much of a curated library did not shape its own centroids.
 		if result.ExcludedMarkers > 0 || result.LowQualityMarkers > 0 {

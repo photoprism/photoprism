@@ -500,13 +500,14 @@ func SaveFaceMigrationEmbeddings(model, detectModel string, embeddings map[strin
 	})
 }
 
-// FinalizeFaceMigration atomically replaces clusters and removes all stale vectors.
-func FinalizeFaceMigration(model string, identities []FaceMigrationIdentity, clusters []FaceMigrationCluster, failedMarkerUIDs []string) error {
+// FinalizeFaceMigration atomically replaces clusters, removes all stale vectors, and lifts the rejection of
+// the listed rejected matches, returning how many it lifted.
+func FinalizeFaceMigration(model string, identities []FaceMigrationIdentity, clusters []FaceMigrationCluster, failedMarkerUIDs, rejectedMarkerUIDs []string) (lifted int, err error) {
 	if model == "" {
-		return fmt.Errorf("faces: migration model is required")
+		return 0, fmt.Errorf("faces: migration model is required")
 	}
 
-	return UnscopedDb().Transaction(func(tx *gorm.DB) error {
+	err = UnscopedDb().Transaction(func(tx *gorm.DB) error {
 		// Deliberately unqualified: a migration re-embeds every marker, so every cluster derived
 		// from the old vector space is stale and the new ones are rebuilt below in the same
 		// transaction. Neither this nor the marker reset that follows is batched, because a
@@ -579,8 +580,33 @@ func FinalizeFaceMigration(model string, identities []FaceMigrationIdentity, clu
 			return ErrFaceMigrationIdentitiesChanged
 		}
 
+		// A new model may recognize what a person rejected under the old one, so the rejected matches
+		// this run re-embedded from it become automatic again. They are not in the identity snapshot.
+		rejected, rejectedArgs := entity.RejectedMatchCond()
+		batchSize := BatchSize()
+
+		for i := 0; i < len(rejectedMarkerUIDs); i += batchSize {
+			j := min(i+batchSize, len(rejectedMarkerUIDs))
+			res := tx.Model(&entity.Marker{}).
+				Where("marker_uid IN (?)", rejectedMarkerUIDs[i:j]).
+				Where(rejected, rejectedArgs...).
+				UpdateColumn("subj_src", entity.SrcAuto)
+
+			if res.Error != nil {
+				return res.Error
+			}
+
+			lifted += int(res.RowsAffected)
+		}
+
 		return nil
 	})
+
+	if err != nil {
+		return 0, err
+	}
+
+	return lifted, nil
 }
 
 // sameFaceMigrationIdentities reports whether two ordered identity snapshots are equal.

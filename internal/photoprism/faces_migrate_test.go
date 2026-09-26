@@ -1708,3 +1708,28 @@ func TestSettleFaceClusters(t *testing.T) {
 		}))
 	})
 }
+
+func TestLiftsRejection(t *testing.T) {
+	vector := face.Embeddings{{0.1, 0.2, 0.3, 0.4}}.JSON()
+	rejected := func(model string, emb []byte) entity.Marker {
+		return entity.Marker{MarkerType: entity.MarkerFace, SubjSrc: entity.SrcManual, EmbedModel: model, EmbeddingsJSON: emb}
+	}
+
+	t.Run("OtherModel", func(t *testing.T) {
+		assert.True(t, liftsRejection(rejected(face.ModelSFace, vector), face.ModelFaceNet))
+	})
+	t.Run("LegacyFaceNet", func(t *testing.T) {
+		assert.True(t, liftsRejection(rejected("", vector), face.ModelSFace))
+	})
+	t.Run("SameModel", func(t *testing.T) {
+		assert.False(t, liftsRejection(rejected(face.ModelFaceNet, vector), face.ModelFaceNet))
+	})
+	t.Run("NoVector", func(t *testing.T) {
+		assert.False(t, liftsRejection(rejected("", nil), face.ModelSFace))
+	})
+	t.Run("NotRejected", func(t *testing.T) {
+		m := rejected(face.ModelSFace, vector)
+		m.SubjSrc = entity.SrcAuto
+		assert.False(t, liftsRejection(m, face.ModelFaceNet))
+	})
+}

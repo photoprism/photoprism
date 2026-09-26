@@ -609,10 +609,29 @@ func TestFinalizeFaceMigration(t *testing.T) {
 		W:              0.1,
 		H:              0.1,
 	}
+	// Markers whose name a person removed: one this run re-embedded, one it failed to, and one it
+	// did not re-embed at all, which only the first may have its rejection lifted.
+	rejected := func() entity.Marker {
+		return entity.Marker{
+			MarkerUID:      rnd.GenerateUID('m'),
+			FileUID:        "file123",
+			MarkerType:     entity.MarkerFace,
+			SubjSrc:        entity.SrcManual,
+			EmbedModel:     face.ModelFaceNet,
+			EmbeddingsJSON: face.Embeddings{face.RandomEmbedding()}.JSON(),
+			W:              0.1,
+			H:              0.1,
+		}
+	}
+	rejectedEmbedded, rejectedFailed, rejectedSkipped := rejected(), rejected(), rejected()
+
 	require.NoError(t, tempDb.Create(&manual).Error)
 	require.NoError(t, tempDb.Create(&automatic).Error)
 	require.NoError(t, tempDb.Create(&imported).Error)
 	require.NoError(t, tempDb.Create(&invalid).Error)
+	require.NoError(t, tempDb.Create(&rejectedEmbedded).Error)
+	require.NoError(t, tempDb.Create(&rejectedFailed).Error)
+	require.NoError(t, tempDb.Create(&rejectedSkipped).Error)
 
 	// A cluster from the previous run, so the delete this function is named for has
 	// something to remove rather than passing over an empty table.
@@ -630,10 +649,31 @@ func TestFinalizeFaceMigration(t *testing.T) {
 	cluster := entity.NewFace(subjectUID, entity.SrcManual, manual.Embeddings(), face.EmbeddingModelName())
 	require.NotNil(t, cluster)
 
-	require.NoError(t, FinalizeFaceMigration(face.ModelFaceNet, identities, []FaceMigrationCluster{{
+	// Padded past one batch, so the marker it names last is only reached by a later statement.
+	listed := make([]string, 0, BatchSize()+3)
+	for range BatchSize() {
+		listed = append(listed, rnd.GenerateUID('m'))
+	}
+	listed = append(listed, manual.MarkerUID, imported.MarkerUID, rejectedEmbedded.MarkerUID)
+
+	lifted, err := FinalizeFaceMigration(face.ModelFaceNet, identities, []FaceMigrationCluster{{
 		Face:            *cluster,
 		MarkerDistances: map[string]float64{manual.MarkerUID: 0, imported.MarkerUID: 0.2},
-	}}, []string{automatic.MarkerUID}))
+	}}, []string{automatic.MarkerUID, rejectedFailed.MarkerUID}, listed)
+	require.NoError(t, err)
+	assert.Equal(t, 1, lifted)
+
+	for uid, want := range map[string]string{rejectedEmbedded.MarkerUID: entity.SrcAuto, rejectedFailed.MarkerUID: entity.SrcManual, rejectedSkipped.MarkerUID: entity.SrcManual} {
+		var m entity.Marker
+		require.NoError(t, tempDb.First(&m, "marker_uid = ?", uid).Error)
+		assert.Equal(t, want, m.SubjSrc, uid)
+		assert.Empty(t, m.SubjUID, uid)
+	}
+
+	// A manual name the run re-embedded keeps its source.
+	var storedManualSrc entity.Marker
+	require.NoError(t, tempDb.First(&storedManualSrc, "marker_uid = ?", manual.MarkerUID).Error)
+	assert.Equal(t, entity.SrcManual, storedManualSrc.SubjSrc)
 
 	var staleCount int
 	require.NoError(t, tempDb.Unscoped().Model(&entity.Face{}).Where("id = ?", stale.ID).Count(&staleCount).Error)
@@ -666,15 +706,23 @@ func TestFinalizeFaceMigration(t *testing.T) {
 
 	var facesBefore, facesAfter int
 	require.NoError(t, tempDb.Model(&entity.Face{}).Count(&facesBefore).Error)
-	changedErr := FinalizeFaceMigration(face.ModelFaceNet, []FaceMigrationIdentity{{MarkerUID: "changed"}}, nil, nil)
+	require.NoError(t, tempDb.Model(&entity.Marker{}).Where("marker_uid = ?", rejectedEmbedded.MarkerUID).
+		UpdateColumn("subj_src", entity.SrcManual).Error)
+	lifted, changedErr := FinalizeFaceMigration(face.ModelFaceNet, []FaceMigrationIdentity{{MarkerUID: "changed"}}, nil, nil, []string{rejectedEmbedded.MarkerUID})
 	require.Error(t, changedErr)
+	assert.Zero(t, lifted)
+
+	var rolledBack entity.Marker
+	require.NoError(t, tempDb.First(&rolledBack, "marker_uid = ?", rejectedEmbedded.MarkerUID).Error)
+	assert.Equal(t, entity.SrcManual, rolledBack.SubjSrc, "a rolled-back finalize leaves the rejection")
 	// Callers distinguish this from a storage failure, because it is the one rollback an
 	// operator caused and can avoid on the next run.
 	assert.ErrorIs(t, changedErr, ErrFaceMigrationIdentitiesChanged)
 	require.NoError(t, tempDb.Model(&entity.Face{}).Count(&facesAfter).Error)
 	assert.Equal(t, facesBefore, facesAfter)
 
-	require.Error(t, FinalizeFaceMigration("", nil, nil, nil))
+	_, err = FinalizeFaceMigration("", nil, nil, nil, nil)
+	require.Error(t, err)
 }
 
 func TestSameFaceMigrationIdentities(t *testing.T) {

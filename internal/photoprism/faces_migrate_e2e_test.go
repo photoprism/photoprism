@@ -408,6 +408,74 @@ func TestFaces_migrate(t *testing.T) {
 		require.NoError(t, entity.UnscopedDb().First(&stored, "marker_uid = ?", m.MarkerUID).Error)
 		assert.Empty(t, stored.EmbeddingsJSON)
 	})
+	t.Run("LiftsRejectedMatches", func(t *testing.T) {
+		c := newMigrateTestConfig(t, "migraterejected")
+		w := NewFaces(c)
+
+		f := addMigrateTestFile(t, c, "3333333333333333333333333333333333333333", true)
+		rejected := addMigrateTestMarker(t, f.FileUID, entity.SrcAuto, "")
+		require.NoError(t, entity.Db().Model(rejected).UpdateColumn("subj_src", entity.SrcManual).Error)
+		require.True(t, entity.FindMarker(rejected.MarkerUID).RejectedMatch())
+
+		plan := FacesMigratePlan{Target: face.ModelFaceNet}
+		result, err := w.migrate(context.Background(), plan, &oneHotEmbedder{dims: 4}, FacesMigrateOptions{Target: face.ModelFaceNet}, FacesMigrateResult{Target: face.ModelFaceNet})
+
+		require.NoError(t, err)
+		assert.Equal(t, 1, result.Migrated)
+		assert.Equal(t, 1, result.LiftedRejections)
+
+		stored := entity.Marker{}
+		require.NoError(t, entity.UnscopedDb().First(&stored, "marker_uid = ?", rejected.MarkerUID).Error)
+		assert.Equal(t, entity.SrcAuto, stored.SubjSrc)
+		assert.False(t, stored.RejectedMatch())
+	})
+	t.Run("SameModelKeepsRejectedMatches", func(t *testing.T) {
+		// A re-run to the model the library already uses re-crops markers without a sample extent,
+		// and a rejection made under that model has to survive it.
+		c := newMigrateTestConfig(t, "migraterejectedsame")
+		w := NewFaces(c)
+
+		f := addMigrateTestFile(t, c, "6666666666666666666666666666666666666666", true)
+		m := addMigrateTestMarker(t, f.FileUID, entity.SrcAuto, "")
+		require.NoError(t, entity.UnscopedDb().Model(&entity.Marker{}).Where("marker_uid = ?", m.MarkerUID).
+			UpdateColumns(entity.Values{"embed_model": face.ModelFaceNet, "thumb_size": -1, "subj_src": entity.SrcManual}).Error)
+		require.True(t, entity.FindMarker(m.MarkerUID).RejectedMatch())
+
+		plan := FacesMigratePlan{Target: face.ModelFaceNet}
+		result, err := w.migrate(context.Background(), plan, &oneHotEmbedder{dims: 4}, FacesMigrateOptions{Target: face.ModelFaceNet}, FacesMigrateResult{Target: face.ModelFaceNet})
+		require.NoError(t, err)
+		require.Equal(t, 1, result.Migrated, "the marker is re-cropped")
+		assert.Zero(t, result.LiftedRejections)
+
+		stored := entity.Marker{}
+		require.NoError(t, entity.UnscopedDb().First(&stored, "marker_uid = ?", m.MarkerUID).Error)
+		assert.Equal(t, entity.SrcManual, stored.SubjSrc)
+	})
+	t.Run("FailedKeepsRejectedMatches", func(t *testing.T) {
+		c := newMigrateTestConfig(t, "migraterejectedfailed")
+		w := NewFaces(c)
+
+		ok := addMigrateTestFile(t, c, "8888888888888888888888888888888888888888", true)
+		bad := addMigrateTestFile(t, c, "9999999999999999999999999999999999999999", false)
+		embedded := addMigrateTestMarker(t, ok.FileUID, entity.SrcAuto, "")
+		failed := addMigrateTestMarker(t, bad.FileUID, entity.SrcAuto, "")
+		require.NoError(t, entity.UnscopedDb().Model(&entity.Marker{}).Where("marker_uid IN (?)", []string{embedded.MarkerUID, failed.MarkerUID}).
+			UpdateColumn("subj_src", entity.SrcManual).Error)
+
+		plan := FacesMigratePlan{Target: face.ModelFaceNet}
+		result, err := w.migrate(context.Background(), plan, &oneHotEmbedder{dims: 4}, FacesMigrateOptions{Target: face.ModelFaceNet, Force: true}, FacesMigrateResult{Target: face.ModelFaceNet})
+
+		var incomplete *FacesMigrateIncompleteError
+		require.ErrorAs(t, err, &incomplete)
+		assert.Equal(t, 1, result.FailedManual)
+		assert.Equal(t, 1, result.LiftedRejections)
+
+		for uid, want := range map[string]string{embedded.MarkerUID: entity.SrcAuto, failed.MarkerUID: entity.SrcManual} {
+			stored := entity.Marker{}
+			require.NoError(t, entity.UnscopedDb().First(&stored, "marker_uid = ?", uid).Error)
+			assert.Equal(t, want, stored.SubjSrc, uid)
+		}
+	})
 	t.Run("Success", func(t *testing.T) {
 		c := newMigrateTestConfig(t, "migratesuccess")
 		w := NewFaces(c)

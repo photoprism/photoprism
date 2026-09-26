@@ -10,6 +10,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/pkg/dsn"
+	"github.com/photoprism/photoprism/pkg/rnd"
 
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/thumb/crop"
@@ -984,6 +985,44 @@ func TestMarker_RejectedMatch(t *testing.T) {
 	t.Run("NilMarker", func(t *testing.T) {
 		assert.False(t, (*Marker)(nil).RejectedMatch())
 	})
+}
+
+func TestRejectedMatchCond(t *testing.T) {
+	// Stored rather than built, so the condition is compared with what the database returns.
+	shapes := map[string]Marker{
+		"Rejected":      {MarkerType: MarkerFace, SubjSrc: SrcManual},
+		"Automatic":     {MarkerType: MarkerFace, SubjSrc: SrcAuto},
+		"ManualSubject": {MarkerType: MarkerFace, SubjSrc: SrcManual, SubjUID: "js6sg6b1qekk9jx8"},
+		"ManualName":    {MarkerType: MarkerFace, SubjSrc: SrcManual, MarkerName: "Jane Doe"},
+		"LabelMarker":   {MarkerType: MarkerLabel, SubjSrc: SrcManual},
+		"XmpNoName":     {MarkerType: MarkerFace, SubjSrc: SrcXmp},
+		"NullSubject":   {MarkerType: MarkerFace, SubjSrc: SrcManual},
+	}
+
+	uids := make(map[string]string, len(shapes))
+
+	for name, m := range shapes {
+		m.MarkerUID = rnd.GenerateUID('m')
+		m.FileUID = rnd.GenerateUID(FileUID)
+		m.W, m.H = 0.1, 0.1
+		require.NoError(t, UnscopedDb().Create(&m).Error)
+		uids[name] = m.MarkerUID
+
+		t.Cleanup(func() { UnscopedDb().Delete(&Marker{}, "marker_uid = ?", m.MarkerUID) })
+	}
+
+	require.NoError(t, UnscopedDb().Exec("UPDATE markers SET subj_uid = NULL, marker_name = NULL WHERE marker_uid = ?", uids["NullSubject"]).Error)
+
+	cond, args := RejectedMatchCond()
+
+	for name, uid := range uids {
+		var m Marker
+		require.NoError(t, UnscopedDb().Where("marker_uid = ?", uid).First(&m).Error)
+
+		var n int
+		require.NoError(t, UnscopedDb().Model(&Marker{}).Where("marker_uid = ?", uid).Where(cond, args...).Count(&n).Error)
+		assert.Equal(t, m.RejectedMatch(), n == 1, name)
+	}
 }
 
 func TestMarker_Embeddings_Normalized(t *testing.T) {
