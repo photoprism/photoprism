@@ -231,11 +231,12 @@ func resetConfigAndDB() *config.Config {
 	return c
 }
 
-// resetConfigAndOpenDB replaces the config with a generated minimal config, and opens the configured database.
-// it does not call Migrate and TestFixtures if the database has records in auth_users and photos.
+// resetConfigAndOpenDB replaces the config with an isolated test config, and opens the configured database.
+// It does not call Migrate and TestFixtures if the database has records in auth_users and photos.
+// The database has a name of its own, since each NewMinimalTestConfig call removes the one it uses.
 func resetConfigAndOpenDB() *config.Config {
-	c := config.NewMinimalTestConfig(savedPath)
-	config.RestoreDBFromCache(c) // If using sqlite (not sqlitefile) then the db is removed by NewMinimalTestConfig
+	c := config.NewIsolatedTestConfig("commands-reset", savedPath, false)
+	config.RestoreDBFromCache(c) // With SQLite, NewIsolatedTestConfig removes the database file first.
 	if err := c.Init(); err != nil {
 		log.Fatalf("config: %s (init)", err.Error())
 	}
@@ -247,6 +248,22 @@ func resetConfigAndOpenDB() *config.Config {
 	}
 
 	return c
+}
+
+// TestResetConfigAndOpenDB checks that the database stays writable when other tests build minimal configs.
+func TestResetConfigAndOpenDB(t *testing.T) {
+	// The previous config may use the database file this reset removes, so the test ends with a new one.
+	t.Cleanup(func() { resetConfigAndDB() })
+
+	c := resetConfigAndOpenDB()
+	require.Same(t, c, get.Config())
+
+	// Building a minimal config must leave the database of the current config in place.
+	config.NewMinimalTestConfig(t.TempDir())
+
+	label := entity.NewLabel("Reset Config Check", 0)
+	require.NoError(t, label.Create())
+	t.Cleanup(func() { entity.UnscopedDb().Delete(label) })
 }
 
 // requireTestDb reopens the shared database for direct registry or entity access.
