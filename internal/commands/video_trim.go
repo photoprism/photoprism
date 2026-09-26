@@ -267,18 +267,17 @@ func videoTrimFile(conf *config.Config, convert *photoprism.Convert, plan videoT
 		return err
 	}
 
+	// A sidecar output never replaces a file, and a trimmed original replaces the original atomically.
 	if plan.Sidecar {
 		if fs.FileExists(plan.DestPath) {
 			return fmt.Errorf("output already exists %s", clean.Log(plan.DestPath))
 		}
 
-		if err = os.Rename(tempPath, plan.DestPath); err != nil {
+		if err = fs.PublishFile(tempPath, plan.DestPath, false); err != nil {
 			return err
 		}
 	} else {
-		if noBackup {
-			_ = os.Remove(plan.DestPath)
-		} else {
+		if !noBackup {
 			backupPath := plan.DestPath + ".backup"
 			if fs.FileExists(backupPath) {
 				_ = os.Remove(backupPath)
@@ -289,7 +288,7 @@ func videoTrimFile(conf *config.Config, convert *photoprism.Convert, plan videoT
 			_ = os.Chmod(backupPath, fs.ModeBackupFile)
 		}
 
-		if err = os.Rename(tempPath, plan.DestPath); err != nil {
+		if err = fs.PublishFile(tempPath, plan.DestPath, true); err != nil {
 			return err
 		}
 	}

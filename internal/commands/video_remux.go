@@ -245,30 +245,17 @@ func videoRemuxFile(conf *config.Config, convert *photoprism.Convert, plan video
 		return err
 	}
 
-	if plan.Sidecar {
-		if fs.FileExists(plan.DestPath) && !force {
-			return fmt.Errorf("output already exists %s", clean.Log(plan.DestPath))
-		}
+	// An existing output is replaced atomically, and only with force unless it is the source itself.
+	replace := force || !plan.Sidecar && plan.DestPath == plan.SrcPath
 
-		if fs.FileExists(plan.DestPath) {
-			_ = os.Remove(plan.DestPath)
-		}
+	if !replace && fs.FileExists(plan.DestPath) {
+		return fmt.Errorf("output already exists %s", clean.Log(plan.DestPath))
+	} else if plan.DestPath != plan.SrcPath && fs.IsSymlink(plan.DestPath) {
+		return fmt.Errorf("output %s is a symbolic link", clean.Log(plan.DestPath))
+	}
 
-		if err = os.Rename(tempPath, plan.DestPath); err != nil {
-			return err
-		}
-	} else {
-		if plan.DestPath != plan.SrcPath && fs.FileExists(plan.DestPath) && !force {
-			return fmt.Errorf("output already exists %s", clean.Log(plan.DestPath))
-		}
-
-		if plan.DestPath != plan.SrcPath && fs.FileExists(plan.DestPath) {
-			_ = os.Remove(plan.DestPath)
-		}
-
-		if err = os.Rename(tempPath, plan.DestPath); err != nil {
-			return err
-		}
+	if err = fs.PublishFile(tempPath, plan.DestPath, replace); err != nil {
+		return err
 	}
 
 	published = true

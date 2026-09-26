@@ -57,3 +57,27 @@ printf 'trimmed' > "$output"
 	assert.Equal(t, "trimmed", string(data))
 	assert.FileExists(t, filepath.Join(conf.OriginalsPath(), folder, "clip.avi"))
 }
+
+// TestVideoTrimFile_SidecarLink verifies that a sidecar trim does not replace a link at its destination.
+func TestVideoTrimFile_SidecarLink(t *testing.T) {
+	dir := t.TempDir()
+	conf, _ := remuxPlanFixture(t, "clip.mp4")
+	src := filepath.Join(conf.OriginalsPath(), "clip.mp4")
+	dest := filepath.Join(dir, "clip.mp4")
+	require.NoError(t, os.Symlink(filepath.Join(dir, "absent"), dest))
+	stub := filepath.Join(t.TempDir(), "ffmpeg")
+	require.NoError(t, os.WriteFile(stub, []byte(`#!/bin/sh
+for output do :; done
+printf 'trimmed' > "$output"
+`), fs.ModeDir))
+	conf.Options().FFmpegBin = stub
+
+	plan := videoTrimPlan{SrcPath: src, DestPath: dest, Duration: 3 * time.Second, Sidecar: true}
+	require.ErrorContains(t, videoTrimFile(conf, nil, plan, time.Second, true), "already exists")
+	assert.True(t, fs.IsSymlink(dest))
+
+	// The staged output is removed.
+	entries, err := os.ReadDir(dir)
+	require.NoError(t, err)
+	assert.Len(t, entries, 1)
+}

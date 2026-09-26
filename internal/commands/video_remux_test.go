@@ -8,10 +8,12 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/ffmpeg"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media/video"
 )
@@ -121,4 +123,91 @@ printf 'remuxed' > "$output"
 	data, err := os.ReadFile(dest) // #nosec G304 -- the fixture owns this temporary path.
 	require.NoError(t, err)
 	assert.Equal(t, "remuxed", string(data))
+}
+
+// TestVideoRemuxFile_SidecarLink verifies that a sidecar remux without force does not replace a link at
+// its destination.
+func TestVideoRemuxFile_SidecarLink(t *testing.T) {
+	dir := t.TempDir()
+	conf, _ := remuxPlanFixture(t, "clip.mts")
+	src := filepath.Join(conf.OriginalsPath(), "clip.mts")
+	dest := filepath.Join(dir, "clip.mp4")
+	require.NoError(t, os.Symlink(filepath.Join(dir, "absent"), dest))
+	stub := filepath.Join(t.TempDir(), "ffmpeg")
+	require.NoError(t, os.WriteFile(stub, []byte(`#!/bin/sh
+for output do :; done
+printf 'remuxed' > "$output"
+`), fs.ModeDir))
+	conf.Options().FFmpegBin = stub
+
+	err := videoRemuxFile(conf, nil, videoRemuxPlan{SrcPath: src, DestPath: dest, Sidecar: true}, false)
+	require.ErrorContains(t, err, "is a symbolic link")
+	assert.True(t, fs.IsSymlink(dest))
+
+	// The staged output is removed.
+	entries, err := os.ReadDir(dir)
+	require.NoError(t, err)
+	assert.Len(t, entries, 1)
+}
+
+// TestVideoRemuxFile_Replace verifies which existing outputs a remux replaces.
+func TestVideoRemuxFile_Replace(t *testing.T) {
+	// newRemux returns a config with an ffmpeg stub, and the source file of a remux.
+	newRemux := func(t *testing.T) (*config.Config, string) {
+		conf, _ := remuxPlanFixture(t, "clip.mts")
+		stub := filepath.Join(t.TempDir(), "ffmpeg")
+		require.NoError(t, os.WriteFile(stub, []byte(`#!/bin/sh
+for output do :; done
+printf 'remuxed' > "$output"
+`), fs.ModeDir))
+		conf.Options().FFmpegBin = stub
+		return conf, filepath.Join(conf.OriginalsPath(), "clip.mts")
+	}
+
+	t.Run("SameFile", func(t *testing.T) {
+		conf, src := newRemux(t)
+
+		// A remux of a file into its own name replaces it without force.
+		err := videoRemuxFile(conf, nil, videoRemuxPlan{SrcPath: src, DestPath: src}, false)
+		require.ErrorContains(t, err, "missing filename")
+		data, err := os.ReadFile(src) // #nosec G304 -- the fixture owns this temporary path.
+		require.NoError(t, err)
+		assert.Equal(t, "remuxed", string(data))
+	})
+	for _, sidecar := range []bool{false, true} {
+		t.Run(map[bool]string{false: "ExistingOutput", true: "ExistingSidecar"}[sidecar], func(t *testing.T) {
+			conf, src := newRemux(t)
+			dest := filepath.Join(t.TempDir(), "clip.mp4")
+			require.NoError(t, os.WriteFile(dest, []byte("existing"), fs.ModeFile))
+
+			err := videoRemuxFile(conf, nil, videoRemuxPlan{SrcPath: src, DestPath: dest, Sidecar: sidecar}, false)
+			require.EqualError(t, err, "output already exists "+clean.Log(dest))
+			data, err := os.ReadFile(dest) // #nosec G304 -- the fixture owns this temporary path.
+			require.NoError(t, err)
+			assert.Equal(t, "existing", string(data))
+
+			// With force, it is replaced.
+			err = videoRemuxFile(conf, nil, videoRemuxPlan{SrcPath: src, DestPath: dest, Sidecar: sidecar}, true)
+			require.ErrorContains(t, err, "missing filename")
+			data, err = os.ReadFile(dest) // #nosec G304 -- the fixture owns this temporary path.
+			require.NoError(t, err)
+			assert.Equal(t, "remuxed", string(data))
+		})
+	}
+	t.Run("LinkWithForce", func(t *testing.T) {
+		conf, src := newRemux(t)
+		dir := t.TempDir()
+		target := filepath.Join(dir, "target.mp4")
+		require.NoError(t, os.WriteFile(target, []byte("target"), fs.ModeFile))
+		dest := filepath.Join(dir, "clip.mp4")
+		require.NoError(t, os.Symlink(target, dest))
+
+		// A link at a separate output is refused even with force, and its target is left as it is.
+		err := videoRemuxFile(conf, nil, videoRemuxPlan{SrcPath: src, DestPath: dest}, true)
+		require.ErrorContains(t, err, "is a symbolic link")
+		assert.True(t, fs.IsSymlink(dest))
+		data, err := os.ReadFile(target) // #nosec G304 -- the fixture owns this temporary path.
+		require.NoError(t, err)
+		assert.Equal(t, "target", string(data))
+	})
 }
