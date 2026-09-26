@@ -748,12 +748,13 @@ export class Photo extends RestModel {
   }
 
   // Downloads all related files if they exist and depending on the settings.
+  // Returns { downloaded, skipped } so a prompt can be shown to report download status
   downloadAll() {
     const s = $config.getSettings();
 
     if (!s || !s.features || !s.download || !s.features.download || s.download.disabled) {
       console.log("download: disabled in settings", s.features, s.download);
-      return;
+      return { downloaded: 0, skipped: 0 };
     }
 
     const token = $config.downloadToken;
@@ -764,12 +765,16 @@ export class Photo extends RestModel {
 
       if (hash) {
         download(`/${$config.apiUri}/dl/${hash}?t=${token}`, this.baseName(false));
+        return { downloaded: 1, skipped: 0 };
       } else if ($config.debug) {
         console.log("download: failed, empty file hash", this);
       }
 
-      return;
+      return { downloaded: 0, skipped: 0 };
     }
+
+    let downloaded = 0;
+    let skipped = 0;
 
     this.Files.forEach((file) => {
       if (!file || !file.Hash) {
@@ -782,6 +787,7 @@ export class Photo extends RestModel {
         if ($config.debug) {
           console.log(`download: skipped ${file.Root} file ${file.Name}`);
         }
+        skipped++;
         return;
       }
 
@@ -791,6 +797,7 @@ export class Photo extends RestModel {
         if ($config.debug) {
           console.log(`download: skipped sidecar file ${file.Name}`);
         }
+        skipped++;
         return;
       }
 
@@ -799,6 +806,7 @@ export class Photo extends RestModel {
         if ($config.debug) {
           console.log(`download: skipped raw file ${file.Name}`);
         }
+        skipped++;
         return;
       }
 
@@ -808,11 +816,15 @@ export class Photo extends RestModel {
         if ($config.debug) {
           console.log(`download: skipped video sidecar ${file.Name}`);
         }
+        skipped++;
         return;
       }
 
       download(`${$config.apiUri}/dl/${file.Hash}?t=${token}`, this.fileBase(file.Name));
+      downloaded++;
     });
+
+    return { downloaded, skipped };
   }
 
   calculateSize(width, height) {

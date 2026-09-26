@@ -395,12 +395,22 @@ export default {
         case 1:
           new Photo()
             .find(this.selection[0])
-            .then((p) => p.downloadAll())
+            .then((p) => {
+              const { downloaded, skipped } = p.downloadAll();
+
+              if (downloaded > 0) {
+                $notify.success(this.$gettext("Downloading…"));
+              } else if (skipped > 0) {
+                $notify.warn(this.$gettext("No files to download: all files are excluded by the download settings"));
+              }
+            })
             .finally(() => {
               this.busy = false;
             });
           break;
         default:
+          $notify.success(this.$gettext("Downloading…"));
+
           $api
             .post("zip", { photos: this.selection })
             .then((r) => {
@@ -410,8 +420,6 @@ export default {
               this.busy = false;
             });
       }
-
-      $notify.success(this.$gettext("Downloading…"));
 
       this.expanded = false;
     },

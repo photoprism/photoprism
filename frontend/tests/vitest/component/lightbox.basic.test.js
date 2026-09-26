@@ -6,6 +6,7 @@ import PLightbox from "component/lightbox.vue";
 import Photo from "model/photo";
 import Thumb from "model/thumb";
 import Album from "model/album";
+import Rest from "model/rest";
 import $util from "common/util";
 import { buildNamespace } from "common/storage";
 import { FaceMarkerDisplay, FaceMarkerEdit } from "options/face-marker";
@@ -1292,6 +1293,65 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
       expect(evictSpy).not.toHaveBeenCalled();
       removeSpy.mockRestore();
       evictSpy.mockRestore();
+    });
+  });
+
+  describe("onDownload wiring", () => {
+    const warnMessage = "No files to download: all files are excluded by the download settings";
+
+    const makeCtx = (wrapper, model) => ({
+      ...wrapper.vm,
+      canDownload: true,
+      pauseSlideshow: vi.fn(),
+      model,
+      $notify: { ...wrapper.vm.$notify, success: vi.fn(), warn: vi.fn() },
+      $gettext: VTUConfig.global.mocks.$gettext,
+      log: vi.fn(),
+    });
+
+    // Rest.prototype.find is the shared fetch used by new Photo().find();
+    // stubbing it resolves onDownload with a Photo whose downloadAll()
+    // return value drives the prompt decision.
+    const stubPhotoFind = (found) => {
+      const findSpy = vi.spyOn(Rest.prototype, "find").mockResolvedValue(found);
+      const dlSpy = vi.spyOn(found, "downloadAll");
+      return { findSpy, dlSpy };
+    };
+
+    it("shows the Downloading prompt when downloadAll started a download", async () => {
+      const wrapper = mountLightbox();
+      const found = new Photo({ UID: "ps6sg6be2lvl0yh7" });
+      const { findSpy, dlSpy } = stubPhotoFind(found);
+      dlSpy.mockReturnValue({ downloaded: 1, skipped: 0 });
+      const ctx = makeCtx(wrapper, new Thumb({ UID: "ps6sg6be2lvl0yh7", DownloadUrl: "/api/v1/dl/abc?t=2lbh9x09" }));
+
+      wrapper.vm.$options.methods.onDownload.call(ctx);
+      await Promise.resolve();
+      await Promise.resolve();
+
+      expect(findSpy).toHaveBeenCalledWith("ps6sg6be2lvl0yh7");
+      expect(dlSpy).toHaveBeenCalledTimes(1);
+      expect(ctx.pauseSlideshow).toHaveBeenCalledTimes(1);
+      expect(ctx.$notify.success).toHaveBeenCalledWith("Downloading…");
+      expect(ctx.$notify.warn).not.toHaveBeenCalled();
+      findSpy.mockRestore();
+    });
+
+    it("warns instead when every file was excluded and no download started", async () => {
+      const wrapper = mountLightbox();
+      const found = new Photo({ UID: "ps6sg6be2lvl0yh7" });
+      const { findSpy, dlSpy } = stubPhotoFind(found);
+      dlSpy.mockReturnValue({ downloaded: 0, skipped: 1 });
+      const ctx = makeCtx(wrapper, new Thumb({ UID: "ps6sg6be2lvl0yh7", DownloadUrl: "/api/v1/dl/abc?t=2lbh9x09" }));
+
+      wrapper.vm.$options.methods.onDownload.call(ctx);
+      await Promise.resolve();
+      await Promise.resolve();
+
+      expect(dlSpy).toHaveBeenCalledTimes(1);
+      expect(ctx.$notify.success).not.toHaveBeenCalled();
+      expect(ctx.$notify.warn).toHaveBeenCalledWith(warnMessage);
+      findSpy.mockRestore();
     });
   });
 
