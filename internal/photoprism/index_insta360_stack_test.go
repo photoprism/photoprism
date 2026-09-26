@@ -806,6 +806,10 @@ func TestIndex_Insta360Cover(t *testing.T) {
 				require.NoError(t, photo.Archive())
 			}
 
+			// File times have a resolution of one second, so the preview replaced by the late lens gets an older
+			// time; otherwise a run within the same second would take it for unchanged.
+			backdateInsta360Previews(t, filepath.Join(cfg.SidecarPath(), folder))
+
 			writeInsta360StackMedia(t, cfg, dir, tc.late)
 			indexInsta360StackFolder(cfg, folder, false, true)
 
@@ -1332,4 +1336,73 @@ func TestImport_Insta360Capture(t *testing.T) {
 	assert.True(t, preview().FilePrimary)
 	assert.Equal(t, "equirectangular", preview().FileProjection)
 	assert.Equal(t, 640, preview().FileWidth)
+}
+
+// writeInsta360Video writes an H.264 clip of the specified size and duration in seconds.
+func writeInsta360Video(t *testing.T, cfg *config.Config, fileName, size, seconds string) {
+	t.Helper()
+	require.NoError(t, fs.MkdirAll(filepath.Dir(fileName)))
+
+	// #nosec G204 -- arguments are test constants.
+	out, err := exec.Command(cfg.FFmpegBin(), "-y", "-loglevel", "error", "-f", "lavfi", "-i", "testsrc=size="+size+":rate=30",
+		"-t", seconds, "-c:v", "libx264", "-pix_fmt", "yuv420p", "-metadata", "title="+filepath.Base(fileName), "-f", "mp4", fileName).CombinedOutput()
+	require.NoError(t, err, strings.TrimSpace(string(out)))
+}
+
+// TestIndex_Insta360FirstIndexMetadata verifies that a capture and its proxy video get their own dimensions,
+// duration and codec when they are indexed for the first time.
+func TestIndex_Insta360FirstIndexMetadata(t *testing.T) {
+	const (
+		capture = "VID_20240415_213145_00_035.insv"
+		proxy   = "LRV_20240415_213145_01_035.lrv"
+	)
+
+	folder := "insta360firstindex"
+	cfg := newInsta360StackConfig(t, folder, false)
+
+	if !cfg.ExifToolEnabled() {
+		t.Skip("ExifTool must be available to read video metadata")
+	}
+
+	dir := filepath.Join(cfg.OriginalsPath(), folder)
+	writeInsta360Video(t, cfg, filepath.Join(dir, capture), "384x192", "2")
+	writeInsta360Video(t, cfg, filepath.Join(dir, proxy), "192x96", "1")
+
+	indexInsta360StackFolder(cfg, folder, false, true)
+
+	// The proxy is indexed with the capture it belongs to.
+	owners := insta360StackOwners(t, folder)
+	require.Contains(t, owners, capture)
+	require.Contains(t, owners, proxy)
+	assert.Equal(t, owners[capture].ID, owners[proxy].ID)
+
+	for _, tc := range []struct {
+		name          string
+		width, height int
+		duration      time.Duration
+	}{
+		{capture, 384, 192, 2 * time.Second},
+		{proxy, 192, 96, time.Second},
+	} {
+		var file entity.File
+		require.NoError(t, entity.UnscopedDb().First(&file, "file_name = ?", folder+"/"+tc.name).Error, tc.name)
+		assert.Equal(t, tc.width, file.FileWidth, tc.name)
+		assert.Equal(t, tc.height, file.FileHeight, tc.name)
+		assert.InDelta(t, tc.duration.Seconds(), file.FileDuration.Seconds(), 0.1, tc.name)
+		assert.Equal(t, "avc1", file.FileCodec, tc.name)
+	}
+}
+
+// backdateInsta360Previews sets the time of the preview images in dir two seconds back.
+func backdateInsta360Previews(t *testing.T, dir string) {
+	t.Helper()
+
+	matches, err := filepath.Glob(filepath.Join(dir, "*.jpg"))
+	require.NoError(t, err)
+
+	past := time.Now().Add(-2 * time.Second)
+
+	for _, fileName := range matches {
+		require.NoError(t, os.Chtimes(fileName, past, past))
+	}
 }

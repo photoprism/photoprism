@@ -53,23 +53,32 @@ func takenAtOf(t *testing.T, relName string) entity.Photo {
 // TestIndex_TakenAtModifyTime verifies that a modify time never replaces the capture time of another file of the
 // same stack, whatever order the files are indexed in, and ranks below a date from the file name.
 func TestIndex_TakenAtModifyTime(t *testing.T) {
-	// The names contain no date, so the photo starts with the modify time when the capture is indexed last.
+	// The R0010070 names contain no date, so the photo starts with the modify time when the capture is indexed
+	// last. The Insta360 bracket names contain one, so the photo starts with the name time instead.
 	const (
-		capture   = "R0010070.insp"
-		writeTime = "R0010070.jpg"
+		capture          = "R0010070.insp"
+		writeTime        = "R0010070.jpg"
+		bracketCapture   = "IMG_20201026_154628_00_070.insp"
+		bracketWriteTime = "IMG_20201026_154628_00_070.jpg"
 	)
 
 	expected := time.Date(2020, 10, 26, 15, 46, 29, 0, time.UTC)
 
 	for _, tc := range []struct {
-		name  string
-		first []string
-		late  []string
+		name               string
+		capture, writeTime string
+		first              []string
+		late               []string
+		firstSrc           string
 	}{
-		{"SameRun", []string{capture, writeTime}, nil},
-		{"WriteTimeFirst", []string{writeTime}, []string{capture}},
-		{"CaptureFirst", []string{capture}, []string{writeTime}},
+		{"SameRun", capture, writeTime, []string{capture, writeTime}, nil, ""},
+		{"WriteTimeFirst", capture, writeTime, []string{writeTime}, []string{capture}, entity.SrcModified},
+		{"CaptureFirst", capture, writeTime, []string{capture}, []string{writeTime}, entity.SrcMeta},
+		{"BracketWriteTimeFirst", bracketCapture, bracketWriteTime, []string{bracketWriteTime}, []string{bracketCapture}, entity.SrcName},
+		{"BracketCaptureFirst", bracketCapture, bracketWriteTime, []string{bracketCapture}, []string{bracketWriteTime}, entity.SrcMeta},
 	} {
+		capture, writeTime := tc.capture, tc.writeTime
+
 		t.Run(tc.name, func(t *testing.T) {
 			folder := strings.ToLower("takenwritetime" + tc.name)
 			cfg := newInsta360StackConfig(t, folder, false)
@@ -88,6 +97,10 @@ func TestIndex_TakenAtModifyTime(t *testing.T) {
 			}
 
 			indexInsta360StackFolder(cfg, folder, false, true)
+
+			if tc.firstSrc != "" {
+				assert.Equal(t, tc.firstSrc, takenAtOf(t, folder+"/"+tc.first[0]).TakenSrc, "after the first index")
+			}
 
 			for _, name := range tc.late {
 				write(name)

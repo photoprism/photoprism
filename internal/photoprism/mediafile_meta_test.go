@@ -263,7 +263,7 @@ func TestMediaFile_CreateExifToolJson(t *testing.T) {
 	})
 	t.Run("MetaDataReadFirst", func(t *testing.T) {
 		// Checking the type reads the metadata of a video before its JSON exists, which the JSON then completes.
-		mediaFile, err := NewMediaFile(c.SamplesPath() + "/gopher-video.mp4")
+		mediaFile, err := NewMediaFile(uniqueGopherVideo(t))
 		require.NoError(t, err)
 
 		jsonName, err := mediaFile.ExifToolJsonName()
@@ -290,7 +290,7 @@ func TestMediaFile_CreateExifToolJson(t *testing.T) {
 		c.Options().ExifToolBin = bin
 		t.Cleanup(func() { c.Options().ExifToolBin = prevBin })
 
-		mediaFile, err := NewMediaFile(c.SamplesPath() + "/gopher-video.mp4")
+		mediaFile, err := NewMediaFile(uniqueGopherVideo(t))
 		require.NoError(t, err)
 
 		jsonName, err := mediaFile.ExifToolJsonName()
@@ -308,7 +308,7 @@ func TestMediaFile_CreateExifToolJson(t *testing.T) {
 		c.Options().ExifToolBin = "/bin/false"
 		t.Cleanup(func() { c.Options().ExifToolBin = prevBin })
 
-		mediaFile, err := NewMediaFile(c.SamplesPath() + "/gopher-video.mp4")
+		mediaFile, err := NewMediaFile(uniqueGopherVideo(t))
 		require.NoError(t, err)
 
 		jsonName, err := mediaFile.ExifToolJsonName()
@@ -574,4 +574,18 @@ func TestMediaFile_VideoInfo(t *testing.T) {
 			assert.Equal(t, media.Image, info.MediaType)
 		},
 	)
+}
+
+// uniqueGopherVideo returns a copy of the gopher video sample with its own hash, so that its cached
+// ExifTool JSON is not shared with other tests.
+func uniqueGopherVideo(t *testing.T) string {
+	t.Helper()
+
+	data, err := os.ReadFile(filepath.Join(Config().SamplesPath(), "gopher-video.mp4"))
+	require.NoError(t, err)
+
+	fileName := filepath.Join(t.TempDir(), "gopher-video.mp4")
+	require.NoError(t, os.WriteFile(fileName, append(data, []byte(t.Name())...), 0o600))
+
+	return fileName
 }
