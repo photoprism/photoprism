@@ -1,5 +1,5 @@
-/* Multi-page PDF viewer component styles. Class-prefixed so they can live in the
-   global CSS bundle (the webpack CSS rule only loads stylesheets from src/css). */
+/* Multi-page PDF viewer component styles, class-prefixed so they can live in the
+   global CSS bundle. */
 
 .p-pdf-viewer {
     position: relative;

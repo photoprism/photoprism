@@ -9,9 +9,9 @@
   "//vuetify": "Vuetify is pinned to 3.12.2 (no caret, exact version) — DO NOT bump to 3.12.3+ without revisiting issue #5538. The 3.12.3 release added an onFocusout handler to VAutocomplete/VSelect/VCombobox (PR fixing Vuetify #22697) that flips isFocused=false whenever relatedTarget is outside the textfield. That handler closes long autocomplete/select dropdowns on open, because Vuetify's virtual scroller unmounts the focused list item during scroll-to-selected-index, producing a transient blur with relatedTarget=null. The bug is unfixed in 3.12.5 and Vuetify development has moved to v4. When lifting this pin (e.g., a future v3.12.x patch or v4 migration), test the photo edit dialog's Country and Time Zone autocompletes in Chrome — the menu must stay open on click. KNOWN CAVEATS of 3.12.2: (1) Vuetify #22828 — v-select's @blur event fires when the menu opens (introduced by the 3.12.2 screenreader fix in commit f906336). PhotoPrism is not affected because we only attach @blur handlers to v-text-field, v-textarea, and v-combobox; if you ever add @blur to a v-select, expect spurious calls until that upstream bug is fixed. (2) The .v-field--focused CSS class can linger on a previously-focused v-autocomplete input after the user clicks into another autocomplete — document.activeElement is correct, but Vuetify's isFocused state is under-aggressive about clearing in 3.12.2. This is the inverse symptom of #22697 (which 3.12.3 over-corrected, causing #5538). Visually harmless in the photo edit dialog because the affected fields aren't on screen together. See also frontend/src/common/view.js (sibling-menu gate) and frontend/CODEMAP.md.",
   "scripts": {
     "acceptance-local": "testcafe chromium --selector-timeout 5000 -S -s tests/acceptance/screenshots tests/acceptance",
-    "build": "webpack --config-node-env=production",
-    "build-analyze": "webpack --config-node-env=analyze",
-    "build-dev": "webpack --config-node-env=development",
+    "build": "vite build",
+    "build-analyze": "cross-env BUILD_ENV=analyze vite build",
+    "build-dev": "cross-env BUILD_ENV=development vite build",
     "postbuild": "node scripts/precompress.js",
     "debug": "webpack --stats-error-details",
     "dep-list": "npx npm-check-updates",
@@ -33,10 +33,17 @@
     "security:scan-installs": "sh -lc 'set -e; MATCHES=\"$(rg -n --hidden --glob !**/.git/** -S \"npm (ci|install|update)\" ./Makefile ./package.json 2>/dev/null || true)\"; if [ -z \"$MATCHES\" ]; then echo \"No npm install/update/ci commands found in frontend/\"; exit 0; fi; VIOLATIONS=\"$(printf %s \"$MATCHES\" | rg -v -e \"ignore-scripts\" -e \"install( .*|) -g npm\" -e \"update( .*|) -g npm\" -e \":[0-9]+:\\s*#\" -e \"install-npm\" || true)\"; if [ -n \"$VIOLATIONS\" ]; then echo \"ERROR: npm install/update/ci without --ignore-scripts (exceptions excluded)\"; printf %s\\n \"$VIOLATIONS\"; exit 1; fi; echo \"OK: All frontend installs/updates use --ignore-scripts or are allowed exceptions.\"'",
     "security:scan-xss": "sh -lc 'set -e; if rg -n --glob \"src/**\" -S \"v-html=\\\"\" src >/dev/null; then echo \"ERROR: v-html usage detected; prefer v-sanitize or $util.sanitizeHtml()\"; rg -n --glob \"src/**\" -S \"v-html=\\\"\" src; exit 1; fi; SINKS=\"$(rg -n --glob \"src/**\" -e \"\\.innerHTML\\s*=\" -e \"\\.outerHTML\\s*=\" -e \"insertAdjacentHTML\\(\" -e \"document\\.write\\(\" -e \"document\\.writeln\\(\" src || true)\"; VIOLATIONS=\"$(printf %s \"$SINKS\" | rg -v -e \"security-reviewed\" -e \"\\.innerHTML\\s*=\\s*[\\\"\\x27]{2}\" || true)\"; if [ -n \"$VIOLATIONS\" ]; then echo \"ERROR: review required for DOM XSS sinks; prefer textContent or approved sanitization paths\"; printf %s\\n \"$VIOLATIONS\"; exit 1; fi; echo \"OK: No unreviewed v-html or dangerous DOM HTML sinks detected.\"'",
     "prewatch": "node scripts/precompress.js --clean",
-    "watch": "cross-env BUILD_ENV=development NODE_ENV=production webpack --watch"
+    "watch": "cross-env BUILD_ENV=development vite build --watch"
   },
   "browserslist": [
-    ">0.25% and last 2 years"
+    "chrome >= 119",
+    "edge >= 119",
+    "firefox >= 128",
+    "safari >= 16.4",
+    "ios_saf >= 16.4",
+    "and_chr >= 119",
+    "and_ff >= 128",
+    "samsung >= 25"
   ],
   "dependencies": {
     "@babel/cli": "^7.29.7",
@@ -101,6 +108,7 @@
     "pubsub-js": "^1.9.5",
     "regenerator-runtime": "^0.14.1",
     "resolve-url-loader": "^5.0.0",
+    "rollup-plugin-visualizer": "^7.1.1",
     "sanitize-html": "^2.17.7",
     "sass": "^1.104.1",
     "sass-loader": "^17.0.1",
@@ -111,6 +119,7 @@
     "url-loader": "^4.1.1",
     "util": "^0.12.5",
     "vite": "^8.3.0",
+    "vite-plugin-vuetify": "^2.1.3",
     "vitest": "^5.0.1",
     "vue": "^3.5.43",
     "vue-3-sanitize": "^0.1.4",
@@ -130,6 +139,7 @@
     "webpack-md5-hash": "^0.0.6",
     "webpack-merge": "^6.0.1",
     "webpack-plugin-vuetify": "^3.1.3",
+    "workbox-build": "^7.4.1",
     "workbox-webpack-plugin": "^7.4.1"
   },
   "engines": {
