@@ -18,18 +18,21 @@ import (
 // mariadbPasswordEnv is the environment variable the MariaDB and MySQL clients read a password from.
 const mariadbPasswordEnv = "MYSQL_PWD" // #nosec G101 environment variable name, not a credential
 
-// mariadbConn holds the values a MariaDB client command connects with. Ssl is set if the server offers
-// zero-configuration TLS, and SslVerify if the client can verify its certificate.
+// mariadbConn holds the values a MariaDB client command connects with. Ssl is set unless the server is known
+// not to offer zero-configuration TLS, SslVerify if the client verifies its certificate, and SslRequest if a
+// MariaDB client is asked to use TLS without verification, which it only does if the server offers it.
 type mariadbConn struct {
-	Bin       string
-	Socket    string
-	Host      string
-	Port      string
-	User      string
-	Name      string
-	Password  string
-	Ssl       bool
-	SslVerify bool
+	Bin        string
+	Socket     string
+	Host       string
+	Port       string
+	User       string
+	Name       string
+	Password   string
+	Ssl        bool
+	SslUnknown bool
+	SslVerify  bool
+	SslRequest bool
 }
 
 // newMariadbConn returns the connection values of the configured database for the specified client.
@@ -42,13 +45,35 @@ func newMariadbConn(c *config.Config, bin string) mariadbConn {
 		Ssl:      c.DatabaseSsl(),
 	}
 
+	// TLS is only skipped for a server known to be older than MariaDB 11.4.
+	if !conn.Ssl && c.DatabaseVersion() == "" {
+		conn.Ssl, conn.SslUnknown = true, true
+	}
+
 	conn.Socket, conn.Host, conn.Port = mariadbTarget(c.DatabaseServer(), c.DatabaseHost(), c.DatabasePortString())
 
-	if conn.Ssl && conn.Socket == "" && conn.Password != "" {
-		conn.SslVerify = clientVerifiesSsl(bin)
+	if conn.Socket == "" {
+		conn.setClientSsl(mariadbClientVersion(bin))
 	}
 
 	return conn
+}
+
+// setClientSsl sets how a client of the specified version uses TLS. A MariaDB 11.4+ client verifies the
+// zero-configuration certificate against the password; otherwise a MariaDB client requests TLS without
+// verification, so it still encrypts the connection where the server offers TLS. A client that could not
+// be checked is asked to verify, so a failed check fails the connection instead of leaving it unverified.
+func (conn *mariadbConn) setClientSsl(major, minor int, kind clientKind) {
+	switch zeroConf := major > 11 || major == 11 && minor >= 4; {
+	case kind == clientOther:
+		return
+	case kind == clientUnknown:
+		conn.SslVerify = conn.Ssl && conn.Password != ""
+	case conn.Ssl && zeroConf:
+		conn.SslVerify = conn.Password != ""
+	default:
+		conn.SslRequest = true
+	}
 }
 
 // mariadbTarget returns what a client connects to: a socket path, or a host and port.
@@ -82,10 +107,13 @@ func (conn mariadbConn) Cmd(args ...string) *exec.Cmd {
 	} else {
 		a = append(a, "--protocol", "tcp")
 
-		if !conn.Ssl {
-			a = append(a, "--skip-ssl")
-		} else if conn.SslVerify && conn.Password != "" {
+		switch {
+		case conn.Ssl && conn.SslVerify && conn.Password != "":
 			a = append(a, "--ssl-verify-server-cert")
+		case conn.SslRequest:
+			a = append(a, "--ssl", "--skip-ssl-verify-server-cert")
+		case !conn.Ssl:
+			a = append(a, "--skip-ssl")
 		}
 
 		a = append(a, "-h", conn.Host, "-P", conn.Port)
@@ -121,12 +149,10 @@ func (conn mariadbConn) env() []string {
 	return append(env, mariadbPasswordEnv+"="+conn.Password)
 }
 
-// clientError returns the diagnostics a failed client wrote to stderr as an error, or nil if there are
-// none. Leading warnings are logged on their own, the remaining lines are joined with "; ", and each
-// line is sanitized with the password masked.
-func clientError(stderr, password, action string) error {
-	var lines []string
-
+// clientDiagnostics logs the leading warnings a client wrote to stderr and returns its remaining lines,
+// each sanitized with the password masked. Warnings are logged whether or not the client succeeded, so
+// that a connection without verified TLS is always reported.
+func clientDiagnostics(stderr, password, action string) (lines []string) {
 	for _, line := range strings.Split(clean.Secrets(stderr, password), "\n") {
 		if line = strings.TrimSpace(line); line == "" {
 			continue
@@ -137,11 +163,17 @@ func clientError(stderr, password, action string) error {
 		}
 	}
 
-	if len(lines) == 0 {
-		return nil
+	return lines
+}
+
+// clientError returns the diagnostics a failed client wrote to stderr as an error, joined with "; ", or
+// nil if there are none besides its warnings.
+func clientError(stderr, password, action string) error {
+	if lines := clientDiagnostics(stderr, password, action); len(lines) > 0 {
+		return errors.New(strings.Join(lines, "; "))
 	}
 
-	return errors.New(strings.Join(lines, "; "))
+	return nil
 }
 
 // logDatabaseSsl reports whether the server offers zero-configuration TLS, which decides how the
@@ -151,29 +183,59 @@ func logDatabaseSsl(conn mariadbConn, action string) {
 	switch {
 	case conn.Socket != "":
 		return
-	case conn.Ssl && conn.Password == "":
-		log.Warnf("%s: server supports zero-configuration ssl, but it cannot be verified without a password", action)
-	case conn.Ssl && !conn.SslVerify:
-		log.Warnf("%s: server supports zero-configuration ssl, but %s cannot verify it", action, filepath.Base(conn.Bin))
-	case conn.Ssl:
-		log.Infof("%s: server supports zero-configuration ssl", action)
+	case !conn.Ssl && conn.SslRequest:
+		log.Warnf("%s: zero-configuration ssl not supported by the server, using unverified ssl if available", action)
+		return
+	case !conn.Ssl:
+		log.Warnf("%s: zero-configuration ssl not supported by the server", action)
+		return
+	}
+
+	subject := "server supports zero-configuration ssl"
+
+	if conn.SslUnknown {
+		subject = "server version unknown, expecting zero-configuration ssl"
+	}
+
+	switch {
+	case conn.Password == "":
+		log.Warnf("%s: %s, but it cannot be verified without a password", action, subject)
+	case !conn.SslVerify:
+		log.Warnf("%s: %s, but %s cannot verify it", action, subject, filepath.Base(conn.Bin))
 	default:
-		log.Infof("%s: zero-configuration ssl not supported by the server", action)
+		log.Infof("%s: %s", action, subject)
 	}
 }
 
-// mariadbClientVersion matches the server version a MariaDB client was built with in its --version output.
-var mariadbClientVersion = regexp.MustCompile(`(\d+)\.(\d+)\.\d+-MariaDB`)
+// mariadbClientVersionRegexp matches the server version a MariaDB client was built with in its --version output.
+var mariadbClientVersionRegexp = regexp.MustCompile(`(\d+)\.(\d+)\.\d+-MariaDB`)
 
-// clientVersions caches the output of client version checks, keyed by binary.
+// clientKind is what a client version check found out about a client.
+type clientKind int
+
+const (
+	clientUnknown clientKind = iota // the client could not be checked
+	clientOther                     // the client is not a MariaDB client
+	clientMariadb                   // the client is a MariaDB client
+)
+
+// clientVersion is the cached result of a client version check.
+type clientVersion struct {
+	major, minor int
+	kind         clientKind
+}
+
+// clientVersions caches client version checks, keyed by binary.
 var clientVersions sync.Map
 
-// clientVerifiesSsl reports whether bin is a MariaDB 11.4+ client, which verifies zero-configuration
-// TLS certificates against the password. The result is cached for each binary.
+// mariadbClientVersion returns the major and minor version of a MariaDB client, and what kind of client bin
+// is. MariaDB 11.4+ clients verify zero-configuration TLS certificates against the password. A completed
+// check is cached for each binary; one that failed is not, so the next command checks again.
 // see https://mariadb.org/mission-impossible-zero-configuration-ssl/
-func clientVerifiesSsl(bin string) bool {
+func mariadbClientVersion(bin string) (major, minor int, kind clientKind) {
 	if v, ok := clientVersions.Load(bin); ok {
-		return v.(bool)
+		cv := v.(clientVersion)
+		return cv.major, cv.minor, cv.kind
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), clientProbeTimeout)
@@ -181,23 +243,29 @@ func clientVerifiesSsl(bin string) bool {
 
 	cmd := exec.CommandContext(ctx, bin, "--no-defaults", "--version") // #nosec G204 configured client binary
 	cmd.WaitDelay = clientProbeWaitDelay
-	out, _ := cmd.Output()
+	out, err := cmd.Output()
 
-	// A check that timed out is not cached, so the next command checks again.
+	// A client that exited while a child kept its output open still ran.
 	if ctx.Err() != nil {
-		log.Warnf("database: failed to check the version of %s (%s)", filepath.Base(bin), ctx.Err())
-		return false
+		err = ctx.Err()
+	} else if errors.Is(err, exec.ErrWaitDelay) {
+		err = nil
 	}
 
-	result := false
-
-	if m := mariadbClientVersion.FindStringSubmatch(string(out)); len(m) == 3 {
-		major, _ := strconv.Atoi(m[1])
-		minor, _ := strconv.Atoi(m[2])
-		result = major > 11 || major == 11 && minor >= 4
+	if err != nil {
+		log.Warnf("database: failed to check the version of %s (%s)", filepath.Base(bin), clean.Error(err))
+		return 0, 0, clientUnknown
 	}
 
-	clientVersions.Store(bin, result)
+	cv := clientVersion{kind: clientOther}
 
-	return result
+	if m := mariadbClientVersionRegexp.FindStringSubmatch(string(out)); len(m) == 3 {
+		cv.major, _ = strconv.Atoi(m[1])
+		cv.minor, _ = strconv.Atoi(m[2])
+		cv.kind = clientMariadb
+	}
+
+	clientVersions.Store(bin, cv)
+
+	return cv.major, cv.minor, cv.kind
 }

@@ -13,9 +13,11 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // mariadbTestConn returns connection values for a TCP client command.
@@ -48,11 +50,20 @@ func TestMariadbConn_Cmd(t *testing.T) {
 		assert.Contains(t, cmd.Env, "MYSQL_PWD=Sup3r$ecret")
 	})
 	t.Run("TcpSslClientCannotVerify", func(t *testing.T) {
-		// A client that cannot verify the certificate connects as it did without the flag.
+		// A client that is not a MariaDB client keeps its own TLS defaults.
 		conn := mariadbTestConn()
 		conn.Ssl, conn.SslVerify = true, false
 		assert.Equal(t, []string{"/usr/bin/mariadb-dump", "--no-defaults", "--protocol", "tcp",
 			"-h", "mariadb", "-P", "4001", "-u", "photoprism", "photoprism"}, conn.Cmd().Args)
+	})
+	t.Run("TcpSslRequest", func(t *testing.T) {
+		// A client that cannot verify the certificate uses TLS without verification where the server offers it.
+		for _, ssl := range []bool{true, false} {
+			conn := mariadbTestConn()
+			conn.Ssl, conn.SslVerify, conn.SslRequest = ssl, false, true
+			assert.Equal(t, []string{"/usr/bin/mariadb-dump", "--no-defaults", "--protocol", "tcp", "--ssl", "--skip-ssl-verify-server-cert",
+				"-h", "mariadb", "-P", "4001", "-u", "photoprism", "photoprism"}, conn.Cmd().Args, "ssl %v", ssl)
+		}
 	})
 	t.Run("TcpSslNoPassword", func(t *testing.T) {
 		// Without a password, zero-configuration TLS has nothing to verify the certificate against.
@@ -63,22 +74,42 @@ func TestMariadbConn_Cmd(t *testing.T) {
 	})
 	t.Run("VerifyOnlyOnTcpSsl", func(t *testing.T) {
 		for _, tc := range []struct {
-			socket, password     string
-			ssl, sslVerify, want bool
+			socket, password                 string
+			ssl, sslVerify, sslRequest, want bool
 		}{
-			{"", "Sup3r$ecret", true, true, true},
-			{"", "Sup3r$ecret", true, false, false},
-			{"", "Sup3r$ecret", false, true, false},
-			{"", "", true, true, false},
-			{"/run/mysqld/mysqld.sock", "Sup3r$ecret", true, true, false},
-			{"/run/mysqld/mysqld.sock", "", true, true, false},
+			{"", "Sup3r$ecret", true, true, false, true},
+			{"", "Sup3r$ecret", true, false, false, false},
+			{"", "Sup3r$ecret", false, true, false, false},
+			{"", "", true, true, false, false},
+			{"/run/mysqld/mysqld.sock", "Sup3r$ecret", true, true, false, false},
+			{"/run/mysqld/mysqld.sock", "", true, true, false, false},
+			{"", "Sup3r$ecret", true, false, true, false},
 		} {
 			conn := mariadbTestConn()
-			conn.Socket, conn.Password, conn.Ssl, conn.SslVerify = tc.socket, tc.password, tc.ssl, tc.sslVerify
+			conn.Socket, conn.Password, conn.Ssl, conn.SslVerify, conn.SslRequest = tc.socket, tc.password, tc.ssl, tc.sslVerify, tc.sslRequest
 			if tc.want {
 				assert.Contains(t, conn.Cmd("-f").Args, "--ssl-verify-server-cert", "%+v", tc)
 			} else {
 				assert.NotContains(t, conn.Cmd("-f").Args, "--ssl-verify-server-cert", "%+v", tc)
+			}
+		}
+	})
+	t.Run("RequestOnlyOnTcp", func(t *testing.T) {
+		for _, tc := range []struct {
+			socket string
+			ssl    bool
+			want   bool
+		}{
+			{"", true, true},
+			{"", false, true},
+			{"/run/mysqld/mysqld.sock", true, false},
+		} {
+			conn := mariadbTestConn()
+			conn.Socket, conn.Ssl, conn.SslVerify, conn.SslRequest = tc.socket, tc.ssl, false, true
+			if tc.want {
+				assert.Contains(t, conn.Cmd().Args, "--ssl", "%+v", tc)
+			} else {
+				assert.NotContains(t, conn.Cmd().Args, "--ssl", "%+v", tc)
 			}
 		}
 	})
@@ -188,8 +219,7 @@ func TestNewMariadbConn(t *testing.T) {
 	assert.Equal(t, c.DatabaseUser(), conn.User)
 	assert.Equal(t, c.DatabaseName(), conn.Name)
 	assert.Equal(t, c.DatabasePassword(), conn.Password)
-	assert.Equal(t, c.DatabaseSsl(), conn.Ssl)
-	assert.Equal(t, c.DatabaseSsl() && conn.Socket == "" && conn.Password != "" && clientVerifiesSsl(conn.Bin), conn.SslVerify)
+	assert.Equal(t, c.DatabaseSsl() || c.DatabaseVersion() == "", conn.Ssl)
 
 	if c.DatabaseDriver() == dsn.DriverSQLite3 {
 		// SQLite has no server, user or password, so no client command reads one.
@@ -235,6 +265,14 @@ func TestLogDatabaseSsl(t *testing.T) {
 		assert.Equal(t, "backup: server supports zero-configuration ssl", hook.LastEntry().Message)
 		assert.Equal(t, logrus.InfoLevel, hook.LastEntry().Level)
 	})
+	t.Run("UnknownServerVersion", func(t *testing.T) {
+		hook := captureLog(t)
+		conn := mariadbTestConn()
+		conn.Ssl, conn.SslUnknown = true, true
+		logDatabaseSsl(conn, "backup")
+		require.Len(t, hook.AllEntries(), 1)
+		assert.Equal(t, "backup: server version unknown, expecting zero-configuration ssl", hook.LastEntry().Message)
+	})
 	t.Run("ClientCannotVerify", func(t *testing.T) {
 		hook := captureLog(t)
 		conn := mariadbTestConn()
@@ -254,6 +292,14 @@ func TestLogDatabaseSsl(t *testing.T) {
 		assert.Equal(t, "backup: server supports zero-configuration ssl, but it cannot be verified without a password", hook.LastEntry().Message)
 		assert.Equal(t, logrus.WarnLevel, hook.LastEntry().Level)
 	})
+	t.Run("NoSslRequest", func(t *testing.T) {
+		hook := captureLog(t)
+		conn := mariadbTestConn()
+		conn.Ssl, conn.SslRequest = false, true
+		logDatabaseSsl(conn, "backup")
+		require.Len(t, hook.AllEntries(), 1)
+		assert.Equal(t, "backup: zero-configuration ssl not supported by the server, using unverified ssl if available", hook.LastEntry().Message)
+	})
 	t.Run("NoSsl", func(t *testing.T) {
 		hook := captureLog(t)
 		logDatabaseSsl(mariadbTestConn(), "restore")
@@ -266,6 +312,20 @@ func TestLogDatabaseSsl(t *testing.T) {
 		conn := mariadbTestConn()
 		conn.Socket, conn.Ssl = "/run/mysqld/mysqld.sock", true
 		logDatabaseSsl(conn, "backup")
+		assert.Empty(t, hook.AllEntries())
+	})
+}
+
+func TestClientDiagnostics(t *testing.T) {
+	t.Run("Warnings", func(t *testing.T) {
+		hook := captureLog(t)
+		lines := clientDiagnostics("WARNING: a\nWARNING: b Sup3r$ecret\nerror c\nWARNING: d\n", "Sup3r$ecret", "backup")
+		assert.Equal(t, []string{"error c", "WARNING: d"}, lines)
+		assert.Equal(t, []string{"backup: a", "backup: b " + txt.Masked}, logMessages(hook))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		hook := captureLog(t)
+		assert.Empty(t, clientDiagnostics("\n \n", "", "restore"))
 		assert.Empty(t, hook.AllEntries())
 	})
 }
@@ -327,28 +387,93 @@ func TestClientError(t *testing.T) {
 	})
 }
 
-func TestClientVerifiesSsl(t *testing.T) {
+func TestMariadbConn_SetClientSsl(t *testing.T) {
+	for _, tc := range []struct {
+		name                  string
+		ssl                   bool
+		password              string
+		major, minor          int
+		kind                  clientKind
+		sslVerify, sslRequest bool
+		args                  []string
+	}{
+		{"ZeroConfClient", true, "Sup3r$ecret", 11, 8, clientMariadb, true, false, []string{"--ssl-verify-server-cert"}},
+		{"ZeroConfClient114", true, "Sup3r$ecret", 11, 4, clientMariadb, true, false, []string{"--ssl-verify-server-cert"}},
+		{"ZeroConfClientNoPassword", true, "", 11, 8, clientMariadb, false, false, nil},
+		{"OlderClient113", true, "Sup3r$ecret", 11, 3, clientMariadb, false, true, []string{"--ssl", "--skip-ssl-verify-server-cert"}},
+		{"OlderClient1011", true, "Sup3r$ecret", 10, 11, clientMariadb, false, true, []string{"--ssl", "--skip-ssl-verify-server-cert"}},
+		{"OlderServer", false, "Sup3r$ecret", 11, 8, clientMariadb, false, true, []string{"--ssl", "--skip-ssl-verify-server-cert"}},
+		{"OlderServerOlderClient", false, "Sup3r$ecret", 10, 11, clientMariadb, false, true, []string{"--ssl", "--skip-ssl-verify-server-cert"}},
+		{"OtherClient", true, "Sup3r$ecret", 0, 0, clientOther, false, false, nil},
+		{"OtherClientOlderServer", false, "Sup3r$ecret", 0, 0, clientOther, false, false, []string{"--skip-ssl"}},
+		{"UnknownClient", true, "Sup3r$ecret", 0, 0, clientUnknown, true, false, []string{"--ssl-verify-server-cert"}},
+		{"UnknownClientNoPassword", true, "", 0, 0, clientUnknown, false, false, nil},
+		{"UnknownClientOlderServer", false, "Sup3r$ecret", 0, 0, clientUnknown, false, false, []string{"--skip-ssl"}},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			conn := mariadbTestConn()
+			conn.Ssl, conn.Password, conn.SslVerify = tc.ssl, tc.password, false
+			conn.setClientSsl(tc.major, tc.minor, tc.kind)
+			assert.Equal(t, tc.sslVerify, conn.SslVerify)
+			assert.Equal(t, tc.sslRequest, conn.SslRequest)
+
+			args := conn.Cmd().Args
+			assert.Equal(t, tc.args, sslArgs(args))
+		})
+	}
+}
+
+// sslArgs returns the TLS flags of a client command.
+func sslArgs(args []string) (result []string) {
+	for _, arg := range args {
+		if strings.Contains(arg, "ssl") {
+			result = append(result, arg)
+		}
+	}
+
+	return result
+}
+
+func TestMariadbClientVersion(t *testing.T) {
 	for _, tc := range []struct {
 		name, output string
-		want         bool
+		major, minor int
+		kind         clientKind
 	}{
-		{"MariaDB118", "mariadb-dump from 11.8.6-MariaDB, client 10.19 for debian-linux-gnu (x86_64)", true},
-		{"MariaDB114", "mariadb  Ver 15.1 Distrib 11.4.2-MariaDB, for debian-linux-gnu (x86_64)", true},
-		{"MariaDB123", "mariadb from 12.3.3-MariaDB, client 15.2 for Linux (x86_64)", true},
-		{"MariaDB113", "mariadb  Ver 15.1 Distrib 11.3.2-MariaDB, for debian-linux-gnu (x86_64)", false},
-		{"MariaDB1011", "mysqldump  Ver 10.19 Distrib 10.11.6-MariaDB, for debian-linux-gnu (x86_64)", false},
-		{"MySQL80", "mysqldump  Ver 8.0.36 for Linux on x86_64 (MySQL Community Server - GPL)", false},
-		{"Empty", "", false},
+		{"MariaDB118", "mariadb-dump from 11.8.6-MariaDB, client 10.19 for debian-linux-gnu (x86_64)", 11, 8, clientMariadb},
+		{"MariaDB114", "mariadb  Ver 15.1 Distrib 11.4.2-MariaDB, for debian-linux-gnu (x86_64)", 11, 4, clientMariadb},
+		{"MariaDB123", "mariadb from 12.3.3-MariaDB, client 15.2 for Linux (x86_64)", 12, 3, clientMariadb},
+		{"MariaDB113", "mariadb  Ver 15.1 Distrib 11.3.2-MariaDB, for debian-linux-gnu (x86_64)", 11, 3, clientMariadb},
+		{"MariaDB1011", "mysqldump  Ver 10.19 Distrib 10.11.6-MariaDB, for debian-linux-gnu (x86_64)", 10, 11, clientMariadb},
+		{"MySQL80", "mysqldump  Ver 8.0.36 for Linux on x86_64 (MySQL Community Server - GPL)", 0, 0, clientOther},
+		{"Empty", "", 0, 0, clientOther},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			bin, runs := fakeClient(t, tc.output, 0)
-			assert.Equal(t, tc.want, clientVerifiesSsl(bin))
-			assert.Equal(t, tc.want, clientVerifiesSsl(bin))
+			for i := 0; i < 2; i++ {
+				major, minor, kind := mariadbClientVersion(bin)
+				assert.Equal(t, tc.major, major)
+				assert.Equal(t, tc.minor, minor)
+				assert.Equal(t, tc.kind, kind)
+			}
 			assert.Equal(t, []string{"--no-defaults --version"}, runArgs(t, runs), "expected one cached check")
 		})
 	}
-	t.Run("Missing", func(t *testing.T) {
-		assert.False(t, clientVerifiesSsl(filepath.Join(t.TempDir(), "missing")))
+	t.Run("MissingNotCached", func(t *testing.T) {
+		bin := filepath.Join(t.TempDir(), "missing")
+		_, _, kind := mariadbClientVersion(bin)
+		assert.Equal(t, clientUnknown, kind)
+		_, cached := clientVersions.Load(bin)
+		assert.False(t, cached)
+	})
+	t.Run("FailedNotCached", func(t *testing.T) {
+		// A check that fails is not taken for a client that is not a MariaDB client.
+		bin, runs := fakeClient(t, "from 11.8.6-MariaDB", 1)
+		_, _, kind := mariadbClientVersion(bin)
+		assert.Equal(t, clientUnknown, kind)
+		_, _, kind = mariadbClientVersion(bin)
+		assert.Equal(t, clientUnknown, kind)
+		assert.Len(t, runArgs(t, runs), 2)
 	})
 	t.Run("TimeoutNotCached", func(t *testing.T) {
 		prevTimeout, prevDelay := clientProbeTimeout, clientProbeWaitDelay
@@ -358,9 +483,69 @@ func TestClientVerifiesSsl(t *testing.T) {
 		bin := filepath.Join(t.TempDir(), "client")
 		require.NoError(t, os.WriteFile(bin, []byte("#!/bin/sh\necho 'from 11.8.6-MariaDB'\nexec sleep 30\n"), 0o700))
 
-		assert.False(t, clientVerifiesSsl(bin))
+		_, _, kind := mariadbClientVersion(bin)
+		assert.Equal(t, clientUnknown, kind)
 		_, cached := clientVersions.Load(bin)
 		assert.False(t, cached)
+	})
+}
+
+// TestNewMariadbConn_OlderServer verifies that a MariaDB client still requests TLS from a server that is known
+// not to offer zero-configuration TLS.
+func TestNewMariadbConn_OlderServer(t *testing.T) {
+	c := get.Config()
+
+	if c.DatabaseSsl() || c.DatabaseVersion() == "" {
+		t.Skip("requires a test database whose server is known not to offer zero-configuration ssl")
+	}
+
+	bin, _ := fakeClient(t, "mariadb-dump from 11.8.6-MariaDB, client 10.19 for debian-linux-gnu (x86_64)", 0)
+	conn := newMariadbConn(c, bin)
+
+	if conn.Socket != "" {
+		t.Skip("requires a tcp connection")
+	}
+
+	assert.False(t, conn.Ssl)
+	assert.True(t, conn.SslRequest)
+	assert.NotContains(t, conn.Cmd().Args, "--skip-ssl")
+}
+
+// TestNewMariadbConn_Tls verifies how the client version and an unknown server version decide the TLS flags.
+func TestNewMariadbConn_Tls(t *testing.T) {
+	// The configuration is not connected to a database, so the server version is unknown.
+	c := config.NewMinimalTestConfig(t.TempDir())
+	require.Empty(t, c.DatabaseVersion())
+	c.Options().DatabaseDriver = dsn.DriverMySQL
+	c.Options().DatabaseDSN = ""
+	c.Options().DatabaseServer = "mariadb:4001"
+	c.Options().DatabasePassword = "Sup3r$ecret"
+
+	for _, tc := range []struct {
+		name, output          string
+		sslVerify, sslRequest bool
+	}{
+		{"MariaDB118", "mariadb-dump from 11.8.6-MariaDB, client 10.19 for debian-linux-gnu (x86_64)", true, false},
+		{"MariaDB1011", "mysqldump  Ver 10.19 Distrib 10.11.6-MariaDB, for debian-linux-gnu (x86_64)", false, true},
+		{"MySQL80", "mysqldump  Ver 8.0.36 for Linux on x86_64 (MySQL Community Server - GPL)", false, false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			bin, _ := fakeClient(t, tc.output, 0)
+			conn := newMariadbConn(c, bin)
+			assert.True(t, conn.Ssl, "TLS must not be skipped for an unknown server version")
+			assert.True(t, conn.SslUnknown)
+			assert.Equal(t, tc.sslVerify, conn.SslVerify)
+			assert.Equal(t, tc.sslRequest, conn.SslRequest)
+			assert.NotContains(t, conn.Cmd().Args, "--skip-ssl")
+		})
+	}
+	t.Run("NoPassword", func(t *testing.T) {
+		bin, _ := fakeClient(t, "mariadb-dump from 11.8.6-MariaDB, client 10.19 for debian-linux-gnu (x86_64)", 0)
+		c.Options().DatabasePassword = ""
+		t.Cleanup(func() { c.Options().DatabasePassword = "Sup3r$ecret" })
+		conn := newMariadbConn(c, bin)
+		assert.False(t, conn.SslVerify)
+		assert.False(t, conn.SslRequest)
 	})
 }
 

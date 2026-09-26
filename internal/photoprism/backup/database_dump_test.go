@@ -507,6 +507,12 @@ func TestRunDump(t *testing.T) {
 		assert.Contains(t, err.Error(), "access denied")
 		assert.NotContains(t, err.Error(), "s3cr3tpass")
 	})
+	t.Run("SuccessWarnings", func(t *testing.T) {
+		// A warning is logged even though the client succeeded, e.g. if TLS verification was disabled.
+		hook := captureLog(t)
+		require.NoError(t, runDump(exec.Command("sh", "-c", "echo 'WARNING: option --ssl-verify-server-cert is disabled' >&2; printf ok"), io.Discard, ""))
+		assert.Contains(t, logMessages(hook), "backup: option --ssl-verify-server-cert is disabled")
+	})
 	t.Run("StderrWithoutWarnings", func(t *testing.T) {
 		hook := captureLog(t)
 		err := runDump(exec.Command("sh", "-c", "echo 'WARNING: insecure' >&2; echo 'Got error: 2005' >&2; echo 'when connecting' >&2; exit 2"), io.Discard, "")
@@ -525,6 +531,11 @@ func TestRunRestore(t *testing.T) {
 		data, err := os.ReadFile(out)
 		require.NoError(t, err)
 		assert.Equal(t, "SELECT 1;\n", string(data))
+	})
+	t.Run("SuccessWarnings", func(t *testing.T) {
+		hook := captureLog(t)
+		require.NoError(t, runRestore(exec.Command("sh", "-c", "echo 'WARNING: insecure' >&2; cat >/dev/null"), strings.NewReader(""), ""))
+		assert.Contains(t, logMessages(hook), "restore: insecure")
 	})
 	t.Run("ExitStatus", func(t *testing.T) {
 		err := runRestore(exec.Command("sh", "-c", "exit 23"), strings.NewReader(""), "")

@@ -68,7 +68,7 @@ func TestDatabase_CommandTrace(t *testing.T) {
 	assert.Contains(t, traced, "--no-defaults")
 
 	// A client that can verify the zero-configuration TLS certificate is asked to.
-	if c.DatabaseSsl() && clientVerifiesSsl(c.MariadbDumpBin()) {
+	if major, minor, kind := mariadbClientVersion(c.MariadbDumpBin()); c.DatabaseSsl() && kind == clientMariadb && (major > 11 || major == 11 && minor >= 4) {
 		assert.Contains(t, traced, "--ssl-verify-server-cert")
 	}
 }

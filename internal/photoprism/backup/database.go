@@ -308,6 +308,8 @@ func runDump(cmd *exec.Cmd, w io.Writer, password string) error {
 		return cmdErr
 	}
 
+	clientDiagnostics(stderr.String(), password, "backup")
+
 	return nil
 }
 
@@ -475,6 +477,8 @@ func runRestore(cmd *exec.Cmd, r io.Reader, password string) error {
 
 		return cmdErr
 	}
+
+	clientDiagnostics(stderr.String(), password, "restore")
 
 	return nil
 }
