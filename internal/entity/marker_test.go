@@ -962,6 +962,30 @@ func TestMarker_NamesFace(t *testing.T) {
 	})
 }
 
+func TestMarker_RejectedMatch(t *testing.T) {
+	t.Run("Rejected", func(t *testing.T) {
+		assert.True(t, (&Marker{MarkerType: MarkerFace, SubjSrc: SrcManual}).RejectedMatch())
+	})
+	t.Run("Automatic", func(t *testing.T) {
+		assert.False(t, (&Marker{MarkerType: MarkerFace, SubjSrc: SrcAuto}).RejectedMatch())
+	})
+	t.Run("Xmp", func(t *testing.T) {
+		assert.False(t, (&Marker{MarkerType: MarkerFace, SubjSrc: SrcXmp}).RejectedMatch())
+	})
+	t.Run("ManualSubject", func(t *testing.T) {
+		assert.False(t, (&Marker{MarkerType: MarkerFace, SubjSrc: SrcManual, SubjUID: "js6sg6b1qekk9jx8"}).RejectedMatch())
+	})
+	t.Run("ManualName", func(t *testing.T) {
+		assert.False(t, (&Marker{MarkerType: MarkerFace, SubjSrc: SrcManual, MarkerName: "Jane Doe"}).RejectedMatch())
+	})
+	t.Run("LabelMarker", func(t *testing.T) {
+		assert.False(t, (&Marker{MarkerType: MarkerLabel, SubjSrc: SrcManual}).RejectedMatch())
+	})
+	t.Run("NilMarker", func(t *testing.T) {
+		assert.False(t, (*Marker)(nil).RejectedMatch())
+	})
+}
+
 func TestMarker_Embeddings_Normalized(t *testing.T) {
 	t.Run("ScalesToUnitLength", func(t *testing.T) {
 		// Distances are stated for unit vectors, so a stored vector of another length has to

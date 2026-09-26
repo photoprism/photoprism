@@ -259,6 +259,7 @@ func (w *Faces) Audit(fix bool, subjUID string) (err error) {
 		logErr("faces", "find marker conflicts", err)
 	} else {
 		anonymous := 0
+		rejected := 0
 
 		for _, m := range markers {
 			if m.FaceID == "" {
@@ -289,6 +290,13 @@ func (w *Faces) Audit(fix bool, subjUID string) (err error) {
 				} else {
 					log.Warnf("%s", msg)
 				}
+				continue
+			}
+
+			// A marker whose name a person removed belongs to its cluster without taking its subject.
+			if m.RejectedMatch() {
+				rejected++
+				log.Debugf("faces: marker %s has no name in cluster %s after a person removed it", clean.Log(m.MarkerUID), clean.Log(m.FaceID))
 				continue
 			}
 
@@ -376,6 +384,11 @@ func (w *Faces) Audit(fix bool, subjUID string) (err error) {
 		if anonymous > 0 {
 			log.Infof("faces: %s carry a subject the matcher assigned, whose cluster is unnamed as a result",
 				english.Plural(anonymous, "marker", "markers"))
+		}
+
+		if rejected > 0 {
+			log.Infof("faces: found %s whose name a person removed, left unnamed in a named cluster",
+				english.Plural(rejected, "marker", "markers"))
 		}
 	}
 

@@ -292,6 +292,12 @@ func (m *Marker) NamesFace() bool {
 	return m != nil && m.SubjUID != "" && subjSrcSharesFace(m.SubjSrc)
 }
 
+// RejectedMatch reports whether a person removed the name of this face marker, which leaves it with a
+// manual source, no subject and no name. Unlike MarkerInvalid, it rejects the match, not the face.
+func (m *Marker) RejectedMatch() bool {
+	return m != nil && m.MarkerType == MarkerFace && m.SubjSrc == SrcManual && m.SubjUID == "" && m.MarkerName == ""
+}
+
 // SetSubjectLink links the marker to an already-resolved subject without renaming it, so
 // reassigning a marker never renames the person globally. Passing nil detaches the cached subject
 // and clears SubjUID, so a later SyncSubject resolves or creates a fresh one.
@@ -365,7 +371,8 @@ func (m *Marker) SetFace(f *Face, dist float64) (updated bool, err error) {
 		m.FaceDist = m.Embeddings().Dist(f.Embedding())
 	}
 
-	if f.SubjUID != "" {
+	// A rejected match may belong to the cluster, but never takes its subject.
+	if f.SubjUID != "" && !m.RejectedMatch() {
 		m.SubjUID = f.SubjUID
 	}
 
