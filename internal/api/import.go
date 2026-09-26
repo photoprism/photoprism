@@ -24,11 +24,6 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// UploadPath is the root directory underneath which user uploads are staged.
-const (
-	UploadPath = "/upload"
-)
-
 // StartImport imports media files from a directory and converts/indexes them as needed.
 //
 //	@Summary	start import
@@ -97,11 +92,8 @@ func StartImport(router *gin.RouterGroup) {
 			srcFolder = clean.UserPath(frm.Path)
 		}
 
-		// To avoid conflicts, uploads are imported from "import_path/upload/session_ref/timestamp".
-		if token := path.Base(srcFolder); token != "" && path.Dir(srcFolder) == UploadPath {
-			srcFolder = path.Join(UploadPath, s.RefID+token)
-			event.AuditInfo([]string{ClientIP(c), "session %s", "import uploads from %s as %s", status.Granted}, s.RefID, clean.Log(srcFolder), s.GetUserRole().String())
-		} else if acl.Rules.Deny(acl.ResourceFiles, s.GetUserRole(), acl.ActionManage) {
+		// Importing files requires permission to manage them.
+		if acl.Rules.Deny(acl.ResourceFiles, s.GetUserRole(), acl.ActionManage) {
 			event.AuditErr([]string{ClientIP(c), "session %s", "import files from %s as %s", status.Denied}, s.RefID, clean.Log(srcFolder), s.GetUserRole().String())
 			AbortForbidden(c)
 			return
