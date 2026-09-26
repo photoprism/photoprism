@@ -149,14 +149,14 @@ func (conn mariadbConn) env() []string {
 	return append(env, mariadbPasswordEnv+"="+conn.Password)
 }
 
-// clientDiagnostics logs the leading warnings a client wrote to stderr and returns its remaining lines,
+// clientDiagnostics logs the stderr lines of a client that start with "WARNING:" and returns the others,
 // each sanitized with the password masked. Warnings are logged whether or not the client succeeded, so
 // that a connection without verified TLS is always reported.
 func clientDiagnostics(stderr, password, action string) (lines []string) {
 	for _, line := range strings.Split(clean.Secrets(stderr, password), "\n") {
 		if line = strings.TrimSpace(line); line == "" {
 			continue
-		} else if len(lines) == 0 && strings.HasPrefix(line, "WARNING:") {
+		} else if strings.HasPrefix(line, "WARNING:") {
 			log.Warnf("%s: %s", action, clean.ErrorFull(errors.New(strings.TrimPrefix(line, "WARNING:"))))
 		} else {
 			lines = append(lines, clean.ErrorFull(errors.New(line)))

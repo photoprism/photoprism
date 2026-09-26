@@ -320,8 +320,8 @@ func TestClientDiagnostics(t *testing.T) {
 	t.Run("Warnings", func(t *testing.T) {
 		hook := captureLog(t)
 		lines := clientDiagnostics("WARNING: a\nWARNING: b Sup3r$ecret\nerror c\nWARNING: d\n", "Sup3r$ecret", "backup")
-		assert.Equal(t, []string{"error c", "WARNING: d"}, lines)
-		assert.Equal(t, []string{"backup: a", "backup: b " + txt.Masked}, logMessages(hook))
+		assert.Equal(t, []string{"error c"}, lines)
+		assert.Equal(t, []string{"backup: a", "backup: b " + txt.Masked, "backup: d"}, logMessages(hook))
 	})
 	t.Run("Empty", func(t *testing.T) {
 		hook := captureLog(t)
@@ -354,13 +354,21 @@ func TestClientError(t *testing.T) {
 		require.Len(t, hook.AllEntries(), 1)
 		assert.Equal(t, "restore: something", hook.LastEntry().Message)
 	})
-	t.Run("LeadingWarningsOnly", func(t *testing.T) {
-		// Server text after the client's error line stays part of the error.
+	t.Run("WarningPrefixOnly", func(t *testing.T) {
+		// Only lines that start with "WARNING:" are warnings; other lines stay part of the error.
 		hook := captureLog(t)
-		err := clientError("ERROR 1045 (28000): Access denied\nWARNING: x\nWARNING: y\n", "", "backup")
+		err := clientError("ERROR 1045 (28000): denied WARNING: x\nWarning: Couldn't read keys from table\n", "", "backup")
 		require.Error(t, err)
-		assert.Equal(t, "ERROR 1045 (28000): Access denied; WARNING: x; WARNING: y", err.Error())
+		assert.Equal(t, "ERROR 1045 (28000): denied WARNING: x; Warning: Couldn't read keys from table", err.Error())
 		assert.Empty(t, hook.AllEntries())
+	})
+	t.Run("WarningsAnywhere", func(t *testing.T) {
+		// Warnings are logged wherever they appear, and the other lines remain the error.
+		hook := captureLog(t)
+		err := clientError("ERROR 1045 (28000): Access denied\nWARNING: x\nsecond line\n", "", "backup")
+		require.Error(t, err)
+		assert.Equal(t, "ERROR 1045 (28000): Access denied; second line", err.Error())
+		assert.Equal(t, []string{"backup: x"}, logMessages(hook))
 	})
 	t.Run("ControlCharacters", func(t *testing.T) {
 		hook := captureLog(t)

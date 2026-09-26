@@ -507,6 +507,19 @@ func TestRunDump(t *testing.T) {
 		assert.Contains(t, err.Error(), "access denied")
 		assert.NotContains(t, err.Error(), "s3cr3tpass")
 	})
+	t.Run("WarningsOnlyFailure", func(t *testing.T) {
+		// A client that fails with nothing but warnings still fails, with its exit status as the error.
+		err := runDump(exec.Command("sh", "-c", "echo 'WARNING: x' >&2; exit 2"), io.Discard, "")
+
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "exit status 2")
+	})
+	t.Run("SuccessWarningAfterNotice", func(t *testing.T) {
+		// A warning after another line, such as a notice about the program name, is still logged.
+		hook := captureLog(t)
+		require.NoError(t, runDump(exec.Command("sh", "-c", "echo \"mysqldump: Deprecated program name. It will be removed in a future release, use '/usr/bin/mariadb-dump' instead\" >&2; echo 'WARNING: option --ssl-verify-server-cert is disabled' >&2; printf ok"), io.Discard, ""))
+		assert.Contains(t, logMessages(hook), "backup: option --ssl-verify-server-cert is disabled")
+	})
 	t.Run("SuccessWarnings", func(t *testing.T) {
 		// A warning is logged even though the client succeeded, e.g. if TLS verification was disabled.
 		hook := captureLog(t)
