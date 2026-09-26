@@ -446,7 +446,18 @@ func TestMariadbClientVersion(t *testing.T) {
 		{"MariaDB113", "mariadb  Ver 15.1 Distrib 11.3.2-MariaDB, for debian-linux-gnu (x86_64)", 11, 3, clientMariadb},
 		{"MariaDB1011", "mysqldump  Ver 10.19 Distrib 10.11.6-MariaDB, for debian-linux-gnu (x86_64)", 10, 11, clientMariadb},
 		{"MySQL80", "mysqldump  Ver 8.0.36 for Linux on x86_64 (MySQL Community Server - GPL)", 0, 0, clientOther},
-		{"Empty", "", 0, 0, clientOther},
+		{"MySQL84", "mysql  Ver 8.4.2 for Linux on x86_64 (MySQL Community Server - GPL)", 0, 0, clientOther},
+		{"MySQL57", "mysqldump  Ver 10.13 Distrib 5.7.44, for Linux (x86_64)", 0, 0, clientOther},
+		{"Percona80", "mysqldump  Ver 8.0.35-27 for Linux on x86_64 (Percona Server (GPL), Release '27', Revision '2f8eeab2')", 0, 0, clientOther},
+		{"Empty", "", 0, 0, clientUnknown},
+		{"Garbage", "wrapper script 1.0", 0, 0, clientUnknown},
+		{"MariaDBEnterprise106", "mariadb  Ver 15.1 Distrib 10.6.16-11-MariaDB, for Linux (x86_64)", 10, 6, clientMariadb},
+		{"MariaDBEnterprise114", "mariadb from 11.4.4-2-MariaDB, client 15.2 for Linux (x86_64)", 11, 4, clientMariadb},
+		{"MySQLUbuntu", "mysqldump  Ver 8.0.39-0ubuntu0.22.04.1 for Linux on x86_64 ((Ubuntu))", 0, 0, clientOther},
+		{"Percona57", "mysql  Ver 14.14 Distrib 5.7.42-46, for Linux (x86_64) using  7.0", 0, 0, clientOther},
+		{"MySQL57Ubuntu", "mysqldump  Ver 10.13 Distrib 5.7.42-0ubuntu0.18.04.1, for Linux (x86_64)", 0, 0, clientOther},
+		{"MySQL57Log", "mysql  Ver 14.14 Distrib 5.7.44-log, for Linux (x86_64)", 0, 0, clientOther},
+		{"MySQLBuild", "mysql  Ver 8.0.33+build1 for Linux on x86_64 (Source distribution)", 0, 0, clientOther},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			bin, runs := fakeClient(t, tc.output, 0)
@@ -459,6 +470,13 @@ func TestMariadbClientVersion(t *testing.T) {
 			assert.Equal(t, []string{"--no-defaults --version"}, runArgs(t, runs), "expected one cached check")
 		})
 	}
+	t.Run("UnidentifiedWarning", func(t *testing.T) {
+		hook := captureLog(t)
+		bin, _ := fakeClient(t, "wrapper script 1.0", 0)
+		mariadbClientVersion(bin)
+		mariadbClientVersion(bin)
+		assert.Equal(t, []string{"database: failed to identify the version of client"}, logMessages(hook))
+	})
 	t.Run("MissingNotCached", func(t *testing.T) {
 		bin := filepath.Join(t.TempDir(), "missing")
 		_, _, kind := mariadbClientVersion(bin)
@@ -528,6 +546,7 @@ func TestNewMariadbConn_Tls(t *testing.T) {
 		{"MariaDB118", "mariadb-dump from 11.8.6-MariaDB, client 10.19 for debian-linux-gnu (x86_64)", true, false},
 		{"MariaDB1011", "mysqldump  Ver 10.19 Distrib 10.11.6-MariaDB, for debian-linux-gnu (x86_64)", false, true},
 		{"MySQL80", "mysqldump  Ver 8.0.36 for Linux on x86_64 (MySQL Community Server - GPL)", false, false},
+		{"Unrecognized", "wrapper script 1.0", true, false},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			bin, _ := fakeClient(t, tc.output, 0)

@@ -62,7 +62,7 @@ func newMariadbConn(c *config.Config, bin string) mariadbConn {
 // setClientSsl sets how a client of the specified version uses TLS. A MariaDB 11.4+ client verifies the
 // zero-configuration certificate against the password; otherwise a MariaDB client requests TLS without
 // verification, so it still encrypts the connection where the server offers TLS. A client that could not
-// be checked is asked to verify, so a failed check fails the connection instead of leaving it unverified.
+// be checked or identified is asked to verify, so the connection fails instead of going unverified.
 func (conn *mariadbConn) setClientSsl(major, minor int, kind clientKind) {
 	switch zeroConf := major > 11 || major == 11 && minor >= 4; {
 	case kind == clientOther:
@@ -208,14 +208,18 @@ func logDatabaseSsl(conn mariadbConn, action string) {
 }
 
 // mariadbClientVersionRegexp matches the server version a MariaDB client was built with in its --version output.
-var mariadbClientVersionRegexp = regexp.MustCompile(`(\d+)\.(\d+)\.\d+-MariaDB`)
+var mariadbClientVersionRegexp = regexp.MustCompile(`(\d+)\.(\d+)\.\d+(?:-\d+)?-MariaDB`)
+
+// mysqlClientVersionRegexp matches the --version output of MySQL and Percona clients, e.g.
+// "Ver 8.0.36 for Linux on x86_64 (MySQL Community Server - GPL)" or "Ver 14.14 Distrib 5.7.44, for Linux".
+var mysqlClientVersionRegexp = regexp.MustCompile(`(?i)\(MySQL [A-Za-z ]+Server|Percona Server|Ver \d+\.\d+\.\d+[-+\w.]* for |Distrib \d+\.\d+\.\d+(?:-[\w.]+)?,`)
 
 // clientKind is what a client version check found out about a client.
 type clientKind int
 
 const (
-	clientUnknown clientKind = iota // the client could not be checked
-	clientOther                     // the client is not a MariaDB client
+	clientUnknown clientKind = iota // the client could not be checked or identified
+	clientOther                     // the client is identified as a MySQL or Percona client
 	clientMariadb                   // the client is a MariaDB client
 )
 
@@ -257,12 +261,16 @@ func mariadbClientVersion(bin string) (major, minor int, kind clientKind) {
 		return 0, 0, clientUnknown
 	}
 
-	cv := clientVersion{kind: clientOther}
+	var cv clientVersion
 
 	if m := mariadbClientVersionRegexp.FindStringSubmatch(string(out)); len(m) == 3 {
 		cv.major, _ = strconv.Atoi(m[1])
 		cv.minor, _ = strconv.Atoi(m[2])
 		cv.kind = clientMariadb
+	} else if mysqlClientVersionRegexp.Match(out) {
+		cv.kind = clientOther
+	} else {
+		log.Warnf("database: failed to identify the version of %s", filepath.Base(bin))
 	}
 
 	clientVersions.Store(bin, cv)
