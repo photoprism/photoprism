@@ -25,11 +25,25 @@ import (
 //	@Success	200		{object}	gin.H
 //	@Failure	401,405	{object}	i18n.Response
 //	@Router		/api/v1/oauth/userinfo [get]
-//	@Router		/api/v1/oauth/userinfo [post]
 func OAuthUserinfo(router *gin.RouterGroup) {
 	router.GET("/oauth/userinfo", func(c *gin.Context) {
 		OAuthUserinfoHandler(c)
 	})
+
+	OAuthUserinfoPost(router)
+}
+
+// OAuthUserinfoPost registers the POST variant of the userinfo endpoint, which OAuthUserinfo
+// registers together with GET.
+//
+//	@Summary	OAuth2/OIDC userinfo endpoint
+//	@Id			OAuthUserinfoPost
+//	@Tags		Authentication
+//	@Produce	json
+//	@Success	200		{object}	gin.H
+//	@Failure	401,405	{object}	i18n.Response
+//	@Router		/api/v1/oauth/userinfo [post]
+func OAuthUserinfoPost(router *gin.RouterGroup) {
 	router.POST("/oauth/userinfo", func(c *gin.Context) {
 		OAuthUserinfoHandler(c)
 	})
