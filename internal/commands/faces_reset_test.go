@@ -206,6 +206,32 @@ func TestConfirmAction(t *testing.T) {
 		assert.NoError(t, err)
 		assert.False(t, proceed)
 	})
+	t.Run("EndOfInputOnTerminalDeclines", func(t *testing.T) {
+		// Ctrl-D on a terminal ends the input, which declines like "n".
+		pipeResetAnswers(t, "")
+		prev := confirmTerminal
+		confirmTerminal = func() bool { return true }
+		t.Cleanup(func() { confirmTerminal = prev })
+
+		proceed, err := ConfirmAction(false, "Remove everything?")
+
+		assert.NoError(t, err)
+		assert.False(t, proceed)
+	})
+	t.Run("EndOfInputWithoutTerminalIsAnError", func(t *testing.T) {
+		pipeResetAnswers(t, "")
+
+		proceed, err := ConfirmAction(false, "Remove everything?")
+
+		require.Error(t, err)
+		assert.False(t, proceed)
+		assert.Contains(t, err.Error(), "no terminal")
+		assert.NotContains(t, err.Error(), "^D")
+
+		var exit cli.ExitCoder
+		require.ErrorAs(t, err, &exit)
+		assert.Equal(t, 2, exit.ExitCode())
+	})
 	t.Run("NonInteractiveEnvSkipsThePrompt", func(t *testing.T) {
 		t.Setenv("PHOTOPRISM_CLI", NONINTERACTIVE)
 

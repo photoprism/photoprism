@@ -35,6 +35,7 @@ import (
 	"syscall"
 
 	"github.com/manifoldco/promptui"
+	"github.com/mattn/go-isatty"
 	"github.com/sevlyar/go-daemon"
 	"github.com/urfave/cli/v2"
 
@@ -57,10 +58,15 @@ func RunNonInteractively(confirmed bool) bool {
 // confirmStdin is where ConfirmAction reads answers from, or nil for the terminal.
 var confirmStdin io.ReadCloser
 
+// confirmTerminal reports whether ConfirmAction reads its answers from a terminal.
+var confirmTerminal = func() bool {
+	return confirmStdin == nil && (isatty.IsTerminal(os.Stdin.Fd()) || isatty.IsCygwinTerminal(os.Stdin.Fd()))
+}
+
 // ConfirmAction asks the operator to confirm a destructive action and reports whether it may
-// proceed. It returns false with no error when the answer is no, and an error when no answer
-// could be obtained at all - without a terminal there is nothing to report as a decision, and
-// treating that as a refusal would tell a caller the action had been considered and declined.
+// proceed. It returns false with no error when the answer is no, including Ctrl-C and Ctrl-D on
+// a terminal, and an error when no answer could be obtained at all, since a caller could not
+// tell a missing terminal from a considered refusal.
 func ConfirmAction(confirmed bool, label string) (proceed bool, err error) {
 	if RunNonInteractively(confirmed) {
 		return true, nil
@@ -72,6 +78,12 @@ func ConfirmAction(confirmed bool, label string) (proceed bool, err error) {
 		return true, nil
 	} else if errors.Is(err, promptui.ErrAbort) || errors.Is(err, promptui.ErrInterrupt) {
 		return false, nil
+	} else if errors.Is(err, promptui.ErrEOF) {
+		if confirmTerminal() {
+			return false, nil
+		}
+
+		err = errors.New("no terminal")
 	}
 
 	// Exit code 2 is the usage error: the command was reached in an environment that cannot
