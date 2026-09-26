@@ -66,4 +66,9 @@ func TestDatabase_CommandTrace(t *testing.T) {
 	// The client reads the password from the environment, so the trace has none to mask.
 	assert.NotContains(t, traced, "-p"+txt.Masked)
 	assert.Contains(t, traced, "--no-defaults")
+
+	// A client that can verify the zero-configuration TLS certificate is asked to.
+	if c.DatabaseSsl() && clientVerifiesSsl(c.MariadbDumpBin()) {
+		assert.Contains(t, traced, "--ssl-verify-server-cert")
+	}
 }

@@ -11,10 +11,12 @@ import (
 	"testing"
 	"time"
 
+	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // seedDumps creates the named files with their names as content and returns the directory.
@@ -505,6 +507,89 @@ func TestRunDump(t *testing.T) {
 		assert.Contains(t, err.Error(), "access denied")
 		assert.NotContains(t, err.Error(), "s3cr3tpass")
 	})
+	t.Run("StderrWithoutWarnings", func(t *testing.T) {
+		hook := captureLog(t)
+		err := runDump(exec.Command("sh", "-c", "echo 'WARNING: insecure' >&2; echo 'Got error: 2005' >&2; echo 'when connecting' >&2; exit 2"), io.Discard, "")
+
+		require.Error(t, err)
+		assert.Equal(t, "Got error: 2005; when connecting", err.Error())
+		assert.Contains(t, logMessages(hook), "backup: insecure")
+	})
+}
+
+func TestRunRestore(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		// The client reads the dump from its input.
+		out := filepath.Join(t.TempDir(), "restored.sql")
+		require.NoError(t, runRestore(exec.Command("sh", "-c", "cat > '"+out+"'"), strings.NewReader("SELECT 1;\n"), ""))
+		data, err := os.ReadFile(out)
+		require.NoError(t, err)
+		assert.Equal(t, "SELECT 1;\n", string(data))
+	})
+	t.Run("ExitStatus", func(t *testing.T) {
+		err := runRestore(exec.Command("sh", "-c", "exit 23"), strings.NewReader(""), "")
+
+		require.Error(t, err)
+		assert.Contains(t, err.Error(), "23")
+	})
+	t.Run("StderrWithoutWarnings", func(t *testing.T) {
+		hook := captureLog(t)
+		script := "echo 'WARNING: insecure s3cr3tpass' >&2; echo 'ERROR 2026 (HY000): TLS/SSL error' >&2; echo 'for s3cr3tpass' >&2; exit 1"
+		err := runRestore(exec.Command("sh", "-c", script), strings.NewReader(""), "s3cr3tpass")
+
+		require.Error(t, err)
+		assert.Equal(t, "ERROR 2026 (HY000): TLS/SSL error; for "+txt.Masked, err.Error())
+		assert.Contains(t, logMessages(hook), "restore: insecure "+txt.Masked)
+	})
+	t.Run("PipedFromFile", func(t *testing.T) {
+		// A file or terminal is passed through a pipe, so the client never reads it interactively.
+		dir := t.TempDir()
+		in, out := filepath.Join(dir, "dump.sql"), filepath.Join(dir, "stdin")
+		require.NoError(t, os.WriteFile(in, []byte("SELECT 1;\n"), 0o600))
+		f, err := os.Open(in)
+		require.NoError(t, err)
+		defer f.Close()
+
+		require.NoError(t, runRestore(exec.Command("sh", "-c", "if [ -p /dev/stdin ]; then echo pipe; else echo other; fi > '"+out+"'; cat >/dev/null"), f, ""))
+		data, err := os.ReadFile(out)
+		require.NoError(t, err)
+		assert.Equal(t, "pipe\n", string(data))
+	})
+	t.Run("EarlyExit", func(t *testing.T) {
+		// A client that fails before reading its input reports its own error.
+		err := runRestore(exec.Command("sh", "-c", "echo 'ERROR 2026 (HY000): TLS/SSL error' >&2; exit 1"), strings.NewReader(strings.Repeat("x", 1<<20)), "")
+
+		require.Error(t, err)
+		assert.Equal(t, "ERROR 2026 (HY000): TLS/SSL error", err.Error())
+	})
+	t.Run("EarlyExitWhileInputBlocks", func(t *testing.T) {
+		// The result does not wait for input that never arrives, such as a terminal nobody types into.
+		pr, pw := io.Pipe()
+		t.Cleanup(func() { _ = pw.Close() })
+
+		done := make(chan error, 1)
+		go func() {
+			done <- runRestore(exec.Command("sh", "-c", "echo 'ERROR 2026 (HY000): TLS/SSL error' >&2; exit 1"), pr, "")
+		}()
+
+		select {
+		case err := <-done:
+			assert.EqualError(t, err, "ERROR 2026 (HY000): TLS/SSL error")
+		case <-time.After(10 * time.Second):
+			t.Fatal("restore did not return after the client exited")
+		}
+	})
+}
+
+// logMessages returns the messages of the captured log entries.
+func logMessages(hook *test.Hook) []string {
+	var result []string
+
+	for _, entry := range hook.AllEntries() {
+		result = append(result, entry.Message)
+	}
+
+	return result
 }
 
 func TestRotateDumps(t *testing.T) {

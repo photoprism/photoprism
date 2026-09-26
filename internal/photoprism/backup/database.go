@@ -9,7 +9,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"sort"
-	"strings"
 	"syscall"
 	"time"
 
@@ -302,8 +301,8 @@ func runDump(cmd *exec.Cmd, w io.Writer, password string) error {
 	log.Trace(clean.Cmd(cmd, password))
 
 	if cmdErr := cmd.Run(); cmdErr != nil {
-		if errStr := strings.TrimSpace(stderr.String()); errStr != "" {
-			return errors.New(clean.Secrets(errStr, password))
+		if err := clientError(stderr.String(), password, "backup"); err != nil {
+			return err
 		}
 
 		return cmdErr
@@ -434,37 +433,47 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 		defer f.Close()
 	}
 
+	if err = runRestore(cmd, f, password); err != nil {
+		log.Errorf("restore: failed to restore index database")
+		return err
+	}
+
+	log.Infof("restore: index database successfully restored")
+
+	return nil
+}
+
+// runRestore runs the restore command with its input read from r, returning stderr as the error if it fails.
+// The input is copied through a pipe, so the client runs in batch mode even if r is a terminal, and the
+// copy does not delay the result of a client that exits before reading all of it.
+func runRestore(cmd *exec.Cmd, r io.Reader, password string) error {
 	var stderr bytes.Buffer
-	var stdin io.WriteCloser
 	cmd.Stderr = &stderr
 	cmd.Stdout = os.Stdout
-	stdin, err = cmd.StdinPipe()
+
+	stdin, err := cmd.StdinPipe()
 
 	if err != nil {
-		return fmt.Errorf("restore: failed to create stdin pipe: %w", err)
+		return fmt.Errorf("failed to create stdin pipe: %w", err)
 	}
 
 	go func() {
 		defer stdin.Close()
-		if _, err = io.Copy(stdin, f); err != nil {
-			log.Errorf("restore: %s", err)
+
+		if _, copyErr := io.Copy(stdin, r); copyErr != nil && !errors.Is(copyErr, syscall.EPIPE) {
+			log.Errorf("restore: %s", clean.Error(copyErr))
 		}
 	}()
 
 	// Log the command for debugging in trace mode.
 	log.Trace(clean.Cmd(cmd, password))
 
-	// Run restore command.
 	if cmdErr := cmd.Run(); cmdErr != nil {
-		log.Errorf("restore: failed to restore index database")
-
-		if errStr := strings.TrimSpace(stderr.String()); errStr != "" {
-			return errors.New(clean.Secrets(errStr, password))
+		if err := clientError(stderr.String(), password, "restore"); err != nil {
+			return err
 		}
 
 		return cmdErr
-	} else {
-		log.Infof("restore: index database successfully restored")
 	}
 
 	return nil

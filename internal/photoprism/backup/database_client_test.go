@@ -4,9 +4,12 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -18,12 +21,13 @@ import (
 // mariadbTestConn returns connection values for a TCP client command.
 func mariadbTestConn() mariadbConn {
 	return mariadbConn{
-		Bin:      "/usr/bin/mariadb-dump",
-		Host:     "mariadb",
-		Port:     "4001",
-		User:     "photoprism",
-		Name:     "photoprism",
-		Password: "Sup3r$ecret",
+		Bin:       "/usr/bin/mariadb-dump",
+		Host:      "mariadb",
+		Port:      "4001",
+		User:      "photoprism",
+		Name:      "photoprism",
+		Password:  "Sup3r$ecret",
+		SslVerify: true,
 	}
 }
 
@@ -35,13 +39,48 @@ func TestMariadbConn_Cmd(t *testing.T) {
 		assert.Contains(t, cmd.Env, "MYSQL_PWD=Sup3r$ecret")
 	})
 	t.Run("TcpSsl", func(t *testing.T) {
-		// A server offering zero-configuration TLS keeps the connection encrypted without --skip-ssl.
+		// A server offering zero-configuration TLS gets its certificate verified against the password.
 		conn := mariadbTestConn()
 		conn.Ssl = true
 		cmd := conn.Cmd()
-		assert.Equal(t, []string{"/usr/bin/mariadb-dump", "--no-defaults", "--protocol", "tcp",
+		assert.Equal(t, []string{"/usr/bin/mariadb-dump", "--no-defaults", "--protocol", "tcp", "--ssl-verify-server-cert",
 			"-h", "mariadb", "-P", "4001", "-u", "photoprism", "photoprism"}, cmd.Args)
 		assert.Contains(t, cmd.Env, "MYSQL_PWD=Sup3r$ecret")
+	})
+	t.Run("TcpSslClientCannotVerify", func(t *testing.T) {
+		// A client that cannot verify the certificate connects as it did without the flag.
+		conn := mariadbTestConn()
+		conn.Ssl, conn.SslVerify = true, false
+		assert.Equal(t, []string{"/usr/bin/mariadb-dump", "--no-defaults", "--protocol", "tcp",
+			"-h", "mariadb", "-P", "4001", "-u", "photoprism", "photoprism"}, conn.Cmd().Args)
+	})
+	t.Run("TcpSslNoPassword", func(t *testing.T) {
+		// Without a password, zero-configuration TLS has nothing to verify the certificate against.
+		conn := mariadbTestConn()
+		conn.Ssl, conn.Password = true, ""
+		assert.Equal(t, []string{"/usr/bin/mariadb-dump", "--no-defaults", "--protocol", "tcp",
+			"-h", "mariadb", "-P", "4001", "-u", "photoprism", "photoprism"}, conn.Cmd().Args)
+	})
+	t.Run("VerifyOnlyOnTcpSsl", func(t *testing.T) {
+		for _, tc := range []struct {
+			socket, password     string
+			ssl, sslVerify, want bool
+		}{
+			{"", "Sup3r$ecret", true, true, true},
+			{"", "Sup3r$ecret", true, false, false},
+			{"", "Sup3r$ecret", false, true, false},
+			{"", "", true, true, false},
+			{"/run/mysqld/mysqld.sock", "Sup3r$ecret", true, true, false},
+			{"/run/mysqld/mysqld.sock", "", true, true, false},
+		} {
+			conn := mariadbTestConn()
+			conn.Socket, conn.Password, conn.Ssl, conn.SslVerify = tc.socket, tc.password, tc.ssl, tc.sslVerify
+			if tc.want {
+				assert.Contains(t, conn.Cmd("-f").Args, "--ssl-verify-server-cert", "%+v", tc)
+			} else {
+				assert.NotContains(t, conn.Cmd("-f").Args, "--ssl-verify-server-cert", "%+v", tc)
+			}
+		}
 	})
 	t.Run("NoPasswordArgumentOnAnyBranch", func(t *testing.T) {
 		for _, tc := range []struct {
@@ -150,6 +189,7 @@ func TestNewMariadbConn(t *testing.T) {
 	assert.Equal(t, c.DatabaseName(), conn.Name)
 	assert.Equal(t, c.DatabasePassword(), conn.Password)
 	assert.Equal(t, c.DatabaseSsl(), conn.Ssl)
+	assert.Equal(t, c.DatabaseSsl() && conn.Socket == "" && conn.Password != "" && clientVerifiesSsl(conn.Bin), conn.SslVerify)
 
 	if c.DatabaseDriver() == dsn.DriverSQLite3 {
 		// SQLite has no server, user or password, so no client command reads one.
@@ -193,6 +233,26 @@ func TestLogDatabaseSsl(t *testing.T) {
 		logDatabaseSsl(conn, "backup")
 		require.Len(t, hook.AllEntries(), 1)
 		assert.Equal(t, "backup: server supports zero-configuration ssl", hook.LastEntry().Message)
+		assert.Equal(t, logrus.InfoLevel, hook.LastEntry().Level)
+	})
+	t.Run("ClientCannotVerify", func(t *testing.T) {
+		hook := captureLog(t)
+		conn := mariadbTestConn()
+		conn.Ssl, conn.SslVerify = true, false
+		logDatabaseSsl(conn, "backup")
+		require.Len(t, hook.AllEntries(), 1)
+		assert.Equal(t, "backup: server supports zero-configuration ssl, but mariadb-dump cannot verify it", hook.LastEntry().Message)
+		assert.Equal(t, logrus.WarnLevel, hook.LastEntry().Level)
+	})
+	t.Run("NoPassword", func(t *testing.T) {
+		// Without a password, the client has nothing to verify the certificate against.
+		hook := captureLog(t)
+		conn := mariadbTestConn()
+		conn.Ssl, conn.SslVerify, conn.Password = true, false, ""
+		logDatabaseSsl(conn, "backup")
+		require.Len(t, hook.AllEntries(), 1)
+		assert.Equal(t, "backup: server supports zero-configuration ssl, but it cannot be verified without a password", hook.LastEntry().Message)
+		assert.Equal(t, logrus.WarnLevel, hook.LastEntry().Level)
 	})
 	t.Run("NoSsl", func(t *testing.T) {
 		hook := captureLog(t)
@@ -207,6 +267,100 @@ func TestLogDatabaseSsl(t *testing.T) {
 		conn.Socket, conn.Ssl = "/run/mysqld/mysqld.sock", true
 		logDatabaseSsl(conn, "backup")
 		assert.Empty(t, hook.AllEntries())
+	})
+}
+
+func TestClientError(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		hook := captureLog(t)
+		assert.NoError(t, clientError(" \n", "Sup3r$ecret", "backup"))
+		assert.Empty(t, hook.AllEntries())
+	})
+	t.Run("WarningLogged", func(t *testing.T) {
+		hook := captureLog(t)
+		stderr := "WARNING: option --ssl-verify-server-cert is disabled, because of an insecure passwordless login.\n" +
+			"mariadb-dump: Got error: 2005: \"Unknown server host 'mariadb'\" when trying to connect\n"
+		err := clientError(stderr, "Sup3r$ecret", "backup")
+		require.Error(t, err)
+		assert.Equal(t, "mariadb-dump: Got error: 2005: 'Unknown server host 'mariadb'' when trying to connect", err.Error())
+		require.Len(t, hook.AllEntries(), 1)
+		assert.Equal(t, "backup: option --ssl-verify-server-cert is disabled, because of an insecure passwordless login.", hook.LastEntry().Message)
+		assert.Equal(t, logrus.WarnLevel, hook.LastEntry().Level)
+	})
+	t.Run("WarningOnly", func(t *testing.T) {
+		// A failure that reports nothing but a warning falls back to the exit status.
+		hook := captureLog(t)
+		assert.NoError(t, clientError("WARNING: something\n", "", "restore"))
+		require.Len(t, hook.AllEntries(), 1)
+		assert.Equal(t, "restore: something", hook.LastEntry().Message)
+	})
+	t.Run("LeadingWarningsOnly", func(t *testing.T) {
+		// Server text after the client's error line stays part of the error.
+		hook := captureLog(t)
+		err := clientError("ERROR 1045 (28000): Access denied\nWARNING: x\nWARNING: y\n", "", "backup")
+		require.Error(t, err)
+		assert.Equal(t, "ERROR 1045 (28000): Access denied; WARNING: x; WARNING: y", err.Error())
+		assert.Empty(t, hook.AllEntries())
+	})
+	t.Run("ControlCharacters", func(t *testing.T) {
+		hook := captureLog(t)
+		err := clientError("WARNING: a\x1b[31mb\rc\nERROR 2026 (HY000): d\x1b[0me\r\n", "", "backup")
+		require.Error(t, err)
+		assert.NotContains(t, err.Error(), "\x1b")
+		assert.NotContains(t, err.Error(), "\r")
+		require.Len(t, hook.AllEntries(), 1)
+		assert.NotContains(t, hook.LastEntry().Message, "\x1b")
+		assert.NotContains(t, hook.LastEntry().Message, "\r")
+	})
+	t.Run("LinesJoined", func(t *testing.T) {
+		err := clientError("ERROR 1045 (28000): Access denied\r\nsecond line\n", "", "restore")
+		require.Error(t, err)
+		assert.Equal(t, "ERROR 1045 (28000): Access denied; second line", err.Error())
+	})
+	t.Run("PasswordMasked", func(t *testing.T) {
+		hook := captureLog(t)
+		err := clientError("WARNING: using Sup3r$ecret\nfailed for Sup3r$ecret\n", "Sup3r$ecret", "backup")
+		require.Error(t, err)
+		assert.NotContains(t, err.Error(), "Sup3r$ecret")
+		require.Len(t, hook.AllEntries(), 1)
+		assert.NotContains(t, hook.LastEntry().Message, "Sup3r$ecret")
+	})
+}
+
+func TestClientVerifiesSsl(t *testing.T) {
+	for _, tc := range []struct {
+		name, output string
+		want         bool
+	}{
+		{"MariaDB118", "mariadb-dump from 11.8.6-MariaDB, client 10.19 for debian-linux-gnu (x86_64)", true},
+		{"MariaDB114", "mariadb  Ver 15.1 Distrib 11.4.2-MariaDB, for debian-linux-gnu (x86_64)", true},
+		{"MariaDB123", "mariadb from 12.3.3-MariaDB, client 15.2 for Linux (x86_64)", true},
+		{"MariaDB113", "mariadb  Ver 15.1 Distrib 11.3.2-MariaDB, for debian-linux-gnu (x86_64)", false},
+		{"MariaDB1011", "mysqldump  Ver 10.19 Distrib 10.11.6-MariaDB, for debian-linux-gnu (x86_64)", false},
+		{"MySQL80", "mysqldump  Ver 8.0.36 for Linux on x86_64 (MySQL Community Server - GPL)", false},
+		{"Empty", "", false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			bin, runs := fakeClient(t, tc.output, 0)
+			assert.Equal(t, tc.want, clientVerifiesSsl(bin))
+			assert.Equal(t, tc.want, clientVerifiesSsl(bin))
+			assert.Equal(t, []string{"--no-defaults --version"}, runArgs(t, runs), "expected one cached check")
+		})
+	}
+	t.Run("Missing", func(t *testing.T) {
+		assert.False(t, clientVerifiesSsl(filepath.Join(t.TempDir(), "missing")))
+	})
+	t.Run("TimeoutNotCached", func(t *testing.T) {
+		prevTimeout, prevDelay := clientProbeTimeout, clientProbeWaitDelay
+		t.Cleanup(func() { clientProbeTimeout, clientProbeWaitDelay = prevTimeout, prevDelay })
+		clientProbeTimeout, clientProbeWaitDelay = 200*time.Millisecond, 200*time.Millisecond
+
+		bin := filepath.Join(t.TempDir(), "client")
+		require.NoError(t, os.WriteFile(bin, []byte("#!/bin/sh\necho 'from 11.8.6-MariaDB'\nexec sleep 30\n"), 0o700))
+
+		assert.False(t, clientVerifiesSsl(bin))
+		_, cached := clientVersions.Load(bin)
+		assert.False(t, cached)
 	})
 }
 
