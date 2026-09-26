@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -109,4 +110,56 @@ func TestClusterNodesMod_InvalidRole(t *testing.T) {
 		t.Fatalf("expected ExitCoder, got %T", err)
 	}
 	assert.Equal(t, 2, ec.ExitCode())
+}
+
+// TestClusterNodesMod_Confirm verifies that updating a node asks for confirmation, and that the command exits
+// with a usage error when it cannot ask.
+func TestClusterNodesMod_Confirm(t *testing.T) {
+	t.Setenv("PHOTOPRISM_CLI", "")
+
+	c := get.Config()
+	prevEdition := c.Options().Edition
+	prevRole := c.Options().NodeRole
+	c.Options().Edition = config.Portal
+	c.Options().NodeRole = cluster.RolePortal
+	t.Cleanup(func() {
+		c.Options().Edition = prevEdition
+		c.Options().NodeRole = prevRole
+	})
+
+	requireTestDb(t)
+
+	r, err := reg.NewClientRegistryWithConfig(c)
+	require.NoError(t, err)
+	require.NoError(t, r.Put(&reg.Node{Node: cluster.Node{Name: "pp-mod-confirm", Role: cluster.RoleInstance, DisplayName: "Reported"}}))
+
+	displayName := func() string {
+		n, findErr := r.FindByName("pp-mod-confirm")
+		require.NoError(t, findErr)
+		require.NotNil(t, n)
+		return n.DisplayName
+	}
+
+	t.Run("NoTerminal", func(t *testing.T) {
+		_, runErr := RunWithTestContext(ClusterNodesModCommand, []string{"mod", "--display-name=Pinned", "pp-mod-confirm"})
+
+		var exit cli.ExitCoder
+		require.ErrorAs(t, runErr, &exit)
+		assert.Equal(t, 2, exit.ExitCode())
+		assert.Equal(t, "Reported", displayName())
+	})
+	t.Run("AnsweredNo", func(t *testing.T) {
+		pipeResetAnswers(t, "n\n")
+
+		_, runErr := RunWithTestContext(ClusterNodesModCommand, []string{"mod", "--display-name=Pinned", "pp-mod-confirm"})
+
+		assert.NoError(t, runErr)
+		assert.Equal(t, "Reported", displayName())
+	})
+	t.Run("DryRun", func(t *testing.T) {
+		_, runErr := RunWithTestContext(ClusterNodesModCommand, []string{"mod", "--display-name=Pinned", "--dry-run", "pp-mod-confirm"})
+
+		assert.NoError(t, runErr)
+		assert.Equal(t, "Reported", displayName())
+	})
 }

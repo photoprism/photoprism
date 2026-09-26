@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/manifoldco/promptui"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 
@@ -241,15 +240,11 @@ func facesMigrateAction(ctx *cli.Context) error {
 			"starts no new indexing and refuses people edits while it runs, but a pass already under way can " +
 			"still force a re-run; restart the instance afterwards to load %s"}, clean.Log(plan.Target))
 
-		if !RunNonInteractively(ctx.Bool("yes")) {
-			prompt := promptui.Prompt{
-				Label:     fmt.Sprintf("Migrate all face embeddings to %s?", plan.Target),
-				IsConfirm: true,
-			}
-			if _, promptErr := prompt.Run(); promptErr != nil {
-				log.Info("faces: migration canceled")
-				return nil
-			}
+		if proceed, confirmErr := ConfirmAction(ctx.Bool("yes"), fmt.Sprintf("Migrate all face embeddings to %s", plan.Target)); confirmErr != nil {
+			return confirmErr
+		} else if !proceed {
+			log.Info("faces: migration canceled")
+			return nil
 		}
 
 		result, migrateErr := w.Migrate(ctx.Context, photoprism.FacesMigrateOptions{

@@ -3,7 +3,6 @@ package commands
 import (
 	"fmt"
 
-	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -60,12 +59,10 @@ func videoTranscodeAction(ctx *cli.Context) error {
 			}
 		}
 
-		if !ctx.Bool("dry-run") && !RunNonInteractively(ctx.Bool("yes")) {
-			prompt := promptui.Prompt{
-				Label:     fmt.Sprintf("Transcode %d video files?", len(plans)),
-				IsConfirm: true,
-			}
-			if _, err = prompt.Run(); err != nil {
+		if !ctx.Bool("dry-run") {
+			if proceed, confirmErr := ConfirmAction(ctx.Bool("yes"), fmt.Sprintf("Transcode %d video files", len(plans))); confirmErr != nil {
+				return confirmErr
+			} else if !proceed {
 				log.Info("transcode: canceled")
 				return nil
 			}

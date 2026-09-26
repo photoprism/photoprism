@@ -4,7 +4,6 @@ import (
 	"context"
 	"time"
 
-	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -63,16 +62,10 @@ func placesUpdateAction(ctx *cli.Context) error {
 	conf.InitDb()
 	defer conf.Shutdown()
 
-	if !RunNonInteractively(ctx.Bool("yes")) {
-		confirmPrompt := promptui.Prompt{
-			Label:     "Interrupting the update may lead to inconsistent location information. Continue?",
-			IsConfirm: true,
-		}
-
-		// Abort?
-		if _, confirmErr := confirmPrompt.Run(); confirmErr != nil {
-			return nil
-		}
+	if proceed, confirmErr := ConfirmAction(ctx.Bool("yes"), "Interrupting the update may lead to inconsistent location information. Continue"); confirmErr != nil {
+		return confirmErr
+	} else if !proceed {
+		return nil
 	}
 
 	start := time.Now()

@@ -9,7 +9,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -74,12 +73,10 @@ func videoTrimAction(ctx *cli.Context) error {
 			}
 		}
 
-		if !ctx.Bool("dry-run") && !RunNonInteractively(ctx.Bool("yes")) {
-			prompt := promptui.Prompt{
-				Label:     fmt.Sprintf("Trim %d video files?", len(plans)),
-				IsConfirm: true,
-			}
-			if _, err = prompt.Run(); err != nil {
+		if !ctx.Bool("dry-run") {
+			if proceed, confirmErr := ConfirmAction(ctx.Bool("yes"), fmt.Sprintf("Trim %d video files", len(plans))); confirmErr != nil {
+				return confirmErr
+			} else if !proceed {
 				log.Info("trim: canceled")
 				return nil
 			}

@@ -9,7 +9,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
@@ -274,8 +273,9 @@ func clusterNodesRotateAction(ctx *cli.Context) error {
 			case rotateSecret:
 				what = "node secret"
 			}
-			prompt := promptui.Prompt{Label: fmt.Sprintf("Rotate %s for %s?", what, clean.LogQuote(name)), IsConfirm: true}
-			if _, err := prompt.Run(); err != nil {
+			if proceed, confirmErr := ConfirmAction(false, fmt.Sprintf("Rotate %s for %s", what, clean.LogQuote(name))); confirmErr != nil {
+				return confirmErr
+			} else if !proceed {
 				log.Infof("rotation canceled for %s", clean.LogQuote(name))
 				return nil
 			}
