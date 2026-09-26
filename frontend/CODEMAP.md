@@ -94,7 +94,7 @@ Theming & UI
 - Global components: register in `src/component/components.js` when they are broadly reused
 
 Testing
-- Vitest config: `frontend/vitest.config.mjs` (Vue plugin, alias map to `src/*`), `tests/vitest/**/*`
+- Vitest config: `frontend/vitest.config.mjs` (Vue plugin, alias map to `src/*`; with `CUSTOM_SRC`, the build's `overlayResolver` instead), `tests/vitest/**/*`
 - Run: `cd frontend && npm run test` (or `make test-js` from repo root)
 - Acceptance: TestCafe configs in `frontend/tests/acceptance`; run against a live server
 - Detailed test/lint guide (humans + agents): `frontend/tests/README.md`
@@ -142,7 +142,7 @@ Common How‑Tos
 Conventions & Safety
 - Avoid `v-html`; use `v-sanitize` or `$util.sanitizeHtml()` (build enforces this)
 - Keep big components lazy if needed; split views logically under `src/page`
-- Respect aliases in `vitest.config.mjs` when importing (`app`, `common`, `component`, `model`, `options`, `page`)
+- Import through the bare module roots (`app`, `common`, `component`, `model`, `options`, `page`), which both the build and Vitest resolve, so edition overlays apply
 
 Frequently Touched Files
 - Bootstrap: `src/app.js`, `src/app.vue`

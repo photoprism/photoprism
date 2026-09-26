@@ -49,13 +49,14 @@ export function findFile(base) {
   return null;
 }
 
-// overlayResolver resolves bare imports from source files like webpack's resolve.modules with
-// preferRelative: the importer's directory first, then each root in order (an edition overlay
-// before frontend/src), then node_modules. Relative and absolute imports are left alone, so an
-// overlay can import the CE file it replaces through a relative path.
-export function overlayResolver({ roots }) {
+// overlayResolver resolves bare imports from files in roots or importers like webpack's
+// resolve.modules with preferRelative: the importer's directory, then each root in order (an
+// edition overlay before frontend/src), then node_modules. Relative and absolute imports, which
+// let an overlay import the CE file it replaces, and bare imports with ".." segments are left to Vite.
+export function overlayResolver({ roots, importers = [] }) {
   const sources = roots.map((r) => path.resolve(r));
-  const inSources = (file) => sources.some((root) => file.startsWith(root + path.sep));
+  const allowed = [...sources, ...importers.map((r) => path.resolve(r))];
+  const inSources = (file) => allowed.some((root) => file.startsWith(root + path.sep));
 
   return {
     name: "photoprism:overlay-resolver",
@@ -68,7 +69,7 @@ export function overlayResolver({ roots }) {
       const [bare, query] = source.split("?");
       const file = importer.split("?")[0];
 
-      if (!inSources(file)) {
+      if (!bare || !inSources(file) || bare.split(/[\\/]/).includes("..")) {
         return null;
       }
 

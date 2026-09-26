@@ -70,6 +70,8 @@ describe("vite.plugins", () => {
       "src/locales/json/de.json": "{}",
       "custom/page/admin.vue": "",
       "custom/common/hooks.js": "",
+      "tests/common/helper.js": "",
+      "src.js": "",
     };
     for (const [file, content] of Object.entries(files)) {
       fs.mkdirSync(path.dirname(path.join(tmp, file)), { recursive: true });
@@ -116,6 +118,20 @@ describe("vite.plugins", () => {
       expect(r.resolveId("/abs/file.js", importer)).toBeNull();
       expect(r.resolveId("\0virtual", importer)).toBeNull();
       expect(r.resolveId("vue", importer)).toBeNull();
+    });
+    it("lets files in the importer directories use bare imports", () => {
+      const r = overlayResolver({ roots: [path.join(tmp, "custom"), path.join(tmp, "src")], importers: [path.join(tmp, "tests")] });
+      expect(r.resolveId("page/admin.vue", path.join(tmp, "tests/page.test.js"))).toBe(path.join(tmp, "custom/page/admin.vue"));
+      expect(overlayResolver({ roots: [path.join(tmp, "src")] }).resolveId("common/api", path.join(tmp, "tests/api.test.js"))).toBeNull();
+      expect(r.resolveId("common/helper", path.join(tmp, "tests/page/page.test.js"))).toBeNull();
+    });
+    it("leaves empty bare imports and those with parent segments alone", () => {
+      const r = overlayResolver({ roots: [path.join(tmp, "src")] });
+      const importer = path.join(tmp, "src/app.js");
+      expect(r.resolveId("common/../common/api", importer)).toBeNull();
+      expect(r.resolveId("common/../common/api?raw", importer)).toBeNull();
+      expect(r.resolveId("?raw", importer)).toBeNull();
+      expect(r.resolveId("common/api", importer)).toBe(path.join(tmp, "src/common/api.js"));
     });
     it("ignores importers outside the source roots", () => {
       const r = overlayResolver({ roots: [path.join(tmp, "src")] });
