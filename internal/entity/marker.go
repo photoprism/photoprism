@@ -279,9 +279,9 @@ func (m *Marker) HasFace(f *Face, dist float64) bool {
 }
 
 // subjSrcSharesFace reports whether a subject source may propagate its name onto
-// the shared Face and its related markers. SrcAuto never does (that is what face
-// clustering itself manages), and SrcXmp is excluded too so an imported XMP name
-// labels only its own marker - there is no XMP-driven clustering in v1.
+// the shared Face and its related markers. One SrcAuto or SrcXmp name never does, so
+// an imported XMP name labels only its own marker; names that agree may still name a
+// cluster through consensus naming.
 func subjSrcSharesFace(src string) bool {
 	return src != SrcAuto && src != SrcXmp
 }

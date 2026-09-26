@@ -131,7 +131,7 @@ type facesRunResult struct {
 	// Retried counts the clusters the second pass at face-cluster-core-retry added, apart from
 	// Added, since an operator reading one combined number cannot tell whether it did anything.
 	Retried int
-	// Named counts the clusters named after the person their matched markers agree on.
+	// Named counts the clusters named after the person their recognized faces agree on.
 	Named      int
 	Updated    int
 	Assigned   int
@@ -327,7 +327,7 @@ func (w *Faces) start(opt FacesOptions) (result facesRunResult, err error) {
 		}
 	}
 
-	// Name the clusters whose matched markers agree on one person. Gated on matching like the retry
+	// Name the clusters whose recognized faces agree on one person. Gated on matching like the retry
 	// pass, since a run that stopped early leaves markers where it would not have left them.
 	if named := w.nameByConsensus(matched); named > 0 {
 		changed = true

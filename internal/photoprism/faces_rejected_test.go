@@ -213,3 +213,26 @@ func TestFaces_AuditRejectedMatch(t *testing.T) {
 		assert.NotNil(t, m.MatchedAt)
 	})
 }
+
+// TestFaces_AuditXmpName pins that the audit leaves an XMP name in a cluster named after someone else
+// as it is, since an XMP name labels only its own marker.
+func TestFaces_AuditXmpName(t *testing.T) {
+	w := isolatedTestFaces(t, "facesauditxmp")
+
+	alice := consensusTestSubject(t, "Audit Xmp Alice")
+	micha := consensusTestSubject(t, "Audit Xmp Micha")
+	f := consensusTestFace(t, 1)
+	require.NoError(t, f.Update("SubjUID", alice.SubjUID))
+	xmp := consensusTestMarkers(t, f, 1, micha.SubjUID, entity.SrcXmp, false)[0]
+	hook := captureLog(t)
+
+	require.NoError(t, w.Audit(true, ""))
+	assert.Contains(t, loggedMessages(hook, logrus.InfoLevel), "faces: found 1 marker with an XMP name in a cluster named after someone else")
+	assert.NotContains(t, strings.Join(loggedMessages(hook, logrus.WarnLevel), "\n"), xmp)
+
+	m := entity.FindMarker(xmp)
+	require.NotNil(t, m)
+	assert.Equal(t, micha.SubjUID, m.SubjUID, "--fix keeps the XMP name")
+	assert.Equal(t, entity.SrcXmp, m.SubjSrc)
+	assert.Equal(t, f.ID, m.FaceID)
+}

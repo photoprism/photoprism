@@ -19,8 +19,9 @@ type FacesConsensusResult struct {
 	Updated int
 }
 
-// NameByConsensus names the unnamed clusters whose automatically named markers agree on one person,
-// which also names their unnamed markers. The name keeps its automatic source, so a reset clears it.
+// NameByConsensus names the unnamed clusters whose recognized faces agree on one person, counting
+// automatic names and XMP names of confirmed people. It also names the unnamed markers and keeps the
+// automatic source, so a reset clears the name.
 func (w *Faces) NameByConsensus() (result FacesConsensusResult, err error) {
 	if w.Canceled() {
 		return result, nil
@@ -35,7 +36,7 @@ func (w *Faces) NameByConsensus() (result FacesConsensusResult, err error) {
 	return w.nameConsensusFaces(candidates)
 }
 
-// nameConsensusFaces names each candidate cluster after the person its automatic names agree on.
+// nameConsensusFaces names each candidate cluster after the person its votes agree on.
 func (w *Faces) nameConsensusFaces(candidates []query.FaceConsensus) (result FacesConsensusResult, err error) {
 	ids := make([]string, len(candidates))
 
@@ -79,7 +80,7 @@ func (w *Faces) nameConsensusFaces(candidates []query.FaceConsensus) (result Fac
 		result.Named++
 		result.Updated += c.Unnamed
 
-		log.Debugf("faces: named cluster %s after %s, %d of %d markers agree", clean.Log(f.ID), entity.SubjNames.Log(c.SubjUID), c.Auto, c.Valid)
+		log.Debugf("faces: named cluster %s after %s, %d of %d markers agree, %d matched", clean.Log(f.ID), entity.SubjNames.Log(c.SubjUID), c.Votes, c.Valid, c.Matched)
 	}
 
 	return result, nil
@@ -108,7 +109,7 @@ func (w *Faces) nameByConsensus(matched bool) int {
 		log.Errorf("faces: %s (name by consensus)", err)
 		return res.Named
 	} else if res.Named > 0 {
-		log.Infof("faces: named %s after the person their matched markers agree on, updated %s [%s]",
+		log.Infof("faces: named %s after the person their recognized faces agree on, updated %s [%s]",
 			english.Plural(res.Named, "cluster", "clusters"), english.Plural(res.Updated, "marker", "markers"), time.Since(start))
 		return res.Named
 	}

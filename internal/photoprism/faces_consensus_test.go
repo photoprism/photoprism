@@ -134,10 +134,21 @@ func TestFaces_NameByConsensus(t *testing.T) {
 	consensusTestMarkers(t, manual, 1, alice.SubjUID, entity.SrcManual, false)
 	manualUnnamed := consensusTestMarkers(t, manual, 1, "", entity.SrcAuto, false)
 
+	// Bob is confirmed by nobody, so an XMP name for him neither votes nor blocks.
 	xmp := consensusTestFace(t, 5)
 	consensusTestMarkers(t, xmp, core, alice.SubjUID, entity.SrcAuto, false)
-	consensusTestMarkers(t, xmp, 1, bob.SubjUID, entity.SrcXmp, false)
+	xmpBob := consensusTestMarkers(t, xmp, 1, bob.SubjUID, entity.SrcXmp, false)
 	xmpUnnamed := consensusTestMarkers(t, xmp, 1, "", entity.SrcAuto, false)
+
+	// Carol is verified, so XMP names for her vote, alone or against another person.
+	carol := consensusTestSubject(t, "Consensus Carol")
+	require.NoError(t, entity.UnscopedDb().Model(carol).UpdateColumn("verified", true).Error)
+	xmpVote := consensusTestFace(t, 8)
+	consensusTestMarkers(t, xmpVote, core-1, carol.SubjUID, entity.SrcAuto, false)
+	xmpVoters := consensusTestMarkers(t, xmpVote, 1, carol.SubjUID, entity.SrcXmp, false)
+	xmpOther := consensusTestFace(t, 9)
+	consensusTestMarkers(t, xmpOther, core, alice.SubjUID, entity.SrcAuto, false)
+	xmpOtherVoter := consensusTestMarkers(t, xmpOther, 1, carol.SubjUID, entity.SrcXmp, false)
 
 	minority := consensusTestFace(t, 6)
 	consensusTestMarkers(t, minority, core, alice.SubjUID, entity.SrcAuto, false)
@@ -147,7 +158,7 @@ func TestFaces_NameByConsensus(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Run("Success", func(t *testing.T) {
-		assert.Equal(t, FacesConsensusResult{Named: 1, Updated: 2}, result)
+		assert.Equal(t, FacesConsensusResult{Named: 3, Updated: 3}, result)
 
 		f := entity.FindFace(qualify.ID)
 		require.NotNil(t, f)
@@ -165,6 +176,22 @@ func TestFaces_NameByConsensus(t *testing.T) {
 			assert.False(t, m.MarkerReview)
 		}
 	})
+	t.Run("XmpNeutral", func(t *testing.T) {
+		assert.Equal(t, alice.SubjUID, entity.FindFace(xmp.ID).SubjUID)
+		assert.Equal(t, []string{alice.SubjUID}, consensusTestSubjects(t, xmpUnnamed))
+
+		m := entity.FindMarker(xmpBob[0])
+		require.NotNil(t, m)
+		assert.Equal(t, bob.SubjUID, m.SubjUID, "the XMP marker keeps its own link")
+		assert.Equal(t, entity.SrcXmp, m.SubjSrc)
+	})
+	t.Run("XmpVote", func(t *testing.T) {
+		assert.Equal(t, carol.SubjUID, entity.FindFace(xmpVote.ID).SubjUID)
+
+		m := entity.FindMarker(xmpVoters[0])
+		require.NotNil(t, m)
+		assert.Equal(t, entity.SrcXmp, m.SubjSrc, "the XMP marker keeps its source")
+	})
 	t.Run("Unchanged", func(t *testing.T) {
 		for name, tc := range map[string]struct {
 			face    *entity.Face
@@ -174,7 +201,7 @@ func TestFaces_NameByConsensus(t *testing.T) {
 			"BelowCore":   {belowCore, belowCoreUnnamed, []string{""}},
 			"TwoSubjects": {twoSubjects, append(twoSubjectsBob, twoSubjectsUnnamed...), []string{bob.SubjUID, ""}},
 			"Manual":      {manual, manualUnnamed, []string{""}},
-			"Xmp":         {xmp, xmpUnnamed, []string{""}},
+			"XmpOther":    {xmpOther, xmpOtherVoter, []string{carol.SubjUID}},
 			"Minority":    {minority, minorityUnnamed, consensusTestRepeat("", core+1)},
 		} {
 			f := entity.FindFace(tc.face.ID)
@@ -327,7 +354,7 @@ func TestFaces_nameConsensusFaces(t *testing.T) {
 		f := consensusTestFace(t, 1)
 		consensusTestMarkers(t, f, core, alice.SubjUID, entity.SrcAuto, false)
 		unnamed := consensusTestMarkers(t, f, 1, "", entity.SrcAuto, false)
-		candidates := []query.FaceConsensus{{FaceID: f.ID, SubjUID: alice.SubjUID, Auto: core, Unnamed: 1, Valid: core + 1}}
+		candidates := []query.FaceConsensus{{FaceID: f.ID, SubjUID: alice.SubjUID, Votes: core, Unnamed: 1, Valid: core + 1}}
 		require.NoError(t, f.Update("SubjUID", bob.SubjUID))
 
 		result, err := w.nameConsensusFaces(candidates)
@@ -350,7 +377,7 @@ func TestFaces_NameByConsensusCanceled(t *testing.T) {
 	alice := consensusTestSubject(t, "Consensus Canceled Alice")
 	f := consensusTestFace(t, 1)
 	consensusTestMarkers(t, f, core, alice.SubjUID, entity.SrcAuto, false)
-	candidates := []query.FaceConsensus{{FaceID: f.ID, SubjUID: alice.SubjUID, Auto: core, Valid: core}}
+	candidates := []query.FaceConsensus{{FaceID: f.ID, SubjUID: alice.SubjUID, Votes: core, Valid: core}}
 
 	require.NoError(t, mutex.FacesWorker.Start())
 	t.Cleanup(mutex.FacesWorker.Stop)
@@ -413,7 +440,7 @@ func TestFaces_auditConsensus(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, 1, n)
 		assert.Contains(t, loggedMessages(hook, logrus.InfoLevel),
-			"faces: found 1 unnamed cluster whose matched markers agree on one person, which a completed recognition run names")
+			"faces: found 1 unnamed cluster whose recognized faces agree on one person, which a completed recognition run names")
 	})
 	t.Run("Subject", func(t *testing.T) {
 		n, err := w.auditConsensus(alice.SubjUID)
@@ -426,14 +453,14 @@ func TestFaces_auditConsensus(t *testing.T) {
 		n, err := w.auditConsensus(bob.SubjUID)
 		require.NoError(t, err)
 		assert.Zero(t, n)
-		assert.Contains(t, loggedMessages(hook, logrus.InfoLevel), "faces: found no unnamed clusters whose matched markers agree on "+entity.SubjNames.Log(bob.SubjUID))
+		assert.Contains(t, loggedMessages(hook, logrus.InfoLevel), "faces: found no unnamed clusters whose recognized faces agree on "+entity.SubjNames.Log(bob.SubjUID))
 	})
 	t.Run("AuditFixDoesNotName", func(t *testing.T) {
 		hook := captureLog(t)
 
 		require.NoError(t, w.Audit(true, ""))
 		assert.Contains(t, loggedMessages(hook, logrus.InfoLevel),
-			"faces: found 1 unnamed cluster whose matched markers agree on one person, which a completed recognition run names")
+			"faces: found 1 unnamed cluster whose recognized faces agree on one person, which a completed recognition run names")
 		assert.Empty(t, entity.FindFace(f.ID).SubjUID)
 		assert.Equal(t, []string{""}, consensusTestSubjects(t, unnamed))
 	})
