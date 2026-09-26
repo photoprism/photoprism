@@ -20,9 +20,9 @@ import (
 //	@Tags		Labels
 //	@Accept		json
 //	@Produce	json
-//	@Success	200					{object}	i18n.Response
-//	@Failure	400,401,403,429,500	{object}	i18n.Response
-//	@Param		labels				body		form.Selection	true	"Label Selection"
+//	@Success	200						{object}	i18n.Response
+//	@Failure	400,401,403,413,429,500	{object}	i18n.Response
+//	@Param		labels					body		form.Selection	true	"Label Selection"
 //	@Router		/api/v1/batch/labels/delete [post]
 func BatchLabelsDelete(router *gin.RouterGroup) {
 	router.POST("/batch/labels/delete", func(c *gin.Context) {

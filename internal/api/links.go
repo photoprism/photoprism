@@ -220,10 +220,10 @@ func CreateLink(c *gin.Context) {
 //	@Tags		Links, Albums
 //	@Accept		json
 //	@Produce	json
-//	@Success	200						{object}	entity.Link
-//	@Failure	400,401,403,404,409,429	{object}	i18n.Response
-//	@Param		uid						path		string		true	"album uid"
-//	@Param		link					body		form.Link	true	"link properties (currently supported: slug, expires)"
+//	@Success	200							{object}	entity.Link
+//	@Failure	400,401,403,404,409,413,429	{object}	i18n.Response
+//	@Param		uid							path		string		true	"album uid"
+//	@Param		link						body		form.Link	true	"link properties (currently supported: slug, expires)"
 //	@Router		/api/v1/albums/{uid}/links [post]
 func CreateAlbumLink(router *gin.RouterGroup) {
 	router.POST("/albums/:uid/links", func(c *gin.Context) {
@@ -249,11 +249,11 @@ func CreateAlbumLink(router *gin.RouterGroup) {
 //	@Tags		Links, Albums
 //	@Accept		json
 //	@Produce	json
-//	@Success	200						{object}	entity.Link
-//	@Failure	400,401,403,429,409,500	{object}	i18n.Response
-//	@Param		uid						path		string		true	"album uid"
-//	@Param		linkuid					path		string		true	"link uid"
-//	@Param		link					body		form.Link	true	"properties to be updated (currently supported: slug, expires, token)"
+//	@Success	200							{object}	entity.Link
+//	@Failure	400,401,403,409,413,429,500	{object}	i18n.Response
+//	@Param		uid							path		string		true	"album uid"
+//	@Param		linkuid						path		string		true	"link uid"
+//	@Param		link						body		form.Link	true	"properties to be updated (currently supported: slug, expires, token)"
 //	@Router		/api/v1/albums/{uid}/links/{linkuid} [put]
 func UpdateAlbumLink(router *gin.RouterGroup) {
 	router.PUT("/albums/:uid/links/:link", func(c *gin.Context) {

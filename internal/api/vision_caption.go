@@ -18,9 +18,9 @@ import (
 //	@Id			PostVisionCaption
 //	@Tags		Vision
 //	@Produce	json
-//	@Success	200					{object}	vision.ApiResponse
-//	@Failure	401,403,404,429,501	{object}	i18n.Response
-//	@Param		images				body		vision.ApiRequest	true	"list of image file urls"
+//	@Success	200						{object}	vision.ApiResponse
+//	@Failure	401,403,404,413,429,501	{object}	i18n.Response
+//	@Param		images					body		vision.ApiRequest	true	"list of image file urls"
 //	@Router		/api/v1/vision/caption [post]
 func PostVisionCaption(router *gin.RouterGroup) {
 	router.POST("/vision/caption", func(c *gin.Context) {

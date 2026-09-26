@@ -37,9 +37,9 @@ import (
 //	@Tags		Cluster
 //	@Accept		json
 //	@Produce	json
-//	@Param		request				body		object	true	"registration payload (NodeName required; optional: NodeRole, Labels, AdvertiseUrl, SiteUrl, AppName, AppVersion, Theme, NodeUUID, RotateDatabase, RotateSecret). New-node joins require the Bearer join token. Existing-node mutations require a Bearer OAuth access token that belongs to the same node client."
-//	@Success	200,201				{object}	cluster.RegisterResponse
-//	@Failure	400,401,403,409,429	{object}	i18n.Response
+//	@Param		request					body		object	true	"registration payload (NodeName required; optional: NodeRole, Labels, AdvertiseUrl, SiteUrl, AppName, AppVersion, Theme, NodeUUID, RotateDatabase, RotateSecret). New-node joins require the Bearer join token. Existing-node mutations require a Bearer OAuth access token that belongs to the same node client."
+//	@Success	200,201					{object}	cluster.RegisterResponse
+//	@Failure	400,401,403,409,413,429	{object}	i18n.Response
 //	@Router		/api/v1/cluster/nodes/register [post]
 func ClusterNodesRegister(router *gin.RouterGroup) {
 	router.POST("/cluster/nodes/register", func(c *gin.Context) {

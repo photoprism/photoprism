@@ -395,11 +395,11 @@ func UploadCheckFile(destName string, rejectRaw bool, totalSizeLimit int64) (rem
 //	@Tags		Users, Files
 //	@Accept		json
 //	@Produce	json
-//	@Param		uid						path		string				true	"user uid"
-//	@Param		token					path		string				true	"upload token"
-//	@Param		options					body		form.UploadOptions	true	"processing options"
-//	@Success	200						{object}	i18n.Response
-//	@Failure	400,401,403,404,409,429	{object}	i18n.Response
+//	@Param		uid							path		string				true	"user uid"
+//	@Param		token						path		string				true	"upload token"
+//	@Param		options						body		form.UploadOptions	true	"processing options"
+//	@Success	200							{object}	i18n.Response
+//	@Failure	400,401,403,404,409,413,429	{object}	i18n.Response
 //	@Router		/api/v1/users/{uid}/upload/{token} [put]
 func ProcessUserUpload(router *gin.RouterGroup) {
 	router.PUT("/users/:uid/upload/:token", func(c *gin.Context) {

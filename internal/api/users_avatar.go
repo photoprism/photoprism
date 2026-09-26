@@ -29,10 +29,10 @@ import (
 //	@Tags			Users
 //	@Accept			multipart/form-data
 //	@Produce		json
-//	@Param			uid					path		string	true	"user uid"
-//	@Param			files				formData	file	true	"avatar image (png or jpeg, <= 20 MB)"
-//	@Success		200					{object}	entity.User
-//	@Failure		400,401,403,404,429	{object}	i18n.Response
+//	@Param			uid						path		string	true	"user uid"
+//	@Param			files					formData	file	true	"avatar image (png or jpeg, <= 20 MB)"
+//	@Success		200						{object}	entity.User
+//	@Failure		400,401,403,404,413,429	{object}	i18n.Response
 //	@Router			/api/v1/users/{uid}/avatar [post]
 func UploadUserAvatar(router *gin.RouterGroup) {
 	router.POST("/users/:uid/avatar", func(c *gin.Context) {

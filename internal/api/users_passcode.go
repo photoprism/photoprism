@@ -29,10 +29,10 @@ import (
 //	@Tags		Users
 //	@Accept		json
 //	@Produce	json
-//	@Param		uid				path		string			true	"user uid"
-//	@Param		request			body		form.Passcode	true	"passcode setup (password required)"
-//	@Success	201				{object}	entity.Passcode
-//	@Failure	400,401,403,429	{object}	i18n.Response
+//	@Param		uid					path		string			true	"user uid"
+//	@Param		request				body		form.Passcode	true	"passcode setup (password required)"
+//	@Success	201					{object}	entity.Passcode
+//	@Failure	400,401,403,413,429	{object}	i18n.Response
 //	@Router		/api/v1/users/{uid}/passcode [post]
 func CreateUserPasscode(router *gin.RouterGroup) {
 	router.POST("/users/:uid/passcode", func(c *gin.Context) {
@@ -97,10 +97,10 @@ func CreateUserPasscode(router *gin.RouterGroup) {
 //	@Tags		Users
 //	@Accept		json
 //	@Produce	json
-//	@Param		uid				path		string			true	"user uid"
-//	@Param		request			body		form.Passcode	true	"verification code"
-//	@Success	200				{object}	entity.Passcode
-//	@Failure	400,401,403,429	{object}	i18n.Response
+//	@Param		uid					path		string			true	"user uid"
+//	@Param		request				body		form.Passcode	true	"verification code"
+//	@Success	200					{object}	entity.Passcode
+//	@Failure	400,401,403,413,429	{object}	i18n.Response
 //	@Router		/api/v1/users/{uid}/passcode/confirm [post]
 func ConfirmUserPasscode(router *gin.RouterGroup) {
 	router.POST("/users/:uid/passcode/confirm", func(c *gin.Context) {
@@ -150,9 +150,9 @@ func ConfirmUserPasscode(router *gin.RouterGroup) {
 //	@Id			ActivateUserPasscode
 //	@Tags		Users
 //	@Produce	json
-//	@Param		uid				path		string	true	"user uid"
-//	@Success	200				{object}	entity.Passcode
-//	@Failure	401,403,404,429	{object}	i18n.Response
+//	@Param		uid					path		string	true	"user uid"
+//	@Success	200					{object}	entity.Passcode
+//	@Failure	401,403,404,413,429	{object}	i18n.Response
 //	@Router		/api/v1/users/{uid}/passcode/activate [post]
 func ActivateUserPasscode(router *gin.RouterGroup) {
 	router.POST("/users/:uid/passcode/activate", func(c *gin.Context) {
@@ -194,10 +194,10 @@ func ActivateUserPasscode(router *gin.RouterGroup) {
 //	@Tags		Users
 //	@Accept		json
 //	@Produce	json
-//	@Param		uid					path		string			true	"user uid"
-//	@Param		request				body		form.Passcode	true	"password for confirmation"
-//	@Success	200					{object}	i18n.Response
-//	@Failure	400,401,403,404,429	{object}	i18n.Response
+//	@Param		uid						path		string			true	"user uid"
+//	@Param		request					body		form.Passcode	true	"password for confirmation"
+//	@Success	200						{object}	i18n.Response
+//	@Failure	400,401,403,404,413,429	{object}	i18n.Response
 //	@Router		/api/v1/users/{uid}/passcode/deactivate [post]
 func DeactivateUserPasscode(router *gin.RouterGroup) {
 	router.POST("/users/:uid/passcode/deactivate", func(c *gin.Context) {

@@ -191,10 +191,10 @@ func ClusterGetNode(router *gin.RouterGroup) {
 //	@Tags		Cluster
 //	@Accept		json
 //	@Produce	json
-//	@Param		uuid				path		string	true	"node uuid"
-//	@Param		node				body		object	true	"properties to update (Role, DisplayName, Labels, AdvertiseUrl, SiteUrl, RedirectURIs, AllowGroups, AllowGroupRoles, GroupsFullView)"
-//	@Success	200					{object}	cluster.StatusResponse
-//	@Failure	400,401,403,404,429	{object}	i18n.Response
+//	@Param		uuid					path		string	true	"node uuid"
+//	@Param		node					body		object	true	"properties to update (Role, DisplayName, Labels, AdvertiseUrl, SiteUrl, RedirectURIs, AllowGroups, AllowGroupRoles, GroupsFullView)"
+//	@Success	200						{object}	cluster.StatusResponse
+//	@Failure	400,401,403,404,413,429	{object}	i18n.Response
 //	@Router		/api/v1/cluster/nodes/{uuid} [patch]
 func ClusterUpdateNode(router *gin.RouterGroup) {
 	router.PATCH("/cluster/nodes/:uuid", func(c *gin.Context) {

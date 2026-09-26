@@ -20,10 +20,10 @@ import (
 //	@Tags		Config
 //	@Accept		json
 //	@Produce	json
-//	@Param		name		path		string			true	"service name (e.g., hub)"
-//	@Param		connect		body		form.Connect	true	"connection token"
-//	@Success	200			{object}	gin.H
-//	@Failure	400,401,403	{object}	i18n.Response
+//	@Param		name			path		string			true	"service name (e.g., hub)"
+//	@Param		connect			body		form.Connect	true	"connection token"
+//	@Success	200				{object}	gin.H
+//	@Failure	400,401,403,413	{object}	i18n.Response
 //	@Router		/api/v1/connect/{name} [put]
 func Connect(router *gin.RouterGroup) {
 	router.PUT("/connect/:name", func(c *gin.Context) {

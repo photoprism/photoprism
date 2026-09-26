@@ -130,6 +130,7 @@ Format, Lint & Docs:
   audit                    Check the dependencies for known vulnerabilities
 
 Checks (also run by lint):
+  check-api-failure-codes   Check that API handlers document their 413 responses
   check-api-request-limits  Check request-body limit coverage in API handlers
   check-audit-events        Check audit-event formatting against its baseline
   check-libheif-install     Check libheif installer selection and version handling
@@ -1282,7 +1283,7 @@ docker-dummy-oidc:
 packer-digitalocean:
 	$(info Building DigitalOcean marketplace image...)
 	(cd ./setup/cloud/digitalocean && packer init digitalocean.pkr.hcl && packer build digitalocean.pkr.hcl)
-lint: lint-js lint-go lint-sh check-api-request-limits check-audit-events check-libheif-install check-cuda-install check-make-help check-scripts-copy-mode
+lint: lint-js lint-go lint-sh check-api-request-limits check-api-failure-codes check-audit-events check-libheif-install check-cuda-install check-make-help check-scripts-copy-mode
 lint-js:
 	$(info Linting JS code...)
 	$(MAKE) -C frontend lint
@@ -1295,6 +1296,9 @@ lint-sh:
 check-api-request-limits:
 	$(info Checking API request-body limits...)
 	bash ./scripts/lint/check-api-request-limits.sh
+check-api-failure-codes:
+	$(info Checking the 413 responses documented by API handlers...)
+	go run ./scripts/tools/check-api-failure-codes
 check-audit-events:
 	$(info Checking how event calls build their messages...)
 	go run ./scripts/tools/check-audit-events

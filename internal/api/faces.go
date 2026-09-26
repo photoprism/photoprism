@@ -52,10 +52,10 @@ func GetFace(router *gin.RouterGroup) {
 //	@Tags		Faces
 //	@Accept		json
 //	@Produce	json
-//	@Success	200							{object}	entity.Face
-//	@Failure	400,401,403,404,409,429,500	{object}	i18n.Response
-//	@Param		id							path		string		true	"face id"
-//	@Param		face						body		form.Face	true	"properties to be updated"
+//	@Success	200								{object}	entity.Face
+//	@Failure	400,401,403,404,409,413,429,500	{object}	i18n.Response
+//	@Param		id								path		string		true	"face id"
+//	@Param		face							body		form.Face	true	"properties to be updated"
 //	@Router		/api/v1/faces/{id} [put]
 func UpdateFace(router *gin.RouterGroup) {
 	router.PUT("/faces/:id", func(c *gin.Context) {

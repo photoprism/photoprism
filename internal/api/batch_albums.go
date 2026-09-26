@@ -20,9 +20,9 @@ import (
 //	@Tags		Albums
 //	@Accept		json
 //	@Produce	json
-//	@Success	200					{object}	i18n.Response
-//	@Failure	400,401,403,404,429	{object}	i18n.Response
-//	@Param		albums				body		form.Selection	true	"Album Selection"
+//	@Success	200						{object}	i18n.Response
+//	@Failure	400,401,403,404,413,429	{object}	i18n.Response
+//	@Param		albums					body		form.Selection	true	"Album Selection"
 //	@Router		/api/v1/batch/albums/delete [post]
 func BatchAlbumsDelete(router *gin.RouterGroup) {
 	router.POST("/batch/albums/delete", func(c *gin.Context) {

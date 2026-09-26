@@ -88,10 +88,10 @@ func GetPhoto(router *gin.RouterGroup) {
 //	@Tags		Photos
 //	@Accept		json
 //	@Produce	json
-//	@Success	200						{object}	entity.Photo
-//	@Failure	400,401,403,404,429,500	{object}	i18n.Response
-//	@Param		uid						path		string		true	"Photo UID"
-//	@Param		photo					body		form.Photo	true	"properties to be updated (only submit values that should be changed)"
+//	@Success	200							{object}	entity.Photo
+//	@Failure	400,401,403,404,413,429,500	{object}	i18n.Response
+//	@Param		uid							path		string		true	"Photo UID"
+//	@Param		photo						body		form.Photo	true	"properties to be updated (only submit values that should be changed)"
 //	@Router		/api/v1/photos/{uid} [put]
 func UpdatePhoto(router *gin.RouterGroup) {
 	router.PUT("/photos/:uid", func(c *gin.Context) {

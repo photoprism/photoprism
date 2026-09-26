@@ -47,8 +47,8 @@ func auditArchiveAccess(c *gin.Context, sess *entity.Session, action, outcome, b
 //	@Id			ZipCreate
 //	@Tags		Download
 //	@Produce	json
-//	@Failure	400,403,404	{object}	i18n.Response
-//	@Success	200			{file}		application/zip
+//	@Failure	400,403,404,413	{object}	i18n.Response
+//	@Success	200				{file}		application/zip
 //	@Router		/api/v1/zip [post]
 func ZipCreate(router *gin.RouterGroup) {
 	router.POST("/zip", func(c *gin.Context) {

@@ -113,8 +113,8 @@ func findFileMarker(c *gin.Context) (s *entity.Session, file *entity.File, marke
 //
 //	@Tags		Files
 //	@Produce	json
-//	@Success	201					{object}	entity.Marker
-//	@Failure	400,401,403,409,500	{object}	i18n.Response
+//	@Success	201						{object}	entity.Marker
+//	@Failure	400,401,403,409,413,500	{object}	i18n.Response
 //	@Router		/api/v1/markers [post]
 func CreateMarker(router *gin.RouterGroup) {
 	router.POST("/markers", func(c *gin.Context) {
@@ -237,10 +237,10 @@ func CreateMarker(router *gin.RouterGroup) {
 //	@Tags		Files
 //	@Accept		json
 //	@Produce	json
-//	@Param		marker_uid				path		string		true	"marker uid"
-//	@Param		marker					body		form.Marker	true	"marker properties"
-//	@Success	200						{object}	entity.Marker
-//	@Failure	400,401,403,404,409,429	{object}	i18n.Response
+//	@Param		marker_uid					path		string		true	"marker uid"
+//	@Param		marker						body		form.Marker	true	"marker properties"
+//	@Success	200							{object}	entity.Marker
+//	@Failure	400,401,403,404,409,413,429	{object}	i18n.Response
 //	@Router		/api/v1/markers/{marker_uid} [put]
 func UpdateMarker(router *gin.RouterGroup) {
 	router.PUT("/markers/:marker_uid", func(c *gin.Context) {

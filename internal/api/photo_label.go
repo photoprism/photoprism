@@ -25,10 +25,10 @@ import (
 //	@Tags		Labels, Photos
 //	@Accept		json
 //	@Produce	json
-//	@Success	200						{object}	entity.Photo
-//	@Failure	400,401,403,404,429,500	{object}	i18n.Response
-//	@Param		label					body		form.Label	true	"label properties"
-//	@Param		uid						path		string		true	"photo uid"
+//	@Success	200							{object}	entity.Photo
+//	@Failure	400,401,403,404,413,429,500	{object}	i18n.Response
+//	@Param		label						body		form.Label	true	"label properties"
+//	@Param		uid							path		string		true	"photo uid"
 //	@Router		/api/v1/photos/{uid}/label [post]
 func AddPhotoLabel(router *gin.RouterGroup) {
 	router.POST("/photos/:uid/label", func(c *gin.Context) {
@@ -219,11 +219,11 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 //	@Tags		Labels, Photos
 //	@Accept		json
 //	@Produce	json
-//	@Success	200						{object}	entity.Photo
-//	@Failure	400,401,403,404,429,500	{object}	i18n.Response
-//	@Param		uid						path		string		true	"photo uid"
-//	@Param		id						path		string		true	"label id"
-//	@Param		label					body		form.Label	true	"properties to be updated (currently supports: uncertainty)"
+//	@Success	200							{object}	entity.Photo
+//	@Failure	400,401,403,404,413,429,500	{object}	i18n.Response
+//	@Param		uid							path		string		true	"photo uid"
+//	@Param		id							path		string		true	"label id"
+//	@Param		label						body		form.Label	true	"properties to be updated (currently supports: uncertainty)"
 //	@Router		/api/v1/photos/{uid}/label/{id} [put]
 func UpdatePhotoLabel(router *gin.RouterGroup) {
 	router.PUT("/photos/:uid/label/:id", func(c *gin.Context) {
