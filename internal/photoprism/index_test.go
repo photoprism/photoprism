@@ -1,13 +1,17 @@
 package photoprism
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 	"time"
 
 	"github.com/dustin/go-humanize/english"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestIndex_Start(t *testing.T) {
@@ -70,4 +74,42 @@ func TestIndex_File(t *testing.T) {
 	err := ind.FileName("xxx", IndexOptionsAll(cfg))
 
 	assert.Equal(t, IndexFailed, err.Status)
+}
+
+func TestIndex_forgetReplacedPreview(t *testing.T) {
+	c := Config()
+	ind := NewIndex(c, NewConvert(c), NewFiles(), NewPhotos())
+
+	// newPreview writes a preview below dir and records its time in the file cache.
+	newPreview := func(t *testing.T, dir string) *MediaFile {
+		fileName := filepath.Join(dir, "zzforgetpreview", "clip.mp4.jpg")
+		require.NoError(t, fs.WriteString(fileName, "preview"))
+		t.Cleanup(func() { _ = os.RemoveAll(filepath.Dir(fileName)) })
+
+		img, err := NewMediaFile(fileName)
+		require.NoError(t, err)
+		require.False(t, ind.files.Ignore(img.RootRelName(), img.Root(), img.ModTime(), false))
+		require.True(t, ind.files.Ignore(img.RootRelName(), img.Root(), img.ModTime(), false))
+
+		return img
+	}
+
+	t.Run("Sidecar", func(t *testing.T) {
+		img := newPreview(t, c.SidecarPath())
+		require.True(t, img.InSidecar())
+
+		ind.forgetReplacedPreview(img)
+		assert.False(t, ind.files.Ignore(img.RootRelName(), img.Root(), img.ModTime(), false))
+	})
+	t.Run("Originals", func(t *testing.T) {
+		img := newPreview(t, c.OriginalsPath())
+		require.False(t, img.InSidecar())
+
+		// A preview next to the original is not rewritten by a forced conversion, so it stays cached.
+		ind.forgetReplacedPreview(img)
+		assert.True(t, ind.files.Ignore(img.RootRelName(), img.Root(), img.ModTime(), false))
+	})
+	t.Run("Nil", func(t *testing.T) {
+		assert.NotPanics(t, func() { ind.forgetReplacedPreview(nil) })
+	})
 }

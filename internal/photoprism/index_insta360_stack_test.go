@@ -208,6 +208,43 @@ func TestIndex_Insta360LateCapture(t *testing.T) {
 	}
 }
 
+// TestIndexMain_ReplacedPreview verifies that a preview replaced with a forced conversion leaves the file
+// cache, so that it is indexed again whatever its modification time.
+func TestIndexMain_ReplacedPreview(t *testing.T) {
+	folder := "insta360replacedpreview"
+	cfg := newInsta360StackConfig(t, folder, false)
+	dir := filepath.Join(cfg.OriginalsPath(), folder)
+	previewName := folder + "/" + insta360StackLeft + ".jpg"
+
+	writeInsta360StackMedia(t, cfg, dir, insta360StackLeft)
+	indexInsta360StackFolder(cfg, folder, false, true)
+	writeInsta360StackMedia(t, cfg, dir, insta360StackRight)
+
+	ind := NewIndex(cfg, NewConvert(cfg), NewFiles(), NewPhotos())
+	require.NoError(t, ind.files.Init())
+	require.True(t, ind.files.Exists(previewName, entity.RootSidecar))
+
+	left, err := NewMediaFile(filepath.Join(dir, insta360StackLeft))
+	require.NoError(t, err)
+	right, err := NewMediaFile(filepath.Join(dir, insta360StackRight))
+	require.NoError(t, err)
+
+	related := &RelatedFiles{Main: left, Files: MediaFiles{left, right}}
+	result := IndexMain(related, ind, NewIndexOptions(folder, false, true, true, false, true, cfg))
+	require.NoError(t, result.Err)
+
+	// IndexMain indexes only the main file, so the replaced preview must no longer be cached.
+	var replaced bool
+
+	// Only the replacement made from both lenses has the 2:1 shape of an equirectangular image.
+	for _, f := range related.Files[2:] {
+		replaced = replaced || f.RootRelName() == previewName && f.InSidecar() && f.Width() == 2*f.Height()
+	}
+
+	require.True(t, replaced, "the preview must have been replaced")
+	assert.False(t, ind.files.Exists(previewName, entity.RootSidecar))
+}
+
 // TestIndex_Insta360StackControls verifies that stacking of other files and sidecar renaming
 // follow the actual file names.
 func TestIndex_Insta360StackControls(t *testing.T) {
@@ -806,12 +843,25 @@ func TestIndex_Insta360Cover(t *testing.T) {
 				require.NoError(t, photo.Archive())
 			}
 
-			// File times have a resolution of one second, so the preview replaced by the late lens gets an older
-			// time; otherwise a run within the same second would take it for unchanged.
-			backdateInsta360Previews(t, filepath.Join(cfg.SidecarPath(), folder))
+			// A preview replaced in the same run is indexed again even with the same whole-second time. A run
+			// that skips the archived photo leaves its row to a later run, which compares the recorded time.
+			sameSecond := !tc.archive && !tc.rightPreview
+			var next time.Time
+
+			if sameSecond {
+				next = sameSecondInsta360Previews(t, cfg, folder)
+			} else {
+				backdateInsta360Previews(t, filepath.Join(cfg.SidecarPath(), folder))
+			}
 
 			writeInsta360StackMedia(t, cfg, dir, tc.late)
 			indexInsta360StackFolder(cfg, folder, false, true)
+
+			// A slow run writes the preview in a later second, which the check below then cannot tell apart.
+			if stat, statErr := os.Stat(filepath.Join(cfg.SidecarPath(), folder, leftPreview)); sameSecond && statErr == nil &&
+				stat.ModTime().Unix() != next.Unix() {
+				t.Logf("preview was replaced after %s, so the same-second case is not covered", next.Format(time.RFC3339))
+			}
 
 			if tc.archive {
 				indexInsta360StackFolder(cfg, folder, false, false)
@@ -1391,6 +1441,29 @@ func TestIndex_Insta360FirstIndexMetadata(t *testing.T) {
 		assert.InDelta(t, tc.duration.Seconds(), file.FileDuration.Seconds(), 0.1, tc.name)
 		assert.Equal(t, "avc1", file.FileCodec, tc.name)
 	}
+}
+
+// sameSecondInsta360Previews gives the previews in folder the next whole second as their file and recorded
+// time and waits for it, so a preview replaced right away has the time of the one it replaces.
+func sameSecondInsta360Previews(t *testing.T, cfg *config.Config, folder string) time.Time {
+	t.Helper()
+
+	next := time.Now().Truncate(time.Second).Add(time.Second)
+
+	matches, err := filepath.Glob(filepath.Join(cfg.SidecarPath(), folder, "*.jpg"))
+	require.NoError(t, err)
+
+	for _, fileName := range matches {
+		require.NoError(t, os.Chtimes(fileName, next, next))
+	}
+
+	require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).
+		Where("file_root = ? AND file_name LIKE ?", entity.RootSidecar, folder+"/%").
+		UpdateColumn("mod_time", next.Unix()).Error)
+
+	time.Sleep(time.Until(next))
+
+	return next
 }
 
 // backdateInsta360Previews sets the time of the preview images in dir two seconds back.

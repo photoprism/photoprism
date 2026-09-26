@@ -88,6 +88,10 @@ func IndexMain(related *RelatedFiles, ind *Index, o IndexOptions) (result IndexR
 				return result
 			}
 
+			if forcePreview {
+				ind.forgetReplacedPreview(img)
+			}
+
 			img.SetRelatedMain(f)
 			related.Files = append(related.Files, img)
 		}

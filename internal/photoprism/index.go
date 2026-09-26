@@ -60,6 +60,14 @@ func (ind *Index) thumbPath() string {
 	return ind.conf.ThumbCachePath()
 }
 
+// forgetReplacedPreview evicts a sidecar preview rewritten by a forced conversion from the file cache,
+// so the same run indexes it even if its whole-second time is unchanged.
+func (ind *Index) forgetReplacedPreview(img *MediaFile) {
+	if img != nil && img.InSidecar() {
+		ind.files.Remove(img.RootRelName(), img.Root())
+	}
+}
+
 // Cancel stops the current indexing operation.
 func (ind *Index) Cancel() {
 	mutex.IndexWorker.Cancel()
