@@ -17,7 +17,7 @@ The `commands` package hosts the CLI implementation for the PhotoPrism binary. C
 ### Command Implementation Patterns
 
 - Construct filesystem paths with `filepath.Join` and rely on permission constants from `pkg/fs` (`fs.ModeDir`, `fs.ModeFile`, and friends) when writing to disk.
-- Follow the overwrite policy used by media helpers: require explicit confirmation (`force` flags) before replacing non-empty files. Where replacements are expected, open destinations with `O_WRONLY|O_CREATE|O_TRUNC`.
+- Follow the overwrite policy used by media helpers: require explicit confirmation (`force` flags) before replacing non-empty files. Where replacements are expected, write a staged sibling (`fs.CreateStageFile` / `fs.OpenStageFile`) and publish it with `fs.PublishFile`; reserve `O_TRUNC` for a deliberate in-place overwrite.
 - Use shared logging through `event.Log` rather than direct `fmt` printing. Sensitive information such as secrets or tokens must never be logged.
 - When integrating configuration options, call the accessors on `*config.Config` (for example, `conf.ClusterUUID()`) rather than mutating option structs directly.
 - For HTTP interactions, depend on the safe download helpers in `pkg/http/safe` or the specialized wrappers in `internal/thumb/avatar` to inherit timeout, size, and SSRF protection defaults.
@@ -36,7 +36,7 @@ that check.
 
 New remux, trim, and transcode outputs use umask-filtered creation permissions. Remux and trim preserve an existing regular destination's permission bits before replacement, including trim with a backup; backups use `fs.ModeBackupFile`. A reused transcode keeps its permissions. The process umask is inherited by FFmpeg; container launch wrappers apply `PHOTOPRISM_UMASK` before starting PhotoPrism.
 
-Remux and trim reserve temporary siblings with `fs.CreateStageFile` until publication and clean them up on failure. Working files stay beside their destinations, so publication requires no extra copying of large media across volume mounts. Permission preservation does not copy ownership, extended attributes, or ACLs.
+Remux and trim reserve temporary siblings with `fs.CreateStageFile` until publication and clean them up on failure. They publish with `fs.PublishFile`, so a replaced original is never removed first and an output that may not replace a file is linked into place. Remux refuses a symbolic link at a separate output even with `--force`. A missing sidecar folder is created before staging when the sidecar path is absolute. Working files stay beside their destinations, so publication requires no extra copying of large media across volume mounts. Permission preservation does not copy ownership, extended attributes, or ACLs.
 
 ### Positional Arguments & Flag Order
 
