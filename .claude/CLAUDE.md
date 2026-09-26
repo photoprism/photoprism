@@ -33,7 +33,9 @@ Run `make help` for an overview of the most common targets, and `make list` to l
 - `make test-go` — all Go tests on SQLite (~3-15 min)
 - `make test-mariadb` — the same Go suite against MariaDB (~5-20 min)
 - `make test-js` — frontend unit tests (Vitest)
-- `make test-short` — short Go tests in parallel (~2-5 min)
+- `make test-short` — short Go tests in parallel (~3-5 min); skips tests that run the indexer or
+  importer on fixture media. Its `-timeout 5m` applies per package, and under full-suite load
+  `internal/api` (~3.5 min) and `internal/photoprism` (~2.5 min) come closest to it
 
 Go runs packages concurrently, so wall-clock time depends on the core count, on how warm the
 build cache is, and on what else is using the host. Treat the ranges as orders of magnitude.

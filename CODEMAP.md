@@ -181,7 +181,7 @@ Common How‑Tos
   - Tests: run against SQLite by default; for MySQL cases, gate appropriately
 
 Testing
-- Full suite: `make test` (frontend + backend). Backend only: `make test-go`.
+- Full suite: `make test` (frontend + backend). Backend only: `make test-go`. `make test-short` skips tests that run the indexer or importer on fixture media.
 - Focused packages: `go test ./internal/<pkg> -run <Name>`.
 - CLI tests: `PHOTOPRISM_CLI=noninteractive` or pass `--yes` to avoid prompts; use `RunWithTestContext` to prevent `os.Exit`.
 - SQLite DSN in tests is per‑suite (not empty). Clean up files if you capture the DSN.

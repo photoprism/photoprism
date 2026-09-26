@@ -10,6 +10,11 @@
 - Keep Go scratch work inside `internal/...` (Go refuses `internal/` imports from `/tmp`), and name
   it `internal/zz<something>` — that prefix is gitignored, so a `git add` that sweeps a directory
   cannot carry a throwaway copy of a package into a commit. Single files follow `zz_*.go`.
+- A test that runs the indexer or importer on fixture media (`Index.Start`, `IndexMain`/`IndexRelated`,
+  `UserMediaFile`, `Import.Start`, the import worker) starts with
+  `if testing.Short() { t.Skip("skipping test in short mode.") }`, placed before any setup; gate only the subtest
+  when the rest of the test is unit-level. `make test-short` then stays within its per-package `-timeout 5m`, and
+  `make test-go` still runs the test. Classify by what the test runs, not by its name.
 - Prefer focused runs: `go test ./internal/<pkg> -run <Name> -count=1`. Avoid `./...` unless needed; heavy packages (`internal/entity`, `internal/photoprism`) take 30–120s on first run.
 
 ### Fast, Focused Test Recipes
@@ -48,6 +53,10 @@ Makefile recipes talk to the development database through `$(MARIADB)`, which de
 - Reserve `config.TestConfig()` for tests that truly need the fully seeded fixture snapshot (runs `InitializeTestData()`, wipes `storage/testdata`).
 - Config helpers auto-discover `assets/`; don't set `PHOTOPRISM_ASSETS_PATH` in `init()`. Hub traffic is disabled by default; re-enable with `PHOTOPRISM_TEST_HUB=test`.
 - A test config whose SQLite name is empty resolves to the shared `.test.db` and **removes that file**, so it must never be built mid-suite in a package whose `TestMain` opened the same database. The symptom is a later test failing with `no such table: <name>` while the same test passes in isolation. `NewMinimalTestConfig` names its database for this reason; keep it named if you add a helper beside it.
+- Every named test config also removes its own `.<name>.db` when it is built, so never `Init` or open a database
+  through a `NewMinimalTestConfig` config: the next one built anywhere in the package deletes `.minimal.db` under
+  the open connection, and writes fail with `attempt to write a readonly database`. A config that opens a database
+  gets a name of its own via `NewIsolatedTestConfig("<name>", path, false)`, as `resetConfigAndOpenDB` does.
 
 ### Environment Traps in `internal/config` and Nested Packages
 
