@@ -1,14 +1,11 @@
 package commands
 
 import (
-	"errors"
 	"fmt"
 
-	"github.com/jinzhu/gorm"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -31,21 +28,18 @@ func authRemoveAction(ctx *cli.Context) error {
 			return ShowUsageError(ctx)
 		}
 
-		m, err := query.Session(id)
+		m, err := authFindSession(id)
 
-		switch {
-		case errors.Is(err, query.ErrInvalidSessionID):
-			return cli.Exit(err, 2)
-		case gorm.IsRecordNotFoundError(err):
-			return cli.Exit(errors.New("session not found"), 3)
-		case err != nil:
-			return cli.Exit(err, 1)
+		if err != nil {
+			return err
 		}
 
-		if proceed, confirmErr := ConfirmAction(ctx.Bool("yes"), fmt.Sprintf("Remove session %s?", clean.LogQuote(id))); confirmErr != nil {
+		label := authSessionLabel(m)
+
+		if proceed, confirmErr := ConfirmAction(ctx.Bool("yes"), fmt.Sprintf("Remove %s?", label)); confirmErr != nil {
 			return confirmErr
 		} else if !proceed {
-			log.Infof("session %s was not removed", clean.LogQuote(id))
+			log.Infof("session %s was not removed", clean.Log(m.RefID))
 			return nil
 		}
 
@@ -53,7 +47,7 @@ func authRemoveAction(ctx *cli.Context) error {
 			return cli.Exit(err, 1)
 		}
 
-		log.Infof("session %s has been removed", clean.LogQuote(id))
+		log.Infof("%s has been removed", label)
 
 		return nil
 	})
