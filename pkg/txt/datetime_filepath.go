@@ -21,6 +21,11 @@ func DateFromFilePath(s string) (result time.Time) {
 		s = "/" + s
 	}
 
+	// Is it a camera file name with a compact date and time like "IMG_20190101_120000.jpg"?
+	if taken := dateFromCameraName(s[strings.LastIndex(s, "/")+1:]); !taken.IsZero() {
+		return taken
+	}
+
 	b := []byte(s)
 
 	if found := DateTimeRegexp.Find(b); len(found) > 0 { // Is it a date with time like "2020-01-30_09-57-18"?
@@ -152,4 +157,31 @@ func DateFromFilePath(s string) (result time.Time) {
 	}
 
 	return result.UTC()
+}
+
+// dateFromCameraName returns the date and time encoded in a camera file name, or the zero time if the
+// name does not start with IMG_, VID_ or LRV_ followed by a plausible compact date and time.
+func dateFromCameraName(base string) time.Time {
+	m := DateCameraRegexp.FindStringSubmatch(base)
+
+	if len(m) != 7 {
+		return time.Time{}
+	}
+
+	year, month, day := Int(m[1]), Int(m[2]), Int(m[3])
+	hour, minute, sec := Int(m[4]), Int(m[5]), Int(m[6])
+
+	if year < YearMin || year > YearMax || month < MonthMin || month > MonthMax || day < DayMin || day > DayMax ||
+		hour < HourMin || hour > HourMax || minute < MinMin || minute > MinMax || sec < SecMin || sec > SecMax {
+		return time.Time{}
+	}
+
+	result := time.Date(year, time.Month(month), day, hour, minute, sec, 0, time.UTC)
+
+	// Reject dates that do not exist, such as February 30, and device defaults of an unset clock.
+	if result.Day() != day || DateTimeDefault(result.Format(time.DateTime)) {
+		return time.Time{}
+	}
+
+	return result
 }

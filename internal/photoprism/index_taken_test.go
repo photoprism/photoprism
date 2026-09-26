@@ -53,9 +53,10 @@ func takenAtOf(t *testing.T, relName string) entity.Photo {
 // TestIndex_TakenAtModifyTime verifies that a modify time never replaces the capture time of another file of the
 // same stack, whatever order the files are indexed in, and ranks below a date from the file name.
 func TestIndex_TakenAtModifyTime(t *testing.T) {
+	// The names contain no date, so the photo starts with the modify time when the capture is indexed last.
 	const (
-		capture   = "IMG_20201026_154628_00_070.insp"
-		writeTime = "IMG_20201026_154628_00_070.jpg"
+		capture   = "R0010070.insp"
+		writeTime = "R0010070.jpg"
 	)
 
 	expected := time.Date(2020, 10, 26, 15, 46, 29, 0, time.UTC)
@@ -162,6 +163,79 @@ func TestIndex_TakenAtModifyTime(t *testing.T) {
 		assert.Equal(t, expected, photo.TakenAtLocal.UTC())
 		assert.Equal(t, "UTC+2", photo.TimeZone)
 		assert.Equal(t, entity.SrcMeta, photo.TakenSrc)
+	})
+}
+
+// TestIndex_TakenAtCameraName verifies that the date and time in a camera file name are used without a
+// capture time in the metadata, and rank below one.
+func TestIndex_TakenAtCameraName(t *testing.T) {
+	nameTime := time.Date(2018, 3, 18, 20, 58, 51, 0, time.UTC)
+
+	t.Run("NameOnly", func(t *testing.T) {
+		folder := "takencameraname"
+		cfg := newInsta360StackConfig(t, folder, false)
+		writeTakenFile(t, cfg, filepath.Join(cfg.OriginalsPath(), folder, "IMG_20180318_205851_239.jpg"))
+		indexInsta360StackFolder(cfg, folder, false, true)
+
+		photo := takenAtOf(t, folder+"/IMG_20180318_205851_239.jpg")
+		assert.Equal(t, nameTime, photo.TakenAt.UTC())
+		assert.Equal(t, nameTime, photo.TakenAtLocal.UTC())
+		assert.Equal(t, entity.SrcName, photo.TakenSrc)
+	})
+	t.Run("CaptureTimeFirst", func(t *testing.T) {
+		folder := "takencameranamemeta"
+		cfg := newInsta360StackConfig(t, folder, false)
+		writeTakenFile(t, cfg, filepath.Join(cfg.OriginalsPath(), folder, "IMG_20180318_205851_239.jpg"), "-EXIF:DateTimeOriginal="+takenCapture)
+		indexInsta360StackFolder(cfg, folder, false, true)
+
+		photo := takenAtOf(t, folder+"/IMG_20180318_205851_239.jpg")
+		assert.Equal(t, time.Date(2020, 10, 26, 15, 46, 29, 0, time.UTC), photo.TakenAtLocal.UTC())
+		assert.Equal(t, entity.SrcMeta, photo.TakenSrc)
+
+		mediaFile, err := NewMediaFile(filepath.Join(cfg.OriginalsPath(), folder, "IMG_20180318_205851_239.jpg"))
+		require.NoError(t, err)
+		_, takenAtLocal, takenSrc := mediaFile.TakenAt()
+		assert.Equal(t, entity.SrcMeta, takenSrc)
+		assert.Equal(t, 2020, takenAtLocal.Year())
+
+		// A forced rescan keeps the capture time.
+		indexInsta360StackFolder(cfg, folder, true, false)
+		assert.Equal(t, entity.SrcMeta, takenAtOf(t, folder+"/IMG_20180318_205851_239.jpg").TakenSrc)
+	})
+	t.Run("NonPrimaryCaptureTime", func(t *testing.T) {
+		// The capture time of a file that is not primary replaces the date in the name of the primary file.
+		folder := "takencameranamenonprimary"
+		cfg := newInsta360StackConfig(t, folder, false)
+		dir := filepath.Join(cfg.OriginalsPath(), folder)
+		writeTakenFile(t, cfg, filepath.Join(dir, "IMG_20180318_205851_239.jpg"))
+		indexInsta360StackFolder(cfg, folder, false, true)
+		require.Equal(t, entity.SrcName, takenAtOf(t, folder+"/IMG_20180318_205851_239.jpg").TakenSrc)
+
+		writeTakenFile(t, cfg, filepath.Join(dir, "IMG_20180318_205851_239.jpeg"), "-EXIF:DateTimeOriginal="+takenCapture)
+		indexInsta360StackFolder(cfg, folder, false, true)
+
+		photo := takenAtOf(t, folder+"/IMG_20180318_205851_239.jpeg")
+		assert.Equal(t, photo.ID, takenAtOf(t, folder+"/IMG_20180318_205851_239.jpg").ID)
+		assert.Equal(t, time.Date(2020, 10, 26, 15, 46, 29, 0, time.UTC), photo.TakenAtLocal.UTC())
+		assert.Equal(t, entity.SrcMeta, photo.TakenSrc)
+	})
+	t.Run("ImportedName", func(t *testing.T) {
+		// An imported file is renamed, so the date comes from the name it had before.
+		folder := "takencameranameimported"
+		cfg := newInsta360StackConfig(t, folder, false)
+		fileName := filepath.Join(cfg.OriginalsPath(), folder, "20260925_135937_07784009.jpg")
+		writeTakenFile(t, cfg, fileName)
+
+		mediaFile, err := NewMediaFile(fileName)
+		require.NoError(t, err)
+
+		ind := NewIndex(cfg, NewConvert(cfg), NewFiles(), NewPhotos())
+		result := ind.UserMediaFile(mediaFile, NewIndexOptions(folder, false, true, true, false, true, cfg), "card/IMG_20180318_205851_239.jpg", "", entity.OwnerUnknown)
+		require.True(t, result.Success(), result.Err)
+
+		photo := takenAtOf(t, folder+"/20260925_135937_07784009.jpg")
+		assert.Equal(t, nameTime, photo.TakenAt.UTC())
+		assert.Equal(t, entity.SrcName, photo.TakenSrc)
 	})
 }
 
