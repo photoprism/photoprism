@@ -311,9 +311,11 @@ describe("common/util", () => {
     it("returns the label for known file types", () => {
       expect($util.fileType("jpg")).toBe("JPEG");
       expect($util.fileType("cin")).toBe("Kodak Cineon");
-      expect($util.fileType("insp")).toBe("Insta360 Panoramic Image");
-      expect($util.fileType("insv")).toBe("Insta360 Video");
-      expect($util.fileType("lrv")).toBe("Insta360 Proxy Video");
+      expect($util.fileType("insp")).toBe("Insta360 Panoramic");
+      expect($util.fileType("insv")).toBe("Insta360");
+      expect($util.fileType("lrv")).toBe("Insta360 Proxy");
+      expect($util.fileType("thm")).toBe("Thumbnail");
+      expect($util.fileType("dv")).toBe("DV");
       expect($util.fileType("mpo")).toBe("Stereoscopic JPEG (3D)");
       expect($util.fileType("mxf")).toBe("Material Exchange Format (MXF)");
       expect($util.fileType("3g2")).toBe("Mobile Multimedia Container (CDMA2000)");

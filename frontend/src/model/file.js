@@ -214,9 +214,7 @@ export class File extends RestModel {
 
       if (this.MediaType && this.MediaType !== this.FileType) {
         const media = $util.capitalize(this.MediaType);
-
-        // Skip the media type if the format name already ends with it, e.g. "Insta360 Video".
-        if (media && !(format && format.toLowerCase().endsWith(media.toLowerCase()))) {
+        if (media) {
           info.push(media);
         }
       }

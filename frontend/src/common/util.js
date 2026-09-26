@@ -536,9 +536,9 @@ export default class $util {
       case "mpo":
         return "Stereoscopic JPEG (3D)";
       case "insp":
-        return "Insta360 Panoramic Image";
+        return "Insta360 Panoramic";
       case "thm":
-        return "Thumbnail Image";
+        return "Thumbnail";
       case "gif":
         return "GIF";
       case "dng":
@@ -579,9 +579,9 @@ export default class $util {
       case "m4v":
         return "Apple iTunes Multimedia Container";
       case "insv":
-        return "Insta360 Video";
+        return "Insta360";
       case "lrv":
-        return "Insta360 Proxy Video";
+        return "Insta360 Proxy";
       case "mkv":
         return "Matroska Multimedia Container";
       case "mts":
@@ -617,7 +617,7 @@ export default class $util {
       case "avi":
         return "Microsoft Audio Video Interleave (AVI)";
       case "dv":
-        return "DV Video";
+        return "DV";
       case "mxf":
         return "Material Exchange Format (MXF)";
       case "3gp":
