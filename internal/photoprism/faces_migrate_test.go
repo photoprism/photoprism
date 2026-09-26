@@ -1641,6 +1641,8 @@ func TestFacesRunResult_Moved(t *testing.T) {
 		assert.True(t, facesRunResult{Resolved: 1}.Moved())
 		assert.True(t, facesRunResult{Merged: 1}.Moved())
 		assert.True(t, facesRunResult{Added: 1}.Moved())
+		assert.True(t, facesRunResult{Retried: 1}.Moved())
+		assert.True(t, facesRunResult{Named: 1}.Moved())
 		assert.True(t, facesRunResult{Updated: 1}.Moved())
 	})
 	t.Run("AssignedOnly", func(t *testing.T) {

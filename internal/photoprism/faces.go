@@ -130,7 +130,9 @@ type facesRunResult struct {
 	Added    int
 	// Retried counts the clusters the second pass at face-cluster-core-retry added, apart from
 	// Added, since an operator reading one combined number cannot tell whether it did anything.
-	Retried    int
+	Retried int
+	// Named counts the clusters named after the person their matched markers agree on.
+	Named      int
 	Updated    int
 	Assigned   int
 	Recognized int
@@ -144,7 +146,7 @@ type facesRunResult struct {
 func (r facesRunResult) Moved() bool {
 	matches := FacesMatchResult{Updated: int64(r.Updated), Assigned: int64(r.Assigned)}
 
-	return r.Subjects > 0 || r.Resolved > 0 || r.Merged > 0 || r.Added > 0 || r.Retried > 0 || matches.MovedSubjects()
+	return r.Subjects > 0 || r.Resolved > 0 || r.Merged > 0 || r.Added > 0 || r.Retried > 0 || r.Named > 0 || matches.MovedSubjects()
 }
 
 // start performs face clustering and matching while the caller holds the faces worker lock.
@@ -253,6 +255,9 @@ func (w *Faces) start(opt FacesOptions) (result facesRunResult, err error) {
 	start = time.Now()
 	matches, matchErr := w.Match(opt)
 
+	// matched records whether every matching step of this run finished.
+	matched := matchErr == nil
+
 	if matchErr != nil {
 		log.Errorf("faces: %s (match)", matchErr)
 	}
@@ -300,8 +305,9 @@ func (w *Faces) start(opt FacesOptions) (result facesRunResult, err error) {
 			// Only the new clusters, rather than a second full matching pass: nothing else in the
 			// library changed, and they are the only candidates the residue has not been compared
 			// with already.
-			if retryMatches, matchErr := w.MatchNewClusters(retried); matchErr != nil {
-				log.Errorf("faces: %s (match retry)", matchErr)
+			if retryMatches, retryMatchErr := w.MatchNewClusters(retried); retryMatchErr != nil {
+				matched = false
+				log.Errorf("faces: %s (match retry)", retryMatchErr)
 			} else {
 				// Not Assigned: only query.MatchFaceMarkers writes it, which propagates a subject
 				// from an already-named cluster and which this pass does not run. A retry cluster
@@ -319,6 +325,13 @@ func (w *Faces) start(opt FacesOptions) (result facesRunResult, err error) {
 		} else {
 			log.Debugf("faces: found no new faces at a core of %d [%s]", core, time.Since(start))
 		}
+	}
+
+	// Name the clusters whose matched markers agree on one person. Gated on matching like the retry
+	// pass, since a run that stopped early leaves markers where it would not have left them.
+	if named := w.nameByConsensus(matched); named > 0 {
+		changed = true
+		result.Named = named
 	}
 
 	// Remove unused people.
