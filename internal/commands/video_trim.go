@@ -235,7 +235,7 @@ func videoTrimFile(conf *config.Config, convert *photoprism.Convert, plan videoT
 		tempDest += ext
 	}
 
-	tempPath, err := fs.CreateStageFile(tempDest)
+	tempPath, err := videoCreateStageFile(tempDest, videoCreatesSidecarDir(conf, plan.Sidecar))
 	if err != nil {
 		return err
 	}

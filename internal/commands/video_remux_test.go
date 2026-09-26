@@ -100,3 +100,25 @@ printf 'remuxed' > "$output"
 		})
 	}
 }
+
+// TestVideoRemuxFile_SidecarFolder verifies that a sidecar remux creates its missing folder.
+func TestVideoRemuxFile_SidecarFolder(t *testing.T) {
+	conf, _ := remuxPlanFixture(t, "clip.mts")
+	src := filepath.Join(conf.OriginalsPath(), "clip.mts")
+	dest := filepath.Join(conf.SidecarPath(), "2026", "clip.mp4")
+	stub := filepath.Join(t.TempDir(), "ffmpeg")
+	require.NoError(t, os.WriteFile(stub, []byte(`#!/bin/sh
+for output do :; done
+printf 'remuxed' > "$output"
+`), fs.ModeDir))
+	conf.Options().FFmpegBin = stub
+	require.True(t, conf.SidecarPathIsAbs())
+	require.NoDirExists(t, filepath.Dir(dest))
+
+	// Empty IndexPath stops at the reindex boundary after publication.
+	err := videoRemuxFile(conf, nil, videoRemuxPlan{SrcPath: src, DestPath: dest, Sidecar: true}, false)
+	require.ErrorContains(t, err, "missing filename")
+	data, err := os.ReadFile(dest) // #nosec G304 -- the fixture owns this temporary path.
+	require.NoError(t, err)
+	assert.Equal(t, "remuxed", string(data))
+}

@@ -2,11 +2,14 @@ package commands
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 
 	"github.com/dustin/go-humanize"
 
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/fs/duf"
 )
 
@@ -25,7 +28,7 @@ func videoCheckFreeSpace(plans []videoOutputPlan) error {
 			continue
 		}
 
-		dir := filepath.Dir(plan.Destination)
+		dir := videoExistingDir(filepath.Dir(plan.Destination))
 		required[dir] += uint64(videoNonNegativeSize(plan.SizeBytes)) //nolint:gosec // size is clamped to non-negative values
 	}
 
@@ -45,4 +48,40 @@ func videoCheckFreeSpace(plans []videoOutputPlan) error {
 	}
 
 	return nil
+}
+
+// videoExistingDir returns dir or its nearest existing parent folder, which holds the folders a command
+// creates for its outputs and so is on the same filesystem.
+func videoExistingDir(dir string) string {
+	for {
+		if info, err := os.Stat(dir); err == nil && info.IsDir() {
+			return dir
+		}
+
+		parent := filepath.Dir(dir)
+
+		if parent == dir {
+			return dir
+		}
+
+		dir = parent
+	}
+}
+
+// videoCreateStageFile reserves a staged file for an output and returns its name, first creating its
+// folder if createDir is set, as the preflight checks create no folders.
+func videoCreateStageFile(dest string, createDir bool) (string, error) {
+	if createDir {
+		if err := fs.MkdirAll(filepath.Dir(dest)); err != nil {
+			return "", err
+		}
+	}
+
+	return fs.CreateStageFile(dest)
+}
+
+// videoCreatesSidecarDir reports whether the folder of a sidecar output may be created. A relative sidecar
+// path is resolved against the working directory here, so its folders are not created.
+func videoCreatesSidecarDir(conf *config.Config, sidecar bool) bool {
+	return sidecar && conf != nil && conf.SidecarPathIsAbs()
 }

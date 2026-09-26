@@ -28,6 +28,54 @@ func (w *Convert) ToAvc(f *MediaFile, encoder encode.Encoder, noMutex, force boo
 	return w.toAvc(f, encoder, noMutex, force, true)
 }
 
+// avcSource returns the file a transcode of f is made from, which is the left lens for every member of a
+// complete Insta360 video capture.
+func avcSource(f *MediaFile) *MediaFile {
+	if capture := FindInsta360Capture(f); capture.ValidPair() {
+		return capture.Left
+	}
+
+	return f
+}
+
+// avcType returns the type a transcode of f is written as: MP4 for animated images, AVC for videos.
+func avcType(f *MediaFile) fs.Type {
+	if f.IsAnimatedImage() {
+		return fs.VideoMp4
+	}
+
+	return fs.VideoAvc
+}
+
+// FindAvc returns the name of an existing transcode of f in the folders the converter searches, or an
+// empty string if there is none.
+func (w *Convert) FindAvc(f *MediaFile) string {
+	if f == nil {
+		return ""
+	}
+
+	return w.findAvc(avcSource(f))
+}
+
+// findAvc returns the name of an existing transcode made from src, which avcSource has already resolved.
+func (w *Convert) findAvc(src *MediaFile) string {
+	return avcType(src).FindFirst(src.FileName(), []string{w.conf.SidecarPath(), fs.PPHiddenPathname}, w.conf.OriginalsPath(), false)
+}
+
+// AvcName returns the sidecar file name a new transcode of f is written to, without creating its folder.
+func (w *Convert) AvcName(f *MediaFile) (string, error) {
+	if f == nil {
+		return "", fmt.Errorf("convert: no media file provided for processing - you may have found a bug")
+	}
+
+	return w.avcName(avcSource(f))
+}
+
+// avcName returns the sidecar file name of a new transcode made from src, which avcSource has already resolved.
+func (w *Convert) avcName(src *MediaFile) (string, error) {
+	return fs.FilePath(src.FileName(), w.conf.SidecarPath(), w.conf.OriginalsPath(), avcType(src).DefaultExt())
+}
+
 // toAvc validates and converts media, optionally coordinating transport-stream requests.
 func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, coordinate bool) (file *MediaFile, err error) {
 	// Abort if the source media file is nil.
@@ -37,9 +85,7 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 
 	// Normalize every member of a complete Insta360 video capture to its canonical left lens so manual
 	// conversion, background conversion, and playback all reuse one equirectangular AVC sidecar.
-	if capture := FindInsta360Capture(f); capture.ValidPair() {
-		f = capture.Left
-	}
+	f = avcSource(f)
 
 	// Sanitized relative filename for use in logs.
 	logFileName := clean.Log(f.RootRelName())
@@ -75,14 +121,8 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 		}
 	}
 
-	// AVC video filename. Animated images are converted into an MPEG-4 container, videos into AVC.
-	var avcName string
-
-	if f.IsAnimatedImage() {
-		avcName = fs.VideoMp4.FindFirst(f.FileName(), []string{w.conf.SidecarPath(), fs.PPHiddenPathname}, w.conf.OriginalsPath(), false)
-	} else {
-		avcName = fs.VideoAvc.FindFirst(f.FileName(), []string{w.conf.SidecarPath(), fs.PPHiddenPathname}, w.conf.OriginalsPath(), false)
-	}
+	// Find an existing transcode. Animated images are converted into an MPEG-4 container, videos into AVC.
+	avcName := w.findAvc(f)
 
 	mediaFile, err := NewMediaFile(avcName)
 
@@ -105,11 +145,11 @@ func (w *Convert) toAvc(f *MediaFile, encoder encode.Encoder, noMutex, force, co
 	// Get relative filename for logging.
 	relName := f.RelName(w.conf.OriginalsPath())
 
-	// Use .mp4 file extension for animated images and .avi for videos.
-	if f.IsAnimatedImage() {
-		avcName, _ = fs.FileName(f.FileName(), w.conf.SidecarPath(), w.conf.OriginalsPath(), fs.ExtMp4)
-	} else {
-		avcName, _ = fs.FileName(f.FileName(), w.conf.SidecarPath(), w.conf.OriginalsPath(), fs.ExtAvc)
+	// Create the sidecar folder of the new transcode.
+	if avcName, err = w.avcName(f); err != nil {
+		return nil, err
+	} else if err = fs.MkdirAll(filepath.Dir(avcName)); err != nil {
+		return nil, err
 	}
 
 	cmd, useMutex, err := w.TranscodeToAvcCmd(f, avcName, encoder)

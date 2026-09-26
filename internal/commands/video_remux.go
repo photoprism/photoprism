@@ -214,7 +214,7 @@ func videoBuildRemuxPlans(conf *config.Config, results []search.Photo, force boo
 
 // videoRemuxFile runs ffmpeg remuxing and refreshes previews/thumbnails before reindexing.
 func videoRemuxFile(conf *config.Config, convert *photoprism.Convert, plan videoRemuxPlan, force bool) error {
-	tempPath, err := fs.CreateStageFile(plan.DestPath)
+	tempPath, err := videoCreateStageFile(plan.DestPath, videoCreatesSidecarDir(conf, plan.Sidecar))
 	if err != nil {
 		return err
 	}

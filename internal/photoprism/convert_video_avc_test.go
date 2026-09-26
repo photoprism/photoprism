@@ -728,3 +728,176 @@ func stagedSiblings(t *testing.T, dir string) []string {
 
 	return names
 }
+
+// newAvcNameFolder creates a new folder below the originals path and returns its name relative to it.
+func newAvcNameFolder(t *testing.T, conf *config.Config) string {
+	t.Helper()
+
+	dir, err := os.MkdirTemp(conf.OriginalsPath(), "avc-name-")
+	require.NoError(t, err)
+	folder := filepath.Base(dir)
+	t.Cleanup(func() {
+		_ = os.RemoveAll(dir)
+		_ = os.RemoveAll(filepath.Join(conf.SidecarPath(), folder))
+	})
+
+	return folder
+}
+
+func TestConvert_AvcName(t *testing.T) {
+	conf := Config()
+	convert := NewConvert(conf)
+
+	t.Run("Video", func(t *testing.T) {
+		folder := newAvcNameFolder(t, conf)
+		src := filepath.Join(conf.OriginalsPath(), folder, "clip.avi")
+		require.NoError(t, fs.Copy(filepath.Join(conf.SamplesPath(), "gopher-video.mp4"), src, false))
+		mf, err := NewMediaFile(src)
+		require.NoError(t, err)
+
+		avcName, err := convert.AvcName(mf)
+		require.NoError(t, err)
+		assert.Equal(t, filepath.Join(conf.SidecarPath(), folder, "clip.avi.avc"), avcName)
+		assert.NoDirExists(t, filepath.Join(conf.SidecarPath(), folder))
+	})
+	t.Run("AnimatedImage", func(t *testing.T) {
+		folder := newAvcNameFolder(t, conf)
+		// The frame count is read from the JSON sidecar.
+		for _, ext := range []string{".gif", fs.ExtJson} {
+			require.NoError(t, fs.Copy("testdata/2018-04-12 19_24_49"+ext, filepath.Join(conf.OriginalsPath(), folder, "2018-04-12 19_24_49"+ext), false))
+		}
+
+		mf, err := NewMediaFile(filepath.Join(conf.OriginalsPath(), folder, "2018-04-12 19_24_49.gif"))
+		require.NoError(t, err)
+		require.True(t, mf.IsAnimatedImage())
+
+		avcName, err := convert.AvcName(mf)
+		require.NoError(t, err)
+		assert.Equal(t, filepath.Join(conf.SidecarPath(), folder, "2018-04-12 19_24_49.gif.mp4"), avcName)
+	})
+	t.Run("Nil", func(t *testing.T) {
+		_, err := convert.AvcName(nil)
+		assert.Error(t, err)
+	})
+}
+
+func TestConvert_FindAvc(t *testing.T) {
+	conf := Config()
+	convert := NewConvert(conf)
+
+	// newClip copies a sample video to a new folder as clip.avi and returns it with the folder name.
+	newClip := func(t *testing.T) (*MediaFile, string) {
+		folder := newAvcNameFolder(t, conf)
+		src := filepath.Join(conf.OriginalsPath(), folder, "clip.avi")
+		require.NoError(t, fs.Copy(filepath.Join(conf.SamplesPath(), "gopher-video.mp4"), src, false))
+		mf, err := NewMediaFile(src)
+		require.NoError(t, err)
+		return mf, folder
+	}
+
+	t.Run("None", func(t *testing.T) {
+		mf, _ := newClip(t)
+		assert.Equal(t, "", convert.FindAvc(mf))
+	})
+	t.Run("Sidecar", func(t *testing.T) {
+		mf, folder := newClip(t)
+		want := filepath.Join(conf.SidecarPath(), folder, "clip.avi.avc")
+		require.NoError(t, fs.WriteString(want, "avc"))
+		assert.Equal(t, want, convert.FindAvc(mf))
+
+		// The converter writes a new transcode to the name it finds.
+		avcName, err := convert.AvcName(mf)
+		require.NoError(t, err)
+		assert.Equal(t, want, avcName)
+	})
+	t.Run("Originals", func(t *testing.T) {
+		mf, folder := newClip(t)
+		want := filepath.Join(conf.OriginalsPath(), folder, "clip.avc")
+		require.NoError(t, fs.WriteString(want, "avc"))
+		assert.Equal(t, want, convert.FindAvc(mf))
+	})
+	t.Run("Nil", func(t *testing.T) {
+		assert.Equal(t, "", convert.FindAvc(nil))
+	})
+}
+
+func TestAvcSource(t *testing.T) {
+	t.Run("Video", func(t *testing.T) {
+		conf := Config()
+		mf, err := NewMediaFile(filepath.Join(conf.SamplesPath(), "gopher-video.mp4"))
+		require.NoError(t, err)
+		assert.Same(t, mf, avcSource(mf))
+	})
+	t.Run("Insta360Pair", func(t *testing.T) {
+		folder := "insta360avcsource"
+		cfg := newInsta360StackConfig(t, folder, false)
+		dir := filepath.Join(cfg.OriginalsPath(), folder)
+		writeInsta360StackMedia(t, cfg, dir, insta360StackLeft)
+		writeInsta360StackMedia(t, cfg, dir, insta360StackRight)
+
+		right, err := NewMediaFile(filepath.Join(dir, insta360StackRight))
+		require.NoError(t, err)
+
+		// The right lens is transcoded as part of the capture, under the name of the left lens.
+		assert.Equal(t, filepath.Join(dir, insta360StackLeft), avcSource(right).FileName())
+
+		convert := NewConvert(cfg)
+		avcName, err := convert.AvcName(right)
+		require.NoError(t, err)
+		assert.Equal(t, filepath.Join(cfg.SidecarPath(), folder, insta360StackLeft+fs.ExtAvc), avcName)
+
+		// The transcode of the left lens is found for the right lens as well.
+		assert.Equal(t, "", convert.FindAvc(right))
+		require.NoError(t, fs.WriteString(avcName, "avc"))
+		assert.Equal(t, avcName, convert.FindAvc(right))
+	})
+}
+
+func TestAvcType(t *testing.T) {
+	t.Run("Video", func(t *testing.T) {
+		mf, err := NewMediaFile(filepath.Join(Config().SamplesPath(), "gopher-video.mp4"))
+		require.NoError(t, err)
+		assert.Equal(t, fs.VideoAvc, avcType(mf))
+	})
+	t.Run("AnimatedImage", func(t *testing.T) {
+		mf, err := NewMediaFile("testdata/2018-04-12 19_24_49.gif")
+		require.NoError(t, err)
+		assert.Equal(t, fs.VideoMp4, avcType(mf))
+	})
+}
+
+func TestConvert_findAvc(t *testing.T) {
+	conf := Config()
+	convert := NewConvert(conf)
+
+	t.Run("Sidecar", func(t *testing.T) {
+		folder := newAvcNameFolder(t, conf)
+		src := filepath.Join(conf.OriginalsPath(), folder, "clip.avi")
+		require.NoError(t, fs.Copy(filepath.Join(conf.SamplesPath(), "gopher-video.mp4"), src, false))
+		mf, err := NewMediaFile(src)
+		require.NoError(t, err)
+
+		assert.Equal(t, "", convert.findAvc(mf))
+		want := filepath.Join(conf.SidecarPath(), folder, "clip.avi.avc")
+		require.NoError(t, fs.WriteString(want, "avc"))
+		assert.Equal(t, want, convert.findAvc(mf))
+	})
+}
+
+func TestConvert_avcName(t *testing.T) {
+	conf := Config()
+	convert := NewConvert(conf)
+
+	t.Run("Video", func(t *testing.T) {
+		mf, err := NewMediaFile(filepath.Join(conf.SamplesPath(), "gopher-video.mp4"))
+		require.NoError(t, err)
+
+		avcName, err := convert.avcName(mf)
+		require.NoError(t, err)
+		assert.Equal(t, filepath.Join(conf.SidecarPath(), conf.SamplesPath(), "gopher-video.mp4.avc"), avcName)
+	})
+	t.Run("EmptyName", func(t *testing.T) {
+		_, err := convert.avcName(&MediaFile{})
+		assert.Error(t, err)
+	})
+}
