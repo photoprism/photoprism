@@ -181,16 +181,7 @@ func (data *Data) Exif(fileName string, fileFormat fs.Type, bruteForce bool) (er
 	}
 
 	if value, ok := data.exif["ExposureTime"]; ok {
-		if n := strings.Split(value, "/"); len(n) == 2 {
-			if n[0] != "1" && len(n[0]) < len(n[1]) {
-				n0, _ := strconv.ParseUint(n[0], 10, 64)
-				if n1, err := strconv.ParseUint(n[1], 10, 64); err == nil && n0 > 0 && n1 > 0 {
-					value = fmt.Sprintf("1/%d", n1/n0)
-				}
-			}
-		}
-
-		data.Exposure = value
+		data.Exposure = normalizeExposure(value)
 	}
 
 	if value, ok := data.exif["FNumber"]; ok {

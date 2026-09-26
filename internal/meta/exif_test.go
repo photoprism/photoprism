@@ -558,7 +558,7 @@ func TestExif(t *testing.T) {
 		assert.Equal(t, 0.0, data.Lat)
 		assert.Equal(t, 0.0, data.Lng)
 		assert.Equal(t, 0.0, data.Altitude)
-		assert.Equal(t, "1/24", data.Exposure)
+		assert.Equal(t, "1/25", data.Exposure)
 		assert.Equal(t, "HMD Global", data.CameraMake)
 		assert.Equal(t, "Nokia X71", data.CameraModel)
 		assert.Equal(t, 26, data.FocalLength)

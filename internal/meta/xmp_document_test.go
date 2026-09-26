@@ -1,6 +1,7 @@
 package meta
 
 import (
+	"math"
 	"os"
 	"path/filepath"
 	"strings"
@@ -598,16 +599,29 @@ func TestFormatExposure(t *testing.T) {
 	t.Run("FractionalSeconds", func(t *testing.T) {
 		assert.Equal(t, "1/250", formatExposure(0.004))
 		assert.Equal(t, "1/50", formatExposure(0.02))
-		assert.Equal(t, "1/2", formatExposure(0.5))
+		assert.Equal(t, "1/4", formatExposure(0.25))
+	})
+	t.Run("AboveQuarterSecond", func(t *testing.T) {
+		assert.Equal(t, "0.3", formatExposure(0.3))
+		assert.Equal(t, "0.5", formatExposure(0.5))
+		assert.Equal(t, "0.8", formatExposure(0.8))
+		assert.Equal(t, "1", formatExposure(0.96))
 	})
 	t.Run("OneSecondAndAbove", func(t *testing.T) {
 		assert.Equal(t, "1", formatExposure(1.0))
 		assert.Equal(t, "2.5", formatExposure(2.5))
+		assert.Equal(t, "1.3", formatExposure(4.0/3))
 		assert.Equal(t, "30", formatExposure(30))
 	})
 	t.Run("ZeroOrNegative", func(t *testing.T) {
 		assert.Equal(t, "", formatExposure(0))
 		assert.Equal(t, "", formatExposure(-1))
+	})
+	t.Run("OutOfRange", func(t *testing.T) {
+		assert.Equal(t, "", formatExposure(3e-10))
+		assert.Equal(t, "", formatExposure(2e6))
+		assert.Equal(t, "", formatExposure(math.Inf(1)))
+		assert.Equal(t, "", formatExposure(math.NaN()))
 	})
 }
 
