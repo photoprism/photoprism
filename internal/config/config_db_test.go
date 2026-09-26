@@ -3,12 +3,14 @@ package config
 import (
 	"bytes"
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/pkg/dsn"
+	"github.com/photoprism/photoprism/pkg/fs"
 
 	"github.com/photoprism/photoprism/internal/service/cluster"
 )
@@ -259,7 +261,7 @@ func TestConfig_DatabasePortString(t *testing.T) {
 func TestConfig_DatabaseName(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	resetDatabaseOptions(c)
-	assert.Equal(t, ProjectRoot+"/storage/testdata/index.db?_busy_timeout=5000", c.DatabaseName())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL", c.DatabaseName())
 }
 
 func TestConfig_DatabaseUser(t *testing.T) {
@@ -340,13 +342,13 @@ func TestConfig_DatabaseDSN(t *testing.T) {
 	c.options.DatabaseDriver = "MariaDB"
 	assert.Equal(t, "photoprism:@tcp(localhost)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s", c.DatabaseDSN())
 	c.options.DatabaseDriver = "tidb"
-	assert.Equal(t, ProjectRoot+"/storage/testdata/index.db?_busy_timeout=5000", c.DatabaseDSN())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL", c.DatabaseDSN())
 	c.options.DatabaseDriver = "Postgres"
 	assert.Equal(t, "user=photoprism password= dbname=photoprism host=localhost port=5432 connect_timeout=15 sslmode=disable TimeZone=UTC", c.DatabaseDSN())
 	c.options.DatabaseDriver = "SQLite"
-	assert.Equal(t, ProjectRoot+"/storage/testdata/index.db?_busy_timeout=5000", c.DatabaseDSN())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL", c.DatabaseDSN())
 	c.options.DatabaseDriver = ""
-	assert.Equal(t, ProjectRoot+"/storage/testdata/index.db?_busy_timeout=5000", c.DatabaseDSN())
+	assert.Equal(t, ProjectRoot+"/storage/testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL", c.DatabaseDSN())
 
 	t.Run("CustomServer", func(t *testing.T) {
 		conf := NewConfig(CliTestContext())
@@ -417,6 +419,21 @@ func TestConfig_DatabaseDSN(t *testing.T) {
 		assert.Equal(t, "postgres.internal", conf.DatabaseHost())
 		assert.Equal(t, 5433, conf.DatabasePort())
 	})
+	t.Run("SQLiteSQLiteAlias", func(t *testing.T) {
+		conf := NewConfig(CliTestContext())
+		resetDatabaseOptions(conf)
+
+		conf.options.DatabaseDriver = dsn.DriverSQLite3
+		conf.options.DatabaseDSN = "sqlite:/var/photoprism/instance.db"
+
+		want := "file:/var/photoprism/instance.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL"
+		if got := conf.DatabaseDSN(); got != want {
+			t.Fatalf("DatabaseDSN() = %q, want %q", got, want)
+		}
+
+		assert.Equal(t, "", conf.DatabaseHost())
+		assert.Equal(t, 0, conf.DatabasePort())
+	})
 }
 
 func TestConfig_DatabaseDSNFlags(t *testing.T) {
@@ -458,13 +475,252 @@ func TestConfig_ReportDatabaseDSN(t *testing.T) {
 
 func TestConfig_DatabaseFile(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	// Ensure SQLite defaults
-	resetDatabaseOptions(c)
-	driver := c.DatabaseDriver()
-	assert.Equal(t, dsn.DriverSQLite3, driver)
-	c.options.DatabaseDSN = ""
-	assert.Equal(t, ProjectRoot+"/storage/testdata/index.db", c.DatabaseFile())
-	assert.Equal(t, ProjectRoot+"/storage/testdata/index.db?_busy_timeout=5000", c.DatabaseDSN())
+
+	tests := []struct {
+		name       string
+		inDriver   string
+		inDSN      string
+		wantDriver string
+		wantFile   string
+		wantDSN    string
+	}{
+		{
+			// Ensure SQLite defaults
+			name:       "DefaultSQLite",
+			inDriver:   "",
+			inDSN:      "",
+			wantDriver: dsn.DriverSQLite3,
+			wantFile:   ProjectRoot + "/storage/testdata/index.db",
+			wantDSN:    ProjectRoot + "/storage/testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+		},
+		{
+			name:       "SQLiteBaseNoPath",
+			inDriver:   dsn.DriverSQLite3,
+			inDSN:      "index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			wantDriver: dsn.DriverSQLite3,
+			wantFile:   "index.db",
+			wantDSN:    "index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+		},
+		{
+			name:       "SQLiteBaseRelativePath",
+			inDriver:   dsn.DriverSQLite3,
+			inDSN:      "testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			wantDriver: dsn.DriverSQLite3,
+			wantFile:   "testdata/index.db",
+			wantDSN:    "testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+		},
+		{
+			name:       "SQLiteBaseRootPath",
+			inDriver:   dsn.DriverSQLite3,
+			inDSN:      "/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			wantDriver: dsn.DriverSQLite3,
+			wantFile:   "/index.db",
+			wantDSN:    "/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+		},
+		{
+			name:       "SQLiteBasePath",
+			inDriver:   dsn.DriverSQLite3,
+			inDSN:      "/testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			wantDriver: dsn.DriverSQLite3,
+			wantFile:   "/testdata/index.db",
+			wantDSN:    "/testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+		},
+		{
+			name:       "SQLiteBaseDotPath",
+			inDriver:   dsn.DriverSQLite3,
+			inDSN:      "./testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			wantDriver: dsn.DriverSQLite3,
+			wantFile:   "testdata/index.db",
+			wantDSN:    "./testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+		},
+		{
+			name:       "SQLiteBaseDoubleDotPath",
+			inDriver:   dsn.DriverSQLite3,
+			inDSN:      "../testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			wantDriver: dsn.DriverSQLite3,
+			wantFile:   "../testdata/index.db",
+			wantDSN:    "../testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+		},
+		{
+			name:       "SQLiteBaseTripleDotPath",
+			inDriver:   dsn.DriverSQLite3,
+			inDSN:      ".../testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			wantDriver: dsn.DriverSQLite3,
+			wantFile:   ".../testdata/index.db",
+			wantDSN:    ".../testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+		},
+		{
+			name:       "SQLiteFileNoPath",
+			inDriver:   dsn.DriverSQLite3,
+			inDSN:      "file:index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			wantDriver: dsn.DriverSQLite3,
+			wantFile:   "index.db",
+			wantDSN:    "file:index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+		},
+		{
+			name:       "SQLiteFileRelativePath",
+			inDriver:   dsn.DriverSQLite3,
+			inDSN:      "file:testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			wantDriver: dsn.DriverSQLite3,
+			wantFile:   "testdata/index.db",
+			wantDSN:    "file:testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+		},
+		{
+			name:       "SQLiteFileRootPath",
+			inDriver:   dsn.DriverSQLite3,
+			inDSN:      "file:/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			wantDriver: dsn.DriverSQLite3,
+			wantFile:   "/index.db",
+			wantDSN:    "file:/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+		},
+		{
+			name:       "SQLiteFilePath",
+			inDriver:   dsn.DriverSQLite3,
+			inDSN:      "file:/testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			wantDriver: dsn.DriverSQLite3,
+			wantFile:   "/testdata/index.db",
+			wantDSN:    "file:/testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+		},
+		{
+			name:       "SQLiteFileDotPath",
+			inDriver:   dsn.DriverSQLite3,
+			inDSN:      "file:./testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			wantDriver: dsn.DriverSQLite3,
+			wantFile:   "testdata/index.db",
+			wantDSN:    "file:./testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+		},
+		{
+			name:       "SQLiteFileDoubleDotPath",
+			inDriver:   dsn.DriverSQLite3,
+			inDSN:      "file:../testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			wantDriver: dsn.DriverSQLite3,
+			wantFile:   "../testdata/index.db",
+			wantDSN:    "file:../testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+		},
+		{
+			name:       "SQLiteFileTripleDotPath",
+			inDriver:   dsn.DriverSQLite3,
+			inDSN:      "file:.../testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			wantDriver: dsn.DriverSQLite3,
+			wantFile:   ".../testdata/index.db",
+			wantDSN:    "file:.../testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+		},
+		{
+			name:       "SQLiteSQLiteNoPath",
+			inDriver:   dsn.DriverSQLite3,
+			inDSN:      "sqlite:index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			wantDriver: dsn.DriverSQLite3,
+			wantFile:   "index.db",
+			wantDSN:    "file:index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+		},
+		{
+			name:       "SQLiteSQLiteRelativePath",
+			inDriver:   dsn.DriverSQLite3,
+			inDSN:      "sqlite:testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			wantDriver: dsn.DriverSQLite3,
+			wantFile:   "testdata/index.db",
+			wantDSN:    "file:testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+		},
+		{
+			name:       "SQLiteSQLiteRootPath",
+			inDriver:   dsn.DriverSQLite3,
+			inDSN:      "sqlite:/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			wantDriver: dsn.DriverSQLite3,
+			wantFile:   "/index.db",
+			wantDSN:    "file:/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+		},
+		{
+			name:       "SQLiteSQLitePath",
+			inDriver:   dsn.DriverSQLite3,
+			inDSN:      "sqlite:/testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			wantDriver: dsn.DriverSQLite3,
+			wantFile:   "/testdata/index.db",
+			wantDSN:    "file:/testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+		},
+		{
+			name:       "SQLiteSQLiteDotPath",
+			inDriver:   dsn.DriverSQLite3,
+			inDSN:      "sqlite:./testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			wantDriver: dsn.DriverSQLite3,
+			wantFile:   "testdata/index.db",
+			wantDSN:    "file:./testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+		},
+		{
+			name:       "SQLiteSQLiteDoubleDotPath",
+			inDriver:   dsn.DriverSQLite3,
+			inDSN:      "sqlite:../testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			wantDriver: dsn.DriverSQLite3,
+			wantFile:   "../testdata/index.db",
+			wantDSN:    "file:../testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+		},
+		{
+			name:       "SQLiteSQLiteTripleDotPath",
+			inDriver:   dsn.DriverSQLite3,
+			inDSN:      "sqlite:.../testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			wantDriver: dsn.DriverSQLite3,
+			wantFile:   ".../testdata/index.db",
+			wantDSN:    "file:.../testdata/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+		},
+		{
+			name:       "SQLiteBaseAtPattern",
+			inDriver:   dsn.DriverSQLite3,
+			inDSN:      "/photoprism/my@storage/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			wantDriver: dsn.DriverSQLite3,
+			wantFile:   "/photoprism/my@storage/index.db",
+			wantDSN:    "/photoprism/my@storage/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+		},
+		{
+			name:       "SQLiteBaseBacketPattern",
+			inDriver:   dsn.DriverSQLite3,
+			inDSN:      "/srv/photos (main)/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			wantDriver: dsn.DriverSQLite3,
+			wantFile:   "/srv/photos (main)/index.db",
+			wantDSN:    "/srv/photos (main)/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+		},
+		{
+			name:       "SQLiteBaseMySQLStyle",
+			inDriver:   dsn.DriverSQLite3,
+			inDSN:      "photoprism:storage@file(storage:port)/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			wantDriver: dsn.DriverSQLite3,
+			wantFile:   "photoprism:storage@file(storage:port)/index.db",
+			wantDSN:    "photoprism:storage@file(storage:port)/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+		},
+		{
+			name:       "SQLiteBaseMySQLPipe",
+			inDriver:   dsn.DriverSQLite3,
+			inDSN:      "photoprism:storage@pipe(storage:port)/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+			wantDriver: dsn.DriverSQLite3,
+			wantFile:   "photoprism:storage@pipe(storage:port)/index.db",
+			wantDSN:    "photoprism:storage@pipe(storage:port)/index.db?_busy_timeout=5000&_journal_mode=WAL&_synchronous=NORMAL",
+		},
+		{
+			name:       "MySQLBlank",
+			inDriver:   dsn.DriverMySQL,
+			inDSN:      "",
+			wantDriver: dsn.DriverMySQL,
+			wantFile:   "",
+			wantDSN:    "photoprism:@tcp(localhost)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=15s",
+		},
+		{
+			name:       "MySQLURI",
+			inDriver:   dsn.DriverMySQL,
+			inDSN:      "mysql://user@localhost:3306/photoprism?parseTime=true",
+			wantDriver: dsn.DriverMySQL,
+			wantFile:   "",
+			wantDSN:    "mysql://user@localhost:3306/photoprism?parseTime=true",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			resetDatabaseOptions(c)
+			c.options.DatabaseDriver = tt.inDriver
+			c.options.DatabaseDSN = tt.inDSN
+			driver := c.DatabaseDriver()
+			assert.Equal(t, tt.wantDriver, driver)
+			assert.Equal(t, tt.wantFile, c.DatabaseFile())
+			assert.Equal(t, tt.wantDSN, c.DatabaseDSN())
+		})
+	}
 }
 
 func TestConfig_DatabaseTimeout(t *testing.T) {
@@ -534,4 +790,146 @@ func TestConfig_checkDb(t *testing.T) {
 	assert.NoError(t, c.checkDb(nil))
 	t.Setenv("PHOTOPRISM_DATABASE_SKIP_VERSION_CHECK", "")
 	assert.Error(t, c.checkDb(nil))
+}
+
+func TestConfig_connectDB(t *testing.T) {
+	tmpDir := t.TempDir()
+	t.Cleanup(func() {
+		cl := TestConfig()
+		cl.RegisterDb()
+	})
+	t.Run("NotExistPath", func(t *testing.T) {
+		c := NewMinimalTestConfig(tmpDir)
+		c.options.DatabaseDSN = filepath.Join(tmpDir, "NotExistPath", ".test.db")
+		c.options.DatabaseDriver = dsn.DriverSQLite3
+
+		require.NoError(t, c.connectDb())
+		assert.NoError(t, c.CloseDb())
+	})
+	t.Run("NotExistPathNoWriteAccess", func(t *testing.T) {
+		c := NewMinimalTestConfig(tmpDir)
+		path := filepath.Join(tmpDir, "NotExistPathNoWriteAccess")
+		require.NoError(t, fs.MkdirAll(path))
+		require.NoError(t, os.Chmod(path, 0555)) //nolint:gosec // G302 - remove write permissions
+		path = filepath.Join(path, "NoAccess")
+		c.options.DatabaseDSN = filepath.Join(path, ".test.db")
+		c.options.DatabaseDriver = dsn.DriverSQLite3
+
+		err := c.connectDb()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "permission denied")
+		assert.NoError(t, c.CloseDb())
+	})
+	t.Run("ExistPath", func(t *testing.T) {
+		c := NewMinimalTestConfig(tmpDir)
+		require.NoError(t, fs.MkdirAll(filepath.Join(tmpDir, "ExistPath")))
+		c.options.DatabaseDSN = filepath.Join(tmpDir, "ExistPath", ".test.db")
+		c.options.DatabaseDriver = dsn.DriverSQLite3
+
+		require.NoError(t, c.connectDb())
+		assert.NoError(t, c.CloseDb())
+	})
+	t.Run("ExistPathNoWriteAccess", func(t *testing.T) {
+		c := NewMinimalTestConfig(tmpDir)
+		path := filepath.Join(tmpDir, "ExistPathNoWrite")
+		require.NoError(t, fs.MkdirAll(path))
+		require.NoError(t, os.Chmod(path, 0555)) //nolint:gosec // G302 - remove write permissions
+		c.options.DatabaseDSN = filepath.Join(path, ".test.db")
+		c.options.DatabaseDriver = dsn.DriverSQLite3
+
+		err := c.connectDb()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "config: database path from dsn not writable")
+		assert.NoError(t, c.CloseDb())
+	})
+	t.Run("ExistDatabase", func(t *testing.T) {
+		c := NewMinimalTestConfig(tmpDir)
+		require.NoError(t, fs.MkdirAll(filepath.Join(tmpDir, "ExistDatabase")))
+		c.options.DatabaseDSN = filepath.Join(tmpDir, "ExistDatabase", ".test.db")
+		c.options.DatabaseDriver = dsn.DriverSQLite3
+		require.NoError(t, fs.WriteFile(c.options.DatabaseDSN, []byte{}, fs.ModeFile))
+
+		require.NoError(t, c.connectDb())
+		assert.NoError(t, c.CloseDb())
+	})
+	t.Run("ExistDatabaseNotWritable", func(t *testing.T) {
+		c := NewMinimalTestConfig(tmpDir)
+		require.NoError(t, fs.MkdirAll(filepath.Join(tmpDir, "ExistDatabaseNotWritable")))
+		c.options.DatabaseDSN = filepath.Join(tmpDir, "ExistDatabaseNotWritable", ".test.db")
+		c.options.DatabaseDriver = dsn.DriverSQLite3
+		require.NoError(t, fs.WriteFile(c.options.DatabaseDSN, []byte{}, fs.ModeFile))
+		require.NoError(t, os.Chmod(c.options.DatabaseDSN, 0555)) //nolint:gosec // G302 - remove write permissions
+
+		err := c.connectDb()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "config: database file from dsn not writable")
+		assert.NoError(t, c.CloseDb())
+	})
+	t.Run("ExistDatabaseFolderNotWritable", func(t *testing.T) {
+		c := NewMinimalTestConfig(tmpDir)
+		path := filepath.Join(tmpDir, "ExistDatabaseFolderNotWritable")
+		require.NoError(t, fs.MkdirAll(path))
+		c.options.DatabaseDSN = filepath.Join(path, ".test.db")
+		c.options.DatabaseDriver = dsn.DriverSQLite3
+		require.NoError(t, fs.WriteFile(c.options.DatabaseDSN, []byte{}, fs.ModeFile))
+		require.NoError(t, os.Chmod(path, 0555)) //nolint:gosec // G302 - remove write permissions
+		t.Cleanup(func() {
+			require.NoError(t, os.Chmod(path, 0755)) //nolint:gosec // G302 - add write permissions
+		})
+
+		err := c.connectDb()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "config: database path from dsn not writable and db files need to be created")
+		assert.NoError(t, c.CloseDb())
+	})
+	t.Run("ExistDatabaseShmWritable", func(t *testing.T) {
+		c := NewMinimalTestConfig(tmpDir)
+		require.NoError(t, fs.MkdirAll(filepath.Join(tmpDir, "ExistDatabaseShmWritable")))
+		c.options.DatabaseDSN = filepath.Join(tmpDir, "ExistDatabaseShmWritable", ".test.db")
+		c.options.DatabaseDriver = dsn.DriverSQLite3
+		require.NoError(t, fs.WriteFile(c.options.DatabaseDSN, []byte{}, fs.ModeFile))
+		require.NoError(t, fs.WriteFile(c.options.DatabaseDSN+"-shm", []byte{}, fs.ModeFile))
+
+		assert.NoError(t, c.connectDb())
+		assert.NoError(t, c.CloseDb())
+	})
+	t.Run("ExistDatabaseShmNotWritable", func(t *testing.T) {
+		c := NewMinimalTestConfig(tmpDir)
+		require.NoError(t, fs.MkdirAll(filepath.Join(tmpDir, "ExistDatabaseShmNotWritable")))
+		c.options.DatabaseDSN = filepath.Join(tmpDir, "ExistDatabaseShmNotWritable", ".test.db")
+		c.options.DatabaseDriver = dsn.DriverSQLite3
+		require.NoError(t, fs.WriteFile(c.options.DatabaseDSN, []byte{}, fs.ModeFile))
+		require.NoError(t, fs.WriteFile(c.options.DatabaseDSN+"-shm", []byte{}, fs.ModeFile))
+		require.NoError(t, os.Chmod(c.options.DatabaseDSN+"-shm", 0555)) //nolint:gosec // G302 - remove write permissions
+
+		err := c.connectDb()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "config: database shm file from dsn not writable")
+		assert.NoError(t, c.CloseDb())
+	})
+	t.Run("ExistDatabaseWalWritable", func(t *testing.T) {
+		c := NewMinimalTestConfig(tmpDir)
+		require.NoError(t, fs.MkdirAll(filepath.Join(tmpDir, "ExistDatabaseWalWritable")))
+		c.options.DatabaseDSN = filepath.Join(tmpDir, "ExistDatabaseWalWritable", ".test.db")
+		c.options.DatabaseDriver = dsn.DriverSQLite3
+		require.NoError(t, fs.WriteFile(c.options.DatabaseDSN, []byte{}, fs.ModeFile))
+		require.NoError(t, fs.WriteFile(c.options.DatabaseDSN+"-wal", []byte{}, fs.ModeFile))
+
+		assert.NoError(t, c.connectDb())
+		assert.NoError(t, c.CloseDb())
+	})
+	t.Run("ExistDatabaseWalNotWritable", func(t *testing.T) {
+		c := NewMinimalTestConfig(tmpDir)
+		require.NoError(t, fs.MkdirAll(filepath.Join(tmpDir, "ExistDatabaseWalNotWritable")))
+		c.options.DatabaseDSN = filepath.Join(tmpDir, "ExistDatabaseWalNotWritable", ".test.db")
+		c.options.DatabaseDriver = dsn.DriverSQLite3
+		require.NoError(t, fs.WriteFile(c.options.DatabaseDSN, []byte{}, fs.ModeFile))
+		require.NoError(t, fs.WriteFile(c.options.DatabaseDSN+"-wal", []byte{}, fs.ModeFile))
+		require.NoError(t, os.Chmod(c.options.DatabaseDSN+"-wal", 0555)) //nolint:gosec // G302 - remove write permissions
+
+		err := c.connectDb()
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "config: database wal file from dsn not writable")
+		assert.NoError(t, c.CloseDb())
+	})
 }
