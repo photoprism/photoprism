@@ -3,6 +3,8 @@ package commands
 import (
 	"errors"
 	"flag"
+	"io"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -232,6 +234,24 @@ func TestConfirmAction(t *testing.T) {
 		require.ErrorAs(t, err, &exit)
 		assert.Equal(t, 2, exit.ExitCode())
 	})
+	t.Run("PromptOnStderr", func(t *testing.T) {
+		// Without a terminal, the prompt that could not be answered stays out of the command output.
+		stdout, stderr := captureStdio(t)
+
+		proceed, err := ConfirmAction(false, "Remove everything?")
+
+		require.Error(t, err)
+		assert.False(t, proceed)
+		assert.Empty(t, stdout())
+		assert.Contains(t, stderr(), "Remove everything")
+	})
+	t.Run("PromptOutput", func(t *testing.T) {
+		// The prompt stays visible when only stdout is a terminal, e.g. with stderr redirected to a file.
+		assert.Same(t, os.Stderr, confirmOutput(true, true))
+		assert.Same(t, os.Stderr, confirmOutput(false, true))
+		assert.Same(t, os.Stderr, confirmOutput(false, false))
+		assert.Same(t, os.Stdout, confirmOutput(true, false))
+	})
 	t.Run("NonInteractiveEnvSkipsThePrompt", func(t *testing.T) {
 		t.Setenv("PHOTOPRISM_CLI", NONINTERACTIVE)
 
@@ -341,4 +361,44 @@ func TestFacesResetRequiresConfirmation(t *testing.T) {
 		assert.Equal(t, 2, exit.ExitCode())
 		assert.Contains(t, err.Error(), "no face detector can be used")
 	})
+}
+
+// captureStdio redirects os.Stdout and os.Stderr to pipes; each returned reader restores its stream and
+// returns what was written to it.
+func captureStdio(t *testing.T) (stdout, stderr func() string) {
+	t.Helper()
+
+	capture := func(target **os.File) func() string {
+		r, w, err := os.Pipe()
+		require.NoError(t, err)
+
+		prev := *target
+		*target = w
+		done := make(chan string)
+
+		go func() {
+			data, _ := io.ReadAll(r)
+			done <- string(data)
+		}()
+
+		var result *string
+
+		read := func() string {
+			if result == nil {
+				*target = prev
+				_ = w.Close()
+				s := <-done
+				_ = r.Close()
+				result = &s
+			}
+
+			return *result
+		}
+
+		t.Cleanup(func() { read() })
+
+		return read
+	}
+
+	return capture(&os.Stdout), capture(&os.Stderr)
 }

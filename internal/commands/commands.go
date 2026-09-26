@@ -60,7 +60,22 @@ var confirmStdin io.ReadCloser
 
 // confirmTerminal reports whether ConfirmAction reads its answers from a terminal.
 var confirmTerminal = func() bool {
-	return confirmStdin == nil && (isatty.IsTerminal(os.Stdin.Fd()) || isatty.IsCygwinTerminal(os.Stdin.Fd()))
+	return confirmStdin == nil && isTerminal(os.Stdin)
+}
+
+// isTerminal reports whether f is a terminal.
+func isTerminal(f *os.File) bool {
+	return f != nil && (isatty.IsTerminal(f.Fd()) || isatty.IsCygwinTerminal(f.Fd()))
+}
+
+// confirmOutput returns where a confirmation prompt is rendered: on stderr, so that stdout only carries
+// what the command outputs, unless only stdout is a terminal and the prompt would otherwise not be seen.
+func confirmOutput(stdoutTerminal, stderrTerminal bool) *os.File {
+	if stdoutTerminal && !stderrTerminal {
+		return os.Stdout
+	}
+
+	return os.Stderr
 }
 
 // ConfirmAction asks the operator to confirm a destructive action and reports whether it may
@@ -72,7 +87,8 @@ func ConfirmAction(confirmed bool, label string) (proceed bool, err error) {
 		return true, nil
 	}
 
-	prompt := promptui.Prompt{Label: confirmLabel(label), IsConfirm: true, Stdin: confirmStdin}
+	prompt := promptui.Prompt{Label: confirmLabel(label), IsConfirm: true, Stdin: confirmStdin,
+		Stdout: confirmOutput(isTerminal(os.Stdout), isTerminal(os.Stderr))}
 
 	if _, err = prompt.Run(); err == nil {
 		return true, nil
