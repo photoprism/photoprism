@@ -2,6 +2,7 @@ package photoprism
 
 import (
 	"errors"
+	"fmt"
 	"sort"
 	"strings"
 	"testing"
@@ -144,4 +145,81 @@ func TestFaces_MatchFacesStampCancellation(t *testing.T) {
 	assert.NotNil(t, entity.FindMarker(uids[1]).MatchedAt)
 	assert.Nil(t, entity.FindMarker(uids[2]).MatchedAt)
 	assert.Nil(t, entity.FindMarker(uids[3]).MatchedAt)
+}
+
+// TestFaces_MatchFacesPause checks that only a page that changed a marker pauses the walk.
+func TestFaces_MatchFacesPause(t *testing.T) {
+	for _, force := range []bool{false, true} {
+		for _, mode := range []string{"StampedOnly", "ChangedPage", "NoMatchPage", "AmbiguousPage"} {
+			t.Run(fmt.Sprintf("%s/Force%t", mode, force), func(t *testing.T) {
+				w, f, uids := stampTestPage(t, fmt.Sprintf("facespause%s%t", mode, force), 5)
+				oldLimit, oldPause := faceMatchBatchSize, faceMatchPause
+				pauses := 0
+				faceMatchBatchSize = 2
+				faceMatchPause = func() { pauses++ }
+				t.Cleanup(func() { faceMatchBatchSize, faceMatchPause = oldLimit, oldPause })
+				faces := entity.Faces{*f}
+				switch mode {
+				case "ChangedPage":
+					require.NoError(t, entity.UnscopedDb().Model(&entity.Marker{}).Where("marker_uid = ?", uids[1]).UpdateColumns(entity.Values{"face_id": "", "face_dist": -1}).Error)
+				case "NoMatchPage":
+					require.NoError(t, entity.UnscopedDb().Model(&entity.Marker{}).Where("marker_uid = ?", uids[3]).UpdateColumns(entity.Values{
+						"face_id": "", "face_dist": -1, "embeddings_json": face.Embeddings{face.FixtureEmbedding(8301)}.JSON(),
+					}).Error)
+				case "AmbiguousPage":
+					faces[0].SubjUID = entity.SubjectFixtures.Get("john-doe").SubjUID
+					rival := entity.NewFace(entity.SubjectFixtures.Get("jane-doe").SubjUID, entity.SrcManual, face.Embeddings{face.FixtureEmbeddingAt(f.Embedding(), face.MatchMarginDefault/2, 8302)}, face.EmbeddingModelName())
+					faces = append(faces, *rival)
+				}
+				result, err := w.MatchFaces(faces, force, nil, nil)
+				require.NoError(t, err)
+				switch mode {
+				case "ChangedPage":
+					assert.Equal(t, int64(1), result.Updated)
+					assert.Equal(t, f.ID, entity.FindMarker(uids[1]).FaceID)
+					assert.Equal(t, 1, pauses, "only the page holding the changed marker pauses")
+				case "AmbiguousPage":
+					assert.Equal(t, int64(5), result.Ambiguous)
+					assert.Equal(t, int64(5), result.Updated)
+					// The offset walk stops by the count after its last page, before the pause.
+					assert.Equal(t, map[bool]int{false: 3, true: 2}[force], pauses, "every page detached a marker")
+				default:
+					assert.Equal(t, FacesMatchResult{}, result)
+					assert.Zero(t, pauses)
+				}
+				for _, uid := range uids {
+					assert.NotNil(t, entity.FindMarker(uid).MatchedAt, "every page is still walked")
+				}
+			})
+		}
+	}
+}
+
+// TestFaces_MatchFacesCount checks that only the offset walk counts the marker table.
+func TestFaces_MatchFacesCount(t *testing.T) {
+	for _, force := range []bool{false, true} {
+		t.Run(map[bool]string{false: "CursorWalk", true: "OffsetWalk"}[force], func(t *testing.T) {
+			w, f, uids := stampTestPage(t, fmt.Sprintf("facescount%t", force), 5)
+			oldLimit := faceMatchBatchSize
+			faceMatchBatchSize = 2
+			t.Cleanup(func() { faceMatchBatchSize = oldLimit })
+			counts := 0
+			entity.Db().Callback().RowQuery().After("gorm:row_query").Register("test:marker-count", func(scope *gorm.Scope) {
+				if scope.TableName() == (entity.Marker{}).TableName() && strings.Contains(strings.ToLower(scope.SQL), "count(") {
+					counts++
+				}
+			})
+			t.Cleanup(func() { entity.Db().Callback().RowQuery().Remove("test:marker-count") })
+			_, err := w.MatchFaces(entity.Faces{*f}, force, nil, nil)
+			require.NoError(t, err)
+			if force {
+				assert.Equal(t, 1, counts)
+			} else {
+				assert.Zero(t, counts)
+			}
+			for _, uid := range uids {
+				assert.NotNil(t, entity.FindMarker(uid).MatchedAt, "the walk reaches every marker")
+			}
+		})
+	}
 }

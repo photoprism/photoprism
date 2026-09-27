@@ -15,6 +15,10 @@ import (
 // can reproduce a full page without seeding one.
 var faceMatchBatchSize = 500
 
+// faceMatchPause yields between match pages that changed or tried to assign a marker. It is a
+// variable so a test can observe the pause without waiting for it.
+var faceMatchPause = func() { time.Sleep(50 * time.Millisecond) }
+
 // FacesMatchResult represents the outcome of Faces.Match().
 type FacesMatchResult struct {
 	Updated    int64
@@ -480,8 +484,15 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 		return result, nil
 	}
 
-	maxMarkers := query.CountMarkers(entity.MarkerFace)
-	processed := make(map[string]struct{}, maxMarkers)
+	// Counted only for the offset walk, which clamps its offset and stops by it; the count scans
+	// every marker row.
+	maxMarkers := 0
+
+	if force {
+		maxMarkers = query.CountMarkers(entity.MarkerFace)
+	}
+
+	processed := make(map[string]struct{}, max(maxMarkers, limit))
 	totalProcessed := 0
 
 	offset := 0
@@ -528,6 +539,7 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 		}
 
 		batchProcessed := 0
+		batchChanged := false
 		pageMatchedAt = entity.TimeStamp()
 
 		for _, marker := range markers {
@@ -576,6 +588,7 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 
 					if updated {
 						result.Updated++
+						batchChanged = true
 					}
 				}
 
@@ -586,7 +599,7 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 			if !marker.HasFace(selFace, dist) {
 				// Marker needs a (new) face.
 			} else {
-				log.Debugf("faces: marker %s already has the best matching face %s with dist %f", marker.MarkerUID, marker.FaceID, marker.FaceDist)
+				log.Tracef("faces: marker %s already has the best matching face %s with dist %f", marker.MarkerUID, marker.FaceID, marker.FaceDist)
 
 				pending = append(pending, &marker)
 
@@ -605,6 +618,7 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 					log.Warnf("faces: %s (clear marker face)", err)
 				} else if updated {
 					result.Updated++
+					batchChanged = true
 					w.rememberVeto(marker.MarkerUID)
 				}
 
@@ -612,6 +626,7 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 			}
 
 			// Assign matching face to marker.
+			batchChanged = true
 			updated, err := marker.SetFace(selFace, dist)
 			index.refresh(selFace)
 
@@ -654,11 +669,15 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 			log.Debugf("faces: matched %s", english.Plural(totalProcessed, "marker", "markers"))
 		}
 
-		if totalProcessed >= maxMarkers {
+		if force && totalProcessed >= maxMarkers {
 			break
 		}
 
-		time.Sleep(50 * time.Millisecond)
+		// Paused only after a page that changed or tried to assign a marker; a page that was
+		// only stamped resumes at once.
+		if batchChanged {
+			faceMatchPause()
+		}
 	}
 
 	return result, err
