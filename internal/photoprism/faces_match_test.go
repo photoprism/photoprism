@@ -918,3 +918,49 @@ func TestFaces_MatchFacesMembership(t *testing.T) {
 		})
 	}
 }
+
+// TestFaces_MatchFacesStoredAcceptance checks refusal and candidate refresh within a page.
+func TestFaces_MatchFacesStoredAcceptance(t *testing.T) {
+	for _, mode := range []string{"Narrowed", "Deleted", "Renamed"} {
+		t.Run(mode, func(t *testing.T) {
+			w := isolatedTestFaces(t, "facesstored"+mode)
+			person := consensusTestSubject(t, "Stored "+mode)
+			f := entity.NewFace(person.SubjUID, entity.SrcAuto, face.Embeddings{face.FixtureEmbedding(8260)}, face.EmbeddingModelName())
+			require.NoError(t, f.Create())
+			uids := consensusTestMarkers(t, f, 2, "", entity.SrcAuto, false)
+			dist := 0.5 * f.AcceptDist()
+			require.NoError(t, entity.UnscopedDb().Model(&entity.Marker{}).Where("marker_uid IN (?)", uids).UpdateColumns(entity.Values{
+				"face_id": "", "face_dist": -1, "matched_at": nil,
+				"embeddings_json": face.Embeddings{face.FixtureEmbeddingAt(f.Embedding(), dist, 10)}.JSON(),
+			}).Error)
+			loaded := entity.Faces{*f}
+			switch mode {
+			case "Narrowed":
+				require.NoError(t, f.Update("collision_radius", dist/2))
+			case "Deleted":
+				require.NoError(t, entity.UnscopedDb().Delete(f).Error)
+			case "Renamed":
+				require.NoError(t, f.Update("subj_uid", ""))
+			}
+			stats := make(map[string]*faceMatchStats)
+			result, err := w.MatchFaces(loaded, false, nil, stats)
+			require.NoError(t, err)
+			assert.Equal(t, int64(1), result.Refused)
+			assert.Zero(t, result.Recognized)
+			if mode == "Renamed" {
+				assert.Equal(t, int64(1), result.Unknown)
+				require.NotNil(t, stats[f.ID])
+				assert.Equal(t, 1, stats[f.ID].matched)
+			} else {
+				assert.Empty(t, stats)
+				assert.Zero(t, result.Updated)
+				for _, uid := range uids {
+					assert.Empty(t, entity.FindMarker(uid).FaceID)
+				}
+			}
+			for _, uid := range uids {
+				assert.Empty(t, entity.FindMarker(uid).SubjUID)
+			}
+		})
+	}
+}

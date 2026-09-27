@@ -127,6 +127,21 @@ func buildFaceIndex(faces entity.Faces) faceIndex {
 	return idx
 }
 
+// refresh copies a cluster's current eligibility into its cached candidate.
+func (idx faceIndex) refresh(f *entity.Face) {
+	for i := range idx.candidates {
+		c := &idx.candidates[i]
+		if c.ref != f {
+			continue
+		}
+		c.collisionRadius = f.CollisionRadius
+		if f.SkipMatching() {
+			c.emb = nil
+		}
+		return
+	}
+}
+
 // limit returns the largest distance at which this candidate would still accept a marker, which
 // is the narrower of its accept distance and a collision radius once one has been measured.
 func (c faceCandidate) limit() float64 {
@@ -588,6 +603,7 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 
 			// Assign matching face to marker.
 			updated, err := marker.SetFace(selFace, dist)
+			index.refresh(selFace)
 
 			if err != nil {
 				log.Warnf("faces: %s while setting a face for marker %s", err, marker.MarkerUID)

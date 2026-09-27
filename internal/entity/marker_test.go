@@ -724,6 +724,7 @@ func TestFindMarker(t *testing.T) {
 	})
 }
 
+// TestMarker_SetFace checks assignment inputs and persisted membership.
 func TestMarker_SetFace(t *testing.T) {
 	t.Run("FaceEqualNil", func(t *testing.T) {
 		m := MarkerFixtures.Pointer("1000003-6")
@@ -746,6 +747,8 @@ func TestMarker_SetFace(t *testing.T) {
 	})
 	t.Run("SetNewFace", func(t *testing.T) {
 		m := Marker{MarkerUID: "mqyz9x61edicxf8j", MarkerType: MarkerFace, SubjUID: "", FaceID: ""}
+		require.NoError(t, UnscopedDb().Create(&m).Error)
+		t.Cleanup(func() { UnscopedDb().Delete(&Marker{}, "marker_uid = ?", m.MarkerUID) })
 
 		updated, _ := m.SetFace(FaceFixtures.Pointer("john-doe"), -1)
 		assert.True(t, updated)
