@@ -63,7 +63,7 @@ func captureStatements(t *testing.T, fn func()) *statementCounter {
 func restoreDbLogger(db *gorm.DB) func() {
 	field := func(name string) reflect.Value {
 		f := reflect.ValueOf(db).Elem().FieldByName(name)
-		return reflect.NewAt(f.Type(), unsafe.Pointer(f.UnsafeAddr())).Elem()
+		return reflect.NewAt(f.Type(), unsafe.Pointer(f.UnsafeAddr())).Elem() //nolint:gosec // G103: test-only access to unexported GORM fields.
 	}
 
 	logger := reflect.New(field("logger").Type()).Elem()
