@@ -50,7 +50,8 @@ Optional nested repositories such as `plus/`, `pro/`, `portal/`, and `specs/` ma
 
 ### GitHub Issues
 
-- Titles MUST be concise, imperative, and start with one capitalized prefix plus `: `, for example `Search: Add filter for RAW image formats`.
+- Titles MUST be concise, imperative, and start with one capitalized prefix plus `: `, for example `Search: Add filter for RAW image formats`. A `Bug` title states what does not work instead, for example `PWA: Unable to download or share files`.
+- Choose the type by what the code was already supposed to do: `Bug` (implemented, but not working as documented), `Enhancement` (new capability on working functionality), `Feature` (entirely new), or `Task` (never fully developed, needs refinement, or an update). The title is a quick test: if it reads naturally as a failure, it is a `Bug`; once the type is chosen, word the title to match it.
 - Descriptions MUST begin with a one-sentence bold user story: `**As a <role>, I want <goal>, so that <outcome>.**`
 - Use level-3 Markdown headings for sections within issue descriptions, for example `### Acceptance Criteria`.
 - Follow with behavior, rationale, technical considerations, and constraints.
