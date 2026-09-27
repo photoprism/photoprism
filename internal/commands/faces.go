@@ -589,11 +589,10 @@ func facesResetAllAction(ctx *cli.Context) error {
 
 	if err := query.RemovePeopleAndFaces(); err != nil {
 		return err
-	} else {
-		elapsed := time.Since(start)
-
-		log.Infof("completed in %s", elapsed)
 	}
+
+	log.Infof("faces: removed all faces, people, and markers; run \"photoprism faces index\" to detect faces again")
+	log.Infof("completed in %s", time.Since(start))
 
 	return nil
 }
