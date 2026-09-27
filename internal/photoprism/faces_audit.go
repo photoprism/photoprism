@@ -356,7 +356,7 @@ func (w *Faces) Audit(fix bool, subjUID string) (err error) {
 				case !fix:
 					log.Warnf("%s", msg)
 					continue
-				case m.SubjSrc == entity.SrcManual:
+				case entity.SrcSubjects[m.SubjSrc] >= entity.SrcPriority[entity.SrcBatch]:
 					updates := entity.Values{"face_id": "", "face_dist": -1.0, "matched_at": nil, "marker_review": true}
 
 					if err := entity.Db().Model(&entity.Marker{}).

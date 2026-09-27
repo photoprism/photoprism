@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"testing"
 
@@ -8,7 +9,9 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
 
+	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -233,4 +236,61 @@ func TestMarkerSubjectSrcAccepted(t *testing.T) {
 	t.Run("NameChange", func(t *testing.T) {
 		assert.False(t, markerSubjectSrcAccepted("Jane", entity.SrcXmp, form.Marker{MarkerName: "Joan", SubjSrc: entity.SrcXmp}))
 	})
+}
+
+// TestUpdateMarker_OptimizeNamingSources merges clusters after a person's marker update.
+func TestUpdateMarker_OptimizeNamingSources(t *testing.T) {
+	app, router, _ := NewApiTest()
+	UpdateMarker(router)
+	for _, tc := range []struct {
+		name, src string
+		merge     bool
+	}{
+		{"Manual", entity.SrcManual, true}, {"Batch", entity.SrcBatch, true},
+		{"Auto", entity.SrcAuto, false}, {"Xmp", entity.SrcXmp, false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			subject := entity.NewSubject("Optimize Naming "+tc.name, entity.SubjPerson, entity.SrcManual)
+			require.NoError(t, subject.Create())
+			t.Cleanup(func() {
+				entity.UnscopedDb().Delete(&entity.Marker{}, "subj_uid = ?", subject.SubjUID)
+				entity.UnscopedDb().Delete(&entity.Face{}, "subj_uid = ?", subject.SubjUID)
+				entity.UnscopedDb().Delete(subject)
+			})
+			base := face.FixtureEmbedding(9531)
+			var first *entity.Face
+			for i := 0; i < face.ManualClusterCore; i++ {
+				embedding := face.FixtureEmbeddingAt(base, face.ClusterDist*0.5, uint64(9532+i))
+				f := entity.NewFace(subject.SubjUID, entity.SrcManual, face.Embeddings{embedding}, face.EmbeddingModelName())
+				require.NoError(t, f.Create())
+				if first == nil {
+					first = f
+				}
+			}
+			require.NotNil(t, first)
+			m := entity.Marker{MarkerUID: rnd.GenerateUID('m'), FileUID: entity.FileFixtures.Get("exampleDNGFile.dng").FileUID,
+				MarkerType: entity.MarkerFace, MarkerSrc: entity.SrcImage, SubjUID: subject.SubjUID, SubjSrc: tc.src,
+				MarkerName: subject.SubjName, FaceID: first.ID, FaceDist: 0, MarkerReview: true, W: 0.1, H: 0.1}
+			m.SetEmbeddings(face.Embeddings{first.Embedding()}, first.EmbedModel, face.DetectorYuNet)
+			require.NoError(t, entity.UnscopedDb().Create(&m).Error)
+			before, err := query.ManuallyAddedFaces(false, false, subject.SubjUID)
+			require.NoError(t, err)
+			require.Len(t, before, face.ManualClusterCore)
+			body := fmt.Sprintf(`{"Name":%q,"SubjSrc":%q,"Review":false}`, subject.SubjName, tc.src)
+			r := PerformRequestWithBody(app, http.MethodPut, "/api/v1/markers/"+m.MarkerUID, body)
+			require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+			after, err := query.ManuallyAddedFaces(false, false, subject.SubjUID)
+			require.NoError(t, err)
+			stored := entity.FindMarker(m.MarkerUID)
+			require.NotNil(t, stored)
+			assert.Equal(t, tc.src, stored.SubjSrc)
+			assert.False(t, stored.MarkerReview)
+			if tc.merge {
+				require.Len(t, after, 1)
+				assert.Equal(t, after[0].ID, stored.FaceID)
+			} else {
+				assert.Len(t, after, len(before))
+			}
+		})
+	}
 }

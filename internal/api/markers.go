@@ -331,7 +331,7 @@ func UpdateMarker(router *gin.RouterGroup) {
 			AbortSaveFailed(c)
 			return
 		} else if changed {
-			if marker.FaceID != "" && marker.SubjUID != "" && marker.SubjSrc == entity.SrcManual {
+			if marker.FaceID != "" && marker.SubjUID != "" && entity.SrcSubjects[marker.SubjSrc] >= entity.SrcPriority[entity.SrcBatch] {
 				if res, err := get.Faces().OptimizeFor(marker.SubjUID); err != nil {
 					log.Errorf("faces: %s (optimize)", err)
 				} else if res.Merged > 0 {
