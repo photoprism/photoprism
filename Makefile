@@ -63,8 +63,9 @@ else
     GOTEST=go test
 endif
 
-# Optional integration matrices can be enabled with GOTEST_TAGS=slow,develop,integration.
-GOTEST_TAGS ?= slow,develop
+# Optional integration matrices can be enabled with "make <target> GOTEST_TAGS=slow,develop,integration".
+# The environment is not read, so an exported GOTEST_TAGS cannot drop the default tags.
+GOTEST_TAGS := slow,develop
 
 # Ensure compatibility with "docker compose" (new) and "docker-compose" (old),
 # preferring the plugin wherever it is available.
