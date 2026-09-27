@@ -144,7 +144,7 @@ Use US English spelling in all code comments (`parameterized`, `behavior`, `colo
   - `docker compose up` or `docker compose up -d`
   - `docker compose logs -f --tail=100 photoprism`
   - `docker compose exec photoprism ./photoprism help`
-  - `docker compose exec -u "$(id -u):$(id -g)" photoprism <command>` to avoid root-owned files
+  - `docker compose exec -u "$(id -u)" photoprism <command>` to avoid root-owned files; a bare UID keeps the account's supplementary groups, such as `ssl-cert`, which adding `:$(id -g)` drops
   - `make terminal`
   - `docker compose --profile=all down --remove-orphans` or `make down`
 - Container mode:
