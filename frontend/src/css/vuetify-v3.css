@@ -1057,8 +1057,13 @@ Additional information can be found in our Developer Guide:
 }
 
 /* Components: the Vuetify 3 layout of navigation rail items and horizontal sliders, whose inline margin
-   is on the input again, so ma-0 on a slider removes it. */
+   is on the input again, so ma-0 on a slider removes it, and field containment, which keeps a floating
+   label below sticky elements that follow the field. */
 @layer vuetify-components {
+    .v-field {
+        contain: layout;
+    }
+
     .v-navigation-drawer--rail:not(.v-navigation-drawer--expand-on-hover) .v-list-item__content,
     .v-navigation-drawer--rail.v-navigation-drawer--expand-on-hover:not(.v-navigation-drawer--is-hovering) .v-list-item__content {
         min-width: 40px;

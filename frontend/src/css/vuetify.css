@@ -631,6 +631,12 @@ body .v-table > .v-table__wrapper > table {
     justify-content: center;
 }
 
+/* Pagination lists keep the padding of lists in app.css, which Vuetify 4 resets. */
+ul.v-pagination__list {
+    padding-left: 24px;
+    padding-right: 24px;
+}
+
 .v-table .v-data-table-footer .v-data-table-footer__pagination ul.v-pagination__list > li {
     margin-top: 4px;
     margin-bottom: 4px;
