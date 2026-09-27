@@ -124,3 +124,37 @@ func TestClusterJoinToken_Replace(t *testing.T) {
 		assert.NotEqual(t, existing, saved())
 	})
 }
+
+// TestClusterJoinToken_ReplaceNode verifies that a node asks before replacing the token it saved.
+func TestClusterJoinToken_ReplaceNode(t *testing.T) {
+	t.Setenv("PHOTOPRISM_CLI", "")
+
+	conf := get.Config()
+	prevEdition := conf.Options().Edition
+	prevRole := conf.Options().NodeRole
+	conf.Options().Edition = config.Pro
+	conf.Options().NodeRole = cluster.RoleInstance
+	t.Cleanup(func() {
+		conf.Options().Edition = prevEdition
+		conf.Options().NodeRole = prevRole
+	})
+
+	require.False(t, conf.Portal())
+	targetFile := conf.JoinTokenFile()
+	require.Equal(t, conf.NodeJoinTokenFile(), targetFile)
+
+	existing := rnd.JoinToken()
+	require.NoError(t, os.MkdirAll(filepath.Dir(targetFile), fs.ModeDir))
+	require.NoError(t, os.WriteFile(targetFile, []byte(existing), fs.ModeSecretFile))
+	t.Cleanup(func() { _ = os.Remove(targetFile) })
+
+	_, err := RunWithTestContext(ClusterJoinTokenCommand, []string{"join-token", "--save"})
+
+	var exit cli.ExitCoder
+	require.ErrorAs(t, err, &exit)
+	assert.Equal(t, 2, exit.ExitCode())
+
+	data, readErr := os.ReadFile(targetFile)
+	require.NoError(t, readErr)
+	assert.Equal(t, existing, strings.TrimSpace(string(data)))
+}
