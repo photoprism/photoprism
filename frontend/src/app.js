@@ -48,7 +48,6 @@ import Socket from "common/websocket";
 import { createApp } from "vue";
 import { createVuetify } from "vuetify";
 import Vue3Sanitize from "vue-3-sanitize";
-import VueSanitize from "vue-sanitize-directive";
 import VueLuxon from "vue-luxon";
 import { passiveSupport } from "passive-events-support/src/utils";
 import * as themes from "options/themes";
@@ -157,7 +156,6 @@ if (window.__PHOTOPRISM_SUPPORTS__ !== false) {
       allowedTags: ["b", "strong", "span"],
       allowedAttributes: { b: ["dir"], strong: ["dir"], span: ["dir"] },
     });
-    app.use(VueSanitize);
 
     // TODO: check it
     // debugger;
