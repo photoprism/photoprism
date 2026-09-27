@@ -411,7 +411,7 @@ func TestAnonymousFaceConsensus(t *testing.T) {
 	t.Run("InvalidManual", func(t *testing.T) {
 		c := findConsensus(counts, fx.invalidManual.ID)
 		require.NotNil(t, c)
-		assert.Equal(t, 1, c.Asserted, "a name a person gave counts on an invalid marker too")
+		assert.Zero(t, c.Asserted, "an invalid marker is ignored, as a run clears its references first")
 		assert.Equal(t, core, c.Valid)
 	})
 	t.Run("ForeignManual", func(t *testing.T) {
@@ -468,6 +468,7 @@ func TestConsensusFaces(t *testing.T) {
 			"XmpAlone":               fx.xmpAlone,
 			"XmpInvalidConfirmation": fx.xmpInvalidConfirmation,
 			"XmpValidConfirmation":   fx.xmpValidConfirmation,
+			"InvalidManual":          fx.invalidManual,
 		} {
 			assert.NotNil(t, findConsensus(result, f.ID), name)
 		}
@@ -478,7 +479,6 @@ func TestConsensusFaces(t *testing.T) {
 			"Manual":        fx.manual,
 			"XmpOther":      fx.xmpOther,
 			"XmpMinority":   fx.xmpMinority,
-			"InvalidManual": fx.invalidManual,
 			"Minority":      fx.minority,
 			"Hidden":        fx.hidden,
 			"Deleted":       fx.deleted,

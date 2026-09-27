@@ -19,7 +19,8 @@ type FaceConsensus struct {
 	Matched int
 	// Split reports that the valid markers casting a vote, in any embedding space, do not all name SubjUID.
 	Split bool
-	// Asserted counts the markers named by a source other than the matcher or XMP, such as a person.
+	// Asserted counts the valid markers named by a source other than the matcher or XMP, such as a person.
+	// A run clears the references of invalid markers before it counts, so the audit ignores them too.
 	Asserted int
 	// Unnamed counts the valid markers without a name, which naming the cluster names too.
 	Unnamed int
@@ -67,7 +68,7 @@ func AnonymousFaceConsensus() (result []FaceConsensus, err error) {
 		SUM(CASE WHEN m.subj_src = '' AND m.subj_uid <> '' AND m.marker_invalid = 0 THEN 1 ELSE 0 END) AS match_count,
 		COALESCE(MIN(CASE WHEN `+vote+` THEN m.subj_uid END), '') AS vote_min,
 		COALESCE(MAX(CASE WHEN `+vote+` THEN m.subj_uid END), '') AS vote_max,
-		SUM(CASE WHEN m.subj_src NOT IN ('', ?) AND m.subj_uid <> '' THEN 1 ELSE 0 END) AS asserted,
+		SUM(CASE WHEN m.subj_src NOT IN ('', ?) AND m.subj_uid <> '' AND m.marker_invalid = 0 THEN 1 ELSE 0 END) AS asserted,
 		SUM(CASE WHEN m.subj_src = '' AND m.subj_uid = '' AND m.marker_invalid = 0 THEN 1 ELSE 0 END) AS unnamed,
 		SUM(CASE WHEN m.marker_invalid = 0 THEN 1 ELSE 0 END) AS valid_count
 		FROM faces f JOIN markers m ON m.face_id = f.id AND m.marker_type = ?
