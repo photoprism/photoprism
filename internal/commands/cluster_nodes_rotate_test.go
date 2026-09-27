@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -129,4 +130,16 @@ func TestRotateNodeInRegistry(t *testing.T) {
 		// The operator view reports the client identifier so the table can print it.
 		assert.NotEmpty(t, resp.Node.ClientID)
 	})
+}
+
+// TestClusterNodesRotate_NothingSelected verifies that disabling both rotation flags is a usage error.
+func TestClusterNodesRotate_NothingSelected(t *testing.T) {
+	_, err := RunWithTestContext(ClusterNodesRotateCommand, []string{
+		"rotate", "--portal-url=http://127.0.0.1:9", "--db=false", "--secret=false", "--yes", "pp-node-07",
+	})
+
+	var exit cli.ExitCoder
+	require.ErrorAs(t, err, &exit)
+	assert.Equal(t, 2, exit.ExitCode())
+	assert.Contains(t, err.Error(), "nothing to rotate")
 }

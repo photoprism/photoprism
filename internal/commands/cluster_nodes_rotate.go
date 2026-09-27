@@ -258,6 +258,10 @@ func clusterNodesRotateAction(ctx *cli.Context) error {
 			return nil
 		}
 
+		if !rotateDatabase && !rotateSecret {
+			return cli.Exit(fmt.Errorf("nothing to rotate (use --database or --secret)"), 2)
+		}
+
 		if !conf.Portal() && portalURL == "" {
 			return cli.Exit(fmt.Errorf("portal URL is required (use --portal-url or set portal-url)"), 2)
 		}
