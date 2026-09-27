@@ -166,8 +166,8 @@ func CreateMarker(router *gin.RouterGroup) {
 		// Find related file.
 		file, err := query.FileByUID(frm.FileUID)
 
-		// Abort if not found.
-		if err != nil {
+		// Require a file with a hash for the marker thumbnail.
+		if err != nil || file.FileHash == "" {
 			AbortEntityNotFound(c)
 			return
 		}

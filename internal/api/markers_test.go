@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/gin-gonic/gin"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
@@ -627,4 +629,27 @@ func TestCreateMarker_XmpReconcile(t *testing.T) {
 	require.NotNil(t, kept)
 	assert.Equal(t, entity.SrcManual, kept.MarkerSrc)
 	assert.Equal(t, entity.MarkerFace, kept.MarkerType)
+}
+
+// TestCreateMarker_FileHash requires a file hash before creating a region.
+func TestCreateMarker_FileHash(t *testing.T) {
+	app, router, _ := NewApiTest()
+	router.Use(gin.Recovery())
+	CreateMarker(router)
+	file := entity.FileFixtures.Get("exampleDNGFile.dng")
+	file.ID = 0
+	file.FileUID = rnd.GenerateUID('f')
+	file.FileHash = ""
+	file.FileName = file.FileUID + ".jpg"
+	require.NoError(t, entity.UnscopedDb().Create(&file).Error)
+	t.Cleanup(func() {
+		entity.UnscopedDb().Delete(&entity.Marker{}, "file_uid = ?", file.FileUID)
+		entity.UnscopedDb().Delete(&file)
+	})
+	body := fmt.Sprintf(`{"FileUID":%q,"Type":"face","Src":"manual","X":0.2,"Y":0.2,"W":0.1,"H":0.1}`, file.FileUID)
+	r := PerformRequestWithBody(app, "POST", "/api/v1/markers", body)
+	assert.Equal(t, http.StatusNotFound, r.Code, r.Body.String())
+	markers, err := entity.FindMarkers(file.FileUID)
+	require.NoError(t, err)
+	assert.Empty(t, markers)
 }
