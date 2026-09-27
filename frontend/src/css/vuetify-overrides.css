@@ -6,3 +6,8 @@
 .v-tab.v-tab.v-btn {
     min-width: 60px;
 }
+
+.v-overlay.v-dialog.v-dialog--sidepanel:not(.v-dialog--fullscreen) {
+    align-items: center;
+    justify-content: end;
+}

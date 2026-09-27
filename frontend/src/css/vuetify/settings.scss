@@ -86,8 +86,5 @@
     $system-bar-letter-spacing: map.get($typography, "caption", "letter-spacing"),
     $system-bar-line-height: map.get($typography, "caption", "line-height"),
     $system-bar-text-transform: map.get($typography, "caption", "text-transform"),
-    $table-header-font-size: map.get($typography, "caption", "size"),
-    $table-font-size: map.get($typography, "body-2", "size"),
-    $icon-btn-font-size: map.get($typography, "button", "size"),
-    $icon-btn-font-weight: map.get($typography, "button", "weight")
+    $table-font-size: map.get($typography, "body-2", "size")
 );

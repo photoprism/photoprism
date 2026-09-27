@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
+import crypto from "node:crypto";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -11,12 +12,15 @@ import {
   entryCss,
   findFile,
   flatManifest,
+  hasLayerOrder,
+  layerStatement,
   logicalName,
   overlayResolver,
   pdfWorkerExports,
   postcssOptions,
   serviceWorkerOptions,
   staticAssets,
+  withLayerOrder,
   withoutSourceMapUrl,
   REQUIRED_ASSETS,
 } from "../../../vite.plugins.mjs";
@@ -273,6 +277,24 @@ describe("vite.plugins", () => {
       expect(manifest["shared.css"]).toBeUndefined();
       expect([...bundle["chunk/lazy.1c1c1c1c.js"].viteMetadata.importedCss]).toEqual(["other.0e0e0e0e.css", manifest["app.css"]]);
     });
+    it("begins a combined style sheet with the layer order and hashes the result", () => {
+      const layers = "@layer a, b;";
+      const bundle = basicBundle();
+      bundle["shared.5a5a5a5a.js"] = chunk("shared", "shared.5a5a5a5a.js", ["shared.7b7b7b7b.css"]);
+      bundle["shared.7b7b7b7b.css"] = asset("shared.7b7b7b7b.css", "@layer b{.shared{}}");
+      bundle["app.bbbbbbbb.css"] = asset("app.bbbbbbbb.css", "@layer a, b;@layer b{.app{}}");
+      bundle["app.aaaaaaaa.js"].imports = ["shared.5a5a5a5a.js"];
+      const { manifest, emitted } = runManifest(bundle, { layers });
+      const source = emitted[manifest["app.css"]];
+      expect(source).toBe("@layer a, b;\n@layer b{.shared{}}\n@layer a, b;@layer b{.app{}}");
+      const hash = crypto.createHash("sha256").update(source).digest("hex").slice(0, 8);
+      expect(manifest["app.css"]).toBe(`app.${hash}.css`);
+    });
+    it("fails for a named style sheet whose first layer rule is not the layer order", () => {
+      const bundle = basicBundle();
+      bundle["splash.eeeeeeee.css"] = asset("splash.eeeeeeee.css", "@layer b{.splash{}}");
+      expect(() => runManifest(bundle, { layers: "@layer a, b;" })).toThrow("splash.eeeeeeee.css: the first layer rule");
+    });
     it("points another entry that used a replaced part to the combined file", () => {
       const bundle = basicBundle();
       bundle["shared.5a5a5a5a.js"] = chunk("shared", "shared.5a5a5a5a.js", ["shared.7b7b7b7b.css"]);
@@ -296,6 +318,49 @@ describe("vite.plugins", () => {
       const { manifest, warnings } = runManifest(bundle);
       expect(manifest["x.js"]).toBe("chunk/x.11111111.js");
       expect(warnings).toHaveLength(1);
+    });
+  });
+
+  describe("layerStatement", () => {
+    it("strips comments and line breaks", () => {
+      const source = "/* order */\n@layer a,\n  b;\n@layer a {\n    @layer x, y;\n}\n";
+      expect(layerStatement(source)).toBe("@layer a, b;@layer a{@layer x, y;}");
+    });
+    it("returns an empty string for an empty style sheet", () => {
+      expect(layerStatement("/* nothing */\n")).toBe("");
+    });
+    it("accepts the layer order of the app", () => {
+      const source = fs.readFileSync(path.resolve(import.meta.dirname, "../../../src/css/layers.css"), "utf8");
+      expect(layerStatement(source)).toMatch(/^@layer vuetify-core, vuetify-components, /);
+    });
+    it("rejects rules, imports, and urls", () => {
+      expect(() => layerStatement("@layer a;.x{color:red}")).toThrow("only contain @layer statements");
+      expect(() => layerStatement('@import url("x.css");@layer a;')).toThrow("only contain @layer statements");
+      expect(() => layerStatement("@layer a{.x{background:url(y.png)}}")).toThrow("only contain @layer statements");
+    });
+  });
+
+  describe("hasLayerOrder", () => {
+    const statement = "@layer a, b;@layer a{@layer x, y;}";
+    it("accepts a style sheet whose first layer rule is the order statement", () => {
+      expect(hasLayerOrder(".y{}@layer a, b;@layer b{.x{}}", statement)).toBe(true);
+    });
+    it("rejects a style sheet whose first layer rule is another one", () => {
+      expect(hasLayerOrder("@layer b{.x{}}@layer a, b;", statement)).toBe(false);
+    });
+    it("accepts a style sheet without layers and any sheet for an empty statement", () => {
+      expect(hasLayerOrder(".psv{}", statement)).toBe(true);
+      expect(hasLayerOrder("@layer b{.x{}}", "")).toBe(true);
+    });
+  });
+
+  describe("withLayerOrder", () => {
+    const statement = "@layer a, b;@layer a{@layer x, y;}";
+    it("prepends the statement when needed", () => {
+      expect(withLayerOrder("@layer b{.x{}}", statement)).toBe(`${statement}\n@layer b{.x{}}`);
+    });
+    it("leaves a style sheet that already declares the order", () => {
+      expect(withLayerOrder("@layer a, b;@layer b{.x{}}", statement)).toBe("@layer a, b;@layer b{.x{}}");
     });
   });
 

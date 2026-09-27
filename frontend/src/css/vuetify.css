@@ -111,8 +111,6 @@ body > .v-overlay-container .v-overlay__scrim {
 }
 
 .v-overlay.v-dialog.v-dialog--sidepanel:not(.v-dialog--fullscreen) {
-    align-items: center;
-    justify-content: end;
     border-radius: 0;
 }
 

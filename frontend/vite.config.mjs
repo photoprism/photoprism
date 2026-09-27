@@ -23,12 +23,13 @@ Additional information can be found in our Developer Guide:
 
 */
 
+import fs from "node:fs";
 import path from "node:path";
 import { createRequire } from "node:module";
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import vuetify from "vite-plugin-vuetify";
-import { assetName, chunkName, cleanOnce, emitStatic, flatManifest, overlayResolver, pdfWorkerExports, postcssOptions, serviceWorker, staticAssets } from "./vite.plugins.mjs";
+import { assetName, chunkName, cleanOnce, emitStatic, flatManifest, layerStatement, overlayResolver, pdfWorkerExports, postcssOptions, serviceWorker, staticAssets } from "./vite.plugins.mjs";
 
 const require = createRequire(import.meta.url);
 const root = import.meta.dirname;
@@ -48,6 +49,9 @@ const BROWSER_TARGET = ["chrome119", "edge119", "firefox128", "safari16.4", "ios
 
 // BROWSERS is the browserslist range for PostCSS, passed explicitly so it also applies to CSS from dependencies.
 const BROWSERS = require("./package.json").browserslist;
+
+// LAYERS is the cascade layer order that every style sheet using Vuetify's layers must declare first.
+const LAYERS = layerStatement(fs.readFileSync(path.join(root, "src/css/layers.css"), "utf8"));
 
 console.log(`Starting ${appName} ${isDev ? "DEVELOPMENT" : "PRODUCTION"} build. Please wait.`);
 
@@ -108,7 +112,7 @@ export default defineConfig(async () => ({
       { source: require.resolve("maplibre-gl/dist/maplibre-gl-shared.mjs"), fileName: `${maplibreDir}/maplibre-gl-shared.mjs` },
     ]),
     staticAssets(/^maplibre\//),
-    flatManifest(),
+    flatManifest({ layers: LAYERS }),
     serviceWorker({ outDir, importScripts: ["sw-scope-cleanup.js"], enabled: !isDev }),
     await analyzer(),
   ].filter(Boolean),

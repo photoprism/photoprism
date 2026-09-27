@@ -205,12 +205,11 @@ function assetSource(asset) {
   return Buffer.isBuffer(asset.source) || asset.source instanceof Uint8Array ? Buffer.from(asset.source).toString("utf8") : String(asset.source);
 }
 
-// flatManifest writes assets.json in the flat shape the Go server reads: logical names such as
-// "app.js" and "app.css" mapped to file names relative to the build directory. Each entry gets one
-// style sheet: when an entry needs more than one, including those of shared chunks, they are
-// combined in order into a single "<entry>.<hash>.css", since the server links only one, and the
-// parts are replaced by it. It runs after Vite has finalized the style sheets of the bundle.
-export function flatManifest({ fileName = "assets.json", required = REQUIRED_ASSETS } = {}) {
+// flatManifest writes assets.json in the flat shape the Go server reads, e.g. "app.css" mapped to its
+// hashed file name. An entry that needs several style sheets gets them combined into one, since the
+// server links only one; the combined file begins with the layer order and replaces the parts, and
+// any other style sheet whose first layer rule is not the order fails the build.
+export function flatManifest({ fileName = "assets.json", required = REQUIRED_ASSETS, layers = "" } = {}) {
   return {
     name: "photoprism:flat-manifest",
     enforce: "post",
@@ -231,7 +230,7 @@ export function flatManifest({ fileName = "assets.json", required = REQUIRED_ASS
                 this.error(`cannot combine ${file} for the ${item.name} entry: style sheets must be in the build root`);
               }
             }
-            const source = css.map((file) => assetSource(bundle[file])).join("\n");
+            const source = withLayerOrder(css.map((file) => assetSource(bundle[file])).join("\n"), layers);
             const hash = crypto.createHash("sha256").update(source).digest("hex").slice(0, 8);
             const combined = `${item.name}.${hash}.css`;
             this.emitFile({ type: "asset", fileName: combined, source });
@@ -276,6 +275,14 @@ export function flatManifest({ fileName = "assets.json", required = REQUIRED_ASS
         }
       }
 
+      // A style sheet that Vite named cannot change without keeping a stale name, so one whose first
+      // layer rule is not the layer order fails the build; combined style sheets get it before hashing.
+      for (const item of Object.values(bundle)) {
+        if (item.type === "asset" && item.fileName.endsWith(".css") && !hasLayerOrder(assetSource(item), layers)) {
+          this.error(`${item.fileName}: the first layer rule must declare the layer order`);
+        }
+      }
+
       // Entries take precedence, so a lazy chunk that happens to share an entry's name cannot replace it.
       Object.assign(manifest, entries);
 
@@ -290,6 +297,34 @@ export function flatManifest({ fileName = "assets.json", required = REQUIRED_ASS
       this.emitFile({ type: "asset", fileName, source: JSON.stringify(sorted, null, 2) + "\n" });
     },
   };
+}
+
+// layerStatement returns the cascade layer order declared in a style sheet, without comments or line breaks.
+// It throws if the style sheet contains anything but layer statements, which would be copied unprocessed.
+export function layerStatement(source) {
+  const statement = source
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .replace(/\s+/g, " ")
+    .replace(/\s*([{};,])\s*/g, "$1")
+    .replace(/,/g, ", ")
+    .trim();
+  if (!/^(@layer [a-z][a-z0-9-]*(, [a-z][a-z0-9-]*)*;|@layer [a-z][a-z0-9-]*\{(@layer [a-z][a-z0-9-]*(, [a-z][a-z0-9-]*)*;)+\})*$/.test(statement)) {
+    throw new Error("layerStatement: the style sheet may only contain @layer statements");
+  }
+  return statement;
+}
+
+// hasLayerOrder reports whether a style sheet has no layer rules or begins its layer rules with the order
+// statement, since the first rule that names a layer sets its rank.
+export function hasLayerOrder(source, statement) {
+  const head = statement.slice(0, statement.indexOf(";") + 1);
+  const first = source.indexOf("@layer ");
+  return !head || first < 0 || source.startsWith(head, first);
+}
+
+// withLayerOrder prepends the layer order statement to a style sheet that does not declare it first.
+export function withLayerOrder(source, statement) {
+  return hasLayerOrder(source, statement) ? source : `${statement}\n${source}`;
 }
 
 // pdfWorkerExports passes on the pdf.js worker's exports from its bundled entry, which the worker

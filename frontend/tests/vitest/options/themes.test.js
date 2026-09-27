@@ -63,4 +63,13 @@ describe("options/themes", () => {
     const filtered = available.filter((option) => option?.value === "example");
     expect(filtered).toHaveLength(1);
   });
+
+  it("returns all themes as a plain object keyed by name", () => {
+    const all = themes.All();
+    expect(Array.isArray(all)).toBe(false);
+    expect(Object.getPrototypeOf(all)).toBe(Object.prototype);
+    expect(all.default).toBeDefined();
+    expect(all.default.dark).toBe(false);
+    expect(Object.keys(all.default.colors).length).toBeGreaterThan(0);
+  });
 });
