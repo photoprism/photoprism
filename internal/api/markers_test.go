@@ -494,3 +494,53 @@ func TestUpdateMarker_Correction(t *testing.T) {
 	assert.Equal(t, carol.SubjUID, cluster.SubjUID)
 	assert.Equal(t, 1, cluster.Collisions)
 }
+
+// TestUpdateMarker_Review covers approve, reject, and compatible review payloads.
+func TestUpdateMarker_Review(t *testing.T) {
+	app, router, _ := NewApiTest()
+	UpdateMarker(router)
+	for _, tc := range []struct {
+		name, body      string
+		review, invalid bool
+	}{
+		{"Approve", `{"Review":false,"Invalid":false}`, false, false},
+		{"ReviewOnly", `{"Review":false}`, false, true},
+		{"Reject", `{"Review":false,"Invalid":true}`, false, true},
+		{"Alias", `{"MarkerReview":false}`, false, true},
+		{"Omitted", `{}`, true, true},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			m := entity.Marker{MarkerUID: rnd.GenerateUID('m'), FileUID: entity.FileFixtures.Get("exampleDNGFile.dng").FileUID,
+				MarkerType: entity.MarkerFace, MarkerSrc: entity.SrcManual, MarkerReview: true, MarkerInvalid: true, W: 0.1, H: 0.1}
+			require.NoError(t, entity.UnscopedDb().Create(&m).Error)
+			t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Marker{}, "marker_uid = ?", m.MarkerUID) })
+			r := PerformRequestWithBody(app, "PUT", "/api/v1/markers/"+m.MarkerUID, tc.body)
+			require.Equal(t, http.StatusOK, r.Code, r.Body.String())
+			assert.Equal(t, tc.review, gjson.Get(r.Body.String(), "Review").Bool())
+			assert.Equal(t, tc.invalid, gjson.Get(r.Body.String(), "Invalid").Bool())
+			stored := entity.FindMarker(m.MarkerUID)
+			require.NotNil(t, stored)
+			assert.Equal(t, tc.review, stored.MarkerReview)
+			assert.Equal(t, tc.invalid, stored.MarkerInvalid)
+		})
+	}
+}
+
+// TestCreateMarker_Review accepts both review names when creating an unnamed region.
+func TestCreateMarker_Review(t *testing.T) {
+	app, router, _ := NewApiTest()
+	CreateMarker(router)
+	for _, key := range []string{"Review", "MarkerReview"} {
+		t.Run(key, func(t *testing.T) {
+			body := fmt.Sprintf(`{"FileUID":%q,"Type":"face","Src":"manual","X":0.2,"Y":0.2,"W":0.1,"H":0.1,%q:true}`, entity.FileFixtures.Get("exampleDNGFile.dng").FileUID, key)
+			r := PerformRequestWithBody(app, "POST", "/api/v1/markers", body)
+			require.Equal(t, http.StatusCreated, r.Code, r.Body.String())
+			uid := gjson.Get(r.Body.String(), "UID").String()
+			t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Marker{}, "marker_uid = ?", uid) })
+			assert.True(t, gjson.Get(r.Body.String(), "Review").Bool())
+			stored := entity.FindMarker(uid)
+			require.NotNil(t, stored)
+			assert.True(t, stored.MarkerReview)
+		})
+	}
+}

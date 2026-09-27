@@ -201,6 +201,9 @@ func CreateMarker(router *gin.RouterGroup) {
 		// Create new marker entity.
 		marker := entity.NewMarker(*file, area, "", frm.MarkerSrc, frm.MarkerType, entity.MarkerSize(area, *file), 100)
 
+		// Apply the requested review state.
+		marker.MarkerReview = frm.MarkerReview
+
 		// Update marker from form values.
 		if err = marker.Create(); err != nil {
 			AbortBadRequest(c, err)

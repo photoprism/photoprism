@@ -1,6 +1,7 @@
 package form
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/ulule/deepcopier"
@@ -19,8 +20,29 @@ type Marker struct {
 	H             float32 `json:"H,omitempty"`
 	SubjSrc       string  `json:"SubjSrc"`
 	MarkerName    string  `json:"Name"`
-	MarkerReview  bool    `json:"MarkerReview"`
+	MarkerReview  bool    `json:"Review"`
 	MarkerInvalid bool    `json:"Invalid"`
+}
+
+// UnmarshalJSON accepts both review names, with Review taking precedence when non-null.
+func (frm *Marker) UnmarshalJSON(data []byte) error {
+	type marker Marker
+	value := marker(*frm)
+	fields := struct {
+		*marker
+		Review       *bool `json:"Review"`
+		MarkerReview *bool `json:"MarkerReview"`
+	}{marker: &value}
+	if err := json.Unmarshal(data, &fields); err != nil {
+		return err
+	}
+	if fields.Review != nil {
+		value.MarkerReview = *fields.Review
+	} else if fields.MarkerReview != nil {
+		value.MarkerReview = *fields.MarkerReview
+	}
+	*frm = Marker(value)
+	return nil
 }
 
 // NewMarker creates a new form initialized with model values.
