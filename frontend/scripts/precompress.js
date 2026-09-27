@@ -59,7 +59,7 @@ const DEFAULT_TARGET = path.join(__dirname, "..", "..", "assets", "static", "bui
 
 // `--clean` removes any precompressed siblings under the target directory
 // without producing new ones. Used by the watch script so stale bundles
-// from a previous `make build-js` don't get served while webpack rebuilds
+// from a previous `make build-js` don't get served while the watcher rebuilds
 // identity assets in development.
 const args = process.argv.slice(2);
 let cleanOnly = false;

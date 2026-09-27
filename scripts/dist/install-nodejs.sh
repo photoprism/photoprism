@@ -65,7 +65,7 @@ echo "Installing ESLint..."
 sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier eslint@9 prettier globals \
   @eslint/eslintrc @eslint/js@9 eslint-config-prettier eslint-formatter-pretty \
   eslint-plugin-html eslint-plugin-import eslint-plugin-node eslint-plugin-prettier \
-  eslint-plugin-vue eslint-plugin-vuetify eslint-webpack-plugin
+  eslint-plugin-vue eslint-plugin-vuetify
 echo "Installing Vue Language Server..."
 sudo npm install -g --ignore-scripts --no-fund --no-audit --no-update-notifier @vue/language-server
 echo "Done."

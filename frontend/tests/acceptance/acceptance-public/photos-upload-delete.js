@@ -237,7 +237,7 @@ test.meta("testID", "photos-upload-delete-004").meta({ mode: "public" })(
       await toolbar.triggerToolbarAction("upload");
       await t
         .click(Selector(".input-albums"))
-        .typeText(Selector(".input-albums input"), "NewCreatedAlbum")
+        .typeText(Selector(".input-albums input:not([type='hidden'])"), "NewCreatedAlbum")
         .pressKey("enter")
         .setFilesToUpload(Selector('input[type="file"]'), ["../../upload-files/digikam.jpg"]);
       await t.click(Selector("button.action-upload"));

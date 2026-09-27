@@ -36,7 +36,7 @@ func NewClientAssets(buildPath, baseUri string) *ClientAssets {
 	return &ClientAssets{BuildPath: buildPath, BaseUri: baseUri}
 }
 
-// Load loads the frontend assets from a webpack manifest file.
+// Load loads the frontend assets from the build's flat manifest file.
 func (a *ClientAssets) Load(fileName string) error {
 	jsonFile, err := os.ReadFile(filepath.Join(a.BuildPath, fileName)) //nolint:gosec // path derived from configured assets directory
 

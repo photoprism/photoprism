@@ -94,7 +94,7 @@ Title Case rules (Chicago-style, with code- and path-aware normalization):
 ## Project Layout & Shared Rules
 
 - Backend: Go in `internal/`, `pkg/`, and `cmd/`, backed by MariaDB or SQLite.
-- Frontend: Vue 3 plus Vuetify 3 under `frontend/`.
+- Frontend: Vue 3 plus Vuetify 4 under `frontend/`.
 - Local development uses Docker Compose; Traefik provides local TLS via `*.localssl.dev`.
 - Code in `pkg/*` must not import from `internal/*`. If you need config, entity, or DB access, add code under `internal/`.
 - Shared Go rules:

@@ -12,6 +12,18 @@
       { ok: function () { return typeof Object.assign === 'function'; }, reason: 'Object.assign' },
       { ok: function () { return typeof Array.from === 'function'; }, reason: 'Array.from' },
       { ok: function () { return typeof Array.prototype.flat === 'function'; }, reason: 'Array.prototype.flat' },
+      // The supported floor (Chrome and Edge 119, Firefox 128, Safari 16.4): relative color syntax,
+      // then the features the UI framework and map worker need unconditionally.
+      {
+        ok: function () {
+          return !!(window.CSS && CSS.supports && CSS.supports('color', 'lab(from red l a b)'));
+        },
+        reason: 'CSS relative color syntax'
+      },
+      { ok: function () { return typeof window.CSSLayerBlockRule === 'function'; }, reason: 'CSS cascade layers' },
+      { ok: function () { return !!(window.CSS && typeof CSS.registerProperty === 'function'); }, reason: 'CSS.registerProperty' },
+      { ok: function () { return !!(window.Intl && typeof Intl.Segmenter === 'function'); }, reason: 'Intl.Segmenter' },
+      { ok: function () { return typeof Object.hasOwn === 'function'; }, reason: 'Object.hasOwn' },
       {
         ok: function () {
           var script = document.createElement('script');

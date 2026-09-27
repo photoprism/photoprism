@@ -49,6 +49,7 @@
                 :hint="$gettextInterpolate($gettext('Must have at least %{n} characters.'), { n: minLength })"
                 :autofocus="!oldRequired"
                 counter
+                :hide-details="false"
                 persistent-hint
                 type="password"
                 autocorrect="off"
@@ -67,6 +68,7 @@
                 :label="$gettext('Retype Password')"
                 :hint="$gettext('Please confirm your new password.')"
                 counter
+                :hide-details="false"
                 persistent-hint
                 type="password"
                 autocorrect="off"

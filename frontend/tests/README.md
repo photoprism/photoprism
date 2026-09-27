@@ -1,6 +1,6 @@
 ## Frontend Tests & Linting
 
-**Last Updated:** May 3, 2026
+**Last Updated:** September 27, 2026
 
 ### Purpose
 
@@ -78,7 +78,6 @@ Current frontend tool versions are defined in `frontend/package.json` unless sta
 | `eslint-plugin-node`                 | `^11.1.0`    |
 | `eslint-plugin-vue`                  | `^10.7.0`    |
 | `eslint-plugin-vuetify`              | `^2.5.3`     |
-| `eslint-webpack-plugin`              | `^5.0.2`     |
 | Prettier                             | `^3.8.1`     |
 | TestCafe CLI (dev environment)       | `3.7.4`      |
 

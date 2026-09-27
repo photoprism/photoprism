@@ -55,7 +55,7 @@ export default class Page {
             .click(Selector("div").withText(name).parent('div[role="option"]'))
             .click(this.albumDialogTitle);
         } else {
-          await t.typeText(Selector(".input-albums input"), name).click(this.albumDialogTitle);
+          await t.typeText(Selector(".input-albums input:not([type='hidden'])"), name).click(this.albumDialogTitle);
         }
         await t.expect(Selector("span.v-chip").withText(name).visible).ok();
       }

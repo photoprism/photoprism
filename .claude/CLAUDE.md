@@ -96,7 +96,7 @@ Migration files live in `internal/entity/migrate/`.
 
 ## Architecture Overview
 
-PhotoPrism is a self-hosted photo management app. The backend is Go, the frontend is Vue 3 + Vuetify 3, and the database is MariaDB or SQLite (via GORM).
+PhotoPrism is a self-hosted photo management app. The backend is Go, the frontend is Vue 3 + Vuetify 4, and the database is MariaDB or SQLite (via GORM).
 
 ### Backend (`internal/`, `pkg/`, `cmd/`)
 
@@ -129,7 +129,7 @@ PhotoPrism is a self-hosted photo management app. The backend is Go, the fronten
 
 ### Frontend (`frontend/`)
 
-Vue 3 app using the Options API and Vuetify 3.
+Vue 3 app using the Options API and Vuetify 4.
 
 | Directory                 | Purpose                                                                                         |
 |---------------------------|-------------------------------------------------------------------------------------------------|
