@@ -605,16 +605,10 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 				continue
 			}
 
-			// No matching face?
+			// HasFace holds for any marker with a face when none is selected, so this one has
+			// no face and no candidate accepts it: it only needs the page's match stamp.
 			if selFace == nil {
-				if updated, err := marker.ClearFace(); err != nil {
-					log.Warnf("faces: %s (clear marker face)", err)
-				} else if updated {
-					result.Updated++
-					batchChanged = true
-					w.rememberVeto(marker.MarkerUID)
-				}
-
+				pending = append(pending, &marker)
 				continue
 			}
 

@@ -126,6 +126,57 @@ func TestFaces_MatchFacesStampPages(t *testing.T) {
 	}
 }
 
+// TestFaces_MatchFacesStampFaceless checks that faceless markers no cluster accepts are stamped per page.
+func TestFaces_MatchFacesStampFaceless(t *testing.T) {
+	for _, force := range []bool{false, true} {
+		t.Run(fmt.Sprintf("Force%t", force), func(t *testing.T) {
+			w, f, uids := stampTestPage(t, fmt.Sprintf("facesstampfaceless%t", force), 5)
+			require.NoError(t, entity.UnscopedDb().Model(&entity.Marker{}).Where("marker_uid IN (?)", uids).UpdateColumns(entity.Values{
+				"face_id": "", "face_dist": -1, "embeddings_json": face.Embeddings{face.FixtureEmbedding(8301)}.JSON(),
+			}).Error)
+			oldLimit, oldPause := faceMatchBatchSize, faceMatchPause
+			pauses := 0
+			faceMatchBatchSize = 2
+			faceMatchPause = func() { pauses++ }
+			t.Cleanup(func() { faceMatchBatchSize, faceMatchPause = oldLimit, oldPause })
+			updates := 0
+			entity.Db().Callback().Update().Before("gorm:begin_transaction").Register("test:faceless-update", func(scope *gorm.Scope) {
+				if scope.TableName() == (entity.Marker{}).TableName() {
+					updates++
+				}
+			})
+			t.Cleanup(func() { entity.Db().Callback().Update().Remove("test:faceless-update") })
+			result, err := w.MatchFaces(entity.Faces{*f}, force, nil, nil)
+			require.NoError(t, err)
+			assert.Equal(t, FacesMatchResult{}, result)
+			assert.Equal(t, 3, updates, "one stamp statement per page")
+			assert.Zero(t, pauses)
+			for _, uid := range uids {
+				stored := entity.FindMarker(uid)
+				require.NotNil(t, stored)
+				assert.NotNil(t, stored.MatchedAt)
+				assert.Empty(t, stored.FaceID)
+			}
+		})
+	}
+}
+
+// TestFaces_MatchFacesKeepsFaceOutsideCandidates checks that a marker keeps a face no candidate replaces.
+func TestFaces_MatchFacesKeepsFaceOutsideCandidates(t *testing.T) {
+	w, f, uids := stampTestPage(t, "faceskeepsface", 2)
+	other := entity.NewFace("", entity.SrcAuto, face.Embeddings{face.FixtureEmbedding(8301)}, face.EmbeddingModelName())
+	require.NoError(t, other.Create())
+	result, err := w.MatchFaces(entity.Faces{*other}, false, nil, nil)
+	require.NoError(t, err)
+	assert.Equal(t, FacesMatchResult{}, result)
+	for _, uid := range uids {
+		stored := entity.FindMarker(uid)
+		require.NotNil(t, stored)
+		assert.Equal(t, f.ID, stored.FaceID)
+		assert.NotNil(t, stored.MatchedAt)
+	}
+}
+
 // TestFaces_MatchFacesStampCancellation checks that an interrupted page persists its collected stamps.
 func TestFaces_MatchFacesStampCancellation(t *testing.T) {
 	w, f, uids := stampTestPage(t, "facesstampcancel", 4)
