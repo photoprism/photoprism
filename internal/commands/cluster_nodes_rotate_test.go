@@ -142,4 +142,11 @@ func TestClusterNodesRotate_NothingSelected(t *testing.T) {
 	require.ErrorAs(t, err, &exit)
 	assert.Equal(t, 2, exit.ExitCode())
 	assert.Contains(t, err.Error(), "nothing to rotate")
+
+	_, err = RunWithTestContext(ClusterNodesRotateCommand, []string{
+		"rotate", "--dry-run", "--db=false", "--secret=false", "pp-node-07",
+	})
+
+	require.ErrorAs(t, err, &exit)
+	assert.Equal(t, 2, exit.ExitCode())
 }

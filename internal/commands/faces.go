@@ -591,7 +591,7 @@ func facesResetAllAction(ctx *cli.Context) error {
 		return err
 	}
 
-	log.Infof("faces: removed all faces, people, and markers; run \"photoprism faces index\" to detect faces again")
+	log.Infof("faces: removed all faces, people, and face markers; run \"photoprism faces index\" to detect faces again")
 	log.Infof("completed in %s", time.Since(start))
 
 	return nil
