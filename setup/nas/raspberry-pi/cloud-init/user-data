@@ -230,7 +230,7 @@ write_files:
           security_opt:
             - seccomp=unconfined
             - apparmor=unconfined
-          user: "1000:1000"
+          user: "1000"
           ports:
             - "2342:2342"
           labels:
