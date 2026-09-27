@@ -95,6 +95,21 @@ func UpdateFace(router *gin.RouterGroup) {
 			return
 		}
 
+		// Resolve the person before any write, so a rejected request changes nothing. A person the
+		// session may not see is answered like an unknown one, as the subject handlers do.
+		subjUid := ""
+
+		if frm.SubjUID != "" {
+			subj := FindSubjectForSession(frm.SubjUID, s)
+
+			if subj == nil || !subj.IsPerson() {
+				Abort(c, http.StatusNotFound, i18n.ErrSubjectNotFound)
+				return
+			}
+
+			subjUid = subj.SubjUID
+		}
+
 		// Change visibility?
 		if !frm.FaceHidden && frm.FaceHidden == m.FaceHidden {
 			// Do nothing.
@@ -104,9 +119,9 @@ func UpdateFace(router *gin.RouterGroup) {
 		}
 
 		// Change subject?
-		if frm.SubjUID == "" {
+		if subjUid == "" {
 			// Do nothing.
-		} else if err := m.SetSubjectUID(frm.SubjUID); err != nil {
+		} else if err := m.SetSubjectUID(subjUid); err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})
 			return
 		}
