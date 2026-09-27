@@ -101,7 +101,8 @@ export default defineConfig(async () => ({
     isWatch && cleanOnce(outDir),
     overlayResolver({ roots: sourceRoots }),
     vue({ template: { compilerOptions: { whitespace: "preserve" } } }),
-    vuetify({ autoImport: true }),
+    // Compiles Vuetify's styles with src/css/vuetify/settings.scss, which keeps the Vuetify 3 breakpoints and typography.
+    vuetify({ autoImport: true, styles: { configFile: "src/css/vuetify/settings.scss" } }),
     emitStatic([
       { source: path.join(root, "src/sw-scope-cleanup.js"), fileName: "sw-scope-cleanup.js", minify: !isDev },
       { source: require.resolve("maplibre-gl/dist/maplibre-gl-shared.mjs"), fileName: `${maplibreDir}/maplibre-gl-shared.mjs` },

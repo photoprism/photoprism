@@ -1,2 +1,1 @@
-import "css/root.css";
-import "css/splash.css";
+import "css/splash-entry.css";

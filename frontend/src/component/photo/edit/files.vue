@@ -288,14 +288,14 @@
                                 class="input-orientation"
                                 @update:model-value="changeOrientation(file)"
                               >
-                                <template #selection="{ item }">
-                                  <v-icon :class="orientationClass(item)">mdi-account-box-outline</v-icon>
-                                  <span>{{ item.title }}</span>
+                                <template #selection="{ internalItem }">
+                                  <v-icon :class="orientationClass(internalItem)">mdi-account-box-outline</v-icon>
+                                  <span>{{ internalItem.title }}</span>
                                 </template>
-                                <template #item="{ props, item }">
+                                <template #item="{ props, internalItem }">
                                   <v-list-item v-bind="props">
                                     <template #prepend>
-                                      <v-icon :class="orientationClass(item)">mdi-account-box-outline</v-icon>
+                                      <v-icon :class="orientationClass(internalItem)">mdi-account-box-outline</v-icon>
                                     </template>
                                   </v-list-item>
                                 </template>

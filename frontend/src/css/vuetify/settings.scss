@@ -1,0 +1,93 @@
+// Vuetify settings that keep the Vuetify 3 breakpoints and Material Design 2 typography, compiled by
+// vite-plugin-vuetify. Based on the Vuetify 4 upgrade and typography migration guides
+// (https://vuetifyjs.com/), Copyright (c) 2016-now Vuetify, LLC, released under the MIT License.
+
+@use "sass:map";
+@use "./typography" as *;
+// The Material Design 2 typography utilities set only the properties that were important in Vuetify 3;
+// their weight, line height, and font family are in vuetify-v3.css. The merged-in Material Design 3
+// classes emit invalid values and are unused.
+@use "vuetify/settings" with (
+    $grid-breakpoints: (
+        "xs": 0,
+        "sm": 600px,
+        "md": 960px,
+        "lg": 1280px,
+        "xl": 1920px,
+        "xxl": 2560px,
+    ),
+
+    $utilities: (
+        "typography": (
+            property: (
+                font-size,
+                letter-spacing,
+                text-transform,
+            ),
+            values: $flat-typography,
+        ),
+    ),
+
+    $alert-title-font-size: map.get($typography, "h6", "size"),
+    $alert-title-font-weight: map.get($typography, "h6", "weight"),
+    $alert-title-letter-spacing: map.get($typography, "h6", "letter-spacing"),
+    $banner-font-size: map.get($typography, "body-2", "size"),
+    $banner-line-height: map.get($typography, "subtitle-2", "line-height"),
+    $breadcrumbs-item-icon-font-size: map.get($typography, "body-1", "size"),
+    $breadcrumbs-line-height: map.get($typography, "subtitle-2", "line-height"),
+    $button-font-size: map.get($typography, "button", "size"),
+    $button-font-weight: map.get($typography, "button", "weight"),
+    $button-text-letter-spacing: map.get($typography, "button", "letter-spacing"),
+    $button-text-transform: map.get($typography, "button", "text-transform"),
+    $card-title-font-size: map.get($typography, "h6", "size"),
+    $card-title-font-weight: map.get($typography, "h6", "weight"),
+    $card-title-letter-spacing: map.get($typography, "h6", "letter-spacing"),
+    $card-title-line-height: map.get($typography, "h6", "line-height"),
+    $card-subtitle-font-size: map.get($typography, "body-2", "size"),
+    $card-subtitle-font-weight: map.get($typography, "body-2", "weight"),
+    $card-subtitle-letter-spacing: map.get($typography, "body-2", "letter-spacing"),
+    $card-subtitle-line-height: map.get($typography, "body-2", "line-height"),
+    $card-text-font-size: map.get($typography, "body-2", "size"),
+    $card-text-font-weight: map.get($typography, "body-2", "weight"),
+    $card-text-letter-spacing: map.get($typography, "body-2", "letter-spacing"),
+    $card-text-line-height: map.get($typography, "body-2", "line-height"),
+    $card-text-text-transform: map.get($typography, "body-2", "text-transform"),
+    $chip-font-size: map.get($typography, "button", "size"),
+    $dialog-card-text-letter-spacing: map.get($typography, "body-1", "letter-spacing"),
+    $empty-state-headline-font-size: map.get($typography, "h2", "size"),
+    $empty-state-headline-font-weight: map.get($typography, "h2", "weight"),
+    $empty-state-headline-line-height: map.get($typography, "h2", "line-height"),
+    $empty-state-headline-mobile-font-size: map.get($typography, "h4", "size"),
+    $empty-state-text-font-size: map.get($typography, "body-2", "size"),
+    $empty-state-text-font-weight: map.get($typography, "body-2", "weight"),
+    $empty-state-text-line-height: map.get($typography, "body-2", "line-height"),
+    $empty-state-title-font-size: map.get($typography, "h6", "size"),
+    $empty-state-title-font-weight: map.get($typography, "h6", "weight"),
+    $empty-state-title-line-height: map.get($typography, "h6", "line-height"),
+    $fab-font-size: map.get($typography, "button", "size"),
+    $input-font-size: map.get($typography, "body-1", "size"),
+    $input-font-weight: map.get($typography, "body-1", "weight"),
+    $list-item-nav-subtitle-font-weight: map.get($typography, "body-2", "weight"),
+    $list-item-nav-subtitle-letter-spacing: map.get($typography, "body-2", "letter-spacing"),
+    $list-item-subtitle-font-size: map.get($typography, "body-2", "size"),
+    $list-item-subtitle-font-weight: map.get($typography, "body-2", "weight"),
+    $list-item-subtitle-letter-spacing: map.get($typography, "body-2", "letter-spacing"),
+    $list-item-title-font-size: map.get($typography, "body-1", "size"),
+    $list-item-title-font-weight: map.get($typography, "body-1", "weight"),
+    $list-item-title-letter-spacing: map.get($typography, "subtitle-1", "letter-spacing"),
+    $list-item-title-line-height: map.get($typography, "body-1", "line-height"),
+    $slider-thumb-label-font-size: map.get($typography, "caption", "size"),
+    $snackbar-font-size: map.get($typography, "body-2", "size"),
+    $snackbar-font-weight: map.get($typography, "body-2", "weight"),
+    $snackbar-letter-spacing: map.get($typography, "body-2", "letter-spacing"),
+    $snackbar-line-height: map.get($typography, "body-2", "line-height"),
+    $system-bar-font-size: map.get($typography, "caption", "size"),
+    $system-bar-font-weight: map.get($typography, "caption", "weight"),
+    $system-bar-letter-spacing: map.get($typography, "caption", "letter-spacing"),
+    $system-bar-line-height: map.get($typography, "caption", "line-height"),
+    $system-bar-text-transform: map.get($typography, "caption", "text-transform"),
+    $table-header-font-size: map.get($typography, "caption", "size"),
+    $table-font-size: map.get($typography, "body-2", "size"),
+    $icon-btn-font-size: map.get($typography, "button", "size"),
+    $icon-btn-font-weight: map.get($typography, "button", "weight")
+);

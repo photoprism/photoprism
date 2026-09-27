@@ -5,7 +5,7 @@
   "license": "AGPL-3.0",
   "version": "1",
   "private": true,
-  "//vuetify": "Vuetify is pinned to 3.12.2 (no caret, exact version) — DO NOT bump to 3.12.3+ without revisiting issue #5538. The 3.12.3 release added an onFocusout handler to VAutocomplete/VSelect/VCombobox (PR fixing Vuetify #22697) that flips isFocused=false whenever relatedTarget is outside the textfield. That handler closes long autocomplete/select dropdowns on open, because Vuetify's virtual scroller unmounts the focused list item during scroll-to-selected-index, producing a transient blur with relatedTarget=null. The bug is unfixed in 3.12.5 and Vuetify development has moved to v4. When lifting this pin (e.g., a future v3.12.x patch or v4 migration), test the photo edit dialog's Country and Time Zone autocompletes in Chrome — the menu must stay open on click. KNOWN CAVEATS of 3.12.2: (1) Vuetify #22828 — v-select's @blur event fires when the menu opens (introduced by the 3.12.2 screenreader fix in commit f906336). PhotoPrism is not affected because we only attach @blur handlers to v-text-field, v-textarea, and v-combobox; if you ever add @blur to a v-select, expect spurious calls until that upstream bug is fixed. (2) The .v-field--focused CSS class can linger on a previously-focused v-autocomplete input after the user clicks into another autocomplete — document.activeElement is correct, but Vuetify's isFocused state is under-aggressive about clearing in 3.12.2. This is the inverse symptom of #22697 (which 3.12.3 over-corrected, causing #5538). Visually harmless in the photo edit dialog because the affected fields aren't on screen together. See also frontend/src/common/view.js (sibling-menu gate) and frontend/CODEMAP.md.",
+  "//vuetify": "Vuetify is pinned to 4.2.2 (no caret, exact version). Before bumping, test the photo edit dialog in Chrome: the Country and Time Zone autocompletes must stay open on click (#5538; 3.12.3 to 3.13.x closed long autocomplete and select menus on open) and filter as you type. The UI keeps the Vuetify 3 appearance: vite.config.mjs compiles Vuetify's styles with src/css/vuetify/settings.scss (Vuetify 3 breakpoints, Material Design 2 typography), src/css/layers.css declares the cascade layer order, src/css/vuetify-v3.css restores the Vuetify 3 reset, grid, typography, rail and slider layout, component shadows, and elevation classes, src/css/vuetify-overrides.css holds rules for Vuetify's override layer, and src/app.js sets the matching display thresholds; check them against the release notes of a new major or minor version. See frontend/README.md.",
   "scripts": {
     "acceptance-local": "testcafe chromium --selector-timeout 5000 -S -s tests/acceptance/screenshots tests/acceptance",
     "build": "vite build",
@@ -105,7 +105,7 @@
     "vue-router": "^4.6.4",
     "vue-sanitize-directive": "^0.2.1",
     "vue3-gettext": "^2.4.0",
-    "vuetify": "3.12.2",
+    "vuetify": "4.2.2",
     "workbox-build": "^7.4.1"
   },
   "engines": {

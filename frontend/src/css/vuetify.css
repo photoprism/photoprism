@@ -1,4 +1,4 @@
-/* Custom Vuetify 3 Component Styles */
+/* Custom Vuetify Component Styles */
 
 .v-overlay__scrim {
     background: rgb(var(--v-overlay-color, #121212));
@@ -13,10 +13,6 @@
 
 .v-tabs button.v-tab.v-btn--disabled {
     opacity: var(--v-disabled-opacity, 0.6);
-}
-
-.v-tab.v-tab.v-btn {
-    min-width: 60px;
 }
 
 .v-slide-group .v-ripple__container {
@@ -686,13 +682,8 @@ body .v-table > .v-table__wrapper > table {
     margin: 0;
 }
 
-.v-row--dense > .v-col,
-.v-row--dense > [class*="v-col-"] {
-    padding: 8px;
-}
-
-.v-row--dense > .v-col,
-.v-row--dense > [class*="v-col-"] {
+.v-row--density-compact > .v-col,
+.v-row--density-compact > [class*="v-col-"] {
     padding: 8px;
 }
 

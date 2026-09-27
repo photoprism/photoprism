@@ -23,6 +23,8 @@ Additional information can be found in our Developer Guide:
 
 */
 
+// Declares the cascade layer order before any module adds styles.
+import "css/layers.css";
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 import $api from "common/api";
@@ -54,9 +56,10 @@ import Hls from "hls.js";
 import { createGettext, T } from "common/gettext";
 import { Locale } from "locales";
 import { aliases, mdi } from "vuetify/iconsets/mdi";
-import { VDateInput } from "vuetify/labs/VDateInput";
-import { VFileUpload } from "vuetify/labs/VFileUpload";
+import { VDateInput } from "vuetify/components/VDateInput";
+import { VFileUpload } from "vuetify/components/VFileUpload";
 import "vuetify/styles";
+import "css/vuetify-v3.css";
 import "@mdi/font/css/materialdesignicons.css";
 import "css/app.css";
 
@@ -119,7 +122,7 @@ if (window.__PHOTOPRISM_SUPPORTS__ !== false) {
     // Create Vue 3 Gettext instance.
     const gettext = createGettext($config);
 
-    // Create Vuetify 3 instance.
+    // Create Vuetify instance.
     const vuetify = createVuetify({
       components: { VDateInput, VFileUpload },
       defaults,
@@ -131,6 +134,10 @@ if (window.__PHOTOPRISM_SUPPORTS__ !== false) {
           ...icons,
         },
       },
+      // Vuetify 3 breakpoints, matching $grid-breakpoints in src/css/vuetify/settings.scss.
+      display: {
+        thresholds: { xs: 0, sm: 600, md: 960, lg: 1280, xl: 1920, xxl: 2560 },
+      },
       theme: {
         defaultTheme: $config.themeName,
         themes: themes.All(),
@@ -139,7 +146,7 @@ if (window.__PHOTOPRISM_SUPPORTS__ !== false) {
       locale: Locale(),
     });
 
-    // Use Vuetify 3.
+    // Use Vuetify.
     app.use(vuetify);
 
     // Use Vue 3 Gettext.

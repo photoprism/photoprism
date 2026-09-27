@@ -1,0 +1,8 @@
+/* Vuetify Override Styles */
+
+/* Rules that replace declarations Vuetify places in its override layer, which outranks the
+   component layer of the application styles. */
+
+.v-tab.v-tab.v-btn {
+    min-width: 60px;
+}

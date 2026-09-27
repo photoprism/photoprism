@@ -1,9 +1,9 @@
 PhotoPrism — Frontend CODEMAP
 
-**Last Updated:** September 10, 2026
+**Last Updated:** September 27, 2026
 
 Purpose
-- Help agents and contributors navigate the Vue 3 + Vuetify 3 app quickly and make safe changes.
+- Help agents and contributors navigate the Vue 3 + Vuetify 4 app quickly and make safe changes.
 - Use Makefile targets and scripts in `frontend/package.json` as sources of truth.
 
 Quick Start
@@ -36,11 +36,11 @@ Startup Templates & Splash Screen
 - Lightbox videos: `createVideoElement` wires listeners through an `AbortController` stored in `content.data.events`; `contentDestroy` aborts it so video and RemotePlayback handlers vanish with the slide.
 
 Runtime & Plugins
-- Vue 3 + Vuetify 3 (`createVuetify`) with MDI icons; themes from `src/options/themes.js`
-- **Vuetify version pin:** `vuetify` is pinned to **`3.12.2` exactly** (no caret); see [`frontend/README.md`](README.md#currently-pinned-packages) for the canonical rationale. The TL;DR is that 3.12.3+ introduced a `VAutocomplete`/`VSelect`/`VCombobox` `onFocusout` handler that closes long dropdowns on open (#5538), unfixed in 3.12.5. The sibling-menu gate in `src/common/view.js` cooperates with the pin but is not a substitute for it.
-  - **Known caveats at 3.12.2:**
-    - Vuetify upstream issue #22828 — `v-select`'s `@blur` fires when the menu opens (introduced by the 3.12.2 screenreader navigation fix). PhotoPrism is not affected because we only bind `@blur` on `v-text-field`, `v-textarea`, and `v-combobox`; if you ever attach `@blur` to a `v-select`, expect spurious calls until that upstream bug is fixed.
-    - The `.v-field--focused` CSS class can linger on a previously-focused `v-autocomplete` input after the user clicks into another autocomplete (`document.activeElement` is correct, but Vuetify's internal `isFocused` is under-aggressive about clearing in 3.12.2). This is the inverse symptom of Vuetify #22697 — fixing it overshot in 3.12.3 and caused #5538. Functionally harmless in the photo edit dialog because the affected fields are not on screen together.
+- Vue 3 + Vuetify 4 (`createVuetify`) with MDI icons; themes from `src/options/themes.js`
+- **Vuetify version pin:** `vuetify` is pinned to **`4.2.2` exactly** (no caret); see [`frontend/README.md`](README.md#currently-pinned-packages) for the canonical rationale. Long `VAutocomplete`/`VSelect` menus stay open on click in 4.2.2; 3.12.3 to 3.13.x closed them on open (#5538). The sibling-menu gate in `src/common/view.js` cooperates with the pin but is not a substitute for it.
+  - **Vuetify 3 appearance:** `vite.config.mjs` compiles Vuetify's styles with `src/css/vuetify/settings.scss` (Vuetify 3 breakpoints, Material Design 2 typography and button text), `src/css/vuetify-v3.css` restores the Vuetify 3 reset, grid (including the `v-col-N` classes used on plain elements), typography weights and line heights, navigation rail and slider layout, component shadows, and elevation classes, and `src/app.js` sets the matching display thresholds.
+  - **Cascade layers:** Vuetify 4 puts its styles in cascade layers, and a later layer wins regardless of specificity. `src/css/layers.css`, imported first, declares their order. `src/css/app.css` imports the application styles into Vuetify's component layer, where specificity decides as in Vuetify 3; new style sheets imported there need `layer(vuetify-components)`. Exceptions: rules that replace Vuetify's override layer go in `src/css/vuetify-overrides.css`; utility classes outrank the application styles unless a rule is `!important`, and the typography utilities set only size, letter spacing, and text transform, with weight, line height, and font family in `vuetify-v3.css`; theme variables such as `--v-btn-height` are set in the utility layer and outrank component-layer rules for the same custom property. Unlayered CSS outranks all layers, so component `<style src>` sheets wrap their rules in `@layer vuetify-components`, and the splash entry imports `src/css/splash-entry.css`.
+  - **Known caveat at 4.2.2:** Vuetify upstream issue #22828 — `v-select`'s `@blur` fires when the menu opens. PhotoPrism is not affected because we only bind `@blur` on `v-text-field`, `v-textarea`, and `v-combobox`; if you ever attach `@blur` to a `v-select`, expect spurious calls until that upstream bug is fixed.
 - Router: Vue Router 4, history base at `$config.frontendUri` (default `/library` for CE/Plus/Pro and `/portal` for Portal)
 - I18n: `vue3-gettext` via `common/gettext.js`; canonical extraction via root `make gettext-extract` (scans `frontend/src` plus available overlays in `plus/frontend`, `pro/frontend`, and `portal/frontend`), compile with `npm run gettext-compile`
 - HTML sanitization: `vue-3-sanitize` + `vue-sanitize-directive`

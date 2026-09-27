@@ -23,216 +23,220 @@ Additional information can be found in our Developer Guide:
 
 */
 
-@import url("photoswipe/dist/photoswipe.css");
-@import url("maplibre-gl/dist/maplibre-gl.css");
-@import url("root.css");
-@import url("splash.css");
-@import url("text.css");
-@import url("meta.css");
-@import url("lightbox.css");
-@import url("controls.css");
-@import url("wallpapers.css");
-@import url("themes.css");
-@import url("effects.css");
-@import url("navigation.css");
-@import url("logs.css");
-@import url("visibility.css");
-@import url("views.css");
-@import url("places.css");
-@import url("labels.css");
-@import url("files.css");
-@import url("pages.css");
-@import url("help.css");
-@import url("auth.css");
-@import url("layout.css");
-@import url("vuetify.css");
-@import url("notify.css");
+@import url("photoswipe/dist/photoswipe.css") layer(vuetify-components);
+@import url("maplibre-gl/dist/maplibre-gl.css") layer(vuetify-components);
+@import url("root.css") layer(vuetify-components);
+@import url("splash.css") layer(vuetify-components);
+@import url("text.css") layer(vuetify-components);
+@import url("meta.css") layer(vuetify-components);
+@import url("lightbox.css") layer(vuetify-components);
+@import url("controls.css") layer(vuetify-components);
+@import url("wallpapers.css") layer(vuetify-components);
+@import url("themes.css") layer(vuetify-components);
+@import url("effects.css") layer(vuetify-components);
+@import url("navigation.css") layer(vuetify-components);
+@import url("logs.css") layer(vuetify-components);
+@import url("visibility.css") layer(vuetify-components);
+@import url("views.css") layer(vuetify-components);
+@import url("places.css") layer(vuetify-components);
+@import url("labels.css") layer(vuetify-components);
+@import url("files.css") layer(vuetify-components);
+@import url("pages.css") layer(vuetify-components);
+@import url("help.css") layer(vuetify-components);
+@import url("auth.css") layer(vuetify-components);
+@import url("layout.css") layer(vuetify-components);
+@import url("vuetify.css") layer(vuetify-components);
+@import url("notify.css") layer(vuetify-components);
+@import url("vuetify-overrides.css") layer(vuetify-overrides);
 
-/* Core Element Styles */
+/* The application's own rules, in the same layer as the imported style sheets above. */
+@layer vuetify-components {
+    /* Core Element Styles */
 
-html,
-body {
-    overscroll-behavior-y: none;
-    overscroll-behavior-x: none;
-    min-height: 100%;
-    margin: 0;
-    padding: 0;
-}
+    html,
+    body {
+        overscroll-behavior-y: none;
+        overscroll-behavior-x: none;
+        min-height: 100%;
+        margin: 0;
+        padding: 0;
+    }
 
-body {
-    background-color: #fafafa;
-    min-width: 320px;
-}
+    body {
+        background-color: #fafafa;
+        min-width: 320px;
+    }
 
-main {
-    padding: 0;
-    margin: 0;
-    z-index: 1;
-}
+    main {
+        padding: 0;
+        margin: 0;
+        z-index: 1;
+    }
 
-/* General App Styles */
+    /* General App Styles */
 
-.v-autocomplete__selection {
-    min-width: 100%;
-}
+    .v-autocomplete__selection {
+        min-width: 100%;
+    }
 
-.v-slide-group {
-    overflow: initial;
-}
+    .v-slide-group {
+        overflow: initial;
+    }
 
-.v-expansion-panel-text__wrapper {
-    padding: 0;
-}
+    .v-expansion-panel-text__wrapper {
+        padding: 0;
+    }
 
-.clickable {
-    cursor: pointer;
-}
+    .clickable {
+        cursor: pointer;
+    }
 
-.p-scroll {
-    position: fixed;
-    top: 72px;
-    left: 50%;
-    transform: translate(-50%, 0);
-    padding: 0.6rem 1.2rem;
-    margin: auto;
-    opacity: 1;
-    color: rgb(var(--v-theme-on-button, #000000));
-    background-color: rgba(var(--v-theme-button, #ffffff), 0.8);
-    /* backdrop-filter: blur(12px);
-    box-shadow: 0 0.2rem 0.5rem #0000001a, 0 0 0.05rem #00000040;
-    transition: color 125ms, background-color 125ms, transform 125ms cubic-bezier(.4, 0, .2, 1), opacity 125ms; */
-    -webkit-tap-highlight-color: transparent;
-    border: 0;
-    border-radius: 1.6rem;
-    cursor: pointer;
-    display: block;
-    font-family: inherit;
-    font-size: 1rem;
-    outline: none;
-    user-select: none;
-    text-decoration: none;
-    z-index: 2;
-}
+    .p-scroll {
+        position: fixed;
+        top: 72px;
+        left: 50%;
+        transform: translate(-50%, 0);
+        padding: 0.6rem 1.2rem;
+        margin: auto;
+        opacity: 1;
+        color: rgb(var(--v-theme-on-button, #000000));
+        background-color: rgba(var(--v-theme-button, #ffffff), 0.8);
+        /* backdrop-filter: blur(12px);
+        box-shadow: 0 0.2rem 0.5rem #0000001a, 0 0 0.05rem #00000040;
+        transition: color 125ms, background-color 125ms, transform 125ms cubic-bezier(.4, 0, .2, 1), opacity 125ms; */
+        -webkit-tap-highlight-color: transparent;
+        border: 0;
+        border-radius: 1.6rem;
+        cursor: pointer;
+        display: block;
+        font-family: inherit;
+        font-size: 1rem;
+        outline: none;
+        user-select: none;
+        text-decoration: none;
+        z-index: 2;
+    }
 
-.p-scroll svg {
-    display: inline-block;
-    vertical-align: -0.4em;
-    fill: currentcolor;
-    height: 1.33rem;
-    width: 1.33rem;
-}
+    .p-scroll svg {
+        display: inline-block;
+        vertical-align: -0.4em;
+        fill: currentcolor;
+        height: 1.33rem;
+        width: 1.33rem;
+    }
 
-.float-left {
-    float: left;
-}
+    .float-left {
+        float: left;
+    }
 
-.float-right {
-    float: right;
-}
+    .float-right {
+        float: right;
+    }
 
-a.float-left,
-a.float-right {
-    display: inline-block;
-}
+    a.float-left,
+    a.float-right {
+        display: inline-block;
+    }
 
-.p-page {
-    user-select: none !important;
-}
+    .p-page {
+        user-select: none !important;
+    }
 
-.not-selectable {
-    user-select: none !important;
-}
+    .not-selectable {
+        user-select: none !important;
+    }
 
-.text-selectable,
-a.text-selectable,
-span.text-selectable,
-.p-page .text-selectable {
-    user-select: text !important;
-}
+    .text-selectable,
+    a.text-selectable,
+    span.text-selectable,
+    .p-page .text-selectable {
+        user-select: text !important;
+    }
 
-.p-page pre {
-    overflow: auto;
-    font-size: 0.875rem;
-}
+    .p-page pre {
+        overflow: auto;
+        font-size: 0.875rem;
+    }
 
-.is-rtl .v-card .caption {
-    text-align: right;
-}
+    .is-rtl .v-card .caption {
+        text-align: right;
+    }
 
-ol,
-ul {
-    padding-left: 24px;
-    padding-right: 24px;
-}
+    ol,
+    ul {
+        padding-left: 24px;
+        padding-right: 24px;
+    }
 
-body .v-list__item .v-icon {
-    color: inherit;
-}
+    body .v-list__item .v-icon {
+        color: inherit;
+    }
 
-/* Mouse Cursor */
+    /* Mouse Cursor */
 
-.cursor-text {
-    cursor: text !important;
-}
+    .cursor-text {
+        cursor: text !important;
+    }
 
-.cursor-copy,
-.cursor-copy i,
-.cursor-copy svg,
-.cursor-copy input,
-.cursor-pointer {
-    cursor: pointer !important;
-}
+    .cursor-copy,
+    .cursor-copy i,
+    .cursor-copy svg,
+    .cursor-copy input,
+    .cursor-pointer {
+        cursor: pointer !important;
+    }
 
-.cursor-help {
-    cursor: help !important;
-}
+    .cursor-help {
+        cursor: help !important;
+    }
 
-.cursor-zoom-in {
-    cursor: zoom-in !important;
-}
+    .cursor-zoom-in {
+        cursor: zoom-in !important;
+    }
 
-.cursor-zoom-out {
-    cursor: zoom-out !important;
-}
+    .cursor-zoom-out {
+        cursor: zoom-out !important;
+    }
 
-.cursor-grab {
-    cursor: grab !important;
-}
+    .cursor-grab {
+        cursor: grab !important;
+    }
 
-/* Image Orientation */
+    /* Image Orientation */
 
-.orientation-0 {
-    transform: rotate(0deg);
-}
+    .orientation-0 {
+        transform: rotate(0deg);
+    }
 
-.orientation-1 {
-    transform: rotate(0deg);
-}
+    .orientation-1 {
+        transform: rotate(0deg);
+    }
 
-.orientation-2 {
-    transform: rotate(0deg);
-}
+    .orientation-2 {
+        transform: rotate(0deg);
+    }
 
-.orientation-3 {
-    transform: rotate(180deg);
-}
+    .orientation-3 {
+        transform: rotate(180deg);
+    }
 
-.orientation-4 {
-    transform: rotate(180deg);
-}
+    .orientation-4 {
+        transform: rotate(180deg);
+    }
 
-.orientation-5 {
-    transform: rotate(90deg);
-}
+    .orientation-5 {
+        transform: rotate(90deg);
+    }
 
-.orientation-6 {
-    transform: rotate(90deg);
-}
+    .orientation-6 {
+        transform: rotate(90deg);
+    }
 
-.orientation-7 {
-    transform: rotate(270deg);
-}
+    .orientation-7 {
+        transform: rotate(270deg);
+    }
 
-.orientation-8 {
-    transform: rotate(270deg);
+    .orientation-8 {
+        transform: rotate(270deg);
+    }
 }
