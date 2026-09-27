@@ -25,6 +25,8 @@ var VideoTrimCommand = &cli.Command{
 	Name:      "trim",
 	Usage:     "Trims a duration from the start (positive) or end (negative) of matching videos",
 	ArgsUsage: "[filter]... <duration>",
+	Description: "Streams are copied without re-encoding, so the cut starts at a keyframe near the requested position " +
+		"rather than at the exact frame. This keeps video and audio starting together.",
 	Flags: []cli.Flag{
 		videoCountFlag,
 		OffsetFlag,
