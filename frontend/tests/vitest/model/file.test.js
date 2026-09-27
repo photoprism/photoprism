@@ -375,12 +375,9 @@ describe("model/file", () => {
     expect(file.typeInfo()).toBe(expected);
   });
 
-  it("should not repeat a media type the label already names", () => {
+  it("should not repeat the sidecar media type", () => {
     const xmp = new File({ UID: "ABC123", Hash: "54ghtfd", Name: "1/2/IMG123.xmp", FileType: "xmp", MediaType: "sidecar", Sidecar: true });
     expect(xmp.typeInfo()).toBe("Sidecar Adobe XMP");
-
-    const raw = new File({ UID: "ABC123", Hash: "54ghtfd", Name: "1/2/IMG123.raw", FileType: "raw", MediaType: "RAW" });
-    expect(raw.typeInfo()).toBe("Unprocessed Sensor Data (RAW)");
   });
 
   it("should get size info", () => {

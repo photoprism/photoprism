@@ -212,12 +212,10 @@ export class File extends RestModel {
         info.push(format);
       }
 
-      // Skip a media type the label already names: the "Sidecar" prefix, or a format such as "(RAW)".
-      if (this.MediaType && this.MediaType !== this.FileType) {
+      // The "Sidecar" prefix already names the media type of a sidecar file.
+      if (this.MediaType && this.MediaType !== this.FileType && !(this.Sidecar && this.MediaType === "sidecar")) {
         const media = $util.capitalize(this.MediaType);
-        const type = this.MediaType.toLowerCase();
-        const named = (this.Sidecar && type === "sidecar") || (format && format.toLowerCase().endsWith(`(${type})`));
-        if (media && !named) {
+        if (media) {
           info.push(media);
         }
       }
