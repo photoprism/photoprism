@@ -41,8 +41,10 @@ The API package exposes PhotoPrism’s HTTP endpoints via Gin handlers. Each fil
 ### Photo Label Updates
 
 `PUT /api/v1/photos/{uid}/label/{id}` accepts optional `Uncertainty` and optional nested `Label.Name`.
-The route selects the assignment; other submitted fields are ignored. Omitted or null values keep
-existing state. An accepted label (`Uncertainty: 0`) uses the manual source.
+The route selects the assignment; other submitted fields are ignored. Omitted or null uncertainty
+keeps both the stored uncertainty and source unchanged. Explicit uncertainty must be an integer
+from 0 through 100; out-of-range values return 400 before name or assignment writes. Explicit
+acceptance (`Uncertainty: 0`) sets the manual source; other values preserve the source.
 
 Assignment edits require photo-update authority and photo visibility. Supplying a name additionally
 requires label-update authority, including credential scope, before any data is written. Name

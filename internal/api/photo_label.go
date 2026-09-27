@@ -295,6 +295,11 @@ func UpdatePhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
+		if frm.Uncertainty != nil && (*frm.Uncertainty < 0 || *frm.Uncertainty > 100) {
+			AbortBadRequest(c, errors.New("uncertainty must be between 0 and 100"))
+			return
+		}
+
 		if frm.Label != nil && frm.Label.Name != nil {
 			if Auth(c, acl.ResourceLabels, acl.ActionUpdate).Abort(c) {
 				return
@@ -316,13 +321,11 @@ func UpdatePhotoLabel(router *gin.RouterGroup) {
 		}
 
 		values := entity.Values{}
-		uncertainty := label.Uncertainty
 		if frm.Uncertainty != nil {
-			uncertainty = *frm.Uncertainty
-			values["uncertainty"] = uncertainty
-		}
-		if uncertainty == 0 && label.LabelSrc != entity.SrcManual {
-			values["label_src"] = entity.SrcManual
+			values["uncertainty"] = *frm.Uncertainty
+			if *frm.Uncertainty == 0 && label.LabelSrc != entity.SrcManual {
+				values["label_src"] = entity.SrcManual
+			}
 		}
 		if len(values) > 0 {
 			if err = label.Updates(values); err != nil {
