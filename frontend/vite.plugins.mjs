@@ -26,6 +26,8 @@ Additional information can be found in our Developer Guide:
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
+import cssnano from "cssnano";
+import postcssPresetEnv from "postcss-preset-env";
 import { minifySync } from "vite";
 import { generateSW } from "workbox-build";
 
@@ -84,6 +86,18 @@ export function overlayResolver({ roots, importers = [] }) {
 
       return null;
     },
+  };
+}
+
+// postcssOptions returns the build's PostCSS options: postcss-preset-env for browsers and, if minify
+// is set, cssnano, which does not round plain numbers. map: false keeps PostCSS from carrying over the
+// source maps of dependency CSS; folding selector lists into :is() is off, since it can move a
+// combinator into the list and change what a selector matches.
+export function postcssOptions({ browsers, minify }) {
+  const preset = ["default", { overrideBrowserslist: browsers, minifySelectors: { convertToIs: false } }];
+  return {
+    map: false,
+    plugins: [postcssPresetEnv({ browsers }), minify && cssnano({ preset })].filter(Boolean),
   };
 }
 

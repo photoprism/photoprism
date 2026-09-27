@@ -2,6 +2,7 @@ import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import postcss from "postcss";
 import {
   assetName,
   chunkName,
@@ -13,6 +14,7 @@ import {
   logicalName,
   overlayResolver,
   pdfWorkerExports,
+  postcssOptions,
   serviceWorkerOptions,
   staticAssets,
   withoutSourceMapUrl,
@@ -72,6 +74,7 @@ describe("vite.plugins", () => {
       "custom/common/hooks.js": "",
       "tests/common/helper.js": "",
       "src.js": "",
+      "dep/.browserslistrc": "op_mini all\n",
     };
     for (const [file, content] of Object.entries(files)) {
       fs.mkdirSync(path.dirname(path.join(tmp, file)), { recursive: true });
@@ -136,6 +139,39 @@ describe("vite.plugins", () => {
     it("ignores importers outside the source roots", () => {
       const r = overlayResolver({ roots: [path.join(tmp, "src")] });
       expect(r.resolveId("common/api", path.join(tmp, "node_modules/pkg/index.js"))).toBeNull();
+    });
+  });
+
+  describe("postcssOptions", () => {
+    const browsers = ["chrome >= 119", "firefox >= 128", "safari >= 16.4"];
+    // run processes css as a file of a dependency whose own browserslist config conflicts with browsers.
+    const run = async (css, minify = true) => {
+      const { map, plugins } = postcssOptions({ browsers, minify });
+      return (await postcss(plugins).process(css, { from: path.join(tmp, "dep/index.css"), map })).css;
+    };
+    it("keeps numbers at full precision", async () => {
+      expect(await run(".a { letter-spacing: .0178571429em; }")).toBe(".a{letter-spacing:.0178571429em}");
+    });
+    it("does not fold selector lists into :is()", async () => {
+      const css = await run(".t > .w > table > tbody > tr > td, .t > .w > table > thead > tr > th { padding: 0 16px; }");
+      expect(css).not.toContain(":is(");
+      expect(css).toContain(".t>.w>table>tbody>tr>td");
+    });
+    it("adds the prefixes the browser range needs", async () => {
+      expect(await run(".a { hyphens: auto; }")).toContain("-webkit-hyphens:auto");
+    });
+    it("minifies values for the browser range", async () => {
+      expect(await run(".a { color: rgba(0, 0, 0, .5); }")).toBe(".a{color:#00000080}");
+    });
+    it("carries over no source map of the input", async () => {
+      const inline = Buffer.from(JSON.stringify({ version: 3, sources: ["src.css"], sourcesContent: [".a{}"], names: [], mappings: "AAAA" })).toString("base64");
+      const input = `.a { color: red; }\n/*# sourceMappingURL=data:application/json;base64,${inline} */`;
+      expect(await run(input)).not.toContain("sourceMappingURL");
+      expect(await run(input, false)).not.toContain("sourceMappingURL");
+    });
+    it("minifies only if requested", async () => {
+      expect(await run(".a { color: red; }", false)).toBe(".a { color: red; }");
+      expect(postcssOptions({ browsers, minify: false }).plugins).toHaveLength(1);
     });
   });
 

@@ -28,8 +28,7 @@ import { createRequire } from "node:module";
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import vuetify from "vite-plugin-vuetify";
-import postcssPresetEnv from "postcss-preset-env";
-import { assetName, chunkName, cleanOnce, emitStatic, flatManifest, overlayResolver, pdfWorkerExports, serviceWorker, staticAssets } from "./vite.plugins.mjs";
+import { assetName, chunkName, cleanOnce, emitStatic, flatManifest, overlayResolver, pdfWorkerExports, postcssOptions, serviceWorker, staticAssets } from "./vite.plugins.mjs";
 
 const require = createRequire(import.meta.url);
 const root = import.meta.dirname;
@@ -46,6 +45,9 @@ const sourceRoots = customSrc ? [customSrc, path.join(root, "src")] : [path.join
 // BROWSER_TARGET is the supported browser floor; browserslist in package.json and
 // assets/static/js/browser-check.js state the same range.
 const BROWSER_TARGET = ["chrome119", "edge119", "firefox128", "safari16.4", "ios16.4"];
+
+// BROWSERS is the browserslist range for PostCSS, passed explicitly so it also applies to CSS from dependencies.
+const BROWSERS = require("./package.json").browserslist;
 
 console.log(`Starting ${appName} ${isDev ? "DEVELOPMENT" : "PRODUCTION"} build. Please wait.`);
 
@@ -80,9 +82,8 @@ export default defineConfig(async () => ({
     __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: JSON.stringify(false),
   },
   css: {
-    postcss: {
-      plugins: [postcssPresetEnv()],
-    },
+    // Production builds minify each style sheet with cssnano instead of Vite's CSS minifier.
+    postcss: postcssOptions({ browsers: BROWSERS, minify: !isDev }),
   },
   worker: {
     format: "es",
@@ -116,10 +117,9 @@ export default defineConfig(async () => ({
     // keeps loading during a rebuild; other builds start from an empty directory.
     emptyOutDir: !isWatch,
     target: BROWSER_TARGET,
-    cssTarget: BROWSER_TARGET,
     sourcemap: isDev ? "inline" : false,
     minify: !isDev,
-    cssMinify: !isDev,
+    cssMinify: false,
     manifest: false,
     modulePreload: { polyfill: false },
     assetsInlineLimit: 0,
