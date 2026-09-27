@@ -849,3 +849,72 @@ func TestFaces_MatchFacesRefused(t *testing.T) {
 	assert.Nil(t, stats[f.ID], "a refused marker does not widen the cluster")
 	assert.Empty(t, entity.FindMarker(m.MarkerUID).FaceID)
 }
+
+// TestFaces_MatchFacesMembership records statistics only for the cluster a marker holds.
+func TestFaces_MatchFacesMembership(t *testing.T) {
+	for _, mode := range []string{"Retained", "RetainedNamed", "Joined", "Held"} {
+		t.Run(mode, func(t *testing.T) {
+			w := isolatedTestFaces(t, "facesmembership"+mode)
+			w.conf.Options().FaceRecomputeStats = false
+			center := face.FixtureEmbedding(7981)
+			candidate := entity.NewFace("", entity.SrcAuto, face.Embeddings{center}, face.EmbeddingModelName())
+			require.NoError(t, candidate.Create())
+			require.NoError(t, candidate.Updates(entity.Values{"samples": 5}))
+			distance := candidate.AcceptDist() * 0.5
+			embedding := face.FixtureEmbeddingAt(center, distance, 1)
+			own := entity.NewFace("", entity.SrcAuto, face.Embeddings{face.FixtureEmbeddingAt(embedding, distance*0.2, 2)}, candidate.EmbedModel)
+			require.NoError(t, own.Create())
+			m := entity.Marker{
+				MarkerUID: rnd.GenerateUID('m'), FileUID: consensusTestFileUID,
+				MarkerType: entity.MarkerFace, MarkerSrc: entity.SrcImage,
+				EmbeddingsJSON: face.Embeddings{embedding}.JSON(), EmbedModel: candidate.EmbedModel,
+				Size: face.ClusterSizeThreshold, Score: face.ClusterScore("") + 10, W: 0.1, H: 0.1,
+			}
+			switch mode {
+			case "Retained", "RetainedNamed":
+				m.FaceID, m.FaceDist = own.ID, distance*0.2
+			case "Held":
+				m.FaceID, m.FaceDist = candidate.ID, distance
+			}
+			if mode == "RetainedNamed" {
+				subject := consensusTestSubject(t, "Retained Name")
+				m.SubjUID, m.SubjSrc, m.MarkerName = subject.SubjUID, entity.SrcManual, subject.SubjName
+			}
+			require.NoError(t, entity.UnscopedDb().Create(&m).Error)
+			radius := candidate.SampleRadius
+			stats := make(map[string]*faceMatchStats)
+			result, err := w.MatchFaces(entity.Faces{*candidate}, false, nil, stats)
+			require.NoError(t, err)
+			stored := entity.FindMarker(m.MarkerUID)
+			require.NotNil(t, stored)
+			require.NotNil(t, stored.MatchedAt)
+			if mode == "Retained" || mode == "RetainedNamed" {
+				assert.Equal(t, own.ID, stored.FaceID)
+				assert.Nil(t, stats[candidate.ID])
+				assert.Equal(t, int64(1), result.Refused)
+				assert.Zero(t, result.Recognized)
+				assert.Zero(t, result.Unknown)
+				assert.Zero(t, result.Updated)
+			} else {
+				assert.Equal(t, candidate.ID, stored.FaceID)
+				require.NotNil(t, stats[candidate.ID])
+				assert.Equal(t, 1, stats[candidate.ID].matched)
+				assert.InDelta(t, distance, stats[candidate.ID].maxDist, 1e-5)
+				assert.Zero(t, result.Refused)
+				if mode == "Joined" {
+					assert.Equal(t, int64(1), result.Updated)
+					assert.Equal(t, int64(1), result.Unknown)
+				}
+			}
+			w.updateMatchStats(stats)
+			after := entity.FindFace(candidate.ID)
+			require.NotNil(t, after)
+			if mode == "Retained" || mode == "RetainedNamed" {
+				assert.Equal(t, radius, after.SampleRadius)
+			} else {
+				assert.Greater(t, after.SampleRadius, radius)
+				assert.InDelta(t, distance+face.Epsilon, after.SampleRadius, 1e-5)
+			}
+		})
+	}
+}

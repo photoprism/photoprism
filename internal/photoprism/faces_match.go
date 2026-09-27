@@ -27,8 +27,8 @@ type FacesMatchResult struct {
 	// which writes subj_uid without going through Updated. Counted apart from Recognized, which
 	// also covers a marker that merely has a subject after being matched.
 	Assigned int64
-	// Refused counts the markers their nearest cluster did not take, such as one named after a
-	// person other than the one the cluster carries.
+	// Refused counts markers not held by the selected cluster, including those keeping
+	// a closer cluster or naming a different person.
 	Refused int64
 }
 
@@ -565,7 +565,11 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 					log.Warnf("faces: %s while updating marker %s match timestamp", err, marker.MarkerUID)
 				}
 
-				recordFaceMatch(stats, selFace, dist)
+				if selFace != nil && marker.FaceID == selFace.ID {
+					recordFaceMatch(stats, selFace, dist)
+				} else if selFace != nil {
+					result.Refused++
+				}
 
 				continue
 			}
