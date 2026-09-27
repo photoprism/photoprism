@@ -824,20 +824,27 @@ func (m *Marker) RefreshPhotos() error {
 		return fmt.Errorf("empty marker uid")
 	}
 
-	var err error
+	return refreshMarkerPhotos([]string{m.MarkerUID})
+}
+
+// refreshMarkerPhotos flags the photos of the specified markers for metadata maintenance.
+func refreshMarkerPhotos(uids []string) error {
+	if len(uids) == 0 {
+		return nil
+	}
+
 	switch DbDialect() {
 	case dsn.DriverMySQL:
-		err = UnscopedDb().Exec(`UPDATE photos p JOIN files f ON f.photo_id = p.id
+		return UnscopedDb().Exec(`UPDATE photos p JOIN files f ON f.photo_id = p.id
 			JOIN ? m ON m.file_uid = f.file_uid SET p.checked_at = NULL
-			WHERE m.marker_uid = ?`,
-			gorm.Expr(Marker{}.TableName()), m.MarkerUID).Error
+			WHERE m.marker_uid IN (?)`,
+			gorm.Expr(Marker{}.TableName()), uids).Error
 	default:
-		err = UnscopedDb().Exec(`UPDATE photos SET checked_at = NULL WHERE id IN
+		return UnscopedDb().Exec(`UPDATE photos SET checked_at = NULL WHERE id IN
 			(SELECT f.photo_id FROM files f JOIN ? m ON m.file_uid = f.file_uid
-			WHERE m.marker_uid = ? GROUP BY f.photo_id)`,
-			gorm.Expr(Marker{}.TableName()), m.MarkerUID).Error
+			WHERE m.marker_uid IN (?) GROUP BY f.photo_id)`,
+			gorm.Expr(Marker{}.TableName()), uids).Error
 	}
-	return err
 }
 
 // Matched updates the match timestamp.
@@ -847,9 +854,6 @@ func (m *Marker) Matched() error {
 }
 
 // Unmatched clears the match timestamp, so the next run compares this marker against every cluster.
-//
-// ClearFace stamps instead, right where the matcher found no face: it had just compared against all
-// of them. Wrong after a conflict narrowed a cluster and dropped the marker, since nothing has.
 func (m *Marker) Unmatched() error {
 	m.MatchedAt = nil
 	return UnscopedDb().Model(m).UpdateColumns(Values{"matched_at": nil}).Error

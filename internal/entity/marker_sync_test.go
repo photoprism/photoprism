@@ -14,18 +14,33 @@ import (
 
 // statementCounter counts the SQL statements the database logger reports.
 type statementCounter struct {
-	sql []string
+	sql  []string
+	vars []int
 }
 
-// Print counts one statement per SQL log entry.
+// Print counts one statement per SQL log entry, with the number of values bound to it.
 func (c *statementCounter) Print(values ...any) {
 	if len(values) > 3 && values[0] == "sql" {
 		c.sql = append(c.sql, fmt.Sprint(values[3]))
+
+		if len(values) > 4 {
+			vars, _ := values[4].([]any)
+			c.vars = append(c.vars, len(vars))
+		} else {
+			c.vars = append(c.vars, 0)
+		}
 	}
 }
 
 // countStatements returns the SQL statements fn issues.
 func countStatements(t *testing.T, fn func()) []string {
+	t.Helper()
+
+	return captureStatements(t, fn).sql
+}
+
+// captureStatements returns the SQL statements fn issues and the values bound to each.
+func captureStatements(t *testing.T, fn func()) *statementCounter {
 	t.Helper()
 
 	c := &statementCounter{}
@@ -40,7 +55,7 @@ func countStatements(t *testing.T, fn func()) []string {
 
 	fn()
 
-	return c.sql
+	return c
 }
 
 // syncTestMarkers stores n automatic markers of subjUID in cluster f on the given file.

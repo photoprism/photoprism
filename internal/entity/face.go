@@ -5,6 +5,7 @@ import (
 	"encoding/base32"
 	"encoding/json"
 	"fmt"
+	"slices"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -456,7 +457,7 @@ func ClearSubjectCollisions(subjUID string) (cleared int, err error) {
 	return cleared, nil
 }
 
-// ReviseMatches updates marker matches after face parameters have been changed.
+// ReviseMatches releases the markers this cluster no longer matches after its parameters changed.
 func (m *Face) ReviseMatches() (revised Markers, err error) {
 	if m.ID == "" {
 		return revised, fmt.Errorf("empty face id")
@@ -464,39 +465,80 @@ func (m *Face) ReviseMatches() (revised Markers, err error) {
 
 	var matches Markers
 
-	if err := Db().Where("face_id = ?", m.ID).Where("marker_type = ?", MarkerFace).
+	if err = Db().Where("face_id = ?", m.ID).Where("marker_type = ?", MarkerFace).
 		Find(&matches).Error; err != nil {
 		log.Debugf("faces: found no matching markers for conflict resolution (%s)", err)
 		return revised, err
-	} else {
-		for _, marker := range matches {
-			// A marker from another embedding space cannot be compared with this cluster,
-			// so its assignment is left alone rather than dropped on a comparison that
-			// never ran.
-			if !face.SameEmbeddingSpace(marker.EmbedModel, m.EmbedModel) {
-				continue
-			}
+	}
 
-			if ok, _ := m.Match(marker.Embeddings(), marker.EmbedModel); !ok {
-				if updated, err := marker.ClearFace(); err != nil {
-					log.Debugf("faces: failed to remove match with marker (%s)", err) // Conflict resolution
-					return revised, err
-				} else if updated {
-					// ClearFace stamps the marker as matched, which is true of the matcher but
-					// not of this: the cluster narrowed underneath it and nothing has compared
-					// it against the others. Left stamped, it is in neither pass's set and waits
-					// for "faces update --force".
-					if err = marker.Unmatched(); err != nil {
-						log.Debugf("faces: failed to flag marker for rematching (%s)", err)
-					}
+	uids := make([]string, 0, len(matches))
+	updatedAt := Now()
 
-					revised = append(revised, marker)
-				}
-			}
+	for _, marker := range matches {
+		// A marker from another embedding space cannot be compared with this cluster,
+		// so its assignment is left alone rather than dropped on a comparison that
+		// never ran.
+		if !face.SameEmbeddingSpace(marker.EmbedModel, m.EmbedModel) {
+			continue
+		} else if ok, _ := m.Match(marker.Embeddings(), marker.EmbedModel); ok {
+			continue
 		}
+
+		marker.FaceID = ""
+		marker.FaceDist = -1.0
+		marker.MatchedAt = nil
+		marker.UpdatedAt = updatedAt
+
+		if marker.SubjSrc == SrcAuto {
+			marker.SubjUID = ""
+		}
+
+		uids = append(uids, marker.MarkerUID)
+		revised = append(revised, marker)
+	}
+
+	if released, err := m.releaseMarkers(uids, updatedAt); err != nil {
+		log.Debugf("faces: failed to remove match with marker (%s)", err) // Conflict resolution
+		return nil, err
+	} else if released < len(uids) {
+		log.Debugf("faces: %d of %d markers were reassigned before release from %s", len(uids)-released, len(uids), m.ID)
 	}
 
 	return revised, nil
+}
+
+// releaseMarkers detaches the specified markers from this cluster in batches, flags their photos,
+// and returns how many it released. Their match stamp is cleared, so the next run compares them
+// against every cluster: the cluster narrowed underneath them, and nothing has compared them since.
+func (m *Face) releaseMarkers(uids []string, updatedAt time.Time) (released int, err error) {
+	if len(uids) == 0 {
+		return 0, nil
+	}
+
+	UpdateFaces.Store(true)
+
+	for batch := range slices.Chunk(uids, BatchSize()) {
+		res := UnscopedDb().Model(&Marker{}).Where("marker_uid IN (?) AND face_id = ?", batch, m.ID).
+			UpdateColumns(Values{
+				"face_id":    "",
+				"face_dist":  -1.0,
+				"subj_uid":   gorm.Expr("CASE WHEN subj_src = ? THEN ? ELSE subj_uid END", SrcAuto, ""),
+				"matched_at": nil,
+				"updated_at": updatedAt,
+			})
+
+		if res.Error != nil {
+			return released, res.Error
+		}
+
+		released += int(res.RowsAffected)
+
+		if err = refreshMarkerPhotos(batch); err != nil {
+			return released, err
+		}
+	}
+
+	return released, nil
 }
 
 // whereSameEmbeddingSpace restricts a statement to vectors from the specified model's
