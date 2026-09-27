@@ -487,6 +487,17 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 	offset := 0
 	cursor := ""
 	start := time.Now()
+	var pending []*entity.Marker
+	var pageMatchedAt *time.Time
+
+	// Flush records this page before another query or a return can expose its markers again.
+	flush := func() {
+		if err := entity.StampMarkerMatches(pending, pageMatchedAt); err != nil {
+			log.Warnf("faces: %s while updating marker match timestamps", err)
+		}
+		pending = nil
+	}
+	defer flush()
 
 	for {
 		var markers entity.Markers
@@ -517,6 +528,7 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 		}
 
 		batchProcessed := 0
+		pageMatchedAt = entity.TimeStamp()
 
 		for _, marker := range markers {
 			if _, seen := processed[marker.MarkerUID]; seen {
@@ -576,9 +588,7 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 			} else {
 				log.Debugf("faces: marker %s already has the best matching face %s with dist %f", marker.MarkerUID, marker.FaceID, marker.FaceDist)
 
-				if err := marker.Matched(); err != nil {
-					log.Warnf("faces: %s while updating marker %s match timestamp", err, marker.MarkerUID)
-				}
+				pending = append(pending, &marker)
 
 				if selFace != nil && marker.FaceID == selFace.ID {
 					recordFaceMatch(stats, selFace, dist)
@@ -629,6 +639,8 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 				result.Unknown++
 			}
 		}
+
+		flush()
 
 		if batchProcessed == 0 {
 			log.Debugf("faces: no new markers to match, stopping")
