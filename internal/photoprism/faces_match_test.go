@@ -809,3 +809,43 @@ func TestStampMatchedFaces(t *testing.T) {
 		}
 	}
 }
+
+// TestFaces_MatchFacesRefused pins that a named marker its nearest cluster refuses is counted as refused
+// and leaves the cluster's match statistics alone.
+func TestFaces_MatchFacesRefused(t *testing.T) {
+	w := isolatedTestFaces(t, "facesmatchrefused")
+
+	carol := consensusTestSubject(t, "Refused Carol")
+	dave := consensusTestSubject(t, "Refused Dave")
+
+	f := entity.NewFace(carol.SubjUID, entity.SrcAuto, face.Embeddings{face.FixtureEmbedding(7961)}, face.EmbeddingModelName())
+	require.NoError(t, f.Create())
+	require.NoError(t, f.Updates(entity.Values{"samples": 5}))
+
+	dist := 0.3 * f.AcceptDist()
+	m := entity.Marker{
+		MarkerUID:      rnd.GenerateUID('m'),
+		FileUID:        consensusTestFileUID,
+		MarkerType:     entity.MarkerFace,
+		MarkerSrc:      entity.SrcImage,
+		SubjUID:        dave.SubjUID,
+		SubjSrc:        entity.SrcManual,
+		MarkerName:     dave.SubjName,
+		EmbeddingsJSON: face.Embeddings{face.FixtureEmbeddingAt(f.Embedding(), dist, 1)}.JSON(),
+		EmbedModel:     f.EmbedModel,
+		Size:           face.ClusterSizeThreshold,
+		Score:          face.ClusterScore("") + 10,
+		W:              0.1,
+		H:              0.1,
+	}
+	require.NoError(t, entity.UnscopedDb().Create(&m).Error)
+
+	stats := make(map[string]*faceMatchStats)
+	result, err := w.MatchFaces(entity.Faces{*entity.FindFace(f.ID)}, false, nil, stats)
+	require.NoError(t, err)
+
+	assert.Equal(t, int64(1), result.Refused)
+	assert.Zero(t, result.Recognized)
+	assert.Nil(t, stats[f.ID], "a refused marker does not widen the cluster")
+	assert.Empty(t, entity.FindMarker(m.MarkerUID).FaceID)
+}

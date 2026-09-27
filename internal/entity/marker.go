@@ -391,8 +391,10 @@ func (m *Marker) SetFace(f *Face, dist float64) (updated bool, err error) {
 
 	// Remember current values for comparison.
 	faceID := m.FaceID
+	faceDist := m.FaceDist
 	subjUID := m.SubjUID
 	subjSrc := m.SubjSrc
+	markerName := m.MarkerName
 
 	m.FaceID = f.ID
 	m.FaceDist = dist
@@ -417,6 +419,8 @@ func (m *Marker) SetFace(f *Face, dist float64) (updated bool, err error) {
 	} else if carries, claimErr := f.ClaimSubject(m.SubjUID); claimErr != nil {
 		return false, claimErr
 	} else if !carries {
+		m.face, m.FaceID, m.FaceDist = nil, faceID, faceDist
+		m.subject, m.SubjUID, m.MarkerName = nil, subjUID, markerName
 		return false, m.Matched()
 	}
 

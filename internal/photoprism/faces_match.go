@@ -27,6 +27,9 @@ type FacesMatchResult struct {
 	// which writes subj_uid without going through Updated. Counted apart from Recognized, which
 	// also covers a marker that merely has a subject after being matched.
 	Assigned int64
+	// Refused counts the markers their nearest cluster did not take, such as one named after a
+	// person other than the one the cluster carries.
+	Refused int64
 }
 
 // MovedSubjects reports whether this run wrote a marker's person assignment, which is what the
@@ -88,6 +91,7 @@ func (r *FacesMatchResult) Add(result FacesMatchResult) {
 	r.Unknown += result.Unknown
 	r.Ambiguous += result.Ambiguous
 	r.Assigned += result.Assigned
+	r.Refused += result.Refused
 }
 
 // buildFaceIndex filters the provided faces down to candidates that can be matched, decoding each
@@ -305,6 +309,11 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 	}
 
 	w.updateMatchStats(stats)
+
+	if result.Refused > 0 {
+		log.Debugf("faces: %s not taken by the nearest cluster",
+			english.Plural(int(result.Refused), "marker was", "markers were"))
+	}
 
 	// Named because the run otherwise reads as one that simply recognized less.
 	if result.Ambiguous > 0 {
@@ -578,6 +587,11 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 
 			if err != nil {
 				log.Warnf("faces: %s while setting a face for marker %s", err, marker.MarkerUID)
+				continue
+			} else if marker.FaceID != selFace.ID {
+				// Refused: the cluster did not take the marker, so it neither counts as recognized
+				// nor widens what the cluster accepts.
+				result.Refused++
 				continue
 			}
 

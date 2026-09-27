@@ -377,6 +377,9 @@ func TestMarker_SetFace_ConcurrentNamingByName(t *testing.T) {
 	assert.Equal(t, hal.SubjUID, FindFace(f.ID).SubjUID)
 	assert.Equal(t, hal.SubjUID, FindMarker(sibling[0]).SubjUID)
 	assert.Empty(t, FindMarker(named[0]).FaceID, "Ivy's marker does not join Hal's cluster")
+	assert.Empty(t, m.FaceID, "the refused copy keeps no face")
+	assert.Empty(t, m.SubjUID, "and no person")
+	assert.Equal(t, ivy.SubjName, m.MarkerName)
 	assert.NotNil(t, FindMarker(named[0]).MatchedAt, "and waits for a forced run")
 	assert.Equal(t, hal.SubjUID, stale.SubjUID, "the run's copy takes over the stored person")
 }
