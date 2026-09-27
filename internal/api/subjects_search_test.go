@@ -36,9 +36,8 @@ func TestSearchSubjects(t *testing.T) {
 
 		SearchSubjects(router)
 
-		// A session scoped to photos has no ResourcePeople grant. Subject search is now the
-		// sole gate on people-name exposure (#5666), so it must be denied rather than leak
-		// names to a caller that cannot act on them.
+		// A session scoped to photos has no ResourcePeople grant, and subject search requires
+		// one, so the request is denied.
 		sess, err := entity.AddClientSession("subjects-no-people", conf.SessionMaxAge(), "photos", authn.GrantClientCredentials, nil)
 		require.NoError(t, err)
 
