@@ -2,6 +2,7 @@ package query
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -75,9 +76,9 @@ func RemoveOrphanSubjects() (removed int64, err error) {
 	return res.RowsAffected, res.Error
 }
 
-// CreateMarkerSubjects adds and references known marker subjects, and returns how many subjects it
-// resolved and how many XMP markers it linked to existing people. A name from a source that may not
-// name its person, such as XMP, is linked only to an existing person and never names the cluster.
+// CreateMarkerSubjects adds and references known marker subjects, and returns how many names it linked
+// markers to and how many XMP markers it linked to existing people, also on an error. A name from a
+// source that may not name its person, such as XMP, is linked only to an existing person.
 func CreateMarkerSubjects() (subjects, linked int64, err error) {
 	var markers entity.Markers
 
@@ -86,15 +87,17 @@ func CreateMarkerSubjects() (subjects, linked int64, err error) {
 		Where("marker_invalid = 0 AND marker_type = ?", entity.MarkerFace).
 		// Sorted by source within a name, so a person another source creates exists before an XMP
 		// marker of the same name looks for it.
-		Order("marker_name, subj_src").
+		Order("LOWER(marker_name), subj_src").
 		Find(&markers).Error; err != nil {
 		return subjects, linked, err
 	} else if len(markers) == 0 {
 		return subjects, linked, nil
 	}
 
-	var name string
-	var subj *entity.Subject
+	// People resolved in this pass, keyed by the lowercase name, so case variants of one name are
+	// resolved once and counted once, when the first marker is linked.
+	resolved := make(map[string]*entity.Subject)
+	counted := make(map[string]bool)
 
 	for _, m := range markers {
 		// A name from a source that may not name its person, such as XMP, is linked only to a person
@@ -110,8 +113,11 @@ func CreateMarkerSubjects() (subjects, linked int64, err error) {
 			continue
 		}
 
-		if name == m.MarkerName && subj != nil {
-			// Do nothing.
+		key := strings.ToLower(clean.Name(m.MarkerName))
+		subj := resolved[key]
+
+		if subj != nil {
+			// Resolved already.
 		} else if subj = entity.NewSubject(m.MarkerName, entity.SubjPerson, entity.SrcMarker); subj == nil {
 			log.Errorf("faces: invalid subject %s", clean.Log(m.MarkerName))
 			continue
@@ -119,15 +125,17 @@ func CreateMarkerSubjects() (subjects, linked int64, err error) {
 			log.Errorf("faces: failed to add subject %s", clean.Log(m.MarkerName))
 			continue
 		} else {
-			subjects++
+			resolved[key] = subj
 		}
 
-		name = m.MarkerName
 		m.SubjUID = subj.SubjUID
 		m.MarkerReview = false
 
 		if err = m.Updates(entity.Values{"subj_uid": m.SubjUID, "marker_review": m.MarkerReview}); err != nil {
 			return subjects, linked, err
+		} else if !counted[key] {
+			counted[key] = true
+			subjects++
 		}
 
 		if m.FaceID == "" {

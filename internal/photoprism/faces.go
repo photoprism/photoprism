@@ -202,9 +202,14 @@ func (w *Faces) start(opt FacesOptions) (result facesRunResult, err error) {
 
 	// Create known marker subjects if needed.
 	start = time.Now()
-	if subjects, linked, err := query.CreateMarkerSubjects(); err != nil {
-		log.Errorf("markers: %s (create subjects)", err)
-	} else if subjects+linked > 0 {
+	// Counts reached before an error are kept, so what was linked still refreshes counts and covers.
+	subjects, linked, subjErr := query.CreateMarkerSubjects()
+
+	if subjErr != nil {
+		log.Errorf("markers: %s (create subjects)", subjErr)
+	}
+
+	if subjects+linked > 0 {
 		changed = true
 		result.Subjects = int(subjects + linked)
 
@@ -215,7 +220,7 @@ func (w *Faces) start(opt FacesOptions) (result facesRunResult, err error) {
 		if linked > 0 {
 			log.Infof("markers: linked %s to existing people [%s]", english.Plural(int(linked), "marker", "markers"), time.Since(start))
 		}
-	} else {
+	} else if subjErr == nil {
 		log.Debugf("markers: found no missing subjects [%s]", time.Since(start))
 	}
 
