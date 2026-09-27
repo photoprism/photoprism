@@ -58,7 +58,7 @@ func (w *Convert) FindAvc(f *MediaFile) string {
 	src := avcSource(f)
 
 	if !src.IsAnimatedImage() && src.IsM2TS() {
-		if mp4Name, err := fs.FileName(src.FileName(), w.conf.SidecarPath(), w.conf.OriginalsPath(), fs.ExtMp4); err == nil &&
+		if mp4Name, err := fs.FilePath(src.FileName(), w.conf.SidecarPath(), w.conf.OriginalsPath(), fs.ExtMp4); err == nil &&
 			fs.FileExistsNotEmpty(mp4Name) && w.avcContainer(mp4Name, clean.Log(src.RootRelName())) != nil {
 			return mp4Name
 		}

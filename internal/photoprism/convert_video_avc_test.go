@@ -828,15 +828,21 @@ func TestConvert_FindAvc(t *testing.T) {
 		mf, err := NewMediaFile(srcName)
 		require.NoError(t, err)
 		require.True(t, mf.IsM2TS())
+
+		// Looking for an output does not create its folder.
+		mp4Name, err := fs.FilePath(srcName, conf.SidecarPath(), conf.OriginalsPath(), fs.ExtMp4)
+		require.NoError(t, err)
 		assert.Equal(t, "", convert.FindAvc(mf))
+		assert.NoDirExists(t, filepath.Dir(mp4Name))
 
 		result, err := convert.ToAvc(mf, encode.SoftwareAvc, false, false)
 		require.NoError(t, err)
 		require.NotNil(t, result)
-		t.Cleanup(func() { _ = os.Remove(result.FileName()) })
+		t.Cleanup(func() { _ = os.RemoveAll(filepath.Dir(mp4Name)) })
 
 		// The remuxed container is what ToAvc returns again, so it counts as the existing transcode.
-		assert.Equal(t, result.FileName(), convert.FindAvc(mf))
+		assert.Equal(t, mp4Name, result.FileName())
+		assert.Equal(t, mp4Name, convert.FindAvc(mf))
 	})
 }
 
