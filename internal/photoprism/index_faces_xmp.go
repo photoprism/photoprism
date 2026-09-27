@@ -209,11 +209,13 @@ func applyXmpName(m *entity.Marker, rawName string) (bool, error) {
 	prevSubjUID := m.SubjUID
 	prevSubjSrc := m.SubjSrc
 
-	if subj := entity.FindSubjectByName(name, false); subj != nil {
-		m.SetSubjectLink(subj)
-		name = subj.SubjName
-	} else {
+	// A deleted person is not linked here; Marker.Subject restores them below, as for a name typed by hand.
+	if subj := entity.FindSubjectByName(name, false); subj == nil {
 		m.SetSubjectLink(nil)
+	} else if name = subj.SubjName; subj.Deleted() {
+		m.SetSubjectLink(nil)
+	} else {
+		m.SetSubjectLink(subj)
 	}
 
 	nameChanged, err := m.SetName(name, entity.SrcXmp)
@@ -238,12 +240,19 @@ func applyXmpName(m *entity.Marker, rawName string) (bool, error) {
 	// applied only when it was durably saved, so a DB failure is not counted.
 	if changed && m.MarkerUID != "" {
 		m.MarkerReview = false
-		if err := m.Updates(entity.Values{
+		values := entity.Values{
 			"subj_uid":      m.SubjUID,
 			"subj_src":      m.SubjSrc,
 			"marker_name":   m.MarkerName,
 			"marker_review": m.MarkerReview,
-		}); err != nil {
+		}
+
+		// SetName clears the match stamp of a marker without a cluster, so it is matched again.
+		if m.MatchedAt == nil {
+			values["matched_at"] = nil
+		}
+
+		if err := m.Updates(values); err != nil {
 			return false, fmt.Errorf("faces: cannot save xmp marker %s: %w", clean.Log(m.MarkerUID), err)
 		}
 	}
