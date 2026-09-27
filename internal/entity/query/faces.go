@@ -157,6 +157,7 @@ func MatchFaceMarkers() (affected int64, err error) {
 		if res := stmt.
 			Where("subj_src = ?", entity.SrcAuto).
 			Where("subj_uid <> ?", f.SubjUID).
+			Where(fmt.Sprintf("EXISTS (SELECT 1 FROM %s f WHERE f.id = ? AND f.subj_uid = ?)", entity.Face{}.TableName()), f.ID, f.SubjUID).
 			UpdateColumns(entity.Values{"subj_uid": f.SubjUID, "marker_review": false}); res.Error != nil {
 			return affected, res.Error
 		} else if res.RowsAffected > 0 {

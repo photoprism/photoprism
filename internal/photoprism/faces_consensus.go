@@ -73,8 +73,10 @@ func (w *Faces) nameConsensusFaces(candidates []query.FaceConsensus) (result Fac
 			return result, claimErr
 		} else if !claimed {
 			continue
-		} else if err = f.SetSubjectUID(c.SubjUID); err != nil {
-			return result, err
+		} else if carries, relinkErr := f.ClaimSubject(c.SubjUID); relinkErr != nil {
+			return result, relinkErr
+		} else if !carries {
+			continue
 		}
 
 		result.Named++

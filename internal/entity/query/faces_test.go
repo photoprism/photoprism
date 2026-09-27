@@ -135,6 +135,38 @@ func TestMatchFaceMarkers(t *testing.T) {
 	}
 }
 
+// TestMatchFaceMarkers_ConcurrentRename pins that automatic markers keep the person of a cluster renamed
+// after the pass loaded it.
+func TestMatchFaceMarkers_ConcurrentRename(t *testing.T) {
+	ada, bea := rnd.GenerateUID('j'), rnd.GenerateUID('j')
+	f := entity.Face{ID: "MATCHRENAMECLUSTER", FaceSrc: entity.SrcManual, FaceKind: int(face.RegularFace),
+		SubjUID: ada, Samples: face.ManualClusterCore, EmbedModel: string(face.EmbeddingModelName())}
+	require.NoError(t, entity.UnscopedDb().Create(&f).Error)
+	t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Face{}, "id = ?", f.ID) })
+
+	m := entity.Marker{MarkerUID: rnd.GenerateUID('m'), FileUID: "fs6sg6bw45bn0001", MarkerType: entity.MarkerFace,
+		FaceID: f.ID, EmbedModel: f.EmbedModel, W: 0.1, H: 0.1}
+	require.NoError(t, entity.UnscopedDb().Create(&m).Error)
+	t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Marker{}, "marker_uid = ?", m.MarkerUID) })
+
+	armed := true
+	entity.Db().Callback().Update().Before("gorm:begin_transaction").Register("race:match-rename", func(scope *gorm.Scope) {
+		if armed && scope.TableName() == (entity.Marker{}).TableName() {
+			armed = false
+			require.NoError(t, entity.UnscopedDb().Exec("UPDATE faces SET subj_uid = ? WHERE id = ?", bea, f.ID).Error)
+		}
+	})
+	t.Cleanup(func() { entity.Db().Callback().Update().Remove("race:match-rename") })
+
+	_, err := MatchFaceMarkers()
+	require.NoError(t, err)
+	require.False(t, armed, "the rename ran")
+
+	stored, err := MarkerByUID(m.MarkerUID)
+	require.NoError(t, err)
+	assert.NotEqual(t, ada, stored.SubjUID, "the marker does not take the person the cluster no longer carries")
+}
+
 // TestMatchableFacesClusterCore pins that a centroid built from fewer embeddings than the core is
 // not offered for matching. It is the whole point of the count: a labeled example or a pair would
 // otherwise cast a cluster-sized accept distance over the library on that evidence.

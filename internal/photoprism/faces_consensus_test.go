@@ -4,6 +4,7 @@ import (
 	"math"
 	"testing"
 
+	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -307,6 +308,36 @@ func TestClaimConsensusFace(t *testing.T) {
 		require.NoError(t, err)
 		assert.False(t, claimed)
 	})
+}
+
+// TestFaces_NameByConsensusConcurrentRename pins that the unnamed markers of a cluster renamed between
+// the claim and the relink keep the cluster's person.
+func TestFaces_NameByConsensusConcurrentRename(t *testing.T) {
+	w := isolatedTestFaces(t, "facesconsensusrename")
+	core := w.conf.FaceClusterCore()
+
+	alice := consensusTestSubject(t, "Rename Alice")
+	bob := consensusTestSubject(t, "Rename Bob")
+
+	f := consensusTestFace(t, 10)
+	consensusTestMarkers(t, f, core, alice.SubjUID, entity.SrcAuto, false)
+	unnamed := consensusTestMarkers(t, f, 1, "", entity.SrcAuto, false)
+
+	armed := true
+	entity.Db().Callback().Update().Before("gorm:begin_transaction").Register("race:consensus-rename", func(scope *gorm.Scope) {
+		if armed && scope.TableName() == (entity.Marker{}).TableName() {
+			armed = false
+			require.NoError(t, entity.UnscopedDb().Exec("UPDATE faces SET subj_uid = ? WHERE id = ?", bob.SubjUID, f.ID).Error)
+		}
+	})
+	t.Cleanup(func() { entity.Db().Callback().Update().Remove("race:consensus-rename") })
+
+	_, err := w.NameByConsensus()
+	require.NoError(t, err)
+	require.False(t, armed, "the rename ran")
+
+	assert.Equal(t, bob.SubjUID, entity.FindFace(f.ID).SubjUID)
+	assert.NotEqual(t, []string{alice.SubjUID}, consensusTestSubjects(t, unnamed), "unnamed markers do not take the former person")
 }
 
 // TestFaces_startNamesByConsensus pins that a worker run reaches the pass and reports it.
