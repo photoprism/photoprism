@@ -195,11 +195,16 @@ func CreateMarker(router *gin.RouterGroup) {
 			return
 		}
 
+		if frm.MarkerSrc != entity.SrcManual || frm.MarkerType != entity.MarkerFace {
+			AbortBadRequest(c)
+			return
+		}
+
 		// Create new face marker area.
 		area := crop.NewArea("face", frm.X, frm.Y, frm.W, frm.H)
 
 		// Create new marker entity.
-		marker := entity.NewMarker(*file, area, "", frm.MarkerSrc, frm.MarkerType, entity.MarkerSize(area, *file), 100)
+		marker := entity.NewMarker(*file, area, "", entity.SrcManual, entity.MarkerFace, entity.MarkerSize(area, *file), 100)
 
 		// Apply the requested review state.
 		marker.MarkerReview = frm.MarkerReview

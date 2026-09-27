@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -14,7 +16,10 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/photoprism"
+	"github.com/photoprism/photoprism/internal/thumb/crop"
 	"github.com/photoprism/photoprism/pkg/authn"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -543,4 +548,83 @@ func TestCreateMarker_Review(t *testing.T) {
 			assert.True(t, stored.MarkerReview)
 		})
 	}
+}
+
+// TestCreateMarker_ManualFace validates the source and type of hand-drawn regions.
+func TestCreateMarker_ManualFace(t *testing.T) {
+	app, router, _ := NewApiTest()
+	CreateMarker(router)
+	for _, tc := range []struct {
+		name, fields string
+		status       int
+	}{
+		{"WebUI", `,"Type":"face","Src":"manual","Review":false,"Invalid":false`, http.StatusCreated},
+		{"Defaults", ``, http.StatusCreated},
+		{"NullDefaults", `,"Src":null,"Type":null`, http.StatusCreated},
+		{"Xmp", `,"Src":"xmp"`, http.StatusBadRequest},
+		{"Image", `,"Src":"image"`, http.StatusBadRequest},
+		{"OtherType", `,"Type":"object"`, http.StatusBadRequest},
+		{"EmptySource", `,"Src":""`, http.StatusBadRequest},
+		{"EmptyType", `,"Type":""`, http.StatusBadRequest},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			file := entity.FileFixtures.Get("exampleDNGFile.dng")
+			before, err := entity.FindMarkers(file.FileUID)
+			require.NoError(t, err)
+			body := fmt.Sprintf(`{"FileUID":%q,"X":0.2,"Y":0.2,"W":0.1,"H":0.1%s}`, file.FileUID, tc.fields)
+			r := PerformRequestWithBody(app, "POST", "/api/v1/markers", body)
+			require.Equal(t, tc.status, r.Code, r.Body.String())
+			after, err := entity.FindMarkers(file.FileUID)
+			require.NoError(t, err)
+			if tc.status != http.StatusCreated {
+				assert.Len(t, after, len(before))
+				return
+			}
+			uid := gjson.Get(r.Body.String(), "UID").String()
+			t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Marker{}, "marker_uid = ?", uid) })
+			stored := entity.FindMarker(uid)
+			require.NotNil(t, stored)
+			assert.Equal(t, entity.SrcManual, stored.MarkerSrc)
+			assert.Equal(t, entity.MarkerFace, stored.MarkerType)
+			assert.False(t, stored.DetectedFace())
+			assert.Equal(t, "manual", gjson.Get(r.Body.String(), "Src").String())
+			assert.Equal(t, "face", gjson.Get(r.Body.String(), "Type").String())
+		})
+	}
+}
+
+// TestCreateMarker_XmpReconcile preserves hand-drawn regions through an authoritative XMP update.
+func TestCreateMarker_XmpReconcile(t *testing.T) {
+	app, router, _ := NewApiTest()
+	CreateMarker(router)
+	file := entity.FileFixtures.Get("exampleDNGFile.dng")
+	file.ID = 0
+	file.FileUID = rnd.GenerateUID('f')
+	file.FileName = file.FileUID + ".jpg"
+	require.NoError(t, entity.UnscopedDb().Create(&file).Error)
+	t.Cleanup(func() {
+		entity.UnscopedDb().Delete(&entity.Marker{}, "file_uid = ?", file.FileUID)
+		entity.UnscopedDb().Delete(&file)
+	})
+	body := fmt.Sprintf(`{"FileUID":%q,"Type":"face","Src":"manual","X":0.2,"Y":0.2,"W":0.1,"H":0.1}`, file.FileUID)
+	r := PerformRequestWithBody(app, "POST", "/api/v1/markers", body)
+	require.Equal(t, http.StatusCreated, r.Code, r.Body.String())
+	uid := gjson.Get(r.Body.String(), "UID").String()
+	imported := entity.NewMarker(file, crop.NewArea("face", 0.8, 0.8, 0.1, 0.1), "", entity.SrcXmp, entity.MarkerFace, 100, 100)
+	require.NotNil(t, imported)
+	require.NoError(t, imported.Create())
+	imageName := filepath.Join(t.TempDir(), "photo.jpg")
+	require.NoError(t, fs.Copy("../photoprism/testdata/xmp-faces/sidecar.jpg", imageName, false))
+	const emptyRegions = `<x:xmpmeta xmlns:x="adobe:ns:meta/"><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"><rdf:Description rdf:about="" xmlns:MP="http://ns.microsoft.com/photo/1.2/" xmlns:MPRI="http://ns.microsoft.com/photo/1.2/t/RegionInfo#"><MP:RegionInfo rdf:parseType="Resource"><MPRI:Regions><rdf:Bag/></MPRI:Regions></MP:RegionInfo></rdf:Description></rdf:RDF></x:xmpmeta>`
+	require.NoError(t, os.WriteFile(imageName+fs.ExtXMP, []byte(emptyRegions), fs.ModeFile)) //nolint:gosec // Isolated test sidecar.
+	media, err := photoprism.NewMediaFile(imageName)
+	require.NoError(t, err)
+	saved, _, err := photoprism.ApplyXmpFaces(media, &file)
+	require.NoError(t, err)
+	assert.True(t, saved)
+	assert.Nil(t, entity.FindMarker(imported.MarkerUID), "the authoritative sidecar must reconcile imported regions")
+	kept := entity.FindMarker(uid)
+	require.NotNil(t, kept)
+	assert.Equal(t, entity.SrcManual, kept.MarkerSrc)
+	assert.Equal(t, entity.MarkerFace, kept.MarkerType)
 }
