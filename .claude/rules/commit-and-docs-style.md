@@ -14,7 +14,7 @@ Do not add `Co-Authored-By: Claude …` trailers (or any other AI-authorship tra
 
 ## GitHub Issues
 
-Issue titles MUST be concise, use the imperative mood, and start with a single capitalized prefix followed by a colon and a space, e.g. `Search: Add filter for RAW image formats`.
+Issue titles MUST be concise, use the imperative mood, and start with a single capitalized prefix followed by a colon and a space, e.g. `Search: Add filter for RAW image formats`. A `Bug` title states what does not work instead, e.g. `PWA: Unable to download or share files`.
 
 Issue descriptions MUST begin with a one-sentence **User Story** in the format: `**As a <role>, I want <goal>, so that <outcome>.**`
 Use level-3 Markdown headings for sections within issue descriptions, for example `### Acceptance Criteria`.
@@ -44,6 +44,8 @@ The types `Bug`, `Enhancement`, `Feature`, and `Task` are distinguished by what 
 - **`Enhancement`** — A new capability on top of functionality that already works.
 - **`Feature`** — Entirely new functionality that does not yet exist.
 - **`Task`** — Something that should work, but was never fully developed, needs refinement, or requires an update (e.g., a dependency upgrade). It is neither a regression nor an addition to working behavior.
+
+The title is a quick test: if it reads naturally as a failure (`Faces: Slow recognition after a correction`), the issue is a `Bug`; if it reads naturally as an imperative, it is not. Once the type is chosen, word the title to match it.
 
 A half-wired mechanism may look like a defect: helpers exist, the intent is legible in the code, and nothing calls them. This is not a `Bug` because nothing regressed; it was never finished. In this case, choose `Task` rather than arguing the intent into a defect. An `Epic` is a tracking issue that remains open until all sub-issues are closed.
 
