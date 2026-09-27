@@ -49,6 +49,19 @@ Additional information can be found in our Developer Guide:
 @import url("notify.css") layer(vuetify-components);
 @import url("vuetify-overrides.css") layer(vuetify-overrides);
 
+/* Registers the overlay scroll variables as non-inherited, so opening a dialog does not restyle the whole
+   page. Only html.v-overlay-scroll-blocked reads them; a sticky VNavigationDrawer, which the app does not
+   use, would read them from a descendant and need them inherited. */
+@property --v-body-scroll-x {
+    syntax: "*";
+    inherits: false;
+}
+
+@property --v-body-scroll-y {
+    syntax: "*";
+    inherits: false;
+}
+
 /* The application's own rules, in the same layer as the imported style sheets above. */
 @layer vuetify-components {
     /* Core Element Styles */
