@@ -2925,11 +2925,11 @@
                 "Invalid": {
                     "type": "boolean"
                 },
-                "MarkerReview": {
-                    "type": "boolean"
-                },
                 "Name": {
                     "type": "string"
+                },
+                "Review": {
+                    "type": "boolean"
                 },
                 "Src": {
                     "type": "string"
