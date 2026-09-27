@@ -4,8 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"sort"
+	"strconv"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
@@ -181,8 +183,7 @@ func TestFaces_MatchFacesPause(t *testing.T) {
 				case "AmbiguousPage":
 					assert.Equal(t, int64(5), result.Ambiguous)
 					assert.Equal(t, int64(5), result.Updated)
-					// The offset walk stops by the count after its last page, before the pause.
-					assert.Equal(t, map[bool]int{false: 3, true: 2}[force], pauses, "every page detached a marker")
+					assert.Equal(t, 3, pauses, "every page detached a marker")
 				default:
 					assert.Equal(t, FacesMatchResult{}, result)
 					assert.Zero(t, pauses)
@@ -195,31 +196,97 @@ func TestFaces_MatchFacesPause(t *testing.T) {
 	}
 }
 
-// TestFaces_MatchFacesCount checks that only the offset walk counts the marker table.
-func TestFaces_MatchFacesCount(t *testing.T) {
+// TestFaces_MatchFacesCursor checks that both walks page by cursor, without counting markers.
+func TestFaces_MatchFacesCursor(t *testing.T) {
 	for _, force := range []bool{false, true} {
-		t.Run(map[bool]string{false: "CursorWalk", true: "OffsetWalk"}[force], func(t *testing.T) {
-			w, f, uids := stampTestPage(t, fmt.Sprintf("facescount%t", force), 5)
+		t.Run(fmt.Sprintf("Force%t", force), func(t *testing.T) {
+			w, f, uids := stampTestPage(t, fmt.Sprintf("facescursor%t", force), 5)
 			oldLimit := faceMatchBatchSize
 			faceMatchBatchSize = 2
 			t.Cleanup(func() { faceMatchBatchSize = oldLimit })
-			counts := 0
+			counts, queries := 0, 0
 			entity.Db().Callback().RowQuery().After("gorm:row_query").Register("test:marker-count", func(scope *gorm.Scope) {
 				if scope.TableName() == (entity.Marker{}).TableName() && strings.Contains(strings.ToLower(scope.SQL), "count(") {
 					counts++
 				}
 			})
 			t.Cleanup(func() { entity.Db().Callback().RowQuery().Remove("test:marker-count") })
+			// Adds a marker that sorts after all others before the first page, as one detected during
+			// the walk would, and removes the first marker before the second, which shifts later rows.
+			added := "m" + strconv.FormatInt(time.Now().UTC().Unix(), 36)[0:6] + "zzzzzzzzz"
+			t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Marker{}, "marker_uid = ?", added) })
+			entity.Db().Callback().Query().Before("gorm:query").Register("test:marker-delete", func(scope *gorm.Scope) {
+				if _, ok := scope.Value.(*entity.Markers); !ok {
+					return
+				}
+				switch queries++; queries {
+				case 1:
+					require.NoError(t, entity.UnscopedDb().Create(&entity.Marker{
+						MarkerUID: added, FileUID: consensusTestFileUID, MarkerType: entity.MarkerFace, MarkerSrc: entity.SrcImage,
+						EmbeddingsJSON: face.Embeddings{f.Embedding()}.JSON(), EmbedModel: f.EmbedModel, FaceDist: -1, W: 0.1, H: 0.1,
+					}).Error)
+				case 2:
+					require.NoError(t, entity.UnscopedDb().Exec("DELETE FROM markers WHERE marker_uid = ?", uids[0]).Error)
+				}
+			})
+			t.Cleanup(func() { entity.Db().Callback().Query().Remove("test:marker-delete") })
 			_, err := w.MatchFaces(entity.Faces{*f}, force, nil, nil)
 			require.NoError(t, err)
-			if force {
-				assert.Equal(t, 1, counts)
-			} else {
-				assert.Zero(t, counts)
+			assert.Zero(t, counts)
+			for _, uid := range uids[1:] {
+				assert.NotNil(t, entity.FindMarker(uid).MatchedAt, "the walk reaches every remaining marker")
 			}
-			for _, uid := range uids {
-				assert.NotNil(t, entity.FindMarker(uid).MatchedAt, "the walk reaches every marker")
+			if force {
+				assert.Equal(t, 4, queries, "three pages and the empty one that ends the walk")
+				assert.Nil(t, entity.FindMarker(added).MatchedAt, "the full walk ends at the markers it started with")
+			} else {
+				assert.Equal(t, 4, queries, "the added marker completes the third page")
+				assert.NotNil(t, entity.FindMarker(added).MatchedAt, "the unmatched walk takes new markers")
 			}
 		})
 	}
+}
+
+// TestFaces_MatchFacesBoundError checks that a full walk returns when its bound cannot be read.
+func TestFaces_MatchFacesBoundError(t *testing.T) {
+	w, f, uids := stampTestPage(t, "facesbounderror", 2)
+	queries := 0
+	entity.Db().Callback().Query().Before("gorm:query").Register("test:bound-error", func(scope *gorm.Scope) {
+		if _, ok := scope.Value.(*entity.Marker); ok {
+			_ = scope.Err(errors.New("test bound failure"))
+		}
+	})
+	t.Cleanup(func() { entity.Db().Callback().Query().Remove("test:bound-error") })
+	entity.Db().Callback().Query().Before("gorm:query").Register("test:bound-pages", func(scope *gorm.Scope) {
+		if _, ok := scope.Value.(*entity.Markers); ok {
+			queries++
+		}
+	})
+	t.Cleanup(func() { entity.Db().Callback().Query().Remove("test:bound-pages") })
+	_, err := w.MatchFaces(entity.Faces{*f}, true, nil, nil)
+	entity.Db().Callback().Query().Remove("test:bound-error")
+	require.ErrorContains(t, err, "test bound failure")
+	assert.Zero(t, queries)
+	for _, uid := range uids {
+		assert.Nil(t, entity.FindMarker(uid).MatchedAt)
+	}
+}
+
+// TestFaces_MatchFacesEmpty checks that a full walk over no markers reads no page.
+func TestFaces_MatchFacesEmpty(t *testing.T) {
+	w, f, _ := stampTestPage(t, "facesempty", 1)
+	require.NoError(t, entity.UnscopedDb().Exec("DELETE FROM markers").Error)
+	// On MariaDB the isolated config shares the package database, so later tests need the fixtures.
+	t.Cleanup(entity.ResetTestFixtures)
+	queries := 0
+	entity.Db().Callback().Query().Before("gorm:query").Register("test:empty-walk", func(scope *gorm.Scope) {
+		if _, ok := scope.Value.(*entity.Markers); ok {
+			queries++
+		}
+	})
+	t.Cleanup(func() { entity.Db().Callback().Query().Remove("test:empty-walk") })
+	result, err := w.MatchFaces(entity.Faces{*f}, true, nil, nil)
+	require.NoError(t, err)
+	assert.Equal(t, FacesMatchResult{}, result)
+	assert.Zero(t, queries)
 }

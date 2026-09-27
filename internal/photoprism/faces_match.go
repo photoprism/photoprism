@@ -484,19 +484,19 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 		return result, nil
 	}
 
-	// Counted only for the offset walk, which clamps its offset and stops by it; the count scans
-	// every marker row.
-	maxMarkers := 0
-
-	if force {
-		maxMarkers = query.CountMarkers(entity.MarkerFace)
-	}
-
-	processed := make(map[string]struct{}, max(maxMarkers, limit))
+	processed := make(map[string]struct{}, limit)
 	totalProcessed := 0
 
-	offset := 0
-	cursor := ""
+	cursor, last := "", ""
+
+	// The full walk stops at the highest uid when it starts. Uids begin with their creation
+	// second, so markers detected in a later second are not part of it.
+	if force {
+		if last, err = query.LastMarkerUID(); err != nil || last == "" {
+			return result, err
+		}
+	}
+
 	start := time.Now()
 	var pending []*entity.Marker
 	var pageMatchedAt *time.Time
@@ -514,7 +514,7 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 		var markers entity.Markers
 
 		if force {
-			markers, err = query.FaceMarkers(limit, offset)
+			markers, err = query.FaceMarkers(limit, cursor, last)
 		} else {
 			markers, err = query.UnmatchedFaceMarkers(limit, cursor, matchedBefore)
 		}
@@ -527,16 +527,9 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 			break
 		}
 
-		if force {
-			offset += len(markers)
-			if offset >= maxMarkers {
-				offset = maxMarkers
-			}
-		} else {
-			// The cursor advances even when every marker in this page is skipped, which is what
-			// keeps a page of markers that are never stamped from being returned forever.
-			cursor = markers[len(markers)-1].MarkerUID
-		}
+		// The cursor advances past every marker in the page, skipped ones included, so no page
+		// is read twice.
+		cursor = markers[len(markers)-1].MarkerUID
 
 		batchProcessed := 0
 		batchChanged := false
@@ -667,10 +660,6 @@ func (w *Faces) MatchFaces(faces entity.Faces, force bool, matchedBefore *time.T
 			start = time.Now()
 		} else {
 			log.Debugf("faces: matched %s", english.Plural(totalProcessed, "marker", "markers"))
-		}
-
-		if force && totalProcessed >= maxMarkers {
-			break
 		}
 
 		// Paused only after a page that changed or tried to assign a marker; a page that was
