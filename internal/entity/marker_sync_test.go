@@ -2,9 +2,12 @@ package entity
 
 import (
 	"fmt"
+	"reflect"
 	"strings"
 	"testing"
+	"unsafe"
 
+	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -45,17 +48,32 @@ func captureStatements(t *testing.T, fn func()) *statementCounter {
 
 	c := &statementCounter{}
 	db := Db()
+	defer restoreDbLogger(db)()
+
 	db.SetLogger(c)
 	db.LogMode(true)
-
-	defer func() {
-		db.LogMode(false)
-		db.SetLogger(log)
-	}()
 
 	fn()
 
 	return c
+}
+
+// restoreDbLogger returns a function that restores the logger and log mode db has now. GORM keeps both
+// unexported, so they are read and written through reflection.
+func restoreDbLogger(db *gorm.DB) func() {
+	field := func(name string) reflect.Value {
+		f := reflect.ValueOf(db).Elem().FieldByName(name)
+		return reflect.NewAt(f.Type(), unsafe.Pointer(f.UnsafeAddr())).Elem()
+	}
+
+	logger := reflect.New(field("logger").Type()).Elem()
+	logger.Set(field("logger"))
+	mode := field("logMode").Int()
+
+	return func() {
+		field("logger").Set(logger)
+		field("logMode").SetInt(mode)
+	}
 }
 
 // syncTestMarkers stores n automatic markers of subjUID in cluster f on the given file.
@@ -271,4 +289,29 @@ func TestMarker_SyncSubject_NoRefreshWithoutChange(t *testing.T) {
 	}
 
 	assert.True(t, related, "the related markers were checked")
+}
+
+// TestRestoreDbLogger pins that capturing statements leaves the logger and log mode a caller had set.
+func TestRestoreDbLogger(t *testing.T) {
+	db := Db()
+	t.Cleanup(restoreDbLogger(db))
+
+	outer := &statementCounter{}
+	db.SetLogger(outer)
+	db.LogMode(true)
+
+	inner := captureStatements(t, func() { FindFace("RESTOREDBLOGGER") })
+	assert.NotEmpty(t, inner.sql, "the capture sees its own statements")
+
+	FindFace("RESTOREDBLOGGERAFTER")
+	require.NotEmpty(t, outer.sql, "the previous logger is active again")
+	assert.Contains(t, outer.sql[len(outer.sql)-1], "faces")
+
+	// A quiet log mode stays quiet after a capture.
+	quiet := &statementCounter{}
+	db.SetLogger(quiet)
+	db.LogMode(false)
+	captureStatements(t, func() { FindFace("RESTOREDBLOGGERQUIET") })
+	FindFace("RESTOREDBLOGGERQUIETAFTER")
+	assert.Empty(t, quiet.sql, "the previous log mode is active again")
 }
