@@ -115,7 +115,7 @@ test.meta("testID", "face-markers-006").meta({ mode: "public" })("Common: Named 
   await t.expect(photoviewer.faceMarkerConfirmButton.visible).ok();
   await photoviewer.confirmMarkerDraft();
   const unnamed = photoviewer.unnamedPersonRows.nth(-1);
-  await t.typeText(unnamed.find(".meta-inline-marker input"), "UnassignIconTest").pressKey("enter");
+  await t.typeText(unnamed.find(".meta-inline-marker input:not([type='hidden'])"), "UnassignIconTest").pressKey("enter");
 
   const named = photoviewer.namedPersonRows.withText("UnassignIconTest");
   await t.expect(named.visible).ok();
@@ -166,7 +166,7 @@ test.meta("testID", "face-markers-008").meta({ mode: "public" })("Common: Naming
 
   const newRow = photoviewer.unnamedPersonRows.nth(-1);
   await t.expect(newRow.visible).ok();
-  const nameInput = newRow.find(".meta-inline-marker input");
+  const nameInput = newRow.find(".meta-inline-marker input:not([type='hidden'])");
   await t.expect(nameInput.visible).ok();
   await t.typeText(nameInput, "SidebarFaceTestPerson").pressKey("enter");
 
@@ -191,7 +191,7 @@ test.meta("testID", "face-markers-010").meta({ mode: "public" })("Common: Blurri
 
   const newRow = photoviewer.unnamedPersonRows.nth(-1);
   await t.expect(newRow.visible).ok();
-  const nameInput = newRow.find(".meta-inline-marker input");
+  const nameInput = newRow.find(".meta-inline-marker input:not([type='hidden'])");
   await t.expect(nameInput.visible).ok();
 
   // Blur via header click (not Enter) — the typed novel name must trigger the Add-name dialog.
@@ -219,7 +219,7 @@ test.meta("testID", "face-markers-009").meta({ mode: "public" })("Common: Unassi
   await t.expect(photoviewer.faceMarkerConfirmButton.visible).ok();
   await photoviewer.confirmMarkerDraft();
   const unnamed = photoviewer.unnamedPersonRows.nth(-1);
-  await t.typeText(unnamed.find(".meta-inline-marker input"), "SidebarClearSubjectTest").pressKey("enter");
+  await t.typeText(unnamed.find(".meta-inline-marker input:not([type='hidden'])"), "SidebarClearSubjectTest").pressKey("enter");
 
   const namedRow = photoviewer.namedPersonRows.withText("SidebarClearSubjectTest");
   await t.expect(namedRow.visible).ok();

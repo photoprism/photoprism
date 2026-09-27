@@ -173,7 +173,7 @@ test.meta("testID", "people-004").meta({ mode: "public" })("Common: Test new fac
   await t
     .expect(Selector('div[role="option"]').nth(0).visible)
     .notOk()
-    .typeText(Selector("div[data-id=" + FirstFaceID + "] div.input-name input"), "Otto");
+    .typeText(Selector("div[data-id=" + FirstFaceID + "] div.input-name input:not([type='hidden'])"), "Otto");
 
   await t.expect(Selector('div[role="option"]').nth(0).withText("Otto Visible").visible).ok();
 });
