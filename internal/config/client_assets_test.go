@@ -33,6 +33,8 @@ func TestClientAssets_Load(t *testing.T) {
 		assert.Equal(t, "/static/build/splash.test.css", a.SplashCssUri())
 		assert.Equal(t, "splash.test.css", a.SplashCssFile())
 		assert.NotEmpty(t, a.SplashCssFileContents())
+		assert.Equal(t, "/static/build/splash.test.js", a.SplashJsUri())
+		assert.Equal(t, "splash.test.js", a.SplashJsFile())
 	})
 	t.Run("Error", func(t *testing.T) {
 		testBuildPath := "testdata/foo"
@@ -51,6 +53,8 @@ func TestClientAssets_Load(t *testing.T) {
 		assert.Equal(t, "", a.ShareCssUri())
 		assert.Equal(t, "", a.ShareJs)
 		assert.Equal(t, "", a.ShareJsUri())
+		assert.Equal(t, "", a.SplashJsUri())
+		assert.Equal(t, "", a.SplashJsFile())
 	})
 }
 

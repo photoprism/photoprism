@@ -102,7 +102,7 @@ func (a *ClientAssets) SplashCssFileContents() template.CSS {
 
 // SplashJsUri returns the splash screen JS URI.
 func (a *ClientAssets) SplashJsUri() string {
-	if a.ShareJs == "" {
+	if a.SplashJs == "" {
 		return ""
 	}
 	return fmt.Sprintf("%s/build/%s", a.BaseUri, a.SplashJs)
@@ -110,10 +110,10 @@ func (a *ClientAssets) SplashJsUri() string {
 
 // SplashJsFile returns the splash screen JS filename.
 func (a *ClientAssets) SplashJsFile() string {
-	if a.ShareJs == "" {
+	if a.SplashJs == "" {
 		return ""
 	}
-	return a.ShareJs
+	return a.SplashJs
 }
 
 // SplashJsFileContents returns the splash screen JS file contents for embedding in HTML.
