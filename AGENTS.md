@@ -1,6 +1,6 @@
 # PhotoPrism Repository Guidelines
 
-**Last Updated:** September 20, 2026
+**Last Updated:** September 27, 2026
 
 ## Purpose
 
@@ -47,6 +47,7 @@ Optional nested repositories such as `plus/`, `pro/`, `portal/`, and `specs/` ma
 - Use concise imperative subjects with a one-word prefix, for example `Config: Add tests for "darktable-cli" path detection`.
 - Append issue or PR IDs when relevant.
 - Commit messages must not exceed 80 characters.
+- Do not add `Co-Authored-By` or any other AI-authorship trailer.
 
 ### GitHub Issues
 
@@ -116,7 +117,7 @@ Title Case rules (Chicago-style, with code- and path-aware normalization):
 
 A doc comment is **required** for every function (including unexported helpers), as well as for every non-trivial Vue `methods:` / `computed:` / watcher:
 - Keep comments **compact** and default to one line for "what" in the format `// Name does X.`. Skip trivial getters (`isOpen: () => this.open`).
-- Add 1-2 follow-up lines (`// …`) **only** if the "why" is non-obvious: a hidden invariant, a workaround that would otherwise be undone by a future cleanup, a contract a reader can't infer from the code. If readers can infer the "why" from the function body or a nearby line, then omit it.
+- Add 1-2 follow-up lines (`// …`) **only** if the "why" is non-obvious: a hidden invariant, a workaround that would otherwise be undone by a future cleanup, a contract a reader can't infer from the code. If readers can infer the "why" from the function body or a nearby line, then omit it. Three follow-up lines are the hard limit; compact a longer comment you touch.
 - Multi-paragraph explanations belong in `specs/`, package `README.md` files, or GitHub issues — never in the source itself.
 
 Doc comments for packages and exported identifiers must be complete sentences that begin with the name of the thing being described and end with a period. For short examples in comments, indent code instead of using backticks.
@@ -127,7 +128,7 @@ Use US English spelling in all code comments (`parameterized`, `behavior`, `colo
 
 ## Agent Runtime
 
-- Detect container mode by checking for `/.dockerenv`.
+- Detect container mode by checking for `/.dockerenv`. This orients you in the development environment only; scripts that ship in images read `PHOTOPRISM_CONTAINER` instead, since the file is absent during image builds and under other container runtimes.
 - If the repo path is `/go/src/github.com/photoprism/photoprism` and `/.dockerenv` is absent, treat the environment as host mode with a bind mount and prefer host-side Docker commands.
 - Bash check: `[ -f "/.dockerenv" ] && echo container || echo host`
 - Node.js check: `require("fs").existsSync("/.dockerenv")`
@@ -158,7 +159,7 @@ Use US English spelling in all code comments (`parameterized`, `behavior`, `colo
 - Our command examples assume a Linux or Unix shell on 64-bit AMD64 or ARM64; see the Developer Guide FAQ for Windows-specific notes.
 
 Formatting and test entry points:
-- Full suite: `make test`, `make lint`
+- Full suite: `make test`, `make lint`. `make test` runs on SQLite without the opt-in `integration` build tag; use `make test-mariadb` for MariaDB, `make test-integration` for the integration matrices, and `make test-short` for a quick pass.
 - After renaming or removing a Makefile target, run `make check-make-help` (also included in `make lint`) so that no `make help` overview keeps advertising it.
 - Go-specific lint, format, and package-test rules live in [`internal/AGENTS.md`](internal/AGENTS.md).
 - Frontend lint, Vitest, acceptance, and Playwright rules live in [`frontend/AGENTS.md`](frontend/AGENTS.md).
