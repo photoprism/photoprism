@@ -25,7 +25,7 @@ Package-level rules live in the nearest `AGENTS.md`, for example `internal/AGENT
 
 - Every added function, including unexported helpers and helpers extracted by a refactor, needs a matching `Test<Name>` in a sibling `*_test.go`, with at least a success and a failure case.
 - Group cases with `t.Run(...)` and PascalCase names such as `Success` or `InvalidRequest`.
-- Prefer focused runs — `go test ./internal/<pkg> -run '<TestName>' -count=1` — over `make test-go`, which takes about 20 minutes. `make test-short` is the fast pass (it skips tests that run the indexer or importer on fixture media, which `make test-go` covers), and `make reset-testdb` resets the test databases.
+- Prefer focused runs — `go test ./internal/<pkg> -run '<TestName>' -count=1` — over `make test-go`, which takes about 20 minutes. `make test-short` is the fast pass (it skips tests that run the indexer or importer on fixture media, which `make test-go` covers), `make test-integration` adds the opt-in `integration` matrices, and `make reset-testdb` resets the test databases.
 
 ## API, Config & Schema
 

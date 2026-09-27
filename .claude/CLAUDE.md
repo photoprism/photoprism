@@ -30,7 +30,9 @@ Run `make help` for an overview of the most common targets, and `make list` to l
 - `make test` — runs the JS and Go tests on SQLite; it does not cover MariaDB. Its Go half sweeps
   `./pkg/... ./internal/... ./.../internal/...`, so the editions' `internal/` packages **are** included;
   what it leaves out is MariaDB and each edition's own `make -C <edition> test` extras
-- `make test-go` — all Go tests on SQLite (~3-15 min)
+- `make test-go` — the Go tests on SQLite (~3-15 min), without the opt-in `integration` build tag
+- `make test-integration` — the same run plus the `integration` matrices (Insta360 stacking, import and
+  reconciliation); run it when changing those areas
 - `make test-mariadb` — the same Go suite against MariaDB (~5-20 min)
 - `make test-js` — frontend unit tests (Vitest)
 - `make test-short` — short Go tests in parallel (~3-5 min); skips tests that run the indexer or
