@@ -586,8 +586,7 @@ zip-nasnet:
 zip-nsfw:
 	(cd assets && zip -r nsfw.zip nsfw -x "*/.*" -x "*/version.txt")
 build-js:
-	(cd frontend &&	env BUILD_ENV=production NODE_ENV=production npm run build)
-	(cd frontend && node scripts/precompress.js)
+	$(MAKE) -C frontend build
 build-go: build-develop
 build-develop:
 	rm -f $(BINARY_NAME)
@@ -661,8 +660,7 @@ build-setup: build-setup-nas-raspberry-pi
 build-setup-nas-raspberry-pi:
 	./scripts/setup/nas/raspberry-pi/build.sh
 watch-js:
-	(cd frontend && node scripts/precompress.js --clean)
-	(cd frontend &&	env BUILD_ENV=development NODE_ENV=production npm run watch)
+	$(MAKE) -C frontend watch
 test-js:
 	$(info Running JS unit tests...)
 	(cd frontend && npm run test)

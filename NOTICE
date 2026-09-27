@@ -9494,13 +9494,8 @@ cross-env                                           MIT            Kent C. Dodds
 cssnano                                             MIT            Ben Briggs beneb.info@gmail.com http://beneb.info
 eslint                                              MIT            Nicholas C. Zakas <nicholas+npm@nczconsulting.com>
 eslint-config-prettier                              MIT            Simon Lydell
-eslint-formatter-pretty                             MIT            Sindre Sorhus sindresorhus@gmail.com https://sindresorhus.com
-eslint-plugin-html                                  ISC            n/a
-eslint-plugin-import                                MIT            Ben Mosher <me@benmosher.com>
-eslint-plugin-node                                  MIT            Toru Nagashima
 eslint-plugin-vue                                   MIT            Toru Nagashima (https://github.com/mysticatea)
 eslint-plugin-vuetify                               MIT            Kael Watts-Deuchar <kaelwd@gmail.com>
-eventsource-polyfill                                MIT            amvtek <devel@amvtek.com>
 file-saver                                          MIT            Eli Grey <me@eligrey.com>
 globals                                             MIT            Sindre Sorhus sindresorhus@gmail.com https://sindresorhus.com
 hls.js                                              Apache-2.0     n/a
@@ -9508,7 +9503,6 @@ jsdom                                               MIT            n/a
 luxon                                               MIT            Isaac Cambron
 maplibre-gl                                         BSD-3-Clause   n/a
 memoize-one                                         MIT            Alex Reardon <alexreardon@gmail.com>
-minimist                                            MIT            James Halliday mail@substack.net http://substack.net
 node-storage-shim                                   ISC            Michael Nahkies
 passive-events-support                              MIT            Ignas Damunskis <ignas3run@gmail.com>
 pdfjs-dist                                          Apache-2.0     n/a
@@ -9516,7 +9510,6 @@ photoswipe                                          MIT            Dmytro Semeno
 playwright                                          Apache-2.0     Microsoft Corporation
 postcss                                             MIT            Andrey Sitnik <andrey@sitnik.es>
 postcss-preset-env                                  MIT-0          n/a
-postcss-reporter                                    MIT            David Clark david.dave.clark@gmail.com https://davidtheclark.com
 prettier                                            MIT            James Long
 pubsub-js                                           MIT            Morgan Roderick morgan@roderick.dk http://roderick.dk
 regenerator-runtime                                 MIT            Ben Newman <bn@cs.stanford.edu>

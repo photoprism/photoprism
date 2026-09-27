@@ -14,6 +14,7 @@
 
 - Run `make -C frontend help` for an overview of the most common frontend targets, and `make -C frontend list` to see all of them.
 - Use the lint and format scripts declared in `frontend/package.json`; all added JS, Vue, and frontend tests must follow those standards.
+- Preserve explicit initial values such as `-1`, `""`, and `[]` when they clarify intent. `no-useless-assignment` is intentionally disabled; do not remove readable initializers merely because subsequent branches overwrite them.
 - Frontend unit tests use Vitest. Common entry points are `make test-js`, `make vitest-watch`, and `make vitest-coverage`.
 - New JavaScript functions, including helpers, should be tested whenever practical; update existing tests or add new ones as needed.
 - New Vue components should have component-test coverage, and existing component tests should be updated as needed when component behavior changes.
@@ -24,12 +25,12 @@
 ## Templates, Session Bootstrap & Browser Baseline
 
 - HTML entry points live under `assets/templates/`; the key files are `index.gohtml`, `app.gohtml`, `app.js.gohtml`, and `splash.gohtml`.
-- Browser checks live in `assets/static/js/browser-check.js` and must load before the main bundle from `app.js.gohtml`. Do not add `defer` or `async` unless you restore guarded loading.
+- Browser checks live in `assets/static/js/browser-check.js` and must load before the main bundle from `app.js.gohtml`. Keep this standalone script ES5-compatible so unsupported browsers can display the warning. Do not add `defer` or `async` unless you restore guarded loading.
 - OIDC completion is bridged through `assets/templates/auth.gohtml` and must stay aligned with `frontend/src/common/session.js`, `frontend/src/common/storage.js`, and `frontend/src/page/auth/login.vue`. Preserve the `session` storage preference across the callback so `sessionStorage` logins survive redirect.
 - When touching frontend session bootstrap, verify that `frontend/src/common/session.js` resolves `storageNamespace` from the real client config shape (`window.__CONFIG__` or `config.values`), not only from simplified mocks. Include a focused test that would fail if restore fell back to `pp:root:`.
 - The loader partial is reused in `pro/assets/templates/index.gohtml` and `portal/assets/templates/index.gohtml`; whenever you change `app.js.gohtml` or bundle loading, verify those files still include the shared partial.
 - Splash styles live in `frontend/src/css/splash.css`; add new splash elements there so public and private editions stay aligned.
-- Browser baseline: Chrome and Edge 119, Firefox 128, and Safari 16.4 on macOS and iOS. The `browserslist` query in `frontend/package.json`, `BROWSER_TARGET` in `frontend/vite.config.mjs`, and `assets/static/js/browser-check.js` state the same range; change all three together. Update the message in `assets/templates/app.js.gohtml` and matching CSS if the support matrix changes.
+- Browser baseline: Chrome and Edge 119, Firefox 128, and Safari 16.4 on macOS and iOS. The `browserslist` query in `frontend/package.json`, `BROWSER_TARGET` in `frontend/vite.config.mjs`, and `assets/static/js/browser-check.js` state the same range; change all three together. Update the message in `assets/static/js/browser-check.js` and matching CSS if the support matrix changes.
 
 ## Translations
 

@@ -1,6 +1,6 @@
 ## PhotoPrism — HTTP Server
 
-**Last Updated:** September 17, 2026
+**Last Updated:** September 27, 2026
 
 ### Overview
 
@@ -47,7 +47,7 @@
 ### Configuration & Safety Notes
 
 - Compression: configured via `PHOTOPRISM_HTTP_COMPRESSION` / `--http-compression` as a comma-separated preference list. Supported tokens are `zstd`, `gzip`, and `none` (empty value also disables compression). The default ships as `zstd,gzip` so capable clients receive zstd while everyone else falls back to gzip; unknown tokens are ignored with a startup warning.
-- Bundled frontend assets under `/static/*` are served with precompressed `.zst` / `.gz` siblings produced at build time by `frontend/scripts/precompress.js` (the npm `postbuild` hook for `make build-js`), selected via `PrecompressedStatic` in `static_precompressed.go`. Custom static assets under `/c/static/*` go through the same handler so extensions and operators *may* ship precompressed siblings alongside their files; without siblings the route serves identity. The runtime middleware bypasses both routes so it never re-encodes an already-encoded body and so `PHOTOPRISM_HTTP_COMPRESSION=none` consistently disables every encoded code path on these routes.
+- Bundled frontend assets under `/static/*` are served with precompressed `.zst` / `.gz` siblings produced at build time by `frontend/scripts/precompress.js` (invoked explicitly by the frontend Makefile because npm lifecycle hooks are disabled by default), selected via `PrecompressedStatic` in `static_precompressed.go`. Custom static assets under `/c/static/*` go through the same handler so extensions and operators *may* ship precompressed siblings alongside their files; without siblings the route serves identity. The runtime middleware bypasses both routes so it never re-encodes an already-encoded body and so `PHOTOPRISM_HTTP_COMPRESSION=none` consistently disables every encoded code path on these routes.
 - Trusted proxies/platform headers are read from config; keep the list tight.
 - If no trusted proxy ranges are configured (or the configured ranges are invalid), proxy trust is disabled and client IP resolution falls back to the TCP peer address.
 - HTTP hardening defaults:

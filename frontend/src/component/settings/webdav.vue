@@ -115,9 +115,8 @@ export default {
 
       return baseUrl;
     },
+    // windowsUrl returns the WebDAV resource path for Windows.
     windowsUrl() {
-      // Generates a resource string for Windows users to connect via WebDAV,
-      // see https://docs.photoprism.app/user-guide/sync/webdav/#microsoft-windows.
       let baseUrl = "";
       const resourcePath = this.webdavOriginalsPath().replace(/\//g, "\\");
 

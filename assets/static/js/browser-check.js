@@ -1,6 +1,8 @@
+// Keep this classic script ES5-compatible so unsupported browsers can display the warning.
 'use strict';
 
 (function () {
+  // supportsModernJs checks the capabilities required by the frontend bundle.
   function supportsModernJs() {
     var checks = [
       { ok: function () { return typeof window.Promise === 'function'; }, reason: 'Promise' },
@@ -42,6 +44,7 @@
     return { ok: true };
   }
 
+  // showUnsupportedMessage replaces the loading indicators with a browser support notice.
   function showUnsupportedMessage(message) {
     var body = document.body;
     if (body && body.className.indexOf('unsupported-browser') === -1) {

@@ -88,7 +88,7 @@ install-npm:
 install-testcafe:
 	npm install -g --ignore-scripts --no-audit --no-fund --no-update-notifier testcafe@latest
 install-eslint:
-	npm install -g --ignore-scripts --no-audit --no-fund --no-update-notifier eslint globals @eslint/eslintrc @eslint/js eslint-config-prettier eslint-formatter-pretty eslint-plugin-html eslint-plugin-import eslint-plugin-node eslint-plugin-promise eslint-plugin-vue vue-eslint-parser prettier
+	npm install -g --ignore-scripts --no-audit --no-fund --no-update-notifier eslint@10 globals @eslint/eslintrc @eslint/js@10 eslint-config-prettier eslint-plugin-vue eslint-plugin-vuetify vue-eslint-parser prettier
 upgrade:
 	$(info Securely upgrading NPM dependencies...)
 	$(DOCKER_NPM) 'npx -y npm@latest update --save --package-lock --ignore-scripts --no-audit --no-fund --no-update-notifier && npx -y npm@latest install --ignore-scripts --no-audit --no-fund --no-update-notifier'
@@ -107,9 +107,11 @@ npm-audit:
 security-check: # Scan for missing --ignore-scripts and unsafe v-html
 	npm run -s security:scan
 watch:
-	npm run watch
+	node scripts/precompress.js --clean
+	env BUILD_ENV=development NODE_ENV=production npm run watch
 build:
-	npm run build
+	env BUILD_ENV=production NODE_ENV=production npm run build
+	node scripts/precompress.js
 lint:
 	npm run lint || true
 fmt:
