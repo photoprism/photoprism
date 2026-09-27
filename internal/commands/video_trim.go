@@ -84,13 +84,13 @@ func videoTrimAction(ctx *cli.Context) error {
 			}
 		}
 
-		var processed, skipped, failed int
+		var planned, processed, skipped, failed int
 		convert := get.Convert()
 
 		for _, plan := range plans {
 			if ctx.Bool("dry-run") {
 				log.Infof("trim: would trim %s by %s", clean.Log(plan.IndexPath), trimDuration.String())
-				skipped++
+				planned++
 				continue
 			}
 
@@ -103,12 +103,7 @@ func videoTrimAction(ctx *cli.Context) error {
 			processed++
 		}
 
-		log.Infof(
-			"trim: processed %s, skipped %s, %s",
-			formatCount(processed, "file", "files"),
-			formatCount(skipped, "file", "files"),
-			formatFailedCount(failed, "file", "files"),
-		)
+		log.Info(formatVideoSummary("trim", ctx.Bool("dry-run"), planned, processed, skipped, failed))
 
 		if failed > 0 {
 			return fmt.Errorf("trim: %s", formatFailedCount(failed, "file", "files"))
