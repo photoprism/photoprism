@@ -127,3 +127,16 @@ func TestClientAssets_Missing(t *testing.T) {
 		assert.Equal(t, []string{"app.css", "app.js", "share.js"}, (&ClientAssets{}).Missing())
 	})
 }
+
+func TestClientAssets_SplashJs(t *testing.T) {
+	t.Run("ShareOnly", func(t *testing.T) {
+		a := &ClientAssets{BaseUri: "/static", ShareJs: "share.js"}
+		assert.Equal(t, "", a.SplashJsUri())
+		assert.Equal(t, "", a.SplashJsFile())
+	})
+	t.Run("SplashOnly", func(t *testing.T) {
+		a := &ClientAssets{BaseUri: "/static", SplashJs: "splash.js"}
+		assert.Equal(t, "/static/build/splash.js", a.SplashJsUri())
+		assert.Equal(t, "splash.js", a.SplashJsFile())
+	})
+}
