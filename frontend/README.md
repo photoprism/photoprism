@@ -97,7 +97,7 @@ The build emits `maplibre-gl-worker.mjs` and its sibling `maplibre-gl-shared.mjs
 
 **Chunks and workers.** Locale catalogs load as `chunk/<locale>-json.<hash>.js`, and the PDF and 360° viewers as `chunk/pdf-viewer.*` and `chunk/sphere-viewer-*`, so they stay out of the initial bundle. The pdf.js worker is built from `src/common/pdf-worker.js`, which defines `Promise.withResolvers` where a supported browser lacks it before it loads the pdf.js worker; `src/common/with-resolvers.js` does the same on the main thread.
 
-**Service worker.** `serviceWorker` in `frontend/vite.plugins.mjs` generates `sw.js` with Workbox after the bundle is written, with a separate `workbox-<hash>.js` runtime and `sw-scope-cleanup.js` imported. It precaches the build except locale chunks, share page assets, `.ttf` and `.woff` fonts, source maps, license notes, and `assets.json`, capped at 5 MiB per file. Development builds generate no service worker.
+**Service worker.** `serviceWorker` in `frontend/vite.plugins.mjs` generates `sw.js` with Workbox after the bundle is written, with a separate `workbox-<hash>.js` runtime and `sw-scope-cleanup.js` imported. It precaches the build except locale chunks, share page assets, `.ttf` and `.woff` fonts, source maps, text files, precompressed copies, and `assets.json`, capped at 5 MiB per file. Development builds generate no service worker.
 
 **Browser support.** The build targets Chrome and Edge 119, Firefox 128, and Safari 16.4 on macOS and iOS. The `browserslist` query in `package.json`, `BROWSER_TARGET` in `vite.config.mjs`, and `assets/static/js/browser-check.js` state the same range; the browser check shows its unsupported-browser notice below it.
 
