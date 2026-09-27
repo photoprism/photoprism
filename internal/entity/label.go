@@ -297,6 +297,44 @@ func (m *Label) SetName(name string) bool {
 	return true
 }
 
+// Rename updates the display name and derived slugs while preserving label identity and other properties.
+func (m *Label) Rename(name string) error {
+	if m == nil || !m.HasID() {
+		return ErrInvalidName
+	}
+	labelMutex.Lock()
+	defer labelMutex.Unlock()
+	renamed := *m
+	if !renamed.SetName(name) {
+		return ErrInvalidName
+	}
+	if err := ensureUniqueLabelSlugs(&renamed); err != nil {
+		return err
+	}
+	values := Values{"label_name": renamed.LabelName, "custom_slug": renamed.CustomSlug}
+	if m.LabelSlug == "" {
+		values["label_slug"] = renamed.LabelSlug
+	} else {
+		renamed.LabelSlug = m.LabelSlug
+	}
+	res := Db().Model(&Label{}).Where("id = ?", m.ID).UpdateColumns(values)
+	if res.Error != nil {
+		return res.Error
+	}
+	if res.RowsAffected == 0 {
+		var count int
+		if err := Db().Model(&Label{}).Where("id = ?", m.ID).Count(&count).Error; err != nil {
+			return err
+		}
+		if count == 0 {
+			return gorm.ErrRecordNotFound
+		}
+	}
+	m.LabelName, m.CustomSlug, m.LabelSlug = renamed.LabelName, renamed.CustomSlug, renamed.LabelSlug
+	FlushLabelCache()
+	return nil
+}
+
 // InvalidName checks if the label name is invalid.
 func (m *Label) InvalidName() bool {
 	labelName := normalizeLabelName(m.LabelName)

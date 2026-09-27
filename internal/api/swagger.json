@@ -3140,6 +3140,25 @@
             },
             "type": "object"
         },
+        "form.PhotoLabel": {
+            "properties": {
+                "Label": {
+                    "$ref": "#/definitions/form.PhotoLabelName"
+                },
+                "Uncertainty": {
+                    "type": "integer"
+                }
+            },
+            "type": "object"
+        },
+        "form.PhotoLabelName": {
+            "properties": {
+                "Name": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
         "form.Selection": {
             "properties": {
                 "albums": {
@@ -11104,12 +11123,12 @@
                         "type": "string"
                     },
                     {
-                        "description": "properties to be updated (currently supports: uncertainty)",
+                        "description": "assignment uncertainty and optional label name",
                         "in": "body",
                         "name": "label",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/form.Label"
+                            "$ref": "#/definitions/form.PhotoLabel"
                         }
                     }
                 ],

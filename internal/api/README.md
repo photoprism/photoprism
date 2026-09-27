@@ -38,6 +38,21 @@ The API package exposes PhotoPrism’s HTTP endpoints via Gin handlers. Each fil
 - For downloads or proxy endpoints, validate URLs against allowed schemes (`http`, `https`) and reject private or loopback addresses unless explicitly required.
 - **Upload-time NSFW screening (`users_upload.go`)** — when `PHOTOPRISM_UPLOAD_NSFW=false`, the upload handler runs `vision.DetectNSFW` against every accepted file and deletes any file flagged above the NSFW threshold before it reaches `originals/`. The check is skipped entirely when `UPLOAD_NSFW=true` (default). See [`internal/ai/nsfw/README.md`](../ai/nsfw/README.md) for the full NSFW call-graph and flag matrix.
 
+### Photo Label Updates
+
+`PUT /api/v1/photos/{uid}/label/{id}` accepts optional `Uncertainty` and optional nested `Label.Name`.
+The route selects the assignment; other submitted fields are ignored. Omitted or null values keep
+existing state. An accepted label (`Uncertainty: 0`) uses the manual source.
+
+Assignment edits require photo-update authority and photo visibility. Supplying a name additionally
+requires label-update authority, including credential scope, before any data is written. Name
+validation and derived slugs follow the shared label naming rules. Renaming does not merge label
+IDs or move assignments, and an existing canonical slug stays stable.
+
+Assignment writes and name writes are separate operations. Photo metadata refreshes keep loaded
+label assignments available for the response without saving those assignments again. Write errors
+are logged and returned through generic error responses.
+
 ### Web Upload Formats
 
 Web uploads accept supported media and enabled ZIP archives. The permitted sidecar types

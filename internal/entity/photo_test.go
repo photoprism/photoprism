@@ -347,7 +347,9 @@ func TestPhoto_SetMediaType(t *testing.T) {
 	})
 }
 
+// TestPhoto_SaveLabels checks metadata persistence and drains its count-refresh jobs.
 func TestPhoto_SaveLabels(t *testing.T) {
+	t.Cleanup(WaitForAsyncJobs)
 	t.Run("NewPhoto", func(t *testing.T) {
 		photo := Photo{
 			ID:               11111,
