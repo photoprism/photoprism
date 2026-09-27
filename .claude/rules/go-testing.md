@@ -57,6 +57,8 @@ Makefile recipes talk to the development database through `$(MARIADB)`, which de
   through a `NewMinimalTestConfig` config: the next one built anywhere in the package deletes `.minimal.db` under
   the open connection, and writes fail with `attempt to write a readonly database`. A config that opens a database
   gets a name of its own via `NewIsolatedTestConfig("<name>", path, false)`, as `resetConfigAndOpenDB` does.
+- With an implicit SQLite DSN, use a distinct database name for each replacement of an open test config. Test
+  database names retain letters, hyphens, and underscores but strip digits, so numeric suffixes are not distinct.
 
 ### Environment Traps in `internal/config` and Nested Packages
 

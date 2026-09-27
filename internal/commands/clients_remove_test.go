@@ -163,6 +163,8 @@ func TestClientsRemoveCommand_Purge(t *testing.T) {
 }
 
 func TestClientsModCommand_Restore(t *testing.T) {
+	requireTestDb(t)
+
 	t.Run("ByClientUID", func(t *testing.T) {
 		m := entity.NewClient().SetName("RestoreMe").SetScope("metrics")
 

@@ -8,6 +8,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"sync/atomic"
 	"testing"
 
 	"github.com/manifoldco/promptui"
@@ -26,6 +27,21 @@ import (
 )
 
 var savedPath string
+var initialTestDbDSN string
+var resetDbSequence atomic.Uint64
+
+// nextResetDbName returns a distinct alphabetic SQLite name for each config.
+func nextResetDbName(prefix string) string {
+	n := resetDbSequence.Add(1)
+	var suffix [14]byte
+
+	for i := len(suffix) - 1; i >= 0; i-- {
+		suffix[i] = 'a' + byte(n%26)
+		n /= 26
+	}
+
+	return prefix + string(suffix[:])
+}
 
 // TODO: Several CLI commands defer conf.Shutdown(), which closes the shared
 // database connection. To avoid flakiness, RunWithTestContext re-initializes
@@ -56,6 +72,7 @@ func runTestMain(m *testing.M) int {
 	defer os.RemoveAll(tempDir)
 
 	c := config.NewMinimalTestConfigWithDb("commands", tempDir)
+	initialTestDbDSN = c.DatabaseDSN()
 	defer c.CleanupTestFolder()
 	defer func() {
 		if err := c.CloseDb(); err != nil {
@@ -75,11 +92,10 @@ func runTestMain(m *testing.M) int {
 		return c, c.Init()
 	}
 
-	// Init core config (no database) using the shared test config so commands
-	// like "show config" and "faces status" don't fall back to a storage path
-	// derived from the real originals directory.
+	// Use the current test config for core-only commands.
 	InitCoreConfig = func(ctx *cli.Context, quiet bool) (*config.Config, error) {
-		return c, c.InitCore()
+		current := get.Config()
+		return current, current.InitCore()
 	}
 
 	// Run unit tests.
@@ -218,9 +234,9 @@ func RunWithProvidedTestContext(ctx *cli.Context, cmd *cli.Command, args []strin
 	return output, err
 }
 
-// resetConfigAndDB replaces the config with a generated minimal config, and may replace the database if it doesn't exist.
+// resetConfigAndDB replaces the config with a distinct fixture-backed database.
 func resetConfigAndDB() *config.Config {
-	c := config.NewMinimalTestConfigWithDb("commands", savedPath)
+	c := config.NewMinimalTestConfigWithDb(nextResetDbName("commands"), savedPath)
 	get.SetConfig(c)
 	entity.SetDbProvider(c)
 
@@ -231,11 +247,9 @@ func resetConfigAndDB() *config.Config {
 	return c
 }
 
-// resetConfigAndOpenDB replaces the config with an isolated test config, and opens the configured database.
-// It does not call Migrate and TestFixtures if the database has records in auth_users and photos.
-// The database has a name of its own, since each NewMinimalTestConfig call removes the one it uses.
+// resetConfigAndOpenDB opens a distinct cached test database for each config.
 func resetConfigAndOpenDB() *config.Config {
-	c := config.NewIsolatedTestConfig("commands-reset", savedPath, false)
+	c := config.NewIsolatedTestConfig(nextResetDbName("commandsreset"), savedPath, false)
 	config.RestoreDBFromCache(c) // With SQLite, NewIsolatedTestConfig removes the database file first.
 	if err := c.Init(); err != nil {
 		log.Fatalf("config: %s (init)", err.Error())
@@ -250,20 +264,64 @@ func resetConfigAndOpenDB() *config.Config {
 	return c
 }
 
+// TestNextResetDbName checks that rollover names stay distinct and valid.
+func TestNextResetDbName(t *testing.T) {
+	seen := make(map[string]bool)
+
+	for i := 0; i < 27; i++ {
+		name := nextResetDbName("commands")
+		require.Equal(t, name, config.PkgNameRegexp.ReplaceAllString(name, ""))
+		require.False(t, seen[name])
+		seen[name] = true
+	}
+}
+
 // TestResetConfigAndOpenDB checks that the database stays writable when other tests build minimal configs.
 func TestResetConfigAndOpenDB(t *testing.T) {
-	// The previous config may use the database file this reset removes, so the test ends with a new one.
 	t.Cleanup(func() { resetConfigAndDB() })
 
-	c := resetConfigAndOpenDB()
-	require.Same(t, c, get.Config())
+	first := resetConfigAndOpenDB()
+	require.Same(t, first, get.Config())
+	require.Same(t, first.Db(), entity.Db())
+	core, err := InitCoreConfig(nil, true)
+	require.NoError(t, err)
+	require.Same(t, first, core)
 
-	// Building a minimal config must leave the database of the current config in place.
+	second := resetConfigAndOpenDB()
+	require.Same(t, second, get.Config())
+	require.Same(t, second.Db(), entity.Db())
+	core, err = InitCoreConfig(nil, true)
+	require.NoError(t, err)
+	require.Same(t, second, core)
+
+	restored := resetConfigAndDB()
+	require.Same(t, restored, get.Config())
+	require.Same(t, restored.Db(), entity.Db())
+	core, err = InitCoreConfig(nil, true)
+	require.NoError(t, err)
+	require.Same(t, restored, core)
+	restoredAgain := resetConfigAndDB()
+	require.Same(t, restoredAgain, get.Config())
+	require.Same(t, restoredAgain.Db(), entity.Db())
+	core, err = InitCoreConfig(nil, true)
+	require.NoError(t, err)
+	require.Same(t, restoredAgain, core)
+
 	config.NewMinimalTestConfig(t.TempDir())
 
-	label := entity.NewLabel("Reset Config Check", 0)
+	for name, c := range map[string]*config.Config{"first": first, "second": second, "restored": restored, "restored again": restoredAgain} {
+		if os.Getenv("PHOTOPRISM_TEST_DSN") == "" {
+			require.NotEqual(t, initialTestDbDSN, c.DatabaseDSN(), name)
+		}
+
+		label := entity.NewLabel("Reset Config Check "+name, 0)
+		require.NoError(t, c.Db().Create(label).Error, name)
+		t.Cleanup(func() { _ = c.Db().Unscoped().Delete(label).Error })
+	}
+
+	label := entity.NewLabel("Reset Config Current", 0)
 	require.NoError(t, label.Create())
-	t.Cleanup(func() { entity.UnscopedDb().Delete(label) })
+	t.Cleanup(func() { _ = entity.UnscopedDb().Delete(label).Error })
 }
 
 // requireTestDb reopens the shared database for direct registry or entity access.
