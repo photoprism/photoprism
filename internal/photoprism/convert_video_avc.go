@@ -48,13 +48,23 @@ func avcType(f *MediaFile) fs.Type {
 }
 
 // FindAvc returns the name of an existing transcode of f in the folders the converter searches, or an
-// empty string if there is none.
+// empty string if there is none. For a transport stream, this includes the MPEG-4 container that
+// ToAvc reuses when it holds playable AVC.
 func (w *Convert) FindAvc(f *MediaFile) string {
 	if f == nil {
 		return ""
 	}
 
-	return w.findAvc(avcSource(f))
+	src := avcSource(f)
+
+	if !src.IsAnimatedImage() && src.IsM2TS() {
+		if mp4Name, err := fs.FileName(src.FileName(), w.conf.SidecarPath(), w.conf.OriginalsPath(), fs.ExtMp4); err == nil &&
+			fs.FileExistsNotEmpty(mp4Name) && w.avcContainer(mp4Name, clean.Log(src.RootRelName())) != nil {
+			return mp4Name
+		}
+	}
+
+	return w.findAvc(src)
 }
 
 // findAvc returns the name of an existing transcode made from src, which avcSource has already resolved.

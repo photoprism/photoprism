@@ -819,6 +819,25 @@ func TestConvert_FindAvc(t *testing.T) {
 	t.Run("Nil", func(t *testing.T) {
 		assert.Equal(t, "", convert.FindAvc(nil))
 	})
+	t.Run("TransportStream", func(t *testing.T) {
+		if !conf.FFmpegEnabled() || !conf.ExifToolEnabled() {
+			t.Skip("FFmpeg and ExifTool must be available to remux transport streams")
+		}
+
+		srcName := writeFFmpegFixture(t, conf.FFmpegBin(), t.TempDir(), "AVCHD003.m2ts", "mpegts", "libx264")
+		mf, err := NewMediaFile(srcName)
+		require.NoError(t, err)
+		require.True(t, mf.IsM2TS())
+		assert.Equal(t, "", convert.FindAvc(mf))
+
+		result, err := convert.ToAvc(mf, encode.SoftwareAvc, false, false)
+		require.NoError(t, err)
+		require.NotNil(t, result)
+		t.Cleanup(func() { _ = os.Remove(result.FileName()) })
+
+		// The remuxed container is what ToAvc returns again, so it counts as the existing transcode.
+		assert.Equal(t, result.FileName(), convert.FindAvc(mf))
+	})
 }
 
 func TestAvcSource(t *testing.T) {
