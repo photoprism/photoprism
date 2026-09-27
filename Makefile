@@ -63,6 +63,9 @@ else
     GOTEST=go test
 endif
 
+# Optional integration matrices can be enabled with GOTEST_TAGS=slow,develop,integration.
+GOTEST_TAGS ?= slow,develop
+
 # Ensure compatibility with "docker compose" (new) and "docker-compose" (old),
 # preferring the plugin wherever it is available.
 HAS_DOCKER_COMPOSE_PLUGIN := $(shell docker compose version 2>/dev/null)
@@ -114,9 +117,11 @@ Run:
 Test:
   test                     Run the JS and Go tests
   test-short               Run the short Go tests in parallel
-  test-go                  Run all Go tests, including slow tests
+  test-go                  Run the default Go suite, including slow tests
+  test-integration         Run the Go suite with the optional integration matrices
   test-js                  Run the frontend unit tests with Vitest
-  test-mariadb             Run all Go tests against MariaDB instead of SQLite
+  test-mariadb             Run the default Go suite against MariaDB
+                           Add GOTEST_TAGS=slow,develop,integration for Insta360 matrices
   reset-testdb             Reset the SQLite and MariaDB test databases
   acceptance-run-chromium  Run the TestCafe acceptance tests in Chrome
   Package subsets: test-pkg, test-api, test-entity, test-commands, test-photoprism, test-ai
@@ -158,7 +163,10 @@ watch: watch-js
 build-all: build-go build-js
 pull: docker-pull
 test: test-js test-go
-test-go: dep-models run-test-go
+test-go:
+	+@bash scripts/test/time.sh $@ $(MAKE) -j1 dep-models run-test-go
+test-integration:
+	+@bash scripts/test/time.sh $@ $(MAKE) -j1 dep-models run-test-go GOTEST_TAGS="$(GOTEST_TAGS),integration"
 test-hub: run-test-hub
 test-pkg: run-test-pkg
 test-ai: dep-models run-test-ai
@@ -167,8 +175,10 @@ test-video: run-test-video
 test-entity: run-test-entity
 test-commands: run-test-commands
 test-photoprism: run-test-photoprism
-test-short: dep-models run-test-short
-test-mariadb: reset-acceptance run-test-mariadb
+test-short:
+	+@bash scripts/test/time.sh $@ $(MAKE) -j1 dep-models run-test-short
+test-mariadb:
+	+@bash scripts/test/time.sh $@ $(MAKE) -j1 reset-acceptance run-test-mariadb
 acceptance-run-chromium: storage/acceptance acceptance-sqlite-restart-1 wait-1 acceptance-api acceptance-sqlite-stop-1 acceptance-auth-sqlite-restart wait-2 acceptance-auth acceptance-auth-sqlite-stop acceptance-sqlite-restart-3 wait-3 acceptance acceptance-sqlite-stop-3
 acceptance-run-chromium-short: storage/acceptance acceptance-auth-sqlite-restart wait-1 acceptance-auth-short acceptance-auth-sqlite-stop acceptance-sqlite-restart-2 wait-2 acceptance-short acceptance-sqlite-stop-2
 acceptance-auth-run-chromium: storage/acceptance acceptance-auth-sqlite-restart wait-1 acceptance-auth acceptance-auth-sqlite-stop
@@ -716,47 +726,47 @@ run-test-short:
 	$(info Running short Go tests in parallel mode...)
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -short -timeout 5m ./pkg/... ./internal/... ./.../internal/...
 run-test-go:
-	$(info Running all Go tests...)
-	$(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="slow,develop" -timeout 20m ./pkg/... ./internal/... ./.../internal/...
+	$(info Running Go tests with tags "$(GOTEST_TAGS)"...)
+	$(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="$(GOTEST_TAGS)" -timeout 20m ./pkg/... ./internal/... ./.../internal/...
 run-test-hub:
 	$(info Running all Go tests with hub requests...)
-	env PHOTOPRISM_TEST_HUB="true" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="slow,develop,debug" -timeout 20m ./pkg/... ./internal/...
+	env PHOTOPRISM_TEST_HUB="true" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="$(GOTEST_TAGS),debug" -timeout 20m ./pkg/... ./internal/...
 run-test-mariadb:
-	$(info Running all Go tests on MariaDB...)
-	PHOTOPRISM_TEST_DRIVER="mysql" PHOTOPRISM_TEST_DSN="root:photoprism@tcp(mariadb:$${MARIADB_PORT:-4001})/acceptance?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="slow,develop" -timeout 20m ./pkg/... ./internal/...
+	$(info Running Go tests on MariaDB with tags "$(GOTEST_TAGS)"...)
+	PHOTOPRISM_TEST_DRIVER="mysql" PHOTOPRISM_TEST_DSN="root:photoprism@tcp(mariadb:$${MARIADB_PORT:-4001})/acceptance?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true" $(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="$(GOTEST_TAGS)" -timeout 20m ./pkg/... ./internal/...
 run-test-pkg:
 	$(info Running all Go tests in "/pkg"...)
-	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="slow,develop" -timeout 20m ./pkg/...
+	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="$(GOTEST_TAGS)" -timeout 20m ./pkg/...
 run-test-ai:
 	$(info Running all AI tests...)
-	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="slow,develop" -timeout 20m ./internal/ai/...
+	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="$(GOTEST_TAGS)" -timeout 20m ./internal/ai/...
 run-test-api:
 	$(info Running all API tests...)
-	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="slow,develop" -timeout 20m ./internal/api/...
+	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="$(GOTEST_TAGS)" -timeout 20m ./internal/api/...
 run-test-video:
 	$(info Running all video tests...)
-	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="slow,develop" -timeout 20m ./internal/ffmpeg/... ./internal/photoprism/dl/... ./pkg/media/...
+	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="$(GOTEST_TAGS)" -timeout 20m ./internal/ffmpeg/... ./internal/photoprism/dl/... ./pkg/media/...
 run-test-entity:
 	$(info Running all Entity tests...)
-	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="slow,develop" -timeout 20m ./internal/entity/...
+	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="$(GOTEST_TAGS)" -timeout 20m ./internal/entity/...
 run-test-commands:
 	$(info Running all CLI command tests...)
-	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="slow,develop" -timeout 20m ./internal/commands/...
+	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="$(GOTEST_TAGS)" -timeout 20m ./internal/commands/...
 run-test-photoprism:
 	$(info Running all Go tests in "/internal/photoprism"...)
-	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="slow,develop" -timeout 20m ./internal/photoprism/...
+	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="$(GOTEST_TAGS)" -timeout 20m ./internal/photoprism/...
 test-parallel:
 	$(info Running all Go tests in parallel mode...)
-	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="slow,develop" -timeout 20m ./pkg/... ./internal/... ./.../internal/...
+	$(GOTEST) -parallel 2 -count 1 -cpu 2 -tags="$(GOTEST_TAGS)" -timeout 20m ./pkg/... ./internal/... ./.../internal/...
 test-verbose:
 	$(info Running all Go tests in verbose mode...)
-	$(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="slow,develop" -timeout 20m -v ./pkg/... ./internal/... ./.../internal/...
+	$(GOTEST) -parallel 1 -count 1 -cpu 1 -tags="$(GOTEST_TAGS)" -timeout 20m -v ./pkg/... ./internal/... ./.../internal/...
 test-race:
 	$(info Running all Go tests with race detection in verbose mode...)
-	$(GOTEST) -tags="slow,develop" -race -timeout 60m -v ./pkg/... ./internal/... ./.../internal/...
+	$(GOTEST) -tags="$(GOTEST_TAGS)" -race -timeout 60m -v ./pkg/... ./internal/... ./.../internal/...
 test-coverage:
 	$(info Running all Go tests with code coverage report...)
-	go test -parallel 1 -count 1 -cpu 1 -failfast -tags="slow,develop" -timeout 30m -coverprofile coverage.txt -covermode atomic ./pkg/... ./internal/... ./.../internal/...
+	go test -parallel 1 -count 1 -cpu 1 -failfast -tags="$(GOTEST_TAGS)" -timeout 30m -coverprofile coverage.txt -covermode atomic ./pkg/... ./internal/... ./.../internal/...
 	go tool cover -html=coverage.txt -o coverage.html
 	go tool cover -func coverage.txt  | grep total:
 git-pull:

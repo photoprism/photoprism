@@ -1,3 +1,5 @@
+//go:build integration
+
 package photoprism
 
 import (
@@ -21,118 +23,6 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media/video"
 )
-
-const (
-	insta360StackLeft  = "VID_20220625_140410_00_008.insv"
-	insta360StackRight = "VID_20220625_140410_10_008.insv"
-	insta360StackProxy = "LRV_20220625_140410_11_008.insv"
-	insta360StackName  = "VID_20220625_140410_00_008"
-)
-
-// newInsta360StackConfig returns an isolated config with its own database and restores the
-// previous config when the test ends.
-func newInsta360StackConfig(t *testing.T, dbName string, stackSequences bool) *config.Config {
-	t.Helper()
-
-	cfg := config.NewMinimalTestConfigWithDb(dbName, filepath.Join(t.TempDir(), "storage"))
-	cfg.Settings().Stack.Name = stackSequences
-
-	if !cfg.FFmpegEnabled() {
-		t.Skip("FFmpeg must be available to create synthetic capture files")
-	}
-
-	oldCfg := Config()
-	SetConfig(cfg)
-	t.Cleanup(func() {
-		SetConfig(oldCfg)
-		oldCfg.RegisterDb()
-	})
-
-	return cfg
-}
-
-// writeInsta360StackMedia writes a one-second square H.264 clip, or a JPEG for image names, with
-// bytes that differ per file name.
-func writeInsta360StackMedia(t *testing.T, cfg *config.Config, dir, name string) {
-	t.Helper()
-
-	require.NoError(t, fs.MkdirAll(dir))
-
-	fileName := filepath.Join(dir, name)
-	fileType := fs.FileType(name)
-	image := fileType == fs.ImageJpeg || fileType == fs.ImageInsp
-
-	args := []string{"-y", "-loglevel", "error", "-f", "lavfi", "-i", "testsrc=size=320x320:rate=30",
-		"-t", "1", "-c:v", "libx264", "-pix_fmt", "yuv420p", "-metadata", "title=" + name, "-f", "mp4", fileName}
-
-	if image {
-		args = []string{"-y", "-loglevel", "error", "-f", "lavfi", "-i", "testsrc=size=320x320",
-			"-frames:v", "1", "-f", "image2", "-c:v", "mjpeg", fileName}
-	}
-
-	// #nosec G204 -- arguments are test constants.
-	out, err := exec.Command(cfg.FFmpegBin(), args...).CombinedOutput()
-	require.NoError(t, err, strings.TrimSpace(string(out)))
-
-	// Images get the name appended after the end marker, so files with different names never share a hash.
-	if image {
-		// #nosec G304 -- the destination directory and filename are controlled by the test.
-		f, openErr := os.OpenFile(fileName, os.O_APPEND|os.O_WRONLY, 0)
-		require.NoError(t, openErr)
-		_, writeErr := f.WriteString(name)
-		require.NoError(t, writeErr)
-		require.NoError(t, f.Close())
-	}
-}
-
-// indexInsta360StackFolder indexes a folder below the originals path.
-func indexInsta360StackFolder(cfg *config.Config, folder string, rescan, skipArchived bool) {
-	indexInsta360StackOptions(cfg, NewIndexOptions(folder, rescan, true, true, false, skipArchived, cfg))
-}
-
-// indexInsta360StackOptions runs the indexer with the given options.
-func indexInsta360StackOptions(cfg *config.Config, opt IndexOptions) {
-	ind := NewIndex(cfg, NewConvert(cfg), NewFiles(), NewPhotos())
-	ind.Start(opt)
-}
-
-// insta360StackOwners returns the photos that own the originals in folder, keyed by file name.
-func insta360StackOwners(t *testing.T, folder string) map[string]entity.Photo {
-	t.Helper()
-
-	var files []entity.File
-	require.NoError(t, entity.UnscopedDb().
-		Where("file_root = ? AND file_name LIKE ?", entity.RootOriginals, folder+"/%").
-		Find(&files).Error)
-
-	result := make(map[string]entity.Photo, len(files))
-
-	for _, f := range files {
-		var p entity.Photo
-		require.NoError(t, entity.UnscopedDb().First(&p, "id = ?", f.PhotoID).Error)
-		result[filepath.Base(f.FileName)] = p
-	}
-
-	return result
-}
-
-// insta360StackPhotoIDs returns the distinct photo IDs in owners.
-func insta360StackPhotoIDs(owners map[string]entity.Photo) map[uint]bool {
-	result := make(map[uint]bool, len(owners))
-
-	for _, p := range owners {
-		result[p.ID] = true
-	}
-
-	return result
-}
-
-// insta360StackPhotoCount returns the number of photo rows in folder, including deleted rows.
-func insta360StackPhotoCount(t *testing.T, folder string) (count int) {
-	t.Helper()
-	require.NoError(t, entity.UnscopedDb().Model(&entity.Photo{}).Where("photo_path = ?", folder).Count(&count).Error)
-	return count
-}
 
 // TestIndex_Insta360LateCapture verifies that capture files indexed in a later run are stacked
 // with the existing photo, which keeps its name and stays in the archive.
@@ -692,38 +582,6 @@ func TestIndex_Insta360ImportedName(t *testing.T) {
 	assert.Equal(t, entity.IsStackable, insta360StackOwners(t, folder)["20260925_135937_07784009.insv"].PhotoStack)
 }
 
-// splitInsta360Capture moves a capture file and its previews to a new photo, and names both photos
-// after their own files, which is how split captures are stored.
-func splitInsta360Capture(t *testing.T, existing entity.Photo, folder, first, late string) entity.Photo {
-	t.Helper()
-
-	require.NoError(t, entity.UnscopedDb().Model(&entity.Photo{}).Where("id = ?", existing.ID).
-		UpdateColumn("photo_name", fs.StripKnownExt(first)).Error)
-
-	photo := entity.NewPhoto(true)
-	photo.PhotoPath = folder
-	photo.PhotoName = fs.StripKnownExt(late)
-	photo.PhotoType = entity.MediaVideo
-	photo.PhotoQuality = 3
-	require.NoError(t, photo.Create())
-
-	var files []entity.File
-	require.NoError(t, entity.UnscopedDb().
-		Where("photo_id = ? AND file_name LIKE ?", existing.ID, folder+"/"+late+"%").
-		Find(&files).Error)
-	require.NotEmpty(t, files)
-
-	for _, f := range files {
-		require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("id = ?", f.ID).UpdateColumns(entity.Values{
-			"photo_id":     photo.ID,
-			"photo_uid":    photo.PhotoUID,
-			"file_primary": f.FileType == fs.ImageJpeg.String(),
-		}).Error)
-	}
-
-	return photo
-}
-
 // TestIndex_Insta360ReconcileSplit verifies that a forced rescan merges a split capture into the
 // existing photo, whose archive state is kept unless it was removed automatically.
 func TestIndex_Insta360ReconcileSplit(t *testing.T) {
@@ -805,39 +663,6 @@ func TestIndex_Insta360ReconcileSplit(t *testing.T) {
 			})
 		}
 	}
-}
-
-// insta360StackPreviews returns the preview file rows in folder, keyed by file name.
-func insta360StackPreviews(t *testing.T, folder string) map[string]entity.File {
-	t.Helper()
-
-	var files []entity.File
-	require.NoError(t, entity.UnscopedDb().
-		Where("file_name LIKE ? AND file_type = ?", folder+"/%", fs.ImageJpeg.String()).
-		Find(&files).Error)
-
-	result := make(map[string]entity.File, len(files))
-
-	for _, f := range files {
-		result[filepath.Base(f.FileName)] = f
-	}
-
-	return result
-}
-
-// assertInsta360SinglePrimary checks that all files in folder belong to one photo with one primary file.
-func assertInsta360SinglePrimary(t *testing.T, folder string) {
-	t.Helper()
-
-	var photoIDs []uint
-	require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).
-		Where("file_name LIKE ?", folder+"/%").Pluck("DISTINCT photo_id", &photoIDs).Error)
-	require.Len(t, photoIDs, 1)
-
-	var primaries int
-	require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).
-		Where("photo_id = ? AND file_primary = 1", photoIDs[0]).Count(&primaries).Error)
-	assert.Equal(t, 1, primaries)
 }
 
 // TestIndex_Insta360Cover verifies that the combined preview becomes the cover of a capture whose
@@ -1170,49 +995,6 @@ func TestMediaFile_RelatedFiles_Insta360Proxy(t *testing.T) {
 	}
 }
 
-// writeInsta360Streams writes a one-second video with one stream per size, encoded with codec.
-func writeInsta360Streams(t *testing.T, cfg *config.Config, fileName, codec string, sizes ...string) {
-	t.Helper()
-	require.NoError(t, fs.MkdirAll(filepath.Dir(fileName)))
-
-	args := []string{"-y", "-loglevel", "error"}
-	for i, size := range sizes {
-		args = append(args, "-f", "lavfi", "-i", fmt.Sprintf("testsrc=size=%s:rate=10,hue=h=%d", size, i*90))
-	}
-
-	for i := range sizes {
-		args = append(args, "-map", fmt.Sprintf("%d:v", i))
-	}
-
-	args = append(args, "-t", "1", "-c:v", codec, "-pix_fmt", "yuv420p", "-metadata", "title="+filepath.Base(fileName), "-f", "mp4", fileName)
-
-	// #nosec G204 -- arguments are test constants.
-	out, err := exec.Command(cfg.FFmpegBin(), args...).CombinedOutput()
-	require.NoError(t, err, strings.TrimSpace(string(out)))
-}
-
-// newInsta360LogHook captures log entries until the test ends, restoring the previous hooks afterwards.
-func newInsta360LogHook(t *testing.T) *test.Hook {
-	t.Helper()
-	logger := logrus.StandardLogger()
-	oldHooks := make(logrus.LevelHooks, len(logger.Hooks))
-	for level, hooks := range logger.Hooks {
-		oldHooks[level] = append([]logrus.Hook(nil), hooks...)
-	}
-	t.Cleanup(func() { logger.ReplaceHooks(oldHooks) })
-	return test.NewGlobal()
-}
-
-// insta360DewarpWarnings returns the warnings about 360° originals that could not be dewarped.
-func insta360DewarpWarnings(hook *test.Hook) (result []string) {
-	for _, entry := range hook.AllEntries() {
-		if entry.Level == logrus.WarnLevel && strings.Contains(entry.Message, "could not be dewarped") {
-			result = append(result, entry.Message)
-		}
-	}
-	return result
-}
-
 // TestIndex_Insta360DualStream verifies that an .insv with one stream per lens gets an equirectangular
 // preview and video made from both streams, while other videos are processed as before.
 func TestIndex_Insta360DualStream(t *testing.T) {
@@ -1296,17 +1078,6 @@ func TestIndex_Insta360DualStream(t *testing.T) {
 		assert.Equal(t, "", previews[name+".jpg"].FileProjection)
 		assert.Len(t, insta360DewarpWarnings(hook), 1)
 	})
-}
-
-// writeInsta360Photo writes a JPEG of the specified size under an .insp name, with bytes that differ per name.
-func writeInsta360Photo(t *testing.T, cfg *config.Config, fileName, size string) {
-	t.Helper()
-	require.NoError(t, fs.MkdirAll(filepath.Dir(fileName)))
-
-	// #nosec G204 -- arguments are test constants.
-	out, err := exec.Command(cfg.FFmpegBin(), "-y", "-loglevel", "error", "-f", "lavfi", "-i", "testsrc=size="+size,
-		"-frames:v", "1", "-f", "image2", "-c:v", "mjpeg", "-metadata", "comment="+filepath.Base(fileName), fileName).CombinedOutput()
-	require.NoError(t, err, strings.TrimSpace(string(out)))
 }
 
 // TestIndex_Insta360SingleLensPhoto verifies that an .insp with a single lens is neither dewarped nor
@@ -1440,17 +1211,6 @@ func TestImport_Insta360Capture(t *testing.T) {
 	assert.Equal(t, 640, preview().FileWidth)
 }
 
-// writeInsta360Video writes an H.264 clip of the specified size and duration in seconds.
-func writeInsta360Video(t *testing.T, cfg *config.Config, fileName, size, seconds string) {
-	t.Helper()
-	require.NoError(t, fs.MkdirAll(filepath.Dir(fileName)))
-
-	// #nosec G204 -- arguments are test constants.
-	out, err := exec.Command(cfg.FFmpegBin(), "-y", "-loglevel", "error", "-f", "lavfi", "-i", "testsrc=size="+size+":rate=30",
-		"-t", seconds, "-c:v", "libx264", "-pix_fmt", "yuv420p", "-metadata", "title="+filepath.Base(fileName), "-f", "mp4", fileName).CombinedOutput()
-	require.NoError(t, err, strings.TrimSpace(string(out)))
-}
-
 // TestIndex_Insta360FirstIndexMetadata verifies that a capture and its proxy video get their own dimensions,
 // duration and codec when they are indexed for the first time.
 func TestIndex_Insta360FirstIndexMetadata(t *testing.T) {
@@ -1497,6 +1257,163 @@ func TestIndex_Insta360FirstIndexMetadata(t *testing.T) {
 		assert.InDelta(t, tc.duration.Seconds(), file.FileDuration.Seconds(), 0.1, tc.name)
 		assert.Equal(t, "avc1", file.FileCodec, tc.name)
 	}
+}
+
+// insta360StackOwners returns the photos that own the originals in folder, keyed by file name.
+func insta360StackOwners(t *testing.T, folder string) map[string]entity.Photo {
+	t.Helper()
+
+	var files []entity.File
+	require.NoError(t, entity.UnscopedDb().
+		Where("file_root = ? AND file_name LIKE ?", entity.RootOriginals, folder+"/%").
+		Find(&files).Error)
+
+	result := make(map[string]entity.Photo, len(files))
+
+	for _, f := range files {
+		var p entity.Photo
+		require.NoError(t, entity.UnscopedDb().First(&p, "id = ?", f.PhotoID).Error)
+		result[filepath.Base(f.FileName)] = p
+	}
+
+	return result
+}
+
+// insta360StackPhotoIDs returns the distinct photo IDs in owners.
+func insta360StackPhotoIDs(owners map[string]entity.Photo) map[uint]bool {
+	result := make(map[uint]bool, len(owners))
+
+	for _, p := range owners {
+		result[p.ID] = true
+	}
+
+	return result
+}
+
+// insta360StackPhotoCount returns the number of photo rows in folder, including deleted rows.
+func insta360StackPhotoCount(t *testing.T, folder string) (count int) {
+	t.Helper()
+	require.NoError(t, entity.UnscopedDb().Model(&entity.Photo{}).Where("photo_path = ?", folder).Count(&count).Error)
+	return count
+}
+
+// splitInsta360Capture moves a capture file and its previews to a new photo, and names both photos
+// after their own files, which is how split captures are stored.
+func splitInsta360Capture(t *testing.T, existing entity.Photo, folder, first, late string) entity.Photo {
+	t.Helper()
+
+	require.NoError(t, entity.UnscopedDb().Model(&entity.Photo{}).Where("id = ?", existing.ID).
+		UpdateColumn("photo_name", fs.StripKnownExt(first)).Error)
+
+	photo := entity.NewPhoto(true)
+	photo.PhotoPath = folder
+	photo.PhotoName = fs.StripKnownExt(late)
+	photo.PhotoType = entity.MediaVideo
+	photo.PhotoQuality = 3
+	require.NoError(t, photo.Create())
+
+	var files []entity.File
+	require.NoError(t, entity.UnscopedDb().
+		Where("photo_id = ? AND file_name LIKE ?", existing.ID, folder+"/"+late+"%").
+		Find(&files).Error)
+	require.NotEmpty(t, files)
+
+	for _, f := range files {
+		require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).Where("id = ?", f.ID).UpdateColumns(entity.Values{
+			"photo_id":     photo.ID,
+			"photo_uid":    photo.PhotoUID,
+			"file_primary": f.FileType == fs.ImageJpeg.String(),
+		}).Error)
+	}
+
+	return photo
+}
+
+// insta360StackPreviews returns the preview file rows in folder, keyed by file name.
+func insta360StackPreviews(t *testing.T, folder string) map[string]entity.File {
+	t.Helper()
+
+	var files []entity.File
+	require.NoError(t, entity.UnscopedDb().
+		Where("file_name LIKE ? AND file_type = ?", folder+"/%", fs.ImageJpeg.String()).
+		Find(&files).Error)
+
+	result := make(map[string]entity.File, len(files))
+
+	for _, f := range files {
+		result[filepath.Base(f.FileName)] = f
+	}
+
+	return result
+}
+
+// assertInsta360SinglePrimary checks that all files in folder belong to one photo with one primary file.
+func assertInsta360SinglePrimary(t *testing.T, folder string) {
+	t.Helper()
+
+	var photoIDs []uint
+	require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).
+		Where("file_name LIKE ?", folder+"/%").Pluck("DISTINCT photo_id", &photoIDs).Error)
+	require.Len(t, photoIDs, 1)
+
+	var primaries int
+	require.NoError(t, entity.UnscopedDb().Model(&entity.File{}).
+		Where("photo_id = ? AND file_primary = 1", photoIDs[0]).Count(&primaries).Error)
+	assert.Equal(t, 1, primaries)
+}
+
+// writeInsta360Streams writes a one-second video with one stream per size, encoded with codec.
+func writeInsta360Streams(t *testing.T, cfg *config.Config, fileName, codec string, sizes ...string) {
+	t.Helper()
+	require.NoError(t, fs.MkdirAll(filepath.Dir(fileName)))
+
+	args := []string{"-y", "-loglevel", "error"}
+	for i, size := range sizes {
+		args = append(args, "-f", "lavfi", "-i", fmt.Sprintf("testsrc=size=%s:rate=10,hue=h=%d", size, i*90))
+	}
+
+	for i := range sizes {
+		args = append(args, "-map", fmt.Sprintf("%d:v", i))
+	}
+
+	args = append(args, "-t", "1", "-c:v", codec, "-pix_fmt", "yuv420p", "-metadata", "title="+filepath.Base(fileName), "-f", "mp4", fileName)
+
+	// #nosec G204 -- arguments are test constants.
+	out, err := exec.Command(cfg.FFmpegBin(), args...).CombinedOutput()
+	require.NoError(t, err, strings.TrimSpace(string(out)))
+}
+
+// newInsta360LogHook captures log entries until the test ends, restoring the previous hooks afterwards.
+func newInsta360LogHook(t *testing.T) *test.Hook {
+	t.Helper()
+	logger := logrus.StandardLogger()
+	oldHooks := make(logrus.LevelHooks, len(logger.Hooks))
+	for level, hooks := range logger.Hooks {
+		oldHooks[level] = append([]logrus.Hook(nil), hooks...)
+	}
+	t.Cleanup(func() { logger.ReplaceHooks(oldHooks) })
+	return test.NewGlobal()
+}
+
+// insta360DewarpWarnings returns the warnings about 360° originals that could not be dewarped.
+func insta360DewarpWarnings(hook *test.Hook) (result []string) {
+	for _, entry := range hook.AllEntries() {
+		if entry.Level == logrus.WarnLevel && strings.Contains(entry.Message, "could not be dewarped") {
+			result = append(result, entry.Message)
+		}
+	}
+	return result
+}
+
+// writeInsta360Video writes an H.264 clip of the specified size and duration in seconds.
+func writeInsta360Video(t *testing.T, cfg *config.Config, fileName, size, seconds string) {
+	t.Helper()
+	require.NoError(t, fs.MkdirAll(filepath.Dir(fileName)))
+
+	// #nosec G204 -- arguments are test constants.
+	out, err := exec.Command(cfg.FFmpegBin(), "-y", "-loglevel", "error", "-f", "lavfi", "-i", "testsrc=size="+size+":rate=30",
+		"-t", seconds, "-c:v", "libx264", "-pix_fmt", "yuv420p", "-metadata", "title="+filepath.Base(fileName), "-f", "mp4", fileName).CombinedOutput()
+	require.NoError(t, err, strings.TrimSpace(string(out)))
 }
 
 // sameSecondInsta360Previews gives the previews in folder the next whole second as their file and recorded

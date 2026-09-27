@@ -1,6 +1,6 @@
 ## PhotoPrism — Core Package
 
-**Last Updated:** September 26, 2026
+**Last Updated:** September 27, 2026
 
 ### Overview
 
@@ -85,3 +85,14 @@ Operators can override the shared JSON byte limit with `PHOTOPRISM_JSON_LIMIT` (
 decimal bytes, for example `4194304` for 4 MiB). Empty, invalid, zero, negative, or
 out-of-range values retain the 1 MiB default; there is no unlimited setting. The override
 applies to both sidecar reads and ExifTool stdout capture, not the 64 KiB stderr bound.
+
+### Test Coverage
+
+The default backend targets retain fast Insta360 parsing, grouping, capture-state and media-file tests. The synthetic-media stack/import matrix and database reconciliation matrix require the `integration` build tag, including the preview-replacement regression that uses the capture fixture. Run this coverage when changing stacking, reconciliation, import naming, proxy selection, preview replacement or dewarping:
+
+```sh
+make test-integration
+make test-mariadb GOTEST_TAGS=slow,develop,integration
+```
+
+For a focused SQLite run, use `go test -count=1 -tags=slow,develop,integration -run 'Insta360|TestIndexMain_ReplacedPreview' ./internal/photoprism`. Existing short-mode guards still apply. The tag does not gate import/index integration tests outside these matrices.

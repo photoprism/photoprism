@@ -14,10 +14,16 @@
   `UserMediaFile`, `Import.Start`, the import worker) starts with
   `if testing.Short() { t.Skip("skipping test in short mode.") }`, placed before any setup; gate only the subtest
   when the rest of the test is unit-level. `make test-short` then stays within its per-package `-timeout 5m`, and
-  `make test-go` still runs the test. Classify by what the test runs, not by its name.
-- Prefer focused runs: `go test ./internal/<pkg> -run <Name> -count=1`. Avoid `./...` unless needed; heavy packages (`internal/entity`, `internal/photoprism`) take 30–120s on first run.
+  non-short runs with the required build tags still run the test. Classify by what the test runs, not by its name.
+- Prefer focused runs: `go test ./internal/<pkg> -run <Name> -count=1`. Avoid `./...` unless needed; full integration packages such as `internal/photoprism` can take many minutes, depending on the database backend and media tools.
+
+### Optional Integration Matrices
+
+The root Makefile defaults `GOTEST_TAGS` to `slow,develop`. The full Insta360 synthetic-media stack/import and database reconciliation matrices require `integration`; fast capture-state, parsing, grouping and media-file tests remain in default runs. Use `make test-integration` or `make test-mariadb GOTEST_TAGS=slow,develop,integration` when changing capture stacking, reconciliation, import naming, proxy selection, preview replacement or dewarping. Existing short-mode guards still apply. This tag does not gate all integration tests.
 
 ### Fast, Focused Test Recipes
+
+The root `make test-go`, `make test-integration`, `make test-short`, and `make test-mariadb` targets print total elapsed wall time, including model/database setup, on success and failure; the exit status is displayed only on failure. Go's `-timeout` applies to each package's test binary, not the complete Make target. To retain per-test durations and failure details, run `make test-mariadb GOTEST='go test -json' > test-mariadb.log 2>&1`; JSON events are mixed with Make and timing output. The direct `run-test-*` targets do not include the outer timer.
 
 - FS + archives (fast): `go test ./pkg/fs -run 'Copy|Move|Unzip' -count=1`
 - Media helpers (fast): `go test ./pkg/media/... -count=1`
