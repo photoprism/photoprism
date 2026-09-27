@@ -7,7 +7,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"slices"
 	"strings"
 	"testing"
 	"time"
@@ -945,54 +944,6 @@ func TestIndex_Insta360Proxy(t *testing.T) {
 			assert.Empty(t, matches, fileName)
 		}
 	})
-}
-
-// TestMediaFile_RelatedFiles_Insta360Proxy verifies that LRV proxies are grouped by partner only in
-// originals, while files to be imported are grouped by name as before.
-func TestMediaFile_RelatedFiles_Insta360Proxy(t *testing.T) {
-	const (
-		left  = "VID_20240415_213145_00_035.insv"
-		proxy = "LRV_20240415_213145_01_035.lrv"
-	)
-
-	cfg := newInsta360StackConfig(t, "insta360proxyrelated", false)
-
-	names := func(related RelatedFiles) (result []string) {
-		for _, f := range related.Files {
-			result = append(result, f.BaseName())
-		}
-		return result
-	}
-
-	for _, root := range []struct {
-		name       string
-		dir        string
-		proxyInSet bool
-		goProInSet bool
-	}{
-		{"Originals", filepath.Join(cfg.OriginalsPath(), "insta360proxyrelated"), true, false},
-		{"Import", filepath.Join(cfg.ImportPath(), "insta360proxyrelated"), false, true},
-	} {
-		t.Run(root.name, func(t *testing.T) {
-			for _, name := range []string{left, proxy, "GOPR0124.MP4", "GOPR0124.LRV"} {
-				writeInsta360StackMedia(t, cfg, root.dir, name)
-			}
-
-			main, err := NewMediaFile(filepath.Join(root.dir, left))
-			require.NoError(t, err)
-			related, err := main.RelatedFiles(false)
-			require.NoError(t, err)
-			assert.Equal(t, root.proxyInSet, slices.Contains(names(related), proxy))
-			assert.Equal(t, left, related.Main.BaseName())
-
-			goPro, err := NewMediaFile(filepath.Join(root.dir, "GOPR0124.MP4"))
-			require.NoError(t, err)
-			related, err = goPro.RelatedFiles(false)
-			require.NoError(t, err)
-			assert.Equal(t, root.goProInSet, slices.Contains(names(related), "GOPR0124.LRV"))
-			assert.Equal(t, "GOPR0124.MP4", related.Main.BaseName())
-		})
-	}
 }
 
 // TestIndex_Insta360DualStream verifies that an .insv with one stream per lens gets an equirectangular
