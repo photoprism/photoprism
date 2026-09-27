@@ -369,9 +369,18 @@ describe("model/file", () => {
     ["dv", "video", "DV Video"],
     ["mp4", "video", "MPEG-4 Multimedia Container Video"],
     ["avc", "video", "Advanced Video Coding (AVC) / H.264 Video"],
+    ["dng", "raw", "Adobe Digital Negative Raw"],
   ])("should append the media type to the %s format in type info", (fileType, mediaType, expected) => {
     const file = new File({ UID: "ABC123", Hash: "54ghtfd", Name: `1/2/IMG123.${fileType}`, FileType: fileType, MediaType: mediaType });
     expect(file.typeInfo()).toBe(expected);
+  });
+
+  it("should not repeat a media type the label already names", () => {
+    const xmp = new File({ UID: "ABC123", Hash: "54ghtfd", Name: "1/2/IMG123.xmp", FileType: "xmp", MediaType: "sidecar", Sidecar: true });
+    expect(xmp.typeInfo()).toBe("Sidecar Adobe XMP");
+
+    const raw = new File({ UID: "ABC123", Hash: "54ghtfd", Name: "1/2/IMG123.raw", FileType: "raw", MediaType: "RAW" });
+    expect(raw.typeInfo()).toBe("Unprocessed Sensor Data (RAW)");
   });
 
   it("should get size info", () => {
