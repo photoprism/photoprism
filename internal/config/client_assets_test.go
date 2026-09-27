@@ -113,3 +113,17 @@ func TestClientManifestUri(t *testing.T) {
 
 	assert.True(t, strings.HasPrefix(c.ClientManifestUri(), "/foo/manifest.json?2e5b4b86"))
 }
+
+func TestClientAssets_Missing(t *testing.T) {
+	t.Run("Complete", func(t *testing.T) {
+		a := &ClientAssets{AppCss: "app.css", AppJs: "app.js", ShareJs: "share.js"}
+		assert.Empty(t, a.Missing())
+	})
+	t.Run("Partial", func(t *testing.T) {
+		a := &ClientAssets{AppCss: "app.css"}
+		assert.Equal(t, []string{"app.js", "share.js"}, a.Missing())
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, []string{"app.css", "app.js", "share.js"}, (&ClientAssets{}).Missing())
+	})
+}
