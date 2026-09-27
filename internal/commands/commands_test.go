@@ -54,6 +54,7 @@ func TestMain(m *testing.M) {
 	os.Exit(runTestMain(m))
 }
 
+// runTestMain initializes shared command fixtures and executes the package tests.
 func runTestMain(m *testing.M) int {
 	_ = os.Setenv("TF_CPP_MIN_LOG_LEVEL", "3")
 

@@ -2,6 +2,7 @@ package api
 
 import (
 	"bytes"
+	"database/sql"
 	"image"
 	"image/color"
 	"image/jpeg"
@@ -179,12 +180,14 @@ func CreateTestOriginal(t *testing.T, f *entity.File) []byte {
 		Update("deleted_at", nil).Error; err != nil {
 		t.Fatal(err)
 	}
+	entity.RegenerateIndexForPhotoIDs([]uint{p.ID})
 
 	t.Cleanup(func() {
 		_ = entity.UnscopedDb().Model(entity.File{}).Where("id = ?", f.ID).
 			Updates(entity.Values{"file_missing": f.FileMissing, "deleted_at": f.DeletedAt}).Error
 		_ = entity.UnscopedDb().Model(entity.Photo{}).Where("photo_uid = ?", f.PhotoUID).
 			Update("deleted_at", p.DeletedAt).Error
+		entity.RegenerateIndexForPhotoIDs([]uint{p.ID})
 	})
 
 	data := NewTestJpeg(t, 1024, 768)
@@ -201,6 +204,52 @@ func CreateTestOriginal(t *testing.T, f *entity.File) []byte {
 	})
 
 	return data
+}
+
+// TestCreateTestOriginalRestoresIndex checks that a restored original is searchable.
+func TestCreateTestOriginalRestoresIndex(t *testing.T) {
+	f := entity.FileFixtures.Get("exampleFileName.jpg")
+	var saved entity.File
+	if err := entity.Db().Where("id = ?", f.ID).First(&saved).Error; err != nil {
+		t.Fatal(err)
+	}
+
+	t.Cleanup(func() {
+		_ = entity.UnscopedDb().Model(&entity.File{}).Where("id = ?", saved.ID).
+			Updates(entity.Values{"file_missing": saved.FileMissing, "deleted_at": saved.DeletedAt}).Error
+		entity.RegenerateIndexForPhotoIDs([]uint{saved.PhotoID})
+	})
+
+	if err := entity.Db().Model(&entity.File{}).Where("id = ?", saved.ID).UpdateColumn("file_missing", true).Error; err != nil {
+		t.Fatal(err)
+	}
+	entity.RegenerateIndexForPhotoIDs([]uint{saved.PhotoID})
+
+	var missing entity.File
+	if err := entity.Db().Where("id = ?", saved.ID).First(&missing).Error; err != nil {
+		t.Fatal(err)
+	} else if missing.MediaID != nil {
+		t.Fatal("missing original still has a media index")
+	}
+
+	f.FileMissing = true
+	t.Run("RestoresOriginal", func(t *testing.T) {
+		CreateTestOriginal(t, &f)
+
+		var restored entity.File
+		if err := entity.Db().Where("id = ?", saved.ID).First(&restored).Error; err != nil {
+			t.Fatal(err)
+		} else if restored.MediaID == nil {
+			t.Fatal("restored original has no media index")
+		}
+	})
+
+	var after entity.File
+	if err := entity.Db().Where("id = ?", saved.ID).First(&after).Error; err != nil {
+		t.Fatal(err)
+	} else if !after.FileMissing || after.MediaID != nil {
+		t.Fatal("missing original remains in the media index")
+	}
 }
 
 // CreateTestFileOriginal creates the original of the indexed fixture with the specified hash.
@@ -389,13 +438,13 @@ func SetTestFileBounds(t *testing.T, fileHash string, w, h int) {
 // afterwards. Pass an empty hash to reach the endpoints that resolve a cover by query,
 // as other tests assign one through query.UpdateCovers().
 func SetTestCoverFile(t *testing.T, model interface{}, where, uid, fileHash string) {
-	var current []string
+	var current []sql.NullString
 
 	if err := entity.UnscopedDb().Model(model).Where(where, uid).Limit(1).Pluck("thumb", &current).Error; err != nil {
 		t.Fatal(err)
 	}
 
-	setCoverFile := func(hash string) error {
+	setCoverFile := func(hash any) error {
 		err := entity.UnscopedDb().Model(model).Where(where, uid).Update("thumb", hash).Error
 
 		// Updating the row directly bypasses the hooks and handlers that clear the caches.
@@ -410,10 +459,10 @@ func SetTestCoverFile(t *testing.T, model interface{}, where, uid, fileHash stri
 	}
 
 	t.Cleanup(func() {
-		restore := ""
+		var restore any
 
-		if len(current) > 0 {
-			restore = current[0]
+		if len(current) > 0 && current[0].Valid {
+			restore = current[0].String
 		}
 
 		_ = setCoverFile(restore)

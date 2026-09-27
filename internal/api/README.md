@@ -1,5 +1,7 @@
 ## API Package Guide
 
+**Last Updated:** September 27, 2026
+
 ### Overview
 
 The API package exposes PhotoPrism’s HTTP endpoints via Gin handlers. Each file under `internal/api` contains the handlers, request/response DTOs, and Swagger annotations for a specific feature area. Handlers remain thin: they validate input, enforce security or ACL checks, and delegate domain work to services in `internal/photoprism`, `internal/service`, or other internal packages. Keep exported types aligned with the REST schema and avoid embedding business logic directly in handlers.
@@ -113,9 +115,9 @@ event.ErrorMsg(i18n.ErrIndexingFailed)
 
 ### Testing Strategy
 
-- Build tests around the API harness (`NewApiTest`) to obtain a configured Gin router, config, and dependencies. This isolates filesystem paths and avoids polluting global state.
+- Build tests around `NewApiTest()` for a fresh Gin router and the package's shared config. Capture and restore the config options, fixture rows, files, and cache entries a test changes.
 - Wrap requests with helper functions (for example, `PerformRequestJSON`, `PerformAuthenticatedRequest`) to capture status codes, headers, and payloads. Assert headers using constants from `pkg/http/header`.
-- When handlers interact with the database, initialize fixtures through config helpers such as `config.NewTestConfig("api")` or `config.NewMinimalTestConfigWithDb("api", t.TempDir())` depending on fixture needs.
+- The package `TestMain` initializes the shared fixture database. Tests that need a second DB-backed config use an isolated test config and restore both `get.Config()` and the entity DB provider in `t.Cleanup`.
 - Stub external dependencies (`httptest.Server`) for remote calls and set `AllowPrivate=true` explicitly when the test server binds to loopback addresses.
 - Structure tests with table-driven subtests (`t.Run("CaseName", ...)`) and use PascalCase names. Provide cleanup functions (`t.Cleanup`) to remove temporary files or databases created during tests.
 - Do not run `internal/api` tests in parallel. These suites share fixture files, temporary assets, and database state, so parallel `go test` invocations can cause false failures and readonly/fixture-conflict errors.

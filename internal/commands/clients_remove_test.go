@@ -162,6 +162,7 @@ func TestClientsRemoveCommand_Purge(t *testing.T) {
 	})
 }
 
+// TestClientsModCommand_Restore checks restoring clients by UID and node UUID.
 func TestClientsModCommand_Restore(t *testing.T) {
 	requireTestDb(t)
 

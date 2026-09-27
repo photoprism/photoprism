@@ -14,6 +14,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
+// TestPhotoUnstack checks file separation and capture-file boundaries.
 func TestPhotoUnstack(t *testing.T) {
 	t.Run("UnstackXmpSidecarFile", func(t *testing.T) {
 		app, router, _ := NewApiTest()
@@ -26,11 +27,67 @@ func TestPhotoUnstack(t *testing.T) {
 	t.Run("UnstackBridge3Jpg", func(t *testing.T) {
 		app, router, c := NewApiTest()
 		PhotoUnstack(router)
-		require.NoError(t, fs.Copy("./testdata/london_160x160.jpg", filepath.Join(c.Options().OriginalsPath, "London", "bridge3.jpg"), true))
-		require.NoError(t, fs.Copy("./testdata/face_160x160.jpg", filepath.Join(c.Options().OriginalsPath, "1990", "04", "bridge2.jpg"), true))
-		r := PerformRequest(app, "POST", "/api/v1/photos/ps6sg6be2lvl0yh7/files/fs6sg6bwhhbnlqdn/unstack")
+		folder := "unstackbridge" + rnd.Base36(10)
+		dir := filepath.Join(c.OriginalsPath(), folder)
+		primaryFolder := folder + "/1990/04"
+		secondaryFolder := folder + "/London"
+		require.NoError(t, fs.MkdirAll(dir))
+		t.Cleanup(func() {
+			db := entity.UnscopedDb().Unscoped()
+			var photos []entity.Photo
+			require.NoError(t, db.Where("photo_path LIKE ?", folder+"/%").Find(&photos).Error)
+			var files []entity.File
+			require.NoError(t, db.Where("file_name LIKE ?", folder+"/%").Find(&files).Error)
+			for _, file := range files {
+				require.NoError(t, db.Delete(&entity.Marker{}, "file_uid = ?", file.FileUID).Error)
+				require.NoError(t, db.Delete(&entity.FileShare{}, "file_id = ?", file.ID).Error)
+				require.NoError(t, db.Delete(&entity.FileSync{}, "file_id = ?", file.ID).Error)
+			}
+			for _, photo := range photos {
+				require.NoError(t, db.Delete(&entity.Details{}, "photo_id = ?", photo.ID).Error)
+				require.NoError(t, db.Delete(&entity.PhotoLabel{}, "photo_id = ?", photo.ID).Error)
+				require.NoError(t, db.Delete(&entity.PhotoKeyword{}, "photo_id = ?", photo.ID).Error)
+				require.NoError(t, db.Delete(&entity.PhotoAlbum{}, "photo_uid = ?", photo.PhotoUID).Error)
+			}
+			require.NoError(t, db.Delete(&entity.File{}, "file_name LIKE ?", folder+"/%").Error)
+			require.NoError(t, db.Delete(&entity.Photo{}, "photo_path LIKE ?", folder+"/%").Error)
+			for _, photo := range photos {
+				var remaining int
+				require.NoError(t, db.Model(&entity.Details{}).Where("photo_id = ?", photo.ID).Count(&remaining).Error)
+				require.Zero(t, remaining)
+			}
+			require.NoError(t, os.RemoveAll(dir))
+		})
+		require.NoError(t, fs.MkdirAll(filepath.Join(dir, "1990", "04")))
+		require.NoError(t, fs.MkdirAll(filepath.Join(dir, "London")))
+		require.NoError(t, fs.Copy("./testdata/face_160x160.jpg", filepath.Join(dir, "1990", "04", "bridge2.jpg"), true))
+		require.NoError(t, fs.Copy("./testdata/london_160x160.jpg", filepath.Join(dir, "London", "bridge3.jpg"), true))
+
+		photo := entity.NewUserPhoto(true, "")
+		photo.PhotoPath = primaryFolder
+		photo.PhotoName = "bridge2"
+		require.NoError(t, photo.Create())
+		primary := &entity.File{
+			FileUID: rnd.GenerateUID(entity.FileUID), PhotoID: photo.ID, PhotoUID: photo.PhotoUID,
+			FileName: primaryFolder + "/bridge2.jpg", FileRoot: entity.RootOriginals,
+			FilePrimary: true, FileHash: rnd.GenerateUID(entity.FileUID),
+		}
+		require.NoError(t, primary.Create())
+		secondary := &entity.File{
+			FileUID: rnd.GenerateUID(entity.FileUID), PhotoID: photo.ID, PhotoUID: photo.PhotoUID,
+			FileName: secondaryFolder + "/bridge3.jpg", FileRoot: entity.RootOriginals,
+			FileHash: rnd.GenerateUID(entity.FileUID),
+		}
+		require.NoError(t, secondary.Create())
+		assert.NotEqual(t, filepath.Dir(primary.FileName), filepath.Dir(secondary.FileName))
+
+		r := PerformRequest(app, "POST", "/api/v1/photos/"+photo.PhotoUID+"/files/"+secondary.FileUID+"/unstack")
 		assert.Equal(t, http.StatusOK, r.Code)
-		// t.Logf("RESP: %s", r.Body.String())
+		var moved, kept entity.File
+		require.NoError(t, entity.UnscopedDb().First(&moved, "file_uid = ?", secondary.FileUID).Error)
+		require.NoError(t, entity.UnscopedDb().First(&kept, "file_uid = ?", primary.FileUID).Error)
+		assert.NotEqual(t, photo.ID, moved.PhotoID)
+		assert.Equal(t, photo.ID, kept.PhotoID)
 	})
 	t.Run("CaptureFiles", func(t *testing.T) {
 		app, router, _ := NewApiTest()

@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/service/cluster"
@@ -19,6 +20,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
+// TestClusterGetTheme checks theme responses and node theme metadata.
 func TestClusterGetTheme(t *testing.T) {
 	t.Run("FeatureDisabled", func(t *testing.T) {
 		app, router, conf := NewApiTest()
@@ -155,8 +157,20 @@ func TestClusterGetTheme(t *testing.T) {
 		regy, err := reg.NewClientRegistryWithConfig(conf)
 		assert.NoError(t, err)
 
-		node := &reg.Node{Node: cluster.Node{Name: "pp-node-01", Role: cluster.RoleInstance, UUID: rnd.UUIDv7()}}
-		assert.NoError(t, regy.Put(node))
+		name := "pp-node-theme-" + rnd.Base36(10)
+		var existing int
+		require.NoError(t, entity.Db().Model(&entity.Client{}).Where("client_name = ?", name).Count(&existing).Error)
+		require.Zero(t, existing)
+		node := &reg.Node{Node: cluster.Node{Name: name, Role: cluster.RoleInstance, UUID: rnd.UUIDv7()}}
+		require.NoError(t, regy.Put(node))
+		require.NotEmpty(t, node.ClientID)
+		t.Cleanup(func() {
+			require.NoError(t, entity.UnscopedDb().Unscoped().Delete(&entity.Client{}, "client_uid = ?", node.ClientID).Error)
+			var remaining int
+			require.NoError(t, entity.UnscopedDb().Unscoped().Model(&entity.Client{}).
+				Where("client_uid = ?", node.ClientID).Count(&remaining).Error)
+			require.Zero(t, remaining)
+		})
 
 		client := entity.FindClientByUID(node.ClientID)
 		sess := entity.NewSession(-1, -1)

@@ -12,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
+// TestUpdateLens checks lens updates and read-only placeholders.
 func TestUpdateLens(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
@@ -48,6 +49,18 @@ func TestUpdateLens(t *testing.T) {
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
 	t.Run("UnknownLens", func(t *testing.T) {
+		previous := entity.UnknownLens
+		var count int
+		assert.NoError(t, entity.UnscopedDb().Model(&entity.Lens{}).Where("lens_slug = ?", previous.LensSlug).Count(&count).Error)
+		entity.CreateUnknownLens()
+		createdID := entity.UnknownLens.ID
+		t.Cleanup(func() {
+			if count == 0 {
+				assert.NoError(t, entity.UnscopedDb().Unscoped().Delete(&entity.Lens{}, "id = ?", createdID).Error)
+			}
+			entity.UnknownLens = previous
+			entity.FlushLensCache()
+		})
 		app, router, _ := NewApiTest()
 		UpdateLens(router)
 		r := PerformRequestWithBody(app, "PUT", fmt.Sprintf("/api/v1/lenses/%d", entity.UnknownLens.ID), `{"Make": "Example", "Model": "Example"}`)
