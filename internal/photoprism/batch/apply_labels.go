@@ -3,10 +3,6 @@ package batch
 import (
 	"errors"
 	"fmt"
-	"strings"
-	"time"
-
-	"github.com/go-sql-driver/mysql"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
@@ -37,15 +33,6 @@ func (a labelRemovalAction) String() string {
 		return "unknown"
 	}
 }
-
-// Locking note: testers observed MySQL deadlocks (error 1213) when concurrent
-// batch edits inserted / removed rows in photos_labels. The helpers below retry
-// a few times with a short backoff so we can surface success whenever InnoDB
-// resolves the deadlock after a retry instead of failing the entire request.
-const (
-	deadlockRetryAttempts = 3
-	deadlockRetryDelay    = 25 * time.Millisecond
-)
 
 // ApplyLabels adds/removes labels on the given photo according to items action.
 func ApplyLabels(photo *entity.Photo, labels Items) (errs []error) {
@@ -361,7 +348,7 @@ func updatePhotoLabel(pl *entity.PhotoLabel, action string) error {
 		return fmt.Errorf("photo label is nil")
 	}
 
-	return withDeadlockRetry(action, func() error {
+	return entity.RetryDeadlock(action, func() error {
 		return pl.Updates(entity.Values{"label_src": pl.LabelSrc, "uncertainty": pl.Uncertainty})
 	})
 }
@@ -372,48 +359,7 @@ func deletePhotoLabel(pl *entity.PhotoLabel) error {
 		return fmt.Errorf("photo label is nil")
 	}
 
-	return withDeadlockRetry("delete label", func() error {
+	return entity.RetryDeadlock("delete label", func() error {
 		return pl.Delete()
 	})
-}
-
-// withDeadlockRetry executes fn and retries a few times if the database reports
-// a deadlock, helping batch edits succeed without surfacing errors to users.
-func withDeadlockRetry(action string, fn func() error) (err error) {
-	for attempt := range deadlockRetryAttempts {
-		err = fn()
-		if err == nil {
-			return nil
-		}
-
-		if !isDeadlockError(err) {
-			return err
-		}
-
-		wait := deadlockRetryDelay * time.Duration(attempt+1)
-		log.Warnf("batch: %s deadlock (attempt %d/%d): %s", action, attempt+1, deadlockRetryAttempts, err)
-		time.Sleep(wait)
-	}
-
-	return err
-}
-
-// isDeadlockError detects MySQL deadlock errors both via driver codes and
-// fallback substring matching so retries trigger reliably across drivers.
-func isDeadlockError(err error) bool {
-	if err == nil {
-		return false
-	}
-
-	var mysqlErr *mysql.MySQLError
-
-	if errors.As(err, &mysqlErr) {
-		if mysqlErr.Number == 1213 {
-			return true
-		}
-	}
-
-	msg := strings.ToLower(err.Error())
-
-	return strings.Contains(msg, "deadlock")
 }

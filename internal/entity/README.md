@@ -1,6 +1,6 @@
 ## PhotoPrism — Database Entities
 
-**Last Updated:** September 25, 2026
+**Last Updated:** September 27, 2026
 
 ### Overview
 
@@ -23,6 +23,13 @@ Prefer these helpers over hand-written GORM calls when a model is written as a w
 - `Save(m, keys...)` tries `Update` first and falls back to GORM's `Save`, which inserts a missing row.
 
 GORM's `Updates` with a struct skips zero values, so a field reset to its zero value is not written that way; pass a `Values` map or use `Update`. `Report()` output for users, clients, and sessions is built from `ModelValues`.
+
+### Label Count Refresh
+
+`UpdateLabelCounts` keeps each driver's counting query and updates the refresh timestamp only after
+success. Its MySQL write uses `RetryDeadlock`, shared with batch label edits: at most three attempts
+with bounded backoff for recognized database lock errors. Other errors return immediately. Retries
+apply to the individual write, not to the entire HTTP handler or its preceding operations.
 
 ### Timestamps
 
