@@ -18,6 +18,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -117,6 +118,9 @@ func UploadUserFiles(router *gin.RouterGroup) {
 
 		var uploads []string
 
+		mutex.UploadBatches.RLock()
+		defer mutex.UploadBatches.RUnlock()
+
 		// Compose upload path.
 		uploadDir, err := conf.UserUploadBatchPath(s.UserUID, batch)
 
@@ -125,6 +129,8 @@ func UploadUserFiles(router *gin.RouterGroup) {
 			Abort(c, http.StatusBadRequest, i18n.ErrUploadFailed)
 			return
 		}
+
+		mutex.UserUploads.Store(true)
 
 		// Operator extension settings can further restrict the supported upload formats.
 		allowedExt := conf.UploadAllow()
@@ -453,6 +459,9 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 			Abort(c, http.StatusBadRequest, i18n.ErrUploadFailed)
 			return
 		}
+
+		mutex.UploadBatches.RLock()
+		defer mutex.UploadBatches.RUnlock()
 
 		uploadPath, err := conf.UserUploadBatchPath(s.UserUID, batch)
 

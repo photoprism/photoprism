@@ -1,6 +1,6 @@
 ## API Package Guide
 
-**Last Updated:** September 27, 2026
+**Last Updated:** September 28, 2026
 
 ### Overview
 
@@ -71,6 +71,12 @@ while other preparation errors keep the batch so that processing can be retried.
 including `.github`, `.forgejo`, `.local`, and `_netrc`, at any depth, matched case-insensitively, along with
 the suffixes in `pkg/fs.ReservedPathSuffixes`. ZIP entry checks
 apply to files and directories before extraction; other hidden-directory handling is unchanged. Other import sources and WebDAV retain their format policies.
+
+Staged batches are eligible for cleanup once the batch directory and every entry in it
+have been unchanged for more than 24 hours, including batches awaiting a processing retry.
+The periodic expiry worker skips active upload requests and rechecks candidates before
+removal. Uploads and their processing remain independent of indexing and other imports.
+Files directly in the upload root, including avatar staging, are not batch cleanup targets.
 
 Processing a batch adds its files to at most 100 requested albums: titles resolve among the user's
 own albums or create a new one, and album UIDs must name regular albums the session can see.

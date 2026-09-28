@@ -19,3 +19,13 @@ func TestTempArchives(t *testing.T) {
 		assert.True(t, TempArchives.Load())
 	})
 }
+
+// TestUserUploads verifies the initial expiry flag and its atomic updates.
+func TestUserUploads(t *testing.T) {
+	assert.True(t, UserUploads.Load())
+	t.Cleanup(func() { UserUploads.Store(true) })
+	UserUploads.Store(false)
+	assert.False(t, UserUploads.Load())
+	UserUploads.Store(true)
+	assert.True(t, UserUploads.Load())
+}
