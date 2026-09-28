@@ -19,7 +19,7 @@ Use Node.js 22.15.0 or later on a supported LTS line and npm 9 or later; `packag
 npm ci --ignore-scripts --no-audit --no-fund --no-update-notifier
 ```
 
-Use `npm install --ignore-scripts --no-audit --no-fund --no-update-notifier` from the root after changing dependency declarations. Do not create a frontend-local lockfile. Lifecycle scripts are disabled by default in the development image and Makefiles; rebuild a native addon explicitly with `npm rebuild --ignore-scripts=false <package>` only when needed.
+Use `npm install --ignore-scripts --no-audit --no-fund --no-update-notifier` from the root after changing dependency declarations. Do not create a frontend-local lockfile. List every package under `dependencies`, including build and test tools, not under `devDependencies`: `node_modules` is never shipped, and builds and `make` targets must not depend on a separate dev install. Lifecycle scripts are disabled by default in the development image and Makefiles; rebuild a native addon explicitly with `npm rebuild --ignore-scripts=false <package>` only when needed.
 
 ## Common Commands
 
