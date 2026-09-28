@@ -39,7 +39,7 @@ func oidcSession(provider authn.ProviderType, idToken string) *entity.Session {
 
 func TestOidcLogoutURL(t *testing.T) {
 	conf := config.NewConfig(config.CliTestContext())
-	provider := oidcProvider("https://provider.example/logout")
+	provider := func() *oidc.Client { return oidcProvider("https://provider.example/logout") }
 
 	t.Run("Success", func(t *testing.T) {
 		conf.Options().OIDCLogout = true
@@ -74,12 +74,32 @@ func TestOidcLogoutURL(t *testing.T) {
 	t.Run("ProviderWithoutEndSession", func(t *testing.T) {
 		conf.Options().OIDCLogout = true
 		defer func() { conf.Options().OIDCLogout = false }()
-		assert.Equal(t, "", oidcLogoutURL(conf, oidcProvider(""), oidcSession(authn.ProviderOIDC, "id-token-123")))
+		assert.Equal(t, "", oidcLogoutURL(conf, func() *oidc.Client { return oidcProvider("") }, oidcSession(authn.ProviderOIDC, "id-token-123")))
 	})
 	t.Run("NilProvider", func(t *testing.T) {
 		conf.Options().OIDCLogout = true
 		defer func() { conf.Options().OIDCLogout = false }()
 		assert.Equal(t, "", oidcLogoutURL(conf, nil, oidcSession(authn.ProviderOIDC, "id-token-123")))
+		assert.Equal(t, "", oidcLogoutURL(conf, func() *oidc.Client { return nil }, oidcSession(authn.ProviderOIDC, "id-token-123")))
+	})
+	t.Run("ProviderResolvedOnlyWhenNeeded", func(t *testing.T) {
+		calls := 0
+		counted := func() *oidc.Client {
+			calls++
+			return oidcProvider("https://provider.example/logout")
+		}
+
+		conf.Options().OIDCLogout = false
+		assert.Equal(t, "", oidcLogoutURL(conf, counted, oidcSession(authn.ProviderOIDC, "id-token-123")))
+
+		conf.Options().OIDCLogout = true
+		defer func() { conf.Options().OIDCLogout = false }()
+		assert.Equal(t, "", oidcLogoutURL(conf, counted, oidcSession(authn.ProviderLocal, "")))
+		assert.Equal(t, "", oidcLogoutURL(conf, counted, oidcSession(authn.ProviderOIDC, "")))
+		assert.Equal(t, 0, calls, "the provider is not resolved for sessions that end without it")
+
+		assert.NotEmpty(t, oidcLogoutURL(conf, counted, oidcSession(authn.ProviderOIDC, "id-token-123")))
+		assert.Equal(t, 1, calls)
 	})
 }
 
