@@ -478,6 +478,36 @@ func TestAuthAnyVisionServiceKey(t *testing.T) {
 	assert.True(t, rnd.IsRefID(s.RefID))
 }
 
+// TestAuthAnyVisionServiceKeyScope checks that the vision service key is accepted only for using the Vision API.
+func TestAuthAnyVisionServiceKeyScope(t *testing.T) {
+	origAPI, origKey := vision.ServiceApi, vision.ServiceKey
+	t.Cleanup(func() { vision.ServiceApi, vision.ServiceKey = origAPI, origKey })
+	vision.ServiceApi = true
+	vision.ServiceKey = "vision-service-key-abc123"
+
+	for _, tc := range []struct {
+		name     string
+		resource acl.Resource
+		perms    acl.Permissions
+	}{
+		{"OtherResource", acl.ResourcePhotos, acl.Permissions{acl.ActionUse}},
+		{"OtherPermission", acl.ResourceVision, acl.Permissions{acl.ActionView}},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			gin.SetMode(gin.TestMode)
+			c, _ := gin.CreateTestContext(httptest.NewRecorder())
+			req := httptest.NewRequest(http.MethodPost, "/api/v1/vision/labels", nil)
+			header.SetAuthorization(req, vision.ServiceKey)
+			c.Request = req
+
+			s := AuthAny(c, tc.resource, tc.perms)
+			require.NotNil(t, s)
+			assert.NotEqual(t, rnd.SessionID(vision.ServiceKey), s.ID)
+			assert.NotEqual(t, acl.ResourceVision.String(), s.Scope())
+		})
+	}
+}
+
 func TestAuthAnyPortalJWT(t *testing.T) {
 	fx := newPortalJWTFixture(t, "ok")
 

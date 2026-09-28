@@ -1,6 +1,8 @@
 package api
 
 import (
+	"crypto/subtle"
+
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/ai/vision"
@@ -36,7 +38,7 @@ func AuthAny(c *gin.Context, resource acl.Resource, perms acl.Permissions) (s *e
 	c.Header(header.CacheControl, header.CacheControlNoStore)
 
 	// Allow requests based on an access token for specific resources.
-	if resource == acl.ResourceVision && perms.Contains(acl.ActionUse) && vision.ServiceApi && vision.ServiceKey != "" && vision.ServiceKey == authToken {
+	if resource == acl.ResourceVision && perms.Contains(acl.ActionUse) && vision.ServiceApi && vision.ServiceKey != "" && subtle.ConstantTimeCompare([]byte(vision.ServiceKey), []byte(authToken)) == 1 {
 		s = entity.NewSessionFromToken(c, authToken, acl.ResourceVision.String(), "service-key")
 		event.AuditInfo([]string{clientIp, "%s", "%s %s as %s", status.Granted}, s.RefID, perms.First(), string(resource), s.GetClientRole().String())
 		return s

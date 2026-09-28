@@ -263,6 +263,7 @@ func TestVisionAuth(t *testing.T) {
 		assert.Equal(t, http.StatusUnauthorized, post("vision-service-key-abc124").Code)
 		assert.Equal(t, http.StatusUnauthorized, post("vision-service-key-abc12").Code)
 		assert.Equal(t, http.StatusUnauthorized, post("vision-service-key-abc1234").Code)
+		assert.Equal(t, http.StatusUnauthorized, post("VISION-SERVICE-KEY-ABC123").Code)
 	})
 	t.Run("NoToken", func(t *testing.T) {
 		assert.Equal(t, http.StatusUnauthorized, post("").Code)
