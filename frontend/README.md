@@ -1,6 +1,6 @@
 # PhotoPrism Frontend
 
-**Last Updated:** September 27, 2026
+**Last Updated:** September 28, 2026
 
 The Vue 3 + Vuetify 4 web UI for PhotoPrism. Built with Vite, tested with Vitest, and served by the Go backend from `assets/static/build/`.
 
@@ -87,7 +87,7 @@ ESLint 10 uses `frontend/eslint.config.mjs`; the root `eslint.config.mjs` re-exp
 
 The recommended ESLint rules include `no-unassigned-vars`, `no-useless-assignment`, and `preserve-caught-error`. PhotoPrism disables `no-useless-assignment` so explicit initial values such as `-1`, `""`, and `[]` can document intent even when every branch replaces them. Preserve these initializers when they aid readability; they do not constrain JavaScript runtime types. `no-unused-vars`, `no-unassigned-vars`, and `preserve-caught-error` remain enabled. The Vue and Vuetify plugins and Vue parser must declare compatible ESLint peers; do not use `--force` or `--legacy-peer-deps` to bypass them. Verify with `npm ls eslint @eslint/js eslint-plugin-vue eslint-plugin-vuetify vue-eslint-parser --all` from the root.
 
-`npm run lint` checks application JS/Vue and top-level JS/MJS configs, then checks CSS/SCSS/Sass with Prettier. `npm run fmt` applies ESLint fixes and formats those style sheets. Neither command lints the test tree or edition overlays by default. Keep the global convenience installers in `frontend/Makefile` and `scripts/dist/install-nodejs.sh` aligned with the workspace toolchain; project scripts use workspace-local binaries.
+`npm run lint` checks application JS/Vue and top-level JS/MJS configs, then checks CSS/SCSS/Sass with Prettier. `npm run fmt` applies ESLint fixes and formats those style sheets. Neither command lints the test tree or edition overlays by default. `vuetify/no-legacy-grid-props` is an error: grids use `density="compact"` and the `align-*`, `justify-*`, and `align-self-*` utility classes instead of the deprecated `v-row`/`v-col` props. Since the overlays are not linted, check grid markup in `plus`, `pro`, and `portal` by hand. Keep the global convenience installers in `frontend/Makefile` and `scripts/dist/install-nodejs.sh` aligned with the workspace toolchain; project scripts use workspace-local binaries.
 
 ## Test Toolchain
 
