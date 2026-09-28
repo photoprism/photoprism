@@ -1,6 +1,7 @@
 package workers
 
 import (
+	"fmt"
 	iofs "io/fs"
 	"os"
 	"path/filepath"
@@ -27,8 +28,24 @@ func purgeStaleUploads(conf *config.Config) {
 		return
 	}
 	mutex.UserUploads.Store(false)
-	cutoff := time.Now().Add(-time.Duration(conf.UploadMaxAge()) * time.Second)
-	candidates, pending := scanUploadDirs(conf.UsersStoragePath(), cutoff, 0)
+	root := conf.UsersStoragePath()
+	if info, err := os.Lstat(root); os.IsNotExist(err) {
+		return
+	} else if err != nil {
+		mutex.UserUploads.Store(true)
+		log.Warnf("upload: %s", clean.Error(err))
+		return
+	} else if !info.IsDir() {
+		return
+	}
+	now, err := uploadStorageTime(root)
+	if err != nil {
+		mutex.UserUploads.Store(true)
+		log.Warnf("upload: expiry scan skipped because the storage time is unknown (%s)", clean.Error(err))
+		return
+	}
+	cutoff := now.Add(-time.Duration(conf.UploadMaxAge()) * time.Second)
+	candidates, pending := scanUploadDirs(root, cutoff, 0)
 	result := removeExpiredUploads(candidates, cutoff)
 	if pending || result.remaining || result.busy {
 		mutex.UserUploads.Store(true)
@@ -45,6 +62,39 @@ func purgeStaleUploads(conf *config.Config) {
 	if len(result.removed) > 0 {
 		log.Infof("upload: removed %s", english.Plural(len(result.removed), "expired batch", "expired batches"))
 	}
+}
+
+// uploadClockFile names the file in the users storage folder whose modification time is read as now.
+const uploadClockFile = ".upload-purge"
+
+// uploadStorageTime returns the current time of the users storage, see storageTime.
+var uploadStorageTime = storageTime
+
+// storageTime replaces the clock file in dir and returns its creation time, so the cutoff and the
+// batch times come from the storage's clock, which may differ from the host's. The file is created
+// anew and renamed into place, so an existing file is never written.
+func storageTime(dir string) (time.Time, error) {
+	name := filepath.Join(dir, uploadClockFile)
+	if info, err := os.Lstat(name); err == nil && !info.Mode().IsRegular() {
+		return time.Time{}, fmt.Errorf("%s is not a regular file", uploadClockFile)
+	}
+	f, err := os.CreateTemp(dir, uploadClockFile+"-*")
+	if err != nil {
+		return time.Time{}, err
+	}
+	tmp := f.Name()
+	info, err := f.Stat()
+	if closeErr := f.Close(); err == nil {
+		err = closeErr
+	}
+	if err == nil {
+		err = os.Rename(tmp, name)
+	}
+	if err != nil {
+		_ = os.Remove(tmp)
+		return time.Time{}, err
+	}
+	return info.ModTime(), nil
 }
 
 // scanUploadDirs collects stale batch candidates without following directory links.

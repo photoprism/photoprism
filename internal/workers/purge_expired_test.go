@@ -151,6 +151,7 @@ func TestPurgeStaleUploads(t *testing.T) {
 		batch := newUploadBatch(t, c.UsersStoragePath(), "utfrd9md4cywhp5v", "old", 48*time.Hour)
 		purgeStaleUploads(c)
 		assert.DirExists(t, batch)
+		assert.NoFileExists(t, filepath.Join(c.UsersStoragePath(), uploadClockFile))
 		assert.False(t, mutex.UserUploads.Load())
 	})
 	t.Run("ReadOnly", func(t *testing.T) {
@@ -160,6 +161,7 @@ func TestPurgeStaleUploads(t *testing.T) {
 		mutex.UserUploads.Store(true)
 		purgeStaleUploads(c)
 		assert.DirExists(t, batch)
+		assert.NoFileExists(t, filepath.Join(c.UsersStoragePath(), uploadClockFile))
 		assert.True(t, mutex.UserUploads.Load())
 	})
 	t.Run("IndexingDoesNotDelayExpiry", func(t *testing.T) {
@@ -184,6 +186,30 @@ func TestPurgeStaleUploads(t *testing.T) {
 		mutex.UserUploads.Store(true)
 		purgeStaleUploads(c)
 		assert.False(t, mutex.UserUploads.Load())
+		assert.NoDirExists(t, c.UsersStoragePath())
+	})
+	t.Run("RootError", func(t *testing.T) {
+		if os.Geteuid() == 0 {
+			t.Skip("requires filesystem permission enforcement")
+		}
+		c := newUploadConfig(t)
+		batch := newUploadBatch(t, c.UsersStoragePath(), "utfrd9md4cywhp5v", "old", 48*time.Hour)
+		parent := filepath.Dir(c.UsersStoragePath())
+		require.NoError(t, os.Chmod(parent, 0))
+		t.Cleanup(func() { require.NoError(t, os.Chmod(parent, 0o700)) })
+		savedLog := log
+		t.Cleanup(func() { log = savedLog })
+		logger := logrus.New()
+		var output bytes.Buffer
+		logger.SetOutput(&output)
+		log = logger
+		mutex.UserUploads.Store(true)
+		purgeStaleUploads(c)
+		require.NoError(t, os.Chmod(parent, 0o700))
+		assert.DirExists(t, batch)
+		assert.True(t, mutex.UserUploads.Load())
+		assert.Contains(t, output.String(), "upload:")
+		assert.NotContains(t, output.String(), c.UsersStoragePath())
 	})
 }
 
@@ -232,9 +258,155 @@ func TestPurgeStaleUploadsMaxAge(t *testing.T) {
 		mutex.UserUploads.Store(true)
 		purgeStaleUploads(c)
 		assert.DirExists(t, batch)
+		assert.NoFileExists(t, filepath.Join(c.UsersStoragePath(), uploadClockFile))
 		assert.True(t, mutex.UserUploads.Load())
 		assert.Empty(t, output.String())
 	})
+}
+
+// TestPurgeStaleUploadsStorageClock verifies that batch age is measured with the storage's clock.
+func TestPurgeStaleUploadsStorageClock(t *testing.T) {
+	flag, savedClock := mutex.UserUploads.Load(), uploadStorageTime
+	t.Cleanup(func() { mutex.UserUploads.Store(flag); uploadStorageTime = savedClock })
+	const user = "utfrd9md4cywhp5v"
+	for _, tc := range []struct {
+		name string
+		skew time.Duration
+	}{{"Behind", -72 * time.Hour}, {"Ahead", 72 * time.Hour}} {
+		t.Run(tc.name, func(t *testing.T) {
+			c := newUploadConfig(t)
+			uploadStorageTime = func(dir string) (time.Time, error) {
+				now, err := storageTime(dir)
+				return now.Add(tc.skew), err
+			}
+			written := newUploadBatch(t, c.UsersStoragePath(), user, "written", -tc.skew)
+			expired := newUploadBatch(t, c.UsersStoragePath(), user, "expired", 25*time.Hour-tc.skew)
+			mutex.UserUploads.Store(true)
+			purgeStaleUploads(c)
+			assert.DirExists(t, written)
+			assert.NoDirExists(t, expired)
+			assert.FileExists(t, filepath.Join(c.UsersStoragePath(), uploadClockFile))
+		})
+	}
+	uploadStorageTime = savedClock
+	t.Run("Unusable", func(t *testing.T) {
+		for _, kind := range []string{"Symlink", "Dangling", "Directory", "Fifo", "Unwritable"} {
+			t.Run(kind, func(t *testing.T) {
+				if kind == "Unwritable" && os.Geteuid() == 0 {
+					t.Skip("requires filesystem permission enforcement")
+				}
+				c := newUploadConfig(t)
+				batch := newUploadBatch(t, c.UsersStoragePath(), user, "old", 48*time.Hour)
+				clock := filepath.Join(c.UsersStoragePath(), uploadClockFile)
+				target := filepath.Join(t.TempDir(), "target")
+				switch kind {
+				case "Symlink":
+					require.NoError(t, os.WriteFile(target, []byte("keep"), fs.ModeFile))
+					require.NoError(t, os.Symlink(target, clock))
+				case "Dangling":
+					require.NoError(t, os.Symlink(target, clock))
+				case "Directory":
+					require.NoError(t, os.Mkdir(clock, fs.ModeDir))
+				case "Fifo":
+					require.NoError(t, unix.Mkfifo(clock, 0o600))
+				case "Unwritable":
+					require.NoError(t, os.Chmod(c.UsersStoragePath(), 0o500))
+					t.Cleanup(func() { require.NoError(t, os.Chmod(c.UsersStoragePath(), 0o700)) })
+				}
+				savedLog := log
+				t.Cleanup(func() { log = savedLog })
+				logger := logrus.New()
+				var output bytes.Buffer
+				logger.SetOutput(&output)
+				log = logger
+				mutex.UserUploads.Store(true)
+				purgeStaleUploads(c)
+				assert.DirExists(t, batch)
+				assert.True(t, mutex.UserUploads.Load())
+				assert.Contains(t, output.String(), "expiry scan skipped")
+				assert.NotContains(t, output.String(), c.UsersStoragePath())
+				switch kind {
+				case "Symlink":
+					data, err := os.ReadFile(target)
+					require.NoError(t, err)
+					assert.Equal(t, "keep", string(data))
+				case "Dangling":
+					assert.NoFileExists(t, target)
+				}
+			})
+		}
+	})
+	t.Run("LinkedRoot", func(t *testing.T) {
+		c := newUploadConfig(t)
+		target := t.TempDir()
+		batch := newUploadBatch(t, target, user, "old", 48*time.Hour)
+		require.NoError(t, os.MkdirAll(filepath.Dir(c.UsersStoragePath()), fs.ModeDir))
+		require.NoError(t, os.Symlink(target, c.UsersStoragePath()))
+		mutex.UserUploads.Store(true)
+		purgeStaleUploads(c)
+		assert.DirExists(t, batch)
+		assert.NoFileExists(t, filepath.Join(target, uploadClockFile))
+		assert.False(t, mutex.UserUploads.Load())
+	})
+}
+
+// TestStorageTime verifies that the clock file is replaced rather than written and non-regular names are refused.
+func TestStorageTime(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		dir := t.TempDir()
+		name := filepath.Join(dir, uploadClockFile)
+		linked := filepath.Join(t.TempDir(), "linked")
+		require.NoError(t, os.WriteFile(linked, []byte("keep"), fs.ModeFile))
+		require.NoError(t, os.Link(linked, name))
+		old := time.Now().Add(-72 * time.Hour)
+		require.NoError(t, os.Chtimes(name, old, old))
+		before := time.Now().Add(-time.Second)
+		now, err := storageTime(dir)
+		require.NoError(t, err)
+		file, err := os.Lstat(name)
+		require.NoError(t, err)
+		assert.True(t, now.After(before), now)
+		assert.True(t, now.Equal(file.ModTime()))
+		assert.Zero(t, file.Size())
+		data, err := os.ReadFile(linked)
+		require.NoError(t, err)
+		assert.Equal(t, "keep", string(data))
+		entries, err := os.ReadDir(dir)
+		require.NoError(t, err)
+		assert.Len(t, entries, 1)
+	})
+	t.Run("MissingFolder", func(t *testing.T) {
+		_, err := storageTime(filepath.Join(t.TempDir(), "missing"))
+		assert.Error(t, err)
+	})
+	for _, kind := range []string{"Symlink", "Dangling", "Directory", "Fifo"} {
+		t.Run(kind, func(t *testing.T) {
+			dir := t.TempDir()
+			name := filepath.Join(dir, uploadClockFile)
+			target := filepath.Join(t.TempDir(), "target")
+			switch kind {
+			case "Symlink":
+				require.NoError(t, os.WriteFile(target, []byte("keep"), fs.ModeFile))
+				require.NoError(t, os.Symlink(target, name))
+			case "Dangling":
+				require.NoError(t, os.Symlink(target, name))
+			case "Directory":
+				require.NoError(t, os.Mkdir(name, fs.ModeDir))
+			case "Fifo":
+				require.NoError(t, unix.Mkfifo(name, 0o600))
+			}
+			before, err := os.Lstat(name)
+			require.NoError(t, err)
+			_, err = storageTime(dir)
+			assert.ErrorContains(t, err, "not a regular file")
+			after, err := os.Lstat(name)
+			require.NoError(t, err)
+			assert.True(t, os.SameFile(before, after))
+			entries, err := os.ReadDir(dir)
+			require.NoError(t, err)
+			assert.Len(t, entries, 1)
+		})
+	}
 }
 
 // TestUploadBatchExpired verifies strict cutoff comparison and traversal errors.
