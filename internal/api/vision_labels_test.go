@@ -5,20 +5,25 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"slices"
 	"strings"
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
+	logtest "github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/http/scheme"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -341,4 +346,88 @@ func TestVisionMultipart(t *testing.T) {
 			assert.Equal(t, "Bad Request", resp.Error)
 		})
 	}
+}
+
+// propagateVision applies the specified vision options through Config.Propagate and restores them on cleanup.
+func propagateVision(t *testing.T, conf *config.Config, enabled bool, uri, key string) {
+	t.Helper()
+
+	opt := conf.Options()
+	origApi, origUri, origKey := opt.VisionApi, opt.VisionUri, opt.VisionKey
+	t.Cleanup(func() {
+		opt.VisionApi, opt.VisionUri, opt.VisionKey = origApi, origUri, origKey
+		conf.Propagate()
+	})
+
+	opt.VisionApi, opt.VisionUri, opt.VisionKey = enabled, uri, key
+	conf.Propagate()
+}
+
+// TestVisionServiceKeyDisabled checks that only an instance that serves the Vision API accepts the service key.
+func TestVisionServiceKeyDisabled(t *testing.T) {
+	const serviceKey = "vision-service-key-abc123"
+
+	conf := get.Config()
+	origAuthMode := conf.AuthMode()
+	conf.SetAuthMode(config.AuthModePasswd)
+	t.Cleanup(func() {
+		conf.SetAuthMode(origAuthMode)
+		conf.Propagate()
+	})
+
+	// Returns the response to a labels request with the specified token and the audit messages it logged.
+	post := func(t *testing.T, token string) (*httptest.ResponseRecorder, []string) {
+		t.Helper()
+
+		orig := event.AuditLog
+		logger, hook := logtest.NewNullLogger()
+		logger.SetLevel(logrus.TraceLevel)
+		event.AuditLog = logger
+		t.Cleanup(func() { event.AuditLog = orig })
+
+		app, router, _ := NewApiTest()
+		PostVisionLabels(router)
+		r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/vision/labels", `{}`, token)
+
+		var messages []string
+
+		for _, entry := range hook.AllEntries() {
+			messages = append(messages, entry.Message)
+		}
+
+		return r, messages
+	}
+
+	// Checks that the service key is refused exactly like a wrong key.
+	refused := func(t *testing.T) {
+		t.Helper()
+
+		r, audit := post(t, serviceKey)
+		wrong, wrongAudit := post(t, "vision-service-key-abc124")
+		assert.Equal(t, http.StatusUnauthorized, r.Code)
+		assert.Equal(t, wrong.Code, r.Code)
+		assert.Equal(t, wrong.Body.String(), r.Body.String())
+		assert.Equal(t, wrongAudit, audit)
+		assert.NotEmpty(t, audit)
+
+		for _, msg := range audit {
+			assert.NotContains(t, msg, status.Granted, msg)
+		}
+	}
+
+	t.Run("Enabled", func(t *testing.T) {
+		propagateVision(t, conf, true, "", serviceKey)
+
+		r, audit := post(t, serviceKey)
+		assert.NotEqual(t, http.StatusUnauthorized, r.Code)
+		assert.True(t, slices.ContainsFunc(audit, func(msg string) bool { return strings.Contains(msg, status.Granted) }), audit)
+	})
+	t.Run("Disabled", func(t *testing.T) {
+		propagateVision(t, conf, false, "", serviceKey)
+		refused(t)
+	})
+	t.Run("ClientOnly", func(t *testing.T) {
+		propagateVision(t, conf, false, "https://vision.example.com/api/v1/vision", serviceKey)
+		refused(t)
+	})
 }
