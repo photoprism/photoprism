@@ -85,6 +85,8 @@ own albums or create a new one, and album UIDs must name regular albums the sess
 When the import cannot run or refuses files, processing answers 503 (busy, e.g. while indexing is
 being canceled or a faces migration runs), 507 (insufficient storage), or 500 instead of success and
 keeps the files that were not imported staged, so the same session can retry with the same token.
+Processing only looks up an existing batch and never creates it; it answers 404 if there is none,
+for example after cleanup removed it or a previous request imported it.
 
 ### Audit Logging
 

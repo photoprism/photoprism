@@ -307,7 +307,7 @@ func discardUpload(s *entity.Session, token string) {
 		return
 	}
 
-	dir, err := get.Config().UserUploadBatchPath(s.UserUID, batch)
+	dir, err := get.Config().UserUploadBatchDir(s.UserUID, batch)
 
 	if err != nil {
 		return
@@ -463,10 +463,21 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 		mutex.UploadBatches.RLock()
 		defer mutex.UploadBatches.RUnlock()
 
-		uploadPath, err := conf.UserUploadBatchPath(s.UserUID, batch)
+		uploadPath, err := conf.UserUploadBatchDir(s.UserUID, batch)
 
 		if err != nil {
-			log.Errorf("upload: failed to create storage folder (%s)", clean.Error(err))
+			log.Errorf("upload: invalid storage folder (%s)", clean.Error(err))
+			Abort(c, http.StatusBadRequest, i18n.ErrUploadFailed)
+			return
+		}
+
+		// Only existing batches can be processed; they are created by uploading files, not here.
+		if _, statErr := os.Lstat(uploadPath); os.IsNotExist(statErr) {
+			log.Warnf("upload: found no staged files to process in upload %s", clean.Log(batch))
+			Abort(c, http.StatusNotFound, i18n.ErrUploadFailed)
+			return
+		} else if statErr != nil {
+			log.Errorf("upload: failed to access storage folder (%s)", clean.Error(statErr))
 			Abort(c, http.StatusBadRequest, i18n.ErrUploadFailed)
 			return
 		}

@@ -499,6 +499,11 @@ func TestDiscardUpload(t *testing.T) {
 
 		assert.DirExists(t, other)
 	})
+	t.Run("NoStorageFolder", func(t *testing.T) {
+		conf.Options().StoragePath = t.TempDir()
+		discardUpload(s, rnd.Base36(10))
+		assert.NoDirExists(t, filepath.Join(conf.UsersStoragePath(), user.UserUID))
+	})
 }
 
 func TestProcessUserUploadStagedFiles(t *testing.T) {
@@ -581,6 +586,37 @@ func TestProcessUserUploadStagedFiles(t *testing.T) {
 		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+other.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
 		assert.Equal(t, http.StatusForbidden, result.Code)
 		assert.FileExists(t, filepath.Join(dir, "upload.jpg"))
+	})
+	t.Run("MissingBatch", func(t *testing.T) {
+		storagePath := conf.Options().StoragePath
+		t.Cleanup(func() { conf.Options().StoragePath = storagePath })
+		conf.Options().StoragePath = t.TempDir()
+		token := rnd.Base36(10)
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusNotFound, result.Code)
+		assert.Contains(t, result.Body.String(), i18n.Msg(i18n.ErrUploadFailed))
+		assert.NoDirExists(t, filepath.Join(conf.UsersStoragePath(), user.UserUID))
+	})
+	t.Run("DanglingLink", func(t *testing.T) {
+		token := rnd.Base36(10)
+		dir, err := conf.UserUploadBatchDir(user.UserUID, sess.RefID+token)
+		require.NoError(t, err)
+		require.NoError(t, fs.MkdirAll(filepath.Dir(dir)))
+		require.NoError(t, os.Symlink(filepath.Join(t.TempDir(), "missing"), dir))
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusBadRequest, result.Code)
+		_, err = os.Lstat(dir)
+		assert.True(t, os.IsNotExist(err), "rejected batch link must be discarded")
+	})
+	t.Run("BatchNotADirectory", func(t *testing.T) {
+		token := rnd.Base36(10)
+		dir, err := conf.UserUploadBatchDir(user.UserUID, sess.RefID+token)
+		require.NoError(t, err)
+		require.NoError(t, fs.MkdirAll(filepath.Dir(dir)))
+		require.NoError(t, os.WriteFile(dir, []byte("file"), fs.ModeFile))
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusBadRequest, result.Code)
+		assert.FileExists(t, dir)
 	})
 	t.Run("FacesLocked", func(t *testing.T) {
 		lock, err := mutex.AcquireFileLock(conf.FacesLockFile(), "faces migration")

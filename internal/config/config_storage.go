@@ -557,6 +557,18 @@ func (c *Config) UserUploadBatchPath(userUid, batch string) (string, error) {
 	}
 }
 
+// UserUploadBatchDir returns the folder of an upload batch like UserUploadBatchPath, but creates
+// neither it nor the user's storage folder, so it can be used to look up an existing batch.
+func (c *Config) UserUploadBatchDir(userUid, batch string) (string, error) {
+	if !rnd.IsUID(userUid, 0) {
+		return "", fmt.Errorf("invalid uid")
+	} else if name := clean.Token(batch); name == "" {
+		return "", fmt.Errorf("invalid upload batch")
+	} else {
+		return filepath.Join(c.UsersStoragePath(), userUid, fs.UploadDir, name), nil
+	}
+}
+
 // WebStoragePath returns the path used for serving web content.
 func (c *Config) WebStoragePath() string {
 	return filepath.Join(c.StoragePath(), fs.WebDir)

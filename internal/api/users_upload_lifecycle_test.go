@@ -68,7 +68,7 @@ func TestUploadRequestLifecycle(t *testing.T) {
 		{"Upload", http.MethodPost, "library: uploaded", false, false},
 		{"Process", http.MethodPut, "deleted empty folder", false, false},
 		{"UploadFolderError", http.MethodPost, "failed to create storage folder", true, false},
-		{"ProcessFolderError", http.MethodPut, "failed to create storage folder", true, false},
+		{"ProcessFolderError", http.MethodPut, "failed to access storage folder", true, false},
 		{"UploadPanic", http.MethodPost, "upload: saved", false, true},
 		{"ProcessPanic", http.MethodPut, "deleted empty folder", false, true},
 	} {
@@ -95,6 +95,13 @@ func TestUploadRequestLifecycle(t *testing.T) {
 			defer removeUploadDirsForToken(t, filepath.Join(conf.UserStoragePath(entity.Admin.UserUID), fs.UploadDir), name)
 			body := bytes.NewBufferString(`{"albums":[]}`)
 			contentType := "application/json"
+			if tc.method == http.MethodPut && !tc.folderError {
+				sess, err := entity.FindSession(rnd.SessionID(token))
+				require.NoError(t, err)
+				dir, err := conf.UserUploadBatchPath(entity.Admin.UserUID, uploadBatchName(sess, name))
+				require.NoError(t, err)
+				require.DirExists(t, dir)
+			}
 			if tc.method == http.MethodPost {
 				var err error
 				body, contentType, err = buildMultipart(map[string][]byte{"photo.jpg": NewTestJpeg(t, 160, 160)})
