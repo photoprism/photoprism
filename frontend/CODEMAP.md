@@ -107,7 +107,7 @@ Build & Tooling
 - Vite bundles the frontend (`vite.config.mjs`, plugins in `vite.plugins.mjs`); scripts in `frontend/package.json`:
   - `npm run build` (prod), `npm run build-dev` (dev), `npm run build-analyze` (bundle report), `npm run watch` (`vite build --watch`)
   - Lint/format: `npm run lint` or `make lint-js`; repo root `make lint` runs both backend (golangci-lint via `.golangci.yml`) and frontend linters
-  - Security scan: `npm run security:scan` (checks `--ignore-scripts` and forbids `v-html`)
+  - Security scan: `npm run security:scan` checks `--ignore-scripts` and runs `scripts/scan-xss.mjs` over the code files: an HTML binding (`v-html`, `:innerHTML`, `:outerHTML`) needs an `eslint-disable-next-line vue/no-v-html -- <reason>` comment on the line directly above, and a DOM HTML sink needs a `security-reviewed` note unless it clears the element with `""`; a Vitest case runs it over `src/`
 - ESLint v10 migration status and upgrade checklist are documented in `frontend/tests/README.md`.
 - Licensing: run `make notice` from the repo root to regenerate `NOTICE` files after dependency changes—never edit them manually.
 - Make targets (from repo root): `make build-js`, `make watch-js`, `make test-js`
@@ -143,7 +143,7 @@ Common How‑Tos
   - Global shortcuts go through `onShortCut(ev)` in `common/view.js`. It only forwards Escape and `ctrl`/`meta` combinations, so do not depend on it for plain character keys.
 
 Conventions & Safety
-- Avoid `v-html`; use `$util.sanitizeHtml()` (ESLint `vue/no-v-html` flags it)
+- Avoid `v-html`; where HTML must render, bind an encoded and `$util.sanitizeHtml()`-sanitized value and mark it with the reviewed note above
 - Keep big components lazy if needed; split views logically under `src/page`
 - Import through the bare module roots (`app`, `common`, `component`, `model`, `options`, `page`), which both the build and Vitest resolve, so edition overlays apply
 
