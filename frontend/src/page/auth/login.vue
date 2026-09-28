@@ -282,7 +282,7 @@ export default {
       if (rawParams) {
         try {
           messageParams = JSON.parse(rawParams);
-        } catch (e) {
+        } catch {
           messageParams = [];
         }
       }
