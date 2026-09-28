@@ -6,10 +6,12 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"golang.org/x/time/rate"
 
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/auth/acl"
@@ -18,6 +20,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/http/header"
@@ -704,5 +707,168 @@ func TestAuthorizeSuperAdmin(t *testing.T) {
 	})
 	t.Run("NilSession", func(t *testing.T) {
 		assert.False(t, AuthorizeSuperAdmin(nil))
+	})
+}
+
+// TestCountServiceKeyMiss checks which failed tokens count as a wrong service key.
+func TestCountServiceKeyMiss(t *testing.T) {
+	origKey := vision.ServiceKey
+	t.Cleanup(func() { vision.ServiceKey = origKey })
+	vision.ServiceKey = "vision-service-key-abc123"
+
+	t.Run("Success", func(t *testing.T) {
+		assert.True(t, countServiceKeyMiss("vision-service-key-abc124"))
+	})
+	t.Run("AuthToken", func(t *testing.T) {
+		assert.False(t, countServiceKeyMiss(rnd.AuthToken()))
+	})
+	t.Run("AppPassword", func(t *testing.T) {
+		assert.False(t, countServiceKeyMiss(rnd.AppPassword()))
+	})
+	t.Run("Jwt", func(t *testing.T) {
+		assert.False(t, countServiceKeyMiss("a.b.c"))
+	})
+	t.Run("JwtKey", func(t *testing.T) {
+		prev := vision.ServiceKey
+		vision.ServiceKey = "vision.service.key"
+		t.Cleanup(func() { vision.ServiceKey = prev })
+		assert.True(t, countServiceKeyMiss("a.b.c"))
+	})
+}
+
+// TestAuthAnyVisionServiceKeyLimit checks that failed service-key attempts count against the authentication rate limit.
+func TestAuthAnyVisionServiceKeyLimit(t *testing.T) {
+	conf := get.Config()
+	origAPI, origKey, origLimit, origAuthMode := vision.ServiceApi, vision.ServiceKey, limiter.Auth, conf.AuthMode()
+	t.Cleanup(func() {
+		vision.ServiceApi, vision.ServiceKey, limiter.Auth = origAPI, origKey, origLimit
+		conf.SetAuthMode(origAuthMode)
+	})
+	conf.SetAuthMode(config.AuthModePasswd)
+	vision.ServiceApi = true
+	vision.ServiceKey = "vision-service-key-abc123"
+
+	// Returns the HTTP status of a Vision API authorization with the specified token and client address.
+	authVision := func(token, remoteAddr string) int {
+		gin.SetMode(gin.TestMode)
+		c, _ := gin.CreateTestContext(httptest.NewRecorder())
+		req := httptest.NewRequest(http.MethodPost, "/api/v1/vision/labels", nil)
+		if token != "" {
+			header.SetAuthorization(req, token)
+		}
+		req.RemoteAddr = remoteAddr
+		c.Request = req
+		return AuthAny(c, acl.ResourceVision, acl.Permissions{acl.ActionUse}).HttpStatus()
+	}
+
+	// Replaces the authentication rate limit with one that allows three failures.
+	resetLimit := func() { limiter.Auth = limiter.NewLimit(rate.Every(24*time.Hour), 3) }
+
+	t.Run("WrongKey", func(t *testing.T) {
+		resetLimit()
+		for range 3 {
+			assert.False(t, limiter.Auth.Reject("198.51.100.31"))
+			assert.Equal(t, http.StatusUnauthorized, authVision("vision-service-key-abc124", "198.51.100.31:1234"))
+		}
+		assert.True(t, limiter.Auth.Reject("198.51.100.31"))
+		assert.Equal(t, http.StatusUnauthorized, authVision(vision.ServiceKey, "198.51.100.31:1234"), "refused over the limit")
+		assert.Equal(t, http.StatusUnauthorized, authVision("vision-service-key-abc124", "198.51.100.31:1234"))
+		assert.Greater(t, limiter.Auth.IP("198.51.100.31").Tokens(), -0.5, "not counted over the limit")
+		assert.False(t, limiter.Auth.Reject("198.51.100.32"), "other address")
+		assert.Equal(t, http.StatusOK, authVision(vision.ServiceKey, "198.51.100.32:1234"))
+	})
+	t.Run("RightKey", func(t *testing.T) {
+		resetLimit()
+		for range 5 {
+			assert.Equal(t, http.StatusOK, authVision(vision.ServiceKey, "198.51.100.33:1234"))
+		}
+		assert.False(t, limiter.Auth.Reject("198.51.100.33"))
+	})
+	t.Run("TokenFormat", func(t *testing.T) {
+		// A wrong key that has the format of an access token is counted once.
+		resetLimit()
+		for range 2 {
+			assert.Equal(t, http.StatusUnauthorized, authVision(rnd.AuthToken(), "198.51.100.34:1234"))
+		}
+		assert.False(t, limiter.Auth.Reject("198.51.100.34"))
+		assert.Equal(t, http.StatusUnauthorized, authVision(rnd.AuthToken(), "198.51.100.34:1234"))
+		assert.True(t, limiter.Auth.Reject("198.51.100.34"))
+	})
+	t.Run("AppPasswordFormat", func(t *testing.T) {
+		// A wrong key that has the format of an app password is counted once.
+		resetLimit()
+		for range 2 {
+			assert.Equal(t, http.StatusUnauthorized, authVision(rnd.AppPassword(), "198.51.100.38:1234"))
+		}
+		assert.False(t, limiter.Auth.Reject("198.51.100.38"))
+		assert.Equal(t, http.StatusUnauthorized, authVision(rnd.AppPassword(), "198.51.100.38:1234"))
+		assert.True(t, limiter.Auth.Reject("198.51.100.38"))
+	})
+	t.Run("JwtFormat", func(t *testing.T) {
+		// A token with the format of a JWT that is refused is not counted, unless the key has that format too.
+		resetLimit()
+		for range 5 {
+			assert.Equal(t, http.StatusUnauthorized, authVision("eyJhbGciOiJFZERTQSJ9.eyJzdWIiOiJ0ZXN0In0.c2ln", "198.51.100.39:1234"))
+		}
+		assert.False(t, limiter.Auth.Reject("198.51.100.39"))
+
+		prev := vision.ServiceKey
+		vision.ServiceKey = "vision.service.key"
+		t.Cleanup(func() { vision.ServiceKey = prev })
+		for range 3 {
+			assert.Equal(t, http.StatusUnauthorized, authVision("vision.service.kez", "198.51.100.40:1234"))
+		}
+		assert.True(t, limiter.Auth.Reject("198.51.100.40"))
+	})
+	t.Run("SessionRefused", func(t *testing.T) {
+		// A valid session without permission to use the Vision API is refused, but not counted.
+		resetLimit()
+		sess, err := entity.AddClientSession("vision-limit-metrics", conf.SessionMaxAge(), "metrics", authn.GrantClientCredentials, nil)
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = sess.Delete() })
+		for range 5 {
+			assert.Equal(t, http.StatusForbidden, authVision(sess.AuthToken(), "198.51.100.41:1234"))
+		}
+		assert.False(t, limiter.Auth.Reject("198.51.100.41"))
+	})
+	t.Run("OtherResource", func(t *testing.T) {
+		resetLimit()
+		for range 5 {
+			gin.SetMode(gin.TestMode)
+			c, _ := gin.CreateTestContext(httptest.NewRecorder())
+			req := httptest.NewRequest(http.MethodGet, "/api/v1/photos", nil)
+			header.SetAuthorization(req, "vision-service-key-abc124")
+			req.RemoteAddr = "198.51.100.42:1234"
+			c.Request = req
+			assert.Equal(t, http.StatusUnauthorized, AuthAny(c, acl.ResourcePhotos, acl.Permissions{acl.ActionView}).HttpStatus())
+		}
+		assert.False(t, limiter.Auth.Reject("198.51.100.42"))
+	})
+	t.Run("Session", func(t *testing.T) {
+		resetLimit()
+		sess, err := entity.AddClientSession("vision-limit-client", conf.SessionMaxAge(), "vision", authn.GrantClientCredentials, nil)
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = sess.Delete() })
+		for range 5 {
+			assert.NotEqual(t, http.StatusUnauthorized, authVision(sess.AuthToken(), "198.51.100.35:1234"))
+		}
+		assert.False(t, limiter.Auth.Reject("198.51.100.35"))
+	})
+	t.Run("NoToken", func(t *testing.T) {
+		resetLimit()
+		for range 5 {
+			assert.Equal(t, http.StatusUnauthorized, authVision("", "198.51.100.36:1234"))
+		}
+		assert.False(t, limiter.Auth.Reject("198.51.100.36"))
+	})
+	t.Run("ServiceApiOff", func(t *testing.T) {
+		// An instance that does not serve the Vision API does not compare the key.
+		resetLimit()
+		vision.ServiceApi = false
+		t.Cleanup(func() { vision.ServiceApi = true })
+		for range 5 {
+			assert.Equal(t, http.StatusUnauthorized, authVision(vision.ServiceKey, "198.51.100.37:1234"))
+		}
+		assert.False(t, limiter.Auth.Reject("198.51.100.37"))
 	})
 }

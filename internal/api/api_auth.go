@@ -2,6 +2,7 @@ package api
 
 import (
 	"crypto/subtle"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 
@@ -10,10 +11,12 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/log/status"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // Auth checks if the user is authorized to access a resource with the given permission
@@ -37,8 +40,12 @@ func AuthAny(c *gin.Context, resource acl.Resource, perms acl.Permissions) (s *e
 	// Disable response caching.
 	c.Header(header.CacheControl, header.CacheControlNoStore)
 
-	// Allow requests based on an access token for specific resources.
-	if resource == acl.ResourceVision && perms.Contains(acl.ActionUse) && vision.ServiceApi && vision.ServiceKey != "" && subtle.ConstantTimeCompare([]byte(vision.ServiceKey), []byte(authToken)) == 1 {
+	// Allow requests based on an access token for specific resources. A failed attempt counts
+	// against the authentication rate limit, see countServiceKeyMiss.
+	serviceKey := resource == acl.ResourceVision && perms.Contains(acl.ActionUse) && vision.ServiceApi && vision.ServiceKey != "" && authToken != ""
+	serviceKeyLimited := serviceKey && limiter.Auth.Reject(clientIp)
+
+	if serviceKey && !serviceKeyLimited && subtle.ConstantTimeCompare([]byte(vision.ServiceKey), []byte(authToken)) == 1 {
 		s = entity.NewSessionFromToken(c, authToken, acl.ResourceVision.String(), "service-key")
 		event.AuditInfo([]string{clientIp, "%s", "%s %s as %s", status.Granted}, s.RefID, perms.First(), string(resource), s.GetClientRole().String())
 		return s
@@ -49,6 +56,10 @@ func AuthAny(c *gin.Context, resource acl.Resource, perms acl.Permissions) (s *e
 		if s = authAnyJWT(c, clientIp, authToken, resource, perms); s != nil {
 			event.AuditInfo([]string{clientIp, "session %s", "%s %s as %s", status.Granted}, s.RefID, perms.First(), string(resource), s.GetClientRole().String())
 			return s
+		}
+
+		if serviceKey && !serviceKeyLimited && countServiceKeyMiss(authToken) {
+			limiter.Auth.Reserve(clientIp)
 		}
 
 		// Log routine anonymous requests at debug level; warn only on a rejected token.
@@ -65,6 +76,17 @@ func AuthAny(c *gin.Context, resource acl.Resource, perms acl.Permissions) (s *e
 	s.SetClientIP(clientIp)
 
 	return authorizeSession(clientIp, s, resource, perms)
+}
+
+// countServiceKeyMiss reports whether a failed authentication with the token counts as a wrong service
+// key. Session() counts session tokens and app passwords itself, and a refused JWT is not counted unless
+// the key has the same shape, since it cannot match otherwise.
+func countServiceKeyMiss(token string) bool {
+	if rnd.IsAuthAny(token) {
+		return false
+	}
+
+	return strings.Count(token, ".") != 2 || strings.Count(vision.ServiceKey, ".") == 2
 }
 
 // authorizeSession applies the credential, scope, owner, and ACL checks to a resolved session, and returns
