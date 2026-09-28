@@ -14,9 +14,7 @@ import (
 )
 
 func TestUsersResetCommand(t *testing.T) {
-	c := resetConfigAndOpenDB()
-	// reset as this test removes all users
-	defer resetConfigAndDB()
+	c := resetConfigAndOpenDB(t)
 
 	t.Run("NotConfirmed", func(t *testing.T) {
 		t.Setenv("PHOTOPRISM_CLI", "")
@@ -45,7 +43,6 @@ func TestUsersResetCommand(t *testing.T) {
 		assert.Contains(t, output1, "bob")
 	})
 	t.Run("Reset", func(t *testing.T) {
-		// c := resetConfigAndDB()
 		count := int64(0)
 		if err := c.Db().Model(&entity.User{}).Count(&count).Error; err != nil {
 			assert.NoError(t, err)
@@ -124,8 +121,7 @@ func countResetTestPasswords(t *testing.T, db *gorm.DB) (users, clients int64) {
 
 func TestDeleteUserPasswords(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		c := resetConfigAndOpenDB()
-		t.Cleanup(func() { resetConfigAndDB() })
+		c := resetConfigAndOpenDB(t)
 
 		// Rolled back, so the fixtures stay in place for the tests that follow.
 		tx := c.Db().Begin()
@@ -155,8 +151,7 @@ func TestDeleteUserPasswords(t *testing.T) {
 
 func TestLogDeleteUserPasswords(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		c := resetConfigAndOpenDB()
-		t.Cleanup(func() { resetConfigAndDB() })
+		c := resetConfigAndOpenDB(t)
 
 		tx := c.Db().Begin()
 		require.NoError(t, tx.Error)
@@ -176,8 +171,7 @@ func TestLogDeleteUserPasswords(t *testing.T) {
 
 func TestLogDeleteUserClients(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		c := resetConfigAndOpenDB()
-		t.Cleanup(func() { resetConfigAndDB() })
+		c := resetConfigAndOpenDB(t)
 
 		tx := c.Db().Begin()
 		require.NoError(t, tx.Error)
@@ -197,8 +191,7 @@ func TestLogDeleteUserClients(t *testing.T) {
 
 func TestDeleteUserClients(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		c := resetConfigAndOpenDB()
-		t.Cleanup(func() { resetConfigAndDB() })
+		c := resetConfigAndOpenDB(t)
 
 		// Rolled back, so the client fixtures stay in place for the tests that follow.
 		tx := c.Db().Begin()

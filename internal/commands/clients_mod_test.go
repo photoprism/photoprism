@@ -9,7 +9,15 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
+// TestClientsModCommand checks authentication changes with isolated client and session fixtures.
 func TestClientsModCommand(t *testing.T) {
+	previous := requireTestDb(t)
+	fixture := entity.SessionFixtures.Get("client_analytics")
+	t.Cleanup(func() {
+		previous.RegisterDb()
+		require.NoError(t, previous.Db().Where("id = ?", fixture.ID).First(&entity.Session{}).Error)
+	})
+	resetConfigAndOpenDB(t)
 	t.Run("ModNotExistingClient", func(t *testing.T) {
 		output, err := RunWithTestContext(ClientsModCommand, []string{"mod", "--name=New", "--scope=test", "cs5cpu17n6gjxxxx"})
 

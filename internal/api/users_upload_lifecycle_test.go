@@ -132,6 +132,9 @@ func TestUploadRequestLifecycle(t *testing.T) {
 
 // TestUploadProcessingDuringIndexing imports a staged image while an unrelated worker is active.
 func TestUploadProcessingDuringIndexing(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
 	app, router, conf := NewApiTest()
 	options, mode, flag := *conf.Options(), conf.AuthMode(), mutex.UserUploads.Load()
 	t.Cleanup(func() { *conf.Options() = options; conf.SetAuthMode(mode); mutex.UserUploads.Store(flag) })

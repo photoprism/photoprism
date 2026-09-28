@@ -74,8 +74,8 @@ apply to files and directories before extraction; other hidden-directory handlin
 
 Staged batches are eligible for cleanup once the batch directory and every entry in it
 have been unchanged for more than 24 hours, including batches awaiting a processing retry.
-The periodic expiry worker skips active upload requests and rechecks candidates before
-removal. Uploads and their processing remain independent of indexing and other imports.
+Upload-batch removal is deferred while upload or processing requests are active;
+candidates are rechecked before removal. Uploads and their processing remain independent of indexing and other imports.
 Files directly in the upload root, including avatar staging, are not batch cleanup targets.
 
 Processing a batch adds its files to at most 100 requested albums: titles resolve among the user's
