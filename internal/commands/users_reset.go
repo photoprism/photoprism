@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -109,7 +109,7 @@ func usersResetAction(ctx *cli.Context) error {
 func DeleteUserPasswords(db *gorm.DB) (int64, error) {
 	if db == nil {
 		return 0, fmt.Errorf("database not connected")
-	} else if !db.HasTable(entity.User{}) || !db.HasTable(entity.Password{}) {
+	} else if !db.Migrator().HasTable(entity.User{}) || !db.Migrator().HasTable(entity.Password{}) {
 		return 0, nil
 	}
 
@@ -137,7 +137,7 @@ func LogDeleteUserPasswords(db *gorm.DB) error {
 func DeleteUserClients(db *gorm.DB) (int64, error) {
 	if db == nil {
 		return 0, fmt.Errorf("database not connected")
-	} else if !db.HasTable(entity.Client{}) {
+	} else if !db.Migrator().HasTable(entity.Client{}) {
 		return 0, nil
 	}
 

@@ -105,11 +105,11 @@ func TestPurgeUnusedCameras(t *testing.T) {
 	}
 
 	// Orphans are removed unless they have been added manually.
-	var count int
+	var count int64
 	assert.NoError(t, UnscopedDb().Model(&entity.Camera{}).Where("id = ?", added.ID).Count(&count).Error)
-	assert.Equal(t, 1, count)
+	assert.EqualValues(t, 1, count)
 	assert.NoError(t, UnscopedDb().Model(&entity.Camera{}).Where("id = ?", orphan.ID).Count(&count).Error)
-	assert.Equal(t, 0, count)
+	assert.EqualValues(t, 0, count)
 }
 
 func TestPurgeUnusedLenses(t *testing.T) {
@@ -128,14 +128,15 @@ func TestPurgeUnusedLenses(t *testing.T) {
 	}
 
 	// Orphans are removed unless they have been added manually.
-	var count int
+	var count int64
 	assert.NoError(t, UnscopedDb().Model(&entity.Lens{}).Where("id = ?", added.ID).Count(&count).Error)
-	assert.Equal(t, 1, count)
+	assert.EqualValues(t, 1, count)
 	assert.NoError(t, UnscopedDb().Model(&entity.Lens{}).Where("id = ?", orphan.ID).Count(&count).Error)
-	assert.Equal(t, 0, count)
+	assert.EqualValues(t, 0, count)
 }
 
 func TestResetMissingCameras(t *testing.T) {
+	t.Skip("Postgres Branch does NOT support invalid camera_id.")
 	t.Run("Success", func(t *testing.T) {
 		photo := entity.Photo{}
 		assert.NoError(t, UnscopedDb().Order("id").First(&photo).Error)
@@ -183,6 +184,7 @@ func TestResetMissingCameras(t *testing.T) {
 }
 
 func TestResetMissingLenses(t *testing.T) {
+	t.Skip("Postgres branch does not support invalid lens_id.")
 	t.Run("Success", func(t *testing.T) {
 		photo := entity.Photo{}
 		assert.NoError(t, UnscopedDb().Order("id").First(&photo).Error)

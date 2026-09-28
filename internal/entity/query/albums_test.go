@@ -42,14 +42,14 @@ func TestAlbumHasThumb(t *testing.T) {
 	setFileError := func(t *testing.T, fileHash string, value any) {
 		var current []sql.NullString
 
-		if err := Db().Model(entity.File{}).Where("file_hash = ?", fileHash).Limit(1).Pluck("file_error", &current).Error; err != nil {
+		if err := Db().Model(&entity.File{}).Where("file_hash = ?", fileHash).Limit(1).Pluck("file_error", &current).Error; err != nil {
 			t.Fatal(err)
 		}
 
 		require.Len(t, current, 1)
 
 		setValue := func(v any) error {
-			return Db().Model(entity.File{}).Where("file_hash = ?", fileHash).
+			return Db().Model(&entity.File{}).Where("file_hash = ?", fileHash).
 				Updates(entity.Values{"file_error": v}).Error
 		}
 
@@ -85,7 +85,7 @@ func TestAlbumHasThumb(t *testing.T) {
 		setFileError(t, "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818", nil)
 
 		var stored []sql.NullString
-		require.NoError(t, Db().Model(entity.File{}).Where("file_hash = ?", "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818").
+		require.NoError(t, Db().Model(&entity.File{}).Where("file_hash = ?", "2cad9168fa6acc5c5c2965ddf6ec465ca42fd818").
 			Limit(1).Pluck("file_error", &stored).Error)
 		require.Len(t, stored, 1)
 		require.False(t, stored[0].Valid, "the column must be NULL for this case to mean anything")

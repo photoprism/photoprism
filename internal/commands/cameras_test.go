@@ -106,9 +106,9 @@ func TestCamerasCommand(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Contains(t, output, slug)
 
-		var count int
+		var count int64
 		assert.NoError(t, entity.Db().Model(&entity.Camera{}).Where("camera_slug = ?", slug).Count(&count).Error)
-		assert.Equal(t, 1, count)
+		assert.EqualValues(t, 1, count)
 	})
 	t.Run("AddExisting", func(t *testing.T) {
 		t.Cleanup(func() {
@@ -121,7 +121,7 @@ func TestCamerasCommand(t *testing.T) {
 		assert.NoError(t, entity.Db().First(&renamed, "id = ?", 1000002).Error)
 		assert.NoError(t, renamed.UpdateMakeModel("Minolta", "XD-7"))
 
-		var before int
+		var before int64
 		assert.NoError(t, entity.Db().Model(&entity.Camera{}).Count(&before).Error)
 
 		output, err := RunWithTestContext(CamerasCommand, []string{"cameras", "add", "--make=Minolta", "--model=XD-7"})
@@ -129,7 +129,7 @@ func TestCamerasCommand(t *testing.T) {
 		assert.Contains(t, output, "1000002")
 		assert.Contains(t, output, "Minolta XD-7")
 
-		var after int
+		var after int64
 		assert.NoError(t, entity.Db().Model(&entity.Camera{}).Count(&after).Error)
 		assert.Equal(t, before, after)
 	})
@@ -215,7 +215,7 @@ func TestCamerasRemoveCommand(t *testing.T) {
 	}
 
 	exists := func(t *testing.T, id uint) bool {
-		var count int
+		var count int64
 		assert.NoError(t, entity.UnscopedDb().Model(&entity.Camera{}).Where("id = ?", id).Count(&count).Error)
 		return count > 0
 	}
@@ -304,7 +304,7 @@ func TestCamerasRemoveCommandByMakeModel(t *testing.T) {
 
 func TestCamerasRemoveCommandSelection(t *testing.T) {
 	exists := func(t *testing.T, id uint) bool {
-		var count int
+		var count int64
 		assert.NoError(t, entity.UnscopedDb().Model(&entity.Camera{}).Where("id = ?", id).Count(&count).Error)
 		return count > 0
 	}

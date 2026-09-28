@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/jinzhu/gorm"
 	"github.com/urfave/cli/v2"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity/query"
@@ -36,7 +36,7 @@ func authRemoveAction(ctx *cli.Context) error {
 		switch {
 		case errors.Is(err, query.ErrInvalidSessionID):
 			return cli.Exit(err, 2)
-		case gorm.IsRecordNotFoundError(err):
+		case errors.Is(err, gorm.ErrRecordNotFound):
 			return cli.Exit(errors.New("session not found"), 3)
 		case err != nil:
 			return cli.Exit(err, 1)

@@ -11,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt/report"
 
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 )
 
 func TestNewClient(t *testing.T) {
@@ -321,20 +322,20 @@ func TestClient_Delete(t *testing.T) {
 
 func TestClient_Deleted(t *testing.T) {
 	var ptr *Client
-	deletedAt := time.Now().UTC()
-	zero := time.Time{}
+	deletedAt := gorm.DeletedAt{Valid: true, Time: time.Now().UTC()}
+	zero := gorm.DeletedAt{}
 	assert.False(t, ClientFixtures.Pointer("alice").Deleted())
-	assert.False(t, (&Client{DeletedAt: &zero}).Deleted())
-	assert.True(t, (&Client{DeletedAt: &deletedAt}).Deleted())
+	assert.False(t, (&Client{DeletedAt: zero}).Deleted())
+	assert.True(t, (&Client{DeletedAt: deletedAt}).Deleted())
 	assert.True(t, ptr.Deleted())
 }
 
 func TestClient_Disabled(t *testing.T) {
 	var ptr *Client
-	deletedAt := time.Now().UTC()
+	deletedAt := gorm.DeletedAt{Valid: true, Time: time.Now().UTC()}
 	assert.False(t, ClientFixtures.Pointer("alice").Disabled())
 	assert.True(t, (&Client{AuthEnabled: false}).Disabled())
-	assert.True(t, (&Client{AuthEnabled: true, DeletedAt: &deletedAt}).Disabled())
+	assert.True(t, (&Client{AuthEnabled: true, DeletedAt: deletedAt}).Disabled())
 	assert.True(t, ptr.Disabled())
 }
 
@@ -862,8 +863,8 @@ func TestClient_AclRole_Resolution(t *testing.T) {
 		assert.Equal(t, acl.RoleClient, m.AclRole())
 	})
 	t.Run("DeletedIsNone", func(t *testing.T) {
-		deletedAt := time.Now().UTC()
-		m := &Client{ClientRole: "client", DeletedAt: &deletedAt}
+		deletedAt := gorm.DeletedAt{Valid: true, Time: time.Now().UTC()}
+		m := &Client{ClientRole: "client", DeletedAt: deletedAt}
 		assert.Equal(t, acl.RoleNone, m.AclRole())
 		assert.False(t, m.HasRole(acl.RoleClient))
 	})
@@ -969,14 +970,14 @@ func TestClient_Validate(t *testing.T) {
 		}
 	})
 	t.Run("Deleted", func(t *testing.T) {
-		deletedAt := time.Now().UTC()
+		deletedAt := gorm.DeletedAt{Valid: true, Time: time.Now().UTC()}
 		m := Client{
 			ClientName:   "test",
 			ClientType:   "test",
 			AuthProvider: authn.ProviderClient.String(),
 			AuthMethod:   "basic",
 			AuthScope:    "all",
-			DeletedAt:    &deletedAt,
+			DeletedAt:    deletedAt,
 		}
 
 		err := m.Validate()
@@ -1334,9 +1335,9 @@ func TestClient_HasInactiveUser(t *testing.T) {
 		assert.True(t, m.HasInactiveUser())
 	})
 	t.Run("DeletedUser", func(t *testing.T) {
-		deletedAt := time.Now().Add(-time.Minute)
+		deletedAt := gorm.DeletedAt{Time: time.Now().Add(-time.Minute), Valid: true}
 		u := *UserFixtures.Pointer("bob")
-		u.DeletedAt = &deletedAt
+		u.DeletedAt = deletedAt
 		m := NewClient().SetUser(&u)
 		assert.True(t, m.HasInactiveUser())
 	})

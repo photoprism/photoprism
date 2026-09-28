@@ -24,7 +24,7 @@ func newContextRequest(t *testing.T, remoteAddr, userAgent string) *gin.Context 
 }
 
 // countSessions returns how many rows the sessions table holds for the given id.
-func countSessions(t *testing.T, id string) (n int) {
+func countSessions(t *testing.T, id string) (n int64) {
 	t.Helper()
 	require.NoError(t, UnscopedDb().Model(&Session{}).Where("id = ?", id).Count(&n).Error)
 	return n
@@ -34,7 +34,7 @@ func countSessions(t *testing.T, id string) (n int) {
 func removeSessionRow(t *testing.T, id string) {
 	t.Helper()
 	require.NoError(t, UnscopedDb().Exec("DELETE FROM auth_sessions WHERE id = ?", id).Error)
-	require.Equal(t, 0, countSessions(t, id))
+	require.EqualValues(t, 0, countSessions(t, id))
 }
 
 func TestSession_UpdateContext(t *testing.T) {
@@ -51,7 +51,7 @@ func TestSession_UpdateContext(t *testing.T) {
 		err = cached.UpdateContext(newContextRequest(t, "10.1.2.3:1234", "agent-b"))
 
 		assert.ErrorIs(t, err, ErrSessionNotFound)
-		assert.Equal(t, 0, countSessions(t, s.ID), "the session row must stay deleted")
+		assert.EqualValues(t, 0, countSessions(t, s.ID), "the session row must stay deleted")
 
 		_, err = FindSession(s.ID)
 		assert.Error(t, err, "the session must no longer be cached")
@@ -92,7 +92,7 @@ func TestSession_saveContext(t *testing.T) {
 		m := NewSession(3600, 0)
 		m.UserAgent = "agent-e"
 		assert.ErrorIs(t, m.saveContext(), ErrSessionNotFound)
-		assert.Equal(t, 0, countSessions(t, m.ID))
+		assert.EqualValues(t, 0, countSessions(t, m.ID))
 	})
 	t.Run("SameValues", func(t *testing.T) {
 		s := NewSession(3600, 0)
@@ -150,7 +150,7 @@ func TestSession_Save_Stored(t *testing.T) {
 
 		s.SetUserAgent("agent-f")
 		assert.ErrorIs(t, s.Save(), ErrSessionNotFound)
-		assert.Equal(t, 0, countSessions(t, s.ID), "the session row must stay deleted")
+		assert.EqualValues(t, 0, countSessions(t, s.ID), "the session row must stay deleted")
 	})
 	t.Run("New", func(t *testing.T) {
 		s := NewSession(3600, 0)
@@ -158,7 +158,7 @@ func TestSession_Save_Stored(t *testing.T) {
 		require.NoError(t, s.Save())
 		t.Cleanup(func() { _ = s.Delete() })
 
-		assert.Equal(t, 1, countSessions(t, s.ID))
+		assert.EqualValues(t, 1, countSessions(t, s.ID))
 	})
 	t.Run("ClearedField", func(t *testing.T) {
 		s := NewSession(3600, 0)
@@ -216,7 +216,7 @@ func TestSession_Save_Stored(t *testing.T) {
 		t.Cleanup(func() { _ = s.Delete() })
 
 		assert.NotEqual(t, oldID, s.ID)
-		assert.Equal(t, 0, countSessions(t, oldID))
-		assert.Equal(t, 1, countSessions(t, s.ID))
+		assert.EqualValues(t, 0, countSessions(t, oldID))
+		assert.EqualValues(t, 1, countSessions(t, s.ID))
 	})
 }

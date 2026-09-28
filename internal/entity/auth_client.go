@@ -58,7 +58,7 @@ type Client struct {
 	LastActive   int64           `json:"LastActive" yaml:"LastActive,omitempty"`
 	CreatedAt    time.Time       `json:"CreatedAt" yaml:"-"`
 	UpdatedAt    time.Time       `json:"UpdatedAt" yaml:"-"`
-	DeletedAt    *time.Time      `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
+	DeletedAt    gorm.DeletedAt  `gorm:"index" json:"DeletedAt,omitempty" yaml:"-"`
 }
 
 // TableName returns the entity table name.
@@ -408,9 +408,9 @@ func (m *Client) Delete() (err error) {
 
 	// Carry the mark onto the in-memory record, which the driver does not do, so a caller
 	// that keeps using it sees the same state as one that reads the row again.
-	if m.DeletedAt == nil {
-		deletedAt := UTC()
-		m.DeletedAt = &deletedAt
+	if !m.DeletedAt.Valid {
+		deletedAt := gorm.DeletedAt{Valid: true, Time: UTC()}
+		m.DeletedAt = deletedAt
 	}
 
 	return nil
@@ -434,7 +434,7 @@ func (m *Client) Restore() error {
 		return err
 	}
 
-	m.DeletedAt = nil
+	m.DeletedAt = gorm.DeletedAt{}
 
 	return nil
 }
@@ -543,11 +543,9 @@ func (m *Client) DeleteSessions() (deleted int, err error) {
 func (m *Client) Deleted() bool {
 	if m == nil {
 		return true
-	} else if m.DeletedAt == nil {
-		return false
 	}
 
-	return !m.DeletedAt.IsZero()
+	return m.DeletedAt.Valid
 }
 
 // Disabled checks if the client has been deleted or its authentication is turned off.

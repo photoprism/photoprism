@@ -39,5 +39,5 @@ func TestFindSessionByRefID_Stored(t *testing.T) {
 
 	require.NoError(t, UnscopedDb().Exec("DELETE FROM auth_sessions WHERE id = ?", s.ID).Error)
 	assert.ErrorIs(t, found.Save(), ErrSessionNotFound)
-	assert.Equal(t, 0, countSessions(t, s.ID))
+	assert.EqualValues(t, 0, countSessions(t, s.ID))
 }

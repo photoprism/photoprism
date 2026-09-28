@@ -872,7 +872,7 @@ func (m *Session) VerifyStored() error {
 		return nil
 	}
 
-	var found int
+	var found int64
 
 	if err := UnscopedDb().Model(&Session{}).Where("id = ?", m.ID).Count(&found).Error; err != nil {
 		return err

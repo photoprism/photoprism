@@ -7,14 +7,15 @@ import (
 	"strings"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/jinzhu/gorm"
 	"github.com/urfave/cli/v2"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/convert"
 	"github.com/photoprism/photoprism/pkg/txt/report"
 )
 
@@ -253,7 +254,8 @@ func camerasRemoveAction(ctx *cli.Context) error {
 			return cli.Exit("unknown camera cannot be deleted", 2)
 		}
 
-		count, err := camera.PhotoCount()
+		count64, err := camera.PhotoCount()
+		count := convert.SafeInt64toint(count64)
 
 		if err != nil {
 			return cli.Exit(err, 1)

@@ -397,7 +397,7 @@ func SetTestCoverFile(t *testing.T, model interface{}, where, uid, fileHash stri
 	}
 
 	setCoverFile := func(hash string) error {
-		err := entity.UnscopedDb().Model(model).Where(where, uid).Update("thumb", hash).Error
+		err := entity.UnscopedDb().Model(&model).Where(where, uid).Update("thumb", hash).Error
 
 		// Updating the row directly bypasses the hooks and handlers that clear the caches.
 		entity.FlushAlbumCache()

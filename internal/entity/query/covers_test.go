@@ -230,7 +230,7 @@ func coverThumb(t *testing.T, subjUID string) string {
 	var nulls int64
 
 	require.NoError(t, UnscopedDb().Where("subj_uid = ?", subjUID).First(&subj).Error)
-	require.NoError(t, UnscopedDb().Model(entity.Subject{}).Where("subj_uid = ? AND thumb IS NULL", subjUID).Count(&nulls).Error)
+	require.NoError(t, UnscopedDb().Model(&entity.Subject{}).Where("subj_uid = ? AND thumb IS NULL", subjUID).Count(&nulls).Error)
 	require.Zero(t, nulls, "cover must not be null")
 
 	return subj.Thumb

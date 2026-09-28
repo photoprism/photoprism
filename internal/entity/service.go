@@ -211,8 +211,10 @@ func (m *Service) SaveForm(form form.Service) error {
 	m.AccName = txt.Clip(m.AccName, txt.ClipName)
 	m.AccOwner = txt.Clip(m.AccOwner, txt.ClipName)
 
-	// GORM v1 inserts the column default in place of false, so a new record is corrected after the insert.
-	newRecord, syncYaml := db.NewRecord(m), m.SyncYaml
+	// GORM inserts the column default in place of false, so a new record is corrected after the insert.
+	newRecord, err := NewRecord(m)
+	Log("service", "new record", err)
+	syncYaml := m.SyncYaml
 
 	// Save changes.
 	if err := db.Save(m).Error; err != nil {

@@ -66,9 +66,9 @@ func TestClientsResetCommand(t *testing.T) {
 
 		t.Cleanup(func() { entity.UnscopedDb().Delete(&entity.Session{}, "id = ?", orphanID) })
 
-		assert.Equal(t, 1, countSessionRows(t, clientSessID))
-		assert.Equal(t, 1, countSessionRows(t, appPasswordID))
-		assert.Equal(t, 1, countSessionRows(t, orphanID))
+		assert.EqualValues(t, 1, countSessionRows(t, clientSessID))
+		assert.EqualValues(t, 1, countSessionRows(t, appPasswordID))
+		assert.EqualValues(t, 1, countSessionRows(t, orphanID))
 
 		// Run command with test context.
 		output, err := RunWithTestContext(ClientsResetCommand, []string{"reset"})
@@ -94,9 +94,9 @@ func TestClientsResetCommand(t *testing.T) {
 		// The access tokens issued to clients are deleted with them, while app passwords, which
 		// belong to user accounts, are kept. Counted in the table, as FindSession may answer from
 		// the session cache.
-		assert.Equal(t, 0, countSessionRows(t, clientSessID))
-		assert.Equal(t, 1, countSessionRows(t, appPasswordID))
-		assert.Equal(t, 0, countSessionRows(t, orphanID))
+		assert.EqualValues(t, 0, countSessionRows(t, clientSessID))
+		assert.EqualValues(t, 1, countSessionRows(t, appPasswordID))
+		assert.EqualValues(t, 0, countSessionRows(t, orphanID))
 
 		entity.CreateClientFixtures()
 		entity.CreateSessionFixtures()
@@ -114,7 +114,7 @@ func TestClientsResetCommand(t *testing.T) {
 }
 
 // countSessionRows returns the number of stored sessions with the specified ID.
-func countSessionRows(t *testing.T, id string) (n int) {
+func countSessionRows(t *testing.T, id string) (n int64) {
 	t.Helper()
 
 	if err := entity.Db().Model(&entity.Session{}).Where("id = ?", id).Count(&n).Error; err != nil {

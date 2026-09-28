@@ -96,7 +96,7 @@ func TestAuthSession(t *testing.T) {
 		assert.Nil(t, authSess)
 		assert.Nil(t, authUser)
 		assert.ErrorIs(t, authErr, authn.ErrInvalidPassword)
-		assert.Equal(t, 0, countSessions(t, s.ID), "the session row must stay deleted")
+		assert.EqualValues(t, 0, countSessions(t, s.ID), "the session row must stay deleted")
 	})
 	t.Run("RemovedRowSameContext", func(t *testing.T) {
 		token := rnd.AppPassword()

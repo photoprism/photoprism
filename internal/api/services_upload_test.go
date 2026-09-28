@@ -174,9 +174,9 @@ func TestUploadToServiceAliases(t *testing.T) {
 			result := PerformRequestWithBody(app, http.MethodPost, uri, body)
 			require.Equal(t, http.StatusBadRequest, result.Code, folder)
 		}
-		var count int
+		var count int64
 		require.NoError(t, entity.Db().Model(&entity.FileShare{}).Where("service_id = ?", account.ID).Count(&count).Error)
-		assert.Equal(t, 0, count)
+		assert.EqualValues(t, 0, count)
 	})
 	t.Run("RootFolder", func(t *testing.T) {
 		names := uploadAliases(t, "Alias Control Root", "")
@@ -236,9 +236,9 @@ func TestUploadToServiceReservedPaths(t *testing.T) {
 	result = PerformRequestWithBody(app, http.MethodPost, uri, `{"selection":{"photos":["`+photo.PhotoUID+`"]},"folder":".ssh"}`)
 	require.Equal(t, http.StatusBadRequest, result.Code)
 	assert.Equal(t, int64(0), gjson.GetBytes(result.Body.Bytes(), "#").Int())
-	var count int
+	var count int64
 	require.NoError(t, entity.Db().Model(&entity.FileShare{}).Where("service_id = ?", account.ID).Count(&count).Error)
-	assert.Equal(t, 2, count)
+	assert.EqualValues(t, 2, count)
 }
 
 func TestUploadToServiceYaml(t *testing.T) {

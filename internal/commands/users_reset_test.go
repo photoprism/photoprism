@@ -6,9 +6,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/dsn"
@@ -125,7 +125,7 @@ func countResetTestPasswords(t *testing.T, db *gorm.DB) (users, clients int64) {
 func TestDeleteUserPasswords(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		c := resetConfigAndOpenDB()
-		t.Cleanup(func() { resetConfigAndDB() })
+		t.Cleanup(func() { resetConfigAndDB(t) })
 
 		// Rolled back, so the fixtures stay in place for the tests that follow.
 		tx := c.Db().Begin()
@@ -156,7 +156,7 @@ func TestDeleteUserPasswords(t *testing.T) {
 func TestLogDeleteUserPasswords(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		c := resetConfigAndOpenDB()
-		t.Cleanup(func() { resetConfigAndDB() })
+		t.Cleanup(func() { resetConfigAndDB(t) })
 
 		tx := c.Db().Begin()
 		require.NoError(t, tx.Error)
@@ -177,7 +177,7 @@ func TestLogDeleteUserPasswords(t *testing.T) {
 func TestLogDeleteUserClients(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		c := resetConfigAndOpenDB()
-		t.Cleanup(func() { resetConfigAndDB() })
+		t.Cleanup(func() { resetConfigAndDB(t) })
 
 		tx := c.Db().Begin()
 		require.NoError(t, tx.Error)
@@ -198,7 +198,7 @@ func TestLogDeleteUserClients(t *testing.T) {
 func TestDeleteUserClients(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		c := resetConfigAndOpenDB()
-		t.Cleanup(func() { resetConfigAndDB() })
+		t.Cleanup(func() { resetConfigAndDB(t) })
 
 		// Rolled back, so the client fixtures stay in place for the tests that follow.
 		tx := c.Db().Begin()

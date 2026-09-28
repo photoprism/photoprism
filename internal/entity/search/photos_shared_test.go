@@ -95,12 +95,12 @@ func TestSharedPhotos(t *testing.T) {
 		require.NotEmpty(t, rows, "the filter must select something, or the case proves nothing")
 
 		for _, row := range rows {
-			assert.Nil(t, row.DeletedAt, "archived content must not be rendered")
+			assert.False(t, row.DeletedAt.Valid, "archived content must not be rendered")
 		}
 	})
 	t.Run("PublicContentIsStillSelected", func(t *testing.T) {
 		var public entity.Photo
-		require.NoError(t, entity.Db().Where("photo_private = 0 AND photo_quality >= 3 AND deleted_at IS NULL").
+		require.NoError(t, entity.Db().Where("photo_private = false AND photo_quality >= 3 AND deleted_at IS NULL").
 			First(&public).Error)
 
 		album := sharedFilterAlbum(t, "uid:"+public.PhotoUID)

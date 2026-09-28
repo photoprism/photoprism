@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -103,9 +103,13 @@ func TestFindSessionGeneration(t *testing.T) {
 	var result *Session
 	var findErr error
 	callback := "test:find_session_generation"
-	Db().Callback().Query().After("gorm:query").Register(callback, func(scope *gorm.Scope) {
+	Db().Callback().Query().After("gorm:query").Register(callback, func(db *gorm.DB) {
+		if db.Error != nil {
+			return
+		}
+
 		var row *Session
-		switch value := scope.Value.(type) {
+		switch value := db.Statement.Dest.(type) {
 		case *Session:
 			row = value
 		case **Session:

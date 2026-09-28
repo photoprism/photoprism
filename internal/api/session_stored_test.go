@@ -29,7 +29,7 @@ func removeStoredSession(t *testing.T, authToken string) string {
 }
 
 // storedSessionCount returns how many rows the sessions table holds for the given id.
-func storedSessionCount(t *testing.T, id string) (n int) {
+func storedSessionCount(t *testing.T, id string) (n int64) {
 	t.Helper()
 	require.NoError(t, entity.UnscopedDb().Model(&entity.Session{}).Where("id = ?", id).Count(&n).Error)
 	return n
@@ -48,7 +48,7 @@ func TestCreateSession_RemovedSession(t *testing.T) {
 
 	r := AuthenticatedRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"token": "1jxf3jfn2k"}`, authToken)
 
-	assert.Equal(t, 0, storedSessionCount(t, id), "the session row must stay deleted")
+	assert.EqualValues(t, 0, storedSessionCount(t, id), "the session row must stay deleted")
 	assert.NotEqual(t, authToken, gjson.Get(r.Body.String(), "access_token").String())
 }
 
@@ -81,5 +81,5 @@ func TestOAuthToken_RemovedSession(t *testing.T) {
 	app.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusUnauthorized, w.Code)
-	assert.Equal(t, 0, storedSessionCount(t, id), "the session row must stay deleted")
+	assert.EqualValues(t, 0, storedSessionCount(t, id), "the session row must stay deleted")
 }

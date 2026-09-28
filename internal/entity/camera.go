@@ -7,7 +7,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/ulule/deepcopier"
 	"gorm.io/gorm"
 
@@ -267,7 +266,7 @@ func (m *Camera) markManual() error {
 		return res.Error
 	} else if res.RowsAffected == 0 {
 		// MariaDB counts only changed rows, so check whether the camera still exists.
-		var count int
+		var count int64
 
 		if err := UnscopedDb().Model(&Camera{}).Where("id = ?", m.ID).Count(&count).Error; err != nil {
 			return err
@@ -296,7 +295,7 @@ func unknownCameraID() (uint, error) {
 }
 
 // PhotoCount returns the number of pictures that reference the camera, including archived and deleted pictures.
-func (m *Camera) PhotoCount() (count int, err error) {
+func (m *Camera) PhotoCount() (count int64, err error) {
 	if m.ID == 0 {
 		return 0, fmt.Errorf("empty id")
 	}
@@ -341,7 +340,7 @@ func (m *Camera) Delete(reassign bool) (reassigned int64, err error) {
 	if res.Error != nil {
 		return reassigned, res.Error
 	} else if res.RowsAffected == 0 {
-		var count int
+		var count int64
 
 		if err = UnscopedDb().Model(&Camera{}).Where("id = ?", m.ID).Count(&count).Error; err != nil {
 			return reassigned, err

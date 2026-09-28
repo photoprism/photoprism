@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
@@ -549,14 +549,14 @@ func TestLens_PhotoCount(t *testing.T) {
 		m := addLens(t, "Jupiter", "9 85mm f/2")
 		count, err := m.PhotoCount()
 		assert.NoError(t, err)
-		assert.Equal(t, 0, count)
+		assert.EqualValues(t, 0, count)
 	})
 	t.Run("Used", func(t *testing.T) {
 		m := addLens(t, "Jupiter", "8 50mm f/2")
 		useLens(t, m)
 		count, err := m.PhotoCount()
 		assert.NoError(t, err)
-		assert.Equal(t, 1, count)
+		assert.EqualValues(t, 1, count)
 	})
 	t.Run("EmptyID", func(t *testing.T) {
 		_, err := (&Lens{}).PhotoCount()
@@ -566,7 +566,7 @@ func TestLens_PhotoCount(t *testing.T) {
 
 func TestLens_Delete(t *testing.T) {
 	exists := func(t *testing.T, id uint) bool {
-		var count int
+		var count int64
 		assert.NoError(t, UnscopedDb().Model(&Lens{}).Where("id = ?", id).Count(&count).Error)
 		return count > 0
 	}
@@ -782,7 +782,7 @@ func TestFindExistingLens(t *testing.T) {
 
 func TestLens_DeleteEdgeCases(t *testing.T) {
 	exists := func(t *testing.T, id uint) bool {
-		var count int
+		var count int64
 		assert.NoError(t, UnscopedDb().Model(&Lens{}).Where("id = ?", id).Count(&count).Error)
 		return count > 0
 	}
@@ -812,7 +812,7 @@ func TestLens_DeleteEdgeCases(t *testing.T) {
 
 		count, err := m.PhotoCount()
 		assert.NoError(t, err)
-		assert.Equal(t, 1, count)
+		assert.EqualValues(t, 1, count)
 
 		_, err = m.Delete(false)
 		assert.ErrorIs(t, err, ErrInUse)
