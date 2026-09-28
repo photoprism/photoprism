@@ -39,3 +39,20 @@ func (c *Config) UploadLimitBytes() int64 {
 		return int64(result) * 1024 * 1024
 	}
 }
+
+// UploadMaxAge returns the time in seconds after which staged uploads that were never imported are
+// removed, from MinUploadMaxAge to MaxUploadMaxAge, or -1 if they are kept.
+func (c *Config) UploadMaxAge() int64 {
+	switch {
+	case c.options.UploadMaxAge < 0:
+		return -1
+	case c.options.UploadMaxAge == 0:
+		return DefaultUploadMaxAge
+	case c.options.UploadMaxAge < MinUploadMaxAge:
+		return MinUploadMaxAge
+	case c.options.UploadMaxAge > MaxUploadMaxAge:
+		return MaxUploadMaxAge
+	}
+
+	return c.options.UploadMaxAge
+}

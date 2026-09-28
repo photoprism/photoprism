@@ -73,7 +73,8 @@ the suffixes in `pkg/fs.ReservedPathSuffixes`. ZIP entry checks
 apply to files and directories before extraction; other hidden-directory handling is unchanged. Other import sources and WebDAV retain their format policies.
 
 Staged batches are eligible for cleanup once the batch directory and every entry in it
-have been unchanged for more than 24 hours, including batches awaiting a processing retry.
+have been unchanged for longer than `upload-maxage` (7 days by default, from one day to 100 years; `-1`
+keeps them), including batches awaiting a processing retry.
 Upload-batch removal is deferred while upload or processing requests are active;
 candidates are rechecked before removal. Uploads and their processing remain independent of indexing and other imports.
 Files directly in the upload root, including avatar staging, are not batch cleanup targets.

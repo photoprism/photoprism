@@ -3,6 +3,7 @@ package workers
 import (
 	"bytes"
 	iofs "io/fs"
+	"math"
 	"os"
 	"path/filepath"
 	"strings"
@@ -20,6 +21,14 @@ import (
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
+
+// newUploadConfig returns a test config that removes staged uploads after the minimum age of one day.
+func newUploadConfig(t *testing.T) *config.Config {
+	t.Helper()
+	c := config.NewMinimalTestConfig(t.TempDir())
+	c.Options().UploadMaxAge = config.MinUploadMaxAge
+	return c
+}
 
 // ageUploadTree sets every entry's time without following links.
 func ageUploadTree(t *testing.T, dir string, at time.Time) {
@@ -78,7 +87,7 @@ func TestPurgeStaleUploads(t *testing.T) {
 	flag := mutex.UserUploads.Load()
 	t.Cleanup(func() { mutex.UserUploads.Store(flag) })
 	t.Run("Eligibility", func(t *testing.T) {
-		c := config.NewMinimalTestConfig(t.TempDir())
+		c := newUploadConfig(t)
 		root := c.UsersStoragePath()
 		outside := t.TempDir()
 		require.NoError(t, os.WriteFile(filepath.Join(outside, "keep.jpg"), []byte("keep"), fs.ModeFile))
@@ -138,14 +147,14 @@ func TestPurgeStaleUploads(t *testing.T) {
 	t.Run("Idle", func(t *testing.T) {
 		mutex.UserUploads.Store(false)
 		assert.NotPanics(t, func() { purgeStaleUploads(nil) })
-		c := config.NewMinimalTestConfig(t.TempDir())
+		c := newUploadConfig(t)
 		batch := newUploadBatch(t, c.UsersStoragePath(), "utfrd9md4cywhp5v", "old", 48*time.Hour)
 		purgeStaleUploads(c)
 		assert.DirExists(t, batch)
 		assert.False(t, mutex.UserUploads.Load())
 	})
 	t.Run("ReadOnly", func(t *testing.T) {
-		c := config.NewMinimalTestConfig(t.TempDir())
+		c := newUploadConfig(t)
 		batch := newUploadBatch(t, c.UsersStoragePath(), "utfrd9md4cywhp5v", "old", 48*time.Hour)
 		c.Options().ReadOnly = true
 		mutex.UserUploads.Store(true)
@@ -154,7 +163,7 @@ func TestPurgeStaleUploads(t *testing.T) {
 		assert.True(t, mutex.UserUploads.Load())
 	})
 	t.Run("IndexingDoesNotDelayExpiry", func(t *testing.T) {
-		c := config.NewMinimalTestConfig(t.TempDir())
+		c := newUploadConfig(t)
 		controls := newUploadControls(t, c.UsersStoragePath())
 		batch := newUploadBatch(t, c.UsersStoragePath(), "utfrd9md4cywhp5v", "old", 48*time.Hour)
 		require.NoError(t, mutex.IndexWorker.Start())
@@ -171,10 +180,60 @@ func TestPurgeStaleUploads(t *testing.T) {
 		assert.False(t, mutex.UserUploads.Load())
 	})
 	t.Run("MissingRoot", func(t *testing.T) {
-		c := config.NewMinimalTestConfig(t.TempDir())
+		c := newUploadConfig(t)
 		mutex.UserUploads.Store(true)
 		purgeStaleUploads(c)
 		assert.False(t, mutex.UserUploads.Load())
+	})
+}
+
+// TestPurgeStaleUploadsMaxAge verifies that the configured maximum age decides which batches expire.
+func TestPurgeStaleUploadsMaxAge(t *testing.T) {
+	flag, savedLog := mutex.UserUploads.Load(), log
+	t.Cleanup(func() { mutex.UserUploads.Store(flag); log = savedLog })
+	const user = "utfrd9md4cywhp5v"
+	for _, tc := range []struct {
+		name   string
+		maxAge int64
+		window time.Duration
+	}{
+		{"Default", 0, 7 * 24 * time.Hour},
+		{"Minimum", 3600, 24 * time.Hour},
+		{"Custom", 3 * 86400, 3 * 24 * time.Hour},
+		{"Maximum", 9999999999, 100 * 365 * 24 * time.Hour},
+		{"MaxInt64", math.MaxInt64, 100 * 365 * 24 * time.Hour},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			c := config.NewMinimalTestConfig(t.TempDir())
+			c.Options().UploadMaxAge = tc.maxAge
+			kept := newUploadBatch(t, c.UsersStoragePath(), user, "within", tc.window-time.Minute)
+			removed := newUploadBatch(t, c.UsersStoragePath(), user, "beyond", tc.window+time.Minute)
+			mutex.UserUploads.Store(true)
+			purgeStaleUploads(c)
+			assert.DirExists(t, kept)
+			assert.NoDirExists(t, removed)
+			assert.True(t, mutex.UserUploads.Load())
+		})
+	}
+	t.Run("Disabled", func(t *testing.T) {
+		c := config.NewMinimalTestConfig(t.TempDir())
+		c.Options().UploadMaxAge = -1
+		batch := newUploadBatch(t, c.UsersStoragePath(), user, "old", 400*24*time.Hour)
+		// A folder that cannot be read makes any scan log a warning, unless permissions are not enforced.
+		blocked := filepath.Join(c.UsersStoragePath(), "zzblocked")
+		require.NoError(t, os.MkdirAll(blocked, fs.ModeDir))
+		require.NoError(t, os.Chmod(blocked, 0))
+		t.Cleanup(func() { _ = os.Chmod(blocked, fs.ModeDir) })
+		logger := logrus.New()
+		logger.SetLevel(logrus.DebugLevel)
+		var output bytes.Buffer
+		logger.SetOutput(&output)
+		log = logger
+		mutex.UserUploads.Store(true)
+		purgeStaleUploads(c)
+		assert.DirExists(t, batch)
+		assert.True(t, mutex.UserUploads.Load())
+		assert.Empty(t, output.String())
 	})
 }
 
@@ -276,7 +335,7 @@ func TestRunPurgeExpired(t *testing.T) {
 				logger.AddHook(hook)
 			}
 			log = logger
-			c := config.NewMinimalTestConfig(t.TempDir())
+			c := newUploadConfig(t)
 			batch := newUploadBatch(t, c.UsersStoragePath(), "utfrd9md4cywhp5v", "old", 48*time.Hour)
 			controls := newUploadControls(t, c.UsersStoragePath())
 			zipDir := filepath.Join(c.TempPath(), fs.ZipDir)
@@ -316,7 +375,7 @@ func TestPurgeUploadLifecycle(t *testing.T) {
 	flag := mutex.UserUploads.Load()
 	t.Cleanup(func() { mutex.UserUploads.Store(flag) })
 	t.Run("ActiveRequestSkipsTick", func(t *testing.T) {
-		c := config.NewMinimalTestConfig(t.TempDir())
+		c := newUploadConfig(t)
 		controls := newUploadControls(t, c.UsersStoragePath())
 		batch := newUploadBatch(t, c.UsersStoragePath(), "utfrd9md4cywhp5v", "old", 48*time.Hour)
 		mutex.UploadBatches.RLock()
@@ -408,7 +467,7 @@ func TestPurgeUploadScanUnlocked(t *testing.T) {
 			name = "CompletedUpload"
 		}
 		t.Run(name, func(t *testing.T) {
-			c := config.NewMinimalTestConfig(t.TempDir())
+			c := newUploadConfig(t)
 			batch := newUploadBatch(t, c.UsersStoragePath(), "utfrd9md4cywhp5v", "old", 48*time.Hour)
 			blocked := filepath.Join(c.UsersStoragePath(), "zzscan")
 			require.NoError(t, os.MkdirAll(blocked, fs.ModeDir))
@@ -461,7 +520,7 @@ func TestPurgeUploadScanUnlocked(t *testing.T) {
 func TestStartPurgeExclusions(t *testing.T) {
 	for _, name := range []string{"Portal", "DisabledWakeup"} {
 		t.Run(name, func(t *testing.T) {
-			c := config.NewMinimalTestConfig(t.TempDir())
+			c := newUploadConfig(t)
 			c.Options().JWTRotateDays = -1
 			if name == "Portal" {
 				c.Options().Edition = config.Portal

@@ -345,6 +345,12 @@ var Flags = CliFlags{
 			Usage:   "maximum total size of web uploads in `MB` (-1 to disable)",
 			EnvVars: EnvVars("UPLOAD_LIMIT"),
 		}}, {
+		Flag: &cli.Int64Flag{
+			Name:    "upload-maxage",
+			Value:   DefaultUploadMaxAge,
+			Usage:   fmt.Sprintf("time in `SECONDS` after which staged uploads that were never imported are removed (%d-%d; -1 to keep them)", MinUploadMaxAge, MaxUploadMaxAge),
+			EnvVars: EnvVars("UPLOAD_MAXAGE"),
+		}}, {
 		Flag: &cli.PathFlag{
 			Name:      "cache-path",
 			Aliases:   []string{"ca"},

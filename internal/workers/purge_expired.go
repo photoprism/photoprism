@@ -15,8 +15,6 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-const staleUploadAge = 24 * time.Hour
-
 // RunPurgeExpired runs isolated expiry tasks; add new tasks here, not to the ticker.
 func RunPurgeExpired(conf *config.Config) {
 	event.Safe(func() { RunPurgeArchives(conf) })
@@ -25,11 +23,11 @@ func RunPurgeExpired(conf *config.Config) {
 
 // purgeStaleUploads scans unlocked and removes expired batches between upload requests.
 func purgeStaleUploads(conf *config.Config) {
-	if !mutex.UserUploads.Load() || conf.ReadOnly() {
+	if !mutex.UserUploads.Load() || conf.ReadOnly() || conf.UploadMaxAge() < 0 {
 		return
 	}
 	mutex.UserUploads.Store(false)
-	cutoff := time.Now().Add(-staleUploadAge)
+	cutoff := time.Now().Add(-time.Duration(conf.UploadMaxAge()) * time.Second)
 	candidates, pending := scanUploadDirs(conf.UsersStoragePath(), cutoff, 0)
 	result := removeExpiredUploads(candidates, cutoff)
 	if pending || result.remaining || result.busy {
