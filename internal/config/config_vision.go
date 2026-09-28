@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
 // VisionYaml returns the path to the computer-vision configuration file,
@@ -237,4 +238,38 @@ func (c *Config) DetectNSFW() bool {
 	}
 
 	return c.options.DetectNSFW
+}
+
+// visionKeyWarnings returns a warning for each character problem of the Vision API key. Incoming requests
+// compare the key as written; outgoing requests send it with environment variables expanded.
+func visionKeyWarnings(key string, incoming, outgoing bool) (warnings []string) {
+	if key == "" || !incoming && !outgoing {
+		return nil
+	}
+
+	stripped := incoming && header.ID(key) != key
+
+	if sent := strings.TrimSpace(os.ExpandEnv(key)); !stripped && outgoing && header.ID(sent) != sent {
+		stripped = true
+	}
+
+	if stripped {
+		warnings = append(warnings, "vision key contains characters that are removed from access tokens, so it cannot authenticate with a PhotoPrism Vision API")
+	}
+
+	if incoming && strings.Contains(key, "$") {
+		warnings = append(warnings, "vision key contains $ and is compared as written, without expanding environment variables")
+	}
+
+	return warnings
+}
+
+// warnVisionKey writes the warnings visionKeyWarnings returns for the configured Vision API key to
+// the system log once, as they describe a secret.
+func (c *Config) warnVisionKey() {
+	for _, w := range visionKeyWarnings(c.VisionKey(), c.VisionApi(), c.VisionUri() != "") {
+		if _, warned := c.warnedOnce.LoadOrStore("vision-key: "+w, true); !warned {
+			event.SystemWarn([]string{"config", "%s"}, w)
+		}
+	}
 }

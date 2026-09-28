@@ -253,6 +253,9 @@ func (c *Config) Init() error {
 		log.Warnf("config: the wakeup interval is %s, but must be 1h or less for face recognition to work", c.WakeupInterval().String())
 	}
 
+	// Show warnings for a Vision API key that cannot authenticate requests as configured.
+	c.warnVisionKey()
+
 	// Configure HTTPS proxy for outgoing connections.
 	if httpsProxy := c.HttpsProxy(); httpsProxy != "" {
 		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{
