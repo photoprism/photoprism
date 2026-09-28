@@ -4,6 +4,7 @@ import (
 	"math"
 	"testing"
 
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
@@ -52,6 +53,30 @@ func TestApplyEndpointEmbeddings(t *testing.T) {
 		assert.Zero(t, applyEndpointEmbeddings(faces, res, face.ModelFaceNet))
 		assert.Empty(t, faces[0].EmbedModel)
 		assert.Empty(t, faces[0].Embeddings)
+	})
+	t.Run("EchoedNameAtDebugOnly", func(t *testing.T) {
+		logHook, _ := captureLogs(t)
+
+		faces := face.Faces{{}}
+		res := &ApiResponse{
+			Model:  &Model{Name: "remote-marker\nmodel"},
+			Result: ApiResult{Embeddings: []face.Embeddings{valid()}},
+		}
+
+		assert.Zero(t, applyEndpointEmbeddings(faces, res, face.ModelFaceNet))
+
+		var debug int
+
+		for _, entry := range logHook.AllEntries() {
+			if entry.Level == logrus.DebugLevel {
+				debug++
+				assert.Contains(t, entry.Message, `"remote_marker\nmodel"`)
+			} else {
+				assert.NotContains(t, entry.Message, "remote", entry.Level.String())
+			}
+		}
+
+		assert.Equal(t, 1, debug)
 	})
 	t.Run("WidthFollowsConfiguredModel", func(t *testing.T) {
 		// SFace is 128-wide, so a 512-value vector is not one of its embeddings whatever

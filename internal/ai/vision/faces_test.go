@@ -224,7 +224,7 @@ func TestEmbedFaces(t *testing.T) {
 		require.NoError(t, os.WriteFile(tmpFile, data, 0o600))
 
 		refused := face.Faces{{Rows: 100, Cols: 100, Area: face.NewArea("face", 50, 50, 20)}}
-		require.EqualError(t, EmbedFaces(tmpFile, refused, true, nil), "Forbidden (status code 403)")
+		require.EqualError(t, EmbedFaces(tmpFile, refused, true, nil), "vision service request failed (status 403)")
 		assert.True(t, refused[0].Embeddings.Empty())
 	})
 }

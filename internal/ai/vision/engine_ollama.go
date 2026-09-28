@@ -198,7 +198,8 @@ func (ollamaParser) Parse(ctx context.Context, req *ApiRequest, raw []byte, stat
 
 	if !parsedLabels && fallbackJSON != "" && (req.Format == FormatJSON || strings.HasPrefix(fallbackJSON, "{")) {
 		if labels, parseErr := parseOllamaLabels(fallbackJSON); parseErr != nil {
-			log.Warnf("vision: %s (parse ollama labels)", clean.Error(parseErr))
+			log.Warnf("vision: ollama returned invalid labels for model %s", clean.Log(req.Model))
+			log.Debugf("vision: %q (parse ollama labels)", parseErr.Error())
 		} else if len(labels) > 0 {
 			response.Result.Labels = append(response.Result.Labels, labels...)
 			parsedLabels = true

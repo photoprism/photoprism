@@ -298,7 +298,7 @@ func TestGenerateLabelsRefused(t *testing.T) {
 	}}}, Thresholds: DefaultThresholds}
 
 	labels, err := GenerateLabels(Files{samplesPath + "/cat_224.jpeg"}, media.SrcLocal, entity.SrcAuto)
-	assert.EqualError(t, err, "Forbidden (status code 403)")
+	assert.EqualError(t, err, "vision service request failed (status 403)")
 	assert.Empty(t, labels)
 }
 

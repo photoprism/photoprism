@@ -7,15 +7,20 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 
+	"github.com/dustin/go-humanize"
 	"github.com/sirupsen/logrus"
 
 	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
 	httpclient "github.com/photoprism/photoprism/pkg/http/client"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/http/safe"
+	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/txt/clip"
 )
 
 // PerformApiRequest performs a Vision API request and returns the result.
@@ -74,7 +79,7 @@ func PerformApiRequest(apiRequest *ApiRequest, uri, method, key string) (apiResp
 	})
 
 	if clientErr != nil {
-		return apiResponse, clientErr
+		return apiResponse, transportError(apiRequest.GetResponseFormat(), clientErr)
 	}
 
 	defer func() {
@@ -83,21 +88,21 @@ func PerformApiRequest(apiRequest *ApiRequest, uri, method, key string) (apiResp
 
 	body, apiErr := io.ReadAll(io.LimitReader(clientResp.Body, MaxResponseBytes+1))
 	if apiErr != nil {
-		return nil, apiErr
+		return nil, transportError(apiRequest.GetResponseFormat(), apiErr)
 	} else if int64(len(body)) > MaxResponseBytes {
 		return nil, fmt.Errorf("vision: response exceeds the maximum size of %d bytes", MaxResponseBytes)
 	}
 
-	if clientResp.StatusCode >= 300 {
-		logErrorResponse(body, clientResp.StatusCode)
-	}
-
 	format := apiRequest.GetResponseFormat()
+
+	if clientResp.StatusCode >= 300 {
+		logServiceResponse(serviceError(format, clientResp.StatusCode), body)
+	}
 
 	if engine, ok := EngineFor(format); ok && engine.Parser != nil {
 		parsed, parseErr := engine.Parser.Parse(context.Background(), apiRequest, body, clientResp.StatusCode)
 		if parseErr != nil {
-			return nil, parseErr
+			return nil, responseError(format, clientResp.StatusCode, parseErr)
 		}
 
 		if clientResp.StatusCode < 300 && log.IsLevelEnabled(logrus.TraceLevel) {
@@ -112,14 +117,8 @@ func PerformApiRequest(apiRequest *ApiRequest, uri, method, key string) (apiResp
 	// Parse and return response, or an error if the request failed.
 	switch format {
 	case ApiFormatVision:
-		if apiErr = json.Unmarshal(body, apiResponse); apiErr != nil {
-			return apiResponse, apiErr
-		} else if clientResp.StatusCode >= 300 {
-			if apiResponse.Error != "" {
-				return apiResponse, fmt.Errorf("%s (status code %d)", clean.Log(apiResponse.Error), clientResp.StatusCode)
-			}
-
-			return apiResponse, fmt.Errorf("status code %d", clientResp.StatusCode)
+		if apiErr = json.Unmarshal(body, apiResponse); apiErr != nil || clientResp.StatusCode >= 300 {
+			return apiResponse, responseError(format, clientResp.StatusCode, apiErr)
 		}
 	default:
 		return apiResponse, fmt.Errorf("unsupported response format %s", clean.Log(apiRequest.ResponseFormat))
@@ -128,13 +127,62 @@ func PerformApiRequest(apiRequest *ApiRequest, uri, method, key string) (apiResp
 	return apiResponse, nil
 }
 
-// logErrorResponse logs the status code and size of a failed response, and its body at trace level.
-func logErrorResponse(body []byte, code int) {
-	log.Debugf("vision: request failed with status code %d (%d bytes)", code, len(body))
-
-	if log.IsLevelEnabled(logrus.TraceLevel) {
-		log.Tracef("vision: response %q (status code %d)", body, code)
+// serviceName returns the sanitized service name for the specified response format.
+func serviceName(format ApiFormat) string {
+	if name := clean.TypeLowerUnderscore(format); name != "" {
+		return name
 	}
+
+	return "remote"
+}
+
+// serviceError returns the error for a failed service request, which names the service and status only.
+func serviceError(format ApiFormat, code int) error {
+	return fmt.Errorf("%s service request failed (status %d)", serviceName(format), code)
+}
+
+// transportError returns the error for a request that received no response, and writes its cause
+// to the system log with the credentials in any URI it holds redacted.
+func transportError(format ApiFormat, cause error) error {
+	reason := "connection error"
+
+	if netErr := net.Error(nil); errors.As(cause, &netErr) && netErr.Timeout() {
+		reason = "timeout"
+	}
+
+	err := fmt.Errorf("%s service request failed (%s)", serviceName(format), reason)
+	logServiceResponse(err, []byte(clean.UriRedactedText(cause.Error())))
+
+	return err
+}
+
+// responseError returns the error for a response that failed or could not be parsed. Below status 300,
+// it writes the parse error to the system log, as its text may quote the response.
+func responseError(format ApiFormat, code int, parseErr error) error {
+	if code >= 300 {
+		return serviceError(format, code)
+	}
+
+	err := fmt.Errorf("%s service returned an invalid response (status %d)", serviceName(format), code)
+
+	if parseErr != nil {
+		logServiceResponse(err, []byte(parseErr.Error()))
+	}
+
+	return err
+}
+
+// logServiceResponse writes the text of a failed service response to the system log, clipped and quoted.
+func logServiceResponse(err error, text []byte) {
+	var truncated string
+
+	clipped := clip.Bytes(string(text), txt.ClipLongText)
+
+	if len(clipped) < len(bytes.TrimSpace(text)) {
+		truncated = fmt.Sprintf(" (truncated from %s)", humanize.Bytes(uint64(len(text))))
+	}
+
+	event.SystemError([]string{"vision", "%s", "%q%s"}, err, clipped, truncated)
 }
 
 // validateApiRequestURL checks that outbound API requests only use HTTP(S) URLs with a host.
