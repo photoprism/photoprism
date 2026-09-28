@@ -77,7 +77,7 @@ have been unchanged for longer than `upload-maxage` (7 days by default, from one
 keeps them), including batches awaiting a processing retry. Age is measured with the storage's own
 clock, read from the `.upload-purge` file that each cleanup run creates anew in the users storage folder.
 Upload-batch removal is deferred while upload or processing requests are active;
-candidates are rechecked before removal. Uploads and their processing remain independent of indexing and other imports.
+candidates are rechecked before removal. Uploads and their processing do not wait for indexing or other imports, but processing answers 503 while a running index is being canceled.
 Files directly in the upload root, including avatar staging, are not batch cleanup targets.
 
 Processing a batch adds its files to at most 100 requested albums: titles resolve among the user's
