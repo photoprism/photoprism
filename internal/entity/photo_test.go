@@ -2059,7 +2059,8 @@ func TestPhoto_UnscopedSearch(t *testing.T) {
 		log.Debugf("m.CameraID = %v", m.CameraID)
 		log.Debugf("m.Camera = %v", m.Camera)
 		assert.Equal(t, m.Camera.ID, m.CameraID, "CameraID Check")
-		Db().Save(&m) // reset back to base
+		Db().Save(&m)                                                                                                                               // reset back to base
+		Db().Model(&Lens{}).Where("id = ?", LensFixtures.Get("lens-f-380").ID).UpdateColumn("updated_at", LensFixtures.Get("lens-f-380").UpdatedAt) // Reset change made by another test
 
 		photo := Photo{}
 		if res := UnscopedSearchFirstPhoto(&photo, "photo_uid = ?", PhotoFixtures.Get("Photo08").PhotoUID); res.Error != nil {
