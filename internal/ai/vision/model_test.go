@@ -348,13 +348,10 @@ func TestModelEndpointKeyOpenAIFallbacks(t *testing.T) {
 		}
 	})
 	t.Run("GlobalFallback", func(t *testing.T) {
-		prev := ServiceKey
-		ServiceKey = "${GLOBAL_KEY}"
-		defer func() { ServiceKey = prev }()
-
+		useSharedService(t, "https://vision.example.com/api/v1/vision", "${GLOBAL_KEY}")
 		t.Setenv("GLOBAL_KEY", "global-secret")
 
-		model := &Model{}
+		model := &Model{Type: ModelTypeCaption}
 		if got := model.EndpointKey(); got != "global-secret" {
 			t.Fatalf("expected global secret, got %q", got)
 		}
@@ -390,6 +387,94 @@ func TestModelEndpointKeyOllamaFallbacks(t *testing.T) {
 		if got := model.EndpointKey(); got != "ollama-env" {
 			t.Fatalf("expected env key, got %q", got)
 		}
+	})
+}
+
+// useSharedService sets the shared service URI and key for the duration of the test.
+func useSharedService(t *testing.T, uri, key string) {
+	t.Helper()
+
+	prevUri, prevKey := ServiceUri, ServiceKey
+	t.Cleanup(func() { ServiceUri, ServiceKey = prevUri, prevKey })
+	ServiceUri, ServiceKey = uri, key
+}
+
+// clearEngineKeys unsets the OpenAI and Ollama key variables for the duration of the test.
+func clearEngineKeys(t *testing.T) {
+	t.Helper()
+
+	t.Cleanup(func() { ensureEnvOnce = sync.Once{} })
+	t.Setenv(openai.APIKeyEnv, "")
+	t.Setenv(openai.APIKeyFileEnv, "")
+	t.Setenv(ollama.APIKeyEnv, "")
+	t.Setenv(ollama.APIKeyFileEnv, "")
+	ensureEnvOnce = sync.Once{}
+}
+
+// TestModelEndpointKey checks that the shared key is only returned for models that use the shared service.
+func TestModelEndpointKey(t *testing.T) {
+	const sharedUri = "https://vision.example.com/api/v1/vision"
+	const sharedKey = "shared-vision-key"
+	const ownUri = "https://models.example.com/api/generate"
+
+	cases := []struct {
+		name    string
+		model   *Model
+		wantUri string
+		wantKey string
+	}{
+		{name: "SharedService", model: &Model{Type: ModelTypeLabels}, wantUri: sharedUri + "/labels", wantKey: sharedKey},
+		{name: "SharedServiceOwnKey", model: &Model{Type: ModelTypeLabels, Service: Service{Key: "own-key"}}, wantUri: sharedUri + "/labels", wantKey: "own-key"},
+		{name: "OwnEndpoint", model: &Model{Type: ModelTypeLabels, Service: Service{Uri: ownUri}}, wantUri: ownUri, wantKey: ""},
+		{name: "OwnEndpointOwnKey", model: &Model{Type: ModelTypeLabels, Service: Service{Uri: ownUri, Key: "own-key"}}, wantUri: ownUri, wantKey: "own-key"},
+		{name: "OwnEndpointUnresolvedKey", model: &Model{Type: ModelTypeLabels, Service: Service{Uri: ownUri, Key: "${VISION_TEST_MISSING_KEY}"}}, wantUri: ownUri, wantKey: ""},
+		{name: "UnresolvedEndpoint", model: &Model{Type: ModelTypeLabels, Service: Service{Uri: "${VISION_TEST_MISSING_URI}"}}, wantUri: sharedUri + "/labels", wantKey: sharedKey},
+		{name: "UnresolvedEndpointBasicAuth", model: &Model{Type: ModelTypeLabels, Service: Service{Uri: "${VISION_TEST_MISSING_URI}", Username: "user", Password: "secret"}}, wantUri: sharedUri + "/labels", wantKey: sharedKey},
+		{name: "UnresolvedEndpointOwnKey", model: &Model{Type: ModelTypeLabels, Service: Service{Uri: "${VISION_TEST_MISSING_URI}", Key: "own-key"}}, wantUri: sharedUri + "/labels", wantKey: sharedKey},
+		{name: "UnresolvedEngineEndpoint", model: &Model{Type: ModelTypeCaption, Engine: openai.EngineName, Service: Service{Uri: "${VISION_TEST_MISSING_URI}", Key: "own-key"}}, wantUri: sharedUri + "/caption", wantKey: sharedKey},
+		{name: "PartlyUnresolvedEndpoint", model: &Model{Type: ModelTypeLabels, Service: Service{Uri: "${VISION_TEST_MISSING_URI}/api/generate"}}, wantUri: "/api/generate", wantKey: ""},
+		{name: "WhitespaceUriOwnKey", model: &Model{Type: ModelTypeLabels, Service: Service{Uri: "   ", Key: "own-key"}}, wantUri: sharedUri + "/labels", wantKey: "own-key"},
+		{name: "DisabledServiceOwnKey", model: &Model{Type: ModelTypeLabels, Service: Service{Key: "own-key", Disabled: true}}, wantUri: sharedUri + "/labels", wantKey: sharedKey},
+		{name: "DisabledService", model: &Model{Type: ModelTypeLabels, Service: Service{Uri: ownUri, Key: "own-key", Disabled: true}}, wantUri: sharedUri + "/labels", wantKey: sharedKey},
+		{name: "OllamaEngine", model: &Model{Type: ModelTypeCaption, Engine: ollama.EngineName, Service: Service{Uri: ownUri}}, wantUri: ownUri, wantKey: ""},
+		{name: "OpenAIEngine", model: &Model{Type: ModelTypeCaption, Engine: openai.EngineName}, wantUri: "https://api.openai.com/v1/responses", wantKey: ""},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			useSharedService(t, sharedUri, sharedKey)
+			clearEngineKeys(t)
+
+			if tc.model.Engine != "" {
+				tc.model.ApplyEngineDefaults()
+			}
+
+			uri, _ := tc.model.Endpoint()
+			assert.Equal(t, tc.wantUri, uri)
+			assert.Equal(t, tc.wantKey, tc.model.EndpointKey())
+		})
+	}
+	t.Run("NoSharedService", func(t *testing.T) {
+		useSharedService(t, "", sharedKey)
+
+		model := &Model{Type: ModelTypeLabels}
+		uri, _ := model.Endpoint()
+		assert.Empty(t, uri)
+		assert.Empty(t, model.EndpointKey())
+	})
+	t.Run("NoType", func(t *testing.T) {
+		useSharedService(t, sharedUri, sharedKey)
+
+		model := &Model{}
+		uri, _ := model.Endpoint()
+		assert.Empty(t, uri)
+		assert.Empty(t, model.EndpointKey())
+	})
+	t.Run("NilModel", func(t *testing.T) {
+		useSharedService(t, sharedUri, sharedKey)
+
+		var model *Model
+		assert.Empty(t, model.EndpointKey())
 	})
 }
 

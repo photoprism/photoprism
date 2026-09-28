@@ -204,15 +204,22 @@ func (m *Model) ApplyService(apiRequest *ApiRequest) {
 	}
 }
 
-// EndpointKey returns the access token belonging to the remote service
-// endpoint, or an empty string for nil receivers.
+// EndpointKey returns the access token for the endpoint that Endpoint resolves
+// to. A model's own key is sent to its own endpoint, or to the shared service if
+// the model has no Uri; the shared service key is only sent to the shared service.
 func (m *Model) EndpointKey() (key string) {
 	if m == nil {
 		return ""
 	}
 
-	if key = m.Service.EndpointKey(); key != "" {
-		return key
+	if uri, method := m.Service.Endpoint(); uri != "" && method != "" {
+		return m.Service.EndpointKey()
+	} else if uri, _ = m.Endpoint(); uri == "" {
+		return ""
+	} else if strings.TrimSpace(m.Service.Uri) == "" {
+		if key = m.Service.EndpointKey(); key != "" {
+			return key
+		}
 	}
 
 	ensureEnv()

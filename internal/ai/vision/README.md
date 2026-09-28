@@ -1,6 +1,6 @@
 ## PhotoPrism — Vision Package
 
-**Last Updated:** August 23, 2026
+**Last Updated:** September 28, 2026
 
 ### Overview
 
@@ -135,7 +135,7 @@ Configures the endpoint URL, method, format, and authentication for [Ollama](oll
 | `FileScheme`                       | set by engine alias (`data` or `base64`) | Controls image transport.                                                                                                                                                                                                                                                                     |
 | `Disabled`                         | `false`                                  | Disable the endpoint without removing the model.                                                                                                                                                                                                                                              |
 
-> **Authentication:** All credentials and identifiers support `${ENV_VAR}` expansion. `Service.Key` sets `Authorization: Bearer <token>`; `Username`/`Password` injects HTTP basic authentication into the service URI when it is not already present. When `Service.Key` is empty, PhotoPrism defaults to `OPENAI_API_KEY` (OpenAI engine) or `OLLAMA_API_KEY` (Ollama engine), also honoring their `_FILE` counterparts. Key and schema file paths must reference readable regular files (directories are ignored/rejected).
+> **Authentication:** All credentials and identifiers support `${ENV_VAR}` expansion. `Service.Key` sets `Authorization: Bearer <token>`; `Username`/`Password` injects HTTP basic authentication into the service URI when it is not already present. When `Service.Key` is empty, PhotoPrism defaults to `OPENAI_API_KEY` (OpenAI engine) or `OLLAMA_API_KEY` (Ollama engine), also honoring their `_FILE` counterparts. The shared `PHOTOPRISM_VISION_KEY` is only sent when a model's requests go to `PHOTOPRISM_VISION_URI`, i.e. its `Service` is disabled or its `Uri` is blank or expands to an empty string; a model with a blank `Uri` and an enabled `Service` sends its own `Key` there instead if it has one. A model with its own endpoint sends its own `Key` or none, so set `Key: ${PHOTOPRISM_VISION_KEY}` to reuse the shared key when it is supplied through that variable. Key and schema file paths must reference readable regular files (directories are ignored/rejected).
 
 > **Retries:** The shared service client retries transient `HTTP 429` responses (rate limiting, `flex`-tier capacity pressure) with bounded exponential backoff — `ServiceMaxRetries` attempts, `ServiceRetryDelay` base delay, capped at `ServiceRetryMaxDelay` — honoring a `Retry-After` header when present (also capped at `ServiceRetryMaxDelay`, so a provider asking for a longer pause is retried sooner and may fail through to the next worker pass) and keeping the total within `ServiceTimeout`. Other error statuses stay terminal, so the item is only reattempted on the next worker pass.
 
