@@ -51,7 +51,6 @@ vite                                                MIT            Evan You
 vite-plugin-vuetify                                 MIT            Kael Watts-Deuchar
 vitest                                              MIT            Anthony Fu <anthonyfu117@hotmail.com>
 vue                                                 MIT            Evan You
-vue-3-sanitize                                      MIT            Vannsl, Vanessa Otto <mail@vannsl.io>
 vue-luxon                                           MIT            Cas Bloem
 vue-router                                          MIT            Eduardo San Martin Morote posva13@gmail.com
 vue3-gettext                                        MIT            Leo Zurbriggen
