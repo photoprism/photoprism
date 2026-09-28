@@ -17,7 +17,6 @@ import (
 )
 
 func TestResetCommand(t *testing.T) {
-
 	// resetTestArgs returns the app arguments that point the command at the test database.
 	resetTestArgs := func(c *config.Config) []string {
 		if dbDrv := os.Getenv("PHOTOPRISM_TEST_DRIVER"); dbDrv != "sqlite" {

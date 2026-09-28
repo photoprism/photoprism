@@ -216,8 +216,10 @@ func TestPurgeUploadDirsErrors(t *testing.T) {
 				blocked = filepath.Dir(bad)
 				mode = 0500
 			}
+			info, err := os.Stat(blocked)
+			require.NoError(t, err)
 			require.NoError(t, os.Chmod(blocked, mode))
-			t.Cleanup(func() { require.NoError(t, os.Chmod(blocked, fs.ModeDir)) })
+			t.Cleanup(func() { require.NoError(t, os.Chmod(blocked, info.Mode().Perm())) })
 			candidates, pending := scanUploadDirs(root, time.Now().Add(-24*time.Hour), 0)
 			result := removeExpiredUploads(candidates, time.Now().Add(-24*time.Hour))
 			assert.Len(t, result.removed, 1)
