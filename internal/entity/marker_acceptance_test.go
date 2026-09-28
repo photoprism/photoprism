@@ -279,3 +279,50 @@ func TestMarker_SetFace_StoredAcceptanceSameFace(t *testing.T) {
 		})
 	}
 }
+
+// TestMarker_SetFace_PhotoRefresh checks maintenance state after accepted and refused assignments.
+func TestMarker_SetFace_PhotoRefresh(t *testing.T) {
+	flag := UpdateFaces.Load()
+	t.Cleanup(func() { UpdateFaces.Store(flag) })
+	for _, tc := range []struct {
+		name string
+		seed uint64
+	}{{"Refused", 8290}, {"RefusedPending", 8291}, {"Accepted", 8292}} {
+		t.Run(tc.name, func(t *testing.T) {
+			name := tc.name
+			f := raceTestFace(t, "", tc.seed)
+			uids := syncTestMarkers(t, f, 1, "", raceTestFile)
+			require.NoError(t, UnscopedDb().Model(&Marker{}).Where("marker_uid = ?", uids[0]).UpdateColumns(Values{"face_id": "", "face_dist": -1, "matched_at": nil}).Error)
+			radius := 0.25
+			if name == "Accepted" {
+				radius = 0.75
+			}
+			require.NoError(t, UnscopedDb().Model(&Face{}).Where("id = ?", f.ID).UpdateColumn("collision_radius", radius).Error)
+			var file File
+			require.NoError(t, UnscopedDb().Where("file_uid = ?", raceTestFile).First(&file).Error)
+			var photo Photo
+			require.NoError(t, UnscopedDb().First(&photo, file.PhotoID).Error)
+			previous := photo.CheckedAt
+			t.Cleanup(func() {
+				require.NoError(t, UnscopedDb().Model(&Photo{}).Where("id = ?", photo.ID).UpdateColumn("checked_at", previous).Error)
+			})
+			checked := Time("2026-01-01T12:00:00Z")
+			require.NoError(t, UnscopedDb().Model(&Photo{}).Where("id = ?", photo.ID).UpdateColumn("checked_at", checked).Error)
+			UpdateFaces.Store(name == "RefusedPending")
+			marker := FindMarker(uids[0])
+			require.NotNil(t, marker)
+			updated, err := marker.SetFace(f, 0.5)
+			require.NoError(t, err)
+			assert.Equal(t, name == "Accepted", updated)
+			var stored Photo
+			require.NoError(t, UnscopedDb().First(&stored, photo.ID).Error)
+			if name == "Accepted" {
+				assert.Nil(t, stored.CheckedAt)
+				assert.True(t, UpdateFaces.Load())
+			} else {
+				assert.Equal(t, checked, stored.CheckedAt)
+				assert.Equal(t, name == "RefusedPending", UpdateFaces.Load())
+			}
+		})
+	}
+}
