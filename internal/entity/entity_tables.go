@@ -102,28 +102,80 @@ func (list Tables) Truncate(db *gorm.DB) {
 		}
 	}()
 
+	autoInc := autoIncrementTables(db)
+
 	for name = range list {
 		if schemaTables[name] {
 			continue
-		} else if err := truncateTable(db, name); err != nil && err.Error() != "record not found" {
+		} else if err := truncateTable(db, name, autoInc[name]); err != nil && err.Error() != "record not found" {
 			log.Debugf("migrate: %s in %s", err, clean.Log(name))
 		}
 	}
 }
 
-// truncateTable removes all rows from the table with the specified name.
+// truncateTable removes all rows from the table with the specified name, so that
+// generated IDs match those in a newly created database.
 //
-// TRUNCATE is preferred as it also resets AUTO_INCREMENT counters, so that
-// generated IDs match those in a newly created database. DELETE serves as a
-// fallback for SQLite and for accounts without the required privileges.
-func truncateTable(db *gorm.DB, name string) error {
-	if db.Dialect().GetName() != dsn.DriverSQLite3 {
-		if err := db.Exec(fmt.Sprintf("TRUNCATE TABLE %s", name)).Error; err == nil {
-			return nil
+// MySQL/MariaDB delete the rows and restart an auto-increment counter, as TRUNCATE
+// is a slower DDL statement there; the restart commits implicitly, so pass db, not
+// a transaction. SQLite deletes the rows and keeps its counters; others truncate.
+func truncateTable(db *gorm.DB, name string, autoInc bool) error {
+	switch db.Dialect().GetName() {
+	case dsn.DriverSQLite3:
+		return db.Exec(fmt.Sprintf("DELETE FROM %s WHERE 1", name)).Error
+	case dsn.DriverMySQL:
+		if err := RetryDeadlock("truncate "+name, func() error {
+			return db.Exec(fmt.Sprintf("DELETE FROM `%s`", name)).Error
+		}); err != nil {
+			return err
+		} else if autoInc {
+			return db.Exec(fmt.Sprintf("ALTER TABLE `%s` AUTO_INCREMENT = 1", name)).Error
 		}
+
+		return nil
+	}
+
+	if err := db.Exec(fmt.Sprintf("TRUNCATE TABLE %s", name)).Error; err == nil {
+		return nil
 	}
 
 	return db.Exec(fmt.Sprintf("DELETE FROM %s WHERE 1", name)).Error
+}
+
+// autoIncrementTables returns the MySQL/MariaDB tables in the current database
+// that have an auto-increment column.
+func autoIncrementTables(db *gorm.DB) map[string]bool {
+	result := make(map[string]bool)
+
+	if db.Dialect().GetName() != dsn.DriverMySQL {
+		return result
+	}
+
+	rows, err := db.Raw("SELECT table_name FROM information_schema.columns WHERE table_schema = DATABASE() AND extra LIKE '%auto_increment%'").Rows()
+
+	if err != nil {
+		log.Debugf("migrate: %s (find auto-increment tables)", err)
+		return result
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var name string
+
+		if err = rows.Scan(&name); err != nil {
+			log.Debugf("migrate: %s (scan auto-increment tables)", err)
+			continue
+		}
+
+		result[name] = true
+	}
+
+	if err = rows.Err(); err != nil {
+		log.Debugf("migrate: %s (find auto-increment tables)", err)
+	}
+
+	return result
 }
 
 // Migrate migrates all database tables of registered entities.
