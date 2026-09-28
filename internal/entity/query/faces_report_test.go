@@ -388,8 +388,8 @@ func TestPersonFilter(t *testing.T) {
 		assert.Equal(t, `%back\slash%`, like)
 	})
 	t.Run("LikeCond", func(t *testing.T) {
-		assert.Equal(t, "subj_name LIKE ? ESCAPE '"+LikeEscape+"'", LikeCond("subj_name"))
-		assert.Equal(t, "s.subj_name LIKE ? ESCAPE '"+LikeEscape+"'", LikeCond("s.subj_name"))
+		assert.Equal(t, "subj_name LIKE ? ESCAPE '"+LikeEscape+"'", LikeCond("subj_name", false))
+		assert.Equal(t, "s.subj_name LIKE ? ESCAPE '"+LikeEscape+"'", LikeCond("s.subj_name", false))
 	})
 	t.Run("UIDOfAnotherType", func(t *testing.T) {
 		// Only a subject uid selects by id; a marker uid is a name nobody has.
@@ -569,7 +569,7 @@ func TestLikeCond_InvalidColumn(t *testing.T) {
 	t.Run("BindsTheArgumentAndMatchesNothing", func(t *testing.T) {
 		// The caller still passes one argument, so the condition has to keep exactly one
 		// placeholder while never being true.
-		cond := LikeCond("subj_name) OR (1=1")
+		cond := LikeCond("subj_name) OR (1=1", false)
 		assert.Equal(t, 1, strings.Count(cond, "?"))
 		assert.Contains(t, cond, "1 = 0")
 		assert.NotContains(t, cond, "OR (1=1")

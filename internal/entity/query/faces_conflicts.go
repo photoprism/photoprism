@@ -202,7 +202,7 @@ func conflictScope(person string, faces FaceMap, ids IDs) (IDs, error) {
 		var uids []string
 
 		if err := UnscopedDb().Model(&entity.Subject{}).
-			Where(LikeCond("subj_name"), nameLike).
+			Where(LikeCond("subj_name", false), nameLike).
 			Where("deleted_at IS NULL").
 			Pluck("subj_uid", &uids).Error; err != nil {
 			return nil, err

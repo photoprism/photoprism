@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -46,18 +47,24 @@ func PersonFilter(s string) (subjUID, nameLike string) {
 // LikeCond returns a LIKE condition for the given column that honors the escaping PersonFilter
 // applies. SQLite has no default escape character, so a pattern built without this matches nothing
 // there while matching correctly on MariaDB - the same command answering differently per driver.
+// Postgres has issues with byte fields as they need to be converted, but text fields do not.
+// Hence the isByte bool flag...
 //
 // The column is part of the statement rather than a bound parameter, so it is limited to a plain
 // identifier with an optional table alias. Anything else yields a condition that binds the
 // argument and matches nothing, which keeps the caller's placeholder count right while making
 // the mistake visible in the log rather than in the statement.
-func LikeCond(col string) string {
+func LikeCond(col string, isByte bool) string {
 	if clean.SqlColumn(col) == "" {
 		log.Errorf("query: invalid column %s in like condition", clean.Log(col))
 		return fmt.Sprintf("1 = 0 AND '' LIKE ? ESCAPE '%s'", LikeEscape)
 	}
 
-	return fmt.Sprintf("%s LIKE ? ESCAPE '%s'", col, LikeEscape)
+	if isByte && DbDialect() == dsn.DialectPostgreSQL {
+		return fmt.Sprintf("%s LIKE convert_to(?, 'UTF8') ESCAPE '%s'", col, LikeEscape)
+	} else {
+		return fmt.Sprintf("%s LIKE ? ESCAPE '%s'", col, LikeEscape)
+	}
 }
 
 // SubjectReport describes one person, with the clusters, files and photos their markers support.
@@ -97,7 +104,7 @@ func SubjectReports(person string, count, offset int, live bool) (result []Subje
 		where = "AND s.subj_uid = ?"
 		args = append(args, subjUID)
 	} else if nameLike != "" {
-		where = "AND " + LikeCond("s.subj_name")
+		where = "AND " + LikeCond("s.subj_name", false)
 		args = append(args, nameLike)
 	}
 
@@ -188,7 +195,7 @@ func FaceReports(person string, count, offset int) (result []FaceReport, err err
 		where = "WHERE f.subj_uid = ?"
 		args = append(args, subjUID)
 	} else if nameLike != "" {
-		where = "WHERE " + LikeCond("s.subj_name")
+		where = "WHERE " + LikeCond("s.subj_name", false)
 		args = append(args, nameLike)
 	}
 
@@ -324,7 +331,7 @@ func MarkerReports(f MarkerReportFilter) (result []MarkerReport, err error) {
 		stmt = stmt.Where("subj_uid = ?", subjUID)
 	} else if nameLike != "" {
 		stmt = stmt.Where(fmt.Sprintf("subj_uid IN (SELECT subj_uid FROM %s WHERE %s)",
-			entity.Subject{}.TableName(), LikeCond("subj_name")), nameLike)
+			entity.Subject{}.TableName(), LikeCond("subj_name", false)), nameLike)
 	}
 
 	if f.FaceID != "" {

@@ -69,6 +69,9 @@ func TestVideoTranscodeActionCreationMode(t *testing.T) {
 	require.NoError(t, file.Create())
 	t.Cleanup(func() {
 		require.NoError(t, entity.UnscopedDb().Where("photo_uid = ?", photo.PhotoUID).Delete(&entity.File{}).Error)
+		require.NoError(t, entity.UnscopedDb().Delete(&entity.PhotoKeyword{}, "photo_id = ?", photo.ID).Error)
+		require.NoError(t, entity.UnscopedDb().Delete(&entity.PhotoLabel{}, "photo_id = ?", photo.ID).Error)
+		require.NoError(t, entity.UnscopedDb().Delete(&entity.Details{}, "photo_id = ?", photo.ID).Error)
 		require.NoError(t, entity.UnscopedDb().Delete(&photo).Error)
 	})
 	dest, err := fs.FileName(src, conf.SidecarPath(), conf.OriginalsPath(), fs.ExtAvc)

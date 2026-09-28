@@ -55,7 +55,7 @@ func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 		if webdav.SkipSyncPath(file.FileName) {
 			log.Debugf("sync: skipping excluded path %s", clean.Log(file.FileName))
 			ignored := entity.NewFileSync(a.ID, path.Join(fs.PPHiddenPathname, "sync", strconv.FormatUint(uint64(file.ID), 10)))
-			ignored.FileID, ignored.Status = file.ID, entity.FileSyncIgnore
+			ignored.FileID, ignored.Status = &file.ID, entity.FileSyncIgnore
 			w.logErr(entity.Db().Save(ignored).Error)
 			continue
 		}

@@ -346,10 +346,10 @@ func FaceMarkerFiles(dir string) (result map[string]FaceMarkerFile, err error) {
 		Select("m.file_uid AS file_uid, f.photo_id AS photo_id, f.file_root AS file_root, f.file_name AS file_name, COUNT(*) AS count").
 		Joins(fmt.Sprintf("JOIN %s f ON f.file_uid = m.file_uid", entity.File{}.TableName())).
 		Joins(fmt.Sprintf("JOIN %s p ON p.id = f.photo_id", entity.Photo{}.TableName())).
-		Where("m.marker_type = ? AND f.file_primary = 1 AND f.deleted_at IS NULL AND f.file_missing = 0", entity.MarkerFace)
+		Where("m.marker_type = ? AND f.file_primary = TRUE AND f.deleted_at IS NULL AND f.file_missing = FALSE", entity.MarkerFace)
 
 	if dir = strings.Trim(path.Clean("/"+dir), "/"); dir != "" {
-		stmt = stmt.Where("f.file_root IN (?)", []string{entity.RootOriginals, entity.RootSidecar}).Where(LikeCond("f.file_name"), likeEscaper.Replace(dir)+"/%")
+		stmt = stmt.Where("f.file_root IN (?)", []string{entity.RootOriginals, entity.RootSidecar}).Where(LikeCond("f.file_name", true), likeEscaper.Replace(dir)+"/%")
 	}
 
 	if err = stmt.Group("m.file_uid, f.photo_id, f.file_root, f.file_name").Scan(&rows).Error; err != nil {

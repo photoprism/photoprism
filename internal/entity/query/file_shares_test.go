@@ -42,6 +42,8 @@ func TestQueuedFileShares(t *testing.T) {
 		}
 	}
 	t.Cleanup(func() {
+		entity.UnscopedDb().Delete(&entity.FileShare{}, "file_id = ?", yaml.ID)
+		entity.UnscopedDb().Delete(&entity.FileShare{}, "file_id = ?", jpeg.ID)
 		entity.UnscopedDb().Unscoped().Delete(yaml)
 		entity.UnscopedDb().Unscoped().Delete(jpeg)
 	})

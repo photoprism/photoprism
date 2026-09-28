@@ -458,7 +458,7 @@ func TestVisiblePeopleFilter(t *testing.T) {
 		assert.Contains(t, joins[1], "LEFT JOIN subjects markers_named ON markers_named.subj_name = markers.marker_name")
 		// Positive form, so a row with no person joined is kept rather than dropped on a NULL.
 		assert.Contains(t, cond, "markers_subj.subj_uid IS NULL")
-		assert.Contains(t, cond, "markers_subj.subj_private = 0 AND markers_subj.subj_hidden = 0")
+		assert.Contains(t, cond, "markers_subj.subj_private = FALSE AND markers_subj.subj_hidden = FALSE")
 		assert.Contains(t, cond, "markers_named.subj_uid IS NULL")
 	})
 	t.Run("WithoutNames", func(t *testing.T) {

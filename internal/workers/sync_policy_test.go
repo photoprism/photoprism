@@ -66,7 +66,7 @@ func TestSyncPathPolicy(t *testing.T) {
 
 	for _, file := range fixtures {
 		record := entity.NewFileSync(a.ID, fmt.Sprintf("fixture/%d", file.ID))
-		record.FileID = file.ID
+		record.FileID = &file.ID
 		record.Status = entity.FileSyncIgnore
 		require.NoError(t, record.Create())
 	}
@@ -76,6 +76,7 @@ func TestSyncPathPolicy(t *testing.T) {
 	require.NoError(t, photo.Save())
 
 	t.Cleanup(func() {
+		entity.UnscopedDb().Unscoped().Delete(&entity.FileSync{}, "file_id in (select id from files where photo_id = ?)", photo.ID)
 		entity.UnscopedDb().Unscoped().Delete(&entity.File{}, "photo_id = ?", photo.ID)
 		entity.UnscopedDb().Unscoped().Delete(&entity.Details{}, "photo_id = ?", photo.ID)
 		entity.UnscopedDb().Unscoped().Delete(photo)
