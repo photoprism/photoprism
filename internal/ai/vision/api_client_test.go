@@ -2,12 +2,16 @@ package vision
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"sync/atomic"
 	"testing"
 	"time"
 
+	"github.com/sirupsen/logrus"
+	logtest "github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -412,5 +416,102 @@ func TestPerformApiRequestVisionStatus(t *testing.T) {
 		resp, err := PerformApiRequest(request(), server.URL, http.MethodPost, "")
 		assert.NoError(t, err)
 		assert.Len(t, resp.Result.Labels, 1)
+	})
+}
+
+// TestPerformApiRequestErrorLog checks that a failed response is summarized at debug level and logged in full at trace level.
+func TestPerformApiRequestErrorLog(t *testing.T) {
+	const marker = "remote-body-marker"
+
+	for _, tc := range []struct {
+		name   string
+		format ApiFormat
+		code   int
+		body   string
+	}{
+		{"VisionJson", ApiFormatVision, http.StatusInternalServerError, `{"code":500,"error":"` + marker + `"}`},
+		{"VisionText", ApiFormatVision, http.StatusInternalServerError, `<html>` + marker + `</html>`},
+		{"VisionRedirect", ApiFormatVision, http.StatusMultipleChoices, `{"error":"` + marker + `"}`},
+		{"Ollama", ApiFormatOllama, http.StatusInternalServerError, `{"code":500,"error":"` + marker + `"}`},
+		{"OllamaText", ApiFormatOllama, http.StatusInternalServerError, `<html>` + marker + `</html>`},
+		{"OpenAI", ApiFormatOpenAI, http.StatusInternalServerError, `{"error":{"message":"` + marker + `"}}`},
+		{"OllamaSuccess", ApiFormatOllama, http.StatusOK, `{"model":"qwen2.5vl:latest","response":"{\"labels\":[{\"name\":\"` + marker + `\",\"confidence\":0.9}]}"}`},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			orig := log
+			logger, hook := logtest.NewNullLogger()
+			logger.SetLevel(logrus.TraceLevel)
+			log = logger
+			t.Cleanup(func() { log = orig })
+
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set(header.ContentType, header.ContentTypeJson)
+				w.WriteHeader(tc.code)
+				_, _ = w.Write([]byte(tc.body))
+			}))
+			defer server.Close()
+
+			request := &ApiRequest{Id: "3487da77-246e-4b4d-b1b2-2b5d5ee7b5a8", Model: "qwen2.5vl:latest", Images: []string{"data:image/jpeg;base64,AA=="}, ResponseFormat: tc.format}
+			_, _ = PerformApiRequest(request, server.URL, http.MethodPost, "")
+
+			var summaries, traces int
+
+			for _, entry := range hook.AllEntries() {
+				if entry.Level == logrus.TraceLevel {
+					if strings.Contains(entry.Message, marker) {
+						traces++
+						assert.True(t, strings.HasPrefix(entry.Message, `vision: response "`), entry.Message)
+					}
+					continue
+				}
+
+				assert.NotContains(t, entry.Message, marker, entry.Level.String())
+
+				if entry.Level == logrus.DebugLevel && strings.Contains(entry.Message, fmt.Sprintf("status code %d", tc.code)) {
+					summaries++
+				}
+			}
+
+			if tc.code < 300 {
+				assert.Zero(t, summaries, "unexpected debug summary")
+			} else {
+				assert.Equal(t, 1, summaries, "debug summaries")
+			}
+
+			assert.Equal(t, 1, traces, "trace bodies")
+		})
+	}
+}
+
+// TestLogErrorResponse checks the log entries written for a failed response at debug and trace level.
+func TestLogErrorResponse(t *testing.T) {
+	capture := func(t *testing.T, level logrus.Level) *logtest.Hook {
+		orig := log
+		logger, hook := logtest.NewNullLogger()
+		logger.SetLevel(level)
+		log = logger
+		t.Cleanup(func() { log = orig })
+		return hook
+	}
+
+	t.Run("Debug", func(t *testing.T) {
+		hook := capture(t, logrus.DebugLevel)
+		logErrorResponse([]byte("<html>bad gateway</html>"), http.StatusBadGateway)
+		require.Len(t, hook.AllEntries(), 1)
+		assert.Equal(t, logrus.DebugLevel, hook.LastEntry().Level)
+		assert.Equal(t, "vision: request failed with status code 502 (24 bytes)", hook.LastEntry().Message)
+	})
+	t.Run("Trace", func(t *testing.T) {
+		hook := capture(t, logrus.TraceLevel)
+		logErrorResponse([]byte("<html>bad gateway</html>"), http.StatusBadGateway)
+		require.Len(t, hook.AllEntries(), 2)
+		assert.Equal(t, logrus.TraceLevel, hook.LastEntry().Level)
+		assert.Equal(t, `vision: response "<html>bad gateway</html>" (status code 502)`, hook.LastEntry().Message)
+	})
+	t.Run("TraceEscaped", func(t *testing.T) {
+		hook := capture(t, logrus.TraceLevel)
+		logErrorResponse([]byte("a\nb\x1b[31m\u202e"), http.StatusBadGateway)
+		require.Len(t, hook.AllEntries(), 2)
+		assert.Equal(t, `vision: response "a\nb\x1b[31m\u202e" (status code 502)`, hook.LastEntry().Message)
 	})
 }
