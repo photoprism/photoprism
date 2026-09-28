@@ -10,6 +10,8 @@
 - Keep Go scratch work inside `internal/...` (Go refuses `internal/` imports from `/tmp`), and name
   it `internal/zz<something>` — that prefix is gitignored, so a `git add` that sweeps a directory
   cannot carry a throwaway copy of a package into a commit. Single files follow `zz_*.go`.
+  `./internal/...` still runs their tests in every full suite, so gate a slow or database-heavy
+  one behind an env var (`t.Skip` unless it is set), and delete the directory when done.
 - A test that runs the indexer or importer on fixture media (`Index.Start`, `IndexMain`/`IndexRelated`,
   `UserMediaFile`, `Import.Start`, the import worker) starts with
   `if testing.Short() { t.Skip("skipping test in short mode.") }`, placed before any setup; gate only the subtest
