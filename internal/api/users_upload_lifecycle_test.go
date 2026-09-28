@@ -95,12 +95,16 @@ func TestUploadRequestLifecycle(t *testing.T) {
 			defer removeUploadDirsForToken(t, filepath.Join(conf.UserStoragePath(entity.Admin.UserUID), fs.UploadDir), name)
 			body := bytes.NewBufferString(`{"albums":[]}`)
 			contentType := "application/json"
+			// An upload request without files stages the empty batch that the processing request expects.
 			if tc.method == http.MethodPut && !tc.folderError {
-				sess, err := entity.FindSession(rnd.SessionID(token))
+				staging, stagingType, err := buildMultipart(map[string][]byte{})
 				require.NoError(t, err)
-				dir, err := conf.UserUploadBatchPath(entity.Admin.UserUID, uploadBatchName(sess, name))
-				require.NoError(t, err)
-				require.DirExists(t, dir)
+				req := httptest.NewRequest(http.MethodPost, "/api/v1/users/"+entity.Admin.UserUID+"/upload/"+name, staging)
+				req.Header.Set("Content-Type", stagingType)
+				header.SetAuthorization(req, token)
+				response := httptest.NewRecorder()
+				app.ServeHTTP(response, req)
+				require.Equal(t, http.StatusOK, response.Code, response.Body.String())
 			}
 			if tc.method == http.MethodPost {
 				var err error
