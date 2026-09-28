@@ -110,7 +110,7 @@ Keep TensorFlow entries in place so PhotoPrism falls back when the external serv
 
 #### Rate Limiting
 
-OpenAI calls respect the existing `limiter.Auth` configuration used by the vision service. Transient `HTTP 429` responses are retried with bounded exponential backoff (`ServiceMaxRetries` attempts, `ServiceRetryDelay` base, capped at `ServiceRetryMaxDelay`), honoring a `Retry-After` header when present — itself capped at `ServiceRetryMaxDelay`, so a longer requested pause is retried sooner and may fail through to the next worker pass — and staying within `ServiceTimeout`; other error statuses surface as standard HTTP errors and are not retried. Operators should still ensure they have adequate account limits and consider external rate limiting when sharing credentials.
+The client applies no rate limit of its own. Transient `HTTP 429` responses are retried with bounded exponential backoff (`ServiceMaxRetries` attempts, `ServiceRetryDelay` base, capped at `ServiceRetryMaxDelay`), honoring a `Retry-After` header when present — itself capped at `ServiceRetryMaxDelay`, so a longer requested pause is retried sooner and may fail through to the next worker pass — and staying within `ServiceTimeout`; other error statuses return `openai service request failed (status N)` and are not retried, with the response text in the console system log. Operators should still ensure they have adequate account limits and consider external rate limiting when sharing credentials.
 
 #### Testing & Validation
 
