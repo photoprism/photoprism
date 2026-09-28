@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v2"
 
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/service/cluster"
@@ -149,4 +150,71 @@ func TestClusterNodesRotate_NothingSelected(t *testing.T) {
 
 	require.ErrorAs(t, err, &exit)
 	assert.Equal(t, 2, exit.ExitCode())
+}
+
+// TestClusterNodesRotate_ConfirmLocalRegistry covers the Portal's own local-registry rotation path,
+// which TestClusterNodesRotate_Confirm in cluster_register_http_test.go does not reach; it also proves
+// the positive case, that a confirmed rotation actually replaces the secret.
+func TestClusterNodesRotate_ConfirmLocalRegistry(t *testing.T) {
+	t.Setenv("PHOTOPRISM_CLI", "")
+
+	c := get.Config()
+	prevEdition := c.Options().Edition
+	prevRole := c.Options().NodeRole
+	c.Options().Edition = config.Portal
+	c.Options().NodeRole = cluster.RolePortal
+	t.Cleanup(func() {
+		c.Options().Edition = prevEdition
+		c.Options().NodeRole = prevRole
+	})
+
+	regy, err := reg.NewClientRegistryWithConfig(c)
+	require.NoError(t, err)
+
+	n := createTestNode(t, regy, "pp-rotate-confirm", cluster.RoleInstance)
+	before, err := regy.RotateSecret(n.UUID)
+	require.NoError(t, err)
+
+	secretUnchanged := func() bool {
+		client := entity.FindClientByUID(before.ClientID)
+		return client != nil && client.VerifySecret(before.ClientSecret)
+	}
+
+	t.Run("NoTerminal", func(t *testing.T) {
+		_, runErr := RunWithTestContext(ClusterNodesRotateCommand, []string{"rotate", "--secret", "pp-rotate-confirm"})
+
+		var exit cli.ExitCoder
+		require.ErrorAs(t, runErr, &exit)
+		assert.Equal(t, 2, exit.ExitCode())
+		assert.Contains(t, runErr.Error(), "--yes")
+		assert.True(t, secretUnchanged())
+	})
+	t.Run("AnsweredNo", func(t *testing.T) {
+		pipeResetAnswers(t, "n\n")
+
+		_, runErr := RunWithTestContext(ClusterNodesRotateCommand, []string{"rotate", "--secret", "pp-rotate-confirm"})
+
+		assert.NoError(t, runErr)
+		assert.True(t, secretUnchanged())
+	})
+	t.Run("AnsweredYes", func(t *testing.T) {
+		pipeResetAnswers(t, "y\n")
+
+		_, runErr := RunWithTestContext(ClusterNodesRotateCommand, []string{"rotate", "--secret", "pp-rotate-confirm"})
+
+		assert.NoError(t, runErr)
+		assert.False(t, secretUnchanged())
+	})
+	t.Run("YesFlag", func(t *testing.T) {
+		before2, rotErr := regy.RotateSecret(n.UUID)
+		require.NoError(t, rotErr)
+
+		_, runErr := RunWithTestContext(ClusterNodesRotateCommand, []string{"rotate", "--secret", "--yes", "pp-rotate-confirm"})
+		require.NoError(t, runErr)
+
+		client := entity.FindClientByUID(before2.ClientID)
+		if assert.NotNil(t, client) {
+			assert.False(t, client.VerifySecret(before2.ClientSecret))
+		}
+	})
 }
