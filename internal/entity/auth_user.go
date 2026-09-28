@@ -1112,10 +1112,8 @@ func (m *User) SetPassword(password string) error {
 		return fmt.Errorf("only registered users can change their password")
 	}
 
-	if len([]rune(password)) < PasswordLength {
-		return fmt.Errorf("password must have at least %d characters", PasswordLength)
-	} else if len(password) > txt.ClipPassword {
-		return fmt.Errorf("password must have less than %d characters", txt.ClipPassword)
+	if err := ValidatePasswordLength(password); err != nil {
+		return err
 	}
 
 	pw := NewPassword(m.UserUID, password, false)
@@ -1125,6 +1123,17 @@ func (m *User) SetPassword(password string) error {
 	}
 
 	return m.RegenerateTokens()
+}
+
+// ValidatePasswordLength returns an error if the password is too short or too long to be set.
+func ValidatePasswordLength(password string) error {
+	if len([]rune(password)) < PasswordLength {
+		return fmt.Errorf("password must have at least %d characters", PasswordLength)
+	} else if len(password) > txt.ClipPassword {
+		return fmt.Errorf("password must have less than %d characters", txt.ClipPassword)
+	}
+
+	return nil
 }
 
 // DeletePassword removes the password of the user account, if one has been set.

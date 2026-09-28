@@ -3,6 +3,7 @@ package entity
 import (
 	"flag"
 	"path"
+	"strings"
 	"testing"
 	"time"
 
@@ -19,6 +20,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/list"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/time/unix"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 func createScopedTestUser(t *testing.T) *User {
@@ -3106,5 +3108,21 @@ func TestUser_RequiresBasePath(t *testing.T) {
 	t.Run("DefaultBasePath", func(t *testing.T) {
 		u := &User{UserUID: "urqdrfb72479n047", UserName: "jane", UserRole: acl.RoleContributor.String()}
 		assert.Equal(t, "users/jane", u.GetBasePath())
+	})
+}
+
+func TestValidatePasswordLength(t *testing.T) {
+	prev := PasswordLength
+	PasswordLength = PasswordLengthDefault
+	t.Cleanup(func() { PasswordLength = prev })
+
+	t.Run("Success", func(t *testing.T) {
+		assert.NoError(t, ValidatePasswordLength(strings.Repeat("a", PasswordLength)))
+	})
+	t.Run("TooShort", func(t *testing.T) {
+		assert.ErrorContains(t, ValidatePasswordLength(strings.Repeat("a", PasswordLength-1)), "at least")
+	})
+	t.Run("TooLong", func(t *testing.T) {
+		assert.ErrorContains(t, ValidatePasswordLength(strings.Repeat("a", txt.ClipPassword+1)), "less than")
 	})
 }

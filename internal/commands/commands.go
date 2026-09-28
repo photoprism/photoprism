@@ -55,10 +55,19 @@ func RunNonInteractively(confirmed bool) bool {
 	return confirmed || strings.ToLower(os.Getenv(config.EnvVar("cli"))) == NONINTERACTIVE
 }
 
-// confirmStdin is where ConfirmAction reads answers from, or nil for the terminal.
+// confirmStdin is where confirmation prompts read answers from, or nil for the terminal.
 var confirmStdin io.ReadCloser
 
-// confirmTerminal reports whether ConfirmAction reads its answers from a terminal.
+// SetConfirmInput makes confirmation prompts read their answers from r, so that tests in other packages can
+// answer them, and returns a function that restores the previous input.
+func SetConfirmInput(r io.ReadCloser) (restore func()) {
+	prev := confirmStdin
+	confirmStdin = r
+
+	return func() { confirmStdin = prev }
+}
+
+// confirmTerminal reports whether confirmation prompts read their answers from a terminal.
 var confirmTerminal = func() bool {
 	return confirmStdin == nil && isTerminal(os.Stdin)
 }
@@ -85,26 +94,46 @@ func confirmOutput(stdoutTerminal, stderrTerminal bool) *os.File {
 func ConfirmAction(confirmed bool, label string) (proceed bool, err error) {
 	if RunNonInteractively(confirmed) {
 		return true, nil
-	}
-
-	prompt := promptui.Prompt{Label: confirmLabel(label), IsConfirm: true, Stdin: confirmStdin,
-		Stdout: confirmOutput(isTerminal(os.Stdout), isTerminal(os.Stderr))}
-
-	if _, err = prompt.Run(); err == nil {
-		return true, nil
-	} else if errors.Is(err, promptui.ErrAbort) || errors.Is(err, promptui.ErrInterrupt) {
-		return false, nil
-	} else if errors.Is(err, promptui.ErrEOF) {
-		if confirmTerminal() {
-			return false, nil
-		}
-
-		err = errors.New("no terminal")
+	} else if proceed, err = askConfirmation(label); err == nil {
+		return proceed, nil
 	}
 
 	// Exit code 2 is the usage error: the command was reached in an environment that cannot
 	// answer it, and the caller fixes that by passing --yes.
 	return false, cli.Exit(fmt.Errorf("could not ask for confirmation (%w), pass --yes to run non-interactively", err), 2)
+}
+
+// ConfirmRestore asks whether to restore a deleted record instead of performing the requested operation.
+// PHOTOPRISM_CLI=noninteractive alone does not confirm it, and when no answer can be obtained it returns
+// a plain error naming flag, so the command exits 1 as it does when the offer is declined.
+func ConfirmRestore(confirmed bool, label, flag string) (restore bool, err error) {
+	if confirmed {
+		return true, nil
+	} else if RunNonInteractively(false) {
+		return false, fmt.Errorf("%s requires confirmation, pass %s", confirmLabel(label), flag)
+	} else if restore, err = askConfirmation(label); err == nil {
+		return restore, nil
+	}
+
+	return false, fmt.Errorf("could not ask for confirmation (%w), pass %s", err, flag)
+}
+
+// askConfirmation shows a yes/no prompt, and returns an error only when no answer could be obtained.
+func askConfirmation(label string) (bool, error) {
+	prompt := promptui.Prompt{Label: confirmLabel(label), IsConfirm: true, Stdin: confirmStdin,
+		Stdout: confirmOutput(isTerminal(os.Stdout), isTerminal(os.Stderr))}
+
+	if _, err := prompt.Run(); err == nil {
+		return true, nil
+	} else if errors.Is(err, promptui.ErrAbort) || errors.Is(err, promptui.ErrInterrupt) {
+		return false, nil
+	} else if !errors.Is(err, promptui.ErrEOF) {
+		return false, err
+	} else if confirmTerminal() {
+		return false, nil
+	}
+
+	return false, errors.New("no terminal")
 }
 
 // confirmLabel removes a trailing question mark, since the prompt appends its own.
