@@ -3,7 +3,7 @@
     <v-form ref="form" validate-on="invalid-input" class="p-form-settings" accept-charset="UTF-8" @submit.prevent="onChange">
       <v-card flat tile class="mt-0 px-1 bg-background">
         <v-card-actions v-if="$config.values.restart">
-          <v-row align="start" dense>
+          <v-row class="align-start" density="compact">
             <v-col cols="12" class="pa-2 text-start">
               <v-alert color="primary" icon="mdi-information" class="pa-2" type="info" variant="outlined">
                 <a style="color: inherit" href="#restart">
@@ -19,7 +19,7 @@
         </v-card-title>
 
         <v-card-actions>
-          <v-row align="start" dense>
+          <v-row class="align-start" density="compact">
             <v-col cols="12" sm="6" lg="3">
               <v-checkbox
                 v-model="settings.Debug"
@@ -188,7 +188,7 @@
           </v-card-title>
 
           <v-card-actions>
-            <v-row align="start" dense>
+            <v-row class="align-start" density="compact">
               <v-col cols="12" sm="4">
                 <v-checkbox
                   v-model="settings.BackupDatabase"
@@ -245,7 +245,7 @@
         </v-card-title>
 
         <v-card-actions class="grid">
-          <v-row align="start">
+          <v-row class="align-start">
             <v-col cols="12" lg="4" class="py-2">
               <v-list-subheader class="pa-0">
                 {{ $gettextInterpolate($gettext("Static Size Limit: %{n}px"), { n: parseInt(settings.ThumbSize) }) }}
@@ -300,7 +300,7 @@
         </v-card-title>
 
         <v-card-actions class="grid">
-          <v-row align="start">
+          <v-row class="align-start">
             <v-col cols="12" lg="4" class="py-2">
               <v-list-subheader class="pa-0">
                 {{ $gettextInterpolate($gettext("JPEG Quality: %{n}"), { n: parseInt(settings.JpegQuality) }) }}
@@ -329,7 +329,7 @@
         </v-card-title>
 
         <v-card-actions>
-          <v-row align="start" dense>
+          <v-row class="align-start" density="compact">
             <v-col cols="12" sm="6" lg="4">
               <v-checkbox
                 v-model="settings.DisableDarktable"

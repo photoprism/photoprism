@@ -28,7 +28,7 @@
                 >
                   {{ file.Error }}
                 </v-alert>
-                <v-row class="d-flex align-stretch" align="center" justify="center">
+                <v-row class="d-flex align-stretch align-center justify-center">
                   <v-col cols="12" class="pa-0 flex-grow-1">
                     <div class="v-table__overflow">
                       <v-table tile hover density="compact" class="photo-files d-flex bg-table">

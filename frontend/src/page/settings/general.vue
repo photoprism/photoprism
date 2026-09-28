@@ -7,7 +7,7 @@
         </v-card-title>
 
         <v-card-actions>
-          <v-row align="start" dense>
+          <v-row class="align-start" density="compact">
             <v-col cols="12" sm="6">
               <v-select
                 v-model="settings.ui.theme"
@@ -71,7 +71,7 @@
 
       <v-card v-if="!isPortal && !hasScope && (isDemo || isSuperAdmin)" flat tile class="mt-0 px-1 bg-background">
         <v-card-actions>
-          <v-row align="start" dense>
+          <v-row class="align-start" density="compact">
             <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.features.albums"
@@ -424,7 +424,7 @@
         </v-card-title>
 
         <v-card-actions>
-          <v-row align="start" dense>
+          <v-row class="align-start" density="compact">
             <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.ui.openOnHover"
@@ -494,7 +494,7 @@
         </v-card-title>
 
         <v-card-actions>
-          <v-row align="start" dense>
+          <v-row class="align-start" density="compact">
             <v-col cols="12" sm="6">
               <v-select
                 v-model="settings.maps.style"

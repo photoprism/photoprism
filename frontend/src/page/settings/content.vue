@@ -7,7 +7,7 @@
         </v-card-title>
 
         <v-card-actions>
-          <v-row align="start" dense>
+          <v-row class="align-start" density="compact">
             <v-col cols="12" sm="4">
               <v-checkbox
                 v-model="settings.features.review"
@@ -63,7 +63,7 @@
         </v-card-title>
 
         <v-card-actions>
-          <v-row align="start" dense>
+          <v-row class="align-start" density="compact">
             <v-col cols="12" sm="4">
               <v-checkbox
                 v-model="settings.stack.meta"
@@ -118,7 +118,7 @@
         </v-card-title>
 
         <v-card-actions>
-          <v-row align="start" dense>
+          <v-row class="align-start" density="compact">
             <v-col cols="12" sm="4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.search.listView"
@@ -175,7 +175,7 @@
         </v-card-title>
 
         <v-card-actions>
-          <v-row align="start" dense>
+          <v-row class="align-start" density="compact">
             <v-col cols="12" :md="isSuperAdmin ? 3 : 4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.download.originals"

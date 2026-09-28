@@ -16,7 +16,7 @@
           <h6 class="text-h6">{{ $gettext(`WebDAV Upload`) }}</h6>
         </v-card-title>
         <v-card-text class="dense">
-          <v-row align="center" dense>
+          <v-row class="align-center" density="compact">
             <v-col cols="12">
               <v-select
                 v-model="service"

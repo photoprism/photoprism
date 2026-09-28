@@ -25,7 +25,7 @@
 
       <v-progress-linear v-if="saving" :indeterminate="true" color="surface-variant"></v-progress-linear>
 
-      <v-row v-if="formData" dense :class="!$vuetify.display.mdAndDown ? 'overflow-hidden' : ''">
+      <v-row v-if="formData" density="compact" :class="!$vuetify.display.mdAndDown ? 'overflow-hidden' : ''">
         <!-- Desktop view -->
         <v-col v-if="!$vuetify.display.mdAndDown" cols="12" lg="4" class="scroll-col">
           <div v-if="model.models" class="edit-batch photo-results list-view">
@@ -151,7 +151,7 @@
           <v-form ref="form" validate-on="invalid-input" class="p-form p-form-photo-details-meta pa-0" accept-charset="UTF-8" @submit.prevent="save">
             <div class="form-body">
               <div class="form-controls">
-                <v-row dense>
+                <v-row density="compact">
                   <v-col cols="12" class="text-subtitle-2">{{ $gettext(`Description`) }}</v-col>
                   <v-col cols="12">
                     <v-text-field
@@ -186,7 +186,7 @@
                     ></v-textarea>
                   </v-col>
                 </v-row>
-                <v-row dense>
+                <v-row density="compact">
                   <v-col cols="12" class="text-subtitle-2">{{ $gettext(`Date & Time`) }}</v-col>
                   <v-col cols="6" md="3">
                     <v-autocomplete
@@ -324,7 +324,7 @@
                     ></v-text-field>
                   </v-col>
                 </v-row>
-                <v-row dense>
+                <v-row density="compact">
                   <v-col cols="12" class="text-subtitle-2">{{ $pgettext(`Edit`, `Content`) }}</v-col>
                   <v-col cols="12" sm="8">
                     <v-textarea
@@ -410,7 +410,7 @@
                     ></v-textarea>
                   </v-col>
                 </v-row>
-                <v-row v-if="canViewAlbums" dense>
+                <v-row v-if="canViewAlbums" density="compact">
                   <v-col cols="12" class="text-subtitle-2">{{ $gettext(`Albums`) }}</v-col>
                   <v-col cols="12">
                     <p-input-chip-selector
@@ -426,7 +426,7 @@
                     />
                   </v-col>
                 </v-row>
-                <v-row v-if="canViewLabels" dense>
+                <v-row v-if="canViewLabels" density="compact">
                   <v-col cols="12" class="text-subtitle-2">{{ $gettext(`Labels`) }}</v-col>
                   <v-col cols="12">
                     <p-input-chip-selector
@@ -444,7 +444,7 @@
                     />
                   </v-col>
                 </v-row>
-                <v-row dense>
+                <v-row density="compact">
                   <v-col v-for="fieldName in toggleFieldsArray" :key="fieldName" cols="12" sm="12" md="6" lg="6" xl="3">
                     <div class="d-flex flex-column">
                       <label class="form-label mb-3 text-subtitle-2">{{ getFieldDisplayName(fieldName) }}</label>

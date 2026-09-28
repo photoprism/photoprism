@@ -50,7 +50,7 @@
         <v-expand-transition>
           <v-card v-show="expanded" flat color="secondary">
             <v-card-text class="dense">
-              <v-row dense>
+              <v-row density="compact">
                 <v-col cols="12" sm="4" class="p-year-select">
                   <v-select
                     :model-value="filter.year"

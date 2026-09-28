@@ -73,6 +73,8 @@ export default defineConfig([
       // Deprecated in favor of @stylistic/brace-style; still functional in ESLint 10.
       "brace-style": ["warn", "1tbs", { allowSingleLine: false }],
       "no-unused-vars": ["warn"],
+      // Grids use density and utility classes instead of the deprecated v-row/v-col props.
+      "vuetify/no-legacy-grid-props": ["error"],
       // Explicit initial values can document a variable's intended type or default.
       "no-useless-assignment": "off",
       "no-console": 0,
