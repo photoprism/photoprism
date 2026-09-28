@@ -17,7 +17,7 @@ type Map = Values
 // ModelValues extracts exported struct fields into a Values map, optionally omitting selected names.
 // Byte slices such as json.RawMessage columns are included; other slices, maps, and relations are not.
 func ModelValues(m any, omit ...string) (result Values, omitted []any, err error) {
-	return ModelValuesStructOption(m, true, omit...)
+	return ModelValuesStructOption(m, false, omit...)
 }
 
 // ModelValuesStructOption extracts Values from an entity model, with the option to includeAll fields like before.
@@ -75,9 +75,6 @@ func ModelValuesStructOption(m any, includeAll bool, omit ...string) (result Val
 			}
 			continue
 		case reflect.Slice:
-			if v.Type().Elem().Kind() != reflect.Uint8 {
-				continue
-			}
 			if v.IsZero() {
 				continue
 			}
@@ -96,7 +93,7 @@ func ModelValuesStructOption(m any, includeAll bool, omit ...string) (result Val
 			}
 			whitelist := false
 			switch v.Type().String() {
-			case "sql.NullTime", "time.Time", "time.Duration", "json.RawMessage", "jsontext.Value", "otp.Key":
+			case "sql.NullTime", "time.Time", "time.Duration", "json.RawMessage", "jsontext.Value", "otp.Key", "gorm.DeletedAt":
 				whitelist = true
 			}
 			if !whitelist && !includeAll {

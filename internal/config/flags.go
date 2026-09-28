@@ -1573,7 +1573,7 @@ var Flags = CliFlags{
 			Aliases: []string{"tfr-db-pass"},
 			Usage:   "database user `PASSWORD`",
 			EnvVars: EnvVars("TRANSFER_PASSWORD"),
-		}},
+		}, Secret: true},
 }
 
 // faceDocDefault formats a face threshold for the generated configuration reference and for

@@ -5,6 +5,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity/migrate"
 	"github.com/photoprism/photoprism/internal/testextras"
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 // onReady stores callbacks to execute once database initialization finishes.

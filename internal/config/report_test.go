@@ -178,7 +178,8 @@ func TestConfig_ReportDatabaseSection(t *testing.T) {
 		assert.Equal(t, "db.internal", values["database-host"])
 		assert.Equal(t, "4002", values["database-port"])
 		assert.Equal(t, "app", values["database-user"])
-		assert.Equal(t, strings.Repeat("*", len("secret")), values["database-password"])
+		// The marker is fixed rather than one asterisk per character.
+		assert.Equal(t, txt.Masked, values["database-password"])
 		_, hasDSN := values["database-dsn"]
 		assert.False(t, hasDSN)
 	})

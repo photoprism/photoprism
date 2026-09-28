@@ -34,7 +34,7 @@ func TestImport_FolderDisplayPath(t *testing.T) {
 		// An upload is imported from a per-session directory under the storage path, which is not
 		// part of the import namespace, so it contributes no folder record and names no staging
 		// path in the log.
-		cfg := config.NewMinimalTestConfigWithDb("import-display", t.TempDir())
+		cfg := config.NewMinimalTestConfigWithDbTTest("import-display", t.TempDir(), t)
 
 		uploadPath := filepath.Join(cfg.StoragePath(), "users", "us6sg6bxpogaaba1", "upload", "sessionrefid")
 		nested := filepath.Join(uploadPath, "Vacation 2030")
@@ -60,7 +60,7 @@ func TestImport_FolderDisplayPath(t *testing.T) {
 	t.Run("SubfolderImportKeepsTheImportNamespace", func(t *testing.T) {
 		// Importing a subfolder still records its directories under the configured import path, so
 		// the namespace stays the one the rest of the application reads.
-		cfg := config.NewMinimalTestConfigWithDb("import-display-subfolder", t.TempDir())
+		cfg := config.NewMinimalTestConfigWithDbTTest("import-display-subfolder", t.TempDir(), t)
 
 		require.NoError(t, os.MkdirAll(filepath.Join(cfg.ImportPath(), "2030", "05"), fs.ModeDir))
 
@@ -80,7 +80,7 @@ func TestImport_FolderDisplayPath(t *testing.T) {
 	})
 	t.Run("SiblingOfTheImportPathIsOutsideTheNamespace", func(t *testing.T) {
 		// A directory whose name merely starts with the import path is not inside it.
-		cfg := config.NewMinimalTestConfigWithDb("import-display-sibling", t.TempDir())
+		cfg := config.NewMinimalTestConfigWithDbTTest("import-display-sibling", t.TempDir(), t)
 
 		sibling := cfg.ImportPath() + "x"
 		require.NoError(t, os.MkdirAll(filepath.Join(sibling, "sub"), fs.ModeDir))
@@ -94,7 +94,7 @@ func TestImport_FolderDisplayPath(t *testing.T) {
 	t.Run("FolderNameIsSanitized", func(t *testing.T) {
 		// A directory name reaches the log through the folder record, so control and bidi characters
 		// must not survive into it.
-		cfg := config.NewMinimalTestConfigWithDb("import-display-clean", t.TempDir())
+		cfg := config.NewMinimalTestConfigWithDbTTest("import-display-clean", t.TempDir(), t)
 
 		importPath := cfg.ImportPath()
 		nested := filepath.Join(importPath, "album\u202egpj.exe\a")
