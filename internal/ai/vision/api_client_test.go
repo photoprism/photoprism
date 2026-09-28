@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
 	"github.com/photoprism/photoprism/pkg/http/header"
@@ -355,4 +356,61 @@ func TestPerformApiRequestResponseLimit(t *testing.T) {
 	assert.Error(t, err)
 	assert.Nil(t, resp)
 	assert.Contains(t, err.Error(), "exceeds the maximum size")
+}
+
+func TestPerformApiRequestVisionStatus(t *testing.T) {
+	newServer := func(code int, body string) *httptest.Server {
+		return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set(header.ContentType, header.ContentTypeJson)
+			w.WriteHeader(code)
+			_, _ = w.Write([]byte(body))
+		}))
+	}
+
+	request := func() *ApiRequest {
+		return &ApiRequest{Id: "3487da77-246e-4b4d-b1b2-2b5d5ee7b5a8", Images: []string{"data:image/jpeg;base64,AA=="}, ResponseFormat: ApiFormatVision}
+	}
+
+	t.Run("Forbidden", func(t *testing.T) {
+		// A service that refuses the request, e.g. because its Vision API is disabled.
+		server := newServer(http.StatusForbidden, `{"id":"3487da77-246e-4b4d-b1b2-2b5d5ee7b5a8","code":403,"error":"Forbidden","result":{}}`)
+		defer server.Close()
+
+		resp, err := PerformApiRequest(request(), server.URL, http.MethodPost, "")
+		assert.EqualError(t, err, "Forbidden (status code 403)")
+		assert.NotNil(t, resp)
+		assert.Equal(t, http.StatusForbidden, resp.Code)
+	})
+	t.Run("NoErrorText", func(t *testing.T) {
+		server := newServer(http.StatusUnauthorized, `{"code":401}`)
+		defer server.Close()
+
+		_, err := PerformApiRequest(request(), server.URL, http.MethodPost, "")
+		assert.EqualError(t, err, "status code 401")
+	})
+	t.Run("ErrorTextSanitized", func(t *testing.T) {
+		server := newServer(http.StatusInternalServerError, `{"code":500,"error":"a\nb\u001b[31m"}`)
+		defer server.Close()
+
+		_, err := PerformApiRequest(request(), server.URL, http.MethodPost, "")
+		require.Error(t, err)
+		assert.NotContains(t, err.Error(), "\n")
+		assert.NotContains(t, err.Error(), "\x1b")
+		assert.Contains(t, err.Error(), "(status code 500)")
+	})
+	t.Run("MultipleChoices", func(t *testing.T) {
+		server := newServer(http.StatusMultipleChoices, `{}`)
+		defer server.Close()
+
+		_, err := PerformApiRequest(request(), server.URL, http.MethodPost, "")
+		assert.EqualError(t, err, "status code 300")
+	})
+	t.Run("Success", func(t *testing.T) {
+		server := newServer(http.StatusOK, `{"id":"3487da77-246e-4b4d-b1b2-2b5d5ee7b5a8","code":200,"result":{"labels":[{"name":"cat","confidence":0.9}]}}`)
+		defer server.Close()
+
+		resp, err := PerformApiRequest(request(), server.URL, http.MethodPost, "")
+		assert.NoError(t, err)
+		assert.Len(t, resp.Result.Labels, 1)
+	})
 }

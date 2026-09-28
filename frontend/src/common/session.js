@@ -580,11 +580,7 @@ export default class Session {
     return this;
   }
 
-  // invalidRedirectUrl reports whether url is unsafe to record as the
-  // post-login deep-link target. Rejects null/undefined, non-string,
-  // whitespace-only, and login-page URLs (a recorded login URL would either
-  // no-op the post-login redirect or re-trigger auto-OIDC indefinitely on a
-  // crafted `?return_to=/login`).
+  // invalidRedirectUrl rejects empty or login-page post-login redirect targets.
   invalidRedirectUrl(url) {
     if (typeof url !== "string") {
       return true;
@@ -919,15 +915,9 @@ export default class Session {
     }
   }
 
-  // revokePeerSessions best-effort revokes every reachable peer instance's session
-  // server-side and clears their namespaced keys from local storage. The peer keys
-  // are cleared synchronously (the DELETEs hold their own tokens), so a route guard
-  // can fire-and-forget while the async revocation settles. Returns the fan-out
-  // promise. Shared by logoutEverywhere (awaits) and signOut (fire-and-forget).
-  //
-  // Unwraps to the raw underlying store first: this.localStorage / this.sessionStorage
-  // are NamespacedStorage wrappers (getAppStorage), so enumerating or clearing a
-  // cross-namespace key through one double-prefixes it (pp:a:pp:b:…) and misses it.
+  // revokePeerSessions revokes reachable peer sessions and clears their stored keys.
+  // Keys are cleared synchronously; the returned promise settles peer revocation.
+  // Unwrap stores so cross-namespace keys are not prefixed twice.
   revokePeerSessions() {
     const rawStore = (s) => (s && s.storage ? s.storage : s);
     const stores = [rawStore(this.localStorage), rawStore(this.sessionStorage)];

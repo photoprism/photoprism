@@ -1,11 +1,13 @@
 package server
 
 import (
+	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
@@ -58,4 +60,34 @@ func TestWebDAVDestinationStatus(t *testing.T) {
 			assert.Equal(t, tc.destination, req.Header.Get("Destination"))
 		})
 	}
+}
+
+// TestWebDAVDestinationStatus_RequiresBasePath checks that a role limited to its base path is denied
+// when it has no base path.
+func TestWebDAVDestinationStatus_RequiresBasePath(t *testing.T) {
+	key := acl.RoleContributor.String()
+
+	if _, had := acl.UserRoles[key]; !had {
+		acl.UserRoles[key] = acl.RoleContributor
+		t.Cleanup(func() { delete(acl.UserRoles, key) })
+	}
+
+	request := func() *http.Request {
+		req := httptest.NewRequest("MOVE", "http://example.com/originals/source.txt", nil)
+		req.Header.Set("Destination", "/originals/users/jane/target.txt")
+		return req
+	}
+
+	t.Run("NoBasePath", func(t *testing.T) {
+		user := &entity.User{UserName: ".", UserRole: key}
+		assert.Equal(t, http.StatusForbidden, WebDAVDestinationStatus(request(), "/originals", user))
+	})
+	t.Run("BasePath", func(t *testing.T) {
+		user := &entity.User{UserName: "jane", UserRole: key}
+		assert.Equal(t, http.StatusOK, WebDAVDestinationStatus(request(), "/originals", user))
+	})
+	t.Run("Unrestricted", func(t *testing.T) {
+		user := &entity.User{UserName: "jane", UserRole: acl.RoleAdmin.String()}
+		assert.Equal(t, http.StatusOK, WebDAVDestinationStatus(request(), "/originals", user))
+	})
 }

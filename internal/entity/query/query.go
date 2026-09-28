@@ -29,7 +29,6 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 var log = event.Log
@@ -73,12 +72,7 @@ func DbDialect() string {
 
 // BatchSize returns the maximum query parameter number based on the current sql database dialect.
 func BatchSize() int {
-	switch DbDialect() {
-	case dsn.DriverSQLite3:
-		return 333
-	default:
-		return 1000
-	}
+	return entity.BatchSize()
 }
 
 // logErr logs an error and keeps quiet otherwise.

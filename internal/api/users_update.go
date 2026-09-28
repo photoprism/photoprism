@@ -24,10 +24,10 @@ import (
 //	@Tags		Users
 //	@Accept		json
 //	@Produce	json
-//	@Param		uid						path		string		true	"user uid"
-//	@Param		user					body		form.User	true	"properties to be updated"
-//	@Success	200						{object}	entity.User
-//	@Failure	400,401,403,404,409,429	{object}	i18n.Response
+//	@Param		uid							path		string		true	"user uid"
+//	@Param		user						body		form.User	true	"properties to be updated"
+//	@Success	200							{object}	entity.User
+//	@Failure	400,401,403,404,409,413,429	{object}	i18n.Response
 //	@Router		/api/v1/users/{uid} [put]
 func UpdateUser(router *gin.RouterGroup) {
 	router.PUT("/users/:uid", func(c *gin.Context) {

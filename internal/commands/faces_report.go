@@ -328,7 +328,7 @@ func reportResolution(c query.FaceConflict) string {
 		return "narrow"
 	default:
 		// Past AmbiguityDist but too close for the recorded radius to clear CollisionDist, so
-		// resolution writes a number nothing enforces.
+		// resolution writes a number nothing enforces, at most once.
 		return "inert"
 	}
 }
@@ -414,7 +414,7 @@ func faceConflictNotes(scan query.FaceConflictScan, notes query.FaceConflictNote
 	lines := []string{
 		fmt.Sprintf("Compared %s across %s.",
 			english.Plural(scan.Compared, "pair", "pairs"), english.Plural(scan.Clusters, "cluster", "clusters")),
-		fmt.Sprintf("Resolving below %s retires a cluster as ambiguous and above %s narrows it; in between it records a radius the matcher ignores.",
+		fmt.Sprintf("Resolving below %s retires a cluster as ambiguous and above %s narrows it; in between it records a radius the matcher ignores, at most once.",
 			report.Distance(face.AmbiguityDist()), report.Distance(face.CollisionDist+face.Epsilon)),
 	}
 
@@ -447,9 +447,9 @@ func faceConflictNotes(scan query.FaceConflictScan, notes query.FaceConflictNote
 	return lines
 }
 
-// unresolvedConflicts counts reported pairs the resolver will not act on, which is every row whose
-// reported side names nobody. The other side always names somebody, since two anonymous clusters
-// never pair.
+// unresolvedConflicts counts reported pairs the resolver will not act on because the reported side
+// names nobody; an inert pair it has recorded already is not acted on again either. The other side
+// always names somebody, since two anonymous clusters never pair.
 func unresolvedConflicts(conflicts []query.FaceConflict) (n int) {
 	for _, c := range conflicts {
 		if c.SubjUID == "" {

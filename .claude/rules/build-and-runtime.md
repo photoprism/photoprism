@@ -23,7 +23,7 @@ Agents MAY run either inside the Development Environment container (recommended)
 - Start services: `docker compose up` (add `-d` for background)
 - Follow live app logs: `docker compose logs -f --tail=100 photoprism`
 - Execute a single command in the app container: `docker compose exec photoprism <command>`
-  - Run as non-root to avoid root-owned files: `docker compose exec -u "$(id -u):$(id -g)" photoprism <command>`
+  - Run as non-root to avoid root-owned files: `docker compose exec -u "$(id -u)" photoprism <command>`. Pass the UID alone: the image has an account for it, so its supplementary groups (e.g. `ssl-cert`, which some tests need) apply, while adding `:$(id -g)` drops them.
 - Open a terminal session: `make terminal`
 - Stop everything: `docker compose --profile=all down --remove-orphans` (`make down`)
 

@@ -147,13 +147,13 @@ func (m *Subject) BeforeCreate(scope *gorm.Scope) error {
 
 // AfterSave is a hook that updates the name cache after saving.
 func (m *Subject) AfterSave() (err error) {
-	SubjNames.Set(m.SubjUID, m.SubjName)
+	setSubjName(m.SubjUID, m.SubjName)
 	return
 }
 
 // AfterFind is a hook that updates the name cache after querying.
 func (m *Subject) AfterFind() (err error) {
-	SubjNames.Set(m.SubjUID, m.SubjName)
+	setSubjName(m.SubjUID, m.SubjName)
 	return
 }
 
@@ -348,17 +348,17 @@ func FindSubjectByName(name string, restore bool) *Subject {
 
 	result := Subject{}
 
-	// Fetch existing record by uid, if possible
+	// Fetch existing record by uid, if possible, and only if it still carries the name.
 	if uid := SubjNames.Key(name); uid == "" {
-	} else if found := FindSubject(uid); found != nil {
-		result = *found
-	} else {
+	} else if found := FindSubject(uid); found == nil {
 		log.Debugf("subject: cannot find record for uid %s", clean.Log(uid))
+	} else if strings.ToLower(found.SubjName) == strings.ToLower(name) { //nolint:staticcheck // Compares like the cache key.
+		result = *found
 	}
 
 	// Search existing record by name, otherwise.
 	if result.SubjUID != "" {
-	} else if err := UnscopedDb().Where("subj_name LIKE ?", name).First(&result).Error; err != nil {
+	} else if err := UnscopedDb().Where(clean.SqlLikeCond("subj_name"), clean.SqlLike(name)).First(&result).Error; err != nil {
 		log.Debugf("subject: %s does not exist yet", clean.Log(name))
 		return nil
 	}
@@ -640,7 +640,7 @@ func (m *Subject) UpdateName(name string) (*Subject, error) {
 	} else if err = m.Updates(Values{"subj_name": m.SubjName, "subj_slug": m.SubjSlug}); err != nil {
 		return m, err
 	} else {
-		SubjNames.Set(m.SubjUID, m.SubjName)
+		setSubjName(m.SubjUID, m.SubjName)
 	}
 
 	// Log result.

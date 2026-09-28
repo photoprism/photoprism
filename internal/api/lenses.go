@@ -22,10 +22,10 @@ import (
 //	@Tags		Lenses
 //	@Accept		json
 //	@Produce	json
-//	@Success	200				{object}	entity.Lens
-//	@Failure	401,403,404,429	{object}	i18n.Response
-//	@Param		id				path		string		true	"Lens ID"
-//	@Param		lens			body		form.Lens	true	"Properties to be updated, only Make and Model supported"
+//	@Success	200					{object}	entity.Lens
+//	@Failure	401,403,404,413,429	{object}	i18n.Response
+//	@Param		id					path		string		true	"Lens ID"
+//	@Param		lens				body		form.Lens	true	"Properties to be updated, only Make and Model supported"
 //	@Router		/api/v1/lenses/{id} [put]
 func UpdateLens(router *gin.RouterGroup) {
 	router.PUT("/lenses/:id", func(c *gin.Context) {

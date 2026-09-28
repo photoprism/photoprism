@@ -2,6 +2,7 @@ package entity
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 	"time"
 
@@ -10,6 +11,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/pkg/rnd"
 
 	"github.com/photoprism/photoprism/internal/form"
 )
@@ -1081,4 +1083,24 @@ func TestSubject_SaveForm_Birthday(t *testing.T) {
 	stored = FindSubject(m.SubjUID)
 	require.NotNil(t, stored)
 	assert.Nil(t, stored.SubjBirthday)
+}
+
+func TestFindSubjectByName_Literal(t *testing.T) {
+	suffix := rnd.Base36(6)
+	other := NewSubject("Like JoXhn "+suffix, SubjPerson, SrcManual)
+	special := NewSubject("Like Jo_hn! "+suffix, SubjPerson, SrcManual)
+
+	for _, m := range []*Subject{other, special} {
+		require.NoError(t, m.Save())
+		t.Cleanup(func() { _ = UnscopedDb().Delete(m).Error })
+
+		// Clear the name cache, so that each lookup queries the database.
+		SubjNames.Unset(m.SubjUID)
+	}
+
+	assert.Nil(t, FindSubjectByName("Like Jo_hn "+suffix, false))
+
+	if found := FindSubjectByName(strings.ToLower(special.SubjName), false); assert.NotNil(t, found) {
+		assert.Equal(t, special.SubjUID, found.SubjUID)
+	}
 }

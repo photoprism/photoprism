@@ -5,8 +5,10 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity/legacy"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestFindLegacyUser(t *testing.T) {
@@ -68,5 +70,22 @@ func TestFindLegacyUsers(t *testing.T) {
 	if err := Db().DropTable(legacy.User{}).Error; err != nil {
 		log.Errorf("TestFindLegacyUser: failed dropping legacy.User")
 		t.Error(err)
+	}
+}
+
+func TestFindLegacyUsers_Literal(t *testing.T) {
+	require.NoError(t, Db().AutoMigrate(legacy.User{}).Error)
+	t.Cleanup(func() { _ = Db().DropTable(legacy.User{}).Error })
+
+	base := "zzl" + rnd.Base36(5)
+
+	for _, name := range []string{base + "_a", base + "Xa"} {
+		require.NoError(t, Db().Create(&legacy.User{UserUID: rnd.GenerateUID(UserUID), UserName: name}).Error)
+	}
+
+	found := FindLegacyUsers(base + "_a")
+
+	if assert.Len(t, found, 1) {
+		assert.Equal(t, base+"_a", found[0].UserName)
 	}
 }

@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-09-10 09:31+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2026-09-25 23:16+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: Japanese <https://translate.photoprism.app/projects/photoprism/frontend/ja/>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -174,12 +174,12 @@ msgstr "アクセシビリティ"
 #: src/component/navigation.vue:578 src/component/user/edit/dialog.vue:26
 #: src/component/auth/menu.vue:14 src/component/navigation.vue:698
 #: src/component/navigation.vue:887 src/component/service/upload.vue:25
-#: src/locales.js:335 src/model/service.js:80 src/model/user.js:151
+#: src/locales.js:335 src/model/service.js:81 src/model/user.js:151
 #: src/page/settings.vue:112 src/page/settings/general.vue:394
 msgid "Account"
 msgstr "アカウント"
 
-#: src/component/user/add/dialog.vue:261 src/component/user/add/dialog.vue:277
+#: src/component/user/add/dialog.vue:262 src/component/user/add/dialog.vue:278
 #: src/component/service/add.vue:131 src/locales.js:442
 msgid "Account created"
 msgstr "アカウントが作成されました"
@@ -213,7 +213,7 @@ msgstr "アカウントが保存されました"
 msgid "Accounts"
 msgstr "アカウント"
 
-#: src/component/photo/edit/info.vue:188 src/component/photo/edit/info.vue:189
+#: src/component/photo/edit/info.vue:189 src/component/photo/edit/info.vue:190
 msgid "Accuracy"
 msgstr "精度"
 
@@ -259,8 +259,8 @@ msgstr "アクティベーションコード"
 msgid "Activity"
 msgstr "アクティビティ"
 
-#: src/component/user/add/dialog.vue:194 src/page/admin/users.vue:107
-#: src/component/user/add/dialog.vue:201 src/page/admin/users.vue:36
+#: src/component/user/add/dialog.vue:195 src/page/admin/users.vue:107
+#: src/component/user/add/dialog.vue:202 src/page/admin/users.vue:36
 #: src/component/settings/apps.vue:125 src/component/settings/apps.vue:126
 #: src/component/settings/apps.vue:135 src/component/settings/apps.vue:194
 #: src/component/settings/apps.vue:212
@@ -346,7 +346,7 @@ msgid "Adjust Location"
 msgstr "場所を調整する"
 
 #: src/model/cluster-instance.js:28 src/options/admin.js:35
-#: src/common/util.js:963 src/options/auth.js:6
+#: src/common/util.js:967 src/options/auth.js:6
 msgid "Admin"
 msgstr "管理者"
 
@@ -429,7 +429,7 @@ msgstr "アルバムが保存されました"
 #: src/app/routes.js:342 src/component/album/toolbar.vue:118
 #: src/component/lightbox/sidebar.vue:286 src/component/navigation.vue:197
 #: src/component/navigation.vue:734 src/component/photo/batch-edit.vue:414
-#: src/component/photo/edit/info.vue:79 src/component/photo/edit/info.vue:80
+#: src/component/photo/edit/info.vue:80 src/component/photo/edit/info.vue:81
 #: src/options/options.js:257 src/page/settings/collections.vue:113
 #: src/page/settings/general.vue:81
 msgid "Albums"
@@ -536,7 +536,7 @@ msgstr "モバイル端末でピンチジェスチャーによるズームを可
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
 msgstr "代わりに、Nextcloud などの WebDAV サーバから直接ファイルをアップロードすることができます。"
 
-#: src/component/photo/edit/info.vue:182 src/component/photo/edit/info.vue:183
+#: src/component/photo/edit/info.vue:183 src/component/photo/edit/info.vue:184
 msgid "Altitude"
 msgstr "高度"
 
@@ -549,7 +549,7 @@ msgstr "高度 (m)"
 msgid "AM"
 msgstr "AM"
 
-#: src/app/routes.js:423 src/common/util.js:905
+#: src/app/routes.js:423 src/common/util.js:907
 #: src/component/photo/batch-edit.vue:127 src/component/photo/batch-edit.vue:68
 #: src/component/photo/edit/files.vue:132
 #: src/component/photo/edit/files.vue:133
@@ -575,7 +575,7 @@ msgstr "アニメーション"
 msgid "Any private photos and videos remain private and won't be shared."
 msgstr "すべてのプライベートな写真や動画はプライベートのまま保管され、共有されることはありません。"
 
-#: src/component/service/edit.vue:181
+#: src/component/service/edit.vue:199
 msgid "API Key"
 msgstr "API キー"
 
@@ -603,8 +603,8 @@ msgstr "変更を承認して保存する"
 msgid "Apps and Devices"
 msgstr "アプリとデバイス"
 
-#: src/component/lightbox.vue:3267 src/component/photo/edit/info.vue:228
-#: src/component/photo/edit/info.vue:229
+#: src/component/lightbox.vue:3267 src/component/photo/edit/info.vue:229
+#: src/component/photo/edit/info.vue:230
 msgid "Archived"
 msgstr "アーカイブ済み"
 
@@ -661,7 +661,7 @@ msgstr "アスペクト比"
 msgid "Attributes"
 msgstr "属性"
 
-#: src/app/routes.js:416 src/common/util.js:903
+#: src/app/routes.js:416 src/common/util.js:905
 #: src/component/navigation.vue:204 src/component/navigation.vue:205
 #: src/component/navigation.vue:217 src/component/navigation.vue:226
 #: src/component/navigation.vue:254 src/options/options.js:360
@@ -672,10 +672,10 @@ msgstr "オーディオ"
 msgid "Audit Log"
 msgstr "オーディオ"
 
-#: src/component/user/add/dialog.vue:106 src/component/user/edit/dialog.vue:189
+#: src/component/user/add/dialog.vue:107 src/component/user/edit/dialog.vue:189
 #: src/page/admin/sessions.vue:112 src/page/admin/sessions.vue:222
 #: src/page/admin/users.vue:181 src/component/cluster/node/user-edit.vue:145
-#: src/component/user/add/dialog.vue:112 src/component/user/edit/dialog.vue:199
+#: src/component/user/add/dialog.vue:113 src/component/user/edit/dialog.vue:199
 #: src/page/admin/sessions.vue:152 src/page/admin/sessions.vue:295
 #: src/page/admin/users.vue:289 src/component/user/edit/dialog.vue:192
 #: src/page/admin/sessions.vue:293 src/page/admin/users.vue:273
@@ -683,7 +683,7 @@ msgstr "オーディオ"
 msgid "Authentication"
 msgstr "認証"
 
-#: src/common/util.js:925
+#: src/common/util.js:927
 msgid "Auto"
 msgstr "自動"
 
@@ -713,7 +713,7 @@ msgstr "バッジ"
 msgid "Base Path"
 msgstr "ベースパス"
 
-#: src/common/util.js:957
+#: src/common/util.js:961
 msgid "Batch"
 msgstr "バッチ"
 
@@ -740,7 +740,7 @@ msgstr "100%自己資金で運営しているため、私たちはお客様の�
 msgid "Bio"
 msgstr "自己紹介"
 
-#: src/page/settings/account.vue:212 src/component/people/edit/dialog.vue:39
+#: src/page/settings/account.vue:212 src/component/people/edit/dialog.vue:41
 #: src/page/settings/account.vue:196
 msgid "Birth Date"
 msgstr "生年月日"
@@ -804,7 +804,7 @@ msgstr "カメラ"
 msgid "Camera not found"
 msgstr "カメラが見つかりません"
 
-#: src/component/photo/edit/info.vue:107 src/component/photo/edit/info.vue:108
+#: src/component/photo/edit/info.vue:108 src/component/photo/edit/info.vue:109
 msgid "Camera Serial"
 msgstr "カメラのシリアル"
 
@@ -828,10 +828,10 @@ msgid "Can't select more items"
 msgstr "これ以上項目を選択することはできません"
 
 #: src/component/session/remove/dialog.vue:19
-#: src/component/user/add/dialog.vue:193 src/component/user/edit/dialog.vue:304
+#: src/component/user/add/dialog.vue:194 src/component/user/edit/dialog.vue:304
 #: src/component/user/remove/dialog.vue:19
 #: src/component/cluster/node/user-edit.vue:253
-#: src/component/user/add/dialog.vue:200 src/component/user/edit/dialog.vue:126
+#: src/component/user/add/dialog.vue:201 src/component/user/edit/dialog.vue:126
 #: src/component/user/edit/dialog.vue:127
 #: src/component/user/edit/dialog.vue:138
 #: src/component/user/edit/dialog.vue:144
@@ -847,23 +847,23 @@ msgstr "これ以上項目を選択することはできません"
 #: src/component/meta/face/markers.vue:54
 #: src/component/meta/face/markers.vue:73
 #: src/component/meta/location/dialog.vue:115
-#: src/component/people/edit/dialog.vue:72
+#: src/component/people/edit/dialog.vue:74
 #: src/component/photo/album/dialog.vue:64 src/component/service/add.vue:97
-#: src/component/service/edit.vue:232 src/component/service/remove.vue:19
+#: src/component/service/edit.vue:250 src/component/service/remove.vue:19
 #: src/component/service/upload.vue:57 src/component/settings/apps.vue:151
 #: src/component/settings/passcode.vue:101
 #: src/component/settings/passcode.vue:142
-#: src/component/settings/password.vue:83 src/component/share/dialog.vue:164
+#: src/component/settings/password.vue:85 src/component/share/dialog.vue:164
 #: src/locales.js:214 src/page/auth/login.vue:120 src/page/connect.vue:36
 #: src/page/library/import.vue:61 src/page/library/index.vue:61
 msgid "Cancel"
 msgstr "キャンセル"
 
-#: src/common/util.js:1141 src/common/util.js:1148
+#: src/common/util.js:1145 src/common/util.js:1152
 msgid "Cannot copy to clipboard"
 msgstr "クリップボードにコピーできない"
 
-#: src/common/util.js:945 src/component/lightbox/sidebar.vue:807
+#: src/common/util.js:949 src/component/lightbox/sidebar.vue:807
 #: src/component/photo/batch-edit.vue:173
 #: src/component/photo/batch-edit.vue:176
 #: src/component/photo/edit/details.vue:28
@@ -904,13 +904,13 @@ msgstr "パスワードの変更"
 msgid "Change private flag"
 msgstr "プライベート状態を変更"
 
-#: src/component/user/add/dialog.vue:268 src/component/user/add/dialog.vue:273
+#: src/component/user/add/dialog.vue:269 src/component/user/add/dialog.vue:274
 #: src/component/user/edit/dialog.vue:418
 #: src/component/user/edit/dialog.vue:423
 #: src/component/cluster/node/overview.vue:141
 #: src/component/cluster/node/user-edit.vue:362
 #: src/component/cluster/node/user-edit.vue:367
-#: src/component/user/add/dialog.vue:284 src/component/user/add/dialog.vue:289
+#: src/component/user/add/dialog.vue:285 src/component/user/add/dialog.vue:290
 #: src/component/user/edit/dialog.vue:517
 #: src/component/user/edit/dialog.vue:522 src/page/settings/account.vue:539
 #: src/page/settings/account.vue:544 src/component/user/edit/dialog.vue:443
@@ -918,7 +918,7 @@ msgstr "プライベート状態を変更"
 #: src/component/album/edit/dialog.vue:171
 #: src/component/label/edit/dialog.vue:109
 #: src/component/meta/camera/dialog.vue:214
-#: src/component/people/edit/dialog.vue:143
+#: src/component/people/edit/dialog.vue:168
 #: src/component/photo/batch-edit.vue:1440
 #: src/component/photo/edit/details.vue:636 src/locales.js:376
 #: src/page/settings/account.vue:447 src/page/settings/account.vue:452
@@ -935,7 +935,7 @@ msgstr "変更を保存できませんでした"
 #: src/component/album/edit/dialog.vue:177
 #: src/component/label/edit/dialog.vue:115 src/component/lightbox.vue:3219
 #: src/component/photo/batch-edit.vue:1472
-#: src/component/photo/edit/files.vue:552 src/component/service/edit.vue:348
+#: src/component/photo/edit/files.vue:566 src/component/service/edit.vue:376
 #: src/component/share/dialog.vue:235 src/component/share/dialog.vue:254
 #: src/locales.js:430 src/page/albums.vue:1197 src/page/people/new.vue:814
 #: src/page/people/recognized.vue:320 src/page/settings/advanced.vue:507
@@ -948,7 +948,7 @@ msgstr "変更が正常に保存されました"
 msgid "Changes to the advanced settings require a restart to take effect."
 msgstr "詳細設定の変更を反映するには再起動が必要です。"
 
-#: src/component/photo/edit/info.vue:220 src/component/photo/edit/info.vue:221
+#: src/component/photo/edit/info.vue:221 src/component/photo/edit/info.vue:222
 msgid "Checked"
 msgstr "選択済み"
 
@@ -1001,7 +1001,7 @@ msgstr "クライアント"
 #: src/component/lightbox/sidebar.vue:7 src/component/meta/camera/dialog.vue:20
 #: src/component/meta/datetime/dialog.vue:20
 #: src/component/meta/location/dialog.vue:20
-#: src/component/people/edit/dialog.vue:20
+#: src/component/people/edit/dialog.vue:21
 #: src/component/photo/album/dialog.vue:18
 #: src/component/photo/batch-edit.vue:18 src/component/photo/batch-edit.vue:473
 #: src/component/photo/edit/details.vue:380
@@ -1155,7 +1155,7 @@ msgstr "貢献者"
 msgid "Converting"
 msgstr "変換しています"
 
-#: src/common/util.js:1134
+#: src/common/util.js:1138
 msgid "Copied to clipboard"
 msgstr "クリップボードにコピーしました"
 
@@ -1225,7 +1225,7 @@ msgstr "画像のメタデータをバックアップするために YAML サイ
 
 #: src/page/admin/sessions.vue:151 src/component/cluster/node/overview.vue:55
 #: src/page/admin/sessions.vue:191 src/page/cluster/nodes.vue:168
-#: src/component/photo/edit/info.vue:196 src/component/photo/edit/info.vue:197
+#: src/component/photo/edit/info.vue:197 src/component/photo/edit/info.vue:198
 msgid "Created"
 msgstr "作成日時"
 
@@ -1286,7 +1286,7 @@ msgstr "デバッグログ"
 #: src/page/admin/sessions.vue:256 src/page/admin/users.vue:233
 #: src/page/admin/groups.vue:35 src/page/admin/sessions.vue:371
 #: src/page/admin/users.vue:430 src/page/admin/sessions.vue:369
-#: src/page/admin/users.vue:374 src/common/util.js:927 src/model/session.js:42
+#: src/page/admin/users.vue:374 src/common/util.js:929 src/model/session.js:42
 #: src/model/user.js:343 src/options/auth.js:40 src/options/auth.js:41
 #: src/options/auth.js:69 src/options/auth.js:70 src/options/options.js:252
 #: src/options/options.js:255 src/options/options.js:295
@@ -1453,12 +1453,12 @@ msgstr "発見"
 msgid "Dismiss"
 msgstr "解任する"
 
-#: src/component/user/add/dialog.vue:65 src/component/user/add/dialog.vue:66
+#: src/component/user/add/dialog.vue:66 src/component/user/add/dialog.vue:67
 #: src/component/user/edit/dialog.vue:89 src/component/user/edit/dialog.vue:90
 #: src/page/admin/users.vue:178 src/component/cluster/node/user-edit.vue:80
 #: src/component/cluster/node/user-edit.vue:81
 #: src/component/cluster/node/users.vue:153
-#: src/component/user/add/dialog.vue:71 src/component/user/add/dialog.vue:72
+#: src/component/user/add/dialog.vue:72 src/component/user/add/dialog.vue:73
 #: src/component/user/edit/dialog.vue:96 src/component/user/edit/dialog.vue:97
 #: src/page/admin/users.vue:283 src/page/settings/account.vue:76
 #: src/page/settings/account.vue:78 src/page/admin/users.vue:270
@@ -1475,7 +1475,7 @@ msgstr "検索結果に画像のキャプションを表示する。"
 msgid "Display picture titles in search results."
 msgstr "検索結果に画像のタイトルを表示する。"
 
-#: src/common/util.js:909 src/component/photo/view/cards.vue:115
+#: src/common/util.js:911 src/component/photo/view/cards.vue:115
 #: src/component/photo/view/cards.vue:239
 #: src/component/photo/view/mosaic.vue:70 src/model/thumb.js:247
 #: src/options/options.js:372
@@ -1525,14 +1525,14 @@ msgstr "ダウンロード"
 msgid "Download only original media files, without any automatically generated files."
 msgstr "自動生成されたファイルを使用せず、オリジナルのメディアファイルのみをダウンロードするようにします。"
 
-#: src/component/service/edit.vue:118
+#: src/component/service/edit.vue:127
 msgid "Download remote files"
 msgstr "リモートにあるファイルをダウンロード"
 
 #: src/component/album/clipboard.vue:203 src/component/album/toolbar.vue:234
 #: src/component/file/clipboard.vue:138 src/component/label/clipboard.vue:149
 #: src/component/lightbox.vue:3307 src/component/people/clipboard.vue:125
-#: src/component/photo/clipboard.vue:414 src/component/photo/edit/files.vue:509
+#: src/component/photo/clipboard.vue:414 src/component/photo/edit/files.vue:523
 #: src/component/photo/view/cards.vue:449 src/component/photo/view/list.vue:284
 #: src/page/library/browse.vue:231
 msgid "Downloading…"
@@ -1579,7 +1579,7 @@ msgstr "編集"
 
 #: src/component/album/edit/dialog.vue:17
 #: src/component/label/edit/dialog.vue:18
-#: src/component/people/edit/dialog.vue:18
+#: src/component/people/edit/dialog.vue:19
 msgid "Edit %{s}"
 msgstr "%{s} を編集"
 
@@ -1597,13 +1597,13 @@ msgstr "写真を編集"
 msgid "Edit Photos (%{n})"
 msgstr "写真を編集する (%{n})"
 
-#: src/component/photo/edit/info.vue:212 src/component/photo/edit/info.vue:213
+#: src/component/photo/edit/info.vue:213 src/component/photo/edit/info.vue:214
 msgid "Edited"
 msgstr "編集済み"
 
-#: src/component/user/add/dialog.vue:79 src/component/user/edit/dialog.vue:123
+#: src/component/user/add/dialog.vue:80 src/component/user/edit/dialog.vue:123
 #: src/component/cluster/node/user-edit.vue:97
-#: src/component/user/add/dialog.vue:85 src/component/user/edit/dialog.vue:130
+#: src/component/user/add/dialog.vue:86 src/component/user/edit/dialog.vue:130
 #: src/page/settings/account.vue:320 src/page/settings/account.vue:91
 #: src/page/settings/account.vue:79
 msgid "Email"
@@ -1680,7 +1680,7 @@ msgstr "エラー"
 msgid "Errors"
 msgstr "エラー"
 
-#: src/common/util.js:929
+#: src/common/util.js:931
 msgid "Estimate"
 msgstr "推定"
 
@@ -1740,7 +1740,7 @@ msgstr "顔"
 msgid "Face not found"
 msgstr "顔を検出できませんでした"
 
-#: src/component/photo/edit/info.vue:101 src/component/photo/edit/info.vue:102
+#: src/component/photo/edit/info.vue:102 src/component/photo/edit/info.vue:103
 msgid "Faces"
 msgstr "顔"
 
@@ -1823,9 +1823,9 @@ msgstr "高速"
 
 #: src/component/album/edit/dialog.vue:77
 #: src/component/label/edit/dialog.vue:37
-#: src/component/people/edit/dialog.vue:50
+#: src/component/people/edit/dialog.vue:52
 #: src/component/photo/batch-edit.vue:1536
-#: src/component/photo/edit/info.vue:121 src/component/photo/edit/info.vue:122
+#: src/component/photo/edit/info.vue:122 src/component/photo/edit/info.vue:123
 msgid "Favorite"
 msgstr "お気に入り"
 
@@ -1851,8 +1851,8 @@ msgstr "特徴"
 msgid "Female"
 msgstr "女性"
 
-#: src/common/util.js:931 src/component/lightbox/sidebar.vue:1101
-#: src/component/photo/edit/info.vue:94 src/model/file.js:271
+#: src/common/util.js:933 src/component/lightbox/sidebar.vue:1101
+#: src/component/photo/edit/info.vue:94 src/model/file.js:274
 msgid "File"
 msgstr "ファイル"
 
@@ -1928,8 +1928,8 @@ msgid "Focal Length"
 msgstr "焦点距離"
 
 #: src/component/photo/edit/info.vue:28 src/component/photo/edit/info.vue:29
-#: src/component/service/edit.vue:44 src/component/service/edit.vue:86
-#: src/component/service/edit.vue:91 src/component/service/upload.vue:42
+#: src/component/service/edit.vue:100 src/component/service/edit.vue:44
+#: src/component/service/edit.vue:95 src/component/service/upload.vue:42
 #: src/component/service/upload.vue:48 src/model/folder.js:181
 #: src/page/library/browse.vue:77
 msgid "Folder"
@@ -2060,7 +2060,7 @@ msgstr "ヘルプ＆サポート"
 
 #: src/component/navigation.vue:369 src/component/navigation.vue:370
 #: src/component/navigation.vue:382 src/component/navigation.vue:391
-#: src/component/navigation.vue:504 src/component/people/edit/dialog.vue:63
+#: src/component/navigation.vue:504 src/component/people/edit/dialog.vue:65
 msgid "Hidden"
 msgstr "隠し項目"
 
@@ -2111,8 +2111,8 @@ msgstr "ハイブリッド"
 msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
 msgstr "認証アプリまたはデバイスにアクセスできなくなった場合は、回復コードを使用してアカウントに再度アクセスできます。"
 
-#: src/common/util.js:895 src/common/util.js:935
-#: src/component/photo/view/cards.vue:246 src/model/file.js:199
+#: src/common/util.js:897 src/common/util.js:939
+#: src/component/photo/view/cards.vue:246 src/model/file.js:201
 #: src/options/options.js:344
 msgid "Image"
 msgstr "写真"
@@ -2253,7 +2253,7 @@ msgstr "ストレージが不足しています"
 msgid "Insufficient storage."
 msgstr "ストレージが不足しています。"
 
-#: src/component/service/edit.vue:100
+#: src/component/service/edit.vue:109
 msgid "Interval"
 msgstr "間隔"
 
@@ -2344,7 +2344,7 @@ msgstr "JPEG サイズの制限: %{n} px"
 msgid "JPEGs and thumbnails are automatically rendered as needed."
 msgstr "JPEG とサムネイルは必要な場合に自動的に生成されます。"
 
-#: src/common/util.js:947
+#: src/common/util.js:951
 msgid "Keyword"
 msgstr "キーワード"
 
@@ -2410,7 +2410,7 @@ msgstr "最終同期"
 msgid "Last Used"
 msgstr "最終利用"
 
-#: src/component/photo/edit/info.vue:166 src/component/photo/edit/info.vue:167
+#: src/component/photo/edit/info.vue:167 src/component/photo/edit/info.vue:168
 msgid "Latitude"
 msgstr "緯度"
 
@@ -2486,7 +2486,7 @@ msgstr "リスト"
 msgid "List View"
 msgstr "リスト表示"
 
-#: src/common/util.js:899 src/component/photo/batch-edit.vue:124
+#: src/common/util.js:901 src/component/photo/batch-edit.vue:124
 #: src/component/photo/batch-edit.vue:65 src/component/photo/view/cards.vue:112
 #: src/component/photo/view/cards.vue:224 src/component/photo/view/list.vue:81
 #: src/component/photo/view/mosaic.vue:67 src/options/options.js:352
@@ -2522,7 +2522,7 @@ msgid "Local Time"
 msgstr "現地時間"
 
 #: src/page/settings/account.vue:359 src/page/settings/account.vue:361
-#: src/common/util.js:937 src/component/album/edit/dialog.vue:38
+#: src/common/util.js:941 src/component/album/edit/dialog.vue:38
 #: src/component/lightbox/sidebar.vue:150
 #: src/component/photo/batch-edit.vue:263
 #: src/component/photo/batch-edit.vue:581
@@ -2549,7 +2549,7 @@ msgstr "ログイン"
 msgid "Logs"
 msgstr "ログ"
 
-#: src/component/photo/edit/info.vue:174 src/component/photo/edit/info.vue:175
+#: src/component/photo/edit/info.vue:175 src/component/photo/edit/info.vue:176
 msgid "Longitude"
 msgstr "経度"
 
@@ -2587,7 +2587,7 @@ msgstr "アカウント管理"
 msgid "Manager"
 msgstr "マネージャー"
 
-#: src/common/util.js:959
+#: src/common/util.js:963
 msgid "Manual"
 msgstr "マニュアル"
 
@@ -2603,7 +2603,7 @@ msgstr "地図"
 msgid "Maps are unavailable. Try another browser or device."
 msgstr "地図は利用できない。別のブラウザや端末を試してみてほしい。"
 
-#: src/common/util.js:939 src/model/marker.js:132
+#: src/common/util.js:943 src/model/marker.js:132
 msgid "Marker"
 msgstr "マーカー"
 
@@ -2633,7 +2633,7 @@ msgstr "%{a} を %{b} に統合しますか？"
 msgid "Message"
 msgstr "メッセージ"
 
-#: src/common/util.js:949
+#: src/common/util.js:953
 msgid "Metadata"
 msgstr "メタデータ"
 
@@ -2648,7 +2648,7 @@ msgstr "最小化"
 #: src/component/photo/edit/files.vue:251
 #: src/component/photo/edit/files.vue:252
 #: src/component/photo/edit/files.vue:258
-#: src/component/photo/edit/files.vue:266 src/component/photo/edit/info.vue:217
+#: src/component/photo/edit/files.vue:266 src/component/photo/edit/info.vue:218
 msgid "Missing"
 msgstr "紛失"
 
@@ -2659,6 +2659,10 @@ msgstr "設定が見つからない、もしくは無効です"
 #: src/options/options.js:24 src/options/options.js:27
 msgid "mixed"
 msgstr "ミックス"
+
+#: src/common/util.js:935
+msgid "Modified"
+msgstr "変更日時"
 
 #: src/app/routes.js:329 src/component/navigation.vue:423
 #: src/options/options.js:264 src/page/settings/collections.vue:143
@@ -2711,21 +2715,21 @@ msgstr "ミュート"
 #: src/component/cluster/node/overview.vue:25
 #: src/component/cluster/node/overview.vue:4
 #: src/component/cluster/node/overview.vue:75 src/page/cluster/nodes.vue:155
-#: src/common/util.js:933 src/component/album/edit/dialog.vue:30
+#: src/common/util.js:937 src/component/album/edit/dialog.vue:30
 #: src/component/album/edit/dialog.vue:31
 #: src/component/input/chip-selector.vue:277
 #: src/component/label/edit/dialog.vue:30
 #: src/component/label/edit/dialog.vue:31
 #: src/component/lightbox/sidebar.vue:239
 #: src/component/lightbox/sidebar.vue:243
-#: src/component/people/edit/dialog.vue:30
 #: src/component/people/edit/dialog.vue:31
+#: src/component/people/edit/dialog.vue:32
 #: src/component/photo/album/dialog.vue:143
 #: src/component/photo/edit/files.vue:417 src/component/photo/edit/info.vue:36
 #: src/component/photo/edit/info.vue:37 src/component/photo/edit/labels.vue:135
 #: src/component/photo/edit/labels.vue:299
 #: src/component/photo/edit/people.vue:51 src/component/photo/view/list.vue:43
-#: src/component/service/edit.vue:155 src/component/settings/apps.vue:112
+#: src/component/service/edit.vue:173 src/component/settings/apps.vue:112
 #: src/component/settings/apps.vue:275 src/locales.js:323
 #: src/page/albums.vue:393 src/page/auth/login.vue:80
 #: src/page/people/new.vue:51 src/page/services.vue:177
@@ -2777,9 +2781,9 @@ msgstr "次のビジュアル"
 #: src/component/people/merge/dialog.vue:19
 #: src/component/photo/archive/dialog.vue:19
 #: src/component/photo/batch-edit.vue:1120
-#: src/component/photo/edit/info.vue:151 src/component/photo/edit/info.vue:165
-#: src/component/photo/edit/info.vue:179 src/component/photo/edit/info.vue:193
-#: src/component/photo/edit/info.vue:207
+#: src/component/photo/edit/info.vue:152 src/component/photo/edit/info.vue:166
+#: src/component/photo/edit/info.vue:180 src/component/photo/edit/info.vue:194
+#: src/component/photo/edit/info.vue:208
 msgid "No"
 msgstr "いいえ"
 
@@ -3065,7 +3069,7 @@ msgstr "オリジナル名"
 
 #: src/component/navigation.vue:362 src/component/navigation.vue:363
 #: src/component/navigation.vue:375 src/component/navigation.vue:384
-#: src/component/navigation.vue:497 src/model/file.js:180
+#: src/component/navigation.vue:497 src/model/file.js:182
 #: src/options/options.js:476 src/page/library/browse.vue:7
 #: src/page/settings/collections.vue:42 src/page/settings/content.vue:185
 #: src/page/settings/general.vue:364
@@ -3105,7 +3109,7 @@ msgid "Pagination Navigation"
 msgstr "ページネーション・ナビゲーション"
 
 #: src/component/photo/batch-edit.vue:1538
-#: src/component/photo/edit/info.vue:145 src/component/photo/edit/info.vue:146
+#: src/component/photo/edit/info.vue:146 src/component/photo/edit/info.vue:147
 msgid "Panorama"
 msgstr "パノラマ"
 
@@ -3123,16 +3127,16 @@ msgstr "選択された写真の一部"
 msgid "Part of some selected photos"
 msgstr "写真の一部"
 
-#: src/component/user/add/dialog.vue:51 src/component/user/add/dialog.vue:52
-#: src/component/user/add/dialog.vue:57 src/component/user/add/dialog.vue:58
-#: src/component/service/add.vue:52 src/component/service/edit.vue:168
+#: src/component/user/add/dialog.vue:52 src/component/user/add/dialog.vue:53
+#: src/component/user/add/dialog.vue:58 src/component/user/add/dialog.vue:59
+#: src/component/service/add.vue:52 src/component/service/edit.vue:186
 #: src/component/settings/apps.vue:33 src/component/settings/passcode.vue:171
 #: src/component/settings/passcode.vue:36 src/component/share/dialog.vue:163
 #: src/options/auth.js:121 src/page/auth/login.vue:101
 msgid "Password"
 msgstr "パスワード"
 
-#: src/component/settings/password.vue:162 src/locales.js:446
+#: src/component/settings/password.vue:164 src/locales.js:446
 msgid "Password changed"
 msgstr "パスワードが変更されました"
 
@@ -3226,7 +3230,7 @@ msgstr "ピンク"
 msgid "Pinned"
 msgstr "固定"
 
-#: src/component/photo/edit/info.vue:153 src/component/photo/edit/info.vue:154
+#: src/component/photo/edit/info.vue:154 src/component/photo/edit/info.vue:155
 msgid "Place"
 msgstr "場所"
 
@@ -3246,7 +3250,7 @@ msgstr "場所"
 msgid "Play"
 msgstr "再生"
 
-#: src/component/settings/password.vue:68
+#: src/component/settings/password.vue:69
 msgid "Please confirm your new password."
 msgstr "新しいパスワードを再入力してください。"
 
@@ -3302,7 +3306,7 @@ msgstr "ポータル"
 msgid "Portrait"
 msgstr "ポートレート"
 
-#: src/component/service/edit.vue:139
+#: src/component/service/edit.vue:148
 msgid "Preserve filenames"
 msgstr "ファイル名を保持"
 
@@ -3364,9 +3368,9 @@ msgstr "プライマリ"
 #: src/component/navigation.vue:126 src/component/navigation.vue:127
 #: src/component/navigation.vue:139 src/component/navigation.vue:148
 #: src/component/navigation.vue:156 src/component/navigation.vue:176
-#: src/component/people/edit/dialog.vue:66
+#: src/component/people/edit/dialog.vue:68
 #: src/component/photo/batch-edit.vue:1537
-#: src/component/photo/edit/info.vue:129 src/component/photo/edit/info.vue:130
+#: src/component/photo/edit/info.vue:130 src/component/photo/edit/info.vue:131
 #: src/page/settings/general.vue:200
 msgid "Private"
 msgstr "プライベート"
@@ -3394,7 +3398,7 @@ msgstr "紫"
 msgid "Quality Filter"
 msgstr "品質フィルター"
 
-#: src/component/photo/edit/info.vue:87 src/component/photo/edit/info.vue:88
+#: src/component/photo/edit/info.vue:88 src/component/photo/edit/info.vue:89
 msgid "Quality Score"
 msgstr "品質スコア"
 
@@ -3410,7 +3414,7 @@ msgstr "ランダム"
 msgid "Rating {0} of {1}"
 msgstr "{1} 中 {0} の評価"
 
-#: src/common/util.js:897 src/options/options.js:348
+#: src/common/util.js:899 src/options/options.js:348
 msgid "Raw"
 msgstr "Raw"
 
@@ -3578,7 +3582,7 @@ msgstr "リクエストに失敗しました - 不正なレスポンスです"
 msgid "Require non-photographic and low-quality images to be reviewed before they appear in search results."
 msgstr "写真以外の画像や低品質の画像は、検索結果に表示される前にレビューすることを必須にします。"
 
-#: src/component/photo/edit/info.vue:95 src/component/photo/edit/info.vue:96
+#: src/component/photo/edit/info.vue:96 src/component/photo/edit/info.vue:97
 msgid "Resolution"
 msgstr "解像度"
 
@@ -3606,11 +3610,11 @@ msgstr "復元"
 msgid "Restored"
 msgstr "復元されました"
 
-#: src/component/service/edit.vue:217
+#: src/component/service/edit.vue:235
 msgid "Retry Limit"
 msgstr "リトライ回数制限"
 
-#: src/component/settings/password.vue:67
+#: src/component/settings/password.vue:68
 msgid "Retype Password"
 msgstr "パスワード再入力"
 
@@ -3621,13 +3625,13 @@ msgstr "パスワード再入力"
 msgid "Review"
 msgstr "レビュー"
 
-#: src/component/user/add/dialog.vue:92 src/component/user/edit/dialog.vue:172
+#: src/component/user/add/dialog.vue:93 src/component/user/edit/dialog.vue:172
 #: src/page/admin/sessions.vue:105 src/page/admin/users.vue:179
 #: src/component/cluster/instance-access.vue:84
 #: src/component/cluster/node/groups.vue:77
 #: src/component/cluster/node/user-edit.vue:128
 #: src/component/cluster/node/users.vue:154
-#: src/component/user/add/dialog.vue:98 src/component/user/edit/dialog.vue:181
+#: src/component/user/add/dialog.vue:99 src/component/user/edit/dialog.vue:181
 #: src/page/admin/groups.vue:77 src/page/admin/sessions.vue:145
 #: src/page/admin/users.vue:284 src/component/user/edit/dialog.vue:174
 #: src/page/admin/users.vue:271 src/locales.js:340
@@ -3688,15 +3692,15 @@ msgstr "衛星"
 #: src/component/meta/datetime/dialog.vue:51
 #: src/component/people/edit/dialog.vue:40
 #: src/component/people/edit/dialog.vue:41
-#: src/component/people/edit/dialog.vue:52
-#: src/component/people/edit/dialog.vue:75
+#: src/component/people/edit/dialog.vue:53
+#: src/component/people/edit/dialog.vue:77
 #: src/component/photo/batch-edit.vue:483
-#: src/component/photo/edit/details.vue:396 src/component/service/edit.vue:103
-#: src/component/service/edit.vue:235 src/component/service/edit.vue:93
-#: src/component/service/edit.vue:94 src/component/settings/password.vue:31
+#: src/component/photo/edit/details.vue:396 src/component/service/edit.vue:100
+#: src/component/service/edit.vue:109 src/component/service/edit.vue:253
+#: src/component/service/edit.vue:99 src/component/settings/password.vue:31
 #: src/component/settings/password.vue:32
 #: src/component/settings/password.vue:41
-#: src/component/settings/password.vue:86 src/component/share/dialog.vue:105
+#: src/component/settings/password.vue:88 src/component/share/dialog.vue:105
 #: src/component/share/dialog.vue:58 src/component/share/dialog.vue:59
 #: src/component/share/dialog.vue:97
 msgid "Save"
@@ -3709,7 +3713,7 @@ msgid "Save changes"
 msgstr "変更を保存する"
 
 #: src/component/photo/batch-edit.vue:1535
-#: src/component/photo/edit/info.vue:137 src/component/photo/edit/info.vue:138
+#: src/component/photo/edit/info.vue:138 src/component/photo/edit/info.vue:139
 msgid "Scan"
 msgstr "スキャン"
 
@@ -3837,7 +3841,7 @@ msgstr "連名"
 msgid "Service"
 msgstr "サービス"
 
-#: src/component/service/add.vue:27 src/component/service/edit.vue:158
+#: src/component/service/add.vue:27 src/component/service/edit.vue:176
 #: src/component/share/dialog.vue:161
 msgid "Service URL"
 msgstr "サービス URL"
@@ -3995,7 +3999,7 @@ msgstr "場所]ビューをインタラクティブな地図で表示し、場�
 msgid "Show Titles"
 msgstr "タイトルを表示"
 
-#: src/common/util.js:911 src/model/file.js:195
+#: src/common/util.js:913 src/model/file.js:197
 #: src/page/settings/collections.vue:72 src/page/settings/content.vue:215
 msgid "Sidecar"
 msgstr "サイドカー"
@@ -4115,7 +4119,7 @@ msgstr "同じ画像またはインスタンス識別子を共有するファイ
 msgid "Stack pictures taken at the exact same time and location based on their metadata."
 msgstr "メタデータを元に、全く同じ時間と場所で撮影された写真をスタックします。"
 
-#: src/component/photo/edit/info.vue:113 src/component/photo/edit/info.vue:114
+#: src/component/photo/edit/info.vue:114 src/component/photo/edit/info.vue:115
 msgid "Stackable"
 msgstr "スタック可能"
 
@@ -4159,7 +4163,7 @@ msgstr "ストレージ"
 msgid "Streets"
 msgstr "市街"
 
-#: src/common/util.js:951 src/component/lightbox/sidebar.vue:820
+#: src/common/util.js:955 src/component/lightbox/sidebar.vue:820
 #: src/component/photo/batch-edit.vue:331
 #: src/component/photo/batch-edit.vue:334
 #: src/component/photo/edit/details.vue:291
@@ -4214,9 +4218,13 @@ msgstr "私たちのミッションを支援"
 msgid "Sync"
 msgstr "同期"
 
-#: src/component/service/edit.vue:148
+#: src/component/service/edit.vue:157
 msgid "Sync raw and video files"
 msgstr "Raw ファイルや動画ファイルを同期"
+
+#: src/component/service/edit.vue:166
+msgid "Sync YAML sidecar files"
+msgstr "YAMLサイドカーファイルを同期する"
 
 #: src/component/lightbox/sidebar.vue:98 src/component/photo/edit/info.vue:91
 #: src/component/photo/view/cards.vue:199 src/component/photo/view/cards.vue:36
@@ -4305,11 +4313,11 @@ msgstr "UTC 時間"
 msgid "Time Zone"
 msgstr "タイムゾーン"
 
-#: src/component/service/edit.vue:203
+#: src/component/service/edit.vue:221
 msgid "Timeout"
 msgstr "タイムアウト"
 
-#: src/common/util.js:953 src/component/photo/view/list.vue:34
+#: src/common/util.js:957 src/component/photo/view/list.vue:34
 msgid "Title"
 msgstr "タイトル"
 
@@ -4382,7 +4390,7 @@ msgstr "あなたのアカウントでは2要素認証が有効になってい�
 #: src/component/photo/edit/files.vue:111
 #: src/component/photo/edit/files.vue:119
 #: src/component/photo/edit/files.vue:439 src/component/photo/edit/info.vue:21
-#: src/component/service/edit.vue:189
+#: src/component/service/edit.vue:207
 msgid "Type"
 msgstr "種類"
 
@@ -4415,7 +4423,7 @@ msgstr "一意の ID"
 
 #: src/model/cluster-node.js:47 src/page/settings/account.vue:221
 #: src/page/settings/account.vue:241 src/page/settings/account.vue:261
-#: src/common/util.js:668 src/component/lightbox/sidebar.vue:120
+#: src/common/util.js:670 src/component/lightbox/sidebar.vue:120
 #: src/component/lightbox/sidebar.vue:1742
 #: src/component/lightbox/sidebar.vue:279
 #: src/component/lightbox/sidebar.vue:701
@@ -4475,8 +4483,8 @@ msgstr "サポートされていない形式です"
 #: src/component/photo/edit/files.vue:269
 #: src/component/photo/edit/files.vue:270
 #: src/component/photo/edit/files.vue:276
-#: src/component/photo/edit/files.vue:284 src/component/photo/edit/info.vue:204
-#: src/component/photo/edit/info.vue:205
+#: src/component/photo/edit/files.vue:284 src/component/photo/edit/info.vue:205
+#: src/component/photo/edit/info.vue:206
 msgid "Updated"
 msgstr "更新日"
 
@@ -4552,7 +4560,7 @@ msgstr "アップロードに失敗しました"
 msgid "Upload has been processed"
 msgstr "アップロードが完了しました"
 
-#: src/component/service/edit.vue:129
+#: src/component/service/edit.vue:138
 msgid "Upload local files"
 msgstr "ローカルファイルをアップロード"
 
@@ -4578,6 +4586,10 @@ msgstr "アップロードが開始されました"
 #: src/locales.js:405
 msgid "Upload to %s failed"
 msgstr "%sへのアップロードに失敗しました"
+
+#: src/component/service/edit.vue:81
+msgid "Upload YAML sidecar files"
+msgstr "YAMLサイドカーファイルをアップロードする"
 
 #: src/component/upload/dialog.vue:29
 msgid "Uploading %{n} of %{t}…"
@@ -4640,7 +4652,7 @@ msgstr "ユーザーが存在しません"
 #: src/component/user/add/dialog.vue:38 src/component/user/add/dialog.vue:39
 #: src/page/admin/sessions.vue:131 src/page/admin/users.vue:282
 #: src/page/admin/users.vue:269 src/component/service/add.vue:38
-#: src/component/service/edit.vue:161 src/component/share/dialog.vue:162
+#: src/component/service/edit.vue:179 src/component/share/dialog.vue:162
 #: src/locales.js:324
 msgid "Username"
 msgstr "ユーザー名"
@@ -4656,7 +4668,7 @@ msgstr "ユーザー"
 msgid "UUID"
 msgstr "UUID"
 
-#: src/common/util.js:907 src/component/photo/view/cards.vue:114
+#: src/common/util.js:909 src/component/photo/view/cards.vue:114
 #: src/component/photo/view/cards.vue:239
 #: src/component/photo/view/mosaic.vue:69 src/options/options.js:368
 msgid "Vector"
@@ -4673,7 +4685,7 @@ msgstr "ベクター"
 msgid "Verification Code"
 msgstr "検証コード"
 
-#: src/component/people/edit/dialog.vue:56
+#: src/component/people/edit/dialog.vue:58
 msgid "Verified"
 msgstr "承認済み"
 
@@ -4685,10 +4697,10 @@ msgstr "認証済みメールアドレスが必要です"
 msgid "Version"
 msgstr "バージョン"
 
-#: src/common/util.js:901 src/component/photo/batch-edit.vue:128
+#: src/common/util.js:903 src/component/photo/batch-edit.vue:128
 #: src/component/photo/batch-edit.vue:69 src/component/photo/view/cards.vue:122
 #: src/component/photo/view/cards.vue:220 src/component/photo/view/list.vue:83
-#: src/component/photo/view/mosaic.vue:77 src/model/file.js:202
+#: src/component/photo/view/mosaic.vue:77 src/model/file.js:204
 #: src/model/photo.js:1015 src/model/photo.js:997 src/options/options.js:356
 msgid "Video"
 msgstr "動画"
@@ -4717,7 +4729,7 @@ msgstr "検索結果を一覧表示します。"
 msgid "Viewer"
 msgstr "ビューア"
 
-#: src/common/util.js:961
+#: src/common/util.js:965
 msgid "Vision"
 msgstr "ビジョン"
 
@@ -4734,18 +4746,18 @@ msgstr "視覚的類似性"
 msgid "Warning"
 msgstr "警告"
 
-#: src/component/user/add/dialog.vue:133 src/component/user/edit/dialog.vue:272
+#: src/component/user/add/dialog.vue:134 src/component/user/edit/dialog.vue:272
 #: src/page/admin/users.vue:186 src/component/cluster/node/user-edit.vue:222
 #: src/component/cluster/node/users.vue:155
-#: src/component/user/add/dialog.vue:139 src/component/user/edit/dialog.vue:295
+#: src/component/user/add/dialog.vue:140 src/component/user/edit/dialog.vue:295
 #: src/page/admin/users.vue:294 src/component/user/edit/dialog.vue:288
 #: src/page/admin/users.vue:278 src/locales.js:338
 msgid "Web Login"
 msgstr "ウェブログイン"
 
-#: src/component/user/add/dialog.vue:142 src/component/user/edit/dialog.vue:282
+#: src/component/user/add/dialog.vue:143 src/component/user/edit/dialog.vue:282
 #: src/page/admin/users.vue:188 src/component/cluster/node/user-edit.vue:232
-#: src/component/user/add/dialog.vue:148 src/component/user/edit/dialog.vue:298
+#: src/component/user/add/dialog.vue:149 src/component/user/edit/dialog.vue:298
 #: src/page/admin/users.vue:280 src/options/auth.js:85 src/options/auth.js:98
 #: src/options/options.js:500
 msgid "WebDAV"
@@ -4808,9 +4820,9 @@ msgstr "黄"
 #: src/component/photo/edit/files.vue:254
 #: src/component/photo/edit/files.vue:255
 #: src/component/photo/edit/files.vue:261
-#: src/component/photo/edit/files.vue:269 src/component/photo/edit/info.vue:151
-#: src/component/photo/edit/info.vue:165 src/component/photo/edit/info.vue:179
-#: src/component/photo/edit/info.vue:193 src/component/photo/edit/info.vue:207
+#: src/component/photo/edit/files.vue:269 src/component/photo/edit/info.vue:152
+#: src/component/photo/edit/info.vue:166 src/component/photo/edit/info.vue:180
+#: src/component/photo/edit/info.vue:194 src/component/photo/edit/info.vue:208
 #: src/component/photo/toolbar.vue:277
 msgid "Yes"
 msgstr "はい"

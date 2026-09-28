@@ -72,6 +72,7 @@ func TestProbeFile(t *testing.T) {
 		assert.Equal(t, 2, info.Tracks)
 		assert.Equal(t, 464, info.VideoWidth)
 		assert.Equal(t, 848, info.VideoHeight)
+		assert.Equal(t, []TrackSize{{Width: 464, Height: 848}}, info.TrackSizes)
 		assert.Equal(t, 32, info.Frames)
 		assert.Equal(t, 30.0, info.FPS)
 		assert.Equal(t, false, info.Encrypted)
@@ -104,6 +105,18 @@ func TestProbeFile(t *testing.T) {
 		assert.Equal(t, false, info.Encrypted)
 		assert.Equal(t, false, info.FastStart)
 		assert.Equal(t, true, info.Compatible)
+	})
+	t.Run("TwoStreamMp4", func(t *testing.T) {
+		info, err := ProbeFile("testdata/two-stream.mp4")
+		require.NoError(t, err)
+		assert.Equal(t, 2, info.Tracks)
+		assert.Equal(t, []TrackSize{{Width: 64, Height: 64}, {Width: 64, Height: 64}}, info.TrackSizes)
+	})
+	t.Run("HevcTrackSize", func(t *testing.T) {
+		info, err := ProbeFile("testdata/quicktime-hvc1.mov")
+		require.NoError(t, err)
+		assert.Equal(t, 0, info.VideoWidth)
+		assert.Equal(t, []TrackSize{{Width: 1280, Height: 720}}, info.TrackSizes)
 	})
 	t.Run("MagicYuvMov", func(t *testing.T) {
 		fileName := "testdata/magicyuv.mov"

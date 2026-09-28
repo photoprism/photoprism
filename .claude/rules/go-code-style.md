@@ -15,6 +15,13 @@
 
 When adding struct fields with uppercase abbreviations (e.g. `LabelNSFW`, `UserID`, `URLHash`), set an explicit `gorm:"column:<name>"` tag so column names stay consistent (`label_nsfw`, `user_id`, `url_hash` instead of split-letter variants).
 
+## GORM Option Flags (-1/0/1)
+
+- A persisted option that is on by default, or whose "not set" must stay distinguishable from an explicit choice, is an `int` with `gorm:"type:SMALLINT;default:0;"` and the values `-1` disabled, `0` default, `1` enabled - not a `bool`. `entity.Service.SyncYaml` is the pattern; the user settings in `internal/entity/auth_user_settings.go` use the same values, without `type:SMALLINT`.
+- Never tag a `bool` with `gorm:"default:true"`: GORM v1 leaves a blank field that has a default tag out of the INSERT, so saving `false` stores `true`. With the tri-state, `0` is both the Go zero value and the column default, so new records, rows that exist when auto-migration adds the column, and create requests that omit the field all get the default. Auto-migration never changes the type or default of an existing column.
+- Read it through one helper (`SyncYamlEnabled()` returns `SyncYaml >= 0` when the default means on), clamp other values when saving a form, and write single values with `Update(column, value)` or `entity.Values`, since a struct-based `Updates` skips `0` and so cannot restore the default. In the web UI, bind a checkbox through a computed getter/setter that calls `model.flagEnabled(key)` and `model.setFlag(key, enabled)` from `frontend/src/model/model.js`.
+- A plain `bool` stays right for an option whose default is off and that never needs to follow a changing default.
+
 ## Filesystem Permissions & io/fs Aliasing
 
 - Always use shared permission variables from `pkg/fs` when creating files/directories:

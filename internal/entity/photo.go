@@ -476,6 +476,11 @@ func (m *Photo) SaveLabels() error {
 
 	m.PhotoQuality = m.QualityScore()
 
+	// These assignments are already persisted; metadata maintenance must not save them again.
+	storedLabels := m.Labels
+	m.Labels = nil
+	defer func() { m.Labels = storedLabels }()
+
 	if err := m.Save(); err != nil {
 		return err
 	}
@@ -1144,6 +1149,11 @@ func (m *Photo) Archive() error {
 	m.DeletedAt = &deletedAt
 
 	return nil
+}
+
+// IsArchived reports whether the photo is archived and not removed.
+func (m *Photo) IsArchived() bool {
+	return m != nil && m.DeletedAt != nil && m.PhotoQuality > -1
 }
 
 // Restore removes the photo from the archive (reverses soft delete).

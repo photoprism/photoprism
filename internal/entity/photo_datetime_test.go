@@ -33,6 +33,11 @@ func TestPhoto_TrustedTime(t *testing.T) {
 		m := Photo{ID: 1, TakenAt: n, TakenAtLocal: n, TakenSrc: SrcEstimate, TimeZone: "Europe/Berlin"}
 		assert.False(t, m.TrustedTime())
 	})
+	t.Run("SrcModified", func(t *testing.T) {
+		n := Now()
+		m := Photo{ID: 1, TakenAt: n, TakenAtLocal: n, TakenSrc: SrcModified, TimeZone: "Europe/Berlin"}
+		assert.False(t, m.TrustedTime())
+	})
 	t.Run("SrcMeta", func(t *testing.T) {
 		n := Now()
 		m := Photo{ID: 1, TakenAt: n, TakenAtLocal: n, TakenSrc: SrcMeta, TimeZone: "Europe/Berlin"}
@@ -53,6 +58,47 @@ func TestPhoto_SetTakenAt(t *testing.T) {
 		m.SetTakenAt(time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC),
 			time.Date(2019, 12, 11, 9, 7, 18, 0, time.UTC), "", SrcAuto)
 		assert.Equal(t, time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC), m.TakenAt)
+	})
+	t.Run("EarliestModifyTime", func(t *testing.T) {
+		earlier := time.Date(2020, 10, 26, 15, 46, 31, 0, time.UTC)
+		later := earlier.Add(time.Hour)
+		m := Photo{}
+		m.SetTakenAt(later, later, tz.UTC, SrcModified)
+		assert.Equal(t, later, m.TakenAt)
+		m.SetTakenAt(earlier, earlier, tz.UTC, SrcModified)
+		assert.Equal(t, earlier, m.TakenAt)
+		m.SetTakenAt(later, later, tz.UTC, SrcModified)
+		assert.Equal(t, earlier, m.TakenAt)
+		assert.Equal(t, SrcModified, m.TakenSrc)
+
+		// A date from the file name replaces the modify time, even if it is later.
+		m.SetTakenAt(later, later, tz.UTC, SrcName)
+		assert.Equal(t, later, m.TakenAt)
+		assert.Equal(t, SrcName, m.TakenSrc)
+		m.SetTakenAt(earlier, earlier, tz.UTC, SrcModified)
+		assert.Equal(t, later, m.TakenAt)
+	})
+	t.Run("EditedCaptureTime", func(t *testing.T) {
+		// An edited capture time replaces the stored one after reindexing, whether it is earlier or later.
+		taken := time.Date(2020, 10, 26, 15, 46, 29, 0, time.UTC)
+		m := Photo{}
+		m.SetTakenAt(taken, taken, tz.UTC, SrcMeta)
+		m.SetTakenAt(taken.Add(time.Hour), taken.Add(time.Hour), tz.UTC, SrcMeta)
+		assert.Equal(t, taken.Add(time.Hour), m.TakenAt)
+		m.SetTakenAt(taken.Add(-time.Hour), taken.Add(-time.Hour), tz.UTC, SrcMeta)
+		assert.Equal(t, taken.Add(-time.Hour), m.TakenAt)
+	})
+	t.Run("EarliestModifyTimeWithOffset", func(t *testing.T) {
+		// A modify time is compared after its time zone has been applied.
+		m := Photo{}
+		m.SetTakenAt(time.Date(2020, 10, 26, 15, 46, 0, 0, time.UTC), time.Date(2020, 10, 26, 15, 46, 0, 0, time.UTC), "UTC-5", SrcModified)
+		assert.Equal(t, time.Date(2020, 10, 26, 20, 46, 0, 0, time.UTC), m.TakenAt)
+		m.SetTakenAt(time.Date(2020, 10, 26, 17, 30, 0, 0, time.UTC), time.Date(2020, 10, 26, 17, 30, 0, 0, time.UTC), "UTC-5", SrcModified)
+		assert.Equal(t, time.Date(2020, 10, 26, 20, 46, 0, 0, time.UTC), m.TakenAt)
+		assert.Equal(t, time.Date(2020, 10, 26, 15, 46, 0, 0, time.UTC), m.TakenAtLocal)
+		assert.Equal(t, "UTC-5", m.TimeZone)
+		m.SetTakenAt(time.Date(2020, 10, 26, 14, 0, 0, 0, time.UTC), time.Date(2020, 10, 26, 14, 0, 0, 0, time.UTC), "UTC-5", SrcModified)
+		assert.Equal(t, time.Date(2020, 10, 26, 19, 0, 0, 0, time.UTC), m.TakenAt)
 	})
 	t.Run("FromName", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")

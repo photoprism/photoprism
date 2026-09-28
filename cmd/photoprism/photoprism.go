@@ -71,9 +71,9 @@ func main() {
 	app.Metadata = Metadata
 
 	// urfave/cli prints and exits with the code of any cli.Exit(...) error
-	// before returning here, so only plain errors reach this point; report
-	// them on stderr without forcing a specific exit code.
+	// before returning here, so only plain errors reach this point.
 	if err := app.Run(os.Args); err != nil {
 		_, _ = fmt.Fprintln(os.Stderr, err)
+		os.Exit(commands.ExitCode(err)) //nolint:gocritic // the deferred recover only handles panics
 	}
 }

@@ -27,6 +27,9 @@ import (
 // ErrSkipPath identifies a path excluded by the transfer policy without a remote failure.
 var ErrSkipPath = errors.New("webdav: transfer path skipped")
 
+// ErrForbidden identifies a transfer the remote server refused with 403 Forbidden.
+var ErrForbidden = errors.New("forbidden")
+
 // ErrUnsafePath identifies a path with a parent-directory segment. It is reported as a failure
 // rather than a skip, so a queued transfer is not recorded as benignly ignored.
 var ErrUnsafePath = errors.New("webdav: transfer path contains a parent directory")
@@ -47,6 +50,7 @@ func checkTransferPath(name string) error {
 // Client represents a webdav client.
 type Client struct {
 	client        *webdav.Client
+	http          *http.Client
 	ctx           context.Context
 	endpoint      *url.URL
 	timeout       time.Duration
@@ -138,7 +142,8 @@ func NewClient(serverUrl, user, pass string, timeout Timeout, servicesCIDR strin
 	// line does not.
 	log.Debugf("webdav: connecting to %s", clean.Log(clean.UriRedacted(serverUrl)))
 
-	client, err := webdav.NewClient(newTransferHTTPClient(allowedCIDRs), serverUrl)
+	transfer := newTransferHTTPClient(allowedCIDRs)
+	client, err := webdav.NewClient(transfer, serverUrl)
 
 	if err != nil {
 		return nil, err
@@ -147,6 +152,7 @@ func NewClient(serverUrl, user, pass string, timeout Timeout, servicesCIDR strin
 	// Create a new webdav.Client wrapper.
 	result := &Client{
 		client:   client,
+		http:     transfer,
 		ctx:      context.Background(),
 		endpoint: endpoint,
 		timeout:  Durations[timeout],
@@ -462,26 +468,50 @@ func (c *Client) Upload(src, dest string) (err error) {
 		}
 	}()
 
-	var writer io.WriteCloser
-	writer, err = c.client.Create(c.ctx, dest)
+	// The deferred Close owns the file, as the client would otherwise close the request body.
+	req, err := http.NewRequestWithContext(c.ctx, http.MethodPut, c.resolveHref(dest).String(), io.NopCloser(f))
 
 	if err != nil {
 		log.Errorf("webdav: %s", clean.Error(err))
 		return fmt.Errorf("webdav: failed to write %s", clean.Log(dest))
 	}
 
-	if _, err = io.Copy(writer, f); err != nil {
-		_ = writer.Close()
+	if info, statErr := f.Stat(); statErr == nil {
+		req.ContentLength = info.Size()
+	}
+
+	resp, err := c.http.Do(req)
+
+	if err != nil {
 		log.Errorf("webdav: %s", clean.Error(err))
 		return fmt.Errorf("webdav: failed to upload %s", clean.Log(dest))
 	}
 
-	if closeErr := writer.Close(); closeErr != nil {
-		log.Errorf("webdav: %s", clean.Error(closeErr))
-		return fmt.Errorf("webdav: failed to finalize upload %s", clean.Log(dest))
+	_, _ = io.Copy(io.Discard, io.LimitReader(resp.Body, 4096))
+	_ = resp.Body.Close()
+
+	switch {
+	case resp.Request != nil && resp.Request.Method != http.MethodPut:
+		// The client follows 301, 302, and 303 with a GET, whose status does not report the upload.
+		return fmt.Errorf("webdav: failed to upload %s (redirected)", clean.Log(dest))
+	case resp.StatusCode == http.StatusForbidden:
+		return fmt.Errorf("webdav: failed to upload %s (%w)", clean.Log(dest), ErrForbidden)
+	case resp.StatusCode/100 != 2:
+		return fmt.Errorf("webdav: failed to upload %s (%d %s)", clean.Log(dest), resp.StatusCode, http.StatusText(resp.StatusCode))
 	}
 
 	return nil
+}
+
+// resolveHref returns the absolute URL of a path relative to the endpoint, including its credentials.
+func (c *Client) resolveHref(name string) *url.URL {
+	base := c.endpoint.Path
+
+	if base == "" {
+		base = "/"
+	}
+
+	return &url.URL{Scheme: c.endpoint.Scheme, User: c.endpoint.User, Host: c.endpoint.Host, Path: path.Join(base, name)}
 }
 
 // Download downloads a single file to the given location.

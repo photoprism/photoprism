@@ -3,10 +3,11 @@
  * (c) 2018 Klokan Technologies GmbH
  */
 import * as maplibregl from "maplibre-gl";
+import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?url";
 
 import { $config } from "app/session";
 
-maplibregl.setWorkerUrl(new URL("maplibre-gl/dist/maplibre-gl-worker.mjs", import.meta.url).toString());
+maplibregl.setWorkerUrl(new URL(maplibreWorkerUrl, import.meta.url).toString());
 
 // langFallbackDecorate applies localized labels to matching style layers.
 const langFallbackDecorate = function (style, cfg) {

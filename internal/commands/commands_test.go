@@ -4,11 +4,17 @@ import (
 	"bytes"
 	"errors"
 	"flag"
+	"fmt"
+	"io"
 	"os"
+	"os/exec"
+	"sync/atomic"
 	"testing"
 
+	"github.com/manifoldco/promptui"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -17,9 +23,25 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
 var savedPath string
+var initialTestDbDSN string
+var resetDbSequence atomic.Uint64
+
+// nextResetDbName returns a distinct alphabetic SQLite name for each config.
+func nextResetDbName(prefix string) string {
+	n := resetDbSequence.Add(1)
+	var suffix [14]byte
+
+	for i := len(suffix) - 1; i >= 0; i-- {
+		suffix[i] = 'a' + byte(n%26)
+		n /= 26
+	}
+
+	return prefix + string(suffix[:])
+}
 
 // TODO: Several CLI commands defer conf.Shutdown(), which closes the shared
 // database connection. To avoid flakiness, RunWithTestContext re-initializes
@@ -32,6 +54,7 @@ func TestMain(m *testing.M) {
 	os.Exit(runTestMain(m))
 }
 
+// runTestMain initializes shared command fixtures and executes the package tests.
 func runTestMain(m *testing.M) int {
 	_ = os.Setenv("TF_CPP_MIN_LOG_LEVEL", "3")
 
@@ -50,6 +73,7 @@ func runTestMain(m *testing.M) int {
 	defer os.RemoveAll(tempDir)
 
 	c := config.NewMinimalTestConfigWithDb("commands", tempDir)
+	initialTestDbDSN = c.DatabaseDSN()
 	defer c.CleanupTestFolder()
 	defer func() {
 		if err := c.CloseDb(); err != nil {
@@ -69,11 +93,10 @@ func runTestMain(m *testing.M) int {
 		return c, c.Init()
 	}
 
-	// Init core config (no database) using the shared test config so commands
-	// like "show config" and "faces status" don't fall back to a storage path
-	// derived from the real originals directory.
+	// Use the current test config for core-only commands.
 	InitCoreConfig = func(ctx *cli.Context, quiet bool) (*config.Config, error) {
-		return c, c.InitCore()
+		current := get.Config()
+		return current, current.InitCore()
 	}
 
 	// Run unit tests.
@@ -212,9 +235,9 @@ func RunWithProvidedTestContext(ctx *cli.Context, cmd *cli.Command, args []strin
 	return output, err
 }
 
-// resetConfigAndDB replaces the config with a generated minimal config, and may replace the database if it doesn't exist.
+// resetConfigAndDB replaces the config with a distinct fixture-backed database.
 func resetConfigAndDB() *config.Config {
-	c := config.NewMinimalTestConfigWithDb("commands", savedPath)
+	c := config.NewMinimalTestConfigWithDb(nextResetDbName("commands"), savedPath)
 	get.SetConfig(c)
 	entity.SetDbProvider(c)
 
@@ -225,11 +248,10 @@ func resetConfigAndDB() *config.Config {
 	return c
 }
 
-// resetConfigAndOpenDB replaces the config with a generated minimal config, and opens the configured database.
-// it does not call Migrate and TestFixtures if the database has records in auth_users and photos.
+// resetConfigAndOpenDB opens a distinct cached test database for each config.
 func resetConfigAndOpenDB() *config.Config {
-	c := config.NewMinimalTestConfig(savedPath)
-	config.RestoreDBFromCache(c) // If using sqlite (not sqlitefile) then the db is removed by NewMinimalTestConfig
+	c := config.NewIsolatedTestConfig(nextResetDbName("commandsreset"), savedPath, false)
+	config.RestoreDBFromCache(c) // With SQLite, NewIsolatedTestConfig removes the database file first.
 	if err := c.Init(); err != nil {
 		log.Fatalf("config: %s (init)", err.Error())
 	}
@@ -241,6 +263,66 @@ func resetConfigAndOpenDB() *config.Config {
 	}
 
 	return c
+}
+
+// TestNextResetDbName checks that rollover names stay distinct and valid.
+func TestNextResetDbName(t *testing.T) {
+	seen := make(map[string]bool)
+
+	for i := 0; i < 27; i++ {
+		name := nextResetDbName("commands")
+		require.Equal(t, name, config.PkgNameRegexp.ReplaceAllString(name, ""))
+		require.False(t, seen[name])
+		seen[name] = true
+	}
+}
+
+// TestResetConfigAndOpenDB checks that the database stays writable when other tests build minimal configs.
+func TestResetConfigAndOpenDB(t *testing.T) {
+	t.Cleanup(func() { resetConfigAndDB() })
+
+	first := resetConfigAndOpenDB()
+	require.Same(t, first, get.Config())
+	require.Same(t, first.Db(), entity.Db())
+	core, err := InitCoreConfig(nil, true)
+	require.NoError(t, err)
+	require.Same(t, first, core)
+
+	second := resetConfigAndOpenDB()
+	require.Same(t, second, get.Config())
+	require.Same(t, second.Db(), entity.Db())
+	core, err = InitCoreConfig(nil, true)
+	require.NoError(t, err)
+	require.Same(t, second, core)
+
+	restored := resetConfigAndDB()
+	require.Same(t, restored, get.Config())
+	require.Same(t, restored.Db(), entity.Db())
+	core, err = InitCoreConfig(nil, true)
+	require.NoError(t, err)
+	require.Same(t, restored, core)
+	restoredAgain := resetConfigAndDB()
+	require.Same(t, restoredAgain, get.Config())
+	require.Same(t, restoredAgain.Db(), entity.Db())
+	core, err = InitCoreConfig(nil, true)
+	require.NoError(t, err)
+	require.Same(t, restoredAgain, core)
+
+	config.NewMinimalTestConfig(t.TempDir())
+
+	for name, c := range map[string]*config.Config{"first": first, "second": second, "restored": restored, "restored again": restoredAgain} {
+		if os.Getenv("PHOTOPRISM_TEST_DSN") == "" {
+			require.NotEqual(t, initialTestDbDSN, c.DatabaseDSN(), name)
+		}
+
+		label := entity.NewLabel("Reset Config Check "+name, 0)
+		require.NoError(t, c.Db().Create(label).Error, name)
+		t.Cleanup(func() { _ = c.Db().Unscoped().Delete(label).Error })
+	}
+
+	label := entity.NewLabel("Reset Config Current", 0)
+	require.NoError(t, label.Create())
+	t.Cleanup(func() { _ = entity.UnscopedDb().Delete(label).Error })
 }
 
 // requireTestDb reopens the shared database for direct registry or entity access.
@@ -272,6 +354,78 @@ func reopenConnection() *config.Config {
 	} else {
 		log.Warn("reopenConnection: config is nil")
 		return nil
+	}
+}
+
+// TestExitCode covers the status main exits with for an error that app.Run returns.
+func TestExitCode(t *testing.T) {
+	// runApp returns the error urfave/cli reports for a command with a required flag.
+	runApp := func(args ...string) error {
+		app := cli.NewApp()
+		app.Writer, app.ErrWriter = io.Discard, io.Discard
+		app.Commands = []*cli.Command{{
+			Name:   "add",
+			Flags:  []cli.Flag{&cli.StringFlag{Name: "make", Required: true}},
+			Action: func(ctx *cli.Context) error { return errors.New("database unreachable") },
+		}}
+		return app.Run(append([]string{"photoprism"}, args...))
+	}
+
+	t.Run("Success", func(t *testing.T) {
+		assert.Equal(t, 0, ExitCode(nil))
+	})
+	t.Run("PlainError", func(t *testing.T) {
+		assert.Equal(t, 1, ExitCode(runApp("add", "--make", "Canon")))
+	})
+	t.Run("MissingRequiredFlag", func(t *testing.T) {
+		err := runApp("add")
+		assert.ErrorContains(t, err, "Required flag")
+		assert.Equal(t, 2, ExitCode(err))
+	})
+	t.Run("ExitCoder", func(t *testing.T) {
+		assert.Equal(t, 3, ExitCode(cli.Exit("not found", 3)))
+	})
+	t.Run("WrappedExitCoder", func(t *testing.T) {
+		assert.Equal(t, 3, ExitCode(fmt.Errorf("users: %w", cli.Exit("not found", 3))))
+	})
+	t.Run("OutOfRangeExitCoder", func(t *testing.T) {
+		assert.Equal(t, 1, ExitCode(fmt.Errorf("users: %w", cli.Exit("failed", 300))))
+	})
+	t.Run("ExternalToolStatus", func(t *testing.T) {
+		execErr := exec.Command("sh", "-c", "exit 3").Run()
+		require.Error(t, execErr)
+		assert.Equal(t, 1, ExitCode(fmt.Errorf("convert: %w", execErr)))
+	})
+	t.Run("Canceled", func(t *testing.T) {
+		assert.Equal(t, 0, ExitCode(fmt.Errorf("index: %w", status.ErrCanceled)))
+	})
+	t.Run("InterruptedPrompt", func(t *testing.T) {
+		assert.Equal(t, 0, ExitCode(promptui.ErrInterrupt))
+	})
+}
+
+// TestShowUsageError covers commands that print their help and exit 2 when the argument is missing.
+func TestShowUsageError(t *testing.T) {
+	for _, c := range []struct {
+		name string
+		cmd  *cli.Command
+	}{
+		{"users show", UsersShowCommand},
+		{"users rm", UsersRemoveCommand},
+		{"users mod", UsersModCommand},
+		{"clients show", ClientsShowCommand},
+		{"clients rm", ClientsRemoveCommand},
+		{"clients mod", ClientsModCommand},
+		{"auth show", AuthShowCommand},
+		{"auth rm", AuthRemoveCommand},
+		{"passwd", PasswdCommand},
+		{"connect", ConnectCommand},
+	} {
+		t.Run(c.name, func(t *testing.T) {
+			output, err := RunWithTestContext(c.cmd, []string{c.cmd.Name})
+			assertExitCode(t, err, 2)
+			assert.Contains(t, output, "USAGE:")
+		})
 	}
 }
 

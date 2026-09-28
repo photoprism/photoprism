@@ -24,9 +24,9 @@ import (
 //	@Tags		Authentication
 //	@Accept		json
 //	@Produce	json
-//	@Param		credentials	body		form.Login	true	"login credentials"
-//	@Success	200			{object}	gin.H
-//	@Failure	400,401,429	{object}	i18n.Response
+//	@Param		credentials		body		form.Login	true	"login credentials"
+//	@Success	200				{object}	gin.H
+//	@Failure	400,401,413,429	{object}	i18n.Response
 //	@Router		/api/v1/session [post]
 //	@Router		/api/v1/sessions [post]
 func CreateSession(router *gin.RouterGroup) {

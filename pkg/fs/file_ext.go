@@ -47,6 +47,7 @@ const (
 	ExtEvc1     = ".evc1"
 	ExtMp4      = ".mp4"
 	ExtInsv     = ".insv"
+	ExtLrv      = ".lrv"
 	ExtMov      = ".mov"
 	ExtQT       = ".qt"
 	ExtYml      = ".yml"

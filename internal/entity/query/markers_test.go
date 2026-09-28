@@ -121,13 +121,46 @@ func TestUnmatchedFaceMarkers(t *testing.T) {
 
 func TestFaceMarkers(t *testing.T) {
 	t.Run("All", func(t *testing.T) {
-		results, err := FaceMarkers(3, 0)
+		results, err := FaceMarkers(3, "", "")
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
 		assert.Equal(t, 3, len(results))
+	})
+	t.Run("After", func(t *testing.T) {
+		first, err := FaceMarkers(2, "", "")
+		require.NoError(t, err)
+		require.Len(t, first, 2)
+		next, err := FaceMarkers(2, first[1].MarkerUID, "")
+		require.NoError(t, err)
+		require.NotEmpty(t, next)
+		assert.Greater(t, next[0].MarkerUID, first[1].MarkerUID)
+		all, err := FaceMarkers(4, "", "")
+		require.NoError(t, err)
+		require.Len(t, all, 4)
+		assert.Equal(t, all[2].MarkerUID, next[0].MarkerUID, "the next page starts right after the cursor")
+	})
+}
+
+func TestLastMarkerUID(t *testing.T) {
+	last, err := LastMarkerUID()
+	require.NoError(t, err)
+	require.NotEmpty(t, last)
+	_, err = MarkerByUID(last)
+	require.NoError(t, err, "the last uid belongs to a stored marker")
+	var count int
+	require.NoError(t, UnscopedDb().Model(&entity.Marker{}).Where("marker_uid > ?", last).Count(&count).Error)
+	assert.Zero(t, count, "no marker sorts after the last uid")
+	t.Run("Bound", func(t *testing.T) {
+		all, err := FaceMarkers(4, "", "")
+		require.NoError(t, err)
+		require.Len(t, all, 4)
+		bounded, err := FaceMarkers(4, "", all[1].MarkerUID)
+		require.NoError(t, err)
+		require.Len(t, bounded, 2, "the last uid is included, later ones are not")
+		assert.Equal(t, all[1].MarkerUID, bounded[1].MarkerUID)
 	})
 }
 
@@ -168,7 +201,7 @@ func TestFaceMarkerModelBoundaries(t *testing.T) {
 	assert.False(t, foundLegacy)
 	assert.Equal(t, beforeUnmatched+1, CountUnmatchedFaceMarkers())
 
-	all, err := FaceMarkers(1000, 0)
+	all, err := FaceMarkers(1000, "", "")
 	require.NoError(t, err)
 	foundCompatible, foundLegacy = false, false
 	for _, marker := range all {
@@ -225,7 +258,7 @@ func TestFaceMarkersWithoutConfiguredModel(t *testing.T) {
 		assert.True(t, found(markers))
 	})
 	t.Run("FaceMarkers", func(t *testing.T) {
-		markers, err := FaceMarkers(1000, 0)
+		markers, err := FaceMarkers(1000, "", "")
 		require.NoError(t, err)
 		assert.True(t, found(markers))
 	})

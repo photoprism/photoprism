@@ -74,6 +74,15 @@ func TestHandle(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		assert.Equal(t, "", Handle("  "))
 	})
+	t.Run("LeadingDot", func(t *testing.T) {
+		for _, s := range []string{".", "..", "...", "/", "./", " . ", ".gitignore", ".Bob", "(bob)", "..@example.com", "corp\\..", "x\\.bob"} {
+			assert.Equal(t, "", Handle(s), s)
+		}
+	})
+	t.Run("InnerDots", func(t *testing.T) {
+		assert.Equal(t, "jane..doe", Handle("Jane .Doe"))
+		assert.Equal(t, "bob.", Handle("bob."))
+	})
 	t.Run("ControlCharacter", func(t *testing.T) {
 		assert.Equal(t, "admin!", Handle("admin!"+string(rune(1))))
 	})

@@ -5,10 +5,14 @@ import (
 	"math/rand/v2"
 	"testing"
 
+	"github.com/jinzhu/gorm"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // benchmarkCandidateCount is the number of face clusters a benchmark matches against. Libraries
@@ -178,4 +182,45 @@ func legacySelectBestFace(embeddings face.Embeddings, idx faceIndex) (*entity.Fa
 	}
 
 	return best, bestDist
+}
+
+// BenchmarkFacesMatchStamps measures a page whose markers already hold their best cluster.
+func BenchmarkFacesMatchStamps(b *testing.B) {
+	oldConfig := Config()
+	oldLevel := log.GetLevel()
+	log.SetLevel(logrus.ErrorLevel)
+	conf := config.NewMinimalTestConfigWithDb("facesmatchstampsbench", b.TempDir())
+	b.Cleanup(func() {
+		require.NoError(b, conf.CloseDb())
+		if oldConfig != nil {
+			oldConfig.RegisterDb()
+		}
+		log.SetLevel(oldLevel)
+	})
+	w := NewFaces(conf)
+	log.SetLevel(logrus.ErrorLevel)
+	require.NoError(b, entity.UnscopedDb().Exec("DELETE FROM markers").Error)
+	f := entity.NewFace("", entity.SrcAuto, face.Embeddings{face.FixtureEmbedding(8280)}, face.EmbeddingModelName())
+	require.NoError(b, f.Create())
+	const count = 500
+	for range count {
+		m := entity.Marker{MarkerUID: rnd.GenerateUID('m'), FileUID: consensusTestFileUID,
+			MarkerType: entity.MarkerFace, MarkerSrc: entity.SrcImage, FaceID: f.ID, FaceDist: 0,
+			EmbedModel: f.EmbedModel, EmbeddingsJSON: face.Embeddings{f.Embedding()}.JSON()}
+		require.NoError(b, entity.UnscopedDb().Create(&m).Error)
+	}
+	updates, iterations := 0, 0
+	entity.Db().Callback().Update().Before("gorm:begin_transaction").Register("bench:match-stamps", func(scope *gorm.Scope) {
+		if scope.TableName() == (entity.Marker{}).TableName() {
+			updates++
+		}
+	})
+	b.Cleanup(func() { entity.Db().Callback().Update().Remove("bench:match-stamps") })
+	for b.Loop() {
+		iterations++
+		_, err := w.MatchFaces(entity.Faces{*f}, true, nil, nil)
+		require.NoError(b, err)
+	}
+	b.ReportMetric(count, "markers/op")
+	b.ReportMetric(float64(updates)/float64(iterations), "stamp_updates/op")
 }

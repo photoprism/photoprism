@@ -51,17 +51,17 @@ export default class Page {
     this.longitude = Selector(".input-longitude input", { timeout: 15000 });
     this.coordinates = Selector("div.p-tab-photo-details .input-coordinates input", { timeout: 15000 });
     this.localTime = Selector(".input-local-time input", { timeout: 15000 });
-    this.day = Selector("div.input-day input", { timeout: 15000 });
-    this.month = Selector(".input-month input", { timeout: 15000 });
-    this.year = Selector(".input-year input", { timeout: 15000 });
-    this.timezone = Selector(".input-timezone input", { timeout: 15000 });
+    this.day = Selector("div.input-day input:not([type='hidden'])", { timeout: 15000 });
+    this.month = Selector(".input-month input:not([type='hidden'])", { timeout: 15000 });
+    this.year = Selector(".input-year input:not([type='hidden'])", { timeout: 15000 });
+    this.timezone = Selector(".input-timezone input:not([type='hidden'])", { timeout: 15000 });
     this.dayValue = Selector(".input-day .v-autocomplete__selection", { timeout: 15000 });
     this.monthValue = Selector(".input-month .v-autocomplete__selection", { timeout: 15000 });
     this.yearValue = Selector(".input-year .v-autocomplete__selection", { timeout: 15000 });
     this.timezoneValue = Selector(".input-timezone .v-autocomplete__selection", { timeout: 15000 });
     this.altitude = Selector(".input-altitude input", { timeout: 15000 });
     this.countryValue = Selector(".input-country .v-autocomplete__selection", { timeout: 15000 });
-    this.country = Selector(".input-country input", { timeout: 15000 });
+    this.country = Selector(".input-country input:not([type='hidden'])", { timeout: 15000 });
     this.iso = Selector(".input-iso input", { timeout: 15000 });
     this.exposure = Selector(".input-exposure input", { timeout: 15000 });
     this.fnumber = Selector(".input-fnumber input", { timeout: 15000 });
@@ -72,8 +72,8 @@ export default class Page {
     this.license = Selector(".input-license textarea", { timeout: 15000 });
     this.description = Selector(".input-caption textarea", { timeout: 15000 });
     this.notes = Selector(".input-notes textarea", { timeout: 15000 });
-    this.camera = Selector(".input-camera input", { timeout: 15000 }).parent('div[class="v-field__input"]');
-    this.lens = Selector(".input-lens input", { timeout: 15000 }).parent('div[class="v-field__input"]');
+    this.camera = Selector(".input-camera input:not([type='hidden'])", { timeout: 15000 }).parent('div[class="v-field__input"]');
+    this.lens = Selector(".input-lens input:not([type='hidden'])", { timeout: 15000 }).parent('div[class="v-field__input"]');
     this.cameraValue = Selector(".input-camera .v-select__selection-text", { timeout: 15000 });
     this.lensValue = Selector(".input-lens .v-select__selection-text", { timeout: 15000 });
 
@@ -85,13 +85,13 @@ export default class Page {
       timeout: 15000,
     });
     this.undoRemoveMarker = Selector("button.action-undo", { timeout: 15000 });
-    this.inputName = Selector("div.input-name input", { timeout: 15000 });
+    this.inputName = Selector("div.input-name input:not([type='hidden'])", { timeout: 15000 });
 
     this.addLabel = Selector("button.p-photo-label-add", { timeout: 15000 });
     this.removeLabel = Selector("button.action-remove", { timeout: 15000 });
     this.activateLabel = Selector(".action-on", { timeout: 15000 });
     this.deleteLabel = Selector(".action-delete", { timeout: 15000 });
-    this.inputLabelName = Selector(".input-label input", { timeout: 15000 });
+    this.inputLabelName = Selector(".input-label input:not([type='hidden'])", { timeout: 15000 });
     this.openInlineEdit = Selector("div.p-inline-edit", { timeout: 15000 });
     this.inputLabelRename = Selector(".input-title input", { timeout: 15000 });
 
@@ -106,7 +106,7 @@ export default class Page {
     this.scanInput = Selector(".input-scan input");
     this.panoramaInput = Selector(".input-panorama input");
     this.stackableInput = Selector(".input-stackable input");
-    this.typeInput = Selector(".input-type input");
+    this.typeInput = Selector(".input-type input:not([type='hidden'])");
   }
 
   async editDetailsField(field, value) {

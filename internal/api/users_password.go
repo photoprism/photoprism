@@ -23,10 +23,10 @@ import (
 //	@Tags		Users, Authentication
 //	@Accept		json
 //	@Produce	json
-//	@Param		uid					path		string				true	"user uid"
-//	@Param		request				body		form.ChangePassword	true	"old and new password"
-//	@Success	200					{object}	i18n.Response
-//	@Failure	400,401,403,404,429	{object}	i18n.Response
+//	@Param		uid						path		string				true	"user uid"
+//	@Param		request					body		form.ChangePassword	true	"old and new password"
+//	@Success	200						{object}	i18n.Response
+//	@Failure	400,401,403,404,413,429	{object}	i18n.Response
 //	@Router		/api/v1/users/{uid}/password [put]
 func UpdateUserPassword(router *gin.RouterGroup) {
 	router.PUT("/users/:uid/password", func(c *gin.Context) {

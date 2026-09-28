@@ -29,9 +29,10 @@ const makeWrapper = (values = {}) => {
         VTextField: { template: "<input />" },
         VDateInput: {
           name: "VDateInput",
-          props: ["modelValue", "label", "min", "max"],
-          emits: ["update:modelValue"],
-          template: "<input type='date' :data-label='label' />",
+          props: ["modelValue", "label", "min", "max", "menu"],
+          emits: ["update:modelValue", "update:menu"],
+          // Opens its picker on Enter keydown like VDateInput, so the dialog's listener phase matters.
+          template: "<input type='date' :data-label='label' @keydown.enter=\"$emit('update:menu', true)\" />",
         },
         VCheckbox: { props: ["modelValue", "label"], template: "<input type='checkbox' :data-label='label' />" },
         VBtn: { template: "<button><slot /></button>" },
@@ -167,6 +168,99 @@ describe("component/people/edit/dialog birthday", () => {
 
     await wrapper.findComponent({ name: "VDateInput" }).vm.$emit("update:modelValue", null);
     expect(wrapper.vm.model.Birthday).toBeNull();
+
+    wrapper.unmount();
+  });
+});
+
+describe("component/people/edit/dialog enter key", () => {
+  // Enter confirms the dialog on keyup, while the date input and its picker act on keydown, so one
+  // press must not do both.
+  const withConfirm = () => {
+    const wrapper = makeWrapper();
+    const confirm = vi.spyOn(wrapper.vm, "confirm").mockResolvedValue(undefined);
+    return { wrapper, confirm };
+  };
+
+  const press = (el, type, init = {}) => el.dispatchEvent(new KeyboardEvent(type, { key: "Enter", bubbles: true, ...init }));
+
+  const enter = (el, init = {}) => {
+    press(el, "keydown", init);
+    press(el, "keyup", init);
+  };
+
+  const nameInput = (wrapper) => wrapper.find("input:not([type])").element;
+
+  const dateInput = (wrapper) => wrapper.find("input[type='date']").element;
+
+  it("confirms on Enter in the name field", () => {
+    const { wrapper, confirm } = withConfirm();
+
+    enter(nameInput(wrapper));
+
+    expect(confirm).toHaveBeenCalledTimes(1);
+
+    wrapper.unmount();
+  });
+
+  it("confirms on Enter in the date field while the picker is closed", () => {
+    const { wrapper, confirm } = withConfirm();
+
+    enter(dateInput(wrapper));
+
+    expect(confirm).toHaveBeenCalledTimes(1);
+
+    wrapper.unmount();
+  });
+
+  it("closes only the picker on Enter while it is open", async () => {
+    const { wrapper, confirm } = withConfirm();
+    const picker = wrapper.findComponent({ name: "VDateInput" });
+
+    await picker.vm.$emit("update:menu", true);
+    enter(dateInput(wrapper));
+    await wrapper.vm.$nextTick();
+
+    expect(confirm).not.toHaveBeenCalled();
+    expect(picker.props("menu")).toBe(false);
+
+    wrapper.unmount();
+  });
+
+  it("ignores a keyup whose keydown happened outside the dialog", () => {
+    const { wrapper, confirm } = withConfirm();
+
+    press(dateInput(wrapper), "keyup");
+
+    expect(confirm).not.toHaveBeenCalled();
+
+    wrapper.unmount();
+  });
+
+  it("ignores a modified Enter without leaving it pending", () => {
+    const { wrapper, confirm } = withConfirm();
+
+    enter(nameInput(wrapper), { shiftKey: true });
+    press(nameInput(wrapper), "keydown", { shiftKey: true });
+    press(nameInput(wrapper), "keyup");
+    press(nameInput(wrapper), "keydown");
+    press(nameInput(wrapper), "keyup", { ctrlKey: true });
+    press(nameInput(wrapper), "keyup");
+
+    expect(confirm).not.toHaveBeenCalled();
+
+    wrapper.unmount();
+  });
+
+  it("forgets an unmatched keydown when the dialog opens again", async () => {
+    const { wrapper, confirm } = withConfirm();
+
+    press(nameInput(wrapper), "keydown");
+    await wrapper.setProps({ visible: false });
+    await wrapper.setProps({ visible: true });
+    press(nameInput(wrapper), "keyup");
+
+    expect(confirm).not.toHaveBeenCalled();
 
     wrapper.unmount();
   });

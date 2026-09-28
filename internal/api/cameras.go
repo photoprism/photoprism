@@ -22,10 +22,10 @@ import (
 //	@Tags		Cameras
 //	@Accept		json
 //	@Produce	json
-//	@Success	200				{object}	entity.Camera
-//	@Failure	401,403,404,429	{object}	i18n.Response
-//	@Param		id				path		string		true	"Camera ID"
-//	@Param		camera			body		form.Camera	true	"Properties to be updated, only Make and Model supported"
+//	@Success	200					{object}	entity.Camera
+//	@Failure	401,403,404,413,429	{object}	i18n.Response
+//	@Param		id					path		string		true	"Camera ID"
+//	@Param		camera				body		form.Camera	true	"Properties to be updated, only Make and Model supported"
 //	@Router		/api/v1/cameras/{id} [put]
 func UpdateCamera(router *gin.RouterGroup) {
 	router.PUT("/cameras/:id", func(c *gin.Context) {

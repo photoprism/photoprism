@@ -10,7 +10,7 @@ export default class Page {
     this.close = Selector(".v-card-actions .action-close");
     this.appsAndDevicesAction = Selector("button.action-apps-dialog");
     this.appAdd = Selector("button.action-add");
-    this.clientName = Selector(".input-name input", { timeout: 15000 });
+    this.clientName = Selector(".input-name input:not([type='hidden'])", { timeout: 15000 });
     this.clientScope = Selector(".input-scope div.v-input__control", { timeout: 15000 });
     this.clientExpires = Selector(".input-expires div.v-input__control", { timeout: 15000 });
     this.appGenerate = Selector("button.action-generate");

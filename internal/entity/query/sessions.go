@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/time/unix"
 )
@@ -20,9 +21,9 @@ func Session(id string) (result entity.Session, err error) {
 	case rnd.IsRefID(id):
 		err = Db().Where("ref_id = ?", id).First(&result).Error
 	case rnd.IsSessionID(id):
-		err = Db().Where("id LIKE ?", id).First(&result).Error
+		err = Db().Where("id = ?", id).First(&result).Error
 	default:
-		err = Db().Where("id LIKE ?", rnd.SessionID(id)).First(&result).Error
+		err = Db().Where("id = ?", rnd.SessionID(id)).First(&result).Error
 	}
 
 	return result, err
@@ -45,7 +46,8 @@ func Sessions(limit, offset int, sortOrder, search string) (result entity.Sessio
 	case rnd.IsUID(search, entity.UserUID):
 		stmt = stmt.Where("user_uid = ?", search)
 	case search != "":
-		stmt = stmt.Where("user_name LIKE ? OR auth_provider LIKE ?", search+"%", search+"%")
+		like := clean.SqlLike(search) + "%"
+		stmt = stmt.Where(clean.SqlLikeAny("user_name", "auth_provider"), like, like)
 	}
 
 	if sortOrder == "" {

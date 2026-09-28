@@ -21,7 +21,13 @@ const (
 	UserNoLoginUsage    = "disables login on the web interface"
 	UserWebDAVUsage     = "allows to sync files via WebDAV"
 	UserDisable2FA      = "deactivates two-factor authentication"
+	UserRestoreUsage    = "restores a deleted account without asking for confirmation"
 )
+
+// UserRestoreFlag returns the --restore flag of the commands that offer to restore a deleted account.
+func UserRestoreFlag() *cli.BoolFlag {
+	return &cli.BoolFlag{Name: "restore", Usage: UserRestoreUsage}
+}
 
 // UserRoleUsageFor builds the --role flag help from the assignable user roles in m, so
 // each edition's CLI lists exactly the roles its own registered map accepts (Portal, for

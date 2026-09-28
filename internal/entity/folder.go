@@ -193,7 +193,7 @@ func ReconcileOriginalsFolderAlbums(rootPath string) (reconciled int, err error)
 	stmt := Db().Where("root = ? AND path <> ''", RootOriginals)
 
 	if rootPath != "" {
-		stmt = stmt.Where("path = ? OR path LIKE ?", rootPath, rootPath+"/%")
+		stmt = stmt.Where("path = ? OR "+clean.SqlPrefixCond("path"), append([]any{rootPath}, clean.SqlPrefixArgs(rootPath+"/")...)...)
 	}
 
 	if err = stmt.Order("path ASC").Find(&folders).Error; err != nil {

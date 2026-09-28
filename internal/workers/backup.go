@@ -1,6 +1,7 @@
 package workers
 
 import (
+	"errors"
 	"fmt"
 	"runtime/debug"
 	"time"
@@ -14,19 +15,46 @@ import (
 	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
-// Backup represents a background backup worker.
+// Backup represents a background backup worker, created with NewBackup.
 type Backup struct {
-	conf *config.Config
+	conf     *config.Config
+	database func(backupPath, fileName string, toStdOut, force bool, retain int) error
+	albums   func(backupPath string, force bool) (int, error)
 }
 
 // NewBackup returns a new Backup worker.
 func NewBackup(conf *config.Config) *Backup {
-	return &Backup{conf: conf}
+	return &Backup{conf: conf, database: backup.Database, albums: backup.Albums}
+}
+
+// backupError names the backup steps that failed and wraps their errors.
+type backupError struct {
+	steps []string
+	errs  []error
+}
+
+// add records the error of a failed step.
+func (e *backupError) add(step string, err error) {
+	e.steps = append(e.steps, step)
+	e.errs = append(e.errs, err)
+}
+
+// Error returns a summary that names the failed steps.
+func (e *backupError) Error() string {
+	return fmt.Sprintf("%s backup failed", english.WordSeries(e.steps, "and"))
+}
+
+// Unwrap returns the errors of the failed steps.
+func (e *backupError) Unwrap() []error {
+	return e.errs
 }
 
 // StartScheduled starts a scheduled run of the backup worker based on the current configuration.
 func (w *Backup) StartScheduled() {
-	if err := w.Start(w.conf.BackupDatabase(), w.conf.BackupAlbums(), true, w.conf.BackupRetain()); err != nil {
+	var failed *backupError
+
+	// Failed steps have already been logged by Start.
+	if err := w.Start(w.conf.BackupDatabase(), w.conf.BackupAlbums(), true, w.conf.BackupRetain()); err != nil && !errors.As(err, &failed) {
 		log.Errorf("scheduler: %s (backup)", err)
 	}
 }
@@ -61,13 +89,15 @@ func (w *Backup) Start(database, albums bool, force bool, retain int) (err error
 
 	// Start creating backups.
 	start := time.Now()
+	failed := &backupError{}
 
 	// Create database backup.
 	if database {
 		databasePath := w.conf.BackupDatabasePath()
 
-		if err = backup.Database(databasePath, "", false, force, retain); err != nil {
-			log.Errorf("backup: %s (database)", err)
+		if dbErr := w.database(databasePath, "", false, force, retain); dbErr != nil {
+			log.Errorf("backup: %s (database)", dbErr)
+			failed.add("database", dbErr)
 		}
 	}
 
@@ -79,11 +109,18 @@ func (w *Backup) Start(database, albums bool, force bool, retain int) (err error
 	if albums {
 		albumsPath := w.conf.BackupAlbumsPath()
 
-		if count, backupErr := backup.Albums(albumsPath, false); backupErr != nil {
+		if count, backupErr := w.albums(albumsPath, false); backupErr != nil {
 			log.Errorf("backup: %s (albums)", backupErr.Error())
+			failed.add("album", backupErr)
 		} else if count > 0 {
 			log.Infof("backup: saved %s", english.Plural(count, "album backup", "album backups"))
 		}
+	}
+
+	// Report the failed steps after every requested step ran.
+	if len(failed.errs) > 0 {
+		log.Errorf("backup: %s", failed)
+		return failed
 	}
 
 	elapsed := time.Since(start)

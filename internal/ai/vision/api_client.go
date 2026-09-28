@@ -116,6 +116,12 @@ func PerformApiRequest(apiRequest *ApiRequest, uri, method, key string) (apiResp
 			return apiResponse, apiErr
 		} else if clientResp.StatusCode >= 300 {
 			log.Debugf("vision: %s (status code %d)", body, clientResp.StatusCode)
+
+			if apiResponse.Error != "" {
+				return apiResponse, fmt.Errorf("%s (status code %d)", clean.Log(apiResponse.Error), clientResp.StatusCode)
+			}
+
+			return apiResponse, fmt.Errorf("status code %d", clientResp.StatusCode)
 		}
 	default:
 		return apiResponse, fmt.Errorf("unsupported response format %s", clean.Log(apiRequest.ResponseFormat))

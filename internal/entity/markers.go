@@ -1,7 +1,9 @@
 package entity
 
 import (
+	"errors"
 	"fmt"
+	"time"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/ai/face"
@@ -267,4 +269,38 @@ func FindVisibleMarkers(fileUid string, omitWithheld bool) (Markers, error) {
 	err := stmt.Find(&m).Error
 
 	return m, err
+}
+
+// StampMarkerMatches records one match time in bounded batches and updates successfully stored markers.
+func StampMarkerMatches(markers []*Marker, matchedAt *time.Time) (err error) {
+	if len(markers) == 0 {
+		return nil
+	}
+	if matchedAt == nil {
+		return fmt.Errorf("match timestamp is nil")
+	}
+	stamp := matchedAt.UTC().Truncate(time.Second)
+	size := BatchSize()
+	for start := 0; start < len(markers); start += size {
+		batch := markers[start:min(start+size, len(markers))]
+		uids := make([]string, 0, len(batch))
+		for _, marker := range batch {
+			if marker != nil && marker.MarkerUID != "" {
+				uids = append(uids, marker.MarkerUID)
+			}
+		}
+		if len(uids) == 0 {
+			continue
+		}
+		if updateErr := UnscopedDb().Model(&Marker{}).Where("marker_uid IN (?)", uids).UpdateColumn("matched_at", &stamp).Error; updateErr != nil {
+			err = errors.Join(err, updateErr)
+			continue
+		}
+		for _, marker := range batch {
+			if marker != nil && marker.MarkerUID != "" {
+				marker.MatchedAt = &stamp
+			}
+		}
+	}
+	return err
 }

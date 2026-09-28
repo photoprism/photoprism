@@ -91,7 +91,7 @@ func DeleteSession(router *gin.RouterGroup) {
 		// On the caller's own logout (not a manager deleting by ref id), end the provider
 		// session too when PHOTOPRISM_OIDC_LOGOUT is enabled.
 		if conf := get.Config(); !rnd.IsRefID(id) {
-			if logoutUri := oidcLogoutURL(conf, get.OIDC(), s); logoutUri != "" {
+			if logoutUri := oidcLogoutURL(conf, get.OIDC, s); logoutUri != "" {
 				// Delegate to the provider's end-session endpoint (the Portal OP in a cluster),
 				// which clears the OP session cookie itself — clearing it here would strip the
 				// cookie the Portal OP needs to resolve the session and chain the upstream logout.
@@ -115,14 +115,21 @@ func DeleteSession(router *gin.RouterGroup) {
 // oidcLogoutURL returns the RP-initiated logout URL for a just-deleted OIDC session, or ""
 // when logout is disabled, the session was not OIDC, or the provider advertises no
 // end_session_endpoint. The browser is redirected there to end the provider SSO session.
-func oidcLogoutURL(conf *config.Config, provider *oidc.Client, s *entity.Session) string {
+func oidcLogoutURL(conf *config.Config, provider func() *oidc.Client, s *entity.Session) string {
 	if conf == nil || provider == nil || s == nil {
 		return ""
 	} else if !conf.OIDCLogout() || s.IdToken == "" || !s.GetProvider().IsOIDC() {
 		return ""
 	}
 
-	logoutUri, err := provider.EndSessionURL(s.IdToken, AbsoluteLoginURL(conf), "")
+	// Resolved only here, since resolving the client may contact the provider.
+	client := provider()
+
+	if client == nil {
+		return ""
+	}
+
+	logoutUri, err := client.EndSessionURL(s.IdToken, AbsoluteLoginURL(conf), "")
 
 	if err != nil {
 		event.AuditWarn([]string{"oidc", "provider logout", status.Error(err)})

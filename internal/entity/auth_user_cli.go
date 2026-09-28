@@ -119,6 +119,13 @@ func (m *User) SetValuesFromCli(ctx *cli.Context) error {
 
 // RestoreFromCli restores a deleted account from CLI input and optionally sets a new password.
 func (m *User) RestoreFromCli(ctx *cli.Context, newPassword string) (err error) {
+	// Validate the new password before restoring the account.
+	if newPassword != "" {
+		if err = ValidatePasswordLength(newPassword); err != nil {
+			return err
+		}
+	}
+
 	m.DeletedAt = nil
 
 	// Set values.

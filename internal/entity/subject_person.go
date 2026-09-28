@@ -25,7 +25,7 @@ type Person struct {
 
 // AfterFind is a hook that updates the name cache after querying.
 func (m *Person) AfterFind() (err error) {
-	SubjNames.Set(m.SubjUID, m.SubjName)
+	setSubjName(m.SubjUID, m.SubjName)
 	return
 }
 

@@ -584,11 +584,15 @@ type portalJWTFixture struct {
 	nodeUUID    string
 }
 
+// newPortalJWTFixture builds portal credentials with isolated test databases.
 func newPortalJWTFixture(t *testing.T, suffix string) portalJWTFixture {
 	t.Helper()
 
 	origConf := get.Config()
-	t.Cleanup(func() { get.SetConfig(origConf) })
+	t.Cleanup(func() {
+		get.SetConfig(origConf)
+		entity.SetDbProvider(origConf)
+	})
 
 	nodeConf := config.NewMinimalTestConfigWithDb("auth-any-portal-jwt-"+suffix, t.TempDir())
 
@@ -627,6 +631,18 @@ func newPortalJWTFixture(t *testing.T, suffix string) portalJWTFixture {
 		clusterUUID: clusterUUID,
 		nodeUUID:    nodeUUID,
 	}
+}
+
+// TestPortalJWTFixtureRestoresProvider checks that the shared database resumes after an isolated fixture.
+func TestPortalJWTFixtureRestoresProvider(t *testing.T) {
+	original := get.Config()
+
+	t.Run("Fixture", func(t *testing.T) {
+		newPortalJWTFixture(t, "provider-restore")
+	})
+
+	require.Same(t, original, get.Config())
+	require.Same(t, original.Db(), entity.Db())
 }
 
 func (fx portalJWTFixture) defaultClaimsSpec() clusterjwt.ClaimsSpec {

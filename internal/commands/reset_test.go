@@ -143,7 +143,7 @@ func TestResetCommand(t *testing.T) {
 	})
 }
 
-// pipeResetAnswers makes ConfirmAction read the answers from a pipe until the test ends.
+// pipeResetAnswers makes confirmation prompts read the answers from a pipe until the test ends.
 func pipeResetAnswers(t *testing.T, answers string) {
 	t.Helper()
 
@@ -154,11 +154,10 @@ func pipeResetAnswers(t *testing.T, answers string) {
 	require.NoError(t, err)
 	require.NoError(t, w.Close())
 
-	prev := confirmStdin
-	confirmStdin = r
+	restore := SetConfirmInput(r)
 
 	t.Cleanup(func() {
-		confirmStdin = prev
+		restore()
 		_ = r.Close()
 	})
 }

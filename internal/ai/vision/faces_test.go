@@ -1,6 +1,8 @@
 package vision
 
 import (
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"testing"
@@ -201,5 +203,28 @@ func TestEmbedFaces(t *testing.T) {
 		t.Cleanup(func() { Config = &ConfigValues{Models: Models{{Name: "facenet", Type: ModelTypeFace}}} })
 
 		require.Error(t, EmbedFaces(fileName, faces, false, nil))
+	})
+	t.Run("EndpointRefused", func(t *testing.T) {
+		// A service that refuses the request returns an error, so no markers are updated.
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusForbidden)
+			_, _ = w.Write([]byte(`{"code":403,"error":"Forbidden","result":{}}`))
+		}))
+		defer server.Close()
+
+		Config = &ConfigValues{Models: Models{{Name: "facenet", Type: ModelTypeFace, Service: Service{
+			Uri: server.URL, Method: http.MethodPost, RequestFormat: ApiFormatVision, ResponseFormat: ApiFormatVision,
+		}}}}
+		t.Cleanup(func() { Config = &ConfigValues{Models: Models{{Name: "facenet", Type: ModelTypeFace}}} })
+
+		// The crops are cached next to a copy of the image, which the request reads them from.
+		tmpFile := filepath.Join(t.TempDir(), "1.jpg")
+		data, readErr := os.ReadFile(fileName)
+		require.NoError(t, readErr)
+		require.NoError(t, os.WriteFile(tmpFile, data, 0o600))
+
+		refused := face.Faces{{Rows: 100, Cols: 100, Area: face.NewArea("face", 50, 50, 20)}}
+		require.EqualError(t, EmbedFaces(tmpFile, refused, true, nil), "Forbidden (status code 403)")
+		assert.True(t, refused[0].Embeddings.Empty())
 	})
 }

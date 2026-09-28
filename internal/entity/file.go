@@ -592,6 +592,56 @@ func (m *File) Rename(fileName, rootName, filePath, fileBase string) error {
 	return nil
 }
 
+// captureName returns the file name that identifies a capture original: its current name, or its
+// original name as long as the file type has not changed since import.
+func (m *File) captureName() string {
+	switch {
+	case m == nil:
+		return ""
+	case fs.StackGroup(m.FileName) != "":
+		return m.FileName
+	case m.OriginalName != "" && fs.FileType(m.FileName) == fs.FileType(m.OriginalName):
+		return m.OriginalName
+	}
+
+	return m.FileName
+}
+
+// StackGroup returns the shared stack name of a lens or proxy original of a multi-file capture.
+func (m *File) StackGroup() string {
+	return fs.StackGroup(m.captureName())
+}
+
+// KeepStacked reports whether the file is stacked under the name of another file of its capture,
+// such as a right lens or proxy, so it must not be separated from it.
+func (m *File) KeepStacked() bool {
+	return fs.KeepStacked(m.captureName())
+}
+
+// KeepStackedWith reports whether the file must stay with the given files of its photo: it is
+// stacked under another file's name, or another original of its capture is stacked under its name.
+func (m *File) KeepStackedWith(files Files) bool {
+	if m == nil {
+		return false
+	} else if m.KeepStacked() {
+		return true
+	}
+
+	group := m.StackGroup()
+
+	if group == "" {
+		return false
+	}
+
+	for i := range files {
+		if f := &files[i]; f.FileUID != m.FileUID && f.FileRoot == RootOriginals && !f.FileSidecar && !f.FileMissing && f.KeepStacked() && f.StackGroup() == group {
+			return true
+		}
+	}
+
+	return false
+}
+
 // Undelete removes the missing flag from this file.
 func (m *File) Undelete() error {
 	if !m.Missing() {

@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/dsn"
+	"github.com/photoprism/photoprism/pkg/fs"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/search"
@@ -66,8 +66,8 @@ func AlbumDownloadSelection(mediaRaw, mediaSidecar, originals, allowPrivate bool
 	return sel
 }
 
-// ShareSelection selects files to share, for example for upload via WebDAV.
-func ShareSelection(originals bool) FileSelection {
+// ShareSelection selects files to share, for example for upload via WebDAV, omitting YAML sidecar files unless yaml is true.
+func ShareSelection(originals, yaml bool) FileSelection {
 	var omitMedia []string
 	var omitTypes []string
 
@@ -81,6 +81,8 @@ func ShareSelection(originals bool) FileSelection {
 		// A share size is configured, and workers.Share resizes JPEG only, so any other image
 		// format would upload at its original size. Share the generated JPEG for those instead.
 		omitTypes = media.ImageTypesExceptJpeg()
+	} else if !yaml {
+		omitTypes = []string{fs.SidecarYaml.String()}
 	}
 
 	return FileSelection{
@@ -138,14 +140,10 @@ func selectedFiles(frm form.Selection, o FileSelection, sess *entity.Session) (r
 		frm.Photos = append(frm.Photos, photoIds...)
 	}
 
-	var concat string
-	switch DbDialect() {
-	case dsn.DriverMySQL:
-		concat = "CONCAT(a.path, '/%')"
-	case dsn.DriverSQLite3:
-		concat = "a.path || '/%'"
-	default:
-		return results, fmt.Errorf("unknown sql dialect: %s", DbDialect())
+	subfolders, err := subfolderCond(DbDialect())
+
+	if err != nil {
+		return results, err
 	}
 
 	// Search condition.
@@ -154,12 +152,12 @@ func selectedFiles(frm form.Selection, o FileSelection, sess *entity.Session) (r
 		OR photos.photo_uid IN (SELECT photo_uid FROM files WHERE file_uid IN (?))
 		OR photos.photo_path IN (
 			SELECT a.path FROM folders a WHERE a.folder_uid IN (?) UNION
-			SELECT b.path FROM folders a JOIN folders b ON b.path LIKE %s WHERE a.folder_uid IN (?))
+			SELECT b.path FROM folders a JOIN folders b ON %s WHERE a.folder_uid IN (?))
 		OR photos.photo_uid IN (SELECT photo_uid FROM photos_albums WHERE hidden = 0 AND album_uid IN (?))
 		OR files.file_uid IN (SELECT file_uid FROM %s m WHERE m.subj_uid IN (?))
 		OR photos.id IN (SELECT pl.photo_id FROM photos_labels pl JOIN labels l ON pl.label_id = l.id AND pl.uncertainty < 100 AND l.deleted_at IS NULL WHERE l.label_uid IN (?))
 		OR photos.id IN (SELECT pl.photo_id FROM photos_labels pl JOIN categories c ON c.label_id = pl.label_id AND pl.uncertainty < 100 JOIN labels lc ON lc.id = c.category_id AND lc.deleted_at IS NULL WHERE lc.label_uid IN (?))`,
-		concat, entity.Marker{}.TableName())
+		subfolders, entity.Marker{}.TableName())
 
 	// Build search query.
 	s := UnscopedDb().Table("files").

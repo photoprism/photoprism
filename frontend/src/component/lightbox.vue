@@ -603,7 +603,7 @@ export default {
 
       return Promise.resolve();
     },
-    // Loads the pictures that belong to a component and displays them in the lightbox.
+    // showView opens the selected photo using the view context or cached results.
     showView(view, index) {
       if (this.isBusy("show context")) {
         return Promise.reject();

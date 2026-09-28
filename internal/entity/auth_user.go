@@ -338,6 +338,11 @@ func (m *User) InitAccount(initName, initPasswd, scope string) (updated bool) {
 
 // Create new entity in the database.
 func (m *User) Create() (err error) {
+	// The initial admin account is exempt, so that it can always be created from the config.
+	if m.ID != 1 && m.UserName != "" && !m.ValidHandle() {
+		return fmt.Errorf("username %s is not supported", clean.LogQuote(m.UserName))
+	}
+
 	err = Db().Create(m).Error
 
 	if err == nil {
@@ -547,18 +552,36 @@ func (m *User) CanUpload() bool {
 	}
 }
 
-// DefaultBasePath returns the default base path of the user based on the username.
+// DefaultBasePath returns the default base path of the user, named after the user handle or, if the
+// username has no valid handle, "+" and the user UID, a name no handle can take. It returns an empty
+// string if neither is available.
 func (m *User) DefaultBasePath() string {
-	if s := m.Handle(); s == "" {
-		return ""
-	} else {
-		return path.Join(UsersPath, s)
+	if m.ValidHandle() {
+		return path.Join(UsersPath, m.Handle())
+	} else if rnd.IsUID(m.UserUID, UserUID) {
+		return path.Join(UsersPath, "+"+m.UserUID)
 	}
+
+	return ""
 }
 
-// GetBasePath returns the user's relative base path.
+// ValidHandle reports whether the username yields a handle that can name the user's default folder.
+func (m *User) ValidHandle() bool {
+	return m.Handle() != ""
+}
+
+// RequiresBasePath reports whether the user may only access files in their own base path, so that
+// access requires one.
+func (m *User) RequiresBasePath() bool {
+	return m.HasRole(acl.RoleContributor)
+}
+
+// GetBasePath returns the user's relative base path. A default resolved from a username without a
+// valid handle is replaced by the default based on the user UID.
 func (m *User) GetBasePath() string {
-	if m.BasePath == "" && m.HasRole("contributor") {
+	if m.BasePath == "" && m.RequiresBasePath() {
+		m.BasePath = m.DefaultBasePath()
+	} else if !m.ValidHandle() && (m.BasePath == UsersPath || m.BasePath == ".") {
 		m.BasePath = m.DefaultBasePath()
 	}
 
@@ -1089,10 +1112,8 @@ func (m *User) SetPassword(password string) error {
 		return fmt.Errorf("only registered users can change their password")
 	}
 
-	if len([]rune(password)) < PasswordLength {
-		return fmt.Errorf("password must have at least %d characters", PasswordLength)
-	} else if len(password) > txt.ClipPassword {
-		return fmt.Errorf("password must have less than %d characters", txt.ClipPassword)
+	if err := ValidatePasswordLength(password); err != nil {
+		return err
 	}
 
 	pw := NewPassword(m.UserUID, password, false)
@@ -1102,6 +1123,17 @@ func (m *User) SetPassword(password string) error {
 	}
 
 	return m.RegenerateTokens()
+}
+
+// ValidatePasswordLength returns an error if the password is too short or too long to be set.
+func ValidatePasswordLength(password string) error {
+	if len([]rune(password)) < PasswordLength {
+		return fmt.Errorf("password must have at least %d characters", PasswordLength)
+	} else if len(password) > txt.ClipPassword {
+		return fmt.Errorf("password must have less than %d characters", txt.ClipPassword)
+	}
+
+	return nil
 }
 
 // DeletePassword removes the password of the user account, if one has been set.
@@ -1254,6 +1286,11 @@ func (m *User) Validate() (err error) {
 	// Check if username also meets the length requirements.
 	if len(m.Username()) < UsernameLength {
 		return fmt.Errorf("username must have at least %d characters", UsernameLength)
+	}
+
+	// Refuse a new username that does not yield a valid handle.
+	if m.ID == 0 && !m.ValidHandle() {
+		return fmt.Errorf("username %s is not supported", clean.LogQuote(m.UserName))
 	}
 
 	// Check user role.

@@ -14,6 +14,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -324,18 +325,23 @@ func TestUploadUserFiles_Multipart_ArchivesDisabled(t *testing.T) {
 	assert.Empty(t, files, "no files should remain when archives disabled")
 }
 
+// TestUploadUserFiles_Multipart_PerFileLimitExceeded checks the per-file size bound.
 func TestUploadUserFiles_Multipart_PerFileLimitExceeded(t *testing.T) {
 	app, router, conf := NewApiTest()
+	options := *conf.Options()
+	t.Cleanup(func() { *conf.Options() = options })
 	conf.Options().UploadAllow = "jpg"
 	conf.Options().OriginalsLimit = 1 // 1 MiB per-file
+	conf.Options().UploadLimit = 10
+	conf.Options().UploadNSFW = true
 	UploadUserFiles(router)
 	token := AuthenticateAdmin(app, router)
 
 	adminUid := entity.Admin.UserUID
 	defer removeUploadDirsForToken(t, filepath.Join(conf.UserStoragePath(adminUid), "upload"), "size1")
 
-	// Build a 2MiB dummy payload (not a real JPEG; that's fine for pre-save size check)
-	big := bytes.Repeat([]byte("A"), 2*1024*1024)
+	// Keep the JPEG decodable so only the per-file limit can reject it.
+	big := append(NewTestJpeg(t, 160, 160), bytes.Repeat([]byte("A"), 2*1024*1024)...)
 	body, ctype, err := buildMultipart(map[string][]byte{"big.jpg": big})
 	if err != nil {
 		t.Fatal(err)
@@ -351,8 +357,11 @@ func TestUploadUserFiles_Multipart_PerFileLimitExceeded(t *testing.T) {
 	assert.Empty(t, files)
 }
 
+// TestUploadUserFiles_Multipart_TotalLimitExceeded checks the total upload bound.
 func TestUploadUserFiles_Multipart_TotalLimitExceeded(t *testing.T) {
 	app, router, conf := NewApiTest()
+	options := *conf.Options()
+	t.Cleanup(func() { *conf.Options() = options })
 	conf.Options().UploadAllow = "jpg"
 	conf.Options().UploadLimit = 1 // 1 MiB total
 	UploadUserFiles(router)
@@ -385,8 +394,11 @@ func TestUploadUserFiles_Multipart_TotalLimitExceeded(t *testing.T) {
 	assert.LessOrEqual(t, len(files), 1)
 }
 
+// TestUploadUserFiles_Multipart_RequestTooLarge checks oversized request rejection.
 func TestUploadUserFiles_Multipart_RequestTooLarge(t *testing.T) {
 	app, router, conf := NewApiTest()
+	options := *conf.Options()
+	t.Cleanup(func() { *conf.Options() = options })
 	conf.Options().UploadAllow = "jpg"
 	conf.Options().UploadLimit = 1
 	UploadUserFiles(router)
@@ -412,8 +424,11 @@ func TestUploadUserFiles_Multipart_RequestTooLarge(t *testing.T) {
 	assert.Empty(t, files)
 }
 
+// TestUploadUserFiles_Multipart_ZipPartialExtraction checks archive entry limits.
 func TestUploadUserFiles_Multipart_ZipPartialExtraction(t *testing.T) {
 	app, router, conf := NewApiTest()
+	options := *conf.Options()
+	t.Cleanup(func() { *conf.Options() = options })
 	conf.Options().UploadArchives = true
 	conf.Options().UploadAllow = "jpg,zip"
 	conf.Options().UploadLimit = 1     // 1 MiB total
@@ -826,4 +841,28 @@ func TestUploadUserFiles_Multipart_SkippedEntryNames(t *testing.T) {
 		assert.Contains(t, line, fmt.Sprintf("and %d more", skipped-clean.LogNamesLimit))
 		assert.Equal(t, clean.LogNamesLimit, strings.Count(line, "../y.jpg"))
 	})
+}
+
+func TestUploadUserFiles_Multipart_TokenTooLong(t *testing.T) {
+	app, router, conf := NewApiTest()
+	options := *conf.Options()
+	t.Cleanup(func() { *conf.Options() = options })
+	conf.Options().StoragePath = t.TempDir()
+	conf.Options().UploadAllow = "jpg"
+	UploadUserFiles(router)
+	token := AuthenticateAdmin(app, router)
+	adminUid := entity.Admin.UserUID
+
+	body, ctype, err := buildMultipart(map[string][]byte{"small.jpg": NewTestJpeg(t, 161, 111)})
+	require.NoError(t, err)
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/users/"+adminUid+"/upload/"+strings.Repeat("a", clean.LengthLimit-4), body)
+	req.Header.Set("Content-Type", ctype)
+	header.SetAuthorization(req, token)
+	w := httptest.NewRecorder()
+	app.ServeHTTP(w, req)
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+
+	// Nothing is written to the user's upload folder.
+	entries, _ := os.ReadDir(filepath.Join(conf.UserStoragePath(adminUid), "upload"))
+	assert.Empty(t, entries)
 }

@@ -80,7 +80,13 @@ func stageName(dest string) string {
 // OpenStageFile creates an exclusive temporary sibling with the default file creation mode.
 // The caller owns the handle and must remove or publish its pathname.
 func OpenStageFile(dest string) (*os.File, error) {
-	return os.OpenFile(stageName(dest), os.O_WRONLY|os.O_CREATE|os.O_EXCL, ModeFile) //nolint:gosec // the name is derived from a validated destination
+	return OpenStageFileMode(dest, ModeFile)
+}
+
+// OpenStageFileMode creates an exclusive temporary sibling with the given creation mode, filtered by
+// the umask, e.g. ModeBackupFile for a backup.
+func OpenStageFileMode(dest string, perm os.FileMode) (*os.File, error) {
+	return os.OpenFile(stageName(dest), os.O_WRONLY|os.O_CREATE|os.O_EXCL, perm) //nolint:gosec // the name is derived from a validated destination
 }
 
 // CreateStageFile creates an empty, uniquely named sibling of the destination and returns its name.

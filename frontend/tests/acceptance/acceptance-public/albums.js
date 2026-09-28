@@ -296,7 +296,7 @@ test.meta("testID", "albums-004-duplicate").meta({ type: "short", mode: "public"
     await contextmenu.openContextMenu();
     await t.click(Selector("button.action-album"));
 
-    await t.click(Selector(".input-albums input"));
+    await t.click(Selector(".input-albums input:not([type='hidden'])"));
     const holidayOption = Selector("div").withText("Holiday").parent('div[role="option"]');
 
     if (await holidayOption.visible) {
@@ -304,8 +304,8 @@ test.meta("testID", "albums-004-duplicate").meta({ type: "short", mode: "public"
       const afterDropdown = await Selector("span.v-chip").withText("Holiday").count;
       await t.expect(afterDropdown).eql(1, "Should have 1 chip after dropdown selection");
 
-      await t.click(Selector(".input-albums input"));
-      await t.typeText(Selector(".input-albums input"), "Holiday", { replace: true }).pressKey("enter");
+      await t.click(Selector(".input-albums input:not([type='hidden'])"));
+      await t.typeText(Selector(".input-albums input:not([type='hidden'])"), "Holiday", { replace: true }).pressKey("enter");
 
       const afterTyping = await Selector("span.v-chip").withText("Holiday").count;
       await t.expect(afterTyping).eql(1, "Should still have only 1 chip after typing duplicate");
@@ -345,11 +345,11 @@ test.meta("testID", "albums-006").meta({ mode: "public" })("Common: Test album a
   const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
   await photo.selectPhotoFromUID(FirstPhotoUid);
   await contextmenu.openContextMenu();
-  await t.click(Selector("button.action-album")).click(Selector(".input-albums input"));
+  await t.click(Selector("button.action-album")).click(Selector(".input-albums input:not([type='hidden'])"));
 
   await t.expect(page.selectOption.withText("Holiday").visible).ok().expect(page.selectOption.withText("Christmas").visible).ok();
 
-  await t.typeText(Selector(".input-albums input"), "C", { replace: true });
+  await t.typeText(Selector(".input-albums input:not([type='hidden'])"), "C", { replace: true });
 
   await t
     .expect(page.selectOption.withText("Holiday").visible)

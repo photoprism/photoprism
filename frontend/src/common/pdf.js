@@ -23,7 +23,9 @@ Additional information can be found in our Developer Guide:
 
 */
 
+import "common/with-resolvers";
 import * as media from "common/media";
+import pdfWorkerUrl from "common/pdf-worker.js?worker&url";
 import { getAppStorage } from "common/storage";
 
 // Cached pdfjs library and shared worker. The library is dynamic-imported on
@@ -46,10 +48,10 @@ export function isPdfDocument(model) {
   return model.Mime === "application/pdf" || model.FileType === "pdf";
 }
 
-// workerSrc returns the URL of the bundled pdfjs worker, which points at the CDN
+// workerSrc returns the URL of the bundled pdfjs worker entry, which points at the CDN
 // whenever the rest of the bundle does.
 function workerSrc() {
-  return new URL("pdfjs-dist/legacy/build/pdf.worker.min.mjs", import.meta.url).href;
+  return new URL(pdfWorkerUrl, import.meta.url).href;
 }
 
 // getPdfWorker returns the shared pdfjs worker, created once and never terminated.
@@ -73,7 +75,7 @@ function getPdfWorker(lib) {
   return pdfWorker;
 }
 
-// loadLibrary dynamic-imports the legacy pdfjs build into its own webpack chunk
+// loadLibrary dynamic-imports the legacy pdfjs build into its own chunk
 // and caches it. The legacy build is used so the viewer keeps working on the
 // browser baseline that the rest of the frontend targets.
 async function loadLibrary() {
@@ -81,7 +83,7 @@ async function loadLibrary() {
     return pdfjs;
   }
 
-  pdfjs = await import(/* webpackChunkName: "pdf-viewer" */ "pdfjs-dist/legacy/build/pdf.mjs");
+  pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
 
   return pdfjs;
 }

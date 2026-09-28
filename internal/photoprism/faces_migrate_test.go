@@ -1655,6 +1655,8 @@ func TestFacesRunResult_Moved(t *testing.T) {
 		assert.True(t, facesRunResult{Resolved: 1}.Moved())
 		assert.True(t, facesRunResult{Merged: 1}.Moved())
 		assert.True(t, facesRunResult{Added: 1}.Moved())
+		assert.True(t, facesRunResult{Retried: 1}.Moved())
+		assert.True(t, facesRunResult{Named: 1}.Moved())
 		assert.True(t, facesRunResult{Updated: 1}.Moved())
 	})
 	t.Run("AssignedOnly", func(t *testing.T) {
@@ -1718,5 +1720,30 @@ func TestSettleFaceClusters(t *testing.T) {
 			t.Fatal("must not run")
 			return facesRunResult{}, nil
 		}))
+	})
+}
+
+func TestLiftsRejection(t *testing.T) {
+	vector := face.Embeddings{{0.1, 0.2, 0.3, 0.4}}.JSON()
+	rejected := func(model string, emb []byte) entity.Marker {
+		return entity.Marker{MarkerType: entity.MarkerFace, SubjSrc: entity.SrcManual, EmbedModel: model, EmbeddingsJSON: emb}
+	}
+
+	t.Run("OtherModel", func(t *testing.T) {
+		assert.True(t, liftsRejection(rejected(face.ModelSFace, vector), face.ModelFaceNet))
+	})
+	t.Run("LegacyFaceNet", func(t *testing.T) {
+		assert.True(t, liftsRejection(rejected("", vector), face.ModelSFace))
+	})
+	t.Run("SameModel", func(t *testing.T) {
+		assert.False(t, liftsRejection(rejected(face.ModelFaceNet, vector), face.ModelFaceNet))
+	})
+	t.Run("NoVector", func(t *testing.T) {
+		assert.False(t, liftsRejection(rejected("", nil), face.ModelSFace))
+	})
+	t.Run("NotRejected", func(t *testing.T) {
+		m := rejected(face.ModelSFace, vector)
+		m.SubjSrc = entity.SrcAuto
+		assert.False(t, liftsRejection(m, face.ModelFaceNet))
 	})
 }

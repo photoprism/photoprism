@@ -26,9 +26,16 @@ type Info struct {
 	Frames        int
 	FPS           float64
 	Tracks        int
+	TrackSizes    []TrackSize
 	Encrypted     bool
 	FastStart     bool
 	Compatible    bool
+}
+
+// TrackSize is the frame size of a visual track, as stored in its track header.
+type TrackSize struct {
+	Width  int
+	Height int
 }
 
 // NewInfo returns a new Info struct with default values.

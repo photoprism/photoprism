@@ -3,8 +3,8 @@
 /* Camera & Datetime Dialogs */
 
 /* Keep labels and selection text readable when fields are focused.
-   Vuetify 3 applies the focused color via an inline style, so overriding
-   it requires !important. */
+   Vuetify applies the focused color with a text color utility class,
+   which ranks above these styles, so overriding it requires !important. */
 .p-meta-camera-dialog .v-field--focused .v-label.v-field-label,
 .p-meta-camera-dialog .v-field--focused .v-label.v-field-label--floating,
 .p-meta-datetime-dialog .v-field--focused .v-label.v-field-label,

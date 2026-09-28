@@ -23,10 +23,10 @@ import (
 //	@Tags		Labels
 //	@Accept		json
 //	@Produce	json
-//	@Success	200				{object}	entity.Label
-//	@Failure	401,403,404,429	{object}	i18n.Response
-//	@Param		uid				path		string		true	"Label UID"
-//	@Param		label			body		form.Label	true	"Label Name"
+//	@Success	200					{object}	entity.Label
+//	@Failure	401,403,404,413,429	{object}	i18n.Response
+//	@Param		uid					path		string		true	"Label UID"
+//	@Param		label				body		form.Label	true	"Label Name"
 //	@Router		/api/v1/labels/{uid} [put]
 func UpdateLabel(router *gin.RouterGroup) {
 	router.PUT("/labels/:uid", func(c *gin.Context) {

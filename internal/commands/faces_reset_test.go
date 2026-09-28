@@ -3,6 +3,8 @@ package commands
 import (
 	"errors"
 	"flag"
+	"io"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -163,6 +165,55 @@ func TestFacesResetDescription(t *testing.T) {
 	}
 }
 
+// TestConfirmRestore covers the restore offer, which the environment variable alone does not accept and
+// which fails with exit code 1 rather than as a usage error when it cannot be asked.
+func TestConfirmRestore(t *testing.T) {
+	t.Setenv("PHOTOPRISM_CLI", "")
+
+	t.Run("ConfirmedSkipsThePrompt", func(t *testing.T) {
+		t.Setenv("PHOTOPRISM_CLI", NONINTERACTIVE)
+
+		proceed, err := ConfirmRestore(true, "Restore user alice", "--restore")
+
+		assert.NoError(t, err)
+		assert.True(t, proceed)
+	})
+	t.Run("NonInteractiveEnvIsAnError", func(t *testing.T) {
+		t.Setenv("PHOTOPRISM_CLI", NONINTERACTIVE)
+
+		proceed, err := ConfirmRestore(false, "Restore client cs7pvt5h8rw9aaqj?", "--restore")
+
+		assert.False(t, proceed)
+		require.Error(t, err)
+		assert.Equal(t, 1, ExitCode(err))
+		assert.Equal(t, "Restore client cs7pvt5h8rw9aaqj requires confirmation, pass --restore", err.Error())
+	})
+	t.Run("NoTerminalIsAnError", func(t *testing.T) {
+		proceed, err := ConfirmRestore(false, "Restore user alice", "--restore")
+
+		assert.False(t, proceed)
+		require.Error(t, err)
+		assert.Equal(t, 1, ExitCode(err))
+		assert.EqualError(t, err, "could not ask for confirmation (no terminal), pass --restore")
+	})
+	t.Run("AnsweredYes", func(t *testing.T) {
+		pipeResetAnswers(t, "y\n")
+
+		proceed, err := ConfirmRestore(false, "Restore user alice", "--restore")
+
+		assert.NoError(t, err)
+		assert.True(t, proceed)
+	})
+	t.Run("AnsweredNo", func(t *testing.T) {
+		pipeResetAnswers(t, "n\n")
+
+		proceed, err := ConfirmRestore(false, "Restore user alice", "--restore")
+
+		assert.NoError(t, err)
+		assert.False(t, proceed)
+	})
+}
+
 // TestConfirmAction covers the confirmation helper, and in particular that a prompt which cannot
 // be shown is reported as an error rather than as a declined action.
 func TestConfirmAction(t *testing.T) {
@@ -205,6 +256,59 @@ func TestConfirmAction(t *testing.T) {
 
 		assert.NoError(t, err)
 		assert.False(t, proceed)
+	})
+	t.Run("AnsweredEnter", func(t *testing.T) {
+		// Pressing Enter without an answer declines, as the default is no.
+		pipeResetAnswers(t, "\n")
+
+		proceed, err := ConfirmAction(false, "Remove everything?")
+
+		assert.NoError(t, err)
+		assert.False(t, proceed)
+	})
+	t.Run("EndOfInputOnTerminalDeclines", func(t *testing.T) {
+		// Ctrl-D on a terminal ends the input, which declines like "n".
+		pipeResetAnswers(t, "")
+		prev := confirmTerminal
+		confirmTerminal = func() bool { return true }
+		t.Cleanup(func() { confirmTerminal = prev })
+
+		proceed, err := ConfirmAction(false, "Remove everything?")
+
+		assert.NoError(t, err)
+		assert.False(t, proceed)
+	})
+	t.Run("EndOfInputWithoutTerminalIsAnError", func(t *testing.T) {
+		pipeResetAnswers(t, "")
+
+		proceed, err := ConfirmAction(false, "Remove everything?")
+
+		require.Error(t, err)
+		assert.False(t, proceed)
+		assert.Contains(t, err.Error(), "no terminal")
+		assert.NotContains(t, err.Error(), "^D")
+
+		var exit cli.ExitCoder
+		require.ErrorAs(t, err, &exit)
+		assert.Equal(t, 2, exit.ExitCode())
+	})
+	t.Run("PromptOnStderr", func(t *testing.T) {
+		// Without a terminal, the prompt that could not be answered stays out of the command output.
+		stdout, stderr := captureStdio(t)
+
+		proceed, err := ConfirmAction(false, "Remove everything?")
+
+		require.Error(t, err)
+		assert.False(t, proceed)
+		assert.Empty(t, stdout())
+		assert.Contains(t, stderr(), "Remove everything")
+	})
+	t.Run("PromptOutput", func(t *testing.T) {
+		// The prompt stays visible when only stdout is a terminal, e.g. with stderr redirected to a file.
+		assert.Same(t, os.Stderr, confirmOutput(true, true))
+		assert.Same(t, os.Stderr, confirmOutput(false, true))
+		assert.Same(t, os.Stderr, confirmOutput(false, false))
+		assert.Same(t, os.Stdout, confirmOutput(true, false))
 	})
 	t.Run("NonInteractiveEnvSkipsThePrompt", func(t *testing.T) {
 		t.Setenv("PHOTOPRISM_CLI", NONINTERACTIVE)
@@ -315,4 +419,44 @@ func TestFacesResetRequiresConfirmation(t *testing.T) {
 		assert.Equal(t, 2, exit.ExitCode())
 		assert.Contains(t, err.Error(), "no face detector can be used")
 	})
+}
+
+// captureStdio redirects os.Stdout and os.Stderr to pipes; each returned reader restores its stream and
+// returns what was written to it.
+func captureStdio(t *testing.T) (stdout, stderr func() string) {
+	t.Helper()
+
+	capture := func(target **os.File) func() string {
+		r, w, err := os.Pipe()
+		require.NoError(t, err)
+
+		prev := *target
+		*target = w
+		done := make(chan string)
+
+		go func() {
+			data, _ := io.ReadAll(r)
+			done <- string(data)
+		}()
+
+		var result *string
+
+		read := func() string {
+			if result == nil {
+				*target = prev
+				_ = w.Close()
+				s := <-done
+				_ = r.Close()
+				result = &s
+			}
+
+			return *result
+		}
+
+		t.Cleanup(func() { read() })
+
+		return read
+	}
+
+	return capture(&os.Stdout), capture(&os.Stderr)
 }

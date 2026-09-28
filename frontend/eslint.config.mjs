@@ -70,9 +70,11 @@ export default defineConfig([
       "curly": ["warn", "all"],
       // Forces braced bodies onto their own line so curly's autofix produces
       // multi-line `if (x) {\n  return;\n}` instead of `if (x) {return;}`.
-      // Deprecated in favor of @stylistic/brace-style; still functional in ESLint 9.
+      // Deprecated in favor of @stylistic/brace-style; still functional in ESLint 10.
       "brace-style": ["warn", "1tbs", { allowSingleLine: false }],
       "no-unused-vars": ["warn"],
+      // Explicit initial values can document a variable's intended type or default.
+      "no-useless-assignment": "off",
       "no-console": 0,
       "no-case-declarations": 0,
       "no-prototype-builtins": 0,

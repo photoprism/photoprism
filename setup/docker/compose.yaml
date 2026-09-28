@@ -107,12 +107,13 @@ services:
       ## NVIDIA GPU Hardware Acceleration (see https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html):
       # NVIDIA_VISIBLE_DEVICES: "all"
       # NVIDIA_DRIVER_CAPABILITIES: "all"
-      ## Run as a non-root user after initialization (supported: 0, 33, 50-99, 500-600, and 900-1200):
+      ## Run as a non-root user after initialization (supported: 0, 33, 50-99, 500-600, 900-1250, and 2000-2100):
       # PHOTOPRISM_UID: 1000
       # PHOTOPRISM_GID: 1000
       # PHOTOPRISM_UMASK: 0000
-    ## Start as non-root user before initialization (supported: 0, 33, 50-99, 500-600, and 900-1200):
-    # user: "1000:1000"
+    ## Start as non-root user before initialization (supported: 0, 33, 50-99, 500-600, 900-1250, and 2000-2100);
+    ## add a group ID, e.g. "1000:1000", only if network storage such as NFS requires it:
+    # user: "1000"
     ## Shared devices for video hardware transcoding (optional):
     # devices:
     #  - "/dev/dri:/dev/dri"                         # Required Intel QSV or VAAPI hardware transcoding

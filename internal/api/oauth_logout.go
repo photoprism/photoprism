@@ -25,11 +25,25 @@ import (
 //	@Success	302		{string}	string	"redirect to post_logout_redirect_uri"
 //	@Failure	403,405	{object}	i18n.Response
 //	@Router		/api/v1/oauth/logout [get]
-//	@Router		/api/v1/oauth/logout [post]
 func OAuthLogout(router *gin.RouterGroup) {
 	router.GET("/oauth/logout", func(c *gin.Context) {
 		OAuthLogoutHandler(c)
 	})
+
+	OAuthLogoutPost(router)
+}
+
+// OAuthLogoutPost registers the POST variant of the end-session endpoint, which OAuthLogout
+// registers together with GET.
+//
+//	@Summary	OAuth2/OIDC end-session endpoint (RP-initiated logout)
+//	@Id			OAuthLogoutPost
+//	@Tags		Authentication
+//	@Produce	json
+//	@Success	302		{string}	string	"redirect to post_logout_redirect_uri"
+//	@Failure	403,405	{object}	i18n.Response
+//	@Router		/api/v1/oauth/logout [post]
+func OAuthLogoutPost(router *gin.RouterGroup) {
 	router.POST("/oauth/logout", func(c *gin.Context) {
 		OAuthLogoutHandler(c)
 	})

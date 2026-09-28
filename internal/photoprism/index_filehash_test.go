@@ -60,3 +60,23 @@ func TestLockFileHash(t *testing.T) {
 		assert.Len(t, fileHashLocks, 0)
 	})
 }
+
+// TestLockStackName verifies that stack name locks are scoped by folder and kept apart from hash locks.
+func TestLockStackName(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		unlock := lockStackName("2022/06", "VID_20220625_140410_00_008")
+		assert.Len(t, fileHashLocks, 1)
+		unlock()
+		assert.Len(t, fileHashLocks, 0)
+	})
+	t.Run("DistinctFoldersDoNotBlock", func(t *testing.T) {
+		unlockFirst := lockStackName("2022/06", "VID_20220625_140410_00_008")
+		unlockSecond := lockStackName("2022/07", "VID_20220625_140410_00_008")
+		unlockHash := lockFileHash("VID_20220625_140410_00_008")
+		assert.Len(t, fileHashLocks, 3)
+		unlockHash()
+		unlockSecond()
+		unlockFirst()
+		assert.Len(t, fileHashLocks, 0)
+	})
+}
