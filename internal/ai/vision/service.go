@@ -35,8 +35,8 @@ func (m *Service) Endpoint() (uri, method string) {
 
 	ensureEnv()
 
-	if uri = strings.TrimSpace(os.ExpandEnv(m.Uri)); strings.Contains(uri, "${") {
-		uri = ""
+	if uri = strings.TrimSpace(os.ExpandEnv(m.Uri)); uri == "" || strings.Contains(uri, "${") {
+		return "", ""
 	}
 
 	if m.Method != "" {
