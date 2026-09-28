@@ -1,6 +1,6 @@
 ## PhotoPrism — OpenAI API Integration
 
-**Last Updated:** August 9, 2026
+**Last Updated:** September 28, 2026
 
 ### Overview
 
@@ -115,7 +115,7 @@ OpenAI calls respect the existing `limiter.Auth` configuration used by the visio
 #### Testing & Validation
 
 1. Unit tests: `go test ./internal/ai/vision/openai ./internal/ai/vision -run OpenAI -count=1`. Fixtures under `internal/ai/vision/openai/testdata/` replay real Responses payloads (captions and labels).
-2. CLI smoke test: `photoprism vision run -m labels --count 1 --force` with trace logging enabled to inspect sanitised Responses.
+2. CLI smoke test: `photoprism vision run -m labels --count 1 --force` with trace logging enabled to inspect sanitized Responses.
 3. Compare worker summaries and label sources (`openai`) in the UI or via `photoprism vision ls`.
 
 #### Code Map
