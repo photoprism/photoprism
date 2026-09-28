@@ -20,11 +20,13 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -579,5 +581,71 @@ func TestProcessUserUploadStagedFiles(t *testing.T) {
 		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+other.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
 		assert.Equal(t, http.StatusForbidden, result.Code)
 		assert.FileExists(t, filepath.Join(dir, "upload.jpg"))
+	})
+	t.Run("FacesLocked", func(t *testing.T) {
+		lock, err := mutex.AcquireFileLock(conf.FacesLockFile(), "faces migration")
+		require.NoError(t, err)
+		t.Cleanup(lock.Release)
+		token, dir := stage(t)
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusServiceUnavailable, result.Code)
+		assert.Contains(t, result.Body.String(), i18n.Msg(i18n.ErrBusy))
+		assert.FileExists(t, filepath.Join(dir, "upload.jpg"))
+	})
+	t.Run("InsufficientStorage", func(t *testing.T) {
+		quota := conf.Options().FilesQuota
+		t.Cleanup(func() { conf.Options().FilesQuota = quota; config.FlushUsageCache() })
+		conf.Options().OriginalsPath = options.OriginalsPath
+		conf.Options().FilesQuota = 1
+		config.FlushUsageCache()
+		require.True(t, conf.InsufficientStorage())
+		token, dir := stage(t)
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusInsufficientStorage, result.Code)
+		assert.Contains(t, result.Body.String(), i18n.Msg(i18n.ErrInsufficientStorage))
+		assert.FileExists(t, filepath.Join(dir, "upload.jpg"))
+	})
+	t.Run("Canceled", func(t *testing.T) {
+		require.NoError(t, mutex.IndexWorker.Start())
+		t.Cleanup(mutex.IndexWorker.Stop)
+		mutex.IndexWorker.Cancel()
+		token, dir := stage(t)
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusServiceUnavailable, result.Code)
+		assert.Contains(t, result.Body.String(), i18n.Msg(i18n.ErrBusy))
+		assert.FileExists(t, filepath.Join(dir, "upload.jpg"))
+	})
+	t.Run("DuplicateAndUnsupported", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		}
+		conf.Options().OriginalsPath = t.TempDir()
+		conf.Options().SidecarPath = t.TempDir()
+		conf.Options().ImportAllow = ""
+		token, dir := stage(t)
+		hash := fs.Hash(filepath.Join(dir, "upload.jpg"))
+		t.Cleanup(func() {
+			file, err := entity.FirstFileByHash(hash)
+			if err != nil {
+				return
+			}
+			entity.UnscopedDb().Unscoped().Delete(&entity.File{}, "photo_id = ?", file.PhotoID)
+			entity.UnscopedDb().Unscoped().Delete(&entity.Details{}, "photo_id = ?", file.PhotoID)
+			entity.UnscopedDb().Unscoped().Delete(&entity.Photo{}, "id = ?", file.PhotoID)
+		})
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		require.Equal(t, http.StatusOK, result.Code, result.Body.String())
+
+		// The same content again is a duplicate, which the import skips.
+		token, _ = stage(t)
+		result = AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusOK, result.Code, result.Body.String())
+
+		// A batch without media files imports nothing.
+		token, dir = stage(t)
+		require.NoError(t, os.Remove(filepath.Join(dir, "upload.jpg")))
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "notes.txt"), []byte("notes"), fs.ModeFile))
+		result = AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusOK, result.Code, result.Body.String())
 	})
 }
