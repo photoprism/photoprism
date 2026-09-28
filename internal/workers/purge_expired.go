@@ -51,7 +51,7 @@ func purgeStaleUploads(conf *config.Config) {
 		mutex.UserUploads.Store(true)
 	}
 	if result.busy {
-		log.Debug("upload: expiry scan deferred while requests are active")
+		log.Debug("upload: expiry of batches deferred while requests are active")
 	}
 	for _, err := range result.errors {
 		log.Warnf("upload: %s", clean.Error(err))
@@ -143,40 +143,59 @@ type uploadPurgeResult struct {
 	busy      bool
 }
 
-// removeExpiredUploads rechecks candidates under a nonblocking exclusive lifecycle lock.
+// uploadOutcome describes what removeExpiredUpload did with a candidate.
+type uploadOutcome int
+
+const (
+	uploadSkipped uploadOutcome = iota // no longer a batch directory
+	uploadBusy                         // a request holds the lifecycle lock
+	uploadKept                         // changed since the scan or failed
+	uploadRemoved
+)
+
+// removeExpiredUploads rechecks and removes each candidate under its own nonblocking exclusive lock.
 func removeExpiredUploads(candidates []string, cutoff time.Time) (result uploadPurgeResult) {
-	if !mutex.UploadBatches.TryLock() {
-		result.busy = true
-		return result
-	}
-	defer mutex.UploadBatches.Unlock()
 	for _, dir := range candidates {
-		info, err := os.Lstat(dir)
-		switch {
-		case os.IsNotExist(err):
-			continue
-		case err != nil:
+		outcome, err := removeUploadCandidate(dir, cutoff)
+		if err != nil {
 			result.errors = append(result.errors, err)
-			result.remaining = true
-			continue
-		case !info.IsDir() || info.Mode()&os.ModeSymlink != 0:
-			continue
 		}
-		stale, err := uploadBatchExpired(dir, cutoff)
-		if err == nil && stale {
-			err = os.RemoveAll(dir)
-		}
-		switch {
-		case err != nil:
-			result.errors = append(result.errors, err)
+		switch outcome {
+		case uploadBusy:
+			result.busy = true
+		case uploadKept:
 			result.remaining = true
-		case !stale:
-			result.remaining = true
-		default:
+		case uploadRemoved:
 			result.removed = append(result.removed, dir)
 		}
 	}
 	return result
+}
+
+// removeUploadCandidate removes one candidate, see removeExpiredUpload.
+var removeUploadCandidate = removeExpiredUpload
+
+// removeExpiredUpload removes the batch if it is still expired, unless a request holds the lifecycle lock.
+func removeExpiredUpload(dir string, cutoff time.Time) (uploadOutcome, error) {
+	if !mutex.UploadBatches.TryLock() {
+		return uploadBusy, nil
+	}
+	defer mutex.UploadBatches.Unlock()
+	info, err := os.Lstat(dir)
+	switch {
+	case os.IsNotExist(err):
+		return uploadSkipped, nil
+	case err != nil:
+		return uploadKept, err
+	case !info.IsDir() || info.Mode()&os.ModeSymlink != 0:
+		return uploadSkipped, nil
+	}
+	if stale, err := uploadBatchExpired(dir, cutoff); err != nil || !stale {
+		return uploadKept, err
+	} else if err = os.RemoveAll(dir); err != nil {
+		return uploadKept, err
+	}
+	return uploadRemoved, nil
 }
 
 // uploadBatchExpired reports whether every entry, including the batch directory, predates cutoff.

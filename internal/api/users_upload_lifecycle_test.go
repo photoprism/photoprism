@@ -7,8 +7,11 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
+	"sync/atomic"
 	"testing"
+	"time"
 
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
@@ -128,6 +131,98 @@ func TestUploadRequestLifecycle(t *testing.T) {
 			assert.True(t, available, "handler must release lifecycle lock")
 		})
 	}
+}
+
+// uploadWaitsForLifecycleLock reports whether an upload request is blocked on the shared lifecycle lock.
+func uploadWaitsForLifecycleLock() bool {
+	buf := make([]byte, 1<<20)
+	stacks := string(buf[:runtime.Stack(buf, true)])
+	for _, stack := range strings.Split(stacks, "\n\n") {
+		if !strings.Contains(stack, "[sync.RWMutex.RLock") {
+			continue
+		}
+		lines := strings.Split(stack, "\n")
+		for i, line := range lines {
+			if strings.HasPrefix(line, "sync.(*RWMutex).RLock(") && i+2 < len(lines) {
+				if strings.Contains(lines[i+2], "api.UploadUserFiles.func1(") {
+					return true
+				}
+				break
+			}
+		}
+	}
+	return false
+}
+
+// TestUploadUserFilesBatchUnderLock checks that a request creates its batch folder only while holding the lifecycle lock.
+func TestUploadUserFilesBatchUnderLock(t *testing.T) {
+	app, router, conf := NewApiTest()
+	options, flag := *conf.Options(), mutex.UserUploads.Load()
+	name := "lifecyclebatchlock"
+	base := filepath.Join(conf.UserStoragePath(entity.Admin.UserUID), fs.UploadDir)
+	t.Cleanup(func() {
+		*conf.Options() = options
+		mutex.UserUploads.Store(flag)
+		removeUploadDirsForToken(t, base, name)
+	})
+	conf.Options().ReadOnly = false
+	conf.Options().UploadNSFW = true
+	conf.Options().UploadAllow = "jpg"
+	UploadUserFiles(router)
+	token := AuthenticateAdmin(app, router)
+	batchExists := func() bool {
+		matches, err := filepath.Glob(filepath.Join(base, "*"+name))
+		require.NoError(t, err)
+		return len(matches) > 0
+	}
+	require.False(t, batchExists())
+	body, contentType, err := buildMultipart(map[string][]byte{"photo.jpg": NewTestJpeg(t, 160, 160)})
+	require.NoError(t, err)
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/users/"+entity.Admin.UserUID+"/upload/"+name, body)
+	req.Header.Set("Content-Type", contentType)
+	header.SetAuthorization(req, token)
+	done := make(chan *httptest.ResponseRecorder, 1)
+	mutex.UploadBatches.Lock()
+	locked := true
+	unlock := func() {
+		if locked {
+			locked = false
+			mutex.UploadBatches.Unlock()
+		}
+	}
+	// Runs before the cleanup above, so the request finishes before options and folders are restored.
+	t.Cleanup(func() {
+		unlock()
+		select {
+		case <-done:
+		case <-time.After(30 * time.Second):
+			t.Error("upload request did not finish")
+		}
+	})
+	var finished atomic.Bool
+	go func() {
+		response := httptest.NewRecorder()
+		app.ServeHTTP(response, req)
+		finished.Store(true)
+		done <- response
+	}()
+	require.Eventually(t, func() bool { return finished.Load() || uploadWaitsForLifecycleLock() }, 10*time.Second, time.Millisecond)
+	if finished.Load() {
+		early := <-done
+		done <- early
+		require.Fail(t, "request finished while the lifecycle lock was held", early.Body.String())
+	}
+	assert.False(t, batchExists(), "batch folder must not exist before the request holds the lifecycle lock")
+	unlock()
+	var response *httptest.ResponseRecorder
+	select {
+	case response = <-done:
+		done <- response
+	case <-time.After(30 * time.Second):
+		require.Fail(t, "upload request did not finish")
+	}
+	assert.Equal(t, http.StatusOK, response.Code, response.Body.String())
+	assert.True(t, batchExists())
 }
 
 // TestUploadProcessingDuringIndexing imports a staged image while an unrelated worker is active.
