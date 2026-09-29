@@ -123,6 +123,19 @@ func UriRedacted(s string) string {
 // unexamined; a trailing one is given back below, as that is the message quoting the URI.
 var uriText = regexp.MustCompile(`[a-zA-Z][a-zA-Z0-9+.\-]*://[^\s"<>\\{}|^` + "`" + `]*`)
 
+// uriQuery matches a query string, including one in a relative or malformed URL.
+var uriQuery = regexp.MustCompile(`\?[^\s'"<>]+`)
+
+// UriQueriesRedacted replaces every query string in s with the redaction marker, including those in
+// relative or malformed URLs that UriRedactedText does not recognize.
+func UriQueriesRedacted(s string) string {
+	if !strings.Contains(s, "?") {
+		return s
+	}
+
+	return uriQuery.ReplaceAllString(s, "?"+UriRedactedValue)
+}
+
 // UriRedactedText replaces every URI a text contains with its redacted form, and masks the whole
 // query of one the parser refuses, which includes a URI over LengthLimit. Text holding no URI is
 // returned as it is, so an ordinary message is neither re-encoded nor truncated.

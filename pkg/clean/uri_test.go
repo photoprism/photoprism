@@ -305,3 +305,17 @@ func TestUriRedactedTextApostrophe(t *testing.T) {
 		assert.NotContains(t, LogUri("https://example.com/v?a='b'&key=secret-value"), "secret-value")
 	})
 }
+
+func TestUriQueriesRedacted(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		assert.Equal(t, "parse 'https://exa mple.com/cat.jpg?"+UriRedactedValue+"': invalid", UriQueriesRedacted("parse 'https://exa mple.com/cat.jpg?sig=abc123': invalid"))
+		assert.Equal(t, "location /next?"+UriRedactedValue, UriQueriesRedacted("location /next?sig=abc123&a=b"))
+		assert.Equal(t, "\"https://example.com/?"+UriRedactedValue+"\"", UriQueriesRedacted("\"https://example.com/?a=1\""))
+	})
+	t.Run("NoQuery", func(t *testing.T) {
+		assert.Equal(t, "", UriQueriesRedacted(""))
+		assert.Equal(t, "no query here", UriQueriesRedacted("no query here"))
+		assert.Equal(t, "what? ok", UriQueriesRedacted("what? ok"))
+		assert.Equal(t, "trailing?", UriQueriesRedacted("trailing?"))
+	})
+}
