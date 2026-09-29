@@ -9,11 +9,12 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
-	"github.com/photoprism/photoprism/pkg/http/scheme"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
+	"github.com/photoprism/photoprism/pkg/http/scheme"
 )
 
 func TestRegisterOllamaEngineDefaults(t *testing.T) {
