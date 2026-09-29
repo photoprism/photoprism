@@ -289,7 +289,7 @@ var Flags = CliFlags{
 			Name:    "originals-limit",
 			Aliases: []string{"mb"},
 			Value:   5000,
-			Usage:   "maximum size of a single media file in `MB` (1-100000; -1 to disable)",
+			Usage:   "maximum size of a single media file in `MB` (-1 to disable)",
 			EnvVars: EnvVars("ORIGINALS_LIMIT"),
 		}}, {
 		Flag: &cli.IntFlag{
@@ -342,7 +342,7 @@ var Flags = CliFlags{
 		Flag: &cli.IntFlag{
 			Name:    "upload-limit",
 			Value:   5000,
-			Usage:   "maximum total size of web uploads in `MB` (1-100000; -1 to disable)",
+			Usage:   "maximum total size of web uploads in `MB` (-1 to disable)",
 			EnvVars: EnvVars("UPLOAD_LIMIT"),
 		}}, {
 		Flag: &cli.PathFlag{

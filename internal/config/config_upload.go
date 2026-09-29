@@ -19,10 +19,13 @@ func (c *Config) UploadArchives() bool {
 	return c.options.UploadArchives
 }
 
-// UploadLimit returns the maximum aggregated size of uploaded files in MB.
+// UploadLimit returns the maximum aggregated size of uploaded files in MB, or -1 if there is none.
+// A larger value is clamped to MaxSizeLimit.
 func (c *Config) UploadLimit() int {
-	if c.options.UploadLimit <= 0 || c.options.UploadLimit > 100000 {
+	if c.options.UploadLimit <= 0 {
 		return -1
+	} else if c.options.UploadLimit > MaxSizeLimit {
+		return MaxSizeLimit
 	}
 
 	return c.options.UploadLimit

@@ -1,6 +1,7 @@
 package config
 
 import (
+	"math"
 	"time"
 
 	"github.com/photoprism/photoprism/pkg/time/unix"
@@ -73,6 +74,9 @@ const RecommendedMem = 3 * GigaByte // 3,000,000,000 Bytes
 
 // DefaultResolutionLimit defines the default resolution limit.
 const DefaultResolutionLimit = 150 // 150 Megapixels
+
+// MaxSizeLimit is the largest originals and upload size limit in MB, 2 PiB in total.
+const MaxSizeLimit = math.MaxInt32
 
 // DefaultConvertTimeout defines the default budget for converting one still image, document,
 // or RAW file, in minutes. It is shared by the converters tried for that file.
