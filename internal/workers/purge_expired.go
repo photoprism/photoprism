@@ -232,14 +232,14 @@ const (
 func removeExpiredUploads(candidates []string, cutoff time.Time, records *mutex.UploadRecords) (result uploadPurgeResult) {
 	var asides, dirs []string
 	for _, dir := range candidates {
-		outcome, aside, err := setAsideUpload(dir, records.Get(filepath.Base(dir)))
+		outcome, aside, files, err := setAsideUpload(dir, records.Get(filepath.Base(dir)))
 		if outcome == uploadChanged {
 			// The record is read before the walk, so a request that ends during it is detected.
 			current := mutex.UploadRecord(filepath.Base(dir))
 			stale, walkErr := checkUploadBatch(dir, cutoff)
 			switch {
 			case walkErr == nil && stale:
-				outcome, aside, err = setAsideUpload(dir, current)
+				outcome, aside, files, err = setAsideUpload(dir, current)
 			case errors.Is(walkErr, iofs.ErrNotExist):
 				// Only a batch that is gone is skipped; an entry that vanished inside it defers it.
 				if _, lstatErr := os.Lstat(dir); os.IsNotExist(lstatErr) {
@@ -252,6 +252,7 @@ func removeExpiredUploads(candidates []string, cutoff time.Time, records *mutex.
 		if err != nil {
 			result.errors = append(result.errors, err)
 		}
+		result.files += files
 		switch outcome {
 		case uploadBusy:
 			result.busy = true
@@ -343,38 +344,40 @@ var makeAsideDir = os.MkdirTemp
 
 // setAsideExpiredUpload renames an expired batch into a new set-aside folder next to it, unless a
 // request holds the lifecycle lock or the batch's request record changed since the given value.
-// If the folder cannot be created on a full disk, the batch is removed under the lock instead.
-func setAsideExpiredUpload(dir string, record uint64) (outcome uploadOutcome, aside string, err error) {
+// If the folder cannot be created on a full disk, the batch is removed under the lock instead, and the
+// number of regular files removed is returned, also when the removal fails partway.
+func setAsideExpiredUpload(dir string, record uint64) (outcome uploadOutcome, aside string, files int, err error) {
 	if !mutex.UploadBatches.TryLock() {
-		return uploadBusy, "", nil
+		return uploadBusy, "", 0, nil
 	}
 	defer mutex.UploadBatches.Unlock()
 	info, err := os.Lstat(dir)
 	switch {
 	case os.IsNotExist(err):
-		return uploadSkipped, "", nil
+		return uploadSkipped, "", 0, nil
 	case err != nil:
-		return uploadKept, "", err
+		return uploadKept, "", 0, err
 	case !info.IsDir() || info.Mode()&os.ModeSymlink != 0:
-		return uploadSkipped, "", nil
+		return uploadSkipped, "", 0, nil
 	case mutex.UploadRecord(filepath.Base(dir)) != record:
-		return uploadChanged, "", nil
+		return uploadChanged, "", 0, nil
 	}
 	if aside, err = makeAsideDir(filepath.Dir(dir), expiredUploadPrefix); errors.Is(err, syscall.ENOSPC) || errors.Is(err, syscall.EDQUOT) {
-		if err = os.RemoveAll(dir); err != nil {
-			return uploadKept, "", err
+		if files, err = removeSetAside(dir); err != nil {
+			return uploadKept, "", files, err
 		}
-		return uploadRemoved, "", nil
+		return uploadRemoved, "", files, nil
 	} else if err != nil {
-		return uploadKept, "", err
+		return uploadKept, "", 0, err
 	} else if err = os.Rename(dir, filepath.Join(aside, filepath.Base(dir))); err != nil {
 		_ = os.Remove(aside)
-		return uploadKept, "", err
+		return uploadKept, "", 0, err
 	}
-	return uploadSetAside, aside, nil
+	return uploadSetAside, aside, 0, nil
 }
 
-// removeSetAside removes a set-aside folder and returns how many regular files were removed with it.
+// removeSetAside removes a set-aside folder, or a batch on a full disk, and returns how many regular files
+// were removed with it.
 func removeSetAside(aside string) (files int, err error) {
 	files = countUploadFiles(aside)
 	if err = os.RemoveAll(aside); err != nil {
