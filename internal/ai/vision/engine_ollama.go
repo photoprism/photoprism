@@ -154,20 +154,22 @@ func (ollamaBuilder) Build(ctx context.Context, model *Model, files Files, media
 
 // Parse processes the Ollama service response.
 func (ollamaParser) Parse(ctx context.Context, req *ApiRequest, raw []byte, status int) (*ApiResponse, error) {
+	// Return an error for a failed request, as its response text is not a result.
+	if status >= http.StatusMultipleChoices {
+		switch {
+		case status == http.StatusNotFound || status == http.StatusGone:
+			log.Warnf("vision: ollama model %s is unavailable (status %d), it may have been retired or renamed", clean.Log(req.Model), status)
+		case status >= http.StatusBadRequest:
+			log.Warnf("vision: ollama request for model %s failed (status %d)", clean.Log(req.Model), status)
+		}
+
+		return nil, serviceError(ApiFormatOllama, status)
+	}
+
 	ollamaResp, err := decodeOllamaResponse(raw)
 
 	if err != nil {
 		return nil, err
-	}
-
-	// Surface upstream failures so they are diagnosable instead of silently yielding no labels or caption.
-	if status >= http.StatusBadRequest {
-		switch status {
-		case http.StatusNotFound, http.StatusGone:
-			log.Warnf("vision: ollama model %s is unavailable (status %d), it may have been retired or renamed", clean.Log(req.Model), status)
-		default:
-			log.Warnf("vision: ollama request for model %s failed (status %d)", clean.Log(req.Model), status)
-		}
 	}
 
 	response := &ApiResponse{

@@ -298,25 +298,38 @@ func TestOllamaParserFallbacks(t *testing.T) {
 
 func TestOllamaParserUnavailableStatus(t *testing.T) {
 	t.Run("Gone", func(t *testing.T) {
-		req := &ApiRequest{Model: ollama.CloudModel}
-		payload := ollama.Response{}
-		raw, err := json.Marshal(payload)
-		if err != nil {
-			t.Fatalf("marshal: %v", err)
-		}
+		logHook, _ := captureLogs(t)
+		raw, err := json.Marshal(ollama.Response{})
+		require.NoError(t, err)
 
-		parser := ollamaParser{}
-		resp, err := parser.Parse(context.Background(), req, raw, http.StatusGone)
-		if err != nil {
-			t.Fatalf("parse should not error on upstream status, got %v", err)
-		}
+		resp, err := ollamaParser{}.Parse(context.Background(), &ApiRequest{Model: ollama.CloudModel}, raw, http.StatusGone)
+		assert.Nil(t, resp)
+		assert.EqualError(t, err, "ollama service request failed (status 410)")
+		require.NotNil(t, logHook.LastEntry())
+		assert.Equal(t, logrus.WarnLevel, logHook.LastEntry().Level)
+		assert.Contains(t, logHook.LastEntry().Message, "is unavailable (status 410)")
+	})
+	t.Run("ServerErrorCaption", func(t *testing.T) {
+		logHook, _ := captureLogs(t)
+		raw, err := json.Marshal(ollama.Response{Model: "qwen2.5vl:latest", Response: "A caption from a failed request."})
+		require.NoError(t, err)
 
-		if resp.Code != http.StatusGone {
-			t.Fatalf("expected code %d, got %d", http.StatusGone, resp.Code)
-		}
-		if len(resp.Result.Labels) != 0 || resp.Result.Caption != nil {
-			t.Fatalf("expected empty result, got %+v", resp.Result)
-		}
+		resp, err := ollamaParser{}.Parse(context.Background(), &ApiRequest{Model: "qwen2.5vl:latest"}, raw, http.StatusInternalServerError)
+		assert.Nil(t, resp)
+		assert.EqualError(t, err, "ollama service request failed (status 500)")
+		require.NotNil(t, logHook.LastEntry())
+		assert.Equal(t, logrus.WarnLevel, logHook.LastEntry().Level)
+		assert.Equal(t, "vision: ollama request for model qwen2.5vl:latest failed (status 500)", logHook.LastEntry().Message)
+	})
+	t.Run("Redirect", func(t *testing.T) {
+		logHook, _ := captureLogs(t)
+		raw, err := json.Marshal(ollama.Response{Model: "qwen2.5vl:latest", Response: "A caption."})
+		require.NoError(t, err)
+
+		resp, err := ollamaParser{}.Parse(context.Background(), &ApiRequest{Model: "qwen2.5vl:latest"}, raw, http.StatusMultipleChoices)
+		assert.Nil(t, resp)
+		assert.EqualError(t, err, "ollama service request failed (status 300)")
+		assert.Empty(t, logHook.AllEntries())
 	})
 }
 
