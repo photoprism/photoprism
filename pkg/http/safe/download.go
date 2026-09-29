@@ -3,6 +3,7 @@ package safe
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"net"
 	"net/http"
@@ -139,7 +140,7 @@ func Download(destPath, rawURL string, opt *Options) error {
 		_ = resp.Body.Close()
 	}()
 	if resp.StatusCode != http.StatusOK {
-		return errors.New(resp.Status)
+		return fmt.Errorf("unexpected status %d", resp.StatusCode)
 	}
 
 	// Validate the connected peer address when private ranges are disallowed.

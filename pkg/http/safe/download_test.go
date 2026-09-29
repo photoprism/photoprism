@@ -86,3 +86,24 @@ func TestIsPrivateOrDisallowedIP(t *testing.T) {
 		t.Error("expected nil IP to be disallowed")
 	}
 }
+
+func TestSafeDownload_Status(t *testing.T) {
+	ts := newTestServer(t, func(w http.ResponseWriter, r *http.Request) {
+		hijacker, ok := w.(http.Hijacker)
+		if !ok {
+			t.Fatal("response writer does not support hijacking")
+		}
+		conn, buf, err := hijacker.Hijack()
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer conn.Close()
+		_, _ = buf.WriteString("HTTP/1.1 404 Gone Fishing\r\nContent-Length: 0\r\nConnection: close\r\n\r\n")
+		_ = buf.Flush()
+	})
+	dir := t.TempDir()
+	err := Download(filepath.Join(dir, "missing.bin"), ts.URL, &Options{Timeout: 5 * time.Second, MaxSizeBytes: 1024, AllowPrivate: true})
+	if err == nil || err.Error() != "unexpected status 404" {
+		t.Fatalf("unexpected error: %v", err)
+	}
+}
