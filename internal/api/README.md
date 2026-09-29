@@ -76,8 +76,8 @@ Staged batches are eligible for cleanup once the batch directory and every entry
 have been unchanged for longer than `upload-maxage` (7 days by default, from one day to 100 years; `-1`
 keeps them), including batches awaiting a processing retry. Age is measured with the storage's own
 clock, read from the `.upload-purge` file that each cleanup run creates anew in the users storage folder.
-Upload-batch removal is deferred while upload or processing requests are active, and batches are
-checked again when a request ran since the cleanup scan; removal logs a warning with the number of
+Upload-batch removal is deferred while upload or processing requests are active, and a batch is
+checked again when a request for it ran since the cleanup scan; removal logs a warning with the number of
 staged files removed with them. Uploads and their processing do not wait for indexing or other imports, but processing answers 503 while a running index is being canceled.
 Files directly in the upload root, including avatar staging, are not batch cleanup targets.
 

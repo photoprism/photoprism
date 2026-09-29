@@ -123,10 +123,9 @@ func TestUploadRequestLifecycle(t *testing.T) {
 			req.Header.Set("Content-Type", contentType)
 			header.SetAuthorization(req, token)
 			response := httptest.NewRecorder()
-			requests := mutex.UploadRequests.Load()
-			t.Cleanup(func() {
-				assert.Equal(t, requests+2, mutex.UploadRequests.Load(), "the request must be recorded when it begins and ends")
-			})
+			uploadBase := filepath.Join(conf.UserStoragePath(entity.Admin.UserUID), fs.UploadDir)
+			batch := uploadBatchDirName(uploadBase, name)
+			records := mutex.LoadUploadRecords()
 			if tc.panicAfter {
 				assert.Panics(t, func() { app.ServeHTTP(response, req) })
 			} else {
@@ -138,6 +137,14 @@ func TestUploadRequestLifecycle(t *testing.T) {
 				assert.Equal(t, expected, response.Code, response.Body.String())
 			}
 			assert.True(t, hook.seen, "filesystem outcome hook must run")
+			assert.Equal(t, []uint64{2}, uploadRecordChanges(&records), "the request must be recorded for one batch when it begins and ends")
+			if batch == "" {
+				batch = uploadBatchDirName(uploadBase, name)
+			}
+			if !tc.folderError {
+				require.NotEmpty(t, batch)
+				assert.Equal(t, records.Get(batch)+2, mutex.UploadRecord(batch), "the request must be recorded for its batch folder")
+			}
 			assert.True(t, mutex.IndexWorker.Running())
 			available := mutex.UploadBatches.TryLock()
 			if available {
@@ -146,6 +153,28 @@ func TestUploadRequestLifecycle(t *testing.T) {
 			assert.True(t, available, "handler must release lifecycle lock")
 		})
 	}
+}
+
+// uploadBatchDirName returns the name of the batch folder in base whose name ends with the token.
+func uploadBatchDirName(base, token string) string {
+	entries, _ := os.ReadDir(base)
+	for _, entry := range entries {
+		if entry.IsDir() && strings.HasSuffix(entry.Name(), token) {
+			return entry.Name()
+		}
+	}
+	return ""
+}
+
+// uploadRecordChanges returns by how much each request record changed since the snapshot.
+func uploadRecordChanges(records *mutex.UploadRecords) (changes []uint64) {
+	current := mutex.LoadUploadRecords()
+	for i := range current {
+		if current[i] != records[i] {
+			changes = append(changes, current[i]-records[i])
+		}
+	}
+	return changes
 }
 
 // uploadWaitsForLifecycleLock reports whether an upload request is blocked on the shared lifecycle lock.

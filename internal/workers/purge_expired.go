@@ -50,9 +50,9 @@ func purgeStaleUploads(conf *config.Config) {
 	}
 	cutoff := now.Add(-time.Duration(conf.UploadMaxAge()) * time.Second)
 	removeStaleClockFiles(root, cutoff)
-	requests := mutex.UploadRequests.Load()
+	records := mutex.LoadUploadRecords()
 	candidates, leftovers, pending := scanUploadDirs(root, cutoff, 0)
-	result := removeExpiredUploads(candidates, cutoff, requests)
+	result := removeExpiredUploads(candidates, cutoff, &records)
 	result.removeLeftovers(leftovers)
 	if pending || result.remaining || result.busy {
 		mutex.UserUploads.Store(true)
@@ -206,7 +206,7 @@ type uploadOutcome int
 const (
 	uploadSkipped uploadOutcome = iota // no longer a batch directory
 	uploadBusy                         // a request holds the lifecycle lock
-	uploadChanged                      // a request began or ended since the scan
+	uploadChanged                      // a request for the batch began or ended since the scan
 	uploadKept                         // failed
 	uploadSetAside
 	uploadRemoved // removed under the lock, as setting it aside failed on a full disk
@@ -215,13 +215,13 @@ const (
 // removeExpiredUploads sets each candidate aside under its own nonblocking exclusive lock and removes
 // the set-aside folders after all candidates were handled, so a request waits at most for one rename
 // unless the disk is full. A candidate a request may have changed is checked again and retried once.
-func removeExpiredUploads(candidates []string, cutoff time.Time, requests uint64) (result uploadPurgeResult) {
+func removeExpiredUploads(candidates []string, cutoff time.Time, records *mutex.UploadRecords) (result uploadPurgeResult) {
 	var asides, dirs []string
 	for _, dir := range candidates {
-		outcome, aside, err := setAsideUpload(dir, requests)
+		outcome, aside, err := setAsideUpload(dir, records.Get(filepath.Base(dir)))
 		if outcome == uploadChanged {
-			// The counter is read before the walk, so a request that ends during it is detected.
-			current := mutex.UploadRequests.Load()
+			// The record is read before the walk, so a request that ends during it is detected.
+			current := mutex.UploadRecord(filepath.Base(dir))
 			stale, walkErr := checkUploadBatch(dir, cutoff)
 			switch {
 			case walkErr == nil && stale:
@@ -290,9 +290,9 @@ var setAsideUpload = setAsideExpiredUpload
 var makeAsideDir = os.MkdirTemp
 
 // setAsideExpiredUpload renames an expired batch into a new set-aside folder next to it, unless a
-// request holds the lifecycle lock or any request began or ended since the given counter value.
+// request holds the lifecycle lock or the batch's request record changed since the given value.
 // If the folder cannot be created on a full disk, the batch is removed under the lock instead.
-func setAsideExpiredUpload(dir string, requests uint64) (outcome uploadOutcome, aside string, err error) {
+func setAsideExpiredUpload(dir string, record uint64) (outcome uploadOutcome, aside string, err error) {
 	if !mutex.UploadBatches.TryLock() {
 		return uploadBusy, "", nil
 	}
@@ -305,7 +305,7 @@ func setAsideExpiredUpload(dir string, requests uint64) (outcome uploadOutcome, 
 		return uploadKept, "", err
 	case !info.IsDir() || info.Mode()&os.ModeSymlink != 0:
 		return uploadSkipped, "", nil
-	case mutex.UploadRequests.Load() != requests:
+	case mutex.UploadRecord(filepath.Base(dir)) != record:
 		return uploadChanged, "", nil
 	}
 	if aside, err = makeAsideDir(filepath.Dir(dir), expiredUploadPrefix); errors.Is(err, syscall.ENOSPC) || errors.Is(err, syscall.EDQUOT) {
