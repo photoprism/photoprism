@@ -133,6 +133,11 @@ func (i *Limit) ReserveN(ip string, n int) *rate.Reservation {
 }
 
 // Reject checks if the request rate limit has been exceeded, but does not modify the counter.
+// A disabled limit, whose burst is 0, never rejects.
 func (i *Limit) Reject(ip string) bool {
+	if i.rateLimit == rate.Inf {
+		return false
+	}
+
 	return i.IP(ip).Tokens() < 1
 }

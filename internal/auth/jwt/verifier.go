@@ -24,8 +24,33 @@ import (
 )
 
 var (
-	errKeyNotFound = errors.New("jwt: key not found")
+	errKeyNotFound      = errors.New("jwt: key not found")
+	errMissingKid       = errors.New("jwt: missing kid header")
+	errCriticalHeader   = errors.New("jwt: unsupported critical header")
+	errRefreshThrottled = errors.New("jwt: key not found and key set refresh not due")
 )
+
+// SignatureFailed reports whether err occurred before the token's claims were checked, i.e. while
+// parsing the token, finding its key, or verifying its signature.
+func SignatureFailed(err error) bool {
+	return errors.Is(err, gojwt.ErrTokenMalformed) || errors.Is(err, gojwt.ErrTokenSignatureInvalid) || errors.Is(err, gojwt.ErrTokenUnverifiable)
+}
+
+// Unverified reports whether err shows that a token's signature could not be verified, because the
+// token is malformed, names no key or one the key set does not hold after a refresh, or has an invalid
+// signature. Claim checks, a throttled refresh, and a key set that could not be fetched are not reported.
+func Unverified(err error) bool {
+	switch {
+	case err == nil:
+		return false
+	case errors.Is(err, gojwt.ErrTokenMalformed), errors.Is(err, gojwt.ErrTokenSignatureInvalid):
+		return true
+	case errors.Is(err, gojwt.ErrTokenUnverifiable):
+		return errors.Is(err, errKeyNotFound) || errors.Is(err, errMissingKid) || errors.Is(err, errCriticalHeader)
+	default:
+		return false
+	}
+}
 
 // maxJWKSResponseBytes bounds how much of a JWKS response is read so a malicious
 // or compromised IdP endpoint cannot exhaust memory; real key sets are a few KB.
@@ -171,12 +196,15 @@ func (v *Verifier) VerifyToken(ctx context.Context, tokenString string, expected
 		kid, _ := token.Header["kid"].(string)
 
 		if kid == "" {
-			return nil, errors.New("jwt: missing kid header")
+			return nil, errMissingKid
 		}
 
 		pk, err := v.publicKeyForKid(ctx, jwksUrl, kid, false)
 
-		if errors.Is(err, errKeyNotFound) {
+		// The cached keys were checked above, so a lookup without a due forced refresh would find the same.
+		if errors.Is(err, errKeyNotFound) && !v.forcedRefreshDue(jwksUrl) {
+			return nil, errRefreshThrottled
+		} else if errors.Is(err, errKeyNotFound) {
 			pk, err = v.publicKeyForKid(ctx, jwksUrl, kid, true)
 		}
 
@@ -268,7 +296,7 @@ func VerifyTokenWithKeys(tokenString string, expected ExpectedClaims, keys []Pub
 		}
 		kid, _ := token.Header["kid"].(string)
 		if kid == "" {
-			return nil, errors.New("jwt: missing kid header")
+			return nil, errMissingKid
 		}
 		pk, ok := keyMap[kid]
 		if !ok {
@@ -327,7 +355,7 @@ func rejectCriticalHeaders(token *gojwt.Token) error {
 	if token == nil {
 		return errors.New("jwt: token is empty")
 	} else if _, ok := token.Header["crit"]; ok {
-		return errors.New("jwt: unsupported critical header")
+		return errCriticalHeader
 	}
 
 	return nil

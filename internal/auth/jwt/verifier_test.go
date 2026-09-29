@@ -3,6 +3,7 @@ package jwt
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -10,6 +11,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	gojwt "github.com/golang-jwt/jwt/v5"
@@ -252,4 +254,48 @@ func TestVerifierRejectsOversizedJWKS(t *testing.T) {
 	verifier := NewVerifier(nodeCfg)
 	err = verifier.Prime(context.Background(), nodeCfg.JWKSUrl())
 	require.Error(t, err)
+}
+
+// TestUnverified checks which verification errors show that a token's signature could not be verified.
+func TestUnverified(t *testing.T) {
+	// Wraps the cause the way the parser does for an error returned by the key function.
+	keyFuncErr := func(cause error) error {
+		return fmt.Errorf("%w: error while executing keyfunc: %w", gojwt.ErrTokenUnverifiable, cause)
+	}
+
+	for _, tc := range []struct {
+		name string
+		err  error
+		want bool
+	}{
+		{name: "Nil", err: nil, want: false},
+		{name: "Malformed", err: fmt.Errorf("%w: token contains an invalid number of segments", gojwt.ErrTokenMalformed), want: true},
+		{name: "SignatureInvalid", err: fmt.Errorf("%w: signature is invalid", gojwt.ErrTokenSignatureInvalid), want: true},
+		{name: "UnknownKey", err: keyFuncErr(errKeyNotFound), want: true},
+		{name: "MissingKid", err: keyFuncErr(errMissingKid), want: true},
+		{name: "CriticalHeader", err: keyFuncErr(errCriticalHeader), want: true},
+		{name: "KeysUnavailable", err: keyFuncErr(errors.New("jwt: jwks fetch failed: 503 Service Unavailable")), want: false},
+		{name: "RefreshThrottled", err: keyFuncErr(errRefreshThrottled), want: false},
+		{name: "Expired", err: fmt.Errorf("%w: token is expired", gojwt.ErrTokenExpired), want: false},
+		{name: "WrongAudience", err: fmt.Errorf("%w: token has invalid audience", gojwt.ErrTokenInvalidAudience), want: false},
+		{name: "MissingScope", err: errors.New("jwt: missing scope vision"), want: false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			assert.Equal(t, tc.want, Unverified(tc.err))
+		})
+	}
+}
+
+// TestSignatureFailed checks which verification errors occur before a token's claims are checked.
+func TestSignatureFailed(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		assert.True(t, SignatureFailed(fmt.Errorf("%w: token contains an invalid number of segments", gojwt.ErrTokenMalformed)))
+		assert.True(t, SignatureFailed(fmt.Errorf("%w: signature is invalid", gojwt.ErrTokenSignatureInvalid)))
+		assert.True(t, SignatureFailed(fmt.Errorf("%w: error while executing keyfunc: %w", gojwt.ErrTokenUnverifiable, errRefreshThrottled)))
+	})
+	t.Run("ClaimErrors", func(t *testing.T) {
+		assert.False(t, SignatureFailed(nil))
+		assert.False(t, SignatureFailed(fmt.Errorf("%w: token has invalid issuer", gojwt.ErrTokenInvalidIssuer)))
+		assert.False(t, SignatureFailed(errors.New("jwt: missing scope vision")))
+	})
 }

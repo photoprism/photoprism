@@ -240,3 +240,25 @@ func TestLimitConcurrentFirstRequests(t *testing.T) {
 	assert.Equal(t, int64(burst), allowed.Load())
 	assert.Len(t, l.limiters, 1)
 }
+
+// TestLimitReject checks that a limit rejects once its burst is used up, and that a disabled limit never rejects.
+func TestLimitReject(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		l := NewLimit(rate.Every(time.Hour), 3)
+		for range 3 {
+			assert.False(t, l.Reject("192.0.2.1"))
+			l.Reserve("192.0.2.1")
+		}
+		assert.True(t, l.Reject("192.0.2.1"))
+		assert.False(t, l.Reject("192.0.2.2"))
+	})
+	t.Run("Disabled", func(t *testing.T) {
+		l := NewLimit(rate.Every(time.Hour), 0)
+		for range 5 {
+			assert.False(t, l.Reject("192.0.2.1"))
+			l.Reserve("192.0.2.1")
+			assert.True(t, l.Allow("192.0.2.1"))
+		}
+		assert.False(t, l.Reject("192.0.2.1"))
+	})
+}
