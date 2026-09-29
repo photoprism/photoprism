@@ -60,6 +60,6 @@ func WebSocket(router *gin.RouterGroup) {
 		go wsWriter(ws, &writeMutex, connId)
 
 		// Init reader.
-		wsReader(ws, &writeMutex, connId, conf)
+		wsReader(ws, &writeMutex, connId, conf, ClientIP(c))
 	})
 }

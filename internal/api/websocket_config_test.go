@@ -11,8 +11,11 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
+	"golang.org/x/time/rate"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/server/limiter"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // TestWebSocket_Config checks which client config the connection handshake returns for a session.
@@ -57,4 +60,29 @@ func TestWebSocket_Config(t *testing.T) {
 		_, sess := newOwnedClientSession(t, "metrics")
 		assert.Empty(t, handshake(t, sess.AuthToken()).Get("previewToken").String())
 	})
+}
+
+// TestWebSocket_AuthLimit checks that failed session tokens count against the client address, not the connection.
+func TestWebSocket_AuthLimit(t *testing.T) {
+	app, router, conf := NewApiTest()
+	conf.SetAuthMode(config.AuthModePasswd)
+	t.Cleanup(func() { conf.SetAuthMode(config.AuthModePublic) })
+
+	origLimit := limiter.Auth
+	t.Cleanup(func() { limiter.Auth = origLimit })
+	limiter.Auth = limiter.NewLimit(rate.Every(24*time.Hour), 3)
+
+	WebSocket(router)
+
+	srv := httptest.NewServer(app)
+	defer srv.Close()
+
+	for range 3 {
+		ws, _, err := websocket.DefaultDialer.Dial("ws"+strings.TrimPrefix(srv.URL, "http")+"/api/v1/ws", http.Header{"Origin": {srv.URL}})
+		require.NoError(t, err)
+		require.NoError(t, ws.WriteJSON(map[string]string{"session": rnd.AuthToken()}))
+		_ = ws.Close()
+	}
+
+	assert.Eventually(t, func() bool { return limiter.Auth.Reject("127.0.0.1") }, 5*time.Second, 20*time.Millisecond)
 }

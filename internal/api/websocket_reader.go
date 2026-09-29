@@ -13,7 +13,7 @@ import (
 )
 
 // wsReader initializes a WebSocket reader for receiving messages.
-func wsReader(ws *websocket.Conn, writeMutex *sync.Mutex, connId string, conf *config.Config) {
+func wsReader(ws *websocket.Conn, writeMutex *sync.Mutex, connId string, conf *config.Config, clientIp string) {
 	defer ws.Close()
 
 	ws.SetReadLimit(4096)
@@ -36,8 +36,6 @@ func wsReader(ws *websocket.Conn, writeMutex *sync.Mutex, connId string, conf *c
 		if jsonErr := json.Unmarshal(m, &info); jsonErr != nil {
 			// Do nothing.
 		} else {
-			clientIp := ws.RemoteAddr().String()
-
 			if s := Session(clientIp, info.AuthToken); s != nil {
 				// Resolve both principals before taking the lock, since either may query the database.
 				user := *s.GetUser()

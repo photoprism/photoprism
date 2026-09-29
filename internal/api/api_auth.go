@@ -2,6 +2,7 @@ package api
 
 import (
 	"crypto/subtle"
+	"errors"
 
 	"github.com/gin-gonic/gin"
 
@@ -52,7 +53,14 @@ func AuthAny(c *gin.Context, resource acl.Resource, perms acl.Permissions) (s *e
 	}
 
 	// Find active session to perform authorization check or deny if no session was found.
-	if s = Session(clientIp, authToken); s == nil {
+	var err error
+
+	if s, err = LookupSession(clientIp, authToken); s == nil {
+		// Refuse a client that exceeded the rate limit after the check above, again without an audit event.
+		if errors.Is(err, authn.ErrRateLimitExceeded) {
+			return entity.SessionStatusTooManyRequests()
+		}
+
 		if s = authAnyJWT(c, clientIp, authToken, resource, perms); s != nil {
 			event.AuditInfo([]string{clientIp, "session %s", "%s %s as %s", status.Granted}, s.RefID, perms.First(), string(resource), s.GetClientRole().String())
 			return s

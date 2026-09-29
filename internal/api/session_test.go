@@ -1,17 +1,23 @@
 package api
 
 import (
+	"math"
 	"net/http"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/tidwall/gjson"
+	"golang.org/x/time/rate"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/internal/server/limiter"
+	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -22,6 +28,68 @@ func TestSession(t *testing.T) {
 		sess := get.Session().Public()
 		assert.Equal(t, sess, Session("1.2.3.4", ""))
 		assert.Equal(t, sess, Session("1.2.3.4", "1234ffc9b86a8fda0d908ebee84a43930cb8d1e3507f4aa0"))
+	})
+}
+
+// TestLookupSession checks that a missing session is returned with the reason.
+func TestLookupSession(t *testing.T) {
+	conf := get.Config()
+	origAuthMode, origLimit := conf.AuthMode(), limiter.Auth
+	conf.SetAuthMode(config.AuthModePasswd)
+	t.Cleanup(func() {
+		conf.SetAuthMode(origAuthMode)
+		limiter.Auth = origLimit
+	})
+
+	t.Run("Success", func(t *testing.T) {
+		limiter.Auth = limiter.NewLimit(rate.Every(24*time.Hour), 3)
+		sess, err := entity.AddClientSession("lookup-session", conf.SessionMaxAge(), "*", authn.GrantClientCredentials, nil)
+		require.NoError(t, err)
+		t.Cleanup(func() { _ = sess.Delete() })
+
+		found, err := LookupSession("198.51.100.51", sess.AuthToken())
+		require.NoError(t, err)
+		require.NotNil(t, found)
+		assert.Equal(t, sess.ID, found.ID)
+		assert.False(t, limiter.Auth.Reject("198.51.100.51"))
+	})
+	t.Run("TokenRequired", func(t *testing.T) {
+		sess, err := LookupSession("198.51.100.52", "")
+		assert.Nil(t, sess)
+		assert.ErrorIs(t, err, authn.ErrTokenRequired)
+	})
+	t.Run("InvalidFormat", func(t *testing.T) {
+		limiter.Auth = limiter.NewLimit(rate.Every(24*time.Hour), 3)
+		sess, err := LookupSession("198.51.100.53", "not-a-session-token")
+		assert.Nil(t, sess)
+		assert.ErrorIs(t, err, authn.ErrInvalidToken)
+		assert.Equal(t, 3.0, math.Round(limiter.Auth.IP("198.51.100.53").Tokens()), "not counted")
+	})
+	t.Run("NotFound", func(t *testing.T) {
+		limiter.Auth = limiter.NewLimit(rate.Every(24*time.Hour), 3)
+		for range 3 {
+			sess, err := LookupSession("198.51.100.54", rnd.AuthToken())
+			assert.Nil(t, sess)
+			assert.ErrorIs(t, err, authn.ErrInvalidToken)
+		}
+		assert.True(t, limiter.Auth.Reject("198.51.100.54"))
+	})
+	t.Run("RateLimited", func(t *testing.T) {
+		limiter.Auth = limiter.NewLimit(rate.Every(24*time.Hour), 3)
+		for range 3 {
+			limiter.Auth.Reserve("198.51.100.55")
+		}
+		sess, err := LookupSession("198.51.100.55", rnd.AuthToken())
+		assert.Nil(t, sess)
+		assert.ErrorIs(t, err, authn.ErrRateLimitExceeded)
+		assert.Greater(t, limiter.Auth.IP("198.51.100.55").Tokens(), -0.5, "not counted over the limit")
+	})
+	t.Run("Public", func(t *testing.T) {
+		conf.SetAuthMode(config.AuthModePublic)
+		t.Cleanup(func() { conf.SetAuthMode(config.AuthModePasswd) })
+		sess, err := LookupSession("198.51.100.56", "")
+		assert.NoError(t, err)
+		assert.Equal(t, get.Session().Public(), sess)
 	})
 }
 
