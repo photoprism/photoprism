@@ -1,39 +1,13 @@
 package proxy
 
 import (
-	"crypto/tls"
 	"net/http"
 	"net/url"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-
-	"github.com/photoprism/photoprism/pkg/http/header"
 )
-
-func TestForwardedProto(t *testing.T) {
-	t.Run("NilRequest", func(t *testing.T) {
-		assert.Equal(t, "", ForwardedProto(nil))
-	})
-	t.Run("HeaderValue", func(t *testing.T) {
-		req, err := http.NewRequest(http.MethodGet, "https://example.com", nil)
-		require.NoError(t, err)
-		req.Header.Set(header.XForwardedProto, "https, http")
-		assert.Equal(t, "https", ForwardedProto(req))
-	})
-	t.Run("TLSFallback", func(t *testing.T) {
-		req, err := http.NewRequest(http.MethodGet, "https://example.com", nil)
-		require.NoError(t, err)
-		req.TLS = &tls.ConnectionState{}
-		assert.Equal(t, "https", ForwardedProto(req))
-	})
-	t.Run("HTTPFallback", func(t *testing.T) {
-		req, err := http.NewRequest(http.MethodGet, "http://example.com", nil)
-		require.NoError(t, err)
-		assert.Equal(t, "http", ForwardedProto(req))
-	})
-}
 
 func TestRewriteLocation(t *testing.T) {
 	prefix := "/i/acme/"

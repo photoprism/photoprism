@@ -5,29 +5,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-
-	"github.com/photoprism/photoprism/pkg/http/header"
 )
-
-// ForwardedProto determines the forwarded scheme for proxy headers.
-func ForwardedProto(req *http.Request) string {
-	if req == nil {
-		return ""
-	}
-
-	if v := strings.TrimSpace(req.Header.Get(header.XForwardedProto)); v != "" {
-		if comma := strings.IndexByte(v, ','); comma > 0 {
-			return strings.TrimSpace(v[:comma])
-		}
-		return v
-	}
-
-	if req.TLS != nil {
-		return "https"
-	}
-
-	return "http"
-}
 
 // portalRootPathPrefixes lists URL paths that are served by the Portal root,
 // not by any proxied instance. Locations under these prefixes are deliberate
