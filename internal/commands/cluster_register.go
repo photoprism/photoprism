@@ -21,6 +21,7 @@ import (
 	"github.com/photoprism/photoprism/internal/service/cluster/theme"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
+	"github.com/photoprism/photoprism/pkg/http/dns"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -468,7 +469,7 @@ func persistRegisterResponse(conf *config.Config, resp *cluster.RegisterResponse
 		}
 		updates.SetDatabaseDriver(driver)
 		updates.SetDatabaseName(resp.Database.Name)
-		updates.SetDatabaseServer(fmt.Sprintf("%s:%d", resp.Database.Host, resp.Database.Port))
+		updates.SetDatabaseServer(dns.JoinHostPort(resp.Database.Host, resp.Database.Port))
 		updates.SetDatabaseUser(resp.Database.User)
 		updates.SetDatabasePassword(resp.Database.Password)
 	}

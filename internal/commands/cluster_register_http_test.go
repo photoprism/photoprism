@@ -119,7 +119,7 @@ func TestClusterRegister_WriteConfig_PersistsSecretFileOnly(t *testing.T) {
 			},
 			Database: cluster.RegisterDatabase{
 				Driver:   dsn.DriverMySQL,
-				Host:     "database",
+				Host:     "fd00::10",
 				Port:     3306,
 				Name:     "pp_db",
 				User:     "pp_user",
@@ -157,6 +157,7 @@ func TestClusterRegister_WriteConfig_PersistsSecretFileOnly(t *testing.T) {
 	assert.Equal(t, cluster.ExampleClientID, persisted["NodeClientID"])
 	assert.Equal(t, jwksURL, persisted["JWKSUrl"])
 	assert.Equal(t, "pp_db", persisted["DatabaseName"])
+	assert.Equal(t, "[fd00::10]:3306", persisted["DatabaseServer"])
 	assert.Equal(t, "pp_user", persisted["DatabaseUser"])
 	assert.Equal(t, "pwd", persisted["DatabasePassword"])
 	_, hasInlineSecret := persisted["NodeClientSecret"]

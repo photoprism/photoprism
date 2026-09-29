@@ -12,7 +12,6 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"time"
 
@@ -538,7 +537,7 @@ func persistRegistration(c *config.Config, r *cluster.RegisterResponse, wantRota
 		} else if r.Database.Name != "" && r.Database.User != "" && r.Database.Password != "" {
 			server := r.Database.Host
 			if r.Database.Port > 0 {
-				server = net.JoinHostPort(r.Database.Host, strconv.Itoa(r.Database.Port))
+				server = dns.JoinHostPort(r.Database.Host, r.Database.Port)
 			}
 			updates.SetDatabaseDriver(r.Database.Driver)
 			updates.SetDatabaseServer(server)

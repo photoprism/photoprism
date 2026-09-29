@@ -32,6 +32,7 @@ import (
 	"strings"
 	"unicode"
 
+	"github.com/photoprism/photoprism/pkg/http/dns"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -163,7 +164,7 @@ func (d *DSN) splitHostPort() (host, port string) {
 	host, port, err = net.SplitHostPort(server)
 
 	if err != nil {
-		return server, ""
+		return dns.TrimBrackets(server), ""
 	}
 
 	return host, port
@@ -261,7 +262,7 @@ func (d *DSN) parsePostgres() bool {
 
 	switch {
 	case host != "" && port != "":
-		d.Server = host + ":" + port
+		d.Server = net.JoinHostPort(dns.TrimBrackets(host), port)
 	case host != "":
 		d.Server = host
 	case port != "":

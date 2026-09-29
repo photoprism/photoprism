@@ -1065,3 +1065,46 @@ func TestRegisterError(t *testing.T) {
 		assert.Error(t, registerError(nil))
 	})
 }
+
+// TestRegister_PersistDBFieldsIPv6 checks that database fields without a DSN are persisted with an
+// IPv6 server address in brackets.
+func TestRegister_PersistDBFieldsIPv6(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/api/v1/cluster/nodes/register" {
+			http.NotFound(w, r)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+		_ = json.NewEncoder(w).Encode(cluster.RegisterResponse{
+			Node:    cluster.Node{Name: "pp-node-02"},
+			UUID:    rnd.UUID(),
+			Secrets: &cluster.RegisterSecrets{ClientSecret: cluster.ExampleClientSecret},
+			Database: cluster.RegisterDatabase{
+				Driver:   dsn.DriverMySQL,
+				Host:     "[fd00::10]",
+				Port:     3306,
+				Name:     "pp_db",
+				User:     "pp_user",
+				Password: "pp_pw",
+			},
+		})
+	}))
+	defer srv.Close()
+
+	c := newBootstrapTestConfig(t, "bootstrap-reg-ipv6")
+	c.Options().PortalUrl = srv.URL
+	c.Options().JoinToken = cluster.ExampleJoinToken
+	c.Options().SiteUrl = "https://public.example.test/"
+	c.Options().AdvertiseUrl = "https://public.example.test/"
+	c.Options().DatabaseDriver = dsn.DriverMySQL
+	c.Options().DatabaseDSN = ""
+	c.Options().DatabaseName = ""
+	c.Options().DatabaseUser = ""
+	c.Options().DatabasePassword = ""
+
+	assert.NoError(t, InitConfig(c))
+	assert.Equal(t, "[fd00::10]:3306", c.Options().DatabaseServer)
+	assert.Equal(t, "fd00::10", c.DatabaseHost())
+}

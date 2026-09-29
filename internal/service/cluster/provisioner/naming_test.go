@@ -81,10 +81,30 @@ func TestGenerateCredentials_CustomPrefix(t *testing.T) {
 }
 
 func TestBuildDSN(t *testing.T) {
-	d := BuildDSN("mysql", "mariadb", 3306, "user", "pass", "dbname")
-	assert.Contains(t, d, "user:pass@tcp(mariadb:3306)/dbname")
-	assert.Contains(t, d, "charset=utf8mb4")
-	assert.Contains(t, d, "parseTime=true")
+	t.Run("Hostname", func(t *testing.T) {
+		d := BuildDSN("mysql", "mariadb", 3306, "user", "pass", "dbname")
+		assert.Contains(t, d, "user:pass@tcp(mariadb:3306)/dbname")
+		assert.Contains(t, d, "charset=utf8mb4")
+		assert.Contains(t, d, "parseTime=true")
+	})
+	t.Run("Hosts", func(t *testing.T) {
+		for host, want := range map[string]string{
+			"mariadb":    "mariadb",
+			"10.0.0.5":   "10.0.0.5",
+			"fd00::10":   "fd00::10",
+			"[fd00::10]": "fd00::10",
+		} {
+			d := BuildDSN("mysql", host, 3306, "user", "pass", "dbname")
+			parsed := dsn.Parse(d)
+			assert.Equal(t, want, parsed.Host(), host)
+			assert.Equal(t, 3306, parsed.Port(), host)
+			assert.Equal(t, "dbname", parsed.Name, host)
+		}
+	})
+	t.Run("UnsupportedDriver", func(t *testing.T) {
+		d := BuildDSN("other", "fd00::10", 3306, "user", "pass", "dbname")
+		assert.Contains(t, d, "user:pass@tcp([fd00::10]:3306)/dbname")
+	})
 }
 
 func TestHmacBase32_LowercaseDeterministic(t *testing.T) {

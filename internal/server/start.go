@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/tls"
 	"errors"
-	"fmt"
 	"net"
 	"net/http"
 	"net/url"
@@ -22,6 +21,7 @@ import (
 	"github.com/photoprism/photoprism/internal/server/process"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/http/dns"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -167,7 +167,7 @@ func Start(ctx context.Context, conf *config.Config) {
 	} else if tlsManager, tlsErr = AutoTLS(conf); tlsErr == nil {
 		log.Infof("server: starting in auto tls mode")
 
-		tlsSocket := fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort())
+		tlsSocket := dns.JoinHostPort(conf.HttpHost(), conf.HttpPort())
 		tlsConfig := tlsManager.TLSConfig()
 		tlsConfig.MinVersion = tls.VersionTLS12
 
@@ -184,7 +184,7 @@ func Start(ctx context.Context, conf *config.Config) {
 	} else if publicCert, privateKey := conf.TLS(); publicCert != "" && privateKey != "" {
 		log.Infof("server: starting in tls mode")
 
-		tlsSocket := fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort())
+		tlsSocket := dns.JoinHostPort(conf.HttpHost(), conf.HttpPort())
 		tlsConfig := &tls.Config{
 			MinVersion: tls.VersionTLS12,
 		}
@@ -202,7 +202,7 @@ func Start(ctx context.Context, conf *config.Config) {
 	} else {
 		log.Infof("server: %s", tlsErr)
 
-		tcpSocket := fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort())
+		tcpSocket := dns.JoinHostPort(conf.HttpHost(), conf.HttpPort())
 
 		if listener, err := net.Listen("tcp", tcpSocket); err != nil {
 			Fail("server: %s", err)
@@ -281,7 +281,7 @@ func StartAutoTLS(s *http.Server, m *autocert.Manager, conf *config.Config) {
 		redirectSrv := newHTTPServer(m.HTTPHandler(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 			redirect(w, req, conf)
 		})), conf)
-		redirectSrv.Addr = fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort())
+		redirectSrv.Addr = dns.JoinHostPort(conf.HttpHost(), conf.HttpPort())
 
 		return redirectSrv.ListenAndServe()
 	})
