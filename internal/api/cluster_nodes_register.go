@@ -4,7 +4,6 @@ import (
 	"crypto/subtle"
 	"errors"
 	"fmt"
-	"net"
 	"net/http"
 	"net/url"
 	"strings"
@@ -789,14 +788,7 @@ func isClusterServiceHost(host string) bool {
 
 // clusterCIDRAllowsClientIP reports whether clientIP is within the configured cidr.
 func clusterCIDRAllowsClientIP(cidr, clientIP string) bool {
-	ip := net.ParseIP(clientIP)
-	_, block, err := net.ParseCIDR(cidr)
-
-	if err != nil || ip == nil || block == nil {
-		return false
-	}
-
-	return block.Contains(ip)
+	return cluster.CIDRsContain(cidr, clientIP)
 }
 
 // registerNameConflictError returns a clear operator-facing conflict message.

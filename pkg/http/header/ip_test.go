@@ -212,13 +212,13 @@ func TestClientNetwork(t *testing.T) {
 
 func TestParseAddr(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
-		addr, err := parseAddr("[::ffff:203.0.113.5]:80")
+		addr, err := ParseAddr("[::ffff:203.0.113.5]:80")
 		assert.NoError(t, err)
 		assert.True(t, addr.Is4())
 		assert.Equal(t, "203.0.113.5", addr.String())
 	})
 	t.Run("Invalid", func(t *testing.T) {
-		addr, err := parseAddr("203.0.113.5, 198.51.100.7")
+		addr, err := ParseAddr("203.0.113.5, 198.51.100.7")
 		assert.ErrorIs(t, err, ErrInvalidIP)
 		assert.False(t, addr.IsValid())
 	})

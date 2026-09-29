@@ -3,7 +3,6 @@ package api
 import (
 	"context"
 	"fmt"
-	"net"
 	"strings"
 	"time"
 
@@ -16,7 +15,9 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/server/limiter"
+	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
 // authAnyJWT attempts to authenticate a Portal-issued JWT when an instance or service
@@ -159,16 +160,14 @@ func shouldAllowJWT(conf *config.Config, clientIP string) bool {
 		return true
 	}
 
-	ip := net.ParseIP(clientIP)
-	_, block, err := net.ParseCIDR(cidr)
-	if err != nil || ip == nil {
+	if _, err := cluster.ParseCIDRs(cidr); err != nil || !header.IsIP(clientIP) {
 		if log.IsLevelEnabled(logrus.DebugLevel) {
 			log.Debugf("auth: skipping portal jwt (invalid cidr %q or client ip %q)", clean.Log(cidr), clean.Log(clientIP))
 		}
 		return false
 	}
 
-	if !block.Contains(ip) {
+	if !cluster.CIDRsContain(cidr, clientIP) {
 		if log.IsLevelEnabled(logrus.DebugLevel) {
 			log.Debugf("auth: skipping portal jwt (client ip %q outside allowed cidr %q)", clean.Log(clientIP), clean.Log(cidr))
 		}

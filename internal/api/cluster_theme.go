@@ -3,7 +3,6 @@ package api
 import (
 	"archive/zip"
 	gofs "io/fs"
-	"net"
 	"path/filepath"
 
 	"github.com/gin-gonic/gin"
@@ -13,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/internal/service/cluster"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
 	"github.com/photoprism/photoprism/internal/service/cluster/theme"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -40,13 +40,9 @@ func ClusterGetTheme(router *gin.RouterGroup) {
 		refID := "-"
 		var session *entity.Session
 
-		if cidr := conf.ClusterCIDR(); cidr != "" {
-			if _, ipnet, err := net.ParseCIDR(cidr); err == nil {
-				if ip := net.ParseIP(clientIp); ip != nil && ipnet.Contains(ip) {
-					// Allowed by CIDR; proceed without session.
-					refID = "cidr"
-				}
-			}
+		if cidr := conf.ClusterCIDR(); cidr != "" && cluster.CIDRsContain(cidr, clientIp) {
+			// Allowed by CIDR; proceed without session.
+			refID = "cidr"
 		}
 
 		// If not allowed by CIDR, require regular auth.

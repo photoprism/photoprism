@@ -750,7 +750,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "cluster-cidr",
-			Usage:   "cluster `CIDR` for IP-based authorization, e.g. 10.0.0.0/8",
+			Usage:   "cluster `CIDR` ranges for IP-based authorization, separated by commas, e.g. 10.0.0.0/8",
 			EnvVars: EnvVars("CLUSTER_CIDR"),
 			Hidden:  true,
 		}}, {

@@ -107,12 +107,26 @@ func TestClusterNodesRegister(t *testing.T) {
 		t.Cleanup(func() {
 			conf.Options().ClusterCIDR = prevClusterCIDR
 		})
-		conf.Options().ClusterCIDR = "192.0.2.0/24"
+		conf.Options().ClusterCIDR = "198.51.100.0/24, 192.0.2.0/24"
 		ClusterNodesRegister(router)
 
 		r := AuthenticatedRequestWithBodyAndIP(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-cidr-allowed"}`, cluster.ExampleJoinToken, "192.0.2.42")
 		assert.Equal(t, http.StatusCreated, r.Code)
 		cleanupRegisterProvisioning(t, conf, r)
+	})
+	t.Run("ClusterCIDRInvalidListFailsClosed", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		enablePortalAPIs(t, conf)
+		conf.Options().JoinToken = cluster.ExampleJoinToken
+		prevClusterCIDR := conf.Options().ClusterCIDR
+		t.Cleanup(func() {
+			conf.Options().ClusterCIDR = prevClusterCIDR
+		})
+		conf.Options().ClusterCIDR = "192.0.2.0/24,garbage"
+		ClusterNodesRegister(router)
+
+		r := AuthenticatedRequestWithBodyAndIP(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":"pp-node-cidr-invalid"}`, cluster.ExampleJoinToken, "192.0.2.42")
+		assert.Equal(t, http.StatusUnauthorized, r.Code)
 	})
 	t.Run("ForbiddenFromCDN", func(t *testing.T) {
 		app, router, conf := NewApiTest()

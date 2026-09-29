@@ -32,7 +32,7 @@ func IP(s, defaultIp string) string {
 // ParseIP parses a single network address, optionally bracketed or with a port, and
 // returns it in canonical form without zone, with IPv4-mapped addresses as IPv4.
 func ParseIP(s string) (string, error) {
-	addr, err := parseAddr(s)
+	addr, err := ParseAddr(s)
 
 	if err != nil {
 		return "", err
@@ -41,8 +41,8 @@ func ParseIP(s string) (string, error) {
 	return addr.String(), nil
 }
 
-// parseAddr parses a single network address as ParseIP does and returns it as netip.Addr.
-func parseAddr(s string) (netip.Addr, error) {
+// ParseAddr parses a single network address as ParseIP does and returns it as netip.Addr.
+func ParseAddr(s string) (netip.Addr, error) {
 	if len(s) > MaxIPLength {
 		return netip.Addr{}, ErrInvalidIP
 	} else if s = strings.TrimSpace(s); s == "" {
@@ -106,7 +106,7 @@ var (
 // prefix for those tunnels, the /64 prefix for other global IPv6 addresses, and the address itself
 // otherwise, or an empty string if the address is invalid.
 func ClientNetwork(ip string) string {
-	addr, err := parseAddr(ip)
+	addr, err := ParseAddr(ip)
 
 	if err != nil {
 		return ""

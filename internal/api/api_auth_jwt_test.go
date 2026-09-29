@@ -410,6 +410,11 @@ func TestInstanceAllowsJWT(t *testing.T) {
 	conf.Options().ClusterCIDR = "192.0.2.0/24"
 	assert.True(t, shouldAllowJWT(conf, "192.0.2.25"))
 	assert.False(t, shouldAllowJWT(conf, "203.0.113.1"))
+	conf.Options().ClusterCIDR = "198.51.100.0/24, 192.0.2.0/24"
+	assert.True(t, shouldAllowJWT(conf, "192.0.2.25"))
+	assert.False(t, shouldAllowJWT(conf, "203.0.113.1"))
+	conf.Options().ClusterCIDR = "192.0.2.0/24,garbage"
+	assert.False(t, shouldAllowJWT(conf, "192.0.2.25"))
 	conf.Options().ClusterCIDR = origCIDR
 
 	origJWKS := conf.JWKSUrl()

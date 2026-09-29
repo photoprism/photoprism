@@ -106,7 +106,7 @@ func TestClusterRegister_WriteConfig_PersistsSecretFileOnly(t *testing.T) {
 		w.WriteHeader(http.StatusCreated)
 		_ = json.NewEncoder(w).Encode(cluster.RegisterResponse{
 			UUID:        clusterUUID,
-			ClusterCIDR: "192.0.2.0/24",
+			ClusterCIDR: "192.0.2.0/24, 2001:db8::/64",
 			JWKSUrl:     jwksURL,
 			Node: cluster.Node{
 				UUID:     nodeUUID,
@@ -152,7 +152,7 @@ func TestClusterRegister_WriteConfig_PersistsSecretFileOnly(t *testing.T) {
 	assert.NoError(t, yaml.Unmarshal(optionsContent, &persisted))
 
 	assert.Equal(t, clusterUUID, persisted["ClusterUUID"])
-	assert.Equal(t, "192.0.2.0/24", persisted["ClusterCIDR"])
+	assert.Equal(t, "192.0.2.0/24, 2001:db8::/64", persisted["ClusterCIDR"])
 	assert.Equal(t, nodeUUID, persisted["NodeUUID"])
 	assert.Equal(t, cluster.ExampleClientID, persisted["NodeClientID"])
 	assert.Equal(t, jwksURL, persisted["JWKSUrl"])
