@@ -177,3 +177,30 @@ func TestRejectNSFWUpload(t *testing.T) {
 	assert.False(t, rejectNSFWUpload(nsfw.StatusUnavailable))
 	assert.False(t, rejectNSFWUpload(nsfw.StatusSafe))
 }
+
+// TestNsfwUploadStatusSystemLog verifies undecided screening is written to the system log only.
+func TestNsfwUploadStatusSystemLog(t *testing.T) {
+	t.Run("Undecided", func(t *testing.T) {
+		stubNSFW(t, []nsfw.Result{nsfw.Unavailable("model is missing")}, nil)
+		hook := captureLog(t)
+		systemHook := captureSystemLog(t)
+
+		assert.Equal(t, nsfw.StatusUnavailable, nsfwUploadStatus("/tmp/upload/undecided.jpg"))
+		assert.Empty(t, hook.AllEntries())
+		require.Len(t, systemHook.AllEntries(), 1)
+		assert.Equal(t, "nsfw: upload › could not check undecided.jpg › model is missing", systemHook.LastEntry().Message)
+	})
+	t.Run("PreviewFailure", func(t *testing.T) {
+		stubNSFW(t, []nsfw.Result{nsfw.NewResult(0.01, nsfw.DefaultThreshold)}, nil)
+		nsfwUploadPreview = func(string) (string, func(), error) {
+			return "", nil, errors.New("preview failed")
+		}
+		hook := captureLog(t)
+		systemHook := captureSystemLog(t)
+
+		assert.Equal(t, nsfw.StatusUnavailable, nsfwUploadStatus("/tmp/upload/broken.heic"))
+		assert.Empty(t, hook.AllEntries())
+		require.Len(t, systemHook.AllEntries(), 1)
+		assert.Equal(t, "nsfw: upload › could not check broken.heic › preview failed", systemHook.LastEntry().Message)
+	})
+}
