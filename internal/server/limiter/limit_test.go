@@ -277,3 +277,79 @@ func TestLimitReject(t *testing.T) {
 		assert.False(t, l.Reject("192.0.2.1"))
 	})
 }
+
+func TestKey(t *testing.T) {
+	t.Run("IPv4", func(t *testing.T) {
+		assert.Equal(t, "192.0.2.1", key("192.0.2.1"))
+		assert.Equal(t, "192.0.2.1", key("::ffff:192.0.2.1"))
+	})
+	t.Run("IPv6", func(t *testing.T) {
+		assert.Equal(t, "2001:db8:1:2::/64", key("2001:db8:1:2::10"))
+	})
+	t.Run("Default", func(t *testing.T) {
+		assert.Equal(t, DefaultIP, key(""))
+		assert.Equal(t, DefaultIP, key("unknown"))
+		assert.Equal(t, DefaultIP, key(DefaultIP))
+	})
+}
+
+func TestLimit_IPv6Network(t *testing.T) {
+	t.Run("SameNetwork", func(t *testing.T) {
+		l := NewLimit(rate.Every(time.Hour), 3)
+
+		for i := range 3 {
+			assert.True(t, l.Allow(fmt.Sprintf("2001:db8:1:2::%x", i+1)))
+		}
+
+		assert.False(t, l.Allow("2001:db8:1:2:ffff:ffff:ffff:ffff"))
+		assert.True(t, l.Reject("2001:db8:1:2::abcd"))
+		assert.Len(t, l.limiters, 1)
+	})
+	t.Run("OtherNetworks", func(t *testing.T) {
+		l := NewLimit(rate.Every(time.Hour), 3)
+
+		for range 3 {
+			l.Reserve("2001:db8:1:2::1")
+		}
+
+		assert.True(t, l.Reject("2001:db8:1:2::2"))
+		assert.False(t, l.Reject("2001:db8:1:3::1"))
+		assert.True(t, l.Allow("2001:db8:1:3::1"))
+		assert.True(t, l.Allow("2001:db8:2:2::1"))
+	})
+	t.Run("IPv4", func(t *testing.T) {
+		l := NewLimit(rate.Every(time.Hour), 3)
+
+		for range 3 {
+			l.Reserve("192.0.2.1")
+		}
+
+		assert.True(t, l.Reject("192.0.2.1"))
+		assert.True(t, l.Reject("::ffff:192.0.2.1"))
+		assert.False(t, l.Reject("192.0.2.2"))
+		assert.True(t, l.Allow("192.0.2.2"))
+	})
+	t.Run("EntryPoints", func(t *testing.T) {
+		// Each entry point takes its tokens from the one bucket of the network, 9 in total.
+		l := NewLimit(rate.Every(time.Hour), 9)
+
+		assert.True(t, l.AllowN("2001:db8:1:2::1", 2))
+		assert.True(t, l.Request("2001:db8:1:2::2").Allow())
+		assert.True(t, l.RequestN("2001:db8:1:2::3", 2).Allow())
+		l.Reserve("2001:db8:1:2::4")
+		l.ReserveN("2001:db8:1:2::5", 2)
+		assert.True(t, l.Allow("2001:db8:1:2::6"))
+		assert.Len(t, l.limiters, 1)
+		assert.True(t, l.Reject("2001:db8:1:2::7"))
+	})
+	t.Run("PerAddress", func(t *testing.T) {
+		l := NewLimit(rate.Every(time.Hour), 3)
+
+		for range 3 {
+			l.Reserve("fd00:1::2")
+		}
+
+		assert.True(t, l.Reject("fd00:1::2"))
+		assert.False(t, l.Reject("fd00:1::3"))
+	})
+}

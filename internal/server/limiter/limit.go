@@ -5,9 +5,11 @@ import (
 	"time"
 
 	"golang.org/x/time/rate"
+
+	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
-// SweepInterval bounds how often the addresses are scanned for entries to remove, so a limiter
+// SweepInterval bounds how often the buckets are scanned for entries to remove, so a limiter
 // holding many of them does not walk them all every time it sees a new one.
 const SweepInterval = time.Minute
 
@@ -17,7 +19,7 @@ type Limit struct {
 	mu        *sync.RWMutex
 	rateLimit rate.Limit // rateLimit defines the maximum frequency of the requests.
 	burstSize int        // burstSize is the maximum number of requests that can be performed at once.
-	swept     time.Time  // swept is when the addresses were last scanned.
+	swept     time.Time  // swept is when the buckets were last scanned.
 }
 
 // NewLimit returns a new Limit with the specified request and burst rate limit per second.
@@ -43,13 +45,19 @@ func NewLimit(limit rate.Limit, burst int) *Limit {
 	}
 }
 
-// IP returns the rate limiter for the specified IP address.
-// TODO: Normalize IPv6 addresses so that hosts with multiple addresses cannot be used for spray attacks.
-func (i *Limit) IP(ip string) *rate.Limiter {
-	// Default to 0.0.0.0 if no address was provided.
-	if ip == "" {
-		ip = DefaultIP
+// key returns the bucket key for a client address, which is its network (header.ClientNetwork), or
+// DefaultIP if the address is empty or invalid.
+func key(ip string) string {
+	if network := header.ClientNetwork(ip); network != "" {
+		return network
 	}
+
+	return DefaultIP
+}
+
+// IP returns the rate limiter for the specified IP address, shared by all addresses of its network.
+func (i *Limit) IP(ip string) *rate.Limiter {
+	ip = key(ip)
 
 	i.mu.RLock()
 	limiter, exists := i.limiters[ip]
@@ -62,7 +70,7 @@ func (i *Limit) IP(ip string) *rate.Limiter {
 	return i.add(ip, time.Now())
 }
 
-// add returns the rate limiter for an address, creating one if the address still has none. The
+// add returns the rate limiter for a bucket key, creating one if the key still has none. The
 // read lock is released before it is called, so another request may have created it meanwhile.
 func (i *Limit) add(ip string, now time.Time) *rate.Limiter {
 	i.mu.Lock()
@@ -80,7 +88,7 @@ func (i *Limit) add(ip string, now time.Time) *rate.Limiter {
 	return limiter
 }
 
-// sweep removes the addresses whose bucket holds a full burst, which is what a new address is
+// sweep removes the keys whose bucket holds a full burst, which is what a new key is
 // given, so nothing it removes can be told apart from what it keeps. Asking the bucket rather
 // than timing it is what makes that exact: a bucket left in debt by a reservation, or one with
 // a rate that never refills, is not full and stays. The caller holds the write lock.
@@ -133,16 +141,14 @@ func (i *Limit) ReserveN(ip string, n int) *rate.Reservation {
 }
 
 // Reject checks if the request rate limit has been exceeded, but does not modify the counter.
-// A disabled limit, whose burst is 0, never rejects, and neither does an address it has not seen.
+// A disabled limit, whose burst is 0, never rejects, and neither does a network it has not seen.
 func (i *Limit) Reject(ip string) bool {
 	if i.rateLimit == rate.Inf {
 		return false
-	} else if ip == "" {
-		ip = DefaultIP
 	}
 
 	i.mu.RLock()
-	limiter, exists := i.limiters[ip]
+	limiter, exists := i.limiters[key(ip)]
 	i.mu.RUnlock()
 
 	return exists && limiter.Tokens() < 1

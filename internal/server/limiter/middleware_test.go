@@ -1,6 +1,7 @@
 package limiter
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -56,6 +57,25 @@ func TestMiddleware(t *testing.T) {
 		assert.Equal(t, http.StatusTooManyRequests, request(router, "198.51.100.8", "203.0.113.5"))
 		assert.Equal(t, http.StatusTooManyRequests, request(router, "2001:0db8:0000:0000:0000:0000:0000:0001, 203.0.113.5"))
 		assert.Equal(t, http.StatusOK, request(router, "203.0.113.5", "203.0.113.6"))
+	})
+	t.Run("IPv6Network", func(t *testing.T) {
+		router := newRouter(t, "")
+
+		// requestFrom sends a request from the specified peer and returns the status.
+		requestFrom := func(remoteAddr string) int {
+			req := httptest.NewRequest(http.MethodGet, "/", nil)
+			req.RemoteAddr = remoteAddr
+			w := httptest.NewRecorder()
+			router.ServeHTTP(w, req)
+			return w.Code
+		}
+
+		for i := range 3 {
+			assert.Equal(t, http.StatusOK, requestFrom(fmt.Sprintf("[2001:db8:1:2::%x]:1234", i+1)))
+		}
+
+		assert.Equal(t, http.StatusTooManyRequests, requestFrom("[2001:db8:1:2::ff]:1234"))
+		assert.Equal(t, http.StatusOK, requestFrom("[2001:db8:1:3::1]:1234"))
 	})
 	t.Run("PeerAddress", func(t *testing.T) {
 		router := newRouter(t, "")
