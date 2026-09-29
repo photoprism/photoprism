@@ -12,7 +12,6 @@ import (
 	"time"
 
 	"golang.org/x/crypto/acme/autocert"
-	"golang.org/x/sync/errgroup"
 
 	"github.com/gin-gonic/gin"
 
@@ -167,38 +166,38 @@ func Start(ctx context.Context, conf *config.Config) {
 	} else if tlsManager, tlsErr = AutoTLS(conf); tlsErr == nil {
 		log.Infof("server: starting in auto tls mode")
 
-		tlsSocket := dns.JoinHostPort(conf.HttpHost(), conf.HttpPort())
-		tlsConfig := tlsManager.TLSConfig()
-		tlsConfig.MinVersion = tls.VersionTLS12
+		server = newAutoTLSServer(router, conf, tlsManager)
 
-		server = newHTTPServer(router, conf)
+		if listener, err := net.Listen("tcp", server.Addr); err != nil {
+			Fail("server: %s", err)
+			return
+		} else {
+			log.Infof("server: listening on %s [%s]", server.Addr, time.Since(start))
 
-		// Listen on HTTPS socket.
-		server.Addr = tlsSocket
-		server.TLSConfig = tlsConfig
-
-		log.Infof("server: listening on %s [%s]", server.Addr, time.Since(start))
-
-		// Start Web server.
-		go StartAutoTLS(server, tlsManager, conf)
+			// Start Web server.
+			go StartTLS(server, listener)
+		}
 	} else if publicCert, privateKey := conf.TLS(); publicCert != "" && privateKey != "" {
 		log.Infof("server: starting in tls mode")
 
-		tlsSocket := dns.JoinHostPort(conf.HttpHost(), conf.HttpPort())
-		tlsConfig := &tls.Config{
-			MinVersion: tls.VersionTLS12,
+		keyPair, err := tls.LoadX509KeyPair(publicCert, privateKey)
+
+		if err != nil {
+			Fail("server: %s", err)
+			return
 		}
 
-		server = newHTTPServer(router, conf)
+		server = newTLSServer(router, conf, keyPair)
 
-		// Listen on HTTPS socket.
-		server.Addr = tlsSocket
-		server.TLSConfig = tlsConfig
+		if listener, listenErr := net.Listen("tcp", server.Addr); listenErr != nil {
+			Fail("server: %s", listenErr)
+			return
+		} else {
+			log.Infof("server: listening on %s [%s]", server.Addr, time.Since(start))
 
-		log.Infof("server: listening on %s [%s]", server.Addr, time.Since(start))
-
-		// Start Web server.
-		go StartTLS(server, publicCert, privateKey)
+			// Start Web server.
+			go StartTLS(server, listener)
+		}
 	} else {
 		log.Infof("server: %s", tlsErr)
 
@@ -262,9 +261,12 @@ func StartHttp(s *http.Server, l net.Listener) {
 	}
 }
 
-// StartTLS starts the Web server in https mode.
-func StartTLS(s *http.Server, httpsCert, privateKey string) {
-	if err := s.ListenAndServeTLS(httpsCert, privateKey); err != nil {
+// StartTLS starts the Web server in https mode with the certificates provided by s.TLSConfig.
+// The listener is closed on return, including when the TLS setup fails before serving.
+func StartTLS(s *http.Server, l net.Listener) {
+	defer l.Close()
+
+	if err := s.ServeTLS(l, "", ""); err != nil {
 		if errors.Is(err, http.ErrServerClosed) {
 			log.Info("server: shutdown complete")
 		} else {
@@ -273,54 +275,30 @@ func StartTLS(s *http.Server, httpsCert, privateKey string) {
 	}
 }
 
-// StartAutoTLS starts the Web server with auto tls enabled.
-func StartAutoTLS(s *http.Server, m *autocert.Manager, conf *config.Config) {
-	var g errgroup.Group
-
-	g.Go(func() error {
-		redirectSrv := newHTTPServer(m.HTTPHandler(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-			redirect(w, req, conf)
-		})), conf)
-		redirectSrv.Addr = dns.JoinHostPort(conf.HttpHost(), conf.HttpPort())
-
-		return redirectSrv.ListenAndServe()
-	})
-
-	g.Go(func() error {
-		return s.ListenAndServeTLS("", "")
-	})
-
-	if err := g.Wait(); err != nil {
-		if errors.Is(err, http.ErrServerClosed) {
-			log.Info("server: shutdown complete")
-		} else {
-			log.Errorf("server: %s", err)
-		}
+// newTLSServer creates the HTTPS server for tls mode with the specified certificate.
+func newTLSServer(handler http.Handler, conf *config.Config, keyPair tls.Certificate) *http.Server {
+	server := newHTTPServer(handler, conf)
+	server.Addr = dns.JoinHostPort(conf.HttpHost(), conf.HttpPort())
+	server.TLSConfig = &tls.Config{
+		MinVersion:   tls.VersionTLS12,
+		Certificates: []tls.Certificate{keyPair},
 	}
+
+	return server
 }
 
-// redirect sends HTTP requests to the configured HTTPS site host.
-func redirect(w http.ResponseWriter, req *http.Request, conf *config.Config) {
-	target := canonicalRedirectTarget(req, conf)
+// newAutoTLSServer creates the HTTPS server for auto tls mode.
+// Certificates are obtained with the tls-alpn-01 challenge on the same port.
+func newAutoTLSServer(handler http.Handler, conf *config.Config, m *autocert.Manager) *http.Server {
+	tlsConfig := m.TLSConfig()
+	tlsConfig.MinVersion = tls.VersionTLS12
+	tlsConfig.GetCertificate = certificateWarner(tlsConfig.GetCertificate, conf.SiteDomain(), certificateWarnInterval)
 
-	http.Redirect(w, req, target, httpsRedirect) //nolint:gosec // G710: host is the configured site host
-}
+	server := newHTTPServer(handler, conf)
+	server.Addr = dns.JoinHostPort(conf.HttpHost(), conf.HttpPort())
+	server.TLSConfig = tlsConfig
 
-// canonicalRedirectTarget returns the HTTPS redirect target using the configured public site host.
-func canonicalRedirectTarget(req *http.Request, conf *config.Config) string {
-	targetHost := ""
-
-	if req != nil {
-		targetHost = req.Host
-	}
-
-	if conf != nil {
-		if host := conf.SiteHost(); host != "" {
-			targetHost = host
-		}
-	}
-
-	return HTTPSRedirectTarget(req, targetHost)
+	return server
 }
 
 // HTTPSRedirectTarget returns the HTTPS redirect target for the provided request and host.

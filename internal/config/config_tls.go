@@ -5,6 +5,7 @@ import (
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/http/dns"
 )
 
 const (
@@ -19,9 +20,18 @@ func (c *Config) CertificatesPath() string {
 	return filepath.Join(c.ConfigPath(), fs.CertificatesDir)
 }
 
-// TLSEmail returns the email address to enable automatic HTTPS via Let's Encrypt
+// TLSEmail returns the email address for obtaining HTTPS certificates from Let's Encrypt.
 func (c *Config) TLSEmail() string {
 	return clean.Email(c.options.TLSEmail)
+}
+
+// AutoTLS checks if an HTTPS certificate for the site domain is obtained automatically from Let's Encrypt.
+func (c *Config) AutoTLS() bool {
+	if c.options.DisableTLS || !c.SiteHttps() || c.TLSEmail() == "" || c.HttpSocket() != nil {
+		return false
+	}
+
+	return dns.IsPublicName(c.SiteDomain())
 }
 
 // TLSCert returns the public certificate required to enable TLS.
@@ -102,15 +112,17 @@ func (c *Config) TLS() (publicCert, privateKey string) {
 	return c.TLSCert(), c.TLSKey()
 }
 
-// DisableTLS checks if HTTPS should be disabled even if the site URL starts with https:// and a certificate is available.
+// DisableTLS checks if HTTPS is disabled, either explicitly, by an http:// site URL, or because neither
+// automatic HTTPS nor a certificate is available.
 func (c *Config) DisableTLS() bool {
-	if c.options.DisableTLS {
+	switch {
+	case c.options.DisableTLS, !c.SiteHttps():
 		return true
-	} else if !c.SiteHttps() {
-		return true
+	case c.AutoTLS():
+		return false
+	default:
+		return c.TLSCert() == "" || c.TLSKey() == ""
 	}
-
-	return c.TLSCert() == "" || c.TLSKey() == ""
 }
 
 // DefaultTLS checks if a self-signed certificate should be used to enable HTTPS if no other certificate is available.

@@ -1,6 +1,6 @@
 ## PhotoPrism — HTTP Server
 
-**Last Updated:** September 27, 2026
+**Last Updated:** September 29, 2026
 
 ### Overview
 
@@ -11,13 +11,13 @@
 - Uses the configured `config.Config` to decide TLS, AutoTLS, Unix sockets, proxies, compression, and trusted headers.
 - Middleware must stay small and deterministic because it runs on every request; heavy logic belongs in handlers.
 - Panics are recovered by `Recovery()`, which returns 500 and writes a debug-level entry holding the stack trace, the caller, the request method, its route template and an allowlist of headers.
-- Startup supports mutually exclusive endpoints: Unix socket, HTTPS with certs, AutoTLS (with redirect listener), or plain HTTP.
+- Startup supports mutually exclusive endpoints: Unix socket, HTTPS with certs, AutoTLS, or plain HTTP. Each binds its listener before serving, and a bind failure, or a certificate pair that cannot be loaded, stops the process.
 
 #### Goals
 
 - Provide a single entrypoint (`Start`) that configures listeners, middleware, and routes consistently.
 - Keep health/readiness endpoints lightweight and cache-safe.
-- Ensure redirect and TLS listeners include sensible header and idle limits.
+- Ensure HTTP and TLS listeners include sensible header and idle limits.
 
 #### Non-Goals
 
@@ -27,6 +27,7 @@
 ### Package Layout (Code Map)
 
 - `start.go` — main startup flow, listener selection (HTTP/HTTPS/AutoTLS/Unix socket), graceful shutdown.
+- `autotls.go` — Let's Encrypt certificate manager for automatic HTTPS (`AutoTLS`).
 - `routes_webapp.go` — Web UI routes and shared method helpers (`MethodsGetHead`).
 - `static_precompressed.go` — `PrecompressedStatic` handler that serves bundled `/static/*` assets from precompressed siblings emitted by `frontend/scripts/precompress.js`; the same handler accepts operator-supplied siblings for `/c/static/*` and falls back to identity when none exist. Range requests always serve identity, and `http.ServeContent` continues to handle `Last-Modified` + `If-Modified-Since` revalidation for both encoded and identity responses (the handler does not set an `ETag`, so `If-None-Match` is latent rather than active).
 - `recovery.go` — panic recovery middleware with stack trace logging.
@@ -65,9 +66,22 @@
   - A request path component containing a backslash is refused before anything is created, renamed, or copied: `400` for `PUT`, `MKCOL`, and `MOVE`/`COPY` destinations (`WebDAVSeparatorInName`). `LOCK` is declined in `webDAVFileSystem.OpenFile`, which is where it would create its placeholder, and upstream reports that as `500`. Names that already contain one stay readable and removable.
   - A `PUT` declaring a length above `conf.OriginalsLimitBytes()` returns `413` before the destination is opened. A body of unknown length stays legal and is bounded as it is read, carrying the upstream handler's own status; any partial file it leaves is removed by `WebDAVRemovePartialUpload`.
   - `LOCK`, `PROPFIND` and `PROPPATCH` bodies are bounded at `api.MaxWebDAVMetadataRequestBytes` (128 KiB), since those are the methods the handler parses into memory. A declared length above the bound returns `413`; any other body is bounded as it is read.
-- AutoTLS: uses `autocert` and spins up a redirect listener; ensure ports 80/443 are reachable.
+- AutoTLS: see [Automatic HTTPS (AutoTLS)](#automatic-https-autotls).
 - Unix sockets: optional `force` query removes stale sockets; permissions can be set via `mode` query.
 - Health endpoints (`/livez`, `/health`, `/healthz`, `/readyz`) return `Cache-Control: no-store` and `Access-Control-Allow-Origin: *`.
+
+### Automatic HTTPS (AutoTLS)
+
+PhotoPrism can obtain and renew a certificate for the site domain from Let's Encrypt without a reverse proxy. `Start` selects the first endpoint that applies: Unix socket, AutoTLS, certificate files (`Config.TLS()`), then plain HTTP.
+
+- **Enabled when** `Config.AutoTLS()` is true: the site URL starts with `https://` and its host is a public DNS name (`dns.IsPublicName`: no IP address, numeric top-level label, or special-use name such as `localhost`, `.local`, `.test`, or `.internal`; IDNs and labels up to 63 characters are accepted), `--tls-email` holds a valid address, `--disable-tls` is off, and no Unix socket is configured. Otherwise `AutoTLS` returns the reason, which is logged when the server falls back to plain HTTP.
+- **Manager:** `AutoTLS` (`autotls.go`) creates an `autocert.Manager` that accepts the Let's Encrypt terms, allows only the site domain (`HostWhitelist`, trailing dot removed), and caches the account key and certificates in `conf.CertificatesPath()` (`storage/config/certificates`).
+- **Listener:** `newAutoTLSServer` builds the server with `newHTTPServer`, so the header and idle limits apply, and uses `m.TLSConfig()` with TLS 1.2 as the minimum; it advertises `h2`, `http/1.1`, and `acme-tls/1`. `Start` binds `HttpHost:HttpPort` before serving and stops the process if that fails; `StartTLS` serves on the bound listener.
+- **Challenge:** certificates are issued with `tls-alpn-01` on that same listener. Let's Encrypt connects to port 443 of the domain, so port 443 must reach `HttpPort` through a port mapping (e.g. `443:2342`), a router forward, or `--http-port 443`. There is no HTTP-01 challenge, no listener on port 80, and no redirect: a plain HTTP request to the port gets `400` from `net/http`.
+- **Lifecycle:** the certificate is requested with the first handshake for the domain and renewed by `autocert` before it expires. `--tls-cert` and `--tls-key` are not used in this mode.
+- **Related behavior:** `Config.DisableTLS()` reports false while AutoTLS is active. In Plus, Pro, and Portal, the security extension treats AutoTLS as HTTPS being available and sends the `Strict-Transport-Security` header configured with `--sts-seconds`, `--sts-subdomains`, and `--sts-preload`, unless `--http-sts` sets the header value directly.
+- **Logging:** a failed certificate request for the site domain is reported to the system log as a warning, at most once per minute (`certificateWarner`); the error may contain Let's Encrypt URLs, so it does not go to the regular log. Other handshake errors, including those for other names and challenge handshakes, are written by `net/http` through the standard logger, which the `event` package redirects to the PhotoPrism log at debug level.
+- **Tests:** `TestAutoTLS`, `TestNewAutoTLSServer`, `TestCertificateWarner`, and `TestStartTLS/AutoTLSChallenge`, which seeds a challenge certificate in a temporary cache and completes an `acme-tls/1` handshake over loopback; its manager points to an unreachable loopback directory URL, so no test contacts Let's Encrypt. Domain rules are covered by `TestConfig_AutoTLS` and `TestIsPublicName` in `pkg/http/dns`.
 
 ### Testing
 
