@@ -284,7 +284,7 @@ func TestMediaFile_CreateExifToolJson(t *testing.T) {
 	t.Run("InvalidExportKeepsError", func(t *testing.T) {
 		// A cached error stays when the ExifTool output cannot be read.
 		bin := filepath.Join(t.TempDir(), "exiftool")
-		require.NoError(t, os.WriteFile(bin, []byte("#!/bin/sh\necho '[1]'\n"), 0o700))
+		require.NoError(t, os.WriteFile(bin, []byte("#!/bin/sh\necho '[1]'\n"), 0o700)) //nolint:gosec // G306: test executable
 
 		prevBin := c.Options().ExifToolBin
 		c.Options().ExifToolBin = bin
@@ -585,7 +585,7 @@ func uniqueGopherVideo(t *testing.T) string {
 	require.NoError(t, err)
 
 	fileName := filepath.Join(t.TempDir(), "gopher-video.mp4")
-	require.NoError(t, os.WriteFile(fileName, append(data, []byte(t.Name())...), 0o600))
+	require.NoError(t, os.WriteFile(fileName, append(data, []byte(t.Name())...), 0o600)) //nolint:gosec // G703: test-owned path
 
 	return fileName
 }

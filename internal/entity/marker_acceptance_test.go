@@ -27,7 +27,7 @@ func TestMarker_SetFace_StoredAcceptance(t *testing.T) {
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			person := raceTestPerson(t, "Stored Acceptance "+tc.name)
-			f := raceTestFace(t, "", uint64(8200+i))
+			f := raceTestFace(t, "", uint64(8200+i)) //nolint:gosec // G115: small loop index
 			uids := syncTestMarkers(t, f, 1, "", raceTestFile)
 			require.NoError(t, UnscopedDb().Model(&Marker{}).Where("marker_uid = ?", uids[0]).UpdateColumns(Values{"face_id": "", "face_dist": -1, "matched_at": nil}).Error)
 			m := FindMarker(uids[0])
@@ -100,7 +100,7 @@ func TestMarker_SetFace_StoredAcceptanceRejected(t *testing.T) {
 		narrowed := name == "NarrowedCluster"
 		t.Run(name, func(t *testing.T) {
 			person := raceTestPerson(t, "Acceptance Rejected "+name)
-			f := raceTestFace(t, person.SubjUID, uint64(8211+i))
+			f := raceTestFace(t, person.SubjUID, uint64(8211+i)) //nolint:gosec // G115: small loop index
 			siblings := syncTestMarkers(t, f, 1, person.SubjUID, raceTestFile)
 			require.NoError(t, UnscopedDb().Model(&Marker{}).Where("marker_uid = ?", siblings[0]).UpdateColumns(Values{
 				"face_dist": 0, "embeddings_json": face.Embeddings{f.Embedding()}.JSON(),
@@ -159,7 +159,7 @@ func TestMarker_SetFace_StoredAcceptanceRejected(t *testing.T) {
 func TestMarker_SetFace_AcceptanceBounds(t *testing.T) {
 	for i, name := range []string{"Boundary", "Floor", "Widened", "Named", "Computed", "Repeated"} {
 		t.Run(name, func(t *testing.T) {
-			f := raceTestFace(t, "", uint64(8240+i))
+			f := raceTestFace(t, "", uint64(8240+i)) //nolint:gosec // G115: small loop index
 			if name == "Named" {
 				person := raceTestPerson(t, "Acceptance Bounds Named")
 				require.NoError(t, f.Update("subj_uid", person.SubjUID))
@@ -217,7 +217,7 @@ func TestMarker_SetFace_ConcurrentAcceptance(t *testing.T) {
 	for i, name := range []string{"Radius", "Subject", "Deleted"} {
 		t.Run(name, func(t *testing.T) {
 			person := raceTestPerson(t, "Concurrent Acceptance "+name)
-			f := raceTestFace(t, person.SubjUID, uint64(8250+i))
+			f := raceTestFace(t, person.SubjUID, uint64(8250+i)) //nolint:gosec // G115: small loop index
 			uids := syncTestMarkers(t, f, 1, "", raceTestFile)
 			require.NoError(t, UnscopedDb().Model(&Marker{}).Where("marker_uid = ?", uids[0]).UpdateColumns(Values{"face_id": "", "face_dist": -1, "matched_at": nil}).Error)
 			m := FindMarker(uids[0])
@@ -251,7 +251,7 @@ func TestMarker_SetFace_ConcurrentAcceptance(t *testing.T) {
 func TestMarker_SetFace_StoredAcceptanceSameFace(t *testing.T) {
 	for i, mode := range []string{"Narrowed", "Renamed", "Deleted", "Accepted"} {
 		t.Run(mode, func(t *testing.T) {
-			f := raceTestFace(t, "", uint64(8270+i))
+			f := raceTestFace(t, "", uint64(8270+i)) //nolint:gosec // G115: small loop index
 			uids := syncTestMarkers(t, f, 1, "", raceTestFile)
 			require.NoError(t, UnscopedDb().Model(&Marker{}).Where("marker_uid = ?", uids[0]).UpdateColumn("matched_at", Time("2000-01-01T00:00:00Z")).Error)
 			m := FindMarker(uids[0])

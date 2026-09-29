@@ -262,7 +262,7 @@ func TestRedactedOptions(t *testing.T) {
 		orig := c.Options().HttpsProxy
 		t.Cleanup(func() { c.Options().HttpsProxy = orig })
 
-		const configured = "https://proxy-user:proxy-pass@proxy.example.com:3128"
+		const configured = "https://proxy-user:proxy-pass@proxy.example.com:3128" //nolint:gosec // G101: sample proxy credential
 
 		c.Options().HttpsProxy = configured
 		out := c.RedactedOptions()
@@ -309,7 +309,7 @@ func TestRemoveRedactedOptionValues(t *testing.T) {
 		assert.Contains(t, v, "SiteTitle")
 	})
 	t.Run("NewValueIsKept", func(t *testing.T) {
-		v := Values{"HttpsProxy": "https://other:pass@proxy.example.net:3128"}
+		v := Values{"HttpsProxy": "https://other:pass@proxy.example.net:3128"} //nolint:gosec // G101: sample proxy credential
 		assert.Empty(t, c.RemoveRedactedOptionValues(v))
 		assert.Contains(t, v, "HttpsProxy")
 	})
@@ -322,7 +322,7 @@ func TestRemoveRedactedOptionValues(t *testing.T) {
 	t.Run("StaleRedactedValueIsDropped", func(t *testing.T) {
 		// Read before the proxy changed, posted after. The test is on the value's own shape, not
 		// on what is stored now, so it is dropped rather than written back as the password.
-		v := Values{"HttpsProxy": "https://someone:***@proxy.example.net:3128"}
+		v := Values{"HttpsProxy": "https://someone:***@proxy.example.net:3128"} //nolint:gosec // G101: sample credential
 		assert.Equal(t, []string{"HttpsProxy"}, c.RemoveRedactedOptionValues(v))
 		assert.NotContains(t, v, "HttpsProxy")
 	})

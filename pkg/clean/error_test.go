@@ -410,7 +410,7 @@ func TestErrorFlattenedUrl(t *testing.T) {
 	u, parseErr := url.Parse("https://user:notreal@cdn.example.com/a/b.tar.gz")
 	require.NoError(t, parseErr)
 
-	wrapped := &url.Error{Op: "Get", URL: "https://user:***@cdn.example.com/a/b.tar.gz", Err: errors.New("i/o timeout")}
+	wrapped := &url.Error{Op: "Get", URL: "https://user:***@cdn.example.com/a/b.tar.gz", Err: errors.New("i/o timeout")} //nolint:gosec // G101: sample credential
 	err := fmt.Errorf("failed to download %s (%w)", u.String(), wrapped)
 
 	t.Run("Error", func(t *testing.T) {

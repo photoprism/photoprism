@@ -196,7 +196,7 @@ func TestPurgeStaleUploads(t *testing.T) {
 		batch := newUploadBatch(t, c.UsersStoragePath(), "utfrd9md4cywhp5v", "old", 48*time.Hour)
 		parent := filepath.Dir(c.UsersStoragePath())
 		require.NoError(t, os.Chmod(parent, 0))
-		t.Cleanup(func() { require.NoError(t, os.Chmod(parent, 0o700)) })
+		t.Cleanup(func() { require.NoError(t, os.Chmod(parent, 0o700)) }) //nolint:gosec // G302: test directory mode
 		savedLog := log
 		t.Cleanup(func() { log = savedLog })
 		logger := logrus.New()
@@ -205,7 +205,7 @@ func TestPurgeStaleUploads(t *testing.T) {
 		log = logger
 		mutex.UserUploads.Store(true)
 		purgeStaleUploads(c)
-		require.NoError(t, os.Chmod(parent, 0o700))
+		require.NoError(t, os.Chmod(parent, 0o700)) //nolint:gosec // G302: test directory mode
 		assert.DirExists(t, batch)
 		assert.True(t, mutex.UserUploads.Load())
 		assert.Contains(t, output.String(), "upload:")
@@ -310,8 +310,8 @@ func TestPurgeStaleUploadsStorageClock(t *testing.T) {
 				case "Fifo":
 					require.NoError(t, unix.Mkfifo(clock, 0o600))
 				case "Unwritable":
-					require.NoError(t, os.Chmod(c.UsersStoragePath(), 0o500))
-					t.Cleanup(func() { require.NoError(t, os.Chmod(c.UsersStoragePath(), 0o700)) })
+					require.NoError(t, os.Chmod(c.UsersStoragePath(), 0o500))                       //nolint:gosec // G302: test directory mode
+					t.Cleanup(func() { require.NoError(t, os.Chmod(c.UsersStoragePath(), 0o700)) }) //nolint:gosec // G302: test directory mode
 				}
 				savedLog := log
 				t.Cleanup(func() { log = savedLog })
@@ -327,7 +327,7 @@ func TestPurgeStaleUploadsStorageClock(t *testing.T) {
 				assert.NotContains(t, output.String(), c.UsersStoragePath())
 				switch kind {
 				case "Symlink":
-					data, err := os.ReadFile(target)
+					data, err := os.ReadFile(target) //nolint:gosec // G304: test-owned path
 					require.NoError(t, err)
 					assert.Equal(t, "keep", string(data))
 				case "Dangling":
@@ -368,7 +368,7 @@ func TestStorageTime(t *testing.T) {
 		assert.True(t, now.After(before), now)
 		assert.True(t, now.Equal(file.ModTime()))
 		assert.Zero(t, file.Size())
-		data, err := os.ReadFile(linked)
+		data, err := os.ReadFile(linked) //nolint:gosec // G304: test-owned path
 		require.NoError(t, err)
 		assert.Equal(t, "keep", string(data))
 		entries, err := os.ReadDir(dir)
@@ -687,7 +687,7 @@ func TestRemoveExpiredUpload(t *testing.T) {
 		}
 		batch := newUploadBatch(t, t.TempDir(), "utfrd9md4cywhp5v", "old", 48*time.Hour)
 		require.NoError(t, os.Chmod(batch, 0))
-		t.Cleanup(func() { require.NoError(t, os.Chmod(batch, 0o700)) })
+		t.Cleanup(func() { require.NoError(t, os.Chmod(batch, 0o700)) }) //nolint:gosec // G302: test directory mode
 		outcome, err := removeExpiredUpload(batch, cutoff)
 		assert.Error(t, err)
 		assert.Equal(t, uploadKept, outcome)
@@ -695,7 +695,7 @@ func TestRemoveExpiredUpload(t *testing.T) {
 		hidden := newUploadBatch(t, t.TempDir(), "utly13tubtpxbzaz", "old", 48*time.Hour)
 		parent := filepath.Dir(hidden)
 		require.NoError(t, os.Chmod(parent, 0))
-		t.Cleanup(func() { require.NoError(t, os.Chmod(parent, 0o700)) })
+		t.Cleanup(func() { require.NoError(t, os.Chmod(parent, 0o700)) }) //nolint:gosec // G302: test directory mode
 		outcome, err = removeExpiredUpload(hidden, cutoff)
 		assert.Error(t, err)
 		assert.Equal(t, uploadKept, outcome)

@@ -399,13 +399,13 @@ func TestServiceError(t *testing.T) {
 	})
 	t.Run("RemoteBodyBytesDoNotSurvive", func(t *testing.T) {
 		// The stored value must stay one line, in one field, whatever the cause contains.
-		body := "500 Internal Server Error: \x00\x01\x02\x7f\x1b[31m\nsync: › admin › granted‮\a"
+		body := "500 Internal Server Error: \x00\x01\x02\x7f\x1b[31m\nsync: › admin › granted\u202e\a"
 		s := ServiceError(errors.New(body))
 		assert.NotContains(t, s, "\x00")
 		assert.NotContains(t, s, "\x1b")
 		assert.NotContains(t, s, "\a")
 		assert.NotContains(t, s, "\n", "a remote body must not add a line")
-		assert.NotContains(t, s, "‮", "a remote body must not carry a bidi override")
+		assert.NotContains(t, s, "\u202e", "a remote body must not carry a bidi override")
 		assert.NotContains(t, s, "›", "a remote body must not add a field separator")
 		assert.True(t, utf8.ValidString(s), "the stored value must be valid UTF-8")
 	})

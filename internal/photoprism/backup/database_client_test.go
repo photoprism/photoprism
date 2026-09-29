@@ -507,7 +507,7 @@ func TestMariadbClientVersion(t *testing.T) {
 		clientProbeTimeout, clientProbeWaitDelay = 200*time.Millisecond, 200*time.Millisecond
 
 		bin := filepath.Join(t.TempDir(), "client")
-		require.NoError(t, os.WriteFile(bin, []byte("#!/bin/sh\necho 'from 11.8.6-MariaDB'\nexec sleep 30\n"), 0o700))
+		require.NoError(t, os.WriteFile(bin, []byte("#!/bin/sh\necho 'from 11.8.6-MariaDB'\nexec sleep 30\n"), 0o700)) //nolint:gosec // G306: test executable
 
 		_, _, kind := mariadbClientVersion(bin)
 		assert.Equal(t, clientUnknown, kind)

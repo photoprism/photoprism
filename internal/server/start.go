@@ -303,7 +303,7 @@ func StartAutoTLS(s *http.Server, m *autocert.Manager, conf *config.Config) {
 func redirect(w http.ResponseWriter, req *http.Request, conf *config.Config) {
 	target := canonicalRedirectTarget(req, conf)
 
-	http.Redirect(w, req, target, httpsRedirect)
+	http.Redirect(w, req, target, httpsRedirect) //nolint:gosec // G710: host is the configured site host
 }
 
 // canonicalRedirectTarget returns the HTTPS redirect target using the configured public site host.

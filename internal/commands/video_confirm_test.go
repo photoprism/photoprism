@@ -53,7 +53,7 @@ func assertVideoRefused(t *testing.T, cmd *cli.Command, args []string, fileName 
 
 	t.Setenv("PHOTOPRISM_CLI", "")
 
-	before, err := os.ReadFile(fileName)
+	before, err := os.ReadFile(fileName) //nolint:gosec // G304: test-owned path
 	require.NoError(t, err)
 	stat, err := os.Stat(fileName)
 	require.NoError(t, err)
@@ -61,7 +61,7 @@ func assertVideoRefused(t *testing.T, cmd *cli.Command, args []string, fileName 
 	unchanged := func() {
 		t.Helper()
 
-		data, readErr := os.ReadFile(fileName)
+		data, readErr := os.ReadFile(fileName) //nolint:gosec // G304: test-owned path
 		require.NoError(t, readErr)
 		assert.Equal(t, before, data)
 

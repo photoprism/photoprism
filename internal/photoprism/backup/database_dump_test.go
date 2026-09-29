@@ -59,7 +59,7 @@ func TestWriteDump(t *testing.T) {
 		err := writeDump(cmd, dir, fileName, "", true, 1)
 
 		require.Error(t, err)
-		data, readErr := os.ReadFile(fileName)
+		data, readErr := os.ReadFile(fileName) //nolint:gosec // G304: test-owned path
 		require.NoError(t, readErr)
 		assert.Equal(t, "good 2026-09-25.sql", string(data))
 		assert.Equal(t, []string{"2026-09-23.sql", "2026-09-24.sql", "2026-09-25.sql"}, dirNames(t, dir))
@@ -67,13 +67,13 @@ func TestWriteDump(t *testing.T) {
 	t.Run("SuccessReplacesAndRotates", func(t *testing.T) {
 		dir := seedDumps(t, "2026-09-23.sql", "2026-09-24.sql", "2026-09-25.sql")
 		fileName := filepath.Join(dir, "2026-09-25.sql")
-		require.NoError(t, os.Chmod(fileName, 0o644))
+		require.NoError(t, os.Chmod(fileName, 0o644)) //nolint:gosec // G302: wider mode the replacement must not keep
 		cmd := exec.Command("sh", "-c", "printf 'complete dump'")
 
 		err := writeDump(cmd, dir, fileName, "", true, 2)
 
 		require.NoError(t, err)
-		data, readErr := os.ReadFile(fileName)
+		data, readErr := os.ReadFile(fileName) //nolint:gosec // G304: test-owned path
 		require.NoError(t, readErr)
 		assert.Equal(t, "complete dump", string(data))
 		info, statErr := os.Stat(fileName)
@@ -88,7 +88,7 @@ func TestWriteDump(t *testing.T) {
 
 		require.NoError(t, writeDump(cmd, dir, fileName, "", false, 0))
 
-		data, err := os.ReadFile(fileName)
+		data, err := os.ReadFile(fileName) //nolint:gosec // G304: test-owned path
 		require.NoError(t, err)
 		assert.Equal(t, "complete dump", string(data))
 		assert.Equal(t, []string{"2026-09-25.sql"}, dirNames(t, dir))
@@ -102,7 +102,7 @@ func TestWriteDump(t *testing.T) {
 
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "empty")
-		data, readErr := os.ReadFile(fileName)
+		data, readErr := os.ReadFile(fileName) //nolint:gosec // G304: test-owned path
 		require.NoError(t, readErr)
 		assert.Equal(t, "good 2026-09-25.sql", string(data))
 		assert.Equal(t, []string{"2026-09-24.sql", "2026-09-25.sql"}, dirNames(t, dir))
@@ -115,7 +115,7 @@ func TestWriteDump(t *testing.T) {
 		err := writeDump(cmd, dir, fileName, "", false, 0)
 
 		require.Error(t, err)
-		data, readErr := os.ReadFile(fileName)
+		data, readErr := os.ReadFile(fileName) //nolint:gosec // G304: test-owned path
 		require.NoError(t, readErr)
 		assert.Equal(t, "good 2026-09-25.sql", string(data))
 		assert.Equal(t, []string{"2026-09-25.sql"}, dirNames(t, dir))
@@ -125,11 +125,11 @@ func TestWriteDump(t *testing.T) {
 		fileName := filepath.Join(dir, "2026-09-25.sql")
 
 		// The command reports the directory entries and their modes while it writes the stage.
-		cmd := exec.Command("sh", "-c", `cd "$1" && for f in .* *; do [ -f "$f" ] && stat -c '%a %n' "$f"; done; true`, "sh", dir)
+		cmd := exec.Command("sh", "-c", `cd "$1" && for f in .* *; do [ -f "$f" ] && stat -c '%a %n' "$f"; done; true`, "sh", dir) //nolint:gosec // G204: test command
 
 		require.NoError(t, writeDump(cmd, dir, fileName, "", false, 0))
 
-		data, err := os.ReadFile(fileName)
+		data, err := os.ReadFile(fileName) //nolint:gosec // G304: test-owned path
 		require.NoError(t, err)
 		lines := strings.Split(strings.TrimSpace(string(data)), "\n")
 		require.Len(t, lines, 1)
@@ -163,7 +163,7 @@ func TestWriteDump(t *testing.T) {
 		fileName := filepath.Join(dir, "2026-09-25.sql")
 
 		// The command occupies the destination with a non-empty directory, which a rename cannot replace.
-		cmd := exec.Command("sh", "-c", `printf data; mkdir "$1" && touch "$1/x"`, "sh", fileName)
+		cmd := exec.Command("sh", "-c", `printf data; mkdir "$1" && touch "$1/x"`, "sh", fileName) //nolint:gosec // G204: test command
 
 		require.Error(t, writeDump(cmd, dir, fileName, "", true, 0))
 		assert.Equal(t, []string{"2026-09-25.sql"}, dirNames(t, dir))
@@ -185,7 +185,7 @@ func TestWriteDump(t *testing.T) {
 
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "file too large")
-		data, readErr := os.ReadFile(fileName)
+		data, readErr := os.ReadFile(fileName) //nolint:gosec // G304: test-owned path
 		require.NoError(t, readErr)
 		assert.Equal(t, "good 2026-09-25.sql", string(data))
 		assert.Equal(t, []string{"2026-09-24.sql", "2026-09-25.sql"}, dirNames(t, dir))
@@ -195,7 +195,7 @@ func TestWriteDump(t *testing.T) {
 		fileName := filepath.Join(dir, "2026-09-25.sql")
 		require.NoError(t, os.Symlink("target.sql", fileName))
 		marker := filepath.Join(dir, "ran")
-		cmd := exec.Command("sh", "-c", `touch "$1"; printf 'complete dump'`, "sh", marker)
+		cmd := exec.Command("sh", "-c", `touch "$1"; printf 'complete dump'`, "sh", marker) //nolint:gosec // G204: test command
 
 		err := writeDump(cmd, dir, fileName, "", true, 0)
 
@@ -205,7 +205,7 @@ func TestWriteDump(t *testing.T) {
 		info, lstatErr := os.Lstat(fileName)
 		require.NoError(t, lstatErr)
 		assert.Equal(t, os.ModeSymlink, info.Mode().Type())
-		data, readErr := os.ReadFile(filepath.Join(dir, "target.sql"))
+		data, readErr := os.ReadFile(filepath.Join(dir, "target.sql")) //nolint:gosec // G304: test-owned path
 		require.NoError(t, readErr)
 		assert.Equal(t, "good target.sql", string(data))
 		assert.Equal(t, []string{"2026-09-25.sql", "target.sql"}, dirNames(t, dir))
@@ -229,7 +229,7 @@ func TestWriteDump(t *testing.T) {
 		require.NoError(t, syscall.Mkfifo(fileName, 0o600))
 
 		// Opening the pipe read-write keeps the reader from blocking on a missing writer.
-		reader, err := os.OpenFile(fileName, os.O_RDWR, 0)
+		reader, err := os.OpenFile(fileName, os.O_RDWR, 0) //nolint:gosec // G304: test-owned path
 		require.NoError(t, err)
 		t.Cleanup(func() { _ = reader.Close() })
 
@@ -328,7 +328,7 @@ func TestWriteDumpTo(t *testing.T) {
 		err := writeDumpTo(exec.Command("sh", "-c", "printf 'complete dump'"), fileName, "", os.Geteuid())
 
 		require.Error(t, err)
-		data, readErr := os.ReadFile(filepath.Join(dir, "target.sql"))
+		data, readErr := os.ReadFile(filepath.Join(dir, "target.sql")) //nolint:gosec // G304: test-owned path
 		require.NoError(t, readErr)
 		assert.Equal(t, "good target.sql", string(data))
 	})
@@ -340,7 +340,7 @@ func TestWriteDumpTo(t *testing.T) {
 
 		require.Error(t, err)
 		assert.Contains(t, err.Error(), "regular file")
-		data, readErr := os.ReadFile(fileName)
+		data, readErr := os.ReadFile(fileName) //nolint:gosec // G304: test-owned path
 		require.NoError(t, readErr)
 		assert.Equal(t, "good manual.sql", string(data))
 	})
@@ -348,7 +348,7 @@ func TestWriteDumpTo(t *testing.T) {
 		fileName := filepath.Join(t.TempDir(), "dump.pipe")
 		require.NoError(t, syscall.Mkfifo(fileName, 0o600))
 		marker := filepath.Join(t.TempDir(), "ran")
-		cmd := exec.Command("sh", "-c", `touch "$1"; printf 'complete dump'`, "sh", marker)
+		cmd := exec.Command("sh", "-c", `touch "$1"; printf 'complete dump'`, "sh", marker) //nolint:gosec // G204: test command
 		done := make(chan error, 1)
 
 		// Without a reader, the pipe is refused before the open, which would block.
@@ -540,8 +540,8 @@ func TestRunRestore(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		// The client reads the dump from its input.
 		out := filepath.Join(t.TempDir(), "restored.sql")
-		require.NoError(t, runRestore(exec.Command("sh", "-c", "cat > '"+out+"'"), strings.NewReader("SELECT 1;\n"), ""))
-		data, err := os.ReadFile(out)
+		require.NoError(t, runRestore(exec.Command("sh", "-c", "cat > '"+out+"'"), strings.NewReader("SELECT 1;\n"), "")) //nolint:gosec // G204: test command on a temp path
+		data, err := os.ReadFile(out)                                                                                     //nolint:gosec // G304: test-owned path
 		require.NoError(t, err)
 		assert.Equal(t, "SELECT 1;\n", string(data))
 	})
@@ -570,12 +570,12 @@ func TestRunRestore(t *testing.T) {
 		dir := t.TempDir()
 		in, out := filepath.Join(dir, "dump.sql"), filepath.Join(dir, "stdin")
 		require.NoError(t, os.WriteFile(in, []byte("SELECT 1;\n"), 0o600))
-		f, err := os.Open(in)
+		f, err := os.Open(in) //nolint:gosec // G304: test-owned path
 		require.NoError(t, err)
 		defer f.Close()
 
-		require.NoError(t, runRestore(exec.Command("sh", "-c", "if [ -p /dev/stdin ]; then echo pipe; else echo other; fi > '"+out+"'; cat >/dev/null"), f, ""))
-		data, err := os.ReadFile(out)
+		require.NoError(t, runRestore(exec.Command("sh", "-c", "if [ -p /dev/stdin ]; then echo pipe; else echo other; fi > '"+out+"'; cat >/dev/null"), f, "")) //nolint:gosec // G204: test command on a temp path
+		data, err := os.ReadFile(out)                                                                                                                            //nolint:gosec // G304: test-owned path
 		require.NoError(t, err)
 		assert.Equal(t, "pipe\n", string(data))
 	})

@@ -38,7 +38,7 @@ var (
 // error rather than something to skip: a silently dropped row would leave an artifact looking
 // undescribed, which is the one signal this tool exists to produce.
 func ReadInstaller(path string) (map[string]InstallerModel, error) {
-	body, err := os.ReadFile(path)
+	body, err := os.ReadFile(path) //nolint:gosec // G304: path comes from the command line
 
 	if err != nil {
 		return nil, err

@@ -126,7 +126,7 @@ func newTestWebDAVServerWithOptions(options testWebDAVServerOptions) *httptest.S
 		switch depth {
 		case "1":
 			if options.redirectSlashlessDepthOne && requestPath != "/" && !strings.HasSuffix(rawPath, "/") {
-				http.Redirect(w, r, rawPath+"/", http.StatusMovedPermanently)
+				http.Redirect(w, r, rawPath+"/", http.StatusMovedPermanently) //nolint:gosec // G710: test server
 				return
 			}
 

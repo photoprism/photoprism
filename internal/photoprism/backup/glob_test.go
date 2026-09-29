@@ -84,8 +84,8 @@ func TestGlobIn(t *testing.T) {
 		dir := filepath.Join(parent, "c.d+", "backup")
 		require.NoError(t, os.MkdirAll(dir, fs.ModeDir))
 		require.NoError(t, os.WriteFile(filepath.Join(dir, "2026-09-25.sql"), []byte("dump"), fs.ModeBackupFile))
-		require.NoError(t, os.Chmod(parent, 0o311))
-		t.Cleanup(func() { _ = os.Chmod(parent, 0o755) })
+		require.NoError(t, os.Chmod(parent, 0o311))       //nolint:gosec // G302: directory without read permission
+		t.Cleanup(func() { _ = os.Chmod(parent, 0o755) }) //nolint:gosec // G302: restores access for cleanup
 
 		files, err := globIn(dir, SqlBackupFileNamePattern)
 

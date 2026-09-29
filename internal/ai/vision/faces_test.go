@@ -219,9 +219,9 @@ func TestEmbedFaces(t *testing.T) {
 
 		// The crops are cached next to a copy of the image, which the request reads them from.
 		tmpFile := filepath.Join(t.TempDir(), "1.jpg")
-		data, readErr := os.ReadFile(fileName)
+		data, readErr := os.ReadFile(fileName) //nolint:gosec // G304: test-owned path
 		require.NoError(t, readErr)
-		require.NoError(t, os.WriteFile(tmpFile, data, 0o600))
+		require.NoError(t, os.WriteFile(tmpFile, data, 0o600)) //nolint:gosec // G703: test-owned path
 
 		refused := face.Faces{{Rows: 100, Cols: 100, Area: face.NewArea("face", 50, 50, 20)}}
 		require.EqualError(t, EmbedFaces(tmpFile, refused, true, nil), "vision service request failed (status 403)")
