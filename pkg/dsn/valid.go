@@ -27,7 +27,7 @@ func ValidIdent(s string) bool {
 }
 
 // ValidServer reports whether s is a host name or IP address with an optional port, or a port alone
-// in the form ":3306".
+// in the form ":3306". A bracketed IPv6 address needs a port, since the MySQL driver cannot add one.
 func ValidServer(s string) bool {
 	host, port := s, ""
 

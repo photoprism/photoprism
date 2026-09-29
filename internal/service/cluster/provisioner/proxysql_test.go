@@ -156,6 +156,7 @@ func TestNormalizeProxyDSN(t *testing.T) {
 			"admin:admin@tcp(127.0.0.1:6032)/?charset=latin1",
 			"admin:admin@tcp(127.0.0.1:6032)/?collation=latin1_swedish_ci&interpolateParams=true",
 			"admin:admin@tcp(127.0.0.1:6032)/?charset=utf8mb4&charset=latin1",
+			"admin:admin@tcp(127.0.0.1:6032)/?CHARACTER_SET_CLIENT=gbk",
 		} {
 			_, err := normalizeProxyDSN(in)
 			assert.EqualError(t, err, "proxysql: dsn must use a UTF-8 character set", in)

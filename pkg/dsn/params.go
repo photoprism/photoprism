@@ -89,15 +89,20 @@ func Query(s string) string {
 	return query
 }
 
-// Utf8Params reports whether every charset and collation parameter in a DSN query names UTF-8.
+// Utf8Params reports whether every charset and collation parameter in a DSN query names UTF-8, including
+// the character_set_* and collation_* session variables the driver sets for unknown parameters.
 func Utf8Params(query string) bool {
 	for param := range strings.SplitSeq(query, "&") {
-		switch key, value, _ := strings.Cut(param, "="); key {
-		case "charset":
+		key, value, _ := strings.Cut(param, "=")
+		key, value = strings.ToLower(key), strings.Trim(value, `'"`)
+
+		// Session variables may be named with a scope, e.g. "@@session.character_set_client".
+		switch {
+		case key == "charset" || strings.Contains(key, "character_set"):
 			if !ValidCharset(value) {
 				return false
 			}
-		case "collation":
+		case strings.Contains(key, "collation"):
 			if !ValidCollation(value) {
 				return false
 			}
