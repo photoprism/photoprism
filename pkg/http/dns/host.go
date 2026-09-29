@@ -30,3 +30,14 @@ func BracketHost(host string) string {
 
 	return host
 }
+
+// IsASCII reports whether s contains only ASCII characters.
+func IsASCII(s string) bool {
+	for i := 0; i < len(s); i++ {
+		if s[i] >= 0x80 {
+			return false
+		}
+	}
+
+	return true
+}

@@ -60,3 +60,10 @@ func TestJoinHostPort_Listen(t *testing.T) {
 		}
 	}
 }
+
+func TestIsASCII(t *testing.T) {
+	assert.True(t, IsASCII("photos.example.io:443"))
+	assert.True(t, IsASCII(""))
+	assert.False(t, IsASCII("photos.example.\u0130o"))
+	assert.False(t, IsASCII("\u212a.example"))
+}

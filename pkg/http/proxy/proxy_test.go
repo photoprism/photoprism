@@ -168,3 +168,43 @@ func TestProxy(t *testing.T) {
 		assert.Equal(t, previousHost, OriginHost)
 	})
 }
+
+func TestNormalizeProxyURI(t *testing.T) {
+	t.Run("Hostname", func(t *testing.T) {
+		prefix, originScheme, originHost, err := NormalizeProxyURI("https://portal.example.com/i/")
+		require.NoError(t, err)
+		assert.Equal(t, "/i/", prefix)
+		assert.Equal(t, "https", originScheme)
+		assert.Equal(t, "portal.example.com", originHost)
+	})
+	t.Run("IPv6", func(t *testing.T) {
+		_, _, originHost, err := NormalizeProxyURI("https://[2001:db8::1]/i/")
+		require.NoError(t, err)
+		assert.Equal(t, "[2001:db8::1]", originHost)
+		assert.True(t, HostMatch("[2001:db8::1]", originHost))
+	})
+	t.Run("IPv6Port", func(t *testing.T) {
+		_, _, originHost, err := NormalizeProxyURI("https://[2001:db8::1]:8443/i/")
+		require.NoError(t, err)
+		assert.Equal(t, "[2001:db8::1]:8443", originHost)
+	})
+	t.Run("IPv6Canonical", func(t *testing.T) {
+		_, _, originHost, err := NormalizeProxyURI("https://[2001:0DB8::0001]/i/")
+		require.NoError(t, err)
+		assert.Equal(t, "[2001:db8::1]", originHost)
+		_, _, originHost, err = NormalizeProxyURI("https://[2001:0db8::0001]:8443/i/")
+		require.NoError(t, err)
+		assert.Equal(t, "[2001:db8::1]:8443", originHost)
+	})
+	t.Run("IPv4Mapped", func(t *testing.T) {
+		_, _, originHost, err := NormalizeProxyURI("https://[::ffff:192.0.2.1]/i/")
+		require.NoError(t, err)
+		assert.Equal(t, "192.0.2.1", originHost)
+		assert.True(t, HostMatch("192.0.2.1", originHost))
+	})
+	t.Run("IPv4Port", func(t *testing.T) {
+		_, _, originHost, err := NormalizeProxyURI("http://192.0.2.1:2342/i/")
+		require.NoError(t, err)
+		assert.Equal(t, "192.0.2.1:2342", originHost)
+	})
+}

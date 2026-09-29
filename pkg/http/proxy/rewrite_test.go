@@ -58,6 +58,58 @@ func TestHostMatch(t *testing.T) {
 	assert.True(t, HostMatch("portal.example.com:443", "portal.example.com"))
 	assert.True(t, HostMatch("Portal.Example.Com:443", "portal.example.com"))
 	assert.False(t, HostMatch("node.example.com", "portal.example.com"))
+	assert.True(t, HostMatch("[2001:db8::1]", "[2001:db8::1]"))
+	assert.True(t, HostMatch("[2001:db8::1]:8443", "[2001:db8::1]"))
+	assert.True(t, HostMatch("[2001:DB8::1]", "2001:db8::1"))
+	assert.False(t, HostMatch("[2001:db8::2]", "[2001:db8::1]"))
+	assert.True(t, HostMatch("[2001:0db8::0001]", "[2001:db8::1]"))
+	assert.True(t, HostMatch("192.0.2.1:2342", "192.0.2.1"))
+}
+
+func TestHostMatch_Invalid(t *testing.T) {
+	for _, host := range []string{
+		"[portal.example.com]",
+		"[PORTAL.EXAMPLE.COM]",
+		"[portal.example.com]:443",
+		"portal.example.com:evil.com",
+		"portal.example.com:0",
+		"portal.example.com:70000",
+		"portal.example.com:+443",
+		"portal.example.com:0443",
+		"portal.example.com:",
+		"[192.0.2.1]",
+		"[::ffff:192.0.2.1]",
+		"[]",
+		"",
+		"portal.example.com@evil",
+		"portal.example.com/x",
+		"portal.example.\u0441om",
+	} {
+		assert.False(t, HostMatch(host, "portal.example.com"), host)
+	}
+
+	assert.False(t, HostMatch("\u212a.example.com", "k.example.com"))
+	assert.False(t, HostMatch("photos.example.\u0130o", "photos.example.io"))
+
+	assert.False(t, HostMatch("[192.0.2.1]", "192.0.2.1"))
+	assert.False(t, HostMatch("", ""))
+}
+
+func TestHostKey(t *testing.T) {
+	for in, want := range map[string]string{
+		"Portal.Example.Com":     "portal.example.com",
+		"portal.example.com:443": "portal.example.com",
+		"[2001:DB8::1]:8443":     "2001:db8::1",
+		"2001:db8::1":            "2001:db8::1",
+		"192.0.2.1":              "192.0.2.1",
+	} {
+		got, ok := hostKey(in)
+		assert.True(t, ok, in)
+		assert.Equal(t, want, got, in)
+	}
+
+	_, ok := hostKey("[portal.example.com]")
+	assert.False(t, ok)
 }
 
 func TestRewriteDestinationHost(t *testing.T) {

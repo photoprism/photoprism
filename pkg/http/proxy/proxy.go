@@ -27,12 +27,14 @@ package proxy
 import (
 	"fmt"
 	"net"
+	"net/netip"
 	"net/url"
 	"path"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/http/dns"
 	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
@@ -182,7 +184,16 @@ func NormalizeProxyURI(raw string) (pathPrefix, originScheme, originHost string,
 		}
 		originHost = net.JoinHostPort(host, port)
 	} else {
-		originHost = host
+		originHost = dns.BracketHost(host)
+	}
+
+	// Store an IP address in canonical form, so it matches the Host header a client sends.
+	if addr, parseErr := netip.ParseAddr(host); parseErr == nil {
+		if port != "" {
+			originHost = net.JoinHostPort(addr.WithZone("").Unmap().String(), port)
+		} else {
+			originHost = dns.BracketHost(addr.WithZone("").Unmap().String())
+		}
 	}
 
 	pathValue := strings.TrimSpace(u.EscapedPath())
