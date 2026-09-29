@@ -1,12 +1,16 @@
 package backup
 
 import (
+	"errors"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"testing"
+	"testing/iotest"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -32,6 +36,72 @@ func TestLogRestoreResult(t *testing.T) {
 		assert.Equal(t, logrus.WarnLevel, hook.LastEntry().Level)
 		assert.Equal(t, "restore: index database restored, but 7 statements failed and some rows may be missing "+
 			"(error 1062 at line 4, error 1286 at line 5)", hook.LastEntry().Message)
+	})
+}
+
+// TestRestoreAndLog checks the outcome a restore logs.
+func TestRestoreAndLog(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		hook := captureLog(t)
+		require.NoError(t, restoreAndLog(exec.Command("sh", "-c", "cat >/dev/null"), strings.NewReader("SELECT 1;\n"), ""))
+		assert.Contains(t, logMessages(hook), "restore: index database successfully restored")
+	})
+	t.Run("FailedStatements", func(t *testing.T) {
+		hook := captureLog(t)
+		script := `printf '%s\n' "ERROR 1062 (23000) at line 4: Duplicate entry 'val-a' for key 'PRIMARY'" >&2; cat >/dev/null`
+		require.NoError(t, restoreAndLog(exec.Command("sh", "-c", script), strings.NewReader(""), ""))
+		assert.Contains(t, logMessages(hook), "restore: index database restored, but 1 statement failed and some rows may be missing (error 1062 at line 4)")
+		assert.NotContains(t, logMessages(hook), "restore: index database successfully restored")
+	})
+	t.Run("Failed", func(t *testing.T) {
+		hook := captureLog(t)
+		require.Error(t, restoreAndLog(exec.Command("sh", "-c", "echo 'ERROR 2002 (HY000): Can not connect' >&2; exit 1"), strings.NewReader(""), ""))
+		assert.Contains(t, logMessages(hook), "restore: failed to restore index database")
+	})
+}
+
+// TestRunRestore_Sqlite restores dumps with the SQLite client into a temporary database file.
+func TestRunRestore_Sqlite(t *testing.T) {
+	bin, err := exec.LookPath("sqlite3")
+
+	if err != nil {
+		t.Skip("sqlite3 client not found")
+	}
+
+	restore := func(t *testing.T, dump string) (restoreFailures, error) {
+		t.Helper()
+		return runRestore(sqliteRestoreCmd(bin, filepath.Join(t.TempDir(), "index.db")), strings.NewReader(dump), "")
+	}
+
+	t.Run("Clean", func(t *testing.T) {
+		failed, restoreErr := restore(t, "CREATE TABLE t (id INTEGER PRIMARY KEY);\nINSERT INTO t VALUES (1);\n")
+		require.NoError(t, restoreErr)
+		assert.Zero(t, failed.Count)
+	})
+	t.Run("FailedStatements", func(t *testing.T) {
+		failed, restoreErr := restore(t, "CREATE TABLE t (id INTEGER PRIMARY KEY, v TEXT);\nINSERT INTO t VALUES (1,'val-a');\n"+
+			"INSERT INTO t VALUES (1,'val-b');\nINSERT INTO t VALUE (2,'val-c');\nINSERT INTO t VALUES (3,'val-d');\n")
+		require.NoError(t, restoreErr)
+		assert.Equal(t, 2, failed.Count)
+		assert.Equal(t, []string{"error at line 3", "error at line 4"}, failed.Errors)
+	})
+	t.Run("CannotOpen", func(t *testing.T) {
+		cmd := sqliteRestoreCmd(bin, filepath.Join(t.TempDir(), "missing", "index.db"))
+		_, restoreErr := runRestore(cmd, strings.NewReader("CREATE TABLE t (id INTEGER);\n"), "")
+		require.Error(t, restoreErr)
+		assert.Contains(t, restoreErr.Error(), "unable to open database")
+	})
+	t.Run("ReadOnly", func(t *testing.T) {
+		if os.Geteuid() == 0 {
+			t.Skip("root can write read-only files")
+		}
+		dbFile := filepath.Join(t.TempDir(), "index.db")
+		_, restoreErr := runRestore(sqliteRestoreCmd(bin, dbFile), strings.NewReader("CREATE TABLE t (id INTEGER);\n"), "")
+		require.NoError(t, restoreErr)
+		require.NoError(t, os.Chmod(dbFile, 0o400))
+		_, restoreErr = runRestore(sqliteRestoreCmd(bin, dbFile), strings.NewReader("INSERT INTO t VALUES (1);\nINSERT INTO t VALUES (2);\n"), "")
+		require.Error(t, restoreErr)
+		assert.Contains(t, restoreErr.Error(), "(8)")
 	})
 }
 
@@ -89,11 +159,52 @@ func TestRunRestore_MariaDB(t *testing.T) {
 		assert.Equal(t, 3, failed.Count)
 		assert.Equal(t, []string{"error 1927 at line 3", "error 2013 at line 4", "error 2006 at line 5"}, failed.Errors)
 	})
+	t.Run("MultiLineSyntaxError", func(t *testing.T) {
+		// A syntax error quoting a value that spans lines logs no part of it.
+		dump := "CREATE TABLE t (id INT PRIMARY KEY, v TEXT);\n" +
+			"INSERT INTO t VALUES (1 x,'val-a\nsecond-line val-b');\nINSERT INTO t VALUES (2,'c');\n"
+		hook := captureLog(t)
+		failed := restore(t, dump)
+		assert.Equal(t, 1, failed.Count)
+		for _, entry := range hook.AllEntries() {
+			if entry.Level != logrus.TraceLevel {
+				assert.NotContains(t, entry.Message, "val-")
+			}
+		}
+
+		// The lines kept for an error message contain no part of the value either.
+		admin(t, "DROP DATABASE IF EXISTS "+name+"; CREATE DATABASE "+name)
+		target := conn
+		target.Name = name
+		cmd := target.Cmd(mariadbRestoreArgs(bin)...)
+		out := &restoreOutput{}
+		cmd.Stdin, cmd.Stderr = strings.NewReader(dump), out
+		require.NoError(t, cmd.Run())
+		out.Close()
+		assert.Equal(t, 1, out.failed)
+		assert.NotContains(t, out.String(), "val-")
+	})
 	t.Run("LargeFailedStatement", func(t *testing.T) {
 		failed := restore(t, "CREATE TABLE t (id INT PRIMARY KEY, v LONGTEXT);\n"+
 			"INSERT INTO t VALUES (1,'a');\n"+
 			"INSERT INTO t VALUES (2,'"+strings.Repeat("x", 4<<20)+"'),(1,'b');\n")
 		assert.Equal(t, 1, failed.Count)
 		assert.Equal(t, []string{"error 1062 at line 3"}, failed.Errors)
+	})
+}
+
+// TestRestoreInput checks that only errors reading the backup are recorded.
+func TestRestoreInput(t *testing.T) {
+	t.Run("ReadError", func(t *testing.T) {
+		in := &restoreInput{r: io.MultiReader(strings.NewReader("x"), iotest.ErrReader(errors.New("read failed")))}
+		_, err := io.Copy(io.Discard, in)
+		require.Error(t, err)
+		assert.EqualError(t, in.err, "read failed")
+	})
+	t.Run("EndOfInput", func(t *testing.T) {
+		in := &restoreInput{r: strings.NewReader("SELECT 1;\n")}
+		_, err := io.Copy(io.Discard, in)
+		require.NoError(t, err)
+		assert.NoError(t, in.err)
 	})
 }

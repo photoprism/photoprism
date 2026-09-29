@@ -1,6 +1,7 @@
 package backup
 
 import (
+	"errors"
 	"io"
 	"os"
 	"os/exec"
@@ -9,6 +10,7 @@ import (
 	"strings"
 	"syscall"
 	"testing"
+	"testing/iotest"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -562,11 +564,11 @@ func TestRunRestore(t *testing.T) {
 	})
 	t.Run("StderrWithoutWarnings", func(t *testing.T) {
 		hook := captureLog(t)
-		script := "echo 'WARNING: insecure s3cr3tpass' >&2; echo 'ERROR 2026 (HY000): TLS/SSL error' >&2; echo 'for s3cr3tpass' >&2; exit 1"
+		script := "echo 'WARNING: insecure s3cr3tpass' >&2; echo 'ERROR 2026 (HY000): TLS/SSL error for s3cr3tpass' >&2; echo 'val-a' >&2; exit 1"
 		_, err := runRestore(exec.Command("sh", "-c", script), strings.NewReader(""), "s3cr3tpass")
 
 		require.Error(t, err)
-		assert.Equal(t, "ERROR 2026 (HY000): TLS/SSL error; for "+txt.Masked, err.Error())
+		assert.Equal(t, "ERROR 2026 (HY000): TLS/SSL error for "+txt.Masked, err.Error())
 		assert.Contains(t, logMessages(hook), "restore: insecure "+txt.Masked)
 	})
 	t.Run("FailedStatements", func(t *testing.T) {
@@ -589,12 +591,43 @@ func TestRunRestore(t *testing.T) {
 		}
 	})
 	t.Run("FailedStatementsExitStatus", func(t *testing.T) {
-		// A client that exits with an error after failed statements reports them by code and line.
+		// A client that exits with an error after reporting only failed statements has completed the restore.
 		script := `printf '%s\n' "ERROR 1062 (23000) at line 4: Duplicate entry 'val-a' for key 'PRIMARY'" >&2; exit 1`
 		failed, err := runRestore(exec.Command("sh", "-c", script), strings.NewReader(""), "")
-		require.Error(t, err)
+		require.NoError(t, err)
 		assert.Equal(t, 1, failed.Count)
-		assert.Equal(t, "exit status 1; 1 statement failed (error 1062 at line 4)", err.Error())
+		assert.Equal(t, []string{"error 1062 at line 4"}, failed.Errors)
+	})
+	t.Run("SqliteFailedStatements", func(t *testing.T) {
+		script := `printf '%s\n' "Runtime error near line 3: UNIQUE constraint failed: t.id (19)" "Parse error near line 4: near \"VALUE\": syntax error" "  INSERT INTO t VALUE (2,'val-a');" >&2; exit 1`
+		failed, err := runRestore(exec.Command("sh", "-c", script), strings.NewReader(""), "")
+		require.NoError(t, err)
+		assert.Equal(t, 2, failed.Count)
+		assert.Equal(t, []string{"error at line 3", "error at line 4"}, failed.Errors)
+	})
+	t.Run("FailedStatementsAndClientError", func(t *testing.T) {
+		// Failed statements followed by another problem remain a failed restore that lists them.
+		script := `printf '%s\n' "Runtime error near line 3: UNIQUE constraint failed: t.id (19)" "Runtime error near line 4: disk I/O error (10)" >&2; exit 1`
+		failed, err := runRestore(exec.Command("sh", "-c", script), strings.NewReader(""), "")
+		require.EqualError(t, err, "Runtime error near line 4 (10); 2 statements failed (error at line 3, error at line 4)")
+		assert.Equal(t, 2, failed.Count)
+	})
+	t.Run("KilledAfterFailedStatements", func(t *testing.T) {
+		// A client killed by a signal has not completed the restore, even if it reported only failed statements.
+		script := `printf '%s\n' "Runtime error near line 1: UNIQUE constraint failed: t.id (19)" >&2; kill -9 $$`
+		_, err := runRestore(exec.Command("sh", "-c", script), strings.NewReader(""), "")
+		require.Error(t, err)
+	})
+	t.Run("ExitStatusTwo", func(t *testing.T) {
+		script := `printf '%s\n' "ERROR 1062 (23000) at line 4: Duplicate entry 'val-a' for key 'PRIMARY'" >&2; exit 2`
+		_, err := runRestore(exec.Command("sh", "-c", script), strings.NewReader(""), "")
+		require.Error(t, err)
+	})
+	t.Run("InputReadError", func(t *testing.T) {
+		// A backup that cannot be read to the end is not reported as restored.
+		r := io.MultiReader(strings.NewReader("SELECT 1;\n"), iotest.ErrReader(errors.New("read failed")))
+		_, err := runRestore(exec.Command("sh", "-c", "cat >/dev/null"), r, "")
+		require.EqualError(t, err, "failed to read backup: read failed")
 	})
 	t.Run("ClientErrorExitStatus", func(t *testing.T) {
 		script := `printf '%s\n' "ERROR 2013 (HY000) at line 812: Lost connection to server during query" >&2; exit 1`

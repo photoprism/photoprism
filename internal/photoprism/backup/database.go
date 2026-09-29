@@ -436,7 +436,12 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 		defer f.Close()
 	}
 
-	failed, err := runRestore(cmd, f, password)
+	return restoreAndLog(cmd, f, password)
+}
+
+// restoreAndLog runs the restore command with its input read from r and logs the outcome.
+func restoreAndLog(cmd *exec.Cmd, r io.Reader, password string) error {
+	failed, err := runRestore(cmd, r, password)
 
 	if err != nil {
 		log.Errorf("restore: failed to restore index database")
@@ -457,6 +462,24 @@ func logRestoreResult(failed restoreFailures) {
 
 	log.Warnf("restore: index database restored, but %s failed and some rows may be missing (%s)",
 		english.Plural(failed.Count, "statement", "statements"), strings.Join(failed.Errors, ", "))
+}
+
+// restoreInput reads a backup and records a read error, so it is told apart from a client that stopped
+// reading its input.
+type restoreInput struct {
+	r   io.Reader
+	err error
+}
+
+// Read reads from the backup and records any error other than the end of input.
+func (i *restoreInput) Read(p []byte) (int, error) {
+	n, err := i.r.Read(p)
+
+	if err != nil && !errors.Is(err, io.EOF) {
+		i.err = err
+	}
+
+	return n, err
 }
 
 // restoreFailures describes the statements that failed while a restore continued: their number, and the
@@ -480,12 +503,15 @@ func runRestore(cmd *exec.Cmd, r io.Reader, password string) (failed restoreFail
 		return failed, fmt.Errorf("failed to create stdin pipe: %w", err)
 	}
 
+	// The client reads end of input if the copy fails, so a failed copy is returned once it exits.
+	copied := make(chan error, 1)
+
 	go func() {
 		defer stdin.Close()
 
-		if _, copyErr := io.Copy(stdin, r); copyErr != nil && !errors.Is(copyErr, syscall.EPIPE) {
-			log.Errorf("restore: %s", clean.Error(copyErr))
-		}
+		in := &restoreInput{r: r}
+		_, _ = io.Copy(stdin, in)
+		copied <- in.err
 	}()
 
 	// Log the command for debugging in trace mode.
@@ -494,6 +520,24 @@ func runRestore(cmd *exec.Cmd, r io.Reader, password string) (failed restoreFail
 	cmdErr := cmd.Run()
 	stderr.Close()
 	failed = stderr.Failures()
+
+	// A client that continues after failed statements and then exits with status 1, such as sqlite3, has
+	// completed the restore if it reported nothing else.
+	var exitErr *exec.ExitError
+
+	if errors.As(cmdErr, &exitErr) && exitErr.Exited() && exitErr.ExitCode() == 1 && stderr.OnlyFailedStatements() {
+		cmdErr = nil
+	}
+
+	// The result of the copy is sent before the client can read end of input, so it is available if the
+	// client read all of it; a client that exits early is not held up by input that never ends.
+	select {
+	case copyErr := <-copied:
+		if copyErr != nil {
+			return failed, fmt.Errorf("failed to read backup: %s", clean.Error(copyErr))
+		}
+	default:
+	}
 
 	if cmdErr != nil {
 		if err = clientError(stderr.String(), password, "restore"); err == nil {

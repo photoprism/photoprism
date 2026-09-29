@@ -18,21 +18,41 @@ const (
 	restoreEchoDelimiter = "--------------"
 )
 
-// restoreErrorRegex matches the output line of a statement that failed while the client continued.
-var restoreErrorRegex = regexp.MustCompile(`^ERROR (\d+) \([0-9A-Za-z]+\) at line (\d+):`)
+// restoreErrorRegex matches the output line of a statement that failed while the client continued,
+// with or without error code, SQLSTATE, and source file, e.g. "ERROR 1062 (23000) at line 4: ...".
+var restoreErrorRegex = regexp.MustCompile(`^ERROR(?: (\d+))?(?: \([0-9A-Za-z]+\))? at line (\d+)\b`)
 
-// restoreSqliteErrorRegex matches the output line of a statement the SQLite client could not run.
-var restoreSqliteErrorRegex = regexp.MustCompile(`^(Parse|Runtime) error near line (\d+):`)
+// restoreClientErrorRegex matches a client error without a line number, e.g. "ERROR 2002 (HY000): ...".
+var restoreClientErrorRegex = regexp.MustCompile(`^ERROR (\d+) \(([0-9A-Za-z]+)\):`)
+
+// restoreSqliteErrorRegex matches the output line of a statement the SQLite client could not run, with
+// the SQLite result code a runtime error ends with, e.g. "Runtime error near line 3: ... (19)".
+var restoreSqliteErrorRegex = regexp.MustCompile(`^(?:(Parse|Runtime) error|Error:) near line (\d+):.*?(?:\((\d+)\))?$`)
+
+// restoreSqliteOpenRegex matches the message of the SQLite client when it cannot open the database.
+var restoreSqliteOpenRegex = regexp.MustCompile(`^Error: unable to open database`)
+
+// restoreClientPrefixRegex matches a message the client writes under the path it was started with, e.g.
+// "/usr/bin/mariadb: unknown option ...", and whether it is a warning.
+var restoreClientPrefixRegex = regexp.MustCompile(`^(?:\S*/)?(?:mariadb|mysql|sqlite3|mariadb-dump|mysqldump): (\[Warning\])?`)
+
+// restoreSqliteFatalCodes are SQLite result codes that fail every statement after them, e.g. because the
+// database is read-only, locked, full, or damaged, so the restore failed rather than single statements.
+var restoreSqliteFatalCodes = map[string]bool{
+	"5": true, "6": true, "7": true, "8": true, "9": true, "10": true, "11": true, "13": true, "14": true, "26": true,
+}
 
 // restoreOutput collects the error output of a restore client with bounded memory. Failed statements
-// are counted and kept as error code and line number only, the statements the client repeats or quotes
-// are skipped, and a limited number of other lines are kept for diagnostics.
+// are counted and kept as error code and line number only, and only known kinds of client messages are
+// kept for diagnostics, so that statement text and row values are never kept.
 type restoreOutput struct {
-	line   []byte
-	echo   bool
-	failed int
-	errors []string
-	lines  []string
+	line     []byte
+	echo     bool
+	started  bool
+	failed   int
+	errors   []string
+	lines    []string
+	problems int
 }
 
 // Write processes client output line by line and never fails.
@@ -63,48 +83,101 @@ func (o *restoreOutput) Write(p []byte) (int, error) {
 }
 
 // endLine processes the current output line. The client repeats a failed statement after a delimiter and
-// then reports it with an error line, so everything from the delimiter to that line is skipped. A client
-// error, such as a lost connection, is also kept in full since it contains no statement or row data.
+// then reports it with an error line, so everything from the delimiter to that line is skipped. Client
+// warnings are kept only before the first statement output, since the client writes them when connecting.
 func (o *restoreOutput) endLine() {
 	raw := strings.TrimSuffix(string(o.line), "\r")
 	line := strings.TrimSpace(raw)
 	o.line = o.line[:0]
 
 	if raw == restoreEchoDelimiter {
-		o.echo = true
+		o.echo, o.started = true, true
 		return
 	}
 
 	if m := restoreErrorRegex.FindStringSubmatch(line); m != nil {
-		o.echo = false
-		o.failed++
+		o.echo, o.started = false, true
 
-		if len(o.errors) < restoreErrorsKept {
-			o.errors = append(o.errors, fmt.Sprintf("error %s at line %s", m[1], m[2]))
+		if isClientErrorCode(m[1]) {
+			o.keep(line, true)
 		}
 
-		if strings.HasPrefix(m[1], "2") && len(m[1]) == 4 {
-			o.keep(line)
-		}
-
+		o.fail(m[1], m[2])
 		return
 	}
 
-	switch m := restoreSqliteErrorRegex.FindStringSubmatch(line); {
+	if m := restoreSqliteErrorRegex.FindStringSubmatch(line); m != nil {
+		o.started = true
+
+		if restoreSqliteFatalCodes[m[3]] && m[1] == "" {
+			o.keep(fmt.Sprintf("Error near line %s (%s)", m[2], m[3]), true)
+		} else if restoreSqliteFatalCodes[m[3]] {
+			o.keep(fmt.Sprintf("%s error near line %s (%s)", m[1], m[2], m[3]), true)
+		}
+
+		o.fail("", m[2])
+		return
+	}
+
+	switch m, p := restoreClientErrorRegex.FindStringSubmatch(line), restoreClientPrefixRegex.FindStringSubmatch(line); {
+	case o.echo || line == "":
+	case m != nil && (isClientErrorCode(m[1]) || isAccessErrorCode(m[1])):
+		o.keep(line, true)
 	case m != nil:
-		o.keep(fmt.Sprintf("%s error near line %s", m[1], m[2]))
-	case o.echo || line == "" || line != raw && strings.TrimLeft(raw, " \t") != raw:
-		// Skip repeated statements and indented lines, which quote statement text.
-	default:
-		o.keep(line)
+		o.keep(fmt.Sprintf("ERROR %s (%s)", m[1], m[2]), true)
+	case strings.HasPrefix(line, "WARNING:") || p != nil && p[1] != "":
+		if !o.started {
+			o.keep(line, false)
+		}
+	case p != nil || restoreSqliteOpenRegex.MatchString(line):
+		o.keep(line, true)
 	}
 }
 
-// keep stores an output line for diagnostics, up to restoreLinesKept lines.
-func (o *restoreOutput) keep(line string) {
+// fail counts a failed statement and keeps the first ones as error code and line number.
+func (o *restoreOutput) fail(code, line string) {
+	o.failed++
+
+	if len(o.errors) >= restoreErrorsKept {
+		return
+	} else if code == "" {
+		o.errors = append(o.errors, fmt.Sprintf("error at line %s", line))
+	} else {
+		o.errors = append(o.errors, fmt.Sprintf("error %s at line %s", code, line))
+	}
+}
+
+// isClientErrorCode reports whether code is a MariaDB client error, such as a lost connection.
+func isClientErrorCode(code string) bool {
+	return len(code) == 4 && strings.HasPrefix(code, "2")
+}
+
+// isAccessErrorCode reports whether code is a server error about the account or database a client
+// connects with, which contains no statement or row data.
+func isAccessErrorCode(code string) bool {
+	switch code {
+	case "1044", "1045", "1049", "1698":
+		return true
+	}
+
+	return false
+}
+
+// keep stores an output line for diagnostics, up to restoreLinesKept lines, and counts it as a problem
+// unless it is a warning.
+func (o *restoreOutput) keep(line string, problem bool) {
+	if problem {
+		o.problems++
+	}
+
 	if len(o.lines) < restoreLinesKept {
 		o.lines = append(o.lines, line)
 	}
+}
+
+// OnlyFailedStatements reports whether the client reported failed statements and no other problem.
+func (o *restoreOutput) OnlyFailedStatements() bool {
+	return o.failed > 0 && o.problems == 0
 }
 
 // Failures returns the number of failed statements and the first ones as error code and line number.
