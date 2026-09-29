@@ -105,6 +105,34 @@ func TestConfig_UserUploadPath(t *testing.T) {
 	}
 }
 
+func TestConfig_UserUploadBatchDir(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	c.Options().StoragePath = t.TempDir()
+
+	t.Run("Success", func(t *testing.T) {
+		dir, err := c.UserUploadBatchDir("urjult03ceelhw6k", "sess/abc")
+		require.NoError(t, err)
+		assert.Equal(t, filepath.Join(c.UsersStoragePath(), "urjult03ceelhw6k", "upload", "sessabc"), dir)
+		assert.NoDirExists(t, dir)
+		assert.NoDirExists(t, filepath.Join(c.UsersStoragePath(), "urjult03ceelhw6k"))
+		created, err := c.UserUploadBatchPath("urjult03ceelhw6k", "sess/abc")
+		require.NoError(t, err)
+		assert.Equal(t, created, dir)
+	})
+	t.Run("InvalidRequest", func(t *testing.T) {
+		for _, uid := range []string{"", "etaetyget", "../urjult03ceelhw6k"} {
+			dir, err := c.UserUploadBatchDir(uid, "sessabcdefgh1234567")
+			assert.Error(t, err, uid)
+			assert.Equal(t, "", dir)
+		}
+		for _, batch := range []string{"", "../", "/.", strings.Repeat("a", clean.LengthLimit+1)} {
+			dir, err := c.UserUploadBatchDir("urjult03ceelhw6k", batch)
+			assert.Error(t, err, batch)
+			assert.Equal(t, "", dir)
+		}
+	})
+}
+
 func TestConfig_UserUploadBatchPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	c.Options().StoragePath = t.TempDir()

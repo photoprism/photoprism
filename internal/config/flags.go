@@ -291,7 +291,7 @@ var Flags = CliFlags{
 			Name:    "originals-limit",
 			Aliases: []string{"mb"},
 			Value:   5000,
-			Usage:   "maximum size of a single media file in `MB` (1-100000; -1 to disable)",
+			Usage:   "maximum size of a single media file in `MB` (-1 to disable)",
 			EnvVars: EnvVars("ORIGINALS_LIMIT"),
 		}}, {
 		Flag: &cli.IntFlag{
@@ -344,8 +344,14 @@ var Flags = CliFlags{
 		Flag: &cli.IntFlag{
 			Name:    "upload-limit",
 			Value:   5000,
-			Usage:   "maximum total size of web uploads in `MB` (1-100000; -1 to disable)",
+			Usage:   "maximum total size of web uploads in `MB` (-1 to disable)",
 			EnvVars: EnvVars("UPLOAD_LIMIT"),
+		}}, {
+		Flag: &cli.Int64Flag{
+			Name:    "upload-maxage",
+			Value:   DefaultUploadMaxAge,
+			Usage:   fmt.Sprintf("time in `SECONDS` after which staged uploads that were never imported are removed (%d-%d; -1 to keep them)", MinUploadMaxAge, MaxUploadMaxAge),
+			EnvVars: EnvVars("UPLOAD_MAXAGE"),
 		}}, {
 		Flag: &cli.PathFlag{
 			Name:      "cache-path",
@@ -746,7 +752,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "cluster-cidr",
-			Usage:   "cluster `CIDR` for IP-based authorization, e.g. 10.0.0.0/8",
+			Usage:   "cluster `CIDR` ranges for IP-based authorization, separated by commas, e.g. 10.0.0.0/8",
 			EnvVars: EnvVars("CLUSTER_CIDR"),
 			Hidden:  true,
 		}}, {
@@ -901,9 +907,9 @@ var Flags = CliFlags{
 		Flag: &cli.StringSliceFlag{
 			Name:    "trusted-proxy",
 			Usage:   "`CIDR` ranges or IPv4/v6 addresses from which reverse proxy headers can be trusted, separated by commas",
-			Value:   cli.NewStringSlice(header.CidrDockerInternal),
+			Value:   cli.NewStringSlice(header.CidrDockerInternal, header.CidrLoopback, header.IPv6Loopback),
 			EnvVars: EnvVars("TRUSTED_PROXY"),
-		}}, {
+		}, DocDefault: header.CidrDockerInternal + ", " + header.CidrLoopback + ", " + header.IPv6Loopback}, {
 		Flag: &cli.StringSliceFlag{
 			Name:    "proxy-client-header",
 			Usage:   "proxy client IP header `NAME`, e.g. X-Forwarded-For, X-Client-IP, X-Real-IP, or CF-Connecting-IP",
@@ -929,7 +935,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.BoolFlag{
 			Name:    "disable-tls",
-			Usage:   "disables HTTPS/TLS even if the site URL starts with https:// and a certificate is available",
+			Usage:   "disables HTTPS/TLS even if the site URL starts with https:// and a certificate or TLS email is configured",
 			EnvVars: EnvVars("DISABLE_TLS"),
 		}}, {
 		Flag: &cli.BoolFlag{
@@ -939,18 +945,17 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "tls-email",
-			Usage:   "`EMAIL` address to enable automatic HTTPS via Let's Encrypt",
+			Usage:   "`EMAIL` address to obtain an HTTPS certificate for the site domain from Let's Encrypt, which must reach the Web server on port 443",
 			EnvVars: EnvVars("TLS_EMAIL"),
-			Hidden:  true,
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "tls-cert",
-			Usage:   "public HTTPS certificate `FILENAME` (.crt), ignored for Unix domain sockets",
+			Usage:   "public HTTPS certificate `FILENAME` (.crt), ignored for Unix domain sockets and with automatic HTTPS",
 			EnvVars: EnvVars("TLS_CERT"),
 		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "tls-key",
-			Usage:   "private HTTPS key `FILENAME` (.key), ignored for Unix domain sockets",
+			Usage:   "private HTTPS key `FILENAME` (.key), ignored for Unix domain sockets and with automatic HTTPS",
 			EnvVars: EnvVars("TLS_KEY"),
 		}}, {
 		Flag: &cli.StringFlag{

@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/ai/vision/openai"
@@ -166,10 +165,7 @@ func (openaiBuilder) Build(ctx context.Context, model *Model, files Files, media
 // Parse converts an OpenAI Responses API payload into the internal ApiResponse representation.
 func (openaiParser) Parse(ctx context.Context, req *ApiRequest, raw []byte, status int) (*ApiResponse, error) {
 	if status >= 300 {
-		if msg := openai.ParseErrorMessage(raw); msg != "" {
-			return nil, fmt.Errorf("openai: %s", msg)
-		}
-		return nil, fmt.Errorf("openai: status %d", status)
+		return nil, serviceError(ApiFormatOpenAI, status)
 	}
 
 	var resp openai.Response

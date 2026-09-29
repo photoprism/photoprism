@@ -1,16 +1,70 @@
 package photoprism
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
+	"syscall"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/log/status"
 )
+
+// TestImportFailures verifies how failures of an import run are counted and reported.
+func TestImportFailures(t *testing.T) {
+	t.Run("None", func(t *testing.T) {
+		assert.NoError(t, (&ImportFailures{}).Err())
+		var nilFailures *ImportFailures
+		assert.NotPanics(t, func() { nilFailures.add(errors.New("failed")) })
+		assert.NoError(t, nilFailures.Err())
+	})
+	t.Run("Incomplete", func(t *testing.T) {
+		f := &ImportFailures{}
+		f.add(errors.New("failed"))
+		f.add(os.ErrPermission)
+		assert.ErrorIs(t, f.Err(), ErrImportIncomplete)
+		assert.Contains(t, f.Err().Error(), "(2)")
+	})
+	t.Run("NoSpace", func(t *testing.T) {
+		f := &ImportFailures{}
+		f.add(errors.New("failed"))
+		f.add(&os.PathError{Op: "write", Path: "/originals/photo.jpg", Err: syscall.ENOSPC})
+		assert.ErrorIs(t, f.Err(), status.ErrInsufficientStorage)
+		assert.NotContains(t, f.Err().Error(), "/originals")
+		quota := &ImportFailures{}
+		quota.add(&os.PathError{Op: "write", Path: "photo.jpg", Err: syscall.EDQUOT})
+		assert.ErrorIs(t, quota.Err(), status.ErrInsufficientStorage)
+	})
+	t.Run("NoSpaceText", func(t *testing.T) {
+		f := &ImportFailures{}
+		f.add(errors.New("no space left on device.jpg cannot be opened"))
+		assert.ErrorIs(t, f.Err(), ErrImportIncomplete)
+	})
+}
+
+// TestImportedContent verifies that only a regular file with the same content counts as imported.
+func TestImportedContent(t *testing.T) {
+	dir := t.TempDir()
+	file := filepath.Join(dir, "photo.jpg")
+	require.NoError(t, os.WriteFile(file, []byte("content"), fs.ModeFile))
+	hash := fs.Hash(file)
+	link := filepath.Join(dir, "link.jpg")
+	require.NoError(t, os.Symlink(file, link))
+	other := filepath.Join(dir, "other.jpg")
+	require.NoError(t, os.WriteFile(other, []byte("other"), fs.ModeFile))
+	assert.True(t, importedContent(file, hash))
+	assert.False(t, importedContent(file, ""))
+	assert.False(t, importedContent(link, hash))
+	assert.False(t, importedContent(other, hash))
+	assert.False(t, importedContent(filepath.Join(dir, "missing.jpg"), hash))
+	assert.False(t, importedContent(dir, hash))
+}
 
 func TestImportWorker_OriginalFileNames(t *testing.T) {
 	if testing.Short() {

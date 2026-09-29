@@ -22,7 +22,7 @@
         </v-btn>
       </v-toolbar>
       <v-card-text class="dense">
-        <v-row dense class="py-2">
+        <v-row density="compact" class="py-2">
           <v-col cols="4">
             <v-autocomplete
               :model-value="day > 0 ? day : null"

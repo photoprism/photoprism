@@ -16,6 +16,9 @@ import (
 	"github.com/photoprism/photoprism/internal/ai/onnx"
 	"github.com/photoprism/photoprism/internal/ai/tensorflow"
 	"github.com/photoprism/photoprism/internal/ai/vision"
+	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -548,4 +551,183 @@ func TestConfig_WarnVisionConfig(t *testing.T) {
 
 		assert.Len(t, hook.AllEntries(), 2)
 	})
+}
+
+// TestVisionKeyWarnings checks which Vision API keys are reported as unable to authenticate requests.
+func TestVisionKeyWarnings(t *testing.T) {
+	const stripped = "vision key contains characters that are removed from access tokens, so it cannot authenticate with a PhotoPrism Vision API"
+	const dollar = "vision key contains $ and is compared as written, without expanding environment variables"
+
+	t.Setenv("VISION_TEST_SECRET", "vision-api-shared-token")
+	t.Setenv("VISION_TEST_INVALID", "vision!secret")
+
+	for _, tc := range []struct {
+		name     string
+		key      string
+		incoming bool
+		outgoing bool
+		want     []string
+	}{
+		{name: "Empty", key: "", incoming: true, outgoing: true},
+		{name: "Valid", key: `Ab3"-+/=#@:;_. ok`, incoming: true, outgoing: true},
+		{name: "Generated", key: "vision-api-shared-token", incoming: true},
+		{name: "Exclamation", key: "SecretAccessToken!", incoming: true, want: []string{stripped}},
+		{name: "Braces", key: "{secret}", incoming: true, want: []string{stripped}},
+		{name: "DoubleSpace", key: "vision  key", incoming: true, want: []string{stripped}},
+		{name: "NonAscii", key: "schlüssel", incoming: true, want: []string{stripped}},
+		{name: "TooLong", key: strings.Repeat("a", 4097), incoming: true, want: []string{stripped}},
+		{name: "ExclamationOutgoing", key: "SecretAccessToken!", outgoing: true, want: []string{stripped}},
+		{name: "Unused", key: "SecretAccessToken!"},
+		{name: "DollarIncoming", key: "$VISION_TEST_SECRET", incoming: true, want: []string{dollar}},
+		{name: "DollarOutgoing", key: "$VISION_TEST_SECRET", outgoing: true},
+		{name: "BracedIncoming", key: "${VISION_TEST_SECRET}", incoming: true, outgoing: true, want: []string{stripped, dollar}},
+		{name: "BracedOutgoing", key: "${VISION_TEST_SECRET}", outgoing: true},
+		{name: "DollarBothInvalid", key: "$VISION_TEST_INVALID", incoming: true, outgoing: true, want: []string{stripped, dollar}},
+		{name: "BracedOutgoingInvalid", key: "${VISION_TEST_INVALID}", outgoing: true, want: []string{stripped}},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			assert.Equal(t, tc.want, visionKeyWarnings(tc.key, tc.incoming, tc.outgoing))
+		})
+	}
+}
+
+// captureVisionKeyLog redirects the system log and the package logger for the duration of the test, and
+// returns the system log entries after checking that the package logger received none.
+func captureVisionKeyLog(t *testing.T) *test.Hook {
+	t.Helper()
+
+	appHook := captureConfigLog(t)
+	orig := event.SystemLog
+	logger, hook := test.NewNullLogger()
+	logger.SetLevel(logrus.TraceLevel)
+	event.SystemLog = logger
+
+	t.Cleanup(func() {
+		event.SystemLog = orig
+		assert.Empty(t, appHook.AllEntries(), "vision key warnings must not reach the package logger")
+	})
+
+	return hook
+}
+
+// TestConfig_WarnVisionKey checks that problems with the configured Vision API key are logged once each.
+func TestConfig_WarnVisionKey(t *testing.T) {
+	t.Run("Warnings", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.VisionApi = true
+		c.options.VisionKey = "${VISION_SECRET}"
+		hook := captureVisionKeyLog(t)
+
+		c.warnVisionKey()
+		c.warnVisionKey()
+
+		require.Len(t, hook.AllEntries(), 2)
+		for _, entry := range hook.AllEntries() {
+			assert.Equal(t, logrus.WarnLevel, entry.Level)
+			assert.True(t, strings.HasPrefix(entry.Message, "config: vision key contains "), entry.Message)
+			assert.NotContains(t, entry.Message, "VISION_SECRET")
+		}
+	})
+	t.Run("None", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.VisionApi = true
+		c.options.VisionKey = " vision-api-shared-token "
+		hook := captureVisionKeyLog(t)
+
+		c.warnVisionKey()
+		assert.Empty(t, hook.AllEntries())
+	})
+	t.Run("Unused", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.VisionApi = false
+		c.options.VisionUri = ""
+		c.options.VisionKey = "SecretAccessToken!"
+		hook := captureVisionKeyLog(t)
+
+		c.warnVisionKey()
+		assert.Empty(t, hook.AllEntries())
+	})
+	t.Run("Outgoing", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.VisionApi = false
+		c.options.VisionUri = "https://vision.example.com/api/v1/vision"
+		c.options.VisionKey = "SecretAccessToken!"
+		hook := captureVisionKeyLog(t)
+
+		c.warnVisionKey()
+		require.Len(t, hook.AllEntries(), 1)
+	})
+	t.Run("OutgoingDollar", func(t *testing.T) {
+		t.Setenv("VISION_SECRET", "")
+		c := NewConfig(CliTestContext())
+		c.options.VisionApi = false
+		c.options.VisionUri = "https://vision.example.com/api/v1/vision"
+		c.options.VisionKey = "$VISION_SECRET"
+		hook := captureVisionKeyLog(t)
+
+		c.warnVisionKey()
+		assert.Empty(t, hook.AllEntries())
+	})
+	t.Run("Demo", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.VisionApi = true
+		c.options.Demo = true
+		c.options.VisionKey = "$VISION_SECRET"
+		hook := captureVisionKeyLog(t)
+
+		c.warnVisionKey()
+		assert.Empty(t, hook.AllEntries())
+	})
+	t.Run("KeyFile", func(t *testing.T) {
+		keyFile := filepath.Join(t.TempDir(), "vision_key")
+		require.NoError(t, os.WriteFile(keyFile, []byte("SecretAccessToken!\n"), fs.ModeSecretFile))
+		t.Setenv(FlagFileVar("VISION_KEY"), keyFile)
+
+		c := NewConfig(CliTestContext())
+		c.options.VisionApi = true
+		c.options.VisionKey = ""
+		hook := captureVisionKeyLog(t)
+
+		c.warnVisionKey()
+		require.Len(t, hook.AllEntries(), 1)
+		assert.Equal(t, "config: vision key contains characters that are removed from access tokens, so it cannot authenticate with a PhotoPrism Vision API", hook.LastEntry().Message)
+	})
+}
+
+// TestConfig_InitWarnVisionKey checks that Init logs the Vision API key warnings to the system log.
+func TestConfig_InitWarnVisionKey(t *testing.T) {
+	c := NewIsolatedTestConfig("visionkeyinit", t.TempDir(), true)
+	c.options.VisionApi = true
+	c.options.VisionKey = "Secret Access Token!"
+
+	orig := event.SystemLog
+	logger, hook := test.NewNullLogger()
+	logger.SetLevel(logrus.TraceLevel)
+	event.SystemLog = logger
+
+	// Init registers its database and propagates its settings, so the package's test config is restored.
+	t.Cleanup(func() {
+		event.SystemLog = orig
+		_ = c.CloseDb()
+		entity.SetDbProvider(TestConfig())
+		TestConfig().Propagate()
+
+		if c.DatabaseDriver() == dsn.DriverSQLite3 {
+			for _, suffix := range []string{"", "-journal", "-wal", "-shm"} {
+				_ = os.Remove(c.DatabaseDSN() + suffix)
+			}
+		}
+	})
+
+	require.NoError(t, c.Init())
+
+	var warnings []string
+
+	for _, entry := range hook.AllEntries() {
+		if strings.HasPrefix(entry.Message, "config: vision key ") {
+			warnings = append(warnings, entry.Message)
+		}
+	}
+
+	assert.Equal(t, []string{"config: vision key contains characters that are removed from access tokens, so it cannot authenticate with a PhotoPrism Vision API"}, warnings)
 }

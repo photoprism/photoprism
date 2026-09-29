@@ -13,6 +13,7 @@ import (
 	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/pkg/http/dns"
 )
 
 // StatusCommand configures the command name, flags, and action.
@@ -55,9 +56,9 @@ func statusAction(ctx *cli.Context) error {
 	var response string
 
 	if resp, reqErr := client.Do(req); reqErr != nil { //nolint:gosec // endpointUrl is built from local config values.
-		return fmt.Errorf("cannot connect to %s:%d", conf.HttpHost(), conf.HttpPort())
+		return fmt.Errorf("cannot connect to %s", statusAddress(conf))
 	} else if resp.StatusCode != 200 {
-		return fmt.Errorf("server running at %s:%d, bad status %d", conf.HttpHost(), conf.HttpPort(), resp.StatusCode)
+		return fmt.Errorf("server running at %s, bad status %d", statusAddress(conf), resp.StatusCode)
 	} else if body, readErr := io.ReadAll(resp.Body); readErr != nil {
 		return readErr
 	} else {
@@ -75,6 +76,16 @@ func statusAction(ctx *cli.Context) error {
 	return nil
 }
 
+// statusAddress returns the configured server address for status messages, which is the Unix socket
+// path if one is used.
+func statusAddress(conf *config.Config) string {
+	if socket := conf.HttpSocket(); socket != nil {
+		return socket.Path
+	}
+
+	return dns.JoinHostPort(conf.HttpHost(), conf.HttpPort())
+}
+
 // buildStatusEndpoint returns the status endpoint URL, preferring the public
 // SiteUrl (which carries the correct scheme) and falling back to the local
 // HTTP host/port. When a Unix socket is configured, an http+unix style URL is
@@ -90,5 +101,5 @@ func buildStatusEndpoint(conf *config.Config) string {
 		return siteUrl + "/api/v1/status"
 	}
 
-	return fmt.Sprintf("http://%s:%d/api/v1/status", conf.HttpHost(), conf.HttpPort())
+	return fmt.Sprintf("http://%s/api/v1/status", dns.JoinHostPort(conf.HttpHost(), conf.HttpPort()))
 }

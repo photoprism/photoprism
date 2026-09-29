@@ -1136,7 +1136,8 @@ func (m *Session) SetUserAgent(ua string) {
 	m.UserAgent = ua
 }
 
-// SetClientIP sets the client IP address.
+// SetClientIP sets the client IP address, and logs a change unless the address stays in the same client
+// network (header.ClientNetwork), such as the /64 of a global IPv6 address.
 func (m *Session) SetClientIP(ip string) {
 	if m == nil || ip == "" {
 		return
@@ -1144,7 +1145,7 @@ func (m *Session) SetClientIP(ip string) {
 		return
 	} else if ip = parsed.String(); ip == "" {
 		return
-	} else if m.ClientIP != "" && m.ClientIP != ip {
+	} else if m.ClientIP != "" && m.ClientIP != ip && header.ClientNetwork(m.ClientIP) != header.ClientNetwork(ip) {
 		event.AuditWarn([]string{ip, "session %s", "client address has changed from %s to %s"}, m.RefID, clean.LogQuote(m.ClientIP), clean.LogQuote(ip))
 	}
 

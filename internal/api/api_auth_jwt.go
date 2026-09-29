@@ -3,7 +3,6 @@ package api
 import (
 	"context"
 	"fmt"
-	"net"
 	"strings"
 	"time"
 
@@ -15,7 +14,10 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/internal/server/limiter"
+	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
 // authAnyJWT attempts to authenticate a Portal-issued JWT when an instance or service
@@ -26,8 +28,8 @@ import (
 // to existing auth flows. By default, only cluster and vision resources are
 // eligible, but instances may opt in to additional scopes via PHOTOPRISM_JWT_SCOPE.
 func authAnyJWT(c *gin.Context, clientIP, authToken string, resource acl.Resource, perms acl.Permissions) *entity.Session {
-	// Check if token may be a JWT.
-	if !shouldAttemptJWT(c, authToken) {
+	// Check if token may be a JWT, and skip verification for clients over the authentication rate limit.
+	if !shouldAttemptJWT(c, authToken) || limiter.Auth.Reject(clientIP) {
 		return nil
 	}
 
@@ -53,7 +55,12 @@ func authAnyJWT(c *gin.Context, clientIP, authToken string, resource acl.Resourc
 	// audience, temporal claims) and enforces that the token includes any scopes
 	// listed in expected.Scope. Local authorization still happens below so instances
 	// can apply their own allow-list semantics.
-	claims := verifyTokenFromPortal(c.Request.Context(), authToken, expected, jwtIssuerCandidates(conf))
+	claims, unverified := verifyTokenFromPortal(c.Request.Context(), authToken, expected, jwtIssuerCandidates(conf))
+
+	// A token whose signature could not be verified counts against the authentication rate limit.
+	if unverified {
+		limiter.Auth.Reserve(clientIP)
+	}
 
 	if claims == nil {
 		if log.IsLevelEnabled(logrus.DebugLevel) {
@@ -67,6 +74,8 @@ func authAnyJWT(c *gin.Context, clientIP, authToken string, resource acl.Resourc
 		}
 		return nil
 	}
+
+	rememberPortalPeer(c)
 
 	// Check if config allows resource access to be authorized with JWT.
 	allowedScopes := conf.JWTAllowedScopes()
@@ -151,16 +160,14 @@ func shouldAllowJWT(conf *config.Config, clientIP string) bool {
 		return true
 	}
 
-	ip := net.ParseIP(clientIP)
-	_, block, err := net.ParseCIDR(cidr)
-	if err != nil || ip == nil {
+	if _, err := cluster.ParseCIDRs(cidr); err != nil || !header.IsIP(clientIP) {
 		if log.IsLevelEnabled(logrus.DebugLevel) {
 			log.Debugf("auth: skipping portal jwt (invalid cidr %q or client ip %q)", clean.Log(cidr), clean.Log(clientIP))
 		}
 		return false
 	}
 
-	if !block.Contains(ip) {
+	if !cluster.CIDRsContain(cidr, clientIP) {
 		if log.IsLevelEnabled(logrus.DebugLevel) {
 			log.Debugf("auth: skipping portal jwt (client ip %q outside allowed cidr %q)", clean.Log(clientIP), clean.Log(cidr))
 		}
@@ -185,27 +192,31 @@ func expectedClaimsFor(conf *config.Config, requiredScope string) clusterjwt.Exp
 	return expected
 }
 
-// verifyTokenFromPortal checks the token against each candidate issuer and
-// returns the verified claims on success.
-func verifyTokenFromPortal(ctx context.Context, token string, expected clusterjwt.ExpectedClaims, issuers []string) *clusterjwt.Claims {
+// verifyTokenFromPortal verifies the token against each issuer candidate and returns its claims, or nil.
+// unverified reports that its signature could not be verified, see clusterjwt.Unverified.
+func verifyTokenFromPortal(ctx context.Context, token string, expected clusterjwt.ExpectedClaims, issuers []string) (claims *clusterjwt.Claims, unverified bool) {
 	if len(issuers) == 0 {
 		if log.IsLevelEnabled(logrus.DebugLevel) {
 			log.Debug("auth: portal jwt verification skipped (no issuer candidates)")
 		}
-		return nil
+		return nil, false
 	}
 
 	var lastErr error
 
 	for _, issuer := range issuers {
 		expected.Issuer = issuer
-		claims, err := get.VerifyJWT(ctx, token, expected)
+		verified, err := get.VerifyJWT(ctx, token, expected)
 		if err == nil {
-			return claims
+			return verified, false
 		}
 		lastErr = err
 		if log.IsLevelEnabled(logrus.DebugLevel) {
 			log.Debugf("auth: portal jwt issuer candidate %s rejected (%s)", clean.Log(issuer), clean.Error(err))
+		}
+		// The key and signature checks do not depend on the issuer, so the other candidates would fail the same way.
+		if clusterjwt.SignatureFailed(err) {
+			return nil, clusterjwt.Unverified(err)
 		}
 	}
 
@@ -213,7 +224,7 @@ func verifyTokenFromPortal(ctx context.Context, token string, expected clusterjw
 		log.Debugf("auth: portal jwt verification failed after %d issuer attempts (%s)", len(issuers), clean.Error(lastErr))
 	}
 
-	return nil
+	return nil, false
 }
 
 // jwtIssuerCandidates returns the possible issuer values the node should accept

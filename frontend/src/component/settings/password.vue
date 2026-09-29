@@ -16,7 +16,7 @@
           <h6 class="text-h6">{{ $gettext(`Change Password`) }}</h6>
         </v-card-title>
         <v-card-text class="dense">
-          <v-row align="start" dense>
+          <v-row class="align-start" density="compact">
             <v-col v-if="oldRequired" cols="12" class="text-caption">
               {{ $gettext(`Please note that changing your password will log you out on other devices and browsers.`) }}
             </v-col>

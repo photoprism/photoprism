@@ -1,6 +1,6 @@
 ## API Package Guide
 
-**Last Updated:** September 27, 2026
+**Last Updated:** September 28, 2026
 
 ### Overview
 
@@ -72,8 +72,24 @@ including `.github`, `.forgejo`, `.local`, and `_netrc`, at any depth, matched c
 the suffixes in `pkg/fs.ReservedPathSuffixes`. ZIP entry checks
 apply to files and directories before extraction; other hidden-directory handling is unchanged. Other import sources and WebDAV retain their format policies.
 
+Staged batches are eligible for cleanup once the batch directory and every entry in it
+have been unchanged for longer than `upload-maxage` (7 days by default, from one day to 100 years; `-1`
+keeps them), including batches awaiting a processing retry. Age is measured with the storage's own
+clock, read from the `.upload-purge` file that each cleanup run creates anew in the users storage folder.
+Upload-batch removal is deferred while upload or processing requests are active, and a batch is
+checked again when a request for it ran since the cleanup scan; removal logs a warning with the number of
+staged files removed with them, and a batch whose removal has been delayed by requests for more than a day
+is reported in a warning at most once a day. Uploads and their processing do not wait for indexing or other imports, but processing answers 503 while a running index is being canceled.
+Files directly in the upload root, including avatar staging, are not batch cleanup targets.
+
 Processing a batch adds its files to at most 100 requested albums: titles resolve among the user's
 own albums or create a new one, and album UIDs must name regular albums the session can see.
+When the import cannot run, refuses files, or cannot move some of them to the originals folder,
+processing answers 503 (busy, e.g. while indexing is being canceled or a faces migration runs), 507
+(insufficient storage), or 500 instead of success and keeps the files that were not imported staged,
+so the same session can retry with the same token.
+Processing only looks up an existing batch and never creates it; it answers 404 if there is none,
+for example after cleanup removed it or a previous request imported it.
 
 ### Audit Logging
 

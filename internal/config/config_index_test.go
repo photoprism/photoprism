@@ -1,6 +1,7 @@
 package config
 
 import (
+	"math"
 	"runtime"
 	"testing"
 	"time"
@@ -219,10 +220,13 @@ func TestConfig_OriginalsLimit(t *testing.T) {
 	assert.Equal(t, -1, c.OriginalsLimit())
 	c.options.OriginalsLimit = 800
 	assert.Equal(t, 800, c.OriginalsLimit())
-	// A value above the accepted range selects the disabled sentinel rather than clamping,
-	// so an operator who sets one too high gets no limit instead of a high one.
+	// A large value is kept, and one above MaxSizeLimit is clamped to it.
 	c.options.OriginalsLimit = 100001
-	assert.Equal(t, -1, c.OriginalsLimit())
+	assert.Equal(t, 100001, c.OriginalsLimit())
+	c.options.OriginalsLimit = math.MaxInt
+	assert.Equal(t, MaxSizeLimit, c.OriginalsLimit())
+	assert.Equal(t, int64(MaxSizeLimit)*1024*1024, c.OriginalsLimitBytes())
+	assert.Greater(t, c.OriginalsLimitBytes(), int64(0))
 	c.options.OriginalsLimit = 100000
 	assert.Equal(t, 100000, c.OriginalsLimit())
 }

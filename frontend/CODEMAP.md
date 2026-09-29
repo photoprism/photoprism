@@ -1,6 +1,6 @@
 PhotoPrism — Frontend CODEMAP
 
-**Last Updated:** September 27, 2026
+**Last Updated:** September 28, 2026
 
 Purpose
 - Help agents and contributors navigate the Vue 3 + Vuetify 4 app quickly and make safe changes.
@@ -46,7 +46,7 @@ Runtime & Plugins
   - **Known caveat at 4.2.2:** Vuetify upstream issue #22828 — `v-select`'s `@blur` fires when the menu opens. PhotoPrism is not affected because we only bind `@blur` on `v-text-field`, `v-textarea`, and `v-combobox`; if you ever attach `@blur` to a `v-select`, expect spurious calls until that upstream bug is fixed.
 - Router: Vue Router 4, history base at `$config.frontendUri` (default `/library` for CE/Plus/Pro and `/portal` for Portal)
 - I18n: `vue3-gettext` via `common/gettext.js`; canonical extraction via root `make gettext-extract` (scans `frontend/src` plus available overlays in `plus/frontend`, `pro/frontend`, and `portal/frontend`), compile with `npm run gettext-compile`
-- HTML sanitization: `vue-3-sanitize` + `vue-sanitize-directive`
+- HTML sanitization: `$util.sanitizeHtml()` in `src/common/util.js`, which wraps `sanitize-html`
 - Tooltips: Vuetify `<v-tooltip>` component + `v-tooltip` directive (auto-imported per SFC by `vite-plugin-vuetify`)
 - Video: HLS.js assigned to `window.Hls`
 - PWA: Workbox registers a service worker after config load (see `src/common/pwa.js` and `src/app.js`); scope and registration URL derive from `$config.baseUri` so non-root deployments work. In Portal mode we intentionally skip root-scope (`/`) registration to avoid shared-domain cache interference with instance scopes under `/i/<name>/`. Instance clients under `/i/<name>/` also try to unregister legacy root-scope registrations before registering their scoped worker, so upgrades from older shared-domain setups can recover without manual browser cleanup. Workbox precache rules live in `serviceWorkerOptions` in `frontend/vite.plugins.mjs`; locale chunks, share page assets, and `.ttf`/`.woff` fonts are excluded there so we don’t force every user to download those assets on first visit.
@@ -107,7 +107,7 @@ Build & Tooling
 - Vite bundles the frontend (`vite.config.mjs`, plugins in `vite.plugins.mjs`); scripts in `frontend/package.json`:
   - `npm run build` (prod), `npm run build-dev` (dev), `npm run build-analyze` (bundle report), `npm run watch` (`vite build --watch`)
   - Lint/format: `npm run lint` or `make lint-js`; repo root `make lint` runs both backend (golangci-lint via `.golangci.yml`) and frontend linters
-  - Security scan: `npm run security:scan` (checks `--ignore-scripts` and forbids `v-html`)
+  - Security scan: `npm run security:scan` checks `--ignore-scripts` and runs `scripts/scan-xss.mjs` over the code files: an HTML binding (`v-html`, `:innerHTML`, `:outerHTML`) needs an `eslint-disable-next-line vue/no-v-html -- <reason>` comment on the line directly above, and a DOM HTML sink needs a `security-reviewed` note unless it clears the element with `""`; a Vitest case runs it over `src/`
 - ESLint v10 migration status and upgrade checklist are documented in `frontend/tests/README.md`.
 - Licensing: run `make notice` from the repo root to regenerate `NOTICE` files after dependency changes—never edit them manually.
 - Make targets (from repo root): `make build-js`, `make watch-js`, `make test-js`
@@ -143,7 +143,7 @@ Common How‑Tos
   - Global shortcuts go through `onShortCut(ev)` in `common/view.js`. It only forwards Escape and `ctrl`/`meta` combinations, so do not depend on it for plain character keys.
 
 Conventions & Safety
-- Avoid `v-html`; use `v-sanitize` or `$util.sanitizeHtml()` (build enforces this)
+- Avoid `v-html`; where HTML must render, bind an encoded and `$util.sanitizeHtml()`-sanitized value and mark it with the reviewed note above
 - Keep big components lazy if needed; split views logically under `src/page`
 - Import through the bare module roots (`app`, `common`, `component`, `model`, `options`, `page`), which both the build and Vitest resolve, so edition overlays apply
 

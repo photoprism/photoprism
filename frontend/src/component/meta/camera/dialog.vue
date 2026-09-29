@@ -23,7 +23,7 @@
       </v-toolbar>
       <v-card-text class="dense">
         <v-form ref="form" v-model="valid" validate-on="invalid-input" @submit.prevent="confirm">
-        <v-row dense class="py-2">
+        <v-row density="compact" class="py-2">
           <v-col cols="12">
             <v-select
               v-model="cameraID"

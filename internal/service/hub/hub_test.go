@@ -64,7 +64,7 @@ func TestNewRequest(t *testing.T) {
 
 	t.Logf("Request: %+v", r)
 
-	if j, err := json.Marshal(r); err != nil {
+	if j, err := json.Marshal(r); err != nil { //nolint:gosec // G117: test request
 		t.Fatal(err)
 	} else {
 		t.Logf("JSON: %s", j)

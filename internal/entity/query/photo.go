@@ -129,11 +129,12 @@ func uniqueUIDs(uids []string) []string {
 	return result
 }
 
-// MissingPhotos returns photo entities without existing files.
+// MissingPhotos returns active and archived photo entities without existing files, excluding removed photos.
 func MissingPhotos(limit int, offset int) (entities entity.Photos, err error) {
-	err = Db().
+	err = UnscopedDb().
 		Select("photos.*").
 		Where("id NOT IN (SELECT photo_id FROM files WHERE file_missing = 0 AND file_root = '/' AND deleted_at IS NULL)").
+		Where("deleted_at IS NULL OR photo_quality > -1").
 		Order("photos.id").
 		Limit(limit).Offset(offset).Find(&entities).Error
 
@@ -245,7 +246,8 @@ func FixPrimaries() error {
 	return nil
 }
 
-// FlagHiddenPhotos sets the quality score of photos without valid primary file to -1.
+// FlagHiddenPhotos sets the quality score of active photos without valid primary file to -1.
+// Archived photos keep their score, since -1 marks an archived photo as removed.
 func FlagHiddenPhotos() (err error) {
 	mutex.Index.Lock()
 	defer mutex.Index.Unlock()
@@ -257,7 +259,7 @@ func FlagHiddenPhotos() (err error) {
 	affected := 0
 
 	ids := Db().Select("id").
-		Where("id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND file_missing = 0 AND file_error = '' AND deleted_at IS NULL) AND photo_quality > -1").
+		Where("id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND file_missing = 0 AND file_error = '' AND deleted_at IS NULL) AND photo_quality > -1 AND deleted_at IS NULL").
 		Table(entity.Photo{}.TableName()).SubQuery()
 	if result := UnscopedDb().Table(entity.Photo{}.TableName()).
 		Where("id IN (?) AND photo_quality > -1", ids).

@@ -27,7 +27,7 @@
             <v-expansion-panel-text>
               <v-card color="secondary-light">
                 <v-card-text class="dense">
-                  <v-row align="center" dense>
+                  <v-row class="align-center" density="compact">
                     <v-col cols="12">
                       <v-text-field
                         :model-value="link.url()"

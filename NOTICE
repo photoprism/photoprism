@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2026-09-27
+Date generated: 2026-09-28
 
 ================================================================================
 
@@ -9516,6 +9516,7 @@ regenerator-runtime                                 MIT            Ben Newman <b
 rollup-plugin-visualizer                            MIT            Denis Bardadym <bardadymchik@gmail.com>
 sanitize-html                                       MIT            Apostrophe Technologies, Inc.
 sass                                                MIT            Natalie Weizenbaum nweiz@google.com https://github.com/nex3
+sass-embedded                                       MIT            Google Inc.
 sockette                                            MIT            Luke Edwards luke.edwards05@gmail.com lukeed.com
 tar                                                 BlueOak-1.0.0  Isaac Z. Schlueter
 util                                                MIT            Joyent http://www.joyent.com
@@ -9523,10 +9524,8 @@ vite                                                MIT            Evan You
 vite-plugin-vuetify                                 MIT            Kael Watts-Deuchar
 vitest                                              MIT            Anthony Fu <anthonyfu117@hotmail.com>
 vue                                                 MIT            Evan You
-vue-3-sanitize                                      MIT            Vannsl, Vanessa Otto <mail@vannsl.io>
 vue-luxon                                           MIT            Cas Bloem
 vue-router                                          MIT            Eduardo San Martin Morote posva13@gmail.com
-vue-sanitize-directive                              MIT            Leonardo Piccioni de Almeida leopiccionia@gmail.com
 vue3-gettext                                        MIT            Leo Zurbriggen
 vuetify                                             MIT            John Leider john@vuetifyjs.com
 workbox-build                                       MIT            Google's Web DevRel Team and Google's Aurora Team

@@ -17,9 +17,6 @@ import (
 )
 
 func TestResetCommand(t *testing.T) {
-	// make sure that database is in a good state for later tests as this test empties it
-	defer resetConfigAndDB()
-
 	// resetTestArgs returns the app arguments that point the command at the test database.
 	resetTestArgs := func(c *config.Config) []string {
 		if dbDrv := os.Getenv("PHOTOPRISM_TEST_DRIVER"); dbDrv != "sqlite" {
@@ -32,7 +29,7 @@ func TestResetCommand(t *testing.T) {
 	t.Run("NoTerminal", func(t *testing.T) {
 		t.Setenv("PHOTOPRISM_CLI", "")
 
-		c := resetConfigAndOpenDB()
+		c := resetConfigAndOpenDB(t)
 		before := int64(0)
 		require.NoError(t, c.Db().Model(&entity.Photo{}).Count(&before).Error)
 		require.Greater(t, before, int64(0))
@@ -52,8 +49,7 @@ func TestResetCommand(t *testing.T) {
 	// keepsFiles runs a reset that must reset only the index database, and keep every file, while
 	// stdin answers every question with yes.
 	keepsFiles := func(t *testing.T, args ...string) {
-		c := resetConfigAndOpenDB()
-		t.Cleanup(func() { resetConfigAndDB() })
+		c := resetConfigAndOpenDB(t)
 		pipeResetAnswers(t, "y\ny\ny\ny\ny\n")
 
 		sidecar := filepath.Join(c.SidecarPath(), "reset-yes-test", "a.json")
@@ -96,7 +92,7 @@ func TestResetCommand(t *testing.T) {
 		}
 	})
 	t.Run("ResetIndex", func(t *testing.T) {
-		c := resetConfigAndOpenDB()
+		c := resetConfigAndOpenDB(t)
 		count := int64(0)
 		if err := c.Db().Model(&entity.Photo{}).Count(&count).Error; err != nil {
 			assert.NoError(t, err)

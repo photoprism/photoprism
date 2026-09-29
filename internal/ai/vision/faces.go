@@ -160,8 +160,8 @@ func applyEndpointEmbeddings(faces face.Faces, res *ApiResponse, configured face
 	// different model produced vectors of another space, whatever their width.
 	if res.Model != nil {
 		if name := face.NormalizeModelName(res.Model.Name); name != "" && !face.ModelsComparable(name, model) {
-			log.Warnf("vision: endpoint returned %s face embeddings, expected %s, dropping them",
-				clean.Log(name), clean.Log(model))
+			log.Warnf("vision: endpoint returned face embeddings of another model, expected %s, dropping them", clean.Log(model))
+			log.Debugf("vision: endpoint returned face embeddings of model %q", name)
 			return 0
 		}
 	}

@@ -5,9 +5,9 @@
         <input ref="upload" type="file" class="d-none input-upload" accept="image/png, image/jpeg" @change.stop="onUploadAvatar()" />
         <v-card flat tile class="bg-background ma-0 pa-0">
           <v-card-actions class="ma-0 pa-0">
-            <v-row align="start" dense>
-              <v-col cols="8" sm="9" md="10" align-self="stretch" class="pa-0 d-flex">
-                <v-row align="start" dense>
+            <v-row class="align-start" density="compact">
+              <v-col cols="8" sm="9" md="10" class="pa-0 d-flex align-self-stretch">
+                <v-row class="align-start" density="compact">
                   <v-col md="2" class="hidden-sm-and-down">
                     <v-text-field
                       v-model="user.Details.NameTitle"
@@ -84,7 +84,7 @@
                   </v-col>
                 </v-row>
               </v-col>
-              <v-col class="text-center" cols="4" sm="3" md="2" align-self="center">
+              <v-col class="text-center align-self-center" cols="4" sm="3" md="2">
                 <v-avatar :size="$vuetify.display.md ? 100 : 112" :class="{ clickable: !busy }" @click.stop.prevent="onChangeAvatar()">
                   <v-img
                     :alt="accountInfo"
@@ -133,7 +133,7 @@
             {{ $gettext(`Security and Access`) }}
           </v-card-title>
           <v-card-actions class="ma-0 pa-0">
-            <v-row align="start" dense>
+            <v-row class="align-start" density="compact">
               <v-col cols="12" sm="6">
                 <v-btn
                   block
@@ -196,7 +196,7 @@
             {{ $gettext(`Birth Date`) }}
           </v-card-title>
           <v-card-actions class="ma-0 pa-0">
-            <v-row align="start" dense>
+            <v-row class="align-start" density="compact">
               <v-col cols="6" sm="3">
                 <v-combobox
                   :model-value="user?.Details?.BirthDay > 0 ? user.Details.BirthDay : null"
@@ -263,7 +263,7 @@
             {{ $gettext(`Contact Details`) }}
           </v-card-title>
           <v-card-actions class="ma-0 pa-0">
-            <v-row align="start" dense>
+            <v-row class="align-start" density="compact">
               <v-col cols="12" sm="7">
                 <v-text-field
                   v-model="user.Details.Location"

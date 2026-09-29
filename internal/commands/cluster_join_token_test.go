@@ -82,7 +82,7 @@ func TestClusterJoinToken_Replace(t *testing.T) {
 	t.Cleanup(func() { _ = os.Remove(targetFile) })
 
 	saved := func() string {
-		data, err := os.ReadFile(targetFile)
+		data, err := os.ReadFile(targetFile) //nolint:gosec // G304: test-owned path
 		require.NoError(t, err)
 		return strings.TrimSpace(string(data))
 	}
@@ -154,7 +154,7 @@ func TestClusterJoinToken_ReplaceNode(t *testing.T) {
 	require.ErrorAs(t, err, &exit)
 	assert.Equal(t, 2, exit.ExitCode())
 
-	data, readErr := os.ReadFile(targetFile)
+	data, readErr := os.ReadFile(targetFile) //nolint:gosec // G304: test-owned path
 	require.NoError(t, readErr)
 	assert.Equal(t, existing, strings.TrimSpace(string(data)))
 }

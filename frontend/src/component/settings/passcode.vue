@@ -20,7 +20,7 @@
         <!-- Setup -->
         <template v-if="page === 'setup'">
           <v-card-text class="dense">
-            <v-row align="start" dense>
+            <v-row class="align-start" density="compact">
               <v-col cols="12" class="text-subtitle-2">
                 {{
                   $gettext(
@@ -68,7 +68,7 @@
         <!-- Confirm -->
         <template v-else-if="page === 'confirm'">
           <v-card-text class="dense">
-            <v-row dense>
+            <v-row density="compact">
               <v-col cols="12" class="text-body-2 text-center">
                 {{ $gettext(`Scan the QR code with your authenticator app or use the setup key shown below and then enter the generated verification code:`) }}
               </v-col>
@@ -108,7 +108,7 @@
         <!-- Activate -->
         <template v-else-if="page === 'activate'">
           <v-card-text class="dense">
-            <v-row align="start" dense>
+            <v-row class="align-start" density="compact">
               <v-col cols="12" class="text-body-2">
                 {{
                   $gettext(
@@ -152,7 +152,7 @@
         <!-- Deactivate -->
         <template v-else-if="page === 'deactivate'">
           <v-card-text class="dense">
-            <v-row align="start" dense>
+            <v-row class="align-start" density="compact">
               <v-col cols="12" class="text-subtitle-2">
                 {{ $gettext(`Two-factor authentication has been enabled for your account.`) }}
               </v-col>
@@ -196,7 +196,7 @@
         <!-- Not Available -->
         <template v-else-if="page === 'not_available'">
           <v-card-text class="dense">
-            <v-row align="start" dense>
+            <v-row class="align-start" density="compact">
               <v-col cols="12" class="text-body-2">
                 {{ $gettext(`Only locally managed accounts can be set up for authentication with 2FA.`) }}
               </v-col>

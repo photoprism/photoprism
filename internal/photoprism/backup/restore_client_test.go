@@ -28,7 +28,7 @@ func fakeClient(t *testing.T, output string, code int) (bin, runs string) {
 	outFile := filepath.Join(dir, "output")
 	require.NoError(t, os.WriteFile(outFile, []byte(output+"\n"), 0o600))
 	script := "#!/bin/sh\necho \"$*\" >> '" + runs + "'\ncat '" + outFile + "'\nexit " + strconv.Itoa(code) + "\n"
-	require.NoError(t, os.WriteFile(bin, []byte(script), 0o700))
+	require.NoError(t, os.WriteFile(bin, []byte(script), 0o700)) //nolint:gosec // G306: test executable
 
 	return bin, runs
 }
@@ -37,7 +37,7 @@ func fakeClient(t *testing.T, output string, code int) (bin, runs string) {
 func runArgs(t *testing.T, runs string) []string {
 	t.Helper()
 
-	data, err := os.ReadFile(runs)
+	data, err := os.ReadFile(runs) //nolint:gosec // G304: test-owned path
 
 	if os.IsNotExist(err) {
 		return nil
@@ -51,7 +51,7 @@ func runArgs(t *testing.T, runs string) []string {
 func TestFakeClient(t *testing.T) {
 	bin, runs := fakeClient(t, "mysql: [ERROR] unknown option '--sandbox'.", 7)
 
-	out, err := exec.Command(bin, "--sandbox", "--version").CombinedOutput()
+	out, err := exec.Command(bin, "--sandbox", "--version").CombinedOutput() //nolint:gosec // G204: test command
 
 	var exitErr *exec.ExitError
 	require.ErrorAs(t, err, &exitErr)
@@ -113,7 +113,7 @@ func TestClientAccepts(t *testing.T) {
 
 		// The child keeps the output open after the script itself is stopped.
 		bin := filepath.Join(t.TempDir(), "client")
-		require.NoError(t, os.WriteFile(bin, []byte("#!/bin/sh\nexec sleep 30\n"), 0o700))
+		require.NoError(t, os.WriteFile(bin, []byte("#!/bin/sh\nexec sleep 30\n"), 0o700)) //nolint:gosec // G306: test executable
 		start := time.Now()
 
 		ok, err := clientAccepts(bin, "-safe", "-version")
@@ -129,7 +129,7 @@ func TestClientAccepts(t *testing.T) {
 
 		// The client exits after printing its version, while a child it started keeps the output open.
 		bin := filepath.Join(t.TempDir(), "client")
-		require.NoError(t, os.WriteFile(bin, []byte("#!/bin/sh\necho client 1.0\nsleep 3 &\nexit 0\n"), 0o700))
+		require.NoError(t, os.WriteFile(bin, []byte("#!/bin/sh\necho client 1.0\nsleep 3 &\nexit 0\n"), 0o700)) //nolint:gosec // G306: test executable
 
 		ok, err := clientAccepts(bin, "-safe", "-version")
 
@@ -183,7 +183,7 @@ func TestSqliteRestoreCmd(t *testing.T) {
 			t.Skip("sqlite3 with safe mode is not available")
 		}
 
-		dump, err := exec.Command(bin, srcFile, ".dump").Output()
+		dump, err := exec.Command(bin, srcFile, ".dump").Output() //nolint:gosec // G204: test command
 		require.NoError(t, err)
 		require.Contains(t, string(dump), "CREATE TABLE")
 
@@ -193,7 +193,7 @@ func TestSqliteRestoreCmd(t *testing.T) {
 		out, err := cmd.CombinedOutput()
 		require.NoError(t, err, string(out))
 
-		restored, err := exec.Command(bin, dbFile, ".dump").Output()
+		restored, err := exec.Command(bin, dbFile, ".dump").Output() //nolint:gosec // G204: test command
 		require.NoError(t, err)
 		assert.Equal(t, string(dump), string(restored))
 	})

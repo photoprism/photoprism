@@ -13,6 +13,7 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -20,11 +21,13 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -497,6 +500,11 @@ func TestDiscardUpload(t *testing.T) {
 
 		assert.DirExists(t, other)
 	})
+	t.Run("NoStorageFolder", func(t *testing.T) {
+		conf.Options().StoragePath = t.TempDir()
+		discardUpload(s, rnd.Base36(10))
+		assert.NoDirExists(t, filepath.Join(conf.UsersStoragePath(), user.UserUID))
+	})
 }
 
 func TestProcessUserUploadStagedFiles(t *testing.T) {
@@ -580,4 +588,144 @@ func TestProcessUserUploadStagedFiles(t *testing.T) {
 		assert.Equal(t, http.StatusForbidden, result.Code)
 		assert.FileExists(t, filepath.Join(dir, "upload.jpg"))
 	})
+	t.Run("MissingBatch", func(t *testing.T) {
+		storagePath := conf.Options().StoragePath
+		t.Cleanup(func() { conf.Options().StoragePath = storagePath })
+		conf.Options().StoragePath = t.TempDir()
+		token := rnd.Base36(10)
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusNotFound, result.Code)
+		assert.Contains(t, result.Body.String(), i18n.Msg(i18n.ErrUploadFailed))
+		assert.NoDirExists(t, filepath.Join(conf.UsersStoragePath(), user.UserUID))
+	})
+	t.Run("DanglingLink", func(t *testing.T) {
+		token := rnd.Base36(10)
+		dir, err := conf.UserUploadBatchDir(user.UserUID, sess.RefID+token)
+		require.NoError(t, err)
+		require.NoError(t, fs.MkdirAll(filepath.Dir(dir)))
+		require.NoError(t, os.Symlink(filepath.Join(t.TempDir(), "missing"), dir))
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusBadRequest, result.Code)
+		_, err = os.Lstat(dir)
+		assert.True(t, os.IsNotExist(err), "rejected batch link must be discarded")
+	})
+	t.Run("BatchNotADirectory", func(t *testing.T) {
+		token := rnd.Base36(10)
+		dir, err := conf.UserUploadBatchDir(user.UserUID, sess.RefID+token)
+		require.NoError(t, err)
+		require.NoError(t, fs.MkdirAll(filepath.Dir(dir)))
+		require.NoError(t, os.WriteFile(dir, []byte("file"), fs.ModeFile))
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusBadRequest, result.Code)
+		assert.FileExists(t, dir)
+	})
+	t.Run("StorageNotAccessible", func(t *testing.T) {
+		if os.Geteuid() == 0 {
+			t.Skip("permissions are not enforced for root")
+		}
+		token, dir := stage(t)
+		upload := filepath.Dir(dir)
+		require.NoError(t, os.Chmod(upload, 0))           //nolint:gosec // Test makes a folder inaccessible.
+		t.Cleanup(func() { _ = os.Chmod(upload, 0o700) }) //nolint:gosec // Test restores access for cleanup.
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		require.NoError(t, os.Chmod(upload, 0o700)) //nolint:gosec // Test restores access.
+		assert.Equal(t, http.StatusInternalServerError, result.Code)
+		assert.FileExists(t, filepath.Join(dir, "upload.jpg"))
+	})
+	t.Run("FacesLocked", func(t *testing.T) {
+		lock, err := mutex.AcquireFileLock(conf.FacesLockFile(), "faces migration")
+		require.NoError(t, err)
+		t.Cleanup(lock.Release)
+		token, dir := stage(t)
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusServiceUnavailable, result.Code)
+		assert.Contains(t, result.Body.String(), i18n.Msg(i18n.ErrBusy))
+		assert.FileExists(t, filepath.Join(dir, "upload.jpg"))
+	})
+	t.Run("InsufficientStorage", func(t *testing.T) {
+		quota := conf.Options().FilesQuota
+		t.Cleanup(func() { conf.Options().FilesQuota = quota; config.FlushUsageCache() })
+		conf.Options().OriginalsPath = options.OriginalsPath
+		conf.Options().FilesQuota = 1
+		config.FlushUsageCache()
+		require.True(t, conf.InsufficientStorage())
+		token, dir := stage(t)
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusInsufficientStorage, result.Code)
+		assert.Contains(t, result.Body.String(), i18n.Msg(i18n.ErrInsufficientStorage))
+		assert.FileExists(t, filepath.Join(dir, "upload.jpg"))
+	})
+	t.Run("Canceled", func(t *testing.T) {
+		require.NoError(t, mutex.IndexWorker.Start())
+		t.Cleanup(mutex.IndexWorker.Stop)
+		mutex.IndexWorker.Cancel()
+		token, dir := stage(t)
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusServiceUnavailable, result.Code)
+		assert.Contains(t, result.Body.String(), i18n.Msg(i18n.ErrBusy))
+		assert.FileExists(t, filepath.Join(dir, "upload.jpg"))
+	})
+	t.Run("MoveFailed", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		} else if os.Geteuid() == 0 {
+			t.Skip("permissions are not enforced for root")
+		}
+		conf.Options().OriginalsPath = t.TempDir()
+		conf.Options().SidecarPath = t.TempDir()
+		conf.Options().ImportAllow = ""
+		require.NoError(t, os.Chmod(conf.OriginalsPath(), 0o500))       //nolint:gosec // Test makes a folder read-only.
+		t.Cleanup(func() { _ = os.Chmod(conf.OriginalsPath(), 0o700) }) //nolint:gosec // Test restores write access for cleanup.
+		token, dir := stage(t)
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusInternalServerError, result.Code, result.Body.String())
+		assert.Contains(t, result.Body.String(), i18n.Msg(i18n.ErrUploadFailed))
+		assert.FileExists(t, filepath.Join(dir, "upload.jpg"))
+	})
+	t.Run("DuplicateAndUnsupported", func(t *testing.T) {
+		if testing.Short() {
+			t.Skip("skipping test in short mode.")
+		}
+		conf.Options().OriginalsPath = t.TempDir()
+		conf.Options().SidecarPath = t.TempDir()
+		conf.Options().ImportAllow = ""
+		token, dir := stage(t)
+		hash := fs.Hash(filepath.Join(dir, "upload.jpg"))
+		t.Cleanup(func() {
+			file, err := entity.FirstFileByHash(hash)
+			if err != nil {
+				return
+			}
+			entity.UnscopedDb().Unscoped().Delete(&entity.File{}, "photo_id = ?", file.PhotoID)
+			entity.UnscopedDb().Unscoped().Delete(&entity.Details{}, "photo_id = ?", file.PhotoID)
+			entity.UnscopedDb().Unscoped().Delete(&entity.Photo{}, "id = ?", file.PhotoID)
+		})
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		require.Equal(t, http.StatusOK, result.Code, result.Body.String())
+
+		// The same content again is a duplicate, which the import skips.
+		token, _ = stage(t)
+		result = AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusOK, result.Code, result.Body.String())
+
+		// A batch without media files imports nothing.
+		token, dir = stage(t)
+		require.NoError(t, os.Remove(filepath.Join(dir, "upload.jpg")))
+		require.NoError(t, os.WriteFile(filepath.Join(dir, "notes.txt"), []byte("notes"), fs.ModeFile))
+		result = AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		assert.Equal(t, http.StatusOK, result.Code, result.Body.String())
+	})
+}
+
+// TestLogUploadNsfwErr checks that an upload content check that could not run is logged to the system log only.
+func TestLogUploadNsfwErr(t *testing.T) {
+	hook := captureLog(t)
+	systemHook := captureSystemLog(t)
+
+	logUploadNsfwErr("/tmp/upload/cat.jpg", errors.New("service uri of nsfw model custom does not resolve"))
+
+	assert.Empty(t, hook.AllEntries())
+	require.Len(t, systemHook.AllEntries(), 1)
+	assert.Equal(t, logrus.WarnLevel, systemHook.LastEntry().Level)
+	assert.Equal(t, "nsfw: upload › could not check cat.jpg › service uri of nsfw model custom does not resolve", systemHook.LastEntry().Message)
 }

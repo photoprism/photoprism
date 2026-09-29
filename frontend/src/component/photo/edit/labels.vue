@@ -3,7 +3,7 @@
     <v-form ref="form" class="p-form p-form--table p-form-photo-labels" validate-on="invalid-input" accept-charset="UTF-8" tabindex="-1" @submit.prevent>
       <div class="form-body">
         <div class="form-controls">
-          <v-row dense align="start">
+          <v-row density="compact" class="align-start">
             <v-col cols="0" sm="2" class="form-thumb">
               <div>
                 <img :alt="view?.model.Title" :src="view?.model.thumbnailUrl('tile_500')" class="clickable" @click.stop.prevent.exact="openPhoto()" />

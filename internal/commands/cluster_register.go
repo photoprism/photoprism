@@ -21,6 +21,7 @@ import (
 	"github.com/photoprism/photoprism/internal/service/cluster/theme"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/dsn"
+	"github.com/photoprism/photoprism/pkg/http/dns"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -402,7 +403,7 @@ func warnInsecurePublicURL(u string) bool {
 		return false
 	}
 	h := parsed.Hostname()
-	if h == "localhost" || h == "127.0.0.1" || h == "::1" {
+	if dns.IsLoopbackHost(h) {
 		return false
 	}
 	return true
@@ -468,7 +469,11 @@ func persistRegisterResponse(conf *config.Config, resp *cluster.RegisterResponse
 		}
 		updates.SetDatabaseDriver(driver)
 		updates.SetDatabaseName(resp.Database.Name)
-		updates.SetDatabaseServer(fmt.Sprintf("%s:%d", resp.Database.Host, resp.Database.Port))
+		if server, ok := resp.Database.Server(); !ok {
+			log.Warnf("cluster: ignored unusable database server address %s", clean.Log(server))
+		} else if server != "" {
+			updates.SetDatabaseServer(server)
+		}
 		updates.SetDatabaseUser(resp.Database.User)
 		updates.SetDatabasePassword(resp.Database.Password)
 	}

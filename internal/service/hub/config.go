@@ -42,7 +42,7 @@ type Config struct {
 	Version   string     `json:"version" yaml:"-"`
 	FileName  string     `json:"-" yaml:"-"`
 	Key       string     `json:"key" yaml:"Key"`
-	Secret    string     `json:"secret" yaml:"Secret"` //nolint:gosec // G117: Encrypted Hub secret persisted in config.
+	Secret    string     `json:"secret" yaml:"Secret"` //nolint:gosec // G117: Hub secret persisted in hub.yml.
 	Session   string     `json:"session" yaml:"Session"`
 	session   *Session   `yaml:"-"`
 	sessionMu sync.Mutex `yaml:"-"`
@@ -250,7 +250,7 @@ func (c *Config) ReSync(token string) (err error) {
 	// Create JSON request.
 	var j []byte
 
-	if j, err = json.Marshal(NewRequest(c.Version, c.Serial, c.Env, c.PartnerID, token)); err != nil {
+	if j, err = json.Marshal(NewRequest(c.Version, c.Serial, c.Env, c.PartnerID, token)); err != nil { //nolint:gosec // G117: request carries the token by design
 		return err
 	} else if req, err = http.NewRequest(method, endpointUrl, bytes.NewReader(j)); err != nil {
 		return err
@@ -336,7 +336,7 @@ func (c *Config) Save() error {
 
 	c.Sanitize()
 
-	data, err := yaml.Marshal(c)
+	data, err := yaml.Marshal(c) //nolint:gosec // G117: config file stores the secret by design
 
 	if err != nil {
 		return err

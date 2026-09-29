@@ -253,6 +253,9 @@ func (c *Config) Init() error {
 		log.Warnf("config: the wakeup interval is %s, but must be 1h or less for face recognition to work", c.WakeupInterval().String())
 	}
 
+	// Show warnings for a Vision API key that cannot authenticate requests as configured.
+	c.warnVisionKey()
+
 	// Configure HTTPS proxy for outgoing connections.
 	if httpsProxy := c.HttpsProxy(); httpsProxy != "" {
 		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{
@@ -701,15 +704,15 @@ func mergeOptionValues(dst Values, src Values) bool {
 	return changed
 }
 
-// writeOptionsYAML persists merged options values. It does not touch the in-memory options,
-// which the caller applies through applyOptionValues when it changed one.
+// writeOptionsYAML persists merged options values with writeOptionsFile. It does not touch the in-memory
+// options, which the caller applies through applyOptionValues when it changed one.
 func (c *Config) writeOptionsYAML(fileName string, values Values) (bool, error) {
 	b, err := yaml.Marshal(values)
 	if err != nil {
 		return false, err
 	}
 
-	if err = os.WriteFile(fileName, b, fs.ModeConfigFile); err != nil {
+	if err = writeOptionsFile(fileName, b, hasCredentialOption(values)); err != nil {
 		return false, err
 	}
 

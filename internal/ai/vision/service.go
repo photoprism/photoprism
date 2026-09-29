@@ -27,6 +27,17 @@ type Service struct {
 	Disabled       bool      `yaml:"Disabled,omitempty" json:"disabled,omitempty"`
 }
 
+// UriUnresolved reports whether the service has a Uri that expands to nothing, so it has no endpoint.
+func (m *Service) UriUnresolved() bool {
+	if m == nil || m.Disabled || strings.TrimSpace(m.Uri) == "" {
+		return false
+	}
+
+	uri, _ := m.Endpoint()
+
+	return uri == ""
+}
+
 // Endpoint returns the remote service request method and endpoint URL, if any.
 func (m *Service) Endpoint() (uri, method string) {
 	if m.Disabled || strings.TrimSpace(m.Uri) == "" {
@@ -35,8 +46,8 @@ func (m *Service) Endpoint() (uri, method string) {
 
 	ensureEnv()
 
-	if uri = strings.TrimSpace(os.ExpandEnv(m.Uri)); strings.Contains(uri, "${") {
-		uri = ""
+	if uri = strings.TrimSpace(os.ExpandEnv(m.Uri)); uri == "" || strings.Contains(uri, "${") {
+		return "", ""
 	}
 
 	if m.Method != "" {

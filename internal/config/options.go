@@ -85,6 +85,7 @@ type Options struct {
 	UploadAllow               string        `yaml:"UploadAllow" json:"-" flag:"upload-allow"`
 	UploadArchives            bool          `yaml:"UploadArchives" json:"-" flag:"upload-archives"`
 	UploadLimit               int           `yaml:"UploadLimit" json:"-" flag:"upload-limit"`
+	UploadMaxAge              int64         `yaml:"UploadMaxAge" json:"-" flag:"upload-maxage"`
 	CachePath                 string        `yaml:"CachePath" json:"-" flag:"cache-path"`
 	TempPath                  string        `yaml:"TempPath" json:"-" flag:"temp-path"`
 	AssetsPath                string        `yaml:"AssetsPath" json:"-" flag:"assets-path"`

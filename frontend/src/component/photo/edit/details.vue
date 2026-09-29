@@ -3,7 +3,7 @@
     <v-form ref="form" validate-on="invalid-input" class="p-form p-form-photo-details-meta" accept-charset="UTF-8" tabindex="-1" @submit.prevent="save">
       <div class="form-body">
         <div class="form-controls">
-          <v-row dense align="start">
+          <v-row density="compact" class="align-start">
             <v-col cols="3" sm="2" class="form-thumb">
               <div>
                 <img :alt="view.model.Title" :src="view.model.thumbnailUrl('tile_500')" class="clickable" @click.stop.prevent.exact="openPhoto()" />
@@ -36,7 +36,7 @@
               ></v-textarea>
             </v-col>
           </v-row>
-          <v-row dense>
+          <v-row density="compact">
             <v-col cols="4" lg="2">
               <v-autocomplete
                 :model-value="view.model.Day > 0 ? view.model.Day : null"
@@ -282,7 +282,7 @@
               ></v-text-field>
             </v-col>
           </v-row>
-          <v-row dense>
+          <v-row density="compact">
             <v-col cols="12" md="6">
               <v-textarea
                 v-model="view.model.Details.Subject"

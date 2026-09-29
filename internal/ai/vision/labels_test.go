@@ -310,6 +310,102 @@ func TestGenerateLabelsRefused(t *testing.T) {
 	}}}, Thresholds: DefaultThresholds}
 
 	labels, err := GenerateLabels(Files{samplesPath + "/cat_224.jpeg"}, media.SrcLocal, entity.SrcAuto)
-	assert.EqualError(t, err, "Forbidden (status code 403)")
+	assert.EqualError(t, err, "vision service request failed (status 403)")
 	assert.Empty(t, labels)
+}
+
+// TestGenerateLabelsServiceKey checks which access token is sent to the shared service and to a model's own endpoint.
+func TestGenerateLabelsServiceKey(t *testing.T) {
+	prevConfig := Config
+	t.Cleanup(func() { Config = prevConfig })
+
+	type recorded struct {
+		auth string
+		hits int
+	}
+
+	// Records the Authorization header and answers in the format of the requesting model.
+	newServer := func(t *testing.T, rec *recorded) *httptest.Server {
+		t.Helper()
+
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			rec.auth = r.Header.Get("Authorization")
+			rec.hits++
+
+			if strings.HasSuffix(r.URL.Path, "/labels") {
+				require.NoError(t, json.NewEncoder(w).Encode(ApiResponse{
+					Code:   http.StatusOK,
+					Result: ApiResult{Labels: []LabelResult{{Name: "cat", Confidence: 0.92, Topicality: 0.88}}},
+				}))
+			} else {
+				require.NoError(t, json.NewEncoder(w).Encode(ollama.Response{
+					Model:    "gemma3:4b",
+					Response: `{"labels":[{"name":"cat","confidence":0.92,"topicality":0.88}]}`,
+				}))
+			}
+		}))
+		t.Cleanup(server.Close)
+
+		return server
+	}
+
+	// Returns an Ollama model that sends its requests to the specified endpoint.
+	ollamaModel := func(uri, key string) *Model {
+		model := &Model{
+			Type:   ModelTypeLabels,
+			Name:   "gemma3:4b",
+			Engine: ollama.EngineName,
+			Service: Service{
+				Uri:            uri,
+				Key:            key,
+				Method:         http.MethodPost,
+				RequestFormat:  ApiFormatOllama,
+				ResponseFormat: ApiFormatOllama,
+				FileScheme:     scheme.Base64,
+			},
+		}
+		model.ApplyEngineDefaults()
+
+		return model
+	}
+
+	generate := func(t *testing.T, model *Model) {
+		t.Helper()
+
+		Config = &ConfigValues{Models: Models{model}, Thresholds: DefaultThresholds}
+
+		labels, err := GenerateLabels(Files{samplesPath + "/cat_224.jpeg"}, media.SrcLocal, entity.SrcAuto)
+		require.NoError(t, err)
+		require.Len(t, labels, 1)
+		assert.True(t, strings.EqualFold("cat", labels[0].Name), labels[0].Name)
+	}
+
+	t.Run("SharedService", func(t *testing.T) {
+		var shared recorded
+		useSharedService(t, newServer(t, &shared).URL, "shared-vision-key")
+
+		generate(t, &Model{Type: ModelTypeLabels, Name: "nasnet"})
+		assert.Equal(t, 1, shared.hits)
+		assert.Equal(t, "Bearer shared-vision-key", shared.auth)
+	})
+	t.Run("OwnEndpoint", func(t *testing.T) {
+		var shared, own recorded
+		useSharedService(t, newServer(t, &shared).URL, "shared-vision-key")
+		clearEngineKeys(t)
+
+		generate(t, ollamaModel(newServer(t, &own).URL, ""))
+		assert.Equal(t, 0, shared.hits)
+		assert.Equal(t, 1, own.hits)
+		assert.Empty(t, own.auth)
+	})
+	t.Run("OwnEndpointOwnKey", func(t *testing.T) {
+		var shared, own recorded
+		useSharedService(t, newServer(t, &shared).URL, "shared-vision-key")
+		clearEngineKeys(t)
+
+		generate(t, ollamaModel(newServer(t, &own).URL, "own-key"))
+		assert.Equal(t, 0, shared.hits)
+		assert.Equal(t, 1, own.hits)
+		assert.Equal(t, "Bearer own-key", own.auth)
+	})
 }

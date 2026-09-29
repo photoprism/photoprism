@@ -7,7 +7,6 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/vision"
 	"github.com/photoprism/photoprism/internal/auth/acl"
-	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/media"
 )
@@ -33,6 +32,11 @@ func PostVisionCaption(router *gin.RouterGroup) {
 			return
 		}
 
+		// Abort if the Computer Vision API is disabled.
+		if abortVisionApiDisabled(c) {
+			return
+		}
+
 		var request vision.ApiRequest
 
 		// File uploads are not currently supported for this API endpoint.
@@ -54,18 +58,12 @@ func PostVisionCaption(router *gin.RouterGroup) {
 			return
 		}
 
-		// Check if the Computer Vision API is enabled, otherwise abort with an error.
-		if !get.Config().VisionApi() {
-			c.AbortWithStatusJSON(http.StatusForbidden, vision.NewApiError(request.GetId(), http.StatusForbidden))
-			return
-		}
-
 		// Run inference to generate a caption.
 		result, model, err := vision.GenerateCaption(request.Images, media.SrcRemote)
 
 		switch {
 		case err != nil:
-			log.Errorf("vision: %s (caption)", err)
+			logVisionErr("caption", err)
 			c.JSON(http.StatusBadRequest, vision.NewApiError(request.GetId(), http.StatusBadRequest))
 			return
 		case model == nil:

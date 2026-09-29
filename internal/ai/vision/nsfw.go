@@ -98,6 +98,11 @@ func nsfwInternalContext(images Files, mediaSrc media.Src, context nsfwThreshold
 	if Config == nil {
 		return result, fmt.Errorf("%w: vision service is not configured", nsfw.ErrNotConfigured)
 	} else if model := Config.Model(ModelTypeNsfw); model != nil {
+		// Refuse a model whose own service URI does not resolve.
+		if err = model.unresolvedUriErr(); err != nil {
+			return result, err
+		}
+
 		// Use remote service API if a server endpoint has been configured.
 		if uri, method := model.Endpoint(); uri != "" && method != "" {
 			var apiRequest *ApiRequest

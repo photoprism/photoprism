@@ -41,9 +41,15 @@ printf 'trimmed' > "$output"
 
 // TestVideoTranscodeActionCreationMode checks the CLI action's output permissions after conversion.
 func TestVideoTranscodeActionCreationMode(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
 	ffmpegBin, err := exec.LookPath("ffmpeg")
 	if err != nil {
 		t.Skip("ffmpeg is required for the one-frame transcode fixture")
+	}
+	if commandTestProcess(t) {
+		return
 	}
 	conf := get.Config()
 	saved := *conf.Options()

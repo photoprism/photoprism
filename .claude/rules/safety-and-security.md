@@ -32,7 +32,7 @@
 ## HTTP Download — Security Checklist
 
 - Use the shared safe HTTP helper: `pkg/http/safe` → `safe.Download(destPath, url, *safe.Options)`. Default policy: only `http/https`, enforced timeouts and max size, writes to a `0600` temp file then renames.
-- SSRF protection (mandatory unless explicitly needed for tests): set `AllowPrivate=false` to block private/loopback/multicast/link-local ranges. All redirect targets are validated and the final connected peer IP is also checked. Prefer an image-focused `Accept` header for image downloads.
+- SSRF protection (mandatory unless explicitly needed for tests): set `AllowPrivate=false` to block private/loopback/multicast/link-local ranges. The dialer refuses those addresses before a connection opens, all redirect targets are validated, and the final connected peer IP is also checked. Prefer an image-focused `Accept` header for image downloads.
 - Avatars and small images: use `internal/thumb/avatar.SafeDownload` (15 s timeout, 10 MiB, `AllowPrivate=false`).
 - Tests using `httptest.Server` on 127.0.0.1 must pass `AllowPrivate=true` explicitly.
 - Keep per-resource size budgets small; rely on `io.LimitReader` + `Content-Length` prechecks.

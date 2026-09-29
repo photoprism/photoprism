@@ -7,6 +7,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"syscall"
 	"time"
 
 	"github.com/dustin/go-humanize/english"
@@ -19,6 +20,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -118,6 +120,9 @@ func UploadUserFiles(router *gin.RouterGroup) {
 
 		var uploads []string
 
+		mutex.BeginUploadRequest(batch)
+		defer mutex.EndUploadRequest(batch)
+
 		// Compose upload path.
 		uploadDir, err := conf.UserUploadBatchPath(s.UserUID, batch)
 
@@ -126,6 +131,8 @@ func UploadUserFiles(router *gin.RouterGroup) {
 			Abort(c, http.StatusBadRequest, i18n.ErrUploadFailed)
 			return
 		}
+
+		mutex.UserUploads.Store(true)
 
 		// Operator extension settings can further restrict the supported upload formats.
 		allowedExt := conf.UploadAllow()
@@ -284,7 +291,7 @@ func discardUpload(s *entity.Session, token string) {
 		return
 	}
 
-	dir, err := get.Config().UserUploadBatchPath(s.UserUID, batch)
+	dir, err := get.Config().UserUploadBatchDir(s.UserUID, batch)
 
 	if err != nil {
 		return
@@ -378,11 +385,11 @@ func UploadCheckFile(destName string, rejectRaw bool, totalSizeLimit int64) (rem
 //	@Tags		Users, Files
 //	@Accept		json
 //	@Produce	json
-//	@Param		uid							path		string				true	"user uid"
-//	@Param		token						path		string				true	"upload token"
-//	@Param		options						body		form.UploadOptions	true	"processing options"
-//	@Success	200							{object}	i18n.Response
-//	@Failure	400,401,403,404,409,413,429	{object}	i18n.Response
+//	@Param		uid										path		string				true	"user uid"
+//	@Param		token									path		string				true	"upload token"
+//	@Param		options									body		form.UploadOptions	true	"processing options"
+//	@Success	200										{object}	i18n.Response
+//	@Failure	400,401,403,404,409,413,429,500,503,507	{object}	i18n.Response
 //	@Router		/api/v1/users/{uid}/upload/{token} [put]
 func ProcessUserUpload(router *gin.RouterGroup) {
 	router.PUT("/users/:uid/upload/:token", func(c *gin.Context) {
@@ -437,11 +444,29 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 			return
 		}
 
-		uploadPath, err := conf.UserUploadBatchPath(s.UserUID, batch)
+		mutex.BeginUploadRequest(batch)
+		defer mutex.EndUploadRequest(batch)
+
+		uploadPath, err := conf.UserUploadBatchDir(s.UserUID, batch)
 
 		if err != nil {
-			log.Errorf("upload: failed to create storage folder (%s)", clean.Error(err))
+			log.Errorf("upload: invalid storage folder (%s)", clean.Error(err))
 			Abort(c, http.StatusBadRequest, i18n.ErrUploadFailed)
+			return
+		}
+
+		// Only existing batches can be processed; they are created by uploading files, not here.
+		if _, statErr := os.Lstat(uploadPath); os.IsNotExist(statErr) {
+			log.Warnf("upload: found no staged files to process in upload %s", clean.Log(batch))
+			Abort(c, http.StatusNotFound, i18n.ErrUploadFailed)
+			return
+		} else if errors.Is(statErr, syscall.ENAMETOOLONG) {
+			log.Errorf("upload: failed to access storage folder (%s)", clean.Error(statErr))
+			Abort(c, http.StatusBadRequest, i18n.ErrUploadFailed)
+			return
+		} else if statErr != nil {
+			log.Errorf("upload: failed to access storage folder (%s)", clean.Error(statErr))
+			Abort(c, http.StatusInternalServerError, i18n.ErrUploadFailed)
 			return
 		}
 
@@ -481,7 +506,7 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 		}
 
 		// Start import.
-		imported := imp.Start(opt)
+		imported, importErr := imp.Run(opt)
 
 		// Delete empty import directory.
 		if fs.DirIsEmpty(uploadPath) {
@@ -505,33 +530,64 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 
 		elapsed := time.Since(start)
 
-		log.Infof("library: imported %s in %s", english.Plural(imported.Processed(), "file", "files"), elapsed)
+		if importErr != nil {
+			log.Warnf("upload: %s", clean.Error(importErr))
+		} else {
+			log.Infof("library: imported %s in %s", english.Plural(imported.Processed(), "file", "files"), elapsed)
 
-		// Show success message.
-		event.PublishSuccessMsg(i18n.MsgUploadProcessed)
-		event.PublishCompleted([]string{"import.completed", "index.completed", "upload.completed"}, opt.UID, "", int(elapsed.Seconds()))
+			// Show success message.
+			event.PublishSuccessMsg(i18n.MsgUploadProcessed)
+			event.PublishCompleted([]string{"import.completed", "index.completed", "upload.completed"}, opt.UID, "", int(elapsed.Seconds()))
+		}
 
-		// Update album YAML backups and notify clients of the changes.
-		for _, album := range opt.Albums {
-			find := entity.AlbumSearch(album, album, entity.AlbumManual)
-			find.CreatedBy = opt.UID
+		// Refresh what depends on the files that were imported, also if the import stopped early.
+		if importErr == nil || imported.Processed() > 0 {
+			if importErr != nil {
+				event.PublishCompleted([]string{"import.completed", "index.completed"}, opt.UID, "", int(elapsed.Seconds()))
+			}
 
-			if a := entity.FindAlbum(find); a != nil {
-				SaveAlbumYaml(a)
-				PublishAlbumEvent(StatusUpdated, a.AlbumUID)
+			// Update album YAML backups and notify clients of the changes.
+			for _, album := range opt.Albums {
+				find := entity.AlbumSearch(album, album, entity.AlbumManual)
+				find.CreatedBy = opt.UID
+
+				if a := entity.FindAlbum(find); a != nil {
+					SaveAlbumYaml(a)
+					PublishAlbumEvent(StatusUpdated, a.AlbumUID)
+				}
+			}
+
+			// Update the user interface.
+			UpdateClientConfig()
+
+			// Update album, label, and subject cover thumbs.
+			if coversErr := query.UpdateCovers(); coversErr != nil {
+				log.Warnf("upload: %s (update covers)", clean.Error(coversErr))
 			}
 		}
 
-		// Update the user interface.
-		UpdateClientConfig()
+		// Report an import that did not run or did not import all files, which remain staged for another request.
+		if importErr != nil {
+			switch {
+			case errors.Is(importErr, status.ErrInsufficientStorage):
+				Abort(c, http.StatusInsufficientStorage, i18n.ErrInsufficientStorage)
+			case errors.Is(importErr, photoprism.ErrImportBusy), errors.Is(importErr, status.ErrCanceled):
+				Abort(c, http.StatusServiceUnavailable, i18n.ErrBusy)
+			default:
+				Abort(c, http.StatusInternalServerError, i18n.ErrUploadFailed)
+			}
 
-		// Update album, label, and subject cover thumbs.
-		if coversErr := query.UpdateCovers(); coversErr != nil {
-			log.Warnf("upload: %s (update covers)", clean.Error(coversErr))
+			return
 		}
 
 		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgUploadProcessed))
 	})
+}
+
+// logUploadNsfwErr writes an upload content check that could not run to the system log, as the
+// upload is accepted and the error names the configured model.
+func logUploadNsfwErr(filename string, err error) {
+	event.SystemWarn([]string{"nsfw", "upload", "could not check %s", "%s"}, clean.Log(filepath.Base(filename)), clean.Error(err))
 }
 
 // rejectNSFWUpload reports whether a screening decision must reject the batch.
@@ -566,7 +622,7 @@ func nsfwUploadStatus(fileName string) nsfw.Status {
 	}
 	previewName, cleanup, previewErr := nsfwUploadPreview(fileName)
 	if previewErr != nil {
-		log.Warnf("nsfw: cannot create preview for %s (%s)", clean.Log(filepath.Base(fileName)), clean.Error(previewErr))
+		logUploadNsfwErr(fileName, previewErr)
 		return nsfw.StatusUnavailable
 	}
 	if previewName == "" {
@@ -597,7 +653,7 @@ func nsfwUploadStatus(fileName string) nsfw.Status {
 	}
 
 	if result.IsUnavailable() {
-		log.Warnf("nsfw: cannot screen %s (%s)", clean.Log(filepath.Base(fileName)), clean.Log(result.Reason))
+		logUploadNsfwErr(fileName, errors.New(result.Reason))
 	} else {
 		log.Infof("nsfw: %s might be offensive", clean.Log(filepath.Base(fileName)))
 	}

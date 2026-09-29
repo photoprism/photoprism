@@ -7,15 +7,18 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"golang.org/x/time/rate"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	clusterjwt "github.com/photoprism/photoprism/internal/auth/jwt"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/http/header"
@@ -36,9 +39,12 @@ func TestAuthAnyJWT(t *testing.T) {
 		req.Header.Set(header.UserAgent, "PhotoPrism Portal/1.0")
 		req.RemoteAddr = "192.0.2.10:12345"
 		c.Request = req
+		resetPortalPeers(t)
 
 		session := authAnyJWT(c, "192.0.2.10", token, acl.ResourceCluster, nil)
 		require.NotNil(t, session)
+		_, found := portalPeers.Get("192.0.2.10")
+		assert.True(t, found)
 		assert.Equal(t, http.StatusOK, session.HttpStatus())
 		assert.Empty(t, session.ClientUID)
 		assert.Equal(t, spec.Subject, session.GetClientName())
@@ -404,6 +410,11 @@ func TestInstanceAllowsJWT(t *testing.T) {
 	conf.Options().ClusterCIDR = "192.0.2.0/24"
 	assert.True(t, shouldAllowJWT(conf, "192.0.2.25"))
 	assert.False(t, shouldAllowJWT(conf, "203.0.113.1"))
+	conf.Options().ClusterCIDR = "198.51.100.0/24, 192.0.2.0/24"
+	assert.True(t, shouldAllowJWT(conf, "192.0.2.25"))
+	assert.False(t, shouldAllowJWT(conf, "203.0.113.1"))
+	conf.Options().ClusterCIDR = "192.0.2.0/24,garbage"
+	assert.False(t, shouldAllowJWT(conf, "192.0.2.25"))
 	conf.Options().ClusterCIDR = origCIDR
 
 	origJWKS := conf.JWKSUrl()
@@ -430,15 +441,155 @@ func TestVerifyTokenFromPortal(t *testing.T) {
 	fx := newPortalJWTFixture(t, "verify-token")
 	spec := fx.defaultClaimsSpec()
 	token := fx.issue(t, spec)
-
 	expected := expectedClaimsFor(fx.nodeConf, clean.Scope("cluster"))
-	claims := verifyTokenFromPortal(context.Background(), token, expected, []string{"wrong", spec.Issuer})
-	require.NotNil(t, claims)
-	assert.Equal(t, spec.Issuer, claims.Issuer)
-	assert.Equal(t, spec.Subject, claims.Subject)
 
-	nilClaims := verifyTokenFromPortal(context.Background(), token, expected, []string{"wrong"})
-	assert.Nil(t, nilClaims)
+	t.Run("Success", func(t *testing.T) {
+		claims, unverified := verifyTokenFromPortal(context.Background(), token, expected, []string{"wrong", spec.Issuer})
+		require.NotNil(t, claims)
+		assert.False(t, unverified)
+		assert.Equal(t, spec.Issuer, claims.Issuer)
+		assert.Equal(t, spec.Subject, claims.Subject)
+	})
+	t.Run("WrongIssuer", func(t *testing.T) {
+		claims, unverified := verifyTokenFromPortal(context.Background(), token, expected, []string{"wrong"})
+		assert.Nil(t, claims)
+		assert.False(t, unverified, "signature verified")
+	})
+	t.Run("NoIssuers", func(t *testing.T) {
+		claims, unverified := verifyTokenFromPortal(context.Background(), token, expected, nil)
+		assert.Nil(t, claims)
+		assert.False(t, unverified)
+	})
+	t.Run("MissingScope", func(t *testing.T) {
+		clusterOnly := spec
+		clusterOnly.Scope = []string{"cluster"}
+		claims, unverified := verifyTokenFromPortal(context.Background(), fx.issue(t, clusterOnly), expectedClaimsFor(fx.nodeConf, clean.Scope("vision")), []string{spec.Issuer})
+		assert.Nil(t, claims)
+		assert.False(t, unverified, "signature verified")
+	})
+	t.Run("InvalidSignature", func(t *testing.T) {
+		parts := strings.Split(token, ".")
+		require.Len(t, parts, 3)
+		parts[2] = strings.Repeat("A", len(parts[2]))
+		claims, unverified := verifyTokenFromPortal(context.Background(), strings.Join(parts, "."), expected, []string{"wrong", spec.Issuer})
+		assert.Nil(t, claims)
+		assert.True(t, unverified)
+	})
+	t.Run("Malformed", func(t *testing.T) {
+		claims, unverified := verifyTokenFromPortal(context.Background(), "a.b.c", expected, []string{spec.Issuer})
+		assert.Nil(t, claims)
+		assert.True(t, unverified)
+	})
+	t.Run("UnknownKey", func(t *testing.T) {
+		otherConf := config.NewMinimalTestConfigWithDb("auth-any-portal-jwt-other-key", t.TempDir())
+		enablePortalAPIs(t, otherConf)
+		otherConf.Options().ClusterUUID = fx.clusterUUID
+		mgr, err := clusterjwt.NewManager(otherConf)
+		require.NoError(t, err)
+		_, err = mgr.EnsureActiveKey()
+		require.NoError(t, err)
+		get.SetConfig(fx.nodeConf)
+
+		other, err := clusterjwt.NewIssuer(mgr).Issue(spec)
+		require.NoError(t, err)
+		claims, unverified := verifyTokenFromPortal(context.Background(), other, expected, []string{"wrong", spec.Issuer})
+		assert.Nil(t, claims)
+		assert.True(t, unverified)
+
+		// Within the forced refresh interval, the key set is not fetched again and the token is not counted.
+		claims, unverified = verifyTokenFromPortal(context.Background(), other, expected, []string{spec.Issuer})
+		assert.Nil(t, claims)
+		assert.False(t, unverified)
+	})
+	t.Run("KeysUnavailable", func(t *testing.T) {
+		// A token that cannot be checked because the key set cannot be fetched is not reported.
+		unavailable := newPortalJWTFixture(t, "verify-token-unavailable")
+		srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusServiceUnavailable)
+		}))
+		t.Cleanup(srv.Close)
+		unavailable.nodeConf.SetJWKSUrl(srv.URL + "/.well-known/jwks.json")
+		get.SetConfig(unavailable.nodeConf)
+
+		unavailableSpec := unavailable.defaultClaimsSpec()
+		claims, unverified := verifyTokenFromPortal(context.Background(), unavailable.issue(t, unavailableSpec), expectedClaimsFor(unavailable.nodeConf, clean.Scope("cluster")), []string{unavailableSpec.Issuer})
+		assert.Nil(t, claims)
+		assert.False(t, unverified)
+	})
+}
+
+// TestAuthAnyJWTLimit checks that only tokens whose signature cannot be verified count against the rate limit.
+func TestAuthAnyJWTLimit(t *testing.T) {
+	fx := newPortalJWTFixture(t, "jwt-limit")
+	spec := fx.defaultClaimsSpec()
+
+	origLimit := limiter.Auth
+	t.Cleanup(func() { limiter.Auth = origLimit })
+
+	// Returns the HTTP status of a cluster authorization with the specified token and client address.
+	authCluster := func(token, clientIP string) int {
+		gin.SetMode(gin.TestMode)
+		c, _ := gin.CreateTestContext(httptest.NewRecorder())
+		req, _ := http.NewRequest(http.MethodGet, "/api/v1/cluster/theme", nil)
+		req.Header.Set("Authorization", "Bearer "+token)
+		req.RemoteAddr = clientIP + ":12345"
+		c.Request = req
+
+		if s := authAnyJWT(c, clientIP, token, acl.ResourceCluster, nil); s != nil {
+			return s.HttpStatus()
+		}
+
+		return http.StatusUnauthorized
+	}
+
+	t.Run("Unverified", func(t *testing.T) {
+		limiter.Auth = limiter.NewLimit(rate.Every(24*time.Hour), 3)
+		parts := strings.Split(fx.issue(t, spec), ".")
+		parts[2] = strings.Repeat("A", len(parts[2]))
+		invalidSignature := strings.Join(parts, ".")
+		for range 3 {
+			assert.False(t, limiter.Auth.Reject("192.0.2.21"))
+			assert.Equal(t, http.StatusUnauthorized, authCluster(invalidSignature, "192.0.2.21"))
+		}
+		assert.True(t, limiter.Auth.Reject("192.0.2.21"))
+	})
+	t.Run("Verified", func(t *testing.T) {
+		// A genuine token that is refused because of its claims or scope is not counted.
+		limiter.Auth = limiter.NewLimit(rate.Every(24*time.Hour), 3)
+		visionOnly := spec
+		visionOnly.Scope = []string{"vision"}
+		wrongAudience := spec
+		wrongAudience.Audience = "node:" + rnd.UUID()
+		for range 5 {
+			assert.Equal(t, http.StatusUnauthorized, authCluster(fx.issue(t, visionOnly), "192.0.2.22"))
+			assert.Equal(t, http.StatusUnauthorized, authCluster(fx.issue(t, wrongAudience), "192.0.2.22"))
+		}
+		assert.False(t, limiter.Auth.Reject("192.0.2.22"))
+		assert.Equal(t, http.StatusOK, authCluster(fx.issue(t, spec), "192.0.2.22"))
+		assert.False(t, limiter.Auth.Reject("192.0.2.22"))
+	})
+	t.Run("OverLimit", func(t *testing.T) {
+		// A client over the limit is neither verified nor counted further.
+		limiter.Auth = limiter.NewLimit(rate.Every(24*time.Hour), 3)
+		parts := strings.Split(fx.issue(t, spec), ".")
+		parts[2] = strings.Repeat("A", len(parts[2]))
+		invalidSignature := strings.Join(parts, ".")
+		for range 3 {
+			authCluster(invalidSignature, "192.0.2.23")
+		}
+		require.True(t, limiter.Auth.Reject("192.0.2.23"))
+		assert.Equal(t, http.StatusUnauthorized, authCluster(fx.issue(t, spec), "192.0.2.23"))
+		assert.Equal(t, http.StatusUnauthorized, authCluster(invalidSignature, "192.0.2.23"))
+		assert.Greater(t, limiter.Auth.IP("192.0.2.23").Tokens(), -0.5)
+
+		gin.SetMode(gin.TestMode)
+		c, _ := gin.CreateTestContext(httptest.NewRecorder())
+		req, _ := http.NewRequest(http.MethodGet, "/api/v1/cluster/theme", nil)
+		req.Header.Set("Authorization", "Bearer "+fx.issue(t, spec))
+		req.RemoteAddr = "192.0.2.23:12345"
+		c.Request = req
+		assert.Equal(t, http.StatusTooManyRequests, AuthAny(c, acl.ResourceCluster, acl.Permissions{acl.ActionView}).HttpStatus())
+	})
 }
 
 func TestAuthAnyJWT_UsersManageScope(t *testing.T) {

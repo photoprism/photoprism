@@ -17,6 +17,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/http/header"
 )
@@ -115,7 +116,11 @@ func removeUploadDirsForToken(t *testing.T, base string, tokenSuffix string) {
 	}
 }
 
+// TestUploadUserFiles_Multipart_SingleJPEG verifies staging and expiry scan activation.
 func TestUploadUserFiles_Multipart_SingleJPEG(t *testing.T) {
+	flag := mutex.UserUploads.Load()
+	t.Cleanup(func() { mutex.UserUploads.Store(flag) })
+	mutex.UserUploads.Store(false)
 	app, router, conf := NewApiTest()
 	// Limit allowed upload extensions to ensure text files get rejected in tests
 	conf.Options().UploadAllow = "jpg"
@@ -159,6 +164,7 @@ func TestUploadUserFiles_Multipart_SingleJPEG(t *testing.T) {
 		}
 	}
 	assert.True(t, found, "uploaded JPEG not found")
+	assert.True(t, mutex.UserUploads.Load())
 }
 
 // TestUploadUserFiles_Multipart_SidecarAllowlist pins that the upload allowlist covers metadata

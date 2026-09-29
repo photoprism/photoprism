@@ -1,6 +1,6 @@
 ## PhotoPrism — Core Package
 
-**Last Updated:** September 27, 2026
+**Last Updated:** September 28, 2026
 
 ### Overview
 
@@ -96,3 +96,25 @@ make test-mariadb GOTEST_TAGS=slow,develop,integration
 ```
 
 For a focused SQLite run, use `go test -count=1 -tags=slow,develop,integration -run 'Insta360|TestIndexMain_ReplacedPreview' ./internal/photoprism`. Existing short-mode guards still apply. The tag does not gate import/index integration tests outside these matrices.
+
+#### Large Face-Library Equivalence
+
+The opt-in `TestFaces_MatchLibraryEquivalence` integration test generates 60,000
+SFace markers across 600 clusters. It compares normal and forced matching from
+copies of the same correction input, including cluster assignments and subject
+links. The fixture includes 63% faceless markers, named clusters, a narrowing,
+and a new cluster built from released members. An overlapping tight cluster
+provides a marker that the narrowed cluster accepts but does not improve.
+Pure narrowing preserves markers held by other clusters; the new cluster must
+receive at least one released marker in the same run. Both runs must advance
+eligible markers' match stamps.
+
+```sh
+PHOTOPRISM_TEST_FACE_LIBRARY=1 go test -tags=integration ./internal/photoprism -run '^TestFaces_MatchLibraryEquivalence$' -count=1 -v -timeout=30m
+```
+
+Use the standard `PHOTOPRISM_TEST_DRIVER=mysql` and `PHOTOPRISM_TEST_DSN`
+test settings for MariaDB. Run serially with other database tests. Input rows
+and snapshot tables are generated at runtime, and package fixtures are restored
+afterward. Timings cover `Faces.Match`, excluding seeding and snapshot copies;
+they are diagnostic measurements, not wall-clock assertions or QA measurements.

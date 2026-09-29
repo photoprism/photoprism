@@ -1,16 +1,21 @@
 package config
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
+	"github.com/go-sql-driver/mysql"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"gopkg.in/yaml.v2"
 
 	"github.com/photoprism/photoprism/internal/service/cluster"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/dns"
 	"github.com/photoprism/photoprism/pkg/http/proxy"
@@ -297,6 +302,36 @@ func TestConfig_PortalUrl(t *testing.T) {
 		c.options.ClusterDomain = "ignored.dev"
 		assert.Equal(t, "https://portal.example.test", c.PortalUrl())
 		c.options.PortalUrl = DefaultPortalUrl
+	})
+	t.Run("OptionUnchanged", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.PortalUrl = "https://portal.${PHOTOPRISM_CLUSTER_DOMAIN}"
+		c.options.ClusterDomain = "example.dev"
+		assert.Equal(t, "https://portal.example.dev", c.PortalUrl())
+		assert.Equal(t, "https://portal.${PHOTOPRISM_CLUSTER_DOMAIN}", c.options.PortalUrl, "the configured value must keep its variables")
+		c.options.ClusterDomain = "example.org"
+		assert.Equal(t, "https://portal.example.org", c.PortalUrl())
+		c.options.PortalUrl = DefaultPortalUrl
+	})
+	t.Run("Concurrent", func(t *testing.T) {
+		// Concurrent calls must not write the options, which only a run with -race detects.
+		c := NewConfig(CliTestContext())
+		c.options.PortalUrl = DefaultPortalUrl
+		c.options.ClusterDomain = "example.dev"
+		var wg sync.WaitGroup
+		urls := make([]string, 4)
+		for i := range urls {
+			wg.Add(1)
+			go func(i int) {
+				defer wg.Done()
+				urls[i] = c.PortalUrl()
+			}(i)
+		}
+		wg.Wait()
+		for _, url := range urls {
+			assert.Equal(t, "https://portal.example.dev", url)
+		}
+		assert.Equal(t, DefaultPortalUrl, c.options.PortalUrl)
 	})
 }
 
@@ -662,6 +697,38 @@ func TestConfig_Cluster(t *testing.T) {
 		assert.Error(t, err)
 		assert.False(t, wrote)
 	})
+	t.Run("SaveClusterOptionsUpdateInvalidDatabase", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ConfigPath = t.TempDir()
+		c.options.OptionsYaml = filepath.Join(c.options.ConfigPath, "options.yml")
+
+		update := cluster.OptionsUpdate{}
+		update.SetDatabaseName("--option=value")
+		wrote, err := c.SaveClusterOptionsUpdate(update)
+		assert.EqualError(t, err, "invalid database name")
+		assert.False(t, wrote)
+		assert.NoFileExists(t, c.OptionsYaml())
+	})
+	t.Run("SaveClusterOptionsUpdateDSNParams", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ConfigPath = t.TempDir()
+		c.options.OptionsYaml = filepath.Join(c.options.ConfigPath, "options.yml")
+
+		update := cluster.OptionsUpdate{}
+		update.SetDatabaseDriver("mysql")
+		update.SetDatabaseDSN("cluster_u0123456789a:secret@tcp(mariadb:4001)/cluster_d0123456789a?option=value")
+		wrote, err := c.SaveClusterOptionsUpdate(update)
+		require.NoError(t, err)
+		assert.True(t, wrote)
+
+		content, err := os.ReadFile(c.OptionsYaml())
+		require.NoError(t, err)
+
+		var merged map[string]any
+		require.NoError(t, yaml.Unmarshal(content, &merged))
+		assert.Equal(t, fmt.Sprintf("cluster_u0123456789a:secret@tcp(mariadb:4001)/cluster_d0123456789a?%s&timeout=%ds",
+			dsn.Params[dsn.DriverMySQL], c.DatabaseTimeout()), merged["DatabaseDSN"])
+	})
 	t.Run("SaveOptionsPatch", func(t *testing.T) {
 		tempCfg := t.TempDir()
 		ctx := CliTestContext()
@@ -1017,5 +1084,234 @@ func TestConfig_JWTRotateDays(t *testing.T) {
 	t.Run("Negative", func(t *testing.T) {
 		c.options.JWTRotateDays = -7
 		assert.Equal(t, 0, c.JWTRotateDays())
+	})
+}
+
+// TestValidateClusterOptionsUpdate checks the values a cluster options update may carry.
+func TestValidateClusterOptionsUpdate(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		update := cluster.OptionsUpdate{}
+		update.SetClusterUUID("4a47c940-d5de-41b3-88a2-eb816cc659ca")
+		update.SetDatabaseDriver("mysql")
+		update.SetDatabaseName("cluster_d0123456789a")
+		update.SetDatabaseUser("cluster_u0123456789a")
+		update.SetDatabaseServer("mariadb:4001")
+		update.SetDatabaseDSN("cluster_u0123456789a:secret@tcp(mariadb:4001)/cluster_d0123456789a?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true")
+		assert.NoError(t, validateClusterOptionsUpdate(update))
+		update.SetDatabaseDriver("MariaDB")
+		update.SetDatabaseName("photo-prism_2")
+		update.SetDatabaseServer("")
+		assert.NoError(t, validateClusterOptionsUpdate(update))
+		assert.NoError(t, validateClusterOptionsUpdate(cluster.OptionsUpdate{}))
+	})
+	t.Run("InvalidDriver", func(t *testing.T) {
+		for _, driver := range []string{"", "sqlite", "postgres", "x"} {
+			update := cluster.OptionsUpdate{}
+			update.SetDatabaseDriver(driver)
+			assert.EqualError(t, validateClusterOptionsUpdate(update), "invalid database driver", "driver %q", driver)
+		}
+	})
+	t.Run("InvalidDatabase", func(t *testing.T) {
+		for _, tc := range []struct {
+			set func(*cluster.OptionsUpdate, string)
+			err string
+		}{
+			{(*cluster.OptionsUpdate).SetDatabaseName, "invalid database name"},
+			{(*cluster.OptionsUpdate).SetDatabaseUser, "invalid database user"},
+			{(*cluster.OptionsUpdate).SetDatabaseServer, "invalid database server"},
+		} {
+			for _, value := range []string{"-x", "--option=value", " -x", "db?option=value", "db/x", "db@x"} {
+				update := cluster.OptionsUpdate{}
+				tc.set(&update, value)
+				assert.EqualError(t, validateClusterOptionsUpdate(update), tc.err, "value %q", value)
+			}
+		}
+	})
+	t.Run("InvalidDSN", func(t *testing.T) {
+		for dsnValue, err := range map[string]string{
+			"user:secret@tcp(mariadb:4001)/--option=value?parseTime=true": "invalid database name",
+			"-x:secret@tcp(mariadb:4001)/photoprism":                      "invalid database user",
+			"user:secret@tcp(--option=value)/photoprism":                  "invalid database server",
+			"user:secret@unix(/run/mysqld/mysqld.sock)/photoprism":        "invalid database dsn",
+			"/srv/photoprism/index.db":                                    "invalid database dsn",
+			"-x":                                                          "invalid database dsn",
+		} {
+			update := cluster.OptionsUpdate{}
+			update.SetDatabaseDSN(dsnValue)
+			assert.EqualError(t, validateClusterOptionsUpdate(update), err, "dsn %q", dsnValue)
+		}
+	})
+	t.Run("InvalidUUID", func(t *testing.T) {
+		update := cluster.OptionsUpdate{}
+		update.SetNodeUUID("invalid-uuid")
+		assert.EqualError(t, validateClusterOptionsUpdate(update), "invalid node UUID")
+	})
+}
+
+// TestValidateClusterDatabase checks the database name, user, and server rules.
+func TestValidateClusterDatabase(t *testing.T) {
+	str := func(s string) *string { return &s }
+	t.Run("Success", func(t *testing.T) {
+		assert.NoError(t, validateClusterDatabase(str("cluster_d0123456789a"), str("cluster_u0123456789a"), str("mariadb:4001")))
+		assert.NoError(t, validateClusterDatabase(str(""), str(""), str("")))
+		assert.NoError(t, validateClusterDatabase(nil, nil, nil))
+	})
+	t.Run("InvalidName", func(t *testing.T) {
+		assert.EqualError(t, validateClusterDatabase(str(strings.Repeat("a", 65)), nil, nil), "invalid database name")
+		assert.EqualError(t, validateClusterDatabase(str("db?x"), nil, nil), "invalid database name")
+	})
+	t.Run("InvalidUser", func(t *testing.T) {
+		assert.EqualError(t, validateClusterDatabase(nil, str("user:x"), nil), "invalid database user")
+	})
+	t.Run("InvalidServer", func(t *testing.T) {
+		assert.EqualError(t, validateClusterDatabase(nil, nil, str("mariadb:4001)/x")), "invalid database server")
+	})
+}
+
+// TestClusterDatabaseDSN checks that a Portal DSN is validated and rebuilt with accepted parameters.
+func TestClusterDatabaseDSN(t *testing.T) {
+	defaults := fmt.Sprint(dsn.Params[dsn.DriverMySQL])
+	t.Run("Provisioned", func(t *testing.T) {
+		provisioned := "cluster_u0123456789a:Sup3rSecret@tcp(mariadb:4001)/cluster_d0123456789a?" + defaults
+		result, dropped, err := clusterDatabaseDSN(provisioned, 15)
+		require.NoError(t, err)
+		assert.Equal(t, provisioned+"&timeout=15s", result)
+		assert.Empty(t, dropped)
+	})
+	t.Run("AcceptedParams", func(t *testing.T) {
+		result, dropped, err := clusterDatabaseDSN("user:secret@tcp(mariadb:4001)/photoprism?tls=skip-verify&charset=utf8mb4,utf8&option=value&collation=utf8mb4_unicode_ci&parseTime=true&timeout=60s", 15)
+		require.NoError(t, err)
+		assert.Equal(t, "user:secret@tcp(mariadb:4001)/photoprism?tls=skip-verify&charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=60s", result)
+		assert.Equal(t, []string{"option"}, dropped)
+	})
+	t.Run("ProxyAndTLS", func(t *testing.T) {
+		for _, query := range []string{"tls=true", "tls=skip-verify", "tls=preferred", "tls=false", "tls=1", "interpolateParams=true",
+			"rejectReadOnly=1", "maxAllowedPacket=67108864", "maxAllowedPacket=1073741824", "readTimeout=30s&writeTimeout=30s"} {
+			result, dropped, err := clusterDatabaseDSN("user:secret@tcp(mariadb:4001)/photoprism?"+query, 15)
+			require.NoError(t, err, query)
+			assert.Equal(t, "user:secret@tcp(mariadb:4001)/photoprism?"+query+"&"+defaults+"&timeout=15s", result, query)
+			assert.Empty(t, dropped, query)
+		}
+	})
+	t.Run("DefaultsAdded", func(t *testing.T) {
+		result, dropped, err := clusterDatabaseDSN("user:secret@tcp([::1]:3306)/photoprism?option=value&other=1", 15)
+		require.NoError(t, err)
+		assert.Equal(t, "user:secret@tcp([::1]:3306)/photoprism?"+defaults+"&timeout=15s", result)
+		assert.Equal(t, []string{"option", "other"}, dropped)
+		result, _, err = clusterDatabaseDSN("user:secret@tcp(mariadb:4001)/db", 30)
+		require.NoError(t, err)
+		assert.Equal(t, "user:secret@tcp(mariadb:4001)/db?"+defaults+"&timeout=30s", result)
+	})
+	t.Run("CharsetPair", func(t *testing.T) {
+		for query, want := range map[string]string{
+			"charset=utf8":                   "charset=utf8&parseTime=true&timeout=15s",
+			"charset=utf8mb3&parseTime=1":    "charset=utf8mb3&parseTime=1&timeout=15s",
+			"collation=utf8mb3_general_ci":   "collation=utf8mb3_general_ci&parseTime=true&timeout=15s",
+			"charset=utf8mb4&parseTime=true": "charset=utf8mb4&parseTime=true&timeout=15s",
+		} {
+			result, _, err := clusterDatabaseDSN("user:secret@tcp(mariadb:4001)/photoprism?"+query, 15)
+			require.NoError(t, err, query)
+			assert.Equal(t, "user:secret@tcp(mariadb:4001)/photoprism?"+want, result, query)
+		}
+	})
+	t.Run("DriverView", func(t *testing.T) {
+		// The Go driver reads the rebuilt DSN with the validated parts and without other options.
+		for s, accepted := range map[string]bool{
+			"user:secret@tcp(mariadb:4001)/photoprism?clientFoundRows=true&columnsWithAlias=true&time_zone=x": true,
+			"user:secret@tcp(mariadb:4001)/photoprism?x=/y?option=value":                                      false,
+			"user:secret@tcp(mariadb:4001)/photoprism?x=/y&option=value":                                      true,
+			"user:p/w@x?option=value@tcp(mariadb:4001)/photoprism?tls=skip-verify&interpolateParams=true":     true,
+		} {
+			result, _, err := clusterDatabaseDSN(s, 15)
+			if !accepted {
+				assert.Error(t, err, s)
+				continue
+			}
+			require.NoError(t, err, s)
+			d := dsn.Parse(result)
+			cfg, err := mysql.ParseDSN(result)
+			require.NoError(t, err, s)
+			assert.Equal(t, "photoprism", cfg.DBName, s)
+			assert.Equal(t, d.User, cfg.User, s)
+			assert.Equal(t, d.Password, cfg.Passwd, s)
+			assert.Equal(t, "mariadb:4001", cfg.Addr, s)
+			assert.False(t, cfg.ClientFoundRows, s)
+			assert.False(t, cfg.ColumnsWithAlias, s)
+			assert.Empty(t, cfg.Params, s)
+		}
+	})
+	t.Run("Empty", func(t *testing.T) {
+		result, dropped, err := clusterDatabaseDSN("", 15)
+		require.NoError(t, err)
+		assert.Equal(t, "", result)
+		assert.Empty(t, dropped)
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		for s, errMsg := range map[string]string{
+			"user:secret@tcp(mariadb:4001)/db?x?option=value":                       "invalid database name",
+			"postgres://user:secret@db:5432/photoprism":                             "invalid database dsn",
+			"user:secret@tcp(mariadb:4001)/":                                        "invalid database dsn",
+			":secret@tcp(mariadb:4001)/photoprism":                                  "invalid database dsn",
+			"user:secret@tcp(mariadb:4001)/photoprism?charset=latin1":               "invalid database dsn",
+			"user:secret@tcp(mariadb:4001)/photoprism?collation=latin1_swedish_ci":  "invalid database dsn",
+			"user:secret@tcp(mariadb:4001)/photoprism?tls=custom":                   "invalid database dsn",
+			"user:secret@tcp(mariadb:4001)/photoprism?tls=false&tls=true":           "invalid database dsn",
+			"user:secret@tcp(mariadb:4001)/photoprism?parseTime=false":              "invalid database dsn",
+			"user:secret@tcp(mariadb:4001)/photoprism?parseTime=tRuE":               "invalid database dsn",
+			"user:secret@tcp(mariadb:4001)/photoprism?maxAllowedPacket=12345678901": "invalid database dsn",
+			"user:secret@tcp(mariadb:4001)/photoprism?maxAllowedPacket=1073741825":  "invalid database dsn",
+			"user:secret@tcp(mariadb:4001)/photoprism?maxAllowedPacket=01":          "invalid database dsn",
+			"user:secret@tcp(mariadb:4001)/photoprism?maxAllowedPacket=+5":          "invalid database dsn",
+		} {
+			_, _, err := clusterDatabaseDSN(s, 15)
+			assert.EqualError(t, err, errMsg, s)
+		}
+	})
+}
+
+// TestConfig_DatabaseServerDSN checks that the database host and port come from the configured server.
+func TestConfig_DatabaseServerDSN(t *testing.T) {
+	t.Run("DiscretePassword", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.DatabaseDriver = dsn.DriverMySQL
+		c.options.DatabaseDSN = ""
+		c.options.DatabaseServer = "mariadb:4001"
+		c.options.DatabaseName = "photoprism"
+		c.options.DatabaseUser = "photoprism"
+		c.options.DatabasePassword = "a://b@tcp(example.com:1)/c"
+		assert.Equal(t, "mariadb", c.DatabaseHost())
+		assert.Equal(t, 4001, c.DatabasePort())
+		cfg, err := mysql.ParseDSN(c.DatabaseDSN())
+		require.NoError(t, err)
+		assert.Equal(t, "mariadb:4001", cfg.Addr)
+		assert.Equal(t, "photoprism", cfg.DBName)
+		assert.Equal(t, "a://b@tcp(example.com:1)/c", cfg.Passwd)
+	})
+	t.Run("Socket", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.DatabaseDriver = dsn.DriverMySQL
+		c.options.DatabaseDSN = ""
+		c.options.DatabaseServer = "/run/mysqld/mysqld.sock"
+		assert.Equal(t, "/run/mysqld/mysqld.sock", c.DatabaseHost())
+		assert.Equal(t, 3306, c.DatabasePort())
+		assert.Contains(t, c.DatabaseDSN(), "@unix(/run/mysqld/mysqld.sock)/")
+	})
+	t.Run("ConfiguredDSN", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.DatabaseDriver = dsn.DriverMySQL
+		c.options.DatabaseDSN = "user:secret@tcp(db.example.com:3307)/photoprism?parseTime=true"
+		assert.Equal(t, "db.example.com", c.DatabaseHost())
+		assert.Equal(t, 3307, c.DatabasePort())
+	})
+}
+
+// TestClusterDatabaseParamNames checks which dropped DSN parameter names may be logged.
+func TestClusterDatabaseParamNames(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		assert.Equal(t, []string{"option", "time_zone", "a.b-c"}, clusterDatabaseParamNames([]string{"option", "time_zone", "a.b-c"}))
+	})
+	t.Run("Filtered", func(t *testing.T) {
+		assert.Equal(t, []string{"option"}, clusterDatabaseParamNames([]string{"", "x, y", "option", "a b", strings.Repeat("a", 65)}))
+		assert.Empty(t, clusterDatabaseParamNames(nil))
 	})
 }

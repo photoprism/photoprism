@@ -1,6 +1,6 @@
 ## PhotoPrism — Ollama Engine Integration
 
-**Last Updated:** September 5, 2026
+**Last Updated:** September 28, 2026
 
 ### Overview
 
@@ -125,7 +125,7 @@ The table below reports median single-image latency over a fixed 16-image benchm
 - `OLLAMA_HOST`, `OLLAMA_MODELS`, `OLLAMA_MAX_QUEUE`, `OLLAMA_NUM_PARALLEL`, etc. — Provided in `compose*.yaml` to tune the Ollama daemon. Adjust `OLLAMA_KEEP_ALIVE` if you want models to stay loaded between worker batches.
 - `OLLAMA_API_KEY` / `OLLAMA_API_KEY_FILE` — Default bearer token picked up when `Service.Key` is empty; useful for hosted Ollama services (e.g., Ollama Cloud).
 - `OLLAMA_BASE_URL` — Base URL for the Ollama API; defaults to `http://ollama:11434`, trailing slashes are trimmed. Set to `https://ollama.com` to enable cloud defaults.
-- `PHOTOPRISM_LOG_LEVEL=trace` — Enables verbose request/response previews (truncated to avoid leaking images). Use temporarily when debugging parsing issues.
+- `PHOTOPRISM_LOG_LEVEL=trace` — Logs request payloads with base64 images shortened, and the full body of a successful response (quoted). Use temporarily when debugging parsing issues. The body of a failed response, or the error for a response that cannot be parsed, is written to the console system log at error level, clipped to 4 KiB.
 
 #### `vision.yml` Example
 
@@ -166,7 +166,7 @@ Guidelines:
 - `Service.Think` defaults to `"false"` for the Ollama engine (reasoning off) and is sent whenever non-empty. Keep it quoted (for example `"false"`, `"true"`, or `"low"`) so YAML preserves it as a string; PhotoPrism serializes `"true"` / `"false"` as JSON booleans for Ollama compatibility. Set `Service.Think: "true"` to re-enable reasoning for a model that benefits from it.
 - Model support is not universal: `think:true` may fail on models that do not implement reasoning, and `think:false` can still yield empty `response` fields on some reasoning-capable models (which then stream their JSON via the `thinking` field — the parser handles this).
 - Keep option flags before positional arguments in CLI snippets (`photoprism vision run -m labels --count 1`).
-- If you proxy requests (e.g., through Traefik), set `Service.Key` to `Bearer <token>` and configure the proxy to inject/validate it.
+- If you proxy requests (e.g., through Traefik), set `Service.Key` to the token (the client adds the `Bearer` prefix) and configure the proxy to inject/validate it.
 
 ### Operational Checklist
 
@@ -187,7 +187,7 @@ Guidelines:
   - Add fixtures under `internal/ai/vision/testdata` when capturing new response shapes; keep files small and anonymized.
 - **Logging**
   - Set `PHOTOPRISM_LOG_LEVEL=debug` to watch summary lines (“processed labels/caption via ollama”).
-  - Use `log.Trace` sparingly; it prints truncated JSON blobs for troubleshooting.
+  - Use `log.Trace` sparingly; it prints shortened requests and the full body of successful responses for troubleshooting; failed responses go to the console system log.
 - **Metrics**
   - `/api/v1/metrics` exposes counts per label source; scrape after a batch to compare throughput with TensorFlow/OpenAI runs.
 

@@ -1,7 +1,7 @@
 <template>
   <div class="auth-footer">
     <footer>
-      <v-row align="start" class="pa-0 ma-0">
+      <v-row class="pa-0 ma-0 align-start">
         <v-col xs="12" class="pa-0 text-subtitle-2 text-selectable text-start hidden-xs">
           {{ about }}
         </v-col>

@@ -173,7 +173,7 @@ func (f finding) first(findings []finding) bool {
 // check walks every root that exists and returns the findings, sorted by location.
 func check(roots []string) (findings []finding, err error) {
 	for _, root := range roots {
-		if _, statErr := os.Stat(root); statErr != nil {
+		if _, statErr := os.Stat(root); statErr != nil { //nolint:gosec // G703: roots come from the command line or the default list
 			continue
 		}
 
@@ -290,7 +290,7 @@ func exceeded(keys, baseline map[string]int) map[string]bool {
 func checkRoot(root string) (findings []finding, err error) {
 	fset := token.NewFileSet()
 
-	err = filepath.WalkDir(root, func(path string, d iofs.DirEntry, err error) error {
+	err = filepath.WalkDir(root, func(path string, d iofs.DirEntry, err error) error { //nolint:gosec // G703: roots come from the command line or the default list
 		if err != nil {
 			return err
 		} else if d.IsDir() {

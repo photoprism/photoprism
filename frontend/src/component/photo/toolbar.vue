@@ -93,7 +93,7 @@
       <v-expand-transition>
         <v-card v-show="expanded" flat color="secondary">
           <v-card-text class="dense">
-            <v-row align="center" dense>
+            <v-row class="align-center" density="compact">
               <v-col cols="12" sm="6" md="3" class="p-countries-select">
                 <v-select
                   :model-value="filter.country"

@@ -13943,6 +13943,24 @@
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "507": {
+                        "description": "Insufficient Storage",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
                     }
                 },
                 "summary": "process previously uploaded files for a user",

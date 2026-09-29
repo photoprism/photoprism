@@ -2,9 +2,12 @@ package commands
 
 import (
 	"bytes"
+	"errors"
+	"flag"
 	"os"
 	"testing"
 
+	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v2"
@@ -169,4 +172,58 @@ func TestAuthRemoveCommand(t *testing.T) {
 		assertExitCode(t, err, 2)
 		assert.Contains(t, err.Error(), "invalid session id")
 	})
+}
+
+// TestAuthRemoveCommandDatabaseErrors checks runtime exits without removing the selected session.
+func TestAuthRemoveCommandDatabaseErrors(t *testing.T) {
+	for _, name := range []string{"Lookup", "Delete"} {
+		t.Run(name, func(t *testing.T) {
+			previousInit := InitConfig
+			conf := reopenConnection()
+			InitConfig = func(*cli.Context) (*config.Config, error) { return conf, nil }
+			t.Cleanup(func() { conf.RegisterDb(); InitConfig = previousInit })
+			session := entity.NewSession(3600, 0)
+			require.NoError(t, session.Create())
+			t.Cleanup(func() { conf.RegisterDb(); require.NoError(t, session.Delete()) })
+			flags := flag.NewFlagSet("auth-rm-database", flag.ContinueOnError)
+			for _, option := range AuthRemoveCommand.Flags {
+				require.NoError(t, option.Apply(flags))
+			}
+			require.NoError(t, flags.Parse([]string{"--yes", session.RefID}))
+			ctx := cli.NewContext(cli.NewApp(), flags, nil)
+			processor, before := conf.Db().Callback().Query(), "gorm:query"
+			if name == "Delete" {
+				processor, before = conf.Db().Callback().Delete(), "gorm:delete"
+			}
+			callback := "test:auth-rm:" + name
+			injected := errors.New("test session database error")
+			calls := 0
+			processor.Before(before).Register(callback, func(scope *gorm.Scope) {
+				if scope.TableName() != (entity.Session{}).TableName() {
+					return
+				}
+				if name == "Delete" {
+					value, ok := scope.Value.(*entity.Session)
+					if !ok || value.ID != session.ID {
+						return
+					}
+				}
+				calls++
+				_ = scope.Err(injected)
+			})
+			runErr := func() error {
+				defer processor.Remove(callback)
+				return AuthRemoveCommand.Action(ctx)
+			}()
+			assertExitCode(t, runErr, 1)
+			require.ErrorContains(t, runErr, injected.Error())
+			assert.Equal(t, 1, calls)
+			conf.RegisterDb()
+			var stored entity.Session
+			require.NoError(t, conf.Db().Where("id = ?", session.ID).First(&stored).Error)
+			require.NoError(t, AuthRemoveCommand.Action(ctx))
+			conf.RegisterDb()
+			assert.True(t, gorm.IsRecordNotFoundError(conf.Db().Where("id = ?", session.ID).First(&stored).Error))
+		})
+	}
 }

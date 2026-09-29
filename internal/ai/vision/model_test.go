@@ -418,13 +418,10 @@ func TestModelEndpointKeyOpenAIFallbacks(t *testing.T) {
 		}
 	})
 	t.Run("GlobalFallback", func(t *testing.T) {
-		prev := ServiceKey
-		ServiceKey = "${GLOBAL_KEY}"
-		defer func() { ServiceKey = prev }()
-
+		useSharedService(t, "https://vision.example.com/api/v1/vision", "${GLOBAL_KEY}")
 		t.Setenv("GLOBAL_KEY", "global-secret")
 
-		model := &Model{}
+		model := &Model{Type: ModelTypeCaption}
 		if got := model.EndpointKey(); got != "global-secret" {
 			t.Fatalf("expected global secret, got %q", got)
 		}
@@ -460,6 +457,94 @@ func TestModelEndpointKeyOllamaFallbacks(t *testing.T) {
 		if got := model.EndpointKey(); got != "ollama-env" {
 			t.Fatalf("expected env key, got %q", got)
 		}
+	})
+}
+
+// useSharedService sets the shared service URI and key for the duration of the test.
+func useSharedService(t *testing.T, uri, key string) {
+	t.Helper()
+
+	prevUri, prevKey := ServiceUri, ServiceKey
+	t.Cleanup(func() { ServiceUri, ServiceKey = prevUri, prevKey })
+	ServiceUri, ServiceKey = uri, key
+}
+
+// clearEngineKeys unsets the OpenAI and Ollama key variables for the duration of the test.
+func clearEngineKeys(t *testing.T) {
+	t.Helper()
+
+	t.Cleanup(func() { ensureEnvOnce = sync.Once{} })
+	t.Setenv(openai.APIKeyEnv, "")
+	t.Setenv(openai.APIKeyFileEnv, "")
+	t.Setenv(ollama.APIKeyEnv, "")
+	t.Setenv(ollama.APIKeyFileEnv, "")
+	ensureEnvOnce = sync.Once{}
+}
+
+// TestModelEndpointKey checks that the shared key is only returned for models that use the shared service.
+func TestModelEndpointKey(t *testing.T) {
+	const sharedUri = "https://vision.example.com/api/v1/vision"
+	const sharedKey = "shared-vision-key"
+	const ownUri = "https://models.example.com/api/generate"
+
+	cases := []struct {
+		name    string
+		model   *Model
+		wantUri string
+		wantKey string
+	}{
+		{name: "SharedService", model: &Model{Type: ModelTypeLabels}, wantUri: sharedUri + "/labels", wantKey: sharedKey},
+		{name: "SharedServiceOwnKey", model: &Model{Type: ModelTypeLabels, Service: Service{Key: "own-key"}}, wantUri: sharedUri + "/labels", wantKey: "own-key"},
+		{name: "OwnEndpoint", model: &Model{Type: ModelTypeLabels, Service: Service{Uri: ownUri}}, wantUri: ownUri, wantKey: ""},
+		{name: "OwnEndpointOwnKey", model: &Model{Type: ModelTypeLabels, Service: Service{Uri: ownUri, Key: "own-key"}}, wantUri: ownUri, wantKey: "own-key"},
+		{name: "OwnEndpointUnresolvedKey", model: &Model{Type: ModelTypeLabels, Service: Service{Uri: ownUri, Key: "${VISION_TEST_MISSING_KEY}"}}, wantUri: ownUri, wantKey: ""},
+		{name: "UnresolvedEndpoint", model: &Model{Type: ModelTypeLabels, Service: Service{Uri: "${VISION_TEST_MISSING_URI}"}}, wantUri: "", wantKey: ""},
+		{name: "UnresolvedEndpointBasicAuth", model: &Model{Type: ModelTypeLabels, Service: Service{Uri: "${VISION_TEST_MISSING_URI}", Username: "user", Password: "secret"}}, wantUri: "", wantKey: ""},
+		{name: "UnresolvedEndpointOwnKey", model: &Model{Type: ModelTypeLabels, Service: Service{Uri: "${VISION_TEST_MISSING_URI}", Key: "own-key"}}, wantUri: "", wantKey: ""},
+		{name: "UnresolvedEngineEndpoint", model: &Model{Type: ModelTypeCaption, Engine: openai.EngineName, Service: Service{Uri: "${VISION_TEST_MISSING_URI}", Key: "own-key"}}, wantUri: "", wantKey: ""},
+		{name: "PartlyUnresolvedEndpoint", model: &Model{Type: ModelTypeLabels, Service: Service{Uri: "${VISION_TEST_MISSING_URI}/api/generate"}}, wantUri: "/api/generate", wantKey: ""},
+		{name: "WhitespaceUriOwnKey", model: &Model{Type: ModelTypeLabels, Service: Service{Uri: "   ", Key: "own-key"}}, wantUri: sharedUri + "/labels", wantKey: "own-key"},
+		{name: "DisabledServiceOwnKey", model: &Model{Type: ModelTypeLabels, Service: Service{Key: "own-key", Disabled: true}}, wantUri: sharedUri + "/labels", wantKey: sharedKey},
+		{name: "DisabledService", model: &Model{Type: ModelTypeLabels, Service: Service{Uri: ownUri, Key: "own-key", Disabled: true}}, wantUri: sharedUri + "/labels", wantKey: sharedKey},
+		{name: "OllamaEngine", model: &Model{Type: ModelTypeCaption, Engine: ollama.EngineName, Service: Service{Uri: ownUri}}, wantUri: ownUri, wantKey: ""},
+		{name: "OpenAIEngine", model: &Model{Type: ModelTypeCaption, Engine: openai.EngineName}, wantUri: "https://api.openai.com/v1/responses", wantKey: ""},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			useSharedService(t, sharedUri, sharedKey)
+			clearEngineKeys(t)
+
+			if tc.model.Engine != "" {
+				tc.model.ApplyEngineDefaults()
+			}
+
+			uri, _ := tc.model.Endpoint()
+			assert.Equal(t, tc.wantUri, uri)
+			assert.Equal(t, tc.wantKey, tc.model.EndpointKey())
+		})
+	}
+	t.Run("NoSharedService", func(t *testing.T) {
+		useSharedService(t, "", sharedKey)
+
+		model := &Model{Type: ModelTypeLabels}
+		uri, _ := model.Endpoint()
+		assert.Empty(t, uri)
+		assert.Empty(t, model.EndpointKey())
+	})
+	t.Run("NoType", func(t *testing.T) {
+		useSharedService(t, sharedUri, sharedKey)
+
+		model := &Model{}
+		uri, _ := model.Endpoint()
+		assert.Empty(t, uri)
+		assert.Empty(t, model.EndpointKey())
+	})
+	t.Run("NilModel", func(t *testing.T) {
+		useSharedService(t, sharedUri, sharedKey)
+
+		var model *Model
+		assert.Empty(t, model.EndpointKey())
 	})
 }
 
@@ -730,4 +815,99 @@ func TestModel_MigrationFaceModel(t *testing.T) {
 	t.Run("NilModel", func(t *testing.T) {
 		assert.Nil(t, (*Model)(nil).MigrationFaceModel())
 	})
+}
+
+// TestModel_EndpointUnresolved checks that a model whose own service URI does not resolve has no endpoint.
+func TestModel_EndpointUnresolved(t *testing.T) {
+	t.Run("WarnsOncePerModel", func(t *testing.T) {
+		useSharedService(t, "https://vision.example.com/api/v1/vision", "shared-vision-key")
+		logHook, _ := captureLogs(t)
+		resetUnresolvedUriWarnings(t)
+
+		labels := &Model{Type: ModelTypeLabels, Name: "custom", Service: Service{Uri: "${VISION_TEST_MISSING_URI}", Username: "user", Password: "pass"}}
+		caption := &Model{Type: ModelTypeCaption, Model: "gemma3:4b", Service: Service{Uri: "${VISION_TEST_MISSING_URI}"}}
+
+		for range 3 {
+			for _, model := range []*Model{labels, caption} {
+				uri, method := model.Endpoint()
+				assert.Empty(t, uri)
+				assert.Empty(t, method)
+			}
+		}
+
+		require.Len(t, logHook.AllEntries(), 2)
+		assert.Equal(t, logrus.WarnLevel, logHook.AllEntries()[0].Level)
+		assert.Equal(t, "vision: service uri of labels model custom does not resolve, so no service is used", logHook.AllEntries()[0].Message)
+		assert.Equal(t, "vision: service uri of caption model gemma3 does not resolve, so no service is used", logHook.AllEntries()[1].Message)
+		assert.NotContains(t, logHook.AllEntries()[0].Message, "pass")
+	})
+	t.Run("ResolvedOrBlank", func(t *testing.T) {
+		useSharedService(t, "https://vision.example.com/api/v1/vision", "shared-vision-key")
+		logHook, _ := captureLogs(t)
+		resetUnresolvedUriWarnings(t)
+
+		uri, _ := (&Model{Type: ModelTypeLabels}).Endpoint()
+		assert.Equal(t, "https://vision.example.com/api/v1/vision/labels", uri)
+		uri, _ = (&Model{Type: ModelTypeLabels, Service: Service{Uri: "https://models.example.com/api"}}).Endpoint()
+		assert.Equal(t, "https://models.example.com/api", uri)
+		uri, _ = (&Model{Type: ModelTypeLabels, Service: Service{Uri: "${VISION_TEST_MISSING_URI}", Disabled: true}}).Endpoint()
+		assert.Equal(t, "https://vision.example.com/api/v1/vision/labels", uri)
+		assert.Empty(t, logHook.AllEntries())
+	})
+}
+
+// TestModel_UnresolvedUriErr checks the error for a model whose own service URI does not resolve.
+func TestModel_UnresolvedUriErr(t *testing.T) {
+	t.Run("Unresolved", func(t *testing.T) {
+		logHook, _ := captureLogs(t)
+		resetUnresolvedUriWarnings(t)
+
+		model := &Model{Type: ModelTypeNsfw, Name: "qwen3-vl:4b", Engine: ollama.EngineName, Service: Service{Uri: "${VISION_TEST_MISSING_URI}"}}
+		assert.EqualError(t, model.unresolvedUriErr(), "service uri of nsfw model qwen3-vl:4b does not resolve")
+		assert.EqualError(t, model.unresolvedUriErr(), "service uri of nsfw model qwen3-vl:4b does not resolve")
+		require.Len(t, logHook.AllEntries(), 1)
+		assert.Equal(t, "vision: service uri of nsfw model qwen3-vl:4b does not resolve, so no service is used", logHook.LastEntry().Message)
+	})
+	t.Run("Resolved", func(t *testing.T) {
+		assert.NoError(t, (&Model{Type: ModelTypeLabels, Service: Service{Uri: "https://models.example.com/api"}}).unresolvedUriErr())
+		assert.NoError(t, (&Model{Type: ModelTypeLabels}).unresolvedUriErr())
+		var model *Model
+		assert.NoError(t, model.unresolvedUriErr())
+	})
+}
+
+// TestModel_WarnUnresolvedUri checks that the warning for an unresolved service URI is logged once per model.
+func TestModel_WarnUnresolvedUri(t *testing.T) {
+	logHook, _ := captureLogs(t)
+	resetUnresolvedUriWarnings(t)
+
+	model := &Model{Type: ModelTypeLabels, Name: "custom", Service: Service{Uri: "${VISION_TEST_MISSING_URI}"}}
+	model.warnUnresolvedUri()
+	model.warnUnresolvedUri()
+	(&Model{Type: ModelTypeLabels, Name: "other", Service: Service{Uri: "${VISION_TEST_MISSING_URI}"}}).warnUnresolvedUri()
+
+	require.Len(t, logHook.AllEntries(), 2)
+}
+
+// TestService_UriUnresolved checks which service URIs count as unresolved.
+func TestService_UriUnresolved(t *testing.T) {
+	t.Run("Unresolved", func(t *testing.T) {
+		assert.True(t, (&Service{Uri: "${VISION_TEST_MISSING_URI}"}).UriUnresolved())
+		assert.True(t, (&Service{Uri: " ${VISION_TEST_MISSING_URI} "}).UriUnresolved())
+	})
+	t.Run("NotUnresolved", func(t *testing.T) {
+		assert.False(t, (&Service{}).UriUnresolved())
+		assert.False(t, (&Service{Uri: "   "}).UriUnresolved())
+		assert.False(t, (&Service{Uri: "https://models.example.com/api"}).UriUnresolved())
+		assert.False(t, (&Service{Uri: "${VISION_TEST_MISSING_URI}", Disabled: true}).UriUnresolved())
+		var service *Service
+		assert.False(t, service.UriUnresolved())
+	})
+}
+
+// resetUnresolvedUriWarnings clears the models warned about before and after a test.
+func resetUnresolvedUriWarnings(t *testing.T) {
+	t.Helper()
+	unresolvedUriWarned.Clear()
+	t.Cleanup(unresolvedUriWarned.Clear)
 }

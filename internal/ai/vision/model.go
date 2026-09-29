@@ -192,6 +192,9 @@ func (m *Model) Endpoint() (uri, method string) {
 
 	if uri, method = m.Service.Endpoint(); uri != "" && method != "" {
 		return uri, method
+	} else if m.Service.UriUnresolved() {
+		m.warnUnresolvedUri()
+		return "", ""
 	} else if ServiceUri == "" {
 		return "", ""
 	} else if serviceType := clean.TypeLowerUnderscore(m.Type); serviceType == "" {
@@ -199,6 +202,37 @@ func (m *Model) Endpoint() (uri, method string) {
 	} else {
 		return fmt.Sprintf("%s/%s", ServiceUri, serviceType), ServiceMethod
 	}
+}
+
+// unresolvedUriWarned holds the models whose unresolved service URI was logged.
+var unresolvedUriWarned sync.Map
+
+// warnUnresolvedUri logs once per model that its service URI does not resolve.
+func (m *Model) warnUnresolvedUri() {
+	key := m.Type + "/" + m.Name + "/" + m.Model + "/" + m.Service.Uri
+
+	if _, warned := unresolvedUriWarned.LoadOrStore(key, struct{}{}); !warned {
+		log.Warnf("vision: %s, so no service is used", m.unresolvedUriErrText())
+	}
+}
+
+// unresolvedUriErr returns an error, and logs a warning once, if the model's service URI does not
+// resolve after expanding environment variables.
+func (m *Model) unresolvedUriErr() error {
+	if m == nil || !m.Service.UriUnresolved() {
+		return nil
+	}
+
+	m.warnUnresolvedUri()
+
+	return m.unresolvedUriErrText()
+}
+
+// unresolvedUriErrText returns the error for a model whose service URI does not resolve.
+func (m *Model) unresolvedUriErrText() error {
+	name, _, _ := m.GetModel()
+
+	return fmt.Errorf("service uri of %s model %s does not resolve", clean.Log(m.Type), clean.Log(name))
 }
 
 // ApplyService updates the ApiRequest with service-specific
@@ -219,15 +253,22 @@ func (m *Model) ApplyService(apiRequest *ApiRequest) {
 	}
 }
 
-// EndpointKey returns the access token belonging to the remote service
-// endpoint, or an empty string for nil receivers.
+// EndpointKey returns the access token for the endpoint that Endpoint resolves
+// to. A model's own key is sent to its own endpoint, or to the shared service if
+// the model has no Uri; the shared service key is only sent to the shared service.
 func (m *Model) EndpointKey() (key string) {
 	if m == nil {
 		return ""
 	}
 
-	if key = m.Service.EndpointKey(); key != "" {
-		return key
+	if uri, method := m.Service.Endpoint(); uri != "" && method != "" {
+		return m.Service.EndpointKey()
+	} else if uri, _ = m.Endpoint(); uri == "" {
+		return ""
+	} else if strings.TrimSpace(m.Service.Uri) == "" {
+		if key = m.Service.EndpointKey(); key != "" {
+			return key
+		}
 	}
 
 	ensureEnv()
