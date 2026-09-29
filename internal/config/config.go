@@ -703,15 +703,15 @@ func mergeOptionValues(dst Values, src Values) bool {
 	return changed
 }
 
-// writeOptionsYAML persists merged options values. It does not touch the in-memory options,
-// which the caller applies through applyOptionValues when it changed one.
+// writeOptionsYAML persists merged options values with writeOptionsFile. It does not touch the in-memory
+// options, which the caller applies through applyOptionValues when it changed one.
 func (c *Config) writeOptionsYAML(fileName string, values Values) (bool, error) {
 	b, err := yaml.Marshal(values)
 	if err != nil {
 		return false, err
 	}
 
-	if err = os.WriteFile(fileName, b, fs.ModeConfigFile); err != nil {
+	if err = writeOptionsFile(fileName, b, hasCredentialOption(values)); err != nil {
 		return false, err
 	}
 
