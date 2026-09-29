@@ -23,8 +23,3 @@ Additional information can be found in our Developer Guide:
 <https://docs.photoprism.app/developer-guide/>
 */
 package mutex
-
-import "sync"
-
-// UploadBatches coordinates active upload requests with batch expiry.
-var UploadBatches sync.RWMutex

@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"syscall"
 	"testing"
 	"time"
 
@@ -180,6 +181,32 @@ func TestPurgeStaleUploads(t *testing.T) {
 		require.NoError(t, os.RemoveAll(filepath.Join(c.UsersStoragePath(), "utsy13tubtpxbzaz")))
 		purgeStaleUploads(c)
 		assert.False(t, mutex.UserUploads.Load())
+	})
+	t.Run("SetAsideLeftovers", func(t *testing.T) {
+		c := newUploadConfig(t)
+		savedLog := log
+		t.Cleanup(func() { log = savedLog })
+		logger := logrus.New()
+		var output bytes.Buffer
+		logger.SetOutput(&output)
+		log = logger
+		upload := filepath.Join(c.UsersStoragePath(), "utfrd9md4cywhp5v", fs.UploadDir)
+		leftover := filepath.Join(upload, expiredUploadPrefix+"123456")
+		require.NoError(t, os.MkdirAll(filepath.Join(leftover, "batch"), fs.ModeDir))
+		require.NoError(t, os.WriteFile(filepath.Join(leftover, "batch", "photo.jpg"), []byte("photo"), fs.ModeFile))
+		expired := newUploadBatch(t, c.UsersStoragePath(), "utfrd9md4cywhp5v", "old", 48*time.Hour)
+		fresh := newUploadBatch(t, c.UsersStoragePath(), "utfrd9md4cywhp5v", "fresh", time.Hour)
+		mutex.UserUploads.Store(true)
+		purgeStaleUploads(c)
+		assert.NoDirExists(t, leftover)
+		assert.NoDirExists(t, expired)
+		assert.DirExists(t, fresh)
+		entries, err := os.ReadDir(upload)
+		require.NoError(t, err)
+		assert.Len(t, entries, 1, "only the fresh batch remains")
+		assert.Contains(t, output.String(), "upload: removed 1 expired batch")
+		assert.Contains(t, output.String(), "upload: removed 2 staged files never imported")
+		assert.NotContains(t, output.String(), c.UsersStoragePath())
 	})
 	t.Run("MissingRoot", func(t *testing.T) {
 		c := newUploadConfig(t)
@@ -435,7 +462,7 @@ func TestPurgeUploadDirsErrors(t *testing.T) {
 	if os.Geteuid() == 0 {
 		t.Skip("requires filesystem permission enforcement")
 	}
-	for _, failure := range []string{"Walk", "Remove"} {
+	for _, failure := range []string{"Walk", "SetAside"} {
 		t.Run(failure, func(t *testing.T) {
 			root := t.TempDir()
 			controls := newUploadControls(t, root)
@@ -443,7 +470,7 @@ func TestPurgeUploadDirsErrors(t *testing.T) {
 			good := newUploadBatch(t, root, "utly13tubtpxbzaz", "good", 48*time.Hour)
 			blocked := bad
 			mode := os.FileMode(0)
-			if failure == "Remove" {
+			if failure == "SetAside" {
 				blocked = filepath.Dir(bad)
 				mode = 0500
 			}
@@ -451,10 +478,10 @@ func TestPurgeUploadDirsErrors(t *testing.T) {
 			require.NoError(t, err)
 			require.NoError(t, os.Chmod(blocked, mode))
 			t.Cleanup(func() { require.NoError(t, os.Chmod(blocked, info.Mode().Perm())) })
-			candidates, pending := scanUploadDirs(root, time.Now().Add(-24*time.Hour), 0)
-			result := removeExpiredUploads(candidates, time.Now().Add(-24*time.Hour))
+			candidates, _, pending := scanUploadDirs(root, time.Now().Add(-24*time.Hour), 0)
+			result := removeExpiredUploads(candidates, time.Now().Add(-24*time.Hour), mutex.UploadRequests.Load())
 			assert.Len(t, result.removed, 1)
-			if failure == "Remove" {
+			if failure == "SetAside" {
 				assert.Len(t, result.errors, 1)
 			}
 			assert.True(t, pending || result.remaining)
@@ -578,15 +605,19 @@ func TestPurgeUploadLifecycle(t *testing.T) {
 		controls := newUploadControls(t, root)
 		batch := newUploadBatch(t, root, "utfrd9md4cywhp5v", "old", 48*time.Hour)
 		cutoff := time.Now().Add(-24 * time.Hour)
-		candidates, _ := scanUploadDirs(root, cutoff, 0)
+		requests := mutex.UploadRequests.Load()
+		candidates, _, _ := scanUploadDirs(root, cutoff, 0)
 		require.Contains(t, candidates, batch)
-		mutex.UploadBatches.RLock()
-		result := removeExpiredUploads(candidates, cutoff)
-		mutex.UploadBatches.RUnlock()
+		mutex.BeginUploadRequest()
+		result := removeExpiredUploads(candidates, cutoff, requests)
+		mutex.EndUploadRequest()
 		assert.True(t, result.busy)
 		assert.DirExists(t, batch)
-		result = removeExpiredUploads(candidates, cutoff)
+
+		// The request changed nothing, so the batch is checked again and removed.
+		result = removeExpiredUploads(candidates, cutoff, requests)
 		assert.Contains(t, result.removed, batch)
+		assert.Zero(t, result.deferred)
 		assert.NoDirExists(t, batch)
 		controls()
 	})
@@ -594,28 +625,31 @@ func TestPurgeUploadLifecycle(t *testing.T) {
 		root := t.TempDir()
 		batch := newUploadBatch(t, root, "utfrd9md4cywhp5v", "old", 48*time.Hour)
 		cutoff := time.Now().Add(-24 * time.Hour)
-		candidates, _ := scanUploadDirs(root, cutoff, 0)
+		requests := mutex.UploadRequests.Load()
+		candidates, _, _ := scanUploadDirs(root, cutoff, 0)
 		require.Contains(t, candidates, batch)
-		mutex.UploadBatches.RLock()
+		mutex.BeginUploadRequest()
 		file := filepath.Join(batch, "nested", "new.jpg")
 		require.NoError(t, os.WriteFile(file, []byte("new"), fs.ModeFile))
-		mutex.UploadBatches.RUnlock()
-		result := removeExpiredUploads(candidates, cutoff)
+		mutex.EndUploadRequest()
+		result := removeExpiredUploads(candidates, cutoff, requests)
 		assert.Empty(t, result.removed)
 		assert.True(t, result.remaining)
+		assert.Equal(t, 1, result.deferred)
 		assert.FileExists(t, file)
 	})
 	t.Run("CandidateBecomesLink", func(t *testing.T) {
 		root := t.TempDir()
 		batch := newUploadBatch(t, root, "utfrd9md4cywhp5v", "old", 48*time.Hour)
 		cutoff := time.Now().Add(-24 * time.Hour)
-		candidates, _ := scanUploadDirs(root, cutoff, 0)
+		requests := mutex.UploadRequests.Load()
+		candidates, _, _ := scanUploadDirs(root, cutoff, 0)
 		require.Contains(t, candidates, batch)
 		target := t.TempDir()
 		require.NoError(t, os.RemoveAll(batch))
 		require.NoError(t, os.Symlink(target, batch))
 		ageUploadTree(t, batch, time.Now().Add(-48*time.Hour))
-		result := removeExpiredUploads(candidates, cutoff)
+		result := removeExpiredUploads(candidates, cutoff, requests)
 		assert.Empty(t, result.removed)
 		_, err := os.Lstat(batch)
 		assert.NoError(t, err)
@@ -623,8 +657,9 @@ func TestPurgeUploadLifecycle(t *testing.T) {
 	})
 }
 
-// TestRemoveExpiredUpload verifies that each candidate takes and releases the lifecycle lock on its own.
-func TestRemoveExpiredUpload(t *testing.T) {
+// TestSetAsideExpiredUpload verifies that each candidate is set aside under its own short hold of
+// the lifecycle lock and removed after it is released.
+func TestSetAsideExpiredUpload(t *testing.T) {
 	cutoff := time.Now().Add(-24 * time.Hour)
 	unlocked := func(t *testing.T) {
 		t.Helper()
@@ -634,48 +669,244 @@ func TestRemoveExpiredUpload(t *testing.T) {
 		}
 		assert.True(t, available, "lifecycle lock must be released")
 	}
-	t.Run("Removed", func(t *testing.T) {
+	t.Run("SetAside", func(t *testing.T) {
 		batch := newUploadBatch(t, t.TempDir(), "utfrd9md4cywhp5v", "old", 48*time.Hour)
-		outcome, err := removeExpiredUpload(batch, cutoff)
+		outcome, aside, err := setAsideExpiredUpload(batch, mutex.UploadRequests.Load())
 		require.NoError(t, err)
-		assert.Equal(t, uploadRemoved, outcome)
+		assert.Equal(t, uploadSetAside, outcome)
 		assert.NoDirExists(t, batch)
+		assert.Equal(t, filepath.Dir(batch), filepath.Dir(aside))
+		assert.True(t, strings.HasPrefix(filepath.Base(aside), expiredUploadPrefix))
+		assert.FileExists(t, filepath.Join(aside, "old", "nested", "photo.jpg"))
 		unlocked(t)
+		files, err := removeSetAside(aside)
+		require.NoError(t, err)
+		assert.Equal(t, 1, files)
+		assert.NoDirExists(t, aside)
 	})
 	t.Run("Busy", func(t *testing.T) {
 		batch := newUploadBatch(t, t.TempDir(), "utfrd9md4cywhp5v", "old", 48*time.Hour)
-		mutex.UploadBatches.RLock()
-		outcome, err := removeExpiredUpload(batch, cutoff)
-		mutex.UploadBatches.RUnlock()
+		requests := mutex.UploadRequests.Load()
+		mutex.BeginUploadRequest()
+		outcome, aside, err := setAsideExpiredUpload(batch, requests)
+		mutex.EndUploadRequest()
 		require.NoError(t, err)
 		assert.Equal(t, uploadBusy, outcome)
+		assert.Empty(t, aside)
 		assert.DirExists(t, batch)
 		unlocked(t)
 	})
-	t.Run("Kept", func(t *testing.T) {
-		batch := newUploadBatch(t, t.TempDir(), "utfrd9md4cywhp5v", "fresh", time.Hour)
-		outcome, err := removeExpiredUpload(batch, cutoff)
+	t.Run("RequestSinceScan", func(t *testing.T) {
+		batch := newUploadBatch(t, t.TempDir(), "utfrd9md4cywhp5v", "old", 48*time.Hour)
+		requests := mutex.UploadRequests.Load()
+		mutex.BeginUploadRequest()
+		mutex.EndUploadRequest()
+		outcome, _, err := setAsideExpiredUpload(batch, requests)
 		require.NoError(t, err)
+		assert.Equal(t, uploadChanged, outcome)
+		assert.DirExists(t, batch)
+		entries, err := os.ReadDir(filepath.Dir(batch))
+		require.NoError(t, err)
+		assert.Len(t, entries, 1)
+		unlocked(t)
+	})
+	t.Run("RequestActiveAtScan", func(t *testing.T) {
+		batch := newUploadBatch(t, t.TempDir(), "utfrd9md4cywhp5v", "old", 48*time.Hour)
+		mutex.BeginUploadRequest()
+		requests := mutex.UploadRequests.Load()
+		mutex.EndUploadRequest()
+		outcome, _, err := setAsideExpiredUpload(batch, requests)
+		require.NoError(t, err)
+		assert.Equal(t, uploadChanged, outcome)
+		assert.DirExists(t, batch)
+		unlocked(t)
+	})
+	t.Run("RenameFails", func(t *testing.T) {
+		if os.Geteuid() == 0 {
+			t.Skip("requires filesystem permission enforcement")
+		}
+		batch := newUploadBatch(t, t.TempDir(), "utfrd9md4cywhp5v", "old", 48*time.Hour)
+		require.NoError(t, os.Chmod(batch, 0o500))
+		t.Cleanup(func() { require.NoError(t, os.Chmod(batch, 0o700)) })
+		outcome, _, err := setAsideExpiredUpload(batch, mutex.UploadRequests.Load())
+		assert.Error(t, err)
 		assert.Equal(t, uploadKept, outcome)
 		assert.DirExists(t, batch)
+		entries, err := os.ReadDir(filepath.Dir(batch))
+		require.NoError(t, err)
+		assert.Len(t, entries, 1, "a failed rename must not leave a set-aside folder")
+		unlocked(t)
+	})
+	t.Run("NoSpace", func(t *testing.T) {
+		saved := makeAsideDir
+		t.Cleanup(func() { makeAsideDir = saved })
+		makeAsideDir = func(string, string) (string, error) {
+			return "", &os.PathError{Op: "mkdir", Path: "aside", Err: syscall.ENOSPC}
+		}
+		batch := newUploadBatch(t, t.TempDir(), "utfrd9md4cywhp5v", "old", 48*time.Hour)
+		outcome, aside, err := setAsideExpiredUpload(batch, mutex.UploadRequests.Load())
+		require.NoError(t, err)
+		assert.Equal(t, uploadRemoved, outcome)
+		assert.Empty(t, aside)
+		assert.NoDirExists(t, batch)
+		makeAsideDir = func(string, string) (string, error) {
+			return "", &os.PathError{Op: "mkdir", Path: "aside", Err: syscall.EDQUOT}
+		}
+		quota := newUploadBatch(t, t.TempDir(), "utfrd9md4cywhp5v", "old", 48*time.Hour)
+		result := removeExpiredUploads([]string{quota}, cutoff, mutex.UploadRequests.Load())
+		assert.Equal(t, []string{quota}, result.removed)
+		assert.NoDirExists(t, quota)
+		if os.Geteuid() != 0 {
+			locked := newUploadBatch(t, t.TempDir(), "utfrd9md4cywhp5v", "old", 48*time.Hour)
+			nested := filepath.Join(locked, "nested")
+			require.NoError(t, os.Chmod(nested, 0o500))
+			t.Cleanup(func() { _ = os.Chmod(nested, 0o700) })
+			outcome, _, err = setAsideExpiredUpload(locked, mutex.UploadRequests.Load())
+			assert.Error(t, err)
+			assert.Equal(t, uploadKept, outcome)
+		}
+		makeAsideDir = func(string, string) (string, error) {
+			return "", &os.PathError{Op: "mkdir", Path: "aside", Err: syscall.EACCES}
+		}
+		other := newUploadBatch(t, t.TempDir(), "utfrd9md4cywhp5v", "old", 48*time.Hour)
+		outcome, _, err = setAsideExpiredUpload(other, mutex.UploadRequests.Load())
+		assert.Error(t, err)
+		assert.Equal(t, uploadKept, outcome)
+		assert.DirExists(t, other)
+		unlocked(t)
+	})
+	t.Run("RemovalFails", func(t *testing.T) {
+		if os.Geteuid() == 0 {
+			t.Skip("requires filesystem permission enforcement")
+		}
+		batch := newUploadBatch(t, t.TempDir(), "utfrd9md4cywhp5v", "old", 48*time.Hour)
+		nested := filepath.Join(batch, "nested")
+		require.NoError(t, os.Chmod(nested, 0o500))
+		t.Cleanup(func() {
+			_ = filepath.WalkDir(filepath.Dir(batch), func(name string, entry iofs.DirEntry, err error) error {
+				if err == nil && entry.IsDir() {
+					_ = os.Chmod(name, 0o700)
+				}
+				return nil
+			})
+		})
+		result := removeExpiredUploads([]string{batch}, cutoff, mutex.UploadRequests.Load())
+		assert.Empty(t, result.removed)
+		assert.Zero(t, result.files)
+		assert.True(t, result.remaining)
+		assert.Len(t, result.errors, 1)
+		assert.NoDirExists(t, batch)
+		unlocked(t)
+	})
+	t.Run("RequestDuringRetry", func(t *testing.T) {
+		saved := checkUploadBatch
+		t.Cleanup(func() { checkUploadBatch = saved })
+		batch := newUploadBatch(t, t.TempDir(), "utfrd9md4cywhp5v", "old", 48*time.Hour)
+		requests := mutex.UploadRequests.Load()
+		mutex.BeginUploadRequest()
+		mutex.EndUploadRequest()
+		file := filepath.Join(batch, "new.jpg")
+		checkUploadBatch = func(dir string, cutoff time.Time) (bool, error) {
+			stale, err := saved(dir, cutoff)
+
+			// A request that stages a file after the walk passed it and ends before the retry.
+			mutex.BeginUploadRequest()
+			assert.NoError(t, os.WriteFile(file, []byte("new"), fs.ModeFile))
+			mutex.EndUploadRequest()
+			return stale, err
+		}
+		result := removeExpiredUploads([]string{batch}, cutoff, requests)
+		assert.Empty(t, result.removed)
+		assert.Equal(t, 1, result.deferred)
+		assert.FileExists(t, file)
+		unlocked(t)
+	})
+	t.Run("RetryWalkError", func(t *testing.T) {
+		saved := checkUploadBatch
+		t.Cleanup(func() { checkUploadBatch = saved })
+		checkUploadBatch = func(string, time.Time) (bool, error) { return false, os.ErrPermission }
+		batch := newUploadBatch(t, t.TempDir(), "utfrd9md4cywhp5v", "old", 48*time.Hour)
+		requests := mutex.UploadRequests.Load()
+		mutex.BeginUploadRequest()
+		mutex.EndUploadRequest()
+		result := removeExpiredUploads([]string{batch}, cutoff, requests)
+		assert.Empty(t, result.removed)
+		assert.Len(t, result.errors, 1)
+		assert.True(t, result.remaining)
+		assert.DirExists(t, batch)
+	})
+	t.Run("RetryBatchGone", func(t *testing.T) {
+		saved := checkUploadBatch
+		t.Cleanup(func() { checkUploadBatch = saved })
+		batch := newUploadBatch(t, t.TempDir(), "utfrd9md4cywhp5v", "old", 48*time.Hour)
+		requests := mutex.UploadRequests.Load()
+		mutex.BeginUploadRequest()
+		mutex.EndUploadRequest()
+
+		// The batch is processed and removed after the first attempt and before the retry.
+		checkUploadBatch = func(dir string, cutoff time.Time) (bool, error) {
+			assert.NoError(t, os.RemoveAll(dir))
+			return saved(dir, cutoff)
+		}
+		result := removeExpiredUploads([]string{batch}, cutoff, requests)
+		assert.Empty(t, result.removed)
+		assert.Empty(t, result.errors)
+		assert.Zero(t, result.deferred)
+		assert.False(t, result.remaining)
+	})
+	t.Run("RetryEntryGone", func(t *testing.T) {
+		saved := checkUploadBatch
+		t.Cleanup(func() { checkUploadBatch = saved })
+		batch := newUploadBatch(t, t.TempDir(), "utfrd9md4cywhp5v", "old", 48*time.Hour)
+		requests := mutex.UploadRequests.Load()
+		mutex.BeginUploadRequest()
+		mutex.EndUploadRequest()
+
+		// A file inside the batch is moved away while the retry walks it.
+		checkUploadBatch = func(dir string, cutoff time.Time) (bool, error) {
+			return false, &os.PathError{Op: "lstat", Path: filepath.Join(dir, "nested", "photo.jpg"), Err: syscall.ENOENT}
+		}
+		result := removeExpiredUploads([]string{batch}, cutoff, requests)
+		assert.Empty(t, result.removed)
+		assert.Empty(t, result.errors)
+		assert.Equal(t, 1, result.deferred)
+		assert.True(t, result.remaining)
+		assert.DirExists(t, batch)
+	})
+	t.Run("RetryAfterRequest", func(t *testing.T) {
+		root := t.TempDir()
+		stale := newUploadBatch(t, root, "utfrd9md4cywhp5v", "stale", 48*time.Hour)
+		changed := newUploadBatch(t, root, "utly13tubtpxbzaz", "changed", 48*time.Hour)
+		requests := mutex.UploadRequests.Load()
+		mutex.BeginUploadRequest()
+		file := filepath.Join(changed, "nested", "new.jpg")
+		require.NoError(t, os.WriteFile(file, []byte("new"), fs.ModeFile))
+		mutex.EndUploadRequest()
+		result := removeExpiredUploads([]string{stale, changed}, cutoff, requests)
+		assert.Equal(t, []string{stale}, result.removed)
+		assert.Equal(t, 1, result.deferred)
+		assert.True(t, result.remaining)
+		assert.NoDirExists(t, stale)
+		assert.FileExists(t, file)
 		unlocked(t)
 	})
 	t.Run("Skipped", func(t *testing.T) {
-		outcome, err := removeExpiredUpload(filepath.Join(t.TempDir(), "missing"), cutoff)
+		requests := mutex.UploadRequests.Load()
+		outcome, _, err := setAsideExpiredUpload(filepath.Join(t.TempDir(), "missing"), requests)
 		require.NoError(t, err)
 		assert.Equal(t, uploadSkipped, outcome)
 		target := t.TempDir()
 		link := filepath.Join(t.TempDir(), "link")
 		require.NoError(t, os.Symlink(target, link))
-		ageUploadTree(t, link, time.Now().Add(-48*time.Hour))
-		outcome, err = removeExpiredUpload(link, cutoff)
+		outcome, _, err = setAsideExpiredUpload(link, requests)
 		require.NoError(t, err)
 		assert.Equal(t, uploadSkipped, outcome)
 		assert.DirExists(t, target)
+		_, err = os.Lstat(link)
+		assert.NoError(t, err)
 		file := filepath.Join(t.TempDir(), "file.jpg")
 		require.NoError(t, os.WriteFile(file, []byte("file"), fs.ModeFile))
-		ageUploadTree(t, file, time.Now().Add(-48*time.Hour))
-		outcome, err = removeExpiredUpload(file, cutoff)
+		outcome, _, err = setAsideExpiredUpload(file, requests)
 		require.NoError(t, err)
 		assert.Equal(t, uploadSkipped, outcome)
 		assert.FileExists(t, file)
@@ -685,18 +916,21 @@ func TestRemoveExpiredUpload(t *testing.T) {
 		if os.Geteuid() == 0 {
 			t.Skip("requires filesystem permission enforcement")
 		}
+		requests := mutex.UploadRequests.Load()
 		batch := newUploadBatch(t, t.TempDir(), "utfrd9md4cywhp5v", "old", 48*time.Hour)
-		require.NoError(t, os.Chmod(batch, 0))
-		t.Cleanup(func() { require.NoError(t, os.Chmod(batch, 0o700)) }) //nolint:gosec // G302: test directory mode
-		outcome, err := removeExpiredUpload(batch, cutoff)
+		parent := filepath.Dir(batch)
+		require.NoError(t, os.Chmod(parent, 0o500))
+		t.Cleanup(func() { require.NoError(t, os.Chmod(parent, 0o700)) })
+		outcome, _, err := setAsideExpiredUpload(batch, requests)
 		assert.Error(t, err)
 		assert.Equal(t, uploadKept, outcome)
+		assert.DirExists(t, batch)
 		unlocked(t)
 		hidden := newUploadBatch(t, t.TempDir(), "utly13tubtpxbzaz", "old", 48*time.Hour)
-		parent := filepath.Dir(hidden)
-		require.NoError(t, os.Chmod(parent, 0))
-		t.Cleanup(func() { require.NoError(t, os.Chmod(parent, 0o700)) }) //nolint:gosec // G302: test directory mode
-		outcome, err = removeExpiredUpload(hidden, cutoff)
+		hiddenParent := filepath.Dir(hidden)
+		require.NoError(t, os.Chmod(hiddenParent, 0))
+		t.Cleanup(func() { require.NoError(t, os.Chmod(hiddenParent, 0o700)) })
+		outcome, _, err = setAsideExpiredUpload(hidden, requests)
 		assert.Error(t, err)
 		assert.Equal(t, uploadKept, outcome)
 		unlocked(t)
@@ -704,41 +938,122 @@ func TestRemoveExpiredUpload(t *testing.T) {
 	t.Run("EachCandidate", func(t *testing.T) {
 		root := t.TempDir()
 		first := newUploadBatch(t, root, "utfrd9md4cywhp5v", "first", 48*time.Hour)
-		fresh := newUploadBatch(t, root, "utfrd9md4cywhp5v", "fresh", time.Hour)
 		second := newUploadBatch(t, root, "utly13tubtpxbzaz", "second", 48*time.Hour)
-		result := removeExpiredUploads([]string{first, fresh, filepath.Join(root, "missing"), second}, cutoff)
+		result := removeExpiredUploads([]string{first, filepath.Join(root, "missing"), second}, cutoff, mutex.UploadRequests.Load())
 		assert.Equal(t, []string{first, second}, result.removed)
-		assert.True(t, result.remaining)
+		assert.Equal(t, 2, result.files)
+		assert.False(t, result.remaining)
 		assert.False(t, result.busy)
 		assert.Empty(t, result.errors)
-		assert.DirExists(t, fresh)
+		for _, dir := range []string{first, second} {
+			entries, err := os.ReadDir(filepath.Dir(dir))
+			require.NoError(t, err)
+			assert.Empty(t, entries, "set-aside folders must be removed")
+		}
 		unlocked(t)
 	})
+	t.Run("RemovedAfterUnlock", func(t *testing.T) {
+		saved := setAsideUpload
+		t.Cleanup(func() { setAsideUpload = saved })
+		batch := newUploadBatch(t, t.TempDir(), "utfrd9md4cywhp5v", "old", 48*time.Hour)
+		var aside string
+		setAsideUpload = func(dir string, requests uint64) (uploadOutcome, string, error) {
+			outcome, dest, err := saved(dir, requests)
+			aside = dest
+			if !mutex.UploadBatches.TryRLock() {
+				t.Error("lifecycle lock must be released before the removal")
+			} else {
+				mutex.UploadBatches.RUnlock()
+			}
+			assert.DirExists(t, dest, "the set-aside folder is removed after the lock is released")
+			return outcome, dest, err
+		}
+		result := removeExpiredUploads([]string{batch}, cutoff, mutex.UploadRequests.Load())
+		assert.Equal(t, []string{batch}, result.removed)
+		assert.NoDirExists(t, aside)
+	})
 	t.Run("BusyCandidate", func(t *testing.T) {
-		saved := removeUploadCandidate
-		t.Cleanup(func() { removeUploadCandidate = saved })
+		saved := setAsideUpload
+		t.Cleanup(func() { setAsideUpload = saved })
 		root := t.TempDir()
 		var batches []string
 		for _, name := range []string{"first", "active", "last"} {
 			batches = append(batches, newUploadBatch(t, root, "utfrd9md4cywhp5v", name, 48*time.Hour))
 		}
-		removeUploadCandidate = func(dir string, cutoff time.Time) (uploadOutcome, error) {
+		setAsideUpload = func(dir string, requests uint64) (uploadOutcome, string, error) {
 			if dir != batches[1] {
-				return saved(dir, cutoff)
+				return saved(dir, requests)
 			}
 			if !mutex.UploadBatches.TryRLock() {
 				t.Error("lifecycle lock must be released between candidates")
-				return saved(dir, cutoff)
+				return saved(dir, requests)
 			}
 			defer mutex.UploadBatches.RUnlock()
-			return saved(dir, cutoff)
+			return saved(dir, requests)
 		}
-		result := removeExpiredUploads(batches, cutoff)
+		result := removeExpiredUploads(batches, cutoff, mutex.UploadRequests.Load())
 		assert.True(t, result.busy)
 		assert.Equal(t, []string{batches[0], batches[2]}, result.removed)
 		assert.DirExists(t, batches[1])
 		unlocked(t)
 	})
+}
+
+// TestRemoveSetAside verifies that only the files that were removed are counted.
+func TestRemoveSetAside(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		aside := filepath.Join(t.TempDir(), expiredUploadPrefix+"1")
+		require.NoError(t, os.MkdirAll(filepath.Join(aside, "batch", "nested"), fs.ModeDir))
+		require.NoError(t, os.WriteFile(filepath.Join(aside, "batch", "a.jpg"), []byte("a"), fs.ModeFile))
+		require.NoError(t, os.WriteFile(filepath.Join(aside, "batch", "nested", "b.jpg"), []byte("b"), fs.ModeFile))
+		require.NoError(t, os.Symlink(t.TempDir(), filepath.Join(aside, "batch", "link")))
+		files, err := removeSetAside(aside)
+		require.NoError(t, err)
+		assert.Equal(t, 2, files)
+		assert.NoDirExists(t, aside)
+	})
+	t.Run("PartialFailure", func(t *testing.T) {
+		if os.Geteuid() == 0 {
+			t.Skip("requires filesystem permission enforcement")
+		}
+		aside := filepath.Join(t.TempDir(), expiredUploadPrefix+"2")
+		locked := filepath.Join(aside, "batch", "locked")
+		require.NoError(t, os.MkdirAll(locked, fs.ModeDir))
+		require.NoError(t, os.WriteFile(filepath.Join(aside, "batch", "a.jpg"), []byte("a"), fs.ModeFile))
+		require.NoError(t, os.WriteFile(filepath.Join(locked, "b.jpg"), []byte("b"), fs.ModeFile))
+		require.NoError(t, os.WriteFile(filepath.Join(locked, "c.jpg"), []byte("c"), fs.ModeFile))
+		require.NoError(t, os.Chmod(locked, 0o500))
+		t.Cleanup(func() { _ = os.Chmod(locked, 0o700) })
+		files, err := removeSetAside(aside)
+		assert.Error(t, err)
+		assert.Equal(t, 1, files)
+		result := uploadPurgeResult{}
+		result.removeLeftovers([]string{aside})
+		assert.True(t, result.remaining)
+		assert.Len(t, result.errors, 1)
+		assert.Zero(t, result.files)
+		require.NoError(t, os.Chmod(locked, 0o700))
+		result = uploadPurgeResult{}
+		result.removeLeftovers([]string{aside})
+		assert.False(t, result.remaining)
+		assert.Equal(t, 2, result.files)
+		assert.NoDirExists(t, aside)
+	})
+}
+
+// TestScanUploadLeftovers verifies that only set-aside folders inside an upload folder are leftovers.
+func TestScanUploadLeftovers(t *testing.T) {
+	root := t.TempDir()
+	upload := filepath.Join(root, "utfrd9md4cywhp5v", fs.UploadDir)
+	leftover := filepath.Join(upload, expiredUploadPrefix+"1")
+	require.NoError(t, os.MkdirAll(leftover, fs.ModeDir))
+	target := t.TempDir()
+	require.NoError(t, os.Symlink(target, filepath.Join(upload, expiredUploadPrefix+"link")))
+	require.NoError(t, os.WriteFile(filepath.Join(upload, expiredUploadPrefix+"file"), []byte("file"), fs.ModeFile))
+	userLike := filepath.Join(root, expiredUploadPrefix+"user", fs.UploadDir, expiredUploadPrefix+"2")
+	require.NoError(t, os.MkdirAll(userLike, fs.ModeDir))
+	_, leftovers, _ := scanUploadDirs(root, time.Now().Add(-24*time.Hour), 0)
+	assert.ElementsMatch(t, []string{leftover, userLike}, leftovers)
 }
 
 // uploadScanHook observes the lifecycle lock at the scan's error-reporting boundary.
@@ -795,9 +1110,12 @@ func TestPurgeUploadScanUnlocked(t *testing.T) {
 				assert.False(t, mutex.UserUploads.Load(), "flag must be cleared before the scan")
 				held = mutex.UploadBatches.TryRLock()
 				assert.True(t, held, "initial scan must permit requests")
+				if held {
+					mutex.UploadRequests.Add(1)
+				}
 				if complete && held {
 					assert.NoError(t, os.WriteFile(file, []byte("new"), fs.ModeFile))
-					mutex.UploadBatches.RUnlock()
+					mutex.EndUploadRequest()
 					held = false
 				}
 			}}
@@ -806,7 +1124,7 @@ func TestPurgeUploadScanUnlocked(t *testing.T) {
 			mutex.UserUploads.Store(true)
 			purgeStaleUploads(c)
 			if held {
-				mutex.UploadBatches.RUnlock()
+				mutex.EndUploadRequest()
 			}
 			require.True(t, hook.called)
 			assert.DirExists(t, batch)

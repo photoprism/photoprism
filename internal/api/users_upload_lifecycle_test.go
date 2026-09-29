@@ -123,6 +123,10 @@ func TestUploadRequestLifecycle(t *testing.T) {
 			req.Header.Set("Content-Type", contentType)
 			header.SetAuthorization(req, token)
 			response := httptest.NewRecorder()
+			requests := mutex.UploadRequests.Load()
+			t.Cleanup(func() {
+				assert.Equal(t, requests+2, mutex.UploadRequests.Load(), "the request must be recorded when it begins and ends")
+			})
 			if tc.panicAfter {
 				assert.Panics(t, func() { app.ServeHTTP(response, req) })
 			} else {
@@ -154,8 +158,8 @@ func uploadWaitsForLifecycleLock() bool {
 		}
 		lines := strings.Split(stack, "\n")
 		for i, line := range lines {
-			if strings.HasPrefix(line, "sync.(*RWMutex).RLock(") && i+2 < len(lines) {
-				if strings.Contains(lines[i+2], "api.UploadUserFiles.func1(") {
+			if strings.HasPrefix(line, "sync.(*RWMutex).RLock(") && i+4 < len(lines) {
+				if strings.Contains(lines[i+2], "mutex.BeginUploadRequest(") && strings.Contains(lines[i+4], "api.UploadUserFiles.func1(") {
 					return true
 				}
 				break

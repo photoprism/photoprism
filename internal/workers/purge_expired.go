@@ -1,10 +1,13 @@
 package workers
 
 import (
+	"errors"
 	"fmt"
 	iofs "io/fs"
 	"os"
 	"path/filepath"
+	"strings"
+	"syscall"
 	"time"
 
 	"github.com/dustin/go-humanize/english"
@@ -45,13 +48,18 @@ func purgeStaleUploads(conf *config.Config) {
 		return
 	}
 	cutoff := now.Add(-time.Duration(conf.UploadMaxAge()) * time.Second)
-	candidates, pending := scanUploadDirs(root, cutoff, 0)
-	result := removeExpiredUploads(candidates, cutoff)
+	requests := mutex.UploadRequests.Load()
+	candidates, leftovers, pending := scanUploadDirs(root, cutoff, 0)
+	result := removeExpiredUploads(candidates, cutoff, requests)
+	result.removeLeftovers(leftovers)
 	if pending || result.remaining || result.busy {
 		mutex.UserUploads.Store(true)
 	}
 	if result.busy {
 		log.Debug("upload: expiry of batches deferred while requests are active")
+	}
+	if result.deferred > 0 {
+		log.Debugf("upload: expiry of %s deferred to the next scan", english.Plural(result.deferred, "changed batch", "changed batches"))
 	}
 	for _, err := range result.errors {
 		log.Warnf("upload: %s", clean.Error(err))
@@ -59,8 +67,11 @@ func purgeStaleUploads(conf *config.Config) {
 	for _, dir := range result.removed {
 		event.SystemDebug([]string{"upload", "removed expired batch %s"}, clean.Log(dir))
 	}
-	if len(result.removed) > 0 {
-		log.Infof("upload: removed %s", english.Plural(len(result.removed), "expired batch", "expired batches"))
+	if n := len(result.removed); n > 0 {
+		log.Infof("upload: removed %s", english.Plural(n, "expired batch", "expired batches"))
+	}
+	if result.files > 0 {
+		log.Warnf("upload: removed %s never imported", english.Plural(result.files, "staged file", "staged files"))
 	}
 }
 
@@ -97,27 +108,34 @@ func storageTime(dir string) (time.Time, error) {
 	return info.ModTime(), nil
 }
 
-// scanUploadDirs collects stale batch candidates without following directory links.
-func scanUploadDirs(dir string, cutoff time.Time, depth int) (candidates []string, remaining bool) {
+// expiredUploadPrefix starts the name of a folder into which an expired batch is set aside for
+// removal. Batch names cannot contain a dot, so no request can address it.
+const expiredUploadPrefix = ".expired-"
+
+// scanUploadDirs collects stale batch candidates and set-aside leftovers without following links.
+func scanUploadDirs(dir string, cutoff time.Time, depth int) (candidates, leftovers []string, remaining bool) {
 	info, err := os.Lstat(dir)
 	switch {
 	case os.IsNotExist(err):
-		return nil, false
+		return nil, nil, false
 	case err != nil:
 		log.Warnf("upload: %s", clean.Error(err))
-		return nil, true
+		return nil, nil, true
 	case !info.IsDir() || info.Mode()&os.ModeSymlink != 0:
-		return nil, false
+		return nil, nil, false
 	}
 	if depth == 3 {
+		if strings.HasPrefix(filepath.Base(dir), expiredUploadPrefix) {
+			return nil, []string{dir}, false
+		}
 		stale, walkErr := uploadBatchExpired(dir, cutoff)
 		if walkErr != nil {
 			log.Warnf("upload: %s", clean.Error(walkErr))
-			return nil, true
+			return nil, nil, true
 		} else if !stale {
-			return nil, true
+			return nil, nil, true
 		}
-		return []string{dir}, false
+		return []string{dir}, nil, false
 	}
 	if depth == 1 {
 		return scanUploadDirs(filepath.Join(dir, fs.UploadDir), cutoff, depth+1)
@@ -125,77 +143,167 @@ func scanUploadDirs(dir string, cutoff time.Time, depth int) (candidates []strin
 	entries, err := os.ReadDir(dir)
 	if err != nil {
 		log.Warnf("upload: %s", clean.Error(err))
-		return nil, true
+		return nil, nil, true
 	}
 	for _, entry := range entries {
-		batches, pending := scanUploadDirs(filepath.Join(dir, entry.Name()), cutoff, depth+1)
+		batches, sets, pending := scanUploadDirs(filepath.Join(dir, entry.Name()), cutoff, depth+1)
 		candidates = append(candidates, batches...)
+		leftovers = append(leftovers, sets...)
 		remaining = remaining || pending
 	}
-	return candidates, remaining
+	return candidates, leftovers, remaining
 }
 
 // uploadPurgeResult records cleanup outcomes for logging after the lifecycle lock is released.
 type uploadPurgeResult struct {
 	removed   []string
+	files     int
+	deferred  int
 	errors    []error
 	remaining bool
 	busy      bool
 }
 
-// uploadOutcome describes what removeExpiredUpload did with a candidate.
+// uploadOutcome describes what setAsideExpiredUpload did with a candidate.
 type uploadOutcome int
 
 const (
 	uploadSkipped uploadOutcome = iota // no longer a batch directory
 	uploadBusy                         // a request holds the lifecycle lock
-	uploadKept                         // changed since the scan or failed
-	uploadRemoved
+	uploadChanged                      // a request began or ended since the scan
+	uploadKept                         // failed
+	uploadSetAside
+	uploadRemoved // removed under the lock, as setting it aside failed on a full disk
 )
 
-// removeExpiredUploads rechecks and removes each candidate under its own nonblocking exclusive lock.
-func removeExpiredUploads(candidates []string, cutoff time.Time) (result uploadPurgeResult) {
+// removeExpiredUploads sets each candidate aside under its own nonblocking exclusive lock and removes
+// the set-aside folders after all candidates were handled, so a request waits at most for one rename
+// unless the disk is full. A candidate a request may have changed is checked again and retried once.
+func removeExpiredUploads(candidates []string, cutoff time.Time, requests uint64) (result uploadPurgeResult) {
+	var asides, dirs []string
 	for _, dir := range candidates {
-		outcome, err := removeUploadCandidate(dir, cutoff)
+		outcome, aside, err := setAsideUpload(dir, requests)
+		if outcome == uploadChanged {
+			// The counter is read before the walk, so a request that ends during it is detected.
+			current := mutex.UploadRequests.Load()
+			stale, walkErr := checkUploadBatch(dir, cutoff)
+			switch {
+			case walkErr == nil && stale:
+				outcome, aside, err = setAsideUpload(dir, current)
+			case errors.Is(walkErr, iofs.ErrNotExist):
+				// Only a batch that is gone is skipped; an entry that vanished inside it defers it.
+				if _, lstatErr := os.Lstat(dir); os.IsNotExist(lstatErr) {
+					outcome = uploadSkipped
+				}
+			case walkErr != nil:
+				result.errors = append(result.errors, walkErr)
+			}
+		}
 		if err != nil {
 			result.errors = append(result.errors, err)
 		}
 		switch outcome {
 		case uploadBusy:
 			result.busy = true
+		case uploadChanged:
+			result.deferred++
+			result.remaining = true
 		case uploadKept:
 			result.remaining = true
+		case uploadSetAside:
+			asides = append(asides, aside)
+			dirs = append(dirs, dir)
 		case uploadRemoved:
 			result.removed = append(result.removed, dir)
+		}
+	}
+	for i, aside := range asides {
+		files, err := removeSetAside(aside)
+		result.files += files
+		if err != nil {
+			result.errors = append(result.errors, err)
+			result.remaining = true
+		} else {
+			result.removed = append(result.removed, dirs[i])
 		}
 	}
 	return result
 }
 
-// removeUploadCandidate removes one candidate, see removeExpiredUpload.
-var removeUploadCandidate = removeExpiredUpload
+// removeLeftovers removes set-aside folders that a previous run could not remove.
+func (result *uploadPurgeResult) removeLeftovers(leftovers []string) {
+	for _, aside := range leftovers {
+		files, err := removeSetAside(aside)
+		result.files += files
+		if err != nil {
+			result.errors = append(result.errors, err)
+			result.remaining = true
+		} else {
+			event.SystemDebug([]string{"upload", "removed set-aside folder %s"}, clean.Log(aside))
+		}
+	}
+}
 
-// removeExpiredUpload removes the batch if it is still expired, unless a request holds the lifecycle lock.
-func removeExpiredUpload(dir string, cutoff time.Time) (uploadOutcome, error) {
+// checkUploadBatch checks a candidate again before it is retried, see uploadBatchExpired.
+var checkUploadBatch = uploadBatchExpired
+
+// setAsideUpload sets one candidate aside, see setAsideExpiredUpload.
+var setAsideUpload = setAsideExpiredUpload
+
+// makeAsideDir creates the set-aside folder, see os.MkdirTemp.
+var makeAsideDir = os.MkdirTemp
+
+// setAsideExpiredUpload renames an expired batch into a new set-aside folder next to it, unless a
+// request holds the lifecycle lock or any request began or ended since the given counter value.
+// If the folder cannot be created on a full disk, the batch is removed under the lock instead.
+func setAsideExpiredUpload(dir string, requests uint64) (outcome uploadOutcome, aside string, err error) {
 	if !mutex.UploadBatches.TryLock() {
-		return uploadBusy, nil
+		return uploadBusy, "", nil
 	}
 	defer mutex.UploadBatches.Unlock()
 	info, err := os.Lstat(dir)
 	switch {
 	case os.IsNotExist(err):
-		return uploadSkipped, nil
+		return uploadSkipped, "", nil
 	case err != nil:
-		return uploadKept, err
+		return uploadKept, "", err
 	case !info.IsDir() || info.Mode()&os.ModeSymlink != 0:
-		return uploadSkipped, nil
+		return uploadSkipped, "", nil
+	case mutex.UploadRequests.Load() != requests:
+		return uploadChanged, "", nil
 	}
-	if stale, err := uploadBatchExpired(dir, cutoff); err != nil || !stale {
-		return uploadKept, err
-	} else if err = os.RemoveAll(dir); err != nil {
-		return uploadKept, err
+	if aside, err = makeAsideDir(filepath.Dir(dir), expiredUploadPrefix); errors.Is(err, syscall.ENOSPC) || errors.Is(err, syscall.EDQUOT) {
+		if err = os.RemoveAll(dir); err != nil {
+			return uploadKept, "", err
+		}
+		return uploadRemoved, "", nil
+	} else if err != nil {
+		return uploadKept, "", err
+	} else if err = os.Rename(dir, filepath.Join(aside, filepath.Base(dir))); err != nil {
+		_ = os.Remove(aside)
+		return uploadKept, "", err
 	}
-	return uploadRemoved, nil
+	return uploadSetAside, aside, nil
+}
+
+// removeSetAside removes a set-aside folder and returns how many regular files were removed with it.
+func removeSetAside(aside string) (files int, err error) {
+	files = countUploadFiles(aside)
+	if err = os.RemoveAll(aside); err != nil {
+		files -= countUploadFiles(aside)
+	}
+	return files, err
+}
+
+// countUploadFiles returns the number of regular files in dir without following links.
+func countUploadFiles(dir string) (files int) {
+	_ = filepath.WalkDir(dir, func(name string, entry iofs.DirEntry, walkErr error) error {
+		if walkErr == nil && entry.Type().IsRegular() {
+			files++
+		}
+		return nil
+	})
+	return files
 }
 
 // uploadBatchExpired reports whether every entry, including the batch directory, predates cutoff.

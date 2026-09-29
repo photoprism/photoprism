@@ -118,8 +118,8 @@ func UploadUserFiles(router *gin.RouterGroup) {
 
 		var uploads []string
 
-		mutex.UploadBatches.RLock()
-		defer mutex.UploadBatches.RUnlock()
+		mutex.BeginUploadRequest()
+		defer mutex.EndUploadRequest()
 
 		// Compose upload path.
 		uploadDir, err := conf.UserUploadBatchPath(s.UserUID, batch)
@@ -460,8 +460,8 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 			return
 		}
 
-		mutex.UploadBatches.RLock()
-		defer mutex.UploadBatches.RUnlock()
+		mutex.BeginUploadRequest()
+		defer mutex.EndUploadRequest()
 
 		uploadPath, err := conf.UserUploadBatchDir(s.UserUID, batch)
 
