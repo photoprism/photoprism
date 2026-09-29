@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -849,6 +850,31 @@ func TestConfig_Cluster(t *testing.T) {
 		assert.Equal(t, string(cluster.RolePortal), c.NodeRole())
 		c.options.NodeRole = string(cluster.RolePortal)
 		assert.Equal(t, string(cluster.RolePortal), c.NodeRole())
+	})
+	t.Run("NodeRolePortalConcurrent", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.Edition = Portal
+		c.options.NodeRole = string(cluster.RoleInstance)
+
+		var wg sync.WaitGroup
+		roles := make([]string, 4)
+
+		for i := range roles {
+			wg.Add(1)
+			go func(i int) {
+				defer wg.Done()
+				roles[i] = c.NodeRole()
+			}(i)
+		}
+
+		wg.Wait()
+
+		for _, role := range roles {
+			assert.Equal(t, string(cluster.RolePortal), role)
+		}
+
+		assert.True(t, c.Portal())
+		assert.Equal(t, string(cluster.RoleInstance), c.options.NodeRole, "resolving the role must not change the option")
 	})
 	t.Run("SecretsFromFiles", func(t *testing.T) {
 		c := NewConfig(CliTestContext())

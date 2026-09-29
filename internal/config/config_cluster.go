@@ -545,8 +545,7 @@ func (c *Config) NodeName() string {
 // NodeRole returns the cluster node role (portal, instance, or service).
 func (c *Config) NodeRole() string {
 	if c.Edition() == Portal {
-		c.options.NodeRole = cluster.RolePortal
-		return c.options.NodeRole
+		return cluster.RolePortal
 	}
 
 	switch role := cluster.NormalizeNodeRole(c.options.NodeRole); role {
