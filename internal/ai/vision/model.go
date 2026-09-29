@@ -177,6 +177,9 @@ func (m *Model) Endpoint() (uri, method string) {
 
 	if uri, method = m.Service.Endpoint(); uri != "" && method != "" {
 		return uri, method
+	} else if m.Service.UriUnresolved() {
+		m.warnUnresolvedUri()
+		return "", ""
 	} else if ServiceUri == "" {
 		return "", ""
 	} else if serviceType := clean.TypeLowerUnderscore(m.Type); serviceType == "" {
@@ -184,6 +187,37 @@ func (m *Model) Endpoint() (uri, method string) {
 	} else {
 		return fmt.Sprintf("%s/%s", ServiceUri, serviceType), ServiceMethod
 	}
+}
+
+// unresolvedUriWarned holds the models whose unresolved service URI was logged.
+var unresolvedUriWarned sync.Map
+
+// warnUnresolvedUri logs once per model that its service URI does not resolve.
+func (m *Model) warnUnresolvedUri() {
+	key := m.Type + "/" + m.Name + "/" + m.Model + "/" + m.Service.Uri
+
+	if _, warned := unresolvedUriWarned.LoadOrStore(key, struct{}{}); !warned {
+		log.Warnf("vision: %s, so no service is used", m.unresolvedUriErrText())
+	}
+}
+
+// unresolvedUriErr returns an error, and logs a warning once, if the model's service URI does not
+// resolve after expanding environment variables.
+func (m *Model) unresolvedUriErr() error {
+	if m == nil || !m.Service.UriUnresolved() {
+		return nil
+	}
+
+	m.warnUnresolvedUri()
+
+	return m.unresolvedUriErrText()
+}
+
+// unresolvedUriErrText returns the error for a model whose service URI does not resolve.
+func (m *Model) unresolvedUriErrText() error {
+	name, _, _ := m.GetModel()
+
+	return fmt.Errorf("service uri of %s model %s does not resolve", clean.Log(m.Type), clean.Log(name))
 }
 
 // ApplyService updates the ApiRequest with service-specific
@@ -865,15 +899,15 @@ func (m *Model) NsfwModel() *nsfw.Model {
 			m.Resolution = DefaultResolution
 		}
 
+		if m.TensorFlow == nil {
+			m.TensorFlow = &tensorflow.ModelInfo{}
+		}
+
 		if m.TensorFlow.Input == nil {
 			m.TensorFlow.Input = new(tensorflow.PhotoInput)
 		}
 
 		m.TensorFlow.Input.SetResolution(m.Resolution)
-
-		if m.TensorFlow == nil {
-			m.TensorFlow = &tensorflow.ModelInfo{}
-		}
 
 		// Try to load custom model based on the configuration values.
 		if model := nsfw.NewModel(GetModelPath(m.Path), m.TensorFlow, m.Disabled); model == nil {
