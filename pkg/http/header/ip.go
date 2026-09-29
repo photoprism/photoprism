@@ -1,64 +1,75 @@
 package header
 
 import (
+	"errors"
 	"net"
-	"regexp"
+	"net/netip"
+	"strings"
 )
 
-// IpRegExp matches characters allowed in IPv4 or IPv6 network addresses.
-// Kept for backwards compatibility (other packages reference it), but IP() no longer uses it.
-var IpRegExp = regexp.MustCompile(`[^a-zA-Z0-9:.]`)
+// MaxIPLength is the maximum length of a network address string accepted by ParseIP.
+const MaxIPLength = 64
 
-const (
-	// IPv6Length represents the maximum length of an IPv6 address string.
-	IPv6Length = 39
-)
+// ErrInvalidIP is returned by ParseIP for input that is not a single network address.
+var ErrInvalidIP = errors.New("invalid ip address")
 
 // IsIP returns true if the string matches a valid IP address.
 func IsIP(s string) bool {
 	return IP(s, "") != ""
 }
 
-// IP returns the sanitized and normalized network address if it is valid, or the default otherwise.
+// IP returns the normalized network address if it is valid, or the default otherwise.
 func IP(s, defaultIp string) string {
-	// Return default if invalid.
-	if s == "" || len(s) > 64 || s == defaultIp {
+	if s == "" || s == defaultIp {
 		return defaultIp
-	}
-
-	// Filter invalid characters: allow only [A-Za-z0-9:.]
-	fastOK := true
-	for i := 0; i < len(s); i++ {
-		b := s[i]
-		isAlphaNum := (b >= '0' && b <= '9') || (b >= 'a' && b <= 'z') || (b >= 'A' && b <= 'Z')
-		if !isAlphaNum && b != ':' && b != '.' {
-			fastOK = false
-			break
-		}
-	}
-	if !fastOK {
-		dst := make([]byte, 0, len(s))
-		for i := 0; i < len(s); i++ {
-			c := s[i]
-			if (c >= '0' && c <= '9') || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == ':' || c == '.' {
-				dst = append(dst, c)
-			}
-		}
-		s = string(dst)
-		if s == "" {
-			return defaultIp
-		}
-	}
-
-	// Limit string length to 39 characters.
-	if len(s) > IPv6Length {
-		s = s[:IPv6Length]
-	}
-
-	// Parse IP address and return it as string.
-	if ip := net.ParseIP(s); ip == nil {
+	} else if ip, err := ParseIP(s); err != nil {
 		return defaultIp
 	} else {
-		return ip.String()
+		return ip
 	}
+}
+
+// ParseIP parses a single network address, optionally bracketed or with a port, and
+// returns it in canonical form without zone, with IPv4-mapped addresses as IPv4.
+func ParseIP(s string) (string, error) {
+	if len(s) > MaxIPLength {
+		return "", ErrInvalidIP
+	} else if s = strings.TrimSpace(s); s == "" {
+		return "", ErrInvalidIP
+	}
+
+	if strings.HasPrefix(s, "[") && strings.HasSuffix(s, "]") {
+		s = s[1 : len(s)-1]
+	} else if strings.HasPrefix(s, "[") || strings.Count(s, ":") == 1 {
+		host, port, err := net.SplitHostPort(s)
+
+		if err != nil || !isPort(port) {
+			return "", ErrInvalidIP
+		}
+
+		s = host
+	}
+
+	addr, err := netip.ParseAddr(s)
+
+	if err != nil {
+		return "", ErrInvalidIP
+	}
+
+	return addr.WithZone("").Unmap().String(), nil
+}
+
+// isPort reports whether s is a decimal port number.
+func isPort(s string) bool {
+	if s == "" || len(s) > 5 {
+		return false
+	}
+
+	for i := 0; i < len(s); i++ {
+		if s[i] < '0' || s[i] > '9' {
+			return false
+		}
+	}
+
+	return true
 }

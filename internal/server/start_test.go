@@ -79,6 +79,46 @@ func TestConfigureTrustedProxySettings(t *testing.T) {
 
 		assert.Equal(t, "198.51.100.11", ip)
 	})
+	t.Run("ResolvesForwardedForPlatformHeader", func(t *testing.T) {
+		t.Cleanup(func() { header.SetTrustedPlatform("") })
+
+		conf := config.NewConfig(config.CliTestContext())
+		conf.Options().TrustedProxies = nil
+		conf.Options().TrustedPlatform = header.XForwardedFor
+
+		router := newProxyTestRouter(conf)
+		assert.Empty(t, router.TrustedPlatform)
+
+		req := httptest.NewRequest(http.MethodGet, "/ip", nil)
+		req.RemoteAddr = "10.128.2.4:12345"
+		req.Header.Add(header.XForwardedFor, "198.51.100.7")
+		req.Header.Add(header.XForwardedFor, "203.0.113.5")
+
+		w := httptest.NewRecorder()
+		router.ServeHTTP(w, req)
+
+		assert.Equal(t, "203.0.113.5", w.Body.String())
+	})
+	t.Run("SetsOtherPlatformHeader", func(t *testing.T) {
+		t.Cleanup(func() { header.SetTrustedPlatform("") })
+
+		conf := config.NewConfig(config.CliTestContext())
+		conf.Options().TrustedProxies = nil
+		conf.Options().TrustedPlatform = gin.PlatformCloudflare
+
+		router := newProxyTestRouter(conf)
+		assert.Equal(t, gin.PlatformCloudflare, router.TrustedPlatform)
+
+		req := httptest.NewRequest(http.MethodGet, "/ip", nil)
+		req.RemoteAddr = "10.128.2.4:12345"
+		req.Header.Set(gin.PlatformCloudflare, "203.0.113.9")
+		req.Header.Set(header.XForwardedFor, "198.51.100.7")
+
+		w := httptest.NewRecorder()
+		router.ServeHTTP(w, req)
+
+		assert.Equal(t, "203.0.113.9", w.Body.String())
+	})
 }
 
 func TestNewHTTPServer(t *testing.T) {

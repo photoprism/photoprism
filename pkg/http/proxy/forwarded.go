@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/http/scheme"
 )
 
@@ -86,7 +87,8 @@ func TrustedRequest(req *http.Request, trusted []*net.IPNet) bool {
 }
 
 // ForwardedProto returns "https" if the request used TLS or, when sent by a trusted
-// peer, carries one of the HTTPS protocol headers, and "http" otherwise.
+// peer, one of the HTTPS protocol headers ends with an HTTPS value, and "http" otherwise.
+// The last entry across all lines of a header is the one the trusted peer added.
 func ForwardedProto(req *http.Request, trusted bool, httpsHeaders map[string]string) string {
 	switch {
 	case req == nil:
@@ -98,13 +100,7 @@ func ForwardedProto(req *http.Request, trusted bool, httpsHeaders map[string]str
 	}
 
 	for name, value := range httpsHeaders {
-		v := req.Header.Get(name)
-
-		if comma := strings.IndexByte(v, ','); comma >= 0 {
-			v = v[:comma]
-		}
-
-		if v = strings.TrimSpace(v); v == "" {
+		if v, _ := header.LastValue(req.Header, name); v == "" {
 			continue
 		} else if strings.EqualFold(v, scheme.Https) || value != "" && strings.EqualFold(v, value) {
 			return scheme.Https

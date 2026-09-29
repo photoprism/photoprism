@@ -52,11 +52,8 @@ func Start(ctx context.Context, conf *config.Config) {
 	// Configure trusted proxy ranges and forwarded client IP headers.
 	configureTrustedProxySettings(router, conf)
 
-	// Set trusted platform client IP address header name?
-	if trustedPlatform := conf.TrustedPlatform(); trustedPlatform != "" {
-		router.TrustedPlatform = trustedPlatform
-
-		// Enable support for HTTP/2 without TLS.
+	// Enable support for HTTP/2 without TLS if a trusted platform header is set.
+	if conf.TrustedPlatform() != "" {
 		router.UseH2C = true
 	}
 
@@ -231,7 +228,8 @@ func Start(ctx context.Context, conf *config.Config) {
 	}
 }
 
-// configureTrustedProxySettings configures trusted proxy ranges for client IP resolution.
+// configureTrustedProxySettings configures trusted proxy ranges and the trusted platform header
+// for client IP resolution.
 func configureTrustedProxySettings(router *gin.Engine, conf *config.Config) {
 	if router == nil || conf == nil {
 		return
@@ -249,6 +247,8 @@ func configureTrustedProxySettings(router *gin.Engine, conf *config.Config) {
 	} else if err := router.SetTrustedProxies(nil); err != nil {
 		log.Warnf("server: %s", err)
 	}
+
+	router.TrustedPlatform = header.SetTrustedPlatform(conf.TrustedPlatform())
 }
 
 // StartHttp starts the Web server in http mode.
