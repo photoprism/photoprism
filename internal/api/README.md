@@ -78,7 +78,8 @@ keeps them), including batches awaiting a processing retry. Age is measured with
 clock, read from the `.upload-purge` file that each cleanup run creates anew in the users storage folder.
 Upload-batch removal is deferred while upload or processing requests are active, and a batch is
 checked again when a request for it ran since the cleanup scan; removal logs a warning with the number of
-staged files removed with them. Uploads and their processing do not wait for indexing or other imports, but processing answers 503 while a running index is being canceled.
+staged files removed with them, and a batch whose removal has been delayed by requests for more than a day
+is reported in a warning at most once a day. Uploads and their processing do not wait for indexing or other imports, but processing answers 503 while a running index is being canceled.
 Files directly in the upload root, including avatar staging, are not batch cleanup targets.
 
 Processing a batch adds its files to at most 100 requested albums: titles resolve among the user's

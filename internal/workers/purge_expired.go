@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"syscall"
 	"time"
 
@@ -31,6 +32,14 @@ func purgeStaleUploads(conf *config.Config) {
 		return
 	}
 	mutex.UserUploads.Store(false)
+
+	// A run that ends before its scan breaks every deferral, so none is reported for the time it lasted.
+	scanned := false
+	defer func() {
+		if !scanned {
+			noteUploadDeferrals(nil, time.Now())
+		}
+	}()
 	root := conf.UsersStoragePath()
 	if info, err := os.Lstat(root); os.IsNotExist(err) {
 		return
@@ -59,6 +68,10 @@ func purgeStaleUploads(conf *config.Config) {
 	}
 	if result.busy {
 		log.Debug("upload: expiry of batches deferred while requests are active")
+	}
+	scanned = true
+	if n := noteUploadDeferrals(result.deferredDirs, time.Now()); n > 0 {
+		log.Warnf("upload: removal of %s delayed for more than a day by ongoing requests", english.Plural(n, "expired batch", "expired batches"))
 	}
 	if result.deferred > 0 {
 		log.Debugf("upload: expiry of %s deferred to the next scan", english.Plural(result.deferred, "changed batch", "changed batches"))
@@ -192,12 +205,13 @@ func scanUploadDirs(dir string, cutoff time.Time, depth int) (candidates, leftov
 
 // uploadPurgeResult records cleanup outcomes for logging after the lifecycle lock is released.
 type uploadPurgeResult struct {
-	removed   []string
-	files     int
-	deferred  int
-	errors    []error
-	remaining bool
-	busy      bool
+	removed      []string
+	deferredDirs []string // candidates skipped because of requests, whether busy or changed
+	files        int
+	deferred     int
+	errors       []error
+	remaining    bool
+	busy         bool
 }
 
 // uploadOutcome describes what setAsideExpiredUpload did with a candidate.
@@ -241,9 +255,11 @@ func removeExpiredUploads(candidates []string, cutoff time.Time, records *mutex.
 		switch outcome {
 		case uploadBusy:
 			result.busy = true
+			result.deferredDirs = append(result.deferredDirs, dir)
 		case uploadChanged:
 			result.deferred++
 			result.remaining = true
+			result.deferredDirs = append(result.deferredDirs, dir)
 		case uploadKept:
 			result.remaining = true
 		case uploadSetAside:
@@ -264,6 +280,42 @@ func removeExpiredUploads(candidates []string, cutoff time.Time, records *mutex.
 		}
 	}
 	return result
+}
+
+// uploadDeferralLimit is how long an expired batch may be deferred on every scan before it is reported.
+const uploadDeferralLimit = 24 * time.Hour
+
+// uploadDeferral records since when a batch has been deferred and when that was last reported.
+type uploadDeferral struct {
+	since, reported time.Time
+}
+
+// uploadDeferrals holds the batches that the latest scan deferred.
+var uploadDeferrals = struct {
+	sync.Mutex
+	batches map[string]uploadDeferral
+}{}
+
+// noteUploadDeferrals replaces the deferred batches with those of the latest scan and returns how many
+// were deferred on every scan for uploadDeferralLimit and not reported within it, marking them reported.
+// A zero reported time is always more than uploadDeferralLimit ago, since the difference saturates.
+func noteUploadDeferrals(dirs []string, now time.Time) (overdue int) {
+	uploadDeferrals.Lock()
+	defer uploadDeferrals.Unlock()
+	batches := make(map[string]uploadDeferral, len(dirs))
+	for _, dir := range dirs {
+		deferral, found := uploadDeferrals.batches[dir]
+		if !found {
+			deferral.since = now
+		}
+		if now.Sub(deferral.since) >= uploadDeferralLimit && now.Sub(deferral.reported) >= uploadDeferralLimit {
+			deferral.reported = now
+			overdue++
+		}
+		batches[dir] = deferral
+	}
+	uploadDeferrals.batches = batches
+	return overdue
 }
 
 // removeLeftovers removes set-aside folders that a previous run could not remove.

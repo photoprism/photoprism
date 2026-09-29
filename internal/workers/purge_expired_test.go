@@ -1062,6 +1062,7 @@ func TestSetAsideExpiredUpload(t *testing.T) {
 		result := removeExpiredUploads([]string{batch}, cutoff, records)
 		assert.Equal(t, []string{batch}, result.removed)
 		assert.Zero(t, result.deferred)
+		assert.Empty(t, result.deferredDirs)
 		assert.Zero(t, walks, "a request for another batch must not cause a second walk")
 
 		// A request for the batch itself defers it.
@@ -1072,6 +1073,7 @@ func TestSetAsideExpiredUpload(t *testing.T) {
 		result = removeExpiredUploads([]string{batch}, cutoff, records)
 		assert.Empty(t, result.removed)
 		assert.Equal(t, 1, result.deferred)
+		assert.Equal(t, []string{batch}, result.deferredDirs)
 		assert.Equal(t, 1, walks)
 		assert.DirExists(t, batch)
 		unlocked(t)
@@ -1196,6 +1198,7 @@ func TestSetAsideExpiredUpload(t *testing.T) {
 		}
 		result := removeExpiredUploads(batches, cutoff, loadUploadRecords())
 		assert.True(t, result.busy)
+		assert.Equal(t, []string{batches[1]}, result.deferredDirs)
 		assert.Equal(t, []string{batches[0], batches[2]}, result.removed)
 		assert.DirExists(t, batches[1])
 		unlocked(t)
@@ -1375,4 +1378,121 @@ func TestStartPurgeExclusions(t *testing.T) {
 			assert.True(t, mutex.UserUploads.Load())
 		})
 	}
+}
+
+// restoreUploadDeferrals clears the deferred batches for a test and restores them afterwards.
+func restoreUploadDeferrals(t *testing.T) {
+	t.Helper()
+	saved := uploadDeferrals.batches
+	uploadDeferrals.batches = nil
+	t.Cleanup(func() { uploadDeferrals.batches = saved })
+}
+
+// TestNoteUploadDeferrals verifies that a batch is reported once per day while every scan defers it.
+func TestNoteUploadDeferrals(t *testing.T) {
+	start := time.Date(2026, 9, 29, 12, 0, 0, 0, time.UTC)
+	tick := 15 * time.Minute
+	t.Run("OncePerDay", func(t *testing.T) {
+		restoreUploadDeferrals(t)
+		var reported []time.Duration
+		for elapsed := time.Duration(0); elapsed <= 50*time.Hour; elapsed += tick {
+			if noteUploadDeferrals([]string{"a"}, start.Add(elapsed)) > 0 {
+				reported = append(reported, elapsed)
+			}
+		}
+		assert.Equal(t, []time.Duration{24 * time.Hour, 48 * time.Hour}, reported)
+	})
+	t.Run("BelowLimit", func(t *testing.T) {
+		restoreUploadDeferrals(t)
+		assert.Zero(t, noteUploadDeferrals([]string{"a"}, start))
+		assert.Zero(t, noteUploadDeferrals([]string{"a"}, start.Add(uploadDeferralLimit-time.Second)))
+		assert.Equal(t, 1, noteUploadDeferrals([]string{"a"}, start.Add(uploadDeferralLimit)))
+	})
+	t.Run("ScanWithoutDeferral", func(t *testing.T) {
+		restoreUploadDeferrals(t)
+		assert.Zero(t, noteUploadDeferrals([]string{"a", "b"}, start))
+		assert.Zero(t, noteUploadDeferrals([]string{"b"}, start.Add(12*time.Hour)))
+		assert.Len(t, uploadDeferrals.batches, 1, "batches that were not deferred must be forgotten")
+		assert.Equal(t, 1, noteUploadDeferrals([]string{"a", "b"}, start.Add(25*time.Hour)), "only the batch deferred on every scan is reported")
+	})
+	t.Run("Multiple", func(t *testing.T) {
+		restoreUploadDeferrals(t)
+		assert.Zero(t, noteUploadDeferrals([]string{"a", "b", "c"}, start))
+		assert.Equal(t, 3, noteUploadDeferrals([]string{"a", "b", "c"}, start.Add(uploadDeferralLimit)))
+		assert.Zero(t, noteUploadDeferrals(nil, start.Add(uploadDeferralLimit+tick)))
+		assert.Empty(t, uploadDeferrals.batches)
+	})
+}
+
+// TestPurgeStaleUploadsDeferralWarning verifies that a batch deferred for more than a day is reported once
+// and that normal deferrals are not reported.
+func TestPurgeStaleUploadsDeferralWarning(t *testing.T) {
+	capture := func(t *testing.T) *bytes.Buffer {
+		t.Helper()
+		savedLog, flag := log, mutex.UserUploads.Load()
+		t.Cleanup(func() { log = savedLog; mutex.UserUploads.Store(flag) })
+		logger := logrus.New()
+		var output bytes.Buffer
+		logger.SetOutput(&output)
+		log = logger
+		return &output
+	}
+	t.Run("Normal", func(t *testing.T) {
+		restoreUploadDeferrals(t)
+		c := newUploadConfig(t)
+		output := capture(t)
+		batch := newUploadBatch(t, c.UsersStoragePath(), "utfrd9md4cywhp5v", "old", 48*time.Hour)
+		mutex.BeginUploadRequest("old")
+		mutex.UserUploads.Store(true)
+		purgeStaleUploads(c)
+		mutex.EndUploadRequest("old")
+		assert.DirExists(t, batch)
+		assert.Contains(t, uploadDeferrals.batches, batch)
+		assert.Empty(t, output.String(), "a deferral must log nothing above debug")
+		purgeStaleUploads(c)
+		assert.NoDirExists(t, batch)
+		assert.Empty(t, uploadDeferrals.batches)
+		assert.NotContains(t, output.String(), "delayed")
+	})
+	t.Run("Overdue", func(t *testing.T) {
+		restoreUploadDeferrals(t)
+		c := newUploadConfig(t)
+		output := capture(t)
+		batch := newUploadBatch(t, c.UsersStoragePath(), "utfrd9md4cywhp5v", "overduebatch", 48*time.Hour)
+		uploadDeferrals.batches = map[string]uploadDeferral{batch: {since: time.Now().Add(-uploadDeferralLimit - time.Minute)}}
+		mutex.BeginUploadRequest("overduebatch")
+		mutex.UserUploads.Store(true)
+		log.SetLevel(logrus.WarnLevel)
+		purgeStaleUploads(c)
+		purgeStaleUploads(c)
+		mutex.EndUploadRequest("overduebatch")
+		assert.DirExists(t, batch)
+		assert.Equal(t, 1, strings.Count(output.String(), `level=warning msg="upload: removal of 1 expired batch delayed for more than a day by ongoing requests"`))
+		assert.NotContains(t, output.String(), c.UsersStoragePath())
+		assert.NotContains(t, output.String(), "utfrd9md4cywhp5v")
+		assert.NotContains(t, output.String(), "overduebatch")
+		purgeStaleUploads(c)
+		assert.NoDirExists(t, batch)
+		assert.Empty(t, uploadDeferrals.batches)
+	})
+	t.Run("RunWithoutScan", func(t *testing.T) {
+		restoreUploadDeferrals(t)
+		c := newUploadConfig(t)
+		output := capture(t)
+		savedClock := uploadStorageTime
+		t.Cleanup(func() { uploadStorageTime = savedClock })
+		uploadStorageTime = func(string) (time.Time, error) { return time.Time{}, os.ErrPermission }
+		batch := newUploadBatch(t, c.UsersStoragePath(), "utfrd9md4cywhp5v", "old", 48*time.Hour)
+		uploadDeferrals.batches = map[string]uploadDeferral{batch: {since: time.Now().Add(-2 * uploadDeferralLimit)}}
+		mutex.UserUploads.Store(true)
+		purgeStaleUploads(c)
+		assert.Empty(t, uploadDeferrals.batches, "a run that ends before its scan must break the deferral")
+		uploadStorageTime = savedClock
+		mutex.BeginUploadRequest("old")
+		purgeStaleUploads(c)
+		mutex.EndUploadRequest("old")
+		assert.DirExists(t, batch)
+		assert.Contains(t, uploadDeferrals.batches, batch)
+		assert.NotContains(t, output.String(), "delayed")
+	})
 }
