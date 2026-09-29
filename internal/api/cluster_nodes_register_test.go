@@ -15,9 +15,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/tidwall/gjson"
+	"golang.org/x/time/rate"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/internal/service/cluster/provisioner"
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
@@ -798,6 +800,25 @@ func oauthNodeAccessTokenWithScope(t testing.TB, app http.Handler, router *gin.R
 	assert.Equal(t, http.StatusOK, w.Code, "oauth token request failed: %s", w.Body.String())
 
 	return gjson.Get(w.Body.String(), "access_token").String()
+}
+
+// TestClusterNodesRegister_RateLimit checks that each request takes one token and the limit applies once they are used.
+func TestClusterNodesRegister_RateLimit(t *testing.T) {
+	app, router, conf := NewApiTest()
+	enablePortalAPIs(t, conf)
+	ClusterNodesRegister(router)
+
+	origLimit := limiter.Auth
+	t.Cleanup(func() { limiter.Auth = origLimit })
+	limiter.Auth = limiter.NewLimit(rate.Every(24*time.Hour), 3)
+
+	for range 3 {
+		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":""}`)
+		assert.Equal(t, http.StatusBadRequest, r.Code)
+	}
+
+	r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/cluster/nodes/register", `{"NodeName":""}`)
+	assert.Equal(t, http.StatusTooManyRequests, r.Code)
 }
 
 // TestBuildPortalLoginURL covers the browser-facing Portal login URL reported
