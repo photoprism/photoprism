@@ -85,4 +85,19 @@ func TestWebSocket_AuthLimit(t *testing.T) {
 	}
 
 	assert.Eventually(t, func() bool { return limiter.Auth.Reject("127.0.0.1") }, 5*time.Second, 20*time.Millisecond)
+
+	// A client over the limit is told so and the connection is closed with "try again later".
+	ws, _, err := websocket.DefaultDialer.Dial("ws"+strings.TrimPrefix(srv.URL, "http")+"/api/v1/ws", http.Header{"Origin": {srv.URL}})
+	require.NoError(t, err)
+	defer ws.Close()
+	require.NoError(t, ws.WriteJSON(map[string]string{"session": rnd.AuthToken()}))
+	require.NoError(t, ws.SetReadDeadline(time.Now().Add(10*time.Second)))
+
+	_, msg, err := ws.ReadMessage()
+	require.NoError(t, err)
+	assert.Equal(t, wsRateLimitedEvent, gjson.GetBytes(msg, "event").String())
+	assert.Equal(t, int64(http.StatusTooManyRequests), gjson.GetBytes(msg, "data.code").Int())
+
+	_, _, err = ws.ReadMessage()
+	assert.True(t, websocket.IsCloseError(err, websocket.CloseTryAgainLater), "%v", err)
 }

@@ -32,8 +32,23 @@ const protocol = "https:" === document.location.protocol ? "wss://" : "ws://";
 const apiUri = window.__CONFIG__ ? window.__CONFIG__.apiUri : "/api/v1";
 const socketUrl = protocol + host + apiUri + "/ws";
 
-const Socket = new Sockette(socketUrl, {
-  timeout: 5e3,
+// Reconnect delay in milliseconds, and its maximum while the server reports too many failed authentications.
+export const reconnectTimeout = 5e3;
+export const maxReconnectTimeout = 60e3;
+
+// nextReconnectTimeout returns the reconnect delay after a server message, doubling it up to the maximum
+// while the server reports too many failed authentications and restoring the default otherwise.
+export function nextReconnectTimeout(current, event) {
+  if (event === "websocket.rate-limited") {
+    return Math.min(Math.max(current, reconnectTimeout) * 2, maxReconnectTimeout);
+  }
+
+  return reconnectTimeout;
+}
+
+// Sockette reads the timeout when it schedules a reconnect, so updating it here changes the next delay.
+const options = {
+  timeout: reconnectTimeout,
   onopen: (e) => {
     console.log("websocket: connected");
     $config.disconnected.value = false;
@@ -42,6 +57,7 @@ const Socket = new Sockette(socketUrl, {
   },
   onmessage: (e) => {
     const m = JSON.parse(e.data);
+    options.timeout = nextReconnectTimeout(options.timeout, m.event);
     $event.publish(m.event, m.data);
   },
   onreconnect: () => console.log("websocket: reconnecting"),
@@ -51,6 +67,8 @@ const Socket = new Sockette(socketUrl, {
     $config.disconnected.value = true;
     document.body.classList.add("disconnected");
   },
-});
+};
+
+const Socket = new Sockette(socketUrl, options);
 
 export default Socket;

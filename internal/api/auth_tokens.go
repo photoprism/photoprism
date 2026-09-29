@@ -11,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/log/status"
@@ -117,6 +118,19 @@ const downloadSessionKey = "download_session"
 // downloadHeaderAuthKey is the gin context key marking a session that a request header authorized.
 const downloadHeaderAuthKey = "download_header_auth"
 
+// downloadRateLimitedKey is the gin context key marking a request header token that was not checked
+// because the client exceeded the authentication failure limit.
+const downloadRateLimitedKey = "download_rate_limited"
+
+// DownloadRateLimited reports whether a download request was not authorized because its client exceeded
+// the authentication failure limit, so the handler can answer 429 instead of 403.
+func DownloadRateLimited(c *gin.Context) bool {
+	v, _ := c.Get(downloadRateLimitedKey)
+	ok, _ := v.(bool)
+
+	return ok
+}
+
 // DownloadSession returns the session the request is bound to (a signed "?t=" token or a Portal JWT
 // header), the shared public session in public mode, or nil for a coarse/forged/expired token. The
 // result is memoized on the request context so the gate and the handler resolve it once.
@@ -154,6 +168,8 @@ func resolveDownloadSession(c *gin.Context) *entity.Session {
 		if s := authAnyJWT(c, ClientIP(c), AuthToken(c), acl.ResourceFiles, acl.Permissions{acl.AccessAll}); s != nil && s.Valid() {
 			c.Set(downloadHeaderAuthKey, true)
 			return s
+		} else if limiter.Auth.Reject(ClientIP(c)) {
+			c.Set(downloadRateLimitedKey, true)
 		}
 		// Not an all-photos cluster JWT: fall through to the "?t=" token path so a non-JWT header (a
 		// client that also sends a bearer) does not shadow a valid download token.
