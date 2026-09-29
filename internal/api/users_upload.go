@@ -248,7 +248,7 @@ func UploadUserFiles(router *gin.RouterGroup) {
 
 				switch {
 				case nsfwErr != nil:
-					log.Debugf("nsfw: %s", clean.Error(nsfwErr))
+					logUploadNsfwErr(filename, nsfwErr)
 					continue
 				case len(labels) < 1:
 					log.Errorf("nsfw: model returned no result")
@@ -594,4 +594,10 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 
 		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgUploadProcessed))
 	})
+}
+
+// logUploadNsfwErr writes an upload content check that could not run to the system log, as the
+// upload is accepted and the error names the configured model.
+func logUploadNsfwErr(filename string, err error) {
+	event.SystemWarn([]string{"nsfw", "upload", "could not check %s", "%s"}, clean.Log(filepath.Base(filename)), clean.Error(err))
 }

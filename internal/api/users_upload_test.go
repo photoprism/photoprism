@@ -13,6 +13,7 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
@@ -684,4 +685,17 @@ func TestProcessUserUploadStagedFiles(t *testing.T) {
 		result = AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
 		assert.Equal(t, http.StatusOK, result.Code, result.Body.String())
 	})
+}
+
+// TestLogUploadNsfwErr checks that an upload content check that could not run is logged to the system log only.
+func TestLogUploadNsfwErr(t *testing.T) {
+	hook := captureLog(t)
+	systemHook := captureSystemLog(t)
+
+	logUploadNsfwErr("/tmp/upload/cat.jpg", errors.New("service uri of nsfw model custom does not resolve"))
+
+	assert.Empty(t, hook.AllEntries())
+	require.Len(t, systemHook.AllEntries(), 1)
+	assert.Equal(t, logrus.WarnLevel, systemHook.LastEntry().Level)
+	assert.Equal(t, "nsfw: upload › could not check cat.jpg › service uri of nsfw model custom does not resolve", systemHook.LastEntry().Message)
 }
