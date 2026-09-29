@@ -1,7 +1,6 @@
 package safe
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"io"
@@ -55,59 +54,18 @@ func Download(destPath, rawURL string, opt *Options) error {
 		}
 	}
 
-	// Optional SSRF block
+	// Check the target address when private networks are disallowed.
 	if !o.AllowPrivate {
-		if ip := net.ParseIP(u.Hostname()); ip != nil {
-			if isPrivateOrDisallowedIP(ip) {
-				return ErrPrivateIP
-			}
-		} else {
-			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-			defer cancel()
-			addrs, lookErr := net.DefaultResolver.LookupIPAddr(ctx, u.Hostname())
-			if lookErr != nil {
-				return lookErr
-			}
-			for _, a := range addrs {
-				if isPrivateOrDisallowedIP(a.IP) {
-					return ErrPrivateIP
-				}
-			}
+		if err = checkHost(u.Hostname()); err != nil {
+			return err
 		}
 	}
 
 	// Enforce redirect validation when private networks are disallowed.
 	client := &http.Client{
-		Timeout: o.Timeout,
-		CheckRedirect: func(req *http.Request, via []*http.Request) error {
-			if !o.AllowPrivate {
-				h := req.URL.Hostname()
-				if ip := net.ParseIP(h); ip != nil {
-					if isPrivateOrDisallowedIP(ip) {
-						return ErrPrivateIP
-					}
-				} else {
-					ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-					defer cancel()
-					addrs, lookErr := net.DefaultResolver.LookupIPAddr(ctx, h)
-					if lookErr != nil {
-						return lookErr
-					}
-					for _, a := range addrs {
-						if isPrivateOrDisallowedIP(a.IP) {
-							return ErrPrivateIP
-						}
-					}
-				}
-			}
-			// Propagate Accept header from the first request.
-			if len(via) > 0 {
-				if v := via[0].Header.Get("Accept"); v != "" {
-					req.Header.Set("Accept", v)
-				}
-			}
-			return nil
-		},
+		Timeout:       o.Timeout,
+		Transport:     newTransport(o.AllowPrivate),
+		CheckRedirect: checkRedirect(o.AllowPrivate),
 	}
 
 	req, err := http.NewRequest(http.MethodGet, u.String(), nil)
@@ -143,8 +101,8 @@ func Download(destPath, rawURL string, opt *Options) error {
 		return fmt.Errorf("unexpected status %d", resp.StatusCode)
 	}
 
-	// Validate the connected peer address when private ranges are disallowed.
-	if !o.AllowPrivate && finalIP != nil && isPrivateOrDisallowedIP(finalIP) {
+	// Validate the connected peer address when private ranges are disallowed; an unknown peer is refused.
+	if !o.AllowPrivate && disallowedPeer(finalIP) {
 		return ErrPrivateIP
 	}
 
@@ -184,39 +142,50 @@ func Download(destPath, rawURL string, opt *Options) error {
 	return os.Rename(tmp, destPath)
 }
 
-func isPrivateOrDisallowedIP(ip net.IP) bool {
-	if ip == nil {
-		return true
+// maxRedirects is the number of requests after which a download stops following redirects.
+const maxRedirects = 10
+
+// checkRedirect returns the redirect policy of a download, which checks each target address when
+// private networks are disallowed and keeps the Accept header of the first request.
+func checkRedirect(allowPrivate bool) func(req *http.Request, via []*http.Request) error {
+	return func(req *http.Request, via []*http.Request) error {
+		if len(via) >= maxRedirects {
+			return fmt.Errorf("stopped after %d redirects", maxRedirects)
+		} else if !allowPrivate {
+			if err := checkHost(req.URL.Hostname()); err != nil {
+				return err
+			}
+		}
+
+		if len(via) > 0 {
+			if v := via[0].Header.Get("Accept"); v != "" {
+				req.Header.Set("Accept", v)
+			}
+		}
+
+		return nil
 	}
-	if ip.IsLoopback() || ip.IsMulticast() || ip.IsLinkLocalUnicast() || ip.IsLinkLocalMulticast() {
-		return true
+}
+
+// newTransport returns the default transport or, when private networks are disallowed, a copy of it
+// without keep-alives that refuses a connection to a disallowed address before it is opened.
+func newTransport(allowPrivate bool) http.RoundTripper {
+	if allowPrivate {
+		return http.DefaultTransport
 	}
-	if v4 := ip.To4(); v4 != nil {
-		if v4[0] == 0 { // 0.0.0.0/8 "this network"
-			return true
-		}
-		if v4[0] == 10 {
-			return true
-		}
-		if v4[0] == 100 && v4[1] >= 64 && v4[1] <= 127 { // 100.64.0.0/10 CGNAT (RFC 6598)
-			return true
-		}
-		if v4[0] == 172 && v4[1] >= 16 && v4[1] <= 31 {
-			return true
-		}
-		if v4[0] == 192 && v4[1] == 168 {
-			return true
-		}
-		if v4[0] == 169 && v4[1] == 254 {
-			return true
-		}
-		return false
+
+	base, ok := http.DefaultTransport.(*http.Transport)
+
+	if !ok {
+		base = &http.Transport{Proxy: http.ProxyFromEnvironment}
 	}
-	// IPv6 ULA fc00::/7
-	if ip.To16() != nil {
-		if ip[0]&0xFE == 0xFC {
-			return true
-		}
-	}
-	return false
+
+	transport := base.Clone()
+	transport.DisableKeepAlives = true
+	transport.DialTLS = nil //nolint:staticcheck // SA1019: a deprecated dialer that is still used if set
+	transport.DialTLSContext = nil
+	dialer := &net.Dialer{Timeout: 30 * time.Second, KeepAlive: 30 * time.Second, Control: dialControlFunc}
+	transport.DialContext = dialer.DialContext
+
+	return transport
 }
