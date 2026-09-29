@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"errors"
 	"strings"
+
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 const (
@@ -48,7 +50,12 @@ var ProvisionProxyOptions = ProxyOptions{
 // SyncProxyUser ensures the ProxySQL mysql_users entry matches the provided schema and credentials.
 // When pass is empty the existing password is preserved, allowing non-rotating syncs that only adjust metadata.
 func SyncProxyUser(ctx context.Context, proxyDSN, schema, user, pass string, opts ProxyOptions) (err error) {
-	db, err := sql.Open("mysql", normalizeProxyDSN(proxyDSN))
+	adminDsn, err := normalizeProxyDSN(proxyDSN)
+	if err != nil {
+		return err
+	}
+
+	db, err := sql.Open("mysql", adminDsn)
 	if err != nil {
 		return err
 	}
@@ -93,7 +100,12 @@ func SyncProxyUser(ctx context.Context, proxyDSN, schema, user, pass string, opt
 
 // DropProxyUser removes the mysql_users record for a instance and reloads ProxySQL runtime/disk.
 func DropProxyUser(ctx context.Context, proxyDSN, user string) (err error) {
-	db, err := sql.Open("mysql", normalizeProxyDSN(proxyDSN))
+	adminDsn, err := normalizeProxyDSN(proxyDSN)
+	if err != nil {
+		return err
+	}
+
+	db, err := sql.Open("mysql", adminDsn)
 	if err != nil {
 		return err
 	}
@@ -121,20 +133,33 @@ func applyProxySQL(ctx context.Context, db *sql.DB) error {
 	return nil
 }
 
-// normalizeProxyDSN adds interpolateParams to ProxySQL admin DSNs when missing so prepared statements work.
-func normalizeProxyDSN(proxyDsn string) string {
-	if proxyDsn == "" || strings.Contains(proxyDsn, "interpolateParams=") {
-		return proxyDsn
+// normalizeProxyDSN adds interpolateParams to ProxySQL admin DSNs when missing so prepared statements work,
+// together with charset=utf8mb4 if no charset or collation is set. A charset or collation other than UTF-8
+// is refused.
+func normalizeProxyDSN(proxyDsn string) (string, error) {
+	query := dsn.Query(proxyDsn)
+
+	if !dsn.Utf8Params(query) {
+		return "", errors.New("proxysql: dsn must use a UTF-8 character set")
+	} else if proxyDsn == "" || dsn.HasParam(query, "interpolateParams") {
+		return proxyDsn, nil
 	}
 
 	sep := "?"
-	if strings.Contains(proxyDsn, "?") {
-		if strings.HasSuffix(proxyDsn, "?") || strings.HasSuffix(proxyDsn, "&") {
+
+	if strings.Contains(proxyDsn[strings.LastIndex(proxyDsn, "/")+1:], "?") {
+		if query == "" || strings.HasSuffix(query, "&") {
 			sep = ""
 		} else {
 			sep = "&"
 		}
 	}
 
-	return proxyDsn + sep + "interpolateParams=true"
+	params := "interpolateParams=true"
+
+	if !dsn.HasParam(query, "charset") && !dsn.HasParam(query, "collation") {
+		params = "charset=utf8mb4&" + params
+	}
+
+	return proxyDsn + sep + params, nil
 }

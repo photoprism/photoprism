@@ -76,6 +76,17 @@ func TestQuoteString_RejectsNUL(t *testing.T) {
 	assert.Error(t, err)
 }
 
+// TestQuoteString_RejectsUnsupported checks that values quoteString cannot escape are refused.
+func TestQuoteString_RejectsUnsupported(t *testing.T) {
+	for _, s := range []string{"back\\slash", "tab\there", "line\nbreak", "del\x7f"} {
+		_, err := quoteString(s)
+		assert.EqualError(t, err, "string contains unsupported characters", "%q", s)
+	}
+	got, err := quoteString("Zx8Qm2Lp9Rt4Vw6Yb1Nc3Kd5Hf7Gj0Sa")
+	assert.NoError(t, err)
+	assert.Equal(t, "'Zx8Qm2Lp9Rt4Vw6Yb1Nc3Kd5Hf7Gj0Sa'", got)
+}
+
 func TestQuoteAccount(t *testing.T) {
 	got, err := quoteAccount("%", "cluster_user")
 	assert.NoError(t, err)

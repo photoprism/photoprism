@@ -130,8 +130,8 @@ func validateClusterDatabase(name, user, server *string) error {
 // clusterDatabaseParamRules lists the DSN parameters a cluster instance accepts from the Portal and
 // checks their values. The character set is limited to UTF-8.
 var clusterDatabaseParamRules = dsn.ParamRules{
-	"charset":           regexp.MustCompile(`^utf8(mb4|mb3)?(,utf8(mb4|mb3)?)*$`).MatchString,
-	"collation":         regexp.MustCompile(`^utf8(mb4|mb3)?_[a-z0-9_]+$`).MatchString,
+	"charset":           dsn.ValidCharset,
+	"collation":         dsn.ValidCollation,
 	"parseTime":         dsn.IsTrue,
 	"interpolateParams": dsn.ValidBool,
 	"rejectReadOnly":    dsn.ValidBool,

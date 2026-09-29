@@ -82,3 +82,23 @@ func TestValidDuration(t *testing.T) {
 		}
 	})
 }
+
+// TestValidCharset checks charset DSN parameter values.
+func TestValidCharset(t *testing.T) {
+	for _, v := range []string{"utf8mb4", "utf8", "utf8mb3", "utf8mb4,utf8"} {
+		assert.True(t, ValidCharset(v), v)
+	}
+	for _, v := range []string{"", "latin1", "utf8mb4,latin1", "utf8mb4,", "UTF8MB4", "utf16"} {
+		assert.False(t, ValidCharset(v), v)
+	}
+}
+
+// TestValidCollation checks collation DSN parameter values.
+func TestValidCollation(t *testing.T) {
+	for _, v := range []string{"utf8mb4_unicode_ci", "utf8mb3_general_ci", "utf8_bin"} {
+		assert.True(t, ValidCollation(v), v)
+	}
+	for _, v := range []string{"", "latin1_swedish_ci", "utf8mb4", "utf8mb4_Unicode_ci", "binary"} {
+		assert.False(t, ValidCollation(v), v)
+	}
+}

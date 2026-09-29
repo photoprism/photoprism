@@ -7,6 +7,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
 	"github.com/photoprism/photoprism/internal/config"
 )
 
@@ -22,7 +25,10 @@ func TestEnsureCredentials_ProxySQLIntegration(t *testing.T) {
 		proxyDSN = "admin:admin@tcp(127.0.0.1:6032)/"
 	}
 
-	adminDB, err := sql.Open("mysql", normalizeProxyDSN(proxyDSN))
+	adminDsn, err := normalizeProxyDSN(proxyDSN)
+	require.NoError(t, err)
+
+	adminDB, err := sql.Open("mysql", adminDsn)
 	if err != nil {
 		t.Skipf("proxy DSN not openable: %v", err)
 	}
@@ -124,4 +130,35 @@ func TestEnsureCredentials_ProxySQLIntegration(t *testing.T) {
 	if count != 0 {
 		t.Fatalf("expected mysql_users count 0 after drop, got %d", count)
 	}
+}
+
+// TestNormalizeProxyDSN checks the parameters added to and required of a ProxySQL admin DSN.
+func TestNormalizeProxyDSN(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		for in, want := range map[string]string{
+			"admin:admin@tcp(127.0.0.1:6032)/":                               "admin:admin@tcp(127.0.0.1:6032)/?charset=utf8mb4&interpolateParams=true",
+			"admin:admin@tcp(127.0.0.1:6032)/?charset=utf8mb4":               "admin:admin@tcp(127.0.0.1:6032)/?charset=utf8mb4&interpolateParams=true",
+			"admin:admin@tcp(127.0.0.1:6032)/?interpolateParams=false":       "admin:admin@tcp(127.0.0.1:6032)/?interpolateParams=false",
+			"admin:admin@tcp(127.0.0.1:6032)/?collation=utf8mb4_unicode_ci&": "admin:admin@tcp(127.0.0.1:6032)/?collation=utf8mb4_unicode_ci&interpolateParams=true",
+			"admin:p?w@tcp(127.0.0.1:6032)/":                                 "admin:p?w@tcp(127.0.0.1:6032)/?charset=utf8mb4&interpolateParams=true",
+			"admin:interpolateParams=x@tcp(127.0.0.1:6032)/?charset=utf8mb4": "admin:interpolateParams=x@tcp(127.0.0.1:6032)/?charset=utf8mb4&interpolateParams=true",
+			"admin:admin@tcp(127.0.0.1:6032)/?":                              "admin:admin@tcp(127.0.0.1:6032)/?charset=utf8mb4&interpolateParams=true",
+			"admin:admin@tcp(127.0.0.1:6032)/?parseTime=true&timeout=15s":    "admin:admin@tcp(127.0.0.1:6032)/?parseTime=true&timeout=15s&charset=utf8mb4&interpolateParams=true",
+			"": "",
+		} {
+			got, err := normalizeProxyDSN(in)
+			require.NoError(t, err, in)
+			assert.Equal(t, want, got, in)
+		}
+	})
+	t.Run("CharacterSet", func(t *testing.T) {
+		for _, in := range []string{
+			"admin:admin@tcp(127.0.0.1:6032)/?charset=latin1",
+			"admin:admin@tcp(127.0.0.1:6032)/?collation=latin1_swedish_ci&interpolateParams=true",
+			"admin:admin@tcp(127.0.0.1:6032)/?charset=utf8mb4&charset=latin1",
+		} {
+			_, err := normalizeProxyDSN(in)
+			assert.EqualError(t, err, "proxysql: dsn must use a UTF-8 character set", in)
+		}
+	})
 }

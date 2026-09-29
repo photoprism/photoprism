@@ -14,6 +14,12 @@ var identPattern = regexp.MustCompile(`^[A-Za-z0-9_][A-Za-z0-9_-]{0,63}$`)
 // hostLabelPattern matches a host name label in a database server address.
 var hostLabelPattern = regexp.MustCompile(`^[A-Za-z0-9_]([A-Za-z0-9_-]{0,61}[A-Za-z0-9_])?$`)
 
+// charsetPattern matches a comma-separated list of UTF-8 character sets.
+var charsetPattern = regexp.MustCompile(`^utf8(mb4|mb3)?(,utf8(mb4|mb3)?)*$`)
+
+// collationPattern matches a UTF-8 collation.
+var collationPattern = regexp.MustCompile(`^utf8(mb4|mb3)?_[a-z0-9_]+$`)
+
 // ValidIdent reports whether s is a database name or user of up to 64 letters, digits, "_", and "-",
 // not beginning with "-".
 func ValidIdent(s string) bool {
@@ -88,4 +94,14 @@ func IsFalse(v string) bool {
 func ValidDuration(v string) bool {
 	d, err := time.ParseDuration(v)
 	return err == nil && d > 0 && !strings.ContainsAny(v, "+-")
+}
+
+// ValidCharset reports whether v is a charset DSN parameter value that names UTF-8 character sets only.
+func ValidCharset(v string) bool {
+	return charsetPattern.MatchString(v)
+}
+
+// ValidCollation reports whether v is a collation DSN parameter value that names a UTF-8 collation.
+func ValidCollation(v string) bool {
+	return collationPattern.MatchString(v)
 }

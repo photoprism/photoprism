@@ -81,3 +81,28 @@ func HasParam(params, name string) bool {
 
 	return false
 }
+
+// Query returns the parameters of a MySQL/MariaDB DSN as the driver reads them, i.e. the part after the
+// first "?" that follows the last "/".
+func Query(s string) string {
+	_, query, _ := strings.Cut(s[strings.LastIndex(s, "/")+1:], "?")
+	return query
+}
+
+// Utf8Params reports whether every charset and collation parameter in a DSN query names UTF-8.
+func Utf8Params(query string) bool {
+	for param := range strings.SplitSeq(query, "&") {
+		switch key, value, _ := strings.Cut(param, "="); key {
+		case "charset":
+			if !ValidCharset(value) {
+				return false
+			}
+		case "collation":
+			if !ValidCollation(value) {
+				return false
+			}
+		}
+	}
+
+	return true
+}

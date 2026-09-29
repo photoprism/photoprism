@@ -73,3 +73,22 @@ func TestHasParam(t *testing.T) {
 	assert.False(t, HasParam("", "charset"))
 	assert.False(t, HasParam("xcharset=utf8", "charset"))
 }
+
+// TestQuery checks that DSN parameters are read as the driver reads them.
+func TestQuery(t *testing.T) {
+	assert.Equal(t, "charset=utf8mb4&parseTime=true", Query("user:secret@tcp(proxysql:6032)/?charset=utf8mb4&parseTime=true"))
+	assert.Equal(t, "", Query("user:secret@tcp(proxysql:6032)/"))
+	assert.Equal(t, "b=c", Query("user:p?w@tcp(proxysql:6032)/db?b=c"))
+	assert.Equal(t, "charset=latin1", Query("user:secret@tcp(proxysql:6032)/db?x=/y?charset=latin1"))
+	assert.Equal(t, "", Query(""))
+}
+
+// TestUtf8Params checks the charset and collation parameters of a DSN query.
+func TestUtf8Params(t *testing.T) {
+	assert.True(t, Utf8Params(""))
+	assert.True(t, Utf8Params("charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true"))
+	assert.False(t, Utf8Params("charset=latin1"))
+	assert.False(t, Utf8Params("collation=latin1_swedish_ci"))
+	assert.False(t, Utf8Params("charset=utf8mb4&charset=latin1"))
+	assert.False(t, Utf8Params("charset"))
+}
