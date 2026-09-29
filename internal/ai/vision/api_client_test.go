@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -709,4 +710,120 @@ func TestResponseError(t *testing.T) {
 		assert.EqualError(t, responseError(ApiFormatOllama, http.StatusOK, nil), "ollama service returned an invalid response (status 200)")
 		assert.Empty(t, systemHook.AllEntries())
 	})
+}
+
+// TestPerformApiRequestRedirect checks that service redirects are reported rather than followed.
+func TestPerformApiRequestRedirect(t *testing.T) {
+	request := func() *ApiRequest {
+		return &ApiRequest{Id: "3487da77-246e-4b4d-b1b2-2b5d5ee7b5a8", Images: []string{"data:image/jpeg;base64,AA=="}, ResponseFormat: ApiFormatVision}
+	}
+
+	for _, code := range []int{http.StatusMovedPermanently, http.StatusFound, http.StatusTemporaryRedirect, http.StatusPermanentRedirect} {
+		t.Run(http.StatusText(code), func(t *testing.T) {
+			logHook, systemHook := captureLogs(t)
+
+			var targetHits atomic.Int32
+
+			target := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				targetHits.Add(1)
+				w.WriteHeader(http.StatusOK)
+			}))
+			defer target.Close()
+
+			location := strings.Replace(target.URL, "http://", "http://user:pass@", 1) + "/next?sig=abc123"
+
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.Header().Set(header.Location, location)
+				w.WriteHeader(code)
+			}))
+			defer server.Close()
+
+			_, err := PerformApiRequest(request(), server.URL, http.MethodPost, "service-key")
+
+			assert.EqualError(t, err, fmt.Sprintf("vision service request failed (status %d, redirect not followed)", code))
+			assert.Zero(t, targetHits.Load())
+			assert.Empty(t, logHook.AllEntries())
+			require.Len(t, systemHook.AllEntries(), 1)
+
+			assert.Contains(t, systemHook.LastEntry().Message, "location "+target.URL+"/next?***")
+		})
+	}
+}
+
+// TestRedirectError checks the error and the system log entry for a service redirect.
+func TestRedirectError(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		logHook, systemHook := captureLogs(t)
+
+		err := redirectError(ApiFormatOpenAI, http.StatusFound, "https://user:pass@example.com/v1?sig=abc123#part")
+
+		assert.EqualError(t, err, "openai service request failed (status 302, redirect not followed)")
+		assert.Empty(t, logHook.AllEntries())
+		require.Len(t, systemHook.AllEntries(), 1)
+		assert.Contains(t, systemHook.LastEntry().Message, `location https://example.com/v1?***`)
+		assert.NotContains(t, systemHook.LastEntry().Message, "part")
+	})
+	t.Run("RelativeLocation", func(t *testing.T) {
+		_, systemHook := captureLogs(t)
+		assert.EqualError(t, redirectError("", http.StatusMovedPermanently, "/next?sig=abc123"), "remote service request failed (status 301, redirect not followed)")
+		require.Len(t, systemHook.AllEntries(), 1)
+		assert.Contains(t, systemHook.LastEntry().Message, "location /next?***")
+	})
+}
+
+// TestNoRedirect checks that the redirect policy returns the redirect response instead of following it.
+func TestNoRedirect(t *testing.T) {
+	assert.ErrorIs(t, noRedirect(nil, nil), http.ErrUseLastResponse)
+}
+
+// TestRedirectTarget checks that a redirect target is logged without its userinfo, query, and fragment.
+func TestRedirectTarget(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		assert.Equal(t, "https://example.com/v1/next", redirectTarget("https://user:pass@example.com/v1/next"))
+		assert.Equal(t, "https://example.com/v1?***", redirectTarget("https://example.com/v1?sig=abc123#part"))
+		assert.Equal(t, "//example.com/next?***", redirectTarget("//user:pass@example.com/next?a='x'&sig=abc123"))
+		assert.Equal(t, "/next?***", redirectTarget("/next?"))
+	})
+	t.Run("Unparseable", func(t *testing.T) {
+		assert.Equal(t, "https://example.com/%zz?***", redirectTarget("https://example.com/%zz?sig=abc123"))
+	})
+}
+
+// TestInvalidUriError checks the error and the system log entry for a service URI that is not a valid request URL.
+func TestInvalidUriError(t *testing.T) {
+	logHook, systemHook := captureLogs(t)
+
+	err := invalidUriError(ApiFormatOllama, errors.New(`parse "://models.example.com/api?key=abc123": missing protocol scheme`))
+
+	assert.EqualError(t, err, "ollama service request failed (invalid service uri)")
+	assert.Empty(t, logHook.AllEntries())
+	require.Len(t, systemHook.AllEntries(), 1)
+	assert.Contains(t, systemHook.LastEntry().Message, "models.example.com/api?***")
+	assert.NotContains(t, systemHook.LastEntry().Message, "abc123")
+}
+
+// TestPerformApiRequestInvalidUri checks that an invalid service URI returns a fixed error.
+func TestPerformApiRequestInvalidUri(t *testing.T) {
+	logHook, systemHook := captureLogs(t)
+
+	request := &ApiRequest{Id: "3487da77-246e-4b4d-b1b2-2b5d5ee7b5a8", Images: []string{"data:image/jpeg;base64,AA=="}, ResponseFormat: ApiFormatOpenAI}
+	_, err := PerformApiRequest(request, "://models.example.com/api?key=abc123", http.MethodPost, "")
+
+	assert.EqualError(t, err, "openai service request failed (invalid service uri)")
+	assert.Empty(t, logHook.AllEntries())
+	require.Len(t, systemHook.AllEntries(), 1)
+	assert.NotContains(t, systemHook.LastEntry().Message, "abc123")
+}
+
+// TestTransportErrorQuery checks that the query of a URI in a transport error is not written to the system log.
+func TestTransportErrorQuery(t *testing.T) {
+	logHook, systemHook := captureLogs(t)
+
+	err := transportError(ApiFormatOpenAI, errors.New(`Post "https://fn.example.net/api?code=abc123": dial tcp: connection refused`))
+
+	assert.EqualError(t, err, "openai service request failed (connection error)")
+	assert.Empty(t, logHook.AllEntries())
+	require.Len(t, systemHook.AllEntries(), 1)
+	assert.Contains(t, systemHook.LastEntry().Message, "fn.example.net/api?***")
+	assert.NotContains(t, systemHook.LastEntry().Message, "abc123")
 }

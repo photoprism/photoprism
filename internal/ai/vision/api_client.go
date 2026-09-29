@@ -9,6 +9,7 @@ import (
 	"io"
 	"net"
 	"net/http"
+	"net/url"
 
 	"github.com/dustin/go-humanize"
 	"github.com/sirupsen/logrus"
@@ -28,7 +29,7 @@ func PerformApiRequest(apiRequest *ApiRequest, uri, method, key string) (apiResp
 	if apiRequest == nil {
 		return apiResponse, errors.New("api request is nil")
 	} else if err = validateApiRequestURL(uri); err != nil {
-		return apiResponse, err
+		return apiResponse, invalidUriError(apiRequest.GetResponseFormat(), err)
 	}
 
 	data, jsonErr := apiRequest.JSON()
@@ -43,7 +44,7 @@ func PerformApiRequest(apiRequest *ApiRequest, uri, method, key string) (apiResp
 
 	// Create HTTP client and a factory that builds a fresh authenticated request
 	// per attempt, so a buffered payload is replayed safely when retrying a 429.
-	client := http.Client{Timeout: ServiceTimeout}
+	client := http.Client{Timeout: ServiceTimeout, CheckRedirect: noRedirect}
 	newReq := func() (*http.Request, error) {
 		req, reqErr := http.NewRequestWithContext(ctx, method, uri, bytes.NewReader(data))
 		if reqErr != nil {
@@ -85,6 +86,10 @@ func PerformApiRequest(apiRequest *ApiRequest, uri, method, key string) (apiResp
 	defer func() {
 		_ = clientResp.Body.Close()
 	}()
+
+	if location := clientResp.Header.Get(header.Location); location != "" && clientResp.StatusCode >= 300 && clientResp.StatusCode < 400 {
+		return nil, redirectError(apiRequest.GetResponseFormat(), clientResp.StatusCode, location)
+	}
 
 	body, apiErr := io.ReadAll(io.LimitReader(clientResp.Body, MaxResponseBytes+1))
 	if apiErr != nil {
@@ -141,8 +146,49 @@ func serviceError(format ApiFormat, code int) error {
 	return fmt.Errorf("%s service request failed (status %d)", serviceName(format), code)
 }
 
+// redirectError returns the error for a service redirect, and writes its target to the system log
+// with the userinfo and query redacted.
+func redirectError(format ApiFormat, code int, location string) error {
+	err := fmt.Errorf("%s service request failed (status %d, redirect not followed)", serviceName(format), code)
+	logServiceResponse(err, []byte("location "+redirectTarget(location)))
+
+	return err
+}
+
+// redirectTarget returns the redirect location without its userinfo, query, and fragment.
+func redirectTarget(location string) string {
+	u, err := url.Parse(location)
+
+	if err != nil {
+		return clean.UriQueriesRedacted(clean.UriRedactedText(location))
+	}
+
+	u.User = nil
+	u.Fragment, u.RawFragment = "", ""
+
+	if u.RawQuery != "" || u.ForceQuery {
+		u.RawQuery, u.ForceQuery = clean.UriRedactedValue, false
+	}
+
+	return u.String()
+}
+
+// invalidUriError returns the error for a service URI that is not a valid request URL, and writes
+// the cause to the system log with the userinfo and queries redacted.
+func invalidUriError(format ApiFormat, cause error) error {
+	err := fmt.Errorf("%s service request failed (invalid service uri)", serviceName(format))
+	logServiceResponse(err, []byte(clean.UriQueriesRedacted(clean.UriRedactedText(cause.Error()))))
+
+	return err
+}
+
+// noRedirect returns the redirect response to the caller instead of following it.
+func noRedirect(*http.Request, []*http.Request) error {
+	return http.ErrUseLastResponse
+}
+
 // transportError returns the error for a request that received no response, and writes its cause
-// to the system log with the credentials in any URI it holds redacted.
+// to the system log with the userinfo and queries in any URI it holds redacted.
 func transportError(format ApiFormat, cause error) error {
 	reason := "connection error"
 
@@ -151,7 +197,7 @@ func transportError(format ApiFormat, cause error) error {
 	}
 
 	err := fmt.Errorf("%s service request failed (%s)", serviceName(format), reason)
-	logServiceResponse(err, []byte(clean.UriRedactedText(cause.Error())))
+	logServiceResponse(err, []byte(clean.UriQueriesRedacted(clean.UriRedactedText(cause.Error()))))
 
 	return err
 }
