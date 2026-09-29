@@ -188,3 +188,20 @@ func TestDSN_ParsePostgres(t *testing.T) {
 		})
 	}
 }
+
+// TestDSN_MySQL checks the MySQL/MariaDB DSN builder.
+func TestDSN_MySQL(t *testing.T) {
+	t.Run("Tcp", func(t *testing.T) {
+		d := DSN{User: "user", Password: "secret", Server: "mariadb:4001", Name: "photoprism", Params: "parseTime=true"}
+		assert.Equal(t, "user:secret@tcp(mariadb:4001)/photoprism?parseTime=true", d.MySQL())
+	})
+	t.Run("Unix", func(t *testing.T) {
+		d := DSN{User: "user", Password: "secret", Net: "unix", Server: "/run/mysqld/mysqld.sock", Name: "photoprism"}
+		assert.Equal(t, "user:secret@unix(/run/mysqld/mysqld.sock)/photoprism", d.MySQL())
+	})
+	t.Run("RoundTrip", func(t *testing.T) {
+		in := "user:secret@tcp([::1]:3306)/photoprism?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true"
+		d := Parse(in)
+		assert.Equal(t, in, d.MySQL())
+	})
+}

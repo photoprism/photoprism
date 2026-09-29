@@ -66,14 +66,14 @@ func BuildDSN(driver, host string, port int, user, pass, name string) string {
 	d := strings.ToLower(driver)
 	switch d {
 	case dsn.DriverMySQL, dsn.DriverMariaDB:
-		return fmt.Sprintf("%s:%s@tcp(%s)/%s?%s",
-			user, pass, dns.JoinHostPort(host, port), name, dsn.Params[dsn.DriverMySQL],
-		)
+		dsnParams := fmt.Sprint(dsn.Params[dsn.DriverMySQL])
+		result := dsn.DSN{User: user, Password: pass, Server: dns.JoinHostPort(host, port), Name: name, Params: dsnParams}
+		return result.MySQL()
 	default:
 		log.Warnf("provisioner: unsupported driver %q, falling back to mysql DSN format", driver)
-		return fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8mb4&collation=utf8mb4_unicode_ci&parseTime=true",
-			user, pass, dns.JoinHostPort(host, port), name,
-		)
+		dsnParams := "charset=utf8mb4&collation=utf8mb4_unicode_ci&parseTime=true"
+		result := dsn.DSN{User: user, Password: pass, Server: dns.JoinHostPort(host, port), Name: name, Params: dsnParams}
+		return result.MySQL()
 	}
 }
 

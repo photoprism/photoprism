@@ -1108,3 +1108,57 @@ func TestRegister_PersistDBFieldsIPv6(t *testing.T) {
 	assert.Equal(t, "[fd00::10]:3306", c.Options().DatabaseServer)
 	assert.Equal(t, "fd00::10", c.DatabaseHost())
 }
+
+// TestPersistRegistration checks which database settings bootstrap saves from a registration response.
+func TestPersistRegistration(t *testing.T) {
+	t.Run("UnusableServer", func(t *testing.T) {
+		// Without a DSN, a server address the instance cannot use is skipped and the other settings are saved.
+		c := newBootstrapTestConfig(t, "bootstrap-persist")
+		clusterUUID := rnd.UUID()
+
+		require.NoError(t, persistRegistration(c, &cluster.RegisterResponse{
+			UUID: clusterUUID,
+			Node: cluster.Node{Name: "pp-node-01"},
+			Database: cluster.RegisterDatabase{
+				Driver:   dsn.DriverMySQL,
+				Host:     "/run/mysqld/mysqld.sock",
+				Port:     3306,
+				Name:     "pp_db",
+				User:     "pp_user",
+				Password: "pp_pw",
+			},
+		}, true))
+
+		content, err := os.ReadFile(c.OptionsYaml())
+		require.NoError(t, err)
+
+		var persisted map[string]any
+		require.NoError(t, yaml.Unmarshal(content, &persisted))
+		assert.Equal(t, clusterUUID, persisted["ClusterUUID"])
+		assert.Equal(t, "pp_db", persisted["DatabaseName"])
+		assert.Equal(t, "pp_user", persisted["DatabaseUser"])
+		assert.NotContains(t, persisted, "DatabaseServer")
+	})
+	t.Run("Server", func(t *testing.T) {
+		c := newBootstrapTestConfig(t, "bootstrap-persist-server")
+
+		require.NoError(t, persistRegistration(c, &cluster.RegisterResponse{
+			UUID: rnd.UUID(),
+			Database: cluster.RegisterDatabase{
+				Driver:   dsn.DriverMySQL,
+				Host:     "db.local",
+				Port:     3306,
+				Name:     "pp_db",
+				User:     "pp_user",
+				Password: "pp_pw",
+			},
+		}, true))
+
+		content, err := os.ReadFile(c.OptionsYaml())
+		require.NoError(t, err)
+
+		var persisted map[string]any
+		require.NoError(t, yaml.Unmarshal(content, &persisted))
+		assert.Equal(t, "db.local:3306", persisted["DatabaseServer"])
+	})
+}

@@ -26,6 +26,7 @@ Additional information can be found in our Developer Guide:
 package dsn
 
 import (
+	"fmt"
 	"net"
 	"regexp"
 	"strconv"
@@ -61,6 +62,24 @@ type DSN struct {
 // String returns the original DSN string.
 func (d *DSN) String() string {
 	return d.DSN
+}
+
+// MySQL returns a MySQL/MariaDB DSN built from the user, password, network, server, name, and parameters,
+// using "tcp" if no network is set.
+func (d *DSN) MySQL() string {
+	network := d.Net
+
+	if network == "" {
+		network = "tcp"
+	}
+
+	s := fmt.Sprintf("%s:%s@%s(%s)/%s", d.User, d.Password, network, d.Server, d.Name)
+
+	if d.Params != "" {
+		s += "?" + d.Params
+	}
+
+	return s
 }
 
 // MaskPassword hides the password portion of a DSN while leaving the rest untouched for logging/reporting.

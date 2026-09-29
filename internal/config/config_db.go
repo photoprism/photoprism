@@ -123,25 +123,22 @@ func (c *Config) DatabaseDSN() string {
 	if c.NoDatabaseDSN() {
 		switch c.DatabaseDriver() {
 		case dsn.DriverMySQL:
-			databaseServer := c.DatabaseServer()
-
-			// Connect via Unix Domain Socket?
-			if strings.HasPrefix(databaseServer, "/") {
-				log.Debugf("mariadb: connecting via Unix domain socket")
-				databaseServer = fmt.Sprintf("unix(%s)", databaseServer)
-			} else {
-				databaseServer = fmt.Sprintf("tcp(%s)", databaseServer)
+			d := dsn.DSN{
+				User:     c.DatabaseUser(),
+				Password: c.DatabasePassword(),
+				Net:      "tcp",
+				Server:   c.DatabaseServer(),
+				Name:     c.DatabaseName(),
+				Params:   fmt.Sprintf("%s&timeout=%ds", dsn.Params[dsn.DriverMySQL], c.DatabaseTimeout()),
 			}
 
-			return fmt.Sprintf(
-				"%s:%s@%s/%s?%s&timeout=%ds",
-				c.DatabaseUser(),
-				c.DatabasePassword(),
-				databaseServer,
-				c.DatabaseName(),
-				dsn.Params[dsn.DriverMySQL],
-				c.DatabaseTimeout(),
-			)
+			// Connect via Unix Domain Socket?
+			if strings.HasPrefix(d.Server, "/") {
+				log.Debugf("mariadb: connecting via Unix domain socket")
+				d.Net = "unix"
+			}
+
+			return d.MySQL()
 		case dsn.DriverPostgres:
 			databaseServer := c.DatabaseServer()
 			d := dsn.DSN{
@@ -244,7 +241,7 @@ func (c *Config) DatabaseHost() string {
 		return ""
 	}
 
-	d := dsn.Parse(c.DatabaseDSN())
+	d := c.databaseServerDSN()
 	return d.Host()
 }
 
@@ -256,8 +253,18 @@ func (c *Config) DatabasePort() int {
 		return 0
 	}
 
-	d := dsn.Parse(c.DatabaseDSN())
+	d := c.databaseServerDSN()
 	return d.Port()
+}
+
+// databaseServerDSN returns the DSN that holds the database server address: the configured DSN, or,
+// without one, the configured server, so a password is never parsed as part of the address.
+func (c *Config) databaseServerDSN() dsn.DSN {
+	if c.HasDatabaseDSN() {
+		return dsn.Parse(c.DatabaseDSN())
+	}
+
+	return dsn.DSN{Driver: c.DatabaseDriver(), Server: c.DatabaseServer()}
 }
 
 // DatabasePortString the database server port as string.

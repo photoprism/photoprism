@@ -469,7 +469,11 @@ func persistRegisterResponse(conf *config.Config, resp *cluster.RegisterResponse
 		}
 		updates.SetDatabaseDriver(driver)
 		updates.SetDatabaseName(resp.Database.Name)
-		updates.SetDatabaseServer(dns.JoinHostPort(resp.Database.Host, resp.Database.Port))
+		if server, ok := resp.Database.Server(); !ok {
+			log.Warnf("cluster: ignored unusable database server address %s", clean.Log(server))
+		} else if server != "" {
+			updates.SetDatabaseServer(server)
+		}
 		updates.SetDatabaseUser(resp.Database.User)
 		updates.SetDatabasePassword(resp.Database.Password)
 	}

@@ -535,12 +535,12 @@ func persistRegistration(c *config.Config, r *cluster.RegisterResponse, wantRota
 			updates.SetDatabaseDriver(r.Database.Driver)
 			updates.SetDatabaseDSN(r.Database.DSN)
 		} else if r.Database.Name != "" && r.Database.User != "" && r.Database.Password != "" {
-			server := r.Database.Host
-			if r.Database.Port > 0 {
-				server = dns.JoinHostPort(r.Database.Host, r.Database.Port)
-			}
 			updates.SetDatabaseDriver(r.Database.Driver)
-			updates.SetDatabaseServer(server)
+			if server, ok := r.Database.Server(); !ok {
+				log.Warnf("cluster: ignored unusable database server address %s", clean.Log(server))
+			} else if server != "" {
+				updates.SetDatabaseServer(server)
+			}
 			updates.SetDatabaseName(r.Database.Name)
 			updates.SetDatabaseUser(r.Database.User)
 			updates.SetDatabasePassword(r.Database.Password)
