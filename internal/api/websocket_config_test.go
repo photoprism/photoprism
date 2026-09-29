@@ -62,7 +62,7 @@ func TestWebSocket_Config(t *testing.T) {
 	})
 }
 
-// TestWebSocket_AuthLimit checks that failed session tokens count against the client address, not the connection.
+// TestWebSocket_AuthLimit checks that failed session tokens sent over a WebSocket count against the client's authentication rate limit.
 func TestWebSocket_AuthLimit(t *testing.T) {
 	app, router, conf := NewApiTest()
 	conf.SetAuthMode(config.AuthModePasswd)

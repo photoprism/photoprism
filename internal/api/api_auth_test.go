@@ -9,6 +9,8 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/time/rate"
@@ -19,6 +21,7 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/session"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/internal/service/cluster"
@@ -798,11 +801,26 @@ func TestAuthAnyVisionServiceKeyLimit(t *testing.T) {
 		assert.Equal(t, http.StatusTooManyRequests, authVision(vision.ServiceKey, "198.51.100.34:1234"), "refused over the limit")
 	})
 	t.Run("JwtFormat", func(t *testing.T) {
+		// Without a JWKS URL, no JWT is checked, so a key in JWT format is not counted.
 		resetLimit()
+		origJwks := conf.JWKSUrl()
+		conf.SetJWKSUrl("")
+		t.Cleanup(func() { conf.SetJWKSUrl(origJwks) })
 		for range 5 {
 			assert.Equal(t, http.StatusUnauthorized, authVision("eyJhbGciOiJFZERTQSJ9.eyJzdWIiOiJ0ZXN0In0.c2ln", "198.51.100.39:1234"))
 		}
 		assert.False(t, limiter.Auth.Reject("198.51.100.39"))
+	})
+	t.Run("JwtFormatWithJwks", func(t *testing.T) {
+		// With a JWKS URL, a token in JWT format without a key id is counted by authAnyJWT.
+		resetLimit()
+		origJwks := conf.JWKSUrl()
+		conf.SetJWKSUrl("https://portal.example.test/.well-known/jwks.json")
+		t.Cleanup(func() { conf.SetJWKSUrl(origJwks) })
+		for range 3 {
+			assert.Equal(t, http.StatusUnauthorized, authVision("eyJhbGciOiJFZERTQSJ9.eyJzdWIiOiJ0ZXN0In0.c2ln", "198.51.100.40:1234"))
+		}
+		assert.True(t, limiter.Auth.Reject("198.51.100.40"))
 	})
 	t.Run("SessionRefused", func(t *testing.T) {
 		// A valid session without permission to use the Vision API is refused, but not counted.
@@ -855,7 +873,18 @@ func TestAuthAnyVisionServiceKeyLimit(t *testing.T) {
 		header.SetAuthorization(req, sess.AuthToken())
 		req.RemoteAddr = "198.51.100.43:1234"
 		c.Request = req
+
+		logHook, systemHook := captureLog(t), captureSystemLog(t)
+		origAudit := event.AuditLog
+		auditLogger, auditHook := test.NewNullLogger()
+		auditLogger.SetLevel(logrus.TraceLevel)
+		event.AuditLog = auditLogger
+		t.Cleanup(func() { event.AuditLog = origAudit })
+
 		assert.Equal(t, http.StatusTooManyRequests, AuthAny(c, acl.ResourcePhotos, acl.Permissions{acl.ActionView}).HttpStatus())
+		assert.Empty(t, logHook.AllEntries())
+		assert.Empty(t, systemHook.AllEntries())
+		assert.Empty(t, auditHook.AllEntries())
 	})
 	t.Run("NoToken", func(t *testing.T) {
 		resetLimit()

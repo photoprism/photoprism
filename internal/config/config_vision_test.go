@@ -13,7 +13,9 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/onnx"
 	"github.com/photoprism/photoprism/internal/ai/vision"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -347,6 +349,17 @@ func TestConfig_WarnVisionKey(t *testing.T) {
 		c.warnVisionKey()
 		require.Len(t, hook.AllEntries(), 1)
 	})
+	t.Run("OutgoingDollar", func(t *testing.T) {
+		t.Setenv("VISION_SECRET", "")
+		c := NewConfig(CliTestContext())
+		c.options.VisionApi = false
+		c.options.VisionUri = "https://vision.example.com/api/v1/vision"
+		c.options.VisionKey = "$VISION_SECRET"
+		hook := captureVisionKeyLog(t)
+
+		c.warnVisionKey()
+		assert.Empty(t, hook.AllEntries())
+	})
 	t.Run("Demo", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
 		c.options.VisionApi = true
@@ -371,4 +384,42 @@ func TestConfig_WarnVisionKey(t *testing.T) {
 		require.Len(t, hook.AllEntries(), 1)
 		assert.Equal(t, "config: vision key contains characters that are removed from access tokens, so it cannot authenticate with a PhotoPrism Vision API", hook.LastEntry().Message)
 	})
+}
+
+// TestConfig_InitWarnVisionKey checks that Init logs the Vision API key warnings to the system log.
+func TestConfig_InitWarnVisionKey(t *testing.T) {
+	c := NewIsolatedTestConfig("visionkeyinit", t.TempDir(), true)
+	c.options.VisionApi = true
+	c.options.VisionKey = "Secret Access Token!"
+
+	orig := event.SystemLog
+	logger, hook := test.NewNullLogger()
+	logger.SetLevel(logrus.TraceLevel)
+	event.SystemLog = logger
+
+	// Init registers its database and propagates its settings, so the package's test config is restored.
+	t.Cleanup(func() {
+		event.SystemLog = orig
+		_ = c.CloseDb()
+		entity.SetDbProvider(TestConfig())
+		TestConfig().Propagate()
+
+		if c.DatabaseDriver() == dsn.DriverSQLite3 {
+			for _, suffix := range []string{"", "-journal", "-wal", "-shm"} {
+				_ = os.Remove(c.DatabaseDSN() + suffix)
+			}
+		}
+	})
+
+	require.NoError(t, c.Init())
+
+	var warnings []string
+
+	for _, entry := range hook.AllEntries() {
+		if strings.HasPrefix(entry.Message, "config: vision key ") {
+			warnings = append(warnings, entry.Message)
+		}
+	}
+
+	assert.Equal(t, []string{"config: vision key contains characters that are removed from access tokens, so it cannot authenticate with a PhotoPrism Vision API"}, warnings)
 }
