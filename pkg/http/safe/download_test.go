@@ -46,6 +46,10 @@ func TestIsPrivateOrDisallowedIP(t *testing.T) {
 		"10.0.0.1",         // RFC1918
 		"100.64.0.1",       // CGNAT RFC6598
 		"100.127.255.254",  // CGNAT upper bound
+		"198.18.0.1",       // benchmarking
+		"198.19.255.254",   // benchmarking upper bound
+		"64:ff9b::c612:1",  // NAT64 of 198.18.0.1
+		"2001:2::1",        // IPv6 benchmarking
 		"172.16.0.1",       // RFC1918
 		"192.168.1.1",      // RFC1918
 		"169.254.169.254",  // link-local / cloud metadata
@@ -83,6 +87,10 @@ func TestIsPrivateOrDisallowedIP(t *testing.T) {
 		"8.8.8.8",              // public
 		"100.63.255.255",       // just below CGNAT range
 		"100.128.0.1",          // just above CGNAT range
+		"198.17.255.255",       // just below benchmarking range
+		"198.20.0.1",           // just above benchmarking range
+		"2001:1:ffff::1",       // just below IPv6 benchmarking range
+		"2001:3::1",            // just above IPv6 benchmarking range
 		"1.1.1.1",              // public
 		"2606:4700:4700::1111", // public IPv6
 		"::ffff:8.8.8.8",       // IPv4-mapped public

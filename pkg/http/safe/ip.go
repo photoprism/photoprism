@@ -24,10 +24,12 @@ var (
 	disallowedPrefixes = []netip.Prefix{
 		netip.MustParsePrefix("0.0.0.0/8"),      // This network.
 		netip.MustParsePrefix("100.64.0.0/10"),  // Shared address space (CGNAT).
+		netip.MustParsePrefix("198.18.0.0/15"),  // Benchmarking.
 		netip.MustParsePrefix("240.0.0.0/4"),    // Reserved, including broadcast.
 		netip.MustParsePrefix("::/96"),          // IPv4-compatible, including unspecified and loopback.
 		netip.MustParsePrefix("100::/64"),       // Discard-only.
 		netip.MustParsePrefix("2001::/32"),      // Teredo.
+		netip.MustParsePrefix("2001:2::/48"),    // Benchmarking.
 		netip.MustParsePrefix("64:ff9b:1::/48"), // Local-use IPv4/IPv6 translation.
 		netip.MustParsePrefix("fec0::/10"),      // Site-local.
 	}
