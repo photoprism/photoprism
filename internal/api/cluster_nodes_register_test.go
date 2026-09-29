@@ -1064,6 +1064,11 @@ func TestValidateSiteURL(t *testing.T) {
 		{"https://photos.example.com", true},
 		{"http://photos.example.com", false},
 		{"http://127.0.0.1:2342", true},
+		{"http://127.0.0.2:2342", true},
+		{"http://[::1]:2342", true},
+		{"http://[0:0:0:0:0:0:0:1]:2342", true},
+		{"http://[::ffff:127.0.0.1]:2342", true},
+		{"http://[2001:db8::1]:2342", false},
 		{"mailto:me@example.com", false},
 		{"://bad", false},
 	}

@@ -827,3 +827,18 @@ func TestClusterNodesRotate_Confirm(t *testing.T) {
 		assert.Equal(t, 0, calls)
 	})
 }
+
+func TestWarnInsecurePublicURL(t *testing.T) {
+	for u, want := range map[string]bool{
+		"https://photos.example.com":    false,
+		"http://photos.example.com":     true,
+		"http://localhost:2342":         false,
+		"http://127.0.0.2:2342":         false,
+		"http://[::1]:2342":             false,
+		"http://[0:0:0:0:0:0:0:1]:2342": false,
+		"http://[2001:db8::1]:2342":     true,
+		"://bad":                        false,
+	} {
+		assert.Equal(t, want, warnInsecurePublicURL(u), u)
+	}
+}

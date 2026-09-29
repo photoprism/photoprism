@@ -23,6 +23,7 @@ import (
 	reg "github.com/photoprism/photoprism/internal/service/cluster/registry"
 	"github.com/photoprism/photoprism/internal/service/cluster/theme"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/http/dns"
 	"github.com/photoprism/photoprism/pkg/http/header"
 	"github.com/photoprism/photoprism/pkg/http/scheme"
 	"github.com/photoprism/photoprism/pkg/i18n"
@@ -622,7 +623,7 @@ func validateSiteURL(u string) bool {
 	}
 
 	if parsed.Scheme == "http" {
-		if host == "localhost" || host == "127.0.0.1" || host == "::1" || isClusterServiceHost(host) {
+		if dns.IsLoopbackHost(host) || isClusterServiceHost(host) {
 			return true
 		}
 		return false
@@ -756,7 +757,7 @@ func validateRedirectURI(u string) bool {
 	}
 
 	if parsed.Scheme == "http" {
-		if host == "localhost" || host == "127.0.0.1" || host == "::1" || isClusterServiceHost(host) {
+		if dns.IsLoopbackHost(host) || isClusterServiceHost(host) {
 			return true
 		}
 	}

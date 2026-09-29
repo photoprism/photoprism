@@ -403,7 +403,7 @@ func warnInsecurePublicURL(u string) bool {
 		return false
 	}
 	h := parsed.Hostname()
-	if h == "localhost" || h == "127.0.0.1" || h == "::1" {
+	if dns.IsLoopbackHost(h) {
 		return false
 	}
 	return true
