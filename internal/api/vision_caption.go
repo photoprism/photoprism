@@ -63,7 +63,7 @@ func PostVisionCaption(router *gin.RouterGroup) {
 
 		switch {
 		case err != nil:
-			log.Errorf("vision: %s (caption)", err)
+			logVisionErr("caption", err)
 			c.JSON(http.StatusBadRequest, vision.NewApiError(request.GetId(), http.StatusBadRequest))
 			return
 		case model == nil:

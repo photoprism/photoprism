@@ -77,7 +77,7 @@ func PostVisionFace(router *gin.RouterGroup) {
 
 			// A rejected reference fails closed with 400, mirroring the labels endpoint.
 			if err != nil {
-				log.Errorf("vision: %s (read face embedding from url)", err)
+				logVisionErr("face image", err)
 				c.JSON(http.StatusBadRequest, vision.NewApiError(request.GetId(), http.StatusBadRequest))
 				return
 			}
@@ -89,7 +89,7 @@ func PostVisionFace(router *gin.RouterGroup) {
 			result, faceErr := vision.GenerateFaceEmbeddings(data)
 
 			if faceErr != nil {
-				log.Errorf("vision: %s (run face embeddings)", faceErr)
+				logVisionErr("face embeddings", faceErr)
 				c.JSON(http.StatusBadRequest, vision.NewApiError(request.GetId(), http.StatusBadRequest))
 				return
 			}

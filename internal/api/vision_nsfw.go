@@ -63,7 +63,7 @@ func PostVisionNsfw(router *gin.RouterGroup) {
 		results, err := vision.DetectNSFW(request.Images, media.SrcRemote)
 
 		if err != nil {
-			log.Errorf("vision: %s (run nsfw)", err)
+			logVisionErr("nsfw", err)
 			c.JSON(http.StatusBadRequest, vision.NewApiError(request.GetId(), http.StatusBadRequest))
 			return
 		}

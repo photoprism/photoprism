@@ -64,7 +64,7 @@ func PostVisionLabels(router *gin.RouterGroup) {
 		labels, err := vision.GenerateLabels(request.Images, media.SrcRemote, entity.SrcAuto)
 
 		if err != nil {
-			log.Errorf("vision: %s (run labels)", err)
+			logVisionErr("labels", err)
 			c.JSON(http.StatusBadRequest, vision.NewApiError(request.GetId(), http.StatusBadRequest))
 			return
 		}
