@@ -189,7 +189,7 @@ func NewConfig(ctx *cli.Context) *Config {
 	if optionsYaml := c.OptionsYaml(); fs.FileExists(optionsYaml) {
 		if err := c.options.Load(optionsYaml); err != nil {
 			event.SystemWarn([]string{"config", "options", "load %s", "%s"}, clean.Log(optionsYaml), clean.ErrorFull(err))
-		} else if c.env == EnvDevelop {
+		} else if restrictOptionsFileWithCredential(optionsYaml); c.env == EnvDevelop {
 			// Reduce the log level to minimize noise in the test logs.
 			log.Tracef("config: overriding config with values from %s", clean.Log(optionsYaml))
 		} else {
