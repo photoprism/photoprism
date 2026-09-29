@@ -39,6 +39,7 @@ func purgeStaleUploads(conf *config.Config) {
 		log.Warnf("upload: %s", clean.Error(err))
 		return
 	} else if !info.IsDir() {
+		log.Warnf("upload: expiry scan skipped because the users storage folder is a link or not a directory")
 		return
 	}
 	now, err := uploadStorageTime(root)
@@ -48,6 +49,7 @@ func purgeStaleUploads(conf *config.Config) {
 		return
 	}
 	cutoff := now.Add(-time.Duration(conf.UploadMaxAge()) * time.Second)
+	removeStaleClockFiles(root, cutoff)
 	requests := mutex.UploadRequests.Load()
 	candidates, leftovers, pending := scanUploadDirs(root, cutoff, 0)
 	result := removeExpiredUploads(candidates, cutoff, requests)
@@ -72,6 +74,35 @@ func purgeStaleUploads(conf *config.Config) {
 	}
 	if result.files > 0 {
 		log.Warnf("upload: removed %s never imported", english.Plural(result.files, "staged file", "staged files"))
+	}
+}
+
+// uploadScanName returns the user and upload folder names of a scanned entry, without the storage path.
+func uploadScanName(dir string, depth int) string {
+	if depth == 2 {
+		return filepath.Join(filepath.Base(filepath.Dir(dir)), filepath.Base(dir))
+	}
+	return filepath.Base(dir)
+}
+
+// removeStaleClockFiles removes temporary clock files left in dir by an interrupted run once they are
+// older than cutoff. Names are matched by prefix, so the path of dir is never read as a pattern.
+func removeStaleClockFiles(dir string, cutoff time.Time) {
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		log.Warnf("upload: failed to list clock files (%s)", clean.Error(err))
+		return
+	}
+	for _, entry := range entries {
+		if !strings.HasPrefix(entry.Name(), uploadClockFile+"-") {
+			continue
+		}
+		name := filepath.Join(dir, entry.Name())
+		if info, lstatErr := os.Lstat(name); lstatErr == nil && info.Mode().IsRegular() && info.ModTime().Before(cutoff) {
+			if removeErr := os.Remove(name); removeErr != nil {
+				log.Warnf("upload: failed to remove clock file %s (%s)", clean.Log(entry.Name()), clean.Error(removeErr))
+			}
+		}
 	}
 }
 
@@ -121,6 +152,11 @@ func scanUploadDirs(dir string, cutoff time.Time, depth int) (candidates, leftov
 	case err != nil:
 		log.Warnf("upload: %s", clean.Error(err))
 		return nil, nil, true
+	case depth == 1 && info.Mode()&os.ModeSymlink != 0, depth == 2 && (!info.IsDir() || info.Mode()&os.ModeSymlink != 0):
+		// User and upload folders are created as directories, so a link in place of either, or a file in
+		// place of an upload folder, is reported; other files in the users folder are ignored.
+		log.Warnf("upload: skipped %s because it is a link or not a directory", clean.Log(uploadScanName(dir, depth)))
+		return nil, nil, false
 	case !info.IsDir() || info.Mode()&os.ModeSymlink != 0:
 		return nil, nil, false
 	}

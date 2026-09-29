@@ -7,6 +7,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"syscall"
 	"time"
 
 	"github.com/dustin/go-humanize/english"
@@ -476,9 +477,13 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 			log.Warnf("upload: found no staged files to process in upload %s", clean.Log(batch))
 			Abort(c, http.StatusNotFound, i18n.ErrUploadFailed)
 			return
-		} else if statErr != nil {
+		} else if errors.Is(statErr, syscall.ENAMETOOLONG) {
 			log.Errorf("upload: failed to access storage folder (%s)", clean.Error(statErr))
 			Abort(c, http.StatusBadRequest, i18n.ErrUploadFailed)
+			return
+		} else if statErr != nil {
+			log.Errorf("upload: failed to access storage folder (%s)", clean.Error(statErr))
+			Abort(c, http.StatusInternalServerError, i18n.ErrUploadFailed)
 			return
 		}
 

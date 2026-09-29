@@ -619,6 +619,19 @@ func TestProcessUserUploadStagedFiles(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, result.Code)
 		assert.FileExists(t, dir)
 	})
+	t.Run("StorageNotAccessible", func(t *testing.T) {
+		if os.Geteuid() == 0 {
+			t.Skip("permissions are not enforced for root")
+		}
+		token, dir := stage(t)
+		upload := filepath.Dir(dir)
+		require.NoError(t, os.Chmod(upload, 0))           //nolint:gosec // Test makes a folder inaccessible.
+		t.Cleanup(func() { _ = os.Chmod(upload, 0o700) }) //nolint:gosec // Test restores access for cleanup.
+		result := AuthenticatedRequestWithBody(app, http.MethodPut, "/api/v1/users/"+user.UserUID+"/upload/"+token, `{}`, sess.AuthToken())
+		require.NoError(t, os.Chmod(upload, 0o700)) //nolint:gosec // Test restores access.
+		assert.Equal(t, http.StatusInternalServerError, result.Code)
+		assert.FileExists(t, filepath.Join(dir, "upload.jpg"))
+	})
 	t.Run("FacesLocked", func(t *testing.T) {
 		lock, err := mutex.AcquireFileLock(conf.FacesLockFile(), "faces migration")
 		require.NoError(t, err)

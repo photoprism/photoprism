@@ -436,6 +436,156 @@ func TestStorageTime(t *testing.T) {
 	}
 }
 
+// TestPurgeStaleUploadsFolderWarnings verifies that links and files in place of user or upload folders are reported.
+func TestPurgeStaleUploadsFolderWarnings(t *testing.T) {
+	flag, savedLog := mutex.UserUploads.Load(), log
+	t.Cleanup(func() { mutex.UserUploads.Store(flag); log = savedLog })
+	capture := func(t *testing.T) *bytes.Buffer {
+		logger := logrus.New()
+		var output bytes.Buffer
+		logger.SetOutput(&output)
+		log = logger
+		return &output
+	}
+	t.Run("RootNotDirectory", func(t *testing.T) {
+		c := newUploadConfig(t)
+		require.NoError(t, os.MkdirAll(filepath.Dir(c.UsersStoragePath()), fs.ModeDir))
+		require.NoError(t, os.WriteFile(c.UsersStoragePath(), []byte("file"), fs.ModeFile))
+		output := capture(t)
+		mutex.UserUploads.Store(true)
+		purgeStaleUploads(c)
+		assert.Contains(t, output.String(), "users storage folder is a link or not a directory")
+		assert.False(t, mutex.UserUploads.Load())
+	})
+	t.Run("RootLink", func(t *testing.T) {
+		c := newUploadConfig(t)
+		require.NoError(t, os.MkdirAll(filepath.Dir(c.UsersStoragePath()), fs.ModeDir))
+		require.NoError(t, os.Symlink(t.TempDir(), c.UsersStoragePath()))
+		output := capture(t)
+		mutex.UserUploads.Store(true)
+		purgeStaleUploads(c)
+		assert.Contains(t, output.String(), "users storage folder is a link or not a directory")
+		assert.NotContains(t, output.String(), c.UsersStoragePath())
+		assert.False(t, mutex.UserUploads.Load())
+	})
+	t.Run("LinksAndFiles", func(t *testing.T) {
+		c := newUploadConfig(t)
+		root := c.UsersStoragePath()
+		batch := newUploadBatch(t, root, "utfrd9md4cywhp5v", "old", 48*time.Hour)
+		require.NoError(t, os.Symlink(t.TempDir(), filepath.Join(root, "utly13tubtpxbzaz")))
+		require.NoError(t, os.MkdirAll(filepath.Join(root, "utmtr7p8m8f8f9ab"), fs.ModeDir))
+		require.NoError(t, os.WriteFile(filepath.Join(root, "utmtr7p8m8f8f9ab", fs.UploadDir), []byte("file"), fs.ModeFile))
+		require.NoError(t, os.WriteFile(filepath.Join(root, "notes.txt"), []byte("file"), fs.ModeFile))
+		output := capture(t)
+		mutex.UserUploads.Store(true)
+		purgeStaleUploads(c)
+		assert.NoDirExists(t, batch)
+		assert.Contains(t, output.String(), "upload: skipped utly13tubtpxbzaz because it is a link or not a directory")
+		assert.Contains(t, output.String(), "upload: skipped utmtr7p8m8f8f9ab/upload because it is a link or not a directory")
+		assert.NotContains(t, output.String(), "notes.txt")
+		assert.NotContains(t, output.String(), uploadClockFile)
+		assert.NotContains(t, output.String(), root)
+	})
+	t.Run("StaleClockFile", func(t *testing.T) {
+		c := newUploadConfig(t)
+		newUploadBatch(t, c.UsersStoragePath(), "utfrd9md4cywhp5v", "fresh", time.Hour)
+		stale := filepath.Join(c.UsersStoragePath(), uploadClockFile+"-1")
+		require.NoError(t, os.WriteFile(stale, nil, fs.ModeFile))
+		ageUploadTree(t, stale, time.Now().Add(-48*time.Hour))
+		recent := filepath.Join(c.UsersStoragePath(), uploadClockFile+"-2")
+		require.NoError(t, os.WriteFile(recent, nil, fs.ModeFile))
+		ageUploadTree(t, recent, time.Now().Add(-time.Hour))
+		capture(t)
+		mutex.UserUploads.Store(true)
+		purgeStaleUploads(c)
+		assert.NoFileExists(t, stale)
+		assert.FileExists(t, recent, "a temporary clock file younger than the window must be kept")
+		assert.FileExists(t, filepath.Join(c.UsersStoragePath(), uploadClockFile))
+	})
+}
+
+// TestRemoveStaleClockFiles verifies that only clock files older than the cutoff are removed.
+func TestRemoveStaleClockFiles(t *testing.T) {
+	dir := t.TempDir()
+	cutoff := time.Now().Add(-24 * time.Hour)
+	old := filepath.Join(dir, uploadClockFile+"-1")
+	fresh := filepath.Join(dir, uploadClockFile+"-2")
+	clock := filepath.Join(dir, uploadClockFile)
+	oldDir := filepath.Join(dir, uploadClockFile+"-3")
+	for _, name := range []string{old, fresh, clock} {
+		require.NoError(t, os.WriteFile(name, nil, fs.ModeFile))
+	}
+	require.NoError(t, os.Mkdir(oldDir, fs.ModeDir))
+	target := filepath.Join(t.TempDir(), "target")
+	require.NoError(t, os.WriteFile(target, nil, fs.ModeFile))
+	link := filepath.Join(dir, uploadClockFile+"-4")
+	require.NoError(t, os.Symlink(target, link))
+	for _, name := range []string{old, clock, oldDir, target, link} {
+		ageUploadTree(t, name, time.Now().Add(-48*time.Hour))
+	}
+	removeStaleClockFiles(dir, cutoff)
+	assert.NoFileExists(t, old)
+	assert.FileExists(t, fresh)
+	assert.FileExists(t, clock)
+	assert.DirExists(t, oldDir)
+	assert.FileExists(t, target)
+	_, err := os.Lstat(link)
+	assert.NoError(t, err)
+}
+
+// TestRemoveStaleClockFilesPattern verifies that the folder path is not read as a pattern.
+func TestRemoveStaleClockFilesPattern(t *testing.T) {
+	parent := t.TempDir()
+	dir := filepath.Join(parent, "lib[a]")
+	other := filepath.Join(parent, "liba")
+	for _, folder := range []string{dir, other} {
+		require.NoError(t, os.Mkdir(folder, fs.ModeDir))
+		name := filepath.Join(folder, uploadClockFile+"-1")
+		require.NoError(t, os.WriteFile(name, nil, fs.ModeFile))
+		ageUploadTree(t, name, time.Now().Add(-48*time.Hour))
+	}
+	removeStaleClockFiles(dir, time.Now().Add(-24*time.Hour))
+	assert.NoFileExists(t, filepath.Join(dir, uploadClockFile+"-1"))
+	assert.FileExists(t, filepath.Join(other, uploadClockFile+"-1"))
+	unbalanced := filepath.Join(parent, "lib[")
+	require.NoError(t, os.Mkdir(unbalanced, fs.ModeDir))
+	name := filepath.Join(unbalanced, uploadClockFile+"-1")
+	require.NoError(t, os.WriteFile(name, nil, fs.ModeFile))
+	ageUploadTree(t, name, time.Now().Add(-48*time.Hour))
+	removeStaleClockFiles(unbalanced, time.Now().Add(-24*time.Hour))
+	assert.NoFileExists(t, name)
+}
+
+// TestRemoveStaleClockFilesWarning verifies that a clock file that cannot be removed is reported by name only.
+func TestRemoveStaleClockFilesWarning(t *testing.T) {
+	if os.Geteuid() == 0 {
+		t.Skip("requires filesystem permission enforcement")
+	}
+	savedLog := log
+	t.Cleanup(func() { log = savedLog })
+	logger := logrus.New()
+	var output bytes.Buffer
+	logger.SetOutput(&output)
+	log = logger
+	dir := t.TempDir()
+	name := filepath.Join(dir, uploadClockFile+"-1")
+	require.NoError(t, os.WriteFile(name, nil, fs.ModeFile))
+	ageUploadTree(t, name, time.Now().Add(-48*time.Hour))
+	require.NoError(t, os.Chmod(dir, 0o500))
+	t.Cleanup(func() { _ = os.Chmod(dir, 0o700) })
+	removeStaleClockFiles(dir, time.Now().Add(-24*time.Hour))
+	assert.FileExists(t, name)
+	assert.Contains(t, output.String(), "upload: failed to remove clock file "+uploadClockFile+"-1")
+	assert.NotContains(t, output.String(), dir)
+}
+
+// TestUploadScanName verifies that only user and upload folder names are returned.
+func TestUploadScanName(t *testing.T) {
+	root := filepath.Join(t.TempDir(), "users")
+	assert.Equal(t, "utfrd9md4cywhp5v", uploadScanName(filepath.Join(root, "utfrd9md4cywhp5v"), 1))
+	assert.Equal(t, filepath.Join("utfrd9md4cywhp5v", fs.UploadDir), uploadScanName(filepath.Join(root, "utfrd9md4cywhp5v", fs.UploadDir), 2))
+}
+
 // TestUploadBatchExpired verifies strict cutoff comparison and traversal errors.
 func TestUploadBatchExpired(t *testing.T) {
 	cutoff := time.Now().Truncate(time.Second)
