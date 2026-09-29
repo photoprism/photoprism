@@ -39,6 +39,9 @@ func AuthAny(c *gin.Context, resource acl.Resource, perms acl.Permissions) (s *e
 	// Disable response caching.
 	c.Header(header.CacheControl, header.CacheControlNoStore)
 
+	// Warn if requests forwarded by the Portal are attributed to its own address.
+	warnUntrustedPortal(c, clientIp)
+
 	// Refuse clients that exceeded the authentication failure rate limit.
 	if limiter.Auth.Reject(clientIp) {
 		return entity.SessionStatusTooManyRequests()

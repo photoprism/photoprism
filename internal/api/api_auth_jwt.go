@@ -74,6 +74,8 @@ func authAnyJWT(c *gin.Context, clientIP, authToken string, resource acl.Resourc
 		return nil
 	}
 
+	rememberPortalPeer(c)
+
 	// Check if config allows resource access to be authorized with JWT.
 	allowedScopes := conf.JWTAllowedScopes()
 	if !acl.ScopeAttrPermits(allowedScopes, resource, perms) {

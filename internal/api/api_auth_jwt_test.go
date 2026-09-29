@@ -39,9 +39,12 @@ func TestAuthAnyJWT(t *testing.T) {
 		req.Header.Set(header.UserAgent, "PhotoPrism Portal/1.0")
 		req.RemoteAddr = "192.0.2.10:12345"
 		c.Request = req
+		resetPortalPeers(t)
 
 		session := authAnyJWT(c, "192.0.2.10", token, acl.ResourceCluster, nil)
 		require.NotNil(t, session)
+		_, found := portalPeers.Get("192.0.2.10")
+		assert.True(t, found)
 		assert.Equal(t, http.StatusOK, session.HttpStatus())
 		assert.Empty(t, session.ClientUID)
 		assert.Equal(t, spec.Subject, session.GetClientName())
