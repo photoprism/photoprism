@@ -905,9 +905,9 @@ var Flags = CliFlags{
 		Flag: &cli.StringSliceFlag{
 			Name:    "trusted-proxy",
 			Usage:   "`CIDR` ranges or IPv4/v6 addresses from which reverse proxy headers can be trusted, separated by commas",
-			Value:   cli.NewStringSlice(header.CidrDockerInternal),
+			Value:   cli.NewStringSlice(header.CidrDockerInternal, header.CidrLoopback, header.IPv6Loopback),
 			EnvVars: EnvVars("TRUSTED_PROXY"),
-		}}, {
+		}, DocDefault: header.CidrDockerInternal + ", " + header.CidrLoopback + ", " + header.IPv6Loopback}, {
 		Flag: &cli.StringSliceFlag{
 			Name:    "proxy-client-header",
 			Usage:   "proxy client IP header `NAME`, e.g. X-Forwarded-For, X-Client-IP, X-Real-IP, or CF-Connecting-IP",

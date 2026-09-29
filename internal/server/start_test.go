@@ -10,6 +10,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/pkg/http/header"
@@ -78,6 +80,25 @@ func TestConfigureTrustedProxySettings(t *testing.T) {
 		ip := requestClientIP(t, router, "198.51.100.11:12345", "10.0.0.124")
 
 		assert.Equal(t, "198.51.100.11", ip)
+	})
+	t.Run("DefaultTrustsLoopbackProxy", func(t *testing.T) {
+		conf := config.NewConfig(config.CliTestContext())
+		conf.Options().ProxyClientHeaders = []string{header.XForwardedFor}
+
+		for _, f := range config.Flags {
+			if ssf, ok := f.Flag.(*cli.StringSliceFlag); ok && ssf.Name == "trusted-proxy" {
+				conf.Options().TrustedProxies = ssf.Value.Value()
+			}
+		}
+
+		require.NotEmpty(t, conf.Options().TrustedProxies)
+
+		router := newProxyTestRouter(conf)
+		assert.Equal(t, "203.0.113.9", requestClientIP(t, router, "127.0.0.1:12345", "203.0.113.9"))
+		assert.Equal(t, "203.0.113.9", requestClientIP(t, router, "[::1]:12345", "203.0.113.9"))
+		assert.Equal(t, "203.0.113.9", requestClientIP(t, router, "127.0.0.1:12345", "198.51.100.7, 203.0.113.9"))
+		assert.Equal(t, "203.0.113.9", requestClientIP(t, router, "172.18.0.2:12345", "203.0.113.9"))
+		assert.Equal(t, "198.51.100.10", requestClientIP(t, router, "198.51.100.10:12345", "203.0.113.9"))
 	})
 	t.Run("ResolvesForwardedForPlatformHeader", func(t *testing.T) {
 		t.Cleanup(func() { header.SetTrustedPlatform("") })
