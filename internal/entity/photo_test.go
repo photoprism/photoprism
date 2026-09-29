@@ -781,6 +781,24 @@ func TestPhoto_Delete(t *testing.T) {
 		}
 		assert.Len(t, files, 1)
 	})
+	t.Run("Archived", func(t *testing.T) {
+		archivedAt := time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC)
+		m := &Photo{PhotoUID: rnd.GenerateUID(PhotoUID), PhotoName: "DeleteArchived", PhotoQuality: 3, DeletedAt: &archivedAt}
+		require.NoError(t, UnscopedDb().Create(m).Error)
+
+		t.Cleanup(func() {
+			require.NoError(t, UnscopedDb().Delete(&Photo{}, "id = ?", m.ID).Error)
+		})
+
+		_, err := m.Delete(false)
+		require.NoError(t, err)
+
+		var result Photo
+		require.NoError(t, UnscopedDb().Where("id = ?", m.ID).First(&result).Error)
+		assert.Equal(t, -1, result.PhotoQuality)
+		require.NotNil(t, result.DeletedAt)
+		assert.False(t, result.IsArchived())
+	})
 	t.Run("NoID", func(t *testing.T) {
 		m := Photo{}
 		_, err := m.Delete(true)
