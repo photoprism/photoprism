@@ -693,6 +693,18 @@ func TestConfig_Cluster(t *testing.T) {
 		assert.Error(t, err)
 		assert.False(t, wrote)
 	})
+	t.Run("SaveClusterOptionsUpdateInvalidDatabase", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ConfigPath = t.TempDir()
+		c.options.OptionsYaml = filepath.Join(c.options.ConfigPath, "options.yml")
+
+		update := cluster.OptionsUpdate{}
+		update.SetDatabaseName("--option=value")
+		wrote, err := c.SaveClusterOptionsUpdate(update)
+		assert.EqualError(t, err, "invalid database name")
+		assert.False(t, wrote)
+		assert.NoFileExists(t, c.OptionsYaml())
+	})
 	t.Run("SaveOptionsPatch", func(t *testing.T) {
 		tempCfg := t.TempDir()
 		ctx := CliTestContext()
@@ -1048,5 +1060,55 @@ func TestConfig_JWTRotateDays(t *testing.T) {
 	t.Run("Negative", func(t *testing.T) {
 		c.options.JWTRotateDays = -7
 		assert.Equal(t, 0, c.JWTRotateDays())
+	})
+}
+
+// TestValidateClusterOptionsUpdate checks the values a cluster options update may carry.
+func TestValidateClusterOptionsUpdate(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		update := cluster.OptionsUpdate{}
+		update.SetClusterUUID("4a47c940-d5de-41b3-88a2-eb816cc659ca")
+		update.SetDatabaseName("cluster_d0123456789a")
+		update.SetDatabaseUser("cluster_u0123456789a")
+		update.SetDatabaseServer("mariadb:4001")
+		assert.NoError(t, validateClusterOptionsUpdate(update))
+		update.SetDatabaseName("photo-prism_2")
+		update.SetDatabaseServer("")
+		assert.NoError(t, validateClusterOptionsUpdate(update))
+		assert.NoError(t, validateClusterOptionsUpdate(cluster.OptionsUpdate{}))
+	})
+	t.Run("InvalidDatabase", func(t *testing.T) {
+		for _, tc := range []struct {
+			set func(*cluster.OptionsUpdate, string)
+			err string
+		}{
+			{(*cluster.OptionsUpdate).SetDatabaseName, "invalid database name"},
+			{(*cluster.OptionsUpdate).SetDatabaseUser, "invalid database user"},
+			{(*cluster.OptionsUpdate).SetDatabaseServer, "invalid database server"},
+		} {
+			for _, value := range []string{"-x", "--option=value", " --option=value"} {
+				update := cluster.OptionsUpdate{}
+				tc.set(&update, value)
+				assert.EqualError(t, validateClusterOptionsUpdate(update), tc.err, "value %q", value)
+			}
+		}
+	})
+	t.Run("DatabaseDSN", func(t *testing.T) {
+		update := cluster.OptionsUpdate{}
+		update.SetDatabaseDSN("cluster_u0123456789a:secret@tcp(mariadb:4001)/cluster_d0123456789a?charset=utf8mb4&parseTime=true")
+		assert.NoError(t, validateClusterOptionsUpdate(update))
+		for dsnValue, err := range map[string]string{
+			"user:secret@tcp(mariadb:4001)/--option=value?parseTime=true": "invalid database name",
+			"-x:secret@tcp(mariadb:4001)/photoprism":                      "invalid database user",
+			"user:secret@tcp(--option=value)/photoprism":                  "invalid database server",
+		} {
+			update.SetDatabaseDSN(dsnValue)
+			assert.EqualError(t, validateClusterOptionsUpdate(update), err, "dsn %q", dsnValue)
+		}
+	})
+	t.Run("InvalidUUID", func(t *testing.T) {
+		update := cluster.OptionsUpdate{}
+		update.SetNodeUUID("invalid-uuid")
+		assert.EqualError(t, validateClusterOptionsUpdate(update), "invalid node UUID")
 	})
 }

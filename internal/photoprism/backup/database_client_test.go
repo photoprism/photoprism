@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 	"time"
@@ -37,7 +38,7 @@ func TestMariadbConn_Cmd(t *testing.T) {
 	t.Run("Tcp", func(t *testing.T) {
 		cmd := mariadbTestConn().Cmd()
 		assert.Equal(t, []string{"/usr/bin/mariadb-dump", "--no-defaults", "--protocol", "tcp", "--skip-ssl",
-			"-h", "mariadb", "-P", "4001", "-u", "photoprism", "photoprism"}, cmd.Args)
+			"-h", "mariadb", "-P", "4001", "-u", "photoprism", "--", "photoprism"}, cmd.Args)
 		assert.Contains(t, cmd.Env, "MYSQL_PWD=Sup3r$ecret")
 	})
 	t.Run("TcpSsl", func(t *testing.T) {
@@ -46,7 +47,7 @@ func TestMariadbConn_Cmd(t *testing.T) {
 		conn.Ssl = true
 		cmd := conn.Cmd()
 		assert.Equal(t, []string{"/usr/bin/mariadb-dump", "--no-defaults", "--protocol", "tcp", "--ssl-verify-server-cert",
-			"-h", "mariadb", "-P", "4001", "-u", "photoprism", "photoprism"}, cmd.Args)
+			"-h", "mariadb", "-P", "4001", "-u", "photoprism", "--", "photoprism"}, cmd.Args)
 		assert.Contains(t, cmd.Env, "MYSQL_PWD=Sup3r$ecret")
 	})
 	t.Run("TcpSslClientCannotVerify", func(t *testing.T) {
@@ -54,7 +55,7 @@ func TestMariadbConn_Cmd(t *testing.T) {
 		conn := mariadbTestConn()
 		conn.Ssl, conn.SslVerify = true, false
 		assert.Equal(t, []string{"/usr/bin/mariadb-dump", "--no-defaults", "--protocol", "tcp",
-			"-h", "mariadb", "-P", "4001", "-u", "photoprism", "photoprism"}, conn.Cmd().Args)
+			"-h", "mariadb", "-P", "4001", "-u", "photoprism", "--", "photoprism"}, conn.Cmd().Args)
 	})
 	t.Run("TcpSslRequest", func(t *testing.T) {
 		// A client that cannot verify the certificate uses TLS without verification where the server offers it.
@@ -62,7 +63,7 @@ func TestMariadbConn_Cmd(t *testing.T) {
 			conn := mariadbTestConn()
 			conn.Ssl, conn.SslVerify, conn.SslRequest = ssl, false, true
 			assert.Equal(t, []string{"/usr/bin/mariadb-dump", "--no-defaults", "--protocol", "tcp", "--ssl", "--skip-ssl-verify-server-cert",
-				"-h", "mariadb", "-P", "4001", "-u", "photoprism", "photoprism"}, conn.Cmd().Args, "ssl %v", ssl)
+				"-h", "mariadb", "-P", "4001", "-u", "photoprism", "--", "photoprism"}, conn.Cmd().Args, "ssl %v", ssl)
 		}
 	})
 	t.Run("TcpSslNoPassword", func(t *testing.T) {
@@ -70,7 +71,7 @@ func TestMariadbConn_Cmd(t *testing.T) {
 		conn := mariadbTestConn()
 		conn.Ssl, conn.Password = true, ""
 		assert.Equal(t, []string{"/usr/bin/mariadb-dump", "--no-defaults", "--protocol", "tcp",
-			"-h", "mariadb", "-P", "4001", "-u", "photoprism", "photoprism"}, conn.Cmd().Args)
+			"-h", "mariadb", "-P", "4001", "-u", "photoprism", "--", "photoprism"}, conn.Cmd().Args)
 	})
 	t.Run("VerifyOnlyOnTcpSsl", func(t *testing.T) {
 		for _, tc := range []struct {
@@ -138,7 +139,7 @@ func TestMariadbConn_Cmd(t *testing.T) {
 		conn.Socket, conn.Host, conn.Port = "/run/mysqld/mysqld.sock", "", ""
 		cmd := conn.Cmd()
 		assert.Equal(t, []string{"/usr/bin/mariadb-dump", "--no-defaults", "--protocol", "socket",
-			"-S", "/run/mysqld/mysqld.sock", "-u", "photoprism", "photoprism"}, cmd.Args)
+			"-S", "/run/mysqld/mysqld.sock", "-u", "photoprism", "--", "photoprism"}, cmd.Args)
 		assert.Contains(t, cmd.Env, "MYSQL_PWD=Sup3r$ecret")
 	})
 	t.Run("SocketSsl", func(t *testing.T) {
@@ -148,7 +149,7 @@ func TestMariadbConn_Cmd(t *testing.T) {
 		conn.Ssl = true
 		cmd := conn.Cmd()
 		assert.Equal(t, []string{"/usr/bin/mariadb-dump", "--no-defaults", "--protocol", "socket",
-			"-S", "/run/mysqld/mysqld.sock", "-u", "photoprism", "photoprism"}, cmd.Args)
+			"-S", "/run/mysqld/mysqld.sock", "-u", "photoprism", "--", "photoprism"}, cmd.Args)
 		assert.Contains(t, cmd.Env, "MYSQL_PWD=Sup3r$ecret")
 	})
 	t.Run("EnvironmentExtended", func(t *testing.T) {
@@ -163,7 +164,18 @@ func TestMariadbConn_Cmd(t *testing.T) {
 		conn.Bin = "/usr/bin/mariadb"
 		cmd := conn.Cmd("-f")
 		assert.Equal(t, []string{"/usr/bin/mariadb", "--no-defaults", "--protocol", "tcp", "--skip-ssl",
-			"-h", "mariadb", "-P", "4001", "-u", "photoprism", "-f", "photoprism"}, cmd.Args)
+			"-h", "mariadb", "-P", "4001", "-u", "photoprism", "-f", "--", "photoprism"}, cmd.Args)
+	})
+	t.Run("NameAfterOptions", func(t *testing.T) {
+		// The database name follows the end of the options, so a name beginning with "-" stays a name.
+		for _, name := range []string{"--option=value", "-x", "cluster_d0123456789a", "photo_prism2"} {
+			conn := mariadbTestConn()
+			conn.Name = name
+			args := conn.Cmd("-f").Args
+			require.GreaterOrEqual(t, len(args), 2)
+			assert.Equal(t, []string{"--", name}, args[len(args)-2:], "name %s", name)
+			assert.Equal(t, len(args)-2, slices.Index(args, "--"), "name %s", name)
+		}
 	})
 	t.Run("NoPassword", func(t *testing.T) {
 		// No credential is passed, in an argument or in the environment, and the option files that

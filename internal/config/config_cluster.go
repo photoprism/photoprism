@@ -16,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/internal/service/cluster/theme"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/dsn"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/http/dns"
 	"github.com/photoprism/photoprism/pkg/http/header"
@@ -72,6 +73,30 @@ func validateClusterOptionsUpdate(update cluster.OptionsUpdate) error {
 
 	if update.NodeUUID != nil && !rnd.IsUUID(*update.NodeUUID) {
 		return fmt.Errorf("invalid node UUID")
+	}
+
+	// Database values are passed to client commands, so none of them may begin like an option,
+	// whether set directly or through the DSN.
+	type dbValue struct {
+		name  string
+		value *string
+	}
+
+	values := []dbValue{
+		{"database name", update.DatabaseName},
+		{"database user", update.DatabaseUser},
+		{"database server", update.DatabaseServer},
+	}
+
+	if update.DatabaseDSN != nil {
+		d := dsn.Parse(*update.DatabaseDSN)
+		values = append(values, dbValue{"database name", &d.Name}, dbValue{"database user", &d.User}, dbValue{"database server", &d.Server})
+	}
+
+	for _, v := range values {
+		if v.value != nil && strings.HasPrefix(strings.TrimSpace(*v.value), "-") {
+			return fmt.Errorf("invalid %s", v.name)
+		}
 	}
 
 	return nil

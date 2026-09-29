@@ -94,10 +94,10 @@ func (conn mariadbConn) String() string {
 	return conn.User + "@" + conn.Host + ":" + conn.Port + "/" + conn.Name
 }
 
-// Cmd returns the client command for the connection, with the specified flags and the database name
-// appended. The password is passed in the environment, keeping it out of the command, and --no-defaults
-// comes first, as the client requires. A MariaDB 11.4+ client is passed --ssl-verify-server-cert, so it
-// verifies the zero-configuration certificate against the password it reads from the environment.
+// Cmd returns the client command for the connection, with the specified flags and, after "--", the database
+// name. The password is passed in the environment, keeping it out of the command, and --no-defaults comes
+// first, as the client requires. A MariaDB 11.4+ client is passed --ssl-verify-server-cert, so it verifies
+// the zero-configuration certificate against the password it reads from the environment.
 func (conn mariadbConn) Cmd(args ...string) *exec.Cmd {
 	a := make([]string, 0, len(args)+10)
 	a = append(a, "--no-defaults")
@@ -121,7 +121,7 @@ func (conn mariadbConn) Cmd(args ...string) *exec.Cmd {
 
 	a = append(a, "-u", conn.User)
 	a = append(a, args...)
-	a = append(a, conn.Name)
+	a = append(a, "--", conn.Name)
 
 	cmd := exec.Command(conn.Bin, a...) // #nosec G204 database connection parameters from trusted config
 	cmd.Env = conn.env()
